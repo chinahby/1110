@@ -60,6 +60,8 @@ when       who     what, where, why
 #include "AEETAPI.h"
 #include "OEMClassIDs.h"
 #include "AEEPointerHelpers.h"
+#include "AEEBacklight.h"
+
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS
@@ -578,7 +580,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
 //Add By zzg 2010_11_23
 #ifndef FEATURE_UNLOCK_KEY_SPACE	
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)
                 case AVK_SELECT:
 #else
                 case AVK_CLR:
@@ -613,10 +615,21 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         {
                             IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
                         }
-
-                        // Unlock the keyguard
-                        OEMKeyguard_SetState(FALSE);
-
+                        #ifdef FEATURE_VERSION_W027
+                        {
+                            IBacklight  *Backlight;
+                            (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+                            if(IBACKLIGHT_IsEnabled(Backlight))
+                            {
+                              // Unlock the keyguard
+                              OEMKeyguard_SetState(FALSE);
+                            } 
+                            IBACKLIGHT_Release(Backlight);
+                        }
+                        #else
+                            // Unlock the keyguard
+                            OEMKeyguard_SetState(FALSE);
+                        #endif
                         OEMPriv_ResumeBREW();
                         return TRUE;
 
@@ -1058,7 +1071,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         //}
         
 		
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
         if(wParam == AVK_CLR)
 #else
         if(wParam == AVK_SELECT)		
@@ -1097,7 +1110,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
             }            
         }
 
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
         if(wParam== AVK_CLR||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
 #else
         if(wParam== AVK_SELECT||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)			
