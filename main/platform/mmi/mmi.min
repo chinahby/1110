@@ -107,9 +107,6 @@ include $(OEMEXTFOR3PART)/OEMExtFor3Part.min
 include $(EDITAPPLET)/EditApplet.min
 include $(EDITEXTENTSION)/EditExtension.min
 endif
-ifeq ($(MMI_ADD_WAPBROWSER),yes)
-include $(WAPBROWSER)/WapBrowser.min
-endif
 
 ifeq ($(USES_BREW_APPMGR), yes)
 ifneq ($(USES_LOWMEM),yes)
@@ -176,6 +173,10 @@ endif
 ifeq ($(USES_LCD_TOUCH),yes)
 include $(HW_PATH)/Hanwang.min
 include $(ADJUSTPENAPP)/adjustpenapp.min
+endif
+
+ifeq ($(USES_NEMOBREW),yes)
+include $(NEMOBREW)/nemobrew.min
 endif
 
 #include $(MMIDIR)/Extend/Extend.min
