@@ -2072,6 +2072,46 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
                                     pMe->m_lineheight*2,
                                     NULL,
                                     IDF_TEXT_TRANSPARENT);
+#ifdef FEATURE_VERSION_W027V3            
+            MEMSET(string, 0, sizeof(string));              
+            (void)ISHELL_LoadResString(pMe->m_pShell,
+                                       AEE_QUICKTEST_RES_FILE,
+                                       IDS_LEDLIGHTON,
+                                       string,
+                                       MAX_STRING_LENGTH);
+            if(string[0] == 0)
+            {
+                return TRUE;
+            }
+            (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                    AEE_FONT_BOLD,
+                                    string,
+                                    -1,
+                                    0,
+                                    pMe->m_lineheight*3,
+                                    NULL,
+                                    IDF_TEXT_TRANSPARENT);
+
+            //绘制第二句提示语
+            MEMSET(string, 0, sizeof(string));
+            (void)ISHELL_LoadResString(pMe->m_pShell,
+                                       AEE_QUICKTEST_RES_FILE,
+                                       IDS_LEDLIGHTOFF,
+                                       string,
+                                       MAX_STRING_LENGTH);
+            if(string[0] == 0)
+            {
+                return TRUE;
+            }
+            (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                    AEE_FONT_BOLD,
+                                    string,
+                                    -1,
+                                    0,
+                                    pMe->m_lineheight*4,
+                                    NULL,
+                                    IDF_TEXT_TRANSPARENT);
+#endif            
 #ifdef FEATURE_LED_CONTROL
             //绘制第三句提示语
             MEMSET(string, 0, sizeof(string));
@@ -2164,7 +2204,14 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
 #endif
                     IBACKLIGHT_TurnOff(pMe->m_pIBacklight);
                     break;
-
+#ifdef FEATURE_VERSION_W027V3
+               case AVK_3:
+                    IBACKLIGHT_TurnOnTorch(pMe->m_pIBacklight);
+               break;
+               case AVK_4:
+                    IBACKLIGHT_TurnOffTorch(pMe->m_pIBacklight);
+               break;
+#endif
 #ifdef FEATURE_LED_CONTROL
                 case AVK_3:                    
                     disp_set_sigled_cmd(HS_SIG_LED_COLOR_ORANGE_ON);
