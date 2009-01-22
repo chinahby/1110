@@ -3316,6 +3316,17 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
    				(void) OEMNV_Put( NV_SIM_SELECT_I, &nvi);
 				#endif
                 value = 0;
+                //add by pyuangui  ÖØÖÃLCDÆÁ±³¹â
+                {
+                  IBacklight   *pBacklight = NULL;
+                  ISHELL_CreateInstance(pMe->m_pShell,
+                                           AEECLSID_BACKLIGHT_DISPLAY1,
+                                           (void**)&pBacklight);
+  
+                  IBACKLIGHT_SetBrightnessLevel(pBacklight,OEMNV_BACKLIGHT_LEVEL);
+                  IBACKLIGHT_Release(pBacklight);
+                  pBacklight = NULL;
+                }
                 if (AEE_SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CALLHISTORY, (void **)&pCallHistory))
                 //if (AEE_SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CALLLIST, (void **)&m_pCallList))
                 {
