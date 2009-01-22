@@ -100,6 +100,12 @@
 	<STRING Id="38" Name="IDS_BACKLIGHTOFF">
 		<Text>2: tutup lampu latar</Text>
 	</STRING>
+	<STRING Id="39" Name="IDS_LEDLIGHTON">
+		<Text>3: open LED</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_LEDLIGHTOFF">
+		<Text>4: close LED</Text>
+	</STRING>
 	<STRING Id="41" Name="IDS_RED">
 		<Text>Merah</Text>
 	</STRING>
