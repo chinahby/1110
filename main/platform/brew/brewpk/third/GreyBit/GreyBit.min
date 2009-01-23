@@ -14,7 +14,7 @@ GREYBIT_LIBS := $(GREYBIT_PATH)/GreyBitType.a
 
 ifeq ($(EXTLANG1),NO)
 ifeq ($(USES_HINDI),yes)
-CONSTFILE_FILES+=systemhindi.gvf|fs:/sys/systemfont.gvf
+CONSTFILE_FILES+=systemhi.gvf|fs:/sys/systemfont.gvf
 else
 CONSTFILE_FILES+=systemen.gvf|fs:/sys/systemfont.gvf
 endif
