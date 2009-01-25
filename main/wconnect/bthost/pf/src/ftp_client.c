@@ -5,10 +5,11 @@
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/wconnect/bthost/pf/rel/00.00.26/src/ftp_client.c#2 $ 
+$Header: //source/qcom/qct/wconnect/bthost/pf/rel/00.00.26/src/ftp_client.c#3 $ 
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2009-11-13   ns  For FTP disconnect remove the already not connected check
   2009-01-14   gs  Added support for sending object size info in fops->write()
 
 *    #19       27 Apr 2007            GS
@@ -73,7 +74,7 @@ File Transfer Profile client
 */
 
 /**********************************************************************************
-  $Revision: #2 $
+  $Revision: #3 $
   Copyright 2002 - 2004 Open Interface North America, Inc. All rights reserved.
 ***********************************************************************************/
 
@@ -451,10 +452,7 @@ OI_STATUS OI_FTPClient_Disconnect(OI_FTP_CLIENT_CONNECTION_HANDLE connectionId)
 
     OI_DBGTRACE(("OI_FTPClient_Disconnect (connectionId = 0x%x)\n", connectionId));
 
-    if (!IS_CLIENT_CONNECTED) {
-        OI_DBGPRINT(("Not connected\n"));
-        return OI_OBEX_NOT_CONNECTED;
-    }
+
 #ifdef OI_CODE
 #error code not present
 #else

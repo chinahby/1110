@@ -6,7 +6,7 @@ GENERAL DESCRIPTION
   This module contains the Bluetooth Basic Printing Profile client data and 
   code.
 
-              Copyright (c) 2004-2008 QUALCOMM Incorporated.               
+              Copyright (c) 2004-2009 QUALCOMM Incorporated.               
                       All Rights Reserved.                                  
               Qualcomm Confidential and Proprietary 
 
@@ -19,12 +19,13 @@ GENERAL DESCRIPTION
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/wconnect/bthost/pf/rel/00.00.26/src/btpfbpp2.c#1 $ 
-  $DateTime: 2009/01/07 18:14:54 $
-  $Author: deepikas $ 
+  $Header: //source/qcom/qct/wconnect/bthost/pf/rel/00.00.26/src/btpfbpp2.c#2 $ 
+  $DateTime: 2011/03/17 00:37:53 $
+  $Author: pvunnam $ 
 
  when        who  what, where, why
  ----------  ---  -----------------------------------------------------------
+ 2009-05-22   pn  Fixed compile errors when FEATURE_BT_EXTPF_BIP is undefined.
  2008-07-24   gs  Fixed Klocwork error.
  2008-06-16   pr  Added cmd to tear down connection from printer
                   to BPP server (object channel).
@@ -172,9 +173,9 @@ LOCAL bt_pf_bpp_sndr_conn_info_type bt_pf_bpp_sndr_conn_info[NUM_BPP_SNDR] =
 
 typedef struct
 {
-  bt_pf_bip_srv_conn_id_type conn_id;
-  bt_event_type              event;
-  bt_cmd_status_type         status;
+  bt_pf_bpp_sndr_conn_id_type conn_id;
+  bt_event_type               event;
+  bt_cmd_status_type          status;
 } bt_pf_bpp_sndr_srv_wait_for_cfm_type;
                          
 
@@ -217,7 +218,7 @@ DESCRIPTION
 
 ===========================================================================*/
 LOCAL void bt_pf_bpp_sndr_wait_for_get_rsp_cfm( 
-  bt_pf_bip_srv_conn_id_type conn_id )
+  bt_pf_bpp_sndr_conn_id_type conn_id )
 {
   bt_pf_bpp_sndr_get_rsp_cfm.conn_id = conn_id;
   rex_timed_wait( BT_PF_BPP_CLI_SIG | BT_PF_TMO_SIG, 
@@ -251,8 +252,8 @@ DESCRIPTION
 
 ===========================================================================*/
 LOCAL bt_cmd_status_type bt_pf_bpp_sndr_wait_for_srv_req_cfm( 
-  bt_pf_bip_srv_conn_id_type conn_id,
-  bt_event_type              req_event )
+  bt_pf_bpp_sndr_conn_id_type conn_id,
+  bt_event_type               req_event )
 {
   OI_STATUS status = OI_TIMEOUT;
 
@@ -287,8 +288,8 @@ LOCAL bt_cmd_status_type bt_pf_bpp_sndr_wait_for_srv_req_cfm(
 }
 
 LOCAL bt_cmd_status_type bt_pf_bpp_sndr_find_job_status_conn(
-  bt_pf_bip_srv_conn_id_type conn_id,
-  bt_pf_bpp_sndr_conn_type*  index_ptr )
+  bt_pf_bpp_sndr_conn_id_type conn_id,
+  bt_pf_bpp_sndr_conn_type*   index_ptr )
 {
   bt_cmd_status_type status = OI_STATUS_NOT_FOUND;
   uint16 i;
