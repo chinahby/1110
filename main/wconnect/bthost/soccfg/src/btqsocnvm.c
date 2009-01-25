@@ -1,3 +1,4 @@
+
 /*====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*
 
     B L U E T O O T H   B T S   N V M   M O D U L E
@@ -12,7 +13,7 @@ EXTERNALIZED FUNCTIONS
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-Copyright (c) 2007-2009 QUALCOMM Incorporated.
+Copyright (c) 2007-2011 QUALCOMM Incorporated.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -25,12 +26,28 @@ Qualcomm Confidential and Proprietary
   Notice that changes are listed in reverse chronological order. Please
   use ISO format for dates.
 
-  $Header: //source/qcom/qct/wconnect/bthost/soccfg/rel/00.00.26/src/btqsocnvm.c#9 $
-  $DateTime: 2009/08/27 11:30:03 $
-  $Author: jnahar $
+  $Header: //source/qcom/qct/wconnect/bthost/soccfg/rel/00.00.26/src/btqsocnvm.c#25 $
+  $DateTime: 2011/01/18 00:25:12 $
+  $Author: roystonr $
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2010-10-25   tw Added support for 4025 B3
+  2010-12-03   av  4025 B2 NVM update
+  2010-08-17   ss  Add changes, featurization for XO Support.
+  2010-07-26   rr  Enabling patch tag for previous 4025 B2 NVM update.
+  2010-07-26   rr  4025 B2 NVM update.
+  2010-07-05   rr  4025 B2 NVM update.
+  2010-04-27   rr  4025 B2 NVM update.
+  2010-03-10   rr  4020 BD B1 NVM update. Corrected tag 41 variable reference in macro and variable definition.
+  2010-03-10   rr  4020 BD B1 NVM update. Corrected tag 41 to be in sync with released dynamic NVM.
+  2010-03-10   rr  Updated 4025 B2. ROM patch for CR#189653 - pabBT Scatternet: AG(master)+FTP(slave)+DUNP (master/slave) concurrent connections fails.
+  2010-03-10   rr  4020 BD B1 NVM update.
+  2009-12-09  dgh  Updated NVM version for 4020 BD B1.
+  2009-11-10  dgh  Updated NVM version for 4025 B2.
+  2009-09-29  dgh  Updated the 32 MHz 2.1 NVM version tag.  No other change was 
+                   necessary to bring the NVMs up to date.
+  2009-09-15   jn  Fix SoC version table in comments section.
   2009-08-27   jn  Updated NVM version for 4025 B1.
   2009-08-07  dgh  Added support for 4025 B2.
   2009-07-07   jn  Updated NVM version for 4025 B1.
@@ -140,14 +157,38 @@ Qualcomm Confidential and Proprietary
                   - 19.2 Mhz Clock: 07.08  (08/01/08)
                   - 32 Mhz Clock: 0D.00
                   ------------- 4025 B1  -------------
-                  - 19.2 Mhz Clock: 07.0B (BT 2.1), 17.0B (CLASS 2)
-		                            47.0C (BT 2.0)  (06/24/09)
-                  - 32 Mhz Clock:   0D.0C (BT 2.1), 1D.0B (CLASS 2)
-		                            4D.0D (BT 2.0)  (06/24/09)
+                  - 19.2 Mhz Clock: 07.0C (BT 2.1), 17.0B (CLASS 2)
+		                            47.0D (BT 2.0)  (06/24/09)
+                  - 32 Mhz Clock:   0D.0D (BT 2.1), 1D.0B (CLASS 2)
+		                            4D.0E (BT 2.0)  (06/24/09)
                   ----------- 4020BD B1 ------------
                   - 19.2 Mhz Clock: 07.0A  (08/05/08)
                   - 32 Mhz Clock: 0D.08    (07/01/08)
-
+                  ----------- 4020BD B1 ------------
+                  - 19.2 Mhz Clock: 07.03 (BT 2.1)
+                                    47.03 (BT 2.0)  (03/10/2010)
+                  - 32 Mhz Clock:   0D.02 (BT 2.1)
+                                    4D.02 (BT 2.0)  (03/10/2010)
+                  ------------- 4025 B2  -------------
+                  - 19.2 Mhz Clock: 07.02 (BT 2.1), 17.02 (CLASS 2)
+                                    47.02 (BT 2.0)  (03/10/2010)
+                  - 32 Mhz Clock:   0D.03 (BT 2.1), 1D.02 (CLASS 2)
+                                    4D.02 (BT 2.0)  (03/10/2010)
+                  ------------- 4025 B2  -------------
+                  - 19.2 Mhz Clock: 07.03 (BT 2.1), 17.03 (CLASS 2)
+                                    47.03 (BT 2.0)  (04/27/2010)
+                  - 32 Mhz Clock:   0D.04 (BT 2.1), 1D.03 (CLASS 2)
+                                    4D.03 (BT 2.0)  (04/27/2010)									
+                  ------------- 4025 B2  -------------
+                  - 19.2 Mhz Clock: 07.05 (BT 2.1), 17.05 (CLASS 2)
+                                    47.05 (BT 2.0)  (07/05/2010)
+                  - 32 Mhz Clock:   0D.06 (BT 2.1), 1D.05 (CLASS 2)
+                                    4D.05 (BT 2.0)  (07/05/2010)
+                  ------------- 4025 B2  -------------
+                  - 19.2 Mhz Clock: 07.06 (BT 2.1), 17.06 (CLASS 2)
+                                    47.06 (BT 2.0)  (07/26/2010)
+                  - 32 Mhz Clock:   0D.07 (BT 2.1), 1D.06 (CLASS 2)
+                                    4D.06 (BT 2.0)  (07/26/2010)                                    
 ********************************************************************************/
 #include "btqsocnvmplatform.h"
 #include "btqsocnvm.h"
@@ -164,6 +205,17 @@ Qualcomm Confidential and Proprietary
 /*===========================================================================
                                  Globals
 ===========================================================================*/
+/* The Clock Stabilization time for XO crystals is longer than TCXO. So BT 
+   modules using XO needs a larger SoC Power on Count to hold off SoC Powerup 
+   for this delay. SoC NVM Tag 37 configures the SoC Sleep/Wakeup parameters.
+*/
+#ifdef FEATURE_BT_SYSTEM_CLOCK_XO_SUPPORT
+  #define TAG_37_SLEEP_PARAMS_MIN_BCST_VAL   (0x80)
+  #define TAG_37_SLEEP_PARAMS_PWR_ON_CNT_VAL (0x7E)  
+#else
+  #define TAG_37_SLEEP_PARAMS_MIN_BCST_VAL   (0x34)
+  #define TAG_37_SLEEP_PARAMS_PWR_ON_CNT_VAL (0x32)  
+#endif /* FEATURE_BT_SYSTEM_CLOCK_XO_SUPPORT */
 
 #define BUF_SIZE 500           /* Number of bytes to read in each call to readfile */
 #define BT_QSOC_TAG_WRITE 0x01 /* Indicates the tag is to be written */
@@ -344,6 +396,7 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_4[] = \
 #define CFG_TAG_4_4025_B0   (&bt_qsoc_cfg_tag_4[0])
 #define CFG_TAG_4_4025_B1   (&bt_qsoc_cfg_tag_4[0])
 #define CFG_TAG_4_4025_B2   (&bt_qsoc_cfg_tag_4[0])
+#define CFG_TAG_4_4025_B3   (&bt_qsoc_cfg_tag_4[0])
 #define CFG_TAG_4_UNKNOWN   (&bt_qsoc_cfg_tag_4[0])
 
 /* Same Entry For R3, Unknown */
@@ -361,6 +414,7 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_5[] = \
 #define CFG_TAG_5_4025_B0   (&bt_qsoc_cfg_tag_5[0])
 #define CFG_TAG_5_4025_B1   (&bt_qsoc_cfg_tag_5[0])
 #define CFG_TAG_5_4025_B2   (&bt_qsoc_cfg_tag_5[0])
+#define CFG_TAG_5_4025_B3   (&bt_qsoc_cfg_tag_5[0])
 #define CFG_TAG_5_UNKNOWN   (&bt_qsoc_cfg_tag_5[0]) 
 
 /* Same Entry For R3, Unknown */
@@ -438,7 +492,8 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_17_4025[] = \
 #define CFG_TAG_17_4025_A0   (&bt_qsoc_cfg_tag_17[0]) 
 #define CFG_TAG_17_4025_B0   (&bt_qsoc_cfg_tag_17[0]) 
 #define CFG_TAG_17_4025_B1   (&bt_qsoc_cfg_tag_17_4025[0]) 
-#define CFG_TAG_17_4025_B2   (&bt_qsoc_cfg_tag_17_4025[0]) 
+#define CFG_TAG_17_4025_B2   (&bt_qsoc_cfg_tag_17_4025[0])
+#define CFG_TAG_17_4025_B3   (&bt_qsoc_cfg_tag_17_4025[0])
 #define CFG_TAG_17_UNKNOWN   (&bt_qsoc_cfg_tag_17[0]) 
 
 /* Same Entry For R3, Unknown */
@@ -468,6 +523,7 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_27_unknown[] = \
 #define CFG_TAG_27_4025_B0   (&bt_qsoc_cfg_tag_27[0])
 #define CFG_TAG_27_4025_B1   (&bt_qsoc_cfg_tag_27[0])
 #define CFG_TAG_27_4025_B2   (&bt_qsoc_cfg_tag_27[0])
+#define CFG_TAG_27_4025_B3   (&bt_qsoc_cfg_tag_27[0])
 #define CFG_TAG_27_UNKNOWN   (&bt_qsoc_cfg_tag_27_unknown[0]) 
 
 /* #28 Low Power Clock Control parameters - LPO type - Digital 
@@ -530,25 +586,25 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4025_b1_bt_2_1[] = 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19p2MHz_4025_b2_bt_2_0[] = \
 {
   0x05, 0x01, 0x20, 0x02, 
-  0x00, 0x47    // version 47.00
+  0x07, 0x47    // version 47.07
 };
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19p2MHz_4025_b2_bt_2_1[] = \
 {
   0x05, 0x01, 0x20, 0x02, 
-  0x00, 0x07    // version 07.00
+  0x07, 0x07    // version 07.07
 };
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4025_b2_bt_2_0[] = \
 {
   0x05, 0x01, 0x20, 0x02, 
-  0x00, 0x4D    // version 4D.00
+  0x07, 0x4D    // version 4D.07
 };
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4025_b2_bt_2_1[] = \
 {
   0x05, 0x01, 0x20, 0x02, 
-  0x00, 0x0D    // version 0D.00
+  0x08, 0x0D    // version 0D.08
 };
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19p2MHz_4020bd_b0_bt_2_1[] = \
@@ -565,6 +621,54 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19p2MHz_4020bd_b0_bt_2_0[
 
 #define CFG_TAG_19P2_4020BD_B0_BT2_1 (&bt_qsoc_cfg_tag_32_19p2MHz_4020bd_b0_bt_2_1[0])
 #define CFG_TAG_19P2_4020BD_B0_BT2_0 (&bt_qsoc_cfg_tag_32_19p2MHz_4020bd_b0_bt_2_0[0])
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19p2MHz_4020bd_b1_bt_2_0[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x03, 0x47    // version 47.03
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19p2MHz_4020bd_b1_bt_2_1[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x03, 0x07    // version 07.03
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4020bd_b1_bt_2_0[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x02, 0x4D    // version 4D.02
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4020bd_b1_bt_2_1[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x02, 0x0D    // version 0D.02
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19p2MHz_4025_b3_bt_2_0[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x00, 0x00    // version 00.00
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19p2MHz_4025_b3_bt_2_1[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x00, 0x10    // version 10.00
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4025_b3_bt_2_0[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x00, 0x01    // version 01.00
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4025_b3_bt_2_1[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x00, 0x11    // version 11.00
+};
 
 /* #36 Remove lowest power mode (01-07) 
 */
@@ -596,7 +700,8 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_37_clock_sharing[] = \
   0x19, 0x01, 0x25, 0x16, 
   0x00, 0x00, 0x02, 0x01, 0x01, 0x12, 0x01, 0x00,
   0x00, 0x12, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 
-  0x34, 0x32, 0x02, 0x00, 0x00, 0x00
+  TAG_37_SLEEP_PARAMS_MIN_BCST_VAL, TAG_37_SLEEP_PARAMS_PWR_ON_CNT_VAL,
+  0x02, 0x00, 0x00, 0x00
 };
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_37_clock_sharing_4025[] =
@@ -604,7 +709,17 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_37_clock_sharing_4025[] =
   0x19, 0x01, 0x25, 0x16, 
   0x00, 0x00, 0x02, 0x01, 0x01, 0x12, 0x1D, 0x00, 
   0x00, 0x12, 0x1D, 0x00, 0x00, 0x00, 0x00, 0x00, 
-  0x34, 0x32, 0x02, 0x00, 0x00, 0x00
+  TAG_37_SLEEP_PARAMS_MIN_BCST_VAL, TAG_37_SLEEP_PARAMS_PWR_ON_CNT_VAL,
+  0x02, 0x00, 0x00, 0x00
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_37_clock_sharing_4025_b3[] =
+{
+  0x19, 0x01, 0x25, 0x16, 
+  0x00, 0x00, 0x02, 0x01, 0x01, 0x12, 0x1D, 0x00, 
+  0x00, 0x12, 0x1D, 0x00, 0x00, 0x00, 0x00, 0x00, 
+  TAG_37_SLEEP_PARAMS_MIN_BCST_VAL, TAG_37_SLEEP_PARAMS_PWR_ON_CNT_VAL,
+  0x30, 0x00, 0x00, 0x00
 };
 
 #define CFG_TAG_37_CLK_SHARING_R3        (&bt_qsoc_cfg_tag_37_clock_sharing[0]) 
@@ -618,7 +733,9 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_37_clock_sharing_4025[] =
 #define CFG_TAG_37_CLK_SHARING_4025_B1 \
                                     (&bt_qsoc_cfg_tag_37_clock_sharing_4025[0]) 
 #define CFG_TAG_37_CLK_SHARING_4025_B2 \
-                                    (&bt_qsoc_cfg_tag_37_clock_sharing_4025[0]) 
+                                    (&bt_qsoc_cfg_tag_37_clock_sharing_4025[0])
+#define CFG_TAG_37_CLK_SHARING_4025_B3    \
+                                (&bt_qsoc_cfg_tag_37_clock_sharing_4025_b3[0])
 #define CFG_TAG_37_CLK_SHARING_UNKNOWN   (&bt_qsoc_cfg_tag_37_clock_sharing[0]) 
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_37_no_clock_sharing[] = \
@@ -648,7 +765,9 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_37_no_clock_sharing_4025[] =
 #define CFG_TAG_37_NO_CLK_SHARING_4025_B1 \
                                        (&bt_qsoc_cfg_tag_37_no_clock_sharing_4025[0]) 
 #define CFG_TAG_37_NO_CLK_SHARING_4025_B2 \
-                                       (&bt_qsoc_cfg_tag_37_no_clock_sharing_4025[0]) 
+                                       (&bt_qsoc_cfg_tag_37_no_clock_sharing_4025[0])
+#define CFG_TAG_37_NO_CLK_SHARING_4025_B3 \
+                                       (&bt_qsoc_cfg_tag_37_no_clock_sharing_4025[0])
 #define CFG_TAG_37_NO_CLK_SHARING_UNKNOWN   (&bt_qsoc_cfg_tag_37_no_clock_sharing[0]) 
 
 /* #38 Debug control - Disable logger output 
@@ -668,7 +787,8 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_38_soc_logging[] = \
 #define CFG_TAG_38_SOC_LOGGING_4025_A0   (&bt_qsoc_cfg_tag_38_soc_logging[0]) 
 #define CFG_TAG_38_SOC_LOGGING_4025_B0   (&bt_qsoc_cfg_tag_38_soc_logging[0]) 
 #define CFG_TAG_38_SOC_LOGGING_4025_B1   (&bt_qsoc_cfg_tag_38_soc_logging[0]) 
-#define CFG_TAG_38_SOC_LOGGING_4025_B2   (&bt_qsoc_cfg_tag_38_soc_logging[0]) 
+#define CFG_TAG_38_SOC_LOGGING_4025_B2   (&bt_qsoc_cfg_tag_38_soc_logging[0])
+#define CFG_TAG_38_SOC_LOGGING_4025_B3   (&bt_qsoc_cfg_tag_38_soc_logging[0])
 #define CFG_TAG_38_SOC_LOGGING_UNKNOWN   (&bt_qsoc_cfg_tag_38_soc_logging[0]) 
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_38_soc_no_logging[] = \
@@ -683,7 +803,8 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_38_soc_no_logging[] = \
 #define CFG_TAG_38_SOC_NO_LOGGING_4025_A0   (&bt_qsoc_cfg_tag_38_soc_no_logging[0]) 
 #define CFG_TAG_38_SOC_NO_LOGGING_4025_B0   (&bt_qsoc_cfg_tag_38_soc_no_logging[0]) 
 #define CFG_TAG_38_SOC_NO_LOGGING_4025_B1   (&bt_qsoc_cfg_tag_38_soc_no_logging[0]) 
-#define CFG_TAG_38_SOC_NO_LOGGING_4025_B2   (&bt_qsoc_cfg_tag_38_soc_no_logging[0]) 
+#define CFG_TAG_38_SOC_NO_LOGGING_4025_B2   (&bt_qsoc_cfg_tag_38_soc_no_logging[0])
+#define CFG_TAG_38_SOC_NO_LOGGING_4025_B3   (&bt_qsoc_cfg_tag_38_soc_no_logging[0])
 #define CFG_TAG_38_SOC_NO_LOGGING_UNKNOWN   (&bt_qsoc_cfg_tag_38_soc_no_logging[0]) 
 
 /* #39 RM and LC Override Enable - Optimize RM register settings 
@@ -746,6 +867,34 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_41_32MHz_4025_a0[] = \
 
 #define CFG_TAG_41_32MHZ_4025_A0     (&bt_qsoc_cfg_tag_41_32MHz_4025_a0[0]) 
 
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_41_19p2MHz_4020_bd_b1[] = \
+{
+  0x3D, 0x01, 0x29, 0x3A, 
+  0x1B, 0x00, 0x00, 0x00, 0x06, 0x1A, 0x3D, 0xFB,
+  0x3E, 0x0F, 0x41, 0x1D, 0x42, 0x00, 0x43, 0xCC, 
+  0x49, 0xF3, 0x4A, 0xF5, 0x5D, 0x06, 0x5E, 0x06,
+  0x5F, 0x03, 0x64, 0x01, 0x72, 0x20, 0x75, 0x01,
+  0x92, 0x00, 0x93, 0x00, 0x9C, 0x03, 0x1C, 0xF6,
+  0x1D, 0x06, 0x20, 0x62, 0x1E, 0x0F, 0xA6, 0xAA,
+  0xA7, 0x55, 0xA8, 0x15, 0xA4, 0x65, 0xA5, 0x32,
+  0x30, 0x07 
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_41_32MHz_4020_bd_b1[] = \
+{
+  0x3B, 0x01, 0x29, 0x38, 
+  0x1A, 0x00, 0x00, 0x00, 0x06, 0x1A, 0x3D, 0xFB,
+  0x3E, 0x0F, 0x41, 0x15, 0x42, 0x00, 0x43, 0xCC,
+  0x49, 0xF4, 0x4A, 0xF5, 0x5D, 0x06, 0x5E, 0x06,
+  0x5F, 0x03, 0x64, 0x01, 0x72, 0x20, 0x75, 0x01,
+  0x92, 0x02, 0x9C, 0x00, 0x1C, 0xF6, 0x1D, 0x06,
+  0x20, 0x62, 0x1E, 0x0F, 0xA6, 0xAA, 0xA7, 0x55,
+  0xA8, 0x15, 0xA4, 0xC8, 0xA5, 0x42, 0x30, 0x07
+};
+
+#define CFG_TAG_41_19P2MHZ_4020_BD_B1   (&bt_qsoc_cfg_tag_41_19p2MHz_4020_bd_b1[0]) 
+#define CFG_TAG_41_32MHZ_4020_BD_B1     (&bt_qsoc_cfg_tag_41_32MHz_4020_bd_b1[0]) 
+
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_41_19P2MHz_4025_CLASS1[] = \
 {
   0x29, 0x01, 0x29, 0x26,
@@ -780,7 +929,8 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_44[] = \
 #define CFG_TAG_44_4025_A0   (&bt_qsoc_cfg_tag_44[0]) 
 #define CFG_TAG_44_4025_B0   (&bt_qsoc_cfg_tag_44[0]) 
 #define CFG_TAG_44_4025_B1   (&bt_qsoc_cfg_tag_44[0]) 
-#define CFG_TAG_44_4025_B2   (&bt_qsoc_cfg_tag_44[0]) 
+#define CFG_TAG_44_4025_B2   (&bt_qsoc_cfg_tag_44[0])
+#define CFG_TAG_44_4025_B3   (&bt_qsoc_cfg_tag_44[0])
 #define CFG_TAG_44_UNKNOWN   (&bt_qsoc_cfg_tag_44[0]) 
 
 
@@ -797,7 +947,8 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_45[] = \
 #define CFG_TAG_45_4025_A0   (&bt_qsoc_cfg_tag_45[0]) 
 #define CFG_TAG_45_4025_B0   (&bt_qsoc_cfg_tag_45[0]) 
 #define CFG_TAG_45_4025_B1   (&bt_qsoc_cfg_tag_45[0]) 
-#define CFG_TAG_45_4025_B2   (&bt_qsoc_cfg_tag_45[0]) 
+#define CFG_TAG_45_4025_B2   (&bt_qsoc_cfg_tag_45[0])
+#define CFG_TAG_45_4025_B3   (&bt_qsoc_cfg_tag_45[0])
 #define CFG_TAG_45_UNKNOWN   (&bt_qsoc_cfg_tag_45[0]) 
 
 /* #46 Voice Settings -  */
@@ -813,11 +964,12 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_46[] = \
 #define CFG_TAG_46_4025_A0   (&bt_qsoc_cfg_tag_46[0]) 
 #define CFG_TAG_46_4025_B0   (&bt_qsoc_cfg_tag_46[0]) 
 #define CFG_TAG_46_4025_B1   (&bt_qsoc_cfg_tag_46[0]) 
-#define CFG_TAG_46_4025_B2   (&bt_qsoc_cfg_tag_46[0]) 
+#define CFG_TAG_46_4025_B2   (&bt_qsoc_cfg_tag_46[0])
+#define CFG_TAG_46_4025_B3   (&bt_qsoc_cfg_tag_46[0])
 #define CFG_TAG_46_UNKNOWN   (&bt_qsoc_cfg_tag_46[0]) 
 
 
-/* Tag 53 for R3 - Atheros Coex */
+/* Tag 53 for WLAN Coex */
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_53[] = \
 {
 #ifdef FEATURE_BT_WLAN_COEXISTENCE
@@ -836,7 +988,8 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_53[] = \
 #define CFG_TAG_53_4025_A0   (&bt_qsoc_cfg_tag_53[0])  
 #define CFG_TAG_53_4025_B0   (&bt_qsoc_cfg_tag_53[0])  
 #define CFG_TAG_53_4025_B1   (&bt_qsoc_cfg_tag_53[0])  
-#define CFG_TAG_53_4025_B2   (&bt_qsoc_cfg_tag_53[0])  
+#define CFG_TAG_53_4025_B2   (&bt_qsoc_cfg_tag_53[0])
+#define CFG_TAG_53_4025_B3   (&bt_qsoc_cfg_tag_53[0])
 #define CFG_TAG_53_UNKNOWN   (&bt_qsoc_cfg_tag_53[0]) 
 
 /* Tag 55 - GPIOs for Sleep, Atheros Coex */
@@ -903,9 +1056,17 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_55_4025[] = \
 #define CFG_TAG_55_4025_A0   (&bt_qsoc_cfg_tag_55_4025[0]) 
 #define CFG_TAG_55_4025_B0   (&bt_qsoc_cfg_tag_55_4025[0]) 
 #define CFG_TAG_55_4025_B1   (&bt_qsoc_cfg_tag_55_4025[0]) 
-#define CFG_TAG_55_4025_B2   (&bt_qsoc_cfg_tag_55_4025[0]) 
+#define CFG_TAG_55_4025_B2   (&bt_qsoc_cfg_tag_55_4025[0])
+#define CFG_TAG_55_4025_B3   (&bt_qsoc_cfg_tag_55_4025[0])
 #define CFG_TAG_55_UNKNOWN   (&bt_qsoc_cfg_tag_55[0]) 
 
+
+/* #56 - Max Transmit Power level */
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_56_4025_CLASS1[] = \
+{
+  0x04, 0x01, 0x38, 0x01,
+  0x0A
+};
 
 /* #57 - AFH parameters */
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_57[] = \
@@ -924,6 +1085,7 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_57[] = \
 #define CFG_TAG_57_4025_B0   (&bt_qsoc_cfg_tag_57[0]) 
 #define CFG_TAG_57_4025_B1   (&bt_qsoc_cfg_tag_57[0]) 
 #define CFG_TAG_57_4025_B2   (&bt_qsoc_cfg_tag_57[0]) 
+#define CFG_TAG_57_4025_B3   (&bt_qsoc_cfg_tag_57[0]) 
 #define CFG_TAG_57_UNKNOWN   (&bt_qsoc_cfg_tag_57[0]) 
 
 /* #70 Internal IO Resistor Settings - Configures the internal 
@@ -941,7 +1103,8 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_70[] = \
 #define CFG_TAG_70_4025_A0   (&bt_qsoc_cfg_tag_70[0]) 
 #define CFG_TAG_70_4025_B0   (&bt_qsoc_cfg_tag_70[0]) 
 #define CFG_TAG_70_4025_B1   (&bt_qsoc_cfg_tag_70[0]) 
-#define CFG_TAG_70_4025_B2   (&bt_qsoc_cfg_tag_70[0]) 
+#define CFG_TAG_70_4025_B2   (&bt_qsoc_cfg_tag_70[0])
+#define CFG_TAG_70_4025_B3   (&bt_qsoc_cfg_tag_70[0])
 #define CFG_TAG_70_UNKNOWN   (&bt_qsoc_cfg_tag_70[0]) 
 
 /* #71 Buffer Sizes - Tx buffer size - BT_QSOC_MAX_HC_TX_LEN, 
@@ -969,6 +1132,7 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_71[] = \
 #define CFG_TAG_71_4025_B0   (&bt_qsoc_cfg_tag_71[0]) 
 #define CFG_TAG_71_4025_B1   (&bt_qsoc_cfg_tag_71[0]) 
 #define CFG_TAG_71_4025_B2   (&bt_qsoc_cfg_tag_71[0]) 
+#define CFG_TAG_71_4025_B3   (&bt_qsoc_cfg_tag_71[0])
 #define CFG_TAG_71_UNKNOWN   (&bt_qsoc_cfg_tag_71[0]) 
 
 /* #72 - HCI supported override */
@@ -994,19 +1158,31 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_72_4025_bt_2_0[] = \
   0xFE, 0x3F, 0x00, 0x00, 0x00, 0x00
 };
 
-static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_72_4020_bd_b0_bt_2_0[] = \
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_72_4020_bd_bt_2_0[] = \
 {
   0x19, 0x01, 0x48, 0x16,
   0x15, 0xFF, 0xFF, 0xFF, 0x03, 0xCE, 0xFF, 0xEF, 
   0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xF2, 0x0F, 0xE8, 
   0xFE, 0x3F, 0x00, 0x00, 0x00, 0x00	  
 };
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_72_4020_bd_b1_bt_2_1[] = \
+{
+  0x19, 0x01, 0x48, 0x16,
+  0x15, 0xFF, 0xFF, 0xFF, 0xFF, 0xCF, 0xFF, 0xFF, 
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF 
+};
+
 #define CFG_TAG_72_4025_A0   (&bt_qsoc_cfg_tag_72[0]) 
 #define CFG_TAG_72_4025_B0   (&bt_qsoc_cfg_tag_72[0]) 
 #define CFG_TAG_72_4025_B1   (&bt_qsoc_cfg_tag_72_4025_bt_2_0[0]) 
 #define CFG_TAG_72_4025_B2   (&bt_qsoc_cfg_tag_72_4025_bt_2_0[0]) 
+#define CFG_TAG_72_4025_B3   (&bt_qsoc_cfg_tag_72_4025_bt_2_0[0])
 #define CFG_TAG_72_4020_BD_B0_BT2_1 (&bt_qsoc_cfg_tag_72[0])
-#define CFG_TAG_72_4020_BD_B0_BT2_0 (&bt_qsoc_cfg_tag_72_4020_bd_b0_bt_2_0[0])
+#define CFG_TAG_72_4020_BD_B0_BT2_0 (&bt_qsoc_cfg_tag_72_4020_bd_bt_2_0[0])
+#define CFG_TAG_72_4020_BD_B1_BT2_1 (&bt_qsoc_cfg_tag_72_4020_bd_b1_bt_2_1[0])
+#define CFG_TAG_72_4020_BD_B1_BT2_0 (&bt_qsoc_cfg_tag_72_4020_bd_bt_2_0[0])
 
 /* #76 Switcher LDO Settings 
  */
@@ -1084,7 +1260,8 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_97_clock_sharing[] = \
 #define CFG_TAG_97_CLK_SHARING_4025_A0   (&bt_qsoc_cfg_tag_97_clock_sharing[0])  
 #define CFG_TAG_97_CLK_SHARING_4025_B0   (&bt_qsoc_cfg_tag_97_clock_sharing[0])  
 #define CFG_TAG_97_CLK_SHARING_4025_B1   (&bt_qsoc_cfg_tag_97_clock_sharing[0])  
-#define CFG_TAG_97_CLK_SHARING_4025_B2   (&bt_qsoc_cfg_tag_97_clock_sharing[0])  
+#define CFG_TAG_97_CLK_SHARING_4025_B2   (&bt_qsoc_cfg_tag_97_clock_sharing[0])
+#define CFG_TAG_97_CLK_SHARING_4025_B3   (&bt_qsoc_cfg_tag_97_clock_sharing[0])
 #define CFG_TAG_97_CLK_SHARING_UNKNOWN   (&bt_qsoc_cfg_tag_97_clock_sharing[0]) 
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_97_no_clock_sharing[] = \
@@ -1101,6 +1278,7 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_97_no_clock_sharing[] = \
 #define CFG_TAG_97_NO_CLK_SHARING_4025_B0   (&bt_qsoc_cfg_tag_97_no_clock_sharing[0]) 
 #define CFG_TAG_97_NO_CLK_SHARING_4025_B1   (&bt_qsoc_cfg_tag_97_no_clock_sharing[0]) 
 #define CFG_TAG_97_NO_CLK_SHARING_4025_B2   (&bt_qsoc_cfg_tag_97_no_clock_sharing[0]) 
+#define CFG_TAG_97_NO_CLK_SHARING_4025_B3   (&bt_qsoc_cfg_tag_97_no_clock_sharing[0])
 #define CFG_TAG_97_NO_CLK_SHARING_UNKNOWN   (&bt_qsoc_cfg_tag_97_no_clock_sharing[0]) 
 
 /* #99 System Reference Clock Control */
@@ -1118,19 +1296,19 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_99_32MHz[] = \
   0x0D
 };
 
-#define CFG_TAG_99_19P2MHZ_R3        (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
+#define CFG_TAG_99_19P2MHZ_R3         (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
+#define CFG_TAG_99_19P2MHZ_4020_BD_B1 (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
+#define CFG_TAG_99_19P2MHZ_4025_A0    (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
+#define CFG_TAG_99_19P2MHZ_4025_B0    (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
+#define CFG_TAG_99_19P2MHZ_4025_B1    (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
+#define CFG_TAG_99_19P2MHZ_UNKNOWN    (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
 
-#define CFG_TAG_99_19P2MHZ_4025_A0   (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
-#define CFG_TAG_99_19P2MHZ_4025_B0   (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
-#define CFG_TAG_99_19P2MHZ_4025_B1   (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
-#define CFG_TAG_99_19P2MHZ_UNKNOWN   (&bt_qsoc_cfg_tag_99_19p2MHz[0]) 
-
-#define CFG_TAG_99_32MHZ_R3          (&bt_qsoc_cfg_tag_99_32MHz[0]) 
-
-#define CFG_TAG_99_32MHZ_4025_A0     (&bt_qsoc_cfg_tag_99_32MHz[0]) 
-#define CFG_TAG_99_32MHZ_4025_B0     (&bt_qsoc_cfg_tag_99_32MHz[0]) 
-#define CFG_TAG_99_32MHZ_4025_B1     (&bt_qsoc_cfg_tag_99_32MHz[0]) 
-#define CFG_TAG_99_32MHZ_UNKNOWN     (&bt_qsoc_cfg_tag_99_32MHz[0]) 
+#define CFG_TAG_99_32MHZ_R3           (&bt_qsoc_cfg_tag_99_32MHz[0]) 
+#define CFG_TAG_99_32MHZ_4020_BD_B1   (&bt_qsoc_cfg_tag_99_32MHz[0]) 
+#define CFG_TAG_99_32MHZ_4025_A0      (&bt_qsoc_cfg_tag_99_32MHz[0]) 
+#define CFG_TAG_99_32MHZ_4025_B0      (&bt_qsoc_cfg_tag_99_32MHz[0]) 
+#define CFG_TAG_99_32MHZ_4025_B1      (&bt_qsoc_cfg_tag_99_32MHz[0]) 
+#define CFG_TAG_99_32MHZ_UNKNOWN      (&bt_qsoc_cfg_tag_99_32MHz[0]) 
 
 
 /* #116 HW Encryption Enable Code 
@@ -1214,25 +1392,6 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_4020bd_b0_tag_106[] = \
 };
 #define CFG_TAG_106_4020BD_B0       (&bt_qsoc_cfg_4020bd_b0_tag_106[0])
 
-/* #106 Rom Insertion Patch 
- * E-sco latency issue
- */
-static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_4020bd_b1_tag_106[] = \
-{
-
-    0x46, 0x01, 0x6A, 0x43, 
-    0x84, 0x5B, 0x01, 0x70, 0x00, 0x00, 0x00, 0x00,
-    0x84, 0x08, 0x3A, 0x00, 0x4C, 0x20, 0x47, 0x09,
-    0x00, 0x00, 0x00, 0x0D, 0x1C, 0x16, 0x1C, 0x09,
-    0x4C, 0x24, 0x7E, 0x00, 0x2C, 0x04, 0xD1, 0x08,
-    0x68, 0x00, 0xF0, 0x09, 0xF8, 0x06, 0x4C, 0x20, 
-    0x76, 0x28, 0x68, 0x81, 0x78, 0x01, 0x4C, 0x20,
-    0x47, 0x00, 0x00, 0x8D, 0x5B, 0x01, 0x70, 0x00,
-    0x4C, 0x20, 0x47, 0xCF, 0x55, 0x01, 0x70, 0x94,
-    0x06, 0x00, 0x00
-};
-#define CFG_TAG_106_4020BD_B1       (&bt_qsoc_cfg_4020bd_b1_tag_106[0])
-
 /* #107 Rom Insertion Patch 
  */
 
@@ -1249,22 +1408,6 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_4020bd_b0_tag_107[] = \
 };
 
 #define CFG_TAG_107_4020BD_B0       (&bt_qsoc_cfg_4020bd_b0_tag_107[0])
-
-/* #107 Rom Insertion Patch 
- * E-sco latency issue
- */
-static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_4020bd_b1_tag_107[] = \
-{
-    0x3A, 0x01, 0x6B, 0x37, 
-    0x78, 0x5A, 0x01, 0x70, 0x00, 0x00, 0x00, 0x00,
-    0x84, 0x08, 0x2C, 0x00, 0x4B, 0x18, 0x47, 0x09,
-    0x00, 0x00, 0x00, 0x81, 0x79, 0xF2, 0x89, 0x91,
-    0x42, 0x09, 0xD8, 0x38, 0x22, 0x92, 0x5D, 0x00,
-    0x2A, 0x01, 0xD0, 0x8A, 0x42, 0x03, 0xD8, 0x00,
-    0x49, 0x08, 0x47, 0x81, 0x5A, 0x01, 0x70, 0x00,
-    0x49, 0x08, 0x47, 0x59, 0x5A, 0x01, 0x70
-};
-#define CFG_TAG_107_4020BD_B1       (&bt_qsoc_cfg_4020bd_b1_tag_107[0])
 
 /* #108 Rom Insertion Patch 
  */
@@ -1285,17 +1428,6 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_4020bd_b0_tag_108[] = \
   0x47, 0x00
 };
 #define CFG_TAG_108_4020BD_B0       (&bt_qsoc_cfg_4020bd_b0_tag_108[0])
-
-/* #108 Rom Insertion Patch 
- * E-sco latency issue
- */
-static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_4020bd_b1_tag_108[] = \
-{
-    0x12, 0x01, 0x6C, 0x0F, 
-    0x54, 0x5A, 0x01, 0x70, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x04, 0x04, 0xC0, 0x46, 0x0B, 0xE0 
-};
-#define CFG_TAG_108_4020BD_B1       (&bt_qsoc_cfg_4020bd_b1_tag_108[0])
 
 /******************************************************************
  *             4 0 2 5  A 0  R O M  P A T C H E S                 *
@@ -1581,26 +1713,30 @@ static bt_qsoc_cfg_cst_element_type* bt_qsoc_cfg_tbl_4020bd_b1[] = \
   CFG_TAG_71_4020BD_B1,
   CFG_TAG_76_4020BD_B1,
   CFG_TAG_95_4020BD_B1,
-  CFG_TAG_106_4020BD_B1,
-  CFG_TAG_107_4020BD_B1,
-  CFG_TAG_108_4020BD_B1,
 };
 
 #define SIZEOF_BT_QSOC_CFG_TBL_4020BD_B1_RAM ((sizeof(bt_qsoc_cfg_tbl_4020bd_b1_ram))/(sizeof(bt_qsoc_cfg_cst_element_type*)))
 static bt_qsoc_cfg_cst_element_type* bt_qsoc_cfg_tbl_4020bd_b1_ram[] = \
 {
   NULL, /* CFG_TAG_6_4020BD_B1_RAM_INDEX */	 
+  NULL, /* CFG_TAG_32_4020BD_B1_RAM_INDEX */	 
   NULL, /* CFG_TAG_37_4020BD_B1_RAM_INDEX */
   NULL, /* CFG_TAG_38_4020BD_B1_RAM_INDEX */
+  NULL, /* CFG_TAG_41_4020BD_B1_RAM_INDEX */
+  NULL, /* CFG_TAG_72_4020BD_B1_RAM_INDEX */
   NULL, /* CFG_TAG_78_4020BD_B1_RAM_INDEX */
   NULL, /* CFG_TAG_97_4020BD_B1_RAM_INDEX */
+  NULL, /* CFG_TAG_99_4020BD_B1_RAM_INDEX */
 };
 #define CFG_TAG_6_4020BD_B1_RAM_INDEX    (0) /* #6 : BT 2.1 support */
-#define CFG_TAG_37_4020BD_B1_RAM_INDEX   (1) /* #37: sleep parameters */
-#define CFG_TAG_38_4020BD_B1_RAM_INDEX   (2) /* #38: soc logging */
-#define CFG_TAG_78_4020BD_B1_RAM_INDEX   (3) /* #78: BT LMP version */
-#define CFG_TAG_97_4020BD_B1_RAM_INDEX   (4) /* #97: clock sharing */                  
-// tag 117/118 not required for 4020BD B1, tag 119 replaces tag 117/118
+#define CFG_TAG_32_4020BD_B1_RAM_INDEX   (1) /* #32: USB version number */
+#define CFG_TAG_37_4020BD_B1_RAM_INDEX   (2) /* #37: sleep parameters */
+#define CFG_TAG_38_4020BD_B1_RAM_INDEX   (3) /* #38: soc logging */
+#define CFG_TAG_41_4020BD_B1_RAM_INDEX   (4) /* #41 Radio Register Override */
+#define CFG_TAG_72_4020BD_B1_RAM_INDEX   (5) /* #72: HCI supported override */
+#define CFG_TAG_78_4020BD_B1_RAM_INDEX   (6) /* #78: BT LMP version */
+#define CFG_TAG_97_4020BD_B1_RAM_INDEX   (7) /* #97: clock sharing */                  
+#define CFG_TAG_99_4020BD_B1_RAM_INDEX   (8) /* #99: System Reference Clock Control*/
 
 /*****************************************************************************/
 /**************** 4 0 2 1  B 1  C O N F I G   T A B L E **********************/
@@ -1841,6 +1977,53 @@ static bt_qsoc_cfg_cst_element_type* bt_qsoc_cfg_tbl_4025_b2_ram[] = \
 #define CFG_TAG_72_4025_B2_RAM_INDEX  (7)  /* #72: HCI supported override */ 
 #define CFG_TAG_78_4025_B2_RAM_INDEX  (8)  /* #78: BT LMP version */ 
 #define CFG_TAG_97_4025_B2_RAM_INDEX  (9)  /* #97: clock sharing */
+
+/*****************************************************************************/
+/*********************** 4025 B3  C O N F I G   T A B L E ********************/
+/*****************************************************************************/
+
+#define SIZEOF_BT_QSOC_CFG_TBL_4025_B3 ((sizeof(bt_qsoc_cfg_tbl_4025_b3))/(sizeof(bt_qsoc_cfg_cst_element_type*)))
+static bt_qsoc_cfg_cst_element_type* bt_qsoc_cfg_tbl_4025_b3[] = \
+{
+  (bt_qsoc_cfg_cst_element_type*)CFG_TAG_2_RAM,
+  CFG_TAG_4_4025_B3,
+  CFG_TAG_5_4025_B3,
+  CFG_TAG_17_4025_B3,
+  CFG_TAG_27_4025_B3,
+  CFG_TAG_44_4025_B3,
+  CFG_TAG_45_4025_B3,
+  CFG_TAG_46_4025_B3,
+  CFG_TAG_53_4025_B3,
+  CFG_TAG_55_4025_B3,
+  CFG_TAG_57_4025_B3,
+  CFG_TAG_70_4025_B3,
+  CFG_TAG_71_4025_B3
+}; 
+
+#define SIZEOF_BT_QSOC_CFG_TBL_4025_B3_RAM ((sizeof(bt_qsoc_cfg_tbl_4025_b3_ram))/(sizeof(bt_qsoc_cfg_cst_element_type*)))
+static bt_qsoc_cfg_cst_element_type* bt_qsoc_cfg_tbl_4025_b3_ram[] = \
+{
+  NULL, /* CFG_TAG_6_4025_B3_RAM_INDEX */	
+  NULL, /* CFG_TAG_32_4025_B3_RAM_INDEX */
+  NULL, /* CFG_TAG_36_4025_B3_RAM_INDEX */
+  NULL, /* CFG_TAG_37_4025_B3_RAM_INDEX */
+  NULL, /* CFG_TAG_38_4025_B3_RAM_INDEX */
+  NULL, /* CFG_TAG_41_4025_B3_RAM_INDEX */
+  NULL, /* CFG_TAG_56_4025_B3_RAM_INDEX */
+  NULL, /* CFG_TAG_72_4025_B3_RAM_INDEX */
+  NULL, /* CFG_TAG_78_4025_B3_RAM_INDEX */
+  NULL, /* CFG_TAG_97_4025_B3_RAM_INDEX */
+};
+#define CFG_TAG_6_4025_B3_RAM_INDEX   (0)  /* #6 : BT 2.1 Support*/
+#define CFG_TAG_32_4025_B3_RAM_INDEX  (1)  /* #32: USB version number */
+#define CFG_TAG_36_4025_B3_RAM_INDEX  (2)  /* #36: Power Configuration */
+#define CFG_TAG_37_4025_B3_RAM_INDEX  (3)  /* #37: sleep parameters */
+#define CFG_TAG_38_4025_B3_RAM_INDEX  (4)  /* #38: soc logging */
+#define CFG_TAG_41_4025_B3_RAM_INDEX  (5)  /* #41:  */
+#define CFG_TAG_56_4025_B3_RAM_INDEX  (6)  /* #56:  */
+#define CFG_TAG_72_4025_B3_RAM_INDEX  (7)  /* #72: HCI supported override */ 
+#define CFG_TAG_78_4025_B3_RAM_INDEX  (8)  /* #78: BT LMP version */ 
+#define CFG_TAG_97_4025_B3_RAM_INDEX  (9)  /* #97: clock sharing */
 
 /*****************************************************************************/
 /******************* UNKNOWN BTS   C O N F I G   T A B L E *******************/
@@ -2088,6 +2271,7 @@ bt_qsoc_runtime_params_struct_type *runtime_params_ptr
   {
     bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_6_4020BD_B1_RAM_INDEX] = 
 		                                  &bt_qsoc_cfg_tag_6_bt_2_1_not_supported[0];
+    bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_72_4020BD_B1_RAM_INDEX] = CFG_TAG_72_4020_BD_B1_BT2_0;
     bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_78_4020BD_B1_RAM_INDEX] =
 		                                  &bt_qsoc_cfg_tag_78_bt_2_1_not_supported[0];
   }
@@ -2095,11 +2279,54 @@ bt_qsoc_runtime_params_struct_type *runtime_params_ptr
   {
     bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_6_4020BD_B1_RAM_INDEX] =
 		                                  &bt_qsoc_cfg_tag_6_bt_2_1_supported[0];
-	bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_78_4020BD_B1_RAM_INDEX] =
+    bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_72_4020BD_B1_RAM_INDEX] = CFG_TAG_72_4020_BD_B1_BT2_1;
+	  bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_78_4020BD_B1_RAM_INDEX] =
 		                                  &bt_qsoc_cfg_tag_78_bt_2_1_supported[0];
-		                              
   }
-
+  
+  if(runtime_params_ptr->refclock_type == BT_SOC_REFCLOCK_19P2MHZ)
+  {
+    bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_41_4020BD_B1_RAM_INDEX] = 
+										CFG_TAG_41_19P2MHZ_4020_BD_B1;
+    bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_99_4020BD_B1_RAM_INDEX] = 
+										CFG_TAG_99_19P2MHZ_4020_BD_B1;
+  }
+  else 
+  {
+    bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_41_4020BD_B1_RAM_INDEX] = 
+										CFG_TAG_41_32MHZ_4020_BD_B1;
+    bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_99_4020BD_B1_RAM_INDEX] = 
+										CFG_TAG_99_32MHZ_4020_BD_B1;
+  }    
+  
+  /* update version tags */
+  if(runtime_params_ptr->refclock_type == BT_SOC_REFCLOCK_19P2MHZ)
+  {
+    if(runtime_params_ptr->bt_2_1_lisbon_disabled == 1)
+    {
+      bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_32_4020BD_B1_RAM_INDEX] = 
+        &bt_qsoc_cfg_tag_32_19p2MHz_4020bd_b1_bt_2_0[0];;
+    }
+    else 
+    {
+      bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_32_4020BD_B1_RAM_INDEX] = 
+        &bt_qsoc_cfg_tag_32_19p2MHz_4020bd_b1_bt_2_1[0];;
+    }
+  }
+  else 
+  {
+    if(runtime_params_ptr->bt_2_1_lisbon_disabled == 1)
+    {
+      bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_32_4020BD_B1_RAM_INDEX] = 
+        &bt_qsoc_cfg_tag_32_32MHz_4020bd_b1_bt_2_0[0];;
+    }
+    else 
+    {
+      bt_qsoc_cfg_tbl_4020bd_b1_ram[CFG_TAG_32_4020BD_B1_RAM_INDEX] = 
+        &bt_qsoc_cfg_tag_32_32MHz_4020bd_b1_bt_2_1[0];;
+    }
+  }
+  
   runtime_params_ptr->nvm_fixed_table_ptr =    &bt_qsoc_cfg_tbl_4020bd_b1[0];
   runtime_params_ptr->nvm_runtime_table_ptr =  &bt_qsoc_cfg_tbl_4020bd_b1_ram[0];
   runtime_params_ptr->nvm_fixed_table_size =   SIZEOF_BT_QSOC_CFG_TBL_4020BD_B1;
@@ -2407,7 +2634,9 @@ bt_qsoc_runtime_params_struct_type *runtime_params_ptr
 #endif /* FEATURE_BT_QSOC_CLASS2 */	     
      {	     
        bt_qsoc_cfg_tbl_4025_b1_ram[CFG_TAG_36_4025_B1_RAM_INDEX] =
-	                                  &bt_qsoc_cfg_tag_36_4025_CLASS1[0];       
+	                                  &bt_qsoc_cfg_tag_36_4025_CLASS1[0];   
+       bt_qsoc_cfg_tbl_4025_b1_ram[CFG_TAG_56_4025_B1_RAM_INDEX] =
+          &bt_qsoc_cfg_tag_56_4025_CLASS1[0];    
 
        if(runtime_params_ptr->refclock_type == BT_SOC_REFCLOCK_19P2MHZ)
        {
@@ -2420,7 +2649,7 @@ bt_qsoc_runtime_params_struct_type *runtime_params_ptr
            &bt_qsoc_cfg_tag_41_32MHz_4025_CLASS1[0];		   
        }
      }
-
+     
    runtime_params_ptr->nvm_fixed_table_ptr =   &bt_qsoc_cfg_tbl_4025_b1[0];
    runtime_params_ptr->nvm_runtime_table_ptr = &bt_qsoc_cfg_tbl_4025_b1_ram[0];
    runtime_params_ptr->nvm_fixed_table_size =  SIZEOF_BT_QSOC_CFG_TBL_4025_B1;
@@ -2542,6 +2771,8 @@ bt_qsoc_runtime_params_struct_type *runtime_params_ptr
      {	     
        bt_qsoc_cfg_tbl_4025_b2_ram[CFG_TAG_36_4025_B2_RAM_INDEX] =
 	                                  &bt_qsoc_cfg_tag_36_4025_CLASS1[0];       
+       bt_qsoc_cfg_tbl_4025_b2_ram[CFG_TAG_56_4025_B2_RAM_INDEX] =
+                                          &bt_qsoc_cfg_tag_56_4025_CLASS1[0];
 
        if(runtime_params_ptr->refclock_type == BT_SOC_REFCLOCK_19P2MHZ)
        {
@@ -2559,6 +2790,142 @@ bt_qsoc_runtime_params_struct_type *runtime_params_ptr
    runtime_params_ptr->nvm_runtime_table_ptr = &bt_qsoc_cfg_tbl_4025_b2_ram[0];
    runtime_params_ptr->nvm_fixed_table_size =  SIZEOF_BT_QSOC_CFG_TBL_4025_B2;
    runtime_params_ptr->nvm_runtime_table_size =SIZEOF_BT_QSOC_CFG_TBL_4025_B2_RAM;
+}
+
+/*==========================================================================
+
+  FUNCTION       bt_qsoc_nvm_vs_update_4025_B3_nvm_entries 
+
+  DESCRIPTION    This routine updates the run time nvm parameters for 4025 B3.
+
+  DEPENDENCIES   None.
+
+  PARAMETERS     runtime_params_ptr: Parameters that determine the run time 
+                 configuration
+
+  RETURN VALUE   NONE.
+
+  SIDE EFFECTS   None.
+
+==========================================================================*/
+
+static void bt_qsoc_nvm_vs_update_4025_B3_nvm_entries
+(
+bt_qsoc_runtime_params_struct_type *runtime_params_ptr
+)
+{
+  if(runtime_params_ptr->clock_sharing == BT_SOC_CLOCK_SHARING_ENABLED)
+  {
+    bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_37_4025_B3_RAM_INDEX] = CFG_TAG_37_CLK_SHARING_4025_B3;
+    bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_97_4025_B3_RAM_INDEX] = CFG_TAG_97_CLK_SHARING_4025_B3;
+  }
+  else
+  {
+    bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_37_4025_B3_RAM_INDEX] = CFG_TAG_37_NO_CLK_SHARING_4025_B3;
+    bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_97_4025_B3_RAM_INDEX] = CFG_TAG_97_NO_CLK_SHARING_4025_B3;
+  }
+
+  if(runtime_params_ptr->soc_logging == 1)
+  {
+    bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_38_4025_B3_RAM_INDEX] = CFG_TAG_38_SOC_LOGGING_4025_B3;
+  }
+  else
+  {
+    bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_38_4025_B3_RAM_INDEX] = CFG_TAG_38_SOC_NO_LOGGING_4025_B3;
+  }
+
+  if(runtime_params_ptr->bt_2_1_lisbon_disabled == 1)
+  {
+    bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_6_4025_B3_RAM_INDEX] =
+		                        &bt_qsoc_cfg_tag_6_bt_2_1_not_supported[0];
+    bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_78_4025_B3_RAM_INDEX] =
+                                        &bt_qsoc_cfg_tag_78_bt_2_1_not_supported[0];
+    bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_72_4025_B3_RAM_INDEX] = CFG_TAG_72_4025_B3;
+
+    if(runtime_params_ptr->refclock_type == BT_SOC_REFCLOCK_19P2MHZ)
+    {
+      bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_32_4025_B3_RAM_INDEX] =
+	                                  &bt_qsoc_cfg_tag_32_19p2MHz_4025_b3_bt_2_0[0];
+    }
+    else 
+    {
+      bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_32_4025_B3_RAM_INDEX] =
+		                          &bt_qsoc_cfg_tag_32_32MHz_4025_b3_bt_2_0[0];
+    }    
+   }
+   else
+   {
+     bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_6_4025_B3_RAM_INDEX] =
+		                          &bt_qsoc_cfg_tag_6_bt_2_1_supported[0];
+
+     bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_78_4025_B3_RAM_INDEX] =
+                                          &bt_qsoc_cfg_tag_78_bt_2_1_supported[0];
+
+     if(runtime_params_ptr->refclock_type == BT_SOC_REFCLOCK_19P2MHZ)
+     {
+       bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_32_4025_B3_RAM_INDEX] =
+	                                  &bt_qsoc_cfg_tag_32_19p2MHz_4025_b3_bt_2_1[0];
+     }
+     else
+     {
+       bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_32_4025_B3_RAM_INDEX] =
+		                          &bt_qsoc_cfg_tag_32_32MHz_4025_b3_bt_2_1[0];
+     }	    
+		                                        
+   }
+
+#ifdef FEATURE_BT_QSOC_CLASS2   
+     if(runtime_params_ptr->bt_qsoc_device_class == BT_QSOC_DEV_CLASS2)
+     {	     
+       bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_36_4025_B3_RAM_INDEX] =
+	                                  &bt_qsoc_cfg_tag_36_4025_CLASS2[0];
+
+       bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_56_4025_B3_RAM_INDEX] =
+          &bt_qsoc_cfg_tag_56_4025_CLASS2[0];
+
+       if(runtime_params_ptr->refclock_type == BT_SOC_REFCLOCK_19P2MHZ)
+       {
+         bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_41_4025_B3_RAM_INDEX] =
+            &bt_qsoc_cfg_tag_41_19P2MHz_4025_CLASS2[0]; 
+
+         /* Reassigning tag 32 for class 2 device */
+         bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_32_4025_B3_RAM_INDEX] =
+		                          &bt_qsoc_cfg_tag_32_19P2MHz_4025_b3_CLASS2[0]; 
+       }
+       else
+       {
+         bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_41_4025_B3_RAM_INDEX] =
+           &bt_qsoc_cfg_tag_41_32MHz_4025_CLASS2[0];		   
+
+         /* Reassigning tag 32 for class 2 device */
+         bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_32_4025_B3_RAM_INDEX] =
+                                          &bt_qsoc_cfg_tag_32_32MHz_4025_b3_CLASS2[0];		   
+       }
+     }
+     else
+#endif /* FEATURE_BT_QSOC_CLASS2 */	     
+     {	     
+       bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_36_4025_B3_RAM_INDEX] =
+	                                  &bt_qsoc_cfg_tag_36_4025_CLASS1[0];       
+       bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_56_4025_B3_RAM_INDEX] =
+                                          &bt_qsoc_cfg_tag_56_4025_CLASS1[0];
+
+       if(runtime_params_ptr->refclock_type == BT_SOC_REFCLOCK_19P2MHZ)
+       {
+         bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_41_4025_B3_RAM_INDEX] =
+            &bt_qsoc_cfg_tag_41_19P2MHz_4025_CLASS1[0]; 
+       }
+       else
+       {
+         bt_qsoc_cfg_tbl_4025_b3_ram[CFG_TAG_41_4025_B3_RAM_INDEX] =
+           &bt_qsoc_cfg_tag_41_32MHz_4025_CLASS1[0];		   
+       }
+     }
+
+   runtime_params_ptr->nvm_fixed_table_ptr =   &bt_qsoc_cfg_tbl_4025_b3[0];
+   runtime_params_ptr->nvm_runtime_table_ptr = &bt_qsoc_cfg_tbl_4025_b3_ram[0];
+   runtime_params_ptr->nvm_fixed_table_size =  SIZEOF_BT_QSOC_CFG_TBL_4025_B3;
+   runtime_params_ptr->nvm_runtime_table_size =SIZEOF_BT_QSOC_CFG_TBL_4025_B3_RAM;
 }
 
 /*==========================================================================
@@ -2707,6 +3074,13 @@ bt_qsoc_runtime_params_struct_type *runtime_params_ptr
   case BT_QSOC_4025_B2:
 	{
 	  bt_qsoc_nvm_vs_update_4025_B2_nvm_entries(runtime_params_ptr);
+	  returnValue = TRUE;
+	  break;
+	}
+
+  case BT_QSOC_4025_B3:
+	{
+	  bt_qsoc_nvm_vs_update_4025_B3_nvm_entries(runtime_params_ptr);
 	  returnValue = TRUE;
 	  break;
 	}
@@ -3003,7 +3377,18 @@ bt_soc_refclock_type bt_refclock_type
        }
        break;
 
-       default:
+       case BT_QSOC_4025_B3:
+       if(bt_refclock_type == BT_SOC_REFCLOCK_19P2MHZ)
+       {
+          buf = (OI_UINT8 *) bt_qsoc_nvm_BTS4025_B3_19P2Mhz;
+       }
+       else
+       {
+          buf = (OI_UINT8 *) bt_qsoc_nvm_BTS4025_B3_32Mhz;
+       }
+       break;
+
+	   default:
        return_status = FALSE;
        return return_status;
    }
@@ -3085,14 +3470,11 @@ bt_soc_refclock_type ref_clock
   if(  qsoc_type == BT_QSOC_4020BD_B1 )
   {
     rel_nvm[28]= rel_nvm[36]= rel_nvm[39]= rel_nvm[40]= rel_nvm[42]=
-    rel_nvm[72]= rel_nvm[103]= rel_nvm[104]= rel_nvm[105]= rel_nvm[109]= 
+    rel_nvm[100]= rel_nvm[101]= rel_nvm[102]= rel_nvm[103]= rel_nvm[104]= 
+    rel_nvm[105]= rel_nvm[106]= rel_nvm[107]= rel_nvm[108]= rel_nvm[109]= 
     rel_nvm[110]= rel_nvm[111]= rel_nvm[112]= rel_nvm[113]= rel_nvm[114]= 
-    rel_nvm[116]= rel_nvm[119]= rel_nvm[32]= rel_nvm[41]= rel_nvm[99]= 1;
-
-    if(ref_clock == BT_SOC_REFCLOCK_19P2MHZ)
-    {
-      rel_nvm[115] = 1;
-    }
+    rel_nvm[115]= rel_nvm[116]= rel_nvm[119]= 1;
+  
     return_status = TRUE;    
   }
 
@@ -3119,10 +3501,22 @@ bt_soc_refclock_type ref_clock
 
   if( qsoc_type == BT_QSOC_4025_B2)
   {
-    rel_nvm[28]= rel_nvm[39]= rel_nvm[40]= rel_nvm[42]= 
-    rel_nvm[95]= rel_nvm[99]= rel_nvm[115]= rel_nvm[116]= rel_nvm[119]= 
-    rel_nvm[120]= rel_nvm[121]= rel_nvm[123]= rel_nvm[126]= 1;
- 
+    rel_nvm[28]= rel_nvm[39]= rel_nvm[40]= rel_nvm[42]= rel_nvm[95]= 
+    rel_nvm[99]= rel_nvm[100]= rel_nvm[101]= rel_nvm[102]= rel_nvm[103]= 
+    rel_nvm[104]= rel_nvm[105]= rel_nvm[106]= rel_nvm[107]= rel_nvm[108]= 
+    rel_nvm[109]= rel_nvm[110]= rel_nvm[111]= rel_nvm[112]= rel_nvm[113]= 
+    rel_nvm[114]= rel_nvm[115]= rel_nvm[116]= rel_nvm[119]= rel_nvm[120]= 
+    rel_nvm[121]= rel_nvm[123]= rel_nvm[126]= 1;
+
+    return_status = TRUE; 
+  }  
+
+  if( qsoc_type == BT_QSOC_4025_B3)
+  {
+    rel_nvm[28]= rel_nvm[39]= rel_nvm[40]= rel_nvm[42]= rel_nvm[95]= 
+    rel_nvm[116]= rel_nvm[119]= rel_nvm[120]= rel_nvm[121]= rel_nvm[123]=
+	rel_nvm[126]= 1;
+
     return_status = TRUE; 
   }  
 

@@ -12,9 +12,9 @@ EXTERNALIZED FUNCTIONS
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-Copyright (c) 2009 QUALCOMM Incorporated. 
+     Copyright (c) 2009-2011 QUALCOMM Incorporated. 
 All Rights Reserved. 
-Qualcomm Confidential and Proprietary
+     Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /*===========================================================================
@@ -25,12 +25,19 @@ Qualcomm Confidential and Proprietary
   Notice that changes are listed in reverse chronological order. Please
   use ISO format for dates.
 
-  $Header: //source/qcom/qct/wconnect/bthost/soccfg/rel/00.00.26/src/btqsocnvmclass2.h#4 $
-  $DateTime: 2009/08/27 11:30:03 $
-  $Author: jnahar $
+  $Header: //source/qcom/qct/wconnect/bthost/soccfg/rel/00.00.26/src/btqsocnvmclass2.h#11 $
+  $DateTime: 2011/01/17 23:23:57 $
+  $Author: roystonr $
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2010-10-25   tw Added support for 4025 B3
+  2010-12-03   av  4025 B2 NVM update
+  2010-07-26   rr  4025 B2 NVM update.
+  2010-07-05   rr  4025 B2 NVM update.
+  2010-04-27   rr  4025 B2 NVM update.
+  2010-03-10   rr  Updated 4025 B2. ROM patch for CR#189653 - pabBT Scatternet: AG(master)+FTP(slave)+DUNP (master/slave) concurrent connections fails.
+  2009-11-10  dgh  Updated NVM version for 4025 B2.
   2009-08-27   jn  Updated NVM version for 4025 B1.
   2009-08-07  dgh  Added support for 4025 B2.
   2009-07-07   jn  Updated NVM version for 4025 B1.
@@ -74,13 +81,25 @@ static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4025_b1_CLASS2[] = 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19P2MHz_4025_b2_CLASS2[] = \
 {
   0x05, 0x01, 0x20, 0x02, 
-  0x00, 0x17    // version 17.00
+  0x07, 0x17    // version 17.07
 };
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4025_b2_CLASS2[] = \
 {
   0x05, 0x01, 0x20, 0x02, 
-  0x00, 0x1D    // version 1D.00
+  0x07, 0x1D    // version 1D.07
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_19P2MHz_4025_b3_CLASS2[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x00, 0x18    // version 18.00
+};
+
+static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_32_32MHz_4025_b3_CLASS2[] = \
+{
+  0x05, 0x01, 0x20, 0x02, 
+  0x00, 0x19    // version 19.00
 };
 
 static bt_qsoc_cfg_cst_element_type bt_qsoc_cfg_tag_36_4025_CLASS2[] = \

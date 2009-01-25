@@ -5,7 +5,7 @@
  *  This file implements Bluetooth Host Controller Common
  *  interface (UART, GPIO, Power, AUX_PCM)
  *
- * Copyright (c) 2007-2008 QUALCOMM Incorporated.
+ * Copyright (c) 2007-2011 QUALCOMM Incorporated.
  * All Rights Reserved.
  * Qualcomm Confidential and Proprietary
  *
@@ -21,12 +21,13 @@
   Notice that changes are listed in reverse chronological order. Please
   use ISO format for dates.
 
-  $Header: //source/qcom/qct/wconnect/bthost/soccfg/rel/00.00.26/src/btqsocnvm.h#3 $
-  $DateTime: 2009/08/07 18:29:21 $
-  $Author: jnahar $
+  $Header: //source/qcom/qct/wconnect/bthost/soccfg/rel/00.00.26/src/btqsocnvm.h#4 $
+  $DateTime: 2011/01/17 23:23:57 $
+  $Author: roystonr $
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2010-10-25  tw  Added support for 4025 B3
   2009-08-07  dgh  Added support for 4025 B2.
   2009-06-02   sa  Support for Class 2 device.
   2008-11-14   sa  Support for NV automation.
@@ -144,6 +145,7 @@ extern "C"
 #define BT_QSOC_4025_B0_STR_ID             "Release 4.00.1"
 #define BT_QSOC_4025_B1_STR_ID             "Release 4.00.2"
 #define BT_QSOC_4025_B2_STR_ID             "Release 4.00.3"
+#define BT_QSOC_4025_B3_STR_ID             "Release 4.00.4"
 
 #define   HCI_VS_NULL_CHAR (0x20)
 
@@ -178,6 +180,7 @@ typedef enum
   BT_QSOC_4025_B0,
   BT_QSOC_4025_B1,
   BT_QSOC_4025_B2,
+  BT_QSOC_4025_B3,
   BT_QSOC_UNKNOWN,
   BT_QSOC_MAX,
   BT_QSOC_NONE = 0xFF
