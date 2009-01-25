@@ -12,7 +12,7 @@
 DESCRIPTION
   This file contains declarations external to the Bluetooth module.
 
-              Copyright (c) 2000-2009 QUALCOMM Incorporated.               
+              Copyright (c) 2000-2010 QUALCOMM Incorporated.               
                       All Rights Reserved.                                  
               Qualcomm Confidential and Proprietary                        
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -25,13 +25,15 @@ DESCRIPTION
   Notice that changes are listed in reverse chronological order.
 
 $PVCSHeader:   O:/src/asw/COMMON/vcs/bt.h_v   1.52   09 Aug 2002 18:36:50   waynelee
-$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/inc/bt.h#5 $ 
-$DateTime: 2009/05/19 15:01:47 $
-$Author: prgowda $
+$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/inc/bt.h#6 $ 
+$DateTime: 2010/05/12 22:07:33 $
+$Author: uppalas $
 
 $Log:   O:/src/asw/COMMON/vcs/bt.h_v  $
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2010-05-06   us  Disbale Scans when intiating Remote Name request or
+                   Create Connection for some SOC versions.
   2009-05-04   pg  Added event notifications for radio power on/off and sync
                    connection parameter changes.
   2009-02-18   hm  Created an API for Bond Cancel
@@ -680,11 +682,23 @@ typedef void (bt_ev_cb_func_type) ( struct bt_ev_msg_struct* bt_ev_msg_ptr );
           (memcmp( (byte*)(p1), (byte*)(p2),                          \
                     sizeof( bt_bd_addr_type) ) == 0) ? TRUE : FALSE )
 
+#ifndef CUST_EDITION  //[modify for device name length]
 #define BT_MAX_NAME_LEN 32  /*  Same as UIBT_MAX_BT_NAME_LEN.  */
+#else
+#define BT_MAX_NAME_LEN 100  /*  Same as UIBT_MAX_BT_NAME_LEN.  */
+#endif
 #define BT_MAX_LOCAL_DEVICE_NAME_LEN (BT_MAX_NAME_LEN - 1)
+#ifndef CUST_EDITION  //[modify for device name length]
 #define BT_MAX_REMOTE_NICK_NAME_LEN 16
+#else
+#define BT_MAX_REMOTE_NICK_NAME_LEN 50
+#endif
 #define BT_SD_MAX_SERVICE_NAME_LEN  31
+#ifdef CUST_EDITION //[add for Device name display]
+#define BT_SD_MAX_DEVICE_NAME_LEN   100
+#else
 #define BT_SD_MAX_DEVICE_NAME_LEN   19
+#endif
 
 #define BT_MAX_PIN_CODE_LEN 16
 typedef BT_PACKED struct
@@ -957,8 +971,13 @@ typedef enum
 
 #define BT_SD_INVALID_UUID 0xFFFF
 
+#ifdef CUST_EDITION //[added for not enough service record]
+#define BT_SD_MAX_NUM_OF_SRV_SRCH_PAT_UUID    20
+#define BT_SD_MAX_NUM_OF_SRV_SRCH_PAT_ATTR_ID 20
+#else
 #define BT_SD_MAX_NUM_OF_SRV_SRCH_PAT_UUID    12
 #define BT_SD_MAX_NUM_OF_SRV_SRCH_PAT_ATTR_ID 12
+#endif
 #define BT_SD_MAX_NUM_OF_SRV_REC              20
 #define BT_SD_MAX_NUM_OF_UINT                 8
 #define BT_SD_MAX_NUM_OF_SRV_SRCH_PAT_UUID128 1
@@ -1589,6 +1608,10 @@ extern void bt_cmd_dc_ftm_get_bt_wm(
                             dsm_watermark_type** ftm_from_bt_wm_ptr_ptr );
 
 #endif /* FEATURE_FACTORY_TESTMODE */
+
+/*SOC version commands*/
+extern void  bt_cmd_dc_set_soc_version(bt_qsoc_enum_type *bt_soc_version);
+extern bt_qsoc_enum_type bt_cmd_dc_get_soc_version(void);
 
 
 /*-------------------------------------------------------------------------*/

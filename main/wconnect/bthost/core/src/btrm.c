@@ -5,7 +5,7 @@
 GENERAL DESCRIPTION
   This module contains the Bluetooth Radio Manager data and code.
 
-Copyright (c) 2007-2009 QUALCOMM Incorporated.
+Copyright (c) 2007-2010 QUALCOMM Incorporated.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -17,12 +17,26 @@ Qualcomm Confidential and Proprietary
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btrm.c#24 $
-  $DateTime: 2009/10/02 11:00:49 $
-  $Author: nksingh $
+  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btrm.c#30 $
+  $DateTime: 2010/11/26 00:07:42 $
+  $Author: ssajjan $
 
   when        who  what, where, why
   ----------  ---  ------------------------------------------------------------
+  2010-11-26   ss  Fix for Missing conn comp event from SOC by Limiting 
+                   Name request during Pin Request, and delete Link Key
+                   when Transaction collision occurs to enable future 
+                   bond request to succeed
+  2010-05-06   us  Disbale Scans when intiating Remote Name request or
+                   Create Connection for some SOC versions.
+  2010-05-03   us  Disconnect ACL connection when busy timer expires
+  2010-04-29   us  Not returned BT_EV_RM_RADION_DISABLED event  in certain scenarios.
+                   Radio Disabled event will be sent before the radio has been disabled
+  2010-04-29   us  RM event sent when the bt_cmd_rm_enforce_security_l2cap_ps 
+                   fails after re-queing maximum number of times
+  2010-04-29   us  Disabled default SSR emulation 
+  2010-04-28   gbm Interface to cleanup pin_req_resp_app_id
+                   Clear the flag disable_scan_pending when scans are enabled
   2009-10-02   ns  Resolved race condition when dedicated bonding is attempted
                    on an existing connnection and that connection is disconnected
                    before bonding is finished.
@@ -5400,6 +5414,22 @@ LOCAL void bt_rm_do_bb_page_started
       bt_dc.page_active = TRUE;
       BT_RM_UPD_RA_AND_SETBIT( BT_RA_PAGING ); 
 
+
+      if((BT_QSOC_4025_A0 == bt_cmd_dc_get_soc_version()) || 
+         (BT_QSOC_4025_B0 == bt_cmd_dc_get_soc_version()) ||
+         (BT_QSOC_4025_B1 == bt_cmd_dc_get_soc_version()))
+      {
+	    if ( bt_dc.scan_active )
+		{
+		  /* Disable scans */
+		  bt_dc.scan_active = FALSE;
+		  bt_cmd_hc_wr_scan_enable( BT_HC_INQ_DIS_PAGE_DIS );
+		  BT_RM_UPD_RA_AND_CLRBIT( BT_RA_INQ_SCANNING | BT_RA_PAGE_SCANNING );
+		}
+      }
+
+
+
       if( bt_rm_data.current_radio_activity & BT_RA_RADIO_POWERED_ON )
       {
         /* If radio is not powered on yet, HCI command is going to be
@@ -5476,6 +5506,15 @@ LOCAL void bt_rm_do_bb_page_stopped
     bt_dc.page_active = FALSE;
     BT_RM_UPD_RA_AND_CLRBIT( BT_RA_PAGING );
     bt_rm_ev_send_radio_activity();
+	
+
+    if((BT_QSOC_4025_A0 == bt_cmd_dc_get_soc_version()) || 
+       (BT_QSOC_4025_B0 == bt_cmd_dc_get_soc_version()) ||
+       (BT_QSOC_4025_B1 == bt_cmd_dc_get_soc_version()))
+    {
+	   /* Re-evaluate required scans */
+      bt_rm_check_scan_settings();
+	}
   }
   else
   {
@@ -9024,6 +9063,10 @@ LOCAL void bt_rm_check_busy_timeout
 
           conn_ptr->pkt_types_req_acl = 0;
         }
+        if ( conn_ptr->state_acl == BT_RM_CS_CONNECTED )
+        {
+          bt_rm_disconnect_acl( conn_ptr, BT_RMDR_USER_ENDED );
+        }
       }
       else
       {
@@ -9273,7 +9316,8 @@ boolean bt_rm_persistent_tick_required
   {
     if ( bt_dc.inq_active ||
          bt_dc.page_active ||
-         ( bt_rm_any_conn_lmactive_or_unstable() == TRUE )
+         ( bt_rm_any_conn_lmactive_or_unstable() == TRUE ) ||
+         ( bt_dc.radio_state == BT_RADIO_DISABLING )
         )
     {
       return TRUE;
@@ -9318,6 +9362,17 @@ static boolean double_scan_windows_with_sco = TRUE;
 #ifndef FEATURE_BT_SOC
   double_scan_windows_with_sco = FALSE;
 #endif
+
+  if((BT_QSOC_4025_A0 == bt_cmd_dc_get_soc_version()) || 
+     (BT_QSOC_4025_B0 == bt_cmd_dc_get_soc_version()) ||
+     (BT_QSOC_4025_B1 == bt_cmd_dc_get_soc_version()))
+  {
+    if ( bt_dc.page_active || bt_dc.inq_active )
+    {
+      /* bail out .. scans will be re-evaluated later */
+      return;
+    }
+  }
 
 #if defined ( BT_AMS_DISABLED )
   /*  Disable all scanning if we are in any connection.  */
@@ -9453,6 +9508,8 @@ static boolean double_scan_windows_with_sco = TRUE;
       }
 
       scan_enable        = BT_HC_INQ_EN_PAGE_DIS;
+      bt_dc.disable_scan_pending = FALSE;
+
 
       bt_dc.scan_active  = TRUE;
     }
@@ -9489,6 +9546,7 @@ static boolean double_scan_windows_with_sco = TRUE;
       inq_scan_window    = BT_DEFAULT_INQUIRYSCAN_WINDOW;
 
       scan_enable        = BT_HC_INQ_DIS_PAGE_EN;
+      bt_dc.disable_scan_pending = FALSE;
 
       bt_dc.scan_active  = TRUE;
     }
@@ -9520,6 +9578,8 @@ static boolean double_scan_windows_with_sco = TRUE;
       }
 
       scan_enable        = BT_HC_INQ_EN_PAGE_EN;
+      bt_dc.disable_scan_pending = FALSE;
+
       bt_dc.scan_active  = TRUE;
     }
   }
@@ -12535,6 +12595,14 @@ LOCAL void bt_rm_ev_hc_command_complete
           /* Send RM radio activity event */
           BT_RM_UPD_RA_AND_CLRBIT( BT_RA_INQUIRING );
           bt_rm_ev_send_radio_activity();
+		  
+          if((BT_QSOC_4025_A0 == bt_cmd_dc_get_soc_version()) || 
+             (BT_QSOC_4025_B0 == bt_cmd_dc_get_soc_version()) ||
+             (BT_QSOC_4025_B1 == bt_cmd_dc_get_soc_version()))
+		  {
+			 /* Re-evaluate required scans */
+             bt_rm_check_scan_settings();
+          }
         }
         else
         {
@@ -13527,6 +13595,12 @@ LOCAL void bt_rm_ev_hc_conn_complete_acl
               conn_ptr->state_acl, hc_status,
               conn_ptr->rm_handle );
     }
+    
+    if (hc_status == BT_BE_DIFFERENT_TRANSACTION_COLLISION)
+    {
+       bt_rm_init_device_security( conn_ptr->dev_ptr);
+       conn_ptr->dev_ptr->update_status |= BT_RM_DUS_UNBONDED_B;
+    }
 
     /*  Code in bt_rm_link_sec_re_pair_started() must mimic  */
     /*  exactly the condition checks below including those   */
@@ -14517,11 +14591,20 @@ LOCAL void bt_rm_ev_hc_user_conf_request
       case  BT_RM_AS1_NUMERIC_COMPARISON:
         if ( ev_msg_ptr->ev_msg.ev_hc_user_cfm_rqst.num_val < 999999 )
         {
+          #ifdef CUST_EDITION /*User has input pin code in bt_rm_cmd_bond_ext()*/ //ptusheng
+          if ( conn_ptr->pairing_initiated != FALSE )
+          {
+            bt_cmd_hc_user_cfmtn_rqst_reply(&conn_ptr->dev_ptr->dev_public.bd_addr );
+          }
+          else
+          #endif
+          {
           BT_MSG_HIGH("BT RM EV TX: SSP UserConfReq to App for NC",
                       0,0,0);
           bt_rm_ev_send_user_confirmation_request(
             conn_ptr,
             num_val_s );
+          }
         }
         else
         {
@@ -16217,6 +16300,14 @@ LOCAL void bt_rm_ev_hc_inquiry_complete
     /* Send RM radio activity event */
     BT_RM_UPD_RA_AND_CLRBIT( BT_RA_INQUIRING );
     bt_rm_ev_send_radio_activity();
+
+    if((BT_QSOC_4025_A0 == bt_cmd_dc_get_soc_version()) || 
+       (BT_QSOC_4025_B0 == bt_cmd_dc_get_soc_version()) ||
+       (BT_QSOC_4025_B1 == bt_cmd_dc_get_soc_version()))
+	{
+      /* Re-evaluate required scans */
+      bt_rm_check_scan_settings();
+    }
   }
   else
   {
@@ -16943,6 +17034,11 @@ LOCAL void bt_rm_ev_hc_pin_code_request
           if ( (bt_rm_app[ i ].bt_app_id != BT_APP_ID_NULL) &&
                (bt_rm_app[ i ].bondable != FALSE) )
           {
+              if (strlen (conn_ptr->dev_ptr->dev_public.name_str) != 0)
+              {
+                conn_ptr->remote_name_available = TRUE; 
+              }
+
               if(conn_ptr->remote_name_available == FALSE)
               {
                 send_name_req = TRUE;
@@ -23130,8 +23226,7 @@ LOCAL void bt_rm_cmd_enforce_security_l2cap_psm
   }
 
   if ( ( rm_esl_ptr->cmd_hdr.cmd_status == BT_CS_GN_RETRY_CMD_LATER ) && 
-       ( BT_CHECK_RETRY_EXPIRED( rm_esl_ptr->cmd_hdr.cmd_retries )  ) &&
-       ( conn_ptr != NULL) )
+       ( BT_CHECK_RETRY_EXPIRED( rm_esl_ptr->cmd_hdr.cmd_retries )  ) )
   {
       /* Command retry have reached max limit send security 
          complete event with failure */
@@ -23141,7 +23236,7 @@ LOCAL void bt_rm_cmd_enforce_security_l2cap_psm
         rm_esl_ptr->cmd_hdr.bt_app_id,
         rm_esl_ptr->cmd_msg.cmd_rm_espsm.l2cap_psm,
         rm_esl_ptr->cmd_msg.cmd_rm_espsm.l2cap_cid,
-        &conn_ptr->dev_ptr->dev_public.bd_addr,
+        &rm_esl_ptr->cmd_msg.cmd_rm_espsm.bd_addr, 
         FALSE );
   }
 
@@ -23820,6 +23915,21 @@ LOCAL void bt_rm_cmd_inquire
 
     /* Send RM radio activity event */
     BT_RM_UPD_RA_AND_SETBIT( BT_RA_INQUIRING );
+
+
+	  if((BT_QSOC_4025_A0 == bt_cmd_dc_get_soc_version()) || 
+       (BT_QSOC_4025_B0 == bt_cmd_dc_get_soc_version()) ||
+       (BT_QSOC_4025_B1 == bt_cmd_dc_get_soc_version()))
+	  {
+        if ( bt_dc.scan_active )
+        {
+          /* Disable scans */
+          bt_dc.scan_active = FALSE;
+          bt_cmd_hc_wr_scan_enable( BT_HC_INQ_DIS_PAGE_DIS );
+          BT_RM_UPD_RA_AND_CLRBIT( BT_RA_INQ_SCANNING | BT_RA_PAGE_SCANNING );
+        }
+      }
+	
     if( bt_rm_data.current_radio_activity & BT_RA_RADIO_POWERED_ON )
     {
       /* If radio is not powered on yet, HCI command is going to be
@@ -25012,7 +25122,7 @@ void bt_rm_radio_disabled
     BT_ERR( "BT RM: Radio on/off in unexpected state %x",
             bt_dc.radio_state, 0, 0 );
   }
-
+  bt_rm_data.disable_radio_app_id = BT_APP_ID_NULL;
 }
 
 
@@ -25095,15 +25205,14 @@ LOCAL void bt_rm_cmd_disable_radio
       {
         new_disable_radio = TRUE;
       }
+      bt_rm_data.disable_radio_app_id = rm_dr_ptr->cmd_hdr.bt_app_id;
 
       if ( bt_rm_data.disable_radio != new_disable_radio )
       {
         bt_rm_data.disable_radio = new_disable_radio;
         if ( bt_rm_data.disable_radio != FALSE )
         {
-          bt_rm_data.disable_radio_app_id = rm_dr_ptr->cmd_hdr.bt_app_id;
-
-          /*  Send an appropriate RM event for each active  */
+         /*  Send an appropriate RM event for each active  */
           /*  connection that it no longer exists.          */
           for ( i = 0; i < BT_MAX_CONNECTIONS; i++ )
           {
@@ -25199,6 +25308,7 @@ LOCAL void bt_rm_cmd_disable_radio
         ev_rm_rd.ev_hdr.ev_type   = BT_EV_RM_RADIO_DISABLED;
         ev_rm_rd.ev_hdr.bt_app_id = bt_rm_data.disable_radio_app_id;
         ev_rm_rd.ev_msg.ev_rm_radio.disabled = bt_rm_data.disable_radio;
+		bt_rm_data.disable_radio_app_id = BT_APP_ID_NULL;
 
         bt_ec_send_event( &ev_rm_rd );
       }
@@ -27230,6 +27340,36 @@ boolean bt_rm_test_mode_enabled
 {
 
   return bt_rm_data.test_mode_enabled;
+
+}
+
+
+/*===========================================================================
+
+FUNCTION
+  bt_rm_auth_failed
+
+DESCRIPTION
+  In case when RM is unaware of Authentication failure, this function is called to cleanup
+  the pin_req_resp_app_id after sending the appropriate event to application.
+
+RETURN VALUES
+  None
+
+===========================================================================*/
+void bt_rm_auth_failed (bt_bd_addr_type* bd_addr)
+{
+  bt_rm_conn_type*  conn_ptr;
+  bt_cmd_status_type status;
+
+  status = bt_rm_get_conn_bd_addr (FALSE, FALSE, bd_addr, BT_ACL_LINK, &conn_ptr);
+  if ((status == BT_CS_GN_SUCCESS) && (conn_ptr->pin_req_resp_app_id != BT_APP_ID_NULL))
+  {
+    bt_rm_ev_send_bond_failed (conn_ptr->pin_req_resp_app_id,
+                            bd_addr,
+                            conn_ptr->rm_handle, BT_EVR_RM_SECURITY_NOT_MET );
+    conn_ptr->pin_req_resp_app_id = BT_APP_ID_NULL;
+  }
 
 }
 

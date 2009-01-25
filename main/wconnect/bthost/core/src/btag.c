@@ -8,7 +8,7 @@ GENERAL DESCRIPTION
   This module contains the Audio Gateway application for Bluetooth (per
   the headset and hands-free profiles).
 
-Copyright (c) 2000-2009 QUALCOMM Incorporated.
+Copyright (c) 2000-2010 QUALCOMM Incorporated.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -21,12 +21,16 @@ Qualcomm Confidential and Proprietary
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btag.c#10 $ 
-  $DateTime: 2009/11/20 18:39:15 $
-  $Author: phuongn $
+  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btag.c#13 $ 
+  $DateTime: 2010/09/17 02:16:00 $
+  $Author: singhr $
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2010-09-17   rs  Ensuring that bt_ag_process_spp_event does not send out BT_EV_AG_CONNECTION_FAILED
+                   on SIO open error
+  2010-01-19   co  Maintain call related info across connections in CDMA.
+  2009-12-08   co  Properly update AUDIO_DEV in bt_ag_cmd_connect().
   2009-11-20   pn  Volume received from remote gets saved in AVS.
   2009-10-15   co  Added AT+CLCC support in CDMA.
   2009-09-24   pn  Added flow control to support sending large amount of data.
@@ -2419,22 +2423,16 @@ LOCAL void bt_ag_hf_cleanup
 
   HF_DATA.features_bitmap     = 0;
   HF_DATA.connection_state    = BT_AG_HCS_BRSF;
-  HF_DATA.service_avail       = FALSE;
-  HF_DATA.call_active         = FALSE;
-  HF_DATA.call_id             = CM_CALL_ID_INVALID;
-  HF_DATA.incoming_call_id    = CM_CALL_ID_INVALID;
   HF_DATA.notify_call_waiting = FALSE;
   HF_DATA.notify_cli          = FALSE;
   HF_DATA.nrec_off            = FALSE;
   HF_DATA.vr_enabled          = FALSE;
-  HF_DATA.call_setup_state    = BT_AG_CALL_SETUP_NONE;
   HF_DATA.ier_mode            = BT_AIER_NO_IER;
   HF_DATA.dtmf_started        = FALSE;
   HF_DATA.profile_version     = HFP_VER_1_0; /* assume car-kit supports ver 1.1*/
 
   /* HFP 1.5 data */
   HF_DATA.ext_err_enabled     = FALSE;
-  HF_DATA.call_held_state     = BT_AG_CALL_HELD_NONE;
 
   for ( i=0; i<BT_AG_RH_MAX; i++)
   {
@@ -2447,8 +2445,26 @@ LOCAL void bt_ag_hf_cleanup
   HF_DATA.entries_2_read = 0;
 #endif /* BT_AG_HF_EXTENSION */
 
-  memset( &HF_DATA.phone_num, 0, sizeof( cm_num_s_type ) );
-  memset( &HF_DATA.ss_info, 0, sizeof( cm_mm_ss_info_s_type ) );
+  if ( (bt_ag.state == BT_AGS_DISABLED) ||
+       !BT_AG_IN_CDMA )
+  {
+    HF_DATA.service_avail       = FALSE;
+    HF_DATA.call_active         = FALSE;
+    HF_DATA.call_setup_state    = BT_AG_CALL_SETUP_NONE;
+    HF_DATA.call_held_state     = BT_AG_CALL_HELD_NONE;
+    HF_DATA.call_id             = CM_CALL_ID_INVALID;
+    HF_DATA.incoming_call_id    = CM_CALL_ID_INVALID;
+
+    memset( &HF_DATA.phone_num, 0, sizeof( cm_num_s_type ) );
+    memset( &HF_DATA.ss_info, 0, sizeof( cm_mm_ss_info_s_type ) );
+  }
+  /* ELSE, need to keep all call related info across connections
+   * to support Enhanced Call Status feature in CDMA.
+   *
+   * TODO: we should be able to do the same for all serving
+   * systems, and hence be able to simplify our code in quite
+   * a few places.
+   */
 
   if ( send_slc_event )
   {
@@ -2928,11 +2944,7 @@ LOCAL boolean bt_ag_check_and_save_params
   else
   {
     /*  BD Addr specified - server or client depending on idle mode.  */
-    if ( enabling != FALSE )
-    {
-      AUDIO_DEV.bd_addr_ptr = &AUDIO_DEV.bd_addr;
-    }
-
+    
     switch ( dev_type )
     {
       case BT_AD_HEADSET:
@@ -2953,15 +2965,20 @@ LOCAL boolean bt_ag_check_and_save_params
         break;
     }
 
-    if ( enabling != FALSE )
+    if ( params_valid &&
+         (enabling != FALSE) )
     {
+      AUDIO_DEV.bd_addr_ptr = &AUDIO_DEV.bd_addr;
+
       bt_ag.enabled_bd_addr       = *bd_addr_ptr;
       bt_ag.enabled_device_type   = dev_type;
       bt_ag.enabled_service_class = bt_ag.service_class;
     }
   }
 
-  if ( params_valid )
+  if ( params_valid &&
+       ((enabling != FALSE) ||
+        (bt_ag.state == BT_AGS_CLOSED)) )  // Connect cmd can be processed now
   {
     /*  Save parameters.  */
     bt_ag.app_id_user     = app_id;
@@ -9050,7 +9067,8 @@ LOCAL void bt_ag_process_spp_connected
         break;
 
       case BT_AD_HANDSFREE:
-        if ( HF_DATA.cm_client_id == CM_CLIENT_TYPE_BLUETOOTH )
+        if ( !BT_AG_IN_CDMA &&
+             (HF_DATA.cm_client_id == CM_CLIENT_TYPE_BLUETOOTH) )
         {
           /*  Request serving-system information.  */
           cm_ss_cmd_get_ss_info( bt_ag_cm_ss_cmd_cb, NULL, 
@@ -10467,6 +10485,9 @@ void bt_ag_powerup_init
 
   bt_ag_cleanup();
 
+  /* must go after bt_ag_cleanup() due to dependency on AG's state */
+  bt_ag_hf_cleanup();
+  
   bt_ag_initialize_external_cmd_io();
 
   bt_ag.app_id_ag =

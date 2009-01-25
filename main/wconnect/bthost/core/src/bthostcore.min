@@ -1,9 +1,9 @@
 #-------------------------------------------------------------------------------
 # BTHOSTCORE - Bluetooth Host Core stack
 #
-# $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/bthostcore.min#3 $ 
-# $DateTime: 2009/08/07 18:29:21 $ 
-# $Author: jnahar $
+# $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/bthostcore.min#4 $ 
+# $DateTime: 2011/01/17 23:23:57 $ 
+# $Author: roystonr $
 #-------------------------------------------------------------------------------
 
 
@@ -46,6 +46,8 @@ BTHOSTCORE_QSOC_SOURCES=\
 	btqsocsleep.c \
 	btqsocnvm.c \
     btqsocnvmplatform.c \
+    bt_qsoc_nvm_BTS4025_B3_32Mhz.c \
+    bt_qsoc_nvm_BTS4025_B3_19P2Mhz.c \
     bt_qsoc_nvm_BTS4025_B2_32Mhz.c \
     bt_qsoc_nvm_BTS4025_B2_19P2Mhz.c \
     bt_qsoc_nvm_BTS4025_B1_32Mhz.c \

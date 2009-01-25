@@ -7,7 +7,7 @@
 GENERAL DESCRIPTION
   This contains the code for the Bluetooth Serial Input Output (SIO) module.
 
-              Copyright (c) 2000-2008 QUALCOMM Incorporated.               
+              Copyright (c) 2000-2010 QUALCOMM Incorporated.               
                       All Rights Reserved.                                  
               Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -20,12 +20,16 @@ GENERAL DESCRIPTION
   Notice that changes are listed in reverse chronological order.
 
 $PVCSHeader:   O:/src/asw/COMMON/vcs/btsio.c_v   1.20   25 Sep 2002 11:29:30   waynelee
-$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btsio.c#1 $ $DateTime:
+$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btsio.c#3 $ $DateTime:
 
 $Log:   O:/src/asw/COMMON/vcs/btsio.c_v  $
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2010-08-09   us  Sending a connection Fail event to the App when the steady 
+                   state moniter timer expires. 
+  2010-01-21  jtl  Allow apps to close SIO ports before they're fully opened
+                   (aka canceling registration).
   2008-09-05   gs  Fixed race condition in NA enable/disable.  Enable/Disable
                    event now be sent only after sdp and rfcomm reg/re-deregistration.
   2008-09-01   gs  Added support for '+++' escape code detection under
@@ -1858,8 +1862,15 @@ LOCAL void bt_sio_disconnect_rc
                                 &bt_sio_table[ i ].bd_addr );
     }
   }
-  else if ( (bt_sio_table[ i ].spp_state  != BT_SPP_ST_OPENING) &&
-            (bt_sio_table[ i ].spp_state != BT_SPP_ST_DISCONNECTING) )
+  else if( (bt_sio_table[ i ].spp_state == BT_SPP_ST_OPENING) &&
+            (bt_sio_table[ i ].client_app == FALSE ) )
+  {
+      BT_MSG_DEBUG( "BT SIO: Cancel SRV register AID %x SCN %x",
+                    bt_sio_table[ i ].bt_app_id_port,
+                    bt_sio_table[ i ].rc_server_channel, 0 );
+      bt_sio_rc_is_disconnected( i );
+  }
+  else if( bt_sio_table[ i ].spp_state != BT_SPP_ST_DISCONNECTING )
   {
     bt_sio_rc_is_disconnected( i );
   }
@@ -3098,6 +3109,15 @@ void bt_sio_background_tick
                          bt_sio_table[ i ].spp_state,
                          bt_sio_table[ i ].stream_id,
                          bt_sio_table[ i ].rc_pid );
+						 
+		   if ( bt_sio_table[ i ].client_app != FALSE )
+		   {
+		     bt_sio_open_error(i,
+                               (bt_event_reason_type)
+                               (BT_SD_EV_ERROR_CONNECTION_FAILED),
+                               TRUE
+                              );
+		   }
 
             bt_sio_initialize_entry( i );
           }

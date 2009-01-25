@@ -9,7 +9,7 @@ GENERAL DESCRIPTION
   This module contains the Driver Configuration (DC) command routines
   of the Bluetooth driver.
 
-Copyright (c) 2000 - 2009 by QUALCOMM Incorporated. All Rights Reserved.
+Copyright (c) 2000 - 2010 by QUALCOMM Incorporated. All Rights Reserved.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -23,12 +23,15 @@ Qualcomm Confidential and Proprietary
   Notice that changes are listed in reverse chronological order. Please
   use ISO format for dates.
 
-  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btdc.c#4 $
-  $DateTime: 2009/06/03 15:56:12 $
-  $Author: jnahar $
+  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btdc.c#6 $
+  $DateTime: 2010/05/12 22:07:33 $
+  $Author: uppalas $
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2010-05-06   us  Disbale Scans when intiating Remote Name request or
+                   Create Connection for some SOC versions.
+  2010-04-05   rk  Fix to udpate the sio_state after powerdown  
   2009-06-03   jn  Fix BTS powerdown on 7K.
   2009-04-27   vk  Configuring GPIOs for 76xx.
   2009-04-14   pn  Watermark queues get initialized by dsm_queue_init().
@@ -709,6 +712,9 @@ LOCAL uint8 bt_dc_local_soc_logging;
 
 // Temporay variable to get and set bt_2_1_lisbon
 LOCAL uint8 bt_soc_bt_2_1_lisbon_disabled;
+
+//Temporary veriable to get and set bt_soc_version
+LOCAL bt_qsoc_enum_type bt_dc_local_soc_version;
 
 //debug variables
 LOCAL boolean bt_debug_enable_sio_sleep_vote = TRUE;
@@ -2092,6 +2098,11 @@ LOCAL void bt_dc_soc_sio_close ( void )
     dsm_empty_queue( &bt_soc_to_msm_sio_wm );
     dsm_empty_queue( &bt_msm_to_soc_sio_wm );
     sio_close( bt_dc.sio_stream_id_ext_soc, NULL );
+    /* Change sio state back to idle. For current targets, this is a safe
+       change. It is however needed for targets using out of band sleep
+       and enabling QSOC_POWERDOWN feature to ensure correct initialization
+       during power on (that followed a powered off) */
+    bt_dc_update_sio_state( BT_SIO_IDLE, FALSE );	
     bt_dc.sio_stream_id_ext_soc = SIO_NO_STREAM_ID;
     bt_dc.sio_port_id_ext_soc = SIO_PORT_NULL;
     rex_leave_crit_sect( &bt_dc_crit_sect );
@@ -2533,12 +2544,6 @@ void bt_dc_disable_driver
 
     /* Close SIO port */
     bt_dc_soc_sio_close();
-
-    /* Change sio state back to idle. For current targets, this is a safe
-       change. It is however needed for targets using out of band sleep
-       and enabling QSOC_POWERDOWN feature to ensure correct initialization
-       during power on (that followed a powered off) */
-    bt_dc_update_sio_state( BT_SIO_IDLE, FALSE );
 
     BT_DC_UPDATE_DRIVER_STATE(BT_DS_SOC_DISABLED);
 
@@ -3603,4 +3608,48 @@ void bt_ftm_cmd
 
 
 #endif /* FEATURE_BT */
+
+/*===========================================================================
+
+
+FUNCTION
+  bt_cmd_dc_set_soc_version
+
+DESCRIPTION
+  Sets the SOC version
+
+===========================================================================*/
+void bt_cmd_dc_set_soc_version
+(
+  bt_qsoc_enum_type *bt_soc_version
+)
+{
+  if( bt_soc_version != NULL )
+  {
+    rex_enter_crit_sect( &bt_dc_crit_sect );
+    bt_dc_local_soc_version = *bt_soc_version;
+    rex_leave_crit_sect( &bt_dc_crit_sect );
+
+  }
+
+}
+/*===========================================================================
+
+FUNCTION
+  bt_cmd_dc_get_soc_version
+
+DESCRIPTION
+  Get SOC version
+
+===========================================================================*/
+
+bt_qsoc_enum_type bt_cmd_dc_get_soc_version
+(
+  void
+)
+{  
+  return(bt_dc_local_soc_version);
+}
+
+/*===========================================================================*/
 

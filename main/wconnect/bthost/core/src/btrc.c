@@ -17,7 +17,7 @@ GENERAL DESCRIPTION
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
- $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btrc.c#2 $ $DateTime:
+ $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btrc.c#3 $ $DateTime:
   when        who  what, where, why
   ----------  ---  ----------------------------------------------------------
   2009-02-21   gs  Updated connect cancel logic to properly handle the case 
@@ -3270,7 +3270,7 @@ void bt_rc_tx_timer_expired
     {
       for ( j = 0; j < BT_RC_MAX_PORTS_PER_SESSION; j++ )
       {
-        if ( (DLC( i, j ).state != BT_RCDS_DISCONNECTED) &&
+        if ( (DLC( i, j ).state == BT_RCDS_CONNECTED) &&
              (DLC( i, j ).tx_wm_ptr != NULL) )
         {
           if ( DLC( i, j ).config.cbfc_enabled != FALSE )

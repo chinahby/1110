@@ -818,6 +818,15 @@ typedef struct
   uint8     index ;
 } bt_sd_hid_host_desc_type;
 
+#ifdef CUST_EDITION
+#define BT_SD_MAX_CUSTOM_ATTR_VALUE_LENGTH	( 255 + 2 )
+
+typedef struct
+{
+  uint8			Data[ BT_SD_MAX_CUSTOM_ATTR_VALUE_LENGTH ];
+} bt_sd_custom_attribute_value;
+#endif
+
 /* Definition for a SDP Service Attribute */
 typedef struct
 {
@@ -842,6 +851,9 @@ typedef struct
     byte                              uint128_value[ 16 ];
     bt_sd_hid_desc_list_type          hid_desc_list;
     bt_sd_hid_host_desc_type          hid_host_desc_list;
+	#ifdef CUST_EDITION
+	bt_sd_custom_attribute_value	  custom_attr_value;
+	#endif
   } attr_value;
 
 } bt_sd_srv_attr_rec_type;

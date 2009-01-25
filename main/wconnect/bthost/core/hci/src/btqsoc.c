@@ -28,7 +28,7 @@ EXTERNALIZED FUNCTIONS
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-Copyright (c) 2007-2008 by QUALCOMM Incorporated. All Rights Reserved.
+Copyright (c) 2007-2011 by QUALCOMM Incorporated. All Rights Reserved.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -40,12 +40,16 @@ Qualcomm Confidential and Proprietary
   Notice that changes are listed in reverse chronological order. Please
   use ISO format for dates.
 
-  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/hci/src/btqsoc.c#6 $
-  $DateTime: 2009/08/07 18:29:21 $
-  $Author: jnahar $
+  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/hci/src/btqsoc.c#9 $
+  $DateTime: 2011/01/17 23:23:57 $
+  $Author: roystonr $
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2010-10-25   tw  Added support for 4025 B3
+  2010-05-06   us  Disbale Scans when intiating Remote Name request or
+                   Create Connection for some SOC versions.
+  2009-12-14  dgh  Fixed minor string copy bug in bt_qsoc_detect_fw_version().
   2009-08-07  dgh  Added 4025 B2 support.
   2009-04-27   vk  Enabled pull down on VREG supplying power to BTS
   2009-03-04   jn  Enable clock sharing feature as well as voting for 
@@ -682,7 +686,7 @@ static boolean bt_qsoc_detect_fw_version
   void
 )
 {
-  char bts_ver[] = "UNKNOWN   ";
+  char bts_ver[16];
   bt_bd_addr_type bd_addr;
   bt_soc_refclock_type bt_refclock_type;
   bt_soc_clock_sharing_type bt_clock_sharing_type;
@@ -693,75 +697,81 @@ static boolean bt_qsoc_detect_fw_version
 
   if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_R2B_STR_ID) != NULL)
   {
-    BT_STRCPY(bts_ver, "R2B", 0x3);
+    BT_STRCPY(bts_ver, "R2B", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_R2B;
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_R2C_STR_ID) != NULL) 
   {
-    BT_STRCPY(bts_ver, "R2C", 0x3);
+    BT_STRCPY(bts_ver, "R2C", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_R2C;
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_R3_STR_ID) != NULL) 
   {
-    BT_STRCPY(bts_ver, "R3", 0x2);
+    BT_STRCPY(bts_ver, "R3", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_R3;
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_R3BD_STR_ID) != NULL) 
   {
-    BT_STRCPY(bts_ver, "R3BD", 0x4);
+    BT_STRCPY(bts_ver, "R3BD", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_R3BD;
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_4020BD_B0_or_B1_STR_ID) != NULL) 
   {
     if(memcmp((const void *)hw_ver_reg_id,(const void *)bt_qsoc_hw_ver_reg_4020_BD_B0, 0x04) == 0)
     {	    
-      BT_STRCPY(bts_ver, "4020BD B0", 0x9);
+      BT_STRCPY(bts_ver, "4020BD B0", sizeof(bts_ver));
       bt_qsoc.bt_qsoc_type = BT_QSOC_4020BD_B0;
     }
     else
     {
-      BT_STRCPY(bts_ver, "4020BD B1", 0x9);
+      BT_STRCPY(bts_ver, "4020BD B1", sizeof(bts_ver));
       bt_qsoc.bt_qsoc_type = BT_QSOC_4020BD_B1;
     }	    
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_4021_B1_STR_ID) != NULL) 
   {
-    BT_STRCPY(bts_ver, "4021 B1", 0x7);
+    BT_STRCPY(bts_ver, "4021 B1", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_4021_B1;
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_R4_STR_ID) != NULL) 
   {
-    BT_STRCPY(bts_ver, "R4", 0x2);
+    BT_STRCPY(bts_ver, "R4", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_R4;
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_4025_A0_STR_ID) != NULL) 
   {
-    BT_STRCPY(bts_ver, "4025 A0", 0x7);
+    BT_STRCPY(bts_ver, "4025 A0", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_4025_A0;
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_4025_B0_STR_ID) != NULL) 
   {
-    BT_STRCPY(bts_ver, "4025 B0", 0x7);
+    BT_STRCPY(bts_ver, "4025 B0", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_4025_B0;
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_4025_B1_STR_ID) != NULL) 
   {
-    BT_STRCPY(bts_ver, "4025 B1", 0x7);
+    BT_STRCPY(bts_ver, "4025 B1", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_4025_B1;
   }
   else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_4025_B2_STR_ID) != NULL) 
   {
-    BT_STRCPY(bts_ver, "4025 B2", 0x7);
+    BT_STRCPY(bts_ver, "4025 B2", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_4025_B2;
+  }
+  else if (strstr( (const char *)bt_qsoc_fw_ver, BT_QSOC_4025_B3_STR_ID) != NULL) 
+  {
+    BT_STRCPY(bts_ver, "4025 B3", sizeof(bts_ver));
+    bt_qsoc.bt_qsoc_type = BT_QSOC_4025_B3;
   }
   else
   {
-    BT_STRCPY(bts_ver, "UNKN", 0x4);
+    BT_STRCPY(bts_ver, "UNKN", sizeof(bts_ver));
     bt_qsoc.bt_qsoc_type = BT_QSOC_UNKNOWN;
   }
 
   MSG_SPRINTF_3(MSG_SSID_DFLT, MSG_LEGACY_LOW, "BT QSOC: BTS version %s, idx %x", \
-bts_ver, bt_qsoc.bt_qsoc_type, 0);
+  bts_ver, bt_qsoc.bt_qsoc_type, 0);
+  bt_cmd_dc_set_soc_version(&bt_qsoc.bt_qsoc_type);
 
   /* NVM initalization below will need the BD Address, so read it from NV */
   bt_cmd_dc_get_bd_addr( &bd_addr ); 

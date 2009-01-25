@@ -5,7 +5,7 @@
 GENERAL DESCRIPTION
   This contains the highest level code for the Bluetooth L2CAP layer.
 
-              Copyright (c) 2000-2009 QUALCOMM Incorporated.               
+              Copyright (c) 2000-2010 QUALCOMM Incorporated.               
                       All Rights Reserved.                                  
               Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -17,9 +17,11 @@ GENERAL DESCRIPTION
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btl2.c#6 $ $DateTime:
+$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btl2.c#7 $ $DateTime:
  when        who  what, where, why
  ----------  ---  -----------------------------------------------------------
+ 2010-04-28  gbm  sending authentication failed information to RM in case of the
+                  connection rejection because of security block
  2009-07-15  jtl  Set the idle timeout timer after the last remote-initiated L2CAP
                   connection has been disconnected. Also, better dectection of when
                   to disconnect ACLs when there are no L2CAP channels.
@@ -852,6 +854,8 @@ LOCAL bt_l2_qos_type bt_l2_default_qos =
   BT_L2_DEFAULT_LATENCY,
   BT_L2_DEFAULT_DELAY_VARIATION
 };
+
+void bt_rm_auth_failed (bt_bd_addr_type* bd_addr);
 
 
 /*-------------------------------------------------------------------------*/
@@ -4035,6 +4039,8 @@ LOCAL boolean bt_l2_process_conn_rsp_pkt
         break;
       case BT_L2_CONN_REFUSED_SECURITY_BLOCK:
         ec = BT_BE_CONN_REJECTED_SECURITY_FAILURE;
+        // Pass this information to RM as RM is unaware of this failure
+        bt_rm_auth_failed (&cdb_ptr->bd_addr);
         break;
       case BT_L2_CONN_REFUSED_NO_RESOURCE:
         ec = BT_BE_CONN_REJECTED_NO_RESOURCE;

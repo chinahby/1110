@@ -6,7 +6,9 @@
 GENERAL DESCRIPTION
   This module contains the Bluetooth API Tester HCI Parser.
 
-Copyright (c) 2006-2009 by QUALCOMM Incorporated. All Rights Reserved.
+Copyright (c) 2006-2009 by QUALCOMM Incorporated. 
+All Rights Reserved.
+Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /*===========================================================================
@@ -17,11 +19,12 @@ Copyright (c) 2006-2009 by QUALCOMM Incorporated. All Rights Reserved.
   Notice that changes are listed in reverse chronological order.
 
 $PVCSHeader:   O:/src/asw/COMMON/vcs/bthcapit.c_v   1.31   07 Jun 2002 17:03:36   waynelee
-$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/bthcapit.c#2 $ $DateTime:
+$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/bthcapit.c#3 $ $DateTime:
 
 $Log:   O:/src/asw/COMMON/vcs/bthcapit.c_v  $
    when        who  what, where, why
  ----------   ---  -----------------------------------------------------------
+ 2009-05-22   pn  Fixed compile errors when selective features are undefined.
  2009-04-14   pn  Watermark queues get initialized by dsm_queue_init().
  2008-09-09   NM  Apitize retrieval of link key from target for automation
  *

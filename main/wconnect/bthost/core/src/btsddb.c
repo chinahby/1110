@@ -786,6 +786,15 @@ boolean bt_sd_service_record_init_attribute
         srv_attr_ptr->header.attr_value_len =
           bt_sd_data_element_size_desc[ srv_attr_ptr->header.size_index ];
         break;
+	  #ifdef CUST_EDITION
+	  case BT_SD_ATTR_TYPE_UNKNOWN:
+	  	srv_attr_ptr->header.type = BT_SD_DATA_ELEMENT_NULL;
+        srv_attr_ptr->header.size_index = 0;
+        srv_attr_ptr->header.hdr_len = 1;
+        srv_attr_ptr->header.attr_value_len = 0;
+		break;
+	  #endif
+	  
       default:
         BT_ERR( "BT SD: Bad Attr T %x", attr_type, 0, 0 );
       status = FALSE;
@@ -883,6 +892,13 @@ void bt_sd_service_attribute_add_uuid(
   {
     srv_attr_ptr->attr_value.primitive_value = uuid;
   }
+  #ifdef CUST_EDITION
+  else if ( srv_attr_ptr->attr_type == BT_SD_ATTR_TYPE_UUID128 )
+  {
+	srv_attr_ptr->attr_type = BT_SD_ATTR_TYPE_UUID;
+    srv_attr_ptr->attr_value.primitive_value = uuid;
+  }
+  #endif
   else
   {
     BT_ERR( "BT SD: Bad UUID Add T %x C %x",
@@ -1219,6 +1235,178 @@ void bt_sd_service_attribute_add_hid_class_desc(
   }
 }
 
+#ifdef CUST_EDITION
+boolean bt_sd_service_attribute_set_custom_attr_value( bt_sd_srv_attr_rec_type *srv_attr_ptr, uint8	*pData )
+{
+	boolean bSuccess = TRUE;
+	
+	if ( ( srv_attr_ptr == NULL ) || ( pData == NULL ) )
+		 return FALSE;
+	
+	if ( srv_attr_ptr->attr_type == BT_SD_ATTR_TYPE_UNKNOWN )
+	{
+		 uint8 size_index = 0;
+
+	     const uint8 DataElementSizeDesc[] = { 1, 2, 4, 8, 16, 1, 2, 4 };
+
+		 bt_sd_data_element_enum_type DataFieldType = BT_SD_DATA_ELEMENT_NULL;
+
+		 uint32 DataFieldSize = 0;
+
+		 uint16 HeaderFieldSize = 0;
+
+	     // The Upper 5 Bits are Type Descriptor
+	     DataFieldType = ( bt_sd_data_element_enum_type )( ( ( *pData ) >> 3 ) & 0x1F );
+
+	     // The Lower 3 Bits are Size Index
+	     size_index = ( *pData ) & 0x07;
+
+		 switch ( DataFieldType )
+		 {
+		 case BT_SD_DATA_ELEMENT_NULL:
+			  {
+				  if ( size_index == 0 )
+				  {
+				 	   DataFieldSize = 0;
+				 	   HeaderFieldSize = 1;
+				  }
+				  else
+				  {
+					   bSuccess = FALSE;
+				  }
+			  }
+			  break;
+			 
+		 case BT_SD_DATA_ELEMENT_BOOL:
+			  {
+				  if ( size_index == 0 )
+				  {
+				 	   DataFieldSize = 1;
+				 	   HeaderFieldSize = 1;
+				  }
+				  else
+				  {
+					   bSuccess = FALSE;
+				  }
+			  }
+			  break;
+
+		 case BT_SD_DATA_ELEMENT_UNSIGNED_INT:
+		 case BT_SD_DATA_ELEMENT_SIGNED_INT:
+			  {
+				  if ( size_index <= 4 )
+				  {
+				 	   DataFieldSize = DataElementSizeDesc[ size_index ];
+				 	   HeaderFieldSize = 1;
+				  }
+				  else
+				  {
+					   bSuccess = FALSE;
+				  }
+			  }
+			  break;
+			 
+		 case BT_SD_DATA_ELEMENT_UUID:
+			  {
+				  if ( ( size_index == 1 ) || ( size_index == 2 ) || ( size_index == 4 ) )
+				  {
+				 	   DataFieldSize = DataElementSizeDesc[ size_index ];
+				 	   HeaderFieldSize = 1;
+				  }
+				  else
+				  {
+					   bSuccess = FALSE;
+				  }
+			  }
+			  break;
+
+		 case BT_SD_DATA_ELEMENT_TEXT_STRING:
+		 case BT_SD_DATA_ELEMENT_SEQUENCE:
+		 case BT_SD_DATA_ELEMENT_ALTERNATIVE:
+		 case BT_SD_DATA_ELEMENT_URL:
+			  {
+				  if ( size_index >= 5 )
+				  {
+				 	   HeaderFieldSize = 2;
+
+					   switch ( DataElementSizeDesc[ size_index ] )
+					   {
+					   case 1:
+						    {
+							    DataFieldSize = *( pData + 1 );
+						    }
+						    break;
+
+					   case 2:
+						    {
+							    uint16 value = 0;
+
+							    memcpy( ( void * )&value, ( void * )( pData + 1 ), sizeof( uint16 ) );
+							   
+							    DataFieldSize = SWAB16( value );
+						    }
+						    break;
+						  
+					   case 4:
+					  	    {
+							    uint32 value = 0;
+
+							    memcpy( ( void * )&value, ( void * )( pData + 1 ), sizeof( uint32 ) );
+							   
+							    DataFieldSize = SWAB32( value );
+						    }
+						    break;
+
+					   default:
+					   	    {
+								bSuccess = FALSE;
+					   	    }
+						    break;
+					   }
+				  }
+				  else
+				  {
+					   bSuccess = FALSE;
+				  }
+			  }
+			  break;
+			  
+		 default:
+		 	  {
+				  bSuccess = FALSE;
+		 	  }
+		      break;
+		 }
+
+		 BT_MSG_DEBUG( "BT SD: Set Custom Attr Value, Type = %d, HeaderSize = %d, DataSize = %d",
+		 			DataFieldType, HeaderFieldSize, DataFieldSize );
+
+		 if ( bSuccess == TRUE )
+		 {
+			  if ( HeaderFieldSize + DataFieldSize > BT_SD_MAX_CUSTOM_ATTR_VALUE_LENGTH )
+			  	   return FALSE;
+			  
+			  srv_attr_ptr->header.type = DataFieldType;
+			  srv_attr_ptr->header.size_index = size_index;
+			  srv_attr_ptr->header.hdr_len = ( uint8 )HeaderFieldSize;
+			  srv_attr_ptr->header.attr_value_len = DataFieldSize;
+
+			  memset( ( void * )&srv_attr_ptr->attr_value.custom_attr_value, 0, sizeof( bt_sd_custom_attribute_value ) );
+
+			  memcpy( ( void * )( srv_attr_ptr->attr_value.custom_attr_value.Data ), ( void * )pData, ( HeaderFieldSize + DataFieldSize ) * sizeof( uint8 ) );
+
+			  return TRUE;
+		 }
+		 else
+		 	  return FALSE;
+	}
+	else
+	{
+		 BT_ERR( "BT SD: Bad Attr Set Custom Attr Value T %x", srv_attr_ptr->attr_type, 0, 0 );
+		 return FALSE;
+	}
+}
+#endif
 /*===========================================================================
 
 FUNCTION

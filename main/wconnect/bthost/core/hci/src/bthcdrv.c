@@ -26,7 +26,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
   bt_hc_drv_soc_init() needs to be called prior to any other function.
 
-        Copyright (c) 2006-2009 QUALCOMM Incorporated.
+        Copyright (c) 2006-2011 QUALCOMM Incorporated.
                All Rights Reserved.
         Qualcomm Confidential and Proprietary
 
@@ -39,8 +39,8 @@ EDIT HISTORY FOR MODULE
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
- $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/hci/src/bthcdrv.c#2 $
- $DateTime: 2009/04/14 15:01:41 $$Author: phuongn $
+ $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/hci/src/bthcdrv.c#4 $
+ $DateTime: 2011/02/07 10:01:56 $$Author: roystonr $
  when        who  what, where, why
  ----------  ---  -----------------------------------------------------------
  2009-04-14   pn  Watermark queues get initialized by dsm_queue_init().

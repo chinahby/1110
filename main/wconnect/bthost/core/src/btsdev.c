@@ -2428,7 +2428,11 @@ uint16 bt_sd_parse_text_string(
   uint8                                       ch;
   uint16                                      tot_byte_parsed = 0;
   uint16                                      i, len;
+  #ifndef CUST_EDITION
   char                                        str[BT_SD_MAX_TEXT_STRING_LEN+1];
+  #else
+  char                                        str[BT_SD_MAX_TEXT_STRING_LEN+1] = {0};
+  #endif
   bt_sd_data_element_header_parse_result_type parse_result;
 
   /* Parse data element header for String (e.g. 0x25 0x??) */
@@ -2478,6 +2482,199 @@ uint16 bt_sd_parse_text_string(
 
   return tot_byte_parsed;
 }
+
+#ifdef CUST_EDITION
+uint16 bt_sd_parse_unknown_type_attr_value( dsm_item_type** dsm_ptr_ptr, bt_sd_srv_attr_rec_type*	srv_attr_ptr )
+{
+	boolean status = TRUE;
+	uint8 Header = 0, size_index = 0;
+	uint8 uint8_data_size = 0;
+	uint16 uint16_data_size = 0;
+	uint32 uint32_data_size = 0;
+	bt_sd_data_element_header_parse_result_type parse_result = { 0 };
+
+	/* Parse Data Element Header */
+	if ( !bt_sd_dsm_pullup( dsm_ptr_ptr, ( void * )&Header, sizeof( uint8 ) ) )
+    {
+      	 BT_ERR( "BT SD: Peek Unknown Type Attr Header Failed", 0, 0, 0 );
+      	 return 0;
+    }
+
+	parse_result.byte_parsed += sizeof( uint8 );
+
+	/* The upper 5 bits are the type descriptor */
+	parse_result.type_desc = ( bt_sd_data_element_enum_type )( ( Header >> 3 ) & 0x1F );
+	
+	/* The lower 3 bits are the size index */
+	size_index = Header & 0x07;
+
+	switch ( parse_result.type_desc )
+	{
+	case BT_SD_DATA_ELEMENT_NULL:
+	case BT_SD_DATA_ELEMENT_BOOL:
+		 {
+			if ( size_index != 0 )
+			{
+				 BT_MSG_HIGH( "BT SD: Invalid size index %d for type %d", size_index, parse_result.type_desc, 0 );
+				 status = FALSE;
+			}
+			else
+			{
+				 parse_result.data_size = 0; /* Don't care about the size field */
+			}
+		 }
+		 break;
+		 
+	case BT_SD_DATA_ELEMENT_UNSIGNED_INT:
+	case BT_SD_DATA_ELEMENT_SIGNED_INT:
+		 {
+		    if ( size_index > 4 )
+		    {
+		   		 BT_MSG_HIGH( "BT SD: Invalid size index %d for type %d", size_index, parse_result.type_desc, 0 );
+			     status = FALSE;
+		    }
+			else
+			{
+		  		 parse_result.data_size = bt_sd_data_element_size_desc[ size_index ];
+			}
+		 }
+	  	 break;
+		 
+	case BT_SD_DATA_ELEMENT_UUID:
+		 {
+		    if ( ( size_index != 1 ) && ( size_index != 2 ) && ( size_index != 4 ) )
+		    {
+		    	 BT_MSG_HIGH( "BT SD: Invalid size index %d for type %d", size_index, parse_result.type_desc, 0 );
+		    	 status = FALSE;
+		  	}
+			else
+			{
+		  		 parse_result.data_size = bt_sd_data_element_size_desc[ size_index ];
+			}
+		 }
+	  	 break;
+		 
+	case BT_SD_DATA_ELEMENT_TEXT_STRING:
+	case BT_SD_DATA_ELEMENT_SEQUENCE:
+	case BT_SD_DATA_ELEMENT_ALTERNATIVE:
+	case BT_SD_DATA_ELEMENT_URL:
+		 {
+		    if ( size_index < 5 )
+		    {
+		    	 BT_MSG_HIGH( "BT SD: Invalid size index %d for type %d", size_index, parse_result.type_desc, 0 );
+			     status = FALSE;
+			     break;
+		    }
+			
+		    /* Fix endian-ness */
+		    switch ( bt_sd_data_element_size_desc[ size_index ] )
+		    {
+		    case 1: /* 1 byte */
+				 {
+					if ( !bt_sd_dsm_pullup( dsm_ptr_ptr, ( void * )&uint8_data_size, sizeof( uint8 ) ) )
+			      	{
+			        	 BT_ERR( "BT SD: dsm_extract failed", 0, 0, 0 );
+			        	 status = FALSE;
+			      	}
+					else
+					{
+			      		 parse_result.data_size = uint8_data_size;
+					}
+		    	 }
+		      	 break;
+				 
+		    case 2: /* 2 bytes */
+				 {
+					if ( !bt_sd_dsm_pullup( dsm_ptr_ptr, ( void * )&uint16_data_size, sizeof( uint16 ) ) )
+			      	{
+			        	 BT_ERR( "BT SD: dsm_extract failed", 0, 0, 0 );
+			        	 status = FALSE;
+			      	}
+					else
+					{
+			      		 parse_result.data_size = SWAB16( uint16_data_size );
+					}
+		    	 }
+		      	 break;
+				 
+		    case 4: /* 4 bytes */
+				 {
+			      	if ( !bt_sd_dsm_pullup( dsm_ptr_ptr, ( void * )&uint32_data_size, sizeof( uint32 ) ) )
+			      	{
+			        	 BT_ERR( "BT SD: dsm_extract failed", 0, 0, 0 );
+			        	 status = FALSE;
+			      	}
+					else
+					{
+			      		 parse_result.data_size = SWAB32( uint32_data_size );
+					}
+		    	 }
+		      	 break;
+				 
+		    default:
+		    	 {
+			      	BT_ERR( "BT SD: Bad elem size %x I %x", bt_sd_data_element_size_desc[ size_index ], size_index, 0 );
+			      	status = FALSE;
+		    	 }
+		         break;
+		  	}
+
+			if ( status == TRUE )
+			{
+		  		 parse_result.byte_parsed += bt_sd_data_element_size_desc[ size_index ];
+			}
+		 }
+	  	 break;
+		 
+	default:
+		 {
+		  	BT_MSG_HIGH( "BT SD: Invalid type descriptor %d", parse_result.type_desc, 0, 0 );
+		  	status = FALSE;
+		 }
+	  	 break;
+	}
+
+	if ( status == FALSE )
+		 return 0;
+	
+	if ( ( parse_result.byte_parsed + parse_result.data_size ) > BT_SD_MAX_CUSTOM_ATTR_VALUE_LENGTH )
+	{
+		 BT_ERR( "BT SD: Unknown Type Attr Length Exceed: HeaderSize %d, DataSize %d, TotalSize %d", 
+				 parse_result.byte_parsed, parse_result.data_size, ( parse_result.byte_parsed + parse_result.data_size ) );
+		 return 0;
+	}
+
+	memset( ( void * )&srv_attr_ptr->attr_value.custom_attr_value, 0, sizeof( bt_sd_custom_attribute_value ) );
+
+	srv_attr_ptr->attr_value.custom_attr_value.Data[ 0 ] = Header;
+
+	if ( parse_result.byte_parsed == 2 )
+	{
+		 memcpy( ( void * )( srv_attr_ptr->attr_value.custom_attr_value.Data + 1 ), ( void * )&uint8_data_size, sizeof( uint8 ) );
+	}
+	else if ( parse_result.byte_parsed == 3 )
+	{
+		 memcpy( ( void * )( srv_attr_ptr->attr_value.custom_attr_value.Data + 1 ), ( void * )&uint16_data_size, sizeof( uint16 ) );
+	}
+	else if ( parse_result.byte_parsed == 5 )
+	{
+		 memcpy( ( void * )( srv_attr_ptr->attr_value.custom_attr_value.Data + 1 ), ( void * )&uint32_data_size, sizeof( uint32 ) );
+	}
+
+	if ( !bt_sd_dsm_pullup( dsm_ptr_ptr, ( void * )( srv_attr_ptr->attr_value.custom_attr_value.Data + parse_result.byte_parsed ), parse_result.data_size ) )
+	{
+		 BT_ERR( "BT SD: parse TS: DSM PU 1 fail", 0, 0, 0 );
+		 return 0;
+	}
+
+	srv_attr_ptr->header.type = parse_result.type_desc;
+	srv_attr_ptr->header.size_index = size_index;
+	srv_attr_ptr->header.hdr_len = ( uint8 )parse_result.byte_parsed;
+	srv_attr_ptr->header.attr_value_len = parse_result.data_size;
+
+	return ( parse_result.byte_parsed + parse_result.data_size );
+}
+#endif
 
 
 /*===========================================================================
@@ -2574,6 +2771,13 @@ uint16 bt_sd_parse_attribute_value
       byte_parsed = bt_sd_parse_hid_desc_lists( dsm_ptr_ptr, 
                                                  srv_attr_ptr );
       break;
+	#ifdef CUST_EDITION
+	case BT_SD_ATTR_TYPE_UNKNOWN:
+		 {
+			 byte_parsed = bt_sd_parse_unknown_type_attr_value( dsm_ptr_ptr, srv_attr_ptr );
+		 }
+      	 break;
+	#endif
   }
 
   return byte_parsed;
@@ -4880,15 +5084,35 @@ boolean bt_sd_ev_rm_remote_name
   ev_dev_name_resp.ev_hdr.ev_type = BT_EV_SD_DEVICE_NAME_RESP;
   ev_dev_name_resp.ev_hdr.bt_app_id = bt_sd_dev_discv_db.app_id;
   ev_dev_name_resp.ev_msg.ev_sd_dname.reason = BT_EVR_GN_SUCCESS;
+  #ifndef CUST_EDITION //modify by peng 2010-10-28, if cannot get remote name, report addr
   if ( rm_rnr_ptr->status != BT_CS_GN_SUCCESS )
   {
     ev_dev_name_resp.ev_msg.ev_sd_dname.reason =
       BT_EVR_SD_GET_DEVICE_NAME_FAILED;
   }
+  #endif /*CUST_EDITION*/
   ev_dev_name_resp.ev_msg.ev_sd_dname.bd_addr = rm_rnr_ptr->bd_addr;
-  memcpy( (void*)ev_dev_name_resp.ev_msg.ev_sd_dname.device_name_str,
-          (void*)rm_rnr_ptr->name_str,
-          BT_SD_MAX_DEVICE_NAME_LEN );
+
+  #ifdef CUST_EDITION //modify by peng 2010-10-28, if cannot get remote name, report addr
+  if ( rm_rnr_ptr->status != BT_CS_GN_SUCCESS )
+  {
+    snprintf( (char*)ev_dev_name_resp.ev_msg.ev_sd_dname.device_name_str, 
+            BT_SD_MAX_DEVICE_NAME_LEN,
+            "%x.%x.%x.%x.%x.%x",
+            rm_rnr_ptr->bd_addr.bd_addr_bytes[0],
+            rm_rnr_ptr->bd_addr.bd_addr_bytes[1],
+            rm_rnr_ptr->bd_addr.bd_addr_bytes[2],
+            rm_rnr_ptr->bd_addr.bd_addr_bytes[3],
+            rm_rnr_ptr->bd_addr.bd_addr_bytes[4],
+            rm_rnr_ptr->bd_addr.bd_addr_bytes[5]);
+  }
+  else
+  #endif /*CUST_EDITION*/
+  {
+    memcpy( (void*)ev_dev_name_resp.ev_msg.ev_sd_dname.device_name_str,
+            (void*)rm_rnr_ptr->name_str,
+            BT_SD_MAX_DEVICE_NAME_LEN );
+  }
 
   ev_dev_name_resp.ev_msg.ev_sd_dname.
     device_name_str[ BT_SD_MAX_DEVICE_NAME_LEN ] = 0;
@@ -5441,6 +5665,17 @@ void bt_sd_add_attribute_to_dsm_buffer(
                                  dsm_pool_id );
       }
       break;
+	#ifdef CUST_EDITION
+	case BT_SD_ATTR_TYPE_UNKNOWN:
+		 {
+			 bt_sd_dsm_pushdown_tail( &dsm_ptr,
+                               		  ( uint8 * )( srv_attr_ptr->attr_value.custom_attr_value.Data + srv_attr_ptr->header.hdr_len ),
+                               		  srv_attr_ptr->header.attr_value_len,
+                               		  dsm_pool_id );
+		 }
+		 break;
+	#endif
+	
     default:
       BT_ERR( "BT SD: Bad Attr Type %x ",
               srv_attr_ptr->attr_type, 0, 0 );
