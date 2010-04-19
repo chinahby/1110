@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IBitmapDev2 simulation
+
+IBitmapDev2 is simulated.
+==========================
+*/ 

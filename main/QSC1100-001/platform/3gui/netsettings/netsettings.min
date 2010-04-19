@@ -1,0 +1,21 @@
+#-------------------------------------------------------------------------------
+# NETSETTINGS - NetSettings Application
+#-------------------------------------------------------------------------------
+NETSETTINGS_SOURCES=\
+	NetSettings.c \
+	NetMenu.c \
+	NetUtils.c
+
+NETSETTINGS_OBJS :=  $(addprefix $(TARGETDIR)/, $(NETSETTINGS_SOURCES:%.c=%.o))
+$(NETSETTINGS_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+NETSETTINGS_DEPS :=  $(addprefix $(TARGETDIR)/, $(NETSETTINGS_SOURCES:%.c=%.dep))
+$(NETSETTINGS_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(NETSETTINGS)	
+vpath %.bar $(NETSETTINGS)/resources/en/256Color
+vpath %.mif $(NETSETTINGS)
+
+CONSTFILE_FILES+=\
+	netsettings.mif|fs:/mif/netsettings.mif \
+	netsettings.bar|fs:/mod/netsettings/netsettings.bar

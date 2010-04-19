@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE BREWRes [
+<!ENTITY  BREWDsd SYSTEM ".\coreapp_common.brx">
+]>
+<BREWRes Name="coreapp_vga" VERSION="1">
+<Objects MimeType="image/png">
+	<Object Id="1" Name="IDB_MYINFO">
+		<File>.\myinfo_vga.png8</File>
+	</Object>
+	<Object Id="2" Name="IDB_COREICON">
+		<File>.\radio_on_vga.png8</File>
+	</Object>
+	<Object Id="3" Name="IDB_NETWORK">
+		<File>.\network_vga.png8</File>
+	</Object>
+	<Object Id="4" Name="IDB_THUMBNAIL">
+		<File>.\AppThumbNail_vga.png8</File>
+	</Object>
+	<Object Id="5" Name="IDB_APPMGR">
+		<File>.\appman_vga.png8</File>
+	</Object>
+	<Object Id="6" Name="IDB_SETTINGS">
+		<File>.\settings_vga.png8</File>
+	</Object>
+	<Object Id="7" Name="IDB_SKUI">
+		<File>.\skui_vga.png8</File>
+	</Object>
+	<Object Id="8" Name="IDB_RECENTCALL">
+		<File>.\rcntcalls_vga.png8</File>
+	</Object>
+	<Object Id="9" Name="IDB_RADIO_FILLED">
+		<File>.\radio_on_vga.png8</File>
+	</Object>
+	<Object Id="10" Name="IDB_RADIO_UNFILLED">
+		<File>.\radio_off_vga.png8</File>
+	</Object>
+	<Object Id="11" Name="IDB_SOUND">
+		<File>.\sound_vga.png8</File>
+	</Object>
+	<Object Id="12" Name="IDB_DISPLAY">
+		<File>.\display_vga.png8</File>
+	</Object>
+	<Object Id="13" Name="IDB_TIMEDATE">
+		<File>.\timedate_vga.png8</File>
+	</Object>
+	<Object Id="14" Name="IDB_SECURITY">
+		<File>.\sec_settings_vga.png8</File>
+	</Object>
+	<Object Id="15" Name="IDB_EXTRAS">
+		<File>.\extras_vga.png8</File>
+	</Object>
+	<Object Id="16" Name="IDB_KEYGUARD">
+		<File>.\keyguard_vga.png8</File>
+	</Object>
+	<Object Id="17" Name="IDB_MESSAGE">
+		<File>.\mail_vga.png8</File>
+	</Object>
+	<Object Id="18" Name="IDB_CONTACT">
+		<File>.\contacts_vga.png8</File>
+	</Object>
+	<Object Id="19" Name="IDB_MEDIAPLAYER">
+		<File>.\mediaplayer_vga.png8</File>
+	</Object>
+	<Object Id="20" Name="IDB_BROWSER">
+		<File>.\browser_vga.png8</File>
+	</Object>
+	<Object Id="21" Name="IDB_GPS">
+		<File>.\gps_vga.png8</File>
+	</Object>
+	<Object Id="22" Name="IDB_POWERDN">
+		<File>.\powerdown_vga.png8</File>
+	</Object>
+	<Object Id="23" Name="IDB_POWERUP">
+		<File>.\powerup_vga.png8</File>
+	</Object>
+	<Object Id="24" Name="IDB_CATAPP">
+		<File>.\cat_vga.png8</File>
+	</Object>
+	<Object Id="25" Name="IDB_JAVA">
+		<File>.\java_vga.png8</File>
+	</Object>
+	<Object Id="26" Name="IDB_QCAMERA">
+		<File>.\qcamera_vga.png8</File>
+	</Object>
+	<Object Id="27" Name="IDB_QCAMCORDER">
+		<File>.\qcamcorder_vga.png8</File>
+	</Object>
+	<Object Id="28" Name="IDB_DEBUG">
+		<File>.\debug_vga.png8</File>
+	</Object>
+	<Object Id="29" Name="IDB_SVCPRG">
+		<File>.\serviceprog_vga.png8</File>
+	</Object>
+	<Object Id="30" Name="IDB_CHECK_ON">
+		<File>.\check_on_vga.png8</File>
+	</Object>
+	<Object Id="31" Name="IDB_CHECK_OFF">
+		<File>.\check_off_vga.png8</File>
+	</Object>
+	<Object Id="32" Name="IDB_DIALER">
+		<File>.\dialer_vga.png8</File>
+	</Object>
+	<Object Id="33" Name="IDB_DATASTATS">
+		<File>.\datastats_vga.png8</File>
+	</Object>
+	<Object Id="34" Name="IDB_BGIMG_PORTRAIT">
+		<File>.\vga_portrait.png8</File>
+	</Object>
+	<Object Id="35" Name="IDB_BGIMG_LANDSCAPE">
+		<File>.\vga_landscape.png8</File>
+	</Object>
+	<Object Id="5001" Name="IDB_VIDEOPHONE">
+		<File>.\videophone_vga.png8</File>
+	</Object>
+	<Object Id="5002" Name="IDB_BLUETOOTH">
+		<File>.\bluetooth_vga.png8</File>
+	</Object>
+	<Object Id="5003" Name="IDB_MMS">
+		<File>.\messenger_icon_40_vga.png8</File>
+	</Object>
+	<Object Id="5004" Name="IDB_CONTRAST_CHART">
+		<File>.\contrast_chart_vga.png8</File>
+	</Object>
+	<Object Id="5005" Name="IDB_WIFI_BMP">
+		<File>.\wifi_vga.png8</File>
+	</Object>
+	<Object Id="5006" Name="IDB_3DUI">
+		<File>.\3dui_vga.png8</File>
+	</Object>
+	<Object Id="5007" Name="IDB_VIDEOSHARE">
+		<File>.\ims_videoshare_vga.png8</File>
+	</Object>
+	<Object Id="5008" Name="IDB_IMS_SETTINGS">
+		<File>.\ims_settings_vga.png8</File>
+	</Object>
+	<Object Id="5009" Name="IDB_ALARMCLOCK">
+		<File>.\alarmclock_vga.png8</File>
+	</Object>
+	<Object Id="5010" Name="IDB_FMRADIO">
+		<File>.\fmradio_vga.png8</File>
+	</Object>
+
+</Objects>
+<!--=================================================================
+        BEGIN: BREW Device Specification For Developer
+=================================================================-->
+&BREWDsd;
+<!--=================================================================
+        END: BREW Device Specification For Developer
+=================================================================-->
+</BREWRes>

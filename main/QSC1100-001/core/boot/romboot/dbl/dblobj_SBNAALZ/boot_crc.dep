@@ -1,0 +1,5 @@
+..\..\..\dblobj_SBNAALZ\boot_crc.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_crc.c
+..\..\..\dblobj_SBNAALZ\boot_crc.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_crc.h
+..\..\..\dblobj_SBNAALZ\boot_crc.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\..\dblobj_SBNAALZ\boot_crc.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_util.h
+..\..\..\dblobj_SBNAALZ\boot_crc.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h

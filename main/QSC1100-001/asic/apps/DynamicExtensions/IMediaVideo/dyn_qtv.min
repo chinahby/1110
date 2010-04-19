@@ -1,0 +1,23 @@
+#-------------------------------------------------------------------------------
+# Dynamic QTV OEM
+#
+# $Header: //depot/asic/msmshared/services/Qtv/targets/6260/2.4/DynamicExtensions/IMediaVideo/dyn_qtv.min#1 $
+# $DateTime: 2007/02/05 12:49:38 $
+# $Change: 437403 $
+# $Author: sverrall $
+# 
+#-------------------------------------------------------------------------------
+
+ifeq ($(USES_MP4), yes)
+
+vpath %.mif $(BREW_DYNAMIC_EXTENSIONS)
+vpath %.mod $(BREW_DYNAMIC_EXTENSIONS)
+vpath %.bar $(BREW_DYNAMIC_EXTENSIONS)
+
+CONSTFILE_FILES+=\
+	aeemediavideo.mif|fs:/mif/aeemediavideo.mif \
+	aeemediavideo.mod|fs:/mod/aeemediavideo/aeemediavideo.mod\
+        qplayer.mif|fs:/mif/qplayer.mif \
+	qplayer.mod|fs:/mod/qplayer/qplayer.mod\
+        qplayer.bar|fs:/mod/qplayer/qplayer.bar                
+endif

@@ -1,0 +1,11 @@
+../../modem/uim/nvruim/src/nvruim.min:20: 警告：覆盖关于目标“SXNAALZ/nvim_ruim.lib”的命令
+../../core/services/nv/nv.min:35: 警告：忽略关于目标“SXNAALZ/nvim_ruim.lib”的旧命令
+../../platform/brew/nonpkbrew/pk/src/msm/oem_nonpk.min:51: 警告：覆盖关于目标“SXNAALZ/oem.lib”的命令
+../../platform/brew/brewpk/pk/src/msm/oem.min:341: 警告：忽略关于目标“SXNAALZ/oem.lib”的旧命令
+------------------------------------------------------------------------
+Deleting the Progressive Boot Scatter Loader
+------------------------------------------------------------------------
+CLEAN
+... remove elf, hex, sym, map, scl files
+... remove static BREW txt files
+... remove .i and .lst files

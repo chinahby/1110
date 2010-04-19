@@ -1,0 +1,146 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+    2 00000000         ;
+    3 00000000         ;           F A I L  S A F E  B O O T  L O A D E R      
+                         
+    4 00000000         ;
+    5 00000000         ; GENERAL DESCRIPTION
+    6 00000000         ;   This file contains the Fail Safe Boot Loader ( 1 ) w
+                       hich 
+    7 00000000         ;   performs the following functions:
+    8 00000000         ;        
+    9 00000000         ;      - Sets up the hardware with target specific funct
+                       ions.
+   10 00000000         ;      - Set up environment before loading AMSS image.
+   11 00000000         ;      - Set up environment after loading AMSS image. 
+   12 00000000         ;
+   13 00000000         ;   The  1  is written to perform the above functions wi
+                       th optimal speed.   
+   14 00000000         ;   It also attempts to minimize the execution time and 
+                       reduce boot time.
+   15 00000000         ;
+   16 00000000         ; EXTERNALIZED SYMBOLS
+   17 00000000         ;   
+   18 00000000         ;   
+   19 00000000         ; INITIALIZATION AND SEQUENCING REQUIREMENTS
+   20 00000000         ;   
+   21 00000000         ;
+   22 00000000         ; Copyright (c) 2007 by QUALCOMM, Incorporated.All Right
+                       s Reserved.
+   23 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+   24 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+   25 00000000         ;
+   26 00000000         ;                           EDIT HISTORY FOR FILE
+   27 00000000         ;
+   28 00000000         ; This section contains comments describing changes made
+                        to the module.
+   29 00000000         ; Notice that changes are listed in reverse chronologica
+                       l order.
+   30 00000000         ;
+   31 00000000         ;  $Header: 
+   32 00000000         ;
+   33 00000000         ; when       who     what, where, why
+   34 00000000         ; --------   ---     -----------------------------------
+                       ---------------------
+   35 00000000         ; 07/30/07   ANB     Initial version.
+   36 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+   37 00000000         ;=======================================================
+                       =====================
+   38 00000000         ;
+   39 00000000         ;                            MODULE INCLUDES
+   40 00000000         ;
+   41 00000000         ;=======================================================
+                       =====================
+   42 00000000         ;=======================================================
+                       =====================
+   43 00000000         ;
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   44 00000000         ;                             MODULE DEFINES
+   45 00000000         ;
+   46 00000000         ;=======================================================
+                       =====================
+   47 00000000         ;=======================================================
+                       =====================
+   48 00000000         ;
+   49 00000000         ;                             MODULE IMPORTS
+   50 00000000         ;
+   51 00000000         ;=======================================================
+                       =====================
+   52 00000000         ; Import the external symbols that are referenced in thi
+                       s module.
+   53 00000000                 IMPORT  fsbl_init
+   54 00000000         ;=======================================================
+                       =====================
+   55 00000000         ;
+   56 00000000         ;                             MODULE EXPORTS
+   57 00000000         ;
+   58 00000000         ;=======================================================
+                       =====================
+   59 00000000         ; Export the external symbols that are referenced in thi
+                       s module.
+   60 00000000                 EXPORT  fsbl_loop_here
+   61 00000000         ;=======================================================
+                       =====================
+   62 00000000         ;
+   63 00000000         ;                             MODULE DATA AREA
+   64 00000000         ;
+   65 00000000         ;=======================================================
+                       =====================
+   66 00000000         ;=======================================================
+                       ================
+   67 00000000         ;                       BOOT BLOCK DATA LOCATIONS
+   68 00000000         ;
+   69 00000000         ;  Locations and sizes of data areas in ROM and RAM are 
+                       imported from th
+   70 00000000         ;  linker and stored as data items that are used at runt
+                       ime by the boot
+   71 00000000         ;  kernel routines.
+   72 00000000         ;=======================================================
+                       ================
+   73 00000000         ; Data area is in RAM and location must be defined in sc
+                       atter load
+   74 00000000         ; file.          
+   75 00000000         ;-------------------------------------------------------
+                       -------------------
+   76 00000000         ; Function Dispatch table for  1  
+   77 00000000         ; Note: These functions are the interface between DBL/OS
+                       BL and  1 . 
+   78 00000000         ;-------------------------------------------------------
+                       -------------------
+   79 00000000                 PRESERVE8
+   80 00000000                 AREA    FSBL_FUNCTION_TABLE, DATA, READONLY
+   81 00000000 00000000        DCD     fsbl_init
+   82 00000004         ;=======================================================
+                       ===============
+   83 00000004         ;  1  code.
+   84 00000004         ;=======================================================
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+                       ===============
+   85 00000004                 AREA    FSBL_CODE, CODE, READONLY
+   86 00000000                 CODE32
+   87 00000000                 ENTRY
+   88 00000000         fsbl_loop_here
+   89 00000000         loophere
+   90 00000000 EAFFFFFE        b       loophere
+   91 00000004                 END
+Command Line: [C:\ARM\ADSv1_2\bin\armasm.exe -list ../../fsblobj_SBNAALZ/fsbl.l
+st -g -apcs /interwork -cpu ARM926EJ-S]

@@ -1,0 +1,31 @@
+#-------------------------------------------------------------------------------
+# Dialer App
+#-------------------------------------------------------------------------------
+DIALERAPP_SOURCES=\
+  DialerApp.c \
+  DialerDiag.c \
+  DialerNumEdit.c \
+  DialerNotif.c \
+  DialerCalling.c \
+  DialerIncoming.c \
+  DialerStatus.c \
+  DialerUtils.c \
+  DialerDlgManager.c \
+  DialerDetail.c \
+  DialerUSSD.c \
+  DialerSups.c
+        
+DIALERAPP_OBJS :=  $(addprefix $(TARGETDIR)/, $(DIALERAPP_SOURCES:%.c=%.o))
+$(DIALERAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+DIALERAPP_DEPS :=  $(addprefix $(TARGETDIR)/, $(DIALERAPP_SOURCES:%.c=%.dep))
+$(DIALERAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(DIALER) 
+vpath %.mif $(DIALER)
+vpath %.bar $(DIALER)/resources/en/256color
+
+CONSTFILE_FILES+=\
+        dialer.mif|fs:/mif/dialer.mif \
+        dialerapp.bar|fs:/mod/dialer/dialerapp.bar
+

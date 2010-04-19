@@ -1,0 +1,1 @@
+../../../dblobj_SBNAALZ/dbl_ram_data.o: ../../../../../../../core/boot/romboot/dbl/shared/src/dbl_ram_data.s

@@ -1,0 +1,7 @@
+..\..\fsblobj_SBNAALZ\fsbl_error_handler.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl_error_handler.c
+..\..\fsblobj_SBNAALZ\fsbl_error_handler.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl_error_handler.h
+..\..\fsblobj_SBNAALZ\fsbl_error_handler.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_error_handler.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_error_if.h
+..\..\fsblobj_SBNAALZ\fsbl_error_handler.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_error_handler.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl.h
+..\..\fsblobj_SBNAALZ\fsbl_error_handler.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h

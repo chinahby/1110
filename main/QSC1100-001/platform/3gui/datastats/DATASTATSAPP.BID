@@ -1,0 +1,7 @@
+#ifndef DATASTATS_BID
+#define DATASTATS_BID
+
+#define AEECLSID_DATASTATS    	0x01014fe4
+
+#endif //DATASTATS_BID
+

@@ -1,0 +1,20 @@
+#-------------------------------------------------------------------------------
+# FMRADIOAPP - FMRadio Application
+#-------------------------------------------------------------------------------
+
+FMRADIOAPP_SOURCES=\
+   FMRadioApp.c
+
+FMRADIOAPP_OBJS :=  $(addprefix $(TARGETDIR)/, $(FMRADIOAPP_SOURCES:%.c=%.o))
+$(FMRADIOAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+FMRADIOAPP_DEPS :=  $(addprefix $(TARGETDIR)/, $(FMRADIOAPP_SOURCES:%.c=%.dep))
+$(FMRADIOAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(FMRADIOAPP)	
+vpath %.bar $(FMRADIOAPP)/resources/en/256Color
+vpath %.mif $(FMRADIOAPP)
+
+CONSTFILE_FILES+=\
+	fmradioapp.mif|fs:/mif/fmradioapp.mif \
+	fmradioapp.bar|fs:/mod/fmradioapp/fmradioapp.bar

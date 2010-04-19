@@ -1,0 +1,19 @@
+#-------------------------------------------------------------------------------
+# Service Programming
+#-------------------------------------------------------------------------------
+SVCPRG_SOURCES=\
+	SvcPrgApp.c 
+        
+SVCPRG_OBJS :=  $(addprefix $(TARGETDIR)/, $(SVCPRG_SOURCES:%.c=%.o))
+$(SVCPRG_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+SVCPRG_DEPS :=  $(addprefix $(TARGETDIR)/, $(SVCPRG_SOURCES:%.c=%.dep))
+$(SVCPRG_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(SVCPRG)	
+vpath %.bar $(SVCPRG)/resources/en/256color
+vpath %.mif $(SVCPRG)
+
+CONSTFILE_FILES+=\
+	svcprog.mif|fs:/mif/svcprog.mif \
+	svcprg.bar|fs:/mod/svcprog/svcprg.bar

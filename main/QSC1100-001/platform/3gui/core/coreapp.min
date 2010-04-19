@@ -1,0 +1,187 @@
+#-------------------------------------------------------------------------------
+# COREAPP - Core Application
+#-------------------------------------------------------------------------------
+ifeq ($(USES_THINUI),yes)
+COREAPP_SOURCES=\
+        uixnv.c  \
+        ui_base.c \
+        ui_provisioning.c \
+        uiutils.c \
+        uixsnd.c \
+        ui_callctrl.c
+else
+
+ifeq ($(USES_UIONE),yes)
+
+COREAPP_SOURCES=\
+   uixnv.c  \
+   ui_base.c \
+   ui_provisioning.c \
+   uiutils.c \
+   uixsnd.c \
+   ui_callctrl.c \
+   core_ui.c \
+
+COREAPP_SOURCES_TO_REMOVE_SOON = \
+   AppComFunc.c \
+	audiodiag.c \
+	portmapdiag.c \
+
+COREAPP_SOURCES += $(COREAPP_SOURCES_TO_REMOVE_SOON)
+
+else
+
+ifeq ($(USES_MANGO_UI),yes)
+
+COREAPP_SOURCES=\
+	core_ui.c \
+        ui_base.c \
+	uixsnd.c \
+	uixnv.c \
+	audiodiag.c \
+	uiutils.c \
+	AppComFunc.c\
+	portmapdiag.c 
+
+else
+
+COREAPP_SOURCES=\
+	AppComFunc.c\
+	CoreApp.c\
+	CoreMenu.c\
+	CoreSecurity.c\
+	CoreStartApp.c \
+	CoreUtils.c \
+	CoreService.c \
+	audiodiag.c \
+	portmapdiag.c \
+	settingsdiag.c \
+	core_ui.c \
+        ui_base.c \
+        ui_provisioning.c \
+	uiutils.c \
+	uixnv.c \
+	uixsnd.c \
+        ui_callctrl.c
+endif 
+endif
+endif 
+# Remote API for ui_callctrl
+ifeq ($(USES_EXPORT_UI_CALLCTRL),yes)
+    UI_CALLCTRL_CLIENT_SOURCES = \
+    ui_callctrl_clnt.c \
+    ui_callctrl_xdr.c
+
+    UI_CALLCTRL_SERVER_SOURCES = \
+    ui_callctrl_svc.c \
+    ui_callctrl_xdr.c
+
+  UI_CALLCTRL_CLIENT_OBJS := $(addprefix $(TARGETDIR)/, $(UI_CALLCTRL_CLIENT_SOURCES:%.c=%.o))
+  UI_CALLCTRL_SERVER_OBJS := $(addprefix $(TARGETDIR)/, $(UI_CALLCTRL_SERVER_SOURCES:%.c=%.o))
+
+  vpath %.h $(COREAPP)
+  vpath %.c $(COREAPP_RPC)
+
+  ifneq ($(REMOTE_API_LOC_KNOWN),yes)
+    htorpc_ui_callctrl : REMOTE_API_LOC = $(COREAPP_RPC)
+  endif
+
+  HTORPC_DEPS += ui_callctrl
+
+  HTORPC_ui_callctrl_ARGS = -a ui_callctrl
+endif
+
+#REMOTE API for UIUTILS
+ifeq ($(USES_EXPORT_UIUTILS),yes)
+  UIUTILS_CLIENT_SOURCES = \
+    uiutils_clnt.c \
+    uiutils_xdr.c
+
+  UIUTILS_SERVER_SOURCES = \
+    uiutils_svc.c \
+    uiutils_xdr.c
+
+  UIUTILS_CLIENT_OBJS := $(addprefix $(TARGETDIR)/, $(UIUTILS_CLIENT_SOURCES:%.c=%.o))
+  UIUTILS_SERVER_OBJS := $(addprefix $(TARGETDIR)/, $(UIUTILS_SERVER_SOURCES:%.c=%.o))
+
+  vpath %.h $(COREAPP)
+  vpath %.c $(COREAPP_RPC)
+
+  ifneq ($(REMOTE_API_LOC_KNOWN),yes)
+    htorpc_uiutils : REMOTE_API_LOC = $(COREAPP_RPC)
+  endif
+
+  HTORPC_DEPS += uiutils
+
+  HTORPC_uiutils_ARGS = -a uiutils
+  
+endif
+
+COREAPP_OBJS :=  $(addprefix $(TARGETDIR)/, $(COREAPP_SOURCES:%.c=%.o))
+$(COREAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+$(TARGETDIR)/coreapp.lib : $(COREAPP_SOURCES)
+	$(group_c_compile)
+
+
+ifneq ($(USES_UIONE),yes)
+ifneq ($(USES_MANGO_UI),yes)
+# Owner: Coreapp
+vpath %.mif $(COREAPP)
+vpath %.c $(COREAPP)
+vpath %.bar $(COREAPP)/resources/en/256Color
+vpath %.mid $(COREAPP)/resources/en/256Color
+vpath %.wav $(COREAPP)/resources/en/256Color
+vpath %.mp3 $(COREAPP)/resources/en/256Color
+vpath %.aac $(COREAPP)/resources/en/256Color
+
+CONSTFILE_FILES+=\
+	coreapp.mif|fs:/mif/coreapp.mif \
+	corestartapp.mif|fs:/mif/corestartapp.mif \
+	coreapp.bar|fs:/mod/coreapp/coreapp.bar \
+	coreapp_qvga.bar|fs:/mod/coreapp/coreapp_qvga.bar \
+        72_poly_tester.mid|fs:/ringers/72_poly_tester.mid \
+	cmx43_mono_16_441.aac|fs:/ringers/cmx43_mono_16_441.aac \
+	CMX_16poly.mid|fs:/ringers/cmx_16poly.mid \
+	CMX_72poly.mid|fs:/ringers/cmx_72poly.mid \
+        walts2_32.mid|fs:/ringers/walts2_32.mid
+
+ifeq ($(USES_VGA_CONTENT),yes)        
+CONSTFILE_FILES+=\
+	coreapp_vga.bar|fs:/mod/coreapp/coreapp_vga.bar
+endif
+
+ifeq ($(USES_LARGE_MM_RINGERS),yes)        
+CONSTFILE_FILES+=\
+        CMX_Song.mp3|fs:/ringers/cmx_Song.mp3 \
+	goofy_128kbps.aac|fs:/ringers/goofy_128kbps.aac \
+	piano_128kbps.aac|fs:/ringers/piano_128kbps.aac \
+        waltz_128kbps.aac|fs:/ringers/waltz_128kbps.aac 
+endif
+else
+vpath %.c $(COREAPP)
+endif #USES_MANGO_UI
+else # USES_UIONE
+
+vpath %.c $(COREAPP)
+
+endif 
+
+# Owner: Videophone
+ifeq ($(USES_QVP),yes)
+vpath %.mif $(BREW_STATIC_MIFS)
+vpath %.bar $(VIDEOPHONE)/resources/en/256color
+
+CONSTFILE_FILES+=\
+	videophone.mif|fs:/mif/videophone.mif \
+        videophone.bar|fs:/mod/videophone/videophone.bar
+endif
+
+# Owner: forms and widgets: lib_buit.min
+ifdef $(BUIT_LIB)
+vpath %.mif $(BUIT_LIB)
+CONSTFILE_FILES +=\
+	forms.mif|fs:/mif/forms.mif
+        widgets.mif|fs:/mif/widgets.mif
+endif
+

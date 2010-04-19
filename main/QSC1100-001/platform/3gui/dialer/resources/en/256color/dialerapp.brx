@@ -1,0 +1,2622 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="dialerapp" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_WILDCARD_TITLE">
+		<Text>Fill in Wildcards</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_SAVE">
+		<Text>Save</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_ADDTO">
+		<Text>Add To...</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_FIND">
+		<Text>Find</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_INSERT">
+		<Text>Insert</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_SENDSMS">
+		<Text>Send SMS</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_BLOCKID">
+		<Text>Block ID</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_END">
+		<Text>End</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_ANSWER">
+		<Text>Answer</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_REJECT">
+		<Text>Reject</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_OPTIONS">
+		<Text>Options</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_DEFLECT">
+		<Text>Deflect</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_SILENCE">
+		<Text>Silence</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_PHONEBOOK">
+		<Text>Phone Book</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_INFO">
+		<Text>Info</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_MUTE">
+		<Text>Mute</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_PLEASEDIAL">
+		<Text>Please Dial a Number Before Performing this Operation</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_SWITCH">
+		<Text>Switch</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_ADD">
+		<Text>Add</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_CANCEL">
+		<Text>Cancel</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_SAVESIM">
+		<Text>Save to UIM</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_FORWARD">
+		<Text>Forward</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_SEND">
+		<Text>Send</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_SUPS_COMPLETE">
+		<Text>Supplementary Service Completed.</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_REQUESTING">
+		<Text>Operation Requesting...</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_CALLING">
+		<Text>Calling</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_INCOMINGCALL">
+		<Text>Incoming Call</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_SWAP">
+		<Text>Swap</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_BUSY">
+		<Text>Busy</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_REDIRECT">
+		<Text>Redirect</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_SS">
+		<Text>Supplementary Services</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_ENDHELD">
+		<Text>End Held</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_ENDACTIVE">
+		<Text>End Active</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_EBADSTATE">
+		<Text>Attempted operation has failed due to a bad state</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_UNHOLD">
+		<Text>Unhold</Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_PRIVATE">
+		<Text>Private </Text>
+	</STRING>
+	<STRING Id="38" Name="IDS_CONFERENCE">
+		<Text>Conference</Text>
+	</STRING>
+	<STRING Id="39" Name="IDS_SSINCOMPLETE">
+		<Text>Incomplete SS String</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_ALLOWCALLWAITING">
+		<Text>Allow Call Waiting</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_SAVENEW">
+		<Text>Save New</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_SAVETO">
+		<Text>Save To</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_INCOMOPTIONSTITLE">
+		<Text>Incoming Call Options</Text>
+	</STRING>
+	<STRING Id="44" Name="IDS_TRANSFER">
+		<Text>Transfer</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_CALLOPTIONSTITLE">
+		<Text>Call Options</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_NOACTIVE">
+		<Text>No Calls Active</Text>
+	</STRING>
+	<STRING Id="47" Name="IDS_CALLONHOLD">
+		<Text>Call is On Hold</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_UNKNOWN">
+		<Text>Unknown ID</Text>
+	</STRING>
+	<STRING Id="49" Name="IDS_HOLD">
+		<Text>Hold</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_STATUSTITLE">
+		<Text>Call Status</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_CALLCONNECTED">
+		<Text>Call is Connected</Text>
+	</STRING>
+	<STRING Id="52" Name="IDS_CALLENDED">
+		<Text>Call has Ended</Text>
+	</STRING>
+	<STRING Id="53" Name="IDS_SSWIZARD">
+		<Text>SS Wizard</Text>
+	</STRING>
+	<STRING Id="54" Name="IDS_ENTERPASS">
+		<Text>Enter Password</Text>
+	</STRING>
+	<STRING Id="55" Name="IDS_ACCEPT">
+		<Text>Accept</Text>
+	</STRING>
+	<STRING Id="56" Name="IDS_CALL_FAIL_NO_SRV">
+		<Text>No Service Currently Available</Text>
+	</STRING>
+	<STRING Id="57" Name="IDS_CALL_FAIL_TEMP">
+		<Text>Please Try Again</Text>
+	</STRING>
+	<STRING Id="58" Name="IDS_CALL_FAIL_NO_FUNDS">
+		<Text>No Funds Available</Text>
+	</STRING>
+	<STRING Id="59" Name="IDS_CALL_FAIL_CDMA_LOCK">
+		<Text>Maintenance Required</Text>
+	</STRING>
+	<STRING Id="60" Name="IDS_CALL_FAIL_UIM_NOT_PRESENT">
+		<Text>R-UIM Not Present</Text>
+	</STRING>
+	<STRING Id="61" Name="IDS_CALL_FAIL_RETRY_ORDER">
+		<Text>Retry Order</Text>
+	</STRING>
+	<STRING Id="62" Name="IDS_CALL_FAIL_REJECTED">
+		<Text>Rejected By Facility</Text>
+	</STRING>
+	<STRING Id="63" Name="IDS_CALL_FAIL_CALL_BARRED">
+		<Text>Call BarRed</Text>
+	</STRING>
+	<STRING Id="64" Name="IDS_CALL_FAIL_USER_BUSY">
+		<Text>User Busy</Text>
+	</STRING>
+	<STRING Id="65" Name="IDS_CALL_FAIL_NUMBER_CHANGED">
+		<Text>Number Changed</Text>
+	</STRING>
+	<STRING Id="66" Name="IDS_CALL_FAIL_INVALID_NUMBER_FORMAT">
+		<Text>Invalid Number Format</Text>
+	</STRING>
+	<STRING Id="67" Name="IDS_CALL_FAIL_SRV_NOT_SUB">
+		<Text>Service Not Subscribed</Text>
+	</STRING>
+	<STRING Id="68" Name="IDS_CALL_FAIL_INCOMING_CALL_BARRED_WITHIN_CUG">
+		<Text>Incoming Call Barred Within CUG</Text>
+	</STRING>
+	<STRING Id="69" Name="IDS_CALL_FAIL_USER_NOT_MEMBER_OF_CUG">
+		<Text>User Not in CUG</Text>
+	</STRING>
+	<STRING Id="70" Name="IDS_CALL_FAIL_UNKNOWN_IMSI">
+		<Text>Unknown IMSI</Text>
+	</STRING>
+	<STRING Id="71" Name="IDS_CALL_FAIL_ILLEGAL_VALUES">
+		<Text>Illegal Values</Text>
+	</STRING>
+	<STRING Id="72" Name="IDS_CALL_FAIL_UNKNOWN_MS">
+		<Text>Unknown MS</Text>
+	</STRING>
+	<STRING Id="73" Name="IDS_CALL_FAIL_SRV_NOT_ALLOWED">
+		<Text>Service Not Allowed</Text>
+	</STRING>
+	<STRING Id="74" Name="IDS_CALL_FAIL_IMPLICITLY_DETACHED">
+		<Text>Implicitly Detached</Text>
+	</STRING>
+	<STRING Id="75" Name="IDS_CALL_FAIL_SRV_NOT_SUP">
+		<Text>Service Not Supported</Text>
+	</STRING>
+	<STRING Id="76" Name="IDS_CALL_FAIL_SRV_OUT_OF_ORDER">
+		<Text>Service Option Out of Order</Text>
+	</STRING>
+	<STRING Id="77" Name="IDS_CALL_FAIL_CALL_NOT_IDENTIFIED">
+		<Text>Call Not Identified</Text>
+	</STRING>
+	<STRING Id="78" Name="IDS_CALL_FAIL_NO_PDP_CONTEXT">
+		<Text>No PDP Context</Text>
+	</STRING>
+	<STRING Id="79" Name="IDS_CALL_FAIL_INVALID_MESSAGE">
+		<Text>Invalid Message</Text>
+	</STRING>
+	<STRING Id="80" Name="IDS_NOT_PROVISIONED">
+		<Text>Not Provisioned</Text>
+	</STRING>
+	<STRING Id="81" Name="IDS_NOT_REGISTERED">
+		<Text>Not Registered</Text>
+	</STRING>
+	<STRING Id="82" Name="IDS_ACTIVATED">
+		<Text>Activated</Text>
+	</STRING>
+	<STRING Id="83" Name="IDS_DEACTIVATED">
+		<Text>Deactivated</Text>
+	</STRING>
+	<STRING Id="84" Name="IDS_ERASED">
+		<Text>Erased</Text>
+	</STRING>
+	<STRING Id="85" Name="IDS_FAILED">
+		<Text>Failed</Text>
+	</STRING>
+	<STRING Id="86" Name="IDS_REGISTERATION">
+		<Text>Registration</Text>
+	</STRING>
+	<STRING Id="87" Name="IDS_PASSWORD_CONFIRMATION">
+		<Text>Password Confirmation</Text>
+	</STRING>
+	<STRING Id="88" Name="IDS_ERASE">
+		<Text>Erase</Text>
+	</STRING>
+	<STRING Id="89" Name="IDS_DEACTIVATION">
+		<Text>Deactivation</Text>
+	</STRING>
+	<STRING Id="90" Name="IDS_FOR">
+		<Text>For</Text>
+	</STRING>
+	<STRING Id="91" Name="IDS_SS_INVALID_MODE">
+		<Text>Invalid Mode</Text>
+	</STRING>
+	<STRING Id="92" Name="IDS_PINS_DO_NOT_MATCH">
+		<Text>Pins do not match</Text>
+	</STRING>
+	<STRING Id="93" Name="IDS_PLEASE_TRY_AGAIN">
+		<Text>Please try again</Text>
+	</STRING>
+	<STRING Id="94" Name="IDS_PASSWORD_CONFIRMED">
+		<Text>Password Confirmed</Text>
+	</STRING>
+	<STRING Id="95" Name="IDS_REQUEST_NOT_COMPLETED">
+		<Text>Request Not Completed</Text>
+	</STRING>
+	<STRING Id="96" Name="IDS_MY_CALLER_ID_SHOW_CALLER_ID">
+		<Text>My Caller ID Show Caller ID</Text>
+	</STRING>
+	<STRING Id="97" Name="IDS_SS_MI_VOICE_ACTIVE">
+		<Text>All Voice Active</Text>
+	</STRING>
+	<STRING Id="98" Name="IDS_SS_MI_VOICE_INACTIVE">
+		<Text>All Voice InActive</Text>
+	</STRING>
+	<STRING Id="99" Name="IDS_SS_MI_FAX_ACTIVE">
+		<Text>All Fax Active </Text>
+	</STRING>
+	<STRING Id="100" Name="IDS_SS_MI_FAX_INACTIVE">
+		<Text>All Fax Inactive</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_SS_MT_SERVICE_PROGRAMMING">
+		<Text>Service Programming</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_SS_MT_SSO">
+		<Text>Supplementary Service Operation</Text>
+	</STRING>
+	<STRING Id="103" Name="IDS_SS_MI_BEARER_ACTIVE">
+		<Text>All Bearer Active</Text>
+	</STRING>
+	<STRING Id="104" Name="IDS_SS_MI_BEARED_INACTIVE">
+		<Text>All Bearer InActive</Text>
+	</STRING>
+	<STRING Id="106" Name="IDS_ERROR_AEESYS_UNKNOWN_SUBR">
+		<Text>Unknown Subscriber</Text>
+	</STRING>
+	<STRING Id="107" Name="IDS_ERROR_AEESYS_ILLEGAL_SUBS">
+		<Text>Illegal Subscription</Text>
+	</STRING>
+	<STRING Id="108" Name="IDS_ERROR_AEESYS_BR_SRV_NOT_PRV">
+		<Text>Bearer Service Not Provision</Text>
+	</STRING>
+	<STRING Id="109" Name="IDS_ERROR_AEESYS_ILLEGAL_EQUIP">
+		<Text>Illegal Equipment</Text>
+	</STRING>
+	<STRING Id="110" Name="IDS_ERROR_AEESYS_TELE_SRV_NOT_PRV">
+		<Text>Tele Service Not Provision</Text>
+	</STRING>
+	<STRING Id="111" Name="IDS_SS_MT_CALL_FORWARDING">
+		<Text>Call Forwarding</Text>
+	</STRING>
+	<STRING Id="112" Name="IDS_SS_MT_CF_SERVICEGROUP">
+		<Text>Call Forwarding Service Groups</Text>
+	</STRING>
+	<STRING Id="113" Name="IDS_ERROR_AEESYS_CALL_BARRED">
+		<Text>Call Bared</Text>
+	</STRING>
+	<STRING Id="114" Name="IDS_ERROR_AEESYS_ILLEGAL_SS_OP">
+		<Text>Illegal SS Operation</Text>
+	</STRING>
+	<STRING Id="115" Name="IDS_ERROR_AEESYS_SS_ERR_STATUS">
+		<Text>SS Error Status</Text>
+	</STRING>
+	<STRING Id="116" Name="IDS_ERROR_AEESYS_SS_NOT_AVAIL">
+		<Text>SS Not Available</Text>
+	</STRING>
+	<STRING Id="117" Name="IDS_ERROR_AEESYS_SS_SUBR_VIOLATION">
+		<Text>SS Subscriber Violation</Text>
+	</STRING>
+	<STRING Id="118" Name="IDS_ERROR_AEESYS_SS_INCOMPATIBLE">
+		<Text>SS Incompatible</Text>
+	</STRING>
+	<STRING Id="119" Name="IDS_ERROR_AEESYS_FACILITY_NOT_SUPP">
+		<Text>Facility Not Suppported</Text>
+	</STRING>
+	<STRING Id="120" Name="IDS_ERROR_AEESYS_ABSENT_SUBR">
+		<Text>Absent Subscriber</Text>
+	</STRING>
+	<STRING Id="121" Name="IDS_ERROR_AEESYS_SHORT_TERM_DENIAL">
+		<Text>Short Term Denial</Text>
+	</STRING>
+	<STRING Id="122" Name="IDS_SS_MT_CFU_ACTIVATE">
+		<Text>Call Forwarding Unconditional Activate</Text>
+	</STRING>
+	<STRING Id="123" Name="IDS_SS_MT_CFU_DEACTIVATE">
+		<Text>Call Forwarding Unconditional Deactivate</Text>
+	</STRING>
+	<STRING Id="124" Name="IDS_SS_MT_CFU_CHECKSTATUS">
+		<Text>Call Forwarding Unconditional Check Status</Text>
+	</STRING>
+	<STRING Id="125" Name="IDS_SS_MT_CFU_ERASE">
+		<Text>Call Forwarding Unconditional Erase</Text>
+	</STRING>
+	<STRING Id="126" Name="IDS_ERROR_AEESYS_LONG_TERM_DENIAL">
+		<Text>Long Term Denial</Text>
+	</STRING>
+	<STRING Id="127" Name="IDS_ERROR_AEESYS_SYSTEM_FAILURE">
+		<Text>System Failure</Text>
+	</STRING>
+	<STRING Id="128" Name="IDS_ERROR_AEESYS_DATA_MISSING">
+		<Text>Data Missing</Text>
+	</STRING>
+	<STRING Id="129" Name="IDS_ERROR_AEESYS_UNEXPT_DATA_VALUE">
+		<Text>Unexpected Data Value</Text>
+	</STRING>
+	<STRING Id="130" Name="IDS_ERROR_AEESYS_PWD_REG_FAILURE">
+		<Text>Password Registration Failure</Text>
+	</STRING>
+	<STRING Id="131" Name="IDS_SS_MT_CFNR_TIMER">
+		<Text>Call Forwarding On No Reply Timer</Text>
+	</STRING>
+	<STRING Id="132" Name="IDS_SS_MT_CFNR_SERVICEGROUP">
+		<Text>Call Forwarding On No Reply Service Group</Text>
+	</STRING>
+	<STRING Id="133" Name="IDS_SS_MT_CFNR_ACTIVATE">
+		<Text>Call Forwarding On No Reply Activate</Text>
+	</STRING>
+	<STRING Id="134" Name="IDS_SS_MT_CFNR_DEACTIVATE">
+		<Text>Call Forwarding On No Reply Deactivate</Text>
+	</STRING>
+	<STRING Id="135" Name="IDS_SS_MT_CFNR_CHECKSTATUS">
+		<Text>Call Forwarding On No Reply Check Status</Text>
+	</STRING>
+	<STRING Id="136" Name="IDS_SS_MT_CFNR_ERASE">
+		<Text>Call Forwarding On No Reply Erase</Text>
+	</STRING>
+	<STRING Id="137" Name="IDS_ERROR_AEESYS_NEGATIVE_PWD_CHECK">
+		<Text>Negative Password Check</Text>
+	</STRING>
+	<STRING Id="138" Name="IDS_ERROR_AEESYS_MAX_PWD_ATTEMPTS">
+		<Text>Max Password Attempts</Text>
+	</STRING>
+	<STRING Id="139" Name="IDS_ERROR_AEESYS_POS_METHOD_FAILURE">
+		<Text>Position Method Failure</Text>
+	</STRING>
+	<STRING Id="140" Name="IDS_ERROR_AEESYS_UNKNOWN_ALPHABET">
+		<Text>Unknown Alphabet</Text>
+	</STRING>
+	<STRING Id="141" Name="IDS_SS_MT_CW_SERVICEGROUP">
+		<Text>Call Waiting Service Groups</Text>
+	</STRING>
+	<STRING Id="142" Name="IDS_ERROR_AEESYS_USSD_BUSY">
+		<Text>USSD Busy</Text>
+	</STRING>
+	<STRING Id="143" Name="IDS_ERROR_AEESYS_REJ_BY_USER">
+		<Text>Rejected By User</Text>
+	</STRING>
+	<STRING Id="144" Name="IDS_ERROR_AEESYS_REJ_BY_NETWORK">
+		<Text>Rejected By Network</Text>
+	</STRING>
+	<STRING Id="145" Name="IDS_ERROR_AEESYS_DEF_TO_SRV_SUBR">
+		<Text>Deflection To Service Subscriber</Text>
+	</STRING>
+	<STRING Id="146" Name="IDS_ERROR_AEESYS_SPECIAL_SRV_CODE">
+		<Text>Special Service Code</Text>
+	</STRING>
+	<STRING Id="147" Name="IDS_ERROR_AEESYS_INVALID_DEF_TO_NUM">
+		<Text>Invalid Deflection to Number</Text>
+	</STRING>
+	<STRING Id="148" Name="IDS_ERROR_AEESUSP_MAX_MPTY_EXCEEDED">
+		<Text>Max Multiparty Exceeded</Text>
+	</STRING>
+	<STRING Id="149" Name="IDS_ERROR_AEESYS_RES_NOT_AVAILABLE">
+		<Text>Response Not Available</Text>
+	</STRING>
+	<STRING Id="150" Name="IDS_ERROR_AEESYS_UNRECOGNISED_COMPONENT">
+		<Text>Unrecognised Component</Text>
+	</STRING>
+	<STRING Id="151" Name="IDS_SS_MT_CALL_BARRING">
+		<Text>Call Barring</Text>
+	</STRING>
+	<STRING Id="152" Name="IDS_SS_MT_CB_ACTIVATE">
+		<Text>Call Barring Activate</Text>
+	</STRING>
+	<STRING Id="153" Name="IDS_SS_MT_CB_DEACTIVATE">
+		<Text>Call Barring Deactivate</Text>
+	</STRING>
+	<STRING Id="154" Name="IDS_SS_MT_CB_CHECKSTATUS">
+		<Text>Call Barring Check Status</Text>
+	</STRING>
+	<STRING Id="155" Name="IDS_SS_MT_CB_SERVICEGROUP">
+		<Text>Call Barring Service Groups</Text>
+	</STRING>
+	<STRING Id="156" Name="IDS_ERROR_AEESYS_MISTYPED_COMPONENT">
+		<Text>Mistyped Component</Text>
+	</STRING>
+	<STRING Id="157" Name="IDS_ERROR_AEESYS_BADLY_STRUCTURED_COMPONENT">
+		<Text>Badly Structured Component</Text>
+	</STRING>
+	<STRING Id="158" Name="IDS_ERROR_AEESYS_DUPLICATE_INVOKE_ID">
+		<Text>Duplicate Invoke ID</Text>
+	</STRING>
+	<STRING Id="159" Name="IDS_ERROR_AEESYS_UNRECOGNISED_OPERATION">
+		<Text>Unrecognised Operation</Text>
+	</STRING>
+	<STRING Id="160" Name="IDS_ERROR_AEESYS_MISTYPED_PARAMETER">
+		<Text>Mistyped Parameter</Text>
+	</STRING>
+	<STRING Id="161" Name="IDS_SS_MT_CALLERID">
+		<Text>Caller Identification</Text>
+	</STRING>
+	<STRING Id="162" Name="IDS_ERROR_AEESYS_RESOURCE_LIMITATION">
+		<Text>Resource Limitation</Text>
+	</STRING>
+	<STRING Id="163" Name="IDS_ERROR_AEESYS_INITIATING_RELEASE">
+		<Text>Initiating Release</Text>
+	</STRING>
+	<STRING Id="164" Name="IDS_ERROR_AEESYS_UNRECOGNISED_LINKED_ID">
+		<Text>Unrecognised Linked ID</Text>
+	</STRING>
+	<STRING Id="165" Name="IDS_ERROR_AEESYS_LINKED_RESPONSE_UNEXPECTED">
+		<Text>Linked Response Unexpected</Text>
+	</STRING>
+	<STRING Id="166" Name="IDS_ERROR_AEESYS_UNEXPECTED_LINKED_OPERATION">
+		<Text>Unexpected Linked Operation</Text>
+	</STRING>
+	<STRING Id="167" Name="IDS_ERROR_AEESYS_UNRECOGNISED_INVOKE_ID">
+		<Text>Unrecognised Invoke ID</Text>
+	</STRING>
+	<STRING Id="168" Name="IDS_ERROR_AEESYS_RETURN_RESULT_UNEXPECTED">
+		<Text>Return Result Unexpected</Text>
+	</STRING>
+	<STRING Id="169" Name="IDS_ERROR_AEESYS_RETURN_RESULT_MISTYPED_PARAMETER">
+		<Text>Return Result Mistyped Parameter</Text>
+	</STRING>
+	<STRING Id="170" Name="IDS_ERROR_AEESYS_RETURN_ERROR_UNRECOGNISED_INVOKE_ID">
+		<Text>Return Error Unrecognised Invoke ID</Text>
+	</STRING>
+	<STRING Id="171" Name="IDS_ERROR_AEESYS_RETURN_ERROR_UNEXPECTED">
+		<Text>Return Error Unexpected</Text>
+	</STRING>
+	<STRING Id="172" Name="IDS_ERROR_AEESYS_UNRECOGNISED_ERROR">
+		<Text>Unrecognised Error</Text>
+	</STRING>
+	<STRING Id="173" Name="IDS_ERROR_AEESYS_UNEXPECTED_ERROR">
+		<Text>Unexpected Error</Text>
+	</STRING>
+	<STRING Id="174" Name="IDS_ERROR_AEESYS_RETURN_ERROR_MISTYPED_PARAMETER">
+		<Text>Return Error Mistyped Parameter</Text>
+	</STRING>
+	<STRING Id="175" Name="IDS_ERROR_AEESYS_MN_INSUFFICIENT_RESOURCES">
+		<Text>Lower Layer Insufficient Resources</Text>
+	</STRING>
+	<STRING Id="176" Name="IDS_ERROR_AEESYS_MN_SPLIT_MPTY_REJ">
+		<Text>Lower Layer Split Multiparty Reject</Text>
+	</STRING>
+	<STRING Id="177" Name="IDS_ERROR_AEESYS_MN_CALL_HOLD_REJ">
+		<Text>Lower Layer Call Hold Reject</Text>
+	</STRING>
+	<STRING Id="178" Name="IDS_ERROR_AEESYS_MN_CALL_RETRIEVE_REJ">
+		<Text>Lower Layer Call Retrieve Reject</Text>
+	</STRING>
+	<STRING Id="179" Name="IDS_ERROR_AEESYS_MN_NETWORK_NOT_RESPONDING">
+		<Text>Lower Layer Network Not Responding</Text>
+	</STRING>
+	<STRING Id="180" Name="IDS_ERROR_AEESYS_NO_ERR">
+		<Text>No Error</Text>
+	</STRING>
+	<STRING Id="181" Name="IDS_ERROR_AEESYS_CALL_BARRED_ERR">
+		<Text>Call Barred Error</Text>
+	</STRING>
+	<STRING Id="182" Name="IDS_ERROR_AEESYS_SUBSCRIPTION_VIOLATION_ERR">
+		<Text>Subscription Violation Error</Text>
+	</STRING>
+	<STRING Id="183" Name="IDS_ERROR_AEESYS_SS_INCOMPATIBILITY_ERR">
+		<Text>SS Incompatibility Error</Text>
+	</STRING>
+	<STRING Id="184" Name="IDS_ERROR_AEESYS_ABSENT_SUBSCRIBER_ERR">
+		<Text>Absent Subscriber Error</Text>
+	</STRING>
+	<STRING Id="185" Name="IDS_ERROR_AEESYS_SYSTEM_FAILURE_ERR">
+		<Text>System Failure Error</Text>
+	</STRING>
+	<STRING Id="186" Name="IDS_ERROR_AEESYS_PW_REG_FAILURE_ERR">
+		<Text>Password Registration Failure Error</Text>
+	</STRING>
+	<STRING Id="187" Name="IDS_ERROR_AEESYS_UNKNOWN_ERR">
+		<Text>Unknown Error</Text>
+	</STRING>
+	<STRING Id="188" Name="IDS_ERROR">
+		<Text>Error</Text>
+	</STRING>
+	<STRING Id="189" Name="IDS_DTMFSENT">
+		<Text>DTMF Sent</Text>
+	</STRING>
+	<STRING Id="190" Name="IDS_DTMFREMAINING">
+		<Text>DTMF Remaining</Text>
+	</STRING>
+	<STRING Id="191" Name="IDS_SS_SS_CB_BOC">
+		<Text>Barring Outgoing Calls</Text>
+	</STRING>
+	<STRING Id="192" Name="IDS_SS_SS_CB_BIC">
+		<Text>Barring Incoming Calls</Text>
+	</STRING>
+	<STRING Id="193" Name="IDS_SS_MI_BOC">
+		<Text>Barring Outgoing Calls</Text>
+	</STRING>
+	<STRING Id="194" Name="IDS_SS_MI_BIC">
+		<Text>Barring Incoming Calls</Text>
+	</STRING>
+	<STRING Id="195" Name="IDS_SS_SS_SG_CB_BOC_ACTIVATE">
+		<Text>Call Barring BOC Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="196" Name="IDS_SS_SS_SG_CB_BOC_DEACTIVATE">
+		<Text>Call Barring BOC Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="197" Name="IDS_SS_SS_SG_CB_BOC_CHECKSTATUS">
+		<Text>Call Barring BOC Check Statsu - Service Groups</Text>
+	</STRING>
+	<STRING Id="198" Name="IDS_SS_SS_SG_CB_BOC_ERASE">
+		<Text>Call Barring BOC  Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="199" Name="IDS_SS_SS_SG_CB_BIC_ACTIVATE">
+		<Text>Call Barring BIC Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="200" Name="IDS_SS_SS_SG_CB_BIC_DEACTIVATE">
+		<Text>Call Barring BIC Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="201" Name="IDS_SS_SS_CFU">
+		<Text>Call Forwarding Unconditional</Text>
+	</STRING>
+	<STRING Id="202" Name="IDS_SS_SS_CFU_REGISTER">
+		<Text>Call Forwarding Unconditional          Register</Text>
+	</STRING>
+	<STRING Id="203" Name="IDS_SS_SS_CFNR">
+		<Text>Call Forwarding on No Reply</Text>
+	</STRING>
+	<STRING Id="204" Name="IDS_SS_SS_CFNR_REGISTER">
+		<Text>Call Forwarding on No Reply Register</Text>
+	</STRING>
+	<STRING Id="205" Name="IDS_SS_SS_CALL_WAITING">
+		<Text>Call Waiting</Text>
+	</STRING>
+	<STRING Id="206" Name="IDS_SS_SS_SG_CB_BIC_CHECKSTATUS">
+		<Text>Call Barring BIC Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="207" Name="IDS_SS_SS_PASSWORD">
+		<Text>Password</Text>
+	</STRING>
+	<STRING Id="208" Name="IDS_SS_SS_SG_CB_BIC_ERASE">
+		<Text>Call Barring BIC Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="209" Name="IDS_SS_SS_FORWARDTO">
+		<Text>Forward To :</Text>
+	</STRING>
+	<STRING Id="210" Name="IDS_SS_SS_CHANGE_PASSWORD">
+		<Text>Change Password</Text>
+	</STRING>
+	<STRING Id="211" Name="IDS_SS_SS_OLD_PASSWORD">
+		<Text>Enter Old Password</Text>
+	</STRING>
+	<STRING Id="212" Name="IDS_SS_SS_NEW_PASSWORD">
+		<Text>Enter New Password</Text>
+	</STRING>
+	<STRING Id="213" Name="IDS_SS_SS_REENTER_PASSWORD">
+		<Text>Re-enter New Password</Text>
+	</STRING>
+	<STRING Id="214" Name="IDS_SS_SS_CF_ONMOBILEBUSY">
+		<Text>Call Forwarding On Mobile Busy</Text>
+	</STRING>
+	<STRING Id="215" Name="IDS_SS_SS_CF_ONMOBILENOTREACHABLE">
+		<Text>Call Forwarding on Mobile Not Reachable</Text>
+	</STRING>
+	<STRING Id="216" Name="IDS_SS_SS_CF_ONMOBILEBUSY_REGISTER">
+		<Text>Call Forwarding On Mobile Busy Register</Text>
+	</STRING>
+	<STRING Id="217" Name="IDS_SS_SS_CF_ONMOBILENOTREACHABLE_REGISTER">
+		<Text>Call Forwarding on Mobile Not Reachable Register</Text>
+	</STRING>
+	<STRING Id="218" Name="IDS_SS_SS_CB">
+		<Text>Call Barring </Text>
+	</STRING>
+	<STRING Id="219" Name="IDS_SS_SS_SG_CF_ONMOBILEBUSY_ACTIVATE">
+		<Text>Call Forwarding on Mobile Busy Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="220" Name="IDS_SS_SS_SG_CF_ONMOBILEBUSY_DEACTIVATE">
+		<Text>Call Forwarding on Mobile Busy Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="221" Name="IDS_SS_SS_SG_CF_ONMOBILEBUSY_CHECKSTATUS">
+		<Text>Call Forwarding on Mobile Busy Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="222" Name="IDS_SS_SS_SG_CF_ONMOBILEBUSY_ERASE">
+		<Text>Call Forwarding on Mobile Busy Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="223" Name="IDS_SS_SS_SG_CF_ONMOBILENOTREACHABLE_ACTIVATE">
+		<Text>Call Forwarding on Mobile Not Reachable Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="224" Name="IDS_SS_SS_SG_CF_ONMOBILENOTREACHABLE_DEACTIVATE">
+		<Text>Call Forwarding on Mobile Not Reachable Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="225" Name="IDS_SS_SS_SG_CF_ONMOBILENOTREACHABLE_CHECKSTATUS">
+		<Text>Call Forwarding on Mobile Not Reachable Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="226" Name="IDS_SS_SS_SG_CF_ONMOBILENOTREACHABLE_ERASE">
+		<Text>Call Forwarding on Mobile Not Reachable Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="227" Name="IDS_SS_SS_SG_CF_ONNOREPLY_ACTIVATE">
+		<Text>Call Forwarding on No Reply Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="228" Name="IDS_SS_SS_SG_CF_ONNOREPLY_DEACTIVATE">
+		<Text>Call Forwarding on No Reply Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="229" Name="IDS_SS_SS_SG_CF_ONNOREPLY_CHECKSTATUS">
+		<Text>Call Forwarding on No Reply Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="230" Name="IDS_SS_SS_SG_CF_ONNOREPLY_ERASE">
+		<Text>Call Forwarding on No Reply Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="231" Name="IDS_SS_SS_SG_CFU_ACTIVATE">
+		<Text>Call Forwarding Unconditional Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="232" Name="IDS_SS_SS_SG_CFU_DEACTIVATE">
+		<Text>Call Forwarding Unconditional Deactivate Service Groups</Text>
+	</STRING>
+	<STRING Id="233" Name="IDS_SS_SS_SG_CFU_CHECKSTATUS">
+		<Text>Call Forwarding Unconditional Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="234" Name="IDS_SS_SS_SG_CFU_ERASE">
+		<Text>Call Forwarding Unconditional Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="235" Name="IDS_SS_SS_SG_CW_ACTIVATE">
+		<Text>Call Waiting Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="236" Name="IDS_SS_SS_SG_CW_DEACTIVATE">
+		<Text>Call Waiting Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="237" Name="IDS_SS_SS_SG_CW_CHECKSTATUS">
+		<Text>Call Waiting Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="238" Name="IDS_SS_SS_SG_CB_BAOC_ACTIVATE">
+		<Text>Call Barring BAOC Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="239" Name="IDS_SS_SS_SG_CB_BAOC_DEACTIVATE">
+		<Text>Call Barring BAOC Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="240" Name="IDS_SS_SS_SG_CB_BAOC_CHECKSTATUS">
+		<Text>Call Barring BAOC Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="241" Name="IDS_SS_SS_SG_CB_BAOC_ERASE">
+		<Text>Call Barring BAOC Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="242" Name="IDS_SS_SS_SG_CB_BOIC_ACTIVATE">
+		<Text>Call Barring BOIC Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="243" Name="IDS_SS_SS_SG_CB_BOIC_DEACTIVATE">
+		<Text>Call Barring BOIC Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="244" Name="IDS_SS_SS_SG_CB_BOIC_CHECKSTATUS">
+		<Text>Call Barring BOIC Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="245" Name="IDS_SS_SS_SG_CB_BOIC_ERASE">
+		<Text>Call Barring BOIC Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="246" Name="IDS_SS_SS_SG_CB_BOICX_ACTIVATE">
+		<Text>Call Barring BOICX Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="247" Name="IDS_SS_SS_SG_CB_BOICX_DEACTIVATE">
+		<Text>Call Barring BOICX  Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="248" Name="IDS_SS_SS_SG_CB_BOICX_CHECKSTATUS">
+		<Text>Call Barring BOICX Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="249" Name="IDS_SS_SS_SG_CB_BOICX_ERASE">
+		<Text>Call Barring BOICX Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="250" Name="IDS_SS_SS_SG_CB_BAIC_ACTIVATE">
+		<Text>Call Barring BAIC Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="251" Name="IDS_SS_SS_SG_CB_BAIC_DEACTIVATE">
+		<Text>Call Barring BAIC Deactivate Service Groups</Text>
+	</STRING>
+	<STRING Id="252" Name="IDS_SS_SS_SG_CB_BAIC_CHECKSTATUS">
+		<Text>Call Barring BAIC Check Staut -Service Groups</Text>
+	</STRING>
+	<STRING Id="253" Name="IDS_SS_SS_SG_CB_BAIC_ERASE">
+		<Text>Call Barring BAIC Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="254" Name="IDS_SS_SS_SG_CB_BAICX_ACTIVATE">
+		<Text>Call Barring BAICX Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="255" Name="IDS_SS_SS_SG_CB_BAICX_DEACTIVATE">
+		<Text>Call Barring BAICX Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="256" Name="IDS_SS_SS_SG_CB_BAICX_CHECKSTATUS">
+		<Text>Call Barring BAICX Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="257" Name="IDS_SS_SS_SG_CB_BAICX_ERASE">
+		<Text>Call Barring BAICX Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="258" Name="IDS_SS_SS_SG_CB_BAC_ACTIVATE">
+		<Text>Call Barring BAC Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="259" Name="IDS_SS_SS_SG_CB_BAC_DEACTIVATE">
+		<Text>Call Barring BAC Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="260" Name="IDS_SS_SS_SG_CB_BAC_CHECKSTATUS">
+		<Text>Call Barring BAC Check Stauts - Service Groups</Text>
+	</STRING>
+	<STRING Id="261" Name="IDS_SS_SS_SG_CB_BAC_ERASE">
+		<Text>Call Barring BAC Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="262" Name="IDS_SS_SS_SG_CF_ONMOBILEBUSY_REGISTER">
+		<Text>Call Forwarding On Mobile Busy Register - Service Groups</Text>
+	</STRING>
+	<STRING Id="263" Name="IDS_SS_SS_SG_CF_ONNOREPLY_REGISTER">
+		<Text>Call Forwarding on No Reply Register - Service Groups</Text>
+	</STRING>
+	<STRING Id="264" Name="IDS_SS_SS_SG_CF_ONMOBILENOTREACHABLE_REGISTER">
+		<Text>Call Forwarding on Mobile Not reachable Register - Service Groups</Text>
+	</STRING>
+	<STRING Id="265" Name="IDS_SS_SS_SG_CFU_REGISTER">
+		<Text>Call Forwarding Unconditional Register - Service Groups</Text>
+	</STRING>
+	<STRING Id="266" Name="IDS_NOT_OPERATIVE">
+		<Text>Not Operative</Text>
+	</STRING>
+	<STRING Id="267" Name="IDS_PROVISIONED">
+		<Text>Provisioned</Text>
+	</STRING>
+	<STRING Id="268" Name="IDS_REGISTERED">
+		<Text>Registered</Text>
+	</STRING>
+	<STRING Id="269" Name="IDS_ACTIVE">
+		<Text>Active</Text>
+	</STRING>
+	<STRING Id="270" Name="IDS_SS_STATUS">
+		<Text>SS Status</Text>
+	</STRING>
+	<STRING Id="271" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_LINE_ID_SS">
+		<Text>All Line Identification</Text>
+	</STRING>
+	<STRING Id="272" Name="IDS_SS_SS_CB_BAOC">
+		<Text>Barring All Outgoing Calls</Text>
+	</STRING>
+	<STRING Id="273" Name="IDS_SS_SS_CB_BOIC">
+		<Text>Barring Outgoing International Calls</Text>
+	</STRING>
+	<STRING Id="274" Name="IDS_SS_SS_CB_BOICX">
+		<Text>Barring International Calls except to Home Country</Text>
+	</STRING>
+	<STRING Id="275" Name="IDS_SS_SS_CB_BAIC">
+		<Text>Barring All Incoming Calls</Text>
+	</STRING>
+	<STRING Id="276" Name="IDS_SS_SS_CB_BAICX">
+		<Text>Barring Incoming Calls when Roaming Outside Home Country</Text>
+	</STRING>
+	<STRING Id="277" Name="IDS_SS_SS_CB_BAC">
+		<Text>Barring All Calls</Text>
+	</STRING>
+	<STRING Id="278" Name="IDS_SS_MI_CFA">
+		<Text>All Call Forwarding</Text>
+	</STRING>
+	<STRING Id="279" Name="IDS_SS_SS_CFA_REGISTER">
+		<Text>All Call Forwarding Register</Text>
+	</STRING>
+	<STRING Id="280" Name="IDS_SS_SS_CFA_REGISTER_SG">
+		<Text>All Call Forwarding Register- Service Groups</Text>
+	</STRING>
+	<STRING Id="281" Name="IDS_SS_SS_CFA_ACTIVATE_SG">
+		<Text>All Call Forwarding Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="282" Name="IDS_SS_SS_CFA_DEACTIVATE_SG">
+		<Text>All Call Forwarding Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="283" Name="IDS_SS_SS_CFA_CHECKSTATUS_SG">
+		<Text>All Call Forwarding Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="284" Name="IDS_SS_SS_CFA_ERASE_SG">
+		<Text>All Call Forwarding Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="285" Name="IDS_SS_MI_CFC">
+		<Text>Call Forwarding Conditional</Text>
+	</STRING>
+	<STRING Id="286" Name="IDS_SS_SS_CFC_REGISTER">
+		<Text>Call Forwarding Conditional Register</Text>
+	</STRING>
+	<STRING Id="287" Name="IDS_SS_SS_CFC_REGISTER_SG">
+		<Text>Call Forwarding Conditional Register - Service Groups</Text>
+	</STRING>
+	<STRING Id="288" Name="IDS_SS_SS_CFC_ACTIVATE_SG">
+		<Text>Call Forwarding Activate - Service Groups</Text>
+	</STRING>
+	<STRING Id="289" Name="IDS_SS_SS_CFC_DEACTIVATE_SG">
+		<Text>Call Forwarding Conditional Deactivate - Service Groups</Text>
+	</STRING>
+	<STRING Id="290" Name="IDS_SS_SS_CFC_CHECKSTATUS_SG">
+		<Text>Call Forwarding Conditional Check Status - Service Groups</Text>
+	</STRING>
+	<STRING Id="291" Name="IDS_SS_SS_CFC_ERASE_SG">
+		<Text>Call Forwarding Conditional Erase - Service Groups</Text>
+	</STRING>
+	<STRING Id="292" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CLIP">
+		<Text>Calling Line Identification Presentation Service</Text>
+	</STRING>
+	<STRING Id="293" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CLIR">
+		<Text>Calling Line Identification Restriction Service</Text>
+	</STRING>
+	<STRING Id="294" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_COLP">
+		<Text>Connected Line Identification Presentation Service</Text>
+	</STRING>
+	<STRING Id="295" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_COLR">
+		<Text>Connected Line Identification Restriction Service</Text>
+	</STRING>
+	<STRING Id="296" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CNAP">
+		<Text>Call Name Identification Presentation</Text>
+	</STRING>
+	<STRING Id="297" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_MCI">
+		<Text>Malicious Call Identify</Text>
+	</STRING>
+	<STRING Id="298" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_FORWARDING_SS">
+		<Text>All Call Forwarding</Text>
+	</STRING>
+	<STRING Id="299" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CFU">
+		<Text>Call Forwarding Unconditional</Text>
+	</STRING>
+	<STRING Id="300" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CD">
+		<Text>Call Deflection</Text>
+	</STRING>
+	<STRING Id="301" Name="IDS_SS_MI_CALL_FORWARDING">
+		<Text>Call Forwarding</Text>
+	</STRING>
+	<STRING Id="302" Name="IDS_SS_MI_CALL_BARRING">
+		<Text>Call Barring</Text>
+	</STRING>
+	<STRING Id="303" Name="IDS_SS_MI_CALL_WAITING">
+		<Text>Call Waiting</Text>
+	</STRING>
+	<STRING Id="304" Name="IDS_SS_MI_CALLER_IDENTITY">
+		<Text>Caller Identity</Text>
+	</STRING>
+	<STRING Id="305" Name="IDS_SS_MI_CHANGE_PASSWORD">
+		<Text>Change Password</Text>
+	</STRING>
+	<STRING Id="306" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_CONDFWD_SS">
+		<Text>All Conditional Call Forwarding</Text>
+	</STRING>
+	<STRING Id="307" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CFB">
+		<Text>Call Forwarding On Mobile Subscriber Busy</Text>
+	</STRING>
+	<STRING Id="308" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CFNRY">
+		<Text>Call Forwarding On No Reply</Text>
+	</STRING>
+	<STRING Id="309" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CFNRC">
+		<Text>Call Forwarding On Mobile Subscriber Unreachable</Text>
+	</STRING>
+	<STRING Id="310" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_CALL_OFFERING_SS">
+		<Text>All Call Offering Sub-Services</Text>
+	</STRING>
+	<STRING Id="311" Name="IDS_SS_MI_ONMOBILEBUSY">
+		<Text>On Mobile Busy</Text>
+	</STRING>
+	<STRING Id="312" Name="IDS_SS_MI_ONNOREPLY">
+		<Text>On No Reply</Text>
+	</STRING>
+	<STRING Id="313" Name="IDS_SS_MI_ONMOBILENOTREACHABLE">
+		<Text>On Mobile Not Reachable</Text>
+	</STRING>
+	<STRING Id="314" Name="IDS_SS_MI_UNCONDITIONAL">
+		<Text>Unconditional</Text>
+	</STRING>
+	<STRING Id="315" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ECT">
+		<Text>Call Transfer</Text>
+	</STRING>
+	<STRING Id="316" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_MAH">
+		<Text>Mobile Access Hunting</Text>
+	</STRING>
+	<STRING Id="317" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_CALL_COMPL_SS">
+		<Text>All Call Completion</Text>
+	</STRING>
+	<STRING Id="318" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CW">
+		<Text>Call Waiting</Text>
+	</STRING>
+	<STRING Id="319" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_HOLD">
+		<Text>Hold</Text>
+	</STRING>
+	<STRING Id="320" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CCBS">
+		<Text>Completion of Call to Busy Subscribers</Text>
+	</STRING>
+	<STRING Id="321" Name="IDS_SS_MI_REGISTER">
+		<Text>Register</Text>
+	</STRING>
+	<STRING Id="322" Name="IDS_SS_MI_ACTIVATE">
+		<Text>Activate</Text>
+	</STRING>
+	<STRING Id="323" Name="IDS_SS_MI_DEACTIVATE">
+		<Text>Deactivate</Text>
+	</STRING>
+	<STRING Id="324" Name="IDS_SS_MI_CHECKSTATUS">
+		<Text>Check Status</Text>
+	</STRING>
+	<STRING Id="325" Name="IDS_SS_MI_ERASE">
+		<Text>Erase</Text>
+	</STRING>
+	<STRING Id="326" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_MPTY_SS">
+		<Text>All Multiparty Services</Text>
+	</STRING>
+	<STRING Id="327" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_MPTY">
+		<Text>Multiparty Services</Text>
+	</STRING>
+	<STRING Id="328" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_CMTY_OF_INTEREST_SS">
+		<Text>All CMTY of Interest SS</Text>
+	</STRING>
+	<STRING Id="329" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CUG">
+		<Text>Closed User Group</Text>
+	</STRING>
+	<STRING Id="330" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_CHARGING_SS">
+		<Text>All Charging SS</Text>
+	</STRING>
+	<STRING Id="331" Name="IDS_SS_MI_VOICE">
+		<Text>All Voice</Text>
+	</STRING>
+	<STRING Id="332" Name="IDS_SS_MI_FAX">
+		<Text>All Fax</Text>
+	</STRING>
+	<STRING Id="333" Name="IDS_SS_MI_SMS">
+		<Text>All SMS</Text>
+	</STRING>
+	<STRING Id="334" Name="IDS_SS_MI_BEARER">
+		<Text>All Bearer Services</Text>
+	</STRING>
+	<STRING Id="335" Name="IDS_SS_MI_SYNC">
+		<Text>All Sync</Text>
+	</STRING>
+	<STRING Id="336" Name="IDS_SS_MI_ASYNC">
+		<Text>All Async</Text>
+	</STRING>
+	<STRING Id="337" Name="IDS_SS_MI_ALL">
+		<Text>All Services</Text>
+	</STRING>
+	<STRING Id="338" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_AOCI">
+		<Text>Advice of Charge Information</Text>
+	</STRING>
+	<STRING Id="339" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_AOCC">
+		<Text>Advice of Charge Charge</Text>
+	</STRING>
+	<STRING Id="340" Name="IDS_SS_MI_0SEC">
+		<Text>0 Seconds</Text>
+	</STRING>
+	<STRING Id="341" Name="IDS_SS_MI_5SEC">
+		<Text>5 Seconds</Text>
+	</STRING>
+	<STRING Id="342" Name="IDS_SS_MI_10SEC">
+		<Text>10 Seconds</Text>
+	</STRING>
+	<STRING Id="343" Name="IDS_SS_MI_15SEC">
+		<Text>15 Seconds</Text>
+	</STRING>
+	<STRING Id="344" Name="IDS_SS_MI_20SEC">
+		<Text>20 Seconds</Text>
+	</STRING>
+	<STRING Id="345" Name="IDS_SS_MI_25SEC">
+		<Text>25 Seconds</Text>
+	</STRING>
+	<STRING Id="346" Name="IDS_SS_MI_30SEC">
+		<Text>30 Seconds</Text>
+	</STRING>
+	<STRING Id="347" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_ADD_INFO_TRNFER_SS">
+		<Text>All Add Information Transfer SS</Text>
+	</STRING>
+	<STRING Id="348" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_UUS">
+		<Text>User to User Signalling</Text>
+	</STRING>
+	<STRING Id="349" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_CALL_RSTRCT_SS">
+		<Text>All Call Restrict SS</Text>
+	</STRING>
+	<STRING Id="350" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_BARRING_OUTGOING_CALLS">
+		<Text>Barring Outgoing Calls</Text>
+	</STRING>
+	<STRING Id="351" Name="IDS_SS_MI_BAOC">
+		<Text>Barring All Outgoing Calls</Text>
+	</STRING>
+	<STRING Id="352" Name="IDS_SS_MI_BAIC">
+		<Text>Barring All Incoming Calls</Text>
+	</STRING>
+	<STRING Id="353" Name="IDS_SS_MI_BAC">
+		<Text>Barring All Calls</Text>
+	</STRING>
+	<STRING Id="354" Name="IDS_SS_MI_BOIC">
+		<Text>Barring Outgoing International Calls</Text>
+	</STRING>
+	<STRING Id="355" Name="IDS_SS_MI_BOICX">
+		<Text>Barring International Calls except those to Home Country</Text>
+	</STRING>
+	<STRING Id="356" Name="IDS_SS_MI_BAICX">
+		<Text>Barring Incoming Calls When Roaming Outside Home Country</Text>
+	</STRING>
+	<STRING Id="357" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_BAOC">
+		<Text>Barring of All Outgoing Calls</Text>
+	</STRING>
+	<STRING Id="358" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_BOIC">
+		<Text>Barring of Outgoing International Calls</Text>
+	</STRING>
+	<STRING Id="359" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_BOIC_EXHC">
+		<Text>Barring of Outgoing International Calls Except those to Home Plan</Text>
+	</STRING>
+	<STRING Id="360" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_BARRING_OF_INCOMING_CALLS">
+		<Text>Barring of Incoming Calls</Text>
+	</STRING>
+	<STRING Id="361" Name="IDS_SS_MI_PRESENT_CALLER">
+		<Text>Presentation for Caller ID of Caller</Text>
+	</STRING>
+	<STRING Id="362" Name="IDS_SS_MI_RESTRICT_CALLER">
+		<Text>Restriction of Caller ID for the Caller</Text>
+	</STRING>
+	<STRING Id="363" Name="IDS_SS_MI_PRESENT_CALLEE">
+		<Text>Presentation of Caller ID for the Connected Party</Text>
+	</STRING>
+	<STRING Id="364" Name="IDS_SS_MI_RESTRICT_CALLEE">
+		<Text>Restriction of  Caller ID from the Connected Party</Text>
+	</STRING>
+	<STRING Id="365" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_BAIC">
+		<Text>Barring of All Incoming Calls</Text>
+	</STRING>
+	<STRING Id="366" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_BICROAM">
+		<Text>Barring of Incoming Calls when Roaming Outside Home PLMN Country</Text>
+	</STRING>
+	<STRING Id="367" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_PLMN_SPECIFIC_SS">
+		<Text>All PLMN Specific Supplementary Services</Text>
+	</STRING>
+	<STRING Id="368" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_CHARGING_INFO_ID">
+		<Text>Charging Information Identification</Text>
+	</STRING>
+	<STRING Id="369" Name="IDS_SUPPSYS_SS_CODE_E_TYPE_ALL_SS">
+		<Text>All SS</Text>
+	</STRING>
+	<STRING Id="370" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_BEARER_SERVICES">
+		<Text>All Bearer Services</Text>
+	</STRING>
+	<STRING Id="371" Name="IDS_SS_MI_SERVICEGROUP">
+		<Text>Service Group</Text>
+	</STRING>
+	<STRING Id="372" Name="IDS_SS_MI_CANCEL">
+		<Text>Cancel</Text>
+	</STRING>
+	<STRING Id="373" Name="IDS_SS_MI_SUBMIT">
+		<Text>Submit</Text>
+	</STRING>
+	<STRING Id="374" Name="IDS_SS_MI_TIMER">
+		<Text>Timer</Text>
+	</STRING>
+	<STRING Id="375" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDA_300BPS">
+		<Text>Data CDA 300BPS</Text>
+	</STRING>
+	<STRING Id="376" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDA_1200BPS">
+		<Text>Data CDA 1200BPS</Text>
+	</STRING>
+	<STRING Id="377" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDA_1200_75BPS">
+		<Text>Data CDA 1200 75BPS</Text>
+	</STRING>
+	<STRING Id="378" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDA_2400BPS">
+		<Text>Data CDA 2400BPS</Text>
+	</STRING>
+	<STRING Id="379" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDA_4800BPS">
+		<Text>Data CDA 4800BPS</Text>
+	</STRING>
+	<STRING Id="380" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDA_9600BPS">
+		<Text>Data CDA 9600BPS</Text>
+	</STRING>
+	<STRING Id="381" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_DATA_CDS_SERVICES">
+		<Text>All Data CDS Services</Text>
+	</STRING>
+	<STRING Id="382" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDS_1200BPS">
+		<Text>Data CDS 1200BPS</Text>
+	</STRING>
+	<STRING Id="383" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDS_2400BPS">
+		<Text>Data CDS 2400BPS</Text>
+	</STRING>
+	<STRING Id="384" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDS_4800BPS">
+		<Text>Data CDS 4800BPS</Text>
+	</STRING>
+	<STRING Id="385" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_CDS_9600BPS">
+		<Text>Data CDS 9600BPS</Text>
+	</STRING>
+	<STRING Id="386" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PAD_ACCESS_CA_300BPS">
+		<Text>PAD Access CA 300BPS</Text>
+	</STRING>
+	<STRING Id="387" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PAD_ACCESS_CA_1200BPS">
+		<Text>PAD Access CA 1200BPS</Text>
+	</STRING>
+	<STRING Id="388" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PAD_ACCESS_CA_1200_75BPS">
+		<Text>PAD Access CA 1200 75BPS</Text>
+	</STRING>
+	<STRING Id="389" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PAD_ACCESS_CA_2400BPS">
+		<Text>PAD Access CA 2400BPS</Text>
+	</STRING>
+	<STRING Id="390" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PAD_ACCESS_CA_4800BPS">
+		<Text>PAD Access CA 4800BPS</Text>
+	</STRING>
+	<STRING Id="391" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PAD_ACCESS_CA_9600BPS">
+		<Text>PAD Access CA 9600BPS</Text>
+	</STRING>
+	<STRING Id="392" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_DATA_PDS_SERVICES">
+		<Text>All Data PDS Services</Text>
+	</STRING>
+	<STRING Id="393" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_PDS_2400BPS">
+		<Text>Data PDS 2400BPS</Text>
+	</STRING>
+	<STRING Id="394" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_PDS_4800BPS">
+		<Text>Data PDS 4800BPS</Text>
+	</STRING>
+	<STRING Id="395" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_DATA_PDS_9600BPS">
+		<Text>Data PDS 9600BPS</Text>
+	</STRING>
+	<STRING Id="396" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_ALTERNATE_SPEECH_DATA_CDA">
+		<Text>All Alternate Speech Data CDA</Text>
+	</STRING>
+	<STRING Id="397" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_ALTERNATE_SPEECH_DATA_CDS">
+		<Text>All Alternate Speech Data CDS</Text>
+	</STRING>
+	<STRING Id="398" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_SPEECH_FOLLWOED_BYDATA_CDA">
+		<Text>All Speech Followed By Data CDA</Text>
+	</STRING>
+	<STRING Id="399" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_SPEECH_FOLLWOED_BYDATA_CDS">
+		<Text>All Speech Followed By Data CDS</Text>
+	</STRING>
+	<STRING Id="400" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_DATA_CIRCUIT_ASYNCHRONOUS">
+		<Text>All Data Circuit Asynchronous</Text>
+	</STRING>
+	<STRING Id="401" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_DATA_CIRCUIT_SYNCHRONOUS">
+		<Text>All Data Circuit Synchronous</Text>
+	</STRING>
+	<STRING Id="402" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_ASYNCHRONOUS_SERVICES">
+		<Text>All Synchronous Services</Text>
+	</STRING>
+	<STRING Id="403" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_PLMN_SPECIFIC_BS">
+		<Text>All PLMN Specific BS</Text>
+	</STRING>
+	<STRING Id="404" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_1">
+		<Text>PLMN Specific BS 1</Text>
+	</STRING>
+	<STRING Id="405" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_2">
+		<Text>PLMN Specific BS 2</Text>
+	</STRING>
+	<STRING Id="406" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_3">
+		<Text>PLMN Specific BS 3</Text>
+	</STRING>
+	<STRING Id="407" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_4">
+		<Text>PLMN Specific BS 4</Text>
+	</STRING>
+	<STRING Id="408" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_5">
+		<Text>PLMN Specific BS 5</Text>
+	</STRING>
+	<STRING Id="409" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_6">
+		<Text>PLMN Specific BS 6</Text>
+	</STRING>
+	<STRING Id="410" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_7">
+		<Text>PLMN Specific BS 7</Text>
+	</STRING>
+	<STRING Id="411" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_8">
+		<Text>PLMN Specific BS 8</Text>
+	</STRING>
+	<STRING Id="412" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_9">
+		<Text>PLMN Specific BS 9</Text>
+	</STRING>
+	<STRING Id="413" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_A">
+		<Text>PLMN Specific BS A</Text>
+	</STRING>
+	<STRING Id="414" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_B">
+		<Text>PLMN Specific BS B</Text>
+	</STRING>
+	<STRING Id="415" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_C">
+		<Text>PLMN Specific BS C</Text>
+	</STRING>
+	<STRING Id="416" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_D">
+		<Text>PLMN Specific BS D</Text>
+	</STRING>
+	<STRING Id="417" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_E">
+		<Text>PLMN Specific BS E</Text>
+	</STRING>
+	<STRING Id="418" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_BS_F">
+		<Text>PLMN Specific BS F</Text>
+	</STRING>
+	<STRING Id="419" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_TELESERVICES">
+		<Text>All Teleservices</Text>
+	</STRING>
+	<STRING Id="420" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_SPEECH_TRANSMISSION_SERVCES">
+		<Text>All Speech Transmission Services</Text>
+	</STRING>
+	<STRING Id="421" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_TELEPHONY">
+		<Text>Telephony</Text>
+	</STRING>
+	<STRING Id="422" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_EMERGENCY_CALLS">
+		<Text>Emergency Calls</Text>
+	</STRING>
+	<STRING Id="423" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_SMS_SERVICES">
+		<Text>All SMS Services</Text>
+	</STRING>
+	<STRING Id="424" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_SHORT_MSG_MT_PP">
+		<Text>Short Message MT PP</Text>
+	</STRING>
+	<STRING Id="425" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_SHORT_MSG_MO_PP">
+		<Text>Short Message MO PP</Text>
+	</STRING>
+	<STRING Id="426" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_FAX_TRANSMISSION_SERVICES">
+		<Text>All Fax Transmission Services</Text>
+	</STRING>
+	<STRING Id="427" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_FAX_GROUP3_AND_ALTER_SPEECH">
+		<Text>Fax Group3 and Alter Speech</Text>
+	</STRING>
+	<STRING Id="428" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_AUTO_FAX_GROUP3">
+		<Text>Auto Fax Group3</Text>
+	</STRING>
+	<STRING Id="429" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_FAX_GROUP4">
+		<Text>Fax Group4</Text>
+	</STRING>
+	<STRING Id="430" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_DATA_TELESERVICES">
+		<Text>All Data Teleservices</Text>
+	</STRING>
+	<STRING Id="431" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_TELESERVICES_EXCEPT_SMS">
+		<Text>All Teleservices Except SMS</Text>
+	</STRING>
+	<STRING Id="432" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_PLMN_SPECIFIC_TS">
+		<Text>All PLMN Specific TS</Text>
+	</STRING>
+	<STRING Id="433" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_1">
+		<Text>PLMN Specific TS 1</Text>
+	</STRING>
+	<STRING Id="434" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_2">
+		<Text>PLMN Specific TS 2</Text>
+	</STRING>
+	<STRING Id="435" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_3">
+		<Text>PLMN Specific TS 3</Text>
+	</STRING>
+	<STRING Id="436" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_4">
+		<Text>PLMN Specific TS 4</Text>
+	</STRING>
+	<STRING Id="437" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_5">
+		<Text>PLMN Specific TS 5</Text>
+	</STRING>
+	<STRING Id="438" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_6">
+		<Text>PLMN Specific TS 6</Text>
+	</STRING>
+	<STRING Id="439" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_7">
+		<Text>PLMN Specific TS 7</Text>
+	</STRING>
+	<STRING Id="440" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_8">
+		<Text>PLMN Specific TS 8</Text>
+	</STRING>
+	<STRING Id="441" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_9">
+		<Text>PLMN Specific TS 9</Text>
+	</STRING>
+	<STRING Id="442" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_A">
+		<Text>PLMN Specific TS A</Text>
+	</STRING>
+	<STRING Id="443" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_B">
+		<Text>PLMN Specific TS B</Text>
+	</STRING>
+	<STRING Id="444" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_C">
+		<Text>PLMN Specific TS C</Text>
+	</STRING>
+	<STRING Id="445" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_D">
+		<Text>PLMN Specific TS D</Text>
+	</STRING>
+	<STRING Id="446" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_E">
+		<Text>PLMN Specific TS E</Text>
+	</STRING>
+	<STRING Id="447" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_PLMN_SPECIFIC_TS_F">
+		<Text>PLMN Specific TS F</Text>
+	</STRING>
+	<STRING Id="448" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_SERVICES">
+		<Text>All Services</Text>
+	</STRING>
+	<STRING Id="449" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_DATA_CDA_SERVICES">
+		<Text>All Data CDA Services</Text>
+	</STRING>
+	<STRING Id="450" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_SYNCHRONOUS_SERVICES">
+		<Text>All Synchronous Services</Text>
+	</STRING>
+	<STRING Id="451" Name="IDS_SUPPSYS_BASIC_SERVICE_E_TYPE_ALL_PAD_ACCESS_CA_SERVICES">
+		<Text>All PAD Access CA Services</Text>
+	</STRING>
+	<STRING Id="452" Name="IDS_SUPPSYS_FWD_REASONS_MS_NOT_REACHABLE">
+		<Text>Mobile Subscriber Not Reachable</Text>
+	</STRING>
+	<STRING Id="453" Name="IDS_CLIRESTRICTION">
+		<Text>Calling Line ID Restriction</Text>
+	</STRING>
+	<STRING Id="454" Name="IDS_SUPPSYS_CLI_RSTRCT_OPTION_E_TYPE_PERMANENT">
+		<Text>Permanent</Text>
+	</STRING>
+	<STRING Id="455" Name="IDS_SUPPSYS_CLI_RSTRCT_OPTION_E_TYPE_TEMPORARY_DEFAULT_RESTRICTED">
+		<Text>Temporary Default Restricted</Text>
+	</STRING>
+	<STRING Id="456" Name="IDS_SUPPSYS_CLI_RSTRCT_OPTION_E_TYPE_TEMPORARY_DEFAULT_ALLOWED">
+		<Text>Temporary Default Allowed</Text>
+	</STRING>
+	<STRING Id="457" Name="IDS_SUPPSYS_FWD_REASONS_MS_BUSY">
+		<Text>Mobile Subscriber Busy</Text>
+	</STRING>
+	<STRING Id="458" Name="IDS_SUPPSYS_FWD_REASONS_NO_REPLY">
+		<Text>No Reply</Text>
+	</STRING>
+	<STRING Id="459" Name="IDS_SUPPSYS_FWD_REASONS_UNCONDITIONAL">
+		<Text>Unconditional</Text>
+	</STRING>
+	<STRING Id="460" Name="IDS_FORWARDREASON">
+		<Text>Foward Reason</Text>
+	</STRING>
+	<STRING Id="461" Name="IDS_FORWARDEDTO">
+		<Text>Forwarded to</Text>
+	</STRING>
+	<STRING Id="462" Name="IDS_TIMER">
+		<Text>Timer</Text>
+	</STRING>
+	<STRING Id="463" Name="IDS_FORWARDEDTOSUBADDRESS">
+		<Text>Forwarded to Subaddress</Text>
+	</STRING>
+	<STRING Id="464" Name="IDS_FPNOTIFY">
+		<Text>Forwarded to Party will be Notified</Text>
+	</STRING>
+	<STRING Id="465" Name="IDS_CPNOTIFY">
+		<Text>Calling Party will be Notified</Text>
+	</STRING>
+	<STRING Id="466" Name="IDS_REASON">
+		<Text>Reason</Text>
+	</STRING>
+	<STRING Id="467" Name="IDS_SS_MT_CFA_TIMER">
+		<Text>All Call Forwarding Timer</Text>
+	</STRING>
+	<STRING Id="468" Name="IDS_SS_MT_CFC_TIMER">
+		<Text>Call Forwarding Conditional Timer</Text>
+	</STRING>
+	<STRING Id="469" Name="IDS_FORWARDINCOMINGCALL">
+		<Text>Forward Incoming Call</Text>
+	</STRING>
+	<STRING Id="470" Name="IDS_FORWARDCALLTO">
+		<Text>Forward Call To:</Text>
+	</STRING>
+	<STRING Id="471" Name="IDS_MISSEDCALLS">
+		<Text>Missed Calls</Text>
+	</STRING>
+	<STRING Id="472" Name="IDS_LASTMISSED">
+		<Text>Last Missed:</Text>
+	</STRING>
+	<STRING Id="473" Name="IDS_SSMENU">
+		<Text>SS Menu</Text>
+	</STRING>
+	<STRING Id="474" Name="IDS_UNMUTE">
+		<Text>Unmute</Text>
+	</STRING>
+	<STRING Id="541" Name="IDS_CALLFAILED">
+		<Text>Call Failed</Text>
+	</STRING>
+	<STRING Id="542" Name="IDS_CALL">
+		<Text>Call</Text>
+	</STRING>
+	<STRING Id="543" Name="IDS_TIMEINCALL">
+		<Text>Time in Call</Text>
+	</STRING>
+	<STRING Id="544" Name="IDS_EMERGENCY">
+		<Text>Emergency</Text>
+	</STRING>
+	<STRING Id="545" Name="IDS_CALL_ERROR_OFFLINE_S">
+		<Text>Phone is offline</Text>
+	</STRING>
+	<STRING Id="546" Name="IDS_CALL_ERROR_CDMA_LOCK_S">
+		<Text>Phone is CDMA locked</Text>
+	</STRING>
+	<STRING Id="547" Name="IDS_CALL_ERROR_FLASH_S">
+		<Text>Current call does not support flashes</Text>
+	</STRING>
+	<STRING Id="548" Name="IDS_CALL_ERROR_ORIG_RES_S">
+		<Text>Dialed number is not allowed under the current origination restriction</Text>
+	</STRING>
+	<STRING Id="549" Name="IDS_CALL_ERROR_NO_FUNDS_S">
+		<Text>Dialed number is not allowed because phone is out of funds</Text>
+	</STRING>
+	<STRING Id="550" Name="IDS_CALL_ERROR_EMERGENCY_MODE_S">
+		<Text>Use is restricted to emergency calls only</Text>
+	</STRING>
+	<STRING Id="551" Name="IDS_CALL_ERROR_IN_USE_S">
+		<Text>Can't perform command because phone is in-use</Text>
+	</STRING>
+	<STRING Id="552" Name="IDS_CALL_ERROR_SRV_TYPE_S">
+		<Text>Originated with service type that is not currenlty supported</Text>
+	</STRING>
+	<STRING Id="553" Name="IDS_CALL_ERROR_CALL_TYPE_S">
+		<Text>Command is invalid for the the current call type</Text>
+	</STRING>
+	<STRING Id="554" Name="IDS_CALL_ERROR_CALL_STATE_S">
+		<Text>Command is invalid for the current call state</Text>
+	</STRING>
+	<STRING Id="555" Name="IDS_CALL_ERROR_SRV_STATE_S">
+		<Text>Command is invalid for the current phone serving state</Text>
+	</STRING>
+	<STRING Id="556" Name="IDS_CALL_ERROR_NO_SO_S">
+		<Text>No valid service found for origination</Text>
+	</STRING>
+	<STRING Id="557" Name="IDS_CALL_ERROR_ALERT_ANS_BYPASS_S">
+		<Text>Not allowed to answer incoming call</Text>
+	</STRING>
+	<STRING Id="558" Name="IDS_CALL_ERROR_UIM_NOT_PRESENT_S">
+		<Text>UIM not present</Text>
+	</STRING>
+	<STRING Id="559" Name="IDS_CALL_ERROR_BAD_PRIVACY_PREF_S">
+		<Text>Invalid privacy preference</Text>
+	</STRING>
+	<STRING Id="560" Name="IDS_CALL_ERROR_NO_CALL_ID_S">
+		<Text>No call IDs can be allocated</Text>
+	</STRING>
+	<STRING Id="561" Name="IDS_CALL_ERROR_CALL_ORIG_FAIL_S">
+		<Text>Call origination failed in lower layers</Text>
+	</STRING>
+	<STRING Id="562" Name="IDS_CALL_ERROR_INVALID_MODE_S">
+		<Text>Recieved command in a mode different than current mode</Text>
+	</STRING>
+	<STRING Id="563" Name="IDS_CALL_ERROR_NO_COLLOC_HDR">
+		<Text>No clocated HDR</Text>
+	</STRING>
+	<STRING Id="564" Name="IDS_CALL_ERROR_OTHER">
+		<Text>Unknown Error</Text>
+	</STRING>
+	<STRING Id="565" Name="IDS_CALL_ERROR_CALL_CONTROL_REJECTED">
+		<Text>Call control has rejected command</Text>
+	</STRING>
+	<STRING Id="566" Name="IDS_CALL_ERROR_LOWER_LAYER">
+		<Text>Lower Layer Error</Text>
+	</STRING>
+	<STRING Id="567" Name="IDS_EBADPARM">
+		<Text>Attempted operation has failed due to bad parameters</Text>
+	</STRING>
+	<STRING Id="568" Name="IDS_ENOMEMORY">
+		<Text>Attempted operation has failed because there is no memory available</Text>
+	</STRING>
+	<STRING Id="569" Name="IDS_EUNSUPPORTED">
+		<Text>Attempted operation has failed because it is currently not supported</Text>
+	</STRING>
+	<STRING Id="570" Name="IDS_EFAILED">
+		<Text>Attempted operation has failed</Text>
+	</STRING>
+	<STRING Id="571" Name="IDS_ERROR_CAPS">
+		<Text>ERROR</Text>
+	</STRING>
+	<STRING Id="572" Name="IDS_SS_FAILED">
+		<Text>SS Failed</Text>
+	</STRING>
+	<STRING Id="573" Name="IDS_SS_CONFIRMED">
+		<Text>SS Confirmed</Text>
+	</STRING>
+	<STRING Id="574" Name="IDS_BSGLIST">
+		<Text>Basic Service Group</Text>
+	</STRING>
+	<STRING Id="575" Name="IDS_CUG">
+		<Text>CUG</Text>
+	</STRING>
+	<STRING Id="576" Name="IDS_CUGNONE">
+		<Text>CUG: None</Text>
+	</STRING>
+	<STRING Id="577" Name="IDS_CALL_FWDED">
+		<Text>Call Forwarded</Text>
+	</STRING>
+	<STRING Id="578" Name="IDS_CALL_BEING_FWD">
+		<Text>Call Being Forwarded</Text>
+	</STRING>
+	<STRING Id="579" Name="IDS_CALL_BARRED">
+		<Text>Call Barred</Text>
+	</STRING>
+	<STRING Id="580" Name="IDS_CALL_TRANSFERRED">
+		<Text>Call Transferred</Text>
+	</STRING>
+	<STRING Id="581" Name="IDS_CALL_IS_WAITING">
+		<Text>Call is in Waiting</Text>
+	</STRING>
+	<STRING Id="582" Name="IDS_CALL_FWD_ACTIVE">
+		<Text>Call Forwarding Active</Text>
+	</STRING>
+	<STRING Id="583" Name="IDS_CALL_RESTRICTED">
+		<Text>Call Restricted</Text>
+	</STRING>
+	<STRING Id="584" Name="IDS_CALL_DEFLECTED">
+		<Text>Call Deflected</Text>
+	</STRING>
+	<STRING Id="585" Name="IDS_CALLDORMANT">
+		<Text>Call is Dormant</Text>
+	</STRING>
+	<STRING Id="586" Name="IDS_CANCELSSREQUEST">
+		<Text>Cancel SS Request</Text>
+	</STRING>
+	<STRING Id="587" Name="IDS_VIDEOCALL">
+		<Text>Video Call</Text>
+	</STRING>
+	<STRING Id="588" Name="IDS_DATA">
+		<Text>Data</Text>
+	</STRING>
+	<STRING Id="589" Name="IDS_POSDET">
+		<Text>Location Service</Text>
+	</STRING>
+	<STRING Id="590" Name="IDS_LOOPBACK">
+		<Text>Loopback</Text>
+	</STRING>
+	<STRING Id="591" Name="IDS_MARKOV">
+		<Text>Markov</Text>
+	</STRING>
+	<STRING Id="592" Name="IDS_SMS">
+		<Text>SMS</Text>
+	</STRING>
+	<STRING Id="593" Name="IDS_ASYNCDATA">
+		<Text>Async Data</Text>
+	</STRING>
+	<STRING Id="594" Name="IDS_FAX">
+		<Text>Fax</Text>
+	</STRING>
+	<STRING Id="595" Name="IDS_MDRPKTDATA">
+		<Text>MDR Packet Data</Text>
+	</STRING>
+	<STRING Id="596" Name="IDS_PPPPKTDATA">
+		<Text>PPP Packet Data</Text>
+	</STRING>
+	<STRING Id="597" Name="IDS_LOOKINGFOREMERGENCY">
+		<Text>Looking for Emergency Service ...</Text>
+	</STRING>
+	<STRING Id="598" Name="IDS_PRIVACYON">
+		<Text>Privacy On</Text>
+	</STRING>
+	<STRING Id="599" Name="IDS_PRIVACYOFF">
+		<Text>Privacy Off</Text>
+	</STRING>
+	<STRING Id="600" Name="IDS_ENHANCEDPRIVACY">
+		<Text>Enhanced Privacy</Text>
+	</STRING>
+	<STRING Id="601" Name="IDS_ACTIVATION">
+		<Text>Activation</Text>
+	</STRING>
+	<STRING Id="602" Name="IDS_ACTIVATIONPROGRESS">
+		<Text>Activation in Progress</Text>
+	</STRING>
+	<STRING Id="603" Name="IDS_SSERROR">
+		<Text>SS Error</Text>
+	</STRING>
+	<STRING Id="604" Name="IDS_SSEND">
+		<Text>SS End</Text>
+	</STRING>
+	<STRING Id="605" Name="IDS_USERGROUP">
+		<Text>User Group</Text>
+	</STRING>
+	<STRING Id="606" Name="IDS_CSDATA">
+		<Text>CS Data</Text>
+	</STRING>
+	<STRING Id="607" Name="IDS_PSDATA">
+		<Text>PS Data</Text>
+	</STRING>
+	<STRING Id="608" Name="IDS_TESTCALL">
+		<Text>Test Call</Text>
+	</STRING>
+	<STRING Id="609" Name="IDS_CALL_TIME">
+		<Text>Call Time</Text>
+	</STRING>
+	<STRING Id="670" Name="IDS_SS_MI_DATA_CDA" Encoding="Unicode">
+		<Text>All Data CDA</Text>
+	</STRING>
+	<STRING Id="671" Name="IDS_SS_MI_DATA_CDS" Encoding="Unicode">
+		<Text>All Data CDS</Text>
+	</STRING>
+	<STRING Id="672" Name="IDS_CALLING_TTY">
+		<Text>Calling in TTY mode</Text>
+	</STRING>
+	<STRING Id="673" Name="IDS_TTY_MODE">
+		<Text>- TTY mode</Text>
+	</STRING>
+	<String Id="674" Name="IDS_CCBS_INDEX" Encoding="Unicode">
+		<Text>Index</Text>
+	</String>
+	<String Id="675" Name="IDS_SS_SS_CCBS" Encoding="Unicode">
+		<Text>Call Completion to Busy Subscriber</Text>
+	</String>
+	<String Id="676" Name="IDS_AVAILABLE" Encoding="Unicode">
+		<Text>is now available</Text>
+	</String>
+	<String Id="677" Name="IDS_SETUP_RECALL" Encoding="Unicode">
+		<Text>User is Busy, Setup Recall?</Text>
+	</String>
+	<String Id="678" Name="IDS_HOLD_N_ACCEPT" Encoding="Unicode">
+		<Text>Hold 'N' Accept</Text>
+	</String>
+	<String Id="679" Name="IDS_REL_N_ACCEPT" Encoding="Unicode">
+		<Text>End 'N' Accept</Text>
+	</String>
+	<String Id="680" Name="IDS_RECALL_IND" Encoding="Unicode">
+		<Text>Recall Indication Set for Call ID </Text>
+	</String>
+	<String Id="681" Name="IDS_RECALL_LIST" Encoding="Unicode">
+		<Text>Pending Recall List</Text>
+	</String>
+	<String Id="682" Name="IDS_NO_PENDING_RECALL" Encoding="Unicode">
+		<Text>No Pending Recall  </Text>
+	</String>
+	<String Id="683" Name="IDS_INVALID_SS_FMT">
+		<Text>Failed: Invalid Paramter</Text>
+	</String>
+	<String Id="684" Name="IDS_PINS_DONT_MATCH">
+		<Text>Failed: PINs do not match</Text>
+	</String>
+	<String Id="685" Name="IDS_SS_START_FAILED">
+		<Text>Supp Svc Command Failed</Text>
+	</String>
+	<String Id="686" Name="IDS_RESTRICTED_CALL">
+		<Text>Restricted Call</Text>
+	</String>
+  <String Id="687" Name="IDS_VIDEOSHARE">
+		<Text>Video Share</Text>
+  </String>
+	<String Id="689" Name="IDS_VS_NOT_AVAIL">
+		<Text>Error: VS not available for this call</Text>
+	</String>
+  <STRING Id="690" Name="IDS_CALL_ERROR_INVALID_SIM_STATE_S">
+    <Text>SIM in invalid state</Text>
+  </STRING>
+</Strings>
+<Objects MimeType="image/bmp">
+	<Object Id="5001" Name="IDB_RADIO_ON">
+		<File>.\radio_on.bmp</File>
+	</Object>
+	<Object Id="5002" Name="IDB_RADIO_OFF">
+		<File>.\radio_off.bmp</File>
+	</Object>
+	<Object Id="5003" Name="IDB_VOICE">
+		<File>.\voice.bmp</File>
+	</Object>
+	<Object Id="5004" Name="IDB_VOICEHOLD">
+		<File>.\voicehold.bmp</File>
+	</Object>
+	<Object Id="5005" Name="IDB_VOICEEND">
+		<File>.\voiceend.bmp</File>
+	</Object>
+	<Object Id="5006" Name="IDB_FAX">
+		<File>.\fax.bmp</File>
+	</Object>
+	<Object Id="5007" Name="IDB_FAXHOLD">
+		<File>.\faxhold.bmp</File>
+	</Object>
+	<Object Id="5008" Name="IDB_FAXEND">
+		<File>.\faxend.bmp</File>
+	</Object>
+	<Object Id="5009" Name="IDB_DATA">
+		<File>.\data.bmp</File>
+	</Object>
+	<Object Id="5010" Name="IDB_DATAHOLD">
+		<File>.\datahold.bmp</File>
+	</Object>
+	<Object Id="5011" Name="IDB_DATAEND">
+		<File>.\dataend.bmp</File>
+	</Object>
+	<Object Id="5012" Name="IDB_EMPTY">
+		<File>.\empty.bmp</File>
+	</Object>
+	<Object Id="5013" Name="IDB_EMERGENCY">
+		<File>.\emergency.bmp</File>
+	</Object>
+	<Object Id="5014" Name="IDB_EMERGENCYHOLD">
+		<File>.\emergencyhold.bmp</File>
+	</Object>
+	<Object Id="5015" Name="IDB_EMERGENCYEND">
+		<File>.\emergencyend.bmp</File>
+	</Object>
+	<Object Id="5016" Name="IDB_DORMANT">
+		<File>.\dormant.bmp</File>
+	</Object>
+	<Object Id="5017" Name="IDB_CONTACT">
+		<File>..\..\..\..\Contact\resources\en\256Color\contactclass_neither.bmp</File>
+	</Object>
+	<Object Id="5018" Name="IDB_SPEEDDIAL">
+		<File>..\..\..\..\Contact\resources\en\256Color\speeddial.bmp</File>
+	</Object>
+	<Object Id="5019" Name="IDB_HOMENUMBER">
+		<File>..\..\..\..\Contact\resources\en\256Color\home_number.bmp</File>
+	</Object>
+	<Object Id="5020" Name="IDB_MOBILENUMBER">
+		<File>..\..\..\..\Contact\resources\en\256Color\mobile_number.bmp</File>
+	</Object>
+	<Object Id="5021" Name="IDB_PAGERNUMBER">
+		<File>..\..\..\..\Contact\resources\en\256Color\pager_number.bmp</File>
+	</Object>
+	<Object Id="5022" Name="IDB_WORKNUMBER">
+		<File>..\..\..\..\Contact\resources\en\256Color\work_number.bmp</File>
+	</Object>
+	<Object Id="5023" Name="IDB_RUIM">
+		<File>..\..\..\..\Contact\resources\en\256Color\ruim.bmp</File>
+	</Object>
+	<Object Id="5024" Name="IDB_RUIM2">
+		<File>..\..\..\..\Contact\resources\en\256Color\ruim2.bmp</File>
+	</Object>
+	<Object Id="5025" Name="IDB_TTY">
+		<File>.\ttycall.bmp</File>
+	</Object>
+	<Object Id="5026" Name="IDB_TTYENDED">
+		<File>.\ttyend.bmp</File>
+	</Object>
+	<Object Id="5027" Name="IDB_TTYONHOLD">
+		<File>.\ttyonhold.bmp</File>
+	</Object>
+</Objects>
+<Dialogs>
+	<DIALOG Id="6000" Name="DIALERAPP_DIALOG_OFFSET" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="7001">
+		<Controls>
+			<Text Id="7001" Name="IDC_TEXT_NUMEDIT">
+				<Items/></Text>
+			<SoftKey Id="7002" Name="IDC_SK_NUMEDIT">
+				<Items>
+					<Item Id="8001" Name="IDL_SK_NUMEDIT_SEND">
+						<TextID>IDS_SEND</TextID>
+					</Item>
+					<Item Id="8002" Name="IDL_SK_NUMEDIT_ADDTO">
+						<TextID>IDS_ADDTO</TextID>
+					</Item>
+					<Item Id="8067" Name="IDL_SK_NUMEDIT_SAVE">
+						<TextID>IDS_SAVE</TextID>
+					</Item>
+					<Item Id="8069" Name="IDL_SK_NUMEDIT_SENDSMS">
+						<TextID>IDS_SENDSMS</TextID>
+					</Item>
+					<Item Id="8085" Name="IDL_SK_NUMEDIT_VIDEOCALL">
+						<TextID>IDS_VIDEOCALL</TextID>
+					</Item>
+					<Item Id="8087" Name="IDL_SK_NUMEDIT_SAVESIM">
+						<TextID>IDS_SAVESIM</TextID>
+					</Item>
+					<Item Id="8097" Name="IDL_SK_NUMEDIT_SSWIZARD">
+						<TextID>IDS_SSWIZARD</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Menu Id="7056" Name="IDC_MENU_NUMEDIT">
+				<Items>
+					<Item Id="8200" Name="IDL_NUMEDIT_SPEEDDIAL">
+					</Item>
+					<Item Id="8201" Name="IDL_NUMEDIT_NUM1">
+					</Item>
+					<Item Id="8202" Name="IDL_NUMEDIT_NUM2">
+					</Item>
+					<Item Id="8203" Name="IDL_NUMEDIT_NUM3">
+					</Item>
+					<Item Id="8204" Name="IDL_NUMEDIT_NUM4">
+					</Item>
+					<Item Id="8205" Name="IDL_NUMEDIT_NUM5">
+					</Item>
+					<Item Id="8206" Name="IDL_NUMEDIT_NUM6">
+					</Item>
+					<Item Id="8207" Name="IDL_NUMEDIT_NUM7">
+					</Item>
+					<Item Id="8208" Name="IDL_NUMEDIT_NUM8">
+					</Item>
+					<Item Id="8209" Name="IDL_NUMEDIT_NUM9">
+					</Item>
+					<Item Id="8210" Name="IDL_NUMEDIT_NUM10">
+					</Item>
+					<Item Id="8211" Name="IDL_NUMEDIT_NUM11">
+					</Item>
+					<Item Id="8212" Name="IDL_NUMEDIT_NUM12">
+					</Item>
+					<Item Id="8213" Name="IDL_NUMEDIT_NUM13">
+					</Item>
+					<Item Id="8214" Name="IDL_NUMEDIT_NUM14">
+					</Item>
+					<Item Id="8215" Name="IDL_NUMEDIT_NUM15">
+					</Item>
+					<Item Id="8216" Name="IDL_NUMEDIT_NUMMAX">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6002" Name="IDD_CALLING" Focus="7008">
+		<Controls>
+			<Static Id="7006" Name="IDC_STATIC_CALLING">
+				<Items/></Static>
+			<SoftKey Id="7008" Name="IDC_SK_CALLING">
+				<Items>
+					<Item Id="8005" Name="IDL_SK_CALLING_END">
+						<TextID>IDS_END</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6003" Name="IDD_SERVICE_PROGRAMMING" Focus="7003">
+		<Controls>
+			<Menu Id="7003" Name="IDC_MENU_SERVICE_PROGRAMMING">
+				<TitleID>IDS_SS_MT_SERVICE_PROGRAMMING</TitleID>
+				<Items>
+					<Item Id="8007" Name="IDL_CALL_FORWARDING">
+						<TextID>IDS_SS_MI_CALL_FORWARDING</TextID>
+					</Item>
+					<Item Id="8008" Name="IDL_CALL_BARRING">
+						<TextID>IDS_SS_MI_CALL_BARRING</TextID>
+					</Item>
+					<Item Id="8009" Name="IDL_CALL_WAITING">
+						<TextID>IDS_SS_MI_CALL_WAITING</TextID>
+					</Item>
+					<Item Id="8010" Name="IDL_CALLER_IDENTITY">
+						<TextID>IDS_SS_MI_CALLER_IDENTITY</TextID>
+					</Item>
+					<Item Id="8011" Name="IDL_CHANGE_PASSWORD">
+						<TextID>IDS_SS_MI_CHANGE_PASSWORD</TextID>
+					</Item>
+					<Item Id="8023" Name="IDL_CCBS">
+						<TextID>IDS_SUPPSYS_SS_CODE_E_TYPE_CCBS</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6004" Name="IDD_CALL_FORWARDING" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_MENU_CALL_FORWARDING">
+				<TitleID>IDS_SS_MT_CALL_FORWARDING</TitleID>
+				<Items>
+					<Item Id="8012" Name="IDL_ONMOBILEBUSY">
+						<TextID>IDS_SS_MI_ONMOBILEBUSY</TextID>
+					</Item>
+					<Item Id="8013" Name="IDL_ONNOREPLY">
+						<TextID>IDS_SS_MI_ONNOREPLY</TextID>
+					</Item>
+					<Item Id="8014" Name="IDL_ONMOBILENOTREACHABLE">
+						<TextID>IDS_SS_MI_ONMOBILENOTREACHABLE</TextID>
+					</Item>
+					<Item Id="8015" Name="IDL_UNCONDITIONAL">
+						<TextID>IDS_SS_MI_UNCONDITIONAL</TextID>
+					</Item>
+					<Item Id="8095" Name="IDL_CFA">
+						<TextID>IDS_SS_MI_CFA</TextID>
+					</Item>
+					<Item Id="8096" Name="IDL_CFC">
+						<TextID>IDS_SS_MI_CFC</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6005" Name="IDD_SUPS_OPERATION" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_MENU_SUPS_OPERATION">
+				<TitleID>IDS_SS_MT_SSO</TitleID>
+				<Position PosX="0" PosW="176" PosY="15" PosH="300"/>
+				<Items>
+					<Item Id="8016" Name="IDL_REGISTER">
+						<TextID>IDS_SS_MI_REGISTER</TextID>
+					</Item>
+					<Item Id="8017" Name="IDL_ACTIVATE">
+						<TextID>IDS_SS_MI_ACTIVATE</TextID>
+					</Item>
+					<Item Id="8018" Name="IDL_DEACTIVATE">
+						<TextID>IDS_SS_MI_DEACTIVATE</TextID>
+					</Item>
+					<Item Id="8019" Name="IDL_CHECKSTATUS">
+						<TextID>IDS_SS_MI_CHECKSTATUS</TextID>
+					</Item>
+					<Item Id="8020" Name="IDL_ERASE">
+						<TextID>IDS_SS_MI_ERASE</TextID>
+					</Item>
+				</Items>
+			</Menu>
+			<Static Id="7013" Name="IDC_STATIC_SUPS_OPERATION">
+				<Position PosX="0" PosW="176" PosY="0" PosH="15"/>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6006" Name="IDD_CF_REGISTER" Focus="7010">
+		<Controls>
+			<Static Id="7007" Name="IDC_STATIC_CF_REGISTER">
+				<Position PosX="0" PosW="176" PosY="0" PosH="40"/>
+				<Items/></Static>
+			<Text Id="7009" Name="IDC_TEXT_CF_FWD_TO">
+				<TitleID>IDS_SS_SS_FORWARDTO</TitleID>
+				<Position PosX="0" PosW="176" PosY="51" PosH="40"/>
+				<Items/></Text>
+			<SoftKey Id="7010" Name="IDC_SK_CF_REGISTER">
+				<Items>
+					<Item Id="8021" Name="IDL_CF_REGISTER_SERVICEGROUP">
+						<TextID>IDS_SS_MI_SERVICEGROUP</TextID>
+					</Item>
+					<Item Id="8022" Name="IDL_CF_REGISTER_CANCEL">
+						<TextID>IDS_SS_MI_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6007" Name="IDD_SERVICE_GROUP" Focus="7011">
+		<Controls>
+			<Menu Id="7011" Name="IDC_MENU_SERVICE_GROUP">
+				<Position PosX="0" PosW="176" PosY="25" PosH="130"/>
+				<Items>
+					<Item Id="8003" Name="IDL_VOICE" Data="5">
+						<TextID>IDS_SS_MI_VOICE</TextID>
+					</Item>
+					<Item Id="8099" Name="IDL_FAX" Data="7">
+						<TextID>IDS_SS_MI_FAX</TextID>
+					</Item>
+					<Item Id="8100" Name="IDL_SMS" Data="6">
+						<TextID>IDS_SS_MI_SMS</TextID>
+					</Item>
+					<Item Id="8105" Name="IDL_BEARER" Data="1">
+						<TextID>IDS_SS_MI_BEARER</TextID>
+					</Item>
+					<Item Id="8106" Name="IDL_SYNC" Data="3">
+						<TextID>IDS_SS_MI_SYNC</TextID>
+					</Item>
+					<Item Id="8107" Name="IDL_ASYNC" Data="2">
+						<TextID>IDS_SS_MI_ASYNC</TextID>
+					</Item>
+					<Item Id="8112" Name="IDL_DATA_CDA" Data="8">
+						<TextID>IDS_SS_MI_DATA_CDA</TextID>
+					</Item>
+					<Item Id="8113" Name="IDL_DATA_CDS" Data="9">
+						<TextID>IDS_SS_MI_DATA_CDS</TextID>
+					</Item>
+					<Item Id="8114" Name="IDL_ALL">
+						<TextID>IDS_SS_MI_ALL</TextID>
+					</Item>
+				</Items>
+			</Menu>
+			<SoftKey Id="7012" Name="IDC_SK_SG">
+				<Items>
+					<Item Id="8030" Name="IDL_SG_SUBMIT">
+						<TextID>IDS_SS_MI_SUBMIT</TextID>
+					</Item>
+					<Item Id="8031" Name="IDL_SG_CANCEL">
+						<TextID>IDS_SS_MI_CANCEL</TextID>
+					</Item>
+					<Item Id="8033" Name="IDL_CFNR_REGISTER_TIMER">
+						<TextID>IDS_SS_MI_TIMER</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Static Id="7033" Name="IDC_STATIC_SG_TITLE">
+				<Position PosX="0" PosW="176" PosY="0" PosH="25"/>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6008" Name="IDD_USSD_PASSWORD" Focus="7014">
+		<Controls>
+			<Text Id="7014" Name="IDC_TEXT_USSD_PASSWORD">
+				<TitleID>IDS_ENTERPASS</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7015" Name="IDC_SK_USSD_PASSWORD">
+				<Items>
+					<Item Id="8032" Name="IDL_SK_USSD_PASSWORD_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6009" Name="IDD_CFNR_TIMER" Focus="7017">
+		<Controls>
+			<Menu Id="7017" Name="IDC_MENU_CFNR_TIMER">
+				<Items>
+					<Item Id="8035" Name="IDL_00SEC">
+						<TextID>IDS_SS_MI_0SEC</TextID>
+						<ImageID>IDB_RADIO_ON</ImageID>
+					</Item>
+					<Item Id="8036" Name="IDL_05SEC" Data="5">
+						<TextID>IDS_SS_MI_5SEC</TextID>
+						<ImageID>IDB_RADIO_OFF</ImageID>
+					</Item>
+					<Item Id="8037" Name="IDL_10SEC" Data="A">
+						<TextID>IDS_SS_MI_10SEC</TextID>
+						<ImageID>IDB_RADIO_OFF</ImageID>
+					</Item>
+					<Item Id="8038" Name="IDL_15SEC" Data="F">
+						<TextID>IDS_SS_MI_15SEC</TextID>
+						<ImageID>IDB_RADIO_OFF</ImageID>
+					</Item>
+					<Item Id="8039" Name="IDL_20SEC" Data="14">
+						<TextID>IDS_SS_MI_20SEC</TextID>
+						<ImageID>IDB_RADIO_OFF</ImageID>
+					</Item>
+					<Item Id="8040" Name="IDL_25SEC" Data="19">
+						<TextID>IDS_SS_MI_25SEC</TextID>
+						<ImageID>IDB_RADIO_OFF</ImageID>
+					</Item>
+					<Item Id="8102" Name="IDL_30SEC" Data="14">
+						<TextID>IDS_SS_MI_30SEC</TextID>
+						<ImageID>IDB_RADIO_OFF</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+			<SoftKey Id="7018" Name="IDC_SK_CFNR_TIMER">
+				<Items>
+					<Item Id="8041" Name="IDL_CFNR_TIMER_SUBMIT">
+						<TextID>IDS_SS_MI_SUBMIT</TextID>
+					</Item>
+					<Item Id="8043" Name="IDL_CFNR_TIMER_CANCEL">
+						<TextID>IDS_SS_MI_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6010" Name="IDD_USSD_INFO" Focus="7016">
+		<Controls>
+			<Text Id="7016" Name="IDC_TEXT_USSD_INFO">
+				<Items/></Text>
+			<SoftKey Id="7019" Name="IDC_SK_USSD_INFO">
+				<Items>
+					<Item Id="8034" Name="IDL_SK_USSD_INFO_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Static Id="7057" Name="IDC_STATIC_USSD_INFO">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6011" Name="IDD_CALL_BARRING" Focus="7021">
+		<Controls>
+			<Menu Id="7021" Name="IDC_MENU_CALL_BARRING">
+				<TitleID>IDS_SS_MT_CALL_BARRING</TitleID>
+				<Items>
+					<Item Id="8047" Name="IDL_BAOC">
+						<TextID>IDS_SS_MI_BAOC</TextID>
+					</Item>
+					<Item Id="8048" Name="IDL_BOIC">
+						<TextID>IDS_SS_MI_BOIC</TextID>
+					</Item>
+					<Item Id="8049" Name="IDL_BOICX">
+						<TextID>IDS_SS_MI_BOICX</TextID>
+					</Item>
+					<Item Id="8050" Name="IDL_BAIC">
+						<TextID>IDS_SS_MI_BAIC</TextID>
+					</Item>
+					<Item Id="8051" Name="IDL_BAICX">
+						<TextID>IDS_SS_MI_BAICX</TextID>
+					</Item>
+					<Item Id="8052" Name="IDL_BAC">
+						<TextID>IDS_SS_MI_BAC</TextID>
+					</Item>
+					<Item Id="8103" Name="IDL_BIC">
+						<TextID>IDS_SS_MI_BIC</TextID>
+					</Item>
+					<Item Id="8104" Name="IDL_BOC">
+						<TextID>IDS_SS_MI_BOC</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6012" Name="IDD_CB_PASSWORD" Focus="7022">
+		<Controls>
+			<Static Id="7022" Name="IDC_STATIC_CB_PASSWORD_SS_CODE">
+				<Position PosX="0" PosW="176" PosY="0" PosH="30"/>
+				<Items/></Static>
+			<Text Id="7023" Name="IDC_TEXT_CB_PASSWORD">
+				<TitleID>IDS_SS_SS_PASSWORD</TitleID>
+				<Position PosX="0" PosW="176" PosY="50" PosH="50"/>
+				<Items/></Text>
+			<SoftKey Id="7024" Name="IDC_SK_CB_PASSWORD">
+				<Items>
+					<Item Id="8053" Name="IDL_SK_CB_PASSWORD_SERVICEGROUP">
+						<TextID>IDS_SS_MI_SERVICEGROUP</TextID>
+					</Item>
+					<Item Id="8054" Name="IDL_SK_CB_PASSWORD_CANCEL">
+						<TextID>IDS_SS_MI_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Static Id="7041" Name="IDC_STATIC_CB_PASSWORD_SS_OPERATION">
+				<Position PosX="0" PosW="176" PosY="30" PosH="15"/>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6013" Name="IDD_CALLER_IDENTITY" Focus="7025">
+		<Controls>
+			<Menu Id="7025" Name="IDC_MENU_CALLER_IDENTITY">
+				<TitleID>IDS_SS_MT_CALLERID</TitleID>
+				<Items>
+					<Item Id="8055" Name="IDL_PRESENT_CALLER">
+						<TextID>IDS_SS_MI_PRESENT_CALLER</TextID>
+					</Item>
+					<Item Id="8056" Name="IDL_RESTRICT_CALLER">
+						<TextID>IDS_SS_MI_RESTRICT_CALLER</TextID>
+					</Item>
+					<Item Id="8057" Name="IDL_PRESENT_CALLEE">
+						<TextID>IDS_SS_MI_PRESENT_CALLEE</TextID>
+					</Item>
+					<Item Id="8058" Name="IDL_RESTRICT_CALLEE">
+						<TextID>IDS_SS_MI_RESTRICT_CALLEE</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6014" Name="IDD_CHANGE_PASSWORD" Focus="7026">
+		<Controls>
+			<Static Id="7026" Name="IDC_STATIC_CHANGE_PASSWORD">
+				<TextID>IDS_SS_SS_CHANGE_PASSWORD</TextID>
+				<Position PosX="0" PosW="200" PosY="0" PosH="15"/>
+				<Items/></Static>
+			<Text Id="7027" Name="IDC_TEXT_OLD_PASSWORD">
+				<TitleID>IDS_SS_SS_OLD_PASSWORD</TitleID>
+				<Position PosX="0" PosW="200" PosY="15" PosH="40"/>
+				<Items/></Text>
+			<Text Id="7028" Name="IDC_TEXT_NEW_PASSWORD">
+				<TitleID>IDS_SS_SS_NEW_PASSWORD</TitleID>
+				<Position PosX="0" PosW="200" PosY="55" PosH="40"/>
+				<Items/></Text>
+			<Text Id="7029" Name="IDC_TEXT_REENTER_PASSWORD">
+				<TitleID>IDS_SS_SS_REENTER_PASSWORD</TitleID>
+				<Position PosX="0" PosW="200" PosY="95" PosH="40"/>
+				<Items/></Text>
+			<SoftKey Id="7030" Name="IDC_SK_CHANGE_PASSWORD">
+				<Items>
+					<Item Id="8029" Name="IDL_SK_CHANGE_PASSWORD_SUBMIT">
+						<TextID>IDS_SS_MI_SUBMIT</TextID>
+					</Item>
+					<Item Id="8059" Name="IDL_SK_CHANGE_PASSWORD_CANCEL">
+						<TextID>IDS_SS_MI_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6015" Name="IDD_WILDCARD" Focus="7031">
+		<Controls>
+			<Text Id="7031" Name="IDC_TEXT_WILDCARD">
+				<TitleID>IDS_WILDCARD_TITLE</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7032" Name="IDC_SK_WILDCARD">
+				<Items>
+					<Item Id="8042" Name="IDL_SK_WILDCARD_CANCEL">
+						<TextID>IDS_CANCEL</TextID>
+					</Item>
+					<Item Id="8060" Name="IDL_SK_WILDCARD_SEND">
+						<TextID>IDS_SEND</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6016" Name="IDD_NOTIF" Focus="7035">
+		<Controls>
+			<Static Id="7034" Name="IDC_STATIC_NOTIF">
+				<Items/></Static>
+			<SoftKey Id="7035" Name="IDC_SK_NOTIF">
+				<Items>
+					<Item Id="8004" Name="IDL_SK_NOTIF_CANCEL">
+						<TextID>IDS_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6017" Name="IDD_INCOMING" Focus="7039">
+		<Controls>
+			<Static Id="7038" Name="IDC_STATIC_INCOMING">
+				<Items/></Static>
+			<SoftKey Id="7039" Name="IDC_SK_INCOMING">
+				<Items>
+					<Item Id="8006" Name="IDL_SK_INCOMING_ANSWER">
+						<TextID>IDS_ANSWER</TextID>
+					</Item>
+					<Item Id="8062" Name="IDL_SK_INCOMING_SILENCE">
+						<TextID>IDS_SILENCE</TextID>
+					</Item>
+					<Item Id="8063" Name="IDL_SK_INCOMING_REJECT">
+						<TextID>IDS_REJECT</TextID>
+					</Item>
+					<Item Id="8064" Name="IDL_SK_INCOMING_OPTIONS">
+						<TextID>IDS_OPTIONS</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6018" Name="IDD_STATUS" Focus="7042">
+		<Controls>
+			<Menu Id="7036" Name="IDC_MENU_STATUS">
+				<TitleID>IDS_STATUSTITLE</TitleID>
+				<Items>
+					<Item Id="11000" Name="DIALERAPP_STATUS_CONTROL_OFFSET">
+					</Item>
+					<Item Id="11001" Name="IDL_STATUS_CALL_1" Data="1">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11002" Name="IDL_STATUS_CALL_2" Data="2">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11003" Name="IDL_STATUS_CALL_3" Data="3">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11004" Name="IDL_STATUS_CALL_4" Data="4">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11005" Name="IDL_STATUS_CALL_5" Data="5">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11006" Name="IDL_STATUS_CALL_6" Data="6">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11007" Name="IDL_STATUS_CALL_7" Data="7">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11008" Name="IDL_STATUS_CALL_8" Data="8">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11009" Name="IDL_STATUS_CALL_9" Data="9">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11010" Name="IDL_STATUS_CALL_10" Data="10">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11011" Name="IDL_STATUS_CALLEND_1" Data="1">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11012" Name="IDL_STATUS_CALLEND_2" Data="2">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11013" Name="IDL_STATUS_CALLEND_3" Data="3">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11014" Name="IDL_STATUS_CALLEND_4" Data="4">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11015" Name="IDL_STATUS_CALLEND_5" Data="5">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11016" Name="IDL_STATUS_CALLEND_6">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11017" Name="IDL_STATUS_CALLEND_7">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11018" Name="IDL_STATUS_CALLEND_8">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11019" Name="IDL_STATUS_CALLEND_9" Data="9">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+					<Item Id="11020" Name="IDL_STATUS_CALLEND_10" Data="10">
+						<ImageID>IDB_EMPTY</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+			<SoftKey Id="7042" Name="IDC_SK_STATUS">
+				<Items>
+					<Item Id="8083" Name="IDL_SK_STATUS_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+					<Item Id="8089" Name="IDL_SK_STATUS_OPTIONS">
+						<TextID>IDS_OPTIONS</TextID>
+					</Item>
+					<Item Id="8091" Name="IDL_SK_STATUS_INFO">
+						<TextID>IDS_INFO</TextID>
+					</Item>
+					<Item Id="8092" Name="IDL_SK_STATUS_MUTE">
+						<TextID>IDS_MUTE</TextID>
+					</Item>
+					<Item Id="8093" Name="IDL_SK_STATUS_END">
+						<TextID>IDS_END</TextID>
+					</Item>
+					<Item Id="8110" Name="IDL_SK_STATUS_UNMUTE">
+						<TextID>IDS_UNMUTE</TextID>
+					</Item>
+					<Item Id="8111" Name="IDL_SK_STATUS_SSMENU">
+						<TextID>IDS_SSMENU</TextID>
+					</Item>
+					<Item Id="8131" Name="IDL_SK_STATUS_VIDEOSHARE">
+						<TextID>IDS_VIDEOSHARE</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6019" Name="IDD_INCOM_OPTIONS" Focus="7043">
+		<Controls>
+			<Menu Id="7043" Name="IDC_MENU_INCOM_OPTIONS">
+				<TitleID>IDS_INCOMOPTIONSTITLE</TitleID>
+				<Items>
+					<Item Id="8061" Name="IDL_INCOM_OPTIONS_TRANSFER">
+						<TextID>IDS_TRANSFER</TextID>
+					</Item>
+					<Item Id="8071" Name="IDL_INCOM_OPTIONS_ENDACTIVE">
+						<TextID>IDS_ENDACTIVE</TextID>
+					</Item>
+					<Item Id="8072" Name="IDL_INCOM_OPTIONS_SWAP">
+						<TextID>IDS_SWAP</TextID>
+					</Item>
+					<Item Id="8073" Name="IDL_INCOM_OPTIONS_BUSY">
+						<TextID>IDS_BUSY</TextID>
+					</Item>
+					<Item Id="8074" Name="IDL_INCOM_OPTIONS_REDIRECT">
+						<TextID>IDS_REDIRECT</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6020" Name="IDD_CALL_OPTIONS" Focus="7044">
+		<Controls>
+			<Menu Id="7044" Name="IDC_MENU_CALL_OPTIONS">
+				<Items>
+					<Item Id="8075" Name="IDL_CALL_OPTIONS_ENDHELD">
+						<TextID>IDS_ENDHELD</TextID>
+					</Item>
+					<Item Id="8076" Name="IDL_CALL_OPTIONS_ENDACTIVE">
+						<TextID>IDS_ENDACTIVE</TextID>
+					</Item>
+					<Item Id="8078" Name="IDL_CALL_OPTIONS_UNHOLD">
+						<TextID>IDS_UNHOLD</TextID>
+					</Item>
+					<Item Id="8079" Name="IDL_CALL_OPTIONS_PRIVATECALL">
+						<TextID>IDS_PRIVATE</TextID>
+					</Item>
+					<Item Id="8080" Name="IDL_CALL_OPTIONS_CONFERENCE">
+						<TextID>IDS_CONFERENCE</TextID>
+					</Item>
+					<Item Id="8081" Name="IDL_CALL_OPTIONS_TRANSFER">
+						<TextID>IDS_TRANSFER</TextID>
+					</Item>
+					<Item Id="8088" Name="IDL_CALL_OPTIONS_HOLD">
+						<TextID>IDS_HOLD</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6021" Name="IDD_MISSEDCALL" Focus="7053">
+		<Controls>
+			<Static Id="7053" Name="IDC_STATIC_MISSEDCALL">
+				<Items/></Static>
+			<SoftKey Id="7054" Name="IDC_SK_MISSEDCALL">
+				<Items>
+					<Item Id="8077" Name="IDL_SK_MISSEDCALL_SAVE">
+						<TextID>IDS_SAVE</TextID>
+					</Item>
+					<Item Id="8090" Name="IDL_SK_MISSEDCALL_ADDTO">
+						<TextID>IDS_ADDTO</TextID>
+					</Item>
+					<Item Id="8109" Name="IDL_SK_MISSEDCALL_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6022" Name="IDD_DETAIL" Focus="7037">
+		<Controls>
+			<SoftKey Id="7037" Name="IDC_SK_DETAIL">
+				<Items>
+					<Item Id="8065" Name="IDL_SK_DETAIL_END">
+						<TextID>IDS_END</TextID>
+					</Item>
+					<Item Id="8066" Name="IDL_SK_DETAIL_SAVE">
+						<TextID>IDS_SAVE</TextID>
+					</Item>
+					<Item Id="8068" Name="IDL_SK_DETAIL_PRIVACYON">
+						<TextID>IDS_PRIVACYON</TextID>
+					</Item>
+					<Item Id="8082" Name="IDL_SK_DETAIL_ADDTO">
+						<TextID>IDS_ADDTO</TextID>
+					</Item>
+					<Item Id="8086" Name="IDL_SK_DETAIL_PRIVACYOFF">
+						<TextID>IDS_PRIVACYOFF</TextID>
+					</Item>
+					<Item Id="8101" Name="IDL_SK_DETAIL_OPTIONS">
+						<TextID>IDS_OPTIONS</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Static Id="7040" Name="IDC_STATIC_DETAIL">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6023" Name="IDD_USSD_PROMPT" Focus="7020">
+		<Controls>
+			<Static Id="7020" Name="IDC_STATIC_USSD_PROMPT">
+				<Items/></Static>
+			<SoftKey Id="7046" Name="IDC_SK_USSD_PROMPT">
+				<Items>
+					<Item Id="8044" Name="IDL_SK_USSD_PROMPT_ACCEPT">
+						<TextID>IDS_ACCEPT</TextID>
+					</Item>
+					<Item Id="8045" Name="IDL_SK_USSD_PROMPT_REJECT">
+						<TextID>IDS_REJECT</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6024" Name="IDD_TIMEPAUSE" Focus="7049">
+		<Controls>
+			<Static Id="7047" Name="IDC_STATIC_TIMEPAUSE_SENT">
+				<TitleID>IDS_DTMFSENT</TitleID>
+				<Items/></Static>
+			<Static Id="7048" Name="IDC_STATIC_TIMEPAUSE_REMAINING">
+				<TitleID>IDS_DTMFREMAINING</TitleID>
+				<Items/></Static>
+			<SoftKey Id="7049" Name="IDC_SK_TIMEPAUSE">
+				<Items>
+					<Item Id="8046" Name="IDL_SK_TIMEPAUSE_SEND">
+						<TextID>IDS_SEND</TextID>
+					</Item>
+					<Item Id="8098" Name="IDL_SK_TIMEPAUSE_CANCEL">
+						<TextID>IDS_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6025" Name="IDD_FORWARDING" Focus="7051">
+		<Controls>
+			<Static Id="7050" Name="IDC_STATIC_FORWARDING">
+				<TitleID>IDS_FORWARDINCOMINGCALL</TitleID>
+				<Items/></Static>
+			<Text Id="7051" Name="IDC_TEXT_FORWARDING">
+				<TitleID>IDS_FORWARDCALLTO</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7052" Name="IDC_SK_FORWARDING">
+				<Items>
+					<Item Id="8070" Name="IDL_SK_FORWARDING_FORWARD">
+						<TextID>IDS_FORWARD</TextID>
+					</Item>
+					<Item Id="8108" Name="IDL_SK_FORWARDING_PHONEBOOK">
+						<TextID>IDS_PHONEBOOK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6026" Name="IDD_SSREQUEST" Focus="7055">
+		<Controls>
+			<Static Id="7045" Name="IDC_STATIC_SSREQUEST">
+				<TextID>IDS_REQUESTING</TextID>
+				<Items/></Static>
+			<SoftKey Id="7055" Name="IDC_SK_SSREQUEST">
+				<Items>
+					<Item Id="8084" Name="IDL_SK_SSREQUEST_CANCEL">
+						<TextID>IDS_CANCELSSREQUEST</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6027" Name="IDD_CCBS_SUPS_OPERATION" Focus="7058">
+		<Controls>
+			<Menu Id="7058" Name="IDC_CCBS_MENU_SUPS_OPERATION">
+				<TitleID>IDS_SUPPSYS_SS_CODE_E_TYPE_CCBS</TitleID>
+				<Position PosX="0" PosW="176" PosY="0" PosH="50"/>
+				<Items>
+					<Item Id="8024" Name="IDL_RECALL_LIST">
+						<TextID>IDS_RECALL_LIST</TextID>
+					</Item>
+					<Item Id="8025" Name="IDL_CCBS_DEACTIVATE">
+						<TextID>IDS_SS_MI_DEACTIVATE</TextID>
+					</Item>
+					<Item Id="8026" Name="IDL_CCBS_CHECK_STATUS">
+						<TextID>IDS_SS_MI_CHECKSTATUS</TextID>
+					</Item>
+				</Items>
+			</Menu>
+			<SoftKey Id="7060" Name="IDC_CCBS_SK">
+				<Items>
+					<Item Id="8027" Name="IDL_CCBS_SUBMIT">
+						<TextID>IDS_SS_MI_SUBMIT</TextID>
+					</Item>
+					<Item Id="8028" Name="IDL_CCBS_CANCEL">
+						<TextID>IDS_SS_MI_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6028" Name="IDD_RECALL" Focus="7062">
+		<Controls>
+			<Static Id="7059" Name="IDC_STATIC_RECALL">
+				<Items/></Static>
+			<SoftKey Id="7062" Name="IDC_SK_RECALL">
+				<Items>
+					<Item Id="8094" Name="IDL_RECALL_SK_CALL">
+						<TextID>IDS_CALL</TextID>
+					</Item>
+					<Item Id="8115" Name="IDL_RECALL_SK_HOLD_N_ACCEPT">
+						<TextID>IDS_HOLD_N_ACCEPT</TextID>
+					</Item>
+					<Item Id="8118" Name="IDL_RECALL_SK_REL_N_ACCEPT">
+						<TextID>IDS_REL_N_ACCEPT</TextID>
+					</Item>
+					<Item Id="8119" Name="IDL_RECALL_SK_CANCEL">
+						<TextID>IDS_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6029" Name="IDD_SETUP_RECALL" Focus="7064">
+		<Controls>
+			<Static Id="7063" Name="IDC_STATIC_SETUP_RECALL">
+				<Items/></Static>
+			<SoftKey Id="7064" Name="IDC_SK_SETUP_RECALL">
+				<Items>
+					<Item Id="8116" Name="IDL_SK_SETUP_RECALL">
+						<TextID>IDS_OK</TextID>
+					</Item>
+					<Item Id="8117" Name="IDL_SK_SETUP_RECALL_CANCEL">
+						<TextID>IDS_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6030" Name="IDD_CCBS_INDEX" Focus="7061">
+		<Controls>
+			<Text Id="7061" Name="IDC_TEXT_CCBS_INDEX">
+				<Items/></Text>
+			<SoftKey Id="7065" Name="IDC_SK_CCBS">
+				<Items>
+					<Item Id="8120" Name="IDL_CCBS_INDEX_SUBMIT">
+						<TextID>IDS_SS_MI_SUBMIT</TextID>
+					</Item>
+					<Item Id="8121" Name="IDL_CCBS_INDEX_CANCEL">
+						<TextID>IDS_SS_MI_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6031" Name="IDD_CCBS_PENDING_LIST" Focus="7066">
+		<Controls>
+			<Menu Id="7066" Name="IDC_CCBS_PENDING_LIST">
+				<TitleID>IDS_RECALL_LIST</TitleID>
+				<Items>
+					<Item Id="8122" Name="IDL_CCBS_PENDING_1">
+					</Item>
+					<Item Id="8123" Name="IDL_CCBS_PENDING_2">
+					</Item>
+					<Item Id="8124" Name="IDL_CCBS_PENDING_3">
+					</Item>
+					<Item Id="8125" Name="IDL_CCBS_PENDING_4">
+					</Item>
+					<Item Id="8126" Name="IDL_CCBS_PENDING_5">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

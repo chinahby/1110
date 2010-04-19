@@ -1,0 +1,5 @@
+#ifndef COREAPP_BID
+#define COREAPP_BID
+#define AEECLSID_CORE_STARTAPP  0x01011afd
+#define AEECLSID_CORE_APP       0x01011a5a
+#endif  /* COREAPP_BID */
