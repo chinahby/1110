@@ -1,0 +1,57 @@
+一、工具安装
+1)FTP服务器：访问ftp://192.168.1.200 Username/Password:ftp/ftp，在Tools下复制以下文件到本地：
+    Cygwin.rar
+    ADS1.2.rar
+    ARMPatch(Build842).exe
+    ActivePerl-5.10.0.1004-MSWin32-x86-287188.msi
+    TortoiseSVN-1.6.3.16613-win32-svn-1.6.3.msi
+    DosHere.reg
+
+2)安装ARM编译器：
+    解压ADS1.2.rar，运行Setup.exe，安装到C:\ARM\ADSv1_2下，请不要使用默认的C:\Program Files\ARM\ADSv1_2目录，中间有空格，容易出问题
+    选择安装License，找到ADS1.2.rar安装路径下面crack，选择License.dat
+    运行ARMPatch(Build848).exe，选择解压目录为C:\ARM\ADSv1_2，解压
+    我的电脑/右键/属性/高级/环境变量，在PATH变量中增加C:\ARM\ADSv1_2\bin;
+
+3)Cygwin的安装：
+    解压Cygwin.rar到C:\cygwin路径下
+    我的电脑/右键/属性/高级/环境变量，在PATH变量中增加C:\cygwin\bin;
+    运行regcygwin.bat在Windows中注册Cygwion的环境
+
+4)Perl安装：
+    运行ActivePerl-5.10.0.1004-MSWin32-x86-287188.msi，默认安装
+    我的电脑/右键/属性/高级/环境变量，在PATH变量中增加C:\Perl\bin;
+    
+5)安装右键的“DOS在这里”：
+    合并DosHere.reg到注册表，方便从右键打开命令行窗口
+    
+6)安装SVN工程管理工具：
+    运行TortoiseSVN-1.6.3.16613-win32-svn-1.6.3.msi
+    重新启动电脑
+    在任何路径下点击右键TortoiesSVN/Settings/Icon Overlays/Status Cache选择None，防止搜索目录导致系统变慢
+    
+二、获取工程
+1)建立工程文件夹：建立文件夹QSC6270
+2)从FTP服务器上获取开发环境：
+    开发环境分为系统开发环境（QSC6270SYS.rar）和通用开发环境（QSC6270ENV），从ftp://192.168.1.200/开发环境目录下下载
+    将开发环境解压到QSC6270文件夹下面
+    
+3)从代码服务器上获取个人代码：
+    使用SVN的Checkout命令（在QSC6270文件夹上点击右键），输入https//192.168.1.200/svn/姓名全拼/Trunks
+    根据提示输入用户名和密码：用户名为姓名的全拼，密码由管理员设置，由本人妥善保管，不得告知他人
+    代码服务器上的代码为系统管理员根据个人工作需要提供的源代码，仅限于本人保管，不得相互拷贝。
+    
+三、编译工程
+1)完全编译：
+    进入QSC1100/build/ms，点击右键，选择"DOS在这里"，打开命令行输入窗口
+    输入SBNAALZ，开始编译
+    
+2)使用b.bat脚本编译
+		b n 网络联机编译,速度最快
+		b   普通编译
+		b c 清除amss
+四、注意事项
+1)如果编译过程中提示找不到/bin/sh，则需要在工程所在盘符的根目录下建立bin文件夹（例如：工程在E盘的某个目录，则建立E:\bin文件夹），到cygwin的bin文件夹下复制sh.exe到此文件夹即可
+2)使用本地多线程编译的时候有可能发生最后链接的编译错误，可以输入W001进行单线程编译即可
+3)请使用ARMPatch(Build842).exe，高通官方不支持848的Patch。
+
