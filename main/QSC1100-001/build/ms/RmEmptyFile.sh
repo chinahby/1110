@@ -9,6 +9,9 @@ do
 	rm -f $i.o
 done	
 
-rm SBNAALZ/boot_vectors.o
-rm SBNAALZ/boot_data.o
-rm SBNAALZ/boot_reset_handler.o
+seconddir=./SXNAALZ/SBNAALZ
+
+
+rm $seconddir/boot_vectors.o
+rm $seconddir/boot_data.o
+rm $seconddir/boot_reset_handler.o
