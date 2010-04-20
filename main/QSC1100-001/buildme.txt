@@ -30,6 +30,8 @@
     重新启动电脑
     在任何路径下点击右键TortoiesSVN/Settings/Icon Overlays/Status Cache选择None，防止搜索目录导致系统变慢
     
+7) 联机编译详见联机编译包的txt说明文档
+
 二、获取工程
 1)建立工程文件夹：建立文件夹QSC6270
 2)从FTP服务器上获取开发环境：
