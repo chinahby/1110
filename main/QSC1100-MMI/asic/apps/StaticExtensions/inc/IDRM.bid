@@ -1,0 +1,7 @@
+#ifndef IDRM_BID
+#define IDRM_BID
+
+#define AEECLSID_IDRM    	0x0101c6d1
+
+#endif //IDRM_BID
+

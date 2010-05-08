@@ -1,0 +1,80 @@
+
+#----------------------------------------------------
+# MIF Path
+#----------------------------------------------------
+vpath %.mif $(BREW_STATIC_MIFS)
+
+#APPFLAGS := -DBREW_STATIC_APP -DAEE_STATIC
+
+include $(APPSCOMMON)/appscommon.min
+
+#Core App
+include $(COREAPP)/coreapp.min
+include $(MAINMENU)/mainmenu.min
+include $(CALLAPP)/CallApp.min
+include $(CONTAPP)/contact.min
+include $(WMSAPP)/wmsapp.min
+include $(UTK)/utk.min
+include $(RECENTCALLS)/recentcalls.min
+
+#MultiMedia
+include $(VIDEOPLAYER)/VideoPlayer.min
+include $(MUSICPLAYER)/MusicPlayer.min
+include $(RECORDER)/recorder.min
+ifeq ($(USES_3PART_BT),BCM2048)
+    include $(BLUETOOTH)/BTApp.min
+endif
+#ifeq ($(MMI_ADD_MEDIAGALLERY),yes)
+include $(MEDIAGALLERY)/mediagallery.min
+#endif
+ifeq ($(MMI_ADD_CAMERA),yes)
+include $(CAMERAAPP)/CameraApp.min
+endif
+ifeq ($(MMI_ADD_FM),yes)
+include $(FMRADIOAPP)/FmRadio.min
+endif
+
+#Phone Setting
+include $(SOUNDMENU)/SoundMenu.min
+include $(DISPLAYMENU)/DisplayMenu.min
+include $(SECURITYMENU)/SecurityMenu.min
+include $(SETTINGMENU)/SettingMenu.min
+include $(ADJUSTPENAPP)/AdjustPenApp.min
+
+#Tools
+include $(CALCAPP)/calcapp.min
+include $(CLOCKAPP)/clockapps.min
+include $(CONVERTER)/converter.min
+include $(SCHEDULEAPP)/scheduleapp.min
+ifeq ($(MMI_ADD_SPORT),yes)
+include $(SPORTS)/sports.min
+endif
+include $(STOPWATCH)/stopwatch.min
+include $(TIMERAPP)/timerapp.min
+include $(WORLDTIME)/worldtime.min
+include $(NOTEBOOK)/notebook.min
+
+#Games
+include $(TETRIS)/tetris.min
+
+#Apps
+include $(EXTRAMENU)/extramenu.min
+include $(OEMEXTFOR3PART)/OEMExtFor3Part.min
+include $(EDITAPPLET)/EditApplet.min
+include $(EDITEXTENTSION)/EditExtension.min
+include $(WAPBROWSER)/WapBrowser.min
+include $(BREW_APPMGR)/BREWAppMgr.min
+include $(ESURFING)/Esurfing.min
+include $(CUSTSERVICE)/custservice.min
+
+#System tools
+ifeq ($(MMI_ADD_FLDDBG),yes)
+include $(FLDDBG)/flddbg.min
+endif
+
+include $(QUICKTEST)/quicktest.min
+include $(SVCPRG)/svcprg.min
+include $(NUMBERMANAGER)/numbermanager.min
+
+
+include $(UI)/oemui.min

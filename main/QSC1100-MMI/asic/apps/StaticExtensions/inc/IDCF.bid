@@ -1,0 +1,6 @@
+#ifndef IDCF_BID
+#define IDCF_BID
+
+#define AEECLSID_IDCF    	0x0101f59d
+
+#endif //IDCF_BID

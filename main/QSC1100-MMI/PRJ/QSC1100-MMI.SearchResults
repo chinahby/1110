@@ -1,0 +1,10 @@
+---- OEMAddrBook_New Matches (9 in 6 files) ----
+OEMAddrBook.c (f:\project\qsc1100-001\asic\apps\staticextensions\oem\src):Function: OEMAddrBook_New()
+OEMAddrBook.c (f:\project\qsc1100-001\asic\apps\staticextensions\oem\src):   int OEMAddrBook_New(IShell * pIShell,AEECLSID ClsId,void ** ppObj)
+OEMAddrBook.c (f:\project\qsc1100-001\asic\apps\staticextensions\oem\src):int OEMAddrBook_New(IShell * pIShell, AEECLSID ClsId, void ** ppObj)
+OEMAddrBook.c (f:\project\qsc1100-001\platform\brew\brewpk\pk\src):int OEMAddrBook_New(IShell * pIShell,AEECLSID ClsId,void ** ppObj)
+OEMAddrBook.c (f:\project\qsc1100-001\platform\brew\brewpk\pk\src\sim):int OEMAddrBook_New(IShell * pIShell,AEECLSID ClsId,void ** ppObj)
+OEMAddrBook.h (f:\project\qsc1100-001\platform\brew\brewpk\pk\inc):{AEECLSID_OEMADDRBOOK,   0,PL_SYSTEM,   NULL, OEMAddrBook_New},
+OEMAddrBookRUIM.c (f:\project\qsc1100-001\platform\brew\brewpk\pk\src\msm):FUNCTION OEMAddrBook_New
+OEMModTable.c (f:\project\qsc1100-001\platform\brew\brewpk\pk\src):extern int OEMAddrBook_New(IShell *ps,AEECLSID cls,void ** ppo);
+OEMModTable.c (f:\project\qsc1100-001\platform\brew\brewpk\pk\src):         {AEECLSID_OEMADDRBOOK,     ASCF_UPGRADE,PL_SYSTEM,   NULL, OEMAddrBook_New},

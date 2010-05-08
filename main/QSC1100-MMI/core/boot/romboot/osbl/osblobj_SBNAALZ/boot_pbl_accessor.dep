@@ -1,0 +1,12 @@
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_pbl_accessor.c
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_pbl_accessor.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_flash.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_headers.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_flash.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\sec\src\secboot_types.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\target\src\pbl_error_handler.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_error_if.h
+..\..\osblobj_SBNAALZ\boot_pbl_accessor.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="zhcnextramenu" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_EXTRAMENU_TITLE">
+		<Text>工具箱</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_BLUETOOTH_TITLE">
+		<Text>蓝牙</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_ALARMCLOCK_TITLE">
+		<Text>闹钟</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_CALENDAR_TITLE">
+		<Text>日程表</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_CALCULATOR_TITLE">
+		<Text>计算器</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_STOPWATCH_TITLE">
+		<Text>秒表</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_WORLDTIME_TITLE">
+		<Text>世界时间</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_CONVERTER_TITLE">
+		<Text>单位换算</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_TIMEER_TITLE">
+		<Text>倒计时器</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_RECORDER_TITLE">
+		<Text>录音机</Text>
+	</STRING>
+	<STRING Id="1001" Name="IDS_JEWISH_CALENDAR_TITLE">
+		<Text>Jewish calendar</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_MORSE_TITLE">
+		<Text>摩尔斯码</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<DIALOG Id="101" Name="IDD_EXTRA_DIALOG" Focus="1">
+		<Controls>
+			<Menu Id="1" Name="IDC_EXTRA_DIALOG">
+				<TitleID>IDS_EXTRAMENU_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+</Dialogs>
+</BREWRes>

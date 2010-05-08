@@ -1,0 +1,27 @@
+#-------------------------------------------------------------------------------
+# BlueTooth
+#-------------------------------------------------------------------------------
+
+BT_HOST_SOURCES=\
+            bt_bcm2048.c
+            
+BT_LIB_SOURCES=\
+			bcmapp_dm.c \
+			bcmapp_ag.c \
+			bcmapp_ops.c \
+			bcmapp_opc.c \
+			bcmapp_fts.c \
+			bta_fs_co.c
+#			bcmapp_dg.c \    
+
+BT_DRIVER_SOURCES = $(BT_HOST_SOURCES) $(BT_LIB_SOURCES)
+
+vpath %.c   $(BT_DRIVER)/bcm2048
+vpath %.c   $(BT_DRIVER)/bcm2048/btapp
+
+THIRD_PARTY_LIBS += \
+                $(BT_DRIVER)/bcm2048/lib/bta.lib\
+                $(BT_DRIVER)/bcm2048/lib/bte.lib\
+                $(BT_DRIVER)/bcm2048/lib/gki.lib\
+                $(BT_DRIVER)/bcm2048/lib/hcisu_h4.lib\
+                $(BT_DRIVER)/bcm2048/lib/stack.lib

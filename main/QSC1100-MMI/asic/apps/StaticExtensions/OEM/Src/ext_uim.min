@@ -1,0 +1,35 @@
+#-------------------------------------------------------------------------------
+# StaticExtensions OEM Library
+#
+# $Header: //depot/asic/msmshared/apps/StaticExtensions/OEM/Src/ext_uim.min#3 $ 
+# $DateTime: 2006/08/24 10:43:20 $ $Author: tingl $
+# 
+#-------------------------------------------------------------------------------
+
+
+EXT_UIM_LIB_SOURCES=\
+  OEMCardSession.c \
+  OEMCardSessionNotifier.c \
+  oemcard.c
+  
+
+ifeq ($(USES_GSTK),yes)
+  EXT_UIM_LIB_SOURCES += OEMCAT.c 
+  EXT_UIM_LIB_SOURCES += AEESTK.c 
+  EXT_UIM_LIB_SOURCES += OEMSTK.c 
+endif
+
+EXT_UIM_LIB_OBJS :=  $(addprefix $(TARGETDIR)/, $(EXT_UIM_LIB_SOURCES:%.c=%.o))       
+ 
+vpath %.c $(BREW_STATIC_EXTENSIONS_OEM_SRC)
+
+EXT_UIM_OBJS := $(EXT_UIM_LIB_OBJS) 
+EXT_UIM_DEPS := $(addprefix $(TARGETDIR)/, $(EXT_UIM_LIB_SOURCES:%.c=%.dep))  
+$(EXT_UIM_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+### Start Lint block ###
+ifeq ($(DO_LINT),yes)
+   EXT_UIM_LINT_OBJS :=  $(addprefix $(LINTDIR)/, $(EXT_UIM_LIB_SOURCES:%.c=%.lint))
+   $(LINTDIR)/uimext_lint : $(EXT_UIM_LINT_OBJS)
+endif
+### End Lint block ###

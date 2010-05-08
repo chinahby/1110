@@ -1,0 +1,23 @@
+#-------------------------------------------------------------------------------
+# Edit Applet
+#-------------------------------------------------------------------------------
+EDITAPPLET_INC = $(EDITAPPLET)
+EDITAPPLET_RES = $(EDITAPPLET)/resources
+EDITAPPLET_SRC = $(EDITAPPLET)
+EDITAPPLET_LIB = $(EDITAPPLET)
+
+EDITAPPLET_SOURCES=	\
+	EditApplet.c
+        
+EDITAPPLET_OBJS :=  $(addprefix $(TARGETDIR)/, $(EDITAPPLET_SOURCES:%.c=%.o))
+$(EDITAPPLET_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(EDITAPPLET)
+
+CONSTFILE_FILES+=\
+	editapplet.mif|fs:/mif/editapplet.mif
+
+INC  += $(EDITAPPLET_INC) $(EDITAPPLET_RES)
+#SRC  += $(EDITAPPLET_SOURCES)
+OBJECTS+=$(EDITAPPLET_OBJS)
+#LIBS +=

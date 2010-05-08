@@ -1,0 +1,8 @@
+#ifndef NOTEBOOK_BID
+#define NOTEBOOK_BID
+
+#define AEECLSID_NOTEBOOK        0x01006138
+
+#endif //NOTEBOOK_BID
+
+

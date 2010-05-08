@@ -1,0 +1,8 @@
+..\..\..\dblobj_SBNAALZ\boot_hw.o:	..\..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_hw.c
+..\..\..\dblobj_SBNAALZ\boot_hw.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\..\dblobj_SBNAALZ\boot_hw.o:	..\..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_hw.h
+..\..\..\dblobj_SBNAALZ\boot_hw.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\..\dblobj_SBNAALZ\boot_hw.o:	..\..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_msm.h
+..\..\..\dblobj_SBNAALZ\boot_hw.o:	..\..\..\..\..\..\..\core\systemdrivers\hw\src\msmhwioreg.h
+..\..\..\dblobj_SBNAALZ\boot_hw.o:	..\..\..\..\..\..\..\core\systemdrivers\hw\src\msmhwioreg_port.h
+..\..\..\dblobj_SBNAALZ\boot_hw.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_msmhwio.h

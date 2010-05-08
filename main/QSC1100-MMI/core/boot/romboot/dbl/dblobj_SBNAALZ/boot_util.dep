@@ -1,0 +1,3 @@
+..\..\..\dblobj_SBNAALZ\boot_util.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_util.c
+..\..\..\dblobj_SBNAALZ\boot_util.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_util.h
+..\..\..\dblobj_SBNAALZ\boot_util.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h

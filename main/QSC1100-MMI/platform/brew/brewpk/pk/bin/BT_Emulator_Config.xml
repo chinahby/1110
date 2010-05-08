@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<!-- This file represents the configuration file for BT Emulator -->
+
+<DEVICE-DATABASE>
+    <DEVICE>
+        <DEVICE-ID> Nokia-e61 </DEVICE-ID>
+        <BD-ADDR> 000D4E5C3D3B </BD-ADDR>
+        <DEVICE-NAME> ABC </DEVICE-NAME>
+        <PIN> 0000 </PIN>
+        <COD> 323546 </COD>
+        <DISCOVERABLE> Yes </DISCOVERABLE>
+        <CONNECTABLE> Yes </CONNECTABLE>
+        <BONDABLE> Yes </BONDABLE>
+        <SECURITY-MODE> Enable </SECURITY-MODE>
+        <ENCRYPTION> Yes/No </ENCRYPTION>
+        <LINK-SUPERVISION-TIMEOUT> 40 </LINK-SUPERVISION-TIMEOUT>
+        <PAGE-TIMEOUT> 40 </PAGE-TIMEOUT>
+        <CONNECTION-ACCEPT-TIMEOUT> 40 </CONNECTION-ACCEPT-TIMEOUT>
+        <SERVICE-DATABASE>
+	    <SDP-RECORD>
+	        <SERVICE-ID> SPP </SERVICE-ID>
+                <CHANNEL-NO> 4 </CHANNEL-NO>
+                <SERVICE-NAME> COM4 </SERVICE-NAME>
+            </SDP-RECORD>
+	    <SDP-RECORD>
+	        <SERVICE-ID> A2DP </SERVICE-ID>
+                <CHANNEL-NO> 4 </CHANNEL-NO>
+                <SERVICE-NAME> COM4 </SERVICE-NAME>
+            </SDP-RECORD>
+        </SERVICE-DATABASE>
+     </DEVICE>
+     <DEVICE>
+        <DEVICE-ID> Moto Krazr </DEVICE-ID>
+        <BD-ADDR> 000D4E5C3D3D </BD-ADDR>
+        <DEVICE-NAME> ABC </DEVICE-NAME>
+        <PIN> 0000 </PIN>
+        <COD> 323546 </COD>
+        <DISCOVERABLE> Yes </DISCOVERABLE>
+        <CONNECTABLE> Yes </CONNECTABLE>
+        <BONDABLE> Yes </BONDABLE>
+        <SECURITY-MODE> Enable </SECURITY-MODE>
+        <ENCRYPTION> Yes/No </ENCRYPTION>
+        <LINK-SUPERVISION-TIMEOUT> 40 </LINK-SUPERVISION-TIMEOUT>
+        <PAGE-TIMEOUT> 40 </PAGE-TIMEOUT>
+        <CONNECTION-ACCEPT-TIMEOUT> 40 </CONNECTION-ACCEPT-TIMEOUT>
+        <SERVICE-DATABASE>
+	    <SDP-RECORD>
+	        <SERVICE-ID> OBEX </SERVICE-ID>
+                <CHANNEL-NO> 4 </CHANNEL-NO>
+                <SERVICE-NAME> COM4 </SERVICE-NAME>
+            </SDP-RECORD>
+	    <SDP-RECORD>
+	        <SERVICE-ID> SPP </SERVICE-ID>
+                <SERVICE-NAME> Audio Source </SERVICE-NAME>
+            </SDP-RECORD>
+        </SERVICE-DATABASE>
+     </DEVICE>
+</DEVICE-DATABASE>

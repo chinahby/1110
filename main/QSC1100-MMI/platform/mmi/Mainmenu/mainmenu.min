@@ -1,0 +1,87 @@
+################################################################################
+# main menu gnumake variable definition
+################################################################################
+MAINMENU_INC = $(MAINMENU)
+MAINMENU_RES = $(MAINMENU)/resources
+MAINMENU_SRC = $(MAINMENU)
+MAINMENU_LIB = $(MAINMENU)
+MAINMENU_SOURCES = mainmenu.c
+
+MAINMENU_OBJS :=  $(addprefix $(TARGETDIR)/, $(MAINMENU_SOURCES:%.c=%.o))
+$(MAINMENU_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(MAINMENU_SRC)
+vpath %.bar $(MAINMENU_RES)
+vpath %.brx $(MAINMENU_RES)
+vpath %.png $(APPSCOMMON)/images/color/Mainmenu/focus
+
+
+CONSTFILE_FILES+=\
+mainmenu.mif|fs:/mif/mainmenu.mif \
+mainmenu.bar|fs:/mod/mainmenu/en/mainmenu.bar
+
+CONSTFILE_FILES+=\
+mainmenuimages.bar|fs:/mod/mainmenu/mainmenuimages.bar \
+
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG1)mainmenu.bar|fs:/mod/mainmenu/$(EXTLANG1)/mainmenu.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG2)mainmenu.bar|fs:/mod/mainmenu/$(EXTLANG2)/mainmenu.bar
+endif
+
+CONSTFILE_FILES+=\
+	Game1.png|fs:/image/mainmenu/Game1.png \
+	Gallery2.png|fs:/image/mainmenu/Gallery2.png \
+	Tools3.png|fs:/image/mainmenu/Tools3.png \
+	Camera4.png|fs:/image/mainmenu/Camera4.png \
+	Contact5.png|fs:/image/mainmenu/Contact5.png \
+	Message6.png|fs:/image/mainmenu/Message6.png \
+	Recentcall7.png|fs:/image/mainmenu/Recentcall7.png \
+	Setting8.png|fs:/image/mainmenu/Setting8.png \
+	Sports9.png|fs:/image/mainmenu/Sports9.png \
+	Profile10.png|fs:/image/mainmenu/Profile10.png \
+	Player11.png|fs:/image/mainmenu/Player11.png \
+	Wap12.png|fs:/image/mainmenu/Wap12.png \
+	Number10.png|fs:/image/mainmenu/Number10.png \
+	surfing_focus.png|fs:/image/mainmenu/surfing_focus.png\
+	custservice_focus.png|fs:/image/mainmenu/custservice_focus.png\
+	Contact511.png|fs:/image/mainmenu/Contact511.png \
+	Contact512.png|fs:/image/mainmenu/Contact512.png \
+	Contact513.png|fs:/image/mainmenu/Contact513.png \
+	Message607.png|fs:/image/mainmenu/Message607.png \
+	Message608.png|fs:/image/mainmenu/Message608.png \
+	Message609.png|fs:/image/mainmenu/Message609.png \
+	Game1_1.png|fs:/image/mainmenu/Game1_1.png \
+	Gallery2_1.png|fs:/image/mainmenu/Gallery2_1.png \
+	Tools3_1.png|fs:/image/mainmenu/Tools3_1.png \
+	Camera4_1.png|fs:/image/mainmenu/Camera4_1.png \
+	Contact5_1.png|fs:/image/mainmenu/Contact5_1.png \
+	Message6_1.png|fs:/image/mainmenu/Message6_1.png \
+	Recentcall7_1.png|fs:/image/mainmenu/Recentcall7_1.png \
+	Setting8_1.png|fs:/image/mainmenu/Setting8_1.png \
+	Sports9_1.png|fs:/image/mainmenu/Sports9_1.png \
+	Profile10_1.png|fs:/image/mainmenu/Profile10_1.png \
+	Player11_1.png|fs:/image/mainmenu/Player11_1.png \
+	Wap12_1.png|fs:/image/mainmenu/Wap12_1.png \
+	Number10_1.png|fs:/image/mainmenu/Number10_1.png \
+	Game1_2.png|fs:/image/mainmenu/Game1_2.png \
+	Gallery2_2.png|fs:/image/mainmenu/Gallery2_2.png \
+	Tools3_2.png|fs:/image/mainmenu/Tools3_2.png \
+	Camera4_2.png|fs:/image/mainmenu/Camera4_2.png \
+	Contact5_2.png|fs:/image/mainmenu/Contact5_2.png \
+	Message6_2.png|fs:/image/mainmenu/Message6_2.png \
+	Recentcall7_2.png|fs:/image/mainmenu/Recentcall7_2.png \
+	Setting8_2.png|fs:/image/mainmenu/Setting8_2.png \
+	Sports9_2.png|fs:/image/mainmenu/Sports9_2.png \
+	Profile10_2.png|fs:/image/mainmenu/Profile10_2.png \
+	Player11_2.png|fs:/image/mainmenu/Player11_2.png \
+	Wap12_2.png|fs:/image/mainmenu/Wap12_2.png \
+	Number10_2.png|fs:/image/mainmenu/Number10_2.png 
+
+INC  += $(MAINMENU_INC) $(MAINMENU_RES)
+#SRC  += $(MAINMENU_SOURCES)
+OBJECTS+=$(MAINMENU_OBJS)
+#LIBS += 

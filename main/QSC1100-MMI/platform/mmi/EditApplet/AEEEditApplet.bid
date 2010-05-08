@@ -1,0 +1,7 @@
+
+#ifndef __AEE_TEXT_APPLET_BID__
+#define __AEE_TEXT_APPLET_BID__
+
+#define AEECLSID_TEXT_APPLET        0x01007101
+
+#endif // __AEE_TEXT_APPLET_BID__

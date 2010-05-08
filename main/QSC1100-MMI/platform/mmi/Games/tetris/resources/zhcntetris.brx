@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="tetris" VERSION="1">
+	<Strings Encoding="Unicode">
+		<STRING Id="1" Name="IDS_TETRIS_TITLE">
+			<Text>俄罗斯方块</Text>
+		</STRING>
+		<STRING Id="2" Name="IDS_TETRIS_START">
+			<Text>新游戏</Text>
+		</STRING>
+		<STRING Id="3" Name="IDS_TETRIS_CONTINUE">
+			<Text>继续游戏</Text>
+		</STRING>
+		<STRING Id="4" Name="IDS_TETRIS_LEVEL">
+			<Text>难易度</Text>
+		</STRING>
+		<STRING Id="5" Name="IDS_TETRIS_SCORE">
+			<Text>英雄榜</Text>
+		</STRING>
+		<STRING Id="6" Name="IDS_TETRIS_HELP">
+			<Text>帮助</Text>
+		</STRING>
+		<STRING Id="8" Name="IDS_TETRIS_SOUND">
+			<Text>声音设置</Text>
+		</STRING>
+		<STRING Id="9" Name="IDS_TETRIS_GRID">
+			<Text>网格设置</Text>
+		</STRING>
+		<STRING Id="21" Name="IDS_TETRIS_LEVEL_1">
+			<Text>容易</Text>
+		</STRING>
+		<STRING Id="22" Name="IDS_TETRIS_LEVEL_2">
+			<Text>普通</Text>
+		</STRING>
+		<STRING Id="23" Name="IDS_TETRIS_LEVEL_3">
+			<Text>困难</Text>
+		</STRING>
+		<STRING Id="24" Name="IDS_YES">
+			<Text>是</Text>
+		</STRING>
+		<STRING Id="25" Name="IDS_NO">
+			<Text>否</Text>
+		</STRING>
+		<STRING Id="26" Name="IDS_GRID_ON">
+			<Text>开</Text>
+		</STRING>
+		<STRING Id="27" Name="IDS_GRID_OFF">
+			<Text>关</Text>
+		</STRING>
+		<STRING Id="31" Name="IDS_TETRIS_OK">
+			<Text>确定</Text>
+		</STRING>
+		<STRING Id="32" Name="IDS_CLEAR">
+			<Text>清除</Text>
+		</STRING>
+		<STRING Id="41" Name="IDS_THELP_CONTENT">
+			<Text>1. 规则: 本游戏有7种不同形状和颜色的方块.有3个难易度可供选择:容易,普通,困难.每个难易度对应不同的游戏速度.对于容易级别,初始速度为0.当分数超过500时,速度会增加一个单位.当速度达到8或者16时,你可以选择是否进入下一等级.\2. 操作说明:  按[5/OK/左软键/拨话键]暂停/开始游戏;按[上方向键]旋转方块;按[左/右方向键]左/右移动方块;按[下方向键]瞬间移动方块到底部.\3. 声音设置: 你可以打开/关闭音效.\4. 网格设置: 网格可以让你更容易对齐方块.你可以选择显示/隐藏网格.\5. 英雄榜: 显示每个等级的最高分.你可以清除英雄榜.</Text>
+		</STRING>
+		<STRING Id="42" Name="IDS_REPORT_SCORE">
+			<Text>你的得分是%d,这个等级的最高分是%d.再来一次!</Text>
+		</STRING>
+		<STRING Id="43" Name="IDS_REPORT_RECORD">
+			<Text>恭喜你!你的得分%d是这个等级的最高分!!!</Text>
+		</STRING>
+		<STRING Id="44" Name="IDS_PASS">
+			<Text>不错!你已经通过了这个等级.你的得分是:%d.你想进入下一等级吗?</Text>
+		</STRING>
+		<STRING Id="45" Name="IDS_PASS_LAST">
+			<Text>太棒了!!!你已经打爆本游戏,你的得分是:%d.</Text>
+		</STRING>
+		<STRING Id="48" Name="IDS_HERO_TITLE">
+			<Text>难易度      分数</Text>
+		</STRING>
+	</Strings>
+	<Objects MimeType="image/bmp">
+		<Object Id="5008" Name="IDI_SCORE">
+			<File>../../../appscommon/images/color/tetris/score.en.bmp</File>
+		</Object>
+		<Object Id="5010" Name="IDI_SPEED">
+			<File>../../../appscommon/images/color/tetris/speed.en.bmp</File>
+		</Object>
+		<Object Id="5030" Name="IDI_PAUSED" MimeType="image/png">
+			<File>../../../appscommon/images/color/tetris/paused.en.png</File>
+		</Object>
+	</Objects>
+</BREWRes>

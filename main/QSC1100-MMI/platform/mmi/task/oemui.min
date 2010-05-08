@@ -1,0 +1,18 @@
+#-------------------------------------------------------------------------------
+# User interface
+#-------------------------------------------------------------------------------
+
+UI_SOURCES=\
+        oemui.c \
+        uixsnd.c
+
+vpath %.c $(UI)
+
+UI_OBJS :=  $(addprefix $(TARGETDIR)/, $(UI_SOURCES:%.c=%.o))
+UI_DEPS :=  $(addprefix $(TARGETDIR)/, $(UI_SOURCES:%.c=%.dep))
+$(UI_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+OBJECTS+=$(UI_OBJS)
+$(TARGETDIR)/ui.lib : $(UI_SOURCES)
+	$(group_c_compile)
+
