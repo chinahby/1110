@@ -10,7 +10,9 @@ IF "%~1"=="n" goto INCREDI_BUILD
 rem b c清除文件
 IF "%~1"=="c" goto CLEAN
 rem b 普通编译
-IF "%~1"=="" goto NORMAL_BUILD
+:NORMAL_BUILD
+SBNAALZ %~1
+goto EXIT
 
 :INCREDI_BUILD
 rem make使用的线程由这个bat引入
@@ -21,9 +23,7 @@ call \bin\sh RmEmptyFile.sh W001
 call SBNAALZ
 goto EXIT
 
-:NORMAL_BUILD
-SBNAALZ
-goto EXIT
+
 
 :CLEAN
 SBNAALZ cleanamss
