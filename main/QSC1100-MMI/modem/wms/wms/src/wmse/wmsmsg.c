@@ -2122,7 +2122,7 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
         /* Set the retry_time_left */
         rec_ptr->retry_time_left = msg_s_ptr->mo_retry_period;
         rec_ptr->retry_wait_time = 0;
-        
+ #ifdef CUST_EDITION	      
         if (g_mochannel == WMS_MO_ONLY_TRAFFIC)
         {
             rec_ptr->large_msg = TRUE;
@@ -2174,6 +2174,7 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
         }
         else
         {
+#endif /*CUST_EDITION*/		
             /* ------------- Now send the msg out -------------- */
     
             st = wms_msg_cdma_send_sms_OTA( FALSE,  /* not a TL Ack msg */
@@ -2279,11 +2280,13 @@ wms_cmd_err_e_type wms_msg_send_from_memory_store
         /* Don't change msg id if it is CANCELLATION or USER_ACK:
         */
         if( cdma_tl.cl_bd.message_id.type == WMS_BD_TYPE_SUBMIT &&
+#ifdef CUST_EDITION			
 #if defined(FEATURE_QMA)
             cdma_tl.teleservice != WMS_TELESERVICE_QMA_WPUSH &&
 #elif defined(FEATURE_CARRIER_CHINA_TELCOM)
             cdma_tl.teleservice != WMS_TELESERVICE_WPUSH &&
 #endif 
+#endif /*CUST_EDITION*/
             cdma_tl.teleservice           != WMS_TELESERVICE_WAP )
         {
           /* use the next message number
@@ -2344,9 +2347,11 @@ wms_cmd_err_e_type wms_msg_send_from_memory_store
         }
         else
         {
+#ifdef CUST_EDITION			
 #if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
           wms_cacheinfolist_updatenodetag(WMS_MEMORY_STORE_RUIM, i, ruim_sms.status);
-#endif          
+#endif  
+#endif /*CUST_EDITION*/        
           cmd_err = wms_msg_cdma_send_MO(
           TRUE,
                             cmd_ptr,
@@ -2419,11 +2424,13 @@ wms_cmd_err_e_type wms_msg_send_from_memory_store
           /* Don't change msg id if it is CANCELLATION or USER_ACK:
           */
           if( cdma_tl.cl_bd.message_id.type == WMS_BD_TYPE_SUBMIT &&
+#ifdef CUST_EDITION			  
 #if defined(FEATURE_QMA)
               cdma_tl.teleservice != WMS_TELESERVICE_QMA_WPUSH &&
 #elif defined(FEATURE_CARRIER_CHINA_TELCOM)
               cdma_tl.teleservice != WMS_TELESERVICE_WPUSH &&
 #endif 
+#endif /*CUST_EDITION*/
               cdma_tl.teleservice           != WMS_TELESERVICE_WAP )
           {
             /* use the next message number
@@ -2481,9 +2488,11 @@ wms_cmd_err_e_type wms_msg_send_from_memory_store
         }
         else
         {
+#ifdef CUST_EDITION			
 #if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
           wms_cacheinfolist_updatenodetag(WMS_MEMORY_STORE_NV_CDMA, i, ruim_sms.status);
 #endif          
+#endif /*CUST_EDITION*/
           cmd_err = wms_msg_cdma_send_MO(
           TRUE,
                             cmd_ptr,
@@ -2566,12 +2575,14 @@ wms_cmd_err_e_type wms_msg_cdma_send_client_message
     /* Don't change msg id if it is CANCELLATION or USER_ACK:
     */
     if( cdma_tl.cl_bd.message_id.type == WMS_BD_TYPE_SUBMIT &&
+#ifdef CUST_EDITION		
         cmd_ptr->hdr.client_id != WMS_CLIENT_TYPE_WMS_APP &&
 #if defined(FEATURE_QMA)
         cdma_tl.teleservice != WMS_TELESERVICE_QMA_WPUSH &&
 #elif defined(FEATURE_CARRIER_CHINA_TELCOM)
         cdma_tl.teleservice != WMS_TELESERVICE_WPUSH &&
 #endif 
+#endif /*CUST_EDITION*/
         cdma_tl.teleservice           != WMS_TELESERVICE_WAP
        )
     {
@@ -2807,6 +2818,7 @@ void wms_msg_awi_ack
 )
 {
 #ifdef FEATURE_ACP
+#ifdef CUST_EDITION	
   if( error_class == WMS_ERROR_NONE )
   {
     tl_status = 0x00;
@@ -2827,6 +2839,7 @@ void wms_msg_awi_ack
 
   /* done */
   return;
+#endif /*CUST_EDITION*/  
 #endif /* FEATURE_ACP */
 } /* wms_msg_awi_ack() */
 
@@ -2848,6 +2861,7 @@ wms_cmd_err_e_type wms_msg_cdma_ack_proc
 #ifdef FEATURE_ACP
   /* AWI SMS ack processing
   */
+  #ifdef CUST_EDITION	
   if( msg_s_ptr->awi_info.is_valid &&
       msg_s_ptr->awi_info.user_data == (void*) ack_ptr->transaction_id )
   {
@@ -2868,6 +2882,7 @@ wms_cmd_err_e_type wms_msg_cdma_ack_proc
     */
     return cmd_err;  /* SHORT-BREAK */
   }
+  #endif /*CUST_EDITION*/
 #endif /* FEATURE_ACP */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -3316,6 +3331,7 @@ wms_cmd_err_e_type wms_msg_do_write
 
 #ifdef FEATURE_CDSMS_RUIM
     case WMS_MEMORY_STORE_RUIM:
+#ifdef CUST_EDITION		
       if ((msg_ptr->msg_hdr.tag == WMS_TAG_MO_DRAFT) || 
           (msg_ptr->msg_hdr.tag == WMS_TAG_PHRASE) ||
           (msg_ptr->msg_hdr.tag == WMS_TAG_RESERVE) ||
@@ -3324,6 +3340,7 @@ wms_cmd_err_e_type wms_msg_do_write
         MSG_ERROR("Invalid Tag %d in wms_msg_do_write", msg_ptr->msg_hdr.tag, 0, 0);
         return WMS_CMD_ERR_MSG_TAG;
       }
+#endif /*CUST_EDITION*/
       if( write_mode == WMS_WRITE_MODE_INSERT )
       {
         for( i=0; i<cfg_s_ptr->ruim_max_slots; i++ )
@@ -3392,6 +3409,7 @@ wms_cmd_err_e_type wms_msg_do_write
               {
                 cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
               }
+#ifdef CUST_EDITION				  
               // 亚太宽频粉红色卡更新成功后提示字符串不完整
 #ifdef FEATURE_CARRIER_TAIWAN_APBW
               else
@@ -3404,6 +3422,7 @@ wms_cmd_err_e_type wms_msg_do_write
                 }
               }
 #endif
+#endif /*CUST_EDITION*/
             }
             else
             {
@@ -3457,6 +3476,7 @@ wms_cmd_err_e_type wms_msg_do_write
     case WMS_MEMORY_STORE_NV_CDMA:
       if( write_mode == WMS_WRITE_MODE_INSERT )
       {
+#ifdef CUST_EDITION		  
         int nMin, nMax;
         
         switch (msg_ptr->msg_hdr.tag)
@@ -3507,6 +3527,7 @@ wms_cmd_err_e_type wms_msg_do_write
                 MSG_ERROR("Invalid Tag %d in wms_msg_do_write", msg_ptr->msg_hdr.tag, 0, 0);
                 return WMS_CMD_ERR_MSG_TAG;
         }
+#endif /*CUST_EDITION*/		
         for (i=nMin; i<=nMax; i++)
         //for( i=0; i<cfg_s_ptr->nv_cdma_max_slots; i++ )
         {
@@ -3860,6 +3881,7 @@ void wms_msg_delete_proc
 
 } /* wms_msg_delete_proc() */
 
+#ifdef CUST_EDITION	
 void wms_msg_delete_box_proc(wms_cmd_type    *cmd_ptr)
 {
     wms_cmd_err_e_type          cmd_err = WMS_CMD_ERR_NONE;
@@ -4479,7 +4501,7 @@ void wms_msg_refresh_proc(wms_cmd_type    *cmd_ptr)
 #endif /* defined(FEATURE_CDSMS) && defined(FEATURE_CDSMS_RUIM) */
 } /* wms_msg_refresh_proc() */
 #endif
-
+#endif /*CUST_EDITION*/
 /*
 */
 void wms_msg_delete_all_proc
@@ -5533,7 +5555,7 @@ void wms_msg_mc_mo_status_proc
                   dc_s_ptr->wms_initiated_call = TRUE;
                   rec_ptr->retry_time_left = WMS_MAX_RETRY_PERIOD;
                   /* Fall through in order to start the retries for large msg */
-                  
+ #ifdef CUST_EDITION	                 
                   clk_dereg(&rec_ptr->clk_timer);
                   clk_reg2(&rec_ptr->clk_timer, 
                            wms_mo_timer,
@@ -5545,6 +5567,7 @@ void wms_msg_mc_mo_status_proc
                   // 注意: 业务信道一旦建立函数 wms_msg_auto_dc_send 会被调用, 故这里给最大等待时间
                   rec_ptr->retry_wait_time = WMS_MAX_RETRY_PERIOD;
                   rec_ptr->state = WMS_MSG_STATE_QUEUED;
+#endif /*CUST_EDITION*/				  
               }
               else
               {
@@ -6288,7 +6311,7 @@ wms_status_e_type wms_msg_cdma_deliver
       routing_ptr->mem_store = WMS_MEMORY_STORE_NONE;
     client = parsed_client;
   }
-  
+#ifdef CUST_EDITION	  
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
   if (msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_CHINAUNICOMREG)
   {
@@ -6299,7 +6322,7 @@ wms_status_e_type wms_msg_cdma_deliver
       routing_ptr->mem_store = WMS_MEMORY_STORE_NONE;
   }
 #endif  
-
+#endif /*CUST_EDITION*/
   /* Handling for WAP Push Messages */
   if (wms_cfg_check_wap_push_message(msg_ptr))
   { 
@@ -6381,7 +6404,7 @@ wms_status_e_type wms_msg_cdma_deliver
         routing_ptr->route = WMS_ROUTE_DISCARD;
         return WMS_OK_S;
       }
-      
+ #ifdef CUST_EDITION	     
       if (cfg_s_ptr->client_memory_full &&
 #ifdef FEATURE_AUTOREPLACE
           (cfg_s_ptr->autoreplace == FALSE) &&
@@ -6403,7 +6426,7 @@ wms_status_e_type wms_msg_cdma_deliver
          wmsutil_decodemessagefromview2logic(msg_ptr);
       }
 #endif
-
+#endif /*CUST_EDITION*/
       /* Store the message and notify the clients.
       ** The Ack will be sent after this function is called.
       */
@@ -8112,7 +8135,7 @@ boolean wms_msg_check_in_use_records
 #ifdef FEATURE_GWSMS_BROADCAST
 #error code not present
 #endif /* FEATURE_GWSMS_BROADCAST */
-
+#ifdef CUST_EDITION	
 
 /*=========================================================================
 FUNCTION
@@ -8238,7 +8261,7 @@ wms_status_e_type wms_msg_get_auto_gw_params
   return WMS_UNSUPPORTED_S;
 #endif /* FEATURE_SMS_TRANSPARENT_MO */
 }
-
+#endif /*CUST_EDITION*/
 /*=========================================================================
 FUNCTION
   wms_msg_set_retry_period

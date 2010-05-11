@@ -3191,7 +3191,7 @@ wms_status_e_type wms_ts_pack_gw_user_data
 #ifdef FEATURE_GWSMS
 #error code not present
 #endif/*FEATURE_GWSMS*/
-
+#ifdef CUST_EDITION	
 
 
 
@@ -3245,7 +3245,7 @@ wms_status_e_type wms_ts_convert_auto_to_cdma_gw_msg
   return WMS_UNSUPPORTED_S;
 #endif /* FEATURE_SMS_TRANSPARENT_MO */
 }
-
+#endif /*CUST_EDITION*/
 #ifdef FEATURE_SMS_UDH
 /*=========================================================================
 FUNCTION

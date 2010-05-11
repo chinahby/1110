@@ -184,8 +184,11 @@ typedef struct wms_cfg_struct
   /* Refresh Functionality common to both GW and CDMA */
   boolean                         refresh_registered;
   boolean                         refresh_in_progress;
+ 
 #elif defined(FEATURE_UIM_TOOLKIT)
+#ifdef CUST_EDITION	 
   boolean                         refresh_in_progress;
+#endif /*CUST_EDITION*/  
 #endif /* FEATURE_GSTK */
 
 #ifdef FEATURE_MMGSDI

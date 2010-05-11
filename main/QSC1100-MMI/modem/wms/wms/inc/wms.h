@@ -319,10 +319,14 @@ extern "C" {
 
 ===========================================================================*/
 #include "comdef.h"
+
+#ifdef CUST_EDITION
 #ifdef WIN32
 #include "custwms.h"
 #endif
+#endif /*CUST_EDITION*/
 
+#ifdef CUST_EDITION
 #if defined(FEATURE_CDSMS) || defined(FEATURE_GWSMS)
 
 /* <EJECT> */
@@ -380,7 +384,7 @@ typedef enum
     
     WMS_BOX_MESSAGE_MAX
 } wms_deletebox_e_type;
-
+#endif /*CUST_EDITION*/
 /* <EJECT> */
 /*===========================================================================
 
@@ -403,16 +407,19 @@ enum { WMS_ADDRESS_MAX            = 36  };
 enum { WMS_SUBADDRESS_MAX         = 36  };
 enum { WMS_GW_ADDRESS_MAX         = 20  };
 enum { WMS_CDMA_USER_DATA_MAX     = 229 };
-
+#ifdef CUST_EDITION
 enum { WMS_AUTO_USER_DATA_MAX     = 160 };
+#endif /*CUST_EDITION*/
 enum { WMS_GW_USER_DATA_MAX     = 160 };
-
+#ifdef CUST_EDITION
 #ifdef FEATURE_SMS_500_MESSAGES
 #error code not present
 #else
+
 // 255->500 值需大于 WMS_MAX_NV_CDMA_MESSAGES 
 enum { WMS_MESSAGE_LIST_MAX     = 500 };
 #endif /* FEATURE_SMS_500_MESSAGES */
+#endif /*CUST_EDITION*/
 
 enum { WMS_MAX_TEMPLATES        = 10 };
 enum { WMS_GW_COMMAND_DATA_MAX  = 157 };                                                   
@@ -421,6 +428,7 @@ enum { WMS_ALPHA_ID_MAX         = 255 };
 
 /* For Extended/Long SMS support, FEATURE_SMS_UDH will be enabled too.
 */
+#ifdef CUST_EDITION
 #if defined(FEATURE_SMS_UDH) && !defined(FEATURE_SMS_EXTENDED)
 enum { WMS_MAX_UD_HEADERS       = 7};
 
@@ -480,8 +488,9 @@ enum { WMS_UDH_ANIM_NUM_BITMAPS  = 1 };
 enum { WMS_UDH_LARGE_BITMAP_SIZE = 1 };
 enum { WMS_UDH_SMALL_BITMAP_SIZE = 1 };
 //miaoxiaoming
-#endif /* FEATURE_SMS_UDH */
 
+#endif /* FEATURE_SMS_UDH */
+#endif /*CUST_EDITION*/
 /* -------------------- */
 /* ---- Digit mode ---- */
 /* -------------------- */
@@ -663,10 +672,12 @@ typedef enum
   WMS_TAG_STATUS_RPT  = 0x20,  /* SMSR parameters*/
   
   // 添加一个标记用于草稿箱
+#ifdef CUST_EDITION
   WMS_TAG_MO_DRAFT  = 0x30,     /* 草稿 */
   WMS_TAG_PHRASE    = 0x31,     /* 常用语 */
   WMS_TAG_RESERVE   = 0x32,     /* 预约 */
   WMS_TAG_RSVFAILED = 0x33      /* 预约失败 */
+#endif /*CUST_EDITION*/
 } wms_message_tag_e_type;
 
 
@@ -737,7 +748,9 @@ typedef enum
 {
   WMS_MESSAGE_MODE_CDMA = 0,
   WMS_MESSAGE_MODE_GW,
+#ifdef CUST_EDITION  
   WMS_MESSAGE_MODE_AUTO,
+#endif /*CUST_EDITION*/  
   WMS_MESSAGE_MODE_MAX,
   WMS_MESSAGE_MODE_MAX32 = 0x100000
 } wms_message_mode_e_type;
@@ -905,8 +918,9 @@ typedef uint32  wms_message_number_type;
 typedef uint32  wms_message_index_type;
 
 #define WMS_DUMMY_MESSAGE_INDEX  0xFFFFFFFF
+#ifdef CUST_EDITION
 #define WMS_VM_MESSAGE_INDEX     0x00000000
-
+#endif /*CUST_EDITION*/
 
 /* Transaction ID
 */
@@ -931,10 +945,12 @@ typedef enum
   WMS_CMD_CFG_SET_MEMORY_FULL,
   WMS_CMD_CFG_SET_LINK_CONTROL,
   WMS_CMD_CFG_GET_LINK_CONTROL,
+#ifdef CUST_EDITION  
   WMS_CMD_CFG_SET_MULTISEND,
 #ifdef FEATURE_AUTOREPLACE
   WMS_CMD_CFG_SET_AUTOREPLACE,
 #endif  
+#endif /*CUST_EDITION*/
 
   /* Message group commands
   */
@@ -943,9 +959,11 @@ typedef enum
   WMS_CMD_MSG_READ,
   WMS_CMD_MSG_WRITE,
   WMS_CMD_MSG_DELETE,
+#ifdef CUST_EDITION  
   WMS_CMD_MSG_DELETE_BOX,
   WMS_CMD_MSG_COPY,
   WMS_CMD_REFRESH_IND,
+#endif /*CUST_EDITION*/  
   WMS_CMD_MSG_DELETE_ALL,
   WMS_CMD_MSG_MODIFY_TAG,
   WMS_CMD_MSG_READ_TEMPLATE,
@@ -965,6 +983,7 @@ typedef enum
   WMS_CMD_DC_ENABLE_AUTO_DISCONNECT,
   WMS_CMD_DC_DISABLE_AUTO_DISCONNECT,
 
+#ifdef CUST_EDITION
   /* BC commands
   */
   WMS_CMD_BC_GET_CONFIG    = 300,
@@ -979,7 +998,7 @@ typedef enum
   WMS_CMD_BC_CHANGE_LABEL,
   WMS_CMD_BC_DELETE_ALL_SERVICES,
   WMS_CMD_BC_SET_PRIORITY_FOR_ALL,
-
+#endif /*CUST_EDITION*/
   /* BC_MM commands
   */
   WMS_CMD_BC_MM_GET_CONFIG   = 400,
@@ -1028,12 +1047,14 @@ typedef enum
   WMS_CMD_CM_BC_ENABLE_FAILURE_E,
   WMS_CMD_CM_START_FULL_SERVICE_E,
   WMS_CMD_CM_ONLINE_E,
+#ifdef CUST_EDITION  
   WMS_CMD_CM_NAS_SM_DATA,
   WMS_CMD_CM_NAS_SM_REPORT,
   WMS_CMD_CM_NAS_SM_LINK_CONTROL,
   WMS_CMD_CM_NAS_CB_DATA,
   WMS_CMD_CM_NAS_CB_CELL_CHANGE,
   WMS_CMD_CM_NAS_CB_DUPLICATION_DETECTION,
+#endif /*CUST_EDITION*/  
   WMS_CMD_CM_LPM_E,
 
   WMS_CMD_GSDI_ASYNC_CB,
@@ -1365,6 +1386,7 @@ typedef enum
   WMS_TELESERVICE_GSM1x_08           = 4111,  /* Reserved for now */
   WMS_TELESERVICE_GSM1x_09           = 4112,  /* Reserved for now */
   WMS_TELESERVICE_GSM1x_10           = 4113,  /* Reserved for now */
+#ifdef CUST_EDITION  
 #ifdef FEATURE_CARRIER_ISRAEL_PELEPHONE
   WMS_TELESERVICE_ISRAEL_SILENT      = 49858,  /* silent sms      */
 #endif
@@ -1378,6 +1400,7 @@ typedef enum
   WMS_TELESERVICE_QMA_WPUSH          = 65002,  /* QMA Wap push message service ID */
   WMS_TELESERVICE_QMA_PMAIL          = 65497,  /* Photo Mail for QMA */
 #endif
+#endif /*CUST_EDITION*/
   WMS_TELESERVICE_IMSST              = 4242,  /* IMS Services Teleservice */
 
   /*---------------------------------------------------------------------
@@ -2541,7 +2564,9 @@ typedef enum
   WMS_CFG_EVENT_PRIMARY_CLIENT_SET,
   WMS_CFG_EVENT_MEMORY_STATUS_SET,
   WMS_CFG_EVENT_LINK_CONTROL,
+#ifdef CUST_EDITION  
   WMS_CFG_EVENT_REFRESH_DONE,
+#endif /*CUST_EDITION*/  
   WMS_CFG_EVENT_MAX,
   WMS_CFG_EVENT_MAX32 = 0x10000000
 } wms_cfg_event_e_type;
@@ -2713,8 +2738,9 @@ typedef struct wms_reply_option_s
 } wms_reply_option_s_type;
 
 
-
+#ifdef CUST_EDITION
 #define WMS_BC_SRV_LABEL_SIZE    10
+#endif /*CUST_EDITION*/
 #define WMS_BC_TABLE_MAX         ( 32 * 4 )
 
 /* Service ID, which is a service/language pair
@@ -3004,8 +3030,9 @@ typedef struct wms_cdma_message_s
   wms_raw_ts_data_s_type       raw_ts;
   
   // 添加下列字段以便非正常长消息的串接
+#ifdef CUST_EDITION  
   wms_udh_concat_8_s_type      concat_8;
-
+#endif /*CUST_EDITION*/
 } wms_cdma_message_s_type;
 
 
@@ -3410,7 +3437,7 @@ typedef struct wms_gw_ack_info_s
    /*~ FIELD wms_gw_ack_info_s.u DISC _OBJ_.success */
 } wms_gw_ack_info_s_type;
 
-
+#ifdef CUST_EDITION
 /* AUTOMATIC memory stores:
 ** (1) distinguishes which mem_store to store the message when sending.
 ** (2) to be used in conjunction with the delivered message mode
@@ -3423,6 +3450,7 @@ typedef struct wms_gw_ack_info_s
 **       ie. If attempt to store to the CARD fails, an additional attempt to
 **           store to the PHONE memory will be made, and so on.
 */
+
 typedef enum
 {
   WMS_AUTO_MEMORY_STORE_NONE = 0, /* No storage is required */
@@ -3495,7 +3523,7 @@ typedef struct wms_auto_submit_report_info_s
     */
 
 } wms_auto_submit_report_info_s_type;
-
+#endif /*CUST_EDITION*/
 /* ============ Client message definitions ========== */
 
 /* Header
@@ -3552,11 +3580,11 @@ typedef struct wms_client_message_s
   /*~ IF ( _DISC_.message_mode == WMS_MESSAGE_MODE_GW &&
           _DISC_.tag == WMS_TAG_MO_TEMPLATE)
         wms_client_message_u.gw_template*/
-
+#ifdef CUST_EDITION
     wms_auto_message_s_type      auto_message;
   /*~ IF ( _DISC_.message_mode == WMS_MESSAGE_MODE_AUTO)
         wms_client_message_u.auto_message*/
-
+#endif /*CUST_EDITION*/
     /*~ DEFAULT wms_client_message_u.void */
 
    } u; /*~ FIELD wms_client_message_s.u DISC _OBJ_.msg_hdr */
@@ -3661,7 +3689,9 @@ typedef struct wms_submit_report_info_s
   wms_cause_info_s_type       cause_info;
   wms_gw_tpdu_type_e_type     tpdu_type;
   wms_alpha_id_s_type         alpha_id;
+#ifdef CUST_EDITION  
   wms_auto_submit_report_info_s_type  auto_rpt_info;
+#endif /*CUST_EDITION*/  
   union wms_submit_report_info_u
   {
     /* Applicable to GW only:
@@ -3826,7 +3856,7 @@ typedef void (*wms_msg_event_cb_type)
 */
 
 #define WMS_MSG_INFO_CACHE_SIZE    30
-
+#ifdef CUST_EDITION
 // Add compile condition FEATURE_CDSMS_CACHE_USELIST
 #ifdef FEATURE_CDSMS_CACHE_USELIST
 typedef void (*wms_msg_info_cache_cb_type)(const wms_client_message_s_type * msg_ptr, wms_message_tag_e_type delcachetag);
@@ -3839,6 +3869,7 @@ typedef void (*wms_msg_info_cache_cb_type)
  /*~ PARAM IN msg_ptr     POINTER */
  /*~ PARAM INOUT cache_ptr ARRAY WMS_MSG_INFO_CACHE_SIZE */ 
 #endif
+#endif /*CUST_EDITION*/
 
 
 /* Specific parsing criteria provided by the client.
@@ -3937,7 +3968,7 @@ typedef enum
   WMS_BC_PREF_MAX32 = 0x10000000
 
 } wms_bc_pref_e_type;
-
+#ifdef CUST_EDITION
 
 
 /* Service info, which is a entry in the service table
@@ -4068,6 +4099,7 @@ typedef void (*wms_bc_event_cb_type)
 
 #define WMS_BC_MM_SRV_LABEL_SIZE   30
 #define WMS_BC_MM_TABLE_MAX        190
+#endif /*CUST_EDITION*/
 
 typedef struct wms_gw_cb_srv_range_s
 {
@@ -4346,7 +4378,7 @@ typedef struct wms_client_ts_data_s
 } wms_client_ts_data_s_type;
 
 
-
+#ifdef CUST_EDITION
 /*=========================================================================
 FUNCTION
   wms_msg_set_auto_cdma_params
@@ -4523,7 +4555,7 @@ wms_status_e_type wms_ts_convert_auto_to_cdma_gw_msg
 /*~ FUNCTION wms_ts_convert_auto_to_cdma_gw_msg */
 /*~ PARAM IN auto_msg_ptr POINTER */
 /*~ PARAM INOUT msg_ptr POINTER */
-
+#endif /*CUST_EDITION*/
 
 
 /* <EJECT> */
@@ -4770,7 +4802,7 @@ wms_client_err_e_type wms_client_reg_dc_cb
 );
 /*~ FUNCTION wms_client_reg_dc_cb */
 
-
+#ifdef CUST_EDITION
 /*=========================================================================
 FUNCTION
   wms_client_reg_bc_cb
@@ -4795,7 +4827,7 @@ wms_client_err_e_type wms_client_reg_bc_cb
   wms_bc_event_cb_type     bc_event_cb
 );
 /*~ FUNCTION wms_client_reg_bc_cb */
-
+#endif /*CUST_EDITION*/
 /*=========================================================================
 FUNCTION
   wms_client_reg_bc_mm_cb
@@ -5101,6 +5133,7 @@ wms_status_e_type wms_cfg_set_memory_full
 );
 /*~ FUNCTION wms_cfg_set_memory_full */
 
+#ifdef CUST_EDITION
 /*=========================================================================
 FUNCTION
   wms_cfg_set_multisend
@@ -5166,7 +5199,7 @@ wms_status_e_type wms_cfg_set_autoreplace
 );
 /*~ wms_cfg_set_autoreplace */
 #endif
-
+#endif /*CUST_EDITION*/
 
 /*=========================================================================
 FUNCTION
@@ -5244,7 +5277,8 @@ SIDE EFFECTS
   Updates is_voicemail_active and count.
 
 =========================================================================*/
-#if 0
+
+#ifndef CUST_EDITION
 boolean wms_cfg_check_voicemail_contents
 (
   wms_message_mode_e_type         msg_mode,             /* INPUT */
@@ -5643,6 +5677,7 @@ wms_status_e_type wms_msg_delete
 );
 /*~ FUNCTION wms_msg_delete */
 
+#ifdef CUST_EDITION
 /*==============================================================================
 FUNCTION
     wms_msg_delete_box
@@ -5714,6 +5749,7 @@ wms_status_e_type wms_msg_refresh_ruimmsg
 );
 /*~ FUNCTION wms_msg_refresh_ruimmsg */
 #endif
+#endif /*CUST_EDITION*/
 
 /*=========================================================================
 FUNCTION
@@ -6170,6 +6206,8 @@ wms_status_e_type wms_dc_disconnect
   const void                      *user_data
 );
 /*~ FUNCTION wms_dc_disconnect */
+#ifdef CUST_EDITION
+
 
 
 /* <EJECT> */
@@ -6509,7 +6547,7 @@ wms_status_e_type wms_bc_set_priority_for_all
   wms_priority_e_type             priority
 );
 /*~ FUNCTION wms_bc_set_priority_for_all */
-
+#endif /*CUST_EDITION*/
 /* <EJECT> */
 /*===========================================================================
 

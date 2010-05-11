@@ -207,6 +207,7 @@ enum { WMS_MAX_RPTS  = 20 };
 enum { WMS_MAX_RAM_MESSAGES = 50 };
 enum { WMS_MAX_RAM_STATUS_REPORTS = 10 };
 
+#ifdef CUST_EDITION
 //  以前是提前5条提示，现在是提前10条提示 
 #ifdef FEATURE_ONEMSG_USE_ONEFILE
 enum 
@@ -245,6 +246,8 @@ enum
 #else
 enum { WMS_MAX_NV_CDMA_MESSAGES = 99 }; /* slots 0..98 */
 #endif
+#endif /*CUST_EDITION*/
+
 enum { WMS_MAX_GCF_NV_GW_MESSAGES = 23 }; /* slots 0..22 */
 #ifdef FEATURE_SMS_500_MESSAGES
 #error code not present
@@ -274,9 +277,9 @@ enum { WMS_GW_CB_MAX_LANGUAGES = 255 };
 enum { WMS_UDH_OTHER_SIZE_GW = 137 }; /* 140 - 1(UDHL) - 1(UDH ID) - 1(UDH Len) */
 
 //enum { WMS_TL_MAX_LEN        = 246 };
-
+#ifdef CUST_EDITION
 #define WMS_GW_TEMPLATE_MIN         28
-
+#endif /*CUST_EDITION*/
 #define WMS_CARD_NUM_REFRESH_FILES 14
 
 /* SMS task signals
@@ -815,8 +818,10 @@ typedef struct
     wms_cmd_msg_write_type            msg_write;
     wms_cmd_msg_delete_type           msg_delete;
     wms_cmd_msg_delete_all_type       msg_delete_all;
+#ifdef CUST_EDITION	
     wms_cmd_msg_delete_box_type       msg_delete_box;
     wms_cmd_msg_copy_type             msg_copy;
+#endif /*CUST_EDITION*/	
     wms_cmd_msg_modify_tag_type       msg_modify_tag;
     wms_cmd_msg_read_template_type    msg_read_template;
     wms_cmd_msg_write_template_type   msg_write_template;

@@ -1369,11 +1369,13 @@ typedef enum {
   MMGSDI_REFRESH_NAA_FCN,
   MMGSDI_REFRESH_NAA_INIT_FULL_FCN,
   MMGSDI_REFRESH_NAA_APP_RESET,
+#ifdef CUST_EDITION    
   MMGSDI_REFRESH_SIM_INIT,
   MMGSDI_REFRESH_SIM_INIT_FCN,
   MMGSDI_REFRESH_FCN,
   MMGSDI_REFRESH_SIM_INIT_FULL_FCN,
   MMGSDI_REFRESH_APP_RESET,
+#endif /*CUST_EDITION*/  
   MMGSDI_REFRESH_3G_SESSION_RESET,
   MMGSDI_REFRESH_RESET_AUTO,
   MMGSDI_REFRESH_MODE_ENUM_MAX = 0x7FFFFFFF
@@ -1629,7 +1631,9 @@ typedef enum {
                    PIN has not been replaced by Universal PIN
 =============================================================================*/
 typedef enum {
+#ifdef CUST_EDITION  
     MMGSDI_PIN_REPLACE_NOT_APPLICABLE,
+#endif /*CUST_EDITION*/    
   MMGSDI_PIN_NOT_REPLACED_BY_UNIVERSAL,
   MMGSDI_PIN_REPLACED_BY_UNIVERSAL
 }mmgsdi_pin_replace_enum_type;
@@ -2885,8 +2889,7 @@ typedef struct {
    STRUCTURE: MMGSDI_PKCS15_LOOKUP_TABLE_ENTRIES
    DESCRIPTION:
    The mmgsdi_pkcs15_lookup_table consists of two categories
-   1. EF Enum – List of PKCS15 EFs whose path is extracted from EF-ODF
-   2. File Path Info – File path info of the PKCS15 EF
+
 -------------------------------------------------------------------------------*/
 typedef struct {
   mmgsdi_file_enum_type      pkcs15_file_enum;
@@ -2897,8 +2900,6 @@ typedef struct {
    STRUCTURE: MMGSDI_PKCS15_LOOKUP_TABLE
    DESCRIPTION:
    The mmgsdi_pkcs15_lookup_table consists of
-   1. EF Enum – List of PKCS15 EFs whose path is extracted from EF-ODF
-   2. File Path Info – File path info of the PKCS15 EF
 -------------------------------------------------------------------------------*/
 typedef struct {
   uint8                               no_of_pkcs15_lookup_table_entries;

@@ -2218,7 +2218,7 @@ void wms_cfg_update_msg_info_cache
 #error code not present
 #endif /* FEATURE_GWSMS */
 
-#if 0
+#ifndef CUST_EDITION
 boolean wms_cfg_check_voicemail_contents
 (
   wms_message_mode_e_type         msg_mode,

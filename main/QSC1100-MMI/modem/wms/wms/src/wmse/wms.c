@@ -497,7 +497,9 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_CFG_SET_ROUTES:
       case WMS_CMD_CFG_GET_ROUTES:
       case WMS_CMD_GSDI_REFRESH_FCN_IND:
+#ifdef CUST_EDITION	  
       case WMS_CMD_REFRESH_IND:
+#endif /*CUST_EDITION*/	  
     #ifdef FEATURE_GWSMS
 #error code not present
     #endif /* FEATURE_GWSMS */
@@ -537,10 +539,12 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_CFG_SET_MEMORY_FULL:
       case WMS_CMD_CFG_SET_LINK_CONTROL:
       case WMS_CMD_CFG_GET_LINK_CONTROL:
+#ifdef CUST_EDITION	  
       case WMS_CMD_CFG_SET_MULTISEND:
 #ifdef FEATURE_AUTOREPLACE
       case WMS_CMD_CFG_SET_AUTOREPLACE:
 #endif        
+#endif /*CUST_EDITION*/
         break;
 
       case WMS_CMD_CFG_GET_MEMORY_STATUS:
@@ -601,12 +605,12 @@ wms_cmd_err_e_type wms_check_for_valid_command
             break;
         }
         break;
-
+#ifdef CUST_EDITION
       case WMS_CMD_MSG_DELETE_BOX:
       case WMS_CMD_MSG_COPY:
         ret_cmd_err = WMS_CMD_ERR_BUSY;
         break;
-      
+#endif /*CUST_EDITION*/
       case WMS_CMD_MSG_DELETE_ALL:
         switch (cmd_ptr->cmd.msg_delete_all.mem_store)
         {
@@ -679,7 +683,7 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_DC_DISABLE_AUTO_DISCONNECT:
         ret_cmd_err = WMS_CMD_ERR_BUSY;
         break;
-
+#ifdef CUST_EDITION
       case WMS_CMD_BC_GET_CONFIG:
       case WMS_CMD_BC_GET_PREF:
       case WMS_CMD_BC_SET_PREF:
@@ -694,6 +698,7 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_BC_SET_PRIORITY_FOR_ALL:
         ret_cmd_err = WMS_CMD_ERR_BUSY;
         break;
+#endif /*CUST_EDITION*/
 
 #ifdef FEATURE_BROADCAST_SMS_MULTIMODE
       case WMS_CMD_BC_MM_GET_CONFIG:
@@ -821,10 +826,11 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_GSDI_ASYNC_CB:
       case WMS_CMD_GSDI_CARD_STATUS_CB:
         break;
-
+#ifdef CUST_EDITION
 #if defined(FEATURE_UIM_TOOLKIT)
       case WMS_CMD_REFRESH_IND:
 #endif        
+#endif /*CUST_EDITION*/
       case WMS_CMD_GSDI_REFRESH_FCN_IND:
       case WMS_CMD_BC_SCPT_DATA:
         ret_cmd_err = WMS_CMD_ERR_BUSY;
@@ -1007,10 +1013,12 @@ void wms_process_cmd
     case WMS_CMD_CFG_SET_MEMORY_FULL:
     case WMS_CMD_CFG_SET_LINK_CONTROL:
     case WMS_CMD_CFG_GET_LINK_CONTROL:
+#ifdef CUST_EDITION	
     case WMS_CMD_CFG_SET_MULTISEND:
 #ifdef FEATURE_AUTOREPLACE
     case WMS_CMD_CFG_SET_AUTOREPLACE:
 #endif        
+#endif /*CUST_EDITION*/
       wms_cfg_process_cmd( cmd_ptr );
       break;
 
@@ -1021,8 +1029,10 @@ void wms_process_cmd
     case WMS_CMD_MSG_READ:
     case WMS_CMD_MSG_WRITE:
     case WMS_CMD_MSG_DELETE:
+#ifdef CUST_EDITION	
     case WMS_CMD_MSG_DELETE_BOX:
     case WMS_CMD_MSG_COPY:
+#endif /*CUST_EDITION*/	
     case WMS_CMD_MSG_DELETE_ALL:
     case WMS_CMD_MSG_MODIFY_TAG:
     case WMS_CMD_MSG_READ_TEMPLATE:
@@ -1311,7 +1321,7 @@ void wms_process_signals
     wms_dc_idle_timer_proc();
   }
 
-#if 0
+#ifndef CUST_EDITION
   if( sigs & WMS_MT_ACK_TIMER_SIG )
   {
     wms_msg_cdma_mt_ack_timer_proc();
@@ -1521,7 +1531,7 @@ wms_status_e_type wms_cfg_set_routes
 
     if(cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -1586,7 +1596,7 @@ wms_status_e_type wms_cfg_get_routes
   cmd_ptr = wms_get_cmd_buf();
   if( cmd_ptr !=NULL )
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -1653,7 +1663,7 @@ wms_status_e_type wms_cfg_get_memory_status
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -1720,7 +1730,7 @@ wms_status_e_type wms_cfg_get_message_list
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -1985,7 +1995,7 @@ wms_status_e_type wms_cfg_set_primary_client
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2053,7 +2063,7 @@ wms_status_e_type wms_cfg_set_memory_full
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2072,7 +2082,7 @@ wms_status_e_type wms_cfg_set_memory_full
 
   return st;
 } /* wms_cfg_set_memory_full */
-
+#ifdef CUST_EDITION	
 /*=========================================================================
 FUNCTION
   wms_cfg_set_multisend
@@ -2120,7 +2130,7 @@ wms_status_e_type wms_cfg_set_multisend
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2188,7 +2198,7 @@ wms_status_e_type wms_cfg_set_autoreplace
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2208,7 +2218,7 @@ wms_status_e_type wms_cfg_set_autoreplace
   return st;
 } /* wms_cfg_set_autoreplace */
 #endif /* FEATURE_AUTOREPLACE */
-
+#endif /*CUST_EDITION*/
 /* <EJECT> */
 /*===========================================================================
 
@@ -2248,11 +2258,11 @@ wms_status_e_type wms_msg_send
   wms_cmd_type        *cmd_ptr;
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+#ifdef CUST_EDITION	
 #if defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
   return WMS_OUT_OF_RESOURCES_S;
 #endif  
-
+#endif /*CUST_EDITION*/
   cmd_backup.hdr.cmd_id      = WMS_CMD_MSG_SEND;
   cmd_backup.hdr.client_id   = client_id;
   cmd_backup.hdr.cmd_cb      = cmd_cb;
@@ -2262,7 +2272,7 @@ wms_status_e_type wms_msg_send
   {
     cmd_backup.cmd.msg_send.send_mode = send_mode;
     cmd_backup.cmd.msg_send.message   = *message_ptr;
-    
+#ifdef CUST_EDITION	    
     // 去掉 MO 不需要的时间戳
     if ((WMS_SEND_MODE_CLIENT_MESSAGE == send_mode) &&
         (cmd_backup.cmd.msg_send.message.u.cdma_message.raw_ts.format == WMS_FORMAT_CDMA))
@@ -2290,12 +2300,13 @@ wms_status_e_type wms_msg_send
         wmsutil_formatmessage(&(cmd_backup.cmd.msg_send.message));
     }
 #endif
-
+#endif /*CUST_EDITION*/
     cmd_ptr = wms_get_cmd_buf();
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#ifdef CUST_EDITION		
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2304,6 +2315,7 @@ wms_status_e_type wms_msg_send
 #else    
       * cmd_ptr = cmd_backup;
 #endif    
+#endif /*CUST_EDITION*/
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -2367,7 +2379,7 @@ wms_status_e_type wms_msg_ack
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2440,7 +2452,7 @@ wms_status_e_type wms_msg_read
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2507,7 +2519,7 @@ wms_status_e_type wms_msg_write
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2583,7 +2595,7 @@ wms_status_e_type wms_msg_delete
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2602,7 +2614,7 @@ wms_status_e_type wms_msg_delete
 
   return st;
 } /* wms_msg_delete */
-
+#ifdef CUST_EDITION	
 /* <EJECT> */
 /*==============================================================================
 FUNCTION
@@ -2643,7 +2655,7 @@ wms_status_e_type wms_msg_delete_box
 
     if (cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
         q_link_type teplink;
         
         (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2704,7 +2716,7 @@ wms_status_e_type wms_msg_copy
 
     if (cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
         q_link_type teplink;
         
         (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2760,7 +2772,7 @@ wms_status_e_type wms_msg_refresh_ruimmsg
 
     if (cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
         q_link_type teplink;
         
         (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2780,7 +2792,7 @@ wms_status_e_type wms_msg_refresh_ruimmsg
     return st;
 } /* wms_msg_refresh_ruimmsg */
 #endif
-
+#endif /*CUST_EDITION*/
 /* <EJECT> */
 /*=========================================================================
 FUNCTION
@@ -2827,7 +2839,7 @@ wms_status_e_type wms_msg_delete_all
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2895,7 +2907,7 @@ wms_status_e_type wms_msg_modify_tag
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -2963,7 +2975,7 @@ wms_status_e_type wms_msg_read_template
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3069,7 +3081,7 @@ wms_status_e_type wms_msg_write_template
 
   if( cmd_ptr != NULL)
   {
-    #ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3158,7 +3170,7 @@ wms_status_e_type wms_msg_delete_template
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3223,7 +3235,7 @@ wms_status_e_type wms_msg_delete_template_all
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3530,7 +3542,7 @@ wms_status_e_type wms_dc_enable_auto_disconnect
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3599,7 +3611,7 @@ wms_status_e_type wms_dc_disable_auto_disconnect
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3672,7 +3684,7 @@ wms_status_e_type wms_dc_connect
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3741,7 +3753,7 @@ wms_status_e_type wms_dc_disconnect
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3768,7 +3780,7 @@ wms_status_e_type wms_dc_disconnect
 } /* wms_dc_disconnect() */
 
 
-
+#ifdef CUST_EDITION	
 /* <EJECT> */
 /*===========================================================================
 
@@ -3819,7 +3831,7 @@ wms_status_e_type wms_bc_get_config
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3886,7 +3898,7 @@ wms_status_e_type wms_bc_get_pref
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -3957,7 +3969,7 @@ wms_status_e_type wms_bc_set_pref
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4031,7 +4043,7 @@ wms_status_e_type wms_bc_get_table
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4106,7 +4118,7 @@ wms_status_e_type wms_bc_select_service
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4177,7 +4189,7 @@ wms_status_e_type wms_bc_get_all_service_ids
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4249,7 +4261,7 @@ wms_status_e_type wms_bc_get_service_info
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4321,7 +4333,7 @@ wms_status_e_type wms_bc_add_service
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4393,7 +4405,7 @@ wms_status_e_type wms_bc_delete_service
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4477,7 +4489,7 @@ wms_status_e_type wms_bc_change_label
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4547,7 +4559,7 @@ wms_status_e_type wms_bc_delete_all_services
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4620,7 +4632,7 @@ wms_status_e_type wms_bc_set_priority_for_all
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4646,7 +4658,7 @@ wms_status_e_type wms_bc_set_priority_for_all
   return st;
 
 } /* wms_bc_set_priority_for_all() */
-
+#endif /*CUST_EDITION*/
 
 /* <EJECT> */
 /*===========================================================================
@@ -4715,7 +4727,7 @@ wms_status_e_type wms_bc_mm_get_config
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4799,7 +4811,7 @@ wms_status_e_type wms_bc_mm_get_pref
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4885,7 +4897,7 @@ wms_status_e_type wms_bc_mm_set_pref
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -4975,7 +4987,7 @@ wms_status_e_type wms_bc_mm_get_table
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5063,7 +5075,7 @@ wms_status_e_type wms_bc_mm_select_service
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5150,7 +5162,7 @@ wms_status_e_type wms_bc_mm_get_all_service_ids
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5237,7 +5249,7 @@ wms_status_e_type wms_bc_mm_get_service_info
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5352,7 +5364,7 @@ wms_status_e_type wms_bc_mm_add_services
 
       if( cmd_ptr != NULL)
       {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
         q_link_type teplink;
     
         (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5455,7 +5467,7 @@ wms_status_e_type wms_bc_mm_delete_services
 
       if( cmd_ptr != NULL)
       {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
         q_link_type teplink;
     
         (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5543,7 +5555,7 @@ wms_status_e_type wms_bc_mm_change_service_info
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5627,7 +5639,7 @@ wms_status_e_type wms_bc_mm_delete_all_services
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5714,7 +5726,7 @@ wms_status_e_type wms_bc_mm_select_all_services
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5795,7 +5807,7 @@ wms_status_e_type wms_bc_mm_set_priority_for_all_services
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -5968,7 +5980,7 @@ wms_status_e_type wms_bc_mm_get_reading_pref
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -6054,7 +6066,7 @@ wms_status_e_type wms_bc_mm_set_reading_pref
 
     if( cmd_ptr != NULL)
     {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
       (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -6130,7 +6142,7 @@ wms_status_e_type wms_dbg_reset_tl_seq_num
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -6288,7 +6300,7 @@ wms_status_e_type wms_dbg_get_retry_interval
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
@@ -6351,7 +6363,7 @@ wms_status_e_type wms_dbg_set_retry_interval
 
   if( cmd_ptr != NULL)
   {
-#ifdef FIX_LINKITEM_INITBUG
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));

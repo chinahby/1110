@@ -125,12 +125,14 @@ LOCAL word         db_acq_mode;      /* Type of CDMA acquisition desired   */
 LOCAL boolean      db_13k_voc_available;/* Flag to indicate 13k capability */
 LOCAL byte         db_bs_p_rev;      /* Base station's protocol rev level  */
 LOCAL db_voice_as_data_type db_voice_as_data; /* Answer next call as data  */
+#ifdef CUST_EDITION  
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 LOCAL byte         db_uiminitmask;          /* 卡上数据初始化掩码，由UI设置, UIM 负责清除   */
 LOCAL boolean      db_uimsmsinited;         /* 卡上短信是否初始化完毕                       */
 LOCAL boolean      db_uimaddinited;         /* 卡上电话本是否初始化完毕                     */
 LOCAL boolean      db_uimsmsadd_init_done;  /* 卡上短信及电话本初始化是否完毕               */
 #endif
+#endif /*CUST_EDITION*/  
 #ifdef FEATURE_GPSONE
 #error code not present
 #endif /* FEATURE_GPSONE */

@@ -100,8 +100,9 @@ typedef struct
   */
   rex_timer_type                 timer;
  //rex_timer_type                 timer;
+#ifdef CUST_EDITION	 
   clk_cb_type                    clk_timer;
-
+#endif /*CUST_EDITION*/
   boolean                        large_msg;
 
 #ifdef FEATURE_IWMSC
