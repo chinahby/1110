@@ -358,7 +358,9 @@ when       who     what, where, why
 //AEECM_MAX_DIAL_STRING corresponds to CM_MAX_NUMBER_CHARS defined in cm.h
 //Includes the NULL terminator, actual max dial string length is 81
 /* Maximum length of digits in a number */
+#ifdef CUST_EDITION  
 #define AEECM_MAX_DIGITS_LENGTH    65
+#endif
 #define AEECM_MAX_DIAL_STRING 82
 
 #define AEECM_INVALID_UZID         -1
@@ -4026,7 +4028,9 @@ typedef struct {
   boolean                  bTTYcall;  /* Is a TTY call */
 
   boolean                  bAlphaRecvd; /* Is cnap alpha string received by OEMCM_HandleCallAlphaUpdate*/
+#ifdef CUST_EDITION  
     boolean                 is_last_cdma_info_rec;
+#endif
 
 } AEECMCallInfo;
 

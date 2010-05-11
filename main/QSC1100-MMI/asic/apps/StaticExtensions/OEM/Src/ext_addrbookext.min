@@ -5,6 +5,7 @@
 # 4/07 15:38:33 $ $Author: cmedrano $
 # 
 #-------------------------------------------------------------------------------
+#原本OEMAddrBook里编译的,目前在brew里编
 ifneq ($(USES_MMI),yes)
 EXT_ADDRBOOKEXT_SOURCES=\
   OEMAddrBook.c \

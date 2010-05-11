@@ -34,7 +34,9 @@ when       who     what, where, why
 #include "AEEComdef.h"
 #include "ALERT.BID"
 #include "ALERT_NOTIFIER.BID"
+#ifdef CUST_EDITION
 #include "AEERinger.h"
+#endif
 
 /* Alerting
 */
@@ -51,7 +53,9 @@ typedef enum
 #define AEEALERT_CALLTYPE_VIDEO   3
 #define AEEALERT_CALLTYPE_FAX     4
 #define AEEALERT_CALLTYPE_TEST    5
+#ifdef CUST_EDITION
 #define TIME_MS_SMSMP3RING_DURATION             10000
+#endif
 
 typedef enum{
   AEEALERT_ALERT_NONE = 0,
@@ -111,6 +115,7 @@ typedef enum{
   AEEALERT_ALERT_IS53A_PPPP_M, 
   AEEALERT_ALERT_IS53A_PPPP_H,                                
   AEEALERT_ALERT_IS53A_PPPP_L,
+#ifdef CUST_EDITION  
   AEEALERT_ALERT_MINUTE_BEEP,
   AEEALERT_ALERT_LOW_BATTERY, 
   AEEALERT_ALERT_CHARGER_OVERVOLTAGE,
@@ -120,8 +125,11 @@ typedef enum{
   AEEALERT_ALERT_EXTERN_PWROFF,
   AEEALERT_ALERT_RUIMDOOR_REMOVED,  
   AEEALERT_ALERT_ERR_SPECIAL,
+#endif  
   AEEALERT_ALERT_MAX = 0x10000000
 }AEEALERTType;
+
+#ifdef CUST_EDITION
 typedef enum
 {
     ALERT_POWER_SND,
@@ -129,6 +137,8 @@ typedef enum
     ,ALERT_SMS_SND
 //#endif //#if defined FEATURE_SMSTONETYPE_MID		    
 }ALERT_SND_TYPE;
+#endif
+
 #define NMASK_ALERT_ONOFF         0x0001
 #define NMASK_ALERT_MUTED         0x0002
 #define NMASK_ALERT_ANSWER        0x0004
@@ -156,6 +166,7 @@ AEEINTERFACE(IALERT)
                  AECHAR *phone_number, uint16 phoneNumberBufSize, AEEALERTType *alert_type);
   int (*SetMediaRingerDelay)(IALERT *po, int32 nMediaRingerDelay);
   int (*GetMediaRingerDelay)(IALERT *po, int32 *pnMediaRingerDelay);
+#ifdef CUST_EDITION  
   int (*StartMp3Alert)(IALERT *po,char* id,ALERT_SND_TYPE type);
   void(*StopMp3Alert)(IALERT *po);
   void (*StartRingerAlert)(IALERT *po,uint32 id,ALERT_SND_TYPE type);
@@ -169,6 +180,7 @@ AEEINTERFACE(IALERT)
   void (*StartSMSAlertPreview)(IALERT *po, int ring_id);
   void (*MinuteAlert)(IALERT *po);
   void (*StartMp3Preview)(IALERT *po,char* id);
+#endif
 };
 
 #define IALERT_AddRef(p)          AEEGETPVTBL(p,IALERT)->AddRef(p)
@@ -193,6 +205,7 @@ AEEINTERFACE(IALERT)
 	    AEEGETPVTBL(po,IALERT)->SetMediaRingerDelay(po, delay)
 #define IALERT_GetMediaRingerDelay(po, pDelay) \
 	    AEEGETPVTBL(po,IALERT)->GetMediaRingerDelay(po, pDelay)
+#ifdef CUST_EDITION  		
 #define IALERT_StartMp3Alert(po, id, alert_type) \
         AEEGETPVTBL(po,IALERT)->StartMp3Alert(po, id, alert_type)
 #define IALERT_StopMp3Alert(po) \
@@ -222,4 +235,5 @@ AEEINTERFACE(IALERT)
 	    AEEGETPVTBL(po,IALERT)->MinuteAlert(po)
 #define IALERT_StartMp3Preview(po, id) \
         AEEGETPVTBL(po,IALERT)->StartMp3Preview(po, id)
+#endif		
 #endif //#ifndef AEEALERT_H

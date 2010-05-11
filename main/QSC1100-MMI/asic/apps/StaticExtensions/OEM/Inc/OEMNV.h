@@ -49,6 +49,7 @@ when       who     what, where, why
 #ifndef COMDEF_H
 #undef ARR_SIZE
 #endif
+#ifdef CUST_EDITION  
 #ifndef WIN32
 #include "nv.h"
 #else
@@ -57,6 +58,7 @@ typedef int nv_items_enum_type;
 typedef int nv_item_type;
 typedef int nv_cmd_type;
 #endif
+#endif /*CUST_EDITION*/
 #include "AEEStdLib.h"
 
 /**************************************************************************/

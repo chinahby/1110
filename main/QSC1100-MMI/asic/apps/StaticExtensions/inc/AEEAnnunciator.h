@@ -44,7 +44,7 @@ typedef struct IAnnunciator IAnnunciator;
 // Global Constant Declarations
 //---------------------------------------------------------------------
 // Annunciator Fields
-#if 0
+#ifndef CUST_EDITION
 #define ANNUN_FIELD_OPERATOR  0   /* PLMN in GSM; other network info in CDMA */
 #define ANNUN_FIELD_MSG       1
 #define ANNUN_FIELD_NET       2
@@ -115,7 +115,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_BLINK         0x80000000
 #define ANNUN_STATE_UNBLINK     0x7FFFFFFF
 
-#if 1
+#ifdef CUST_EDITION
 // Mask to strip the blink bit from the state
 #define ANNUN_STATE_BLINK_UNMASK  0x7FFFFFFF
 
@@ -179,6 +179,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_CS_PS     3
 
 // RSSI and HDR fields
+#ifdef CUST_EDITION  
 #define ANNUN_STATE_AIR_MODE_ON     ANNUN_FIRST_STATE
 #define ANNUN_STATE_AIR_MODE_OFF   ANNUN_FIRST_STATE_OFF
 #define ANNUN_STATE_RSSI_NO_SERV    ANNUN_SECOND_STATE
@@ -263,6 +264,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_RINGTONE_SILENT      ANNUN_SECOND_STATE
 #define ANNUN_STATE_RINGTONE_VIBRING    ANNUN_THIRD_STATE
 #define ANNUN_STATE_RINGTONE_VIBRATOR  ANNUN_FORTH_STATE
+#endif
 
 // In Use field
 #define ANNUN_STATE_IN_USE    1
@@ -316,8 +318,10 @@ AEEINTERFACE(IAnnunciator)
    int     (*EnableAnnunciatorBar)   (IAnnunciator * pMe, AEECLSID clsid, boolean bOn);
    int     (*GetAnnunciatorBarSize)  (IAnnunciator * pMe, AEECLSID clsid, AEERect *pRec);
    void    (*EnableBlink) (IAnnunciator * pMe, boolean bEnable);
+#ifdef CUST_EDITION  
    int     (*EnableAnnunciatorBarEx) (IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw);
    int     (*SetUnblinkTimer) (IAnnunciator * pMe, uint32 nAnnunID, uint32 nState, uint32 nTimeMs); //added by chengxiao 2009.03.10
+#endif
 };
 
 //---------------------------------------------------------------------
@@ -334,8 +338,10 @@ AEEINTERFACE(IAnnunciator)
 #define IANNUNCIATOR_EnableAnnunciatorBar(p,cls,b)   AEEGETPVTBL((p),IAnnunciator)->EnableAnnunciatorBar((p),(cls),(b))
 #define IANNUNCIATOR_GetAnnunciatorBarSize(p,cls,pr) AEEGETPVTBL((p),IAnnunciator)->GetAnnunciatorBarSize((p),(cls),(pr))
 #define IANNUNCIATOR_EnableBlink(p,b) AEEGETPVTBL((p),IAnnunciator)->EnableBlink((p),(b))
+#ifdef CUST_EDITION  
 #define IANNUNCIATOR_EnableAnnunciatorBarEx(p,cls,b,c)   AEEGETPVTBL((p),IAnnunciator)->EnableAnnunciatorBarEx((p),(cls),(b),(c))
 #define IANNUNCIATOR_SetUnblinkTimer(p,id,s,n)   AEEGETPVTBL((p),IAnnunciator)->SetUnblinkTimer((p),(id),(s),(n))
+#endif
 
 /*============================================================================
    DATA STRUCTURE DOCUMENTATION

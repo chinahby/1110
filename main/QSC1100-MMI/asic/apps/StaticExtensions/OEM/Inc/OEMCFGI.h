@@ -117,12 +117,14 @@ when       who     what, where, why
 12/05/01   jcb     Created file. Moved OEM AEEConfigItem's here.
 
 ===========================================================================*/
-
 #include "BREWVersion.h"
+#include "OEMFeatures.h"
 
 #if MIN_BREW_VERSIONEx(3,1,2)
 #ifndef AEECONFIG_H
+#ifdef CUST_EDITION  
 #include "AEEConfig.h"
+#endif
 //#error OEMCFGI.h must not be included directly, include AEEConfig.h instead
 #endif
 #else
@@ -131,17 +133,18 @@ when       who     what, where, why
 #endif
 #endif
 
-#include "OEMFeatures.h"
+#ifdef CUST_EDITION  
 #if !defined( AEE_SIMULATOR)
 #include "customer.h"
 #endif
-
+#endif
 //-----------------------------------------------------------------------------
 //  Includes
 //-----------------------------------------------------------------------------
 
 #include "oemnvint.h"  // include the config values
 
+#ifdef CUST_EDITION  
 #ifdef CUST_OEM_NV_H
 #include CUST_OEM_NV_H
 #else
@@ -149,8 +152,11 @@ when       who     what, where, why
 #error You must define CUST_OEM_NV_H in min file and contain corresponding header file in your build directory
 #endif
 #endif
+#endif
 
 #include "CustomOEMConfigItems.h" // include CustomOEMConfigItems define
+
+#ifdef CUST_EDITION  
 #define BREW_USERNAME_LEN 32
 #define BREW_PASSWORD_LEN 32
 
@@ -179,7 +185,7 @@ typedef enum Send_OPT_e_Type
     SENDOPT_SAVE,           // 只保存
     SENDOPT_SAVEANDSEND     // 发送并保存
 } Send_OPT_e_Type;
-
+#endif /*CUST_EDITION*/
 //-----------------------------------------------------------------------------
 //  Types
 //-----------------------------------------------------------------------------
@@ -206,6 +212,7 @@ enum /* OEM AEEConfigItem Values */
    CFGI_ROAMING_ALERT,               // type=byte
    CFGI_INTERNET_ALERT,              // type=byte
    CFGI_MINUTE_ALERT,                // type=byte
+#ifdef CUST_EDITION  
    CFGI_VOICE_PRIVACY,               // type=byte
 #ifdef FEATRUE_AUTO_POWER
    CFGI_AUTO_POWER_ON,               //type = Auto_Power_Cfg
@@ -223,6 +230,7 @@ enum /* OEM AEEConfigItem Values */
    CFGI_IP_NUMBER,                   //type = IP_Number_Cfg
 #endif
    CFGI_AUTO_REDIAL,                 //type = nv_auto_redial_type
+#endif /*CUST_EDITION*/
    CFGI_GAME_MODE,                   // type=boolean
    CFGI_GAME_MODE_PERSIST,           // type=boolean
 
@@ -245,6 +253,7 @@ enum /* OEM AEEConfigItem Values */
    // The valid values are:
    // {SND_ALERT,SND_EFS_RINGER_1,SND_RING_[123456789],SND_ALERT_[12345]}
    CFGI_RINGER_TYPE,                // type=byte,
+#ifdef CUST_EDITION  
    CFGI_SMS_RINGER,                 // type=byte    短信铃声(0-表示无)
    CFGI_ALARM_RINGER,               //type = byte 闹钟铃声
    CFGI_SMS_RINGER_ID,              //type = byte 短信铃声
@@ -265,6 +274,7 @@ enum /* OEM AEEConfigItem Values */
    CFGI_PROFILE_EAR_VOL,            //耳机音量
    CFGI_PROFILE_BEEP_VOL,           //键盘音量
    CFGI_KEYSND_TYPE,                //多彩按键音  
+#endif /*CUST_EDITION*/
    // IMEI
    CFGI_IMEI,                       // type = oemnvi_imei_type
    CFGI_CUG,                        // type = OEMNVCugInfo
@@ -307,6 +317,8 @@ enum /* OEM AEEConfigItem Values */
    CFGI_BANNER,              // type=AECHAR *, size <= OEMNV_BANNER_MAXLEN
    CFGI_MENU_FORMAT,         // type=byte
    CFGI_TIME_FORMAT,         // type=byte
+   
+#ifdef CUST_EDITION     
 #ifdef FEATURE_TIME_DATA_SETTING
    CFGI_DATE_FORMAT,                 //type = byte
 #endif 
@@ -327,6 +339,8 @@ enum /* OEM AEEConfigItem Values */
 #ifdef FEATRUE_KEY_PAD_CTL
    CFGI_KEY_PAD_CTL,                 //type = Key_pad_Cfg
 #endif
+#endif /*CUST_EDITION*/
+
    CFGI_MANUAL_PLMN_SEL,     // type=boolean    
 #if defined(FEATURE_USRSYSCLOCK) || defined(FEATURE_ISYSCLOCK)
    CFGI_AUTO_TIME_ENABLE,    // type = boolean
@@ -371,6 +385,7 @@ enum /* OEM AEEConfigItem Values */
                                      // size <= OEMNV_VOICEMAIL_MAXLEN
    CFGI_VOICEMAIL_NUMBER_GW,         // type=AECHAR *,
                                      // size <= OEMNV_VOICEMAIL_MAXLEN
+#ifdef CUST_EDITION  									 
    CFGI_WMS_PRIORITY,                // type=byte
    CFGI_WMS_SENDMODE,                // type=byte
    CFGI_WMS_STORETYPE,               // type=byte
@@ -384,7 +399,7 @@ enum /* OEM AEEConfigItem Values */
    CFGI_WMS_CALLBACKNUMSWITCH,       // type= boolean
    CFGI_CALLBACKNUM,                 // type= AECHAR *
    CFGI_WMS_MO_CHANNEL_SELECT,       // type= byte
-   
+#endif /*CUST_EDITION*/   
    /////////////////////////////////////////////////////////////////
    // Recent Calls App
    /////////////////////////////////////////////////////////////////
@@ -416,9 +431,11 @@ enum /* OEM AEEConfigItem Values */
                           //      elements.
    CFGI_IMSI_MCC,         // type=uint16 (MCC encoded as decimal)   (read-only)
    CFGI_IMSI_11_12,       // type=uint16 (MNC encoded as decimal)   (read-only)
+#ifdef CUST_EDITION     
    #ifdef FATRUE_LOCK_IMSI_MCCMNC
    CFGI_IMSI_SETMCC,   // tyoe= SetImsi
    #endif
+#endif /*CUST_EDITION*/   
    CFGI_IMSI_S,           // type=AECHAR *, len==OEMNV_IMSI_S_LENGTH(read-only)
    CFGI_PRL_ENABLED,      // type=boolean
    CFGI_PRI_CH_A,         // type=uint16
@@ -431,12 +448,14 @@ enum /* OEM AEEConfigItem Values */
    CFGI_FORN_NID_REG,     // type=boolean
 
 #ifdef FEATURE_ACP
+#ifdef CUST_EDITION  
    CFGI_MODE_PREF,        // type=uint16
 
    CFGI_AMPS_HOME_SID,    // type=uint16
    CFGI_AMPS_FIRSTCHP,    // type=uint16
 
    CFGI_AMPS_REG_TYPE,    // type=uint16
+#endif /*CUST_EDITION*/   
 #endif /* FEATURE_ACP */
 
    CFGI_DATA_QNC_ENABLED, // type=boolean
@@ -450,14 +469,17 @@ enum /* OEM AEEConfigItem Values */
    CFGI_BREW_FLAGS,   // type=uint16, 16-bit download related flags
    CFGI_BREW_AUTH,    // type=byte, download auth policy
    CFGI_BREW_PRIVP,   // type=byte, privacy policy
+#ifdef CUST_EDITION     
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
    CFGI_RTRE_CONFIGURATION,   // nv_rtre_configuration_type
 #endif
+#endif /*CUST_EDITION*/
    ////////////////////////////////////////////////////////////////
    // Security Menu
    ////////////////////////////////////////////////////////////////
 
    CFGI_LOCKCODE,              // type=AECHAR *, len <= OEMNV_LOCKCODE_MAXLEN
+#ifdef CUST_EDITION     
    CFGI_PHONE_PASSWORD,        //type = uint16
    CFGI_PHONE_PASSWORD_CHECK,  //type = boolean
    CFGI_RESTRICT_OUTGOING,     //type = byte
@@ -469,6 +491,7 @@ enum /* OEM AEEConfigItem Values */
    CFGI_KEY_LOCK_CHECK,      //type = boolean
    CFGI_LOCK_RUIM,   //type: boolean 
    CFGI_LOCK_MCCMNC_LIST,
+#endif /*CUST_EDITION*/   
 
 #ifdef FEATURE_FDN
    CFGI_FDN_ENABLED,      // type=boolean
@@ -476,12 +499,17 @@ enum /* OEM AEEConfigItem Values */
 
    CFGI_HEADSET,        // type=boolean
    CFGI_STEREO_HEADSET, // type=boolean
+#ifdef CUST_EDITION     
    CFGI_HFK,                   // type=boolean
    CFGI_USB_HFK,               // type=boolean
+#endif /*CUST_EDITION*/   
    CFGI_USB_HFK_ATTACHED,   // type=boolean
    CFGI_STEREO_USB_HFK_ATTACHED,   // type=boolean
+#ifdef CUST_EDITION     
    CFGI_SDAC,                  // type=boolean
+#endif /*CUST_EDITION*/
    CFGI_EXT_PWR,        // type=boolean
+#ifdef CUST_EDITION     
    CFGI_SPEAKERPHONE,          // type=boolean
    CFGI_SHAKE_MUSIC_CHECK,            //type = boolean,摇一摇换音乐               
    CFGI_SHAKE_FM_RADIO_CHECK,         //type = boolean,摇一摇换收音机    
@@ -577,6 +605,7 @@ enum /* OEM AEEConfigItem Values */
 
 
    CFGI_MISSED_CALL_ICON,
+#endif /*CUST_EDITION*/   
 #ifdef FEATURE_VOICE_FIXED_PATTERN_DEBUG
 #error code not present
 #endif /* FEATURE_VOICE_FIXED_PATTERN_DEBUG */
@@ -605,7 +634,9 @@ enum /* OEM AEEConfigItem Values */
                                      // from the normal config items
 
    CFGI_DEVICE, //type = uint32
+#ifdef CUST_EDITION     
    CFGI_GSENSOR,                      //type = uint32 
+#endif /*CUST_EDITION*/
    // Debug Menu state items
    CFGI_DEBUG_CHANNEL,    // type=uint16
    CFGI_DEBUG_PILOT_PN,   // type=uint16
@@ -613,7 +644,9 @@ enum /* OEM AEEConfigItem Values */
    CFGI_DEBUG_TX_AGC_IN_DBM,// type=int16
    CFGI_DEBUG_RX_AGC,     // type=byte
    CFGI_DEBUG_RX_AGC_IN_DBM,// type=int16
+#ifdef CUST_EDITION     
    CFGI_DEBUG_ECIO,
+#endif /*CUST_EDITION*/   
    CFGI_DEBUG_SID,        // type=uint16
    CFGI_DEBUG_NID,        // type=uint16
    CFGI_DEBUG_TX_ADJUST,  // type=byte
@@ -661,6 +694,8 @@ enum /* OEM AEEConfigItem Values */
    // setting this item to TRUE/FALSE.
    //
    CFGI_KEYGUARD_ENABLED, // type=boolean
+
+#ifdef CUST_EDITION     
    CFGI_HEADSET_PRESENT,  // type=boolean
    CFGI_FM_BACKGROUND,    // type=boolean   
 
@@ -673,7 +708,9 @@ enum /* OEM AEEConfigItem Values */
 #ifdef FEATURE_INTELLICEIVER
    CFGI_DEBUG_INTELLICEIVER_STATE,
 #endif /* FEATURE_INTELLICEIVER */
+
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
+
    /*Menu default REND*/
    CFGI_DEFAULT_REND,  // 默认界面转换效果
    /*Menu default color REND, 0 for off, 1 for a specific REND, 2 for random REND*/
@@ -682,6 +719,7 @@ enum /* OEM AEEConfigItem Values */
 #ifdef FEATURE_TOUCHPAD
    CFGI_PEN_CAL,     // 笔校准参数
 #endif
+#endif /*CUST_EDITION*/
    
    CFGI_LAST_OEM_ITEM
 };
@@ -735,12 +773,15 @@ enum
 备注：:
 
 ==============================================================================*/
+#ifdef CUST_EDITION  
 int GetRepeatRawNumber(AECHAR * number,AECHAR * rawnumber);
 void OEM_RestoreFactorySetting( void );
+#endif /*CUST_EDITION*/
 boolean   OEM_GetCachedLCDSetting(void);
-
+#ifdef CUST_EDITION  
 boolean OEM_IsEmergency_Number(char *pNumber,int len);
 extern dword OEM_GetMEESN(void);
 extern void OEM_SetMEESN(dword esn);
+#endif /*CUST_EDITION*/
 #endif // !OEMCFGI_H
 

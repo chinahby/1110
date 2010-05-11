@@ -86,9 +86,7 @@ $(EXT_OEM_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.mif $(BREW_STATIC_MIFS)
 vpath %.bar $(BREW_STATIC_EXTENSIONS_RESINC)
 vpath %.brx $(BREW_STATIC_EXTENSIONS_RESINC)
-$(warning miaoxiaoming $(BREW_STATIC_EXTENSIONS_RESINC))
 
 CONSTFILE_FILES+=\
 	vector.mif|fs:/mif/vector.mif \
 	oemannunciator.bar|fs:/shared/oemannunciator.bar
-$(warning miaoxiaoming $(CONSTFILE_FILES))

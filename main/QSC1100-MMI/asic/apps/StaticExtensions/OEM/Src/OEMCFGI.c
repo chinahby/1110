@@ -1523,7 +1523,7 @@ static void OEMPriv_MIN1_TO_STR(uint32  min1,
 
 }
 
-
+#ifdef CUST_EDITION  
 static dword g_me_esn=0;
 
 dword OEM_GetMEESN(void)
@@ -1535,6 +1535,8 @@ void OEM_SetMEESN(dword esn)
 {
     g_me_esn = esn;
 }
+#endif /*CUST_EDITION*/
+
 /*=============================================================================
 FUNCTION:  OEM_InitPreference
 
@@ -5490,7 +5492,7 @@ static int OEMPriv_SetItem_CFGI_DATA_QNC_ENABLED(void *pBuff)
    return SUCCESS;
 }
 
-
+#ifdef CUST_EDITION  
 // ‰»Î∑®…Ë÷√
 #ifndef CUST_EDITION
 static int OEMPriv_GetItem_CFGI_INPUTMODE(void *pBuff)
@@ -5541,6 +5543,7 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
 #endif    
     return is_emergency;
 }
+#endif /*CUST_EDITION*/
 
 #ifdef FEATURE_FDN
 
@@ -6553,6 +6556,7 @@ static int OEMPriv_SetItem_CFGI_MANUAL_PLMN_SEL_ALLOWED(void *pBuff)
    return SUCCESS;
 }
 
+#ifdef CUST_EDITION  
 
 
 //static int SetSubscriberID(byte *pBuff, int nSize)
@@ -6641,6 +6645,6 @@ void OEM_SetBAM_ADSAccount(void)
 #endif
 #endif
 } /* OEM_SetBAM_ADSAccount */
-
+#endif /*CUST_EDITION*/
 //lint -restore
 

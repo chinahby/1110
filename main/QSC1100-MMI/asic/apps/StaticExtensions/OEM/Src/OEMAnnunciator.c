@@ -76,12 +76,12 @@ $Header: //depot/asic/msmshared/apps/StaticExtensions/OEM/Src/OEMAnnunciator.c#5
 #define ANNUN_ALPHA_BLEND_PCT 0x8f
 #endif
 
-
+#ifdef CUST_EDITION  
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
 // 用于保存待机界面墙纸顶层图标栏覆盖部分墙纸的图片数据
 static IDIB *pgWallpaperBarDDB=NULL;
 #endif
-
+#endif /*CUST_EDITION*/
 
 typedef struct IANNUNCore
 {
@@ -180,7 +180,7 @@ typedef struct {
  * Image data for the annunciator fields.
  *
  *******************************************************************/
-# if 0
+# ifndef CUST_EDITION
 static OEMState_data mode_image_data[] =
 {
   {ANNUN_STATE_ANALOG, IDB_ANALOG, NULL},
@@ -459,7 +459,7 @@ static AECHAR pszBanner[ANNUN_TEXT_SIZE];
  * Content data for the annunciator fields
  *
  *******************************************************************/
-#if 0
+#ifndef CUST_EDITION
 OEMAnnun_content reserved_content =
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)reserved_image_data};
 
@@ -628,6 +628,8 @@ OEMAnnun_content batt_content =
     #define ROW1_Y           2
     #define BETWEEN_ICON_PIXEL 1
 #endif
+
+#ifdef CUST_EDITION  
 #define ANNUN_ICON_POSITION_1      (0)
 #define ANNUN_ICON_POSITION_2      (LG_IMG_WIDTH + 1*BETWEEN_ICON_PIXEL)
 #define ANNUN_ICON_POSITION_3      (LG_IMG_WIDTH + 1*IMG_WIDTH + 2*BETWEEN_ICON_PIXEL)
@@ -640,6 +642,7 @@ OEMAnnun_content batt_content =
 #define ANNUN_ICON_POSITION_10    (LG_IMG_WIDTH + 8*IMG_WIDTH + 9*BETWEEN_ICON_PIXEL)
 #define ANNUN_ICON_POSITION_11    (LG_IMG_WIDTH + 9*IMG_WIDTH + 10*BETWEEN_ICON_PIXEL)
 #define ANNUN_ICON_POSITION_END  ((DISP_WIDTH) - (LG_IMG_WIDTH))
+#endif /*CUST_EDITION*/
 
 /* Row layouts for annunciator, assuming 40-row annunciator region
  * Pixel rows:  First        Last        Annunciator content
@@ -704,7 +707,7 @@ OEMAnnun_content batt_content =
  *             125          174         Operator
  *             175          175         -
  */
-#if 0
+#ifndef CUST_EDITION
 /* Annunciator Definitions */
 //lint -save -e545  Suppress complaints about "suspicious use of &"
 static OEMAnnun_data Annunciators[] =
@@ -914,7 +917,7 @@ static void annun_disp_update(
 //lint -restore
 //lint -restore
 
-#ifdef FEATRUE_SET_ANN_FULL_SCREEN
+#if defined(FEATRUE_SET_ANN_FULL_SCREEN) && defined(CUST_EDITION)
 static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
 {
     AEERect Rect;
@@ -2178,7 +2181,7 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
   return SUCCESS;
 }
 
-
+#ifdef CUST_EDITION  
 static int IAnnunciator_EnableAnnunciatorBarEx(IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw)
 {
     boolean bLastState;
@@ -2224,6 +2227,7 @@ static int IAnnunciator_EnableAnnunciatorBarEx(IAnnunciator * pMe, AEECLSID clsi
     
     return SUCCESS;
 }
+#endif /*CUST_EDITION*/
 /*=======================================================================
 
 IAnnunciator_GetAnnunciatorBarSize()
@@ -2277,7 +2281,7 @@ static int IAnnunciator_GetAnnunciatorBarSize(IAnnunciator * pMe, AEECLSID clsid
   return SUCCESS;
 }
 
-
+#ifdef CUST_EDITION  
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
 // 用于保存待机界面墙纸顶层图标栏覆盖部分墙纸的图片数据
 IDIB ** OEMANNUNCIATOR_GetWallpaperBarDDB(void)
@@ -2291,6 +2295,7 @@ IDIB ** OEMANNUNCIATOR_GetWallpaperBarDDB(void)
     return (&pgWallpaperBarDDB);
 }
 #endif
+#endif /*CUST_EDITION*/
 /* =======================================================================
 
 IANNUNCIATOR_EnableBlink()

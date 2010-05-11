@@ -81,14 +81,18 @@ when       who     what, where, why
 #if !defined( OEMCFGI_H) && !defined( AEE_SIMULATOR)
 #error oemnvint.h must not be included directly, include OEMConfig.h instead
 #endif
+
 #include "OEMFeatures.h"
+#ifdef CUST_EDITION  
 #include "OEMText.h"
 #include "AEEFile.h"
+#endif /*CUST_EDITION*/
 /************************************************************************/
 /*                                                                      */
 /*  Setting Menu                                                        */
 /*                                                                      */
 /************************************************************************/
+#ifdef CUST_EDITION  
 // Phone Disposition -- CFGI_PROFILE_CUR_NUMBER
 ///////////////////////////////////////////////////////////////////////// 
 #define OEMNV_PROFILE_NORMALMODE          0                          // NORMALMODE
@@ -257,6 +261,7 @@ typedef PACKED struct _Key_pad_Cfg
     uint32     to_Time;
 } Key_pad_Cfg;
 #endif
+#endif /*CUST_EDITION*/
 
 /////////////////////////////////////////////////////////////////////////
 // Silence All -- CFGI_SILENCEALL
@@ -264,6 +269,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_SA_NORMAL              0
 #define OEMNV_SA_VIBONLY             1
 #define OEMNV_SA_LITONLY             2
+
 #ifdef FEATURE_SET_AUTOKEYGUARD
 /////////////////////////////////////////////////////////////////////////
 // Auto Key Guard -- CFGI_AUTOKEYGUARD
@@ -320,6 +326,7 @@ typedef PACKED struct _Key_pad_Cfg
 /////////////////////////////////////////////////////////////////////////
 
 // maximum number of AECHARS in the lock code (including a NULL word)
+#ifdef CUST_EDITION  
 #define OEMNV_LOCKPIN_MAXLEN 8
 #define OEMNV_LOCKCODE_MAXLEN 5
 #define OEMNV_LOCKUIM_MAXLEN 10
@@ -354,6 +361,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_RESTRICT_INCOMING_ALL               1
 #define   OEMNV_RESTRICT_INCOMING_OUTCONTACT        2
 #define   OEMNV_RESTRICT_INCOMING_OFF               0
+#endif /*CUST_EDITION*/
 /***********************************************************************/
 /*                                                                     */
 /*  Sound Menu                                                       */
@@ -367,6 +375,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_VOLUME_MID         2
 #define   OEMNV_VOLUME_HIGH        3
 #define   OEMNV_VOLUME_ESCALATING  4  // only valid for CFGI_RINGER_VOL
+#ifdef CUST_EDITION  
 #define   OEMNV_SMS_OFF      0
 #define   OEMNV_SMS_RING     1
 #define   OEMNV_SMS_VIBONLY  2
@@ -386,6 +395,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_KEYSND_MUSICBOX      1
 #define   OEMNV_KEYSND_GUITAR        2
 #define   OEMNV_KEYSND_TRUMPET       3
+#endif /*CUST_EDITION*/
 /////////////////////////////////////////////////////////////////////////
 // Key Tone Length -- CFGI_KEYTONE_LENGTH
 /////////////////////////////////////////////////////////////////////////
@@ -412,8 +422,9 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_ALERTTYPE_RINGER      1
 #define   OEMNV_ALERTTYPE_VIB         2
 #define   OEMNV_ALERTTYPE_VIBRINGER   3
+#ifdef CUST_EDITION  
 #define   OEMNV_ALERTTYPE_VIBANDRINGER   4
-
+#endif /*CUST_EDITION*/
 /***********************************************************************/
 /*                                                                     */
 /*  Display Menu                                                       */
@@ -425,10 +436,12 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_BL_OFF    0
 #define   OEMNV_BL_10S     10
 #define   OEMNV_BL_30S     30
+#ifdef CUST_EDITION  
 #define   OEMNV_BL_50S     50
 #define   OEMNV_BL_ALWAYS_ON     100
 #define   OEMNV_BL_10CALL  3
 #define   OEMNV_BL_30CALL  4
+#endif /*CUST_EDITION*/
 
 /////////////////////////////////////////////////////////////////////////
 // Menu Format -- CFGI_MENU_FORMAT
@@ -439,15 +452,18 @@ typedef PACKED struct _Key_pad_Cfg
 /////////////////////////////////////////////////////////////////////////
 // Time Format -- CFGI_TIME_FORMAT
 /////////////////////////////////////////////////////////////////////////
-#define   OEMNV_TIMEFORM_INVALID  0
+
 #define   OEMNV_TIMEFORM_AMPM    0
 #define   OEMNV_TIMEFORM_24HR    1
+#ifdef CUST_EDITION  
+#define   OEMNV_TIMEFORM_INVALID  0
 #ifdef FEATURE_TIME_DATA_SETTING
 #define   OEMNV_DATEFORM_INVALID  0
 #define   OEMNV_DATEFORM_DMY    1
 #define   OEMNV_DATEFORM_MDY    2
 #define   OEMNV_DATEFORM_YMD    3
 #endif
+#endif /*CUST_EDITION*/
 /////////////////////////////////////////////////////////////////////////
 // Banner -- CFGI_BNNER
 /////////////////////////////////////////////////////////////////////////
@@ -501,11 +517,12 @@ typedef PACKED struct _Key_pad_Cfg
 
 // Encode Mobile Originated messages in UNICODE
 #define OEMNV_SMS_MO_ENCODING_UNICODE        1
-
+#ifdef CUST_EDITION  
 #if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA)|| defined (FEATURE_CARRIER_ISRAEL_PELEPHONE)
 // Encode Mobile Originated messages in Octet
 #define OEMNV_SMS_MO_ENCODING_OCTET          2
 #endif
+#endif /*CUST_EDITION*/
 // Encode mode to CDMA
 #define OEMNV_SMS_MODE_CDMA                  0
 
@@ -568,12 +585,14 @@ typedef PACKED struct _Key_pad_Cfg
 
 // Retry Interval
 #define OEMNV_SMS_RETRY_INTERVAL             5
+#ifdef CUST_EDITION  
 #define OEMNV_SMS_VALIDITYPERIOD_MAX        245 
 #define OEMNV_SMS_VALIDITYPERIOD_1OUR       11 
 #define OEMNV_SMS_VALIDITYPERIOD_6OURS      71 
 #define OEMNV_SMS_VALIDITYPERIOD_24OURS     167 
 #define OEMNV_SMS_VALIDITYPERIOD_3DAYS      169 
 #define OEMNV_SMS_VALIDITYPERIOD_1WEEK      173 
+#endif /*CUST_EDITION*/
 
 /////////////////////////////////////////////////////////////////////////
 // Voice Mail Number -- CFGI_VOICEMAIL_NUMBER
@@ -640,6 +659,7 @@ typedef PACKED struct {
 #define OEMNV_LOCK_SIDNID_ARRSIZE 10
 
 #ifdef FEATURE_ACP
+#ifdef CUST_EDITION  
 
 /////////////////////////////////////////////////////////////////////////
 // Mode preference -- CFGI_MODE_PREF
@@ -657,7 +677,7 @@ typedef PACKED struct {
                                             // tell location.
 #define OEMNV_AMPSREG_WHEREABOUTS_UNKNOWN 2 // Autonomous registration enabled,
                                             // hide location.
-
+#endif /*CUST_EDITION*/
 #endif /* FEATURE_ACP */
 
 /////////////////////////////////////////////////////////////////////////
@@ -691,12 +711,14 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EXT_PWR_MASK                     0x00000080
 #define OEMNV_SPEAKERPHONE_MASK                0x00000100
 
+#ifdef CUST_EDITION  
 #define OEMNV_SHAKE_MUSIC_MASK            0x0001                                                         
 #define OEMNV_SHAKE_FM_RADIO_MASK         0x0002           
 #define OEMNV_SHAKE_WALLPAPER_MASK        0x0004       
 #define OEMNV_SHAKE_SNOOZE_ALARM_MASK     0x0008
 #define OEMNV_SHAKE_VIDEO_MASK            0x0010
 #define OEMNV_PEDOMETER_MASK              0x0020
+#endif /*CUST_EDITION*/
 
 typedef enum {
     OEMNV_TTY_FULL,
@@ -704,6 +726,8 @@ typedef enum {
     OEMNV_TTY_HEAR,
     OEMNV_TTY_OFF
 } OEMTTY;
+
+#ifdef CUST_EDITION  
 typedef enum {
     //DESKTOP_THEME_NONE = 0x00,
     DESKTOP_THEME_ORANGE    = 0x00,
@@ -728,12 +752,15 @@ typedef PACKED struct _sChanInfo
     AECHAR          szName[MAX_FMRADIO_NAME_CHAR + 1];              //广播台名
     uint16          wChannel;                                       //信道号
 } sChanInfo;
+#endif /*CUST_EDITION*/
+
 typedef enum{
   OEMNV_DTMFOFF=1,
   OEMNV_DTMFCONT,
   OEMNV_DTMFBURST
 }OEMDTMF;
 
+#ifdef CUST_EDITION  
 typedef enum {
     OEMNV_RING_FIRST,
     OEMNV_MP3_RINGER,
@@ -905,6 +932,7 @@ typedef enum{
     OEMNV_USB_MASS_STORAGE,
 }OEMUSBFUNCTION;
 #endif //FEATURE_USB_FUNCTION_SELECT
+#endif /*CUST_EDITION*/
 
 typedef enum
 {

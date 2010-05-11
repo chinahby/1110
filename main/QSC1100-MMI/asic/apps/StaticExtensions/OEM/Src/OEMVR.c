@@ -21,8 +21,11 @@ when       who     what, where, why
 05/16/05   sun     Fixed case for include files
 07/20/04   sun     Fixed length in Strlcpy
 ==============================================================================*/
-#include "BREWVersion.h"
 #include "OEMFeatures.h"
+#ifdef CUST_EDITION  
+#include "BREWVersion.h"
+#endif /*CUST_EDITION*/
+
 
 #ifdef FEATURE_PHONE_VR
 

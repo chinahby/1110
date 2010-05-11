@@ -49,12 +49,14 @@ when         who     what, where, why
 #define __IVECTOR_H__
 
 #if !defined(BREW_STATIC_APP)
-#error BREW_STATIC_APP define
    // Use the .bid file if compiling as dynamic module 
    #include "IVector.bid"		
 #else
-//   #define AEECLSID_VECTOR    	0x01011e62
+#ifndef USES_MMI  
+   #define AEECLSID_VECTOR    	0x01011e62
+#else   
     #include "OEMClassIDs.h"   
+#endif	
 #endif
 
 
