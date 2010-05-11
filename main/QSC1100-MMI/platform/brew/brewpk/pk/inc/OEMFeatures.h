@@ -12,6 +12,7 @@ GENERAL DESCRIPTION:
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
+
 #if defined AEE_SIMULATOR
 #include "BREWSimfeatures.h"  // Simulator Feature Definitions
 #else
@@ -31,7 +32,6 @@ GENERAL DESCRIPTION:
 // routines.  If these flags are DEFINED, then we will compile the OEM_XXXX.c
 // versions provided as samples.
 //
-
 #if !defined(OEMDB)
    #define OEMDB               // Use OEMDB.c
 #endif
@@ -476,7 +476,10 @@ GENERAL DESCRIPTION:
 #define FEATURE_NO_OEMCALLCTRL
 
 #ifdef CUST_EDITION
+
+/*brew À©Õ¹*/
 #define FEATURE_BREW_EXTENDED_MODTABLE
+
 #if !defined( AEE_SIMULATOR)
     #define FEATURE_APP_DIALER
     #define FEATURE_ICM
@@ -495,6 +498,7 @@ GENERAL DESCRIPTION:
 #define FEATURE_GAME_TETRIS
 #endif//#if !defined( FEATURE_GAME_TETRIS)
 
+#undef FEATRUE_SUPPORT_G_SENSOR
 #if !defined(FEATRUE_SUPPORT_G_SENSOR)
 #define FEATURE_GAME_BRICKATTACK
 #define FEATURE_GAME_BLACKJACK
@@ -531,22 +535,24 @@ GENERAL DESCRIPTION:
 #endif //FEATURE_SUPPORT_BT_BCM
 
 #define FEATURE_SUPPORT_BUIW
+#undef FETURE_HW_ON
 
 #ifndef WIN32
 #if !defined(FEATURE_CARRIER_TFL)
+#ifndef CUST_EDITION
 #define FEATURE_SUPPORT_WAP_APP
+#endif /*CUST_EDITION*/
 #endif
 #if !defined(FEATURE_CARRIER_CHINA_VERTU) && !defined(FEATURE_CARRIER_TAIWAN_APBW)
 #define FEATURE_SUPPORT_BREW_MOBILESHOP
 #endif
 #endif//WIN32
+
 #ifndef WIN32
-#ifdef FEATURE_SUPPORT_VC0848
-#define FEATURE_APP_MEDIAGALLERY
-#define FEATURE_APP_CAMERA
-#define FEATURE_APP_MUSICPLAYER
-#define FEATURE_VIDEOPLAYER
-#endif//FEATURE_SUPPORT_VIM0848
+#undef FEATURE_APP_MEDIAGALLERY
+#undef FEATURE_APP_CAMERA
+#undef FEATURE_APP_MUSICPLAYER
+#undef FEATURE_VIDEOPLAYER
 #else
 #define FEATURE_APP_MEDIAGALLERY
 #define FEATURE_APP_CAMERA
@@ -604,7 +610,7 @@ GENERAL DESCRIPTION:
 #define FEATURE_CALENDAR_USE_STYLE
 
 #define FEATURE_EDITABLE_RECORD
-#define FEATURE_APP_RECORDER
+#undef FEATURE_APP_RECORDER
 #define FEATURE_SUPPORT_VCARD
 #ifdef FEATURE_SUPPORT_WAP_APP
 
@@ -638,6 +644,7 @@ GENERAL DESCRIPTION:
 #define FEATURE_LCD_TOUCH_ENABLE
 
 //wlh 20090405 add 
+
 #define FEATURE_RANDOM_MENU_REND
 #endif/*CUST_EDITION*/
 

@@ -413,11 +413,14 @@ See Also:
 #define LNG_TAMIL             0x20206174  // 'ta  '
 #define LNG_TELUGU            0x20206574  // 'te  '
 #define LNG_TAJIK             0x20206774  // 'tg  '
+
+#ifdef CUST_EDITION	
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH
 #define LNG_THAI              0x68747568  // 'huth'   // 0x75686874  // 'thhu'   // xiaoguo.xie modify the code for ascii on 080905
 #else
 #define LNG_THAI              0x20206874  // 'th  '
 #endif
+#endif /*CUST_EDITION*/
 #define LNG_TIGRINYA          0x20206974  // 'ti  '
 #define LNG_TURKMEN           0x20206B74  // 'tk  '
 #define LNG_TAGALOG           0x20206c74  // 'tl  '

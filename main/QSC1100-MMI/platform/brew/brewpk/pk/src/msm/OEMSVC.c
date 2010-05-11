@@ -22,6 +22,7 @@
 #include "disp.h"
 #include "bit.h"
 #endif
+
 #ifndef USES_MMI
 #include "ui.h"
 #else
@@ -118,7 +119,10 @@ extern dword uim_get_esn_me(void);
 #include "AEEMutualAuth.h"   // Required for MA CAPAB Flags
 
 #include "AEECLSID_BACKLIGHT.bid"
+
+#ifdef CUST_EDITION	  
 #include "OEMSVC.h"
+#endif /*CUST_EDITION*/
 
 #include "OEMSecSysClock.h"
 
@@ -231,7 +235,7 @@ typedef struct _NVMap
    AEEConfigItem        cfgi;
    nv_items_enum_type   nvi;
 } NVMap;
-
+#ifdef CUST_EDITION	 
 // 解决慢卡插入后，启动 Applet 慢的问题
 typedef struct _RUIM_NV_Cache
 {
@@ -252,7 +256,7 @@ static RUIM_NV_Cache        gUIMNVCache;
 
 static int DeviceMp4State = DEVICE_MP4_STATE_OFF;
 static int DeviceCameraState = DEVICE_CAMERA_STATE_OFF;
-
+#endif /*CUST_EDITION*/
 #if defined(FEATURE_UIM_RUIM)
 #if defined(FEATURE_MMGSDI ) && !defined ( FEATURE_MULTIPROCESSOR )
 static uim_cmd_type        gUimCmd;
@@ -277,7 +281,7 @@ extern int OEMDisp_GetDispInfo(AEEDeviceInfo* pi);
 
 #define DOWNLOAD_INFO_FILE "fs:/sys/downloadinfo.dat"
 #define USER_CLOCK_OFFSET_FILE "fs:/sys/userclkoffset.dat"
-
+#ifdef CUST_EDITION	  
 extern void OEMSound_Vibrate(uint16 wDuration, void * pUser);
 
 /*��ui_put_nv��Ҫ��װ*/
@@ -298,7 +302,7 @@ nv_stat_enum_type QSC1100_get_nv(
 #endif  //FEATURE_OEMUI_TASK
 }
 #endif
-
+#endif /*CUST_EDITION*/
 #if defined(FEATURE_GSM1x)
 /*===========================================================================
 FUNCTION gsm1x_get_nv
@@ -408,7 +412,7 @@ void OEM_SVCGsdiReadCb(gsdi_cnf_T * sim_cnf)
 }
 #endif /* FEATURE_MMGSDI */
 
-
+#ifdef CUST_EDITION	 
 void SetDeviceState(DeviceType dt,DeviceStateType dst)
 {   
     switch(dt)
@@ -463,6 +467,7 @@ int GetDeviceState(DeviceType dt)
 
     return  state;
 }
+#endif /*CUST_EDITION*/
 
 #ifdef FEATURE_ICARDSESSION
 /*==================================================================
@@ -4904,7 +4909,7 @@ int OEM_SVCSetConfig(AEEConfigItem i, void * pBuff, int nSize)
             return EBADPARM;
 
          nvItem.gps1_lock = *(dword*)pBuff;
-#ifndef FEATURE_OEMUI_TASK  
+#if !defined (CUST_EDITION)&& !defined(FEATURE_OEMUI_TASK)
         if( ui_put_nv(NV_GPS1_LOCK_I, &nvItem))
 #else    
 #ifndef WIN32
@@ -5347,12 +5352,12 @@ static void SetImsiFromSim (
   char* txt;         // destination text
   word temp;         // working buffer
   dword value;       // to store value read from nv
-  
+#ifdef CUST_EDITION	   
   if (pMobileInfo != NULL)
   {
       MEMSET(pMobileInfo, 0, sizeof(AEEMobileInfo));
   }
-
+#endif /*CUST_EDITION*/
 #if defined(FEATURE_GSM1x)
   pMobileInfo->dwESN = 0;
 #else
@@ -5434,7 +5439,7 @@ static void SetImsiFromSim (
   // NULL terminate the string
   *txt = (char)0;
 }  /* GetMobileInfo */
-
+#ifdef CUST_EDITION	 
 // 在测PEK时，因目前取 CFGI_SUBSCRIBERID 时我们以MIN表示(BREW 设置亦如此)，若用GetMobileInfo返回的
 // szMobileID,长度为15，此时DPK中MIN设为15位的号码，GetConfigComplex.18 测不过；若设为10位的号码，
 // GetConfigComplex.25 测不过。通过分析，oat 测试软件认为对以 MIN 表示 SUBSCRIBERID ，则是 10 位号
@@ -5520,7 +5525,7 @@ void GetMobileInfoEx(AEEMobileInfo * pmi)
     *txt = (char)0;
 #endif // #ifndef AEE_SIMULATOR
 }  /* GetMobileInfoEx */
-
+#endif /*CUST_EDITION*/
 
 static int GetSoftwareVersion(byte *pVer, int *pnVerLen)
 {
@@ -5542,6 +5547,8 @@ static int GetSoftwareVersion(byte *pVer, int *pnVerLen)
 
    return SUCCESS;
 }
+
+#ifdef CUST_EDITION	 
 /*===========================================================================
 FUNCTION WaitNV
 
@@ -5616,7 +5623,7 @@ static void WaitNV( void )
 
    return SUCCESS;
 }
-
+#endif /*CUST_EDITION*/
 
 
 #if defined(FEATURE_GSM1x)
@@ -6008,7 +6015,10 @@ void OEM_GetGSM1xSIDNIDParams
 }
 
 #endif /* FEATURE_GSM1x*/
+
+#ifdef CUST_EDITION	 
 #define OEMSVC_SMS_MAX_MSG_PAYLOAD 140
+#endif /*CUST_EDITION*/
 
 int GetPayloadLength(uint32 *pInt)
 {
@@ -6019,7 +6029,7 @@ int GetPayloadLength(uint32 *pInt)
   if(!pInt)
     return EBADPARM;
 
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef CUST_EDITION  
   retval = QSC1100_get_nv(NV_SMS_MAX_PAYLOAD_LENGTH_I, &nvi);
 #else      
   #ifndef WIN32
@@ -6055,7 +6065,7 @@ int GetTraffic(boolean *pBool)
   if(!pBool)
     return EBADPARM;
 
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef CUST_EDITION  
   retval = QSC1100_get_nv(NV_SMS_MO_ON_TRAFFIC_CHANNEL_I, &nvi);
 #else      
 #ifndef WIN32
@@ -6099,7 +6109,7 @@ int GetAccess(boolean *pBool)
   if(!pBool)
     return EBADPARM;
 
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef CUST_EDITION  
   retval = QSC1100_get_nv(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi);
 #else  
 #ifndef WIN32
@@ -6158,7 +6168,7 @@ int SetTraffic(boolean *pBool)
 #ifndef WIN32
   nvi.sms_mo_on_traffic_channel = *pBool;
 #endif
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef CUST_EDITION  
   return ui_put_nv(NV_SMS_MO_ON_TRAFFIC_CHANNEL_I, &nvi);
 #else    
 #ifndef WIN32
@@ -6193,7 +6203,7 @@ int SetAccess(boolean *pBool)
 #ifndef WIN32   
   nvi.sms_mo_on_access_channel = *pBool;
 #endif
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef CUST_EDITION  
   return ui_put_nv(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi);
 #else      
 #ifndef WIN32
@@ -6214,7 +6224,7 @@ int SetPayloadLength(uint32 *pInt)
 #ifndef WIN32      
   nvi.sms_max_payload_length = *pInt;
 #endif
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef CUST_EDITION  
   return ui_put_nv(NV_SMS_MAX_PAYLOAD_LENGTH_I, &nvi);
 #else    
 #ifndef WIN32
@@ -6251,7 +6261,7 @@ int SetSubscriberID(byte *pBuff, int nSize)
    {
       nvi.brew_subscriber_id[i] = '\0';
    }
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef CUST_EDITION  
   return ui_put_nv(NV_BREW_SUBSCRIBER_ID_I, &nvi);
 #else    
 #ifndef WIN32
@@ -6263,6 +6273,9 @@ int SetSubscriberID(byte *pBuff, int nSize)
 }
 
 #endif //defined(OEMAPPFUNCS)
+
+
+#ifdef CUST_EDITION	 
 // Macro to trim some letter.
 #define TRIM_LEFT_CHAR(psz, ch)	do { while(*(psz) && *(psz)==(ch)) (psz)++; } while(0)
 
@@ -6526,4 +6539,4 @@ void OEMSVC_UpdateRUIMNVCacheReq(nv_items_enum_type nItem)
             break;
     }
 }
-
+#endif /*CUST_EDITION*/

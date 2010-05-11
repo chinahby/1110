@@ -31,11 +31,15 @@ INCLUDE FILES FOR MODULE
 
 #include "AEE_OEM.h"
 #include "AEEStdLib.h"
-//#include "AEEDate_priv.h"
+#ifndef CUST_EDITION
+#include "AEEDate_priv.h"
+#include "AEEControls_res.h"
+#else
 #include "AEEControls.brh"
 #include "Appscommon.h"
 #include "appscommon_color.brh"
 #include "AEEDate.h"
+#endif
 #include "AEEPointerHelpers.h"
 
 /*===========================================================================
@@ -59,6 +63,7 @@ DEFINITIONS
 
 #define PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 
+#ifdef CUST_EDITION	
 /* 背景色*/
 #define DATECTL_BG_COLOR                      (RGB_BLACK)
 /* 平日背景填充色*/
@@ -72,7 +77,9 @@ DEFINITIONS
 /* 节假日字体颜色*/
 #define DATECTL_SPECIALDAY_COLOR        (MAKE_RGB(0x99, 0x00, 0x00))
 #define DATECTL_UNDELINE_COLOR            (RGB_WHITE)
+#endif /*CUST_EDITION*/
 /*===========================================================================
+
 
 Class Definitions
 
@@ -89,10 +96,11 @@ OBJECT(DateCtl)
    IShell *       m_pIShell;        // shell interface
    IDisplay *     m_pIDisplay;      // display interface
    IImage *       m_pFont;
+#ifdef CUST_EDITION	   
 #ifdef FEATURE_CALENDAR_USE_STYLE
    IImage *       m_pBgImage;
 #endif
-  
+#endif /*CUST_EDITION*/  
    int            m_nFontTitleHeight;
    int            m_nFontLineHeight;
    AEERect        m_rcGrid;
@@ -107,13 +115,14 @@ OBJECT(DateCtl)
    int            m_nMonth;        // range: 1 - 12
    int            m_nDay;          // range: 1 - 31
    long           m_lJulianDay;    // 
-
+#ifdef CUST_EDITION	
    long           m_Today;          
    long           m_StartJulDate;
    long           m_EndJulDate;
    
    boolean        m_ActRange;
    boolean        m_bDrawDateText;
+#endif /*CUST_EDITION*/   
    int            m_nCurrentField;
    int            m_nNumFields;
 
@@ -162,18 +171,20 @@ static boolean     IDateCtl_GetDateString(IDateCtl * po, AECHAR * pBuffer, int n
 static void        IDateCtl_SetFont(IDateCtl * po, AEEFont fntText, AEEFont fntTitle);
 static boolean     IDateCtl_GetFont(IDateCtl * po, AEEFont *pfntText, AEEFont *pfntTitle);
 static void        IDateCtl_SizeToFit(IDateCtl * po, AEERect *prc);
-
+#ifdef CUST_EDITION	
 static void        IDateCtl_SetToday(IDateCtl * po, int32 lJulDate);
 static boolean     IDateCtl_SetDateRange(IDateCtl * po, int32 StartJulDate, int32 EndJulDate);
 static void        IDateCtl_EnableDateRange(IDateCtl * po, boolean ActRange);
 
 static boolean     IDateCtl_SetJulianDayEx(IDateCtl * po, int32 lJulDate);
-
+#endif /*CUST_EDITION*/
 static void        DateCtl_DisplayDateText(DateCtl * pme);
 static void        DateCtl_SetGridRect(DateCtl * pme);
 static void        DateCtl_Digit(DateCtl * pme, int nDigit, int x, int y);
 static void        DateCtl_DrawDay(DateCtl * pme, int nDay, AEERect * prc);
+#ifdef CUST_EDITION	
 static boolean     DateCtl_IsToday(IDateCtl * po, int nday);
+#endif /*CUST_EDITION*/
 static void        DateCtl_DisplayMonthDays(DateCtl * pme, int nStartDOW, int nMonLen);
 static boolean     DateCtl_DrawMonthView(DateCtl * pme);
 static void        DateCtl_GetGridRect(DateCtl * pme, AEERect * prc, int nGridIndex);
@@ -193,12 +204,12 @@ static int         GetMonthLength(int nMonth, int nYear);
 static int         GetDayOfWeek(long lJulianDay);
 static AECHAR *    SpitDate(AECHAR * psz, int * pVal, int * pPad, int nRemaining,AECHAR chDelim);
 static void        SetTextSizeCache(DateCtl * pme);
-
+#ifdef CUST_EDITION	
 #if defined( FEATURE_JEWISH_CALENDAR)
 static void        IDateCtl_GetJewishDate(IDateCtl* po, JewishType* pjewish);
 #endif
 static void drawImage( DateCtl *pMe, char *resFile, int16 resId, int x, int y);
-
+#endif /*CUST_EDITION*/
 #define HighlightDay(p,day) \
    DateCtl_HighlightGridRect(p,(day)+((p)->m_nStartDayOfWeek)-1)
 
@@ -237,14 +248,16 @@ static const VTBL(IDateCtl) gQDateCtlFuncs = {
    IDateCtl_SetActiveDayMask,
    IDateCtl_SetFont,
    IDateCtl_GetFont,
-   IDateCtl_SizeToFit,
-   IDateCtl_SetToday,
+   IDateCtl_SizeToFit
+#ifdef CUST_EDITION	   
+   ,IDateCtl_SetToday,
    IDateCtl_SetDateRange,
    IDateCtl_EnableDateRange,
 
 #if defined( FEATURE_JEWISH_CALENDAR)
 	IDateCtl_GetJewishDate
 #endif
+#endif /*CUST_EDITION*/
 };
 
 static const int16 gMonthIDs[] = {
@@ -293,9 +306,9 @@ int DateCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
    pme->m_nCurrentField = -1;
    pme->m_bMonthView    = (cls == AEECLSID_DATEPICKCTL); // needed by
                                                          // SetTextSizeCache
-
+#ifdef CUST_EDITION	
    pme->m_ActRange  =  FALSE;
- 
+#endif /*CUST_EDITION*/
    // create IDisplay interface
 
    i = ISHELL_CreateInstance(pme->m_pIShell, AEECLSID_DISPLAY, (void **)&pme->m_pIDisplay);
@@ -339,10 +352,11 @@ int DateCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
    pme->m_pFont = ISHELL_LoadResImage(pme->m_pIShell, AEECONTROLS_RES_FILE, AEE_IDB_SMALLFONTS);
    if(pme->m_pFont)
       IIMAGE_SetParm(pme->m_pFont, IPARM_CXFRAME, IMAGE_WIDTH, 0);
-   
+#ifdef CUST_EDITION	   
 #ifdef FEATURE_CALENDAR_USE_STYLE
    pme->m_pBgImage = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CALENDAR);
 #endif
+#endif /*CUST_EDITION*/
    *ppobj = (IDateCtl*)pme;
 
    return(0);
@@ -374,6 +388,7 @@ static uint32 IDateCtl_Release(IDateCtl * po)
          return(pme->m_nRefs);
 
       aee_releaseobj((void **)&pme->m_pFont);
+#ifdef CUST_EDITION		  
 #ifdef FEATURE_CALENDAR_USE_STYLE
       if(pme->m_pBgImage != NULL)
       {
@@ -381,6 +396,7 @@ static uint32 IDateCtl_Release(IDateCtl * po)
         pme->m_pBgImage = NULL;
       }
 #endif
+#endif /*CUST_EDITION*/
       aee_freeobj((void **)&pme->m_pTitle);
       aee_releaseobj((void **)&pme->m_pIDisplay);
       aee_releaseobj((void **)&pme->m_pIShell);
@@ -480,12 +496,15 @@ static boolean IDateCtl_HandleEvent(IDateCtl * po, AEEEvent eCode, uint16 wParam
       case EVT_KEY: {
          
          switch (wParam) {
-     
+#ifdef CUST_EDITION	    
 #if defined( AEE_SIMULATOR)
             case AVK_SELECT:
 #else
             case AVK_INFO:
 #endif
+#else
+			case AVK_SELECT:
+#endif /*CUST_EDITION*/
                if (pme->m_bSendCmd) 
                   return ISHELL_HandleEvent(pme->m_pIShell, EVT_COMMAND, (uint16)pme->m_nCmdId, (uint32)po);
                break;
@@ -704,7 +723,7 @@ static boolean IDateCtl_SetJulianDay(IDateCtl * po, int32 lJulDate)
   // save the julian day
 
       pme->m_lJulianDay = lJulDate;
-
+#ifdef CUST_EDITION	
       if(pme->m_ActRange) 
       { 
          if((int32)pme->m_StartJulDate > lJulDate)
@@ -723,7 +742,7 @@ static boolean IDateCtl_SetJulianDay(IDateCtl * po, int32 lJulDate)
 			 JDayToDate( lJulDate, &nYear, &nMonth, &nDay);
 		 }
       }
-
+#endif /*CUST_EDITION*/
   // get and save the day-of-week for the 1st of the month
 
       pme->m_nStartDayOfWeek = GetDayOfWeek(lJulDate - nDay + 1);
@@ -746,15 +765,15 @@ static boolean IDateCtl_SetJulianDay(IDateCtl * po, int32 lJulDate)
    pme->m_nYear  = nYear;
    pme->m_nMonth = nMonth;
    pme->m_nDay   = nDay;
-
+#ifdef CUST_EDITION	
    if( pme->m_bValidDate)
    {
 	   ISHELL_PostEvent( pme->m_pIShell, ISHELL_ActiveApplet( pme->m_pIShell), EVT_COMMAND,(uint16)-2, (uint32)po);
    }
-
+#endif /*CUST_EDITION*/
    return(pme->m_bValidDate);
 }
-
+#ifdef CUST_EDITION	
 /*=====================================================================
 
 ======================================================================*/
@@ -798,6 +817,7 @@ static boolean IDateCtl_SetJulianDayEx(IDateCtl * po, int32 lJulDate)
 
    return(pme->m_bValidDate);
 }
+#endif /*CUST_EDITION*/
 /*=====================================================================
 
 Public Method - Returns the julian date of the date control. See AEEDate.h
@@ -1618,7 +1638,7 @@ Local Method - This function displays date on the phone screen. This clears the
 previous date, writes abbreviated day of the week in top left 
 corner of phone screen and writes date string in the top right 
 corner of phone screen.
-
+#ifdef CUST_EDITION	
 ==================================================================*/
 static void DateCtl_DisplayDateText(DateCtl * pme)
 {
@@ -1675,7 +1695,38 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
 
     (void)IDISPLAY_SetColor( pme->m_pIDisplay, CLR_USER_TEXT, nOldFontColor/*RGB_BLACK*/); //modified by chengxiao 2009.04.16
 }
+#else
+/*==================================================================
 
+Local Method - This function displays date on the phone screen. This clears the 
+previous date, writes abbreviated day of the week in top left 
+corner of phone screen and writes date string in the top right 
+corner of phone screen.
+
+==================================================================*/
+static void DateCtl_DisplayDateText(DateCtl * pme)
+{
+   int16    nWidth;
+   AECHAR   sz[90];
+   int      nChars;
+
+   // clear date text
+
+   ClearDateText(pme);
+   
+   // display the day-of-week string in the top left of screen
+
+   if (DateCtl_GetDayString(pme, pme->m_nDayOfWeek, sz, sizeof(sz)))
+      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz,ABBREV_LEN,pme->m_rc.x, pme->m_rc.y+1, NULL,0);
+   
+   // display the date string in the top right of screen
+   // DateCtl_FormatDate(pme, pme->m_nYear, pme->m_nMonth, pme->m_nDay, sz, 3);
+
+   IDateCtl_GetDateString((IDateCtl*)pme, sz, sizeof(sz), &nChars, pme->m_dwProps);
+   nWidth = IDISPLAY_MeasureTextEx(pme->m_pIDisplay, pme->m_fntText, sz, nChars, 70, NULL);
+   IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1,pme->m_rc.dx-1-nWidth, pme->m_rc.y+1, NULL,0);
+}
+#endif /*CUST_EDITION*/
 /*==================================================================
 
 Local Method - Days of a month are displayed on phone screen in rows of seven days. 
@@ -1689,7 +1740,7 @@ static void DateCtl_GetGridRect(DateCtl * pme, AEERect * prc, int nGridIndex)
 
    x = pme->m_rcGrid.x + ((nGridIndex % DAYS_PER_WEEK) * pme->m_rcGrid.dx);
    y = pme->m_rcGrid.y + ((nGridIndex / DAYS_PER_WEEK) * pme->m_rcGrid.dy);
-#ifdef FEATURE_CALENDAR_USE_STYLE
+#if defined (FEATURE_CALENDAR_USE_STYLE) && defines (CUST_EDITION)
    SETAEERECT(prc, x+1, y+1, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-2);
 #else
    SETAEERECT(prc, x, y, pme->m_rcGrid.dx, pme->m_rcGrid.dy);
@@ -1818,7 +1869,7 @@ static void DateCtl_DisplayMonthDays(DateCtl * pme, int nStartDOW, int nMonLen)
       DateCtl_DrawDay(pme, i+1, &rc);
    }
 }
-
+#ifdef CUST_EDITION	
 /*==================================================================
 
 Local Method - This method draws the month view on phone screen. This clears the 
@@ -1867,7 +1918,47 @@ static boolean DateCtl_DrawMonthView(DateCtl * pme)
 
    return(TRUE);
 }
+#else
+/*==================================================================
 
+Local Method - This method draws the month view on phone screen. This clears the 
+phone screen, calls DateCtl_DisplayDateText to display date text 
+in first line of the screen, draws a separator, draws matrix 
+displaying month of the days, highlights current day and update 
+phone screen.
+
+==================================================================*/
+static boolean DateCtl_DrawMonthView(DateCtl * pme)
+{
+   ClearScreen(pme);
+   
+   if(pme->m_bValidDate){
+
+   // display date text
+
+      DateCtl_DisplayDateText(pme);
+   
+   // draw line separator   
+
+      IDISPLAY_DrawHLine(pme->m_pIDisplay, pme->m_rc.x, pme->m_rc.y+pme->m_nFontTitleHeight, pme->m_rc.dx);
+   
+   // display the array of days for this month
+
+      DateCtl_DisplayMonthDays(pme, pme->m_nStartDayOfWeek, GetMonthLength(pme->m_nMonth, pme->m_nYear));
+   
+   // highlight the current day
+
+      HighlightDay(pme, pme->m_nDay);
+   
+   // update the screen
+
+   }
+
+   IDISPLAY_Update(pme->m_pIDisplay);
+
+   return(TRUE);
+}
+#endif /*CUST_EDITION*/
 /*=====================================================================
 
 Local Method - Increments the edit field in the direction specified.
@@ -2148,7 +2239,7 @@ static void SetTextSizeCache(DateCtl * pme)
       }
    }
 }
-
+#ifdef CUST_EDITION	
 /*==============================================================================
 函数: 
        DateCtl_DrawDayEx
@@ -2793,5 +2884,6 @@ static void IDateCtl_GetJewishDate( IDateCtl * po, JewishType* pjewish)
 		DBGPRINTF( ";is leap jewish year");
 	}
 }
-
 #endif
+#endif /*CUST_EDITION*/
+

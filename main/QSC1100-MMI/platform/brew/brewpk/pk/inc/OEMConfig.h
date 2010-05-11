@@ -21,7 +21,9 @@ None.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
+#ifdef CUST_EDITION	
 #include "customer.h"
+#endif /*CUST_EDITION*/
 #include "AEEConfig.h"
 
 #if defined(__cplusplus)
@@ -45,10 +47,10 @@ extern boolean          OEM_GetItemStyle(AEEItemType t, AEEItemStyle * pNormal, 
 #if defined(__cplusplus)
 }
 #endif
-
+#ifdef CUST_EDITION	
 uint32 GetLngCode(void);
 int SetLngCode(uint32 dwLngCode);
-
+#endif /*CUST_EDITION*/
 /*=======================================================================
   OEM  DOCUMENTATION
 =======================================================================

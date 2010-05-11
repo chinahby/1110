@@ -35,7 +35,7 @@ typedef struct {
    int16  nDescent;
 } AEEFontInfo;
 
-#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
+#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE) && defined(CUST_EDITION)
 #define INHERIT_IFont(iname) \
    INHERIT_IQI(iname); \
    int   (*DrawText)               (iname *po, IBitmap *pDst, int x, int y,       \
@@ -87,10 +87,11 @@ static __inline int IFont_GetInfo(IFont *p, AEEFontInfo *i, int n)
    return AEEGETPVTBL(p, IFont)->GetInfo((p),(i),(n));
 }
 
+#ifdef CUST_EDITION	
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 #define  IFONT_MeasureTextCursorPos(p,x,t,n,r,cx,lc,w)  AEEGETPVTBL((p),IFont)->MeasureTextCursorPos((p),(x),(t),(n),(r),(cx),(lc),(w))
 #endif
-
+#endif /*CUST_EDITION*/
 /*
 ===============================================================================
 DATA STRUCTURES DOCUMENTATION

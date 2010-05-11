@@ -133,6 +133,7 @@ Description: Gets Display info. from DMSS for secondary display
 int     OEM_SVCdisp_get_info2(disp_info_type *pInfo);
 #endif
 
+#ifdef CUST_EDITION	
 #include "OEMSVC.h"
 #include "AEEConfig.h"
 #include "OEMConfig.h"
@@ -189,6 +190,6 @@ typedef enum
 void SetDeviceState(DeviceType dt,DeviceStateType dst);
 int  GetDeviceState(DeviceType dt);
 
-
+#endif /*CUST_EDITION*/
 
 #endif //_OEMSVC_H_

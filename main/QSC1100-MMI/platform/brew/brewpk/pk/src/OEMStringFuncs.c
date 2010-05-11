@@ -92,12 +92,13 @@ boolean OEM_FloatToWStr(double v, AECHAR * psz, int nSize)
    //digits printed. Also, %g will print in either %f format or %e format
    //depending the actual value being printed. %g may not work on
    //all phone environments.
+#ifdef CUST_EDITION	  
 #if !defined( AEE_SIMULATOR)
    (void) snprintf(szBuff,32,"%12.10g",v);
 #else //temp for simulator   
    (void) sprintf(szBuff,"%12.10g",v);
 #endif
-
+#endif /*CUST_EDITION*/
    (void) StrToWStr(szBuff, psz, nSize);
    return(TRUE);
 }

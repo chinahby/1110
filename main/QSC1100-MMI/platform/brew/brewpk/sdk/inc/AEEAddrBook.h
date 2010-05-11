@@ -16,7 +16,11 @@ GENERAL DESCRIPTION:
 #include "AEEDB.h"
 
 // 为顺利通过 BREW 相关测试，暴露给外部的对象 ID 需以 BREW 定义的为准
+#ifdef CUST_EDITION	
 #include "ADDRBOOK_RUIM.BID"
+#else
+#include "ADDRBOOK_RUIM.bid"
+#endif /*CUST_EDITION*/
 //#include "OEMClassIds.h"      // Applet Ids
 
 //Address Category (Ex: Personal, Business, etc).
@@ -40,7 +44,7 @@ typedef  uint16   AEEAddrFieldID;
 
 //Starting range for OEM defined Category IDs
 #define  AEE_ADDR_CAT_USER                (AEE_ADDR_CAT_NONE+0x8000)
-
+#ifdef CUST_EDITION	
 // 记录组群属性
 // VIP
 #define AEE_ADDR_CAT_VIP                (AEE_ADDR_CAT_USER+1)
@@ -57,7 +61,7 @@ typedef  uint16   AEEAddrFieldID;
 #define AEE_ADDR_CAT_FRIEND             (AEE_ADDR_CAT_USER+4)
 
 #define AEE_ADDR_CAT_UIM               (AEE_ADDR_CAT_USER+6)
-
+#endif /*CUST_EDITION*/
 #define  AEE_ADDR_CAT_RESERVED_SIRIUS_1   AEE_ADDR_CAT_USER
 #define  AEE_ADDR_CAT_RESERVED_SIRIUS_32  (AEE_ADDR_CAT_USER+31)
 
@@ -128,10 +132,10 @@ typedef  uint16   AEEAddrFieldID;
 #define  AEE_ADDRFIELD_UNIQUE_ID                (AEE_ADDRFIELD_NONE + 46)
 
 #define  AEE_ADDRFIELD_RESERVED_SIRIUS_1        (AEE_ADDRFIELD_NONE + 47)
-
+#ifdef CUST_EDITION	
 #define  AEE_ADDRFIELD_BIRTHDAY                 (AEE_ADDRFIELD_NONE + 48) 
 #define  AEE_ADDRFIELD_LOCATION                 (AEE_ADDRFIELD_NONE + 49) 
-
+#endif /*CUST_EDITION*/
 #define  AEE_ADDRFIELD_RESERVED_SIRIUS_150      (AEE_ADDRFIELD_NONE + 196)
 #define  AEE_ADDRFIELD_FIELDID_PRIMARY_PHONE    (AEE_ADDRFIELD_NONE + 197)
 
@@ -156,9 +160,9 @@ typedef  uint16   AEEAddrFieldID;
 
 // User-defined FieldIDs begin here
 #define  AEE_ADDRFIELD_USER                     (AEE_ADDRFIELD_NONE + 0x8000)
-
+#ifdef CUST_EDITION	
 #define  AEE_ADDRFIELD_GROUP                    (AEE_ADDRFIELD_USER + 0) 
-
+#endif /*CUST_EDITION*/
 // This value is deprecated. Use AEE_ADDRFIELD_USER instead
 #define  AEE_ADDRFIELD_USER_DEFINED             AEE_ADDRFIELD_USER_DEPRECATED
 #define  AEE_ADDRFIELD_USER_DEPRECATED          (AEE_ADDRFIELD_NONE + 0xff00)
@@ -273,7 +277,7 @@ typedef struct
 
 typedef struct _IAddrBook     IAddrBook;
 typedef struct _IAddrRec      IAddrRec;
-
+#ifdef CUST_EDITION	
 typedef enum
 {
     NUMBERMATCH_EQUAL,                  // 两个号码完全相等
@@ -303,7 +307,7 @@ struct _AEEAddCacheInfo
     Addr_Store_e_type   store;      // record store type
     AEEAddCacheInfo     *pNext;
 };
-
+#endif /*CUST_EDITION*/
 /*
    Address Book  Interface
 
@@ -349,12 +353,14 @@ QINTERFACE(IAddrBook)
 
    int              (*GetCategoryName)(IAddrBook *po, AEEAddrCat c, AECHAR *pCatName, int *pnSize);
    int              (*GetFieldName)(IAddrBook *po, AEEAddrFieldID f, AECHAR *pFieldName, int *pnSize);
+#ifdef CUST_EDITION	   
    int              (*EnumCacheInit)(IAddrBook * po,  AEEAddrCat wCategory, AEEAddrFieldID wFieldID, void *pData, uint16 wDataSize);
    int              (*EnumNextCache)(IAddrBook * po, void **ppCache);
    uint16           (*ExtractCache)(IAddrBook * po, void *pCache, AECHAR **ppName, AEEAddrCat *pCat);
    uint16           (*GetCapacity)(IAddrBook * po);
    int (*GetCacheinfoByNumber)(IAddrBook *po, AECHAR *pwstrNum, AEEAddCacheInfo *pCacheInfo, PFN_NUMBERMATCH pfnMactch);
    int (*CheckSameRecord)(IAddrBook  *po, AECHAR *name, boolean *exist);
+#endif /*CUST_EDITION*/   
 };
 
 
@@ -377,6 +383,7 @@ QINTERFACE(IAddrBook)
 #define IADDRBOOK_GetProperties(p)                    GET_PVTBL(p,IAddrBook)->GetProperties(p)
 #define IADDRBOOK_GetCategoryName(p,c,psz,pn)         GET_PVTBL(p,IAddrBook)->GetCategoryName(p,c,psz,pn)
 #define IADDRBOOK_GetFieldName(p,c,psz,pn)            GET_PVTBL(p,IAddrBook)->GetFieldName(p,c,psz,pn)
+#ifdef CUST_EDITION	
 #define IADDRBOOK_EnumCacheInit(p,cat,field,data,wLen)    GET_PVTBL(p,IAddrBook)->EnumCacheInit(p,cat,field,data,wLen)
 #define IADDRBOOK_EnumNextCache(p,pCache)                      GET_PVTBL(p,IAddrBook)->EnumNextCache(p,pCache)
 #define IADDRBOOK_ExtractCache(p,pCache,ppName,pCat)    GET_PVTBL(p,IAddrBook)->ExtractCache(p,pCache,ppName,pCat)
@@ -386,6 +393,7 @@ QINTERFACE(IAddrBook)
                 
 #define IADDRBOOK_CheckSameRecord(p,name,exist)        \
                   GET_PVTBL(p,IAddrBook)->CheckSameRecord(p,name,exist)
+#endif /*CUST_EDITION*/				  
 
 /* 
    Address Record Interface

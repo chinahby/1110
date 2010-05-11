@@ -15,9 +15,9 @@ Qualcomm Confidential and Proprietary
 
 #include "AEE.h"
 #include "AEEShell.h"
-
+#ifdef CUST_EDITION	
 #include "OEMFeatures.h"
-
+#endif /*CUST_EDITION*/
 
 typedef struct _IMenuCtl      IMenuCtl;
 
@@ -29,7 +29,7 @@ typedef struct _IMenuCtl      IMenuCtl;
 
 
 // Menu properties
-
+#ifdef CUST_EDITION	
 // add MP_BIND_ITEM_TO_KEY @08.01.15
 #define MP_BIND_ITEM_TO_NUMBER_KEY   0x00000100  // bind item to number key 0 - 9
 
@@ -37,7 +37,7 @@ typedef struct _IMenuCtl      IMenuCtl;
 
 //draw icon align right but the text align left
 #define MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT    0x00000400
-
+#endif /*CUST_EDITION*/
 #define MP_WRAPSCROLL         0x00010000  // Menu ONLY (softkey/icons - auto ON, supported but default OFF for MenuCtl)
 #define MP_NO_ARROWS          0x00020000  // No arrows even if scroll is possible (IconView)
 #define MP_ALLOW_DUPE_IDS     0x00040000  // Allows duplicate IDs, Optimises AddItem
@@ -56,7 +56,7 @@ typedef struct _IMenuCtl      IMenuCtl;
 #define MP_MULTI_SEL          0x80000000  // Single-frame image delayed
 
 #define MAX_MENU_TEXT         128         // Max number of chars in a menu item's string
-
+#ifdef CUST_EDITION	
 // Please define OEM properties at here
 #define OEMMP_SWITCHNAVIGATIONKEY             0x00000001  // switch Up<-->Left Down<--->Right key
 #define OEMMP_DISTINGUISH_INFOKEY_SELECTKEY   0x00000002  // 设置此掩码将区别对待AVK_INFO、AVK_SELECT
@@ -69,7 +69,7 @@ typedef struct _IMenuCtl      IMenuCtl;
 #define OEMMP_GRAPHIC_UNDERLINE 0x0000040  //设置此掩码将绘制菜单下划线
 #define OEMMP_GRAPHIC_BG             0x0000080  //设置此掩码将绘制默认图片背景
 #define OEMMP_USE_MENU_STYLE        0x00000C0  //设置此掩码将设置统一列表显示风格
-
+#endif /*CUST_EDITION*/
 //
 // Menu Color - The following bits are passed to IMENUCTL_SetColors() to
 // indicate what values in the structure are being applied.
@@ -84,9 +84,9 @@ typedef struct _IMenuCtl      IMenuCtl;
 #define MC_SCROLLBAR_FILL  0x0080   // Scrollbar fill color
 #define MC_TITLE           0x0100   // Title background color
 #define MC_TITLE_TEXT      0x0200   // Title text color
-
+#ifdef CUST_EDITION	
 #define ICONMENU_FIX_ITEMMAX    30
-
+#endif /*CUST_EDITION*/
 
 typedef struct
 {
@@ -222,6 +222,7 @@ QINTERFACE(IMenuCtl)
    void        (*GetColors)    (IMenuCtl * pIMenuCtl, AEEMenuColors  * pc);
    void        (*GetItemRect)  (IMenuCtl * pIMenuCtl, uint16 nIdx, AEERect * prc);
    int         (*SetOwnerDrawCB)(IMenuCtl * po, PFNOWNERDRAWCB pfnCB, void * pvContext, uint16 nODFlags);
+#ifdef CUST_EDITION	
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)   
    void        (*SetBottomBarType)( IMenuCtl *po, int bottomBar_e_Type);
    void        (*SetPopMenuRect)( IMenuCtl *po);
@@ -235,6 +236,7 @@ QINTERFACE(IMenuCtl)
    #ifdef FEATURE_CUSTOMIZED_MENU_STYLE
    void        (*SetBackGround)(IMenuCtl *po, char *pstrImgResFile, uint16 nImgResID);
    #endif
+#endif /*CUST_EDITION*/
 };
 
 
@@ -284,7 +286,7 @@ QINTERFACE(IMenuCtl)
 #define IMENUCTL_GetItemRect(p, nIdx, prc)      GET_PVTBL(p,IMenuCtl)->GetItemRect(p, nIdx, prc)
 #define IMENUCTL_AddOwnerDrawItem(p, i, d)      GET_PVTBL(p,IMenuCtl)->AddItem(p, NULL, 0, i, NULL, d)
 #define IMENUCTL_SetOwnerDrawCB(p, pf, pc, odf) GET_PVTBL(p,IMenuCtl)->SetOwnerDrawCB(p, pf, pc, odf)
-
+#ifdef CUST_EDITION	
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 #define IMENUCTL_SetBottomBarType(p, t)         GET_PVTBL(p,IMenuCtl)->SetBottomBarType( p, t)
 #define IMENUCTL_SetPopMenuRect(p)              GET_PVTBL(p,IMenuCtl)->SetPopMenuRect(p)
@@ -298,7 +300,7 @@ QINTERFACE(IMenuCtl)
 #ifdef FEATURE_CUSTOMIZED_MENU_STYLE
 #define IMENUCTL_SetBackGround(p,s,n)      GET_PVTBL(p,IMenuCtl)->SetBackGround(p, s, n)
 #endif
-
+#endif /*CUST_EDITION*/
 #endif    // AEEMENU_H
 
 /*============================================================================

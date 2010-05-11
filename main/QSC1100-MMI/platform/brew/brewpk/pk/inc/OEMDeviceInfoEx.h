@@ -60,7 +60,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
 
 ===========================================================================*/
 
-
+#ifdef CUST_EDITION	
 /*=============================================================================
 FUNCTION: OEM_SetDeviceInfoEx
 
@@ -83,7 +83,7 @@ SEE ALSO:
 
 =============================================================================*/
 int OEM_SetDeviceInfoEx(AEEDeviceItem nItem, void *pBuff, int nSize);
-
+#endif /*CUST_EDITION*/
 
 static __inline int OEM_SetDeviceInfoFlipOpen(boolean flipOpen)
 {

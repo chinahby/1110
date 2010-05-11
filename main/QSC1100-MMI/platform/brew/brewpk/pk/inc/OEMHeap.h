@@ -28,9 +28,9 @@ None.
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
+#ifdef CUST_EDITION	
 #include "AEE_OEMHeap.h"
-
+#endif /*CUST_EDITION*/
 extern int OEM_GetHeapInitBytes(void **ppHeapBytes, uint32 *puHeapBytesLen);
 
 #if defined(__cplusplus)

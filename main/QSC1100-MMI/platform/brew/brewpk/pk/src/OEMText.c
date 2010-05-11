@@ -36,6 +36,46 @@ No additional module-level initialization or sequencing requirements.
 //-----------------------------------------------------------------------------
 #include "OEMFeatures.h"
 
+#ifndef CUST_EDITION
+#ifndef FEATURE_ZICORP_CHINESE // {
+#ifndef FEATURE_ZICORP_EZITEXT // {
+#define NUM_OF_MODES                (3)
+#else // } !FEATURE_ZICORP_EZITEXT {
+#define NUM_OF_MODES                (4)
+#endif // } FEATURE_ZICORP_EZITEXT
+#else // } !FEATURE_ZICORP_CHINESE {
+#if defined(FEATURE_ZICORP_STROKE) && defined(FEATURE_ZICORP_PINYIN) // {
+#ifndef FEATURE_ZICORP_EZITEXT // {
+#define NUM_OF_MODES                (5)
+#else // } !FEATURE_ZICORP_EZITEXT {
+#define NUM_OF_MODES                (6)
+#endif // } FEATURE_ZICORP_EZITEXT
+#define ZIPINYINPOS                 (3)
+#define ZISTROKEPOS                 (4)
+// } FEATURE_ZICORP_STROKE && FEATURE_ZICORP_PINYIN {
+#elif defined(FEATURE_ZICORP_STROKE)
+#ifndef FEATURE_ZICORP_EZITEXT // {
+#define NUM_OF_MODES                (4)
+#else // } !FEATURE_ZICORP_EZITEXT {
+#define NUM_OF_MODES                (5)
+#endif // } FEATURE_ZICORP_EZITEXT
+#define ZISTROKEPOS                 (3)
+// } FEATURE_ZICORP_STROKE {
+#elif defined(FEATURE_ZICORP_PINYIN)
+#ifndef FEATURE_ZICORP_EZITEXT // {
+#define NUM_OF_MODES                (4)
+#else // } !FEATURE_ZICORP_EZITEXT {
+#define NUM_OF_MODES                (5)
+#endif // } FEATURE_ZICORP_EZITEXT
+#define ZIPINYINPOS                 (3)
+#endif // } (FEATURE_ZICORP_STROKE && FEATURE_ZICORP_PINYIN) || FEATURE_ZICORP_STROKE || FEATURE_ZICORP_PINYIN
+
+#define OEM_IME_DIALOG              (0x7FFF)
+#define OEM_IME_DIALOG_CTL_IMUI     (0x7FFE)
+
+
+#endif // } FEATURE_ZICORP_CHINESE
+#endif
 #define MTAP_DEFAULT_CAPS_STATE     1 // Default shifting state when there is no text
 
 //-----------------------------------------------------------------------------
@@ -59,8 +99,10 @@ No additional module-level initialization or sequencing requirements.
 #include "OEMHeap.h"
 #include "AEE.h"
 #include "OEMText.h"
+#ifdef CUST_EDITION	
 #include "OEMClassIDs.h"
 #include "OEMITSIM.h"
+#endif /*CUST_EDITION*/
 
 #include "AEEDisp.h"
 #include "AEEError.h"
@@ -85,7 +127,7 @@ No additional module-level initialization or sequencing requirements.
 #ifdef AEE_DEBUG
 #include "msg.h"
 #endif
-
+#ifdef CUST_EDITION	
 #ifdef FEATURE_T9_INPUT
 #include "t9api.h"  
 #include "chinconv.h"
@@ -93,7 +135,7 @@ No additional module-level initialization or sequencing requirements.
 
 #include "Appscommon.h"
 #include "Appscommon_color.brh"
-
+#endif /*CUST_EDITION*/
 
 #include "AEEPointerHelpers.h"
 
@@ -189,17 +231,19 @@ OBJECT(eZiTextCxt){
    uint32      nWordSelStart;    // Where the word starts
 };
 #endif // } FEATURE_ZICORP_EZITEXT
-#ifdef FEATURE_T9_INPUT
+
 #define  PTRCK_HIT_ABOVE   (0x01)      // Above the thumb, y position < thumb.y OR x position < thumb.x
 #define  PTRCK_HIT_THUMB   (0x02)      // On the thumb
 #define  PTRCK_HIT_ITEM    (0x02)      // Matches above, overloaded for non SB entities
 #define  PTRCK_HIT_BELOW   (0x04)      // Below the thumb, y position > thumb.y + thumb.dy OR x position < thumb.x + thumb.dx
 #define  PTRCK_HIT_SCRL    (0x08)      // 1: Hit Scrollbar; 0: Didn't hit Scrollbar
+
+#define  PTRCK_NOTTHUMB    (PTRCK_HIT_BELOW | PTRCK_HIT_ABOVE)
+#ifdef FEATURE_T9_INPUT
 #define  PTRCK_HIT_ABTRI   (0x10)
 #define  PTRCK_HIT_BLTRI   (0x20)
-#define  PTRCK_NOTTHUMB    (PTRCK_HIT_BELOW | PTRCK_HIT_ABOVE)
 #define  PTRCK_HIT_TRIAN   (PTRCK_HIT_ABTRI | PTRCK_HIT_BLTRI)
-
+#ifdef FEATURE_T9_INPUT
 #ifdef FEATURE_T9_CHINESE
 #define SELECTION_BUFFER_SIZE   (8)
 #define CAUDB_SIZE              (110)
@@ -249,7 +293,7 @@ static int snTextModeIndex = 0;
 #ifdef FEATURE_GRAPHIC_INPUT_BG
 #define FEATURE_INPUT_BG_YOFFSET (18)  //added nu chengxiao 2009.04.17
 #endif
-
+#endif /*CUST_EDITION*/
 #define  PTRCK_GEN_TMRSET  (0x01)   // Timer is set
 #define  PTRCK_SCROLLSELECTION      (0x02)   // Selection scroll timer is. 
                                     //Used to continue select text when PEN moved outside
@@ -261,11 +305,11 @@ typedef struct
    uint16   wData;
    AEEPoint ptPosition;
 } PenTracker;
-
+#ifdef FEATURE_T9_INPUT
 OBJECT(T9ChineseCxt){
 	IDialog *      pDlg;
 };
-
+#endif /*CUST_EDITION*/
 #define PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 
 #ifdef FEATURE_EXTENDED_KEYS
@@ -277,7 +321,7 @@ typedef struct _extKeysCxt
 
 #endif
 
-#if 0
+#ifndef CUST_EDITION
 typedef struct _MultitapStateInfo {
    AVKType kLast;    // Last key pressed
    int nSubChar;     // Which character in multitap string currently
@@ -290,7 +334,7 @@ typedef union _ModeStateInfo {
    // Add other substate info as required
    MultitapStateInfo mtap;
 } ModeStateInfo;
-#endif
+#endif /*CUST_EDITION*/
 
 typedef struct _TextCtlContext
 {
@@ -317,6 +361,7 @@ typedef struct _TextCtlContext
    int16             nExtraPixels;
    uint16            wLines;
    uint16 *          pwLineStarts;    // Array of wLines+1 entries
+#ifdef FEATURE_T9_INPUT
  int32                nLineHeight;
 
    //add by ydc
@@ -329,6 +374,7 @@ typedef struct _TextCtlContext
    CoordiRange       textrange;//the range of the text area
    T9ChineseCxt      T9Cxt;
    flg               flgPenDown;       
+#endif /*CUST_EDITION*/   
    //end ydc
    flg                  bValid:1;
    flg                  bEditable:1;
@@ -336,7 +382,9 @@ typedef struct _TextCtlContext
    //flag added to indicate when the maximum char i.e the last char has timed
    // out. Used in multitap so that the char after the max char should not
    // replace the last char, instead they should be ignored
+#ifdef FEATURE_T9_INPUT   
    flg                  bMaxCharTimedOut:1;
+#endif /*CUST_EDITION*/   
    flg                  bSwap:1;         // Determines if we swapped SelStart with SelEnd
                                          // Useful to track actual selection beginning point
                                          // without rewriting a bunch of start/end logics.
@@ -351,6 +399,7 @@ typedef struct _TextCtlContext
 #ifdef FEATURE_EXTENDED_KEYS
    extKeysCxt       extKCxt;
 #endif // FEATURE_EXTENDED_KEYS
+#ifdef FEATURE_T9_INPUT
    MultitapCapsState    nMultitapCaps;
 #ifdef FEATURE_FUNCS_THEME    
    RGBVAL               m_themeColor;
@@ -375,6 +424,7 @@ typedef struct _TextCtlContext
    AEERect             CursorDrawRectTimerPara;
 #endif
    IImage               *m_pImageBg;
+#endif /*CUST_EDITION*/   
 } TextCtlContext;
 
 typedef boolean         (*PFN_ModeCharHandler)(TextCtlContext *, AVKType);
@@ -709,7 +759,7 @@ static const AECHAR *const saMultitapStrings[10] =
 
 static int snTextModeIndex = 0;
 #endif
-#if 0
+#ifndef CUST_EDITION
 //-----------------------------------------------------------------------------
 //  Global Function Implementations
 //-----------------------------------------------------------------------------

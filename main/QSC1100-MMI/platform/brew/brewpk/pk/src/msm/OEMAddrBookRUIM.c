@@ -853,7 +853,7 @@ static void OEMRUIMAddr_SetProperties(uint32 dwProps)
    gwRUIMProps = dwProps;
 }
 
-
+#ifdef CUST_EDITION	
 void OEMRUIMAddr_Refresh(void)
 {
     InitRUIMAddrBkCache();
@@ -872,6 +872,7 @@ uint16   OEMRUIMAddr_GetRUIMMaxNumberSize(void)
 {  
     return (ADN_NUMBER_LEN * 2);
 }
+#endif /*CUST_EDITION*/
 /*========================================================================
 
 Function: OEMRUIMAddr_GetProperties()

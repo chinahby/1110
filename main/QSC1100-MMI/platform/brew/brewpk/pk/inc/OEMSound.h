@@ -45,6 +45,7 @@ extern void OEMSound_GetVolume(AEESoundInfo * psi, void * pUser);
 extern void OEMSound_Vibrate(uint16 wDuration, void * pUser);
 extern void OEMSound_StopVibrate(void * pUser);
 #ifndef WIN32
+#ifdef CUST_EDITION	
 extern void OEMSOUND_Sound_Id_Start (snd_device_type       device,
                                     snd_method_type       method,
                                     snd_sound_id_type     sound_id,
@@ -53,6 +54,7 @@ extern void OEMSOUND_Sound_Id_Start (snd_device_type       device,
                                     snd_cb_func_ptr_type  callback_ptr );
 extern void OEMSOUND_Sound_Stop(snd_priority_type priority);
 extern snd_device_type OEMSound_GetSndDevice(AEESoundDevice e);
+#endif /*CUST_EDITION*/
 #endif
 #if defined(__cplusplus)
 }

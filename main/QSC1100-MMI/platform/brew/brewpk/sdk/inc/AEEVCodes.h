@@ -195,7 +195,7 @@ enum _AVKType {
    AVK_SYMBOL, // Symbol (modifier key)                                   // hex 0xE07F; dec 57471
    AVK_ENTER,  // Enter key                                               // hex 0xE080; dec 57472
    AVK_SPACE,  // Space bar                                               // hex 0xE081; dec 57473
-
+#ifdef CUST_EDITION	
    // 接上耳机
    AVK_HEADSET_CONNECT,
    
@@ -232,6 +232,7 @@ enum _AVKType {
    // 断开耳机
    AVK_BT_HEADSET_DISCONNECT,
    AVK_CONTACTS_GIVEUP_EDIT,
+#endif /*CUST_EDITION*/   
    AVK_LAST
 };
 #ifdef _WIN32

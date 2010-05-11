@@ -18,7 +18,7 @@
 #include "Rendering_OEM.h"
 #include "Rendering_Type.h"
 
-#include "oemcfgi.h"//wlh 20090405 add 
+#include "OEMCFGI.h"//wlh 20090405 add 
 #include "AEEStdLib.h"
 
 #define REND_TYPE_TEST REND_SHOW_LEFTRIGHT_OUT//REND_ROTAT_LEFTTOP

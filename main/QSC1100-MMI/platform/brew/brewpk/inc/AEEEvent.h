@@ -48,7 +48,9 @@ Qualcomm Confidential and Proprietary
 #define EVT_KEY                  0x100 // App key - wParam = KEYCODE, dwParam = Bitflags for modifier keys
 #define EVT_KEY_PRESS            0x101 // App keydown - wParam= KEYCODE, dwParam = Bitflags for modifier keys
 #define EVT_KEY_RELEASE          0x102 // App keyRelease - wParam = KEYCODE, dwParam = Bitflags for modifier keys
+#ifdef CUST_EDITION	
 #define EVT_KEY_HELD             0x103 // App keyHeld - wParam = KEYCODE, dwParam = 0
+#endif /*CUST_EDITION*/
 #define EVT_CHAR                 0x104 // Character Event wParam = AECHAR, dwParam = Bitflags for modifier keys
 #define EVT_UPDATECHAR           0x105 // Char update Event wParam = AECHAR, dwParam = Bitflags for modifier keys
 
@@ -192,6 +194,8 @@ Qualcomm Confidential and Proprietary
 
 // OEM Events...
 #define EVT_OEM_START            0x5800   // OEM-specific events start @ 0x5800 
+
+#ifdef CUST_EDITION	
 // 自定义事件请全部在此定义
 enum
 {
@@ -297,6 +301,8 @@ enum
     EVT_EDITOR_END,        // Send to the invoker APP when the END key is pressed.
 	EVT_MMS_RECEIVED,		// notify CoreApp that MMS is received.
 };
+#endif /*CUST_EDITION*/
+
 #define EVT_OEM_END              0x5fff   // OEM-specific events end   @ 0x5fff
 
 // Events registered via ISHELL_RegisterEvent

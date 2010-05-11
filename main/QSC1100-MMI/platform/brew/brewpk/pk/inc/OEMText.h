@@ -41,13 +41,16 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 /*-------------------------------------------------------------------
       Include Files
 -------------------------------------------------------------------*/
-
-#include "AEE_OEMComdef.h"
+#ifdef CUST_EDITION	
 #include "AEE.h"
+#endif /*CUST_EDITION*/
+#include "AEE_OEMComdef.h"
 #include "AEEText.h"
+#ifdef CUST_EDITION	
 #include "OEMFeatures.h"
 #include "OEMConfig.h"
 #include "OEMCFGI.h"
+#endif /*CUST_EDITION*/
 //#include "zhcnime.brh"
 
 
@@ -55,7 +58,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
       Type Declarations
       FEATURE DEFINED
 -------------------------------------------------------------------*/
-
+#ifdef CUST_EDITION	
 // USE T9 input method
 #define FEATURE_T9_INPUT
 #ifdef WIN32  //add by ydc
@@ -1785,7 +1788,7 @@ typedef enum {
    MULTITAP_USER_DENY_AUTOSET,
    MULTITAP_MAX_AUTO_STATE
 } MultitapAutoSetState;
-
+#endif /*CUST_EDITION*/
 
 //-------------------------------------------------------------------
 // Global Constant Declarations
@@ -1824,8 +1827,9 @@ void OEM_TextSetEdit(OEMCONTEXT hTextField, boolean bIsEditable, AEETextInputMod
 AEETextInputMode OEM_TextGetCurrentMode(OEMCONTEXT hTextField);
 
 void OEM_TextAddChar(OEMCONTEXT hTextField,AECHAR ch, boolean bOverStrike);
+#ifdef CUST_EDITION	
 void OEM_TextAddString(OEMCONTEXT hTextField,AECHAR* string) ;
-
+#endif /*CUST_EDITION*/
 int OEM_TextQueryModes(AEETextMode** ppTextMode);
 
 boolean OEM_TextKeyPress(OEMCONTEXT hTextField,
@@ -1869,7 +1873,7 @@ uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size) ;
 int32 OEM_TextGetCursorPos(OEMCONTEXT hTextField);
 
 void  OEM_TextSetCursorPos(OEMCONTEXT hTextField, int32 nOffset);
-
+#ifdef CUST_EDITION	
 int32 OEM_TextGetT9End(OEMCONTEXT hTextField);
 
 void OEM_TextSetMultiCaps(OEMCONTEXT hTextField,MultitapCapsState nCaps);
@@ -1886,8 +1890,10 @@ int32 OEM_ExitIputMethod(OEMCONTEXT hTextField);
  /* add the code end */
  
 void OEM_TextSetBackGround(OEMCONTEXT hTextField, const IImage * pImageBg);
+#endif /*CUST_EDITION*/
 //#ifdef  WIN32   //add by ydc
 void             OEM_TextDrawIMEDlg(OEMCONTEXT hTextField);   
+#ifdef CUST_EDITION	
 boolean          OEM_HandlePenEvt(OEMCONTEXT hTextField,
 								  AEEEvent eCode,
 								  uint16 wLwrTime,
@@ -1898,7 +1904,7 @@ boolean          TSIM_ProcPenDown(OEMCONTEXT hTextCtl,
 								  int16 xpos,
 								  int16 ypos);
 
-
+#endif /*CUST_EDITION*/
 //#endif
 
 /*========================================================================

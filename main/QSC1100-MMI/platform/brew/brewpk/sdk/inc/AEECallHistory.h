@@ -24,8 +24,9 @@ Qualcomm Confidential and Proprietary
 #define  AEECALLHISTORY_CALL_TYPE_TO                1
 #define  AEECALLHISTORY_CALL_TYPE_FROM              2
 #define  AEECALLHISTORY_CALL_TYPE_MISSED            3
+#ifdef CUST_EDITION	
 #define  AEECALLHISTORY_CALL_TYPE_ALL                4
-
+#endif /*CUST_EDITION*/
 // Pre-defined Number types
 #define  AEECALLHISTORY_NUMBER_TYPE_INTERNATIONAL   1
 #define  AEECALLHISTORY_NUMBER_TYPE_NATIONAL        2
@@ -61,11 +62,12 @@ Qualcomm Confidential and Proprietary
 #define  AEECALLHISTORY_FIELD_DURATIONKNOWN      (AEECALLHISTORY_FIELD_NONE + 13)
 #define  AEECALLHISTORY_FIELD_NOTVIEWED          (AEECALLHISTORY_FIELD_NONE + 14) 
 #define  AEECALLHISTORY_FIELD_TECH_TYPE          (AEECALLHISTORY_FIELD_NONE + 15)
+#ifdef CUST_EDITION	
 #define  AEECALLHISTORY_FIELD_COUNTER            (AEECALLHISTORY_FIELD_NONE + 16)
 
 // ×Ö¶ÎID×î´ó±àºÅ
 #define  AEECALLHISTORY_FIELD_MAX                AEECALLHISTORY_FIELD_COUNTER
-
+#endif /*CUST_EDITION*/
 // Define PTT call types for AEECALLHISTORY_FIELD_PTT_CALL_TYPE field
 #define AEECALLHISTORY_PTT_CALL_TYPE_NONE          0
 #define AEECALLHISTORY_PTT_CALL_TYPE_DIRECT        1
@@ -107,7 +109,7 @@ Qualcomm Confidential and Proprietary
 #define AEECALLHISTORY_FIELD_BROWSER_2             (AEECALLHISTORY_FIELD_OEM + 7)
 #define AEECALLHISTORY_FIELD_BROWSER_3             (AEECALLHISTORY_FIELD_OEM + 8)
 #define AEECALLHISTORY_FIELD_BROWSER_4             (AEECALLHISTORY_FIELD_OEM + 9)
-
+#ifdef CUST_EDITION	
 // define max number of items
 // Max number of digits in a call history entry 
 #define AEECALLHISTORY_MAXDIGITS             (33+2)  //two bytes for number count
@@ -117,7 +119,7 @@ Qualcomm Confidential and Proprietary
 
 #define AEECALLHISTORY_MAX_CALLS            (60)
 //end added
-
+#endif /*CUST_EDITION*/
 /*--- Data Types ---*/
 
 /* Definition of Call History entry Field. An entry in the address book is 
@@ -155,8 +157,10 @@ AEEINTERFACE(ICallHistory)
    int (*EnumInitByCallType)(ICallHistory *pich, uint16 type);
    int (*ClearEntry)(ICallHistory *pich);
    int (*Notify)(ICallHistory *pich, AEECallback *pcb);
+#ifdef CUST_EDITION	   
    int (*GetRecCountByType)(ICallHistory *pich, uint16 type);
    AECHAR *(*GetLastRecNumByType)(ICallHistory *pich, uint16 type);
+#endif /*CUST_EDITION*/   
 };
 
 #define ICALLHISTORY_AddRef(p)                   AEEGETPVTBL((p),ICallHistory)->AddRef((p))
@@ -170,8 +174,10 @@ AEEINTERFACE(ICallHistory)
 #define ICALLHISTORY_Clear(p)                    AEEGETPVTBL((p),ICallHistory)->Clear((p))
 #define ICALLHISTORY_ClearEntry(p)               AEEGETPVTBL((p),ICallHistory)->ClearEntry((p))
 #define ICALLHISTORY_Notify(p,c)                 AEEGETPVTBL((p),ICallHistory)->Notify((p),(c))
+#ifdef CUST_EDITION	
 #define ICALLHISTORY_GetRecCountByType(p, t)    AEEGETPVTBL((p),ICallHistory)->GetRecCountByType((p), (t))
 #define ICALLHISTORY_GetLastRecNumByType(p, t)    AEEGETPVTBL((p),ICallHistory)->GetLastRecNumByType((p), (t))
+#endif /*CUST_EDITION*/
 // This is for compilation backwards compatability with older versions of
 // this file with a misspelling.
 #define AEECALLHISTORY_NUMBER_TYPE_ABREVIATED AEECALLHISTORY_NUMBER_TYPE_ABBREVIATED

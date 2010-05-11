@@ -28,7 +28,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_OEMADDRBOOK       (AEECLSID_OEM + 0x105)
 #define AEECLSID_OEMRUIMADDRBOOK   (AEECLSID_OEM + 0x106)
 
-
+#ifdef CUST_EDITION	
 #define AEECLSID_CORE_APP          (AEECLSID_OEM + 0x107) // 0x01006107
 #define AEECLSID_APP_SETTINGMENU   (AEECLSID_OEM + 0x108)
 #define AEECLSID_APP_SOUNDMENU     (AEECLSID_OEM + 0x109)
@@ -94,7 +94,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_ADJUSTPENAPP      (AEECLSID_OEM + 0x500) //wlh 20090407 add
 #define AEECLSID_OEMITSIM          (AEECLSID_OEM + 0x501)   //   //add by ydc
 #define AEECLSID_VKEY_CONTROL      (AEECLSID_OEM + 0x502)   //0x01006131
-
+#endif /*CUST_EDITION*/
 /*=====================================================================
   DATA STRUCTURE DOCUMENTATION
 =======================================================================

@@ -21,7 +21,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #include "AEECamera.h"
 #include "AEEClassIDs.h"
 #include "AEECamera.bid"
-
+#ifdef CUST_EDITION	
 #define CAM_FOCUS_RECT_BASE            1                       // Base used by ICamera
 #define CAM_FOCUS_RECT_USER_BASE       0x1000                  // Base used for extension
 
@@ -29,7 +29,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #define CAM_FOCUS_RECT_SPOT             (CAM_FOCUS_RECT_BASE + 1)   
 #define CAM_FOCUS_RECT_AVERAGE          (CAM_FOCUS_RECT_BASE + 2)   
 #define CAM_FOCUS_RECT_CENTER_WEIGHTED  (CAM_FOCUS_RECT_BASE + 3)
-
+#endif /*CUST_EDITION*/
 //-------------------------------------------------------------------
 //      Macros
 //-------------------------------------------------------------------
@@ -46,7 +46,7 @@ typedef struct CameraConfigInfo
 {
    uint16   wNotifyCount;
 } CameraConfigInfo;
-
+#ifdef CUST_EDITION	
 /* This stuff is really in AEECamera.c. It doesn't really belong here, but it
    is for now. */
 typedef struct CameraCallback
@@ -86,6 +86,7 @@ struct ICamera
    uint16            m_wFrameSize;
 };
 #endif // VC0848_CAM_DBG
+#endif /*CUST_EDITION*/
 //---------------------------------------------------------------------------
 //    AEE-OEM Function Declarations
 //---------------------------------------------------------------------------
@@ -112,9 +113,11 @@ extern int     OEMCamera_FrameBlt(void * pDst, uint32 dwDstSize, int xDst, int y
 extern int     OEMCamera_GetConfigInfo(CameraConfigInfo * pInfo);
 extern int     OEMCamera_FrameBitmapNew(IBitmap ** ppFrame, uint16 * pwSize);
 extern boolean OEMCamera_GetFrameTrigger(IBitmap * pFrame);
+#ifdef CUST_EDITION	
 #ifdef FEATURE_CAMERA7500
 extern int     OEMCamera_GetMultipleFocusRect(int32* pRc, AEERect **pInfo);
 #endif
+#endif /*CUST_EDITION*/
 //---------------------------------------------------------------------------
 // AEE Functions used in OEM Layer.
 // AEECamera_Init(): OEM ModTable entry. Called, during BREW initialization,

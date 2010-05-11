@@ -127,6 +127,7 @@ DESCRIPTION
 
 #define FEATURE_UI_DBCS
 
+#ifdef CUST_EDITION	
 #undef FEATURE_TSG_EXT
 #undef FEATURE_UI_CORE
 #if !defined(FEATURE_UI_CORE)
@@ -147,7 +148,7 @@ DESCRIPTION
       #undef FEATURE_APP_DIALER
 #endif
 #undef FEATURE_ICM
-      
+#endif /*CUST_EDITION*/      
 
 #define FEATURE_ADDRBOOK
 

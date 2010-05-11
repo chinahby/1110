@@ -23,17 +23,18 @@ Qualcomm Confidential and Proprietary
 #include "AEECLSID_BACKLIGHT.bid"
 #include "AEE.h"
 #include "AEEBitmap.h"
-
+#ifdef CUST_EDITION	
 #ifndef WIN32
 #include "Hs_mb6550.h"
 #endif
 #include "OEMFeatures.h"
-
+#endif /*CUST_EDITION*/
 #define AEECLSID_BACKLIGHT_DISPLAY1      	AEECLSID_BACKLIGHT   	// display 1 backlight
 #define AEECLSID_BACKLIGHT_DISPLAY2      	0x0103035d           	// display 2 backlight
 #define AEECLSID_BACKLIGHT_DISPLAY3      	0x0103035e           	// display 3 backlight
 #define AEECLSID_BACKLIGHT_DISPLAY4      	0x0103035f           	// display 4 backlight
 #define AEECLSID_BACKLIGHT_KEYPAD    		0x010308a4    		// keypad backlight
+#ifdef CUST_EDITION	
 typedef enum _SIG_LED_TYPE
 {
     SIG_LED_NONE,
@@ -43,6 +44,7 @@ typedef enum _SIG_LED_TYPE
     SIG_LED_NETWORK,
     SIG_LED_ALARM,
 } sig_led_type;
+#endif /*CUST_EDITION*/
 /*=============================================================================
 
                     CLASS DEFINITIONS
@@ -68,6 +70,7 @@ AEEINTERFACE(IBacklight)
    int (*GetBacklightInfo)(IBacklight *p, AEEBacklightInfo * pBacklightInfo);
    int (*GetBrightnessLevel)(IBacklight *p, uint32* pdwBrightnessLevel);
    int (*SetBrightnessLevel)(IBacklight *p, uint32 dwBrightnessLevel);
+#ifdef CUST_EDITION	   
    void (*TurnOn)(IBacklight *p);   
    void (*TurnOff)(IBacklight *p);
 #ifdef FEATURE_LED_CONTROL
@@ -77,6 +80,8 @@ AEEINTERFACE(IBacklight)
 #ifdef FEATURE_SUPPORT_TORCH
     void (*SetTorch)(IBacklight *p);
 #endif
+#endif /*CUST_EDITION*/
+
 };
 
 #define IBACKLIGHT_AddRef(p)                       AEEGETPVTBL((p),IBacklight)->AddRef((p))
@@ -88,6 +93,7 @@ AEEINTERFACE(IBacklight)
 #define IBACKLIGHT_GetBacklightInfo(p,pbi)         AEEGETPVTBL((p),IBacklight)->GetBacklightInfo((p),(pbi))
 #define IBACKLIGHT_GetBrightnessLevel(p,pdwbl)     AEEGETPVTBL((p),IBacklight)->GetBrightnessLevel((p),(pdwbl))
 #define IBACKLIGHT_SetBrightnessLevel(p,dwbl)      AEEGETPVTBL((p),IBacklight)->SetBrightnessLevel((p),(dwbl))
+#ifdef CUST_EDITION	
 #define IBACKLIGHT_TurnOn(p)                       AEEGETPVTBL((p),IBacklight)->TurnOn((p))
 #define IBACKLIGHT_TurnOff(p)                      AEEGETPVTBL((p),IBacklight)->TurnOff((p))
 #ifdef FEATURE_LED_CONTROL
@@ -98,6 +104,7 @@ AEEINTERFACE(IBacklight)
 #ifdef FEATURE_SUPPORT_TORCH
 #define IBACKLIGHT_SetTorch(p)                       AEEGETPVTBL((p),IBacklight)->SetTorch((p))
 #endif
+#endif /*CUST_EDITION*/
 
 #endif // AEEBACKLIGHT_H
 

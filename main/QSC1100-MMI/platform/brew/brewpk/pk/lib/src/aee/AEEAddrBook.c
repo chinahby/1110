@@ -139,7 +139,7 @@ static void             AEEAddrRec_Delete(AEEAddrRec * pme);
 static AEEAddrField*    AEEAddrRec_CopyField(AEEAddrField *pDst,AEEAddrField* pSrc);
 static void             FreeAddrField(AEEAddrField *pItems,int nItemCount);  
 static IAddrRec*        AEEAddrRecFromData(IAddrBook *, uint16 wID, AEEAddrCat cat,AEEAddrField *pItems, int nItemCount,int *pnErr);
-
+#ifdef CUST_EDITION	
 static int     AEEAddrBook_EnumCacheInit( IAddrBook *po, AEEAddrCat wCategory, AEEAddrFieldID wFieldID,  void *pData, uint16 wDataSize);
 static int     AEEAddrBook_EnumNextCache(IAddrBook * po, void **ppCache);
 static uint16  AEEAddrBook_ExtractCache( IAddrBook  *po, void *pCache, AECHAR **ppName, AEEAddrCat *pCat);
@@ -152,11 +152,11 @@ static int AEEAddrBook_GetCacheinfoByNumber(IAddrBook  *po,
 static int AEEAddrBook_CheckSameRecord(IAddrBook  *po,
                                             AECHAR *name, 
                                             boolean *exist);
-
+#endif /*CUST_EDITION*/
 // Constant Data...
 //
 
-
+#ifdef CUST_EDITION	
 static const VTBL(IAddrBook)  gAEEAddrBookFuncs = {AEEAddrBook_AddRef,
                                                    AEEAddrBook_Release,
                                                    AEEAddrBook_EnumCategoryInit,
@@ -181,7 +181,25 @@ static const VTBL(IAddrBook)  gAEEAddrBookFuncs = {AEEAddrBook_AddRef,
                                                    AEEAddrBook_GetCacheinfoByNumber,
                                                    AEEAddrBook_CheckSameRecord
 							};       
-
+#else
+static const VTBL(IAddrBook)  gAEEAddrBookFuncs = {AEEAddrBook_AddRef,
+                                                   AEEAddrBook_Release,
+                                                   AEEAddrBook_EnumCategoryInit,
+                                                   AEEAddrBook_EnumNextCategory,
+                                                   AEEAddrBook_EnumFieldsInfoInit,
+                                                   AEEAddrBook_EnumNextFieldsInfo,
+                                                   AEEAddrBook_CreateRec,
+                                                   AEEAddrBook_GetNumRecs,
+                                                   AEEAddrBook_RemoveAllRecs,
+                                                   AEEAddrBook_GetRecByID,
+                                                   AEEAddrBook_EnumRecInit,
+                                                   AEEAddrBook_EnumNextRec,
+                                                   AEEAddrBook_GetLastError,
+                                                   AEEAddrBook_SetProperties,
+                                                   AEEAddrBook_GetProperties,
+                                                   AEEAddrBook_GetCategoryName,
+                                                   AEEAddrBook_GetFieldName};							
+#endif /*CUST_EDITION*/
 static const VTBL(IAddrRec)  gAEEAddrRecFuncs = {AEEAddrRec_AddRef,
                                                  AEEAddrRec_Release,
                                                  AEEAddrRec_GetCategory,

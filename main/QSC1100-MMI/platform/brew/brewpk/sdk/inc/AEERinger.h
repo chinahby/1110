@@ -24,7 +24,9 @@ typedef uint32             AEERingerCatID;
 
 #define AEE_RINGER_CATEGORY_ALL  ((AEERingerCatID)0)
 #define AEE_RINGER_ID_NONE       ((AEERingerID)0xffffffff)
+#ifdef CUST_EDITION	
 #define OEM_RINGER_SUPPORT
+#endif /*CUST_EDITION*/
 #define MAX_RINGER_NAME          (32)
 
 enum {

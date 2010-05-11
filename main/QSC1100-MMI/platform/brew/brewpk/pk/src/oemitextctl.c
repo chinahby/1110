@@ -2343,8 +2343,11 @@ static void TextCtl_ShowModeMenu(CTextCtl * pme)
       pme->m_pModeMenu = pm;
 
       //Set the title of the menu to "Text Mode".
+#ifdef CUST_EDITION	  	  
       IMENUCTL_SetTitle(pm, OEMAEECONTROLS_LNGRES_FILE, AEE_IDS_MODE_TITLE, NULL);
-
+#else
+     IMENUCTL_SetTitle(pm, AEECONTROLS_RES_FILE, AEE_IDS_MODE_TITLE, NULL);
+#endif /*CUST_EDITION*/
       //Now, build the list using modes supported by OEM & Us.
       CTextCtl_EnumModeInit((ITextCtl *)pme);
 

@@ -16,8 +16,9 @@ GENERAL DESCRIPTION:
 
 /* necessary BREW includes */
 #include "OEMSock_QoSSpec.h" // must be included before "OEMSock_priv.h"
-
+#ifdef CUST_EDITION	  
 #include "OEMSVC.h"
+#endif /*CUST_EDITION*/
 #include "OEMSock.h"
 #include "OEMSock_priv.h"       // OEM_PROVIDES_*, etc.
 #include "OEMNotify.h"

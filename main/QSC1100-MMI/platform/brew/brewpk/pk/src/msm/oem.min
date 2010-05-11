@@ -281,9 +281,8 @@ vpath %.c $(BUIW)/xmod $(BUIW_XMOD)
 #-------------------------------------------------------------------------------
 # 
 # Rules for building Const File System
-# 
-#-------------------------------------------------------------------------------
-
+#------------------------------------------------------------------------------- 
+ifeq ($(USES_MMI),no)
 CONSTFILE_FILENAMES = $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(CONSTFILE_FILES))))
 CONSTFILE_SOURCES = $(addsuffix .c, $(CONSTFILE_FILENAMES))
 
@@ -293,6 +292,7 @@ CONSTFILE_FLAGENT = $(firstword $(filter FLAGS:%, $(subst |, ,$(filter $(notdir 
 CONSTFILE_FLAGS = $(subst FIXED,-f,$(subst ., ,$(subst FLAGS:, , $(CONSTFILE_FLAGENT))))
 
 CONSTFILE_OBJS = $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o))
+
 
 $(CONSTFILE_OBJS) : $(TARGETDIR)/%.o: %
 	@echo ------------------------------------------------------------------------
@@ -314,6 +314,7 @@ else
 endif
 	@echo ------------------------------------------------------------------------	
 
+
 #Always regenerate OEMConstFiles_Dynamic.c
 .PHONY : constfiledoit
 constfiledoit:
@@ -325,7 +326,7 @@ $(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c constfiledoit
 	@chmod 666 $@
 	@perl $(BREW_OEM_SRC)/../utils/OEMConstFileMod.pl $@ $(CONSTFILE_FILENAMES) $(CONSTFILES_LINKONLY)
 	@echo ------------------------------------------------------------------------
-
+endif
 #-------------------------------------------------------------------------------
 # 
 # OBJECT List Declaration

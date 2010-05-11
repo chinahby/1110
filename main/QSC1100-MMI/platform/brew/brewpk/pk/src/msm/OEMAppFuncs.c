@@ -488,7 +488,7 @@ boolean OEM_IsClsOKInSafeMode(uint32 clsid)
     case AEECLSID_DATASTATS:
    #endif
 
-#if 0   
+#ifndef CUST_EDITION   
    #ifdef FEATURE_APP_DIALER
      case AEECLSID_DIALER:
    #endif
@@ -542,7 +542,7 @@ boolean OEM_IsClsOKInSafeMode(uint32 clsid)
    #endif // FEATURE_APP_QALBUM
    #endif
 
-#if 0   
+#ifndef CUST_EDITION
    #ifdef FEATURE_APP_RECENTCALLS
       case AEECLSID_RECENTCALLSAPP:
    #endif

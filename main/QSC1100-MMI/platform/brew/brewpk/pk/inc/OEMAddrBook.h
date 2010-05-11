@@ -71,6 +71,7 @@ QINTERFACE(IOEMAddrBook)
 
    int     (*GetCategoryName)(AEEAddrCat c, AECHAR *pszCatName, int *pnSize);
    int     (*GetFieldName)(AEEAddrFieldID f, AECHAR *pszFieldName, int *pnSize);
+#ifdef CUST_EDITION	   
    int     (*EnumCacheInit)(AEEAddrCat wCategory, AEEAddrFieldID wFieldID, 
                                            void *pData, uint16 wDataSize);
    int     (*EnumNextCache)(void **ppCache);
@@ -78,6 +79,7 @@ QINTERFACE(IOEMAddrBook)
    uint16  (*GetCapacity)(void);   
    int (*GetCacheinfoByNumber)(AECHAR *pwstrNum, AEEAddCacheInfo *pCacheInfo, PFN_NUMBERMATCH pfnMactch);
    int (*CheckSameRecord)(AECHAR *name, boolean* exist);
+#endif /*CUST_EDITION*/   
 };
 
 #define IOEMADDR_AddRef(p)                    GET_PVTBL(p,IOEMAddrBook)->AddRef(p)
@@ -98,7 +100,7 @@ QINTERFACE(IOEMAddrBook)
 #define IOEMADDR_GetProperties(p)             GET_PVTBL(p,IOEMAddrBook)->GetProperties()
 #define IOEMADDR_GetCategoryName(p,c,psz,pn)  GET_PVTBL(p,IOEMAddrBook)->GetCategoryName(c,psz,pn)
 #define IOEMADDR_GetFieldName(p,f,psz,pn)     GET_PVTBL(p,IOEMAddrBook)->GetFieldName(f,psz,pn)
-
+#ifdef CUST_EDITION	
 #define IOEMADDR_EnumCacheInit(p,cat,field,data,wLen)   \
                  GET_PVTBL(p,IOEMAddrBook)->EnumCacheInit(cat,field,data,wLen)
 #define IOEMADDR_EnumNextCache(p,pCache)                \
@@ -113,6 +115,7 @@ QINTERFACE(IOEMAddrBook)
 
 #define IOEMADDR_CheckSameRecord(p, n,e)  \
                  GET_PVTBL(p,IOEMAddrBook)->CheckSameRecord(n,e)
+#endif /*CUST_EDITION*/				 
 #endif      // OEMADDRBOOK_H
 
 

@@ -56,8 +56,10 @@ No additional module-level initialization or sequencing requirements.
 #include "OEMHeap.h"
 #include "OEMACM.h"
 #endif // FEATURE_ACM && !FEATURE_ODM_UI
+#ifdef CUST_EDITION	  
 #include "clk.h" 
 #include "keypad.h"
+#endif /*CUST_EDITION*/
 /*-------------------------------------------------------------------
             Type Declarations
 -------------------------------------------------------------------*/
@@ -89,9 +91,9 @@ static int gsRefs = 0;
 static AEESoundInfo gsDevice;
 
 static OEMCriticalSection gSoundCriticalSection;
-
+#ifdef CUST_EDITION	  
 static clk_cb_type oemVibratorCB;    /* Timer to vibrating the phone */
-
+#endif /*CUST_EDITION*/
 #if defined(FEATURE_ACM) && !defined(FEATURE_ODM_UI)
 #define OPERATION_PLAY_TONE        1
 #define OPERATION_PLAY_FREQ_TONE   2
@@ -172,10 +174,10 @@ static void OEMSound_Vibrate_ACM_StatusCB      (void *uniqueID);
 static void OEMSound_Tone_ACM_TimerCallback    (void *pClientData);
 static void OEMSound_Vibrate_ACM_TimerCallback (void *pClientData);
 #endif // FEATURE_ACM && !FEATURE_ODM_UI
-
+#ifdef CUST_EDITION	  
 static void OEMSound_vibrate_cmd(boolean vibrate);
 static void OEMSound_VibratorCB( int4 interval );
-
+#endif /*CUST_EDITION*/
 /*==================================================================
 Function: OEMSound_Init
 
@@ -260,10 +262,11 @@ void OEMSound_Init(void)
 #else
    gsSoundCaps.sndDevice[(int)AEE_SOUND_DEVICE_TTY_FULL] = (uint16)SND_DEVICE_CURRENT;
 #endif
-
+#ifdef CUST_EDITION	  
 #if defined( FEATURE_SOUND_DEVICE_HEADSET_SPEAKER)
    gsSoundCaps.sndDevice[(int)AEE_SOUND_DEVICE_HEADSET_SPEAKER] = (uint16)SND_DEVICE_HEADSET_SPEAKER;
 #endif
+#endif /*CUST_EDITION*/
    for(ii=0; ii<AEE_SOUND_METHOD_LAST; ++ii) {
       gsSoundCaps.sndMethod[ii] = (uint16)SND_METHOD_MAX;
    }
@@ -302,9 +305,10 @@ void OEMSound_Init(void)
       }
    }
 #endif // FEATURE_ACM && !FEATURE_ODM_UI
-
+#ifdef CUST_EDITION	  
    // Define the vibrator timer
    clk_def( &oemVibratorCB );
+#endif /*CUST_EDITION*/   
 }
 
 /*===========================================================================
@@ -1070,12 +1074,13 @@ void OEMSound_SetDevice(AEESoundInfo * psi, void * pUser)
 #if defined(FEATURE_OEMSOUND_NATIVE_IF)
    uisnd_SetSoundInfo(psi);
 #endif
-
+#ifdef CUST_EDITION	  
    uisnd_set_forced_audio_path(OEMSound_GetSndDevice(psi->eDevice), 
                                (snd_mute_control_type)psi->eEarMuteCtl, 
                                (snd_mute_control_type)psi->eMicMuteCtl, 
                                &OEMSound_StatusCB, 
                                pUser);
+#endif /*CUST_EDITION*/							   
    snd_set_device( OEMSound_GetSndDevice(psi->eDevice), 
                    (snd_mute_control_type)psi->eEarMuteCtl, 
                    (snd_mute_control_type)psi->eMicMuteCtl, 
@@ -1235,7 +1240,7 @@ void OEMSound_GetVolume(AEESoundInfo * psi, void * pUser)
                   pUser);
 
 }
-
+#ifdef CUST_EDITION	 
 /*===========================================================================
 
 FUNCTION OEMSOUND_Sound_Id_Start
@@ -1298,7 +1303,7 @@ void OEMSOUND_Sound_Stop(snd_priority_type priority)
 {
    snd_sound_stop(priority, NULL, NULL);
 } /* end of OEM_Snd_Sound_Stop */
-
+#endif /*CUST_EDITION*/
 /*==================================================================
 Function: OEM_Vibrate
 
@@ -1343,6 +1348,7 @@ void OEMSound_Vibrate(uint16 wDuration, void * pUser)
 
    gsVibrateON = TRUE;
 }
+#ifdef CUST_EDITION	  
 /*==================================================================
 Function: OEMSound_Vibrator_Cb
 
@@ -1365,7 +1371,7 @@ static void OEMSound_VibratorCB( int4 interval )
    OEMSound_vibrate_cmd(FALSE);
    clk_dereg( &oemVibratorCB );
 }
-
+#endif /*CUST_EDITION*/
 /*==================================================================
 Function: OEMSound_StopVibrate
 
@@ -1398,7 +1404,7 @@ void OEMSound_StopVibrate(void * pUser)
 
    gsVibrateON = FALSE;
 }
-
+#ifdef CUST_EDITION	  
 /*===========================================================================
 
 FUNCTION OEMSound_vibrate_cmd
@@ -1433,7 +1439,7 @@ static void OEMSound_vibrate_cmd(boolean vibrate)
     hs_cmd_ptr->vib_moto_ctrl.onoff         = vibrate;
     hs_cmd( hs_cmd_ptr );
 }
-
+#endif /*CUST_EDITION*/
 /*==================================================================
 Function: OEMSound_IsVibratorON
 

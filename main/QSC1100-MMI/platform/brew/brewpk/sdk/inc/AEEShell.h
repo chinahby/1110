@@ -23,9 +23,13 @@ Qualcomm Confidential and Proprietary
 #endif
 #include "AEEControls_res.h"
 #include "AEELngCode.h"
+#ifdef CUST_EDITION	
 #include "OEMAEEControls.brh"
+#endif /*CUST_EDITION*/
 #include "../../inc/AEEDeviceItems.h"
+#ifdef CUST_EDITION	
 #define OEMAEECONTROLS_LNGRES_FILE ("fs:/sys/" AEE_RES_LANGDIR OEMAEECONTROLS_RES_FILE)
+#endif /*CUST_EDITION*/
 
 typedef struct _IDialog    IDialog;
 typedef struct _IStatic    IStatic;
@@ -36,8 +40,9 @@ typedef struct _IStatic    IStatic;
 // that is set using IDIALOG_SetEventHandler() will get all events that are not
 // handled by the dialog.
 #define DLG_HANDLE_ALL_EVENTS 0x00010000
+#ifdef CUST_EDITION	
 #define DLG_NOT_SET_FOCUS_AUTO 0x00001000
-
+#endif /*CUST_EDITION*/
 //
 // Arguments sent on EVT_APP_START/EVT_APP_RESUME
 //
@@ -996,7 +1001,9 @@ static __inline boolean ISHELL_SendURL( IShell *pShell, const char *pszURL )
 //
 // Static Text Control
 //
+#ifdef CUST_EDITION	
 #define ST_DISPLAY_CONT_DETAIL         0x00001000
+#endif /*CUST_EDITION*/
 #define ST_CENTERTEXT      0x00010000  // Center Text
 #define ST_CENTERTITLE     0x00020000  // Center Title
 #define ST_NOSCROLL        0x00040000  // Do not scroll text
@@ -1016,11 +1023,12 @@ static __inline boolean ISHELL_SendURL( IShell *pShell, const char *pszURL )
 #define ST_SCROLL_QUARTER_SEC 0x10000000  // Quarter second scroll rate
 #define ST_SCROLL_HALF_SEC    0x20000000  // Half second scroll rate
 #define ST_SCROLL_TWO_SEC     0x30000000  // Two second scroll rate
+#ifdef CUST_EDITION	
 #define ST_DISPLATSMS         0x20000000  // Current static text control used for displaying sms
 #define ST_TRANSPARENTBACK    0x40000000  // set static text background transparent, liubin 2008.10.23
 #define ST_TRANSPARENT        0x80000000  // Transparent Text
 #define ST_GRAPHIC_BG        0x00000010  // use graphic background //added by chengxiao 2009.03.25
-
+#endif /*CUST_EDITION*/
 QINTERFACE(IStatic)
 {
    DECLARE_IBASE(IStatic)
@@ -1035,8 +1043,10 @@ QINTERFACE(IStatic)
    int            (*GoToLine)(IStatic * po, int nLine);
    void           (*SizeToFit)(IStatic * po, AEERect * prc);
    boolean        (*IsScrollable)(IStatic * po);
+#ifdef CUST_EDITION	   
    void           (*SetBackGround)(IStatic * po, char *pstrImgResFile, uint16 nImgResID);
    void           (*SetFontColor)(IStatic * po, RGBVAL nFontColor);
+#endif /*CUST_EDITION*/ 
 };
 
 #define ISTATIC_AddRef(p)                            GET_PVTBL(p,IStatic)->AddRef(p)
@@ -1062,8 +1072,11 @@ QINTERFACE(IStatic)
 // New 2.0 interfaces
 #define ISTATIC_IsScrollable(p)                      GET_PVTBL(p,IStatic)->IsScrollable(p)
 
+#ifdef CUST_EDITION	 
 #define ISTATIC_SetBackGround(p,s,n)          GET_PVTBL(p,IStatic)->SetBackGround(p, s, n) //added by chengxiao 2009.03.30
 #define ISTATIC_SetFontColor(p,n)                GET_PVTBL(p,IStatic)->SetFontColor(p, n)  //added by chengxiao 2009.04.16
+#endif /*CUST_EDITION*/ 
+
 #endif    // AEESHELL_H
 
 /*=====================================================================
