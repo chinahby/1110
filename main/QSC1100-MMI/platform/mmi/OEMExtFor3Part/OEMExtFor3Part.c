@@ -20,8 +20,13 @@
 #include "wmsapp.h"
 #include "CallApp.h"
 #include "contapp.h"
+#ifdef FEATURE_APP_MUSICPLAYER
 #include "musicplayer.h"
+#endif
+
+#ifdef FEATURE_APP_MEDIAGALLERY
 #include "mediagallery.h"
+#endif
 
 #include "sndi.h"
 #include "aeesound.h"

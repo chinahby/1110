@@ -23,7 +23,9 @@
 #include "aeecm.h"
 #endif
 #include "wmsapp.h"
+#ifdef FEATURE_APP_MEDIAGALLERY
 #include "MediaGallery.h" 
+#endif
 #include "ContApp.h"
 #include "Scheduleapp.h"
 /*==============================================================================
@@ -4600,12 +4602,12 @@ static int SecurityMenu_DeleteAllEntries(CSecurityMenu * pMe)
             pIWmsApp = NULL;
         }
     }
-
+#ifdef FEATURE_APP_MEDIAGALLERY
     // 删除文件夹内的文件 (存储在手机上的)
     {
         CMediaGallery_ClearMediaFiles(pMe);
     }
-
+#endif
     // 删除contacts
     {
         IContApp * pIContApp = NULL;

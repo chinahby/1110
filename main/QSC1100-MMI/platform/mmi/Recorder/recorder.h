@@ -16,8 +16,9 @@
 #include "AEEMedia.h"
 #include "aeeerror.h"
 #include "aeefile.h"
+#ifdef FEATURE_APP_MEDIAGALLERY
 #include "MediaGallery.h"
-
+#endif
 
 #define RECORDER_FILE_NAME_LENGHT	16
 //#define RECORDER_MEMO_SAVE_DIR_INTERNAL 		"fs:/mymemos/"

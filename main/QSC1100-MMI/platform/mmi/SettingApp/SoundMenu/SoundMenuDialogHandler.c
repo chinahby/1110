@@ -30,7 +30,7 @@
 #endif 
 #include "Appscommon_color.brh"
 
-#ifdef CUST_EDITION
+#ifdef FEATURE_APP_MEDIAGALLERY
 #include "MediaGallery.h"
 #endif
 /*==============================================================================
@@ -159,6 +159,28 @@ static boolean  HandleKeyVolumeDialogEvent(CSoundMenu *pMe,
     uint32 dwParam
 );
 #endif
+
+#ifdef CUST_EDITION
+#ifndef MG_MAX_FILE_NAME            
+#define MG_MAX_FILE_NAME            128
+#endif
+typedef char (*FileNamesBuf)[MG_MAX_FILE_NAME];
+typedef struct _ExplorerPara{
+   /*下面几项为MMS选择文件使用*/
+   AEECLSID    nClsId; /*the applet which invoke the interface class ID */
+   const char* cpszPath;/*the can set to NULL by default*/
+   int         nFileType; /*Please refer to File mime classfication up*/
+   int         nFileMaxSize;/*the maximum size of file which listed*/
+
+   /*下面项为添加音频文件时，所使用的*/
+   uint16      nSelNum;/*maximum file number to select*/
+
+   /*下面为情景模式调用设置铃声时使用，因为当前模式不一定是情景模式中编辑设置
+    * 项的模式*/
+   byte        nSelectProfile;
+}ExplorerPara;
+#endif
+
 // 对话框 IDD_MESSAGE_DIALOG 事件处理函数
 //static boolean  HandleMessageDialogEvent(CSoundMenu *pMe,
 //    AEEEvent      eCode,
@@ -1623,12 +1645,14 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             SetMenuIcon(pMenu, wParam, TRUE);
             if(wParam == DOWNLOAD_MENU)
             {
+#ifdef FEATURE_APP_MEDIAGALLERY            
                 ExplorerPara sSoundPara={0};
                 
                 sSoundPara.nSelectProfile = pMe->m_CurProfile;                
                 MSG_ERROR("SELECT MEDIA GALLERY..........",0,0,0);
                 CMediaGallery_RegisterCallback((PFNMGSELECTEDCB)SoundMenu_SetMp3ring, pMe);
                 CMediaGallery_FileExplorer(GALLERY_MUSIC_SETTING, &sSoundPara);                
+#endif                
                 return TRUE;
             }
 #if 0            //选中下载新铃声,启动铃声图片applet
@@ -1946,12 +1970,14 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
             ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewConfigRinger, sizeof(nNewConfigRinger));
             if(wParam == IDS_GALLERY_PROFILE)
             {
+#ifdef FEATURE_APP_MEDIAGALLERY            
                 ExplorerPara sSoundPara={0};
                 
                 sSoundPara.nSelectProfile = pMe->m_CurProfile;
                 
                 CMediaGallery_RegisterCallback((PFNMGSELECTEDCB)SoundMenu_SetMp3ring, pMe);
                 CMediaGallery_FileExplorer(GALLERY_MUSIC_SETTING, &sSoundPara);            
+#endif                
                 //pMe->m_eCurState = SOUNDMENUST_SOUNDMENU;
                 return TRUE;                
             }

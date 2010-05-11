@@ -1684,6 +1684,7 @@ static void send_key_event(AEEEvent evt, const KeyEntry *key)
                                     }
                                 }
                             }
+#ifndef CUST_EDITION
                             {
 #ifdef FEATURE_SUPPORT_VC0848                                
                                 extern void audio_speaker_ctrl(boolean on);
@@ -1700,6 +1701,7 @@ static void send_key_event(AEEEvent evt, const KeyEntry *key)
                                 }
                             
                             }
+#endif
                             return;
                             
                         case AVK_FLIP_OPEN:
@@ -5093,10 +5095,12 @@ int app_media_scheduler(void)
     {
         return APP_MEDIA_IMPACT_BY_FM;
     }
+#ifdef FEATURE_APP_MUSICPLAYER    
     else if(IsMp3PlayerStatusOnBG()) 
     {
         return APP_MEDIA_IMPACT_BY_MP3;        
     }
+#endif    
     return APP_MEDIA_ALLOW;
 }
 

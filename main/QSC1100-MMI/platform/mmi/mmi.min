@@ -18,18 +18,30 @@ include $(UTK)/utk.min
 include $(RECENTCALLS)/recentcalls.min
 
 #MultiMedia
+ifeq ($(MMI_ADD_VIDEOPLAYER),yes)
 include $(VIDEOPLAYER)/VideoPlayer.min
+endif
+
+ifeq ($(MMI_ADD_MUSICPLAYER),yes)
 include $(MUSICPLAYER)/MusicPlayer.min
+endif
+
+ifeq ($(MMI_ADD_RECORDER),yes)
 include $(RECORDER)/recorder.min
+endif
+
 ifeq ($(USES_3PART_BT),BCM2048)
     include $(BLUETOOTH)/BTApp.min
 endif
-#ifeq ($(MMI_ADD_MEDIAGALLERY),yes)
+
+ifeq ($(MMI_ADD_MEDIAGALLERY),yes)
 include $(MEDIAGALLERY)/mediagallery.min
-#endif
+endif
+
 ifeq ($(MMI_ADD_CAMERA),yes)
 include $(CAMERAAPP)/CameraApp.min
 endif
+
 ifeq ($(MMI_ADD_FM),yes)
 include $(FMRADIOAPP)/FmRadio.min
 endif
@@ -46,9 +58,11 @@ include $(CALCAPP)/calcapp.min
 include $(CLOCKAPP)/clockapps.min
 include $(CONVERTER)/converter.min
 include $(SCHEDULEAPP)/scheduleapp.min
+
 ifeq ($(MMI_ADD_SPORT),yes)
 include $(SPORTS)/sports.min
 endif
+
 include $(STOPWATCH)/stopwatch.min
 include $(TIMERAPP)/timerapp.min
 include $(WORLDTIME)/worldtime.min
@@ -62,10 +76,17 @@ include $(EXTRAMENU)/extramenu.min
 include $(OEMEXTFOR3PART)/OEMExtFor3Part.min
 include $(EDITAPPLET)/EditApplet.min
 include $(EDITEXTENTSION)/EditExtension.min
+
+ifeq ($(MMI_ADD_WAPBROWSER),yes)
 include $(WAPBROWSER)/WapBrowser.min
+endif
+
 include $(BREW_APPMGR)/BREWAppMgr.min
+
+ifeq ($(MMI_ADD_ESURFING),yes)
 include $(ESURFING)/Esurfing.min
 include $(CUSTSERVICE)/custservice.min
+endif
 
 #System tools
 ifeq ($(MMI_ADD_FLDDBG),yes)
@@ -74,7 +95,9 @@ endif
 
 include $(QUICKTEST)/quicktest.min
 include $(SVCPRG)/svcprg.min
-include $(NUMBERMANAGER)/numbermanager.min
 
+ifeq ($(MMI_ADD_NUMBER_MANAGER),yes)
+include $(NUMBERMANAGER)/numbermanager.min
+endif
 
 include $(UI)/oemui.min
