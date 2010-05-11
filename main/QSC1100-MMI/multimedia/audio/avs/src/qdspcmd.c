@@ -30935,7 +30935,7 @@ qdsp_cmd_status_type qdsp_cmd_set_slowtalk_config (
   return (QDSP_CMD_SUCCESS);
 #endif /* QDSP_ezHearEnableFlag */
 }
-
+#ifdef CUST_EDITION	
 void iquicktest_mic_receiver_loopback_isr ( void )
 {
   uint16  enc_semaphore_flag;         
@@ -31021,3 +31021,4 @@ void iquicktest_mic_receiver_loopback_isr ( void )
     }
   } /* end if ( dec_semaphore_flag != 0 ) */
 } /* iquicktest_mic_receiver_loopback_isr() */
+#endif /*CUST_EDITION*/
