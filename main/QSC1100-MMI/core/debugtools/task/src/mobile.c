@@ -82,8 +82,10 @@ NOTICE_TYPE ver_date[] = __DATE__;
 NOTICE_TYPE ver_time[] = __TIME__;
 NOTICE_TYPE ver_dir[]  = BUILD_TARGET BUILD_VER;
 
+#ifdef CUST_EDITION  
 NOTICE_TYPE ver_modelname[]  = "SBNAALZ";
 NOTICE_TYPE ver_modelversion[]  = "SBNAALZ_V0.1";
+#endif /*CUST_EDITION*/
 
 NOTICE_TYPE rel_date[] = "Jun 25 2009";
 NOTICE_TYPE rel_time[] = "11:00:00";

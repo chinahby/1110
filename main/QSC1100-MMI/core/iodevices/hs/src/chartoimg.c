@@ -140,7 +140,7 @@ when       who     what, where, why
 #include "AEEFont.h"
 #include "AEEStdLib.h"
 
-#ifndef FEATURE_OEMUI_TASK
+#ifndef USES_MMI
 #ifndef FEATURE_UIONE_HDK
 #ifdef FEATURE_UI_CORE
 #include "CoreApp.h"
@@ -234,7 +234,7 @@ LOCAL AnnunciatorData annunciatorData;
 ==============================================================================*/
 static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
 {
-#ifndef FEATURE_OEMUI_TASK
+#ifndef USES_MMI
    /* First see the system Digital or Analog */
   if ( ( (pAnnunData->annunciator) & HS_AN_CDMA) != 0 )
   {
@@ -792,7 +792,7 @@ void chartoimg_init(void)
     IBITMAP_FillRect(pBmp, &rect, clrFill, AEE_RO_COPY);
     
 #ifndef FEATURE_UIONE_HDK
-#ifndef FEATURE_OEMUI_TASK
+#ifndef USES_MMI
 #ifdef FEATURE_UI_CORE
     if (CoreApp_IsSKUI())
 #endif /* FEATURE_UI_CORE */
@@ -806,7 +806,7 @@ void chartoimg_init(void)
     
 
 #ifndef FEATURE_UIONE_HDK
-#ifndef FEATURE_OEMUI_TASK
+#ifndef USES_MMI
 #ifdef FEATURE_UI_CORE
     if (CoreApp_IsSKUI())
 #endif /* FEATURE_UI_CORE */

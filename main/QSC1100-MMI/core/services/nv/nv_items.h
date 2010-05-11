@@ -9533,6 +9533,7 @@ typedef  word  nv_language_enum_type;
   #define  NV_LANGUAGE_FRENCH                            ((nv_language_enum_type)2)
   /* Use Portuguese language */
   #define  NV_LANGUAGE_PORTUGUESE                        ((nv_language_enum_type)3)
+  #ifdef CUST_EDITION  
    /* Use TChinese language    */
   #define NV_LANGUAGE_TCHINESE                           ((nv_language_enum_type)4)  
    /* Use Chinese language    */
@@ -9555,6 +9556,7 @@ typedef  word  nv_language_enum_type;
   #define NV_LANGUAGE_HINDI                              ((nv_language_enum_type)13)      
    /* Use Vietnamese language    */
   #define NV_LANGUAGE_VIETNAMESE                         ((nv_language_enum_type)14)
+  #endif /*CUST_EDITION*/
 
 /* Type to specify the user interface menu format */
 typedef  word  nv_menu_format_enum_type;

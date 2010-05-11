@@ -192,10 +192,11 @@ typedef uint32 sleep_okts_handle;
    MODEM processor for all other builds the signals are always
    present */
 
+#ifdef CUST_EDITION  
 #ifndef SLEEP_UI_OKTS_SIG
   #define  SLEEP_UI_OKTS_SIG        0x00000020
 #endif
-
+#endif /*CUST_EDITION*/
 
 #ifdef MODEM_SLEEP
   /* This signal is used when the SDCC/SDIO driver is active */
