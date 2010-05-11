@@ -66,7 +66,7 @@ when       who     what, where, why
   #define FEATURE_ANSIC_FILE_API
 
 #ifndef FEATURE_MANGO_UI
-#ifndef USES_MMI
+#ifndef CUST_EDITION
   #define FEATURE_NETSETTINGS_APP
   #define FEATURE_AUXSETTINGS_APP
 #endif  
@@ -81,7 +81,7 @@ when       who     what, where, why
     #ifdef FEATURE_UI_CORE
 
 #ifndef FEATURE_MANGO_UI
-#ifndef USES_MMI
+#ifndef CUST_EDITION
       /* The following apps should be removed in HDK builds. */
       #ifndef FEATURE_UIONE_HDK
 

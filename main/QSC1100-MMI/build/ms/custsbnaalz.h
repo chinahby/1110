@@ -1,12 +1,15 @@
 #ifndef CUSTSBNAALZ_H
 #define CUSTSBNAALZ_H
+
 /* ========================================================================
 FILE: CUSTSBNAALZ
 
 Copyright (c) 2001-2009 by QUALCOMM Incorporated.  All Rights Reserved.        
 =========================================================================== */
-
+#ifndef CUST_EDITION
 #define CUST_EDITION
+#endif
+
 #ifdef CUST_EDITION
 
 #define FEATURE_OEMUI_TASK

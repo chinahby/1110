@@ -318,10 +318,12 @@ when       who     what, where, why
 #endif  
 #endif /* FEATURE_UIM_TOOLKIT */
 
-
+#ifdef CUST_EDITION
 #ifdef FEATURE_UIM_TOOLKIT_UTK
 #define FEATURE_UTK2
 #endif //FEATURE_UIM_TOOLKIT
+#endif  
+
 /* Disables programming of rx waterlevel in the UART*/
 #define T_UIM_NO_RX_WATERLEVEL
 
