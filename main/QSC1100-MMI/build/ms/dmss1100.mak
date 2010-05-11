@@ -133,7 +133,7 @@ USES_T9=yes
 USES_DISP_SIZE=176X220#
 USES_KEYGUARD=yes
 USES_BREW_AEE_SRC=yes
-USES_HANWANG=yes
+USES_HANWANG=no
 
 MMI_ADD_FM=no
 MMI_ADD_MUSICPLAYER=no
@@ -141,6 +141,10 @@ MMI_ADD_FLDDBG=no
 MMI_ADD_MEDIAGALLERY=no
 MMI_ADD_CAMERA=no
 MMI_ADD_SPORT=no
+MMI_ADD_RECORDER=no
+#”Ô—‘ÃÌº”
+EXTLANG1=NO
+EXTLANG2=NO
 endif
 #-------------------------------------------------------------------------------
 # Core includes

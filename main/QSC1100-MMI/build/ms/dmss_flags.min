@@ -204,7 +204,7 @@ PVVRTK_FLAG   = -DFEATURE_PVVRTK_TEST#          # PVVRTK Settings
 DMSS_CFLAGS = $(ARM) $(SURF) $(CUSTH) $(EXTENSIONS) $(TIMETEST) $(ASSERT_FATAL)
 ifeq ($(USES_MMI),yes)
 DMSS_CFLAGS+=$(OEM_NV_H)
-DMSS_CFLAGS += -DUSES_MMI
+DMSS_CFLAGS += -DUSES_MMI -DCUST_EDITION#为应用程序添加USES_MMI的宏
 endif
 RVCT_DMSS_CFLAGS = $(RVCT_ARM) $(SURF) $(CUSTH) $(EXTENSIONS) $(TIMETEST) $(ASSERT_FATAL)
 DEPEND_FLAGS= -D SMF_DEPEND
@@ -247,7 +247,6 @@ endif
 define c_compile
 	@echo ------------------------------------------------------------------------
 	@echo OBJECT $@
-	@echo "$(BUILD_VERSION)"
 	$(CC) $(CFLAGS) $(DMSS_CFLAGS) $(ALL_INCLUDES) $(QTV_PATHS) -I"$(ARMINC)" $(BUILD_VERSION) $(APPFLAGS) $(MSG_BT_SSID) $(OBJ_CMD) $@ $<
 	@echo ------------------------------------------------------------------------
 endef

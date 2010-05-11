@@ -20,7 +20,7 @@ endif
 -D GPIO_INT_MSM_H=$(TRAMP)/gpio_int_msm.h
 -D ADIE_I_H=../../drivers/adie/adie_sbi.h
 -D SBI_MSM_H=$(SBI)/sbi_qsc60x5.h
-$(warning "~~~~~~~~~~~HS_H=$(HS_H)")
+
 # --------------------------------------------------------------
 # Excluded directories
 # --------------------------------------------------------------

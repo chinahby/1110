@@ -356,8 +356,8 @@ bar:$(CONSTFILE_BAR)
 	@echo BREW Build BAR File From BRX
 	@echo ------------------------------------------------------------------
 	
-.PHONY : res
-res:$(CONSTFILE_SOURCES) $(BREW_CONST)/OEMConstFiles_Dynamic.c
+.PHONY : mmires
+mmires: $(CONSTFILE_SOURCES) $(BREW_CONST)/OEMConstFiles_Dynamic.c
 	@echo ------------------------------------------------------------------
 	@echo BREW RESOURCE BUILDER
 	@echo ------------------------------------------------------------------
@@ -376,13 +376,13 @@ ifneq ($(USES_OBJECT_ONLY),yes)
 ifeq ($(USES_REX),yes)
 dmss : rvctflashtools setup flashtools deps libs media exe $(TARGET).bin fotapacker prereqs 
 else
-dmss : rvctflashtools setup flashtools deps libs media exe $(TARGET).bin fotapacker prereqs memmap 
+dmss : mmires rvctflashtools setup flashtools deps libs media  exe $(TARGET).bin fotapacker prereqs memmap 
 endif
 else
 dmss : rvctflashtools setup flashtools deps libs media exe $(TARGET).bin fotapacker memmap 
 endif
 
-preobjs:rvctflashtools setup flashtools deps libs media
+preobjs:mmires rvctflashtools setup flashtools deps libs media
 	@echo "~~~~~~~~~~~~~~~~~~~~preobjs finish~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 genobjs:$(OBJECTS) $(QCTLIBS)# $(LIBOBJECTS)	
 	@echo "~~~~~~~~~~~~~~~~~~~~genobjs finish~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -785,10 +785,8 @@ $(TARGET).$(EXETYPE) : $(OBJECTS) $(QCTLIBS)# $(LIBOBJECTS)
 	$(GenFeatList)
 ifeq ($(USES_MMI),yes)
 BUILD_VERSION=-DBUILD_ASIC=\"$(ASIC)\" -DBUILD_TARGET=\"$(BUILD)\" -DBUILD_VER=\"$(VERSION)\" -DMODELNAME=\"$(MODELNAME)\" -DMODELVERSION=\"$(MODELVERSION)\"
-$(warning ~~~~~~$(BUILD_VERSION))
 else
-#BUILD_VERSION=-DBUILD_ASIC=\"$(ASIC)\" -DBUILD_TARGET=\"$(BUILD)\" -DBUILD_VER=\"$(VERSION)\" -DMODELNAME=\"$(MODELNAME)\"
-$(warning ~~~~~~$(BUILD_VERSION))
+#BUILD_VERSION=-DBUILD_ASIC=\"$(ASIC)\" -DBUILD_TARGET=\"$(BUILD)\" -DBUILD_VER=\"$(VERSION)\" 
 endif
 
 #If running a distributed build, run the link step local; otherwise
@@ -802,8 +800,12 @@ endif
 #-------------------------------------------------------------------------------
 
 # The object subdirectory, target image file, and target hex file are deleted.
-
-cleanamss:
+cleanmmires:
+	@echo --------------------clean resource file--------------------------------
+	@-rm -f $(BREW_CONST)/*.*
+	@echo -----------------clean resource file finish----------------------------
+	
+cleanamss:cleanmmires	
 	@echo ------------------------------------------------------------------------
 	@echo Deleting the Progressive Boot Scatter Loader
 	@-if test -n "$(USES_PROGRESSIVE_BOOT)"; then echo    ... remove Progressive Boot Scatter Loader; rm -f $(BUILDMS)/$(SCLFILE_IN); fi
@@ -884,6 +886,10 @@ test :
 	@echo ------------------------------------------------------------------
 	@echo QCTLIBS     : $(QCTLIBS)
 	@echo ------------------------------------------------------------------
+ifeq ($(USES_MMI),yes)	
+	@echo CONSTFILE_BAR:$(CONSTFILE_BAR)
+	@echo ------------------------------------------------------------------
+endif	
 	@echo PREREQ_OBJ  : $(PREREQ_OBJS)
 	@echo ------------------------------------------------------------------
 	@echo OBJECTS     : $(OBJECTS)
@@ -891,7 +897,7 @@ test :
 	@echo SUBSYS_DBG_SYM  : $(SUBSYS_DBG_SYM)
 	@echo ------------------------------------------------------------------
 	@echo OBJS_WITH_DBG_SYMS : $(OBJS_WITH_DBG_SYMS)
-
+	
 #-------------------------------------------------------------------------------
 # Tools target
 #-------------------------------------------------------------------------------

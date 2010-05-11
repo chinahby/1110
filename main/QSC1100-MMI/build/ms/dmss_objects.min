@@ -84,7 +84,9 @@ endif
 
 ifeq ($(USES_BREW_APPMGR), yes)
 ifneq ($(USES_MANGO_BREW), yes)
+ifneq ($(USES_MMI), yes)
   include $(BREW_APPMGR)/BREWAppMgr.min
+endif  
 endif
 endif
 
@@ -178,7 +180,9 @@ ifneq ($(USES_MANGO_UI),yes)
  endif
 endif
 endif
+ifneq ($(USES_MMI), yes)
 include $(COREAPP)/coreapp.min
+endif
 ifneq ($(USES_THINUI),yes)
 ifneq ($(USES_MANGO_UI),yes)
  ifneq ($(USES_MMI), yes)
