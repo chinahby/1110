@@ -58,7 +58,9 @@ when         who     what, where, why
 #include "t9api.h"  
 #include "Appscommon.h"
 #include "Appscommon_color.brh"
+#ifndef FETURE_HW_ON
 #include "HWOEMAPI.h"
+#endif
 /*=====================================================================
 
                       PUBLIC DATA DECLARATIONS
@@ -6137,6 +6139,7 @@ static boolean TSIM_HanstrokePenReady(CTSIM* pme)
 	szResult.wType = 1;
 	szResult.wCandNum = 10;
     temp_szResult = &szResult;
+#ifndef FEATURE_HW_ON    
     num = HWRE_Recognize(pme->m_trace,
                              -1,
                              &pme->m_Thwattribute,
@@ -6150,6 +6153,7 @@ static boolean TSIM_HanstrokePenReady(CTSIM* pme)
         IDISPLAY_Update(pme->m_pIDisplay);
         return FALSE;
     }
+#endif    
 
     pme->bselect_hw = FALSE;
         //save the result from hw into pContext

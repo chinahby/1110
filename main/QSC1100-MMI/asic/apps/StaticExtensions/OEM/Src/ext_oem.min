@@ -4,7 +4,24 @@
 # $Header: //depot/asic/qsc60x0/apps/StaticExtensions/oem/Src/ext_oem.min#5 $ $DateTime: 2007/10/28 23:02:33 $ $Author: sborra $
 #
 #-------------------------------------------------------------------------------
-
+ifeq ($(USES_MMI),yes)
+EXT_OEM_LIB_SOURCES=\
+  OEMAnnunciator.c \
+  OEMCFGI.c \
+  OEMNV.c \
+  OEMVector.c \
+  OEMVR.c \
+  OEMWMS.c \
+  OEMRats.c \
+  OEMAlert.c \
+  AEEBatt.c \
+  OEMBatt.c\
+  OEMCallList.c\
+  OEMRTC.c \
+  OEMTPanel.c \
+  OEMDrawAni.c \
+  pinyin.c
+else
 EXT_OEM_LIB_SOURCES=\
   OEMAnnunciator.c \
   OEMCFGI.c \
@@ -22,6 +39,7 @@ EXT_OEM_LIB_SOURCES=\
   OEMTPanel.c \
   OEMDrawAni.c \
   pinyin.c
+endif
 
 EXT_OEM_LIB_CPP_SOURCES=
 
