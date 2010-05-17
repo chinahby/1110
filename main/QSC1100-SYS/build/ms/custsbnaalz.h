@@ -7,7 +7,7 @@ Copyright (c) 2001-2009 by QUALCOMM Incorporated.  All Rights Reserved.
 =========================================================================== */
 
 #ifndef TARGSB2_H
-   #include "targsb2.h"
+   #include "targsbw2.h"
 #endif
 
 #define FEATURE_DATA_STRIP_ATCOP 
@@ -183,6 +183,9 @@ Copyright (c) 2001-2009 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_QHSUSB_DEAD_BATTERY_CHARGING 
 #define FEATURE_XO 
 
+#define CUST_EDITION
+#ifdef CUST_EDITION
+#endif
 
 #include "custuim.h"
 #include "custcmx.h"
