@@ -2,13 +2,18 @@
 
 rem window默认字符编码GBK,用于解决某些系统字符编码为UTF-8出现乱码
 set OUTPUT_CHARSET=GBK
+rem 设置环境变量
+PATH=..\..\Tools\xMake;..\..\..\Tools\xMake;..\..\platform\brew\brewpk\brewtools\ResourceEditor;%PATH%
 
 rem b n进行网络联编
 IF "%~1"=="n" goto INCREDI_BUILD
 rem b c清除文件
 IF "%~1"=="c" goto CLEAN
 rem b 普通编译
-IF "%~1"=="" goto NORMAL_BUILD
+
+:NORMAL_BUILD
+SBNAALZ %~1
+goto EXIT
 
 :INCREDI_BUILD
 rem make使用的线程由这个bat引入
@@ -19,12 +24,10 @@ call \bin\sh RmEmptyFile.sh W001
 call SBNAALZ
 goto EXIT
 
-:NORMAL_BUILD
-SBNAALZ
-goto EXIT
+
 
 :CLEAN
-SBNAALZ cleanamss
+SBNAALZ clean
 goto EXIT
 
 :EXIT
