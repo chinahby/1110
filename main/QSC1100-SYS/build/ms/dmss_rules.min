@@ -788,7 +788,11 @@ ifneq ($(USES_ZBLD), yes)
 	@echo ------------------------------------------------------------------------
 endif
 
+ifeq ($(USES_MMI),yes)
 .PHONY: clean
+else
+clean: cleanamss cleanflashtools
+endif
 
 #-------------------------------------------------------------------------------
 # Test target
