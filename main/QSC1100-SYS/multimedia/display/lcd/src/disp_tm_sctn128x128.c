@@ -49,6 +49,7 @@ when       who     what, where, why
 #include "disp_tm_sctn128x128.h"
 #include "gpio_1100.h"
 #include "pm.h"
+#include "pmapp.h"
 #ifdef T_FFA
 #error code not present
 #endif
@@ -200,9 +201,9 @@ static lcd_config_attribs_type lcatDispCfg[LCD_MAX_DISPLAYS] =
 
       // Parallel bus interface attributes
       PEGS_TM_EBI2_ID,
-      EBI2_WIDTH_2_x_9,
+      EBI2_WIDTH_8,
       HWIO_ADDR(LCD_CFG0),      // HWIO_LCD_CFG0_PHYS 
-      0x04120105,
+      0x00380308,
       /*(// lcd_cfg0 value   = 0x04120105, 
         (   LCD_CFG0_LCD_CS_SETUP = 0x0 )|
         (   LCD_CFG0_LCD_RECOVERY = 0x4)|
@@ -212,7 +213,7 @@ static lcd_config_attribs_type lcatDispCfg[LCD_MAX_DISPLAYS] =
         (   LCD_CFG0_LCD_WAIT_RD = 0x05 )  
       ),*/
       HWIO_ADDR(LCD_CFG1),      // HWIO_LCD_CFG1_PHYS
-      0xC9000000,               //0x39000000,
+      0x49000000,               //0x39000000,
       /*(                         // lcd_cfg1 value   = 0x39000000,
         (   0x1<<LCD_CFG1__LCD_D_ON_UB_LB___S       )|
         (   0x1<<LCD_CFG1__LCD_18_OR_24_BIT_ENA___S )|
@@ -536,7 +537,7 @@ static void tm_sctn128x128_disp_set_backlight(byte level)
   #ifdef FEATURE_PDM_BACKLIGHT
         /* SC2X/ULC use GPIO PDM to drive the LCD backlight, not the PMIC core */
         tm_sctn128x128_set_backlight_pdm_util(level);
-  #else  /* FEATURE_PDM_BACKLIGHT*/
+//  #else  /* FEATURE_PDM_BACKLIGHT*/
         pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);   
         if (PM_ERR_FLAG__SUCCESS != pefRet)
 		{
@@ -728,8 +729,8 @@ SIDE EFFECTS
 
 #ifdef CUST_EDITION
 
-#define TM_SCTN_WRITE_CMD(v)  out_word(lcatDispCfg[0].cmd_addr, (v))
-#define TM_SCTN_WRITE_DATA(v)  out_word(lcatDispCfg[0].param_addr, (v))
+#define TM_SCTN_WRITE_CMD(v)  out_byte(lcatDispCfg[0].cmd_addr, (v))
+#define TM_SCTN_WRITE_DATA(v)  out_byte(lcatDispCfg[0].param_addr, (v))
 #define TM_SCTN_DELAY(v) clk_busy_wait(v)
 
 static void tm_sctn128x128_disp_powerup(void)
@@ -738,8 +739,8 @@ static void tm_sctn128x128_disp_powerup(void)
 
     if (!tm_sctn128x128_state.disp_powered_up && !tm_sctn128x128_state.display_on)
     {
-        (void)pm_vreg_set_level(PM_VREG_MSME2_ID, 2800);	
-		pm_vote_vreg_switch(PM_ON_CMD, PM_VREG_MSME2_ID, PM_VOTE_VREG_GP2_APP__LCD_MAIN);
+     //   (void)pm_vreg_set_level(PM_VREG_MSME2_ID, 2800);	
+	//	pm_vote_vreg_switch(PM_ON_CMD, PM_VREG_MSME2_ID, PM_VOTE_VREG_GP2_APP__LCD_MAIN);
         
         TM_SCTN_WRITE_CMD(0x01);  //software reset
     	TM_SCTN_DELAY(30);       //delay 150ms
@@ -832,7 +833,7 @@ static void tm_sctn128x128_disp_powerup(void)
 
         TM_SCTN_WRITE_CMD(0x29);
     	TM_SCTN_WRITE_CMD(0x2c);
-         tm_sctn128x128_state.disp_powered_up = TRUE;
+        tm_sctn128x128_state.disp_powered_up = TRUE;
    }
    rex_leave_crit_sect(&tm_sctn128x128_crit_sect);
 
@@ -872,7 +873,7 @@ static int tm_sctn128x128_disp_powerdown(void)
     /* Reset controller to ensure clean state */
    /* Transfer command to display hardware*/
 
-    pm_vote_vreg_switch(PM_OFF_CMD, PM_VREG_MSME2_ID, PM_VOTE_VREG_GP2_APP__LCD_MAIN);
+  //  pm_vote_vreg_switch(PM_OFF_CMD, PM_VREG_MSME2_ID, PM_VOTE_VREG_GP2_APP__LCD_MAIN);
      //out_word(lcatDispCfg[0].cmd_addr, DISP_EPSON_CMD9(TM_SCTN128x128_VDD_OFF_C));   miaoxiaoming
      clk_busy_wait(100);
      tm_sctn128x128_state.disp_powered_up = FALSE;
@@ -901,6 +902,15 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+void get_disp_id()
+{
+    byte id = -1;
+    out_byte(lcatDispCfg[0].cmd_addr, 0xda);
+    in_byte(lcatDispCfg[0].data_addr);
+    id = in_byte(lcatDispCfg[0].data_addr);
+
+}
+
 int tm_sctn128x128_disp_init(void)
 {
   if (tm_sctn128x128_state.disp_initialized) 
@@ -938,7 +948,9 @@ int tm_sctn128x128_disp_init(void)
   tm_sctn128x128_disp_clear_whole_screen();
 
   tm_sctn128x128_disp_set_backlight(TM_SCTN128x128_DISP_MAX_BACKLIGHT);
-
+  
+  get_disp_id();
+  
   return 1;
 } /* tm_sctn128x128_disp_init() */
 
