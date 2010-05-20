@@ -136,6 +136,60 @@ and other items needed by this module.
   #define KEYPAD_ROWS             5
   #define KEYPAD_COLUMNS          5
 
+#ifdef CUST_EDITION
+static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
+   /* JoyStick keys [up, down, left, right] uses 2 simultaneous row inputs
+    * on KEYSENSE0_N routed by SC2x FFA's Panasonic MultiFunction Switch 
+    * [EVQWH] as follows:
+    *     Direction | Switches
+    *       up          1,4
+    *       down        2,3
+    *       left        3,4
+    *       right       1,2
+    *
+    * Switches are connected to Keypad signals:
+    *     Switch   |  Keypad Signal
+    *       1           KYPD_17
+    *       2           KYPD_9
+    *       3           KYPD_15
+    *       4           KYPD_11
+    *
+    * Which gives us-
+    *     KeyScan Code     Keypad Signals
+    *     HS_KEY_UP_K      KYPD_17, KYPD_11
+    *     HS_KEY_DOWN_K    KYPD_9,  KYPD_15
+    *     HS_KEY_LEFT_K    KYPD_15, KYPD_11
+    *     HS_KEY_RIGHT_K   KYPD_17, KYPD_9
+    *
+    * Mapping keypad signal to Keyscan codes:
+    *     Keypad Signal              KeyScan Codes
+    *     KYPD_17           HS_KEY_UP_K    | HS_KEY_RIGHT_K
+    *     KYPD_15           HS_KEY_DOWN_K  | HS_KEY_LEFT_K
+    *     KYPD_11           HS_KEY_LEFT_K  | HS_KEY_UP_K
+    *     KYPD_9            HS_KEY_RIGHT_K | HS_KEY_DOWN_K
+    */
+
+   /* KEYSENSE_0 */
+   /* 1,17          1,15        1,11        1,9          1,Memo*/
+   { HS_CLR_K,       HS_SEND_K,  HS_DOWN_K,  HS_END_K,  HS_NONE_K},
+
+   /* KEYSENSE_1 */
+   /* 3,17          3,15        3,11        3,9          3,Memo*/
+   { HS_LEFT_K,     HS_1_K,     HS_2_K,     HS_3_K,      HS_NONE_K},
+
+   /* KEYSENSE_2 */
+   /* 5,17          5,15        5,11        5,9          5,Memo*/
+   { HS_SEL_K,      HS_4_K,     HS_5_K,     HS_6_K,      HS_NONE_K},
+
+   /* KEYSENSE_3 */
+   /* 7,17          7,15        7,11        7,9          7,Memo*/
+   { HS_RIGHT_K,      HS_7_K,     HS_8_K,     HS_9_K,      HS_SF2_K},
+
+   /* KEYSENSE_4 */
+   /* 9,17          9,15        9,11        9,9          9,Memo*/
+   { HS_UP_K,  		HS_STAR_K,  HS_0_K,     HS_POUND_K,  HS_SF1_K}
+};
+#else
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* JoyStick keys [up, down, left, right] uses 2 simultaneous row inputs
     * on KEYSENSE0_N routed by SC2x FFA's Panasonic MultiFunction Switch 
@@ -188,13 +242,49 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* 9,17          9,15        9,11        9,9          9,Memo*/
    {  HS_VOL_UP_K,  HS_STAR_K,  HS_0_K,     HS_POUND_K,  HS_LSPKR_K}
 };
+#endif
 
+#ifdef CUST_EDITION
 /*
  * Table position of keys contributing to the "panic chord" 
  */
 /* '1' Key */
 #define ONE_KEY_ROW      1
 #define ONE_KEY_COLUMN   1
+
+/* '*' Key */
+#define STAR_KEY_ROW     4
+#define STAR_KEY_COLUMN  1
+
+/* '#' Key */
+#define POUND_KEY_ROW    4
+#define POUND_KEY_COLUMN 3
+
+/* 
+ * Table positions of navigation keys 
+ */
+/* Nav-Up Key */
+#define UP_KEY_ROW         4
+#define UP_KEY_COLUMN      0
+
+/* Nav-Down Key */
+#define DOWN_KEY_ROW       0
+#define DOWN_KEY_COLUMN    2
+
+/* Nav-Left Key */
+#define LEFT_KEY_ROW       1
+#define LEFT_KEY_COLUMN    0
+
+/* Nav-Right Key */
+#define RIGHT_KEY_ROW      3
+#define RIGHT_KEY_COLUMN   0
+#else
+/*
+ * Table position of keys contributing to the "panic chord" 
+ */
+/* '1' Key */
+#define ONE_KEY_ROW      1
+#define ONE_KEY_COLUMN   3
 
 /* '*' Key */
 #define STAR_KEY_ROW     4
@@ -223,6 +313,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 #define RIGHT_KEY_ROW      0
 #define RIGHT_KEY_COLUMN   3
 
+#endif
 
 #else /* !KEYPAD_5_BY_5_MATRIX */
 #error code not present
