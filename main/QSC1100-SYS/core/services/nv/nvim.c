@@ -156,6 +156,47 @@ nv_item_type  local_item;
 /* Command buffer for individual writes/reads issued internally. */
 nv_cmd_type   local_cmd; 
 
+#define FEATRUE_AUTO_SET_NEED_NV_VALUE
+#if defined(CUST_EDITION) && defined(FEATRUE_AUTO_SET_NEED_NV_VALUE)
+#define AUTO_NV_CUST_CODE_INVALID           0x00
+#define AUTO_NV_MODIFY_TIME_FOR_CUSTOMER    0x10
+
+
+#define AUTO_NV_CUST_CODE_COMMON            0x02260000                                                      //For common using, internal test.
+#define AUTO_NV_CUST_CODE_HTTH              (AUTO_NV_CUST_CODE_COMMON + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //Hutch In Thailand
+#define AUTO_NV_CUST_CODE_CTTH              (AUTO_NV_CUST_CODE_HTTH   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //CAT In Thailand
+#define AUTO_NV_CUST_CODE_ALTW              (AUTO_NV_CUST_CODE_CTTH   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //APTG In Taiwan, China
+#define AUTO_NV_CUST_CODE_ALCN              (AUTO_NV_CUST_CODE_ALTW   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //China Telecom
+#define AUTO_NV_CUST_CODE_TLFJ              (AUTO_NV_CUST_CODE_ALCN   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //China Telecom
+
+typedef struct _nv_auto_set_type
+{
+    nv_items_enum_type      nv_items_id;
+    char                    nv_items_value[128];
+}nv_auto_set_type;
+
+typedef struct _nv_auto_set_table_type
+{
+    const nv_auto_set_type* plist;
+    int                     lsit_size;
+}nv_auto_set_table_type;
+
+#include "rf_sbnaalz_nv.h"
+#include "oem_sbnaalz_nv.h"
+#include "svc_sbnaalz_nv.h"
+#include "prl.h"
+nv_auto_set_table_type nv_auto_set_table[] = 
+{
+    {nv_auto_set_rf_fixed_list,     sizeof(nv_auto_set_rf_fixed_list)/sizeof(nv_auto_set_type)},
+    {nv_auto_set_svc_list,          sizeof(nv_auto_set_svc_list)/sizeof(nv_auto_set_type)}
+  
+};
+
+boolean bIsResetOemNv = FALSE;
+
+static nv_stat_enum_type nv_auto_set_need_value(void);
+#endif
+
 #ifdef NV_FEATURE_PRL_ITEMS
 /* Globally used buffer to contain the roaming list read-from  */ 
 /* or written-to NV memory.                                    */
@@ -197,6 +238,7 @@ byte fact_data[NVIM_FACTORY_DATA_SIZE];
 
 static boolean          nverr_init( void );
 static void             nverr_update_log( void );
+
 
 /* Structure used to essentially double buffer the error log  */
 struct 
@@ -1226,6 +1268,15 @@ nv_init (void)
   else {
     status = NV_DONE_S;
   }
+
+#ifdef CUST_EDITION
+    status = nv_auto_set_need_value();
+    if(NV_DONE_S != status)
+    {
+        return status;
+    }
+#endif //FEATRUE_AUTO_SET_NEED_NV_VALUE
+
 
 #ifdef FEATURE_NV_CNV
   /* If the file was dropped in as part of a CEFS image, then restore
@@ -2881,6 +2932,310 @@ void nv_access_op_cs_init(void)
   }
   nv_cs_init_flag = TRUE;
 }
+
+#ifdef CUST_EDITION
+#ifdef FEATRUE_AUTO_SET_NEED_NV_VALUE
+
+extern void lcd_debug_message( char * message);
+/*===========================================================================
+
+Function nv_auto_set_prl()
+
+DESCRIPTION
+  Auot set the pre-defined prl to nv.
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  Must be called after NV task initialized or be called in nv_auto_set_need_value
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+LOCAL nv_stat_enum_type nv_auto_set_prl()
+{
+    dword               dwPrlSize = 0;
+#ifdef FEATURE_SD20
+    word                prl_version = PRL_DEFAULT_VER;
+#endif    
+    boolean             bIsNVTaskIni = nvi_initialized;
+    /* Validate all sspr p rev version with P REV 1 first.*/
+    prl_sspr_p_rev_e_type  sspr_p_rev          = PRL_SSPR_P_REV_1;  
+    boolean                is_full_validation  = TRUE;  
+
+    dwPrlSize = sizeof(pr_list_data)/sizeof(byte);
+
+    //set it to TRUE and set back to it's own value when exit
+    nvi_initialized = TRUE;
+    
+    if(dwPrlSize > nv_max_size_of_roaming_list())
+    {
+        ERR("Pre-defined PRL size is invalid!!!", 0, 0, 0);  
+        
+        nvi_initialized = bIsNVTaskIni;
+        return NV_NOTACTIVE_S;
+    }
+
+    local_cmd.tcb_ptr    = NULL;
+    local_cmd.sigs       = 0;
+    local_cmd.done_q_ptr = NULL;
+    local_cmd.cmd        = NV_WRITE_F;
+    local_cmd.data_ptr   = (nv_item_type*) &nv_pr_list;
+        
+    /* We always only pre-set NAM 1 */
+    nv_pr_list.nam = 0;
+    nv_pr_list.size = dwPrlSize * 8;
+
+    memcpy((void*)nv_pr_list.roaming_list, (void*)pr_list_data, dwPrlSize);
+    
+#ifdef FEATURE_SD20
+    if(prl_validate((byte*) nv_pr_list.roaming_list, &prl_version,&sspr_p_rev,is_full_validation) == PRL_VALID)
+    {
+#else
+    if(mcsys_validate_roaming_list((byte *)nv_pr_list.roaming_list) == PRL_VALID)
+    {
+#endif
+        nv_pr_list.valid = TRUE;
+    }
+    else
+    {
+        nv_pr_list.valid = FALSE;
+
+        ERR("Pre-defined PRL is invalid!!!", 0, 0, 0);  
+        
+        nvi_initialized = bIsNVTaskIni;
+        return NV_NOTACTIVE_S;
+    }    
+    
+    /* Set the PRL version */
+#ifdef FEATURE_SD20
+    nv_pr_list.prl_version = prl_version;
+#else
+    nv_pr_list.prl_version = mcsys_get_prl_version();
+#endif
+    
+#ifdef FEATURE_IS683A_PRL
+    local_cmd.item = NV_ROAMING_LIST_683_I;
+#else
+    local_cmd.item = NV_ROAMING_LIST_I;
+#endif    
+
+    nvio_write(&local_cmd);
+    
+    nvi_initialized = bIsNVTaskIni;
+    return local_cmd.status;
+}
+    
+/*===========================================================================
+
+Function nv_auto_set_need_value()
+
+DESCRIPTION
+  Auot set needed nv item when fresh build.
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+static nv_stat_enum_type nv_auto_set_need_value(void)
+{
+    int                             table_index, table_size, list_index;
+    dword                           auto_nv_item_version = AUTO_NV_CUST_CODE_INVALID;
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+    extern boolean                  nvruim_rtre_config_initialized;
+
+    nv_rtre_control_type            saved_rtre_control_value = nv_rtre_control_value;
+    nv_rtre_polling_control_type    saved_rtre_polling_control_type = nv_rtre_polling_control_value;
+    boolean                         saved_rtre_config_initialized = nvruim_rtre_config_initialized;    
+#endif
+    nv_stat_enum_type               nvOpStatus;
+    boolean                         bIsFreshBuild = TRUE;
+
+//Check if this is a fresh start phone.
+//if the phone is fresh start, the NV_STATUS of NV_PCB_STATUS_I must be NV_INACTIVE
+    local_cmd.tcb_ptr    = NULL;
+    local_cmd.sigs       = 0;
+    local_cmd.done_q_ptr = NULL;
+    local_cmd.cmd        = NV_READ_F;
+    local_cmd.item       = NV_AUTO_SET_ITEM_VERSION_I;
+    local_cmd.data_ptr   = (nv_item_type*) &auto_nv_item_version;
+
+    //Read It
+    local_cmd.status = nvio_read(&local_cmd);
+
+    if(NV_NOTACTIVE_S != local_cmd.status)
+    {
+        //if(AUTO_NV_ITME_VERSION <= auto_nv_item_version)
+        if(AUTO_NV_ITME_VERSION == auto_nv_item_version)
+        {
+            //OK, it not a fresh start phone and version is same as this bin file
+            //skip the follow operations.
+            return NV_DONE_S;
+        }
+        
+        //If version doesen't equal we need to do follow operations.        
+           
+        //make it as not fresh start.
+        bIsFreshBuild = FALSE;  
+    }
+    //OK, Fresh Build of NV VERSION change, I must restore OEM NVs.
+    bIsResetOemNv = TRUE;
+    
+    //OK, need to restore, make the version equal to BIN file's.
+    auto_nv_item_version = AUTO_NV_ITME_VERSION;
+    lcd_debug_message ("Initialize necessary nv, please waiting.");
+    
+    
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+//If phone supports UIM RTRE, we must config RTRE mode to NV Only, then we can write some SERVICE NVs.
+//After NVs set done, we MUST restore those RTRE Control value.
+    nv_rtre_control_value = NV_RTRE_CONTROL_NO_RUIM;
+    nv_rtre_polling_control_value = NV_RTRE_POLLING_CONTROL_NO_POLL;
+    nvruim_rtre_config_initialized = TRUE;
+#endif           
+
+    local_cmd.cmd = NV_WRITE_F;
+
+    /*--------------------------------------------------------------
+                       Write Needed Items to NV
+    --------------------------------------------------------------*/
+    table_index = 0;
+    table_size = sizeof(nv_auto_set_table)/sizeof(nv_auto_set_table_type);
+    while(table_index < table_size)
+    {
+        list_index = 0;
+        while(list_index < nv_auto_set_table[table_index].lsit_size)
+        {
+            local_cmd.item = nv_auto_set_table[table_index].plist[list_index].nv_items_id;
+            local_cmd.data_ptr = (nv_item_type*)nv_auto_set_table[table_index].plist[list_index].nv_items_value;
+            local_cmd.status = nvio_write(&local_cmd);
+
+            if(NV_DONE_S != local_cmd.status)
+            {
+                ERR_FATAL("Auto set NV failed, item = %d", local_cmd.item, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+                nv_rtre_control_value = saved_rtre_control_value;
+                nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+                nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+                return local_cmd.status;                            
+            }
+
+            list_index++;
+        }
+        table_index++;
+    }
+
+    /*--------------------------------------------------------------
+                       Write Pre-Defined PRL to NV
+    --------------------------------------------------------------*/
+    nvOpStatus = nv_auto_set_prl();    
+    if(NV_DONE_S != nvOpStatus &&  NV_NOTACTIVE_S != nvOpStatus)
+    {
+        ERR_FATAL("Auto set PRL failed, item = %d", local_cmd.item, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+        nv_rtre_control_value = saved_rtre_control_value;
+        nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+        nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+        return local_cmd.status;         
+    }
+    
+    //Only restore Pre-Defined RF calibration items and
+    //Critical Items when phone's fresh build
+    if(bIsFreshBuild)
+    {
+    /*--------------------------------------------------------------
+                Write Pre-Defined RF calibration items to NV
+    --------------------------------------------------------------*/
+        list_index = 0;
+        while(list_index < sizeof(nv_auto_set_rf_cal_list)/sizeof(nv_auto_set_type))
+        {
+            local_cmd.item = nv_auto_set_rf_cal_list[list_index].nv_items_id;
+            local_cmd.data_ptr = (nv_item_type*)nv_auto_set_rf_cal_list[list_index].nv_items_value;
+            local_cmd.status = nvio_write(&local_cmd);
+
+            if(NV_DONE_S != local_cmd.status)
+            {
+                ERR_FATAL("Auto set NV failed, item = %d", local_cmd.item, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+                nv_rtre_control_value = saved_rtre_control_value;
+                nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+                nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+                return local_cmd.status;                            
+            }
+
+            list_index++;
+        }
+        
+    /*--------------------------------------------------------------
+                       Write Critical Items to NV
+    --------------------------------------------------------------*/
+#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH   
+        nvOpStatus = nv_critical_restore();
+
+        if(NV_DONE_S != nvOpStatus &&  NV_NOTACTIVE_S != nvOpStatus)
+        {
+            ERR_FATAL("Auto set NV failed, item = %d", local_cmd.item, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+            nv_rtre_control_value = saved_rtre_control_value;
+            nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+            nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+            return local_cmd.status;         
+        }
+#endif
+    } //if(bIsFreshBuild)
+    
+    local_cmd.item       = NV_AUTO_SET_ITEM_VERSION_I;
+    local_cmd.data_ptr   = (nv_item_type*) &auto_nv_item_version;
+
+    //Write NV
+    local_cmd.status = nvio_write(&local_cmd);
+
+    if(NV_DONE_S != local_cmd.status)
+    {
+        ERR_FATAL("Set auto nv item version failed, status = %d", local_cmd.status, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+        nv_rtre_control_value = saved_rtre_control_value;
+        nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+        nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+        return local_cmd.status;                            
+    }
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+    nv_rtre_control_value = saved_rtre_control_value;
+    nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+    nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif  
+    
+    return NV_DONE_S;
+}
+#endif /*FEATRUE_AUTO_SET_NEED_NV_VALUE*/
+#endif /*CUST_EDITION*/
+
+
 
 #endif /* FEATURE_NV_ITEM_MGR */
 
