@@ -5,6 +5,9 @@ FILE: CUSTSBNAALZ
 
 Copyright (c) 2001-2009 by QUALCOMM Incorporated.  All Rights Reserved.        
 =========================================================================== */
+#ifndef CUST_EDITION
+#define CUST_EDITION
+#endif
 
 #ifndef TARGSB2_H
    #include "targsbw2.h"
@@ -29,10 +32,14 @@ Copyright (c) 2001-2009 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_HS_USB_PMIC_PHY 
 #define FEATURE_HS_USB_USER_EVENT_POST 
 #define FEATURE_RRC_SIB_HEAP 
+#ifndef CUST_EDITION
 #define FEATURE_LOW_MEMORY_USAGE 
 #define FEATURE_FS_LOW_MEMORY_USAGE 
+#endif
 #define FEATURE_DSM_MINIMIZE 
+#ifndef CUST_EDITION
 #define FEATURE_MSG_LOW_MEMORY_USAGE 
+#endif
 #define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
@@ -183,8 +190,8 @@ Copyright (c) 2001-2009 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_QHSUSB_DEAD_BATTERY_CHARGING 
 #define FEATURE_XO 
 
-#define CUST_EDITION
 #ifdef CUST_EDITION
+#define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #endif
 
 #include "custuim.h"
