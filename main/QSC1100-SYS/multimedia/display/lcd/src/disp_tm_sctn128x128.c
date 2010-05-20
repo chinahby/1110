@@ -382,10 +382,10 @@ static void tm_sctn128x128_set_screen_area(uint32 start_row, uint32 start_col,
 	*/
 
 	/* Range check compensated rectangle vertices */
-	if ( (start_col <= lptDispInfo[nDisp].width) && 
-	    (start_row <= lptDispInfo[nDisp].height) && 
-	    (end_col   <= lptDispInfo[nDisp].width)   && 
-	    (end_row   <= lptDispInfo[nDisp].height) )
+	if ( (start_col < lptDispInfo[nDisp].width) && 
+	    (start_row < lptDispInfo[nDisp].height) && 
+	    (end_col   < lptDispInfo[nDisp].width)   && 
+	    (end_row   < lptDispInfo[nDisp].height) )
 	{
 		/* Set LCD hardware to new drawing rectangle */
 		/* Set LCD hardware to set start address */
@@ -492,8 +492,8 @@ SIDE EFFECTS
 static void tm_sctn128x128_disp_clear_screen_area(word start_row, word start_col,
                                                   word end_row, word end_col)
 {
-	uint32 ii = 128*128;
-	static uint32 whitebpp = 0xFF;
+  uint32 i = (end_row - start_row + 1) * (end_col - start_col + 1);
+  static uint32 whitebpp = 0xFF;
 
 	if (tm_sctn128x128_state.disp_initialized &&
 		tm_sctn128x128_state.disp_powered_up  &&
@@ -511,7 +511,7 @@ static void tm_sctn128x128_disp_clear_screen_area(word start_row, word start_col
 		TM_SCTN_WRITE_DATA(0x7f);
 		/* Transfer command to display hardware */
 		TM_SCTN_WRITE_CMD(TM_SCTN128x128_RAM_WRITE_C);  
-		while(ii--)
+		while(i--)
 		{
 			TM_SCTN_WRITE_DATA((uint8)(whitebpp));
 			TM_SCTN_WRITE_DATA((uint8)(whitebpp));
@@ -821,9 +821,9 @@ int tm_sctn128x128_disp_init(void)
 	tm_sctn128x128_disp_info.backlight_min      = TM_SCTN128x128_DISP_MIN_BACKLIGHT;
 	tm_sctn128x128_disp_info.backlight_max      = TM_SCTN128x128_DISP_MAX_BACKLIGHT;
 	tm_sctn128x128_disp_info.backlight_default  = TM_SCTN128x128_DISP_DEFAULT_BACKLIGHT;
-	tm_sctn128x128_disp_info.lcd_type           = EPSON_QVGA;
-	tm_sctn128x128_disp_info.phys_width         = EPSON_QVGA_LCD_DIMENSION_WIDTH;    
-	tm_sctn128x128_disp_info.phys_height        = EPSON_QVGA_LCD_DIMENSION_HEIGHT; 
+  tm_sctn128x128_disp_info.lcd_type           = TM_SCTN128;
+  tm_sctn128x128_disp_info.phys_width         = TM_SCTN128x128_DISP_WIDTH;    
+  tm_sctn128x128_disp_info.phys_height        = TM_SCTN128x128_DISP_HEIGHT; 
 
 	rex_init_crit_sect(&tm_sctn128x128_crit_sect);
 
@@ -834,7 +834,7 @@ int tm_sctn128x128_disp_init(void)
 	tm_sctn128x128_disp_on();
 
 	tm_sctn128x128_state.disp_initialized = TRUE;
-	tm_sctn128x128_state.display_on = TRUE;
+	
 
 	tm_sctn128x128_disp_clear_whole_screen();
 
@@ -888,7 +888,7 @@ static void tm_sctn128x128_disp_copy(void *src_ptr, dword copy_count)
 {  
 	int i;
 	uint8 *pdata = src_ptr;
-	uint8 data1,data2;
+//	uint8 data1,data2;
 	/* Bus is wired from LCD D9-D17 (9 bits) to MPU bus, need two transfer 
 	* to complete one pixel(RGB666).
 	*
@@ -903,13 +903,10 @@ static void tm_sctn128x128_disp_copy(void *src_ptr, dword copy_count)
     {
         for ( i = 0; i < copy_count; i++ )
         {
-			data1 = *pdata;
+			TM_SCTN_WRITE_DATA((uint8)(*pdata));
 			pdata++;
-			data2 = *pdata;
+			TM_SCTN_WRITE_DATA((uint8)(*pdata));
 			pdata++;
-
-			TM_SCTN_WRITE_DATA((uint8)(data1));
-			TM_SCTN_WRITE_DATA((uint8)(data2));
         }        
     }
     else 
