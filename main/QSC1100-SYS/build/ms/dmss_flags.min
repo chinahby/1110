@@ -196,6 +196,9 @@ PVVRTK_FLAG   = -DFEATURE_PVVRTK_TEST#          # PVVRTK Settings
 #-------------------------------------------------------------------------------
 
 DMSS_CFLAGS = $(ARM) $(SURF) $(CUSTH) $(EXTENSIONS) $(TIMETEST) $(ASSERT_FATAL)
+
+DMSS_CFLAGS += -DUSES_MMI -DCUST_EDITION#为应用程序添加USES_MMI的宏
+
 RVCT_DMSS_CFLAGS = $(RVCT_ARM) $(SURF) $(CUSTH) $(EXTENSIONS) $(TIMETEST) $(ASSERT_FATAL)
 DEPEND_FLAGS= -D SMF_DEPEND
 
