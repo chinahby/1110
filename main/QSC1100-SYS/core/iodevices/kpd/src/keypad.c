@@ -946,6 +946,7 @@ static void keypad_scan_keypad_matrix(void)
    * Convert any joystick signals to single keyscan code.  
    * See JoyStick info in keys[] init section for more info.
    */
+#ifndef CUST_EDITION
   {
     boolean up     = keys_pressed[UP_KEY_ROW][UP_KEY_COLUMN]       && 
                      keys_pressed[LEFT_KEY_ROW][LEFT_KEY_COLUMN];
@@ -961,6 +962,7 @@ static void keypad_scan_keypad_matrix(void)
     keys_pressed[RIGHT_KEY_ROW][RIGHT_KEY_COLUMN] = right;
     keys_pressed[DOWN_KEY_ROW][DOWN_KEY_COLUMN]   = down;
   }
+#endif
   #endif /* T_QSC60X5 */
 
 } /* end of keypad_scan_keypad_matrix */
