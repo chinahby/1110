@@ -156,7 +156,6 @@ nv_item_type  local_item;
 /* Command buffer for individual writes/reads issued internally. */
 nv_cmd_type   local_cmd; 
 
-#define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #if defined(CUST_EDITION) && defined(FEATRUE_AUTO_SET_NEED_NV_VALUE)
 #define AUTO_NV_CUST_CODE_INVALID           0x00
 #define AUTO_NV_MODIFY_TIME_FOR_CUSTOMER    0x10
@@ -1270,12 +1269,14 @@ nv_init (void)
   }
 
 #ifdef CUST_EDITION
+#ifdef FEATRUE_AUTO_SET_NEED_NV_VALUE
     status = nv_auto_set_need_value();
     if(NV_DONE_S != status)
     {
         return status;
     }
-#endif //FEATRUE_AUTO_SET_NEED_NV_VALUE
+#endif   /*FEATRUE_AUTO_SET_NEED_NV_VALUE*/
+#endif /*CUST_EDITION*/
 
 
 #ifdef FEATURE_NV_CNV
@@ -2937,6 +2938,8 @@ void nv_access_op_cs_init(void)
 #ifdef FEATRUE_AUTO_SET_NEED_NV_VALUE
 
 extern void lcd_debug_message( char * message);
+
+
 /*===========================================================================
 
 Function nv_auto_set_prl()
@@ -3205,7 +3208,7 @@ static nv_stat_enum_type nv_auto_set_need_value(void)
         }
 #endif
     } //if(bIsFreshBuild)
-    
+#if 0    
     local_cmd.item       = NV_AUTO_SET_ITEM_VERSION_I;
     local_cmd.data_ptr   = (nv_item_type*) &auto_nv_item_version;
 
@@ -3223,7 +3226,7 @@ static nv_stat_enum_type nv_auto_set_need_value(void)
 #endif      
         return local_cmd.status;                            
     }
-
+#endif
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
     nv_rtre_control_value = saved_rtre_control_value;
     nv_rtre_polling_control_value = saved_rtre_polling_control_type;
