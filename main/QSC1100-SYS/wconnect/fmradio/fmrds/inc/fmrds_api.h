@@ -76,7 +76,7 @@
 #include "msg.h"
 #include "msmhwioreg_port.h"     /* Added to track RDS ISR usage */
 
-#ifdef  FEATURE_FM
+#ifdef  FEATURE_FMRDS
 
 // *** functional defines ***
 #define FEATURE_FM_SERVICE_AVAILABLE  // support for legacy service available command
@@ -1488,7 +1488,7 @@ FUNCTION      fmrds_task( )
 
 DESCRIPTION	  Main processing loop for all FM-RDS Radio messages.
 
-DEPENDENCIES  FEATURE_FM defined, fmrds_tcb definition necessary
+DEPENDENCIES  FEATURE_FMRDS defined, fmrds_tcb definition necessary
 
 RETURN VALUE  *** Does not return ***
 
@@ -3579,7 +3579,7 @@ teFmrdsCmdQStatusType FmrdsApi_FMServiceAvailable (uint8 fmrdsServiceRssi);
  * End
  * -------------------------------------------------------------------------*/
 
-#endif  // FEATURE_FM
+#endif  // FEATURE_FMRDS
 
 #endif /* #ifndef FMRDS_API_H */
 

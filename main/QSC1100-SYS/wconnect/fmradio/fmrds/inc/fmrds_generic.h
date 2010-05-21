@@ -107,7 +107,7 @@
 #include "comdef.h"
 
 
-#ifdef FEATURE_FM
+#ifdef FEATURE_FMRDS
 
 
 // *** functional defines ***
@@ -1063,7 +1063,7 @@ teFmrdsDevResult FtmFmrdsDev_SetStation(void);
 
 #endif  // FMRDS_INCLUDE_FTM
 
-#endif  /* FEATURE_FM */
+#endif  /* FEATURE_FMRDS */
 
 #endif  /* FMRDS_GENERIC_H  */
 

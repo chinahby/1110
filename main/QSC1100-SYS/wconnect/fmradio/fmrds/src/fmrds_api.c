@@ -75,7 +75,7 @@
 #include "comdef.h"             /* Definitions for byte, word, ... */
 #include "target.h"             /* Target specific definitions */
 
-#ifdef FEATURE_FM
+#ifdef FEATURE_FMRDS
 
 #include "task.h"
 #include "tmc.h"
@@ -2998,7 +2998,7 @@ FUNCTION      fmrds_task
 DESCRIPTION	  Task provides main processing loop for all FM commands and
               subsequent actions.
 
-DEPENDENCIES  FEATURE_FM
+DEPENDENCIES  FEATURE_FMRDS
 
 RETURN VALUE  Does not return.
 
@@ -3322,7 +3322,7 @@ FUNCTION      FmrdsApiProcessCommandQueue
 
 DESCRIPTION   De-queue commands from the FM RDS command queue and process them  
               
-DEPENDENCIES  FEATURE_FM
+DEPENDENCIES  FEATURE_FMRDS
 
 RETURN VALUE  None
 
@@ -3350,7 +3350,7 @@ FUNCTION      FmrdsApiProcessCommand
 
 DESCRIPTION   Process commands from command queue.
               
-DEPENDENCIES  FEATURE_FM
+DEPENDENCIES  FEATURE_FMRDS
 
 RETURN VALUE  None
 
@@ -4447,4 +4447,4 @@ static tsFmrdsCmdMsgType*  FmrdsGetFreeCmd(void)
 }
 
 
-#endif /* FEATURE_FM */
+#endif /* FEATURE_FMRDS */

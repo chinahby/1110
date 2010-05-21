@@ -64,7 +64,7 @@
 
 #include "custfmrds.h"          // include global fm rds switches
 
-#ifdef FEATURE_FM
+#ifdef FEATURE_FMRDS
 
 #include "fmrds_api.h"          // for typedefs
 #include "fmrds_generic.h"      // include generic fm definitions
@@ -479,7 +479,7 @@ typedef tsFmrdsDevRawBlockData tsSi4703RdsDataRegMapType;
 // ...
 
 
-#endif  // FEATURE_FM
+#endif  // FEATURE_FMRDS
 
 #endif  // FMRDS_SI4703_H
 

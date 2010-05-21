@@ -92,7 +92,7 @@
 #include "target.h"
 #include "comdef.h"
 
-#ifdef FEATURE_FM
+#ifdef FEATURE_FMRDS
 
 #include "fmrds_si4703.h"       // include si4703 definitions
 
@@ -2596,7 +2596,7 @@ teFmrdsDevResult FtmFmrdsDev_SetStation(void)
 
 
 
-#endif  // FEATURE_FM
+#endif  // FEATURE_FMRDS
 
 // *** end of file ***
 
