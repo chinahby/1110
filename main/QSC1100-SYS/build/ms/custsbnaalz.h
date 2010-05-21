@@ -192,6 +192,7 @@ Copyright (c) 2001-2009 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #ifdef CUST_EDITION
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
+#define FEATURE_WMS_APP
 #endif
 
 #include "custuim.h"
