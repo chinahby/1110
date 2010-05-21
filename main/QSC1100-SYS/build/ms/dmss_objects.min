@@ -297,6 +297,7 @@ include $(FDI)/fdi.min
 endif
 include $(ERR)/err.min
 include $(FM_RDS)/fmrds.min
+include $(FM)/fm.min
 include $(FLASH)/flash.min
 ifneq ($(USES_MANGO_UI),yes)
 include $(FLDDBG)/flddbg.min

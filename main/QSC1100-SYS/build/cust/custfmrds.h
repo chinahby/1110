@@ -36,7 +36,7 @@
                           FM RDS
 ---------------------------------------------------------------------------*/
 
-#define FEATURE_FM      /* enable fm rds functionality */
-
+#define FEATURE_FMRDS      /* enable fm rds functionality */
+#define FEATURE_FM
 
 #endif  /* CUSTFMRDS_H */

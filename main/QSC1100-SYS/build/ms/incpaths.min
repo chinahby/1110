@@ -524,6 +524,8 @@ DSM=         $(SRCASIC)/services/dsm
 #FM_RDS=       $(SRCROOT)/services/fmrds
 FM_RDS=      $(SRCROOT)/wconnect/fmradio/fmrds/src
 FM_RDS_INC=  $(SRCROOT)/wconnect/fmradio/fmrds/inc  
+FM=      $(SRCROOT)/wconnect/fmradio/fm/src
+FM_INC=  $(SRCROOT)/wconnect/fmradio/fm/inc
 #FLDDBG=      $(SRCROOT)/apps/FldDbg
 FLDDBG=      $(SRCPLATFORM)/FldDbg
 GRAPH=       $(SRCROOT)/multimedia/graphics/graph
@@ -710,7 +712,7 @@ ALL_PATHS=\
 	$(CAMERA_UNIT) $(VIDEO_RESOURCES) $(CAMERA_SNAPSHOTPROCESS)\
         $(CAMSENSOR) $(CAT_INC) $(CAT_SRC) $(CM) $(CM_INC) $(CMX) $(CONTACT) $(COREAPP) $(NETSETTINGS) $(CP_INC) $(CUST) \
         $(DATA_INC) $(DSMGR_INC) $(ATCOP_INC) $(CDPS) $(DATASTATS) $(DIALER) $(DMTASK) $(DISP) $(DSM) \
-        $(FM_RDS) $(FM_RDS_INC) $(FLDDBG) $(FTM_PATHS) \
+        $(FM_RDS) $(FM) $(FM_RDS_INC) $(FM_INC) $(FLDDBG) $(FTM_PATHS) \
         $(GRAPH) $(GRP) $(GSTK_INC) $(GSTK_SRC)\
         $(IPL) $(JPEG) $(DISP_INC) $(BREW_DISPLAY_OEM_INC) $(BREW_DISPLAY_OEM_SRC) $(LCD_INC) $(MDP_INC) $(MDP_API_INC) $(QMDP) $(DRVLIB_INC) $(DRVLIB_SRC) \
         $(MALLOC_MGR_INC) $(MDSPBUILD)/src $(MDSPSVCSRC) $(MDSP_IMG_LOC) $(MEDIAPLAYER) $(MMC) $(MMOC) $(MMOC_INC) $(MMGSDI_INC) $(MMGSDI_SRC) \
