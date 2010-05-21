@@ -158,7 +158,8 @@ ALL_PATHS = $(OSBL_SHARED) $(OSBL_TARGET) $(PM_RF) $(PM_RF_1x_SRC) $(PM_ROOT_INC
             $(BOOT) $(EFUSE) $(MIBIB) $(FLASH) $(DMOV) $(HWIO) $(MSM_BUILD) \
             $(BIO) $(CP) $(CP_INC) $(TLMM) $(1X_DRIVERS_INC) $(1X_DIAG_INC) $(SRCH_COMMON) \
             $(SRCH_INC) $(MDSP_IMG_LOC) $(RF_1X) $(PARB) $(LCD_INC) $(LCD_SRC) $(DRVLIB_INC) $(DRVLIB_SRC) $(AEE_PATH) $(SDCC)
-            
+
+ALL_PATHS += $()            
 ifeq ($(USES_HSU),yes)
 ALL_PATHS += $(HSU) $(HSU_DRIVER_INC)
 endif
@@ -169,3 +170,7 @@ endif
 OSBL_ALL_INCLUDES = $(addprefix -I, $(ALL_PATHS))
 
 ALL_INCLUDES = $(OSBL_ALL_INCLUDES)
+
+#lucid Add for Keypad support int OSBL
+KPD           = $(ROOT)/core/iodevices/kpd/src
+ALL_INCLUDES += -I$(KPD)#

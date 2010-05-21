@@ -93,7 +93,9 @@ when       who      what, where, why
 #include "clk.h"
 #include "err.h"
 #include "msg.h"
-
+#ifdef BUILD_BOOT_CHAIN
+#include "bio.h"
+#endif
 #if defined(FEATURE_PMIC)
   #include "pm.h"
 #endif /* defined(FEATURE_PMIC) */
@@ -136,6 +138,7 @@ and other items needed by this module.
   #define KEYPAD_ROWS             5
   #define KEYPAD_COLUMNS          5
 
+#ifndef BUILD_BOOT_CHAIN
 #ifdef CUST_EDITION
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* JoyStick keys [up, down, left, right] uses 2 simultaneous row inputs
@@ -242,7 +245,8 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* 9,17          9,15        9,11        9,9          9,Memo*/
    {  HS_VOL_UP_K,  HS_STAR_K,  HS_0_K,     HS_POUND_K,  HS_LSPKR_K}
 };
-#endif
+#endif /*CUST_EDITION*/
+#endif /*BUILD_BOOT_CHAIN*/
 
 #ifdef CUST_EDITION
 /*
@@ -408,6 +412,7 @@ typedef enum
   KS_UP_WAIT
 } keypad_state_type;
 
+#ifndef BUILD_BOOT_CHAIN
 /* current key processing state */
 static keypad_state_type keypad_key_state[KEYPAD_ROWS][KEYPAD_COLUMNS];
 static keypad_state_type keypad_power_key_state;
@@ -721,7 +726,7 @@ void keypad_pass_key_code( byte key_code, byte key_parm )
     INTFREE_SAV( isave );         /* Restore interrupts (PSW) */
   }
 } /* end of pass_key_code */
-
+#endif /*  BUILD_BOOT_CHAIN*/
 
 /*===========================================================================
 
@@ -755,7 +760,7 @@ static void keypad_drive_all_scan_cols_low(void)
   }
 }
 
-
+#ifndef BUILD_BOOT_CHAIN
 /*===========================================================================
 
 FUNCTION KEYPAD_DRIVE_ONE_SCAN_COL_LOW
@@ -1874,4 +1879,33 @@ void keypad_clear_headset_key(void)
   pm_hsed_clear_key_pressed();
 }
 #endif /* FEATURE_PMIC_HS_SEND_END_DETECT */ 
+#endif /* BUILD_BOOT_CHAIN*/
+
+
+
+#ifdef CUST_EDITION
+boolean keypad_is_dload_key_pressed(void)
+{
+#ifndef FEATURE_ALL_KEY_PAD    
+    /* Set the column LOW (0), the pressed key will show a LOW (0)
+     * in it's position in the row being scanned.  This sets the other
+     * columns HI-Z.
+     */
+    keypad_drive_all_scan_cols_low();
+    
+    /* The following delays the polling of sense signals to make sure the
+     * signals are stable. You may tweak the delay if you wish.
+     */
+    clk_busy_wait(KEYPAD_POLLING_DELAY_USEC);
+ 
+    if (GPIO_LOW_VALUE == gpio_in(keytbl_row_to_keysense_gpio_map[0]))
+    {
+         /* A low keysense reading indicates a closed switch (pressed) */
+        return TRUE;
+    }
+#endif
+    return FALSE;
+}
+#endif
+
 
