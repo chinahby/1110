@@ -446,6 +446,17 @@ static void tm_sctn128x128_disp_set_backlight(byte level)
 		{
 			pm_err_flag_type pefRet = (pm_err_flag_type)~PM_ERR_FLAG__SUCCESS;  // Assume failure
 
+			/*
+			gpio_tlmm_config(GPIO_OUTPUT_25);
+			if ( level == 0 )
+			{
+				gpio_out(GPIO_OUTPUT_25,GPIO_LOW_VALUE);
+			}
+			else
+			{
+				gpio_out(GPIO_OUTPUT_25,GPIO_HIGH_VALUE);
+			}
+			*/
 			pefRet = pm_set_led_intensity(PM_KBD_LED, (uint8)level);
 			if (PM_ERR_FLAG__SUCCESS != pefRet)
 			{
@@ -455,8 +466,7 @@ static void tm_sctn128x128_disp_set_backlight(byte level)
 				0);
 			}
 
-			//pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
-			pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)TM_SCTN128x128_DISP_MAX_BACKLIGHT);
+			pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
 			if (PM_ERR_FLAG__SUCCESS != pefRet)
 			{
 				MSG_MED("PMIC LCD backlight set failed: pefRet=%d, nLevel=%d",
