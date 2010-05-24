@@ -73,6 +73,7 @@ typedef enum
   EP_OP_QCIFP_SEC,       /* EBI2 GP2_CS_N Epson+Optrex QCIF+ LCD */
   MDDI_LCD_PRIM,         /* MDDI Prim LCD */
   MDDI_LCD_SECD,         /* MDDI Secd LCD */
+  TM_SCTN128,
 //do not change the order of the following enum types
 //
   MEM_WR,                /* WR Memory, must be MAX_LCD_NUM - 1 */

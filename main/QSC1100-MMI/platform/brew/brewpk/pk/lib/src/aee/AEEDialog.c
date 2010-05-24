@@ -26,12 +26,55 @@ Copyright © 1999-2007 QUALCOMM Incorporated.
 #include "AEE_OEM.h"
 #include "AEE_OEMEvent.h"
 #include "AEEStdLib.h"
-#include "AEEDialog_priv.h"
-#include "AEE_MIF.h"
+//#include "AEEDialog_priv.h"
+//#include "AEE_MIF.h"
 #include "AEEText.h"
 #include "AEEPointerHelpers.h"
+#ifdef FEATURE_RANDOM_MENU_COLOR
+#include "Appscommon.h"
+#include "AEEAnnunciator.h"
+#endif
+/*===========================================================================
 
+Class DEFINITIONS
 
+===========================================================================*/
+OBJECT(DlgControl)
+{
+    DlgControl   * pNext;
+    IControl     * pc;
+    uint16         wID;                 // control ID in dialog
+};
+typedef struct _ADialog          ADialog;
+struct _ADialog
+{
+   DECLARE_VTBL(IDialog)
+
+   uint16         m_wDialogID;
+   uint32         m_dwProps;
+   flg            m_bReady:1;
+   flg            m_bPrompt:1;
+   flg            m_bCopyright:1;
+   flg            m_bClosing:1;
+   AEERect        m_rc;
+   uint32         m_nRefs;
+   ADialog *      m_pNext;
+   IShell *       m_pShell;   
+   void     *     m_paOwner;
+   DlgControl *   m_pControls;
+   DlgControl *   m_pFocus;
+   uint16         m_wDefCommand;
+   uint16         m_ySKFrame;
+   PFNAEEEVENT    m_pfnEvent;
+   void *         m_pUserEvent;
+   IDisplay *     m_pDisplay;
+   uint32         m_cxScreen;
+   uint32         m_cyScreen;
+   IStatic      * m_pPrmpStatic;
+   uint32         m_dwStaticProps;
+   boolean       m_bKeyIsReady;
+   
+};
 
 // Dialog Routines
 
@@ -119,6 +162,20 @@ int ADialog_New(IShell * ps,AEECLSID cls, void **ppif)
       return nErr;
    }
 
+#ifdef FEATURE_RANDOM_MENU_COLOR
+    {
+        byte nRandomMenu = 0;
+        
+        (void)OEM_GetConfig(CFGI_RANDOM_MENU, (void*)&nRandomMenu, sizeof(nRandomMenu));
+        if(nRandomMenu == 2)
+        {
+            RGBVAL nColor;
+            
+            nColor = Appscommon_GetRandomColor(110);
+            (void)OEM_SetConfig(CFGI_MENU_BGCOLOR, (void*)&nColor, sizeof(nColor));
+        }
+    }
+#endif
    pbmDst = IDISPLAY_GetDestination(pme->m_pDisplay);
    IBITMAP_GetInfo(pbmDst, &bi, sizeof(bi));
    IBITMAP_Release(pbmDst);
@@ -136,9 +193,11 @@ int ADialog_New(IShell * ps,AEECLSID cls, void **ppif)
    AEE_SetAppContextDlg(pae,(IDialog *)pme);
    pme->m_pShell              = ps;
    pme->m_paOwner             = pae;
+#ifndef CUST_EDITION
    pme->m_cPenEvent.pHitCtl   = NULL;
    pme->m_cPenEvent.wID       = 0;
-
+#endif   
+   pme->m_bKeyIsReady = FALSE;
    return SUCCESS;
 }
 
@@ -565,6 +624,18 @@ boolean ADialog_HandleEvent(IDialog * po, AEEEvent evt, uint16 wParam, uint32 dw
 
    if(pme->m_bReady){
 
+   if(!pme->m_bKeyIsReady)
+   {
+       if(evt == EVT_KEY || evt == EVT_KEY_RELEASE)
+       {
+           return TRUE;
+       }
+       else if(evt == EVT_KEY_PRESS)
+       {
+           pme->m_bKeyIsReady = TRUE;
+       }
+   }
+
    // Prompt dailogs are special - they eat all events...
 
       if(pme->m_bPrompt){
@@ -593,6 +664,26 @@ boolean ADialog_HandleEvent(IDialog * po, AEEEvent evt, uint16 wParam, uint32 dw
          if( evt == EVT_POINTER_DOWN ){
             int16 wXHit = (int16)AEE_POINTER_GET_X((const char *)dwParam);
             int16 wYHit = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
+#ifdef FEATURE_LCD_TOUCH_ENABLE  //add by ydc
+			if ((wXHit>118)&&(wXHit<=176)&&(wYHit>184)&&(wYHit<202))
+			{
+				evt = EVT_KEY;
+				wParam = AVK_CLR;
+				for(pdc = pme->m_pControls; pdc != NULL ; pdc = pdc->pNext){
+					if(ICONTROL_HandleEvent(pdc->pc, evt, wParam, dwParam))
+						return(TRUE);
+				}
+			}
+			else if ((wXHit>136)&&(wXHit<=176)&&(wYHit>=0)&&(wYHit<20))
+			{
+				evt = EVT_KEY_RELEASE;
+				wParam = AVK_POUND;
+				for(pdc = pme->m_pControls; pdc != NULL ; pdc = pdc->pNext){
+					if(ICONTROL_HandleEvent(pdc->pc, evt, wParam, dwParam))
+						return(TRUE);
+				}
+			}
+#endif       //add by ydc
 
             // First see if it is in the Dialog itself
             if( PT_IN_RECT(wXHit, wYHit, pme->m_rc) ){
@@ -662,8 +753,12 @@ boolean ADialog_HandleEvent(IDialog * po, AEEEvent evt, uint16 wParam, uint32 dw
    // Handle tabbing between controls...
 
 
-      if(evt == EVT_CTL_TAB){
-
+      if(evt == EVT_CTL_TAB)
+      {
+        if(pme->m_dwProps & DLG_NOT_SET_FOCUS_AUTO)
+        {
+            return(FALSE);
+        }
          pdcNew = NULL;
 
    // If we are moving forward, look for the next.  Assumes the list is in order of left-right, top-bottom...
@@ -682,8 +777,9 @@ boolean ADialog_HandleEvent(IDialog * po, AEEEvent evt, uint16 wParam, uint32 dw
             if(!pdcNew)
                for(pdcNew = pme->m_pControls; pdcNew != NULL && pdcNew->pNext != NULL ; pdcNew = pdcNew->pNext);
          }
-
-         if(pdcNew){
+         //if(pdcNew){
+         if ((pdcNew) && pdcNew->pc != (IControl *)dwParam)
+         {// Ö»ÓÐ·¢³ö¸ÃÊÂ¼þµÄ¿Ø¼þÓëÐÂ¿Ø¼þ²»Í¬Ê±²ÅÐèÖØÐÂÉèÖÃ½¹µã
             ADialog_SetFocus(po, pdcNew->wID);
             return(TRUE);
          }
@@ -835,6 +931,22 @@ static void ADialog_Redraw(IDialog * po)
    if(pme->m_bCopyright)
       ADialog_ShowCopyright(pme);
    else{
+#ifdef FEATURE_RANDOM_MENU_COLOR
+            byte nRandomMenu = 0;
+            
+            (void)OEM_GetConfig(CFGI_RANDOM_MENU, (void*)&nRandomMenu, sizeof(nRandomMenu));
+            if(nRandomMenu == 2)
+            {
+                IAnnunciator *pIAnn = NULL;
+                
+                if (AEE_SUCCESS == ISHELL_CreateInstance(pme->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pIAnn))
+                {
+                    IANNUNCIATOR_Redraw(pIAnn);
+                    IANNUNCIATOR_Release(pIAnn);
+                    pIAnn = NULL;
+                }
+            }
+#endif
       if(HAS_BORDER(pme))
          IDISPLAY_DrawFrame(pd, &rc, (AEEFrameType)(pme->m_dwProps & CP_3D_BORDER ? AEE_FT_RAISED : AEE_FT_BOX),CLR_SYS_WIN);
 

@@ -7305,7 +7305,23 @@ typedef enum {
   NV_EDGE_850_LINEAR_TX_GAIN_PARAM_I             = 6475,
   NV_EDGE_1800_LINEAR_TX_GAIN_PARAM_I            = 6476,
   NV_EDGE_1900_LINEAR_TX_GAIN_PARAM_I            = 6477,
-  NV_MAX_I                                       = 6478
+#ifdef CUST_EDITION
+  //Add it to record the version of different operator.
+  NV_AUTO_SET_ITEM_VERSION_I                     = 6478,
+  //Add NV_CRITICAL_ITEM_I, use for CRITICAL NV ITEMs Backup operations.
+  NV_CRITICAL_ITEM_I                             = 6479,
+  NV_BT_TESTMODE_I                               = 6480,
+  NV_VOC_PCM_ON_CHIP_0_CAL_I                     = 6481,
+  NV_VOC_PCM_ON_CHIP_1_CAL_I                     = 6482,  
+  NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I               = 6483,
+  NV_VOC_CAL_EC_PARAMS_ESEC_I                    = 6484,
+  NV_VOC_CAL_EC_PARAMS_HEADSET_I                 = 6485,
+  NV_VOC_CAL_EC_PARAMS_AEC_I                     = 6486,
+  NV_VOC_CAL_EC_PARAMS_SPEAKER_I                 = 6487,  
+  NV_ESN_OVER_WRITE_I                            = 6488,
+#endif  
+  
+  NV_MAX_I                                       = 6489
 
 #ifdef FEATURE_NV_RPC_SUPPORT
    , NV_ITEMS_ENUM_MAX                             = 0x7fffffff

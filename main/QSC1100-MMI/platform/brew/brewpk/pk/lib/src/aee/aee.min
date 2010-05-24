@@ -28,3 +28,4 @@ AEE_OBJS :=  $(addprefix $(TARGETDIR)/, $(AEE_SOURCES:%.c=%.o))
 $(AEE_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 
 AEE_DEPS :=  $(addprefix $(TARGETDIR)/, $(AEE_SOURCES:%.c=%.dep))
+$(warning $(AEE_OBJS))

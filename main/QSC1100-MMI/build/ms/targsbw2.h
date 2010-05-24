@@ -5,7 +5,6 @@ FILE: TARGSBW2
 
 Copyright (c) 2001-2009 by QUALCOMM Incorporated.  All Rights Reserved.        
 =========================================================================== */
-#error Targsb2.h
 #define T_QSC1100
 
 #define FLASH_NOR_EFS2_START_BYTE_OFFSET 0x00600000

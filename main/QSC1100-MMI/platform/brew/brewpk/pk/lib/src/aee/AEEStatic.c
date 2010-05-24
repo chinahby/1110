@@ -27,7 +27,7 @@ Copyright © 1999-2007 QUALCOMM Incorporated.
 #include "AEE_OEM.h"
 #include "AEEStatic_priv.h"
 #include "AEEStdLib.h"
-#include "AEE_MIF.h"
+//#include "AEE_MIF.h"
 #include "AEEText.h"
 #include "AEEPointerHelpers.h"
 

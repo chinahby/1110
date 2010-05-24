@@ -34,9 +34,12 @@ INCLUDE FILES FOR MODULE
 
 #include "AEE_OEM.h"
 #include "AEEStdLib.h"
-#include "AEETime_priv.h"
+//#include "AEETime_priv.h"
 #include "AEEPointerHelpers.h"
 
+#include "AEETime.h"
+#include "OEMFeatures.h"
+#include "Appscommon.h"
 /*===========================================================================
 
 DEFINITIONS
@@ -58,7 +61,7 @@ DEFINITIONS
 #define SNOOZE_MSECS             (15l * 60l * 1000l)  // 15 minutes...
 #define MAX_TIME_STRING          (16)
 
-
+#define TIMECTL_BG_COLOR      (APPSCOMMON_BG_COLOR)
 /*===========================================================================
 
 Class Definitions
@@ -99,6 +102,10 @@ OBJECT(TimeCtl)
    int            m_nHitData; // -1 means nothing
 
    AECHAR         m_szLast[MAX_TIME_STRING + 1];
+
+   uint32         m_dwOemProperties;
+   int            m_nEditingDigit;
+   RGBVAL     m_nBgColor;
 };
 
 #define IsAlarmClock(x)    ((x)->m_cls == AEECLSID_CLOCKCTL)
@@ -143,6 +150,9 @@ static int16   TimeCtl_BumpCDTime(int16 nVal, int nDir,int16 nMax);
 static void    TimeCtl_SetTextSizeCache(TimeCtl * pme);
 static int     TimeCtl_FieldHit(TimeCtl * pme, int16 wXPos, int16 wYPos);
 
+static void    ITimeCtl_SetOemProperties(ITimeCtl * po, uint32 dwProp);
+
+static void    ITimeCtl_SetBgColor(ITimeCtl * po, RGBVAL nBgColor);
 //---------------------------------------------------------------------
 // Global Data Definitions
 //---------------------------------------------------------------------
@@ -167,7 +177,9 @@ static const VTBL(ITimeCtl) gTimeFuncs = {
     ITimeCtl_SetEditField,
     ITimeCtl_SetFont,
     ITimeCtl_GetFont,
-    ITimeCtl_SizeToFit
+    ITimeCtl_SizeToFit,
+    ITimeCtl_SetOemProperties
+    ,ITimeCtl_SetBgColor
 };
 
 /*===========================================================================
@@ -230,6 +242,7 @@ int TimeCtl_New(IShell * ps,AEECLSID cls, void ** ppobj)
    // initialize default fonts
    pme->m_fntNum = AEE_FONT_LARGE;
    pme->m_fntLetter = AEE_FONT_BOLD;
+   pme->m_nBgColor = TIMECTL_BG_COLOR;
 
    // set text size fields
    TimeCtl_SetTextSizeCache( pme );
@@ -280,6 +293,8 @@ static uint32 ITimeCtl_Release(ITimeCtl * po)
 Public Method - Event handler for time control. 
 
 ======================================================================*/
+#define FEATURE_EDIT_SINGLE_DIGIT   1
+
 static boolean ITimeCtl_HandleEvent(ITimeCtl * po, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
    TimeCtl *  pme = (TimeCtl*)po;
@@ -304,6 +319,11 @@ static boolean ITimeCtl_HandleEvent(ITimeCtl * po, AEEEvent eCode, uint16 wParam
       // Fall Thru!!!
 
          case AVK_UP:
+            if( IsCountDown(pme) && ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE))
+            {
+                return FALSE;
+            }
+            else
             {
             int16          nHours, nMins, nSecs,nHSecs;
             boolean        bPM;
@@ -360,7 +380,19 @@ static boolean ITimeCtl_HandleEvent(ITimeCtl * po, AEEEvent eCode, uint16 wParam
 
           case AVK_RIGHT:
             nIdx = pme->m_nSelect;
-            nIdx += nlrDir;
+
+#if FEATURE_EDIT_SINGLE_DIGIT
+            if( IsCountDown(pme) &&
+                ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE) &&
+                pme->m_nEditingDigit % 2 != wParam - AVK_LEFT
+            )
+            {
+                pme->m_nEditingDigit += nlrDir / 3;
+            }
+            else
+#endif
+            {
+                nIdx += nlrDir;
 
             nMaxIdx = AMPM_IDX;
 
@@ -379,19 +411,128 @@ static boolean ITimeCtl_HandleEvent(ITimeCtl * po, AEEEvent eCode, uint16 wParam
                   break;
             }
             if(nIdx < 0){
-               if(!ISHELL_HandleEvent(pme->m_pShell, EVT_CTL_TAB, (uint16)0, (uint32)po))
+#if !defined( AEE_SIMULATOR)
+                   if(!ISHELL_HandleEvent(pme->m_pShell, EVT_CTL_TAB, (uint16)0, (uint32)po))
+#endif
                   nIdx = nMaxIdx;
             }
             else{
                if(nIdx > nMaxIdx){
-                 if(!ISHELL_HandleEvent(pme->m_pShell, EVT_CTL_TAB, (uint16)1, (uint32)po))
+#if !defined( AEE_SIMULATOR)
+                     if(!ISHELL_HandleEvent(pme->m_pShell, EVT_CTL_TAB, (uint16)1, (uint32)po))
+#endif
                      nIdx = 0;
                }
             }
             pme->m_nSelect = nIdx;
+#if FEATURE_EDIT_SINGLE_DIGIT
+                pme->m_nEditingDigit = pme->m_nSelect / 3 * 2 + ( wParam == AVK_LEFT ?  1 : 0);
+#else
+                pme->m_nEditingDigit = pme->m_nSelect / 3 * 2;
+#endif
+            }
             ITimeCtl_Redraw(po);
             return(TRUE);
+     }
+    if( IsCountDown( pme) &&
+        ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE) &&
+        wParam >= AVK_0 &&
+        wParam <= AVK_9
+    )
+    {
 
+        int16   timeHM[4]   = {0};
+        int16   timePart[2] = {0};
+        int     editField   = pme->m_nSelect / 3;
+        int     digit       = wParam - AVK_0;
+
+        int     hourLowerLimit  = 0;
+        int     hourUpperLimit  = 23;
+        boolean bPM             = FALSE;
+        boolean ampmFormat      = pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_12_FORMAT;
+
+        if( ampmFormat)
+        {
+            hourLowerLimit  = 1;
+            hourUpperLimit  = 12;
+        }
+
+        if( ( pme->m_nEditingDigit < (editField * 2)) || ( pme->m_nEditingDigit > (editField * 2 + 1)))
+        {
+            pme->m_nEditingDigit = editField * 2;
+        }
+
+        aee_MSECSToHM(pme->m_dwTime, &timeHM[0], &timeHM[1], &timeHM[2], &timeHM[3], ampmFormat?&bPM:0);
+
+        timePart[1] = timeHM[editField] % 10;
+        timePart[0] = timeHM[editField] / 10;
+
+        timePart[pme->m_nEditingDigit % 2] = digit;
+        if( pme->m_nEditingDigit == 0 &&
+            ( timePart[0] * 10 + timePart[1]) > hourUpperLimit
+        )
+        {
+            timePart[1] = hourUpperLimit % 10;
+        }
+        if( pme->m_nEditingDigit == 0 &&
+            ( timePart[0] * 10 + timePart[1]) < hourLowerLimit
+        )
+        {
+            timePart[1] = hourLowerLimit % 10;
+        }
+        timeHM[editField] = timePart[0] * 10 + timePart[1];
+        if( timeHM[0] >= hourLowerLimit && timeHM[0] <= hourUpperLimit && timeHM[1] < 60 && timeHM[2] < 100)
+        {
+            CtlValChange    v           = {0};
+            int             maxField    = ( pme->m_dwProps & TP_NO_SECONDS) ? 3 : 6;
+
+            v.dwParam   = TimeCtl_HMToMSECS( timeHM[0], timeHM[1], timeHM[2], bPM, ampmFormat);
+            v.pc        = (IControl *)pme;
+            v.bValid    = TRUE;
+            if( ISHELL_HandleEvent(pme->m_pShell, EVT_CTL_CHANGING, 0, (uint32)&v))
+            {
+                if( !v.bValid)
+                {
+                    return FALSE;
+                }
+            }
+
+            pme->m_dwTime = v.dwParam;
+
+            if( pme->m_nEditingDigit % 2 == 1)
+            {
+                pme->m_nSelect += 3;
+            }
+
+            if( pme->m_nSelect > maxField)
+            {
+                pme->m_nSelect = maxField;
+            }
+            else
+            {
+                pme->m_nEditingDigit ++;
+            }
+
+            ITimeCtl_Redraw(po);
+            return(TRUE);
+        }
+
+        return FALSE;
+    }
+
+    if( IsCountDown( pme) &&
+        ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_12_FORMAT) &&
+#if defined( AEE_SIMULATOR)
+        wParam == AVK_STAR
+#else
+        (wParam == AVK_INFO || wParam == AVK_STAR)
+#endif
+    )
+    {
+        pme->m_dwTime += 12 * 60 * 60 * 1000;
+        pme->m_dwTime %= 24 * 60 * 60 * 1000;
+        ITimeCtl_Redraw(po);
+        return TRUE;
      }
   }
   if( eCode == EVT_POINTER_STALE_MOVE || eCode == EVT_POINTER_MOVE ){
@@ -453,7 +594,10 @@ static void ITimeCtl_SetActive(ITimeCtl * po, boolean bActive)
       pme->m_bActive = bActive;
       TimeCtl_SetErase(pme);
       if(!bActive)
-         pme->m_nSelect = 0; 
+      {
+         pme->m_nSelect = 0;
+         pme->m_nEditingDigit = 0;
+      }
       if(pme->m_dwProps & TP_AUTOREDRAW)
          TimeCtl_Redraw(pme,FALSE);
    }
@@ -536,6 +680,7 @@ static void ITimeCtl_Reset(ITimeCtl * po)
 
    pme->m_bActive = FALSE;
    pme->m_nSelect = 0;
+   pme->m_nEditingDigit = 0;
    pme->m_nHitData = -1;
    TimeCtl_SetErase(pme);
 }
@@ -563,8 +708,9 @@ static void ITimeCtl_GetTimeString(ITimeCtl * po, uint32 dwSecs, AECHAR * pDest,
    if(wFlags & GTS_SECS || wFlags & GTS_MSECS)
       SPRINTF(szTemp + STRLEN(szTemp),":%02d", wSecs);
 
-   if(wFlags & GTS_MSECS) { 
-      SPRINTF(szTemp + STRLEN(szTemp),".%02d",wHSecs);
+   if(wFlags & GTS_MSECS) 
+   { 
+	  SPRINTF(szTemp + STRLEN(szTemp),".%02d",wHSecs);
    }
 
    if(wFlags & GTS_AMPM)
@@ -724,13 +870,24 @@ static void ITimeCtl_SizeToFit(ITimeCtl * po, AEERect *prc)
    switch(pme->m_cls){
 
       case AEECLSID_CLOCKCTL:
-         wFlags |= GTS_AMPM;
-         break;
+        //ERR("pme->m_dwProps = %x",pme->m_dwProps,0,0);
+        if(!(pme->m_dwProps & TP_24_FORMAT))
+        {
+            wFlags |= GTS_AMPM;
+        }
+        break;
 
       case AEECLSID_STOPWATCHCTL:
          if(!(pme->m_dwProps & TP_NO_MSECONDS))
             wFlags |= GTS_MSECS;
          break;
+
+      case AEECLSID_COUNTDOWNCTL:
+          if( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_12_FORMAT)
+          {
+              wFlags |= GTS_AMPM;
+          }
+          break;
    }
 
    ITimeCtl_GetTimeString((ITimeCtl *)pme, pme->m_dwTime, szBuff, sizeof(szBuff), wFlags);
@@ -761,6 +918,8 @@ Public Method - Sets the active edit field.  See AEETime.h
 static void ITimeCtl_SetEditField(ITimeCtl * po, ITField field)
 {
    ((TimeCtl *)po)->m_nSelect = (uint16)field * 3;
+
+     ((TimeCtl *)po)->m_nEditingDigit = field * 2;
 }
 
 /*=====================================================================
@@ -842,7 +1001,8 @@ static int TimeCtl_TimeText(TimeCtl * pme, AECHAR * pBuff,int x,boolean bDraw)
    AEEFont        fnt;
    AEERect        rc;
    uint32         dwFlags = 0;
-   int nResult = EFAILED;
+   RGBVAL       nOldFontColor;
+   int nResult = AEE_SUCCESS;
 
    nHiIdx = (pme->m_bActive ? pme->m_nSelect : -1);
 
@@ -882,7 +1042,13 @@ static int TimeCtl_TimeText(TimeCtl * pme, AECHAR * pBuff,int x,boolean bDraw)
       pme->m_bSmallDisplay = bAllSmall;
    }
 
-   if(pme->m_bErase && bDraw){
+   if( IsCountDown( pme) && ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE) && !pme->m_bActive)
+   {
+       pme->m_bErase = TRUE;
+   }
+
+   if (pme->m_bErase && bDraw)
+    {
 
    // Reset the last time displayed...
 
@@ -890,6 +1056,17 @@ static int TimeCtl_TimeText(TimeCtl * pme, AECHAR * pBuff,int x,boolean bDraw)
       IDISPLAY_FillRect(pd, &pme->m_rc, CLR_USER_BACKGROUND);
       pme->m_bErase = FALSE;
    }
+    if ( IsStopWatch( pme))
+    {
+        if(pme->m_dwOemProperties & TP_OEM_CUSTOM_BG_COLOR)
+        {
+            Appscommon_ResetBackgroundEx(pd, &pme->m_rc, FALSE);
+        }
+        else
+        {
+            IDISPLAY_FillRect(pd, &pme->m_rc, pme->m_nBgColor/*RGB_BLACK*/);
+        }
+    }
 
    // Draw or measure each character...
 
@@ -925,14 +1102,49 @@ static int TimeCtl_TimeText(TimeCtl * pme, AECHAR * pBuff,int x,boolean bDraw)
          if(!(pme->m_dwProps & TP_LEFT_JUSTIFY))
             dwFlags |= IDF_ALIGN_CENTER;
 
-         if(nHiIdx >= 0 && nHiIdx <= i){
-            dwFlags |= IDF_TEXT_INVERTED;
-            if(bAlready)
-               nHiIdx = -1;
+#if FEATURE_EDIT_SINGLE_DIGIT
+            if( IsCountDown( pme) && ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE))
+            {
+                if( ( i - pme->m_nSelect / 3) == pme->m_nEditingDigit)
+                {
+                    dwFlags |= IDF_TEXT_INVERTED;
+                }
+            }
             else
-               bAlready = TRUE;
-         }
+#endif
+            if (nHiIdx >= 0 && nHiIdx <= i)
+            {
+                dwFlags |= IDF_TEXT_INVERTED;
+                if (bAlready)
+                    nHiIdx = -1;
+                else
+                    bAlready = TRUE;
+            }
 
+		   if ( IsStopWatch( pme))
+            {
+                nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, RGB_WHITE);
+                dwFlags |= IDF_TEXT_TRANSPARENT;
+            }
+
+            else if( IsCountDown( pme) && ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE))
+            {
+				if( !pme->m_bActive)
+				{
+                    nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, 0x84848400);
+                	dwFlags &= ~IDF_TEXT_INVERTED;
+                	fnt = AEE_FONT_BOLD;
+				}
+				else if( fnt == AEE_FONT_BOLD)
+				{
+					IDISPLAY_FillRect( pd, &rc, CLR_USER_BACKGROUND);
+				}
+            }
+            /* must get the former font color and then set it back, or some interface might display the wrong color!*/
+            else
+            {
+                nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, RGB_BLACK);
+            }
          IDISPLAY_DrawText(pd,fnt,pch,1,rc.x,rc.y,&rc,dwFlags);
       }
 
@@ -984,13 +1196,24 @@ static void TimeCtl_Redraw(TimeCtl * pme, boolean bSave)
    switch(pme->m_cls){
 
       case AEECLSID_CLOCKCTL:
-         wFlags |= GTS_AMPM;
-         break;
+        //ERR("pme->m_dwProps1 = %x",pme->m_dwProps,0,0);
+        if(!(pme->m_dwProps & TP_24_FORMAT))
+        {
+             wFlags |= GTS_AMPM;
+        }
+        break;
 
       case AEECLSID_STOPWATCHCTL:
          if(!(dwProps & TP_NO_MSECONDS))
             wFlags |= GTS_MSECS;
          break;
+
+      case AEECLSID_COUNTDOWNCTL:
+          if( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_12_FORMAT)
+          {
+              wFlags |= GTS_AMPM;
+          }
+          break;
    }
 
    ITimeCtl_GetTimeString((ITimeCtl *)pme, pme->m_dwTime, szBuff, sizeof(szBuff), wFlags);
@@ -1162,6 +1385,10 @@ static int TimeCtl_FieldHit(TimeCtl * pme, int16 wXPos, int16 wYPos)
          wFlags |= GTS_AMPM;
       }
 
+      if( IsCountDown( pme) && ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_12_FORMAT))
+      {
+          wFlags |= GTS_AMPM;
+      }
       ITimeCtl_GetTimeString((ITimeCtl *)pme, pme->m_dwTime, szwBuff, sizeof(szwBuff), wFlags);
 
       // Not Left Justified so CENTER text
@@ -1213,3 +1440,18 @@ static int TimeCtl_FieldHit(TimeCtl * pme, int16 wXPos, int16 wYPos)
    return -1;
 }
 
+static void ITimeCtl_SetOemProperties(ITimeCtl * po, uint32 dwProp)
+{
+   TimeCtl * pme = (TimeCtl *)po;
+
+   pme->m_dwOemProperties = dwProp;
+}
+static void    ITimeCtl_SetBgColor(ITimeCtl * po, RGBVAL nBgColor)
+{
+    TimeCtl * pme = (TimeCtl *)po;
+
+    if(NULL != pme)
+    {
+        pme->m_nBgColor = nBgColor;
+    }
+}

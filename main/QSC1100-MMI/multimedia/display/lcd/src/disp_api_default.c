@@ -109,8 +109,13 @@ static void mdp_init(void);
 
 void disp_init(void)
 {
+#ifndef CUST_EDITION
   if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
     return;
+#else
+  if(tm_sctn128x128_install(PRIMARY_LCD_NAME) == -1)
+    return;  
+#endif
 
   fd = drv_open(PRIMARY_LCD_NAME);
   drv_init(fd);

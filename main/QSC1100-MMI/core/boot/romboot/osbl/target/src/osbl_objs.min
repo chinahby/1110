@@ -56,7 +56,6 @@ vpath %.c $(BOOT_COMMON_SHARED_ELF_LOADER)
 #vpath %.s $(BOOT)
 #vpath %.c $(BOOT)
 
-
 include $(BOOT)/oemsbl_drivers_boot.min
 include $(BIO)/oemsbl_drivers_bio.min
 #include $(CLKREGIM)/oemsbl_clkregim.min
@@ -75,6 +74,11 @@ ifeq ($(USES_OSBL_CHG_SCREEN),yes)
 include $(LCD_SRC)/lcd.min
 include $(DRVLIB_SRC)/drvLib.min
 endif
+
+#lucid Add for Keypad support int OSBL
+include $(KPD)/kpd.min
+
+
 #include $(CLKREGIM)/clkregim.min
 
 
