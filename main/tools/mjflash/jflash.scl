@@ -1,0 +1,26 @@
+###################################################
+##  GENERATED FILE - DO NOT EDIT
+##                                    
+## generated:  Sun Apr 25 00:38:46 PDT 2010                 
+###################################################
+RAM  0x08000000 
+{
+    CODE  0x08000000  
+    {
+      jfstart.o (StartHere, +FIRST)
+      jf.o (+RO)
+      * (+RO)
+    }
+    APP_RAM +0x0
+    {
+      * (+RW, +ZI)
+    }
+    ID_RAM +0x0
+    {
+      jf_id.o (+RO)
+    }
+    PARAM  0x08080000 
+    {
+      jfparam.o (+ZI)
+    }
+}

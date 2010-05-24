@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="walk" VERSION="1">
+<Objects MimeType="image/png">
+	<Object Id="5001" Name="IDI_WALK_ANI_1">
+		<File>..\..\Appscommon\images\color\sports\Anime\walk01.png</File>
+	</Object>
+	<Object Id="5002" Name="IDI_WALK_ANI_2">
+		<File>..\..\Appscommon\images\color\sports\Anime\walk02.png</File>
+	</Object>
+	<Object Id="5003" Name="IDI_WALK_ANI_3">
+		<File>..\..\Appscommon\images\color\sports\Anime\walk03.png</File>
+	</Object>
+	<Object Id="5004" Name="IDI_WALK_ANI_4">
+		<File>..\..\Appscommon\images\color\sports\Anime\walk04.png</File>
+	</Object>
+</Objects>
+</BREWRes>

@@ -1,0 +1,48 @@
+#-------------------------------------------------------------------------------
+# BTHOSTSTATAPP - Bluetooth Host Static Application
+#
+# $Header: //source/qcom/qct/wconnect/bthost/brew/statapp/main/latest/src/bthoststatapp.min#1 $ 
+# $DateTime: 2008/03/27 13:45:55 $ 
+# $Author: deepikas $
+#-------------------------------------------------------------------------------
+BT_APP_INC = $(BLUETOOTH)
+BT_APP_RES = $(BLUETOOTH)/resources
+BT_APP_SRC = $(BLUETOOTH)
+BT_APP_LIB = $(BLUETOOTH)
+
+BT_APP_SOURCES=\
+        bt_ui_app.c \
+        bt_ui_dm.c \
+        bt_ui_ht_ui.c \
+        bt_ui_ht_win.c \
+        bt_ui_ht_db.c \
+        bt_ui_cfg.c \
+        bt_ui_ag.c \
+        bt_ui_ht_common.c \
+        bt_ui_opc.c \
+        bt_ui_ops.c \
+	bt_ui_fts.c
+
+BT_APP_OBJS :=  $(addprefix $(TARGETDIR)/, $(BT_APP_SOURCES:%.c=%.o))
+$(BT_APP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(BT_APP_SRC)
+vpath %.bar $(BT_APP_RES)
+vpath %.brx $(BT_APP_RES)
+
+CONSTFILE_FILES+=\
+        bluetooth.mif|fs:/mif/bluetooth.mif \
+        bluetooth.bar|fs:/mod/bluetooth/en/bluetooth.bar
+        
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG1)bluetooth.bar|fs:/mod/bluetooth/$(EXTLANG1)/bluetooth.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)bluetooth.bar|fs:/mod/bluetooth/$(EXTLANG2)/bluetooth.bar
+endif
+INC  += $(BT_APP_INC) $(BT_APP_RES)
+SRC  += $(BT_APP_SOURCES)
+OBJECTS+=$(BT_APP_OBJS)
+#LIBS += 

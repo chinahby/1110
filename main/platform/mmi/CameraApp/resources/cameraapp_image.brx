@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="cameraapp_image" VERSION="1">
+<Objects MimeType="image/png">
+	<Object Id="5001" Name="IDI_ENV_AUTO">
+		<File>..\..\Appscommon\images\color\CameraApp\AutoMode.png</File>
+	</Object>
+	<Object Id="5002" Name="IDI_ENV_SUNNY">
+		<File>..\..\Appscommon\images\color\CameraApp\SunnyMode.PNG</File>
+	</Object>
+	<Object Id="5003" Name="IDI_ENV_CLOUDY">
+		<File>..\..\Appscommon\images\color\CameraApp\CloudyMode.PNG</File>
+	</Object>
+	<Object Id="5004" Name="IDI_ENV_NIGHT">
+		<File>..\..\Appscommon\images\color\CameraApp\NightMode.PNG</File>
+	</Object>
+	<Object Id="5005" Name="IDI_QUALITY_HIGH">
+		<File>..\..\Appscommon\images\color\CameraApp\high.PNG</File>
+	</Object>
+	<Object Id="5006" Name="IDI_QUALITY_MED">
+		<File>..\..\Appscommon\images\color\CameraApp\med.PNG</File>
+	</Object>
+	<Object Id="5007" Name="IDI_QUALITY_LOW">
+		<File>..\..\Appscommon\images\color\CameraApp\low.PNG</File>
+	</Object>
+	<Object Id="5008" Name="IDI_SIZE_176_220">
+		<File>..\..\Appscommon\images\color\CameraApp\176_220.PNG</File>
+	</Object>
+	<Object Id="5009" Name="IDI_SIZE_320_240">
+		<File>..\..\Appscommon\images\color\CameraApp\320_240.PNG</File>
+	</Object>
+	<Object Id="5010" Name="IDI_SIZE_640_480">
+		<File>..\..\Appscommon\images\color\CameraApp\640_480.PNG</File>
+	</Object>
+	<Object Id="5011" Name="IDI_SIZE_1280_960">
+		<File>..\..\Appscommon\images\color\CameraApp\1280_960.PNG</File>
+	</Object>
+	<Object Id="5012" Name="IDI_SIZE_1600_1200">
+		<File>..\..\Appscommon\images\color\CameraApp\1600_1200.PNG</File>
+	</Object>
+	<Object Id="5013" Name="IDI_TONE_ENABLE">
+		<File>..\..\Appscommon\images\color\CameraApp\Enable.PNG</File>
+	</Object>
+	<Object Id="5014" Name="IDI_TONE_DISABLE">
+		<File>..\..\Appscommon\images\color\CameraApp\Disable.PNG</File>
+	</Object>
+	<Object Id="5015" Name="IDI_SELFTIME_OFF">
+		<File>..\..\Appscommon\images\color\CameraApp\selfTimeOff.PNG</File>
+	</Object>
+	<Object Id="5016" Name="IDI_SELFTIME_5">
+		<File>..\..\Appscommon\images\color\CameraApp\Sec_5.PNG</File>
+	</Object>
+	<Object Id="5017" Name="IDI_SELFTIME_10">
+		<File>..\..\Appscommon\images\color\CameraApp\Sec_10.PNG</File>
+	</Object>
+	<Object Id="5018" Name="IDI_SELFTIME_15">
+		<File>..\..\Appscommon\images\color\CameraApp\Sec_15.PNG</File>
+	</Object>
+	<Object Id="5019" Name="IDI_CAPTURE_OFF">
+		<File>..\..\Appscommon\images\color\CameraApp\captureOff.png</File>
+	</Object>
+	<Object Id="5020" Name="IDI_CAPTURE_1">
+		<File>..\..\Appscommon\images\color\CameraApp\shot_1.PNG</File>
+	</Object>
+	<Object Id="5021" Name="IDI_CAPTURE_3">
+		<File>..\..\Appscommon\images\color\CameraApp\shot_3.PNG</File>
+	</Object>
+	<Object Id="5022" Name="IDI_CAPTURE_5">
+		<File>..\..\Appscommon\images\color\CameraApp\shot_5.PNG</File>
+	</Object>
+	<Object Id="5023" Name="IDI_BANDING_50">
+		<File>..\..\Appscommon\images\color\CameraApp\50_Hz.PNG</File>
+	</Object>
+	<Object Id="5024" Name="IDI_BANDING_60">
+		<File>..\..\Appscommon\images\color\CameraApp\60_Hz.PNG</File>
+	</Object>
+	<Object Id="5025" Name="IDI_STORAGE_SDCARD">
+		<File>..\..\Appscommon\images\color\CameraApp\SDCard.PNG</File>
+	</Object>
+	<Object Id="5026" Name="IDI_STORAGE_PHONE">
+		<File>..\..\Appscommon\images\color\CameraApp\phone.PNG</File>
+	</Object>
+	<Object Id="5027" Name="IDI_BRIGHTNESS_LEVEL1">
+		<File>..\..\Appscommon\images\color\CameraApp\level1.PNG</File>
+	</Object>
+	<Object Id="5028" Name="IDI_BRIGHTNESS_LEVEL2">
+		<File>..\..\Appscommon\images\color\CameraApp\level2.PNG</File>
+	</Object>
+	<Object Id="5029" Name="IDI_BRIGHTNESS_LEVEL3">
+		<File>..\..\Appscommon\images\color\CameraApp\level3.PNG</File>
+	</Object>
+	<Object Id="5030" Name="IDI_BRIGHTNESS_LEVEL4">
+		<File>..\..\Appscommon\images\color\CameraApp\level4.PNG</File>
+	</Object>
+	<Object Id="5031" Name="IDI_BRIGHTNESS_LEVEL5">
+		<File>..\..\Appscommon\images\color\CameraApp\level5.PNG</File>
+	</Object>
+	<Object Id="5032" Name="IDI_ZOOM_1">
+		<File>..\..\Appscommon\images\color\CameraApp\zoom1.PNG</File>
+	</Object>
+	<Object Id="5033" Name="IDI_ZOOM_2">
+		<File>..\..\Appscommon\images\color\CameraApp\zoom2.PNG</File>
+	</Object>
+	<Object Id="5034" Name="IDI_ZOOM_3">
+		<File>..\..\Appscommon\images\color\CameraApp\zoom3.PNG</File>
+	</Object>
+	<Object Id="5035" Name="IDI_ZOOM_4">
+		<File>..\..\Appscommon\images\color\CameraApp\zoom4.PNG</File>
+	</Object>
+	<Object Id="5036" Name="IDI_ZOOM_5">
+		<File>..\..\Appscommon\images\color\CameraApp\zoom5.PNG</File>
+	</Object>
+	<Object Id="5037" Name="IDI_MID_CAMERA">
+		<File>..\..\Appscommon\images\color\CameraApp\camera.png</File>
+	</Object>
+	<Object Id="5038" Name="IDI_MID_VIDEO">
+		<File>..\..\Appscommon\images\color\CameraApp\video.png</File>
+	</Object>
+	<Object Id="5039" Name="IDI_POPMENU_BG">
+		<File>..\..\Appscommon\images\color\CameraApp\popmenubg.png</File>
+	</Object>
+	<Object Id="5040" Name="IDI_FRAME_1">
+		<File>..\..\Appscommon\images\color\CameraApp\frame1.png</File>
+	</Object>
+	<Object Id="5041" Name="IDI_FRAME_2">
+		<File>..\..\Appscommon\images\color\CameraApp\frame2.png</File>
+	</Object>
+	<Object Id="5042" Name="IDI_FRAME_3">
+		<File>..\..\Appscommon\images\color\CameraApp\frame3.png</File>
+	</Object>
+	<Object Id="5043" Name="IDI_FRAME_4">
+		<File>..\..\Appscommon\images\color\CameraApp\frame4.png</File>
+	</Object>
+	<Object Id="5044" Name="IDI_FRAME_5">
+		<File>..\..\Appscommon\images\color\CameraApp\frame5.PNG</File>
+	</Object>
+	<Object Id="5045" Name="IDI_FRAME_6">
+		<File>..\..\Appscommon\images\color\CameraApp\frame6.png</File>
+	</Object>
+	<Object Id="5046" Name="IDI_FRAME_7">
+		<File>..\..\Appscommon\images\color\CameraApp\frame7.png</File>
+	</Object>
+	<Object Id="5047" Name="IDI_FRAME_8">
+		<File>..\..\Appscommon\images\color\CameraApp\frame8.png</File>
+	</Object>
+	<Object Id="5048" Name="IDI_SCROLLBAR">
+		<File>..\..\Appscommon\images\color\CameraApp\scrollbar.png</File>
+	</Object>
+	<Object Id="5049" Name="IDI_TOPBAR_BG">
+		<File>..\..\Appscommon\images\color\CameraApp\topbarbg.png</File>
+	</Object>
+	<Object Id="5050" Name="IDI_CCFG_BAR">
+		<File>..\..\Appscommon\images\color\CameraApp\Ccfgbar.png</File>
+	</Object>
+	<Object Id="5051" Name="IDI_VCFG_BAR">
+		<File>..\..\Appscommon\images\color\CameraApp\Vcfgbar.png</File>
+	</Object>
+	<Object Id="5052" Name="IDI_CFG_BG">
+		<File>..\..\Appscommon\images\color\CameraApp\cfgbarbg.png</File>
+	</Object>
+	<Object Id="5053" Name="IDI_CHOOSE_REC">
+		<File>..\..\Appscommon\images\color\CameraApp\chooserec.png</File>
+	</Object>
+	<Object Id="5054" Name="IDI_SCROLLBAR_BG">
+		<File>..\..\Appscommon\images\color\CameraApp\scrollbarbg.png</File>
+	</Object>
+	<Object Id="5055" Name="IDI_LEFT_ARROW">
+		<File>..\..\Appscommon\images\color\CameraApp\leftArrow.png</File>
+	</Object>
+	<Object Id="5056" Name="IDI_RIGHT_ARROW">
+		<File>..\..\Appscommon\images\color\CameraApp\rightArrow.png</File>
+	</Object>
+	<Object Id="5057" Name="IDI_COUNT_DOWN">
+		<File>..\..\Appscommon\images\color\CameraApp\countdown.png</File>
+	</Object>
+	<Object Id="5058" Name="IDI_CAMERA_BUSY">
+		<File>..\..\Appscommon\images\color\CameraApp\busystate.png</File>
+	</Object>
+	<Object Id="5059" Name="IDI_TOPBAR_BG_VERTU">
+		<File>..\..\Appscommon\images\color\CameraApp\topbarbg_vertu.png</File>
+	</Object>
+	<Object Id="5060" Name="IDI_CFG_BG_VERTU">
+		<File>..\..\Appscommon\images\color\CameraApp\cfgbarbg_vertu.png</File>
+	</Object>
+	<Object Id="5061" Name="IDI_SCROLLBAR_BG_VERTU">
+		<File>..\..\Appscommon\images\color\CameraApp\scrollbarbg_vertu.png</File>
+	</Object>
+</Objects>
+</BREWRes>

@@ -1,0 +1,11 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+ISMSMsg simulation
+
+ISMSMsg is simulated.
+See Also:
+ISMS Simulation
+==========================
+*/ 

@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "aeemenuctlex", "aeemenuctlex.vcproj", "{F96771AE-CCC5-4AA5-ACC1-317216DE51BA}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 1
+		SccProjectUniqueName0 = aeemenuctlex.vcproj
+		SccProjectName0 = aeemenuctlex
+		SccLocalPath0 = ..\\..
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+		SccProjectFilePathRelativizedFromConnection0 = HEAD\\aeemenuctlex\\
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{F96771AE-CCC5-4AA5-ACC1-317216DE51BA}.Debug.ActiveCfg = Debug|Win32
+		{F96771AE-CCC5-4AA5-ACC1-317216DE51BA}.Debug.Build.0 = Debug|Win32
+		{F96771AE-CCC5-4AA5-ACC1-317216DE51BA}.Release.ActiveCfg = Release|Win32
+		{F96771AE-CCC5-4AA5-ACC1-317216DE51BA}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

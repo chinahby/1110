@@ -1,0 +1,23 @@
+#-------------------------------------------------------------------------------
+# OEM Extension For 3PART
+#-------------------------------------------------------------------------------
+OEMEXTFOR3PART_INC = $(OEMEXTFOR3PART)
+OEMEXTFOR3PART_RES = $(OEMEXTFOR3PART)/resources
+OEMEXTFOR3PART_SRC = $(OEMEXTFOR3PART)
+OEMEXTFOR3PART_LIB = $(OEMEXTFOR3PART)
+
+OEMEXTFOR3PART_SOURCES=	\
+		OEMExtFor3Part.c
+        
+OEMEXTFOR3PART_OBJS := $(addprefix $(TARGETDIR)/, $(OEMEXTFOR3PART_SOURCES:%.c=%.o))
+$(OEMEXTFOR3PART_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(OEMEXTFOR3PART_SRC)
+
+CONSTFILE_FILES+=\
+	oemextfor3part.mif|fs:/mif/oemextfor3part.mif
+
+INC  += $(OEMEXTFOR3PART_INC) $(OEMEXTFOR3PART_RES)
+#SRC  += $(OEMEXTFOR3PART_SOURCES)
+OBJECTS+=$(OEMEXTFOR3PART_OBJS)
+#LIBS += 

@@ -1,0 +1,39 @@
+#-------------------------------------------------------------------------------
+# Esurfing - Esurfing Application
+#-------------------------------------------------------------------------------
+ESURFING_INC = $(ESURFING)
+ESURFING_RES = $(ESURFING)/resources
+ESURFING_SRC = $(ESURFING)
+ESURFING_LIB = $(ESURFING)
+
+ESURFING_SOURCES=\
+	EsurfingApp.c\
+	EsurfingAppProt.c\
+	EsurfingDialogHandler.c\
+	EsurfingStateHandler.c
+
+ESURFING_OBJS :=  $(addprefix $(TARGETDIR)/, $(ESURFING_SOURCES:%.c=%.o))
+$(ESURFING_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(ESURFING_SRC)	
+vpath %.bar $(ESURFING_RES)
+vpath %.brx $(ESURFING_RES)
+
+CONSTFILE_FILES+=\
+    esurfing.mif|fs:/mif/esurfing.mif \
+    esurfing.bar|fs:/mod/esurfing/en/esurfing.bar
+
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG1)esurfing.bar|fs:/mod/esurfing/$(EXTLANG1)/esurfing.bar
+endif
+
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG2)esurfing.bar|fs:/mod/esurfing/$(EXTLANG2)/esurfing.bar
+endif
+
+INC  += $(ESURFING_INC) $(ESURFING_RES)
+#SRC  += $(ESURFING_SOURCES)
+OBJECTS+=$(ESURFING_OBJS)
+#LIBS += 

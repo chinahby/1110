@@ -1,0 +1,44 @@
+#-------------------------------------------------------------------------------
+# COREAPP - Core Application
+#-------------------------------------------------------------------------------
+COREAPP_INC = $(COREAPP)
+COREAPP_RES = $(COREAPP)/resources
+COREAPP_SRC = $(COREAPP)
+COREAPP_LIB = $(COREAPP)
+
+COREAPP_SOURCES=\
+	CoreApp.c \
+	CoreAppStateHandler.c \
+	CoreAppDialogHandler.c 
+
+	
+COREAPP_OBJS :=  $(addprefix $(TARGETDIR)/, $(COREAPP_SOURCES:%.c=%.o))
+$(COREAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(COREAPP_SRC)
+vpath %.bar $(COREAPP_RES)
+vpath %.brx $(COREAPP_RES)
+vpath %.png $(APPSCOMMON)/images/color/Pwronoffani
+
+
+CONSTFILE_FILES+=\
+	coreapp.mif|fs:/mif/coreapp.mif \
+	coreapp.bar|fs:/mod/coreapp/en/coreapp.bar \
+    tianyion.png|fs:/image/pwronoffani/tianyion.png \
+	tianyioff.png|fs:/image/pwronoffani/tianyioff.png \
+	charge.png|fs:/image/charge/charge.png
+
+# 加入另外一种语言资源文件
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG1)coreapp.bar|fs:/mod/coreapp/$(EXTLANG1)/coreapp.bar 
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)coreapp.bar|fs:/mod/coreapp/$(EXTLANG2)/coreapp.bar 
+endif
+
+INC  += $(COREAPP_INC) $(COREAPP_RES)
+#SRC  += $(COREAPP_SOURCES)
+OBJECTS+=$(COREAPP_OBJS)
+#LIBS += 
