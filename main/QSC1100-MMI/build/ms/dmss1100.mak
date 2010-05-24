@@ -619,6 +619,10 @@ ifeq ($(USES_KEYGUARD),yes)
 				OBJECTS += $(KEYGUARD_OBJS)
 endif
 
+ifeq ($(USES_BREW_AEE_SRC),yes)
+        OBJECTS += $(AEE_OBJS)
+endif
+
 endif
 
 ifeq ($(USES_MDDI),yes)
