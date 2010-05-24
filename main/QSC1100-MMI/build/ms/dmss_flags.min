@@ -61,6 +61,8 @@ CHECK_4_CERTIFICATES = ./check_4_certificates  # Waits for Certificates to be ge
 MOD_ELF_FLAGS= $(QCTHDRGENTOOLS)/modify_elf_flags
 RESERVE_HASH_SEG = $(HEADERGEN)/reserve_hash_seg.exe
 
+#Gemsea Add
+BREWRC=$(BREWTOOLSDIR)/ResourceEditor/brewrc
 #-------------------------------------------------------------------------------
 # Windows/Unix Copy
 #-------------------------------------------------------------------------------

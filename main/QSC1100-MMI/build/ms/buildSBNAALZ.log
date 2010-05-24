@@ -1,167 +1,666 @@
-../../modem/uim/nvruim/src/nvruim.min:20: 警告：覆盖关于目标“SXNAALZ/nvim_ruim.lib”的命令
-../../core/services/nv/nv.min:35: 警告：忽略关于目标“SXNAALZ/nvim_ruim.lib”的旧命令
-../../platform/brew/brewpk/pk/src/msm/oem.min:297: 目标“SXNAALZ/brewappmgrls.bar.o”在同一个规则中给出了多次。
-../../platform/brew/brewpk/pk/src/msm/oem.min:297: 目标“SXNAALZ/coreapp.bar.o”在同一个规则中给出了多次。
-../../platform/brew/brewpk/pk/src/msm/oem.min:297: 目标“SXNAALZ/coreapp.bar.o”在同一个规则中给出了多次。
-../../platform/brew/nonpkbrew/pk/src/msm/oem_nonpk.min:51: 警告：覆盖关于目标“SXNAALZ/oem.lib”的命令
-../../platform/brew/brewpk/pk/src/msm/oem.min:345: 警告：忽略关于目标“SXNAALZ/oem.lib”的旧命令
-../../asic/apps/StaticExtensions/oem/src/ext_oem.min:89: miaoxiaoming ../../asic/apps/StaticExtensions/bin/en/256color
-../../asic/apps/StaticExtensions/oem/src/ext_oem.min:94: miaoxiaoming brewappmgr.mif|fs:/mif/brewappmgr.mif brewappmgrcommon.bar|fs:/mod/brewappmgr/brewappmgrcommon.bar brewappmgrls.bar|fs:/mod/brewappmgr/en/brewappmgrls.bar brewappmgrln.bar|fs:/mod/brewappmgr/brewappmgrln.bar oemcfg.txt|fs:/mod/brewappmgr/oemcfg.txt brewappmgrls.bar|fs:/mod/brewappmgr//brewappmgrls.bar coreapp.mif|fs:/mif/coreapp.mif coreapp.bar|fs:/mod/coreapp/en/coreapp.bar tianyion.png|fs:/image/pwronoffani/tianyion.png tianyioff.png|fs:/image/pwronoffani/tianyioff.png charge.png|fs:/image/charge/charge.png coreapp.bar|fs:/mod/coreapp//coreapp.bar  coreapp.bar|fs:/mod/coreapp//coreapp.bar  oemmsgs.bar|fs:/sys/oemmsgs.bar  aeecontrols.bar|fs:/sys/aeecontrols.bar vector.mif|fs:/mif/vector.mif oemannunciator.bar|fs:/shared/oemannunciator.bar
-dmss_rules.min:338: 目标“brewappmgrls.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“coreapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“coreapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“appscommon.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“appscommon.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“coreapp.mif.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“coreapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“tianyion.png.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“tianyioff.png.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“charge.png.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“coreapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“coreapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“mainmenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“mainmenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“callapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“callapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“contactapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“contactapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“wms.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“wms.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“utk.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“utk.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“recentcalls.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“recentcalls.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“videoplayer.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“videoplayer.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“musicplayer.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“musicplayer.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“recorder.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“recorder.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“mediagallery.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“mediagallery.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“soundmenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“soundmenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“displaymenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“displaymenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“securitymenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“securitymenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“settingmenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“settingmenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“adjustpenapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“adjustpenapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“calcapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“calcapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“clockapps.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“clockapps.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“converter.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“scheduleapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“calendarapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“scheduleapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“calendarapp.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“stopwatch.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“stopwatch.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“apptimerres.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“worldtime.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“worldtime.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“notebook.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“notebook.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“tetris.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“tetris.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“extramenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“extramenu.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“brewappmgr.mif.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“brewappmgrcommon.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“brewappmgrls.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“brewappmgrln.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“oemcfg.txt.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“brewappmgrls.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“esurfing.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“esurfing.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“custservice.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“custservice.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“quicktest.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“quicktest.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“svcprg.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“svcprg.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“numbermanager.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:338: 目标“numbermanager.bar.c”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“brewappmgrls.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“coreapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“coreapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“appscommon.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“appscommon.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“coreapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“coreapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“coreapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“mainmenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“mainmenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“callapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“callapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“contactapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“contactapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“wms.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“wms.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“utk.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“utk.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“recentcalls.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“recentcalls.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“videoplayer.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“videoplayer.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“musicplayer.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“musicplayer.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“recorder.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“recorder.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“mediagallery.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“mediagallery.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“soundmenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“soundmenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“displaymenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“displaymenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“securitymenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“securitymenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“settingmenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“settingmenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“adjustpenapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“adjustpenapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“calcapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“calcapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“clockapps.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“clockapps.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“converter.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“scheduleapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“calendarapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“scheduleapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“calendarapp.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“stopwatch.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“stopwatch.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“apptimerres.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“worldtime.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“worldtime.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“notebook.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“notebook.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“tetris.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“tetris.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“extramenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“extramenu.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“brewappmgrcommon.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“brewappmgrls.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“brewappmgrln.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“brewappmgrls.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“esurfing.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“esurfing.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“custservice.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“custservice.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“quicktest.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“quicktest.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“svcprg.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“svcprg.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“numbermanager.bar”在同一个规则中给出了多次。
-dmss_rules.min:344: 目标“numbermanager.bar”在同一个规则中给出了多次。
-dmss_rules.min:788: ~~~~~~-DBUILD_ASIC=\"q1100\" -DBUILD_TARGET=\"SBNAALZ\" -DBUILD_VER=\"3350\" -DMODELNAME=\"SBNAALZ\" -DMODELVERSION=\"SBNAALZ_V0.1\"
+../../modem/uim/nvruim/src/nvruim.min:20: warning: overriding commands for target `SXNAALZ/nvim_ruim.lib'
+../../core/services/nv/nv.min:35: warning: ignoring old commands for target `SXNAALZ/nvim_ruim.lib'
+../../platform/brew/nonpkbrew/pk/src/msm/oem_nonpk.min:51: warning: overriding commands for target `SXNAALZ/oem.lib'
+../../platform/brew/brewpk/pk/src/msm/oem.min:268: warning: ignoring old commands for target `SXNAALZ/oem.lib'
+../../platform/brew/brewpk/pk/lib/src/aee/aee.min:31: SXNAALZ/AEEAddrBook.o SXNAALZ/AEEMenu.o SXNAALZ/AEESound.o SXNAALZ/AEETime.o SXNAALZ/AEEDialog.o SXNAALZ/AEEStatic.o SXNAALZ/AEEDate.o SXNAALZ/AEECamera.o SXNAALZ/AEEVirtualkey.o SXNAALZ/AEEAlarm.o SXNAALZ/AEESMS.o
+Build started at 14:31:05 - 24 May 2010
 ------------------------------------------------------------------------
-Deleting the Progressive Boot Scatter Loader
+Build Resource ../../platform/brew/brewpk/pk/bin/en/256Color/oemmsgs.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\brew\brewpk\pk\bin\en\256Color\oemmsgs.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\brew\brewpk\pk\bin\en\256Color\oemmsgs.brh
 ------------------------------------------------------------------------
-CLEAN
-... remove elf, hex, sym, map, scl files
-... remove static BREW txt files
-... remove .i and .lst files
+------------------------------------------------------------------------
+Creating C File oemmsgs.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\brew\\brewpk\\pk\\bin\\en\\256Color\\oemmsgs.bar -dfs:/sys/oemmsgs.bar -o..\\..\\platform\\mmi\\const\\oemmsgs.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/UTK/resources/utk.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\UTK\resources\utk.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\UTK\resources\utk.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File utk.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\UTK\\resources\\utk.bar -dfs:/mod/utk/en/utk.bar -o..\\..\\platform\\mmi\\const\\utk.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/RecentCalls/resources/recentcalls.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\RecentCalls\resources\recentcalls.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\RecentCalls\resources\recentcalls.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File recentcalls.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\RecentCalls\\resources\\recentcalls.bar -dfs:/mod/recentcalls/en/recentcalls.bar -o..\\..\\platform\\mmi\\const\\recentcalls.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/AdjustPenApp/resources/adjustpenapp.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\AdjustPenApp\resources\adjustpenapp.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\AdjustPenApp\resources\adjustpenapp.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File adjustpenapp.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\AdjustPenApp\\resources\\adjustpenapp.bar -dfs:/mod/adjustpenapp/en/adjustpenapp.bar -o..\\..\\platform\\mmi\\const\\adjustpenapp.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/ClockApp/resources/clockapps.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\ClockApp\resources\clockapps.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\ClockApp\resources\clockapps.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File clockapps.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\ClockApp\\resources\\clockapps.bar -dfs:/mod/clockapps/en/clockapps.bar -o..\\..\\platform\\mmi\\const\\clockapps.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/ClockApp/resources/clockapps_images.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\ClockApp\resources\clockapps_images.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\ClockApp\resources\clockapps_images.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File clockapps_images.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\ClockApp\\resources\\clockapps_images.bar -dfs:/mod/clockapps/clockapps_images.bar -o..\\..\\platform\\mmi\\const\\clockapps_images.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/Converter/resources/converter.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\Converter\resources\converter.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\Converter\resources\converter.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File converter.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Converter\\resources\\converter.bar -dfs:/mod/converter/en/converter.bar -o..\\..\\platform\\mmi\\const\\converter.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/Games/tetris/resources/tetris.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\Games\tetris\resources\tetris.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\Games\tetris\resources\tetris.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File tetris.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\tetris.bar -dfs:/mod/tetris/en/tetris.bar -o..\\..\\platform\\mmi\\const\\tetris.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/Games/tetris/resources/tetrisimages.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\Games\tetris\resources\tetrisimages.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\Games\tetris\resources\tetrisimages.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File tetrisimages.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\tetrisimages.bar -dfs:/mod/tetris/tetrisimages.bar -o..\\..\\platform\\mmi\\const\\tetrisimages.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File blink.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\blink.mid -dfs:/mod/tetris/blink.mid   -o..\\..\\platform\\mmi\\const\\blink.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File drop.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\drop.mid -dfs:/mod/tetris/drop.mid   -o..\\..\\platform\\mmi\\const\\drop.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File droppiece.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\droppiece.mid -dfs:/mod/tetris/droppiece.mid   -o..\\..\\platform\\mmi\\const\\droppiece.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File fail.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\fail.mid -dfs:/mod/tetris/fail.mid   -o..\\..\\platform\\mmi\\const\\fail.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File hero.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\hero.mid -dfs:/mod/tetris/hero.mid   -o..\\..\\platform\\mmi\\const\\hero.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File mullines.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\mullines.mid -dfs:/mod/tetris/mullines.mid   -o..\\..\\platform\\mmi\\const\\mullines.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File over.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\over.mid -dfs:/mod/tetris/over.mid   -o..\\..\\platform\\mmi\\const\\over.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File select.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\select.mid -dfs:/mod/tetris/select.mid   -o..\\..\\platform\\mmi\\const\\select.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File singleline.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\singleline.mid -dfs:/mod/tetris/singleline.mid   -o..\\..\\platform\\mmi\\const\\singleline.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File undrop.mid.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\Games\\tetris\\resources\\music\\undrop.mid -dfs:/mod/tetris/undrop.mid   -o..\\..\\platform\\mmi\\const\\undrop.mid.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/ExtraMenu/resources/extramenu.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\ExtraMenu\resources\extramenu.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\ExtraMenu\resources\extramenu.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File extramenu.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\ExtraMenu\\resources\\extramenu.bar -dfs:/mod/extramenu/en/extramenu.bar -o..\\..\\platform\\mmi\\const\\extramenu.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Build Resource ../../platform/mmi/QuickTest/resources/quicktest.bar
+Successfully built specified resource script file.
+See the detailed list of generated files shown below:
+
+Resource binary file:	F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\QuickTest\resources\quicktest.bar
+Header file:		F:\Project\QSC1100\main\QSC1100-MMI\platform\mmi\QuickTest\resources\quicktest.brh
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Creating C File quicktest.bar.c
+../../platform/brew/brewpk/pk/utils/bin2src.exe -s..\\..\\platform\\mmi\\QuickTest\\resources\\quicktest.bar -dfs:/mod/quicktest/en/quicktest.bar -o..\\..\\platform\\mmi\\const\\quicktest.bar.c
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+Generating ../../platform/mmi/const/OEMConstFiles_Dynamic.c
+------------------------------------------------------------------------
+------------------------------------------------------------------
+BREW RESOURCE BUILDER
+------------------------------------------------------------------
+CREATING SXNAALZ/SBNAALZ
+
+Building NOR Flash Tools
+
+make -C ../../tools/mjflash -f jflash.mak BUILDID=SBNAALZ
+make[1]: Entering directory `/cygdrive/f/Project/QSC1100/main/QSC1100-MMI/tools/mjflash'
+-----------------------------------------------------------------
+DEPENDENCY jflash/jfstart.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/jf_mem_init.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/jf.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/jf_id.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/jfparam.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_msm.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_common.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_os_none.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_nor.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_ram.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_nor_spansion.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_nor_samsung.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_nor_intel.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_nor_utils.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_partition.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY jflash/flash_nor_partition.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Processing dependencies
+-----------------------------------------------------------------
+---------------------------------------------------------------
+========================================================== 
+Creating Scatter Load File
+========================================================== 
+
+Done
+---------------------------------------------------------------
+ 
+ 
+========================================================== 
+Generating jflash_param.cmm
+========================================================== 
+ 
+ 
+==========================================================
+rm -f jflash/jf_id.o
+==========================================================
+
+-----------------------------------------------------------------
+OBJECT jflash/jfstart.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/jf_mem_init.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/jf.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/jf_id.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/jfparam.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_msm.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_common.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_os_none.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_nor.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_ram.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_nor_spansion.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_nor_samsung.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_nor_intel.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_nor_utils.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_partition.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT jflash/flash_nor_partition.o
+-----------------------------------------------------------
+
+========================================================
+TARGET : jflash.elf
+========================================================
+ 
+ 
+========================================================== 
+Generating JFLASH_EXT_ERROR.CMM
+========================================================== 
+ 
+Done
+---------------------------------------------------------------
+ 
+ 
+make[1]: Leaving directory `/cygdrive/f/Project/QSC1100/main/QSC1100-MMI/tools/mjflash'
+make -C ../../tools/hostdl -f ap_arm.mak BUILDID=SBNAALZ ADS120HOME=C:/ARM/ADSv1_2 FLASHTYPE=NOR
+make[1]: Entering directory `/cygdrive/f/Project/QSC1100/main/QSC1100-MMI/tools/hostdl'
+-----------------------------------------------------------------
+DEPENDENCY norprg/ap_startup.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/ap_armprg.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/ap_packet.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_msm.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_common.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_os_none.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_nor.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_ram.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_nor_spansion.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_nor_samsung.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_nor_intel.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_nor_utils.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_partition.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/flash_nor_partition.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/ap_uart.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/qhsusb_al_hostdl.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/qhsusb_fd_hdlc.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/qhsusb_dcd_ch9.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/qhsusb_dci.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/qhsusb_dci_q1100.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/crc.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/ap_msm.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/ap_flash.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+DEPENDENCY norprg/ap_id.dep
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Processing Dependencies
+-----------------------------------------------------------------
+---------------------------------------------------------------
+========================================================== 
+Creating Scatter Load File
+========================================================== 
+
+Done
+---------------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/ap_startup.o
+----------------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/ap_armprg.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/ap_packet.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_msm.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_common.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_os_none.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_nor.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_ram.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_nor_spansion.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_nor_samsung.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_nor_intel.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_nor_utils.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_partition.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/flash_nor_partition.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/ap_uart.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/qhsusb_al_hostdl.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/qhsusb_fd_hdlc.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/qhsusb_dcd_ch9.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/qhsusb_dci.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/qhsusb_dci_q1100.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/crc.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/ap_msm.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/ap_flash.o
+-----------------------------------------------------------
+-----------------------------------------------------------------
+OBJECT norprg/ap_id.o
+-----------------------------------------------------------
+
+------------------------------------------------------------------
+LINKING norprg.elf
+------------------------------------------------------------------
+------------------------------------------------------------------
+CREATING APRG1100.hex
+------------------------------------------------------------------
+
+
+make[1]: Leaving directory `/cygdrive/f/Project/QSC1100/main/QSC1100-MMI/tools/hostdl'
+
+Done Building Flash Tools
+
+
+------------------------------------------------------------------------
+SBNAALZ
+rm -f std_loadbuild.cmm
+rm -f std_loadbuild_erase.cmm
+
+
+------------------------------------------------------------------------
+Checking dependency file...
+HS_H=$(HS)/hs_mb6550.h refers to non existant file $(HS)/hs_mb6550.h
+BIO_MB_H=$(BIO)/bio_mb1100.h refers to non existant file $(BIO)/bio_mb1100.h
+TLMM_MSM_H=$(TLMM)/tlmm_1100.h refers to non existant file $(TLMM)/tlmm_1100.h
+TRAMP_MSM_H=$(TRAMP)/tramp_msm.h refers to non existant file $(TRAMP)/tramp_msm.h
+TRAMPI_MSM_H=$(TRAMP)/trampi_msm.h refers to non existant file $(TRAMP)/trampi_msm.h
+CLKRGM_MSM_H=$(CLKREGIM)/clkrgm_msm.h refers to non existant file $(CLKREGIM)/clkrgm_msm.h
+CLK_RGM_MODEM_H=$(CLKREGIM)/clkrgm_modem.h refers to non existant file $(CLKREGIM)/clkrgm_modem.h
+BOOTHW_MSM_H=$(BOOT)/boothw_60x5.h refers to non existant file $(BOOT)/boothw_60x5.h
+GPIO_H=$(TLMM)/gpio_1100.h refers to non existant file $(TLMM)/gpio_1100.h
+GPIO_INT_MSM_H=$(TRAMP)/gpio_int_msm.h refers to non existant file $(TRAMP)/gpio_int_msm.h
+ADIE_I_H=../../drivers/adie/adie_sbi.h refers to non existant file ../../drivers/adie/adie_sbi.h
+SBI_MSM_H=$(SBI)/sbi_qsc60x5.h refers to non existant file $(SBI)/sbi_qsc60x5.h
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/Rendering.o
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering.c", line 291: Warning: C2871W: static 'Rendering_Stop' declared but not used
+..\..\platform\brew\brewpk\pk\Rend\src\Rendering.c: 1 warning, 0 errors, 0 serious errors
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/Rendering_OEM.o
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/Rendering_Type16.o
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1287: Warning: C2870W: variable 'h' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1287: Warning: C2870W: variable 'Angle2' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1287: Warning: C2870W: variable 'Angle1' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1794: Warning: C2874W: 'Max' may be used before being set
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FADE_OUT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FADE_IN' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FIRE_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FIRE_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROLL_RIGHTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROLL_RIGHTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROLL_LEFTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROLL_LEFTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROLL_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROLL_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROLL_RIGHT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROLL_LEFT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLLOUT_RIGHTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLLOUT_RIGHTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLLOUT_LEFTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLLOUT_LEFTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLLOUT_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLLOUT_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLLOUT_RIGHT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLLOUT_LEFT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLL_RIGHTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLL_RIGHTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLL_LEFTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLL_LEFTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLL_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLL_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLL_RIGHT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SCROLL_LEFT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDSOUT_RIGHTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDSOUT_RIGHTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDSOUT_LEFTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDSOUT_LEFTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDSOUT_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDSOUT_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDSOUT_RIGHT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDSOUT_LEFT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDS_RIGHTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDS_RIGHTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDS_LEFTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDS_LEFTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDS_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_BLINDS_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTATOUT_RIGHTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTATOUT_RIGHTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTATOUT_LEFTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTATOUT_LEFTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTATOUT_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTATOUT_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTATOUT_RIGHT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTATOUT_LEFT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTAT_RIGHTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTAT_RIGHTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTAT_LEFTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTAT_LEFTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTAT_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTAT_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTAT_RIGHT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_ROTAT_LEFT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLYOUT_RIGHTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLYOUT_RIGHTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLYOUT_LEFTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLYOUT_LEFTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLYOUT_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLYOUT_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLYOUT_RIGHT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLYOUT_LEFT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLY_RIGHTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLY_RIGHTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLY_LEFTBOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLY_LEFTTOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLY_BOTTOM_FLEX' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLY_RIGHT_FLEX' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLY_RIGHT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLY_LEFT_FLEX' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_FLY_LEFT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_MOVE_BOTTOM' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_MOVE_TOP' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SHOW_CENTER_IN' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SHOW_CENTER_OUT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SHOW_TOPBOTTOM_IN' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SHOW_TOPBOTTOM_OUT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SHOW_LEFTRIGHT_IN' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'Fun_REND_SHOW_LEFTRIGHT_OUT' declared but not used
+"..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c", line 1893: Warning: C2871W: static 'g_LightBuf' declared but not used
+..\..\platform\brew\brewpk\pk\Rend\src\Rendering_Type16.c: 88 warnings, 0 errors, 0 serious errors
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/t9lang.o
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/chinconv.o
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/Appscommon.o
+"..\..\platform\mmi\Appscommon\Appscommon.c", line 3653: Warning: C2871W: static 'call_start_info_call' declared but not used
+..\..\platform\mmi\Appscommon\Appscommon.c: 1 warning, 0 errors, 0 serious errors
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/AppComFunc.o
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/CoreApp.o
+"..\..\platform\mmi\CoreApp\CoreApp.c", line 2988: Warning: C2871W: static 'CoreAppLoadTimepImage' declared but not used
+..\..\platform\mmi\CoreApp\CoreApp.c: 1 warning, 0 errors, 0 serious errors
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/CoreAppStateHandler.o
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/CoreAppDialogHandler.o
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 2885: Warning: C2899W: unsigned comparison with 0 is always true: '>='
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 3616: Warning: C2870W: variable 'm_dial_rc' declared but not used
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 3870: Warning: C2870W: variable 'shake' declared but not used
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 4126: Warning: C2870W: variable 'shake' declared but not used
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 4126: Warning: C2870W: variable 'b_FMBackground' declared but not used
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 4356: Warning: C2917W: no side effect in void context: '<expr> == <expr>'
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 4363: Warning: C2917W: no side effect in void context: '<expr> == <expr>'
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 4702: Warning: C2917W: no side effect in void context: '<expr> == <expr>'
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 4919: Warning: C2870W: variable 'bHideText' declared but not used
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 5966: Warning: C2870W: variable 'di' declared but not used
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 7138: Warning: C2916W: use of '=' in condition context
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 7147: Warning: C2916W: use of '=' in condition context
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 7828: Warning: C2871W: static 'CoreApp_UpdateTimeDial' declared but not used
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 7828: Warning: C2871W: static 'CoreApp_UpdateIcon' declared but not used
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 7828: Warning: C2871W: static 'CoreApp_DrawMinuteHand' declared but not used
+"..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c", line 7828: Warning: C2871W: static 'CoreApp_sin' declared but not used
+..\..\platform\mmi\CoreApp\CoreAppDialogHandler.c: 16 warnings, 0 errors, 0 serious errors
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/mainmenu.o
+"..\..\platform\mmi\Mainmenu\mainmenu.c", line 3533: Warning: C2871W: static 'ICON_ANI_2' declared but not used
+"..\..\platform\mmi\Mainmenu\mainmenu.c", line 3533: Warning: C2871W: static 'ICON_ANI_1' declared but not used
+..\..\platform\mmi\Mainmenu\mainmenu.c: 2 warnings, 0 errors, 0 serious errors
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT SXNAALZ/CallApp.o
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+OBJECT 

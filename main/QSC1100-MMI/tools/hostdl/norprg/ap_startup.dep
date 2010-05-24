@@ -25,4 +25,4 @@ norprg/ap_startup.o: ..\..\build\cust\custuim.h
 norprg/ap_startup.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/ap_startup.o: ..\..\build\cust\custwms.h
 norprg/ap_startup.o: ..\..\build\ms\custsbnaalz.h
-norprg/ap_startup.o: ..\..\build\ms\targsb2.h
+norprg/ap_startup.o: ..\..\build\ms\targsbw2.h

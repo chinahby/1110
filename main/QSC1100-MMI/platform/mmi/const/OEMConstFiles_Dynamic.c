@@ -101,25 +101,10 @@ extern const AEEConstFile *  gpODMAppsConstFiles[];
 #endif
 
 //Start Dynamic ConstFile Externs
-extern AEEConstFile gBREWAPPMGR_MIF;
-extern AEEConstFile gBREWAPPMGRCOMMON_BAR;
-extern AEEConstFile gBREWAPPMGRLS_BAR;
-extern AEEConstFile gBREWAPPMGRLN_BAR;
-extern AEEConstFile gOEMCFG_TXT;
-extern AEEConstFile gBREWAPPMGRLS_BAR;
-extern AEEConstFile gCOREAPP_MIF;
-extern AEEConstFile gCOREAPP_BAR;
-extern AEEConstFile gTIANYION_PNG;
-extern AEEConstFile gTIANYIOFF_PNG;
-extern AEEConstFile gCHARGE_PNG;
-extern AEEConstFile gCOREAPP_BAR;
-extern AEEConstFile gCOREAPP_BAR;
 extern AEEConstFile gOEMMSGS_BAR;
-extern AEEConstFile gAEECONTROLS_BAR;
+extern AEEConstFile gOEMAEECONTROLS_BAR;
 extern AEEConstFile gVECTOR_MIF;
 extern AEEConstFile gOEMANNUNCIATOR_BAR;
-extern AEEConstFile gAPPSCOMMON_BAR;
-extern AEEConstFile gAPPSCOMMON_BAR;
 extern AEEConstFile gAPPSCOMMON_BAR;
 extern AEEConstFile gAPPSCOMMON_COLOR_BAR;
 extern AEEConstFile gSENDINGSMS_PNG;
@@ -131,13 +116,9 @@ extern AEEConstFile gCOREAPP_BAR;
 extern AEEConstFile gTIANYION_PNG;
 extern AEEConstFile gTIANYIOFF_PNG;
 extern AEEConstFile gCHARGE_PNG;
-extern AEEConstFile gCOREAPP_BAR;
-extern AEEConstFile gCOREAPP_BAR;
 extern AEEConstFile gMAINMENU_MIF;
 extern AEEConstFile gMAINMENU_BAR;
 extern AEEConstFile gMAINMENUIMAGES_BAR;
-extern AEEConstFile gMAINMENU_BAR;
-extern AEEConstFile gMAINMENU_BAR;
 extern AEEConstFile gGAME1_PNG;
 extern AEEConstFile gGALLERY2_PNG;
 extern AEEConstFile gTOOLS3_PNG;
@@ -187,45 +168,14 @@ extern AEEConstFile gWAP12_2_PNG;
 extern AEEConstFile gNUMBER10_2_PNG;
 extern AEEConstFile gCALLAPP_MIF;
 extern AEEConstFile gCALLAPP_BAR;
-extern AEEConstFile gCALLAPP_BAR;
-extern AEEConstFile gCALLAPP_BAR;
 extern AEEConstFile gCONTACTAPP_MIF;
-extern AEEConstFile gCONTACTAPP_BAR;
-extern AEEConstFile gCONTACTAPP_BAR;
 extern AEEConstFile gCONTACTAPP_BAR;
 extern AEEConstFile gWMS_MIF;
 extern AEEConstFile gWMS_BAR;
-extern AEEConstFile gWMS_BAR;
-extern AEEConstFile gWMS_BAR;
 extern AEEConstFile gUTK_MIF;
-extern AEEConstFile gUTK_BAR;
-extern AEEConstFile gUTK_BAR;
 extern AEEConstFile gUTK_BAR;
 extern AEEConstFile gRECENTCALLS_MIF;
 extern AEEConstFile gRECENTCALLS_BAR;
-extern AEEConstFile gRECENTCALLS_BAR;
-extern AEEConstFile gRECENTCALLS_BAR;
-extern AEEConstFile gVIDEOPLAYER_MIF;
-extern AEEConstFile gVIDEOPLAYER_BAR;
-extern AEEConstFile gVIDEOPLAYER_IMAGES_BAR;
-extern AEEConstFile gVIDEOPLAYER_BAR;
-extern AEEConstFile gVIDEOPLAYER_BAR;
-extern AEEConstFile gMUSICPLAYER_MIF;
-extern AEEConstFile gMUSICPLAYER_BAR;
-extern AEEConstFile gMUSICPLAYERIMAGE_BAR;
-extern AEEConstFile gAWAY_MP3;
-extern AEEConstFile gMUSICPLAYER_BAR;
-extern AEEConstFile gMUSICPLAYER_BAR;
-extern AEEConstFile gRECORDER_MIF;
-extern AEEConstFile gRECORDER_BAR;
-extern AEEConstFile gRECORDER_IMAGES_BAR;
-extern AEEConstFile gRECORDER_BAR;
-extern AEEConstFile gRECORDER_BAR;
-extern AEEConstFile gMEDIAGALLERY_MIF;
-extern AEEConstFile gMEDIAGALLERY_BAR;
-extern AEEConstFile gMEDIAGALLERY_IMAGE_BAR;
-extern AEEConstFile gMEDIAGALLERY_BAR;
-extern AEEConstFile gMEDIAGALLERY_BAR;
 extern AEEConstFile gSOUNDMENU_MIF;
 extern AEEConstFile gSOUNDMENU_BAR;
 extern AEEConstFile gBLUES_MID;
@@ -240,8 +190,6 @@ extern AEEConstFile gSTREET_TALE_MID;
 extern AEEConstFile gTECHNO_METO_MID;
 extern AEEConstFile gFEELING_ON_MID;
 extern AEEConstFile gFEELING_OFF_MID;
-extern AEEConstFile gSOUNDMENU_BAR;
-extern AEEConstFile gSOUNDMENU_BAR;
 extern AEEConstFile gDISPLAYMENU_MIF;
 extern AEEConstFile gDISPLAYMENU_BAR;
 extern AEEConstFile gWALLPAPER01_PNG;
@@ -250,54 +198,30 @@ extern AEEConstFile gWALLPAPER03_PNG;
 extern AEEConstFile gWALLPAPER04_PNG;
 extern AEEConstFile gWALLPAPER05_PNG;
 extern AEEConstFile gWALLPAPER06_PNG;
-extern AEEConstFile gDISPLAYMENU_BAR;
-extern AEEConstFile gDISPLAYMENU_BAR;
 extern AEEConstFile gSECURITYMENU_MIF;
-extern AEEConstFile gSECURITYMENU_BAR;
-extern AEEConstFile gSECURITYMENU_BAR;
 extern AEEConstFile gSECURITYMENU_BAR;
 extern AEEConstFile gSETTINGMENU_MIF;
 extern AEEConstFile gSETTINGMENU_BAR;
-extern AEEConstFile gSETTINGMENU_BAR;
-extern AEEConstFile gSETTINGMENU_BAR;
 extern AEEConstFile gADJUSTPENAPP_MIF;
 extern AEEConstFile gADJUSTPENAPP_BAR;
-extern AEEConstFile gADJUSTPENAPP_BAR;
-extern AEEConstFile gADJUSTPENAPP_BAR;
 extern AEEConstFile gCALCAPP_MIF;
-extern AEEConstFile gCALCAPP_BAR;
-extern AEEConstFile gCALCAPP_BAR;
 extern AEEConstFile gCALCAPP_BAR;
 extern AEEConstFile gCLOCKAPPS_MIF;
 extern AEEConstFile gCLOCKAPPS_BAR;
 extern AEEConstFile gCLOCKAPPS_IMAGES_BAR;
-extern AEEConstFile gCLOCKAPPS_BAR;
-extern AEEConstFile gCLOCKAPPS_BAR;
 extern AEEConstFile gCONVERTER_MIF;
-extern AEEConstFile gCONVERTER_BAR;
 extern AEEConstFile gCONVERTER_BAR;
 extern AEEConstFile gSCHEDULEAPP_MIF;
 extern AEEConstFile gSCHEDULEAPP_BAR;
 extern AEEConstFile gCALENDARAPP_BAR;
-extern AEEConstFile gSCHEDULEAPP_BAR;
-extern AEEConstFile gCALENDARAPP_BAR;
-extern AEEConstFile gSCHEDULEAPP_BAR;
-extern AEEConstFile gCALENDARAPP_BAR;
 extern AEEConstFile gSTOPWATCH_MIF;
 extern AEEConstFile gSTOPWATCH_BAR;
-extern AEEConstFile gSTOPWATCH_BAR;
-extern AEEConstFile gSTOPWATCH_BAR;
 extern AEEConstFile gAPPTIMER_MIF;
-extern AEEConstFile gAPPTIMERRES_BAR;
 extern AEEConstFile gAPPTIMERRES_BAR;
 extern AEEConstFile gWORLDTIME_MIF;
 extern AEEConstFile gWORLDTIME_BAR;
 extern AEEConstFile gWORLDTIME_IMAGES_BAR;
-extern AEEConstFile gWORLDTIME_BAR;
-extern AEEConstFile gWORLDTIME_BAR;
 extern AEEConstFile gNOTEBOOK_MIF;
-extern AEEConstFile gNOTEBOOK_BAR;
-extern AEEConstFile gNOTEBOOK_BAR;
 extern AEEConstFile gNOTEBOOK_BAR;
 extern AEEConstFile gTETRIS_MIF;
 extern AEEConstFile gTETRIS_BAR;
@@ -312,83 +236,29 @@ extern AEEConstFile gOVER_MID;
 extern AEEConstFile gSELECT_MID;
 extern AEEConstFile gSINGLELINE_MID;
 extern AEEConstFile gUNDROP_MID;
-extern AEEConstFile gTETRIS_BAR;
-extern AEEConstFile gTETRIS_BAR;
 extern AEEConstFile gEXTRAMENU_MIF;
-extern AEEConstFile gEXTRAMENU_BAR;
-extern AEEConstFile gEXTRAMENU_BAR;
 extern AEEConstFile gEXTRAMENU_BAR;
 extern AEEConstFile gOEMEXTFOR3PART_MIF;
 extern AEEConstFile gEDITAPPLET_MIF;
 extern AEEConstFile gEDITEXTENSION_MIF;
-extern AEEConstFile gBROWSERWIDGET_MIF;
-extern AEEConstFile gBRW_APP_MIF;
-extern AEEConstFile gDRM_MIF;
-extern AEEConstFile gSEC_MIF;
-extern AEEConstFile gWECSC_MIF;
-extern AEEConstFile gWAP_MIF;
-extern AEEConstFile gPUSHE_MIF;
-extern AEEConstFile gPICTOGRAMCORESET_BAR;
-extern AEEConstFile gIMG_BAR;
-extern AEEConstFile gTHEME_BAR;
-extern AEEConstFile gZHCN_EN_STRING_BAR;
-extern AEEConstFile gZHCN_ZHCN_STRING_BAR;
-extern AEEConstFile gZHCN_IMAGE_BAR;
-extern AEEConstFile gREGBRW_DAT;
-extern AEEConstFile gBIG5TOUCS_DAT;
-extern AEEConstFile gGB2UCS_DAT;
-extern AEEConstFile gUCS2BIG5_DAT;
-extern AEEConstFile gUCS2GB_DAT;
 extern AEEConstFile gBREWAPPMGR_MIF;
 extern AEEConstFile gBREWAPPMGRCOMMON_BAR;
 extern AEEConstFile gBREWAPPMGRLS_BAR;
 extern AEEConstFile gBREWAPPMGRLN_BAR;
 extern AEEConstFile gOEMCFG_TXT;
-extern AEEConstFile gBREWAPPMGRLS_BAR;
-extern AEEConstFile gESURFING_MIF;
-extern AEEConstFile gESURFING_BAR;
-extern AEEConstFile gESURFING_BAR;
-extern AEEConstFile gESURFING_BAR;
-extern AEEConstFile gCUSTSERVICE_MIF;
-extern AEEConstFile gCUSTSERVICE_BAR;
-extern AEEConstFile gCUSTSERVICE_BAR;
-extern AEEConstFile gCUSTSERVICE_BAR;
 extern AEEConstFile gQUICKTEST_MIF;
-extern AEEConstFile gQUICKTEST_BAR;
-extern AEEConstFile gQUICKTEST_BAR;
 extern AEEConstFile gQUICKTEST_BAR;
 extern AEEConstFile gSVCPRG_MIF;
 extern AEEConstFile gSVCPRG_BAR;
-extern AEEConstFile gSVCPRG_BAR;
-extern AEEConstFile gSVCPRG_BAR;
-extern AEEConstFile gNUMBERMANAGER_MIF;
-extern AEEConstFile gNUMBERMANAGER_BAR;
-extern AEEConstFile gNUMBERMANAGER_BAR;
-extern AEEConstFile gNUMBERMANAGER_BAR;
 //End Dynamic ConstFile Externs
 
 static const AEEConstFile *  gpOEMConstFiles[] = {
 
 //Start Dynamic ConstFile Symbols
-      &gBREWAPPMGR_MIF,
-      &gBREWAPPMGRCOMMON_BAR,
-      &gBREWAPPMGRLS_BAR,
-      &gBREWAPPMGRLN_BAR,
-      &gOEMCFG_TXT,
-      &gBREWAPPMGRLS_BAR,
-      &gCOREAPP_MIF,
-      &gCOREAPP_BAR,
-      &gTIANYION_PNG,
-      &gTIANYIOFF_PNG,
-      &gCHARGE_PNG,
-      &gCOREAPP_BAR,
-      &gCOREAPP_BAR,
       &gOEMMSGS_BAR,
-      &gAEECONTROLS_BAR,
+      &gOEMAEECONTROLS_BAR,
       &gVECTOR_MIF,
       &gOEMANNUNCIATOR_BAR,
-      &gAPPSCOMMON_BAR,
-      &gAPPSCOMMON_BAR,
       &gAPPSCOMMON_BAR,
       &gAPPSCOMMON_COLOR_BAR,
       &gSENDINGSMS_PNG,
@@ -400,13 +270,9 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
       &gTIANYION_PNG,
       &gTIANYIOFF_PNG,
       &gCHARGE_PNG,
-      &gCOREAPP_BAR,
-      &gCOREAPP_BAR,
       &gMAINMENU_MIF,
       &gMAINMENU_BAR,
       &gMAINMENUIMAGES_BAR,
-      &gMAINMENU_BAR,
-      &gMAINMENU_BAR,
       &gGAME1_PNG,
       &gGALLERY2_PNG,
       &gTOOLS3_PNG,
@@ -456,45 +322,14 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
       &gNUMBER10_2_PNG,
       &gCALLAPP_MIF,
       &gCALLAPP_BAR,
-      &gCALLAPP_BAR,
-      &gCALLAPP_BAR,
       &gCONTACTAPP_MIF,
-      &gCONTACTAPP_BAR,
-      &gCONTACTAPP_BAR,
       &gCONTACTAPP_BAR,
       &gWMS_MIF,
       &gWMS_BAR,
-      &gWMS_BAR,
-      &gWMS_BAR,
       &gUTK_MIF,
-      &gUTK_BAR,
-      &gUTK_BAR,
       &gUTK_BAR,
       &gRECENTCALLS_MIF,
       &gRECENTCALLS_BAR,
-      &gRECENTCALLS_BAR,
-      &gRECENTCALLS_BAR,
-      &gVIDEOPLAYER_MIF,
-      &gVIDEOPLAYER_BAR,
-      &gVIDEOPLAYER_IMAGES_BAR,
-      &gVIDEOPLAYER_BAR,
-      &gVIDEOPLAYER_BAR,
-      &gMUSICPLAYER_MIF,
-      &gMUSICPLAYER_BAR,
-      &gMUSICPLAYERIMAGE_BAR,
-      &gAWAY_MP3,
-      &gMUSICPLAYER_BAR,
-      &gMUSICPLAYER_BAR,
-      &gRECORDER_MIF,
-      &gRECORDER_BAR,
-      &gRECORDER_IMAGES_BAR,
-      &gRECORDER_BAR,
-      &gRECORDER_BAR,
-      &gMEDIAGALLERY_MIF,
-      &gMEDIAGALLERY_BAR,
-      &gMEDIAGALLERY_IMAGE_BAR,
-      &gMEDIAGALLERY_BAR,
-      &gMEDIAGALLERY_BAR,
       &gSOUNDMENU_MIF,
       &gSOUNDMENU_BAR,
       &gBLUES_MID,
@@ -509,8 +344,6 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
       &gTECHNO_METO_MID,
       &gFEELING_ON_MID,
       &gFEELING_OFF_MID,
-      &gSOUNDMENU_BAR,
-      &gSOUNDMENU_BAR,
       &gDISPLAYMENU_MIF,
       &gDISPLAYMENU_BAR,
       &gWALLPAPER01_PNG,
@@ -519,54 +352,30 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
       &gWALLPAPER04_PNG,
       &gWALLPAPER05_PNG,
       &gWALLPAPER06_PNG,
-      &gDISPLAYMENU_BAR,
-      &gDISPLAYMENU_BAR,
       &gSECURITYMENU_MIF,
-      &gSECURITYMENU_BAR,
-      &gSECURITYMENU_BAR,
       &gSECURITYMENU_BAR,
       &gSETTINGMENU_MIF,
       &gSETTINGMENU_BAR,
-      &gSETTINGMENU_BAR,
-      &gSETTINGMENU_BAR,
       &gADJUSTPENAPP_MIF,
       &gADJUSTPENAPP_BAR,
-      &gADJUSTPENAPP_BAR,
-      &gADJUSTPENAPP_BAR,
       &gCALCAPP_MIF,
-      &gCALCAPP_BAR,
-      &gCALCAPP_BAR,
       &gCALCAPP_BAR,
       &gCLOCKAPPS_MIF,
       &gCLOCKAPPS_BAR,
       &gCLOCKAPPS_IMAGES_BAR,
-      &gCLOCKAPPS_BAR,
-      &gCLOCKAPPS_BAR,
       &gCONVERTER_MIF,
-      &gCONVERTER_BAR,
       &gCONVERTER_BAR,
       &gSCHEDULEAPP_MIF,
       &gSCHEDULEAPP_BAR,
       &gCALENDARAPP_BAR,
-      &gSCHEDULEAPP_BAR,
-      &gCALENDARAPP_BAR,
-      &gSCHEDULEAPP_BAR,
-      &gCALENDARAPP_BAR,
       &gSTOPWATCH_MIF,
       &gSTOPWATCH_BAR,
-      &gSTOPWATCH_BAR,
-      &gSTOPWATCH_BAR,
       &gAPPTIMER_MIF,
-      &gAPPTIMERRES_BAR,
       &gAPPTIMERRES_BAR,
       &gWORLDTIME_MIF,
       &gWORLDTIME_BAR,
       &gWORLDTIME_IMAGES_BAR,
-      &gWORLDTIME_BAR,
-      &gWORLDTIME_BAR,
       &gNOTEBOOK_MIF,
-      &gNOTEBOOK_BAR,
-      &gNOTEBOOK_BAR,
       &gNOTEBOOK_BAR,
       &gTETRIS_MIF,
       &gTETRIS_BAR,
@@ -581,59 +390,20 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
       &gSELECT_MID,
       &gSINGLELINE_MID,
       &gUNDROP_MID,
-      &gTETRIS_BAR,
-      &gTETRIS_BAR,
       &gEXTRAMENU_MIF,
-      &gEXTRAMENU_BAR,
-      &gEXTRAMENU_BAR,
       &gEXTRAMENU_BAR,
       &gOEMEXTFOR3PART_MIF,
       &gEDITAPPLET_MIF,
       &gEDITEXTENSION_MIF,
-      &gBROWSERWIDGET_MIF,
-      &gBRW_APP_MIF,
-      &gDRM_MIF,
-      &gSEC_MIF,
-      &gWECSC_MIF,
-      &gWAP_MIF,
-      &gPUSHE_MIF,
-      &gPICTOGRAMCORESET_BAR,
-      &gIMG_BAR,
-      &gTHEME_BAR,
-      &gZHCN_EN_STRING_BAR,
-      &gZHCN_ZHCN_STRING_BAR,
-      &gZHCN_IMAGE_BAR,
-      &gREGBRW_DAT,
-      &gBIG5TOUCS_DAT,
-      &gGB2UCS_DAT,
-      &gUCS2BIG5_DAT,
-      &gUCS2GB_DAT,
       &gBREWAPPMGR_MIF,
       &gBREWAPPMGRCOMMON_BAR,
       &gBREWAPPMGRLS_BAR,
       &gBREWAPPMGRLN_BAR,
       &gOEMCFG_TXT,
-      &gBREWAPPMGRLS_BAR,
-      &gESURFING_MIF,
-      &gESURFING_BAR,
-      &gESURFING_BAR,
-      &gESURFING_BAR,
-      &gCUSTSERVICE_MIF,
-      &gCUSTSERVICE_BAR,
-      &gCUSTSERVICE_BAR,
-      &gCUSTSERVICE_BAR,
       &gQUICKTEST_MIF,
-      &gQUICKTEST_BAR,
-      &gQUICKTEST_BAR,
       &gQUICKTEST_BAR,
       &gSVCPRG_MIF,
       &gSVCPRG_BAR,
-      &gSVCPRG_BAR,
-      &gSVCPRG_BAR,
-      &gNUMBERMANAGER_MIF,
-      &gNUMBERMANAGER_BAR,
-      &gNUMBERMANAGER_BAR,
-      &gNUMBERMANAGER_BAR,
 //End Dynamic ConstFile Symbols
 
 #if   !defined(_AEEWIN)   

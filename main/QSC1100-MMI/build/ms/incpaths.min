@@ -131,6 +131,8 @@ endif
 endif
 
 BREWDIR=$(SRCROOT)/platform/brew/brewpk
+#Gemsea ADD
+BREWTOOLSDIR=$(BREWDIR)/brewtools
 ifeq ($(USES_THINUI),yes)
 BREWDIR=        $(SRCROOT)/platform/brew/brewpk
 BREW_AEE=                $(BREWDIR)/sdk/inc

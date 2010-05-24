@@ -25,7 +25,7 @@ norprg/flash_nor_intel.o: ..\..\build\cust\custuim.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custwms.h
 norprg/flash_nor_intel.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_nor_intel.o: ..\..\build\ms\targsb2.h
+norprg/flash_nor_intel.o: ..\..\build\ms\targsbw2.h
 norprg/flash_nor_intel.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_nor_intel.o: ..\..\core\debugtools\err\src\err.h
 norprg/flash_nor_intel.o: ..\..\core\kernel\rex\src\rex.h

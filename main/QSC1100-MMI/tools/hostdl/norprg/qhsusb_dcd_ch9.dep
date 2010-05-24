@@ -25,7 +25,7 @@ norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custuim.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custwms.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\ms\custsbnaalz.h
-norprg/qhsusb_dcd_ch9.o: ..\..\build\ms\targsb2.h
+norprg/qhsusb_dcd_ch9.o: ..\..\build\ms\targsbw2.h
 norprg/qhsusb_dcd_ch9.o: ..\..\core\services\utils\src\armasm.h
 norprg/qhsusb_dcd_ch9.o: ..\..\core\services\utils\src\comdef.h
 norprg/qhsusb_dcd_ch9.o: ..\..\core\services\utils\src\target.h

@@ -25,7 +25,7 @@
 @jflash/flash_common.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 @jflash/flash_common.o: ..\..\build\cust\custwms.h
 @jflash/flash_common.o: ..\..\build\ms\CUSTSBNAALZ.H
-@jflash/flash_common.o: ..\..\build\ms\targsb2.h
+@jflash/flash_common.o: ..\..\build\ms\targsbw2.h
 @jflash/flash_common.o: ..\..\core\boot\mibib\mibib.h
 @jflash/flash_common.o: ..\..\core\boot\mibib\miparti.h
 @jflash/flash_common.o: ..\..\core\services\utils\src\armasm.h

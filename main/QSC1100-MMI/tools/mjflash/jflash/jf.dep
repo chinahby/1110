@@ -25,7 +25,7 @@
 @jflash/jf.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 @jflash/jf.o: ..\..\build\cust\custwms.h
 @jflash/jf.o: ..\..\build\ms\CUSTSBNAALZ.H
-@jflash/jf.o: ..\..\build\ms\targsb2.h
+@jflash/jf.o: ..\..\build\ms\targsbw2.h
 @jflash/jf.o: ..\..\core\boot\mibib\mibib.h
 @jflash/jf.o: ..\..\core\boot\mibib\miboot.h
 @jflash/jf.o: ..\..\core\boot\mibib\mioemsbl.h

@@ -25,7 +25,7 @@
 @jflash/flash_nor_utils.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 @jflash/flash_nor_utils.o: ..\..\build\cust\custwms.h
 @jflash/flash_nor_utils.o: ..\..\build\ms\CUSTSBNAALZ.H
-@jflash/flash_nor_utils.o: ..\..\build\ms\targsb2.h
+@jflash/flash_nor_utils.o: ..\..\build\ms\targsbw2.h
 @jflash/flash_nor_utils.o: ..\..\core\boot\mibib\miparti.h
 @jflash/flash_nor_utils.o: ..\..\core\services\utils\src\armasm.h
 @jflash/flash_nor_utils.o: ..\..\core\services\utils\src\comdef.h

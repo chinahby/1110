@@ -25,7 +25,7 @@ norprg/flash_nor_utils.o: ..\..\build\cust\custuim.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custwms.h
 norprg/flash_nor_utils.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_nor_utils.o: ..\..\build\ms\targsb2.h
+norprg/flash_nor_utils.o: ..\..\build\ms\targsbw2.h
 norprg/flash_nor_utils.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_nor_utils.o: ..\..\core\services\utils\src\armasm.h
 norprg/flash_nor_utils.o: ..\..\core\services\utils\src\comdef.h
