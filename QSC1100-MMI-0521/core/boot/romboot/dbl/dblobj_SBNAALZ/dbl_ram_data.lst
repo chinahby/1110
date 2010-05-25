@@ -1,0 +1,130 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+    2 00000000         ;
+    3 00000000         ;                                 1  RAM DATA
+    4 00000000         ;
+    5 00000000         ; GENERAL DESCRIPTION
+    6 00000000         ;   Get Region information from dbl.map file.
+    7 00000000         ;         
+    8 00000000         ; Copyright (c) 2007      by QUALCOMM, Incorporated.  Al
+                       l Rights Reserved.
+    9 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+   10 00000000         ;=======================================================
+                       =====================
+   11 00000000         ;
+   12 00000000         ;                       EDIT HISTORY FOR MODULE
+   13 00000000         ;
+   14 00000000         ; This section contains comments describing changes made
+                        to the module.
+   15 00000000         ; Notice that changes are listed in reverse chronologica
+                       l order.
+   16 00000000         ;
+   17 00000000         ;  $Header: 
+   18 00000000         ;
+   19 00000000         ; when      who     what, where, why
+   20 00000000         ; --------  -----   ------------------------------------
+                       --------------- ------
+   21 00000000         ; 07/30/07   ANB     Initial version.
+   22 00000000         ;=======================================================
+                       =====================
+   23 00000000         ;=======================================================
+                       =====================
+   24 00000000         ;
+   25 00000000         ;                           MODULE INCLUDE FILES
+   26 00000000         ;
+   27 00000000         ;=======================================================
+                       =====================
+   28 00000000         ;=======================================================
+                       =====================
+   29 00000000         ;
+   30 00000000         ;                             MODULE IMPORTS
+   31 00000000         ;
+   32 00000000         ;=======================================================
+                       =====================
+   33 00000000         ; Import the linker generated symbols that correspond to
+                        the base
+   34 00000000         ; addresses and sizes of the boot code including both DA
+                       TA and CODE.
+   35 00000000                 IMPORT  |Load$$DBL_IRAM_VEC_TBL$$Base|
+   36 00000000                 IMPORT  |Image$$DBL_IRAM_VEC_TBL$$Base|
+   37 00000000                 IMPORT  |Image$$DBL_IRAM_VEC_TBL$$Length|
+   38 00000000                 IMPORT  |Image$$DBL_RAM_ZI$$ZI$$Base|
+   39 00000000                 IMPORT  |Image$$DBL_RAM_ZI$$ZI$$Length|
+   40 00000000                 IMPORT  |Load$$DBL_RAM_RW$$Base|
+   41 00000000                 IMPORT  |Image$$DBL_RAM_RW$$Base|
+   42 00000000                 IMPORT  |Image$$DBL_RAM_RW$$Length|
+   43 00000000                 IMPORT  |Image$$DBL_RAM_NZI$$Base|
+   44 00000000                 IMPORT  |Image$$DBL_RAM_NZI$$Length|
+   45 00000000         ;=======================================================
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                       =====================
+   46 00000000         ;
+   47 00000000         ;                             MODULE EXPORTS
+   48 00000000         ;
+   49 00000000         ;=======================================================
+                       =====================
+   50 00000000         ; Export the renamed linker symbols for use by the other
+                        boot modules.
+   51 00000000                 EXPORT  Load__DBL_IRAM_VEC_TBL__Base ;
+   52 00000000                 EXPORT  Image__DBL_IRAM_VEC_TBL__Base ;
+   53 00000000                 EXPORT  Image__DBL_IRAM_VEC_TBL__Length 
+                                                   ;        
+   54 00000000                 EXPORT  Image__DBL_RAM_ZI__Base
+   55 00000000                 EXPORT  Image__DBL_RAM_ZI__Length
+   56 00000000                 EXPORT  Load__DBL_RAM_RW__Base
+   57 00000000                 EXPORT  Image__DBL_RAM_RW__Base
+   58 00000000                 EXPORT  Image__DBL_RAM_RW__Length
+   59 00000000                 EXPORT  Image__DBL_RAM_NZI__Base
+   60 00000000                 EXPORT  Image__DBL_RAM_NZI__Length
+   61 00000000         ;=======================================================
+                       =====================
+   62 00000000         ;                       BOOT BLOCK DATA LOCATIONS
+   63 00000000         ;
+   64 00000000         ;  Locations and sizes of data areas in ROM and RAM are 
+                       imported from the
+   65 00000000         ;  linker and stored as data items that are used at runt
+                       ime by the boot
+   66 00000000         ;  kernel routines.
+   67 00000000         ;=======================================================
+                       =====================
+   68 00000000                 AREA    BOOTSYS_DATA, DATA, READONLY
+   69 00000000         ; The $$ convention used by the linker is replaced to av
+                       oid the need
+   70 00000000         ; for the -pcc option required by the ARM compiler when 
+                       symbols that
+   71 00000000         ; include $$ are used in 'C' code.
+   72 00000000         Load__DBL_IRAM_VEC_TBL__Base
+   73 00000000 00000000        DCD     |Load$$DBL_IRAM_VEC_TBL$$Base|
+   74 00000004         Image__DBL_IRAM_VEC_TBL__Base
+   75 00000004 00000000        DCD     |Image$$DBL_IRAM_VEC_TBL$$Base|
+   76 00000008         Image__DBL_IRAM_VEC_TBL__Length
+   77 00000008 00000000        DCD     |Image$$DBL_IRAM_VEC_TBL$$Length|
+   78 0000000C         Image__DBL_RAM_ZI__Base
+   79 0000000C 00000000        DCD     |Image$$DBL_RAM_ZI$$ZI$$Base|
+   80 00000010         Image__DBL_RAM_ZI__Length
+   81 00000010 00000000        DCD     |Image$$DBL_RAM_ZI$$ZI$$Length|
+   82 00000014         Load__DBL_RAM_RW__Base
+   83 00000014 00000000        DCD     |Load$$DBL_RAM_RW$$Base|
+   84 00000018         Image__DBL_RAM_RW__Base
+   85 00000018 00000000        DCD     |Image$$DBL_RAM_RW$$Base|
+   86 0000001C         Image__DBL_RAM_RW__Length
+   87 0000001C 00000000        DCD     |Image$$DBL_RAM_RW$$Length|
+   88 00000020         Image__DBL_RAM_NZI__Base
+   89 00000020 00000000        DCD     |Image$$DBL_RAM_NZI$$Base|
+   90 00000024         Image__DBL_RAM_NZI__Length
+   91 00000024 00000000        DCD     |Image$$DBL_RAM_NZI$$Length|
+   92 00000028                 END
+Command Line: [C:\ARM\ADSv1_2\bin\armasm.exe -list ../../../dblobj_SBNAALZ/dbl_
+ram_data.lst -g -apcs /interwork -cpu ARM926EJ-S]

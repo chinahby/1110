@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="bluetooth" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1001" Name="IDS_BTAPP_TITLE">
+		<Text>Bluetooth</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_ADD_NEW">
+		<Text>Add new device</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_PAIRED_LIST">
+		<Text>Paired device</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_BTAPP_SETTING">
+		<Text>Bluetooth settings</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_TURN_BT_ON">
+		<Text>Turn bluetooth on</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_ENABBE_TEST_MODE">
+		<Text>Enable test mode</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_HANDSET_EX">
+		<Text>Support use of a compatible bluetooth headset for  mono voice.</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_HANDFREE_EX">
+		<Text>Support Bluetooth headset, and may also support other installed compatible bluetooth devices with speakerphone capablities such as car kits or a conference room device.</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_ENTER_PASSWORD">
+		<Text>Enter password</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_BT_ENABLE">
+		<Text>On</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_BT_DISABLE">
+		<Text>Off</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_DISCOVERY_MODE">
+		<Text>Discovery mode</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_DEVICE_RENAME">
+		<Text>Rename</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_SUP_PROFILES">
+		<Text>Supported profiles</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_HSP">
+		<Text>Headset</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_HFP">
+		<Text>Handsfree</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_OPJECT_PUSH">
+		<Text>Object push</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_FILE_TRANSFER">
+		<Text>File transfer</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_DEVICE_INFO">
+		<Text>Detail</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_OPJECT_PUSH_EX">
+		<Text>Allows sending and receiving of contact name cards or another files between devices.</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_PAIRING">
+		<Text>Pairing...</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_SEARCH">
+		<Text>Search...</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_BT_MOBILE_PHONE">
+		<Text>Mobile phone</Text>
+	</STRING>
+	<STRING Id="1024" Name="IDS_CONNECT_PORC">
+		<Text>Connecting...</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_DISCONNECT_PORC">
+		<Text>Disconnecting...</Text>
+	</STRING>
+	<STRING Id="1026" Name="IDS_TEST_MODE">
+		<Text>Test mode</Text>
+	</STRING>
+	<STRING Id="1027" Name="IDS_FILE_TRANSFER_EX">
+		<Text>Allows the capability to send or receive non-protected data files to a compatible bluetooth device.</Text>
+	</STRING>
+	<STRING Id="1028" Name="IDS_BT_SET_ON">
+		<Text>Bluetooth set on</Text>
+	</STRING>
+	<STRING Id="1029" Name="IDS_BT_SET_OFF">
+		<Text>Bluetooth set off</Text>
+	</STRING>
+	<STRING Id="1030" Name="IDS_DISCOVERY_ON">
+		<Text>Discovery on:other device can find you</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_DISCOVERY_OFF">
+		<Text>Discovery off:other device can't find you</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_DONE">
+		<Text>Done</Text>
+	</STRING>
+	<STRING Id="1033" Name="IDS_LAST_PAIR">
+		<Text>Last pair:</Text>
+	</STRING>
+	<STRING Id="1034" Name="IDS_STRING_NAME">
+		<Text>Name:</Text>
+	</STRING>
+	<STRING Id="1035" Name="IDS_STRING_STATE">
+		<Text>State:</Text>
+	</STRING>
+	<STRING Id="1036" Name="IDS_STRING_ADDRESS">
+		<Text>Address:</Text>
+	</STRING>
+	<STRING Id="1037" Name="IDS_STRING_PAIR">
+		<Text>Pair</Text>
+	</STRING>
+	<STRING Id="1038" Name="IDS_STRING_NOT_PAIR">
+		<Text>Not pair</Text>
+	</STRING>
+	<STRING Id="1039" Name="IDS_STRING_TYPE">
+		<Text>Type:</Text>
+	</STRING>
+	<STRING Id="1040" Name="IDS_OPC_SENDING">
+		<Text>Sending...</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_FAIL">
+		<Text>Fail</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_BT_OPP_RECEIVE">
+		<Text>Receiving...</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_DEL_AG_FAIL">
+		<Text>%s connected,can't delete</Text>
+	</STRING>
+	<STRING Id="1044" Name="IDS_NO_RECORD">
+		<Text>No record</Text>
+	</STRING>
+	<STRING Id="1045" Name="IDS_OPP_SEND">
+		<Text>Send</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_SEL_SERACH">
+		<Text>Search</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_AG_CONNECT">
+		<Text>Connect</Text>
+	</STRING>
+	<STRING Id="1048" Name="IDS_AG_DISCONNECT">
+		<Text>Disconnect</Text>
+	</STRING>
+	<STRING Id="1049" Name="IDS_STRING_DELETE">
+		<Text>Delete</Text>
+	</STRING>
+	<STRING Id="1050" Name="IDS_BT_DELETE_ALL">
+		<Text>Delete all</Text>
+	</STRING>
+	<STRING Id="1051" Name="IDS_BT_MAKE_CALL">
+		<Text>Make call</Text>
+	</STRING>
+	<STRING Id="1052" Name="IDS_BLUETOOTH_DISABLE">
+		<Text>Disable bluetooth</Text>
+	</STRING>
+	<STRING Id="1053" Name="IDS_AG_CONNECT_FAIL">
+		<Text>%s connected, please disconnect</Text>
+	</STRING>
+	<STRING Id="1054" Name="IDS_BT_AUTH_REQ">
+		<Text>%s request %s service,accept</Text>
+	</STRING>
+	<STRING Id="1055" Name="IDS_BT_DISCOVERING">
+		<Text>Discovering ...</Text>
+	</STRING>
+	<STRING Id="1056" Name="IDS_BT_BE_PAIREING">
+		<Text>%s pairing,accept</Text>
+	</STRING>
+	<STRING Id="1057" Name="IDS_OPS_RECEIVE_FILE">
+		<Text>Received %s, type %s</Text>
+	</STRING>
+	<STRING Id="1058" Name="IDS_AUTHORIZE_REQUEST">
+		<Text>Authorization request from %s, accept</Text>
+	</STRING>
+	<STRING Id="1059" Name="IDS_NEW_AUDIO_DEVICE">
+		<Text>New audio device</Text>
+	</STRING>
+	<STRING Id="1060" Name="IDS_NO_DEVICE_FOUND">
+		<Text>No device found</Text>
+	</STRING>
+	<STRING Id="1061" Name="IDS_DEVICE_NAME">
+		<Text>Device name:</Text>
+	</STRING>
+</Strings>
+</BREWRes>

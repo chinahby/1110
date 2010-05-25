@@ -1,0 +1,14 @@
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\flash\src\boot_clobber_prot.c
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\flash\src\boot_clobber_prot.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	dbl_target.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_msm.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\systemdrivers\hw\src\msmhwioreg.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\systemdrivers\hw\src\msmhwioreg_port.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_msmhwio.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_headers.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_flash.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\shared\sec\src\secboot_types.h
+..\..\..\dblobj_SBNAALZ\boot_clobber_prot.o:	..\..\..\..\..\..\..\core\boot\romboot\common\target\src\pbl_error_handler.h

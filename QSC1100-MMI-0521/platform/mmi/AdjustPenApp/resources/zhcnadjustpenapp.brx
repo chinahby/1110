@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="zhcnadjustpenapp" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1001" Name="IDS_ADJUST_NONE">
+		<Text>你可以校准触屏使得触笔更加准确,请点击画面开始进行校准</Text>
+	</STRING>
+	<String Id="1002" Name="IDS_ADJUST_LEFTTOP">
+		<Text>请点击画面左上角的箭头中心</Text>
+	</String>
+	<String Id="1003" Name="IDS_ADJUST_CENTER">
+		<Text>请点击画面中央的箭头中心</Text>
+	</String>
+	<String Id="1004" Name="IDS_ADJUST_RIGHTBOM">
+		<Text>请点击画面右下角的箭头中心</Text>
+	</String>
+	<String Id="1005" Name="IDS_ADJUST_DONE">
+		<Text>触摸校准完毕</Text>
+	</String>
+</Strings>
+<Objects MimeType="image/png">
+	<Object Id="5001" Name="IDI_ADJUSTBIG">
+		<File>..\..\Appscommon\images\color\AdjustPenApp\big.png</File>
+	</Object>
+	<Object Id="5002" Name="IDI_ADJUSTSMALL">
+		<File>..\..\Appscommon\images\color\AdjustPenApp\small.png</File>
+	</Object>
+</Objects>
+</BREWRes>

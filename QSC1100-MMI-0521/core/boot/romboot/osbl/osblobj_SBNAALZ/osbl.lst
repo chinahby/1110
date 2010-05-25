@@ -1,0 +1,373 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+    2 00000000         ;
+    3 00000000         ;     O S S E C O N D A R Y  B O O T   L O A D E R
+    4 00000000         ;
+    5 00000000         ; GENERAL DESCRIPTION
+    6 00000000         ;   This file contains the Qualcomm Operating System Boo
+                       t Loader ( 1 ) which 
+    7 00000000         ;   performs the following functions:
+    8 00000000         ;        
+    9 00000000         ;      - Continue on setting up the hardware.
+   10 00000000         ;      - Load operating system such as L4 Kernel.
+   11 00000000         ;      - Bring up application boot loader.
+   12 00000000         ;      - Load the reset of AMSS image if necessary. 
+   13 00000000         ;      - Transfers control to operating system. 
+   14 00000000         ;
+   15 00000000         ;   The  1  is written to perform the above functions wi
+                       th optimal speed.   
+   16 00000000         ;   It also attempts to minimize the execution time and 
+                       hence reduce boot time.
+   17 00000000         ;
+   18 00000000         ; EXTERNALIZED SYMBOLS
+   19 00000000         ;   osbl_loop_here
+   20 00000000         ;   osbl_set_stack_ptr
+   21 00000000         ;   __main
+   22 00000000         ;   _main
+   23 00000000         ;   
+   24 00000000         ; INITIALIZATION AND SEQUENCING REQUIREMENTS
+   25 00000000         ;   
+   26 00000000         ;
+   27 00000000         ; Copyright (c) 2005 by QUALCOMM, Incorporated.All Right
+                       s Reserved.
+   28 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+   29 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+   30 00000000         ;
+   31 00000000         ;                           EDIT HISTORY FOR FILE
+   32 00000000         ;
+   33 00000000         ; This section contains comments describing changes made
+                        to the module.
+   34 00000000         ; Notice that changes are listed in reverse chronologica
+                       l order.
+   35 00000000         ;
+   36 00000000         ; $Header: 
+   37 00000000         ;
+   38 00000000         ; when       who     what, where, why
+   39 00000000         ; --------   ---     -----------------------------------
+                       ---------------------
+   40 00000000         ; 10/09/07   ly      Create
+   41 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+   42 00000000         ;=======================================================
+                       =====================
+   43 00000000         ;
+   44 00000000         ;                            MODULE INCLUDES
+   45 00000000         ;
+   46 00000000         ;=======================================================
+                       =====================
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   47 00000000         ;=======================================================
+                       =====================
+   48 00000000         ;
+   49 00000000         ;                             MODULE DEFINES
+   50 00000000         ;
+   51 00000000         ;=======================================================
+                       =====================
+   52 00000000         ;            
+   53 00000000 00000013 
+                       Mode_SVC
+                               EQU     0x13
+   54 00000000 00000017 
+                       Mode_ABT
+                               EQU     0x17
+   55 00000000 0000001B 
+                       Mode_UND
+                               EQU     0x1b
+   56 00000000 00000010 
+                       Mode_USR
+                               EQU     0x10
+   57 00000000 00000011 
+                       Mode_FIQ
+                               EQU     0x11
+   58 00000000 00000012 
+                       Mode_IRQ
+                               EQU     0x12
+   59 00000000 00000080 
+                       I_Bit   EQU     0x80
+   60 00000000 00000040 
+                       F_Bit   EQU     0x40
+   61 00000000         ;=======================================================
+                       =====================
+   62 00000000         ;
+   63 00000000         ;                             MODULE IMPORTS
+   64 00000000         ;
+   65 00000000         ;=======================================================
+                       =====================
+   66 00000000         ; Import the external symbols that are referenced in thi
+                       s module.
+   67 00000000                 IMPORT  osbl_undefined_instruction_c_handler
+   68 00000000                 IMPORT  osbl_swi_c_handler
+   69 00000000                 IMPORT  osbl_prefetch_abort_c_handler
+   70 00000000                 IMPORT  osbl_data_abort_c_handler
+   71 00000000                 IMPORT  osbl_reserved_c_handler
+   72 00000000                 IMPORT  osbl_irq_c_handler
+   73 00000000                 IMPORT  osbl_fiq_c_handler
+   74 00000000                 IMPORT  osbl_nested_exception_c_handler
+   75 00000000                 IMPORT  osbl_main_ctl
+   76 00000000                 IMPORT  memcpy
+   77 00000000         ;=======================================================
+                       =====================
+   78 00000000         ;
+   79 00000000         ;                             MODULE EXPORTS
+   80 00000000         ;
+   81 00000000         ;=======================================================
+                       =====================
+   82 00000000         ; Export the external symbols that are referenced in thi
+                       s module.
+   83 00000000                 EXPORT  osbl_loop_here
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   84 00000000                 EXPORT  osbl_set_stack_ptr
+   85 00000000         ; Export the symbols __main and _main to prevent the lin
+                       ker from
+   86 00000000         ; including the standard runtime library and startup rou
+                       tine.
+   87 00000000                 EXPORT  __main
+   88 00000000                 EXPORT  _main
+   89 00000000         ;=======================================================
+                       =====================
+   90 00000000         ;
+   91 00000000         ;                             MODULE DATA AREA
+   92 00000000         ;
+   93 00000000         ;=======================================================
+                       =====================
+   94 00000000         ;-------------------------------------------------------
+                       -------------------
+   95 00000000         ; Data area is in IRAM and location must be defined in s
+                       catter load
+   96 00000000         ; file.  Data area starts at the top of IRAM.
+   97 00000000         ;-------------------------------------------------------
+                       -------------------
+   98 00000000                 PRESERVE8
+   99 00000000                 AREA    OSBL_VECTOR_TABLE, DATA, READWRITE
+  100 00000000         ;-------------------------------------------------------
+                       -------------------
+  101 00000000         ; Exception vectors table located at the top of IRAM.  T
+                       his is initialized
+  102 00000000         ; to the  1  exception handlers.  This region will be co
+                       pied into IRAM 
+  103 00000000         ; to replace the vectors which were used by the PBL.
+  104 00000000         ;-------------------------------------------------------
+                       -------------------
+  105 00000000         unused_reset_vector
+  106 00000000 00000000        DCD     0x00000000
+  107 00000004         undefined_instruction_vector
+  108 00000004 00000000        DCD     osbl_undefined_instruction_nested_handle
+r
+  109 00000008         swi_vector
+  110 00000008 00000000        DCD     osbl_swi_c_handler
+  111 0000000C         prefetch_abort_vector
+  112 0000000C 00000000        DCD     osbl_prefetch_abort_nested_handler
+  113 00000010         data_abort_vector
+  114 00000010 00000000        DCD     osbl_data_abort_nested_handler
+  115 00000014         reserved_vector
+  116 00000014 00000000        DCD     osbl_reserved_c_handler
+  117 00000018         irq_vector
+  118 00000018 00000000        DCD     osbl_irq_c_handler
+  119 0000001C         fiq_vector
+  120 0000001C 00000000        DCD     osbl_fiq_c_handler
+  121 00000020         ;=======================================================
+                       =====================
+  122 00000020         ; Qualcomm OS BOOT LOADER ENTRY POINT
+  123 00000020         ;=======================================================
+                       =====================
+  124 00000020                 AREA    OSBL_ENTRY, CODE, READONLY
+  125 00000000                 CODE32
+  126 00000000                 ENTRY
+  127 00000000         __main
+  128 00000000         _main
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  129 00000000         ;=======================================================
+                       =====================
+  130 00000000         ;   We contiue to disable interrupt and watch dog until 
+                       we jump to AMSS 
+  131 00000000         ;=======================================================
+                       =====================
+  132 00000000         osbl_reset_handler
+  133 00000000         ; ------------------------------------------------------
+                       ------------
+  134 00000000         ; Disable IRQ and FIQ interrupts.
+  135 00000000         ; ------------------------------------------------------
+                       ------------
+  136 00000000 E321F0D3        msr     CPSR_c,#Mode_SVC:OR:I_Bit:OR:F_Bit
+  137 00000004         ;save the passing parameter from DBL
+  138 00000004 E1A06000        mov     r6, r0
+  139 00000008         ; ------------------------------------------------------
+                       -----------------
+  140 00000008         ; Set up a boot stack pointer in Supervisor,Undefined,Ab
+                       ort mode.
+  141 00000008         ; ------------------------------------------------------
+                       -----------------
+  142 00000008         ; Set the Stack Pointer address.
+  143 00000008 E59F00B8        ldr     r0, =   0x58010000
+  144 0000000C E1A0D000        mov     r13, r0
+  145 00000010         ; switch to Undefined mode
+  146 00000010 E321F0DB        msr     CPSR_c,#Mode_UND:OR:I_Bit:OR:F_Bit
+  147 00000014         ; in Undefined mode
+  148 00000014 E1A0D000        mov     r13, r0     ; set Undefined SP
+  149 00000018         ; switch to Abort mode
+  150 00000018 E321F0D7        msr     CPSR_c,#Mode_ABT:OR:I_Bit:OR:F_Bit
+  151 0000001C         ; in Abort mode
+  152 0000001C E1A0D000        mov     r13, r0     ; set Abort SP
+  153 00000020         ; switch back to Supervisor mode
+  154 00000020 E321F0D3        msr     CPSR_c,#Mode_SVC:OR:I_Bit:OR:F_Bit
+  155 00000024         ; Restore the passing parameter
+  156 00000024 E1A00006        mov     r0, r6
+  157 00000028         ; ------------------------------------------------------
+                       ------------
+  158 00000028         ; Call functions external to perform  1  function.    
+  159 00000028         ; It should never return.
+  160 00000028         ; ------------------------------------------------------
+                       ------------
+  161 00000028 E59F509C        ldr     r5, =osbl_main_ctl
+  162 0000002C E12FFF35        blx     r5
+  163 00000030         ;=======================================================
+                       ===============
+  164 00000030         ; Called by osbl_error_hanlder only. We perform
+  165 00000030         ; Clean up the registers and loop here until JTAG is con
+                       nected.
+  166 00000030         ;=======================================================
+                       ===============
+  167 00000030         osbl_loop_here
+  168 00000030 E3A00000        mov     r0,#0
+  169 00000034 E3A01000        mov     r1,#0
+  170 00000038 E3A02000        mov     r2,#0
+  171 0000003C E3A03000        mov     r3,#0
+  172 00000040 E3A04000        mov     r4,#0
+  173 00000044 E3A05000        mov     r5,#0
+  174 00000048 E3A06000        mov     r6,#0
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  175 0000004C E3A07000        mov     r7,#0
+  176 00000050 E3A08000        mov     r8,#0
+  177 00000054 E3A09000        mov     r9,#0
+  178 00000058 E3A0A000        mov     r10,#0
+  179 0000005C E3A0B000        mov     r11,#0
+  180 00000060 E3A0C000        mov     r12,#0
+  181 00000064         loophere
+  182 00000064 E59F0064        ldr     r0, = 0x8003400c
+  183 00000068 E3A01001        mov     r1, #0x1
+  184 0000006C E5801000        str     r1, [r0]
+  185 00000070 EAFFFFFE        b       loophere
+  186 00000074         ;=======================================================
+                       ===============
+  187 00000074         ;  1  exception handlers that can have nested calls to t
+                       hem.  These
+  188 00000074         ; handlers check for nesting and if it is the first exce
+                       ption they
+  189 00000074         ; call a "C" exception handler that calls the  1  error 
+                       handler.
+  190 00000074         ; If it is a nested exception, the "C" exception handler
+                        is not
+  191 00000074         ; re-entered and the JTAG interface is enabled immediate
+                       ly. Nesting
+  192 00000074         ; is only a concern for undefined instruction and abort 
+                       exceptions.     
+  193 00000074         ; Note, a separate exception handler is used for each ex
+                       ception to 
+  194 00000074         ; provide additional debug information (see osbl_error_h
+                       andler.c for 
+  195 00000074         ; more information).
+  196 00000074         ;=======================================================
+                       ===============
+  197 00000074         osbl_undefined_instruction_nested_handler
+  198 00000074 E59F5058        ldr     r5,=osbl_undefined_instruction_c_handler
+  199 00000078 EAFFFFFE        b       check_for_nesting
+  200 0000007C         osbl_prefetch_abort_nested_handler
+  201 0000007C E59F5054        ldr     r5,=osbl_prefetch_abort_c_handler
+  202 00000080 EAFFFFFE        b       check_for_nesting
+  203 00000084         osbl_data_abort_nested_handler
+  204 00000084 E59F5050        ldr     r5,=osbl_data_abort_c_handler
+  205 00000088 EAFFFFFE        b       check_for_nesting
+  206 0000008C         ;=======================================================
+                       ===============
+  207 0000008C         ; Checks for nested exceptions and then calls the "C" ex
+                       ception 
+  208 0000008C         ; handler pointed to by R5 if this is the first time thi
+                       s exception
+  209 0000008C         ; has occurred, otherwise it calls the "C" nested except
+                       ion handler
+  210 0000008C         ; that just enables JTAG debug access.  The mode stack p
+                       ointer is used  
+  211 0000008C         ; to determine if a nested exception or a second abort e
+                       xception has
+  212 0000008C         ; occurred.  This is accomplished by comparing the mode 
+                       stack pointer  
+  213 0000008C         ; to the top of the stack that was initially assigned to
+                        the stack,
+  214 0000008C         ; then decrementing the stack pointer.  If they are equa
+                       l, it is a 
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  215 0000008C         ; first time exception.  
+  216 0000008C         ;=======================================================
+                       ===============
+  217 0000008C         check_for_nesting
+  218 0000008C E59F6034        ldr     r6,=   0x58010000 
+                                                   ; Initial mode stack ptr
+  219 00000090 E1A0700D        mov     r7, r13     ; Save current stack ptr 
+  220 00000094 E24DD004        sub     r13,r13,#4  ; Decrement stack ptr 
+  221 00000098 E1560007        cmp     r6, r7      ; Compare initial and actual
+                                                   
+  222 0000009C 012FFF35        blxeq   r5          ; First time exception 
+  223 000000A0 E59F5038        ldr     r5,=osbl_nested_exception_c_handler 
+                                                   ; This is a nested exception
+                                                   
+  224 000000A4 E12FFF35        blx     r5
+  225 000000A8         ;=======================================================
+                       ===============
+  226 000000A8         ; This function is used to set up the stack ptr specifie
+                       d by  1 
+  227 000000A8         ; r0 - new  1  stack address
+  228 000000A8         ; r1 - old stack base address
+  229 000000A8         ;=======================================================
+                       ===============
+  230 000000A8         osbl_set_stack_ptr
+  231 000000A8 E92D4007        stmfd   sp!, {r0-r2,lr}
+  232 000000AC E1A02001        mov     r2, r1      ;save old stack base addr
+  233 000000B0 E1A0100D        mov     r1, sp      ;src addr
+  234 000000B4 E042200D        sub     r2, r2, r13 ;size of the stack
+  235 000000B8 E0400002        sub     r0, r0, r2  ;dest addr
+  236 000000BC FAFFFFFE        blx     memcpy
+  237 000000C0 E1A0D000        mov     sp, r0      ;relocate stack ptr
+  238 000000C4 E8BD8007        ldmfd   sp!, {r0-r2,pc}
+  239 000000C8                 END
+              58010000 
+              00000000 
+              8003400C 
+              00000000 
+              00000000 
+              00000000 
+              00000000 
+Command Line: [C:\ARM\ADSv1_2\bin\armasm.exe -list ../../osblobj_SBNAALZ/osbl.l
+st -g -apcs /interwork -cpu ARM926EJ-S]

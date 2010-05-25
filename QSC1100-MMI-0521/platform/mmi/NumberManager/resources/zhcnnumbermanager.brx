@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="zhcnnumbermanager" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_NUMBERMANAGER_TITLE">
+		<Text>号码百事通</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_BOOK_TICKET_TITLE">
+		<Text>订机票</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_BOOK_HOTEL_TITLE">
+		<Text>订酒店</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_BOOK_RESTAURANT_TITLE">
+		<Text>订餐馆</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_COMMUNICATE_ASSISTANT_TITLE">
+		<Text>通信助理</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_TELEPHONE_EXCHANGE_TITLE">
+		<Text>总机服务</Text>
+	</STRING>
+	<String Id="7" Name="IDS_CALL_NUMBER_MANAGER_TITLE">
+		<Text>拨号码百事通</Text>
+	</String>
+	<String Id="8" Name="IDS_TELEPHONE_EXCHANGE_NUMBER">
+		<Text>总机号码</Text>
+	</String>
+	<String Id="9" Name="IDS_TELEPHONE_EXCHANGE_INPUT">
+		<Text>请输入总机号码</Text>
+	</String>
+	<String Id="10" Name="IDS_TELEPHONE_EXCHANGE_MODIFY">
+		<Text>请修改总机号码</Text>
+	</String>
+	<String Id="11" Name="IDS_LIFE_SEARCHING_TITLE">
+		<Text>生活搜索</Text>
+	</String>
+	<String Id="12" Name="IDS_MAP_SERVICE_TITLE">
+		<Text>地图服务</Text>
+	</String>
+	<String Id="13" Name="IDS_MEMBER_SPACE_TITLE">
+		<Text>会员空间</Text>
+	</String>
+	<String Id="14" Name="IDS_CONNECT_TO">
+		<Text>链接至</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<DIALOG Id="101" Name="IDD_NUMBERMANAGER_DIALOG" Focus="1">
+		<Controls>
+			<Menu Id="1" Name="IDC_NUMBERMANAGER_DIALOG">
+				<TitleID>IDS_NUMBERMANAGER_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="102" Name="IDD_DISPLAY_NUMBER_DIALOG" Focus="0">
+		<Controls>
+			<Static Id="7001" Name="IDC_DISPLAY_NUMBER_DIALOG">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="103" Name="IDD_TEXT_INPUT_DIALOG" Focus="0">
+		<Controls>
+			<Text Id="7002" Name="IDC_TEXT_INPUT_DIALOG">
+				<Items/></Text>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+</Dialogs>
+</BREWRes>

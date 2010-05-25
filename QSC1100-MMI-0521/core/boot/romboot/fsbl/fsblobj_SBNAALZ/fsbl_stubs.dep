@@ -1,0 +1,4 @@
+..\..\fsblobj_SBNAALZ\fsbl_stubs.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl_stubs.c
+..\..\fsblobj_SBNAALZ\fsbl_stubs.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_stubs.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl.h
+..\..\fsblobj_SBNAALZ\fsbl_stubs.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h

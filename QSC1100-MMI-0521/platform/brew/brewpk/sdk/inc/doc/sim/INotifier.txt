@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+INotifier simulation
+
+INotifier is simulated.
+==========================
+*/ 

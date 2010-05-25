@@ -1,0 +1,6 @@
+#ifndef SPORTSAPP_BID
+#define SPORTSAPP_BID
+
+#define AEECLSID_SPORTSAPP        0x0100612b
+
+#endif //SPORTSAPP_BID

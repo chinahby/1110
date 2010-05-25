@@ -1,0 +1,14 @@
+#-------------------------------------------------------------------------------
+# BT BCM 
+#-------------------------------------------------------------------------------
+
+ifeq ($(USES_3PART_BT),BCM2048)
+include $(BT_DRIVER)/bcm2048/bt_bcm2048.min
+endif
+
+ifeq ($(USES_3PART_BT),CSRMC601)
+include $(BT_DRIVER)/csrmc601/bt_csrmc601.min
+endif
+
+BT_DRIVER_OBJS :=  $(addprefix $(TARGETDIR)/, $(BT_DRIVER_SOURCES:%.c=%.o))
+BT_DRIVER_DEPS :=  $(addprefix $(TARGETDIR)/, $(BT_DRIVER_SOURCES:%.c=%.dep))

@@ -1,0 +1,270 @@
+#-------------------------------------------------------------------------------
+# OEM
+#
+# $Header: //depot/asic/qsc60x0/apps/brew_3.1.5/pk/src/oem.min#19 $ $DateTime: 2007/01/18 13:24:39 $ $Author: sjain $
+#
+#-------------------------------------------------------------------------------
+$(warning "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+OEM_LIB_SOURCES=\
+	AEEPhone.c \
+	AEETSupps.c \
+	OEMAddrBook.c \
+	OEMAppFrame.c \
+	OEMAppFuncs.c \
+	OEMAppx5.c \
+	OEMBacklight.c \
+	OEMBattery.c \
+	OEMBitmap16.c \
+	OEMBitmap_common.c \
+	OEMBN.c \
+	OEMCall.c \
+	OEMCallHistory.c \
+	OEMConfig.c \
+	OEMConstFiles_Dynamic.c \
+	OEMCriticalSection.c \
+	OEMDB.c \
+	OEMDebug.c \
+	OEMDefaults.c \
+	OEMDeviceNotifier.c \
+	OEMDisp.c \
+	OEMDisplayDev.c \
+	OEMAnnunciatorControl.c \
+        OEMDSS.c \
+	OEMFlip.c \
+	OEMFS.c \
+	OEMFSPath.c \
+	OEMJPEG.c \
+	OEMHeap.c \
+	oemheap3x.c \
+	oemitextctl.c \
+	OEMLogger.c \
+	OEMLoggerBTIL.c \
+	OEMLoggerDMSS.c \
+	OEMLoggerFile.c \
+	OEMMD5.c \
+	OEMMedia.c \
+	OEMMediaCMX.c \
+	OEMMediaDLS.c \
+	OEMMediaFormats.c \
+	OEMMediaPMD.c \
+	OEMMediaUtil.c \
+	OEMMemCache.c \
+	OEMModTable.c \
+	OEMModTableExt.c \
+	OEMMutex.c \
+	OEMNativeNotifier.c \
+	OEMObjectMgr.c \
+	OEMOS.c \
+	OEMPhone.c \
+	OEMPosDet.c \
+	OEMPrivacy.c \
+	OEMRUIM.c \
+	OEMAddrBookRUIM.c \
+	OEMRan.c \
+	OEMRegistry.c \
+	OEMResArbiter.c \
+	OEMRinger.c \
+	OEMSecSysClock.c  \
+	OEMSIO.c\
+	OEMSock.c  \
+	OEMAuth.c  \
+	OEMServingNetworks.c  \
+	OEMSound.c \
+	OEMStringFuncs.c \
+	OEMSVC.c \
+	OEMSynthQuality.c \
+	OEMSysClock.c \
+	OEMTAPI.c \
+	OEMTelephone.c \
+	OEMText.c \
+	OEMTSupps.c \
+	OEMVocoder.c \
+	OEMWIFI.c \
+	OEMFont.c \
+	OEMFontData.c \
+
+ifeq ($(USES_UIONE),yes)
+# Tell make where the static extension source files from the Porting Kit are located
+vpath %.c $(UHPK_BASEDIR)/StaticExtensions/SignalTone/impl/src
+vpath %.c $(UHPK_BASEDIR)/ModuleBase/src
+
+# Include the UI dynamic modules from the Dev Kit.  These dynamic modules
+# will be statically linked into the phone image via OEMConstFiles
+include $(DYNAMICUI_BASEDIR)/dynamicui.min
+
+# Add the required uiOne SDK and ISQL BREW extensions as OEMConstFile-based modules
+vpath %.mif $(SQL_BASEDIR)
+vpath %.mod $(SQL_BASEDIR)/isql
+vpath %.mif $(TRIGPLAYER_BASEDIR)
+vpath %.mod $(TRIGPLAYER_BASEDIR)/trigplayer
+vpath %.mif $(WIDGETS_BASEDIR)
+vpath %.mod $(WIDGETS_BASEDIR)/widgets
+vpath %.mod $(WIDGETS_BASEDIR)/framewidget
+vpath %.mif $(BBFE_BASEDIR)
+vpath %.mod $(BBFE_BASEDIR)/bbfe
+
+CONSTFILE_FILES += \
+   isql.mif|fs:/mif/isql.mif \
+   isql.mod|fs:/mod/isql/isql.mod \
+   trigplayer.mif|fs:/mif/trigplayer.mif \
+   trigplayer.mod|fs:/mod/trigplayer/trigplayer.mod \
+   widgets.mif|fs:/mif/widgets.mif \
+   widgets.mod|fs:/mod/widgets/widgets.mod \
+   framewidget.mif|fs:/mif/framewidget.mif \
+   framewidget.mod|fs:/mod/framewidget/framewidget.mod \
+   bbfe.mif|fs:/mif/bbfe.mif \
+   bbfe.mod|fs:/mod/bbfe/bbfe.mod
+endif
+
+OEM_LIB_A_SOURCES = \
+        OEMMemCacheASM.s
+
+ifeq ($(USES_ACM),yes)
+    OEM_LIB_SOURCES += \
+	OEMACM.c \
+	OEMACMi.c \
+	OEMACMPort.c
+endif
+
+ifeq ($(USES_ARM_STACKTRACE),yes)
+    OEM_LIB_A_SOURCES += \
+	OEMARMFastBacktrace.s
+
+    OEM_LIB_SOURCES += \
+	OEMARMFastBacktraceHelper.c
+endif
+
+#OEM_LIB_SOURCES += \
+#	sys_palette.c \
+
+ifeq ($(USES_BREW_SMS),yes)
+OEM_LIB_SOURCES+=\
+	OEMSMS.c \
+	OEMUASMS.c \
+	OEMUASMSStorage.c \
+	OEMWSMS.c \
+	OEMSMSCust.c
+endif
+
+ifeq ($(USES_BREW_MCF),yes)
+OEM_LIB_SOURCES+=\
+	OEMMCFMIF_10888.c \
+	OEMMCFMIF_10889.c \
+	OEMMCFMIF_10890.c \
+	OEMMCFMIF_10891.c \
+	OEMMCFMIF_10892.c \
+	OEMMCFMIF_16225.c \
+	OEMMCFMIF_18067.c \
+	OEMMCFMIF_19240.c \
+	OEMMCFMIF_19917.c \
+	OEMMCFMIF_19918.c \
+	OEMMCFMIF_19919.c \
+	OEMMCFMIF_19920.c \
+	OEMMCFMIF_19922.c \
+	OEMMCFMIF_19923.c \
+	OEMMCFMIF_19924.c
+endif
+
+ifeq ($(USES_LOW_MEMORY),yes)
+else
+OEM_LIB_SOURCES+=\
+	OEMDebugger.c \
+	OEMUSBHMSMIF_26108.c \
+	OEMUSBHMSMIF_26109.c
+endif
+
+ifeq ($(USES_GSM1X),yes)
+    OEM_LIB_SOURCES += \
+	OEMGSM1xControl.c \
+	OEMGSM1xControl_SVC.c \
+	OEMGSMSMS.c \
+	OEMGSMSMS_SVC.c \
+	OEMGSM1xSig.c \
+	OEMGSM1xSig_SVC.c \
+	OEMGSM1xCardHandler.c \
+	OEMGSM1xCardHandler_SVC.c \
+	OEMGSM1xProv.c \
+	OEMGSM1xMessage.c \
+	OEMGSM1xMessage_SVC.c \
+	OEMGSM1xPrl.c
+endif
+
+ifeq ($(USES_BREW_BUIW), yes)
+	include $(BUIW)/buiw.min
+endif
+
+# Const filesystem files
+ifeq ($(USES_LOW_MEMORY),yes)
+	vpath %.bar $(BREWDIR)/pk/bin/en/mono
+	vpath %.brx $(BREWDIR)/pk/bin/en/mono
+else
+	vpath %.bar $(BREWDIR)/pk/bin/en/256Color
+	vpath %.brx $(BREWDIR)/pk/bin/en/256Color
+endif
+
+ifeq ($(USES_UIONE),yes)
+    OEM_LIB_SOURCES += \
+        OEMAddrBookExt.c \
+        AEESignalTone.c \
+        OEMSignalTone.c \
+        ModuleBaseImpl.c
+endif
+
+ifeq ($(USES_VC0848),yes)    
+    OEM_LIB_SOURCES += \
+	OEMMediaVC0848.c \
+	OEMCameraVC0848.c
+else
+    OEM_LIB_SOURCES += \
+	OEMCamera.c \
+	OEMCameraFrame.c \
+	OEMCamera_priv.c 
+endif
+
+CONSTFILE_FILES+=\
+        oemmsgs.bar|fs:/sys/oemmsgs.bar \
+        OEMAEEControls.bar|fs:/sys/en/OEMAEEControls.bar
+	
+# 加入另外一种语言资源文件
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+        $(EXTLANG1)OEMAEEControls.bar|fs:/sys/$(EXTLANG1)/OEMAEEControls.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+        $(EXTLANG2)OEMAEEControls.bar|fs:/sys/$(EXTLANG2)/OEMAEEControls.bar
+endif
+
+
+vpath %.s $(BREW_OEM_SRC) $(BREW_OEM_MSM_SRC)
+vpath %.c $(BREW_OEM_SRC) $(BREW_OEM_MSM_SRC)
+vpath %.c $(BREW_CONST)
+
+ifneq ($(BUIW_STATIC_LOADING),yes)
+OEM_LIB_SOURCES +=  \
+        xmodimpl.c
+vpath %.c $(BUIW)/xmod
+vpath %.c $(UIONESDK12)/Fonts/BREWTrueTypeFont/xmod
+vpath %.c $(UIONESDK12)/Fonts/BREWBitmapFont/xmod
+endif
+
+#-------------------------------------------------------------------------------
+#
+# OBJECT List Declaration
+#
+#-------------------------------------------------------------------------------
+
+OEM_LIB_OBJS := $(CONSTFILE_SOURCES:%.c=%.o) $(addprefix $(TARGETDIR)/, $(OEM_LIB_SOURCES:%.c=%.o) $(OEM_LIB_A_SOURCES:%.s=%.o))
+$(warning "~~~~~~~~~~~~OEM_LIB_OBJS = $(OEM_LIB_OBJS)")
+$(OEM_LIB_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+ifeq ($(BIG),yes)
+	OEM_OBJS := $(TARGETDIR)/oem.lib
+else
+	OEM_OBJS :=  $(CONSTFILE_OBJS) $(addprefix $(TARGETDIR)/, $(OEM_LIB_SOURCES:%.c=%.o) $(OEM_LIB_A_SOURCES:%.s=%.o))
+	OEM_DEPS :=  $(addprefix $(TARGETDIR)/, $(OEM_LIB_SOURCES:%.c=%.dep) $(OEM_LIB_A_SOURCES:%.s=%.dep))
+endif
+
+$(TARGETDIR)/oem.lib : $(OEM_LIB_SOURCES) $(OEM_LIB_A_SOURCES)
+	$(group_c_compile)
+

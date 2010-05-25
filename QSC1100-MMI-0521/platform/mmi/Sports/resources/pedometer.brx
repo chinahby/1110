@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="pedometer" VERSION="1">
+<Objects MimeType="image/png">
+	<Object Id="5001" Name="IDI_PEDOMETER_BG">
+		<File>..\..\Appscommon\images\color\sports\Background\Background.png</File>
+	</Object>
+</Objects>
+</BREWRes>

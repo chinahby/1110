@@ -1,0 +1,255 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+    2 00000000         ;
+    3 00000000         ;                   B O O T    R E S E T    H A N D L E 
+                       R
+    4 00000000         ;
+    5 00000000         ; GENERAL DESCRIPTION
+    6 00000000         ;   This module contains the reset handler function that
+                        is executed after
+    7 00000000         ;   reset of the ARM processor.
+    8 00000000         ;
+    9 00000000         ; INITIALIZATION AND SEQUENCING REQUIREMENTS
+   10 00000000         ;   None.
+   11 00000000         ;
+   12 00000000         ; Copyright (c) 2004 by QUALCOMM, Incorporated.  All Rig
+                       hts Reserved.
+   13 00000000         ;*====*====*====*====*====*====*====*====*====*====*====
+                       *====*====*====*====*
+   14 00000000         ;=======================================================
+                       =====================
+   15 00000000         ;
+   16 00000000         ;                       EDIT HISTORY FOR MODULE
+   17 00000000         ;
+   18 00000000         ; This section contains comments describing changes made
+                        to the module.
+   19 00000000         ; Notice that changes are listed in reverse chronologica
+                       l order.
+   20 00000000         ;
+   21 00000000         ;
+   22 00000000         ; when      who     what, where, why
+   23 00000000         ; --------  -----   ------------------------------------
+                       ---------------------
+   24 00000000         ; 10/18/05  rp      Moved boot_hw_powerdown() into this 
+                       file from
+   25 00000000         ;                   boot_error_handler.s
+   26 00000000         ; 07/23/05  wd      L4 Merge.
+   27 00000000         ; 05/09/05  rp      Created from boot_reset_handler.    
+                                                
+   28 00000000         ;=======================================================
+                       =====================
+   29 00000000         ;=======================================================
+                       =====================
+   30 00000000         ;
+   31 00000000         ;                             MODULE INCLUDES
+   32 00000000         ;
+   33 00000000         ;=======================================================
+                       =====================
+   34 00000000                 GBLS    current_node_name
+   35 00000000                 GBLS    current_node_type
+   36 00000000                 GBLA    current_node_aregcount
+   37 00000000                 GBLA    current_node_vregcount
+   38 00000000                 MACRO
+   39 00000000                 pusha   $stack, $reg
+   40 00000000                 str     $reg, [$stack, #-4]!
+   41 00000000                 MEND
+   42 00000000                 MACRO
+   43 00000000                 popa    $stack, $reg
+   44 00000000                 ldr     $reg, [$stack], #4
+   45 00000000                 MEND
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   46 00000000                 MACRO
+   47 00000000                 ENTRY_NODE
+                                       $node_name
+   48 00000000         current_node_name
+                               SETS    "$node_name"
+   49 00000000                 EXPORT  $node_name
+   50 00000000                 ALIGN
+   51 00000000                 ROUT
+   52 00000000         $node_name
+   53 00000000                 MEND
+   54 00000000         ;  The end of an entry node.
+   55 00000000                 MACRO
+   56 00000000                 ENTRY_NODE_END
+   57 00000000         $current_node_name._exit
+   58 00000000         current_node_name
+                               SETS    ""
+   59 00000000                 MEND
+   60 00000000                 MACRO
+   61 00000000                 LEAF_NODE
+                                       $node_name
+   62 00000000         current_node_type
+                               SETS    "Leaf"
+   63 00000000                 CODE16
+   64 00000000                 ENTRY_NODE
+                                       $node_name
+   65 00000000                 bx      pc
+   66 00000000                 ALIGN
+   67 00000000                 CODE32
+   68 00000000                 EXPORT  $node_name._32
+   69 00000000         $node_name._32
+   70 00000000                 MEND
+   71 00000000                 MACRO
+   72 00000000                 LEAF_NODE_END
+                                       $node_name
+   73 00000000                 ASSERT  "$current_node_type" = "Leaf"
+   74 00000000                 ENTRY_NODE_END
+                                       $node_name
+   75 00000000                 bx      lr
+   76 00000000         current_node_type
+                               SETS    ""
+   77 00000000                 MEND
+   78 00000000                 MACRO
+   79 00000000                 LEAF_NODE_16
+                                       $node_name
+   80 00000000         current_node_type
+                               SETS    "Leaf16"
+   81 00000000                 CODE16
+   82 00000000                 ENTRY_NODE
+                                       $node_name
+   83 00000000                 MEND
+   84 00000000                 MACRO
+   85 00000000                 LEAF_NODE_END_16
+                                       $node_name
+   86 00000000                 ASSERT  "$current_node_type" = "Leaf16"
+   87 00000000                 ENTRY_NODE_END
+                                       $node_name
+   88 00000000                 bx      lr
+   89 00000000         current_node_type
+                               SETS    ""
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   90 00000000                 MEND
+   91 00000000                 MACRO
+   92 00000000                 ALTERNATE_ENTRY_16
+                                       $node_name
+   93 00000000                 ASSERT  "$current_node_type" = "Leaf16"
+   94 00000000                 EXPORT  $node_name
+   95 00000000         $node_name
+   96 00000000                 MEND
+   97 00000000                 MACRO
+   98 00000000         $lbl    blatox  $destreg
+   99 00000000         $lbl
+  100 00000000                 blx     $destreg    ; ARMv5
+  101 00000000                 MEND
+  102 00000000         ;=======================================================
+                       ================
+  103 00000000         ;
+  104 00000000         ;                             MODULE DATA 
+  105 00000000         ;
+  106 00000000         ;=======================================================
+                       ================
+  107 00000000         ;=======================================================
+                       =====================
+  108 00000000         ;
+  109 00000000         ;                             MODULE IMPORTS
+  110 00000000         ;
+  111 00000000         ;=======================================================
+                       =====================
+  112 00000000         ;=======================================================
+                       =====================
+  113 00000000         ;
+  114 00000000         ;                             MODULE EXPORTS
+  115 00000000         ;
+  116 00000000         ;=======================================================
+                       =====================
+  117 00000000                 IMPORT  mmu_clean_and_invalidate_data_cache
+  118 00000000                 IMPORT  mmu_invalidate_instruction_cache
+  119 00000000                 IMPORT  cache_mmu_disable
+  120 00000000                 IMPORT  boot_hw_powerdown
+  121 00000000         ;=======================================================
+                       =====================
+  122 00000000                 AREA    Misc_target_code, CODE, READONLY
+  123 00000000                 CODE16              ; 16 bit Thumb instruction s
+                                                   et
+  124 00000000                 EXPORT  jump_armprg
+  125 00000000                 ALIGN
+  126 00000000         jump_armprg
+  127 00000000 00001C07        mov     r7,r0
+  128 00000002 00004808        ldr     r0,=mmu_clean_and_invalidate_data_cache
+  129 00000004 00004780        blx     r0
+  130 00000006 00004808        ldr     r0,=mmu_invalidate_instruction_cache
+  131 00000008 00004780        blx     r0
+  132 0000000A 00004808        ldr     r0,=cache_mmu_disable
+  133 0000000C 00004780        blx     r0
+  134 0000000E 00004738        bx      r7
+  135 00000010         ;-------------------------------------------------------
+                       ---------------------
+  136 00000010         ; BOOT POWERDOWN ENTRY POINT
+  137 00000010         ;
+  138 00000010         ; DESCRIPTION
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  139 00000010         ;   The boot powerdown routine is entered in the event o
+                       f a return from the
+  140 00000010         ;   boot kernel.
+  141 00000010         ;-------------------------------------------------------
+                       ---------------------
+  142 00000010                 LEAF_NODE
+                                       boot_powerdown_entry
+   62 00000010 Leaf    current_node_type
+                               SETS    "Leaf"
+   63 00000010                 CODE16
+   64 00000010                 ENTRY_NODE
+                                       boot_powerdown_entry
+   48 00000010 boot_powerdown_entry
+                       current_node_name
+                               SETS    "boot_powerdown_entry"
+   49 00000010                 EXPORT  boot_powerdown_entry
+   50 00000010                 ALIGN
+   51 00000010                 ROUT
+   52 00000010         boot_powerdown_entry
+   65 00000010 00004778        bx      pc
+   66 00000012 00 00           ALIGN
+   67 00000014                 CODE32
+   68 00000014                 EXPORT  boot_powerdown_entry_32
+   69 00000014         boot_powerdown_entry_32
+  143 00000014         ; Disable IRQ and FIQ interrupts in the event that the b
+                       oot image
+  144 00000014         ; has been entered from the application with interrupts 
+                       enabled.
+  145 00000014 E321F0D3        msr     CPSR_c, # 0x13 :OR: 0x80 :OR: 0x40
+  146 00000018         ; Enter the boot powerdown routine.  There is no return 
+                       from this
+  147 00000018         ; routine.
+  148 00000018 E59F4010        ldr     r4, =boot_hw_powerdown
+  149 0000001C E12FFF14        bx      r4
+  150 00000020                 LEAF_NODE_END
+   73 00000020                 ASSERT  "Leaf" = "Leaf"
+   74 00000020                 ENTRY_NODE_END
+   57 00000020         boot_powerdown_entry_exit
+   58 00000020         current_node_name
+                               SETS    ""
+   75 00000020 E12FFF1E        bx      lr
+   76 00000024         current_node_type
+                               SETS    ""
+  151 00000024         ;=======================================================
+                       =====================
+  152 00000024         ;=======================================================
+                       =====================
+  153 00000024                 END
+              00000000 
+              00000000 
+              00000000 
+              00000000 
+Command Line: [C:\ARM\ADSv1_2\bin\armasm.exe -list ../../fsblobj_SBNAALZ/boot_t
+arget.lst -g -apcs /interwork -cpu ARM926EJ-S]

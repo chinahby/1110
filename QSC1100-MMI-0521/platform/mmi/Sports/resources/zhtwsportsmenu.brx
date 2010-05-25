@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="zhtwsportsmenu" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1001" Name="IDS_SPORTS_PEDOMETER">
+		<Text>計步器</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_SPORTS_PLAN">
+		<Text>訓練計畫</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_SPORTS_PERSONAL">
+		<Text>個人資料</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_MAIN_TITLE">
+		<Text>運動</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_WARNNING_AGE_NULL">
+		<Text>年龄範圍：1歲到110歲</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_HEADSET_OFF">
+		<Text>請插入耳機</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_PED_WALK">
+		<Text>走路</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_PED_RUN">
+		<Text>跑步</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_PED_METER">
+		<Text>米</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_PED_SPEED">
+		<Text>千米/小時</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_DONE">
+		<Text>完成</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_REC_CONT">
+		<Text>未指定</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_EDIT_MALE">
+		<Text>男性</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_PEDOMETER_START">
+		<Text>開始</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_PEDOMETER_START_WITH_MUSIC">
+		<Text>伴著音樂</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_PEDOMETER_START_WITH_FM">
+		<Text>伴著收音機</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_PEDOMETER_RECORD">
+		<Text>記錄</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_PED_OPT_LASTREC">
+		<Text>最終記錄</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_PED_OPT_ACCREC">
+		<Text>最佳記錄</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_PED_OPT_RESET">
+		<Text>復位</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_STEP">
+		<Text>步</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_REST_CONFIRM">
+		<Text>是否復位</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_STOP_CONFIRM">
+		<Text>是否停止</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_PERS_ONE">
+		<Text>用戶1</Text>
+	</STRING>
+	<STRING Id="1026" Name="IDS_PERS_TWO">
+		<Text>用戶2</Text>
+	</STRING>
+	<STRING Id="1027" Name="IDS_PERS_THREE">
+		<Text>用戶3</Text>
+	</STRING>
+	<STRING Id="1028" Name="IDS_PERS_OPT_EDIT">
+		<Text>編輯</Text>
+	</STRING>
+	<STRING Id="1029" Name="IDS_PERS_OPT_SELECT">
+		<Text>選擇</Text>
+	</STRING>
+	<STRING Id="1030" Name="IDS_PERS_OPT_RECORD">
+		<Text>記錄</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_EDIT_NAME">
+		<Text>姓名</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_EDIT_HIGHT">
+		<Text>身高(cm)</Text>
+	</STRING>
+	<STRING Id="1033" Name="IDS_EDIT_WEIGHT">
+		<Text>體重(kg)</Text>
+	</STRING>
+	<STRING Id="1034" Name="IDS_WALK_STEP">
+		<Text>走路步長(cm)</Text>
+	</STRING>
+	<STRING Id="1035" Name="IDS_RUN_STEP">
+		<Text>跑步步長(cm)</Text>
+	</STRING>
+	<STRING Id="1036" Name="IDS_EDIT_BRITHDAY">
+		<Text>年齡</Text>
+	</STRING>
+	<STRING Id="1037" Name="IDS_EDIT_GENDER">
+		<Text>性別</Text>
+	</STRING>
+	<STRING Id="1038" Name="IDS_WARNNING_NAME_NULL">
+		<Text>姓名為空</Text>
+	</STRING>
+	<STRING Id="1039" Name="IDS_WARNNING_HEIGHT_NULL">
+		<Text>身高為空</Text>
+	</STRING>
+	<STRING Id="1040" Name="IDS_WARNNING_WEIGHT_NULL">
+		<Text>體重為空</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_WARNNING_WALKST_NULL">
+		<Text>步行步長為空</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_WARNNING_RUNST_NULL">
+		<Text>跑步步長為空</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_NEEDNAME">
+		<Text>名字為空</Text>
+	</STRING>
+	<STRING Id="1044" Name="IDS_OUTOFWEIGHT">
+		<Text>體重範圍：40kg 到 250kg</Text>
+	</STRING>
+	<STRING Id="1045" Name="IDS_OUTOFHEIGHT">
+		<Text>身高範圍：120cm 到 250cm</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_OUTOFWALK">
+		<Text>步行步長範圍：50cm 到 100cm</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_OUTOFRUN">
+		<Text>跑步步長範圍：100cm 到 150cm</Text>
+	</STRING>
+	<STRING Id="1048" Name="IDS_RUN_BG">
+		<Text>在平地上跑</Text>
+	</STRING>
+	<STRING Id="1049" Name="IDS_APP_EXIT">
+		<Text>退出</Text>
+	</STRING>
+	<STRING Id="1050" Name="IDS_GENDER_MALE">
+		<Text>男性</Text>
+	</STRING>
+	<STRING Id="1051" Name="IDS_EDIT_FEMALE">
+		<Text>女性</Text>
+	</STRING>
+	<STRING Id="1052" Name="IDS_WARNNING_CLOSE">
+		<Text>搖一搖關閉</Text>
+	</STRING>
+	<STRING Id="1053" Name="IDS_REC_PLAN">
+		<Text>計畫:</Text>
+	</STRING>
+	<STRING Id="1054" Name="IDS_REC_TIME">
+		<Text>時間：</Text>
+	</STRING>
+	<STRING Id="1055" Name="IDS_REC_DISTANCE">
+		<Text>距離(m)：</Text>
+	</STRING>
+	<STRING Id="1056" Name="IDS_REC_SPEED">
+		<Text>速度(km/h):</Text>
+	</STRING>
+	<STRING Id="1057" Name="IDS_REC_STEP">
+		<Text>步伐大小：</Text>
+	</STRING>
+	<STRING Id="1058" Name="IDS_REC_CAL">
+		<Text>熱量(kcal)：</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_DIALOG_MAIN" Focus="1">
+		<Controls>
+			<Menu Id="1" Name="IDC_MENU">
+				<TitleID>IDS_MAIN_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_DIALOG_PEDOMETER" Focus="0">
+		<Controls>
+			<Stopwatch Id="7002" Name="IDC_PED_STOPWATCH">
+				<Items/></Stopwatch>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_DIALOG_PEDOMETER_OPTION" Focus="0">
+		<Controls>
+			<Menu Id="7001" Name="IDC_PED_OPTION">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_DIALOG_PED_RECORD" Focus="7003">
+		<Controls>
+			<Menu Id="7003" Name="IDC_MENU_REC">
+				<TitleID>IDS_PEDOMETER_RECORD</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_DIALOG_PED_RECORD_VIEW" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_MENU_REC_VIEW">
+				<TitleID>IDS_PEDOMETER_RECORD</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6006" Name="IDD_DIALOG_PERSONAL" Focus="0">
+		<Controls>
+			<Menu Id="7005" Name="IDC_MENU_PERSONAL">
+				<TitleID>IDS_SPORTS_PERSONAL</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6007" Name="IDD_DIALOG_PER_OPTION" Focus="7006">
+		<Controls>
+			<Menu Id="7006" Name="IDC_PERS_OPTION">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6008" Name="IDD_DIALOG_PER_EDIT" Focus="7007">
+		<Controls>
+			<Menu Id="7007" Name="IDC_MENU_EDIT">
+				<TitleID>IDS_SPORTS_PERSONAL</TitleID>
+				<Items/>
+			</Menu>
+			<Text Id="7010" Name="IDC_TEXT_PERS">
+				<Items/></Text>
+			<List Id="7011" Name="IDC_LIST_EDIT">
+				<Items/>
+			</List>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6009" Name="IDD_DIALOG_INPUT" Focus="7008">
+		<Controls>
+			<Text Id="7008" Name="IDC_TEXT_INPUT">
+				<TitleID>IDS_PERS_OPT_EDIT</TitleID>
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6011" Name="IDD_APP_BGROUND" Focus="0">
+		<Controls>
+			<Menu Id="7009" Name="IDC_APP_BG_RUN">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

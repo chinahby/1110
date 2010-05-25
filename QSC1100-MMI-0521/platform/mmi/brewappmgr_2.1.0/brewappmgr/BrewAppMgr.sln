@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BrewAppMgr", "BrewAppMgr.vcproj", "{B875BCF7-F4E8-409A-9A4F-E2C8E30D0FB2}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 1
+		SccProjectUniqueName0 = BrewAppMgr.vcproj
+		SccProjectName0 = BrewAppMgr
+		SccLocalPath0 = ..\\..
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+		SccProjectFilePathRelativizedFromConnection0 = HEAD\\brewappmgr\\
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{B875BCF7-F4E8-409A-9A4F-E2C8E30D0FB2}.Debug.ActiveCfg = Debug|Win32
+		{B875BCF7-F4E8-409A-9A4F-E2C8E30D0FB2}.Debug.Build.0 = Debug|Win32
+		{B875BCF7-F4E8-409A-9A4F-E2C8E30D0FB2}.Release.ActiveCfg = Release|Win32
+		{B875BCF7-F4E8-409A-9A4F-E2C8E30D0FB2}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

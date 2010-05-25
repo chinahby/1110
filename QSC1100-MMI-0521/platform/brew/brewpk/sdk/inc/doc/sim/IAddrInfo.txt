@@ -1,0 +1,10 @@
+/* 
+===========================
+Simulator support DOCUMENTATION
+============================
+IAddrInfo simulation
+
+IAddrInfo is simulated.
+
+==========================  
+*/

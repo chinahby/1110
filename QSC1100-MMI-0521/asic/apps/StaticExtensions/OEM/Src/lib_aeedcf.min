@@ -1,0 +1,23 @@
+
+#----------------------------------------------------------------------------
+# Digital Content Format (DCF) BREW EXTENSION
+#----------------------------------------------------------------------------
+AEEDCF_LIB_SOURCES = \
+       OEMDCF.c      \
+       AESLib.c                   
+       
+AEEDCF_LIB_OBJS :=  $(addprefix $(LIBDIR)/, $(AEEDCF_LIB_SOURCES:%.c=%.o)) 
+$(AEEDCF_LIB_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+      
+vpath %.c $(BREW_STATIC_EXTENSIONS_OEM_SRC)
+
+$(LIBDIR)/AEEDCF.lib : $(AEEDCF_LIB_OBJS)
+	@echo ------------------------------------------------------------------
+	@echo LIBRARY $@
+	@if test -f $@; then rm -f $@; fi
+	$(ARMAR) -r $@ $(AEEDCF_LIB_OBJS)
+	@echo ------------------------------------------------------------------
+
+LIBOBJECTS := $(AEEDCF_LIB_OBJS) $(LIBOBJECTS)
+QCTLIBS := $(QCTLIBS) $(LIBDIR)/AEEDCF.lib
+

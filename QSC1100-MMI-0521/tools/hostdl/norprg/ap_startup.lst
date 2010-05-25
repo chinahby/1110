@@ -1,0 +1,220 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 CODE32
+    2 00000000                 IMPORT  main_c
+    3 00000000                 IMPORT  memory_init
+    4 00000000                 IMPORT  asb_and_msm_init
+    5 00000000                 IMPORT  abort_stack
+    6 00000000                 IMPORT  undef_stack
+    7 00000000                 IMPORT  irq_stack
+    8 00000000                 IMPORT  svc_stack
+    9 00000000                 EXPORT  startup
+   10 00000000                 PRESERVE8           ; This module preserves 8 by
+                                                   te stack alignment
+   11 00000000                 AREA    BootRom, CODE, READONLY
+   12 00000000                 ENTRY
+   13 00000000                 MACRO
+   14 00000000                 blxx    $destreg
+   15 00000000                 ROUT
+   16 00000000                 tst     $destreg, #0x01
+   17 00000000                 ldrne   lr, =%1
+   18 00000000                 ldreq   lr, =%2
+   19 00000000                 bx      $destreg
+   20 00000000         1
+   21 00000000                 CODE16
+   22 00000000                 bx      pc
+   23 00000000                 ALIGN
+   24 00000000                 CODE32
+   25 00000000         2
+   26 00000000                 MEND
+   27 00000000         ;=======================================================
+                       ================
+   28 00000000         ; MACRO mmu_set_default_cfg
+   29 00000000         ; ARGS
+   30 00000000         ;   NONE
+   31 00000000         ; DESCRIPTION
+   32 00000000         ;   Sets a default value into the mmu control register
+   33 00000000         ;   we do not really need to do this, but we do it to
+   34 00000000         ;   know exactly the state of the processor
+   35 00000000         ;=======================================================
+                       ================
+   36 00000000                 MACRO
+   37 00000000                 mmu_set_default_cfg
+   38 00000000                 ldr     r0, = 0x00050078
+   39 00000000                 MCR     p15, 0, r0, c1, c0, 0
+   40 00000000                 MEND
+   41 00000000         ;=======================================================
+                       ================
+   42 00000000         ;=======================================================
+                       ================
+   43 00000000         ; MACRO mmu_enable_i_cache
+   44 00000000         ; ARGS
+   45 00000000         ;  NONE
+   46 00000000         ; DESCRIPTION
+   47 00000000         ;  Enables the I Cache
+   48 00000000         ;  Does a read modify write, so no other bits in the con
+                       trol register a
+   49 00000000         ;  affected
+   50 00000000         ;=======================================================
+                       ================
+   51 00000000                 MACRO
+   52 00000000                 mmu_enable_i_cache
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   53 00000000                 mrc     p15, 0 , r0, c1, c0, 0
+   54 00000000                 orr     r0, r0, # (1 << 12 )
+   55 00000000                 mcr     p15, 0 , r0, c1, c0, 0
+   56 00000000                 MEND
+   57 00000000         ;=======================================================
+                       ================
+   58 00000000         startup
+   59 00000000 E59F10DC        ldr     r1,  =0xdeadbeef
+   60 00000004 E59F20D8        ldr     r2,  =0xdeadbeef
+   61 00000008 E59F30D4        ldr     r3,  =0xdeadbeef
+   62 0000000C E59F40D0        ldr     r4,  =0xdeadbeef
+   63 00000010 E59F50CC        ldr     r5,  =0xdeadbeef
+   64 00000014 E59F60C8        ldr     r6,  =0xdeadbeef
+   65 00000018 E59F70C4        ldr     r7,  =0xdeadbeef
+   66 0000001C E59F80C0        ldr     r8,  =0xdeadbeef
+   67 00000020 E59F90BC        ldr     r9,  =0xdeadbeef
+   68 00000024 E59FB0B8        ldr     r11, =0xdeadbeef
+   69 00000028 E59FC0B4        ldr     r12, =0xdeadbeef
+   70 0000002C E59FD0B0        ldr     r13, =0xdeadbeef
+   71 00000030 E59FE0AC        ldr     r14, =0xdeadbeef
+   72 00000034 E10F0000        mrs     a1, CPSR
+   73 00000038 E3801080        orr     a2, a1, # 0x80
+   74 0000003C E121F001        msr     CPSR_c, a2
+   75 00000040 E321F0D7        msr     CPSR_c, # 0x17 :OR: 0x40 :OR: 0x80
+   76 00000044 E59FD09C        ldr     r13, =abort_stack+ 0x100
+   77 00000048 E321F0DB        msr     CPSR_c, # 0x1b :OR: 0x40 :OR: 0x80
+   78 0000004C E59FD098        ldr     r13,=undef_stack+ 0x100
+   79 00000050 E321F0D2        msr     CPSR_c, # 0x12 :OR: 0x40 :OR: 0x80
+   80 00000054 E59FD094        ldr     r13, =irq_stack+ 0x800
+   81 00000058 E321F0D3        msr     CPSR_c, # 0x13 :OR: 0x80 :OR: 0x40
+   82 0000005C E59FD090        ldr     r13, =svc_stack+ 0x4000
+   83 00000060 E59F0090        ldr     a1, =memory_init
+   84 00000064                 blxx    a1
+   15 00000064                 ROUT
+   16 00000064 E3100001        tst     a1, #0x01
+   17 00000068 159FE08C        ldrne   lr, =%1
+   18 0000006C 059FE08C        ldreq   lr, =%2
+   19 00000070 E12FFF10        bx      a1
+   20 00000074         1
+   21 00000074                 CODE16
+   22 00000074 00004778        bx      pc
+   23 00000076 00 00           ALIGN
+   24 00000078                 CODE32
+   25 00000078         2
+   85 00000078         ; ======================================================
+                       ================
+   86 00000078         ; Enable the instruction cache
+   87 00000078         ; ======================================================
+                       ================
+   88 00000078                 mmu_set_default_cfg
+   38 00000078 E59F0084        ldr     r0, = 0x00050078
+   39 0000007C EE010F10        MCR     p15, 0, r0, c1, c0, 0
+   89 00000080                 mmu_enable_i_cache
+   53 00000080 EE110F10        mrc     p15, 0 , r0, c1, c0, 0
+   54 00000084 E3800D40        orr     r0, r0, # (1 << 12 )
+   55 00000088 EE010F10        mcr     p15, 0 , r0, c1, c0, 0
+   90 0000008C E59F0074        ldr     a1, =main_c
+   91 00000090 E12FFF10        bx      a1
+   92 00000094         ; Software breakpoint code
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   93 00000094         ; main_c never returns, but if it did, a breakpoint here
+                       
+   94 00000094         ; would catch it
+   95 00000094 EEDEEEDE 
+                       swbp    DCD     0xEEDEEEDE
+   96 00000098         ; Terminal emulation entry point for put/get a character
+                       .
+   97 00000098         ; When called, it will put or get a charactr from the
+   98 00000098         ; JTAG debugger terminal emulation window.  These functi
+                       on
+   99 00000098         ; are incompatible with the JTAG debugger FLASH.* functi
+                       ons
+  100 00000098         ; and will cause the debugger to hang if both are used.
+  101 00000098                 CODE16
+  102 00000098                 EXPORT  term_put
+  103 00000098                 ALIGN
+  104 00000098         term_put
+  105 00000098 00004778        bx      pc
+  106 0000009A 00 00           DCW     0x0         ; Literal to align next inst
+                                                   ruction to word boundary
+  107 0000009C         ; to avoid compiler warning 
+  108 0000009C                 CODE32
+  109 0000009C                 ALIGN
+  110 0000009C         term_put_arm
+  111 0000009C E3A02002        mov     r2, #2
+  112 000000A0         put_again
+  113 000000A0 EE101E10        mrc     p14, 0, r1, c0, c0
+  114 000000A4 E0011002        and     r1, r1, r2
+  115 000000A8 E3510000        cmp     r1, #0
+  116 000000AC 1AFFFFFE        bne     put_again
+  117 000000B0 EE010E10        mcr     p14, 0, r0, c1, c0
+  118 000000B4 E12FFF1E        bx      lr
+  119 000000B8         ; Get terminal character.
+  120 000000B8                 CODE16
+  121 000000B8                 EXPORT  term_get
+  122 000000B8                 ALIGN
+  123 000000B8         term_get
+  124 000000B8 00004778        bx      pc
+  125 000000BA 00 00           DCW     0x0         ; Literal to align next inst
+                                                   ruction to word boundary
+  126 000000BC                 CODE32
+  127 000000BC                 ALIGN
+  128 000000BC         term_get_arm
+  129 000000BC E3A02001        mov     r2, #1
+  130 000000C0         get_again
+  131 000000C0 EE101E10        mrc     p14, 0, r1, c0, c0
+  132 000000C4 E0011002        and     r1, r1, r2
+  133 000000C8 E3510000        cmp     r1, #0
+  134 000000CC 0AFFFFFE        beq     get_again
+  135 000000D0 EE110E10        mrc     p14, 0, r0, c1, c0
+  136 000000D4 E12FFF1E        bx      lr
+  137 000000D8         ;  Jump to address passed in.
+  138 000000D8         ;  Used to fake a reset by passing zero
+  139 000000D8                 CODE16
+  140 000000D8                 EXPORT  jmp_abs
+  141 000000D8                 ALIGN
+  142 000000D8         jmp_abs
+  143 000000D8 00004778        bx      pc
+  144 000000DA 00 00           DCW     0x0         ; Literal to align next inst
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+                                                   ruction to word boundary
+  145 000000DC                 CODE32
+  146 000000DC                 ALIGN
+  147 000000DC         jmp_abs_arm
+  148 000000DC E1A07000        mov     r7,r0
+  149 000000E0 E12FFF17        bx      r7
+  150 000000E4                 END
+              DEADBEEF 
+              00000100 
+              00000100 
+              00000800 
+              00004000 
+              00000000 
+              00000074 
+              00000078 
+              00050078 
+              00000000 
+Command Line: [C:\ARM\ADSV1_2\bin\armasm.exe -list norprg/ap_startup.lst -g -ap
+cs /interwork -cpu ARM926EJ-S]

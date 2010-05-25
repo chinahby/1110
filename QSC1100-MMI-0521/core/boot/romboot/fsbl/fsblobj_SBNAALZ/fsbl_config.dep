@@ -1,0 +1,17 @@
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl_config.c
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl_config.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_fsbl_config_if.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_clk_speed.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_module_base.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_singleton.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_error_if.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\target\src\boot_clk_speed.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl.h
+..\..\fsblobj_SBNAALZ\fsbl_config.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h

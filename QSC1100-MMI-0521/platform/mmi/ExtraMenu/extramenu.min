@@ -1,0 +1,35 @@
+#-------------------------------------------------------------------------------
+# ExtraMenu
+#-------------------------------------------------------------------------------
+EXTRAMENU_INC = $(EXTRAMENU)
+EXTRAMENU_RES = $(EXTRAMENU)/resources
+EXTRAMENU_SRC = $(EXTRAMENU)
+EXTRAMENU_LIB = $(EXTRAMENU)
+
+EXTRAMENU_SOURCES=\
+	extramenu.c
+        
+EXTRAMENU_OBJS :=  $(addprefix $(TARGETDIR)/, $(EXTRAMENU_SOURCES:%.c=%.o))
+$(EXTRAMENU_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(EXTRAMENU_SRC)
+vpath %.bar $(EXTRAMENU_RES)
+vpath %.brx $(EXTRAMENU_RES)
+
+CONSTFILE_FILES+=\
+	extramenu.mif|fs:/mif/extramenu.mif \
+	extramenu.bar|fs:/mod/extramenu/en/extramenu.bar	
+# 加入另外一种语言资源文件
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG1)extramenu.bar|fs:/mod/extramenu/$(EXTLANG1)/extramenu.bar 
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)extramenu.bar|fs:/mod/extramenu/$(EXTLANG2)/extramenu.bar 
+endif
+
+INC  += $(EXTRAMENU_INC) $(EXTRAMENU_RES)
+#SRC  += $(EXTRAMENU_SOURCES)
+OBJECTS+=$(EXTRAMENU_OBJS)
+#LIBS += 
