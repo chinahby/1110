@@ -306,6 +306,59 @@ endif
 
 # The following are the target rules supported by this makefile with the
 # exception of the 'depend' target which is located at the end of this file.
+ifeq ($(USES_MMI),no)
+#-------------------------------------------------------------------------------
+#
+# Rules for building Const File System
+#
+#-------------------------------------------------------------------------------
+CONSTFILE_FILENAMES 	= $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(CONSTFILE_FILES))))
+CONSTFILE_SOURCES 		= $(addsuffix .c, $(CONSTFILE_FILENAMES))
+
+CONSTFILE_FSLOC 		= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES)))))
+CONSTFILE_FLAGENT 		= $(firstword $(filter FLAGS:%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES)))))
+CONSTFILE_FLAGS 		= $(subst FIXED,-f,$(subst ., ,$(subst FLAGS:, , $(CONSTFILE_FLAGENT))))
+
+CONSTFILE_OBJS 			= $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o))
+CONSTFILE_BAR_FSLOC 	= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $(<:%.brx=%.bar))|%, $(CONSTFILE_FILES)))))
+CONSTFILE_BAR  			= $(filter %.bar, $(CONSTFILE_FILENAMES))
+CONSTFILE_BAR_SRC 		= $(addsuffix .c, $(CONSTFILE_BAR))
+CONSTFILE_BIN  			= $(filter-out %.bar, $(CONSTFILE_FILENAMES))
+CONSTFILE_BIN_SRC 		= $(addsuffix .c, $(CONSTFILE_BIN))
+
+$(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES)
+	@echo ------------------------------------------------------------------------
+	@echo Generating $@
+	@cp $< $@
+	@chmod 666 $@
+	@$(BREWDIR)/pk/utils/OEMConstFileMod.exe $@ $(CONSTFILE_FILENAMES)
+	@echo ------------------------------------------------------------------------
+	
+OBJECTS += $(CONSTFILE_OBJS)
+
+$(CONSTFILE_BIN_SRC) : %.c: %
+	@echo ------------------------------------------------------------------------
+	@echo Creating C File $@
+	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$<) -d$(CONSTFILE_FSLOC) $(CONSTFILE_FLAGS) -o$(subst /,\\,$(TARGETDIR)/$@)
+	@echo ------------------------------------------------------------------------
+
+$(CONSTFILE_BAR_SRC) : %.bar.c: %.bar
+	@echo ------------------------------------------------------------------------
+	@echo Build Resource $(<:%.brx=%.bar)
+	@$(BREWRC) -h $(<:%.brx=%.brh) -o $(<:%.brx=%.bar) $<
+	@echo ------------------------------------------------------------------------
+	@echo ------------------------------------------------------------------------
+	@echo Creating C File $@
+	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$(<:%.brx=%.bar)) -d$(CONSTFILE_BAR_FSLOC) -o$(subst /,\\,$(TARGETDIR)/$@)
+	@echo ------------------------------------------------------------------------
+
+.PHONY : mmires
+mmires: $(CONSTFILE_SOURCES) $(TARGETDIR)/OEMConstFiles_Dynamic.c
+	@echo ------------------------------------------------------------------
+	@echo BREW RESOURCE BUILDER
+	@echo ------------------------------------------------------------------
+endif	
+
 ifeq ($(USES_MMI),yes)
 #-------------------------------------------------------------------------------
 #

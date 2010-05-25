@@ -537,6 +537,13 @@ static void AEESound_PlayTone(ISound* po, AEESoundToneData toneData)
 {
    AEESound *  pMe = (AEESound *) po;
    
+   //if ( toneData.eTone <= AEE_TONE_FIRST || toneData.eTone >= AEE_TONE_LAST )
+   if ( toneData.eTone <= AEE_TONE_FIRST || toneData.eTone > AEE_TONE_FEEDBACK_STOP)
+   {
+      AEESound_StatusNotify(pMe, AEE_SOUND_FAILURE);
+      return;
+   }
+
    AEESOUND_CHECK_ACQUIRED(po);
    pMe->m_nPlaying++;
 
