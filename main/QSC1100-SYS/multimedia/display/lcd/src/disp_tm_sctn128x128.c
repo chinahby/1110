@@ -646,9 +646,6 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-
-#ifdef CUST_EDITION
-
 static void tm_sctn128x128_disp_powerup(void)
 {
     rex_enter_crit_sect(&tm_sctn128x128_crit_sect);
@@ -695,7 +692,7 @@ static void tm_sctn128x128_disp_powerup(void)
     	TM_SCTN_WRITE_CMD(0xd0);   //set vg source
     	TM_SCTN_WRITE_DATA(0x1d);
     	
-    //------------MTP SET-------------------------//		
+    	//------------MTP SET-------------------------//		
     	TM_SCTN_WRITE_CMD(0xb5);   //n-line set
     	TM_SCTN_WRITE_DATA(0x89);//00
     	
@@ -751,7 +748,6 @@ static void tm_sctn128x128_disp_powerup(void)
    
    rex_leave_crit_sect(&tm_sctn128x128_crit_sect);
 }
-#endif
 
 /*===========================================================================
 
@@ -898,7 +894,7 @@ static void tm_sctn128x128_disp_copy(void *src_ptr, dword copy_count)
 {  
 	int i;
 	uint8 *pdata = src_ptr;
-//	uint8 data1,data2;
+	uint8 data1,data2;
 	/* Bus is wired from LCD D9-D17 (9 bits) to MPU bus, need two transfer 
 	* to complete one pixel(RGB666).
 	*
@@ -913,10 +909,12 @@ static void tm_sctn128x128_disp_copy(void *src_ptr, dword copy_count)
     {
         for ( i = 0; i < copy_count; i++ )
         {
-			TM_SCTN_WRITE_DATA((uint8)(*pdata));
+        	data1 = *pdata;
 			pdata++;
-			TM_SCTN_WRITE_DATA((uint8)(*pdata));
+			data2 = *pdata;
 			pdata++;
+			TM_SCTN_WRITE_DATA((uint8)(data2));			
+			TM_SCTN_WRITE_DATA((uint8)(data1));			
         }        
     }
     else 
