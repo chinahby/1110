@@ -182,15 +182,15 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 
    /* KEYSENSE_2 */
    /* 5,17          5,15        5,11        5,9          5,Memo*/
-   { HS_SEL_K,      HS_4_K,     HS_5_K,     HS_6_K,      HS_NONE_K},
+   { HS_INFO_K,      HS_4_K,     HS_5_K,     HS_6_K,      HS_NONE_K},
 
    /* KEYSENSE_3 */
    /* 7,17          7,15        7,11        7,9          7,Memo*/
-   { HS_RIGHT_K,      HS_7_K,     HS_8_K,     HS_9_K,      HS_SF2_K},
+   { HS_RIGHT_K,      HS_7_K,     HS_8_K,     HS_9_K,      HS_CLR_K},
 
    /* KEYSENSE_4 */
    /* 9,17          9,15        9,11        9,9          9,Memo*/
-   { HS_UP_K,  		HS_STAR_K,  HS_0_K,     HS_POUND_K,  HS_SF1_K}
+   { HS_UP_K,  		HS_STAR_K,  HS_0_K,     HS_POUND_K,  HS_SEL_K}
 };
 #else
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
