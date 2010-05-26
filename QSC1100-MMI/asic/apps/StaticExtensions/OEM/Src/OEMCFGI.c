@@ -471,8 +471,13 @@ typedef PACKED struct
    byte brew_username[126];                          /* CFGI_BREW_USERNAME       */
    byte brew_password[32];                           /* CFGI_BREW_PASSWORD       */
 #else
+#ifdef WIN32
+   byte brew_username[126];                          /* CFGI_BREW_USERNAME       */
+   byte brew_password[32];  
+#else
    byte brew_username[NV_MAX_PAP_USER_ID_LENGTH];    /* CFGI_BREW_USERNAME       */
    byte brew_password[NV_MAX_PAP_PASSWORD_LENGTH];   /* CFGI_BREW_PASSWORD       */
+#endif   
 #endif
 
 #ifdef FEATURE_USB_FUNCTION_SELECT
