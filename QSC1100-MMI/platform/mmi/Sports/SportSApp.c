@@ -45,8 +45,9 @@ static void SportSApp_RunFSM(CSportsMenu *pMe);
    #error This applet was never intended to be used with the AEE Simulator.
 #endif//WIN32
 #endif
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*-------------------------------------------------------------------
             Static variable Definitions
 -------------------------------------------------------------------*/
@@ -629,7 +630,9 @@ static boolean SportSApp_HandleEvent(ISportsMenu *pi,
     switch (eCode)
     {
         case EVT_APP_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             /*event application start*/
             as = (AEEAppStart*)dwParam;
 
@@ -761,7 +764,9 @@ static boolean SportSApp_HandleEvent(ISportsMenu *pi,
 			{
 				return TRUE;
 			}
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             return SportSApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
         case EVT_CLOSEAPP:
         {

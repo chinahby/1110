@@ -866,6 +866,177 @@ static int CRingerMgr_Remove(IRingerMgr * po, AEERingerID id)
    return(EFAILED);
 }
 
+#ifdef WIN32
+#if defined( FEATURE_RECORDER)
+#include "appcomfunc.h"
+boolean oemringer_playing_qcp_ringtone;
+boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo);
+
+static void OEMRinger_SetupQcpVolume( ISound* pSound)
+{
+	byte volume	= AEE_MAX_VOLUME;
+	
+#if 0//defined( FEATURE_SOUND_DEVICE_HEADSET_SPEAKER)
+	{
+		byte activedProfile					= 0;
+		byte headsetVolume[PROFILENUMBER]	= {0};							
+		
+		OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &activedProfile, sizeof( activedProfile));     
+		OEM_GetConfig( CFGI_PROFILE_EAR_VOL, headsetVolume, sizeof( headsetVolume));
+		volume = headsetVolume[activedProfile];  			
+	}
+#else
+	{
+		OEM_GetConfig( CFGI_RINGER_VOL, &volume, sizeof( volume));
+	}
+#endif
+	
+	volume = GET_ISOUND_VOL_LEVEL( volume);
+	if( volume > 100)
+	{
+		volume = 100;
+	}	
+	ISOUND_SetVolume( pSound, volume);
+}
+static void OEMRinger_SetupQcpSoundInfoCB( void * pUser,
+						   AEESoundCmd eCBType,
+						   AEESoundStatus eSPStatus,
+						   uint32 dwParam
+)
+{
+	ISound* pSound = gMgr.m_pSound;
+
+	//DBGPRINTF( ";--------------------------------------------");
+	//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB");
+
+	if( !oemringer_playing_qcp_ringtone)
+	{
+		//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB, not qcp ringtone now");
+		return;
+	}
+
+	if( !pSound)
+	{
+		//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB, NULL pSound");
+		return;
+	}
+
+	//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB, status = %d", eSPStatus);
+	if( eSPStatus != AEE_SOUND_SUCCESS)
+	{
+		//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB, setup failed, continue");
+#if defined( FEATURE_RECORDER)		
+		OEMRinger_SetupQcpSoundInfo( pSound, 0);
+#endif
+		return;
+	}
+
+	if( pSound && oemringer_playing_qcp_ringtone)
+	{
+#if defined( FEATURE_SOUND_DEVICE_HEADSET_SPEAKER)
+		AEESoundDevice  device = AEE_SOUND_DEVICE_HEADSET_SPEAKER;
+#else
+#ifdef FEATURE_SPEAKER_PHONE
+		AEESoundDevice 	device = AEE_SOUND_DEVICE_SPEAKER;
+#else
+		AEESoundDevice 	device = AEE_SOUND_DEVICE_HFK;
+#endif
+#endif
+		AEESoundInfo	info	= {0};
+
+
+		ISOUND_Get( pSound, &info);
+/*		DBGPRINTF( ";now, sound info:");
+		DBGPRINTF( ";eDevice = %d", info.eDevice);
+		DBGPRINTF( ";eMethod = %d", info.eMethod);
+		DBGPRINTF( ";eAPath = %d", info.eAPath);
+		DBGPRINTF( ";eEarMuteCtl = %d", info.eEarMuteCtl);
+		DBGPRINTF( ";eMicMuteCtl = %d", info.eMicMuteCtl);
+*/
+		if( info.eDevice != device)
+		{
+			//DBGPRINTF( ";the device is not expected, %d, %d, continue", device, info.eDevice);
+#if defined( FEATURE_RECORDER)			
+			OEMRinger_SetupQcpSoundInfo( pSound, 0);
+#endif
+			return;
+		}
+
+	}
+}
+
+boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo) 
+{
+
+	boolean releaseSound = FALSE;
+	boolean result       = FALSE;
+
+	if( !oemringer_playing_qcp_ringtone)
+	{
+		return FALSE;
+	}
+	
+	if( !pSound)
+	{
+		if( ISHELL_CreateInstance( AEE_GetShell(), AEECLSID_SOUND, (void**)&pSound)  == SUCCESS)
+		{
+			releaseSound = TRUE;
+		}
+		else
+		{
+			pSound = NULL;
+		}
+	}
+
+	
+	if( pSound && oemringer_playing_qcp_ringtone)
+	{
+#if defined( FEATURE_SOUND_DEVICE_HEADSET_SPEAKER)
+		AEESoundDevice  device = AEE_SOUND_DEVICE_HEADSET_SPEAKER;
+#else
+#ifdef FEATURE_SPEAKER_PHONE
+		AEESoundDevice 	device = AEE_SOUND_DEVICE_SPEAKER;
+#else
+		AEESoundDevice 	device = AEE_SOUND_DEVICE_HFK;
+#endif
+#endif	
+		AEESoundInfo	info	= {0};
+	
+		ISOUND_Get( pSound, &info);		
+		if( info.eDevice == device)
+		{
+			return TRUE;
+		}
+		if( pOldSoundInfo)
+		{
+			*pOldSoundInfo = info;
+		}
+		
+		
+		info.eDevice  = device;
+		info.eMethod = AEE_SOUND_METHOD_VOICE;
+		ISOUND_Set( pSound, &info);
+		ISOUND_RegisterNotify( pSound,
+						OEMRinger_SetupQcpSoundInfoCB,
+						pSound
+					);
+		ISOUND_SetDevice( pSound);
+		OEMRinger_SetupQcpVolume( pSound);		
+		result = TRUE;
+	}	
+//	else
+//	{
+//		DBGPRINTF( ";OEMRinger_SetupQcpSoundInfo, not set");
+//	}
+	if( releaseSound)
+	{
+		ISOUND_Release( pSound);
+	}
+	return result;
+}				
+#endif
+#endif /**WIN32/
+
 /*===========================================================================
 
 

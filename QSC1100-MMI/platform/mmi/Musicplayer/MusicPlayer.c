@@ -84,7 +84,9 @@ static void MP3_SetStartCurState(CMusicPlayer *pMe);
 static void MP3_SetStartStatus(CMusicPlayer *pMe);
 
 static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe);
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*==============================================================================
                                  全局数据
 ==============================================================================*/

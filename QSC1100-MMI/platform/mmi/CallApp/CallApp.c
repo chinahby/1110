@@ -212,8 +212,9 @@ static int CallApp_BtCallNumber(ICallApp *p, AECHAR *number);
 //修改Config项中的通话时长
 static void CallApp_AddToCFGCallTimer(CCallApp *pMe, uint16 call_type, uint32 durationS);
 //static void CallApp_Process_Batty_Msg(CCallApp  *pMe, uint16  msg_id);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -1124,7 +1125,9 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
     switch (eCode)
     {
         case EVT_APP_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/			
             pMe->m_userCanceled = FALSE;
             pMe->m_eCurState = STATE_INIT;
             ASSERT(dwParam != 0);
@@ -1350,7 +1353,9 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             
         case EVT_APP_RESUME:
             ASSERT(dwParam != 0);
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/			
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
 

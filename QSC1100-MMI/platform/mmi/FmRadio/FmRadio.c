@@ -96,8 +96,9 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe);
 static void FmRadio_PowerDown( CFmRadio *pMe);
 static void FmRadio_PowerUp(void *pme);
 static void FmRadio_AppIsReadyCB(void *pUser);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -1006,7 +1007,9 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             pMe->m_pActiveDlgID = wParam;
         case EVT_DIALOG_START:
         case EVT_USER_REDRAW:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             if( eCode == EVT_USER_REDRAW)
             {
                 (void)ISHELL_SetTimer( pMe->m_pShell,                                       
@@ -1244,6 +1247,7 @@ extern boolean is_alarm_time_reach(void);
 
 void Fm_Shake_Open(void)
 {
+#ifdef FEATRUE_SUPPORT_G_SENSOR
     dword shake;
     if((MMI_GSENSOR_SHAKE_OPEN == mmi_g_sensor_state) 
         ||(MMI_GSENSOR_SHAKE_OPEN_IN_IDLE == mmi_g_sensor_state))   //return if sensor has been open.
@@ -1262,11 +1266,12 @@ void Fm_Shake_Open(void)
             mmi_g_sensor_state = MMI_GSENSOR_SHAKE_OPEN;
         }    
     }
- 
+#endif 
 }
 
 void Fm_Shake_Close(void)
 {
+#ifdef FEATRUE_SUPPORT_G_SENSOR
     dword shake;
 
     if((MMI_GSENSOR_SHAKE_CLOSE == mmi_g_sensor_state) 
@@ -1290,6 +1295,7 @@ void Fm_Shake_Close(void)
             mmi_g_sensor_state = MMI_GSENSOR_SHAKE_CLOSE;
         }            
     }
+#endif
 }
 
 static void FmRadio_PowerDown( CFmRadio *pMe)

@@ -20,7 +20,8 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
 #include "ui.h"
 #else
 #include "oemui.h"
-#endif#include "dsm.h"
+#endif
+#include "dsm.h"
 #include "usbcdc.h"
 #include "usbdc.h"
 #include "sio.h"

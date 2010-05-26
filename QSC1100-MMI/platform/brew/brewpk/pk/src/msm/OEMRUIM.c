@@ -32,7 +32,7 @@ GENERAL DESCRIPTION:
 
 // DMSS headers.
 #include "rex.h"
-#ifndef FEATURE_OEMUI_TASK
+#ifndef USES_MMI
 #include "ui.h"
 #else
 #include "oemui.h"

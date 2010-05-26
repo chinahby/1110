@@ -213,7 +213,9 @@ static void WmsApp_UpdateMemoryStatus(WmsApp *pMe, wms_memory_status_s_type *ptr
 static uint16 WmsApp_GetMsgICONID(wms_cache_info_node * pNode);
 
 static void WmsApp_ReservedMsgTimer(void * pUser);
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 
 /*==============================================================================
                               全局数据
@@ -881,7 +883,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 return FALSE;
             }
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/			
             as = (AEEAppStart*)dwParam;
     
             pMe->m_eAppStatus = WMSAPP_RUNNING;
@@ -984,7 +988,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 return FALSE;
             }
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/			
             as = (AEEAppStart*)dwParam;
     
             pMe->m_eAppStatus = WMSAPP_RUNNING;
@@ -1065,7 +1071,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 			{
 				return TRUE;
 			}
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/		
             (void) WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
             return TRUE;

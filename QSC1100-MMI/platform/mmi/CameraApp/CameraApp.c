@@ -94,8 +94,9 @@ static void CameraApp_RunFSM(CCameraApp *pMe);
 static void CameraApp_APPIsReadyTimer(void *pme);
 
 static void CameraApp_ShowBusyStateImage(CCameraApp *pMe);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*==============================================================================
 全局数据
 ==============================================================================*/
@@ -761,7 +762,9 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
     switch(eCode)
     {
         case EVT_APP_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/			
             pMe->m_bAppIsReady = FALSE;
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
@@ -906,7 +909,9 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 
       
         case EVT_APP_RESUME: 
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/			
             if(pMe->m_pCamera == NULL)
             {
                 ISHELL_CreateInstance(pMe->m_pShell, 
@@ -935,7 +940,9 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_DIALOG_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/			
             return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_USER_REDRAW:

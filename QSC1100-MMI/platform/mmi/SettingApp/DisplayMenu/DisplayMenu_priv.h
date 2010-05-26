@@ -67,7 +67,9 @@
 #include "OEMCFGI.h"
 
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
+#ifdef FEATURE_APP_READER            
 #include "Rendering.h"
+#endif /*FEATURE_APP_READER*/
 #endif//FEATURE_RANDOM_MENU_REND
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define DISPLAYMENU_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )

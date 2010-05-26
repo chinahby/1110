@@ -172,8 +172,9 @@ static NextFSMAction StateMainHandler(CExtraMenu *pMe);
 
 // 状态 EXTRAMENUST_EXIT 处理函数
 static NextFSMAction StateExitHandler(CExtraMenu *pMe);
-
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#ifdef FEATURE_APP_READER   
+extern int Rendering_UpdateEx(void);//wlh 20090409 ad
+#endif  /*FEATURE_APP_READER*/
 
 /*----------------------对话框相关函数声明---------------------*/
 /*==============================================================================
@@ -1327,7 +1328,9 @@ static boolean  HandleMainDialogEvent(CExtraMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType( pMenu, BTBAR_SELECT_BACK);

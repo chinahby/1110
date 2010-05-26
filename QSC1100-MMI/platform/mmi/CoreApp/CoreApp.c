@@ -36,7 +36,9 @@
 #include "CoreApp_priv.h"        /* CoreApp external data and function prototypes */
 
 #include "AEEClipboard.h"
+#ifdef FEATURE_APP_READER            
 #include "Rendering.h"
+#endif /*FEATURE_APP_READER*/
 #ifdef FEATURE_TOUCHPAD
 #include "touchpad.h"
 #endif
@@ -169,7 +171,9 @@ static void CoreNotifyMP3PlayerAlertEvent(CCoreApp *pMe, boolean toStartAlert);
 static void CoreNotifyMP3PlayerAlertEventCB(CCoreApp *pMe);
 
 static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe);
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 static void CoreAppLoadTimepImage(CCoreApp *pMe);   //add by ydc
 /*==============================================================================
 
@@ -823,7 +827,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
             // 开始 Core Applet 状态机, 当前状态已初始为 COREST_INIT
             CoreApp_RunFSM(pMe);
+#ifdef FEATURE_APP_READER            
             Rendering_SetEnable(DISPLAYDEV_MAIN, TRUE);
+#endif
             return TRUE;
 
         case EVT_APP_STOP:
@@ -919,7 +925,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return CoreApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
 
         case EVT_DIALOG_START:
+#ifdef FEATURE_APP_READER                       
             Rendering_UpdateEx();//wlh add for 3D test
+#endif /*FEATURE_APP_READER*/            
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:

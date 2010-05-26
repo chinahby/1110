@@ -133,8 +133,9 @@ static void    StopWatch_Record( CStopWatch* pme);
 static void    StopWatch_Gettime(CStopWatch *pme,uint32 nTicks);
 static void    StopWatch_Redraw(CStopWatch *pme);
 static int      StopWatch_AddTimeList(CStopWatch *pme, uint32 *endTime);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*=============================================================================
 FUNCTION: StopWatchMod_Load
 
@@ -448,7 +449,9 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
     switch (eCode)
     {
         case EVT_APP_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             InitStopWatch(pme);
             StopWatch_Redraw(pme);
             return TRUE;

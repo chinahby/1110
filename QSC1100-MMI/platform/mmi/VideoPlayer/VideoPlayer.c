@@ -60,8 +60,9 @@ static void VideoPlayer_RunFSM(CVideoPlayer *pMe);
 
 //初始化音量等级
 static void VideoPlayer_InitVolumeLevel(CVideoPlayer *pMe);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*=================================================================================================================
                                  全局数据
 =================================================================================================================*/
@@ -512,7 +513,9 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
     switch (eCode)
     {
         case EVT_APP_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
             if (NULL != pMe->m_pDisplay)
@@ -686,7 +689,9 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
             return VideoPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:     
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             return VideoPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY:

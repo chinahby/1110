@@ -162,8 +162,9 @@ static void AppTimer_Confirm(CAppTimer *pme);
 static void TimerNotifyMP3PlayerAlertEvent(CAppTimer *pMe, boolean toStartAlert);
 static boolean AppTimer_CanAlert(CAppTimer *pMe);
 static void AppTimer_ClearAnnField(CAppTimer *pme);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*=============================================================================
 FUNCTION: AppTimerMod_Load
 
@@ -348,7 +349,9 @@ static boolean InitAppTimer(CAppTimer *pme)
         IMENUCTL_SetProperties( pme->m_pmenu, MP_BIND_ITEM_TO_NUMBER_KEY);
         IMENUCTL_SetActive( pme->m_pmenu, TRUE);
     }*/
+#ifdef FEATURE_APP_READER       
 	Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/	
         /*TIME¿Ø¼þÀ¸*/
     if(NULL != pme->m_pTime)
     {

@@ -265,8 +265,9 @@ static double  Calc_GetVal(CCalcApp *pme);
 static int     Calc_GetOpPrecedence(OpType op);
 static uint16  Calc_GetOpResourceId(OpType op);
 static boolean Calc_FloatToWStr(double v, AECHAR * psz, int nSize);
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
-
+#endif  /*FEATURE_APP_READER*/
 //wlh 20090417 add 为了区别点击，加，减，乘除，等号等等
 static void CALC_drawClipRectWithOffset(CCalcApp *pMe,uint32 imageId,AEERect *rect)
 {
@@ -642,7 +643,9 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
     switch (eCode)
     {
         case EVT_APP_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             pme->m_TempValue = 0.0;
             pme->m_bIdle = TRUE;
             Calc_Startup(pme, (AEEAppStart *) dwParam);

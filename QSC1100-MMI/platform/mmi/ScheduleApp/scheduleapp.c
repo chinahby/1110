@@ -72,8 +72,9 @@ static void     CScheduleApp_RunFSM(CScheduleApp *pme);
 static void     Schedule_APPIsReadyTimer(void *pme);
 
 static boolean  Schedule_CanAlert(CScheduleApp *pme);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 
 /*==============================================================================
                                  全局数据
@@ -511,7 +512,9 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
     switch (eCode)
     {
         case EVT_APP_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             pme->m_bAppIsReady = FALSE;
             as = (AEEAppStart*)dwParam;
             pme->m_rc = as->rc;
@@ -627,7 +630,9 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
             return CScheduleApp_RouteDialogEvent(pme,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
+#ifdef FEATURE_APP_READER               
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             if (wParam == OEM_IME_DIALOG)
             {
                 return TRUE;

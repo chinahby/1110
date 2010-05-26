@@ -4355,14 +4355,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				//保护
 				if(pMe->m_now_Num > 11)
 				{
-					pMe->m_now_Num == -1;
+					pMe->m_now_Num = -1;
 				}
 				//判断是否时间，时间始终在最上面
 				SETAEERECT(&rc, pMe->m_dial_rc.x, pMe->m_dial_rc.y,DIAL_W, DIAL_H);
 				//如果是时间状态的变换，数字变表盘
 				if((TOUCH_PT_IN_RECT(wXPos,wYPos,rc)) && (abs(pMe->m_down_xstation - wXPos) < 10) && (abs(pMe->m_down_ystation - wYPos) < 10) )
 				{
-					pMe->m_now_Num == 0;
+					pMe->m_now_Num = 0;
 					if(!pMe->m_b_dialflag) 
 					{
 						pMe->m_b_dialflag = TRUE;
@@ -4701,7 +4701,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
 				//保护
 				if(pMe->m_now_Num > 11)
-					pMe->m_now_Num == -1;
+					pMe->m_now_Num = -1;
 
 				if(pMe->m_now_Num > -1)
 				{

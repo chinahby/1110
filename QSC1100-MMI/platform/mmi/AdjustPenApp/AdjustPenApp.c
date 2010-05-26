@@ -124,7 +124,9 @@ static boolean AdjustPen_HandleEvent(CAdjustPenApp *pme,
                                 uint32   dwParam);
 static void    AdjustPen_DrawScreen(CAdjustPenApp *pme);
 
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*===========================================================================
 
                     LOCAL/STATIC DATA

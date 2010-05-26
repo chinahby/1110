@@ -128,8 +128,9 @@ static int      CContApp_GetNumber( IAddrRec   *pAddrRec,
 
 /*快速查找中焦点自动切换处理函数，Gemsea @2008.08.08*/
 void CContApp_SmartMenuSetFocus(void *pUser);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 
 /*==============================================================================
                                  全局数据
@@ -722,7 +723,9 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 #if defined(AEE_STATIC)
             ASSERT(dwParam != 0);
 #endif
+#ifdef FEATURE_APP_READER   
 			Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			
             as = (AEEAppStart*)dwParam;
             pMe->m_rc = as->rc;
             pMe->m_rc.dy = di.cyScreen; //在当前状态下显示信号栏，要重新取dy的大小            
@@ -818,7 +821,9 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 #if defined(AEE_STATIC)
             ASSERT(dwParam != 0);
 #endif
+#ifdef FEATURE_APP_READER   
 			Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/			
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
             
@@ -847,7 +852,9 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
             pMe->m_bAppReady = FALSE;
+#ifdef FEATURE_APP_READER               
             Rendering_UpdateEx();//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/            
             return CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             
         case EVT_DIALOG_END:

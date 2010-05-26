@@ -117,8 +117,10 @@ static void Recorder_Free( Recorder* pme)
 
 	recorder_release_media_if( &pme->m_Media);
 	recorder_release_filemgr_if( &pme->m_Media);
-
+    
+#ifdef FEATURE_APP_RECORDER
     g_runningflag = FALSE;
+#endif
 	if( pme->m_pSound)
 	{
 		ISOUND_Release( pme->m_pSound);
@@ -551,7 +553,11 @@ void recorder_process_media_operation_result( Media* pme, int result, RecorderMe
 	repaint( TRUE);
 }
 
+
+#ifdef FEATURE_APP_RECORDER
 boolean recorder_GetRunningFlag(void)
 {
     return g_runningflag;
 }
+#endif
+

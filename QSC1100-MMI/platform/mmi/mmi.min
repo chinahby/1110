@@ -51,7 +51,10 @@ include $(SOUNDMENU)/SoundMenu.min
 include $(DISPLAYMENU)/DisplayMenu.min
 include $(SECURITYMENU)/SecurityMenu.min
 include $(SETTINGMENU)/SettingMenu.min
+
+ifeq ($(MMI_ADD_TOUCHPAD),yes)
 include $(ADJUSTPENAPP)/AdjustPenApp.min
+endif
 
 #Tools
 include $(CALCAPP)/calcapp.min

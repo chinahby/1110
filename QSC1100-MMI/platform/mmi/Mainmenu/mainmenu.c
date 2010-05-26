@@ -176,8 +176,9 @@ void MainMenu_CloseSportBgRun(MainMenu *pMe);
 #endif
 
 void MainMenu_DraImage(MainMenu *pMe,int16 index,int16 imgid);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 
 /*==============================================================================
                               
@@ -796,7 +797,9 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
     switch ( eCode)
     {
         case EVT_APP_START:
+#ifdef FEATURE_APP_READER               
 				Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/				
             // 此事件dwParam为指针，不应为0
             if (dwParam == 0) 
             {
@@ -852,10 +855,14 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
         case EVT_APP_RESUME:
             {
                 AEEAppStart* as = ( AEEAppStart*)dwParam;
+#ifdef FEATURE_APP_READER                   
                 Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/                
                 pMe->m_rc    = as->rc;
                 pMe->m_eAppStatus = MAINMENU_RUNNING;
+#ifdef FEATURE_APP_READER                   
 				  Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/				  
 
                 // 开始跑WMS状态机
                 MainMenu_RunFSM(pMe); 
@@ -877,7 +884,9 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
+#ifdef FEATURE_APP_READER               
 			  Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/			  
             (void) MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveIDlg = NULL;
             pMe->m_pActivedlgID = 0;

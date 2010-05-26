@@ -119,6 +119,7 @@ int Rendering_Update(DisplayDev eDev, int16 x, int16 y, int16 dx, int16 dy)
 	}
 	return 1;
 }
+
 int Rendering_UpdateEx(void)
 {
 	Rendering_PushScreen(DISPLAYDEV_MAIN);

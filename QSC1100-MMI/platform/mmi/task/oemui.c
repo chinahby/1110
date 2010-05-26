@@ -251,8 +251,7 @@ const KeyEntry OEMKeyTable[] =
     KEY(UP, UP, NORMAL, TRUE),
     KEY(DOWN, DOWN, NORMAL, TRUE),
     KEY(INFO, INFO, NORMAL, TRUE),
-    
-    // ¿ØÖÆ¼ü
+     // ¿ØÖÆ¼ü
     KEY(SEND, SEND, HELD, TRUE),
     KEY(END, END, NORMAL, TRUE),
     KEY(CLR, CLR, HELD, TRUE),

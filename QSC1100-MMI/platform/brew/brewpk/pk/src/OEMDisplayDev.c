@@ -37,7 +37,7 @@ GENERAL DESCRIPTION:
 
 #endif
 #include "OEMSVC.h"
-#ifdef SIM_REND
+#ifdef FEATURE_APP_READER
 #include "AEEBitmap.h"
 #include "Rendering.h"
 #endif
@@ -196,8 +196,9 @@ unsigned char roundTo6[256];
 unsigned char roundTo2[256];
 unsigned char roundTo3[256];
 #endif /* DISP_DEVICE_8 */
+#ifdef FEATURE_APP_READER
 extern boolean Rendering_IsPlayingEx(DisplayDev eDev);//wlh 20090409 add
-
+#endif /*FEATURE_APP_READER*/
 extern int OEMDisp_GetDispInfo(AEEDeviceInfo * pi);
 extern void OEMDisp_InitDispInfo(void);
 
@@ -212,6 +213,7 @@ static int OEMDisplayDev_New(IShell * piShell, AEECLSID cls, void **ppif);
 static int OEMBitmapDev_New(IShell * piShell, AEECLSID cls, void **ppif);
 static int OEMBitmapDevChild_New(IShell * piShell, AEECLSID cls, void **ppif);
 static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif);
+
 
 void *SVC_disp_buf(void)
 {
@@ -317,7 +319,7 @@ extern const AEEStaticClass gOEMDisplayDevClasses[] = {
 static uint32 OEMDisplayDev_AddRef(IDisplayDev *pMe);
 static uint32 OEMDisplayDev_Release(IDisplayDev *pMe);
 static int OEMDisplayDev_QueryInterface(IDisplayDev *pMe, AEECLSID clsid, void **ppNew);
-#ifdef SIM_REND
+#ifdef FEATURE_APP_READER
 static int OEMDisplayDev_Update1(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc);
 #else
 static int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc);
@@ -326,13 +328,13 @@ static const VTBL(IDisplayDev) gOEMDisplayDevFuncs = {
    OEMDisplayDev_AddRef,
    OEMDisplayDev_Release,
    OEMDisplayDev_QueryInterface,
-#ifdef SIM_REND
+#ifdef FEATURE_APP_READER
    OEMDisplayDev_Update1,
 #else
    OEMDisplayDev_Update,
 #endif
 };
-#ifdef SIM_REND
+#ifdef FEATURE_APP_READER
 IBitmap *gpDevBitmap = NULL;
 IDisplayDev *gpDevDisp = NULL;
 #endif
@@ -418,7 +420,7 @@ extern int OEMDisplayDev_New(IShell * piShell, AEECLSID cls, void **ppif)
    pMe->nRefs = 1;
 
    *ppif = pMe;
-#ifdef SIM_REND
+#ifdef FEATURE_APP_READER
    gpDevDisp = pMe;
 #endif
    return SUCCESS;
@@ -469,7 +471,7 @@ extern int OEMBitmapDev_New(IShell * piShell, AEECLSID cls, void **ppif)
 #endif /* GRP_ENABLED */
 
             gpDevBitmap1 = (IBitmap*)*ppif;
-#ifdef SIM_REND
+#ifdef FEATURE_APP_READER
     		gpDevBitmap = gpDevBitmap1;
     		Rendering_Initlize(DISPLAYDEV_MAIN, ((IDIB *)gpDevBitmap)->pBmp);
 #endif
@@ -646,7 +648,7 @@ static uint32 OEMDisplayDev_Release(IDisplayDev *pMe)
    uint32 nRefs = (pMe->nRefs ? --pMe->nRefs : 0);
 
    if (!nRefs) {
-#ifdef SIM_REND
+#ifdef FEATURE_APP_READER
 	   Rendering_Release(DISPLAYDEV_MAIN);
 #endif
       FREE(pMe);
@@ -667,7 +669,7 @@ static int OEMDisplayDev_QueryInterface(IDisplayDev *pMe, AEECLSID clsid, void *
    return ECLASSNOTSUPPORT;
 }
 
-#ifndef SIM_REND
+#ifndef FEATURE_APP_READER
 static 
 #endif
 int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc)
@@ -687,7 +689,7 @@ int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc)
 
    return SUCCESS;
 }
-#ifdef SIM_REND
+#ifdef FEATURE_APP_READER
 static int OEMDisplayDev_Update1(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc)
 {
 	//DBGPRINTF("OEMDisplayDev_Update1 %d",Rendering_IsPlayingEx(DISPLAYDEV_MAIN));

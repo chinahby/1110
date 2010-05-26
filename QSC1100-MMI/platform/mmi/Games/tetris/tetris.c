@@ -106,8 +106,9 @@ static void     drawTheFinalTetrisWhichFillupThePlayingZone( int16 YPos);
 static boolean  updateGameScoreAndGoToNextLevelIf( void);
 
 static boolean  playMusic( MusicTypeEnum type);
-
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 //---------------------- mod related method definition
 
 #if defined(AEE_STATIC)
@@ -443,7 +444,9 @@ static boolean Tetris_HandleEvent( CTetris *ptetris,
             returnValue = ICONFIG_GetItem(me->config, CFGI_BEEP_VOL, &me->keyBeepVolumeSetting, sizeof(byte));
             returnValue = ICONFIG_SetItem(me->config, CFGI_BEEP_VOL, &mute, sizeof(byte));
         #endif
+#ifdef FEATURE_APP_READER           
             Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/            
             displaySplashScreen();
             return TRUE;
         } // EVT_APP_START

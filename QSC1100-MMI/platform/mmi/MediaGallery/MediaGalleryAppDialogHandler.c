@@ -26,8 +26,10 @@
 #include "Vc0848.h"
 #endif
 #ifdef USES_MMI
+#ifndef WIN32
 #include "oemui.h"
-#endif
+#endif  /*WIN32*/
+#endif /*USES_MMI*/
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
 #include "simutils.h"
 #endif

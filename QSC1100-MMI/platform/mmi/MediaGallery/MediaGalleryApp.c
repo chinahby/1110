@@ -77,7 +77,9 @@ static void MediaGalleryApp_Resume(void *po);
 #ifdef FEATURE_TIMER_TEST
 static void MediaGalleryApp_TestTimer(CMediaGalleryApp *pMe);
 #endif
+#ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
+#endif  /*FEATURE_APP_READER*/
 /*===========================================================================
  *
  *                              LOCAL/STATIC DATA
@@ -307,7 +309,9 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
       {
          AEEAppStart* as = (AEEAppStart*) dwParam;
          boolean           bRet;
+#ifdef FEATURE_APP_READER            
          Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/         
          pMe->m_rc = as->rc;
          pMe->m_bSuspending = FALSE;
 
@@ -398,7 +402,9 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
 
    case EVT_DIALOG_INIT:
       {
+#ifdef FEATURE_APP_READER           
          Rendering_UpdateEx();//wlh add for 3D test
+#endif  /*FEATURE_APP_READER*/         
          // Update the active dialog info in the one and only Media gallery
          // applet object.
          pMe->m_pActiveDlg = (IDialog*)dwParam;
