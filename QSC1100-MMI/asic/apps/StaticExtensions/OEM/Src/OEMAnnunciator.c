@@ -7,7 +7,7 @@ SERVICES: Provides annunciator related services.
 
 ==============================================================================
 
-               Copyright © 1999-2008 QUALCOMM Incorporated
+               Copyright ?1999-2008 QUALCOMM Incorporated
                        All Rights Reserved.
                        QUALCOMM Proprietary
 
@@ -32,12 +32,16 @@ $Header: //depot/asic/msmshared/apps/StaticExtensions/OEM/Src/OEMAnnunciator.c#5
 #include "AEEAnnunciator.h"
 #include "oemannunciator.brh"
 #include "OEMDisp.h"
+#ifndef WIN32
 #include "disp.h"
+#include "msg.h"
+#else
+#include "OEMHelperFuncType.h"
+#endif
 #include "AEE_OEM.h"
 #include "AEEClassIDs.h"
 #include "AEE_OEMHeap.h"
 #include "OEMHeap.h"
-#include "msg.h"
 #include "BREWVersion.h"
 #include "AEE_OEMDispatch.h"
 
@@ -58,11 +62,11 @@ $Header: //depot/asic/msmshared/apps/StaticExtensions/OEM/Src/OEMAnnunciator.c#5
 #define ANNUN_SQCIF_SMALL_DIM 96    //lint -save -e750 "not referenced"
 #define ANNUN_SQCIF_LARGE_DIM 128   //lint -save -e750 "not referenced"
 /* QCIF Dimensions */
-#define ANNUN_QCIF_SMALL_DIM 176
-#define ANNUN_QCIF_LARGE_DIM 220
+#define ANNUN_QCIF_SMALL_DIM 128
+#define ANNUN_QCIF_LARGE_DIM 128
 
 /* Use a fixed size for the primary display annunciator */
-#define ANNUN_PRIMARY_HEIGHT 40
+#define ANNUN_PRIMARY_HEIGHT 15
 
 #ifdef FEATURE_SECONDARY_DISPLAY
 #error code not present
