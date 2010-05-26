@@ -33,6 +33,9 @@ static AEECallback   gCBResetBREW;
 static boolean       gbInResetBREW = FALSE;
 #include "OEMVersion.h"
 
+#ifdef CUST_EDITION
+#include "OEMClassIDs.h"
+#else
 #ifdef FEATURE_UI_CORE
 #include "CoreApp.BID"
 #endif /* FEATURE_UI_CORE */
@@ -163,7 +166,14 @@ static boolean       gbInResetBREW = FALSE;
 #ifdef FEATURE_APP_PBPRINT
 #include "pbprint.bid"
 #endif
+#endif
+#ifdef FEATURE_APP_FLDDBG
+#include "FLDDBGAPP.BID"
+#endif
 
+#ifdef FEATURE_APP_SVCPRG
+#include "SVCPRGAPP.BID"
+#endif
 
 #ifdef FEATURE_DYNAMIC_CLOCK_FREQUENCY_CHANGING
 #include "clkregim.h"
@@ -393,7 +403,12 @@ int OEM_Notify(OEMNotifyEvent evt, uint32 dw)
                  pae->cls != AEECLSID_PHONEAPP &&
 #endif
 
-                 pae->cls != AEECLSID_CORE_STARTAPP)
+#ifndef CUST_EDITION
+                 pae->cls != AEECLSID_CORE_STARTAPP&&
+#endif                 
+                 
+                 1)
+                
              {
                high_cpu_clk_needed = TRUE;
              }
@@ -459,7 +474,9 @@ boolean OEM_IsClsOKInSafeMode(uint32 clsid)
      case AEECLSID_APPMANAGER:
    #ifdef FEATURE_UI_CORE
      case AEECLSID_CORE_APP:
+#ifndef CUST_EDITION
      case AEECLSID_CORE_STARTAPP:
+#endif        
    #endif
 
    #ifdef FEATURE_APP_BLUETOOTH
@@ -478,10 +495,13 @@ boolean OEM_IsClsOKInSafeMode(uint32 clsid)
     case AEECLSID_DATASTATS:
    #endif
 
+#ifndef CUST_EDITION   
    #ifdef FEATURE_APP_DIALER
      case AEECLSID_DIALER:
    #endif
 
+#endif
+  
    #ifdef FEATURE_APP_FLDDBG
      case AEECLSID_FIELDDEBUGAPP:
    #endif
@@ -529,9 +549,11 @@ boolean OEM_IsClsOKInSafeMode(uint32 clsid)
    #endif // FEATURE_APP_QALBUM
    #endif
 
+#ifndef CUST_EDITION
    #ifdef FEATURE_APP_RECENTCALLS
       case AEECLSID_RECENTCALLSAPP:
    #endif
+#endif
 
    #ifdef FEATURE_APP_SVCPRG
     case AEECLSID_SVCPRGAPP:

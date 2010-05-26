@@ -10,7 +10,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
  
 INITIALIZATION AND SEQUENCING REQUIREMENTS:
  
-(c) COPYRIGHT 2003 - 2006 QUALCOMM Incorporated.
+(c) COPYRIGHT 2003 - 2008 QUALCOMM Incorporated.
                     All Rights Reserved.
  
                     QUALCOMM Proprietary
@@ -19,8 +19,8 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
 
 /*=============================================================================
 
-  $Header: //depot/asic/qsc60x0/apps/SvcPrg/SvcPrgApp.c#2 $
-$DateTime: 2006/07/19 12:53:23 $
+  $Header: //depot/asic/msmshared/apps/SvcPrg/SvcPrgApp.c#24 $
+$DateTime: 2008/10/31 07:05:40 $
 
                       EDIT HISTORY FOR FILE
  
@@ -29,6 +29,14 @@ $DateTime: 2006/07/19 12:53:23 $
  
 when       who     what, where, why
 --------   ---     ---------------------------------------------------------
+10/31/08   phani   Propagating the changes done for BMP build on 6290.
+03/26/08   cvs     Remove deprecated functions
+10/23/06   jas     Porting changes from uiOne HDK
+09/18/06   cvs     Fix compile warning
+06/15/06   JD      Changed SMS channel options and menus
+05/24/06   JD      Added call to SelectFonts to increase size on VGA
+11/28/05   jk      Call new Auth API to validate AKey for multiprocessor RPC
+02/03/05   sun     Fixed Compile Error
 05/20/04   sun     GetItemData was assuming wrong input parameters
 02/12/04   ram     Added CDMA/HDR Rx diversity control menus.
 01/09/04   sun     Removed static from prototype
@@ -53,12 +61,6 @@ when       who     what, where, why
 ===========================================================================*/
 #include "comdef.h"
 
-#if !defined(BREW_STATIC_APP)
-#include "SVCPRGAPP.BID"
-#else
-#include "OEMClassIds.h"      // Applet Ids
-#endif
-
 #include "AEEShell.h"
 #include "AEEStdLib.h"
 #include "AEEHeap.h"
@@ -66,10 +68,20 @@ when       who     what, where, why
 #include "AEEText.h"
 #include "AEEModGen.h"
 #include "AEEAppGen.h"
+#if defined(FEATURE_BMP)
+#include "AEEDownloadInfo.h"
+#else
+#include "AEEDownload.h"
+#endif
+
 #include "AppComFunc.h"
+
 #include "AEEConfig.h"
-#include "svcprg.brh"
-#include "Appscommon.h"
+
+#include "OEMClassIDs.h"
+
+#include "svcprg_res.h"
+
 #ifdef FEATURE_ICM
 #include "AEECM.h"
 #else
@@ -79,22 +91,32 @@ when       who     what, where, why
 
 #include "OEMCFGI.h"
 
+#include "SVCPRGAPP.BID"
+
 #ifdef FEATURE_AUTH
 #include "auth.h"
 #endif
 
 #include "msg.h"
-#include "UTK_priv.h"
-#include "oemui.h"
-#include "OEMNV.h"
-#include "Voccal.h"
-#include "AEEDownload.h"
+#include "err.h"
+#include "assert.h"
+
+#if defined(FEATURE_BMP)
+#undef FEATURE_UIONE_HDK
+#endif
+
+#if defined(FEATURE_UIONE_HDK)
+#include "AEESystemNotificationModel.h"
+#include "SystemNotificationModel.bid"
+#include "CustomConfigItems.h"
+#endif
+
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS
 
 ===========================================================================*/
-#define  AEE_SVCPRG_RES_FILE (AEE_RES_LANGDIR SVCPRG_RES_FILE)
+
 // When an IMenuCtl itemID has this flag set, it is part of a 'range'
 // (the remainder of the itemID is the idx into the range)
 #define RANGE_ITEMID_FLAG ((uint16) 0x8000)
@@ -115,12 +137,11 @@ when       who     what, where, why
 #else
 #define MAX_AKEY_DIGITS 26
 #endif
-#define FEATURE_LOCK
-#define debug DBGPRINTF
-#define MENU_SETBOTTOMBAR(p, t)                     \
-{                                                   \
-    IMENUCTL_SetBottomBarType((p), (t));            \
-}
+
+// DT_IP related values
+#define MAX_IP_INDEX                  4
+#define MAX_IP_LEN                    16
+
 /*===========================================================================
 
                     MACRO DEFINITIONS
@@ -143,6 +164,7 @@ typedef enum {
    DT_ESN, 
    DT_WSTR,        // A varible length string with number input mode only 
    DT_WSTR_FIXED,  // A fixed length string with number input mode only
+   DT_TSTR,        // A variable length string with alphanumeric input
    DT_BYTE,
    DT_WORD,
    DT_DWORD,
@@ -150,12 +172,8 @@ typedef enum {
    DT_RANGE,    // Assumed to be an uint8 C type
    DT_SIDNIDLIST,
    DT_AKEY,
+   DT_IP,
    DT_SUBMENU
-   ,DT_ALPHA       // A varible length string with Alpha input mode only 
-#ifdef FEATURE_NV_VOICE_PARAMETER   
-   ,DT_BOOLEAN_VOCCAL
-   ,DT_WORD_VOCCAL
-#endif //FEATURE_NV_VOICE_PARAMETER   
 } ItemType;
 
 
@@ -183,6 +201,9 @@ typedef struct _MenuItemType {
       // If DT_SUBMENU type, this points to a list of MenuItemTypes
       struct _MenuItemType *subMenu;
 
+      // If DT_TSTR, this is the max length of the string (including 
+      // a terminating NULL char.)
+      // 
       // If DT_WSTR, this it the max length of the string (including
       // a terminating NULL word).
       //
@@ -200,6 +221,12 @@ typedef struct _MenuItemType {
          uint16             currIndex;
       } sidnid;
 
+      // if DT_IP, we need to get each byte separately
+      struct {
+          byte                  ip_byte[MAX_IP_INDEX];
+          uint8                 currIndex;
+      }ipid;
+
    } typeData;
 
 
@@ -209,9 +236,6 @@ typedef struct _MenuItemType {
    flg isEditable:1; // Is this item editable?
    flg isLast:1;     // TRUE if this is the last MenuItemType in the
                      // current menu.
-#ifdef FEATURE_NV_VOICE_PARAMETER
-   nv_items_enum_type nvitem;
-#endif //#ifdef FEATURE_NV_VOICE_PARAMETER
 } MenuItemType;
    
 
@@ -224,12 +248,7 @@ typedef struct _CSvcPrgApp {
    IConfig      *m_pConfig;
 
    boolean       m_resetOnExit;
-   
    MenuItemType *m_mainMenu;
-   
-   MenuItemType *m_lockMenu;
-   
-   int           m_ShowMainMenu;
 
 #ifdef FEATURE_ENABLE_OTKSL
    // TRUE if access to the Service Programming applet was gained
@@ -238,15 +257,6 @@ typedef struct _CSvcPrgApp {
 #endif /* FEATURE_ENABLE_OTKSL */
 } CSvcPrgApp;
 
-#ifdef FEATURE_NV_VOICE_PARAMETER
-extern nv_voc_pcm_path_cal_type nv_voc_pcm_on_chip_0_cal_default;
-extern nv_voc_pcm_path_cal_type nv_voc_pcm_on_chip_1_cal_default;
-extern nv_voc_pcm_path_cal_type nv_voc_pcm_on_chip_speaker_cal_default;
-extern nv_qdsp_cmd_ec_params_type nv_voc_cal_ec_params_esec_default;
-extern nv_qdsp_cmd_ec_params_type nv_voc_cal_ec_params_headset_default;
-extern nv_qdsp_cmd_ec_params_type nv_voc_cal_ec_params_aec_default;
-extern nv_qdsp_cmd_ec_params_type nv_voc_cal_ec_params_speaker_default;
-#endif //FEATURE_NV_VOICE_PARAMETER
 
 /*===========================================================================
 
@@ -256,7 +266,7 @@ extern nv_qdsp_cmd_ec_params_type nv_voc_cal_ec_params_speaker_default;
 
 #if defined(AEE_STATIC)
 
-int     CSvcPrgMod_Load(IShell   *ps, 
+/*static*/ int     CSvcPrgMod_Load(IShell   *ps, 
                                void     *pHelpers, 
                                IModule **pMod);
 
@@ -322,6 +332,13 @@ static boolean CSvcPrg_OnSidNidItemSelect(CSvcPrgApp    *pMe,
                                           uint16         itemId,
                                           MenuItemType  *pItem);
 
+static boolean CSvcPrg_OnCommand_IP_Edit(IDialog      *pd,
+                                         MenuItemType *pItem);
+
+static boolean CSvcPrg_OnCommand_IP_Continue(CSvcPrgApp   *pMe,
+                                             IDialog      *pd,
+                                             MenuItemType *pItem);
+
 #ifdef WORKAROUND_IMENUCTL_DISABLE_UPDOWN_KEY_EVENT
 static boolean CSvcPrg_OnKeyPress(CSvcPrgApp  *pMe, 
                                   AVKType      key);
@@ -333,7 +350,6 @@ static boolean CSvcPrg_OnKey(CSvcPrgApp  *pMe,
 // Helper functions
 static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe);
 
-static boolean CSvcPrg_BuildLockMenuList(CSvcPrgApp *pMe);
 static MenuItemType *CSvcPrg_CreateMenuList(uint16 numItems);
 
 static void CSvcPrg_FreeMenuList(MenuItemType *itemList);
@@ -359,9 +375,7 @@ static boolean CSvcPrg_DisplaySecCodeDialog(CSvcPrgApp *pMe);
 
 static boolean CSvcPrg_DisplayMessageDialog(CSvcPrgApp *pMe, uint16 resId);
 
-//static boolean CSvcPrg_CheckSecCode(CSvcPrgApp *pMe, AECHAR const *code);
-
-static int CSvcPrg_CheckLockCode(CSvcPrgApp *pMe, AECHAR const *code);
+static boolean CSvcPrg_CheckSecCode(CSvcPrgApp *pMe, AECHAR const *code);
 
 static void CSvcPrg_MessageDialog_TimerCB(CSvcPrgApp *pMe);
 
@@ -372,9 +386,6 @@ static boolean CSvcPrg_SaveSIDNIDPair(CSvcPrgApp      *pMe,
                                       uint16           sid, 
                                       uint16           nid);
 
-extern void hw_reset( void );
-extern void OEMRTC_Phone_Reset(void *ppp);
-
 /*===========================================================================
 
                     LOCAL/STATIC DATA
@@ -382,6 +393,59 @@ extern void OEMRTC_Phone_Reset(void *ppp);
 ===========================================================================*/
 
 #if defined(AEE_STATIC)
+static const AEEAppInfo saiSvcPrgApp = 
+{
+   AEECLSID_SVCPRGAPP,
+   SVCPRG_RES_FILE,
+   0,
+   0,
+   0,
+   0,
+   0,
+   AFLAG_TOOL | AFLAG_STATIC | AFLAG_PHONE |AFLAG_HIDDEN
+};
+#endif /* defined(AEE_STATIC) */
+
+
+
+#if defined(AEE_STATIC)
+
+/*=============================================================================
+FUNCTION: CSvcPrgMod_GetModInfo
+
+DESCRIPTION:  Called by BREW to retrieve information about this module
+
+PARAMETERS:
+   *ps: 
+   **ppClasses: 
+   **pApps: 
+   *pnApps: 
+   *pwMinPriv: 
+
+RETURN VALUE:
+   PFNMODENTRY: 
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+PFNMODENTRY CSvcPrgMod_GetModInfo(IShell      *ps,
+                                  AEECLSID   **ppClasses,
+                                  AEEAppInfo **pApps, 
+                                  uint16      *pnApps,
+                                  uint16      *pwMinPriv)
+{
+   PARAM_NOT_REF(ps)
+   PARAM_NOT_REF(ppClasses)
+   PARAM_NOT_REF(pwMinPriv)
+
+   *pApps = (AEEAppInfo *)&saiSvcPrgApp;
+   *pnApps = 1; 
+   return (PFNMODENTRY) CSvcPrgMod_Load;
+}
 
 /*=============================================================================
 FUNCTION: CSvcPrgMod_Load
@@ -403,7 +467,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-int CSvcPrgMod_Load(IShell   *ps, 
+/*static*/ int CSvcPrgMod_Load(IShell   *ps, 
                            void     *pHelpers, 
                            IModule **pMod)
 {
@@ -470,6 +534,7 @@ int AEEClsCreateInstance(AEECLSID  ClsId,
                                                   (void **) &pMe->m_pConfig)) {
             break;
          }
+	 //AppComFunc_SelectFonts(pMe->a.m_pIDisplay);
 
          return AEE_SUCCESS;
       } while (0); /*lint !e717*/ // suppress 'Info 717: do .. while (0);'
@@ -532,19 +597,6 @@ static boolean CSvcPrg_HandleEvent(CSvcPrgApp *pMe,
 #endif /* WORKAROUND_IMENUCTL_DISABLE_UPDOWN_KEY_EVENT */
 
    case EVT_KEY:
-    if(wParam == AVK_ENDCALL)
-    {
-       if (pMe->m_resetOnExit) {
-	  BrewUI_EnableKeys(FALSE);
-        CSvcPrg_DisplayTextMsg(pMe, IDS_PHONE_RESETTING);
-        OEMRTC_Phone_Reset(pMe->a.m_pIShell);
-      } 
-     else {
-      (void) ISHELL_CloseApplet(pMe->a.m_pIShell, TRUE);
-      }	   
-	return TRUE;
-
-   }
       return CSvcPrg_OnKey(pMe, (AVKType) wParam);
       
    case EVT_BUSY:
@@ -580,7 +632,6 @@ SEE ALSO:
 static void CSvcPrg_FreeAppData(CSvcPrgApp *pMe)
 {
    CSvcPrg_FreeMenuList(pMe->m_mainMenu);
-   CSvcPrg_FreeMenuList(pMe->m_lockMenu);
 
    if (pMe->m_pConfig) {
       ICONFIG_Release(pMe->m_pConfig);
@@ -669,6 +720,7 @@ static boolean CSvcPrg_OnDialogStart(CSvcPrgApp  *pMe,
       (void) IMENUCTL_DeleteAll(pm);
       ITEXTCTL_SetSoftKeyMenu(pt, NULL);
 
+      SetDefaultSoftkeyLook(pMe->a.m_pIShell, pm);
 
    } else if (IDD_GENERICMENU == wParam) {
       IMenuCtl *pm;
@@ -678,7 +730,8 @@ static boolean CSvcPrg_OnDialogStart(CSvcPrgApp  *pMe,
       if (!pm) {
          return FALSE;
       }
-      
+
+      SetDefaultMenuLook(pMe->a.m_pIShell, pm);
    }
    return TRUE;
 }
@@ -759,6 +812,12 @@ static boolean CSvcPrg_OnCommand(CSvcPrgApp  *pMe,
    case IDS_CMD_EDIT:
       return CSvcPrg_OnCommand_Edit(pDialog, pItem);
 
+   case IDS_CMD_IP_EDIT:
+      return CSvcPrg_OnCommand_IP_Edit(pDialog, pItem);
+
+   case IDS_CMD_IP_CONTINUE:
+      return CSvcPrg_OnCommand_IP_Continue(pMe, pDialog, pItem);
+
    case IDS_CMD_SAVE:
       return CSvcPrg_OnCommand_Save(pMe, pDialog, pItem);
 
@@ -834,8 +893,8 @@ static boolean CSvcPrg_OnCommand_SecCodeOK(CSvcPrgApp *pMe,
 {
    ITextCtl *pt; 
 #ifdef FEATURE_ICM
-   //ICM *pICM = NULL;
-   //int nReturnStatus;
+   ICM *pICM = NULL;
+   int nReturnStatus;
 #endif
 
    if (IDIALOG_GetID(pd) != IDD_SECCODE) {
@@ -847,8 +906,8 @@ static boolean CSvcPrg_OnCommand_SecCodeOK(CSvcPrgApp *pMe,
    if (!pt) {
       return FALSE;
    }
-   pMe->m_ShowMainMenu = CSvcPrg_CheckLockCode(pMe, ITEXTCTL_GetTextPtr(pt));
-   if (pMe->m_ShowMainMenu == 1) {
+
+   if (CSvcPrg_CheckSecCode(pMe, ITEXTCTL_GetTextPtr(pt))) {
       MenuItemType  fakeItem;
 
       // Build the main menu
@@ -857,9 +916,8 @@ static boolean CSvcPrg_OnCommand_SecCodeOK(CSvcPrgApp *pMe,
       }
 
       // Set the phone offline
-/*
 #ifdef FEATURE_ICM
-      // Create the Call Manager object. 
+      /* Create the Call Manager object. */
       nReturnStatus = ISHELL_CreateInstance(pMe->a.m_pIShell,
                                 AEECLSID_CM,
                                 (void **) &pICM);
@@ -868,7 +926,7 @@ static boolean CSvcPrg_OnCommand_SecCodeOK(CSvcPrgApp *pMe,
         return FALSE;
       }
 
-      if (pICM == NULL) { 
+      if (pICM == NULL) { /* error */
         return FALSE;
       }
       ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_OFFLINE);
@@ -877,7 +935,33 @@ static boolean CSvcPrg_OnCommand_SecCodeOK(CSvcPrgApp *pMe,
 #else
       (void) ui_set_ph_oprt_mode (SYS_OPRT_MODE_OFFLINE);
 #endif
-*/
+
+#if defined(FEATURE_UIONE_HDK)
+      // Pretend to register for system notifications to prevent the app
+      // from getting closed when the offline note appears.  We actually 
+      // don't display system notifications at all, but that's ok...this
+      // is not an end-user app.
+      {
+         ISystemNotificationModel *pSysNoteModel = NULL;
+         
+         (void) ISHELL_CreateInstance(
+            pMe->a.m_pIShell,
+            AEECLSID_SYSTEMNOTIFICATIONMODEL,
+            (void **) &pSysNoteModel
+         );
+
+         if (pSysNoteModel != NULL) {
+            (void) ISYSTEMNOTIFICATIONMODEL_RegisterApp(
+               pSysNoteModel,
+               AEECLSID_SVCPRGAPP,
+               TRUE
+            );
+            ISYSTEMNOTIFICATIONMODEL_Release(pSysNoteModel);
+            pSysNoteModel = NULL;
+         }
+      }
+#endif /* FEATURE_UIONE_HDK */
+
       pMe->m_resetOnExit = TRUE;
 
       // Close the security code dialog
@@ -892,32 +976,7 @@ static boolean CSvcPrg_OnCommand_SecCodeOK(CSvcPrgApp *pMe,
       fakeItem.isLast           = TRUE;
 
       return CSvcPrg_DisplayItem(pMe, &fakeItem);
-   }
-   else if(pMe->m_ShowMainMenu == 2) 
-   {
-   	  MenuItemType  lockItem;
-
-      // Build the main menu
-      if (!CSvcPrg_BuildLockMenuList(pMe)) {
-         return FALSE;
-      }
-      pMe->m_resetOnExit = TRUE;
-
-      // Close the security code dialog
-      (void) ISHELL_EndDialog(pMe->a.m_pIShell);
-
-      // Display the main menu...
-      MEMSET(&lockItem, 0, sizeof(lockItem));
-
-      lockItem.title            = IDS_OPERATOR_OPTIONS; 
-      lockItem.itemType         = DT_SUBMENU;
-      lockItem.typeData.subMenu = pMe->m_lockMenu;
-      lockItem.isLast           = TRUE;
-
-      return CSvcPrg_DisplayItem(pMe, &lockItem);
-   	
-   	}
-    else {
+   } else {
 
       // Reset the controls for the next time...
       (void) ITEXTCTL_SetText(pt, NULL, -1);
@@ -928,6 +987,307 @@ static boolean CSvcPrg_OnCommand_SecCodeOK(CSvcPrgApp *pMe,
    }
 }
 
+
+/*=============================================================================
+FUNCTION: CSvcPrg_OnCommand_IP_Edit
+
+DESCRIPTION:  Command event handler for IDS_CMD_IP_EDIT
+
+PARAMETERS:
+   *pd: IDialog interface for the active dialog 
+   *pItem: menu item
+
+RETURN VALUE:
+   boolean: TRUE if the event was handled 
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static boolean CSvcPrg_OnCommand_IP_Edit(IDialog      *pd,
+                                      MenuItemType *pItem)
+{
+   char     szByte[MAX_IP_LEN];
+   AECHAR   strTemp[MAX_IP_LEN];
+   IMenuCtl *pm;
+   ITextCtl *pt;
+
+   if (NULL == pItem) {
+      return FALSE;
+   }
+
+   if (IDIALOG_GetID(pd) != IDD_GENERICTEXTSK) {
+      return FALSE;
+   }
+
+   pm = (IMenuCtl *) IDIALOG_GetControl(pd,
+                                        IDC_GENERICTEXTSK_SK);
+   pt = (ITextCtl *) IDIALOG_GetControl(pd,
+                                        IDC_GENERICTEXTSK_TEXT);
+   if (!pm || !pt) {
+      return FALSE;
+   }
+
+   // make sure the currIndex is set to 0
+   pItem->typeData.ipid.currIndex = 0;
+
+   (void) ITEXTCTL_SetTitle(pt,
+                            SVCPRG_RES_FILE,
+                            IDS_EDIT_IP_BYTE0,
+                            NULL);
+   
+   // Add the association between the softkey and the text control
+   // _before_ deleting all the menu items so the 'Multitap' item
+   // is removed too
+   ITEXTCTL_SetSoftKeyMenu(pt, pm);
+   (void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
+
+   (void) IMENUCTL_DeleteAll(pm);
+   (void) IMENUCTL_AddItem(pm, 
+                           SVCPRG_RES_FILE,
+                           IDS_CMD_IP_CONTINUE,
+                           IDS_CMD_IP_CONTINUE,
+                           NULL,
+                           (uint32) pItem);
+   (void) IMENUCTL_AddItem(pm, 
+                           SVCPRG_RES_FILE,
+                           IDS_CMD_CANCEL,
+                           IDS_CMD_CANCEL,
+                           NULL,
+                           (uint32) pItem);
+
+   // set the max possible
+   // also display the current byte value
+   ITEXTCTL_SetMaxSize(pt, 3); /* max chars in a 8-bit decimal number */
+   SNPRINTF(szByte, sizeof(szByte), "%u",
+            pItem->typeData.ipid.ip_byte[pItem->typeData.ipid.currIndex]);
+   STRTOWSTR(szByte, strTemp, sizeof(strTemp));
+   (void) ITEXTCTL_SetText(pt,
+                           strTemp,
+                           -1);
+
+   // Set the focus to the text control object
+   (void) IDIALOG_SetFocus(pd,
+                           IDC_GENERICTEXTSK_TEXT);
+   (void) ITEXTCTL_Redraw(pt);
+   (void) IMENUCTL_Redraw(pm);
+   
+   return TRUE;
+}
+
+/*=============================================================================
+FUNCTION: CSvcPrg_Ask_Save_IP
+
+DESCRIPTION:  check to see if the user wants to save the new IP
+
+PARAMETERS:
+   *pd: IDialog interface for the active dialog
+   *pItem: menu item
+
+RETURN VALUE:
+   boolean: TRUE if the event was handled
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static boolean CSvcPrg_Ask_Save_IP(IDialog      *pd,
+                                   MenuItemType *pItem)
+{
+   char     szByte[MAX_IP_LEN];
+   AECHAR   strTemp[MAX_IP_LEN];
+   IMenuCtl *pm;
+   ITextCtl *pt;
+
+   if (IDIALOG_GetID(pd) != IDD_GENERICTEXTSK) {
+      return FALSE;
+   }
+
+   pm = (IMenuCtl *) IDIALOG_GetControl(pd,
+                                        IDC_GENERICTEXTSK_SK);
+   pt = (ITextCtl *) IDIALOG_GetControl(pd,
+                                        IDC_GENERICTEXTSK_TEXT);
+   if (!pm || !pt) {
+      return FALSE;
+   }
+
+   // Add the association between the softkey and the text control
+   // _before_ deleting all the menu items so the 'Multitap' item
+   // is removed too
+
+   if (pItem->itemType != DT_TSTR) {
+      ITEXTCTL_SetSoftKeyMenu(pt, pm);
+      (void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
+   } else {
+      (void) ITEXTCTL_SetInputMode(pt, AEE_TM_LETTERS);
+   }
+
+   (void) IMENUCTL_DeleteAll(pm);
+   (void) IMENUCTL_AddItem(pm,
+                           SVCPRG_RES_FILE,
+                           IDS_CMD_SAVE,
+                           IDS_CMD_SAVE,
+                           NULL,
+                           (uint32) pItem);
+   (void) IMENUCTL_AddItem(pm,
+                           SVCPRG_RES_FILE,
+                           IDS_CMD_CANCEL,
+                           IDS_CMD_CANCEL,
+                           NULL,
+                           (uint32) pItem);
+
+   if (pItem->cfgItem == CFGI_DNS_IP1) {
+      (void) ITEXTCTL_SetTitle(pt,
+                               SVCPRG_RES_FILE,
+                               IDS_DNS1,
+                               NULL);
+   }
+   else {
+      (void) ITEXTCTL_SetTitle(pt,
+                               SVCPRG_RES_FILE,
+                               IDS_DNS2,
+                               NULL);
+   }
+
+   SNPRINTF(szByte,
+            sizeof(szByte),
+            "%d.%d.%d.%d",
+            pItem->typeData.ipid.ip_byte[0],
+            pItem->typeData.ipid.ip_byte[1],
+            pItem->typeData.ipid.ip_byte[2],
+            pItem->typeData.ipid.ip_byte[3]);
+
+   STRTOWSTR(szByte, strTemp, sizeof(strTemp));
+ 
+   // also display the current byte value
+   (void) ITEXTCTL_SetText(pt,
+                           strTemp,
+                           -1);
+
+   // Set the focus to the softkey
+   (void) IDIALOG_SetFocus(pd,
+                           IDC_GENERICTEXTSK_SK);
+   ITEXTCTL_SetActive(pt, FALSE);
+   
+   (void) ITEXTCTL_Redraw(pt);
+   (void) IMENUCTL_Redraw(pm);
+   return TRUE;
+}
+   
+/*=============================================================================
+FUNCTION: CSvcPrg_OnCommand_IP_Continue
+
+DESCRIPTION:  Command event handler for IDS_CMD_IP_CONTINUE
+
+PARAMETERS:
+   *pMe: CSvcPrgApp object pointer 
+   *pd: IDialog interface for the active dialog 
+   *pItem: menu item
+
+RETURN VALUE:
+   boolean: TRUE if the event was handled 
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static boolean CSvcPrg_OnCommand_IP_Continue(CSvcPrgApp   *pMe,
+                                      IDialog         *pd,
+                                      MenuItemType    *pItem)
+{
+   int       len;
+   char     szByte[4];
+   uint16   titleId;
+   AECHAR   *pText;
+   AECHAR   strTemp[4];
+   IMenuCtl *pm;
+   ITextCtl *pt;
+
+   if (NULL == pItem) {
+      return FALSE;
+   }
+
+   if (IDIALOG_GetID(pd) != IDD_GENERICTEXTSK) {
+      return FALSE;
+   }
+
+   pm = (IMenuCtl *) IDIALOG_GetControl(pd,
+                                        IDC_GENERICTEXTSK_SK);
+   pt = (ITextCtl *) IDIALOG_GetControl(pd,
+                                        IDC_GENERICTEXTSK_TEXT);
+   if (!pm || !pt) {
+      return FALSE;
+   }
+
+   // let's save the old data before moving on to the next one.
+   pText = ITEXTCTL_GetTextPtr(pt);
+   len = WSTRLEN(pText);
+   
+   if (0 == len) {
+      // Exit immediately if the text control is empty.
+      return CSvcPrg_DisplayMessageDialog(pMe, IDS_NOTHING_ENTERED);
+   }
+
+   WSTRTOSTR(pText, szByte, sizeof(szByte));
+   pItem->typeData.ipid.ip_byte[pItem->typeData.ipid.currIndex] = 
+                                                     (uint8) ATOI(szByte);
+   
+   // make sure the currIndex is set to 0
+   pItem->typeData.ipid.currIndex++;
+
+   // let's stop if we have all the data bytes
+   if (pItem->typeData.ipid.currIndex >= MAX_IP_INDEX) {
+     return CSvcPrg_Ask_Save_IP(pd, pItem);
+   }
+
+   switch(pItem->typeData.ipid.currIndex) {
+      case 1:
+         titleId = IDS_EDIT_IP_BYTE1;         
+         break;
+
+      case 2:
+         titleId = IDS_EDIT_IP_BYTE2;
+         break;
+      
+      case 3:
+         titleId = IDS_EDIT_IP_BYTE3;
+         break;
+      
+      default:
+         titleId = IDS_EDIT_IP_BYTE0;
+         break;
+   }
+   
+   (void) ITEXTCTL_SetTitle(pt,
+                            SVCPRG_RES_FILE,
+                            titleId,
+                            NULL);
+
+   // set the max possible
+   // also display the current byte value
+   SNPRINTF(szByte, sizeof(szByte), "%u", 
+            pItem->typeData.ipid.ip_byte[pItem->typeData.ipid.currIndex]);
+   STRTOWSTR(szByte, strTemp, sizeof(strTemp));
+   (void) ITEXTCTL_SetText(pt,
+                           strTemp,
+                           -1);
+
+   // Set the focus to the text control object
+   (void) IDIALOG_SetFocus(pd,
+                           IDC_GENERICTEXTSK_TEXT);
+   (void) ITEXTCTL_Redraw(pt);
+   (void) IMENUCTL_Redraw(pm);
+   return TRUE;
+}
 
 /*=============================================================================
 FUNCTION: CSvcPrg_OnCommand_Edit
@@ -969,24 +1329,32 @@ static boolean CSvcPrg_OnCommand_Edit(IDialog      *pd,
    // Add the association between the softkey and the text control
    // _before_ deleting all the menu items so the 'Multitap' item
    // is removed too
-   ITEXTCTL_SetSoftKeyMenu(pt, pm);
-   // 有些设置项需输入字母，在这里设置不便控制，改在文本控件初始化时设置
-   //(void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
+   if (pItem->itemType != DT_TSTR) {
+      ITEXTCTL_SetSoftKeyMenu(pt, pm);
+      (void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
+   } else {
+      (void) ITEXTCTL_SetInputMode(pt, AEE_TM_LETTERS);
+   }
 
    (void) IMENUCTL_DeleteAll(pm);
    (void) IMENUCTL_AddItem(pm, 
-                           AEE_SVCPRG_RES_FILE,
+                           SVCPRG_RES_FILE,
                            IDS_CMD_SAVE,
                            IDS_CMD_SAVE,
                            NULL,
                            (uint32) pItem);
    (void) IMENUCTL_AddItem(pm, 
-                           AEE_SVCPRG_RES_FILE,
+                           SVCPRG_RES_FILE,
                            IDS_CMD_CANCEL,
                            IDS_CMD_CANCEL,
                            NULL,
                            (uint32) pItem);
 
+   // add "Multitap" back in for txt string
+   if (pItem->itemType == DT_TSTR) {
+      ITEXTCTL_SetSoftKeyMenu(pt, pm);
+   }
+      
    // Set the focus to the text control object
    (void) IDIALOG_SetFocus(pd,
                            IDC_GENERICTEXTSK_TEXT);
@@ -1051,24 +1419,6 @@ static boolean CSvcPrg_OnCommand_Save(CSvcPrgApp      *pMe,
       return CSvcPrg_DisplayMessageDialog(pMe, IDS_TOO_SHORT);
    }
 
-   // "MIN Lock" just for Venezuela MOVILNET
-#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
-      if(pItem->cfgItem == CFGI_IMSI_S)
-      {
-         char temp[15];
-         WSTRTOSTR(pText, temp, 15);
-         
-         temp[3] = 0;
-         if (!((STRCMP(temp, "158") == 0) ||
-                (STRCMP(temp, "199") == 0)))
-          {
-                   (void) ITEXTCTL_SetText(pt, NULL, -1);
-                   (void) IDIALOG_SetFocus(pd, IDC_GENERICTEXTSK_TEXT);
-                   return CSvcPrg_DisplayMessageDialog(pMe, IDS_INVALID_MIN);
-         }
-      }
-#endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
-
    // Save the new value
    CSvcPrg_SaveItemValue(pMe, 
                      pItem,
@@ -1107,15 +1457,16 @@ static boolean CSvcPrg_OnCommand_AKEYEntry(CSvcPrgApp      *pMe,
    ITextCtl *pt;
    AECHAR   *pText;
    int       len;
-#if defined (FEATURE_AUTH)
+#if defined (FEATURE_AUTH) && (!defined(FEATURE_UIM_RUIM) || \
+    defined (FEATURE_UIM_RUN_TIME_ENABLE))
    char     pszBuf[MAX_AKEY_DIGITS+1];
    int i,j;
-#endif
    int nam;
 #ifdef FEATURE_ICM
    int nReturnStatus;
    ICM  *pICM;
    AEECMPhInfo phInfo;
+#endif
 #endif
 
    if (NULL == pItem) {
@@ -1141,6 +1492,9 @@ static boolean CSvcPrg_OnCommand_AKEYEntry(CSvcPrgApp      *pMe,
       return CSvcPrg_DisplayMessageDialog(pMe, IDS_NOTHING_ENTERED);
    }
 
+#if defined (FEATURE_AUTH) && (!defined(FEATURE_UIM_RUIM) || \
+    defined (FEATURE_UIM_RUN_TIME_ENABLE))
+
 #ifdef FEATURE_ICM
       /* Create the Call Manager object. */
       nReturnStatus = ISHELL_CreateInstance(pMe->a.m_pIShell,
@@ -1162,7 +1516,6 @@ static boolean CSvcPrg_OnCommand_AKEYEntry(CSvcPrgApp      *pMe,
       nam = ui.nam;
 #endif
 
-#if defined (FEATURE_AUTH)
 #if defined( FEATURE_UIM_RUN_TIME_ENABLE )
   /* Determine if the R-UIM is available for this NAM */
   if (!nv_rtre_use_ruim_for_nam(nam))
@@ -1189,30 +1542,24 @@ static boolean CSvcPrg_OnCommand_AKEYEntry(CSvcPrgApp      *pMe,
       /* Verify AKEY entry */
       if ( auth_validate_a_key( (byte*)pszBuf ) )
       {
-        auth_cmd_type *auth_ptr;
-        /* valid AKEY */
-        if( ( auth_ptr = (auth_cmd_type *)(q_get( &auth_free_q ))) == NULL )
+
+        /* tell auth to update AKEY  */
+        if (auth_send_update_a_key_cmd((byte *)pszBuf, MAX_AKEY_DIGITS, nam))
         {
-          /* could not get a buffer : try again */
-          MSG_ERROR( " ... couldn't store AKEY", 0, 0, 0 );
-          // Exit immediately if the text control is empty.
+          // Save the new value
+          CSvcPrg_EndDialog (pMe, FALSE);
+          return CSvcPrg_DisplayMessageDialog(pMe, IDS_AKEY_SUCCESS);
+        }
+        else
+        {
+          MSG_ERROR("Update A Key Failed",0,0,0);
           return CSvcPrg_DisplayMessageDialog(pMe, IDS_AKEY_FAILED);
         }
-        /* tell auth to update AKEY */
-        auth_ptr->hdr.command = AUTH_UPDATE_A_KEY_F;
-        auth_ptr->hdr.cmd_hdr.task_ptr = NULL;
-        MEMCPY( auth_ptr->a_key.a_key, pszBuf, MAX_AKEY_DIGITS );
-        auth_ptr->a_key.nam = nam;
-        auth_ptr->a_key.rpt_function = NULL;
-        auth_cmd ( auth_ptr );
-        // Save the new value
-        CSvcPrg_EndDialog (pMe, FALSE);
-        return CSvcPrg_DisplayMessageDialog(pMe, IDS_AKEY_SUCCESS); 
-      } /* if ( auth_validate_a_key( akey_num.buf ) ) */
+     } /* if ( auth_validate_a_key( akey_num.buf ) ) */
       /* if AKEY is not validated we fall through */
     } /* if ( pszBuf >= MIN_AUTH_DIGITS ) */
   }
-#endif /* F_AUTH */
+#endif /* FEATURE_AUTH && (!FEATURE_UIM_RUIM || FEATURE_UIM_RUN_TIME_ENABLE)*/
   /* Fall through if invalid AKEY */
   return CSvcPrg_DisplayMessageDialog(pMe, IDS_AKEY_FAILED); 
 }
@@ -1252,106 +1599,14 @@ static boolean CSvcPrg_OnCommand_YesNo(CSvcPrgApp      *pMe,
       return FALSE;
    }
 
-   if ((pItem->itemType != DT_BOOLEAN)
-#ifdef FEATURE_NV_VOICE_PARAMETER    
-    && (pItem->itemType != DT_BOOLEAN_VOCCAL)
-#endif //FEATURE_NV_VOICE_PARAMETER   
-    ) 
-    {
+   if (pItem->itemType != DT_BOOLEAN) {
       return FALSE;
    }
 
-   if(pItem->itemType == DT_BOOLEAN)
-   {
-       (void) ICONFIG_SetItem(pMe->m_pConfig, 
-                              pItem->cfgItem,
-                              &bYes,
-                              sizeof(bYes));
-   }
-#ifdef FEATURE_NV_VOICE_PARAMETER    
-   else if(pItem->itemType == DT_BOOLEAN_VOCCAL)
-   {
-        nv_item_type nvi;
-        
-        if (NV_DONE_S != OEMNV_Get(pItem->nvitem,&nvi))
-        {
-            ERR("Unable to retrieve config item: %d", 
-                (int) pItem->nvitem, 0, 0);
-            return FALSE;            
-        }
-         
-        if(IDS_VOCCAL_USE_NVMODE == pItem->title)
-        {
-            switch(pItem->nvitem)
-            {
-                case NV_VOC_PCM_ON_CHIP_0_CAL_I:
-                    nvi.nv_voc_pcm_on_chip_0_cal.use_nvmode = bYes;
-                    if(!bYes)
-                    {
-                        nvi.nv_voc_pcm_on_chip_0_cal = nv_voc_pcm_on_chip_0_cal_default;
-                    }
-                    break;
-
-                case NV_VOC_PCM_ON_CHIP_1_CAL_I:
-                    nvi.nv_voc_pcm_on_chip_1_cal.use_nvmode = bYes;
-                    if(!bYes)
-                    {
-                        nvi.nv_voc_pcm_on_chip_1_cal = nv_voc_pcm_on_chip_1_cal_default;
-                    }                        
-                    break;
-
-                case NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I:
-                    nvi.nv_voc_pcm_on_chip_speaker_cal.use_nvmode = bYes;
-                    if(!bYes)
-                    {
-                        nvi.nv_voc_pcm_on_chip_speaker_cal = nv_voc_pcm_on_chip_speaker_cal_default;
-                    }                        
-                    break;   
-
-                case NV_VOC_CAL_EC_PARAMS_ESEC_I:
-                    nvi.nv_voc_cal_ec_params_esec.use_nvmode = bYes;
-                    if(!bYes)
-                    {
-                        nvi.nv_voc_cal_ec_params_esec = nv_voc_cal_ec_params_esec_default;
-                    }                        
-                    break;                       
-
-                case NV_VOC_CAL_EC_PARAMS_HEADSET_I:
-                    nvi.nv_voc_cal_ec_params_headset.use_nvmode = bYes;
-                    if(!bYes)
-                    {
-                        nvi.nv_voc_cal_ec_params_headset = nv_voc_cal_ec_params_headset_default;
-                    }                        
-                    break;    
-                    
-                case NV_VOC_CAL_EC_PARAMS_AEC_I:
-                    nvi.nv_voc_cal_ec_params_aec.use_nvmode = bYes;
-                    if(!bYes)
-                    {
-                        nvi.nv_voc_cal_ec_params_aec = nv_voc_cal_ec_params_aec_default;
-                    }                        
-                    break; 
-
-                case NV_VOC_CAL_EC_PARAMS_SPEAKER_I:
-                    nvi.nv_voc_cal_ec_params_speaker.use_nvmode = bYes;
-                    if(!bYes)
-                    {
-                        nvi.nv_voc_cal_ec_params_speaker = nv_voc_cal_ec_params_speaker_default;
-                    }                        
-                    break; 
-
-                default:
-                    break;  
-            }
-           
-            if (NV_DONE_S != OEMNV_Put(pItem->nvitem,&nvi))
-            {
-                ERR("Unable to save config item: %d", 
-                    (int) pItem->nvitem, 0, 0);
-            }  
-        }
-   }
-#endif //FEATURE_NV_VOICE_PARAMETER 
+   (void) ICONFIG_SetItem(pMe->m_pConfig, 
+                          pItem->cfgItem,
+                          &bYes,
+                          sizeof(bYes));
 
    CSvcPrg_EndDialog(pMe, FALSE);
    return TRUE;
@@ -1402,15 +1657,8 @@ static boolean CSvcPrg_OnCommand_SID_OK(CSvcPrgApp      *pMe,
    if (0 == WSTRLEN(ITEXTCTL_GetTextPtr(pt))) {
       return CSvcPrg_DisplayMessageDialog(pMe, IDS_NOTHING_ENTERED);
    }
-#if defined FEATURE_LOCK 
-   if ( pItem->cfgItem == CFGI_LOCK_MCCMNC_LIST )
-   {
-      if ( WSTRLEN(ITEXTCTL_GetTextPtr(pt)) > 3 ) 
-      {
-         return CSvcPrg_DisplayMessageDialog(pMe, IDS_MCC_LIMIT);
-      }
-   }
-#endif   
+
+
    //
    // Display Edit NID Dialog
    //
@@ -1424,36 +1672,25 @@ static boolean CSvcPrg_OnCommand_SID_OK(CSvcPrgApp      *pMe,
    if (!pm || !pt) {
       return FALSE;
    }
-#if defined FEATURE_LOCK
-   if ( pItem->cfgItem == CFGI_LOCK_MCCMNC_LIST )
-   {
-      (void) ITEXTCTL_SetTitle(pt,
-                                AEE_SVCPRG_RES_FILE,
-                                IDS_EDIT_MNC,
-                                NULL);
-   }
-   else
-#endif
-   {
-       (void) ITEXTCTL_SetTitle(pt,
-                                AEE_SVCPRG_RES_FILE,
-                                IDS_EDIT_NID,
-                                NULL);
-    }
-    
+
+   (void) ITEXTCTL_SetTitle(pt,
+                            SVCPRG_RES_FILE,
+                            IDS_EDIT_NID,
+                            NULL);
+
    ITEXTCTL_SetSoftKeyMenu(pt, pm);
    (void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
    (void) IMENUCTL_DeleteAll(pm);
 
    (void) IMENUCTL_AddItem(pm, 
-                           AEE_SVCPRG_RES_FILE,
+                           SVCPRG_RES_FILE,
                            IDS_CMD_NID_OK,
                            IDS_CMD_NID_OK,
                            NULL,
                            (uint32) pItem);
 
    (void) IMENUCTL_AddItem(pm, 
-                           AEE_SVCPRG_RES_FILE,
+                           SVCPRG_RES_FILE,
                            IDS_CMD_NID_CANCEL,
                            IDS_CMD_NID_CANCEL,
                            NULL,
@@ -1541,15 +1778,6 @@ static boolean CSvcPrg_OnCommand_NID_OK(CSvcPrgApp      *pMe,
             return CSvcPrg_DisplayMessageDialog(pMe, 
                                             IDS_NOTHING_ENTERED);
          }
-#if defined FEATURE_LOCK
-         if ( pItem->cfgItem == CFGI_LOCK_MCCMNC_LIST )
-         {
-            if ( WSTRLEN(ITEXTCTL_GetTextPtr(pt)) > 2 ) 
-            {
-               return CSvcPrg_DisplayMessageDialog(pMe, IDS_MNC_LIMIT);
-            }
-         }
-#endif
       } else {
          (void) ITEXTCTL_GetText(pt, 
                                  wSID, 
@@ -1611,32 +1839,15 @@ static boolean CSvcPrg_OnRangeItemSelect(CSvcPrgApp      *pMe,
    }
 
    val = (uint8) (itemId & 0xFF);
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-   if (pItem->cfgItem == CFGI_RTRE_CONFIGURATION)
-   {
-       nv_rtre_configuration_type rtre_config=itemId;
-       (void) ICONFIG_SetItem(pMe->m_pConfig, 
-                              pItem->cfgItem,
-                              &rtre_config,
-                              sizeof(rtre_config));
-   }
-   else
-   {
-       (void) ICONFIG_SetItem(pMe->m_pConfig, 
-                              pItem->cfgItem,
-                              &val,
-                              sizeof(val));
-   }
-#else
+
    (void) ICONFIG_SetItem(pMe->m_pConfig, 
                           pItem->cfgItem,
                           &val,
                           sizeof(val));
-#endif
 
    CSvcPrg_EndDialog(pMe, FALSE);
 
-   return TRUE;  
+   return TRUE;
 }
 
 
@@ -1687,35 +1898,25 @@ static boolean CSvcPrg_OnSidNidItemSelect(CSvcPrgApp   *pMe,
    if (!pm || !pt) {
       return FALSE;
    }
-#if defined FEATURE_LOCK
-   if ( pItem->cfgItem == CFGI_LOCK_MCCMNC_LIST )
-   {
-      (void) ITEXTCTL_SetTitle(pt,
-                                AEE_SVCPRG_RES_FILE,
-                                IDS_EDIT_MCC,
-                                NULL);
-   }
-   else
-#endif
-    {
-       (void) ITEXTCTL_SetTitle(pt,
-                                AEE_SVCPRG_RES_FILE,
-                                IDS_EDIT_SID,
-                                NULL);
-    }
+
+   (void) ITEXTCTL_SetTitle(pt,
+                            SVCPRG_RES_FILE,
+                            IDS_EDIT_SID,
+                            NULL);
+
    ITEXTCTL_SetSoftKeyMenu(pt, pm);
    (void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
    (void) IMENUCTL_DeleteAll(pm);
 
    (void) IMENUCTL_AddItem(pm, 
-                           AEE_SVCPRG_RES_FILE,
+                           SVCPRG_RES_FILE,
                            IDS_CMD_SID_OK,
                            IDS_CMD_SID_OK,
                            NULL,
                            (uint32) pItem);
 
    (void) IMENUCTL_AddItem(pm, 
-                           AEE_SVCPRG_RES_FILE,
+                           SVCPRG_RES_FILE,
                            IDS_CMD_CANCEL,
                            IDS_CMD_CANCEL,
                            NULL,
@@ -1819,7 +2020,6 @@ static boolean CSvcPrg_OnKey(CSvcPrgApp  *pMe,
                              AVKType      key)
 {
    switch (key) {
-  // case AVK_END:
    case AVK_CLR:
       // Pressing CLR will end the current dialog 
       // (and possibly the entire applet) 
@@ -1857,23 +2057,14 @@ static boolean CSvcPrg_OnKey(CSvcPrgApp  *pMe,
          return TRUE;
       }
 #endif /* WORKAROUND_IMENUCTL_DISABLE_UPDOWN_KEY_EVENT */
-   case AVK_SELECT:
-         {
-         IDialog *pd;
 
-         pd = ISHELL_GetActiveDialog(pMe->a.m_pIShell);
-	  if(pd)
-	  {
-              (void) IDIALOG_SetFocus(pd, IDC_SECCODE_SK);
-	   }
-   	  }
-     return TRUE;
-     //    case AVK_END:
+   case AVK_END:
       // Keep ending dialogs until there are no more, at which point
       // CSvcPrg_EndDialog() will exit the applet for us.
-   //       MSG_ERROR("88888888888888888888",0,0,0);
-     //  CSvcPrg_EndDialog(pMe, FALSE);
-    //  return TRUE;
+      while (ISHELL_GetActiveDialog(pMe->a.m_pIShell)) {
+         CSvcPrg_EndDialog(pMe, TRUE);
+      }
+      return TRUE;
 
    default:
       break;
@@ -1902,42 +2093,25 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-#ifndef FEATURE_CARRIER_VENEZUELA_MOVILNET
 static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 {
    MenuItemType *m;
-   int numItems = 7; // Number of items in the main menu.
-   int idxBrew = 0;
-   
-#ifdef FEATURE_NV_VOICE_PARAMETER
-   int voccalitem;
-   int echocancel;
-#endif //#ifdef FEATURE_NV_VOICE_PARAMETER
-   
+   int numItems = 8; // Number of items in the main menu.
+   int indexBREWMenu;
+
    pMe->m_mainMenu = NULL;
+
    //
    // Build the Main menu
    //
 #ifdef FEATURE_CDMA_RX_DIVERSITY
    numItems++;
 #endif
-
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-   numItems++;
-#endif
-
-#ifdef FEATURE_NV_VOICE_PARAMETER
-   numItems++;
-   numItems++;
-#endif //#ifdef FEATURE_NV_VOICE_PARAMETER
-
-   numItems++;// 添加了 IDS_BREW_CONFIG
-
 #ifdef FEATURE_HDR
-#error code not present
+  numItems++;
 #endif
 
-   m = CSvcPrg_CreateMenuList(numItems);  // 7 elements in the Main menu
+   m = CSvcPrg_CreateMenuList(numItems);
 
    if (NULL == m) {
       return FALSE;
@@ -1983,55 +2157,25 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    m[numItems].isEditable         = TRUE;
    numItems++;
 #endif
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-   m[numItems].title             = IDS_RTRE_SELECT;
-   m[numItems].itemType          = DT_RANGE;
-   m[numItems].cfgItem           = CFGI_RTRE_CONFIGURATION; 
-   m[numItems].isEditable        = TRUE;
-
-   m[numItems].typeData.rangeData = CSvcPrg_CreateRange(3);
-   if (NULL == m[numItems].typeData.rangeData) {
-      return FALSE;
-   }
-   m[numItems].typeData.rangeData[0].resId = IDS_RTRE_SELECT_NVONLY;
-   m[numItems].typeData.rangeData[0].value = NV_RTRE_CONFIG_NV_ONLY;
-   m[numItems].typeData.rangeData[1].resId = IDS_RTRE_SELECT_RUIMONLY;
-   m[numItems].typeData.rangeData[1].value = NV_RTRE_CONFIG_RUIM_ONLY;
-   m[numItems].typeData.rangeData[2].resId = IDS_RTRE_SELECT_BOTH;
-   m[numItems].typeData.rangeData[2].value = NV_RTRE_CONFIG_RUIM_OR_DROP_BACK;
-   ERR("F numItems:= %d", numItems, 0, 0);
-   numItems++;
-   ERR("S numItems:= %d", numItems, 0, 0);
-#endif
-
-#ifdef FEATURE_NV_VOICE_PARAMETER
-   m[numItems].title              = IDS_VOCCAL;
-   m[numItems].itemType           = DT_SUBMENU;
-   m[numItems].typeData.subMenu   = NULL;
-   voccalitem = numItems;
-   numItems++;   
-
-   m[numItems].title              = IDS_ECHO_CANCEL;
-   m[numItems].itemType           = DT_SUBMENU;
-   m[numItems].typeData.subMenu   = NULL;
-   echocancel = numItems;   
-   numItems++;  
-#endif //FEATURE_NV_VOICE_PARAMETER
-
-   m[numItems].title       = IDS_BREW_CONFIG;
-   m[numItems].itemType    = DT_SUBMENU;
-   m[numItems].typeData.subMenu = NULL;
-   idxBrew = numItems;
-   numItems++;
 
 #ifdef FEATURE_HDR
-#error code not present
+   m[numItems].title              = IDS_HDR_RX_DIVERSITY_ENABLED;
+   m[numItems].itemType           = DT_BOOLEAN;
+   m[numItems].cfgItem            = CFGI_HDR_RX_DIVERSITY_CTL;
+   m[numItems].isEditable         = TRUE;
+   numItems++;
 #endif
 
+   // Add BREW MSHOP item
+   m[numItems].title              = IDS_BREW_OPTIONS;
+   m[numItems].itemType           = DT_SUBMENU;
+   m[numItems].typeData.subMenu   = NULL;
+   indexBREWMenu                  = numItems++;
+   
    // Store the Main menu pointer
    pMe->m_mainMenu = m;  
 
-   
+
    //
    // Build the Network menu
    //
@@ -2139,6 +2283,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    ASSERT(DT_SUBMENU == pMe->m_mainMenu[1].itemType);
    pMe->m_mainMenu[1].typeData.subMenu = m;
 
+
    //
    // Build the Registration submenu
    //
@@ -2218,1007 +2363,11 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    //
    // Build the SMS Options menu
    //
-
-   m = CSvcPrg_CreateMenuList(6); // 6 elements in the Network menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_SMS_TIMESTAMP;
-   m[0].itemType           = DT_RANGE;
-   m[0].cfgItem            = CFGI_SMS_TIMESTAMP; 
-   m[0].isEditable         = TRUE;
-   m[0].typeData.rangeData = CSvcPrg_CreateRange(2);
-   if (NULL == m[0].typeData.rangeData) {
-      return FALSE;
-   }
-   m[0].typeData.rangeData[0].resId = IDS_SMS_TIMESTAMP_ADJUST;
-   m[0].typeData.rangeData[0].value = OEMNV_SMS_TIMESTAMP_ADJUST;
-   m[0].typeData.rangeData[1].resId = IDS_SMS_TIMESTAMP_ASRECEIVED;
-   m[0].typeData.rangeData[1].value = OEMNV_SMS_TIMESTAMP_ASRECEIVED;
-
-
-   m[1].title              = IDS_MAX_MSG_PAYLOAD;
-   m[1].itemType           = DT_DWORD;
-   m[1].cfgItem            = CFGI_SMS_MAX_PAYLOAD_LENGTH;
-   m[1].isEditable         = TRUE;
-
-   m[2].title              = IDS_SMS_MO_ACCESS;
-   m[2].itemType           = DT_RANGE;
-   m[2].cfgItem            = CFGI_WMS_MO_CHANNEL_SELECT;//CFGI_SMS_MO_ON_ACCESS_CHANNEL;
-   m[2].isEditable         = TRUE;
-   m[2].typeData.rangeData = CSvcPrg_CreateRange(2);
-   if (NULL == m[2].typeData.rangeData) {
-      return FALSE;
-   }
-
-   m[2].typeData.rangeData[0].resId = IDS_SMS_MO_ACCESS_OFF;
-   m[2].typeData.rangeData[0].value = 0;
-   m[2].typeData.rangeData[1].resId = IDS_SMS_MO_ACCESS_ON;
-   m[2].typeData.rangeData[1].value = 1;
-   
-   /*
-   m[3].title              = IDS_SMS_MO_TRAFFIC;
-   m[3].itemType           = DT_RANGE;
-   m[3].cfgItem            = CFGI_SMS_MO_ON_TRAFFIC_CHANNEL;
-   m[3].isEditable         = TRUE;
-   m[3].typeData.rangeData = CSvcPrg_CreateRange(2);
-   if (NULL == m[3].typeData.rangeData) {
-      return FALSE;
-   }
-   m[3].typeData.rangeData[0].resId = IDS_SMS_MO_TRAFFIC_OFF;
-   m[3].typeData.rangeData[0].value = 0;
-   m[3].typeData.rangeData[1].resId = IDS_SMS_MO_TRAFFIC_ON;
-   m[3].typeData.rangeData[1].value = 1;
-  */
-   m[4].title              = IDS_SMS_IS41_WORKAROUND;
-   m[4].itemType           = DT_RANGE;
-   m[4].cfgItem            = CFGI_SMS_IS41_WORKAROUND;
-   m[4].isEditable         = TRUE;
-   m[4].typeData.rangeData = CSvcPrg_CreateRange(2);
-   if (NULL == m[4].typeData.rangeData) {
-      return FALSE;
-   }
-   m[4].typeData.rangeData[0].resId = IDS_SMS_IS41_WORKAROUND_ON;
-   m[4].typeData.rangeData[0].value = OEMNV_SMS_EMAIL_ADDRESSING_IS41;
-   m[4].typeData.rangeData[1].resId = IDS_SMS_IS41_WORKAROUND_OFF;
-   m[4].typeData.rangeData[1].value = OEMNV_SMS_EMAIL_ADDRESSING_STANDARD;
-
-
-   m[5].title              = IDS_SMS_MO_ENCODING;
-   m[5].itemType           = DT_RANGE;
-   m[5].cfgItem            = CFGI_SMS_MO_ENCODING; 
-   m[5].isEditable         = TRUE;
-   m[5].typeData.rangeData = CSvcPrg_CreateRange(2);
-   if (NULL == m[5].typeData.rangeData) {
-      return FALSE;
-   }
-   m[5].typeData.rangeData[0].resId = IDS_SMS_MO_ENCODING_7BIT;
-   m[5].typeData.rangeData[0].value = OEMNV_SMS_MO_ENCODING_7BIT;
-#if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA) || defined (FEATURE_CARRIER_ISRAEL_PELEPHONE)
-   m[5].typeData.rangeData[1].resId = IDS_SMS_MO_ENCODING_OCTET;
-   m[5].typeData.rangeData[1].value = OEMNV_SMS_MO_ENCODING_OCTET;
-#else       
-   m[5].typeData.rangeData[1].resId = IDS_SMS_MO_ENCODING_UNICODE;
-   m[5].typeData.rangeData[1].value = OEMNV_SMS_MO_ENCODING_UNICODE;
-#endif
-
-   // Store the SMS Options menu in the Main menu
-   ASSERT(IDS_SMS_OPTIONS == pMe->m_mainMenu[2].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[2].itemType);
-   pMe->m_mainMenu[2].typeData.subMenu = m;
-
-
-   //
-   // Build the Data Options menu
-   //
-
-   m = CSvcPrg_CreateMenuList(2); // 2 elements in the Network menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_QNC_ENABLED;
-   m[0].itemType           = DT_BOOLEAN;
-   m[0].cfgItem            = CFGI_DATA_QNC_ENABLED;
-   m[0].isEditable         = TRUE;
-
-
-   m[1].title              = IDS_DATA_DIALSTRING;
-   m[1].itemType           = DT_WSTR;
-   m[1].cfgItem            = CFGI_DATA_DIALSTRING;
-   m[1].typeData.strLen    = OEMNV_DATA_DIALSTRING_MAXLEN; 
-   m[1].isEditable         = TRUE;
-
-   // Store the Data Options submenu in the Main menu
-   ASSERT(IDS_DATA_OPTIONS == pMe->m_mainMenu[3].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[3].itemType);
-   pMe->m_mainMenu[3].typeData.subMenu = m;   
-
-#ifdef FEATURE_NV_VOICE_PARAMETER   
-   //build Voice parameter cal submenu
-    m = CSvcPrg_CreateMenuList(3); // 2 elements in the Network menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_VOCCAL_HANDSET;
-   m[0].itemType           = DT_SUBMENU;
-   m[0].typeData.subMenu   = NULL;
-
-   m[1].title              = IDS_VOCCAL_HEADSET;
-   m[1].itemType           = DT_SUBMENU;
-   m[1].typeData.subMenu   = NULL;
-
-   m[2].title              = IDS_VOCCAL_SPEAKER;
-   m[2].itemType           = DT_SUBMENU;
-   m[2].typeData.subMenu   = NULL;
-
-   // Store the SMS Options menu in the Main menu
-   ASSERT(IDS_VOCCAL == pMe->m_mainMenu[voccalitem].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[voccalitem].itemType);
-   pMe->m_mainMenu[voccalitem].typeData.subMenu = m;
-
-   //
-   // Build the Handset submenu
-   //
-
-   m = CSvcPrg_CreateMenuList(9); // 9 elements in the Registration menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_VOCCAL_USE_NVMODE;
-   m[0].itemType           = DT_BOOLEAN_VOCCAL;
-   m[0].nvitem             = NV_VOC_PCM_ON_CHIP_0_CAL_I;
-   m[0].isEditable         = TRUE;   
-   
-   m[1].title              = IDS_VOCCAL_EC_MODE;
-   m[1].itemType           = DT_WORD_VOCCAL;
-   m[1].nvitem             = NV_VOC_PCM_ON_CHIP_0_CAL_I;
-   m[1].isEditable         = TRUE;
-   
-   m[2].title              = IDS_VOCCAL_NS_ENABLE;
-   m[2].itemType           = DT_WORD_VOCCAL;
-   m[2].nvitem             = NV_VOC_PCM_ON_CHIP_0_CAL_I;
-   m[2].isEditable         = TRUE;
-
-   m[3].title              = IDS_VOCCAL_TX_GAIN;
-   m[3].itemType           = DT_WORD_VOCCAL;
-   m[3].nvitem             = NV_VOC_PCM_ON_CHIP_0_CAL_I;
-   m[3].isEditable         = TRUE;
-
-   m[4].title              = IDS_VOCCAL_DTMF_TX_GAIN;
-   m[4].itemType           = DT_WORD_VOCCAL;
-   m[4].nvitem             = NV_VOC_PCM_ON_CHIP_0_CAL_I;
-   m[4].isEditable         = TRUE;
-
-   m[5].title              = IDS_VOCCAL_CODEC_TX_GAIN;
-   m[5].itemType           = DT_WORD_VOCCAL;
-   m[5].nvitem             = NV_VOC_PCM_ON_CHIP_0_CAL_I;
-   m[5].isEditable         = TRUE;
-
-   m[6].title              = IDS_VOCCAL_CODEC_RX_GAIN;
-   m[6].itemType           = DT_WORD_VOCCAL;
-   m[6].nvitem             = NV_VOC_PCM_ON_CHIP_0_CAL_I;
-   m[6].isEditable         = TRUE;   
-
-   m[7].title              = IDS_VOCCAL_CODEC_ST_GAIN;
-   m[7].itemType           = DT_WORD_VOCCAL;
-   m[7].nvitem             = NV_VOC_PCM_ON_CHIP_0_CAL_I;
-   m[7].isEditable         = TRUE;   
-
-   m[8].title              = IDS_VOCCAL_RX_DBM_OFFSET;
-   m[8].itemType           = DT_WORD_VOCCAL;
-   m[8].nvitem             = NV_VOC_PCM_ON_CHIP_0_CAL_I;
-   m[8].isEditable         = TRUE;   
-   
-   // Store the Registration menu pointer in the Network menu 
-   ASSERT(IDS_VOCCAL == pMe->m_mainMenu[voccalitem].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[voccalitem].itemType);
-   ASSERT(IDS_VOCCAL_HANDSET == pMe->m_mainMenu[voccalitem].typeData.subMenu[0].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[voccalitem].typeData.subMenu[0].itemType);
-   pMe->m_mainMenu[voccalitem].typeData.subMenu[0].typeData.subMenu = m;   
-
-   //
-   // Build the Headset submenu
-   //
-
-   m = CSvcPrg_CreateMenuList(9); // 9 elements in the Registration menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_VOCCAL_USE_NVMODE;
-   m[0].itemType           = DT_BOOLEAN_VOCCAL;
-   m[0].nvitem             = NV_VOC_PCM_ON_CHIP_1_CAL_I;
-   m[0].isEditable         = TRUE;   
-   
-   m[1].title              = IDS_VOCCAL_EC_MODE;
-   m[1].itemType           = DT_WORD_VOCCAL;
-   m[1].nvitem             = NV_VOC_PCM_ON_CHIP_1_CAL_I;
-   m[1].isEditable         = TRUE;
-   
-   m[2].title              = IDS_VOCCAL_NS_ENABLE;
-   m[2].itemType           = DT_WORD_VOCCAL;
-   m[2].nvitem             = NV_VOC_PCM_ON_CHIP_1_CAL_I;
-   m[2].isEditable         = TRUE;
-
-   m[3].title              = IDS_VOCCAL_TX_GAIN;
-   m[3].itemType           = DT_WORD_VOCCAL;
-   m[3].nvitem             = NV_VOC_PCM_ON_CHIP_1_CAL_I;
-   m[3].isEditable         = TRUE;
-
-   m[4].title              = IDS_VOCCAL_DTMF_TX_GAIN;
-   m[4].itemType           = DT_WORD_VOCCAL;
-   m[4].nvitem             = NV_VOC_PCM_ON_CHIP_1_CAL_I;
-   m[4].isEditable         = TRUE;
-
-   m[5].title              = IDS_VOCCAL_CODEC_TX_GAIN;
-   m[5].itemType           = DT_WORD_VOCCAL;
-   m[5].nvitem             = NV_VOC_PCM_ON_CHIP_1_CAL_I;
-   m[5].isEditable         = TRUE;
-
-   m[6].title              = IDS_VOCCAL_CODEC_RX_GAIN;
-   m[6].itemType           = DT_WORD_VOCCAL;
-   m[6].nvitem             = NV_VOC_PCM_ON_CHIP_1_CAL_I;
-   m[6].isEditable         = TRUE;   
-
-   m[7].title              = IDS_VOCCAL_CODEC_ST_GAIN;
-   m[7].itemType           = DT_WORD_VOCCAL;
-   m[7].nvitem             = NV_VOC_PCM_ON_CHIP_1_CAL_I;
-   m[7].isEditable         = TRUE;   
-
-   m[8].title              = IDS_VOCCAL_RX_DBM_OFFSET;
-   m[8].itemType           = DT_WORD_VOCCAL;
-   m[8].nvitem             = NV_VOC_PCM_ON_CHIP_1_CAL_I;
-   m[8].isEditable         = TRUE;   
-   
-   // Store the Registration menu pointer in the Network menu 
-   ASSERT(IDS_VOCCAL == pMe->m_mainMenu[voccalitem].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[voccalitem].itemType);
-   ASSERT(IDS_VOCCAL_HEADSET == pMe->m_mainMenu[voccalitem].typeData.subMenu[1].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[voccalitem].typeData.subMenu[1].itemType);
-   pMe->m_mainMenu[voccalitem].typeData.subMenu[1].typeData.subMenu = m; 
-
-   //
-   // Build the Speaker submenu
-   //
-
-   m = CSvcPrg_CreateMenuList(9); // 9 elements in the Registration menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_VOCCAL_USE_NVMODE;
-   m[0].itemType           = DT_BOOLEAN_VOCCAL;
-   m[0].nvitem             = NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I;
-   m[0].isEditable         = TRUE;   
-   
-   m[1].title              = IDS_VOCCAL_EC_MODE;
-   m[1].itemType           = DT_WORD_VOCCAL;
-   m[1].nvitem             = NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I;
-   m[1].isEditable         = TRUE;
-   
-   m[2].title              = IDS_VOCCAL_NS_ENABLE;
-   m[2].itemType           = DT_WORD_VOCCAL;
-   m[2].nvitem             = NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I;
-   m[2].isEditable         = TRUE;
-
-   m[3].title              = IDS_VOCCAL_TX_GAIN;
-   m[3].itemType           = DT_WORD_VOCCAL;
-   m[3].nvitem             = NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I;
-   m[3].isEditable         = TRUE;
-
-   m[4].title              = IDS_VOCCAL_DTMF_TX_GAIN;
-   m[4].itemType           = DT_WORD_VOCCAL;
-   m[4].nvitem             = NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I;
-   m[4].isEditable         = TRUE;
-
-   m[5].title              = IDS_VOCCAL_CODEC_TX_GAIN;
-   m[5].itemType           = DT_WORD_VOCCAL;
-   m[5].nvitem             = NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I;
-   m[5].isEditable         = TRUE;
-
-   m[6].title              = IDS_VOCCAL_CODEC_RX_GAIN;
-   m[6].itemType           = DT_WORD_VOCCAL;
-   m[6].nvitem             = NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I;
-   m[6].isEditable         = TRUE;   
-
-   m[7].title              = IDS_VOCCAL_CODEC_ST_GAIN;
-   m[7].itemType           = DT_WORD_VOCCAL;
-   m[7].nvitem             = NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I;
-   m[7].isEditable         = TRUE;   
-
-   m[8].title              = IDS_VOCCAL_RX_DBM_OFFSET;
-   m[8].itemType           = DT_WORD_VOCCAL;
-   m[8].nvitem             = NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I;
-   m[8].isEditable         = TRUE;   
-   
-   // Store the Registration menu pointer in the Network menu 
-   ASSERT(IDS_VOCCAL == pMe->m_mainMenu[voccalitem].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[voccalitem].itemType);
-   ASSERT(IDS_VOCCAL_SPEAKER == pMe->m_mainMenu[voccalitem].typeData.subMenu[2].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[voccalitem].typeData.subMenu[2].itemType);
-   pMe->m_mainMenu[voccalitem].typeData.subMenu[2].typeData.subMenu = m; 
-
-
-
-   //build Echo cancel submenu
-    m = CSvcPrg_CreateMenuList(4); // 2 elements in the Network menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_ECHO_CANCEL_ESEC;
-   m[0].itemType           = DT_SUBMENU;
-   m[0].typeData.subMenu   = NULL;
-
-   m[1].title              = IDS_ECHO_CANCEL_HEADSET;
-   m[1].itemType           = DT_SUBMENU;
-   m[1].typeData.subMenu   = NULL;
-
-   m[2].title              = IDS_ECHO_CANCEL_AEC;
-   m[2].itemType           = DT_SUBMENU;
-   m[2].typeData.subMenu   = NULL;
-
-   m[3].title              = IDS_ECHO_CANCEL_SPEAKER;
-   m[3].itemType           = DT_SUBMENU;
-   m[3].typeData.subMenu   = NULL;   
-
-   // Store the SMS Options menu in the Main menu
-   ASSERT(IDS_ECHO_CANCEL == pMe->m_mainMenu[echocancel].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[echocancel].itemType);
-   pMe->m_mainMenu[echocancel].typeData.subMenu = m;
-
-   //
-   // Build the EC_ESEC submenu
-   //
-
-   m = CSvcPrg_CreateMenuList(6); // 9 elements in the Registration menu
-   if (NULL == m) {
-      return FALSE;
-   }
-   m[0].title              = IDS_VOCCAL_USE_NVMODE;
-   m[0].itemType           = DT_BOOLEAN_VOCCAL;
-   m[0].nvitem             = NV_VOC_CAL_EC_PARAMS_ESEC_I;
-   m[0].isEditable         = TRUE; 
-
-   m[1].title              = IDS_ECHO_CANCEL_FAREND;
-   m[1].itemType           = DT_WORD_VOCCAL;
-   m[1].nvitem             = NV_VOC_CAL_EC_PARAMS_ESEC_I;
-   m[1].isEditable         = TRUE;   
-   
-   m[2].title              = IDS_ECHO_CANCEL_DOUBLETALK;
-   m[2].itemType           = DT_WORD_VOCCAL;
-   m[2].nvitem             = NV_VOC_CAL_EC_PARAMS_ESEC_I;
-   m[2].isEditable         = TRUE;
-   
-   m[3].title              = IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER;
-   m[3].itemType           = DT_WORD_VOCCAL;
-   m[3].nvitem             = NV_VOC_CAL_EC_PARAMS_ESEC_I;
-   m[3].isEditable         = TRUE;
-
-   m[4].title              = IDS_ECHO_CANCEL_STARTUP_MUTE_MODE;
-   m[4].itemType           = DT_WORD_VOCCAL;
-   m[4].nvitem             = NV_VOC_CAL_EC_PARAMS_ESEC_I;
-   m[4].isEditable         = TRUE;
-
-   m[5].title              = IDS_ECHO_CANCEL_STARTUP_ERLE;
-   m[5].itemType           = DT_WORD_VOCCAL;
-   m[5].nvitem             = NV_VOC_CAL_EC_PARAMS_ESEC_I;
-   m[5].isEditable         = TRUE;
-   
-   // Store the Registration menu pointer in the Network menu 
-   ASSERT(IDS_ECHO_CANCEL == pMe->m_mainMenu[echocancel].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[echocancel].itemType);
-   ASSERT(IDS_ECHO_CANCEL_ESEC == pMe->m_mainMenu[echocancel].typeData.subMenu[0].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[echocancel].typeData.subMenu[0].itemType);
-   pMe->m_mainMenu[echocancel].typeData.subMenu[0].typeData.subMenu = m;   
-
-   //
-   // Build the EC_Headset submenu
-   //
-
-   m = CSvcPrg_CreateMenuList(6); // 9 elements in the Registration menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_VOCCAL_USE_NVMODE;
-   m[0].itemType           = DT_BOOLEAN_VOCCAL;
-   m[0].nvitem             = NV_VOC_CAL_EC_PARAMS_HEADSET_I;
-   m[0].isEditable         = TRUE; 
-
-   m[1].title              = IDS_ECHO_CANCEL_FAREND;
-   m[1].itemType           = DT_WORD_VOCCAL;
-   m[1].nvitem             = NV_VOC_CAL_EC_PARAMS_HEADSET_I;
-   m[1].isEditable         = TRUE;   
-   
-   m[2].title              = IDS_ECHO_CANCEL_DOUBLETALK;
-   m[2].itemType           = DT_WORD_VOCCAL;
-   m[2].nvitem             = NV_VOC_CAL_EC_PARAMS_HEADSET_I;
-   m[2].isEditable         = TRUE;
-   
-   m[3].title              = IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER;
-   m[3].itemType           = DT_WORD_VOCCAL;
-   m[3].nvitem             = NV_VOC_CAL_EC_PARAMS_HEADSET_I;
-   m[3].isEditable         = TRUE;
-
-   m[4].title              = IDS_ECHO_CANCEL_STARTUP_MUTE_MODE;
-   m[4].itemType           = DT_WORD_VOCCAL;
-   m[4].nvitem             = NV_VOC_CAL_EC_PARAMS_HEADSET_I;
-   m[4].isEditable         = TRUE;
-
-   m[5].title              = IDS_ECHO_CANCEL_STARTUP_ERLE;
-   m[5].itemType           = DT_WORD_VOCCAL;
-   m[5].nvitem             = NV_VOC_CAL_EC_PARAMS_HEADSET_I;
-   m[5].isEditable         = TRUE;
-   
-   // Store the Registration menu pointer in the Network menu 
-   ASSERT(IDS_ECHO_CANCEL == pMe->m_mainMenu[echocancel].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[echocancel].itemType);
-   ASSERT(IDS_ECHO_CANCEL_HEADSET == pMe->m_mainMenu[echocancel].typeData.subMenu[1].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[echocancel].typeData.subMenu[1].itemType);
-   pMe->m_mainMenu[echocancel].typeData.subMenu[1].typeData.subMenu = m;  
-
-   //
-   // Build the EC_AEC submenu
-   //
-
-   m = CSvcPrg_CreateMenuList(6); // 9 elements in the Registration menu
-   if (NULL == m) {
-      return FALSE;
-   }
-   
-   m[0].title              = IDS_VOCCAL_USE_NVMODE;
-   m[0].itemType           = DT_BOOLEAN_VOCCAL;
-   m[0].nvitem             = NV_VOC_CAL_EC_PARAMS_AEC_I;
-   m[0].isEditable         = TRUE; 
-
-   m[1].title              = IDS_ECHO_CANCEL_FAREND;
-   m[1].itemType           = DT_WORD_VOCCAL;
-   m[1].nvitem             = NV_VOC_CAL_EC_PARAMS_AEC_I;
-   m[1].isEditable         = TRUE;   
-   
-   m[2].title              = IDS_ECHO_CANCEL_DOUBLETALK;
-   m[2].itemType           = DT_WORD_VOCCAL;
-   m[2].nvitem             = NV_VOC_CAL_EC_PARAMS_AEC_I;
-   m[2].isEditable         = TRUE;
-   
-   m[3].title              = IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER;
-   m[3].itemType           = DT_WORD_VOCCAL;
-   m[3].nvitem             = NV_VOC_CAL_EC_PARAMS_AEC_I;
-   m[3].isEditable         = TRUE;
-
-   m[4].title              = IDS_ECHO_CANCEL_STARTUP_MUTE_MODE;
-   m[4].itemType           = DT_WORD_VOCCAL;
-   m[4].nvitem             = NV_VOC_CAL_EC_PARAMS_AEC_I;
-   m[4].isEditable         = TRUE;
-
-   m[5].title              = IDS_ECHO_CANCEL_STARTUP_ERLE;
-   m[5].itemType           = DT_WORD_VOCCAL;
-   m[5].nvitem             = NV_VOC_CAL_EC_PARAMS_AEC_I;
-   m[5].isEditable         = TRUE;
-   
-   // Store the Registration menu pointer in the Network menu 
-   ASSERT(IDS_ECHO_CANCEL == pMe->m_mainMenu[echocancel].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[echocancel].itemType);
-   ASSERT(IDS_ECHO_CANCEL_AEC == pMe->m_mainMenu[echocancel].typeData.subMenu[2].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[echocancel].typeData.subMenu[2].itemType);
-   pMe->m_mainMenu[echocancel].typeData.subMenu[2].typeData.subMenu = m; 
-
-   //
-   // Build the EC_ESEC submenu
-   //
-
-   m = CSvcPrg_CreateMenuList(6); // 9 elements in the Registration menu
-   if (NULL == m) {
-      return FALSE;
-   }
-   m[0].title              = IDS_VOCCAL_USE_NVMODE;
-   m[0].itemType           = DT_BOOLEAN_VOCCAL;
-   m[0].nvitem             = NV_VOC_CAL_EC_PARAMS_SPEAKER_I;
-   m[0].isEditable         = TRUE; 
-
-   m[1].title              = IDS_ECHO_CANCEL_FAREND;
-   m[1].itemType           = DT_WORD_VOCCAL;
-   m[1].nvitem             = NV_VOC_CAL_EC_PARAMS_SPEAKER_I;
-   m[1].isEditable         = TRUE;   
-   
-   m[2].title              = IDS_ECHO_CANCEL_DOUBLETALK;
-   m[2].itemType           = DT_WORD_VOCCAL;
-   m[2].nvitem             = NV_VOC_CAL_EC_PARAMS_SPEAKER_I;
-   m[2].isEditable         = TRUE;
-   
-   m[3].title              = IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER;
-   m[3].itemType           = DT_WORD_VOCCAL;
-   m[3].nvitem             = NV_VOC_CAL_EC_PARAMS_SPEAKER_I;
-   m[3].isEditable         = TRUE;
-
-   m[4].title              = IDS_ECHO_CANCEL_STARTUP_MUTE_MODE;
-   m[4].itemType           = DT_WORD_VOCCAL;
-   m[4].nvitem             = NV_VOC_CAL_EC_PARAMS_SPEAKER_I;
-   m[4].isEditable         = TRUE;
-
-   m[5].title              = IDS_ECHO_CANCEL_STARTUP_ERLE;
-   m[5].itemType           = DT_WORD_VOCCAL;
-   m[5].nvitem             = NV_VOC_CAL_EC_PARAMS_SPEAKER_I;
-   m[5].isEditable         = TRUE;
-   
-   // Store the Registration menu pointer in the Network menu 
-   ASSERT(IDS_ECHO_CANCEL == pMe->m_mainMenu[echocancel].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[echocancel].itemType);
-   ASSERT(IDS_ECHO_CANCEL_SPEAKER == pMe->m_mainMenu[echocancel].typeData.subMenu[3].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[echocancel].typeData.subMenu[3].itemType);
-   pMe->m_mainMenu[echocancel].typeData.subMenu[3].typeData.subMenu = m;  
-#endif //FEATURE_NV_VOICE_PARAMETER
-
-   //
-   // Build the BREW Configuration menu
-   //
-   // 14 elements in the BREW Configuration menu
-   m = CSvcPrg_CreateMenuList(14); 
-   if (NULL == m) 
-   {
-      return FALSE;
-   }
-   
-   m[0].title              = IDS_BREWUSERNAME;
-   m[0].itemType           = DT_ALPHA;
-   m[0].cfgItem            = CFGI_BREW_USERNAME; 
-   m[0].typeData.strLen    = BREW_USERNAME_LEN;
-   m[0].isEditable         = TRUE;
-   
-   m[1].title              = IDS_BREWPASSWORD;
-   m[1].itemType           = DT_ALPHA;
-   m[1].cfgItem            = CFGI_BREW_PASSWORD; 
-   m[1].typeData.strLen    = BREW_PASSWORD_LEN;
-   m[1].isEditable         = TRUE;
-   
-   m[2].title              = IDS_ADSURL;
-   m[2].itemType           = DT_ALPHA;
-   m[2].cfgItem            = CFGI_BREW_SERVER; 
-   m[2].typeData.strLen    = DL_MAX_SERVER;
-   m[2].isEditable         = TRUE;
-   
-   m[3].title              = IDS_PRIM_DNS_IP;
-   m[3].itemType           = DT_DWORD;
-   m[3].cfgItem            = CFGI_DNS_IP1; 
-   m[3].isEditable         = TRUE;
-   
-   m[4].title              = IDS_SECOND_DNS_IP;
-   m[4].itemType           = DT_DWORD;
-   m[4].cfgItem            = CFGI_DNS_IP2; 
-   m[4].isEditable         = TRUE;
-   
-   m[5].title              = IDS_CARRIER_ID;
-   m[5].itemType           = DT_DWORD;
-   m[5].cfgItem            = CFGI_BREW_CARRIER_ID; 
-   m[5].isEditable         = TRUE;
-   
-   m[6].title              = IDS_BKEY;
-   m[6].itemType           = DT_WSTR;
-   m[6].cfgItem            = CFGI_BREW_BKEY; 
-   m[6].typeData.strLen    = NV_BREW_BKEY_SIZ;
-   m[6].isEditable         = TRUE;
-   
-   m[7].title              = IDS_KEY_SPEC;
-   m[7].itemType           = DT_BOOLEAN;
-   m[7].cfgItem            = CFGI_BREW_USEAKEY;
-   m[7].isEditable         = TRUE;
-   
-   m[8].title             = IDS_AUTHFLAG;
-   m[8].itemType          = DT_SUBMENU;
-   m[8].typeData.subMenu  = NULL;
-   
-   m[9].title              = IDS_AUTHPOLICY;
-   m[9].itemType           = DT_RANGE;
-   m[9].cfgItem            = CFGI_BREW_AUTH_POLICY;
-   m[9].isEditable         = TRUE;
-   m[9].typeData.rangeData = CSvcPrg_CreateRange(4);
-   if (NULL == m[9].typeData.rangeData) 
-   {
-      return FALSE;
-   }
-   m[9].typeData.rangeData[0].resId = IDS_APOLICY_NONE;
-   m[9].typeData.rangeData[0].value = APOLICY_NONE;
-   m[9].typeData.rangeData[1].resId = IDS_APOLICY_SID;
-   m[9].typeData.rangeData[1].value = APOLICY_SID;
-   m[9].typeData.rangeData[2].resId = IDS_APOLICY_TEXT;
-   m[9].typeData.rangeData[2].value = APOLICY_TEXT;
-   m[9].typeData.rangeData[3].resId = IDS_APOLICY_NUM;
-   m[9].typeData.rangeData[3].value = APOLICY_NUM;
-   
-   m[10].title              = IDS_APP_POLICY;
-   m[10].itemType           = DT_RANGE;
-   m[10].cfgItem            = CFGI_BREW_PRIVACY_POLICY;
-   m[10].isEditable         = TRUE;
-   m[10].typeData.rangeData = CSvcPrg_CreateRange(4);
-   if (NULL == m[10].typeData.rangeData) 
-   {
-      return FALSE;
-   }
-   m[10].typeData.rangeData[0].resId = IDS_PPOLICY_BREW;
-   m[10].typeData.rangeData[0].value = PPOLICY_BREW;
-   m[10].typeData.rangeData[1].resId = IDS_PPOLICY_CARRIER;
-   m[10].typeData.rangeData[1].value = PPOLICY_CARRIER;
-   m[10].typeData.rangeData[2].resId = IDS_PPOLICY_BREW_AND_CARRIER;
-   m[10].typeData.rangeData[2].value = PPOLICY_BREW_AND_CARRIER;
-   m[10].typeData.rangeData[3].resId = IDS_PPOLICY_BREW_OR_CARRIER;
-   m[10].typeData.rangeData[3].value = PPOLICY_BREW_OR_CARRIER;
-   
-   m[11].title              = IDS_BREWTESTOPT;
-   m[11].itemType           = DT_BOOLEAN;
-   m[11].cfgItem            = CFGI_BREW_TESTOPT;
-   m[11].isEditable         = TRUE;
-   
-   m[12].title              = IDS_BREW_SID;
-   m[12].itemType           = DT_WSTR;
-   m[12].cfgItem            = CFGI_BREW_SUBSCRIBER_ID; 
-   m[12].typeData.strLen    = NV_BREW_SID_SIZ;/* add 1 to fix textctl */
-   m[12].isEditable         = FALSE;
-   
-   m[13].title              = IDS_PLATFORMID;
-   m[13].itemType           = DT_DWORD;
-   m[13].cfgItem            = CFGI_BREW_PLATFORM_ID; 
-   m[13].isEditable         = TRUE;
-   
-   // Store the BREW Config menu in the Main menu
-   ASSERT(IDS_BREW_CONFIG == pMe->m_mainMenu[idxBrew].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[idxBrew].itemType);
-   pMe->m_mainMenu[idxBrew].typeData.subMenu = m;
-   
-   //
-   // Build the User Authorization Flag submenu
-   //
-   if (IsRunAsUIMVersion())
-   {
-      m = CSvcPrg_CreateMenuList(7); 
-   }
-   else
-   {
-      m = CSvcPrg_CreateMenuList(6);
-   }
-   
-   if (NULL == m) 
-   {
-      return FALSE;
-   }
-   m[0].title              = IDS_AUTOUPGRADE;
-   m[0].itemType           = DT_BOOLEAN;
-   m[0].cfgItem            = CFGI_BREW_AUTOUPGRADE_FLG;
-   m[0].isEditable         = TRUE;
-   
-   m[1].title              = IDS_USE_MIN_FOR_SID;
-   m[1].itemType           = DT_BOOLEAN;
-   m[1].cfgItem            = CFGI_BREW_USEMINFORSID_FLG;
-   m[1].isEditable         = TRUE;
-
-   m[2].title              = IDS_PREPAY;
-   m[2].itemType           = DT_BOOLEAN;
-   m[2].cfgItem            = CFGI_BREW_PREPAY_FLG;
-   m[2].isEditable         = TRUE;
-
-   m[3].title              = IDS_NOAUTOACK;
-   m[3].itemType           = DT_BOOLEAN;
-   m[3].cfgItem            = CFGI_BREW_NOAUTOACK_FLG;
-   m[3].isEditable         = TRUE;
-   
-   m[4].title              = IDS_SIDENCODE;
-   m[4].itemType           = DT_BOOLEAN;
-   m[4].cfgItem            = CFGI_BREW_SIDENCODE_FLG;
-   m[4].isEditable         = TRUE;
-   
-   m[5].title              = IDS_SIDVALIDATAALL;
-   m[5].itemType           = DT_BOOLEAN;
-   m[5].cfgItem            = CFGI_BREW_SIDVALIDATAALL_FLG;
-   m[5].isEditable         = TRUE;
-   
-   if (IsRunAsUIMVersion())
-   {
-      m[6].title              = IDS_RUIMDELETE;
-      m[6].itemType           = DT_BOOLEAN;
-      m[6].cfgItem            = CFGI_BREW_IDS_RUIMDELETE_FLG;
-      m[6].isEditable         = TRUE;
-   }
-
-   // Store the User Authorization Flag menu pointer in the BREW Configuration menu 
-   ASSERT(IDS_BREW_CONFIG == pMe->m_mainMenu[idxBrew].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[idxBrew].itemType);
-   ASSERT(IDS_AUTHFLAG == pMe->m_mainMenu[idxBrew].typeData.subMenu[8].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[idxBrew].typeData.subMenu[8].itemType);
-   pMe->m_mainMenu[idxBrew].typeData.subMenu[8].typeData.subMenu = m;
-
-   return TRUE;    // Phew!  I'm sure glad that pain is over with.
-}
-
+#if defined(FEATURE_UIONE_HDK)
+   m = CSvcPrg_CreateMenuList(7); // elements in the SMS menu
 #else
-
-static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
-{
-   MenuItemType *m;
-   int numItems = 7; // Number of items in the main menu.
-   
-   pMe->m_mainMenu = NULL;
-   //
-   // Build the Main menu
-   //
-#ifdef FEATURE_CDMA_RX_DIVERSITY
-   numItems++;
+   m = CSvcPrg_CreateMenuList(6); // elements in the SMS menu
 #endif
-
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-   numItems++;
-#endif
-
-#ifdef FEATURE_HDR
-#error code not present
-#endif
-
-   m = CSvcPrg_CreateMenuList(numItems);  // 7 elements in the Main menu
-
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_ESN;
-   m[0].itemType           = DT_ESN;
-   m[0].cfgItem            = CFGI_ESN; 
-
-   m[1].title              = IDS_NETWORK_OPTIONS;
-   m[1].itemType           = DT_SUBMENU;
-   m[1].typeData.subMenu   = NULL;
-   
-   m[2].title              = IDS_SMS_OPTIONS;
-   m[2].itemType           = DT_SUBMENU;
-   m[2].typeData.subMenu   = NULL;
-
-   m[3].title              = IDS_DATA_OPTIONS;
-   m[3].itemType           = DT_SUBMENU;
-   m[3].typeData.subMenu   = NULL;
-   
-   m[4].title              = IDS_SLOTCYCLEINDEX;
-   m[4].itemType           = DT_BYTE;
-   m[4].cfgItem            = CFGI_SLOTINDEX; 
-   m[4].isEditable         = TRUE;
-
-   m[5].title              = IDS_SPCCODE;
-   m[5].itemType           = DT_WSTR_FIXED;
-   m[5].cfgItem            = CFGI_SECCODE; 
-   m[5].typeData.strLen    = OEMNV_SECCODE_LENGTH;
-   m[5].isEditable         = TRUE;
-
-   m[6].title             = IDS_AKEY;
-   m[6].itemType          = DT_AKEY;
-   m[6].typeData.strLen   = MAX_AKEY_DIGITS+1; /* add 1 to fix textctl */
-
-   numItems = 7;
-
-#ifdef FEATURE_CDMA_RX_DIVERSITY
-   m[numItems].title              = IDS_CDMA_RX_DIVERSITY_ENABLED;
-   m[numItems].itemType           = DT_BOOLEAN;
-   m[numItems].cfgItem            = CFGI_CDMA_RX_DIVERSITY_CTL;
-   m[numItems].isEditable         = TRUE;
-   numItems++;
-#endif
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-   m[numItems].title             = IDS_RTRE_SELECT;
-   m[numItems].itemType          = DT_RANGE;
-   m[numItems].cfgItem           = CFGI_RTRE_CONFIGURATION; 
-   m[numItems].isEditable        = TRUE;
-
-   m[numItems].typeData.rangeData = CSvcPrg_CreateRange(3);
-   if (NULL == m[numItems].typeData.rangeData) {
-      return FALSE;
-   }
-   m[numItems].typeData.rangeData[0].resId = IDS_RTRE_SELECT_NVONLY;
-   m[numItems].typeData.rangeData[0].value = NV_RTRE_CONFIG_NV_ONLY;
-   m[numItems].typeData.rangeData[1].resId = IDS_RTRE_SELECT_RUIMONLY;
-   m[numItems].typeData.rangeData[1].value = NV_RTRE_CONFIG_RUIM_ONLY;
-   m[numItems].typeData.rangeData[2].resId = IDS_RTRE_SELECT_BOTH;
-   m[numItems].typeData.rangeData[2].value = NV_RTRE_CONFIG_RUIM_OR_DROP_BACK;
-   ERR("F numItems:= %d", numItems, 0, 0);
-   numItems++;
-   ERR("S numItems:= %d", numItems, 0, 0);
-#endif
-
-#ifdef FEATURE_HDR
-#error code not present
-#endif
-
-   // Store the Main menu pointer
-   pMe->m_mainMenu = m;  
-
-   
-   //
-   // Build the Network menu
-   //
-#ifdef FEATURE_ACP
-   m = CSvcPrg_CreateMenuList(14); // 14 elements in the Network menu
-#else  
-   m = CSvcPrg_CreateMenuList(12); // 12 elements in the Network menu
-#endif 
-   if (NULL == m) {
-      return FALSE;
-   }
-/*
-   m[0].title              = IDS_PHONE_NUMBER;
-   m[0].itemType           = DT_WSTR;
-   m[0].cfgItem            = CFGI_PHONE_NUMBER; 
-   m[0].typeData.strLen    = OEMNV_PHONENUMBER_MAXLEN;
-   m[0].isEditable         = TRUE;
-*/
-   m[0].title              = IDS_HOME_SIDNID;
-   m[0].itemType           = DT_SIDNIDLIST;
-   m[0].cfgItem            = CFGI_HOME_SIDNID_LIST; 
-   m[0].typeData.sidnid.count = OEMNV_HOME_SIDNID_ARRSIZE;
-   m[0].isEditable         = TRUE;
-
-   m[1].title              = IDS_LOCK_SIDNID;
-   m[1].itemType           = DT_SIDNIDLIST;
-   m[1].cfgItem            = CFGI_LOCK_SIDNID_LIST; 
-   m[1].typeData.sidnid.count = OEMNV_LOCK_SIDNID_ARRSIZE;
-   m[1].isEditable         = TRUE;
-
-   m[2].title              = IDS_COUNTRY_CODE;
-   m[2].itemType           = DT_WORD;
-   m[2].cfgItem            = CFGI_IMSI_MCC;
-   m[2].isEditable         = TRUE;
-
-   m[3].title              = IDS_NETWORK_CODE;
-   m[3].itemType           = DT_WORD;
-   m[3].cfgItem            = CFGI_IMSI_11_12;
-   m[3].isEditable         = TRUE;
-
-   m[4].title              = IDS_IMSI_S;
-   m[4].itemType           = DT_WSTR_FIXED;
-   m[4].cfgItem            = CFGI_IMSI_S;
-   m[4].typeData.strLen    = OEMNV_IMSI_S_LENGTH;
-   m[4].isEditable         = TRUE;
-
-   m[5].title              = IDS_PRL_ENABLED;
-   m[5].itemType           = DT_BOOLEAN;
-   m[5].cfgItem            = CFGI_PRL_ENABLED;
-   m[5].isEditable         = TRUE;
-
-   m[6].title              = IDS_PRI_CH_A;
-   m[6].itemType           = DT_WORD;
-   m[6].cfgItem            = CFGI_PRI_CH_A;
-   m[6].isEditable         = TRUE;
-
-   m[7].title              = IDS_PRI_CH_B;
-   m[7].itemType           = DT_WORD;
-   m[7].cfgItem            = CFGI_PRI_CH_B;
-   m[7].isEditable         = TRUE;
-
-   m[8].title              = IDS_SEC_CH_A;
-   m[8].itemType           = DT_WORD;
-   m[8].cfgItem            = CFGI_SEC_CH_A;
-   m[8].isEditable         = TRUE;
-
-   m[9].title             = IDS_SEC_CH_B;
-   m[9].itemType          = DT_WORD;
-   m[9].cfgItem           = CFGI_SEC_CH_B;
-   m[9].isEditable        = TRUE;
-
-   m[10].title             = IDS_REGISTRATION;
-   m[10].itemType          = DT_SUBMENU;
-   m[10].typeData.subMenu  = NULL;
-
-   m[11].title             = IDS_AOC;
-   m[11].itemType          = DT_BYTE;
-   m[11].cfgItem           = CFGI_AOC;
-   m[11].isEditable         = TRUE;
-
-#ifdef FEATURE_ACP
-   m[12].title              = IDS_MODE_PREF;
-   m[12].itemType           = DT_RANGE;
-   m[12].cfgItem            = CFGI_MODE_PREF;
-   m[12].isEditable         = TRUE;
-   m[12].typeData.rangeData = CSvcPrg_CreateRange(3);
-   if (NULL == m[12].typeData.rangeData) {
-      return FALSE;
-   }
-   m[12].typeData.rangeData[0].resId = IDS_MODE_AUTOMATIC;
-   m[12].typeData.rangeData[0].value = OEMNV_MODE_AUTOMATIC;
-   m[12].typeData.rangeData[1].resId = IDS_MODE_DIGITAL_ONLY;
-   m[12].typeData.rangeData[1].value = OEMNV_MODE_DIGITAL_ONLY;
-   m[12].typeData.rangeData[2].resId = IDS_MODE_ANALOG_ONLY;
-   m[12].typeData.rangeData[2].value = OEMNV_MODE_ANALOG_ONLY;
-
-   m[13].title              = IDS_ANALOG_OPTIONS;
-   m[13].itemType           = DT_SUBMENU;
-   m[13].typeData.subMenu   = NULL;
-
-#endif /* FEATURE_ACP */
-   
-   // Store the Network menu in the Main menu
-   ASSERT(IDS_NETWORK_OPTIONS == pMe->m_mainMenu[1].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[1].itemType);
-   pMe->m_mainMenu[1].typeData.subMenu = m;
-
-   //
-   // Build the Registration submenu
-   //
-
-   m = CSvcPrg_CreateMenuList(3); // 3 elements in the Registration menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_HOME_SID_REG;
-   m[0].itemType           = DT_BOOLEAN;
-   m[0].cfgItem            = CFGI_HOME_SID_REG;
-   m[0].isEditable         = TRUE;
-
-   m[1].title              = IDS_FORN_SID_REG;
-   m[1].itemType           = DT_BOOLEAN;
-   m[1].cfgItem            = CFGI_FORN_SID_REG;
-   m[1].isEditable         = TRUE;
-
-   m[2].title              = IDS_FORN_NID_REG;
-   m[2].itemType           = DT_BOOLEAN;
-   m[2].cfgItem            = CFGI_FORN_NID_REG;
-   m[2].isEditable         = TRUE;
-
-   // Store the Registration menu pointer in the Network menu 
-   ASSERT(IDS_NETWORK_OPTIONS == pMe->m_mainMenu[1].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[1].itemType);
-   ASSERT(IDS_REGISTRATION == pMe->m_mainMenu[1].typeData.subMenu[10].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[1].typeData.subMenu[10].itemType);
-   pMe->m_mainMenu[1].typeData.subMenu[10].typeData.subMenu = m;
-
-
-#ifdef FEATURE_ACP
-   //
-   // Build the Analog Options submenu
-   //
-
-   m = CSvcPrg_CreateMenuList(3); // 3 elements in the Registration menu
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_AMPS_HOME_SID;
-   m[0].itemType           = DT_WORD;
-   m[0].cfgItem            = CFGI_AMPS_HOME_SID;
-   m[0].isEditable         = TRUE;
-
-   m[1].title              = IDS_AMPS_FIRSTCHP;
-   m[1].itemType           = DT_WORD;
-   m[1].cfgItem            = CFGI_AMPS_FIRSTCHP;
-   m[1].isEditable         = TRUE;
-
-   m[2].title              = IDS_AMPS_REG_TYPE;
-   m[2].itemType           = DT_RANGE;
-   m[2].cfgItem            = CFGI_AMPS_REG_TYPE;
-   m[2].isEditable         = TRUE;
-
-   m[2].typeData.rangeData = CSvcPrg_CreateRange(3);
-   if (NULL == m[2].typeData.rangeData) {
-      return FALSE;
-   }
-   m[2].typeData.rangeData[0].resId = IDS_AMPSREG_DISABLED;
-   m[2].typeData.rangeData[0].value = OEMNV_AMPSREG_DISABLED;
-   m[2].typeData.rangeData[1].resId = IDS_AMPSREG_WHEREABOUTS_KNOWN;
-   m[2].typeData.rangeData[1].value = OEMNV_AMPSREG_WHEREABOUTS_KNOWN;
-   m[2].typeData.rangeData[2].resId = IDS_AMPSREG_WHEREABOUTS_UNKNOWN;
-   m[2].typeData.rangeData[2].value = OEMNV_AMPSREG_WHEREABOUTS_UNKNOWN;
-
-   // Store the Analog Options menu pointer in the Network menu 
-   ASSERT(IDS_NETWORK_OPTIONS == pMe->m_mainMenu[1].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[1].itemType);
-   ASSERT(IDS_ANALOG_OPTIONS == pMe->m_mainMenu[1].typeData.subMenu[13].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[1].typeData.subMenu[13].itemType);
-   pMe->m_mainMenu[1].typeData.subMenu[13].typeData.subMenu = m;
-#endif /* FEATURE_ACP */
-
-   //
-   // Build the SMS Options menu
-   //
-
-   m = CSvcPrg_CreateMenuList(6); // 6 elements in the Network menu
    if (NULL == m) {
       return FALSE;
    }
@@ -3242,7 +2391,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    m[1].cfgItem            = CFGI_SMS_MAX_PAYLOAD_LENGTH;
    m[1].isEditable         = TRUE;
 
-   /*
+
    m[2].title              = IDS_SMS_MO_ACCESS;
    m[2].itemType           = DT_RANGE;
    m[2].cfgItem            = CFGI_SMS_MO_ON_ACCESS_CHANNEL;
@@ -3251,7 +2400,6 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    if (NULL == m[2].typeData.rangeData) {
       return FALSE;
    }
-
    m[2].typeData.rangeData[0].resId = IDS_SMS_MO_ACCESS_OFF;
    m[2].typeData.rangeData[0].value = 0;
    m[2].typeData.rangeData[1].resId = IDS_SMS_MO_ACCESS_ON;
@@ -3269,13 +2417,13 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    m[3].typeData.rangeData[0].value = 0;
    m[3].typeData.rangeData[1].resId = IDS_SMS_MO_TRAFFIC_ON;
    m[3].typeData.rangeData[1].value = 1;
-  */
+
    m[4].title              = IDS_SMS_IS41_WORKAROUND;
    m[4].itemType           = DT_RANGE;
    m[4].cfgItem            = CFGI_SMS_IS41_WORKAROUND;
    m[4].isEditable         = TRUE;
    m[4].typeData.rangeData = CSvcPrg_CreateRange(2);
-   if (NULL == m[4].typeData.rangeData) {
+   if (NULL == m[3].typeData.rangeData) {
       return FALSE;
    }
    m[4].typeData.rangeData[0].resId = IDS_SMS_IS41_WORKAROUND_ON;
@@ -3289,19 +2437,21 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    m[5].cfgItem            = CFGI_SMS_MO_ENCODING; 
    m[5].isEditable         = TRUE;
    m[5].typeData.rangeData = CSvcPrg_CreateRange(2);
-   if (NULL == m[5].typeData.rangeData) {
+   if (NULL == m[4].typeData.rangeData) {
       return FALSE;
    }
    m[5].typeData.rangeData[0].resId = IDS_SMS_MO_ENCODING_7BIT;
    m[5].typeData.rangeData[0].value = OEMNV_SMS_MO_ENCODING_7BIT;
-#if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA)
-   m[5].typeData.rangeData[1].resId = IDS_SMS_MO_ENCODING_OCTET;
-   m[5].typeData.rangeData[1].value = OEMNV_SMS_MO_ENCODING_OCTET;
-#else       
    m[5].typeData.rangeData[1].resId = IDS_SMS_MO_ENCODING_UNICODE;
    m[5].typeData.rangeData[1].value = OEMNV_SMS_MO_ENCODING_UNICODE;
-#endif
 
+#if defined(FEATURE_UIONE_HDK)
+   m[6].title              = IDS_AUTOSAVE_CLASS1_TO_SIM;
+   m[6].itemType           = DT_BOOLEAN;
+   m[6].cfgItem            = CFGI_AUTOSAVE_CLASS1_TO_SIM;
+   m[6].isEditable         = TRUE;
+#endif
+   
    // Store the SMS Options menu in the Main menu
    ASSERT(IDS_SMS_OPTIONS == pMe->m_mainMenu[2].title);
    ASSERT(DT_SUBMENU == pMe->m_mainMenu[2].itemType);
@@ -3333,10 +2483,119 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    ASSERT(IDS_DATA_OPTIONS == pMe->m_mainMenu[3].title);
    ASSERT(DT_SUBMENU == pMe->m_mainMenu[3].itemType);
    pMe->m_mainMenu[3].typeData.subMenu = m;
-      
+   
+   // 
+   // Build the BREW Options menu
+   //
+
+   // Add BREW MSHOP items
+   m = CSvcPrg_CreateMenuList(10);
+   
+   if (NULL == m) {
+      return FALSE;
+   }
+
+   // carrier ID
+   m[0].title            = IDS_BREW_CID;
+   m[0].itemType         = DT_DWORD;
+   m[0].cfgItem          = CFGI_BREW_CID;
+   m[0].isEditable       = TRUE;
+
+   // device platform ID
+   m[1].title            = IDS_BREW_PID;
+   m[1].itemType         = DT_DWORD;
+   m[1].cfgItem          = CFGI_BREW_PID;
+   m[1].isEditable       = TRUE;
+   
+   // Bkey
+   m[2].title            = IDS_BREW_BKEY;
+   m[2].itemType         = DT_WSTR;
+   m[2].cfgItem          = CFGI_BREW_BKEY;
+   m[2].typeData.strLen  = DL_BKEY_SIZE; 
+   m[2].isEditable       = TRUE;
+   
+   // Akey
+   m[3].title            = IDS_BREW_AKEY;
+   m[3].itemType         = DT_WSTR;
+   m[3].cfgItem          = CFGI_BREW_AKEY;
+   m[3].typeData.strLen  = DL_AKEY_SIZE; 
+   m[3].isEditable       = TRUE;
+   
+   // Server
+   m[4].title            = IDS_BREW_SERVER;
+   m[4].itemType         = DT_TSTR;
+   m[4].cfgItem          = CFGI_BREW_SERVER;
+   m[4].typeData.strLen  = DL_MAX_SERVER; 
+   m[4].isEditable       = TRUE;
+   
+   // Flags
+   m[5].title            = IDS_BREW_FLAGS;
+   m[5].itemType         = DT_WORD;
+   m[5].cfgItem          = CFGI_BREW_FLAGS;
+   m[5].isEditable       = TRUE;
+
+   // Auth Policy
+   m[6].title            = IDS_BREW_AUTH;
+   m[6].itemType         = DT_RANGE;
+   m[6].cfgItem          = CFGI_BREW_AUTH;
+   
+   // number of items =>  AEEAuthPolicy
+   m[6].typeData.rangeData = CSvcPrg_CreateRange(4);
+   if (NULL == m[6].typeData.rangeData) {
+      return FALSE;
+   }
+   m[6].typeData.rangeData[0].resId = IDS_APOLICY_NONE;
+   m[6].typeData.rangeData[0].value = APOLICY_NONE;
+   m[6].typeData.rangeData[1].resId = IDS_APOLICY_SID;
+   m[6].typeData.rangeData[1].value = APOLICY_SID;
+   m[6].typeData.rangeData[2].resId = IDS_APOLICY_TEXT;
+   m[6].typeData.rangeData[2].value = APOLICY_TEXT;
+   m[6].typeData.rangeData[3].resId = IDS_APOLICY_NUM;
+   m[6].typeData.rangeData[3].value = APOLICY_NUM;
+
+   m[6].isEditable       = TRUE;
+
+   // Privacy Policy
+   m[7].title            = IDS_BREW_PRIVP;
+   m[7].itemType         = DT_RANGE;
+   m[7].cfgItem          = CFGI_BREW_PRIVP;
+
+   // number of items =>  AEEAuthPolicy
+   m[7].typeData.rangeData = CSvcPrg_CreateRange(4);
+   if (NULL == m[7].typeData.rangeData) {
+      return FALSE;
+   }
+   m[7].typeData.rangeData[0].resId = IDS_PPOLICY_BREW;
+   m[7].typeData.rangeData[0].value = PPOLICY_BREW;
+   m[7].typeData.rangeData[1].resId = IDS_PPOLICY_CARRIER;
+   m[7].typeData.rangeData[1].value = PPOLICY_CARRIER;
+   m[7].typeData.rangeData[2].resId = IDS_PPOLICY_BREW_AND_CARRIER;
+   m[7].typeData.rangeData[2].value = PPOLICY_BREW_AND_CARRIER;
+   m[7].typeData.rangeData[3].resId = IDS_PPOLICY_BREW_OR_CARRIER;
+   m[7].typeData.rangeData[3].value = PPOLICY_BREW_OR_CARRIER;
+
+   m[7].isEditable       = TRUE;
+ 
+   // DNS1
+   m[8].title            = IDS_DNS1;
+   m[8].itemType         = DT_IP;
+   m[8].cfgItem          = CFGI_DNS_IP1;
+   m[8].isEditable       = TRUE;
+
+   // DNS2
+   m[9].title            = IDS_DNS2;
+   m[9].itemType         = DT_IP;
+   m[9].cfgItem          = CFGI_DNS_IP2;
+   m[9].isEditable       = TRUE;
+
+   // Store the BREW menu in the Main menu
+   ASSERT(IDS_BREW_OPTIONS == pMe->m_mainMenu[indexBREWMenu].title);
+   ASSERT(DT_SUBMENU == pMe->m_mainMenu[indexBREWMenu].itemType);
+   pMe->m_mainMenu[indexBREWMenu].typeData.subMenu = m;
+
    return TRUE;    // Phew!  I'm sure glad that pain is over with.
 }
-#endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
+
 
 /*=============================================================================
 FUNCTION: CSvcPrg_CreateMenuList
@@ -3493,9 +2752,6 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
    case DT_SUBMENU:
    case DT_RANGE:
    case DT_SIDNIDLIST:
-#ifdef FEATURE_NV_VOICE_PARAMETER   
-   case DT_BOOLEAN_VOCCAL:
-#endif //FEATURE_NV_VOICE_PARAMETER  
       dlgID = IDD_GENERICMENU;
       break;
 
@@ -3532,71 +2788,56 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
 
    // Do any item type specific initialization..
    switch (item->itemType) {
-   case DT_ALPHA:
    case DT_WSTR:
    case DT_WSTR_FIXED:
+   case DT_TSTR:
    case DT_BYTE:
    case DT_WORD:
    case DT_DWORD:
    case DT_ESN:
    case DT_AKEY:
-#ifdef FEATURE_NV_VOICE_PARAMETER    
-   case DT_WORD_VOCCAL:
-#endif //FEATURE_NV_VOICE_PARAMETER  
+   case DT_IP: 
       if (!pt || !pm) {
          return FALSE;
       }
       (void) ITEXTCTL_SetTitle(pt,
-                               AEE_SVCPRG_RES_FILE,
+                               SVCPRG_RES_FILE,
                                item->title,
                                NULL);
       (void) ITEXTCTL_SetText(pt, NULL, -1);
       if (item->itemType == DT_AKEY) {
-	  	
         (void) IMENUCTL_AddItem(pm, 
-                                AEE_SVCPRG_RES_FILE,
+                                SVCPRG_RES_FILE,
                                 IDS_CMD_AKEY,
                                 IDS_CMD_AKEY,
                                 NULL,
                                 (uint32) item);
-		(void) IMENUCTL_AddItem(pm, 
-                                 AEE_SVCPRG_RES_FILE,
-                                 IDS_CMD_CANCEL,
-                                 IDS_CMD_CANCEL,
-                                 NULL,
-                                 (uint32) item);
-                                
       }
       else {
-
-		
-	
         (void) IMENUCTL_AddItem(pm, 
-                                AEE_SVCPRG_RES_FILE,
+                                SVCPRG_RES_FILE,
                                 IDS_CMD_OK,
                                 IDS_CMD_OK,
                                 NULL,
                                 (uint32) item);
-	(void) IMENUCTL_AddItem(pm, 
-                                 AEE_SVCPRG_RES_FILE,
-                                 IDS_CMD_NID_CANCEL,
-                                 IDS_CMD_NID_CANCEL,
-                                 NULL,
-                                 (uint32) item);
-                                           
       }
 
       if ((item->itemType != DT_AKEY) && (item->isEditable)) {
-	 IMENUCTL_DeleteItem (pm, IDS_CMD_NID_CANCEL);
-	
-     (void) IMENUCTL_AddItem(pm, 
-                                 AEE_SVCPRG_RES_FILE,
-                                 IDS_CMD_EDIT,
-                                 IDS_CMD_EDIT,
-                                 NULL,
-                                 (uint32) item);
-                              
-         //   MENU_SETBOTTOMBAR(pm,BTBAR_CONTINU_DELETE); 
+         if (item->itemType == DT_IP) {
+            (void) IMENUCTL_AddItem(pm, 
+                                    SVCPRG_RES_FILE,
+                                    IDS_CMD_IP_EDIT,
+                                    IDS_CMD_IP_EDIT,
+                                    NULL,
+                                    (uint32) item);
+         } else {
+            (void) IMENUCTL_AddItem(pm, 
+                                    SVCPRG_RES_FILE,
+                                    IDS_CMD_EDIT,
+                                    IDS_CMD_EDIT,
+                                    NULL,
+                                    (uint32) item);
+         }
       }
       
       if (item->itemType != DT_AKEY) {
@@ -3605,13 +2846,11 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
 
       // The ESN item type requires two lines to display so make the 
       // Text Control a multiline control
-      //if (DT_ESN == item->itemType) 
-      if ((DT_ESN == item->itemType)  || (item->itemType == DT_ALPHA))
-      {
+      if (DT_ESN == item->itemType) {
          AEERect rcSK, rcText;
          
          ITEXTCTL_SetProperties(pt, 
-                                TP_MULTILINE | ITEXTCTL_GetProperties(pt)|TP_FOCUS_NOSEL);
+                                TP_MULTILINE | ITEXTCTL_GetProperties(pt));
 
          // BREW Bug:
          // 
@@ -3642,25 +2881,10 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
         ITEXTCTL_SetActive(pt, FALSE);
       }
       else {
-        //(void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
+        (void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
         ITEXTCTL_SetMaxSize(pt, item->typeData.strLen-1);
         ITEXTCTL_SetActive(pt, TRUE);
       }
-      if ((item->cfgItem == CFGI_DNS_IP1) ||
-         (item->cfgItem == CFGI_DNS_IP2))
-      {
-          ITEXTCTL_SetProperties(pt, TP_MULTILINE | TP_STARKEY_SWITCH | ITEXTCTL_GetProperties(pt));
-      }
-      
-      if (item->itemType == DT_ALPHA)
-      {
-          (void) ITEXTCTL_SetInputMode(pt, AEE_TM_LETTERS);
-      }
-      else
-      {
-          (void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
-      }
-      
       (void) ITEXTCTL_Redraw(pt);
       (void) IMENUCTL_Redraw(pm);
       IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -3675,17 +2899,17 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          }
          
          (void) IMENUCTL_SetTitle(pm, 
-                                  AEE_SVCPRG_RES_FILE, 
+                                  SVCPRG_RES_FILE, 
                                   item->title,
                                   NULL);
 
-     
+         //
          // Add in the menu options
          //
          ASSERT(m != NULL);
          for (;;) {
             (void) IMENUCTL_AddItem(pm, 
-                                    AEE_SVCPRG_RES_FILE,
+                                    SVCPRG_RES_FILE,
                                     m->title,
                                     m->title,
                                     NULL,
@@ -3711,7 +2935,6 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
 #endif
 
          }
-	   MENU_SETBOTTOMBAR(pm, BTBAR_SELECT_BACK);
          (void) IMENUCTL_Redraw(pm);
          break;
       }
@@ -3725,42 +2948,22 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          }
 
          (void) IMENUCTL_SetTitle(pm, 
-                                  AEE_SVCPRG_RES_FILE, 
+                                  SVCPRG_RES_FILE, 
                                   item->title,
                                   NULL);
 
          // booleans are assumed to always be editable
          ASSERT(item->isEditable);  
 
-         if (IDS_KEY_SPEC == item->title)
-         {
-             (void) IMENUCTL_AddItem(pm, 
-                                     AEE_SVCPRG_RES_FILE,
-                                     IDS_USEAKEY,
-                                     IDS_CMD_YES,
-                                     NULL,
-                                     (uint32) item);
-         }
-         else
          (void) IMENUCTL_AddItem(pm, 
-                                 AEE_SVCPRG_RES_FILE,
+                                 SVCPRG_RES_FILE,
                                  IDS_CMD_YES,
                                  IDS_CMD_YES,
                                  NULL,
                                  (uint32) item);
 
-         if (IDS_KEY_SPEC == item->title)
-         {
-             (void) IMENUCTL_AddItem(pm, 
-                                     AEE_SVCPRG_RES_FILE,
-                                     IDS_USEBKEY,
-                                     IDS_CMD_NO,
-                                     NULL,
-                                     (uint32) item);
-         }
-         else
          (void) IMENUCTL_AddItem(pm, 
-                                 AEE_SVCPRG_RES_FILE,
+                                 SVCPRG_RES_FILE,
                                  IDS_CMD_NO,
                                  IDS_CMD_NO,
                                  NULL,
@@ -3778,132 +2981,25 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          SetMenuIcon(pm, IDS_CMD_YES, val);
          SetMenuIcon(pm, IDS_CMD_NO,  !val); /*lint !e730*/
                                              // 'boolean argument to function'
-         MENU_SETBOTTOMBAR(pm, BTBAR_SELECT_BACK);
+
          (void) IMENUCTL_Redraw(pm);
          break;
       }
-   
-#ifdef FEATURE_NV_VOICE_PARAMETER
-   case DT_BOOLEAN_VOCCAL:
-      {
-         boolean val=0;
-         nv_item_type nvi; 
-         
-         if (!pm) {
-            return FALSE;
-         }
-
-         (void) IMENUCTL_SetTitle(pm, 
-                                  AEE_SVCPRG_RES_FILE, 
-                                  item->title,
-                                  NULL);
-
-         // booleans are assumed to always be editable
-         ASSERT(item->isEditable);  
-
-         (void) IMENUCTL_AddItem(pm, 
-                                 AEE_SVCPRG_RES_FILE,
-                                 IDS_CMD_YES,
-                                 IDS_CMD_YES,
-                                 NULL,
-                                 (uint32) item);
-
-         (void) IMENUCTL_AddItem(pm, 
-                                 AEE_SVCPRG_RES_FILE,
-                                 IDS_CMD_NO,
-                                 IDS_CMD_NO,
-                                 NULL,
-                                 (uint32) item);
-
-          if (NV_DONE_S != OEMNV_Get(item->nvitem,&nvi))
-          {
-          
-             ERR("Unable to retrieve config item: %d", 
-                 (int) item->nvitem, 0, 0);
-             return FALSE;             
-          }
-          
-          if(IDS_VOCCAL_USE_NVMODE == item->title)
-          {
-             switch(item->nvitem)
-              {
-                  case NV_VOC_PCM_ON_CHIP_0_CAL_I:
-                      val = nvi.nv_voc_pcm_on_chip_0_cal.use_nvmode;
-                      break;
-     
-                  case NV_VOC_PCM_ON_CHIP_1_CAL_I:
-                      val = nvi.nv_voc_pcm_on_chip_1_cal.use_nvmode;
-                      break;
-     
-                  case NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I:
-                      val = nvi.nv_voc_pcm_on_chip_speaker_cal.use_nvmode;
-                      break; 
-
-                  case NV_VOC_CAL_EC_PARAMS_ESEC_I:
-                      val = nvi.nv_voc_cal_ec_params_esec.use_nvmode;
-                      break; 
-
-                  case NV_VOC_CAL_EC_PARAMS_HEADSET_I:
-                      val = nvi.nv_voc_cal_ec_params_headset.use_nvmode;
-                      break; 
-
-                  case NV_VOC_CAL_EC_PARAMS_AEC_I:
-                      val = nvi.nv_voc_cal_ec_params_aec.use_nvmode;
-                      break; 
-
-                  case NV_VOC_CAL_EC_PARAMS_SPEAKER_I:
-                      val = nvi.nv_voc_cal_ec_params_speaker.use_nvmode;
-                      break;                       
-   
-                  default:
-                      val = FALSE;
-                      break;
-              }
-          }
-         SetMenuIcon(pm, IDS_CMD_YES, val);
-         SetMenuIcon(pm, IDS_CMD_NO,  !val); /*lint !e730*/
-                                             // 'boolean argument to function'
-         MENU_SETBOTTOMBAR(pm, BTBAR_SELECT_BACK);
-         (void) IMENUCTL_Redraw(pm);
-         break;
-      }
-#endif //FEATURE_NV_VOICE_PARAMETER
 
    case DT_RANGE:
       {
          RangeItemType *r;
          uint8          val;
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-         nv_rtre_configuration_type rtre_config;
-#endif
 
          if (!pm) {
             return FALSE;
          }
          
          (void) IMENUCTL_SetTitle(pm, 
-                                  AEE_SVCPRG_RES_FILE, 
+                                  SVCPRG_RES_FILE, 
                                   item->title,
                                   NULL);
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-         if (item->cfgItem == CFGI_RTRE_CONFIGURATION)
-         {
-             if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig, 
-                                            item->cfgItem,
-                                            &rtre_config,
-                                            sizeof(rtre_config))) 
-             {
-                ERR("Unable to retrieve config item: %d", 
-                    (int) item->cfgItem, 0, 0);
-                val = (uint8) item->typeData.rangeData[0].value;
-             }
-             else
-             {
-                val = (uint8) rtre_config;
-             }
-         }
-         else
-#endif
+
          if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig, 
                                         item->cfgItem,
                                         &val,
@@ -3918,16 +3014,16 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
               r->resId != 0 || r->value != 0; 
               r++) {
             (void) IMENUCTL_AddItem(pm, 
-                                    AEE_SVCPRG_RES_FILE,
+                                    SVCPRG_RES_FILE,
                                     r->resId,
                                     RANGE_ITEMID_FLAG | r->value,
                                     NULL,
                                     (uint32) item);
-            
+
             SetMenuIcon(pm, 
                         RANGE_ITEMID_FLAG | r->value,
                         ( val == r->value ) ? TRUE : FALSE);
-            
+
             // Select the current value (so it will scroll into
             // view when there are more than a screenful of options)
             if (val == r->value) {
@@ -3935,7 +3031,7 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
                                RANGE_ITEMID_FLAG | r->value);
             }
          }
-         MENU_SETBOTTOMBAR(pm,BTBAR_SELECT_BACK); 
+
          (void) IMENUCTL_Redraw(pm);
          break;
       }
@@ -3966,18 +3062,18 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          }
 
          (void) IMENUCTL_SetTitle(pm, 
-                                  AEE_SVCPRG_RES_FILE, 
+                                  SVCPRG_RES_FILE, 
                                   item->title,
                                   NULL);
 
-        
+         // 
          // Add in the menu options
          //
          for (i = 0; i < item->typeData.sidnid.count; i++) {
             char   str[32];
             AECHAR wStr[32];
             
-            SPRINTF(str, "%d/%d", p[i].sid, p[i].nid);
+            SNPRINTF(str, sizeof(str), "%d/%d", p[i].sid, p[i].nid);
             STR_TO_WSTR(str, wStr, sizeof(wStr));
 
             (void) IMENUCTL_AddItem(pm, 
@@ -3989,7 +3085,7 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          }
 
          FREE((void *)p);
-         MENU_SETBOTTOMBAR(pm, BTBAR_SELECT_BACK);
+
          (void) IMENUCTL_Redraw(pm);
          break;
       }
@@ -4034,16 +3130,16 @@ static void CSvcPrg_LoadTextCtlWithItemVal(CSvcPrgApp      *pMe,
 {
    PARAM_NOT_REF(pMe)
 
-   char   szBuf[32];  // 32 seems like a reasonably large number
-   AECHAR  wBuf[32];  
+   char   szBuf[64];    /* 64 is big  enough to fit CFGI_DOWNLOAD fields */
+   AECHAR  wBuf[64];  
          
    szBuf[0] = '\0';
    wBuf[0]  = (AECHAR) 0;
 
    switch (item->itemType) {
-   case DT_ALPHA:
    case DT_WSTR:
    case DT_WSTR_FIXED:
+   case DT_TSTR:
       {
          int maxLen;
 
@@ -4119,298 +3215,13 @@ static void CSvcPrg_LoadTextCtlWithItemVal(CSvcPrgApp      *pMe,
                 (int) item->cfgItem, 0, 0);
             dw = 0;
          }
-         if ((item->cfgItem == CFGI_DNS_IP1) ||
-             (item->cfgItem == CFGI_DNS_IP2))
-         {
-            ITEXTCTL_SetMaxSize(pt, 15/* max chars in a IP string*/);
-            if (!IPAdd_FromNetValueToString(dw, szBuf, sizeof(szBuf)))
-            {
-                STRTOWSTR("0.0.0.0", wBuf, sizeof(wBuf));
-            }
-            else
-            {
-                STRTOWSTR(szBuf, wBuf, sizeof(wBuf));
-            }
-         }
-         else
-         {
-            ITEXTCTL_SetMaxSize(pt, 10/* max chars in a 16-bit decimal number*/);
-    
-            SNPRINTF(szBuf, sizeof(szBuf), "%u", dw);
-            STR_TO_WSTR(szBuf, wBuf, sizeof(wBuf));
-         }
-         break;
-      }
-   
-#ifdef FEATURE_NV_VOICE_PARAMETER
-   case DT_WORD_VOCCAL:
-      {  
-         uint16 w = 0;
-         nv_item_type nvi;
 
-         if (NV_DONE_S != OEMNV_Get(item->nvitem,&nvi))
-         {
+         ITEXTCTL_SetMaxSize(pt, 10/* max chars in a 16-bit decimal number*/);
 
-            ERR("Unable to retrieve config item: %d", 
-                (int) item->nvitem, 0, 0);
-            w = 0;            
-         }    
-         else
-         {
-            switch(item->nvitem)
-            {
-                case NV_VOC_PCM_ON_CHIP_0_CAL_I:
-                    switch (item->title)
-                    {  
-                        case IDS_VOCCAL_EC_MODE:  
-                            w = nvi.nv_voc_pcm_on_chip_0_cal.ec_mode;
-                            break;
-                          
-                        case IDS_VOCCAL_NS_ENABLE:
-                            w = nvi.nv_voc_pcm_on_chip_0_cal.ns_enable;
-                            break;
-
-                        case IDS_VOCCAL_TX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_0_cal.tx_gain;
-                            break;
-
-                        case IDS_VOCCAL_DTMF_TX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_0_cal.dtmf_tx_gain;
-                            break;
-
-                        case IDS_VOCCAL_CODEC_TX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_0_cal.codec_tx_gain;
-                            break;
-
-                        case IDS_VOCCAL_CODEC_RX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_0_cal.codec_rx_gain;
-                            break;
-
-                        case IDS_VOCCAL_CODEC_ST_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_0_cal.codec_st_gain;
-                            break;    
-
-                        case IDS_VOCCAL_RX_DBM_OFFSET:
-                            w = nvi.nv_voc_pcm_on_chip_0_cal.rx_dbm_offset;
-                            break;  
-
-                        default:
-                            ASSERT_NOT_REACHABLE
-                            break;  
-                    }                       
-                    break;
-
-
-                case NV_VOC_PCM_ON_CHIP_1_CAL_I:
-                    switch (item->title)
-                    {  
-                        case IDS_VOCCAL_EC_MODE:  
-                            w = nvi.nv_voc_pcm_on_chip_1_cal.ec_mode;
-                            break;
-                          
-                        case IDS_VOCCAL_NS_ENABLE:
-                            w = nvi.nv_voc_pcm_on_chip_1_cal.ns_enable;
-                            break;
-
-                        case IDS_VOCCAL_TX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_1_cal.tx_gain;
-                            break;
-
-                        case IDS_VOCCAL_DTMF_TX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_1_cal.dtmf_tx_gain;
-                            break;
-
-                        case IDS_VOCCAL_CODEC_TX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_1_cal.codec_tx_gain;
-                            break;
-
-                        case IDS_VOCCAL_CODEC_RX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_1_cal.codec_rx_gain;
-                            break;
-
-                        case IDS_VOCCAL_CODEC_ST_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_1_cal.codec_st_gain;
-                            break;    
-
-                        case IDS_VOCCAL_RX_DBM_OFFSET:
-                            w = nvi.nv_voc_pcm_on_chip_1_cal.rx_dbm_offset;
-                            break;  
-
-                        default:
-                            ASSERT_NOT_REACHABLE
-                            break;  
-                    }                       
-                    break;
-
-                case NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I:
-                    switch (item->title)
-                    {  
-                        case IDS_VOCCAL_EC_MODE:  
-                            w = nvi.nv_voc_pcm_on_chip_speaker_cal.ec_mode;
-                            break;
-                          
-                        case IDS_VOCCAL_NS_ENABLE:
-                            w = nvi.nv_voc_pcm_on_chip_speaker_cal.ns_enable;
-                            break;
-
-                        case IDS_VOCCAL_TX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_speaker_cal.tx_gain;
-                            break;
-
-                        case IDS_VOCCAL_DTMF_TX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_speaker_cal.dtmf_tx_gain;
-                            break;
-
-                        case IDS_VOCCAL_CODEC_TX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_speaker_cal.codec_tx_gain;
-                            break;
-
-                        case IDS_VOCCAL_CODEC_RX_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_speaker_cal.codec_rx_gain;
-                            break;
-
-                        case IDS_VOCCAL_CODEC_ST_GAIN:
-                            w = nvi.nv_voc_pcm_on_chip_speaker_cal.codec_st_gain;
-                            break;    
-
-                        case IDS_VOCCAL_RX_DBM_OFFSET:
-                            w = nvi.nv_voc_pcm_on_chip_speaker_cal.rx_dbm_offset;
-                            break;  
-
-                        default:
-                            ASSERT_NOT_REACHABLE
-                            break;  
-                    }                       
-                    break;
-
-                case NV_VOC_CAL_EC_PARAMS_ESEC_I:
-                    switch (item->title)
-                    {  
-                        case IDS_ECHO_CANCEL_FAREND:  
-                            w = nvi.nv_voc_cal_ec_params_esec.farend_hangover_thresh;
-                            break;
-                          
-                        case IDS_ECHO_CANCEL_DOUBLETALK:
-                            w = nvi.nv_voc_cal_ec_params_esec.doubletalk_hangover_thresh;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER:
-                            w = nvi.nv_voc_cal_ec_params_esec.startup_mute_hangover_thresh;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_MUTE_MODE:
-                            w = nvi.nv_voc_cal_ec_params_esec.startup_mute_mode;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_ERLE:
-                            w = nvi.nv_voc_cal_ec_params_esec.startup_erle_thresh;
-                            break;
-
-                        default:
-                            ASSERT_NOT_REACHABLE
-                            break;  
-                    }                       
-                    break;                    
-
-                case NV_VOC_CAL_EC_PARAMS_HEADSET_I:
-                    switch (item->title)
-                    {  
-                        case IDS_ECHO_CANCEL_FAREND:  
-                            w = nvi.nv_voc_cal_ec_params_headset.farend_hangover_thresh;
-                            break;
-                          
-                        case IDS_ECHO_CANCEL_DOUBLETALK:
-                            w = nvi.nv_voc_cal_ec_params_headset.doubletalk_hangover_thresh;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER:
-                            w = nvi.nv_voc_cal_ec_params_headset.startup_mute_hangover_thresh;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_MUTE_MODE:
-                            w = nvi.nv_voc_cal_ec_params_headset.startup_mute_mode;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_ERLE:
-                            w = nvi.nv_voc_cal_ec_params_headset.startup_erle_thresh;
-                            break;
-
-                        default:
-                            ASSERT_NOT_REACHABLE
-                            break;  
-                    }                       
-                    break;  
-
-                case NV_VOC_CAL_EC_PARAMS_AEC_I:
-                    switch (item->title)
-                    {  
-                        case IDS_ECHO_CANCEL_FAREND:  
-                            w = nvi.nv_voc_cal_ec_params_aec.farend_hangover_thresh;
-                            break;
-                          
-                        case IDS_ECHO_CANCEL_DOUBLETALK:
-                            w = nvi.nv_voc_cal_ec_params_aec.doubletalk_hangover_thresh;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER:
-                            w = nvi.nv_voc_cal_ec_params_aec.startup_mute_hangover_thresh;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_MUTE_MODE:
-                            w = nvi.nv_voc_cal_ec_params_aec.startup_mute_mode;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_ERLE:
-                            w = nvi.nv_voc_cal_ec_params_aec.startup_erle_thresh;
-                            break;
-
-                        default:
-                            ASSERT_NOT_REACHABLE
-                            break;  
-                    }                       
-                    break;  
-
-                case NV_VOC_CAL_EC_PARAMS_SPEAKER_I:
-                    switch (item->title)
-                    {  
-                        case IDS_ECHO_CANCEL_FAREND:  
-                            w = nvi.nv_voc_cal_ec_params_speaker.farend_hangover_thresh;
-                            break;
-                          
-                        case IDS_ECHO_CANCEL_DOUBLETALK:
-                            w = nvi.nv_voc_cal_ec_params_speaker.doubletalk_hangover_thresh;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER:
-                            w = nvi.nv_voc_cal_ec_params_speaker.startup_mute_hangover_thresh;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_MUTE_MODE:
-                            w = nvi.nv_voc_cal_ec_params_speaker.startup_mute_mode;
-                            break;
-
-                        case IDS_ECHO_CANCEL_STARTUP_ERLE:
-                            w = nvi.nv_voc_cal_ec_params_speaker.startup_erle_thresh;
-                            break;
-
-                        default:
-                            ASSERT_NOT_REACHABLE
-                            break;  
-                    }                       
-                    break;                      
-
-                default:
-                    break;
-            }
-         }
-
-         ITEXTCTL_SetMaxSize(pt, 5 /* max chars in a 16-bit decimal number*/);         
-         SNPRINTF(szBuf, sizeof(szBuf), "%u", w);
+         SNPRINTF(szBuf, sizeof(szBuf), "%u", dw);
          STR_TO_WSTR(szBuf, wBuf, sizeof(wBuf));
-         
          break;
       }
-#endif //FEATURE_NV_VOICE_PARAMETER   
 
    case DT_ESN:
       {
@@ -4435,6 +3246,33 @@ static void CSvcPrg_LoadTextCtlWithItemVal(CSvcPrgApp      *pMe,
          break;
       }
 
+   case DT_IP:
+      {   
+         // BREW IP values are in network order already, so just copy it in
+         if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,
+                                        item->cfgItem,
+                                        &item->typeData.ipid.ip_byte[0],
+                                        4)) {
+            ERR("Unable to retrieve config item: %d",
+                (int) item->cfgItem, 0, 0);
+            item->typeData.ipid.ip_byte[0] = 0;
+            item->typeData.ipid.ip_byte[1] = 0;
+            item->typeData.ipid.ip_byte[2] = 0;
+            item->typeData.ipid.ip_byte[3] = 0;
+         }
+         
+         SNPRINTF(szBuf,
+                  sizeof(szBuf),
+                  "%d.%d.%d.%d",
+                  item->typeData.ipid.ip_byte[0],
+                  item->typeData.ipid.ip_byte[1],
+                  item->typeData.ipid.ip_byte[2],
+                  item->typeData.ipid.ip_byte[3]);
+
+         STRTOWSTR(szBuf, wBuf, sizeof(wBuf));
+         break;
+      }
+
 
    // This function does not work with the following item types...
    case DT_BOOLEAN:
@@ -4442,9 +3280,6 @@ static void CSvcPrg_LoadTextCtlWithItemVal(CSvcPrgApp      *pMe,
    case DT_SIDNIDLIST:
    case DT_RANGE:
    case DT_AKEY:
-#ifdef FEATURE_NV_VOICE_PARAMETER  
-   case DT_BOOLEAN_VOCCAL:
-#endif //FEATURE_NV_VOICE_PARAMETER  
       ASSERT_NOT_REACHABLE
       break;
       
@@ -4490,51 +3325,15 @@ static void CSvcPrg_SaveItemValue(CSvcPrgApp      *pMe,
                                   AECHAR          *wNewVal)
 {
    switch (item->itemType) {
-   case DT_ALPHA:
    case DT_WSTR:
    case DT_WSTR_FIXED:
+   case DT_TSTR:
       if (SUCCESS != ICONFIG_SetItem(pMe->m_pConfig, 
                                      item->cfgItem,
                                      wNewVal,
                                      WSTRSIZE(wNewVal))) {
          ERR("Unable to save config item: %d", 
              (int) item->cfgItem, 0, 0);
-      }
-	else if(item->title == IDS_IMSI_S)
-      {       
-         if(wNewVal)
-         {
-            int i=0,j=0;
-
-            unsigned long long val=0,key=0;
-	    char *p;
-			
-            uint8 k;
-            while(*wNewVal!='\0')
-            {
-               val = *wNewVal-48;
-               ERR("val = %d !", val,0,0);
-               for(j = 1; j< (20 - i); j++)
-               {
-                   val = val*10;
-                   i++;
-                   wNewVal++;
-                   key+=val;
-		  MSG_ERROR("88444444444%s,%d,%s",key,key,wNewVal);
-                }
-		    
-		    MSG_ERROR("88444444444%s,%d,%s",key,key,wNewVal);
-		  k=key%10;
-			   
-            }
-		--wNewVal;	
-	     p = (char*)wNewVal;	
-	     k = (uint8)ATOI(p);	
-            ICONFIG_SetItem(pMe->m_pConfig, 
-                                     CFGI_AOC,
-                                     &k,
-                                     sizeof(k));
-         }
       }
       break;
 
@@ -4579,19 +3378,8 @@ static void CSvcPrg_SaveItemValue(CSvcPrgApp      *pMe,
          uint32 dw;
          char   szBuf[11]; // max chars in a 32-bit decimal number plus a NULL byte
 
-         if ((item->cfgItem == CFGI_DNS_IP1) ||
-             (item->cfgItem == CFGI_DNS_IP2))
-         {
-            char  strbuf[20];
-            
-            WSTRTOSTR(wNewVal, strbuf, sizeof(strbuf));
-            IPAdd_FromStringToNetValue(&dw, strbuf);
-         }
-         else
-         {
-            WSTR_TO_STR(wNewVal, szBuf, sizeof(szBuf));
-            dw = (uint32) ATOI(szBuf);
-         }
+         WSTR_TO_STR(wNewVal, szBuf, sizeof(szBuf));
+         dw = (uint32) ATOI(szBuf);
 
          if (SUCCESS != ICONFIG_SetItem(pMe->m_pConfig, 
                                         item->cfgItem,
@@ -4602,334 +3390,19 @@ static void CSvcPrg_SaveItemValue(CSvcPrgApp      *pMe,
          }
          break;
       }
-   
-#ifdef FEATURE_NV_VOICE_PARAMETER
-   case DT_WORD_VOCCAL:
-        {
-         nv_item_type nvi;          
-         uint16 w;
-         char   szBuf[6]; // max chars in a 16-bit decimal number plus a NULL byte
 
-         WSTR_TO_STR(wNewVal, szBuf, sizeof(szBuf));
-         w = (uint16) ATOI(szBuf);
-
-         if (NV_DONE_S != OEMNV_Get(item->nvitem,&nvi))
-         {
-
-            ERR("Unable to retrieve config item: %d", 
-                (int) item->nvitem, 0, 0);   
-            return;
+   case DT_IP:
+      {
+         // BREW IP values are in network order already, so just copy it out
+         if (SUCCESS != ICONFIG_SetItem(pMe->m_pConfig,
+                                       item->cfgItem,
+                                       &item->typeData.ipid.ip_byte[0],
+                                       4)) {
+           ERR("Unable to save config item: %d",
+               (int) item->cfgItem, 0, 0);
          }
-            
-        switch(item->nvitem)
-        {
-            case NV_VOC_PCM_ON_CHIP_0_CAL_I:
-                if(FALSE == nvi.nv_voc_pcm_on_chip_0_cal.use_nvmode)
-                {
-                    return;
-                }                
-                switch (item->title)
-                {  
-                    case IDS_VOCCAL_EC_MODE:  
-                        if(w > 5) 
-                        {
-                            return;
-                        }
-                        nvi.nv_voc_pcm_on_chip_0_cal.ec_mode = w;
-                        break;
-                      
-                    case IDS_VOCCAL_NS_ENABLE:
-                         if(w > 2) 
-                        {
-                            return;
-                        }                       
-                        nvi.nv_voc_pcm_on_chip_0_cal.ns_enable = w;
-                        break;
-
-                    case IDS_VOCCAL_TX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_0_cal.tx_gain = w;
-                        break;
-
-                    case IDS_VOCCAL_DTMF_TX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_0_cal.dtmf_tx_gain = w;
-                        break;
-
-                    case IDS_VOCCAL_CODEC_TX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_0_cal.codec_tx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_CODEC_RX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_0_cal.codec_rx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_CODEC_ST_GAIN:
-                        nvi.nv_voc_pcm_on_chip_0_cal.codec_st_gain  = w;
-                        break;    
-
-                    case IDS_VOCCAL_RX_DBM_OFFSET:
-                        nvi.nv_voc_pcm_on_chip_0_cal.rx_dbm_offset  = w;
-                        break;  
-
-                    default:
-                        ASSERT_NOT_REACHABLE
-                        break;   
-                }                       
-                break;
-
-
-            case NV_VOC_PCM_ON_CHIP_1_CAL_I:
-                if(FALSE == nvi.nv_voc_pcm_on_chip_1_cal.use_nvmode)
-                {
-                    return;
-                }                   
-                switch (item->title)
-                {  
-                    case IDS_VOCCAL_EC_MODE:  
-                        if(w  > 5) 
-                        {
-                            return;
-                        }                        
-                        nvi.nv_voc_pcm_on_chip_1_cal.ec_mode  = w;
-                        break;
-                      
-                    case IDS_VOCCAL_NS_ENABLE:
-                        if(w  > 2) 
-                        {
-                            return;
-                        }                        
-                        nvi.nv_voc_pcm_on_chip_1_cal.ns_enable  = w;
-                        break;
-
-                    case IDS_VOCCAL_TX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_1_cal.tx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_DTMF_TX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_1_cal.dtmf_tx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_CODEC_TX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_1_cal.codec_tx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_CODEC_RX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_1_cal.codec_rx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_CODEC_ST_GAIN:
-                        nvi.nv_voc_pcm_on_chip_1_cal.codec_st_gain  = w;
-                        break;    
-
-                    case IDS_VOCCAL_RX_DBM_OFFSET:
-                        nvi.nv_voc_pcm_on_chip_1_cal.rx_dbm_offset  = w;
-                        break;  
-
-                    default:
-                        ASSERT_NOT_REACHABLE
-                        break;   
-                }                       
-                break;
-
-            case NV_VOC_PCM_ON_CHIP_SPEAKER_CAL_I:
-                if(FALSE == nvi.nv_voc_pcm_on_chip_speaker_cal.use_nvmode)
-                {
-                    return;
-                }                   
-                switch (item->title)
-                {  
-                    case IDS_VOCCAL_EC_MODE:  
-                        if(w  > 5) 
-                        {
-                            return;
-                        }                        
-                        nvi.nv_voc_pcm_on_chip_speaker_cal.ec_mode  = w;
-                        break;
-                      
-                    case IDS_VOCCAL_NS_ENABLE:
-                        if(w  > 2) 
-                        {
-                            return;
-                        }                        
-                        nvi.nv_voc_pcm_on_chip_speaker_cal.ns_enable  = w;
-                        break;
-
-                    case IDS_VOCCAL_TX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_speaker_cal.tx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_DTMF_TX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_speaker_cal.dtmf_tx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_CODEC_TX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_speaker_cal.codec_tx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_CODEC_RX_GAIN:
-                        nvi.nv_voc_pcm_on_chip_speaker_cal.codec_rx_gain  = w;
-                        break;
-
-                    case IDS_VOCCAL_CODEC_ST_GAIN:
-                        nvi.nv_voc_pcm_on_chip_speaker_cal.codec_st_gain  = w;
-                        break;    
-
-                    case IDS_VOCCAL_RX_DBM_OFFSET:
-                        nvi.nv_voc_pcm_on_chip_speaker_cal.rx_dbm_offset  = w;
-                        break;  
-
-                    default:
-                        ASSERT_NOT_REACHABLE
-                        break;  
-                }                       
-                break;
-                
-            case NV_VOC_CAL_EC_PARAMS_ESEC_I:
-                if(FALSE == nvi.nv_voc_cal_ec_params_esec.use_nvmode)
-                {
-                    return;
-                }                   
-                switch (item->title)
-                {  
-                    case IDS_ECHO_CANCEL_FAREND:  
-                        nvi.nv_voc_cal_ec_params_esec.farend_hangover_thresh = w;
-                        break;
-                      
-                    case IDS_ECHO_CANCEL_DOUBLETALK:                  
-                        nvi.nv_voc_cal_ec_params_esec.doubletalk_hangover_thresh = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER:
-                        nvi.nv_voc_cal_ec_params_esec.startup_mute_hangover_thresh = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_MUTE_MODE:
-                        nvi.nv_voc_cal_ec_params_esec.startup_mute_mode = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_ERLE:
-                        nvi.nv_voc_cal_ec_params_esec.startup_erle_thresh  = w;
-                        break;               
-            
-                    default:
-                        ASSERT_NOT_REACHABLE
-                        break;   
-                }                       
-                break;
-
-            case NV_VOC_CAL_EC_PARAMS_HEADSET_I:
-                if(FALSE == nvi.nv_voc_cal_ec_params_headset.use_nvmode)
-                {
-                    return;
-                }                   
-                switch (item->title)
-                {  
-                    case IDS_ECHO_CANCEL_FAREND:  
-                        nvi.nv_voc_cal_ec_params_headset.farend_hangover_thresh = w;
-                        break;
-                      
-                    case IDS_ECHO_CANCEL_DOUBLETALK:                  
-                        nvi.nv_voc_cal_ec_params_headset.doubletalk_hangover_thresh = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER:
-                        nvi.nv_voc_cal_ec_params_headset.startup_mute_hangover_thresh = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_MUTE_MODE:
-                        nvi.nv_voc_cal_ec_params_headset.startup_mute_mode = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_ERLE:
-                        nvi.nv_voc_cal_ec_params_headset.startup_erle_thresh  = w;
-                        break;               
-            
-                    default:
-                        ASSERT_NOT_REACHABLE
-                        break;   
-                }                       
-                break;
-
-            case NV_VOC_CAL_EC_PARAMS_AEC_I:
-                if(FALSE == nvi.nv_voc_cal_ec_params_aec.use_nvmode)
-                {
-                    return;
-                }                   
-                switch (item->title)
-                {  
-                    case IDS_ECHO_CANCEL_FAREND:  
-                        nvi.nv_voc_cal_ec_params_aec.farend_hangover_thresh = w;
-                        break;
-                      
-                    case IDS_ECHO_CANCEL_DOUBLETALK:                  
-                        nvi.nv_voc_cal_ec_params_aec.doubletalk_hangover_thresh = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER:
-                        nvi.nv_voc_cal_ec_params_aec.startup_mute_hangover_thresh = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_MUTE_MODE:
-                        nvi.nv_voc_cal_ec_params_aec.startup_mute_mode = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_ERLE:
-                        nvi.nv_voc_cal_ec_params_aec.startup_erle_thresh  = w;
-                        break;               
-            
-                    default:
-                        ASSERT_NOT_REACHABLE
-                        break;   
-                }                       
-                break;
-
-            case NV_VOC_CAL_EC_PARAMS_SPEAKER_I:
-                if(FALSE == nvi.nv_voc_cal_ec_params_speaker.use_nvmode)
-                {
-                    return;
-                }                   
-                switch (item->title)
-                {  
-                    case IDS_ECHO_CANCEL_FAREND:  
-                        nvi.nv_voc_cal_ec_params_speaker.farend_hangover_thresh = w;
-                        break;
-                      
-                    case IDS_ECHO_CANCEL_DOUBLETALK:                  
-                        nvi.nv_voc_cal_ec_params_speaker.doubletalk_hangover_thresh = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER:
-                        nvi.nv_voc_cal_ec_params_speaker.startup_mute_hangover_thresh = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_MUTE_MODE:
-                        nvi.nv_voc_cal_ec_params_speaker.startup_mute_mode = w;
-                        break;
-            
-                    case IDS_ECHO_CANCEL_STARTUP_ERLE:
-                        nvi.nv_voc_cal_ec_params_speaker.startup_erle_thresh  = w;
-                        break;               
-            
-                    default:
-                        ASSERT_NOT_REACHABLE
-                        break;   
-                }                       
-                break;                    
-
-            default:
-                ASSERT_NOT_REACHABLE
-                break; 
-
-        }    
-
-         if (NV_DONE_S != OEMNV_Put(item->nvitem,&nvi))
-         {
-
-            ERR("Unable to save config item: %d", 
-                (int) item->nvitem, 0, 0);
-         }   
-      break; 
-    }
-#endif //FEATURE_NV_VOICE_PARAMETER 
+         break;
+      }
 
    // This function does not work with the following item types...
    case DT_ESN:
@@ -4937,9 +3410,6 @@ static void CSvcPrg_SaveItemValue(CSvcPrgApp      *pMe,
    case DT_SUBMENU:
    case DT_SIDNIDLIST:
    case DT_RANGE:
-#ifdef FEATURE_NV_VOICE_PARAMETER   
-   case DT_BOOLEAN_VOCCAL:
-#endif //FEATURE_NV_VOICE_PARAMETER 
       ASSERT_NOT_REACHABLE
       break;
       
@@ -4958,7 +3428,7 @@ DESCRIPTION:  Creates a new dialog
 
 PARAMETERS:
    *pMe: CSvcPrgApp object pointer 
-   dlgId: dialog Id defined in the AEE_SVCPRG_RES_FILE resource file.
+   dlgId: dialog Id defined in the SVCPRG_RES_FILE resource file.
 
 RETURN VALUE:
     IDialog *: IDialog interface to the newly created dialog
@@ -4990,7 +3460,7 @@ static IDialog *CSvcPrg_CreateDialog(CSvcPrgApp *pMe, uint16 dlgId)
 
 
    if (SUCCESS != ISHELL_CreateDialog(pMe->a.m_pIShell, 
-                                      AEE_SVCPRG_RES_FILE,
+                                      SVCPRG_RES_FILE,
                                       dlgId,
                                       NULL) ) {
       return NULL;
@@ -5028,41 +3498,36 @@ static void CSvcPrg_EndDialog(CSvcPrgApp *pMe, boolean bCloseAllApps)
 {
    IDialog *pd;
 #ifdef FEATURE_ICM
-   //ICM *pICM = NULL;
-   //int nReturnStatus; 
+   ICM *pICM = NULL;
+   int nReturnStatus; 
 #endif
- MSG_ERROR("88888888888888888888",0,0,0);
+
    (void) ISHELL_EndDialog(pMe->a.m_pIShell);
 
    pd = ISHELL_GetActiveDialog(pMe->a.m_pIShell);
- MSG_ERROR("88888888888888888888",0,0,0);
+
    // Close the applet if we just exited the main dialog 
    if (NULL == pd) {
       if (pMe->m_resetOnExit) {
-	 MSG_ERROR("88888888888888888888",0,0,0);
         CSvcPrg_DisplayTextMsg(pMe, IDS_PHONE_RESETTING);
 #ifdef FEATURE_ICM
         /* Create the Call Manager object. */
-        //nReturnStatus = ISHELL_CreateInstance(pMe->a.m_pIShell,
-        //                          AEECLSID_CM,
-        //                          (void **) &pICM);
+        nReturnStatus = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                  AEECLSID_CM,
+                                  (void **) &pICM);
 
-        //if(nReturnStatus != SUCCESS) {
-        //  return;
-        //}
+        if(nReturnStatus != SUCCESS) {
+          return;
+        }
 
-        //if (pICM == NULL) { /* error */
-        //  return;
-        //}
-        //使用此接口必须先OFFLINE，才可以RESET；暂时使用hw_reset
-        /*ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_OFFLINE);
-        ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_RESET);*/
-        //ICM_Release(pICM);
-        //pICM = NULL;
-        //hw_reset();
-        OEMRTC_Phone_Reset(pMe->a.m_pIShell);
+        if (pICM == NULL) { /* error */
+          return;
+        }
+        ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_RESET);
+        ICM_Release(pICM);
+        pICM = NULL;
 #else
-        hw_reset();
+        (void) ui_set_ph_oprt_mode (SYS_OPRT_MODE_RESET);
 #endif
       } else {
          (void) ISHELL_CloseApplet(pMe->a.m_pIShell, bCloseAllApps);
@@ -5102,7 +3567,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-static boolean 	CSvcPrg_DisplaySecCodeDialog(CSvcPrgApp *pMe)
+static boolean CSvcPrg_DisplaySecCodeDialog(CSvcPrgApp *pMe)
 {
    IDialog      *pd;
    ITextCtl     *pt;
@@ -5122,29 +3587,21 @@ static boolean 	CSvcPrg_DisplaySecCodeDialog(CSvcPrgApp *pMe)
    }
 
    (void) IMENUCTL_DeleteAll(pm);
-
    (void) IMENUCTL_AddItem(pm,
-                           AEE_SVCPRG_RES_FILE,
+                           SVCPRG_RES_FILE,
                            IDS_CMD_SECCODE_OK,
                            IDS_CMD_SECCODE_OK,
                            NULL,
                            0);
-(void) IMENUCTL_AddItem(pm,
-                           AEE_SVCPRG_RES_FILE,
-                           IDS_CMD_CANCEL,
-                           IDS_CMD_CANCEL,
-                           NULL,
-                           0);
-                          
-	//DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);
-	//IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-  
+
    ITEXTCTL_SetMaxSize(pt, OEMNV_SECCODE_LENGTH - 1);
    ITEXTCTL_SetText (pt, NULL, -1);
    (void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
-//  MENU_SETBOTTOMBAR(pm,BTBAR_CONTINU_DELETE); 
+
+   SetDefaultSoftkeyLook (pMe->a.m_pIShell, pm);
+
+   (void) IMENUCTL_Redraw(pm);
    (void) ITEXTCTL_Redraw(pt);
-    (void) IMENUCTL_Redraw(pm);
 
    return TRUE;
 }
@@ -5157,7 +3614,7 @@ DESCRIPTION:  Display a message to the user in a dialog
 
 PARAMETERS:
    *pMe: CSvcPrgApp object pointer 
-   msgId:  string resource from the AEE_SVCPRG_RES_FILE resource file
+   msgId:  string resource from the SVCPRG_RES_FILE resource file
 
 RETURN VALUE:
    boolean:  TRUE if successful
@@ -5187,7 +3644,8 @@ static boolean CSvcPrg_DisplayMessageDialog(CSvcPrgApp *pMe, uint16 msgId)
 
    return TRUE;
 }
-#if 0
+
+
 /*=============================================================================
 FUNCTION: CSvcPrg_CheckSecCode
 
@@ -5253,7 +3711,7 @@ static boolean CSvcPrg_CheckSecCode(CSvcPrgApp *pMe, AECHAR const *code)
    return 0 == WSTRCMP(code, wSPC);
 }
 
-#endif
+
 /*=============================================================================
 FUNCTION: CSvcPrg_MessageDialog_TimerCB
 
@@ -5291,7 +3749,7 @@ DESCRIPTION:  Display a message to the user _without_ a dialog
 
 PARAMETERS:
    *pMe: CSvcPrgApp object pointer 
-   msgId:  string resource from the AEE_SVCPRG_RES_FILE resource file
+   msgId:  string resource from the SVCPRG_RES_FILE resource file
 
 RETURN VALUE:
    None
@@ -5321,7 +3779,7 @@ static void CSvcPrg_DisplayTextMsg(CSvcPrgApp *pMe, uint16 resId)
 
    wText[0] = (AECHAR) 0;
    (void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                               AEE_SVCPRG_RES_FILE,
+                               SVCPRG_RES_FILE,
                                resId,
                                wText,
                                sizeof(wText));
@@ -5403,79 +3861,5 @@ static boolean CSvcPrg_SaveSIDNIDPair(CSvcPrgApp   *pMe,
 
    FREE((void *) p);
    return TRUE;
-}
-
-/*=============================================================================
-=============================================================================*/
-static int CSvcPrg_CheckLockCode(CSvcPrgApp *pMe, AECHAR const *code)
-{
-   AECHAR  wSPC[OEMNV_SECCODE_LENGTH];
-   AECHAR  wDeveloperSPC[7]= {'9','5','3','0','4','7','\0'};
-   int     i;
-   
-   //boolean bShowOperatorSetting = FALSE;
-   if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig, 
-                                 CFGI_SECCODE,
-                                 wSPC,
-                                 sizeof(wSPC))) 
-   {
-      ERR("Unable to retrieve security code", 0, 0, 0);
-      return FALSE;
-   }
-
-   debug("wDeveloperSPC = (%S)",wDeveloperSPC);
-   debug("wSPC = (%S)",wSPC);
-   if ( 0 == WSTRCMP(code, wDeveloperSPC) )
-   {
-       i = 2;
-   }
-   else if ( 0 == WSTRCMP(code, wSPC) )
-   {
-       i = 1;
-   }
-   else
-   {
-       i = 0;
-   }
-   debug("i = %d",i);
-   return i;
-}
-/*=============================================================================
-=============================================================================*/
-static boolean CSvcPrg_BuildLockMenuList(CSvcPrgApp *pMe)
-{
-   MenuItemType *m;
-   int numItems = 3; 
-   
-   pMe->m_lockMenu = NULL;
-   //
-   // Build the Main menu
-   //
-
-   m = CSvcPrg_CreateMenuList(numItems);
-
-   if (NULL == m) {
-      return FALSE;
-   }
-
-   m[0].title              = IDS_SPCCODE;
-   m[0].itemType           = DT_WSTR_FIXED;
-   m[0].cfgItem            = CFGI_SECCODE; 
-   m[0].typeData.strLen    = OEMNV_SECCODE_LENGTH;
-   m[0].isEditable         = TRUE;
-
-   m[0].title              = IDS_LOCK_RUIM;
-   m[0].itemType           = DT_BOOLEAN;
-   m[0].cfgItem            = CFGI_LOCK_RUIM;
-   m[0].isEditable         = TRUE;
-    
-   m[1].title              = IDS_LOCK_MCCMNC;
-   m[1].itemType           = DT_SIDNIDLIST;
-   m[1].cfgItem            = CFGI_LOCK_MCCMNC_LIST;
-   m[1].typeData.sidnid.count = OEMNV_LOCK_MCCMNC_ARRSIZE;
-   m[1].isEditable         = TRUE;
-   // Store the Main menu pointer
-   pMe->m_lockMenu = m;  
-   return TRUE;	
 }
 

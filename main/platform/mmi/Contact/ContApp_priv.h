@@ -69,7 +69,7 @@
 
 #include "OEMCFGI.h"
 #include "AEECM.h"
-
+#include "AEEAddrBookExt.h"
 
 
 // 图片资源文件

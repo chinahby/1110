@@ -26,11 +26,6 @@ when         who            what, where, why
 #include "OEMRTC.h"
 #include "AEECM.h"
 
-#ifdef FEATURE_SUPPORT_VC0848
-#include "OEMSVC.h"
-#include "Vc0848.h"
-#endif
-
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
@@ -639,17 +634,6 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
             }
             else if( pMe->m_bAlarmOff)
 #endif//这里如果在通话中也要执行闹钟，只是响闹的方式不同，所以在这里不加限制
-#ifdef FEATURE_SUPPORT_VC0848
-            switch(VC_GetCurrentDevice())
-            {
-                case VC_DEV_CAMERA:
-                    ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_ALARM, 0, 0);
-                    break;
-
-                default:
-                    break;                      
-            }
-#endif
             if(pMe->m_bAlarmOff)
             {
                 pMe->m_bAlarmOff = FALSE;
@@ -1398,17 +1382,6 @@ boolean ClockApps_CanAlert(CClockApps *pMe)
         ICM_Release(pICM);
         pICM = NULL;
     }
-
-#ifdef FEATURE_SUPPORT_VC0848
-    if(DEVICE_CAMERA_STATE_ON == GetDeviceState(DEVICE_TYPE_CAMERA))
-    {
-        return FALSE;
-    }
-    if(GetDeviceState(DEVICE_TYPE_MP4) == DEVICE_MP4_STATE_ON)
-    {
-        return FALSE;
-    }
-#endif
 
     if(num > 0)
     {

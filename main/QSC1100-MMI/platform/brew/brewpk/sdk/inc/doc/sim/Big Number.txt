@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-Big Number simulation
-
-Big Number is simulated.
-==========================
-*/ 

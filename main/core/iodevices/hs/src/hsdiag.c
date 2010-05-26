@@ -1126,7 +1126,9 @@ void hsdiag_init (void)
 
 #ifndef FEATURE_UI_CORE_REMOVED
 #ifdef FEATURE_PORTMAP_TEST_AUTOMATION
+#ifndef CUST_EDITION
   portmapdiag_init();
+#endif
 #endif
 #ifdef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
   mediaplayerdiag_init();
@@ -1135,7 +1137,9 @@ void hsdiag_init (void)
   qcameradiag_init();
 #endif
 #ifdef FEATURE_AUDIOSETTINGS_TEST_AUTOMATION
+#ifndef CUST_EDITION
   audiodiag_init();
+#endif
 #endif
 #ifdef FEATURE_MOBIMON_TEST_AUTOMATION
   mobimondiag_init();

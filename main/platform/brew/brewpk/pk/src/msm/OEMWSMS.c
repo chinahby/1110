@@ -215,6 +215,13 @@ static const TsIdMap   gsTsIdMap[] =
                   {SMS_TELESERVICE_IS91_SHORT_MESSAGE,   WMS_TELESERVICE_IS91_SHORT_MESSAGE},
                   {SMS_TELESERVICE_MWI,                  WMS_TELESERVICE_MWI},
                   {SMS_TELESERVICE_WAP,                  WMS_TELESERVICE_WAP},
+#ifdef CUST_EDITION	  				  
+#if defined(FEATURE_QMA)
+                  {SMS_TELESERVICE_QMA_WPUSH,            WMS_TELESERVICE_QMA_WPUSH},
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+                  {SMS_TELESERVICE_WPUSH,                WMS_TELESERVICE_WPUSH},
+#endif            
+#endif /*CUST_EDITION*/
                   {SMS_TELESERVICE_WEMT,                 WMS_TELESERVICE_WEMT},
                   {SMS_TELESERVICE_BROADCAST,            WMS_TELESERVICE_BROADCAST}};
 
@@ -644,8 +651,9 @@ static int OEMWMS_SetUDHData(int nMaxHeaders, wms_udh_s_type udh[], byte * pBuff
 #ifndef FEATURE_WMS_APP
 static void OEMWMS_GetMsgTransferRoute(void);
 #endif
-
+#ifdef FEATURE_NOT_BREW_ONLY_SMS
 static void OEMWMS_SetPrimaryClient(void);
+#endif // #ifdef FEATURE_NOT_BREW_ONLY_SMS
 
 static void OEMWMS_SetMemoryFull(boolean bFull);
 
@@ -1776,7 +1784,15 @@ boolean OEMWMS_CopyMessage
                      (pcd->user_data.headers[i].u.wap_16.dest_port == 2948)) 
                   {
                      FARF(SMS, ("WAP Push Message Received"));
+#ifdef CUST_EDITION	  					 
+#if defined(FEATURE_QMA)
+                     ts =  WMS_TELESERVICE_QMA_WPUSH;
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+                     ts =  WMS_TELESERVICE_WPUSH;
+#else                     
                      ts =  WMS_TELESERVICE_WAP;
+#endif
+#endif /*CUST_EDITION*/
                      break;
                   }
                }
@@ -1791,7 +1807,15 @@ boolean OEMWMS_CopyMessage
             pce->pText = (pcd->mask & WMS_MASK_BD_USER_DATA ? (byte*)pcd->user_data.data : NULL);
             pce->nText = (pcd->mask & WMS_MASK_BD_USER_DATA ? pcd->user_data.data_len : 0);
          
-            if (ts == WMS_TELESERVICE_WAP)
+            if (ts == WMS_TELESERVICE_WAP
+#ifdef CUST_EDITION	  			
+#if defined(FEATURE_QMA)
+                || ts == WMS_TELESERVICE_QMA_WPUSH
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+                || ts == WMS_TELESERVICE_WPUSH
+#endif
+#endif /*CUST_EDITION*/
+                )
             {
                pce->nEncoding = AEESMS_ENC_OCTET;
             }
@@ -2139,7 +2163,15 @@ boolean OEMWMS_CopyMessage
                         pce->pText = pctsdata->u.gw_pp.u.deliver.user_data.sm_data;
                         pce->nText = pctsdata->u.gw_pp.u.deliver.user_data.sm_len;
 
-                        if (ts == WMS_TELESERVICE_WAP)
+                        if (ts == WMS_TELESERVICE_WAP
+#ifdef CUST_EDITION	  						
+#if defined(FEATURE_QMA)
+                            || ts == WMS_TELESERVICE_QMA_WPUSH
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+                            || ts == WMS_TELESERVICE_WPUSH
+#endif
+#endif /*CUST_EDITION*/
+                            )
                         {
                            pce->nEncoding = AEESMS_ENC_OCTET;
                         }
@@ -2341,7 +2373,15 @@ boolean OEMWMS_CopyMessage
                         pce->dwMsgID = pctsdata->u.gw_pp.u.status_report.message_reference;
                         pce->bIsGWBroadcast = FALSE;
 
-                        if (ts == WMS_TELESERVICE_WAP)
+                        if (ts == WMS_TELESERVICE_WAP
+#ifdef CUST_EDITION	  						
+#if defined(FEATURE_QMA)
+                            || ts == WMS_TELESERVICE_QMA_WPUSH
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+                            || ts == WMS_TELESERVICE_WPUSH
+#endif
+#endif /*CUST_EDITION*/
+                            )
                         {
                            pce->nEncoding = AEESMS_ENC_OCTET;
                         }
@@ -3288,7 +3328,13 @@ static wms_teleservice_e_type OEMWMS_DetermineGSMMessageType
           (132 == puserdata->sm_data[6]))
       {
          FARF(SMS, ("GSM WAP Push Message Received"));
+#if defined(FEATURE_QMA)
+         ts =  WMS_TELESERVICE_QMA_WPUSH;
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+         ts =  WMS_TELESERVICE_WPUSH;
+#else
          ts = WMS_TELESERVICE_WAP;
+#endif
          goto Done;
       }
       else if (wms_cfg_check_cphs_msg(&pgw_pp->u.deliver.address))
@@ -3317,7 +3363,15 @@ static wms_teleservice_e_type OEMWMS_DetermineGSMMessageType
           (132 == puserdata->sm_data[6]))
       {
          FARF(SMS, ("GSM WAP Push Message Received"));
+#ifdef CUST_EDITION	  		 
+#if defined(FEATURE_QMA)
+         ts =  WMS_TELESERVICE_QMA_WPUSH;
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+         ts =  WMS_TELESERVICE_WPUSH;
+#else
          ts = WMS_TELESERVICE_WAP;
+#endif
+#endif /*CUST_EDITION*/
          goto Done;
       }
       else
@@ -3373,7 +3427,13 @@ static wms_teleservice_e_type OEMWMS_DetermineGSMMessageType
             (puserdata->headers[i].u.wap_16.dest_port == 2948)) 
          {
             FARF(SMS, ("GSM WAP Push Message Received"));
+#if defined(FEATURE_QMA)
+            ts =  WMS_TELESERVICE_QMA_WPUSH;
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+            ts =  WMS_TELESERVICE_WPUSH;
+#else
             ts =  WMS_TELESERVICE_WAP;
+#endif
             break;
          }
       }
@@ -3830,7 +3890,7 @@ static boolean OEMWMS_ConstructClientBD
 
             // Reply option is an optional bearer data parameter
             // This subparameter should not be included in the message with
-            // USER_ACK_REQ, DAK_REQ and READ_ACK_REQ all set to ‘0’.
+            // USER_ACK_REQ, DAK_REQ and READ_ACK_REQ all set to
             if ( pMsgData->bRequestDLAck || 
                  pMsgData->bRequestUserAck ||
                  pMsgData->bRequestReadAck )
@@ -5679,6 +5739,7 @@ static void OEMWMS_GetMsgTransferRoute()
 }
 #endif
 
+#if defined( FEATURE_NOT_BREW_ONLY_SMS)&& defined (CUST_EDITION)
 /*===========================================================================
 
    OEMWMS_SetPrimaryClient
@@ -5709,6 +5770,7 @@ static void OEMWMS_SetPrimaryClient(void)
       FARF(SMS, ("wms_cfg_set_primary_client failed err = %d", wmsStatus));
    }
 }
+#endif // #ifdef FEATURE_NOT_BREW_ONLY_SMS
 
 /*===========================================================================
 
@@ -7080,7 +7142,13 @@ static wms_status_e_type OEMSMS_GetMsgAckStatus(uint32        ts,
               *eCDMAStatus = Xlate_CDMAClientStatus (gpWms->dwTextStatus);
             }
             break;
-
+#ifdef CUST_EDITION	  
+#if defined(FEATURE_QMA)
+         case SMS_TELESERVICE_QMA_WPUSH:
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+         case SMS_TELESERVICE_WPUSH:
+#endif            
+#endif /*CUST_EDITION*/
          case SMS_TELESERVICE_WAP:
             if ( gpWms->dwWAPStatus == AEESMS_CS_OK )
             {

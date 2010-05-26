@@ -122,7 +122,8 @@ when       who     what, where, why
 
 #if MIN_BREW_VERSIONEx(3,1,2)
 #ifndef AEECONFIG_H
-#error OEMCFGI.h must not be included directly, include AEEConfig.h instead
+#include "AEEConfig.h"
+//#error OEMCFGI.h must not be included directly, include AEEConfig.h instead
 #endif
 #else
 #ifndef OEMCONFIG_H
@@ -475,6 +476,27 @@ enum
 
 boolean   OEM_GetCachedLCDSetting(void);
 
+/*==============================================================================
+函数：
+       GetRepeatRawNumber
+       
+说明：
+       得到raw　number.用于把连续重复的号码记录为一条记录。
 
+参数：
+      
+返回值：
+       无。
+
+备注：:
+
+==============================================================================*/
+int GetRepeatRawNumber(AECHAR * number,AECHAR * rawnumber);
+
+void OEM_RestoreFactorySetting( void );
+
+boolean OEM_IsEmergency_Number(char *pNumber,int len);
+extern dword OEM_GetMEESN(void);
+extern void OEM_SetMEESN(dword esn);
 #endif // !OEMCFGI_H
 

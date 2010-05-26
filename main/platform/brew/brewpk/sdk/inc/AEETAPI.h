@@ -8,12 +8,16 @@ SERVICES:  AEE TAPI Interface
 GENERAL DESCRIPTION:
    Base level definitions, typedefs, etc. for AEE TAPI
 
-Copyright © 1999-2008 QUALCOMM Incorporated.
-All Rights Reserved.
-Qualcomm Confidential and Proprietary
+        Copyright ?1999-2002 QUALCOMM Incorporated.
+               All Rights Reserved.
+            QUALCOMM Proprietary/GTDR
 =====================================================*/
 
 #include "AEE.h"
+
+/* Make sure that CUST_H is defined and then include whatever file it
+** specifies.
+*/
 
 typedef struct _ITAPI         ITAPI;
 
@@ -107,6 +111,13 @@ enum {
    SMS_TELESERVICE_GSM1x_10           = 4113,  /* Reserved for now */
    SMS_TELESERVICE_BROADCAST          = 0x0005,
 
+#ifdef CUST_EDITION
+#if defined(FEATURE_QMA)
+   SMS_TELESERVICE_QMA_WPUSH          = 65002,  /* QMA Wap push message service ID */
+#elif defined (FEATURE_CARRIER_CHINA_TELCOM)
+   SMS_TELESERVICE_WPUSH              = 65002,  /* China telecom Wap push message service ID  */
+#endif
+#endif
    SMS_TELESERVICE_UNKNOWN            = 0xFFFF
 };
 #ifdef WIN32
@@ -402,14 +413,7 @@ typedef struct
 
 Members:
  
-   szMobileID: For CDMA networks represents 15-byte mobile number
-               which consists of the following components:
-                  - mcc: mobile country code (3 digits)
-                  - mnc: mobile network code (2 digits)
-                  - min2: area code (3 digits)
-                  - min1: phone number (7 digits)
-               For UMTS networks represents International Mobile Subscriber
-               Identity (IMSI).
+   szMobileID: ASCII string representing Mobile Identification Number (MIN). 
                Applications that need the MDN information should use 
                ISHELL_GetDeviceInfoEx with AEE_DEVICEITEM_MDN.
 

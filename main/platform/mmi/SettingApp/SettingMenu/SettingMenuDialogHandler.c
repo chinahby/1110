@@ -166,14 +166,6 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
 );
 #endif
 
-#ifdef FEATURE_USB_FUNCTION_SELECT
-static boolean  HandleUSBFunctionDialogEvent(CSettingMenu *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-);
-#endif //FEATURE_USB_FUNCTION_SELECT
-
 // 对话框 IDD_WARNING_MESSEGE 事件处理函数
 static boolean  HandleWarningMessegeDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
@@ -432,12 +424,6 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_PLANEMODE:
             return HandlePlaneModeDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
-
-#ifdef FEATURE_USB_FUNCTION_SELECT
-        case IDD_USB_FUNCTION:
-            return HandleUSBFunctionDialogEvent(pMe,eCode,wParam,dwParam);
-#endif //FEATURE_USB_FUNCTION_SELECT
-        
         case IDD_WARNING_MESSEGE:
             return HandleWarningMessegeDialogEvent(pMe,eCode,wParam,dwParam);
 
@@ -919,12 +905,9 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_KEYGUARD
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTOKEYGUARD_TITLE, IDS_AUTOKEYGUARD_TITLE, NULL, 0);
 #endif
-#ifdef FEATURE_USB_FUNCTION_SELECT
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_USB_FUNCTION, IDS_USB_FUNCTION, NULL, 0);
-#endif //FEATURE_USB_FUNCTION_SELECT
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 200904007 add 触摸校准
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ADJUSTSETTING, IDS_ADJUSTSETTING, NULL, 0);
-#endif //FEATURE_USB_FUNCTION_SELECT
+#endif //FEATURE_LCD_TOUCH_ENABLE
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -984,13 +967,6 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                         CLOSE_DIALOG(DLGRET_PLANEMODE)
                     break;
 #endif //FEATURE_PLANEMODE
-
-#ifdef FEATURE_USB_FUNCTION_SELECT
-                case IDS_USB_FUNCTION:    //语言选择
-                    CLOSE_DIALOG(DLGRET_USB_FUNCTION)
-                    break;
-#endif //FEATURE_USB_FUNCTION_SELECT
-
                 case IDS_LANGUAGE:    //语言选择
                     CLOSE_DIALOG(DLGRET_LANGUAGE)
                     break;
@@ -1125,7 +1101,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                         break;
 
                    case IDS_VOICE_PRIVACY:     //voice privacy
-                        ICONFIG_GetItem(pMe->m_pConfig,CFGI_VOICE_PRIVACY, &byte_return,sizeof(byte_return));
+                        ICONFIG_GetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY, &byte_return,sizeof(byte_return));
                         break;
 #ifdef FEATRUE_SET_IP_NUMBER
                     case IDS_SET_IP_CALL_OPTION:
@@ -1405,7 +1381,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
 
                        case IDS_VOICE_PRIVACY:     //voice privacy
                             callset = AEECM_PRIVACY_PREF_STANDARD;
-                            ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICE_PRIVACY,&callset,sizeof(callset));
+                            ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)
                             return TRUE;
 #ifdef FEATRUE_SET_IP_NUMBER
@@ -1476,7 +1452,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
 
                         case IDS_VOICE_PRIVACY:     //voice privacy
                             callset = AEECM_PRIVACY_PREF_ENHANCED;
-                            ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICE_PRIVACY,&callset,sizeof(callset));
+                            ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)
                             return TRUE;
 #ifdef FEATURE_CARRIER_TAIWAN_APBW
@@ -7121,155 +7097,3 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
 } // HandlePlaneModeDialogEvent
 #endif
 
-#ifdef FEATURE_USB_FUNCTION_SELECT
-/*==============================================================================
-函数：
-       HandleUSBFunctionDialogEvent
-说明：
-       IDD_USB_FUNCTION 对话框事件处理函数
-
-参数：
-       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
-       eCode [in]：事件代码。
-       wParam：事件相关数据。
-       dwParam：事件相关数据。
-
-返回值：
-       TRUE：传入事件被处理。
-       FALSE：传入事件被忽略。
-
-备注：
-
-==============================================================================*/
-static boolean  HandleUSBFunctionDialogEvent(CSettingMenu *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-)
-{
-    PARAM_NOT_REF(dwParam)
-    static OEMUSBFUNCTION enumData = 0;
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                                    IDC_USB_FUNCTION);
-    
-    if (pMenu == NULL)
-    {
-        return FALSE;
-    }
-     //实现菜单循环滚动功能
-    //SettingMenu_AutoScroll(pMenu,eCode,wParam);
-
-    switch (eCode)
-    {
-        case EVT_DIALOG_INIT:
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DIAG_AND_DATA, IDS_DIAG_AND_DATA, NULL, 0);
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MASS_STORAGE, IDS_MASS_STORAGE, NULL, 0);
-            return TRUE;
-
-        case EVT_DIALOG_START:
-            {
-                uint16 wItemID;
-
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
-                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
-#endif
-                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-                (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                       CFGI_USB_FUNCTION,
-                                       &enumData,
-                                       sizeof(enumData));
-
-                switch (enumData)
-                {
-                    case OEMNV_USB_MASS_STORAGE:
-                        wItemID = IDS_MASS_STORAGE;
-                        break;
-
-                    case OEMNV_USB_DATA_AND_DIAG :
-                    default:
-                        wItemID = IDS_DIAG_AND_DATA;
-                        break;
-                }
-
-                InitMenuIcons(pMenu);
-                SetMenuIcon(pMenu, wItemID, TRUE);
-                IMENUCTL_SetSel(pMenu, wItemID);
-                (void) ISHELL_PostEvent( pMe->m_pShell,
-                                         AEECLSID_APP_SETTINGMENU,
-                                         EVT_USER_REDRAW,
-                                         0,
-                                         0);
-            }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
-            return TRUE;
-
-        case EVT_DIALOG_END:
-            return TRUE;
-
-        case EVT_KEY:
-            switch(wParam)
-            {
-                case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-
-                  default:
-                    break;
-            }
-            return TRUE;
-
-        case EVT_COMMAND:
-            {
-                OEMUSBFUNCTION enumNewData = OEMNV_USB_DATA_AND_DIAG;
-                
-                switch (wParam)
-                {
-                    case IDS_DIAG_AND_DATA:                        
-                       enumNewData = OEMNV_USB_DATA_AND_DIAG ;
-                       break;
-
-                    case IDS_MASS_STORAGE:                        
-                       enumNewData = OEMNV_USB_MASS_STORAGE ;
-                       break;
-
-                    default:
-                       ASSERT_NOT_REACHABLE;
-
-                }
-
-                if (enumNewData != enumData)
-                {
-                    (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                          CFGI_USB_FUNCTION,
-                                          &enumNewData, sizeof(enumNewData));
-
-                    if(OEMNV_USB_DATA_AND_DIAG == enumNewData)
-                    {
-                        hs_usb_switch_ctrl(FALSE);
-                    }
-                    else
-                    {
-                        hs_usb_switch_ctrl(TRUE);
-                    }
-                    
-                    //将选中的选项标出
-                    enumData = enumNewData;
-                    InitMenuIcons(pMenu);
-                    SetMenuIcon(pMenu, wParam, TRUE);
-                    (void)IMENUCTL_Redraw(pMenu);
-                }
-                CLOSE_DIALOG(DLGRET_WARNING)
-            }
-            return TRUE;
-
-        default:
-            break;
-    }
-    return FALSE;
-} // HandleUSBFunctionDialogEvent
-#endif //FEATURE_USB_FUNCTION_SELECT

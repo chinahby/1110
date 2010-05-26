@@ -31,7 +31,10 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "AEERinger.h"
 #include "AEEStdLib.h"
 #include "AEEMimeTypes.h"
-
+#ifdef CUST_EDITION
+#include "OEMCFGI.h"
+#include "OEMRinger.h"
+#endif
 /*===========================================================================
 
                       PUBLIC DATA DECLARATIONS
@@ -1340,5 +1343,38 @@ static IFileMgr *RingerMgr_GetFileMgr(void)
    // Do not add a reference to the interface!
    return info->m_pfm;
 }
+
+#ifdef OEM_RINGER_SUPPORT
+/*===========================================================================
+
+
+===========================================================================*/
+ int OEM_SetActiveRinger(AEERingerCatID idCategory, AEERingerID idRinger, char * szFilename)
+{
+    byte data;
+    // 1st ringer has idRinger value 1 and menu item value should be 0 for this
+
+    data = (byte)idRinger;
+    return OEM_SetConfig(CFGI_RINGER_TYPE, &data, sizeof(byte));
+}
+
+/*===========================================================================
+
+
+===========================================================================*/
+AEERingerID OEM_GetActiveRinger(AEERingerCatID idRingerCat, AECHAR * szwName)
+{
+    byte data;
+
+    if (OEM_GetConfig(CFGI_RINGER_TYPE, &data, sizeof(byte)) != SUCCESS)
+    {
+        return 1;
+    }
+    else
+    {
+        return data;
+    }
+}
+#endif
 
 #endif   // OEMRINGERS

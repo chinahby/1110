@@ -31,8 +31,11 @@ DESCRIPTION
 #define  NV_MAX_LTRS                                            12
 
 /* Maximum 20 call stack numbers */
+#ifdef CUST_EDITION
+#define  NV_MAX_STACK_DIALS                                     30
+#else
 #define  NV_MAX_STACK_DIALS                                     20
-
+#endif
 /* Up to 2 NAMs allowed */
 #define  NV_MAX_NAMS                                             1
 
@@ -82,8 +85,11 @@ DESCRIPTION
 #define  NV_TEMP_TABLE2_SIZ                                     16
 
 /* Maximum 32 digit number */
+#ifdef CUST_EDITION
+#define  NV_MAX_DIAL_DIGITS                                     (32+2) //two bytes for number count
+#else
 #define  NV_MAX_DIAL_DIGITS                                     32
-
+#endif
 /* Max of 64 chars in User ID */
 #define  NV_MAX_PAP_USER_ID_LENGTH                              64
 
@@ -7305,7 +7311,14 @@ typedef enum {
   NV_EDGE_850_LINEAR_TX_GAIN_PARAM_I             = 6475,
   NV_EDGE_1800_LINEAR_TX_GAIN_PARAM_I            = 6476,
   NV_EDGE_1900_LINEAR_TX_GAIN_PARAM_I            = 6477,
-  NV_MAX_I                                       = 6478
+#ifdef CUST_EDITION
+  NV_SID_LOCK_I                                  = 6478,
+  NV_AUTO_SET_ITEM_VERSION_I                     = 6479,
+  NV_CRITICAL_ITEM_I                             = 6480,
+  NV_ESN_OVER_WRITE_I                            = 6481,
+#endif  
+  
+  NV_MAX_I                                       = 6482
 
 #ifdef FEATURE_NV_RPC_SUPPORT
    , NV_ITEMS_ENUM_MAX                             = 0x7fffffff
@@ -7597,6 +7610,40 @@ typedef PACKED struct {
   byte                                             key[NV_UP_MAX_KEY_SIZE];
 } nv_up_key_type;
 
+#ifdef CUST_EDITION 
+/* Generic enabled/disabled sid lock type */
+typedef PACKED struct { 
+  /* NAM id 0-N */
+  byte                                             nam;
+  /* Enabled flag */
+  byte                                             b_sid_lock;
+} nv_enabled_sid_lock;
+
+typedef enum
+{
+    NV_CRITICAL_CLEAN,
+    NV_CRITICAL_MARK_INVALID,
+    NV_CRITICAL_BACKUP_RF,
+    NV_CRITICAL_RESTORE,
+
+    NV_CRITICAL_OP_MAX = 0xFFFF
+}nv_critical_item_op_type;
+
+typedef enum
+{
+    NV_CRITICAL_NOT_BACKUP = 0x0000,
+    NV_CRITICAL_RF_BACKUP = 0x0001,
+    NV_CRITICAL_ESN_BACKUP = 0x0002,
+    NV_CRITICAL_ESN_FULL = 0x0002,
+    
+    NV_CRITICAL_NEED_CLEAN = 0x8000  
+}nv_critical_backup_status;
+
+typedef PACKED struct {
+  nv_critical_item_op_type                          operation;
+  nv_critical_backup_status                         dwStatus;                                     
+} nv_critical_item_type;
+#endif
 /* DATA SERVICES default SIO baud rate */
 typedef  word  nv_sio_baudrate_type;
   
@@ -9533,6 +9580,30 @@ typedef  word  nv_language_enum_type;
   #define  NV_LANGUAGE_FRENCH                            ((nv_language_enum_type)2)
   /* Use Portuguese language */
   #define  NV_LANGUAGE_PORTUGUESE                        ((nv_language_enum_type)3)
+  #ifdef CUST_EDITION  
+   /* Use TChinese language    */
+  #define NV_LANGUAGE_TCHINESE                           ((nv_language_enum_type)4)  
+   /* Use Chinese language    */
+  #define NV_LANGUAGE_CHINESE                            ((nv_language_enum_type)5)
+   /* Use Japanese  language    */
+  #define NV_LANGUAGE_JAPANESE                           ((nv_language_enum_type)6)
+   /* Use Korean language    */
+  #define NV_LANGUAGE_KOREAN                             ((nv_language_enum_type)7)  
+   /* Use Hebrew language    */
+  #define NV_LANGUAGE_HEBREW                             ((nv_language_enum_type)8)
+   /* Use Thai language    */
+  #define NV_LANGUAGE_THAI                               ((nv_language_enum_type)9)
+   /* Use Italian language    */
+  #define NV_LANGUAGE_ITALIAN                            ((nv_language_enum_type)10)  
+   /* Use Indonesian language    */
+  #define NV_LANGUAGE_INDONESIAN                         ((nv_language_enum_type)11)
+   /* Use Arabic language    */
+  #define NV_LANGUAGE_ARABIC                             ((nv_language_enum_type)12)
+   /* Use Hindi language    */
+  #define NV_LANGUAGE_HINDI                              ((nv_language_enum_type)13)      
+   /* Use Vietnamese language    */
+  #define NV_LANGUAGE_VIETNAMESE                         ((nv_language_enum_type)14)
+  #endif /*CUST_EDITION*/
 
 /* Type to specify the user interface menu format */
 typedef  word  nv_menu_format_enum_type;
@@ -25337,6 +25408,14 @@ typedef PACKED union {
   uint16                                           edge_1800_linear_tx_gain_param;
   /* Tx gain parameter for EDGE mode in GSM1900 band */
   uint16                                           edge_1900_linear_tx_gain_param;
+  
+#ifdef CUST_EDITION
+  /* Generic enabled/disabled sid lock type */
+  nv_enabled_sid_lock                              enabled_sid_lock;
+  dword                                            auto_set_item_version;
+  nv_critical_item_type                            critical_item;
+  nv_esn_type                                      over_write_esn;
+#endif
 } nv_item_type;
 
 #ifdef FEATURE_NV_HTORPC_METACOMMENTS

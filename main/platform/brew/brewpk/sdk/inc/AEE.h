@@ -185,7 +185,20 @@ typedef unsigned AEESuspendReason;
 #else
 typedef int8 AEESuspendReason;
 #endif
-
+#ifdef CUST_EDITION
+// OEM Define events... //define by alk ydc
+#define EVT_OEMSTART             0x800 // Base event
+#define EVT_PAGE_START           (EVT_OEMSTART)    // Page start event
+#define EVT_PAGE_END             (EVT_OEMSTART +1) // Page end event
+#define EVT_UPDATE_ANIMATION_GIF (EVT_OEMSTART +2) // Defined for animatin gif update in idle state. 
+#define EVT_BK_CONTINUE_ON       (EVT_OEMSTART +3) // Backlight continue on? send when close the backlight
+#define EVT_BK_CONTINUE_OFF      (EVT_OEMSTART +4) // Backlight continue off? send when open the backlight
+#define EVT_STROKE_READY         (EVT_OEMSTART +5) // Handstroke ready event
+#define EVT_TSIM_READY           (EVT_OEMSTART +6) // Touch Screen ready
+#define EVT_TSIM_DLG_OPEN        (EVT_OEMSTART +7) // Handstroke dialog open event
+#define EVT_TEXT_SYMBOLCLOSED    (EVT_OEMSTART +8) //send it when symbol dialog is closed.
+#endif
+//add end
 typedef struct _AEESuspendInfo
 {
    int      nErr;                      // App sets if there is some error

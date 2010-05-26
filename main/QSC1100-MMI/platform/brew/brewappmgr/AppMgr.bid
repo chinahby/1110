@@ -1,6 +1,0 @@
-#ifndef APPMGR_BID
-#define APPMGR_BID
-
-#define AEECLSID_APPMGR_BID    	0x01008000
-
-#endif //APPMGR_BID

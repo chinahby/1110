@@ -27,7 +27,12 @@ typedef uint32 RGBVAL;
 #define RGB_NONE              (0xffffffffL)
 #define RGB_WHITE             (MAKE_RGB(0xff, 0xff, 0xff))
 #define RGB_BLACK             (MAKE_RGB(0,0,0))
-
+#ifdef CUST_EDITION	
+#define RGB_YELLOW_EX         (MAKE_RGB(0xff, 0x00, 0x00))//wlh 20090427 add
+#define RGB_RED               (MAKE_RGB(255,0,0))
+#define RGB_WINTE_BACKDROP    (MAKE_RGB(56,98,107))           //add by ydc 090522
+#define RGB_WIRIE_SCRLLBAR    (MAKE_RGB(133,181,190))           //add by ydc 090522
+#endif /*CUST_EDITION*/
 //
 // AEE_RO_TRANSPARENT Mask Values: These describe the default transparent
 // colors for the display bitmap and bitmaps compatible with it.  For

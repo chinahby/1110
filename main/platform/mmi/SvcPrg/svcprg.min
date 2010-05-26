@@ -17,7 +17,7 @@ vpath %.bar $(SVCPRG_RES)
 vpath %.brx $(SVCPRG_RES)
 
 CONSTFILE_FILES+=\
-	svcprg.mif|fs:/mif/svcprg.mif \
+	svcprog.mif|fs:/mif/svcprog.mif \
 	svcprg.bar|fs:/mod/svcprg/en/svcprg.bar
 	
 # 加入另外一种语言资源文件

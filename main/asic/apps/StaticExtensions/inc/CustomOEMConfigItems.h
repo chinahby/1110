@@ -37,19 +37,22 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
 
 =============================================================================*/
 
+#include "OEMFeatures.h"
+#if !defined( AEE_SIMULATOR)
+#include "customer.h"
+#endif
 
 #include "AEEConfig.h"
 
 #define CUSTOMOEMCONFIG_BASE 0x9000
 
-
+#ifndef CUST_EDITION
 ////
 // Default Backlight setting.
 //
 // Type: byte, 0: never on, 1-254: secs before going off, 255: always on
 // 
 #define CFGI_BACK_LIGHT         (CUSTOMOEMCONFIG_BASE + 0)
-
 
 ////
 #ifndef FEATURE_BMP
@@ -169,6 +172,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
 //Corresponds to NV_DB_DAYLT_I  
 #define CFGI_DAYLT  (CUSTOMOEMCONFIG_BASE + 14)
 
+#endif //#ifndef CUST_EDITION
 
 ////
 // If this value is TRUE, the messaging daemons will not run.  This item 
@@ -188,6 +192,244 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
 #endif 
 #endif
 
+#ifdef CUST_EDITION
 
+#ifdef CUST_OEM_NV_H
+#include CUST_OEM_NV_H
+#else
+#ifndef WIN32
+#error You must define CUST_OEM_NV_H in min file and contain corresponding header file in your build directory
+#endif
+#endif
+
+#define BREW_USERNAME_LEN 32
+#define BREW_PASSWORD_LEN 32
+
+
+typedef byte keyToneLength;
+#define MAX_EMERGENCY_NUM          10
+#define MAX_EMERGENCY_NUM_LEN      10
+#define FEATURE_CODE_MAX_LENTH     10
+typedef PACKED struct// _Emergency_Number
+{
+   char  num_buf[MAX_EMERGENCY_NUM_LEN];
+   int  num_len;
+} Emergency_Number;
+
+typedef PACKED struct //_EmergencyNum_Table
+{
+    Emergency_Number  emerg_num[MAX_EMERGENCY_NUM];
+    int emert_size;
+} EmergencyNum_Table;
+
+// 信息发送模式
+typedef enum Send_OPT_e_Type
+{
+    SENDOPT_NONE,           // 内部使用
+    SENDOPT_SEND,           // 只发送
+    SENDOPT_SAVE,           // 只保存
+    SENDOPT_SAVEANDSEND     // 发送并保存
+} Send_OPT_e_Type;
+
+enum{
+    CFGI_BACK_LIGHT = CUSTOMOEMCONFIG_BASE,
+    CFGI_SVC_ALERT,
+    CFGI_EXTPWR_BK_LIGHT,
+    CFGI_VOICEPRIVACY,               // type=byte
+    CFGI_CONTRAST_LVL,
+    CFGI_FACTORY_TEST_MODE,
+    CFGI_TTY,
+#ifdef FEATRUE_AUTO_POWER
+    CFGI_AUTO_POWER_ON,               //type = Auto_Power_Cfg
+    CFGI_AUTO_POWER_OFF,              //type = Auto_Power_Cfg
+#endif
+
+    CFGI_POWERDOWN_ALARM,             //type =PowerDown_Alarm_Cfg
+    CFGI_ALARM_FLAG,                  //type = boolean
+#ifdef FEATURE_SPORTS_APP
+    CFGI_SPORT_FLAG,
+#endif	
+
+#ifdef FEATRUE_SET_IP_NUMBER
+    CFGI_IP_NUMBER,                   //type = IP_Number_Cfg
+#endif
+    CFGI_AUTO_REDIAL,                 //type = nv_auto_redial_type
+    CFGI_SMS_RINGER,                 // type=byte    ?ìD?á?éù(0-±íê??T)
+    CFGI_ALARM_RINGER,               //type = byte ???óá?éù
+    CFGI_SMS_RINGER_ID,              //type = byte ?ìD?á?éù
+    CFGI_PROFILE_CUR_NUMBER,         //?é?°?￡ê?ààDí
+    CFGI_PROFILE_ALERT_TYPE,         //à′μ?ìáê?
+    CFGI_PROFILE_SMS_RINGER,         //?ìD?ìáê?
+    CFGI_PROFILE_CALL_RINGER,        //à′μ?á?éù????  
+    CFGI_PROFILE_ALARM_RINGER,       //???óá?éù????
+    CFGI_PROFILE_SMS_RINGER_ID,      //SMSò?à?   
+    CFGI_PROFILE_STARTUP_MUSIC,      //?a?úò?à?
+    CFGI_PROFILE_SHUTDOWN_MUSIC,     //1??úò?à?
+    CFGI_PROFILE_POWERONOFF_ALERT,   //?a1??úò?à?ìáê?
+    CFGI_PROFILE_MISSED_CALL_ALERT,  //?ìD?á?éù????
+    CFGI_PROFILE_KEYSND_TYPE,        //?à2ê°′?üò?
+    CFGI_PROFILE_KEYTONE_LENGTH,     //°′?üò?3¤?è  
+    CFGI_PROFILE_RINGER_VOL,         //á?éùò?á?
+    CFGI_PROFILE_EAR_VOL,            //?ú?úò?á?
+    CFGI_PROFILE_BEEP_VOL,           //?ü?ìò?á?
+    CFGI_KEYSND_TYPE,                //?à2ê°′?üò?  
+#ifdef FEATURE_TIME_DATA_SETTING
+    CFGI_DATE_FORMAT,                 //type = byte
+#endif 
+    CFGI_SCREENSAVER_TIME,            //?á±￡ê±??
+    CFGI_WALLPAPER,                   // ×à??????
+#ifdef FEATURE_ANIMATION_POWERUPDOWN
+    CFGI_STARTUP_ANIMATION,           // ?a?ú?ˉ?-
+    CFGI_POWEROFF_ANIMATION,          // 1??ú?ˉ?-
+#endif
+    CFGI_BACKLIGHT_LEVEL,             // ±31aáá?è??±e????
+    CFGI_DESKTOP_THEME,               // type=byte
+#ifdef FEATURE_SCREEN_SAVE
+    CFGI_SCREENSAVE_TYPE,             // ?á??±￡?¤ààDí
+#endif
+#ifdef FEATURE_LED_CONTROL
+    CFGI_LED_CONTROL,                 //type=byte
+#endif
+#ifdef FEATRUE_KEY_PAD_CTL
+    CFGI_KEY_PAD_CTL,                 //type = Key_pad_Cfg
+#endif
+    CFGI_WMS_PRIORITY,                // type=byte
+    CFGI_WMS_SENDMODE,                // type=byte
+    CFGI_WMS_STORETYPE,               // type=byte
+    CFGI_WMS_DELIVERYREPORTS,         // type= boolean
+#ifdef FEATURE_AUTOREPLACE
+    CFGI_WMS_AUTOREPLACE,             // type= boolean
+#endif   
+    CFGI_WMS_VALIDITYPERIOD,          // type=byte
+    CFGI_WMS_MEMSTORE,                // type=wms_memory_store_e_type
+    CFGI_WMS_RESVDMSGALERT_TIMEIOUT,  // type= boolean
+    CFGI_WMS_CALLBACKNUMSWITCH,       // type= boolean
+    CFGI_CALLBACKNUM,                 // type= AECHAR *
+    CFGI_WMS_MO_CHANNEL_SELECT,       // type= byte
+
+#ifdef FATRUE_LOCK_IMSI_MCCMNC
+    CFGI_IMSI_SETMCC,   // tyoe= SetImsi
+#endif
+
+    CFGI_PHONE_PASSWORD,        //type = uint16
+    CFGI_PHONE_PASSWORD_CHECK,  //type = boolean
+    CFGI_RESTRICT_OUTGOING,     //type = byte
+    CFGI_RESTRICT_INCOMING,     //type = byte
+    CFGI_PHONEBOOK_LOCK_CHECK,  //type = boolean
+    CFGI_RECENTCALL_LOCK_CHECK, //type = boolean
+    CFGI_SMS_LOCK_CHECK,        //type = boolean
+    CFGI_CALENDAR_LOCK_CHECK,   //type = boolean
+    CFGI_KEY_LOCK_CHECK,      //type = boolean
+    CFGI_LOCK_RUIM,   //type: boolean 
+    CFGI_LOCK_MCCMNC_LIST,
+    CFGI_SHAKE_MUSIC_CHECK,            //type = boolean,ò?ò?ò???ò?à?               
+    CFGI_SHAKE_FM_RADIO_CHECK,         //type = boolean,ò?ò?ò???ê?ò??ú    
+    CFGI_SHAKE_WALLPAPER_CHECK,        //type = boolean,ò?ò?ò???í???   
+    CFGI_SHAKE_SNOOZE_ALARM_CHECK,     //type = boolean,ò?ò?ò??????ó
+    CFGI_SHAKE_VIDEO_CHECK,            //type = boolean,ò?ò?ò???êó?μ
+    CFGI_PEDOMETER_CHECK,              //type = boolean,??2??÷ 
+    CFGI_FMRADIO_VOLUME,
+    CFGI_FMRADIO_CHAN_INFO,
+    CFGI_FMRADIO_CHAN_TOTAL,
+    CFGI_EMERGENCYNUM_TABLE,    //tpye = EmergencyNum_Table
+    CFGI_CALLFORWARD_BUSY_ENABLE,
+    CFGI_CALLFORWARD_BUSY_DISABLE,
+    CFGI_CALLFORWARD_NOANSWER_ENABLE,
+    CFGI_CALLFORWARD_NOANSWER_DISABLE,
+    CFGI_CALLFORWARD_NOCONNECT_ENABLE,
+    CFGI_CALLFORWARD_NOCONNECT_DISABLE,
+    CFGI_CALLFORWARD_ANYWAY_ENABLE,
+    CFGI_CALLFORWARD_ANYWAY_DISABLE,
+    CFGI_CALLFORWARD_DISABLE_ALL,
+    CFGI_CALLFORWARD_WAIT_ENABLE,
+    CFGI_CALLFORWARD_WAIT_DISABLE,
+    CFGI_CALLFORWARD_VOICEMAIL_ENABLE,
+#ifdef FEATURE_CARRIER_SUDAN_SUDATEL
+    CFGI_CALLFORWARD_BUSY_VOICEMAIL,
+    CFGI_CALLFORWARD_NOANSWER_VOICEMAIL,
+    CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL,
+    CFGI_CALLFORWARD_ANYWAY_VOICEMAIL,
+    CFGI_CALLFORWARD_WAIT_TEMP_DISABLE,
+    CFGI_CALLFORWARD_DND_ENABLE,
+    CFGI_CALLFORWARD_DND_DISABLE,
+    CFGI_CALLFORWARD_CNIR_ENABLE,
+    CFGI_CALLFORWARD_CNIR_DISABLE,
+#endif
+    CFGI_SERVICE_PROVIDER,
+    CFGI_INPUTMODE,
+
+#ifdef FEATRUE_SET_IP_NUMBER
+    CFGI_IP_POUND,
+#endif
+#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+    CFGI_SHORT_CODE_NAM_COUNT,
+#endif //#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+
+#ifdef FEATURE_MENU_STYLE
+    CFGI_MENU_STYLE,                  //type=byte
+#endif
+
+    // BREW Configuration Parameters
+    CFGI_BREW_USERNAME,
+    CFGI_BREW_PASSWORD,
+    CFGI_BREW_CARRIER_ID,
+    CFGI_BREW_AUTH_POLICY,
+    CFGI_BREW_PRIVACY_POLICY,
+    CFGI_BREW_SUBSCRIBER_ID,
+    CFGI_BREW_PLATFORM_ID,
+    CFGI_BREW_TESTOPT,               // DIF_TEST_ALLOWED
+    CFGI_BREW_USEAKEY,               // DIF_USE_A_KEY
+    CFGI_BREW_AUTOUPGRADE_FLG,       // DIF_AUTO_UPGRADE 
+    CFGI_BREW_USEMINFORSID_FLG,      // DIF_MIN_FOR_SID
+    CFGI_BREW_PREPAY_FLG,            // DIF_PREPAY
+    CFGI_BREW_NOAUTOACK_FLG,         // DIF_NO_AUTO_ACK
+    CFGI_BREW_SIDENCODE_FLG,         // DIF_SID_ENCODE
+    CFGI_BREW_SIDVALIDATAALL_FLG,    // DIF_SID_VALIDATE_ALL
+    CFGI_BREW_IDS_RUIMDELETE_FLG,    // DIF_RUIM_DEL_OVERRIDE
+
+    ////////////////////////////////////////////////////////////////
+    // CameraApp
+    ////////////////////////////////////////////////////////////////
+    CFGI_CAMERA_ENVIROMENT,      //type = byte
+    CFGI_CAMERA_QUALITY,         //type = byte
+    CFGI_CAMERA_SIZE,            //type = byte
+    CFGI_CAMERA_TONE,            //type = byte
+    CFGI_CAMERA_BANDING,         //type = byte
+    CFGI_CAMERA_STORAGE,         //type = byte
+    CFGI_CAMERA_BRIGHTNESS,      //type = byte
+    CFGI_VIDEO_ENVIROMENT,       //type = byte
+    CFGI_CAMERA_ICON,            //type = boolean
+    CFGI_VIDEO_ICON,             //type = boolean
+    CFGI_CAMERA_FRAME,           //type = byte
+    CFGI_CAMERA_COLOR,           //type = byte
+    CFGI_VIDEO_COLOR,            //type = byte
+    CFGI_VIDEO_BRIGHTNESS,       //type = byte
+
+#ifdef FEATURE_PLANEMODE
+    CFGI_PLANEMODE,                 //type = byte
+#endif
+    CFGI_MISSED_CALL_ICON,
+    CFGI_GSENSOR,                      //type = uint32 
+    CFGI_HEADSET_PRESENT,  // type=boolean
+    CFGI_FM_BACKGROUND,    // type=boolean   
+#ifdef FEATURE_RANDOM_MENU_COLOR
+    /*Menu background RGB value*/
+    CFGI_MENU_BGCOLOR,  // type=RGBVAL   
+    /*Menu background color state, 0 for off, 1 for a specific color, 2 for random color*/
+    CFGI_RANDOM_MENU,  // type=byte   
+#endif
+#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
+    /*Menu default REND*/
+    CFGI_DEFAULT_REND,  // ??è?????×a??D§1?
+    /*Menu default color REND, 0 for off, 1 for a specific REND, 2 for random REND*/
+    CFGI_REND_STATE,  // ????D§1?×a??×′ì?￡?0 2??óD§1?,1 ???¨D§1?,2 ???úD§1?   
+#endif
+#ifdef FEATURE_TOUCHPAD
+    CFGI_PEN_CAL,     // ±êD￡×?2?êy
+#endif
+    CFGI_CUST_END
+};
+
+#endif
 
 #endif /* CUSTOMOEMCONFIGITEMS_H */

@@ -31,8 +31,8 @@ endif
 $(TARGETDIR)/nvim.lib : $(NVIM_SOURCES)
 	$(group_c_compile)
 
-$(TARGETDIR)/nvim_ruim.lib : $(NVIM_RUIM_SOURCES)
-	$(group_c_compile)
+#$(TARGETDIR)/nvim_ruim.lib : $(NVIM_RUIM_SOURCES)
+#	$(group_c_compile)
 
 #============================================================================
 # Support for exporting the NV APIs from modem to apps

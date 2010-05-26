@@ -17,9 +17,6 @@
 #include "AEEAppletCtl.h"
 #include "AEEAnnunciator.h"
 #include "AEECM.h"
-#ifdef FEATURE_SUPPORT_VC0848
-#include "vc0848.h"
-#endif
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif
@@ -77,7 +74,6 @@ static void MediaGalleryApp_Resume(void *po);
 #ifdef FEATURE_TIMER_TEST
 static void MediaGalleryApp_TestTimer(CMediaGalleryApp *pMe);
 #endif
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*===========================================================================
  *
  *                              LOCAL/STATIC DATA
@@ -307,7 +303,6 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
       {
          AEEAppStart* as = (AEEAppStart*) dwParam;
          boolean           bRet;
-         Rendering_UpdateEx();//wlh add for 3D test
          pMe->m_rc = as->rc;
          pMe->m_bSuspending = FALSE;
 
@@ -398,7 +393,6 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
 
    case EVT_DIALOG_INIT:
       {
-         Rendering_UpdateEx();//wlh add for 3D test
          // Update the active dialog info in the one and only Media gallery
          // applet object.
          pMe->m_pActiveDlg = (IDialog*)dwParam;
@@ -876,18 +870,9 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
 boolean CMediaGallery_GetTflashStatus(void)
 {
    boolean bExist = FALSE;
-#if !defined(FEATURE_SUPPORT_VC0848)
-   IShell *ps = AEE_GetShell();
-   IFileMgr *pFileMgr = NULL;
-#endif
 
    MG_FARF(ADDR, ("CMediaGallery_GetTflashStatus"));
 
-#ifdef FEATURE_SUPPORT_VC0848
-   bExist = MediaGalleryApp_CheckSDCard();
-   MG_FARF(ADDR, ("stop sd card to save power!"));
-   MediaGalleryApp_StopSDCard();
-#else
    if(SUCCESS != ISHELL_CreateInstance(ps,
                                        AEECLSID_FILEMGR,
                                        (void **)&pFileMgr))
@@ -900,7 +885,6 @@ boolean CMediaGallery_GetTflashStatus(void)
       bExist = TRUE;
    else
       bExist = FALSE;
-#endif
 
    return bExist;
 }
@@ -1452,13 +1436,6 @@ static void MediaGalleryApp_FreeAppData(CMediaGalleryApp* pMe)
    RELEASEIF(pMe->m_pImage);
 #ifdef FEATURE_ANICTL
    RELEASEIF(pMe->m_pAniCtl);
-#endif
-
-#ifdef FEATURE_SUPPORT_VC0848
-   if(0 == Appscommon_bluetooth_used_sd(-1)) //jinqiang add,2009/03/13
-   {
-      MediaGalleryApp_StopSDCard();
-   }
 #endif
 }//MediaGalleryApp_FreeAppData
 
@@ -2106,16 +2083,11 @@ void MediaGallery_TestCard0(void *po)
    if(!po || !pMe->m_pFileMgr)
       return;
    MG_FARF(ADDR, ("MediaGallery_TestCard0"));
-#ifdef FEATURE_SUPPORT_VC0848
-   bExist = MediaGalleryApp_CheckSDCard();
-   MG_FARF(ADDR, ("stop sd card to save power!"));
-   MediaGalleryApp_StopSDCard();
-#else
+
    if(SUCCESS == IFILEMGR_Test(pMe->m_pFileMgr, MG_MASSCARD_ROOTDIR))
       bExist = TRUE;
    else
       bExist = FALSE;
-#endif
 
    pMe->m_bCardExist = bExist;
 
@@ -2128,159 +2100,6 @@ void MediaGallery_TestCard0(void *po)
    MediaGalleryApp_RegisterMMCNotify(pMe);
    pMe->m_bCallbackDoing = FALSE;
 }//MediaGallery_TestCard0
-
-/*===========================================================================
- * FUNCTION:MediaGalleryApp_CheckSDCard
- *
- * DESCRIPTION: query sd exist or not by call 848 API
- *
- * PARAMETERS:
- *
- * ==========================================================================
- */
-#ifdef FEATURE_SUPPORT_VC0848
-boolean MediaGalleryApp_CheckSDCard(void)
-{
-   static vc_union_type vc_data;
-
-   VC_DeviceControl(VC_ITM_SD_STAT_I, VC_FUNC_GET_PARM, &vc_data);
-
-   if(vc_data.sd == VC_SD_FIND_OK)
-   {
-      // indicate that SD exist
-      return TRUE;
-   }
-
-   return FALSE;
-
-
-/*    static vc_union_type vc_data;
- *
- *    VC_DeviceControl(VC_ITM_SD_STAT_I, VC_FUNC_GET_PARM, &vc_data);
- *    if(vc_data.sd == VC_SD_FIND_OK)
- *    {
- *       pMe->m_bCardExist = TRUE;
- *    }
- *    else
- *    {
- *       pMe->m_bCardExist = FALSE;
- *    }
- */
-
-
-}//MediaGalleryApp_CheckSDCard
-#endif//ifdef FEATURE_SUPPORT_VC0848
-
-/*============================================================================
- * FUNCTION:MediaGalleryApp_StopSDCard
- * DESCRIPTION: request VC0848 to stop SD Card
- * RETURN VALUE:
- *============================================================================
- */
-#ifdef FEATURE_SUPPORT_VC0848
-void MediaGalleryApp_StopSDCard(void)
-{
-   vc_union_type vc_data;
-   vc_data.dev_run.curr_dev = VC_DEV_SD;
-   VC_DeviceControl(VC_ITM_DEV_STOP_I, VC_FUNC_CONTROL, &vc_data);
-}
-#endif//ifdef FEATURE_SUPPORT_VC0848
-
-/*
- * ==========================================================================
- * FUNCTION     :  MediaGallery_StartUDisk
- * DESCRIPTION  :
- * PARAMETERS   :
- * RETURN VALUE :
- * ==========================================================================
- */
-#ifdef FEATURE_SUPPORT_VC0848
-boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
-{
-   ICM *pCM = NULL;
-   vc_union_type vc_data;
-
-   if(!pMe)
-   {
-      MG_FARF(STATE, ("ERR PARAMTER"));
-      return FALSE;
-   }
-
-   if(FALSE == pMe->m_bCardExist ||
-      FALSE == MediaGallery_CheckUSBCableConnect())
-   {
-      /*if no mass storge card, do not permit to turn UDisk function on*/
-      MG_FARF(STATE, ("Card do not exist"));
-      return FALSE;
-   }
-     // Create ICM instance
-    if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-                                 AEECLSID_CALLMANAGER,
-                                 (void **) &pCM))
-    {
-       MG_FARF(STATE, ("Create ICM instance failed"));
-       return FALSE;
-    }
-
-   /*
-    * stop UDisk function , set the handset in Low power mode(LPM), so incoming
-    * call do not interrupt U-disk operation .
-    * */
-   if(pCM)
-   {
-      ICM_SetOperatingMode(pCM, AEECM_OPRT_MODE_LPM);
-   }
-   //ICM_Release, release ICM interface.
-   RELEASEIF(pCM);
-   gbUDiskOn = TRUE;
-   vc_data.dev_run.curr_dev = VC_DEV_UDISK;
-   VC_DeviceControl(VC_ITM_DEV_OPEN_I, VC_FUNC_CONTROL, &vc_data); // start udisk
-
-   return TRUE;
-}//MediaGallery_StartUDisk
-#endif
-
-/*
- * ==========================================================================
- * FUNCTION     :  MediaGallery_StopUDisk
- * DESCRIPTION  :
- * PARAMETERS   :
- * RETURN VALUE :
- *          TRUE : Success to stop
- *          FALSE : Failed to stop UDisk
- *==========================================================================
- */
-#ifdef FEATURE_SUPPORT_VC0848
-boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe)
-{
-   ICM *pCM = NULL;
-   vc_union_type vc_data;
-
-   if(!pMe)
-   {
-      MG_FARF(STATE, ("ERR PARAMTER"));
-      return FALSE;
-   }
-
-   // Create ICM instance
-   if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
-            AEECLSID_CALLMANAGER,
-            (void **) &pCM))
-   {
-      MG_FARF(STATE, ("Create ICM instance failed"));
-      /*stop UDisk function , set the handset online*/
-
-      ICM_SetOperatingMode(pCM, AEECM_OPRT_MODE_ONLINE);
-      RELEASEIF(pCM);
-   }
-
-   gbUDiskOn = FALSE;
-   vc_data.dev_run.curr_dev = VC_DEV_UDISK;
-   VC_DeviceControl(VC_ITM_DEV_STOP_I, VC_FUNC_CONTROL, &vc_data); // stop udisk
-
-   return TRUE;
-}//MediaGallery_StopUDisk
-#endif
 
 /*
  * ==========================================================================

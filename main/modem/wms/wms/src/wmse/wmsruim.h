@@ -94,6 +94,13 @@ void wms_ruim_init
   void
 );
 
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+boolean wms_ruim_init_stepbystep(void);
+
+#ifdef FEATURE_OMH_SMS
+void wms_ruim_OMH_init(void);
+#endif
+#endif
 
 boolean wms_ruim_read_sms
 (

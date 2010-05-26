@@ -2218,6 +2218,7 @@ void wms_cfg_update_msg_info_cache
 #error code not present
 #endif /* FEATURE_GWSMS */
 
+#ifndef CUST_EDITION
 /*===========================================================================
 FUNCTION wms_cfg_check_voicemail_contents
 
@@ -2334,6 +2335,116 @@ boolean wms_cfg_check_voicemail_contents
 
   return is_voicemail;
 } /* wms_cfg_check_voicemail_contents */
+#else
+boolean wms_cfg_check_voicemail_contents
+(
+  wms_message_mode_e_type         msg_mode,
+  const wms_client_message_s_type *pCltMsg,             /* IN  */
+  boolean                         *is_voicemail_active, /* OUT */
+  uint8                           *count                /* OUT */
+)
+{
+    boolean is_voicemail = FALSE;
+    boolean is_vm_active    = FALSE;
+    uint8   num_of_msgs  = 0;
+    wms_raw_ts_data_s_type    *raw_ts;
+
+#ifdef FEATURE_SMS_UDH
+    int j=0;
+#endif /*FEATURE_SMS_UDH*/
+
+    if (NULL == pCltMsg)
+    {
+        return is_voicemail;
+    }
+    raw_ts = &(((wms_client_message_s_type *)pCltMsg)->u.cdma_message.raw_ts);
+    
+    /* Early return for null pointer or
+    ** decode the message to check for voicemail contents.
+    */
+    if ((wms_ts_decode(raw_ts, &client_ts) != WMS_OK_S))
+    {
+        MSG_HIGH("Can not perform voicemail check!",0,0,0);
+        return is_voicemail;
+    }
+
+    /* Check CDMA voicemail */
+    if(msg_mode == WMS_MESSAGE_MODE_CDMA)
+    {
+        if ((client_ts.u.cdma.mask & WMS_MASK_BD_NUM_OF_MSGS) &&
+            ((pCltMsg->u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95) ||
+             (pCltMsg->u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL) ||
+             (pCltMsg->u.cdma_message.teleservice == WMS_TELESERVICE_MWI)))
+        {
+            /* This is a voicemail message */
+            is_voicemail  = TRUE;
+            
+            /* Assign the number of messages */
+            num_of_msgs   = client_ts.u.cdma.num_messages;
+            
+            /* Active means there is voicemail waiting on the server */
+            is_vm_active  = (client_ts.u.cdma.num_messages != 0) ? TRUE : FALSE;
+        }
+    }
+    /* Check GW voicemail */
+    else if ((msg_mode == WMS_MESSAGE_MODE_GW)&&(raw_ts->format == WMS_FORMAT_GW_PP))
+    {
+        if (client_ts.u.gw_pp.tpdu_type == WMS_TPDU_DELIVER &&
+            (client_ts.u.gw_pp.u.deliver.pid == WMS_PID_RETURN_CALL ||
+            ((client_ts.u.gw_pp.u.deliver.dcs.msg_waiting == WMS_GW_MSG_WAITING_STORE 
+              ||client_ts.u.gw_pp.u.deliver.dcs.msg_waiting == WMS_GW_MSG_WAITING_DISCARD) 
+              &&(client_ts.u.gw_pp.u.deliver.dcs.msg_waiting_kind == WMS_GW_MSG_WAITING_VOICEMAIL))))
+        {
+            is_voicemail = TRUE;
+            
+            if (client_ts.u.gw_pp.u.deliver.dcs.msg_waiting != WMS_GW_MSG_WAITING_NONE)
+            {
+                is_vm_active = client_ts.u.gw_pp.u.deliver.dcs.msg_waiting_active;
+            }
+        }
+
+#ifdef FEATURE_CPHS
+#error code not present
+#endif /* FEATURE_CPHS */
+
+#ifdef FEATURE_SMS_UDH
+        for (j=0;j<client_ts.u.gw_pp.u.deliver.user_data.num_headers;j++)
+        {
+            if (client_ts.u.gw_pp.u.deliver.user_data.headers[j].header_id == WMS_UDH_SPECIAL_SM
+                && ((client_ts.u.gw_pp.u.deliver.user_data.headers[j].u.special_sm.msg_waiting == WMS_GW_MSG_WAITING_STORE 
+                || client_ts.u.gw_pp.u.deliver.user_data.headers[j].u.special_sm.msg_waiting == WMS_GW_MSG_WAITING_DISCARD) 
+                &&(client_ts.u.gw_pp.u.deliver.user_data.headers[j].u.special_sm.msg_waiting_kind == WMS_GW_MSG_WAITING_VOICEMAIL)))
+            {
+                is_voicemail = TRUE;
+                
+                /* Get the number of messages */
+                num_of_msgs = client_ts.u.gw_pp.u.deliver.user_data.headers[j].u.
+                            special_sm.message_count;
+                
+                /* Active means messages waiting */
+                is_vm_active = (num_of_msgs != 0) ? TRUE : FALSE;
+            }
+        }
+#endif /*FEATURE_SMS_UDH*/
+    }
+
+    if(is_voicemail == TRUE)
+    {
+        /* make sure passed in pointers are valid before assignment */
+        if(is_voicemail_active != NULL)
+        {
+            *is_voicemail_active = is_vm_active;
+        }
+        
+        if(count != NULL)
+        {
+            *count = num_of_msgs;
+        }
+    }
+    
+    return is_voicemail;
+} /* wms_cfg_check_voicemail_contents */
+#endif
 
 
 /*=========================================================================

@@ -82,7 +82,10 @@ typedef enum {
   UIM_TK_ICON_ID_LIST_TAG          = 0x1F,
   UIM_TK_IMMEDIATE_RSP_TAG         = 0x2B,
   UIM_TK_LANG_TAG                  = 0x2D,
-
+ #ifdef CUST_EDITION   
+  UIM_TK_DATE_TIME_AND_TIME_ZONE_TAG = 0x26, 
+  UIM_TK_ACCESS_TECHNOLOGY_TAG     = 0x3F,  
+#endif /*CUST_EDITION*/
 /* Tag values for the BER tags */
   UIM_TK_PROACTIVE_SIM_COMMAND_TAG = 0xD0,
   UIM_TK_CDMA_SMS_PP_DOWNLOAD_TAG  = 0xD1, 
@@ -133,6 +136,9 @@ typedef enum {
  UIM_TK_CMD_PERFORMED_SUCCESSFULLY_LIMITED_SVC             = 0x06,
  UIM_TK_CMD_PERFORMED_W_MODIFICATION                       = 0x07,
  UIM_TK_REFRESH_PERFORMED_BUT_INDICATED_NAA_WAS_NOT_ACTIVE = 0x08,
+#ifdef CUST_EDITION  
+ UIM_TK_CMD_PERFORMED_BUT_TONE_NOT_PLAYED                  = 0x09,
+#endif /*CUST_EDITION*/ 
  UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER          = 0x10,
  UIM_TK_BWARD_MOVE_IN_PROACTIVE_RUIM_SESSION_REQ_BY_USER   = 0x11,
  UIM_TK_NO_RESPONSE_FROM_USER                              = 0x12,
@@ -196,7 +202,22 @@ typedef enum {
 #define UIM_TK_SECONDS      0x01
 #define UIM_TK_TENTHS_SECS  0x02
 
+#ifdef CUST_EDITION  
+/* Get input command details qualifiers */
+#define UIM_TK_GETINPUT_NUM_ALPHA    0x01
+#define UIM_TK_GETINPUT_GSM_UNICODE  0x02
+#define UIM_TK_GETINPUT_DISPLAY_TEXT 0x04
+#define UIM_TK_GETINPUT_COMPRESS     0x08
+#define UIM_TK_GETINPUT_ALPHA_UNICODE 0x03
 
+/* Local Information command details qualifiers */
+#define UIM_TK_LOCAL_INFO_ACCORD      0x00 
+#define UIM_TK_LOCAL_INFO_DATE_TIME   0x03 
+#define UIM_TK_LOCAL_INFO_LANGUAGE    0x04 
+#define UIM_TK_LOCAL_INFO_ACCESS_TECH 0x06 
+
+#define UIM_TK_ACCESS_TECH_TIA_EIA_IS2000 0x06 
+#endif
 /* Coding for PROFILE COMMAND      */
 /* Byte 1 of TERMINAL PROFILE data */
 #define UIM_TK_B1_PROFILE_DOWNLOAD             0x01
@@ -555,11 +576,22 @@ typedef struct {
 
 /* Location Information - parsed Value field */
 typedef struct {
+#ifndef CUST_EDITION  
   uim_tk_hdr_type hdr;
   dword mcc_mnc;
   word lac;
   word cell_id;
-} uim_tk_locn_info_tlv_type;
+#else
+  uim_tk_hdr_type hdr;   
+  word   mcc;
+  word   imsi_11_12;
+  word   sid;
+  word   nid;
+  word   base_id; 
+  dword  base_lat;
+  dword  base_long; 
+#endif  //#if 0
+} uim_tk_locn_info_tlv_type;  
 
 /* IMEI - parsed Value field */
 # define UIM_TK_IMEI_SIZE 8
@@ -612,6 +644,26 @@ typedef struct {
   word lang;
 } uim_tk_lang_tlv_type;
 
+#ifdef CUST_EDITION  
+/* access_technology - parsed Value field */
+typedef struct {
+  uim_tk_hdr_type hdr;
+  byte access_technology;
+} uim_tk_access_technology_tlv_type;
+
+/* date_time - parsed Value field */
+typedef struct {
+  uim_tk_hdr_type hdr;
+  word  year;
+  word  month;
+  word  day;
+  word  hour;
+  word  minute;
+  word  second;
+  word  zone;
+} uim_tk_date_time_tlv_type;
+#endif
+
 /* This type defines a parsed simple tlv.  A client task can use this type
    to process simple tlv data objects. */
 typedef union {
@@ -639,6 +691,10 @@ typedef union {
   uim_tk_icon_id_tlv_type            icon_id;
   uim_tk_icon_id_list_tlv_type       icon_id_list;
   uim_tk_lang_tlv_type               lang;
+#ifdef CUST_EDITION  
+  uim_tk_access_technology_tlv_type  access_technology;
+  uim_tk_date_time_tlv_type          date_time;
+#endif
 } uim_tk_tlv_type;
 
 /*--------------------------------------------------------------------------
@@ -677,8 +733,12 @@ typedef struct {
                                   is variable.  */
   byte  total_size;            /* This is the size of the entire BER-TLV */
 } uim_tk_pack_ber_tlv_return_type;
-
-
+#ifdef CUST_EDITION  
+// integer to BCD
+#define UTK_INT2BCD(x)  ((x/10)|((x%10) << 4))
+// BCD to integer
+#define UTK_BCD2INT(x)  (((((x) & 0xf0) >> 4) * 10) + ((x) & 0x0f))
+#endif
 /* <EJECT> */
 /*===========================================================================
 

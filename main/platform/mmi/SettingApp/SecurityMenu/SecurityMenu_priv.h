@@ -52,7 +52,6 @@
 
 #include "AEEText.h"
 //#include "AEEPhone.h"
-//#include "AEEAddrBookExt.h"
 #include "AppComFunc.h"
 #include "Appscommon.h"
 //#include "OEMRUIM.h"

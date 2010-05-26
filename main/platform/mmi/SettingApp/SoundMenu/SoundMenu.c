@@ -98,7 +98,6 @@ static void  SoundMenu_Autoanswer(ISoundMenu *pi);
 
 static void  SoundMenu_Ringer_List (ISoundMenu *pi,void*  ringer_id);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -870,7 +869,6 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             pMe->m_bAppIsReady = FALSE;
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
@@ -1032,7 +1030,6 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
             return SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             return SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:

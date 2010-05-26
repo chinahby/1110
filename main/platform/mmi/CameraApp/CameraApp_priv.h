@@ -76,7 +76,6 @@
 #include "AEECamera.h"
 #include "cameraapp_image.brh"
 #include "db.h"
-#include "Vc0848.h"
 #include "Appscommon.brh"
 #include "oemui.h"
 #include "OEMSVC.h"

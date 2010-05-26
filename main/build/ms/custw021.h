@@ -5,9 +5,29 @@ FILE: CUSTSBNAALZ
 
 Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.        
 =========================================================================== */
+#ifndef CUST_EDITION
+#define CUST_EDITION
+#endif
+
+#ifdef CUST_EDITION
+
+#define FEATURE_OEMUI_TASK
+#define FEATURE_COLOR_DISPLAY
+#define FEATURE_ONEMSG_USE_ONEFILE
+#define FEATURE_SMS_UDH
+#define FEATURE_WMS_APP
+#define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+#undef  FEATRUE_SUPPORT_G_SENSOR
+#define FEATURE_CDSMS_CACHE_USELIST
+#define FEATURE_SUPPORT_TORCH
+#define FEATURE_RUIM_PHONEBOOK
+#define FEATURE_ICARD_NO_UI_BASE
+#define FEATURE_LANG_ENGLISH
+#define FEATURE_LANG_CHINESE
+#endif
 
 #ifndef TARGSB2_H
-   #include "targsb2.h"
+   #include "targsbw2.h"
 #endif
 
 #define FEATURE_DATA_STRIP_ATCOP 
@@ -102,7 +122,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_BREW_DEV 
 #define FEATURE_QDSP_USES_NATIVE_MEMCPY 
 #define FEATURE_VBATT_CUT_OFF_3P2V 
-#define FEATURE_PBM_TASK 
+//#define FEATURE_PBM_TASK 
 #define FEATURE_BATT_CBF18150 
 #define FEATURE_DUAL_CLK_RGM 
 #define FEATURE_ENABLE_FLOATING_POINT_ERRORS 
@@ -183,6 +203,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_QHSUSB_DEAD_BATTERY_CHARGING 
 #define FEATURE_XO 
 
+#ifdef CUST_EDITION
+#define FEATRUE_AUTO_SET_NEED_NV_VALUE
+//#define FEATURE_WMS_APP
+#endif
 
 #include "custuim.h"
 #include "custcmx.h"
@@ -202,7 +226,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmcs.h"
 #include "custpmic3.h"
 #include "custefs.h"
-#include "custfmrds.h"
+//#include "custfmrds.h"
 #include "custnvm.h"
 #include "custrex.h"
 #include "custbmp.h"

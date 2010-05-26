@@ -13,7 +13,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 
    See Exported Routines
 
-        Copyright � 1999-2001 QUALCOMM Incorporated.
+        Copyright ?1999-2001 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -27,9 +27,9 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "AEEAddrBook.h"
 #include "OEMAddrBook.h"
 #include "OEMHeap.h"
-#include "AEEPriv.h"
-#include "AEEShell_priv.h"
-#include "AEE_MIF.h"
+//#include "AEEPriv.h"
+//#include "AEEShell_priv.h"
+//#include "AEE_MIF.h"
 #include "AEE_OEM.h"
 #include "AEE_OEMHeap.h"
 #include "AEEStdLib.h"
@@ -139,11 +139,24 @@ static void             AEEAddrRec_Delete(AEEAddrRec * pme);
 static AEEAddrField*    AEEAddrRec_CopyField(AEEAddrField *pDst,AEEAddrField* pSrc);
 static void             FreeAddrField(AEEAddrField *pItems,int nItemCount);  
 static IAddrRec*        AEEAddrRecFromData(IAddrBook *, uint16 wID, AEEAddrCat cat,AEEAddrField *pItems, int nItemCount,int *pnErr);
+#ifdef CUST_EDITION	
+static int     AEEAddrBook_EnumCacheInit( IAddrBook *po, AEEAddrCat wCategory, AEEAddrFieldID wFieldID,  void *pData, uint16 wDataSize);
+static int     AEEAddrBook_EnumNextCache(IAddrBook * po, void **ppCache);
+static uint16  AEEAddrBook_ExtractCache( IAddrBook  *po, void *pCache, AECHAR **ppName, AEEAddrCat *pCat);
+static uint16  AEEAddrBook_GetCapacity(IAddrBook * po);
 
+static int AEEAddrBook_GetCacheinfoByNumber(IAddrBook  *po,
+                                            AECHAR *pwstrNum, 
+                                            AEEAddCacheInfo *pCacheInfo,
+                                            PFN_NUMBERMATCH pfnMactch);
+static int AEEAddrBook_CheckSameRecord(IAddrBook  *po,
+                                            AECHAR *name, 
+                                            boolean *exist);
+#endif /*CUST_EDITION*/
 // Constant Data...
 //
 
-
+#ifdef CUST_EDITION	
 static const VTBL(IAddrBook)  gAEEAddrBookFuncs = {AEEAddrBook_AddRef,
                                                    AEEAddrBook_Release,
                                                    AEEAddrBook_EnumCategoryInit,
@@ -160,8 +173,33 @@ static const VTBL(IAddrBook)  gAEEAddrBookFuncs = {AEEAddrBook_AddRef,
                                                    AEEAddrBook_SetProperties,
                                                    AEEAddrBook_GetProperties,
                                                    AEEAddrBook_GetCategoryName,
-                                                   AEEAddrBook_GetFieldName};
-
+                                                   AEEAddrBook_GetFieldName,
+                                                   AEEAddrBook_EnumCacheInit,
+                                                   AEEAddrBook_EnumNextCache,
+                                                   AEEAddrBook_ExtractCache,
+                                                   AEEAddrBook_GetCapacity,
+                                                   AEEAddrBook_GetCacheinfoByNumber,
+                                                   AEEAddrBook_CheckSameRecord
+							};       
+#else
+static const VTBL(IAddrBook)  gAEEAddrBookFuncs = {AEEAddrBook_AddRef,
+                                                   AEEAddrBook_Release,
+                                                   AEEAddrBook_EnumCategoryInit,
+                                                   AEEAddrBook_EnumNextCategory,
+                                                   AEEAddrBook_EnumFieldsInfoInit,
+                                                   AEEAddrBook_EnumNextFieldsInfo,
+                                                   AEEAddrBook_CreateRec,
+                                                   AEEAddrBook_GetNumRecs,
+                                                   AEEAddrBook_RemoveAllRecs,
+                                                   AEEAddrBook_GetRecByID,
+                                                   AEEAddrBook_EnumRecInit,
+                                                   AEEAddrBook_EnumNextRec,
+                                                   AEEAddrBook_GetLastError,
+                                                   AEEAddrBook_SetProperties,
+                                                   AEEAddrBook_GetProperties,
+                                                   AEEAddrBook_GetCategoryName,
+                                                   AEEAddrBook_GetFieldName};							
+#endif /*CUST_EDITION*/
 static const VTBL(IAddrRec)  gAEEAddrRecFuncs = {AEEAddrRec_AddRef,
                                                  AEEAddrRec_Release,
                                                  AEEAddrRec_GetCategory,
@@ -272,8 +310,9 @@ static IBase * AddrBookCls_New(IShell * pShell, AEECLSID ClsId)
    }
    else
       // Reset properties because they are shared by all instances
+#ifndef WIN32//wlh 临时修改
       IOEMADDR_SetProperties(pAddrBook->m_pIOEMAddrBk,AEE_ADDR_DEFAULT_PROPERTIES);
-
+#endif//WIN32
    return((IBase *)pAddrBook);
 }
 
@@ -1687,4 +1726,174 @@ IAddrRec* AEEAddrRecFromData(IAddrBook *po, uint16 wID, AEEAddrCat cat,AEEAddrFi
    return((IAddrRec*)pr);
 }
 
+/*===========================================================================
+
+FUNCTION : AEEAddrBook_EnumCacheInit
+
+DESCRIPTION: Initialize enumeration of OEM cache data
+             based on a given search criteria
+DEPENDENCIES
+  none
+  
+RETURN VALUE
+  SUCCESS     : if success to initilize
+  EFAILED     : if failed to initilize
+  EBADPARM    : if not pass the parameter
+  ENOTALLOWED : if no cache
+  EBADSTATE   : if cache not be initilized
+  
+SIDE EFFECTS
+  none
+===========================================================================*/
+static int     AEEAddrBook_EnumCacheInit( IAddrBook     *po,
+                                          AEEAddrCat     wCategory,
+                                          AEEAddrFieldID wFieldID, 
+                                          void          *pData,
+                                          uint16         wDataSize)
+{
+   AEEAddrBook *pme = (AEEAddrBook *)po;
+#ifndef WIN32    
+   return (IOEMADDR_EnumCacheInit( pme->m_pIOEMAddrBk, 
+                                   wCategory, 
+                                   wFieldID, 
+                                   pData,
+                                   wDataSize));
+#else
+   return 0;
+#endif
+}// AEEAddrBook_EnumCacheInit
+
+/*===========================================================================
+
+FUNCTION : AEEAddrBook_EnumNextCache
+
+DESCRIPTION: enumeration of OEM cache data
+  po     [in] :
+  ppCahe [out]:
+DEPENDENCIES
+  none
+  
+RETURN VALUE
+  SUCCESS : if success to initilize
+  EFAILED : if failed to initilize
+  EBADPARM: if not pass the parameter
+
+SIDE EFFECTS
+  none
+===========================================================================*/
+static int     AEEAddrBook_EnumNextCache(IAddrBook * po, void **ppCache)
+{
+   AEEAddrBook *pme = (AEEAddrBook *)po;
+#ifndef WIN32  
+   return (IOEMADDR_EnumNextCache( pme->m_pIOEMAddrBk, ppCache));
+#else
+   return 0;
+#endif
+}// AEEAddrBook_EnumNextCache
+
+/*===========================================================================
+
+FUNCTION : AEEAddrBook_ExtractCache
+
+DESCRIPTION: Extract the name info from the cache
+  po     [in] :
+  pCahe  [in] :
+  ppName [out]: 
+  pCat   [out]:
+DEPENDENCIES
+  none
+  
+RETURN VALUE
+  return the record id. return AEE_ADDR_RECID_NULL if error happens
+SIDE EFFECTS
+  none
+===========================================================================*/
+static uint16  AEEAddrBook_ExtractCache( IAddrBook  *po, 
+                                         void       *pCache, 
+                                         AECHAR     **ppName,
+                                         AEEAddrCat *pCat)
+{
+   AEEAddrBook *pme = (AEEAddrBook *)po;
+   
+   return (IOEMADDR_ExtractCache( pme->m_pIOEMAddrBk, pCache, ppName, pCat));
+}// AEEAddrBook_ExtractCache
+
+/*===========================================================================
+
+FUNCTION : AEEAddrBook_GetCapacity
+
+DESCRIPTION: Get the address book capacity
+  po     [in] :
+DEPENDENCIES
+  none
+  
+RETURN VALUE
+  return the capacity
+SIDE EFFECTS
+  none
+===========================================================================*/
+static uint16  AEEAddrBook_GetCapacity(IAddrBook  *po)
+{
+   AEEAddrBook *pme = (AEEAddrBook *)po;
+   
+   return (IOEMADDR_GetCapacity(pme->m_pIOEMAddrBk));
+}// AEEAddrBook_ExtractCache
+
+/*==============================================================================
+函数：
+    AEEAddrBook_GetCacheinfoByNumber
+
+说明：
+    根据号码找出相关 Cache 信息。
+
+参数：
+    po [in]: IAddrBook 接口指针
+    pwstrNum [in]: 用来查询 Cache 信息的号码
+    pCache [in/out]: 用来返回 Cache 信息的缓冲区
+    pfnMactch [in]: 号码匹配规则函数指针
+       
+返回值：
+    查到相关 Cache 信息: SUCCESS
+    查询失败: SUCCESS 以外其它值
+
+备注：
+       
+==============================================================================*/
+static int AEEAddrBook_GetCacheinfoByNumber(IAddrBook  *po,
+                                            AECHAR *pwstrNum, 
+                                            AEEAddCacheInfo *pCacheInfo,
+                                            PFN_NUMBERMATCH pfnMactch)
+{
+    AEEAddrBook *pme = (AEEAddrBook *)po;
+    
+    return (IOEMADDR_GetCacheinfoByNumber(pme->m_pIOEMAddrBk, pwstrNum, pCacheInfo, pfnMactch));
+}// AEEAddrBook_GetCacheinfoByNumber
+
+/*==============================================================================
+函数：
+    AEEAddrBook_CheckSameRecord
+
+说明：
+    重名检查
+
+参数：
+    name [in]: 用来查询 Cache 信息的名字
+    exist [out]: 用来返回 查询结果
+       
+返回值：
+    检查成功: SUCCESS
+    查询失败: SUCCESS 以外其它值
+
+备注：
+       
+==============================================================================*/
+
+static int AEEAddrBook_CheckSameRecord(IAddrBook  *po,
+                                            AECHAR *name, 
+                                            boolean *exist)
+{
+    AEEAddrBook *pme = (AEEAddrBook *)po;
+    
+    return (IOEMADDR_CheckSameRecord(pme->m_pIOEMAddrBk, name, exist));
+}// AEEAddrBook_CheckSameRecord 
 /*===========================================================================*/

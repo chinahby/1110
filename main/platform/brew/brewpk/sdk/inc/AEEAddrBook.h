@@ -8,7 +8,7 @@ SERVICES:  BREW Address Book Interface
 GENERAL DESCRIPTION:
 	Interface definitions, data structures, etc. for BREW Address Book Interface
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright ? 1999-2007 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -38,6 +38,24 @@ typedef  uint16   AEEAddrFieldID;
 
 //Starting range for OEM defined Category IDs
 #define  AEE_ADDR_CAT_USER                (AEE_ADDR_CAT_NONE+0x8000)
+#ifdef CUST_EDITION	
+// ¼ÇÂ¼×éÈºÊôÐÔ
+// VIP
+#define AEE_ADDR_CAT_VIP                (AEE_ADDR_CAT_USER+1)
+
+// Family
+#define AEE_ADDR_CAT_HOME               (AEE_ADDR_CAT_USER+2)
+
+// Colleague
+#define AEE_ADDR_CAT_WORK               (AEE_ADDR_CAT_USER+3)
+
+// other
+#define AEE_ADDR_CAT_OTHER             (AEE_ADDR_CAT_USER+5)
+// Friends
+#define AEE_ADDR_CAT_FRIEND             (AEE_ADDR_CAT_USER+4)
+
+#define AEE_ADDR_CAT_UIM               (AEE_ADDR_CAT_USER+6)
+#endif /*CUST_EDITION*/
 #define  AEE_ADDR_CAT_RESERVED_SIRIUS_1   AEE_ADDR_CAT_USER
 #define  AEE_ADDR_CAT_RESERVED_SIRIUS_32  (AEE_ADDR_CAT_USER+31)
 
@@ -107,7 +125,12 @@ typedef  uint16   AEEAddrFieldID;
 
 #define  AEE_ADDRFIELD_UNIQUE_ID                (AEE_ADDRFIELD_NONE + 46)
 
+
 #define  AEE_ADDRFIELD_RESERVED_SIRIUS_1        (AEE_ADDRFIELD_NONE + 47)
+
+#define  AEE_ADDRFIELD_BIRTHDAY                 (AEE_ADDRFIELD_NONE + 48) 
+#define  AEE_ADDRFIELD_LOCATION                 (AEE_ADDRFIELD_NONE + 49) 
+
 #define  AEE_ADDRFIELD_RESERVED_SIRIUS_150      (AEE_ADDRFIELD_NONE + 196)
 #define  AEE_ADDRFIELD_FIELDID_PRIMARY_PHONE    (AEE_ADDRFIELD_NONE + 197)
 
@@ -132,6 +155,8 @@ typedef  uint16   AEEAddrFieldID;
 
 // User-defined FieldIDs begin here
 #define  AEE_ADDRFIELD_USER                     (AEE_ADDRFIELD_NONE + 0x8000)
+
+#define  AEE_ADDRFIELD_GROUP                    (AEE_ADDRFIELD_USER + 0) 
 
 // This value is deprecated. Use AEE_ADDRFIELD_USER instead
 #define  AEE_ADDRFIELD_USER_DEFINED             AEE_ADDRFIELD_USER_DEPRECATED
@@ -247,9 +272,37 @@ typedef struct
 
 typedef struct _IAddrBook     IAddrBook;
 typedef struct _IAddrRec      IAddrRec;
+#ifdef CUST_EDITION	
+typedef enum
+{
+    NUMBERMATCH_EQUAL,                  // Á½¸öºÅÂëÍêÈ«ÏàµÈ
+    NUMBERMATCH_WSTR1_ISTAIL_OF_WSTR2,  // ºÅÂë1ÊÇºÅÂë2µÄÎ²²¿
+    NUMBERMATCH_WSTR2_ISTAIL_OF_WSTR1,  // ºÅÂë2ÊÇºÅÂë1µÄÎ²²¿
+    NUMBERMATCH_IRRELEVANCE             // Á½¸öºÅÂë²»Ïà¹Ø
+} Numbermatch_e_Type;
 
+// ºÅÂëÆ¥Åä±È½Ïº¯ÊýÀàÐÍ¶¨Òå
+typedef Numbermatch_e_Type (*PFN_NUMBERMATCH)(const AECHAR * wstrNum1, const AECHAR * wstrNum2, int *pMatchChars);
 
+typedef struct _AEEAddCacheInfo   AEEAddCacheInfo;
 
+typedef enum
+{
+    ADDR_STORE_DBFILE = 0,      // ÊÖ»úÊý¾Ý¿âÎÄ¼þ
+    ADDR_STORE_RUIM,            // UIM
+    ADDR_STORE_MAX
+} Addr_Store_e_type;
+
+struct _AEEAddCacheInfo
+{
+    uint16              wRecID;     // ID of the Record
+    AECHAR              *szName;    // Name. If its NULL, its an untitled record
+    AEEAddrCat          nCat;       // Record category id
+    AECHAR              *szNumber;  // all number of record, only used by cache search   
+    Addr_Store_e_type   store;      // record store type
+    AEEAddCacheInfo     *pNext;
+};
+#endif /*CUST_EDITION*/
 /*
    Address Book  Interface
 
@@ -295,6 +348,14 @@ QINTERFACE(IAddrBook)
 
    int              (*GetCategoryName)(IAddrBook *po, AEEAddrCat c, AECHAR *pCatName, int *pnSize);
    int              (*GetFieldName)(IAddrBook *po, AEEAddrFieldID f, AECHAR *pFieldName, int *pnSize);
+#ifdef CUST_EDITION	   
+   int              (*EnumCacheInit)(IAddrBook * po,  AEEAddrCat wCategory, AEEAddrFieldID wFieldID, void *pData, uint16 wDataSize);
+   int              (*EnumNextCache)(IAddrBook * po, void **ppCache);
+   uint16           (*ExtractCache)(IAddrBook * po, void *pCache, AECHAR **ppName, AEEAddrCat *pCat);
+   uint16           (*GetCapacity)(IAddrBook * po);
+   int (*GetCacheinfoByNumber)(IAddrBook *po, AECHAR *pwstrNum, AEEAddCacheInfo *pCacheInfo, PFN_NUMBERMATCH pfnMactch);
+   int (*CheckSameRecord)(IAddrBook  *po, AECHAR *name, boolean *exist);
+#endif /*CUST_EDITION*/   
 };
 
 
@@ -317,6 +378,17 @@ QINTERFACE(IAddrBook)
 #define IADDRBOOK_GetProperties(p)                    GET_PVTBL(p,IAddrBook)->GetProperties(p)
 #define IADDRBOOK_GetCategoryName(p,c,psz,pn)         GET_PVTBL(p,IAddrBook)->GetCategoryName(p,c,psz,pn)
 #define IADDRBOOK_GetFieldName(p,c,psz,pn)            GET_PVTBL(p,IAddrBook)->GetFieldName(p,c,psz,pn)
+#ifdef CUST_EDITION	
+#define IADDRBOOK_EnumCacheInit(p,cat,field,data,wLen)    GET_PVTBL(p,IAddrBook)->EnumCacheInit(p,cat,field,data,wLen)
+#define IADDRBOOK_EnumNextCache(p,pCache)                      GET_PVTBL(p,IAddrBook)->EnumNextCache(p,pCache)
+#define IADDRBOOK_ExtractCache(p,pCache,ppName,pCat)    GET_PVTBL(p,IAddrBook)->ExtractCache(p,pCache,ppName,pCat)
+#define IADDRBOOK_GetCapacity(p)                                         GET_PVTBL(p,IAddrBook)->GetCapacity(p)
+#define IADDRBOOK_GetCacheinfoByNumber(p,pNum,pInfo,pfn)        \
+                  GET_PVTBL(p,IAddrBook)->GetCacheinfoByNumber(p,pNum,pInfo,pfn)
+                
+#define IADDRBOOK_CheckSameRecord(p,name,exist)        \
+                  GET_PVTBL(p,IAddrBook)->CheckSameRecord(p,name,exist)
+#endif /*CUST_EDITION*/				  
 
 /* 
    Address Record Interface

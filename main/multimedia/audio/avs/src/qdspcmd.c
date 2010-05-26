@@ -31493,3 +31493,113 @@ qdsp_cmd_status_type qdsp_cmd_set_slowtalk_config (
   return (QDSP_CMD_SUCCESS);
 #endif /* QDSP_ezHearEnableFlag */
 }
+
+
+#ifdef CUST_EDITION
+/*===========================================================================
+
+FUNCTION iquicktest_mic_receiver_loopback_isr
+
+DESCRIPTION
+  This function processes the vocoders encoder and decoder interrupt.
+  This function is same to qdsp_cmd_up_packet_loopback_isr().
+  This function is only used to iquicktest.
+
+DEPENDENCIES
+  This function depends on all vocoder initialization taking place first.
+    
+RETURN VALUE
+  None. 
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+
+void iquicktest_mic_receiver_loopback_isr ( void )
+{
+  uint16  enc_semaphore_flag;         
+  /* flag indicating if packet can be read    */
+  uint16  dec_semaphore_flag;         
+  /* flag indicating if packet can be read    */
+  static uint16  frame_rate;    
+  /* frame rate of Tx packet                 */
+  static uint16  tx_packet[17];          
+  /* tx packet data buffer                   */ 
+  
+  /* Read the encPacketReg and set the semaphore flag         */
+  enc_semaphore_flag = qdsp_read(QDSP_encPacketReg);
+  /* Read the decPacketReg and set the semaphore flag         */
+  dec_semaphore_flag = qdsp_read(QDSP_decPacketReg);
+ 
+  /* Check whether this is an encoder interrupt */
+  if ( enc_semaphore_flag != 0 )
+  {
+    /* semaphore was not 0 so read out frame rate                      */
+                 
+    /* Read the frame rate from the DSP                */
+    frame_rate = qdsp_read(QDSP_encPacketRate);
+
+    qdsp_block_read(QDSP_encPacketBuf, 0, tx_packet, 17, FALSE);
+   
+    /* Host clears the semaphore flag when read                        */
+    qdsp_write(QDSP_encPacketReg, 0); /* Clear the semaphore */
+
+    /* Diagnostic transmit frame rate counters */
+    switch (frame_rate) {
+       case QDSP_RATE_EIGHTH_V:
+          qdsp_tx_8++;
+          break;
+       case QDSP_RATE_QUARTER_V:
+          qdsp_tx_4++;
+          break;
+       case QDSP_RATE_HALF_V:
+          qdsp_tx_2++;
+          break;
+       case QDSP_RATE_FULL_V:
+          qdsp_tx_1++;
+          break;
+       default:
+          break;
+    }
+ 
+    qdsp_write(QDSP_encMinRate, QDSP_RATE_EIGHTH_V);
+ 
+    qdsp_write(QDSP_encMaxRate, QDSP_RATE_FULL_V);
+
+  } /* end if ( enc_semaphore_flag != 0 ) */
+ 
+ 
+  /* Check whether this is a decoder interrupt */
+  if ( dec_semaphore_flag != 0 )
+  {
+    /* semaphore was not 0 so write out frame rate  */
+    qdsp_write(QDSP_decPacketRate, frame_rate);
+          
+    qdsp_block_write(QDSP_decPacketBuf, 0, tx_packet, 17, FALSE);
+          
+    /* Host clears the count to indicate a valid packet is 
+       available for DSP */
+    qdsp_write(QDSP_decPacketReg, 0);
+
+    /* Diagnostic receive frame rate counters */
+    switch (frame_rate) {
+       case QDSP_RATE_EIGHTH_V:
+          qdsp_rx_8++;
+          break;
+       case QDSP_RATE_QUARTER_V:
+          qdsp_rx_4++;
+          break;
+       case QDSP_RATE_HALF_V:
+          qdsp_rx_2++;
+          break;
+       case QDSP_RATE_FULL_V:
+          qdsp_rx_1++;
+          break;
+       default:
+          break;
+    }
+  } /* end if ( dec_semaphore_flag != 0 ) */
+} /* iquicktest_mic_receiver_loopback_isr() */
+#endif
+

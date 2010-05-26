@@ -115,6 +115,37 @@ else
    endif
 endif
 
+
+ifeq ($(USES_MMI), yes)
+
+MODELNAME = $(BUILD)#  #Product Model english name.
+MODELVERSION = $(MODELNAME)_V0.1
+CUSTOMER_NAME = common# Change "common" to the customer name you will sell to
+MODEL_RF_NV = rf_$(MODELNAME)_nv.h#
+CUST_SVC_NV = svc_$(CUSTOMER_NAME)_nv.h#
+CUST_OEM_NV = oem_$(CUSTOMER_NAME)_nv.h#
+endif
+
+#应用的标签
+ifeq ($(USES_MMI),yes)
+USES_REND=no
+USES_T9=yes
+USES_DISP_SIZE=176X220#
+USES_KEYGUARD=yes
+USES_BREW_AEE_SRC=yes
+USES_HANWANG=no
+
+MMI_ADD_FM=no
+MMI_ADD_MUSICPLAYER=no
+MMI_ADD_FLDDBG=no
+MMI_ADD_MEDIAGALLERY=no
+MMI_ADD_CAMERA=no
+MMI_ADD_SPORT=no
+MMI_ADD_RECORDER=no
+#语言添加
+EXTLANG1=NO
+EXTLANG2=NO
+endif
 #-------------------------------------------------------------------------------
 # Core includes
 #-------------------------------------------------------------------------------
@@ -133,6 +164,11 @@ export MIBIB
 #-------------------------------------------------------------------------------
 include dmss_objects.min
 
+#包含自定义的菜单
+ifeq ($(USES_MMI), yes)
+include $(MMIDIR)/mmi.min
+endif
+
 build_start:
 	@$(BTIME) -start build_time.bt -b
 
@@ -144,7 +180,7 @@ build_end: dmss   # added dependency so timing for parallel builds is accurate
 #-------------------------------------------------------------------------------
 # INSERT OBJECTS MACROS HERE
 # Build the full object list for this target
-OBJECTS = \
+OBJECTS += \
                 $(REX_OBJS) \
                 $(ADC_OBJS)  \
                 $(ADIE_OBJS) \
@@ -569,6 +605,27 @@ ifeq ($(USES_HWTC), yes)
     endif
 
     include $(HWTC)/hwtc.min
+endif
+
+#部分OBJS不在对应的min文件里添加,而是跑这里了
+ifeq ($(USES_MMI),yes)
+
+ifeq ($(USES_T9),yes)
+        OBJECTS += $(T9_OBJS)
+endif
+
+ifeq ($(USES_REND),yes)
+        OBJECTS += $(REND_OBJS)
+endif
+
+ifeq ($(USES_KEYGUARD),yes)
+				OBJECTS += $(KEYGUARD_OBJS)
+endif
+
+ifeq ($(USES_BREW_AEE_SRC),yes)
+        OBJECTS += $(AEE_OBJS)
+endif
+
 endif
 
 ifeq ($(USES_MDDI),yes)

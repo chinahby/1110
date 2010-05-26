@@ -19,6 +19,7 @@ GENERAL DESCRIPTION:
 #include "AEE_OEM.h"
 #include "AEEModTable.h"
 #include "AEEStdLib.h"
+#ifndef CUST_EDITION
 #ifndef FEATURE_UIONE_HDK
 #ifdef FEATURE_UI_CORE
 #include "CoreApp.h"
@@ -26,6 +27,7 @@ GENERAL DESCRIPTION:
 #  include "uistate.h" // DMSS header file
 #endif/* FEATURE_UI_CORE */
 #endif /* FEATURE_UIONE_HDK */
+#endif
 #include "disp.h"
 #include "OEMSVC.h"
 #ifdef FEATURE_UIONE_HDK
@@ -213,7 +215,7 @@ int SVC_disp_update(IDIB *pDib, const AEERect *prc)
 #ifndef FEATURE_UIONE_HDK
 #endif // !FEATURE_UIONE_HDK
 
-
+#ifndef CUST_EDITION
    // Temporary workaround to prevent BREW updating UI screen.
 #ifndef FEATURE_UIONE_HDK
 #ifdef FEATURE_UI_CORE
@@ -222,7 +224,7 @@ int SVC_disp_update(IDIB *pDib, const AEERect *prc)
     if (ui_current_state() != UI_BREW_S) return 0;
 #endif /* FEATURE_UI_CORE */
 #endif /* FEATURE_UIONE_HDK */
-
+#endif
    if ((IDIB*)0 == pDib || (AEERect*)0 == prc) {
       return 0;
    }

@@ -1,6 +1,0 @@
-
-; Setup access to BREW source directories
-y.spath + \\grif\QSC1100_docs\ASW\BREW3.1.5.169\libdev\src\AEE
-y.spath + \\grif\QSC1100_docs\ASW\BREW3.1.5.169\libdev\src\fonts
-enddo
-

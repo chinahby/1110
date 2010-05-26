@@ -75,10 +75,6 @@
 #define UI_MULTI_STOP_SIG   0x0100UL  // Multitone has ended
 #define UI_RING_SIG         0x0200UL  // End of a ring from SND task
 
-#ifdef FEATURE_SUPPORT_VC0848
-#define UI_VC_SIG           0x0400UL /* return from vc task */
-#endif
-
 #ifdef FEATURE_TOUCHPAD
 #define UI_GET_PEN_SIG      0x0800UL /* return from vc task */
 #endif

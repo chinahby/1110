@@ -38,7 +38,9 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
 ===========================================================================*/
 #include "OEMDeviceInfoEx.h"
 #include "AEE_OEMDispatch.h"
-
+#ifdef CUST_EDITION	
+#include "OEMConfig.h"
+#endif /*CUST_EDITION*/
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS

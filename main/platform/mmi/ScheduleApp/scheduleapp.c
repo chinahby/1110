@@ -23,12 +23,6 @@
 ==============================================================================*/
 #include "ScheduleApp_priv.h"
 #include "AEECM.h"
-
-#ifdef FEATURE_SUPPORT_VC0848
-#include "OEMSVC.h"
-#include "Vc0848.h"
-#endif
-
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -73,7 +67,6 @@ static void     Schedule_APPIsReadyTimer(void *pme);
 
 static boolean  Schedule_CanAlert(CScheduleApp *pme);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 
 /*==============================================================================
                                  全局数据
@@ -511,7 +504,6 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             pme->m_bAppIsReady = FALSE;
             as = (AEEAppStart*)dwParam;
             pme->m_rc = as->rc;
@@ -627,7 +619,6 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
             return CScheduleApp_RouteDialogEvent(pme,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             if (wParam == OEM_IME_DIALOG)
             {
                 return TRUE;
@@ -678,17 +669,6 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
 
         case EVT_ALARM:
             pme->ALERTID = wParam;
-#ifdef FEATURE_SUPPORT_VC0848           
-            switch(VC_GetCurrentDevice())
-            {
-                case VC_DEV_CAMERA:
-                    ISHELL_SendEvent(pme->m_pShell, AEECLSID_APP_CAMERA, EVT_ALARM, 0, 0);
-                    break;
-     
-                default:
-                    break;                      
-            }
-#endif
             if(Schedule_CanAlert(pme))
             {
                 Cal_HandleAlarm(pme, wParam);
@@ -924,17 +904,6 @@ static boolean Schedule_CanAlert(CScheduleApp *pme)
         ICM_Release(pICM);
         pICM = NULL;
     }
-#ifdef FEATURE_SUPPORT_VC0848
-    if(DEVICE_CAMERA_STATE_ON == GetDeviceState(DEVICE_TYPE_CAMERA))
-    {       
-        return FALSE;
-    }
-
-    if(DEVICE_MP4_STATE_ON == GetDeviceState(DEVICE_TYPE_MP4))
-    {       
-        return FALSE;
-    }
-#endif
 #ifdef FEATURE_APP_RECORDER
     if(TRUE == recorder_GetRunningFlag())
     {

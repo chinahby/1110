@@ -158,6 +158,10 @@ static void          DB_MarkRecordDelete(OEMDBase *pdb, word  wRecId, AEE_DBErro
 
 static OEMDBase *    gpActiveDBs = NULL;
 
+#ifdef CUST_EDITION	  
+int giNumPbRead = 0;
+#endif /*CUST_EDITION*/
+
 /*===========================================================================
 =============== Begin OEM_DB Interface Methods ============================
 ===========================================================================*/
@@ -817,7 +821,9 @@ static byte * DB_GetRecord(OEMCONTEXT pDBContext,word wRecId,AEE_DBRecInfo*   pR
       SetDBError(pDBErr, AEE_DB_ERR_NO_MEMORY);
       return(NULL);
    }
-   
+#ifdef CUST_EDITION	  
+   giNumPbRead = RecHeaderBuf.wRecSize;
+#endif /*CUST_EDITION*/
    //Read the record from the file into the allocated buffer
    //No need to check if a record with NULL Rec ID can be found here as that condition
    //is ruled out at the start of the function.

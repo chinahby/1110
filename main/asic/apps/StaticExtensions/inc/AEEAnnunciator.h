@@ -44,6 +44,7 @@ typedef struct IAnnunciator IAnnunciator;
 // Global Constant Declarations
 //---------------------------------------------------------------------
 // Annunciator Fields
+#ifndef CUST_EDITION
 #define ANNUN_FIELD_OPERATOR  0   /* PLMN in GSM; other network info in CDMA */
 #define ANNUN_FIELD_MSG       1
 #define ANNUN_FIELD_NET       2
@@ -63,7 +64,48 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_VT        16
 #define ANNUN_FIELD_HSDPA     17  //Field to indicate HSDPA/HSUPA service
 #define ANNUN_FIELD_BCMCS     18  //BCMCS annunciator
-
+#else
+#if 1
+/*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
+#define ANNUN_FIELD_RSSI                       0   /*Airplane Mode/RSSI*/
+#define ANNUN_FIELD_WAP                       1   /*Wap/1x/Roam*/
+#define ANNUN_FIELD_LOCKSTATUS           2   /*Voice Privacy/Lockstatus*/
+#define ANNUN_FIELD_CALL                      3   /*Loudspeaker/Mute/Emergency/Inuse/Missed Call*/
+#define ANNUN_FIELD_SMS                       4   /*VMail/SMS/SMS Memory Full*/
+#define ANNUN_FIELD_SPORTS                  5   /*Push/Sport*/
+#define ANNUN_FIELD_FMRADIO                6   /*FMRadio/Headset*/
+#define ANNUN_FIELD_BLUETOOTH            7   /*BT Trans/BT Headset/BT On*/
+#define ANNUN_FIELD_ALARM                    8   /*Timer/Alarm/Schedule*/
+#define ANNUN_FIELD_MMS                       9   /*MMS Full/MMS Unread/MMS Unreceive/Push*/
+#define ANNUN_FIELD_RINGTONE              10   /*Ringtone*/
+#define ANNUN_FIELD_BATT                     11   /*Battery*/
+#define ANNUN_FIELD_HSDPA     17  //Field to indicate HSDPA/HSUPA service
+#define ANNUN_FIELD_BCMCS     18  //BCMCS annunciator
+#else
+#define ANNUN_FIELD_RSSI       0
+#define ANNUN_FIELD_RING       1
+#define ANNUN_FIELD_SILENT   2 
+#define ANNUN_FIELD_ALERT     3
+#define ANNUN_FIELD_VIBRATE 4
+#define ANNUN_FIELD_HEADSET 5
+#define ANNUN_FIELD_FMRADIO 6
+#define ANNUN_FIELD_VOICE_PRIVACY 7
+#define ANNUN_FIELD_CALLFORWARD 8
+#define ANNUN_FIELD_MISSEDCALL    9
+#define ANNUN_FIELD_VMAIL 10
+#define ANNUN_FIELD_SMSMEMORYFULL  11
+#define ANNUN_FIELD_SMS  12
+#define ANNUN_FIELD_ALARM 13
+#define ANNUN_FIELD_ROAM   14
+#define ANNUN_FIELD_BATT  15
+#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
+#define ANNUN_FIELD_MUTE 16
+#define ANNUN_FIELD_HSDPA     17  //Field to indicate HSDPA/HSUPA service
+#define ANNUN_FIELD_BCMCS     18  //BCMCS annunciator
+#endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
+#endif
+//end added
+#endif
 
 // Possible State of each annunciator field
 #define ANNUN_STATE_OFF       0
@@ -71,9 +113,50 @@ typedef struct IAnnunciator IAnnunciator;
 
 // Mask to get/set the blink bit in the state
 #define ANNUN_STATE_BLINK         0x80000000
+#define ANNUN_STATE_UNBLINK     0x7FFFFFFF
 
+#ifdef CUST_EDITION
 // Mask to strip the blink bit from the state
 #define ANNUN_STATE_BLINK_UNMASK  0x7FFFFFFF
+
+/*Currently, the maxium number of different states in one field is 6*/
+// Mask to get the highest priority state
+#define ANNUN_FIRST_STATE   0x00000004
+#define ANNUN_FIRST_STATE_OFF   0xFFFFFFFA
+
+// Mask to get the second highest priority state
+#define ANNUN_SECOND_STATE   0x00000008
+#define ANNUN_SECOND_STATE_OFF   0xFFFFFFF6
+
+// Mask to get the third highest priority state
+#define ANNUN_THIRD_STATE   0x00000010
+#define ANNUN_THIRD_STATE_OFF   0xFFFFFFEE
+
+// Mask to get the forth highest priority state
+#define ANNUN_FORTH_STATE   0x00000020
+#define ANNUN_FORTH_STATE_OFF   0xFFFFFFDE
+
+// Mask to get the fifth highest priority state
+#define ANNUN_FIFTH_STATE   0x00000040
+#define ANNUN_FIFTH_STATE_OFF   0xFFFFFFBE
+
+// Mask to get the sixth highest priority state
+#define ANNUN_SIXTH_STATE   0x00000080
+#define ANNUN_SIXTH_STATE_OFF   0xFFFFFF7E
+
+// Mask to get the seven highest priority state
+#define ANNUN_SEVENTH_STATE   0x00000100
+#define ANNUN_SEVENTH_STATE_OFF   0xFFFFFEFE
+
+// Mask to know if the state is going to turn a state off
+#define ANNUN_TURN_OFF_STATE    0x00000002
+
+// Mask to know whether the buffer bits contains information
+#define ANNUN_STATE_BUFFERED_MASK  0x000FFC00
+// Mask to clear the buffer bits
+#define ANNUN_STATE_BUFFERED_UNMASK  0x000003FF
+#endif
+//end added
 
 // Field specific custom states
 
@@ -96,11 +179,92 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_CS_PS     3
 
 // RSSI and HDR fields
-#define ANNUN_STATE_RSSI_0        1
-#define ANNUN_STATE_RSSI_1        2
-#define ANNUN_STATE_RSSI_2        3
-#define ANNUN_STATE_RSSI_3        4
-#define ANNUN_STATE_RSSI_4        5
+#ifdef CUST_EDITION  
+#define ANNUN_STATE_AIR_MODE_ON     ANNUN_FIRST_STATE
+#define ANNUN_STATE_AIR_MODE_OFF   ANNUN_FIRST_STATE_OFF
+#define ANNUN_STATE_RSSI_NO_SERV    ANNUN_SECOND_STATE
+#define ANNUN_STATE_RSSI_0                ANNUN_THIRD_STATE
+#define ANNUN_STATE_RSSI_1                ANNUN_FORTH_STATE
+#define ANNUN_STATE_RSSI_2                ANNUN_FIFTH_STATE
+#define ANNUN_STATE_RSSI_3                ANNUN_SIXTH_STATE
+#define ANNUN_STATE_RSSI_4                ANNUN_SEVENTH_STATE
+
+/*ANNUN_FIELD_WAP*/
+#define ANNUN_STATE_WAP_ON      ANNUN_FIRST_STATE
+#define ANNUN_STATE_WAP_OFF    ANNUN_FIRST_STATE_OFF
+#define ANNUN_STATE_1X_ON         ANNUN_SECOND_STATE
+#define ANNUN_STATE_1X_OFF       ANNUN_SECOND_STATE_OFF
+#define ANNUN_STATE_ROAM_ON    ANNUN_THIRD_STATE
+#define ANNUN_STATE_ROAM_OFF   ANNUN_THIRD_STATE_OFF
+
+/*ANNUN_FIELD_LOCKSTATUS*/
+#define ANNUN_STATE_LOCKSTATUS_ON    ANNUN_FIRST_STATE
+#define ANNUN_STATE_LOCKSTATUS_OFF   ANNUN_FIRST_STATE_OFF
+#define ANNUN_STATE_VOICE_PRIV_ON     ANNUN_SECOND_STATE
+#define ANNUN_STATE_VOICE_PRIV_OFF   ANNUN_SECOND_STATE_OFF
+
+/*ANNUN_FIELD_CALL*/
+#define ANNUN_STATE_CALL_EMERGENCY_ON        ANNUN_FIRST_STATE
+#define ANNUN_STATE_CALL_EMERGENCY_OFF      ANNUN_FIRST_STATE_OFF
+#define ANNUN_STATE_CALL_MUTE_ON                  ANNUN_SECOND_STATE
+#define ANNUN_STATE_CALL_MUTE_OFF                ANNUN_SECOND_STATE_OFF
+#define ANNUN_STATE_CALL_LOUDSPEAKER_ON     ANNUN_THIRD_STATE
+#define ANNUN_STATE_CALL_LOUDSPEAKER_OFF    ANNUN_THIRD_STATE_OFF
+#define ANNUN_STATE_CALL_INUSE_ON                 ANNUN_FORTH_STATE
+#define ANNUN_STATE_CALL_INUSE_OFF               ANNUN_FORTH_STATE_OFF
+#define ANNUN_STATE_CALL_MISSEDCALL_ON       ANNUN_FIFTH_STATE
+#define ANNUN_STATE_CALL_MISSEDCALL_OFF      ANNUN_FIFTH_STATE_OFF
+
+/*ANNUN_FIELD_SMS*/
+#define ANNUN_STATE_SMS_MAILFULL_ON    ANNUN_FIRST_STATE
+#define ANNUN_STATE_SMS_MAILFULL_OFF  ANNUN_FIRST_STATE_OFF
+#define ANNUN_STATE_SMS_VMAIL_ON        ANNUN_SECOND_STATE
+#define ANNUN_STATE_SMS_VMAIL_OFF       ANNUN_SECOND_STATE_OFF
+#define ANNUN_STATE_SMS_SMAIL_ON         ANNUN_THIRD_STATE
+#define ANNUN_STATE_SMS_SMAIL_OFF       ANNUN_THIRD_STATE_OFF
+
+/*ANNUN_FIELD_SPORT*/
+#define ANNUN_STATE_SPORTS_ON     ANNUN_FIRST_STATE
+#define ANNUN_STATE_SPORTS_OFF   ANNUN_FIRST_STATE_OFF
+
+/*ANNUN_FIELD_FMRADIO*/
+#define ANNUN_STATE_FMRADIO_ON    ANNUN_FIRST_STATE
+#define ANNUN_STATE_FMRADIO_OFF  ANNUN_FIRST_STATE_OFF
+#define ANNUN_STATE_HEADSET_ON    ANNUN_SECOND_STATE
+#define ANNUN_STATE_HEADSET_OFF  ANNUN_SECOND_STATE_OFF
+
+/*ANNUN_FIELD_BLUETOOTH*/
+#define ANNUN_STATE_BT_TRANS_ON       ANNUN_FIRST_STATE
+#define ANNUN_STATE_BT_TRANS_OFF     ANNUN_FIRST_STATE_OFF
+#define ANNUN_STATE_BT_HEADSET_ON   ANNUN_SECOND_STATE
+#define ANNUN_STATE_BT_HEADSET_OFF  ANNUN_SECOND_STATE_OFF
+#define ANNUN_STATE_BT_ON                  ANNUN_THIRD_STATE
+#define ANNUN_STATE_BT_OFF                ANNUN_THIRD_STATE_OFF
+
+/*ANNUN_FIELD_ALARM*/
+#define ANNUN_STATE_TIMER_ON          ANNUN_FIRST_STATE
+#define ANNUN_STATE_TIMER_OFF        ANNUN_FIRST_STATE_OFF
+#define ANNUN_STATE_ALARM_ON         ANNUN_SECOND_STATE
+#define ANNUN_STATE_ALARM_OFF       ANNUN_SECOND_STATE_OFF
+#define ANNUN_STATE_SCHEDULE_ON    ANNUN_THIRD_STATE
+#define ANNUN_STATE_SCHEDULE_OFF  ANNUN_THIRD_STATE_OFF
+
+/*ANNUN_FIELD_MMS*/
+#define ANNUN_MMS_FULL_ON              ANNUN_FIRST_STATE
+#define ANNUN_MMS_FULL_OFF             ANNUN_FIRST_STATE_OFF
+#define ANNUN_MMS_UNREAD_ON          ANNUN_SECOND_STATE
+#define ANNUN_MMS_UNREAD_OFF        ANNUN_SECOND_STATE_OFF
+#define ANNUN_MMS_UNRECEIVE_ON     ANNUN_THIRD_STATE
+#define ANNUN_MMS_UNRECEIVE_OFF   ANNUN_THIRD_STATE_OFF
+#define ANNUN_STATE_PUSH_ON           ANNUN_FORTH_STATE
+#define ANNUN_STATE_PUSH_OFF          ANNUN_FORTH_STATE_OFF
+
+/*ANNUN_FIELD_RINGTONE*/
+#define ANNUN_STATE_RINGTONE_ALERT       ANNUN_FIRST_STATE
+#define ANNUN_STATE_RINGTONE_SILENT      ANNUN_SECOND_STATE
+#define ANNUN_STATE_RINGTONE_VIBRING    ANNUN_THIRD_STATE
+#define ANNUN_STATE_RINGTONE_VIBRATOR  ANNUN_FORTH_STATE
+#endif
 
 // In Use field
 #define ANNUN_STATE_IN_USE    1
@@ -154,6 +318,10 @@ AEEINTERFACE(IAnnunciator)
    int     (*EnableAnnunciatorBar)   (IAnnunciator * pMe, AEECLSID clsid, boolean bOn);
    int     (*GetAnnunciatorBarSize)  (IAnnunciator * pMe, AEECLSID clsid, AEERect *pRec);
    void    (*EnableBlink) (IAnnunciator * pMe, boolean bEnable);
+#ifdef CUST_EDITION  
+   int     (*EnableAnnunciatorBarEx) (IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw);
+   int     (*SetUnblinkTimer) (IAnnunciator * pMe, uint32 nAnnunID, uint32 nState, uint32 nTimeMs); //added by chengxiao 2009.03.10
+#endif
 };
 
 //---------------------------------------------------------------------
@@ -170,6 +338,10 @@ AEEINTERFACE(IAnnunciator)
 #define IANNUNCIATOR_EnableAnnunciatorBar(p,cls,b)   AEEGETPVTBL((p),IAnnunciator)->EnableAnnunciatorBar((p),(cls),(b))
 #define IANNUNCIATOR_GetAnnunciatorBarSize(p,cls,pr) AEEGETPVTBL((p),IAnnunciator)->GetAnnunciatorBarSize((p),(cls),(pr))
 #define IANNUNCIATOR_EnableBlink(p,b) AEEGETPVTBL((p),IAnnunciator)->EnableBlink((p),(b))
+#ifdef CUST_EDITION  
+#define IANNUNCIATOR_EnableAnnunciatorBarEx(p,cls,b,c)   AEEGETPVTBL((p),IAnnunciator)->EnableAnnunciatorBarEx((p),(cls),(b),(c))
+#define IANNUNCIATOR_SetUnblinkTimer(p,id,s,n)   AEEGETPVTBL((p),IAnnunciator)->SetUnblinkTimer((p),(id),(s),(n))
+#endif
 
 /*============================================================================
    DATA STRUCTURE DOCUMENTATION

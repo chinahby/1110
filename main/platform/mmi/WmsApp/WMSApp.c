@@ -26,10 +26,6 @@
 #include "WMSUtil.h"          // Applet工具模块头文件
 #include "OEMClassIDs.h"
 
-#ifdef FEATURE_SUPPORT_VC0848
-#include "Vc0848.h"
-#include "OEMSVC.h"
-#endif
 #ifdef WIN32
 void wms_cacheinfolist_getcounts(wms_box_e_type box, 
                                  uint16 *pNew, 
@@ -213,7 +209,6 @@ static void WmsApp_UpdateMemoryStatus(WmsApp *pMe, wms_memory_status_s_type *ptr
 static uint16 WmsApp_GetMsgICONID(wms_cache_info_node * pNode);
 
 static void WmsApp_ReservedMsgTimer(void * pUser);
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 
 /*==============================================================================
                               全局数据
@@ -881,7 +876,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 return FALSE;
             }
-			Rendering_UpdateEx();//wlh 20090409 add
             as = (AEEAppStart*)dwParam;
     
             pMe->m_eAppStatus = WMSAPP_RUNNING;
@@ -984,7 +978,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 return FALSE;
             }
-			Rendering_UpdateEx();//wlh 20090409 add
             as = (AEEAppStart*)dwParam;
     
             pMe->m_eAppStatus = WMSAPP_RUNNING;
@@ -1065,7 +1058,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 			{
 				return TRUE;
 			}
-			Rendering_UpdateEx();//wlh 20090409 add
             (void) WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
             return TRUE;
@@ -2505,7 +2497,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
         // WMS applet is already running
         return EFAILED;
     }
-    
+#if defined(FEATURE_UIM_TOOLKIT)
     if (STARTMETHOD_REFRESH == eStype)
     {
         pMe->m_refresh_in_progress = TRUE;
@@ -2518,7 +2510,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
         
         return SUCCESS;
     }
-
+#endif
     // 发送特殊短信
     if (STARTMETHOD_SENDSPECMESSAGE == eStype)
     {
@@ -5084,22 +5076,6 @@ void WmsApp_PlaySMSAlert(WmsApp * pMe, boolean bsmsin)
          return;
      }
 #endif
-#endif
-#ifdef FEATURE_SUPPORT_VC0848
-    switch(VC_GetCurrentDevice())
-    {
-        case VC_DEV_CAMERA:               
-            ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_ALARM, 0, 0);
-            if(DEVICE_CAMERA_STATE_ON == GetDeviceState(DEVICE_TYPE_CAMERA))
-            {
-                ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE);
-                return;
-            }
-            break;
-
-        default:
-            break;                      
-    }
 #endif
     (void) ICONFIG_GetItem(pMe->m_pConfig,
                     CFGI_PROFILE_CUR_NUMBER,

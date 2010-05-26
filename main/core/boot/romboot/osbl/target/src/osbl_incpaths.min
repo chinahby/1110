@@ -169,3 +169,7 @@ endif
 OSBL_ALL_INCLUDES = $(addprefix -I, $(ALL_PATHS))
 
 ALL_INCLUDES = $(OSBL_ALL_INCLUDES)
+
+#lucid Add for Keypad support int OSBL
+KPD           = $(ROOT)/core/iodevices/kpd/src
+ALL_INCLUDES += -I$(KPD)#

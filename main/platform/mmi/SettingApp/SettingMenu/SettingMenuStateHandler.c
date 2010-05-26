@@ -123,10 +123,6 @@ static NextFSMAction Sound_StateAutoAnswerSubHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StatePlaneModeHandler(CSettingMenu *pMe);
 #endif
 
-#ifdef FEATURE_USB_FUNCTION_SELECT
-static NextFSMAction SettingMenu_StateUSBFunctionHandler(CSettingMenu *pMe);
-#endif //FEATURE_USB_FUNCTION_SELECT
-
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -296,14 +292,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_PLANEMODE:
             retVal = SettingMenu_StatePlaneModeHandler(pMe);
             break; 
-#endif            
-
-#ifdef FEATURE_USB_FUNCTION_SELECT
-        case SETTINGMENUST_USBFUNCTION:
-            retVal = SettingMenu_StateUSBFunctionHandler(pMe);
-            break; 
-#endif //FEATURE_USB_FUNCTION_SELECT
-        
+#endif
         default:
             ASSERT_NOT_REACHABLE;
     }
@@ -560,13 +549,6 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_PLANEMODE)
             return NFSMACTION_CONTINUE;
 #endif
-        
-#ifdef FEATURE_USB_FUNCTION_SELECT
-        case DLGRET_USB_FUNCTION:
-            MOVE_TO_STATE(SETTINGMENUST_USBFUNCTION)
-            return NFSMACTION_CONTINUE;
-#endif //FEATURE_USB_FUNCTION_SELECT
-        
         case DLGRET_LANGUAGE:
             MOVE_TO_STATE(SETTINGMENUST_LANGUAGE)
             return NFSMACTION_CONTINUE;
@@ -1856,53 +1838,3 @@ static NextFSMAction SettingMenu_StatePlaneModeHandler(CSettingMenu *pMe)
 } // SettingMenu_StatePlaneModeHandler
 #endif 
 
-#ifdef FEATURE_USB_FUNCTION_SELECT
-/*==============================================================================
-函数：
-       SettingMenu_StateUSBFunctionHandler
-说明：
-       SETTINGMENUST_USBFUNCTION 状态处理函数
-
-参数：
-       pMe [in]：指向DisplayMenu Applet对象结构的指针。该结构包含小程序的特定信息。
-
-返回值：
-       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
-       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
-
-备注：
-
-==============================================================================*/
-static NextFSMAction SettingMenu_StateUSBFunctionHandler(CSettingMenu *pMe)
-{
-    if (NULL == pMe)
-    {
-        return NFSMACTION_WAIT;
-    }
-
-    switch(pMe->m_eDlgRet)
-    {
-        case DLGRET_CREATE:
-            pMe->m_bNotOverwriteDlgRet = FALSE;
-            SettingMenu_ShowDialog(pMe, IDD_USB_FUNCTION);
-            return NFSMACTION_WAIT;
-
-        case DLGRET_CANCELED:
-        case DLGRET_MSGBOX_OK:            
-            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
-            return NFSMACTION_CONTINUE;
-
-        case DLGRET_WARNING:
-            
-            pMe->m_bNotOverwriteDlgRet = FALSE;
-            pMe->m_msg_id = IDS_DONE;
-            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
-            return NFSMACTION_WAIT;
-
-        default:
-            ASSERT_NOT_REACHABLE;
-    }
-
-    return NFSMACTION_WAIT;
-} // SettingMenu_StateUSBFunctionHandler
-#endif //FEATURE_USB_FUNCTION_SELECT

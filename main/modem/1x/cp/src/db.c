@@ -108,8 +108,10 @@ LOCAL byte         db_ltm_off;  /* Local time offset from System Time      */
 LOCAL boolean      db_daylt;    /* Daylight savings time indicator         */
 LOCAL db_dmss_state_type  db_dmss_state; /* Current system state           */
 LOCAL byte         db_power;    /* Current mobile output power level       */
+LOCAL boolean      db_privacy_mode; /* Current privacy mode                */
 LOCAL word         db_rssi;     /* Current RSSI level                      */
 LOCAL word         db_cdma_rssi; /* Current CDMA RSSI level                */
+LOCAL byte          db_cdma_ecio; 
 LOCAL word         db_battery_level; /* Current battery level              */
 LOCAL word         db_temperature;   /* Current temperature                */
 LOCAL db_rf_mode_type db_rf_mode;    /* Current RF mode                    */
@@ -123,11 +125,26 @@ LOCAL word         db_sleep_mode;    /* Is sleep enabled?                  */
 LOCAL word         db_sleep_active;  /* Is sleep currently occurring?      */
 LOCAL word         db_acq_mode;      /* Type of CDMA acquisition desired   */
 LOCAL boolean      db_13k_voc_available;/* Flag to indicate 13k capability */
+LOCAL boolean      db_voice_privacy;    /* Flag to indicate Voice Privacy  */
 LOCAL byte         db_bs_p_rev;      /* Base station's protocol rev level  */
 LOCAL db_voice_as_data_type db_voice_as_data; /* Answer next call as data  */
-#ifdef FEATURE_GPSONE
-#error code not present
-#endif /* FEATURE_GPSONE */
+LOCAL db_lcd_type db_lcd_t;
+#ifdef CUST_EDITION  
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+LOCAL byte         db_uiminitmask;          /* 卡上数据初始化掩码，由UI设置, UIM 负责清除   */
+LOCAL boolean      db_uimsmsinited;         /* 卡上短信是否初始化完毕                       */
+LOCAL boolean      db_uimaddinited;         /* 卡上电话本是否初始化完毕                     */
+LOCAL boolean      db_uimsmsadd_init_done;  /* 卡上短信及电话本初始化是否完毕               */
+#endif
+LOCAL boolean      db_pwkcleared;           /* 开机按键是否清除                             */
+LOCAL boolean      db_poweronchk;           /* 开机检查是否通过                             */
+LOCAL db_powerup_type      db_poweruptype;  /* 开机方式                                     */
+LOCAL boolean      db_bRefreshing = FALSE;
+#ifdef FEATURE_SID_LOCK
+LOCAL byte            db_sid_lock;
+#endif
+#endif /*CUST_EDITION*/  
+LOCAL db_capture_type  db_capture;
 
 /*===========================================================================
 
@@ -274,6 +291,13 @@ void db_put
       /* Add notifications here */
       break;
 
+    case DB_PRIVACY_MODE:
+      db_privacy_mode = value_ptr->privacy_mode;
+      MSG_LOW("DB_PRIVACY_MODE updated to %d",db_privacy_mode,0,0);
+
+      /* Add notifiactions here */
+      break;
+
     case DB_RSSI:
       db_rssi = value_ptr->rssi;
       MSG_LOW("DB_RSSI updated to %d",db_rssi,0,0);
@@ -287,6 +311,10 @@ void db_put
 
       /* Add notifications here */
       break;
+    case DB_CDMA_ECIO:
+      db_cdma_ecio = value_ptr->cdma_ecio;
+     MSG_LOW("cdma_ecio updated to %d",db_cdma_ecio,0,0);
+	  break;
 
     case DB_BATTERY_LEVEL:
       db_battery_level = value_ptr->battery_level;
@@ -372,6 +400,13 @@ void db_put
       /* Add notifications here */
       break;
 
+    case DB_VOICE_PRIVACY:
+      db_voice_privacy = value_ptr->voice_privacy;
+      MSG_LOW("DB_VOICE_PRIVACY updated to %d",db_voice_privacy,0,0);
+
+      /* Add notifications here */
+      break;
+
     case DB_BS_P_REV:
       db_bs_p_rev = value_ptr->bs_p_rev;
       MSG_LOW("DB_BS_P_REV updated to %d",db_bs_p_rev,0,0);
@@ -385,13 +420,59 @@ void db_put
 
       /* Add notifications here */
       break;
+
+      case DB_LCD: 
+        db_lcd_t = value_ptr->db_lcd;
+        MSG_LOW("DB_LCD  updated to %d",db_lcd_t,0,0);
+
+        break;
 #ifdef FEATURE_GPSONE
 #error code not present
 #endif /* FEATURE_GPSONE */
 
-    default:
-      ERR_FATAL("Bad item parameter %d ",item, 0,0);
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+    case DB_UIMINIT_MASK:
+      db_uiminitmask = (db_uiminitmask | value_ptr->db_uiminitmask);
+      break;
+      
+    case DB_UIMSMSINIT:
+      db_uimsmsinited = value_ptr->db_uimsmsinited;
+      break;
+      
+    case DB_UIMADDINIT:
+      db_uimaddinited = value_ptr->db_uimaddinited;
+      break;
+#endif
 
+    case DB_PWKCLEARED:
+        db_pwkcleared = value_ptr->db_pwkcleared;
+        break;
+    
+    case DB_POWERONCHK:
+        db_poweronchk = value_ptr->db_poweronchk;
+        break;
+        
+    case DB_POWERUPTYPE:
+        db_poweruptype = value_ptr->db_poweruptype;
+        break;
+
+    case DB_REFRESHING:
+      db_bRefreshing = value_ptr->bRefreshing;
+      break;
+#ifdef FEATURE_SID_LOCK
+    case DB_SID_LOCK:
+        db_sid_lock = value_ptr->b_sid_lock;
+        break;
+#endif
+    case DB_CAPTURE_WALLPER:
+        db_capture = value_ptr->b_capture;
+        break;
+
+    default:
+#ifndef BUILD_BOOT_CHAIN 
+	ERR_FATAL("Bad item parameter %d ",item, 0,0);
+#endif
+        break;
   } /* end switch on item */
 
 } /*lint !e818 */
@@ -485,6 +566,10 @@ void db_get
       value_ptr->power               = db_power;
       break;
 
+    case DB_PRIVACY_MODE:
+      value_ptr->privacy_mode        = db_privacy_mode;
+      break;
+
     case DB_RSSI:
       value_ptr->rssi                = db_rssi;
       break;
@@ -492,6 +577,10 @@ void db_get
     case DB_CDMA_RSSI:
       value_ptr->cdma_rssi           = db_cdma_rssi;
       break;
+
+    case DB_CDMA_ECIO:
+      value_ptr->cdma_ecio        = db_cdma_ecio;
+        break;
 
     case DB_BATTERY_LEVEL:
       value_ptr->battery_level       = db_battery_level;
@@ -541,6 +630,10 @@ void db_get
         value_ptr->voc13k_available = db_13k_voc_available;
         break;
 
+    case DB_VOICE_PRIVACY:
+        value_ptr->voice_privacy    = db_voice_privacy;
+        break;
+
     case DB_BS_P_REV:
         value_ptr->bs_p_rev         = db_bs_p_rev;
         break;
@@ -549,13 +642,57 @@ void db_get
         value_ptr->voice_as_data    = db_voice_as_data;
         break;
 
+    case DB_LCD:
+       value_ptr->db_lcd= db_lcd_t;
+       break;
+    
 #ifdef FEATURE_GPSONE
 #error code not present
 #endif /* FEATURE_GPSONE */
 
-    default:
-      ERR_FATAL("Bad item parameter %d ",item, 0,0);
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+    case DB_UIMINIT_MASK:
+        value_ptr->db_uiminitmask  = db_uiminitmask;
+        break;
+        
+    case DB_UIMSMSINIT:
+        value_ptr->db_uimsmsinited  = db_uimsmsinited;
+        break;
+        
+    case DB_UIMADDINIT:
+        value_ptr->db_uimaddinited  = db_uimaddinited;
+        break;
+#endif
 
+    case DB_PWKCLEARED:
+        value_ptr->db_pwkcleared = db_pwkcleared;
+        break;
+    
+    case DB_POWERONCHK:
+        value_ptr->db_poweronchk = db_poweronchk;
+        break;
+        
+    case DB_POWERUPTYPE:
+        value_ptr->db_poweruptype = db_poweruptype;
+        break;
+
+    case DB_REFRESHING:
+      value_ptr->bRefreshing = db_bRefreshing;
+      break;
+#ifdef FEATURE_SID_LOCK
+    case DB_SID_LOCK:
+        value_ptr->b_sid_lock = db_sid_lock;
+        break;
+#endif
+    case DB_CAPTURE_WALLPER:
+        value_ptr->b_capture = db_capture;
+        break;
+    
+    default:
+#ifndef BUILD_BOOT_CHAIN 
+	ERR_FATAL("Bad item parameter %d ",item, 0,0);
+#endif
+        break;
   } /* end switch on item */
 
 } /* end db_get */
@@ -653,9 +790,17 @@ void db_init( void )
         db_power = 0;
         break;
 
+      case DB_PRIVACY_MODE:
+        db_privacy_mode = FALSE;
+        break;
+
       case DB_RSSI:
         db_rssi = 0;
         break;
+
+      case DB_CDMA_ECIO:
+	 db_cdma_ecio = 0;
+        break;	
 
       case DB_CDMA_RSSI:
         db_cdma_rssi = 0;
@@ -709,6 +854,10 @@ void db_init( void )
         db_13k_voc_available = FALSE;
         break;
 
+      case DB_VOICE_PRIVACY:
+        db_voice_privacy = FALSE;
+        break;
+
       case DB_BS_P_REV:
         db_bs_p_rev = 1;
         break;
@@ -717,16 +866,97 @@ void db_init( void )
         db_voice_as_data = DB_VOICE_AS_DATA_NEVER;
         break;
 
+      case DB_LCD:
+        db_lcd_t = other_lcd;
+        break;
+
 #ifdef FEATURE_GPSONE
 #error code not present
 #endif /* FEATURE_GPSONE */
 
-      default:
-        ERR_FATAL("Bad item parameter %d ",index,0,0);
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+      case DB_UIMINIT_MASK:
+        db_uiminitmask = 0;
+        break;
 
+      case DB_UIMSMSINIT:
+        db_uimsmsinited = FALSE;
+        break;
+
+      case DB_UIMADDINIT:
+        db_uimaddinited = FALSE;
+        break;
+#endif
+	
+      case DB_PWKCLEARED:
+        db_pwkcleared = FALSE;
+        break;
+      
+      case DB_POWERONCHK:
+        db_poweronchk = FALSE;
+        break;
+        
+      case DB_POWERUPTYPE:
+        db_poweruptype = DB_POWERUP_NONE;
+        break;
+	
+      case DB_REFRESHING:
+        db_bRefreshing = FALSE;
+        break;
+#ifdef FEATURE_SID_LOCK
+      case DB_SID_LOCK:
+        db_sid_lock = 0;
+        break;
+#endif
+    case DB_CAPTURE_WALLPER:
+        db_capture = DB_CAPTURE_NONE;
+        break;
+	default:
+
+#ifndef BUILD_BOOT_CHAIN 
+        ERR_FATAL("Bad item parameter %d ",index,0,0);
+#endif
+        break;      
     } /* end switch on item */
 
   } /* End loop for each item */
 
 } /* end db_init() */
+
+#ifdef CUST_EDITION
+#if defined(FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK)
+#if defined( FEATURE_RUIM_PHONEBOOK) && !defined(FEATURE_MINI_DLOADER)
+#include "Oemui.h"
+boolean PhoneBookCache_IsIninited(void)
+{
+    db_items_value_type  db_value;    
+    if (IsRunAsUIMVersion())
+    {
+        db_get(DB_UIMADDINIT, &db_value);
+        return db_value.db_uimaddinited;
+    }
+    else
+    {
+        return TRUE;
+    }
+}
+#endif /* FEATURE_RUIM_PHONEBOOK */
+
+void db_setuiminitmask(byte mask)
+{
+    db_uiminitmask = (db_uiminitmask | mask);
+}
+
+byte db_getuiminitmask(void)
+{
+    return db_uiminitmask;
+}
+
+// 注意此函数只能由 uim task 调用
+void db_removeuiminitmask(byte mask)
+{
+    db_uiminitmask = (db_uiminitmask & (~mask));
+}
+#endif /* FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK*/
+#endif  /*CUST_EDITION*/
 

@@ -35,6 +35,38 @@ typedef enum {
    IRUIM_CHV2 = 2  // Card Holder Verification 2.
 } AEECHVType;
 
+#ifdef CUST_EDITION	
+typedef enum {
+  Active_Callforward_Busy = 11,//激活忙转接
+  De_Active_Callforward_Busy=13,//取消忙转接
+  Active_Callforward_Default=21,//激活未接通转接
+  De_Active_Callforward_Default=23,//取消未接通转接
+  Active_Callforward_No_Answer=31,//激活无应答转接
+  De_Active_Callforward_No_Answer=33,//取消无应答转接
+  Active_Callforward_Unconditional=41,//激活无条件转接
+  De_Active_Callforward_Unconditional=43,//取消无条件转接
+  Active_CallWaiting=45,//激活呼叫等待
+  De_Active_CallWaiting=47,//取消呼叫等待
+#if defined(FEATURE_CARRIER_INDONESIA)
+   //Register Section
+   REGISTER_CFB                  = 5,
+   DE_REGISTER_CFB            = 9,
+   
+   REGISTER_CFD                  = 15,
+   REGISTER_CFD_TO_VM     = 17,
+   DE_REGISTER_CFD            = 19,
+
+   REGISTER_CFNA                = 25,
+   REGISTER_CFNA_TO_VM   = 27,
+   DE_REGISTER_CFNA          = 29,
+
+   REGISTER_CFU                  = 35,
+   REGISTER_CFU_TO_VM     = 37,
+   DE_REGISTER_CFU            = 39,
+#endif  
+} OEMRUIM_PreferCallState;
+#endif /*CUST_EDITION*/
+
 typedef struct IRUIM IRUIM;
 
 AEEINTERFACE(IRUIM) {
@@ -50,6 +82,10 @@ AEEINTERFACE(IRUIM) {
                                                               const char *pPin);
    int (*GetPrefLang)(IRUIM *pIRUIM, int *pLang, int *pEncoding);
    int (*GetId)(IRUIM *pIRUIM, char *pId, int *pnLen);
+#ifdef CUST_EDITION	   
+   int (*Get_Feature_Code)(IRUIM *pIRUIM,byte *Buf,int  Lable);
+   int (*Read_Svc_P_Name)(IRUIM *pIRUIM,AECHAR *Buf);
+#endif /*CUST_EDITION*/   
 };
 
 #define IRUIM_AddRef(p)                \
@@ -77,8 +113,14 @@ AEEINTERFACE(IRUIM) {
 #define IRUIM_GetPrefLang(p,pil,pit)   \
                            AEEGETPVTBL((p),IRUIM)->GetPrefLang((p),(pil),(pit))
 #define IRUIM_GetId(p,pi,pn)           \
-                           AEEGETPVTBL((p),IRUIM)->GetId((p),(pi),(pn))
+                           AEEGETPVTBL((p),IRUIM)->GetId((p),(pi),(pn)) 
+#ifdef CUST_EDITION							   
+#define IRUIM_Get_Feature_Code(p,pi,pn)           \
+                           AEEGETPVTBL((p),IRUIM)->Get_Feature_Code((p),(pi),(pn))
 
+#define IRUIM_Read_Svc_P_Name(p,pi)           \
+                           AEEGETPVTBL((p),IRUIM)->Read_Svc_P_Name((p),(pi))
+#endif /*CUST_EDITION*/						   
 /* Preferred language encoding */
 #define  AEERUIM_LANG_ENCODING_OCTET            0  // Octet, unspecified:
                                                    // 8 bits/char
@@ -91,6 +133,9 @@ AEEINTERFACE(IRUIM) {
 #define  AEERUIM_LANG_ENCODING_LATINHEBREW   0x07  // Latin/Hebrew: 8 bits/char
 #define  AEERUIM_LANG_ENCODING_LATIN         0x08  // Latin: 8 bits/char
 
+#ifdef CUST_EDITION	
+#define UIM_CDMA_HOME_SERVICE_SIZE 35
+#endif /*CUST_EDITION*/
 /*=======================================================================
   INTERFACES   DOCUMENTATION
 =======================================================================

@@ -14,7 +14,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 
    See Exported Routines
 
-        Copyright © 1999-2004 QUALCOMM Incorporated.
+        Copyright ?1999-2004 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -56,7 +56,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #ifdef FEATURE_UIONE_HDK
 #define CH_RECS_PER_TYPE           80
 #else
-#define CH_RECS_PER_TYPE           10
+#define CH_RECS_PER_TYPE           20 //10
 #endif // FEATURE_UIONE_HDK
 #else /* CATEGORIZED_CALLHISTORY */
 #define CH_RECS_PER_TYPE           20
@@ -179,7 +179,8 @@ static int OEMCallHistory_UpdateEntry(ICallHistory *pICallHistory, const AEECall
 static int OEMCallHistory_Clear(ICallHistory *po);
 static int OEMCallHistory_ClearEntry(ICallHistory *po);
 static int OEMCallHistory_Notify(ICallHistory *po, AEECallback *pcb);
-
+static int OEMCallHistory_GetRecCountByType(ICallHistory *po, uint16 type);
+static AECHAR* OEMCallHistory_GetLastRecNumByType(ICallHistory *po, uint16 type);
 // Non-Interface Functions:
 static void SysObjectCB(void *pUsr);
 static void MarkAsUpdated(OEMCallHistory *pme);
@@ -220,6 +221,8 @@ static int ItemVerify_CallActive(byte *pData, uint16 nDataLen);
 static int ItemVerify_DurationKnown(byte *pData, uint16 nDataLen); 
 static int ItemVerify_NotViewed(byte *pData, uint16 nDataLen); 
 static int ItemVerify_TechType(byte *pData, uint16 nDataLen);
+static int ItemVerify_Counter(byte *pData, uint16 nDataLen);
+
 
 static int ItemVerify_WStrField(byte *pData, uint16 nDataLen); 
 static int ItemVerify_BooleanField(byte *pData, uint16 nDataLen); 
@@ -246,13 +249,17 @@ static VTBL(ICallHistory)  gOEMCallHistoryFuncs =
    OEMCallHistory_Clear,
    OEMCallHistory_EnumInitByCallType,
    OEMCallHistory_ClearEntry,
-   OEMCallHistory_Notify
+   OEMCallHistory_Notify,
+   OEMCallHistory_GetRecCountByType,
+   OEMCallHistory_GetLastRecNumByType
 };
 
 typedef int (*PFNRAWDATA)(byte* pData, uint16 nDataLen);
 
 // Table of functions to verify the different entry types
-static PFNRAWDATA gpVerifyFns[AEECALLHISTORY_FIELD_TECH_TYPE -
+//static PFNRAWDATA gpVerifyFns[AEECALLHISTORY_FIELD_TECH_TYPE -
+//                             AEECALLHISTORY_FIELD_NONE] = 
+static PFNRAWDATA gpVerifyFns[AEECALLHISTORY_FIELD_MAX -
                              AEECALLHISTORY_FIELD_NONE] = 
 {
    ItemVerify_CallType,
@@ -270,6 +277,7 @@ static PFNRAWDATA gpVerifyFns[AEECALLHISTORY_FIELD_TECH_TYPE -
    ItemVerify_DurationKnown,
    ItemVerify_NotViewed,
    ItemVerify_TechType
+   ,ItemVerify_Counter
 };
 
 static uint16 gwFTNumberEx = AEECALLHISTORY_FIELD_NUMBER_EX;
@@ -1180,7 +1188,7 @@ Prototype:
 Parameters:
  
     po: [in]:  Pointer to an ICallHistory interface object
-	pcb: [in]: Pointer to an AEECallback 
+    pcb: [in]: Pointer to an AEECallback 
 
 Return Value:
 
@@ -1218,6 +1226,139 @@ static int OEMCallHistory_Notify(ICallHistory *po, AEECallback *pcb)
    return SUCCESS;
 }
 
+/*======================================================================= 
+
+Function: OEMCallHistory_GetRecCountByType
+
+Description: 
+   This function returns the record count of a certain type.
+
+Prototype:
+   
+Parameters:
+ 
+    po: [in]:  Pointer to an ICallHistory interface object
+    type: [in]: call type
+
+Return Value:
+    int: record count.
+
+Comments:  
+   None
+
+Side Effects: 
+   None
+
+See Also: 
+   None
+
+=======================================================================*/
+static int OEMCallHistory_GetRecCountByType(ICallHistory *po, uint16 type)
+{
+   OEMCallHistory *pme = (OEMCallHistory*)po;
+   int nCount = 0;
+   
+   if(type == AEECALLHISTORY_CALL_TYPE_TO ||
+        type == AEECALLHISTORY_CALL_TYPE_FROM ||
+        type == AEECALLHISTORY_CALL_TYPE_MISSED)
+   {/*get the count of a certain type*/
+        nCount = GetRecordCountByType(pme, type); 
+   }
+   else /*AEECALLHISTORY_CALL_TYPE_ALL*/
+   {/*get the total count of all type*/
+        nCount += GetRecordCountByType(pme, AEECALLHISTORY_CALL_TYPE_TO);
+        nCount += GetRecordCountByType(pme, AEECALLHISTORY_CALL_TYPE_FROM);
+        nCount += GetRecordCountByType(pme, AEECALLHISTORY_CALL_TYPE_MISSED);
+   }
+   return nCount;
+}
+
+/*======================================================================= 
+
+Function: OEMCallHistory_GetLastRecNumByType
+
+Description: 
+   This function returns the last record number of a certain type.
+
+Prototype:
+   
+Parameters:
+ 
+    po: [in]:  Pointer to an ICallHistory interface object
+    type: [in]: call type
+
+Return Value:
+    AECHAR: pointer of the last record number.
+
+Comments:  
+   The return pointer need to free after using.
+
+Side Effects: 
+   None
+
+See Also: 
+   None
+
+=======================================================================*/
+static AECHAR* OEMCallHistory_GetLastRecNumByType(ICallHistory *po, uint16 type)
+{
+    AEECallHistoryEntry *pEntry = NULL;
+    AECHAR wstrBuffer[AEECALLHISTORY_MAXDIGITS];
+    AECHAR *pwstrNumber = NULL;
+    int nFieldNum = 0, nRet = 0;
+    boolean bRecordExisted = FALSE;
+   
+    switch(type)
+    {
+        case AEECALLHISTORY_CALL_TYPE_TO:
+        case AEECALLHISTORY_CALL_TYPE_FROM:
+        case AEECALLHISTORY_CALL_TYPE_MISSED:
+        {
+            if(OEMCallHistory_EnumInitByCallType(po, type) != SUCCESS)
+            {
+                return NULL;
+            }
+        }
+        break;
+
+        case AEECALLHISTORY_CALL_TYPE_ALL:
+        {
+            if(OEMCallHistory_EnumInit(po) != SUCCESS)
+            {
+                return NULL;
+            }
+        }
+        break;
+
+        default:
+            return NULL;
+    }
+   
+    pEntry = (AEECallHistoryEntry *)OEMCallHistory_EnumNext(po, &nRet);
+    while (NULL != pEntry)
+    {
+        for (nFieldNum=0; nFieldNum<pEntry->wNumFields; nFieldNum++)
+        {
+            if(pEntry->pFields[nFieldNum].wID == AEECALLHISTORY_FIELD_NUMBER)
+            {
+                if(pEntry->pFields[nFieldNum].pData != NULL)
+                {
+                    MEMSET(wstrBuffer, 0, sizeof(wstrBuffer));
+                    (void) STRTOWSTR((char*)pEntry->pFields[nFieldNum].pData, wstrBuffer, sizeof(wstrBuffer));
+                    pwstrNumber = WSTRDUP(wstrBuffer);
+                    bRecordExisted = TRUE;
+                    break;
+                }
+            }
+        }
+        if (bRecordExisted)
+        {
+            break;
+        }
+        pEntry = (AEECallHistoryEntry *)OEMCallHistory_EnumNext(po, &nRet);
+    }
+    return (AECHAR*)pwstrNumber;
+}
 /**********************************************************************
 **
 ** NON-INTERFACE/HELPER FUNCTION DEFINITIONS
@@ -1889,8 +2030,8 @@ static int VerifyFields(AEECallHistoryEntry *pEntry)
 
          /* Verify that the parameter they're sending us is one of the 
          ** built-in field ids */
-         if (pEntry->pFields[i].wID < AEECALLHISTORY_FIELD_CALL_TYPE ||
-             pEntry->pFields[i].wID > AEECALLHISTORY_FIELD_TECH_TYPE) {
+         if (pEntry->pFields[i].wID < AEECALLHISTORY_FIELD_CALL_TYPE || 
+             pEntry->pFields[i].wID > AEECALLHISTORY_FIELD_MAX) {
             return EBADPARM;
          }
 
@@ -2484,6 +2625,13 @@ static int ItemVerify_TechType(byte *pData, uint16 nDataLen)
    return SUCCESS;
 }
 
+static int ItemVerify_Counter(byte *pData, uint16 nDataLen)
+{
+   if (nDataLen != sizeof(uint16))
+      return EFAILED;
+
+   return SUCCESS;
+}
 
 static int ItemVerify_WStrField(byte *pData, uint16 nDataLen) 
 {

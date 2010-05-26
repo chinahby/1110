@@ -40,10 +40,6 @@
 #endif 
 #include "AEETelephoneTypes.h"
 
-#ifdef FEATURE_SUPPORT_VC0848
-#include "Vc0848.h"
-#endif
-
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -213,7 +209,6 @@ static int CallApp_BtCallNumber(ICallApp *p, AECHAR *number);
 static void CallApp_AddToCFGCallTimer(CCallApp *pMe, uint16 call_type, uint32 durationS);
 //static void CallApp_Process_Batty_Msg(CCallApp  *pMe, uint16  msg_id);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -1124,7 +1119,6 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh 20090409 add
             pMe->m_userCanceled = FALSE;
             pMe->m_eCurState = STATE_INIT;
             ASSERT(dwParam != 0);
@@ -1168,19 +1162,6 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 
             CallApp_SetupCallAudio(pMe);
             // 开始CallApp状态机
-
-#ifdef FEATURE_SUPPORT_VC0848
-            // 848设备与来电的并发业务处理
-            switch(VC_GetCurrentDevice())
-            {
-                case VC_DEV_CAMERA:
-                    ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_APP_INTERRUPT, 0, 0);
-                    break;
-     
-                default:
-                    break;                      
-            }
-#endif
             
             CallApp_RunFSM(pMe);
             return TRUE;
@@ -1350,7 +1331,6 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             
         case EVT_APP_RESUME:
             ASSERT(dwParam != 0);
-			Rendering_UpdateEx();//wlh 20090409 add
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
 
@@ -1465,7 +1445,6 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
         //    return TRUE;
 
         case EVT_DIALOG_INIT:
-			//Rendering_UpdateEx();//wlh 20090409 add
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
             return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);

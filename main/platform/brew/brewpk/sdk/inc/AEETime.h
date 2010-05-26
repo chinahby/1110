@@ -48,7 +48,15 @@ typedef int8 ITField;
 #define TP_NO_MSECONDS     0x00000004     // Do not show milliseconds in STOPWATCH...
 #define TP_NOEDIT_AMPM     0x00000008     // Do not allow them to edit AM/PM...
 #define TP_LEFT_JUSTIFY    0x00000010     // Left Justify the Time
+#ifdef CUST_EDITION	
+#define TP_24_FORMAT       0x00000020
 
+
+#define TP_OEM_COUNTDOWNCTL_EDITABLE    0x00000001
+#define TP_OEM_COUNTDOWNCTL_12_FORMAT   0x00000002
+
+#define TP_OEM_CUSTOM_BG_COLOR   0x00000004
+#endif /*CUST_EDITION*/
 #define GTS_SECS        0x0001
 #define GTS_AMPM        0x0002
 #define GTS_MSECS       0x0004
@@ -82,6 +90,10 @@ QINTERFACE(ITimeCtl)
    void        (*SetFont)      (ITimeCtl * pITimeCtl, AEEFont fntNum, AEEFont fntLetter);
    boolean     (*GetFont)      (ITimeCtl * pITimeCtl, AEEFont *pfntNum, AEEFont *pfntLetter);
    void        (*SizeToFit)    (ITimeCtl * pITimeCtl, AEERect *prc);
+#ifdef CUST_EDITION	
+    void    (*SetOemProperties) (ITimeCtl * po, uint32 dwProp);
+    void     (*SetBgColor) (ITimeCtl * po, RGBVAL nBgColor);
+#endif /*CUST_EDITION*/	
 };
 
 //---------------------------------------------------------------------
@@ -109,7 +121,10 @@ QINTERFACE(ITimeCtl)
 #define ITIMECTL_SetFont(p, f1, f2)               GET_PVTBL(p, ITimeCtl)->SetFont(p,f1,f2)
 #define ITIMECTL_GetFont(p, f1, f2)               GET_PVTBL(p, ITimeCtl)->GetFont(p,f1,f2)
 #define ITIMECTL_SizeToFit(p, f1)                 GET_PVTBL(p, ITimeCtl)->SizeToFit(p,f1)
-
+#ifdef CUST_EDITION	
+#define ITIMECTL_SetOemProperties(p,v)            GET_PVTBL(p,ITimeCtl)->SetOemProperties(p,v)
+#define ITIMECTL_SetBgColor(p,n)                   GET_PVTBL(p,ITimeCtl)->SetBgColor(p,n)
+#endif /*CUST_EDITION*/
 #endif    // AEETIME_H
 /*============================================================================
    DATA STRUCTURE DOCUMENTATION

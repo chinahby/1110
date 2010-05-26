@@ -88,7 +88,6 @@ static void DisplayMenu_FreeAppData(CDisplayMenu *pMe);
 
 static void DisplayMenu_RunFSM(CDisplayMenu *pMe);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -713,7 +712,6 @@ static boolean DisplayMenu_HandleEvent(IDisplayMenu *pi,
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             pMe->m_bAppIsReady = FALSE;
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
@@ -777,7 +775,6 @@ static boolean DisplayMenu_HandleEvent(IDisplayMenu *pi,
             return DisplayMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             return DisplayMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:

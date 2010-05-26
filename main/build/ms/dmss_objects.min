@@ -84,13 +84,17 @@ endif
 
 ifeq ($(USES_BREW_APPMGR), yes)
 ifneq ($(USES_MANGO_BREW), yes)
+ifneq ($(USES_MMI), yes)
   include $(BREW_APPMGR)/BREWAppMgr.min
+endif  
 endif
 endif
 
 ifeq ($(USES_CAMCORDER),yes)
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI), yes)
   include $(CAMCORDER_APP_SRC)/qcamcorder.min
+endif  
 endif
   include $(CAMCORDER_SERVICES_RECORDER_LOWTIER_SRC)/record_lotier.min
   include $(CAMCORDER_SERVICES_RECORDER_COMMON_SRC)/record_common.min
@@ -102,7 +106,9 @@ endif
 
 ##MANGO
 ifeq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
 include $(BREWPORT)/brewport.min
+endif
 endif
 
 ifneq ($(USES_ZBLD),yes)
@@ -121,7 +127,9 @@ ifeq ($(USES_QBT), yes)
   #
   ifeq ($(USES_IBT), yes)
    ifneq ($(USES_MANGO_UI),yes)
-    include $(BTHOSTSTATAPP_SRC)/bthoststatapp.min
+    ifneq ($(USES_MMI), yes)
+      include $(BTHOSTSTATAPP_SRC)/bthoststatapp.min
+    endif  
    endif
     include $(BTHOSTIBT_SRC)/bthostibt.min
 endif
@@ -150,8 +158,10 @@ ifeq ($(USES_CAMERA), yes)
   include $(CAMSENSOR_MT9D112_MU2M0YU)/camsensor_mt9d112_mu2m0yu.min
   include $(QCAMCOMMON)/qcamcommon.min
 ifneq ($(USES_MANGO_UI),yes)
+ ifneq ($(USES_MMI), yes)
   include $(QCAMERA)/qcamera.min
   include $(QALBUM)/qalbum.min
+ endif
 endif
   include $(CAMERA_MOBICAT)/camera_mobicat.min
 endif
@@ -163,17 +173,23 @@ include $(CM)/cm.min
 include $(CMX)/cmx.min
 ifneq ($(USES_UIONE),yes)
 ifneq ($(USES_MANGO_UI),yes)
+ ifneq ($(USES_MMI), yes)
   include $(CONTACT)/contact.min
   include $(DIALER)/DialerApp.min
   include $(RECENTCALLS)/recentcalls.min
+ endif
 endif
 endif
+ifneq ($(USES_MMI), yes)
 include $(COREAPP)/coreapp.min
+endif
 ifneq ($(USES_THINUI),yes)
 ifneq ($(USES_MANGO_UI),yes)
+ ifneq ($(USES_MMI), yes)
    include $(NETSETTINGS)/netsettings.min
 	include $(AUXSETTINGS)/AUXsettings.min
    include $(FMRADIOAPP)/FMRadioApp.min
+ endif
    endif
 endif
 ifeq ($(USES_STATIC_RAPTOR), yes)
@@ -182,7 +198,9 @@ endif
 
 ifneq ($(USES_THINUI),yes)
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI), yes)
 include $(ALARMCLOCK)/AlarmClock.min
+endif
 endif
 endif
 include $(CP)/src/cp_cdma.min
@@ -207,20 +225,24 @@ endif
   include $(QTV_STATICEXT_OEM)/../etc/qtv_oem.min
   include $(BREW_DISPLAY_OEM_SRC)/ext_overlay.min
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_idiag.min
+endif  
 endif
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_gifviewer.min
   #include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_uim.min
 ifneq ($(USES_MANGO_BREW),yes)
-  include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_addrbookext.min
+#Gemsea Remove  include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_addrbookext.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_icm.min
 endif
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ialert.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ipdp.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_isuppsvc.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_irats.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ivector.min
+endif  
 endif
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_oemcfgi.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_sysmodelbase.min
@@ -232,8 +254,10 @@ endif
 include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ibatt.min
 ifneq ($(USES_UIONE),yes)
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
        include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_iannunciator.min
-       
+       include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ibatt.min
+endif       
 endif
   endif
   ifeq ($(USES_SVGDOM), yes)
@@ -274,7 +298,9 @@ include $(IPL_STITCH)/ipl_stitch.min
 include $(IPL_UTILITY)/ipl_utility.min
 include $(IPL_TRANSFORMATION)/ipl_transformation.min
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
 include $(DATASTATS)/datastatsapp.min
+endif
 endif
 include $(DIAG)/diag.min
 ifeq ($(USES_L4), yes)
@@ -298,10 +324,14 @@ ifeq ($(USES_FDI),yes)
 include $(FDI)/fdi.min
 endif
 include $(ERR)/err.min
+ifneq ($(USES_MMI),yes)
 include $(FM_RDS)/fmrds.min
+endif
 include $(FLASH)/flash.min
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
 include $(FLDDBG)/flddbg.min
+endif
 endif
 ifeq ($(USES_SEC_CLNT), yes)
   include $(SME_CRYPTO_SRC)/sec_oem.min
@@ -322,7 +352,9 @@ include $(GRAPH)/graph.min
 ifeq ($(USES_GSTK),yes)
   include $(GSTK_SRC)/gstk.min
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
   include $(CAT_SRC)/cat.min
+endif  
 endif
 endif
 include $(HS)/hs.min
@@ -362,7 +394,9 @@ include $(MDSPSVCSRC)/mdspsvc.min
 
 ifeq ($(USES_MEDIAPLAYER), yes)
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
 include $(MEDIAPLAYER)/mediaplayer.min
+endif
 endif
 endif
 
@@ -382,9 +416,13 @@ ifeq  ($(USES_ONCRPC),yes)
          include $(ONCRPC)/oncrpc.min
 endif
 include $(PARB)/parb.min
+
+ifneq ($(USES_MMI), yes)
 ifeq ($(USES_PBMTASK), yes)
   include $(PBM)/pbm.min
 endif
+endif
+
 ifeq ($(USES_PLT),yes)
   include $(PLT)/plt.min
 endif
@@ -433,7 +471,9 @@ include $(SAMPLE_SERVER_SRC)/sample_server.min
 include $(SRCH4_SRC)/srch4.min
 include $(1X_DRIVERS_SRC)/1xdrivers.min
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
 include $(SVCPRG)/svcprg.min
+endif
 endif
 include $(TASK)/task.min
 ifeq ($(USES_GSM_GPRS),yes)
@@ -471,8 +511,10 @@ ifeq ($(USES_WLAN), yes)
 endif
 include $(WMS)/wms.min
 ifneq ($(USES_MANGO_UI),yes)
+ifneq ($(USES_MMI),yes)
 ifneq ($(USES_REMOVE_WMS_RESOURCES),yes)
 include $(WMSAPP)/wmsapp.min
+endif
 endif
 endif
 include $(XMLLIB)/xmllib.min
@@ -534,4 +576,35 @@ endif
 ifeq ($(USES_IQOSSESSIONEX), yes)
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_qossessionex.min
 endif  
+
+#USES_MMIÓÃ»§Ìí¼Ó
+ifeq ($(USES_MMI),yes)
+
+ifeq ($(USES_REND),yes)
+	include $(REND_PATH)/Rend.min
+endif	
+
+ifeq ($(USES_HANWANG),yes)
+	include $(HW_PATH)/Hanwang.min
+endif
+
+ifeq ($(USES_T9),yes)
+	include $(T9_PATH)/T9.min
+endif
+
+ifeq ($(USES_KEYGUARD),yes)
+	include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/keyguard.min
+	
+	include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_oem.min
+  include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_uim.min
+
+endif
+
+ifeq ($(USES_BREW_AEE_SRC), yes)
+	include $(BREW_AEE_SRC)/aee.min
+endif
+
+
+endif
+
 

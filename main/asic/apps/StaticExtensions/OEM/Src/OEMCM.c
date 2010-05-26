@@ -369,7 +369,9 @@ const byte oemcm_enc_sch_rate_table[MAX_NO_SCH_RATES][2] = {
   #define AEECM_DEFAULT_ECIO_TO_E5 -17
 #endif
 
+#ifndef USES_MMI
 #include "pbmlib.h"
+#endif
 
 /* The following table is used to convert back and
  * forth between CM and ICM band preferences.  Usage of the
@@ -9391,8 +9393,11 @@ static boolean OEMCM_IsEmergencyNumber(const AECHAR *number, uint8 *ecc_category
     return FALSE;
 
   (void) WSTRTOSTR(number, (char *)called, sizeof(called));
-
+#ifndef CUST_EDITION
   return pbm_emergency_number_cat(called, (uint8)STRLEN((char *)called), ecc_category);
+#else
+    return TRUE;
+#endif
 }
 
 /*=============================================================================

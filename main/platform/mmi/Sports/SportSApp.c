@@ -46,7 +46,6 @@ static void SportSApp_RunFSM(CSportsMenu *pMe);
 #endif//WIN32
 #endif
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*-------------------------------------------------------------------
             Static variable Definitions
 -------------------------------------------------------------------*/
@@ -629,7 +628,6 @@ static boolean SportSApp_HandleEvent(ISportsMenu *pi,
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             /*event application start*/
             as = (AEEAppStart*)dwParam;
 
@@ -761,7 +759,6 @@ static boolean SportSApp_HandleEvent(ISportsMenu *pi,
 			{
 				return TRUE;
 			}
-			Rendering_UpdateEx();//wlh add for 3D test
             return SportSApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
         case EVT_CLOSEAPP:
         {

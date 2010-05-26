@@ -60,7 +60,11 @@ when         who     what, where, why
 
 ===========================================================================*/
 #include "customer.h"
+#ifndef FEATURE_OEMUI_TASK
 #include "ui.h"
+#else
+#include "oemui.h"
+#endif
 #include "uixsnd.h"
 
 #include "OEMNV.h"
@@ -398,6 +402,7 @@ static const byte ascii2GSM[128] =
    32,  // DEL
 };
 
+extern void OEMSVC_UpdateRUIMNVCacheReq(nv_items_enum_type nItem);
 
 
 /*===========================================================================
@@ -801,6 +806,7 @@ nv_stat_enum_type OEMNV_Get
       case NV_CURR_NAM_I:         /* Current NAM setting */
         data_ptr->curr_nam = 0;   /* write it to nv, if never set */
         (void) OEMNV_Put ( NV_CURR_NAM_I, data_ptr );
+        OEMSVC_UpdateRUIMNVCacheReq(NV_CURR_NAM_I);
         break;
 
       case NV_BANNER_I:           /* Idle banner to display - QUALCOMM */
@@ -1184,9 +1190,31 @@ void OEMNV_RUIMAlpha_TO_WSTR(byte const *alpha,
    /* determine the length of the input alpha string (in bytes) */
    len = 0;
    for (i = 0; i < nAlphaSize; i++) {
-      if (0xFF == alpha[i]) { 
-         break;
-      } 
+      if(0xFF == alpha[i])
+      {
+         if(isAscii)
+         {
+            break;
+         }
+         else
+         {
+            // 如果当前的长度是偶数位，则证明当前判断的是一个字当中
+            // 的另一个字节，那么直接跳过并增加长度
+            if((len&0x1) == 0x0)
+            {
+                len++;
+                continue;
+            }
+            
+            // 如果是Unicode码，则需要进一步判断是否到达结尾，因为
+            // Unicode是双字节，可能含有0xff(如:0x51ff)，同时也有可能
+            // 已经到达buffer的结尾（0x0）
+            if((0xFF == alpha[i+1])||(0x0 == alpha[i+1]))
+            {
+               break;
+            }
+         }
+      }
       len++;
    }
 
@@ -1233,7 +1261,9 @@ void OEMNV_RUIMAlpha_TO_WSTR(byte const *alpha,
       for (i = 0; i < len; i+=2, wStr++) {
          // Suppress "Suspicious pointer-to-pointer conversion(area too small)"
          /*lint -save -e826*/
-         *wStr = NTOHS(*(AECHAR*)(&alpha[1+i]));
+//         *wStr = NTOHS(*(AECHAR*)(&alpha[1+i]));
+         *wStr = alpha[1+i] << 8;
+         *wStr |= alpha[2+i];
          /*lint -restore*/
       }
    }
@@ -1314,6 +1344,7 @@ void OEMNV_WSTR_TO_RUIMAlpha(AECHAR const *wStr,
       }
 
    } else {
+      byte *dp;
       alpha[0] = 0x80; // 0x80 == Unicode encoding
       
       len = MIN(nAlphaSize-1,nWStrLen*2);
@@ -1324,12 +1355,15 @@ void OEMNV_WSTR_TO_RUIMAlpha(AECHAR const *wStr,
       if (len % 2) {
          len--;
       }
+      dp = (byte*)alpha+1;
             
       for (i = 0; i < len; i+=2, wStr++) {
          // Suppress "Suspicious pointer-to-pointer conversion(area too small)"
-         /*lint -save -e826*/
-         *(AECHAR*)(&alpha[1+i]) = HTONS(*wStr);
+         /*lint -save -e826*/         
+         // *(AECHAR*)(&alpha[1+i]) = HTONS(*wStr);
          /*lint -restore*/
+         *dp++ = (*wStr) >> 8;
+         *dp++ = (*wStr) & 0xFF;
       }
 
       len++; // add one for the encoding byte 

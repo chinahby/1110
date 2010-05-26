@@ -412,6 +412,7 @@ uint32 AEEBatt_Release(INotifier *p)
    if (0 == pMe->nRefs) {
       CALLBACK_Cancel(&sAEEBattPtr->m_cbExit);
       AEEBatt_Dtor(pMe);
+      OEMBatt_Destory();
       return 0;
    }
 

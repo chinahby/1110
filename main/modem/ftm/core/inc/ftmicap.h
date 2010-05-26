@@ -275,8 +275,9 @@ when       who     what, where, why
 /*Dont Define anything*/
 #endif
 #endif /* else FTMICAP_HEADER */
+#ifdef FEATURE_FM
 #define FEATURE_FTM_FMRDS
-
+#endif
 #endif /* FTMICAP_H */
 
 

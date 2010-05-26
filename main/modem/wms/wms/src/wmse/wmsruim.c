@@ -464,6 +464,521 @@ void wms_ruim_init
 
 } /* wms_ruim_init() */
 
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+void wms_ruim_report_ext(uim_rpt_type *report)
+{
+  wms_ruim_status_report = report->rpt_status;
+
+  (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_RPT_SIG);
+} 
+
+void wms_ruim_access_ext(uim_cmd_type *cmd_ptr)
+{
+    cmd_ptr->access_uim.hdr.command = UIM_ACCESS_F; /* "Access" an EF    */
+
+    /* Indicate command completion is to be signaled:
+    *    Do not signal the WMS Task
+    *    Use no signal
+    *    No "done" queue
+    *    Status call-back function
+    *    Always Report status
+    */
+    cmd_ptr->access_uim.hdr.cmd_hdr.task_ptr = NULL;
+    cmd_ptr->access_uim.hdr.cmd_hdr.sigs = 0;
+    cmd_ptr->access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+    
+    cmd_ptr->hdr.rpt_function = wms_ruim_report_ext;
+    cmd_ptr->hdr.protocol = UIM_CDMA;
+    cmd_ptr->hdr.slot     = UIM_SLOT_AUTOMATIC;
+    cmd_ptr->access_uim.hdr.options = UIM_OPTION_ALWAYS_RPT;
+    
+    /* Send the command to the R-UIM:
+    */
+    uim_cmd(cmd_ptr);
+} /* wms_ruim_access_ext */
+
+/*==============================================================================
+函数:
+    wms_ruim_init_stepbystep
+
+说明:
+    初始卡上短信的回调函数。
+
+参数:
+    none
+
+返回值:
+    TRUE : 初始化完成
+    FALSE: 初始化未完成
+
+备注:
+    注意卡上短信可能不止开机时会初始化，若支持 UTK ，则 Refresh 命令会导致卡
+    上短信的重新初始化。
+        
+==============================================================================*/
+boolean wms_ruim_init_stepbystep(void)
+{
+    static uint8        i=0;
+    static uint8        t=0;
+    static boolean      has_sms = FALSE;
+    static boolean      has_smsp = FALSE;
+    static boolean      bInitStart = FALSE;
+    static boolean      bWaitRpt = FALSE;
+    static boolean      bSvcInited = FALSE;
+    uim_rpt_status      status = UIM_FAIL; /* status of ruim operation */
+
+    cfg_s_ptr = wms_cfg_s_ptr();
+    
+    if (cfg_s_ptr->cdma_init_complete == TRUE)
+    {
+        MSG_HIGH("wms_ruim_init already done",0,0,0);
+        return TRUE;
+    }
+    
+    if (!IsRunAsUIMVersion())
+    {// 当前软件运行于无卡版本
+        wms_cfg_do_cdma_ready_event();
+        return TRUE;
+    }
+    if (bInitStart == FALSE)
+    {
+        MSG_ERROR("wms_ruim_init start", 0, 0, 0);
+        bWaitRpt = FALSE;
+        bInitStart = TRUE;
+        bSvcInited = FALSE;
+        i = 0;
+        t = 0;
+        
+        /* EFsms related init
+        */
+        cfg_s_ptr->ruim_max_slots = 0;
+        cfg_s_ptr->ruim_max_templates = 0;
+        
+#if !defined(FEATURE_WMS_APP)
+        wms_cfg_do_cdma_ready_event();
+        return TRUE;
+#endif
+    }
+    
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    
+    /* Read CDMA Service Table                                                  */
+    if ((i == 0) && (bSvcInited == FALSE))
+    {
+        if (bWaitRpt == FALSE)
+        {
+            cmd.access_uim.num_bytes = WMS_RUIM_SERVICE_TABLE_SIZE;
+            cmd.access_uim.data_ptr  = ruim_data;
+            cmd.access_uim.offset    = 0;
+            cmd.access_uim.item      = UIM_CDMA_CDMA_SVC_TABLE;
+            cmd.access_uim.access    = UIM_READ_F;
+        
+            bWaitRpt = TRUE;
+            
+            wms_ruim_access_ext(&cmd);
+            return FALSE;
+        }
+        else 
+        {
+            bWaitRpt = FALSE;
+            bSvcInited = TRUE;
+            if (wms_ruim_status_report == UIM_PASS)
+            {
+                has_sms  = WMS_RUIM_SERVICE_TABLE_HAS_SMS(ruim_data[0]);
+                has_smsp = WMS_RUIM_SERVICE_TABLE_HAS_SMSP(ruim_data[2]);
+                
+                MSG_ERROR("has_sms =%d   has_smsp =%d", has_sms, has_smsp, 0);
+            }
+            
+            return FALSE;
+        }
+    }
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    
+    /* EFsms related init
+    */
+    if (has_sms)
+    {
+        MSG_ERROR("wms_ruim_init i=%d", i, 0, 0);
+        
+        status = UIM_FAIL;
+        if (i==0)
+        {
+            if (bWaitRpt == FALSE)
+            {
+                cfg_s_ptr->ruim_max_slots = 0;
+                cfg_s_ptr->ruim_sms_file_name = UIM_CDMA_SMS;
+                
+                /* Determine the number of records and record length
+                */
+                /* Set up cmd item */
+                cmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE;
+                cmd.access_uim.data_ptr  = ruim_data;
+                cmd.access_uim.offset    = 1;
+                
+                cmd.access_uim.item      = cfg_s_ptr->ruim_sms_file_name;
+                
+                cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+                cmd.access_uim.access    = UIM_READ_F;
+                
+                bWaitRpt = TRUE;
+                
+                wms_ruim_access_ext(&cmd);
+                return FALSE;
+            }
+            else
+            {
+                bWaitRpt = FALSE;
+                if (wms_ruim_status_report == UIM_PASS)
+                {
+                    cfg_s_ptr->ruim_max_slots   = cmd.access_uim.num_records_rsp;
+                    cfg_s_ptr->ruim_sms_rec_len = cmd.access_uim.num_bytes_rsp;
+                    MSG_ERROR("cfg_s_ptr->ruim_max_slots=%d", cfg_s_ptr->ruim_max_slots, 0, 0);
+                    if (cfg_s_ptr->ruim_max_slots == 0)
+                    {
+                        i++;
+                        return FALSE;
+                    }
+                    else
+                    {
+                        status = UIM_PASS;
+                    }
+                }
+                else
+                {
+                    i++;
+                    return FALSE;
+                }
+            }
+        }
+        else if (i < cfg_s_ptr->ruim_max_slots)
+        {
+            if (bWaitRpt == FALSE)
+            {
+                /* Set up cmd item */
+                cmd.access_uim.num_bytes = (uint16)cfg_s_ptr->ruim_sms_rec_len;
+                cmd.access_uim.data_ptr  = ruim_data;
+                cmd.access_uim.offset    = (uint16)(i + 1);
+                
+                cmd.access_uim.item      = cfg_s_ptr->ruim_sms_file_name;
+                
+                cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+                cmd.access_uim.access    = UIM_READ_F;
+                
+                bWaitRpt = TRUE;
+                
+                wms_ruim_access_ext(&cmd);
+                return FALSE;
+            }
+            else
+            {
+                bWaitRpt = FALSE;
+                if (wms_ruim_status_report != UIM_PASS)
+                {
+                    i++;
+                }
+                else
+                {
+                    status = UIM_PASS;
+                }
+            }
+        }
+        if (status == UIM_PASS)
+        {
+            if ((ruim_data[0] != WMS_TAG_NONE) || (cfg_s_ptr->ruim_tags[i] != WMS_TAG_NONE))
+            {
+                wms_cfg_update_msg_info_cache(ruim_data[0],
+                           WMS_MEMORY_STORE_RUIM,
+                           i,
+                           ruim_data,
+                           (uint8)cfg_s_ptr->ruim_sms_rec_len );
+            }
+            
+            cfg_s_ptr->ruim_tags[i] = (wms_message_tag_e_type)ruim_data[0];
+            
+            i++;
+            
+            return FALSE;
+        }
+        
+        if (i < cfg_s_ptr->ruim_max_slots)
+        {
+            return FALSE;
+        }
+        has_sms = FALSE;
+        bWaitRpt = FALSE;
+    }
+
+    /* EFsmsp related init
+    */
+    if (has_smsp)
+    {
+        MSG_ERROR("t=%d", t, 0, 0);
+        status = UIM_FAIL;
+        if (t == 0)
+        {
+            if (bWaitRpt == FALSE)
+            {
+                cfg_s_ptr->ruim_max_templates = 0;
+                cfg_s_ptr->ruim_smsp_file_name = UIM_CDMA_SMS_PARAMS;
+                
+                /* Determine the number of records and record length
+                */
+                /* Set up cmd item */
+                cmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE;
+                cmd.access_uim.data_ptr  = ruim_data;
+                cmd.access_uim.offset    = 1;
+                
+                cmd.access_uim.item      = cfg_s_ptr->ruim_smsp_file_name;
+                
+                cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+                cmd.access_uim.access    = UIM_READ_F;
+                
+                bWaitRpt = TRUE;
+                
+                wms_ruim_access_ext(&cmd);
+                return FALSE;
+            }
+            else
+            {
+                bWaitRpt = FALSE;
+                if (wms_ruim_status_report != UIM_PASS)
+                {
+                    t++;
+                    return FALSE;
+                }
+                else
+                {
+                    cfg_s_ptr->ruim_max_templates   = cmd.access_uim.num_records_rsp;
+                    cfg_s_ptr->ruim_smsp_rec_len    = cmd.access_uim.num_bytes_rsp;
+                    MSG_ERROR("cfg_s_ptr->ruim_max_templates=%d cfg_s_ptr->ruim_smsp_rec_len=%d", cfg_s_ptr->ruim_max_templates, cfg_s_ptr->ruim_smsp_rec_len, 0);
+                    
+                    if (cfg_s_ptr->ruim_max_templates == 0)
+                    {
+                        t++;
+                        return FALSE;
+                    }
+                    else
+                    {
+                        status = UIM_PASS;
+                    }
+                }
+            }
+        }
+        else if (t < cfg_s_ptr->ruim_max_templates)
+        {
+            if (bWaitRpt == FALSE)
+            {
+                /* Set up cmd item */
+                cmd.access_uim.num_bytes = (uint16)cfg_s_ptr->ruim_smsp_rec_len;
+                cmd.access_uim.data_ptr  = ruim_data;
+                cmd.access_uim.offset    = (uint16)(t + 1);
+                
+                cmd.access_uim.item      = cfg_s_ptr->ruim_smsp_file_name;
+                
+                cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+                cmd.access_uim.access    = UIM_READ_F;
+                
+                bWaitRpt = TRUE;
+                
+                wms_ruim_access_ext(&cmd);
+                return FALSE;
+            }
+            else
+            {
+                bWaitRpt = FALSE;
+                
+                if (wms_ruim_status_report != UIM_PASS)
+                {
+                    t++;
+                    return FALSE;
+                }
+                else
+                {
+                    status = UIM_PASS;
+                }
+            }
+        }
+            
+        if (status == UIM_PASS)
+        {
+#ifdef FEATURE_RUIM_DEBUG_SMS_NOT_STRICTFF
+            /* Following for invalid card work-around: */
+            if ((ruim_data[0] | ruim_data[1] | ruim_data[2] | ruim_data[3]) != WMS_RUIM_SMSP_EMPTY_CHAR2)
+#else
+            if (ruim_data[0] != WMS_RUIM_SMSP_EMPTY_CHAR)
+#endif
+            {
+                cfg_s_ptr->ruim_templates[t] = TRUE;
+                
+                wms_cfg_update_msg_info_cache(WMS_TAG_MO_TEMPLATE,
+                                 WMS_MEMORY_STORE_RUIM,
+                                 t,
+                                 ruim_data,
+                                 (uint8)cfg_s_ptr->ruim_smsp_rec_len);
+            }
+            else if (cfg_s_ptr->ruim_templates[t])
+            {
+                cfg_s_ptr->ruim_templates[t] = FALSE;
+                
+                // 删除可能存在的 Cache
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                wms_cacheinfo_deleteruimtemplatecache(t);
+#endif
+            }
+                             
+            t++;
+            
+            return FALSE;
+        }
+        
+        if (t < cfg_s_ptr->ruim_max_templates)
+        {
+            return FALSE;
+        }
+        has_smsp = FALSE;
+    }
+
+    /* EFsmss related init
+    */
+    if (bWaitRpt == FALSE)
+    {
+        MSG_ERROR("-------------1", 0, 0, 0);
+        cfg_s_ptr->ruim_smss_file_name = UIM_CDMA_SMS_STATUS;
+        
+        /* Set up cmd item */
+        cmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE;
+        cmd.access_uim.data_ptr  = ruim_data;
+        cmd.access_uim.offset    = 0;
+        
+        cmd.access_uim.item      = cfg_s_ptr->ruim_smss_file_name;
+        
+        //cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+        cmd.access_uim.access    = UIM_READ_F;
+        
+        bWaitRpt = TRUE;
+        
+        wms_ruim_access_ext(&cmd);
+        return FALSE;
+    }
+    else
+    {
+        MSG_ERROR("-------------2", 0, 0, 0);
+        bWaitRpt = FALSE;
+        
+        if (wms_ruim_status_report == UIM_PASS)
+        {
+            cfg_s_ptr->ruim_smss_rec_len = cmd.access_uim.num_bytes_rsp;
+            
+            cfg_s_ptr->ruim_last_message_number = (ruim_data[0] << 8) | ruim_data[1];
+            cfg_s_ptr->ruim_last_wap_message_number = (ruim_data[2] << 8 ) | ruim_data[3];
+            cfg_s_ptr->ruim_mem_full_flag        = (wms_sim_mem_full_flag_e_type)ruim_data[4];
+        }
+    }
+//#ifdef FEATURE_GSTK
+#if defined(FEATURE_GSTK) || defined(FEATURE_UIM_TOOLKIT)
+    if (cfg_s_ptr->refresh_in_progress)
+    {
+        /* Since it is called for refresh
+           Send Message List Event */
+        wms_cfg_do_message_list(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+        
+        wms_cfg_do_template_list(WMS_MEMORY_STORE_RUIM);
+        
+        wms_cfg_do_memory_status(WMS_MEMORY_STORE_RUIM, WMS_TAG_MO_TEMPLATE);
+        
+        wms_cfg_do_memory_status(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+        
+        cfg_s_ptr->cdma_init_complete = TRUE;
+        
+        wms_cfg_do_refresh_done_event();
+        
+        MSG_MED("GSDI Refresh: Returning from wms_ruim_init",0,0,0);
+    }
+    else
+#endif /* FEATURE_GSTK */
+    {
+        /* Notify the clients that RUIM is ready
+        */
+        wms_cfg_do_cdma_ready_event();
+        
+        MSG_ERROR("Returning from wms_ruim_init after cdma ready event",0,0,0);
+    }
+    
+    // 下面语句的目的是便于 UTK Refresh 命令时再次进入
+    i = 0;
+    bInitStart = FALSE;
+    bSvcInited = FALSE;
+    
+    bWaitRpt = FALSE;
+    
+    MSG_ERROR("-------------3", 0, 0, 0);
+    return TRUE;
+} /* wms_ruim_init_stepbystep() */
+
+#ifdef FEATURE_OMH_SMS
+void wms_ruim_OMH_init(void)
+{
+    static          boolean bInited = FALSE;
+    boolean         has_bcsms = FALSE;
+    boolean         has_smscap = FALSE;
+    uim_rpt_status  status; /* status of ruim operation */
+    uint8           data_table[WMS_RUIM_SERVICE_TABLE_SIZE+1] = {0};
+    
+    if (bInited)
+    {
+        return;
+    }
+    if (!IsRunAsUIMVersion())
+    {// 当前软件运行于无卡版本
+        return;
+    }
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    
+    /* Read CDMA Service Table                                                  */
+    
+    cmd.access_uim.num_bytes = WMS_RUIM_SERVICE_TABLE_SIZE;
+    cmd.access_uim.data_ptr  = data_table;
+    cmd.access_uim.offset    = 0;
+    cmd.access_uim.item      = UIM_CDMA_CDMA_SVC_TABLE;
+    cmd.access_uim.access    = UIM_READ_F;
+    
+    status = wms_ruim_access(&cmd);
+
+    if (status == UIM_PASS)
+    {
+        has_bcsms  = WMS_RUIM_SERVICE_TABLE_HAS_BCSMS(data_table[3]);
+        has_smscap = WMS_RUIM_SERVICE_TABLE_HAS_SMSCAP(data_table[3]);
+        MSG_HIGH("RUIM BCSMS support: %d", has_bcsms,0,0);
+        MSG_HIGH("RUIM SMSCAP support: %d", has_smscap,0,0);
+    }
+
+    /* Inform NVRUIM about the card's capabilities for SMS and re-read the NV
+    ** items that might come from the card.
+    */
+    nvruim_init_wms_svc_items(has_bcsms, has_smscap);
+    if (TRUE == has_bcsms)
+    {
+#ifdef FEATURE_BROADCAST_SMS
+        wms_bc_init();
+#endif /* FEATURE_BROADCAST_SMS */
+    }
+    if (TRUE == has_smscap)
+    {
+        wms_nv_init_nvruim();
+    }
+    
+    bInited = TRUE;
+    
+    /* done */
+    return;
+} /* wms_ruim_init() */
+#endif /* FEATURE_OMH_SMS */
+
+#endif
+
 
 /*
 */

@@ -123,8 +123,6 @@ static boolean AdjustPen_HandleEvent(CAdjustPenApp *pme,
                                 uint16   wParam,
                                 uint32   dwParam);
 static void    AdjustPen_DrawScreen(CAdjustPenApp *pme);
-
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*===========================================================================
 
                     LOCAL/STATIC DATA

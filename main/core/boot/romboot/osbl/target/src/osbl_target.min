@@ -130,6 +130,9 @@ ifeq ($(USES_QHSUSB_DEAD_BATTERY_CHARGING),yes)
 OBJECTS += $(OSBL_CHG_SRS_OBJS) $(QHSUSB_CHG_OBJS)
 endif
 
+#lucid Add for Keypad support int OSBL
+OBJECTS += $(KPD_OBJS)
+
 OBJECTS_LIST = $(OBJECTS)
 
 # This object list should never be removed by the linker

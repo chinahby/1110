@@ -505,7 +505,11 @@ when       who     what, where, why
 
 #ifdef FEATURE_MMGSDI
 #include "gsdi_exp.h"
+#ifndef CUST_EDITION
 #include "pbmlib.h"
+#else
+#include "gstk_exp.h"
+#endif
 #endif /* FEATURE_MMGSDI */
 
 #ifdef FEATURE_GWSMS_BROADCAST
@@ -572,6 +576,10 @@ static wms_message_number_type           pp_download_msg_id;
 static wms_client_message_s_type         pp_download_user_ack_cl_msg;
 #endif /* FEATURE_UIM_TOOLKIT_UTK && FEATURE_GSTK */
 #endif /* FEATURE_CDSMS */
+
+#ifdef CUST_EDITION
+static byte g_mochannel = WMS_MO_ONLY_TRAFFIC;
+#endif
 
 #ifdef FEATURE_GWSMS_DEPERSO
 #error code not present
@@ -2154,6 +2162,59 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
         rec_ptr->retry_wait_time = 0;
         rec_ptr->large_msg = FALSE;
         
+ #ifdef CUST_EDITION	      
+        if (g_mochannel == WMS_MO_ONLY_TRAFFIC)
+        {
+            rec_ptr->large_msg = TRUE;
+        }
+        else
+        rec_ptr->large_msg = FALSE;
+        
+        /* Set the Global Retry Timer */
+        //wms_set_retry_timer();
+        clk_dereg(&rec_ptr->clk_timer);
+        clk_reg2(&rec_ptr->clk_timer, 
+                 wms_mo_timer,
+                 CLK_MS_PER_SEC,
+                 0,
+                 FALSE,
+                 rec_ptr);
+                 
+        /* Request to set up DC if call is not already active */
+        if ((!dc_s_ptr->call_active) && 
+            (!dc_s_ptr->bInTC) && 
+            (g_mochannel == WMS_MO_ONLY_TRAFFIC))
+        {
+           MSG_HIGH("WMS initiating DC... ", 0,0,0);
+
+           st = wms_dc_connect(WMS_CLIENT_TYPE_INTERNAL,
+                    NULL,
+                    NULL,
+                    dc_s_ptr->default_so_from_nv);
+
+           if (st == WMS_OK_S)
+           {
+               dc_s_ptr->wms_initiated_call = TRUE;
+               rec_ptr->retry_time_left = WMS_MAX_RETRY_PERIOD;
+               
+               // 注意: 业务信道一旦建立函数 wms_msg_auto_dc_send 会被调用, 故这里给最大等待时间
+               rec_ptr->retry_wait_time = WMS_MAX_RETRY_PERIOD;
+               rec_ptr->state = WMS_MSG_STATE_QUEUED;
+           }
+           else
+           {
+               /* Assign the new error code */
+               cmd_ptr->cmd.mc_mo_status.status = st;
+
+               /* No retry for this msg any more */
+               rec_ptr->retry_time_left = -1;
+               
+               cmd_err = WMS_CMD_ERR_BUSY;
+           }
+        }
+        else
+        {
+#endif /*CUST_EDITION*/		
         if (msg_s_ptr->mo_retry_period > 0)
         { 
         /* Set the Global Retry Timer */
@@ -2194,6 +2255,9 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
           /* Declare Failure */
           cmd_err = WMS_CMD_ERR_NULL_PTR;
         }
+ #ifdef CUST_EDITION
+        }
+ #endif
       }
       else
       {
@@ -2438,6 +2502,13 @@ wms_cmd_err_e_type wms_msg_send_from_memory_store
         /* Don't change msg id if it is CANCELLATION or USER_ACK:
         */
         if( cdma_tl.cl_bd.message_id.type == WMS_BD_TYPE_SUBMIT &&
+#ifdef CUST_EDITION			
+#if defined(FEATURE_QMA)
+            cdma_tl.teleservice != WMS_TELESERVICE_QMA_WPUSH &&
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+            cdma_tl.teleservice != WMS_TELESERVICE_WPUSH &&
+#endif 
+#endif /*CUST_EDITION*/
             cdma_tl.teleservice           != WMS_TELESERVICE_WAP )
         {
           /* use the next message number
@@ -2504,6 +2575,11 @@ wms_cmd_err_e_type wms_msg_send_from_memory_store
         }
         else
         {
+#ifdef CUST_EDITION			
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+          wms_cacheinfolist_updatenodetag(WMS_MEMORY_STORE_RUIM, i, ruim_sms.status);
+#endif  
+#endif /*CUST_EDITION*/        
           cmd_err = wms_msg_cdma_send_mo_channel(
           TRUE,
                             cmd_ptr,
@@ -2576,6 +2652,13 @@ wms_cmd_err_e_type wms_msg_send_from_memory_store
           /* Don't change msg id if it is CANCELLATION or USER_ACK:
           */
           if( cdma_tl.cl_bd.message_id.type == WMS_BD_TYPE_SUBMIT &&
+#ifdef CUST_EDITION			  
+#if defined(FEATURE_QMA)
+              cdma_tl.teleservice != WMS_TELESERVICE_QMA_WPUSH &&
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+              cdma_tl.teleservice != WMS_TELESERVICE_WPUSH &&
+#endif 
+#endif /*CUST_EDITION*/
               cdma_tl.teleservice           != WMS_TELESERVICE_WAP )
           {
             /* use the next message number
@@ -2639,6 +2722,11 @@ wms_cmd_err_e_type wms_msg_send_from_memory_store
         }
         else
         {
+#ifdef CUST_EDITION			
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+          wms_cacheinfolist_updatenodetag(WMS_MEMORY_STORE_NV_CDMA, i, ruim_sms.status);
+#endif          
+#endif /*CUST_EDITION*/
           cmd_err = wms_msg_cdma_send_mo_channel(
           TRUE,
                             cmd_ptr,
@@ -2721,6 +2809,14 @@ wms_cmd_err_e_type wms_msg_cdma_send_client_message
     /* Don't change msg id if it is CANCELLATION or USER_ACK:
     */
     if( cdma_tl.cl_bd.message_id.type == WMS_BD_TYPE_SUBMIT &&
+#ifdef CUST_EDITION		
+        cmd_ptr->hdr.client_id != WMS_CLIENT_TYPE_WMS_APP &&
+#if defined(FEATURE_QMA)
+        cdma_tl.teleservice != WMS_TELESERVICE_QMA_WPUSH &&
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+        cdma_tl.teleservice != WMS_TELESERVICE_WPUSH &&
+#endif 
+#endif /*CUST_EDITION*/
         cdma_tl.teleservice           != WMS_TELESERVICE_WAP )
     {
       /* use the next message number
@@ -3428,6 +3524,16 @@ wms_cmd_err_e_type wms_msg_do_write
 
 #ifdef FEATURE_CDSMS_RUIM
     case WMS_MEMORY_STORE_RUIM:
+#ifdef CUST_EDITION		
+      if ((msg_ptr->msg_hdr.tag == WMS_TAG_MO_DRAFT) || 
+          (msg_ptr->msg_hdr.tag == WMS_TAG_PHRASE) ||
+          (msg_ptr->msg_hdr.tag == WMS_TAG_RESERVE) ||
+          (msg_ptr->msg_hdr.tag == WMS_TAG_RSVFAILED))
+      {// 此类消息不允许写入卡
+        MSG_ERROR("Invalid Tag %d in wms_msg_do_write", msg_ptr->msg_hdr.tag, 0, 0);
+        return WMS_CMD_ERR_MSG_TAG;
+      }
+#endif /*CUST_EDITION*/
       if( write_mode == WMS_WRITE_MODE_INSERT )
       {
         for( i=0; i<cfg_s_ptr->ruim_max_slots; i++ )
@@ -3496,6 +3602,20 @@ wms_cmd_err_e_type wms_msg_do_write
               {
                 cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
               }
+#ifdef CUST_EDITION				  
+              // 亚太宽频粉红色卡更新成功后提示字符串不完整
+#ifdef FEATURE_CARRIER_TAIWAN_APBW
+              else
+              {
+                extern boolean ChkUpdate(uint8 *ruimdata);
+                
+                if (ChkUpdate(ruim_data))
+                {
+                   (void)wms_ruim_write_sms(i, ruim_data, FALSE);
+                }
+              }
+#endif
+#endif /*CUST_EDITION*/
             }
             else
             {
@@ -3549,7 +3669,62 @@ wms_cmd_err_e_type wms_msg_do_write
     case WMS_MEMORY_STORE_NV_CDMA:
       if( write_mode == WMS_WRITE_MODE_INSERT )
       {
+#ifdef CUST_EDITION		  
+        int nMin, nMax;
+        
+        switch (msg_ptr->msg_hdr.tag)
+        {
+            // 收件箱
+            case WMS_TAG_MT_NOT_READ:
+            case WMS_TAG_MT_READ:
+                if ((msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95) ||
+                    (msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_MWI))
+                {// 语音短信
+                    nMin = VOICE_INDEX;
+                    nMax = VOICE_INDEX;
+                }
+                else
+                {// 一般短信
+                    nMin = IN_START;
+                    nMax = IN_END;
+                }
+                break;
+                
+            // 发件箱
+            case WMS_TAG_MO_SENT:
+            case WMS_TAG_MO_NOT_SENT:
+                nMin = OUT_START;
+                nMax = OUT_END;
+                break;
+                
+            // 常用语
+            case WMS_TAG_PHRASE:
+                nMin = PHRASE_START+MAX_OEMTEMPLATES;
+                nMax = PHRASE_END;
+                break;
+                
+            // 草稿
+            case WMS_TAG_MO_DRAFT:
+                nMin = DRAFT_START;
+                nMax = DRAFT_END;
+                break;
+                
+            // 预约
+            case WMS_TAG_RESERVE:
+            case WMS_TAG_RSVFAILED:
+                nMin = RESERVE_START;
+                nMax = RESERVE_END;
+                break;
+            
+            default:
+                MSG_ERROR("Invalid Tag %d in wms_msg_do_write", msg_ptr->msg_hdr.tag, 0, 0);
+                return WMS_CMD_ERR_MSG_TAG;
+        }
+	
+        for (i=nMin; i<=nMax; i++)
+#else
         for( i=0; i<cfg_s_ptr->nv_cdma_max_slots; i++ )
+#endif /*CUST_EDITION*/	
         {
           if( cfg_s_ptr->nv_cdma_tags[i] == WMS_TAG_NONE )
           {
@@ -3901,8 +4076,627 @@ void wms_msg_delete_proc
 
 } /* wms_msg_delete_proc() */
 
+#ifdef CUST_EDITION	
+void wms_msg_delete_box_proc(wms_cmd_type    *cmd_ptr)
+{
+    wms_cmd_err_e_type          cmd_err = WMS_CMD_ERR_NONE;
+    uint32                      i;
 
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+    switch (cmd_ptr->cmd.msg_delete_box.box_deltype)
+    {
+#ifdef FEATURE_CDSMS
+        case WMS_BOXES_DEL_ALL:
+        case WMS_INBOX_DEL_ALL:
+#ifdef FEATURE_CDSMS_RUIM
+        case WMS_INBOX_DEL_RUIM:
+            for (i=0; i < cfg_s_ptr->ruim_max_slots; i++)
+            {
+                if (WMS_IS_MT(cfg_s_ptr->ruim_tags[i]))
+                {
+                    if (wms_ruim_delete_sms(i) == FALSE)
+                    {
+                        cmd_err = WMS_CMD_ERR_MSG_RUIM_DELETE;
+                    }
+                    else
+                    {
+                        /* Update duplicate detection list */
+                        wms_cfg_delete_dup_info_cache(WMS_MEMORY_STORE_RUIM, i);
+                        
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                        {
+                            uint8 data = cfg_s_ptr->ruim_tags[i];
+                            
+                            /* Delet old Message Information Cache */
+                            wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                      WMS_MEMORY_STORE_RUIM,
+                                      i,
+                                      &data,
+                                      1);
+                        }
+#endif
+                        
+                        /* RUIM delete was successful, update message list */
+                        cfg_s_ptr->ruim_tags[i] = WMS_TAG_NONE;
+                    }
+                }
+                else
+                {
+                    continue; /* skip slots */
+                }
+            }
+            
+            if (cmd_err == WMS_CMD_ERR_NONE)
+            {
+                // send out CFG message list event
+                wms_cfg_do_message_list(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+                wms_cfg_do_memory_status(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+            }
+            if (cmd_ptr->cmd.msg_delete_box.box_deltype == WMS_INBOX_DEL_RUIM)
+            {
+                msg_event_info.status_info.message.msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
+                break;
+            }
+#endif /* FEATURE_CDSMS_RUIM */
+        case WMS_INBOX_DEL_PHONE:
+            for (i=IN_START; i <= IN_END; i++)
+            {
+                if (WMS_IS_MT(cfg_s_ptr->nv_cdma_tags[i]))
+                {
+                    ruim_data[1] =  (uint8)WMS_TAG_NONE;
+                    
+                    if (wms_nv_delete_cdma_sms(i, ruim_data) == FALSE)
+                    {
+                        cmd_err = WMS_CMD_ERR_MSG_NV_DELETE;
+                    }
+                    else
+                    {
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                        uint8 data = cfg_s_ptr->nv_cdma_tags[i];
+                        
+                        /* Delet old Message Information Cache */
+                        wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                  WMS_MEMORY_STORE_NV_CDMA,
+                                  i,
+                                  &data,
+                                  1);
+#endif
+
+                        /* Update duplicate detection list */
+                        wms_cfg_delete_dup_info_cache(WMS_MEMORY_STORE_NV_CDMA, i);
+                        
+                        /* NV write was successful, update message list */
+                        cfg_s_ptr->nv_cdma_tags[i] = WMS_TAG_NONE;
+                        
+                    }
+                }
+                else
+                {
+                    continue; /* skip slots */
+                }
+            }
+            
+            if (cmd_ptr->cmd.msg_delete_box.box_deltype != WMS_BOXES_DEL_ALL)
+            {
+                msg_event_info.status_info.message.msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
+                break;
+            }
+                
+        case WMS_OUTBOX_DEL_ALL:
+            for (i=OUT_START; i <= OUT_END; i++)
+            {
+                if ((cfg_s_ptr->nv_cdma_tags[i] == WMS_TAG_MO_SENT) ||
+                    (cfg_s_ptr->nv_cdma_tags[i] == WMS_TAG_MO_NOT_SENT))
+                {
+                    ruim_data[1] =  (uint8)WMS_TAG_NONE;
+                    
+                    if (wms_nv_delete_cdma_sms(i, ruim_data) == FALSE)
+                    {
+                        cmd_err = WMS_CMD_ERR_MSG_NV_DELETE;
+                    }
+                    else
+                    {
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                        uint8 data = cfg_s_ptr->nv_cdma_tags[i];
+                        
+                        /* Delet old Message Information Cache */
+                        wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                  WMS_MEMORY_STORE_NV_CDMA,
+                                  i,
+                                  &data,
+                                  1);
+#endif
+
+                        /* NV write was successful, update message list */
+                        cfg_s_ptr->nv_cdma_tags[i] = WMS_TAG_NONE;
+                    }
+                }
+                else
+                {
+                    continue; /* skip slots */
+                }
+            }
+            
+            if (cmd_ptr->cmd.msg_delete_box.box_deltype != WMS_BOXES_DEL_ALL)
+            {
+                // 删除卡上 MO 消息
+#ifdef FEATURE_CDSMS_RUIM
+                for (i=0; i < cfg_s_ptr->ruim_max_slots; i++)
+                {
+                    if ((cfg_s_ptr->ruim_tags[i] == WMS_TAG_MO_SENT) ||
+                        (cfg_s_ptr->ruim_tags[i] == WMS_TAG_MO_NOT_SENT))
+                    {
+                        if (wms_ruim_delete_sms(i) == FALSE)
+                        {
+                            cmd_err = WMS_CMD_ERR_MSG_RUIM_DELETE;
+                        }
+                        else
+                        {
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                            {
+                                uint8 data = cfg_s_ptr->ruim_tags[i];
+                                
+                                /* Delet old Message Information Cache */
+                                wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                          WMS_MEMORY_STORE_RUIM,
+                                          i,
+                                          &data,
+                                          1);
+                            }
+#endif
+                            
+                            /* RUIM delete was successful, update message list */
+                            cfg_s_ptr->ruim_tags[i] = WMS_TAG_NONE;
+                        }
+                    }
+                    else
+                    {
+                        continue; /* skip slots */
+                    }
+                }
+                
+                if (cmd_err == WMS_CMD_ERR_NONE)
+                {
+                    // send out CFG message list event
+                    wms_cfg_do_message_list(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+                    wms_cfg_do_memory_status(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+                }
+#endif /* FEATURE_CDSMS_RUIM */
+                
+                msg_event_info.status_info.message.msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
+                break;
+            }
+            
+        case WMS_DRAFT_DEL_ALL:
+            for (i=DRAFT_START; i <= DRAFT_END; i++)
+            {
+                if (cfg_s_ptr->nv_cdma_tags[i] == WMS_TAG_MO_DRAFT)
+                {
+                    ruim_data[1] =  (uint8)WMS_TAG_NONE;
+                    
+                    if (wms_nv_delete_cdma_sms(i, ruim_data) == FALSE)
+                    {
+                        cmd_err = WMS_CMD_ERR_MSG_NV_DELETE;
+                    }
+                    else
+                    {
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                        /* Delet old Message Information Cache */
+                        {
+                            uint8 data = cfg_s_ptr->nv_cdma_tags[i];
+                            
+                            /* Delet old Message Information Cache */
+                            wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                      WMS_MEMORY_STORE_NV_CDMA,
+                                      i,
+                                      &data,
+                                      1);
+                        }
+#endif
+
+                        /* NV write was successful, update message list */
+                        cfg_s_ptr->nv_cdma_tags[i] = WMS_TAG_NONE;
+                    }
+                }
+                else
+                {
+                    continue; /* skip slots */
+                }
+            }
+            
+            msg_event_info.status_info.message.msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
+            break;
+            
+        case WMS_RESERVE_DEL_ALL:
+        case WMS_RSVFAILED_DEL_ALL:
+        case WMS_RSVANDRSVFAILED_DEL_ALL:
+            {
+                wms_message_tag_e_type delTag;
+                
+                if (cmd_ptr->cmd.msg_delete_box.box_deltype == WMS_RESERVE_DEL_ALL)
+                {
+                    delTag = WMS_TAG_RESERVE;
+                }
+                else
+                {
+                    delTag = WMS_TAG_RSVFAILED;
+                }
+                
+                for (i=RESERVE_START; i <= RESERVE_END; i++)
+                {
+                    if (cfg_s_ptr->nv_cdma_tags[i] == delTag || 
+                        cmd_ptr->cmd.msg_delete_box.box_deltype == WMS_RSVANDRSVFAILED_DEL_ALL)
+                    {
+                        ruim_data[1] =  (uint8)WMS_TAG_NONE;
+                        
+                        if (wms_nv_delete_cdma_sms(i, ruim_data) == FALSE)
+                        {
+                            cmd_err = WMS_CMD_ERR_MSG_NV_DELETE;
+                        }
+                        else
+                        {
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                            /* Delet old Message Information Cache */
+                            {
+                                uint8 data = cfg_s_ptr->nv_cdma_tags[i];
+                                
+                                /* Delet old Message Information Cache */
+                                wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                          WMS_MEMORY_STORE_NV_CDMA,
+                                          i,
+                                          &data,
+                                          1);
+                            }
+#endif
+
+                            /* NV write was successful, update message list */
+                            cfg_s_ptr->nv_cdma_tags[i] = WMS_TAG_NONE;
+                        }
+                    }
+                    else
+                    {
+                        continue; /* skip slots */
+                    }
+                }
+            }
+            
+            msg_event_info.status_info.message.msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
+            break;
+
+#endif /* FEATURE_CDSMS */
+
+        default:
+            cmd_err = WMS_CMD_ERR_MSG_MEMORY_STORE;
+            MSG_ERROR("Invalid box del type %d", cmd_ptr->cmd.msg_delete_box.box_deltype, 0, 0 );
+            break;
+    } /* switch mem_store */
+
+    wms_client_cmd_status( cmd_ptr, cmd_err );
+    
+    if (cmd_err == WMS_CMD_ERR_NONE)
+    {
+        msg_event_info.status_info.user_data  = cmd_ptr->hdr.user_data;
+        msg_event_info.status_info.client_id  =  (wms_client_type_e_type)cmd_ptr->hdr.client_id;
+        (void)wms_msg_event_notify(WMS_CMD_MSG_DELETE_BOX, &msg_event_info);
+        
+        if (cmd_ptr->cmd.msg_delete_box.box_deltype != WMS_INBOX_DEL_RUIM)
+        {
+            // send out CFG message list event
+            wms_cfg_do_message_list(WMS_MEMORY_STORE_NV_CDMA, WMS_TAG_NONE);
+            wms_cfg_do_memory_status(WMS_MEMORY_STORE_NV_CDMA, WMS_TAG_NONE);
+        }
+    }
+    
+    /* done */
+    return;
+} /* wms_msg_delete_box_proc() */
+
+void wms_msg_copy_proc(wms_cmd_type    *cmd_ptr)
+{
+#if defined(FEATURE_CDSMS) && defined(FEATURE_CDSMS_RUIM)
+    wms_cmd_err_e_type          cmd_err = WMS_CMD_ERR_NONE;
+    uint32                      src,dest,i;
+    wms_memory_store_e_type     src_store;
+    wms_memory_store_e_type     dest_store;
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    src = cmd_ptr->cmd.msg_copy.copypram.index_src;
+    src_store = cmd_ptr->cmd.msg_copy.copypram.memStore_src;
+    dest = cmd_ptr->cmd.msg_copy.copypram.index_dest;
+    dest_store = cmd_ptr->cmd.msg_copy.copypram.memStore_dest;
+
+    switch (src_store)
+    {
+        case WMS_MEMORY_STORE_RUIM:
+            if (src >= cfg_s_ptr->ruim_max_slots )
+            {
+                cmd_err =  WMS_CMD_ERR_MSG_INDEX;
+                MSG_ERROR("Invalid message index %d", src, 0, 0);
+            }
+            else if (cfg_s_ptr->ruim_tags[src] == WMS_TAG_NONE)
+            {
+                cmd_err =  WMS_CMD_ERR_MSG_EMPTY_MESSAGE;
+                MSG_ERROR("Empty  message %d",  src, 0, 0);
+            }
+            else if (src_store == dest_store)
+            {
+                cmd_err =  WMS_CMD_ERR_MSG_MEMORY_STORE;
+                MSG_ERROR("Source store is same as target store",  0, 0, 0);
+            }
+            else if (wms_ruim_read_sms(src, &ruim_data[1]) != TRUE)
+            {
+                cmd_err = WMS_CMD_ERR_MSG_RUIM_READ;
+            }
+            else
+            {
+                ruim_data[0] = WMS_FORMAT_CDMA;
+                
+                if (dest == WMS_DUMMY_MESSAGE_INDEX)
+                {// 插入
+                    for (i=IN_START; i<=IN_END; i++)
+                    {
+                        if (cfg_s_ptr->nv_cdma_tags[i] == WMS_TAG_NONE)
+                        {
+                            /* found a free slot */
+                            dest = i;
+                            break;
+                        }
+                    }
+                    
+                    if (dest == WMS_DUMMY_MESSAGE_INDEX)
+                    {
+                        cmd_err = WMS_CMD_ERR_MSG_MEMORY_FULL;
+                    }
+                    else if (wms_nv_write_cdma_sms(dest, ruim_data) == FALSE)
+                    {
+                        cmd_err = WMS_CMD_ERR_MSG_NV_WRITE;
+                    }
+                    else
+                    {
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                        /* Update Message Information Cache */
+                        wms_cfg_update_msg_info_cache(ruim_data[1],
+                                          WMS_MEMORY_STORE_NV_CDMA,
+                                          dest,
+                                          ruim_data,
+                                          WMS_MAX_LEN);
+#endif 
+
+                        /* NV write was successful, update message list
+                        */
+                        cfg_s_ptr->nv_cdma_tags[dest]  = ruim_data[1];
+                        
+                        // send out CFG message list event
+                        wms_cfg_do_message_list(WMS_MEMORY_STORE_NV_CDMA, WMS_TAG_NONE);
+                        wms_cfg_do_memory_status(WMS_MEMORY_STORE_NV_CDMA, WMS_TAG_NONE);
+
+                        if (cmd_ptr->cmd.msg_copy.copypram.delete_src)
+                        {// 移动消息
+                            if (wms_ruim_delete_sms(src) == FALSE)
+                            {
+                                cmd_err = WMS_CMD_ERR_MSG_RUIM_DELETE;
+                            }
+                            else
+                            {
+                                /* Update duplicate detection list */
+                                wms_cfg_delete_dup_info_cache(WMS_MEMORY_STORE_RUIM, src);
+                                
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                                {
+                                    uint8 data = cfg_s_ptr->ruim_tags[src];
+                                    
+                                    /* Delet old Message Information Cache */
+                                    wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                              WMS_MEMORY_STORE_RUIM,
+                                              src,
+                                              &data,
+                                              1);
+                                }
+#endif
+                                
+                                /* RUIM delete was successful, update message list */
+                                cfg_s_ptr->ruim_tags[src] = WMS_TAG_NONE;
+                                
+                                // send out CFG message list event
+                                wms_cfg_do_message_list(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+                                wms_cfg_do_memory_status(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+                            }
+                        }
+                    }
+                }
+                else
+                {// 替换
+                    // TODO
+                }
+            }
+            break;
+
+        case WMS_MEMORY_STORE_NV_CDMA:
+            if (src >= cfg_s_ptr->nv_cdma_max_slots)
+            {
+                cmd_err =  WMS_CMD_ERR_MSG_INDEX;
+                MSG_ERROR("Invalid message index %d",src,0,0);
+                break;
+            }
+            if (cfg_s_ptr->nv_cdma_tags[src] == WMS_TAG_NONE)
+            {
+                cmd_err =  WMS_CMD_ERR_MSG_EMPTY_MESSAGE;
+                MSG_ERROR("Empty  message %d", src, 0, 0 );
+                break;
+            }
+            
+            if (wms_nv_read_cdma_sms(src, ruim_data) == FALSE)
+            {
+                cmd_err = WMS_CMD_ERR_MSG_NV_READ;
+            }
+            else
+            {
+                /* Layout of SMS message in NV. */
+                /* 0: format                    */
+                /* 1: tag/status                */
+                /* 2: len                       */
+                /* 3+: data                     */
+                if (dest == WMS_DUMMY_MESSAGE_INDEX)
+                {// 插入
+                    for (i=0; i<cfg_s_ptr->ruim_max_slots; i++)
+                    {
+                        if (cfg_s_ptr->ruim_tags[i] == WMS_TAG_NONE)
+                        {
+                            /* found a free slot */
+                            dest = i;
+                            break;
+                        }
+                    }
+                    
+                    if (dest == WMS_DUMMY_MESSAGE_INDEX)
+                    {
+                        cmd_err = WMS_CMD_ERR_MSG_MEMORY_FULL;
+                    }
+                    else if (wms_ruim_write_sms(dest, &ruim_data[1], FALSE) == FALSE)
+                    {
+                        cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
+                    }
+                    else
+                    {
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                        /* Update Message Information Cache */
+                        wms_cfg_update_msg_info_cache(ruim_data[1],
+                                          WMS_MEMORY_STORE_RUIM,
+                                          dest,
+                                          &ruim_data[1],
+                                          (uint8)cfg_s_ptr->ruim_sms_rec_len);
+#endif 
+
+                        /* RUIM write was successful, update message list */
+                        cfg_s_ptr->ruim_tags[dest] = (wms_message_tag_e_type)ruim_data[1];
+                        
+                        // send out CFG message list event
+                        wms_cfg_do_message_list(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+                        wms_cfg_do_memory_status(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+                        
+                        if (cmd_ptr->cmd.msg_copy.copypram.delete_src)
+                        {// 移动消息
+                            ruim_data[1] = WMS_TAG_NONE;
+                            
+                            if (wms_nv_delete_cdma_sms(src, ruim_data) == FALSE)
+                            {
+                                cmd_err = WMS_CMD_ERR_MSG_NV_DELETE;
+                            }
+                            else
+                            {
+                                /* Update duplicate detection list */
+                                wms_cfg_delete_dup_info_cache(WMS_MEMORY_STORE_NV_CDMA, src);
+                                
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                                /* Delet Message Information Cache */
+                                {
+                                    uint8 data = cfg_s_ptr->nv_cdma_tags[src];
+                                    
+                                    /* Delet old Message Information Cache */
+                                    wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                              WMS_MEMORY_STORE_NV_CDMA,
+                                              src,
+                                              &data,
+                                              1);
+                                }
+#endif 
+                                
+                                /* NV write was successful, update message list */
+                                cfg_s_ptr->nv_cdma_tags[src] = WMS_TAG_NONE;
+                                
+                                // send out CFG message list event
+                                wms_cfg_do_message_list(WMS_MEMORY_STORE_NV_CDMA, WMS_TAG_NONE);
+                                wms_cfg_do_memory_status(WMS_MEMORY_STORE_NV_CDMA, WMS_TAG_NONE);
+                            }
+                        }
+                    }
+                }
+                else
+                {// 替换
+                    // TODO
+                }
+            }
+            break;
+
+        default:
+            cmd_err = WMS_CMD_ERR_MSG_MEMORY_STORE;
+            MSG_ERROR("Invalid memory store %d", cmd_ptr->cmd.msg_write.message.msg_hdr.mem_store, 0, 0 );
+            break;
+    } /* switch mem_store */
+
+    wms_client_cmd_status(cmd_ptr, cmd_err);
+    
+    return;
+#endif /* defined(FEATURE_CDSMS) && defined(FEATURE_CDSMS_RUIM) */
+} /* wms_msg_copy_proc() */
+
+#if defined(FEATURE_UIM_TOOLKIT)
+void wms_msg_refresh_proc(wms_cmd_type    *cmd_ptr)
+{
+#if defined(FEATURE_CDSMS) && defined(FEATURE_CDSMS_RUIM)
+    wms_cmd_err_e_type          cmd_err = WMS_CMD_ERR_NONE;
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    cfg_s_ptr->refresh_in_progress = TRUE;
+    cfg_s_ptr->cdma_init_complete = FALSE;
+    
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+    {
+        // 清除 Cache
+        int i;
+        
+        if (db_getuiminitmask() & INITUIMSMSMASK)
+        {
+            return;
+        }
+        for (i=0; i < cfg_s_ptr->ruim_max_slots; i++)
+        {
+            if (cfg_s_ptr->ruim_tags[i] != WMS_TAG_NONE)
+            {
+                ruim_data[0] = cfg_s_ptr->ruim_tags[i];
+                ruim_data[1] = 0;
+                
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+                /* Delet old Message Information Cache */
+                wms_cfg_update_msg_info_cache(WMS_TAG_NONE,
+                                      WMS_MEMORY_STORE_RUIM,
+                                      i,
+                                      ruim_data,
+                                      (uint8)cfg_s_ptr->ruim_sms_rec_len);
+#endif  
+              
+                /* Update duplicate detection list */
+                wms_cfg_delete_dup_info_cache(WMS_MEMORY_STORE_RUIM, i);
+                
+                /* RUIM delete was successful, update message list */
+                cfg_s_ptr->ruim_tags[i] = WMS_TAG_NONE;
+            }
+            else
+            {
+                continue; /* skip slots */
+            }
+            
+            wms_cfg_do_message_list(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+            wms_cfg_do_memory_status(WMS_MEMORY_STORE_RUIM, WMS_TAG_NONE);
+        }
+    }
+    db_setuiminitmask(INITUIMSMSMASK);
+    //wms_ruim_init_stepbystep();
+#ifdef FEATURE_OMH_SMS
+    wms_ruim_OMH_init();
+#endif
+#else        
+    wms_ruim_init();
+#endif        
+
+    wms_client_cmd_status(cmd_ptr, cmd_err);
+#endif /* defined(FEATURE_CDSMS) && defined(FEATURE_CDSMS_RUIM) */
+} /* wms_msg_refresh_proc() */
+#endif
+#endif /*CUST_EDITION*/
 /*
 */
 void wms_msg_delete_all_proc
@@ -4958,8 +5752,23 @@ void wms_msg_mc_mo_status_proc
                      /* Fall back in order to start the retries for large msg */
                   rec_ptr->retry_time_left = msg_s_ptr->mo_retry_period;
                      /* Wait till RETRY Period to hear back from CM */
+ #ifdef CUST_EDITION	                 
+                  clk_dereg(&rec_ptr->clk_timer);
+                  clk_reg2(&rec_ptr->clk_timer, 
+                           wms_mo_timer,
+                           CLK_MS_PER_SEC,
+                           0,
+                           FALSE,
+                           rec_ptr);
+                  
+                  // 注意: 业务信道一旦建立函数 wms_msg_auto_dc_send 会被调用, 故这里给最大等待时间
+                  rec_ptr->retry_wait_time = WMS_MAX_RETRY_PERIOD;
+                  rec_ptr->state = WMS_MSG_STATE_QUEUED;
+#else
+
                      rec_ptr->retry_wait_time = 0;
                      rec_ptr->state = WMS_MSG_STATE_QUEUED;
+#endif /*CUST_EDITION*/	
               }
               else
               {
@@ -5718,15 +6527,30 @@ wms_status_e_type wms_msg_cdma_deliver
       routing_ptr->mem_store = WMS_MEMORY_STORE_NONE;
     client = parsed_client;
   }
-
+#ifdef CUST_EDITION	  
+#ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
+  if (msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_CHINAUNICOMREG)
+  {
+    MSG_HIGH("China Unicom Register ack Message Detected! Routes Changed", 0, 0, 0);
+    msg_event_info.mt_message_info.route = routing_ptr->route =
+      WMS_ROUTE_TRANSFER_AND_ACK;
+    msg_event_info.mt_message_info.message.msg_hdr.mem_store =
+      routing_ptr->mem_store = WMS_MEMORY_STORE_NONE;
+  }
+#endif  
+#endif /*CUST_EDITION*/
   /* Handling for WAP Push Messages */
   if (wms_cfg_check_wap_push_message(msg_ptr))
-  {
+  { 
+#ifdef FEATURE_CARRIER_TAIWAN_APBW    
+    return WMS_UNSUPPORTED_S;
+#else    
     MSG_HIGH("WAP Push Message Detected! Routes Changed", 0, 0, 0);
     msg_event_info.mt_message_info.route = routing_ptr->route =
       WMS_ROUTE_TRANSFER_AND_ACK;
     msg_event_info.mt_message_info.message.msg_hdr.mem_store =
       routing_ptr->mem_store = WMS_MEMORY_STORE_NONE;
+#endif
   }
 
   if (wms_msg_check_flash_sms_message(&cdma_tl))
@@ -5796,7 +6620,29 @@ wms_status_e_type wms_msg_cdma_deliver
         routing_ptr->route = WMS_ROUTE_DISCARD;
         return WMS_OK_S;
       }
+ #ifdef CUST_EDITION	     
+      if (cfg_s_ptr->client_memory_full &&
+#ifdef FEATURE_AUTOREPLACE
+          (cfg_s_ptr->autoreplace == FALSE) &&
+#endif          
+          (write_mode != WMS_WRITE_MODE_REPLACE))
+      {
+        MSG_HIGH("Storage full!", 0,0,0);
+        return WMS_OUT_OF_RESOURCES_S;
+      }
+      
+#if defined(FEATURE_CARRIER_ISRAEL_PELEPHONE)
+      // 以色列版本在此将消息由可视顺序转为逻辑顺序
+      if ((cdma_tl.teleservice != WMS_TELESERVICE_VMN_95) &&
+          (cdma_tl.teleservice != WMS_TELESERVICE_IS91_VOICE_MAIL) &&
+          (cdma_tl.teleservice != WMS_TELESERVICE_MWI))
+      {
+         extern void wmsutil_decodemessagefromview2logic(wms_client_message_s_type *pclt_msg);
 
+         wmsutil_decodemessagefromview2logic(msg_ptr);
+      }
+#endif
+#endif /*CUST_EDITION*/
       /* Store the message and notify the clients.
       ** The Ack will be sent after this function is called.
       */
@@ -7510,7 +8356,133 @@ boolean wms_msg_check_in_use_records
 #ifdef FEATURE_GWSMS_BROADCAST
 #error code not present
 #endif /* FEATURE_GWSMS_BROADCAST */
+#ifdef CUST_EDITION	
 
+/*=========================================================================
+FUNCTION
+  wms_msg_set_auto_cdma_params
+
+DESCRIPTION
+  Sets particular CDMA parameters based on cdma_set_params_ptr, to be used for
+  MO messaging on the CDMA network while the format is AUTOMATIC.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  status codes
+
+SIDE EFFECTS
+  Internal data set for MO processing.
+
+=========================================================================*/
+wms_status_e_type wms_msg_set_auto_cdma_params
+(
+  wms_client_id_type              client_id,
+  wms_cdma_template_s_type        *cdma_set_params_ptr  /* IN */
+)
+{
+#ifdef FEATURE_SMS_TRANSPARENT_MO
+#error code not present
+#else
+  return WMS_UNSUPPORTED_S;
+#endif /* FEATURE_SMS_TRANSPARENT_MO */
+
+}
+
+/*=========================================================================
+FUNCTION
+  wms_msg_set_auto_gw_params
+
+DESCRIPTION
+  Sets particular GW parameters based on gw_set_params_ptr, to be used for
+  MO messaging on the GW network while the format is AUTOMATIC.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  status codes
+
+SIDE EFFECTS
+  Internal data set for MO processing.
+
+=========================================================================*/
+wms_status_e_type wms_msg_set_auto_gw_params
+(
+  wms_client_id_type              client_id,
+  wms_gw_template_s_type          *gw_set_params_ptr    /* IN */
+)
+{
+#ifdef FEATURE_SMS_TRANSPARENT_MO
+#error code not present
+#else
+  return WMS_UNSUPPORTED_S;
+#endif /* FEATURE_SMS_TRANSPARENT_MO */
+}
+
+/*=========================================================================
+FUNCTION
+  wms_msg_get_auto_cdma_params
+
+DESCRIPTION
+  Gets particular CDMA parameters, to be used for MO messaging on the CDMA
+  network while the format is AUTOMATIC.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  status codes
+
+SIDE EFFECTS
+  Modifies cdma_get_params_ptr directly.
+
+=========================================================================*/
+wms_status_e_type wms_msg_get_auto_cdma_params
+(
+  wms_client_id_type              client_id,
+  wms_cdma_template_s_type        *cdma_get_params_ptr  /* OUT */
+)
+{
+#ifdef FEATURE_SMS_TRANSPARENT_MO
+#error code not present
+#else
+  return WMS_UNSUPPORTED_S;
+#endif /* FEATURE_SMS_TRANSPARENT_MO */
+}
+
+/*=========================================================================
+FUNCTION
+  wms_msg_get_auto_gw_params
+
+DESCRIPTION
+  Gets particular GW parameters, to be used for MO messaging on the GW
+  network while the format is AUTOMATIC.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  status codes
+
+SIDE EFFECTS
+  Modifies gw_get_params_ptr directly.
+
+=========================================================================*/
+wms_status_e_type wms_msg_get_auto_gw_params
+(
+  wms_client_id_type              client_id,
+  wms_gw_template_s_type          *gw_get_params_ptr    /* OUT */
+)
+{
+#ifdef FEATURE_SMS_TRANSPARENT_MO
+#error code not present
+#else
+  return WMS_UNSUPPORTED_S;
+#endif /* FEATURE_SMS_TRANSPARENT_MO */
+}
+#endif /*CUST_EDITION*/
 /*=========================================================================
 FUNCTION
   wms_msg_set_retry_period
@@ -7887,6 +8859,267 @@ void wms_msg_process_retry_sig
   }
 }
 
+void wms_mt_timer(int4 ms_interval, void *user_data_ptr)
+{
+    boolean set_timer = FALSE;
+    wms_msg_cdma_message_record_type  *rec_ptr;
+    wms_status_e_type     st;
+    
+    rec_ptr = (wms_msg_cdma_message_record_type *)user_data_ptr;
+    
+    clk_dereg(&rec_ptr->clk_timer);
+    if (rec_ptr->state == WMS_MSG_STATE_IDLE)
+    {
+        return;
+    }
+    
+    rec_ptr->retry_time_left--;
+    
+    /* Decrement Timers */
+    if (rec_ptr->retry_time_left > 0)
+    {
+        switch (rec_ptr->state)
+        {// For MT msg: IDLE->WAIT_FOR_ACK->QUEUED->LAYER2_IN_PROGRESS->IDLE
+            case WMS_MSG_STATE_LAYER2_IN_PROGRESS:
+                MSG_HIGH( "Client didn't ack msg",0,0,0);
+        
+                st = wms_msg_cdma_ack_msg_i(rec_ptr, WMS_ERROR_TEMP, WMS_TL_NO_ACK_S);
+        
+                /* don't care about layer2 ack status;
+                   don't report ack status to client
+                */
+                if(st == WMS_OK_S)
+                {
+                  msg_s_ptr->mc_msg.is_valid = FALSE;
+                }
+                break;
+                
+            case WMS_MSG_STATE_WAIT_FOR_ACK:
+                MSG_HIGH( "Client didn't ack msg",0,0,0);
+                
+                st = wms_msg_cdma_ack_msg_i(rec_ptr, rec_ptr->error_class, rec_ptr->tl_status);
+                
+                if (st == WMS_OK_S)
+                {
+                    MSG_HIGH("ack msg: L2 timer set",0,0,0);
+                    rec_ptr->state = WMS_MSG_STATE_LAYER2_IN_PROGRESS;
+                    set_timer = TRUE;
+                }
+                else if (st == WMS_NETWORK_NOT_READY_S)
+                {
+                    rec_ptr->retry_wait_time = 1; /* Retry after 1 second */
+                    rec_ptr->state           = WMS_MSG_STATE_QUEUED;
+                    set_timer = TRUE;
+                }
+                else
+                {
+                    MSG_HIGH("ack msg error",0,0,0);
+                }
+                break;
+                
+            default:// WMS_MSG_STATE_QUEUED
+                if (rec_ptr->retry_wait_time > 0)
+                {
+                    rec_ptr->retry_wait_time -= 1;
+                    
+                    if (rec_ptr->retry_wait_time == 0)
+                    {
+                        wms_status_e_type     st;
+                        
+                        /* Send the Ack Again */
+                        st = wms_msg_cdma_ack_msg_i(rec_ptr, rec_ptr->error_class, rec_ptr->tl_status);
+                        
+                        if (st == WMS_OK_S)
+                        {
+                            MSG_HIGH("ack msg: L2 timer set",0,0,0);
+                            rec_ptr->state = WMS_MSG_STATE_LAYER2_IN_PROGRESS;
+                            set_timer = TRUE;
+                        }
+                        else if (st == WMS_NETWORK_NOT_READY_S)
+                        {
+                            rec_ptr->retry_wait_time = 1; /* Retry after 1 second */
+                            rec_ptr->state           = WMS_MSG_STATE_QUEUED;
+                            set_timer = TRUE;
+                        }
+                        else
+                        {
+                            MSG_HIGH("ack msg error",0,0,0);
+                        }
+                    }
+                    else
+                    {
+                        set_timer = TRUE;
+                    }
+                }
+                break;
+        }
+    }
+    
+    if (set_timer == TRUE)
+    {
+        clk_reg2(&rec_ptr->clk_timer, 
+                 wms_mt_timer,
+                 CLK_MS_PER_SEC,
+                 0,
+                 FALSE,
+                 rec_ptr);
+    }
+    else
+    {
+        if (rec_ptr->client_id != WMS_CLIENT_TYPE_INTERNAL)
+        {
+            msg_event_info.ack_report_info.client_id = rec_ptr->client_id;
+            msg_event_info.ack_report_info.transaction_id =
+                    (wms_transaction_id_type)rec_ptr->user_data;
+            msg_event_info.ack_report_info.message_mode = WMS_MESSAGE_MODE_CDMA;
+            msg_event_info.ack_report_info.user_data = rec_ptr->mt_rec_user_data;
+            msg_event_info.ack_report_info.is_success = FALSE;
+            
+            (void)wms_msg_event_notify(WMS_MSG_EVENT_ACK_REPORT, &msg_event_info);
+        }
+        
+        wms_msg_cdma_clear_msg_rec(rec_ptr);
+    }
+}
+
+void wms_mo_timer(int4 ms_interval, void *user_data_ptr)
+{
+    boolean set_timer = FALSE;
+    wms_msg_cdma_message_record_type  *rec_ptr;
+    
+    rec_ptr = (wms_msg_cdma_message_record_type *)user_data_ptr;
+    
+    clk_dereg(&rec_ptr->clk_timer);
+    if (rec_ptr->state == WMS_MSG_STATE_IDLE)
+    {
+        return;
+    }
+    
+    rec_ptr->retry_time_left--;
+    
+    /* Decrement Timers */
+    if (rec_ptr->retry_time_left > 0)
+    {
+        if (rec_ptr->state == WMS_MSG_STATE_QUEUED
+            && rec_ptr->retry_wait_time > 0)
+        {
+            rec_ptr->retry_wait_time -= 1;
+            
+            if (rec_ptr->retry_wait_time == 0)
+            {
+                wms_status_e_type     st;
+                
+                /* Send the Message Again */
+                st = wms_msg_cdma_send_sms_OTA(FALSE,   /* not a TL ack */
+                                               rec_ptr,
+                                               rec_ptr->ota,
+                                               &rec_ptr->address);
+                
+                // Send MO SMS Retry Attempt Event
+                wms_msg_evt_mo_sms_retry_attempt((uint32)rec_ptr->user_data,
+                            (rec_ptr-msg_s_ptr->cdma_mo_rec)/sizeof(wms_msg_cdma_message_record_type *),
+                            rec_ptr->prev_report.report_status,
+                            rec_ptr->prev_report.cause_info.tl_status,
+                            rec_ptr->retry_time_left);
+                
+                if (st == WMS_OK_S)
+                {
+                    /* update the msg state of the rec_ptr
+                    */
+                    rec_ptr->state = WMS_MSG_STATE_LAYER2_IN_PROGRESS;
+                    set_timer = TRUE;
+                }
+                else if (st == WMS_NETWORK_NOT_READY_S)
+                {
+                    /* reset the interval timer if there is enough time left from the
+                    ** retry period.
+                    */
+                    if ((rec_ptr->retry_time_left - msg_s_ptr->mo_retry_interval) > 0)
+                    {
+                        /* Set the retry_wait_time */
+                        rec_ptr->retry_wait_time = msg_s_ptr->mo_retry_interval;
+                        rec_ptr->state = WMS_MSG_STATE_QUEUED;
+                        set_timer = TRUE;
+                    }
+                }
+            }
+            else
+            {
+                set_timer = TRUE;
+            }
+        }
+        else if(rec_ptr->state == WMS_MSG_STATE_LAYER2_IN_PROGRESS
+            && rec_ptr->retry_wait_time > 0
+            && !dc_s_ptr->call_active
+            && !dc_s_ptr->bInTC
+            && !rec_ptr->large_msg)
+        {
+            set_timer = TRUE;
+            rec_ptr->retry_wait_time -= 1;
+            
+            if (rec_ptr->retry_wait_time == 0)
+            {// 改走业务信道
+                wms_status_e_type     st;
+                
+                MSG_HIGH("WMS initiating DC... ", 0,0,0);
+    
+                st = wms_dc_connect(WMS_CLIENT_TYPE_INTERNAL,
+                        NULL,
+                        NULL,
+                        dc_s_ptr->default_so_from_nv);
+                        
+                if (st == WMS_OK_S)
+                {
+                    dc_s_ptr->wms_initiated_call = TRUE;
+                    rec_ptr->retry_time_left = WMS_MAX_RETRY_PERIOD;
+                   
+                    // 注意: 业务信道一旦建立函数 wms_msg_auto_dc_send 会被调用, 故这里给最大等待时间
+                    rec_ptr->retry_wait_time = WMS_MAX_RETRY_PERIOD;
+                    rec_ptr->state = WMS_MSG_STATE_QUEUED;
+                    
+                    rec_ptr->large_msg = TRUE;
+                }
+            }
+        }
+        else
+        {
+            set_timer = TRUE;
+        }
+    }
+    else
+    {
+        if (rec_ptr->state == WMS_MSG_STATE_WAIT_FOR_ACK)
+        {
+            rec_ptr->prev_report.report_status = WMS_RPT_NO_ACK;
+        }
+    }
+    
+    if (set_timer == TRUE)
+    {
+        clk_reg2(&rec_ptr->clk_timer, 
+                 wms_mo_timer,
+                 CLK_MS_PER_SEC,
+                 0,
+                 FALSE,
+                 rec_ptr);
+    }
+    else
+    {
+        msg_event_info.submit_report_info = rec_ptr->prev_report;
+        
+        if (rec_ptr->send_status_to_clients == TRUE)
+        {
+            (void)wms_msg_event_notify(WMS_MSG_EVENT_SUBMIT_REPORT, &msg_event_info);
+        }
+        
+        /* layer2 processing done */
+        msg_s_ptr->mc_msg.is_valid = FALSE;
+        
+        wms_msg_cdma_clear_msg_rec(rec_ptr);
+    }    
+}
+
+
 void wms_msg_offline
 (
   void
@@ -8218,6 +9451,11 @@ static boolean wms_msg_convert_address_to_plus
 #ifdef FEATURE_GWSMS
 #error code not present
 #endif /* FEATURE_GWSMS */
+
+void wms_msg_setmochannel(byte usechl)
+{
+    g_mochannel = usechl;
+}
 
 #endif /* FEATURE_CDSMS || FEATURE_GWSMS */
 

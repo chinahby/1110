@@ -103,6 +103,17 @@ when       who     what, where, why
 #include "nv_cnv.h"
 #endif
 
+#ifdef FEATRUE_AUTO_SET_NEED_NV_VALUE
+#include "prl.h"
+#endif
+
+#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
+#include "flash_nor_device.h"
+#ifdef MAP_BACKUP_TO_CODE_AREA
+#include "cache_mmu.h"
+#endif //MAP_BACKUP_TO_CODE_AREA
+#endif //FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
+
 #ifdef FEATURE_MDN_BASED_NAI
 #define PS_NAI_DFLT_DOMAIN "@default.com"
 #include "dsmip.h"
@@ -198,6 +209,7 @@ byte fact_data[NVIM_FACTORY_DATA_SIZE];
 static boolean          nverr_init( void );
 static void             nverr_update_log( void );
 
+
 /* Structure used to essentially double buffer the error log  */
 struct 
 {
@@ -232,6 +244,143 @@ static const char *nv_access_dirs[] = {
 };
 
 #endif
+
+#ifdef FEATRUE_AUTO_SET_NEED_NV_VALUE
+typedef struct _nv_auto_set_type
+{
+    nv_items_enum_type      nv_items_id;
+    char                    nv_items_value[128];
+}nv_auto_set_type;
+
+typedef struct _nv_auto_set_table_type
+{
+    const nv_auto_set_type* plist;
+    int                     lsit_size;
+}nv_auto_set_table_type;
+
+/*---------------------------------------------------------------------------------------
+                           Please add new customer code here
+          We give every customer 16 version number for update it's nv in future
+---------------------------------------------------------------------------------------*/
+#define AUTO_NV_CUST_CODE_INVALID           0x00
+#define AUTO_NV_MODIFY_TIME_FOR_CUSTOMER    0x10
+
+
+#define AUTO_NV_CUST_CODE_COMMON            0x02260000                                                      //For common using, internal test.
+#define AUTO_NV_CUST_CODE_HTTH              (AUTO_NV_CUST_CODE_COMMON + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //Hutch In Thailand
+#define AUTO_NV_CUST_CODE_CTTH              (AUTO_NV_CUST_CODE_HTTH   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //CAT In Thailand
+#define AUTO_NV_CUST_CODE_ALTW              (AUTO_NV_CUST_CODE_CTTH   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //APTG In Taiwan, China
+#define AUTO_NV_CUST_CODE_ALCN              (AUTO_NV_CUST_CODE_ALTW   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //China Telecom
+#define AUTO_NV_CUST_CODE_TLFJ              (AUTO_NV_CUST_CODE_ALCN   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //China Telecom
+
+#ifdef MODEL_RF_NV_H
+#include MODEL_RF_NV_H
+#else
+#error You must define MODEL_RF_NV_H in min file and contain corresponding header file in your build directory
+#endif
+
+#ifdef CUST_SVC_NV_H
+#include CUST_SVC_NV_H
+#else
+#error You must define CUST_SVC_NV_H in min file and contain corresponding header file in your build directory
+#endif
+
+//Add all auto set list to table
+nv_auto_set_table_type nv_auto_set_table[] = 
+{
+    {nv_auto_set_rf_fixed_list,     sizeof(nv_auto_set_rf_fixed_list)/sizeof(nv_auto_set_type)},
+    {nv_auto_set_svc_list,          sizeof(nv_auto_set_svc_list)/sizeof(nv_auto_set_type)}
+};
+
+boolean bIsResetOemNv = FALSE;
+
+LOCAL nv_stat_enum_type nv_auto_set_need_value(void);
+#endif //FEATRUE_AUTO_SET_NEED_NV_VALUE
+
+/*-----------------------------------------------------------------------
+      Backup critical nv to flash and auto resotre when nv inactive
+
+      Rule NO.1: RF NV can be backup only 1 time.
+      Rule NO.2: ESN can backup ESN_BACKUP_TIME_MAX times.
+      Rule NO.3: If RF nv or ESN is backup, Header must be written
+                 to FLAG_CRITICAL_NV_WRITED
+      Rule NO.4: If any problem happens, Header msut be marked as 
+                 FLAG_CRITICAL_NV_INVALID
+      Rule NO.5: Please MAKE SURE backup area isn't overlap the 
+                 bootloader and main applicaiton
+-----------------------------------------------------------------------*/
+#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
+#define FLAG_CRITICAL_NV_UNWRITE            0xFFFFFFFF
+#define FLAG_CRITICAL_NV_WRITED             0x51515151
+#define FLAG_CRITICAL_NV_INVALID            0x00000000
+
+#define CRITICAL_NV_ITEM_SIZE               128
+
+#define CRITICAL_RF_NV_OFFSET               0x2000
+#define CRITICAL_NV_ESN_OFFSET              0x1000
+
+#define ESN_BACKUP_TIME_MAX                 10
+#define EMPTY_ESN_ADDR_SLOT                 0xFFFF
+#define INVALID_ESN_ADDR_SLOT               0x0000
+
+
+#define  CRITICAL_NV_KICK_WATCHDOG()   /*lint -e717 do ... while(0) */  \
+                           do {                             \
+   (void)outp(HWIO_WDOG_RESET_ADDR, HWIO_WDOG_RESET_RMSK);  \
+                              }                             \
+                           while (0)                        \
+                           /*lint +e717 */
+
+#ifdef MAP_BACKUP_TO_CODE_AREA                           
+#define CRITICAL_NV_CACHE_DISABLE()  cache_mmu_disable()
+#define CRITICAL_NV_CACHE_REENABLE()  cache_mmu_re_enable()
+
+#define CRITICAL_NV_INTLOCK_SAV(sav)  INTLOCK_SAV(sav)
+#define CRITICAL_NV_INTFREE_SAV(sav)  INTFREE_SAV(sav)
+#else //MAP_BACKUP_TO_CODE_AREA
+#define CRITICAL_NV_CACHE_DISABLE()
+#define CRITICAL_NV_CACHE_REENABLE()
+
+#define CRITICAL_NV_INTLOCK_SAV(sav)
+#define CRITICAL_NV_INTFREE_SAV(sav)
+#endif//MAP_BACKUP_TO_CODE_AREA
+
+extern fsi_nor_device *nor_device;
+
+//Allow to update ESN 10 times.
+typedef struct _nv_backup_header_type
+{
+    dword                   dwStatus;    
+    dword                   dwRfNvCount;
+    word                    esn_address[ESN_BACKUP_TIME_MAX];
+}nv_backup_header_type;
+
+nv_items_enum_type  critical_nv_list[] = 
+{
+    NV_VBATT_I,                       
+    NV_CDMA_TX_LIM_VS_TEMP_I,         
+    NV_CDMA_TX_LIM_VS_FREQ_I,         
+    NV_CDMA_EXP_HDET_VS_AGC_I,        
+    NV_HDET_OFF_I,                    
+    NV_HDET_SPN_I,                    
+    NV_LNA_RANGE_OFFSET_I,            
+    NV_CDMA_TX_LIN_MASTER0_I,         
+    NV_CDMA_TX_LIN_MASTER1_I,         
+    NV_LNA_RANGE_12_OFFSET_I,         
+    NV_CDMA_LNA_OFFSET_VS_FREQ_I,     
+    NV_CDMA_LNA_12_OFFSET_VS_FREQ_I,  
+    NV_TX_COMP0_I,                    
+    NV_TX_COMP1_I,                    
+    NV_CDMA_LNA_3_OFFSET_I,           
+    NV_CDMA_LNA_3_OFFSET_VS_FREQ_I,   
+    NV_CDMA_LNA_4_OFFSET_I,           
+    NV_CDMA_LNA_4_OFFSET_VS_FREQ_I,   
+    NV_CDMA_VGA_GAIN_OFFSET_I,        
+    NV_CDMA_VGA_GAIN_OFFSET_VS_FREQ_I
+};
+#endif //FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
+
+
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /*                                                                         */
@@ -1226,6 +1375,17 @@ nv_init (void)
   else {
     status = NV_DONE_S;
   }
+
+#ifdef CUST_EDITION
+#ifdef FEATRUE_AUTO_SET_NEED_NV_VALUE
+    status = nv_auto_set_need_value();
+    if(NV_DONE_S != status)
+    {
+        return status;
+    }
+#endif   /*FEATRUE_AUTO_SET_NEED_NV_VALUE*/
+#endif /*CUST_EDITION*/
+
 
 #ifdef FEATURE_NV_CNV
   /* If the file was dropped in as part of a CEFS image, then restore
@@ -2881,6 +3041,883 @@ void nv_access_op_cs_init(void)
   }
   nv_cs_init_flag = TRUE;
 }
+
+#ifdef CUST_EDITION
+#ifdef FEATRUE_AUTO_SET_NEED_NV_VALUE
+
+extern void lcd_debug_message( char * message);
+
+
+/*===========================================================================
+
+Function nv_auto_set_prl()
+
+DESCRIPTION
+  Auot set the pre-defined prl to nv.
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  Must be called after NV task initialized or be called in nv_auto_set_need_value
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+LOCAL nv_stat_enum_type nv_auto_set_prl()
+{
+    dword               dwPrlSize = 0;
+#ifdef FEATURE_SD20
+    word                prl_version = PRL_DEFAULT_VER;
+    /* Validate all sspr p rev version with P REV 1 first.*/
+    prl_sspr_p_rev_e_type  sspr_p_rev          = PRL_SSPR_P_REV_1;  
+    boolean                is_full_validation  = TRUE;  
+#endif    
+    boolean             bIsNVTaskIni = nvi_initialized;
+
+    dwPrlSize = sizeof(pr_list_data)/sizeof(byte);
+
+    //set it to TRUE and set back to it's own value when exit
+    nvi_initialized = TRUE;
+    
+    if(dwPrlSize > nv_max_size_of_roaming_list())
+    {
+        ERR("Pre-defined PRL size is invalid!!!", 0, 0, 0);  
+        
+        nvi_initialized = bIsNVTaskIni;
+        return NV_NOTACTIVE_S;
+    }
+
+    local_cmd.tcb_ptr    = NULL;
+    local_cmd.sigs       = 0;
+    local_cmd.done_q_ptr = NULL;
+    local_cmd.cmd        = NV_WRITE_F;
+    local_cmd.data_ptr   = (nv_item_type*) &nv_pr_list;
+        
+    /* We always only pre-set NAM 1 */
+    nv_pr_list.nam = 0;
+    nv_pr_list.size = dwPrlSize * 8;
+
+    memcpy((void*)nv_pr_list.roaming_list, (void*)pr_list_data, dwPrlSize);
+    
+#ifdef FEATURE_SD20
+    if(prl_validate((byte*) nv_pr_list.roaming_list, &prl_version,&sspr_p_rev,is_full_validation) == PRL_VALID)
+    {
+#else
+    if(mcsys_validate_roaming_list((byte *)nv_pr_list.roaming_list) == PRL_VALID)
+    {
+#endif
+        nv_pr_list.valid = TRUE;
+    }
+    else
+    {
+        nv_pr_list.valid = FALSE;
+
+        ERR("Pre-defined PRL is invalid!!!", 0, 0, 0);  
+        
+        nvi_initialized = bIsNVTaskIni;
+        return NV_NOTACTIVE_S;
+    }    
+    
+    /* Set the PRL version */
+#ifdef FEATURE_SD20
+    nv_pr_list.prl_version = prl_version;
+#else
+    nv_pr_list.prl_version = mcsys_get_prl_version();
+#endif
+    
+#ifdef FEATURE_IS683A_PRL
+    local_cmd.item = NV_ROAMING_LIST_683_I;
+#else
+    local_cmd.item = NV_ROAMING_LIST_I;
+#endif    
+
+    nvio_write(&local_cmd);
+    
+    nvi_initialized = bIsNVTaskIni;
+    return local_cmd.status;
+}
+    
+/*===========================================================================
+
+Function nv_auto_set_need_value()
+
+DESCRIPTION
+  Auot set needed nv item when fresh build.
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+LOCAL nv_stat_enum_type nv_auto_set_need_value(void)
+{
+    int                             table_index, table_size, list_index;
+    dword                           auto_nv_item_version = AUTO_NV_CUST_CODE_INVALID;
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+    extern boolean                  nvruim_rtre_config_initialized;
+
+    nv_rtre_control_type            saved_rtre_control_value = nv_rtre_control_value;
+    nv_rtre_polling_control_type    saved_rtre_polling_control_type = nv_rtre_polling_control_value;
+    boolean                         saved_rtre_config_initialized = nvruim_rtre_config_initialized;    
+#endif
+    nv_stat_enum_type               nvOpStatus;
+    boolean                         bIsFreshBuild = TRUE;
+
+//Check if this is a fresh start phone.
+//if the phone is fresh start, the NV_STATUS of NV_PCB_STATUS_I must be NV_INACTIVE
+    local_cmd.tcb_ptr    = NULL;
+    local_cmd.sigs       = 0;
+    local_cmd.done_q_ptr = NULL;
+    local_cmd.cmd        = NV_READ_F;
+    local_cmd.item       = NV_AUTO_SET_ITEM_VERSION_I;
+    local_cmd.data_ptr   = (nv_item_type*) &auto_nv_item_version;
+
+    //Read It
+    local_cmd.status = nvio_read(&local_cmd);
+
+    if(NV_NOTACTIVE_S != local_cmd.status)
+    {
+        //if(AUTO_NV_ITME_VERSION <= auto_nv_item_version)
+        if(AUTO_NV_ITME_VERSION == auto_nv_item_version)
+        {
+            //OK, it not a fresh start phone and version is same as this bin file
+            //skip the follow operations.
+            return NV_DONE_S;
+        }
+        
+        //If version doesen't equal we need to do follow operations.        
+           
+        //make it as not fresh start.
+        bIsFreshBuild = FALSE;  
+    }
+    //OK, Fresh Build of NV VERSION change, I must restore OEM NVs.
+    bIsResetOemNv = TRUE;
+    
+    //OK, need to restore, make the version equal to BIN file's.
+    auto_nv_item_version = AUTO_NV_ITME_VERSION;
+    lcd_debug_message ("Initialize necessary nv, please waiting.");
+    
+    
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+//If phone supports UIM RTRE, we must config RTRE mode to NV Only, then we can write some SERVICE NVs.
+//After NVs set done, we MUST restore those RTRE Control value.
+    nv_rtre_control_value = NV_RTRE_CONTROL_NO_RUIM;
+    nv_rtre_polling_control_value = NV_RTRE_POLLING_CONTROL_NO_POLL;
+    nvruim_rtre_config_initialized = TRUE;
+#endif           
+
+    local_cmd.cmd = NV_WRITE_F;
+
+    /*--------------------------------------------------------------
+                       Write Needed Items to NV
+    --------------------------------------------------------------*/
+    table_index = 0;
+    table_size = sizeof(nv_auto_set_table)/sizeof(nv_auto_set_table_type);
+    while(table_index < table_size)
+    {
+        list_index = 0;
+        while(list_index < nv_auto_set_table[table_index].lsit_size)
+        {
+            local_cmd.item = nv_auto_set_table[table_index].plist[list_index].nv_items_id;
+            local_cmd.data_ptr = (nv_item_type*)nv_auto_set_table[table_index].plist[list_index].nv_items_value;
+            local_cmd.status = nvio_write(&local_cmd);
+
+            if(NV_DONE_S != local_cmd.status)
+            {
+                ERR_FATAL("Auto set NV failed, item = %d", local_cmd.item, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+                nv_rtre_control_value = saved_rtre_control_value;
+                nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+                nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+                return local_cmd.status;                            
+            }
+
+            list_index++;
+        }
+        table_index++;
+    }
+
+    /*--------------------------------------------------------------
+                       Write Pre-Defined PRL to NV
+    --------------------------------------------------------------*/
+    nvOpStatus = nv_auto_set_prl();    
+    if(NV_DONE_S != nvOpStatus &&  NV_NOTACTIVE_S != nvOpStatus)
+    {
+        ERR_FATAL("Auto set PRL failed, item = %d", local_cmd.item, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+        nv_rtre_control_value = saved_rtre_control_value;
+        nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+        nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+        return local_cmd.status;         
+    }
+    
+    //Only restore Pre-Defined RF calibration items and
+    //Critical Items when phone's fresh build
+    if(bIsFreshBuild)
+    {
+    /*--------------------------------------------------------------
+                Write Pre-Defined RF calibration items to NV
+    --------------------------------------------------------------*/
+        list_index = 0;
+        while(list_index < sizeof(nv_auto_set_rf_cal_list)/sizeof(nv_auto_set_type))
+        {
+            local_cmd.item = nv_auto_set_rf_cal_list[list_index].nv_items_id;
+            local_cmd.data_ptr = (nv_item_type*)nv_auto_set_rf_cal_list[list_index].nv_items_value;
+            local_cmd.status = nvio_write(&local_cmd);
+
+            if(NV_DONE_S != local_cmd.status)
+            {
+                ERR_FATAL("Auto set NV failed, item = %d", local_cmd.item, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+                nv_rtre_control_value = saved_rtre_control_value;
+                nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+                nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+                return local_cmd.status;                            
+            }
+
+            list_index++;
+        }
+        
+    /*--------------------------------------------------------------
+                       Write Critical Items to NV
+    --------------------------------------------------------------*/
+#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH   
+        nvOpStatus = nv_critical_restore();
+
+        if(NV_DONE_S != nvOpStatus &&  NV_NOTACTIVE_S != nvOpStatus)
+        {
+            ERR_FATAL("Auto set NV failed, item = %d", local_cmd.item, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+            nv_rtre_control_value = saved_rtre_control_value;
+            nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+            nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+            return local_cmd.status;         
+        }
+#endif
+    } //if(bIsFreshBuild)
+
+    local_cmd.item       = NV_AUTO_SET_ITEM_VERSION_I;
+    local_cmd.data_ptr   = (nv_item_type*) &auto_nv_item_version;
+
+    //Write NV
+    local_cmd.status = nvio_write(&local_cmd);
+
+    if(NV_DONE_S != local_cmd.status)
+    {
+        ERR_FATAL("Set auto nv item version failed, status = %d", local_cmd.status, 0, 0);            
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE    
+        nv_rtre_control_value = saved_rtre_control_value;
+        nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+        nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif      
+        return local_cmd.status;                            
+    }
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+    nv_rtre_control_value = saved_rtre_control_value;
+    nv_rtre_polling_control_value = saved_rtre_polling_control_type;
+    nvruim_rtre_config_initialized = saved_rtre_config_initialized;
+#endif  
+    
+    return NV_DONE_S;
+}
+#endif /*FEATRUE_AUTO_SET_NEED_NV_VALUE*/
+
+#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
+/*===========================================================================
+
+Function nv_clean_critical_backup_area()
+
+DESCRIPTION
+  erase critical nv items backup area, all backuped nv will lost.
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+#ifdef MAP_BACKUP_TO_CODE_AREA
+//We must place this funciton to RAM, if nv backup locates at code area
+#pragma arm section code = "NVIM_RAM_CODE"
+#endif
+nv_stat_enum_type nv_clean_critical_backup_area(void)
+{
+    dword*          pStatus = (dword*) CRITICAL_NV_BACKUP_ADDR;
+    dword           dwNextBlockAddr = 0, dwCurBlockAddr = 0;         
+    word            wBlockStart = 0, wBlockEnd = 0, wBlockInRegion = 0;
+    int             i = 0;
+    boolean         bIsFound = FALSE;    
+    flash_status    ret_code;
+    flash_ptr_type  base_address = FLASH_DEVICE_BASE;
+#ifdef MAP_BACKUP_TO_CODE_AREA
+    dword           int_sav = 0;
+#endif
+
+    if(FLAG_CRITICAL_NV_UNWRITE == *pStatus)
+    {
+        return NV_DONE_S;
+    }
+    
+    wBlockStart = 0;
+    for(i = 0; i < nor_device->flash_geometry->num_erase_blk_region; i++)
+    {
+        //Find start block to erase
+        //Only enter this loop when the start block doen't find
+        wBlockInRegion = 0;
+        while(wBlockInRegion < nor_device->flash_geometry->blk_regions[i].numblocks &&
+              !bIsFound)
+        {
+            dwCurBlockAddr = dwNextBlockAddr;
+            dwNextBlockAddr += nor_device->flash_geometry->blk_regions[i].blocksize_bytes;
+            if(CRITICAL_NV_BACKUP_ADDR < dwNextBlockAddr)
+            {
+                wBlockEnd = wBlockStart;
+                bIsFound = TRUE;
+
+#ifdef MAP_BACKUP_TO_CODE_AREA
+                //if CRITICAL_NV_BACKUP_ADDR doesn't locate at begin of a block.
+                //It may overwrite another region
+                //Verify if it is overwrite bootloader.
+                if(0 == wBlockStart || dwCurBlockAddr < CRITICAL_NV_BACKUP_ADDR)
+                {
+                    ERR("Critical NV backup area overwrite bootloader!!!", 0, 0, 0);  
+                    return NV_FAIL_S;
+                }
+#else                
+                //Verify if it is overwrite EFS.
+                if(dwCurBlockAddr < CRITICAL_NV_BACKUP_ADDR)
+                {
+                    ERR("Critical NV backup area overwrite EFS!!!", 0, 0, 0);  
+                    return NV_FAIL_S;
+                }
+#endif //MAP_BACKUP_TO_CODE_AREA            
+                break;
+            }
+            wBlockStart++;
+            wBlockInRegion++;
+        }        
+        
+        //Erase Block and stop when find end block.
+        //Only enter this loop, when find the start block.
+        while(bIsFound &&
+              wBlockInRegion < nor_device->flash_geometry->blk_regions[i].numblocks)
+        {
+#ifdef MAP_BACKUP_TO_CODE_AREA
+            if(dwNextBlockAddr > MAIN_APP_ADDRESS)
+            {
+                ERR("Critical NV backup area overwrite main applications!!!", 0, 0, 0);  
+                return NV_FAIL_S;
+            }
+#else
+            if(dwNextBlockAddr > T_NOR_FLASH_SIZE)
+            {
+                ERR("Critical NV backup area is out the range of flash size!!!", 0, 0, 0);  
+                return NV_FAIL_S;
+            }
+#endif //MAP_BACKUP_TO_CODE_AREA
+            else
+            {   
+                CRITICAL_NV_CACHE_DISABLE();
+                CRITICAL_NV_INTLOCK_SAV(int_sav);
+        
+                ret_code = nor_device->ops->erase_start(base_address, dwCurBlockAddr);
+        
+                if (ret_code == FLASH_SUCCESS)
+                {
+                    do
+                    { 
+                        ret_code = nor_device->ops->erase_status(base_address + BYTE_TO_WORD_OFFSET(dwCurBlockAddr));
+                        CRITICAL_NV_KICK_WATCHDOG();
+                    } while (ret_code != FLASH_SUCCESS);  
+                }
+                
+                CRITICAL_NV_INTFREE_SAV(int_sav);
+                CRITICAL_NV_CACHE_REENABLE();
+
+                if(ret_code != FLASH_SUCCESS)
+                {
+                    ERR("Erease critical nv backup area failed!!!", 0, 0, 0);  
+                    return NV_FAIL_S;                    
+                }
+            }
+
+            if(CRITICAL_NV_BACKUP_ADDR + CRITICAL_NV_BACKUP_SIZE - 1 < dwNextBlockAddr)
+            {
+                break;
+            }            
+            dwCurBlockAddr = dwNextBlockAddr;
+            dwNextBlockAddr += nor_device->flash_geometry->blk_regions[i].blocksize_bytes;
+            wBlockEnd++;
+            wBlockInRegion++;
+        }
+
+        //OK, we find all, get out of the loop.
+        if(CRITICAL_NV_BACKUP_ADDR + CRITICAL_NV_BACKUP_SIZE - 1 < dwNextBlockAddr)
+        {
+            break;
+        }
+    }
+
+    ERR("Clean Critical NV backup area successful!!!", 0, 0, 0);  
+        
+    return NV_DONE_S;
+}
+#ifdef MAP_BACKUP_TO_CODE_AREA
+#pragma arm section code
+#endif
+
+/*===========================================================================
+
+Function nv_critical_make_area_invalid()
+
+DESCRIPTION
+  Mark the nv backup area as invalid
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+nv_stat_enum_type nv_critical_mark_area_invalid(void)
+{
+    dword                       Status = FLAG_CRITICAL_NV_INVALID;
+    flash_status                ret_code;
+    flash_ptr_type              base_address = (flash_ptr_type)FLASH_DEVICE_BASE;
+#ifdef MAP_BACKUP_TO_CODE_AREA
+    dword                       int_sav = 0;
+#endif
+
+    CRITICAL_NV_CACHE_DISABLE();
+    CRITICAL_NV_INTLOCK_SAV(int_sav);        
+    ret_code = nor_device->ops->write((byte*)&Status, base_address, CRITICAL_NV_BACKUP_ADDR, sizeof(dword));
+    CRITICAL_NV_INTFREE_SAV(int_sav);
+    CRITICAL_NV_CACHE_REENABLE();
+    
+    if(ret_code != FLASH_SUCCESS)
+    {
+        ERR("Mark critical nv backup area invalid ESN failed!", 0, 0, 0);             
+        return NV_FAIL_S;
+    }
+    
+    ERR("Mark critical nv backup area invalid ESN successful!", 0, 0, 0);   
+    
+    return NV_DONE_S;
+}
+
+/*===========================================================================
+
+Function nv_critical_update_rf()
+
+DESCRIPTION
+  Backup critical rf nv items to flash.
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  nv_clean_critical_backup_area must be called before.
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+nv_stat_enum_type nv_critical_update_rf(void)
+{
+    nv_backup_header_type*      pHeader = (nv_backup_header_type*)CRITICAL_NV_BACKUP_ADDR;
+    nv_backup_header_type       newHeader = {0};
+    int                         index = 0, size = 0;
+    flash_status                ret_code = FLASH_SUCCESS;
+    flash_ptr_type              base_address = (flash_ptr_type)FLASH_DEVICE_BASE;
+    dword                       offset = CRITICAL_NV_BACKUP_ADDR;
+    word                        buffer[CRITICAL_NV_ITEM_SIZE/sizeof(word)] = {0};
+    word                        bufferSize = 0;
+#ifdef MAP_BACKUP_TO_CODE_AREA
+    dword                       int_sav = 0;
+#endif
+
+    if(FLAG_CRITICAL_NV_WRITED != pHeader->dwStatus &&
+       FLAG_CRITICAL_NV_UNWRITE != pHeader->dwStatus)
+    {
+        ERR("Critical NV area is invalid!!!", 0, 0, 0); 
+        return NV_FAIL_S;
+    } 
+
+    if(FLAG_CRITICAL_NV_UNWRITE != pHeader->dwRfNvCount)
+    {
+        ERR("Rf NV is allowed to backup 1 time, please clean first!", 0, 0, 0); 
+        return NV_FAIL_S;
+    }    
+    memcpy(&newHeader, pHeader, sizeof(nv_backup_header_type)); 
+    
+    local_cmd.tcb_ptr    = NULL;
+    local_cmd.sigs       = 0;
+    local_cmd.done_q_ptr = NULL;
+    local_cmd.cmd        = NV_READ_F;
+    local_cmd.data_ptr   = (nv_item_type*) buffer;
+
+    size = sizeof(critical_nv_list)/sizeof(nv_items_enum_type);
+    while(index < size)
+    {   
+        local_cmd.item = critical_nv_list[index];
+        local_cmd.status = nvio_read(&local_cmd);
+
+        if(NV_DONE_S != local_cmd.status)
+        {
+            ERR_FATAL("Read NV failed, item = %d", local_cmd.item, 0, 0);                              
+        }
+        else
+        {       
+            offset = CRITICAL_NV_BACKUP_ADDR + CRITICAL_RF_NV_OFFSET + CRITICAL_NV_ITEM_SIZE * index;
+            bufferSize = nvim_item_info_table[local_cmd.item].item_size;
+            if((bufferSize & 0x01) == 1)
+            {
+                buffer[bufferSize] = 0xFF;
+                bufferSize++;
+            }
+            
+            CRITICAL_NV_CACHE_DISABLE();
+            CRITICAL_NV_INTLOCK_SAV(int_sav);
+            ret_code = nor_device->ops->write((byte*)buffer, base_address, offset, bufferSize);
+            CRITICAL_NV_INTFREE_SAV(int_sav);
+            CRITICAL_NV_CACHE_REENABLE();
+        }
+        
+        if(NV_DONE_S != local_cmd.status || ret_code != FLASH_SUCCESS)
+        {
+            ERR("Backup RF nv item failed!, id = %d", local_cmd.item, 0, 0);        
+            
+            break;
+        }
+        index++;
+    }
+    
+    newHeader.dwRfNvCount = index;
+    if(index != size)
+    {
+        newHeader.dwStatus = FLAG_CRITICAL_NV_INVALID;
+    }
+    else
+    {
+        newHeader.dwStatus = FLAG_CRITICAL_NV_WRITED;
+    }  
+            
+    CRITICAL_NV_CACHE_DISABLE();
+    CRITICAL_NV_INTLOCK_SAV(int_sav);        
+    ret_code |= nor_device->ops->write((byte*)&newHeader, base_address, CRITICAL_NV_BACKUP_ADDR, sizeof(nv_backup_header_type));
+    CRITICAL_NV_INTFREE_SAV(int_sav);
+    CRITICAL_NV_CACHE_REENABLE();
+        
+    if(ret_code != FLASH_SUCCESS || index != size)
+    {
+        ERR("Backup RF nv items failed!", 0, 0, 0);             
+        return NV_FAIL_S;
+    }
+
+    ERR("Backup RF nv items successful!", 0, 0, 0);   
+    
+    return NV_DONE_S;
+}
+
+/*===========================================================================
+
+Function nv_critical_update_esn(byte* pEsn)
+
+DESCRIPTION
+  Backup ESN to flash
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  ESN can update 10 times, nv_clean_critical_backup_area must be called before 
+  backup ESN at 11 times.
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+nv_stat_enum_type nv_critical_update_esn(dword dwEsnValue)
+{
+    nv_backup_header_type*      pHeader = (nv_backup_header_type*)CRITICAL_NV_BACKUP_ADDR;
+    nv_backup_header_type       newHeader = {0};
+    int                         index = 0;
+    flash_status                ret_code = FLASH_SUCCESS;
+    flash_ptr_type              base_address = (flash_ptr_type)FLASH_DEVICE_BASE;
+#ifdef MAP_BACKUP_TO_CODE_AREA
+    dword                       int_sav = 0;
+#endif
+
+    if(FLAG_CRITICAL_NV_WRITED != pHeader->dwStatus &&
+       FLAG_CRITICAL_NV_UNWRITE != pHeader->dwStatus)
+    {
+        ERR("Critical NV area is invalid!!!", 0, 0, 0); 
+        return NV_FAIL_S;
+    }   
+
+    //Search for a empty esn addr slot
+    while(EMPTY_ESN_ADDR_SLOT != pHeader->esn_address[index])
+    {
+        index++;
+
+        if(ESN_BACKUP_TIME_MAX == index)
+        {
+            ERR("Get empty esn slot failed!", 0, 0, 0);             
+            return NV_FAIL_S;
+        }
+    }
+    memcpy(&newHeader, pHeader, sizeof(nv_backup_header_type));    
+    newHeader.esn_address[index] = CRITICAL_NV_ESN_OFFSET + index * sizeof(dword);
+    if(index != 0)
+    {
+        newHeader.esn_address[index - 1] = INVALID_ESN_ADDR_SLOT;    
+    }
+
+    CRITICAL_NV_CACHE_DISABLE();
+    CRITICAL_NV_INTLOCK_SAV(int_sav);  
+    
+    ret_code = nor_device->ops->write((byte*)&dwEsnValue, base_address, CRITICAL_NV_BACKUP_ADDR + newHeader.esn_address[index], sizeof(dword));
+    if(ret_code != FLASH_SUCCESS)
+    {
+        newHeader.dwStatus = FLAG_CRITICAL_NV_INVALID;
+    }
+    else
+    {
+        newHeader.dwStatus = FLAG_CRITICAL_NV_WRITED;
+    }
+    ret_code |= nor_device->ops->write((byte*)&newHeader, base_address, CRITICAL_NV_BACKUP_ADDR, sizeof(nv_backup_header_type));   
+    
+    CRITICAL_NV_INTFREE_SAV(int_sav);
+    CRITICAL_NV_CACHE_REENABLE();
+    
+    if(ret_code != FLASH_SUCCESS)
+    {
+        ERR("Backup ESN failed!", 0, 0, 0);             
+        return NV_FAIL_S;
+    }
+
+    ERR("Backup ESN successful!", 0, 0, 0);    
+    
+    return NV_DONE_S;
+}
+
+/*===========================================================================
+
+Function nv_critical_restore()
+
+DESCRIPTION
+  Restore ciritcal nv items.
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+nv_stat_enum_type nv_critical_restore(void)
+{
+    nv_backup_header_type*      pHeader = (nv_backup_header_type*)CRITICAL_NV_BACKUP_ADDR;
+    int                         index = 0;
+
+    //If NV Store area is empty, it's OK. or over range or rf nv size don't match, we return NV_NOTACTIVE_S
+    if(FLAG_CRITICAL_NV_WRITED != pHeader->dwStatus)
+    {
+        ERR("Critical NV isn't backup!!!", 0, 0, 0); 
+        return NV_NOTACTIVE_S;
+    }    
+
+    //if the rf nv was writen AND rf nv over range OR rf nv size don't match, we return NV_NOTACTIVE_S
+    if(FLAG_CRITICAL_NV_UNWRITE != pHeader->dwRfNvCount &&
+       (CRITICAL_NV_ITEM_SIZE * pHeader->dwRfNvCount >  CRITICAL_NV_BACKUP_SIZE ||
+        sizeof(critical_nv_list)/sizeof(nv_items_enum_type) != pHeader->dwRfNvCount))
+    {
+        ERR("Rf nv backup size out of range", 0, 0, 0);    
+        
+        return NV_NOTACTIVE_S;
+    }
+    
+    lcd_debug_message ("Restore critical nv items, please waiting.");
+    
+    local_cmd.tcb_ptr    = NULL;
+    local_cmd.sigs       = 0;
+    local_cmd.done_q_ptr = NULL;
+    local_cmd.cmd        = NV_WRITE_F;
+
+    //restore Rf nv first if it was backup.
+    if(FLAG_CRITICAL_NV_UNWRITE != pHeader->dwRfNvCount)
+    {
+        while(index < pHeader->dwRfNvCount)
+        {
+            local_cmd.item = critical_nv_list[index];
+            local_cmd.data_ptr = (nv_item_type*) (CRITICAL_NV_BACKUP_ADDR + CRITICAL_RF_NV_OFFSET + CRITICAL_NV_ITEM_SIZE * index);
+            local_cmd.status = nvio_write(&local_cmd);
+
+            if(NV_DONE_S != local_cmd.status)
+            {
+                ERR("Restore critical NV failed, item = %d", local_cmd.item, 0, 0);         
+                
+                return local_cmd.status;                            
+            }            
+            index++;
+        }
+    }
+
+    //then restore ESN
+    //ESN isn't backup, return.
+    if(EMPTY_ESN_ADDR_SLOT == pHeader->esn_address[0])
+    {
+        return NV_DONE_S;        
+    }
+
+    index = 0;
+    //Search for right esn address
+    while(INVALID_ESN_ADDR_SLOT == pHeader->esn_address[index])
+    {
+        index++;
+
+        if(ESN_BACKUP_TIME_MAX == index)
+        {
+            ERR("Get ESN backup address failed!", 0, 0, 0); 
+            
+            return NV_NOTACTIVE_S;
+        }
+    }
+
+    if(!(CRITICAL_NV_ESN_OFFSET <= pHeader->esn_address[index] && 
+         pHeader->esn_address[index] + 4 <= CRITICAL_NV_BACKUP_SIZE))
+    {
+        ERR("ESN address out of range!", 0, 0, 0); 
+        return NV_NOTACTIVE_S;
+    }
+
+    //OK, find it, restore ESN
+    //local_cmd.item = NV_ESN_I;
+    local_cmd.item = NV_ESN_OVER_WRITE_I;
+    local_cmd.data_ptr = (nv_item_type*) (CRITICAL_NV_BACKUP_ADDR + pHeader->esn_address[index]);
+    local_cmd.status = nvio_write(&local_cmd);
+    
+    if(NV_DONE_S != local_cmd.status)
+    {
+        ERR("Restore ESN failed", 0, 0, 0);         
+        
+        return local_cmd.status;                            
+    }
+    
+    ERR("Restore Critical NV successful!!!", 0, 0, 0);  
+        
+    return NV_DONE_S;
+}
+
+/*===========================================================================
+
+Function nv_stat_enum_type()
+
+DESCRIPTION
+  Get the critical nv backup status.
+
+PARAMETERS
+  None
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+nv_stat_enum_type nv_critical_get_backup_status(byte* pStatus)
+{    
+    nv_backup_header_type*      pHeader = (nv_backup_header_type*)CRITICAL_NV_BACKUP_ADDR;
+    word                        wStatus = NV_CRITICAL_NOT_BACKUP;
+
+    if((FLAG_CRITICAL_NV_UNWRITE != pHeader->dwStatus && FLAG_CRITICAL_NV_WRITED != pHeader->dwStatus) ||
+       FLAG_CRITICAL_NV_INVALID == pHeader->dwRfNvCount ||
+       INVALID_ESN_ADDR_SLOT == pHeader->esn_address[ESN_BACKUP_TIME_MAX - 1])
+    {
+        wStatus = NV_CRITICAL_NEED_CLEAN;
+    }
+    else if(FLAG_CRITICAL_NV_UNWRITE == pHeader->dwStatus)
+    {
+        wStatus = NV_CRITICAL_NOT_BACKUP;
+    }
+    else
+    {
+        if(FLAG_CRITICAL_NV_UNWRITE != pHeader->dwRfNvCount)
+        {
+            wStatus |= NV_CRITICAL_RF_BACKUP;
+        }
+
+        //The first slot of esn is not empty means esn was backup
+        if(EMPTY_ESN_ADDR_SLOT != pHeader->esn_address[0])
+        {
+            wStatus |= NV_CRITICAL_ESN_BACKUP;
+        }
+
+        //The last slot of esn is not empty means esn was backup and can't be update again.
+        if(EMPTY_ESN_ADDR_SLOT != pHeader->esn_address[ESN_BACKUP_TIME_MAX - 1])
+        {
+            wStatus |= NV_CRITICAL_ESN_FULL;
+        }
+    }
+    memcpy(pStatus, &wStatus, sizeof(wStatus));
+
+    return NV_DONE_S;
+}
+#endif
+#endif /*CUST_EDITION*/
 
 #endif /* FEATURE_NV_ITEM_MGR */
 

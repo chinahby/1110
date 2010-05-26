@@ -73,7 +73,9 @@
 SRCROOT=../..
 
 SRCASIC				= $(SRCROOT)/asic
+ifneq ($(USES_MMI),yes)
 SRCPLATFORM			= $(SRCROOT)/platform/3gui
+endif
 ALARMCLOCK			= $(SRCPLATFORM)/alarmclock
 include $(SRCROOT)/core/build/core_incpaths.min
 include $(SRCROOT)/modem/rfa/target/build/ms/src/incpaths_rf.min
@@ -129,6 +131,8 @@ endif
 endif
 
 BREWDIR=$(SRCROOT)/platform/brew/brewpk
+#Gemsea ADD
+BREWTOOLSDIR=$(BREWDIR)/brewtools
 ifeq ($(USES_THINUI),yes)
 BREWDIR=        $(SRCROOT)/platform/brew/brewpk
 BREW_AEE=                $(BREWDIR)/sdk/inc
@@ -634,7 +638,7 @@ TCXOMGR_INC= $(SRCROOT)/modem/mcs/tcxomgr/inc
 TOKENBUCKET= $(SRCROOT)/modem/data/cdps/tokenbucket
 TPROF=       $(SRCROOT)/asic/services/profile
 #UI=          $(SRCROOT)/apps/core
-UI=          $(SRCPLATFORM)/core
+#UI=          $(SRCPLATFORM)/core
 #UIM=         $(SRCROOT)/services/uim
 UIMDRV_INC=  $(SRCROOT)/modem/uim/uimdrv/inc
 UIMDRV_SRC=  $(SRCROOT)/modem/uim/uimdrv/src
@@ -744,3 +748,74 @@ INCLUDE_PREFIX = -I
 endif
 
 ALL_INCLUDES = $(addprefix $(INCLUDE_PREFIX), $(ALL_PATHS))
+
+ifeq ($(USES_MMI), yes)
+#------------------------------------------------------------------------------
+#第三方扩展驱动目录
+DRIVEREXT:=							$(SRCROOT)/modem/drivers_ext
+
+#应用菜单文件的目录
+MMIDIR=									$(SRCROOT)/platform/mmi
+
+#应用第三方库
+BREW_THIRD = 						$(BREWDIR)/third
+T9_PATH =               $(BREW_THIRD)/T9/V730
+HW_PATH =               $(BREW_THIRD)/HW
+GB_PATH =               $(BREW_THIRD)/GB
+ZI_PATH =               $(BREW_THIRD)/ZiCorp/v6.0
+REND_PATH =             $(BREWDIR)/pk/Rend
+BREW_OEM_SIM_INC=       $(BREWDIR)/pk/inc/sim
+BREW_OEM_RESINC=        $(BREWDIR)/pk/bin/en/256Color
+BREW_AEE_SRC =          $(BREWDIR)/pk/lib/src/aee
+BREW_STATIC_EXTENSIONS_RESINC =	$(SRCROOT)/asic/apps/StaticExtensions/bin/en/256color
+
+#在mmi.min里被包含
+BREW_STATIC_MIFS=       $(MMIDIR)/mif
+UI=                     $(MMIDIR)/task
+APPSCOMMON=             $(MMIDIR)/Appscommon
+COREAPP=                $(MMIDIR)/CoreApp
+MAINMENU=               $(MMIDIR)/Mainmenu
+CALLAPP=                $(MMIDIR)/CallApp
+WMSAPP=                 $(MMIDIR)/WmsApp
+CONTAPP=                $(MMIDIR)/Contact
+RECENTCALLS=            $(MMIDIR)/RecentCalls
+BLUETOOTH=              $(MMIDIR)/Bluetooth
+CALCAPP=                $(MMIDIR)/CalcApp
+CAMERAAPP=              $(MMIDIR)/CameraApp
+CLOCKAPP=               $(MMIDIR)/ClockApp
+CONVERTER=              $(MMIDIR)/Converter
+CUSTSERVICE=            $(MMIDIR)/CustService
+EXTRAMENU=              $(MMIDIR)/ExtraMenu
+ESURFING=               $(MMIDIR)/Esurfing
+FLDDBG=                 $(MMIDIR)/FldDbg
+FMRADIOAPP=             $(MMIDIR)/FmRadio
+TETRIS=                 $(MMIDIR)/Games/tetris
+BRICKATTACK=            $(MMIDIR)/Games/brickattack
+BLACKJACK=              $(MMIDIR)/Games/blackjack
+MEDIAGALLERY=           $(MMIDIR)/MediaGallery
+MUSICPLAYER=            $(MMIDIR)/Musicplayer
+NOTEBOOK=               $(MMIDIR)/Notebook
+QUICKTEST=              $(MMIDIR)/QuickTest
+RECORDER=               $(MMIDIR)/Recorder
+SCHEDULEAPP=            $(MMIDIR)/ScheduleApp
+DISPLAYMENU=            $(MMIDIR)/SettingApp/DisplayMenu
+SECURITYMENU=           $(MMIDIR)/SettingApp/SecurityMenu
+SETTINGMENU=            $(MMIDIR)/SettingApp/SettingMenu
+SOUNDMENU=              $(MMIDIR)/SettingApp/SoundMenu
+SPORTS=                 $(MMIDIR)/Sports
+STOPWATCH=              $(MMIDIR)/StopWatch
+SVCPRG=                 $(MMIDIR)/SvcPrg
+TIMERAPP=               $(MMIDIR)/TimerApp
+VIDEOPLAYER=            $(MMIDIR)/VideoPlayer
+WORLDTIME=              $(MMIDIR)/WorldTime
+UTK=                    $(MMIDIR)/UTK
+EDITAPPLET =            $(MMIDIR)/EditApplet
+EDITEXTENTSION =        $(MMIDIR)/EditExtension
+OEMEXTFOR3PART =        $(MMIDIR)/OEMExtFor3Part
+WAPBROWSER =            $(MMIDIR)/WapBrowser
+BREW_APPMGR=            $(MMIDIR)/brewappmgr_2.1.0/brewappmgr
+NUMBERMANAGER =         $(MMIDIR)/NumberManager
+ADJUSTPENAPP =          $(MMIDIR)/AdjustPenApp
+#头文件的路径在这里加
+ALL_PATHS+=$(INC) $(BREW_OEM_SIM_INC) $(BREW_OEM_RESINC) $(BREW_AEE_SRC) $(BREW_STATIC_EXTENSIONS_RESINC)
+endif

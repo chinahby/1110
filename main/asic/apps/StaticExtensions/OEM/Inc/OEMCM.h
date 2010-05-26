@@ -134,7 +134,9 @@ when         who     what, where, why
 #include "sys_gw.h"
 #include "sd.h"
 #include "tmc.h"
+#ifndef USES_MMI
 #include "uiupbm.h"
+#endif
 #include "prl.h"
 
 #include "SysModelBase_priv.h"

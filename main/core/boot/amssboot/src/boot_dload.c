@@ -180,8 +180,12 @@ boolean boot_dload_entry( void )
   }
   else
   {
+#ifdef CUST_EDITION
+    return keypad_is_dload_key_pressed();//lucid Modify for support dload key
+#else
     return FALSE;
-  }
+#endif
+    }
   
 } 
    /* boot_dload_entry() */

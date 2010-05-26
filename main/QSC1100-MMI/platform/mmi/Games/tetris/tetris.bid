@@ -1,6 +1,0 @@
-#ifndef TETRIS_BID
-#define TETRIS_BID
-
-#define AEECLSID_GAME_TETRIS        0x01006110
-
-#endif //TETRIS_BID

@@ -78,16 +78,185 @@ when       who     what, where, why
 
 =============================================================================*/
 
-#ifndef OEMCFGI_H
+#if !defined( OEMCFGI_H) && !defined( AEE_SIMULATOR)
 #error oemnvint.h must not be included directly, include OEMConfig.h instead
 #endif
-
+#include "OEMFeatures.h"
+#include "OEMText.h"
+#include "AEEFile.h"
 /************************************************************************/
 /*                                                                      */
 /*  Setting Menu                                                        */
 /*                                                                      */
 /************************************************************************/
+// Phone Disposition -- CFGI_PROFILE_CUR_NUMBER
+///////////////////////////////////////////////////////////////////////// 
+#define OEMNV_PROFILE_NORMALMODE          0                          // NORMALMODE
+#define OEMNV_PROFILE_QUIETMODE           1                          // QUIETMODE
+#define OEMNV_PROFILE_MEETING             2                          // MEETING
+#define OEMNV_PROFILE_NOISEMODE           3                          // NOISEMODE
+#define OEMNV_PROFILE_CARMODE             4                          // CARMODE 
+#define PROFILENUMBER                     5                          // 情景模式种类
+//默认的短信铃声
+#define OEMNV_SMS_RINGER_ID 78 
+/////////////////////////////////////////////////////////////////////////
+// 情景模式出厂设置
+/////////////////////////////////////////////////////////////////////////                     
+#ifndef WIN32
+// 来电提示 
+#if defined FEATURE_CARRIER_THAILAND_CAT
+// 来电提示 
+#define OEMNV_ALERT_TYPE_INIT {OEMNV_ALERTTYPE_VIBANDRINGER,OEMNV_ALERTTYPE_OFF,OEMNV_ALERTTYPE_VIB,OEMNV_ALERTTYPE_VIBRINGER,OEMNV_ALERTTYPE_VIBRINGER} 
+#else
+// 来电提示 
+#define OEMNV_ALERT_TYPE_INIT {OEMNV_ALERTTYPE_RINGER,OEMNV_ALERTTYPE_OFF,OEMNV_ALERTTYPE_VIB,OEMNV_ALERTTYPE_VIBRINGER,OEMNV_ALERTTYPE_VIBRINGER} 
+#endif //defined FEATURE_CARRIER_THAILAND_CAT
+// 短信提示  
+#define OEMNV_SMS_RINGER_INIT {OEMNV_SMS_RING,OEMNV_SMS_OFF,OEMNV_SMS_VIBONLY,OEMNV_SMS_RINGVIB,OEMNV_SMS_RINGVIB} 
+// 来电铃声选择           
+#define OEMNV_CALL_RINGER_INIT {{{0}, OEMNV_DEFAULTRINGER, OEMNV_MID_RINGER},{{0}, OEMNV_DEFAULTRINGER, OEMNV_MID_RINGER},{{0},OEMNV_DEFAULTRINGER,OEMNV_MID_RINGER},{{0},OEMNV_DEFAULTRINGER,OEMNV_MID_RINGER},{{0},OEMNV_DEFAULTRINGER,OEMNV_MID_RINGER}} 
+// 闹钟铃声选择              
+#define OEMNV_ALARM_RINGER_INIT {{{0}, OEMNV_ALARM_RINGER, OEMNV_MID_RINGER},{{0}, OEMNV_ALARM_RINGER, OEMNV_MID_RINGER},{{0},OEMNV_ALARM_RINGER,OEMNV_MID_RINGER},{{0},OEMNV_ALARM_RINGER,OEMNV_MID_RINGER},{{0},OEMNV_ALARM_RINGER,OEMNV_MID_RINGER}} 
+// 短信铃声选择       
+#define OEMNV_SMS_RINGER_ID_INIT {{{0}, OEMNV_SMS_RINGER_ID, OEMNV_MID_RINGER},{{0}, OEMNV_SMS_RINGER_ID, OEMNV_MID_RINGER},{{0},OEMNV_SMS_RINGER_ID,OEMNV_MID_RINGER},{{0},OEMNV_SMS_RINGER_ID,OEMNV_MID_RINGER},{{0},OEMNV_SMS_RINGER_ID,OEMNV_MID_RINGER}}
+// 未接来电提醒       
+#define OEMNV_MISSED_CALL_ALERT_INIT {OEMNV_ALERT_ENABLE,OEMNV_ALERT_DISABLE,OEMNV_ALERT_DISABLE,OEMNV_ALERT_ENABLE,OEMNV_ALERT_ENABLE} 
+// 开机音乐      
+#define OEMNV_STARTUP_MUSIC_INIT {OEMNV_STARTUP_MUSIC,OEMNV_STARTUP_MUSIC,OEMNV_STARTUP_MUSIC,OEMNV_STARTUP_MUSIC,OEMNV_STARTUP_MUSIC} 
+// 关机音乐        
+#define OEMNV_SHUTDOWN_MUSIC_INIT {OEMNV_SHUTDOWN_MUSIC,OEMNV_SHUTDOWN_MUSIC,OEMNV_SHUTDOWN_MUSIC,OEMNV_SHUTDOWN_MUSIC,OEMNV_SHUTDOWN_MUSIC} 
+// 开关机铃声提示       
+#define OEMNV_POWERONOFF_ALERT_INIT {OEMNV_POWERONOFF_ENABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_ENABLE,OEMNV_POWERONOFF_ENABLE}
+// 自动接听                
+#define OEMNV_HEADSET_AUTOANSWER_INIT {OEMNV_HEADSET_AUTOANSWER_OFF,OEMNV_HEADSET_AUTOANSWER_OFF,OEMNV_HEADSET_AUTOANSWER_OFF,OEMNV_HEADSET_AUTOANSWER_OFF,OEMNV_HEADSET_AUTOANSWER_5SEC} 
+// 多彩按键音     
+#define OEMNV_KEYSND_TYPE_INIT {SND_METHOD_KEY_BEEP,SND_METHOD_KEY_BEEP,SND_METHOD_KEY_BEEP,SND_METHOD_KEY_BEEP,SND_METHOD_KEY_BEEP} 
+#ifdef FEATURE_KEYTONE_LONG
+// 按键音长度     
+#define OEMNV_KEYTONE_LENGTH_INIT {OEMNV_KEYTONE_LONG,OEMNV_KEYTONE_LONG,OEMNV_KEYTONE_LONG,OEMNV_KEYTONE_LONG,OEMNV_KEYTONE_LONG} 
+#else
+// 按键音长度     
+#define OEMNV_KEYTONE_LENGTH_INIT {OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL} 
+#endif //
 
+#else
+
+// 来电提示 
+#define OEMNV_ALERT_TYPE_INIT {OEMNV_ALERTTYPE_RINGER,OEMNV_ALERTTYPE_OFF,OEMNV_ALERTTYPE_VIB,OEMNV_ALERTTYPE_VIBRINGER,OEMNV_ALERTTYPE_VIBRINGER} 
+// 短信提示  
+#define OEMNV_SMS_RINGER_INIT {OEMNV_SMS_RING,OEMNV_SMS_OFF,OEMNV_SMS_VIBONLY,OEMNV_SMS_RINGVIB,OEMNV_SMS_RINGVIB} 
+// 来电铃声选择           
+#define OEMNV_CALL_RINGER_INIT {OEMNV_DEFAULTRINGER,OEMNV_DEFAULTRINGER,OEMNV_DEFAULTRINGER,OEMNV_DEFAULTRINGER,OEMNV_DEFAULTRINGER} 
+// 闹钟铃声选择              
+#define OEMNV_ALARM_RINGER_INIT {OEMNV_ALARM_RINGER,OEMNV_ALARM_RINGER,OEMNV_ALARM_RINGER,OEMNV_ALARM_RINGER,OEMNV_ALARM_RINGER} 
+// 短信铃声选择       
+#define OEMNV_SMS_RINGER_ID_INIT {OEMNV_SMS_RINGER_ID,OEMNV_SMS_RINGER_ID,OEMNV_SMS_RINGER_ID,OEMNV_SMS_RINGER_ID,OEMNV_SMS_RINGER_ID}
+// 未接来电提醒       
+#define OEMNV_MISSED_CALL_ALERT_INIT {OEMNV_ALERT_ENABLE,OEMNV_ALERT_DISABLE,OEMNV_ALERT_DISABLE,OEMNV_ALERT_ENABLE,OEMNV_ALERT_ENABLE} 
+// 开机音乐      
+#define OEMNV_STARTUP_MUSIC_INIT {OEMNV_STARTUP_MUSIC,OEMNV_STARTUP_MUSIC,OEMNV_STARTUP_MUSIC,OEMNV_STARTUP_MUSIC,OEMNV_STARTUP_MUSIC} 
+// 关机音乐        
+#define OEMNV_SHUTDOWN_MUSIC_INIT {OEMNV_SHUTDOWN_MUSIC,OEMNV_SHUTDOWN_MUSIC,OEMNV_SHUTDOWN_MUSIC,OEMNV_SHUTDOWN_MUSIC,OEMNV_SHUTDOWN_MUSIC} 
+// 开关机铃声提示       
+#define OEMNV_POWERONOFF_ALERT_INIT {OEMNV_POWERONOFF_ENABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_DISABLE,OEMNV_POWERONOFF_ENABLE,OEMNV_POWERONOFF_ENABLE}
+// 自动接听                
+#define OEMNV_HEADSET_AUTOANSWER_INIT {OEMNV_HEADSET_AUTOANSWER_OFF,OEMNV_HEADSET_AUTOANSWER_OFF,OEMNV_HEADSET_AUTOANSWER_OFF,OEMNV_HEADSET_AUTOANSWER_OFF,OEMNV_HEADSET_AUTOANSWER_5SEC} 
+// 多彩按键音     
+#define OEMNV_KEYSND_TYPE_INIT {0,0,0,0,0} //{SND_METHOD_KEY_BEEP,SND_METHOD_KEY_BEEP,SND_METHOD_KEY_BEEP,SND_METHOD_KEY_BEEP,SND_METHOD_KEY_BEEP} 
+#ifdef FEATURE_KEYTONE_LONG
+// 按键音长度     
+#define OEMNV_KEYTONE_LENGTH_INIT {OEMNV_KEYTONE_LONG,OEMNV_KEYTONE_LONG,OEMNV_KEYTONE_LONG,OEMNV_KEYTONE_LONG,OEMNV_KEYTONE_LONG} 
+#else
+// 按键音长度     
+#define OEMNV_KEYTONE_LENGTH_INIT {OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL} 
+#endif //
+
+#endif
+// 铃声音量     
+#define OEMNV_RINGER_VOL_INIT {3,0,0,4,4}  
+// 耳机音量    
+#define OEMNV_EAR_VOL_INIT {3,3,3,4,4}  
+// 键盘音量     
+#define OEMNV_BEEP_VOL_INIT {3,0,0,4,4}     
+
+// Phone Disposition -- CFGI_SCREENSAVER_TIME
+/////////////////////////////////////////////////////////////////////////
+#define OEMNV_SCREENSAVER_TIME_30SEC       0
+#define OEMNV_SCREENSAVER_TIME_2MIN        1
+#define OEMNV_SCREENSAVER_TIME_5MIN        2  
+/////////////////////////////////////////////////////////////////////////
+// Phone Disposition -- CFGI_SCREENSAVER_ANIMATION
+/////////////////////////////////////////////////////////////////////////
+#define OEMNV_SCREENSAVER_ANIMATION0      0    
+#define OEMNV_SCREENSAVER_ANIMATION1      1  
+#define OEMNV_SCREENSAVER_ANIMATION2      2  
+#define OEMNV_SCREENSAVER_ANIMATION3      3  
+#define OEMNV_SCREENSAVER_ANIMATION4      4 
+
+#define OEMNV_CONTRAST_OFFSET       0x8
+#define OEMNV_CONTRAST_BASE           0x22
+
+#define OEMNV_CONTRAST_LEVEL_1      (OEMNV_CONTRAST_BASE)
+#define OEMNV_CONTRAST_LEVEL_2      (OEMNV_CONTRAST_BASE + OEMNV_CONTRAST_OFFSET)
+#define OEMNV_CONTRAST_LEVEL_3      (OEMNV_CONTRAST_BASE + 2 * OEMNV_CONTRAST_OFFSET)
+#define OEMNV_CONTRAST_LEVEL_4      (OEMNV_CONTRAST_BASE + 3 * OEMNV_CONTRAST_OFFSET)
+#define OEMNV_CONTRAST_LEVEL_5      (OEMNV_CONTRAST_BASE + 4 * OEMNV_CONTRAST_OFFSET)
+#define OEMNV_CONTRAST_LEVEL_6      (OEMNV_CONTRAST_BASE + 5 * OEMNV_CONTRAST_OFFSET)
+#define OEMNV_CONTRAST_LEVEL_7      (OEMNV_CONTRAST_BASE + 6 * OEMNV_CONTRAST_OFFSET)
+
+#define OEMNV_BACKLIGHT_BASE         0x1
+#define OEMNV_BACKLIGHT_OFFSET       0x11
+
+#define OEMNV_BACKLIGHT_LEVEL_1      (OEMNV_BACKLIGHT_BASE)
+#define OEMNV_BACKLIGHT_LEVEL_2      (OEMNV_BACKLIGHT_BASE + OEMNV_BACKLIGHT_OFFSET)
+#define OEMNV_BACKLIGHT_LEVEL_3      (OEMNV_BACKLIGHT_BASE + 2 * OEMNV_BACKLIGHT_OFFSET)
+#define OEMNV_BACKLIGHT_LEVEL_4      (OEMNV_BACKLIGHT_BASE + 3 * OEMNV_BACKLIGHT_OFFSET)
+#define OEMNV_BACKLIGHT_LEVEL_5      (OEMNV_BACKLIGHT_BASE + 4 * OEMNV_BACKLIGHT_OFFSET)
+#define OEMNV_BACKLIGHT_LEVEL_6      (OEMNV_BACKLIGHT_BASE + 5 * OEMNV_BACKLIGHT_OFFSET)
+#define OEMNV_BACKLIGHT_LEVEL_7      (OEMNV_BACKLIGHT_BASE + 7 * OEMNV_BACKLIGHT_OFFSET + OEMNV_BACKLIGHT_OFFSET) //增加差别，否则不明显。
+
+#define OEMNV_BACKLIGHT_LEVEL       (OEMNV_BACKLIGHT_LEVEL_4) 
+//endif
+
+
+#define OEMNV_CONTRAST_LEVEL_DEFULT 5
+#define OEM_AUTO_ANSWER_MODE        0x4 /*only send key answer*/
+#define OEM_ANYKEY_ANSWER_MODE    0x1 /*only any key answer*/
+
+#ifdef FEATRUE_AUTO_POWER
+typedef PACKED struct _Auto_Power_Cfg
+{
+    uint16     bStateOn;        //闹钟状态
+    uint32     dwWATime;        //闹钟时间,毫秒表示
+} Auto_Power_Cfg;
+#endif
+
+typedef PACKED struct _PowerDown_Alarm_Cfg
+{
+    uint16     bStateOn;        //闹钟状态
+    uint16     alarm_id;
+    uint32     dwWATime;        //闹钟时间,毫秒表示
+} PowerDown_Alarm_Cfg;
+
+#ifdef FEATRUE_SET_IP_NUMBER
+#define OEM_IP_NUMBER_MAX           10
+#define OEM_IP_NUMBER_COUNT       10
+typedef PACKED struct _IP_Number_Cfg
+{
+    uint16     bStateOn;
+    uint16     ip_count;
+    char       default_number[OEM_IP_NUMBER_MAX+1];
+    char       Number[OEM_IP_NUMBER_COUNT * (OEM_IP_NUMBER_MAX+1)+1];
+}IP_Number_Cfg;
+#endif
+#ifdef FEATRUE_KEY_PAD_CTL
+typedef PACKED struct _Key_pad_Cfg
+{
+    uint16     bStateOn;
+    uint32     from_Time;
+    uint32     to_Time;
+} Key_pad_Cfg;
+#endif
 /////////////////////////////////////////////////////////////////////////
 // Silence All -- CFGI_SILENCEALL
 /////////////////////////////////////////////////////////////////////////
@@ -150,8 +319,40 @@ when       who     what, where, why
 /////////////////////////////////////////////////////////////////////////
 
 // maximum number of AECHARS in the lock code (including a NULL word)
+#define OEMNV_LOCKPIN_MAXLEN 8
 #define OEMNV_LOCKCODE_MAXLEN 5
+#define OEMNV_LOCKUIM_MAXLEN 10
 
+#define OEMNV_DEFAULT_BANNER     "OT-I650C"   //繁体版黑白机
+
+#ifdef FEATURE_ANIMATION_POWERUPDOWN
+#define  OEMNV_STARTUPANI   "\\image\\wallpaper\\kawind_8.bmp"  
+#define  OEMNV_POWEROFFANI  "\\image\\wallpaper\\gdiamond_8.bmp"
+#endif
+
+#if defined FEATURE_APP_MEDIAGALLERY
+#define  OEMNV_WALLPAPER    "fs:/hsmm/pictures/wallpaper01.png"
+#else
+#define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper01.png"
+#endif
+#ifdef FEATURE_SCREEN_SAVE
+#define  OEMNV_SCREENSAVE_TYPE "\\image\\wallpaper\\w1.bmp"
+#endif
+/*
+
+*/
+#define   OEMNV_LOCK_RUIM       1
+#define   OEMNV_LOCK_MCCMNC_ARRSIZE 10
+#define   OEMNV_PHONE_PASSWORD_CHECK       0                            // CFGI_PHONE_PASSWORD_CHECK,  //type = boolean
+#define   OEMNV_RESTRICT_OUTGOING_ALL               1
+#define   OEMNV_RESTRICT_OUTGOING_INTERNATIONAL     2
+#define   OEMNV_RESTRICT_OUTGOING_INTERNAL          3
+#define   OEMNV_RESTRICT_OUTGOING_OUTCONTACT        4
+#define   OEMNV_RESTRICT_OUTGOING_OFF               0
+
+#define   OEMNV_RESTRICT_INCOMING_ALL               1
+#define   OEMNV_RESTRICT_INCOMING_OUTCONTACT        2
+#define   OEMNV_RESTRICT_INCOMING_OFF               0
 /***********************************************************************/
 /*                                                                     */
 /*  Sound Menu                                                       */
@@ -165,7 +366,25 @@ when       who     what, where, why
 #define   OEMNV_VOLUME_MID         2
 #define   OEMNV_VOLUME_HIGH        3
 #define   OEMNV_VOLUME_ESCALATING  4  // only valid for CFGI_RINGER_VOL
+#define   OEMNV_SMS_OFF      0
+#define   OEMNV_SMS_RING     1
+#define   OEMNV_SMS_VIBONLY  2
+#define   OEMNV_SMS_RINGVIB  3
+#define   OEMNV_SMS_VIBANDRINGER  4
+#define   OEMNV_DEFAULTRINGER        4
+#define   OEMNV_ALARM_RINGER  1 
+#define   OEMNV_STARTUP_MUSIC 11
+#define   OEMNV_SHUTDOWN_MUSIC 12
 
+//开关机铃声提示
+#define   OEMNV_POWERONOFF_ENABLE   1
+#define   OEMNV_POWERONOFF_DISABLE  0
+
+//多彩按键音
+#define   OEMNV_KEYSND_DEFAULT       0  
+#define   OEMNV_KEYSND_MUSICBOX      1
+#define   OEMNV_KEYSND_GUITAR        2
+#define   OEMNV_KEYSND_TRUMPET       3
 /////////////////////////////////////////////////////////////////////////
 // Key Tone Length -- CFGI_KEYTONE_LENGTH
 /////////////////////////////////////////////////////////////////////////
@@ -188,10 +407,11 @@ when       who     what, where, why
 // Alert Type -- CFGI_ALERT_TYPE
 /////////////////////////////////////////////////////////////////////////
 
-#define OEMNV_ALERTTYPE_OFF         0
-#define OEMNV_ALERTTYPE_RINGER      1
-#define OEMNV_ALERTTYPE_VIB         2
-#define OEMNV_ALERTTYPE_VIBRINGER   3
+#define   OEMNV_ALERTTYPE_OFF         0
+#define   OEMNV_ALERTTYPE_RINGER      1
+#define   OEMNV_ALERTTYPE_VIB         2
+#define   OEMNV_ALERTTYPE_VIBRINGER   3
+#define   OEMNV_ALERTTYPE_VIBANDRINGER   4
 
 /***********************************************************************/
 /*                                                                     */
@@ -204,6 +424,10 @@ when       who     what, where, why
 #define   OEMNV_BL_OFF    0
 #define   OEMNV_BL_10S     10
 #define   OEMNV_BL_30S     30
+#define   OEMNV_BL_50S     50
+#define   OEMNV_BL_ALWAYS_ON     100
+#define   OEMNV_BL_10CALL  3
+#define   OEMNV_BL_30CALL  4
 
 /////////////////////////////////////////////////////////////////////////
 // Menu Format -- CFGI_MENU_FORMAT
@@ -214,9 +438,15 @@ when       who     what, where, why
 /////////////////////////////////////////////////////////////////////////
 // Time Format -- CFGI_TIME_FORMAT
 /////////////////////////////////////////////////////////////////////////
-#define   OEMNV_TIMEFORM_AMPM    0
+#define   OEMNV_TIMEFORM_INVALID  0
+#define   OEMNV_TIMEFORM_AMPM    2
 #define   OEMNV_TIMEFORM_24HR    1
-
+#ifdef FEATURE_TIME_DATA_SETTING
+#define   OEMNV_DATEFORM_INVALID  0
+#define   OEMNV_DATEFORM_DMY    1
+#define   OEMNV_DATEFORM_MDY    2
+#define   OEMNV_DATEFORM_YMD    3
+#endif
 /////////////////////////////////////////////////////////////////////////
 // Banner -- CFGI_BNNER
 /////////////////////////////////////////////////////////////////////////
@@ -271,6 +501,10 @@ when       who     what, where, why
 // Encode Mobile Originated messages in UNICODE
 #define OEMNV_SMS_MO_ENCODING_UNICODE        1
 
+#if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA)|| defined (FEATURE_CARRIER_ISRAEL_PELEPHONE)
+// Encode Mobile Originated messages in Octet
+#define OEMNV_SMS_MO_ENCODING_OCTET          2
+#endif
 // Encode mode to CDMA
 #define OEMNV_SMS_MODE_CDMA                  0
 
@@ -333,6 +567,13 @@ when       who     what, where, why
 
 // Retry Interval
 #define OEMNV_SMS_RETRY_INTERVAL             5
+// messages validity period - relative
+#define OEMNV_SMS_VALIDITYPERIOD_MAX        245 
+#define OEMNV_SMS_VALIDITYPERIOD_1OUR       11 
+#define OEMNV_SMS_VALIDITYPERIOD_6OURS      71 
+#define OEMNV_SMS_VALIDITYPERIOD_24OURS     167 
+#define OEMNV_SMS_VALIDITYPERIOD_3DAYS      169 
+#define OEMNV_SMS_VALIDITYPERIOD_1WEEK      173 
 
 /////////////////////////////////////////////////////////////////////////
 // Voice Mail Number -- CFGI_VOICEMAIL_NUMBER
@@ -409,6 +650,7 @@ typedef PACKED struct {
 // Maximum length in AECHARs of the data dial string (including the NULL word).
 #define OEMNV_DATA_DIALSTRING_MAXLEN  17
 
+
 /////////////////////////////////////////////////////////////////////////
 // SysMenu - The following structure is required to fetch the error logs
 /////////////////////////////////////////////////////////////////////////
@@ -432,7 +674,12 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EXT_PWR_MASK                     0x00000080
 #define OEMNV_SPEAKERPHONE_MASK                0x00000100
 
-
+#define OEMNV_SHAKE_MUSIC_MASK            0x0001                                                         
+#define OEMNV_SHAKE_FM_RADIO_MASK         0x0002           
+#define OEMNV_SHAKE_WALLPAPER_MASK        0x0004       
+#define OEMNV_SHAKE_SNOOZE_ALARM_MASK     0x0008
+#define OEMNV_SHAKE_VIDEO_MASK            0x0010
+#define OEMNV_PEDOMETER_MASK              0x0020
 typedef uint32 OEMTTY;
 
 #define OEMNV_TTY_FULL  0
@@ -454,5 +701,192 @@ typedef enum
   OEM_CCBS_RELEASE_N_ACCEPT,
   OEM_CCBS_NONE
 }OEMCCBS;
-#endif  /* OEMNVINT_H */
 
+typedef enum {
+    //DESKTOP_THEME_NONE = 0x00,
+    DESKTOP_THEME_ORANGE    = 0x00,
+    DESKTOP_THEME_RED,
+    DESKTOP_THEME_YELLOW,
+    DESKTOP_THEME_GREEN,
+    DESKTOP_THEME_BLUE,
+    DESKTOP_THEME_DEEP_BLUE
+} DESKTOP_THEME;
+
+#define MAX_FMRADIO_VOLUME  7
+#define MAX_FMRADIO_NAME_CHAR 16
+
+#if defined( FEATURE_CARRIER_THAILAND_HUTCH)
+#define MAX_FMRADIO_STORED_CHANNEL 40
+#else
+#define MAX_FMRADIO_STORED_CHANNEL 20
+#endif
+
+typedef PACKED struct _sChanInfo
+{
+    AECHAR          szName[MAX_FMRADIO_NAME_CHAR + 1];              //广播台名
+    uint16          wChannel;                                       //信道号
+} sChanInfo;
+typedef enum {
+    OEMNV_RING_FIRST,
+    OEMNV_MP3_RINGER,
+    OEMNV_MID_RINGER,
+    OEMNV_RING_LAST
+} OEMRINGTYPE;
+
+typedef PACKED struct _ringID
+{
+    char        szMusicname[MAX_FILE_NAME];
+    uint16      midID;
+    OEMRINGTYPE ringType;
+    
+}ringID;
+
+
+#define OEMNV_MAX_SERVICEPROVIDER_NUMBER 50
+#define OPERATOR_NAME_MAX_SIZE 32
+#define OEMNV_MAX_MCC_SIZE 4
+#define OEMNV_MAX_MNC_SIZE 3
+typedef PACKED struct _ServiceProvider
+{
+    char   mcc[OEMNV_MAX_MCC_SIZE];
+    char   mnc[OEMNV_MAX_MNC_SIZE];
+    char  ids_name[OPERATOR_NAME_MAX_SIZE];
+} ServiceProvider;
+#ifdef FATRUE_LOCK_IMSI_MCCMNC
+typedef PACKED struct _SetImsi
+{
+//add code for set lockimsi
+    uint16 mcc;
+    uint16 mnc;
+    boolean bsetimsi;//set lockimsi state
+} SetImsi;
+#endif
+/////////////////////////////////////////////////////////////////////////
+// 输入法设置 -- CFGI_INPUTMODE
+/////////////////////////////////////////////////////////////////////////
+
+#ifdef WIN32//wlh 临时修改
+#define OEM_MODE_T9_ZHUYIN  1
+#endif//WIN32
+
+#if defined FEATURE_LANG_THAI 
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_THAI
+#elif defined FEATURE_LANG_TCHINESE
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_ZHUYIN
+#elif defined FEATURE_LANG_SPANISH
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_SPANISH //OEM_MODE_T9_MT_SPANISH
+#elif defined FEATURE_LANG_INDONESIAN
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_INDONESIAN
+//#elif defined FEATURE_LANG_PORTUGUESE
+//#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_PORTUGUESE
+#elif defined FEATURE_LANG_HEBREW
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_HEBREW
+//#elif defined(FEATURE_LANG_ARABIC) && !defined(FEATURE_LANG_FRENCH)
+#elif defined FEATURE_CARRIER_SUDAN_SUDATEL
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_ARABIC
+//#elif defined(FEATURE_LANG_ARABIC) && defined(FEATURE_LANG_FRENCH)
+#elif defined FEATURE_CARRIER_MAROC_WANA
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_FRENCH
+#else
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_ENGLISH
+#endif  
+
+#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+#define   OEMNV_SHORT_CODE_NAM_COUNT         10   // CFGI_SHORT_CODE_NAM_COUNT
+#endif //FEATURE_SHORT_CODE_NAM_COUNT
+#define OEM_INIFILE    "oem.ini"
+#define OEM_BAKFILE   "oem.bak"
+#if defined (FEATURE_CARRIER_THAILAND_HUTCH)
+#define OEM_INTERNATION_NUMBER "001"
+#else
+#define OEM_INTERNATION_NUMBER "00"
+#endif
+#define   OEMNV_MENU_STYLE_ICON    0
+#define   OEMNV_MENU_STYLE_LIST     1
+
+#ifdef FEATURE_PLANEMODE
+#define   OEMNV_PLANEMODE_ON        (1)
+#define   OEMNV_PLANEMODE_OFF       (2)
+#define   OEMNV_PLANEMODE_QUERY     (3)
+#endif
+
+typedef enum {
+    OEMNV_CAMERA_ENVIR_AUTO,
+    OEMNV_CAMERA_ENVIR_NIGHT,
+    OEMNV_CAMERA_ENVIR_SUNNY,
+    OEMNV_CAMERA_ENVIR_CLOUDY
+} OEMCAMERAENVIR;
+
+typedef enum {
+    OEMNV_CAMERA_QUALITY_HIGH,
+    OEMNV_CAMERA_QUALITY_MED,
+    OEMNV_CAMERA_QUALITY_LOW
+} OEMCAMERAQUALITY;
+
+typedef enum {
+    OEMNV_CAMERA_SIZE_1600_1200,
+    OEMNV_CAMERA_SIZE_1280_960,
+    OEMNV_CAMERA_SIZE_640_480,
+    OEMNV_CAMERA_SIZE_320_240,   
+    OEMNV_CAMERA_SIZE_176_220
+} OEMCAMERASIZE;
+
+#ifdef FEATURE_CARRIER_CHINA_TELCOM
+typedef enum {
+    OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1,
+    OEMNV_CAMERA_SHUTTER_TONE_SHUTTER2
+} OEMCAMERATONE;
+#else
+typedef enum {
+    OEMNV_CAMERA_SHUTTER_TONE_DISABLE,
+    OEMNV_CAMERA_SHUTTER_TONE_ENABLE
+} OEMCAMERATONE;
+#endif
+
+typedef enum {
+    OEMNV_CAMERA_BANDING_50HZ,
+    OEMNV_CAMERA_BANDING_60HZ
+} OEMCAMERABANDING;
+
+typedef enum {
+    OEMNV_CAMERA_STORAGE_PHONE,
+    OEMNV_CAMERA_STORAGE_MEMORY_CARD
+} OEMCAMERASTORAGE;
+
+typedef enum {
+    OEMNV_CAMERA_BRIGHTNESS_LEVEL1, //-2
+    OEMNV_CAMERA_BRIGHTNESS_LEVEL2, //-1
+    OEMNV_CAMERA_BRIGHTNESS_LEVEL3, //0
+    OEMNV_CAMERA_BRIGHTNESS_LEVEL4, //1
+    OEMNV_CAMERA_BRIGHTNESS_LEVEL5  //2
+} OEMCAMERABRIGHTNESS;
+
+typedef enum {
+    OEMNV_CAMERA_ZOOM_LEVEL1,
+    OEMNV_CAMERA_ZOOM_LEVEL2,
+    OEMNV_CAMERA_ZOOM_LEVEL3,
+    OEMNV_CAMERA_ZOOM_LEVEL4,
+    OEMNV_CAMERA_ZOOM_LEVEL5
+} OEMCAMERAZOOM;
+
+typedef enum {
+    OEMNV_CAMERA_FRAME_0,
+    OEMNV_CAMERA_FRAME_1,
+    OEMNV_CAMERA_FRAME_2,
+    OEMNV_CAMERA_FRAME_3,
+    OEMNV_CAMERA_FRAME_4,
+    OEMNV_CAMERA_FRAME_5,
+    OEMNV_CAMERA_FRAME_6,
+    OEMNV_CAMERA_FRAME_7,
+    OEMNV_CAMERA_FRAME_8
+} OEMCAMERAFRAME;
+
+typedef enum {
+    OEMNV_CAMERA_COLOR_NORMAL = 8,
+    OEMNV_CAMERA_COLOR_BANDW = 4,
+    OEMNV_CAMERA_COLOR_SEPIA = 0,
+    OEMNV_CAMERA_COLOR_NEGATIVE = 2,
+    OEMNV_CAMERA_COLOR_REDONLY = 3,
+    OEMNV_CAMERA_COLOR_GREENONLY = 7
+} OEMCAMERACOLOR;
+#endif  /* OEMNVINT_H */

@@ -8,7 +8,7 @@ GENERAL DESCRIPTION:
    A sample implementation of the OEMSock functions declared in
    OEMSock.h that are used in the implementation of AEENet.
 
-        Copyright © 1999-2008 QUALCOMM Incorporated.
+        Copyright ?1999-2005 QUALCOMM Incorporated.
                All Rights Reserved.
         Qualcomm Confidential and Proprietary
 =============================================================================*/
@@ -16,7 +16,9 @@ GENERAL DESCRIPTION:
 
 /* necessary BREW includes */
 #include "OEMSock_QoSSpec.h" // must be included before "OEMSock_priv.h"
-
+#ifdef CUST_EDITION	  
+#include "OEMSVC.h"
+#endif /*CUST_EDITION*/
 #include "OEMSock.h"
 #include "OEMSock_priv.h"       // OEM_PROVIDES_*, etc.
 #include "OEMNotify.h"

@@ -40,8 +40,10 @@ $DateTime: 2006/10/25 15:10:34 $
 
 #include "AEEAddrBook.h"
 
+#ifndef CUST_EDITION
 /*lint -save -library */
 #include "uiupbm.h"
+#endif
 /*lint -restore*/
 
 /*===========================================================================

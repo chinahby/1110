@@ -4407,17 +4407,6 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
     }
 
     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
-
-#ifdef FEATURE_USB_FUNCTION_SELECT
-    if(OEMNV_USB_FUNCTION_DEFAULT == OEMNV_USB_DATA_AND_DIAG)
-    {
-        hs_usb_switch_ctrl(FALSE);
-    }
-    else
-    {
-        hs_usb_switch_ctrl(TRUE);
-    }
-#endif //FEATURE_USB_FUNCTION_SELECT
 }
 
 static void SecurityMenu_SetItemNumIcon(IMenuCtl   *pMenu)

@@ -102,8 +102,6 @@
 #else
 #include "appscommon_momo.brh"
 #endif
-//#include "AEECallList.h"
-#include "UTKUtils.h"
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 //#include "AEEVirtualkey.h"//wlh for vkey number

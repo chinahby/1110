@@ -134,7 +134,6 @@ static void    StopWatch_Gettime(CStopWatch *pme,uint32 nTicks);
 static void    StopWatch_Redraw(CStopWatch *pme);
 static int      StopWatch_AddTimeList(CStopWatch *pme, uint32 *endTime);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*=============================================================================
 FUNCTION: StopWatchMod_Load
 
@@ -448,7 +447,6 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             InitStopWatch(pme);
             StopWatch_Redraw(pme);
             return TRUE;
@@ -1363,7 +1361,7 @@ static void StopWatch_Continue(CStopWatch *pme)
     }
 }
 #include "aee_oem.h"
-void StopWatch_ClearData()
+void StopWatch_ClearData(void)
 {
     StopWatchTimeData data = {0};
     ISHELL_SetPrefs( AEE_GetShell(), AEECLSID_STOPWATCH, 1, &data, sizeof( data));

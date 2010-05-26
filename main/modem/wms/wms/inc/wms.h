@@ -320,6 +320,71 @@ extern "C" {
 ===========================================================================*/
 #include "comdef.h"
 
+#ifdef CUST_EDITION
+#ifdef WIN32
+#include "custwms.h"
+#endif
+#endif /*CUST_EDITION*/
+
+#ifdef CUST_EDITION
+#if defined(FEATURE_CDSMS) || defined(FEATURE_GWSMS)
+
+/* <EJECT> */
+/*===========================================================================
+
+                         DATA TYPE DECLARATIONS
+
+===========================================================================*/
+
+
+/* ========================================================================= */
+/* ========================== Common data types ============================ */
+/* ========================================================================= */
+#define WMS_MO_ONLY_TRAFFIC     0
+#define WMS_MO_ALL_CHANNEL      1
+
+
+typedef enum _wms_box_e_type
+{
+    WMS_MB_NONE,         // 无邮箱
+    WMS_MB_VOICEMAIL,    // 语音箱
+    WMS_MB_INBOX,        // 收件箱
+    WMS_MB_OUTBOX,       // 发件箱
+    WMS_MB_DRAFT,        // 草稿箱
+    WMS_MB_TEMPLATE,     // 消息模板
+    WMS_MB_RESERVE,      // 预约
+    WMS_MB_RSVFAILED,    // 预约失败
+    WMS_MB_MAX
+} wms_box_e_type;
+
+typedef enum
+{
+    // 用于收件箱
+    WMS_INBOX_DEL_ALL       = 0x00,
+    WMS_INBOX_DEL_RUIM,
+    WMS_INBOX_DEL_PHONE,
+    
+    // 用于发件箱
+    WMS_OUTBOX_DEL_ALL,
+    
+    // 用于草稿箱
+    WMS_DRAFT_DEL_ALL,
+    
+    // 用于预约短信
+    WMS_RESERVE_DEL_ALL,
+    
+    // 用于预约失败短信
+    WMS_RSVFAILED_DEL_ALL,
+
+    //用于删除预约以及预约失败短信
+    WMS_RSVANDRSVFAILED_DEL_ALL,
+    
+    // 删除全部
+    WMS_BOXES_DEL_ALL,
+    
+    WMS_BOX_MESSAGE_MAX
+} wms_deletebox_e_type;
+#endif /*CUST_EDITION*/
 /* <EJECT> */
 /*===========================================================================
 
@@ -342,16 +407,55 @@ enum { WMS_ADDRESS_MAX            = 36  };
 enum { WMS_SUBADDRESS_MAX         = 36  };
 enum { WMS_GW_ADDRESS_MAX         = 20  };
 enum { WMS_CDMA_USER_DATA_MAX     = 229 };
-
+#ifdef CUST_EDITION
+enum { WMS_AUTO_USER_DATA_MAX     = 160 };
+#endif /*CUST_EDITION*/
 enum { WMS_GW_USER_DATA_MAX     = 160 };
+#ifdef CUST_EDITION
+#ifdef FEATURE_SMS_500_MESSAGES
+#error code not present
+#else
 
-enum { WMS_MESSAGE_LIST_MAX     = 255 };
+// 255->500 值需大于 WMS_MAX_NV_CDMA_MESSAGES 
+enum { WMS_MESSAGE_LIST_MAX     = 500 };
+#endif /* FEATURE_SMS_500_MESSAGES */
+#endif /*CUST_EDITION*/
 
 enum { WMS_MAX_TEMPLATES        = 10 };
 enum { WMS_GW_COMMAND_DATA_MAX  = 157 };                                                   
 // enum { WMS_MAX_LONG_LEN         = 39015 /* 255*153 */ };
 enum { WMS_ALPHA_ID_MAX         = 255 };
 
+/* For Extended/Long SMS support, FEATURE_SMS_UDH will be enabled too.
+*/
+#ifdef CUST_EDITION
+#if defined(FEATURE_SMS_UDH) && !defined(FEATURE_SMS_EXTENDED)
+enum { WMS_MAX_UD_HEADERS       = 7};
+
+/* UDH MAX SIZES */
+enum { WMS_UDH_MAX_8BIT              = 134};
+enum { WMS_UDH_MAX_7BIT              = 153};
+enum { WMS_UDH_OTHER_SIZE        = 226 };
+/* 229 (CDMA MAX USER DATA LEN) - 1(UDHL) - 1(UDH ID) - 1(UDH Len) */
+
+
+/* Sound definitions
+*/
+enum { WMS_UDH_MAX_SND_SIZE          = 128 };
+
+/* Picture definitions
+*/
+enum { WMS_UDH_LARGE_PIC_SIZE    = 128 };
+enum { WMS_UDH_SMALL_PIC_SIZE    = 32  };
+enum { WMS_UDH_VAR_PIC_SIZE      = 134 };  /* 140 - 1(UDHL) - 5(UDH) */
+
+/* Animation definitions
+*/
+enum { WMS_UDH_ANIM_NUM_BITMAPS  = 4 };
+enum { WMS_UDH_LARGE_BITMAP_SIZE = 32 };
+enum { WMS_UDH_SMALL_BITMAP_SIZE = 8 };
+
+#else /* FEATURE_SMS_UDH && ! FEATURE_SMS_EXTENDED */
 
 /* decreasing the EMS header size and the all the rest because this reduces the structure
    of the user_data_s_type and hence the RAM memory decreases when EMS is not required. 
@@ -383,7 +487,10 @@ enum { WMS_UDH_VAR_PIC_SIZE      = 1 };  /* 140 - 1(UDHL) - 5(UDH) */
 enum { WMS_UDH_ANIM_NUM_BITMAPS  = 1 };
 enum { WMS_UDH_LARGE_BITMAP_SIZE = 1 };
 enum { WMS_UDH_SMALL_BITMAP_SIZE = 1 };
+//miaoxiaoming
 
+#endif /* FEATURE_SMS_UDH */
+#endif /*CUST_EDITION*/
 /* -------------------- */
 /* ---- Digit mode ---- */
 /* -------------------- */
@@ -557,9 +664,20 @@ typedef enum
   WMS_TAG_MO_SENT_ST_NOT_STORED   = 0x15,
   WMS_TAG_MO_SENT_ST_STORED       = 0x35,
 
-  WMS_TAG_MO_TEMPLATE = 0x100, /* SMS parameters */
-  WMS_TAG_STATUS_RPT  = 0x200  /* SMSR parameters*/
-
+  // 在本平台许多地方将 wms_message_tag_e_type 大小视为一个字节，下面的
+  // 定义不是一个字节所能表示的
+  //WMS_TAG_MO_TEMPLATE = 0x100, /* SMS parameters */
+  //WMS_TAG_STATUS_RPT  = 0x200  /* SMSR parameters*/
+  WMS_TAG_MO_TEMPLATE = 0x10, /* SMS parameters */
+  WMS_TAG_STATUS_RPT  = 0x20,  /* SMSR parameters*/
+  
+  // 添加一个标记用于草稿箱
+#ifdef CUST_EDITION
+  WMS_TAG_MO_DRAFT  = 0x30,     /* 草稿 */
+  WMS_TAG_PHRASE    = 0x31,     /* 常用语 */
+  WMS_TAG_RESERVE   = 0x32,     /* 预约 */
+  WMS_TAG_RSVFAILED = 0x33      /* 预约失败 */
+#endif /*CUST_EDITION*/
 } wms_message_tag_e_type;
 
 
@@ -630,6 +748,9 @@ typedef enum
 {
   WMS_MESSAGE_MODE_CDMA = 0,
   WMS_MESSAGE_MODE_GW,
+#ifdef CUST_EDITION  
+  WMS_MESSAGE_MODE_AUTO,
+#endif /*CUST_EDITION*/  
   WMS_MESSAGE_MODE_MAX,
   WMS_MESSAGE_MODE_MAX32 = 0x100000
 } wms_message_mode_e_type;
@@ -797,7 +918,9 @@ typedef uint32  wms_message_number_type;
 typedef uint32  wms_message_index_type;
 
 #define WMS_DUMMY_MESSAGE_INDEX  0xFFFFFFFF
-
+#ifdef CUST_EDITION
+#define WMS_VM_MESSAGE_INDEX     0x00000000
+#endif /*CUST_EDITION*/
 
 /* Transaction ID
 */
@@ -822,6 +945,12 @@ typedef enum
   WMS_CMD_CFG_SET_MEMORY_FULL,
   WMS_CMD_CFG_SET_LINK_CONTROL,
   WMS_CMD_CFG_GET_LINK_CONTROL,
+#ifdef CUST_EDITION  
+  WMS_CMD_CFG_SET_MULTISEND,
+#ifdef FEATURE_AUTOREPLACE
+  WMS_CMD_CFG_SET_AUTOREPLACE,
+#endif  
+#endif /*CUST_EDITION*/
 
   /* Message group commands
   */
@@ -830,6 +959,11 @@ typedef enum
   WMS_CMD_MSG_READ,
   WMS_CMD_MSG_WRITE,
   WMS_CMD_MSG_DELETE,
+#ifdef CUST_EDITION  
+  WMS_CMD_MSG_DELETE_BOX,
+  WMS_CMD_MSG_COPY,
+  WMS_CMD_REFRESH_IND,
+#endif /*CUST_EDITION*/  
   WMS_CMD_MSG_DELETE_ALL,
   WMS_CMD_MSG_MODIFY_TAG,
   WMS_CMD_MSG_READ_TEMPLATE,
@@ -849,6 +983,22 @@ typedef enum
   WMS_CMD_DC_ENABLE_AUTO_DISCONNECT,
   WMS_CMD_DC_DISABLE_AUTO_DISCONNECT,
 
+#ifdef CUST_EDITION
+  /* BC commands
+  */
+  WMS_CMD_BC_GET_CONFIG    = 300,
+  WMS_CMD_BC_GET_PREF,
+  WMS_CMD_BC_SET_PREF,
+  WMS_CMD_BC_GET_TABLE,
+  WMS_CMD_BC_SELECT_SRV,
+  WMS_CMD_BC_GET_ALL_SRV_IDS,
+  WMS_CMD_BC_GET_SRV_INFO,
+  WMS_CMD_BC_ADD_SRV,
+  WMS_CMD_BC_DELETE_SRV,
+  WMS_CMD_BC_CHANGE_LABEL,
+  WMS_CMD_BC_DELETE_ALL_SERVICES,
+  WMS_CMD_BC_SET_PRIORITY_FOR_ALL,
+#endif /*CUST_EDITION*/
   /* BC_MM commands
   */
   WMS_CMD_BC_MM_GET_CONFIG   = 400,
@@ -897,6 +1047,14 @@ typedef enum
   WMS_CMD_CM_BC_ENABLE_FAILURE_E,
   WMS_CMD_CM_START_FULL_SERVICE_E,
   WMS_CMD_CM_ONLINE_E,
+#ifdef CUST_EDITION  
+  WMS_CMD_CM_NAS_SM_DATA,
+  WMS_CMD_CM_NAS_SM_REPORT,
+  WMS_CMD_CM_NAS_SM_LINK_CONTROL,
+  WMS_CMD_CM_NAS_CB_DATA,
+  WMS_CMD_CM_NAS_CB_CELL_CHANGE,
+  WMS_CMD_CM_NAS_CB_DUPLICATION_DETECTION,
+#endif /*CUST_EDITION*/  
   WMS_CMD_CM_LPM_E,
 
   WMS_CMD_GSDI_ASYNC_CB,
@@ -1180,6 +1338,14 @@ typedef enum
 
 } wms_report_status_e_type;
 
+typedef struct
+{
+    wms_memory_store_e_type         memStore_src;
+    wms_message_index_type          index_src;
+    wms_memory_store_e_type         memStore_dest;
+    wms_message_index_type          index_dest;
+    boolean                         delete_src;
+} wms_msg_copy_type;
 
 
 /* <EJECT> */
@@ -1220,7 +1386,21 @@ typedef enum
   WMS_TELESERVICE_GSM1x_08           = 4111,  /* Reserved for now */
   WMS_TELESERVICE_GSM1x_09           = 4112,  /* Reserved for now */
   WMS_TELESERVICE_GSM1x_10           = 4113,  /* Reserved for now */
+#ifdef CUST_EDITION  
+#ifdef FEATURE_CARRIER_ISRAEL_PELEPHONE
+  WMS_TELESERVICE_ISRAEL_SILENT      = 49858,  /* silent sms      */
+#endif
+  
+#ifdef FEATURE_CHINAUNICOM_REG
+  WMS_TELESERVICE_CHINAUNICOMREG     = 65005, /* 联通开机注册 */
+#endif  
 
+#if defined(FEATURE_QMA)
+  WMS_TELESERVICE_QMA_EMAIL          = 65490,  /* UMS for QMA */
+  WMS_TELESERVICE_QMA_WPUSH          = 65002,  /* QMA Wap push message service ID */
+  WMS_TELESERVICE_QMA_PMAIL          = 65497,  /* Photo Mail for QMA */
+#endif
+#endif /*CUST_EDITION*/
   WMS_TELESERVICE_IMSST              = 4242,  /* IMS Services Teleservice */
 
   /*---------------------------------------------------------------------
@@ -2384,6 +2564,9 @@ typedef enum
   WMS_CFG_EVENT_PRIMARY_CLIENT_SET,
   WMS_CFG_EVENT_MEMORY_STATUS_SET,
   WMS_CFG_EVENT_LINK_CONTROL,
+#ifdef CUST_EDITION  
+  WMS_CFG_EVENT_REFRESH_DONE,
+#endif /*CUST_EDITION*/  
   WMS_CFG_EVENT_MAX,
   WMS_CFG_EVENT_MAX32 = 0x10000000
 } wms_cfg_event_e_type;
@@ -2554,6 +2737,10 @@ typedef struct wms_reply_option_s
 
 } wms_reply_option_s_type;
 
+
+#ifdef CUST_EDITION
+#define WMS_BC_SRV_LABEL_SIZE    10
+#endif /*CUST_EDITION*/
 #define WMS_BC_TABLE_MAX         ( 32 * 4 )
 
 /* Service ID, which is a service/language pair
@@ -2840,7 +3027,11 @@ typedef struct wms_cdma_message_s
   /* Raw (un-decoded) bearer data:
   */
   wms_raw_ts_data_s_type       raw_ts;
-
+  
+  // 添加下列字段以便非正常长消息的串接
+#ifdef CUST_EDITION  
+  wms_udh_concat_8_s_type      concat_8;
+#endif /*CUST_EDITION*/
 } wms_cdma_message_s_type;
 
 
@@ -3245,6 +3436,93 @@ typedef struct wms_gw_ack_info_s
    /*~ FIELD wms_gw_ack_info_s.u DISC _OBJ_.success */
 } wms_gw_ack_info_s_type;
 
+#ifdef CUST_EDITION
+/* AUTOMATIC memory stores:
+** (1) distinguishes which mem_store to store the message when sending.
+** (2) to be used in conjunction with the delivered message mode
+**     to distinguish which memory store the message resides.
+**     ie. WMS_AUTO_MEMORY_STORE_CARD && WMS_MESSAGE_MODE_CDMA ==
+**         WMS_MEMORY_STORE_RUIM
+** (3) WMS_AUTO_MEMORY_STORE_NONE: WMS will not attempt to store the message
+**     after delivery.
+** NOTE: Heirarchy of memory stores. ->CARD->PHONE->RAM->
+**       ie. If attempt to store to the CARD fails, an additional attempt to
+**           store to the PHONE memory will be made, and so on.
+*/
+
+typedef enum
+{
+  WMS_AUTO_MEMORY_STORE_NONE = 0, /* No storage is required */
+  WMS_AUTO_MEMORY_STORE_PHONE,    /* NV */
+  WMS_AUTO_MEMORY_STORE_CARD,     /* SIM, RUIM */
+  WMS_AUTO_MEMORY_STORE_TEMP,     /* RAM */
+  WMS_AUTO_MEMORY_STORE_MAX,
+  WMS_AUTO_MEMORY_STORE_MAX32 = 0x10000000
+
+} wms_auto_memory_store_e_type;
+
+/* AUTOMATIC address
+*/
+typedef struct wms_auto_address_s
+{
+  wms_address_s_type            address;          /* Mandatory */
+    /* Note: address.digits will be 8-bit Ascii representation.
+    */
+
+  uint8                         email_length;
+  uint16                        email_address[WMS_ADDRESS_MAX*2];  /* Unicode */
+    /* Email address is OPTIONAL.  This allows for email addresses to be
+    ** specified if it should not standardly appear in the above address struct.
+    */
+
+  wms_address_s_type            reply_sc_address;
+    /* reply_sc_address_ptr should be specified if replying to a GW MT message
+    ** where the reply_sc_address will be provided.
+    */
+
+} wms_auto_address_s_type;
+
+/* AUTOMATIC message
+*/
+typedef struct wms_auto_message_s
+{
+  wms_auto_address_s_type         dest_addr;        /* Destination Address */
+  wms_auto_memory_store_e_type    mem_store;
+  uint8                           num_of_headers;
+  wms_udh_s_type                  headers[WMS_MAX_UD_HEADERS];
+  uint16                          user_data[WMS_AUTO_USER_DATA_MAX];/* Unicode*/
+  uint8                           user_data_length; /* num of uint16 chars */
+  boolean                         reply_request;
+  boolean                         status_request;
+
+} wms_auto_message_s_type;
+
+/* wms_auto_submit_report_info_s_type will be part of the submit report info and
+** should be used when the message_mode in submit_report_info_s is AUTOMATIC.
+*/
+typedef struct wms_auto_submit_report_info_s
+{
+  wms_message_mode_e_type         submit_message_mode;
+    /* The mode of which the MO message was delivered.
+    */
+
+  wms_message_number_type         message_id;
+    /* CDMA = id_number
+    ** GW   = reference_number
+    */
+
+  wms_memory_store_e_type         mem_store;
+  wms_message_index_type          index;
+    /* Storage details after the message is sent.
+    */
+
+  wms_message_tag_e_type          tag;
+    /* SENT     = sent OK
+    ** NOT_SENT = send failure
+    */
+
+} wms_auto_submit_report_info_s_type;
+#endif /*CUST_EDITION*/
 /* ============ Client message definitions ========== */
 
 /* Header
@@ -3301,7 +3579,11 @@ typedef struct wms_client_message_s
   /*~ IF ( _DISC_.message_mode == WMS_MESSAGE_MODE_GW &&
           _DISC_.tag == WMS_TAG_MO_TEMPLATE)
         wms_client_message_u.gw_template*/
-
+#ifdef CUST_EDITION
+    wms_auto_message_s_type      auto_message;
+  /*~ IF ( _DISC_.message_mode == WMS_MESSAGE_MODE_AUTO)
+        wms_client_message_u.auto_message*/
+#endif /*CUST_EDITION*/
     /*~ DEFAULT wms_client_message_u.void */
 
    } u; /*~ FIELD wms_client_message_s.u DISC _OBJ_.msg_hdr */
@@ -3406,6 +3688,9 @@ typedef struct wms_submit_report_info_s
   wms_cause_info_s_type       cause_info;
   wms_gw_tpdu_type_e_type     tpdu_type;
   wms_alpha_id_s_type         alpha_id;
+#ifdef CUST_EDITION  
+  wms_auto_submit_report_info_s_type  auto_rpt_info;
+#endif /*CUST_EDITION*/  
   union wms_submit_report_info_u
   {
     /* Applicable to GW only:
@@ -3570,7 +3855,11 @@ typedef void (*wms_msg_event_cb_type)
 */
 
 #define WMS_MSG_INFO_CACHE_SIZE    30
-
+#ifdef CUST_EDITION
+// Add compile condition FEATURE_CDSMS_CACHE_USELIST
+#ifdef FEATURE_CDSMS_CACHE_USELIST
+typedef void (*wms_msg_info_cache_cb_type)(const wms_client_message_s_type * msg_ptr, wms_message_tag_e_type delcachetag);
+#else
 typedef void (*wms_msg_info_cache_cb_type)
 (
   const wms_client_message_s_type         * msg_ptr,  /* INPUT from WMS */
@@ -3580,7 +3869,8 @@ typedef void (*wms_msg_info_cache_cb_type)
 /*~ PARAM INOUT cache_ptr ARRAY WMS_MSG_INFO_CACHE_SIZE */ 
 /*~ CALLBACK wms_msg_info_cache_cb_type */
 /*~ ONERROR return  */
-
+#endif
+#endif /*CUST_EDITION*/
 
 /* Specific parsing criteria provided by the client.
  * If a client registers this callback to WMS, this callback will be called
@@ -3678,6 +3968,138 @@ typedef enum
   WMS_BC_PREF_MAX32 = 0x10000000
 
 } wms_bc_pref_e_type;
+#ifdef CUST_EDITION
+
+
+/* Service info, which is a entry in the service table
+*/
+typedef struct wms_bc_service_info_s
+{
+  wms_bc_service_id_s_type    srv_id;
+  boolean                     selected;
+  wms_priority_e_type         priority;
+  char                        label[WMS_BC_SRV_LABEL_SIZE];
+
+  wms_user_data_encoding_e_type   label_encoding;
+    /* Encoding type for the service label.
+    ** If it is ASCII or IA5, each byte of 'label' has one character;
+    ** otherwise, 'label' has the raw bytes to be decoded by the clients.
+    */
+  wms_bc_alert_e_type             alert;
+    /* Alert options for this broadcast service.
+    */
+  uint8                            max_messages;
+    /* Max number of messages that can be stored for this service.
+    */
+
+} wms_bc_service_info_s_type;
+
+
+/* the whole service table
+*/
+typedef struct wms_bc_table_s
+{
+  uint16                        size;
+  wms_bc_service_info_s_type    entries[WMS_BC_TABLE_MAX];
+} wms_bc_table_s_type;
+
+
+/* all service IDs in the service table
+*/
+typedef struct wms_bc_service_ids_s
+{
+  uint16                       size;
+  wms_bc_service_id_s_type     entries[WMS_BC_TABLE_MAX];
+} wms_bc_service_ids_s_type;
+
+
+
+
+/* ---------------- */
+/* ---- Events ---- */
+/* ---------------- */
+typedef enum
+{
+  WMS_BC_EVENT_CONFIG,
+  WMS_BC_EVENT_PREF,
+  WMS_BC_EVENT_TABLE,
+  WMS_BC_EVENT_SRV_IDS,
+  WMS_BC_EVENT_SRV_INFO,
+  WMS_BC_EVENT_SRV_ADDED,
+  WMS_BC_EVENT_SRV_DELETED,
+  WMS_BC_EVENT_SRV_UPDATED,
+  WMS_BC_EVENT_ALL_SRV_DELETED, /* no event data needed */
+  WMS_BC_EVENT_ENABLE_FAILURE,  /* lower layer (CM & CP) failure */
+  WMS_BC_EVENT_DISABLE_FAILURE, /* lower layer (CM & CP) failure */
+
+  WMS_BC_EVENT_MAX,
+  WMS_BC_EVENT_MAX32 = 0x10000000
+} wms_bc_event_e_type;
+
+
+/* event info
+*/
+typedef union wms_bc_event_info_u
+{
+  wms_bc_config_e_type         bc_config;
+    /* WMS_BC_EVENT_CONFIG */
+  /*~ IF (_DISC_ == WMS_BC_EVENT_CONFIG) wms_bc_event_info_u.bc_config */
+
+  wms_bc_pref_e_type           bc_pref;
+    /* WMS_BC_EVENT_PREF */
+  /*~ IF (_DISC_ == WMS_BC_EVENT_PREF) wms_bc_event_info_u.bc_pref */
+
+  wms_bc_table_s_type          bc_table;
+    /* WMS_BC_EVENT_TABLE */
+  /*~ IF (_DISC_ == WMS_BC_EVENT_TABLE) wms_bc_event_info_u.bc_table */
+
+  wms_bc_service_ids_s_type    bc_srv_ids;
+    /* WMS_BC_EVENT_SRV_IDS */
+  /*~ IF (_DISC_ == WMS_BC_EVENT_SRV_IDS) wms_bc_event_info_u.bc_srv_ids */
+
+  wms_bc_service_info_s_type   bc_srv_info;
+    /* WMS_BC_EVENT_SRV_INFO */
+    /* WMS_BC_EVENT_SRV_ADDED */
+    /* WMS_BC_EVENT_SRV_UPDATED */
+  /*~ IF (_DISC_ == WMS_BC_EVENT_SRV_INFO || _DISC_ == WMS_BC_EVENT_SRV_ADDED
+         || _DISC_ == WMS_BC_EVENT_SRV_UPDATED) wms_bc_event_info_u.bc_srv_info */
+
+  wms_bc_service_id_s_type     bc_deleted_srv;
+    /* WMS_BC_EVENT_SRV_DELETED */
+  /*~ IF (_DISC_ == WMS_BC_EVENT_SRV_DELETED) wms_bc_event_info_u.bc_deleted_srv */
+
+  /* no event data for WMS_BC_EVENT_ALL_SRV_DELETED */
+
+  wms_status_e_type            bc_enable_error;
+    /* WMS_BC_EVENT_ENABLE_FAILURE */
+    /* WMS_BC_EVENT_DISABLE_FAILURE */
+  /*~ IF (_DISC_ == WMS_BC_EVENT_ENABLE_FAILURE || _DISC_ == WMS_BC_EVENT_DISABLE_FAILURE)
+      wms_bc_event_info_u.bc_enable_error */
+
+  /*~ DEFAULT wms_bc_event_event_info_u.void */
+
+} wms_bc_event_info_s_type;
+
+
+/* Broadcast event callback
+*/
+typedef void (*wms_bc_event_cb_type)
+(
+  wms_bc_event_e_type         event,
+  wms_bc_event_info_s_type    *info_ptr
+);
+ /*~ PARAM IN info_ptr POINTER DISC event */
+
+
+/* ====================================================================== */
+/* ---------------------------------------------------------------------- */
+/* ----------------- Multimode Broadcast definitions: ------------------- */
+/* ---------------------------------------------------------------------- */
+/* ====================================================================== */
+
+#define WMS_BC_MM_SRV_LABEL_SIZE   30
+#define WMS_BC_MM_TABLE_MAX        190
+#endif /*CUST_EDITION*/
 
 typedef struct wms_gw_cb_srv_range_s
 {
@@ -3955,6 +4377,187 @@ typedef struct wms_client_ts_data_s
 
 } wms_client_ts_data_s_type;
 
+
+#ifdef CUST_EDITION
+/*=========================================================================
+FUNCTION
+  wms_msg_set_auto_cdma_params
+
+DESCRIPTION
+  Sets particular CDMA parameters based on cdma_set_params_ptr, to be used for
+  MO messaging on the CDMA network while the format is AUTOMATIC.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  status codes
+
+SIDE EFFECTS
+  Internal data set for MO processing.
+
+=========================================================================*/
+wms_status_e_type wms_msg_set_auto_cdma_params
+(
+  wms_client_id_type              client_id,
+  wms_cdma_template_s_type        *cdma_set_params_ptr  /* IN */
+);
+/*~ FUNCTION wms_msg_set_auto_cdma_params */
+/*~ PARAM IN cdma_set_params_ptr POINTER */
+
+/*=========================================================================
+FUNCTION
+  wms_msg_set_auto_gw_params
+
+DESCRIPTION
+  Sets particular GW parameters based on gw_set_params_ptr, to be used for
+  MO messaging on the GW network while the format is AUTOMATIC.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  status codes
+
+SIDE EFFECTS
+  Internal data set for MO processing.
+
+COMMENTS
+  Set gw_set_params_ptr->alpha_id.data to a Valid Value or NULL
+  Set gw_set_params_ptr->alpha_id.len to a Valid Value or 0
+
+=========================================================================*/
+wms_status_e_type wms_msg_set_auto_gw_params
+(
+  wms_client_id_type              client_id,
+  wms_gw_template_s_type          *gw_set_params_ptr    /* IN */
+);
+/*~ FUNCTION wms_msg_set_auto_gw_params */
+/*~ PARAM IN gw_set_params_ptr POINTER */
+
+/*=========================================================================
+FUNCTION
+  wms_msg_get_auto_cdma_params
+
+DESCRIPTION
+  Gets particular CDMA parameters, to be used for MO messaging on the CDMA
+  network while the format is AUTOMATIC.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  status codes
+
+SIDE EFFECTS
+  Modifies cdma_get_params_ptr directly.
+
+=========================================================================*/
+wms_status_e_type wms_msg_get_auto_cdma_params
+(
+  wms_client_id_type              client_id,
+  wms_cdma_template_s_type        *cdma_get_params_ptr  /* OUT */
+);
+/*~ FUNCTION wms_msg_get_auto_cdma_params */
+/*~ PARAM INOUT cdma_get_params_ptr POINTER */
+
+/*=========================================================================
+FUNCTION
+  wms_msg_get_auto_gw_params
+
+DESCRIPTION
+  Gets particular GW parameters, to be used for MO messaging on the GW
+  network while the format is AUTOMATIC.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  status codes
+
+SIDE EFFECTS
+  Modifies gw_get_params_ptr directly.
+
+COMMENTS
+  Set gw_set_params_ptr->alpha_id.data to a Valid Value or NULL
+  Set gw_set_params_ptr->alpha_id.len to a Valid Value or 0
+
+=========================================================================*/
+wms_status_e_type wms_msg_get_auto_gw_params
+(
+  wms_client_id_type              client_id,
+  wms_gw_template_s_type          *gw_get_params_ptr    /* INOUT */
+);
+/*~ FUNCTION wms_msg_get_auto_gw_params */
+/*~ PARAM INOUT gw_get_params_ptr POINTER */
+
+/*=========================================================================
+FUNCTION
+  wms_ts_convert_cdma_gw_msg_to_auto
+
+DESCRIPTION
+  Converts a CDMA or GW msg_ptr, to a message in AUTOMATIC format auto_msg_ptr.
+  email_len represents the number of characters in the standard e-mail
+  provided. For CDMA, if using the standard e-mail implementation, email_len
+  will be disregarded. Non-standard implementation will take email_len into
+  consideration. For GW, email_len will always be taken into consideration and
+  should be the total characters for the email address.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  Modifies auto_msg_ptr directly.
+
+=========================================================================*/
+wms_status_e_type wms_ts_convert_cdma_gw_msg_to_auto
+(
+  const wms_client_message_s_type     *msg_ptr,       /* IN */
+  uint8                               email_len,
+  wms_auto_message_s_type             *auto_msg_ptr   /* OUT */
+);
+/*~ FUNCTION wms_ts_convert_cdma_gw_msg_to_auto */
+/*~ PARAM IN msg_ptr POINTER */
+/*~ PARAM INOUT auto_msg_ptr POINTER */
+
+/*=========================================================================
+FUNCTION
+  wms_convert_auto_to_cdma_gw_msg
+
+DESCRIPTION
+  Converts an automatic formatted message, auto_msg_ptr, to a CDMA or GW msg,
+  msg_ptr, based on:
+  (1) msg_mode desired, CDMA format or GW format.
+  (2) the set auto params declared by client_id.
+  NOTE: mem_store and index will not be assigned for the client message hdr,
+        the tag will be set to WMS_TAG_NONE.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  Modifies msg_ptr directly.
+
+=========================================================================*/
+wms_status_e_type wms_ts_convert_auto_to_cdma_gw_msg
+(
+  wms_client_id_type                  client_id,
+  wms_message_mode_e_type             msg_mode,
+  const wms_auto_message_s_type       *auto_msg_ptr,  /* IN */
+  wms_client_message_s_type           *msg_ptr        /* INOUT */
+);
+/*~ FUNCTION wms_ts_convert_auto_to_cdma_gw_msg */
+/*~ PARAM IN auto_msg_ptr POINTER */
+/*~ PARAM INOUT msg_ptr POINTER */
+#endif /*CUST_EDITION*/
+
+
 /* <EJECT> */
 /*===========================================================================
 
@@ -4199,7 +4802,32 @@ wms_client_err_e_type wms_client_reg_dc_cb
 );
 /*~ FUNCTION wms_client_reg_dc_cb */
 /*~ ONERROR return WMS_CLIENT_ERR_RPC */
+#ifdef CUST_EDITION
+/*=========================================================================
+FUNCTION
+  wms_client_reg_bc_cb
 
+DESCRIPTION
+  Allow the client to register its Broadcast event callback function.
+  If a null pointer is passed, the callback is de-registered.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  client error codes
+
+SIDE EFFECTS
+  Internal data updated.
+
+=========================================================================*/
+wms_client_err_e_type wms_client_reg_bc_cb
+(
+  wms_client_id_type       client_id,
+  wms_bc_event_cb_type     bc_event_cb
+);
+/*~ FUNCTION wms_client_reg_bc_cb */
+#endif /*CUST_EDITION*/
 /*=========================================================================
 FUNCTION
   wms_client_reg_bc_mm_cb
@@ -4505,6 +5133,73 @@ wms_status_e_type wms_cfg_set_memory_full
 );
 /*~ FUNCTION wms_cfg_set_memory_full */
 /*~ ONERROR return WMS_RPC_ERROR_S */
+#ifdef CUST_EDITION
+/*=========================================================================
+FUNCTION
+  wms_cfg_set_multisend
+
+DESCRIPTION
+  This allows the primary client to specify its multisend Status.
+
+USAGE
+  Only the primary client will be allowed to set/reset the multisend Status.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  WMS_OK_S
+  WMS_OUT_OF_RESOURCES_S
+
+SIDE EFFECTS
+  A command is sent to WMS task.
+
+SEE ALSO
+
+=========================================================================*/
+wms_status_e_type wms_cfg_set_multisend
+(
+  wms_client_id_type               client_id,
+  wms_cmd_cb_type                  cmd_cb,
+  const void                     * user_data,
+  boolean                          multisend
+);
+/*~ wms_cfg_set_multisend */
+
+#ifdef FEATURE_AUTOREPLACE
+/*=========================================================================
+FUNCTION
+  wms_cfg_set_autoreplace
+
+DESCRIPTION
+  This allows the primary client to specify its autoreplace Status.
+
+USAGE
+  Only the primary client will be allowed to set/reset the autoreplace Status.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  WMS_OK_S
+  WMS_OUT_OF_RESOURCES_S
+
+SIDE EFFECTS
+  A command is sent to WMS task.
+
+SEE ALSO
+
+=========================================================================*/
+wms_status_e_type wms_cfg_set_autoreplace
+(
+  wms_client_id_type               client_id,
+  wms_cmd_cb_type                  cmd_cb,
+  const void                     * user_data,
+  boolean                          autoreplace
+);
+/*~ wms_cfg_set_autoreplace */
+#endif
+#endif /*CUST_EDITION*/
 
 /*=========================================================================
 FUNCTION
@@ -4582,6 +5277,8 @@ SIDE EFFECTS
   Updates is_voicemail_active and count.
 
 =========================================================================*/
+
+#ifndef CUST_EDITION
 boolean wms_cfg_check_voicemail_contents
 (
   wms_message_mode_e_type         msg_mode,             /* INPUT */
@@ -4589,6 +5286,16 @@ boolean wms_cfg_check_voicemail_contents
   boolean                         *is_voicemail_active, /* OUTPUT */
   uint8                           *count  /* OUTPUT: how many voice mails */
 );
+#else
+boolean wms_cfg_check_voicemail_contents
+(
+  wms_message_mode_e_type         msg_mode,             /* INPUT */
+  const wms_client_message_s_type *pCltMsg,             /* INPUT */
+  boolean                         *is_voicemail_active, /* OUTPUT */
+  uint8                           *count  /* OUTPUT: how many voice mails */
+);
+#endif
+
 /*~ FUNCTION wms_cfg_check_voicemail_contents */
 /*~ PARAM IN message POINTER */
 /*~ PARAM INOUT is_voicemail_active POINTER */
@@ -4969,7 +5676,79 @@ wms_status_e_type wms_msg_delete
   wms_message_index_type          index
 );
 /*~ FUNCTION wms_msg_delete */
-/*~ ONERROR return WMS_RPC_ERROR_S */
+#ifdef CUST_EDITION
+/*==============================================================================
+FUNCTION
+    wms_msg_delete_box
+
+DESCRIPTION
+    Allow the client to delete all message in a message box.
+
+RETURN VALUE
+    WMS_OK_S
+    WMS_OUT_OF_RESOURCES_S
+
+note
+    A command is sent to WMS task.
+==============================================================================*/
+wms_status_e_type wms_msg_delete_box
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  wms_deletebox_e_type            box_deltype
+);
+/*~ FUNCTION wms_msg_delete_box */
+
+/*==============================================================================
+FUNCTION
+    wms_msg_copy
+
+DESCRIPTION
+    Allow the client to copy a message from one Storage to another Storage.
+
+RETURN VALUE
+    WMS_OK_S
+    WMS_OUT_OF_RESOURCES_S
+
+note
+    A command is sent to WMS task. Only use for MT message copy between UIM
+    and NV. If index_dest not equal to WMS_DUMMY_MESSAGE_INDEX, the dest message
+    will be replaced.
+==============================================================================*/
+wms_status_e_type wms_msg_copy
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  wms_msg_copy_type               *pmsg_copy
+);
+/*~ FUNCTION wms_msg_copy */
+
+#if defined(FEATURE_UIM_TOOLKIT)
+/*==============================================================================
+FUNCTION
+    wms_msg_refresh_ruimmsg
+
+DESCRIPTION
+    Allow the client to rebuild ruim sms cache.
+
+RETURN VALUE
+    WMS_OK_S
+    WMS_OUT_OF_RESOURCES_S
+
+note
+
+==============================================================================*/
+wms_status_e_type wms_msg_refresh_ruimmsg
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+);
+/*~ FUNCTION wms_msg_refresh_ruimmsg */
+#endif
+#endif /*CUST_EDITION*/
 
 /*=========================================================================
 FUNCTION
@@ -5426,8 +6205,348 @@ wms_status_e_type wms_dc_disconnect
   const void                      *user_data
 );
 /*~ FUNCTION wms_dc_disconnect */
-/*~ ONERROR return WMS_RPC_ERROR_S */
+#ifdef CUST_EDITION
 
+
+
+/* <EJECT> */
+/*===========================================================================
+
+                            Broadcast Group
+
+                        API FUNCTION DEFINITIONS
+
+===========================================================================*/
+
+
+/*=========================================================================
+FUNCTION
+  wms_bc_get_config
+
+DESCRIPTION
+  This function is used to retrieve the configuration for broadcast SMS.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_config
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+);
+/*~ FUNCTION wms_bc_get_config */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_get_pref
+
+DESCRIPTION
+  This function is used to retrieve the user preference for broadcast SMS.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_pref
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+);
+/*~ FUNCTION wms_bc_get_pref */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_set_pref
+
+DESCRIPTION
+  This function is used to set the user preference for broadcast SMS.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_set_pref
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  wms_bc_pref_e_type     pref
+);
+/*~ FUNCTION wms_bc_set_pref */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_get_table
+
+DESCRIPTION
+  This function is used to retrieve the service table for broadcast SMS.
+
+  NOTE: To prevent retrieving a large service table, the function
+  wms_bc_get_all_service_ids() can be called to retrieve all service
+  IDs, where each ID is much smaller than a complete table entry, and then
+  the function wms_bc_get_service_info() can be called for each service ID
+  in order to retrieve the table entries one by one.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_table
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+);
+/*~ FUNCTION wms_bc_get_table */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_select_service
+
+DESCRIPTION
+  This function is used to select a broadcast SMS service
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_select_service
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  const wms_bc_service_id_s_type  *srv_id,
+  boolean                         selected,
+  wms_priority_e_type             priority
+);
+/*~ FUNCTION wms_bc_select_service */
+/*~ PARAM IN srv_id POINTER */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_get_all_service_ids
+
+DESCRIPTION
+  This function is used to retrieve all the service IDs in the broadcast
+  SMS service table. After the retrieval of the service IDs, the function
+  wms_bc_get_service_info() can be called to retrieve the complete
+  table entries one by one.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_all_service_ids
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+);
+/*~ FUNCTION wms_bc_get_all_service_ids */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_get_service_info
+
+DESCRIPTION
+  This function is used to retrieve a table entry in the broadcast SMS
+  service table using a service ID.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_service_info
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  const wms_bc_service_id_s_type  *srv_id
+);
+/*~ FUNCTION wms_bc_get_service_info */
+/*~ PARAM IN srv_id POINTER */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_add_service
+
+DESCRIPTION
+  This function is used to add an entry to the broadcast SMS service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_add_service
+(
+  wms_client_id_type                client_id,
+  wms_cmd_cb_type                   cmd_cb,
+  const void                        *user_data,
+  const wms_bc_service_info_s_type  *srv_info
+);
+/*~ FUNCTION wms_bc_add_service */
+/*~ PARAM IN srv_info POINTER */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_delete_service
+
+DESCRIPTION
+  This function is used to delete an entry to the broadcast SMS service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_delete_service
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  const wms_bc_service_id_s_type   *srv_id
+);
+/*~ FUNCTION wms_bc_delete_service */
+/*~ PARAM IN srv_id POINTER */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_change_label
+
+DESCRIPTION
+  This function is used to change an entry in the broadcast SMS service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_change_label
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  const wms_bc_service_id_s_type  *srv_id,
+  const char                      *label_ptr
+);
+/*~ FUNCTION wms_bc_change_label */
+/*~ PARAM IN srv_id POINTER */
+/*~ PARAM IN label_ptr STRING */ 
+
+
+/*=========================================================================
+FUNCTION
+  wms_bc_delete_all_services
+
+DESCRIPTION
+  This function is used to delete all entries from the broadcast service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_delete_all_services
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+);
+/*~ FUNCTION wms_bc_delete_all_services */
+
+/*=========================================================================
+FUNCTION
+  wms_bc_set_priority_for_all
+
+DESCRIPTION
+  This function is used to change priority levels for all services in the
+  broadcast service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_set_priority_for_all
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  wms_priority_e_type             priority
+);
+/*~ FUNCTION wms_bc_set_priority_for_all */
+#endif /*CUST_EDITION*/
 /* <EJECT> */
 /*===========================================================================
 
@@ -6671,5 +7790,10 @@ wms_status_e_type wms_dbg_set_retry_interval
 #ifdef __cplusplus
 }
 #endif
+
+void wms_msg_setmochannel(byte usechl);
+
+#endif /* defined(FEATURE_CDSMS) || defined(GWSMS) */
+
 
 #endif /* WMS_H */

@@ -506,6 +506,10 @@ be and how many blocks of data the card can accept */
 #define  UIM_EFSLOG_PURGE_SIG                             0x00000400
   /* This signal is set when the Local EFS Log buffer has reached 1/2 full */
 
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+#define  UIMDATA_INIT_SIG         0x0800
+#define  UIMDATA_INIT_RPT_SIG     0x1000
+#endif
 /*Following is a list of reserved signals that should not be used*/
 /*******Reserved Signals**************/
 #define UIM_CLASH_WITH_UIM_USB_ATTACH_SIG                 0x00000800

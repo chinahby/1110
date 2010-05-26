@@ -10,7 +10,7 @@
   specified in this file are not all mandatory. The OEM can add, delete, or modify
   functions in this file to support the functions in OEMAppFuncs and OEMNotify.
 
-        Copyright � 1999-2007 QUALCOMM Incorporated.
+        Copyright ?1999-2005 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ============================================================================*/
@@ -18,16 +18,34 @@
 #include "target.h"
 #include "customer.h"
 #if !defined(AEE_SIMULATOR)
+#ifndef WIN32
 #include "disp.h"
 #include "bit.h"
-#include "ui.h"
-#include "voc.h"
-#endif //!defined(AEE_SIMULATOR)
+#endif
 
+#ifndef USES_MMI
+#include "ui.h"
+#else
+#ifndef WIN32
+#include "oemui.h"
+#include "uixsnd.h"
+#endif
+#endif
+#ifndef WIN32
+#include "voc.h"
+#endif
+#endif //!defined(AEE_SIMULATOR)
+#include "OEMFeatures.h"
+#if defined( FEATURE_APP_MANAGER) || ( defined( FEATURE_QSC6010_TEST) && !defined( FEATURE_BREW_SMS) && defined( T_QSC6010))
+#include "AEE_OEMFile.h"
+#endif
 #ifdef FEATURE_MMGSDI
 #include "gsdi_exp.h"
 #endif //def FEATURE_MMGSDI
 
+#ifdef CUST_EDITION
+#include "OEMHeap.h"
+#endif
 #include "OEMFeatures.h"
 #include "AEE_OEM.h"
 #include "OEMDisp.h"
@@ -62,7 +80,9 @@ extern rex_tcb_type wms_tcb;
 #include "AEEFile.h"
 
 #ifdef FEATURE_UI_CORE
+#ifndef USES_MMI
 #include "CoreApp.BID"
+#endif
 #include "uixsnd.h"
 #endif /* FEATURE_UI_CORE */
 #include "OEMCFGI.h"
@@ -71,14 +91,21 @@ extern rex_tcb_type wms_tcb;
 
 #include "nv.h"
 #include "nvi.h"
+#ifndef USES_MMI
 #include "uiutils.h"
+#include "ui_base.h"
+#else
+#include "OEMNV.h"
+#include "AEE_OEM.h"
+#include "OEMClassIDs.h"
+#endif
 #include "mobile.h"
 
 #ifdef FEATURE_UIM_RUIM
 #include "rex.h"
 #include "uim.h"
 #include "nvruimi.h"
-#include "ui_base.h"
+
 extern dword uim_get_esn_me(void);
 #endif //def FEATURE_UIM_RUIM
 
@@ -92,6 +119,10 @@ extern dword uim_get_esn_me(void);
 #include "AEEMutualAuth.h"   // Required for MA CAPAB Flags
 
 #include "AEECLSID_BACKLIGHT.bid"
+
+#ifdef CUST_EDITION	  
+#include "OEMSVC.h"
+#endif /*CUST_EDITION*/
 
 #include "OEMSecSysClock.h"
 
@@ -204,7 +235,28 @@ typedef struct _NVMap
    AEEConfigItem        cfgi;
    nv_items_enum_type   nvi;
 } NVMap;
+#ifdef CUST_EDITION	 
+// 解决慢卡插入后，启动 Applet 慢的问题
+typedef struct _RUIM_NV_Cache
+{
+    // CFGI_CARDID
+    flg         isCARDIDValid:1;    // 值为1时结构包含对应项有效数据
+    // NV_DIR_NUMBER_I
+    flg         isDirNumValid:1;    // 值为1时结构包含对应项有效数据
+    // NV_CURR_NAM_I
+    flg         isCurNamValid:1;    // 值为1时结构包含对应项有效数据
+    
+    int         nCardIDLen;
+    byte        *CardIDbuf;
+    
+    nv_mob_dir_data_type           mobdir_number;
+} RUIM_NV_Cache;
 
+static RUIM_NV_Cache        gUIMNVCache;
+
+static int DeviceMp4State = DEVICE_MP4_STATE_OFF;
+static int DeviceCameraState = DEVICE_CAMERA_STATE_OFF;
+#endif /*CUST_EDITION*/
 #if defined(FEATURE_UIM_RUIM)
 #if defined(FEATURE_MMGSDI ) && !defined ( FEATURE_MULTIPROCESSOR )
 static uim_cmd_type        gUimCmd;
@@ -212,7 +264,7 @@ static uim_cmd_type        gUimCmd;
 static uim_rpt_type        gCallBack;
 #endif //defined(FEATURE_UIM_RUIM)
 
-static void GetMobileInfo(AEEMobileInfo * pmi);
+void GetMobileInfo(AEEMobileInfo * pmi);
 static int  GetSoftwareVersion(byte *pVer, int *pnVerLen);
 extern uint32 GetLngCode(void);
 extern int SetLngCode(uint32 dwLngCode);
@@ -229,7 +281,28 @@ extern int OEMDisp_GetDispInfo(AEEDeviceInfo* pi);
 
 #define DOWNLOAD_INFO_FILE "fs:/sys/downloadinfo.dat"
 #define USER_CLOCK_OFFSET_FILE "fs:/sys/userclkoffset.dat"
+#ifdef CUST_EDITION	  
+extern void OEMSound_Vibrate(uint16 wDuration, void * pUser);
 
+/*��ui_put_nv��Ҫ��װ*/
+#ifdef CUST_EDITION
+nv_stat_enum_type QSC1100_get_nv(
+  nv_items_enum_type item,        /* which item */
+  nv_item_type *data_ptr          /* pointer to space for item */
+)
+{
+#ifndef FEATURE_OEMUI_TASK  
+  return ui_get_nv(item, data_ptr);
+#else    
+#ifndef WIN32
+  return OEMNV_Get(item, data_ptr);
+#else
+  return NV_DONE_S;
+#endif//WIN32
+#endif  //FEATURE_OEMUI_TASK
+}
+#endif
+#endif /*CUST_EDITION*/
 #if defined(FEATURE_GSM1x)
 /*===========================================================================
 FUNCTION gsm1x_get_nv
@@ -251,7 +324,7 @@ nv_stat_enum_type gsm1x_get_nv(
    rex_tcb_type *tcb_ptr = rex_self();
    if (tcb_ptr == &ui_tcb)
    {
-      return ui_get_nv(item,data_ptr);
+      return QSC1100_get_nv(item,data_ptr);
    }
 
 #ifndef FEATURE_GSM1x_WMS
@@ -311,8 +384,10 @@ Function: UIM_Report
 ===========================================================================*/
 static void UIM_Report(uim_rpt_type *report)
 {
+#ifndef WIN32
    MEMCPY(&gCallBack, report, sizeof(uim_rpt_type));
    rex_set_sigs( &ui_tcb, UI_RUIM_SIG);
+#endif
 }
 #endif //(FEATURE_UIM_RUIM)
 
@@ -336,6 +411,63 @@ void OEM_SVCGsdiReadCb(gsdi_cnf_T * sim_cnf)
   rex_set_sigs(&ui_tcb,UI_RUIM_SIG);
 }
 #endif /* FEATURE_MMGSDI */
+
+#ifdef CUST_EDITION	 
+void SetDeviceState(DeviceType dt,DeviceStateType dst)
+{   
+    switch(dt)
+    {
+        case DEVICE_TYPE_MP4:
+             if(dst==DEVICE_MP4_STATE_ON)
+             {
+                 DeviceMp4State=DEVICE_MP4_STATE_ON;
+             }
+             else if(dst==DEVICE_MP4_STATE_OFF)
+             {   DeviceMp4State=DEVICE_MP4_STATE_OFF;
+                
+             }
+             break;
+
+        case DEVICE_TYPE_CAMERA:
+            if(dst==DEVICE_CAMERA_STATE_ON)
+            {
+                DeviceCameraState=DEVICE_CAMERA_STATE_ON;
+            }
+            else if(dst==DEVICE_CAMERA_STATE_OFF)
+            {
+                DeviceCameraState=DEVICE_CAMERA_STATE_OFF;
+            }
+
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+
+int GetDeviceState(DeviceType dt)
+{   
+    int state = 0;
+    
+    switch(dt)
+    {
+        case DEVICE_TYPE_MP4:
+            state = DeviceMp4State;
+            break;
+
+        case DEVICE_TYPE_CAMERA:
+            state = DeviceCameraState;
+            break;
+
+        default:
+            break;
+    }
+
+    return  state;
+}
+#endif /*CUST_EDITION*/
 
 #ifdef FEATURE_ICARDSESSION
 /*==================================================================
@@ -1278,6 +1410,7 @@ void OEM_SVCReadDataCb(FileAttr *pAttr)
 
 #endif
 
+#ifndef CUST_EDITION
 /*==================================================================
 Function: OEM_SVCGetConfig
 
@@ -1313,13 +1446,14 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    switch(i){
    
+#ifdef NV_DSAT707_CTA_TIMER_I
    case CFGI_DORMANCY_TIMEOUT_DEFAULT:
       {
          nv_item_type nvItem;
          if( nSize != sizeof( uint8 )){
             return EBADPARM;
          }         		 
-         if(NV_DONE_S == ui_get_nv(NV_DSAT707_CTA_TIMER_I, &nvItem)) {
+         if(NV_DONE_S == QSC1100_get_nv(NV_DSAT707_CTA_TIMER_I, &nvItem)) {
   
             if (nvItem.dsat707_cta_timer > 255) {
                return EUNSUPPORTED;
@@ -1332,6 +1466,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
             return EFAILED;
          }
       }
+#endif
 
    case CFGI_USER_CLOCK_OFFSET:
       {
@@ -1466,7 +1601,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
          }
          {
             nv_item_type nvItem;
-            if(NV_DONE_S == ui_get_nv(NV_PRIMARY_DNS_I, &nvItem))
+            if(NV_DONE_S == QSC1100_get_nv(NV_PRIMARY_DNS_I, &nvItem))
          {
                *(uint32*)pBuff = HTONL(nvItem.primary_dns);
                return SUCCESS;
@@ -1481,7 +1616,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
          }
          {
             nv_item_type nvItem;
-            if(NV_DONE_S == ui_get_nv(NV_SECONDARY_DNS_I, &nvItem))
+            if(NV_DONE_S == QSC1100_get_nv(NV_SECONDARY_DNS_I, &nvItem))
             {
                *(uint32*)pBuff = HTONL(nvItem.secondary_dns);
                return SUCCESS;
@@ -1501,7 +1636,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
          }
          {
             nv_item_type nvItem;
-            if(NV_DONE_S == ui_get_nv(NV_IPV6_PRIMARY_DNS_I, &nvItem))
+            if(NV_DONE_S == QSC1100_get_nv(NV_IPV6_PRIMARY_DNS_I, &nvItem))
             {
                MEMCPY((byte*)pBuff, (byte*)&nvItem.ipv6_primary_dns, sizeof(INAddr6));
                return SUCCESS;
@@ -1516,7 +1651,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
          }
          {
             nv_item_type nvItem;
-            if(NV_DONE_S == ui_get_nv(NV_IPV6_SECONDARY_DNS_I, &nvItem))
+            if(NV_DONE_S == QSC1100_get_nv(NV_IPV6_SECONDARY_DNS_I, &nvItem))
             {
                MEMCPY((byte*)pBuff, (byte*)&nvItem.ipv6_secondary_dns, sizeof(INAddr6));
                return SUCCESS;
@@ -1718,11 +1853,11 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
             if( !pLen || nSize != sizeof(int) ){
                return EBADPARM;
             }
-            if( ui_get_nv(NV_CURR_NAM_I, &nvi) != NV_DONE_S ){
+            if( QSC1100_get_nv(NV_CURR_NAM_I, &nvi) != NV_DONE_S ){
                return EFAILED;
             }else{
               nvi.dir_number.nam = nvi.curr_nam;
-              if( ui_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S){
+              if( QSC1100_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S){
                return EFAILED;
                 }else{
                    int nLen = STRLEN((char*)&nvi.dir_number.dir_number) + 1;
@@ -1834,13 +1969,13 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
          if( !szBuff || !nSize ){
             return EBADPARM;
          }
-         if( ui_get_nv(NV_CURR_NAM_I, &nvi) != NV_DONE_S ){
+         if( QSC1100_get_nv(NV_CURR_NAM_I, &nvi) != NV_DONE_S ){
             return EFAILED;
          }else{
           //  ui_get_nv(NV_CURR_NAM_I, &nvi);
             // cbCurrentNam = pMobileInfo->nCurrNAM = nvi.curr_nam;
            nvi.dir_number.nam = nvi.curr_nam;
-           if( ui_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S){
+           if( QSC1100_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S){
             return EFAILED;
              }else{
                STRLCPY(szBuff, (char *)nvi.dir_number.dir_number, MIN(nSize, sizeof(nvi.dir_number.dir_number)+1));
@@ -1896,7 +2031,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
             {
                return EBADPARM;
             }
-            if(NV_DONE_S == ui_get_nv(NV_BREW_SUBSCRIBER_ID_I, &nvItem))
+            if(NV_DONE_S == QSC1100_get_nv(NV_BREW_SUBSCRIBER_ID_I, &nvItem))
             {
                for (i = 0; i < nSize; i++)
                {
@@ -2284,7 +2419,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
             nv_item_type nvItem;
             if(nSize < sizeof(dword))
                return EBADPARM;
-            if( ui_get_nv(NV_GPS1_LOCK_I, &nvItem) != NV_DONE_S ){
+            if( QSC1100_get_nv(NV_GPS1_LOCK_I, &nvItem) != NV_DONE_S ){
                return EFAILED;
             }else{
                *(dword*)pBuff = nvItem.gps1_lock;
@@ -2426,7 +2561,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
             return EBADPARM;
          }
 
-         nRet = ui_get_nv(NV_AUTO_LOCK_I, &nvItem);
+         nRet = QSC1100_get_nv(NV_AUTO_LOCK_I, &nvItem);
          if(NV_DONE_S == nRet)
          {
             *(boolean *)pBuff = nvItem.auto_lock;
@@ -2454,7 +2589,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
       {
          return EBADPARM;
       }
-      if(NV_DONE_S == ui_get_nv(NV_MF_PROXY_I, &nvItem))
+      if(NV_DONE_S == QSC1100_get_nv(NV_MF_PROXY_I, &nvItem))
       {
          for (i = 0; i < nSize; i++) //if null termination is  before nSize , it will still be fine.
          {
@@ -2654,7 +2789,1879 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
    }
    return(EBADPARM);
 }
+#else
+#if 0
+int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
+{
+   //
+   // NOTE: This code should be replaced by code that stores/retrieves values in
+   // NV-RAM.  You will need to add NV items for each of the items referenced here.
+   //
+#ifdef FEATURE_APP_SVCPRG
+   /* found a match in our cache */
+   if (OEM_GetCachedConfig(i, pBuff, nSize) == 0)
+     return 0;
+#endif  //def FEATURE_APP_SVCPRG
 
+   // Make sure we have a valid buffer
+   if(!pBuff)
+      return EBADPARM;
+
+   switch(i){
+
+#if defined(FEATURE_GSM1x)
+      case CFGI_GSM1X_PRL:
+         {
+           AEEGSM1xPRLInfo *PRLInfoPtr = (AEEGSM1xPRLInfo *)pBuff;
+           if( PRLInfoPtr->maxSizeBytes < sizeof(nv_ram_roaming_list_type) ){
+               return EFAILED;
+           }
+           OEM_GetGSM1xPRL( PRLInfoPtr );
+         }
+         return SUCCESS;
+
+#if defined(FEATURE_UIM_RUN_TIME_ENABLE)
+      case CFGI_GSM1X_RTRE_CONFIG:
+         {
+           AEEGSM1xRTREConfig *RTREPtr = (AEEGSM1xRTREConfig *)pBuff;
+           OEM_GetGSM1xRTREConfig( RTREPtr );
+         }
+         return SUCCESS;
+#endif /* FEATURE_UIM_RUN_TIME_ENABLE */
+
+      case CFGI_GSM1X_IDENTITY_PARAMS:
+         {
+           AEEGSM1xIdentityParams *IdentityParamsPtr = (AEEGSM1xIdentityParams *)pBuff;
+           OEM_GetGSM1xIdentityParams( IdentityParamsPtr );
+         }
+         return SUCCESS;
+
+      case CFGI_GSM1X_SID_NID_PARAMS:
+         {
+           AEEGSM1xSIDNIDParams *SIDNIDParamsPtr = (AEEGSM1xSIDNIDParams *)pBuff;
+           OEM_GetGSM1xSIDNIDParams( SIDNIDParamsPtr );
+         }
+      return SUCCESS;
+#endif /* FEATURE_GSM1x */
+
+   //
+   // DNS Addresses - Used by the HTTP layer, etc.
+   //
+
+      case CFGI_DNS_IP1:
+         if( nSize != sizeof( uint32 ) ) {
+            return EBADPARM;
+         }
+         {
+            nv_item_type nvItem;
+            if(NV_DONE_S == ui_get_nv(NV_PRIMARY_DNS_I, &nvItem))
+         {
+               *(uint32*)pBuff = HTONL(nvItem.primary_dns);
+               return SUCCESS;
+            }
+            else
+               return EFAILED;
+         }
+
+      case CFGI_DNS_IP2:
+         if( nSize != sizeof( uint32 ) ) {
+            return EBADPARM;
+         }
+         {
+            nv_item_type nvItem;
+            if(NV_DONE_S == ui_get_nv(NV_SECONDARY_DNS_I, &nvItem))
+            {
+               *(uint32*)pBuff = HTONL(nvItem.secondary_dns);
+               return SUCCESS;
+            }
+            else
+               return EFAILED;
+         }
+
+   //
+   // IPv6 DNS Addresses
+   //
+
+#ifdef FEATURE_DATA_PS_IPV6
+      case CFGI_IPV6_DNS_IP1:
+         if( nSize != sizeof( INAddr6 ) ) {
+            return EBADPARM;
+         }
+         {
+            nv_item_type nvItem;
+            if(NV_DONE_S == ui_get_nv(NV_IPV6_PRIMARY_DNS_I, &nvItem))
+            {
+               MEMCPY((byte*)pBuff, (byte*)&nvItem.ipv6_primary_dns, sizeof(INAddr6));
+               return SUCCESS;
+            }
+            else
+               return EFAILED;
+         }
+
+      case CFGI_IPV6_DNS_IP2:
+         if( nSize != sizeof( INAddr6 ) ) {
+            return EBADPARM;
+         }
+         {
+            nv_item_type nvItem;
+            if(NV_DONE_S == ui_get_nv(NV_IPV6_SECONDARY_DNS_I, &nvItem))
+            {
+               MEMCPY((byte*)pBuff, (byte*)&nvItem.ipv6_secondary_dns, sizeof(INAddr6));
+               return SUCCESS;
+            }
+            else
+               return EFAILED;
+         }
+#endif //FEATURE_DATA_PS_IPV6
+
+   //
+   // Download information - specific to the carrier/handset
+   //
+
+#if 0      
+      case CFGI_DOWNLOAD:
+         {
+         AEEDownloadInfo * pdi = (AEEDownloadInfo *)pBuff;
+      IFileMgr* pFileMgr;
+
+         if(nSize != sizeof(AEEDownloadInfo))
+            return(EBADPARM);
+
+         MEMSET((byte *) pdi, 0, nSize);
+
+      	 //bBKey -- Leave as 0s?
+         //bAKey -- Leave as 0s?
+         pdi->dwCarrierID  = 27;
+      	 pdi->dwPlatformID = 600; //4000;//500;
+      	 STRCPY((char*)pdi->szServer,"oemdemo.qualcomm.com");
+      	 pdi->wFlags       = DIF_TEST_ALLOWED|DIF_MIN_FOR_SID;
+         pdi->nAuth        = APOLICY_NONE;
+         pdi->nPolicy      = PPOLICY_BREW_OR_CARRIER;
+
+      if(ISHELL_CreateInstance(AEE_GetShell(),
+                               AEECLSID_FILEMGR,
+                               (void**)&pFileMgr) == SUCCESS)
+      {
+         IFile* pFile;
+         boolean bWriteFile = FALSE;
+         pFile = IFILEMGR_OpenFile(pFileMgr,
+                                   DOWNLOAD_INFO_FILE,
+                                   _OFM_READ);
+         if(pFile)
+         {
+            /* Read from File to AEEDownloadInfo struct */
+            if(IFILE_Read(pFile,
+                          (void*)pdi,
+                          sizeof(AEEDownloadInfo)) == sizeof(AEEDownloadInfo))
+            {
+               /* Successful Read. */
+               IFILE_Release(pFile);
+            }
+            else
+            {
+               /* Read failed for some reason. Destroy the file and re-write. */
+               IFILE_Release(pFile);
+               IFILEMGR_Remove(pFileMgr, DOWNLOAD_INFO_FILE);
+               bWriteFile = TRUE;
+            }
+         }
+         else
+         {
+            bWriteFile = TRUE;
+         }
+         if(bWriteFile)
+         {
+            /* No file there yet. Write out defaults. */
+            pFile = IFILEMGR_OpenFile(pFileMgr,
+                                       DOWNLOAD_INFO_FILE,
+                                       _OFM_CREATE);
+            if(pFile)
+            {
+               /* File opened successfully. Write the data */
+               if(IFILE_Write(pFile,
+                              pdi,
+                              sizeof(AEEDownloadInfo)) == sizeof(AEEDownloadInfo))
+               {
+                  /* Successful write. Close the file and return.*/
+                  IFILE_Release(pFile);
+               }
+               else
+               {
+                  /* Something went wrong. Destroy the file. */
+                  IFILE_Release(pFile);
+                  IFILEMGR_Remove(pFileMgr, DOWNLOAD_INFO_FILE);
+               }
+            }
+         }
+         IFILEMGR_Release(pFileMgr);
+      }
+
+      	 return SUCCESS;
+         }
+#endif         
+
+      case CFGI_MOBILE_DIR_NUM_LEN:
+         {
+#if defined(T_MSM6250)
+            // TODO: For devices where subscriber info is stored on a removable
+            // card. The MDN should come from the card on such devices.
+            int *             pLen = pBuff;
+
+            if( !pLen || nSize != sizeof(int) ){
+               return EBADPARM;
+            }
+            *pLen = STRLEN(DEFAULT_MDN) + 1;
+#else
+            nv_item_type      nvi;
+            int *             pLen = pBuff;
+
+            if( !pLen || nSize != sizeof(int) ){
+               return EBADPARM;
+            }
+            if( ui_get_nv(NV_CURR_NAM_I, &nvi) != NV_DONE_S ){
+               return EFAILED;
+            }else{
+              nvi.dir_number.nam = nvi.curr_nam;
+              if( ui_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S){
+               return EFAILED;
+                }else{
+                   *pLen = MIN(STRLEN((char*)&nvi.dir_number.dir_number) + 1,
+                               sizeof(nvi.dir_number.dir_number) + 1);
+                }
+            }
+#endif //defined(T_MSM6250)
+         }
+         return AEE_SUCCESS;
+
+         case CFGI_KB_AUTOREPEAT:
+         {
+             OEMKBAutoRepeat* pautoRepeat = (OEMKBAutoRepeat*)pBuff;
+             pautoRepeat->dwStart = 0;
+             pautoRepeat->dwRate = 0;
+             return SUCCESS;
+         }
+
+      case CFGI_MOBILE_DIR_NUM:
+      {
+#if defined(T_MSM6250)
+         // TODO: For devices where subscriber info is stored on a removable
+         // card. The MDN should come from the card on such devices.
+         char *            szBuff = (char *)pBuff;
+
+         if( !szBuff || nSize < (STRLEN(DEFAULT_MDN)+1) ){
+            return EBADPARM;
+         }
+         STRLCPY(szBuff, DEFAULT_MDN, MIN(nSize, STRLEN(DEFAULT_MDN)));
+#else
+         nv_item_type      nvi;
+         char *            szBuff = (char *)pBuff;
+
+         if( !szBuff || !nSize ){
+            return EBADPARM;
+         }
+         if( ui_get_nv(NV_CURR_NAM_I, &nvi) != NV_DONE_S ){
+            return EFAILED;
+         }else{
+          //  ui_get_nv(NV_CURR_NAM_I, &nvi);
+            // cbCurrentNam = pMobileInfo->nCurrNAM = nvi.curr_nam;
+           nvi.dir_number.nam = nvi.curr_nam;
+           if( ui_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S){
+            return EFAILED;
+             }else{
+               STRLCPY(szBuff, (char *)nvi.dir_number.dir_number, MIN(nSize, sizeof(nvi.dir_number.dir_number)+1));
+             }
+         }
+#endif // defined(T_MSM6250)
+      }
+      return AEE_SUCCESS;
+
+
+   //
+   // MA Capability Flags - specific to the carrier/handset.
+   // See AEEMutualAuth.h for full documentation for setting MA Capability flags.
+   //
+
+   case CFGI_BREWMA_CAPABILITIES:
+
+	  if( nSize != sizeof( uint32 ) ) {
+		 return EBADPARM;
+	  }
+
+	  // Bit 0 (LSB) is set dynamically on the handset by getting the serving
+	  // system info from ITelephone
+	  // 0x00000001 MA_CLIENT_CAP_MODE_NO_TIME_SYNC Dynamic - from ITelephone
+
+	  // Bit 1 & 2 are ALWAYS hard coded by BREW, and ALWAYS set ON.
+	  // Any values set by the OEM for bits 1 & 2 will be overridden.
+
+	  // 0x00000002 MA_CLIENT_CAP_SUPPORTS_NN	      Hard coded ON by BREW
+	  // 0x00000004 MA_CLIENT_CAP_SUPPORTS_TT	      Hard coded ON by BREW
+	  //
+	  // The remaining defined bits should be set by the OEM.
+	  // As a basic default, we assume a battery backed RTC - all other caps
+	  // are off by default or are presently unused.
+	  // 0x00000008	MA_CLIENT_CAP_BATTERY_BACKED_RTC	OEM Config Item
+
+	  (*(uint32*)pBuff) = (MA_CLIENT_CAP_BATTERY_BACKED_RTC);
+
+	  return(SUCCESS);
+
+   //
+   // Mobile ID information - generally, this is the MIN
+   //
+      case CFGI_MOBILEINFO:
+        if (nSize != sizeof(AEEMobileInfo))
+           return(EBADPARM);
+         GetMobileInfoEx((AEEMobileInfo *) pBuff);
+
+         return SUCCESS;
+
+   //
+   // AutoStart Application - This app will be started by BREW after AEE_Init
+   // completes and the next time AEE_Dispatch is called.
+   //
+
+      case CFGI_AUTOSTART:
+         {
+         AEECLSID * pc = (AEECLSID *)pBuff;
+
+         if(nSize != sizeof(AEECLSID))
+            return(EBADPARM);
+#ifdef FEATURE_UI_CORE
+         *pc = AEECLSID_CORE_STARTAPP;
+#else
+         *pc = 0;
+#endif /* FEATURE_UI_CORE */
+         return SUCCESS;
+         }
+
+      case CFGI_FIRMWARE_ID_LEN:
+         if(nSize != sizeof(int))
+            return EBADPARM;
+         return GetFirmwareVersion(NULL, (int *)pBuff);
+
+      case CFGI_FIRMWARE_ID:
+      {
+         int nVerLen;
+         if(GetFirmwareVersion(NULL, (int *)&nVerLen))
+            return EUNSUPPORTED;
+         if(nSize < nVerLen)
+            return EBADPARM;
+         return GetFirmwareVersion((byte *)pBuff, &nVerLen);
+      }
+
+      case CFGI_SYSMEM_SIZE:
+      {
+         /* Default SYSMEM Size is 4kB. Let's use larger size due
+            to large number of UI Apps. */
+         if(nSize < sizeof(uint32))
+            return EBADPARM;
+         *(uint32*)pBuff = 8192;
+         return AEE_SUCCESS;
+      }
+
+      case CFGI_BUSY_CURSOR_OFFSET:
+      case CFGI_DOWNLOAD_BUFFER:
+      case CFGI_HTTP_BUFFER:
+      case CFGI_NET_CONNTIMEOUT:
+      case CFGI_MAX_DISPATCH_TIME:
+      case CFGI_MIN_IDLE_TIME:
+      case CFGI_SLEEP_TIMER_RESOLUTION:
+      case CFGI_DOWNLOAD_FS_INFO:
+      case CFGI_SCREEN_SAVER:
+      case CFGI_CLOSE_KEYS:
+      case CFGI_FILE_CACHE_INFO:
+      case CFGI_GPSONE_TRANSPORT:
+      case CFGI_GPSONE_SVRIP:
+      case CFGI_GPSONE_SVRPORT:
+      case CFGI_GPSONE_LOCK:
+         return EUNSUPPORTED;
+
+   //
+   // Default file system limits for apps.
+   //
+
+      case CFGI_MODULE_FSLIMIT:
+      {
+         MIFFSLimit *   pfsLimit = (MIFFSLimit *)pBuff;
+
+         if (nSize < sizeof(MIFFSLimit))
+            return EBADPARM;
+
+#if !defined(AEE_SIMULATOR)
+         //
+         // NOTE: OEMs can enforce their (per module) defaults here...
+         //
+         pfsLimit->wMaxFiles = MAX_FILES_UNLIMITED;
+         pfsLimit->dwMaxSpace = MAX_SPACE_UNLIMITED;
+#else
+#error Simulator CFGI_MODULE_FSLIMIT code is located in a different file
+#endif // !defined(AEE_SIMULATOR)
+
+         return SUCCESS;
+      }
+
+   //
+   // Card ID (RUIM/SIM) support
+   //
+#if defined (FEATURE_UIM_RUIM)
+      case CFGI_CARDID_LEN:
+      case CFGI_CARDID:
+      {
+         int   nErr = SUCCESS;
+         byte *buffer;
+
+         buffer = MALLOC(CARD_ID_SIZE);
+         if(!buffer){
+           return(EFAILED);
+         }
+
+         // Prepare to read the id EF.
+         gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+         gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+         gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+         gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+         gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+         gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+         gUimCmd.access_uim.hdr.rpt_function       = UIM_Report;
+
+         gUimCmd.access_uim.item      = UIM_CDMA_RUIM_ID;
+         gUimCmd.access_uim.access    = UIM_READ_F;
+         gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+         gUimCmd.access_uim.num_bytes = CARD_ID_SIZE;
+         gUimCmd.access_uim.offset    = 1;
+         gUimCmd.access_uim.data_ptr  = buffer;
+
+         // From nvruim_access():  Access an EF, do not signal any task, use no
+         // signal, no done queue, use a callback, always report status.
+
+         // Send the command to the R-UIM:
+         (void) rex_clr_sigs( &ui_tcb, UI_RUIM_SIG);
+         // Send the command.
+         uim_cmd (&gUimCmd);
+         (void) rex_wait(UI_RUIM_SIG);
+
+         if ((gCallBack.rpt_type   != UIM_ACCESS_R) ||
+            (gCallBack.rpt_status != UIM_PASS)) {
+            FREE(buffer);
+            return(EFAILED);
+         }
+
+         if(i == CFGI_CARDID_LEN){
+            if(nSize == sizeof(int)){
+               *((int*)pBuff) = gUimCmd.access_uim.num_bytes_rsp;
+            }else{
+               nErr = EBADPARM;
+            }
+         }else{
+            nSize = MIN(nSize, gUimCmd.access_uim.num_bytes_rsp);
+            MEMCPY(pBuff, buffer, nSize);
+         }
+         FREE(buffer);
+         return(nErr);
+      }
+#endif // defined (FEATURE_UIM_RUIM)
+
+      case CFGI_DEBUG_KEY:
+         return EUNSUPPORTED;
+
+      case CFGI_ALLOW_3G_2G_FAILOVER:
+         if(nSize != sizeof(boolean))
+            return EBADPARM;
+         // Allow failover
+         *(boolean*)pBuff = TRUE;
+         return SUCCESS;
+
+#if defined(FEATURE_BREW_DEV)
+      // short safe mode timer during development
+      case CFGI_SAFEMODE_TIMER:
+         if(nSize != sizeof(int32))
+            return EBADPARM;
+         *(int32*)pBuff = 5;
+         return SUCCESS;
+#endif // defined(FEATURE_BREW_DEV)
+
+      case CFGI_SMS_EMAIL_DEST:
+         if(nSize < (STRLEN("6245") + 1))
+            return EBADPARM;
+         STRNCPY((char*)pBuff, "6245", STRLEN("6245"));
+         return SUCCESS;
+
+      case CFGI_SMS_EMAIL_DEST_LENGTH:
+         if(nSize < sizeof(uint32))
+            return EBADPARM;
+         *(uint32*)pBuff = STRLEN("6245") + 1;
+         return SUCCESS;
+
+      // Maximum payload length in terms of number of bytes
+     case CFGI_SMS_MAX_PAYLOAD_LENGTH:
+         if(nSize < sizeof(uint32))
+            return EBADPARM;
+         return GetPayloadLength((uint32*)pBuff);
+
+      // Default encoding for MO SMS
+      case CFGI_SMS_DEFAULT_MO_ENC:
+         if(nSize < sizeof(AEESMSEncType))
+            return EBADPARM;
+         *(AEESMSEncType*)pBuff = AEESMS_ENC_ASCII;
+         return SUCCESS;
+
+      // Count of encoding types available for MO SMS
+      case CFGI_SMS_MO_ENC_TYPES_COUNT:
+         if(nSize < sizeof(uint32))
+            return EBADPARM;
+         *(uint32*)pBuff = 5;
+         return SUCCESS;
+
+      // Encoding types available for MO SMS
+      case CFGI_SMS_MO_ENC_TYPES:
+         if(nSize < sizeof(uint32)*5)
+            return EBADPARM;
+         *(uint32*)pBuff = AEESMS_ENC_ASCII;
+         *(((uint32*)pBuff) + 1) = AEESMS_ENC_LATIN;
+         *(((uint32*)pBuff) + 2) = AEESMS_ENC_UNICODE;
+         *(((uint32*)pBuff) + 3) = AEESMS_ENC_OCTET;
+         *(((uint32*)pBuff) + 4) = AEESMS_ENC_GSM_7_BIT_DEFAULT;
+         return SUCCESS;
+
+      case CFGI_BREWDIR_SMS_TELESERVICE:
+         if(nSize < sizeof(uint32))
+            return EBADPARM;
+         *(uint32*)pBuff = 4098;
+         return SUCCESS;
+
+      // If ON_ACCESS is set, the SMS message is sent on the access channel
+      // If ON_TRAFFIC is set, it is sent on the traffic channel
+      // If both are set, it will attempt the access channel, and use the
+      // traffic channel if the message is too large.
+      case CFGI_SMS_MO_ON_ACCESS_CHANNEL:
+         if(nSize < sizeof(boolean))
+            return EBADPARM;
+         return GetAccess((boolean*)pBuff);
+
+      case CFGI_SMS_MO_ON_TRAFFIC_CHANNEL:
+         if(nSize < sizeof(boolean))
+            return EBADPARM;
+         return GetTraffic((boolean*)pBuff);
+
+      case CFGI_LNG:
+         if(nSize < sizeof(uint32))
+            return EBADPARM;
+         *(uint32*)pBuff = GetLngCode();
+         return SUCCESS;
+
+#ifdef FEATURE_BREW_SMS
+      case CFGI_SMS_GW_DOMAIN_PREF:
+         if(nSize < sizeof(uint32))
+            return EBADPARM;
+         return OEMSMS_GetDomainPref((int*)pBuff);
+#endif //FEATURE_BREW_SMS
+
+      case CFGI_BACKLIGHT_CLASSIDS_LIST:
+         if(nSize < sizeof(uint32)*2)
+            return EBADPARM;
+         *(uint32*)pBuff = AEECLSID_BACKLIGHT;
+         *(((uint32*)pBuff) + 1) = 0;
+         return SUCCESS;
+
+      // Type boolean, if TRUE, OEM app Context notifications sent via
+      // OEM_Notify, else not.
+      case CFGI_OEM_NOTIFY_APP_CTXT:
+         if(nSize < sizeof(boolean))
+         {
+            return EBADPARM;
+         }
+         *(boolean*)pBuff = FALSE;
+         return SUCCESS;
+
+	  case CFGI_REQUIREPINENTRY: 
+      {
+         nv_item_type nvItem;
+         int nRet; 
+
+         if(nSize != sizeof(boolean)) 
+         {
+            return EBADPARM;
+         }   
+         
+         nRet = ui_get_nv(NV_AUTO_LOCK_I, &nvItem); 
+         if(NV_DONE_S == nRet)
+         {
+            *(boolean *)pBuff = nvItem.auto_lock;
+            return SUCCESS;
+         }
+         else if (NV_NOTACTIVE_S == nRet)
+         {
+            //If the NV item is not active, 
+            //then set pBuff to the default value (false)
+            *(boolean *)pBuff = 0; 
+            return SUCCESS;
+         }
+         return EFAILED; 
+      }
+
+
+// TYpe boolean. TRUE if pending ACKS to be flushed after first data app's launch 
+      case CFGI_LAZY_ACK:
+         if(nSize < sizeof(boolean))
+            return EBADPARM;
+         *(boolean*)pBuff = TRUE;
+         return SUCCESS;
+#ifdef FEATURE_ICARDSESSION
+   case CFGI_MMS_CONFIG:
+      case CFGI_MMS_ICP:      
+      case CFGI_BROWSER_CP:
+      case CFGI_JAVA_JDL:
+      case CFGI_MMS_UP:      
+         {
+            int nResult = EFAILED;            
+            AEECallback  *pcbReadData = NULL;            
+            AEECardSessionCmdStatus *pRegisterCmdStatus = NULL;
+            OEMProvisionInfo *pProvInfo = (OEMProvisionInfo*)pBuff;
+            ICardSession *pICardSession = NULL;
+            FileAttr *psFileAttr = NULL;
+            IShell * pIShell = AEE_GetShell();
+            if(NULL == pIShell || NULL == pProvInfo ||
+               NULL == pProvInfo->pData || NULL == pProvInfo->pcbUserCallback){
+               return EFAILED;
+            }
+                                    
+            pcbReadData= (AEECallback *)MALLOC(
+                                       sizeof(AEECallback));
+            if(NULL == pcbReadData){               
+               pProvInfo->nStatus = EFAILED;
+               return ENOMEMORY;
+            }
+            psFileAttr= (FileAttr *)MALLOC(
+                                       sizeof(FileAttr));
+            if(NULL == psFileAttr){               
+               FREEIF(pcbReadData);
+               pProvInfo->nStatus = EFAILED;
+               return ENOMEMORY;
+            }
+            pRegisterCmdStatus= (AEECardSessionCmdStatus *)MALLOC(
+                                       sizeof(AEECardSessionCmdStatus));
+            if(NULL == pRegisterCmdStatus){               
+               FREEIF(pcbReadData);
+               FREEIF(psFileAttr);
+               pProvInfo->nStatus = EFAILED;
+               return ENOMEMORY;
+            }
+            psFileAttr->nSize = nSize;
+            pProvInfo->dwMemType = 0;
+            psFileAttr->dwConfigItem = i;
+            psFileAttr->pcbSVCCallback = (AEECallback*)pcbReadData; 
+            CALLBACK_Init(pcbReadData, (PFNNOTIFY)OEM_SVCRegisterReadCb,
+                          (void*)(psFileAttr));
+            psFileAttr->pProvInfo = pProvInfo;
+            psFileAttr->pRegisterStatus = pRegisterCmdStatus; 
+            
+            nResult = ISHELL_CreateInstance(pIShell, 
+                                            AEECLSID_CARDSESSION, 
+                                            (void **)(&pICardSession));
+            if(SUCCESS != nResult){
+               FREEIF(pcbReadData);
+               FREEIF(psFileAttr);
+               FREEIF(pRegisterCmdStatus);
+               pProvInfo->nStatus = EFAILED;
+               return EFAILED;
+            } 
+            psFileAttr->pICardSession = pICardSession;
+            nResult = ICARDSESSION_Register(pICardSession,
+                                            pRegisterCmdStatus,
+                                            pcbReadData);
+                                            
+            if(SUCCESS != nResult){
+               FREEIF(pcbReadData);
+               FREEIF(psFileAttr);
+               FREEIF(pRegisterCmdStatus);
+               RELEASEIF(pICardSession);
+            }
+            
+            pProvInfo->nStatus = nResult;
+            return nResult;            
+                        
+         }
+      
+      case CFGI_MMS_CONFIG_LEN:
+      case CFGI_MMS_ICP_LEN:      
+      case CFGI_BROWSER_CP_LEN:
+      case CFGI_JAVA_JDL_LEN: 
+      case CFGI_MMS_UP_ATTRIBUTES:       
+         {
+            int nResult = EFAILED;
+            ICardSession *pICardSession = NULL;
+            IShell * pIShell = AEE_GetShell();
+            AEECallback  *pcbGetAttr = NULL;
+            OEMProvisionInfo *pProvInfo = (OEMProvisionInfo*)pBuff;            
+            AEECardSessionCmdStatus *pRegisterCmdStatus = NULL;
+            FileAttr *psFileAttr = NULL;
+            
+            if(NULL == pIShell || NULL == pProvInfo || 
+               NULL == pProvInfo->pData || NULL == pProvInfo->pcbUserCallback){
+               return EFAILED;
+            }
+
+            *(uint32*)pProvInfo->pData = 0;
+            
+
+            pcbGetAttr= (AEECallback *)MALLOC(
+                                       sizeof(AEECallback));
+            if(NULL == pcbGetAttr){
+               pProvInfo->nStatus = EFAILED;               
+               return ENOMEMORY;
+            }
+            psFileAttr= (FileAttr *)MALLOC(
+                                       sizeof(FileAttr));
+            if(NULL == psFileAttr){               
+               FREEIF(pcbGetAttr);
+               pProvInfo->nStatus = EFAILED;
+               return ENOMEMORY;
+            }
+            pRegisterCmdStatus= (AEECardSessionCmdStatus *)MALLOC(
+                                       sizeof(AEECardSessionCmdStatus));
+            if(NULL == pRegisterCmdStatus){               
+               FREEIF(pcbGetAttr);
+               FREEIF(psFileAttr);
+               pProvInfo->nStatus = EFAILED;
+               return ENOMEMORY;
+            }
+            pProvInfo->dwMemType = 0;
+            psFileAttr->pProvInfo = pProvInfo;
+            psFileAttr->pRegisterStatus = pRegisterCmdStatus; 
+            psFileAttr->bRead = TRUE;
+            psFileAttr->pcbSVCCallback = (AEECallback*)pcbGetAttr;
+            psFileAttr->dwConfigItem = i;            
+            CALLBACK_Init(pcbGetAttr, (PFNNOTIFY)OEM_SVCRegisterLenCb,
+                          (void*)(psFileAttr));            
+                        
+            nResult = ISHELL_CreateInstance(pIShell, 
+                                            AEECLSID_CARDSESSION, 
+                                            (void **)(&pICardSession));
+            if(SUCCESS != nResult){               
+               FREEIF(pcbGetAttr);
+               FREEIF(psFileAttr);
+               FREEIF(pRegisterCmdStatus);
+               pProvInfo->nStatus = EFAILED;
+               return EFAILED;
+            } 
+            psFileAttr->pICardSession = pICardSession;            
+            nResult = ICARDSESSION_Register(pICardSession,
+                                            pRegisterCmdStatus,
+                                            pcbGetAttr);
+                                            
+            if(SUCCESS != nResult){
+               FREEIF(pcbGetAttr);
+               FREEIF(psFileAttr);
+               FREEIF(pRegisterCmdStatus);
+               RELEASEIF(pICardSession);
+            }
+            pProvInfo->nStatus = nResult;
+            return nResult;                                                
+         }
+#endif //FEATURE_ICARDSESSION
+     
+      default:
+         return(EUNSUPPORTED);
+   }
+   return(EBADPARM);
+}
+
+#else
+
+int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
+{
+   IShell *pShell = AEE_GetShell();
+    //
+    // NOTE: This code should be replaced by code that stores/retrieves values in
+    // NV-RAM.  You will need to add NV items for each of the items referenced here.
+    //
+#ifdef FEATURE_APP_SVCPRG
+    /* found a match in our cache */
+    if (OEM_GetCachedConfig(i, pBuff, nSize) == 0)
+    {
+        return 0;
+    }
+#endif  //def FEATURE_APP_SVCPRG
+
+    // Make sure we have a valid buffer
+    if (!pBuff)
+    {
+        return EBADPARM;
+    }
+
+    switch (i)
+    {
+        case CFGI_USER_CLOCK_OFFSET:
+            {
+                IFileMgr* pFileMgr;
+                int32 *pdwOffset = (int32 *)pBuff;
+                PACONTEXT pacLast;
+                int nErr;
+            
+                if (nSize != sizeof(int32))
+                {
+                    return(EBADPARM);
+                }
+            
+                MEMSET(pdwOffset, 0, nSize);
+                
+                pacLast = AEE_EnterAppContext(NULL);
+                nErr = ISHELL_CreateInstance(pShell, AEECLSID_FILEMGR, (void**)&pFileMgr);
+                
+                if (SUCCESS == nErr)
+                {
+                    IFile* pFile;
+                    boolean bWriteFile = FALSE;
+                    pFile = IFILEMGR_OpenFile(pFileMgr, USER_CLOCK_OFFSET_FILE, _OFM_READ);
+                    if (pFile)
+                    {
+                        /* Read from File */
+                        if (IFILE_Read(pFile, (void*)pdwOffset, sizeof(int32)) == sizeof(int32))
+                        {
+                            /* Successful Read. */
+                            IFILE_Release(pFile);
+                        }
+                        else
+                        {
+                            /* Read failed for some reason. Destroy the file and re-write. */
+                            IFILE_Release(pFile);
+                            IFILEMGR_Remove(pFileMgr, USER_CLOCK_OFFSET_FILE);
+                            bWriteFile = TRUE;
+                        }
+                    }
+                    else
+                    {
+                        bWriteFile = TRUE;
+                    }
+                    
+                    if (bWriteFile)
+                    {
+                        /* No file there yet. Write out defaults. */
+                        pFile = IFILEMGR_OpenFile(pFileMgr, USER_CLOCK_OFFSET_FILE, _OFM_CREATE);
+                        if (pFile)
+                        {
+                            /* File opened successfully. Write the data */
+                            if (IFILE_Write(pFile, pdwOffset, sizeof(int32)) == sizeof(int32))
+                            {
+                                /* Successful write. Close the file and return.*/
+                                IFILE_Release(pFile);
+                            }
+                            else
+                            {
+                                /* Something went wrong. Destroy the file. */
+                                IFILE_Release(pFile);
+                                IFILEMGR_Remove(pFileMgr, USER_CLOCK_OFFSET_FILE);
+                                IFILEMGR_Release(pFileMgr);
+                                AEE_LeaveAppContext(pacLast);
+                                return EFAILED;
+                            }
+                        }
+                        else
+                        {
+                            IFILEMGR_Release(pFileMgr);
+                            AEE_LeaveAppContext(pacLast);
+                            return EFAILED;
+                        }
+                    }
+                    IFILEMGR_Release(pFileMgr);
+                }
+                AEE_LeaveAppContext(pacLast);
+            }
+            return SUCCESS;
+
+#if defined(FEATURE_GSM1x)
+        case CFGI_GSM1X_PRL:
+            {
+                AEEGSM1xPRLInfo *PRLInfoPtr = (AEEGSM1xPRLInfo *)pBuff;
+                
+                if (PRLInfoPtr->maxSizeBytes < sizeof(nv_ram_roaming_list_type))
+                {
+                    return EFAILED;
+                }
+                OEM_GetGSM1xPRL( PRLInfoPtr );
+            }
+            return SUCCESS;
+
+#if defined(FEATURE_UIM_RUN_TIME_ENABLE)
+        case CFGI_GSM1X_RTRE_CONFIG:
+            {
+                AEEGSM1xRTREConfig *RTREPtr = (AEEGSM1xRTREConfig *)pBuff;
+                OEM_GetGSM1xRTREConfig( RTREPtr );
+            }
+            return SUCCESS;
+#endif /* FEATURE_UIM_RUN_TIME_ENABLE */
+
+        case CFGI_GSM1X_IDENTITY_PARAMS:
+            {
+                AEEGSM1xIdentityParams *IdentityParamsPtr = (AEEGSM1xIdentityParams *)pBuff;
+                OEM_GetGSM1xIdentityParams( IdentityParamsPtr );
+            }
+            return SUCCESS;
+        
+        case CFGI_GSM1X_SID_NID_PARAMS:
+            {
+                AEEGSM1xSIDNIDParams *SIDNIDParamsPtr = (AEEGSM1xSIDNIDParams *)pBuff;
+                OEM_GetGSM1xSIDNIDParams( SIDNIDParamsPtr );
+            }
+            return SUCCESS;
+#endif /* FEATURE_GSM1x */
+
+        //
+        // DNS Addresses - Used by the HTTP layer, etc.
+        //
+
+        case CFGI_DNS_IP1:
+            if (nSize != sizeof(uint32)) 
+            {
+                return EBADPARM;
+            }
+            {
+                nv_item_type nvItem;
+#ifndef WIN32                
+                if (NV_DONE_S == OEMNV_Get(NV_PRIMARY_DNS_I, &nvItem))
+                {
+                    *(uint32*)pBuff = HTONL(nvItem.primary_dns);
+                    return SUCCESS;
+                }
+#else
+				return SUCCESS;			
+#endif
+            }
+            return EFAILED;
+
+        case CFGI_DNS_IP2:
+            if (nSize != sizeof(uint32)) 
+            {
+                return EBADPARM;
+            }
+            {
+                nv_item_type nvItem;
+#ifndef WIN32                
+                if (NV_DONE_S == OEMNV_Get(NV_SECONDARY_DNS_I, &nvItem))
+                {
+                    *(uint32*)pBuff = HTONL(nvItem.secondary_dns);
+                    return SUCCESS;
+                }
+#else
+				return SUCCESS;
+#endif
+            }
+            return EFAILED;
+
+        //
+        // IPv6 DNS Addresses
+        //
+
+#ifdef FEATURE_DATA_PS_IPV6
+        case CFGI_IPV6_DNS_IP1:
+            if (nSize != sizeof(INAddr6)) 
+            {
+                return EBADPARM;
+            }
+            {
+                nv_item_type nvItem;
+                
+                if (NV_DONE_S == OEMNV_Get(NV_IPV6_PRIMARY_DNS_I, &nvItem))
+                {
+                    MEMCPY((byte*)pBuff, (byte*)&nvItem.ipv6_primary_dns, sizeof(INAddr6));
+                    return SUCCESS;
+                }
+            }
+            return EFAILED;
+
+        case CFGI_IPV6_DNS_IP2:
+            if (nSize != sizeof(INAddr6)) 
+            {
+                return EBADPARM;
+            }
+            {
+                nv_item_type nvItem;
+                
+                if(NV_DONE_S == OEMNV_Get(NV_IPV6_SECONDARY_DNS_I, &nvItem))
+                {
+                    MEMCPY((byte*)pBuff, (byte*)&nvItem.ipv6_secondary_dns, sizeof(INAddr6));
+                    return SUCCESS;
+                }
+            }
+            return EFAILED;
+#endif //FEATURE_DATA_PS_IPV6
+
+        case CFGI_MOBILE_DIR_NUM_LEN:
+            {
+#if defined(T_MSM6250)
+                // TODO: For devices where subscriber info is stored on a removable
+                // card. The MDN should come from the card on such devices.
+                int *             pLen = pBuff;
+                
+                if (!pLen || nSize != sizeof(int))
+                {
+                    return EBADPARM;
+                }
+                *pLen = STRLEN(DEFAULT_MDN) + 1;
+#else
+                nv_item_type      nvi;
+                int *             pLen = pBuff;
+                int               i;
+                
+                if (!pLen || nSize != sizeof(int))
+                {
+                    return EBADPARM;
+                }
+                
+                // �����п��汾�����鿨��״̬
+#ifndef WIN32
+                if (IsRunAsUIMVersion() && !oemui_uimisunlocked())
+                {
+                    return EFAILED;
+                }
+#endif   
+                if (gUIMNVCache.isDirNumValid)
+                {
+#ifndef WIN32
+                    *pLen = gUIMNVCache.mobdir_number.n_digits+1;
+#endif
+                    return AEE_SUCCESS;
+                }
+#ifndef WIN32               
+                if (!gUIMNVCache.isCurNamValid)
+                {
+                    if (OEMNV_Get(NV_CURR_NAM_I, &nvi) != NV_DONE_S)
+                    {
+                        return EFAILED;
+                    }
+                    
+                    gUIMNVCache.mobdir_number.nam = nvi.curr_nam;
+                    gUIMNVCache.isCurNamValid = 1;
+                }
+                
+                nvi.mob_dir_number.nam = (byte) CM_NAM_1;
+                if (NV_DONE_S != OEMNV_Get(NV_DIR_NUMBER_PCS_I, &nvi)) 
+                {
+                    return EFAILED;
+                }
+                gUIMNVCache.mobdir_number.n_digits = nvi.mob_dir_number.n_digits;
+                i = 0;
+                for (;;) 
+                {
+                    if (i >= nvi.mob_dir_number.n_digits) 
+                    {
+                        gUIMNVCache.mobdir_number.digitn[i] = '\0';
+                        break;
+                    }
+          
+                    if (nvi.mob_dir_number.digitn[i] <= 9) 
+                    {
+                        gUIMNVCache.mobdir_number.digitn[i] = '0' + (char) nvi.mob_dir_number.digitn[i];
+                    } 
+                    else if (0x0A == nvi.mob_dir_number.digitn[i]) 
+                    {
+                        gUIMNVCache.mobdir_number.digitn[i] = '0';
+                    } 
+                    else 
+                    {
+                        // Bad value!
+                        gUIMNVCache.mobdir_number.digitn[i] = '\0';
+                        break;
+                    }
+                    i++;
+                }
+                *pLen = gUIMNVCache.mobdir_number.n_digits+1;
+                gUIMNVCache.isDirNumValid = 1;
+#endif //defined(T_MSM6250)
+#endif //defined(T_MSM6250)
+            }
+            return AEE_SUCCESS;
+#ifndef FEATURE_UIONE_HDK
+        case CFGI_KB_AUTOREPEAT:
+            {
+                OEMKBAutoRepeat* pautoRepeat = (OEMKBAutoRepeat*)pBuff;
+                //pautoRepeat->dwStart = 0;
+                //pautoRepeat->dwRate = 0;
+                pautoRepeat->dwStart = KB_AUTOREPEAT_START;
+                pautoRepeat->dwRate = KB_AUTOREPEAT_RATE;
+            }
+            return AEE_SUCCESS;
+#endif // !FEATURE_UIONE_HDK
+
+        case CFGI_MOBILE_DIR_NUM:
+            {
+#if defined(T_MSM6250)
+                // TODO: For devices where subscriber info is stored on a removable
+                // card. The MDN should come from the card on such devices.
+                char *            szBuff = (char *)pBuff;
+
+                if (!szBuff || nSize < (STRLEN(DEFAULT_MDN)+1))
+                {
+                    return EBADPARM;
+                }
+                STRLCPY(szBuff, DEFAULT_MDN, MIN(nSize, STRLEN(DEFAULT_MDN)));
+#else
+                nv_item_type      nvi;
+                char *            szBuff = (char *)pBuff;
+                int               i;
+        
+                if (!szBuff || !nSize)
+                {
+                    return EBADPARM;
+                }
+                
+                // �����п��汾�����鿨��״̬
+               #ifndef WIN32
+                if (IsRunAsUIMVersion() && !oemui_uimisunlocked())
+                {
+                    return EFAILED;
+                }
+                #endif
+                if (gUIMNVCache.isDirNumValid)
+                {
+#ifndef WIN32
+                    if (nSize <= gUIMNVCache.mobdir_number.n_digits) 
+                    {
+                        return EBADPARM;
+                    }
+
+                    STRNCPY(szBuff, (char *)gUIMNVCache.mobdir_number.digitn, gUIMNVCache.mobdir_number.n_digits);
+#endif             
+					return AEE_SUCCESS;
+                }
+#ifndef WIN32                
+                if (!gUIMNVCache.isCurNamValid)
+                {
+                    if (OEMNV_Get(NV_CURR_NAM_I, &nvi) != NV_DONE_S)
+                    {
+                        return EFAILED;
+                    }
+                    
+                    gUIMNVCache.mobdir_number.nam = nvi.curr_nam;
+                    gUIMNVCache.isCurNamValid = 1;
+                }
+               
+                nvi.mob_dir_number.nam = (byte) CM_NAM_1;
+                if (NV_DONE_S != OEMNV_Get(NV_DIR_NUMBER_PCS_I, &nvi)) 
+                {
+                    return EFAILED;
+                }
+                gUIMNVCache.mobdir_number.n_digits = nvi.mob_dir_number.n_digits;
+                if (nSize <= nvi.mob_dir_number.n_digits) 
+                {
+                    return EBADPARM;
+                }
+
+                i = 0;
+                for (;;) 
+                {
+                    if (i >= nvi.mob_dir_number.n_digits) 
+                    {
+                        gUIMNVCache.mobdir_number.digitn[i] = '\0';
+                        break;
+                    }
+          
+                    if (nvi.mob_dir_number.digitn[i] <= 9) 
+                    {
+                        gUIMNVCache.mobdir_number.digitn[i] = '0' + (char) nvi.mob_dir_number.digitn[i];
+                    } 
+                    else if (0x0A == nvi.mob_dir_number.digitn[i]) 
+                    {
+                        gUIMNVCache.mobdir_number.digitn[i] = '0';
+                    } 
+                    else 
+                    {
+                        // Bad value!
+                        gUIMNVCache.mobdir_number.digitn[i] = '\0';
+                        break;
+                    }
+                    i++;
+                }
+                STRNCPY(szBuff, (char *)gUIMNVCache.mobdir_number.digitn, gUIMNVCache.mobdir_number.n_digits);
+                
+                gUIMNVCache.isDirNumValid = 1;
+#endif 
+#endif // defined(T_MSM6250)
+            }
+            return AEE_SUCCESS;
+
+
+        //
+        // MA Capability Flags - specific to the carrier/handset.
+        // See AEEMutualAuth.h for full documentation for setting MA Capability flags.
+        //
+
+        case CFGI_BREWMA_CAPABILITIES:
+
+            if (nSize != sizeof(uint32)) 
+            {
+                return EBADPARM;
+            }
+
+            // Bit 0 (LSB) is set dynamically on the handset by getting the serving
+            // system info from ITelephone
+            // 0x00000001 MA_CLIENT_CAP_MODE_NO_TIME_SYNC Dynamic - from ITelephone
+            
+            // Bit 1 & 2 are ALWAYS hard coded by BREW, and ALWAYS set ON.
+            // Any values set by the OEM for bits 1 & 2 will be overridden.
+            
+            // 0x00000002 MA_CLIENT_CAP_SUPPORTS_NN	      Hard coded ON by BREW
+            // 0x00000004 MA_CLIENT_CAP_SUPPORTS_TT	      Hard coded ON by BREW
+            //
+            // The remaining defined bits should be set by the OEM.
+            // As a basic default, we assume a battery backed RTC - all other caps
+            // are off by default or are presently unused.
+            // 0x00000008	MA_CLIENT_CAP_BATTERY_BACKED_RTC	OEM Config Item
+            
+            (*(uint32*)pBuff) = (MA_CLIENT_CAP_BATTERY_BACKED_RTC);
+            
+            return(SUCCESS);
+
+
+        //
+        // Subscriber ID -- 32-byte Subscriber ID in ASCII
+        //
+                
+
+        //
+        // Mobile ID information - generally, this is the MIN
+        //
+        case CFGI_MOBILEINFO:
+            if (nSize != sizeof(AEEMobileInfo))
+            {
+                return(EBADPARM);
+            }
+            GetMobileInfoEx((AEEMobileInfo *) pBuff);
+            
+            return SUCCESS;
+
+        //
+        // AutoStart Application - This app will be started by BREW after AEE_Init
+        // completes and the next time AEE_Dispatch is called.
+        //
+
+        case CFGI_AUTOSTART:
+             {
+                AEECLSID * pc = (AEECLSID *)pBuff;
+                
+                if (nSize != sizeof(AEECLSID))
+                {
+                    return(EBADPARM);
+                }
+#ifdef FEATURE_UI_CORE
+                //*pc = AEECLSID_CORE_STARTAPP;
+                *pc = AEECLSID_CORE_APP;
+#else
+                *pc = AEECLSID_APPMANAGER;
+#endif /* FEATURE_UI_CORE */
+            }
+            return SUCCESS;
+
+        case CFGI_FIRMWARE_ID_LEN:
+            if (nSize != sizeof(int))
+            {
+                return EBADPARM;
+            }
+            return GetFirmwareVersion(NULL, (int *)pBuff);
+
+        case CFGI_FIRMWARE_ID:
+            {
+                int nVerLen;
+                
+                if (GetFirmwareVersion(NULL, (int *)&nVerLen))
+                {
+                    return EUNSUPPORTED;
+                }
+                if (nSize < nVerLen)
+                {
+                    return EBADPARM;
+                }
+                return GetFirmwareVersion((byte *)pBuff, &nVerLen);
+            }
+
+        case CFGI_SYSMEM_SIZE:
+            /* Default SYSMEM Size is 4kB. Let's use larger size due
+            to large number of UI Apps. */
+            if (nSize < sizeof(uint32))
+            {
+                return EBADPARM;
+            }
+            *(uint32*)pBuff = 8192;
+            return AEE_SUCCESS;
+            
+#if defined (FEATURE_UIONE_HDK) || defined (FEATURE_EXT_USB_P1)
+        /* Bump up dispatch time to prevent brew throttling
+        during high speed SD writes using IFILE_Write() */
+        case CFGI_MAX_DISPATCH_TIME:
+            {
+                if (nSize < sizeof(uint32))
+                {
+                    return EBADPARM;
+                }
+#if defined (FEATURE_UIONE_HDK)
+                *(uint32*)pBuff = 3000;
+#else
+                *(uint32*)pBuff = 450;
+#endif
+                return AEE_SUCCESS;
+            }
+            
+#else
+        case CFGI_MAX_DISPATCH_TIME:
+            return EUNSUPPORTED;
+#endif  /* FEATURE_EXT_USB_P1 || FEATURE_UIONE_HDK */
+
+        case CFGI_BUSY_CURSOR_OFFSET:
+        case CFGI_DOWNLOAD_BUFFER:
+        case CFGI_HTTP_BUFFER:
+        case CFGI_NET_CONNTIMEOUT:
+        case CFGI_MIN_IDLE_TIME:
+        case CFGI_SLEEP_TIMER_RESOLUTION:
+        case CFGI_DOWNLOAD_FS_INFO:
+        case CFGI_SCREEN_SAVER:
+        case CFGI_FILE_CACHE_INFO:
+        case CFGI_GPSONE_TRANSPORT:
+        case CFGI_GPSONE_SVRIP:
+        case CFGI_GPSONE_SVRPORT:
+            return EUNSUPPORTED;
+
+        case CFGI_CLOSE_KEYS:
+            if ((nSize != sizeof(OEMCloseKeys)) || (pBuff == NULL))
+            {
+                return EBADPARM;
+            }
+            
+            {
+                OEMCloseKeys *pOCK = (OEMCloseKeys *)pBuff;
+                pOCK->wCloseApp = AVK_CLR;
+                pOCK->evtCloseApp = EVT_KEY;
+                pOCK->wCloseAllApps = AVK_END;
+                pOCK->evtCloseAllApps = EVT_KEY;
+            }
+            return SUCCESS;
+        
+        case CFGI_OEMAUTH_CHALLENGE_CAP:
+            if (nSize < sizeof(boolean))
+            {
+                return EBADPARM;
+            }
+            
+            OEM_GetBrewConfig(i, pBuff, nSize);
+            return SUCCESS;
+            
+        case CFGI_OEMAUTH_CHALLENGE_RESPONSE_LEN:
+        case CFGI_OEMAUTH_RUIM_CARDID:
+            if (nSize < sizeof(uint32))
+            {
+                return EBADPARM;
+            }
+            
+            OEM_GetBrewConfig(i, pBuff, nSize);
+            return SUCCESS;
+
+        //
+        // Default file system limits for apps.
+        //
+
+        case CFGI_MODULE_FSLIMIT:
+            {
+                MIFFSLimit *   pfsLimit = (MIFFSLimit *)pBuff;
+                
+                if (nSize < sizeof(MIFFSLimit))
+                {
+                    return EBADPARM;
+                }
+
+#if !defined(AEE_SIMULATOR)
+                //
+                // NOTE: OEMs can enforce their (per module) defaults here...
+                //
+                pfsLimit->wMaxFiles = MAX_FILES_UNLIMITED;
+                pfsLimit->dwMaxSpace = MAX_SPACE_UNLIMITED;
+#else
+#ifndef WIN32
+#error Simulator CFGI_MODULE_FSLIMIT code is located in a different file
+#endif//WIN32
+#endif // !defined(AEE_SIMULATOR)
+            }
+            return SUCCESS;
+
+        //
+        // Card ID (RUIM/SIM) support
+        //
+#if defined (FEATURE_UIM_RUIM)
+        case CFGI_CARDID_LEN:
+        case CFGI_CARDID:
+            {
+                int   nErr = SUCCESS;
+                byte *buffer;
+                if (gUIMNVCache.isCARDIDValid)
+                {
+                    if (i == CFGI_CARDID_LEN)
+                    {
+                        if (nSize == sizeof(int))
+                        {
+                            *((int*)pBuff) = gUIMNVCache.nCardIDLen;
+                        }
+                        else
+                        {
+                            nErr = EBADPARM;
+                        }
+                    }
+                    else if (NULL != gUIMNVCache.CardIDbuf)
+                    {
+                        nSize = MIN(nSize, gUIMNVCache.nCardIDLen);
+                        MEMCPY(pBuff, gUIMNVCache.CardIDbuf, nSize);
+                    }
+                    
+                    return(nErr);
+                }
+#ifndef WIN32                
+                buffer = MALLOC(CARD_ID_SIZE);
+                
+                if (!buffer)
+                {
+                    return(EFAILED);
+                }
+            
+                // Prepare to read the id EF.
+                gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+                gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+                gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+                gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+                gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+                gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+                gUimCmd.access_uim.hdr.rpt_function       = UIM_Report;
+                
+                gUimCmd.access_uim.item      = UIM_CDMA_RUIM_ID;
+                gUimCmd.access_uim.access    = UIM_READ_F;
+                gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+                gUimCmd.access_uim.num_bytes = CARD_ID_SIZE;
+                gUimCmd.access_uim.offset    = 1;
+                gUimCmd.access_uim.data_ptr  = buffer;
+            
+                // From nvruim_access():  Access an EF, do not signal any task, use no
+                // signal, no done queue, use a callback, always report status.
+                
+                // Send the command to the R-UIM:
+                (void) rex_clr_sigs( &ui_tcb, UI_RUIM_SIG);
+                // Send the command.
+                uim_cmd (&gUimCmd);
+                (void) rex_wait(UI_RUIM_SIG);
+                
+                if ((gCallBack.rpt_type   != UIM_ACCESS_R) ||
+                    (gCallBack.rpt_status != UIM_PASS)) 
+                {
+                    FREE(buffer);
+                    return(EFAILED);
+                }
+            
+                gUIMNVCache.nCardIDLen = gUimCmd.access_uim.num_bytes_rsp;
+                if (gUIMNVCache.nCardIDLen>0)
+                {
+                    gUIMNVCache.CardIDbuf = (byte *)sys_malloc(gUIMNVCache.nCardIDLen);
+                    if (NULL != gUIMNVCache.CardIDbuf)
+                    {
+                        MEMCPY(gUIMNVCache.CardIDbuf, buffer, gUIMNVCache.nCardIDLen);
+                        gUIMNVCache.isCARDIDValid = 1;
+                    }
+                }
+            
+                if (i == CFGI_CARDID_LEN)
+                {
+                    if (nSize == sizeof(int))
+                    {
+                        *((int*)pBuff) = gUimCmd.access_uim.num_bytes_rsp;
+                    }
+                    else
+                    {
+                        nErr = EBADPARM;
+                    }
+                }
+                else
+                {
+                    nSize = MIN(nSize, gUimCmd.access_uim.num_bytes_rsp);
+                    MEMCPY(pBuff, buffer, nSize);
+                }
+                FREE(buffer);
+#endif
+                return(nErr);
+            }
+#endif // defined (FEATURE_UIM_RUIM)
+
+        case CFGI_DEBUG_KEY:
+            return EUNSUPPORTED;
+
+        case CFGI_ALLOW_3G_2G_FAILOVER:
+            if (nSize != sizeof(boolean))
+            {
+                return EBADPARM;
+            }
+            // Allow failover
+            *(boolean*)pBuff = TRUE;
+            return SUCCESS;
+
+#ifdef FEATURE_UIONE_HDK
+      case CFGI_SAFEMODE_TIMER:
+         if(nSize != sizeof(int32)) return EBADPARM;
+         return TestApp_SafeMode_OEM_GetSafeModeTimer((int32*)pBuff);
+
+      case CFGI_SAFEMODE_STARTMODE:
+         if(nSize != sizeof(int32)) return EBADPARM;
+         return TestApp_SafeMode_OEM_GetSafeModeStartMode((int*)pBuff);
+#else
+
+#if defined(FEATURE_BREW_DEV)
+        // short safe mode timer during development
+        case CFGI_SAFEMODE_TIMER:
+            if (nSize != sizeof(int32))
+            {
+                return EBADPARM;
+            }
+            *(int32*)pBuff = 5;
+            return SUCCESS;
+#endif // defined(FEATURE_BREW_DEV)
+
+#endif 
+
+        case CFGI_SMS_EMAIL_DEST:
+            if (nSize < (STRLEN("6245") + 1))
+            {
+                return EBADPARM;
+            }
+            STRNCPY((char*)pBuff, "6245", STRLEN("6245"));
+            return SUCCESS;
+
+        case CFGI_SMS_EMAIL_DEST_LENGTH:
+            if (nSize < sizeof(uint32))
+            {
+                return EBADPARM;
+            }
+            *(uint32*)pBuff = STRLEN("6245") + 1;
+            return SUCCESS;
+
+        // Maximum payload length in terms of number of bytes
+        case CFGI_SMS_MAX_PAYLOAD_LENGTH:
+            if (nSize < sizeof(uint32))
+            {
+                return EBADPARM;
+            }
+            return GetPayloadLength((uint32*)pBuff);
+
+        // Default encoding for MO SMS
+        case CFGI_SMS_DEFAULT_MO_ENC:
+            if (nSize < sizeof(AEESMSEncType))
+            {
+                return EBADPARM;
+            }
+            *(AEESMSEncType*)pBuff = AEESMS_ENC_ASCII;
+            return SUCCESS;
+
+        // Count of encoding types available for MO SMS
+        case CFGI_SMS_MO_ENC_TYPES_COUNT:
+            if (nSize < sizeof(uint32))
+            {
+                return EBADPARM;
+            }
+            *(uint32*)pBuff = 4;
+            return SUCCESS;
+
+        // Encoding types available for MO SMS
+        case CFGI_SMS_MO_ENC_TYPES:
+            if (nSize < sizeof(uint32)*4)
+            {
+                return EBADPARM;
+            }
+            *(uint32*)pBuff = AEESMS_ENC_ASCII;
+            *(((uint32*)pBuff) + 1) = AEESMS_ENC_LATIN;
+            *(((uint32*)pBuff) + 2) = AEESMS_ENC_UNICODE;
+            *(((uint32*)pBuff) + 3) = AEESMS_ENC_OCTET;
+            //*(((uint32*)pBuff) + 4) = AEESMS_ENC_GSM_7_BIT_DEFAULT;
+            return SUCCESS;
+
+        case CFGI_BREWDIR_SMS_TELESERVICE:
+            if (nSize < sizeof(uint32))
+            {
+                return EBADPARM;
+            }
+            *(uint32*)pBuff = 4098;
+            return SUCCESS;
+
+        // If ON_ACCESS is set, the SMS message is sent on the access channel
+        // If ON_TRAFFIC is set, it is sent on the traffic channel
+        // If both are set, it will attempt the access channel, and use the
+        // traffic channel if the message is too large.
+        case CFGI_SMS_MO_ON_ACCESS_CHANNEL:
+            if (nSize < sizeof(boolean))
+            {
+                return EBADPARM;
+            }
+            return GetAccess((boolean*)pBuff);
+
+        case CFGI_SMS_MO_ON_TRAFFIC_CHANNEL:
+            if (nSize < sizeof(boolean))
+            {
+                return EBADPARM;
+            }
+            return GetTraffic((boolean*)pBuff);
+
+        case CFGI_LNG:
+            if (nSize < sizeof(uint32))
+            {
+                return EBADPARM;
+            }
+            *(uint32*)pBuff = GetLngCode();
+            return SUCCESS;
+
+#ifdef FEATURE_BREW_SMS
+        case CFGI_SMS_GW_DOMAIN_PREF:
+            if (nSize < sizeof(uint32))
+            {
+                return EBADPARM;
+            }
+#ifndef WIN32
+            return OEMSMS_GetDomainPref((int*)pBuff);
+#else
+			return 0;
+#endif
+#endif //FEATURE_BREW_SMS
+
+        case CFGI_BACKLIGHT_CLASSIDS_LIST:
+            if (nSize < sizeof(uint32)*2)
+            {
+                return EBADPARM;
+            }
+            *(uint32*)pBuff = AEECLSID_BACKLIGHT;
+            *(((uint32*)pBuff) + 1) = 0;
+            return SUCCESS;
+
+        case CFGI_GPSONE_LOCK:
+            {
+                nv_item_type nvItem;
+                if (nSize < sizeof(dword))
+                {
+                    return EBADPARM;
+                }
+#ifndef WIN32
+                if (OEMNV_Get(NV_GPS1_LOCK_I, &nvItem) != NV_DONE_S)
+                {
+                    return EFAILED;
+                }
+                else
+                {
+                    *(dword*)pBuff = nvItem.gps1_lock;
+                    return SUCCESS;
+                }
+#else
+				return SUCCESS;
+#endif
+            }
+
+        // Type boolean, if TRUE, OEM app Context notifications sent via
+        // OEM_Notify, else not.
+        case CFGI_OEM_NOTIFY_APP_CTXT:
+            if (nSize < sizeof(boolean))
+            {
+                return EBADPARM;
+            }
+            *(boolean*)pBuff = FALSE;
+            return SUCCESS;
+
+        // TYpe boolean. TRUE if pending ACKS to be flushed after first data app's launch 
+        case CFGI_LAZY_ACK:
+            if (nSize < sizeof(boolean))
+            {
+                return EBADPARM;
+            }
+            
+            *(boolean*)pBuff = TRUE;
+            return SUCCESS;
+      
+        case CFGI_LAST_VALID_TIME:
+            {
+                IFileMgr* pFileMgr;
+                JulianType Date;
+                LastValidCfg *pConfig = (LastValidCfg *)pBuff;
+                uint64 secs=0;
+                PACONTEXT pacLast;
+                int nErr;
+                
+                AEECLSID callerID = AEE_GetAppContextCls(AEE_GetAppContext());
+                
+                if (nSize != sizeof(LastValidCfg))
+                {
+                    return(EBADPARM);
+                }
+                
+                MEMSET(pConfig, 0, nSize);
+                
+                // Default time in micro-seconds is set to Apr 14th, 2005 - 09:30:30
+                Date.wYear    = 2005;
+                Date.wMonth   = 4;
+                Date.wDay     = 14;
+                Date.wHour    = 9;
+                Date.wMinute  = 30;
+                Date.wSecond  = 30;
+                Date.wWeekDay = 3;
+                
+                secs = (uint64) JULIANTOSECONDS(&Date);
+                pConfig->qwTime = secs * 1000 * 1000; // in microseconds
+                
+                pConfig->OwnerCls = callerID;
+                
+                pacLast = AEE_EnterAppContext(NULL);
+                nErr = ISHELL_CreateInstance(pShell, AEECLSID_FILEMGR, (void**)&pFileMgr);
+                
+                if (SUCCESS == nErr)
+                {
+                    IFile* pFile;
+                    boolean bWriteFile = FALSE;
+                    pFile = IFILEMGR_OpenFile(pFileMgr, LAST_VALID_TIMEINFO_FILE, _OFM_READ);
+                    if (pFile)
+                    {
+                        /* Read from File */
+                        if (IFILE_Read(pFile, (void*)pConfig, sizeof(LastValidCfg)) == sizeof(LastValidCfg))
+                        {
+                            /* Successful Read. */
+                            IFILE_Release(pFile);
+                        }
+                        else
+                        {
+                            /* Read failed for some reason. Destroy the file and re-write. */
+                            IFILE_Release(pFile);
+                            IFILEMGR_Remove(pFileMgr, LAST_VALID_TIMEINFO_FILE);
+                            bWriteFile = TRUE;
+                        }
+                    }
+                    else
+                    {
+                        bWriteFile = TRUE;
+                    }
+                
+                    if (bWriteFile)
+                    {
+                        /* No file there yet. Write out defaults. */
+                        pFile = IFILEMGR_OpenFile(pFileMgr, LAST_VALID_TIMEINFO_FILE, _OFM_CREATE);
+                        if (pFile)
+                        {
+                            /* File opened successfully. Write the data */
+                            if (IFILE_Write(pFile, pConfig, sizeof(LastValidCfg)) == sizeof(LastValidCfg))
+                            {
+                                /* Successful write. Close the file and return.*/
+                                IFILE_Release(pFile);
+                            }
+                            else
+                            {
+                                /* Something went wrong. Destroy the file. */
+                                IFILE_Release(pFile);
+                                IFILEMGR_Remove(pFileMgr, LAST_VALID_TIMEINFO_FILE);
+                                IFILEMGR_Release(pFileMgr);
+                                AEE_LeaveAppContext(pacLast);
+                                return EFAILED;
+                            }
+                        }
+                        else
+                        {
+                            IFILEMGR_Release(pFileMgr);
+                            AEE_LeaveAppContext(pacLast);
+                            return EFAILED;
+                        }
+                    }
+                    IFILEMGR_Release(pFileMgr);
+                }
+                AEE_LeaveAppContext(pacLast);
+                
+                return nErr;
+            }
+
+        case CFGI_REQUIREPINENTRY: 
+            {
+                nv_item_type nvItem;
+                int nRet; 
+                
+                if (nSize != sizeof(boolean)) 
+                {
+                    return EBADPARM;
+                }   
+#ifndef WIN32     
+                nRet = OEMNV_Get(NV_AUTO_LOCK_I, &nvItem); 
+                if(NV_DONE_S == nRet)
+                {
+                    *(boolean *)pBuff = nvItem.auto_lock;
+                    return SUCCESS;
+                }
+                else if (NV_NOTACTIVE_S == nRet)
+                {
+                    //If the NV item is not active, 
+                    //then set pBuff to the default value (false)
+                    *(boolean *)pBuff = 0; 
+                    return SUCCESS;
+                }
+#else
+				return SUCCESS;
+#endif
+            }
+            return EFAILED; 
+
+#ifdef FEATURE_MFLO
+        case CFGI_MFLO_PROXY:
+            {
+                nv_item_type nvItem;
+                int i;
+                byte* pBBuff = (byte *)pBuff;
+                MEMSET(pBBuff, 0, nSize);
+                
+                if (nSize > MF_PROXY_MAX_LEN*sizeof(byte))
+                {
+                    return EBADPARM;
+                }
+                if (NV_DONE_S == ui_get_nv(NV_MF_PROXY_I, &nvItem))
+                {
+                    for (i = 0; i < nSize; i++) //if null termination is  before nSize , it will still be fine.
+                    {
+                        pBBuff[i] = nvItem.mf_proxy[i];
+                    }
+                    return SUCCESS;
+                }
+                return EFAILED;
+            }
+            break;
+
+        case  CFGI_MFLO_PROXY_LEN :
+            {
+                nv_item_type      nvi;
+                int *             pLen = pBuff;
+                int i =0;
+                
+                if (!pLen || nSize != sizeof(int))
+                {
+                    return EBADPARM;
+                }
+                if (OEMNV_Get(NV_MF_PROXY_I, &nvi) != NV_DONE_S )
+                {
+                    return EFAILED;
+                }
+                else
+                {
+                    for (i = 0; i < MF_PROXY_MAX_LEN; i++) //instead of strlen for safety
+                    {
+                        if (nvi.mf_proxy[i]==0)
+                        {
+                            break;
+                        }
+                    }
+                    *pLen = i;
+                    return SUCCESS;
+                }
+            }
+            break;
+#endif
+
+        default:
+            return(EUNSUPPORTED);
+    }
+    
+    return(EBADPARM);
+}
+#endif
+
+#endif
 /*==================================================================
 Function: OEM_SVCSetConfig
 
@@ -2902,7 +4909,15 @@ int OEM_SVCSetConfig(AEEConfigItem i, void * pBuff, int nSize)
             return EBADPARM;
 
          nvItem.gps1_lock = *(dword*)pBuff;
-         if( ui_put_nv(NV_GPS1_LOCK_I, &nvItem) != NV_DONE_S )
+#if !defined (CUST_EDITION)&& !defined(FEATURE_OEMUI_TASK)
+        if( ui_put_nv(NV_GPS1_LOCK_I, &nvItem))
+#else    
+#ifndef WIN32
+        if(OEMNV_Put(NV_GPS1_LOCK_I, &nvItem))
+#else
+        if (1)
+#endif//WIN32
+#endif          
          {
             return EFAILED;
          }
@@ -2992,12 +5007,13 @@ int OEM_SVCSetConfig(AEEConfigItem i, void * pBuff, int nSize)
    return(EUNSUPPORTED);
 }
 
-
+#ifndef WIN32
 boolean OEM_SVCIsVocCapable(voc_capability_type vocCap)
 {
 return voc_capability_supported(vocCap);
 
 }
+#endif
 
 int OEM_GetBrewConfig(AEEConfigItem id, void *buffer, int len)
 {
@@ -3139,23 +5155,33 @@ boolean OEM_SVCSimpleBeep(BeepType nBeepType, boolean bLoud)
    {
    case BEEP_OFF:
       // Turn current BEEP sound off
+#ifndef WIN32
       uisnd_snd_stop();
+#endif
       return TRUE;
    case BEEP_ALERT:
       // Use Alert Beep sound
+#ifndef WIN32
       uisnd_snd(UI_MSG_SND, SND_ALERT);
+#endif
       return TRUE;
    case BEEP_REMINDER:
       // Use Reminder Beep sound
+#ifndef WIN32
       uisnd_tone(UI_MSG_SND, SND_WARN, 300);
+#endif
       return TRUE;
    case BEEP_MSG:
       // Use New Message Beep Sound
+#ifndef WIN32
       uisnd_tone(UI_MSG_SND, SND_MSG_WAITING, 300);
-      return TRUE;
+#endif
+	  return TRUE;
    case BEEP_ERROR:
       // Use Errpor Beep sound
+#ifndef WIN32
       uisnd_tone(UI_MSG_SND, SND_ERR, 300);
+#endif
       return TRUE;
    case BEEP_VIBRATE_ALERT:
       // Use Alert Sound
@@ -3182,9 +5208,9 @@ int  OEM_SVCdisp_get_info(disp_info_type *pInfo)
 
    if(!pInfo)
       return 1;
-
+#ifndef WIN32
    dispInfo = disp_get_info();
-
+#endif//WIN32  
    MEMCPY( pInfo, &dispInfo, sizeof(dispInfo));
    return 0;
 }
@@ -3202,9 +5228,9 @@ int  OEM_SVCdisp_get_info2(disp_info_type *pInfo)
 
    if(!pInfo)
       return 1;
-
+#ifndef WIN32
    dispInfo = disp_get_info2();
-
+#endif
 //lint -save -e611 -e740   Suppress complaint about suspicious cast
    MEMCPY(pInfo, &dispInfo, sizeof(dispInfo));
 //lint -restore
@@ -3319,14 +5345,19 @@ static void SetImsiFromSim (
 #endif //defined(T_MSM6250)
 
 
-static void GetMobileInfo(AEEMobileInfo * pMobileInfo)
+ void GetMobileInfo(AEEMobileInfo * pMobileInfo)
 {
   nv_item_type nvi;  // buffer to read NV
   uint8 curr_nam;    // current NAM
   char* txt;         // destination text
   word temp;         // working buffer
   dword value;       // to store value read from nv
-
+#ifdef CUST_EDITION	   
+  if (pMobileInfo != NULL)
+  {
+      MEMSET(pMobileInfo, 0, sizeof(AEEMobileInfo));
+  }
+#endif /*CUST_EDITION*/
 #if defined(FEATURE_GSM1x)
   pMobileInfo->dwESN = 0;
 #else
@@ -3334,13 +5365,13 @@ static void GetMobileInfo(AEEMobileInfo * pMobileInfo)
 #ifdef FEATURE_UIM_RUIM
    nvi.esn.esn = uim_get_esn_me();
 #else
-  ui_get_nv(NV_ESN_I, &nvi);
+  QSC1100_get_nv(NV_ESN_I, &nvi);
 #endif /* FEATURE_UIM_RUIM */
 
   pMobileInfo->dwESN = nvi.esn.esn;
 #endif /* defined(FEATURE_GSM1x) */
 
-  ui_get_nv(NV_CURR_NAM_I, &nvi);
+  QSC1100_get_nv(NV_CURR_NAM_I, &nvi);
   pMobileInfo->nCurrNAM = nvi.curr_nam;
   curr_nam = nvi.curr_nam;
 
@@ -3364,7 +5395,7 @@ static void GetMobileInfo(AEEMobileInfo * pMobileInfo)
 
   // read Mobile Contry Code
   nvi.imsi_mcc.nam = curr_nam;
-  ui_get_nv( NV_IMSI_MCC_I, &nvi );
+  QSC1100_get_nv( NV_IMSI_MCC_I, &nvi );
   value = nvi.imsi_mcc.imsi_mcc;
   *txt++ = mintable[(value/100) %10];
   value %= 100;
@@ -3373,14 +5404,14 @@ static void GetMobileInfo(AEEMobileInfo * pMobileInfo)
 
   // read Mobile Network Code
   nvi.imsi_11_12.nam = curr_nam;
-  ui_get_nv( NV_IMSI_11_12_I, &nvi );
+  QSC1100_get_nv( NV_IMSI_11_12_I, &nvi );
   value = nvi.imsi_11_12.imsi_11_12;
   *txt++ = mintable[(value/10) %10];
   *txt++ = mintable[value %10];
 
 
   // read MIN2
-  ui_get_nv(NV_MIN2_I, &nvi);
+  QSC1100_get_nv(NV_MIN2_I, &nvi);
   value = nvi.min2.min2[1];
   *txt++ = mintable[ (value/100) %10];
   value %= 100;
@@ -3388,7 +5419,7 @@ static void GetMobileInfo(AEEMobileInfo * pMobileInfo)
   *txt++ = mintable[ value%10 ];
 
   // read MIN1
-  ui_get_nv(NV_MIN1_I, &nvi);
+  QSC1100_get_nv(NV_MIN1_I, &nvi);
   value = nvi.min1.min1[1];
   temp = (word) (value>>14 );
   *txt++ = mintable[ (temp/100) %10];
@@ -3408,7 +5439,93 @@ static void GetMobileInfo(AEEMobileInfo * pMobileInfo)
   // NULL terminate the string
   *txt = (char)0;
 }  /* GetMobileInfo */
+#ifdef CUST_EDITION	 
+// 在测PEK时，因目前取 CFGI_SUBSCRIBERID 时我们以MIN表示(BREW 设置亦如此)，若用GetMobileInfo返回的
+// szMobileID,长度为15，此时DPK中MIN设为15位的号码，GetConfigComplex.18 测不过；若设为10位的号码，
+// GetConfigComplex.25 测不过。通过分析，oat 测试软件认为对以 MIN 表示 SUBSCRIBERID ，则是 10 位号
+// 码的 MIN 且与用 CFGI_MOBILEINFO 取得的 szMobileID 一致。目前，仅部分 UI 用到 15 位的 szMobileID
+// 。为满足双方需要，添加一个取 10 位的函数用于系统级，原来的函数仅供需要15位的UI应用使用。
+void GetMobileInfoEx(AEEMobileInfo * pmi)
+{
+    nv_item_type nvi;  // buffer to read NV
+    uint8 curr_nam;    // current NAM
+    char* txt;         // destination text
+    word temp;         // working buffer
+    dword value;       // to store value read from nv
+  
+    if (pmi != NULL)
+    {
+        MEMSET(pmi, 0, sizeof(AEEMobileInfo));
+    }
+#ifndef WIN32
+#ifdef FEATURE_UIM_RUIM
+    // 根据 BREWOEMNote_RUIMSupport.pdf ，这里需返回设备的 ESN
+    if (IsRunAsUIMVersion())
+    {
+        nvi.esn.esn = OEM_GetMEESN();
+    }
+    else
+#endif /* FEATURE_UIM_RUIM */ 
+    {
+        (void)OEMNV_Get(NV_ESN_I, &nvi);
+    }
+    pmi->dwESN = nvi.esn.esn;
+    
+    (void)OEMNV_Get(NV_CURR_NAM_I, &nvi);
+    pmi->nCurrNAM = nvi.curr_nam;
+    curr_nam = nvi.curr_nam;
+    
+    // szMobileID's composed of the following
+    // - min2: area code (3 digits)
+    // - min1: phone number (7 digits)
+    
+    // set up destination text buffer
+    txt = pmi->szMobileID;
 
+#if defined(T_MSM6250)
+    // get IMSI from NV or SIM card?
+    (void)OEMNV_Get(NV_RTRE_CONFIG_I, &nvi);
+    if (nvi.rtre_config != NV_RTRE_CONFIG_NV_ONLY) 
+    {
+        SetImsiFromSim(txt);
+        return;
+    }
+#endif /* defined(T_MSM6250) */
+
+    nvi.imsi_mcc.nam = curr_nam;
+    nvi.imsi_11_12.nam = curr_nam;
+    
+    // read MIN2
+    (void)OEMNV_Get(NV_MIN2_I, &nvi);
+    value = nvi.min2.min2[1];
+    *txt++ = mintable[ (value/100) %10];
+    value %= 100;
+    *txt++ = mintable[ value/10 ];
+    *txt++ = mintable[ value%10 ];
+    
+    // read MIN1
+    (void)OEMNV_Get(NV_MIN1_I, &nvi);
+    value = nvi.min1.min1[1];
+    temp = (word) (value>>14 );
+    *txt++ = mintable[ (temp/100) %10];
+    temp %= 100;
+    *txt++ = mintable[ temp/10 ];
+    *txt++ = mintable[ temp%10 ];
+    value &= 0x3FFFL;                /* get bottom 14 bits */
+    /* next digit is top 4 bits */
+    temp = (word) (( value >> 10 ) & 0xF );
+    *txt++ = (char) ( ( ( temp == 10 ) ? 0 : temp ) + '0' );
+    temp = (word) ( value & 0x3FF ); /* get bottom 10 bits */
+    *txt++ = mintable[ (temp/100) %10];
+    temp %= 100;
+    *txt++ = mintable[ temp/10 ];
+    *txt++ = mintable[ temp%10 ];
+    
+    // NULL terminate the string
+    *txt = (char)0;
+#endif // #ifndef AEE_SIMULATOR
+}  /* GetMobileInfoEx */
+#endif /*CUST_EDITION*/
 
 static int GetSoftwareVersion(byte *pVer, int *pnVerLen)
 {
@@ -3431,6 +5548,82 @@ static int GetSoftwareVersion(byte *pVer, int *pnVerLen)
    return SUCCESS;
 }
 
+#ifdef CUST_EDITION	 
+/*===========================================================================
+FUNCTION WaitNV
+
+DESCRIPTION
+  Wait on NV actions.  Handle signals as they come in just in case NV
+  takes a while.  Only time critical watchdog signals are
+  acknowledged.
+
+DEPENDENCIES
+  There is a command sent to NV, and this task will be signalled.
+
+RETURN VALUE
+  None
+
+SIDE EFFECT
+  Some signals are ignored till we're done with NV
+
+===========================================================================*/
+static void WaitNV( void )
+{
+	#ifndef WIN32
+  rex_sigs_type sigs;             /* hold signals from rex_wait() */
+
+  for( ;; )
+  {                     /* until signal back from NV */
+    sigs = rex_wait(UI_NV_SIG);
+
+    /* The NV is done.  Exit this routine. */
+    if( sigs & UI_NV_SIG )
+    {
+      return;
+    }
+  }
+#endif
+} /* End WaitNV */
+
+ int GetFirmwareVersion(byte *pVer, int *pnVerLen)
+{
+   uint32 strSize;
+   nv_cmd_type   nv_item;
+   word          me_firm;
+
+   if(!pnVerLen)
+      return EFAILED;
+
+   strSize = STRLEN(mob_sw_rev)+1;
+
+   if(!pVer)
+   {
+      *pnVerLen = strSize;
+      return SUCCESS;
+   }
+
+   MEMSET(pVer, '\0', *pnVerLen);
+#ifndef WIN32
+   nv_item.tcb_ptr = rex_self();    /* Notify this task when done */
+   nv_item.sigs = UI_NV_SIG;
+   nv_item.done_q_ptr = NULL;
+   nv_item.item = NV_MOB_FIRM_REV_I;
+   nv_item.cmd = NV_READ_F;
+   nv_item.data_ptr = (nv_item_type *)&(me_firm);
+
+   /* Clear the return signal, call NV, and wait for a response */
+   (void) rex_clr_sigs( rex_self(), UI_NV_SIG );
+#endif
+#ifndef WIN32
+   nv_cmd( &nv_item );
+#endif
+   WaitNV();
+
+   SNPRINTF((char *) pVer, (uint32) *pnVerLen, "%d", me_firm);
+
+   return SUCCESS;
+}
+#endif /*CUST_EDITION*/
 
 
 #if defined(FEATURE_GSM1x)
@@ -3823,6 +6016,10 @@ void OEM_GetGSM1xSIDNIDParams
 
 #endif /* FEATURE_GSM1x*/
 
+#ifdef CUST_EDITION	 
+#define OEMSVC_SMS_MAX_MSG_PAYLOAD 140
+#endif /*CUST_EDITION*/
+
 int GetPayloadLength(uint32 *pInt)
 {
   nv_item_type nvi;  // buffer to read NV
@@ -3832,7 +6029,14 @@ int GetPayloadLength(uint32 *pInt)
   if(!pInt)
     return EBADPARM;
 
-  retval = ui_get_nv(NV_SMS_MAX_PAYLOAD_LENGTH_I, &nvi);
+#ifndef CUST_EDITION  
+  retval = QSC1100_get_nv(NV_SMS_MAX_PAYLOAD_LENGTH_I, &nvi);
+#else      
+  #ifndef WIN32
+  retval = OEMNV_Get(NV_SMS_MAX_PAYLOAD_LENGTH_I, &nvi);
+#endif
+#endif  
+  #ifndef WIN32
   if(retval == NV_DONE_S)
     {
       *pInt = nvi.sms_max_payload_length;
@@ -3847,6 +6051,9 @@ int GetPayloadLength(uint32 *pInt)
     {
       return EFAILED;
     }
+#else
+  return SUCCESS;
+#endif
 }
 
 int GetTraffic(boolean *pBool)
@@ -3858,10 +6065,20 @@ int GetTraffic(boolean *pBool)
   if(!pBool)
     return EBADPARM;
 
-  retval = ui_get_nv(NV_SMS_MO_ON_TRAFFIC_CHANNEL_I, &nvi);
+#ifndef CUST_EDITION  
+  retval = QSC1100_get_nv(NV_SMS_MO_ON_TRAFFIC_CHANNEL_I, &nvi);
+#else      
+#ifndef WIN32
+  retval = OEMNV_Get(NV_SMS_MO_ON_TRAFFIC_CHANNEL_I, &nvi);
+#else
+  retval = NV_DONE_S;
+#endif//WIN32
+#endif  
   if(retval == NV_DONE_S)
-    {
+    { 
+#ifndef WIN32
       *pBool = nvi.sms_mo_on_traffic_channel;
+#endif
     }
   else if(retval == NV_NOTACTIVE_S)
     {
@@ -3892,10 +6109,20 @@ int GetAccess(boolean *pBool)
   if(!pBool)
     return EBADPARM;
 
-  retval = ui_get_nv(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi);
+#ifndef CUST_EDITION  
+  retval = QSC1100_get_nv(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi);
+#else  
+#ifndef WIN32
+  retval = OEMNV_Get(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi);
+#else
+  retval = NV_DONE_S;
+#endif//WIN32
+#endif  
   if(retval == NV_DONE_S)
     {
+#ifndef WIN32
       *pBool = nvi.sms_mo_on_access_channel;
+#endif
     }
   else if(retval == NV_NOTACTIVE_S)
     {
@@ -3938,9 +6165,18 @@ int SetTraffic(boolean *pBool)
       if(data == FALSE)
         return EBADPARM;
     }
-
+#ifndef WIN32
   nvi.sms_mo_on_traffic_channel = *pBool;
+#endif
+#ifndef CUST_EDITION  
   return ui_put_nv(NV_SMS_MO_ON_TRAFFIC_CHANNEL_I, &nvi);
+#else    
+#ifndef WIN32
+  return OEMNV_Put(NV_SMS_MO_ON_TRAFFIC_CHANNEL_I, &nvi);
+#else
+  return NV_DONE_S;
+#endif//WIN32
+#endif  
 }
 
 int SetAccess(boolean *pBool)
@@ -3964,9 +6200,18 @@ int SetAccess(boolean *pBool)
       if(data == FALSE)
         return EBADPARM;
     }
-
+#ifndef WIN32   
   nvi.sms_mo_on_access_channel = *pBool;
+#endif
+#ifndef CUST_EDITION  
   return ui_put_nv(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi);
+#else      
+#ifndef WIN32
+  return OEMNV_Put(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi);
+#else
+  return 0;
+#endif//WIN32
+#endif  
 }
 
 int SetPayloadLength(uint32 *pInt)
@@ -3976,9 +6221,18 @@ int SetPayloadLength(uint32 *pInt)
   // Pointer must be valid
   if(!pInt)
     return EBADPARM;
-
+#ifndef WIN32      
   nvi.sms_max_payload_length = *pInt;
+#endif
+#ifndef CUST_EDITION  
   return ui_put_nv(NV_SMS_MAX_PAYLOAD_LENGTH_I, &nvi);
+#else    
+#ifndef WIN32
+  return OEMNV_Put(NV_SMS_MAX_PAYLOAD_LENGTH_I, &nvi);
+#else
+  return 0;
+#endif//WIN32
+#endif  
 }
 
 int SetSubscriberID(byte *pBuff, int nSize)
@@ -4007,9 +6261,282 @@ int SetSubscriberID(byte *pBuff, int nSize)
    {
       nvi.brew_subscriber_id[i] = '\0';
    }
-
-   return ui_put_nv(NV_BREW_SUBSCRIBER_ID_I, &nvi);
+#ifndef CUST_EDITION  
+  return ui_put_nv(NV_BREW_SUBSCRIBER_ID_I, &nvi);
+#else    
+#ifndef WIN32
+  return OEMNV_Put(NV_BREW_SUBSCRIBER_ID_I, &nvi);
+#else
+  return NV_DONE_S;
+#endif//WIN32
+#endif  
 }
 
 #endif //defined(OEMAPPFUNCS)
 
+
+#ifdef CUST_EDITION	 
+// Macro to trim some letter.
+#define TRIM_LEFT_CHAR(psz, ch)	do { while(*(psz) && *(psz)==(ch)) (psz)++; } while(0)
+
+// inline to copy string within some size.
+__inline int str_cpy_within_buf_size(char *pDest, int cbDest, char *pSrc)
+{
+	int cb = cbDest;
+
+	while(--cb > 0)	{
+		if('\0' == *pSrc)
+			break;
+		*pDest++ = *pSrc++;		
+	}
+	*pDest = 0;
+
+	return (cbDest - (cb + 1));
+}
+
+// Function to read nv. Using OEMNV_Get can not read some ppp item as NV_PPP_PASSWORD_I. 
+nv_stat_enum_type OEMNV_GetPPPItem
+(
+  nv_items_enum_type  item,       /* Item to get                      */
+  nv_item_type        *data_ptr        /* Pointer where to put the item    */
+)
+{
+#ifndef WIN32
+  nv_cmd_type nvi;           /* nv command buffer */
+  
+  nvi.tcb_ptr = rex_self();          /* notify this task when done */
+  nvi.sigs = UI_NV_SIG;
+  nvi.done_q_ptr = NULL;             /* command goes on no queue when done */
+
+  nvi.item = item;                 /* item to read */
+  nvi.cmd = NV_READ_F;
+
+  /* Set up NV so that it will read the data into the correct location */
+  nvi.data_ptr = data_ptr;
+
+  /* Call NV and wait for a response */
+  (void)rex_clr_sigs(rex_self(), UI_NV_SIG);
+#ifndef WIN32
+  nv_cmd( &nvi );
+#endif
+  rex_wait( UI_NV_SIG );
+
+  if( nvi.status != NV_DONE_S &&
+      nvi.status != NV_NOTACTIVE_S )
+  {
+    ERR( "NV Read Failed Item %d Code %d", nvi.item, nvi.status, 0 );
+  }  
+  return( nvi.status );
+#else
+	return NV_STAT_ENUM_PAD;
+#endif
+} /* OEMNV_GetPPPItem() */
+
+/*
+** Set the PPP auth acount info to nv.
+*/
+int OEM_SetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
+{
+	nv_item_type nvi, nvi2;
+	uint8 index;
+	
+	if(NULL == pAccount)
+		return EBADPARM;
+	
+    switch(dsType)
+    {
+	case DS_BREW_TYPE:
+	case DS_WAP20_TYPE:
+	default:
+		{
+#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE // use CHAP but PAP,
+			
+			// Get  the PPP NAI ID to NV FOR ACTIVE PROFILE.   
+			if(NV_DONE_S != OEMNV_GetPPPItem(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi))   {
+				DBGPRINTF( "NV read fails for active profile index");
+				
+				/* If the active profile index is not active, 	we should put it as 0 but not return EFAILED.*/
+#ifndef WIN32
+				nvi.ds_sip_active_profile_index = 0;
+
+				if(OEMNV_Put(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi) != NV_DONE_S)   {
+					DBGPRINTF(";put NV_DS_SIP_ACTIVE_PROFILE_INDEX_I as 0 failed");
+					return EFAILED;
+				}
+#endif
+			}
+#ifndef WIN32			
+			index = nvi.ds_sip_active_profile_index;
+		
+			//nvi.ds_sip_nai_info.nai_length = (byte)STRLEN(pAccount->user_id_info);
+			//STRCPY((char*)nvi.ds_sip_nai_info.nai, pAccount->user_id_info);
+			nvi.ds_sip_nai_info.nai_length = str_cpy_within_buf_size((char*)nvi.ds_sip_nai_info.nai, 
+															sizeof(nvi.ds_sip_nai_info.nai), 
+															pAccount->user_id_info);
+			
+			//nvi.ds_sip_ppp_ss_info.ss_length = (byte)STRLEN(pAccount->passwd_info);
+			//STRCPY((char*)nvi2.ds_sip_ppp_ss_info.ss, pAccount->passwd_info);
+			nvi2.ds_sip_ppp_ss_info.ss_length = str_cpy_within_buf_size((char*)nvi2.ds_sip_ppp_ss_info.ss, 
+															sizeof(nvi2.ds_sip_ppp_ss_info.ss),
+															pAccount->passwd_info);
+#endif				
+#else // FEATURE_DS_SIP_MULTIPLE_PROFILE
+				
+			//nvi.pap_user_id.user_id_len = (byte)STRLEN(pAccount->user_id_info);
+			//STRCPY((char*)nvi.pap_user_id.user_id, pAccount->user_id_info);
+			nvi.pap_user_id.user_id_len = str_cpy_within_buf_size((char*)nvi.pap_user_id.user_id,
+															sizeof(nvi.pap_user_id.user_id),
+															pAccount->user_id_info);
+			
+			//nvi2.pap_password.password_len = (byte)STRLEN(pAccount->passwd_info);
+			//STRCPY((char*)nvi2.pap_password.password, pAccount->passwd_info);          
+			nvi2.pap_password.password_len = str_cpy_within_buf_size((char*)nvi2.pap_password.password,
+															sizeof(nvi2.pap_password.password),
+															pAccount->passwd_info);
+			
+#endif   // FEATURE_DS_SIP_MULTIPLE_PROFILE
+		}
+		break;	   
+    } // switch( dsType) 
+	
+	
+#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
+#ifndef WIN32	
+	nvi.ds_sip_nai_info.index = index;   
+	if(OEMNV_Put(NV_DS_SIP_NAI_INFO_I, &nvi) != NV_DONE_S)
+		DBGPRINTF(";put NV_DS_SIP_NAI_INFO_I failed");
+	
+	nvi2.ds_sip_ppp_ss_info.index = index;   
+	if( OEMNV_Put(NV_DS_SIP_PPP_SS_INFO_I, &nvi2) != NV_DONE_S) 
+		DBGPRINTF(";put NV_DS_SIP_PPP_SS_INFO_I failed");
+#endif	
+#else // FEATURE_DS_SIP_MULTIPLE_PROFILE
+	
+	if(OEMNV_Put(NV_PPP_USER_ID_I, &nvi) != NV_DONE_S)
+		DBGPRINTF(";put NV_PPP_USER_ID_I failed");
+	
+	if( OEMNV_Put(NV_PPP_PASSWORD_I, &nvi2) != NV_DONE_S) 
+		DBGPRINTF(";put NV_PPP_PASSWORD_I failed");
+	
+#endif   // FEATURE_DS_SIP_MULTIPLE_PROFILE
+	
+	return SUCCESS;
+} //OEM_SetPppAccounts
+
+/*
+** Get the PPP auth acount info from nv.
+*/
+int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
+{
+   char *pszUserId, *pszPassWord;
+   nv_item_type  nvi, nvi2;
+   uint8 index;
+
+   if(NULL == pAccount)
+      return EBADPARM;
+    
+#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
+   // Get  the PPP NAI ID to NV FOR ACTIVE PROFILE.   
+#ifndef WIN32
+   if(NV_DONE_S != OEMNV_Get(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi ))   {
+      DBGPRINTF( "NV read fails for active profile index");
+      return EFAILED;
+   }   
+
+   index = nvi.ds_sip_active_profile_index;
+
+   nvi.ds_sip_nai_info.index = index;  
+   if(OEMNV_GetPPPItem(NV_DS_SIP_NAI_INFO_I, &nvi) != NV_DONE_S)
+      DBGPRINTF(";get NV_DS_SIP_NAI_INFO_I failed");
+   
+   nvi2.ds_sip_ppp_ss_info.index = index;  
+   if( OEMNV_GetPPPItem(NV_DS_SIP_PPP_SS_INFO_I, &nvi2) != NV_DONE_S) 
+      DBGPRINTF(";get NV_DS_SIP_PPP_SS_INFO_I failed");  
+#endif   
+#else // FEATURE_DS_SIP_MULTIPLE_PROFILE
+   
+   if(OEMNV_GetPPPItem(NV_PPP_USER_ID_I, &nvi) != NV_DONE_S)
+      DBGPRINTF(";get NV_PPP_USER_ID_I failed");
+   
+   if(OEMNV_GetPPPItem(NV_PPP_PASSWORD_I, &nvi2) != NV_DONE_S) 
+      DBGPRINTF(";get NV_PPP_PASSWORD_I failed");   
+#endif // FEATURE_DS_SIP_MULTIPLE_PROFILE
+		
+    switch(dsType)
+    {
+        case DS_BREW_TYPE:
+        case DS_WAP20_TYPE:
+        default:
+#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
+#ifndef WIN32
+            pszUserId = (char *)nvi.ds_sip_nai_info.nai;
+            TRIM_LEFT_CHAR(pszUserId, '0');
+
+            pszPassWord = (char *)nvi2.ds_sip_ppp_ss_info.ss;
+            TRIM_LEFT_CHAR(pszPassWord, '0');
+#endif
+#else // FEATURE_DS_SIP_MULTIPLE_PROFILE
+#ifndef WIN32
+            pszUserId = (char *)nvi.pap_user_id.user_id;
+            TRIM_LEFT_CHAR(pszUserId, '0');
+
+            pszPassWord = (char *)nvi2.pap_password.password;
+            TRIM_LEFT_CHAR(pszPassWord, '0');
+#endif
+#endif // FEATURE_DS_SIP_MULTIPLE_PROFILE
+
+            str_cpy_within_buf_size(pAccount->user_id_info, PPP_MAX_USER_ID_LEN, pszUserId);
+            str_cpy_within_buf_size(pAccount->passwd_info, PPP_MAX_PASSWD_LEN, pszPassWord);		
+    } // switch( dsType)
+
+    return SUCCESS;
+} //OEM_GetPppAccounts
+
+
+// 解决慢卡插入后，启动 Applet 慢的问题
+/*==============================================================================
+函数:
+    OEMSVC_UpdateRUIMNVCacheReq
+
+说明:
+    函数通过变更 RUIM_NV_Cache 结构中标记。使用到 RUIM_NV_Cache 的函数根据这个标
+    记确定是否读取 RUIM 。
+
+参数:
+    nItem [in]: NV 项。
+
+返回值:
+    none
+
+备注:
+        
+==============================================================================*/
+void OEMSVC_UpdateRUIMNVCacheReq(nv_items_enum_type nItem)
+{
+    switch (nItem)
+    {
+        case CFGI_CARDID:
+        case CFGI_CARDID_LEN:
+            gUIMNVCache.isCARDIDValid = 0;
+            if (gUIMNVCache.CardIDbuf != NULL)
+            {
+                sys_free(gUIMNVCache.CardIDbuf);
+                gUIMNVCache.CardIDbuf = NULL;
+            }
+            gUIMNVCache.nCardIDLen = 0;
+            break;
+            
+        case NV_CURR_NAM_I:
+            gUIMNVCache.isDirNumValid = 0;
+            gUIMNVCache.isCurNamValid = 0;
+            break;
+            
+        case NV_DIR_NUMBER_PCS_I:
+            gUIMNVCache.isDirNumValid = 0;
+            break;
+            
+        default:
+            break;
+    }
+}
+#endif /*CUST_EDITION*/

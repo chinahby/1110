@@ -2770,7 +2770,7 @@ static void CoreApp_UpdateIcon(CCoreApp    *pMe)
 		}
 	}
 #ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
-	IIMAGE_Draw( pMe->m_Idle_Icon->m_ImageSmallCheck[pMe->m_Idle_Icon->m_checkicon - 1]     , pMe->m_Idle_Icon->m_icon_rc.x + 2 + 30*(pMe->m_Idle_Icon->m_fisticon - num1 -1) , pMe->m_Idle_Icon->m_icon_rc.y + 2);
+//	IIMAGE_Draw( pMe->m_Idle_Icon->m_ImageSmallCheck[pMe->m_Idle_Icon->m_checkicon - 1]     , pMe->m_Idle_Icon->m_icon_rc.x + 2 + 30*(pMe->m_Idle_Icon->m_fisticon - num1 -1) , pMe->m_Idle_Icon->m_icon_rc.y + 2);
 #endif			
 	pMe->m_Idle_Icon->m_icon_rc.x = pMe->m_Idle_Icon->m_icon_rc.x - 14;
 

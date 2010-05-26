@@ -120,7 +120,9 @@ when       who     what, where, why
 #include "OEMVR_priv.h"
 #endif /* FEATURE_PHONE_VR */
 #include "AppComFunc.h"
+#ifndef USES_MMI
 #include "uiutils.h"
+#endif
 #include "tmc.h"
 #include "BREWVersion.h"
 
@@ -1123,20 +1125,28 @@ static int  OEMALERT_GetRingerType
     MSG_ERROR("Invalid Pointer",0,0,0);
     return EBADPARM;
   }
-
-  result = ui_get_nv(NV_RINGER_TYPE_I, &nvi);
-
+#ifndef CUST_EDITION
+    result = ui_get_nv (NV_RINGER_TYPE_I, &nvi);
+#else      
+    result = OEMNV_Get(NV_RINGER_TYPE_I, &nvi);
+#endif 
   if(result == NV_DONE_S) { /* successfully obtain from NV */
     /* range checking */
     if (nvi.ringer_type >=(uint8) OEMALERT_RINGER_MAX) {
         nvi.ringer_type = (uint8) OEMALERT_RINGER_NORMAL;
+#ifndef FEATURE_OEMUI_TASK  
       (void)ui_put_nv (NV_RINGER_TYPE_I, &nvi);
+#else      
+      (void)OEMNV_Put(NV_RINGER_TYPE_I, &nvi);
+#endif  
     }
 
     *ringerType = (OEMALERTRingerType)nvi.ringer_type;
-
+#ifndef CUST_EDITION
     result = ui_get_nv (NV_MM_RINGER_FILE_I, &nvi);
-
+#else      
+    result = OEMNV_Get(NV_MM_RINGER_FILE_I, &nvi);
+#endif 
     if (result == NV_DONE_S) {
       if (pMe->m_ringerFile) {
         FREE(pMe->m_ringerFile);

@@ -556,6 +556,29 @@ wms_client_err_e_type wms_client_reg_dc_cb_for_pm
 
 } /* wms_client_reg_dc_cb_for_pm() */
 
+#ifdef CUST_EDITION
+wms_client_err_e_type wms_client_reg_bc_cb
+(
+  wms_client_id_type       client_id,
+  wms_bc_event_cb_type     bc_event_cb
+)
+{
+  wms_client_s_type  *client_ptr = wms_client_ptr(client_id);
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+  if( client_ptr == NULL )
+  {
+    return WMS_CLIENT_ERR_CLIENT_ID;
+  }
+
+  client_ptr->bc_event_cb = bc_event_cb;
+
+  return WMS_CLIENT_ERR_NONE;
+
+} /* wms_client_reg_bc_cb() */
+#endif
+
 /*=========================================================================
 FUNCTION
   wms_client_reg_bc_mm_cb

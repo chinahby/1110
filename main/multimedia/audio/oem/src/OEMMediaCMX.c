@@ -150,8 +150,11 @@ when       who     what, where, why
 #include "AEE_OEMFile.h"
 #include "OEMFS.h"
 #include "AEEBitmap.h"
-
+#ifndef CUST_EDITION
 #include "ui.h"
+#else
+#include "oemui.h"
+#endif
 #include "task.h"
 #include "msg.h"
 

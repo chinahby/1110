@@ -22,7 +22,9 @@ GENERAL DESCRIPTION:
 // IMUI Properties
 #define IUIP_TRAPEVENTS       (0x00010000) // Default: On, Trap all interactive events
 #define IUIP_ALIGNBOTTOM      (0x00020000) // Default: Off, Align Bottom edge
-
+#ifdef CUST_EDITION	
+#define IUIP_EXTRADISP        (0x00040000) // Default: Off, No extra info disp, san hang or not
+#endif /*CUST_EDITION*/
 OBJECT(IMUIFontStruct){
    uint16   wSize;         // Struct Size, FillMe!
    AEEFont  fntLetterComp; // Default: Bold

@@ -139,7 +139,9 @@ when       who     what, where, why
 #endif
 
 //below .h will have the declaration for ui_get_nv
+#ifndef USES_MMI
 #include "uiutils.h"
+#endif
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS
@@ -284,6 +286,10 @@ void OEMBatt_Init(void)
 
 
 }
+void OEMBatt_Destory(void)
+{
+    AEE_CancelTimer(OEMBattPriv_PeriodicBattCheck, NULL);
+}
 /*=============================================================================
 FUNCTION: OEMBatt_InitBattLevels
 
@@ -312,7 +318,11 @@ void OEMBatt_InitBattLevels(void *pUser)
 
 
   /* Get nv read*/
-  if(NV_DONE_S !=  ui_get_nv( NV_VBATT_I, &nv_data_buf ))
+#ifndef FEATURE_OEMUI_TASK    
+   if(NV_DONE_S != ui_get_nv (NV_VBATT_I, &nv_data_buf))
+#else     
+    if(NV_DONE_S != OEMNV_Get (NV_VBATT_I, &nv_data_buf))
+#endif
   {
     MSG_ERROR("NV read failed", 0, 0, 0);
 	return;
@@ -350,8 +360,11 @@ SEE ALSO:
 int32 OEMBatt_vbatt_scale(int32 batt)
 {
   nv_item_type          nv_data_buf;
-
-  if(NV_DONE_S != ui_get_nv( NV_VBATT_I, &nv_data_buf ))
+#ifndef FEATURE_OEMUI_TASK    
+   if(NV_DONE_S != ui_get_nv (NV_VBATT_I, &nv_data_buf))
+#else     
+    if(NV_DONE_S != OEMNV_Get (NV_VBATT_I, &nv_data_buf))
+#endif
   {
     MSG_ERROR("NV read failed", 0, 0, 0);
 	return 0;

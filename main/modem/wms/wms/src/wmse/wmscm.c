@@ -1208,7 +1208,15 @@ void wms_cm_process_event
 
          if (bRUIMCardPresent) {
 #ifdef FEATURE_CDSMS_RUIM
-             wms_ruim_init();
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+        //db_setuiminitmask(INITUIMSMSMASK);放在 ui 去控制
+        //wms_ruim_init_stepbystep();
+#ifdef FEATURE_OMH_SMS
+        wms_ruim_OMH_init();
+#endif
+#else        
+        wms_ruim_init();
+#endif   
 #endif /* FEATURE_CDSMS_RUIM */             
          }
          else {

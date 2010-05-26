@@ -5,7 +5,7 @@
 
   Please search for OEM-Note in the file for points of interest.
 
-        Copyright © 2003 QUALCOMM Incorporated.
+        Copyright ? 2003 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ============================================================================*/

@@ -5,11 +5,12 @@
 
 LCD_SURF_C_SOURCES=\
 	disp_epson_S1D19120.c \
+	disp_tm_cstn128x128.c \
 	disp_api_default.c
 
 LCD_SURF_C_SOURCES += disp_epson_S1D19120_bootscreen.c
 
-LCD_SURF_A_SOURCES=
+LCD_SURF_A_SOURCES=disp.s
 
 LCD_FFA_SOURCES=
 

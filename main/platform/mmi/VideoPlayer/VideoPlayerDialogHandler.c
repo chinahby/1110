@@ -20,14 +20,7 @@
                           本文件包含的外部文件
 =================================================================================================================*/
 #include "VideoPlayer_priv.h"
-#ifndef WIN32
-#ifdef FEATURE_SUPPORT_VC0848
-#include "mmd_ply_driver.h"
-#endif
-#else
-#include "oemhelperfunctype.h"
-#endif//WIN32
-#include "appscommon_color.brh"
+ #include "appscommon_color.brh"
 #include "appscommon.brh"
 
 boolean        FullScreen = FALSE;
@@ -704,11 +697,6 @@ static boolean  VPDMSGBOX_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wP
 /*=================================================================================================================  
   处理视频播放的按钮事件
 =================================================================================================================*/
-#ifndef WIN32
-#ifdef FEATURE_SUPPORT_VC0848
-extern MMD_PLYFILE pFileHandle;
-#endif
-#endif//WIN32
 static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wParam ,uint32 dwParam)
 {   
     switch(wParam)
@@ -839,10 +827,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             }            
             else //全屏状态下
             {
-                {  
-#ifdef FEATURE_SUPPORT_VC0848                    
-                    MMD_LCDRotate(0);
-#endif
+                {
                     pMe->IsFullScreen = FALSE;
 		            FullScreen = FALSE;
                     
@@ -856,12 +841,6 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     }
                     else if(pMe->IsPause)
                     {
-
-#ifndef WIN32
-#ifdef FEATURE_SUPPORT_VC0848
-                        MMD_Player_File_Pause(pFileHandle);     //add by wangjian 2009.2.5
-#endif                        
-#endif//WIN32
                         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);
                         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PLAY, VIDEOPLAYER_PLAY_X, VIDEOPLAYER_PLAY_Y); //"|>"
 						pMe->m_rtype = TYPE_PLAYER;
@@ -1401,15 +1380,9 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 }
                 if(pMe->IsFullScreen)
                 {
-#ifdef FEATURE_SUPPORT_VC0848                    
-                    MMD_LCDRotate(0);
-#endif                    
                     //如果下一首播放成功，则转为全屏，不成功则在正常模式弹出播放失败的弹框
                     if(pMe->m_PlayFailed == SUCCESS)
-                    {
-#ifdef FEATURE_SUPPORT_VC0848                    
-                    MMD_LCDRotate(0);
-#endif                   
+                    { 
                     }
                     else
                     {
@@ -1666,9 +1639,6 @@ boolean VideoPlayer_PlayMod(CVideoPlayer *pMe, uint16 wParam)
             {    
                 ISHELL_CancelTimer(pMe->m_pShell,NULL,pMe); 
                 pMe->IsFullScreen = TRUE;
-#ifdef FEATURE_SUPPORT_VC0848                    
-                    MMD_LCDRotate(0);
-#endif            
             }
         }
         else
@@ -1685,10 +1655,6 @@ boolean VideoPlayer_PlayMod(CVideoPlayer *pMe, uint16 wParam)
                 VideoPlayer_RefreshVolBar(pMe);//刷新音量
                 VideoPlayer_RefreshScheduleBar(pMe);//刷新进度条
                 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE); 
-                
-#ifdef FEATURE_SUPPORT_VC0848                    
-                    MMD_LCDRotate(0);
-#endif            
           }
         return TRUE;
         }

@@ -23,7 +23,9 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "OEMFeatures.h"
 #include "OEMModTableExt.h"
 #include "AEEFile.h"
-
+#ifdef CUST_EDITION
+#include "OEMClassIDs.h"
+#endif
 //MTP MCS static Extension
 #ifdef FEATURE_SME_DRMMS
 #include "AEECLSID_MTPDRM.BID"
@@ -61,7 +63,11 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 //#ifdef FEATURE_I3D
 //#include "OEM3D_Demos.h"
 //#endif
-
+#ifdef CUST_EDITION
+    #undef FEATURE_WMS_APP
+    #undef FEATURE_IWMSDIAG
+    #undef FEATURE_APP_FLDDBG
+#endif
 #ifdef FEATURE_NO_WMS_APP
 	#undef FEATURE_WMS_APP
 #endif
@@ -271,13 +277,13 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #if defined (FEATURE_IRDM)
 #error code not present
 #endif
-
+#ifndef CUST_EDITION
 // Address Book Extension
 #if defined(FEATURE_ADDRBOOK)
 	#include "AddrBookExt.bid"
 	extern int OEMAddrBookExt_New(IShell *ps,AEECLSID cls,void ** ppo);
 #endif
-
+#endif
 // CDMA/GSM/WCDMA tone generation
 #ifdef FEATURE_UIONE_HDK
 	#include "AEESignalTone_priv.h"
@@ -298,9 +304,33 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #if defined(FEATURE_GRAPHICS_OPENVG)
 #error code not present
 #endif
-
+#ifndef WIN32
 #if defined(FEATURE_QCT_JPEG_DECODER)
-	extern const AEEStaticClass gAEEJpegClasses[];
+extern const AEEStaticClass gAEEJpegClasses[];
+#endif
+#if defined FEATURE_SUPPORT_BT_APP
+extern int tBtuiApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+#endif
+
+#if defined FEATURE_SUPPORT_BUIW
+extern int FormsMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+extern int WidgetMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+
+
+#if defined FEATURE_SUPPORT_WAP_APP
+extern int EditApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
+extern int EditExt_Load(IShell *ps, void *pHelpers, IModule **pMod);
+extern int OEMExtFor3Part_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+
+extern int AEEBrwAppMod_Load(IShell *pIShell, void *ph, IModule **ppMod);					
+extern int AEEBrwMod_Load(IShell *pIShell, void *ph, IModule **ppMod);                                           
+extern int AEEDrmMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
+extern int AEESecMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
+extern int AEEWapMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
+extern int AEEWecscMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
+extern int AEEPushMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 #endif
 
 #if defined(FEATURE_IYCBCR)
@@ -391,7 +421,9 @@ extern const AEEStaticClass gOEMOverlayClasses[];
    extern int AEEBatt_New(IShell *pIShell, AEECLSID cls, void **ppif);
 #endif
 #endif /* FEATURE_ICM */
-
+#if defined(FEATURE_UIALARM) // {
+extern int AEEAlarm_New(IShell *ps, AEECLSID cls, void **ppif);
+#endif // } FEATURE_UIALARM
 // CARD
 #if defined(FEATURE_ICARD)
 	extern int OEMCard_New (IShell *pIShell, AEECLSID cls, void **ppif);
@@ -521,12 +553,55 @@ extern int     OEMGenericViewer_New(IShell *pIShell, AEECLSID cls, void **ppif);
 #error code not present
 #endif //FEATURE_IRDM
 
+#if defined(FEATURE_ANICTL)
+extern int AniCtl_New (IShell * pIShell, AEECLSID clsid, void ** ppif);
+#endif
+
 // UI App
 #if defined(FEATURE_APP_UI) && !defined(FEATURE_MANGO_UI)
 extern int CoreApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#ifndef FEATURE_OEMUI_TASK
 extern int CoreStartApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
+#endif
 
+extern int QuickTest_Load(IShell *pIShell,void *ph,IModule **ppMod);
+
+extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+extern int StopWatchMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+extern int ClockAppsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+extern int CalcMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+extern int WorldTimeMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+
+extern int ScheduleApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+//#endif
+
+#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+extern int OtkMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif //FEATURE_SHORT_CODE_NAM_COUNT
+
+extern int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
+#if defined( FEATURE_GAME_TETRIS)
+extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+#if defined( FEATURE_GAME_BRICKATTACK)
+extern int Brick_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+#if defined( FEATURE_GAME_BLACKJACK)
+extern int BlackJack_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+#if defined( FEATURE_JEWISH_CALENDAR)
+extern int JewishCalendar_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+extern int LKV_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#if defined(FEATURE_RECORDER)
+extern int Recorder_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
+
+// Contact App
+#if defined(FEATURE_CONTACT_APP)
+extern int ContApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
 // Brew App Coordination. Proxy App to represent App from Alternate Env.
 // and AltEnvShell Extension for BREW App developers who want to deal with
 // Alternate Environment applications (start/stop/postevent)
@@ -577,6 +652,14 @@ extern int CCatApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int RecentCalls_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
+// UTK App
+#if defined(FEATURE_APP_UTK)
+extern int UTK_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
+// NumberManager App
+#if defined(FEATURE_APP_NUMBERMANAGER)
+extern int  NumberManagerMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
+#endif
 // Vector Interface
 #if defined(FEATURE_IVECTOR) && !defined(FEATURE_MANGO_UI)
 extern int IVectorMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -682,9 +765,17 @@ extern int CMediaPlayer_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 
 // Dialer app
 #if defined (FEATURE_APP_DIALER) && !defined(FEATURE_MANGO_UI)
-extern int CDialerApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
+    extern int CallAppMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 #endif
 
+extern int SettingMenuMod_Load(IShell   *pIShell,  void  *ph, IModule **ppMod);
+extern int SecurityMenuMod_Load(IShell   *pIShell, void  *ph,  IModule  **ppMod);
+extern int SoundMenuMod_Load(IShell   *pIShell, void *ph, IModule **ppMod);
+extern int DisplayMenuMod_Load(IShell   *pIShell, void *ph, IModule **ppMod);
+
+#if defined( FEATURE_FM_RADIO)
+extern int FmRadioMod_Load(IShell   *pIShell, void  *ph,  IModule  **ppMod);
+#endif
 // Svc Programming
 #if defined (FEATURE_APP_SVCPRG)
 extern int CSvcPrgMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -806,6 +897,51 @@ extern int  FMRadioApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int  brewPort_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
+#if defined(FEATURE_CALLLIST)
+extern int  OEMCallList_New(IShell *pIShell, AEECLSID cls, void **ppif);
+#endif
+
+#if defined(FEATURE_APP_MEDIAGALLERY)
+extern int MediaGalleryApp_Load(IShell* ps, void* pHelpers, IModule** ppMod); 
+#endif
+#ifndef WIN32
+#if defined(FEATURE_APP_CAMERA)
+extern int  CCameraAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
+#endif
+#if defined(FEATURE_APP_MUSICPLAYER)
+extern int MusicPlayer_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
+
+#if defined(FEATURE_VIDEOPLAYER)
+extern int  VideoPlayerMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
+
+#if defined(FEATURE_APPTIMER)
+extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+
+#if defined(FEATURE_CONVERTER)
+extern int  ConverterMod_Load(IShell* ps, void* pHelpers, IModule** ppMod);
+#endif
+#ifdef FEATURE_SPORTS_APP
+extern int SportsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+#endif
+
+#ifdef FEATURE_MORSE
+extern int MorseMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+#endif
+
+#ifdef FEATURE_CARRIER_CHINA_TELCOM
+extern int CustServiceMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+extern int EsurfingMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+extern int NotebookMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+#endif /*FEATURE_CARRIER_CHINA_TELCOM*/
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
+extern int AdjustPenMod_Load(IShell *p,void *ph,IModule **ppMod);
+extern int TSIM_New   (IShell * piShell,AEECLSID cls,void **ppif);
+extern int VkeyCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj);
+#endif
 /* =====================================================
    Statically linked application list.
 =====================================================*/
@@ -814,10 +950,55 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifndef FEATURE_UIONE_HDK
 #if defined(FEATURE_APP_UI) && !defined(FEATURE_MANGO_UI)
       {AEEFS_MIF_DIR"coreapp.mif", CoreApp_Load},
+#ifndef FEATURE_OEMUI_TASK
     {AEEFS_MIF_DIR"corestartapp.mif", CoreStartApp_Load},
+#endif
 #endif
 #endif // FEATURE_UIONE_HDK
 
+
+    {AEEFS_MIF_DIR"extramenu.mif", ExtraMenuMod_Load},
+    {AEEFS_MIF_DIR"quicktest.mif", QuickTest_Load},
+
+    {AEEFS_MIF_DIR"clockapps.mif", ClockAppsMod_Load},
+    {AEEFS_MIF_DIR"calcapp.mif", CalcMod_Load},
+    {AEEFS_MIF_DIR"worldtime.mif", WorldTimeMod_Load},
+    {AEEFS_MIF_DIR"stopwatch.mif", StopWatchMod_Load},
+
+    {AEEFS_MIF_DIR"scheduleapp.mif", ScheduleApp_Load},
+#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+    {AEEFS_MIF_DIR"otk.mif", OtkMod_Load},
+#endif //FEATURE_SHORT_CODE_NAM_COUNT
+
+
+    {AEEFS_MIF_DIR"mainmenu.mif", MainMenuMod_Load},
+
+#if defined( FEATURE_GAME_TETRIS)
+    {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
+#endif
+
+
+#if defined( FEATURE_GAME_BRICKATTACK)
+    {AEEFS_MIF_DIR"brickattack.mif", Brick_Load},
+#endif
+#if defined( FEATURE_GAME_BLACKJACK)
+    {AEEFS_MIF_DIR"blackjack.mif", BlackJack_Load},
+#endif
+
+#if defined( FEATURE_GAME_LKV)
+    {AEEFS_MIF_DIR"lkv.mif", LKV_Load},
+#endif
+#if defined( FEATURE_JEWISH_CALENDAR)
+	{ AEEFS_MIF_DIR"jewishcalendar.mif",JewishCalendar_Load},
+#endif
+
+#if defined(FEATURE_RECORDER)
+	{ AEEFS_MIF_DIR"recorder.mif", Recorder_Load},
+#endif
+
+#if defined(FEATURE_CONTACT_APP)
+    {AEEFS_MIF_DIR"contactapp.mif", ContApp_Load},
+#endif
 #ifdef FEATURE_APP_PBPRINT
 #error code not present
 #endif //FEATURE_APP_PBPRINT
@@ -855,6 +1036,12 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"recentcalls.mif", RecentCalls_Load},
 #endif
 
+#if defined (FEATURE_APP_UTK)
+    {AEEFS_MIF_DIR"utk.mif", UTK_Load},
+#endif
+#if defined (FEATURE_APP_NUMBERMANAGER)
+    {AEEFS_MIF_DIR"numbermanager.mif", NumberManagerMod_Load},
+#endif
 #if defined(FEATURE_IVECTOR) && !defined(FEATURE_MANGO_UI)
     {AEEFS_MIF_DIR"vector.mif", IVectorMod_Load},
 #endif
@@ -952,14 +1139,25 @@ static const AEEStaticMod gOEMStaticModList[] =
       {AEEFS_MIF_DIR"mediaplayer.mif", CMediaPlayer_Load},
 #endif
 
-#if defined (FEATURE_APP_SVCPRG)
+#if defined(FEATURE_APP_SVCPRG) && !defined( AEE_SIMULATOR)
       {AEEFS_MIF_DIR"svcprog.mif", CSvcPrgMod_Load},
 #endif
 
 #if defined (FEATURE_APP_FLDDBG)
-      {AEEFS_MIF_DIR"fielddebug.mif", CFieldDebugMod_Load},
+      {AEEFS_MIF_DIR"flddbg.mif", CFieldDebugMod_Load},
 #endif
+#if defined (FEATURE_APP_DIALER)
+    {AEEFS_MIF_DIR"callapp.mif", CallAppMod_Load},
+#endif
+    {AEEFS_MIF_DIR"settingmenu.mif", SettingMenuMod_Load},
+    {AEEFS_MIF_DIR"securitymenu.mif", SecurityMenuMod_Load},
+    {AEEFS_MIF_DIR"soundmenu.mif", SoundMenuMod_Load},
+    {AEEFS_MIF_DIR"displaymenu.mif", DisplayMenuMod_Load},
 
+
+#if defined( FEATURE_FM_RADIO)
+    {AEEFS_MIF_DIR"fmradio.mif", FmRadioMod_Load},
+#endif
 #if defined (FEATURE_SECSERVICES_TESTAPP)
       {AEEFS_MIF_DIR"securityservices.mif", SecurityServices_Load},
 #endif
@@ -968,13 +1166,13 @@ static const AEEStaticMod gOEMStaticModList[] =
           {AEEFS_MIF_DIR"mtph.mif", MTPH_Load},
           {AEEFS_MIF_DIR"mcs.mif", MCS_Load},
 #endif
-
+#ifndef CUST_EDITION
 #ifndef FEATURE_UIONE_HDK
 #if defined (FEATURE_APP_DIALER) && !defined(FEATURE_MANGO_UI)
     {AEEFS_MIF_DIR"dialer.mif", CDialerApp_Load},
 #endif
 #endif // FEATURE_UIONE_HDK
-
+#endif
 // Datastats
 #ifdef FEATURE_APP_DATASTATS
   {AEEFS_MIF_DIR"datastats.mif", CDataStatsApp_Load},
@@ -987,7 +1185,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined(FEATURE_IBT) && !defined(FEATURE_MANGO_UI)
   BT_STATIC_MOD_LIST_ENTRY
 #endif
-
+#ifndef WIN32
 #ifdef FEATURE_STATIC_RAPTOR
 #ifdef RAPTOR_UMTS_VPA
       {AEEFS_MIF_DIR"ruvpa.mif", BNMApp_Mod_Load},
@@ -998,7 +1196,7 @@ static const AEEStaticMod gOEMStaticModList[] =
       {AEEFS_MIF_DIR"rudda.mif", RUDDA_Mod_Load},
 #endif
 #endif  // FEATURE_STATIC_RAPTOR
-
+#endif // WIN32
 #ifdef FEATURE_JAVA
 #error code not present
 #endif
@@ -1016,6 +1214,72 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined(FEATURE_MANGO_UI)
   {AEEFS_MIF_DIR"brewport.mif", brewPort_Load},
 #endif
+
+#if defined(FEATURE_APP_MEDIAGALLERY)
+      {AEEFS_MIF_DIR"mediagallery.mif", MediaGalleryApp_Load},
+#endif
+#ifndef WIN32
+#ifdef FEATURE_APP_CAMERA
+    {AEEFS_MIF_DIR"cameraapp.mif", CCameraAppMod_Load},
+#endif
+#endif
+#if defined(FEATURE_APP_MUSICPLAYER)
+      {AEEFS_MIF_DIR"musicplayer.mif", MusicPlayer_Load},
+#endif
+
+#if defined(FEATURE_VIDEOPLAYER)
+    {AEEFS_MIF_DIR"videoplayer.mif", VideoPlayerMod_Load},
+#endif
+
+#if defined(FEATURE_APPTIMER)
+      {AEEFS_MIF_DIR"apptimer.mif", AppTimerMod_Load},//wu raojin add
+#endif
+#ifndef WIN32
+#if defined FEATURE_SUPPORT_BT_APP
+    {AEEFS_MIF_DIR"bluetooth.mif", tBtuiApp_Load},
+#endif
+#endif
+#if defined FEATURE_SUPPORT_BUIW
+    {AEEFS_MIF_DIR"forms.mif", FormsMod_Load},
+    {AEEFS_MIF_DIR"widgets.mif", WidgetMod_Load},
+#endif
+
+
+#if defined FEATURE_SUPPORT_WAP_APP
+    {AEEFS_MIF_DIR"editapplet.mif", EditApp_Load},
+    {AEEFS_MIF_DIR"editextension.mif", EditExt_Load},
+    {AEEFS_MIF_DIR"oemextfor3part.mif", OEMExtFor3Part_Load},
+    
+    {AEEFS_MIF_DIR"browserwidget.mif", AEEBrwMod_Load},
+    {AEEFS_MIF_DIR"brw_app.mif", AEEBrwAppMod_Load},
+    {AEEFS_MIF_DIR"drm.mif", AEEDrmMod_Load},
+    {AEEFS_MIF_DIR"sec.mif", AEESecMod_Load},
+    {AEEFS_MIF_DIR"wap.mif", AEEWapMod_Load},
+    {AEEFS_MIF_DIR"wecsc.mif", AEEWecscMod_Load},
+    {AEEFS_MIF_DIR"pushe.mif", AEEPushMod_Load},
+#endif
+#if defined(FEATURE_CONVERTER)
+         {AEEFS_MIF_DIR"converter.mif", ConverterMod_Load},
+#endif
+
+#ifdef FEATURE_SPORTS_APP
+{ AEEFS_MIF_DIR"sportsapp.mif",SportsMod_Load},
+#endif
+
+#ifdef FEATURE_MORSE
+   { AEEFS_MIF_DIR"morse.mif",MorseMod_Load},
+#endif
+#ifdef FEATURE_CARRIER_CHINA_TELCOM
+            {AEEFS_MIF_DIR"custservice.mif",CustServiceMod_Load},
+            {AEEFS_MIF_DIR"esurfing.mif",EsurfingMod_Load},
+            {AEEFS_MIF_DIR"notebook.mif",NotebookMod_Load},
+#endif /*FEATURE_CARRIER_CHINA_TELCOM*/
+
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
+	  { AEEFS_MIF_DIR"adjustpenapp.mif",AdjustPenMod_Load},
+#endif
+
    {NULL, NULL}
 };
 
@@ -1031,6 +1295,10 @@ const AEEStaticMod *gOEMStaticModLists[] = {
    Statically linked class list.
 =====================================================*/
 static const AEEStaticClass gOEMStaticClassList[] = {
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
+   {AEECLSID_VKEY_CONTROL,    ASCF_UPGRADE,PL_SYSTEM, NULL, VkeyCtl_New},
+   {AEECLSID_OEMITSIM,                   0,0, NULL, TSIM_New},   //add by ydc
+#endif
 #if defined(FEATURE_STATIC_APP_JEODE)
 //{AEECLSID_APP_JEODE,        (ASCF_PRIV | ASCF_UPGRADE),0, NULL, JeodeK_New},
    {0x10000001,               (ASCF_PRIV | ASCF_UPGRADE),0, NULL, JeodeK_New},
@@ -1098,6 +1366,9 @@ static const AEEStaticClass gOEMStaticClassList[] = {
    {AEECLSID_BATT_NOTIFIER,       ASCF_PRIV, 0,NULL,AEEBatt_New},
 #endif /* FEATURE_MANGO_UI*/
 #endif /* FEATURE_ICM */
+#if defined(FEATURE_UIALARM)
+    {AEECLSID_UIALARM,      ASCF_PRIV,0,NULL,AEEAlarm_New},
+#endif
 #if defined(FEATURE_APP_WAP)
    {AEECLSID_SEC_WAP_APP,        (ASCF_PRIV | ASCF_UPGRADE),0,NULL,AEESEC_New},
 #endif
@@ -1124,14 +1395,14 @@ static const AEEStaticClass gOEMStaticClassList[] = {
    {AEECLSID_CARD,            ASCF_PRIV, PL_ADDRBOOK, NULL, OEMCard_New},
    {AEECLSID_CARD_NOTIFIER,   ASCF_PRIV, PL_ADDRBOOK, NULL, OEMCardNotifier_New},
 #endif
-
+#ifndef WIN32
 #if defined(FEATURE_ICARDSESSION)
    {AEECLSID_CARDSESSION,                    ASCF_PRIV, PL_ADDRBOOK, NULL, OEMCardSession_New},
    {AEECLSID_CARDSESSION_SLOT2,              ASCF_PRIV, PL_ADDRBOOK, NULL, OEMCardSession_New},
    {AEECLSID_CARDSESSION_NOTIFIER,           ASCF_PRIV, PL_ADDRBOOK, NULL, OEMCardSessionNotifier_New},
    {AEECLSID_CARDSESSION_NOTIFIER_SLOT2,     ASCF_PRIV, PL_ADDRBOOK, NULL, OEMCardSessionNotifier_New},
 #endif
-
+#endif
 #if defined(FEATURE_ICARD_IMODEL)
    {AEECLSID_CARD_MODEL,     ASCF_PRIV, PL_ADDRBOOK, NULL, OEMCardModel_New},
 #endif
@@ -1186,6 +1457,7 @@ static const AEEStaticClass gOEMStaticClassList[] = {
 #if defined (FEATURE_BREW_IMOVIEEDIT)
       {AEECLSID_IMOVIEEDIT,   (ASCF_PRIV | ASCF_UPGRADE), 0, NULL, IMovieEdit_New},
 #endif
+#ifndef WIN32
 #if defined(FEATURE_TSG_EXT)
       {0x01023c45,  ASCF_PRIV, 0, NULL, AEE01023c45_New}, // AEEAPPLOG 
       {0x01013fd6,  ASCF_PRIV, 0, NULL, AEE01013fd6_New},
@@ -1193,6 +1465,7 @@ static const AEEStaticClass gOEMStaticClassList[] = {
       {0x01012eff,  ASCF_PRIV|ASCF_UPGRADE, 0, NULL, BnmRm_New},
 #endif
 #endif
+#endif // Win32
 //MTP MCS static Extension
 #if defined (FEATURE_SME_DRMMS)
    {AEECLSID_MTPDRM,  ASCF_UPGRADE, 0, NULL, AEEMtpDrm_New},
@@ -1269,9 +1542,10 @@ static const AEEStaticClass gOEMStaticClassList[] = {
 #if defined(FEATURE_ODM_BROWSER)
     {AEECLSID_BROWSER_MODEL, 0, 0, NULL, BrowserModel_New},
 #endif //(FEATURE_ODM_BROWSER)
-
+#ifndef CUST_EDITION
 #if defined(FEATURE_ADDRBOOK)
    {AEECLSID_ADDRBOOKEXT, ASCF_UPGRADE, PL_SYSTEM, NULL, OEMAddrBookExt_New},
+#endif
 #endif
 #ifdef FEATURE_UIONE_HDK
    {AEECLSID_AEESIGNALTONE, ASCF_PRIV, 0, NULL, AEESignalTone_New},
@@ -1279,7 +1553,12 @@ static const AEEStaticClass gOEMStaticClassList[] = {
 #if defined(FEATURE_AUDFMT_HYBRID_MODE)
    {AEECLSID_SYNTHQUALITY, ASCF_UPGRADE, 0, NULL, ISynthQuality_New},
 #endif
-
+#if defined(FEATURE_CALLLIST)
+   {AEECLSID_CALLLIST,ASCF_PRIV,0,NULL,OEMCallList_New},
+#endif
+#if defined(FEATURE_ANICTL)
+   {AEECLSID_ANICTL, ASCF_UPGRADE, 0, NULL, AniCtl_New},
+#endif
 #ifdef FEATURE_SENSORS
    SENSORS_STATIC_CLASS_LIST_ENTRY
 #endif
@@ -1312,8 +1591,10 @@ const AEEStaticClass *gOEMStaticClassLists[] = {
 #if defined(FEATURE_GRAPHICS_OPENVG)
 #error code not present
 #endif
+#ifndef WIN32
 #if defined (FEATURE_QCT_JPEG_DECODER)
    gAEEJpegClasses,
+#endif
 #endif
 #if defined(FEATURE_BREW_SIGNAL)
    gascSignalClassList,

@@ -51,11 +51,6 @@ when         who            what, where, why
 
 #include "apptimerres.brh"
 #include "Appscommon_color.brh"
-#ifdef FEATURE_SUPPORT_VC0848
-#include "OEMSVC.h"
-#include "Vc0848.h"
-#include "AEE_OEM.h"
-#endif
 
 #if defined( AEE_SIMULATOR)
     #define  AEE_APPTIMER_RES_FILE "fs:/mod/apptimer/en/apptimerres.bar"
@@ -163,7 +158,6 @@ static void TimerNotifyMP3PlayerAlertEvent(CAppTimer *pMe, boolean toStartAlert)
 static boolean AppTimer_CanAlert(CAppTimer *pMe);
 static void AppTimer_ClearAnnField(CAppTimer *pme);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*=============================================================================
 FUNCTION: AppTimerMod_Load
 
@@ -348,7 +342,6 @@ static boolean InitAppTimer(CAppTimer *pme)
         IMENUCTL_SetProperties( pme->m_pmenu, MP_BIND_ITEM_TO_NUMBER_KEY);
         IMENUCTL_SetActive( pme->m_pmenu, TRUE);
     }*/
-	Rendering_UpdateEx();//wlh add for 3D test
         /*TIME控件栏*/
     if(NULL != pme->m_pTime)
     {
@@ -772,7 +765,6 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
     switch (eCode)
     {
         case EVT_APP_START:
-			//Rendering_UpdateEx();//wlh add for 3D test
         if((pme->m_suspending == TRUE) && (pme->timer_state == W_RUNNING) && (0 == ITIMECTL_GetTime(pme->m_pTime)))
         {
             //pme->timer_state = W_STOPPED;
@@ -876,7 +868,6 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
         case EVT_DIALOG_START:
         case EVT_DIALOG_END:
         case EVT_USER_REDRAW:
-			//Rendering_UpdateEx();//wlh add for 3D test
             return TRUE;
 
         case EVT_KEY:
@@ -1211,19 +1202,6 @@ static void AppTimer_Running(CAppTimer *pme)
                 pme->m_dwDispTime = 0;
                 (void) ITIMECTL_SetTimeEx(pme->m_pTime, pme->m_dwDispTime, TRUE);
                 (void) ISHELL_CancelTimer(pme->a.m_pIShell,(PFNNOTIFY)AppTimer_Running, pme);
-
-#ifdef FEATURE_SUPPORT_VC0848
-                 // 848设备与Timerapp的并发业务处理。
-                switch(VC_GetCurrentDevice())
-                {
-                    case VC_DEV_CAMERA:               
-                        ISHELL_SendEvent(AEE_GetShell(), AEECLSID_APP_CAMERA, EVT_ALARM, 0, 0);
-                        break;
-         
-                    default:
-                        break;                      
-                }
-#endif
                 
                 if(AppTimer_CanAlert(pme))
                 {
@@ -1567,16 +1545,7 @@ boolean AppTimer_CanAlert(CAppTimer *pMe)
         ICM_Release(pICM);
         pICM = NULL;
     }
-#ifdef FEATURE_SUPPORT_VC0848
-    if(DEVICE_CAMERA_STATE_ON == GetDeviceState(DEVICE_TYPE_CAMERA))
-    {       
-        return FALSE;
-    }
-    if(DEVICE_MP4_STATE_ON == GetDeviceState(DEVICE_TYPE_MP4))
-    {       
-        return FALSE;
-    }
-#endif
+    
 #ifdef FEATURE_APP_RECORDER
 if(TRUE == recorder_GetRunningFlag())
 {

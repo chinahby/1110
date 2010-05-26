@@ -1,9 +1,0 @@
-..\..\osblobj_SBNAALZ\boot_flash_partition.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\flash\src\boot_flash_partition.c
-..\..\osblobj_SBNAALZ\boot_flash_partition.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
-..\..\osblobj_SBNAALZ\boot_flash_partition.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_error_if.h
-..\..\osblobj_SBNAALZ\boot_flash_partition.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
-..\..\osblobj_SBNAALZ\boot_flash_partition.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\flash\src\boot_flash_partition.h
-..\..\osblobj_SBNAALZ\boot_flash_partition.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
-..\..\osblobj_SBNAALZ\boot_flash_partition.o:	..\..\..\..\..\..\core\boot\mibib\miparti.h
-..\..\osblobj_SBNAALZ\boot_flash_partition.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
-..\..\osblobj_SBNAALZ\boot_flash_partition.o:	..\..\..\..\..\..\core\boot\mibib\miparti.h

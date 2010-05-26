@@ -57,7 +57,13 @@
 #include "AEEDownload.h"
 #include "AEEDeviceNotifier.h"
 
+#ifndef USES_MMI
 #include "ui.h"
+#else
+#include "oemui.h"
+#include "mobile.h"
+#endif
+
 #include "nv.h"
 #include "nvi.h"
 
@@ -680,7 +686,15 @@ static int OEM_GetHWIDList(byte * pList, int * pwLength, boolean bPrimary)
 
    {
       uint32 esn_me;
-      if (SUCCESS == OEM_ReadESN(&esn_me) && esn_me != 0) {
+      
+      {
+         AEEMobileInfo info;
+         
+         GetMobileInfoEx(&info);
+         esn_me = info.dwESN;
+      }
+      if (esn_me != 0) {
+      //if (SUCCESS == OEM_ReadESN(&esn_me) && esn_me != 0) {
          len = sizeof(AEEHWIDType) + ((sizeof(esn_me)-1) & 0xFFFC);
          listLength += len;
          // big enough?
@@ -1139,7 +1153,73 @@ int   OEM_GetDeviceInfoEx(AEEDeviceItem nItem, void *pBuff, int *pnSize)
       }
       return OEM_GetHWIDList((byte *)pBuff, pnSize, FALSE);
       break;
-
+      
+   case AEE_DEVICEITEM_MANUFACTURER_NAME:
+      if (!pnSize) 
+      {
+         return(EBADPARM);
+      }
+      if (!pBuff || *pnSize< (STRLEN("ALCATEL")+1)*sizeof(AECHAR)) 
+      {
+         *pnSize = (STRLEN("ALCATEL")+1)*sizeof(AECHAR);
+         return(EBUFFERTOOSMALL);
+      }
+      
+      (void)STRTOWSTR("ALCATEL", (AECHAR *)pBuff, *pnSize);
+      return SUCCESS;
+   
+   case AEE_DEVICEITEM_MODEL_NAME:
+      if (!pnSize) 
+      {
+         return(EBADPARM);
+      }
+      if (!pBuff || *pnSize< (STRLEN(ver_modelname)+1)*sizeof(AECHAR)) 
+      {
+         *pnSize = (STRLEN(ver_modelname)+1)*sizeof(AECHAR);
+         return(EBUFFERTOOSMALL);
+      }
+      
+      (void)STRTOWSTR(ver_modelname, (AECHAR *)pBuff, *pnSize);
+      return SUCCESS;
+   
+   case AEE_DEVICEITEM_FRIENDLY_NAME:
+      if (!pnSize) 
+      {
+         return(EBADPARM);
+      }
+      if (!pBuff || *pnSize< (STRLEN(OEMNV_DEFAULT_BANNER)+1)*sizeof(AECHAR)) 
+      {
+         *pnSize = (STRLEN(OEMNV_DEFAULT_BANNER)+1)*sizeof(AECHAR);
+         return(EBUFFERTOOSMALL);
+      }
+      
+      (void)STRTOWSTR(OEMNV_DEFAULT_BANNER, (AECHAR *)pBuff, *pnSize);
+      return SUCCESS;
+   
+   case AEE_DEVICEITEM_MDN:
+      {
+         AECHAR  wstrBuf[OEMNV_PHONENUMBER_MAXLEN]={0,};
+         
+         if (!pnSize)
+         {
+            return(EBADPARM);
+         }
+         
+         if (OEM_GetConfig(CFGI_PHONE_NUMBER, wstrBuf, sizeof(wstrBuf)) != SUCCESS)
+         {
+            return(EFAILED);
+         }
+         
+         if (!pBuff || *pnSize< WSTRSIZE(wstrBuf)) 
+         {
+            *pnSize = WSTRSIZE(wstrBuf);
+            return(EBUFFERTOOSMALL);
+         }
+          
+         (void)WSTRCPY((AECHAR *)pBuff, wstrBuf);
+      }
+      return SUCCESS;
+   
 #if defined(FEATURE_WCDMA) || defined(FEATURE_GSM)
    case AEE_DEVICEITEM_ICCID:
    {
@@ -1512,6 +1592,7 @@ int   OEM_GetDeviceInfoEx(AEEDeviceItem nItem, void *pBuff, int *pnSize)
 /*==================================================================
 
 ==================================================================*/
+#if 0
 uint32 GetLngCode(void)
 {
    if (0 == CachedLngCode)
@@ -1599,6 +1680,231 @@ int SetLngCode(uint32 dwLngCode)
 
    return nErr;
 }
+
+#else
+
+uint32 GetLngCode(void)
+{
+    nv_language_enum_type language=0;
+    uint32 LngCode = LNG_ENGLISH;
+ 
+    OEM_SVCGetConfig(CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
+
+#ifdef WIN32//wlh 临时修改为中文
+	language = NV_LANGUAGE_CHINESE;
+#endif//WIN32
+
+    switch (language)
+    {
+#ifdef FEATURE_LANG_SPANISH  
+        case NV_LANGUAGE_SPANISH:
+            LngCode = LNG_SPANISH;
+            break;
+#endif //FEATURE_LANG_SPANISH           
+
+#ifdef FEATURE_LANG_FRENCH  
+        case NV_LANGUAGE_FRENCH:
+            LngCode = LNG_FRENCH;
+            break;
+#endif //FEATURE_LANG_FRENCH  
+
+#ifdef FEATURE_LANG_PORTUGUESE
+         case NV_LANGUAGE_PORTUGUESE:
+            LngCode = LNG_PORTUGUESE;
+            break;   
+#endif //FEATURE_LANG_PORTUGUESE            
+
+#ifdef FEATURE_LANG_TCHINESE
+        case NV_LANGUAGE_TCHINESE:
+            LngCode = LNG_TCHINESE;
+            break;
+#endif //FEATURE_LANG_TCHINESE           
+
+#ifdef FEATURE_LANG_CHINESE
+        case NV_LANGUAGE_CHINESE:
+            LngCode = LNG_SCHINESE;
+            break;
+#endif //FEATURE_LANG_CHINESE            
+
+#ifdef FEATURE_LANG_JAPANESE
+         case NV_LANGUAGE_JAPANESE:
+            LngCode = LNG_JAPANESE;
+            break; 
+#endif //FEATURE_LANG_JAPANESE            
+
+#ifdef FEATURE_LANG_KOREAN
+        case NV_LANGUAGE_KOREAN:
+            LngCode = LNG_KOREAN;
+            break;
+#endif //FEATURE_LANG_KOREAN            
+
+#ifdef FEATURE_LANG_HEBREW
+        case NV_LANGUAGE_HEBREW:
+            LngCode = LNG_HEBREW;
+            break;
+#endif //FEATURE_LANG_HEBREW            
+
+#ifdef FEATURE_LANG_ARABIC
+        case NV_LANGUAGE_ARABIC:
+            LngCode = LNG_ARABIC;
+            break;
+#endif //FEATURE_LANG_ARABIC
+
+#ifdef FEATURE_LANG_THAI
+         case NV_LANGUAGE_THAI:
+            LngCode = LNG_THAI;
+            break;  
+#endif //FEATURE_LANG_THAI            
+
+#ifdef FEATURE_LANG_ITALIAN
+        case NV_LANGUAGE_ITALIAN:
+            LngCode = LNG_ITALIAN;
+            break;
+#endif //FEATURE_LANG_ITALIAN           
+
+#ifdef FEATURE_LANG_INDONESIAN
+        case NV_LANGUAGE_INDONESIAN:
+            LngCode = LNG_INDONESIAN;
+            break;
+            
+#if defined(FEATURE_CARRIER_INDONESIA)
+        case NV_LANGUAGE_CHINESE:
+            LngCode = LNG_SCHINESE;             
+            break; 
+#endif
+#endif //FEATURE_LANG_INDONESIAN
+
+#ifdef FEATURE_LANG_HINDI
+         case NV_LANGUAGE_HINDI:
+            LngCode = LNG_HINDI;
+            break;     
+#endif //FEATURE_LANG_HINDI
+
+#ifdef FEATURE_LANG_VIETNAMESE
+         case NV_LANGUAGE_VIETNAMESE:
+            LngCode = LNG_VIETNAMESE;
+            break; 
+#endif //FEATURE_LANG_VIETNAMESE            
+           
+#ifdef FEATURE_LANG_ENGLISH
+        case NV_LANGUAGE_ENGLISH:
+#endif //FEATURE_LANG_VIETNAMESE            
+        default:
+            LngCode = LNG_ENGLISH;
+            break;
+    }
+    return LngCode;    
+}
+
+int SetLngCode(uint32 dwLngCode)
+{
+    nv_language_enum_type language=NV_LANGUAGE_ENGLISH;
+    switch (dwLngCode)
+    {
+#ifdef FEATURE_LANG_SPANISH    
+        case LNG_SPANISH:
+            language = NV_LANGUAGE_SPANISH;            
+            break;
+#endif //FEATURE_LANG_SPANISH            
+
+#ifdef FEATURE_LANG_FRENCH  
+        case LNG_FRENCH:
+            language = NV_LANGUAGE_FRENCH;                
+            break;
+#endif //FEATURE_LANG_FRENCH              
+
+#ifdef FEATURE_LANG_PORTUGUESE 
+         case LNG_PORTUGUESE:
+            language = NV_LANGUAGE_PORTUGUESE;                
+            break;    
+#endif //FEATURE_LANG_PORTUGUESE 
+
+#ifdef FEATURE_LANG_TCHINESE
+        case LNG_TCHINESE:
+            language = NV_LANGUAGE_TCHINESE;                
+            break;
+#endif //FEATURE_LANG_TCHINESE
+
+#ifdef FEATURE_LANG_CHINESE
+        case LNG_SCHINESE:
+            language = NV_LANGUAGE_CHINESE;                
+            break;
+#endif //FEATURE_LANG_CHINESE
+
+#ifdef FEATURE_LANG_JAPANESE
+         case LNG_JAPANESE:
+            language = NV_LANGUAGE_JAPANESE;                
+            break;  
+#endif //FEATURE_LANG_JAPANESE
+
+#ifdef FEATURE_LANG_KOREAN
+        case LNG_KOREAN:
+            language = NV_LANGUAGE_KOREAN;                
+            break;
+#endif //FEATURE_LANG_KOREAN            
+
+#ifdef FEATURE_LANG_HEBREW
+        case LNG_HEBREW:
+            language = NV_LANGUAGE_HEBREW;                
+            break;
+#endif //FEATURE_LANG_HEBREW
+
+#ifdef FEATURE_LANG_ARABIC
+        case LNG_ARABIC:
+            language = NV_LANGUAGE_ARABIC;                
+            break;
+#endif //FEATURE_LANG_ARABIC
+
+#ifdef FEATURE_LANG_THAI
+         case LNG_THAI:
+            language = NV_LANGUAGE_THAI;                
+            break;    
+#endif //FEATURE_LANG_THAI
+
+#ifdef FEATURE_LANG_ITALIAN
+        case LNG_ITALIAN:
+            language = NV_LANGUAGE_ITALIAN;   
+            break;
+#endif //FEATURE_LANG_ITALIAN
+
+#ifdef FEATURE_LANG_INDONESIAN
+        case LNG_INDONESIAN:
+            language = NV_LANGUAGE_INDONESIAN;                
+            break;
+            
+#if defined(FEATURE_CARRIER_INDONESIA)
+        case LNG_SCHINESE:
+            language = NV_LANGUAGE_CHINESE;               
+            break; 
+#endif
+
+#endif //FEATURE_LANG_INDONESIAN
+
+#ifdef FEATURE_LANG_HINDI
+        case LNG_HINDI:
+            language = NV_LANGUAGE_HINDI;               
+            break; 
+#endif //FEATURE_LANG_HINDI            
+
+#ifdef FEATURE_LANG_VIETNAMESE
+         case LNG_VIETNAMESE:
+            language = NV_LANGUAGE_VIETNAMESE;                
+            break; 
+#endif //FEATURE_LANG_VIETNAMESE            
+
+#ifdef FEATURE_LANG_ENGLISH          
+        case LNG_ENGLISH:
+#endif //FEATURE_LANG_ENGLISH            
+        default:
+            language = NV_LANGUAGE_ENGLISH;                
+            break;
+    }
+
+    OEM_SVCSetConfig(CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
+    return SUCCESS;
+}
+
+#endif
 
 /*===========================================================================
 Cancels Config item listener callback

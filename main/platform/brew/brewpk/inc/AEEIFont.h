@@ -35,6 +35,7 @@ typedef struct {
    int16  nDescent;
 } AEEFontInfo;
 
+#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE) && defined(CUST_EDITION)
 #define INHERIT_IFont(iname) \
    INHERIT_IQI(iname); \
    int   (*DrawText)               (iname *po, IBitmap *pDst, int x, int y,       \
@@ -43,7 +44,21 @@ typedef struct {
                                     const AEERect *prcClip, uint32 dwFlags);      \
    int   (*MeasureText)            (iname *po, const AECHAR *pcText, int nChars,  \
                                     int nMaxWidth, int *pnFits, int *pnPixels);   \
-   int   (*GetInfo)                (iname *po, AEEFontInfo *pinfo, int nSize)
+   int   (*GetInfo)                (iname *po, AEEFontInfo *pinfo, int nSize)   \
+   int   (*MeasureTextCursorPos) (IFont *pMe,  int x, const AECHAR *pcText, int nChars,\
+                                            const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags);
+#else
+#define INHERIT_IFont(iname) \
+   INHERIT_IQI(iname); \
+   int   (*DrawText)               (iname *po, IBitmap *pDst, int x, int y,       \
+                                    const AECHAR *pcText, int nChars,             \
+                                    NativeColor fg, NativeColor bg,               \
+                                    const AEERect *prcClip, uint32 dwFlags);      \
+   int   (*MeasureText)            (iname *po, const AECHAR *pcText, int nChars,  \
+                                    int nMaxWidth, int *pnFits, int *pnPixels);   \
+   int   (*GetInfo)                (iname *po, AEEFontInfo *pinfo, int nSize)   
+#endif
+
 
 AEEINTERFACE_DEFINE(IFont);
 
@@ -72,6 +87,11 @@ static __inline int IFont_GetInfo(IFont *p, AEEFontInfo *i, int n)
    return AEEGETPVTBL(p, IFont)->GetInfo((p),(i),(n));
 }
 
+#ifdef CUST_EDITION	
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#define  IFONT_MeasureTextCursorPos(p,x,t,n,r,cx,lc,w)  AEEGETPVTBL((p),IFont)->MeasureTextCursorPos((p),(x),(t),(n),(r),(cx),(lc),(w))
+#endif
+#endif /*CUST_EDITION*/
 /*
 ===============================================================================
 DATA STRUCTURES DOCUMENTATION

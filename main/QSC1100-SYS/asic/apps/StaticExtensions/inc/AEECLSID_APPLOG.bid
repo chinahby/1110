@@ -1,6 +1,0 @@
-#ifndef AEEAPPLOG_BID
-#define AEEAPPLOG_BID
-
-#define AEECLSID_APPLOG    	0x01023c45
-
-#endif // AEEAPPLOG_BID

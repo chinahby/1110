@@ -2386,12 +2386,6 @@ static boolean CFieldDebug_VoicePrivHandleEvent(CFieldDebug * pme,
       default:
          return FALSE;
       }
-
-     /* (void) ICONFIG_SetItem(pme->m_pIConfig,
-                             CFGI_VOICE_PRIVACY,
-                             &vp,
-                             sizeof(byte));*/
-
       (void) CFieldDebug_MoveToDialog(pme, IDD_DEBUG_DIALOG);
       return TRUE;
 
@@ -4863,24 +4857,6 @@ static void CFieldDebug_DrawVoicePrivScreen(CFieldDebug * pme)
 
    dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
    mctl = (IMenuCtl*)IDIALOG_GetControl(dlg, IDC_VOICE_PRIVACY_MENU);
-
-/*   (void) ICONFIG_GetItem(pme->m_pIConfig,
-                          CFGI_VOICE_PRIVACY,
-                          &vp,
-                          sizeof(byte));
-
-   InitMenuIcons(mctl);
-   switch (vp) {
-   case OEMNV_VP_STANDARD:
-      SetMenuIcon(mctl, IDS_VP_STANDARD, TRUE);
-      break;
-   case OEMNV_VP_ENHANCED:
-      SetMenuIcon(mctl, IDS_VP_ENHANCED, TRUE);
-      break;
-   default:
-      break;
-   }
-*/
    IMENUCTL_SetActive(mctl, TRUE);
    (void) IMENUCTL_Redraw(mctl);
 }

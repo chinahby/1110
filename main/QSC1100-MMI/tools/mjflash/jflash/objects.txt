@@ -1,1 +1,0 @@
-jflash\jfstart.o jflash\jf_mem_init.o jflash\jf.o jflash\jf_id.o jflash\jfparam.o jflash\flash_msm.o jflash\flash_common.o jflash\flash_os_none.o jflash\flash_nor.o jflash\flash_ram.o jflash\flash_nor_spansion.o jflash\flash_nor_samsung.o jflash\flash_nor_intel.o jflash\flash_nor_utils.o jflash\flash_partition.o jflash\flash_nor_partition.o 

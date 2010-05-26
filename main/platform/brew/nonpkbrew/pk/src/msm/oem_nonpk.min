@@ -47,6 +47,6 @@ else
 	OEM_NONPK_OBJS := $(addprefix $(TARGETDIR)/, $(OEM_NONPK_LIB_SOURCES:%.c=%.o) $(OEM_NONPK_LIB_A_SOURCES:%.s=%.o))
 endif
 
-$(TARGETDIR)/oem.lib : $(OEM_NONPK_LIB_SOURCES) $(OEM_NONPK_LIB_A_SOURCES)
-	$(group_c_compile)
+#$(TARGETDIR)/oem.lib : $(OEM_NONPK_LIB_SOURCES) $(OEM_NONPK_LIB_A_SOURCES)
+#	$(group_c_compile)
 

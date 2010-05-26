@@ -75,13 +75,14 @@
 #include "MusicPlayer.h"
 #endif 
 #include "oemdevicenotifier.h"
-#ifdef FEATURE_SUPPORT_VC0848
-#include "Mediagallery.h"
-#endif
 
 #ifdef FEATURE_TOUCHPAD
 #include "touchpad.h"
 #include "OEMPointerHelpers.h"
+#endif
+
+#ifdef FEATURE_APP_SVCPRG
+#include "SVCPRGAPP.BID"
 #endif
 
 /*==============================================================================
@@ -382,9 +383,6 @@ static boolean oemui_busy = FALSE;
 extern boolean bIsResetOemNv;
 #endif
 
-#ifdef FEATURE_SUPPORT_VC0848
-boolean disp_init_status();
-#endif
 /*==============================================================================
                                  
                                  函数声明及定义
@@ -1123,12 +1121,6 @@ static void oemui_post_start_init(void)
                                         NMASK_SHELL_START_STATUS);
             oemui_cm_init();
 #endif
-#ifdef FEATURE_SUPPORT_VC0848
-            while(disp_init_status() == FALSE)
-            {
-                rex_sleep(100);
-            }
-#endif
             (void) ISHELL_CreateInstance(gpShell,
                                  AEECLSID_BACKLIGHT,
                                  (void**)&gpBacklight);
@@ -1164,32 +1156,6 @@ static void oemui_post_start_init(void)
             (void) ISHELL_CreateInstance(gpShell,
                                  AEECLSID_CM,
                                  (void**)&gpICM);
-#ifdef FEATURE_SUPPORT_VC0848
-            {
-                IFileMgr * pFileMgr = NULL;
-                (void) ISHELL_CreateInstance(gpShell,
-                                 AEECLSID_FILEMGR,
-                                 (void**)&pFileMgr);
-                if(pFileMgr)
-                {
-                    if(IFILEMGR_Test(pFileMgr, AEEFS_ROOT_DIR MG_MUSIC_FOLDER) == SUCCESS)
-                    {
-                        int nRet;
-                        nRet = IFILEMGR_EnumInit(pFileMgr, AEEFS_ROOT_DIR MG_MUSIC_FOLDER, FALSE);
-                        if(nRet == SUCCESS)
-                        {
-                            FileInfo info;
-                            while(IFILEMGR_EnumNext(pFileMgr, &info))
-                            {
-                                IFILEMGR_Remove(pFileMgr, info.szName);
-                            }
-                        }
-                    }
-                    IFILEMGR_Release(pFileMgr);
-                    pFileMgr = NULL;
-                }
-            }
-#endif /* FEATURE_SUPPORT_VC0848 */
 #ifdef FEATURE_TOUCHPAD
             oemui_touchpadinit();
 #endif
@@ -1478,11 +1444,12 @@ static void route_brew_event(AEEEvent evt, uint16 wParam)
             }
         }
 #endif //FEATURE_HEADSET_SWITCH        
-        
-         if (cls == AEECLSID_SVCPRGAPP && wParam == AVK_END)      	
-         {
-           wParam = AVK_ENDCALL;
-         }
+#ifdef FEATURE_APP_SVCPRG
+        if (cls == AEECLSID_SVCPRGAPP && wParam == AVK_END)      	
+        {
+            wParam = AVK_ENDCALL;
+        }
+#endif
         if (cls == AEECLSID_DIALER && wParam == AVK_END)      	
         {// AVK_END 会关掉全部程序，回到待机界面，这里做转换，避免此问题
             db_items_value_type dbItemValue;
@@ -1684,24 +1651,6 @@ static void send_key_event(AEEEvent evt, const KeyEntry *key)
                                     }
                                 }
                             }
-#ifndef CUST_EDITION
-                            {
-#ifdef FEATURE_SUPPORT_VC0848                                
-                                extern void audio_speaker_ctrl(boolean on);
-#endif
-                                if(!IsMp3PlayerStatusNone()
-                                	|| (TRUE == MediaGallery_GetPlayMusicStatus())
-                                    || (TRUE == is_videoplayer_play()))
-                                {
-#ifdef FEATURE_SUPPORT_VC0848                                                                
-                                    audio_speaker_ctrl(1);
-#else
-                                    ;
-#endif
-                                }
-                            
-                            }
-#endif
                             return;
                             
                         case AVK_FLIP_OPEN:
@@ -1990,18 +1939,12 @@ static void process_key(kpd_key_event_type      key)
 #endif
 {
     static KeyEntry *pKeyEntry = NULL;
-#ifdef FEATURE_SUPPORT_VC0848
-    db_items_value_type db_item;
-#endif
     
     if (HS_NONE_K == key.key_code)
     {
         return;
     }
-#ifdef FEATURE_SUPPORT_VC0848
-    db_get(DB_BACKLIGHT_ON, &db_item);
-#endif
-
+    
     // 背光处理
     if(FALSE == is_dummy_key(key.key_code, key.key_parm))//Don't turn on blight at dummy key event of g_sensor.
     {
@@ -2077,12 +2020,6 @@ static void process_key(kpd_key_event_type      key)
                 else
                 {
                     IBACKLIGHT_Enable(gpBacklight);
-#ifdef FEATURE_SUPPORT_VC0848
-                       if(db_item.bBacklightOn == FALSE)
-#endif /* FEATURE_SUPPORT_VC0848 */                     
-                       {
-                          return;
-                       }
                 }                
 #endif //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
                 }
@@ -2092,13 +2029,9 @@ static void process_key(kpd_key_event_type      key)
                 }
             }
         }    
-    }    
-#ifdef FEATURE_SUPPORT_VC0848
-    // 检查是否需要发送按键事件
-    if (gbsend_keys == FALSE && db_item.bBacklightOn == FALSE)
-#else
+    }
+    
     if (gbsend_keys == FALSE)
-#endif /* FEATURE_SUPPORT_VC0848 */
     {
         return;
     }

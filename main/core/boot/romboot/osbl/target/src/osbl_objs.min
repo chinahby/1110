@@ -75,6 +75,11 @@ ifeq ($(USES_OSBL_CHG_SCREEN),yes)
 include $(LCD_SRC)/lcd.min
 include $(DRVLIB_SRC)/drvLib.min
 endif
+
+#lucid Add for Keypad support int OSBL
+include $(KPD)/kpd.min
+
+
 #include $(CLKREGIM)/clkregim.min
 
 

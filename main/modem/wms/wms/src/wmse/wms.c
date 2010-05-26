@@ -273,6 +273,10 @@ LOCAL rex_crit_sect_type            sms_card_refresh_crit_sect;
 /* Define the wms_msg_info_cache_cb_type */
 wms_msg_info_cache_cb_type wms_msg_info_cache_cb = NULL;
 
+#ifdef CUST_EDITION
+static wms_client_ts_data_s_type client_ts;
+#endif
+
 /* <EJECT> */
 /*===========================================================================
 =============================== MISCELLANEOUS =================================
@@ -493,6 +497,9 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_CFG_SET_ROUTES:
       case WMS_CMD_CFG_GET_ROUTES:
       case WMS_CMD_GSDI_REFRESH_FCN_IND:
+#ifdef CUST_EDITION	  
+      case WMS_CMD_REFRESH_IND:
+#endif /*CUST_EDITION*/	  
     #ifdef FEATURE_GWSMS
 #error code not present
     #endif /* FEATURE_GWSMS */
@@ -503,6 +510,9 @@ wms_cmd_err_e_type wms_check_for_valid_command
     #ifdef FEATURE_APPS_POWER_COLLAPSE
 #error code not present
     #endif /* FEATURE_APPS_POWER_COLLAPSE */
+	    #ifdef FEATURE_APIONE
+#error code not present
+    #endif /* FEATURE_APIONE */
         break;
 
       default:
@@ -529,6 +539,12 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_CFG_SET_MEMORY_FULL:
       case WMS_CMD_CFG_SET_LINK_CONTROL:
       case WMS_CMD_CFG_GET_LINK_CONTROL:
+#ifdef CUST_EDITION	  
+      case WMS_CMD_CFG_SET_MULTISEND:
+#ifdef FEATURE_AUTOREPLACE
+      case WMS_CMD_CFG_SET_AUTOREPLACE:
+#endif        
+#endif /*CUST_EDITION*/
         break;
 
       case WMS_CMD_CFG_GET_MEMORY_STATUS:
@@ -589,7 +605,12 @@ wms_cmd_err_e_type wms_check_for_valid_command
             break;
         }
         break;
-
+#ifdef CUST_EDITION
+      case WMS_CMD_MSG_DELETE_BOX:
+      case WMS_CMD_MSG_COPY:
+        ret_cmd_err = WMS_CMD_ERR_BUSY;
+        break;
+#endif /*CUST_EDITION*/
       case WMS_CMD_MSG_DELETE_ALL:
         switch (cmd_ptr->cmd.msg_delete_all.mem_store)
         {
@@ -662,6 +683,22 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_DC_DISABLE_AUTO_DISCONNECT:
         ret_cmd_err = WMS_CMD_ERR_BUSY;
         break;
+#ifdef CUST_EDITION
+      case WMS_CMD_BC_GET_CONFIG:
+      case WMS_CMD_BC_GET_PREF:
+      case WMS_CMD_BC_SET_PREF:
+      case WMS_CMD_BC_GET_TABLE:
+      case WMS_CMD_BC_SELECT_SRV:
+      case WMS_CMD_BC_GET_ALL_SRV_IDS:
+      case WMS_CMD_BC_GET_SRV_INFO:
+      case WMS_CMD_BC_ADD_SRV:
+      case WMS_CMD_BC_DELETE_SRV:
+      case WMS_CMD_BC_CHANGE_LABEL:
+      case WMS_CMD_BC_DELETE_ALL_SERVICES:
+      case WMS_CMD_BC_SET_PRIORITY_FOR_ALL:
+        ret_cmd_err = WMS_CMD_ERR_BUSY;
+        break;
+#endif /*CUST_EDITION*/
 
 #ifdef FEATURE_BROADCAST_SMS_MULTIMODE
       case WMS_CMD_BC_MM_GET_CONFIG:
@@ -754,7 +791,9 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_DBG_SET_MSG_REF_NUM:
       case WMS_CMD_DBG_CLEAR_SMMA:
         break;
-
+#ifndef CUST_EDITION
+	//case WMS_CMD_MSG_MC_MT_MSG_E:
+#endif        
       // Allow since we could be getting this back
       // after sending MO even if network goes down
       case WMS_CMD_MSG_MC_MO_STATUS_E:
@@ -787,7 +826,11 @@ wms_cmd_err_e_type wms_check_for_valid_command
       case WMS_CMD_GSDI_ASYNC_CB:
       case WMS_CMD_GSDI_CARD_STATUS_CB:
         break;
-
+#ifdef CUST_EDITION
+#if defined(FEATURE_UIM_TOOLKIT)
+      case WMS_CMD_REFRESH_IND:
+#endif        
+#endif /*CUST_EDITION*/
       case WMS_CMD_GSDI_REFRESH_FCN_IND:
       case WMS_CMD_BC_SCPT_DATA:
         ret_cmd_err = WMS_CMD_ERR_BUSY;
@@ -970,6 +1013,12 @@ void wms_process_cmd
     case WMS_CMD_CFG_SET_MEMORY_FULL:
     case WMS_CMD_CFG_SET_LINK_CONTROL:
     case WMS_CMD_CFG_GET_LINK_CONTROL:
+#ifdef CUST_EDITION	
+    case WMS_CMD_CFG_SET_MULTISEND:
+#ifdef FEATURE_AUTOREPLACE
+    case WMS_CMD_CFG_SET_AUTOREPLACE:
+#endif        
+#endif /*CUST_EDITION*/
       wms_cfg_process_cmd( cmd_ptr );
       break;
 
@@ -980,6 +1029,10 @@ void wms_process_cmd
     case WMS_CMD_MSG_READ:
     case WMS_CMD_MSG_WRITE:
     case WMS_CMD_MSG_DELETE:
+#ifdef CUST_EDITION	
+    case WMS_CMD_MSG_DELETE_BOX:
+    case WMS_CMD_MSG_COPY:
+#endif /*CUST_EDITION*/	
     case WMS_CMD_MSG_DELETE_ALL:
     case WMS_CMD_MSG_MODIFY_TAG:
     case WMS_CMD_MSG_READ_TEMPLATE:
@@ -1016,6 +1069,31 @@ void wms_process_cmd
       wms_dc_process_cmd( cmd_ptr );
       break;
 #endif /* FEATURE_CDSMS */
+
+
+    /* BC commands
+    */
+#ifndef CUST_EDITION  /*FEATURE_BROADCAST_SMS*/
+#ifdef FEATURE_BROADCAST_SMS
+    case WMS_CMD_BC_GET_CONFIG:
+    case WMS_CMD_BC_GET_PREF:
+    case WMS_CMD_BC_SET_PREF:
+    case WMS_CMD_BC_GET_TABLE:
+    case WMS_CMD_BC_SELECT_SRV:
+    case WMS_CMD_BC_GET_ALL_SRV_IDS:
+    case WMS_CMD_BC_GET_SRV_INFO:
+    case WMS_CMD_BC_ADD_SRV:
+    case WMS_CMD_BC_DELETE_SRV:
+    case WMS_CMD_BC_CHANGE_LABEL:
+    case WMS_CMD_BC_DELETE_ALL_SERVICES:
+    case WMS_CMD_BC_SET_PRIORITY_FOR_ALL:
+#ifdef FEATURE_CDSMS_IS637B_BROADCAST_SCPT
+    case WMS_CMD_BC_SCPT_DATA: /* Internal command */
+#endif /* FEATURE_CDSMS_IS637B_BROADCAST_SCPT */
+      wms_bc_process_cmd( cmd_ptr );
+      break;
+#endif /* FEATURE_BROADCAST_SMS */
+#endif
 
     /* BC MM commands
     */
@@ -1209,6 +1287,8 @@ void wms_process_signals
 
   if( sigs & WMS_CMD_Q_SIG )
   {
+    rex_sigs_type wms_sigs;
+    
     MSG_MED( "got WMS_CMD_Q_SIG", 0, 0, 0 );
 
     (void) rex_clr_sigs( rex_self(), WMS_CMD_Q_SIG );
@@ -1241,10 +1321,12 @@ void wms_process_signals
     wms_dc_idle_timer_proc();
   }
 
+#ifndef CUST_EDITION
   if( sigs & WMS_MT_ACK_TIMER_SIG )
   {
     wms_msg_cdma_mt_ack_timer_proc();
   }
+#endif
 
   if( sigs & WMS_AWISMS_ACK_TIMER_SIG )
   {
@@ -1449,7 +1531,15 @@ wms_status_e_type wms_cfg_set_routes
 
     if(cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -1506,7 +1596,15 @@ wms_status_e_type wms_cfg_get_routes
   cmd_ptr = wms_get_cmd_buf();
   if( cmd_ptr !=NULL )
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -1565,7 +1663,15 @@ wms_status_e_type wms_cfg_get_memory_status
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -1624,7 +1730,15 @@ wms_status_e_type wms_cfg_get_message_list
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -1881,7 +1995,15 @@ wms_status_e_type wms_cfg_set_primary_client
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -1941,7 +2063,15 @@ wms_status_e_type wms_cfg_set_memory_full
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -1952,7 +2082,143 @@ wms_status_e_type wms_cfg_set_memory_full
 
   return st;
 } /* wms_cfg_set_memory_full */
+#ifdef CUST_EDITION	
+/*=========================================================================
+FUNCTION
+  wms_cfg_set_multisend
 
+DESCRIPTION
+  This allows the primary client to specify its multisend Status.
+
+USAGE
+  Only the primary client will be allowed to set/reset the multisend Status.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  WMS_OK_S
+  WMS_OUT_OF_RESOURCES_S
+
+SIDE EFFECTS
+  A command is sent to WMS task.
+
+SEE ALSO
+
+=========================================================================*/
+wms_status_e_type wms_cfg_set_multisend
+(
+  wms_client_id_type               client_id,
+  wms_cmd_cb_type                  cmd_cb,
+  const void                     * user_data,
+  boolean                          multisend
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_CFG_SET_MULTISEND;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+  cmd_backup.cmd.cfg_set_multisend.multisend = multisend;
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+  return st;
+} /* wms_cfg_set_multisend */
+
+#ifdef FEATURE_AUTOREPLACE
+/*=========================================================================
+FUNCTION
+  wms_cfg_set_autoreplace
+
+DESCRIPTION
+  This allows the primary client to specify its autoreplace Status.
+
+USAGE
+  Only the primary client will be allowed to set/reset the autoreplace Status.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  WMS_OK_S
+  WMS_OUT_OF_RESOURCES_S
+
+SIDE EFFECTS
+  A command is sent to WMS task.
+
+SEE ALSO
+
+=========================================================================*/
+wms_status_e_type wms_cfg_set_autoreplace
+(
+  wms_client_id_type               client_id,
+  wms_cmd_cb_type                  cmd_cb,
+  const void                     * user_data,
+  boolean                          autoreplace
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_CFG_SET_AUTOREPLACE;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+  cmd_backup.cmd.cfg_set_autoreplace.autoreplace = autoreplace;
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+  return st;
+} /* wms_cfg_set_autoreplace */
+#endif /* FEATURE_AUTOREPLACE */
+#endif /*CUST_EDITION*/
 /* <EJECT> */
 /*===========================================================================
 
@@ -1992,7 +2258,11 @@ wms_status_e_type wms_msg_send
   wms_cmd_type        *cmd_ptr;
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+#ifdef CUST_EDITION	
+#if defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+  return WMS_OUT_OF_RESOURCES_S;
+#endif  
+#endif /*CUST_EDITION*/
   cmd_backup.hdr.cmd_id      = WMS_CMD_MSG_SEND;
   cmd_backup.hdr.client_id   = client_id;
   cmd_backup.hdr.cmd_cb      = cmd_cb;
@@ -2002,12 +2272,50 @@ wms_status_e_type wms_msg_send
   {
     cmd_backup.cmd.msg_send.send_mode = send_mode;
     cmd_backup.cmd.msg_send.message   = *message_ptr;
-
+#ifdef CUST_EDITION	    
+    // 去掉 MO 不需要的时间戳
+    if ((WMS_SEND_MODE_CLIENT_MESSAGE == send_mode) &&
+        (cmd_backup.cmd.msg_send.message.u.cdma_message.raw_ts.format == WMS_FORMAT_CDMA))
+    {
+        wms_raw_ts_data_s_type    *raw_ts;
+        
+        raw_ts = &(cmd_backup.cmd.msg_send.message.u.cdma_message.raw_ts);
+        
+        if ((wms_ts_decode(raw_ts, &client_ts) == WMS_OK_S))
+        {
+            if (client_ts.u.cdma.mask & WMS_MASK_BD_MC_TIME)
+            {
+                client_ts.u.cdma.mask = client_ts.u.cdma.mask & (~WMS_MASK_BD_MC_TIME);
+            }
+            
+            (void)wms_ts_encode(&client_ts, raw_ts);
+        }
+    }
+    
+#ifdef FEATURE_CARRIER_ISRAEL_PELEPHONE
+    {
+        extern void wmsutil_formatmessage(wms_client_message_s_type *pclt_msg);
+        
+        // 以色列对发出的短信格式有要求，为取得最小修改，故在消息发出前重新格式化消息内容
+        wmsutil_formatmessage(&(cmd_backup.cmd.msg_send.message));
+    }
+#endif
+#endif /*CUST_EDITION*/
     cmd_ptr = wms_get_cmd_buf();
 
     if( cmd_ptr != NULL)
     {
+#ifdef CUST_EDITION		
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
+#endif /*CUST_EDITION*/
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -2071,7 +2379,15 @@ wms_status_e_type wms_msg_ack
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -2136,7 +2452,15 @@ wms_status_e_type wms_msg_read
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2195,7 +2519,15 @@ wms_status_e_type wms_msg_write
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -2263,7 +2595,15 @@ wms_status_e_type wms_msg_delete
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2274,8 +2614,185 @@ wms_status_e_type wms_msg_delete
 
   return st;
 } /* wms_msg_delete */
+#ifdef CUST_EDITION	
+/* <EJECT> */
+/*==============================================================================
+FUNCTION
+    wms_msg_delete_box
 
+DESCRIPTION
+    Allow the client to delete all message in a message box.
 
+RETURN VALUE
+    WMS_OK_S
+    WMS_OUT_OF_RESOURCES_S
+
+note
+    A command is sent to WMS task.
+==============================================================================*/
+wms_status_e_type wms_msg_delete_box
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  wms_deletebox_e_type            box_deltype
+)
+{
+    wms_status_e_type   st = WMS_OK_S;
+    wms_cmd_type        *cmd_ptr;
+    
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    
+    cmd_backup.hdr.cmd_id      = WMS_CMD_MSG_DELETE_BOX;
+    cmd_backup.hdr.client_id   = client_id;
+    cmd_backup.hdr.cmd_cb      = cmd_cb;
+    cmd_backup.hdr.user_data   = (void*)user_data;
+    
+    cmd_backup.cmd.msg_delete_box.box_deltype = box_deltype;
+    
+    
+    cmd_ptr = wms_get_cmd_buf();
+
+    if (cmd_ptr != NULL)
+    {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+        q_link_type teplink;
+        
+        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+        * cmd_ptr = cmd_backup;
+        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+        * cmd_ptr = cmd_backup;
+#endif    
+        wms_put_cmd( cmd_ptr );
+    }
+    else
+    {
+        wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+        st = WMS_OUT_OF_RESOURCES_S;
+    }
+    
+    return st;
+} /* wms_msg_delete_box */
+
+/* <EJECT> */
+/*==============================================================================
+FUNCTION
+    wms_msg_copy
+
+DESCRIPTION
+    Allow the client to copy a message from one Storage to another Storage.
+
+RETURN VALUE
+    WMS_OK_S
+    WMS_OUT_OF_RESOURCES_S
+
+note
+    A command is sent to WMS task. Only use for MT message copy between UIM
+    and NV. If index_dest not equal to WMS_DUMMY_MESSAGE_INDEX, the dest message
+    will be replaced.
+==============================================================================*/
+wms_status_e_type wms_msg_copy
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  wms_msg_copy_type               *pmsg_copy
+)
+{
+    wms_status_e_type   st = WMS_OK_S;
+    wms_cmd_type        *cmd_ptr;
+    
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    
+    cmd_backup.hdr.cmd_id      = WMS_CMD_MSG_COPY;
+    cmd_backup.hdr.client_id   = client_id;
+    cmd_backup.hdr.cmd_cb      = cmd_cb;
+    cmd_backup.hdr.user_data   = (void*)user_data;
+    
+    (void)memcpy(&(cmd_backup.cmd.msg_copy.copypram), pmsg_copy, sizeof(wms_msg_copy_type));
+    
+    cmd_ptr = wms_get_cmd_buf();
+
+    if (cmd_ptr != NULL)
+    {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+        q_link_type teplink;
+        
+        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+        * cmd_ptr = cmd_backup;
+        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+        * cmd_ptr = cmd_backup;
+#endif    
+        wms_put_cmd( cmd_ptr );
+    }
+    else
+    {
+        wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+        st = WMS_OUT_OF_RESOURCES_S;
+    }
+    
+    return st;
+} /* wms_msg_copy */
+
+#if defined(FEATURE_UIM_TOOLKIT)
+/*==============================================================================
+FUNCTION
+    wms_msg_refresh_ruimmsg
+
+DESCRIPTION
+    Allow the client to rebuild ruim sms cache.
+
+RETURN VALUE
+    WMS_OK_S
+    WMS_OUT_OF_RESOURCES_S
+
+note
+
+==============================================================================*/
+wms_status_e_type wms_msg_refresh_ruimmsg
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+)
+{
+    wms_status_e_type   st = WMS_OK_S;
+    wms_cmd_type        *cmd_ptr;
+    
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    
+    cmd_backup.hdr.cmd_id      = WMS_CMD_REFRESH_IND;
+    cmd_backup.hdr.client_id   = client_id;
+    cmd_backup.hdr.cmd_cb      = cmd_cb;
+    cmd_backup.hdr.user_data   = (void*)user_data;
+    
+    cmd_ptr = wms_get_cmd_buf();
+
+    if (cmd_ptr != NULL)
+    {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+        q_link_type teplink;
+        
+        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+        * cmd_ptr = cmd_backup;
+        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+        * cmd_ptr = cmd_backup;
+#endif    
+        wms_put_cmd( cmd_ptr );
+    }
+    else
+    {
+        wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+        st = WMS_OUT_OF_RESOURCES_S;
+    }
+    
+    return st;
+} /* wms_msg_refresh_ruimmsg */
+#endif
+#endif /*CUST_EDITION*/
 /* <EJECT> */
 /*=========================================================================
 FUNCTION
@@ -2322,7 +2839,15 @@ wms_status_e_type wms_msg_delete_all
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2382,7 +2907,15 @@ wms_status_e_type wms_msg_modify_tag
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2442,7 +2975,15 @@ wms_status_e_type wms_msg_read_template
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2540,7 +3081,15 @@ wms_status_e_type wms_msg_write_template
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif   
 
     // We cannot assume the client set the right combination of message mode and 
     // memory store. Without this check the phone might crash.
@@ -2621,7 +3170,15 @@ wms_status_e_type wms_msg_delete_template
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2678,7 +3235,15 @@ wms_status_e_type wms_msg_delete_template_all
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2977,7 +3542,15 @@ wms_status_e_type wms_dc_enable_auto_disconnect
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3038,7 +3611,15 @@ wms_status_e_type wms_dc_disable_auto_disconnect
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3103,7 +3684,15 @@ wms_status_e_type wms_dc_connect
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3164,7 +3753,15 @@ wms_status_e_type wms_dc_disconnect
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3181,6 +3778,887 @@ wms_status_e_type wms_dc_disconnect
   return st;
 
 } /* wms_dc_disconnect() */
+
+
+#ifdef CUST_EDITION	
+/* <EJECT> */
+/*===========================================================================
+
+                            Broadcast Group
+
+                        API FUNCTION DEFINITIONS
+
+===========================================================================*/
+
+
+/*=========================================================================
+FUNCTION
+  wms_bc_get_config
+
+DESCRIPTION
+  This function is used to retrieve the configuration for broadcast SMS.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_config
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_GET_CONFIG;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+  return st;
+
+} /* wms_bc_get_config() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_get_pref
+
+DESCRIPTION
+  This function is used to retrieve the user preference for broadcast SMS.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_pref
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_GET_PREF;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+  return st;
+
+} /* wms_bc_get_pref() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_set_pref
+
+DESCRIPTION
+  This function is used to set the user preference for broadcast SMS.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_set_pref
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  wms_bc_pref_e_type              pref
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_SET_PREF;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+  cmd_backup.cmd.bc_set_pref.bc_pref  = pref;
+
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+
+  return st;
+
+} /* wms_bc_set_pref() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_get_table
+
+DESCRIPTION
+  This function is used to retrieve the service table for broadcast SMS.
+
+  NOTE: To prevent retrieving a large service table, the function
+  wms_bc_get_all_service_ids() can be called to retrieve all service
+  IDs, where each ID is much smaller than a complete table entry, and then
+  the function wms_bc_get_service_info() can be called for each service ID
+  in order to retrieve the table entries one by one.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_table
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_GET_TABLE;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+
+  return st;
+
+} /* wms_bc_get_table() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_select_service
+
+DESCRIPTION
+  This function is used to select a broadcast SMS service
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_select_service
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  const wms_bc_service_id_s_type  *srv_id,
+  boolean                   selected,
+  wms_priority_e_type       priority
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_SELECT_SRV;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+  cmd_backup.cmd.bc_select_srv.srv_id   = *srv_id;
+  cmd_backup.cmd.bc_select_srv.selected = selected;
+  cmd_backup.cmd.bc_select_srv.priority = priority;
+
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+
+  return st;
+
+} /* wms_bc_select_service() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_get_all_service_ids
+
+DESCRIPTION
+  This function is used to retrieve all the service IDs in the broadcast
+  SMS service table. After the retrieval of the service IDs, the function
+  wms_bc_get_service_info() can be called to retrieve the complete
+  table entries one by one.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_all_service_ids
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_GET_ALL_SRV_IDS;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+
+  return st;
+
+} /* wms_bc_get_all_service_ids() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_get_service_info
+
+DESCRIPTION
+  This function is used to retrieve a table entry in the broadcast SMS
+  service table using a service ID.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_get_service_info
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  const wms_bc_service_id_s_type  *srv_id
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_GET_SRV_INFO;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  cmd_backup.cmd.bc_get_srv_info.srv_id = *srv_id;
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+
+  return st;
+
+} /* wms_bc_get_service_info() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_add_service
+
+DESCRIPTION
+  This function is used to add an entry to the broadcast SMS service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_add_service
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  const wms_bc_service_info_s_type      *srv_info
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_ADD_SRV;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  cmd_backup.cmd.bc_add_srv.srv_info = *srv_info;
+
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+
+  return st;
+
+} /* wms_bc_add_serivice() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_delete_service
+
+DESCRIPTION
+  This function is used to delete an entry to the broadcast SMS service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_delete_service
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  const wms_bc_service_id_s_type        *srv_id
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_DELETE_SRV;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  cmd_backup.cmd.bc_delete_srv.srv_id  = *srv_id;
+
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+
+  return st;
+
+} /* wms_bc_delete_service() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_change_label
+
+DESCRIPTION
+  This function is used to change an entry in the broadcast SMS service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_change_label
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  const wms_bc_service_id_s_type        *srv_id,
+  const char                            *label_ptr
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_CHANGE_LABEL;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  if(srv_id == NULL || label_ptr == NULL)
+  {
+    MSG_ERROR("Null Ptr: wms_bc_change_label",0,0,0);
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NULL_PTR );
+    st = WMS_NULL_PTR_S;
+  }
+  else
+  {
+    cmd_backup.cmd.bc_change_label.srv_id = *srv_id;
+    memcpy( cmd_backup.cmd.bc_change_label.label,
+            label_ptr,
+            WMS_BC_SRV_LABEL_SIZE );
+
+    cmd_ptr = wms_get_cmd_buf();
+
+    if( cmd_ptr != NULL)
+    {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+      * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
+      wms_put_cmd( cmd_ptr );
+    }
+    else
+    {
+      wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+      st = WMS_OUT_OF_RESOURCES_S;
+    }
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+  return st;
+
+} /* wms_bc_change_label() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_delete_all_services
+
+DESCRIPTION
+  This function is used to delete all entries from the broadcast service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_delete_all_services
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data
+)
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_DELETE_ALL_SERVICES;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+  /* no command data needed */
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+
+  return st;
+
+} /* wms_bc_delete_all_services() */
+
+/* <EJECT> */
+/*=========================================================================
+FUNCTION
+  wms_bc_set_priority_for_all
+
+DESCRIPTION
+  This function is used to change priority levels for all services in the
+  broadcast service table.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  Status of the request.
+
+SIDE EFFECTS
+  Request is added to the request queue.
+
+=========================================================================*/
+wms_status_e_type wms_bc_set_priority_for_all
+(
+  wms_client_id_type              client_id,
+  wms_cmd_cb_type                 cmd_cb,
+  const void                      *user_data,
+  wms_priority_e_type             priority
+)
+
+{
+  wms_status_e_type   st = WMS_OK_S;
+  wms_cmd_type        *cmd_ptr = & cmd_backup;
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  cmd_backup.hdr.cmd_id      = WMS_CMD_BC_SET_PRIORITY_FOR_ALL;
+  cmd_backup.hdr.client_id   = client_id;
+  cmd_backup.hdr.cmd_cb      = cmd_cb;
+  cmd_backup.hdr.user_data   = (void*)user_data;
+
+#if (defined(FEATURE_BROADCAST_SMS) && !defined(FEATURE_CDSMS_BROADCAST))
+
+  cmd_backup.cmd.bc_set_priority_for_all.priority = priority;
+
+  cmd_ptr = wms_get_cmd_buf();
+
+  if( cmd_ptr != NULL)
+  {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
+    wms_put_cmd( cmd_ptr );
+  }
+  else
+  {
+    wms_client_cmd_status( & cmd_backup, WMS_CMD_ERR_NO_RESOURCE );
+    st = WMS_OUT_OF_RESOURCES_S;
+  }
+
+#else /* FEATURE_BROADCAST_SMS */
+  wms_client_cmd_status( cmd_ptr, WMS_CMD_ERR_UNSUPPORTED );
+  st = WMS_UNSUPPORTED_S;
+#endif /* FEATURE_BROADCAST_SMS */
+
+
+  return st;
+
+} /* wms_bc_set_priority_for_all() */
+#endif /*CUST_EDITION*/
 
 /* <EJECT> */
 /*===========================================================================
@@ -3249,7 +4727,15 @@ wms_status_e_type wms_bc_mm_get_config
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -3325,7 +4811,15 @@ wms_status_e_type wms_bc_mm_get_pref
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -3403,7 +4897,15 @@ wms_status_e_type wms_bc_mm_set_pref
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -3485,7 +4987,15 @@ wms_status_e_type wms_bc_mm_get_table
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -3565,7 +5075,15 @@ wms_status_e_type wms_bc_mm_select_service
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -3644,7 +5162,15 @@ wms_status_e_type wms_bc_mm_get_all_service_ids
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -3723,7 +5249,15 @@ wms_status_e_type wms_bc_mm_get_service_info
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -3830,7 +5364,15 @@ wms_status_e_type wms_bc_mm_add_services
 
       if( cmd_ptr != NULL)
       {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+        q_link_type teplink;
+    
+        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
         * cmd_ptr = cmd_backup;
+        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+        * cmd_ptr = cmd_backup;
+#endif    
         wms_put_cmd( cmd_ptr );
       }
       else
@@ -3925,7 +5467,15 @@ wms_status_e_type wms_bc_mm_delete_services
 
       if( cmd_ptr != NULL)
       {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+        q_link_type teplink;
+    
+        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
         * cmd_ptr = cmd_backup;
+        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+        * cmd_ptr = cmd_backup;
+#endif    
         wms_put_cmd( cmd_ptr );
       }
       else
@@ -4005,7 +5555,15 @@ wms_status_e_type wms_bc_mm_change_service_info
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4081,7 +5639,15 @@ wms_status_e_type wms_bc_mm_delete_all_services
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4160,7 +5726,15 @@ wms_status_e_type wms_bc_mm_select_all_services
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4233,7 +5807,15 @@ wms_status_e_type wms_bc_mm_set_priority_for_all_services
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4398,7 +5980,15 @@ wms_status_e_type wms_bc_mm_get_reading_pref
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4476,7 +6066,15 @@ wms_status_e_type wms_bc_mm_set_reading_pref
 
     if( cmd_ptr != NULL)
     {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+      q_link_type teplink;
+    
+      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
+      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+      * cmd_ptr = cmd_backup;
+#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4544,7 +6142,15 @@ wms_status_e_type wms_dbg_reset_tl_seq_num
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4694,7 +6300,15 @@ wms_status_e_type wms_dbg_get_retry_interval
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4749,7 +6363,15 @@ wms_status_e_type wms_dbg_set_retry_interval
 
   if( cmd_ptr != NULL)
   {
+#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
+    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    * cmd_ptr = cmd_backup;
+#endif    
     wms_put_cmd( cmd_ptr );
   }
   else

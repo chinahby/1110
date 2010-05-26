@@ -22,9 +22,6 @@
 #ifdef WIN32
 #include "oemhelperfunctype.h"
 #endif//WIN32
-#ifdef FEATURE_SUPPORT_VC0848
-#include "Vc0848.h"
-#endif
 #ifdef USES_MMI
 #include "oemui.h"
 #endif
@@ -1836,10 +1833,6 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
          TRUE == MediaGallery_CheckUdiskStat())
       {
          boolean bRet = FALSE;
-
-#ifdef FEATURE_SUPPORT_VC0848
-         bRet = MediaGallery_StopUDisk(pMe);
-#endif
       }
       return TRUE;
 
@@ -2603,11 +2596,6 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          if(display_jpg_done == VC_JPEG_DECODE_DOING)
          {
             DBGPRINTF("VC_ITM_JPG_STOP_DECODE_I");
-#ifndef AEE_SIMULATOR
-#ifdef FEATURE_SUPPORT_VC0848
-            VC_DeviceControl(VC_ITM_JPG_STOP_DECODE_I,VC_FUNC_PLAY_ON,0);
-#endif
-#endif
          }
          return TRUE;
       }
@@ -8247,84 +8235,6 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
                            &nAscent,
                            &nDescent);
 
-
-#ifndef AEE_SIMULATOR
-#ifdef FEATURE_SUPPORT_VC0848
-
-   /*如果是使用中星微848解码*/
-   if(pMe->m_bV0848DecodeImg == TRUE)
-   {
-      vc_union_type vc_data;
-      char *pplayfile = NULL;
-      AEERect OldRc;
-
-      if(display_jpg_done == VC_JPEG_DECODE_DONE)
-      {
-         MG_FARF(ADDR, ("848 already decode!"));
-         //return EFAILED;
-      }
-      //MGAppUtil_DrawImageViewerBG(pMe);
-      //  IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-      IDISPLAY_DrawRect(pMe->m_pDisplay,
-                        NULL,
-                        RGB_BLACK,
-                        RGB_BLACK,
-                        IDF_RECT_FILL);
-      IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-
-      rc.x = MGAppUtil_DrawTitleArrow(pMe, NULL) + 1;
-      rc.dx = pMe->m_rc.dx - rc.x * 2;
-      rc.y = 1;
-      rc.dy = nAscent + nDescent;
-
-      bRet = MGAppUtil_ShrinkString(pDisp,
-                                    rc.dx,
-                                    wszTitle,
-                                    (AECHAR **)&pszTitle);
-      if(NULL == pszTitle)
-         bRet = FALSE;
-
-      /*update display buffer immediately, otherwise the data may stay in
-       * memory buffer, and can not send to 848*/
-
-
-      //VC_DeviceControl(VC_ITM_JPG_DISPCLR_I, VC_FUNC_PLAY_ON, &vc_data);
-      pplayfile = SPLITPATH((const char*)pszPath, MG_MASSCARD_ROOTDIR);
-      STRCPY((char *)&vc_data.play_info.szFileName,pplayfile);
-      DBGPRINTF("VC JPEG Decode:%s", (char *)&vc_data.play_info.szFileName);
-      vc_data.play_info.entry = VC_JPEG_ENTRY_FS;
-
-      //if we use VIM848 decode jpeg photo, now call it
-#ifdef FEATURE_SUPPORT_VC0848      
-      VC_DeviceControl(VC_ITM_JPG_DECODE_I, VC_FUNC_PLAY_ON, &vc_data);
-#endif
-      while(  display_jpg_done != VC_JPEG_DECODE_DONE)
-      {
-         AEEOS_Sleep(20);
-      }
-      DrawTextWithProfile(pMe->m_pShell,
-                          pDisp,
-                          RGB_WHITE,//_NO_TRANS,
-                          AEE_FONT_BOLD,
-                          (AECHAR *)(bRet == TRUE ? pszTitle : wszTitle),
-                          -1,
-                          0,
-                          0,
-                          &rc,
-                          IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
-      IDisplay_GetClipRect(pMe->m_pDisplay, &OldRc);
-      IDisplay_SetClipRect(pMe->m_pDisplay, &rc);
-      IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-      IDisplay_SetClipRect(pMe->m_pDisplay, &OldRc);
-
-      MGAppUtil_UpdateImgViewerSoftkey(pMe);
-
-      FREEIF(pszTitle);
-      return SUCCESS;
-   }
-#endif   
-#endif
-
    po = pMe->m_pImage;
    if(NULL == po)
    {
@@ -9118,10 +9028,6 @@ static void MGAppUtil_StartUDisk(void *po)
       MG_FARF(ADDR, ("MGAppUtil_StartUDisk bad parameter!!!"));
       return;
    }
-
-#ifdef FEATURE_SUPPORT_VC0848
-   bRet = MediaGallery_StartUDisk(pMe);
-#endif
 
    if(FALSE == bRet)
    {

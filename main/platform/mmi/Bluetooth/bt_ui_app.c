@@ -15,9 +15,6 @@
 #include "MediaGalleryApp.h"
 #endif
 #endif
-#ifdef FEATURE_SUPPORT_VC0848
-#include "Vc0848.h"
-#endif
 
 static bt_ui_start *ui_start = NULL;
 //////////////////////////////////////////////////////////////////////////
@@ -671,17 +668,6 @@ void bt_ui_process_suspend_event(tBTUI_BTA_MSG* p_msg,bt_ui_start_fun * fun)
     {
         return;
     }
-#ifdef FEATURE_SUPPORT_VC0848
-    switch(VC_GetCurrentDevice())
-    {
-        case VC_DEV_CAMERA:
-            ISHELL_SendEvent(bt_ui_get_shell(), AEECLSID_APP_CAMERA, EVT_APP_INTERRUPT, 0, 0);
-            break;
-
-        default:
-            break;
-    }
-#endif
 
     MEMSET(&ui_start->msg,0,sizeof(tBTUI_BTA_MSG));
     ui_start->msg.pin_req.hdr.event = p_msg->hdr.event;

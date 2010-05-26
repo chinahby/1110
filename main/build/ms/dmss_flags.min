@@ -61,6 +61,8 @@ CHECK_4_CERTIFICATES = ./check_4_certificates  # Waits for Certificates to be ge
 MOD_ELF_FLAGS= $(QCTHDRGENTOOLS)/modify_elf_flags
 RESERVE_HASH_SEG = $(HEADERGEN)/reserve_hash_seg.exe
 
+#Gemsea Add
+BREWRC=$(BREWTOOLSDIR)/ResourceEditor/brewrc
 #-------------------------------------------------------------------------------
 # Windows/Unix Copy
 #-------------------------------------------------------------------------------
@@ -160,6 +162,12 @@ EXTENSIONS     = -DQC_MODIFIED -Dinline=__inline # Flags for various target exte
 
 MEMLIST        = memusage.lf                   # List file of memory objects and groups
 
+ifeq ($(USES_MMI),yes)
+RF_NV_H = -DMODEL_RF_NV_H=\"$(MODEL_RF_NV)\"#
+SVC_NV_H = -DCUST_SVC_NV_H=\"$(CUST_SVC_NV)\"#
+OEM_NV_H = -DCUST_OEM_NV_H=\"$(CUST_OEM_NV)\"#
+endif
+
 ASIC_UC       := $(shell perl -e 'print uc("$(ASIC)")')
 ASIC_NOREV    := $(shell perl -e 'print substr("$(ASIC)",1,4)')
 
@@ -196,6 +204,10 @@ PVVRTK_FLAG   = -DFEATURE_PVVRTK_TEST#          # PVVRTK Settings
 #-------------------------------------------------------------------------------
 
 DMSS_CFLAGS = $(ARM) $(SURF) $(CUSTH) $(EXTENSIONS) $(TIMETEST) $(ASSERT_FATAL)
+ifeq ($(USES_MMI),yes)
+DMSS_CFLAGS+=$(OEM_NV_H) $(RF_NV_H) $(SVC_NV_H)
+DMSS_CFLAGS += -DUSES_MMI -DCUST_EDITION
+endif
 RVCT_DMSS_CFLAGS = $(RVCT_ARM) $(SURF) $(CUSTH) $(EXTENSIONS) $(TIMETEST) $(ASSERT_FATAL)
 DEPEND_FLAGS= -D SMF_DEPEND
 

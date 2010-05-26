@@ -665,7 +665,45 @@ void wms_msg_process_retry_sig
 (
   void
 );
+#ifdef CUST_EDITION
+/*=========================================================================
+FUNCTION
+  wms_mo_timer
 
+DESCRIPTION
+  MO Message Timer callback function
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+=========================================================================*/
+void wms_mo_timer(int4 ms_interval, void *user_data_ptr);
+
+/*=========================================================================
+FUNCTION
+  wms_mt_timer
+
+DESCRIPTION
+  MT Message Timer callback function
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+=========================================================================*/
+void wms_mt_timer(int4 ms_interval, void *user_data_ptr);
+#endif
 #endif /* FEATURE_CDSMS || FEATURE_GWSMS */
 
 #endif /* WMSMSG_H */

@@ -248,7 +248,7 @@ ifeq ($(USES_PS_LIB), yes)
 QCTLIBS := $(QCTLIBS) $(LIBDIR)/ps.lib
 endif
 
-QCTLIBS := $(QCTLIBS) $(LIBDIR)/trm.lib
+#Gemsea Remove QCTLIBS := $(QCTLIBS) $(LIBDIR)/trm.lib
 
 QCTLIBS := $(QCTLIBS) $(LIBDIR)/hw.lib
 
@@ -306,7 +306,58 @@ endif
 
 # The following are the target rules supported by this makefile with the
 # exception of the 'depend' target which is located at the end of this file.
+ifeq ($(USES_MMI),yes)
+#-------------------------------------------------------------------------------
+#
+# Rules for building Const File System
+#
+#-------------------------------------------------------------------------------
+CONSTFILE_FILENAMES 	= $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(CONSTFILE_FILES))))
+CONSTFILE_SOURCES 		= $(addsuffix .c, $(CONSTFILE_FILENAMES))
 
+CONSTFILE_FSLOC 		= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES)))))
+CONSTFILE_FLAGENT 		= $(firstword $(filter FLAGS:%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES)))))
+CONSTFILE_FLAGS 		= $(subst FIXED,-f,$(subst ., ,$(subst FLAGS:, , $(CONSTFILE_FLAGENT))))
+
+CONSTFILE_OBJS 			= $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o))
+CONSTFILE_BAR_FSLOC 	= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $(<:%.brx=%.bar))|%, $(CONSTFILE_FILES)))))
+CONSTFILE_BAR  			= $(filter %.bar, $(CONSTFILE_FILENAMES))
+CONSTFILE_BAR_SRC 		= $(addsuffix .c, $(CONSTFILE_BAR))
+CONSTFILE_BIN  			= $(filter-out %.bar, $(CONSTFILE_FILENAMES))
+CONSTFILE_BIN_SRC 		= $(addsuffix .c, $(CONSTFILE_BIN))
+
+$(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES)
+	@echo ------------------------------------------------------------------------
+	@echo Generating $@
+	@cp $< $@
+	@chmod 666 $@
+	@perl $(BREWDIR)/pk/utils/OEMConstFileMod.pl $@ $(CONSTFILE_FILENAMES)
+	@echo ------------------------------------------------------------------------
+	
+OBJECTS += $(CONSTFILE_OBJS)
+
+$(CONSTFILE_BIN_SRC) : %.c: %
+	@echo ------------------------------------------------------------------------
+	@echo Creating C File $@
+	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$<) -d$(CONSTFILE_FSLOC) $(CONSTFILE_FLAGS) -o$(subst /,\\,$(TARGETDIR)/$@)
+	@echo ------------------------------------------------------------------------
+
+$(CONSTFILE_BAR_SRC) : %.bar.c: %.brx
+	@echo ------------------------------------------------------------------------
+	@echo Build Resource $(<:%.brx=%.bar)
+	@$(BREWRC) -h $(<:%.brx=%.brh) -o $(<:%.brx=%.bar) $<
+	@echo ------------------------------------------------------------------------
+	@echo ------------------------------------------------------------------------
+	@echo Creating C File $@
+	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$(<:%.brx=%.bar)) -d$(CONSTFILE_BAR_FSLOC) -o$(subst /,\\,$(TARGETDIR)/$@)
+	@echo ------------------------------------------------------------------------
+
+.PHONY : mmires
+mmires: $(CONSTFILE_SOURCES) $(TARGETDIR)/OEMConstFiles_Dynamic.c
+	@echo ------------------------------------------------------------------
+	@echo BREW RESOURCE BUILDER
+	@echo ------------------------------------------------------------------
+endif	
 #-------------------------------------------------------------------------------
 # DMSS target
 #-------------------------------------------------------------------------------
@@ -321,11 +372,16 @@ ifneq ($(USES_OBJECT_ONLY),yes)
 ifeq ($(USES_REX),yes)
 dmss : rvctflashtools setup flashtools deps libs media exe $(TARGET).bin fotapacker prereqs 
 else
-dmss : rvctflashtools setup flashtools deps libs media exe $(TARGET).bin fotapacker prereqs memmap 
+dmss : mmires rvctflashtools setup flashtools deps libs media  exe $(TARGET).bin fotapacker prereqs memmap 
 endif
 else
 dmss : rvctflashtools setup flashtools deps libs media exe $(TARGET).bin fotapacker memmap 
 endif
+
+
+genobjs:$(OBJECTS) $(QCTLIBS)# $(LIBOBJECTS)	
+	@echo "~~~~~~~~~~~~~~~~~~~~genobjs finish~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	
 
 #-------------------------------------------------------------------------------
 # Dependencies
@@ -722,8 +778,11 @@ $(TARGET).$(EXETYPE) : $(OBJECTS) $(QCTLIBS)# $(LIBOBJECTS)
 	$(link)
 	$(RemListFiles)
 	$(GenFeatList)
-
-BUILD_VERSION=-DBUILD_ASIC=\"$(ASIC)\" -DBUILD_TARGET=\"$(BUILD)\" -DBUILD_VER=\"$(VERSION)\"
+ifeq ($(USES_MMI),yes)
+BUILD_VERSION=-DBUILD_ASIC=\"$(ASIC)\" -DBUILD_TARGET=\"$(BUILD)\" -DBUILD_VER=\"$(VERSION)\" -DMODELNAME=\"$(MODELNAME)\" -DMODELVERSION=\"$(MODELVERSION)\"
+else
+#BUILD_VERSION=-DBUILD_ASIC=\"$(ASIC)\" -DBUILD_TARGET=\"$(BUILD)\" -DBUILD_VER=\"$(VERSION)\" 
+endif
 
 #If running a distributed build, run the link step local; otherwise
 #this pragma is ignored
@@ -736,8 +795,7 @@ BUILD_VERSION=-DBUILD_ASIC=\"$(ASIC)\" -DBUILD_TARGET=\"$(BUILD)\" -DBUILD_VER=\
 #-------------------------------------------------------------------------------
 
 # The object subdirectory, target image file, and target hex file are deleted.
-
-cleanamss:
+cleanamss:	
 	@echo ------------------------------------------------------------------------
 	@echo Deleting the Progressive Boot Scatter Loader
 	@-if test -n "$(USES_PROGRESSIVE_BOOT)"; then echo    ... remove Progressive Boot Scatter Loader; rm -f $(BUILDMS)/$(SCLFILE_IN); fi
@@ -764,10 +822,10 @@ endif
 	@-rm -f $(ASIC)_$(BUILD_KCFG)_rom_$(FLASH_TYPE).scl
 	@-rm -f $(ASIC)_$(BUILD_KCFG)_rom_$(FLASH_TYPE)_2cs.scl
 
-	@echo    ... remove static BREW txt files
-	@-rm -f $(UI)/*.txt
-	@echo    ... remove .i and .lst files
-	@-find $(SRCROOT)/. -name '*.i' | xargs rm -f
+#Gemsea Remove	@echo    ... remove static BREW txt files
+#Gemsea Remove	@-rm -f $(UI)/*.txt
+#Gemsea Remove	@echo    ... remove .i and .lst files
+#Gemsea Remove	@-find $(SRCROOT)/. -name '*.i' | xargs rm -f
 ifneq ($(USES_ZBLD), yes)
 	@echo    ... remove qdsp/mdsp files
 	@-rm -f $(ADSP)/qdspext.c

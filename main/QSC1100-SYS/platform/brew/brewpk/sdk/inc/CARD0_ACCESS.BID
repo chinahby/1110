@@ -1,7 +1,0 @@
-#ifndef CARD0_ACCESS_BID
-#define CARD0_ACCESS_BID
-
-#define AEECLSID_CARD0_ACCESS    	0x0101414e
-
-#endif //CARD0_ACCESS_BID
-

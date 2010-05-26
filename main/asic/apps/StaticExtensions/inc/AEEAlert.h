@@ -10,7 +10,6 @@ SERVICES:  AEE Alert Interface
 GENERAL DESCRIPTION:
         Base level definitions, typedefs, etc. for AEE SuppSvc/
 
-        Copyright © 2003 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -35,7 +34,9 @@ when       who     what, where, why
 #include "AEEComdef.h"
 #include "ALERT.BID"
 #include "ALERT_NOTIFIER.BID"
-
+#ifdef CUST_EDITION
+#include "AEERinger.h"
+#endif
 
 /* Alerting
 */
@@ -52,6 +53,9 @@ typedef enum
 #define AEEALERT_CALLTYPE_VIDEO   3
 #define AEEALERT_CALLTYPE_FAX     4
 #define AEEALERT_CALLTYPE_TEST    5
+#ifdef CUST_EDITION
+#define TIME_MS_SMSMP3RING_DURATION             10000
+#endif
 
 typedef enum{
   AEEALERT_ALERT_NONE = 0,
@@ -111,9 +115,29 @@ typedef enum{
   AEEALERT_ALERT_IS53A_PPPP_M, 
   AEEALERT_ALERT_IS53A_PPPP_H,                                
   AEEALERT_ALERT_IS53A_PPPP_L,
+#ifdef CUST_EDITION  
+  AEEALERT_ALERT_MINUTE_BEEP,
+  AEEALERT_ALERT_LOW_BATTERY, 
+  AEEALERT_ALERT_CHARGER_OVERVOLTAGE,
+  AEEALERT_ALERT_KEYGUARD_ENABLED,
+  AEEALERT_ALERT_ROAMING,
+  AEEALERT_ALERT_EXTERN_PWRON,
+  AEEALERT_ALERT_EXTERN_PWROFF,
+  AEEALERT_ALERT_RUIMDOOR_REMOVED,  
+  AEEALERT_ALERT_ERR_SPECIAL,
+#endif  
   AEEALERT_ALERT_MAX = 0x10000000
 }AEEALERTType;
 
+#ifdef CUST_EDITION
+typedef enum
+{
+    ALERT_POWER_SND,
+    ALERT_NORMAL_SND
+    ,ALERT_SMS_SND
+//#endif //#if defined FEATURE_SMSTONETYPE_MID		    
+}ALERT_SND_TYPE;
+#endif
 
 #define NMASK_ALERT_ONOFF         0x0001
 #define NMASK_ALERT_MUTED         0x0002
@@ -142,6 +166,21 @@ AEEINTERFACE(IALERT)
                  AECHAR *phone_number, uint16 phoneNumberBufSize, AEEALERTType *alert_type);
   int (*SetMediaRingerDelay)(IALERT *po, int32 nMediaRingerDelay);
   int (*GetMediaRingerDelay)(IALERT *po, int32 *pnMediaRingerDelay);
+#ifdef CUST_EDITION  
+  int (*StartMp3Alert)(IALERT *po,char* id,ALERT_SND_TYPE type);
+  void(*StopMp3Alert)(IALERT *po);
+  void (*StartRingerAlert)(IALERT *po,uint32 id,ALERT_SND_TYPE type);
+  void (*StopRingerAlert)(IALERT *po); 
+  void (*StartRingerPreview)(IALERT *po,AEERingerID ringer);
+  void (*StartSMSAlert)(IALERT *po,int ring_id);
+  void (*StopSMSAlert)(IALERT *po); 
+  void (*StartMissedCallAlert)(IALERT *po);  
+  void (*StopMissedCallAlert)(IALERT *po);
+  void (*KeyBeep)(IALERT *po, AVKType key, boolean bPressed);  
+  void (*StartSMSAlertPreview)(IALERT *po, int ring_id);
+  void (*MinuteAlert)(IALERT *po);
+  void (*StartMp3Preview)(IALERT *po,char* id);
+#endif
 };
 
 #define IALERT_AddRef(p)          AEEGETPVTBL(p,IALERT)->AddRef(p)
@@ -166,5 +205,35 @@ AEEINTERFACE(IALERT)
 	    AEEGETPVTBL(po,IALERT)->SetMediaRingerDelay(po, delay)
 #define IALERT_GetMediaRingerDelay(po, pDelay) \
 	    AEEGETPVTBL(po,IALERT)->GetMediaRingerDelay(po, pDelay)
+#ifdef CUST_EDITION  		
+#define IALERT_StartMp3Alert(po, id, alert_type) \
+        AEEGETPVTBL(po,IALERT)->StartMp3Alert(po, id, alert_type)
+#define IALERT_StopMp3Alert(po) \
+        AEEGETPVTBL(po,IALERT)->StopMp3Alert(po)
+#define IALERT_StartRingerAlert(po, id) \
+	    AEEGETPVTBL(po,IALERT)->StartRingerAlert(po, id,ALERT_NORMAL_SND)
+#define IALERT_StartRingerAlert_Ex(po, id) \
+	    AEEGETPVTBL(po,IALERT)->StartRingerAlert(po, id,ALERT_POWER_SND)
+#define IALERT_StopRingerAlert(po) \
+	    AEEGETPVTBL(po,IALERT)->StopRingerAlert(po)
+#define IALERT_StartRingerPreview(po,ringer) \
+	    AEEGETPVTBL(po,IALERT)->StartRingerPreview(po,ringer)	
+#define IALERT_StartSMSAlert(po, id) \
+	    AEEGETPVTBL(po,IALERT)->StartSMSAlert(po, id)
+#define IALERT_StopSMSAlert(po) \
+	    AEEGETPVTBL(po,IALERT)->StopSMSAlert(po)	    
+#define IALERT_StartMissedCallAlert(po) \
+	    AEEGETPVTBL(po,IALERT)->StartMissedCallAlert(po)
+#define IALERT_StopMissedCallAlert(po) \
+	    AEEGETPVTBL(po,IALERT)->StopMissedCallAlert(po)		
+#define IALERT_KeyBeep(po,key,bPressed) \
+	    AEEGETPVTBL(po,IALERT)->KeyBeep(po,key,bPressed)	            
+#define IALERT_StartSMSAlertPreview(po, id) \
+	    AEEGETPVTBL(po,IALERT)->StartSMSAlertPreview(po, id)
 
+#define IALERT_MinuteAlert(po) \
+	    AEEGETPVTBL(po,IALERT)->MinuteAlert(po)
+#define IALERT_StartMp3Preview(po, id) \
+        AEEGETPVTBL(po,IALERT)->StartMp3Preview(po, id)
+#endif		
 #endif //#ifndef AEEALERT_H

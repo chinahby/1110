@@ -52,6 +52,7 @@ when       who     what, where, why
 #include "comdef.h"     /* Definitions for byte, word, etc.     */
 #include "customer.h"   /* Customer specific definitions        */
 #include "target.h"     /* Target specific definitions          */
+#ifndef BUILD_BOOT_CHAIN
 #include "hs.h"
 
 
@@ -418,5 +419,8 @@ SIDE EFFECTS
 boolean keypad_is_headset_present(void);
 #endif
 
+#endif //#ifndef BUILD_BOOT_CHAIN
+
+boolean keypad_is_dload_key_pressed(void);
 #endif /* KEYPAD_H */
 

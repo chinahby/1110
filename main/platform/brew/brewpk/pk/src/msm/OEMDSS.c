@@ -1048,7 +1048,9 @@ void OEMDSS_SetCDMAProfileId(int nNetwork, dss_net_policy_info_type* policy_info
 {
 #ifdef CDMA_DATA_SESSION_PROFILE_ID_SUPPORTED
    int cdma_profile_id = (nNetwork>>16)&0xffff;
-   policy_info->cdma.data_session_profile_id = cdma_profile_id;          
+   if(cdma_profile_id > 0) {
+      policy_info->cdma.data_session_profile_id = cdma_profile_id;         
+   }   
 #endif // CDMA_DATA_SESSION_PROFILE_ID_SUPPORTED
 }
 

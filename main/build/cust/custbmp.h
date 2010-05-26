@@ -38,7 +38,10 @@ when       who     what, where, why
 */
 #define FEATURE_BITMAP
 
+#ifndef CUST_EDITION
+//高通原始工程的应用
 #define FEATURE_FMRADIO_APP
+#endif
 
 #ifdef FEATURE_BITMAP
 
@@ -63,8 +66,10 @@ when       who     what, where, why
   #define FEATURE_ANSIC_FILE_API
 
 #ifndef FEATURE_MANGO_UI
+#ifndef CUST_EDITION
   #define FEATURE_NETSETTINGS_APP
   #define FEATURE_AUXSETTINGS_APP
+#endif  
 #endif
 
   #if defined(FEATURE_BREW_LITE) || defined(FEATURE_BREW)
@@ -79,16 +84,16 @@ when       who     what, where, why
       #ifndef FEATURE_UIONE_HDK
 
         /* Contacts (Phonebook) application.  */
-        #define FEATURE_APP_CONTACT
+        //#define FEATURE_APP_CONTACT
 
         /* Recent Calls (call history) application.  */
         #define FEATURE_APP_RECENTCALLS
 
         /* Dialer (Lite) application.  */
-        #define FEATURE_APP_DIALER
+        //#define FEATURE_APP_DIALER
 
         #define FEATURE_ANNUNCIATOR
-        #define FEATURE_ALARMCLOCK_APP
+        //#define FEATURE_ALARMCLOCK_APP
 
       #endif /* FEATURE_UIONE_HDK */
 
@@ -101,7 +106,7 @@ when       who     what, where, why
       */
       #define FEATURE_APP_FLDDBG
 
-      #define FEATURE_APP_DATASTATS
+      //#define FEATURE_APP_DATASTATS
 #endif
 #ifndef FEATURE_MANGO_BREW
       #define FEATURE_ICM

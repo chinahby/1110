@@ -29,9 +29,9 @@ INITIALIAZTION AND SEQUENCEING REQUIREMENTS:
 ---------------------------------------------------------------------------------*/
 
 typedef struct IDisplayDev    IDisplayDev;
-
-
-
+#ifdef CUST_EDITION	
+#define SIM_REND//wlh 开启3D效果，目前针对全屏显示
+#endif /*CUST_EDITION*/
 /*---------------------------------------------------------------------------------
       Class IDs
 ---------------------------------------------------------------------------------*/

@@ -16,8 +16,8 @@ else
   NVIM_RUIM_OBJS :=  $(addprefix $(TARGETDIR)/, $(NVIM_RUIM_SOURCES:%.c=%.o))
 endif
 
-$(TARGETDIR)/nvim_ruim.lib : $(NVIM_RUIM_SOURCES)
-	$(group_c_compile)
+#$(TARGETDIR)/nvim_ruim.lib : $(NVIM_RUIM_SOURCES)
+#	$(group_c_compile)
 
 #============================================================================
 # Support for exporting the NVRUIM API from modem to apps

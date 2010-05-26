@@ -78,6 +78,9 @@ typedef struct
   wms_cfg_event_cb_type     cfg_event_cb;
   wms_msg_event_cb_type     msg_event_cb;
   wms_dc_event_cb_type      dc_event_cb;
+#ifdef CUST_EDITION
+  wms_bc_event_cb_type      bc_event_cb;
+#endif
   wms_bc_mm_event_cb_type   bc_mm_event_cb;
   wms_dbg_event_cb_type     dbg_event_cb;
 

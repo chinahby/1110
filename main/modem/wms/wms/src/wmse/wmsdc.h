@@ -84,6 +84,10 @@ typedef struct wms_dc_struct
 #ifdef FEATURE_GWSMS
 #error code not present
 #endif /* FEATURE_GWSMS */
+#ifdef CUST_EDITION
+  boolean               bInTC;
+#endif
+
 
 } wms_dc_s_type;
 

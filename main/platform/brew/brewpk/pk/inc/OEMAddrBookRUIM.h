@@ -20,7 +20,10 @@
 
 // Init of AddressBook OEM function table.
 VTBL(IOEMAddrBook) *OEMRUIMAddr_GetFuncs(void);
-
+#ifdef CUST_EDITION	
+uint16   OEMRUIMAddr_GetRUIMMaxNameSize(void);
+uint16   OEMRUIMAddr_GetRUIMMaxNumberSize(void);
+#endif /*CUST_EDITION*/
 #endif      // OEMADDRBOOKRUIM_H
 
 /*=====================================================================

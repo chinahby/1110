@@ -1,6 +1,0 @@
-#ifndef BRW_APP_BID
-#define BRW_APP_BID
-
-#define AEECLSID_BRW_APP    	0x0104c960
-
-#endif //BRW_APP_BID

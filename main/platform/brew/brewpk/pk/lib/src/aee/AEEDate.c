@@ -17,7 +17,7 @@ in AEE.
 
 PUBLIC CLASSES AND STATIC FUNCTIONS: IDateCtl
 
-Copyright � 1999-2002,2007 QUALCOMM Incorporated.
+Copyright  1999-2002,2007 QUALCOMM Incorporated.
          All Rights Reserved.
        QUALCOMM Proprietary/GTDR
 
@@ -31,8 +31,15 @@ INCLUDE FILES FOR MODULE
 
 #include "AEE_OEM.h"
 #include "AEEStdLib.h"
+#ifndef CUST_EDITION
 #include "AEEDate_priv.h"
 #include "AEEControls_res.h"
+#else
+#include "OEMAEEControls.brh"
+#include "Appscommon.h"
+#include "appscommon_color.brh"
+#include "AEEDate.h"
+#endif
 #include "AEEPointerHelpers.h"
 
 /*===========================================================================
@@ -40,6 +47,7 @@ INCLUDE FILES FOR MODULE
 DEFINITIONS
 
 ===========================================================================*/
+#define DRAW_GIGNUM
 
 #define WRAP(val,mod)      ((val)+(mod))%(mod)
 #define IS_LEAP(y)         ((((y)%4)==0) && (((y)%100) || (((y)%400)==0)))
@@ -55,7 +63,23 @@ DEFINITIONS
 
 #define PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 
+#ifdef CUST_EDITION	
+/* 背景色*/
+#define DATECTL_BG_COLOR                      (RGB_BLACK)
+/* 平日背景填充色*/
+#define DATECTL_NORMALDAY_BG_COLOR  (MAKE_RGB(0x70, 0x70, 0x70))
+/* 节假日背景填充色*/
+#define DATECTL_SPECIALDAY_BG_COLOR  (RGB_WHITE)
+/* 今日外框颜色*/
+#define DATECTL_TODAY_FRAME_COLOR     (MAKE_RGB(0xFF, 0x00, 0x00))
+/* 平日字体颜色*/
+#define DATECTL_NORMALDAY_COLOR        (RGB_WHITE)
+/* 节假日字体颜色*/
+#define DATECTL_SPECIALDAY_COLOR        (MAKE_RGB(0x99, 0x00, 0x00))
+#define DATECTL_UNDELINE_COLOR            (RGB_WHITE)
+#endif /*CUST_EDITION*/
 /*===========================================================================
+
 
 Class Definitions
 
@@ -72,7 +96,11 @@ OBJECT(DateCtl)
    IShell *       m_pIShell;        // shell interface
    IDisplay *     m_pIDisplay;      // display interface
    IImage *       m_pFont;
-  
+#ifdef CUST_EDITION	   
+#ifdef FEATURE_CALENDAR_USE_STYLE
+   IImage *       m_pBgImage;
+#endif
+#endif /*CUST_EDITION*/  
    int            m_nFontTitleHeight;
    int            m_nFontLineHeight;
    AEERect        m_rcGrid;
@@ -87,7 +115,14 @@ OBJECT(DateCtl)
    int            m_nMonth;        // range: 1 - 12
    int            m_nDay;          // range: 1 - 31
    long           m_lJulianDay;    // 
-
+#ifdef CUST_EDITION	
+   long           m_Today;          
+   long           m_StartJulDate;
+   long           m_EndJulDate;
+   
+   boolean        m_ActRange;
+   boolean        m_bDrawDateText;
+#endif /*CUST_EDITION*/   
    int            m_nCurrentField;
    int            m_nNumFields;
 
@@ -136,11 +171,20 @@ static boolean     IDateCtl_GetDateString(IDateCtl * po, AECHAR * pBuffer, int n
 static void        IDateCtl_SetFont(IDateCtl * po, AEEFont fntText, AEEFont fntTitle);
 static boolean     IDateCtl_GetFont(IDateCtl * po, AEEFont *pfntText, AEEFont *pfntTitle);
 static void        IDateCtl_SizeToFit(IDateCtl * po, AEERect *prc);
+#ifdef CUST_EDITION	
+static void        IDateCtl_SetToday(IDateCtl * po, int32 lJulDate);
+static boolean     IDateCtl_SetDateRange(IDateCtl * po, int32 StartJulDate, int32 EndJulDate);
+static void        IDateCtl_EnableDateRange(IDateCtl * po, boolean ActRange);
 
+static boolean     IDateCtl_SetJulianDayEx(IDateCtl * po, int32 lJulDate);
+#endif /*CUST_EDITION*/
 static void        DateCtl_DisplayDateText(DateCtl * pme);
 static void        DateCtl_SetGridRect(DateCtl * pme);
 static void        DateCtl_Digit(DateCtl * pme, int nDigit, int x, int y);
 static void        DateCtl_DrawDay(DateCtl * pme, int nDay, AEERect * prc);
+#ifdef CUST_EDITION	
+static boolean     DateCtl_IsToday(IDateCtl * po, int nday);
+#endif /*CUST_EDITION*/
 static void        DateCtl_DisplayMonthDays(DateCtl * pme, int nStartDOW, int nMonLen);
 static boolean     DateCtl_DrawMonthView(DateCtl * pme);
 static void        DateCtl_GetGridRect(DateCtl * pme, AEERect * prc, int nGridIndex);
@@ -160,8 +204,12 @@ static int         GetMonthLength(int nMonth, int nYear);
 static int         GetDayOfWeek(long lJulianDay);
 static AECHAR *    SpitDate(AECHAR * psz, int * pVal, int * pPad, int nRemaining,AECHAR chDelim);
 static void        SetTextSizeCache(DateCtl * pme);
-
-
+#ifdef CUST_EDITION	
+#if defined( FEATURE_JEWISH_CALENDAR)
+static void        IDateCtl_GetJewishDate(IDateCtl* po, JewishType* pjewish);
+#endif
+static void drawImage( DateCtl *pMe, char *resFile, int16 resId, int x, int y);
+#endif /*CUST_EDITION*/
 #define HighlightDay(p,day) \
    DateCtl_HighlightGridRect(p,(day)+((p)->m_nStartDayOfWeek)-1)
 
@@ -201,6 +249,15 @@ static const VTBL(IDateCtl) gQDateCtlFuncs = {
    IDateCtl_SetFont,
    IDateCtl_GetFont,
    IDateCtl_SizeToFit
+#ifdef CUST_EDITION	   
+   ,IDateCtl_SetToday,
+   IDateCtl_SetDateRange,
+   IDateCtl_EnableDateRange,
+
+#if defined( FEATURE_JEWISH_CALENDAR)
+	IDateCtl_GetJewishDate
+#endif
+#endif /*CUST_EDITION*/
 };
 
 static const int16 gMonthIDs[] = {
@@ -249,7 +306,9 @@ int DateCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
    pme->m_nCurrentField = -1;
    pme->m_bMonthView    = (cls == AEECLSID_DATEPICKCTL); // needed by
                                                          // SetTextSizeCache
-
+#ifdef CUST_EDITION	
+   pme->m_ActRange  =  FALSE;
+#endif /*CUST_EDITION*/
    // create IDisplay interface
 
    i = ISHELL_CreateInstance(pme->m_pIShell, AEECLSID_DISPLAY, (void **)&pme->m_pIDisplay);
@@ -293,7 +352,11 @@ int DateCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
    pme->m_pFont = ISHELL_LoadResImage(pme->m_pIShell, AEECONTROLS_RES_FILE, AEE_IDB_SMALLFONTS);
    if(pme->m_pFont)
       IIMAGE_SetParm(pme->m_pFont, IPARM_CXFRAME, IMAGE_WIDTH, 0);
-
+#ifdef CUST_EDITION	   
+#ifdef FEATURE_CALENDAR_USE_STYLE
+   pme->m_pBgImage = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CALENDAR);
+#endif
+#endif /*CUST_EDITION*/
    *ppobj = (IDateCtl*)pme;
 
    return(0);
@@ -325,6 +388,15 @@ static uint32 IDateCtl_Release(IDateCtl * po)
          return(pme->m_nRefs);
 
       aee_releaseobj((void **)&pme->m_pFont);
+#ifdef CUST_EDITION		  
+#ifdef FEATURE_CALENDAR_USE_STYLE
+      if(pme->m_pBgImage != NULL)
+      {
+        IImage_Release(pme->m_pBgImage);
+        pme->m_pBgImage = NULL;
+      }
+#endif
+#endif /*CUST_EDITION*/
       aee_freeobj((void **)&pme->m_pTitle);
       aee_releaseobj((void **)&pme->m_pIDisplay);
       aee_releaseobj((void **)&pme->m_pIShell);
@@ -424,8 +496,15 @@ static boolean IDateCtl_HandleEvent(IDateCtl * po, AEEEvent eCode, uint16 wParam
       case EVT_KEY: {
          
          switch (wParam) {
-     
+#ifdef CUST_EDITION	    
+#if defined( AEE_SIMULATOR)
             case AVK_SELECT:
+#else
+            case AVK_INFO:
+#endif
+#else
+			case AVK_SELECT:
+#endif /*CUST_EDITION*/
                if (pme->m_bSendCmd) 
                   return ISHELL_HandleEvent(pme->m_pIShell, EVT_COMMAND, (uint16)pme->m_nCmdId, (uint32)po);
                break;
@@ -644,7 +723,26 @@ static boolean IDateCtl_SetJulianDay(IDateCtl * po, int32 lJulDate)
   // save the julian day
 
       pme->m_lJulianDay = lJulDate;
+#ifdef CUST_EDITION	
+      if(pme->m_ActRange) 
+      { 
+         if((int32)pme->m_StartJulDate > lJulDate)
+         {
+            pme->m_lJulianDay = pme->m_StartJulDate;
+         }
 
+         if((int32)pme->m_EndJulDate < lJulDate )
+         {
+             pme->m_lJulianDay = pme->m_EndJulDate;
+         }         
+
+		 if( lJulDate != pme->m_lJulianDay)
+		 {
+			 lJulDate = pme->m_lJulianDay;
+			 JDayToDate( lJulDate, &nYear, &nMonth, &nDay);
+		 }
+      }
+#endif /*CUST_EDITION*/
   // get and save the day-of-week for the 1st of the month
 
       pme->m_nStartDayOfWeek = GetDayOfWeek(lJulDate - nDay + 1);
@@ -667,10 +765,59 @@ static boolean IDateCtl_SetJulianDay(IDateCtl * po, int32 lJulDate)
    pme->m_nYear  = nYear;
    pme->m_nMonth = nMonth;
    pme->m_nDay   = nDay;
+#ifdef CUST_EDITION	
+   if( pme->m_bValidDate)
+   {
+	   ISHELL_PostEvent( pme->m_pIShell, ISHELL_ActiveApplet( pme->m_pIShell), EVT_COMMAND,(uint16)-2, (uint32)po);
+   }
+#endif /*CUST_EDITION*/
+   return(pme->m_bValidDate);
+}
+#ifdef CUST_EDITION	
+/*=====================================================================
+
+======================================================================*/
+static boolean IDateCtl_SetJulianDayEx(IDateCtl * po, int32 lJulDate)
+{
+   int nYear = 0, nMonth = 0, nDay = 0;
+
+   DateCtl * pme = (DateCtl*)po;
+
+  // convert to yyyy / mm / dd
+   nYear = nMonth = nDay = 0;
+
+   pme->m_bValidDate = JDayToDate(lJulDate, &nYear, &nMonth, &nDay);
+
+   if(pme->m_bValidDate){
+
+  // save the julian day
+
+      pme->m_lJulianDay = lJulDate;
+
+  // get and save the day-of-week for the 1st of the month
+
+      pme->m_nStartDayOfWeek = GetDayOfWeek(lJulDate - nDay + 1);
+
+  // get and save day-of-week  (0=Sun ... 6=Sat)
+
+      pme->m_nDayOfWeek = GetDayOfWeek(lJulDate);
+
+   }
+   else{
+      pme->m_nStartDayOfWeek = 0;
+      pme->m_nDayOfWeek = 0;
+      pme->m_lJulianDay = 0;
+   }
+
+  // save year, month, day
+
+   pme->m_nYear  = nYear;
+   pme->m_nMonth = nMonth;
+   pme->m_nDay   = nDay;
 
    return(pme->m_bValidDate);
 }
-
+#endif /*CUST_EDITION*/
 /*=====================================================================
 
 Public Method - Returns the julian date of the date control. See AEEDate.h
@@ -1120,7 +1267,7 @@ by AEECONTROLS_RES_FILE.
 static boolean DateCtl_GetMonthString(DateCtl * pme, int nMonth, AECHAR * pBuff, int nSize)
 {  
    if(pBuff && nMonth >= 1 && nMonth <= 12)
-      return(ISHELL_LoadResString(pme->m_pIShell, AEECONTROLS_RES_FILE, gMonthIDs[nMonth-1], pBuff, nSize) != 0);
+      return(ISHELL_LoadResString(pme->m_pIShell, OEMAEECONTROLS_LNGRES_FILE, gMonthIDs[nMonth-1], pBuff, nSize) != 0);
 
    return(FALSE);
 }
@@ -1135,7 +1282,7 @@ file specified by AEECONTROLS_RES_FILE.
 static boolean DateCtl_GetDayString(DateCtl * pme, int nDay, AECHAR * pBuff, int nSize)
 {
    if(nDay >= 0 && nDay <= 6) 
-      return(ISHELL_LoadResString(pme->m_pIShell, AEECONTROLS_RES_FILE, gDayIDs[nDay], pBuff, nSize) != 0);
+      return(ISHELL_LoadResString(pme->m_pIShell, OEMAEECONTROLS_LNGRES_FILE, gDayIDs[nDay], pBuff, nSize) != 0);
 
    return(FALSE);
 }
@@ -1474,13 +1621,80 @@ grid index.
 static void DateCtl_SetGridRect(DateCtl * pme)
 {
    pme->m_rcGrid.x = pme->m_rc.x;
+#ifdef FEATURE_CALENDAR_USE_STYLE
+   pme->m_rcGrid.y = pme->m_rc.y + pme->m_nFontTitleHeight + 5;
+#else
    pme->m_rcGrid.y = pme->m_rc.y + pme->m_nFontTitleHeight + 2;
+#endif
    pme->m_rcGrid.dy = (pme->m_rc.dy - pme->m_rcGrid.y) * 10 / MAX_WEEK_ROWS; // multiply by 10 for rounding
    pme->m_rcGrid.dy = (pme->m_rcGrid.dy + 5) / 10;   // rounding
    pme->m_rcGrid.dx = (pme->m_rc.dx * 10 / DAYS_PER_WEEK); // multiply by 10 for rounding
    pme->m_rcGrid.dx = (pme->m_rcGrid.dx + 5) / 10;   // rounding
 }
 
+/*==================================================================
+
+Local Method - This function displays date on the phone screen. This clears the 
+previous date, writes abbreviated day of the week in top left 
+corner of phone screen and writes date string in the top right 
+corner of phone screen.
+==================================================================*/
+#ifdef CUST_EDITION	
+static void DateCtl_DisplayDateText(DateCtl * pme)
+{
+   AECHAR   sz[90];
+#ifdef FEATURE_CALENDAR_USE_STYLE
+   AEERect  rectTitle;
+#endif
+   RGBVAL nOldFontColor;
+
+   
+#ifdef FEATURE_CALENDAR_USE_STYLE
+   SETAEERECT(&rectTitle, pme->m_rc.x+4, pme->m_rc.y+3, pme->m_rc.dx-7, pme->m_nFontLineHeight);
+   drawImage(pme, AEE_APPSCOMMONRES_IMAGESFILE, IDI_DATE_BAR, pme->m_rc.x, pme->m_rc.y);
+#endif
+    nOldFontColor = IDISPLAY_SetColor( pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE); //modified by chengxiao 2009.04.16
+   
+   // display the day-of-week string in the top left of screen
+
+   if (DateCtl_GetDayString(pme, pme->m_nDayOfWeek, sz, sizeof(sz)))
+#ifdef FEATURE_CALENDAR_USE_STYLE
+      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz,ABBREV_LEN,0, rectTitle.y, &rectTitle,IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+#else
+      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz,ABBREV_LEN,pme->m_rc.x, pme->m_rc.y+1, NULL,IDF_TEXT_TRANSPARENT);
+#endif
+   // display the date string in the top right of screen
+   // DateCtl_FormatDate(pme, pme->m_nYear, pme->m_nMonth, pme->m_nDay, sz, 3);
+
+
+{
+    int nChars,nWidth;
+    IDateCtl_GetDateString((IDateCtl*)pme, sz, sizeof(sz), &nChars, pme->m_dwProps);
+    nWidth = IDISPLAY_MeasureTextEx(pme->m_pIDisplay, pme->m_fntText, sz, nChars, 70, NULL);
+#ifdef FEATURE_CALENDAR_USE_STYLE
+    IDISPLAY_DrawText(pme->m_pIDisplay, 
+                     pme->m_fntText, 
+                     sz, 
+                     -1,
+                     0, 
+                     rectTitle.y, 
+                     &rectTitle,
+                     IDF_ALIGN_RIGHT | IDF_TEXT_TRANSPARENT);
+#else
+    IDISPLAY_DrawText(pme->m_pIDisplay, 
+                     pme->m_fntText, 
+                     sz, 
+                     -1,
+                     0, 
+                     pme->m_rc.y+1, 
+                     NULL,
+                     IDF_ALIGN_RIGHT | IDF_TEXT_TRANSPARENT);
+#endif
+}
+
+    (void)IDISPLAY_SetColor( pme->m_pIDisplay, CLR_USER_TEXT, nOldFontColor/*RGB_BLACK*/); //modified by chengxiao 2009.04.16
+}
+#else
 /*==================================================================
 
 Local Method - This function displays date on the phone screen. This clears the 
@@ -1511,7 +1725,7 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
    nWidth = IDISPLAY_MeasureTextEx(pme->m_pIDisplay, pme->m_fntText, sz, nChars, 70, NULL);
    IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1,pme->m_rc.dx-1-nWidth, pme->m_rc.y+1, NULL,0);
 }
-
+#endif /*CUST_EDITION*/
 /*==================================================================
 
 Local Method - Days of a month are displayed on phone screen in rows of seven days. 
@@ -1525,7 +1739,11 @@ static void DateCtl_GetGridRect(DateCtl * pme, AEERect * prc, int nGridIndex)
 
    x = pme->m_rcGrid.x + ((nGridIndex % DAYS_PER_WEEK) * pme->m_rcGrid.dx);
    y = pme->m_rcGrid.y + ((nGridIndex / DAYS_PER_WEEK) * pme->m_rcGrid.dy);
+#if defined (FEATURE_CALENDAR_USE_STYLE) && defined (CUST_EDITION)
+   SETAEERECT(prc, x+1, y+1, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-2);
+#else
    SETAEERECT(prc, x, y, pme->m_rcGrid.dx, pme->m_rcGrid.dy);
+#endif
 }
 
 /*==================================================================
@@ -1650,7 +1868,56 @@ static void DateCtl_DisplayMonthDays(DateCtl * pme, int nStartDOW, int nMonLen)
       DateCtl_DrawDay(pme, i+1, &rc);
    }
 }
+#ifdef CUST_EDITION	
+/*==================================================================
 
+Local Method - This method draws the month view on phone screen. This clears the 
+phone screen, calls DateCtl_DisplayDateText to display date text 
+in first line of the screen, draws a separator, draws matrix 
+displaying month of the days, highlights current day and update 
+phone screen.
+
+==================================================================*/
+static boolean DateCtl_DrawMonthView(DateCtl * pme)
+{
+    AEERect rc = pme->m_rc;
+
+    if (pme->m_bValidDate)
+    {
+
+#ifdef FEATURE_CALENDAR_USE_STYLE
+        IDISPLAY_FillRect(pme->m_pIDisplay, &rc, DATECTL_BG_COLOR);
+        Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, DATECTL_BG_COLOR, &rc, rc.x, rc.x);
+#else
+        IDISPLAY_FillRect(pme->m_pIDisplay, &rc, RGB_BLACK);
+#endif
+
+        // display date text
+        DateCtl_DisplayDateText(pme);
+
+        // draw line separator
+        {
+#ifdef FEATURE_FUNCS_THEME
+#if !defined(FEATURE_CALENDAR_USE_STYLE)
+            Theme_Param_type    themeParms      = {0};
+            AEERect             rect            = {0};
+
+            Appscom_GetThemeParameters( &themeParms);
+            SETAEERECT( &rect, 0, pme->m_nFontTitleHeight, rc.dx, 1);
+            IDISPLAY_FillRect( pme->m_pIDisplay, &rect, themeParms.themeColor);
+#endif
+#endif
+        }
+
+        // display the array of days for this month
+        DateCtl_DisplayMonthDays(pme, pme->m_nStartDayOfWeek, GetMonthLength(pme->m_nMonth, pme->m_nYear));
+    }
+
+   IDISPLAY_Update(pme->m_pIDisplay);
+
+   return(TRUE);
+}
+#else
 /*==================================================================
 
 Local Method - This method draws the month view on phone screen. This clears the 
@@ -1690,7 +1957,7 @@ static boolean DateCtl_DrawMonthView(DateCtl * pme)
 
    return(TRUE);
 }
-
+#endif /*CUST_EDITION*/
 /*=====================================================================
 
 Local Method - Increments the edit field in the direction specified.
@@ -1971,3 +2238,651 @@ static void SetTextSizeCache(DateCtl * pme)
       }
    }
 }
+#ifdef CUST_EDITION	
+/*==============================================================================
+函数: 
+       DateCtl_DrawDayEx
+       
+说明: 
+       画日子数字到方格上去
+       
+参数: 
+       pme [in]：指向TimeCtl接口t对象的指针。
+       
+返回值:
+       无
+       
+备注:
+       
+==============================================================================*/
+static void drawImage( DateCtl *pMe, char *resFile, int16 resId, int x, int y)
+{
+    IImage *image = ISHELL_LoadResImage( pMe->m_pIShell, resFile, resId);
+    if( image != NULL)
+    {
+        IIMAGE_Draw( image, x, y);
+        IIMAGE_Release( image);
+    }
+}
+
+static void DateCtl_DrawDayEx(DateCtl * pme, int nDay, AEERect * prc)
+{
+    AECHAR sz[3];
+    AEEFont lsave;
+    RGBVAL preclr;
+
+    lsave = pme->m_fntText;
+    if (nDay >= 1 && nDay <= 31)
+    {
+#ifdef FEATURE_FUNCS_THEME    
+        Theme_Param_type theme;
+#endif
+#ifdef FEATURE_CALENDAR_USE_STYLE
+        RGBVAL nTextBgColor;
+#endif
+
+#ifdef FEATURE_FUNCS_THEME    
+        Appscom_GetThemeParameters(&theme);
+#endif
+        if( ((pme->m_nStartDayOfWeek + nDay-1) % 7 == 0) ||
+            ((pme->m_nStartDayOfWeek + nDay-1) % 7 == 6)
+        )
+        {
+            preclr = DATECTL_SPECIALDAY_COLOR;//0x9900;
+#ifdef FEATURE_CALENDAR_USE_STYLE
+            nTextBgColor = DATECTL_SPECIALDAY_BG_COLOR;
+#endif
+        }
+        else
+        {
+#ifdef FEATURE_FUNCS_THEME    
+            preclr = theme.textColor;
+#else
+            preclr = DATECTL_NORMALDAY_COLOR;
+#endif
+#ifdef FEATURE_CALENDAR_USE_STYLE
+            nTextBgColor = DATECTL_NORMALDAY_BG_COLOR;
+#endif
+        }
+        preclr = IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, preclr);
+
+        (void)WWRITELONG(sz, nDay); //copy the longe number to string.
+
+        {
+#ifdef FEATURE_CALENDAR_USE_STYLE
+            uint32 properties = IDF_TEXT_TRANSPARENT|IDF_ALIGN_MIDDLE|IDF_ALIGN_CENTER;
+#else
+            uint32 properties = IDF_TEXT_TRANSPARENT|IDF_ALIGN_MIDDLE|IDF_RECT_FRAME;
+
+            if (pme->m_dwMDayMask & 1 << (nDay - 1))
+            {
+                properties |= IDF_ALIGN_RIGHT;
+            }
+            else
+            {
+                properties |= IDF_ALIGN_CENTER;
+            }
+#endif
+            
+#ifdef FEATURE_CALENDAR_USE_STYLE
+            IDISPLAY_FillRect(pme->m_pIDisplay, prc, nTextBgColor);
+            Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, nTextBgColor, prc, pme->m_rc.x, pme->m_rc.y);
+#endif
+
+            if (DateCtl_IsToday((IDateCtl*)pme, nDay))
+            {
+                RGBVAL oldFrameColor;
+#ifdef FEATURE_CALENDAR_USE_STYLE
+                AEERect rectText;
+
+                SETAEERECT(&rectText, prc->x-1, prc->y-1, prc->dx+2,prc->dy+2);
+                oldFrameColor = IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_FRAME, DATECTL_TODAY_FRAME_COLOR);
+                properties |= IDF_RECT_FRAME;
+                (void)IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, 0, 0, &rectText, properties);
+#else
+                oldFrameColor = IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_FRAME, 0xff00);
+                (void)IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, 0, 0, prc, properties);
+#endif
+
+
+                IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_FRAME, oldFrameColor);
+            }
+            else
+            {
+                (void)IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, 0, 0, prc, properties);
+            }
+
+            if (nDay == pme->m_nDay)
+            {
+                AEERect rc = { 0 };
+
+                SETAEERECT( &rc, prc->x, prc->y + prc->dy - 3, prc->dx, 1);
+                IDISPLAY_FillRect(pme->m_pIDisplay, &rc, DATECTL_UNDELINE_COLOR);//modifed by chengxiao 2009.03.19
+            }
+        }
+        IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, preclr);
+
+        // See if the day has been 'ticked'...
+        if (pme->m_dwMDayMask & 1 << (nDay - 1))
+        {
+            int x = prc->x;
+            int y = prc->y;
+            if( DateCtl_IsToday((IDateCtl*)pme, nDay))
+            {
+                x ++;
+                y ++;
+            }
+
+            drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDI_ALARM, x, y);
+        }
+
+        pme->m_fntText = lsave;
+
+  }
+}
+
+static boolean DateCtl_IsToday(IDateCtl * po, int nday)
+{
+     int nYear1, nMonth1, nDay1;
+     int nYear2, nMonth2, nDay2;
+     int32 savelJulDate;
+     
+     DateCtl *pme = (DateCtl*) po;
+
+     boolean revalue = FALSE;
+     
+     savelJulDate = pme->m_lJulianDay;
+
+     IDateCtl_GetDate(po, &nYear1, &nMonth1, &nDay1);
+     
+     IDateCtl_SetJulianDayEx(po, pme->m_Today); 
+     
+     IDateCtl_GetDate(po, &nYear2, &nMonth2, &nDay2);
+
+     if((nYear1==nYear2)&&(nMonth1==nMonth2))
+     {
+         if(nday == nDay2)
+         {
+            revalue = TRUE;
+         }
+     }
+    
+     pme->m_lJulianDay = savelJulDate;
+     IDateCtl_SetJulianDayEx(po, pme->m_lJulianDay);
+     return revalue;
+}
+
+static void IDateCtl_SetToday(IDateCtl * po, int32 lJulDate)
+{
+     DateCtl * pme = (DateCtl*)po;
+     pme->m_Today = lJulDate;
+     return;
+}
+
+static boolean IDateCtl_SetDateRange(IDateCtl * po, int32 StartJulDate, int32 EndJulDate)
+{
+   int nYear = 0, nMonth = 0, nDay = 0;
+   boolean bStart = FALSE, bEnd = FALSE;
+  
+   DateCtl * pme = (DateCtl*)po;
+
+
+   nYear = nMonth = nDay = 0;
+
+   bStart = JDayToDate(StartJulDate, &nYear, &nMonth, &nDay);
+
+   bEnd = JDayToDate(EndJulDate, &nYear, &nMonth, &nDay);
+
+   if(bStart && bEnd)
+   {
+      pme->m_StartJulDate = StartJulDate;
+
+      pme->m_EndJulDate = EndJulDate;
+      
+      return TRUE;
+   }
+
+   return FALSE; 
+}
+
+static void IDateCtl_EnableDateRange(IDateCtl * po, boolean ActRange)
+{
+    DateCtl * pme = (DateCtl*)po;
+    pme->m_ActRange = ActRange;
+    return;
+}
+
+
+//-----------------------------------------------------------------
+#if defined( FEATURE_JEWISH_CALENDAR)
+
+#define JEWISH_EPOCH 347995.5
+#define GREGORIAN_EPOCH 1721425.5
+
+static double jewish_to_jd( int year, int month, int day);
+
+static boolean jewish_leap( int year)
+{
+
+	return ( ((year * 7) + 1) % 19) < 7;
+}
+
+static int jewish_year_months( int year)
+{
+
+	return jewish_leap( year) ? 13 : 12;
+}
+
+static int jewish_elapsed_days( int year)
+{
+
+	int months  = 0;
+	int days    = 0;
+	int parts   = 0;
+
+	months = FFLOOR( ((235 * year) - 234) / 19);
+	parts  = 12084 + ( 13753 * months);
+	days   = ( months * 29) + FFLOOR( parts / 25920);
+
+	if( ( (3 * ( days + 1)) % 7) < 3)
+	{
+		days ++;
+	}
+	return days;
+}
+
+static int jewish_delayed_days( int year)
+{
+
+	int last       = jewish_elapsed_days( year - 1);
+	int present    = jewish_elapsed_days( year);
+	int next       = jewish_elapsed_days( year + 1);
+
+	return ((next - present) == 356) ? 2 :
+			(((present - last) == 382) ? 1 : 0);
+}
+
+static int jewish_year_days( int year)
+{
+
+	return FFLOOR( jewish_to_jd( year + 1, 7, 1) - jewish_to_jd( year, 7, 1));
+}
+
+static int jewish_month_days( int year, int month)
+{
+
+	if( month == 2  ||
+		month == 4  ||
+		month == 6  ||
+		month == 10 ||
+		month == 13 ||
+		( month == 12 && !jewish_leap(year)) ||
+		( month == 8 && ( jewish_year_days( year) % 10) != 5) ||
+		( month == 9 && ( jewish_year_days(year) % 10) == 3)
+	)
+	{
+		return 29;
+	}
+
+	return 30;
+}
+
+static int jewish_to_days( int year, int month, int day)
+{
+
+	int i           = 0;
+	int yearMonths  = jewish_year_months( year);
+	int days        = jewish_elapsed_days( year) + jewish_delayed_days( year) + day + 1;
+
+	if( month < 7)
+	{
+
+		for( i = 7; i <= yearMonths; i ++)
+		{
+			days += jewish_month_days( year, i);
+		}
+
+		for( i = 1; i < month; i ++)
+		{
+			days += jewish_month_days( year, i);
+		}
+	}
+	else
+	{
+
+		for( i = 7; i < month; i ++)
+		{
+			days += jewish_month_days( year, i);
+		}
+	}
+
+	return days;
+}
+
+static double jewish_to_jd( int year, int month, int day)
+{
+
+	double jd = JEWISH_EPOCH + jewish_to_days( year, month, day);
+	return jd;
+}
+
+static void jd_to_jewish( double jd, int* pYear, int* pMonth, int* pDay)
+{
+
+	int year    = 0;
+	int month   = 0;
+	int day     = 0;
+	int i       = 0;
+	int count   = 0;
+	int first   = 0;
+
+	jd     = FFLOOR( jd) + 0.5;
+	count  = FFLOOR( ((jd - JEWISH_EPOCH) * 98496.0) / 35975351.0);
+	year   = count - 1;
+
+	DBGPRINTF( ";-----------------");
+	DBGPRINTF( ";jd_to_jewish");
+	DBGPRINTF( ";count = %d, year = %d", count, year);
+	for( i = count; jd >= jewish_to_jd( i, 7, 1); i ++)
+	{
+		year ++;
+	}
+	DBGPRINTF( ";result year = %d, loop %d to get result year", year, (year - count + 1));
+
+	first = ( jd < jewish_to_jd( year, 1, 1)) ? 7 : 1;
+	month = first;
+	DBGPRINTF( ";month = %d", month);
+	for( i = first; jd > jewish_to_jd( year, i, jewish_month_days( year, i)); i ++)
+	{
+		month++;
+	}
+	DBGPRINTF( ";result month = %d, loop %d to get result month", month, ( month - first));
+
+	day = ( jd - jewish_to_jd( year, month, 1)) + 1;
+	DBGPRINTF( ";result day = %d", day);
+	DBGPRINTF( ";-----------------");
+
+	*pYear     = year;
+	*pMonth    = month;
+	*pDay      = day;
+}
+
+static double date_to_jd( int year, int month, int day)
+{
+	return ( GREGORIAN_EPOCH - 1)             +
+		   ( 365 * ( year - 1))               +
+		   FFLOOR( (year - 1) / 4)            +
+		   (-FFLOOR( (year - 1) / 100))       +
+		   FFLOOR( (year - 1) / 400)          +
+		   FFLOOR( (((367 * month) - 362) / 12) + ((month <= 2) ? 0 : ( IS_LEAP(year) ? -1 : -2)) + day);
+}
+
+static int get_holiday( int month, int day, int weekday, int yeardays, int julianYear)
+{
+	int holiday = 0;
+
+	static int holidays_table[][30] =
+	{
+
+		{   // Nisan
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 15, 32, 16, 16, 16, 16,
+			28, 29, 0, 0, 0, 24, 24, 24, 0, 0
+		},
+		{   // Iyar
+			0, 17, 17, 17, 17, 17, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 18, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 26, 0, 0
+		},
+		{   // Sivan
+			0, 0, 0, 0, 19, 20, 30, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		},
+		{   // Tamuz
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 36, 36
+		},
+		{   // Av
+			0, 0, 0, 0, 0, 0, 0, 0, 22, 22,
+			0, 0, 0, 0, 23, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		},
+		{   // Elul
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		},
+		{   // Tishrey
+			1, 2, 3, 3, 0, 0, 0, 0, 0, 4,
+			0, 0, 0, 0, 5, 31, 6, 6, 6, 6,
+			7, 27, 8, 0, 0, 0, 0, 0, 0, 0
+		},
+		{   // Heshvan
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 35,
+			35, 35, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		},
+		{   // Kislev
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 9, 9, 9, 9, 9, 9
+		},
+		{   // Tevet
+			9, 9, 9, 0, 0, 0, 0, 0, 0, 10,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		},
+		{   // Shvat
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 11, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 33
+		},
+		{   // Adar
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			12, 0, 12, 13, 14, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		},
+		{   // Adar 1
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		},
+		{   // Adar 2
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			12, 0, 12, 13, 14, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		}
+	};
+
+	if (month < 1 || month > 14 || day < 1 || day > 31)
+	{
+		return 0;
+	}
+
+	holiday = holidays_table[month - 1][day - 1];
+	DBGPRINTF( ";---------------get_holiday");
+	DBGPRINTF( ";month = %d, day = %d, holiday = %d", month, day, holiday);
+
+	// if tzom on sat delay one day, yom cipur on sat
+	if( (holiday == 3) && ( weekday == 0 || ( day == 4 && weekday != 1)))
+	{
+		holiday = 0;
+	}
+
+	// 17 of Tanuz on sat
+	if( (holiday == 21) && ( weekday == 0 || ( day == 18 && weekday != 1)))
+	{
+		holiday = 0;
+	}
+
+	// 9 of Av on sat
+	if( (holiday == 22) && ( weekday == 0 || ( day == 10 && weekday != 1)))
+	{
+		holiday = 0;
+	}
+
+	// Hanukah in a long year
+	if( (holiday == 9) && (yeardays % 10 != 3) && (day == 3))
+	{
+		holiday = 0;
+	}
+
+	// if tanit ester on sat mov to Thu
+	if( (holiday == 12) && ( weekday == 0 || (day == 11 && weekday != 5)))
+	{
+		holiday = 0;
+	}
+
+	// yom yerushalym after 68
+	if( holiday == 26 && julianYear < 1968)
+	{
+		holiday = 0;
+	}
+
+	// yom ha azmaot and yom ha zicaron
+	if (holiday == 17)
+	{
+		if( julianYear < 1948)
+		{
+			holiday = 0;
+		}
+		else if( julianYear < 2004)
+		{
+			if( ( (day == 3) && (weekday == 5)) ||
+				( (day == 4) && (weekday == 5)) ||
+				( (day == 5) && (weekday != 6 && weekday != 0))
+			)
+			{
+				holiday = 17;
+			}
+			else if( ( (day == 2) && (weekday == 4))  ||
+					 ( (day == 3) && (weekday == 4))  ||
+					 ( (day == 4) && (weekday != 5 && weekday != 6))
+			)
+			{
+				holiday = 25;
+			}
+			else
+			{
+				holiday = 0;
+			}
+		}
+		else
+		{
+			if( ( (day == 3) && (weekday == 5)) ||
+				( (day == 4) && (weekday == 5)) ||
+				( (day == 5) && (weekday != 6 && weekday != 0 && weekday != 2)) ||
+				( (day == 6) && (weekday == 3))
+			)
+			{
+				holiday = 17;
+			}
+			else if( ( (day == 2) && (weekday == 4)) ||
+					 ( (day == 3) && (weekday == 4)) ||
+					 ( (day == 4) && (weekday != 5 && weekday != 6 && weekday != 1)) ||
+					 ( (day == 5) && (weekday == 2))
+			)
+			{
+				holiday = 25;
+			}
+			else
+			{
+				holiday = 0;
+			}
+		}
+	}
+
+	// yom ha shoaa, on years after 1958
+	if( holiday == 24)
+	{
+		if( julianYear < 1958)
+		{
+			holiday = 0;
+		}
+		else if( ( (day == 26) && (weekday != 5)) ||
+				 ( (day == 27) && (weekday == 6 || weekday == 1)) ||
+				 ( (day == 28) && (weekday != 2))
+		)
+		{
+			holiday = 0;
+		}
+	}
+
+	// Rabin day, on years after 1997
+	if( holiday == 35)
+	{
+		if (julianYear < 1997)
+		{
+			holiday = 0;
+		}
+		else if( ( (day == 10 || day == 11) && (weekday != 5)) ||
+				 ( (day == 12) && (weekday == 6 || weekday == 0))
+		)
+		{
+			holiday = 0;
+		}
+	}
+
+	// Zhabotinsky day, on years after 2005
+	if (holiday == 36)
+	{
+		if (julianYear < 2005)
+		{
+			holiday = 0;
+		}
+		else if( ( (day == 29) && (weekday == 0)) ||
+				 ( (day == 30) && (weekday != 1))
+		)
+		{
+			holiday = 0;
+		}
+	}
+
+	return holiday;
+}
+
+static void IDateCtl_GetJewishDate( IDateCtl * po, JewishType* pjewish)
+{
+
+	DateCtl*   pme     = (DateCtl*)po;
+	JulianType julian  = {0};
+	int        year    = 0;
+	int        month   = 0;
+	int        day     = 0;
+	int        weekday = 0;
+
+
+	GETJULIANDATE( GETTIMESECONDS(), &julian);
+	if( julian.wHour >= 18)
+	{
+		IDateCtl_SetJulianDay( po, pme->m_lJulianDay+1);
+	}
+
+	jd_to_jewish( date_to_jd( pme->m_nYear, pme->m_nMonth, pme->m_nDay), &year, &month, &day);
+	weekday = jewish_to_days( year, month, day) % 7;
+	pjewish->year      = year;
+	pjewish->month     = month;
+	pjewish->day       = day;
+	pjewish->weekday   = weekday;
+	pjewish->leap      = jewish_leap( year);
+	pjewish->holiday   = get_holiday( (pjewish->leap && month >= 12)?(month + 1):month, day, weekday, jewish_year_days( year), pme->m_nYear);
+
+	if( julian.wHour >= 18)
+	{
+		IDateCtl_SetJulianDay( po, pme->m_lJulianDay-1);
+	}
+
+	DBGPRINTF( ";-------------------------------------");
+	DBGPRINTF( ";IDateCtl_GetJewishDate");
+	DBGPRINTF( ";jd, %d.%02d.%02d", pme->m_nYear, pme->m_nMonth, pme->m_nDay);
+	DBGPRINTF( ";jewish, %d.%02d.%02d", year, month, day);
+	if( pjewish->leap)
+	{
+		DBGPRINTF( ";is leap jewish year");
+	}
+}
+#endif
+#endif /*CUST_EDITION*/
+

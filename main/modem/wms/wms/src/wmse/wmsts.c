@@ -3191,7 +3191,61 @@ wms_status_e_type wms_ts_pack_gw_user_data
 #ifdef FEATURE_GWSMS
 #error code not present
 #endif/*FEATURE_GWSMS*/
+#ifdef CUST_EDITION	
 
+
+
+wms_status_e_type wms_ts_convert_cdma_gw_msg_to_auto
+(
+  const wms_client_message_s_type     *msg_ptr,       /* IN */
+  uint8                               email_len,
+  wms_auto_message_s_type             *auto_msg_ptr   /* OUT */
+)
+{
+#ifdef FEATURE_SMS_TRANSPARENT_MO
+#error code not present
+#else
+  return WMS_UNSUPPORTED_S;
+#endif /* FEATURE_SMS_TRANSPARENT_MO */
+}
+
+/*=========================================================================
+FUNCTION
+  wms_convert_auto_to_cdma_gw_msg
+
+DESCRIPTION
+  Converts an automatic formatted message, auto_msg_ptr, to a CDMA or GW msg,
+  msg_ptr, based on:
+  (1) msg_mode desired, CDMA format or GW format.
+  (2) the set auto params declared by client_id.
+  NOTE: mem_store and index will not be assigned for the client message hdr,
+        the tag will be set to WMS_TAG_NONE.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  Modifies msg_ptr directly.
+
+=========================================================================*/
+wms_status_e_type wms_ts_convert_auto_to_cdma_gw_msg
+(
+  wms_client_id_type                  client_id,
+  wms_message_mode_e_type             msg_mode,
+  const wms_auto_message_s_type       *auto_msg_ptr,  /* IN */
+  wms_client_message_s_type           *msg_ptr        /* OUT */
+)
+{
+#ifdef FEATURE_SMS_TRANSPARENT_MO
+#error code not present
+#else
+  return WMS_UNSUPPORTED_S;
+#endif /* FEATURE_SMS_TRANSPARENT_MO */
+}
+#endif /*CUST_EDITION*/
 #ifdef FEATURE_SMS_UDH
 /*=========================================================================
 FUNCTION

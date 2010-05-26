@@ -2880,8 +2880,8 @@ typedef struct {
    STRUCTURE: MMGSDI_PKCS15_LOOKUP_TABLE_ENTRIES
    DESCRIPTION:
    The mmgsdi_pkcs15_lookup_table consists of two categories
-   1. EF Enum – List of PKCS15 EFs whose path is extracted from EF-ODF
-   2. File Path Info – File path info of the PKCS15 EF
+   1. EF Enum ? List of PKCS15 EFs whose path is extracted from EF-ODF
+   2. File Path Info ? File path info of the PKCS15 EF
 -------------------------------------------------------------------------------*/
 typedef struct {
   mmgsdi_file_enum_type      pkcs15_file_enum;
@@ -2892,8 +2892,8 @@ typedef struct {
    STRUCTURE: MMGSDI_PKCS15_LOOKUP_TABLE
    DESCRIPTION:
    The mmgsdi_pkcs15_lookup_table consists of
-   1. EF Enum – List of PKCS15 EFs whose path is extracted from EF-ODF
-   2. File Path Info – File path info of the PKCS15 EF
+   1. EF Enum ? List of PKCS15 EFs whose path is extracted from EF-ODF
+   2. File Path Info ? File path info of the PKCS15 EF
 -------------------------------------------------------------------------------*/
 typedef struct {
   uint8                               no_of_pkcs15_lookup_table_entries;
@@ -3542,7 +3542,7 @@ typedef struct {
    DESCRIPTION:
      It contains the confirmation for get subscriber Id for MediaFLO
      ADF, the len is specified in the “Qualcomm MediaFLO
-     Authentication Manager Applet Functional Specification”
+     Authentication Manager Applet Functional Specification?
 ----------------------------------------------------------------*/
 typedef struct {
   mmgsdi_response_header_type    response_header;
@@ -3555,7 +3555,7 @@ typedef struct {
    DESCRIPTION:
      It contains the confirmation for get public key for MediaFLO
      ADF, the len is specified in the “Qualcomm MediaFLO
-     Authentication Manager Applet Functional Specification”
+     Authentication Manager Applet Functional Specification?
 ----------------------------------------------------------------*/
 typedef struct {
   mmgsdi_response_header_type    response_header;
@@ -6665,8 +6665,8 @@ mmgsdi_return_enum_type mmgsdi_register_for_refresh (
       Refresh_files:    Files that the Client is no longer interested in
                         getting notification for
       vote_for_init:    Deregister from Voting,
-                        FALSE – NO changes to Current Registration,
-                        TRUE – DeRegister from Voting
+                        FALSE ? NO changes to Current Registration,
+                        TRUE ? DeRegister from Voting
       option       :   optional parameter, not used right now
       Response_cb_ptr:  Callback to this command
       client_ref:       User Data returned upon completion of this cmd.

@@ -38,8 +38,11 @@ DESCRIPTION
 #define  NVI_ADDER_ARRAY_SIZE                                   50
 
 /* Half of NV_MAX_DIAL_DIGITS */
+#ifdef CUST_EDITION
+#define  NVI_MAX_DIAL_DIGITS                                    (16+1)  //two bytes for number count
+#else
 #define  NVI_MAX_DIAL_DIGITS                                    16
-
+#endif
 /* Maximum number of SMS entries. */
 #define  NVI_MAX_SMS_ADDR                                      501
 

@@ -97,7 +97,6 @@ static void FmRadio_PowerDown( CFmRadio *pMe);
 static void FmRadio_PowerUp(void *pme);
 static void FmRadio_AppIsReadyCB(void *pUser);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -1006,7 +1005,6 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             pMe->m_pActiveDlgID = wParam;
         case EVT_DIALOG_START:
         case EVT_USER_REDRAW:
-			Rendering_UpdateEx();//wlh add for 3D test
             if( eCode == EVT_USER_REDRAW)
             {
                 (void)ISHELL_SetTimer( pMe->m_pShell,                                       

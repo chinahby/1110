@@ -119,6 +119,7 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
                                                             &gCODESIG_MIF,
                                                             &gCODESIG_MOD,
 #endif
+#ifndef CUST_EDITION
                                                             // Const MIF files for MCF
 #ifndef FEATURE_MANGO_BREW
                                                             &g10888_MIF,
@@ -137,7 +138,7 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
                                                             &g19923_MIF,
                                                             &g19924_MIF,
 #endif
-
+#endif
 #if defined(FEATURE_DEFAULT_VIEW_APP)
                                                             &gVIEWAPP_MIF,
 #endif

@@ -48,6 +48,9 @@ Qualcomm Confidential and Proprietary
 #define EVT_KEY                  0x100 // App key - wParam = KEYCODE, dwParam = Bitflags for modifier keys
 #define EVT_KEY_PRESS            0x101 // App keydown - wParam= KEYCODE, dwParam = Bitflags for modifier keys
 #define EVT_KEY_RELEASE          0x102 // App keyRelease - wParam = KEYCODE, dwParam = Bitflags for modifier keys
+#ifdef CUST_EDITION	
+#define EVT_KEY_HELD             0x103 // App keyHeld - wParam = KEYCODE, dwParam = 0
+#endif /*CUST_EDITION*/
 #define EVT_CHAR                 0x104 // Character Event wParam = AECHAR, dwParam = Bitflags for modifier keys
 #define EVT_UPDATECHAR           0x105 // Char update Event wParam = AECHAR, dwParam = Bitflags for modifier keys
 
@@ -191,6 +194,115 @@ Qualcomm Confidential and Proprietary
 
 // OEM Events...
 #define EVT_OEM_START            0x5800   // OEM-specific events start @ 0x5800 
+
+#ifdef CUST_EDITION	
+// 自定义事件请全部在此定义
+enum
+{
+    EVT_USER_REDRAW  = (EVT_OEM_START+1),
+    EVT_DISPLAYDIALOGTIMEOUT,
+    EVT_UPDATEIDLE,
+    EVT_ORIGINATE_CALL,
+    
+    EVT_WMS_CFG_GW_READY,
+    EVT_WMS_CFG_CDMA_READY,
+    EVT_WMS_CFG_REFRESH_DONE,
+    EVT_WMS_CFG_ROUTES,
+    EVT_WMS_CFG_MEMORY_STATUS,
+    EVT_WMS_CFG_MESSAGE_LIST,
+    EVT_WMS_CFG_MEMORY_FULL,
+    EVT_WMS_CFG_GW_DOMAIN_PREF,
+    EVT_WMS_CFG_CELL_CHANGE,
+    EVT_WMS_CFG_PRIMARY_CLIENT_SET,
+    
+    EVT_WMS_MSG_SEND,
+    EVT_WMS_MSG_ACK,
+    EVT_WMS_MSG_READ,
+    EVT_WMS_MSG_WRITE,
+    EVT_WMS_MSG_DELETE,
+    EVT_WMS_MSG_COPY,
+    EVT_WMS_MSG_DELETE_BOX,
+    EVT_WMS_MSG_MODIFY_TAG,
+    EVT_WMS_MSG_READ_TEMPLATE,
+    EVT_WMS_MSG_WRITE_TEMPLATE,
+    EVT_WMS_MSG_DELETE_TEMPLATE,
+    EVT_WMS_MSG_RECEIVED_MESSAGE,
+    EVT_WMS_MSG_SUBMIT_REPORT,
+    EVT_WMS_MSG_STATUS_REPORT,
+    EVT_WMS_MSG_DELETE_ALL,
+    EVT_WMS_MSG_DELETE_TEMPLATE_ALL,
+    EVT_WMS_MSG_READ_STATUS_REPORT,
+    EVT_WMS_MSG_DELETE_STATUS_REPORT,
+    EVT_WMS_MSG_DUPLICATE_CB_PAGE,
+    
+    EVT_WMS_CMD_STATUS,
+    EVT_WMS_BC_EVENT,
+    EVT_WMS_DLG_RESUME,
+    EVT_WMS_CONFIRM,
+    EVT_WMS_PROCESS_NEW_MSG,
+    
+    EVT_WMS_DC_CONNECTED,
+    EVT_WMS_DC_ABORTED,
+    EVT_WMS_DC_ENABLE_AUTO_DISCONNECT,
+    EVT_WMS_DC_DISABLE_AUTO_DISCONNECT,
+    EVT_WMS_DC_INCOMING,
+    EVT_WMS_DC_DISCONNECTED,
+    EVT_WMS_DC_CONNECTING,
+    
+    EVT_WMSAPP_MESSAGE_READ,
+    EVT_WMSAPP_MESSAGE_COMPOSE,
+    
+    EVT_WMSAPP_CARDFILE_CPHS_MWI,/* CPHS Message Waiting Indicator Status File */
+    EVT_WMSAPP_CARDFILE_CPHS_MAILBOX_NUM,/* CPHS Mailbox Dailing Number File */
+    EVT_WMSAPP_CARDFILE_MWI,/* EF-Message Waiting Indication Status File */
+    EVT_WMSAPP_CARDFILE_MAILBOX_NUM,/* EF-Mailbox Dailing Number File */
+    EVT_WMSAPP_CARDFILE_MAILBOX_ID,/* EF-Mailbox Identifier File */
+    
+    EVT_UPDATE,
+    EVT_NEWMSGIN,
+    EVT_NEXTSEND,
+    EVT_UPDATAMENU,
+    EVT_SENDSMSEND,
+    EVT_MSGCOPY,
+    EVT_RESERVEDMSGALERT,
+    EVT_SENDREGINFOR,
+    EVT_SENDSTATUS,
+    EVT_UPDATEREGSTATUS,
+    EVT_CALLVOICEMAILNUM,
+    EVT_CTL_TEXT_TEXTFULL,
+    EVT_RUIM_PROACTIVE,
+    EVT_AUTO_POWERDOWN,
+    EVT_BATT_POWERDOWN,
+    EVT_ALARMOFF,
+    EVT_FOCUS_SWITCH,
+#ifdef FEATURE_UTK2    
+    EVT_UTKREFRESH,    
+#endif //FEATURE_UTK2   
+    EVT_RTC,
+    EVT_UPDATE_ARROW_BUTTON,
+    EVT_BLUETOOTH_EVENT,
+    EVT_CLOSEAPP,
+    EVT_GSENSOR_SHAKE,
+    EVT_DRAWMUSICNAME,
+    EVT_OPENSHAKE,
+    EVT_PLAYNEXT,       //play next video / music file. 
+                        //dwParam == (char*)pszFilename ,point to filename
+    EVT_POPMSGDIALOG,  // notify pop playfailed msg when play failed 
+
+//#ifdef FEATURE_PLANEMODE
+    EVT_PLANEMODEON,
+//#endif
+
+    EVT_APP_DIALOG_TIMEOUT,    
+    EVT_APP_INTERRUPT,
+    EVT_APP_EXIT,
+    EVT_EDITOR_OK,	        // Send to the invoker APP when the editor input is OK.
+    EVT_EDITOR_CANCEL,   // Send to the invoker APP when the editor input is cancelled.
+    EVT_EDITOR_END,        // Send to the invoker APP when the END key is pressed.
+	EVT_MMS_RECEIVED,		// notify CoreApp that MMS is received.
+};
+#endif /*CUST_EDITION*/
+
 #define EVT_OEM_END              0x5fff   // OEM-specific events end   @ 0x5fff
 
 // Events registered via ISHELL_RegisterEvent

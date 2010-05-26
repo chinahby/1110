@@ -107,10 +107,6 @@ typedef enum DLGRetValue
 #ifdef FEATURE_PLANEMODE
     DLGRET_PLANEMODE,            //IDD_PLANEMODE
 #endif
-#ifdef FEATURE_USB_FUNCTION_SELECT
-    DLGRET_USB_FUNCTION,         //IDD_USB_FUNCTION
-#endif //FEATURE_USB_FUNCTION_SELECT
-//
 #ifdef FEATURE_PERU_VERSION
     DLGRET_PHONE_NUMBER,
 #endif
@@ -185,11 +181,6 @@ typedef enum _SettingMenuState
 #ifdef FEATURE_PLANEMODE
    ,SETTINGMENUST_PLANEMODE
 #endif
-
-#ifdef FEATURE_USB_FUNCTION_SELECT
-   ,SETTINGMENUST_USBFUNCTION
-#endif //FEATURE_USB_FUNCTION_SELECT
-
 } SettingMenuState;
 
 // 状态处理函数返回给状态处理主函数的值类型

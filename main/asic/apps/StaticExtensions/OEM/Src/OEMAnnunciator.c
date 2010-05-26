@@ -45,6 +45,10 @@ $Header: //depot/asic/msmshared/apps/StaticExtensions/OEM/Src/OEMAnnunciator.c#5
 #include "mdp_sys_api.h"
 #endif
 
+#ifdef CUST_EDITION
+#include "db.h"
+#include "OEMCFGI.h"
+#endif
 /* Dimensions of various display sizes.  They're defined as
  * "small dimension" and "large dimension" rather than "width" and
  * "height", since width and height vary according to landscape
@@ -71,6 +75,13 @@ $Header: //depot/asic/msmshared/apps/StaticExtensions/OEM/Src/OEMAnnunciator.c#5
 #ifdef FEATURE_MDP
 #define ANNUN_ALPHA_BLEND_PCT 0x8f
 #endif
+
+#ifdef CUST_EDITION  
+#ifdef FEATRUE_SET_ANN_FULL_SCREEN
+// 用于保存待机界面墙纸顶层图标栏覆盖部分墙纸的图片数据
+static IDIB *pgWallpaperBarDDB=NULL;
+#endif
+#endif /*CUST_EDITION*/
 
 typedef struct IANNUNCore
 {
@@ -169,6 +180,7 @@ typedef struct {
  * Image data for the annunciator fields.
  *
  *******************************************************************/
+# ifndef CUST_EDITION
 static OEMState_data mode_image_data[] =
 {
   {ANNUN_STATE_ANALOG, IDB_ANALOG, NULL},
@@ -281,7 +293,162 @@ static OEMState_data hsdpa_image_data[] =
 
 // Image data for BCMCS annunciator
 static OEMState_data bcmcs_image_data[] = {ANNUN_STATE_ON, IDB_BCMCS, NULL};
+#else
+#if 1
+ /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
+ /*RSSI/Airplane Mode*/
+ static OEMState_data rssi_image_data[]=
+{
+  {ANNUN_STATE_AIR_MODE_ON, IDB_AIR_MODE, NULL},
+  {ANNUN_STATE_RSSI_NO_SERV, IDB_NO_SERVICE, NULL},
+  {ANNUN_STATE_RSSI_0, IDB_RSSI0, NULL},
+  {ANNUN_STATE_RSSI_1, IDB_RSSI1, NULL},
+  {ANNUN_STATE_RSSI_2, IDB_RSSI2, NULL},
+  {ANNUN_STATE_RSSI_3, IDB_RSSI3, NULL},
+  {ANNUN_STATE_RSSI_4, IDB_RSSI4, NULL}
+};
+/*1x/Wap/Roam*/
+static OEMState_data wap_image_data[]=
+{
+    {ANNUN_STATE_WAP_ON, IDB_WAP, NULL},
+    {ANNUN_STATE_1X_ON, IDB_1X, NULL},
+    {ANNUN_STATE_ROAM_ON, IDB_ROAM, NULL}
+};
+/*Voice Privacy/Lockstatus*/
+static OEMState_data lockstatus_image_data[]=
+{
+    {ANNUN_STATE_LOCKSTATUS_ON, IDB_LOCKSTATUS, NULL},
+    {ANNUN_STATE_VOICE_PRIV_ON, IDB_VOICE_PRIV, NULL}
+};
+/*Inuse/Loudspeaker/Mute/Emergency/Missed Call*/
+static OEMState_data call_image_data[]=
+{
+    {ANNUN_STATE_CALL_EMERGENCY_ON, IDB_EMERGENCY, NULL},
+    {ANNUN_STATE_CALL_MUTE_ON, IDB_MUTE, NULL},
+    {ANNUN_STATE_CALL_LOUDSPEAKER_ON, IDB_LOADSPEAKER, NULL},
+    {ANNUN_STATE_CALL_INUSE_ON, IDB_INUSE, NULL},
+    {ANNUN_STATE_CALL_MISSEDCALL_ON, IDB_MISSED_CALL, NULL}
+};
+/*SMS Memory Full/VMail/SMS*/
+static OEMState_data sms_image_data[]=
+{
+    {ANNUN_STATE_SMS_MAILFULL_ON, IDB_SMS_FULL, NULL},
+    {ANNUN_STATE_SMS_VMAIL_ON, IDB_VMAIL, NULL},
+    {ANNUN_STATE_SMS_SMAIL_ON, IDB_SMS, NULL}
+};
+/*Push/Sports*/
+static OEMState_data sports_image_data[]=
+{
+    {ANNUN_STATE_SPORTS_ON, IDB_SPORTS, NULL}
+};
+/*FMRadio/Headset*/
+static OEMState_data fmradio_image_data[]=
+{
+    {ANNUN_STATE_FMRADIO_ON, IDB_FM_RADIO, NULL},
+    {ANNUN_STATE_HEADSET_ON, IDB_HEADSET, NULL}
+};
+/*BT Trans/BT Headset/BT On*/
+static OEMState_data bluetooth_image_data[]=
+{
+    {ANNUN_STATE_BT_TRANS_ON, IDB_BT_TRANS, NULL},
+    {ANNUN_STATE_BT_HEADSET_ON, IDB_BT_HEADSET, NULL},
+    {ANNUN_STATE_BT_ON, IDB_BLUETOOTH, NULL}
+};
+/*Timer/Alarm/Schedule*/
+static OEMState_data alarm_image_data[]=
+{
+    {ANNUN_STATE_TIMER_ON, IDB_TIMER, NULL},
+    {ANNUN_STATE_ALARM_ON, IDB_ALARM, NULL},
+    {ANNUN_STATE_SCHEDULE_ON, IDB_SCHEDULE, NULL}
+};
+/*MMS Full/MMS Unread/MMS Unreceive/Push*/
+static OEMState_data mms_image_data[]=
+{
+    {ANNUN_MMS_FULL_ON, IDB_MMS_FULL, NULL},
+    {ANNUN_MMS_UNREAD_ON, IDB_MMS_UNREAD, NULL},
+    {ANNUN_MMS_UNRECEIVE_ON, IDB_MMS_UNRECEIVED, NULL},
+    {ANNUN_STATE_PUSH_ON, IDB_PUSH_MSG, NULL}
+};
+/*Ringtone*/
+static OEMState_data ringtone_image_data[]=
+{
+  {ANNUN_STATE_RINGTONE_ALERT, IDB_ALERT, NULL},
+  {ANNUN_STATE_RINGTONE_SILENT, IDB_SILENCE, NULL},
+  {ANNUN_STATE_RINGTONE_VIBRING, IDB_VIBRING, NULL},
+  {ANNUN_STATE_RINGTONE_VIBRATOR, IDB_VIBRATOR, NULL}
+};
+/*Battery*/
+static OEMState_data batt_image_data[]=
+{
+  {ANNUN_STATE_BATT_LOW, IDB_BATT_LOW, NULL},
+  {ANNUN_STATE_BATT_1, IDB_BATT1, NULL},
+  {ANNUN_STATE_BATT_2, IDB_BATT2, NULL},
+  {ANNUN_STATE_BATT_3, IDB_BATT3, NULL},
+  {ANNUN_STATE_BATT_FULL, IDB_BATT_FULL, NULL}
+};
 
+#else
+static OEMState_data rssi_image_data[]=
+{
+  {ANNUN_STATE_RSSI_0, IDB_RSSI0, NULL},
+  {ANNUN_STATE_RSSI_1, IDB_RSSI1, NULL},
+  {ANNUN_STATE_RSSI_2, IDB_RSSI2, NULL},
+  {ANNUN_STATE_RSSI_3, IDB_RSSI3, NULL},
+  {ANNUN_STATE_RSSI_4, IDB_RSSI4, NULL}
+};
+
+static OEMState_data ring_image_data[]={ANNUN_STATE_ON, IDB_ALERT, NULL};
+
+static OEMState_data silent_image_data[]={ANNUN_STATE_ON, IDB_SILENCE, NULL};
+
+static OEMState_data alert_image_data[]={ANNUN_STATE_ON, IDB_RING_THEN_VIBRATOR, NULL};
+
+static OEMState_data vibrate_image_data[]={ANNUN_STATE_ON, IDB_VIBRATOR, NULL};
+#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
+static OEMState_data mute_image_data[]={ANNUN_STATE_ON, IDB_MUTE, NULL};
+#endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
+static OEMState_data headset_image_data[]={ANNUN_STATE_ON, IDB_HEADSET, NULL};
+
+static OEMState_data fmradio_image_data[]={ANNUN_STATE_ON, IDB_FM_RADIO_PLAY, NULL};
+
+//static OEMState_data lockstatus_image_data[]={ANNUN_STATE_ON, IDB_LOCK, NULL};
+
+static OEMState_data voiceprivacy_image_data[]={ANNUN_STATE_ON, IDB_VOICE_PRIVACY, NULL};
+
+static OEMState_data callforward_image_data[]={ANNUN_STATE_ON, IDB_INUSE, NULL};
+
+static OEMState_data missedcall_image_data[]={ANNUN_STATE_ON, IDB_MISS_INDICATOR, NULL};
+
+static OEMState_data smsmemoryfull_image_data[]={ANNUN_STATE_ON, IDB_SMS_FULL, NULL};
+
+static OEMState_data sms_image_data[]={ANNUN_STATE_ON, IDB_MSG, NULL};
+
+static OEMState_data vmail_image_data[]={ANNUN_STATE_ON, IDB_MBOX, NULL};
+
+static OEMState_data alarm_image_data[]={ANNUN_STATE_ON, IDB_ALARM_ACTIVATED, NULL};
+
+static OEMState_data roam_image_data[]={ANNUN_STATE_ON, IDB_ROAM, NULL};
+
+//static OEMState_data homezone_image_data[]={ANNUN_STATE_ON, IDB_HOMEZONE_INDICATOR, NULL};
+
+//static OEMState_data divertedcall_image_data[]={ANNUN_STATE_ON, IDB_DIVERTED_INDICATOR, NULL};
+
+//static OEMState_data callfirewall_image_data[]={ANNUN_STATE_ON, IDB_CALL_FIREWALL_ACTIVATED, NULL};
+
+//static OEMState_data smsfirewall_image_data[]={ANNUN_STATE_ON, IDB_SMS_FIREWALL_ACTIVATED, NULL};
+
+//static OEMState_data callandsms_firewall_image_data[]={ANNUN_STATE_ON, IDB_CALL_AND_SMS, NULL};
+
+static OEMState_data batt_image_data[]=
+{
+  {ANNUN_STATE_BATT_LOW, IDB_NO_BATT, NULL},
+  {ANNUN_STATE_BATT_1, IDB_BATT1, NULL},
+  {ANNUN_STATE_BATT_2, IDB_BATT2, NULL},
+  {ANNUN_STATE_BATT_3, IDB_BATT3, NULL},
+  {ANNUN_STATE_BATT_FULL, IDB_FULLBATT, NULL}
+};
+#endif
+#endif
 // Text data
 #define ANNUN_TEXT_SIZE 25
 static AECHAR pszTime[ANNUN_TEXT_SIZE];
@@ -292,6 +459,7 @@ static AECHAR pszBanner[ANNUN_TEXT_SIZE];
  * Content data for the annunciator fields
  *
  *******************************************************************/
+#ifndef CUST_EDITION
 OEMAnnun_content reserved_content =
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)reserved_image_data};
 
@@ -346,16 +514,135 @@ OEMAnnun_content vt_content =
 OEMAnnun_content hsdpa_content =
      {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)hsdpa_image_data};
 
+
+
 OEMAnnun_content bcmcs_content =
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)bcmcs_image_data};
+#else
+#if 1
+ /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
+ /*ANNUN_FIELD_RSSI*/
+OEMAnnun_content rssi_content =
+     {ANNUN_TYPE_IMAGE, 7, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
+/*ANNUN_FIELD_WAP*/
+OEMAnnun_content wap_content =
+     {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)wap_image_data};
+/*ANNUN_FIELD_LOCKSTATUS*/
+OEMAnnun_content lockstatus_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)lockstatus_image_data};
+/*ANNUN_FIELD_CALL*/
+OEMAnnun_content call_content =
+     {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)call_image_data};
+/*ANNUN_FIELD_SMS*/
+OEMAnnun_content sms_content =
+     {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)sms_image_data};
+/*ANNUN_FIELD_SPORT*/
+OEMAnnun_content sports_content =
+     {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)sports_image_data};
+/*ANNUN_FIELD_FMRADIO*/
+OEMAnnun_content fmradio_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
+/*ANNUN_FIELD_BLUETOOTH*/
+OEMAnnun_content bluetooth_content =
+     {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)bluetooth_image_data};
+/*ANNUN_FIELD_ALARM*/
+OEMAnnun_content alarm_content =
+     {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)alarm_image_data};
+/*ANNUN_FIELD_MMS*/
+OEMAnnun_content mms_content =
+     {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)mms_image_data};
+/*ANNUN_FIELD_RINGTONE*/
+OEMAnnun_content ringtone_content =
+     {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)ringtone_image_data};
+/*ANNUN_FIELD_BATT*/
+OEMAnnun_content batt_content =
+     {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)batt_image_data};
+ #else
+ 
+OEMAnnun_content rssi_content =
+     {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)rssi_image_data};
+OEMAnnun_content ring_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)ring_image_data};
+OEMAnnun_content silent_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)silent_image_data};
+OEMAnnun_content alert_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)alert_image_data};
+OEMAnnun_content vibrate_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)vibrate_image_data};
+#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
+OEMAnnun_content mute_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)mute_image_data};
+#endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
+OEMAnnun_content headset_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)headset_image_data};
+OEMAnnun_content fmradio_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
+//OEMAnnun_content lockstatus_content =
+//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)lockstatus_image_data};
+OEMAnnun_content voiceprivacy_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)voiceprivacy_image_data};  
+OEMAnnun_content callforward_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)callforward_image_data};
+OEMAnnun_content missedcall_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)missedcall_image_data};
+OEMAnnun_content smsmemoryfull_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)smsmemoryfull_image_data};
+OEMAnnun_content sms_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)sms_image_data};
+OEMAnnun_content vmail_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)vmail_image_data};
+OEMAnnun_content alarm_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)alarm_image_data};
+OEMAnnun_content roam_content =
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)roam_image_data};
+//OEMAnnun_content homezone_content =
+//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)homezone_image_data};
+//OEMAnnun_content divertedcall_content =
+//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)divertedcall_image_data};
+//OEMAnnun_content callfirewall_content =
+//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)callfirewall_image_data};
+//OEMAnnun_content smsfirewall_content =
+//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)smsfirewall_image_data};
+//OEMAnnun_content callandsms_firewall_content =
+//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)callandsms_firewall_image_data};
+OEMAnnun_content batt_content =
+     {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)batt_image_data};
+#endif
 
+#endif
+
+#ifdef FEATURE_DISP_176X220
+    #define IMG_WIDTH      12
+    #define IMG_HEIGHT     13
+    #define LG_IMG_WIDTH 20
+    #define TEXT_HEIGHT    11
+    #define ROW1_Y           0
+    #define BETWEEN_ICON_PIXEL 1
+#else
 /* Standard image fields are 10 x 10 (pixels)    */
 /* while large image fields are 20 x 10 (pixels) */
+    #define IMG_WIDTH      10
+    #define IMG_HEIGHT     10
+    #define LG_IMG_WIDTH 20
+    #define TEXT_HEIGHT    11
+    #define ROW1_Y           2
+    #define BETWEEN_ICON_PIXEL 1
+#endif
 
-#define IMG_WIDTH  10
-#define IMG_HEIGHT 10
-#define LG_IMG_WIDTH 20
-#define TEXT_HEIGHT 11
+#ifdef CUST_EDITION  
+#define ANNUN_ICON_POSITION_1      (0)
+#define ANNUN_ICON_POSITION_2      (LG_IMG_WIDTH + 1*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_3      (LG_IMG_WIDTH + 1*IMG_WIDTH + 2*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_4      (LG_IMG_WIDTH + 2*IMG_WIDTH + 3*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_5      (LG_IMG_WIDTH + 3*IMG_WIDTH + 4*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_6      (LG_IMG_WIDTH + 4*IMG_WIDTH + 5*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_7      (LG_IMG_WIDTH + 5*IMG_WIDTH + 6*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_8      (LG_IMG_WIDTH + 6*IMG_WIDTH + 7*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_9      (LG_IMG_WIDTH + 7*IMG_WIDTH + 8*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_10    (LG_IMG_WIDTH + 8*IMG_WIDTH + 9*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_11    (LG_IMG_WIDTH + 9*IMG_WIDTH + 10*BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_END  ((DISP_WIDTH) - (LG_IMG_WIDTH))
+#endif /*CUST_EDITION*/
 
 /* Row layouts for annunciator, assuming 40-row annunciator region
  * Pixel rows:  First        Last        Annunciator content
@@ -420,7 +707,7 @@ OEMAnnun_content bcmcs_content =
  *             125          174         Operator
  *             175          175         -
  */
-
+#ifndef CUST_EDITION
 /* Annunciator Definitions */
 //lint -save -e545  Suppress complaints about "suspicious use of &"
 static OEMAnnun_data Annunciators[] =
@@ -445,7 +732,74 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_HSDPA, 112, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &hsdpa_content},
   {ANNUN_FIELD_BCMCS, 142, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &bcmcs_content}
 };
+#else
+#if 1
+/*The first place is reserved for the signal icon, and the last place is reserved for the battery icon. 
+    Those icons between them are arranged one by one, and their positions are now decided by macro*/
+/* Q1 Annunciator layout:
+ * First row: Rank               Pos                        Field(from higher priority to lower)
+ * ---------------------------------------------------
+ *               1    ANNUN_ICON_POSITION_1         Airplane Mode/ RSSI
+ *               2    ANNUN_ICON_POSITION_2         Lockstatus/Voice Privacy
+ *               3    ANNUN_ICON_POSITION_3         Wap/1x/Roam
+ *               4    ANNUN_ICON_POSITION_4         Emergency/Mute/Loudspeaker/Inuse/Missed Call
+ *               5    ANNUN_ICON_POSITION_5         SMS Memory Full/VMail/SMS
+ *               6    ANNUN_ICON_POSITION_6         Push/Sport
+ *               7    ANNUN_ICON_POSITION_7         FMRadio/Headset
+ *               8    ANNUN_ICON_POSITION_8         BT Trans/BT Headset/BT On
+ *               9    ANNUN_ICON_POSITION_9         Timer/Alarm/Schedule
+ *              10   ANNUN_ICON_POSITION_10        SD Card
+ *              11   ANNUN_ICON_POSITION_11        Ringtone
+ *              12   ANNUN_ICON_POSITION_END      Battery
+ */
+static OEMAnnun_data Annunciators[] =
+{
+  {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content},
+  {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},  
+  {ANNUN_FIELD_LOCKSTATUS,     ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
+  {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
+  {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content},
+  {ANNUN_FIELD_SPORTS,            ANNUN_ICON_POSITION_6,     ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sports_content}, 
+  {ANNUN_FIELD_FMRADIO,          ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &fmradio_content},
+  {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_8,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
+  {ANNUN_FIELD_ALARM,             ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+  {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
+  {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_11,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+  {ANNUN_FIELD_BATT,                ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+};
+#else
 
+static OEMAnnun_data Annunciators[] =
+{
+  {ANNUN_FIELD_RSSI,             0, ROW1_Y, LG_IMG_WIDTH, IMG_HEIGHT, &rssi_content},
+  {ANNUN_FIELD_RING,            21, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &ring_content},
+  {ANNUN_FIELD_SILENT,         21, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &silent_content},
+  {ANNUN_FIELD_ALERT,          21, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &alert_content},  
+  {ANNUN_FIELD_VIBRATE,      21, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &vibrate_content},    
+  {ANNUN_FIELD_HEADSET,      32, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &headset_content},  
+  {ANNUN_FIELD_FMRADIO,         32, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &fmradio_content},    
+//  {ANNUN_FIELD_LOCKSTATUS,  43, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &lockstatus_content},
+//  {ANNUN_FIELD_CALLFIREWALL,      54, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &callfirewall_content}, 
+//  {ANNUN_FIELD_CALLANDSMS_FIREWALL, 54, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &callandsms_firewall_content},   
+//  {ANNUN_FIELD_DIVERTEDCALL,   54, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &divertedcall_content},  
+  {ANNUN_FIELD_VOICE_PRIVACY,43, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &voiceprivacy_content},    
+  {ANNUN_FIELD_CALLFORWARD,  54, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &callforward_content}, 
+  {ANNUN_FIELD_MISSEDCALL,      65, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &missedcall_content},   
+  {ANNUN_FIELD_VMAIL,      76, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &vmail_content},  
+//  {ANNUN_FIELD_SMSFIREWALL, 65, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &smsfirewall_content},  
+  {ANNUN_FIELD_SMSMEMORYFULL,   76, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &smsmemoryfull_content},
+  {ANNUN_FIELD_SMS,         76, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &sms_content},
+  {ANNUN_FIELD_ALARM,     135, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &alarm_content},
+  {ANNUN_FIELD_ROAM,       146, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &roam_content},
+//  {ANNUN_FIELD_HOMEZONE,97, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &homezone_content},     
+  {ANNUN_FIELD_BATT,         156, ROW1_Y, LG_IMG_WIDTH, IMG_HEIGHT, &batt_content}, 
+  #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
+  {ANNUN_FIELD_MUTE,      65, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &mute_content},
+  #endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
+};
+#endif
+
+#endif
 #ifdef FEATURE_SECONDARY_DISPLAY
 #error code not present
 #endif // FEATURE_SECONDARY_DISPLAY
@@ -563,6 +917,90 @@ static void annun_disp_update(
 //lint -restore
 //lint -restore
 
+#if defined(FEATRUE_SET_ANN_FULL_SCREEN) && defined(CUST_EDITION)
+static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
+{
+    AEERect Rect;
+    int nWidth, nHeight;
+    IBitmap *pIBitmap = NULL;
+    db_items_value_type  need_capture;
+
+    if (pMe == NULL) 
+    {
+        return EFAILED;
+    }
+
+    if(NULL == pMe->m_coreObj)
+    {
+        return EFAILED;
+    }
+
+    if (pMe->m_coreObj->m_pDDB == NULL) 
+    {
+        return EFAILED;
+    }
+    
+    nWidth = (int)Annunciators[nAnnunID].width;
+    nHeight = (int)Annunciators[nAnnunID].height;
+    SETAEERECT(&Rect, Annunciators[nAnnunID].x_pos,
+             Annunciators[nAnnunID].y_pos, nWidth, nHeight);
+    if(Annunciators[nAnnunID].pcontent->nCurrState == ANNUN_STATE_OFF)
+    {
+        /* nothing to do */
+        return SUCCESS;
+    }
+
+    db_get(DB_CAPTURE_WALLPER,&need_capture);
+    if (pMe->m_coreObj->m_bAnnunciatorOn)
+    {// 清除显示色备上的图标--此时需判断显示设备图标状态
+        if (need_capture.b_capture == DB_CAPTURE_INIDLE)
+        {
+            // 待机界面下以拷贝下来的墙纸数据更新显示设备
+            if (NULL != pgWallpaperBarDDB)
+            {
+                IBitmap *pDevBmp=NULL;
+                IBitmap *pBmp =NULL;
+                
+                if (IDISPLAY_GetDeviceBitmap(pMe->m_coreObj->m_piDisplay, &pDevBmp) == SUCCESS)
+                {
+                    pBmp = IDIB_TO_IBITMAP(pgWallpaperBarDDB);
+                    
+                    (void)IBITMAP_BltIn(pDevBmp, 
+                                        Annunciators[nAnnunID].x_pos, Annunciators[nAnnunID].y_pos, nWidth, nHeight, pBmp, 
+                                        Annunciators[nAnnunID].x_pos, Annunciators[nAnnunID].y_pos, AEE_RO_COPY);
+                                        
+                    IBITMAP_Release(pDevBmp);
+                    IDISPLAY_Update(pMe->m_coreObj->m_piDisplay);
+                }
+            }
+        }
+        else
+        {
+            RGBVAL nBgColor = RGB_BLACK;
+#ifdef FEATURE_RANDOM_MENU_COLOR
+            byte     nRandomMenu = 0;
+
+            (void)OEM_GetConfig(CFGI_RANDOM_MENU, (void*)&nRandomMenu, sizeof(nRandomMenu));
+            if(nRandomMenu != 0)
+            {
+                (void)OEM_GetConfig(CFGI_MENU_BGCOLOR, &nBgColor, sizeof(nBgColor));
+            }
+#endif
+            // 此时应用填充色，而非背景色, 且填充的是显示设备
+            IDISPLAY_FillRect(pMe->m_coreObj->m_piDisplay, &Rect, nBgColor);
+            IDISPLAY_Update(pMe->m_coreObj->m_piDisplay);
+        }
+    }
+    
+    // 以图标层背景色清除图标层位图相应位置的图标数据--此时无需判断显示设配图标状态，操作必须进行
+    pIBitmap = IDIB_TO_IBITMAP(pMe->m_coreObj->m_pDDB);
+    IBITMAP_FillRect(pIBitmap, &Rect, pMe->m_coreObj->m_bg, AEE_RO_COPY);
+
+    return SUCCESS;
+}
+
+#else
+
 /*===========================================================================
 
 FUNCTION: ClearField
@@ -618,6 +1056,10 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
 
   return SUCCESS;
 }
+#endif
+
+
+
 
 /*===========================================================================
 
@@ -657,9 +1099,15 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   // Since we have HDR RSSI and normal RSSI at the same location,
   // even if the new state is same as previous state,
   // it needs to be redrawn.
+#ifdef CUST_EDITION
+  if ((nState == Annunciators[nAnnunID].pcontent->nCurrState) &&
+      (nAnnunID != ANNUN_FIELD_RSSI))
+#else
   if ((nState == Annunciators[nAnnunID].pcontent->nCurrState) &&
       (nAnnunID != ANNUN_FIELD_RSSI) &&
-      (nAnnunID != ANNUN_FIELD_HDR_RSSI)) {
+      (nAnnunID != ANNUN_FIELD_HDR_RSSI)) 
+#endif      
+  {
     /* nothing to do */
     return SUCCESS;
   }
@@ -1428,8 +1876,12 @@ static int IAnnunciator_SetFieldEx(IAnnunciator * pMe, uint32 nAnnunID,
 
   //ANNUN_FIELD_OPERATOR is a special case which can be image/text
   // We display the PLMN at this location for GSM/WCDMA
+#ifdef CUST_EDITION
+if ((Annunciators[nAnnunID].pcontent->nFieldType != ANNUN_TYPE_TEXT))
+#else
   if ((Annunciators[nAnnunID].pcontent->nFieldType != ANNUN_TYPE_TEXT) &&
        (nAnnunID != ANNUN_FIELD_OPERATOR))
+#endif       
     return EFAILED;
 
   /* Run in the system context */
@@ -1455,7 +1907,9 @@ static int IAnnunciator_SetFieldEx(IAnnunciator * pMe, uint32 nAnnunID,
 
   pszText = (AECHAR *) pData;
 
+#ifndef CUST_EDITION
   if(nAnnunID != ANNUN_FIELD_OPERATOR) // Reserved field is image.
+#endif  
   {
     (void)WSTRLCPY((AECHAR *) Annunciators[nAnnunID].pcontent->data, pszText, ANNUN_TEXT_SIZE);
   }
@@ -1727,6 +2181,53 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
   return SUCCESS;
 }
 
+#ifdef CUST_EDITION  
+static int IAnnunciator_EnableAnnunciatorBarEx(IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw)
+{
+    boolean bLastState;
+#ifdef FEATURE_MDP
+    #error code not present
+#endif /* FEATURE_MDP */
+
+    if (!pMe)
+    {
+        return EFAILED;
+    }
+
+    if(NULL == pMe->m_coreObj)
+    {
+        return EFAILED;
+    }
+
+    switch(clsid)
+    {
+        case AEECLSID_DISPLAY1:
+            bLastState = pMe->m_coreObj->m_bAnnunciatorOn;
+            pMe->m_coreObj->m_bAnnunciatorOn = bOn;
+#ifdef FEATURE_MDP
+#error code not present
+#endif /* FEATURE_MDP */
+            break;
+
+        default:
+            return ECLASSNOTSUPPORT;
+    }
+
+    if ((bOn != bLastState) || bForceRearaw)
+    {
+#ifdef FEATURE_MDP
+#error code not present
+#endif /* FEATURE_MDP */
+        
+        if (bOn)
+        {
+            (void) IANNUNCIATOR_Redraw(pMe);
+        }
+    }
+    
+    return SUCCESS;
+}
+#endif /*CUST_EDITION*/
 /*=======================================================================
 
 IAnnunciator_GetAnnunciatorBarSize()
@@ -1780,6 +2281,21 @@ static int IAnnunciator_GetAnnunciatorBarSize(IAnnunciator * pMe, AEECLSID clsid
   return SUCCESS;
 }
 
+#ifdef CUST_EDITION  
+#ifdef FEATRUE_SET_ANN_FULL_SCREEN
+// 用于保存待机界面墙纸顶层图标栏覆盖部分墙纸的图片数据
+IDIB ** OEMANNUNCIATOR_GetWallpaperBarDDB(void)
+{
+    if (NULL != pgWallpaperBarDDB)
+    {
+        IDIB_Release(pgWallpaperBarDDB);
+        pgWallpaperBarDDB = NULL;
+    }
+    
+    return (&pgWallpaperBarDDB);
+}
+#endif
+#endif /*CUST_EDITION*/
 /* =======================================================================
 
 IANNUNCIATOR_EnableBlink()

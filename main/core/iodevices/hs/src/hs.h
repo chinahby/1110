@@ -223,6 +223,10 @@ typedef enum {
   HS_LCD_SRVC,
   HS_KPD_KEY_REG,
 #endif
+
+#ifdef CUST_EDITION
+  HS_SET_VIB_MOTO_ONOFF, /* Set sig led on/off profile                       */
+#endif
   HS_OP_MAX
 } hs_op_type;
 
@@ -902,7 +906,12 @@ typedef struct{
   kpd_cb_f_handle_type    *cb_ptr; /* pointer to callback function */
 }hs_kpd_sub_srvc_packet_type;
 
-
+#ifdef CUST_EDITION
+typedef struct {
+  hs_hdr_type               hdr;      /* Command header  */
+  boolean                   onoff;    /* On/Off          */
+} hs_vib_moto_ctrl_type;
+#endif
 
 typedef struct{
   hs_hdr_type              hdr;
@@ -953,6 +962,11 @@ typedef union {
   hs_lcd_sub_srvc_packet_type lcd_srvc; /* LCD subscription , HS_LCD_SRVC  */
   hs_kpd_event_packet_type    kpd_evt;  /* KPD event subsc, , HS_KPD_EVENT */
 #endif
+
+#ifdef CUST_EDITION
+    hs_vib_moto_ctrl_type vib_moto_ctrl;  /* Vibration moto control packet       */   
+#endif
+
 } hs_packets_type;
 
 /* Queue of free command buffers.  These can be retrieved by calling

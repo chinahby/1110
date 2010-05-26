@@ -36,7 +36,9 @@
 #include "CoreApp_priv.h"        /* CoreApp external data and function prototypes */
 
 #include "AEEClipboard.h"
+#ifdef FEATURE_RANDOM_MENU_REND
 #include "Rendering.h"
+#endif
 #ifdef FEATURE_TOUCHPAD
 #include "touchpad.h"
 #endif
@@ -115,9 +117,6 @@ void OEMKeyguard_Init(void *pShell,void *pPhone,void *pAlert,void *ann)
 #include "OEMRTC.h"
 #include "AEEDownload.h"
 
-#ifdef FEATURE_SUPPORT_VC0848
-#include "Vc0848.h"
-#endif
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -169,7 +168,6 @@ static void CoreNotifyMP3PlayerAlertEvent(CCoreApp *pMe, boolean toStartAlert);
 static void CoreNotifyMP3PlayerAlertEventCB(CCoreApp *pMe);
 
 static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe);
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 static void CoreAppLoadTimepImage(CCoreApp *pMe);   //add by ydc
 /*==============================================================================
 
@@ -483,25 +481,6 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifndef  FEATURE_2008_POWERON_LOGIC
     pMe->m_b_online_from = ON_LINE_FROM_NORMAL;
 #endif
-#ifdef FEATURE_USB_FUNCTION_SELECT
-    {
-#ifndef WIN32
-        OEMUSBFUNCTION enumData = OEMNV_USB_DATA_AND_DIAG;
-
-        ICONFIG_GetItem(pMe->m_pConfig, CFGI_USB_FUNCTION, &enumData, sizeof(enumData));
-
-        if(OEMNV_USB_DATA_AND_DIAG == enumData)
-        {
-            hs_usb_switch_ctrl(FALSE);
-        }
-        else
-        {
-            hs_usb_switch_ctrl(TRUE);
-        }
-#endif//WIN32
-    }
-#endif //FEATURE_SUPPORT_VIM0848
-
     CoreAppReadNVKeyBeepValue(pMe);
     g_pCoreApp = pMe;
 
@@ -823,7 +802,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
             // 开始 Core Applet 状态机, 当前状态已初始为 COREST_INIT
             CoreApp_RunFSM(pMe);
-            Rendering_SetEnable(DISPLAYDEV_MAIN, TRUE);
             return TRUE;
 
         case EVT_APP_STOP:
@@ -895,18 +873,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             pMe->m_bSuspended = FALSE;
             pMe->m_bActive = TRUE;
 
-#ifdef FEATURE_SUPPORT_VC0848
-            switch(VC_GetCurrentDevice())
-            {
-                case VC_DEV_CAMERA:
-                    ISHELL_SendEvent(pMe->a.m_pIShell, AEECLSID_APP_CAMERA, EVT_APP_INTERRUPT, 0, 0);
-                    break;
-
-                default:
-                    break;
-            }
-#endif
-
             // 跑状态机
             CoreApp_RunFSM(pMe);
             return TRUE;
@@ -919,7 +885,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return CoreApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
 
         case EVT_DIALOG_START:
-            Rendering_UpdateEx();//wlh add for 3D test
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:

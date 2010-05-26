@@ -80,7 +80,6 @@ static void SecurityMenu_FreeAppData(CSecurityMenu *pMe);
 
 static void SecurityMenu_RunFSM(CSecurityMenu *pMe);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -717,7 +716,6 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             pMe->m_bAppIsReady = FALSE;
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
@@ -786,7 +784,6 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
             return SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             return SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:

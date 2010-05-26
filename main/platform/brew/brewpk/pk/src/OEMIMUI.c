@@ -211,8 +211,8 @@ static boolean OEMIMUI_HandleEvent(IIMUI * po, AEEEvent eCode, uint16 wParam, ui
       if( eCode == EVT_POINTER_DOWN ){
          AEERect  rctChar, rctLetter;
          boolean  bRet  = FALSE;
-         int16   wXPos = (int16)AEE_GET_POINTER_X((const char *)dwParam);
-         int16   wYPos = (int16)AEE_GET_POINTER_Y((const char *)dwParam);
+         int16   wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
+         int16   wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
          
          IMENUCTL_GetRect(pme->pSKCharacterList, &rctChar);
          IMENUCTL_GetRect(pme->pSKLetterComp, &rctLetter);

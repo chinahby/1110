@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-ISourceUtil simulation
-
-ISourceUtil is simulated.
-==========================
-*/ 

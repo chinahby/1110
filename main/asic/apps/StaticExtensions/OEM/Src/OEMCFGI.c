@@ -6,7 +6,7 @@
   This file contains a reference implementation of a OEM Config
   control interfaces.
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright ? 1999-2007 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ============================================================================*/
@@ -169,7 +169,9 @@ when       who     what, where, why
 #include "OEMFS.h"
 #endif //MIN_BREW_VERSION(4,0)
 #include "snd.h"
+#ifndef FEATURE_OEMUI_TASK
 #include "ui.h"
+#endif
 #include "hs.h"
 #include "mobile.h"
 #include "adc.h"
@@ -222,6 +224,24 @@ when       who     what, where, why
 #error code not present
 #endif
 
+#ifdef CUST_EDITION
+#include "Appscommon.h"
+#include "AEECallList.h" 
+#include "wms.h"
+#include "AEEAlarm.h"
+#ifdef FEATURE_KEYGUARD
+#include "OEMKeyguard.h"
+#endif
+#include "AEECM.h"
+#ifdef FEATURE_SUPPORT_BT_APP
+#ifndef WIN32
+#include "bt_ui_int.h"
+#endif
+#endif
+#ifdef FEATURE_TOUCHPAD
+#include "touchpad.h"
+#endif
+#endif // CUST_EDITION
 /*===========================================================================
 
                      DEFINES AND CONSTANTS
@@ -298,8 +318,66 @@ typedef PACKED struct {
    uint16   wAuth;         // Auth policy
    uint16   wPrivP;        // Privacy policy
 } OEMConfigDownloadInfo;
+#ifdef CUST_EDITION
+#ifdef FEATRUE_KEY_PAD_CTL
+#ifdef FEATURE_CARRIER_ISRAEL_PELEPHONE
+    #define KEY_PDA_CTL_FROM_TIME 57600000
+    #define KEY_PDA_CTL_TO_TIME      28800000
+#else
+    #define KEY_PDA_CTL_FROM_TIME 59400000
+    #define KEY_PDA_CTL_TO_TIME      32400000
+#endif
+#endif
 
+#if defined(FEATURE_PEKTEST)
+// Œ™∑Ω±„ PEK ≤‚ ‘£¨PEK ≤‚ ‘≈‰÷√∑≈‘⁄◊Ó«∞√Ê
+#define DEFAULT_BREW_CARRIER_ID     27
+#define DEFAULT_BREW_PLATFORM_ID    600
+#define DEFAULT_BREW_USERNAME       "card"
+#define DEFAULT_BREW_PASSWORD       "card"
+#define DEFAULT_BREW_SERVER         "oemdemo.qualcomm.com"
+#define DEFAULT_BREW_DOWNLOAD_FLG   (DIF_TEST_ALLOWED | DIF_SID_VALIDATE_ALL | DIF_RUIM_DEL_OVERRIDE | DIF_MIN_FOR_SID)
+#define DEFAULT_BREW_APOLICY        APOLICY_SID
+#define DEFAULT_BREW_PPOLICY        PPOLICY_BREW_OR_CARRIER
 
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+// ÷–π˙µÁ–≈»± °µƒbrew…Ë÷√ bkey -- 0 ∆ΩÃ®∫≈‘›”√±µƒ≥ß…Ãµƒ£¨»∑∂®∫Û–Ë∏¸∏ƒ
+// “™«Û BAM ¥”2.0.5…˝º∂÷¡2.1,∏˘æ›πÊ∑∂ PPP ¡¨Ω”∞¥ª•¡™–«ø’≤Œ ˝Ω¯––
+#define DEFAULT_BREW_CARRIER_ID     53
+#define DEFAULT_BREW_PLATFORM_ID    30012
+#define DEFAULT_BREW_USERNAME       "ctwap@mycdma.cn"
+#define DEFAULT_BREW_PASSWORD       "vnet.mobi"
+#define DEFAULT_BREW_SERVER         "brew.vnet.mobi"
+#define DEFAULT_BREW_DOWNLOAD_FLG   (DIF_TEST_ALLOWED | DIF_SID_VALIDATE_ALL | DIF_RUIM_DEL_OVERRIDE | DIF_AUTO_UPGRADE | DIF_MIN_FOR_SID)
+#define DEFAULT_BREW_APOLICY        APOLICY_SID
+#define DEFAULT_BREW_PPOLICY        PPOLICY_BREW_OR_CARRIER
+
+#elif defined(FEATURE_CARRIER_TAIWAN_APBW)
+// —«Ã´øÌ∆µ»± °µƒbrew…Ë÷√ bkey -- 0 
+#define DEFAULT_BREW_CARRIER_ID     97
+#define DEFAULT_BREW_PLATFORM_ID    600
+#define DEFAULT_BREW_USERNAME       ""
+#define DEFAULT_BREW_PASSWORD       ""
+#define DEFAULT_BREW_SERVER         "ads.qma.com.tw"
+#define DEFAULT_BREW_DOWNLOAD_FLG   (DIF_TEST_ALLOWED | DIF_SID_VALIDATE_ALL | DIF_RUIM_DEL_OVERRIDE | DIF_AUTO_UPGRADE | DIF_MIN_FOR_SID)
+#define DEFAULT_BREW_APOLICY        APOLICY_SID
+#define DEFAULT_BREW_PPOLICY        PPOLICY_BREW_OR_CARRIER
+
+#else
+
+// »± °µƒbrew…Ë÷√£¨pek≤‚ ‘”√
+#define DEFAULT_BREW_CARRIER_ID     27
+#define DEFAULT_BREW_PLATFORM_ID    600
+#define DEFAULT_BREW_USERNAME       "card"
+#define DEFAULT_BREW_PASSWORD       "card"
+#define DEFAULT_BREW_SERVER         "oemdemo.qualcomm.com"
+#define DEFAULT_BREW_DOWNLOAD_FLG   (DIF_TEST_ALLOWED | DIF_SID_VALIDATE_ALL | DIF_RUIM_DEL_OVERRIDE | DIF_MIN_FOR_SID)
+#define DEFAULT_BREW_APOLICY        APOLICY_SID
+#define DEFAULT_BREW_PPOLICY        PPOLICY_BREW_OR_CARRIER
+#endif
+
+#define OEMCONFIG_UPDATED           1
+#endif //#ifdef CUST_EDITION
 ////
 // Configuration items managed by the OEM layer.
 //
@@ -348,7 +426,11 @@ typedef PACKED struct
    dword         recent_mo_call_time;          // CFGI_RECENT_MO_TIMER
 
    byte          minute_alert;                 // CFGI_MINUTE_ALERT
+#ifdef CUST_EDITION
+   byte          any_key_answer;               // CFGI_ANYKEY_ANSWER
+#else
    boolean       any_key_answer;               // CFGI_ANYKEY_ANSWER
+#endif
    byte          headset_autoanswer;           // CFGI_HEADSET_AUTOANSWER
    byte          time_format;                  // CFGI_TIME_FORMAT
    uint32        device_mask;                  // CFGI_HEADSET|CFGI_STEREO_HEADSET|
@@ -362,7 +444,177 @@ typedef PACKED struct
    boolean       disable_in_call_disp;            // CFGI_DISABLE_IN_CALL_DISP
    boolean       disable_bg_image;              // CFGI_DISABLE_BG_IMAGE
    boolean       manual_plmn_sel_allowed;      // CFGI_MANUAL_PLMN_SEL_ALLOWED
+#ifdef CUST_EDITION
+   uint32        shake_mask;   //CFGI_SHAKE_MUSIC_CHECK|CFGI_SHAKE_FM_RADIO_CHECK|CFGI_SHAKE_WALLPAPER_CHECK|
+                              //CFGI_SHAKE_SNOOZE_ALARM_CHECK|CFGI_SHAKE_VIDEO_CHECK|CFGI_PEDOMETER_CHECK
+   uint16        phone_password;               // CFGI_PHONE_PASSWORD     
+   //boolean     phone_password_check;         // CFGI_PHONE_PASSWORD_CHECK  //type = boolean
+   byte          restrict_outgoing;            // CFGI_RESTRICT_OUTGOING     //type = byte
+   byte          restrict_incoming;            // CFGI_RESTRICT_INCOMING     //type = byte
+   //«Èæ∞ƒ£ Ω
+   byte          p_profile_cur_number;                           // CFGI_PROFILE_CUR_NUMBER
+   byte          p_alert_type[PROFILENUMBER];                    // CFGI_PROFILE_ALERT_TYPE
+   byte          p_bt_sms_ringer[PROFILENUMBER];                 // CFGI_PROFILE_SMS_RINGER  
+   ringID        p_call_ringer[PROFILENUMBER];                   // CFGI_PROFILE_CALL_RINGER      
+   ringID        p_alarm_ringer[PROFILENUMBER];                  // CFGI_PROFILE_ALARM_RINGER
+   ringID        p_sms_ringer_id[PROFILENUMBER];                 // CFGI_PROFILE_SMS_RINGER_ID   
+   uint16        p_start_music[PROFILENUMBER];                   // CFGI_PROFILE_STARTUP_MUSIC
+   uint16        p_shutdown_music[PROFILENUMBER];                // CFGI_PROFILE_SHUTDOWN_MUSIC
+   byte          p_poweronoff_alert[PROFILENUMBER];              // CFGI_PROFILE_POWERONOFF_ALERT   
+   byte          p_missed_call_alert[PROFILENUMBER];             // CFGI_PROFILE_MISSED_CALL_ALERT
+   //byte          p_headset_autoanswer[PROFILENUMBER];          // CFGI_PROFILE_HEADSET_AUTOANSWER
+   byte          p_keysnd_type[PROFILENUMBER];                   // CFGI_PROFILE_KEYSND_TYPE 
+   byte          p_keytone_length[PROFILENUMBER];                // CFGI_PROFILE_KEYTONE_LENGTH      
+   byte          p_ringer_level[PROFILENUMBER];                  // CFGI_PROFILE_RINGER_VOL 
+   byte          p_handset_ear_level[PROFILENUMBER];             // CFGI_PROFILE_EAR_VOL 
+   byte          p_beep_level[PROFILENUMBER];                    // CFGI_PROFILE_BEEP_VOL  
+   //∂Ã–≈¡Â…˘(0-±Ì æŒﬁ)
+   byte          bt_sms_ringer;                //CFGI_SMS_RINGER           // type=byte 
+   //ƒ÷÷”¡Â…˘
+   uint16        alarm_ringer;                 //CFGI_ALARM_RINGER   
+   //∂Ã–≈¡Â…˘
+   uint16        sms_ringer_id;                //CFGI_SMS_RINGER_ID    
+   //∂‡≤ ∞¥º¸“Ù
+   byte          keysnd_type;                  //CFGI_KEYSND_TYPE   
+   //∆¡±£ ±º‰
+   byte          p_screensaver_time;           // CFGI_SCREENSAVER_TIME 
+   //◊¿√Ê«Ω÷Ω
+   char          s_wallpaper[AEE_MAX_FILE_NAME/*FILESPECLEN*/];     //CFGI_WALLPAPER
+#ifdef FEATURE_ANIMATION_POWERUPDOWN
+   //ø™ª˙∂Øª≠
+   char          s_startupani[AEE_MAX_FILE_NAME/*FILESPECLEN*/];    //CFGI_STARTUP_ANIMATION 
+   //πÿª˙∂Øª≠
+   char          s_poweroffani[AEE_MAX_FILE_NAME/*FILESPECLEN*/];   //CFGI_POWEROFF_ANIMATION    
+#endif
+   //±≥π‚¡¡∂»º∂±      
+   byte          backlight_level;              //CFGI_BACKLIGHT_LEVEL    
+
+   //keyToneLength key_tone_length;            // CFGI_KEYTONE_LENGTH
+#ifdef FEATURE_SET_AUTOKEYGUARD
+   byte          autokey_guard;                // CFGI_AUTOKEYGUARD
+#endif
+   //byte        keypad_light_time;            //CFGI_KEYPAD_LIGHT_TIME
+   boolean       b_phonebook_lock;             //CFGI_PHONEBOOK_LOCK_CHECK
+   boolean       b_recentcall_lock;            //CFGI_RECENTCALL_LOCK_CHECK
+   boolean       b_sms_lock;                   //CFGI_SMS_LOCK_CHECK
+   boolean       b_calendar_lock;              //CFGI_CALENDAR_LOCK_CHECK
+   boolean       b_key_lock;                    //CFGI_KEY_LOCK_CHECK
+   boolean       lock_ruim;  
+   AEEConfigSIDNIDPairType lock_mccmnc[OEMNV_LOCK_MCCMNC_ARRSIZE];  
+   byte          desktop_theme;                //CFGI_DESKTOP_THEME
+#ifdef FEATURE_SCREEN_SAVE
+   char          s_screensave_type[AEE_MAX_FILE_NAME/*FILESPECLEN*/];//CFGI_SCREENSAVE_TYPE 
+#endif
+   byte          wms_priority;                  //CFGI_WMS_PRIORITY
+   byte          wms_sendmode;                  //CFGI_WMS_SENDMODE
+   byte          wms_storetype;                 //CFGI_WMS_STORETYPE
+   boolean       wms_delivereports;             //CFGI_WMS_DELIVERYREPORTS
+#ifdef FEATURE_AUTOREPLACE
+   boolean       wms_autoreplace;               //CFGI_WMS_AUTOREPLACE
+#endif
+   byte          wms_validityperiod;            //CFGI_WMS_VALIDITYPERIOD
+   wms_memory_store_e_type    wms_memstore;     //CFGI_WMS_MEMSTORE
+   boolean       wms_resvdmsgalert_timeout;     //CFGI_WMS_RESVDMSGALERT_TIMEIOUT
+   boolean       callbacknum_switch;            //CFGI_WMS_CALLBACKNUMSWITCH
+   AECHAR        callback_number[WMS_ADDRESS_MAX]; //CFGI_CALLBACKNUM
+   byte          wms_mochannel;                 //CFGI_WMS_MO_CHANNEL_SELECT
+#ifdef FEATRUE_AUTO_POWER
+   Auto_Power_Cfg m_auto_poweron;               //CFGI_AUTO_POWER_ON
+   Auto_Power_Cfg m_auto_poweroff;              //CFGI_AUTO_POWER_OFF
+#endif 
+
+   PowerDown_Alarm_Cfg powerdown_alarm;         //CFGI_POWERDOWN_ALARM
+
+#ifdef FEATRUE_SET_IP_NUMBER
+   IP_Number_Cfg m_ip_number;                   //CFGI_IP_NUMBER
+#endif
+#ifdef FEATURE_LED_CONTROL
+   byte          m_led_control;                 //CFGI_LED_CONTROL
+#endif
+#ifdef FEATRUE_KEY_PAD_CTL
+   Key_pad_Cfg   m_key_pad_ctl;                 //CFGI_KEY_PAD_CTL
+#endif
  
+
+   byte        fmRadio_volume;                                  //CFGI_FMRADIO_VOLUME
+   sChanInfo   fmRadio_chan_info[MAX_FMRADIO_STORED_CHANNEL];   //CFGI_FMRADIO_CHAN_INFO
+   byte        fmRadio_chan_total;                              //CFGI_FMRADIO_CHAN_TOTAL
+   EmergencyNum_Table    emerg_table;                 //CFGI_EMERGENCYNUM_TABLE
+   char     BUSY_ENABLE[FEATURE_CODE_MAX_LENTH];      //CFGI_CALLFORWARD_BUSY_ENABLE
+   char     BUSY_DISABLE[FEATURE_CODE_MAX_LENTH];     //CFGI_CALLFORWARD_BUSY_DISABLE
+   char     NOANSWER_ENABLE[FEATURE_CODE_MAX_LENTH];  //CFGI_CALLFORWARD_NOANSWER_ENABLE
+   char     NOANSWER_DISABLE[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_NOANSWER_DISABLE
+   char     NOCONNECT_ENABLE[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_NOCONNECT_ENABLE
+   char     NOCONNECT_DISABLE[FEATURE_CODE_MAX_LENTH];//CFGI_CALLFORWARD_NOCONNECT_DISABLE
+   char     ANYWAY_ENABLE[FEATURE_CODE_MAX_LENTH];    //CFGI_CALLFORWARD_ANYWAY_ENABLE
+   char     ANYWAY_DISABLE[FEATURE_CODE_MAX_LENTH];   //CFGI_CALLFORWARD_ANYWAY_DISABLE
+   char     DISABLE_ALL[FEATURE_CODE_MAX_LENTH];      //CFGI_CALLFORWARD_DISABLE_ALL
+   char     WAIT_ENABLE[FEATURE_CODE_MAX_LENTH];      //CFGI_CALLFORWARD_WAIT_ENABLE
+   char     WAIT_DISABLE[FEATURE_CODE_MAX_LENTH];     //CFGI_CALLFORWARD_WAIT_DISABLE
+   char     VOICEMAIL_ENABLE[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_VOICEMAIL_ENABLE
+   ServiceProvider List_SP[OEMNV_MAX_SERVICEPROVIDER_NUMBER]; //CFGI_SERVICE_PROVIDER
+   #ifdef FATRUE_LOCK_IMSI_MCCMNC
+   SetImsi List[OEMNV_MAX_SERVICEPROVIDER_NUMBER];//CFGI_IMSI_SETMCC
+   #endif
+   // ‰»Î∑®…Ë÷√   
+   byte     input_mode;                                //CFGI_INPUTMODE   
+   boolean m_fm_background;                            /*CFGI_FM_BACKGROUND*/
+#ifdef FEATURE_RANDOM_MENU_COLOR
+   uint32 m_nmenubgcolor;                       //CFGI_MENU_BGCOLOR
+   byte m_nrandommenu;                      //CFGI_RANDOM_MENU
+#endif
+#ifdef FEATRUE_SET_IP_NUMBER
+   boolean m_b_ip_pound;                               /*CFGI_IP_POUND*/
+#endif
+#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+   byte short_code_nam_count;//CFGI_SHORT_CODE_NAM_COUNT
+#endif 
+   boolean   alarm_flag;                               //CFGI_ALARM_FLAG
+#ifdef FEATURE_CARRIER_SUDAN_SUDATEL
+   char     BUSY_VOICEMAIL[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_BUSY_VOICEMAIL,
+   char     NOANSWER_VOICEMAIL[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_NOANSWER_VOICEMAIL,
+   char     NOCONNECT_VOICEMAIL[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL,
+   char     ANYWAY_VOICEMAIL[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_ANYWAY_VOICEMAIL,
+   char     WAIT_TEMP_DISABLE[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_WAIT_TEMP_DISABLE,
+   char     DND_ENABLE[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_DND_ENABLE,
+   char     DND_DISABLE[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_DND_DISABLE,
+   char     CNIR_ENABLE[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_CNIR_ENABLE,
+   char     CNIR_DISABLE[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_CNIR_DISABLE,
+#endif
+#ifdef FEATURE_SPORTS_APP   
+   uint16 sport_flag;                                    //CFGI_SPORT_FLAG
+#endif
+#ifdef FEATURE_MENU_STYLE
+  byte menu_style;              /*CFGI_MENU_STYLE*/
+ #endif
+
+   byte camera_enviroment; /*CFGI_CAMERA_ENVIROMENT*/
+   byte camera_quality;    /*CFGI_CAMERA_QUALITY*/
+   byte camera_size;       /*CFGI_CAMERA_SIZE*/
+   byte camera_tone;       /*CFGI_CAMERA_TONE*/
+   byte camera_banding;    /*CFGI_CAMERA_BANDING*/
+   byte camera_storage;    /*CFGI_CAMERA_STORAGE*/
+   byte camera_brightness; /*CFGI_CAMERA_BRIGHTNESS*/
+   byte video_enviroment;  /*CFGI_VIDEO_ENVIROMENT*/ 
+   boolean camera_icon;    /*CFGI_CAMERA_ICON_HIDE*/
+   boolean video_icon;     /*CFGI_VIDEO_ICON_HIDE*/
+   byte camera_frame;      /*CFGI_CAMERA_FRAME*/
+   byte camera_color;      /*CFGI_CAMERA_COLOR*/
+   byte video_color;       /*CFGI_VIDEO_COLOR*/
+   byte video_brightness;  /*CFGI_CAMERA_BRIGHTNESS*/
+
+#ifdef FEATURE_PLANEMODE
+   byte planeMode;         /*CFGI_PLANEMODE*/
+#endif
+    boolean missed_call_icon;                            /* CFGI_MISSED_CALL_ICON    */
+#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
+   uint32 m_ndefaulerend;                       //CFGI_DEFAULT_REND
+   byte m_nrendstate;                      //CFGI_REND_STATE
+#endif
+#ifdef FEATURE_TOUCHPAD
+   pen_cal_type m_pencal_data;
+#endif
+#endif //#ifdef CUST_EDITION
 } OEMConfigListType;
 
 
@@ -444,6 +696,17 @@ typedef struct
   uint32  mnc; /* CFGI_NITZ_NW_INFO_MNC */
 #endif 
   uint8 voice_priv;            /* CFGI_VOICEPRIVACY */
+  
+#ifdef CUST_EDITION
+  byte set_time_format;                /* CFGI_TIME_FORMAT*/
+#ifdef FEATURE_TIME_DATA_SETTING  
+  byte set_date_format;                /* CFGI_DATE_FORMAT*/
+#endif
+  byte lock;                           /*CFGI_PHONE_PASSWORD_CHECK*/
+  nv_auto_redial_type auto_redial;     /*CFGI_AUTO_REDIAL*/
+
+  keyToneLength key_tone_length;       /* CFGI_KEYTONE_LENGTH*/
+#endif //#ifdef CUST_EDITION
 } NVConfigListType;
 
 ////
@@ -756,6 +1019,361 @@ static int OEMPriv_SetItem_CFGI_VOICEPRIVACY(void *pBuff);
 static int OEMPriv_GetItem_CFGI_MANUAL_PLMN_SEL_ALLOWED(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MANUAL_PLMN_SEL_ALLOWED(void *pBuff);
 
+#ifdef CUST_EDITION
+static int OEMPriv_GetItem_CFGI_GSENSOR(void *pBuff);
+static int OEMPriv_GetItem_CFGI_SHAKE_MUSIC_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SHAKE_MUSIC_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_SHAKE_FM_RADIO_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SHAKE_FM_RADIO_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_SHAKE_WALLPAPER_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SHAKE_WALLPAPER_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_SHAKE_SNOOZE_ALARM_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SHAKE_SNOOZE_ALARM_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_SHAKE_VIDEO_CHECK (void *pBuff);
+static int OEMPriv_SetItem_CFGI_SHAKE_VIDEO_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PEDOMETER_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PEDOMETER_CHECK(void *pBuff);
+static int OEMPriv_GetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_DISABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_DISABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOANSWER_ENABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_ENABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOANSWER_DISABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_DISABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_ENABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_ENABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_DISABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_DISABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_ENABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_ENABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_DISABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_DISABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_DISABLE_ALL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_DISABLE_ALL(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_WAIT_ENABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_WAIT_ENABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_WAIT_DISABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_WAIT_DISABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_VOICEMAIL_ENABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_VOICEMAIL_ENABLE(void *pBuff);
+#ifdef FEATURE_CARRIER_SUDAN_SUDATEL
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_VOICEMAIL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_VOICEMAIL(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOANSWER_VOICEMAIL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_VOICEMAIL(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_VOICEMAIL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_VOICEMAIL(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_WAIT_TEMP_DISABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_WAIT_TEMP_DISABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_DND_ENABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_DND_ENABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_DND_DISABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_DND_DISABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_CNIR_ENABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_ENABLE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff);
+#endif
+static int OEMPriv_GetItem_CFGI_SERVICE_PROVIDER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SERVICE_PROVIDER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_INPUTMODE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_INPUTMODE(void *pBuff);
+#ifdef FATRUE_LOCK_IMSI_MCCMNC
+static int OEMPriv_GetItem_CFGI_IMSI_SETMCC(void *pBuff);
+static int OEMPriv_SetItem_CFGI_IMSI_SETMCC(void *pBuff);
+#endif
+static int OEMPriv_GetItem_CFGI_TTY(void *pBuff);
+static int OEMPriv_SetItem_CFGI_TTY(void *pBuff);
+#ifdef FEATURE_TIME_DATA_SETTING
+static int OEMPriv_GetItem_CFGI_DATE_FORMAT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_DATE_FORMAT(void *pBuff);
+#endif
+static int OEMPriv_GetItem_CFGI_LCD(void *pBuff);
+static int OEMPriv_SetItem_CFGI_LCD(void *pBuff);
+static int OEMPriv_GetItem_CFGI_LCD_TIMER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_LCD_TIMER(void *pBuff);
+static int OEMPriv_GetItem_CFGI_PHONE_PASSWORD(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PHONE_PASSWORD(void *pBuff);
+static int OEMPriv_GetItem_CFGI_PHONE_PASSWORD_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PHONE_PASSWORD_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_RESTRICT_OUTGOING(void *pBuff);
+static int OEMPriv_GetItem_CFGI_RESTRICT_OUTGOING(void *pBuff);
+static int OEMPriv_SetItem_CFGI_RESTRICT_INCOMING(void *pBuff);
+static int OEMPriv_GetItem_CFGI_RESTRICT_INCOMING(void *pBuff);
+//«Èæ∞ƒ£ Ω
+static int OEMPriv_GetItem_CFGI_PROFILE_CUR_NUMBER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_CUR_NUMBER(void *pBuff);
+   
+static int OEMPriv_GetItem_CFGI_PROFILE_ALERT_TYPE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_ALERT_TYPE(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_SMS_RINGER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_SMS_RINGER(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_CALL_RINGER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_CALL_RINGER(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_ALARM_RINGER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_ALARM_RINGER(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_SMS_RINGER_ID(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_SMS_RINGER_ID(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_STARTUP_MUSIC(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_STARTUP_MUSIC(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_SHUTDOWN_MUSIC(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_SHUTDOWN_MUSIC(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_POWERONOFF_ALERT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_POWERONOFF_ALERT(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_MISSED_CALL_ALERT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_MISSED_CALL_ALERT(void *pBuff);
+   
+//static int OEMPriv_GetItem_CFGI_PROFILE_HEADSET_AUTOANSWER(void *pBuff);
+//static int OEMPriv_SetItem_CFGI_PROFILE_HEADSET_AUTOANSWER(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_KEYSND_TYPE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_KEYSND_TYPE(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_KEYTONE_LENGTH(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_KEYTONE_LENGTH(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_RINGER_VOL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_RINGER_VOL(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_EAR_VOL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_EAR_VOL(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PROFILE_BEEP_VOL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PROFILE_BEEP_VOL(void *pBuff);
+//∂Ã–≈¡Â…˘(0-±Ì æŒﬁ)
+static int OEMPriv_SetItem_CFGI_SMS_RINGER(void *pBuff);
+static int OEMPriv_GetItem_CFGI_SMS_RINGER(void *pBuff);
+//ƒ÷÷”¡Â…˘
+static int OEMPriv_GetItem_CFGI_ALARM_RINGER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_ALARM_RINGER(void *pBuff);
+
+//∂Ã–≈¡Â…˘
+static int OEMPriv_GetItem_CFGI_SMS_RINGER_ID(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SMS_RINGER_ID(void *pBuff);
+static int OEMPriv_GetItem_CFGI_HEADSET_PRESENT(void *pBuff);
+//∂‡≤ ∞¥º¸“Ù
+static int OEMPriv_GetItem_CFGI_KEYSND_TYPE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_KEYSND_TYPE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_SCREENSAVER_TIME(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SCREENSAVER_TIME(void *pBuff);
+//±≥π‚¡¡∂»º∂±
+static int OEMPriv_GetItem_CFGI_BACKLIGHT_LEVEL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_BACKLIGHT_LEVEL(void *pBuff);
+#ifdef FEATURE_SET_AUTOKEYGUARD
+static int OEMPriv_GetItem_CFGI_AUTOKEYGUARD(void *pBuff);
+static int OEMPriv_SetItem_CFGI_AUTOKEYGUARD(void *pBuff);
+#endif
+static int OEMPriv_GetItem_CFGI_KEYTONE_LENGTH(void *pBuff);
+static int OEMPriv_SetItem_CFGI_KEYTONE_LENGTH(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_PHONEBOOK_LOCK_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PHONEBOOK_LOCK_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_RECENTCALL_LOCK_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_RECENTCALL_LOCK_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_SMS_LOCK_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SMS_LOCK_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_KEY_LOCK_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_KEY_LOCK_CHECK(void *pBuff);
+static int OEMPriv_GetItem_CFGI_LOCK_RUIM(void *pBuff);
+static int OEMPriv_SetItem_CFGI_LOCK_RUIM(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_LOCK_MCCMNC_LIST(void *pBuff);
+static int OEMPriv_SetItem_CFGI_LOCK_MCCMNC_LIST(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_DESKTOP_THEME(void *pBuff);
+static int OEMPriv_SetItem_CFGI_DESKTOP_THEME(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_PRIORITY(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_PRIORITY(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_SENDMODE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_SENDMODE(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_STORETYPE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_STORETYPE(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_DELIVERYREPORTS(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_DELIVERYREPORTS(void *pBuff);
+
+#ifdef FEATURE_AUTOREPLACE
+static int OEMPriv_GetItem_CFGI_WMS_AUTOREPLACE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_AUTOREPLACE(void *pBuff);
+#endif
+
+static int OEMPriv_GetItem_CFGI_WMS_VALIDITYPERIOD(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_VALIDITYPERIOD(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_MEMSTORE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_MEMSTORE(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_RESVDMSGALERT_TIMEIOUT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_RESVDMSGALERT_TIMEIOUT(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_CALLBACKNUMSWITCH(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_CALLBACKNUMSWITCH(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CALLBACKNUM(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CALLBACKNUM(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_MO_CHANNEL_SELECT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_MO_CHANNEL_SELECT(void *pBuff);
+
+#ifdef FEATRUE_AUTO_POWER
+static int OEMPriv_GetItem_CFGI_AUTO_POWER_ON(void *pBuff);
+static int OEMPriv_SetItem_CFGI_AUTO_POWER_ON(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_AUTO_POWER_OFF(void *pBuff);
+static int OEMPriv_SetItem_CFGI_AUTO_POWER_OFF(void *pBuff);
+#endif
+
+static int OEMPriv_GetItem_CFGI_POWERDOWN_ALARM(void *pBuff);
+static int OEMPriv_SetItem_CFGI_POWERDOWN_ALARM(void *pBuff);
+
+#ifdef FEATRUE_SET_IP_NUMBER
+static int OEMPriv_GetItem_CFGI_IP_NUMBER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_IP_NUMBER(void *pBuff);
+static int OEMPriv_GetItem_CFGI_IP_POUND(void *pBuff);
+static int OEMPriv_SetItem_CFGI_IP_POUND(void *pBuff);
+#endif
+
+#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+static int OEMPriv_GetItem_CFGI_SHORT_CODE_NAM_COUNT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SHORT_CODE_NAM_COUNT(void *pBuff);
+#endif //#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+
+#ifdef FEATURE_LED_CONTROL
+static int OEMPriv_GetItem_CFGI_LED_CONTROL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_LED_CONTROL(void *pBuff);
+#endif
+
+#ifdef FEATRUE_KEY_PAD_CTL
+static int OEMPriv_GetItem_CFGI_KEY_PAD_CTL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_KEY_PAD_CTL(void *pBuff);
+#endif
+
+static int OEMPriv_GetItem_CFGI_AUTO_REDIAL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_AUTO_REDIAL(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_FMRADIO_VOLUME(void *pBuff);
+static int OEMPriv_SetItem_CFGI_FMRADIO_VOLUME(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_FMRADIO_CHAN_INFO(void *pBuff);
+static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_INFO(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_FMRADIO_CHAN_TOTAL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_TOTAL(void *pBuff);
+static int OEMPriv_GetItem_CFGI_KEYGUARD_ENABLED(void *pBuff);
+static int OEMPriv_SetItem_CFGI_KEYGUARD_ENABLED(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_FM_BACKGROUND(void *pBuff) ;
+static int OEMPriv_SetItem_CFGI_FM_BACKGROUND(void *pBuff) ;
+#ifdef FEATURE_RANDOM_MENU_COLOR
+static int OEMPriv_GetItem_CFGI_MENU_BGCOLOR(void *pBuff);
+
+static int OEMPriv_SetItem_CFGI_MENU_BGCOLOR(void *pBuff);
+static int OEMPriv_GetItem_CFGI_RANDOM_MENU(void *pBuff);
+
+static int OEMPriv_SetItem_CFGI_RANDOM_MENU(void *pBuff);
+#endif
+
+#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add 
+static int OEMPriv_GetItem_CFGI_DEFAULT_REND(void *pBuff);
+static int OEMPriv_SetItem_CFGI_DEFAULT_REND(void *pBuff);
+static int OEMPriv_GetItem_CFGI_REND_STATE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_REND_STATE(void *pBuff);
+#endif//FEATURE_RANDOM_MENU_REND
+
+#ifdef FEATURE_TOUCHPAD
+static int OEMPriv_GetItem_CFGI_PEN_CAL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff);
+#endif//FEATURE_TOUCHPAD
+
+static int OEMPriv_GetItem_CFGI_ALARM_FLAG(void *pBuff);
+static int OEMPriv_SetItem_CFGI_ALARM_FLAG(void *pBuff);
+
+#ifdef FEATURE_SPORTS_APP
+static int OEMPriv_GetItem_CFGI_SPORT_FLAG(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SPORT_FLAG(void *pBuff);
+#endif
+
+
+#ifdef FEATURE_MENU_STYLE
+static int OEMPriv_GetItem_CFGI_MENU_STYLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MENU_STYLE(void *pBuff);
+#endif
+
+static int OEMPriv_GetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CAMERA_QUALITY(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_QUALITY(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CAMERA_SIZE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_SIZE(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CAMERA_TONE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_TONE(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CAMERA_BANDING(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_BANDING(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CAMERA_STORAGE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_STORAGE(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CAMERA_BRIGHTNESS(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_BRIGHTNESS(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_VIDEO_ENVIROMENT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_VIDEO_ENVIROMENT(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CAMERA_ICON(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_ICON(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_VIDEO_ICON(void *pBuff);
+static int OEMPriv_SetItem_CFGI_VIDEO_ICON(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CAMERA_FRAME(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_FRAME(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_CAMERA_COLOR(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_COLOR(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_VIDEO_COLOR(void *pBuff);
+static int OEMPriv_SetItem_CFGI_VIDEO_COLOR(void *pBuff);
+static int OEMPriv_GetItem_CFGI_VIDEO_BRIGHTNESS(void *pBuff);
+static int OEMPriv_SetItem_CFGI_VIDEO_BRIGHTNESS(void *pBuff);
+#ifdef FEATURE_PLANEMODE
+static int OEMPriv_GetItem_CFGI_PLANEMODE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PLANEMODE(void *pBuff);
+#endif
+
+static int OEMPriv_GetItem_CFGI_MISSED_CALL_ICON(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MISSED_CALL_ICON(void *pBuff);
+#endif //#ifdef CUST_EDITION
 /*===========================================================================
 
                      STATIC/LOCAL DATA
@@ -770,7 +1388,11 @@ static AEECallback   gCBWriteOEMConfig;
 // NOTE: Any changes made to these values should be mirrored in
 //       OEM_RestoreFactorySettings()
 static OEMConfigListType oemi_cache = {
+#ifdef  FEATURE_CARRIER_THAILAND_CAT     
+   OEMNV_ALERTTYPE_VIBANDRINGER,               // CFGI_ALERT_TYPE
+#else
    OEMNV_ALERTTYPE_RINGER,                          // CFGI_ALERT_TYPE
+#endif
    OEMNV_SA_NORMAL,                                 // CFGI_SILENCEALL
    OEMNV_HEADSET_RNG_ON,                            // CFGI_HEADSET_RNG
    OEMNV_ALERT_ENABLE,                              // CFGI_MISSED_CALL_ALERT
@@ -779,7 +1401,11 @@ static OEMConfigListType oemi_cache = {
    0,                                               // CFGI_BROWSER_CALL_TIMER
    OEMNV_SMS_SO_SO6,
    OEMNV_SMS_EMAIL_ADDRESSING_IS41,
+#if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA) || defined (FEATURE_CARRIER_ISRAEL_PELEPHONE)
+   OEMNV_SMS_MO_ENCODING_OCTET,
+#else   
    OEMNV_SMS_MO_ENCODING_7BIT,
+#endif
    OEMNV_SMS_MODE_CDMA,
    OEMNV_SMS_APP_TEST,
    OEMNV_SMS_CB_DISABLE_AUTO_DELETE,
@@ -801,21 +1427,214 @@ static OEMConfigListType oemi_cache = {
    0,                                              // CFGI_RECENT_MT_CALL_TIMER
    0,                                              // CFGI_RECENT_MO_TIMER
    OEMNV_ALERT_DISABLE,                            // CFGI_MINUTE_ALERT
+#ifdef CUST_EDITION
+   OEM_AUTO_ANSWER_MODE,                           // CFGI_ANYKEY_ANSWER
+#else
    FALSE,                                          // CFGI_ANYKEY_ANSWER
+#endif
    OEMNV_HEADSET_AUTOANSWER_OFF,                   // CFGI_HEADSET_AUTOANSWER
    OEMNV_TIMEFORM_AMPM,
    0,                                              // CFGI_DEVICE
    {0,},                                           // CFGI_CUG
    FALSE,                                          // CFGI_VR
-   {OEMCFG_DEFAULT_CID, OEMCFG_DEFAULT_PLATFORM_ID,   // Download Info
+#ifdef CUST_EDITION
+   {DEFAULT_BREW_CARRIER_ID, OEMCFG_DEFAULT_PLATFORM_ID,   // Download Info
+    {0,}, {0,},
+    DEFAULT_BREW_SERVER, DEFAULT_BREW_DOWNLOAD_FLG,
+    DEFAULT_BREW_APOLICY, DEFAULT_BREW_PPOLICY
+   },
+#else
+   {OEMCFG_DEFAULT_CID, DEFAULT_BREW_PLATFORM_ID,   // Download Info
     {0,}, {0,},
     OEMCFG_DEFAULT_DL_SERVER, DIF_TEST_ALLOWED | DIF_MIN_FOR_SID,
     APOLICY_NONE, PPOLICY_BREW_OR_CARRIER
    },
+#endif
    "0000000000000000000000000000000",              // CFGI_SUBSCRIBERID
    FALSE,                                          // CFGI_DISABLE_IN_CALL_DISP
    FALSE,                                          // CFGI_DISABLE_BG_IMAGE
    TRUE,                                           // CFGI_MANUAL_PLMN_SEL_ALLOWED
+#ifdef CUST_EDITION
+   0,                                               //CFGI_GSENSOR
+   OEMNV_PHONE_PASSWORD,                            // CFGI_PHONE_PASSWORD,        //type = uint16
+   //OEMNV_PHONE_PASSWORD_CHECK,                    // CFGI_PHONE_PASSWORD_CHECK,  //type = boolean
+   0,                                               // CFGI_RESTRICT_OUTGOING,     //type = byte
+   0,                                               // CFGI_RESTRICT_INCOMING,     //type = byte
+   //«Èæ∞ƒ£ Ω      
+   OEMNV_PROFILE_NORMALMODE,                        // CFGI_PROFILE_CUR_NUMBER
+   OEMNV_ALERT_TYPE_INIT,                           // CFGI_PROFILE_ALERT_TYPE 
+   OEMNV_SMS_RINGER_INIT,                           // CFGI_PROFILE_SMS_RINGER 
+   OEMNV_CALL_RINGER_INIT,                          // CFGI_PROFILE_CALL_RINGER 
+   OEMNV_ALARM_RINGER_INIT,                         // CFGI_PROFILE_ALARM_RINGER 
+   OEMNV_SMS_RINGER_ID_INIT,                        // CFGI_PROFILE_SMS_RINGER_ID    
+   OEMNV_STARTUP_MUSIC_INIT,                        // CFGI_PROFILE_STARTUP_MUSIC 
+   OEMNV_SHUTDOWN_MUSIC_INIT,                       // CFGI_PROFILE_SHUTDOWN_MUSIC 
+   OEMNV_POWERONOFF_ALERT_INIT,                     // CFGI_PROFILE_POWERONOFF_ALERT   
+   OEMNV_MISSED_CALL_ALERT_INIT,                    // CFGI_PROFILE_MISSED_CALL_ALERT 
+   //OEMNV_HEADSET_AUTOANSWER_INIT,                 // CFGI_PROFILE_HEADSET_AUTOANSWER 
+   OEMNV_KEYSND_TYPE_INIT,                          // CFGI_PROFILE_KEYSND_TYPE 
+   OEMNV_KEYTONE_LENGTH_INIT,                       // CFGI_PROFILE_KEYTONE_LENGTH     
+   OEMNV_RINGER_VOL_INIT,                           // CFGI_PROFILE_RINGER_VOL 
+   OEMNV_EAR_VOL_INIT ,                             // CFGI_PROFILE_EAR_VOL 
+   OEMNV_BEEP_VOL_INIT,                             // CFGI_PROFILE_BEEP_VOL   
+   //∂Ã–≈¡Â…˘
+   OEMNV_SMS_RING,                                  //CFGI_SMS_RINGER 
+   //ƒ÷÷”¡Â…˘   
+   OEMNV_ALARM_RINGER,                              //CFGI_ALARM_RINGER     
+   //∂Ã–≈¡Â…˘
+   OEMNV_SMS_RINGER_ID ,                            //CFGI_SMS_RINGER_ID
+   //∂‡≤ ∞¥º¸“Ù
+   OEMNV_KEYSND_DEFAULT,                            //CFGI_KEYSND_TYPE
+   //∆¡±£ ±º‰
+   OEMNV_SCREENSAVER_TIME_2MIN,                     // CFGI_SCREENSAVER_TIME
+   //◊¿√Ê«Ω÷Ω
+   {OEMNV_WALLPAPER},                               //CFGI_WALLPAPER   
+#ifdef FEATURE_ANIMATION_POWERUPDOWN
+   //ø™ª˙∂Øª≠
+   {OEMNV_STARTUPANI},                              //CFGI_STARTUP_ANIMATION
+   
+   //πÿª˙∂Øª≠   
+   {OEMNV_POWEROFFANI},                             //CFGI_POWEROFF_ANIMATION 
+#endif
+   //±≥π‚¡¡∂»º∂±
+   OEMNV_BACKLIGHT_LEVEL,                           //CFGI_BACKLIGHT_LEVEL  
+   
+//#ifdef FEATURE_KEYTONE_LONG
+//   OEMNV_KEYTONE_LONG,                            // CFGI_KEYTONE_LENGTH
+//#else
+//   OEMNV_KEYTONE_NORMAL,                          // CFGI_KEYTONE_LENGTH
+//#endif /* FEATURE_KEYTONE_LONG */
+#ifdef FEATURE_SET_AUTOKEYGUARD
+   OEMNV_AKG_OFF,                                   // CFGI_AUTOKEYGUARD
+#endif
+   //OEMNV_BL_10S,                                  //CFGI_KEYPAD_LIGHT_TIME
+   FALSE,                                           //CFGI_PHONEBOOK_LOCK_CHECK
+   FALSE,                                           //CFGI_RECENTCALL_LOCK_CHECK
+   FALSE,                                           //CFGI_SMS_LOCK_CHECK
+   FALSE,                                           //CFGI_CALENDAR_LOCK_CHECK
+   FALSE,                                           //CFGI_KEY_LOCK_CHECK
+   OEMNV_LOCK_RUIM,                                 // CFGI_LOCK_RUIM,   //type = boolean
+   {0,},
+#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
+   DESKTOP_THEME_DEEP_BLUE,
+#else
+   DESKTOP_THEME_ORANGE, 
+#endif //FEATURE_CARRIER_THAILAND_HUTCH
+#ifdef FEATURE_SCREEN_SAVE
+   OEMNV_SCREENSAVE_TYPE,                           //CFGI_SCREENSAVE_TYPE
+#endif
+   WMS_PRIORITY_NORMAL,                             //CFGI_WMS_PRIORITY
+   SENDOPT_SAVEANDSEND,                             //CFGI_WMS_SENDMODE
+   WMS_MEMORY_STORE_NV_CDMA,                        //CFGI_WMS_STORETYPE
+   FALSE                                            //CFGI_WMS_DELIVERYREPORTS
+#ifdef FEATURE_AUTOREPLACE
+   ,FALSE                                           //CFGI_WMS_AUTOREPLACE
+#endif
+   ,OEMNV_SMS_VALIDITYPERIOD_MAX                    //CFGI_WMS_VALIDITYPERIOD
+#if defined(FEATURE_CARRIER_THAILAND_HUTCH)
+   ,WMS_MEMORY_STORE_RUIM                       
+ #else
+   ,WMS_MEMORY_STORE_NV_CDMA                        //CFGI_WMS_MEMSTORE
+ #endif //defined FEATURE_CARRIER_THAILAND_HUTCH
+   ,TRUE                                           //CFGI_WMS_RESVDMSGALERT_TIMEIOUT
+   ,FALSE                                           //CFGI_WMS_CALLBACKNUMSWITCH
+   ,{0,}                                            //CFGI_CALLBACKNUM
+   ,WMS_MO_ONLY_TRAFFIC                             //CFGI_WMS_MO_CHANNEL_SELECT
+#ifdef FEATRUE_AUTO_POWER
+   ,{FALSE,0}                                       //CFGI_AUTO_POWER_ON
+   ,{FALSE,0}                                       //CFGI_AUTO_POWER_OFF
+#endif
+   ,{FALSE,0}
+#ifdef FEATRUE_SET_IP_NUMBER
+   ,{0,0,{"0"}}                                     //CFGI_IP_NUMBER
+#endif
+#ifdef FEATURE_LED_CONTROL
+   , 0xF                                            //CFGI_LED_CONTROL
+#endif
+#ifdef FEATRUE_KEY_PAD_CTL
+   ,{TRUE,KEY_PDA_CTL_FROM_TIME,KEY_PDA_CTL_TO_TIME}
+#endif
+   
+
+   , (MAX_FMRADIO_VOLUME + 1) / 2                   //CFGI_FMRADIO_VOLUME
+   , {0}                                            //CFGI_FMRADIO_CHAN_INFO
+   , 0                                              //CFGI_FMRADIO_CHAN_TOTAL
+   ,OEMNV_EMERGENCYNUM_TABLE_NUM                                            //CFGI_EMERGENCYNUM_TABLE
+   ,{OEMNV_CALLFORWARD_BUSY_ENABLE}                                         //CFGI_CALLFORWARD_BUSY_ENABLE
+   ,{OEMNV_CALLFORWARD_BUSY_DISABLE}                                        //CFGI_CALLFORWARD_BUSY_DISABLE
+   ,{OEMNV_CALLFORWARD_NOANSWER_ENABLE}                                     //CFGI_CALLFORWARD_NOANSWER_ENABLE
+   ,{OEMNV_CALLFORWARD_NOANSWER_DISABLE}                                    //CFGI_CALLFORWARD_NOANSWER_DISABLE
+   ,{OEMNV_CALLFORWARD_NOCONNECT_ENABLE}                                    //CFGI_CALLFORWARD_NOCONNECT_ENABLE
+   ,{OEMNV_CALLFORWARD_NOCONNECT_DISABLE}                                   //CFGI_CALLFORWARD_NOCONNECT_DISABLE
+   ,{OEMNV_CALLFORWARD_ANYWAY_ENABLE}                                       //CFGI_CALLFORWARD_ANYWAY_ENABLE
+   ,{OEMNV_CALLFORWARD_ANYWAY_DISABLE}                                      //CFGI_CALLFORWARD_ANYWAY_DISABLE
+   ,{OEMNV_CALLFORWARD_DISABLE_ALL}                                         //CFGI_CALLFORWARD_DISABLE_ALL
+   ,{OEMNV_CALLFORWARD_WAIT_ENABLE}                                         //CFGI_CALLFORWARD_WAIT_ENABLE
+   ,{OEMNV_CALLFORWARD_WAIT_DISABLE}                                        //CFGI_CALLFORWARD_WAIT_DISABLE
+   ,{OEMNV_CALLFORWARD_VOICEMAIL_ENABLE}                                    //CFGI_CALLFORWARD_VOICEMAIL_ENABLE
+   ,OEMNV_SERVICE_PROVIDER                                                  //CFGI_SERVICE_PROVIDER   
+#ifdef FATRUE_LOCK_IMSI_MCCMNC
+    ,{0}                                           //CFGI_IMSI_SETMCC
+#endif
+   ,OEMNV_INPUTMODE_DEFAULT                        //CFGI_INPUTMODE     
+   ,FALSE                                          //CFGI_FM_BACKGROUND
+#ifdef FEATURE_RANDOM_MENU_COLOR
+   ,APPSCOMMON_BG_COLOR  //CFGI_MENU_BGCOLOR
+   ,0  //CFGI_RANDOM_MENU
+#endif
+#ifdef FEATRUE_SET_IP_NUMBER
+   ,TRUE                                           //CFGI_IP_POUND
+#endif
+#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+   ,OEMNV_SHORT_CODE_NAM_COUNT          //CFGI_SHORT_CODE_NAM_COUNT
+#endif //#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+   ,FALSE                                   //CFGI_ALARM_FLAG
+#ifdef FEATURE_CARRIER_SUDAN_SUDATEL
+   ,{""}//CFGI_CALLFORWARD_BUSY_VOICEMAIL,
+   ,{""}//CFGI_CALLFORWARD_NOANSWER_VOICEMAIL,
+   ,{""}//CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL,
+   ,{""}//CFGI_CALLFORWARD_ANYWAY_VOICEMAIL,
+   ,{""}//CFGI_CALLFORWARD_WAIT_TEMP_DISABLE,
+   ,{""}//CFGI_CALLFORWARD_DND_ENABLE,
+   ,{""}//CFGI_CALLFORWARD_DND_DISABLE,
+   ,{""}//CFGI_CALLFORWARD_CNIR_ENABLE,
+   ,{""}//CFGI_CALLFORWARD_CNIR_DISABLE,
+#endif
+   	#ifdef FEATURE_SPORTS_APP
+	,0                                      //CFGI_SPORT_FLAG
+	#endif
+   ,OEMNV_MENU_STYLE_ICON
+
+   ,OEMNV_CAMERA_ENVIR_AUTO         /*CFGI_CAMERA_ENVIROMENT*/
+   ,OEMNV_CAMERA_QUALITY_HIGH       /*CFGI_CAMERA_QUALITY*/
+   ,OEMNV_CAMERA_SIZE_176_220         /*CFGI_CAMERA_SIZE*/ 	//   ,OEMNV_CAMERA_SIZE_640_480         /*CFGI_CAMERA_SIZE*/
+#ifdef FEATURE_CARRIER_CHINA_TELCOM
+   ,OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1/*CFGI_CAMERA_TONE*/
+#else   
+   ,OEMNV_CAMERA_SHUTTER_TONE_ENABLE        /*CFGI_CAMERA_TONE*/
+#endif   
+   ,OEMNV_CAMERA_BANDING_50HZ      /*CFGI_CAMERA_BANDING*/
+   ,OEMNV_CAMERA_STORAGE_MEMORY_CARD/*CFGI_VIDEO_STORAGE*/ 
+   ,OEMNV_CAMERA_BRIGHTNESS_LEVEL3  /*CFGI_CAMERA_BRIGHTNESS*/
+   ,OEMNV_CAMERA_ENVIR_AUTO          /*CFGI_VIDEO_ENVIROMENT*/
+   ,FALSE                           /*CFGI_CAMERA_ICON*/
+   ,FALSE                           /*CFGI_VIDEO_ICON*/
+   ,OEMNV_CAMERA_FRAME_0            /*CFGI_CAMERA_FRAME*/
+   ,OEMNV_CAMERA_COLOR_NORMAL       /*CFGI_CAMERA_COLOR*/
+   ,OEMNV_CAMERA_COLOR_NORMAL       /*CFGI_VIDEO_COLOR*/
+   ,OEMNV_CAMERA_BRIGHTNESS_LEVEL3  /*CFGI_VIDEO_BRIGHTNESS*/
+#ifdef FEATURE_PLANEMODE
+    ,OEMNV_PLANEMODE_OFF/*CFGI_PLANEMODE*/
+#endif
+   ,FALSE
+#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
+   ,0  //APPSCOMMON_DEFAULT_REND  //CFGI_DEFAULT_REND
+   ,2  //CFGI_REND_STATE ΩÁ√Ê–ßπ˚◊™ªª◊¥Ã¨£¨0 ≤ªº”–ßπ˚,1 —°∂®–ßπ˚,2 ÀÊª˙–ßπ˚   
+#endif
+#ifdef FEATURE_TOUCHPAD
+   ,{-1,-1,-1,-1}
+#endif//FEATURE_TOUCHPAD
+#endif //CUST_EDITION
 };
 
 ////
@@ -850,7 +1669,11 @@ static ConfigItemTableEntry const customItemTable[] =
    CFGTABLEITEM(CFGI_ALL_CALL_TIMER, sizeof(dword)),
    CFGTABLEITEM(CFGI_BROWSER_CALL_TIMER, sizeof(dword)),
    CFGTABLEITEM(CFGI_HEADSET_RNG, sizeof(byte)),
+#ifdef CUST_EDITION
+   CFGTABLEITEM(CFGI_ANYKEY_ANSWER, sizeof(byte)),
+#else
    CFGTABLEITEM(CFGI_ANYKEY_ANSWER, sizeof(boolean)),
+#endif
    CFGTABLEITEM(CFGI_HEADSET_AUTOANSWER, sizeof(byte)),
    CFGTABLEITEM(CFGI_MISSED_CALL_ALERT, sizeof(byte)),
    CFGTABLEITEM(CFGI_ROAMING_ALERT, sizeof(byte)),
@@ -872,7 +1695,11 @@ static ConfigItemTableEntry const customItemTable[] =
 #endif
 
    CFGTABLEITEM(CFGI_KEYBEEP_SOUND, sizeof(byte)),
+#ifdef CUST_EDITION
+   CFGTABLEITEM(CFGI_KEYTONE_LENGTH, sizeof(keyToneLength)),
+#else
    CFGTABLEITEM_EMPTY(CFGI_KEYTONE_LENGTH),
+#endif
    CFGTABLEITEM(CFGI_RINGER_TYPE, sizeof(byte)),
    CFGTABLEITEM(CFGI_IMEI, OEMCFG_IMEI_SIZE),
    CFGTABLEITEM(CFGI_CUG, sizeof(OEMConfigCugInfo)),
@@ -904,8 +1731,11 @@ static ConfigItemTableEntry const customItemTable[] =
    ////////////////////////////////////////////////////////////////
 
    CFGTABLEITEM(CFGI_BACK_LIGHT_INTENSITY, sizeof(uint8)),
-
+#ifdef CUST_EDITION
+   CFGTABLEITEM(CFGI_LANGUAGE_SELECTION, sizeof(nv_language_enum_type)),
+#else
    CFGTABLEITEM(CFGI_LANGUAGE_SELECTION, sizeof(byte)),
+#endif
    CFGTABLEITEM_EMPTY(CFGI_BANNER),
    CFGTABLEITEM(CFGI_MENU_FORMAT, sizeof(byte)),
    CFGTABLEITEM(CFGI_TIME_FORMAT, sizeof(byte)),
@@ -1010,8 +1840,8 @@ static ConfigItemTableEntry const customItemTable[] =
    CFGTABLEITEM_EMPTY(CFGI_LOCKCODE),
 
 #ifdef FEATURE_FDN
-   ,
-   CFGTABLEITEM(CFGI_FDN_ENABLED,sizeof(boolean))
+   
+   CFGTABLEITEM(CFGI_FDN_ENABLED,sizeof(boolean)),
 #endif /* FEATURE_FDN */
 
    CFGTABLEITEM(CFGI_HEADSET,sizeof(boolean)),
@@ -1091,13 +1921,231 @@ static ConfigItemTableEntry const customStateItemTable[] =
 
    CFGTABLEITEM_READONLY(CFGI_DEBUG_THERM,sizeof(word)),
    CFGTABLEITEM_READONLY(CFGI_DEBUG_BAND,sizeof(byte)),
-
+#ifdef CUST_EDITION
+   CFGTABLEITEM(CFGI_KEYGUARD_ENABLED,sizeof(boolean)),
+#else
    CFGTABLEITEM_EMPTY(CFGI_KEYGUARD_ENABLED),
-
+#endif
 #ifdef FEATURE_INTELLICEIVER
   CFGTABLEITEM_READONLY(CFGI_DEBUG_INTELLICEIVER_STATE,sizeof(byte)),
 #endif /* FEATURE_INTELLICEIVER */
 };
+#ifdef CUST_EDITION
+static ConfigItemTableEntry const customOEMItemTable[] =
+{
+   CFGTABLEITEM(CFGI_BACK_LIGHT, sizeof(byte)),
+   CFGTABLEITEM(CFGI_SVC_ALERT, sizeof(byte)),
+   CFGTABLEITEM(CFGI_EXTPWR_BK_LIGHT, sizeof(byte)),
+   CFGTABLEITEM(CFGI_VOICEPRIVACY,sizeof(byte)),
+   CFGTABLEITEM(CFGI_CONTRAST_LVL, sizeof(byte)),
+   CFGTABLEITEM_READONLY(CFGI_FACTORY_TEST_MODE,sizeof(boolean)),
+   CFGTABLEITEM(CFGI_TTY, sizeof(OEMTTY)),
+#ifdef FEATRUE_AUTO_POWER   
+   CFGTABLEITEM(CFGI_AUTO_POWER_ON, sizeof(Auto_Power_Cfg)),       //type = Auto_Power_Cfg
+   CFGTABLEITEM(CFGI_AUTO_POWER_OFF, sizeof(Auto_Power_Cfg)) ,      //type = Auto_Power_Cfg
+#endif
+
+   CFGTABLEITEM(CFGI_POWERDOWN_ALARM, sizeof(PowerDown_Alarm_Cfg)), 
+   CFGTABLEITEM(CFGI_ALARM_FLAG, sizeof(boolean)),
+#ifdef FEATURE_SPORTS_APP
+   CFGTABLEITEM(CFGI_SPORT_FLAG,sizeof(uint16)),
+#endif
+#ifdef FEATRUE_SET_IP_NUMBER
+   CFGTABLEITEM(CFGI_IP_NUMBER, sizeof(IP_Number_Cfg)),
+#endif
+   CFGTABLEITEM(CFGI_AUTO_REDIAL, sizeof(nv_auto_redial_type)),
+   //∂Ã–≈¡Â…˘(0-±Ì æŒﬁ)
+   CFGTABLEITEM(CFGI_SMS_RINGER, sizeof(byte)) ,             // type=byte    
+   //ƒ÷÷”¡Â…˘,
+   CFGTABLEITEM(CFGI_ALARM_RINGER, sizeof(uint16)),        
+   
+   //∂Ã–≈¡Â…˘
+   CFGTABLEITEM(CFGI_SMS_RINGER_ID, sizeof(uint16)),
+   //«Èæ∞ƒ£ Ω         
+   //«Èæ∞ƒ£ Ω¿‡–Õ
+   CFGTABLEITEM(CFGI_PROFILE_CUR_NUMBER, sizeof(oemi_cache.p_profile_cur_number)),
+    
+   //¿¥µÁÃ· æ∑Ω Ω     
+   CFGTABLEITEM(CFGI_PROFILE_ALERT_TYPE, sizeof(oemi_cache.p_alert_type))  ,
+   
+   //∂Ã–≈Ã· æ∑Ω Ω
+   CFGTABLEITEM(CFGI_PROFILE_SMS_RINGER, sizeof(oemi_cache.p_bt_sms_ringer)) ,
+
+   //¿¥µÁ¡Â…˘
+   CFGTABLEITEM(CFGI_PROFILE_CALL_RINGER, sizeof(oemi_cache.p_call_ringer))  ,  
+  
+   //ƒ÷÷”¡Â…˘
+   CFGTABLEITEM(CFGI_PROFILE_ALARM_RINGER, sizeof(oemi_cache.p_alarm_ringer)) ,
+   
+   //∂Ã–≈¡Â…˘
+   CFGTABLEITEM(CFGI_PROFILE_SMS_RINGER_ID, sizeof(oemi_cache.p_sms_ringer_id)) ,    
+ 
+   //ø™ª˙“Ù¿÷
+   CFGTABLEITEM(CFGI_PROFILE_STARTUP_MUSIC, sizeof(oemi_cache.p_start_music)) ,
+   
+   //πÿª˙“Ù¿÷
+   CFGTABLEITEM(CFGI_PROFILE_SHUTDOWN_MUSIC, sizeof(oemi_cache.p_shutdown_music)) ,
+
+   //ø™πÿª˙¡Â…˘Ã· æ
+   CFGTABLEITEM(CFGI_PROFILE_POWERONOFF_ALERT, sizeof(oemi_cache.p_poweronoff_alert)) ,
+
+   //Œ¥Ω”¿¥µÁÃ·–—
+   CFGTABLEITEM(CFGI_PROFILE_MISSED_CALL_ALERT, sizeof(oemi_cache.p_missed_call_alert)) ,
+       
+   //◊‘∂ØΩ”Ã˝
+   //CFGTABLEITEM(CFGI_PROFILE_HEADSET_AUTOANSWER, sizeof(oemi_cache.p_headset_autoanswer)) ,
+   
+   //∂‡≤ ∞¥º¸“Ù
+   CFGTABLEITEM(CFGI_PROFILE_KEYSND_TYPE, sizeof(oemi_cache.p_keysnd_type)) ,
+   
+   //∞¥º¸“Ù≥§∂»
+   CFGTABLEITEM(CFGI_PROFILE_KEYTONE_LENGTH, sizeof(oemi_cache.p_keytone_length)) , 
+ 
+   //¡Â…˘“Ù¡ø
+   CFGTABLEITEM(CFGI_PROFILE_RINGER_VOL, sizeof(oemi_cache.p_ringer_level)) ,
+   
+   //∂˙ª˙“Ù¡ø
+   CFGTABLEITEM(CFGI_PROFILE_EAR_VOL, sizeof(oemi_cache.p_handset_ear_level)) ,
+   
+   //º¸≈Ã“Ù¡ø
+   CFGTABLEITEM(CFGI_PROFILE_BEEP_VOL, sizeof(oemi_cache.p_beep_level)) ,
+   //∂‡≤ ∞¥º¸“Ù,
+   
+   CFGTABLEITEM(CFGI_KEYSND_TYPE, sizeof(byte)) ,
+#ifdef FEATURE_TIME_DATA_SETTING
+   CFGTABLEITEM(CFGI_DATE_FORMAT, sizeof(byte)),
+#endif
+   //∆¡±£ ±º‰
+   CFGTABLEITEM(CFGI_SCREENSAVER_TIME, sizeof(oemi_cache.p_screensaver_time)) ,
+   //◊¿√Ê«Ω÷Ω
+   CFGTABLEITEM_EMPTY(CFGI_WALLPAPER) ,
+#ifdef FEATURE_ANIMATION_POWERUPDOWN
+    //ø™ª˙∂Øª≠
+   CFGTABLEITEM_EMPTY(CFGI_STARTUP_ANIMATION),     
+   //πÿª˙∂Øª≠
+   CFGTABLEITEM_EMPTY(CFGI_POWEROFF_ANIMATION),   
+#endif
+   //±≥π‚¡¡∂»º∂± 
+   CFGTABLEITEM(CFGI_BACKLIGHT_LEVEL, sizeof(byte)) ,
+   //CFGTABLEITEM(CFGI_KEYPAD_LIGHT_TIME, sizeof(byte)) ,
+   CFGTABLEITEM(CFGI_DESKTOP_THEME, sizeof(byte)) ,
+#ifdef FEATURE_SCREEN_SAVE
+   CFGTABLEITEM_EMPTY(CFGI_SCREENSAVE_TYPE) ,
+#endif
+#ifdef FEATURE_LED_CONTROL  
+   CFGTABLEITEM(CFGI_LED_CONTROL, sizeof(byte)),
+#endif
+#ifdef FEATRUE_KEY_PAD_CTL  
+   CFGTABLEITEM(CFGI_KEY_PAD_CTL, sizeof(Key_pad_Cfg)),
+#endif
+   CFGTABLEITEM(CFGI_WMS_PRIORITY, sizeof(byte)),
+   CFGTABLEITEM(CFGI_WMS_SENDMODE, sizeof(byte)),
+   CFGTABLEITEM(CFGI_WMS_STORETYPE, sizeof(byte)),
+   CFGTABLEITEM(CFGI_WMS_DELIVERYREPORTS, sizeof(boolean)),
+#ifdef FEATURE_AUTOREPLACE
+   CFGTABLEITEM(CFGI_WMS_AUTOREPLACE, sizeof(boolean)),
+#endif   
+   CFGTABLEITEM(CFGI_WMS_VALIDITYPERIOD, sizeof(byte)),
+   CFGTABLEITEM(CFGI_WMS_MEMSTORE, sizeof(wms_memory_store_e_type)),
+   CFGTABLEITEM(CFGI_WMS_RESVDMSGALERT_TIMEIOUT, sizeof(boolean)),
+   CFGTABLEITEM(CFGI_WMS_CALLBACKNUMSWITCH, sizeof(boolean)),
+   CFGTABLEITEM(CFGI_CALLBACKNUM, sizeof(AECHAR)*WMS_ADDRESS_MAX),
+   CFGTABLEITEM(CFGI_WMS_MO_CHANNEL_SELECT, sizeof(byte)),
+#ifdef FATRUE_LOCK_IMSI_MCCMNC
+   CFGTABLEITEM(CFGI_IMSI_SETMCC,sizeof(SetImsi) * OEMNV_MAX_SERVICEPROVIDER_NUMBER),
+#endif
+   CFGTABLEITEM(CFGI_PHONE_PASSWORD, sizeof(uint16)) ,       //type = uint16
+   CFGTABLEITEM(CFGI_PHONE_PASSWORD_CHECK,  sizeof(byte)),//type = boolean
+   CFGTABLEITEM(CFGI_RESTRICT_OUTGOING, sizeof(byte)) ,      //type = byte
+   CFGTABLEITEM(CFGI_RESTRICT_INCOMING, sizeof(byte)),       //type = byte
+   CFGTABLEITEM(CFGI_PHONEBOOK_LOCK_CHECK, sizeof(boolean)), //type = boolena
+   CFGTABLEITEM(CFGI_RECENTCALL_LOCK_CHECK, sizeof(boolean)),//type = boolena
+   CFGTABLEITEM(CFGI_SMS_LOCK_CHECK, sizeof(boolean)),       //type = boolena
+   CFGTABLEITEM(CFGI_CALENDAR_LOCK_CHECK, sizeof(boolean)),  //type = boolean
+   CFGTABLEITEM(CFGI_KEY_LOCK_CHECK, sizeof(boolean)),       //type = boolena
+   CFGTABLEITEM(CFGI_LOCK_RUIM,  sizeof(boolean)),            //type = boolean
+   CFGTABLEITEM(CFGI_LOCK_MCCMNC_LIST,  sizeof(oemi_cache.lock_mccmnc)), 
+   
+   CFGTABLEITEM(CFGI_SHAKE_MUSIC_CHECK,  sizeof(boolean)),             //type = boolean
+   CFGTABLEITEM(CFGI_SHAKE_FM_RADIO_CHECK,  sizeof(boolean)),          //type = boolean
+   CFGTABLEITEM(CFGI_SHAKE_WALLPAPER_CHECK,  sizeof(boolean)),         //type = boolean
+   CFGTABLEITEM(CFGI_SHAKE_SNOOZE_ALARM_CHECK,  sizeof(boolean)),      //type = boolean
+   CFGTABLEITEM(CFGI_SHAKE_VIDEO_CHECK,  sizeof(boolean)),             //type = boolean
+   CFGTABLEITEM(CFGI_PEDOMETER_CHECK,  sizeof(boolean)),             //type = boolean
+   
+   CFGTABLEITEM(CFGI_FMRADIO_VOLUME, sizeof(byte)),
+   CFGTABLEITEM(CFGI_FMRADIO_CHAN_INFO, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL),
+   CFGTABLEITEM(CFGI_FMRADIO_CHAN_TOTAL, sizeof(byte)),
+   CFGTABLEITEM(CFGI_EMERGENCYNUM_TABLE,sizeof(EmergencyNum_Table)),
+   CFGTABLEITEM(CFGI_CALLFORWARD_BUSY_ENABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_BUSY_DISABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_NOANSWER_ENABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_NOANSWER_DISABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_NOCONNECT_ENABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_NOCONNECT_DISABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_ANYWAY_ENABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_ANYWAY_DISABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_DISABLE_ALL,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_WAIT_ENABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_WAIT_DISABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_VOICEMAIL_ENABLE,FEATURE_CODE_MAX_LENTH),
+#ifdef FEATURE_CARRIER_SUDAN_SUDATEL
+   CFGTABLEITEM(CFGI_CALLFORWARD_BUSY_VOICEMAIL,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_NOANSWER_VOICEMAIL,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_ANYWAY_VOICEMAIL,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_WAIT_TEMP_DISABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_DND_ENABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_DND_DISABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_CNIR_ENABLE,FEATURE_CODE_MAX_LENTH),
+   CFGTABLEITEM(CFGI_CALLFORWARD_CNIR_DISABLE,FEATURE_CODE_MAX_LENTH),
+#endif
+   CFGTABLEITEM(CFGI_SERVICE_PROVIDER,sizeof(ServiceProvider)*OEMNV_MAX_SERVICEPROVIDER_NUMBER),
+   CFGTABLEITEM(CFGI_INPUTMODE, sizeof(byte))
+#ifdef FEATRUE_SET_IP_NUMBER
+   ,CFGTABLEITEM(CFGI_IP_POUND, sizeof(boolean))
+#endif
+#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+   ,CFGTABLEITEM(CFGI_SHORT_CODE_NAM_COUNT,   sizeof(byte))  //byte
+#endif //#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+
+#ifdef FEATURE_MENU_STYLE
+   ,CFGTABLEITEM(CFGI_MENU_STYLE, sizeof(byte))
+#endif
+   ,CFGTABLEITEM(CFGI_CAMERA_ENVIROMENT, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_CAMERA_QUALITY, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_CAMERA_SIZE, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_CAMERA_TONE, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_CAMERA_BANDING, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_CAMERA_STORAGE, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_CAMERA_BRIGHTNESS, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_VIDEO_ENVIROMENT, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_CAMERA_ICON, sizeof(boolean))
+   ,CFGTABLEITEM(CFGI_VIDEO_ICON, sizeof(boolean))
+   ,CFGTABLEITEM(CFGI_CAMERA_FRAME, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_CAMERA_COLOR, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_VIDEO_COLOR, sizeof(byte))
+   ,CFGTABLEITEM(CFGI_VIDEO_BRIGHTNESS, sizeof(byte))
+#ifdef FEATURE_PLANEMODE
+   ,CFGTABLEITEM(CFGI_PLANEMODE, sizeof(byte))
+#endif
+   ,CFGTABLEITEM(CFGI_MISSED_CALL_ICON, sizeof(boolean)),
+   CFGTABLEITEM_READONLY(CFGI_GSENSOR,sizeof(uint32)),
+   CFGTABLEITEM_READONLY(CFGI_HEADSET_PRESENT,sizeof(boolean)),
+   CFGTABLEITEM(CFGI_FM_BACKGROUND,sizeof(boolean)),
+#ifdef FEATURE_RANDOM_MENU_COLOR
+   CFGTABLEITEM(CFGI_MENU_BGCOLOR,sizeof(uint32)),
+   CFGTABLEITEM(CFGI_RANDOM_MENU,sizeof(byte)),
+#endif
+#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add
+   CFGTABLEITEM(CFGI_DEFAULT_REND,sizeof(uint32)),
+   CFGTABLEITEM(CFGI_REND_STATE,sizeof(byte)),
+#endif//FEATURE_RANDOM_MENU_REND
+#ifdef FEATURE_TOUCHPAD
+   CFGTABLEITEM(CFGI_PEN_CAL,sizeof(pen_cal_type))
+#endif//FEATURE_TOUCHPAD
+};
+#endif
 
 ////
 //  The table containing all the config tables.
@@ -1105,6 +2153,9 @@ static ConfigTableInfo const cfgTable[] =
 {
    { customItemTable,      ARR_SIZE(customItemTable)      },
    { customStateItemTable, ARR_SIZE(customStateItemTable) }
+#ifdef CUST_EDITION
+  ,{ customOEMItemTable,   ARR_SIZE(customOEMItemTable)   }
+#endif
 };
 
 /* Cache initialized ? */
@@ -1147,9 +2198,11 @@ SIDE EFFECTS
 ===========================================================================*/
 boolean OEM_IsHeadsetPresent (void)
 {
-
+#ifndef WIN32
   return(HS_HEADSET_ON());
-
+#else
+	return FALSE;
+#endif
 }
 
 #ifdef FEATURE_FACTORY_TESTMODE
@@ -1198,21 +2251,31 @@ DEPENDENCIES
 void OEM_RestoreFactorySetting( void )
 {
    nv_item_type nvi;
+#ifndef CUST_EDITION
    disp_info_type di = disp_get_info();
-
+#endif
    // Reset the OEM Configuration list
    //
    // NOTE: Any changes to these values should be mirrored in the
    //       initialization of the oemi_cache variable.
+#ifdef  FEATURE_CARRIER_THAILAND_CAT     
+   oemi_cache.alert_type          = OEMNV_ALERTTYPE_VIBANDRINGER;
+#else 
    oemi_cache.alert_type          = OEMNV_ALERTTYPE_RINGER;
+#endif
    oemi_cache.silence_all         = OEMNV_SA_NORMAL;
    oemi_cache.headset_ringer      = OEMNV_HEADSET_RNG_ON;
    oemi_cache.missed_call_alert   = OEMNV_ALERT_ENABLE;
    oemi_cache.internet_call_alert = OEMNV_ALERT_ENABLE;
    oemi_cache.internet_call_time  = 0;
+
    oemi_cache.sms_service_option  = OEMNV_SMS_SO_SO6;
    oemi_cache.sms_is41_workaround = OEMNV_SMS_EMAIL_ADDRESSING_IS41;
+#if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA) || defined (FEATURE_CARRIER_ISRAEL_PELEPHONE)
+   oemi_cache.sms_mo_encoding     = OEMNV_SMS_MO_ENCODING_OCTET;
+#else
    oemi_cache.sms_mo_encoding     = OEMNV_SMS_MO_ENCODING_7BIT;
+#endif   
    oemi_cache.sms_mode            = OEMNV_SMS_MODE_CDMA;
    oemi_cache.sms_app             = OEMNV_SMS_APP_TEST;
    oemi_cache.sms_cb_auto_delete  = OEMNV_SMS_CB_DISABLE_AUTO_DELETE;
@@ -1228,22 +2291,50 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.sms_retry_period          = OEMNV_SMS_RETRY_PERIOD;
    oemi_cache.sms_retry_interval        = OEMNV_SMS_RETRY_INTERVAL;
    oemi_cache.sms_gcf_flag              = FALSE;
+#ifdef CUST_EDITION
+   {
+    AECHAR pBuff[OEMNV_VOICEMAIL_MAXLEN]={0};
+    
+    (void)STRTOWSTR(OEMNV_VOICEMAIL_NUMBER, pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
+#ifndef WIN32
+    nvi.sms_vm_number.num_digits = WSTRLEN(pBuff);
+    WSTRTOSTR(pBuff, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
+#endif
+    OEMNV_Put(NV_SMS_VM_NUMBER_I, &nvi);
+    WSTRNCOPYN((void *) oemi_cache.voicemail_number,
+                sizeof(oemi_cache.voicemail_number)/sizeof(AECHAR),
+                (AECHAR*) pBuff,
+                -1);
+   }
+#else
    MEMSET((void *) oemi_cache.voicemail_number,
           0,
           sizeof(oemi_cache.voicemail_number));
+#endif
    MEMSET((void *) oemi_cache.voicemail_number_cdma,
           0,
           sizeof(oemi_cache.voicemail_number_cdma));
    MEMSET((void *) oemi_cache.voicemail_number_gw,
           0,
           sizeof(oemi_cache.voicemail_number_gw));
+#ifndef CUST_EDITION
    oemi_cache.time_format         = OEMNV_TIMEFORM_AMPM;
-
+#endif
    MEMSET((void *)&oemi_cache.cug, 0, sizeof(OEMConfigCugInfo));
 
    oemi_cache.vr = 0;
 
    MEMSET((void *)&oemi_cache.download_info, 0, sizeof(OEMConfigDownloadInfo));
+#ifdef CUST_EDITION
+   oemi_cache.download_info.dwCID  = DEFAULT_BREW_CARRIER_ID;
+   oemi_cache.download_info.dwPID  = DEFAULT_BREW_PLATFORM_ID;
+   oemi_cache.download_info.wFlags = DEFAULT_BREW_DOWNLOAD_FLG;
+   oemi_cache.download_info.wAuth  = DEFAULT_BREW_APOLICY;
+   oemi_cache.download_info.wPrivP = DEFAULT_BREW_PPOLICY;
+   STRLCPY((char *)oemi_cache.download_info.szServer, 
+           (const char *)DEFAULT_BREW_SERVER, 
+           sizeof(oemi_cache.download_info.szServer));
+#else
    oemi_cache.download_info.dwCID  = OEMCFG_DEFAULT_CID;
    oemi_cache.download_info.dwPID  = OEMCFG_DEFAULT_PLATFORM_ID;
    oemi_cache.download_info.wFlags = DIF_TEST_ALLOWED | DIF_MIN_FOR_SID;
@@ -1252,18 +2343,264 @@ void OEM_RestoreFactorySetting( void )
    STRLCPY((char *)oemi_cache.download_info.szServer, 
            (const char *)OEMCFG_DEFAULT_DL_SERVER, 
            sizeof(oemi_cache.download_info.szServer));
-
+#endif
    oemi_cache.disable_in_call_disp = FALSE;
    oemi_cache.disable_bg_image = FALSE;
    oemi_cache.manual_plmn_sel_allowed = TRUE;
 
+#ifdef CUST_EDITION
+#ifdef FEATURE_KEYGUARD	 
+    oemi_cache.b_key_lock       =  FALSE; 
+#endif
+#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
+   oemi_cache.desktop_theme       = DESKTOP_THEME_DEEP_BLUE;
+#else
+   oemi_cache.desktop_theme       = DESKTOP_THEME_ORANGE;   
+#endif //FEATURE_CARRIER_THAILAND_HUTCH
+#ifdef FEATRUE_AUTO_POWER
+   oemi_cache.m_auto_poweron.bStateOn  = FALSE;
+   oemi_cache.m_auto_poweroff.bStateOn = FALSE;
+   oemi_cache.m_auto_poweron.dwWATime  = 0;
+   oemi_cache.m_auto_poweroff.dwWATime = 0;
+#endif
+   oemi_cache.powerdown_alarm.bStateOn  = FALSE;
+   oemi_cache.powerdown_alarm.alarm_id = 0;
+   oemi_cache.powerdown_alarm.dwWATime  = 0;
+   oemi_cache.alarm_flag = FALSE;
+#ifdef FEATURE_LED_CONTROL
+   oemi_cache.m_led_control            = 0xF;
+#endif
+#ifdef FEATRUE_KEY_PAD_CTL
+   oemi_cache.m_key_pad_ctl.bStateOn  = TRUE; 
+   oemi_cache.m_key_pad_ctl.from_Time = KEY_PDA_CTL_FROM_TIME;
+   oemi_cache.m_key_pad_ctl.to_Time   = KEY_PDA_CTL_TO_TIME;
+#endif
+#ifdef FEATRUE_SET_IP_NUMBER
+   MEMSET((void *)&oemi_cache.m_ip_number, 0 ,sizeof(IP_Number_Cfg));
+   oemi_cache.m_b_ip_pound = TRUE;
+#endif
+
+   oemi_cache.b_phonebook_lock         = FALSE;
+   oemi_cache.b_recentcall_lock        = FALSE;
+   oemi_cache.b_sms_lock               = FALSE;
+#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
+    nvi_cache.key_tone_length = OEMNV_KEYTONE_LONG;
+    nvi.cont_key_dtmf = TRUE;
+    (void) OEMNV_Put( NV_CONT_KEY_DTMF_I, &nvi);
+#else //FEATURE_CARRIER_VENEZUELA_MOVILNET
+    nvi_cache.key_tone_length = OEMNV_KEYTONE_NORMAL;
+#ifndef WIN32
+    nvi.cont_key_dtmf = FALSE;
+    (void) OEMNV_Put( NV_CONT_KEY_DTMF_I, &nvi);
+#endif
+#endif
+
+#ifdef FEATURE_SET_AUTOKEYGUARD
+   oemi_cache.autokey_guard            = OEMNV_AKG_OFF;
+#endif
+   oemi_cache.roaming_alert            = OEMNV_ALERT_ENABLE;
+
+   oemi_cache.minute_alert             = OEMNV_ALERT_DISABLE;
+#ifdef CUST_EDITION
+   oemi_cache.any_key_answer           = OEM_AUTO_ANSWER_MODE;
+#else
+   oemi_cache.any_key_answer           = FALSE;
+#endif
+   oemi_cache.headset_autoanswer       = OEMNV_HEADSET_AUTOANSWER_OFF;
+   oemi_cache.phone_password         = OEMNV_PHONE_PASSWORD;
+   //oemi_cache.phone_password_check   = OEMNV_PHONE_PASSWORD_CHECK;  //ª÷∏¥≥ˆ≥ß…Ë÷√≤ªª÷∏¥Œ™≤ªºÏ≤‚ ÷ª˙√‹¬Î
+   //∂Ã–≈¡Â…˘(0-±Ì æŒﬁ)
+   oemi_cache.bt_sms_ringer = OEMNV_SMS_RING;
+
+   //–«∆⁄ƒ÷÷”,
+   //oemi_cache.ui16_weekalarm         = OEMNV_WEEKALARM;//not use
+   //◊‘∂Øπÿª˙,
+   //oemi_cache.ui16_autopower         = OEMNV_AUTOPOWER;//not use
+   //«Èæ∞ƒ£ Ω,
+   //oemi_cache.bt_scene               = OEMNV_NORMALMODE;//not use
+#ifdef FEATURE_ANIMATION_POWERUPDOWN
+   //ø™ª˙∂Øª≠
+   MEMCPY((void*)oemi_cache.s_startupani,OEMNV_STARTUPANI, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+   
+   //πÿª˙∂Øª≠
+   MEMCPY((void*)oemi_cache.s_poweroffani,OEMNV_POWEROFFANI, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+#endif
+   //◊¿√Ê«Ω÷Ω
+   MEMCPY((void*)oemi_cache.s_wallpaper,OEMNV_WALLPAPER, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+#ifdef FEATURE_SCREEN_SAVE
+   //∆¡±£¿‡–Õ
+   MEMCPY((void*)oemi_cache.s_screensave_type,OEMNV_SCREENSAVE_TYPE, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+#endif
+   oemi_cache.wms_priority        = WMS_PRIORITY_NORMAL; 
+   oemi_cache.wms_storetype       = WMS_MEMORY_STORE_NV_CDMA; 
+   oemi_cache.wms_delivereports   = FALSE; 
+   oemi_cache.wms_validityperiod   = OEMNV_SMS_VALIDITYPERIOD_MAX; // Œﬁœﬁ÷∆
+#if defined(FEATURE_CARRIER_THAILAND_HUTCH)
+   oemi_cache.wms_memstore         = WMS_MEMORY_STORE_RUIM; // ¥Ê”⁄UIM
+#else
+   oemi_cache.wms_memstore         = WMS_MEMORY_STORE_NV_CDMA; // ¥Ê”⁄ª∞ª˙
+#endif //defined FEATURE_CARRIER_THAILAND_HUTCH
+   oemi_cache.wms_resvdmsgalert_timeout = FALSE; // ≤ª∑¢ÀÕ
+   oemi_cache.callbacknum_switch = FALSE;
+   oemi_cache.callback_number[0] = 0;
+   oemi_cache.wms_mochannel = WMS_MO_ONLY_TRAFFIC;
+#ifndef WIN32
+   wms_msg_setmochannel(oemi_cache.wms_mochannel);
+#endif
+
+   //ƒ÷÷”¡Â…˘
+   oemi_cache.alarm_ringer    = OEMNV_ALARM_RINGER;  
+   
+   //∂Ã–≈¡Â…˘
+   oemi_cache.sms_ringer_id   = OEMNV_SMS_RINGER_ID;  
+   //±≥π‚¡¡∂»º∂±
+   oemi_cache.backlight_level = OEMNV_BACKLIGHT_LEVEL;   
+   //pm_lcd_bright_level      = OEMNV_BACKLIGHT_LEVEL;
+   //pm_kbd_bright_level      = OEMNV_BACKLIGHT_LEVEL;
+   //«Èæ∞ƒ£ Ω¿‡–Õ
+   oemi_cache.p_profile_cur_number = OEMNV_PROFILE_NORMALMODE; 
+
+   //¿¥µÁÃ· æ∑Ω Ω 
+  {
+       byte restore_alert_type[PROFILENUMBER] = OEMNV_ALERT_TYPE_INIT;
+       MEMCPY((void *) oemi_cache.p_alert_type,(const void * )restore_alert_type,sizeof(restore_alert_type));
+  }
+  //∂Ã–≈Ã· æ∑Ω Ω
+  {  
+       byte restore_bt_sms_ringer[PROFILENUMBER] = OEMNV_SMS_RINGER_INIT;
+       MEMCPY((void *) oemi_cache.p_bt_sms_ringer,(const void * )restore_bt_sms_ringer,sizeof(restore_bt_sms_ringer));
+  }   
+   //¿¥µÁ¡Â…˘
+  {   
+       ringID restore_call_ringer[PROFILENUMBER] = OEMNV_CALL_RINGER_INIT;
+       MEMCPY((void *) oemi_cache.p_call_ringer,(const void * )restore_call_ringer,sizeof(restore_call_ringer));
+  }   
+   //ƒ÷÷”¡Â…˘
+  {   
+       ringID restore_alarm_ringer[PROFILENUMBER] = OEMNV_ALARM_RINGER_INIT;
+       MEMCPY((void *) oemi_cache.p_alarm_ringer,(const void * )restore_alarm_ringer,sizeof(restore_alarm_ringer));
+  }   
+   //∂Ã–≈¡Â…˘
+  { 
+       ringID restore_sms_ringer_id[PROFILENUMBER] = OEMNV_SMS_RINGER_ID_INIT;
+       MEMCPY((void *) oemi_cache.p_sms_ringer_id,(const void * )restore_sms_ringer_id,sizeof(restore_sms_ringer_id));
+  } 
+    
+   //ø™ª˙“Ù¿÷
+  {
+       uint16 restore_start_music[PROFILENUMBER] = OEMNV_STARTUP_MUSIC_INIT;
+       MEMCPY((void *) oemi_cache.p_start_music,(const void * )restore_start_music,sizeof(restore_start_music));
+  }
+   //πÿª˙“Ù¿÷
+  {
+       uint16 restore_shutdown_music[PROFILENUMBER] = OEMNV_SHUTDOWN_MUSIC_INIT;
+       MEMCPY((void *) oemi_cache.p_shutdown_music,(const void * )restore_shutdown_music,sizeof(restore_shutdown_music));  
+  }
+    
+   //ø™πÿª˙¡Â…˘Ã· æ
+  { 
+       byte restore_poweronoff_alert[PROFILENUMBER] = OEMNV_POWERONOFF_ALERT_INIT;
+       MEMCPY((void *) oemi_cache.p_poweronoff_alert,(const void * )restore_poweronoff_alert,sizeof(restore_poweronoff_alert));
+  }
+   
+   //Œ¥Ω”¿¥µÁÃ·–—
+  { 
+       byte restore_missed_call_alert[PROFILENUMBER] = OEMNV_MISSED_CALL_ALERT_INIT;
+       MEMCPY((void *) oemi_cache.p_missed_call_alert,(const void * )restore_missed_call_alert,sizeof(restore_missed_call_alert));
+  }
+  //◊‘∂ØΩ”Ã˝
+  //{
+  //     byte restore_headset_autoanswer[PROFILENUMBER] = OEMNV_HEADSET_AUTOANSWER_INIT;
+  //     MEMCPY((void *) oemi_cache.p_headset_autoanswer,(const void * )restore_headset_autoanswer,sizeof(restore_headset_autoanswer));
+  //}
+   //∂‡≤ ∞¥º¸“Ù
+  { 
+       byte restore_keysnd_type[PROFILENUMBER] = OEMNV_KEYSND_TYPE_INIT;
+       MEMCPY((void *) oemi_cache.p_keysnd_type,(const void * )restore_keysnd_type,sizeof(restore_keysnd_type));
+  }
+
+   //∞¥º¸“Ù≥§∂»
+  { 
+       byte restore_keytone_length[PROFILENUMBER] = OEMNV_KEYTONE_LENGTH_INIT;
+       MEMCPY((void *) oemi_cache.p_keytone_length,(const void * )restore_keytone_length,sizeof(restore_keytone_length));
+  }    
+
+   //¡Â…˘“Ù¡ø
+  {
+       byte restore_ringer_level[PROFILENUMBER] = OEMNV_RINGER_VOL_INIT;
+       MEMCPY((void *) oemi_cache.p_ringer_level,(const void * )restore_ringer_level,sizeof(restore_ringer_level));
+  }
+   //∂˙ª˙“Ù¡ø
+  {
+       byte restore_handset_ear_level[PROFILENUMBER] = OEMNV_EAR_VOL_INIT;
+       MEMCPY((void *) oemi_cache.p_handset_ear_level,(const void * )restore_handset_ear_level,sizeof(restore_handset_ear_level));   
+  }
+   //º¸≈Ã“Ù¡ø
+  {
+       byte restore_beep_level[PROFILENUMBER] = OEMNV_BEEP_VOL_INIT;
+       MEMCPY((void *) oemi_cache.p_beep_level,(const void * )restore_beep_level,sizeof(restore_beep_level));       
+  }
+  
+   //∆¡±£ ±º‰
+   oemi_cache.p_screensaver_time=0; 
+   oemi_cache.restrict_incoming = 0;
+   oemi_cache.restrict_outgoing = 0;
+
+   oemi_cache.fmRadio_volume = (MAX_FMRADIO_VOLUME + 1)/2;                                  
+   MEMSET((void *)&oemi_cache.fmRadio_chan_info, 0, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
+   oemi_cache.fmRadio_chan_total = 0;
+   
+   oemi_cache.input_mode=OEMNV_INPUTMODE_DEFAULT;
+
+   oemi_cache.menu_style= OEMNV_MENU_STYLE_ICON;
+
+   oemi_cache.camera_enviroment = OEMNV_CAMERA_ENVIR_AUTO;
+   oemi_cache.camera_quality = OEMNV_CAMERA_QUALITY_HIGH;
+   oemi_cache.camera_size = OEMNV_CAMERA_SIZE_176_220;//   oemi_cache.camera_size = OEMNV_CAMERA_SIZE_640_480;
+#ifdef FEATURE_CARRIER_CHINA_TELCOM
+   oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1;
+#else   
+   oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_ENABLE;
+#endif
+   oemi_cache.camera_banding = OEMNV_CAMERA_BANDING_50HZ;
+   oemi_cache.camera_storage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
+   oemi_cache.camera_brightness = OEMNV_CAMERA_BRIGHTNESS_LEVEL3;
+   oemi_cache.video_enviroment = OEMNV_CAMERA_ENVIR_AUTO;
+   oemi_cache.camera_icon = FALSE;
+   oemi_cache.video_icon = FALSE;
+   oemi_cache.camera_frame = OEMNV_CAMERA_FRAME_0;
+   oemi_cache.camera_color = OEMNV_CAMERA_COLOR_NORMAL;
+   oemi_cache.video_color = OEMNV_CAMERA_COLOR_NORMAL;
+   oemi_cache.video_brightness = OEMNV_CAMERA_BRIGHTNESS_LEVEL3;
+
+#ifdef FEATURE_PLANEMODE
+   oemi_cache.planeMode = OEMNV_PLANEMODE_OFF;
+#endif
+#endif //CUST_EDITION
    OEMPriv_WriteOEMConfigList();
 
    // Backlight with external pwr
+#ifndef WIN32
    nvi.back_light_hfk = OEMNV_EXTPWR_BL_ON;
    (void) OEMNV_Put( NV_BACK_LIGHT_HFK_I, &nvi );
    nvi_cache.backlight_hfk = OEMNV_EXTPWR_BL_ON;
 
+#if defined(FEATURE_CARRIER_THAILAND_CAT)
+   // CFGI_RINGER_VOL:
+   nvi.ringer_level = OEMNV_VOLUME_MID;
+   (void) OEMNV_Put( NV_RINGER_LVL_I, &nvi );
+   nvi_cache.ringer_level = OEMNV_VOLUME_ESCALATING;
+
+   // CFGI_EAR_VOL:
+   nvi.ear_level = OEMNV_VOLUME_MID;
+   (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
+   nvi_cache.handset_ear_level = OEMNV_VOLUME_ESCALATING;
+
+   // CFGI_BEEP_VOL:
+   nvi.beep_level = OEMNV_VOLUME_LOW;
+   (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
+   nvi_cache.beep_level = OEMNV_VOLUME_LOW;
+#else
    // CFGI_RINGER_VOL:
    nvi.ringer_level = OEMNV_VOLUME_MID;
    (void) OEMNV_Put( NV_RINGER_LVL_I, &nvi );
@@ -1278,6 +2615,7 @@ void OEM_RestoreFactorySetting( void )
    nvi.beep_level = OEMNV_VOLUME_MID;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
    nvi_cache.beep_level = OEMNV_VOLUME_MID;
+#endif //defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
 
 #ifdef FEATURE_SMART_SOUND
    // CFGI_SMART_SOUND:
@@ -1298,19 +2636,30 @@ void OEM_RestoreFactorySetting( void )
    nvi_cache.key_sound = OEMNV_KEYBEEP_TONE;
 
    // LCD contrast
+#ifdef CUST_EDITION
+   nvi.lcd = OEMNV_CONTRAST_LEVEL_4;
+   (void) OEMNV_Put( NV_LCD_I, &nvi );
+   nvi_cache.contrast = OEMNV_CONTRAST_LEVEL_4;
+#else
    nvi.lcd = di.contrast_default;
    (void) OEMNV_Put( NV_LCD_I, &nvi );
    nvi_cache.contrast = di.contrast_default;
-
+#endif
    // Menu Format
    nvi.menu_format = (nv_menu_format_enum_type) OEMNV_MENUFORM_LARGE;
    (void) OEMNV_Put( NV_MENU_FORMAT_I, &nvi );
    nvi_cache.menu_format = (byte) OEMNV_MENUFORM_LARGE;
 
+#if defined(FEATURE_CARRIER_THAILAND_CAT)
+   nvi.back_light = OEMNV_BL_30S;
+   (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
+   nvi_cache.backlight = OEMNV_BL_30S;
+#else
    // NV_BACK_LIGHT_I
    nvi.back_light = OEMNV_BL_10S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_10S;
+#endif //defined FEATURE_CARRIER_THAILAND_CAT
 
    // Data Call Counters
    nvi.last_rx_data_count = 0;
@@ -1388,10 +2737,103 @@ void OEM_RestoreFactorySetting( void )
    nvi.nitz_nw_info_mnc = nvi_cache.mnc = 0;
    (void) OEMNV_Put( NV_NITZ_NW_INFO_MNC_I, &nvi);
 #endif 
-
+#ifdef CUST_EDITION
+   nvi.voice_priv = 0;
+#else
    nvi.voice_priv = VOICEPRIVACY_STD;
+#endif
    (void) OEMNV_Put( NV_VOICE_PRIV_I, &nvi);
    nvi_cache.voice_priv = nvi.voice_priv;  
+#ifdef CUST_EDITION
+   // CFGI_SVC_ALERT:
+   nvi.svc_area_alert = OEMNV_ALERT_ENABLE;
+   (void) OEMNV_Put( NV_SVC_AREA_ALERT_I, &nvi );
+   nvi_cache.svc_alert = OEMNV_ALERT_ENABLE;
+
+    //CFGI_LANGUAGE_SELECTION
+    if(nvi_cache.language != (nv_language_enum_type) OEMNV_LANGUAGE_DEFULT)
+    {
+#if defined(FEATURE_PEKTEST)
+        // PEK ≤‚ ‘∞Ê»Ìº˛Ω´”Ô—‘∏ƒŒ™”¢”Ô
+        nvi.language_selection = NV_LANGUAGE_ENGLISH;
+        nvi_cache.language = NV_LANGUAGE_ENGLISH;
+#else
+        nvi.language_selection = (nv_language_enum_type) OEMNV_LANGUAGE_DEFULT;
+        nvi_cache.language = (nv_language_enum_type) OEMNV_LANGUAGE_DEFULT;
+#endif
+
+        (void) OEMNV_Put( NV_LANGUAGE_SELECTION_I, &nvi );
+        (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
+    }
+   //CFGI_RTRE_CONFIGURATION
+   nvi.rtre_config = OEMNV_RTRT_DEFULT_CONFIG;
+   (void) OEMNV_Put( NV_RTRE_CONFIG_I, &nvi );
+   
+   nvi.set_time_format = NV_SET_TIME_FORMAT_24_HOUR;
+   (void) OEMNV_Put( NV_SET_TIME_FORMAT_I, &nvi);
+   nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_24_HOUR;
+   
+#ifdef FEATURE_TIME_DATA_SETTING
+    nvi.set_date_format = NV_SET_DATE_FORMAT_DD_MM_YYYY;
+    (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
+    nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_DD_MM_YYYY;
+#endif 
+   //CFGI_PHONE_PASSWORD_CHECK
+   nvi.lock = 0;
+   (void) OEMNV_Put( NV_LOCK_I, &nvi);
+   nvi_cache.lock = 0;
+
+   //CFGI_AUTO_REDIAL
+   nvi.auto_redial.enable = FALSE;
+   nvi.auto_redial.rings    = 10;
+   (void) OEMNV_Put( NV_AUTO_REDIAL_I, &nvi);   
+   nvi_cache.auto_redial.enable = FALSE;
+   nvi_cache.auto_redial.rings    = 10;
+
+#ifdef FEATURE_SID_LOCK
+    {
+        db_items_value_type sid_lock;
+        
+        sid_lock.b_sid_lock = 1;
+        db_put(DB_SID_LOCK, &sid_lock);
+        nvi.enabled_sid_lock.nam = cm_get_curr_nam();
+        nvi.enabled_sid_lock.b_sid_lock = 1;
+        (void) OEMNV_Put(NV_SID_LOCK_I, &nvi);
+    }
+#endif //FEATURE_SID_LOCK
+   
+   //CFGI_VOICEPRIVACY
+   nvi.voice_priv = CM_PRIVACY_PREF_STANDARD;
+   (void) OEMNV_Put( NV_VOICE_PRIV_I, &nvi);
+   nvi_cache.voice_priv = CM_PRIVACY_PREF_STANDARD;
+#endif//#ifndef win32   
+#ifdef FEATURE_SUPPORT_BT_APP
+#ifndef WIN32
+   bt_ui_restore_set(); 
+#endif
+#endif
+   OEMFS_Remove( ALARM_EFS_FILE);
+   {
+       extern void ClockApps_ClearAll(void);
+       DBGPRINTF( ";restorefactory, remove alarm file success");
+#ifndef WIN32//wlh ¡Ÿ ±–ﬁ∏ƒ
+       ClockApps_ClearAll();
+#endif//WIN32
+   }
+#ifndef WIN32//wlh ¡Ÿ ±–ﬁ∏ƒ
+   {
+	   extern void StopWatch_ClearData(void);
+	   StopWatch_ClearData();
+   }
+#endif//WIN32
+    {
+        IShell *piShell = AEE_GetShell();
+        if(piShell)
+            ISHELL_PostURL(piShell,"brw_app:ResetSetting");
+    }	
+	
+   //oemi_cache.input_mode=OEMNV_INPUTMODE_DEFAULT;
+#endif //CUST_EDITION
 }
 
 
@@ -1517,6 +2959,19 @@ static void OEMPriv_MIN1_TO_STR(uint32  min1,
 
 }
 
+#ifdef CUST_EDITION
+static dword g_me_esn=0;
+
+dword OEM_GetMEESN(void)
+{
+    return g_me_esn;
+}
+
+void OEM_SetMEESN(dword esn)
+{
+    g_me_esn = esn;
+}
+#endif
 /*=============================================================================
 FUNCTION:  OEM_InitPreference
 
@@ -1545,7 +3000,11 @@ void OEM_InitPreference(void)
 
   // Read the OEM Configuration List
   OEMPriv_ReadOEMConfigList();
-
+#ifdef CUST_EDITION
+#ifndef WIN32  
+  wms_msg_setmochannel(oemi_cache.wms_mochannel);
+#endif
+#endif // CUST_EDITION
   //
   // Load the NV Configuration List
   //
@@ -1553,6 +3012,7 @@ void OEM_InitPreference(void)
   //////////////////////////////////////////////////////////////////////
   // Setting Menu
   //////////////////////////////////////////////////////////////////////
+#ifndef WIN32
   (void) OEMNV_Get( NV_LIFE_TIMER_G_I, &nvi );
   nvi_cache.all_call_time = nvi.life_timer_g.time;
 
@@ -1607,7 +3067,11 @@ void OEM_InitPreference(void)
   nvi_cache.display_duration = nvi.display_duration;
 
   (void) OEMNV_Get( NV_LANGUAGE_SELECTION_I, &nvi );
+#ifdef CUST_EDITION
+  nvi_cache.language = nvi.language_selection;
+#else
   nvi_cache.language = (byte) nvi.language_selection;
+#endif
 
   (void) OEMNV_Get( NV_BANNER_I, &nvi );
   {
@@ -1768,11 +3232,53 @@ void OEM_InitPreference(void)
   
 #endif 
   if( OEMNV_Get( NV_VOICE_PRIV_I, &nvi) != NV_DONE_S){
-    nvi.voice_priv = VOICEPRIVACY_STD;  
+#ifdef CUST_EDITION
+     nvi.voice_priv = 0;
+#else
+     nvi.voice_priv = VOICEPRIVACY_STD;
+#endif
     (void) OEMNV_Put( NV_VOICE_PRIV_I, &nvi);
   }
   nvi_cache.voice_priv = nvi.voice_priv;
-  cache_initialized = TRUE;
+#ifdef CUST_EDITION
+  (void) OEMNV_Get( NV_SET_TIME_FORMAT_I,  &nvi);
+  nvi_cache.set_time_format = (byte)nvi.set_time_format;
+  
+#ifdef FEATURE_TIME_DATA_SETTING
+  (void) OEMNV_Get( NV_SET_DATE_FORMAT_I,  &nvi);
+  nvi_cache.set_date_format = (byte)nvi.set_date_format;
+#endif
+
+   //CFGI_AUTO_REDIAL
+   (void) OEMNV_Get( NV_AUTO_REDIAL_I,  &nvi);
+   nvi_cache.auto_redial.enable = nvi.auto_redial.enable;
+   if(nvi.auto_redial.rings == 0)
+   {
+       nvi.auto_redial.rings = 10;
+   }
+   nvi_cache.auto_redial.rings    = nvi.auto_redial.rings;
+   
+   //CFGI_PHONE_PASSWORD_CHECK
+   (void) OEMNV_Get( NV_LOCK_I, &nvi);
+   nvi_cache.lock = nvi.lock;
+
+   //CFGI_KEYTONE_LENGTH
+   (void) OEMNV_Get( NV_CONT_KEY_DTMF_I, &nvi);
+   if(nvi.cont_key_dtmf)
+   {
+      nvi_cache.key_tone_length = OEMNV_KEYTONE_LONG;
+   }
+   else
+   {
+      nvi_cache.key_tone_length = OEMNV_KEYTONE_NORMAL;
+   }
+#endif // CUST_EDITION
+#endif//#ifndef WIN32
+
+#ifdef CUST_EDITION
+    cfgi_lcd = TRUE;
+#endif // CUST_EDITION
+    cache_initialized = TRUE;
 }
 
 
@@ -1871,7 +3377,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          return EBADPARM;
       }
       return OEMPriv_GetItem_CFGI_VOICEPRIVACY(pBuff);
-
+#ifndef CUST_EDITION
    case CFGI_RTRE_CONFIG:
       if (nSize != sizeof(byte)) {
          ERR("GetConfig(): invalid parm size", 0, 0, 0);
@@ -1889,7 +3395,6 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       *(byte *) pBuff = (byte)RTRE_CONFIG_DISABLED;
       return SUCCESS;
 #endif /* FEATURE_UIM_RUN_TIME_ENABLE */
-
 
    case CFGI_UNITTEST_ACTIVE:
       if (nSize != (int)sizeof(boolean)) {
@@ -1920,7 +3425,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #error code not present
 #endif
       return SUCCESS;
-
+#endif
 #ifdef AEE_SIMULATOR
    case CFGI_LNG:
       if (nSize != (int) sizeof(uint32)) {
@@ -1936,7 +3441,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       return SUCCESS;
 
 #endif
-
+#ifndef CUST_EDITION
    case CFGI_FIRMWARE_VERSION:
       if (nSize != FIRMWAREVERSION_MAX_LEN * (int)sizeof(AECHAR)) {
          ERR("GetConfig(): invalid parm size", 0, 0, 0);
@@ -1967,6 +3472,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       return SUCCESS;
 
    }
+#endif
 
    case CFGI_TTY:
    {
@@ -1987,7 +3493,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
       return SUCCESS;
    }
-   
+#ifndef CUST_EDITION
    case CFGI_LP_SEC:
    {
       nv_item_type nvi;
@@ -2049,7 +3555,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
       return SUCCESS;
    }
-
+#endif
    //////////////////////////////////////////////////////////////////////
    // Security Menu
    //////////////////////////////////////////////////////////////////////
@@ -2078,7 +3584,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          if (nSize < (int) sizeof(AECHAR) * OEMNV_PHONENUMBER_MAXLEN) {
             return EFAILED;
          }
-
+#ifndef WIN32
          nvi.mob_dir_number.nam = (byte) CM_NAM_1;
 
          if (NV_DONE_S != OEMNV_Get(NV_DIR_NUMBER_PCS_I, &nvi)) {
@@ -2107,7 +3613,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
             }
             i++;
          }
-
+#endif
          STR_TO_WSTR(digits,
                      (AECHAR *) pBuff,
                      nSize);
@@ -2132,12 +3638,14 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    case CFGI_SMS_ALERT_VOLUME:
    {
 #ifdef FEATURE_WMS_APP
+#ifndef WIN32
 
      if (OEMNV_Get(NV_ALERTS_LVL_I, &nvi) != NV_DONE_S)
      {
        return EFAILED;
      }
      MEMCPY((byte *)pBuff, (byte *)&nvi.alerts_lvl, 1);
+#endif
 #else
      MEMCPY((byte *)pBuff, (byte *)&oemi_cache.sms_alert_volume, 1);
 #endif /* FEATURE_WMS_APP */
@@ -2174,6 +3682,22 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_VOICEMAIL_NUMBER:
    {
+#ifdef CUST_EDITION
+#ifndef WIN32     
+     if (OEMNV_Get(NV_SMS_VM_NUMBER_I, &nvi) != NV_DONE_S) 
+     {
+       return EFAILED;
+     }
+     nvi.sms_vm_number.digits[nvi.sms_vm_number.num_digits] = 0;
+     STRTOWSTR((char *)nvi.sms_vm_number.digits, pBuff, (nvi.sms_vm_number.num_digits+1) * sizeof(AECHAR));
+#endif
+     if (WSTRLEN(pBuff) == 0)
+     {
+#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
+        (void)STRTOWSTR("*9", pBuff, nSize);
+#endif     
+     }
+#else
 #ifdef FEATURE_WMS_APP
 
      if (OEMNV_Get(NV_SMS_VM_NUMBER_I, &nvi) != NV_DONE_S)
@@ -2188,6 +3712,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
                 (void *) oemi_cache.voicemail_number,
                 (int) (sizeof(oemi_cache.voicemail_number) / sizeof(AECHAR)));
 #endif /* FEATURE_WMS_APP */
+#endif // CUST_EDITION
      return SUCCESS;
    }
 
@@ -2217,7 +3742,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    case CFGI_LASTCALL_TIMER:
    {
      nv_item_type nvItem;
-
+#ifndef WIN32
      if(NV_DONE_S == OEMNV_Get(NV_CALL_TIMER_G_I, &nvItem))
      {
        *(dword*)pBuff = (nvItem.call_timer_g.time);
@@ -2225,11 +3750,15 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
      }
      else
        return EFAILED;
-   }
+#else
+	 return SUCCESS;
+#endif
+   } 
 
    // total local (non-roaming) air time used
-   case CFGI_AIR_TIMER:
+   case CFGI_AIR_TIMER:   
    {
+#ifndef WIN32      
       nv_item_type nvItem;
 
       nvItem.air_timer.nam = (byte) CM_NAM_1;
@@ -2239,12 +3768,14 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       }
 
       *(dword*)pBuff = nvItem.air_timer.time;
+#endif
       return SUCCESS;
    }
 
    // returns the total roaming time used.
    case CFGI_ROAM_TIMER:
    {
+#ifndef WIN32     
       nv_item_type nvItem;
 
       nvItem.roam_timer.nam = (byte) CM_NAM_1;
@@ -2254,6 +3785,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       }
 
       *(dword*)pBuff = nvItem.roam_timer.time;
+#endif
       return SUCCESS;
    }
 
@@ -2261,7 +3793,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    case CFGI_LIFE_TIMER:
    {
       nv_item_type nvItem;
-
+#ifndef WIN32
       if(NV_DONE_S == OEMNV_Get(NV_LIFE_TIMER_G_I, &nvItem))
       {
         *(dword*)pBuff = (nvItem.life_timer_g.time);
@@ -2269,16 +3801,27 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       }
       else
         return EFAILED;
+#else
+	 return SUCCESS;
+#endif
    } // Recent Calls App
 
    ////////////////////////////////////////////////////////////////
-   // Service Programming
+   // Service Programming 
    ////////////////////////////////////////////////////////////////
 
    case CFGI_BUILD_VERSION:
+#ifdef CUST_EDITION
+#ifndef WIN32
+      STR_TO_WSTR((char *)ver_modelversion,
+                  (AECHAR *) pBuff,
+                  nSize);
+#endif
+#else
       STR_TO_WSTR((char *)ver_dir,
                   (AECHAR *) pBuff,
                   nSize);
+#endif // CUST_EDITION
       return SUCCESS;
    
 #ifdef FEATURE_FACTORY_TESTMODE
@@ -2294,6 +3837,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    case CFGI_PRI_CH_B:
       {
 
+#ifndef WIN32
          if (nSize != (int) sizeof(uint16)) {
             return EBADPARM;
          }
@@ -2308,12 +3852,14 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          } else {
             *(uint16 *) pBuff = nvi.pcdmach.channel_b;
          }
+#endif
          return SUCCESS;
       }
 
    case CFGI_SEC_CH_A:
    case CFGI_SEC_CH_B:
       {
+#ifndef WIN32
 
          if (nSize != (int) sizeof(uint16)) {
             return EBADPARM;
@@ -2329,11 +3875,13 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          } else {
             *(uint16 *) pBuff = nvi.scdmach.channel_b;
          }
+#endif
          return SUCCESS;
       }
 
    case CFGI_DATA_DIALSTRING:
       {
+#ifndef WIN32
          char         code[OEMNV_DATA_DIALSTRING_MAXLEN];
 
          if (nSize > ((int) sizeof(AECHAR) * OEMNV_DATA_DIALSTRING_MAXLEN)) {
@@ -2352,7 +3900,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          STR_TO_WSTR(code,
                      (AECHAR *) pBuff,
                      nSize);
-
+#endif
          return SUCCESS;
       }
 
@@ -2472,7 +4020,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          *val = oemi_cache.download_info.wPrivP;
          return(SUCCESS);
       }
-
+#ifndef CUST_EDITION
    case CFGI_SUBSCRIBERID:
       {
          if(nSize < (STRLEN((const char *)oemi_cache.szSubscriberID) + 1))
@@ -2482,6 +4030,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
          return AEE_SUCCESS;
       }
+#endif
 #if defined(FEATURE_USRSYSCLOCK) || defined(FEATURE_ISYSCLOCK)
     case CFGI_NITZ_NW_INFO:
       WSTRNCOPYN(pBuff,
@@ -2508,7 +4057,179 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          return(SUCCESS);
       }
 #endif 
+#ifdef CUST_EDITION
+    //
+    // OEM IDs, specific to the OEM
+    // 
+    case CFGI_OEM_IDS_LEN:
+    case CFGI_OEM_IDS:
+        {
+            // An initial entry of 0 is used to signify that OEM IDs are not to
+            // be used. Change the value(s) to include the OEM IDs this build
+            // should accept as valid OEM IDs.
+            static const uint32 adwOEMIDs[] = {0,};
+            
+            // There is no need to change the following assignment. nOEMIDsSize
+            // will be updated appropriately if adwOEMIDs does not start with 0
+            int nOEMIDsSize = 0;
+            
+            // If the first entry in the array is 0, nOEMIDsSize should remain 0
+            if ((sizeof(adwOEMIDs) != 0) && (0 != adwOEMIDs[0])) 
+            {
+                nOEMIDsSize = sizeof(adwOEMIDs);
+            }
+            
+            if (CFGI_OEM_IDS_LEN == i) 
+            {
+                // Caller is requesting the size of the OEM IDs array
+                if (sizeof(int) != nSize) 
+                {
+                    return EBADPARM;
+                }
+                else 
+                {
+                    // Assign the size to the out param (pBuff)
+                    *((int*)pBuff) = nOEMIDsSize;
+                }
+            }
+            else 
+            {
+                // Caller is requesting the data in the OEM IDs array
+                if (nSize != nOEMIDsSize) 
+                {
+                    return EBADPARM;
+                }
+                else
+                {
+                    // Copy the data into the caller supplied buffer
+                    MEMMOVE(pBuff, adwOEMIDs, nSize);
+                }
+            }
+        }
+        return SUCCESS;
+	  
+#if defined( FEATURE_APP_MANAGER)
+    case CFGI_DOWNLOAD_BUFFER:
+    {
+         if (nSize != (int)sizeof(uint32)) 
+         {
+            return EBADPARM;
+         }
+        
+         *(uint32*)pBuff = 1024 * 8;
+         return SUCCESS;
+    }
+    case CFGI_HTTP_BUFFER:
+    {
+         if(!pBuff || nSize != (int)sizeof(dword))
+         {
+              return(EBADPARM);
+         }
+     
+         *((uint32*)pBuff) = 1024 * 8;
+         return SUCCESS;
+    }
+    case CFGI_NET_CONNTIMEOUT:
+    {
+    	 if(!pBuff || nSize != (int)sizeof(dword))
+    	 {
+            return(EBADPARM);
+    	 }
+    	 
+         *((uint32*)pBuff) = 30000;
+         return SUCCESS;
+    }   		
+#endif //#if defined( FEATURE_APP_MANAGER)
+	  
+      // ≤ª÷ß≥÷∏√œÓ£¨“‘ MIN ¥˙ÃÊ SID
+      // “‘ MIN ¥˙ÃÊ SID
+      case CFGI_SUBSCRIBERID:
+      {
+         int nLen;
+         AEEMobileInfo info;
+         extern void GetMobileInfoEx(AEEMobileInfo * pmi);
+         
+         GetMobileInfoEx(&info);
+         nLen = STRLEN(info.szMobileID);
+             
+         if (!pBuff || nSize <= nLen)
+         {
+            return EBADPARM;
+         }
+         
+         STRLCPY((char *)pBuff, info.szMobileID, nSize);
+         return AEE_SUCCESS;
+      }
+      
+      case CFGI_SUBSCRIBERID_LEN:
+      {
+         int nLen;
+         AEEMobileInfo info;
+         extern void GetMobileInfoEx(AEEMobileInfo * pmi);
+         
+         if (!pBuff || nSize != sizeof(int32))
+         {
+            return EBADPARM;
+         }
+         
+         GetMobileInfoEx(&info);
+         nLen = STRLEN(info.szMobileID);
+         *((int32 *)pBuff) = nLen+1;
 
+         return AEE_SUCCESS;
+      }
+#ifdef FEATURE_ANIMATION_POWERUPDOWN
+    //ø™ª˙∂Øª≠
+    case CFGI_STARTUP_ANIMATION:
+      MEMCPY((void *)pBuff, (void *)oemi_cache.s_startupani, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      return AEE_SUCCESS;
+      
+    //πÿª˙∂Øª≠  
+    case CFGI_POWEROFF_ANIMATION:
+      MEMCPY((void *)pBuff, (void *)oemi_cache.s_poweroffani, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      return AEE_SUCCESS;
+#endif
+
+    //◊¿√Ê«Ω÷Ω  
+    case CFGI_WALLPAPER:
+      MEMCPY((void *)pBuff, (void *)oemi_cache.s_wallpaper, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      return AEE_SUCCESS;
+      
+#ifdef FEATURE_SCREEN_SAVE
+    //∆¡ƒª±£ª§¿‡–Õ
+   case CFGI_SCREENSAVE_TYPE:
+      MEMCPY((void *)pBuff, (void *)oemi_cache.s_screensave_type, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      return AEE_SUCCESS;
+#endif
+
+   case CFGI_MOBILEINFO:
+   {
+      extern void GetMobileInfoEx(AEEMobileInfo * pmi);
+      if (nSize != sizeof(AEEMobileInfo))
+      {
+         return(EBADPARM);
+      }
+      GetMobileInfoEx((AEEMobileInfo *) pBuff);
+   }
+      return SUCCESS;
+    
+    case CFGI_OEMAUTH_CHALLENGE_CAP:
+        if (nSize < sizeof(boolean))
+        {
+            return EBADPARM;
+        }
+        /* 
+        if (IsRunAsUIMVersion())
+        {
+            *(boolean *)pBuff = TRUE;
+        }
+        else
+        */
+        {
+            *(boolean *)pBuff = FALSE;
+        }
+        return AEE_SUCCESS;
+#endif // CUST_EDITION
    default:
       return(EUNSUPPORTED);
 
@@ -2631,7 +4352,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          return EBADPARM;
       }
       return OEMPriv_SetItem_CFGI_VOICEPRIVACY(pBuff);
-
+#ifndef CUST_EDITION
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
    case CFGI_RTRE_CONFIG:
       if (nSize != sizeof(byte)) {
@@ -2645,7 +4366,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       }
       return SUCCESS;
 #endif /* FEATURE_UIM_RUN_TIME_ENABLE */
-
+#endif
 #ifdef srIMON
 #error code not present
 #endif
@@ -2685,12 +4406,13 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          MEMCPY((byte *)nvi_cache.lockcode,
                 (byte *) pBuff,
                 NV_LOCK_CODE_SIZE);
-
+#ifndef WIN32
          MEMCPY((byte *)nvi.lock_code.digits,
                 (byte *) pBuff,
                 NV_LOCK_CODE_SIZE);
 
          (void) OEMNV_Put( NV_LOCK_CODE_I, &nvi );
+#endif
       }
       return SUCCESS;
 
@@ -2700,6 +4422,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    ////////////////////////////////////////////////////////////////
    case CFGI_PHONE_NUMBER:
       {
+#ifndef WIN32
          int32    len;
          AECHAR  *wPtr = pBuff;
 
@@ -2724,7 +4447,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          }
 
          (void) OEMNV_Put( NV_DIR_NUMBER_PCS_I, &nvi );
-
+#endif 
          return SUCCESS;
       }
 
@@ -2733,7 +4456,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    //////////////////////////////////////////////////////////////////////
    case CFGI_BANNER:
       if(!pBuff) return EFAILED;
-
+#ifndef WIN32
       WSTRNCOPYN(nvi_cache.banner,
                  sizeof(nvi_cache.banner)/sizeof(AECHAR),
                  (AECHAR*) pBuff,
@@ -2748,7 +4471,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
 
       (void) OEMNV_Put( NV_BANNER_I, &nvi );
-
+#endif
       return 0;
 
    ////////////////////////////////////////////////////////////////
@@ -2758,6 +4481,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    {
      if(!pBuff)
        return EFAILED;
+#ifndef WIN32
 #ifdef FEATURE_WMS_APP
     MEMCPY((byte*)&nvi.alerts_lvl, (byte*)pBuff, 1);
 
@@ -2771,7 +4495,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #endif
     return SUCCESS;
    }
-
+#endif
 #ifdef FEATURE_SMS_RETRY
    case CFGI_SMS_RETRY_PERIOD:
    {
@@ -2801,11 +4525,21 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
      return SUCCESS;
    }
 #endif /* FEATURE_SMS_RETRY */
-
    case CFGI_VOICEMAIL_NUMBER:
    {
-     if(!pBuff)
+     if(!pBuff) 
        return EFAILED;
+#ifdef CUST_EDITION
+#ifndef WIN32    
+    nvi.sms_vm_number.num_digits = WSTRLEN(pBuff);
+    WSTRTOSTR(pBuff, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
+
+    if (OEMNV_Put(NV_SMS_VM_NUMBER_I, &nvi) != NV_DONE_S)
+    {
+      return EFAILED;
+    }
+#endif
+#else
 #ifdef FEATURE_WMS_APP
 
     nvi.sms_vm_number.num_digits = WSTRLEN(pBuff);
@@ -2822,6 +4556,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
                 -1);
     OEMPriv_WriteOEMConfigList();
 #endif
+#endif // CUST_EDITION
       return SUCCESS;
    }
 
@@ -2854,12 +4589,12 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
      {
       if ((!pBuff) || (nSize != (int)sizeof(dword)))
         return EBADPARM;
-
+#ifndef WIN32      
       nvi.call_timer_g.time = *(dword*) pBuff;
 
       if(OEMNV_Put(NV_CALL_TIMER_G_I,&nvi)!= NV_DONE_S)
         return EFAILED;
-
+#endif
       return SUCCESS;
      }
 
@@ -2867,27 +4602,27 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
      {
       if ((!pBuff) || (nSize != (int)sizeof(dword)))
         return EBADPARM;
-
+#ifndef WIN32      
       nvi.air_timer.nam = CM_NAM_1;
       nvi.air_timer.time = *(dword*) pBuff;
 
       if(OEMNV_Put(NV_AIR_TIMER_I,&nvi)!= NV_DONE_S)
         return EFAILED;
-
+#endif
       return SUCCESS;
      }
-
+   
    case CFGI_ROAM_TIMER:
      {
       if ((!pBuff) || (nSize != (int)sizeof(dword)))
         return EBADPARM;
-
+#ifndef WIN32      
       nvi.roam_timer.nam = CM_NAM_1;
       nvi.roam_timer.time = *(dword*) pBuff;
 
       if(OEMNV_Put(NV_ROAM_TIMER_I,&nvi)!= NV_DONE_S)
         return EFAILED;
-
+#endif
       return SUCCESS;
      }
 
@@ -2895,12 +4630,12 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
      {
       if ((!pBuff) || (nSize != (int)sizeof(dword)))
         return EBADPARM;
-
+#ifndef WIN32      
       nvi.life_timer_g.time = *(dword*) pBuff;
 
       if(OEMNV_Put(NV_LIFE_TIMER_G_I,&nvi)!= NV_DONE_S)
         return EFAILED;
-
+#endif
       return SUCCESS;
      }
    ////////////////////////////////////////////////////////////////
@@ -2916,7 +4651,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          if (nSize != (int) sizeof(uint16)) {
             return EBADPARM;
          }
-
+#ifndef WIN32
          // Get current values
          nvi.pcdmach.nam = (byte) CM_NAM_1;
          if (NV_DONE_S != OEMNV_Get(NV_PCDMACH_I, &nvi)) {
@@ -2935,7 +4670,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          if (NV_DONE_S != OEMNV_Put(NV_PCDMACH_I, &nvi)) {
             return EFAILED;
          }
-
+#endif
          return SUCCESS;
       }
 
@@ -2945,7 +4680,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          if (nSize != (int) sizeof(uint16)) {
             return EBADPARM;
          }
-
+#ifndef WIN32
          // Get current values
          nvi.scdmach.nam = (byte) CM_NAM_1;
          if (NV_DONE_S != OEMNV_Get(NV_SCDMACH_I, &nvi)) {
@@ -2964,7 +4699,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          if (NV_DONE_S != OEMNV_Put(NV_SCDMACH_I, &nvi)) {
             return EFAILED;
          }
-
+#endif
          return SUCCESS;
       }
 
@@ -2979,7 +4714,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          WSTR_TO_STR((AECHAR *) pBuff,
                      code,
                      sizeof(code));
-
+#ifndef WIN32
          // Length includes the NULL character
          nvi.data_pkt_orig_str.num_digits = (uint8) STRLEN(code) + 1;
 
@@ -2990,6 +4725,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          if (NV_DONE_S != OEMNV_Put(NV_DATA_PKT_ORIG_STR_I, &nvi)) {
             return EFAILED;
          }
+#endif
          return SUCCESS;
       }
  /*
@@ -3020,7 +4756,6 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       OEMPriv_WriteOEMConfigList();
       return SUCCESS;
      }
-
    case CFGI_BREW_CID:
       {
          uint32 *val = (uint32 *)pBuff;
@@ -3181,7 +4916,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          return SUCCESS;
       }
 #endif
-
+#ifndef CUST_EDITION
    case CFGI_AUTO_ANSWER:
       {
          nv_item_type nvi;
@@ -3195,7 +4930,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          }
          return SUCCESS;
       }
-      
+#endif
    case CFGI_TTY:
       {
          nv_item_type nvi;
@@ -3209,7 +4944,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          }
          return SUCCESS;
       }
-      
+#ifndef CUST_EDITION
    case CFGI_LP_SEC:
       {
          nv_item_type nvi;
@@ -3250,9 +4985,70 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
             return EFAILED;
          }
          return SUCCESS;
-      }    
-
+      }
+#endif
+#ifdef CUST_EDITION
+#ifdef FEATURE_ANIMATION_POWERUPDOWN
+   //ø™ª˙∂Øª≠
+   case CFGI_STARTUP_ANIMATION:
+      if(!pBuff) return EFAILED;
+      MEMSET((void *)oemi_cache.s_startupani,'\0', AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      MEMCPY((void *)oemi_cache.s_startupani, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      OEMPriv_WriteOEMConfigList();
+      return AEE_SUCCESS;
       
+   //πÿª˙∂Øª≠  
+   case CFGI_POWEROFF_ANIMATION:
+      if(!pBuff) return EFAILED;
+      MEMSET((void *)oemi_cache.s_poweroffani,'\0', AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      MEMCPY((void *)oemi_cache.s_poweroffani, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      OEMPriv_WriteOEMConfigList();
+      return AEE_SUCCESS;
+#endif
+
+   //◊¿√Ê«Ω÷Ω 
+   case CFGI_WALLPAPER:
+      if(!pBuff) return EFAILED;
+      MEMSET((void *)oemi_cache.s_wallpaper,'\0', AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      MEMCPY((void *)oemi_cache.s_wallpaper, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      OEMPriv_WriteOEMConfigList();
+      return AEE_SUCCESS;
+      
+#ifdef FEATURE_SCREEN_SAVE
+   //∆¡ƒª±£ª§¿‡–Õ
+   case CFGI_SCREENSAVE_TYPE:
+      if(!pBuff) return EFAILED;
+      MEMSET((void *)oemi_cache.s_screensave_type,'\0', AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      MEMCPY((void *)oemi_cache.s_screensave_type, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      OEMPriv_WriteOEMConfigList();
+      return AEE_SUCCESS;
+#endif
+         
+   //
+   // DNS Addresses - Used by the HTTP layer, etc.
+   //
+   case CFGI_DNS_IP1:
+   case CFGI_DNS_IP2:
+#ifndef WIN32
+      {
+         nv_items_enum_type item = (i==CFGI_DNS_IP1 ? NV_PRIMARY_DNS_I : NV_SECONDARY_DNS_I);
+         if ((!pBuff) || nSize != sizeof(uint32))
+         {
+            return EBADPARM;
+         }
+         
+         nvi.primary_dns = NTOHL(*((uint32 *)pBuff));
+         
+         if (OEMNV_Put(item, &nvi) != NV_DONE_S)
+         {
+            DBGPRINTF(";put %d failed", item);
+            return EFAILED;
+         }
+      }
+#else
+#endif
+      return AEE_SUCCESS;
+#endif //#ifdef CUST_EDITION
    default:
       return(EUNSUPPORTED);
    }
@@ -3540,7 +5336,16 @@ static void OEMPriv_ReadOEMConfigList(void)
    MEMSET((void *)&oemi_cache.cug, 0, sizeof(OEMConfigCugInfo));
    if (STRCMP((const char *)oemi_cache.download_info.szServer, "") == 0)
    {
-     // Download information not initialized
+#ifdef CUST_EDITION
+     oemi_cache.download_info.dwCID  = DEFAULT_BREW_CARRIER_ID;
+     oemi_cache.download_info.dwPID  = DEFAULT_BREW_PLATFORM_ID;
+     oemi_cache.download_info.wFlags = DEFAULT_BREW_DOWNLOAD_FLG;
+     oemi_cache.download_info.wAuth  = DEFAULT_BREW_APOLICY;
+     oemi_cache.download_info.wPrivP = DEFAULT_BREW_PPOLICY;
+     STRLCPY((char *)oemi_cache.download_info.szServer, 
+             (const char *)DEFAULT_BREW_SERVER, 
+             sizeof(oemi_cache.download_info.szServer));
+#else
      oemi_cache.download_info.dwCID  = OEMCFG_DEFAULT_CID;
      oemi_cache.download_info.dwPID  = OEMCFG_DEFAULT_PLATFORM_ID;
      oemi_cache.download_info.wFlags = DIF_TEST_ALLOWED | DIF_MIN_FOR_SID;
@@ -3549,6 +5354,7 @@ static void OEMPriv_ReadOEMConfigList(void)
      STRLCPY((char *)oemi_cache.download_info.szServer, 
              (const char *)OEMCFG_DEFAULT_DL_SERVER, 
              sizeof(oemi_cache.download_info.szServer));
+#endif
    }
 
    // Force the value on the following members
@@ -3667,6 +5473,7 @@ static int OEMPriv_GetItem_CFGI_ALL_CALL_TIMER(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_ALL_CALL_TIMER(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.all_call_time != *((dword *)pBuff)) {
@@ -3674,7 +5481,7 @@ static int OEMPriv_SetItem_CFGI_ALL_CALL_TIMER(void *pBuff)
       nvi.life_timer_g.time = *((dword *)pBuff);
       (void) OEMNV_Put( NV_LIFE_TIMER_G_I, &nvi);
    }
-
+#endif
    return SUCCESS;
 }
 
@@ -3702,6 +5509,7 @@ static int OEMPriv_GetItem_CFGI_EXTPWR_BK_LIGHT(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_EXTPWR_BK_LIGHT(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.backlight_hfk != *((byte *)pBuff)) {
@@ -3709,7 +5517,7 @@ static int OEMPriv_SetItem_CFGI_EXTPWR_BK_LIGHT(void *pBuff)
       nvi.back_light_hfk = *((byte *)pBuff);
       (void) OEMNV_Put( NV_BACK_LIGHT_HFK_I, &nvi );
    }
-
+#endif
    return SUCCESS;
 }
 
@@ -3737,8 +5545,13 @@ static int OEMPriv_GetItem_CFGI_ANYKEY_ANSWER(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_ANYKEY_ANSWER(void *pBuff)
 {
+#ifdef CUST_EDITION
+   if (oemi_cache.any_key_answer != *(byte *)pBuff) {
+      oemi_cache.any_key_answer = *((byte *)pBuff);
+#else
    if (oemi_cache.any_key_answer != *(boolean *)pBuff) {
       oemi_cache.any_key_answer = *((boolean *)pBuff);
+#endif
       OEMPriv_WriteOEMConfigList();
    }
 
@@ -3802,6 +5615,7 @@ static int OEMPriv_GetItem_CFGI_SVC_ALERT(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_SVC_ALERT(void *pBuff)
 {
+#ifndef WIN32
    byte b = *((byte *)pBuff) ? 1: 0;
    nv_item_type nvi;
 
@@ -3810,6 +5624,7 @@ static int OEMPriv_SetItem_CFGI_SVC_ALERT(void *pBuff)
       nvi.svc_area_alert = b;
       (void) OEMNV_Put( NV_SVC_AREA_ALERT_I, &nvi );
    }
+#endif
    return SUCCESS;
 }
 
@@ -3894,6 +5709,7 @@ static int OEMPriv_GetItem_CFGI_RINGER_VOL(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_RINGER_VOL(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.ringer_level != *((byte *)pBuff)) {
@@ -3901,7 +5717,7 @@ static int OEMPriv_SetItem_CFGI_RINGER_VOL(void *pBuff)
       nvi.ringer_level = *((byte *)pBuff);
       (void) OEMNV_Put( NV_RINGER_LVL_I, &nvi);
    }
-
+#endif
    return SUCCESS;
 }
 
@@ -3913,6 +5729,7 @@ static int OEMPriv_GetItem_CFGI_EAR_VOL(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_EAR_VOL(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.handset_ear_level != *((byte *)pBuff)) {
@@ -3920,7 +5737,7 @@ static int OEMPriv_SetItem_CFGI_EAR_VOL(void *pBuff)
       nvi.ear_level = *((byte *)pBuff);
       (void) OEMNV_Put( NV_EAR_LVL_I, &nvi);
    }
-
+#endif
    return SUCCESS;
 }
 
@@ -3932,6 +5749,7 @@ static int OEMPriv_GetItem_CFGI_BEEP_VOL(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_BEEP_VOL(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.beep_level != *((byte *)pBuff)) {
@@ -3939,7 +5757,7 @@ static int OEMPriv_SetItem_CFGI_BEEP_VOL(void *pBuff)
       nvi.beep_level = *((byte *)pBuff);
       (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi);
    }
-
+#endif
    return SUCCESS;
 }
 
@@ -3988,6 +5806,7 @@ static int OEMPriv_GetItem_CFGI_KEYBEEP_SOUND(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_KEYBEEP_SOUND(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.key_sound != *((byte *)pBuff)) {
@@ -3995,19 +5814,23 @@ static int OEMPriv_SetItem_CFGI_KEYBEEP_SOUND(void *pBuff)
       nvi.key_sound = (nv_key_sound_enum_type) *((byte *)pBuff);
       (void) OEMNV_Put( NV_KEY_SOUND_I, &nvi);
    }
-
+#endif
    return SUCCESS;
 }
 
 
 static int OEMPriv_GetItem_CFGI_RINGER_TYPE(void *pBuff)
 {
+#ifdef CUST_EDITION
     // To do - ringer type
+    *(byte *) pBuff = nvi_cache.ringer_type;
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_RINGER_TYPE(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.ringer_type != *((byte *)pBuff)) {
@@ -4015,7 +5838,7 @@ static int OEMPriv_SetItem_CFGI_RINGER_TYPE(void *pBuff)
       nvi.ringer_type = *((byte *)pBuff);
       (void) OEMNV_Put( NV_RINGER_TYPE_I, &nvi);
    }
-
+#endif
    return SUCCESS;
 }
 
@@ -4087,6 +5910,7 @@ static int OEMPriv_SetItem_CFGI_AMR(void *pBuff)
   }
    return SUCCESS;
 }
+
 
 
 static int OEMPriv_SetItem_CFGI_LCD(void *pBuff)
@@ -4170,12 +5994,14 @@ static int OEMPriv_GetItem_CFGI_LAST_RX_DATA_COUNT(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_LAST_RX_DATA_COUNT(void *pBuff)
 {
+#ifndef WIN32
   nv_item_type nvi;
   if (nvi_cache.last_rx_data_count != *((uint32 *)pBuff)) {
     nvi_cache.last_rx_data_count = *((uint32 *)pBuff);
     nvi.last_rx_data_count = *((uint32 *)pBuff);
     (void) OEMNV_Put(NV_LAST_RX_DATA_COUNT_I, &nvi);
   }
+#endif
   return SUCCESS;
 }
 
@@ -4187,12 +6013,14 @@ static int OEMPriv_GetItem_CFGI_LAST_TX_DATA_COUNT(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_LAST_TX_DATA_COUNT(void *pBuff)
 {
+#ifndef WIN32
   nv_item_type nvi;
   if (nvi_cache.last_tx_data_count != *((uint32 *)pBuff)) {
     nvi_cache.last_tx_data_count = *((uint32 *)pBuff);
     nvi.last_tx_data_count = *((uint32 *)pBuff);
     (void) OEMNV_Put(NV_LAST_TX_DATA_COUNT_I, &nvi);
   }
+#endif
   return SUCCESS;
 }
 
@@ -4204,12 +6032,14 @@ static int OEMPriv_GetItem_CFGI_TOTAL_RX_DATA_COUNT(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_TOTAL_RX_DATA_COUNT(void *pBuff)
 {
+#ifndef WIN32
   nv_item_type nvi;
   if (nvi_cache.total_rx_data_count != *((uint32 *)pBuff)) {
     nvi_cache.total_rx_data_count = *((uint32 *)pBuff);
     nvi.total_rx_data_count = *((uint32 *)pBuff);
     (void) OEMNV_Put(NV_TOTAL_RX_DATA_COUNT_I, &nvi);
   }
+#endif
   return SUCCESS;
 }
 
@@ -4221,12 +6051,14 @@ static int OEMPriv_GetItem_CFGI_TOTAL_TX_DATA_COUNT(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_TOTAL_TX_DATA_COUNT(void *pBuff)
 {
+#ifndef WIN32
   nv_item_type nvi;
   if (nvi_cache.total_tx_data_count != *((uint32 *)pBuff)) {
     nvi_cache.total_tx_data_count = *((uint32 *)pBuff);
     nvi.total_tx_data_count = *((uint32 *)pBuff);
     (void) OEMNV_Put(NV_TOTAL_TX_DATA_COUNT_I, &nvi);
   }
+#endif
   return SUCCESS;
 }
 
@@ -4255,6 +6087,7 @@ static int OEMPriv_GetItem_CFGI_CONTRAST_LVL(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_CONTRAST_LVL(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.contrast != *((byte *)pBuff)) {
@@ -4262,7 +6095,7 @@ static int OEMPriv_SetItem_CFGI_CONTRAST_LVL(void *pBuff)
       nvi.lcd = *((byte *)pBuff);
       (void) OEMNV_Put( NV_LCD_I, &nvi );
    }
-
+#endif
    return SUCCESS;
 }
 
@@ -4294,6 +6127,7 @@ static int OEMPriv_GetItem_CFGI_BACK_LIGHT(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_BACK_LIGHT(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.backlight != *((byte *)pBuff)) {
@@ -4301,24 +6135,34 @@ static int OEMPriv_SetItem_CFGI_BACK_LIGHT(void *pBuff)
       nvi.back_light = *((byte *)pBuff);
       (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    }
-
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_LANGUAGE_SELECTION(void *pBuff)
 {
+#ifdef CUST_EDITION
+   *(nv_language_enum_type *) pBuff = nvi_cache.language;
+#else
    *(byte *) pBuff = nvi_cache.language;
+#endif
    return SUCCESS;
 }
 
 
 static int OEMPriv_SetItem_CFGI_LANGUAGE_SELECTION(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
-
+#ifdef CUST_EDITION
+   if( nvi_cache.language != *((nv_language_enum_type *)pBuff )) {
+      nvi_cache.language = *((nv_language_enum_type *)pBuff );
+      nvi.language_selection = *((nv_language_enum_type *)pBuff);
+#else
    if( nvi_cache.language != *((byte *)pBuff )) {
       nvi_cache.language = *((byte *)pBuff );
       nvi.language_selection = (nv_language_enum_type) *((byte *)pBuff);
+#endif
       (void) OEMNV_Put( NV_LANGUAGE_SELECTION_I, &nvi );
 
       // NOTE!
@@ -4329,9 +6173,11 @@ static int OEMPriv_SetItem_CFGI_LANGUAGE_SELECTION(void *pBuff)
       // Currently only the Idle applet keeps track of the language
       // and takes appropriate action when it is resumed.
       //
-
+#ifdef CUST_EDITION
+     (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
+#endif
    }
-
+#endif
    return SUCCESS;
 }
 
@@ -4343,6 +6189,7 @@ static int OEMPriv_GetItem_CFGI_MENU_FORMAT(void *pBuff)
 
 static int OEMPriv_SetItem_CFGI_MENU_FORMAT(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (nvi_cache.menu_format != *((byte *)pBuff)) {
@@ -4350,23 +6197,38 @@ static int OEMPriv_SetItem_CFGI_MENU_FORMAT(void *pBuff)
       nvi.menu_format = (nv_menu_format_enum_type) *((byte *)pBuff);
       (void) OEMNV_Put( NV_MENU_FORMAT_I, &nvi );
    }
-
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_TIME_FORMAT(void *pBuff)
 {
+#ifdef CUST_EDITION
+   *(byte *) pBuff = nvi_cache.set_time_format;
+#else
    *(byte *) pBuff = oemi_cache.time_format;
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_TIME_FORMAT(void *pBuff)
 {
+#ifdef CUST_EDITION
+#ifndef WIN32
+    nv_item_type nvi;
+
+   if (nvi_cache.set_time_format != *((byte *)pBuff)) {
+      nvi_cache.set_time_format = *((byte *)pBuff);
+      nvi.set_time_format = *((nv_set_time_format_enum_type *)pBuff);
+      (void) OEMNV_Put( NV_SET_TIME_FORMAT_I,  &nvi);
+   }
+#endif
+#else
    if (oemi_cache.time_format != *(boolean *)pBuff) {
       oemi_cache.time_format = *(boolean *)pBuff;
       OEMPriv_WriteOEMConfigList();
    }
-
+#endif //CUST_EDITION
    return SUCCESS;
 }
 
@@ -4568,6 +6430,7 @@ static int OEMPriv_SetItem_CFGI_SMS_SERVICE_OPTION(void *pBuff)
 
 static int OEMPriv_GetItem_CFGI_SMS_TIMESTAMP(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (NV_DONE_S != OEMNV_Get(NV_SMS_UTC_I, &nvi)) {
@@ -4579,12 +6442,13 @@ static int OEMPriv_GetItem_CFGI_SMS_TIMESTAMP(void *pBuff)
    } else {
       *(byte *) pBuff = OEMNV_SMS_TIMESTAMP_ASRECEIVED;
    }
-
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_SMS_TIMESTAMP(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (OEMNV_SMS_TIMESTAMP_ADJUST == *(byte *) pBuff) {
@@ -4596,6 +6460,7 @@ static int OEMPriv_SetItem_CFGI_SMS_TIMESTAMP(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_SMS_UTC_I, &nvi)) {
       return EFAILED;
    }
+#endif
    return SUCCESS;
 }
 
@@ -4800,6 +6665,7 @@ static int OEMPriv_SetItem_CFGI_SMS_SEGMENT_REF_NUM(void *pBuff)
 
 static int OEMPriv_GetItem_CFGI_SECCODE(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (NV_DONE_S != OEMNV_Get(NV_SEC_CODE_I, &nvi)) {
@@ -4808,11 +6674,13 @@ static int OEMPriv_GetItem_CFGI_SECCODE(void *pBuff)
    STR_TO_WSTR((char *)nvi.sec_code.digits,
                (AECHAR *) pBuff,
                OEMNV_SECCODE_LENGTH * sizeof(AECHAR));
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_SECCODE(void *pBuff)
 {
+#ifndef WIN32
    char code[OEMNV_SECCODE_LENGTH];
    nv_item_type nvi;
 
@@ -4831,6 +6699,7 @@ static int OEMPriv_SetItem_CFGI_SECCODE(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_SEC_CODE_I, &nvi)) {
       return EFAILED;
    }
+#endif
    return SUCCESS;
 }
 
@@ -4861,7 +6730,7 @@ static int OEMPriv_SetItem_CFGI_OTKSLCODE(void *pBuff)
       return EBADPARM;
    }
 
-   MEMCPY((void *) nvi.otksl.digits,
+   MEMCPY((void *) nvi.otksl.digits, 
           code,
           sizeof(nvi.otksl.digits));
 
@@ -4875,13 +6744,14 @@ static int OEMPriv_SetItem_CFGI_OTKSLCODE(void *pBuff)
 
 static int OEMPriv_GetItem_CFGI_ESN(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (NV_DONE_S != OEMNV_Get(NV_ESN_I, &nvi)) {
       return EFAILED;
    }
    *(uint32 *) pBuff = nvi.esn.esn;
-
+#endif
    return SUCCESS;
 }
 
@@ -4890,6 +6760,7 @@ static int OEMPriv_GetItem_CFGI_ESN(void *pBuff)
 static int OEMPriv_GetItem_CFGI_RFCAL_VERSION(void *pBuff)
 {
 #ifdef FEATURE_RF_ZIF
+#ifndef WIN32
    nv_item_type nvi;
    int i;
 
@@ -4902,7 +6773,7 @@ static int OEMPriv_GetItem_CFGI_RFCAL_VERSION(void *pBuff)
    }
 
    ((AECHAR *) pBuff)[OEMNV_RFCALVER_LEN - 1] = (AECHAR) 0;
-
+#endif
    return SUCCESS;
 #else
 #error code not present
@@ -4915,6 +6786,7 @@ static int OEMPriv_GetItem_CFGI_RFCAL_VERSION(void *pBuff)
 
 static int OEMPriv_GetItem_CFGI_RFCAL_DATE(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (NV_DONE_S != OEMNV_Get(NV_RF_CAL_DATE_I, &nvi)) {
@@ -4927,24 +6799,29 @@ static int OEMPriv_GetItem_CFGI_RFCAL_DATE(void *pBuff)
 #else
 #error code not present
 #endif
-
+#else
+	return SUCCESS;
+#endif
 }
 
 
 
 static int OEMPriv_GetItem_CFGI_SLOTINDEX(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (NV_DONE_S != OEMNV_Get(NV_SLOT_CYCLE_INDEX_I, &nvi)) {
       return EFAILED;
    }
    *(uint8 *) pBuff = nvi.slot_cycle_index;
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_SLOTINDEX(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.slot_cycle_index = *(uint8 *) pBuff;
@@ -4952,11 +6829,13 @@ static int OEMPriv_SetItem_CFGI_SLOTINDEX(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_SLOT_CYCLE_INDEX_I, &nvi)) {
       return EFAILED;
    }
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_HOME_SIDNID_LIST(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type             nvi;
    int                      j;
    AEEConfigSIDNIDPairType *p;
@@ -4977,11 +6856,13 @@ static int OEMPriv_GetItem_CFGI_HOME_SIDNID_LIST(void *pBuff)
       p->sid = nvi.home_sid_nid.pair[j].sid;
       p->nid = nvi.home_sid_nid.pair[j].nid;
    }
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_HOME_SIDNID_LIST(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type             nvi;
    int                      j;
    AEEConfigSIDNIDPairType *p;
@@ -4998,12 +6879,13 @@ static int OEMPriv_SetItem_CFGI_HOME_SIDNID_LIST(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_HOME_SID_NID_I, &nvi)) {
       return EFAILED;
    }
-
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_LOCK_SIDNID_LIST(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type             nvi;
    int                      j;
    AEEConfigSIDNIDPairType *p;
@@ -5023,12 +6905,13 @@ static int OEMPriv_GetItem_CFGI_LOCK_SIDNID_LIST(void *pBuff)
       p->sid = nvi.sid_nid_lock.pair[j].sid;
       p->nid = nvi.sid_nid_lock.pair[j].nid;
    }
-
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_LOCK_SIDNID_LIST(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type             nvi;
    int                      j;
    AEEConfigSIDNIDPairType *p;
@@ -5045,12 +6928,13 @@ static int OEMPriv_SetItem_CFGI_LOCK_SIDNID_LIST(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_SID_NID_LOCK_I, &nvi)) {
       return EFAILED;
    }
-
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_IMSI_MCC(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.imsi_mcc.nam = (byte) CM_NAM_1;
@@ -5059,12 +6943,14 @@ static int OEMPriv_GetItem_CFGI_IMSI_MCC(void *pBuff)
    }
 
    *(uint16 *) pBuff = OEMPriv_MCC_TO_DEC(nvi.imsi_mcc.imsi_mcc);
+#endif
    return SUCCESS;
 }
 
 
 static int OEMPriv_SetItem_CFGI_IMSI_MCC(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
    uint16       enc_mcc,
                 user_mcc,
@@ -5100,12 +6986,14 @@ static int OEMPriv_SetItem_CFGI_IMSI_MCC(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_IMSI_MCC_I, &nvi)) {
       return EFAILED;
    }
+#endif
    return SUCCESS;
 }
 
 
 static int OEMPriv_GetItem_CFGI_IMSI_11_12(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type      nvi;
    uint16            mnc;
    uint16            digit;
@@ -5125,12 +7013,14 @@ static int OEMPriv_GetItem_CFGI_IMSI_11_12(void *pBuff)
    mnc  += (digit % 10);
 
    *(uint16 *) pBuff = mnc;
+#endif
    return SUCCESS;
 }
 
 
 static int OEMPriv_SetItem_CFGI_IMSI_11_12(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
    uint16       user,
                 enc,
@@ -5160,13 +7050,14 @@ static int OEMPriv_SetItem_CFGI_IMSI_11_12(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_IMSI_11_12_I, &nvi)) {
       return EFAILED;
    }
-
+#endif
    return SUCCESS;
 }
 
 
 static int OEMPriv_GetItem_CFGI_IMSI_S(void *pBuff)
 {
+#ifndef WIN32
    char         imsi_s[11];
    nv_item_type nvi;
    uint16       min2;
@@ -5192,13 +7083,14 @@ static int OEMPriv_GetItem_CFGI_IMSI_S(void *pBuff)
    STR_TO_WSTR(imsi_s,
                (AECHAR *) pBuff,
                sizeof(AECHAR) * OEMNV_IMSI_S_LENGTH);
-
+#endif
    return SUCCESS;
 }
 
 
 static int OEMPriv_SetItem_CFGI_IMSI_S(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
    AECHAR      *imsi;
    uint16       min2;
@@ -5304,13 +7196,14 @@ static int OEMPriv_SetItem_CFGI_IMSI_S(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_MIN1_I, &nvi)) {
       return EFAILED;
    }
-
+#endif
    return SUCCESS;
 }
 
 
 static int OEMPriv_GetItem_CFGI_PRL_ENABLED(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.prl_enabled.nam = (byte) CM_NAM_1;
@@ -5319,11 +7212,13 @@ static int OEMPriv_GetItem_CFGI_PRL_ENABLED(void *pBuff)
    }
 
    *(boolean *) pBuff = nvi.prl_enabled.enabled;
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_PRL_ENABLED(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.prl_enabled.nam = (byte) CM_NAM_1;
@@ -5332,12 +7227,13 @@ static int OEMPriv_SetItem_CFGI_PRL_ENABLED(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_PRL_ENABLED_I, &nvi)) {
       return EFAILED;
    }
-
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_AOC(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.accolc.nam = (byte) CM_NAM_1;
@@ -5346,11 +7242,13 @@ static int OEMPriv_GetItem_CFGI_AOC(void *pBuff)
    }
 
    *(uint8 *) pBuff = nvi.accolc.ACCOLCpClass[CDMAMIN];
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_AOC(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.accolc.nam = (byte) CM_NAM_1;
@@ -5358,12 +7256,14 @@ static int OEMPriv_SetItem_CFGI_AOC(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_ACCOLC_I, &nvi)) {
       return EFAILED;
    }
+#endif
    return SUCCESS;
 }
 
 
 static int OEMPriv_GetItem_CFGI_HOME_SID_REG(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.mob_term_home.nam = (byte) CM_NAM_1;
@@ -5372,25 +7272,28 @@ static int OEMPriv_GetItem_CFGI_HOME_SID_REG(void *pBuff)
    }
 
    *(boolean *) pBuff = nvi.mob_term_home.enabled[CDMAMIN] ? TRUE:FALSE;
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_HOME_SID_REG(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
-   nvi.mob_term_home.nam = (byte) CM_NAM_1;
+   nvi.mob_term_home.nam = (byte) CM_NAM_1; 
    nvi.mob_term_home.enabled[CDMAMIN] = *(boolean *) pBuff;
 
    if (NV_DONE_S != OEMNV_Put(NV_MOB_TERM_HOME_I, &nvi)) {
       return EFAILED;
    }
-
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_FORN_SID_REG(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.mob_term_for_sid.nam = (byte) CM_NAM_1;
@@ -5399,25 +7302,28 @@ static int OEMPriv_GetItem_CFGI_FORN_SID_REG(void *pBuff)
    }
 
    *(boolean *) pBuff = nvi.mob_term_for_sid.enabled[CDMAMIN]?TRUE:FALSE;
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_FORN_SID_REG(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
-   nvi.mob_term_for_sid.nam = (byte) CM_NAM_1;
+   nvi.mob_term_for_sid.nam = (byte) CM_NAM_1; 
    nvi.mob_term_for_sid.enabled[CDMAMIN] = *(boolean *) pBuff;
 
    if (NV_DONE_S != OEMNV_Put(NV_MOB_TERM_FOR_SID_I, &nvi)) {
       return EFAILED;
    }
-
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_FORN_NID_REG(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.mob_term_for_nid.nam = (byte) CM_NAM_1;
@@ -5426,11 +7332,13 @@ static int OEMPriv_GetItem_CFGI_FORN_NID_REG(void *pBuff)
    }
 
    *(boolean *) pBuff = nvi.mob_term_for_nid.enabled[CDMAMIN]?TRUE:FALSE;
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_FORN_NID_REG(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.mob_term_for_nid.nam = (byte) CM_NAM_1;
@@ -5439,7 +7347,7 @@ static int OEMPriv_SetItem_CFGI_FORN_NID_REG(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_MOB_TERM_FOR_NID_I, &nvi)) {
       return EFAILED;
    }
-
+#endif
    return SUCCESS;
 }
 
@@ -5449,6 +7357,7 @@ static int OEMPriv_SetItem_CFGI_FORN_NID_REG(void *pBuff)
 
 static int OEMPriv_GetItem_CFGI_DATA_QNC_ENABLED(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    if (NV_DONE_S != OEMNV_Get(NV_DATA_QNC_ENABLED_I, &nvi)) {
@@ -5456,11 +7365,13 @@ static int OEMPriv_GetItem_CFGI_DATA_QNC_ENABLED(void *pBuff)
    }
 
    *(boolean *) pBuff = nvi.data_qnc_enabled;
+#endif
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_DATA_QNC_ENABLED(void *pBuff)
 {
+#ifndef WIN32
    nv_item_type nvi;
 
    nvi.data_qnc_enabled = *(boolean *)pBuff;
@@ -5468,10 +7379,9 @@ static int OEMPriv_SetItem_CFGI_DATA_QNC_ENABLED(void *pBuff)
    if (NV_DONE_S != OEMNV_Put(NV_DATA_QNC_ENABLED_I, &nvi)) {
       return EFAILED;
    }
-
+#endif
    return SUCCESS;
 }
-
 #ifdef FEATURE_FDN
 
 static int OEMPriv_GetItem_CFGI_FDN_ENABLED(void *pBuff)
@@ -5525,10 +7435,12 @@ static int OEMPriv_GetItem_CFGI_DEBUG_CHANNEL(void *pBuff)
 static int OEMPriv_GetItem_CFGI_DEBUG_PILOT_PN(void *pBuff)
 {
 #if defined (FEATURE_CDMA_800) || defined (FEATURE_CDMA_1900)
+#ifndef WIN32
    db_items_value_type dbi;
 
    db_get(DB_PILOT_PN_OFF, &dbi);
    *(uint16 *)pBuff = dbi.pilot_pn_off;
+#endif
    return SUCCESS;
 #else
    return EUNSUPPORTED;
@@ -5824,10 +7736,12 @@ static int OEMPriv_GetItem_CFGI_DEBUG_RX_AGC_IN_DBM(void *pBuff)
 static int OEMPriv_GetItem_CFGI_DEBUG_SID(void *pBuff)
 {
 #if defined (FEATURE_CDMA_800) || defined (FEATURE_CDMA_1900)
+#ifndef WIN32
    db_items_value_type dbi;
 
    db_get(DB_SID, &dbi);
    *(uint16 *)pBuff = dbi.sid;
+#endif
    return SUCCESS;
 #else
    return EUNSUPPORTED;
@@ -5838,10 +7752,12 @@ static int OEMPriv_GetItem_CFGI_DEBUG_SID(void *pBuff)
 static int OEMPriv_GetItem_CFGI_DEBUG_NID(void *pBuff)
 {
 #if defined (FEATURE_CDMA_800) || defined (FEATURE_CDMA_1900)
+#ifndef WIN32
    db_items_value_type dbi;
 
    db_get(DB_NID, &dbi);
    *(uint16 *)pBuff = dbi.nid;
+#endif
    return SUCCESS;
 #else
    return EUNSUPPORTED;
@@ -5936,7 +7852,9 @@ static int OEMPriv_GetItem_CFGI_DEBUG_HDET(void *pBuff)
 static int OEMPriv_GetItem_CFGI_DEBUG_VBATT(void *pBuff)
 {
 #ifdef FEATURE_RF_ZIF
+#ifndef WIN32
    *(byte *)pBuff = (byte) adc_read(ADC_VBATT);
+#endif
    return SUCCESS;
 #elif defined(FEATURE_WCDMA) || defined(FEATURE_GSM)
 #error code not present
@@ -5948,6 +7866,7 @@ static int OEMPriv_GetItem_CFGI_DEBUG_VBATT(void *pBuff)
 
 static int OEMPriv_GetItem_CFGI_DEBUG_ERRLOG(void *pBuff)
 {
+#ifndef WIN32
    OEMErrLogType *p_errlog = (OEMErrLogType *)pBuff;
    nv_err_log_type nv_log;
    int i;
@@ -5967,6 +7886,9 @@ static int OEMPriv_GetItem_CFGI_DEBUG_ERRLOG(void *pBuff)
       }
    }
    return EFAILED;
+#else
+	return SUCCESS;
+#endif
 }
 
 #ifndef FEATURE_RFM_IOCTL
@@ -6008,6 +7930,7 @@ static int OEMPriv_GetItem_CFGI_DEBUG_LNA_STATE(void *pBuff)
 #else
 #error code not present
 #endif
+    return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_DEBUG_PA_STATE(void *pBuff)
@@ -6141,12 +8064,14 @@ static int OEMPriv_GetItem_CFGI_DEBUG_RATCHET_STATE(void *pBuff)
 static int OEMPriv_GetItem_CFGI_CDMA_DYNAMIC_RANGE(void *pBuff)
 {
 #ifdef FEATURE_RF_ZIF
+#ifndef WIN32
    nv_item_type nvi;
 
    if (NV_DONE_S != OEMNV_Get(NV_CDMA_DYNAMIC_RANGE_I, &nvi)) {
       return EFAILED;
    }
    *(short *)pBuff = nvi.cdma_dynamic_range;
+#endif
    return SUCCESS;
 #else
 #error code not present
@@ -6158,6 +8083,7 @@ static int OEMPriv_GetItem_CFGI_CDMA_DYNAMIC_RANGE(void *pBuff)
 static int OEMPriv_GetItem_CFGI_CDMA_MIN_RX_RSSI(void *pBuff)
 {
 #ifdef FEATURE_RF_ZIF
+#ifndef WIN32
    nv_item_type nvi;
 
    if (NV_DONE_S != OEMNV_Get(NV_CDMA_MIN_RX_RSSI_I, &nvi)) {
@@ -6165,6 +8091,7 @@ static int OEMPriv_GetItem_CFGI_CDMA_MIN_RX_RSSI(void *pBuff)
    }
 
    *(short *)pBuff = nvi.cdma_min_rx_rssi;
+#endif
    return SUCCESS;
 #else
 #error code not present
@@ -6483,5 +8410,2062 @@ static int OEMPriv_SetItem_CFGI_MANUAL_PLMN_SEL_ALLOWED(void *pBuff)
    return SUCCESS;
 }
 
+#ifdef CUST_EDITION
 //lint -restore
+#ifdef FEATURE_TIME_DATA_SETTING
+static int OEMPriv_GetItem_CFGI_DATE_FORMAT(void *pBuff)
+{
+   *(byte *) pBuff = nvi_cache.set_date_format;
+   return SUCCESS;
+}
 
+static int OEMPriv_SetItem_CFGI_DATE_FORMAT(void *pBuff)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+
+   if (nvi_cache.set_date_format != *((byte *)pBuff)) {
+      nvi_cache.set_date_format = *((byte *)pBuff);
+      nvi.set_date_format = *((nv_set_date_format_enum_type *)pBuff);
+      (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
+   }
+#endif
+   return SUCCESS;
+}
+#endif
+
+static int OEMPriv_GetItem_CFGI_TTY(void *pBuff) 
+{
+  *(OEMTTY *) pBuff = nvi_cache.tty;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_TTY(void *pBuff) 
+{
+#ifndef WIN32
+  nv_item_type nvi;
+
+  if (nvi_cache.tty != *((OEMTTY *)pBuff)) {
+      nvi_cache.tty = *((OEMTTY *)pBuff);
+     (void) OEMNV_Put( NV_TTY_I, &nvi);
+  }
+#endif
+  return SUCCESS;								   
+}
+
+//“°“ª“°ªª“Ù??
+static int OEMPriv_GetItem_CFGI_SHAKE_MUSIC_CHECK(void *pBuff)
+{
+    if(oemi_cache.shake_mask & OEMNV_SHAKE_MUSIC_MASK)
+      *(boolean *) pBuff = TRUE;
+    else{
+      *(boolean *) pBuff = FALSE;
+    }
+    
+    return SUCCESS;
+
+
+}
+static int OEMPriv_SetItem_CFGI_SHAKE_MUSIC_CHECK(void *pBuff)
+{
+    if(*(boolean *) pBuff == TRUE){
+      oemi_cache.shake_mask |= OEMNV_SHAKE_MUSIC_MASK;
+    }
+    else{
+      oemi_cache.shake_mask &= ~OEMNV_SHAKE_MUSIC_MASK;
+    }
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+
+}
+//“°“ª“°ªª ’“Ùª˙  
+static int OEMPriv_GetItem_CFGI_SHAKE_FM_RADIO_CHECK(void *pBuff)
+{
+    if(oemi_cache.shake_mask & OEMNV_SHAKE_FM_RADIO_MASK)
+      *(boolean *) pBuff = TRUE;
+    else{
+      *(boolean *) pBuff = FALSE;
+    }
+    
+    return SUCCESS;
+
+
+}
+static int OEMPriv_SetItem_CFGI_SHAKE_FM_RADIO_CHECK(void *pBuff)
+{
+    if(*(boolean *) pBuff == TRUE){
+      oemi_cache.shake_mask |= OEMNV_SHAKE_FM_RADIO_MASK;
+    }
+    else{
+      oemi_cache.shake_mask &= ~OEMNV_SHAKE_FM_RADIO_MASK;
+    }
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+
+
+}
+//“°“ª“°ªªÕº∆¨  
+static int OEMPriv_GetItem_CFGI_SHAKE_WALLPAPER_CHECK(void *pBuff)
+{
+    if(oemi_cache.shake_mask & OEMNV_SHAKE_WALLPAPER_MASK)
+      *(boolean *) pBuff = TRUE;
+    else{
+      *(boolean *) pBuff = FALSE;
+    }
+    
+    return SUCCESS;
+
+}
+static int OEMPriv_SetItem_CFGI_SHAKE_WALLPAPER_CHECK(void *pBuff)
+{
+    if(*(boolean *) pBuff == TRUE){
+      oemi_cache.shake_mask |= OEMNV_SHAKE_WALLPAPER_MASK;
+    }
+    else{
+      oemi_cache.shake_mask &= ~OEMNV_SHAKE_WALLPAPER_MASK;
+    }
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+
+
+}
+//“°“ª“°ªªƒ÷÷”
+static int OEMPriv_GetItem_CFGI_SHAKE_SNOOZE_ALARM_CHECK(void *pBuff)
+{
+    if(oemi_cache.shake_mask & OEMNV_SHAKE_SNOOZE_ALARM_MASK)
+      *(boolean *) pBuff = TRUE;
+    else{
+      *(boolean *) pBuff = FALSE;
+    }
+    
+    return SUCCESS;
+
+
+}
+static int OEMPriv_SetItem_CFGI_SHAKE_SNOOZE_ALARM_CHECK(void *pBuff)
+{
+    if(*(boolean *) pBuff == TRUE){
+      oemi_cache.shake_mask |= OEMNV_SHAKE_SNOOZE_ALARM_MASK;
+    }
+    else{
+      oemi_cache.shake_mask &= ~OEMNV_SHAKE_SNOOZE_ALARM_MASK;
+    }
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+
+
+}
+
+//“°“ª“°ªª ”∆µ
+static int OEMPriv_GetItem_CFGI_SHAKE_VIDEO_CHECK (void *pBuff)
+{
+    if(oemi_cache.shake_mask & OEMNV_SHAKE_VIDEO_MASK)
+      *(boolean *) pBuff = TRUE;
+    else{
+      *(boolean *) pBuff = FALSE;
+    }
+    
+    return SUCCESS;
+
+
+}
+static int OEMPriv_SetItem_CFGI_SHAKE_VIDEO_CHECK(void *pBuff)
+{
+   if(*(boolean *) pBuff == TRUE){
+     oemi_cache.shake_mask |= OEMNV_SHAKE_VIDEO_MASK;
+   }
+   else{
+     oemi_cache.shake_mask &= ~OEMNV_SHAKE_VIDEO_MASK;
+   }
+   OEMPriv_WriteOEMConfigList(); 
+   return SUCCESS; 
+
+}
+
+//º∆≤Ω∆˜
+static int OEMPriv_GetItem_CFGI_PEDOMETER_CHECK (void *pBuff)
+{
+    if(oemi_cache.shake_mask & OEMNV_PEDOMETER_MASK)
+      *(boolean *) pBuff = TRUE;
+    else{
+      *(boolean *) pBuff = FALSE;
+    }
+    
+    return SUCCESS;
+
+
+}
+static int OEMPriv_SetItem_CFGI_PEDOMETER_CHECK(void *pBuff)
+{
+   if(*(boolean *) pBuff == TRUE){
+     oemi_cache.shake_mask |= OEMNV_PEDOMETER_MASK;
+   }
+   else{
+     oemi_cache.shake_mask &= ~OEMNV_PEDOMETER_MASK;
+   }
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS; 
+}
+
+static int OEMPriv_GetItem_CFGI_GSENSOR(void *pBuff)
+{
+   *(uint32 *) pBuff = oemi_cache.shake_mask;
+   return SUCCESS;
+}
+
+#ifdef FATRUE_LOCK_IMSI_MCCMNC
+static int OEMPriv_GetItem_CFGI_IMSI_SETMCC(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.List, sizeof(SetImsi) * OEMNV_MAX_SERVICEPROVIDER_NUMBER);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_IMSI_SETMCC(void *pBuff)
+{
+    memcpy((void *)oemi_cache.List,(void *)pBuff,sizeof(SetImsi) * OEMNV_MAX_SERVICEPROVIDER_NUMBER);
+   OEMPriv_WriteOEMConfigList();  
+   return SUCCESS;
+}
+#endif
+static int OEMPriv_GetItem_CFGI_PHONE_PASSWORD(void *pBuff)
+{
+   *(uint16 *) pBuff = oemi_cache.phone_password;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PHONE_PASSWORD(void *pBuff)
+{
+   if (oemi_cache.phone_password != *(uint16 *)pBuff) {
+      oemi_cache.phone_password = *(uint16 *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_PHONE_PASSWORD_CHECK(void *pBuff)
+{
+   *(byte *) pBuff = nvi_cache.lock;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PHONE_PASSWORD_CHECK(void *pBuff)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+
+   if (nvi_cache.lock != *((byte *)pBuff)) {
+      nvi_cache.lock = *((byte *)pBuff);
+      nvi.lock = *((byte *)pBuff);
+      (void) OEMNV_Put( NV_LOCK_I, &nvi);
+   }
+#endif
+   return SUCCESS;
+   //if (oemi_cache.phone_password_check != *(byte *)pBuff) {
+   //   oemi_cache.phone_password_check = *(byte *)pBuff;
+   //   OEMPriv_WriteOEMConfigList();
+   //}
+   //return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_RESTRICT_OUTGOING(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.restrict_outgoing;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_RESTRICT_OUTGOING(void *pBuff)
+{
+   if (oemi_cache.restrict_outgoing != *(byte *)pBuff) {
+      oemi_cache.restrict_outgoing = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_RESTRICT_INCOMING(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.restrict_incoming;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_RESTRICT_INCOMING(void *pBuff)
+{
+//   *(byte *) pBuff = oemi_cache.restrict_incoming;
+   if (oemi_cache.restrict_incoming != *(byte *)pBuff) {
+      oemi_cache.restrict_incoming = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+//«Èæ∞ƒ£ Ω
+//«Èæ∞ƒ£ Ω¿‡–Õ
+static int OEMPriv_GetItem_CFGI_PROFILE_CUR_NUMBER(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.p_profile_cur_number;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_CUR_NUMBER(void *pBuff)
+{
+   if (oemi_cache.p_profile_cur_number != *(byte *)pBuff)
+   {
+      oemi_cache.p_profile_cur_number = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+//¿¥µÁÃ· æ∑Ω Ω
+static int OEMPriv_GetItem_CFGI_PROFILE_ALERT_TYPE(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_alert_type,sizeof(oemi_cache.p_alert_type));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_ALERT_TYPE(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_alert_type,(void *)pBuff,sizeof(oemi_cache.p_alert_type));
+   OEMPriv_WriteOEMConfigList();  
+   return SUCCESS;
+}
+
+//∂Ã–≈Ã· æ∑Ω Ω
+static int OEMPriv_GetItem_CFGI_PROFILE_SMS_RINGER(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_bt_sms_ringer,sizeof(oemi_cache.p_bt_sms_ringer));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_SMS_RINGER(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_bt_sms_ringer,(void *)pBuff,sizeof(oemi_cache.p_bt_sms_ringer));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//¿¥µÁ¡Â…˘
+static int OEMPriv_GetItem_CFGI_PROFILE_CALL_RINGER(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_call_ringer,sizeof(oemi_cache.p_call_ringer));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_CALL_RINGER(void *pBuff)
+{
+	memcpy((void *)oemi_cache.p_call_ringer,(void *)pBuff,sizeof(oemi_cache.p_call_ringer));
+	OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//ƒ÷÷”¡Â…˘
+static int OEMPriv_GetItem_CFGI_PROFILE_ALARM_RINGER(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_alarm_ringer,sizeof(oemi_cache.p_alarm_ringer));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_ALARM_RINGER(void *pBuff)
+{
+	memcpy((void *)oemi_cache.p_alarm_ringer,(void *)pBuff,sizeof(oemi_cache.p_alarm_ringer));
+	OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//∂Ã–≈¡Â…˘
+static int OEMPriv_GetItem_CFGI_PROFILE_SMS_RINGER_ID(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_sms_ringer_id,sizeof(oemi_cache.p_sms_ringer_id));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_SMS_RINGER_ID(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_sms_ringer_id,(void *)pBuff,sizeof(oemi_cache.p_sms_ringer_id));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+   
+//ø™ª˙“Ù¿÷
+static int OEMPriv_GetItem_CFGI_PROFILE_STARTUP_MUSIC(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_start_music,sizeof(oemi_cache.p_start_music));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_STARTUP_MUSIC(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_start_music,(void *)pBuff,sizeof(oemi_cache.p_start_music));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//πÿª˙“Ù¿÷
+static int OEMPriv_GetItem_CFGI_PROFILE_SHUTDOWN_MUSIC(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_shutdown_music,sizeof(oemi_cache.p_shutdown_music));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_SHUTDOWN_MUSIC(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_shutdown_music,(void *)pBuff,sizeof(oemi_cache.p_shutdown_music));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//ø™πÿª˙¡Â…˘Ã· æ
+static int OEMPriv_GetItem_CFGI_PROFILE_POWERONOFF_ALERT(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_poweronoff_alert,sizeof(oemi_cache.p_poweronoff_alert));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_POWERONOFF_ALERT(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_poweronoff_alert,(void *)pBuff,sizeof(oemi_cache.p_poweronoff_alert));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//Œ¥Ω”¿¥µÁÃ·–—
+static int OEMPriv_GetItem_CFGI_PROFILE_MISSED_CALL_ALERT(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_missed_call_alert,sizeof(oemi_cache.p_missed_call_alert));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_MISSED_CALL_ALERT(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_missed_call_alert,(void *)pBuff,sizeof(oemi_cache.p_missed_call_alert));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//∂‡≤ ∞¥º¸“Ù
+static int OEMPriv_GetItem_CFGI_PROFILE_KEYSND_TYPE(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_keysnd_type,sizeof(oemi_cache.p_keysnd_type));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_KEYSND_TYPE(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_keysnd_type,(void *)pBuff,sizeof(oemi_cache.p_keysnd_type));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//∞¥º¸“Ù≥§∂»
+static int OEMPriv_GetItem_CFGI_PROFILE_KEYTONE_LENGTH(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_keytone_length,sizeof(oemi_cache.p_keytone_length));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_KEYTONE_LENGTH(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_keytone_length,(void *)pBuff,sizeof(oemi_cache.p_keytone_length));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+ 
+//¡Â…˘“Ù¡ø
+static int OEMPriv_GetItem_CFGI_PROFILE_RINGER_VOL(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_ringer_level,sizeof(oemi_cache.p_ringer_level));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_RINGER_VOL(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_ringer_level,(void *)pBuff,sizeof(oemi_cache.p_ringer_level));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//∂˙ª˙“Ù¡ø
+static int OEMPriv_GetItem_CFGI_PROFILE_EAR_VOL(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_handset_ear_level,sizeof(oemi_cache.p_handset_ear_level));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_EAR_VOL(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_handset_ear_level,(void *)pBuff,sizeof(oemi_cache.p_handset_ear_level));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+}
+
+//º¸≈Ã“Ù¡ø
+static int OEMPriv_GetItem_CFGI_PROFILE_BEEP_VOL(void *pBuff)
+{
+   memcpy((void *)pBuff,(void *)oemi_cache.p_beep_level,sizeof(oemi_cache.p_beep_level));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PROFILE_BEEP_VOL(void *pBuff)
+{
+   memcpy((void *)oemi_cache.p_beep_level,(void *)pBuff,sizeof(oemi_cache.p_beep_level));
+   OEMPriv_WriteOEMConfigList();
+   return SUCCESS;
+} 
+//∂Ã–≈¡Â…˘(0-±Ì æŒﬁ),–«∆⁄ƒ÷÷”,◊‘∂Øπÿª˙
+static int OEMPriv_GetItem_CFGI_SMS_RINGER(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.bt_sms_ringer;
+   return SUCCESS;
+}
+
+//ƒ÷÷”¡Â…˘
+static int OEMPriv_GetItem_CFGI_ALARM_RINGER(void *pBuff)
+{
+   *(uint16 *) pBuff = oemi_cache.alarm_ringer;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_ALARM_RINGER(void *pBuff)
+{
+   if (oemi_cache.alarm_ringer != *(uint16 *)pBuff)
+   {
+      oemi_cache.alarm_ringer = *(uint16 *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+//∂Ã–≈¡Â…˘
+static int OEMPriv_GetItem_CFGI_SMS_RINGER_ID(void *pBuff)
+{
+   *(uint16 *) pBuff = oemi_cache.sms_ringer_id;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_SMS_RINGER_ID(void *pBuff)
+{
+   if (oemi_cache.sms_ringer_id != *(uint16 *)pBuff)
+   {
+      oemi_cache.sms_ringer_id = *(uint16 *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_SMS_RINGER(void *pBuff)
+{
+   if (oemi_cache.bt_sms_ringer != *(byte *)pBuff) {
+      oemi_cache.bt_sms_ringer = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}  
+static int OEMPriv_GetItem_CFGI_HEADSET_PRESENT(void *pBuff)
+{
+   *(boolean *) pBuff = OEM_IsHeadsetPresent();
+   return SUCCESS;
+}
+//∂‡≤ ∞¥º¸“Ù
+static int OEMPriv_GetItem_CFGI_KEYSND_TYPE(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.keysnd_type;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_KEYSND_TYPE(void *pBuff)
+{
+   if (oemi_cache.keysnd_type != *(byte *)pBuff)
+   {
+      oemi_cache.keysnd_type = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+//∆¡±£ ±º‰
+static int OEMPriv_GetItem_CFGI_SCREENSAVER_TIME(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.p_screensaver_time;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_SCREENSAVER_TIME(void *pBuff)
+{
+   if (oemi_cache.p_screensaver_time != *(byte *)pBuff)
+   {
+      oemi_cache.p_screensaver_time = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+//±≥π‚¡¡∂»º∂±
+static int OEMPriv_GetItem_CFGI_BACKLIGHT_LEVEL(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.backlight_level;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_BACKLIGHT_LEVEL(void *pBuff)
+{
+   if (oemi_cache.backlight_level != *(byte *)pBuff)
+    {
+        oemi_cache.backlight_level = *(byte *)pBuff;
+        //pm_lcd_bright_level = oemi_cache.backlight_level;
+        //pm_kbd_bright_level = oemi_cache.backlight_level;
+        OEMPriv_WriteOEMConfigList();
+    }
+   return SUCCESS;
+}
+#ifdef FEATURE_SET_AUTOKEYGUARD
+static int OEMPriv_GetItem_CFGI_AUTOKEYGUARD(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.autokey_guard;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_AUTOKEYGUARD(void *pBuff) 
+{
+   if (oemi_cache.autokey_guard != *(byte *)pBuff) {
+      oemi_cache.autokey_guard = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+#endif
+static int OEMPriv_GetItem_CFGI_KEYTONE_LENGTH(void *pBuff) 
+{
+   *(keyToneLength *) pBuff = nvi_cache.key_tone_length;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_KEYTONE_LENGTH(void *pBuff) 
+{
+#ifndef WIN32
+    nv_item_type nvi;   
+    if (nvi_cache.key_tone_length != *((keyToneLength *)pBuff)) 
+    {
+        nvi_cache.key_tone_length = *((keyToneLength *)pBuff);
+        nvi.cont_key_dtmf = *((boolean *)pBuff);
+        (void) OEMNV_Put( NV_CONT_KEY_DTMF_I, &nvi);
+    }
+#endif
+    return SUCCESS;
+}
+
+//static int OEMPriv_GetItem_CFGI_KEYPAD_LIGHT_TIME(void *pBuff) 
+//{
+//   *(byte *) pBuff = oemi_cache.keypad_light_time;
+//   return SUCCESS;
+//}
+
+//static int OEMPriv_SetItem_CFGI_KEYPAD_LIGHT_TIME(void *pBuff) 
+//{
+//   if (oemi_cache.keypad_light_time != *(byte *)pBuff) {
+//      oemi_cache.keypad_light_time = *(byte *)pBuff;
+//      OEMPriv_WriteOEMConfigList();
+//   }
+//
+//   return SUCCESS;
+//}
+
+static int OEMPriv_GetItem_CFGI_PHONEBOOK_LOCK_CHECK(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.b_phonebook_lock;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PHONEBOOK_LOCK_CHECK(void *pBuff) 
+{
+   if (oemi_cache.b_phonebook_lock != *(byte *)pBuff) {
+      oemi_cache.b_phonebook_lock = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_RECENTCALL_LOCK_CHECK(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.b_recentcall_lock;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_RECENTCALL_LOCK_CHECK(void *pBuff) 
+{
+   if (oemi_cache.b_recentcall_lock != *(byte *)pBuff) {
+      oemi_cache.b_recentcall_lock = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_SMS_LOCK_CHECK(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.b_sms_lock;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_SMS_LOCK_CHECK(void *pBuff) 
+{
+   if (oemi_cache.b_sms_lock != *(byte *)pBuff) {
+      oemi_cache.b_sms_lock = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.b_calendar_lock;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff) 
+{
+   if (oemi_cache.b_calendar_lock != *(byte *)pBuff) {
+      oemi_cache.b_calendar_lock = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_KEY_LOCK_CHECK(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.b_key_lock;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_KEY_LOCK_CHECK(void *pBuff) 
+{
+   if (oemi_cache.b_key_lock != *(byte *)pBuff) {
+      oemi_cache.b_key_lock = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_LOCK_RUIM(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.lock_ruim;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_LOCK_RUIM(void *pBuff)
+{
+   if (oemi_cache.lock_ruim != *(byte *)pBuff) {
+      oemi_cache.lock_ruim = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_LOCK_MCCMNC_LIST(void *pBuff)
+{
+
+   memcpy((void *)pBuff,(void *)oemi_cache.lock_mccmnc,sizeof(oemi_cache.lock_mccmnc));
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_LOCK_MCCMNC_LIST(void *pBuff)
+{
+   memcpy((void *)oemi_cache.lock_mccmnc,(void *)pBuff,sizeof(oemi_cache.lock_mccmnc));
+   OEMPriv_WriteOEMConfigList();  
+   return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_DESKTOP_THEME(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.desktop_theme;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_DESKTOP_THEME(void *pBuff) 
+{
+   if (oemi_cache.desktop_theme != *(byte *)pBuff) {
+      oemi_cache.desktop_theme = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_WMS_PRIORITY(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.wms_priority;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_WMS_PRIORITY(void *pBuff)
+{
+   if (oemi_cache.wms_priority != *(byte *)pBuff) {
+      oemi_cache.wms_priority = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_WMS_SENDMODE(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.wms_sendmode;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_WMS_SENDMODE(void *pBuff)
+{
+   if (oemi_cache.wms_sendmode != *(byte *)pBuff) {
+      oemi_cache.wms_sendmode = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+
+static int OEMPriv_GetItem_CFGI_WMS_STORETYPE(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.wms_storetype;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_WMS_STORETYPE(void *pBuff)
+{
+   if (oemi_cache.wms_storetype != *(byte *)pBuff) {
+      oemi_cache.wms_storetype = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_WMS_DELIVERYREPORTS(void *pBuff)
+{
+   *(boolean *) pBuff = oemi_cache.wms_delivereports;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_WMS_DELIVERYREPORTS(void *pBuff)
+{
+   if (oemi_cache.wms_delivereports != *(boolean *)pBuff) {
+      oemi_cache.wms_delivereports = *(boolean *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+#ifdef FEATURE_AUTOREPLACE
+static int OEMPriv_GetItem_CFGI_WMS_AUTOREPLACE(void *pBuff)
+{
+   *(boolean *) pBuff = oemi_cache.wms_autoreplace;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_WMS_AUTOREPLACE(void *pBuff)
+{
+   if (oemi_cache.wms_autoreplace != *(boolean *)pBuff) {
+      oemi_cache.wms_autoreplace = *(boolean *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+#endif /* FEATURE_AUTOREPLACE */
+
+static int OEMPriv_GetItem_CFGI_WMS_VALIDITYPERIOD(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    *(byte *) pBuff = oemi_cache.wms_validityperiod;
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_WMS_VALIDITYPERIOD(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    
+    if (oemi_cache.wms_validityperiod != *(byte *)pBuff) 
+    {
+        oemi_cache.wms_validityperiod = *(byte *)pBuff;
+        OEMPriv_WriteOEMConfigList();
+    }
+    
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_WMS_MEMSTORE(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    *(wms_memory_store_e_type *) pBuff = oemi_cache.wms_memstore;
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_WMS_MEMSTORE(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    
+    if (oemi_cache.wms_memstore != *(wms_memory_store_e_type *)pBuff) 
+    {
+        oemi_cache.wms_memstore = *(wms_memory_store_e_type *)pBuff;
+        OEMPriv_WriteOEMConfigList();
+    }
+    
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_WMS_RESVDMSGALERT_TIMEIOUT(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    *(boolean *) pBuff = oemi_cache.wms_resvdmsgalert_timeout;
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_WMS_RESVDMSGALERT_TIMEIOUT(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    
+    if (oemi_cache.wms_resvdmsgalert_timeout != *(boolean *)pBuff) 
+    {
+        oemi_cache.wms_resvdmsgalert_timeout = *(boolean *)pBuff;
+        OEMPriv_WriteOEMConfigList();
+    }
+    
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_WMS_CALLBACKNUMSWITCH(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    *(boolean *) pBuff = oemi_cache.callbacknum_switch;
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_WMS_CALLBACKNUMSWITCH(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    
+    if (oemi_cache.callbacknum_switch != *(boolean *)pBuff) 
+    {
+        oemi_cache.callbacknum_switch = *(boolean *)pBuff;
+        OEMPriv_WriteOEMConfigList();
+    }
+    
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CALLBACKNUM(void *pBuff)
+{
+    int i;
+    AECHAR *pwstrTep = (AECHAR *)pBuff;
+    
+    if (NULL == pwstrTep)
+    {
+        return EFAILED;
+    }
+    
+    for (i=0; (i<WMS_ADDRESS_MAX-1) && oemi_cache.callback_number[i] != 0; i++)
+    {
+        pwstrTep[i] = oemi_cache.callback_number[i];
+    }
+    pwstrTep[i] = 0;
+    
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CALLBACKNUM(void *pBuff)
+{
+    int i, nLen;
+    AECHAR *pwstrTep = (AECHAR *)pBuff;
+    
+    if (NULL == pwstrTep)
+    {
+        return EFAILED;
+    }
+    
+    nLen = WSTRLEN(pwstrTep);
+    nLen = (nLen <= (WMS_ADDRESS_MAX-1) ? nLen : (WMS_ADDRESS_MAX-1));
+    for (i=0; i<nLen; i++)
+    {
+        oemi_cache.callback_number[i] = pwstrTep[i];
+    }
+    oemi_cache.callback_number[i] = 0;
+    
+    OEMPriv_WriteOEMConfigList();
+    
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_WMS_MO_CHANNEL_SELECT(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    *(byte *) pBuff = oemi_cache.wms_mochannel;
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_WMS_MO_CHANNEL_SELECT(void *pBuff)
+{
+    if (NULL == pBuff)
+    {
+        return EFAILED;
+    }
+    
+    if (oemi_cache.wms_mochannel != *(byte *)pBuff) 
+    {
+        oemi_cache.wms_mochannel = *(byte *)pBuff;
+        OEMPriv_WriteOEMConfigList();
+    }
+    
+    return SUCCESS;
+}
+
+#ifdef FEATRUE_AUTO_POWER
+static int OEMPriv_GetItem_CFGI_AUTO_POWER_ON(void *pBuff) 
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.m_auto_poweron, sizeof(Auto_Power_Cfg));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_AUTO_POWER_ON(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.m_auto_poweron, pBuff, sizeof(Auto_Power_Cfg));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_AUTO_POWER_OFF(void *pBuff) 
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.m_auto_poweroff, sizeof(Auto_Power_Cfg));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_AUTO_POWER_OFF(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.m_auto_poweroff, pBuff, sizeof(Auto_Power_Cfg));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+#endif
+static int OEMPriv_GetItem_CFGI_POWERDOWN_ALARM(void *pBuff) 
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.powerdown_alarm, sizeof(PowerDown_Alarm_Cfg));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_POWERDOWN_ALARM(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.powerdown_alarm, pBuff, sizeof(PowerDown_Alarm_Cfg));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+#ifdef FEATRUE_SET_IP_NUMBER
+static int OEMPriv_GetItem_CFGI_IP_NUMBER(void *pBuff) 
+{
+   
+   MEMCPY(pBuff, (void*) &oemi_cache.m_ip_number, sizeof(IP_Number_Cfg));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_IP_NUMBER(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.m_ip_number, pBuff, sizeof(IP_Number_Cfg));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_IP_POUND(void *pBuff) 
+{
+   
+   *(boolean *) pBuff = oemi_cache.m_b_ip_pound;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_IP_POUND(void *pBuff) 
+{
+    if (oemi_cache.m_b_ip_pound != *(boolean *)pBuff) {
+      oemi_cache.m_b_ip_pound = *(boolean *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+#endif
+
+#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+static int OEMPriv_GetItem_CFGI_SHORT_CODE_NAM_COUNT(void *pBuff)
+{
+   *(byte *)pBuff = oemi_cache.short_code_nam_count;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_SHORT_CODE_NAM_COUNT(void *pBuff)
+{
+   if (oemi_cache.short_code_nam_count != *(byte *)pBuff) {
+      oemi_cache.short_code_nam_count = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+#endif //#ifdef FEATURE_SHORT_CODE_NAM_COUNT
+
+#ifdef FEATURE_LED_CONTROL
+static int OEMPriv_GetItem_CFGI_LED_CONTROL(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.m_led_control;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_LED_CONTROL(void *pBuff) 
+{
+   if (oemi_cache.m_led_control != *(byte *)pBuff) {
+      oemi_cache.m_led_control = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+#endif
+
+#ifdef FEATRUE_KEY_PAD_CTL
+static int OEMPriv_GetItem_CFGI_KEY_PAD_CTL(void *pBuff) 
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.m_key_pad_ctl, sizeof(Key_pad_Cfg));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_KEY_PAD_CTL(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.m_key_pad_ctl, pBuff, sizeof(Key_pad_Cfg));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+#endif
+static int OEMPriv_GetItem_CFGI_AUTO_REDIAL(void *pBuff)
+{
+   nv_auto_redial_type * point = (nv_auto_redial_type *) pBuff;
+   point->enable = nvi_cache.auto_redial.enable;
+   point->rings = nvi_cache.auto_redial.rings;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_AUTO_REDIAL(void *pBuff)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+    nv_auto_redial_type * point = (nv_auto_redial_type *) pBuff;
+    if((nvi_cache.auto_redial.enable != point->enable)
+        || (nvi_cache.auto_redial.rings != point->rings))
+    {
+        nvi_cache.auto_redial.enable = point->enable;
+        nvi_cache.auto_redial.rings   = point->rings;
+        nvi.auto_redial.enable = point->enable;
+        nvi.auto_redial.rings   = point->rings;
+        (void) OEMNV_Put( NV_AUTO_REDIAL_I, &nvi);
+    }
+#endif
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.emerg_table, sizeof(EmergencyNum_Table));
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.emerg_table, pBuff, sizeof(EmergencyNum_Table));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.BUSY_ENABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.BUSY_ENABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.BUSY_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_DISABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.BUSY_DISABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_DISABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.BUSY_DISABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.BUSY_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOANSWER_ENABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.NOANSWER_ENABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_ENABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.NOANSWER_ENABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.NOANSWER_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOANSWER_DISABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.NOANSWER_DISABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_DISABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.NOANSWER_DISABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.NOANSWER_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_ENABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.NOCONNECT_ENABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_ENABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.NOCONNECT_ENABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.NOCONNECT_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_DISABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.NOCONNECT_DISABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_DISABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.NOCONNECT_DISABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.NOCONNECT_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_ENABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.ANYWAY_ENABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_ENABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.ANYWAY_ENABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.ANYWAY_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_DISABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.ANYWAY_DISABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_DISABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.ANYWAY_DISABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.ANYWAY_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_DISABLE_ALL(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.DISABLE_ALL, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_DISABLE_ALL(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.DISABLE_ALL) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.DISABLE_ALL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_WAIT_ENABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.WAIT_ENABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_WAIT_ENABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.WAIT_ENABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.WAIT_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_WAIT_DISABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.WAIT_DISABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_WAIT_DISABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.WAIT_DISABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.WAIT_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_VOICEMAIL_ENABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.VOICEMAIL_ENABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_VOICEMAIL_ENABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.VOICEMAIL_ENABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.VOICEMAIL_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_SERVICE_PROVIDER(void *pBuff)
+{
+
+   memcpy((void *)pBuff,(void *)oemi_cache.List_SP,sizeof(ServiceProvider)*OEMNV_MAX_SERVICEPROVIDER_NUMBER);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_SERVICE_PROVIDER(void *pBuff)
+{
+   memcpy((void *)oemi_cache.List_SP,(void *)pBuff,sizeof(ServiceProvider)*OEMNV_MAX_SERVICEPROVIDER_NUMBER);
+   OEMPriv_WriteOEMConfigList();  
+   return SUCCESS;
+}
+
+// ‰»Î∑®…Ë÷√
+static int OEMPriv_GetItem_CFGI_INPUTMODE(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.input_mode;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_INPUTMODE(void *pBuff)
+{
+   if (oemi_cache.input_mode != *(byte *)pBuff) {
+      oemi_cache.input_mode = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+boolean OEM_IsEmergency_Number(char *pNumber,int len)
+{
+    boolean is_emergency = FALSE;
+    int i =0;
+    //DBGPRINTF("%s OEM_IsEmergency_Number",pNumber);
+    if(oemi_cache.emerg_table.emert_size == 0)
+    {
+        //DBGPRINTF("emerg_table size is 0");
+        return FALSE;
+    }
+    
+    if(pNumber)
+    {
+        for (i = 0; i < oemi_cache.emerg_table.emert_size; i++)
+        {
+            //DBGPRINTF("%s %d OEM_IsEmergency_Number1",oemi_cache.emerg_table.emerg_num[i].num_buf,oemi_cache.emerg_table.emerg_num[i].num_len);
+            if(len == oemi_cache.emerg_table.emerg_num[i].num_len)
+            {
+                if(STRNCMP(pNumber,oemi_cache.emerg_table.emerg_num[i].num_buf,oemi_cache.emerg_table.emerg_num[i].num_len) == 0)
+                {
+                    is_emergency = TRUE;
+                    break;
+                }
+            }
+        }
+    }
+    return is_emergency;
+}
+
+static int OEMPriv_GetItem_CFGI_FMRADIO_VOLUME(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.fmRadio_volume;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_FMRADIO_VOLUME(void *pBuff) 
+{
+   if (oemi_cache.fmRadio_volume != *(byte *)pBuff) {
+      oemi_cache.fmRadio_volume = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_FMRADIO_CHAN_INFO(void *pBuff) 
+{
+   
+   MEMCPY(pBuff, (void*) &oemi_cache.fmRadio_chan_info, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_INFO(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.fmRadio_chan_info, pBuff, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_FMRADIO_CHAN_TOTAL(void *pBuff) 
+{
+   *(byte *) pBuff = oemi_cache.fmRadio_chan_total;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_TOTAL(void *pBuff)
+{
+   if (oemi_cache.fmRadio_chan_total != *(byte *)pBuff) {
+      oemi_cache.fmRadio_chan_total = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+/*==============================================================================
+∫Ø ˝£∫
+       GetRepeatRawNumber
+       
+Àµ√˜£∫
+       À˘”–±£¥Ê”⁄recent call÷–µƒº«¬º£¨«∞¡ΩŒª∂º”√”⁄±£¥Êµ±«∞µƒ∫≈¬Î÷ÿ∏¥Ãı ˝°£
+       µ√µΩraw°°number.”√”⁄∞—¡¨–¯÷ÿ∏¥µƒ∫≈¬Îº«¬ºŒ™“ªÃıº«¬º°£
+
+≤Œ ˝£∫
+        [in]number,∞¸∫¨'÷ÿ∏¥ ˝'µƒ∫≈¬Îº«¬º
+        [out]rawnumber£¨≤ª∞¸∫¨'÷ÿ∏¥ ˝'µƒ∫≈¬Î
+        
+      
+∑µªÿ÷µ£∫
+       Œﬁ°£
+
+±∏◊¢£∫:
+
+==============================================================================*/
+int GetRepeatRawNumber(AECHAR * number,AECHAR * rawnumber)
+{
+    AECHAR wszCount[3];
+    char   szCount[3];
+    int    nCount = 0;
+
+    (void)WSTRNCOPYN ( wszCount, 3, number, 2 );
+    
+    // get nCount
+    nCount = ATOI( WSTRTOSTR( wszCount, szCount, CALLHISTORY_MAXDIGITS ) );
+    (void)WSTRNCOPYN ( rawnumber, CALLHISTORY_MAXDIGITS, number+2, -1 );
+    
+    if ( nCount > 0 && nCount <= 99 )
+        return nCount;      
+    else
+        return 0;
+}
+static int OEMPriv_GetItem_CFGI_KEYGUARD_ENABLED(void *pBuff)
+{
+#ifdef FEATURE_KEYGUARD
+   *(boolean *) pBuff = OEMKeyguard_IsEnabled(); 
+#else
+   *(boolean *) pBuff = FALSE;
+#endif
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_KEYGUARD_ENABLED(void *pBuff)
+{
+#ifdef FEATURE_KEYGUARD
+   OEMKeyguard_SetState(*(boolean *) pBuff);
+#endif
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_FM_BACKGROUND(void *pBuff) 
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.m_fm_background, sizeof(boolean));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_FM_BACKGROUND(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.m_fm_background, pBuff, sizeof(boolean));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+
+#ifdef FEATURE_RANDOM_MENU_COLOR
+static int OEMPriv_GetItem_CFGI_MENU_BGCOLOR(void *pBuff) 
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.m_nmenubgcolor, sizeof(uint32));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MENU_BGCOLOR(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.m_nmenubgcolor, pBuff, sizeof(uint32));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_RANDOM_MENU(void *pBuff)
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.m_nrandommenu, sizeof(byte));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_RANDOM_MENU(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.m_nrandommenu, pBuff, sizeof(byte));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+#endif
+#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add
+static int OEMPriv_GetItem_CFGI_DEFAULT_REND(void *pBuff) 
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.m_ndefaulerend, sizeof(uint32));
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_DEFAULT_REND(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.m_ndefaulerend, pBuff, sizeof(uint32));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_REND_STATE(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.m_nrendstate, sizeof(byte));
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_REND_STATE(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.m_nrendstate, pBuff, sizeof(byte));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+#endif//FEATURE_RANDOM_MENU_REND
+#ifdef FEATURE_TOUCHPAD
+static int OEMPriv_GetItem_CFGI_PEN_CAL(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.m_pencal_data, sizeof(pen_cal_type));
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.m_pencal_data, pBuff, sizeof(pen_cal_type));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+#endif//FEATURE_TOUCHPAD
+
+static int OEMPriv_GetItem_CFGI_ALARM_FLAG(void *pBuff)
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.alarm_flag, sizeof(boolean));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_ALARM_FLAG(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.alarm_flag, pBuff, sizeof(boolean));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+
+#ifdef FEATURE_SPORTS_APP
+static int OEMPriv_GetItem_CFGI_SPORT_FLAG(void *pBuff)
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.sport_flag, sizeof(uint16));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_SPORT_FLAG(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.sport_flag, pBuff, sizeof(uint16));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+#endif
+
+static int OEMPriv_GetItem_CFGI_MENU_STYLE(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.menu_style;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MENU_STYLE(void *pBuff)
+{
+   if (oemi_cache.menu_style != *(byte *)pBuff) {
+      oemi_cache.menu_style = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_enviroment;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff)
+{
+   if (oemi_cache.camera_enviroment != *(byte *)pBuff) {
+      oemi_cache.camera_enviroment = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_QUALITY(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_quality;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_QUALITY(void *pBuff)
+{
+   if (oemi_cache.camera_quality != *(byte *)pBuff) {
+      oemi_cache.camera_quality = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_SIZE(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_size;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_SIZE(void *pBuff)
+{
+   if (oemi_cache.camera_size != *(byte *)pBuff) {
+      oemi_cache.camera_size = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_TONE(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_tone;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_TONE(void *pBuff)
+{
+   if (oemi_cache.camera_tone != *(byte *)pBuff) {
+      oemi_cache.camera_tone = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_BANDING(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_banding;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_BANDING(void *pBuff)
+{
+   if (oemi_cache.camera_banding != *(byte *)pBuff) {
+      oemi_cache.camera_banding = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_STORAGE(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_storage;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_STORAGE(void *pBuff)
+{
+   if (oemi_cache.camera_storage != *(byte *)pBuff) {
+      oemi_cache.camera_storage = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_BRIGHTNESS(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_brightness;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_BRIGHTNESS(void *pBuff)
+{
+   if (oemi_cache.camera_brightness != *(byte *)pBuff) {
+      oemi_cache.camera_brightness = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_VIDEO_ENVIROMENT(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.video_enviroment;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_VIDEO_ENVIROMENT(void *pBuff)
+{
+   if (oemi_cache.video_enviroment != *(byte *)pBuff) {
+      oemi_cache.video_enviroment = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_ICON(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_icon;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_ICON(void *pBuff)
+{
+   if (oemi_cache.camera_icon != *(byte *)pBuff) {
+      oemi_cache.camera_icon = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_VIDEO_ICON(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.video_icon;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_VIDEO_ICON(void *pBuff)
+{
+   if (oemi_cache.video_icon != *(byte *)pBuff) {
+      oemi_cache.video_icon = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_FRAME(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_frame;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_FRAME(void *pBuff)
+{
+   if (oemi_cache.camera_frame != *(byte *)pBuff) {
+      oemi_cache.camera_frame = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_CAMERA_COLOR(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.camera_color;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_CAMERA_COLOR(void *pBuff)
+{
+   if (oemi_cache.camera_color != *(byte *)pBuff) {
+      oemi_cache.camera_color = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_VIDEO_COLOR(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.video_color;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_VIDEO_COLOR(void *pBuff)
+{
+   if (oemi_cache.video_color != *(byte *)pBuff) {
+      oemi_cache.video_color = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_VIDEO_BRIGHTNESS(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.video_brightness;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_VIDEO_BRIGHTNESS(void *pBuff)
+{
+   if (oemi_cache.video_brightness != *(byte *)pBuff) {
+      oemi_cache.video_brightness = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+#ifdef FEATURE_PLANEMODE
+static int OEMPriv_GetItem_CFGI_PLANEMODE(void *pBuff)
+{
+    *(byte *) pBuff = oemi_cache.planeMode;
+    
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PLANEMODE(void *pBuff)
+{
+    if (oemi_cache.planeMode != *(byte *)pBuff) {
+       oemi_cache.planeMode = *(byte *)pBuff;
+       OEMPriv_WriteOEMConfigList();
+    }
+    
+    return SUCCESS;
+}
+#endif
+
+static int OEMPriv_GetItem_CFGI_MISSED_CALL_ICON(void *pBuff)
+{
+   *(boolean *) pBuff = oemi_cache.missed_call_icon;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MISSED_CALL_ICON(void *pBuff)
+{
+   if (oemi_cache.missed_call_icon != *(boolean *)pBuff) {
+      oemi_cache.missed_call_icon = *(boolean *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+#ifdef FEATURE_CARRIER_SUDAN_SUDATEL
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_VOICEMAIL(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.BUSY_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_VOICEMAIL(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.BUSY_VOICEMAIL) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.BUSY_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOANSWER_VOICEMAIL(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.NOANSWER_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_VOICEMAIL(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.NOANSWER_VOICEMAIL) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.NOANSWER_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.NOCONNECT_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.NOCONNECT_VOICEMAIL) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.NOCONNECT_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_VOICEMAIL(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.ANYWAY_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_VOICEMAIL(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.ANYWAY_VOICEMAIL) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.ANYWAY_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_WAIT_TEMP_DISABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.WAIT_TEMP_DISABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_WAIT_TEMP_DISABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.WAIT_TEMP_DISABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.WAIT_TEMP_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_DND_ENABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.DND_ENABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_DND_ENABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.DND_ENABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.DND_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_DND_DISABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.DND_DISABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_DND_DISABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.DND_DISABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.DND_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_CNIR_ENABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.CNIR_ENABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_ENABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.CNIR_ENABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.CNIR_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.CNIR_DISABLE, FEATURE_CODE_MAX_LENTH);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff)
+{
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.CNIR_DISABLE) != 0)
+    {
+        STRLCPY((char*) &oemi_cache.CNIR_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        OEMPriv_WriteOEMConfigList();
+    }
+    return SUCCESS;
+}
+#endif
+/*==============================================================================
+∫Ø ˝:
+    OEM_SetBAM_ADSAccount
+
+Àµ√˜:
+    ∫Ø ˝”√”⁄Ω´ BREW App Manager µƒ MobileShop ’À∫≈–≈œ¢…Ë÷√µΩ NV °£
+
+≤Œ ˝:
+    None
+
+∑µªÿ÷µ:
+    None
+
+±∏◊¢:
+    NV µƒœ‡πÿ≈‰÷√÷ª∆¡Ÿ ±◊˜”√°£≤ªÕ¨”¶”√µƒ’À∫≈–≈œ¢ø…ƒ‹≤ª“ª—˘°£ π”√ ±–Ë◊‘––≈‰÷√°£
+    ±æ∫Ø ˝Ωˆπ© BREW App Manager  π”√°£
+==============================================================================*/
+void OEM_SetBAM_ADSAccount(void)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+    
+    // ’À∫≈
+#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
+    nvi.ds_sip_nai_info.index = 0;
+    (void)OEMNV_Put(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi);
+
+    (void)STRCPY((char *)nvi.ds_sip_nai_info.nai, (char *)DEFAULT_BREW_USERNAME);
+    nvi.ds_sip_nai_info.nai_length = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    (void)OEMNV_Put(NV_DS_SIP_NAI_INFO_I, &nvi);
+#else /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
+    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
+    nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+#endif /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
+
+    // ’À∫≈√‹¬Î
+#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
+    nvi.ds_sip_nai_info.index = 0;
+    
+    (void)STRCPY((char *)nvi.ds_sip_ppp_ss_info.ss, (char *)DEFAULT_BREW_PASSWORD);
+    nvi.ds_sip_ppp_ss_info.ss_length = STRLEN((char *)DEFAULT_BREW_PASSWORD);
+
+    (void)OEMNV_Put(NV_DS_SIP_PPP_SS_INFO_I, &nvi);
+#else /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
+    (void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
+    nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
+    
+    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
+#endif /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
+#endif
+} /* OEM_SetBAM_ADSAccount */
+
+#endif // CUST_EDITION

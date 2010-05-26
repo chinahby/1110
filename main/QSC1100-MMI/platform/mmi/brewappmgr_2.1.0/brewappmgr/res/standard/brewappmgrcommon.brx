@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="brewappmgrcommon" VERSION="1">
-<Strings Encoding="Unicode">
-	<String Id="1001" Name="IDS_APPMGR_VERSION">
-		<Text>2.1.0.13</Text>
-	</String>
-</Strings>
-</BREWRes>

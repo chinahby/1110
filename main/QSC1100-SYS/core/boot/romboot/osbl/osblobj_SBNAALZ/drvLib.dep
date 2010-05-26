@@ -1,7 +1,0 @@
-..\..\osblobj_SBNAALZ\drvLib.o:	..\..\..\..\..\..\multimedia\display\drvlib\src\drvLib.c
-..\..\osblobj_SBNAALZ\drvLib.o:	C:\ARM\ADSv1_2\INCLUDE\string.h
-..\..\osblobj_SBNAALZ\drvLib.o:	..\..\..\..\..\..\core\cs\libstd\inc\AEEStd.h
-..\..\osblobj_SBNAALZ\drvLib.o:	..\..\..\..\..\..\core\cs\libstd\inc\AEEVaList.h
-..\..\osblobj_SBNAALZ\drvLib.o:	..\..\..\..\..\..\core\cs\libstd\inc\AEEStdDef.h
-..\..\osblobj_SBNAALZ\drvLib.o:	..\..\..\..\..\..\multimedia\display\drvlib\src\ioDrv.h
-..\..\osblobj_SBNAALZ\drvLib.o:	..\..\..\..\..\..\multimedia\display\drvlib\inc\drvLib.h

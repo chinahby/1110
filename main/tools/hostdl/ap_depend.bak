@@ -12,7 +12,6 @@ norprg/ap_armprg.o: ..\..\build\cust\custdebug.h
 norprg/ap_armprg.o: ..\..\build\cust\custdiag.h
 norprg/ap_armprg.o: ..\..\build\cust\custdmss.h
 norprg/ap_armprg.o: ..\..\build\cust\custefs.h
-norprg/ap_armprg.o: ..\..\build\cust\custfmrds.h
 norprg/ap_armprg.o: ..\..\build\cust\custmcs.h
 norprg/ap_armprg.o: ..\..\build\cust\custmmode.h
 norprg/ap_armprg.o: ..\..\build\cust\custnvm.h
@@ -27,8 +26,8 @@ norprg/ap_armprg.o: ..\..\build\cust\custui.h
 norprg/ap_armprg.o: ..\..\build\cust\custuim.h
 norprg/ap_armprg.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/ap_armprg.o: ..\..\build\cust\custwms.h
-norprg/ap_armprg.o: ..\..\build\ms\custsbnaalz.h
-norprg/ap_armprg.o: ..\..\build\ms\targsb2.h
+norprg/ap_armprg.o: ..\..\build\ms\custw021.h
+norprg/ap_armprg.o: ..\..\build\ms\targsbw2.h
 norprg/ap_armprg.o: ..\..\core\debugtools\err\src\err.h
 norprg/ap_armprg.o: ..\..\core\services\diag\src\msg.h
 norprg/ap_armprg.o: ..\..\core\services\diag\src\msg_pkt_defs.h
@@ -88,7 +87,6 @@ norprg/ap_flash.o: ..\..\build\cust\custdebug.h
 norprg/ap_flash.o: ..\..\build\cust\custdiag.h
 norprg/ap_flash.o: ..\..\build\cust\custdmss.h
 norprg/ap_flash.o: ..\..\build\cust\custefs.h
-norprg/ap_flash.o: ..\..\build\cust\custfmrds.h
 norprg/ap_flash.o: ..\..\build\cust\custmcs.h
 norprg/ap_flash.o: ..\..\build\cust\custmmode.h
 norprg/ap_flash.o: ..\..\build\cust\custnvm.h
@@ -103,8 +101,8 @@ norprg/ap_flash.o: ..\..\build\cust\custui.h
 norprg/ap_flash.o: ..\..\build\cust\custuim.h
 norprg/ap_flash.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/ap_flash.o: ..\..\build\cust\custwms.h
-norprg/ap_flash.o: ..\..\build\ms\custsbnaalz.h
-norprg/ap_flash.o: ..\..\build\ms\targsb2.h
+norprg/ap_flash.o: ..\..\build\ms\custw021.h
+norprg/ap_flash.o: ..\..\build\ms\targsbw2.h
 norprg/ap_flash.o: ..\..\core\boot\mibib\mibib.h
 norprg/ap_flash.o: ..\..\core\boot\mibib\miparti.h
 norprg/ap_flash.o: ..\..\core\debugtools\err\src\err.h
@@ -173,7 +171,6 @@ norprg/ap_msm.o: ..\..\build\cust\custdebug.h
 norprg/ap_msm.o: ..\..\build\cust\custdiag.h
 norprg/ap_msm.o: ..\..\build\cust\custdmss.h
 norprg/ap_msm.o: ..\..\build\cust\custefs.h
-norprg/ap_msm.o: ..\..\build\cust\custfmrds.h
 norprg/ap_msm.o: ..\..\build\cust\custmcs.h
 norprg/ap_msm.o: ..\..\build\cust\custmmode.h
 norprg/ap_msm.o: ..\..\build\cust\custnvm.h
@@ -188,8 +185,8 @@ norprg/ap_msm.o: ..\..\build\cust\custui.h
 norprg/ap_msm.o: ..\..\build\cust\custuim.h
 norprg/ap_msm.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/ap_msm.o: ..\..\build\cust\custwms.h
-norprg/ap_msm.o: ..\..\build\ms\custsbnaalz.h
-norprg/ap_msm.o: ..\..\build\ms\targsb2.h
+norprg/ap_msm.o: ..\..\build\ms\custw021.h
+norprg/ap_msm.o: ..\..\build\ms\targsbw2.h
 norprg/ap_msm.o: ..\..\core\debugtools\err\src\err.h
 norprg/ap_msm.o: ..\..\core\services\diag\src\msg.h
 norprg/ap_msm.o: ..\..\core\services\diag\src\msg_pkt_defs.h
@@ -249,7 +246,6 @@ norprg/ap_packet.o: ..\..\build\cust\custdebug.h
 norprg/ap_packet.o: ..\..\build\cust\custdiag.h
 norprg/ap_packet.o: ..\..\build\cust\custdmss.h
 norprg/ap_packet.o: ..\..\build\cust\custefs.h
-norprg/ap_packet.o: ..\..\build\cust\custfmrds.h
 norprg/ap_packet.o: ..\..\build\cust\custmcs.h
 norprg/ap_packet.o: ..\..\build\cust\custmmode.h
 norprg/ap_packet.o: ..\..\build\cust\custnvm.h
@@ -264,8 +260,8 @@ norprg/ap_packet.o: ..\..\build\cust\custui.h
 norprg/ap_packet.o: ..\..\build\cust\custuim.h
 norprg/ap_packet.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/ap_packet.o: ..\..\build\cust\custwms.h
-norprg/ap_packet.o: ..\..\build\ms\custsbnaalz.h
-norprg/ap_packet.o: ..\..\build\ms\targsb2.h
+norprg/ap_packet.o: ..\..\build\ms\custw021.h
+norprg/ap_packet.o: ..\..\build\ms\targsbw2.h
 norprg/ap_packet.o: ..\..\core\debugtools\err\src\err.h
 norprg/ap_packet.o: ..\..\core\services\diag\src\msg.h
 norprg/ap_packet.o: ..\..\core\services\diag\src\msg_pkt_defs.h
@@ -326,7 +322,6 @@ norprg/ap_startup.o: ..\..\build\cust\custdebug.h
 norprg/ap_startup.o: ..\..\build\cust\custdiag.h
 norprg/ap_startup.o: ..\..\build\cust\custdmss.h
 norprg/ap_startup.o: ..\..\build\cust\custefs.h
-norprg/ap_startup.o: ..\..\build\cust\custfmrds.h
 norprg/ap_startup.o: ..\..\build\cust\custmcs.h
 norprg/ap_startup.o: ..\..\build\cust\custmmode.h
 norprg/ap_startup.o: ..\..\build\cust\custnvm.h
@@ -341,8 +336,8 @@ norprg/ap_startup.o: ..\..\build\cust\custui.h
 norprg/ap_startup.o: ..\..\build\cust\custuim.h
 norprg/ap_startup.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/ap_startup.o: ..\..\build\cust\custwms.h
-norprg/ap_startup.o: ..\..\build\ms\custsbnaalz.h
-norprg/ap_startup.o: ..\..\build\ms\targsb2.h
+norprg/ap_startup.o: ..\..\build\ms\custw021.h
+norprg/ap_startup.o: ..\..\build\ms\targsbw2.h
 
 norprg/ap_uart.o: ap_uart.c
 norprg/ap_uart.o: ..\..\build\cust\custavs.h
@@ -355,7 +350,6 @@ norprg/ap_uart.o: ..\..\build\cust\custdebug.h
 norprg/ap_uart.o: ..\..\build\cust\custdiag.h
 norprg/ap_uart.o: ..\..\build\cust\custdmss.h
 norprg/ap_uart.o: ..\..\build\cust\custefs.h
-norprg/ap_uart.o: ..\..\build\cust\custfmrds.h
 norprg/ap_uart.o: ..\..\build\cust\custmcs.h
 norprg/ap_uart.o: ..\..\build\cust\custmmode.h
 norprg/ap_uart.o: ..\..\build\cust\custnvm.h
@@ -370,8 +364,8 @@ norprg/ap_uart.o: ..\..\build\cust\custui.h
 norprg/ap_uart.o: ..\..\build\cust\custuim.h
 norprg/ap_uart.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/ap_uart.o: ..\..\build\cust\custwms.h
-norprg/ap_uart.o: ..\..\build\ms\custsbnaalz.h
-norprg/ap_uart.o: ..\..\build\ms\targsb2.h
+norprg/ap_uart.o: ..\..\build\ms\custw021.h
+norprg/ap_uart.o: ..\..\build\ms\targsbw2.h
 norprg/ap_uart.o: ..\..\core\debugtools\err\src\err.h
 norprg/ap_uart.o: ..\..\core\services\diag\src\msg.h
 norprg/ap_uart.o: ..\..\core\services\diag\src\msg_pkt_defs.h
@@ -429,7 +423,6 @@ norprg/crc.o: ..\..\build\cust\custdebug.h
 norprg/crc.o: ..\..\build\cust\custdiag.h
 norprg/crc.o: ..\..\build\cust\custdmss.h
 norprg/crc.o: ..\..\build\cust\custefs.h
-norprg/crc.o: ..\..\build\cust\custfmrds.h
 norprg/crc.o: ..\..\build\cust\custmcs.h
 norprg/crc.o: ..\..\build\cust\custmmode.h
 norprg/crc.o: ..\..\build\cust\custnvm.h
@@ -444,8 +437,8 @@ norprg/crc.o: ..\..\build\cust\custui.h
 norprg/crc.o: ..\..\build\cust\custuim.h
 norprg/crc.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/crc.o: ..\..\build\cust\custwms.h
-norprg/crc.o: ..\..\build\ms\custsbnaalz.h
-norprg/crc.o: ..\..\build\ms\targsb2.h
+norprg/crc.o: ..\..\build\ms\custw021.h
+norprg/crc.o: ..\..\build\ms\targsbw2.h
 norprg/crc.o: ..\..\core\services\utils\src\armasm.h
 norprg/crc.o: ..\..\core\services\utils\src\comdef.h
 norprg/crc.o: ..\..\core\services\utils\src\crc.h
@@ -462,7 +455,6 @@ norprg/flash_common.o: ..\..\build\cust\custdebug.h
 norprg/flash_common.o: ..\..\build\cust\custdiag.h
 norprg/flash_common.o: ..\..\build\cust\custdmss.h
 norprg/flash_common.o: ..\..\build\cust\custefs.h
-norprg/flash_common.o: ..\..\build\cust\custfmrds.h
 norprg/flash_common.o: ..\..\build\cust\custmcs.h
 norprg/flash_common.o: ..\..\build\cust\custmmode.h
 norprg/flash_common.o: ..\..\build\cust\custnvm.h
@@ -477,8 +469,8 @@ norprg/flash_common.o: ..\..\build\cust\custui.h
 norprg/flash_common.o: ..\..\build\cust\custuim.h
 norprg/flash_common.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_common.o: ..\..\build\cust\custwms.h
-norprg/flash_common.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_common.o: ..\..\build\ms\targsb2.h
+norprg/flash_common.o: ..\..\build\ms\custw021.h
+norprg/flash_common.o: ..\..\build\ms\targsbw2.h
 norprg/flash_common.o: ..\..\core\boot\mibib\mibib.h
 norprg/flash_common.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_common.o: ..\..\core\debugtools\err\src\err.h
@@ -549,7 +541,6 @@ norprg/flash_msm.o: ..\..\build\cust\custdebug.h
 norprg/flash_msm.o: ..\..\build\cust\custdiag.h
 norprg/flash_msm.o: ..\..\build\cust\custdmss.h
 norprg/flash_msm.o: ..\..\build\cust\custefs.h
-norprg/flash_msm.o: ..\..\build\cust\custfmrds.h
 norprg/flash_msm.o: ..\..\build\cust\custmcs.h
 norprg/flash_msm.o: ..\..\build\cust\custmmode.h
 norprg/flash_msm.o: ..\..\build\cust\custnvm.h
@@ -564,8 +555,8 @@ norprg/flash_msm.o: ..\..\build\cust\custui.h
 norprg/flash_msm.o: ..\..\build\cust\custuim.h
 norprg/flash_msm.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_msm.o: ..\..\build\cust\custwms.h
-norprg/flash_msm.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_msm.o: ..\..\build\ms\targsb2.h
+norprg/flash_msm.o: ..\..\build\ms\custw021.h
+norprg/flash_msm.o: ..\..\build\ms\targsbw2.h
 norprg/flash_msm.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_msm.o: ..\..\core\debugtools\err\src\err.h
 norprg/flash_msm.o: ..\..\core\services\diag\src\msg.h
@@ -633,7 +624,6 @@ norprg/flash_nor.o: ..\..\build\cust\custdebug.h
 norprg/flash_nor.o: ..\..\build\cust\custdiag.h
 norprg/flash_nor.o: ..\..\build\cust\custdmss.h
 norprg/flash_nor.o: ..\..\build\cust\custefs.h
-norprg/flash_nor.o: ..\..\build\cust\custfmrds.h
 norprg/flash_nor.o: ..\..\build\cust\custmcs.h
 norprg/flash_nor.o: ..\..\build\cust\custmmode.h
 norprg/flash_nor.o: ..\..\build\cust\custnvm.h
@@ -648,8 +638,8 @@ norprg/flash_nor.o: ..\..\build\cust\custui.h
 norprg/flash_nor.o: ..\..\build\cust\custuim.h
 norprg/flash_nor.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_nor.o: ..\..\build\cust\custwms.h
-norprg/flash_nor.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_nor.o: ..\..\build\ms\targsb2.h
+norprg/flash_nor.o: ..\..\build\ms\custw021.h
+norprg/flash_nor.o: ..\..\build\ms\targsbw2.h
 norprg/flash_nor.o: ..\..\core\boot\mibib\mibib.h
 norprg/flash_nor.o: ..\..\core\boot\mibib\miboot.h
 norprg/flash_nor.o: ..\..\core\boot\mibib\mioemsbl.h
@@ -727,7 +717,6 @@ norprg/flash_nor_intel.o: ..\..\build\cust\custdebug.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custdiag.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custdmss.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custefs.h
-norprg/flash_nor_intel.o: ..\..\build\cust\custfmrds.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custmcs.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custmmode.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custnvm.h
@@ -742,8 +731,8 @@ norprg/flash_nor_intel.o: ..\..\build\cust\custui.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custuim.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_nor_intel.o: ..\..\build\cust\custwms.h
-norprg/flash_nor_intel.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_nor_intel.o: ..\..\build\ms\targsb2.h
+norprg/flash_nor_intel.o: ..\..\build\ms\custw021.h
+norprg/flash_nor_intel.o: ..\..\build\ms\targsbw2.h
 norprg/flash_nor_intel.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_nor_intel.o: ..\..\core\debugtools\err\src\err.h
 norprg/flash_nor_intel.o: ..\..\core\kernel\rex\src\rex.h
@@ -820,7 +809,6 @@ norprg/flash_nor_partition.o: ..\..\build\cust\custdebug.h
 norprg/flash_nor_partition.o: ..\..\build\cust\custdiag.h
 norprg/flash_nor_partition.o: ..\..\build\cust\custdmss.h
 norprg/flash_nor_partition.o: ..\..\build\cust\custefs.h
-norprg/flash_nor_partition.o: ..\..\build\cust\custfmrds.h
 norprg/flash_nor_partition.o: ..\..\build\cust\custmcs.h
 norprg/flash_nor_partition.o: ..\..\build\cust\custmmode.h
 norprg/flash_nor_partition.o: ..\..\build\cust\custnvm.h
@@ -835,8 +823,8 @@ norprg/flash_nor_partition.o: ..\..\build\cust\custui.h
 norprg/flash_nor_partition.o: ..\..\build\cust\custuim.h
 norprg/flash_nor_partition.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_nor_partition.o: ..\..\build\cust\custwms.h
-norprg/flash_nor_partition.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_nor_partition.o: ..\..\build\ms\targsb2.h
+norprg/flash_nor_partition.o: ..\..\build\ms\custw021.h
+norprg/flash_nor_partition.o: ..\..\build\ms\targsbw2.h
 norprg/flash_nor_partition.o: ..\..\core\boot\mibib\mibib.h
 norprg/flash_nor_partition.o: ..\..\core\boot\mibib\miboot.h
 norprg/flash_nor_partition.o: ..\..\core\boot\mibib\mioemsbl.h
@@ -877,7 +865,6 @@ norprg/flash_nor_samsung.o: ..\..\build\cust\custdebug.h
 norprg/flash_nor_samsung.o: ..\..\build\cust\custdiag.h
 norprg/flash_nor_samsung.o: ..\..\build\cust\custdmss.h
 norprg/flash_nor_samsung.o: ..\..\build\cust\custefs.h
-norprg/flash_nor_samsung.o: ..\..\build\cust\custfmrds.h
 norprg/flash_nor_samsung.o: ..\..\build\cust\custmcs.h
 norprg/flash_nor_samsung.o: ..\..\build\cust\custmmode.h
 norprg/flash_nor_samsung.o: ..\..\build\cust\custnvm.h
@@ -892,8 +879,8 @@ norprg/flash_nor_samsung.o: ..\..\build\cust\custui.h
 norprg/flash_nor_samsung.o: ..\..\build\cust\custuim.h
 norprg/flash_nor_samsung.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_nor_samsung.o: ..\..\build\cust\custwms.h
-norprg/flash_nor_samsung.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_nor_samsung.o: ..\..\build\ms\targsb2.h
+norprg/flash_nor_samsung.o: ..\..\build\ms\custw021.h
+norprg/flash_nor_samsung.o: ..\..\build\ms\targsbw2.h
 norprg/flash_nor_samsung.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_nor_samsung.o: ..\..\core\debugtools\err\src\err.h
 norprg/flash_nor_samsung.o: ..\..\core\kernel\rex\src\rex.h
@@ -969,7 +956,6 @@ norprg/flash_nor_spansion.o: ..\..\build\cust\custdebug.h
 norprg/flash_nor_spansion.o: ..\..\build\cust\custdiag.h
 norprg/flash_nor_spansion.o: ..\..\build\cust\custdmss.h
 norprg/flash_nor_spansion.o: ..\..\build\cust\custefs.h
-norprg/flash_nor_spansion.o: ..\..\build\cust\custfmrds.h
 norprg/flash_nor_spansion.o: ..\..\build\cust\custmcs.h
 norprg/flash_nor_spansion.o: ..\..\build\cust\custmmode.h
 norprg/flash_nor_spansion.o: ..\..\build\cust\custnvm.h
@@ -984,8 +970,8 @@ norprg/flash_nor_spansion.o: ..\..\build\cust\custui.h
 norprg/flash_nor_spansion.o: ..\..\build\cust\custuim.h
 norprg/flash_nor_spansion.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_nor_spansion.o: ..\..\build\cust\custwms.h
-norprg/flash_nor_spansion.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_nor_spansion.o: ..\..\build\ms\targsb2.h
+norprg/flash_nor_spansion.o: ..\..\build\ms\custw021.h
+norprg/flash_nor_spansion.o: ..\..\build\ms\targsbw2.h
 norprg/flash_nor_spansion.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_nor_spansion.o: ..\..\core\debugtools\err\src\err.h
 norprg/flash_nor_spansion.o: ..\..\core\kernel\rex\src\rex.h
@@ -1062,7 +1048,6 @@ norprg/flash_nor_utils.o: ..\..\build\cust\custdebug.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custdiag.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custdmss.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custefs.h
-norprg/flash_nor_utils.o: ..\..\build\cust\custfmrds.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custmcs.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custmmode.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custnvm.h
@@ -1077,8 +1062,8 @@ norprg/flash_nor_utils.o: ..\..\build\cust\custui.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custuim.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_nor_utils.o: ..\..\build\cust\custwms.h
-norprg/flash_nor_utils.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_nor_utils.o: ..\..\build\ms\targsb2.h
+norprg/flash_nor_utils.o: ..\..\build\ms\custw021.h
+norprg/flash_nor_utils.o: ..\..\build\ms\targsbw2.h
 norprg/flash_nor_utils.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_nor_utils.o: ..\..\core\services\utils\src\armasm.h
 norprg/flash_nor_utils.o: ..\..\core\services\utils\src\comdef.h
@@ -1099,7 +1084,6 @@ norprg/flash_os_none.o: ..\..\build\cust\custdebug.h
 norprg/flash_os_none.o: ..\..\build\cust\custdiag.h
 norprg/flash_os_none.o: ..\..\build\cust\custdmss.h
 norprg/flash_os_none.o: ..\..\build\cust\custefs.h
-norprg/flash_os_none.o: ..\..\build\cust\custfmrds.h
 norprg/flash_os_none.o: ..\..\build\cust\custmcs.h
 norprg/flash_os_none.o: ..\..\build\cust\custmmode.h
 norprg/flash_os_none.o: ..\..\build\cust\custnvm.h
@@ -1114,8 +1098,8 @@ norprg/flash_os_none.o: ..\..\build\cust\custui.h
 norprg/flash_os_none.o: ..\..\build\cust\custuim.h
 norprg/flash_os_none.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_os_none.o: ..\..\build\cust\custwms.h
-norprg/flash_os_none.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_os_none.o: ..\..\build\ms\targsb2.h
+norprg/flash_os_none.o: ..\..\build\ms\custw021.h
+norprg/flash_os_none.o: ..\..\build\ms\targsbw2.h
 norprg/flash_os_none.o: ..\..\core\debugtools\err\src\err.h
 norprg/flash_os_none.o: ..\..\core\services\diag\src\msg.h
 norprg/flash_os_none.o: ..\..\core\services\diag\src\msg_pkt_defs.h
@@ -1178,7 +1162,6 @@ norprg/flash_partition.o: ..\..\build\cust\custdebug.h
 norprg/flash_partition.o: ..\..\build\cust\custdiag.h
 norprg/flash_partition.o: ..\..\build\cust\custdmss.h
 norprg/flash_partition.o: ..\..\build\cust\custefs.h
-norprg/flash_partition.o: ..\..\build\cust\custfmrds.h
 norprg/flash_partition.o: ..\..\build\cust\custmcs.h
 norprg/flash_partition.o: ..\..\build\cust\custmmode.h
 norprg/flash_partition.o: ..\..\build\cust\custnvm.h
@@ -1193,8 +1176,8 @@ norprg/flash_partition.o: ..\..\build\cust\custui.h
 norprg/flash_partition.o: ..\..\build\cust\custuim.h
 norprg/flash_partition.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_partition.o: ..\..\build\cust\custwms.h
-norprg/flash_partition.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_partition.o: ..\..\build\ms\targsb2.h
+norprg/flash_partition.o: ..\..\build\ms\custw021.h
+norprg/flash_partition.o: ..\..\build\ms\targsbw2.h
 norprg/flash_partition.o: ..\..\core\boot\mibib\mibib.h
 norprg/flash_partition.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_partition.o: ..\..\core\debugtools\err\src\err.h
@@ -1267,7 +1250,6 @@ norprg/flash_ram.o: ..\..\build\cust\custdebug.h
 norprg/flash_ram.o: ..\..\build\cust\custdiag.h
 norprg/flash_ram.o: ..\..\build\cust\custdmss.h
 norprg/flash_ram.o: ..\..\build\cust\custefs.h
-norprg/flash_ram.o: ..\..\build\cust\custfmrds.h
 norprg/flash_ram.o: ..\..\build\cust\custmcs.h
 norprg/flash_ram.o: ..\..\build\cust\custmmode.h
 norprg/flash_ram.o: ..\..\build\cust\custnvm.h
@@ -1282,8 +1264,8 @@ norprg/flash_ram.o: ..\..\build\cust\custui.h
 norprg/flash_ram.o: ..\..\build\cust\custuim.h
 norprg/flash_ram.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/flash_ram.o: ..\..\build\cust\custwms.h
-norprg/flash_ram.o: ..\..\build\ms\custsbnaalz.h
-norprg/flash_ram.o: ..\..\build\ms\targsb2.h
+norprg/flash_ram.o: ..\..\build\ms\custw021.h
+norprg/flash_ram.o: ..\..\build\ms\targsbw2.h
 norprg/flash_ram.o: ..\..\core\boot\mibib\miparti.h
 norprg/flash_ram.o: ..\..\core\debugtools\err\src\err.h
 norprg/flash_ram.o: ..\..\core\kernel\rex\src\rex.h
@@ -1359,7 +1341,6 @@ norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custdebug.h
 norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custdiag.h
 norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custdmss.h
 norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custefs.h
-norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custfmrds.h
 norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custmcs.h
 norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custmmode.h
 norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custnvm.h
@@ -1374,8 +1355,8 @@ norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custui.h
 norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custuim.h
 norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/qhsusb_al_hostdl.o: ..\..\build\cust\custwms.h
-norprg/qhsusb_al_hostdl.o: ..\..\build\ms\custsbnaalz.h
-norprg/qhsusb_al_hostdl.o: ..\..\build\ms\targsb2.h
+norprg/qhsusb_al_hostdl.o: ..\..\build\ms\custw021.h
+norprg/qhsusb_al_hostdl.o: ..\..\build\ms\targsbw2.h
 norprg/qhsusb_al_hostdl.o: ..\..\core\debugtools\err\src\err.h
 norprg/qhsusb_al_hostdl.o: ..\..\core\services\diag\src\msg.h
 norprg/qhsusb_al_hostdl.o: ..\..\core\services\diag\src\msg_pkt_defs.h
@@ -1438,7 +1419,6 @@ norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custdebug.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custdiag.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custdmss.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custefs.h
-norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custfmrds.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custmcs.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custmmode.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custnvm.h
@@ -1453,8 +1433,8 @@ norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custui.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custuim.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/qhsusb_dcd_ch9.o: ..\..\build\cust\custwms.h
-norprg/qhsusb_dcd_ch9.o: ..\..\build\ms\custsbnaalz.h
-norprg/qhsusb_dcd_ch9.o: ..\..\build\ms\targsb2.h
+norprg/qhsusb_dcd_ch9.o: ..\..\build\ms\custw021.h
+norprg/qhsusb_dcd_ch9.o: ..\..\build\ms\targsbw2.h
 norprg/qhsusb_dcd_ch9.o: ..\..\core\services\utils\src\armasm.h
 norprg/qhsusb_dcd_ch9.o: ..\..\core\services\utils\src\comdef.h
 norprg/qhsusb_dcd_ch9.o: ..\..\core\services\utils\src\target.h
@@ -1474,7 +1454,6 @@ norprg/qhsusb_dci.o: ..\..\build\cust\custdebug.h
 norprg/qhsusb_dci.o: ..\..\build\cust\custdiag.h
 norprg/qhsusb_dci.o: ..\..\build\cust\custdmss.h
 norprg/qhsusb_dci.o: ..\..\build\cust\custefs.h
-norprg/qhsusb_dci.o: ..\..\build\cust\custfmrds.h
 norprg/qhsusb_dci.o: ..\..\build\cust\custmcs.h
 norprg/qhsusb_dci.o: ..\..\build\cust\custmmode.h
 norprg/qhsusb_dci.o: ..\..\build\cust\custnvm.h
@@ -1489,8 +1468,8 @@ norprg/qhsusb_dci.o: ..\..\build\cust\custui.h
 norprg/qhsusb_dci.o: ..\..\build\cust\custuim.h
 norprg/qhsusb_dci.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/qhsusb_dci.o: ..\..\build\cust\custwms.h
-norprg/qhsusb_dci.o: ..\..\build\ms\custsbnaalz.h
-norprg/qhsusb_dci.o: ..\..\build\ms\targsb2.h
+norprg/qhsusb_dci.o: ..\..\build\ms\custw021.h
+norprg/qhsusb_dci.o: ..\..\build\ms\targsbw2.h
 norprg/qhsusb_dci.o: ..\..\core\services\utils\src\armasm.h
 norprg/qhsusb_dci.o: ..\..\core\services\utils\src\comdef.h
 norprg/qhsusb_dci.o: ..\..\core\services\utils\src\memory.h
@@ -1524,7 +1503,6 @@ norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custdebug.h
 norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custdiag.h
 norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custdmss.h
 norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custefs.h
-norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custfmrds.h
 norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custmcs.h
 norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custmmode.h
 norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custnvm.h
@@ -1539,8 +1517,8 @@ norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custui.h
 norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custuim.h
 norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/qhsusb_dci_q1100.o: ..\..\build\cust\custwms.h
-norprg/qhsusb_dci_q1100.o: ..\..\build\ms\custsbnaalz.h
-norprg/qhsusb_dci_q1100.o: ..\..\build\ms\targsb2.h
+norprg/qhsusb_dci_q1100.o: ..\..\build\ms\custw021.h
+norprg/qhsusb_dci_q1100.o: ..\..\build\ms\targsbw2.h
 norprg/qhsusb_dci_q1100.o: ..\..\core\boot\amssboot\src\armmmu.h
 norprg/qhsusb_dci_q1100.o: ..\..\core\boot\amssboot\src\memory_map_full.h
 norprg/qhsusb_dci_q1100.o: ..\..\core\services\utils\src\armasm.h
@@ -1575,7 +1553,6 @@ norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custdebug.h
 norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custdiag.h
 norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custdmss.h
 norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custefs.h
-norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custfmrds.h
 norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custmcs.h
 norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custmmode.h
 norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custnvm.h
@@ -1590,8 +1567,8 @@ norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custui.h
 norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custuim.h
 norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custuim_hw_qsc11x0.h
 norprg/qhsusb_fd_hdlc.o: ..\..\build\cust\custwms.h
-norprg/qhsusb_fd_hdlc.o: ..\..\build\ms\custsbnaalz.h
-norprg/qhsusb_fd_hdlc.o: ..\..\build\ms\targsb2.h
+norprg/qhsusb_fd_hdlc.o: ..\..\build\ms\custw021.h
+norprg/qhsusb_fd_hdlc.o: ..\..\build\ms\targsbw2.h
 norprg/qhsusb_fd_hdlc.o: ..\..\core\services\utils\src\armasm.h
 norprg/qhsusb_fd_hdlc.o: ..\..\core\services\utils\src\comdef.h
 norprg/qhsusb_fd_hdlc.o: ..\..\core\services\utils\src\target.h

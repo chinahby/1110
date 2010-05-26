@@ -37,7 +37,9 @@
 #ifdef FEATURE_TEST_ANNUN_ICONS
     #include "oemannunciator.brh" 
 #endif
-
+#ifdef FEATURE_APP_FLDDBG
+#include "FLDDBGAPP.BID"
+#endif
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -1780,7 +1782,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
 
             //CallApp_Set_Db_In_Idle(TRUE);
             
-            (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_VOICE_PRIVACY,&privacy_pref,sizeof(byte));
+            (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&privacy_pref,sizeof(byte));
             CALL_ERR("privacy_pref = %d",privacy_pref,0,0);
             if((AEECMPrivacyPref)privacy_pref == AEECM_PRIVACY_PREF_ENHANCED )
             {

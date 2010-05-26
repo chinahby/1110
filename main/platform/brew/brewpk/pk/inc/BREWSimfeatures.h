@@ -127,6 +127,29 @@ DESCRIPTION
 
 #define FEATURE_UI_DBCS
 
+#ifdef CUST_EDITION	
+#undef FEATURE_TSG_EXT
+#undef FEATURE_UI_CORE
+#if !defined(FEATURE_UI_CORE)
+      /* Contacts (Phonebook) application.
+      */
+      #undef FEATURE_APP_CONTACT
+      /* Service Programming application.
+      */
+      #undef FEATURE_APP_SVCPRG
+      /* Field Debug application.
+      */
+      #undef FEATURE_APP_FLDDBG
+      /* Recent Calls (call history) application.
+      */
+      #undef FEATURE_APP_RECENTCALLS
+      /* Dialer (Lite) application.
+      */
+      #undef FEATURE_APP_DIALER
+#endif
+#undef FEATURE_ICM
+#endif /*CUST_EDITION*/      
+
 #define FEATURE_ADDRBOOK
 
 //This is required so that AEEDownload.c will get compiled

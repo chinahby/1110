@@ -828,23 +828,6 @@ int MGExplorer_MediaMenuSort(CMediaGalleryApp *pMe,
  */
 int MGExplorer_RecoverMediaMenu(CMediaGalleryApp *pMe,  IMenuCtl *pMenuCtl);
 
-
-/* ---------------------------------------------------------------------------
- *     SD卡和U盘相关的函数。
- * ---------------------------------------------------------------------------
- */
-#ifdef FEATURE_SUPPORT_VC0848
-boolean MediaGalleryApp_CheckSDCard(void);
-
-void MediaGalleryApp_StopSDCard(void);
-
-boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe);
-
-boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe);
-
-#endif//ifdef FEATURE_SUPPORT_VC0848
-
-
 /*
  * ==========================================================================
  * FUNCTION     :  MediaGallery_HideAnnunciatorBar

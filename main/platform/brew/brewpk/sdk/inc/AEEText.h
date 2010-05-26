@@ -44,8 +44,21 @@ typedef struct _ITextCtl ITextCtl;
 #define TP_OVERWRITE	      0x01000000  // Sets the AEE_TM_DIALED_DIGITS mode to overwrite wildcard chars
 #define TP_FONTMORPH       0x02000000  // Sets the AEE_TM_DIALED_DIGITS mode to morph text from large to small
 #define TP_AUTOHYPHEN	   0x04000000  // Sets the AEE_TM_DIALED_DIGITS mode to auto hyphen the string
-
+#ifdef CUST_EDITION	
+#define TP_DISPLAY_SMSCOUNT  0x08000000
+#define TP_DISPLAY_UNICODE_ASCII_COUNT 0x01000000
+#endif /*CUST_EDITION*/
 #define TP_T9_MODE      (TP_RAPID_MODE)
+#ifdef CUST_EDITION	
+#define TP_LARGE_FONT      0x00001000  // property to make a text control use the AEE_FONT_LARGE font
+
+#define TP_STARKEY_SWITCH  0x00000001 //switch input method when input text
+#define TP_NOSYMBOL               0x00000008//do not need symbol pages,, CAUTION :: DIFFER FROM CP_STATIC.
+#define TP_DISPLAY_COUNT   0x10000000 //display sms count
+#define TP_EDITNUMBER_PTSTRING 0x00000020 //input P\T\+ wehn input number
+#define TP_USELESS_UPDOWN      0x00000040 // the text do not handle AVK_UP  and  AVK_DOWN
+#define TP_GRAPHIC_BG      0x00000080 // use graphic bcakground
+#endif /*CUST_EDITION*/
 
 // Placeholder: Extended Text Properties
 //#define TP_EX_
@@ -145,7 +158,11 @@ typedef struct _ITextCtl ITextCtl;
 #define AEE_TM_ENGLISH_UK        0x0051  // UK English standard mode
 #define AEE_TM_HINDI             0x0052  // Hindi standard mode
 #define AEE_TM_HINDI_R           0x0053  // Hindi rapid mode
-
+#ifdef CUST_EDITION	
+#define AEE_TM_NET_SYMBOL        0x0054  // Net symbol mode
+#define AEE_TM_FACE_SYMBOL       0x0055  // Face symbol mode
+#define AEE_TM_ZHUYIN            0x0056  // Traditional Chinese Input 
+#endif /*CUST_EDITION*/
 // Note: New text modes should not be added to this range
 // Add new text modes to the AEE_TM_RESERVED range below
 #define AEE_TM_MAX            AEE_TM_HINDI_R
@@ -158,7 +175,12 @@ typedef struct _ITextCtl ITextCtl;
 #define AEE_TM_TOUCH_NUMERIC      (AEE_TM_RESERVED + 1) // Numeric touch screen mode
 #define AEE_TM_TOUCH_EXTENDED     (AEE_TM_RESERVED + 2) // Touch screen extended keypad
 #define AEE_TM_TOUCH_PREDICTIVE   (AEE_TM_RESERVED + 3) // Touch screen predictive input
-
+#ifdef CUST_EDITION	
+#define AEE_TMINFO_ICONID       0x8000   //icon id of current  text method
+#define AEE_TMINFO_NOCCINPUT       0x8001   //no candidate or stroke or symbol in various Tradition / Simple Chines input methods
+#define AEE_TMINFO_KEYBUFLEN        0x8002  //the key buff for chinese input method
+#define OEM_IME_DIALOG          (0x7FFF)
+#endif /*CUST_EDITION*/
 typedef int AEETextInputMode;
 
 typedef struct _AEETextInputModeInfo
@@ -221,6 +243,11 @@ QINTERFACE(ITextCtl)
    uint32            (*GetSelection)(ITextCtl *po);
    void              (*SetPropertiesEx)(ITextCtl *po, uint32 dwPropsEx);
    uint32            (*GetPropertiesEx)(ITextCtl *po);
+#ifdef CUST_EDITION	   
+   boolean           (*GetInfo)(ITextCtl *po, uint32 type, uint32 * pvoid);
+   int32             (*GetT9End)(ITextCtl *po);
+   void              (*SetBackGround)(ITextCtl *po, char *pstrImgResFile, uint16 nImgResID);//added by chengxiao 2009.04.08
+#endif /*CUST_EDITION*/
 };
 
 //---------------------------------------------------------------------
@@ -257,6 +284,11 @@ QINTERFACE(ITextCtl)
 #define ITEXTCTL_GetSelection(p)                      GET_PVTBL((p),ITextCtl)->GetSelection((p))
 #define ITEXTCTL_SetPropertiesEx(p,props)             GET_PVTBL((p),ITextCtl)->SetProperties((p),(props))
 #define ITEXTCTL_GetPropertiesEx(p)                   GET_PVTBL((p),ITextCtl)->GetProperties((p))
+#ifdef CUST_EDITION	
+#define ITEXTCTL_GetInfo(p,type,pvoid)                GET_PVTBL((p),ITextCtl)->GetInfo((p),(type),(pvoid))
+#define ITEXTCTL_GetT9End(p)                          GET_PVTBL((p),ITextCtl)->GetT9End((p))
+#define ITEXTCTL_SetBackGround(p,s,n)            GET_PVTBL((p),ITextCtl)->SetBackGround(p, s, n) //added by chengxiao 2009.04.08
+#endif /*CUST_EDITION*/
 
 #endif    // AEETEXT_H
 /*============================================================================

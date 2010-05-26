@@ -19,7 +19,10 @@ GENERAL DESCRIPTION:
 #include "AEEModTable.h"
 #include "AEEStdLib.h"
 #include "AEE_OEM.h"
-
+#ifdef CUST_EDITION	  
+#include "qw.h"
+#include "clk.h"
+#endif /*CUST_EDITION*/
 #ifdef FEATURE_PMIC_RTC
 #include "clkrtc.h"
 #endif

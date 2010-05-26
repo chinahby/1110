@@ -14,7 +14,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FLASH_BURST_NOR 
 #define T_SURF 
 #define FEATURE_I2C_CHIP_ENABLE 
-#define FEATURE_EXTENDED_KEYS 
+//#define FEATURE_EXTENDED_KEYS 
 #define ADC_CHANNELS_H "adc_channels_qsc1100.h"
 #define FEATURE_SSBI_ONLY 
 #define FEATURE_SPEAKER_PHONE 

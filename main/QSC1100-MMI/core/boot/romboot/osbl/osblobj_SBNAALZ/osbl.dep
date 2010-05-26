@@ -1,2 +1,0 @@
-../../osblobj_SBNAALZ/osbl.o: ../../../../../../core/boot/romboot/osbl/shared/src/osbl.s
-../../osblobj_SBNAALZ/osbl.o: osbl_target.h

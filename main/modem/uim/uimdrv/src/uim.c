@@ -614,6 +614,15 @@ when       who     what, where, why
   #include "sleep.h"
 #endif /* FEATURE_NEW_SLEEP_API && FEATURE_UIM_USES_NEW_SLEEP_API */
 
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+#include "db.h"
+
+#define INIT_DELAY_TIME 1000
+static rex_timer_type uim_initsmsadd_timer;
+static byte btCurInitFlg = 0;
+extern boolean  InitRUIMAddrBkCacheCb(void);
+extern boolean  wms_ruim_init_stepbystep(void);
+#endif
 /* <EJECT> */
 /*===========================================================================
 
@@ -7279,6 +7288,11 @@ LOCAL void uim_init( void )
 #error code not present
 #endif /* FEATURE_UIM_CARD_ERR_UIM_LDO_PUP */
 
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+  rex_def_timer( &uim_initsmsadd_timer, &uim_tcb, UIMDATA_INIT_SIG);
+#endif  
+
+
   /* -----------------
   ** Initialize queues
   ** ----------------- */
@@ -8459,6 +8473,9 @@ dword dummy
 #endif /* FEATURE_UIM_USB_UICC */
            UIM_EFSLOG_PURGE_SIG;
 
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+  i_mask |= UIMDATA_INIT_SIG | UIMDATA_INIT_RPT_SIG;
+#endif
   /* ----------------------
   ** Perform initialization
   ** ---------------------- */
@@ -8550,7 +8567,36 @@ dword dummy
     ** signal, report to DOG, set the timer again and proceed.
     ** ------------------------------------------------------- */
     if ((rex_signals_mask & UIM_RPT_TIMER_SIG) != 0)
-    {
+    {      
+      (void) rex_clr_sigs( &uim_tcb, UIM_RPT_TIMER_SIG);
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+      if (btCurInitFlg == 0)
+      {
+
+         btCurInitFlg = db_getuiminitmask();
+         
+         // 一次只能初始化一项
+         if (btCurInitFlg & INITUIMSMSMASK)
+         {
+            btCurInitFlg = INITUIMSMSMASK;
+         }
+         else if (btCurInitFlg & INITUIMADDMASK)
+         {
+            btCurInitFlg = INITUIMADDMASK;
+         }
+         else
+         {
+            db_removeuiminitmask(btCurInitFlg);
+            btCurInitFlg = 0;
+         }
+         
+         if (btCurInitFlg != 0)
+         {
+            (void) rex_set_timer(&uim_initsmsadd_timer, 100);
+         }
+      }
+#endif      
+
       /* -----------------------------
       ** Kick watchdog and reset timer
       ** ----------------------------- */
@@ -8845,6 +8891,73 @@ dword dummy
         } /* end if - Check if clock should be turned back on */
       }
 #endif /* FEATURE_UIM_SUPPORT_DUAL_SLOTS */
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+      if ((rex_signals_mask & UIMDATA_INIT_SIG) ||
+          (rex_signals_mask & UIMDATA_INIT_RPT_SIG))
+      {
+         rex_sigs_type sig;
+         
+         if (rex_signals_mask & UIMDATA_INIT_SIG)
+         {
+            sig = UIMDATA_INIT_SIG;
+         }
+         else
+         {
+            sig = UIMDATA_INIT_RPT_SIG;
+         }
+         (void) rex_clr_timer(&uim_rpt_timer);
+         dog_report(DOG_UIM_RPT);
+         (void) rex_set_timer(&uim_rpt_timer, DOG_UIM_RPT_TIME);
+         
+         MSG_ERROR("--UIMDATA_INIT_SIG--", 0, 0, 0);
+         (void) rex_clr_sigs(&uim_tcb, sig);
+         
+         switch (btCurInitFlg)
+         {
+            // 当前初始化短信
+            case INITUIMSMSMASK:
+                if (wms_ruim_init_stepbystep())
+                {// 短信初始化完成
+                    db_items_value_type db_item;
+                    
+                    db_item.db_uimsmsinited = TRUE;
+                    db_put(DB_UIMSMSINIT, &db_item);
+                    
+                    // 去掉初始化短信的掩码
+                    db_removeuiminitmask(INITUIMSMSMASK);
+                    btCurInitFlg = 0;
+                }
+                break;
+                
+            // 当前初始化电话本
+            case INITUIMADDMASK:
+                if (InitRUIMAddrBkCacheCb())
+                {// 电话本初始化完成
+                    db_items_value_type db_item;
+                    
+                    db_item.db_uimaddinited = TRUE;
+                    db_put(DB_UIMADDINIT, &db_item);
+                    
+                    // 去掉初始化电话本的掩码
+                    db_removeuiminitmask(INITUIMADDMASK);
+                    btCurInitFlg = 0;
+                }
+                break;
+                
+            default:
+                db_removeuiminitmask(btCurInitFlg);
+                btCurInitFlg = 0;
+                break;
+         }
+         
+         if ((btCurInitFlg != 0) &&
+             (sig == UIMDATA_INIT_RPT_SIG))
+         {
+            // 启动下轮初始化
+            (void) rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);    
+         }
+      }
+#endif
 
       /*-----------------------------
       ** We have a command to process
@@ -9769,6 +9882,9 @@ dword dummy
     !defined (FEATURE_UIM_UTIL) && !defined (FEATURE_UIM_SUPPORT_3GPD)
             && ( uim_type.init && uim_type.proactive_uim )
 #endif /* FEATURE_UIM_TOOLKIT && !FEATURE_UIM_UICC && ! FEATURE_UIM_UTIL && !FEATURE_UIM_SUPPORT_3GPD */
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+            && (btCurInitFlg == 0)
+#endif            
            )
         {
           if(q_cnt(& uim_cmd_q) == 0)
@@ -9792,7 +9908,11 @@ dword dummy
         {
           /* Check if the UIM interface is allowed to be powered down
              or if the interface must be powered down */
-          if (uim_powerdown || uim_powering_down_task)
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+           if ((uim_powerdown || uim_powering_down_task) && (btCurInitFlg == 0))
+#else
+           if (uim_powerdown || uim_powering_down_task)
+#endif            
           {
             uim_reset_dir();
 #ifdef FEATURE_UIM_SUPPORT_CSIM

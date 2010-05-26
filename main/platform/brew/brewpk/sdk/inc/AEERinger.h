@@ -8,9 +8,9 @@ SERVICES:  BREW Ringer Interface
 GENERAL DESCRIPTION:
    Base level definitions, typedefs, etc. for AEEShell
 
-Copyright © 1999-2005,2007-2009 QUALCOMM Incorporated.
-All Rights Reserved.
-Qualcomm Confidential and Proprietary
+        Copyright ?1999-2002 QUALCOMM Incorporated.
+               All Rights Reserved.
+            QUALCOMM Proprietary/GTDR
 =====================================================*/
 
 #include "AEE.h"
@@ -24,7 +24,9 @@ typedef uint32             AEERingerCatID;
 
 #define AEE_RINGER_CATEGORY_ALL  ((AEERingerCatID)0)
 #define AEE_RINGER_ID_NONE       ((AEERingerID)0xffffffff)
-
+#ifdef CUST_EDITION	
+#define OEM_RINGER_SUPPORT
+#endif /*CUST_EDITION*/
 #define MAX_RINGER_NAME          (32)
 
 enum {
@@ -487,7 +489,7 @@ Return Value:
   EFAILED: Rinter not set
 
 Comments:
-   0 is a valid Category and this is equal to category ID "ALL".
+   None
 
 Side Effects:
    None

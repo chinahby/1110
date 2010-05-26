@@ -95,7 +95,6 @@ static void recentcalls_FreeAppData(CRecentCalls *pMe);
 
 static void recentcalls_RunFSM(CRecentCalls *pMe);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -863,7 +862,6 @@ static boolean recentcalls_HandleEvent(IRecentCalls *pi,
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh 20090409 add
             pMe->m_bAppIsReady = FALSE; 
             //ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
@@ -926,7 +924,6 @@ static boolean recentcalls_HandleEvent(IRecentCalls *pi,
 
         case EVT_APP_RESUME:
             //ASSERT(dwParam != 0);
-            Rendering_UpdateEx();//wlh 20090409 add
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
 
@@ -954,7 +951,6 @@ static boolean recentcalls_HandleEvent(IRecentCalls *pi,
             return recentcalls_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-			Rendering_UpdateEx();//wlh 20090409 add
             return recentcalls_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:

@@ -45,7 +45,20 @@ enum {
    DOW_FRIDAY,
    DOW_SATURDAY
 };
+#ifdef CUST_EDITION	
+#if defined( FEATURE_JEWISH_CALENDAR)
+typedef struct
+{
+	uint16 year;
+	uint16 month;
+	uint16 day;
+	uint16 weekday;
+	byte   holiday;
+	boolean leap;
 
+} JewishType;
+#endif
+#endif /*CUST_EDITION*/
 // Date format flags for IDateCtl::GetDateString()
 
 // This group is mutually exclusive
@@ -107,6 +120,16 @@ QINTERFACE(IDateCtl)
    void           (*SetFont)(IDateCtl * po, AEEFont fntText, AEEFont fntTitle);
    boolean        (*GetFont)(IDateCtl * po, AEEFont *pfntText, AEEFont *pfntTitle);
    void           (*SizeToFit)(IDateCtl * po, AEERect *prc);
+#ifdef CUST_EDITION	   
+   void           (*SetToday)(IDateCtl * pme, int32 lJulDate);
+   boolean        (*SetJRange)(IDateCtl * po, int32 StartJulDate, int32 EndJulDate);
+   void           (*EnabeRange)(IDateCtl * po, boolean ActRange);
+   
+#if defined( FEATURE_JEWISH_CALENDAR)
+   void           (*GetJewishDate)(IDateCtl * pIDateCtl, JewishType* pjewish);
+#endif
+#endif /*CUST_EDITION*/
+
 };
 
 //---------------------------------------------------------------------
@@ -138,7 +161,15 @@ QINTERFACE(IDateCtl)
 #define IDATECTL_SetFont(p,f1,f2)                     GET_PVTBL((p),IDateCtl)->SetFont((p),(f1),(f2))
 #define IDATECTL_GetFont(p,f1,f2)                     GET_PVTBL((p),IDateCtl)->GetFont((p),(f1),(f2))
 #define IDATECTL_SizeToFit(p,f1)                      GET_PVTBL((p),IDateCtl)->SizeToFit((p),(f1))
+#ifdef CUST_EDITION	
+#define IDATECTL_SetToday(p,f1)                       GET_PVTBL(p,IDateCtl)->SetToday(p,f1)
+#define IDATECTL_SetDateRange(p,f1,f2)                GET_PVTBL(p,IDateCtl)->SetJRange(p,f1,f2)
+#define IDATECTL_EnableDateRange(p,f1)                GET_PVTBL(p,IDateCtl)->EnabeRange(p,f1)
 
+#if defined( FEATURE_JEWISH_CALENDAR)
+#define IDATECTL_GetJewishDate(p,pj)            GET_PVTBL((p),IDateCtl)->GetJewishDate((p),(pj))
+#endif
+#endif /*CUST_EDITION*/
 #endif    // AEEDATE_H
 
 /*=============================================================================

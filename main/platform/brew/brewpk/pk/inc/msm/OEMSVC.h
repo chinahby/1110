@@ -19,13 +19,14 @@ None.
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 None.
 
-        Copyright © 1999-2004 QUALCOMM Incorporated.
+        Copyright ?1999-2004 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
-
+#ifndef WIN32
 #include "disp.h"
 #include "voc.h"
+#endif
 #include "OEMConfig.h"
 #include "OEMNotify.h"
 #include "AEEShell.h"
@@ -72,8 +73,9 @@ Function: OEM_SVCIsVocCapable
 Description: Is the given type supported by the vocoder
 
 ==============================================================*/
+#ifndef WIN32
 boolean OEM_SVCIsVocCapable(voc_capability_type vocCap);
-
+#endif
 /*==================================================================
 Function: OEM_SimpleBeep
 
@@ -112,7 +114,7 @@ boolean OEM_SVCSimpleBeep(BeepType nBeepType, boolean bLoud);
 
 boolean OEM_SVCUiIsInCall(void);
 void    OEM_SVCUiAddEvent(OEMNotifyEvent evt);
-
+#ifndef WIN32
 /*==============================================================
 Function: OEM_SVCdisp_get_info
 
@@ -120,7 +122,7 @@ Description: Gets Display info. from DMSS
 
 ==============================================================*/
 int     OEM_SVCdisp_get_info(disp_info_type *pInfo);
-
+#endif
 #ifdef FEATURE_SECONDARY_DISPLAY
 /*==============================================================
 Function: OEM_SVCdisp_get_info2
@@ -130,5 +132,64 @@ Description: Gets Display info. from DMSS for secondary display
 ==============================================================*/
 int     OEM_SVCdisp_get_info2(disp_info_type *pInfo);
 #endif
+
+#ifdef CUST_EDITION	
+#include "OEMSVC.h"
+#include "AEEConfig.h"
+#include "OEMConfig.h"
+#include "OEMCFGI.h"
+#include "OEMNV.h"
+#ifndef WIN32
+#include "ps_ppp_defs.h"
+#else
+#define PPP_MAX_USER_ID_LEN 127
+#define PPP_MAX_PASSWD_LEN  127
+#endif
+typedef struct
+{
+  char  user_id_info[PPP_MAX_USER_ID_LEN];
+  char  passwd_info[PPP_MAX_PASSWD_LEN];
+} PppAccounts;
+
+typedef enum 
+{
+   DS_NONE_TYPE = 0,
+   DS_BREW_TYPE,
+   DS_WAP12_TYPE,
+   DS_WAP20_TYPE,
+   DS_MAIL_TYPE,
+   DS_JAVA_TYPE,
+   DS_INTERNET_TYPE
+} DataSvcType;
+
+int OEM_SetPppAccounts(PppAccounts *pAccount, DataSvcType dsType);
+int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType);
+
+void GetMobileInfo(AEEMobileInfo * pmi);
+// ÔÚ²âPEKÊ±£¬ÒòÄ¿Ç°È¡ CFGI_SUBSCRIBERID Ê±ÎÒÃÇÒÔMIN±íÊ¾(BREW ÉèÖÃÒàÈç´Ë)£¬ÈôÓÃGetMobileInfo·µ»ØµÄ
+// szMobileID,³¤¶ÈÎª15£¬´ËÊ±DPKÖÐMINÉèÎª15Î»µÄºÅÂë£¬GetConfigComplex.18 ²â²»¹ý£»ÈôÉèÎª10Î»µÄºÅÂë£¬
+// GetConfigComplex.25 ²â²»¹ý¡£Í¨¹ý·ÖÎö£¬oat ²âÊÔÈí¼þÈÏÎª¶ÔÒÔ MIN ±íÊ¾ SUBSCRIBERID £¬ÔòÊÇ 10 Î»ºÅ
+// ÂëµÄ MIN ÇÒÓëÓÃ CFGI_MOBILEINFO È¡µÃµÄ szMobileID Ò»ÖÂ¡£Ä¿Ç°£¬½ö²¿·Ö UI ÓÃµ½ 15 Î»µÄ szMobileID
+// ¡£ÎªÂú×ãË«·½ÐèÒª£¬Ìí¼ÓÒ»¸öÈ¡ 10 Î»µÄº¯ÊýÓÃÓÚÏµÍ³¼¶£¬Ô­À´µÄº¯Êý½ö¹©ÐèÒª15Î»µÄUIÓ¦ÓÃÊ¹ÓÃ¡£
+void GetMobileInfoEx(AEEMobileInfo * pmi);
+// ÕýÔÚ»î¶¯µÄÉè±¸ÀàÐÍ
+typedef enum
+{
+    DEVICE_TYPE_MP4,
+    DEVICE_TYPE_CAMERA
+}DeviceType;
+// Éè±¸µ±Ç°µÄ×´Ì¬
+typedef enum
+{
+    DEVICE_MP4_STATE_ON, 
+    DEVICE_MP4_STATE_OFF,
+    DEVICE_CAMERA_STATE_ON,
+    DEVICE_CAMERA_STATE_OFF
+}DeviceStateType;
+
+void SetDeviceState(DeviceType dt,DeviceStateType dst);
+int  GetDeviceState(DeviceType dt);
+
+#endif /*CUST_EDITION*/
 
 #endif //_OEMSVC_H_

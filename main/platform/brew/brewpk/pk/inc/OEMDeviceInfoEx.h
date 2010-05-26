@@ -60,6 +60,31 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
 
 ===========================================================================*/
 
+#ifdef CUST_EDITION	
+/*=============================================================================
+FUNCTION: OEM_SetDeviceInfoEx
+
+DESCRIPTION:  Used by the OEM layer to indicate that a device configuration
+              item has changed.
+
+PARAMETERS:
+    nItem  [in]:  The item that has changed
+   *pBuff  [in]:  New value
+    nSize  [in]:  Size of the new value
+
+RETURN VALUE:
+   int:  BREW result code
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+int OEM_SetDeviceInfoEx(AEEDeviceItem nItem, void *pBuff, int nSize);
+#endif /*CUST_EDITION*/
+
 static __inline int OEM_SetDeviceInfoFlipOpen(boolean flipOpen)
 {
    return OEM_SetDeviceInfoEx(AEE_DEVICESTATE_FLIP_OPEN,

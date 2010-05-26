@@ -11,7 +11,6 @@ DESCRIPTION:
 
 PUBLIC CLASSES AND FUNCTIONS:
 
-Copyright © 1999-2008 QUALCOMM Incorporated.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 ===================================================================*/
@@ -196,9 +195,45 @@ enum _AVKType {
    AVK_SYMBOL, // Symbol (modifier key)                                   // hex 0xE07F; dec 57471
    AVK_ENTER,  // Enter key                                               // hex 0xE080; dec 57472
    AVK_SPACE,  // Space bar                                               // hex 0xE081; dec 57473
+#ifdef CUST_EDITION	
+   // ½ÓÉÏ¶ú»ú
+   AVK_HEADSET_CONNECT,
+   
+   // ¶Ï¿ª¶ú»ú
+   AVK_HEADSET_DISCONNECT,
 
+   // ½ÓÉÏ¶ú»ú
+   AVK_HEADSET_SWITCH,
+   
+   // ¶Ï¿ª¶ú»ú
+   AVK_HEADSET_SWITCH_OFF,   
+   
+   // ¹Ò»ú
+   AVK_ENDCALL,     /*0xe079*/
+   AVK_BGRUN,
+   AVK_MORSE_BG,
+   AVK_BGPLAY,
 
-   AVK_LAST                                                               // hex 0xE082; dec 57474
+   AVK_WITHDRAW,
+   // ·­¸Ç¡¢»¬¸Ç
+   AVK_FLIP_OPEN,
+   AVK_FLIP_CLOSE,
+   AVK_USER_HEADSET,/*User press headset switch*/
+   AVK_GSENSOR_FORWARD,
+   AVK_GSENSOR_BACKWARD, 
+   AVK_GSENSOR_STAND,
+   AVK_GSENSOR_LEFT,
+   AVK_GSENSOR_RIGHT,
+   AVK_GSENSOR_UPEND,
+   AVK_GSENSOR_STEP,
+      // ½ÓÉÏ¶ú»ú
+   AVK_BT_HEADSET_CONNECT,
+   
+   // ¶Ï¿ª¶ú»ú
+   AVK_BT_HEADSET_DISCONNECT,
+   AVK_CONTACTS_GIVEUP_EDIT,
+#endif /*CUST_EDITION*/   
+   AVK_LAST
 };
 #ifdef _WIN32
 typedef unsigned AVKType;

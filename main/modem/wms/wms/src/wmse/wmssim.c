@@ -115,6 +115,10 @@ when       who     what, where, why
 #include "wmsruim.h"
 #endif /* FEATURE_CDSMS_RUIM */
 
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+#include "db.h"
+#endif 
+
 #if (defined(FEATURE_GWSMS) || defined(FEATURE_MMGSDI))
 static wms_cfg_s_type         * cfg_s_ptr;
 #endif
@@ -280,7 +284,15 @@ void wms_sim_gsdi_card_status_cb_proc (wms_cmd_type   * cmd_ptr)
         if (cfg_s_ptr->cdma_init_complete == FALSE)
         {
   #ifdef FEATURE_CDSMS_RUIM
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+          db_setuiminitmask(INITUIMSMSMASK);
+          //wms_ruim_init_stepbystep();
+#ifdef FEATURE_OMH_SMS
+          wms_ruim_OMH_init();
+#endif
+#else          
           wms_ruim_init();
+#endif          
   #else /* FEATURE_CDSMS_RUIM */
           wms_cfg_do_cdma_ready_event();
   #endif /* FEATURE_CDSMS_RUIM */

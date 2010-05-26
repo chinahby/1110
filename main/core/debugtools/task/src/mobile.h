@@ -130,6 +130,12 @@ extern const byte NOTICE_SEG_TYPE mob_model;
 */
 extern NOTICE_TYPE mob_sw_rev[];
 
+// Product Model english name
+#ifdef CUST_EDITION  
+extern NOTICE_TYPE ver_modelname[];
+extern NOTICE_TYPE ver_modelversion[];
+#endif /*CUST_EDITION*/
+
 #ifdef FEATURE_GPSONE
 #error code not present
 #endif /* GPSONE */

@@ -34,6 +34,21 @@ Qualcomm Confidential and Proprietary
 /*-------------------------------------------------------------------
       Type Declarations
 -------------------------------------------------------------------*/
+#ifdef CUST_EDITION
+typedef enum {
+   OEMSOUND_MUTE_VOL = 0,
+   OEMSOUND_1ST_VOL,
+   OEMSOUND_2ND_VOL,
+   OEMSOUND_3RD_VOL,
+   OEMSOUND_4TH_VOL,
+   OEMSOUND_5TH_VOL,
+   OEMSOUND_ESCALATING_VOL
+} OEMSound_Volume_Type;
+#define OEMSOUND_AVG_VOL OEMSOUND_2ND_VOL
+#define OEMSOUND_MAX_VOL OEMSOUND_5TH_VOL
+#define OEMSOUND_MAX_RING_VOL OEMSOUND_ESCALATING_VOL
+#endif
+
 enum {
    AEE_SOUND_UNKNOWN       = 0,
    AEE_SOUND_SUCCESS       = 1,
@@ -71,6 +86,11 @@ enum {
    AEE_SOUND_DEVICE_TTY_HCO            = 14, //forward link = tty data, reverse link = voice
    AEE_SOUND_DEVICE_TTY_VCO            = 15, //forward link = voice, reverse link = tty data
    AEE_SOUND_DEVICE_TTY_FULL           = 16, //tty data both directions.
+#ifdef CUST_EDITION	   
+#if defined( FEATURE_SOUND_DEVICE_HEADSET_SPEAKER)
+   AEE_SOUND_DEVICE_HEADSET_SPEAKER	   = 17,
+#endif
+#endif /*CUST_EDITION*/
    AEE_SOUND_DEVICE_RESERVED3_START    = 89, // Reserved range #3
    AEE_SOUND_DEVICE_RESERVED3_END      = 104,
    AEE_SOUND_DEVICE_RESERVED2_START    = 105, // Reserved range #2

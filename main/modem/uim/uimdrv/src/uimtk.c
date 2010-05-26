@@ -92,7 +92,12 @@ when       who     what, where, why
 #if defined FEATURE_UIM_TOOLKIT_UTK && !defined FEATURE_GSTK
 #include "uimtk.h"
 #include "uimi.h"
+
+#ifndef USES_MMI
 #include "ui.h"
+#else
+#include "oemui.h"
+#endif
 #include "msg.h"
 #include "err.h"
 #include "memory.h"
@@ -1063,6 +1068,7 @@ uim_tk_proc_simple_tlv_return_type uim_tk_parse_simple_tlv
       } /* end case - UIM_TK_FILE_LIST_TAG */
       break;
 
+#ifndef CUST_EDITION
     case UIM_TK_LOCN_INFO_TAG:
       {
         /* Make sure the length is valid */
@@ -1088,6 +1094,67 @@ uim_tk_proc_simple_tlv_return_type uim_tk_parse_simple_tlv
         } /* end if - the length is valid */
       } /* end case - UIM_TK_LOCN_INFO_TAG */
       break;
+#else
+   case UIM_TK_LOCN_INFO_TAG:
+      {
+        /* Make sure the length is valid */
+        if (return_buf.tlv_size == UIM_TK_LOCN_INFO_SIZE)
+        {
+          /* Parse the Value field */
+          parsed_tlv_buff->locn_info.mcc = 
+                (((tlv_buff[offset + 2] & 0x0f)*1000)+ 
+                (((tlv_buff[offset + 2] >> 4)& 0x0f)*100) +
+                ((tlv_buff[offset + 3]& 0x0f)*10) +
+                ((tlv_buff[offset + 3] >> 4)& 0x0f));
+                                
+          parsed_tlv_buff->locn_info.imsi_11_12 = 
+                (((tlv_buff[offset + 4]& 0x0f)*10) +
+                ((tlv_buff[offset + 4] >> 4)& 0x0f));  
+                
+          parsed_tlv_buff->locn_info.sid = 
+                (((tlv_buff[offset + 5] & 0x0f)*1000)+ 
+                (((tlv_buff[offset + 5] >> 4)& 0x0f)*100) +
+                ((tlv_buff[offset + 6]& 0x0f)*10) +
+                ((tlv_buff[offset + 6] >> 4)& 0x0f));
+                
+          parsed_tlv_buff->locn_info.nid = 
+                (((tlv_buff[offset + 7] & 0x0f)*1000)+ 
+                (((tlv_buff[offset + 7] >> 4)& 0x0f)*100) +
+                ((tlv_buff[offset + 8]& 0x0f)*10) +
+                ((tlv_buff[offset + 8] >> 4)& 0x0f));
+                
+          parsed_tlv_buff->locn_info.base_id = 
+                (((tlv_buff[offset + 9] & 0x0f)*1000)+ 
+                (((tlv_buff[offset + 9] >> 4)& 0x0f)*100) +
+                ((tlv_buff[offset + 10]& 0x0f)*10) +
+                ((tlv_buff[offset + 10] >> 4)& 0x0f));
+                
+          parsed_tlv_buff->locn_info.base_lat = 
+                (((tlv_buff[offset + 11] & 0x0f)*100000)+ 
+                (((tlv_buff[offset + 11] >> 4)& 0x0f)*10000) +
+                ((tlv_buff[offset + 12]& 0x0f)*1000) +
+                (((tlv_buff[offset + 12] >> 4)& 0x0f)*100)+
+                ((tlv_buff[offset + 13]& 0x0f)*10) +
+                ((tlv_buff[offset + 13] >> 4)& 0x0f));    
+                
+          parsed_tlv_buff->locn_info.base_long = 
+                (((tlv_buff[offset + 14] & 0x0f)*100000)+ 
+                (((tlv_buff[offset + 14] >> 4)& 0x0f)*10000) +
+                ((tlv_buff[offset + 15]& 0x0f)*1000) +
+                (((tlv_buff[offset + 15] >> 4)& 0x0f)*100)+
+                ((tlv_buff[offset + 16]& 0x0f)*10) +
+                ((tlv_buff[offset + 16] >> 4)& 0x0f));            
+                      
+          return_buf.status = UIM_TK_MESSAGE_IS_VALID;
+        }
+        else /* The size is not correct */
+        {
+          /* Indicate the problem in the return status */
+          return_buf.status = UIM_TL_LENGTH_ERROR;
+        } /* end if - the length is valid */
+      } /* end case - UIM_TK_LOCN_INFO_TAG */
+      break;
+#endif //#if 0      
 
     case UIM_TK_IMEI_TAG:
       {
@@ -1910,7 +1977,7 @@ uim_tk_proc_simple_tlv_return_type uim_tk_pack_simple_tlv
         } /* end if - The simple TLV fits within the BER_TLV */
       } /* end case - UIM_TK_FILE_LIST_TAG */
       break;
-
+#if 0
     case UIM_TK_LOCN_INFO_TAG:
       {
         /* Make sure the simple TLV fits within the BER-TLV */
@@ -1949,6 +2016,48 @@ uim_tk_proc_simple_tlv_return_type uim_tk_pack_simple_tlv
         } /* end if - The simple TLV fits within the BER_TLV */
       } /* end case - UIM_TK_LOCN_INFO_TAG */
       break;
+#else //#if 0
+    case UIM_TK_LOCN_INFO_TAG:
+      {
+        /* Make sure the simple TLV fits within the BER-TLV */
+        if (((word)offset + UIM_TK_LOCN_INFO_SIZE + 2) <= UIM_MAX_CHARS)
+        {
+          /* Set the tag of the simple TLV */
+          tlv_buff[offset] = local_tag;
+
+          /* Set the size of the simple TLV */
+          tlv_buff[offset + 1] = UIM_TK_LOCN_INFO_SIZE;
+          
+          /* Pack the Value field */          
+          tlv_buff[offset + 2] = UTK_INT2BCD((parsed_tlv_buff->locn_info.mcc%10000)/100);
+          tlv_buff[offset + 3] = UTK_INT2BCD(parsed_tlv_buff->locn_info.mcc%100);
+          tlv_buff[offset + 4] = UTK_INT2BCD(parsed_tlv_buff->locn_info.imsi_11_12%100);
+          tlv_buff[offset + 5] = UTK_INT2BCD((parsed_tlv_buff->locn_info.sid%10000)/100);
+          tlv_buff[offset + 6] = UTK_INT2BCD(parsed_tlv_buff->locn_info.sid%100);
+          tlv_buff[offset + 7] = UTK_INT2BCD((parsed_tlv_buff->locn_info.nid%10000)/100);
+          tlv_buff[offset + 8] = UTK_INT2BCD(parsed_tlv_buff->locn_info.nid%100); 
+          tlv_buff[offset + 9] = UTK_INT2BCD((parsed_tlv_buff->locn_info.base_id%10000)/100);
+          tlv_buff[offset + 10] = UTK_INT2BCD(parsed_tlv_buff->locn_info.base_id%100);   
+          tlv_buff[offset + 11] = UTK_INT2BCD((parsed_tlv_buff->locn_info.base_lat%1000000)/10000);
+          tlv_buff[offset + 12] = UTK_INT2BCD((parsed_tlv_buff->locn_info.base_lat%10000)/100);  
+          tlv_buff[offset + 13] = UTK_INT2BCD(parsed_tlv_buff->locn_info.base_lat%100);
+          tlv_buff[offset + 14] = UTK_INT2BCD((parsed_tlv_buff->locn_info.base_long%1000000)/10000); 
+          tlv_buff[offset + 15] = UTK_INT2BCD((parsed_tlv_buff->locn_info.base_long%10000)/100); 
+          tlv_buff[offset + 16] = UTK_INT2BCD(parsed_tlv_buff->locn_info.base_long%100);         
+                 
+          /* Fill in the return buffer */
+          return_buf.status = UIM_TK_MESSAGE_IS_VALID;
+          return_buf.tlv_size = UIM_TK_LOCN_INFO_SIZE + 2;
+        }
+        else /* The simple TLV is too large for this BER-TLV */
+        {
+          /* Indicate the offset is outside the BER-TLV */
+          return_buf.status = UIM_TK_OFFSET_OUTSIDE_BUFFER;
+          return_buf.tlv_size = 0;
+        } /* end if - The simple TLV fits within the BER_TLV */
+      } /* end case - UIM_TK_LOCN_INFO_TAG */
+      break;
+#endif //#if 0
 
     case UIM_TK_IMEI_TAG:
       {

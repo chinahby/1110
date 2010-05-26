@@ -345,7 +345,11 @@ typedef struct {
 /*=========================================================================*/
 
 /* Determines NV Major version number */
+#ifdef CUST_EDITION
+#define NVI_KLT_REV            0x84
+#else
 #define NVI_KLT_REV            0x83
+#endif
 /* Length of variable sized part of extended version designator */
 #define NVI_VERNO_LENGTH       NVI_VERNO_EXT_LENGTH
 /* General revision number for feature bits assignment */

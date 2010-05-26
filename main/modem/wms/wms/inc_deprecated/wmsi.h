@@ -165,7 +165,14 @@ when       who     what, where, why
 #include "wms.h"
 #include "wmspm.h"
 #include "wmspriv.h"
+#ifndef WIN32
 #include "rex.h"
+#else
+typedef int rex_timer_type;
+rex_timer_type wms_rpt_timer;
+typedef int rex_tcb_type;
+typedef int rex_sigs_type;
+#endif
 #include "queue.h"
 #include "cm.h"
 
@@ -197,9 +204,53 @@ enum { WMS_MAX_RPTS  = 20 };
 enum { WMS_MAX_RAM_MESSAGES = 50 };
 enum { WMS_MAX_RAM_STATUS_REPORTS = 10 };
 
+#ifdef CUST_EDITION
+//  以前是提前5条提示，现在是提前10条提示 
+#ifdef FEATURE_ONEMSG_USE_ONEFILE
+enum 
+{ 
+    IN_WATERMARK = 190,
+    IN_MAX = 200
+};
+enum 
+{ 
+    OUT_WATERMARK = 90,
+    OUT_MAX = 100
+};
+enum { MAX_OEMTEMPLATES = 10};// OEM 消息常用语条数
+enum { PHRASE_MAX = 20 };
+enum { DRAFT_MAX = 50 };
+enum { BC_MAX = 50 };
+enum { RESERVE_MAX = 30 };
+enum { WMS_MAX_NV_CDMA_MESSAGES     = (1+IN_MAX+OUT_MAX+PHRASE_MAX+DRAFT_MAX+BC_MAX+RESERVE_MAX) };
+enum 
+{ 
+    VOICE_INDEX    = 0,                         // 语音短信索引值
+    IN_START       = 1,                         // 收件信息索引开始值
+    IN_END         = IN_MAX,                    // 收件信息索引结束值
+    OUT_START      ,                            // 发件信息索引开始值
+    OUT_END        = (IN_END+OUT_MAX),          // 发件信息索引结束值
+    PHRASE_START   ,                            // 常用语信息索引开始值
+    PHRASE_END     = (OUT_END+PHRASE_MAX),      // 常用语信息索引结束值
+    DRAFT_START    ,                            // 草稿信息索引开始值
+    DRAFT_END      = (PHRASE_END+DRAFT_MAX),    // 草稿信息索引结束值
+    BC_START       ,                            // 广播信息索引开始值
+    BC_END         = (DRAFT_END+BC_MAX),        // 广播信息索引结束值
+    RESERVE_START  ,                            // 预约信息索引开始值
+    RESERVE_END    = (BC_END+RESERVE_MAX),      // 预约信息索引结束值
+};
+    
+#else
 enum { WMS_MAX_NV_CDMA_MESSAGES = 99 }; /* slots 0..98 */
+#endif
+#endif /*CUST_EDITION*/
+
 enum { WMS_MAX_GCF_NV_GW_MESSAGES = 23 }; /* slots 0..22 */
+#ifdef FEATURE_SMS_500_MESSAGES
+#error code not present
+#else 
 enum { WMS_MAX_NV_GW_MESSAGES   = 255 }; /* slots 0..254 */
+#endif /* FEATURE_SMS_500_MESSAGES */
 
 enum { WMS_MAX_CDMA_MESSAGES_IN_MEM =
          WMS_MAX_NV_CDMA_MESSAGES + WMS_MESSAGE_LIST_MAX };
@@ -214,6 +265,10 @@ enum { WMS_GW_CB_MAX_LANGUAGES = 255 };
 
 enum { WMS_UDH_OTHER_SIZE_GW = 137 }; /* 140 - 1(UDHL) - 1(UDH ID) - 1(UDH Len) */
 
+//enum { WMS_TL_MAX_LEN        = 246 };
+#ifdef CUST_EDITION
+#define WMS_GW_TEMPLATE_MIN         28
+#endif /*CUST_EDITION*/
 #define WMS_CARD_NUM_REFRESH_FILES 14
 
 /* SMS task signals
@@ -699,6 +754,27 @@ typedef struct
 /* Union of all command types.  The header is always present and           */
 /* specifies the command type and attributes.  If the command has          */
 /* arguments, they follow in the union.                                    */
+
+#ifdef CUST_EDITION
+typedef struct
+{
+  boolean                          multisend;
+} wms_cmd_cfg_set_multisend_type;
+
+typedef struct
+{
+    wms_deletebox_e_type box_deltype;
+} wms_cmd_msg_delete_box_type;
+
+typedef struct
+{
+    wms_msg_copy_type             copypram;
+} wms_cmd_msg_copy_type;
+
+
+#endif
+
+
 typedef struct
 {
   wms_cmd_hdr_type                    hdr;       /* header */
@@ -719,7 +795,9 @@ typedef struct
 #ifdef FEATURE_GWSMS
 #error code not present
 #endif /* FEATURE_GWSMS */
-
+#ifdef CUST_EDITION
+    wms_cmd_cfg_set_multisend_type    cfg_set_multisend;
+#endif
 
     /* Message group commands
     */
@@ -729,6 +807,10 @@ typedef struct
     wms_cmd_msg_write_type            msg_write;
     wms_cmd_msg_delete_type           msg_delete;
     wms_cmd_msg_delete_all_type       msg_delete_all;
+#ifdef CUST_EDITION	
+    wms_cmd_msg_delete_box_type       msg_delete_box;
+    wms_cmd_msg_copy_type             msg_copy;
+#endif /*CUST_EDITION*/	
     wms_cmd_msg_modify_tag_type       msg_modify_tag;
     wms_cmd_msg_read_template_type    msg_read_template;
     wms_cmd_msg_write_template_type   msg_write_template;

@@ -140,11 +140,13 @@ when       who     what, where, why
 #include "AEEFont.h"
 #include "AEEStdLib.h"
 
+#ifndef USES_MMI
 #ifndef FEATURE_UIONE_HDK
 #ifdef FEATURE_UI_CORE
 #include "CoreApp.h"
 #endif /* FEATURE_UI_CORE */
 #endif /* FEATURE_UIONE_HDK */
+#endif
 
 #ifdef FEATURE_ANNUNCIATOR
 #include "AEEAnnunciator.h"
@@ -232,6 +234,7 @@ LOCAL AnnunciatorData annunciatorData;
 ==============================================================================*/
 static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
 {
+#ifndef USES_MMI
    /* First see the system Digital or Analog */
   if ( ( (pAnnunData->annunciator) & HS_AN_CDMA) != 0 )
   {
@@ -351,6 +354,8 @@ static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
       MSG_ERROR( "Illegal BATT Value (%d)", pAnnunData->batt, 0, 0 );
       break;
   }
+  
+  #endif
   return;
 } /* End UpdateAnnunciators */
 #endif /* FEATURE_ANNUNCIATOR */
@@ -785,11 +790,13 @@ void chartoimg_init(void)
     clrFill = IBITMAP_RGBToNative(pBmp, MAKE_RGB(0xff, 0xff, 0xff)); // White
     clrFrame = IBITMAP_RGBToNative(pBmp, MAKE_RGB(0, 0, 0)); // Black
     IBITMAP_FillRect(pBmp, &rect, clrFill, AEE_RO_COPY);
-
+    
 #ifndef FEATURE_UIONE_HDK
+#ifndef USES_MMI
 #ifdef FEATURE_UI_CORE
     if (CoreApp_IsSKUI())
 #endif /* FEATURE_UI_CORE */
+#endif
     DrawRect(pBmp, &rect, clrFrame, AEE_RO_COPY);
 #endif /* FEATURE_UIONE_HDK */
 
@@ -797,9 +804,11 @@ void chartoimg_init(void)
     IBITMAP_Release(pBmp);
 
 #ifndef FEATURE_UIONE_HDK
+#ifndef USES_MMI
 #ifdef FEATURE_UI_CORE
     if (CoreApp_IsSKUI())
 #endif /* FEATURE_UI_CORE */
+#endif
     disp_update(pDDB->pBmp,
                 CHAR_DISPLAY_WIDTH,
                 0,

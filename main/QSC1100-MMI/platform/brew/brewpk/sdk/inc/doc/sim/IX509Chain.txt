@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IX509Chain simulation
-
-IX509Chain is simulated.
-==========================
-*/ 
