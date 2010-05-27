@@ -670,7 +670,7 @@ gen_com_cmm: prereqs
 	@$(REDIRECT) std_loadbuild.cmm "do jf $(BUILD)"
 	rm -f std_loadbuild_erase.cmm
 	@echo do erasechip.cmm > std_loadbuild_erase.cmm
-	@echo cd ..\..\build\ms >> std_loadbuild_erase.cmm
+	@echo cd ..\\..\\build\\ms >> std_loadbuild_erase.cmm
 	@echo do jf $(BUILD) >> std_loadbuild_erase.cmm
 	@echo
 	@echo
