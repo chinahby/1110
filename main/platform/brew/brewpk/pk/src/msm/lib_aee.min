@@ -107,3 +107,7 @@ ifeq ($(USES_JOYST),yes)
         QCTLIBS += $(BREW_LIB)/aeejoystick.lib
 endif
 endif
+
+ifeq ($(USES_MMI),yes)
+QCTLIBS += $(BREW_LIB)/others.lib
+endif

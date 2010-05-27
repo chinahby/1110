@@ -160,6 +160,9 @@ endif
 ifeq ($(USES_MANGO_BREW),yes)
 BREW_LIB=          $(BREWDIR)/pk/lib/Chipset/ADS12arm9_BrewDownloadDisabled# # DEFAULT
 endif
+ifeq ($(USES_MMI),yes)
+BREW_LIB=          $(BREWDIR)/pk/lib/Chipset/ADS12arm9_BrewDownloadDisabled# # DEFAULT
+endif
 BREW_OEM_SRC=      $(BREWDIR)/pk/src
 BREW_OEM_MSM_SRC=  $(BREWDIR)/pk/src/msm
 BREW_OEM_INC=      $(BREWDIR)/pk/inc
