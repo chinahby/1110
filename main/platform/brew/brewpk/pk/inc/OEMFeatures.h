@@ -147,7 +147,7 @@ GENERAL DESCRIPTION:
 
 // Applications supported
 #ifndef FEATURE_MANGO_BREW
-#define FEATURE_APP_MANAGER
+//#define FEATURE_APP_MANAGER
 
 #endif
 #ifdef FEATURE_UI_CORE
@@ -160,7 +160,7 @@ GENERAL DESCRIPTION:
 #define FEATURE_ANNUNCIATOR
 
 #ifndef FEATURE_BREW_DOWNLOAD
-#define FEATURE_BREW_DOWNLOAD
+//#define FEATURE_BREW_DOWNLOAD
 #endif
 #endif
 
@@ -290,7 +290,7 @@ GENERAL DESCRIPTION:
 //Disable for QSC1110
 //#define FEATURE_BREW_WEB
 #ifndef FEATURE_MANGO_BREW
-#define FEATURE_BREW_FONTS
+//#define FEATURE_BREW_FONTS
 #endif
 #define FEATURE_BREW_TELEPHONE
 #ifndef FEATURE_MANGO_BREW
@@ -453,7 +453,7 @@ GENERAL DESCRIPTION:
 
 // Enable the following definition to support DebugApp
 #ifndef FEATURE_MANGO_BREW
-#define FEATURE_AEE_DEBUGSET
+//#define FEATURE_AEE_DEBUGSET
 #endif
 
 // Enable the following definition to forcibly close all TCP sockets
