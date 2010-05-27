@@ -329,13 +329,13 @@ static boolean Setting_inquire_Sid_lock_Cmd(byte cur_set);
 void SettingMenu_ShowDialog(CSettingMenu *pMe,uint16  dlgResId)
 {
     int nRet;
-    //SETTING_ERR("next show %d dialog", dlgResId, 0, 0);
+    SETTING_ERR("next show %d dialog", dlgResId, 0, 0);
     // At most one dialog open at once
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
         // Looks like there is one dialog already opened.
         // Flag an error an return without doing anything.
-        ERR("Trying to create a dialog without closing the previous one",0,0,0);
+        SETTING_ERR("Trying to create a dialog without closing the previous one",0,0,0);
         return;
     }
 
@@ -343,7 +343,7 @@ void SettingMenu_ShowDialog(CSettingMenu *pMe,uint16  dlgResId)
 
     if (nRet != SUCCESS)
     {
-        ERR("Failed to create the dialog in the SettingMenu applet",0,0,0);
+        SETTING_ERR("Failed to create the dialog in the SettingMenu applet",0,0,0);
     }
 }
 
@@ -381,7 +381,7 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    //SETTING_ERR("%d SettingMenu_RouteDialogEvent", pMe->m_pActiveDlgID, 0, 0);
+    SETTING_ERR("%d SettingMenu_RouteDialogEvent", pMe->m_pActiveDlgID, 0, 0);
     switch (pMe->m_pActiveDlgID)
     {
         case IDD_MAIN_MENU:
@@ -4042,7 +4042,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             int         lineSpace = ( pMe->m_rc.dy - titleheight  - bottomheight - itemheight*3) / 4;
             nv_language_enum_type language = NV_LANGUAGE_ENGLISH;
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
-            //SETTING_ERR("EVT_USER_REDRAW", 0, 0, 0);
+            SETTING_ERR("EVT_USER_REDRAW", 0, 0, 0);
             MEMSET(wszTitle,0,sizeof(wszTitle));
             MEMSET(wszState,0,sizeof(wszState));
             MEMSET(wszTime,0,sizeof(wszTime));
@@ -4326,7 +4326,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_KEY:
-            //SETTING_ERR("EVT_KEY_RELEASE", 0, 0, 0);
+            SETTING_ERR("EVT_KEY_RELEASE", 0, 0, 0);
             //时间控件下处理数字键设置时间
             if (ITIMECTL_IsActive(pMe->m_pTime))
             {
@@ -4388,7 +4388,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 
                 case AVK_SELECT:
                 case AVK_INFO:
-                    //SETTING_ERR("EVT_KEY_RELEASE->AVK_SELECT", 0, 0, 0);
+                    SETTING_ERR("EVT_KEY_RELEASE->AVK_SELECT", 0, 0, 0);
                     //当处于clockctl控件,不接收command事件
                     //处理Clock编辑界面应用COMMAND键保存设置内容.
 #if 0
@@ -4421,7 +4421,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
                     {
                         if(Setting_CClockApps_HandleCmdEvent(pMe))
                         {
-                            //SETTING_ERR("EVT_KEY->AVK_SELECT", 0, 0, 0);
+                            SETTING_ERR("EVT_KEY->AVK_SELECT", 0, 0, 0);
                             pMe->m_msg_id = IDS_DONE;
                             CLOSE_DIALOG(DLGRET_WARNING)
                         }
@@ -6871,7 +6871,7 @@ static boolean Setting_Handle_Msgbox(CSettingMenu *pMe,
         
         {
             return FALSE;
-            ERR("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
+            SETTING_ERR("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
         }        
         ISTATIC_SetRect(pStatic, &rect);  
    }

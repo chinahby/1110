@@ -624,9 +624,9 @@ OEMAnnun_content batt_content =
     #define BETWEEN_ICON_PIXEL 1
 #elif defined(FEATURE_DISP_128X128)
     #define IMG_WIDTH      10
-    #define IMG_HEIGHT     10
+    #define IMG_HEIGHT     12
     #define LG_IMG_WIDTH 20
-    #define TEXT_HEIGHT    10
+    #define TEXT_HEIGHT    12
     //#define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1
 #else

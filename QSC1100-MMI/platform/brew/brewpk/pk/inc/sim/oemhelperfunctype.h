@@ -37,8 +37,14 @@ void uisnd_snd(int,int);
     NV_NOTALLOC_S,      /* address is not a valid allocation */
     NV_STAT_ENUM_PAD = 0x7FFF     /* Pad to 16 bits on ARM */
   } nv_stat_enum_type;
+
+#ifdef CUST_EDITION
+#define DISP_WIDTH        128
+#define DISP_HEIGHT       128
+#else
 #define DISP_WIDTH        176
 #define DISP_HEIGHT       220
+#endif
 typedef enum
 {
   DISP_8BPP,

@@ -258,7 +258,7 @@ typedef PACKED struct {
     #define NUM_IMAGE_WIDTH                    (20)
     #define REFUI_CALL_MAX_IMAGSIZE       (16)
 #elif defined(FEATURE_DISP_128X128)
-	#define NUM_IMAGE_HIGHT                    (30)
+	#define NUM_IMAGE_HIGHT                    (20)
     #define NUM_IMAGE_WIDTH                    (20)
     #define REFUI_CALL_MAX_IMAGSIZE       (16)
 #else
