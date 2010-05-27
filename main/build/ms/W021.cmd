@@ -14,8 +14,6 @@ cd %PROJECTNAME%\libs\hsusb
 IF NOT EXIST %PROJECTNAME% ren %QUALCOMMNAME% %PROJECTNAME%
 cd ..\..\..
 
-del /f /a %PROJECTNAME%\mobile.o
-
 :DO_WORK
 del /f /a build%PROJECTNAME%.log.old
 
