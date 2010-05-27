@@ -105,9 +105,11 @@ void Pedometer_Redraw(CSportsMenu *pMe)
 
 //Redraw BottomBar
 	BottomBar_e_Type BottomDisplayStyle[] = { 
-						BTBAR_OPTION_BACK, //IDLE
-						BTBAR_PAUSE_STOP, //STOPED
-						BTBAR_RESUME_STOP  //RESUME
+						BTBAR_OPTION_BACK //IDLE
+#ifdef FEATURE_SPORTS_APP 						
+						,BTBAR_PAUSE_STOP //STOPED
+						,BTBAR_RESUME_STOP  //RESUME
+#endif						
 						};
 
 	nLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,AEE_FONT_NORMAL,NULL,NULL);

@@ -1242,6 +1242,7 @@ extern boolean is_alarm_time_reach(void);
 
 void Fm_Shake_Open(void)
 {
+#ifdef FEATRUE_SUPPORT_G_SENSOR
     dword shake;
     if((MMI_GSENSOR_SHAKE_OPEN == mmi_g_sensor_state) 
         ||(MMI_GSENSOR_SHAKE_OPEN_IN_IDLE == mmi_g_sensor_state))   //return if sensor has been open.
@@ -1260,11 +1261,12 @@ void Fm_Shake_Open(void)
             mmi_g_sensor_state = MMI_GSENSOR_SHAKE_OPEN;
         }    
     }
- 
+#endif 
 }
 
 void Fm_Shake_Close(void)
 {
+#ifdef FEATRUE_SUPPORT_G_SENSOR
     dword shake;
 
     if((MMI_GSENSOR_SHAKE_CLOSE == mmi_g_sensor_state) 
@@ -1288,6 +1290,7 @@ void Fm_Shake_Close(void)
             mmi_g_sensor_state = MMI_GSENSOR_SHAKE_CLOSE;
         }            
     }
+#endif
 }
 
 static void FmRadio_PowerDown( CFmRadio *pMe)
