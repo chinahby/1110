@@ -781,9 +781,24 @@ Error:
    return nErr;
 }
 
-
+extern int OEMFont_GetSystemFont(AEEFont nFont, IFont **ppif);
 static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif)
 {
+#ifndef FEATURE_BREW_FONTS
+    switch (cls) {
+    case AEECLSID_FONTSYSNORMAL:
+        return OEMFont_GetSystemFont( AEE_FONT_NORMAL, (IFont **)ppif);
+
+    case AEECLSID_FONTSYSBOLD:
+        return OEMFont_GetSystemFont( AEE_FONT_BOLD, (IFont **)ppif);
+
+    case AEECLSID_FONTSYSLARGE:
+        return OEMFont_GetSystemFont( AEE_FONT_LARGE, (IFont **)ppif);
+        
+    default:
+        return ECLASSNOTSUPPORT;
+    }
+#else
    switch (cls) {
    case AEECLSID_FONTSYSNORMAL:
       return ISHELL_CreateInstance(piShell, AEECLSID_FONT_BASIC11,
@@ -797,6 +812,7 @@ static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif)
    default:
       return ECLASSNOTSUPPORT;
    }
+#endif
 }
 
 
