@@ -51,9 +51,9 @@
 #if defined(FEATURE_DISP_176X220)
     #define BOTTOMBAR_HEIGHT        22
     #define TITLEBAR_HEIGHT         30
-    #define MENUITEM_HEIGHT           22
-    #define SCROLLBAR_WIDTH          5
-    #define STATUSBAR_HEIGHT         14
+    #define MENUITEM_HEIGHT         22
+    #define SCROLLBAR_WIDTH         5
+    #define STATUSBAR_HEIGHT        14
 #elif defined(FEATURE_DISP_128X128)
 	#define BOTTOMBAR_HEIGHT        16
     #define TITLEBAR_HEIGHT         16
@@ -61,11 +61,11 @@
     #define SCROLLBAR_WIDTH          5
     #define STATUSBAR_HEIGHT         16
 #else
-    #define BOTTOMBAR_HEIGHT        18
-    #define TITLEBAR_HEIGHT            18
-    #define MENUITEM_HEIGHT           18
-    #define SCROLLBAR_WIDTH          5
-    #define STATUSBAR_HEIGHT         14
+    #define BOTTOMBAR_HEIGHT        16
+    #define TITLEBAR_HEIGHT         16
+    #define MENUITEM_HEIGHT         16
+    #define SCROLLBAR_WIDTH         5
+    #define STATUSBAR_HEIGHT        16
 #endif
 
 #define APPSCOMMON_BG_COLOR       (RGB_BLACK)
