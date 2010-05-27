@@ -103,7 +103,9 @@ extern const AEEConstFile *  gpODMAppsConstFiles[];
 static const AEEConstFile *  gpOEMConstFiles[] = {
 #if   !defined(_AEEWIN)   
 #ifndef FEATURE_MANGO_BREW
+#ifdef FEATURE_APP_MANAGER
                                                             &gBREWAPPMGR_MIF,
+#endif
 #endif
 #if defined(AEE_SIMULATOR)
                                                             &gAPPMGR_BAR,

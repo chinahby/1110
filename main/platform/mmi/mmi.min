@@ -78,16 +78,17 @@ include $(TETRIS)/tetris.min
 
 #Apps
 include $(EXTRAMENU)/extramenu.min
+ifneq ($(USES_LOW),yes)
 include $(OEMEXTFOR3PART)/OEMExtFor3Part.min
 include $(EDITAPPLET)/EditApplet.min
 include $(EDITEXTENTSION)/EditExtension.min
-
+endif
 ifeq ($(MMI_ADD_WAPBROWSER),yes)
 include $(WAPBROWSER)/WapBrowser.min
 endif
-
+ifneq ($(USES_LOW),yes)
 include $(BREW_APPMGR)/BREWAppMgr.min
-
+endif
 ifeq ($(MMI_ADD_ESURFING),yes)
 include $(ESURFING)/Esurfing.min
 include $(CUSTSERVICE)/custservice.min
