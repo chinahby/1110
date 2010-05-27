@@ -5758,7 +5758,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     }
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
-#ifdef FEATURE_DISP_176X220
+#if defined(FEATURE_DISP_176X220)
     SETAEERECT(&rc, 
                1,
                20,
@@ -5769,17 +5769,28 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                160,//40, 
                130, 
                pMe->m_nNormalFontHeight);
+#elif defined(FEATURE_DISP_128X128)
+	SETAEERECT(&rc, 
+               1,
+               20,
+               pMe->m_rc.dx-100, 
+               pMe->m_nNormalFontHeight);
+    SETAEERECT(&rc_week, 
+               15,//1,
+               68,//160,//40, 
+               (pMe->m_rc.dx-30),//130, 
+               pMe->m_nNormalFontHeight);
 #else
-SETAEERECT(&rc, 
-           1,
-           15, 
-           pMe->m_rc.dx-2, 
-           pMe->m_nNormalFontHeight);
-SETAEERECT(&rc_week, 
-           (pMe->m_rc.dx-10)/2 ,
-           15, 
-           pMe->m_rc.dx-(pMe->m_rc.dx-10)/2, 
-           pMe->m_nNormalFontHeight);
+	SETAEERECT(&rc, 
+	           1,
+	           15, 
+	           pMe->m_rc.dx-2, 
+	           pMe->m_nNormalFontHeight);
+	SETAEERECT(&rc_week, 
+	           (pMe->m_rc.dx-10)/2 ,
+	           15, 
+	           pMe->m_rc.dx-(pMe->m_rc.dx-10)/2, 
+	           pMe->m_nNormalFontHeight);
 #endif //FEATURE_DISP_176X220
 #else
     SETAEERECT(&rc, 
@@ -5829,7 +5840,7 @@ SETAEERECT(&rc_week,
     {
         WSPRINTF(wszDate, sizeof(wszDate), wFormat, jDate.wHour, jDate.wMinute);
     }
-//    IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test               
+	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test               
     // Display the string of date or time or weekday
 	/*wlh 测试临时屏蔽
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -5843,7 +5854,7 @@ SETAEERECT(&rc_week,
                               | IDF_TEXT_TRANSPARENT);
 							  */
         
- //   IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test  
+ 	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test  
     // 格式化日期字符串并绘制
     wszDate[0] = (AECHAR)'\0';
     wFormat[0] = (AECHAR)'\0';
@@ -5856,7 +5867,9 @@ SETAEERECT(&rc_week,
         switch(bTFmt)
         {
             case OEMNV_DATEFORM_DMY:
-#ifdef FEATURE_DISP_176X220
+#if defined(FEATURE_DISP_176X220)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -5865,7 +5878,9 @@ SETAEERECT(&rc_week,
                 break;
                 
             case OEMNV_DATEFORM_MDY:
-#ifdef FEATURE_DISP_176X220                
+#if defined(FEATURE_DISP_176X220)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -5875,7 +5890,9 @@ SETAEERECT(&rc_week,
                 
             default:
             case OEMNV_DATEFORM_YMD:
-#ifdef FEATURE_DISP_176X220                
+#if defined(FEATURE_DISP_176X220)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -5883,7 +5900,17 @@ SETAEERECT(&rc_week,
                 WSPRINTF(wszDate, sizeof(wszDate), wFormat,  jDate.wYear, jDate.wMonth,jDate.wDay);
                 break;
         }
-#ifdef FEATURE_DISP_176X220          
+#if defined(FEATURE_DISP_176X220)
+		DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_week, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_LEFT
+                                  | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_128X128)
         DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -5914,7 +5941,7 @@ SETAEERECT(&rc_week,
                                 sizeof(wFormat));
 
     WSPRINTF(wszDate, sizeof(wszDate), wFormat,jDate.wYear, jDate.wDay, jDate.wMonth);
-#ifdef FEATURE_DISP_176X220
+#if defined(FEATURE_DISP_176X220)
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -5924,6 +5951,16 @@ SETAEERECT(&rc_week,
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);  
+#elif defined(FEATURE_DISP_128X128)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_week, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
 #else
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
@@ -5950,6 +5987,9 @@ SETAEERECT(&rc_week,
                                 sizeof(wszDate));
     
     wszDate[3] = (AECHAR)'\0';
+    //wszDate[0] = (AECHAR)'0';
+    //wszDate[1] = (AECHAR)'1';
+    //wszDate[2] = (AECHAR)'2';
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -5957,7 +5997,9 @@ SETAEERECT(&rc_week,
                               wszDate, -1,
                               0, 0, &rc_week, 
                               IDF_ALIGN_MIDDLE
-#ifdef FEATURE_DISP_176X220                              
+#if defined(FEATURE_DISP_176X220)
+							  | IDF_ALIGN_RIGHT
+#elif defined(FEATURE_DISP_128X128)
                               | IDF_ALIGN_RIGHT
 #else
                               | IDF_ALIGN_LEFT
