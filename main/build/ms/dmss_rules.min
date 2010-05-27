@@ -322,9 +322,9 @@ CONSTFILE_FLAGS 		= $(subst FIXED,-f,$(subst ., ,$(subst FLAGS:, , $(CONSTFILE_F
 CONSTFILE_OBJS 			= $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o))
 CONSTFILE_BAR_FSLOC 	= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $(<:%.brx=%.bar))|%, $(CONSTFILE_FILES)))))
 CONSTFILE_BAR  			= $(filter %.bar, $(CONSTFILE_FILENAMES))
-CONSTFILE_BAR_SRC 		= $(addsuffix .c, $(CONSTFILE_BAR))
+CONSTFILE_BAR_SRC 		= $(addprefix $(TARGETDIR)/, $(addsuffix .c, $(CONSTFILE_BAR)))
 CONSTFILE_BIN  			= $(filter-out %.bar, $(CONSTFILE_FILENAMES))
-CONSTFILE_BIN_SRC 		= $(addsuffix .c, $(CONSTFILE_BIN))
+CONSTFILE_BIN_SRC 		= $(addprefix $(TARGETDIR)/, $(addsuffix .c, $(CONSTFILE_BIN)))
 
 $(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES)
 	@echo ------------------------------------------------------------------------
@@ -336,13 +336,13 @@ $(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES)
 	
 OBJECTS += $(CONSTFILE_OBJS)
 
-$(CONSTFILE_BIN_SRC) : %.c: %
+$(CONSTFILE_BIN_SRC) : $(TARGETDIR)/%.c: %
 	@echo ------------------------------------------------------------------------
 	@echo Creating C File $@
 	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$<) -d$(CONSTFILE_FSLOC) $(CONSTFILE_FLAGS) -o$(subst /,\\,$(TARGETDIR)/$@)
 	@echo ------------------------------------------------------------------------
 
-$(CONSTFILE_BAR_SRC) : %.bar.c: %.brx
+$(CONSTFILE_BAR_SRC) : $(TARGETDIR)/%.bar.c: %.brx
 	@echo ------------------------------------------------------------------------
 	@echo Build Resource $(<:%.brx=%.bar)
 	@$(BREWRC) -h $(<:%.brx=%.brh) -o $(<:%.brx=%.bar) $<
@@ -351,9 +351,12 @@ $(CONSTFILE_BAR_SRC) : %.bar.c: %.brx
 	@echo Creating C File $@
 	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$(<:%.brx=%.bar)) -d$(CONSTFILE_BAR_FSLOC) -o$(subst /,\\,$(TARGETDIR)/$@)
 	@echo ------------------------------------------------------------------------
-
+	
+$(CONSTFILE_OBJS) : $(TARGETDIR)/%.o : $(TARGETDIR)/%.c
+	$(c_compile)
+	
 .PHONY : mmires
-mmires: $(CONSTFILE_SOURCES) $(TARGETDIR)/OEMConstFiles_Dynamic.c
+mmires: $(CONSTFILE_BIN_SRC) $(CONSTFILE_BAR_SRC) $(TARGETDIR)/OEMConstFiles_Dynamic.c
 	@echo ------------------------------------------------------------------
 	@echo BREW RESOURCE BUILDER
 	@echo ------------------------------------------------------------------
