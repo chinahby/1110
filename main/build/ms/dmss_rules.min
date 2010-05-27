@@ -339,7 +339,7 @@ OBJECTS += $(CONSTFILE_OBJS)
 $(CONSTFILE_BIN_SRC) : $(TARGETDIR)/%.c: %
 	@echo ------------------------------------------------------------------------
 	@echo Creating C File $@
-	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$<) -d$(CONSTFILE_FSLOC) $(CONSTFILE_FLAGS) -o$(subst /,\\,$(TARGETDIR)/$@)
+	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$<) -d$(CONSTFILE_FSLOC) $(CONSTFILE_FLAGS) -o$(subst /,\\,$@)
 	@echo ------------------------------------------------------------------------
 
 $(CONSTFILE_BAR_SRC) : $(TARGETDIR)/%.bar.c: %.brx
@@ -349,7 +349,7 @@ $(CONSTFILE_BAR_SRC) : $(TARGETDIR)/%.bar.c: %.brx
 	@echo ------------------------------------------------------------------------
 	@echo ------------------------------------------------------------------------
 	@echo Creating C File $@
-	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$(<:%.brx=%.bar)) -d$(CONSTFILE_BAR_FSLOC) -o$(subst /,\\,$(TARGETDIR)/$@)
+	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$(<:%.brx=%.bar)) -d$(CONSTFILE_BAR_FSLOC) -o$(subst /,\\,$@)
 	@echo ------------------------------------------------------------------------
 	
 $(CONSTFILE_OBJS) : $(TARGETDIR)/%.o : $(TARGETDIR)/%.c
