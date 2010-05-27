@@ -218,7 +218,7 @@ Copyright (c) 2001-2009 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_QHSUSB 
 #define FEATURE_QHSUSB_DEAD_BATTERY_CHARGING 
 #define FEATURE_XO 
-
+#define FEATURE_DISP_128X128
 #ifdef CUST_EDITION
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 //#define FEATURE_WMS_APP
