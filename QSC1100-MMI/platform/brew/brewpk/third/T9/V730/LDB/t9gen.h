@@ -26,7 +26,7 @@
 
 #ifdef WIN32  //add by ydc
 #define FEATURE_LANG_ENGLISH
-#define FEATURE_LANG_CHINESE
+//#define FEATURE_LANG_CHINESE
 //#define FEATURE_LANG_TCHINESE
 #endif
 
