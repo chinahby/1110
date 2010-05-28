@@ -122,6 +122,7 @@ int Rendering_Update(DisplayDev eDev, int16 x, int16 y, int16 dx, int16 dy)
 
 int Rendering_UpdateEx(void)
 {
+/*
 	Rendering_PushScreen(DISPLAYDEV_MAIN);
 	if(!Rendering_IsPlaying(DISPLAYDEV_MAIN))
 	{
@@ -136,7 +137,7 @@ int Rendering_UpdateEx(void)
 		return 0;
 	}
 
-	return 1;
+	return 1;*/
 }
 int Rendering_PushScreen(DisplayDev eDev)
 {
