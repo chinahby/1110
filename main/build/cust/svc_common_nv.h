@@ -13,7 +13,7 @@
 
 //If any change in this file, please increase the MACRO AUTO_NV_MIN_VERSION
 //It must be less than AUTO_NV_MODIFY_TIME_FOR_CUSTOMER
-#define AUTO_NV_MIN_VERSION                 0x1
+#define AUTO_NV_MIN_VERSION                 0x2
 
 #if (AUTO_NV_MIN_VERSION >= AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)
 #error AUTO_NV_MIN_VERSION msut be less than AUTO_NV_MODIFY_TIME_FOR_CUSTOMER
