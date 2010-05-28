@@ -196,17 +196,7 @@ static char* ICON_ANI[] =
     ICON7_ANI,
     ICON8_ANI,
     ICON9_ANI,
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
-    ICON10_ANI,
-#else
-#ifdef FEATURE_APP_NUMBERMANAGER
-    ICON13_ANI,
-#else    
-    ICON10_ANI,
-#endif
-#endif
-    ICON11_ANI,
-    ICON12_ANI,
+
 };
 //wlh 20090410 add  start 移动效果
 static char* ICON_ANI_1[] =
@@ -220,17 +210,7 @@ static char* ICON_ANI_1[] =
     ICON7_ANI_1,
     ICON8_ANI_1,
     ICON9_ANI_1,
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
-    ICON10_ANI,
-#else
-#ifdef FEATURE_APP_NUMBERMANAGER
-    ICON13_ANI_1,
-#else    
-    ICON10_ANI_1,
-#endif
-#endif
-    ICON11_ANI_1,
-    ICON12_ANI_1,
+
 };
 static char* ICON_ANI_2[] =
 {
@@ -243,17 +223,7 @@ static char* ICON_ANI_2[] =
     ICON7_ANI_2,
     ICON8_ANI_2,
     ICON9_ANI_2,
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
-    ICON10_ANI,
-#else
-#ifdef FEATURE_APP_NUMBERMANAGER
-    ICON13_ANI_2,
-#else    
-    ICON10_ANI_2,
-#endif
-#endif
-    ICON11_ANI_2,
-    ICON12_ANI_2,
+
 };
 //wlh 20090410 add  end 移动效果
 /*=============================================================================
@@ -541,20 +511,18 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	pMe->m_pImageTurn[7] = ISHELL_LoadImage(pMe->m_pShell,ICON8_ANI_1);
 	pMe->m_pImageTurn[8] = ISHELL_LoadImage(pMe->m_pShell,ICON9_ANI_1);
 	pMe->m_pImageTurn[9] = ISHELL_LoadImage(pMe->m_pShell,ICON10_ANI_1);
-	pMe->m_pImageTurn[10] = ISHELL_LoadImage(pMe->m_pShell,ICON11_ANI_1);
-	pMe->m_pImageTurn[11] = ISHELL_LoadImage(pMe->m_pShell,ICON13_ANI_1);
-	pMe->m_pImageTurn[12] = ISHELL_LoadImage(pMe->m_pShell,ICON1_ANI_2);
-	pMe->m_pImageTurn[13] = ISHELL_LoadImage(pMe->m_pShell,ICON2_ANI_2);
-	pMe->m_pImageTurn[14] = ISHELL_LoadImage(pMe->m_pShell,ICON3_ANI_2);
-	pMe->m_pImageTurn[15] = ISHELL_LoadImage(pMe->m_pShell,ICON4_ANI_2);
-	pMe->m_pImageTurn[16] = ISHELL_LoadImage(pMe->m_pShell,ICON5_ANI_2);
-	pMe->m_pImageTurn[17] = ISHELL_LoadImage(pMe->m_pShell,ICON6_ANI_2);
-	pMe->m_pImageTurn[18] = ISHELL_LoadImage(pMe->m_pShell,ICON7_ANI_2);
-	pMe->m_pImageTurn[19] = ISHELL_LoadImage(pMe->m_pShell,ICON8_ANI_2);
-	pMe->m_pImageTurn[20] = ISHELL_LoadImage(pMe->m_pShell,ICON9_ANI_2);
-	pMe->m_pImageTurn[21] = ISHELL_LoadImage(pMe->m_pShell,ICON10_ANI_2);
-	pMe->m_pImageTurn[22] = ISHELL_LoadImage(pMe->m_pShell,ICON11_ANI_2);
-	pMe->m_pImageTurn[23] = ISHELL_LoadImage(pMe->m_pShell,ICON13_ANI_2);
+
+	pMe->m_pImageTurn[10] = ISHELL_LoadImage(pMe->m_pShell,ICON1_ANI_2);
+	pMe->m_pImageTurn[11] = ISHELL_LoadImage(pMe->m_pShell,ICON2_ANI_2);
+	pMe->m_pImageTurn[12] = ISHELL_LoadImage(pMe->m_pShell,ICON3_ANI_2);
+	pMe->m_pImageTurn[13] = ISHELL_LoadImage(pMe->m_pShell,ICON4_ANI_2);
+	pMe->m_pImageTurn[14] = ISHELL_LoadImage(pMe->m_pShell,ICON5_ANI_2);
+	pMe->m_pImageTurn[15] = ISHELL_LoadImage(pMe->m_pShell,ICON6_ANI_2);
+	pMe->m_pImageTurn[16] = ISHELL_LoadImage(pMe->m_pShell,ICON7_ANI_2);
+	pMe->m_pImageTurn[17] = ISHELL_LoadImage(pMe->m_pShell,ICON8_ANI_2);
+	pMe->m_pImageTurn[18] = ISHELL_LoadImage(pMe->m_pShell,ICON9_ANI_2);
+	pMe->m_pImageTurn[19] = ISHELL_LoadImage(pMe->m_pShell,ICON10_ANI_2);
+
 
 	for (i = 0; i < MAX_TURN_NUM; i ++)
 	{
@@ -1603,7 +1571,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     pMe->m_pImageBg = NULL;
                 }
 
-                for(i=0;i<12;i++)
+                for(i=0;i<MAX_MATRIX_ITEMS;i++)
                 {
                     if(pMe->m_pImageIcon[i] != NULL)
                     {
@@ -1813,14 +1781,14 @@ static void calculateScreenParameters(MainMenu *pMe)
     
     if(pMe->m_rc.dy > TITLEBAR_HEIGHT + imageInfoIcon.cy * MAX_MATRIX_ROWS)
     {
-        iconSpaceVertical   = (pMe->m_rc.dy - TITLEBAR_HEIGHT - imageInfoIcon.cy * MAX_MATRIX_ROWS) / (MAX_MATRIX_ROWS+1);
+        iconSpaceVertical   = (pMe->m_rc.dy - TITLEBAR_HEIGHT*2 - imageInfoIcon.cy * MAX_MATRIX_ROWS) / (MAX_MATRIX_ROWS+1);
     }
     else
     {
         iconSpaceVertical = 0;
     }
     //chengxiao modify end 2009.04.02
-    
+    DBGPRINTF("pMe->m_rc.dy:: %d,,,,iconSpaceHorizontal::::%d,,iconSpaceVertical:::::%d",pMe->m_rc.dy,iconSpaceHorizontal,iconSpaceVertical);
     for( i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
         pMe->m_Icondefault_Pt[i].x = iconSpaceHorizontal +
@@ -1833,6 +1801,8 @@ static void calculateScreenParameters(MainMenu *pMe)
         pMe->m_IconFocus_Pt[i].x = pMe->m_Icondefault_Pt[i].x - (ICON_ANIMATED_WIDTH - imageInfoIcon.cx)/2;
 
         pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
+        DBGPRINTF("pMe->m_IconFocus_Pt[%d].x:: %d",i,pMe->m_IconFocus_Pt[i].x);
+        DBGPRINTF("pMe->m_IconFocus_Pt[%d].y:: %d",i,pMe->m_IconFocus_Pt[i].y);
         //end added
     }
 }
@@ -1886,11 +1856,10 @@ static void DrawMatrix(MainMenu *pMe)
     {
         if (pMe->m_pImageIcon[i] == NULL)
         {
-            pMe->m_pImageIcon[i] = ISHELL_LoadResImage(pMe->m_pShell,
-                                                    MAINMENU_RES_FILE_IMAGE,
-                                                    IDI_MAIN_MENU_LARGE_ICON_1 + i);
+            pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI[i]);
         }
-
+/*
 #ifdef FEATURE_APP_NUMBERMANAGER
         if(i == 9)
         {
@@ -1929,7 +1898,7 @@ static void DrawMatrix(MainMenu *pMe)
         {
             MainMenu_DraImage(pMe,i,IDI_MAIN_MENU_LARGE_ICON_8);
         }
-#endif
+#endif*/
         if (pMe->m_pImageIcon[i] != NULL)
         {
             IIMAGE_Draw(pMe->m_pImageIcon[i],
@@ -1956,7 +1925,7 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
     if(pMe->m_pAnimate == NULL)
     {
         nFrame = 0;
-        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[theFocus]);
+        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[theFocus]);
     }
 
     if(nFrame < (ICON_ANIMATED_MOVE_FRAME - 1) && pMe->m_pAnimate != NULL && (theFocus != thePrevFocus))
@@ -2035,54 +2004,61 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
             
         titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
         STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
-        titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
+        //titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
 
-#ifdef FEATURE_APP_NUMBERMANAGER
-        if(theFocus == 9)
+
+        if(theFocus == 0)
         {
-            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_13;
+            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_1;
         }
-#endif
 
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
-        if(theFocus == 3)
+        if(theFocus == 1)
+        {
+            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_3;
+        }
+        
+        if(theFocus == 2)
         {
             titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_5;
         }
 
+        if(theFocus == 3)
+        {
+            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_6;
+        }
+
         if(theFocus == 4)
         {
-            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_ESURFING;
+            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_7;
         }
 
         if(theFocus == 5)
         {
-            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_13;
-        }
-
+            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_8;
+        }  
+        if(theFocus == 6)
+        {
+            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_CUSTSERVICE;
+        } 
         if(theFocus == 7)
         {
-            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_6;
-        }  
-        
-        if(theFocus == 9)
+            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_CUSTSERVICE;
+        } 
+        if(theFocus == 8)
         {
             titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_CUSTSERVICE;
         } 
 
-        if(theFocus == 11)
-        {
-            titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_8;
-        }
         
-#endif /*FEATURE_CARRIER_CHINA_TELCOM*/
+        
+
 
         DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
     }
     
     if(pMe->m_pAnimate == NULL)
     {
-        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[theFocus]);
+        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[theFocus]);
     }
 /*wlh 20090410 临时屏蔽
     if( pMe->m_pAnimate != NULL)
@@ -2197,7 +2173,7 @@ static void DrawFocusIcon(MainMenu *pMe)
     
     if(pMe->m_pAnimate == NULL)
     {
-        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[theFocus]);
+        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[theFocus]);
     }
 /*
     if( pMe->m_pAnimate != NULL)
@@ -2253,14 +2229,8 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 {
     int theFocus = pMe->m_nRow * 3 + pMe->m_nColumn;
     AEERect rect;
-	
-//#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
-	//IImage      *m_pImageTurn[MAX_TURN_NUM];
 	int i;
 	AEERect turnrect;
-	//int rowflag;//0 上面行，1当前行，2下面行
-	//int columnflag;//0左边列，1当前列，2右边列
-	//int startx,starty;//实际滚动图片相对于50×50块的偏移
 	int lengthX,lengthY;//下一个宫格的距离
 	int lengthXX,lengthYY;//下一个宫格的距离,绝对值
 	int turnnum;//当前要滚动多少次
@@ -2290,33 +2260,6 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
  
 	  	DrawMatrix(pMe);
 		DrawTitleBar(pMe->m_pDisplay, &titleBarParms);	//wlh add 0404
-	/*
-		if(row > pMe->m_nRow)
-		{
-			starty = 7;//(50-36)/2
-		}			
-		if(row == pMe->m_nRow)
-		{
-			starty = 7;//(50-36)/2
-		}
-		if(row < pMe->m_nRow)
-		{
-			starty = -7;//(50-36)/2
-		}
-		lengthY = ICON_ANIMATED_HEIGHT * (row - pMe->m_nRow);
-	
-		if(column > pMe->m_nColumn)
-		{
-			startx = 8 + 4;//(50 - 34)/2 
-		}			
-		if(column == pMe->m_nColumn)
-		{
-			startx = 8;//(50 - 34)/2 
-		}			
-		if(column < pMe->m_nColumn)
-		{
-			startx = 8 - 4;//(50 - 34)/2 
-		}*/
 		lengthX = ICON_ANIMATED_WIDTH * (column - pMe->m_nColumn);
 	    lengthY = ICON_ANIMATED_HEIGHT* (row - pMe->m_nRow);
 	
@@ -2353,14 +2296,10 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 
 		turnlengthx = lengthXX/5;
 		turnlengthy = lengthYY/5;
-		//m_pImageTurns[0] = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_1[theFocus]);
-		//m_pImageTurns[1] = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_2[theFocus]);
-		//m_pImageTurns[2] = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_2[row * 3 + column]);
-		//m_pImageTurns[3] = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_1[row * 3 + column]);
 
 		m_pImageTurns[0] = pMe->m_pImageTurn[theFocus];
-		m_pImageTurns[1] = pMe->m_pImageTurn[theFocus + 12];
-		m_pImageTurns[2] = pMe->m_pImageTurn[row * 3 + column + 12];
+		m_pImageTurns[1] = pMe->m_pImageTurn[theFocus + 9];
+		m_pImageTurns[2] = pMe->m_pImageTurn[row * 3 + column + 9];
 		m_pImageTurns[3] = pMe->m_pImageTurn[row * 3 + column];
 
 		turnnum = 4;
@@ -2369,11 +2308,6 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 		
 		for (i = 0; i < turnnum; i ++)
 		{
-			//if(i>4)
-			//	IIMAGE_Draw(pMe->m_pImageTurn[i%5], turnrect.x, turnrect.y);
-			//else
-			//	IIMAGE_Draw(pMe->m_pImageTurn[i], turnrect.x, turnrect.y);
-			
 			if((i == 0) || (i == 3))
 			{
 				turnx = 8;
@@ -2394,7 +2328,6 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 					x = x + turnlengthx*(i+1) + turnx;
 					if(lengthY != 0)
 					{
-						//turnrect.y = turnrect.y + lengthY/turnnum;
 						turnlengthy = lengthY/4;
 						
 					}
@@ -2405,7 +2338,6 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 					x = x - turnlengthx*(i+1) - turnx;
 					if(lengthY != 0)
 					{
-						//turnrect.y = turnrect.y + lengthY/turnnum;
 						turnlengthy = lengthY/4;
 					}
 					y = y + turnlengthy*(i+1) + turny;
@@ -2440,18 +2372,7 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 			DrawMatrix(pMe);
 			DrawTitleBar(pMe->m_pDisplay, &titleBarParms);	//wlh add 0404
 		}
-		//DrawMatrix(pMe);
-		//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-		//for (i = 0; i < MAX_TURN_NUM; i ++)
-		//{
-		//	IImage_Release(m_pImageTurn[i]);
-		//}
-		//for (i = 0; i < turnnum; i ++)
-		//{
-		//	IImage_Release(m_pImageTurns[i]);
-		//}
-	}
-//#endif//FEATURE_LCD_TOUCH_ENABLE
+    }
 
     ISHELL_CancelTimer (pMe->m_pShell, NULL, ( void*)&pMe);
     
@@ -3160,7 +3081,7 @@ static boolean  MainMenu_MsgBoxHandler(MainMenu *pMe, AEEEvent eCode, uint16 wPa
             switch( wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_GAME)
+                    //CLOSE_DIALOG(DLGRET_GAME)
                     break;
                 case AVK_INFO:
                 case AVK_SELECT:
@@ -3205,6 +3126,7 @@ PARAMETERS:  如果APPLET 有变动，只需改动次函数
 =============================================================================*/
 static boolean StartApplet(MainMenu *pMe, int i)
 {
+    int Result = FALSE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 	if (pMe->m_pAnimate != NULL)
 	{
@@ -3212,7 +3134,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
 		pMe->m_pAnimate = NULL;
 	}
 #endif//FEATURE_LCD_TOUCH_ENABLE
-
+   DBGPRINTF("StartApplet:::::%d",i);
     switch(i)
     {
         case 0:
@@ -3220,104 +3142,40 @@ static boolean StartApplet(MainMenu *pMe, int i)
             break;
             
         case 1:
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_EXTRAMENU);
             break;
     
         case 2:
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_EXTRAMENU);
+            {
+                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT);
+            }
             break;
     
         case 3:
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
-            {
-                IContactApp *ca = NULL;
-                if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_APP_CONTACT, (void**)&ca))
-                {
-                    return FALSE;
-                }
-                else
-                {
-                    ICONTAPP_MainMenu(ca);
-                    IContactApp_Release(ca);
-                }
-            }            
-#else
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
-#endif
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
             break;
     
         case 4:
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-            {
-                IContactApp *ca = NULL;
-                if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_APP_CONTACT, (void**)&ca))
-                {
-                    return FALSE;
-                }
-                else
-                {
-                    ICONTAPP_MainMenu(ca);
-                    IContactApp_Release(ca);
-                }
-            }
-#else
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ESURFING);
-#endif
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
             break;
     
         case 5:
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-#else
-            #ifdef FEATURE_APP_NUMBERMANAGER
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NUMBERMANAGER);   
-            #endif
-#endif
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;
     
         case 6:
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
-            break;
-    
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
+            break;    
         case 7:
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
-#else
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-#endif
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;
     
         case 8:
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SPORTSAPP);
-            break;
-    
-        case 9:
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-#ifdef FEATURE_APP_NUMBERMANAGER
-            // for 号码百事通
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NUMBERMANAGER);            
-#else
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SOUNDMENU);
-#endif
-#else
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CUSTSERVICE);
-#endif
-            break;
-    
-        case 10:
-            CLOSE_DIALOG(DLGRET_MEDIA);
-            break;
-    
-        case 11:
-            //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-            CLOSE_DIALOG(DLGRET_DATA);
-#else
-            ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
-#endif
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
             break;
 
     }
+    DBGPRINTF("Result   :::::%d",Result);
     setCursor(pMe, i/MAX_MATRIX_COLS, i%MAX_MATRIX_COLS);
     return TRUE;
 }

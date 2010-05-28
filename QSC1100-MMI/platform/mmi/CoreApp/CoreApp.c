@@ -174,7 +174,7 @@ static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe);
 #ifdef FEATURE_APP_READER   
 extern int Rendering_UpdateEx(void);//wlh 20090409 add
 #endif  /*FEATURE_APP_READER*/
-static void CoreAppLoadTimepImage(CCoreApp *pMe);   //add by ydc
+//static void CoreAppLoadTimepImage(CCoreApp *pMe);   //add by ydc
 /*==============================================================================
 
                                  函数定义
@@ -468,7 +468,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 	pMe->m_dial_rc.dx = 55;//wlh 20090427 add 时间表盘
 	pMe->m_dial_rc.dy = 24;//wlh 20090427 add 时间表盘
 	////modi ydc 20090408
-	
+/*
 	pMe->m_dial_Image = ISHELL_LoadResImage( AEE_GetShell(),
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDI_DIAL
@@ -476,7 +476,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 	pMe->m_time_Image = ISHELL_LoadResImage( AEE_GetShell(),
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDI_TIMEBACK
-                           );
+                           );*/
 //wlh 20090427 add end 时间表盘
 #ifndef WIN32
     BrewUI_EnableKeys(TRUE);
@@ -510,7 +510,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     g_pCoreApp = pMe;
 
 	//wlh 20090522 add start
-	
+	/*
 	pMe->m_Idle_Icon = NULL;
 	pMe->m_Idle_Icon = MALLOC(sizeof(IdleIcon));
 	if(pMe->m_Idle_Icon)
@@ -756,7 +756,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 
 
 	}
-	
+	*/
 	//wlh 20090522 add end
 
     return TRUE;
@@ -1011,6 +1011,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
         case EVT_GSENSOR_SHAKE:
         case EVT_KEY:
+            
+            DBGPRINTF("%d %d %d CoreApp_HandleEvent",eCode,wParam,dwParam);
 #if MIN_BREW_VERSION(3,0)
             // do not want to handle au
             if ((dwParam & KB_AUTOREPEAT) != 0)
@@ -2758,8 +2760,10 @@ static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe)
 
 }
 //add by ydc
+/*
 static void CoreAppLoadTimepImage(CCoreApp *pMe)
 {
+
 	pMe->m_dial_hour_image[2] = ISHELL_LoadResImage(AEE_GetShell(),AEE_APPSCOMMONRES_IMAGESFILE,IDI_HOUR_12);
 
 	pMe->m_dial_minue_image[2] = ISHELL_LoadResImage(AEE_GetShell(),AEE_APPSCOMMONRES_IMAGESFILE,IDI_MINUTE_12);
@@ -2991,5 +2995,5 @@ static void CoreAppLoadTimepImage(CCoreApp *pMe)
 	pMe->m_dial_hour_image[59] = ISHELL_LoadResImage(AEE_GetShell(),AEE_APPSCOMMONRES_IMAGESFILE,IDI_HOUR_354);
 
 	pMe->m_dial_minue_image[59] = ISHELL_LoadResImage(AEE_GetShell(),AEE_APPSCOMMONRES_IMAGESFILE,IDI_MINUTE_354);
-
 }
+*/

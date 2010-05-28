@@ -152,26 +152,7 @@
 #define MINUTE_W 
 #define MINUTE_H
 
-//add by ydc 090522
-//Ω«∂»sin÷µ
-#define SIN_0  0.000
-#define SIN_6  0.105
-#define SIN_12 0.208
-#define SIN_18 0.309
-#define SIN_24 0.407
-#define SIN_30 0.500
-#define SIN_36 0.588
-#define SIN_42 0.669
-#define SIN_48 0.743
-#define SIN_54 0.809
-#define SIN_60 0.866
-#define SIN_66 0.914
-#define SIN_72 0.951
-#define SIN_78 0.978
-#define SIN_84 0.996
-#define SIN_90 1.000
 
-//wlh 20090427 add end
 
 #ifdef FEATURE_SPN_FROM_BSMCCMNC
 #define OPERATOR_NAME_MAX_SIZE   32

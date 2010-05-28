@@ -2824,6 +2824,7 @@ static void CoreApp_UpdateIcon(CCoreApp    *pMe)
 备注:
     刷新显示操作由调用者根据需要执行相关操作。
 ==============================================================================*/
+#if 0
 static void CoreApp_UpdateTimeDial(CCoreApp    *pMe)
 {
 	JulianType  jDate;
@@ -3623,6 +3624,7 @@ static void CoreApp_UpdateTimeDial(CCoreApp    *pMe)
 	}
        
 } // CoreApp_UpdateTimeDial
+#endif
 //wlh 20090427 add end
 /*==============================================================================
 函数:
@@ -3949,14 +3951,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_DOWN:
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH
                 {
-#if defined( FEATURE_FM_RADIO)
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
-#else
+//#if defined( FEATURE_FM_RADIO)
+//                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+//#else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
-#endif
+//#endif
                 }
 //                    return CoreApp_LaunchApplet(pMe, AEECLSID_APPMANAGER);
-#else //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
+ //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
                 {
                     IMainMenu *pIMainMenu = NULL;
                     if (SUCCESS == ISHELL_CreateInstance(pMe->a.m_pIShell,
@@ -3971,8 +3973,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         pIMainMenu = NULL;
                     }                        
                 }
-                return TRUE;  
+#else
+               return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
+               return TRUE;  
+
 #endif  //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
+    
                 case AVK_LEFT:
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH
                     {
@@ -3997,28 +4003,28 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 //#else
 //                    return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
 //#endif
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
                 }
 #endif //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
 				
                 case AVK_RIGHT:
 					//wlh 20090522 add start
-					if(pMe->m_Idle_Icon->m_b_show)
-					{
-						CoreApp_IconRight(pMe);
-						return TRUE;
-					}
-					else
+					//if(pMe->m_Idle_Icon->m_b_show)
+					//{
+					//	CoreApp_IconRight(pMe);
+					//	return TRUE;
+					//}
+					//else
 					//wlh 20090522 add end
 //#if defined FEATURE_SUPPORT_BT_APP
 //                    return CoreApp_LaunchApplet(pMe, AEECLSID_BTUIAPP);
 //#else
 					{
-						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);//
+						return CoreApp_LaunchApplet(pMe, AEECLSID_EXTRAMENU);//
 					}
 //#endif
                 case AVK_SELECT:
-                    return TRUE;//CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
 
                 case AVK_INFO:
 					/*
@@ -4042,6 +4048,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
 #endif //FEATURE_CARRIER_TFL                    
 */
+
 					if(pMe->m_Idle_Icon->m_b_show)
 					{
 						pMe->m_now_Num = -1;
@@ -4168,7 +4175,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
 
                 case AVK_SELECT:
-                    return   CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+                    return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
                  // 重拨
                 case AVK_SEND:
                     if (pMe->m_bAcquiredTime && !pMe->m_bemergencymode)
@@ -6044,15 +6051,15 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
         IIMAGE_Release(pBottomMask);
         pBottomMask = NULL;
 
-		IIMAGE_Draw(pBottomMaskleft, pMe->m_rc.x + 11, pMe->m_rc.dy - 38);
+		IIMAGE_Draw(pBottomMaskleft, pMe->m_rc.x + 5, pMe->m_rc.dy - 38);
         IIMAGE_Release(pBottomMaskleft);
         pBottomMaskleft = NULL;
 
-		IIMAGE_Draw(pBottomMaskcenter, pMe->m_rc.x + 11+36+11+1+11, pMe->m_rc.dy - 38);
+		IIMAGE_Draw(pBottomMaskcenter, pMe->m_rc.x + 5+36+5, pMe->m_rc.dy - 38);
         IIMAGE_Release(pBottomMaskcenter);
         pBottomMaskcenter = NULL;
 
-		IIMAGE_Draw(pBottomMaskright, pMe->m_rc.x + 11+36+11+1+11+36+11+1+11, pMe->m_rc.dy - 38);
+        IIMAGE_Draw(pBottomMaskright, pMe->m_rc.x + 5+36*2+5+5, pMe->m_rc.dy - 38);
         IIMAGE_Release(pBottomMaskright);
         pBottomMaskright = NULL;
     }
@@ -7158,7 +7165,7 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
 #endif //FEATURE_SPN_FROM_BSMCCMNC   
 #endif//WIN32
 }
-
+#if 0
 //根据角度取得sin値
 static void CoreApp_SetMintueImageID(CCoreApp *pMe,uint16 MINUTE_angle)
 {
@@ -7779,7 +7786,7 @@ static double CoreApp_sin(uint16 angle)
 	return sin_value;
 }
 
-
+#endif
 static void CoreApp_DrawMinuteHand(CCoreApp *pMe,uint16 Minute_angle)
 {/*
 	uint16 err;
