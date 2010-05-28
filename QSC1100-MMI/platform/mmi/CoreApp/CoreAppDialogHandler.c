@@ -2648,7 +2648,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
 }
 
-
+#if 0
 //wlh 20090522 add start
 /*==============================================================================
 º¯Êý:
@@ -2805,7 +2805,9 @@ static void CoreApp_UpdateIcon(CCoreApp    *pMe)
                        0,0L);
 		}
 	}
-} // CoreApp_UpdateIcon
+}
+#endif
+// CoreApp_UpdateIcon
 //wlh 20090522 add end
 //wlh 20090427 add start
 /*==============================================================================
@@ -4048,7 +4050,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
 #endif //FEATURE_CARRIER_TFL                    
 */
-
+#if 0
 					if(pMe->m_Idle_Icon->m_b_show)
 					{
 						pMe->m_now_Num = -1;
@@ -4082,10 +4084,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						return TRUE;
 					}
 					else
+                    #endif
 					{
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 					}
                 case AVK_CLR:
+                    #if 0
 #ifdef FEATURE_KEYGUARD
                     if(OEMKeyguard_IsEnabled())
                     {
@@ -4095,6 +4099,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         return TRUE;
                     }
 #endif /* FEATURE_KEYGUARD*/
+#endif
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 
                 default:
@@ -4204,6 +4209,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_9:
                 case AVK_STAR:
                 case AVK_POUND:
+                    #if 0   // for touch
 					if((pMe->m_Idle_Icon->m_b_show)  && (wParam == AVK_POUND))
 					{
 						pMe->m_Idle_Icon->m_b_show = FALSE;
@@ -4229,6 +4235,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						;
 					}
 					else
+                    #endif
                     {
                         ICallApp         *pCallApp = NULL;
                         if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
