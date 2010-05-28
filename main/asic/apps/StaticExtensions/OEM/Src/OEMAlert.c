@@ -133,7 +133,6 @@ when       who     what, where, why
 #ifndef WIN32
 #include "db.h"
 #include "voc.h"
-#include "vc0848.h"
 #endif
 #include "AEEShell.h"
 
