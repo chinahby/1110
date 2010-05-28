@@ -9,7 +9,7 @@ GENERAL DESCRIPTION:
   provide in order to support the BREW Address book
   interface on the RUIM
 
-        Copyright © 1999-2005 QUALCOMM Incorporated.
+        Copyright ?1999-2005 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -35,14 +35,22 @@ GENERAL DESCRIPTION:
 #include "rex.h"
 #include "uim.h"
 #include "nvruimi.h"
-
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+#include "err.h"
+#include "db.h"
+#endif
+#include "OEMNV.h"
+#include "Dstask.h"
 // External function prototypes.
 int AEEAddrBook_New(IShell *pIShell, AEECLSID ClsId, void **ppObj);
 
 // Local helper function prototypes.
 static void OEMRUIM_report (uim_rpt_type *report);
 static void OEMRUIM_send_uim_cmd_and_wait (uim_cmd_type *uim_cmd_ptr);
+#ifndef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 static uint16 OEMRUIM_phonebook_max_recs(void);
+#endif
+
 static uint16 UnusedCacheID(uint16 adn_max_rec);
 static int del_adn_rec(uint16 wRecID);
 static int read_adn_rec(byte *pBuf, uint16 wRecID,
@@ -50,6 +58,23 @@ static int read_adn_rec(byte *pBuf, uint16 wRecID,
                         AEE_DBRecInfo *dbRecInfo);
 static int write_adn_rec(const byte *pBuf, uint16 wRecID,
                          uint16 wRecSize);
+
+uint16  AT_OEMRUIMAddr_GetNumRecs(void);
+byte*   AT_RUIMRecordGetOne(word wpbID);
+byte*   AT_RUIMRecordGetOneName(word wpbID);
+uint16  AT_OEMRUIMAddr_RecordAdd(const AECHAR *szName,const AECHAR *szNumber);
+int     AT_OEMRUIMAddr_RecordDelete(uint16 wRecID);
+int     AT_write_adn_rec(const byte *pBuf, uint16 wRecID,uint16 wRecSize);
+int     AT_del_adn_rec(uint16 wRecID);
+int     AT_OEMRUIMAddr_RemoveAllRecs(void);
+int     AT_OEMRUIMAddr_RecordDelete(uint16 wRecID);
+int     AT_OEMRUIMAddr_RemoveAllRecs_UIM(void);
+void    AT_OEMRUIM_report (uim_rpt_type *report);
+uint16  AT_OEMRUIM_phonebook_max_recs(void);
+
+
+extern rex_tcb_type ds_tcb;
+
 
 /************************************************************************
  ** I N T E R F A C E   F U N C T I O N   D E F I N I T I O N S
@@ -66,7 +91,7 @@ extern rex_tcb_type ui_tcb;
 static uim_cmd_type   gUimCmd;
 static uim_rpt_type   gCallBack;
 static int            gAdnRecSize;
-static int            gAdnMaxRec;
+static int            gAdnMaxRec=0;
 
 OBJECT(COEMAddrBook)
 {
@@ -76,7 +101,7 @@ OBJECT(COEMAddrBook)
 };
 
 //Global Context for AddressBook.
-static boolean  gbRUIMAddrBookOpen = NULL;
+static boolean  gbRUIMAddrBookOpen = FALSE;
 
 //Number of address categories supported by this address book
 #define  OEM_ADDRESS_CATEGORY_COUNT    0
@@ -84,19 +109,15 @@ static boolean  gbRUIMAddrBookOpen = NULL;
 //Number of fields supported in the address book
 #define  OEM_ADDRESS_FIELDS_COUNT      2
 
-typedef struct _RUIMAddrBkCache   RUIMAddrBkCache;
-
-//Struct holding vital information that will be cached
-struct _RUIMAddrBkCache
-{
-   uint16             wRecID;      //ID of the Record
-   AECHAR             *szName;     //Name.  NULL terminated.
-   AECHAR             *szNumber;   //Phone number.  NULL term.
-   RUIMAddrBkCache*   pNext;       //Linked list
-};
+typedef  AEEAddCacheInfo   RUIMAddrBkCache;
 
 //Cache of address book in memory
-static RUIMAddrBkCache  *gpCache;         //Cache of vital fields in AddressBook
+static RUIMAddrBkCache  *gpCache=NULL;         //Cache of vital fields in AddressBook
+
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+static RUIMAddrBkCache  *gpCacheHead=NULL;
+extern rex_tcb_type uim_tcb;
+#endif
 
 //Properties
 static uint32            gwRUIMProps;
@@ -109,6 +130,26 @@ static uint16            gwCurRecID;       // Current RecordID in enumeration
 static void              *gSearchData;     // Data value to search on
 static uint16            gSearchDataSize;  // Size of gSearchData
 static boolean           gbNameSearch;     // Flag to indicate if its a name-based search
+
+// Separator for the numbers of the cache
+#define NUMBER_SEPARATOR    ((AECHAR)',')
+
+// Global varibles used in the cache search
+static AEEAddrFieldID   gCacheSearchFieldID;  // Field ID to search on
+static boolean          gbEnumCacheInit;      // Flag to indicate if enumeration has been initialized
+static AECHAR          *gpCacheSearchData;    // search data
+static uint16           gCacheSearchDataSize; // Size of gSearchData
+static RUIMAddrBkCache *gpCurCacheElement;    // Will point to current element in cache
+
+AEECallback gInitRuimCachecb;
+
+#ifndef PARAM_NOT_REF
+#define PARAM_NOT_REF(x)              
+#endif
+
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+boolean  InitRUIMAddrBkCacheCb(void);
+#endif
 
 //Helper functions
 static byte *AddressToRawData(AEEAddrCat cat, AEEAddrField *pItems,
@@ -139,8 +180,12 @@ static void FreeAddrCacheElem(RUIMAddrBkCache *pRemove);
 static uint16 GetCacheRecCount(void);
 static void OEM_FreeAddressItems(AEEAddrField *pItems,
                                  int nItemCount);
+#if defined(FEATURE_CONTACT_APP)
+extern int Appscommon_CompareName(AECHAR *wstrNam1,AECHAR *wstrNam2 );
+#else
 static int AddrBkCompareName(const AECHAR *str1,
                              const AECHAR *str2);
+#endif                             
 
 // OEM VTBL functions.
 
@@ -220,8 +265,16 @@ static int OEMRUIMAddr_GetCategoryName(AEEAddrCat c, AECHAR *pszCatName, int *pn
 
 //Get field name
 static int OEMRUIMAddr_GetFieldName(AEEAddrFieldID f, AECHAR *pszFieldName, int *pnSize);
+static boolean  OEMRUIMAddr_WStrStrEx( AECHAR *pHaystack, AECHAR *pNeedle, boolean bCaseInsensitive );
+static int      OEMRUIMAddr_EnumCacheInit( AEEAddrCat wCategory, AEEAddrFieldID wFieldID, void  *pData, uint16 wDataSize);
+static int      OEMRUIMAddr_EnumNextCache(void **ppCache);
+static uint16   OEMRUIMAddr_ExtractCache( void  *pCache,  AECHAR  **ppName,  AEEAddrCat *pCat);
+static uint16   OEMRUIMAddr_GetCapacity(void);
 
-
+static int OEMRUIMAddr_GetCacheinfoByNumber(AECHAR *pwstrNum, 
+                                            AEEAddCacheInfo *pCacheInfo,
+                                            PFN_NUMBERMATCH pfnMactch);
+static int OEMRUIMAddr_CheckSameRecord(AECHAR *name, boolean* exist);
 static const VTBL(IOEMAddrBook) gsOEMRUIMAddrBookFuncs = 
                                                  {OEMRUIMAddr_AddRef,
                                                   OEMRUIMAddr_Release,
@@ -240,7 +293,14 @@ static const VTBL(IOEMAddrBook) gsOEMRUIMAddrBookFuncs =
                                                   OEMRUIMAddr_SetProperties,
                                                   OEMRUIMAddr_GetProperties,
                                                   OEMRUIMAddr_GetCategoryName,
-                                                  OEMRUIMAddr_GetFieldName};
+                                                  OEMRUIMAddr_GetFieldName,
+                                                  OEMRUIMAddr_EnumCacheInit,
+                                                  OEMRUIMAddr_EnumNextCache,
+                                                  OEMRUIMAddr_ExtractCache,
+                                                  OEMRUIMAddr_GetCapacity
+                                                  ,OEMRUIMAddr_GetCacheinfoByNumber
+                                                  , OEMRUIMAddr_CheckSameRecord
+                                                  };
 
 /*===========================================================================
 
@@ -306,6 +366,8 @@ static uint32 OEMRUIMAddr_Release(IOEMAddrBook * po)
       {
         OEMRUIMAddrBook_Exit();
         sys_free(po);
+        
+        return 0;
       }
 
    }
@@ -325,6 +387,17 @@ static void OEMRUIM_report (uim_rpt_type *report)
 
 /*===========================================================================
 
+FUNCTION AT_OEMRUIM_report
+
+===========================================================================*/
+void AT_OEMRUIM_report (uim_rpt_type *report)
+{
+   MEMCPY(&gCallBack, report, sizeof(uim_rpt_type));
+   rex_set_sigs( &ds_tcb, DS_UIM_CMD_SIG);
+}
+
+
+/*===========================================================================
 FUNCTION OEMRUIM_send_uim_cmd_and_wait
 
 ===========================================================================*/
@@ -353,6 +426,7 @@ static uint16 OEMRUIMAddr_RecordAdd(AEEAddrCat cat, AEEAddrField *pItems,
    uint16        wRecID;
    uint16        wRecSize;
    int           status;
+   int           i = 0;
 
    if(cat != AEE_ADDR_CAT_NONE)
       return(AEE_ADDR_RECID_NULL);
@@ -553,6 +627,7 @@ static int OEMRUIMAddr_RecordGetByID(uint16 wrecID, AEEAddrCat *pcat,
       pFields++;
    }
 
+
    if (*pnItemCount) {
       return(AEE_SUCCESS);
    } else {
@@ -572,7 +647,9 @@ static boolean  OEMRUIMAddrBook_Init(void)
    if(gbRUIMAddrBookOpen)
       return(TRUE);
 
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
    gpCache = NULL;
+#endif   
    gbEnumInit = FALSE;
    gSearchData = NULL;
    gwRUIMProps = AEE_ADDR_DEFAULT_PROPERTIES;
@@ -597,15 +674,25 @@ static void OEMRUIMAddrBook_Exit(void)
    //Close the address book
    if(gbRUIMAddrBookOpen)
    {
-      gbRUIMAddrBookOpen = NULL;
+      gbRUIMAddrBookOpen = FALSE;
    }
    if(gSearchData)
    {
       sys_free(gSearchData);
       gSearchData = NULL;
    }
+   //Free the cache search data
+   if(gpCacheSearchData)
+   {
+       sys_free(gpCacheSearchData);
+       gpCacheSearchData = NULL;
+   }
+   
+   // Cache Ò»µ©½¨Á¢, ²»µÃÇå³ý£¬Ö»ÄÜ×öºÃÎ¬»¤¹¤×÷£¬Ö±ÖÁ¹Ø»ú
+#ifndef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
    //Free the cache
    ClearRUIMAddrBkCache();
+#endif
 }
 
 /*===========================================================================
@@ -770,7 +857,7 @@ static uint16 OEMRUIMAddr_EnumNextRec(AEEAddrCat *pcat, AEEAddrField **ppItems,
          return(AEE_ADDR_RECID_NULL);
    }
 }
-
+ 
 /*===========================================================================
 
 FUNCTION OEMRUIMAddr_GetCatCount()
@@ -790,25 +877,31 @@ FUNCTION OEMRUIMAddr_GetCatList()
 ===========================================================================*/
 static int   OEMRUIMAddr_GetCatList(AEEAddrCat *p, int nSize)
 {
-   int i;
-   if(!p || !nSize)
-      return(EFAILED);
-
-   for(i = 0; i < OEM_ADDRESS_CATEGORY_COUNT && i < nSize; i++)
-   {
-      switch(i)
-      {
-      case 0:
-         p[i] = AEE_ADDR_CAT_PERSONAL;
-         break;
-      case 1:
-         p[i] = AEE_ADDR_CAT_BUSINESS;
-         break;
-      default:
-         break;
-      }
-   }
-   return(AEE_SUCCESS);
+    int i;
+    
+    if (!p || !nSize || nSize<OEM_ADDRESS_CATEGORY_COUNT)
+    {
+        return(EFAILED);
+    }
+    
+    for (i = 0; i < OEM_ADDRESS_CATEGORY_COUNT && i < nSize; i++)
+    {
+        switch(i)
+        {
+            case 0:
+                p[i] = AEE_ADDR_CAT_PERSONAL;
+                break;
+                
+            case 1:
+                p[i] = AEE_ADDR_CAT_BUSINESS;
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    return(AEE_SUCCESS);
 }
 
 /*===========================================================================
@@ -853,26 +946,6 @@ static void OEMRUIMAddr_SetProperties(uint32 dwProps)
    gwRUIMProps = dwProps;
 }
 
-#ifdef CUST_EDITION	
-void OEMRUIMAddr_Refresh(void)
-{
-    InitRUIMAddrBkCache();
-}
-
-
-uint16   OEMRUIMAddr_GetRUIMMaxNameSize(void)
-{
-    //return (gAdnRecSize - PHONEBOOK_TAIL_LENGTH -2); 
-    return (gAdnRecSize - PHONEBOOK_TAIL_LENGTH);
-
-}
-// OEMRUIMAddr_GetRecMaxNameSize
-
-uint16   OEMRUIMAddr_GetRUIMMaxNumberSize(void)
-{  
-    return (ADN_NUMBER_LEN * 2);
-}
-#endif /*CUST_EDITION*/
 /*========================================================================
 
 Function: OEMRUIMAddr_GetProperties()
@@ -1066,6 +1139,7 @@ static int OEMRUIMAddr_GetFieldName(AEEAddrFieldID f, AECHAR *pszFieldName, int 
 FUNCTION OEMRUIM_phonebook_max_recs
 
 ===========================================================================*/
+#ifndef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 static uint16 OEMRUIM_phonebook_max_recs (void)
 {
    byte *ruim_buffer;
@@ -1097,6 +1171,56 @@ static uint16 OEMRUIM_phonebook_max_recs (void)
 
    // Send the command to the R-UIM:
    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+   
+   FREE(ruim_buffer);
+
+   if ((gCallBack.rpt_type != UIM_ACCESS_R)
+                                        || (gCallBack.rpt_status != UIM_PASS)) {
+      return 0;
+   }
+
+   // Get the number of records and max. size.
+   gAdnMaxRec  = gUimCmd.access_uim.num_records_rsp;
+   gAdnRecSize = gUimCmd.access_uim.num_bytes;
+   return (gAdnMaxRec);
+}
+#endif
+
+uint16 AT_OEMRUIM_phonebook_max_recs(void)
+{
+    byte *ruim_buffer;
+
+   ruim_buffer = MALLOC(NVRUIM_EF_BUF_SIZE);
+   if (!ruim_buffer) {
+      return 0;
+   }
+
+   // Prepare to read a phonebook EF.  Only need the number of records in the
+   // file.
+   gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+   gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+   gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+   gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+   gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+   gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+   gUimCmd.access_uim.hdr.rpt_function       = AT_OEMRUIM_report;
+
+   gUimCmd.access_uim.item      = UIM_TELECOM_ADN;
+   gUimCmd.access_uim.access    = UIM_READ_F;
+   gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+   gUimCmd.access_uim.num_bytes = 1;
+   gUimCmd.access_uim.offset    = 1;
+   gUimCmd.access_uim.data_ptr  = ruim_buffer;
+
+   // From nvruim_access():  Access an EF, do not signal any task, use no
+   // signal, no done queue, use a callback, always report status.
+
+   // Send the command to the R-UIM:
+   (void) rex_clr_sigs( &ds_tcb, DS_UIM_CMD_SIG);
+   uim_cmd (&gUimCmd);
+   (void) rex_wait( DS_UIM_CMD_SIG);
+   
+   FREE(ruim_buffer);
 
    if ((gCallBack.rpt_type != UIM_ACCESS_R)
                                         || (gCallBack.rpt_status != UIM_PASS)) {
@@ -1173,13 +1297,14 @@ static byte *AddressToRawData(AEEAddrCat cat, AEEAddrField *pItems,
    int      adn_tag_size;
    int      digits_left;
    int      num_digits;
-   int      str_len;
+   //int      str_len;
    boolean  first_name;
    boolean  first_num;
    
    first_name = TRUE;
    first_num = TRUE;
    
+
    pBuf = MALLOC(gAdnRecSize);
    if (!pBuf) {
       *pErr = ENOMEMORY;
@@ -1199,6 +1324,7 @@ static byte *AddressToRawData(AEEAddrCat cat, AEEAddrField *pItems,
                   return NULL;
                }
                wBuffer = (AECHAR *)pItems[i].pBuffer;
+#if 0               
                str_len = MIN(adn_tag_size,
                                    ((pItems[i].wDataLen / sizeof(AECHAR)) - 1));
                for (j = 0; j < str_len; j++) {
@@ -1208,6 +1334,12 @@ static byte *AddressToRawData(AEEAddrCat cat, AEEAddrField *pItems,
                   MEMSET(&pBuf[str_len], ADN_FILLER_CHAR,
                                                       (adn_tag_size - str_len));
                }
+#else
+               OEMNV_WSTR_TO_RUIMAlpha( wBuffer,
+                                        pBuf,
+                                        adn_tag_size);
+
+#endif
             }
             else
             {
@@ -1339,6 +1471,7 @@ static int   RawDataToAddress(byte *pBuf,
    i = 0;
    num_chars = 0;
    bNonBlankNameFound = FALSE;
+#if 0   
    while ((i < adn_tag_size) & (pBuf[i] != 0xff)) {
       if (pBuf[i] != ' '){
          bNonBlankNameFound = TRUE;
@@ -1347,6 +1480,21 @@ static int   RawDataToAddress(byte *pBuf,
       wBuffer[i] = (AECHAR)pBuf[i];
       i++;
    }
+#else
+   // Convert the RUIMAlpha to wstring
+   OEMNV_RUIMAlpha_TO_WSTR( pBuf,
+                            adn_tag_size,
+                            wBuffer,
+                            adn_tag_size*sizeof(AECHAR));
+                            
+   while ((i < adn_tag_size) & (wBuffer[i] != NULL)) {
+      if (wBuffer[i] != (AECHAR)' '){
+         bNonBlankNameFound = TRUE;
+      }
+      num_chars++;
+      i++;
+   }
+#endif
    wBuffer[i] = NULL;
 
    if (bNonBlankNameFound) {
@@ -1554,12 +1702,14 @@ static int   ClearRUIMAddrBkCache()
       gpCache = ptr->pNext;
       if(ptr->szName)
          sys_free(ptr->szName);
+      if(ptr->szNumber)
+         sys_free(ptr->szNumber);      
       sys_free(ptr);
    }
    return(AEE_SUCCESS);
 }
 
-
+#if !defined(FEATURE_CONTACT_APP)
 /*===========================================================================
 
 FUNCTION: AddrBkCompareName
@@ -1597,7 +1747,7 @@ static int AddrBkCompareName(const AECHAR *str1, const AECHAR *str2)
    return(WSTRICMP(str1,str2));
 
 }
-
+#endif
 
 /*===========================================================================
 
@@ -1635,6 +1785,7 @@ static int   InsertCache(uint16 wRecID,
       return(ENOMEMORY);
    }
    
+   pNew->store = ADDR_STORE_RUIM;
    pNew->wRecID = wRecID;
    
    if(szName) {
@@ -1698,7 +1849,11 @@ static int   InsertCache(uint16 wRecID,
 
    while(cur) {
       //Put in list of ascending names.
+#if defined(FEATURE_CONTACT_APP)
+    if(Appscommon_CompareName((AECHAR *)szName,cur->szName ) >0) {
+#else
       if(AddrBkCompareName(szName,cur->szName) >0) {
+#endif        
          prev = cur;
          cur = cur->pNext;
       } else {
@@ -1715,7 +1870,6 @@ static int   InsertCache(uint16 wRecID,
       }
    }
 
-   //Insert at end
    prev->pNext = pNew;
    pNew->pNext = NULL;
    return(AEE_SUCCESS);
@@ -1749,52 +1903,78 @@ static int   InitRUIMAddrBkCache()
    AECHAR         *pPhoneField;
    AECHAR         *pNameField;
 
+#ifndef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
    //Clear existing cache, if any
    ClearRUIMAddrBkCache();
+#endif   
+#if 0
+    if (!OEM_IsRUIMAvailable())
+    {
+        gAdnMaxRec = 0;
+        return(AEE_SUCCESS);
+    }
+#endif
 
-   //Get the max. number of possible records on the RUIM.
-   gAdnMaxRec = OEMRUIM_phonebook_max_recs();
-   if (!gAdnMaxRec) {
-      return EFAILED;
-   }
+#ifndef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+    //Get the max. number of possible records on the RUIM.
+    gAdnMaxRec = OEMRUIM_phonebook_max_recs();
+    if (!gAdnMaxRec) 
+    {
+        return EFAILED;
+    }
+#else
+    {
+        db_setuiminitmask(INITUIMADDMASK);
 
-   //Read each record in the address book and place its ID and Name in the
-   //appropriate place in the cache.
-   curRec = 1;
-   while(curRec <= gAdnMaxRec) {
-      nRet = OEMRUIMAddr_RecordGetByIDOffDevice(curRec, &cat, &pFields, &nCount, &nErr);
-      
-      if(nRet == AEE_SUCCESS) {
-         //Find Number
-         pPhoneField = NULL;
-         for(i = 0; i < nCount; i++) {
-            if(pFields[i].fID == AEE_ADDRFIELD_PHONE_GENERIC) {
-               pPhoneField = pFields[i].pBuffer;
-               break;
+        return(AEE_SUCCESS);
+    }
+#endif    
+
+    //Read each record in the address book and place its ID and Name in the
+    //appropriate place in the cache.
+    curRec = 1;
+    while(curRec <= gAdnMaxRec) 
+    {
+        nRet = OEMRUIMAddr_RecordGetByIDOffDevice(curRec, &cat, &pFields, &nCount, &nErr);
+
+        if(nRet == AEE_SUCCESS) 
+        {
+            //Find Number
+            pPhoneField = NULL;
+            for(i = 0; i < nCount; i++) 
+            {
+                if(pFields[i].fID == AEE_ADDRFIELD_PHONE_GENERIC) 
+                {
+                    pPhoneField = pFields[i].pBuffer;
+                    break;
+                }
             }
-         }
-         pNameField = NULL;
-         //Find Name
-         for(i = 0; i < nCount; i++) {
-            if(pFields[i].fID == AEE_ADDRFIELD_NAME) {
-               pNameField = pFields[i].pBuffer;
-               break;
+            
+            pNameField = NULL;
+            //Find Name
+            for(i = 0; i < nCount; i++) 
+            {
+                if(pFields[i].fID == AEE_ADDRFIELD_NAME) 
+                {
+                    pNameField = pFields[i].pBuffer;
+                    break;
+                }
             }
-         }
-         nRet = InsertCache(curRec, pNameField, pPhoneField);
-  
-         //Free mem returned by OEMRUIMAddr_RecordGetByID
-         OEM_FreeAddressItems(pFields, nCount);
+            nRet = InsertCache(curRec, pNameField, pPhoneField);
 
-         if(nRet != AEE_SUCCESS) {
-            //Fail to insert into Cache
-            ClearRUIMAddrBkCache();
-            return(EFAILED);
-         }
-      }  //Data read successfully from AddressBook
-      curRec++;
-   } // Process next record
-   return(AEE_SUCCESS);
+            //Free mem returned by OEMRUIMAddr_RecordGetByID
+            OEM_FreeAddressItems(pFields, nCount);
+
+            if(nRet != AEE_SUCCESS) 
+            {
+                //Fail to insert into Cache
+                ClearRUIMAddrBkCache();
+                return(EFAILED);
+            }
+        }  //Data read successfully from AddressBook
+        curRec++;
+    } // Process next record
+    return(AEE_SUCCESS);
 }
 
 /*===========================================================================
@@ -2256,14 +2436,16 @@ static int read_adn_rec(byte *pBuf, uint16 wRecID, uint16 wRecSize,
    // Read the entry.
    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
 
-   if ((gCallBack.rpt_type == UIM_ACCESS_R)
-                                        && (gCallBack.rpt_status == UIM_PASS)) {
-      status = AEE_SUCCESS;
-      dbRecInfo->wRecID = wRecID;
-      dbRecInfo->wRecSize = gUimCmd.access_uim.num_bytes_rsp;
-      dbRecInfo->dwLastModified = 0;
+    if ((gCallBack.rpt_type == UIM_ACCESS_R) && (gCallBack.rpt_status == UIM_PASS) && (pBuf[0] != 0)) 
+    {
+        status = AEE_SUCCESS;
+        dbRecInfo->wRecID = wRecID;
+        dbRecInfo->wRecSize = gUimCmd.access_uim.num_bytes_rsp;
+        dbRecInfo->dwLastModified = 0;
 
-   } else {
+    } 
+    else 
+    {
       status = EFAILED;
       dbRecInfo->wRecID = AEE_DB_RECID_NULL;
       dbRecInfo->wRecSize = 0;
@@ -2320,6 +2502,1185 @@ static int write_adn_rec(const byte *pBuf, uint16 wRecID, uint16 wRecSize)
    }
    return status;
 }
+
+/*==============================================================================
+    Extern function
+==============================================================================*/
+/*=============================================================================
+FUNCTION: OEMRUIMAddr_WStrStrEx
+
+DESCRIPTION:
+   Widestring strstr() function with case sensitive compare flag.
+
+PARAMETERS:
+   *pHaystack: string in which pNeedle is found
+   *pNeedle:  string which is searched in pHaystack
+
+RETURN VALUE:
+boolean:
+   Returns true if pNeedle is found in pHaystack. 
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+=============================================================================*/
+static boolean OEMRUIMAddr_WStrStrEx( AECHAR *pHaystack, 
+                                      AECHAR *pNeedle, 
+                                      boolean bCaseInsensitive )
+{
+    AECHAR *pTempNdl, *pTempHay;
+    AECHAR char1[2],char2[2];
+
+    if((pHaystack == NULL)||(pNeedle == NULL))
+    {
+        return FALSE;
+    }
+
+    char1[1] = char2[1] = (AECHAR)0;
+
+    for (;;)
+    {
+        pTempNdl = pNeedle;
+        pTempHay = pHaystack;
+
+
+        if ((AECHAR)0 == *pHaystack)
+        {
+            return FALSE;
+        }
+      
+        for(;;)
+        {
+            char1[0] = *pTempHay;
+            char2[0] = *pTempNdl;
+
+            // If case insensitive, then covert both characters to lower case
+            // before doing the compare.
+            if( bCaseInsensitive )
+            {
+                WSTRLOWER(char1);
+                WSTRLOWER(char2);
+            }
+
+            // Compare the characters
+            //if ((char1[0] == char2[0] )&&(char1[0]!=(AECHAR)0))
+            if ((char1[0] == char2[0] || char1[0] == '*' || char2[0] == '*' )&&(char1[0]!=(AECHAR)0))
+            {
+                pTempNdl++;
+                pTempHay++;
+            }
+            else
+            {
+                break;
+            }
+        }
+      
+        if ((AECHAR)0 == *pTempNdl) 
+        {
+            return TRUE;
+        }
+      
+        pHaystack++;
+    }
+}
+/*===========================================================================
+FUNCTION : OEMRUIMAddr_EnumCacheInit
+
+DESCRIPTION: Initialize enumeration of OEM cache data
+             based on a given search criteria
+DEPENDENCIES
+  none
+  
+RETURN VALUE
+  SUCCESS     : if success to initilize
+  EFAILED     : if failed to initilize
+  EBADPARM    : if not pass the parameter
+  ENOTALLOWED : if cache not be initilized
+    
+SIDE EFFECTS
+  none
+===========================================================================*/
+static int      OEMRUIMAddr_EnumCacheInit( AEEAddrCat     wCategory,
+                                           AEEAddrFieldID wFieldID, 
+                                           void          *pData,
+                                           uint16         wDataSize)
+{
+    PARAM_NOT_REF(wCategory);
+    
+    gbEnumCacheInit     = FALSE;
+    
+    //Free data from previous enum
+    if(gpCacheSearchData)
+    {
+        sys_free(gpCacheSearchData);
+        gpCacheSearchData = NULL;
+    }
+    
+    // get the search data
+    if(pData)
+    {
+        //The search data must be valid when switching between apps. Hence,
+        //use sys_malloc
+        gpCacheSearchData = (void *)sys_malloc(wDataSize);
+        if(!gpCacheSearchData)
+        {
+            return(EFAILED);
+        }
+
+        MEMCPY(gpCacheSearchData,pData,wDataSize);
+        gCacheSearchDataSize = wDataSize;
+    };
+    
+    gCacheSearchFieldID = wFieldID;
+    gbEnumCacheInit     = TRUE;
+    gpCurCacheElement   = gpCache;
+    return SUCCESS;
+}// OEMRUIMAddr_EnumCacheInit
+
+/*===========================================================================
+
+FUNCTION : OEMRUIMAddr_EnumNextCache
+
+DESCRIPTION: enumeration of OEM cache data
+  pCahe [out]:
+DEPENDENCIES
+  none
+  
+RETURN VALUE
+  SUCCESS : if success to initilize
+  EFAILED : if failed to initilize
+  EBADPARM: if not pass the parameter
+
+SIDE EFFECTS
+  none
+===========================================================================*/
+static int      OEMRUIMAddr_EnumNextCache(void **ppCache)
+{
+    RUIMAddrBkCache *ptr;
+    
+    if(!ppCache)
+    {
+        return EBADPARM;
+    }
+    
+    if(gbEnumCacheInit == FALSE)
+    {
+        return EFAILED;
+    }
+    
+    ptr = gpCurCacheElement;
+    
+    // Search the match cache
+    while(ptr)
+    {
+        // Search the field
+        switch(gCacheSearchFieldID)
+        {
+            case AEE_ADDRFIELD_NONE:
+                // Match all cache whether or not the search data
+                *ppCache = (void *)ptr;
+                gpCurCacheElement = ptr->pNext;
+                return SUCCESS;
+                
+            case AEE_ADDRFIELD_NAME:
+                if(gpCacheSearchData)
+                {
+                    if(!OEMRUIMAddr_WStrStrEx( ptr->szName, 
+                                               gpCacheSearchData, 
+                                               TRUE))
+                    {
+                        break;
+                    }
+                }//else no search data return success
+                
+                // Match in the cache
+                *ppCache = (void *)ptr;
+                gpCurCacheElement = ptr->pNext;
+                return SUCCESS;
+                
+            case AEE_ADDRFIELD_PHONE_GENERIC:
+            case AEE_ADDRFIELD_PHONE_HOME:
+            case AEE_ADDRFIELD_PHONE_PREF:
+            case AEE_ADDRFIELD_PHONE_WORK:
+            case AEE_ADDRFIELD_PHONE_FAX:
+            case AEE_ADDRFIELD_PHONE_CELL:
+                if(gpCacheSearchData)
+                {
+                    if(!OEMRUIMAddr_WStrStrEx( ptr->szNumber, 
+                                               gpCacheSearchData,
+                                               FALSE))
+                    {
+                        // Inverse search
+                        if(!OEMRUIMAddr_WStrStrEx( gpCacheSearchData,
+                                                   ptr->szNumber,
+                                                   FALSE))
+                        {
+                            break;
+                        }
+                    }
+                }//else no search data return success
+                
+                // Match in the cache
+                *ppCache = (void *)ptr;
+                gpCurCacheElement = ptr->pNext;
+                return SUCCESS;
+                
+            default:
+                gbEnumCacheInit = FALSE;
+                *ppCache = NULL;
+                return EFAILED;
+                
+        }
+        ptr = ptr->pNext;
+    }
+    
+    gbEnumCacheInit = FALSE;
+    *ppCache = NULL;
+    return EFAILED;
+}// OEMRUIMAddr_EnumNextCache
+
+/*===========================================================================
+
+FUNCTION : OEMAddr_ExtractCache
+
+DESCRIPTION: Extract the name info from the cache
+  pCahe [in] :
+  pName [out]: 
+DEPENDENCIES
+  none
+  
+RETURN VALUE
+  return the record id. return AEE_ADDR_RECID_NULL if error happens
+SIDE EFFECTS
+  none
+===========================================================================*/
+static uint16   OEMRUIMAddr_ExtractCache( void       *pCache, 
+                                          AECHAR    **ppName,
+                                          AEEAddrCat *pCat)
+{
+    if(pCache == NULL)
+    {
+        return AEE_ADDR_RECID_NULL;
+    }
+    
+    if(ppName)
+    {
+        *ppName = ((RUIMAddrBkCache *)pCache)->szName;
+    }
+    
+    if(pCat)
+    {
+        *pCat = AEE_ADDR_CAT_NONE;
+    }
+    return ((RUIMAddrBkCache *)pCache)->wRecID;
+}// OEMRUIMAddr_ExtractCache
+
+/*===========================================================================
+
+FUNCTION : OEMRUIMAddr_GetCapacity
+
+DESCRIPTION: Get the phone book capacity
+  pCahe [in] :
+DEPENDENCIES
+  none
+  
+RETURN VALUE
+  return capacity of oem define
+SIDE EFFECTS
+  none
+===========================================================================*/
+static uint16   OEMRUIMAddr_GetCapacity(void)
+{
+    return gAdnMaxRec;
+}// OEMAddr_GetCapacity
+
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+extern void DecodeAlphaString(byte *pdata, int nLen, AECHAR *wstrOut, int nBufSize);
+
+static void InsertCache_Ext(RUIMAddrBkCache *pItem)
+{
+    RUIMAddrBkCache *prev,*cur;
+    
+    if (NULL == gpCacheHead) 
+    {
+        //Empty list.
+        pItem->pNext = NULL;
+        gpCacheHead = pItem;
+        return;
+    }
+    
+    if ((NULL == pItem->szName) || (WSTRLEN(pItem->szName) == 0))
+    {// ÐÕÃû¿Õ°×£¬·ÅÔÚÁ´±íÍ·²¿
+        pItem->pNext = gpCacheHead;
+        gpCacheHead = pItem;
+        return;
+    }
+   
+    // ½«½Úµã²åÔÚÊÊµ±Î»ÖÃ
+    prev = NULL;
+    cur = gpCacheHead;
+
+    while (cur) 
+    {
+        //Put in list of ascending names.
+#if defined(FEATURE_CONTACT_APP)
+        if(Appscommon_CompareName(pItem->szName,cur->szName ) >0)
+#else
+        if(AddrBkCompareName(pItem->szName,cur->szName) >0) 
+#endif            
+        {
+            prev = cur;
+            cur = cur->pNext;
+        } 
+        else 
+        {
+            if (prev) 
+            {
+                pItem->pNext = prev->pNext;
+                prev->pNext = pItem;
+                return;
+            } 
+            else 
+            {
+                //Insert at beginning of list
+                pItem->pNext = gpCacheHead;
+                gpCacheHead = pItem;
+                return;
+            }
+        }
+    }
+
+    prev->pNext = pItem;
+    pItem->pNext = NULL;
+}
+
+static void OEMRUIM_report_ext (uim_rpt_type *report)
+{
+   MEMCPY(&gCallBack, report, sizeof(uim_rpt_type));
+   rex_set_sigs(&uim_tcb, UIMDATA_INIT_RPT_SIG);
+}
+
+static void read_adn_rec_ext(byte *pBuf, uint16 wRecID, uint16 wRecSize,
+                        AEE_DBRecInfo  *dbRecInfo)
+{
+   MEMSET(&gUimCmd, 0, sizeof(gUimCmd));
+   gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+   gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+   gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+   gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+   gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+   gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+   gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report_ext;
+
+   gUimCmd.access_uim.item      = UIM_TELECOM_ADN;
+   gUimCmd.access_uim.access    = UIM_READ_F;
+   gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+   gUimCmd.access_uim.num_bytes = wRecSize;
+   gUimCmd.access_uim.offset    = wRecID;
+   gUimCmd.access_uim.data_ptr  = pBuf;
+
+   // Read the entry.
+   (void) rex_clr_sigs( &uim_tcb, UIMDATA_INIT_RPT_SIG);
+
+   // Send the command.
+   uim_cmd (&gUimCmd);
+}
+
+
+/*==============================================================================
+º¯Êý:
+    InitRUIMAddrBkCacheCb
+
+ËµÃ÷:
+    ³õÊ¼¿¨ÉÏµç»°±¾µÄ»Øµ÷º¯Êý¡£
+
+²ÎÊý:
+    none
+
+·µ»ØÖµ:
+    TRUE : ³õÊ¼»¯Íê³É
+    FALSE: ³õÊ¼»¯Î´Íê³É
+
+±¸×¢:
+    ×¢Òâ¿¨ÉÏµç»°±¾¿ÉÄÜ²»Ö¹¿ª»úÊ±»á³õÊ¼»¯£¬ÈôÖ§³Ö UTK £¬Ôò Refresh ÃüÁî»áµ¼ÖÂ¿¨
+    ÉÏµç»°±¾µÄÖØÐÂ³õÊ¼»¯¡£
+        
+==============================================================================*/
+boolean  InitRUIMAddrBkCacheCb(void)
+{
+    static uint16  i=0;
+    static boolean bInitStart = FALSE;
+    static byte *  pBuf = NULL;
+    static AEE_DBRecInfo  dbRecInfo;
+    static boolean bWaitReport = FALSE;
+    int            nAlpha=0;
+    RUIMAddrBkCache *pItem = NULL;
+    byte           digits[PHONEBOOK_DN];
+    int            num_digits;
+    boolean        bBlankNum = TRUE;
+    boolean        bBlankNam = TRUE;
+    int32          nSize;
+    db_items_value_type db_item;
+    
+    db_get(DB_UIMADDINIT, &db_item);
+    if (db_item.db_uimaddinited)
+    {
+        return TRUE;
+    }
+    
+    if (bInitStart == FALSE)
+    {
+        //Clear existing cache, if any
+        ClearRUIMAddrBkCache();
+        gpCacheHead = NULL;
+
+        bInitStart = TRUE;
+        i = 0;
+        // ¶Á¼ÇÂ¼Êý¼°¼ÇÂ¼µÄ×î´ó³ß´ç
+        pBuf = (byte *)sys_realloc(pBuf, NVRUIM_EF_BUF_SIZE);
+        if (NULL == pBuf)
+        {
+            goto InitRUIMAddrBkCacheCb_Exit;
+        }
+        MEMSET(pBuf, 0, NVRUIM_EF_BUF_SIZE);
+        read_adn_rec_ext(pBuf, 1, 1, NULL);
+        bWaitReport = TRUE;
+        
+        return FALSE;
+    }
+    
+    if ((i == 0) && bWaitReport)
+    {
+        gAdnMaxRec  = gUimCmd.access_uim.num_records_rsp;
+        gAdnRecSize = gUimCmd.access_uim.num_bytes;
+        
+        if (0==gAdnMaxRec || gAdnRecSize==0)
+        {
+            goto InitRUIMAddrBkCacheCb_Exit;
+        }
+        pBuf = (byte *)sys_realloc(pBuf, gAdnRecSize);
+        if (NULL == pBuf)
+        {
+            goto InitRUIMAddrBkCacheCb_Exit;
+        }
+        MEMSET(pBuf, 0, gAdnRecSize);
+        i++;
+        
+        bWaitReport = FALSE;
+        return FALSE;
+    }
+    
+    if (bWaitReport == FALSE)
+    {
+        MEMSET(pBuf, 0, gAdnRecSize);
+        read_adn_rec_ext(pBuf, i, gAdnRecSize, &dbRecInfo);
+        bWaitReport = TRUE;
+        return FALSE;
+    }
+    
+    bWaitReport = FALSE;
+    
+    if ((gCallBack.rpt_type == UIM_ACCESS_R) &&
+        (gCallBack.rpt_status == UIM_PASS)) 
+    {
+        dbRecInfo.wRecID = i;
+        dbRecInfo.wRecSize = gUimCmd.access_uim.num_bytes_rsp;
+        dbRecInfo.dwLastModified = 0;
+    } 
+    else 
+    {
+        dbRecInfo.wRecID = AEE_DB_RECID_NULL;
+        dbRecInfo.wRecSize = 0;
+        dbRecInfo.dwLastModified = 0;
+        goto InitRUIMAddrBkCacheCb_Exit;
+    }
+    
+    nAlpha = dbRecInfo.wRecSize - PHONEBOOK_TAIL_LENGTH;
+    if (nAlpha<0)
+    {// ¼ÇÂ¼²»Âú×ãÇ¿ÖÆ³¤¶ÈÒªÇó
+        goto InitRUIMAddrBkCacheCb_Exit;
+    }
+    
+    pItem = (RUIMAddrBkCache *)sys_malloc(sizeof(RUIMAddrBkCache));
+    if (NULL == pItem)
+    {
+        goto InitRUIMAddrBkCacheCb_Exit;
+    }
+    pItem->store = ADDR_STORE_RUIM;
+    pItem->wRecID = i;
+    // ½âÎöÈËÃû
+    if (nAlpha>0)
+    {
+        nSize = (nAlpha+1) * sizeof(AECHAR);
+        pItem->szName = (AECHAR *)sys_malloc(nSize);
+        if (NULL != pItem->szName)
+        {
+            MEMSET(pItem->szName, 0, nSize);
+            //nAlpha to (nAlpha + 1), ´Ó¿¨ÉÏ¶Áµç»°±¾Ãû×Ö£¬Ö§³Ö×î³¤×Ö½Ú¡£
+            DecodeAlphaString(pBuf, nAlpha, pItem->szName, nAlpha + 1);
+            
+            if (WSTRLEN(pItem->szName)>0)
+            {
+                bBlankNam = FALSE;
+            }
+        }
+    }    
+    
+    // ½âÎöºÅÂë
+    // Copy & convert digits.
+    num_digits = nvruim_phbook_bcd_to_ascii(PHONEBOOK_DN, &pBuf[nAlpha + 2], digits);
+    if (num_digits > 0)
+    {
+        nSize = (num_digits +1) * sizeof(AECHAR);
+        pItem->szNumber = (AECHAR *)sys_malloc(nSize);
+        if (NULL != pItem->szNumber)
+        {
+            MEMSET(pItem->szNumber, 0, nSize);
+            (void)STRTOWSTR((char *)digits, pItem->szNumber, (num_digits +1) * sizeof(AECHAR));
+            if (WSTRLEN(pItem->szNumber)>0)
+            {
+                bBlankNum = FALSE;
+            }
+        }
+    }
+    
+    if (bBlankNum && bBlankNam)
+    {// ¿ÕºÅÂë¼°ÈËÃû
+        if (NULL != pItem->szNumber)
+        {
+            sys_free(pItem->szNumber);
+        }
+        if (NULL != pItem->szName)
+        {
+            sys_free(pItem->szName);
+        }
+        sys_free(pItem);
+    }
+    else
+    {
+        if (TRUE == bBlankNam)
+        {
+            if (NULL != pItem->szName)
+            {
+                sys_free(pItem->szName);
+            }
+        
+            nSize = (num_digits +1) * sizeof(AECHAR);
+            pItem->szName = (AECHAR *)sys_malloc(nSize);
+            WSTRCPY(pItem->szName, pItem->szNumber);
+        }
+        InsertCache_Ext(pItem);
+    }
+    
+InitRUIMAddrBkCacheCb_Exit:
+    i++;
+    if (i>gAdnMaxRec)
+    {
+        gpCache = gpCacheHead;
+        bInitStart = FALSE;
+        if (NULL != pBuf)
+        {
+            sys_free(pBuf);
+            pBuf = NULL;
+        }
+        i = 0;
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
+}
+#endif
+
+
+void OEMRUIMAddr_Refresh(void)
+{
+    InitRUIMAddrBkCache();
+}
+
+/*==============================================================================
+º¯Êý£º
+    OEMRUIMAddr_GetCacheinfoByNumber
+
+ËµÃ÷£º
+    ¸ù¾ÝºÅÂëÕÒ³öÏà¹Ø Cache ÐÅÏ¢¡£
+
+²ÎÊý£º
+    pwstrNum [in]: ÓÃÀ´²éÑ¯ Cache ÐÅÏ¢µÄºÅÂë
+    pCache [in]: ÓÃÀ´·µ»Ø Cache ÐÅÏ¢µÄ»º³åÇø
+    pfnMactch [in]: ºÅÂëÆ¥Åä¹æÔòº¯ÊýÖ¸Õë
+       
+·µ»ØÖµ£º
+    ²éµ½Ïà¹Ø Cache ÐÅÏ¢: SUCCESS
+    ²éÑ¯Ê§°Ü: SUCCESS ÒÔÍâÆäËüÖµ
+
+±¸×¢£º
+       
+==============================================================================*/
+static int OEMRUIMAddr_GetCacheinfoByNumber(AECHAR *pwstrNum, 
+                                            AEEAddCacheInfo *pCacheInfo,
+                                            PFN_NUMBERMATCH pfnMactch)
+{
+    RUIMAddrBkCache *pCache = NULL;
+    RUIMAddrBkCache *pCache_Equal = NULL;
+    RUIMAddrBkCache *pCache_NumAtCacheTail = NULL;
+    RUIMAddrBkCache *pCache_CacheAtNumTail = NULL;
+    AECHAR      *pwstrRetnum_Equal = NULL;
+    AECHAR      *pwstrRetnum_NumAtCacheTail = NULL;
+    AECHAR      *pwstrRetnum_CacheAtNumTail = NULL;
+    int         nLen_Equal=0;
+    int         nLen_NumAtCacheTail=0;
+    int         nLen_CacheAtNumTail=0;
+    int         nMatchLen=0;
+    
+    if(!gpCache)
+    {
+        return EBADPARM;
+    }
+
+    if ((NULL == pwstrNum) || (NULL == pCacheInfo) || (NULL == pfnMactch))
+    {
+        return(EFAILED);
+    }
+    
+    pCache = gpCache;
+    while (pCache != NULL)
+    {
+        if (pCache->szNumber == NULL)
+        {
+            pCache = pCache->pNext;
+            continue;
+        }
+        
+        switch (pfnMactch(pCache->szNumber, pwstrNum, &nMatchLen))
+        {// ºÅÂëÆ¥Åä
+            case NUMBERMATCH_EQUAL:                  // Á½¸öºÅÂëÍêÈ«ÏàµÈ
+                if (NULL == pCache_Equal)
+                {
+                    nLen_Equal = nMatchLen;
+                    pCache_Equal = pCache;
+                    pwstrRetnum_Equal = WSTRDUP(pCache->szNumber);
+                }
+                break;
+                
+            case NUMBERMATCH_WSTR1_ISTAIL_OF_WSTR2:  // ºÅÂë1ÊÇºÅÂë2µÄÎ²²¿
+                if (NULL == pCache_CacheAtNumTail)
+                {
+                    nLen_CacheAtNumTail = nMatchLen;
+                    pCache_CacheAtNumTail = pCache;
+                    pwstrRetnum_CacheAtNumTail = WSTRDUP(pCache->szNumber);
+                }
+                else if (nMatchLen > nLen_CacheAtNumTail)
+                {// µ±Ç°ºÅÂëÆ¥ÅäÎ»Êý¸ü¶à
+                    FREEIF(pwstrRetnum_CacheAtNumTail);
+                    
+                    nLen_CacheAtNumTail = nMatchLen;
+                    pCache_CacheAtNumTail = pCache;
+                    pwstrRetnum_CacheAtNumTail = WSTRDUP(pCache->szNumber);
+                }
+                break;
+                
+            case NUMBERMATCH_WSTR2_ISTAIL_OF_WSTR1:  // ºÅÂë2ÊÇºÅÂë1µÄÎ²²¿
+                if (NULL == pCache_NumAtCacheTail)
+                {
+                    pCache_NumAtCacheTail = pCache;
+                    pwstrRetnum_NumAtCacheTail = WSTRDUP(pCache->szNumber);
+                }
+                break;
+                
+            default:// NUMBERMATCH_IRRELEVANCE       // Á½¸öºÅÂë²»Ïà¹Ø
+                break;
+        }
+        
+        // Èô×îÓÅÏÈµÄ¼ÇÂ¼ÒÑÕÒ³ö£¬¾ÍÃ»±ØÒª¼ÌÐøÑ­»·ÁË
+        if (pCache_Equal != NULL)
+        {
+            pCache = NULL;
+        }
+        else
+        {
+            pCache = pCache->pNext;
+        }
+    }
+    
+    // ¸ù¾ÝÒªÇó·µ»Ø½á¹û
+    if (NULL != pCache_Equal)
+    {
+        pCache = pCache_Equal;
+        pCacheInfo->szNumber = WSTRDUP(pwstrRetnum_Equal);
+    }
+    else if (NULL != pCache_NumAtCacheTail)
+    {
+        pCache = pCache_NumAtCacheTail;
+        pCacheInfo->szNumber = WSTRDUP(pwstrRetnum_NumAtCacheTail);
+    }
+    else if (NULL != pCache_CacheAtNumTail)
+    {
+        pCache = pCache_CacheAtNumTail;
+        pCacheInfo->szNumber = WSTRDUP(pwstrRetnum_CacheAtNumTail);
+    }
+    else
+    {
+        pCache = NULL;
+    }
+    
+    FREEIF(pwstrRetnum_Equal);
+    FREEIF(pwstrRetnum_NumAtCacheTail);
+    FREEIF(pwstrRetnum_CacheAtNumTail);
+    
+    if (NULL != pCache)
+    {
+        // Ìî³äÏà¹Ø Cache ÐÅÏ¢
+        pCacheInfo->wRecID = pCache->wRecID;
+        pCacheInfo->szName = WSTRDUP(pCache->szName);
+        pCacheInfo->nCat = AEE_ADDR_CAT_NONE;
+        
+        return SUCCESS;
+    }
+    
+    return EFAILED;
+}// OEMRUIMAddr_GetCacheinfoByNumber
+
+
+uint16   OEMRUIMAddr_GetRUIMMaxNameSize(void)
+{
+    //return (gAdnRecSize - PHONEBOOK_TAIL_LENGTH -2); 
+    return (gAdnRecSize - PHONEBOOK_TAIL_LENGTH);
+
+}
+// OEMRUIMAddr_GetRecMaxNameSize
+
+uint16   OEMRUIMAddr_GetRUIMMaxNumberSize(void)
+{  
+    return (ADN_NUMBER_LEN * 2);
+}
+// OEMRUIMAddr_GetRUIMMaxNumberSize
+/*===========================================================================
+
+FUNCTION OEMRUIMAddr_GetNumRecs()
+   Get record count for AT
+===========================================================================*/
+uint16 AT_OEMRUIMAddr_GetNumRecs(void)
+{
+   //Get Count from Cache
+   return(OEMRUIMAddr_GetNumRecs());
+}
+
+/*===========================================================================
+
+FUNCTION AT_RUIMRecordGetOneNumber() 
+  Get a the Number of record from RUIM for AT (only number)
+
+===========================================================================*/
+
+byte*  AT_RUIMRecordGetOneNumber(word wpbID)
+{
+   AECHAR          * pBuf = NULL;
+   RUIMAddrBkCache * pCur = NULL;
+   int               len = 0;
+   int               j = 0;
+   
+   if(gpCache)
+   {
+      pCur = gpCache;
+      while(pCur && (pCur->wRecID != wpbID)) 
+      {
+         pCur = pCur->pNext;
+      }
+      if(!pCur)
+      {
+         return(NULL);
+      }
+   }
+   else
+   {
+      return(NULL);
+   }
+   
+
+   if(pCur->szNumber) 
+   {      
+      len = (WSTRLEN(pCur->szNumber) + 1) * sizeof(AECHAR);
+      pBuf = (AECHAR *) MALLOC(len);
+      
+      if(!pBuf)
+      {  
+         return(NULL);
+      }
+       
+      WSTRLCPY(pBuf, pCur->szNumber, len);
+   }
+
+   return((byte*)pBuf); 
+
+}
+/*===========================================================================
+
+FUNCTION AT_RUIMRecordGetOneName()
+  Get a the Name of record from RUIM for AT (only name)
+
+===========================================================================*/
+
+byte*  AT_RUIMRecordGetOneName(word wpbID)
+{
+   AECHAR *          pBuf = NULL;
+   RUIMAddrBkCache * pCur = NULL;
+   AECHAR            len = 0;
+   int               i = 0;
+   
+   if(gpCache)
+   {
+      pCur = gpCache;
+      while(pCur && (pCur->wRecID != wpbID)) 
+      {
+         pCur = pCur->pNext;
+      }
+      if(!pCur)
+      {
+         return(NULL);
+      }
+   }
+   else
+   {
+      return(NULL);
+   }
+   
+      
+   if(pCur->szName)
+   {      
+      len = (WSTRLEN(pCur->szName) + 1) * sizeof(AECHAR);
+      pBuf = (AECHAR *) MALLOC(len);
+      
+      if(!pBuf)
+      { 
+         return(NULL);
+      }
+       
+      WSTRLCPY(pBuf, pCur->szName, len);
+   }
+   
+   return((byte*)pBuf);
+ 
+}
+
+/*===========================================================================
+
+FUNCTION AT_OEMRUIMAddr_RecordAdd() 
+   <see OEMAddr_RecordAdd() documentation in OEMAddrBook.h>
+
+===========================================================================*/
+uint16 AT_OEMRUIMAddr_RecordAdd(const AECHAR *szName,const AECHAR *szNumber)
+{
+   //Stretch pItems into a single contiguous memory block so that we can
+   //place it onto the R-UIM.
+   AEEAddrCat    cat = 0;
+   int           nItemCount = 2;
+   byte          *pBuf;
+   uint16        wRecID;
+   uint16        wRecSize;
+   int           status;
+   int           Err = 0;
+   AEEAddrField* pAddrField = NULL;
+   AEEAddrField* pAddrField0 = NULL;
+   AECHAR*       pBufName = NULL;
+   AECHAR*       pBufNumber = NULL;
+   int           i = 0;
+   //--------------------------------------------------------
+
+   pAddrField = (AEEAddrField *)MALLOC(sizeof(AEEAddrField)*2);
+   if( pAddrField == NULL)
+   {
+        return AEE_ADDR_RECID_NULL;
+   }
+   pAddrField0 = pAddrField;
+
+   if(cat != AEE_ADDR_CAT_NONE)
+      return(AEE_ADDR_RECID_NULL);
+
+    // add name field
+   pAddrField->fID = AEE_ADDRFIELD_NAME;
+   pAddrField->fType = AEEDB_FT_STRING;
+   pAddrField->wDataLen = (WSTRLEN(szName) + 1) * sizeof(AECHAR);
+   pAddrField->pBuffer = (AECHAR *) MALLOC(pAddrField->wDataLen);    
+   if(!(pAddrField->pBuffer))
+   {
+      return(AEE_ADDR_RECID_NULL);
+   } 
+   pBufName = pAddrField->pBuffer;
+   WSTRLCPY(pAddrField->pBuffer, szName, pAddrField->wDataLen);
+   pAddrField++;
+   
+
+    //add number field
+   pAddrField->fID = AEE_ADDRFIELD_PHONE_GENERIC;
+   pAddrField->fType = AEEDB_FT_PHONE;
+   pAddrField->wDataLen = (WSTRLEN(szNumber) + 1) * sizeof(AECHAR);
+   pAddrField->pBuffer = (AECHAR *) MALLOC(pAddrField->wDataLen);    
+   if(!(pAddrField->pBuffer))
+   {  
+      return(AEE_ADDR_RECID_NULL);
+   } 
+   pBufNumber= pAddrField->pBuffer;
+   WSTRLCPY(pAddrField->pBuffer, szNumber, pAddrField->wDataLen);
+
+   pBuf = AddressToRawData(cat, pAddrField0, nItemCount, &Err, &wRecSize);
+   if(!pBuf)
+   {
+      return(AEE_ADDR_RECID_NULL);
+   }
+   //Add record to database
+  
+   wRecID = UnusedCacheID(gAdnMaxRec);
+  
+   status = AT_write_adn_rec(pBuf, wRecID, wRecSize);  
+
+   if(status != AEE_SUCCESS)
+   {
+      if(&Err) {
+         Err = status;
+      }
+      return(AEE_ADDR_RECID_NULL);
+   }
+
+   //Update cache
+   if((InsertCache(wRecID, szName,szNumber)) != AEE_SUCCESS)
+   {
+      OEMRUIMAddr_RecordDelete(wRecID);
+
+           //Free the buffer
+      FREE(pBuf);
+      FREE(pBufName); //free number field
+      FREE(pBufNumber); //free name field
+      FREE(pAddrField);
+      return(AEE_ADDR_RECID_NULL);
+   }
+
+    //Free the buffer
+   FREE(pBuf);
+   FREE(pBufName); //free number field
+   FREE(pBufNumber); //free name field
+   FREE(pAddrField);
+
+   //Success.
+   return(wRecID);
+}
+
+/*===========================================================================
+
+FUNCTION AT_OEMRUIMAddr_RecordDelete()
+
+===========================================================================*/
+
+int AT_OEMRUIMAddr_RecordDelete(uint16 wRecID)
+{
+   int status = 999;
+
+   status = AT_del_adn_rec(wRecID);
+   if(status == AEE_SUCCESS)
+   {
+      //Remove from Cache
+      RemoveRecCache(wRecID);
+      return(AEE_SUCCESS);
+   }
+   return(EFAILED);
+}
+
+/*===========================================================================
+
+FUNCTION: AT_write_adn_rec
+
+DESCRIPTION
+
+  This function writes a record to the phonebook on the R-UIM.
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  none
+===========================================================================*/
+int AT_write_adn_rec(const byte *pBuf, uint16 wRecID, uint16 wRecSize)
+{
+   int status;
+   
+   gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+   gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+   gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+   gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+   gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+   gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+   gUimCmd.access_uim.hdr.rpt_function       = AT_OEMRUIM_report;
+
+   gUimCmd.access_uim.item      = UIM_TELECOM_ADN;
+   gUimCmd.access_uim.access    = UIM_WRITE_F;
+   gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+   gUimCmd.access_uim.num_bytes = wRecSize;
+   gUimCmd.access_uim.offset    = wRecID;
+   gUimCmd.access_uim.data_ptr  = (byte *)pBuf;
+
+   // Read the entry.
+   //OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+   (void) rex_clr_sigs( &ds_tcb, DS_UIM_CMD_SIG);
+   // Send the command.
+   uim_cmd (&gUimCmd);
+   (void) rex_wait( DS_UIM_CMD_SIG);
+
+   if ((gCallBack.rpt_type == UIM_ACCESS_R)
+                                        && (gCallBack.rpt_status == UIM_PASS)) {
+      status = AEE_SUCCESS;
+
+   } else {
+      status = EFAILED;
+   }
+   return status;
+}
+
+/*===========================================================================
+
+FUNCTION: AT_del_adn_rec
+DESCRIPTION
+
+  This function deletes a record from the phonebook on the R-UIM.
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  none
+===========================================================================*/
+int AT_del_adn_rec(uint16 wRecID)
+{
+   byte *pBuf;
+   int   status;
+
+   pBuf = MALLOC(gAdnRecSize);
+   if (!pBuf) {
+      return ENOMEMORY;
+   }
+   MEMSET (pBuf, ADN_FILLER_CHAR, gAdnRecSize);
+   status = AT_write_adn_rec(pBuf, wRecID, gAdnRecSize);
+   FREE(pBuf);
+   return status;
+}
+
+/*===========================================================================
+
+FUNCTION AT_OEMRUIMAddr_RemoveAllRecs()
+   <see OEMAddr_RemoveAllRecs() documentation in OEMAddrBook.h>
+
+===========================================================================*/
+int AT_OEMRUIMAddr_RemoveAllRecs(void)
+{
+   /*uint16 wRecIdInit = AEE_DB_RECID_NULL;
+   uint16 wRecId = 0;
+
+   while( wRecId!= AEE_DB_RECID_NULL )
+   {
+      wRecId = GetNextRecInCache(wRecIdInit);  
+      if( AT_OEMRUIMAddr_RecordDelete(wRecId) == EFAILED )
+      {
+          return EFAILED;
+      }
+      wRecIdInit = wRecId;
+   }
+   return(AEE_SUCCESS);*/
+   return ( AT_OEMRUIMAddr_RemoveAllRecs_UIM() );
+}
+
+/*===========================================================================
+
+FUNCTION OEMRUIMAddr_RemoveAllRecs()
+   <see OEMAddr_RemoveAllRecs() documentation in OEMAddrBook.h>
+
+===========================================================================*/
+int AT_OEMRUIMAddr_RemoveAllRecs_UIM(void)
+{
+   uint16      wRecId;
+
+   while ((wRecId = GetNextRecInCache(AEE_DB_RECID_NULL))
+                                                         != AEE_DB_RECID_NULL) {
+      AT_OEMRUIMAddr_RecordDelete(wRecId);
+   }
+   return(AEE_SUCCESS);
+}
+
+/*==============================================================================
+º¯Êý£º
+    OEMRUIMAddr_CheckSameRecord
+
+ËµÃ÷£º
+    ÖØÃû¼ì²é
+
+²ÎÊý£º
+    name [in]: ÓÃÀ´²éÑ¯ Cache ÐÅÏ¢µÄÃû×Ö
+    exist [out]: ÓÃÀ´·µ»Ø ²éÑ¯½á¹û
+       
+·µ»ØÖµ£º 
+    ¼ì²é³É¹¦: SUCCESS
+    ²éÑ¯Ê§°Ü: SUCCESS ÒÔÍâÆäËüÖµ
+
+±¸×¢£º
+       
+==============================================================================*/
+static int OEMRUIMAddr_CheckSameRecord(AECHAR *name, boolean* exist)
+{
+    RUIMAddrBkCache *pCache = NULL;
+    AECHAR cache_name[32]={0};
+    AECHAR cmp_name[32]={0};
+    
+    if(!gpCache)
+    {
+        return EBADPARM;
+    }
+
+    if ((NULL == name) || (NULL == exist))
+    {
+        return(EFAILED);
+    }
+    
+    pCache = gpCache;
+    while (pCache != NULL)
+    {
+        if (pCache->szName == NULL)
+        {
+            pCache = pCache->pNext;
+            continue;
+        }
+
+        //´óÐ¡Ð´²»Ãô¸Ð
+        if(!HaveNoneASCIIChar(name, NULL) && !HaveNoneASCIIChar(pCache->szName, NULL))
+        {
+            WSTRCPY(cache_name, pCache->szName);
+            WSTRCPY(cmp_name, name);
+            WSTRLOWER(cache_name);
+            WSTRLOWER(cmp_name);
+
+            if(WSTRCMP(cache_name, cmp_name) == 0)
+            {
+                *exist = TRUE;
+                return SUCCESS;
+            }
+        }
+
+        if(WSTRCMP(pCache->szName, name) == 0)
+        {
+            *exist = TRUE;
+            return SUCCESS;
+        }
+        
+        pCache = pCache->pNext;
+    }
+    
+    return EFAILED;
+}// OEMAddr_CheckSameRecord
 
 #endif    // FEATURE_ADDRBOOK_RUIM   
 
