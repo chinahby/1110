@@ -14,7 +14,9 @@ include $(MAINMENU)/mainmenu.min
 include $(CALLAPP)/CallApp.min
 include $(CONTAPP)/contact.min
 include $(WMSAPP)/wmsapp.min
+ifeq ($(MMI_ADD_UTK),yes)
 include $(UTK)/utk.min
+endif
 include $(RECENTCALLS)/recentcalls.min
 
 #MultiMedia
@@ -68,7 +70,9 @@ endif
 
 include $(STOPWATCH)/stopwatch.min
 include $(TIMERAPP)/timerapp.min
+ifeq ($(MMI_ADD_WORLDTIME),yes)
 include $(WORLDTIME)/worldtime.min
+endif
 include $(NOTEBOOK)/notebook.min
 
 #Games
