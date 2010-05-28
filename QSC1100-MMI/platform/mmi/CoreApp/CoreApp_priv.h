@@ -49,7 +49,9 @@
 #include "AEEImage.h"
 #include "CallApp.h"
 //#include "AEEPhone.h"
+#ifdef FEATURE_UTK2
 #include "UTKUtils.h"
+#endif
 
 #if defined(AEE_STATIC)
 #include "OEMClassIDs.h"

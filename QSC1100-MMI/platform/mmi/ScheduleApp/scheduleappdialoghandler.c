@@ -169,13 +169,15 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme);
 static void CScheduleApp_DrawLunarStr(CScheduleApp *pme);
 #endif
 
-
+#ifdef FEATURE_APP_WORLDTIME
 extern boolean Calendar_FormatDateTime( uint32 seconds,
                                         AECHAR* resultString,
                                         int resultStringLength
                                     );
-
+#endif /*FEATURE_APP_WORLDTIME*/
+#ifdef FEATURE_APP_WORLDTIME
 extern boolean Calendar_FormatTime( uint32 seconds, AECHAR* resultString, int resultStringLength);
+#endif /*FEATURE_APP_WORLDTIME*/
 extern int OEM_GetConfig(AEEConfigItem i, void * pBuff, int nSize);
 extern int OEM_SetConfig(AEEConfigItem i, void * pBuff, int nSize);
 
@@ -1699,12 +1701,14 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                     pme->m_CalMgr.m_lCurrentDay = (uint32)IDATECTL_GetJulianDay(pDatePick);
 
                     {
+#ifdef FEATURE_APP_WORLDTIME                        
                         extern boolean Calendar_FormatDate2( uint16 year, uint16 month, uint16 day, AECHAR* resultString, int resultStringLength);
 
                         if( Calendar_FormatDate2( pnYear, pnMonth, pnDay, pchar, nLeft))
                         {
                             pnChars = WSTRLEN( pchar);
                         }
+#endif /*FEATURE_APP_WORLDTIME*/                        
                     }
                     nLeft = nLeft - pnChars;
                     pchar = pchar + pnChars;
@@ -4564,8 +4568,9 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
                 CtlAddItem  item        = { 0 };
                 uint16      hour        = GET_HOUR( GETTIME(pEvent->m_b.dwTime));
                 uint16      minute      = GET_MINUTE( GETTIME(pEvent->m_b.dwTime));
-
+#ifdef FEATURE_APP_WORLDTIME
                 Calendar_FormatTime( hour*3600 + minute*60, text, sizeof( text));
+#endif /*FEATURE_APP_WORLDTIME*/
                 text[WSTRLEN( text)] = ' ';
                 WSTRCAT( text, subject);
                 text[WSTRLEN( text)] = ' ';
@@ -4603,7 +4608,9 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
         else
         {
             uint32 seconds = i*3600 + (i==setupHour?setupMinute:0)*60;
+#ifdef FEATURE_APP_WORLDTIME            
             Calendar_FormatTime( seconds, subject, sizeof( subject));
+#endif /*FEATURE_APP_WORLDTIME*/
             IMENUCTL_AddItem( pMenu, 0, 0, id ++, subject, 0);
             debug( ";%d, %S, no event", seconds, subject);
 
@@ -6231,7 +6238,10 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
             text[length ++] = ' ';
             text[length ++] = ' ';
             seconds = JULIANTOSECONDS( &pappointment->julian);
+#ifdef FEATURE_APP_WORLDTIME     
             Calendar_FormatDateTime( seconds, date, sizeof( date));
+#endif /*FEATURE_APP_WORLDTIME*/
+
             WSTRCPY( text + length, date);
             length = WSTRLEN( text);
             text[length ++] = '\n';

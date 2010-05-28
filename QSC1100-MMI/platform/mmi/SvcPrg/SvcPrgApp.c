@@ -84,7 +84,9 @@ when       who     what, where, why
 #endif
 
 #include "msg.h"
+#ifdef FEATURE_UTK2
 #include "UTK_priv.h"
+#endif
 #include "oemui.h"
 #include "OEMNV.h"
 #include "Voccal.h"
