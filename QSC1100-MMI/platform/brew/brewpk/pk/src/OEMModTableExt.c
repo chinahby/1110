@@ -363,8 +363,9 @@ extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int StopWatchMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int ClockAppsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int CalcMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#ifdef FEATURE_APP_WORLDTIME
 extern int WorldTimeMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
-
+#endif /*FEATURE_APP_WORLDTIME*/
 extern int ScheduleApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 //#endif
 
@@ -646,7 +647,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 
     {AEEFS_MIF_DIR"clockapps.mif", ClockAppsMod_Load},
     {AEEFS_MIF_DIR"calcapp.mif", CalcMod_Load},
+#ifdef FEATURE_APP_WORLDTIME    
     {AEEFS_MIF_DIR"worldtime.mif", WorldTimeMod_Load},
+#endif /*FEATURE_APP_WORLDTIME*/
     {AEEFS_MIF_DIR"stopwatch.mif", StopWatchMod_Load},
 
     {AEEFS_MIF_DIR"scheduleapp.mif", ScheduleApp_Load},
