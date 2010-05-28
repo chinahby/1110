@@ -361,7 +361,7 @@ int OEM_Notify(OEMNotifyEvent evt, uint32 dw)
                  pae->cls != AEECLSID_WMSAPP &&
 #endif
 #ifdef FEATURE_APP_CONTACT
-                 pae->cls != AEECLSID_CONTACT_APP &&
+                 pae->cls != AEECLSID_APP_CONTACT &&
 #endif
 #ifdef FEATURE_APP_RECENTCALLS
                  pae->cls != AEECLSID_RECENTCALLSAPP &&
@@ -481,7 +481,7 @@ boolean OEM_IsClsOKInSafeMode(uint32 clsid)
    #endif
 
    #ifdef FEATURE_APP_CONTACT
-     case AEECLSID_CONTACT_APP:
+     case AEECLSID_APP_CONTACT:
    #endif
 
    #ifdef FEATURE_APP_DATASTATS
