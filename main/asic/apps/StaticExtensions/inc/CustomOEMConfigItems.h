@@ -369,24 +369,6 @@ enum{
     CFGI_MENU_STYLE,                  //type=byte
 #endif
 
-    // BREW Configuration Parameters
-    CFGI_BREW_USERNAME,
-    CFGI_BREW_PASSWORD,
-    CFGI_BREW_CARRIER_ID,
-    CFGI_BREW_AUTH_POLICY,
-    CFGI_BREW_PRIVACY_POLICY,
-    CFGI_BREW_SUBSCRIBER_ID,
-    CFGI_BREW_PLATFORM_ID,
-    CFGI_BREW_TESTOPT,               // DIF_TEST_ALLOWED
-    CFGI_BREW_USEAKEY,               // DIF_USE_A_KEY
-    CFGI_BREW_AUTOUPGRADE_FLG,       // DIF_AUTO_UPGRADE 
-    CFGI_BREW_USEMINFORSID_FLG,      // DIF_MIN_FOR_SID
-    CFGI_BREW_PREPAY_FLG,            // DIF_PREPAY
-    CFGI_BREW_NOAUTOACK_FLG,         // DIF_NO_AUTO_ACK
-    CFGI_BREW_SIDENCODE_FLG,         // DIF_SID_ENCODE
-    CFGI_BREW_SIDVALIDATAALL_FLG,    // DIF_SID_VALIDATE_ALL
-    CFGI_BREW_IDS_RUIMDELETE_FLG,    // DIF_RUIM_DEL_OVERRIDE
-
     ////////////////////////////////////////////////////////////////
     // CameraApp
     ////////////////////////////////////////////////////////////////
