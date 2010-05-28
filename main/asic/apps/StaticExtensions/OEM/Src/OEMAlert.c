@@ -2668,13 +2668,7 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
         }     
     }
     ISHELL_CancelTimer(pMe->m_pIShell, OEMALERT_HandleStopMp3Timer, pMe);
-#ifndef WIN32
-    if(VC_DEV_NONE != VC_GetCurrentDevice())
-    {
-        MSG_ERROR("YKMILNA IN HERE START MP3 ALERT device is used %x  ",VC_GetCurrentDevice(),0,0);
-        return EFAILED;
-    }
-#endif
+    
     IBACKLIGHT_Enable(pMe->m_pBacklight);
     pMe->m_snd_type = type;
     pMe->m_mp3Ring = TRUE;
