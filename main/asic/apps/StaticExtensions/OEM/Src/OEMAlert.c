@@ -22,7 +22,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
       OEMALERT_NOTIFIER_SetMask  Called by Notifier interface to set a mask.
 
 
-        Copyright © 2006-2007 QUALCOMM Incorporated.
+        Copyright ?2006 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 
@@ -30,19 +30,16 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
 /*=============================================================================
 EDIT HISTORY FOR MODULE
 
-$Header: //depot/asic/msmshared/apps/StaticExtensions/OEM/Src/OEMAlert.c#19 $
-$DateTime: 2007/10/31 15:38:17 $
-$Author: carls $
-$Change: 559515 $
+$Header: //depot/asic/qsc60x0/apps/StaticExtensions/OEM/Src/OEMAlert.c#2 $
+$DateTime: 2006/08/11 09:14:34 $
+$Author: johns $
+$Change: 362969 $
 
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
-10/31/07   cvs     Fix stale pointer
-02/27/07   jas     Featurizing voice recognition code
-09/27/06   jks     Added support for QTV priority multimedia ringers
-07/20/06   jks     Added singleton media ringer delay
+08/11/06   jas     Fixing a compiler warning
 03/14/06   jas     Lint fixes.
 02/17/06   jks     Added CEPT sounds
 09/19/05   RI      Fixed the VR abort if VR is not playing.
@@ -88,7 +85,10 @@ when       who     what, where, why
 //lint -save -e754  // temporary since it is still in development
 
 #include "comdef.h"     // Get DMSS type declarations.
+#ifndef WIN32
 #include "err.h"        // Error functions
+#include "uixsnd.h"
+#endif
 #include "AEE.h"         // BREW headers.
 #include "AEE_OEM.h"     // Brew OEM Headers
 #include "AEEAlert.h"
@@ -96,35 +96,345 @@ when       who     what, where, why
 #include "AEEStdLib.h"
 #include "OEMHeap.h"
 #include "AEE_OEMDispatch.h"
-#include "uixsnd.h"
 
 
-#ifdef FEATURE_BREW_3_0
+#ifndef FEATURE_OEMUI_TASK
+#ifndef WIN32
+#include "uiuint.h"
+#endif
+#else
+#include "sndid.h"
+#include "OEMNV.h"
+#endif
 #include "OEMCriticalSection.h"
-#endif
-
 #include "AEEMediaUtil.h"
-
-#ifdef FEATURE_APP_MPEG4
-#include "AEEMediaMPEG4.h"
-#endif
-
+#ifndef WIN32
 #include "nv.h"
-#ifdef FEATURE_PHONE_VR
+#endif
 #include "AEEVR.h"
-#endif /* FEATURE_PHONE_VR */
 #include "AEEConfig.h"
 #include "OEMCFGI.h"
 #include "AEEAddrBookExt.h"
-#ifdef FEATURE_PHONE_VR
 #include "OEMVR_priv.h"
-#endif /* FEATURE_PHONE_VR */
 #include "AppComFunc.h"
-#ifndef USES_MMI
+
+#ifndef FEATURE_OEMUI_TASK
+#ifndef WIN32
 #include "uiutils.h"
 #endif
+#endif
+#ifndef WIN32
 #include "tmc.h"
+#include "Oemui.h"
+#endif
 #include "BREWVersion.h"
+
+#include "AEERinger.h"
+#ifndef WIN32
+#include "db.h"
+#include "voc.h"
+#include "vc0848.h"
+#endif
+#include "AEEShell.h"
+
+#include "AEEBacklight.h"
+#include "OEMSound.h"
+#include "AEECM.h"
+#include "OEMClassIDs.h"
+#include "AEEAnnunciator.h"
+
+#ifdef WIN32 
+#define SND_DUMMY_DATA_UINT32_MAX 0x7FFFFFFF
+#define SNDDEV_DUMMY_DATA_UINT32_MAX 0x7FFFFFFF
+#define MSG_ERROR(p,p1,p2,p3)
+enum sdb_sounds {          /* Description of sound                 */
+
+  SND_FIRST_SND = -1,   /* Use for range checking last sound    */
+
+  SND_ALERT = 0,                /* 0 -  Ringing for incoming call            */
+  SND_WAKEUP,                   /* Wake-up/Power-up sound                    */
+  SND_DIAL_TONE,                /* Dial tone                                 */
+  SND_DTACO_ROAM_TONE,          /* DTACO roaming dial tone                   */
+  SND_RING_BACK,                /* Ring-back sound                           */
+  SND_INTERCEPT,                /* Send request intercepted locally          */
+  SND_REORDER,                  /* System busy                               */
+  SND_BUSY_ALERT,               /* Busy Signal                               */
+  SND_CONFIRMATION,             /* Confirmation Tone                         */
+  SND_CALL_WAITING,             /* Call Waiting                              */
+  SND_ANSWER,                   /* 10 - Answer Tone                          */
+  SND_OFF_HOOK,                 /* Off-Hook Warning                          */
+  SND_NORMAL_ALERT,             /* "Normal" Alerting                         */
+  SND_INTR_GROUP_ALERT,         /* Intergroup Alerting                       */
+  SND_SPCL_ALERT,               /* Special/Priority Alerting                 */
+  SND_PING_RING,                /* "Ping ring"                               */
+  SND_IS54B_LONG_H_ALERT,       /* IS-54B High Long                          */
+  SND_IS54B_SS_H_ALERT,         /* IS-54B High Short-short                   */
+  SND_IS54B_SSL_H_ALERT,        /* IS-54B High Short-short-long              */
+  SND_IS54B_SS2_H_ALERT,        /* IS-54B High Short-short-2                 */
+  SND_IS54B_SLS_H_ALERT,        /* 20 - IS-54B High Short-long-short         */
+  SND_IS54B_SSSS_H_ALERT,       /* IS-54B High Short-short-short-short       */
+  SND_IS54B_PBX_LONG_H_ALERT,   /* IS-54B High PBX Long                      */
+  SND_IS54B_PBX_SS_H_ALERT,     /* IS-54B High PBX Short-short               */
+  SND_IS54B_PBX_SSL_H_ALERT,    /* IS-54B High PBX Short-short-long          */
+  SND_IS54B_PBX_SLS_H_ALERT,    /* IS-54B High PBX Short-long-short          */
+  SND_IS54B_PBX_SSSS_H_ALERT,   /* IS-54B High PBX Short-short-short-short   */
+  SND_IS53A_PPPP_H_ALERT,       /* IS-53A High Pip-Pip-Pip-Pip Alert         */
+  SND_IS54B_LONG_M_ALERT,       /* IS-54B Medium Long                        */
+  SND_IS54B_SS_M_ALERT,         /* IS-54B Medium Short-short                 */
+  SND_IS54B_SSL_M_ALERT,        /* 30 - IS-54B Medium Short-short-long       */
+  SND_IS54B_SS2_M_ALERT,        /* IS-54B Medium Short-short-2               */
+  SND_IS54B_SLS_M_ALERT,        /* IS-54B Medium Short-long-short            */
+  SND_IS54B_SSSS_M_ALERT,       /* IS-54B Medium Short-short-short-short     */
+  SND_IS54B_PBX_LONG_M_ALERT,   /* IS-54B Medium PBX Long                    */
+  SND_IS54B_PBX_SS_M_ALERT,     /* IS-54B Medium PBX Short-short             */
+  SND_IS54B_PBX_SSL_M_ALERT,    /* IS-54B Medium PBX Short-short-long        */
+  SND_IS54B_PBX_SLS_M_ALERT,    /* IS-54B Medium PBX Short-long-short        */
+  SND_IS54B_PBX_SSSS_M_ALERT,   /* IS-54B Medium PBX Short-short-short-short */
+  SND_IS53A_PPPP_M_ALERT,       /* IS-53A Medium Pip-Pip-Pip-Pip Alert       */
+  SND_IS54B_LONG_L_ALERT,       /* 40 - IS-54B Low Long                      */
+  SND_IS54B_SS_L_ALERT,         /* IS-54B Low Short-short                    */
+  SND_IS54B_SSL_L_ALERT,        /* IS-54B Low Short-short-long               */
+  SND_IS54B_SS2_L_ALERT,        /* IS-54B Low Short-short-2                  */
+  SND_IS54B_SLS_L_ALERT,        /* IS-54B Low Short-long-short               */
+  SND_IS54B_SSSS_L_ALERT,       /* IS-54B Low Short-short-short-short        */
+  SND_IS54B_PBX_LONG_L_ALERT,   /* IS-54B Low PBX Long                       */
+  SND_IS54B_PBX_SS_L_ALERT,     /* IS-54B Low PBX Short-short                */
+  SND_IS54B_PBX_SSL_L_ALERT,    /* IS-54B Low PBX Short-short-long           */
+  SND_IS54B_PBX_SLS_L_ALERT,    /* IS-54B Low PBX Short-long-short           */
+  SND_IS54B_PBX_SSSS_L_ALERT,   /* 50 - IS-54B Low PBX Short-short-short-shrt*/
+  SND_IS53A_PPPP_L_ALERT,       /* IS-53A Low Pip-Pip-Pip-Pip Alert          */
+  SND_FADE_TONE,                /* Tone to inform user of a fade             */
+  SND_SVC_CHANGE,               /* Inform user of a service area change      */
+  SND_HORN_ALERT,               /* Horn alert                                */
+  SND_ABRV_REORDER,             /* Abbreviated System busy                   */
+  SND_ABRV_INTERCEPT,           /* Abbrev'd Send request intercepted locally */
+  SND_ALTERNATE_REORDER,        /* Alternate reorder                         */
+  SND_MESSAGE_ALERT,            /* Message Waiting Signal                    */
+  SND_ABRV_ALERT,               /* Abbreviated alert                         */
+  SND_PIP_TONE,                 /* 60 - Pip Tone (Voice Mail Waiting)        */
+  SND_ROAM_RING,                /* Ringing option while roaming              */
+  SND_SVC_ACQ,                  /* Service acquired sound                    */
+  SND_SVC_LOST,                 /* Service lost sound                        */
+  SND_SVC_CHNG_MORE_PREF,       /* Change to a more preferred service sound  */
+  SND_SVC_CHNG_LESS_PREF,       /* Change to a less preferred service sound  */
+  SND_EXT_PWR_ON,               /* External power on sound                   */
+  SND_EXT_PWR_OFF,              /* External power off sound                  */
+  SND_RING_1,                   /* User selectable ring 1                    */
+  SND_RING_2,                   /* User selectable ring 2                    */
+  SND_RING_3,                   /* 70 - User selectable ring 3               */
+  SND_RING_4,                   /* User selectable ring 4                    */
+  SND_RING_5,                   /* User selectable ring 5                    */
+  SND_RING_6,                   /* User selectable ring 6                    */
+  SND_RING_7,                   /* User selectable ring 7                    */
+  SND_RING_8,                   /* User selectable ring 8                    */
+  SND_RING_9,                   /* User selectable ring 9                    */
+  SND_VR_HFK_CALL_RECEIVED,     /* Call answer sound when in HFK             */
+  SND_HFK_CALL_ORIG,            /* Call origination sound when in HFK        */
+  SND_SPECIAL_INFO,             /* Special info sound                        */
+                                /* GSM tones, defined in 3GPP 2.40           */
+  SND_SUBSCRIBER_BUSY,          /* 80 - Subscriber busy sound                */
+  SND_CONGESTION,               /* Congestion sound                          */
+  SND_ERROR_INFO,               /* Error information sound                   */
+  SND_NUMBER_UNOBTAINABLE,      /* Number unobtainable sound                 */
+  SND_AUTH_FAILURE,             /* Authentication failure sound              */
+  SND_RADIO_PATH_ACK,           /* Radio path acknowledgement sound          */
+  SND_RADIO_PATH_NOT_AVAIL,     /* Radio path not available sound            */
+  SND_CEPT_CALL_WAITING,        /* CEPT call waiting sound                   */
+  SND_CEPT_RING,                /* CEPT ringing sound                        */
+  SND_CEPT_DIAL_TONE,           /* CEPT dial tone                            */
+  SND_LAST_SND                  /* Use for range checking last sound         */
+
+};
+typedef enum {
+  SND_DEVICE_HANDSET,
+  SND_DEVICE_HFK,
+  SND_DEVICE_HEADSET,         /* Mono headset               */
+#if defined(FEATURE_INTERNAL_SDAC) || defined(FEATURE_EXTERNAL_SDAC)
+  SND_DEVICE_STEREO_HEADSET,  /* Stereo headset             */
+#endif /* FEATURE_INTERNAL_SDAC || FEATURE_EXTERNAL_SDAC */
+#ifdef FEATURE_ANALOG_HFK
+  SND_DEVICE_AHFK,
+#endif  
+#if defined(FEATURE_INTERNAL_SDAC) || defined(FEATURE_EXTERNAL_SDAC)
+  SND_DEVICE_SDAC,
+#endif /* FEATURE_INTERNAL_SDAC || FEATURE_EXTERNAL_SDAC */
+#ifdef FEATURE_SPEAKER_PHONE
+  SND_DEVICE_SPEAKER_PHONE,
+#endif
+#ifdef FEATURE_TTY
+  SND_DEVICE_TTY_HFK,
+  SND_DEVICE_TTY_HEADSET,
+  SND_DEVICE_TTY_VCO,
+  SND_DEVICE_TTY_HCO,
+#endif
+#ifdef FEATURE_SUPPORT_BT_BCM
+  SND_DEVICE_BT_HEADSET,
+#endif /* FEATURE_SUPPORT_BT_BCM */
+#ifdef FEATURE_USB_CARKIT
+#error code not present
+#endif /* FEATURE_USB_CARKIT */
+#if defined(FEATURE_INTERNAL_SADC) || defined(FEATURE_EXTERNAL_SADC)
+  SND_DEVICE_IN_M_SADC_OUT_HANDSET, /* Input Mono   SADD, Output Handset */
+  SND_DEVICE_IN_S_SADC_OUT_HANDSET, /* Input Stereo SADD, Output Headset */ 
+  SND_DEVICE_IN_M_SADC_OUT_HEADSET, /* Input Mono   SADD, Output Handset */
+  SND_DEVICE_IN_S_SADC_OUT_HEADSET, /* Input Stereo SADD, Output Headset */
+#endif /* FEATURE_INTERNAL_SADC || FEATURE_EXTERNAL_SADC */
+#ifdef FEATURE_BT
+#error code not present
+#endif /* FEATURE_BT */
+  SND_DEVICE_MAX,
+  SND_DEVICE_CURRENT,
+
+  /* DO NOT USE: Force this enum to be a 32bit type */
+  SND_DEVICE_32BIT_DUMMY = SNDDEV_DUMMY_DATA_UINT32_MAX
+} snd_device_type;
+// UI Ï£Íû²¥·ÅµÄÉùÒôÀàÐÍ¶¨Òå
+typedef enum 
+{
+    UI_PWRUP_SND,              /* Sounds for power on, ext power off/on   */
+                               /*  in use generator     = ringer          */
+                               /*  not in use generator = ringer          */
+                               /*  volume used          = key beep volume */
+    UI_BEEP_SND,               /* Beep snd for most keys                  */
+                               /*  in use generator     = ringer          */
+                               /*  not in use generator = ringer          */
+                               /*  volume used          = key beep volume */
+    UI_EARBEEP_SND,            /* Beep for low battery, minute beep etc.. */
+                               /*  in use generator     = ear piece       */
+                               /*  not in use generator = ringer          */
+                               /*  volume used          = ear volume      */
+                               /*  in car kit volume    = ringer volume   */
+    UI_ALERT_SND,              /* alert ring sound - includes signalling  */
+                               /*  in use generator     = ringer          */
+                               /*  not in use generator = ringer          */
+                               /*  volume used          = ringer volume   */
+    UI_CALL_SND,               /* Call feedback sound ringer/earpiece     */
+                               /*  in use generator     = ear piece       */
+                               /*  not in use generator = ringer          */
+                               /*  volume used          = constant        */
+    UI_MSG_SND,                /* Message notifications                   */
+                               /*  in use generator     = ear piece       */
+                               /*  not in use generator = ringer          */
+                               /*  volume used          = ringer volume   */
+    UI_EXT_PWR_SND,            /* External Power sounds                   */
+                               /*  in use generator     = ringer          */
+                               /*  not in use generator = ringer          */
+                               /*  volume used          = constant        */
+    UI_SVC_ALERT_SND,          /* Service Alert sound */
+                               /*  in use generator     = ear piece       */
+                               /*  not in use generator = ringer          */
+                               /*  volume used          = constant        */
+    UI_DTMF_SND,               /* DTMF sounds during a call               */
+                               /*  in use generator     = ear piece       */
+                               /*  not in use generator =  n/a            */
+                               /*  volume used          = up to snd task  */
+    UI_CALL_EAR_SND            /* CAll feedback sound earpiece/earpiece   */
+                               /*  in use generator     = ear piece       */
+                               /*  not in use generator = ear piece       */
+                               /*  volume used          = constant        */
+                               /* these will be generated at the earpiece */
+                               /* even if the phone is not in use         */
+} uisnd_snd_type;
+typedef enum {
+  /* This method is required
+  */
+  SND_METHOD_VOICE = 0,   /* Use the device's voice generator                */
+  
+  /* Application-Specific Methods
+  */
+  SND_METHOD_KEY_BEEP,    /* Use the device's keybeep generator              */
+  SND_METHOD_MESSAGE,     /* Use the path's ringer, or voice generator       */
+  SND_METHOD_RING,        /* Use the device's ring generator                 */
+#ifdef FEATURE_CLICK
+#error code not present
+#endif
+#if defined(FEATURE_AUDIO_FORMAT) || defined(FEATURE_MIDI_OUT)
+  SND_METHOD_MIDI,        /* Use the device's Midi generator                 */
+#endif
+  SND_METHOD_AUX,         /* Use the device's auxiliary generator if avail.  */
+  SND_METHOD_MAX,          /* Always last in the list                         */
+
+  /* DO NOT USE: Force this enum to be a 32bit type */
+  SND_METHOD_32BIT_DUMMY = SNDDEV_DUMMY_DATA_UINT32_MAX
+} snd_method_type;
+
+
+
+typedef enum {
+  SND_APATH_LOCAL,         /* DTMF's on local audio        */
+  SND_APATH_TX,            /* Transmit DTMFs               */
+  SND_APATH_BOTH,          /* Tx and sound DTMF's locally  */
+  SND_APATH_MUTE,          /* Mute the DTMFs               */
+
+  /* DO NOT USE: Force this enum to be a 32bit type */
+  SND_APATH_32BIT_DUMMY = SND_DUMMY_DATA_UINT32_MAX
+} snd_apath_type;
+typedef enum {
+  SND_PRIO_LOW,                 /* All sounds except DTMF burst    */
+  SND_PRIO_MED,                 /* All sounds except DTMF burst    */
+  SND_PRIO_HIGH,                /* Used in DTMF burst transmission */
+  SND_PRIO_ALL,                 /* Used to stop all sounds         */
+
+  /* DO NOT USE: Force this enum to be a 32bit type */
+  SND_PRIO_32BIT_DUMMY = SND_DUMMY_DATA_UINT32_MAX
+} snd_priority_type;
+
+typedef int snd_sound_id_type;
+typedef void *snd_cb_func_ptr_type;
+
+static void uisnd_snd(uisnd_snd_type  type, snd_sound_id_type   snd){return;}
+static void OEMSOUND_Sound_Id_Start
+(
+  snd_device_type       device,
+   /* The device chosen for this command    */
+  snd_method_type       method,
+    /* method                               */
+  snd_sound_id_type     sound_id,
+    /* Sound id                             */
+  snd_priority_type     priority,
+    /* Priority of the tone                 */
+  snd_apath_type        dtmf_path,
+    /* Play this tone OTA when in DFM call  */
+  snd_cb_func_ptr_type  callback_ptr
+    /* Call back function                   */
+){return;}
+static void uisnd_snd_stop(void){return;}
+static void OEMSOUND_Sound_Stop(snd_priority_type priority){return ;}
+#endif
+
+#define INCREMENT_ESCALATING_RINGER(vol) \
+                           ( (vol) = (OEMSound_Volume_Type)((int)(vol) + 2) )
+                           
+// How long the phone vibrates for each "ring"
+#define TIME_MS_RINGERVIBRATE_DURATION          2000
+
+// How long the phone vibrates for an incoming call, if using the Ring Then
+// Vibrate setting (must be divisible evenly by TIME_MS_RINGERVIBRATE_DURATION)
+#define TIME_MS_RINGERVIBRATE_ALERT_DURATION    12000
+
+// Twice the number of times the phone should vibrate before starting to ring
+// when using the Vibrate Then Ring setting
+#define COUNT_VIBRATE_ALERTS_THEN_RING  \
+      ( TIME_MS_RINGERVIBRATE_ALERT_DURATION / TIME_MS_RINGERVIBRATE_DURATION )
+      
+// Time between CAlert_HandleMissedCallTimer() callbacks
+#define TIMEOUT_MS_MISSEDCALL_TIMER             (60 * 1000)
+
+// Time between OEMALERT_HandleRingerTimer() callbacks
+#define TIMEOUT_MS_RINGERVIB_TIMER     TIME_MS_RINGERVIBRATE_DURATION
+
+// How long the phone vibrates for a SMS alert
+#ifdef FEATURE_SMSTONETYPE_MID  
+#define TIME_MS_SMSVIBRATE_DURATION             8000
+#define COUNT_SMSVIBRATE_ALERTS_THEN_RING       2
+#else
+#define TIME_MS_SMSVIBRATE_DURATION             2000
+#endif //#ifdef FEATURE_SMSTONETYPE_MID  
+
+//The time of Key beep tone play
+#define NORMAL_TONE_MS  200
+#define LONG_TONE_MS    400
+
 
 /* Ringer type for the standard alert */
 /* It is translated into ringer_type in sound module using the */
@@ -179,19 +489,31 @@ struct IALERT
   char *                   m_ringerFile;      /* MultiMedia Ringer File*/
   AEEALERTType             m_alertType;       /* Current Alert Type*/
   OEMALERTRingerType       m_ringerType;      /* Current Ringer Playing*/
-#ifdef FEATURE_PHONE_VR
   boolean                  m_bVRPlaying;      /* Identifies if VR is aplying the prompts*/
-#endif /* FEATURE_PHONE_VR */
   uint8                    m_numTimeOut;      /* Timeout value*/
   boolean                  m_bStopRinger;
   AEECallback              m_acbDelayedRingCallback;
   int32                    m_nMediaRingerDelay;
   IMedia*                  m_pMedia;         /* Pointer to IMedia*/
-#ifdef FEATURE_PHONE_VR
   IVR*                     m_pVR;            /* pointer to IVR*/
-#endif /* FEATURE_PHONE_VR */
   IConfig*                 m_pConfig;        /* pointer to IConfig*/
   void *                   m_pac;        /* App context */
+  IAnnunciator *           m_pIAnn;
+  
+  IRingerMgr              *m_pRingerMgr;
+  ISound                  *m_pSound;   
+  int32                    m_ringVibCount;   // Used for Vib+Ring ringer type
+  OEMSound_Volume_Type     m_ringCurVol;     // Current ringer volume
+  OEMSound_Volume_Type     m_ringEndVol;     // Final ringer volume (for escalating)
+  uint32                   ring_id; 
+  uint32                   CurrRingerId;   
+  boolean                  ringer_playing; 
+  int                      alert_count;  
+  int                      smsID; 
+  IBacklight               *m_pBacklight;  
+  ICM                      *m_pICM;  
+  ALERT_SND_TYPE   m_snd_type;
+  boolean                  m_mp3Ring;
 };
 
 /* The following structure is for the notifier object when
@@ -206,6 +528,11 @@ struct IALERT_NOTIFIER
 
 };
 
+typedef struct IALERT_CurStatus
+{
+    IRingerMgr          *m_pCurRingerMgr;
+    boolean             m_bplaying; 
+}IALERT_CurStatus;
 
 /***********************************************************************
                  * INTERNAL      FUNCTIONS*
@@ -219,7 +546,7 @@ static boolean GetPhonebookMatchByNumber
   AECHAR *pszNumber,
   char *pszName,
   int *rwid);
-#endif /* FEATURE_PHONE_VR */
+#endif
 
 static int OEMALERT_PlayRinger(IALERT *pMe, uint8,AECHAR*,AEEALERTType);
 static int OEMALERT_StopRinger(IALERT* pMe);
@@ -245,8 +572,8 @@ static uint32 OEMALERT_AddRef        (IALERT *po);
 static uint32 OEMALERT_Release       (IALERT *po);
 static int    OEMALERT_QueryInterface(IALERT *po, AEECLSID id, void **ppNew);
 static int    OEMALERT_StartAlerting (IALERT *po, uint8 call_type,
-				      AECHAR *phoneNumber,
-				      AEEALERTType alert_type);
+                				      AECHAR *phoneNumber,
+                				      AEEALERTType alert_type);
 static int    OEMALERT_StopAlerting  (IALERT *po);
 static int    OEMALERT_SetMuteCtl    (IALERT *po, boolean muteOn);
 static int    OEMALERT_SetRect       (IALERT *po, AEERect *tRect);
@@ -259,7 +586,45 @@ static int    OEMALERT_SetMediaRingerDelay
                                      (IALERT *po, int32 nMediaRingerDelay);
 static int    OEMALERT_GetMediaRingerDelay
                                      (IALERT *po, int32 *pnMediaRingerDelay);
+                                     
+static void   OEMALERT_StartRingerAlert(IALERT *po,uint32 id,ALERT_SND_TYPE type);
+static int    OEMALERT_StartMp3Alert(IALERT *po, char* id, ALERT_SND_TYPE type); 
+static void   OEMALERT_StopMp3Alert(IALERT *po);
+static void   OEMALERT_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify);
+static void   OEMALERT_StopRingerAlert(IALERT *po);                                   
+static void   OEMALERT_HandleRingerAlertTimer(void *pUser);
+static void   OEMALERT_StartRingerPreview(IALERT *po, AEERingerID ringer);
+static void   OEMALERT_StartMp3Preview(IALERT * po, char *id);
+static void   OEMALERT_StartMissedCallAlert(IALERT *po);
+static void   OEMALERT_StopMissedCallAlert(IALERT *po);
+static void   OEMALERT_HandleMissedCallTimer(void *pUser);
+static void   OEMALERT_StartSMSAlert(IALERT *po, int ring_id);
 
+#if !defined(FEATURE_SMSTONETYPE_MID)
+static void   OEMALERT_HandleSMSTimer(void *pUser);
+#endif
+
+static void   OEMALERT_StopSMSAlert(IALERT *po);
+static void   OEMALERT_KeyBeep(IALERT *po, AVKType key, boolean bPressed);
+static void   OEMALERT_keeybeep_stop(void *pUser);
+static AEESoundTone OEMALERT_MapKeyToTone(AVKType key);
+static void   OEMALERT_GetRingerVol(IALERT *po);
+static void   OEMALERT_SetRingerVol(IALERT *po, boolean bEscalate);
+static boolean OEMALERT_InCall(IALERT *po);  
+static boolean OEMALERT_RingInHeadset(IALERT *po);
+
+#ifdef FEATURE_APP_MUSICPLAYER
+static void OEMALERT_NotifyMP3Player(IALERT *pMe,boolean bStartAlert);
+static void OEMALERT_NotifyMP3PlayerCB(IALERT * pMe);
+#endif
+#ifdef FEATURE_SMSTONETYPE_MID     
+static void   OEMALERT_HandleStopRingerTimer(void *pUser);
+#endif //#if defined FEATURE_SMSTONETYPE_MID		    
+
+static void   OEMALERT_HandleStopMp3Timer(void *pUser);
+static void   OEMALERT_StartSMSAlertPreview(IALERT *po, int ring_id);
+
+static void   OEMALERT_MinuteAlert(IALERT *pMe);
 
 /* The function supported by the NOTIFIER object. */
 static const AEEVTBL(IALERT_NOTIFIER) gOEMALERT_NOTIFIERFuncs = {
@@ -280,7 +645,20 @@ static const AEEVTBL(IALERT) gOEMALERTFuncs = {
    OEMALERT_GetRect,
    OEMALERT_GetInfo,
    OEMALERT_SetMediaRingerDelay,
-   OEMALERT_GetMediaRingerDelay
+   OEMALERT_GetMediaRingerDelay,
+   OEMALERT_StartMp3Alert,
+   OEMALERT_StopMp3Alert,
+   OEMALERT_StartRingerAlert,
+   OEMALERT_StopRingerAlert,
+   OEMALERT_StartRingerPreview,  
+   OEMALERT_StartSMSAlert,
+   OEMALERT_StopSMSAlert,
+   OEMALERT_StartMissedCallAlert, 
+   OEMALERT_StopMissedCallAlert, 
+   OEMALERT_KeyBeep,
+   OEMALERT_StartSMSAlertPreview,
+   OEMALERT_MinuteAlert,
+   OEMALERT_StartMp3Preview,
 };
 
 
@@ -290,6 +668,8 @@ static const AEEVTBL(IALERT) gOEMALERTFuncs = {
  ***********************************************************************/
 static struct IALERT_NOTIFIER *IALERT_NOTIFIERobj = NULL;
 
+static IALERT_CurStatus gCurStatus = {0,};
+
 
 typedef struct OEMALERT_NOTIFIER_notify_cb
 {
@@ -297,8 +677,6 @@ typedef struct OEMALERT_NOTIFIER_notify_cb
   void *user_data;
 } OEMCARD_ALERT_NOTIFY_CB;
 
-
-static int32 nGlobalMediaRingerDelay = 250;
 
 /*===========================================================================
 FUNCTION OEMALERT_DoNotify
@@ -354,8 +732,9 @@ static int OEMALERT_SendNotification(uint8 mask, boolean data)
 
   oem_cb.pfnNotify = (PFNNOTIFY) OEMALERT_DoNotify;
   oem_cb.pNotifyData = &notifyData;
+#ifndef WIN32 //wlh
   ISHELL_Resume(IALERT_NOTIFIERobj->m_pIShell, &oem_cb);
-
+#endif
   return SUCCESS;
 }
 
@@ -382,12 +761,13 @@ SIDE EFFECTS
 ===========================================================================*/
 int OEMALERT_NOTIFIER_New(IShell *pIShell, AEECLSID cls, void **ppif)
 {
+#ifndef WIN32
 #ifdef AEE_SIMULATOR
    // Do not create an object is this is being run on the SDK.
    *ppif = NULL;
    return EUNSUPPORTED;
 #endif
-
+#endif
    // Check parameters.
    if ((!pIShell) || (!ppif)) {
       return EBADPARM;
@@ -540,21 +920,59 @@ static void OEMALERT_NOTIFIER_SetMask(IALERT_NOTIFIER *po,
    CALLBACK_Cancel(&pMe->m_acbDelayedRingCallback);
    CALLBACK_Cancel(&pMe->m_cbSysObj);
 
-   if (pMe->m_pMedia) {
+   if (pMe->m_pMedia) 
+   {
      (void) IMEDIA_Release(pMe->m_pMedia);
      pMe->m_pMedia = NULL;
    }
 
 #ifdef FEATURE_PHONE_VR
-   if (pMe->m_pVR) {
+   if (pMe->m_pVR) 
+   {
      (void)IVR_Release(pMe->m_pVR);
      pMe->m_pVR = NULL;
    }
-#endif /* FEATURE_PHONE_VR */
+#endif
 
-   if (pMe->m_pConfig) {
+   if (pMe->m_pConfig) 
+   {
      (void) ICONFIG_Release(pMe->m_pConfig);
      pMe->m_pConfig = NULL;
+   }
+
+   if (pMe->m_pRingerMgr) 
+   {
+     (void) IRINGERMGR_Release(pMe->m_pRingerMgr);
+     
+     if (gCurStatus.m_pCurRingerMgr == pMe->m_pRingerMgr )
+     {
+         gCurStatus.m_bplaying = FALSE;
+         gCurStatus.m_pCurRingerMgr = NULL;
+     }
+     pMe->m_pRingerMgr= NULL;
+   }   
+
+   if (pMe->m_pSound) 
+   {
+     (void) ISOUND_Release(pMe->m_pSound);
+     pMe->m_pSound= NULL;
+   }  
+      
+   if (pMe->m_pBacklight) 
+   {
+     (void) IBACKLIGHT_Release(pMe->m_pBacklight);
+     pMe->m_pBacklight= NULL;
+   }     
+   
+   if (pMe->m_pICM) 
+   {
+     (void) ICM_Release(pMe->m_pICM);
+     pMe->m_pICM= NULL;
+   }        
+   if (pMe->m_pIAnn) 
+   {
+       IANNUNCIATOR_Release(pMe->m_pIAnn);
+       pMe->m_pIAnn= NULL;
    }
 
    FREE(pMe);
@@ -579,13 +997,6 @@ SIDE EFFECTS
 int OEMALERT_New(IShell *pIShell, AEECLSID cls, void **ppif)
 {
   IALERT *pNew;
-
-#ifdef AEE_SIMULATOR
-   // Do not create an object is this is being run on the SDK.
-   *ppif = NULL;
-   return EUNSUPPORTED;
-#endif
-
    // Check parameters.
   if ((!pIShell) || (!ppif)) {
        return EBADPARM;
@@ -611,24 +1022,66 @@ int OEMALERT_New(IShell *pIShell, AEECLSID cls, void **ppif)
 
 
   pNew->m_pMedia = NULL;
-  pNew->m_pConfig = NULL;
-
-#ifdef FEATURE_PHONE_VR
-  /* IVR object should be available*/
   pNew->m_pVR = NULL;
+  pNew->m_pConfig = NULL;
+  pNew->m_pSound = NULL;
+  pNew->m_pRingerMgr = NULL;
+  pNew->m_snd_type = ALERT_NORMAL_SND;
+#ifdef FEATURE_PHONE_VR
+/* IVR object should be available*/
   if(ISHELL_CreateInstance(pNew->m_pIShell, AEECLSID_VR,
-			   (void **)&pNew->m_pVR) != SUCCESS) {
+			   (void **)&pNew->m_pVR) != SUCCESS) 
+  {
       OEM_FreeAlert(pNew);
       return EFAILED;
   }
-#endif /* FEATURE_PHONE_VR */
+#endif
   if (ISHELL_CreateInstance(pNew->m_pIShell, AEECLSID_CONFIG,
 			    (void **) &pNew->m_pConfig)
-      != SUCCESS) {
+      != SUCCESS) 
+  {
      OEM_FreeAlert(pNew);
      return EFAILED;
   }
 
+  if (ISHELL_CreateInstance(pNew->m_pIShell, AEECLSID_SOUND,
+			    (void **) &pNew->m_pSound)
+      != SUCCESS) 
+  {
+     OEM_FreeAlert(pNew);
+     return EFAILED;
+  }
+  
+  if (ISHELL_CreateInstance(pNew->m_pIShell, AEECLSID_RINGERMGR,
+			    (void **) &pNew->m_pRingerMgr)
+      != SUCCESS) 
+  {
+     OEM_FreeAlert(pNew);
+     return EFAILED;
+  }  
+  
+  if (AEE_SUCCESS != ISHELL_CreateInstance(pNew->m_pIShell,
+                                           AEECLSID_BACKLIGHT,
+                                           (void **)&pNew->m_pBacklight))
+  {
+     OEM_FreeAlert(pNew);
+     return EFAILED;
+  }     
+
+  if (AEE_SUCCESS != ISHELL_CreateInstance(pNew->m_pIShell,
+                                           AEECLSID_CM,
+                                           (void **)&pNew->m_pICM))
+  {
+     OEM_FreeAlert(pNew);
+     return EFAILED;
+  }       
+
+  if (AEE_SUCCESS != ISHELL_CreateInstance(pNew->m_pIShell, AEECLSID_ANNUNCIATOR, 
+          (void **) &pNew->m_pIAnn))
+  {
+      OEM_FreeAlert(pNew);
+      return EFAILED;
+  }
   pNew->m_pac = AEE_GetAppContext();
 
   CALLBACK_Init(&pNew->m_cbSysObj, OEM_FreeAlert, pNew);
@@ -695,6 +1148,8 @@ static uint32 OEMALERT_Release(IALERT *pMe)
     return pMe->m_uRefs;
   }
 
+  // ÊÍ·ÅÓë pMe Ïà¹ØµÄÈ«²¿¶¨Ê±Æ÷
+  (void) ISHELL_CancelTimer(pMe->m_pIShell, NULL, pMe);
 
   OEM_FreeAlert(pMe);
   return 0;
@@ -768,7 +1223,7 @@ SIDE EFFECTS
 static int OEMALERT_SetMediaRingerDelay(IALERT *po, int32 nMediaRingerDelay)
 {
   if (!po) return EBADPARM;
-  nGlobalMediaRingerDelay = nMediaRingerDelay;
+  po->m_nMediaRingerDelay = nMediaRingerDelay;
   return AEE_SUCCESS;
 }
 
@@ -793,7 +1248,7 @@ SIDE EFFECTS
 static int OEMALERT_GetMediaRingerDelay(IALERT *po, int32 *pnMediaRingerDelay)
 {
   if (!po || !pnMediaRingerDelay) return EBADPARM;
-  *pnMediaRingerDelay = nGlobalMediaRingerDelay;
+  *pnMediaRingerDelay = po->m_nMediaRingerDelay;
   return AEE_SUCCESS;
 //lint -save -esym(818, po)  Suppress "could be ptr to const"
 }
@@ -896,7 +1351,7 @@ static int OEMALERT_StartAlerting
     }
   }
 
-#endif /* FEATURE_PHONE_VR */
+#endif
 
   pMe->m_bStopRinger = FALSE;
   nRetVal = OEMALERT_PlayRinger(pMe, callType, phoneNumber, alertType);
@@ -949,7 +1404,7 @@ static int OEMALERT_StopAlerting
       return nRetVal;
     }
   }
-#endif /* FEATURE_PHONE_VR */
+#endif
 
   pMe->m_alertType = AEEALERT_ALERT_NONE;
 
@@ -986,18 +1441,19 @@ static int OEMALERT_SetMuteCtl
 
   if(muteOn){
 
-#ifdef FEATURE_PHONE_VR
+  #ifdef FEATURE_PHONE_VR
     if(pMe->m_pVR)
       (void) IVR_AbortOperation(pMe->m_pVR);
-#endif /* FEATURE_PHONE_VR */
+  #endif
 
     if (pMe->m_pMedia) {
         (void) IMEDIA_Stop(pMe->m_pMedia);
         (void) IMEDIA_Release(pMe->m_pMedia);
         pMe->m_pMedia = NULL;
     }
-
+#ifndef WIN32
     uisnd_snd_stop();
+#endif
   }
   (void) OEMALERT_SendNotification(NMASK_ALERT_MUTED, muteOn);
   return SUCCESS;
@@ -1117,6 +1573,7 @@ static int  OEMALERT_GetRingerType
  OEMALERTRingerType *ringerType
 )
 {
+#ifndef WIN32
   //lint -save -esym(550, ringerType)
   nv_item_type nvi;
   nv_stat_enum_type result;
@@ -1125,11 +1582,13 @@ static int  OEMALERT_GetRingerType
     MSG_ERROR("Invalid Pointer",0,0,0);
     return EBADPARM;
   }
-#ifndef CUST_EDITION
-    result = ui_get_nv (NV_RINGER_TYPE_I, &nvi);
-#else      
-    result = OEMNV_Get(NV_RINGER_TYPE_I, &nvi);
-#endif 
+
+#ifndef FEATURE_OEMUI_TASK  
+  result = ui_get_nv(NV_RINGER_TYPE_I, &nvi);
+#else
+  result = OEMNV_Get(NV_RINGER_TYPE_I, &nvi);
+#endif  
+
   if(result == NV_DONE_S) { /* successfully obtain from NV */
     /* range checking */
     if (nvi.ringer_type >=(uint8) OEMALERT_RINGER_MAX) {
@@ -1142,11 +1601,13 @@ static int  OEMALERT_GetRingerType
     }
 
     *ringerType = (OEMALERTRingerType)nvi.ringer_type;
-#ifndef CUST_EDITION
+
+#ifndef FEATURE_OEMUI_TASK  
     result = ui_get_nv (NV_MM_RINGER_FILE_I, &nvi);
 #else      
     result = OEMNV_Get(NV_MM_RINGER_FILE_I, &nvi);
-#endif 
+#endif  
+
     if (result == NV_DONE_S) {
       if (pMe->m_ringerFile) {
         FREE(pMe->m_ringerFile);
@@ -1171,6 +1632,9 @@ static int  OEMALERT_GetRingerType
   }
 
   return EFAILED;
+#else
+	return SUCCESS;
+#endif
 } /*OEMALERT_GetRingerType*/
 
 #ifdef FEATURE_PHONE_VR
@@ -1282,7 +1746,7 @@ void OEMALERT_VrCallback
    }
 }
 
-#endif /* FEATURE_PHONE_VR */
+#endif
 
 
 /*===========================================================================
@@ -1324,11 +1788,11 @@ static int OEMALERT_PlayMedia(IALERT *pMe)
     return EBADPARM;
   }
 
-  if (nGlobalMediaRingerDelay > 0) {
+  if (pMe->m_nMediaRingerDelay > 0) {
     CALLBACK_Init(&pMe->m_acbDelayedRingCallback,
                   OEMALERT_PlayMediaCallback,
                   pMe);
-    (void)ISHELL_SetTimerEx(pIShell, nGlobalMediaRingerDelay,
+    (void)ISHELL_SetTimerEx(pIShell, pMe->m_nMediaRingerDelay,
                             &pMe->m_acbDelayedRingCallback);
     return SUCCESS;
   }
@@ -1390,8 +1854,6 @@ SIDE EFFECTS
 static int OEMALERT_PlayMedia2(IALERT *pMe)
 {
     AEEMediaData mediaData;
-    int  iResult;
-    AEECLSID    cls;
 
     if(NULL == pMe) {
       MSG_ERROR("Invalid Pointer",0,0,0);
@@ -1407,36 +1869,15 @@ static int OEMALERT_PlayMedia2(IALERT *pMe)
     mediaData.pData = (void *)STRDUP(pMe->m_ringerFile);
     mediaData.dwSize = 0;
 
-    pMe->m_pMedia = NULL;
-
-    // Find the class ID. This function uses ISHELL_DetectType() API to get the IMedia
-    // MIME and subsequently class ID...
-    iResult = AEEMediaUtil_FindClass(pMe->m_pIShell, &mediaData, &cls);
-    if (iResult != SUCCESS)
-       return iResult;
-
-    // Create IMedia-based object
-    if (ISHELL_CreateInstance(pMe->m_pIShell, cls, (void **)&pMe->m_pMedia) || !pMe->m_pMedia)
-       return MM_ENOMEDIAMEMORY;
-
-#ifdef MM_MP4_PARM_PRIORITY
-    iResult = IMEDIA_SetMediaParm(pMe->m_pMedia, 
-                                  MM_MP4_PARM_PRIORITY,
-                                  1,
-                                  0);
-#endif
-
-    // Set the media data and put IMedia in Ready state.
-    iResult = IMEDIA_SetMediaData(pMe->m_pMedia, &mediaData);
-    if (iResult != SUCCESS)
-    {
-       IMEDIA_Release(pMe->m_pMedia);
-       pMe->m_pMedia = NULL;
-       return iResult;
+    if(AEEMediaUtil_CreateMedia(pMe->m_pIShell, &mediaData,
+				&pMe->m_pMedia) == SUCCESS) {
+      (void) IMEDIA_Play(pMe->m_pMedia);
     }
-
-    (void) IMEDIA_Play(pMe->m_pMedia);
-
+    else
+    {
+      MSG_ERROR("IMEDIA could not be created",0,0,0);
+      return EFAILED;
+    }
     return SUCCESS;
 }
 
@@ -1477,9 +1918,7 @@ static int OEMALERT_PlayRinger
     (void) OEMALERT_StopRinger(pMe);
   }
 
-#ifdef FEATURE_PHONE_VR
   pMe->m_bVRPlaying = FALSE;
-#endif /* FEATURE_PHONE_VR */
 
   /*Save the Alert Type for Future Use*/
   pMe->m_alertType = alertType;
@@ -1509,8 +1948,10 @@ static int OEMALERT_PlayRinger
       case OEMALERT_RINGER_7:
       case OEMALERT_RINGER_8:
       case OEMALERT_RINGER_9:
+#ifndef WIN32
         uisnd_snd( UI_ALERT_SND,
 		   OEMAlertRingerMap[pMe->m_ringerType].sndRinger);
+#endif
         break;
 
       default:
@@ -1763,7 +2204,121 @@ static int OEMALERT_PlayRinger
   case AEEALERT_ALERT_IS53A_PPPP_L:
     uisnd_snd(UI_ALERT_SND, (uint32)SND_IS53A_PPPP_L_ALERT );
     break;
+    
+  case AEEALERT_ALERT_MINUTE_BEEP:
+#ifndef WIN32
+    OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                            SND_METHOD_VOICE,
+                            SND_MESSAGE_ALERT,
+                            SND_PRIO_MED,
+                            SND_APATH_LOCAL,
+                            NULL);  
+#endif
+    break;
 
+  case AEEALERT_ALERT_LOW_BATTERY: 
+    IBACKLIGHT_Enable(pMe->m_pBacklight);
+    OEMALERT_GetRingerVol(pMe);
+    OEMALERT_SetRingerVol(pMe, FALSE);
+    OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                           (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                                      SND_METHOD_VOICE : SND_METHOD_RING,
+                           (int) SND_MESSAGE_ALERT,
+                           SND_PRIO_MED,
+                           SND_APATH_LOCAL,
+                           NULL);  
+    break;      
+    
+  case AEEALERT_ALERT_CHARGER_OVERVOLTAGE: 
+    IBACKLIGHT_Enable(pMe->m_pBacklight);
+    OEMALERT_GetRingerVol(pMe);
+    OEMALERT_SetRingerVol(pMe, FALSE);
+    OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                           (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                                      SND_METHOD_VOICE : SND_METHOD_RING,
+                           (int) SND_MESSAGE_ALERT,
+                           SND_PRIO_MED,
+                           SND_APATH_LOCAL,
+                           NULL);                             
+    break;        
+   
+  case AEEALERT_ALERT_KEYGUARD_ENABLED:   
+    IBACKLIGHT_Enable(pMe->m_pBacklight);
+    OEMALERT_GetRingerVol(pMe);
+    OEMALERT_SetRingerVol(pMe, FALSE);
+    OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                           (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                                      SND_METHOD_VOICE : SND_METHOD_RING,
+                           (int) SND_MESSAGE_ALERT,
+                           SND_PRIO_MED,
+                           SND_APATH_LOCAL,
+                           NULL);    
+    break;  
+    
+  case AEEALERT_ALERT_ROAMING: 
+   IBACKLIGHT_Enable(pMe->m_pBacklight); 
+   OEMALERT_GetRingerVol(pMe);
+   OEMALERT_SetRingerVol(pMe, FALSE);
+   OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                         (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                                     SND_METHOD_VOICE : SND_METHOD_RING,
+                          (int) SND_SVC_CHNG_LESS_PREF,
+                          SND_PRIO_MED,
+                          SND_APATH_LOCAL,
+                          NULL); 
+    break;  
+    
+  case AEEALERT_ALERT_EXTERN_PWRON: 
+    IBACKLIGHT_Enable(pMe->m_pBacklight); 
+    OEMALERT_GetRingerVol(pMe);
+    OEMALERT_SetRingerVol(pMe, FALSE);
+    OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                           (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                                      SND_METHOD_VOICE : SND_METHOD_RING,
+                           (int) SND_EXT_PWR_ON,
+                           SND_PRIO_MED,
+                           SND_APATH_LOCAL,
+                           NULL);    
+    break;  
+    
+  case AEEALERT_ALERT_EXTERN_PWROFF: 
+    IBACKLIGHT_Enable(pMe->m_pBacklight); 
+    OEMALERT_GetRingerVol(pMe);
+    OEMALERT_SetRingerVol(pMe, FALSE);
+    OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                           (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                                      SND_METHOD_VOICE : SND_METHOD_RING,
+                           (int) SND_EXT_PWR_OFF,
+                           SND_PRIO_MED,
+                           SND_APATH_LOCAL,
+                           NULL);    
+    break;      
+    
+  case AEEALERT_ALERT_RUIMDOOR_REMOVED: 
+    IBACKLIGHT_Enable(pMe->m_pBacklight);
+    OEMALERT_GetRingerVol(pMe);
+    OEMALERT_SetRingerVol(pMe, FALSE);
+    OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                           SND_METHOD_RING,
+                           (int) SND_SVC_LOST,
+                           SND_PRIO_MED,
+                           SND_APATH_LOCAL,
+                           NULL);  
+    break;            
+    
+  case AEEALERT_ALERT_ERR_SPECIAL: 
+    IBACKLIGHT_Enable(pMe->m_pBacklight);
+    OEMALERT_GetRingerVol(pMe);
+    OEMALERT_SetRingerVol(pMe, FALSE);
+    OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                           (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                                      SND_METHOD_VOICE : SND_METHOD_RING,
+                           (int) SND_SPECIAL_INFO,
+                           SND_PRIO_MED,
+                           SND_APATH_LOCAL,
+                           NULL);  
+    break;                                               
+      
   default:
     MSG_ERROR("Bad Alert Type",0,0,0);
     return EFAILED;
@@ -1791,8 +2346,9 @@ SIDE EFFECTS
 ===========================================================================*/
 static int OEMALERT_StopRinger(IALERT *pMe)
 {
+#ifndef WIN32
   MSG_MED ("Stop Ringing", 0, 0, 0);
-
+#endif
   if(NULL == pMe) {
     MSG_ERROR("Invalid Pointer",0,0,0);
     return EBADPARM;
@@ -1898,5 +2454,1687 @@ static boolean GetPhonebookMatchByNumber
 }
 #endif /* FEATURE_PHONE_VR */
 
+/*=============================================================================
+FUNCTION: OEMALERT_StartRingerAlert
 
-//lint -restore
+DESCRIPTION:
+   Start the ringer alert for incoming calls
+
+PARAMETERS:
+   *p: IAlert interface pointer
+   id:personal contact ringer id
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
+{    
+     byte alerttype;
+     //boolean bKeyguardEnabled = FALSE;
+     
+     ASSERT(pMe != NULL);
+     if (OEMALERT_InCall(pMe))
+     {
+         return;
+     }
+     //Get ringer id
+     pMe->ring_id=id;
+     pMe->m_mp3Ring = FALSE;
+    //Ëø¼üÅÌºóÀ´µçÒª»Ö¸´±³¹â
+    //   (void) ICONFIG_GetItem(pMe->m_pConfig,
+    //                          CFGI_KEYGUARD_ENABLED,
+    //                          &bKeyguardEnabled,
+    //                          sizeof(bKeyguardEnabled));
+    //   if(bKeyguardEnabled)
+    //   {
+    //      db_items_value_type  db_value;
+    //      db_value.db_backlight_level = FALSE;
+    //      db_put(DB_BACKLIGHT_LEVEL, &db_value);
+    //
+    //   } 
+    
+    IBACKLIGHT_Enable(pMe->m_pBacklight);
+    
+    // Initialize vibrate count to zero (assume we're going to ring)
+    pMe->m_ringVibCount = 0;
+    
+    // Set ringer volume
+    OEMALERT_GetRingerVol(pMe);    
+    if (pMe->m_ringCurVol == OEMSOUND_ESCALATING_VOL) 
+    {
+        pMe->m_ringCurVol = OEMSOUND_1ST_VOL;
+        pMe->m_ringEndVol = OEMSOUND_5TH_VOL;
+    } 
+    else 
+    {
+        pMe->m_ringEndVol = pMe->m_ringCurVol;
+    }
+    /*Only play for power on off snd*/     
+    pMe->m_snd_type = type;
+    if(type == ALERT_POWER_SND)
+    {
+        alerttype = OEMNV_ALERTTYPE_RINGER;
+    }
+#ifdef FEATURE_SMSTONETYPE_MID      
+    else if(type == ALERT_SMS_SND)
+    {
+        // Get sms ringer type
+        (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SMS_RINGER,  &alerttype,sizeof(alerttype)); 
+    }
+#endif //#if defined FEATURE_SMSTONETYPE_MID		    
+    else
+    {
+        // Get ringer type
+        (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_ALERT_TYPE,  &alerttype,sizeof(alerttype)); 
+    }
+     switch (alerttype) 
+     {    
+        default:
+        case OEMNV_ALERTTYPE_RINGER:
+        {
+            //AEERingerID  ringerId;
+            //AEERingerCat ci;
+            OEMALERT_SetRingerVol(pMe, FALSE);  
+            // Get the default ringer
+            //ringerId = 0;            
+            //(void) IRINGERMGR_EnumCategoryInit(pMe->m_pRingerMgr);
+            //while (IRINGERMGR_EnumNextCategory(pMe->m_pRingerMgr, &ci)) 
+            //{
+            //    if (ci.id == AEE_RINGER_CATEGORY_ALL) 
+            //    {
+            //        ringerId = ci.idRinger;
+            //        pMe->ring_id = ringerId;
+            //        pMe->CurrRingerId = pMe->ring_id;
+            //        break;
+            //    }
+            //}
+            if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
+            {
+                (void) IRINGERMGR_Play(pMe->m_pRingerMgr, pMe->ring_id, 1);
+                gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
+                gCurStatus.m_bplaying = TRUE;
+            }
+            break; 
+        }                            
+    
+        case OEMNV_ALERTTYPE_VIB:    
+            // Nothing to do here, as initial call to
+            // OEMALERT_HandleRingerTimer will vibrate the phone for us    
+            break;
+    
+        case OEMNV_ALERTTYPE_VIBRINGER: 
+            // Vibrate for a while before ringing                
+#ifdef FEATURE_SMSTONETYPE_MID    
+            if(type == ALERT_SMS_SND)
+            {
+                pMe->m_ringVibCount = COUNT_SMSVIBRATE_ALERTS_THEN_RING;
+            }
+            else
+#endif //#if defined FEATURE_SMSTONETYPE_MID	
+            pMe->m_ringVibCount = COUNT_VIBRATE_ALERTS_THEN_RING;
+            break;
+
+        case OEMNV_ALERTTYPE_VIBANDRINGER:    
+            OEMALERT_SetRingerVol(pMe, FALSE); 
+            if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
+            {
+                (void) IRINGERMGR_Play(pMe->m_pRingerMgr, pMe->ring_id, 1);
+                gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
+                gCurStatus.m_bplaying = TRUE;
+            }		
+            break;
+    
+        case OEMNV_ALERTTYPE_OFF:    
+            // Nothing to do here, as initial call to
+            // OEMALERT_HandleRingerTimer will flash the phone for us    
+            break;    
+     }    
+    OEMALERT_HandleRingerAlertTimer(pMe);
+#ifdef FEATURE_SMSTONETYPE_MID      
+    if(type == ALERT_SMS_SND)
+    {
+        // Get sms ringer type
+        (void) ISHELL_SetTimer(pMe->m_pIShell,
+                                TIME_MS_SMSVIBRATE_DURATION,
+                                OEMALERT_HandleStopRingerTimer,
+                                pMe);   
+    }
+#endif //#if defined FEATURE_SMSTONETYPE_MID		    
+}
+/*===========================================================================
+OEMALERT_StartMp3Alert
+
+DESCRIPTION
+        ²¥·Åmp3ÁåÉù
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+
+-SUCCESS
+-FAILD
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
+{
+    AEEMediaData mediaData;
+    int          nRet = EFAILED;
+    byte         alertType;
+    uint16       volume;
+
+    if(NULL == pMe) 
+    {
+        return EBADPARM;
+    }
+    
+    if(type == ALERT_SMS_SND)
+    {
+        uint16 num;
+        
+        num = ICM_GetActiveCallIDs(pMe->m_pICM, 
+                                   (AEECM_CALL_TYPE_VOICE | AEECM_CALL_TYPE_EMERGENCY), 
+                                   (AEECM_CALL_STATE_ORIG | AEECM_CALL_STATE_INCOM | 
+                                    AEECM_CALL_STATE_CONV | AEECM_CALL_STATE_ONHOLD | 
+                                    AEECM_CALL_STATE_DORMANT),
+                                   NULL, 
+                                   0);     
+        if(num >0)
+        {
+            ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
+            IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON | ANNUN_STATE_BLINK);
+            IANNUNCIATOR_SetUnblinkTimer(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF, 5000);            
+            return SUCCESS;            
+        }
+        
+        if(AEECLSID_LAUNCHER != ISHELL_ActiveApplet(pMe->m_pIShell))
+        {    
+            if (gCurStatus.m_pCurRingerMgr != NULL &&
+                gCurStatus.m_bplaying)
+            {
+                ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
+                IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON | ANNUN_STATE_BLINK);
+                IANNUNCIATOR_SetUnblinkTimer(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF, 5000);
+                return SUCCESS;
+            }
+        }     
+    }
+    ISHELL_CancelTimer(pMe->m_pIShell, OEMALERT_HandleStopMp3Timer, pMe);
+#ifndef WIN32
+    if(VC_DEV_NONE != VC_GetCurrentDevice())
+    {
+        MSG_ERROR("YKMILNA IN HERE START MP3 ALERT device is used %x  ",VC_GetCurrentDevice(),0,0);
+        return EFAILED;
+    }
+#endif
+    IBACKLIGHT_Enable(pMe->m_pBacklight);
+    pMe->m_snd_type = type;
+    pMe->m_mp3Ring = TRUE;
+    
+    if(pMe->m_pMedia) 
+    {
+        (void) IMEDIA_Release(pMe->m_pMedia);
+        pMe->m_pMedia = NULL;
+    }
+    
+    mediaData.clsData = MMD_FILE_NAME;
+    mediaData.pData = (void *)id;
+    mediaData.dwSize = 0;
+
+    nRet = AEEMediaUtil_CreateMedia(pMe->m_pIShell, &mediaData,
+                &pMe->m_pMedia) ;
+    
+    if(type == ALERT_SMS_SND)
+    {
+        (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_SMS_RINGER, &alertType, sizeof(alertType));
+    }
+    else
+    {
+        (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_ALERT_TYPE,  &alertType, sizeof(alertType)); 
+    }
+    OEMALERT_GetRingerVol(pMe);
+    if(nRet == SUCCESS)         
+    {
+        if(type == ALERT_SMS_SND)
+        {
+            ISHELL_SetTimer(pMe->m_pIShell, TIME_MS_SMSMP3RING_DURATION, OEMALERT_HandleStopMp3Timer, pMe);
+        }
+        
+        volume = ((uint16)(pMe->m_ringCurVol)) * AEE_MAX_VOLUME/5;
+        (void)IMEDIA_SetVolume(pMe->m_pMedia,volume);         
+        
+        switch(alertType)
+        {
+            default:
+            case OEMNV_ALERTTYPE_RINGER:
+                if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
+                {
+ #ifdef FEATURE_APP_MUSICPLAYER
+                    if(type == ALERT_SMS_SND)
+                    {
+                       OEMALERT_NotifyMP3Player(pMe,TRUE);
+                    }
+#endif
+                    (void) IMEDIA_Play(pMe->m_pMedia);
+                    (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
+                }
+                break;
+                
+            case OEMNV_ALERTTYPE_VIB:
+                break;
+
+            case OEMNV_ALERTTYPE_VIBRINGER:
+                if(type == ALERT_SMS_SND)
+                {
+                    pMe->m_ringVibCount = 2;
+                }    
+                else
+                {
+                    pMe->m_ringVibCount = COUNT_VIBRATE_ALERTS_THEN_RING;
+                }
+                break;
+
+            case OEMNV_ALERTTYPE_VIBANDRINGER:  
+                if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
+                {
+ #ifdef FEATURE_APP_MUSICPLAYER
+                    if(type == ALERT_SMS_SND)
+                    {
+                       OEMALERT_NotifyMP3Player(pMe,TRUE);
+                    }
+#endif
+                    (void) IMEDIA_Play(pMe->m_pMedia);
+                    (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
+                }       
+                break;
+
+            case OEMNV_ALERTTYPE_OFF:    
+                // Nothing to do here, as initial call to
+                // OEMALERT_HandleRingerTimer will flash the phone for us    
+                break;  
+        }
+    }
+    else
+    {
+        MSG_ERROR("IMEDIA could not be created  %x",nRet,0,0);
+        return EFAILED;
+    }
+    //(void)IMEDIA_SetVolume(pMe->m_pMedia, oldVolume); 
+    OEMALERT_HandleRingerAlertTimer(pMe);
+    return nRet;
+}
+
+/*===========================================================================
+OEMALERT_StopMp3Alert
+
+DESCRIPTION
+       Í£Ö¹mp3ÁåÉùµÄ²¥·Å
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+
+-SUCCESS
+-FAILD
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+static void OEMALERT_StopMp3Alert(IALERT *pMe)
+{
+    if(pMe->m_snd_type == ALERT_SMS_SND)
+    {
+        // Stop recurring alert timer
+        (void) ISHELL_CancelTimer(pMe->m_pIShell,
+                                 OEMALERT_HandleStopMp3Timer,
+                                 pMe);   
+    }
+    
+    (void) ISHELL_CancelTimer(pMe->m_pIShell,
+                             OEMALERT_HandleRingerAlertTimer,
+                             pMe);
+
+    if(pMe->m_pMedia)
+    {
+ #ifdef FEATURE_APP_MUSICPLAYER
+        if(pMe->m_snd_type == ALERT_SMS_SND)
+        {
+           OEMALERT_NotifyMP3Player(pMe,FALSE);
+        }
+#endif
+        MSG_ERROR("ykmilan come here to release media....",0,0,0);
+       (void)IMEDIA_RegisterNotify(pMe->m_pMedia, NULL, pMe);
+       IMEDIA_Release(pMe->m_pMedia);
+       pMe->m_pMedia = NULL;
+    }
+    ISOUND_StopVibrate(pMe->m_pSound);
+
+}
+
+/*===========================================================================
+OEMALERT_MediaNotify
+
+DESCRIPTION
+       IMEDIA µÄ »Øµ÷º¯Êý
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+
+-SUCCESS
+-FAILD
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+static void OEMALERT_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
+{
+    IALERT *pMe = (IALERT*)pUser;
+
+    
+    if (pCmdNotify->nCmd == MM_CMD_PLAY)
+    {
+        switch (pCmdNotify->nStatus)
+        {
+            case MM_STATUS_DONE:
+                if(pMe->m_pMedia)
+                {
+                    IMEDIA_Stop(pMe->m_pMedia);
+                    IMEDIA_Play(pMe->m_pMedia);
+                    (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
+                }
+                break;
+
+            case MM_STATUS_ABORT:
+                OEMALERT_StopMp3Alert(pMe);
+                OEMALERT_StartRingerAlert(pMe, OEMNV_DEFAULTRINGER, ALERT_NORMAL_SND);
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
+
+/*=============================================================================
+FUNCTION: OEMALERT_StopRingerAlert
+
+DESCRIPTION:
+   Stop the incoming call alert
+
+PARAMETERS:
+   *p: IAlert interface pointer
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_StopRingerAlert(IALERT *pMe)
+{
+    ASSERT(pMe != NULL);
+#ifdef FEATURE_SMSTONETYPE_MID        
+    if(pMe->m_snd_type == ALERT_SMS_SND)
+    {
+        // Stop recurring alert timer
+        (void) ISHELL_CancelTimer(pMe->m_pIShell,
+                                 OEMALERT_HandleStopRingerTimer,
+                                 pMe);   
+    }
+#endif //#if defined FEATURE_SMSTONETYPE_MID		    
+    
+    // Stop recurring alert timer
+    (void) ISHELL_CancelTimer(pMe->m_pIShell,
+                             OEMALERT_HandleRingerAlertTimer,
+                             pMe);
+    // Stop Ringer
+    //(void) IRINGERMGR_Stop(pMe->m_pRingerMgr);
+    if (gCurStatus.m_pCurRingerMgr != NULL &&
+        gCurStatus.m_bplaying)
+    {
+        IRINGERMGR_Stop(gCurStatus.m_pCurRingerMgr);
+        gCurStatus.m_bplaying = FALSE;
+        gCurStatus.m_pCurRingerMgr = NULL;
+    }
+    else
+    {
+        IRINGERMGR_Stop(pMe->m_pRingerMgr);
+    }
+    
+    // Stop vibrating
+    ISOUND_StopVibrate(pMe->m_pSound);
+}
+
+/*=============================================================================
+FUNCTION: OEMALERT_HandleRingerTimer
+
+DESCRIPTION:  Ringer timer callback
+
+PARAMETERS:
+   *pUser: OEMALERT object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_HandleRingerAlertTimer(void *pUser)
+{
+    byte             alerttype;
+    static boolean   vib = FALSE;
+    
+    IALERT * pMe = (IALERT *)pUser;
+    
+    ASSERT(pMe != NULL);
+    
+    if(pMe->m_snd_type == ALERT_POWER_SND)
+    {
+        alerttype = OEMNV_ALERTTYPE_RINGER;
+    }
+    else if(pMe->m_snd_type == ALERT_SMS_SND)
+    {
+        // Get sms ringer type
+        (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SMS_RINGER,&alerttype,sizeof(alerttype));        
+    }
+    else
+    {
+        (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_ALERT_TYPE,&alerttype,sizeof(alerttype));
+    }
+    switch (alerttype) 
+    {
+        case OEMNV_ALERTTYPE_OFF:
+            // Nothing to do, as backlight's already on
+            break;
+        
+        case OEMNV_ALERTTYPE_VIB:
+            // Alternate between vibrating and not
+            vib = !vib;
+            if( vib == TRUE ) 
+            {
+                ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+            }
+            break;
+        
+        case OEMNV_ALERTTYPE_VIBRINGER:
+            if (pMe->m_ringVibCount > 0) 
+            {
+                --pMe->m_ringVibCount;            
+                if (pMe->m_ringVibCount % 2) 
+                {
+                    ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+                }
+                break;
+            } 
+            else if (pMe->m_ringVibCount == 0) 
+            {
+                //AEERingerID  ringerId;
+                //AEERingerCat ci;
+                // Decrement the count to -1 so that we only begin
+                // ringing a single time
+                --pMe->m_ringVibCount;
+                                
+                OEMALERT_GetRingerVol(pMe);
+                OEMALERT_SetRingerVol(pMe, FALSE); 
+                // Get the default ringer
+                //ringerId = 0;
+                //(void) IRINGERMGR_EnumCategoryInit(pMe->m_pRingerMgr);
+                //while (IRINGERMGR_EnumNextCategory(pMe->m_pRingerMgr, &ci)) 
+                //{
+                //    if (AEE_RINGER_CATEGORY_ALL == ci.id) 
+                //    {
+                //        ringerId = ci.idRinger;
+                //        pMe->ring_id = ringerId;
+                //        break;
+                //    }
+                //}
+                if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
+                {
+                    if(pMe->m_mp3Ring)
+                    {
+                        MSG_ERROR("play media,",0,0,0);
+                        IMEDIA_Play(pMe->m_pMedia);
+                        (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
+                    }
+                    else
+                    {
+                        (void) IRINGERMGR_Play(pMe->m_pRingerMgr, pMe->ring_id, 1);
+                        gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
+                        gCurStatus.m_bplaying = TRUE;
+                    }
+                }
+            }
+            else
+            {
+                // increase the escalating ringer volume if necessary
+                if (pMe->m_ringCurVol < pMe->m_ringEndVol) 
+                {
+                    INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+                    OEMALERT_SetRingerVol(pMe, TRUE);
+                }
+            }  
+            break;               
+
+            case OEMNV_ALERTTYPE_VIBANDRINGER:
+                // Alternate between vibrating and not
+                vib = !vib;
+                if( vib == TRUE ) 
+                {
+                    ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+                }                        
+                break;     
+        
+        case OEMNV_ALERTTYPE_RINGER:
+        default:
+            // increase the escalating ringer volume if necessary
+            if (pMe->m_ringCurVol < pMe->m_ringEndVol) 
+            {
+                INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+                OEMALERT_SetRingerVol(pMe, TRUE);
+            }            
+            break;
+    }       
+    (void) ISHELL_SetTimer(pMe->m_pIShell,
+                            TIMEOUT_MS_RINGERVIB_TIMER,
+                            OEMALERT_HandleRingerAlertTimer,
+                            pMe);
+}
+
+#ifdef FEATURE_SMSTONETYPE_MID       
+/*=============================================================================
+FUNCTION: OEMALERT_HandleStopRingerTimer
+
+DESCRIPTION:  Ringer timer callback
+
+PARAMETERS:
+   *pUser: OEMALERT object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_HandleStopRingerTimer(void *pUser)
+{  
+    IALERT * pMe = (IALERT *)pUser;
+    ASSERT(pMe != NULL);
+     
+    OEMALERT_StopRingerAlert(pMe);
+    
+}
+#endif //FEATURE_SMSTONETYPE_MID
+/*=============================================================================
+FUNCTION: OEMALERT_HandleStopMp3Timer
+
+DESCRIPTION:  Ringer timer callback
+
+PARAMETERS:
+   *pUser: OEMALERT object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+
+static void OEMALERT_HandleStopMp3Timer(void *pUser)
+{
+    IALERT *pMe = (IALERT *)pUser;
+    ASSERT(pMe != NULL);
+
+    OEMALERT_StopMp3Alert(pMe);
+}
+
+/*=============================================================================
+FUNCTION:  OEMALERT_StartRingerPreview
+ 
+DESCRIPTION:  Previews the specified ringer.
+ 
+PARAMETERS:
+   *p: IAlert interface pointer
+  int: ringer to preview
+ 
+RETURN VALUE:
+   None
+
+COMMENTS:
+   Use IALERT_StartRingerPreview() to stop the playback.
+
+   This method will always play the ringer, even if the 'silence all' is 
+   enabled or the ringer type is set to Vibration or Off.
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_StartRingerPreview(IALERT *pMe, AEERingerID ringer)
+{
+    byte ringerVol;
+    if(OEMALERT_InCall(pMe))
+    {
+        return;
+    }        
+    //OEMALERT_GetRingerVol(pMe);
+    {
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                        CFGI_RINGER_VOL,
+                        &ringerVol,
+                        sizeof(ringerVol));
+    }
+    pMe->m_ringCurVol = (OEMSound_Volume_Type)ringerVol;    
+    OEMALERT_SetRingerVol(pMe, TRUE);
+    (void) IRINGERMGR_Play(pMe->m_pRingerMgr, ringer, 0);  
+    gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
+    gCurStatus.m_bplaying = TRUE;
+}
+static void   OEMALERT_StartMp3Preview(IALERT * pMe, char *id)
+{
+    byte ringerVol;
+    AEEMediaData mediaData;
+    int nRet = EFAILED;
+    uint16 volume;
+    
+    if(OEMALERT_InCall(pMe))
+    {
+        return;
+    }
+#ifndef WIN32
+    if(VC_DEV_NONE != VC_GetCurrentDevice())
+    {
+        OEMALERT_StartRingerPreview(pMe, OEMNV_DEFAULTRINGER);
+        return;
+    }
+#endif
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                        CFGI_RINGER_VOL,
+                        &ringerVol,
+                        sizeof(ringerVol));
+    mediaData.clsData = MMD_FILE_NAME;
+    mediaData.pData = (void *)id;
+    mediaData.dwSize = 0;
+
+    nRet = AEEMediaUtil_CreateMedia(pMe->m_pIShell, &mediaData,
+                &pMe->m_pMedia) ;
+    if(nRet == AEE_SUCCESS)
+    {
+        pMe->m_ringCurVol = (OEMSound_Volume_Type)ringerVol;
+        OEMALERT_GetRingerVol(pMe);
+            
+        volume = ((uint16)(pMe->m_ringCurVol)) * AEE_MAX_VOLUME/5;
+        (void)IMEDIA_SetVolume(pMe->m_pMedia,volume);
+#ifdef FEATURE_APP_MUSICPLAYER
+        OEMALERT_NotifyMP3Player(pMe,TRUE);
+#endif
+        //end
+        (void) IMEDIA_Play(pMe->m_pMedia);
+        (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
+        gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
+        gCurStatus.m_bplaying = TRUE;
+    }
+}
+
+/*=============================================================================
+FUNCTION: OEMALERT_StartInSMSAlert
+
+DESCRIPTION: Start SMS alert
+
+PARAMETERS:
+   *pUser: OEMAlert object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+
+static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
+{  
+    uint16          num = 0;    
+#if !defined(FEATURE_SMSTONETYPE_MID)
+    byte sms_size = 1;
+#endif
+
+    num = ICM_GetActiveCallIDs(pMe->m_pICM, 
+                               (AEECM_CALL_TYPE_VOICE | AEECM_CALL_TYPE_EMERGENCY), 
+                               (AEECM_CALL_STATE_ORIG | AEECM_CALL_STATE_INCOM | 
+                                AEECM_CALL_STATE_CONV | AEECM_CALL_STATE_ONHOLD | 
+                                AEECM_CALL_STATE_DORMANT),
+                               NULL, 
+                               0);
+
+    OEMALERT_GetRingerVol(pMe);
+    //ÅÐ¶Ïµ±Ç°ÊÇ²»ÊÇÀ´µçÏìÁå×´Ì¬
+    if (num > 0)
+    {
+        if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
+        {
+//            OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+//                                    SND_METHOD_VOICE,
+//                                    (int) SND_ABRV_ALERT,
+//                                    SND_PRIO_MED,
+//                                    SND_APATH_LOCAL,
+//                                    NULL);
+            ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
+        }
+        return;
+    } 
+    
+    OEMALERT_SetRingerVol(pMe, FALSE);
+    
+    if(AEECLSID_LAUNCHER != ISHELL_ActiveApplet(pMe->m_pIShell))
+    {    
+        //(void) IRINGERMGR_Stop(pMe->m_pRingerMgr);
+        if (gCurStatus.m_pCurRingerMgr != NULL &&
+            gCurStatus.m_bplaying) //|| VC_DEV_NONE != VC_GetCurrentDevice())
+        {
+            //IRINGERMGR_Stop(gCurStatus.m_pCurRingerMgr);
+            //gCurStatus.m_bplaying = FALSE;
+            //gCurStatus.m_pCurRingerMgr = NULL;
+            ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
+            IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON | ANNUN_STATE_BLINK);
+            IANNUNCIATOR_SetUnblinkTimer(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF, 5000);
+            return;
+        }
+        else
+        {
+            IRINGERMGR_Stop(pMe->m_pRingerMgr);
+        }
+    }
+    
+#ifdef FEATURE_SMSTONETYPE_MID  
+    OEMALERT_StartRingerAlert(pMe,ring_id,ALERT_SMS_SND);
+#else 
+
+    //dspµÄÄÜÁ¦²»¹»Ç¿,ÐèÒªÁô³östopµÄÊ±¼ä
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                            CFGI_SMS_RINGER,
+                            &sms_size,
+                            sizeof(sms_size));
+    
+    if(OEMNV_SMS_RING == sms_size)  
+    {
+        if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
+        {
+#ifdef FEATURE_APP_MUSICPLAYER
+            OEMALERT_NotifyMP3Player(pMe,TRUE);
+            (void)ISHELL_SetTimer(pMe->m_pIShell, 2000, (PFNNOTIFY)OEMALERT_NotifyMP3PlayerCB, pMe);
+#endif
+            OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                                    (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                                    SND_METHOD_VOICE : SND_METHOD_RING,
+                                    ring_id,
+                                    SND_PRIO_MED,
+                                    SND_APATH_LOCAL,
+                                    NULL);
+        }
+    }
+    else if(OEMNV_SMS_VIBONLY == sms_size)
+    {
+        ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
+    }
+    else if(OEMNV_SMS_RINGVIB == sms_size)
+    {
+        pMe->smsID = ring_id;
+        ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);
+        if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
+        {	  
+            // ÎªÈ·±£¶¨Ê±Æ÷Î´ÉèÖÃ£¬ÏÈÈ¡Ïû¸Ã¶¨Ê±Æ÷
+            AEE_CancelTimer(OEMALERT_HandleSMSTimer, pMe);
+            
+            // ÉèÖÃÉÁË¸Í¼±ê¶¨Ê±Æ÷
+            (void)AEE_SetSysTimer(TIME_MS_SMSVIBRATE_DURATION, 
+                                    OEMALERT_HandleSMSTimer,
+                                    pMe);
+        }
+    }
+    else if(OEMNV_SMS_VIBANDRINGER == sms_size)
+    {
+        ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);
+        if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
+        {
+#ifdef FEATURE_APP_MUSICPLAYER
+            OEMALERT_NotifyMP3Player(pMe,TRUE);
+            (void)ISHELL_SetTimer(pMe->m_pIShell, 2000, (PFNNOTIFY)OEMALERT_NotifyMP3PlayerCB, pMe);
+#endif
+            OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                                    (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                                    SND_METHOD_VOICE : SND_METHOD_RING,
+                                    ring_id,
+                                    SND_PRIO_MED,
+                                    SND_APATH_LOCAL,
+                                    NULL);
+        }
+    }  
+#endif //#ifdef FEATURE_SMSTONETYPE_MID  
+}    
+/*=============================================================================
+FUNCTION: OEMALERT_StopSMSAlert
+
+DESCRIPTION:
+   Stops the SMS message waiting alert
+
+PARAMETERS:
+   *p: IAlert interface pointer
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_StopSMSAlert(IALERT *pMe)
+{
+#ifndef WIN32
+#ifdef FEATURE_SMSTONETYPE_MID 
+    pMe->m_snd_type = ALERT_SMS_SND;
+    OEMALERT_StopRingerAlert(pMe);
+#else
+   OEMSOUND_Sound_Stop(SND_PRIO_MED);
+#endif
+   ISOUND_StopVibrate(pMe->m_pSound);
+
+   // Stop recurring SMS alert (reminder) timer
+   (void) ISHELL_CancelTimer(pMe->m_pIShell,
+                             OEMALERT_HandleSMSTimer,
+                             (void*)pMe);
+#endif //#if defined FEATURE_SMSTONETYPE_MID		    
+}
+
+#if !defined(FEATURE_SMSTONETYPE_MID)
+/*=============================================================================
+FUNCTION: OEMALERT_HandleSMSTimer
+
+DESCRIPTION:
+   ÏìÁåºóÕñ¶¯µÄ¶¨Ê±Æ÷»Øµ÷º¯Êý
+
+PARAMETERS:
+   *pUser: CAlert object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_HandleSMSTimer(void *pUser)
+{
+   register IALERT *pMe = (IALERT *)pUser;
+
+   ASSERT(pMe != NULL);
+   
+   OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                         SND_METHOD_RING,
+                         pMe->smsID,
+                         SND_PRIO_MED,
+                         SND_APATH_LOCAL,
+                         NULL);
+}
+#endif
+
+/*=============================================================================
+FUNCTION: OEMALERT_StartMissedCallAlert
+
+DESCRIPTION:
+   Start the missed call alert
+
+PARAMETERS:
+   *p: IAlert interface pointer
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_StartMissedCallAlert(IALERT *pMe)
+{
+   byte             missedCallAlert;
+
+   IBACKLIGHT_Enable(pMe->m_pBacklight);
+   (void) ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_MISSED_CALL_ALERT,
+                          &missedCallAlert,
+                          sizeof(byte));
+
+   if (OEMNV_ALERT_ENABLE == missedCallAlert) 
+   {
+      OEMALERT_GetRingerVol(pMe);
+      OEMALERT_SetRingerVol(pMe, FALSE);
+      pMe->alert_count = 0; 
+      OEMALERT_HandleMissedCallTimer(pMe);
+   }
+}
+
+
+/*=============================================================================
+FUNCTION: OEMALERT_StopMissedCallAlert
+
+DESCRIPTION:
+   Stop the missed call alert
+
+PARAMETERS:
+   *p: IAlert interface pointer
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_StopMissedCallAlert(IALERT *pMe)
+{
+   ASSERT(pMe != NULL);
+
+   // Stop Ringer
+   OEMSOUND_Sound_Stop(SND_PRIO_MED);
+
+   // Stop vibrating
+   ISOUND_StopVibrate(pMe->m_pSound);
+
+   // Stop recurring alert timer
+   (void) ISHELL_CancelTimer(pMe->m_pIShell,
+                             OEMALERT_HandleMissedCallTimer,
+                             (void*)pMe);
+}
+
+/*=============================================================================
+FUNCTION: OEMALERT_HandleMissedCallTimer
+
+DESCRIPTION: Missed call timer callback
+
+PARAMETERS:
+   *pUser: CAlert object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_HandleMissedCallTimer(void *pUser)
+{
+    register IALERT *pMe = (IALERT *)pUser;
+    
+    ASSERT(pMe != NULL);
+    
+    //¹æ¶¨´í¹ýÒ»´ÎÀ´µçÌáÊ¾µÄ´ÎÊý²»¶àÓÚÈý´Î,·ñÔòºÜºÄµç
+    if(pMe->alert_count>= 3)
+    {
+        pMe->alert_count=0;//µ±´ïµ½3Ê±£¬ÖÃÎª0£¬ÔÙÖ±½Ó·µ»Ø¡£
+        return;
+    }
+    pMe->alert_count++;
+    
+    // Don't pester the user while in a call
+    if (!OEMALERT_InCall(pMe)) 
+    {    
+        IBACKLIGHT_Enable(pMe->m_pBacklight);
+        
+        OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                                OEMALERT_RingInHeadset(pMe) ?
+                                SND_METHOD_VOICE :
+                                SND_METHOD_RING,
+                                (int) SND_MESSAGE_ALERT,
+                                SND_PRIO_MED,
+                                SND_APATH_LOCAL,
+                                NULL);    
+    }    
+    (void) ISHELL_SetTimer(pMe->m_pIShell,
+                            TIMEOUT_MS_MISSEDCALL_TIMER,
+                            OEMALERT_HandleMissedCallTimer,
+                            pMe);
+}
+
+/*=============================================================================
+FUNCTION: OEMALERT_KeyBeep
+
+DESCRIPTION:
+   Makes the keybeep sound
+
+PARAMETERS:
+      *p: IAlert interface pointer
+     key: the key that has been pressed
+bPressed: TRUE if the key has been pressed, FALSE if it has been released.
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
+{
+   snd_method_type        method;
+   byte               method_ex = 0;
+   keyToneLength          len;
+   AEESoundToneData       td;
+   byte                   btKeyVol = 0;
+   boolean                headsetPresent;
+
+   static AEESoundInfo si = 
+   {
+      AEE_SOUND_DEVICE_CURRENT,
+      AEE_SOUND_METHOD_BEEP,
+      AEE_SOUND_APATH_LOCAL,
+      AEE_SOUND_MUTECTL_UNMUTED,
+      AEE_SOUND_MUTECTL_UNMUTED,
+   };
+   static keyToneLength   lastLen    = OEMNV_KEYTONE_NORMAL;
+#ifdef FEATURE_CLICK
+   static snd_method_type lastMethod = SND_METHOD_CLICK;
+#else
+   static snd_method_type lastMethod = SND_METHOD_KEY_BEEP;
+#endif
+
+   ASSERT(pMe != NULL);
+   
+   if (gCurStatus.m_bplaying && (NULL != gCurStatus.m_pCurRingerMgr))
+   {
+      return;
+   }
+   
+   (void) ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_KEYBEEP_SOUND,
+                          &method_ex,
+                          sizeof(byte));
+
+   (void) ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_KEYTONE_LENGTH,
+                          &len,
+                          sizeof(keyToneLength));
+                       
+   (void) ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_BEEP_VOL,
+                          &btKeyVol,
+                          sizeof(byte));
+   //DBGPRINTF("KeyBeep %d %d %d",method_ex,len,btKeyVol);
+   method = (snd_method_type)method_ex;
+   if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,
+                                   CFGI_HEADSET_PRESENT,
+                                   &headsetPresent,
+                                   sizeof(headsetPresent)))
+    {
+        headsetPresent = FALSE;
+    }
+   if (!bPressed) 
+   {
+      // Make sure the tone is stopped if the user just 
+      // switched from Long Tones to Normal Tones, or from
+      // Long Tones to Clicks.
+      if ((lastLen != len) || (lastMethod != method)) 
+      {
+         ISOUND_StopTone(pMe->m_pSound);
+      }
+      lastLen = len;
+      lastMethod = method;
+   }
+
+   switch (method)
+   {
+#ifdef FEATURE_CLICK
+      case SND_METHOD_CLICK:
+      {
+         if (bPressed) 
+         {
+            si.eMethod = AEE_SOUND_METHOD_CLICK;   
+            td.eTone     = AEE_TONE_2;     // tone doesn't matter
+            td.wDuration = NORMAL_TONE_MS; // duration doesn't matter            
+            ISOUND_Set(pMe->m_pSound, &si);    
+            ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+            if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
+            {            
+                ISOUND_PlayTone( pMe->m_pSound, td); 
+            }
+         } 
+         break;
+      }
+      
+#endif
+      default:
+      case SND_METHOD_KEY_BEEP:   
+      {         
+         si.eMethod = AEE_SOUND_METHOD_BEEP;
+   
+         if (OEMNV_KEYTONE_LONG == len) 
+         {
+            static uint32 keystart_time;
+            
+            if (bPressed) 
+            {  
+               keystart_time = GETUPTIMEMS();   
+               td.eTone = OEMALERT_MapKeyToTone(key);
+   
+               // Only play the END key tone for LONG_TONE_MS milliseconds,
+               // the user needs to hold the END key for several seconds to 
+               // power down the phone and it is annoying to have it beeping
+               // for the whole time.  Same thing for the CLR key (ie, when
+               // enabling the keyguard)
+               if ((key == AVK_END) || (key == AVK_POWER) || (key == AVK_CLR)) 
+               {
+                  td.wDuration = LONG_TONE_MS; 
+               } 
+               else 
+               {
+                  // Play the tone for a long as possible (around 65 seconds)
+                  td.wDuration = 1000;
+               }               
+               ISOUND_Set(pMe->m_pSound, &si);    
+               ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+               if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
+               {               
+                   ISOUND_PlayTone( pMe->m_pSound, td);  
+               }  
+            } 
+            else 
+            {
+               uint32 tone_time = GETUPTIMEMS() - keystart_time;
+
+               // If the tone has been playing for longer than LONG_TIME_MS,
+               // just stop it immediately.  Also need to check that SilenceAll
+               // hasn't just been enabled, which might cause the tone to 
+               // play for the entire 0xFFFF duration.
+               if ( tone_time >= LONG_TONE_MS )
+               {
+                  ISOUND_StopTone(pMe->m_pSound);
+               } 
+               else 
+               {   
+                  // The key was released before LONG_TIME_MS millseconds, so
+                  // continue playing the tone for the time remaining.
+                  td.eTone = OEMALERT_MapKeyToTone(key);
+                  td.wDuration = (uint16)(LONG_TONE_MS - tone_time); 
+   
+                  ISOUND_Set(pMe->m_pSound, &si);    
+                  ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+                  if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
+                  {                  
+                     ISOUND_PlayTone(pMe->m_pSound, td); 
+                  }
+               }
+            }
+         } 
+         else 
+         {
+            if (bPressed) 
+            {
+               td.eTone     = OEMALERT_MapKeyToTone(key);
+               td.wDuration = NORMAL_TONE_MS; 
+   
+               ISOUND_Set(pMe->m_pSound, &si);    
+               ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+              // if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
+               if(btKeyVol != OEMSOUND_MUTE_VOL)
+               {                
+                  ISOUND_PlayTone(pMe->m_pSound, td); 
+               }
+            }
+         }
+         break;
+      }
+      
+      //default:
+      //   break;
+      
+   }
+   //ÒòÎª°´¼üÒô²¥Íê²»»á¹Ø±ÕÏà¹ØÓ²¼þÔì³ÉµçÁ÷´ó
+   (void) ISHELL_CancelTimer(pMe->m_pIShell,
+                             OEMALERT_keeybeep_stop,
+                             pMe);
+   (void) ISHELL_SetTimer(pMe->m_pIShell,
+                          700,
+                          OEMALERT_keeybeep_stop,
+                          pMe);
+   
+}
+
+/*=============================================================================
+FUNCTION: OEMALERT_keeybeep_stop
+
+DESCRIPTION:
+   Stop the keybeep sound
+
+PARAMETERS:
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_keeybeep_stop(void *pUser)
+{
+    IALERT * pMe = (IALERT *)pUser;
+	ISOUND_StopTone(pMe->m_pSound);
+}
+	
+/*=============================================================================
+FUNCTION:  OEMALERT_MapKeyToTone
+ 
+DESCRIPTION: Returns the tone for the specified key
+ 
+PARAMETERS:
+   key: 
+ 
+RETURN VALUE:
+   AEESoundTone: 
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static AEESoundTone OEMALERT_MapKeyToTone(AVKType key)
+{
+   switch (key) 
+   {
+       case AVK_1:
+          return AEE_TONE_1;
+          
+       case AVK_2:
+          return AEE_TONE_2;
+          
+       case AVK_3:
+          return AEE_TONE_3;
+          
+       case AVK_4:
+          return AEE_TONE_4;
+          
+       case AVK_5:
+          return AEE_TONE_5;
+          
+       case AVK_6:
+          return AEE_TONE_6;
+          
+       case AVK_7:
+          return AEE_TONE_7;
+          
+       case AVK_8:
+          return AEE_TONE_8;
+          
+       case AVK_9:
+          return AEE_TONE_9;
+          
+       case AVK_0:
+          return AEE_TONE_0;
+          
+       case AVK_POUND:
+          return AEE_TONE_POUND;
+          
+       case AVK_STAR:
+          return AEE_TONE_STAR;
+          
+       case AVK_POWER:
+       case AVK_END:
+          return AEE_TONE_CTRL;
+          
+       default:
+          return AEE_TONE_2ND;
+   }
+}
+
+/*=============================================================================
+FUNCTION: OEMALERT_GetRingerVol
+
+DESCRIPTION:
+   Retrieve the current ringer volume from NV and store it in
+   OEMALERT::m_ringCurVol.
+
+PARAMETERS:
+   *pMe: OEMALERT object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_GetRingerVol(IALERT *pMe)
+{
+    byte ringerVol;
+    boolean headsetPresent;
+    byte    btActiveProfile;
+    byte headsetVol[PROFILENUMBER];
+
+    (void) ICONFIG_GetItem(pMe->m_pConfig, 
+                   CFGI_HEADSET_PRESENT, 
+                   &headsetPresent, 
+                   sizeof(boolean));
+    if  (headsetPresent == TRUE)
+    {
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                        CFGI_PROFILE_CUR_NUMBER,
+                        &btActiveProfile,
+                        sizeof(btActiveProfile));     
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                        CFGI_PROFILE_EAR_VOL,
+                        headsetVol,
+                        sizeof(headsetVol));
+        ringerVol = headsetVol[btActiveProfile];  
+    }
+    else
+    {
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                        CFGI_RINGER_VOL,
+                        &ringerVol,
+                        sizeof(ringerVol));
+    }
+    pMe->m_ringCurVol = (OEMSound_Volume_Type)ringerVol;
+}
+
+/*=============================================================================
+FUNCTION: OEMALERT_SetRingerVol
+
+DESCRIPTION:
+   Set the ringer volume to the volume level specified
+   by OEMALERT::m_ringCurVol
+
+PARAMETERS:
+   *pMe: OEMALERT object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void OEMALERT_SetRingerVol(IALERT *pMe, boolean bEscalate)
+{
+    AEESoundInfo         si; 
+    OEMSound_Volume_Type vol;
+    
+    MEMSET(&si, 0, sizeof(si));
+    vol = pMe->m_ringCurVol;
+    if (OEMSOUND_ESCALATING_VOL == vol) 
+    {
+        vol = OEMSOUND_AVG_VOL;
+    }
+    
+    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    si.eMethod = AEE_SOUND_METHOD_MIDI; 
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_HEADSET;
+    si.eMethod = AEE_SOUND_METHOD_MIDI;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    si.eMethod = AEE_SOUND_METHOD_RING;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    si.eMethod = AEE_SOUND_METHOD_VOICE;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_HEADSET;
+    si.eMethod = AEE_SOUND_METHOD_VOICE;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_HEADSET;
+    si.eMethod = AEE_SOUND_METHOD_RING;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));                    
+}
+
+/*=============================================================================
+FUNCTION: OEMALERT_InCall
+
+DESCRIPTION:
+   Return TRUE if the phone is currently in a call
+
+PARAMETERS:
+   *pMe: OEMALERT object
+
+RETURN VALUE:
+   boolean
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static boolean OEMALERT_InCall(IALERT *pMe)
+{                  
+    return (AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM));
+}
+/*=============================================================================
+FUNCTION:  OEMALERT_RingInHeadset
+ 
+DESCRIPTION: Returns TRUE if the headset is attached and headset ringing
+             has been enabled.
+ 
+PARAMETERS:
+   None
+ 
+RETURN VALUE:
+   boolean: 
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static boolean OEMALERT_RingInHeadset(IALERT *pMe)
+{
+    boolean headsetPresent;    
+    if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,
+                                    CFGI_HEADSET_PRESENT,
+                                    &headsetPresent,
+                                    sizeof(headsetPresent)))
+    {
+        headsetPresent = FALSE;
+    }
+    return (headsetPresent);    
+}
+
+static void OEMALERT_StartSMSAlertPreview(IALERT *pMe, int ring_id)
+{
+    ISOUND_StopTone(pMe->m_pSound);
+    // Stop Ringer
+    //IRINGERMGR_Stop(pMe->m_pRingerMgr);
+    if (gCurStatus.m_pCurRingerMgr != NULL &&
+        gCurStatus.m_bplaying)
+    {
+        IRINGERMGR_Stop(gCurStatus.m_pCurRingerMgr);
+        gCurStatus.m_bplaying = FALSE;
+        gCurStatus.m_pCurRingerMgr = NULL;
+    }
+    else
+    {
+        IRINGERMGR_Stop(pMe->m_pRingerMgr);
+    }
+    OEMALERT_GetRingerVol(pMe);
+    OEMALERT_SetRingerVol(pMe, FALSE);
+#ifndef WIN32
+    snd_sound_id_start(SND_DEVICE_CURRENT,
+                       (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
+                       SND_METHOD_VOICE : SND_METHOD_RING,
+                       (int) ring_id,
+                       SND_PRIO_MED,
+                       SND_APATH_LOCAL,
+                       NULL,NULL);
+#endif
+}
+
+
+
+/*=======================================================================
+
+Function: OEMALERT_MinuteAlert
+
+Description:
+   Plays the minute alert
+
+Parameters:
+   p: IAlert interface pointer
+
+Return Value:
+   None
+
+Comments:
+   None
+
+Side Effects:
+   None
+
+See Also:
+
+=====================================================================*/
+static void OEMALERT_MinuteAlert(IALERT *pMe)
+{
+    static  AEESoundToneData  td = 
+    {
+        AEE_TONE_TIME,  
+        NORMAL_TONE_MS
+    };
+    static const AEESoundInfo      si = 
+    {
+        AEE_SOUND_DEVICE_CURRENT,
+        AEE_SOUND_METHOD_VOICE,
+        AEE_SOUND_APATH_LOCAL,
+        AEE_SOUND_MUTECTL_UNMUTED,
+        AEE_SOUND_MUTECTL_UNMUTED,
+    };
+
+    ASSERT(pMe != NULL);
+
+    if (!OEMALERT_InCall(pMe)) 
+    {
+        return;
+    }
+
+    if(!OEMALERT_RingInHeadset(pMe))
+    {
+        OEMSound_PlayTone((AEESoundInfo *) &si, &td, NULL); 
+    }
+    else
+    {      
+        //IRINGERMGR_Stop(pMe->m_pRingerMgr);
+        if (gCurStatus.m_pCurRingerMgr != NULL &&
+            gCurStatus.m_bplaying)
+        {
+            IRINGERMGR_Stop(gCurStatus.m_pCurRingerMgr);
+            gCurStatus.m_bplaying = FALSE;
+            gCurStatus.m_pCurRingerMgr = NULL;
+        }
+        else
+        {
+            IRINGERMGR_Stop(pMe->m_pRingerMgr);
+        }
+#ifndef WIN32
+        snd_sound_id_start(SND_DEVICE_CURRENT,                                        
+                                        SND_METHOD_VOICE ,
+                                        SND_MESSAGE_ALERT,
+                                        SND_PRIO_MED,                                 
+                                        SND_APATH_LOCAL,
+                                        NULL,NULL);
+#endif
+    }
+}
+
+#ifdef FEATURE_APP_MUSICPLAYER
+static void OEMALERT_NotifyMP3Player(IALERT *pMe,boolean bStartAlert)
+{
+    if(!IsMp3PlayerStatusNone())
+    {
+        (void)ISHELL_SendEvent(pMe->m_pIShell, 
+                               AEECLSID_APP_MUSICPLAYER,
+                               EVT_ALARM,
+                               bStartAlert,
+                               0);
+    }
+}
+static void OEMALERT_NotifyMP3PlayerCB(IALERT * pMe)
+{
+    OEMALERT_NotifyMP3Player(pMe,FALSE);
+}
+#endif

@@ -11,11 +11,11 @@ PUBLIC CLASSES: Not Applicable
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS: Not Applicable
 
-        Copyright © 1999-2006 QUALCOMM Incorporated.
+        Copyright ?1999-2005 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 
-$Header: //depot/asic/msmshared/apps/StaticExtensions/Inc/AEEAnnunciator.h#13 $
+$Header: //depot/asic/qsc60x0/apps/StaticExtensions/Inc/AEEAnnunciator.h#1 $
 
 =====================================================================*/
 
@@ -44,7 +44,7 @@ typedef struct IAnnunciator IAnnunciator;
 // Global Constant Declarations
 //---------------------------------------------------------------------
 // Annunciator Fields
-#ifndef CUST_EDITION
+#if 0
 #define ANNUN_FIELD_OPERATOR  0   /* PLMN in GSM; other network info in CDMA */
 #define ANNUN_FIELD_MSG       1
 #define ANNUN_FIELD_NET       2
@@ -62,8 +62,6 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_HDR_RSSI  14
 #define ANNUN_FIELD_WLAN_RSSI 15
 #define ANNUN_FIELD_VT        16
-#define ANNUN_FIELD_HSDPA     17  //Field to indicate HSDPA/HSUPA service
-#define ANNUN_FIELD_BCMCS     18  //BCMCS annunciator
 #else
 #if 1
 /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
@@ -79,8 +77,6 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_MMS                       9   /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 #define ANNUN_FIELD_RINGTONE              10   /*Ringtone*/
 #define ANNUN_FIELD_BATT                     11   /*Battery*/
-#define ANNUN_FIELD_HSDPA     17  //Field to indicate HSDPA/HSUPA service
-#define ANNUN_FIELD_BCMCS     18  //BCMCS annunciator
 #else
 #define ANNUN_FIELD_RSSI       0
 #define ANNUN_FIELD_RING       1
@@ -100,8 +96,6 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_BATT  15
 #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
 #define ANNUN_FIELD_MUTE 16
-#define ANNUN_FIELD_HSDPA     17  //Field to indicate HSDPA/HSUPA service
-#define ANNUN_FIELD_BCMCS     18  //BCMCS annunciator
 #endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
 #endif
 //end added
@@ -115,7 +109,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_BLINK         0x80000000
 #define ANNUN_STATE_UNBLINK     0x7FFFFFFF
 
-#ifdef CUST_EDITION
+#if 1
 // Mask to strip the blink bit from the state
 #define ANNUN_STATE_BLINK_UNMASK  0x7FFFFFFF
 
@@ -167,19 +161,16 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_WCDMA           4
 #define ANNUN_STATE_HDR             5
 #define ANNUN_STATE_HYBRID          6
-#define ANNUN_STATE_HDR_REV_A       7
-#define ANNUN_STATE_HYBRID_REV_A    8
-#define ANNUN_STATE_SIMULTANEOUS    9
-#define ANNUN_STATE_GPS             10 //Not used currently
-#define ANNUN_STATE_DIGITAL         11
+#define ANNUN_STATE_SIMULTANEOUS    7
+#define ANNUN_STATE_GPS             8 //Not used currently
+#define ANNUN_STATE_DIGITAL         9
 
 // Domain field
 #define ANNUN_STATE_CS        1
 #define ANNUN_STATE_PS        2
 #define ANNUN_STATE_CS_PS     3
 
-// RSSI and HDR fields
-#ifdef CUST_EDITION  
+/*ANNUN_FIELD_RSSI*/
 #define ANNUN_STATE_AIR_MODE_ON     ANNUN_FIRST_STATE
 #define ANNUN_STATE_AIR_MODE_OFF   ANNUN_FIRST_STATE_OFF
 #define ANNUN_STATE_RSSI_NO_SERV    ANNUN_SECOND_STATE
@@ -264,7 +255,6 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_RINGTONE_SILENT      ANNUN_SECOND_STATE
 #define ANNUN_STATE_RINGTONE_VIBRING    ANNUN_THIRD_STATE
 #define ANNUN_STATE_RINGTONE_VIBRATOR  ANNUN_FORTH_STATE
-#endif
 
 // In Use field
 #define ANNUN_STATE_IN_USE    1
@@ -277,20 +267,15 @@ typedef struct IAnnunciator IAnnunciator;
 // Message field
 
 // Battery field
-#define ANNUN_STATE_BATT_LOW  1
-#define ANNUN_STATE_BATT_1    2
-#define ANNUN_STATE_BATT_2    3
-#define ANNUN_STATE_BATT_3    4
-#define ANNUN_STATE_BATT_FULL 5
+#define ANNUN_STATE_BATT_LOW  ANNUN_FIRST_STATE
+#define ANNUN_STATE_BATT_1       ANNUN_SECOND_STATE
+#define ANNUN_STATE_BATT_2       ANNUN_THIRD_STATE
+#define ANNUN_STATE_BATT_3       ANNUN_FORTH_STATE
+#define ANNUN_STATE_BATT_FULL  ANNUN_FIFTH_STATE
 
 //Network field
 #define ANNUN_STATE_DORMANT   0
 #define ANNUN_STATE_ACTIVE    1
-
-//HSDPA/HSUPA SERVICE field 
-#define ANNUN_STATE_HSDPA       1
-#define ANNUN_STATE_HSUPA       2
-#define ANNUN_STATE_HSDPA_HSUPA 3
 
 /* Annunciator types */
 #define ANNUN_TYPE_IMAGE      0
@@ -317,11 +302,8 @@ AEEINTERFACE(IAnnunciator)
    int     (*Redraw) (IAnnunciator *pMe);
    int     (*EnableAnnunciatorBar)   (IAnnunciator * pMe, AEECLSID clsid, boolean bOn);
    int     (*GetAnnunciatorBarSize)  (IAnnunciator * pMe, AEECLSID clsid, AEERect *pRec);
-   void    (*EnableBlink) (IAnnunciator * pMe, boolean bEnable);
-#ifdef CUST_EDITION  
    int     (*EnableAnnunciatorBarEx) (IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw);
    int     (*SetUnblinkTimer) (IAnnunciator * pMe, uint32 nAnnunID, uint32 nState, uint32 nTimeMs); //added by chengxiao 2009.03.10
-#endif
 };
 
 //---------------------------------------------------------------------
@@ -337,11 +319,8 @@ AEEINTERFACE(IAnnunciator)
 #define IANNUNCIATOR_Redraw(p) AEEGETPVTBL((p), IAnnunciator)->Redraw((p))
 #define IANNUNCIATOR_EnableAnnunciatorBar(p,cls,b)   AEEGETPVTBL((p),IAnnunciator)->EnableAnnunciatorBar((p),(cls),(b))
 #define IANNUNCIATOR_GetAnnunciatorBarSize(p,cls,pr) AEEGETPVTBL((p),IAnnunciator)->GetAnnunciatorBarSize((p),(cls),(pr))
-#define IANNUNCIATOR_EnableBlink(p,b) AEEGETPVTBL((p),IAnnunciator)->EnableBlink((p),(b))
-#ifdef CUST_EDITION  
 #define IANNUNCIATOR_EnableAnnunciatorBarEx(p,cls,b,c)   AEEGETPVTBL((p),IAnnunciator)->EnableAnnunciatorBarEx((p),(cls),(b),(c))
 #define IANNUNCIATOR_SetUnblinkTimer(p,id,s,n)   AEEGETPVTBL((p),IAnnunciator)->SetUnblinkTimer((p),(id),(s),(n))
-#endif
 
 /*============================================================================
    DATA STRUCTURE DOCUMENTATION
@@ -742,30 +721,7 @@ Side Effects:
 See Also:
 
 
-=======================================================================
-
-IANNUNCIATOR_EnableBlink()
-
-Description:
-    This function enables or disables the blinking of annunciator images.
-
-Prototype:
-    int IANNUNCIATOR_EnableBlink(IAnnunciator * pIAnnunciator, boolean bEnable)
-
-Parameters:
-    pIAnnunciator : Pointer to the IAnnunciator Interface object
-    bOn           : TRUE/Enable annunciator blink feature.
-
-Return Value:
-
-Comments:
-    None
-
-Side Effects:
-
-See Also:
-
-
 ======================================================================= */
+
 
 #endif /* ifndef AEEANNUNCIATOR_H */
