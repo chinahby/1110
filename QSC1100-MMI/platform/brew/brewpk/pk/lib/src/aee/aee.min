@@ -13,7 +13,6 @@ AEE_SOURCES=\
 	AEEStatic.c \
 	AEEDate.c \
 	AEECamera.c \
-	AEEVirtualkey.c \
 	AEEAlarm.c 
 	
     
