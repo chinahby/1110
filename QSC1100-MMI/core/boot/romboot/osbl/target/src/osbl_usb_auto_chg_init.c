@@ -366,8 +366,17 @@ osbl_shp_autocharging_setup ( uint32 imaxsel, uint32 trickle_current_setting )
     err |= pm_chg_failed_clear(TRUE);
 
     /* Enable battery temperature monitoring */
-    err |= pm_chg_batt_temp_disable ( FALSE ) ;
-
+#ifdef CUST_EDITION
+    /* Enable battery temperature monitoring */
+#if defined(CHG_BATT_TEMP_MONITOR_ENABLE)
+			/* Enable battery temperature monitoring */
+	err |= pm_chg_batt_temp_disable(FALSE);
+#else
+	err |= pm_chg_batt_temp_disable(TRUE);
+#endif
+#else
+	err |= pm_chg_batt_temp_disable(FALSE);
+#endif
     /* Enable automatic charging */
     err |= pm_chg_auto_disable ( FALSE ) ;
 

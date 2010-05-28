@@ -190,8 +190,17 @@ void AutoChargingManager::startShpAutoCharging()
 #error code not present
     #endif
 
+#ifdef CUST_EDITION
     /* Enable battery temperature monitoring */
-    err |= pm_chg_batt_temp_disable(FALSE);
+#if defined(CHG_BATT_TEMP_MONITOR_ENABLE)
+			/* Enable battery temperature monitoring */
+	err |= pm_chg_batt_temp_disable(FALSE);
+#else
+	err |= pm_chg_batt_temp_disable(TRUE);
+#endif
+#else
+	err |= pm_chg_batt_temp_disable(FALSE);
+#endif
 
     /* Enable battery charging/powering PMIC from USB device */
     err |= pm_chg_enum_done_enable(TRUE);
@@ -263,7 +272,17 @@ void AutoChargingManager::startUcpAutoCharging()
     #endif
 
     /* Enable battery temperature monitoring */
-    err |= pm_chg_batt_temp_disable(FALSE);
+#ifdef CUST_EDITION
+		/* Enable battery temperature monitoring */
+#if defined(CHG_BATT_TEMP_MONITOR_ENABLE)
+				/* Enable battery temperature monitoring */
+	err |= pm_chg_batt_temp_disable(FALSE);
+#else
+	err |= pm_chg_batt_temp_disable(TRUE);
+#endif
+#else
+	err |= pm_chg_batt_temp_disable(FALSE);
+#endif
 
     /* Enable battery charging/powering PMIC from USB device */
     err |= pm_chg_enum_done_enable(TRUE);
