@@ -3163,13 +3163,7 @@ static void   OEMALERT_StartMp3Preview(IALERT * pMe, char *id)
     {
         return;
     }
-#ifndef WIN32
-    if(VC_DEV_NONE != VC_GetCurrentDevice())
-    {
-        OEMALERT_StartRingerPreview(pMe, OEMNV_DEFAULTRINGER);
-        return;
-    }
-#endif
+    
     (void) ICONFIG_GetItem(pMe->m_pConfig,
                         CFGI_RINGER_VOL,
                         &ringerVol,
@@ -3255,7 +3249,7 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
     {    
         //(void) IRINGERMGR_Stop(pMe->m_pRingerMgr);
         if (gCurStatus.m_pCurRingerMgr != NULL &&
-            gCurStatus.m_bplaying) //|| VC_DEV_NONE != VC_GetCurrentDevice())
+            gCurStatus.m_bplaying)
         {
             //IRINGERMGR_Stop(gCurStatus.m_pCurRingerMgr);
             //gCurStatus.m_bplaying = FALSE;
