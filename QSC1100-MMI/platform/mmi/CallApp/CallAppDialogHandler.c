@@ -2223,13 +2223,13 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
                                                 ImageSize.cx,
                                                 ImageSize.cy);
         
-        Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);
+        //Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);  // 不让刷第二次背景图
         
         nCurrentFrame = (calling_coute >= CALLAPP_ANI_FRAMES)?(CALLAPP_ANI_FRAMES - 1):(calling_coute);
         IIMAGE_DrawFrame(pMe->m_pCallingImage, 
                                     nCurrentFrame, 
                                     (pMe->m_rc.dx - ImageSize.cxFrame)/2, 
-                                    CALL_ANIM_IMG_Y);
+                                    CALL_ANIM_IMG_Y - CALL_LINE_HIGHT);
     }
                         
     (void) ISHELL_SetTimer(pMe->m_pShell,
@@ -3347,7 +3347,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 IIMAGE_DrawFrame(pMe->m_pCallingImage, 
                                     3, 
                                     (pMe->m_rc.dx - ImageSize.cxFrame)/2, 
-                                    CALL_ANIM_IMG_Y);
+                                    CALL_ANIM_IMG_Y- CALL_LINE_HIGHT);
             }
 
             if(pMe->m_Is3Way)
@@ -4507,7 +4507,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                 IIMAGE_DrawFrame(pMe->m_pCallingImage, 
                                     0, 
                                     (pMe->m_rc.dx - ImageSize.cxFrame)/2, 
-                                    CALL_ANIM_IMG_Y);
+                                    CALL_ANIM_IMG_Y - CALL_LINE_HIGHT);
             }
             //Secend line
             if (pMe->m_MissedCallCount > 1)

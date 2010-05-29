@@ -192,21 +192,21 @@ typedef PACKED struct {
 
 #define  AEE_APPSCALLAPP_RES_FILE AEE_RES_LANGDIR CALLAPP_RES_FILE
 #define MAX_SIZE_GETIMSI                    20
-#define MAX_SIZE_BANNER_TEXT           20
-#define MAX_SIZE_DIALER_TEXT            128
-#define MAX_SIZE_NAME_TEXT              20
+#define MAX_SIZE_BANNER_TEXT                20
+#define MAX_SIZE_DIALER_TEXT                128
+#define MAX_SIZE_NAME_TEXT                  20
 #define MAX_SIZE_DIAL_STR                  AEECM_MAX_DIAL_STRING +1//33
-#define TIMEOUT_MS_ONE_SECOND        1000
+#define TIMEOUT_MS_ONE_SECOND               1000
 //#define DIALER_TEXT_LEN_MAX      32
-#define MAX_COUNT_TO_CHANGE           5
-#define DIALERAPP_MAX_NUM_CALLS     5
-#define CALL_PICTURE_NAME_LENTH      64
+#define MAX_COUNT_TO_CHANGE                 5
+#define DIALERAPP_MAX_NUM_CALLS             5
+#define CALL_PICTURE_NAME_LENTH             64
 //#define DIALOG_SOFTKEY_HIGH        (pMe->m_LineHeight + 2)
-#define DIALERAPP_NUM_CALLHISTORY_FIELDS 5
+#define DIALERAPP_NUM_CALLHISTORY_FIELDS    5
 
-#define CALL_ANIMATION_WIDTH           36
-#define CALL_ANNU_HEIGHT                   5//16
-#define CALL_SOFT_KEY_HIGHT              16//15//  (pMe->m_LargeLineHeight)
+#define CALL_ANIMATION_WIDTH                36
+#define CALL_ANNU_HEIGHT                    5//16
+#define CALL_SOFT_KEY_HIGHT                 16//15//  (pMe->m_LargeLineHeight)
 //#define CALL_TITLE_BAR_HEIGHT   14 
 
 #define SOFT_KEY_MENU_X                    0
@@ -216,56 +216,54 @@ typedef PACKED struct {
 
 #define CALL_SCREEN_X                         0
 #define CALL_SCREEN_Y                         0
-#define CALL_SCREEN_DX                       (pMe->m_rc.dx)
-#define CALL_SCREEN_DY                       (pMe->m_rc.dy - CALL_SOFT_KEY_HIGHT)
+#define CALL_SCREEN_DX                    (pMe->m_rc.dx)
+#define CALL_SCREEN_DY                    (pMe->m_rc.dy - CALL_SOFT_KEY_HIGHT)
 /*两边各空2个像素*/
-#define CALL_TEXT_DX                           (pMe->m_rc.dx- 2*CALL_TEXT_X)
-#define CALL_NAME_DX                          (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
-#define CALL_NUM_DX                            (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
+#define CALL_TEXT_DX                      (pMe->m_rc.dx- 2*CALL_TEXT_X)
+#define CALL_NAME_DX                      (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
+#define CALL_NUM_DX                       (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 /*两边各空2个像素*/
 
-#define CALL_TEXT_X                             (3)
-#define CALL_NAME_X                            (2*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
-#define CALL_NUM_X                              (2*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
-
-//#define CALL_LINE_HIGHT           (pMe->m_LineHeight + 3)
+#define CALL_TEXT_X                       (3)
+#define CALL_NAME_X                       (2*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
+#define CALL_NUM_X                        (2*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
 
 /*来电去电动画图片高度*/
-#define CALL_ANIM_IMG_HEIGHT            (90)
+#define CALL_ANIM_IMG_HEIGHT              (60)
 
 /*上下各空3个像素*/
 //#define CALL_LINE_HIGHT             ((int)((pMe->m_rc.dy - CALL_ANNU_HEIGHT - CALL_SOFT_KEY_HIGHT)/4))
 /*上下各空3个像素*/
-#define CALL_LINE_HIGHT                      (20) //18为NORMAL字体高度，目前只需要这个高度就够了
+#define CALL_LINE_HIGHT                  (20) //18为NORMAL字体高度，目前只需要这个高度就够了
 
-#define CALL_FIRST_LINE_Y                   (CALL_ANNU_HEIGHT)
-#define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    CALL_LINE_HIGHT)
-#define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +2*CALL_LINE_HIGHT )
-#define CALL_FOURTH_LINE_Y               (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
+#define CALL_FIRST_LINE_Y                (CALL_ANNU_HEIGHT)
+#define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y + CALL_LINE_HIGHT)
+#define CALL_THIRD_LINE_Y                (CALL_FIRST_LINE_Y + 2*CALL_LINE_HIGHT)
+#define CALL_FOURTH_LINE_Y               (CALL_FIRST_LINE_Y + 3*CALL_LINE_HIGHT)
 
 /*来电去电动画图片Y坐标*/
-#define CALL_ANIM_IMG_Y                     (CALL_FIRST_LINE_Y + 4*CALL_LINE_HIGHT)
+#define CALL_ANIM_IMG_Y                  (CALL_FIRST_LINE_Y + 2*CALL_LINE_HIGHT+CALL_LINE_HIGHT/2)
 
 /*拨号大数字图片行距*/
-#define BETWEEN_LINE_PIXEL                (6)
+#define BETWEEN_LINE_PIXEL               (6)
 
-#define MISSED_TEXT_Y                         CALL_ANNU_HEIGHT
-#define MISSED_CALL_Y                         (CALL_ANNU_HEIGHT + pMe->m_LineHeight+2)
+#define MISSED_TEXT_Y                    CALL_ANNU_HEIGHT
+#define MISSED_CALL_Y                    (CALL_ANNU_HEIGHT + pMe->m_LineHeight+2)
 /*Temp add */
 #define FEATURE_APP_PAUSE_TIMER
 #define FEATURE_IMAGE_DIALING_DIGITS
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
 #if defined(FEATURE_DISP_176X220)
-    #define NUM_IMAGE_HIGHT                    (30)
-    #define NUM_IMAGE_WIDTH                    (20)
+    #define NUM_IMAGE_HIGHT               (30)
+    #define NUM_IMAGE_WIDTH               (20)
     #define REFUI_CALL_MAX_IMAGSIZE       (16)
 #elif defined(FEATURE_DISP_128X128)
-	#define NUM_IMAGE_HIGHT                    (25)
-    #define NUM_IMAGE_WIDTH                    (20)
+	#define NUM_IMAGE_HIGHT               (25)
+    #define NUM_IMAGE_WIDTH               (20)
     #define REFUI_CALL_MAX_IMAGSIZE       (16)
 #else
-    #define NUM_IMAGE_HIGHT                    (25)
-    #define NUM_IMAGE_WIDTH                    (20)
+    #define NUM_IMAGE_HIGHT               (25)
+    #define NUM_IMAGE_WIDTH               (20)
     #define REFUI_CALL_MAX_IMAGSIZE       (16)
 #endif
 #endif
