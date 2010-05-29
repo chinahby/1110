@@ -26,7 +26,7 @@ T9LIBS :=\
 	$(T9_LIB)/rbmpapi.o
 else
 T9LIBS :=\
-	$(T9_LIB)/T9_v730_ADS1.2_uni_AlCh.o
+	$(T9_LIB)/T9_v730_ADS_uni_AlCh.o
 endif
 
 INC  += $(T9_INC)
