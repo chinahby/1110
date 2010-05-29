@@ -13,18 +13,6 @@
 	<Object Id="5004" Name="IDI_BOTTOMMASK">
 		<File>..\images\color\Appscommon\Background\BottomMask.png</File>
 	</Object>
-	<Object Id="5005" Name="IDI_BTHEADSET" MimeType="image/bmp">
-		<File>..\images\color\Bluetooth\BTHEADSET.bmp</File>
-	</Object>
-	<Object Id="5006" Name="IDI_BTOTHER" MimeType="image/bmp">
-		<File>..\images\color\Bluetooth\BTOTHER.bmp</File>
-	</Object>
-	<Object Id="5007" Name="IDI_BTPC" MimeType="image/bmp">
-		<File>..\images\color\Bluetooth\BTPC.bmp</File>
-	</Object>
-	<Object Id="5008" Name="IDI_BTPHONE" MimeType="image/bmp">
-		<File>..\images\color\Bluetooth\BTPHONE.bmp</File>
-	</Object>
 	<Object Id="5009" Name="IDB_SPORT_RACE" MimeType="image/bmp">
 		<File>..\images\color\Sports\Icons\step_race.bmp</File>
 	</Object>
