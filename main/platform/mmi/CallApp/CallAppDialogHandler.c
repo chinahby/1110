@@ -941,6 +941,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                        uint16 mcc;
                        uint16 mnc;
 #endif
+#ifdef FEATURE_APP_FLDDBG
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
                         if (WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)
                         {
@@ -955,7 +956,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#*#8378#0#");
                             return TRUE;
                         }
-                        
+#endif
                         if (WSTRCMP(pMe->m_DialString, L"123456#") == 0)
                         {
                             return CallApp_LaunchApplet(pMe,  AEECLSID_APPMANAGER);

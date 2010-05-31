@@ -10,7 +10,7 @@ include $(APPSCOMMON)/appscommon.min
 
 #Core App
 include $(COREAPP)/coreapp.min
-include $(MAINMENU)/mainmenu.min
+#include $(MAINMENU)/mainmenu.min
 include $(CALLAPP)/CallApp.min
 include $(CONTAPP)/contact.min
 include $(WMSAPP)/wmsapp.min
@@ -79,7 +79,7 @@ endif
 #include $(TETRIS)/tetris.min
 
 #Apps
-include $(EXTRAMENU)/extramenu.min
+#include $(EXTRAMENU)/extramenu.min
 ifneq ($(USES_LOW),yes)
 include $(OEMEXTFOR3PART)/OEMExtFor3Part.min
 include $(EDITAPPLET)/EditApplet.min
