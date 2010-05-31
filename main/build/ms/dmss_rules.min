@@ -382,8 +382,10 @@ dmss : rvctflashtools setup flashtools deps libs media exe $(TARGET).bin fotapac
 endif
 
 
-genobjs:$(OBJECTS) $(QCTLIBS)# $(LIBOBJECTS)	
-	@echo "~~~~~~~~~~~~~~~~~~~~genobjs finish~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+preobjs:mmires rvctflashtools setup flashtools deps libs media
+	@echo "-------------------------preobjs finish-------------------------"
+genobjs:$(OBJECTS)# $(LIBOBJECTS)	
+	@echo "-------------------------genobjs finish-------------------------"
 	
 
 #-------------------------------------------------------------------------------
