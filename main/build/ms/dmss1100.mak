@@ -167,11 +167,6 @@ export MIBIB
 #-------------------------------------------------------------------------------
 include dmss_objects.min
 
-#包含自定义的菜单
-ifeq ($(USES_MMI), yes)
-include $(MMIDIR)/mmi.min
-endif
-
 build_start:
 	@$(BTIME) -start build_time.bt -b
 
@@ -183,7 +178,7 @@ build_end: dmss   # added dependency so timing for parallel builds is accurate
 #-------------------------------------------------------------------------------
 # INSERT OBJECTS MACROS HERE
 # Build the full object list for this target
-OBJECTS += \
+OBJECTS = \
                 $(REX_OBJS) \
                 $(ADC_OBJS)  \
                 $(ADIE_OBJS) \
@@ -627,6 +622,11 @@ endif
 
 ifeq ($(USES_BREW_AEE_SRC),yes)
         OBJECTS += $(AEE_OBJS)
+endif
+
+#包含自定义的菜单
+ifeq ($(USES_MMI), yes)
+include $(MMIDIR)/mmi.min
 endif
 
 endif
