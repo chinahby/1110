@@ -178,7 +178,7 @@ build_end: dmss   # added dependency so timing for parallel builds is accurate
 #-------------------------------------------------------------------------------
 # INSERT OBJECTS MACROS HERE
 # Build the full object list for this target
-OBJECTS = \
+OBJECTS += \
                 $(REX_OBJS) \
                 $(ADC_OBJS)  \
                 $(ADIE_OBJS) \
