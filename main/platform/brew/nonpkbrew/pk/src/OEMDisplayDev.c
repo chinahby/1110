@@ -271,6 +271,9 @@ int SVC_disp_update(IDIB *pDib, const AEERect *prc)
    return 0;
 }
 
+#ifdef FEATURE_GREYBIT
+extern int GreyBitBrewFont_New(IShell *piShell, AEECLSID cls, void **ppif);
+#endif
 
 extern const AEEStaticClass gOEMDisplayDevClasses[] = {
    {AEECLSID_DEVBITMAP1,      ASCF_UPGRADE, PL_SYSTEM,  Display_Init, OEMBitmapDev_New},
@@ -288,9 +291,16 @@ extern const AEEStaticClass gOEMDisplayDevClasses[] = {
    {AEECLSID_DISPLAYDEV2,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDev_New},
    {AEECLSID_DISPLAYDEV3,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDev_New},
    {AEECLSID_DISPLAYDEV4,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDev_New},
+#ifdef FEATURE_GREYBIT
+   {AEECLSID_FONTSYSNORMAL,   ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
+   {AEECLSID_FONTSYSLARGE,    ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
+   {AEECLSID_FONTSYSBOLD,     ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
+   {AEECLSID_FONTSYSBIGNUMBER,ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
+#else
    {AEECLSID_FONTSYSNORMAL,   ASCF_UPGRADE, 0,          0, OEMSysFont_New},
    {AEECLSID_FONTSYSLARGE,    ASCF_UPGRADE, 0,          0, OEMSysFont_New},
    {AEECLSID_FONTSYSBOLD,     ASCF_UPGRADE, 0,          0, OEMSysFont_New},
+#endif
    NULL
 };
 
@@ -781,6 +791,7 @@ Error:
    return nErr;
 }
 
+#ifndef FEATURE_GREYBIT
 extern int OEMFont_GetSystemFont(AEEFont nFont, IFont **ppif);
 static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif)
 {
@@ -814,7 +825,7 @@ static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif)
    }
 #endif
 }
-
+#endif
 
 static uint32 OEMDisplayDev_AddRef(IDisplayDev *pMe)
 {

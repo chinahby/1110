@@ -755,17 +755,18 @@ ALL_INCLUDES = $(addprefix $(INCLUDE_PREFIX), $(ALL_PATHS))
 ifeq ($(USES_MMI), yes)
 #------------------------------------------------------------------------------
 #第三方扩展驱动目录
-DRIVEREXT:=							$(SRCROOT)/modem/drivers_ext
+DRIVEREXT:=				$(SRCROOT)/modem/drivers_ext
 
 #应用菜单文件的目录
-MMIDIR=									$(SRCROOT)/platform/mmi
+MMIDIR=					$(SRCROOT)/platform/mmi
 
 #应用第三方库
-BREW_THIRD = 						$(BREWDIR)/third
+BREW_THIRD = 			$(BREWDIR)/third
 T9_PATH =               $(BREW_THIRD)/T9/V730
 HW_PATH =               $(BREW_THIRD)/HW
 GB_PATH =               $(BREW_THIRD)/GB
 ZI_PATH =               $(BREW_THIRD)/ZiCorp/v6.0
+GREYBIT_PATH =			$(BREW_THIRD)/GreyBit
 REND_PATH =             $(BREWDIR)/pk/Rend
 BREW_OEM_SIM_INC=       $(BREWDIR)/pk/inc/sim
 BREW_OEM_RESINC=        $(BREWDIR)/pk/bin/en/256Color

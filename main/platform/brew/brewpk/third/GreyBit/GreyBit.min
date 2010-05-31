@@ -1,0 +1,19 @@
+#-------------------------------------------------------------------------------
+# Greybit Font Engine
+#-------------------------------------------------------------------------------
+GREYBIT_SOURCES = GreyBitSystemBrew.c \
+                  GreyBitBrewFont.c
+
+GREYBIT_OBJS :=  $(addprefix $(TARGETDIR)/, $(GREYBIT_SOURCES:%.c=%.o))
+
+vpath %.c $(GREYBIT_PATH)
+vpath %.gvf $(GREYBIT_PATH)
+
+GREYBIT_LIBS := $(GREYBIT_PATH)/GreyBitType.a
+
+CONSTFILE_FILES+=systemen.gvf|fs:/sys/systemen.gvf
+	
+INC  += $(GREYBIT_PATH)
+OBJECTS+=$(GREYBIT_OBJS)
+THIRD_PARTY_LIBS += $(GREYBIT_LIBS)
+

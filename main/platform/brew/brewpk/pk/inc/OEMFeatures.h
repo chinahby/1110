@@ -25,7 +25,7 @@ GENERAL DESCRIPTION:
 #endif
 #endif
 #include "BREWVersion.h"
-
+#define FEATURE_GREYBIT
 #define FEATURE_BREW_3_0
 //
 // The following defines are used to selectively compile the OEM_XXXX.c
@@ -289,8 +289,10 @@ GENERAL DESCRIPTION:
 
 //Disable for QSC1110
 //#define FEATURE_BREW_WEB
+#ifndef FEATURE_GREYBIT
 #ifndef FEATURE_MANGO_BREW
 #define FEATURE_BREW_FONTS
+#endif
 #endif
 #define FEATURE_BREW_TELEPHONE
 #ifndef FEATURE_MANGO_BREW
@@ -656,6 +658,6 @@ GENERAL DESCRIPTION:
 #define FEATURE_BREW_DETECT_AAC
 
 #ifdef CUST_EDITION
-#define FEATURE_VIRTUALKEY
+//#define FEATURE_VIRTUALKEY
 #endif
 #endif   // OEMFEATURES_H
