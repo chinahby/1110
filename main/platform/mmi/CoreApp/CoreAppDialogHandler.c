@@ -2648,7 +2648,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
 }
 
-
+#if 0
 //wlh 20090522 add start
 /*==============================================================================
 函数:
@@ -2769,9 +2769,11 @@ static void CoreApp_UpdateIcon(CCoreApp    *pMe)
 			num++;
 		}
 	}
+#ifndef CUST_EDITION
 #ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
-//	IIMAGE_Draw( pMe->m_Idle_Icon->m_ImageSmallCheck[pMe->m_Idle_Icon->m_checkicon - 1]     , pMe->m_Idle_Icon->m_icon_rc.x + 2 + 30*(pMe->m_Idle_Icon->m_fisticon - num1 -1) , pMe->m_Idle_Icon->m_icon_rc.y + 2);
+	IIMAGE_Draw( pMe->m_Idle_Icon->m_ImageSmallCheck[pMe->m_Idle_Icon->m_checkicon - 1]     , pMe->m_Idle_Icon->m_icon_rc.x + 2 + 30*(pMe->m_Idle_Icon->m_fisticon - num1 -1) , pMe->m_Idle_Icon->m_icon_rc.y + 2);
 #endif			
+#endif /*CUST_EDITION*/
 	pMe->m_Idle_Icon->m_icon_rc.x = pMe->m_Idle_Icon->m_icon_rc.x - 14;
 
 	//第三步，画左右箭头
@@ -2803,7 +2805,9 @@ static void CoreApp_UpdateIcon(CCoreApp    *pMe)
                        0,0L);
 		}
 	}
-} // CoreApp_UpdateIcon
+}
+#endif
+// CoreApp_UpdateIcon
 //wlh 20090522 add end
 //wlh 20090427 add start
 /*==============================================================================
@@ -2822,6 +2826,7 @@ static void CoreApp_UpdateIcon(CCoreApp    *pMe)
 备注:
     刷新显示操作由调用者根据需要执行相关操作。
 ==============================================================================*/
+#if 0
 static void CoreApp_UpdateTimeDial(CCoreApp    *pMe)
 {
 	JulianType  jDate;
@@ -3621,6 +3626,7 @@ static void CoreApp_UpdateTimeDial(CCoreApp    *pMe)
 	}
        
 } // CoreApp_UpdateTimeDial
+#endif
 //wlh 20090427 add end
 /*==============================================================================
 函数:
@@ -3649,6 +3655,7 @@ extern boolean is_g_sportsapp_pedometer_bground_flag();
 //extern boolean is_g_bMp3PlayerRun();
 
 //wlh add start
+#if 0
 static void CoreApp_IconLeft(CCoreApp *pMe)//小图标向左移
 {
 	int i,j;
@@ -3748,6 +3755,7 @@ static void CoreApp_IconRight(CCoreApp *pMe)//小图标向右移
 											EVT_UPDATEIDLE,
 											0,0L);
 }
+#endif
 //wlh add end
 static boolean  IDD_IDLE_Handler(void       *pUser,
                                  AEEEvent   eCode,
@@ -3947,14 +3955,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_DOWN:
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH
                 {
-#if defined( FEATURE_FM_RADIO)
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
-#else
+//#if defined( FEATURE_FM_RADIO)
+//                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+//#else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
-#endif
+//#endif
                 }
 //                    return CoreApp_LaunchApplet(pMe, AEECLSID_APPMANAGER);
-#else //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
+ //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
                 {
                     IMainMenu *pIMainMenu = NULL;
                     if (SUCCESS == ISHELL_CreateInstance(pMe->a.m_pIShell,
@@ -3969,8 +3977,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         pIMainMenu = NULL;
                     }                        
                 }
-                return TRUE;  
+#else
+               return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
+               return TRUE;  
+
 #endif  //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
+    
                 case AVK_LEFT:
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH
                     {
@@ -3995,28 +4007,28 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 //#else
 //                    return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
 //#endif
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
                 }
 #endif //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
 				
                 case AVK_RIGHT:
 					//wlh 20090522 add start
-					if(pMe->m_Idle_Icon->m_b_show)
-					{
-						CoreApp_IconRight(pMe);
-						return TRUE;
-					}
-					else
+					//if(pMe->m_Idle_Icon->m_b_show)
+					//{
+					//	CoreApp_IconRight(pMe);
+					//	return TRUE;
+					//}
+					//else
 					//wlh 20090522 add end
 //#if defined FEATURE_SUPPORT_BT_APP
 //                    return CoreApp_LaunchApplet(pMe, AEECLSID_BTUIAPP);
 //#else
 					{
-						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);//
+						return CoreApp_LaunchApplet(pMe, AEECLSID_EXTRAMENU);//
 					}
 //#endif
                 case AVK_SELECT:
-                    return TRUE;//CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
 
                 case AVK_INFO:
 					/*
@@ -4040,6 +4052,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
 #endif //FEATURE_CARRIER_TFL                    
 */
+#if 0
 					if(pMe->m_Idle_Icon->m_b_show)
 					{
 						pMe->m_now_Num = -1;
@@ -4073,10 +4086,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						return TRUE;
 					}
 					else
+                    #endif
 					{
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 					}
                 case AVK_CLR:
+                    #if 0
 #ifdef FEATURE_KEYGUARD
                     if(OEMKeyguard_IsEnabled())
                     {
@@ -4086,6 +4101,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         return TRUE;
                     }
 #endif /* FEATURE_KEYGUARD*/
+#endif
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 
                 default:
@@ -4166,7 +4182,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
 
                 case AVK_SELECT:
-                    return   CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+                    return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
                  // 重拨
                 case AVK_SEND:
                     if (pMe->m_bAcquiredTime && !pMe->m_bemergencymode)
@@ -4195,6 +4211,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_9:
                 case AVK_STAR:
                 case AVK_POUND:
+                    #if 0   // for touch
 					if((pMe->m_Idle_Icon->m_b_show)  && (wParam == AVK_POUND))
 					{
 						pMe->m_Idle_Icon->m_b_show = FALSE;
@@ -4220,6 +4237,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						;
 					}
 					else
+                    #endif
                     {
                         ICallApp         *pCallApp = NULL;
                         if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
@@ -5756,7 +5774,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     }
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
-#ifdef FEATURE_DISP_176X220
+#if defined(FEATURE_DISP_176X220)
     SETAEERECT(&rc, 
                1,
                20,
@@ -5767,17 +5785,28 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                160,//40, 
                130, 
                pMe->m_nNormalFontHeight);
+#elif defined(FEATURE_DISP_128X128)
+	SETAEERECT(&rc, 
+               1,
+               20,
+               pMe->m_rc.dx-100, 
+               pMe->m_nNormalFontHeight);
+    SETAEERECT(&rc_week, 
+               15,//1,
+               68,//160,//40, 
+               (pMe->m_rc.dx-30),//130, 
+               pMe->m_nNormalFontHeight);
 #else
-SETAEERECT(&rc, 
-           1,
-           15, 
-           pMe->m_rc.dx-2, 
-           pMe->m_nNormalFontHeight);
-SETAEERECT(&rc_week, 
-           (pMe->m_rc.dx-10)/2 ,
-           15, 
-           pMe->m_rc.dx-(pMe->m_rc.dx-10)/2, 
-           pMe->m_nNormalFontHeight);
+	SETAEERECT(&rc, 
+	           1,
+	           15, 
+	           pMe->m_rc.dx-2, 
+	           pMe->m_nNormalFontHeight);
+	SETAEERECT(&rc_week, 
+	           (pMe->m_rc.dx-10)/2 ,
+	           15, 
+	           pMe->m_rc.dx-(pMe->m_rc.dx-10)/2, 
+	           pMe->m_nNormalFontHeight);
 #endif //FEATURE_DISP_176X220
 #else
     SETAEERECT(&rc, 
@@ -5827,7 +5856,7 @@ SETAEERECT(&rc_week,
     {
         WSPRINTF(wszDate, sizeof(wszDate), wFormat, jDate.wHour, jDate.wMinute);
     }
-//    IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test               
+	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test               
     // Display the string of date or time or weekday
 	/*wlh 测试临时屏蔽
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -5841,7 +5870,7 @@ SETAEERECT(&rc_week,
                               | IDF_TEXT_TRANSPARENT);
 							  */
         
- //   IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test  
+ 	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test  
     // 格式化日期字符串并绘制
     wszDate[0] = (AECHAR)'\0';
     wFormat[0] = (AECHAR)'\0';
@@ -5854,7 +5883,9 @@ SETAEERECT(&rc_week,
         switch(bTFmt)
         {
             case OEMNV_DATEFORM_DMY:
-#ifdef FEATURE_DISP_176X220
+#if defined(FEATURE_DISP_176X220)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -5863,7 +5894,9 @@ SETAEERECT(&rc_week,
                 break;
                 
             case OEMNV_DATEFORM_MDY:
-#ifdef FEATURE_DISP_176X220                
+#if defined(FEATURE_DISP_176X220)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -5873,7 +5906,9 @@ SETAEERECT(&rc_week,
                 
             default:
             case OEMNV_DATEFORM_YMD:
-#ifdef FEATURE_DISP_176X220                
+#if defined(FEATURE_DISP_176X220)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -5881,7 +5916,17 @@ SETAEERECT(&rc_week,
                 WSPRINTF(wszDate, sizeof(wszDate), wFormat,  jDate.wYear, jDate.wMonth,jDate.wDay);
                 break;
         }
-#ifdef FEATURE_DISP_176X220          
+#if defined(FEATURE_DISP_176X220)
+		DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_week, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_LEFT
+                                  | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_128X128)
         DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -5912,7 +5957,7 @@ SETAEERECT(&rc_week,
                                 sizeof(wFormat));
 
     WSPRINTF(wszDate, sizeof(wszDate), wFormat,jDate.wYear, jDate.wDay, jDate.wMonth);
-#ifdef FEATURE_DISP_176X220
+#if defined(FEATURE_DISP_176X220)
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -5922,6 +5967,16 @@ SETAEERECT(&rc_week,
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);  
+#elif defined(FEATURE_DISP_128X128)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_week, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
 #else
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
@@ -5955,7 +6010,9 @@ SETAEERECT(&rc_week,
                               wszDate, -1,
                               0, 0, &rc_week, 
                               IDF_ALIGN_MIDDLE
-#ifdef FEATURE_DISP_176X220                              
+#if defined(FEATURE_DISP_176X220)
+							  | IDF_ALIGN_RIGHT
+#elif defined(FEATURE_DISP_128X128)
                               | IDF_ALIGN_RIGHT
 #else
                               | IDF_ALIGN_LEFT
@@ -6000,15 +6057,15 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
         IIMAGE_Release(pBottomMask);
         pBottomMask = NULL;
 
-		IIMAGE_Draw(pBottomMaskleft, pMe->m_rc.x + 11, pMe->m_rc.dy - 38);
+		IIMAGE_Draw(pBottomMaskleft, pMe->m_rc.x + 5, pMe->m_rc.dy - 38);
         IIMAGE_Release(pBottomMaskleft);
         pBottomMaskleft = NULL;
 
-		IIMAGE_Draw(pBottomMaskcenter, pMe->m_rc.x + 11+36+11+1+11, pMe->m_rc.dy - 38);
+		IIMAGE_Draw(pBottomMaskcenter, pMe->m_rc.x + 5+36+5, pMe->m_rc.dy - 38);
         IIMAGE_Release(pBottomMaskcenter);
         pBottomMaskcenter = NULL;
 
-		IIMAGE_Draw(pBottomMaskright, pMe->m_rc.x + 11+36+11+1+11+36+11+1+11, pMe->m_rc.dy - 38);
+        IIMAGE_Draw(pBottomMaskright, pMe->m_rc.x + 5+36*2+5+5, pMe->m_rc.dy - 38);
         IIMAGE_Release(pBottomMaskright);
         pBottomMaskright = NULL;
     }
@@ -7114,7 +7171,7 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
 #endif //FEATURE_SPN_FROM_BSMCCMNC   
 #endif//WIN32
 }
-
+#if 0
 //根据角度取得sin値
 static void CoreApp_SetMintueImageID(CCoreApp *pMe,uint16 MINUTE_angle)
 {
@@ -7735,7 +7792,7 @@ static double CoreApp_sin(uint16 angle)
 	return sin_value;
 }
 
-
+#endif
 static void CoreApp_DrawMinuteHand(CCoreApp *pMe,uint16 Minute_angle)
 {/*
 	uint16 err;

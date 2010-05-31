@@ -52,6 +52,7 @@
 #ifdef FEATURE_UTK2
 #include "UTKUtils.h"
 #endif
+
 #if defined(AEE_STATIC)
 #include "OEMClassIDs.h"
 #endif
@@ -151,24 +152,6 @@
 #define MINUTE_W 
 #define MINUTE_H
 
-//add by ydc 090522
-//角度sin值
-#define SIN_0  0.000
-#define SIN_6  0.105
-#define SIN_12 0.208
-#define SIN_18 0.309
-#define SIN_24 0.407
-#define SIN_30 0.500
-#define SIN_36 0.588
-#define SIN_42 0.669
-#define SIN_48 0.743
-#define SIN_54 0.809
-#define SIN_60 0.866
-#define SIN_66 0.914
-#define SIN_72 0.951
-#define SIN_78 0.978
-#define SIN_84 0.996
-#define SIN_90 1.000
 
 //wlh 20090427 add end
 
@@ -511,6 +494,7 @@ typedef struct _IdleAPP_Config_Type
 
 // 对话框事件处理函数指针类型定义
 typedef boolean (*PFNDLGHANDLER)(void *pUser, AEEEvent evt, uint16 w, uint32 dw);
+#if 0
 //wlh 20090521 add start 
 typedef  struct _xIcon_AppList//一共11个小程序
 {
@@ -569,7 +553,7 @@ typedef struct _IdleIcon
 	*/
 }IdleIcon;
 //wlh 20090521 add end 
-
+#endif
 typedef struct _CCoreApp
 {
     // 本结构的第一个数据成员必须是 AEEApplet 型
@@ -732,8 +716,10 @@ boolean bPlaneModeOn;
 	uint16              m_up_xstation;
 	uint16              m_up_ystation;
 	int                 m_now_Num;//当前移动的对象序号0是时间,默认-1
+#if 0
 	//wlh 20090427 add end 
 	IdleIcon *          m_Idle_Icon;
+#endif
 } CCoreApp;
 
 /*==============================================================================

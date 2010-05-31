@@ -294,7 +294,7 @@ void CoreApp_FreeAppData(IApplet* po)
     //    pMe->m_pPhone = NULL;
     //}
     //OEMRTC_Process_User_Power_Off();
-
+    /*
 	//wlh 20090522 add start 
 	if(pMe->m_Idle_Icon)
 	{
@@ -361,6 +361,7 @@ void CoreApp_FreeAppData(IApplet* po)
 	FREE(pMe->m_Idle_Icon);
 	}
 	//wlh 20090522 end
+    */
 #ifndef WIN32
     OEMRTC_Free_All_Node();
 #endif//WIN32
@@ -462,7 +463,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 	pMe->m_dial_rc.dx = 55;//wlh 20090427 add 时间表盘
 	pMe->m_dial_rc.dy = 24;//wlh 20090427 add 时间表盘
 	////modi ydc 20090408
-	
+/*
 	pMe->m_dial_Image = ISHELL_LoadResImage( AEE_GetShell(),
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDI_DIAL
@@ -470,7 +471,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 	pMe->m_time_Image = ISHELL_LoadResImage( AEE_GetShell(),
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDI_TIMEBACK
-                           );
+                           );*/
 //wlh 20090427 add end 时间表盘
 #ifndef WIN32
     BrewUI_EnableKeys(TRUE);
@@ -485,7 +486,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     g_pCoreApp = pMe;
 
 	//wlh 20090522 add start
-	
+	/*
 	pMe->m_Idle_Icon = NULL;
 	pMe->m_Idle_Icon = MALLOC(sizeof(IdleIcon));
 	if(pMe->m_Idle_Icon)
@@ -731,7 +732,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 
 
 	}
-	
+	*/
 	//wlh 20090522 add end
 
     return TRUE;
@@ -2715,8 +2716,10 @@ static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe)
 
 }
 //add by ydc
+/*
 static void CoreAppLoadTimepImage(CCoreApp *pMe)
 {
+
 	pMe->m_dial_hour_image[2] = ISHELL_LoadResImage(AEE_GetShell(),AEE_APPSCOMMONRES_IMAGESFILE,IDI_HOUR_12);
 
 	pMe->m_dial_minue_image[2] = ISHELL_LoadResImage(AEE_GetShell(),AEE_APPSCOMMONRES_IMAGESFILE,IDI_MINUTE_12);
@@ -2950,3 +2953,4 @@ static void CoreAppLoadTimepImage(CCoreApp *pMe)
 	pMe->m_dial_minue_image[59] = ISHELL_LoadResImage(AEE_GetShell(),AEE_APPSCOMMONRES_IMAGESFILE,IDI_MINUTE_354);
 
 }
+*/
