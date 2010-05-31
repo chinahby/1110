@@ -5,6 +5,7 @@ GREYBIT_SOURCES = GreyBitSystemBrew.c \
                   GreyBitBrewFont.c
 
 GREYBIT_OBJS :=  $(addprefix $(TARGETDIR)/, $(GREYBIT_SOURCES:%.c=%.o))
+$(GREYBIT_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 
 vpath %.c $(GREYBIT_PATH)
 vpath %.gvf $(GREYBIT_PATH)
