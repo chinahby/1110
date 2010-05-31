@@ -368,6 +368,13 @@ void CoreApp_FreeAppData(IApplet* po)
     ISHELL_RegisterNotify(pMe->a.m_pIShell,AEECLSID_CORE_APP,  AEECLSID_ALERT_NOTIFIER,0);
     FREEIF(pMe->m_cdg_msgptr);
     g_pCoreApp = NULL;
+
+#ifdef FEATURE_GREYBIT
+{
+    extern void GreyBitBrewFont_Done(void);
+    GreyBitBrewFont_Done();
+}
+#endif
 } /* End CoreApp_FreeAppData */
 
 
@@ -397,7 +404,12 @@ boolean CoreApp_InitAppData(IApplet* po)
     {
         return FALSE;
     }
-        
+#ifdef FEATURE_GREYBIT
+{
+    extern void GreyBitBrewFont_Init(void);
+    GreyBitBrewFont_Init();
+}
+#endif
     pMe->m_bSuspended = FALSE;
 
     if (TRUE != CoreApp_InitExtInterface(pMe))
