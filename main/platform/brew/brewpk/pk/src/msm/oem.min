@@ -23,13 +23,11 @@ OEM_LIB_SOURCES=\
 	OEMConstFiles_Dynamic.c \
 	OEMCriticalSection.c \
 	OEMDB.c \
-	OEMDebug.c \
 	OEMDefaults.c \
 	OEMDeviceNotifier.c \
 	OEMDisp.c \
 	OEMDisplayDev.c \
 	OEMAnnunciatorControl.c \
-        OEMDSS.c \
 	OEMFlip.c \
 	OEMFS.c \
 	OEMFSPath.c \
@@ -56,7 +54,6 @@ OEM_LIB_SOURCES=\
 	OEMObjectMgr.c \
 	OEMOS.c \
 	OEMPhone.c \
-	OEMPosDet.c \
 	OEMPrivacy.c \
 	OEMRUIM.c \
 	OEMAddrBookRUIM.c \
@@ -66,7 +63,6 @@ OEM_LIB_SOURCES=\
 	OEMRinger.c \
 	OEMSecSysClock.c  \
 	OEMSIO.c\
-	OEMSock.c  \
 	OEMAuth.c  \
 	OEMServingNetworks.c  \
 	OEMSound.c \
@@ -79,9 +75,9 @@ OEM_LIB_SOURCES=\
 	OEMText.c \
 	OEMTSupps.c \
 	OEMVocoder.c \
-	OEMWIFI.c \
 	OEMFont.c \
 	OEMFontData.c \
+	OEMMangoBrewStubs.c \
 
 ifeq ($(USES_UIONE),yes)
 # Tell make where the static extension source files from the Porting Kit are located
@@ -163,14 +159,6 @@ OEM_LIB_SOURCES+=\
 	OEMMCFMIF_19922.c \
 	OEMMCFMIF_19923.c \
 	OEMMCFMIF_19924.c
-endif
-
-ifeq ($(USES_LOW_MEMORY),yes)
-else
-OEM_LIB_SOURCES+=\
-	OEMDebugger.c \
-	OEMUSBHMSMIF_26108.c \
-	OEMUSBHMSMIF_26109.c
 endif
 
 ifeq ($(USES_GSM1X),yes)

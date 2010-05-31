@@ -59,10 +59,10 @@ include $(ADJUSTPENAPP)/AdjustPenApp.min
 endif
 
 #Tools
-include $(CALCAPP)/calcapp.min
+#include $(CALCAPP)/calcapp.min
 include $(CLOCKAPP)/clockapps.min
-include $(CONVERTER)/converter.min
-include $(SCHEDULEAPP)/scheduleapp.min
+#include $(CONVERTER)/converter.min
+#include $(SCHEDULEAPP)/scheduleapp.min
 
 ifeq ($(MMI_ADD_SPORT),yes)
 include $(SPORTS)/sports.min
@@ -73,10 +73,10 @@ include $(TIMERAPP)/timerapp.min
 ifeq ($(MMI_ADD_WORLDTIME),yes)
 include $(WORLDTIME)/worldtime.min
 endif
-include $(NOTEBOOK)/notebook.min
+#include $(NOTEBOOK)/notebook.min
 
 #Games
-include $(TETRIS)/tetris.min
+#include $(TETRIS)/tetris.min
 
 #Apps
 include $(EXTRAMENU)/extramenu.min
@@ -102,7 +102,7 @@ include $(FLDDBG)/flddbg.min
 endif
 
 include $(QUICKTEST)/quicktest.min
-include $(SVCPRG)/svcprg.min
+#include $(SVCPRG)/svcprg.min
 
 ifeq ($(MMI_ADD_NUMBER_MANAGER),yes)
 include $(NUMBERMANAGER)/numbermanager.min

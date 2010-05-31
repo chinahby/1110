@@ -24,6 +24,7 @@ void AEENetList_DrawStat(IDisplay *piDisp)
    return;
 }
 
+#ifndef CUST_EDITION
 int Static_New(IShell * pShell,AEECLSID cls, void **ppif)
 {
    ASSERT(FALSE);
@@ -58,7 +59,7 @@ int ADialog_Load(IDialog * po, const char * pszResFile, uint16 wID,DialogInfo * 
    ASSERT(FALSE);
    return(EUNSUPPORTED);
 }
-
+#endif
 int rsa(const uint8 input[], const int inputSize, 
         uint8 output[], int *outputSize,
         const uint8 exponent[], const int exponentSize,
@@ -99,10 +100,12 @@ void AEEDebug_LogEvent(AEEEvent evt, AEECLSID cls, uint32 pl)
    return;
 }
 
+#ifndef CUST_EDITION
 uint32 ParagraphAlignment(AECHAR *pszText, int nChars)
 {
       return (IDF_ALIGN_LEFT);
 }
+#endif
 
 void OEMDebug_Trigger(unsigned uDebugTriggerNum)
 {

@@ -101,10 +101,10 @@ when       who     what, where, why
 
       /* Service Programming application.
       */
-      #define FEATURE_APP_SVCPRG
+      //#define FEATURE_APP_SVCPRG
       /* Field Debug application.
       */
-      #define FEATURE_APP_FLDDBG
+      //#define FEATURE_APP_FLDDBG
 
       //#define FEATURE_APP_DATASTATS
 #endif

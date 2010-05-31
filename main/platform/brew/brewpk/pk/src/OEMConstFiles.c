@@ -47,7 +47,7 @@ extern AEEConstFile gAEESSL_MIF;
 extern AEEConstFile gAEESSL_MOD;
 #endif
 #ifndef FEATURE_MANGO_BREW
-#define FEATURE_CODESIG
+//#define FEATURE_CODESIG
 #endif
 #if defined(FEATURE_CODESIG) && !defined(AEE_SIMULATOR)
 extern AEEConstFile gCODESIG_MIF;

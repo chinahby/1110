@@ -966,13 +966,13 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"quicktest.mif", QuickTest_Load},
 
     {AEEFS_MIF_DIR"clockapps.mif", ClockAppsMod_Load},
-    {AEEFS_MIF_DIR"calcapp.mif", CalcMod_Load},
+    //{AEEFS_MIF_DIR"calcapp.mif", CalcMod_Load},
 #ifdef FEATURE_APP_WORLDTIME 	
     {AEEFS_MIF_DIR"worldtime.mif", WorldTimeMod_Load},
 #endif /*FEATURE_APP_WORLDTIME*/	
     {AEEFS_MIF_DIR"stopwatch.mif", StopWatchMod_Load},
 
-    {AEEFS_MIF_DIR"scheduleapp.mif", ScheduleApp_Load},
+    //{AEEFS_MIF_DIR"scheduleapp.mif", ScheduleApp_Load},
 #ifdef FEATURE_SHORT_CODE_NAM_COUNT
     {AEEFS_MIF_DIR"otk.mif", OtkMod_Load},
 #endif //FEATURE_SHORT_CODE_NAM_COUNT

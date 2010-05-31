@@ -109,7 +109,7 @@ when       who     what, where, why
 /* Enables the Phone Book Manager interface with existing UI menus 
 */
 #ifndef FEATURE_MANGO_BREW
-#define FEATURE_UI_PBM
+//#define FEATURE_UI_PBM
 #endif
 /* Enable dynamic memory management
 */

@@ -27,7 +27,7 @@
 #include "MediaGallery.h" 
 #endif
 #include "ContApp.h"
-#include "Scheduleapp.h"
+//#include "Scheduleapp.h"
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -4617,7 +4617,7 @@ static int SecurityMenu_DeleteAllEntries(CSecurityMenu * pMe)
             pIContApp = NULL;
         }
     }
-
+#if 0
     // 删除 schedule
     {
         IScheduleApp * pIScheduleApp = NULL;
@@ -4639,6 +4639,7 @@ static int SecurityMenu_DeleteAllEntries(CSecurityMenu * pMe)
         }
 
     }
+#endif
     return SUCCESS;
 }
 
