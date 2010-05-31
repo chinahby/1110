@@ -204,6 +204,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
+#define FEATURE_DISP_128X128
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 //#define FEATURE_WMS_APP
 #endif

@@ -31,8 +31,8 @@
 
 
 
-#define  MAX_MATRIX_ITEMS 12
-#define  MAX_MATRIX_ROWS 4
+#define  MAX_MATRIX_ITEMS 9
+#define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
 
 #define FEATURE_ICON_MOVE_ANIMATION //added by chengxiao 2009.04.10
@@ -40,7 +40,7 @@
 #if !defined(FEATURE_CARRIER_CHINA_VERTU)
 #define FEATURE_FOCUS_ANIMATION
 #endif
-#define MAX_TURN_NUM   24
+#define MAX_TURN_NUM   20
 
 /*==============================================================================
                                  
@@ -181,9 +181,9 @@ typedef struct _MainMenu
 ==============================================================================*/
 
 #define ICON_WIDTH              34
-#define ICON_HEIGHT             36
-#define ICON_ANIMATED_WIDTH     50
-#define ICON_ANIMATED_HEIGHT    42
+#define ICON_HEIGHT             28
+#define ICON_ANIMATED_WIDTH     42
+#define ICON_ANIMATED_HEIGHT    32
 #define ICON_ANIMATED_FRAME     1 //焦点图片的帧数
 #ifdef FEATURE_ICON_MOVE_ANIMATION
 #define ICON_ANIMATED_MOVE_FRAME  6
@@ -198,80 +198,39 @@ typedef struct _MainMenu
 
 
 #define ICON1_ANI      "fs:/image/mainmenu/Game1.png"
-#define ICON2_ANI      "fs:/image/mainmenu/Gallery2.png"
-#define ICON3_ANI      "fs:/image/mainmenu/Tools3.png"
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-#define ICON4_ANI      "fs:/image/mainmenu/Camera4.png"
-#else
-#define ICON4_ANI "fs:/image/mainmenu/Contact5.png"
-#endif
+#define ICON2_ANI      "fs:/image/mainmenu/Tools3.png"
+#define ICON3_ANI      "fs:/image/mainmenu/Contact5.png"
+#define ICON4_ANI      "fs:/image/mainmenu/Message6.png"
+#define ICON5_ANI      "fs:/image/mainmenu/Recentcall7.png"
+#define ICON6_ANI      "fs:/image/mainmenu/Setting8.png"
+#define ICON7_ANI      "fs:/image/mainmenu/Sports9.png"
+#define ICON8_ANI      "fs:/image/mainmenu/Number10.png"
+#define ICON9_ANI      "fs:/image/mainmenu/Wap12.png"
 
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-#define ICON5_ANI      "fs:/image/mainmenu/Contact5.png"
-#else
-#define ICON5_ANI      "fs:/image/mainmenu/surfing_focus.png"
-#endif
-
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-#define ICON6_ANI      "fs:/image/mainmenu/Message6.png"
-#else
-#define ICON6_ANI      "fs:/image/mainmenu/Number10.png"
-#endif
-
-#define ICON7_ANI      "fs:/image/mainmenu/Recentcalls7.png"
-
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-#define ICON8_ANI      "fs:/image/mainmenu/Setting8.png"
-#else
-#define ICON8_ANI     "fs:/image/mainmenu/Message6.png"
-#endif
-
-#define ICON9_ANI      "fs:/image/mainmenu/Sports9.png"
-
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-#define ICON10_ANI      "fs:/image/mainmenu/Profile10.png"
-#else
-#define ICON10_ANI      "fs:/image/mainmenu/custservice_focus.png"
-#endif
-
-#define ICON11_ANI      "fs:/image/mainmenu/Player11.png"
-
-#ifndef FEATURE_CARRIER_CHINA_TELCOM
-#define ICON12_ANI      "fs:/image/mainmenu/Wap12.png"
-#else
-#define ICON12_ANI      "fs:/image/mainmenu/Setting8.png"
-
-#endif
-#define ICON13_ANI      "fs:/image/mainmenu/Number10.png"
 
 //wlh 20090410 add start
 #define ICON1_ANI_1      "fs:/image/mainmenu/Game1_1.png"
-#define ICON2_ANI_1      "fs:/image/mainmenu/Gallery2_1.png"
-#define ICON3_ANI_1     "fs:/image/mainmenu/Tools3_1.png"
-#define ICON4_ANI_1      "fs:/image/mainmenu/Camera4_1.png"
-#define ICON5_ANI_1      "fs:/image/mainmenu/Contact5_1.png"
-#define ICON6_ANI_1      "fs:/image/mainmenu/Message6_1.png"
-#define ICON7_ANI_1      "fs:/image/mainmenu/Recentcall7_1.png"
-#define ICON8_ANI_1      "fs:/image/mainmenu/Setting8_1.png"
-#define ICON9_ANI_1      "fs:/image/mainmenu/Sports9_1.png"
-#define ICON10_ANI_1      "fs:/image/mainmenu/Profile10_1.png"
-#define ICON11_ANI_1      "fs:/image/mainmenu/Player11_1.png"
-#define ICON12_ANI_1      "fs:/image/mainmenu/Wap12_1.png"
-#define ICON13_ANI_1      "fs:/image/mainmenu/Number10_1.png"
+#define ICON2_ANI_1      "fs:/image/mainmenu/Tools3_1.png"
+#define ICON3_ANI_1      "fs:/image/mainmenu/Contact5_1.png"
+#define ICON4_ANI_1      "fs:/image/mainmenu/Message6_1.png"
+#define ICON5_ANI_1      "fs:/image/mainmenu/Recentcall7_1.png"
+#define ICON6_ANI_1      "fs:/image/mainmenu/Setting8_1.png"
+#define ICON7_ANI_1      "fs:/image/mainmenu/Sports9_1.png"
+#define ICON8_ANI_1      "fs:/image/mainmenu/Profile10_1.png"
+#define ICON9_ANI_1      "fs:/image/mainmenu/Number10_1.png"
+#define ICON10_ANI_1     "fs:/image/mainmenu/Wap12_1.png"
+
 
 #define ICON1_ANI_2      "fs:/image/mainmenu/Game1_2.png"
-#define ICON2_ANI_2      "fs:/image/mainmenu/Gallery2_2.png"
-#define ICON3_ANI_2     "fs:/image/mainmenu/Tools3_2.png"
-#define ICON4_ANI_2      "fs:/image/mainmenu/Camera4_2.png"
-#define ICON5_ANI_2      "fs:/image/mainmenu/Contact5_2.png"
-#define ICON6_ANI_2      "fs:/image/mainmenu/Message6_2.png"
-#define ICON7_ANI_2      "fs:/image/mainmenu/Recentcall7_2.png"
-#define ICON8_ANI_2      "fs:/image/mainmenu/Setting8_2.png"
-#define ICON9_ANI_2      "fs:/image/mainmenu/Sports9_2.png"
-#define ICON10_ANI_2      "fs:/image/mainmenu/Profile10_2.png"
-#define ICON11_ANI_2      "fs:/image/mainmenu/Player11_2.png"
-#define ICON12_ANI_2      "fs:/image/mainmenu/Wap12_2.png"
-#define ICON13_ANI_2      "fs:/image/mainmenu/Number10_2.png"
+#define ICON2_ANI_2      "fs:/image/mainmenu/Tools3_2.png"
+#define ICON3_ANI_2      "fs:/image/mainmenu/Contact5_2.png"
+#define ICON4_ANI_2      "fs:/image/mainmenu/Message6_2.png"
+#define ICON5_ANI_2      "fs:/image/mainmenu/Recentcall7_2.png"
+#define ICON6_ANI_2      "fs:/image/mainmenu/Setting8_2.png"
+#define ICON7_ANI_2      "fs:/image/mainmenu/Sports9_2.png"
+#define ICON8_ANI_2      "fs:/image/mainmenu/Profile10_2.png"
+#define ICON9_ANI_2      "fs:/image/mainmenu/Number10_2.png"
+#define ICON10_ANI_2     "fs:/image/mainmenu/Wap12_2.png"
 //wlh 20090410 add end
 
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态

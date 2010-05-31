@@ -23,12 +23,12 @@ in AEE.  These include:
 
 PUBLIC CLASSES AND STATIC FUNCTIONS: IMenuCtl
 
-Copyright © 1999-2007 QUALCOMM Incorporated.
+Copyright ? 1999-2005 QUALCOMM Incorporated.
          All Rights Reserved.
        QUALCOMM Proprietary/GTDR
 
 =====================================================*/
-
+ 
 /*=========================================================================
 
 INCLUDE FILES FOR MODULE
@@ -42,6 +42,11 @@ INCLUDE FILES FOR MODULE
 #include "AEEModTable.h"
 #include "AEEPointerHelpers.h"
 
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+#include "Appscommon.h"
+#include "appscommon_color.brh"
+#endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    
 /*===========================================================================
 
 DEFINITIONS
@@ -50,7 +55,11 @@ DEFINITIONS
 #define __MAX(x,y)            ((x) > (y) ? (x) : (y))       // Max of X and Y
 #define __MIN(x,y)            ((x) < (y) ? (x) : (y))       // Min of X and Y
 
-#define IMAGE_WIDTH           (4)                           // Frame Width for AEE_IDB_SMALLFONTS
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+static int IMAGE_WIDTH           = 5;                           // Frame Width for AEE_IDB_SMALLFONTS
+#else
+#define IMAGE_WIDTH       (4)                           // Frame Width for AEE_IDB_SMALLFONTS   
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
 #define SOFT_PAGE_ITEMS       (3)                           // Initializes # of soft key items visible at once
 #define MAX_SOFT_PAGE_ITEMS   (12)                          // Max SK items/screen
@@ -70,6 +79,10 @@ DEFINITIONS
 #define AUTO_SCROLL_START     (1000)                        // Auto Scroll - (Re)Start Delay
 #define ARROW_LINES           (5)
 #define INVALID_MARK          (-100)
+#ifdef FEATURE_MENUTITLE_AUTOSCROLL
+#define MENUTEXT_XOFFSET      (0)
+#define MENU_SBWIDTH_XPAD     (0)
+#endif //FEATURE_MENUTITLE_AUTOSCROLL
 
 #define PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 
@@ -187,15 +200,14 @@ OBJECT(CMenuCtl)
    int16          m_nSBWidth;                // Scroll Bar Width (cxScrollBar of AEEDeviceInfo)
 
    uint32         m_dwProps;                 // menu control properties
+   uint32         m_dwOemProps;              // menu control Oem properties
    AEECLSID       m_cls;                     // menu control class
    CMenuItem *    m_pItemList;               // list of menu items
    IShell *       m_pIShell;                 // IShell interface ptr
    IDisplay *     m_pIDisplay;               // IDisplay interface ptr
    uint16         m_nItems;                  // number of items in list
    uint16         m_nSelect;                 // index of current menu selection
-   uint16         m_nScrollItem;             // index of current scroll position (row index
-                                             // for grid icon view, col 0 item index on horizonital 
-                                             // scroll, just item index otherwise)
+   uint16         m_nScrollItem;             // index of current scroll position (row index for grid icon view, item index otherwise)
    uint16         m_nPageItems;              // number of items that can fit in a page
    int            m_nAscent;                 // ascent in m_cyFont font
    int            m_cyFont;                  // height of char cell of menu font 
@@ -223,7 +235,7 @@ OBJECT(CMenuCtl)
    int            m_cyMaxItem;               // Max height of a menu item
 
    AEERect        m_rc;                      // control rectangle
-
+//   AEERect        m_seltextrc;               // ±»Ñ¡ÖÐÏîÏÔÊ¾ÎÄ±¾²¿·Ý¾ØÐÎ´óÐ¡
    AEEPoint       m_ptPrevious;  // Previous pen position to facilitate scroll
 
    // Auto-Scroll stuff
@@ -249,6 +261,31 @@ OBJECT(CMenuCtl)
    // Pen handling memebers
    PenTracker     m_ptTracker;
    AEEAutoRepeat  m_arPenRepeat;
+   
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
+    IImage *imageSelectBar;
+    BottomBar_e_Type bottomBarType;
+    boolean userSetStyle;
+    boolean SetPopMenu;
+    
+    int    theDrawnItem; // the item is currently drawn
+#endif
+#ifdef FEATURE_CUSTOMIZED_MENU_STYLE
+    IImage *m_pBgImage; // for OEMMP_GRAPHIC_BG
+#ifdef FEATURE_RANDOM_MENU_COLOR
+    byte m_nRandomMenu; // for CFGI_RANDOM_MENU
+#endif
+#endif
+#ifdef FEATURE_MENUTITLE_AUTOSCROLL
+    int     m_nTitleAutoScrollIdx;
+    boolean m_bTitleAutoScroll;
+#endif //FEATURE_MENUTITLE_AUTOSCROLL
+    boolean m_bAutoScrollMenuItem;
+#ifdef FEATURE_CUSTOMIZED_MENU_STYLE
+    uint16  nBgImgResID;
+    char    strBgImgResFile[MAX_FILE_NAME];
+#endif
 };
 
 typedef struct 
@@ -429,6 +466,29 @@ static void          Icon_CalcItemRect(CMenuCtl * pme, uint16 nIdx, AEERect* prc
 
 static void          Menu_SetSelbyIdx(CMenuCtl * pme, uint16 nItemID, int nIdx);
 static void          Icon_CalcStartEndItemIndx(CMenuCtl* pme, int* pnStart, int* pnEnd);
+
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+static void IMenuCtl_SetBottomBarType( IMenuCtl *po, int bottomBar_e_Type);
+static void IMenuCtl_SetPopMenuRect( IMenuCtl *po);
+#ifdef FEATURE_MENUTITLE_AUTOSCROLL
+static void Menu_DrawTitle(CMenuCtl * pme, uint16 wChars);
+static boolean Menu_TitleScrolls(CMenuCtl * pme, int nIdx);
+static void Menu_TitleAutoScroll(CMenuCtl * pme);
+static void Menu_ResetTitleAutoScroll(CMenuCtl * pme);
+#endif //FEATURE_MENUTITLE_AUTOSCROLL
+#endif
+
+static void          IMenuCtl_GetSelItemRect(IMenuCtl *po, AEERect * prc);
+
+static void IMenuCtl_SetOemProperties(IMenuCtl * po, uint32 nProperties);
+static uint32 IMenuCtl_GetOemProperties(IMenuCtl * po);
+
+static void IMenuCtl_SetLastItemSel(IMenuCtl *po, boolean bSelected);
+#ifdef FEATURE_CUSTOMIZED_MENU_STYLE
+static void IMenuCtl_SetBackGround(IMenuCtl *po, char *pstrImgResFile, uint16 nImgResID);
+#endif
+static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect);
+
 //
 // Menu vtable
 //
@@ -482,7 +542,18 @@ static const VTBL(IMenuCtl) gCMenuCtlFuncs = {IMenuCtl_AddRef,
                                              IMenuCtl_GetStyle,
                                              IMenuCtl_GetColors,
                                              IMenuCtl_GetItemRect,
-                                             IMenuCtl_SetOwnerDrawCB
+                                             IMenuCtl_SetOwnerDrawCB,
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+                                            IMenuCtl_SetBottomBarType,
+                                            IMenuCtl_SetPopMenuRect,
+#endif
+                                             IMenuCtl_GetSelItemRect,
+                                             IMenuCtl_SetOemProperties,
+                                             IMenuCtl_GetOemProperties,
+                                             IMenuCtl_SetLastItemSel,
+#ifdef FEATURE_CUSTOMIZED_MENU_STYLE
+                                             IMenuCtl_SetBackGround,
+#endif
 };
 
 /*===========================================================================
@@ -569,27 +640,123 @@ static int Menu_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
          break;
 
    }
+/*
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    pme->userSetStyle   = FALSE;
+    if( t == AEE_IT_MENU)
+    {
+        pme->m_style[0].ft         = AEE_FT_NONE;
+        pme->m_style[0].xOffset  = 4;///2;
+        pme->m_style[0].yOffset  = 3;///2;
+        pme->m_style[0].roImage = AEE_RO_TRANSPARENT;
 
+        pme->m_style[1].ft          = AEE_FT_NONE;
+        pme->m_style[1].xOffset   = 4;///2;
+        pme->m_style[1].yOffset   = 3;///2;
+        pme->m_style[1].roImage  = AEE_RO_TRANSPARENT;
+
+        pme->imageSelectBar = NULL;
+    }
+    else if( t == AEE_IT_SOFTKEY)
+    {
+        pme->m_style[0].ft         = AEE_FT_NONE;
+        pme->m_style[0].xOffset  = 4;///2;
+        pme->m_style[0].yOffset  = 3;///2;
+        pme->m_style[0].roImage = AEE_RO_TRANSPARENT;
+    
+        pme->m_style[1].ft         = AEE_FT_NONE;
+        pme->m_style[1].xOffset  = 4;///2;
+        pme->m_style[1].yOffset  = 3;///2;
+        pme->m_style[1].roImage = AEE_RO_TRANSPARENT;
+        
+        pme->imageSelectBar = NULL;
+    }
+    else
+    {
+        ISHELL_GetItemStyle(pIShell, t, &pme->m_style[0], &pme->m_style[1]);
+    }
+#else //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
    // Get and Cache Style for Normal and Selected Items
    ISHELL_GetItemStyle(pIShell, t, &pme->m_style[0], &pme->m_style[1]);
-
+#endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+*/
+   
    pme->m_pIShell          = pIShell;           // IShell Pointer
    pme->m_cls              = cls;               // Control Class
    pme->m_nPageItems       = SOFT_PAGE_ITEMS;   // initialized to # of soft key items visible at once
    pme->m_bSendCmd         = 1;                 // defaults to on
    pme->m_bResumeCmd       = bResumeCmd;        // Set TRUE for Post 1.0
 
-   // Default Properties
-   IMenuCtl_SetProperties((IMenuCtl *)pme,0);   
+    // Default Properties
+    IMenuCtl_SetProperties( (IMenuCtl *)pme, 0);    
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    if(t == AEE_IT_MENU)
+    {
+        pme->bottomBarType = BTBAR_NONE;
+        IMenuCtl_SetProperties( (IMenuCtl *)pme, MP_WRAPSCROLL);
+    }
+#endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
    // Default Color Values
    IMenuCtl_SetColors((IMenuCtl *)pme, NULL);
-
+#ifdef FEATURE_RANDOM_MENU_COLOR
+   if(cls == AEECLSID_MENUCTL)
+   {
+       OEM_GetConfig(CFGI_RANDOM_MENU, (void*)&pme->m_nRandomMenu, sizeof(pme->m_nRandomMenu));
+   }
+#endif
    pme->m_yLastTimeMark = INVALID_MARK;
 
    // obtain font metrics for later use
    pme->m_cyFont = IDISPLAY_GetFontMetrics(pme->m_pIDisplay, AEE_FONT_BOLD, &pme->m_nAscent, &descent);
-
+   
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+       pme->userSetStyle   = FALSE;
+       /* ÎªÁË·½±ã¿ØÖÆ²Ëµ¥µÄ¸ß¶È£¬Ò»°ãÓÃMENUITEM_HEIGHTÀ´Í³Ò»ÉèÖÃ¸ß¶È
+        ÕâÑù×ÓÖ»ÐèÒªÔÚAppscommon.hÀïÃæÐÞ¸Ä¸ÃºêµÄÖµ¾Í¿ÉÒÔ×Ô¶¯µ÷Õû²Ëµ¥ÏÔÊ¾*/
+       if( t == AEE_IT_MENU)
+       {
+           pme->m_style[0].ft         = AEE_FT_NONE;
+           pme->m_style[0].xOffset  = 4;///2;
+           pme->m_style[0].yOffset  = (MENUITEM_HEIGHT - pme->m_cyFont)/2;
+           pme->m_style[0].roImage = AEE_RO_TRANSPARENT;
+   
+           pme->m_style[1].ft          = AEE_FT_NONE;
+           pme->m_style[1].xOffset   = 4;///2;
+           pme->m_style[1].yOffset   = (MENUITEM_HEIGHT - pme->m_cyFont)/2;
+           pme->m_style[1].roImage  = AEE_RO_TRANSPARENT;
+   
+           pme->imageSelectBar = NULL;
+       }
+       else if( t == AEE_IT_SOFTKEY)
+       {
+           pme->m_style[0].ft         = AEE_FT_NONE;
+           pme->m_style[0].xOffset  = 4;///2;
+           pme->m_style[0].yOffset  = (MENUITEM_HEIGHT - pme->m_cyFont)/2;
+           pme->m_style[0].roImage = AEE_RO_TRANSPARENT;
+       
+           pme->m_style[1].ft         = AEE_FT_NONE;
+           pme->m_style[1].xOffset  = 4;///2;
+           pme->m_style[1].yOffset  = (MENUITEM_HEIGHT - pme->m_cyFont)/2;
+           pme->m_style[1].roImage = AEE_RO_TRANSPARENT;
+           
+           pme->imageSelectBar = NULL;
+       }
+       else
+       {
+           ISHELL_GetItemStyle(pIShell, t, &pme->m_style[0], &pme->m_style[1]);
+       }
+#else //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+      // Get and Cache Style for Normal and Selected Items
+      ISHELL_GetItemStyle(pIShell, t, &pme->m_style[0], &pme->m_style[1]);
+#endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+#ifdef FEATURE_CUSTOMIZED_MENU_STYLE
+    pme->m_pBgImage = NULL;
+#endif
+#ifdef FEATURE_CUSTOMIZED_MENU_STYLE
+    pme->nBgImgResID = 0;
+    MEMSET(pme->strBgImgResFile, 0, sizeof(pme->strBgImgResFile));
+#endif
    // get display metrics
    ISHELL_GetDeviceInfo(pme->m_pIShell, &dm);
    pme->m_nSBWidth = dm.cxScrollBar;               // Scroll Bar Width
@@ -622,7 +789,12 @@ static int Menu_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
 
    // Default Title Rect
    pme->m_rcTitle.dx = (int16)bi.cy;
-   pme->m_rcTitle.dy = pme->m_cyFont;
+
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) && defined( FEATURE_FUNCS_TITLE_BAR)
+    pme->m_rcTitle.dy = GetTitleBarHeight( pme->m_pIDisplay);
+#else
+    pme->m_rcTitle.dy = pme->m_cyFont;
+#endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
    // Load Ellipses Symbol & Cache its width
    pme->m_szEllipses[0] = (AECHAR)IDISPLAY_GetSymbol(pme->m_pIDisplay,AEE_SYM_ELLIPSES,AEE_FONT_NORMAL);
@@ -635,7 +807,10 @@ static int Menu_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
    MEMSET((void *)&pme->m_ptTracker, 0, sizeof(pme->m_ptTracker));
 
    *ppobj = pme;
-
+   pme->m_bAutoScrollMenuItem = FALSE;
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    pme->SetPopMenu = FALSE;
+#endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
    return(0);
 
 Error:
@@ -685,6 +860,19 @@ static uint32 IMenuCtl_Release(IMenuCtl * po)
       aee_releaseobj((void **)&pme->m_pIShell);
       aee_releaseobj((void **)&pme->m_pIDisplay);
 
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+      if(pme->imageSelectBar != NULL)       
+      {
+          IIMAGE_Release(pme->imageSelectBar);
+          pme->imageSelectBar = NULL;
+      }
+      if(pme->m_pBgImage != NULL)       
+      {
+          IIMAGE_Release(pme->m_pBgImage);
+          pme->m_pBgImage = NULL;
+      }
+#endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+      
       // Free Menu Object
       FREE(pme);
    }      
@@ -704,6 +892,19 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
       return(FALSE);  // Event not handled.
 
    // First handle the pens, most time sensitive events we get
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
+	//if(( eCode == EVT_PEN_UP ) || (eCode == EVT_PEN_UP))
+	if(eCode == EVT_PEN_UP )//wlh 20090409 mod
+	{
+		return Menu_HandlePens(pme, eCode, wParam, dwParam);
+	}
+	if(eCode == EVT_USER)//wlh ÕâÀïÏìÓ¦ÀàËÆÓÚÈÕ³Ì±íÖÐ×óÓÒ·½Ïò¼ü
+	{
+		eCode = EVT_KEY;
+	}
+#endif//FEATURE_LCD_TOUCH_ENABLE
+
    if( eCode >= EVT_POINTER_DOWN && eCode <= EVT_POINTER_STALE_MOVE ){
       // Stale move is not handled and likely the largest stream of events
       // For speed, abort quick.
@@ -734,8 +935,40 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
       // Add Item - Event from Dialog      
       case EVT_CTL_ADD_ITEM:
          return(IMenuCtl_AddItemEx(po, (CtlAddItem *)dwParam));
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
+	  case EVT_USER_REDRAW:
+#endif//FEATURE_LCD_TOUCH_ENABLE
       case EVT_KEY:
+         if (pme->m_dwOemProps & OEMMP_SWITCHNAVIGATIONKEY)
+         {
+             switch (wParam)
+             {
+                 case AVK_LEFT:
+                     wParam = AVK_UP;
+                     break;
+                       
+                 case AVK_RIGHT:
+                     wParam = AVK_DOWN;
+                     break;
+                       
+                 case AVK_UP:
+                     wParam = AVK_LEFT;
+                     break;
+                       
+                 case AVK_DOWN:
+                     wParam = AVK_RIGHT;
+                     break;
+                
+                 default:
+                     break;
+             }
+         }
+         
+         if ((!(pme->m_dwOemProps & OEMMP_DISTINGUISH_INFOKEY_SELECTKEY)) &&
+             (wParam == AVK_INFO))
+         {
+             wParam = AVK_SELECT;
+         }
         
          if(pme->m_cls == AEECLSID_ICONVIEWCTL && Icon_HandleKey(pme, wParam))
             return(TRUE);
@@ -749,9 +982,16 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
          }
          
          switch (wParam) {
-     
             case AVK_SELECT:
-               return Menu_HandleSelection(pme, pme->m_nSelect);
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+               if(IS_MULTI_SEL(pme)){
+                  break;/*do not handle this key*/
+               }
+               else
+#endif/*if defined( FEATURE_CUSTOMIZED_MENU_STYLE)*/
+               {
+                  return Menu_HandleSelection(pme, pme->m_nSelect);
+               }
 
          // Note: We have already handled keys for AEECLSID_ICONVIEWCTL so here we only care
          // about remaining control types
@@ -771,8 +1011,28 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
                if (IS_SOFTKEY_MENU(pme))
                   return SK_MoveSelect(pme, 1);
 
-               if( ISHELL_HandleEvent(pme->m_pIShell, EVT_CTL_TAB, (uint16)1, (uint32)po) )
-                  return TRUE;
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+               if(IS_MULTI_SEL(pme)){
+                  CMenuItem   * pItem;
+                  if((pItem = GetItemByIdx(pme->m_pItemList, pme->m_nSelect)) != NULL){
+                     pItem->bIsSel = !pItem->bIsSel;
+                     IMenuCtl_SetSelEx((IMenuCtl *)pme, pItem->nItemID, pItem->bIsSel);
+                     if(!NO_REDRAW(pme))
+                     {
+                        IMenuCtl_Redraw((IMenuCtl *)pme);
+                     }
+
+                     return TRUE;
+                  }else{
+                     return FALSE;
+                  }
+               }
+               else
+#endif/*if defined( FEATURE_CUSTOMIZED_MENU_STYLE)*/
+               {
+                  if( ISHELL_HandleEvent(pme->m_pIShell, EVT_CTL_TAB, (uint16)1, (uint32)po) )
+                     return TRUE;
+               }
                break;
 
             // AVK_UP and AVK_DOWN need not be handled by softkey control. For softkey control,
@@ -780,6 +1040,10 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
 
             case AVK_UP:
                if (!IS_SOFTKEY_MENU(pme)) {
+                  if ((!WRAP_SCROLL(pme)) && (pme->m_nSelect == 0))
+                  {
+                      return FALSE;
+                  }
                   if (IS_LIST_MENU(pme))
                      List_MoveSelect(pme, -1);
                   else
@@ -793,6 +1057,10 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
 
             case AVK_DOWN:
                if (!IS_SOFTKEY_MENU(pme)) {
+                  if ((!WRAP_SCROLL(pme)) && (pme->m_nSelect == pme->m_nItems-1))
+                  {
+                      return FALSE;
+                  }
                   if (IS_LIST_MENU(pme))
                      List_MoveSelect(pme, 1);
                   else
@@ -804,7 +1072,7 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
                   return TRUE;
                break;
 
-         // For calendar, we treat numeric key press as input hour. Zero is treated as 10. We
+          // For calendar, we treat numeric key press as input hour. Zero is treated as 10. We
          // iterate items to check if an entry starts at input hour or (input + 12) hour and 
          // if so, that entry is set as selection
             default:
@@ -826,6 +1094,35 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
                      }
                   }
                }
+// add these @08.01.16
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
+              else if( !pme->userSetStyle   && 
+                       wParam >= AVK_0      && 
+                       wParam <= AVK_9      && 
+                       IS_MENU( pme)        &&
+                       IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && 
+                       pme->m_nItems <= 10
+               )
+               {
+                   int index = (wParam - AVK_1 + 10) % 10;
+                   if( index > pme->m_nItems - 1)
+                   {
+                       break;
+                   }
+                   {
+                        uint16 nItemID = IMENUCTL_GetItemID( po, index);
+                       //uint32 oldProperties = IMENUCTL_GetProperties(po);
+                       //IMENUCTL_SetProperties(po, MP_NO_REDRAW);
+                       //IMENUCTL_SetSel( po, nItemID);
+                       //IMENUCTL_SetProperties(po, oldProperties);
+                       ISHELL_HandleEvent(pme->m_pIShell, EVT_COMMAND, (uint16)nItemID, (uint32)pme);
+                       //ISHELL_HandleEvent( pme->m_pIShell, EVT_KEY, AVK_SELECT, 0);
+                   }
+                   return TRUE;
+               }
+                
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
                break;
             }
          }
@@ -864,6 +1161,9 @@ static boolean IMenuCtl_Redraw(IMenuCtl * po)
       case AEECLSID_MENUCTL:
          Menu_Draw(pme);
          Menu_ResetAutoScroll(pme);
+#ifdef FEATURE_MENUTITLE_AUTOSCROLL
+         Menu_ResetTitleAutoScroll(pme);
+#endif //FEATURE_MENUTITLE_AUTOSCROLL		 
          return(TRUE);
 
       case AEECLSID_ICONVIEWCTL:
@@ -895,6 +1195,9 @@ static void IMenuCtl_SetActive(IMenuCtl * po, boolean bActive)
 
          if(IS_MENU(pme) && bActive)
             Menu_ResetAutoScroll(pme);    // Active Menu - Reset item text auto scroll
+#ifdef FEATURE_MENUTITLE_AUTOSCROLL
+            Menu_ResetTitleAutoScroll(pme);
+#endif //FEATURE_MENUTITLE_AUTOSCROLL
 
    // Icon views redraw async - If this is a disable, do not allow it!
 
@@ -911,7 +1214,7 @@ static void IMenuCtl_SetActive(IMenuCtl * po, boolean bActive)
             pme->m_nScrollItem = start;
          }
       }
-   }//pme->m_bActive != bActive)
+   }
 }
 
 /*=====================================================================
@@ -932,6 +1235,7 @@ Public Method - Sets the rectangle for the menu.
 static void IMenuCtl_SetRect(IMenuCtl * po, const AEERect * prc)
 {
    CMenuCtl * pme = (CMenuCtl*)po;
+   pme->SetPopMenu = FALSE;
 
    if (prc) {
       pme->m_rc = *prc;
@@ -960,11 +1264,16 @@ static void IMenuCtl_SetProperties(IMenuCtl * po, uint32 nProperties)
    CMenuCtl *     pme = (CMenuCtl*)po;
 
    // Force this property regardless of what they set!
-
    if (IS_SOFTKEY_MENU(pme) || IS_LIST_MENU(pme))
+   {
+	   
       nProperties |= MP_WRAPSCROLL;
+   }
    else if (!IS_MENU(pme))
-      nProperties &= ~MP_WRAPSCROLL;
+   {
+    
+	   nProperties &= ~MP_WRAPSCROLL;
+   }
 
    // Calendar isn't owner drawn - ensure that for owner draw menu,
    // calendar specific properties aren't set
@@ -1177,7 +1486,21 @@ static boolean IMenuCtl_AddItemEx(IMenuCtl * po, CtlAddItem * pai)
 
    // AEE_FONT_BOLD is default for soft key and icon view
    if(!pmi->nFont)
-      pmi->nFont = (AEEFont)(IS_SOFTKEY_MENU(pme) || IS_ICON_VIEW(pme) ? AEE_FONT_BOLD : AEE_FONT_NORMAL);
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    {
+		if( !pme->userSetStyle)
+		{
+            pmi->nFont = (AEEFont)(IS_ICON_VIEW(pme) ? AEE_FONT_BOLD : AEE_FONT_NORMAL);
+		}
+		else
+		{
+            pmi->nFont = (AEEFont)(IS_SOFTKEY_MENU(pme) || IS_ICON_VIEW(pme) ? AEE_FONT_BOLD : AEE_FONT_NORMAL);
+		}
+    }
+#else
+    pmi->nFont = (AEEFont)(IS_SOFTKEY_MENU(pme) || IS_ICON_VIEW(pme) ? AEE_FONT_BOLD : AEE_FONT_NORMAL);
+#endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+      
 
    // Free Text memory if we allocated
    if(bFreeText)
@@ -1370,10 +1693,11 @@ static boolean IMenuCtl_SetItem(IMenuCtl * po, uint16 wID, uint16 wFlags, CtlAdd
          aee_releaseobj((void **)&pImage);
          return(FALSE);
       }
-      if(pmi->pszImage) {
-         pmi->wImageID = pai->wImage;
-			STRLCPY((char*)pmi->pszImage, pai->pszResImage, STRLEN(pai->pszResImage) + 1); 	
-		}
+      if(pmi->pszImage) 
+      {
+        pmi->wImageID = pai->wImage;
+        STRCPY((char*)pmi->pszImage, pai->pszResImage);     
+      }
 
    // Pre-calc the image stuff in case we unload it...
 
@@ -1445,7 +1769,7 @@ static void  IMenuCtl_Sort(IMenuCtl * po, AEEMenuSortType t, PFNMENUSORTCOMPARE 
 
    psi = (MSortItem *)MALLOC(sizeof(MSortItem) * pme->m_nItems);
    if(psi){
-      for(pmi = pme->m_pItemList,i = 0; pmi ; pmi = pmi->pNext,i++){
+      for(pmi = pme->m_pItemList,i = 0; pmi && i < pme->m_nItems; pmi = pmi->pNext,i++){
          psi[i].pa = &ms;
          psi[i].pmi = pmi;
       }
@@ -1623,6 +1947,7 @@ static void Menu_SetSelbyIdx(CMenuCtl * pme, uint16 nItemID, int nIdx)
 
    pmi = pme->m_pItemList;
 
+
    // Find the matching item.  Need to do this rather than doing FindByID
    // so that we have the index value.
 
@@ -1651,10 +1976,10 @@ static void Menu_SetSelbyIdx(CMenuCtl * pme, uint16 nItemID, int nIdx)
    nDir = i - pme->m_nSelect;
    if(!nDir)
       return;
-   
+
    dwProps = pme->m_dwProps;
    pme->m_dwProps |= MP_NO_REDRAW;
-   
+
    switch(pme->m_cls){
 
    // If it is a menu, then do the following:
@@ -1744,7 +2069,6 @@ static void Menu_SetSelbyIdx(CMenuCtl * pme, uint16 nItemID, int nIdx)
       if(nCurr != i)
          Menu_NotifySelChange(pme);
    }
-   
 }
 
 static void IMenuCtl_SetSelEx(IMenuCtl * po, uint16 nItemID, boolean bSelected)
@@ -1909,11 +2233,26 @@ static void IMenuCtl_SetStyle(IMenuCtl * po, AEEItemStyle * pNormal, AEEItemStyl
    CMenuCtl * pme = (CMenuCtl *)po;
 
    if(pNormal)
-      MEMCPY(&pme->m_style[0], pNormal, sizeof(AEEItemStyle));
-
+   {
+       MEMCPY(&pme->m_style[0], pNormal, sizeof(AEEItemStyle));
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+       pme->userSetStyle = TRUE;  
+#endif
+   }
    if(pSel)
+   {
       MEMCPY(&pme->m_style[1], pSel, sizeof(AEEItemStyle));
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+       pme->userSetStyle = TRUE;  
+#endif
+   }
 
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+   if( pme->userSetStyle)
+   {
+       IMenuCtl_SetColors( (IMenuCtl*)pme, NULL);
+   }
+#endif   
    Menu_Recalc(pme);
 }
 
@@ -1961,18 +2300,79 @@ static void IMenuCtl_SetColors(IMenuCtl * po, AEEMenuColors * pc)
          pme->m_c.cTitle = pc->cTitle;
       if(pc->wMask & MC_TITLE_TEXT)
          pme->m_c.cTitleText = pc->cTitleText;
+   #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+       pme->userSetStyle = TRUE;  
+   #endif
    }
    else{
-      pme->m_c.cBack          = CLR_SYS_ITEM;
-      pme->m_c.cText          = CLR_SYS_ITEM_TEXT;
-      pme->m_c.cSelBack       = CLR_SYS_ITEM_SEL;
-      pme->m_c.cSelText       = CLR_SYS_ITEM_SEL_TEXT;
-      pme->m_c.cFrame         = CLR_SYS_FRAME_LO;
-      pme->m_c.cScrollbar     = CLR_SYS_SCROLLBAR;
-      pme->m_c.cScrollbarFill = CLR_SYS_SCROLLBAR_FILL;
-      pme->m_c.cTitle         = CLR_SYS_TITLE;
-      pme->m_c.cTitleText     = CLR_SYS_TITLE_TEXT;
+	   
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+		if( !pme->userSetStyle && ( IS_MENU( pme) || IS_SOFTKEY_MENU( pme)))
+		{
+#if defined( FEATURE_FUNCS_THEME)		
+		    Theme_Param_type themeParms;
+		    Appscom_GetThemeParameters( &themeParms);
+			pme->m_c.cBack          = themeParms.bkcolor;
+#if defined( FEATURE_CONTROL_BG_USE_IMAGE)
+			pme->m_c.cText          = IS_SOFTKEY_MENU( pme) ? themeParms.textColor : themeParms.bkcolor;
+#else
+			pme->m_c.cText          = themeParms.textColor;
+#endif//#if defined( FEATURE_CONTROL_BG_USE_IMAGE)
+			pme->m_c.cSelBack       = themeParms.themeColor;
+			pme->m_c.cSelText       = themeParms.seltextColor;
+			pme->m_c.cFrame         = CLR_SYS_FRAME_LO;
+			pme->m_c.cScrollbar     = themeParms.textColor;
+			pme->m_c.cScrollbarFill = themeParms.themeColor;
+			pme->m_c.cTitle         = themeParms.themeColor;
+			pme->m_c.cTitleText     = themeParms.textColor;
+#else //#if defined( FEATURE_FUNCS_THEME)
+            pme->m_c.cBack          = RGB_BLACK;
+            pme->m_c.cText          = MAKE_RGB( 0xde, 0xde, 0xde);
+            pme->m_c.cSelBack       = MAKE_RGB( 0xde, 0xde, 0xde);
+            pme->m_c.cSelText       = RGB_YELLOW_EX;//RGB_BLACK;//wlh mod ¸ü¸ÄÑ¡ÖÐÌõµÄÎÄ×ÖÑÕÉ«
+            pme->m_c.cFrame         = CLR_SYS_FRAME_LO;
+            pme->m_c.cScrollbar     = MAKE_RGB( 0xde, 0xde, 0xde);
+            pme->m_c.cScrollbarFill = MAKE_RGB(0xfe, 0x61, 0x01);
+            pme->m_c.cTitle         = MAKE_RGB(0xfe, 0x61, 0x01);
+            pme->m_c.cTitleText     = RGB_WHITE;
+#endif//#if defined( FEATURE_FUNCS_THEME)  
+		}
+		else
+		{
+
+			pme->m_c.cBack          = CLR_SYS_ITEM;
+			pme->m_c.cText          = CLR_SYS_ITEM_TEXT;
+			pme->m_c.cSelBack       = CLR_SYS_ITEM_SEL;
+			pme->m_c.cSelText       = CLR_SYS_ITEM_SEL_TEXT;
+			pme->m_c.cFrame         = CLR_SYS_FRAME_LO;
+			pme->m_c.cScrollbar     = CLR_SYS_SCROLLBAR;
+			pme->m_c.cScrollbarFill = CLR_SYS_SCROLLBAR_FILL;
+			pme->m_c.cTitle         = CLR_SYS_TITLE;
+			pme->m_c.cTitleText     = CLR_SYS_TITLE_TEXT;
+		}
+#else//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+		pme->m_c.cBack          = CLR_SYS_ITEM;
+		pme->m_c.cText          = CLR_SYS_ITEM_TEXT;
+		pme->m_c.cSelBack       = CLR_SYS_ITEM_SEL;
+		pme->m_c.cSelText       = CLR_SYS_ITEM_SEL_TEXT;
+		pme->m_c.cFrame         = CLR_SYS_FRAME_LO;
+		pme->m_c.cScrollbar     = CLR_SYS_SCROLLBAR;
+		pme->m_c.cScrollbarFill = CLR_SYS_SCROLLBAR_FILL;
+		pme->m_c.cTitle         = CLR_SYS_TITLE;
+		pme->m_c.cTitleText     = CLR_SYS_TITLE_TEXT;		   
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
    }
+   
+    if( pme->userSetStyle && IS_SOFTKEY_MENU(pme))
+    {
+        
+        CMenuItem *pi = NULL;
+        for( pi = pme->m_pItemList; pi != NULL; pi = pi->pNext)
+        {
+            pi->nFont = AEE_FONT_BOLD;
+        }
+        Menu_Recalc( pme);
+    }   
 }
 
 /*=====================================================================
@@ -1986,6 +2386,60 @@ static void IMenuCtl_GetColors(IMenuCtl * po, AEEMenuColors * pc)
 
    if(pc)
       MEMCPY(pc, &pme->m_c, sizeof(AEEMenuColors));
+}
+
+static void IMenuCtl_GetSelItemRect(IMenuCtl *po, AEERect * prc)
+{
+    CMenuCtl * pme = (CMenuCtl *)po;
+    
+//    // Check NULL prc
+//    if(!prc)
+//    {
+//        return;
+//    }
+//    
+//    *prc = pme->m_seltextrc;
+    
+// add these @08.03.04
+    if( prc != NULL)
+    {
+        CMenuItem* item = GetItemByIdx( pme->m_pItemList, pme->m_nSelect);
+        IMenuCtl_GetItemRect( po, pme->m_nSelect, prc);
+        
+        prc->x  += item->cxImage + 4;
+        prc->dx -= item->cxImage + 4;
+        
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+         if( !pme->userSetStyle && 
+             ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= 10) ||
+               IS_MULTI_SEL( pme)
+             )
+         )
+         {
+             prc->x  += 13;
+             prc->dx -= 13;
+         }
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) 
+    }
+
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+    {
+        nv_language_enum_type language;
+        
+        OEM_GetConfig(CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
+        if (  0 
+#ifdef NV_LANGUAGE_HEBREW
+        || (NV_LANGUAGE_HEBREW == language)
+#endif
+#ifdef NV_LANGUAGE_ARABIC
+        || (NV_LANGUAGE_ARABIC == language)
+#endif        
+        )
+        {
+            prc->x = pme->m_rc.dx - (prc->x+prc->dx);
+        }
+    }
+#endif
 }
 
 /*=====================================================================
@@ -2311,8 +2765,19 @@ static int Menu_SortCB(const void * p1, const void * p2)
    MSortItem *    psi2 = (MSortItem *)p2;
    CMenuItem *    pi1,*pi2;
 
+
+   if(p1 == NULL || p2 == NULL)
+   {
+      return 0;
+   }
+
    pi1 = psi1->pmi;
    pi2 = psi2->pmi;
+
+   if(psi1->pa == NULL)
+   {
+      return 0;
+   }
 
    switch(psi1->pa->t){
       case MCS_NAME_ASCENDING:
@@ -2440,25 +2905,36 @@ Local Method - Handles all the pen events, moved here for handleevent clarity
 ======================================================================*/
 static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, uint32 dwParam)//int16 wXPos, int16 wYPos)
 {
-   int16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
-   int16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
-   int nClickCount = AEE_POINTER_GET_CLICKCOUNT((const char *)dwParam);
-   
-   switch( evtCode ){
-      case EVT_POINTER_MOVE:
-      {
+#ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
+	int16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
+	int16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
+	int nClickCount = AEE_POINTER_GET_CLICKCOUNT((const char *)dwParam);
+#else
+   	int16 wXPos = (int16)AEE_GET_X(dwParam);
+	int16 wYPos = (int16)AEE_GET_Y(dwParam);
+	//int nClickCount = AEE_POINTER_GET_CLICKCOUNT((const char *)dwParam);//wlh ²»ÐèÒªË«»÷Æô¶¯
+#endif //FEATURE_LCD_TOUCH_ENABLE 
+   	switch( evtCode ){
+
+#ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH		
+		case EVT_POINTER_MOVE:
+#else
+		case EVT_PEN_MOVE:
+#endif//FEATURE_LCD_TOUCH_ENABLE
+      	{
          int         y, cy;
          int         nScrollItem, nItems, nPageItems, nPos;
          uint16      nRange;
          
-         if( pme->m_ptTracker.cbHit & PTRCK_HIT_SCRL ){
-            // Need to do things in relation to where the pen is and whether on thumb or off
+         if( pme->m_ptTracker.cbHit & PTRCK_HIT_SCRL )
+		 {
+           // Need to do things in relation to where the pen is and whether on thumb or off
             if( pme->m_ptTracker.cbHit & PTRCK_HIT_THUMB ){
                // This logic is married to Menu_GetScrollBarRects()
                // It is inverted as in Solve for pme->m_nIdx
                if( wXPos >= ((pme->m_rc.x + pme->m_rc.dx) - pme->m_nSBWidth)
                   && wXPos < (pme->m_rc.x + pme->m_rc.dx) ){
-                  
+
                   if(IS_ICON_VIEW(pme)){
 
                      nItems = pme->m_nTotalRows;
@@ -2541,7 +3017,10 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                }
             }
             return TRUE;
-         }else { // pen down outside of scrollbar area
+         }
+		 else 
+		 { // pen down outside of scrollbar area
+#if 0
             int         nRounding = 1;
             
             if( IS_SOFTKEY_MENU(pme) || IS_LIST_MENU(pme) )
@@ -2624,17 +3103,75 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                   pme->m_ptPrevious.y = wYPos;
                }// nPos != 0
             } //(nItems > nPageItems)
+#endif
             return TRUE;
-         }
-      }
+         	}
+      	}
       //return FALSE; //never reaches here
-      case EVT_POINTER_DOWN:
-      {
-         if( PT_IN_RECT(wXPos, wYPos, pme->m_rc) ){
+#ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH			
+		case EVT_POINTER_UP:
+#else
+		case EVT_PEN_UP :
+#endif//FEATURE_LCD_TOUCH_ENABLE
+		{
+	  	
+#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH Ö»¶ÔEVT_PEN_UP µÄÏìÓ¦×ö´¦Àí£¬ÕâÀïËµµÄÊÇ·¢ËÍÊÂ¼þ»Øµ±Ç°applet
+			AEECLSID  pCLSID = ISHELL_ActiveApplet (pme->m_pIShell);
+		//	if(pme->bottomBarType != BTBAR_NONE)
+		  	{
+			  	AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pme->m_pIDisplay);
+			  	//bottomBarRect.x = pme->m_rc.x;
+				if(pme->bottomBarType != BTBAR_NONE)
+				{
+					//ht = pme->m_rc.y - (pme->m_rc.dy - GetTitleBarHeight( pme->m_pIDisplay));
+					//if(ht < 0)
+					//	ht = 0 - ht;
+					//bottomBarRect.y = ht;
+					MEMSET(&devinfo, 0, sizeof(devinfo));
+					ISHELL_GetDeviceInfo(pme->m_pIShell, &devinfo);
+					SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				}
+				else
+				{
+					bottomBarRect.y = pme->m_rc.y;
+				}
+				//bottomBarRect.dx = pme->m_rc.dx;
+				//bottomBarRect.dy = GetBottomBarHeight( pme->m_pIDisplay); 
+				DBGPRINTF("bottomBarRect.y [%d] wXPos [%d] wYPos [%d]",bottomBarRect.y,wXPos,wYPos);
+				if( PT_IN_RECT(wXPos, wYPos, bottomBarRect) )
+				{
+					//ÅÐ¶Ï×óÖÐÓÒ
+					if(wXPos >= bottomBarRect.x && wXPos < bottomBarRect.x + (bottomBarRect.dx/3) )//×ó
+					{
+						uint16 selid = IMENUCTL_GetSel ((IMenuCtl *)&pme->vtIMenuCtl);//wlh »ñµÃµ±Ç°Ñ¡ÖÐµÄÌõÄ¿×ÊÔ´ID
+						boolean rt =  ISHELL_PostEvent(pme->m_pIShell,pCLSID,EVT_USER,AVK_SELECT,selid);
+						return rt;
+					}
+					else if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)   && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pme->m_pIShell,pCLSID,EVT_USER,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pme->m_pIShell,pCLSID,EVT_USER,AVK_CLR,0);
+						 return rt;
+					}
+				}
+		  	}
+#endif//FEATURE_LCD_TOUCH_ENABLE
+         	if( PT_IN_RECT(wXPos, wYPos, pme->m_rc) ){
             MEMSET((void *)&pme->m_ptTracker, 0, sizeof(pme->m_ptTracker));
             switch( pme->m_cls ){
             case AEECLSID_SOFTKEYCTL:
                {
+#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH	
+				  CMenuItem * pItem;
+#endif//FEATURE_LCD_TOUCH_ENABLE
                   uint16 wIdx;
                   pme->m_ptTracker.cbHit = SK_HandlePen(pme, wXPos, wYPos, &pme->m_ptTracker.wData, &wIdx);
                   /* Index returned above may not be correct if there are 
@@ -2643,6 +3180,16 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                   if( pme->m_ptTracker.cbHit == PTRCK_HIT_ITEM ){
                      // If an item is hit, change focus. Do not select it at this time.
                      IMENUCTL_SetFocus((IMenuCtl *)pme, pme->m_ptTracker.wData);
+#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH	
+                     pme->m_ptTracker.cbHit = PTRCK_HIT_ITEM;
+                     if( (pItem = GetItemByIdx(pme->m_pItemList, wIdx)) != NULL ){
+					 	if( pItem->nItemID == IMENUCTL_GetFocus((IMenuCtl *)pme)) {
+                        	(void)Menu_HandleSelection(pme, wIdx);
+                         } else {
+                             IMENUCTL_SetFocus((IMenuCtl *)pme, pme->m_ptTracker.wData);
+                         }
+                     }
+#endif//FEATURE_LCD_TOUCH_ENABLE
                   }
                }
                break;
@@ -2665,13 +3212,18 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                               CMenuItem * pItem;
                               pme->m_ptTracker.cbHit = PTRCK_HIT_ITEM;
                               if( (pItem = GetItemByIdx(pme->m_pItemList, nIdx)) != NULL ){
+#ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH	
                                  if( pItem->nItemID == IMENUCTL_GetFocus((IMenuCtl *)pme) &&
                                     (2 == nClickCount)) {
+#else
+								if( pItem->nItemID == IMENUCTL_GetFocus((IMenuCtl *)pme)) {
+#endif//FEATURE_LCD_TOUCH_ENABLE
                                     (void)Menu_HandleSelection(pme, nIdx);
                                  } else {
                                     pme->m_ptTracker.wData = (uint16)nIdx;
                                     //Need to pass both id & index as there can be duplicate item ids
                                     Menu_SetSelbyIdx(pme, pItem->nItemID, nIdx);
+									(void)Menu_HandleSelection(pme, nIdx);//µã»÷´¥·¢¶¯×÷
                                  }
                               }
                               break;
@@ -2729,26 +3281,26 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                            nFont = pme->m_cyFont;
                         }
                         cyFont = nFont;
-                        Cal_CalcPageItems(pme);
-                        rct = pme->m_rc;
-                        cyLeft = rct.dy;
+                     Cal_CalcPageItems(pme);
+                     rct = pme->m_rc;
+                     cyLeft = rct.dy;
 
-                        if(pme->m_pTitle || IS_TITLE_OD(pme)){
-                           cyLeft -= pme->m_rcTitle.dy;
-                           rct.y += pme->m_rcTitle.dy;
-                           rct.dy -= pme->m_rcTitle.dy; 
-                        }
+                     if(pme->m_pTitle || IS_TITLE_OD(pme)){
+                        cyLeft -= pme->m_rcTitle.dy;
+                        rct.y += pme->m_rcTitle.dy;
+                        rct.dy -= pme->m_rcTitle.dy; 
+                     }
 
-                        for (i = 0; i < pme->m_nPageItems && p; p = p->pNext, i++){
-                           rct.dy = GetItemHeight(p, &cyLeft, cyFont);
-                           if( PT_IN_RECT(wXPos, wYPos, rct) ){
-                              pme->m_ptTracker.cbHit = PTRCK_HIT_ITEM;
-                              pme->m_ptTracker.wData = (uint16) i + pme->m_nScrollItem;
+                     for (i = 0; i < pme->m_nPageItems && p; p = p->pNext, i++){
+                        rct.dy = GetItemHeight(p, &cyLeft, cyFont);
+                        if( PT_IN_RECT(wXPos, wYPos, rct) ){
+                           pme->m_ptTracker.cbHit = PTRCK_HIT_ITEM;
+                           pme->m_ptTracker.wData = (uint16) i + pme->m_nScrollItem;
                               //Need to pass both id & index as there can be duplicate item ids
                               Menu_SetSelbyIdx(pme, p->nItemID, pme->m_ptTracker.wData );
-                              break;
-                           }
-                           rct.y += rct.dy;
+                           break;
+                        }
+                        rct.y += rct.dy;
                         }
                      } else { 
                         // In the scrollbar
@@ -2817,8 +3369,12 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                            pme->m_ptTracker.cbHit = PTRCK_HIT_ITEM;
                            pme->m_ptTracker.wData = (uint16)nID;
                            if ( (pItem = GetItemByIdx(pme->m_pItemList, nID)) != NULL) {
-                              if ( pItem->nItemID == IMENUCTL_GetFocus((IMenuCtl *)pme) &&
+#ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
+							  if ( pItem->nItemID == IMENUCTL_GetFocus((IMenuCtl *)pme) &&
                                  (2 == nClickCount) ) {
+#else
+							  if ( pItem->nItemID == IMENUCTL_GetFocus((IMenuCtl *)pme)) {
+#endif//FEATURE_LCD_TOUCH_ENABLE
                                     (void)Menu_HandleSelection(pme, nID);
                                  }
                               else {
@@ -2868,6 +3424,7 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                            IMENUCTL_GetItemRect( (IMenuCtl *)pme, pme->m_nSelect, &rct);
                            //check to make sure the click is in icon's rectangle area
                            if (PT_IN_RECT (wXPos, wYPos, rct)) {
+#ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH						   	
                               if (2 == nClickCount)
                                  (void)Menu_HandleSelection(pme, pme->m_nSelect);
                               else
@@ -2877,6 +3434,9 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                                     Menu_SetSelbyIdx(pme, pItem->nItemID, pme->m_nSelect);
                                  //Need to pass both id & index as there can be duplicate item ids
                               }
+#else
+							(void)Menu_HandleSelection(pme, pme->m_nSelect);
+#endif//FEATURE_LCD_TOUCH_ENABLE
                            }    
                         }else{//clicked elsewhere on an icon area
                            int nItem, nID;
@@ -2885,8 +3445,12 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                               pme->m_ptTracker.cbHit = PTRCK_HIT_ITEM;
                               pme->m_ptTracker.wData = (uint16)nID;
                               if ( (pItem =  GetItemByIdx(pme->m_pItemList, nID)) != NULL) {
-                                 if ( pItem->nItemID == IMENUCTL_GetFocus((IMenuCtl *)pme) &&
+#ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
+								 if ( pItem->nItemID == IMENUCTL_GetFocus((IMenuCtl *)pme) &&
                                     (2 == nClickCount) ) {
+#else
+								if ( pItem->nItemID == IMENUCTL_GetFocus((IMenuCtl *)pme) ) {
+#endif//FEATURE_LCD_TOUCH_ENABLE
                                        (void)Menu_HandleSelection(pme, nID);
                                     }
                                  else {
@@ -2897,12 +3461,15 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                            }
                         }
                      } // non scrollbar area
-                  }
+               }
                break;
             case AEECLSID_LISTCTL:
                {
                   pme->m_ptTracker.cbHit = PTRCK_HIT_ITEM;
-                  if (2 == AEE_POINTER_GET_CLICKCOUNT((const char *)dwParam)) {
+#ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
+                  if (2 == AEE_POINTER_GET_CLICKCOUNT((const char *)dwParam))
+#endif//FEATURE_LCD_TOUCH_ENABLE
+				  {
                      (void)Menu_HandleSelection(pme, pme->m_nSelect);
                   }
                }
@@ -2914,8 +3481,11 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
          }
       }
       return FALSE;
-
-      case EVT_POINTER_UP:
+#ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH		
+	  case EVT_POINTER_DOWN:
+#else
+      case EVT_PEN_DOWN:
+#endif//FEATURE_LCD_TOUCH_ENABLE
       {
          boolean bRet = FALSE;
          if( PT_IN_RECT(wXPos, wYPos, pme->m_rc) ){
@@ -3012,7 +3582,7 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
 
                //         SETAEERECT(&rctText, pme->m_rc.x, pme->m_rc.y, pme->m_rc.dx, cyText);
                //         if(!ALIGN_TEXT_TOP(pme))
-			            //      rctText.y += (pme->m_rc.dy - cyText);
+                            //      rctText.y += (pme->m_rc.dy - cyText);
                //         rctText.dy++;
 
                //         if( !PT_IN_RECT(wXPos, wYPos, rctText) && pme->m_ptTracker.wData == pme->m_nSelect ){
@@ -3032,7 +3602,7 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
 
                //         SETAEERECT(&rctText, pme->m_rc.x, pme->m_rc.y, pme->m_rc.dx, cyText);
                //         if(!ALIGN_TEXT_TOP(pme))
-			            //      rctText.y += (pme->m_rc.dy - cyText);
+                            //      rctText.y += (pme->m_rc.dy - cyText);
                //         rctText.dy++;
 
 
@@ -3085,8 +3655,8 @@ static void Menu_Recalc(CMenuCtl * pme)
    Menu_GetStyleOffsets(pme, &cxs, &cys);
 
    nFrame = (uint16)(AEE_FRAME_SIZE * 2);
-	cxMaxItem = pme->m_rc.dx - cxs - nFrame;     // Max item width
-	cyMaxItem = pme->m_rc.dy - cys - nFrame;     // Max item height
+   cxMaxItem = pme->m_rc.dx - cxs - nFrame;     // Max item width
+   cyMaxItem = pme->m_rc.dy - cys - nFrame;     // Max item height
 
    if(SINGLE_FRAME(pme)){
       cxMax = cxMaxItem;                        // Width of widest item - Max item width
@@ -3151,8 +3721,22 @@ static void Menu_Recalc(CMenuCtl * pme)
          pme->m_bHasText = TRUE;
    }
 
+#if 1
+ if( pme->m_dwOemProps & OEMMP_ICON_FIX_ITEMMAX )
+ {
+        cxMax =MIN(cxMax, ICONMENU_FIX_ITEMMAX);
+        cyMax =MIN(cyMax, ICONMENU_FIX_ITEMMAX);        
+ }
+ #endif
+
    cxMax += cxs;              // Add Width Offset
-   cyMax += cys;              // Add Height Offset
+   cyMax += cys;
+   
+#ifdef FEATURE_CUSTOMIZED_MENU_STYLE
+   /*  ÕâÀïÈ¡Á½ÕßÖ®ÖÐ½Ï´óÖµÎªcyMax¸³ÖµÒÔÏû³ýµ±ÉèÖÃµÄ
+    MENUITEM_HEIGHTºêÊýÖµÓë×ÖÌå¸ß¶È²îÖµÎªÆæÊýÊ±×ø±ê´í*/
+   cyMax = MAX(cyMax, MENUITEM_HEIGHT);
+#endif
 
    pme->m_cxMaxItem = cxMax;  // Width of widest item
    pme->m_cyMaxItem = cyMax;  // Height of tallest item
@@ -3191,6 +3775,13 @@ static void Menu_Recalc(CMenuCtl * pme)
             cy = pme->m_rc.dy;
             if(pme->m_pTitle || IS_TITLE_OD(pme))
                cy -= pme->m_rcTitle.dy;
+            
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+            if( (!pme->userSetStyle) && (pme->bottomBarType != BTBAR_NONE))
+            {
+                cy -= GetBottomBarHeight( pme->m_pIDisplay);
+            }
+#endif
             pme->m_nPageItems = (cy / cyMax);
          }
          else
@@ -3256,6 +3847,11 @@ static void Menu_DrawNewSelectItem(CMenuCtl * pme, int nIdx,int nIdxSel)
    {
       Menu_CalcItemRect(pme, nIdx, &qrc);
 
+// add these @08.01.16
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+      pme->theDrawnItem = ( nIdx + 1) % 10;
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+      
       if (IS_ITEM_OD(pItem))
          Menu_DrawODItem(pme, pItem, &qrc, FALSE);
       else
@@ -3274,12 +3870,31 @@ static void Menu_DrawNewSelectItem(CMenuCtl * pme, int nIdx,int nIdxSel)
    {
       Menu_CalcItemRect(pme, nIdxSel, &qrc);
 
+//      pme->m_seltextrc = qrc;
+//      pme->m_seltextrc.x = (pItem->cxImage+4);
+//      pme->m_seltextrc.dx -= (pItem->cxImage+4);
+      
+// add these @08.01.16
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+      if( !pme->userSetStyle && 
+          ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= 10) ||
+            IS_MULTI_SEL( pme)
+          )
+      )
+      {
+//          pme->m_seltextrc.x  += 13;
+//          pme->m_seltextrc.dx -= 13;
+            
+          pme->theDrawnItem = ( nIdxSel + 1) % 10;
+      }
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+      
       if (IS_ITEM_OD(pItem))
          Menu_DrawODItem(pme, pItem, &qrc, TRUE);
       else
          Menu_DrawItem(pme, pItem, &qrc, TRUE, 0);
    }
-
+ 
    // Reset the colors.  If this is not done here, it will screw-up the drawing of the scrollbar...
    ResetColors(pd, clrBack, clrText,clrFrame);
 
@@ -3300,7 +3915,11 @@ static void Menu_SetItemColor(CMenuCtl * pme, IDisplay * pd, boolean bSel,RGBVAL
 {
    RGBVAL  nText, nBack;
 
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+   if( bSel && !( IS_SOFTKEY_MENU( pme) && pme->m_nItems <= 1)){
+#else
    if(bSel){
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
       nText = pme->m_c.cSelText;
       nBack = pme->m_c.cSelBack;
    }
@@ -3333,12 +3952,72 @@ static void Menu_FreeItem(CMenuCtl * pme, CMenuItem * pmi)
 Local Method - Draws a standard menu
 
 ======================================================================*/
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
+static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft)
+{
+    AEERect oldClip;
+
+    if (pme->m_dwOemProps & OEMMP_NODRAWSELECTBAR)
+    {
+        return;
+    }
+    
+    if( pme->imageSelectBar == NULL)
+    {
+        if(pme->SetPopMenu == TRUE)
+        {
+            /*if( pme->imageSelectBar != NULL)
+            {
+                IIMAGE_Release(pme->imageSelectBar);
+            }*/
+            pme->imageSelectBar = ISHELL_LoadResImage( pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_SELECT_BAR_SHORT);
+        }
+        else if(IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL))
+        {
+            /*if( pme->imageSelectBar != NULL)
+            {
+                IIMAGE_Release(pme->imageSelectBar);
+            }*/
+            pme->imageSelectBar = ISHELL_LoadResImage( pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_SELECT_BAR_SHORT);
+        }
+        else
+        {
+            /*if( pme->imageSelectBar != NULL)
+            {
+                IIMAGE_Release(pme->imageSelectBar);
+            }*/
+            pme->imageSelectBar = ISHELL_LoadResImage( pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_SELECT_BAR);
+        }
+    }
+
+    IDISPLAY_GetClipRect( pme->m_pIDisplay, &oldClip);
+
+    IDISPLAY_SetClipRect( pme->m_pIDisplay, prc);
+    
+#if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
+    if( IS_MENU( pme)&& (!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL)))
+    {
+       IDISPLAY_DrawFrame( pme->m_pIDisplay, prc, ft, pme->m_c.cBack);
+    }
+
+#endif //#if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
+
+    IIMAGE_Draw( pme->imageSelectBar, prc->x, prc->y);
+    IIMAGE_Release(pme->imageSelectBar);
+    pme->imageSelectBar = NULL;
+    
+    IDISPLAY_SetClipRect( pme->m_pIDisplay, &oldClip);
+}
+
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
 static boolean Menu_Draw(CMenuCtl * pme)
 {
    int         i;
    AEERect     qrc;
    uint16      cyLeft;
-   uint16      cy,cx;
+   uint16      cyMenuItem,cxMenuItem;
    RGBVAL      clrBack, clrText,clrFrame;
    boolean     bSel;
    int         cyFont = pme->m_cyFont;
@@ -3346,23 +4025,137 @@ static boolean Menu_Draw(CMenuCtl * pme)
    int         y = pme->m_rc.y;
    CMenuItem * p = NULL;
    IDisplay *  pd = pme->m_pIDisplay;
+#ifdef FEATURE_RANDOM_MENU_COLOR
+   byte nOldRandMenu = pme->m_nRandomMenu;//added by chengxiao 2009.02.19
+#endif
+#ifdef FEATURE_RANDOM_MENU_COLOR
+   if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL)  &&
+       pme->m_dwOemProps & OEMMP_GRAPHIC_BG)
+   {
+       (void)OEM_GetConfig(CFGI_RANDOM_MENU, (void*)&pme->m_nRandomMenu, sizeof(pme->m_nRandomMenu));
+       if(pme->m_nRandomMenu == 0)
+       {
+            pme->m_c.cBack = RGB_BLACK;
+            if(nOldRandMenu != 0  &&
+                pme->m_pBgImage != NULL)
+            {
+                IImage_Release(pme->m_pBgImage);
+                pme->m_pBgImage = NULL;
+            }
+       }
+       else
+       {
+            OEM_GetConfig(CFGI_MENU_BGCOLOR, (void*)&pme->m_c.cBack, sizeof(pme->m_c.cBack));
+            if(nOldRandMenu == 0 &&
+                pme->m_pBgImage != NULL)
+            {
+                IImage_Release(pme->m_pBgImage);
+                pme->m_pBgImage = NULL;
+            }
+       }
+   }
+#endif
 
    Menu_InitColors(pme, &clrBack, &clrText, &clrFrame);
 
-   // Erase Previous Menu - Use default system color
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    
+#if defined( FEATURE_CONTROL_BG_USE_IMAGE)
+    if( pme->userSetStyle)
+    {
+        IDISPLAY_FillRect( pd, &pme->m_rc, CLR_USER_BACKGROUND);
+    }
+    else
+    {
+        drawControlBg( pd, &pme->m_rc);
+    }
+#else
+    if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL) )
+    {
+        if(pme->m_dwOemProps & OEMMP_GRAPHIC_BG)
+        {
+            Menu_DrawBackGround(pme, &pme->m_rc);
+        }
+        else
+        {
+            IDISPLAY_FillRect( pd, &pme->m_rc, CLR_USER_BACKGROUND);  
+        }
+    }
+    else
+    {
+        IDISPLAY_FillRect( pd, &pme->m_rc, MAKE_RGB(102, 102, 102));  
+    }
+#endif //#if defined( FEATURE_CONTROL_BG_USE_IMAGE) 
+    
+    if( pme->userSetStyle)
+    {
+        pme->m_rcTitle.dy = GetTitleBarHeight( pme->m_pIDisplay);
+    }
 
-   IDISPLAY_FillRect(pd, &pme->m_rc, CLR_USER_BACKGROUND);
+#else //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
+    // Erase Previous Menu - Use default system color
+    if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL) )
+    {
+         IDISPLAY_FillRect( pd, &pme->m_rc, CLR_USER_BACKGROUND);
+    }
+    else
+    {       
+         IDISPLAY_FillRect( pd, &pme->m_rc, MAKE_RGB(102, 102, 102));     
+    }  
+
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+              
 
    // draw the title text
-
    cyLeft = pme->m_rc.dy;
 
-   if(pme->m_pTitle || IS_TITLE_OD(pme)){
+   if(pme->m_pTitle || IS_TITLE_OD(pme))
+   {
 
       SETAEERECT(&qrc, x, y, pme->m_rc.dx, pme->m_rcTitle.dy);
-
+        
       if (pme->m_pTitle)
-         IDISPLAY_DrawText(pd, AEE_FONT_BOLD, pme->m_pTitle, -1, x, y, &qrc, IDF_RECT_FILL | ParagraphAlignment(pme->m_pTitle, WSTRLEN(pme->m_pTitle)));
+      {
+#ifdef FEATURE_MENUTITLE_AUTOSCROLL
+         Menu_DrawTitle(pme,0);
+#else //FEATURE_MENUTITLE_AUTOSCROLL
+
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+        if( pme->userSetStyle)
+        {
+            IDISPLAY_DrawText( pd, 
+                  AEE_FONT_BOLD, 
+                  pme->m_pTitle, 
+                  -1, 
+                  x, 
+                  y, 
+                  &qrc, 
+                  IDF_ALIGN_MIDDLE | IDF_RECT_FILL | ParagraphAlignment(pme->m_pTitle, WSTRLEN(pme->m_pTitle))
+
+              );
+        }
+        else
+        {
+            TitleBar_Param_type titleBarParms;
+            MEMSET( &titleBarParms, 0, sizeof( TitleBar_Param_type));
+            
+            titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+
+            titleBarParms.pwszTitle     = pme->m_pTitle;
+            titleBarParms.prc           = &qrc;
+            if(pme->m_dwOemProps & OEMMP_ARROW_TITLE)
+            {
+                titleBarParms.eTBarType = TBAR_ARROW;
+            }
+            
+            DrawTitleBar( pd, &titleBarParms);
+        }
+#else
+        IDISPLAY_DrawText(pd, AEE_FONT_BOLD, pme->m_pTitle, -1, x, y, &qrc, IDF_RECT_FILL | ParagraphAlignment(pme->m_pTitle, WSTRLEN(pme->m_pTitle)));
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+#endif
+      }
       else
       {
          // Title is owner draw
@@ -3378,50 +4171,117 @@ static boolean Menu_Draw(CMenuCtl * pme)
          // Draw Title
          pme->m_pfnCB(pme->m_pvContext, &cbData);
       }
-      cyLeft -= pme->m_rcTitle.dy;
-      y += pme->m_rcTitle.dy;
+      
+      
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+        if(pme->bottomBarType == BTBAR_NONE)
+        {
+            cyLeft -= pme->m_rcTitle.dy;
+            y      += pme->m_rcTitle.dy;
 
-      if(UNDERLINE(pme)){
-         qrc.y = y - 1;
-         qrc.dy = 1;
-         IDISPLAY_FillRect(pme->m_pIDisplay, &qrc, CLR_USER_FRAME);
-      }
+            if(pme->userSetStyle && UNDERLINE( pme)) 
+            {
+                qrc.y = y - 1;
+                qrc.dy = 1;
+                IDISPLAY_FillRect(pme->m_pIDisplay, &qrc, CLR_USER_FRAME);
+            }
+        }
+        else
+        {
+/*
+            cyLeft -= GetBottomBarHeight( pme->m_pIDisplay);
+            y      += GetBottomBarHeight( pme->m_pIDisplay);
+*/
+            cyLeft -= (pme->m_rcTitle.dy + GetBottomBarHeight( pme->m_pIDisplay));
+            y       += pme->m_rcTitle.dy;
+        }
+#else //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+        cyLeft -= pme->m_rcTitle.dy;
+        y    += pme->m_rcTitle.dy;
+
+        if(UNDERLINE(pme))
+        {
+            qrc.y = y - 1;
+            qrc.dy = 1;
+            IDISPLAY_FillRect(pme->m_pIDisplay, &qrc, CLR_USER_FRAME);
+        }
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
    }
    
    pme->m_yLastTimeMark = INVALID_MARK;
-   Cal_CalcPageItems(pme);
+   if(IS_CALENDAR_VIEW(pme))
+   {
+       Cal_CalcPageItems(pme);
+   }
 
    pme->m_nVisibleItems = 0;
-   cx = pme->m_rc.dx;
-   cy = pme->m_cyMaxItem;
+   cxMenuItem           = pme->m_rc.dx;
+   cyMenuItem           = pme->m_cyMaxItem;
 
-   if (pme->m_nItems > pme->m_nPageItems) 
-      cx -= pme->m_nSBWidth;
+   if (pme->m_nItems > pme->m_nPageItems)
+       cxMenuItem -= pme->m_nSBWidth;      
 
    p = GetItemByIdx(pme->m_pItemList, pme->m_nScrollItem);
-
+        
    for (i = pme->m_nScrollItem; p && i < pme->m_nScrollItem + pme->m_nPageItems; i++, p = p->pNext) {
 
-      SETAEERECT(&qrc, x, y, cx, cy);
-
+      SETAEERECT(&qrc, x, y, cxMenuItem, cyMenuItem);
+        
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+         if( !pme->userSetStyle && 
+             IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) &&
+             pme->m_nItems <= 10
+         )
+         {
+             pme->theDrawnItem   = ( i + 1) % 10;
+         }
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) 
+         
       bSel = (boolean)(pme->m_bActive && i == pme->m_nSelect);
       if(IS_CALENDAR_VIEW(pme)){
-         p->cyImage  = cy = GetItemHeight(p, &cyLeft, (uint16)cyFont);
+         p->cyImage  = cyMenuItem = GetItemHeight(p, &cyLeft, (uint16)cyFont);
          p->y        = y;
+         
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+         Cal_DrawItem(pme, p, i, FALSE);
+#else
          Menu_SetItemColor(pme,pd,bSel,NULL);
          Cal_DrawItem(pme, p, i, FALSE);
+#endif
       }
       else
-      {
+      {  
          if (IS_ITEM_OD(p))
             Menu_DrawODItem(pme, p, &qrc, bSel);
          else
             Menu_DrawItem(pme, p, &qrc, bSel, 0);
       }
-      y += cy;
+      y += cyMenuItem;
       pme->m_nVisibleItems++;
    }
 
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    if( !pme->userSetStyle && pme->bottomBarType != BTBAR_NONE)
+    {
+        AEERect rect;
+        BottomBar_Param_type bottomBarParms;
+        MEMSET( &bottomBarParms, 0, sizeof( BottomBar_Param_type));
+        
+        SETAEERECT( &rect, 
+              pme->m_rc.x, 
+              pme->m_rc.y + pme->m_rc.dy - GetBottomBarHeight( pme->m_pIDisplay),
+              pme->m_rc.dx,
+              GetBottomBarHeight( pme->m_pIDisplay));
+        if(pme->SetPopMenu == FALSE)
+        {
+            bottomBarParms.prc         = &rect;
+        }
+        bottomBarParms.eBBarType   = pme->bottomBarType;
+        
+        DrawBottomBar( pd, &bottomBarParms);
+    }
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+   
    // Reset the colors.  If this is not done here, it will screw-up the drawing of the scrollbar...
    ResetColors(pd, clrBack, clrText,clrFrame);
 
@@ -3430,8 +4290,63 @@ static boolean Menu_Draw(CMenuCtl * pme)
 
    if(IS_CALENDAR_VIEW(pme) && AUTO_SCROLL(pme))
       Cal_ShowTimeMark(pme, NULL,0, 0);
+      
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    if(pme->SetPopMenu == TRUE)
+    {
+        //AEERect titlerect;
+        AEERect framerect;
+        Theme_Param_type Theme_Param;
+        
+        Appscom_GetThemeParameters(&Theme_Param);
+#if 0
+        SETAEERECT( &titlerect,  
+            pme->m_rc.x,  
+            pme->m_rc.y - GetTitleBarHeight( pme->m_pIDisplay), 
+            pme->m_rc.dx, 
+            GetTitleBarHeight( pme->m_pIDisplay));
+        IDISPLAY_FillRect(pme->m_pIDisplay, &titlerect, Theme_Param.themeColor);  
 
-   IDISPLAY_Update(pd);
+        SETAEERECT( &framerect,  
+            pme->m_rc.x-AEE_FRAME_SIZE,  
+            pme->m_rc.y - GetTitleBarHeight( pme->m_pIDisplay), 
+            pme->m_rc.dx +2*AEE_FRAME_SIZE, 
+            pme->m_rc.dy + GetTitleBarHeight( pme->m_pIDisplay));
+        
+        IDISPLAY_DrawRect(pme->m_pIDisplay,
+                                        &framerect,
+                                        Theme_Param.themeColor, 
+                                        0, 
+                                        IDF_RECT_FRAME);            
+#else //if 0
+        SETAEERECT( &framerect,  
+            pme->m_rc.x-AEE_FRAME_SIZE,  
+            pme->m_rc.y- AEE_FRAME_SIZE*2,
+            pme->m_rc.dx +2*AEE_FRAME_SIZE, 
+            AEE_FRAME_SIZE*2);
+            
+        IDisplay_FillRect(pme->m_pIDisplay, &framerect, RGB_WHITE);
+
+        SETAEERECT( &framerect,  
+            pme->m_rc.dx +2*AEE_FRAME_SIZE,  
+            pme->m_rc.y- AEE_FRAME_SIZE*2,
+            2, 
+            pme->m_rc.dy + 2 - GetBottomBarHeight(pme->m_pIDisplay));
+            
+        IDisplay_FillRect(pme->m_pIDisplay, &framerect, RGB_WHITE);
+
+#endif //if 0
+    }
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
+    if(pme->m_bAutoScrollMenuItem)
+    {
+        pme->m_bAutoScrollMenuItem = FALSE;
+        return TRUE;   //popMenu which has autoscroll menuitem on preview window should not update display tlc.lb.20081219
+    }
+
+    IDISPLAY_Update(pd);
+
    return(TRUE);
 }
 
@@ -3443,21 +4358,48 @@ Local Method - Draws a standard menu item
 static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean bSel, int nTruncExtent)
 {
    int            x,y,cx,cxText,yImage,nFont;
-   RGBVAL         cBack;
-   boolean        b3State;
-   boolean        bMulti;
-   IDisplay    *  pd = pme->m_pIDisplay;
-   AECHAR *       pText = p->text;
-   AEEItemStyle * ps = &pme->m_style[(bSel ? 1 : 0)];
-   boolean        bTitleRightAligned = FALSE;
-   AEERect        rcText;
-   uint32         dwItemTextAlignment;
+   int                  buf = 0;
+
+   RGBVAL               cBack;
+   boolean              b3State;
+   boolean              bMulti;
+   IDisplay*            pd = pme->m_pIDisplay;
+   AECHAR*              pText = p->text;
+   AEEItemStyle*        ps = &pme->m_style[(bSel ? 1 : 0)];
+   boolean              bTitleRightAligned = FALSE;
+   AEERect              rcText;
+   uint32               dwItemTextAlignment;
+   AECHAR               wszIndex[5];
+   AECHAR               wszFmt[4];
+   //Theme_Param_type     themeParms;
+   AEERect              rect; 
+   //IImage*              checkBox; 
+   AEEImageInfo         imageInfo   = {0}; 
+   //IImage*              underline;
+   int                  menuwidth, xMenu;
+   
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+    AEEDeviceInfo DeviceInfo;
+    
+    ISHELL_GetDeviceInfo(pme->m_pIShell, &DeviceInfo);
+    if((LNG_HEBREW == DeviceInfo.dwLang) || (LNG_ARABIC == DeviceInfo.dwLang))
+    {
+        bTitleRightAligned = TRUE;
+    }
+    else
+    {
+        bTitleRightAligned = FALSE;
+    }
+#else
 
    // icons are drawn according to the alignment of the menu title ...
    if (pme->m_pTitle) {
       bTitleRightAligned = (ParagraphAlignment(pme->m_pTitle, WSTRLEN(pme->m_pTitle))) == IDF_ALIGN_RIGHT;
    }
+#endif   
 
+   menuwidth = prc->dx;
+   xMenu     = prc->x;
    b3State = (boolean)(IS_MULTI_IMAGE(pme) ? TRUE : FALSE);
    bMulti  = (boolean)(IS_MULTI_SEL(pme) ? TRUE : FALSE);
 
@@ -3479,12 +4421,129 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
       if( !bMulti )
          ft = ps->ft;
       else{
-         if( bSel && !p->bIsSel )
-            ft = AEE_FT_BOX;
-         else
+         //if( bSel && !p->bIsSel )
+           // ft = AEE_FT_BOX;
+         //else
             ft = (AEEFrameType)(p->bIsSel ? pme->m_style[1].ft : pme->m_style[0].ft);
       }
-      IDISPLAY_DrawFrame(pd, prc, ft, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
+      
+
+#if !defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+       if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL))
+       {
+               IDISPLAY_DrawFrame(pd, prc, ft, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
+       }
+#else //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
+    if(IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL))
+    {
+        prc->dx+=2;
+    }
+    
+
+    if( !pme->userSetStyle && ( IS_MENU( pme) || ( IS_SOFTKEY_MENU( pme) && pme->m_nItems > 1)) && bSel)
+    {
+        Menu_DrawSelectBar( pme, prc, ft);
+    }
+#if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
+    else if( pme->userSetStyle || IS_MENU( pme))
+    {
+       if(pme->m_dwOemProps & OEMMP_GRAPHIC_BG)
+       {
+           Menu_DrawBackGround(pme, prc);
+       }
+       else if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL))
+        {
+              IDISPLAY_DrawFrame(pd, prc, ft, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
+        }
+    }
+#endif
+
+    // add these @08.01.15
+    if( !pme->userSetStyle && 
+        ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= 10) || bMulti)
+    )
+    {
+    if( bMulti)
+    {
+       IImage *pImage = NULL;
+       //AEERect rect = {0};
+
+#if defined( FEATURE_CONTROL_BG_USE_IMAGE)
+       static IImage* sel1	= 0;
+       static IImage* sel2	= 0;
+       void *pOldContext = AEE_EnterAppContext( NULL);
+
+          if( !sel1)
+          {
+             sel1 = ISHELL_LoadResImage( pme->m_pIShell, 
+                                          AEE_APPSCOMMONRES_IMAGESFILE, 
+                                          IDI_MENU_SEL1);
+          }
+          if( !sel2)
+          {
+             sel2 = ISHELL_LoadResImage( pme->m_pIShell, 
+                                          AEE_APPSCOMMONRES_IMAGESFILE, 
+                                          IDI_MENU_SEL2);
+          }
+          AEE_LeaveAppContext( pOldContext);
+       }
+
+       pImage = p->bIsSel ? sel2 : sel1;
+       if( pImage)
+       {
+          IIMAGE_Draw( pImage, prc->x + prc->dx - 13, prc->y + ( ( prc->dy - 13) >> 1));
+          IIMAGE_Release( pImage);
+       }
+#else
+     /*  SETAEERECT( &rect,  prc->x + prc->dx - 12, prc->y + ( ( prc->dy - 12) >> 1), 12, 12);
+       IDISPLAY_DrawRect( pd, &rect, RGB_WHITE, 0, IDF_RECT_FRAME);
+       */
+
+          pImage = ISHELL_LoadResImage( pme->m_pIShell,
+                AEE_APPSCOMMONRES_IMAGESFILE,
+                (uint16)(p->bIsSel ? IDB_CHECK_ON : IDB_CHECK_OFF));
+
+          if( pImage)
+          {
+             IIMAGE_GetInfo( pImage, &imageInfo);
+             IIMAGE_Draw( pImage, 
+                   menuwidth - MENU_IMAGE_PAD - imageInfo.cx, 
+                   prc->y + (prc->dy - imageInfo.cy)/2);
+             IIMAGE_Release( pImage);
+          }
+#endif
+
+        prc->dx -= 13;
+    }
+    else
+    {
+       /*  Õâ¸öifÓÃÀ´¼ì²âMP_BIND_ITEM_TO_NUMBER_KEYÊôÐÔÊÇ·ñ±»ÉèÖÃ£¬ÓÐ£¬ÔÚ²Ëµ¥Ç°Ãæ»­Ò»¸öÄÚÇ¶ÐòºÅµÄÕý·½ÐÎ */
+       //ÏÂÃæµÄ20 ºÍ12¿ÉÄÜÒª¸Ä³É¹«Ê½¼ÆËã
+       SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset + AEE_FRAME_SIZE, 16, prc->dy);
+       STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
+       WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
+
+#if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
+       if(bSel){
+          IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_WHITE);
+          //IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);//wlh mod ¸ü¸ÄÑ¡ÖÐÌõµÄÐòºÅÑÕÉ«
+		   IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_YELLOW_EX);
+       }
+       else{
+          IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_BLACK);
+          IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_WHITE);
+       }
+#endif
+       IDISPLAY_DrawText(pd, p->nFont, wszIndex, -1, rect.x, rect.y, &rect, IDF_TEXT_TRANSPARENT);
+
+       prc->x  += rect.dx;
+       prc->dx -= rect.dx;
+       SETAEERECT( &rect, prc->x -(rect.dx + 1), prc->y, prc->dx + (rect.dx + 1), prc->dy);
+    }
+ }
+
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
    }
 
    // Now setup the background colors for the item.  This will insure the image
@@ -3509,7 +4568,9 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
          x += ((prc->dx - p->cxImage) / 2);
 
       // If text and a right aligned title, draw the image on the right
-      if (cxText && bTitleRightAligned) {
+      //if (cxText && bTitleRightAligned) {
+      if ((cxText && bTitleRightAligned) ||(IS_PROP_SET( pme->m_dwProps, MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT))) {
+        buf = x;
          x += cx - p->cxImage;
       }
 
@@ -3520,16 +4581,37 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
       else
          IIMAGE_Draw(p->pImage, x , yImage);
 
+      if(IS_PROP_SET( pme->m_dwProps, MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT))
+      {
+             x = buf;
+      }
+
       if(cxText){
          x += MENU_IMAGE_PAD + p->cxImage;
+         if(IS_PROP_SET( pme->m_dwProps, MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT))
+         {
+             x -= p->cxImage;
+         }
          cx -= p->cxImage + MENU_IMAGE_PAD;
       }
    }
 
-	if(cxText){
+    if(cxText){
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+        if( !pme->userSetStyle)
+        {
+            if( bSel && pme->m_nItems > 1) {
+                p->nFont = AEE_FONT_BOLD;
+            }
+            else {
+                p->nFont = AEE_FONT_NORMAL;
+            }
+        }
+#endif
+            
       // For softkey, we draw text in center of remaining space
-		if(pme->m_cls == AEECLSID_SOFTKEYCTL && cxText < cx)
-			x += (cx - cxText) / 2;
+        if(pme->m_cls == AEECLSID_SOFTKEYCTL && cxText < cx)
+            x += (cx - cxText) / 2;
 
       // Bidirectional Text Support      -jdboyd 05/09/03
       //
@@ -3580,7 +4662,12 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
       rcText = *prc;
       if (IS_MENU(pme) && p->pImage) {
          if (!bTitleRightAligned)
-            rcText.x += p->cxImage + MENU_IMAGE_PAD;
+         {
+            if(!IS_PROP_SET( pme->m_dwProps, MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT))
+            {
+               rcText.x += p->cxImage + MENU_IMAGE_PAD;
+            }
+         }
          rcText.dx -= p->cxImage + MENU_IMAGE_PAD;  
       }
 
@@ -3598,14 +4685,96 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
             // factor in the auto scroll index if we're not selected.
             x -= IDISPLAY_MeasureText(pme->m_pIDisplay, p->nFont, pText) - rcText.dx - (bSel ? pme->m_nAutoScrollIdx : 0);
          }
-      }
+      }       
+        // draw the entire text.  Align it unless it's scrolling or a softkey.
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    if(Menu_ItemScrolls(pme, p, 0) || (pme->m_cls == AEECLSID_SOFTKEYCTL))
+    {
+         IDISPLAY_DrawText( pd, 
+                 p->nFont, 
+                 pText, 
+                 -1, 
+                 x, 
+                 y, 
+                 &rcText, 
+                 pme->userSetStyle ? 0 : IDF_TEXT_TRANSPARENT
+              );
+    }
+    else 
+    {
+        if( pme->m_dwOemProps & OEMMP_IDF_ALIGN_CENTER)
+        {
+            dwItemTextAlignment = IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT;
+        }
+        else if( !pme->userSetStyle)
+        {
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+           if(bTitleRightAligned) {
+                dwItemTextAlignment = (IDF_ALIGN_RIGHT | IDF_TEXT_TRANSPARENT);
+           }
+           else {
+                dwItemTextAlignment = (IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
+           }
+#else
+            dwItemTextAlignment = IDF_TEXT_TRANSPARENT;
+#endif            
+        }
 
-      // draw the entire text.  Align it unless it's scrolling or a softkey.
-      if (Menu_ItemScrolls(pme, p, 0) || (pme->m_cls == AEECLSID_SOFTKEYCTL))
-         IDISPLAY_DrawText(pd, p->nFont, pText, -1, x, y, &rcText, 0);
-      else 
-         IDISPLAY_DrawText(pd, p->nFont, pText, -1, x, y, &rcText, dwItemTextAlignment);
-	}
+        IDISPLAY_DrawText(pd,
+                p->nFont,
+                pText,
+                -1,
+                x,
+                y,
+                &rcText,
+                dwItemTextAlignment
+            );
+    }
+    
+#else
+    if (Menu_ItemScrolls(pme, p, 0) || (pme->m_cls == AEECLSID_SOFTKEYCTL)) {
+        IDISPLAY_DrawText(pd, p->nFont, pText, -1, x, y, &rcText, 0);
+    }
+    else {
+        IDISPLAY_DrawText(pd, p->nFont, pText, -1, x, y, &rcText, dwItemTextAlignment);
+    }
+
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    }
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    //draw line
+    if(pme->m_dwOemProps & OEMMP_GRAPHIC_UNDERLINE)
+    {
+        IImage*              underline;
+        
+        if(pme->SetPopMenu == TRUE) {
+            underline = ISHELL_LoadResImage(pme->m_pIShell, 
+                                           AEE_APPSCOMMONRES_IMAGESFILE,
+                                           IDI_UNDERLINE_SHORT);
+        }
+        else if(IS_PROP_SET(pme->m_dwProps, MP_TRANSPARENT_UNSEL)) {
+            underline = ISHELL_LoadResImage(pme->m_pIShell, 
+                                           AEE_APPSCOMMONRES_IMAGESFILE,
+                                           IDI_UNDERLINE_SHORT);   
+        }
+        else {
+            underline = ISHELL_LoadResImage(pme->m_pIShell, 
+                                           AEE_APPSCOMMONRES_IMAGESFILE,
+                                           IDI_UNDERLINE);
+        }
+        
+        if(NULL != underline)
+        {
+            /* ÓÉÓÚAdjustRectÖÐÎªÎÄ×ÖÏÔÊ¾¶à¼ÓÁËÒ»¸öÏñËØ£¬ÕâÀï²¹³¥»ØÀ´*/
+            SETAEERECT(&rect, xMenu, prc->y + prc->dy + ps->yOffset - 2*AEE_FRAME_SIZE, menuwidth, AEE_FRAME_SIZE);
+            IIMAGE_GetInfo(underline, &imageInfo);
+            
+            Appscommon_ResetBackground(pd, underline, pme->m_c.cBack, &rect, rect.x - (imageInfo.cx - menuwidth)/2, rect.y);
+            IIMAGE_Release(underline);
+        }
+    }
+    
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
    // Reset the background color - it may have changed above...
 
@@ -3697,11 +4866,23 @@ static void Menu_AutoScroll(CMenuCtl * pme)
          // save current background, text and frame colors for restoration
          Menu_InitColors(pme, &clrBack, &clrText, &clrFrame);
 
+// add these @08.01.17
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+         pme->theDrawnItem = ( pme->m_nSelect + 1) % 10;
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
          // Draw Menu Item
+         if(IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL))
+         {
+            pme->m_bAutoScrollMenuItem = TRUE;
+            Menu_Draw(pme);
+         }
+         
          Menu_DrawItem(pme, pi, &rc, TRUE, 0);
 
          // Restore Colors
          ResetColors(pme->m_pIDisplay, clrBack, clrText,clrFrame);
+
          IDISPLAY_Update(pme->m_pIDisplay);
       }
    }        
@@ -3726,6 +4907,13 @@ static void Menu_ResetAutoScroll(CMenuCtl * pme)
    // Get current selection
    pi = GetItemByIdx(pme->m_pItemList, pme->m_nSelect);
    pme->m_nAutoScrollIdx = 0;
+// add these @08.01.15
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+   if( !pme->userSetStyle && pme->m_nItems > 1)
+    {
+        pi->nFont = AEE_FONT_BOLD;
+    }
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) 
 
    if(pi && pme->m_bActive && Menu_ItemScrolls(pme, pi, 0)){
       pme->m_bAutoScroll = TRUE;
@@ -3766,7 +4954,25 @@ static boolean Menu_ItemScrolls(CMenuCtl * pme, CMenuItem *pi, int nIdx)
    }
 
    cxMax = pme->m_rc.dx;   // Max Width
+   
+// add these @08.01.15
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+   if( !pme->userSetStyle && 
+        ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= 10) ||
+          IS_MULTI_SEL( pme)
+        )
+    )
+    {
+        cxMax -= 13;
+    }
 
+   if( !pme->userSetStyle && (IS_PROP_SET( pme->m_dwProps, MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT) ) )
+    {
+        cxMax -= (10 + MENU_IMAGE_PAD);//10 should be cx of picture check_yes.bmp 
+    }
+
+#endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) 
+    
    // Adjust Max Width for scroll bar
    if (pme->m_nItems > pme->m_nPageItems) 
       cxMax -= pme->m_nSBWidth;
@@ -3791,7 +4997,7 @@ static void Menu_MoveSelect(CMenuCtl * pme, int nDir, boolean bRedraw)
    nSaveScroll = pme->m_nScrollItem;
 
    if (nDir < 0) {   
-      if (WRAP_SCROLL(pme) && (pme->m_nSelect == 0)) {
+      if (WRAP_SCROLL(pme) && (pme->m_nSelect == 0)&& (pme->m_nItems > 0)) {
          pme->m_nSelect = pme->m_nItems-1;
          pme->m_nScrollItem = (uint16)__MAX(0, (int)pme->m_nItems - (int)pme->m_nPageItems);
       }
@@ -3832,7 +5038,7 @@ static void Menu_MoveSelect(CMenuCtl * pme, int nDir, boolean bRedraw)
       if(nSaveScroll == pme->m_nScrollItem && ITEM_IS_VISIBLE(pme, nSaveSelect) && ITEM_IS_VISIBLE(pme, pme->m_nSelect))
          Menu_DrawNewSelectItem(pme,nSaveSelect,pme->m_nSelect);
       else
-         Menu_Draw(pme);
+            Menu_Draw(pme);
    }
 
    // Notify them that the selection changed.
@@ -3885,6 +5091,35 @@ static void Menu_DrawScrollBar(CMenuCtl * pme)
       }
       else
       {
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+#ifdef FEATURE_SCROLLBAR_USE_STYLE
+        {
+            AEERect ScrollbarDarkRect;
+            //RGBVAL  ScrollbarDarkClr = MAKE_RGB(0xFF, 0x70, 0x00);//wlh mod
+			RGBVAL  ScrollbarDarkClr = MAKE_RGB(0x34, 0x4D, 0xD6);
+             
+            pme->m_c.cScrollbar     = MAKE_RGB(0xDE, 0xDE, 0xDE);
+            //pme->m_c.cScrollbarFill = MAKE_RGB(0xFF, 0xC0, 0x60);//wlh mod
+			pme->m_c.cScrollbarFill = MAKE_RGB(0x00, 0x91, 0xFE);
+            SETAEERECT(&ScrollbarDarkRect, 
+                                rctThumb.x + AEE_FRAME_SIZE, 
+                                rctThumb.y - AEE_FRAME_SIZE, 
+                                rctThumb.dx - 2*AEE_FRAME_SIZE, 
+                                rctThumb.dy + 2*AEE_FRAME_SIZE);
+            
+            IDISPLAY_FillRect(pd, &rctFrame, pme->m_c.cScrollbar);
+            IDISPLAY_FillRect(pd, &rctThumb, pme->m_c.cScrollbarFill);
+            IDISPLAY_FillRect(pd, &ScrollbarDarkRect, ScrollbarDarkClr);
+         }
+#else
+        if( !pme->userSetStyle)
+        {
+            Theme_Param_type themeParms;
+            Appscom_GetThemeParameters( &themeParms);
+
+            pme->m_c.cScrollbar     = themeParms.textColor;
+            pme->m_c.cScrollbarFill = themeParms.themeColor;
+        }
          // Draw the frame
          IDISPLAY_DrawFrame(pd, &rctFrame, AEE_FT_BOX, pme->m_c.cScrollbar);
 
@@ -3911,8 +5146,10 @@ static void Menu_DrawScrollBar(CMenuCtl * pme)
             SETAEERECT(&rc, xa, rctFrame.y + rctFrame.dy - 2, CXARROW, 1);
             IDISPLAY_FillRect(pd, &rc, pme->m_c.cFrame);
          }
-
+         
          IDISPLAY_FillRect(pd, &rctThumb, pme->m_c.cScrollbarFill);
+#endif //ifdef FEATURE_SCROLLBAR_USE_STYLE
+#endif //if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
       }
    }
 }
@@ -3966,10 +5203,15 @@ static int Menu_GetScrollBarRects(CMenuCtl * pme, AEERect * prcFrame, AEERect * 
                y += cyText;
          }
       }
-      else{       
-         if(pme->m_pTitle || IS_TITLE_OD(pme)){
+      else
+      { 
+         if(pme->m_pTitle || IS_TITLE_OD(pme))
+         {
             if(!IS_MENU(pme))
-               cy -= pme->m_rcTitle.dy;
+            {
+              cy -= pme->m_rcTitle.dy;
+            }
+            
             y += pme->m_rcTitle.dy;
          } 
       }    
@@ -3978,9 +5220,13 @@ static int Menu_GetScrollBarRects(CMenuCtl * pme, AEERect * prcFrame, AEERect * 
          nRange = cy;
       else
       {
+#ifdef FEATURE_SCROLLBAR_USE_STYLE
+         nRange = cy - 4*AEE_FRAME_SIZE;
+#else
          nRange = cy - 2*AEE_FRAME_SIZE;
          if (WRAP_SCROLL(pme))
             nRange -= 2*CXARROW;
+#endif
       }
     
       nRange *= 10;    // multiply by 10 for rounding
@@ -3991,24 +5237,31 @@ static int Menu_GetScrollBarRects(CMenuCtl * pme, AEERect * prcFrame, AEERect * 
       nPos = (nPos + 5) / 10;     // rounding
       nLen = (nLen + 5) / 10;     // rounding
 
-      if( pwPos ){
+      if( pwPos )
+      {
          *pwPos = nPos;
       }
-      if( pwLen ){
+      if( pwLen )
+      {
          *pwLen = nLen;
       }
       SETAEERECT(prcFrame, x, y , cx, cy);
-      if(WRAP_SCROLL(pme)){
+#ifdef FEATURE_SCROLLBAR_USE_STYLE
+      y += (2*AEE_FRAME_SIZE);
+      cy -= (4*AEE_FRAME_SIZE);
+#else
+      if(WRAP_SCROLL(pme))
+      {
          // Never executed!
          y += CXARROW;
       }
-
-
+      
       // Adjust x, y and cx for scroll bar fill
       y += AEE_FRAME_SIZE;
       x += AEE_FRAME_SIZE;
       cx -= (AEE_FRAME_SIZE * 2);
       cy -= (AEE_FRAME_SIZE * 2);
+#endif
 
       nLen = MAX(1,nLen);
       SETAEERECT(prcThumb, x, y + MIN(cy-nLen,nPos), cx, nLen);
@@ -4408,7 +5661,7 @@ static void Menu_GetStyleOffsets(CMenuCtl * pme,int * pcx, int * pcy)
    // height by any of these
    for(i = 0; i < sizeof(pme->m_style)/sizeof(AEEItemStyle); i++, ps++){
       // Calculate pixels required to draw frame
-		nFrame = IDISPLAY_DrawFrame(pme->m_pIDisplay, NULL, ps->ft, RGB_NONE);
+        nFrame = IDISPLAY_DrawFrame(pme->m_pIDisplay, NULL, ps->ft, RGB_NONE);
 
       cx = (ps->xOffset + nFrame) * 2;
       cy = (ps->yOffset + nFrame) * 2;
@@ -4464,7 +5717,7 @@ static CMenuItem * Menu_AllocItem(CMenuCtl * pme, CMenuItem *piOrig, AECHAR * pT
 
       if(pszResImage){
          pi->pszImage = (const char *)pi + nSizeBase;
-         STRLCPY((char *)pi->pszImage, pszResImage, STRLEN(pszResImage) + 1);
+         STRCPY((char *)pi->pszImage, pszResImage);
       }
       else
          pi->pszImage = NULL;
@@ -4472,7 +5725,7 @@ static CMenuItem * Menu_AllocItem(CMenuCtl * pme, CMenuItem *piOrig, AECHAR * pT
       // Copy Item Text
       if(nStrSize)
       {
-         WSTRNCOPYN(pi->text, WSTRSIZE(pText)/sizeof(AECHAR), pText, -1);
+         WSTRCPY(pi->text, pText);
          if (piOrig)
             pi->cxText = IDISPLAY_MeasureText(pme->m_pIDisplay, pi->nFont, pi->text);
       }
@@ -4585,7 +5838,7 @@ static boolean List_Draw(CMenuCtl * pme)
 
    //If there is no item in the list, return
    if(!p)
-	   return(FALSE);
+       return(FALSE);
 
    Menu_SetItemColor(pme, pd, (boolean)pme->m_bActive, NULL);
 
@@ -4606,12 +5859,32 @@ static boolean List_Draw(CMenuCtl * pme)
       if (pme->m_bActive)
          cbData.nActionInfo |= 0x00000001;
 
-      // Draw Item 
+      // Draw Item
       pme->m_pfnCB(pme->m_pvContext, &cbData);
    }
    else
+   {
       // Draw Item Text
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+       boolean width = IDISPLAY_MeasureText( pme->m_pIDisplay, p->nFont, p->text);
+	   uint32 alignment = IDF_RECT_FILL | ParagraphAlignment((AECHAR *)(p->text), WSTRLEN(p->text));
+       if( pme->m_dwOemProps & OEMMP_IDF_ALIGN_CENTER)
+       {
+           if( width <= qrc.dx)
+           {
+               alignment = IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE;
+           }
+           else
+           {
+               alignment = IDF_ALIGN_MIDDLE|ParagraphAlignment((AECHAR *)(p->text), WSTRLEN(p->text));
+           }
+       }
+       
+	   IDISPLAY_DrawText(pme->m_pIDisplay, p->nFont,p->text, -1, qrc.x , qrc.y + 2, &qrc, alignment);
+#else
       IDISPLAY_DrawText(pme->m_pIDisplay, p->nFont,p->text, -1, qrc.x , qrc.y + 2, &qrc, IDF_RECT_FILL | ParagraphAlignment((AECHAR *)(p->text), WSTRLEN(p->text)));
+#endif
+   }
 
    IDISPLAY_SetColor(pd, CLR_USER_BACKGROUND, clrBack);
    IDISPLAY_SetColor(pd, CLR_USER_TEXT, clrText);
@@ -4991,16 +6264,32 @@ static boolean SK_Draw(CMenuCtl * pme)
    
    // initialize with menu colors
    Menu_InitColors(pme, &clrBack, &clrText, &clrFrame);
-
+   
    // erase the previous soft key bar
    SETAEERECT(&qrc, pme->m_rc.x, yCell, pme->m_rc.dx, cyCell);
-   IDISPLAY_FillRect(pd, &qrc, CLR_USER_BACKGROUND);
 
-	// Make sure we draw the appropriate line across any empty tabs.  This is
-	// necessary to cover the tab borders above the arrows and any empty (unpainted) cells
-	ft = pme->m_style[0].ft;
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+   if( !pme->userSetStyle)
+   {
+       
+#if defined( FEATURE_FUNCS_THEME)       
+       Theme_Param_type themeParms;
+       Appscom_GetThemeParameters( &themeParms);
+       
+       IDISPLAY_FillRect(pd, &qrc, themeParms.themeColor);
+#else
+       IDISPLAY_FillRect(pd, &qrc, MAKE_RGB(0xfe, 0x61, 0x01));
+#endif   
+   }
+   else
+#endif
+       IDISPLAY_FillRect(pd, &qrc, CLR_USER_BACKGROUND);
+
+    // Make sure we draw the appropriate line across any empty tabs.  This is
+    // necessary to cover the tab borders above the arrows and any empty (unpainted) cells
+    ft = pme->m_style[0].ft;
    if(!IS_MULTI_IMAGE(pme) && (ft == AEE_FT_TAB_BOTTOM || ft == AEE_FT_TAB_TOP)){
-		qrc = pme->m_rc;
+        qrc = pme->m_rc;
       IDISPLAY_DrawFrame(pd, &qrc, ft, pme->m_c.cBack);
    }
 
@@ -5034,7 +6323,7 @@ static boolean SK_Draw(CMenuCtl * pme)
 
    // Restore Colors
    ResetColors(pd, clrBack, clrText, clrFrame);
-
+   
    IDISPLAY_Update(pd);
    
    return(TRUE);
@@ -5272,10 +6561,10 @@ Local Method - Returns the height of text for the icon menu.
 ======================================================================*/
 static uint16 Icon_GetTextHeight(CMenuCtl * pme)
 {
-	uint16 cy = pme->m_cyFont;
-	if(SINGLE_FRAME(pme))
-		cy += (pme->m_style[0].yOffset * 2);
-	return(cy);
+    uint16 cy = pme->m_cyFont;
+    if(SINGLE_FRAME(pme))
+        cy += (pme->m_style[0].yOffset * 2);
+    return(cy);
 }
 
 /*=====================================================================
@@ -5302,7 +6591,7 @@ static uint16 Icon_GetMaxTextHeight(CMenuCtl * pme)
    else
       cyTextMax = Icon_GetTextHeight(pme);
 
-	return(cyTextMax);
+    return(cyTextMax);
 }
 
 /*=====================================================================
@@ -5445,10 +6734,10 @@ static void Icon_CalcStartEndItemIndx(CMenuCtl* pme, int* pnStart, int* pnEnd)
       i = 0;
 
       // End Index
-		if(nCount == 0)
-		   nEnd = 0;
-		else 
-		   nEnd = nCount - 1;
+        if(nCount == 0)
+           nEnd = 0;
+        else 
+           nEnd = nCount - 1;
    }
    else if (pme->m_dwProps & MP_ICON_NO_CENTERSEL)
    {
@@ -5517,7 +6806,7 @@ static void Icon_CalcItemRect(CMenuCtl * pme, uint16 nIdx, AEERect* prc)
    }
    else{
       yOffset = 0;
-   }			
+   }            
 
    xPad = pme->m_xImagePad;
    yPad = pme->m_yImagePad;
@@ -5527,7 +6816,7 @@ static void Icon_CalcItemRect(CMenuCtl * pme, uint16 nIdx, AEERect* prc)
 
    // Adjust for space taken by text
    if(nFrame && ALIGN_TEXT_TOP(pme))
-      rc.y += yOffset;
+      rc.y += (yOffset);// + AEE_FRAME_SIZE);
 
    if(pme->m_bIconHScroll){
       int nEnd, nCount;
@@ -5612,7 +6901,7 @@ static void Icon_DrawAllItems(CMenuCtl * pme)
    rc = pme->m_rc;
 
    if(pme->m_bHasText){
-		yOffset = Icon_GetImageOffset(pme);    // Text Height + Frame Size
+        yOffset = Icon_GetImageOffset(pme);    // Text Height + Frame Size
       rc.dy -= Icon_GetMaxTextHeight(pme);   // Adjust control rect height by text height
 
       // For top aligned text, frame should appear underneath text
@@ -5624,9 +6913,9 @@ static void Icon_DrawAllItems(CMenuCtl * pme)
       nFrame = AEE_FRAME_SIZE;
    }
    else{
-		yOffset = 0;
+        yOffset = 0;
       nFrame = 0;
-	}			
+    }           
 
    xPad = pme->m_xImagePad;
    yPad = pme->m_yImagePad;
@@ -5724,16 +7013,16 @@ static void Icon_DrawItem(CMenuCtl * pme, CMenuItem * pmi, AEERect * prc, boolea
    AEEItemStyle *    ps = NULL;
    IImage *          pi = NULL;
    IDisplay *        pd = pme->m_pIDisplay;
-	uint16			   cyText;
+    uint16             cyText;
 
-	if(!pmi)
-		return;
+    if(!pmi)
+        return;
 
    bSelMark = pme->m_bActive ? bSel : FALSE;
 
    pi = pmi->pImage;
 
-	cyText = Icon_GetMaxTextHeight(pme);
+    cyText = Icon_GetMaxTextHeight(pme);
 
    rc = *prc;
    ps = &pme->m_style[(bSelMark ? 1 : 0)];
@@ -5796,7 +7085,16 @@ static void Icon_DrawItem(CMenuCtl * pme, CMenuItem * pmi, AEERect * prc, boolea
       y = rc.y + ((rc.dy - cy) / 2);
 
       if(bLimit)
-         IIMAGE_SetParm(pi, IPARM_SIZE, cx, cy);
+      {
+         if( pme->m_dwOemProps & OEMMP_ICON_FIX_ITEMMAX )
+         {
+            IIMAGE_SetParm(pi, IPARM_SCALE, rc.dx, rc.dy);
+            x = rc.x;
+            y = rc.y;
+         }
+         else
+            IIMAGE_SetParm(pi, IPARM_SIZE, cx, cy);
+      }
 
       ro = ps->roImage;
 
@@ -5804,7 +7102,7 @@ static void Icon_DrawItem(CMenuCtl * pme, CMenuItem * pmi, AEERect * prc, boolea
       if(!bSelDraw && !pme->m_bColor)
          ro = AEE_RO_COPY;
 
-		IIMAGE_SetParm(pi, IPARM_ROP, (int)ro, 0);
+        IIMAGE_SetParm(pi, IPARM_ROP, (int)ro, 0);
 
       // Make sure we reset the color of the background here.  This ensures that 
       // the image will be displayed in the correct color and will continue to do
@@ -5829,16 +7127,22 @@ Local Method - Requests draw for an owner drawn icon menu item.
 ======================================================================*/
 static void Icon_DrawODItem(CMenuCtl * pme, CMenuItem * pmi, AEERect * prc, boolean bSel)
 {
-	uint16	   cyText;
+    uint16     cyText;
    AEEODCBData cbData;
    IDisplay * pd = pme->m_pIDisplay;
 
-	if(!pmi)
-		return;
+    if(!pmi)
+        return;
 
+   cbData.rc = *prc;
    bSel &= pme->m_bActive;
 
-	cyText = Icon_GetMaxTextHeight(pme);
+    cyText = Icon_GetMaxTextHeight(pme);
+
+   if(SINGLE_FRAME(pme)){
+      if(pme->m_bHasText)
+         cbData.rc.dy -= cyText;
+   }
 
    // Make sure we set the color of the background in display context
    IDISPLAY_SetColor(pd, CLR_USER_BACKGROUND, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
@@ -5851,13 +7155,6 @@ static void Icon_DrawODItem(CMenuCtl * pme, CMenuItem * pmi, AEERect * prc, bool
    cbData.pIDisplay = pd;
    cbData.nActionInfo = pmi->nItemID;
    cbData.nActionInfo <<= 16;
-   cbData.rc = *prc;
-   
-   if(SINGLE_FRAME(pme)){
-      if(pme->m_bHasText)
-         cbData.rc.dy -= cyText;
-   }
-   
    if (bSel)
       cbData.nActionInfo |= 0x00000001;
 
@@ -5882,13 +7179,13 @@ static void Icon_DrawItemText(CMenuCtl * pme, CMenuItem * pmi, uint16 cyText, bo
       uint16 cyMaxText = Icon_GetMaxTextHeight(pme);
 
       if(!cyText)
-	      cyText = cyMaxText;
+          cyText = cyMaxText;
 
       SETAEERECT(&rc, pme->m_rc.x, pme->m_rc.y, pme->m_rc.dx, cyText);
 
       // Adjust if text is at the bottom
       if(!ALIGN_TEXT_TOP(pme))
-			rc.y += (pme->m_rc.dy - cyText);
+            rc.y += (pme->m_rc.dy - cyText);
    
       // We actually increment the size of the text by 1 pixel so that it hits the 
       // border of the box...
@@ -5935,13 +7232,13 @@ static void Icon_DrawODItemText(CMenuCtl * pme, CMenuItem * pmi, uint16 cyText, 
       AEEODCBData cbData;
 
       if(!cyText)
-	      cyText = Icon_GetMaxTextHeight(pme);
+          cyText = Icon_GetMaxTextHeight(pme);
 
       SETAEERECT(&rc, pme->m_rc.x, pme->m_rc.y, pme->m_rc.dx, cyText);
 
       // Adjust if text is at the bottom
       if(!ALIGN_TEXT_TOP(pme))
-			rc.y += (pme->m_rc.dy - cyText);
+            rc.y += (pme->m_rc.dy - cyText);
    
       // We actually increment the size of the text by 1 pixel so that it hits the 
       // border of the box...
@@ -5995,7 +7292,7 @@ static void Icon_CalcRows(CMenuCtl * pme)
 
    // We need height of tallest item
    if(!pme->m_cyMaxItem)
-	   return;
+       return;
 
    cyMax = pme->m_rc.dy;
    cxMax = pme->m_rc.dx;
@@ -6004,6 +7301,10 @@ static void Icon_CalcRows(CMenuCtl * pme)
    if(pme->m_bHasText){
       cyMax -= (Icon_GetMaxTextHeight(pme) + (2*AEE_FRAME_SIZE));
       cxMax -= (AEE_FRAME_SIZE * 2);
+      if(cyMax < pme->m_cyMaxItem)
+        pme->m_cyMaxItem = cyMax;
+      if(cxMax < pme->m_cxMaxItem)
+        pme->m_cxMaxItem = cxMax;
    }
 
    // Number of displayable icon rows
@@ -6023,7 +7324,10 @@ static void Icon_CalcRows(CMenuCtl * pme)
       pme->m_bIconVScroll = TRUE; // Vertical Scroll
    }
    else
-      pme->m_bIconHScroll = (pme->m_nRows == 1 ? TRUE : FALSE);   // Horizontal Scroll
+   {
+      pme->m_bIconHScroll =( (pme->m_nRows == 1 && pme->m_nTotalRows > 1)? TRUE : FALSE);
+      //pme->m_bIconHScroll = (pme->m_nTotalRows/*m_nCols*/ == 1 ? FALSE : TRUE);   // Horizontal Scroll
+   }
    
    // Calculate horizontal/vertical padding around icons
    pme->m_xImagePad = (cxMax - (pme->m_nCols * pme->m_cxMaxItem)) / (pme->m_nCols + 1);
@@ -6041,7 +7345,7 @@ static int Icon_CalcCols(CMenuCtl * pme, int cx)
 
    // Need width of widest item
    if(! pme->m_cxMaxItem)
-	   return 0;
+       return 0;
 
    // Number of displayable icon cols
    nCols = cx / pme->m_cxMaxItem;
@@ -6085,7 +7389,16 @@ static void Cal_DrawTime(CMenuCtl * pme, IDisplay * pd, uint16 wTimeMin, int x, 
 
    // Load small font image
    if(!pme->m_pFont){
-      pme->m_pFont = ISHELL_LoadResImage(pme->m_pIShell, AEECONTROLS_RES_FILE, AEE_IDB_SMALLFONTS);
+       
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) 
+        IMAGE_WIDTH = pme->userSetStyle ? 4 : 5;
+        pme->m_pFont = 
+              pme->userSetStyle ?
+              ISHELL_LoadResImage(pme->m_pIShell, AEECONTROLS_RES_FILE, AEE_IDB_SMALLFONTS):        
+              ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_NUMBER);
+#else
+        pme->m_pFont = ISHELL_LoadResImage(pme->m_pIShell, AEECONTROLS_RES_FILE, AEE_IDB_SMALLFONTS);
+#endif
       if(!pme->m_pFont)
          return;
       IIMAGE_SetParm(pme->m_pFont, IPARM_CXFRAME, IMAGE_WIDTH, 0);
@@ -6093,7 +7406,7 @@ static void Cal_DrawTime(CMenuCtl * pme, IDisplay * pd, uint16 wTimeMin, int x, 
 
    // get time string
    aee_MSECSToHM((uint32)(wTimeMin * 60l) * 1000l, &wHour, &wMins, &wSecs, &wHSecs, &bPM);
-   SNPRINTF(szTemp,sizeof(szTemp),"%02d:%02d",wHour,wMins);
+   SPRINTF(szTemp,"%02d:%02d",wHour,wMins);
 
    // indicate PM
    if(bPM){
@@ -6105,10 +7418,24 @@ static void Cal_DrawTime(CMenuCtl * pme, IDisplay * pd, uint16 wTimeMin, int x, 
    
    for(psz = szTemp; (ch = *psz) != 0; psz++){
       if(ch == ':'){    // Draw :
-         SETAEERECT(&rc, x + 1, y, 2, 1);
-         IDISPLAY_FillRect(pd, &rc, CLR_USER_TEXT);
-         rc.y += 3;
-         IDISPLAY_FillRect(pd, &rc, CLR_USER_TEXT);
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)     
+            if( pme->userSetStyle)
+            {
+                SETAEERECT(&rc, x + 1, y, 2, 1);
+                IDISPLAY_FillRect(pd, &rc, CLR_USER_TEXT);
+                rc.y += 3;
+                IDISPLAY_FillRect(pd, &rc, CLR_USER_TEXT);
+            }
+            else
+            {
+                IIMAGE_DrawFrame(pme->m_pFont, 10, x, y);
+            }
+#else
+            SETAEERECT(&rc, x + 1, y, 2, 1);
+            IDISPLAY_FillRect(pd, &rc, CLR_USER_TEXT);
+            rc.y += 3;
+            IDISPLAY_FillRect(pd, &rc, CLR_USER_TEXT);
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
       }
       else{             // Draw Time
          if(ch != '0' || psz != szTemp)
@@ -6143,6 +7470,32 @@ with visible calendar menu items.
 ======================================================================*/
 static void Cal_CalcPageItems(CMenuCtl * pme)
 {
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    if(IS_CALENDAR_VIEW(pme))
+    {
+        CMenuItem   *pp     = GetItemByIdx(pme->m_pItemList, pme->m_nScrollItem);
+        uint16      cyLeft  = pme->m_rc.dy;
+        uint16      cyFont  = pme->m_cyFont;
+
+        if(pme->m_pTitle || IS_TITLE_OD(pme))
+        {
+            cyLeft -= pme->m_rcTitle.dy;
+        }
+        if( !pme->userSetStyle && pme->bottomBarType != BTBAR_NONE)
+        {
+            cyLeft -= GetBottomBarHeight( pme->m_pIDisplay);
+        }
+            
+        pme->m_nPageItems = 0;
+        for(; pp && cyLeft > 0; pp = pp->pNext)
+        {
+            if(GetItemHeight(pp, &cyLeft, (uint16)cyFont))
+            {
+                pme->m_nPageItems ++;
+            }
+        }
+    }          
+#else //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
    CMenuItem * pp = GetItemByIdx(pme->m_pItemList, pme->m_nScrollItem);
    uint16         cyLeft,cyFont,nFont;
    
@@ -6171,6 +7524,7 @@ static void Cal_CalcPageItems(CMenuCtl * pme)
             pme->m_nPageItems++;
       }
    }
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 }
 
 /*=====================================================================
@@ -6336,6 +7690,113 @@ Local Method - Draws a caledar menu item.
 ======================================================================*/
 static void Cal_DrawItem(CMenuCtl * pme, CMenuItem * pi, int nIdx, boolean bClear)
 {
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+   IDisplay *  pd = pme->m_pIDisplay;
+   AEERect     rc;
+   int         cx,cy;
+   boolean     bActive = (boolean)(nIdx == pme->m_nSelect);
+
+   Menu_SetItemColor(pme,pd,bActive,NULL);
+
+   cx = pme->m_rc.dx;
+   cy = pi->cyImage;
+
+   if (pme->m_nItems > pme->m_nPageItems) 
+      cx -= pme->m_nSBWidth;
+
+   SETAEERECT(&rc, pme->m_rc.x, pi->y, cx, cy);
+
+#if defined( FEATURE_CONTROL_BG_USE_IMAGE)
+   if(bClear && pme->userSetStyle)
+      IDISPLAY_FillRect(pd, &rc, RGB_NONE);
+   else if( bClear)
+       drawControlBg( pd, &rc);
+#else //#if defined( FEATURE_CONTROL_BG_USE_IMAGE)
+   if(bClear)
+      IDISPLAY_FillRect(pd, &rc, pme->userSetStyle ? RGB_NONE : RGB_BLACK);
+   
+   if( !pme->userSetStyle)
+   {
+       
+      rc.dx = IMAGE_WIDTH * 6;
+      IDISPLAY_FillRect( pd, &rc, pme->m_c.cTitle);
+      rc.dx = cx; 
+   }
+#endif //#if defined( FEATURE_CONTROL_BG_USE_IMAGE)
+   
+  if( bActive && !pme->userSetStyle)
+  {
+      
+      rc.x  += IMAGE_WIDTH * 6;
+      rc.dx -= IMAGE_WIDTH * 6;
+      Menu_DrawSelectBar( pme, &rc, pme->m_style[1].ft);
+      rc.x  -= IMAGE_WIDTH * 6;
+      rc.dx = cx;  
+  }
+
+  if( pme->userSetStyle && !bActive)
+  {
+      
+      if(nIdx > pme->m_nScrollItem){
+         rc.y--;
+         rc.dy++;
+      }
+      IDISPLAY_FrameRect(pd, &rc);
+      rc.y = pi->y;
+      rc.dy = cy;      
+  }
+  else
+  {
+       
+      RGBVAL oldFrameColor = IDISPLAY_SetColor( pd, 
+              CLR_USER_FRAME, 
+              RGB_WHITE);
+      
+      if(nIdx > pme->m_nScrollItem)
+      {
+          
+         rc.y--;
+         rc.dy++;
+      }
+      IDISPLAY_FrameRect( pd, &rc);
+      rc.y = pi->y;
+      rc.dy = cy;
+      IDISPLAY_SetColor( pd, CLR_USER_FRAME, oldFrameColor);
+   }
+      
+   // Draw Time
+   Cal_DrawTime(pme, pd, pi->wCalStart, rc.x , rc.y, rc.y + ((cy - IMAGE_WIDTH)/2));
+
+   // If this is active, invert time string
+   if( pme->userSetStyle && bActive){
+      rc.dx = IMAGE_WIDTH * 6;
+      IDISPLAY_InvertRect(pd, &rc);
+      rc.dx = cx;
+   }
+   
+   // Adjust for tims string
+   rc.x  += IMAGE_WIDTH * 6;
+   rc.dx -= IMAGE_WIDTH * 6;
+
+   // If not active, ensure that text doesn't touch frame
+   if(!bActive){
+      rc.x++;
+      rc.y++;
+      rc.dx -= 2;
+      rc.dy -= 2;
+   }
+
+   // Draw Text
+   IDISPLAY_DrawText(pd, 
+           pi->nFont,
+           pi->text,
+           -1,
+           rc.x,
+           rc.y,
+           &rc,
+           IDF_ALIGN_MIDDLE | ( pme->userSetStyle ? IDF_RECT_FILL : IDF_TEXT_TRANSPARENT) | ParagraphAlignment(pi->text, WSTRLEN(pi->text))
+    );
+#else //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
    IDisplay *  pd = pme->m_pIDisplay;
    AEERect     rc;
    int         cx,cy;
@@ -6391,6 +7852,7 @@ static void Cal_DrawItem(CMenuCtl * pme, CMenuItem * pi, int nIdx, boolean bClea
 
    // Draw Text
    IDISPLAY_DrawText(pd, pi->nFont, pi->text, -1, rc.x, rc.y, &rc,IDF_RECT_FILL|IDF_ALIGN_MIDDLE|ParagraphAlignment(pi->text, WSTRLEN(pi->text)));
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 }
 
 
@@ -6532,11 +7994,14 @@ static uint16 GetItemHeight(CMenuItem * p, uint16 * pwLeft, uint16 wLine)
 
 Local Method - Adjusts the size of the rect based upon the style.
 
+ ÕâÀïÒ»°ãÓÃÀ´µ÷Õûitem×Ö·û´®µÄÏÔÊ¾¾ØÐÎ¿ò
 ======================================================================*/
 static void AdjustRect(AEERect * prc, AEEItemStyle * ps)
 {
    prc->x += ps->xOffset;
-   prc->y += ps->yOffset;
+   /* ÒòÎªÏÔÊ¾×ÖÌå×ÜÔÚ×ÖÌåÏÂ·½¿ÕÓàÒ»¸öÏñËØ£¬ÎªÁËÏÔÊ¾ÃÀ¹Û£¬
+    ×ÜÊÇÔÚ×Ý×ø±ê·½Ïò¶àÏòÏÂÆ«ÒÆÒ»¸öÏñËØÊ¹Ö®¿´ÆðÀ´¸ü¼Ó¾ÓÖÐ*/
+   prc->y += (ps->yOffset + AEE_FRAME_SIZE);
    prc->dx -= (ps->xOffset * 2);
    prc->dy -= (ps->yOffset * 2);
 }
@@ -6561,3 +8026,394 @@ static int GetItemWidth(CMenuItem * pi)
    return(cx);
 }
 
+
+#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+static void IMenuCtl_SetBottomBarType( IMenuCtl *po, int bottomBar_e_Type)
+{
+    CMenuCtl* pme = (CMenuCtl*)po;
+    
+    pme->bottomBarType = bottomBar_e_Type;
+    Menu_Recalc( pme);
+    
+    // 2008.03.18
+    if( !ITEM_IS_VISIBLE( pme, pme->m_nSelect))
+    {
+
+        int nDir = 0;
+
+        if( pme->m_nSelect < pme->m_nScrollItem)
+        {
+            nDir = pme->m_nSelect;
+        }
+        else
+        {
+            nDir = ( pme->m_nSelect + 1) - pme->m_nPageItems;
+            if( nDir < 0)
+            {
+                nDir = 0;
+            }
+        }
+        pme->m_nScrollItem = (uint16)nDir;
+    }
+}
+
+/*=====================================================================
+
+Local Method - Set pop menu rect
+
+======================================================================*/
+static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
+{
+    CMenuCtl *pme = (CMenuCtl*)po;
+    AEEDeviceInfo   devinfo;
+    IImage                *BgImg;
+    int                       cy,cyMax,cxMax,cys,cxs,nFrame;
+
+    //Draw shadow for screen
+    BgImg = ISHELL_LoadResImage(pme->m_pIShell,
+                            AEE_APPSCOMMONRES_IMAGESFILE,
+                            IDB_BGMASK);
+    if(BgImg != NULL)
+    {                  
+
+        int             x    = 0;
+        int             y    = 0;
+        AEEImageInfo    ii   = {0};
+        
+#if defined( AEE_SIMULATOR)
+        AEEDeviceInfo dm = {0};
+        ISHELL_GetDeviceInfo(pme->m_pIShell, &dm);
+        SETAEERECT( &pme->m_rc, 0, 0, dm.cxScreen, dm.cyScreen);
+#endif
+        IIMAGE_GetInfo( BgImg, &ii);
+        IIMAGE_Draw(BgImg,x,y);
+/*
+        while( x < pme->m_rc.dx)
+        {
+
+            y = 0;
+            while( y < pme->m_rc.dy)
+            {
+                IIMAGE_Draw( BgImg, x, y);
+                ERR("DRAW BG IMG SUCCESSFUL",0,0,0);
+                y += ii.cy;
+            }
+            x += ii.cx;
+        }
+*/   
+
+        IIMAGE_Release(BgImg);
+        BgImg = NULL;
+    }
+    else
+    {
+        return;
+    }    
+
+    pme->SetPopMenu = TRUE;
+    
+    MEMSET(&devinfo, 0, sizeof(devinfo));
+    ISHELL_GetDeviceInfo(pme->m_pIShell, &devinfo);    
+    
+    // Get extra pixels added to height and width because of style
+    Menu_GetStyleOffsets(pme, &cxs, &cys);
+    
+    nFrame = (uint16)(AEE_FRAME_SIZE * 2);   
+    cxMax = devinfo.cxScreen *2/3;     // Max pop menu width
+    //cyMax = devinfo.cyScreen*3/4 - cys - nFrame;     // Max pop menu  height
+    cyMax = (pme->m_cyFont+ cys)*6 + GetBottomBarHeight(pme->m_pIDisplay) + AEE_FRAME_SIZE*10;
+
+    cy = (pme->m_cyFont + cys)* (pme->m_nItems) + GetBottomBarHeight( pme->m_pIDisplay) + AEE_FRAME_SIZE*(pme->m_nItems + 4); 
+    if(cy > cyMax)
+    {
+        cy  = cyMax;
+    }
+
+    //Set pop menu rect
+    pme->m_rc.dx = cxMax-nFrame;
+    pme->m_rc.dy = cy;
+    pme->m_rc.x = AEE_FRAME_SIZE*2;
+    pme->m_rc.y = devinfo.cyScreen - pme->m_rc.dy;
+
+    {
+        uint32 wMask = IMENUCTL_GetOemProperties(po);
+
+        IMENUCTL_SetOemProperties(po, wMask |OEMMP_USE_MENU_STYLE);
+    }
+    Menu_Recalc(pme);
+}
+#endif
+
+// Public Method - Sets the OEM properties (flags) for the menu.
+static void IMenuCtl_SetOemProperties(IMenuCtl * po, uint32 nProperties)
+{
+    CMenuCtl *pme = (CMenuCtl*)po;
+    
+    pme->m_dwOemProps = nProperties;
+}
+   
+// Public Method - Returns the active OEM properties for the menu.
+static uint32 IMenuCtl_GetOemProperties(IMenuCtl * po)
+{
+    return(((CMenuCtl *)po)->m_dwOemProps);
+}
+
+/*=====================================================================
+
+Set last item's select value(TRUE or FALSE)
+
+======================================================================*/
+static void IMenuCtl_SetLastItemSel(IMenuCtl *po, boolean bSelected)
+{
+    CMenuCtl *pme = (CMenuCtl*)po;
+    
+    pme->m_pLastItem->bIsSel = bSelected;
+}
+
+#ifdef FEATURE_CUSTOMIZED_MENU_STYLE
+/*=====================================================================
+
+Set menu background image
+
+======================================================================*/
+static void IMenuCtl_SetBackGround(IMenuCtl *po, char *pstrImgResFile, uint16 nImgResID)
+{
+    CMenuCtl *pme = (CMenuCtl*)po;
+
+    if(pstrImgResFile != NULL && STRLEN(pstrImgResFile) != 0 && nImgResID != 0)
+    {
+        pme->nBgImgResID = nImgResID;
+        MEMSET(pme->strBgImgResFile, 0, sizeof(pme->strBgImgResFile));
+        STRCPY(pme->strBgImgResFile, pstrImgResFile);
+        if(pme->m_pBgImage != NULL)
+        {
+            IImage_Release(pme->m_pBgImage);
+            pme->m_pBgImage = NULL;
+        }
+        pme->m_pBgImage = ISHELL_LoadResImage(pme->m_pIShell,
+                           pme->strBgImgResFile,
+                           pme->nBgImgResID);
+    }
+}
+#endif
+/*=====================================================================
+
+Draw menu background image
+
+======================================================================*/
+static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
+{
+#ifdef FEATURE_RANDOM_MENU_COLOR
+    if(pme->m_nRandomMenu != 0)
+    {
+        if(pme->m_pBgImage == NULL)
+        {
+            pme->m_pBgImage = ISHELL_LoadResImage(pme->m_pIShell,
+                                   AEE_APPSCOMMONRES_IMAGESFILE,
+                                   IDI_MENU_BACKGROUND_TRANS);
+        }
+        IDISPLAY_FillRect( pme->m_pIDisplay, pRect, pme->m_c.cBack);
+        Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, pme->m_c.cBack, pRect, APPSCOMMON_MENUBG_XPOS, APPSCOMMON_MENUBG_YPOS);
+    }
+    else
+#endif
+    {
+       if(pme->m_pBgImage == NULL)
+       {
+            if(STRLEN(pme->strBgImgResFile) != 0 && pme->nBgImgResID != 0)
+            {
+                pme->m_pBgImage = ISHELL_LoadResImage(pme->m_pIShell,
+                                   pme->strBgImgResFile,
+                                   pme->nBgImgResID);
+            }
+            else
+            {
+                pme->m_pBgImage = ISHELL_LoadResImage(pme->m_pIShell,
+                                   AEE_APPSCOMMONRES_IMAGESFILE,
+                                   IDI_MENU_BACKGROUND);
+            }
+       }
+       Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, pme->m_c.cBack, pRect, 0, 0);
+    }
+}
+#ifdef FEATURE_MENUTITLE_AUTOSCROLL
+/*=====================================================================
+
+Local Method - Draws a standard menu title
+
+======================================================================*/
+static void Menu_DrawTitle(CMenuCtl * pme, uint16 wChars)
+{
+    IDisplay *  pd = pme->m_pIDisplay;
+    int         x;
+    int         y;
+    AEERect     qrc;
+    uint16      cyLeft;
+    AECHAR     *pTitle;
+
+    AEERect     TextRect;
+
+    if(!pme->m_pTitle)
+    {
+        return;
+    }
+    
+    pTitle = &pme->m_pTitle[wChars];
+    x = pme->m_rc.x;
+    y = pme->m_rc.y;
+    //cyFont = pme->m_cyFont;
+    cyLeft = pme->m_rc.dy;
+
+ 
+    SETAEERECT(&qrc, x, y, pme->m_rc.dx, pme->m_rcTitle.dy);//cyFont);
+    TextRect = qrc;
+
+#ifdef FEATURE_LANG_BIDI
+    if(ParagraphAlignment(pme->m_pTitle, WSTRLEN(pme->m_pTitle))&IDF_ALIGN_RIGHT)
+    {
+        TextRect.dx -= MENUTEXT_XOFFSET;//a little leading
+    }
+    else
+#endif /*FEATURE_LANG_BIDI*/
+    {
+        TextRect.x  += MENUTEXT_XOFFSET;//a little leading
+        TextRect.dx -= MENUTEXT_XOFFSET;//a little leading
+    }
+
+	//wlh 20090410 mod ÆÁ±ÎÏÂÃæÒ»¾ä´úÂë
+    //IDISPLAY_FillRect(pme->m_pIDisplay, &TextRect, MAKE_RGB(0, 0, 0));
+	//IDISPLAY_FillRect(pme->m_pIDisplay, &TextRect, MAKE_RGB(20, 47, 91));
+ 
+ #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+        if( pme->userSetStyle)
+        {
+            IDISPLAY_DrawText( pd, 
+                  AEE_FONT_NORMAL, 
+                  pTitle, 
+                  -1, 
+                  x, 
+                  y, 
+                  &TextRect, 
+                  //IDF_RECT_FILL | ParagraphAlignment(pme->m_pTitle, WSTRLEN(pme->m_pTitle))
+                  IDF_ALIGN_MIDDLE | IDF_RECT_FILL | ParagraphAlignment(pme->m_pTitle, WSTRLEN(pme->m_pTitle))
+              );
+        }
+        else
+        {
+            TitleBar_Param_type titleBarParms;
+            MEMSET( &titleBarParms, 0, sizeof( TitleBar_Param_type));
+            
+            //titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER;
+            titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+            titleBarParms.pwszTitle     = pTitle;
+            titleBarParms.prc           = &TextRect;
+            
+            if(pme->m_dwOemProps & OEMMP_ARROW_TITLE)
+            {
+                titleBarParms.eTBarType = TBAR_ARROW;
+            }         
+            DrawTitleBar( pd, &titleBarParms);
+        }
+#else
+	    IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, pTitle, -1, x, y, &TextRect, IDF_RECT_FILL | ParagraphAlignment(pme->m_pTitle, WSTRLEN(pme->m_pTitle)));
+#endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
+#if 0
+    if(UNDERLINE(pme)){
+        qrc.y = qrc.dy - 1;
+        qrc.dy = 1;
+        IDISPLAY_FillRect(pme->m_pIDisplay, &qrc, CLR_USER_TEXT);
+    }//UNDERLINE(pme)
+#endif
+}// Menu_DrawTitle
+
+/*=====================================================================
+
+Local Method - Determines whether a menu item scrolls
+
+======================================================================*/
+static boolean Menu_TitleScrolls(CMenuCtl * pme, int nIdx)
+{
+    int   cx,cxMax;
+
+    cx = IDISPLAY_MeasureText(pme->m_pIDisplay, AEE_FONT_BOLD, pme->m_pTitle + nIdx);
+   
+    cxMax = pme->m_rc.dx;    
+    
+    return(cx > cxMax);
+}// Menu_TitleScrolls
+
+/*=====================================================================
+
+Local Method - Auto-scroll logic for standard menu title.
+
+======================================================================*/
+static void Menu_TitleAutoScroll(CMenuCtl * pme)
+{
+    int         n,nIdxNew,nIdx;
+    RGBVAL      clrBack,clrText,clrFrame;
+   
+    if(!pme->m_bTitleAutoScroll)
+    {
+        return;
+    }
+    
+    // See if the index is within range for the string...
+    nIdx  = nIdxNew = pme->m_nTitleAutoScrollIdx;
+    n     = WSTRLEN(pme->m_pTitle);
+
+    if(nIdx < n)
+    {
+        // Measure the text starting from the auto-scroll offset
+        if(Menu_TitleScrolls(pme, nIdx))
+        {
+            nIdxNew++;
+        }
+        else
+        {
+            nIdxNew = 0;
+        }
+        
+        Menu_InitColors(pme, &clrBack, &clrText, &clrFrame);
+        Menu_DrawTitle(pme, (uint16)nIdx);
+        ResetColors(pme->m_pIDisplay, clrBack, clrText,clrFrame);
+        IDISPLAY_Update(pme->m_pIDisplay);
+    }
+    else
+    {
+        nIdxNew = 0;
+    }
+
+    pme->m_nTitleAutoScrollIdx = nIdxNew;
+
+    ISHELL_SetTimer( pme->m_pIShell,
+                    (uint32)(nIdx && nIdxNew ? AUTO_SCROLL_TIME : AUTO_SCROLL_START),
+                    (PFNNOTIFY)(Menu_TitleAutoScroll), 
+                    pme);
+}// Menu_TitleAutoScroll
+
+/*=====================================================================
+
+Local Method - Resets the auto-scroll timer for a menu title.
+
+======================================================================*/
+static void Menu_ResetTitleAutoScroll(CMenuCtl * pme)
+{
+    pme->m_nTitleAutoScrollIdx = 0;
+    
+    if( pme->m_bActive && Menu_TitleScrolls(pme, 0))
+    {
+        pme->m_bTitleAutoScroll = TRUE;
+
+    // We set the timer to go off pretty quickly.  That's because the AutoScroll function
+    // will automatically set a longer timer for the first and last characters...
+
+        ISHELL_SetTimer(pme->m_pIShell, AUTO_SCROLL_TIME, (PFNNOTIFY)(Menu_TitleAutoScroll), pme);
+    }
+    else
+    {
+        ISHELL_CancelTimer(pme->m_pIShell, (PFNNOTIFY)(Menu_TitleAutoScroll), pme);
+        pme->m_bTitleAutoScroll = FALSE;
+    }
+}// Menu_ResetTitleAutoScroll
+#endif //FEATURE_MENUTITLE_AUTOSCROLL

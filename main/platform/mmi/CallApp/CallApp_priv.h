@@ -251,8 +251,12 @@ typedef PACKED struct {
 #define FEATURE_APP_PAUSE_TIMER
 #define FEATURE_IMAGE_DIALING_DIGITS
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
-#ifdef FEATURE_DISP_176X220
+#if defined(FEATURE_DISP_176X220)
     #define NUM_IMAGE_HIGHT                    (30)
+    #define NUM_IMAGE_WIDTH                    (20)
+    #define REFUI_CALL_MAX_IMAGSIZE       (16)
+#elif defined(FEATURE_DISP_128X128)
+	#define NUM_IMAGE_HIGHT                    (25)
     #define NUM_IMAGE_WIDTH                    (20)
     #define REFUI_CALL_MAX_IMAGSIZE       (16)
 #else

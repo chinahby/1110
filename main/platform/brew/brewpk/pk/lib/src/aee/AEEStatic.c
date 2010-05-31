@@ -17,18 +17,27 @@ interfaces in AEE.
 
 PUBLIC CLASSES AND STATIC FUNCTIONS: IStatic
 
-Copyright © 1999-2007 QUALCOMM Incorporated.
+Copyright ?1999-2002 QUALCOMM Incorporated.
          All Rights Reserved.
        QUALCOMM Proprietary/GTDR
 
 =====================================================*/
-
+ 
+#if !defined( AEE_SIMULATOR)
 #include "OEMConfig.h"
+#endif
+
 #include "AEE_OEM.h"
 #include "AEEStatic_priv.h"
 #include "AEEStdLib.h"
-//#include "AEE_MIF.h"
 #include "AEEText.h"
+// Í¼Æ¬×ÊÔ´ÎÄ¼þ
+#if !defined( FEATURE_COLOR_DISPLAY) || !defined( AEESIMULATOR)
+#include "appscommon_color.brh"
+#else
+#include "appscommon_momo.brh"
+#endif
+#include "Appscommon.h"
 #include "AEEPointerHelpers.h"
 
 /*===========================================================================
@@ -75,6 +84,8 @@ typedef struct
    AEEPoint ptPosition;
 } PenTracker;
 
+#define TEXT_BETWEEN_LINE_PIXEL   (3)
+
 /*===========================================================================
 
 Class Definitions
@@ -111,6 +122,11 @@ struct _AStatic
    IAStream *     m_pStream;
    PenTracker     m_ptTracker;
    AEEAutoRepeat  m_arPenRepeat;
+   IImage        *m_backgroundImg;
+   uint16         m_nBgImgResID;
+   char           m_strBgImgResFile[MAX_FILE_NAME];
+   RGBVAL         m_nFontColor;
+   boolean        m_bUserCustomColor;
 };
 
 // Static Text Routines
@@ -148,7 +164,13 @@ static int              XStrSize(void * pIn, boolean bSB);
 
 static byte *     AStatic_GetNextLine(AStatic * pme, byte * pText, int cxMax,int * pnLen);
 static void       FreePtr(void ** pp);
+static void AStatic_FillRect_Transparence(AStatic * pme, AEERect rc);
 
+static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc);
+
+static void AStatic_SetBackGround(IStatic * po, char *pstrImgResFile, uint16 nImgResID);
+
+static void AStatic_SetFontColor(IStatic * po, RGBVAL nFontColor);
 
 static const VTBL(IStatic) gStaticMethods = {AStatic_AddRef,
                                              AStatic_Release,
@@ -166,7 +188,10 @@ static const VTBL(IStatic) gStaticMethods = {AStatic_AddRef,
                                              AStatic_SetTextEx,
                                              AStatic_GoToLine,
                                              AStatic_SizeToFit,
-                                             AStatic_IsScrollable};
+                                             AStatic_IsScrollable,
+                                             AStatic_SetBackGround,
+                                             AStatic_SetFontColor
+                                             };
 
 /*===========================================================================
 
@@ -212,7 +237,11 @@ int Static_New(IShell * pShell,AEECLSID cls, void **ppif)
    ISHELL_GetDeviceInfoEx(pShell, AEE_DEVICEITEM_REPEAT_TIME, (void *)&pme->m_arPenRepeat, &nSize);
 
    AStatic_SetFont((IStatic *)pme,AEE_FONT_NORMAL, AEE_FONT_BOLD);
-
+   pme->m_backgroundImg = NULL;
+   pme->m_nBgImgResID = 0;
+   MEMSET(pme->m_strBgImgResFile, 0, sizeof(pme->m_strBgImgResFile)); 
+   pme->m_nFontColor = TEXT_FONT_COLOR;
+   pme->m_bUserCustomColor = FALSE;
    return SUCCESS;
 }
 
@@ -244,6 +273,11 @@ static uint32  AStatic_Release(IStatic * po)
       AStatic_Reset(po);
       IDISPLAY_Release(pme->m_pDisplay);
       FreePtr((void **)&pme->m_pTitle);
+      if(pme->m_backgroundImg != NULL)
+      {
+          IIMAGE_Release(pme->m_backgroundImg);
+          pme->m_backgroundImg = NULL;
+      }
       FREE(pme);
    }
    return(0);
@@ -279,7 +313,7 @@ static boolean AStatic_HandleEvent
          if( pme->m_ptTracker.cbHit && pme->m_nLines > pme->m_nPageLines ){
             // Need to do things in relation to where the pen is and whether on thumb or off
             if( pme->m_ptTracker.cbHit & PTRCK_HIT_THUMB ){
-               
+
                // This logic is married to AStatic_GetScrollBarRects()
                // It is inverted as in Solve for pme->m_nIdx
                if( wXPos >= ((pme->m_rc.x + pme->m_rc.dx) - pme->m_nSBWidth)
@@ -323,7 +357,7 @@ static boolean AStatic_HandleEvent
                // AND the move was in the direction of the flow
                if( !(pme->m_ptTracker.cbFlags & PTRCK_GEN_TMRSET) 
                   && pme->m_ptTracker.cbHit & PTRCK_NOTTHUMB ){
-                  AStatic_ScrollByPos(pme, ((pme->m_ptTracker.cbHit & PTRCK_HIT_BELOW) ? 1 : -1), (int16)AEE_POINTER_GET_X((const char *)dwParam), (int16)AEE_POINTER_GET_Y((const char *)dwParam));
+                  AStatic_ScrollByPos(pme, ((pme->m_ptTracker.cbHit & PTRCK_HIT_BELOW) ? 1 : -1), AEE_GET_X(dwParam), AEE_GET_Y(dwParam));
                }
             }
             return TRUE;
@@ -370,7 +404,7 @@ static boolean AStatic_HandleEvent
             return TRUE;
          }//pen outside of scrolling area
       }
-
+      break;
       case EVT_POINTER_DOWN:
       {
          int16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
@@ -667,14 +701,47 @@ static boolean AStatic_ScrollByPos(AStatic * pme, int nDir, int16 wXPos, int16 w
 Internal Method - Redraws text in the IStatic
 
 ===========================================================================*/
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#include "aleuser.h"
+extern char *gAleWorkBuffer;
+#endif
 static boolean AStatic_Redraw(IStatic * po)
 {
    AStatic *   pme = (AStatic *)po;
    AEERect     rc;
    uint32      dwTitleAlignment;
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+    AEEDeviceInfo DeviceInfo;
+    boolean bContAppDetail = FALSE;
+    
+    ISHELL_GetDeviceInfo(pme->m_pShell, &DeviceInfo);
+    if((LNG_ENGLISH == DeviceInfo.dwLang) && (pme->m_dwProps & ST_DISPLAY_CONT_DETAIL))//such as contact detail
+    {
+        AleSetTextDirection (ALE_TEXTDIR_ENGLISH_MAJOR, gAleWorkBuffer) ;
+        bContAppDetail = TRUE;
+    }
+#endif
 
    rc = pme->m_rc;
-   IDISPLAY_FillRect(pme->m_pDisplay, &rc, CLR_USER_BACKGROUND);
+   
+    if(pme->m_dwProps & ST_TRANSPARENT) 
+    {
+        AStatic_FillRect_Transparence(pme, rc);
+    }
+    else
+    {
+    	 if(!(pme->m_dwProps & ST_TRANSPARENTBACK))
+    	 {
+            if(pme->m_dwProps & ST_GRAPHIC_BG)
+            {
+                AStatic_DrawBackground(pme, &rc);
+            }
+            else
+            {
+                IDISPLAY_FillRect(pme->m_pDisplay, &rc, CLR_USER_BACKGROUND);
+            }
+        }
+    }
 
    if(pme->m_pTitle){
       // determine the alignment of the Title text
@@ -682,7 +749,45 @@ static boolean AStatic_Redraw(IStatic * po)
          dwTitleAlignment = IDF_ALIGN_CENTER;
       else
          dwTitleAlignment = ParagraphAlignment((AECHAR *)(pme->m_pTitle), WSTRLEN(pme->m_pTitle));
-      IDISPLAY_DrawText(pme->m_pDisplay, pme->m_fntTitle, pme->m_pTitle, -1, pme->m_rc.x, pme->m_rc.y, &pme->m_rc,dwTitleAlignment);
+      if (pme->m_dwProps & ST_DISPLATSMS)
+      {
+          RGBVAL oldColor=IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, MAKE_RGB(255,0,0));
+          
+          IDISPLAY_DrawText(pme->m_pDisplay, pme->m_fntTitle, pme->m_pTitle, -1, pme->m_rc.x, pme->m_rc.y, &pme->m_rc,dwTitleAlignment);
+          (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, oldColor);
+      }
+      else
+      if(!(pme->m_dwProps & ST_TRANSPARENTBACK))
+      {
+          RGBVAL oldColor;
+
+          if(pme->m_dwProps & ST_GRAPHIC_BG)
+          {
+              oldColor = TEXT_GRAPHIC_FONT_COLOR;
+          }
+          else
+          {
+              oldColor = pme->m_nFontColor;
+          }
+          
+          oldColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, oldColor);
+          IDISPLAY_DrawText(pme->m_pDisplay, pme->m_fntTitle, pme->m_pTitle, -1, pme->m_rc.x, pme->m_rc.y, &pme->m_rc,dwTitleAlignment);
+          (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, oldColor);
+      }
+      else
+      {
+          RGBVAL oldColor;
+
+          if(pme->m_bUserCustomColor)
+          {
+            oldColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, pme->m_nFontColor);
+          }
+          IDISPLAY_DrawText(pme->m_pDisplay, pme->m_fntTitle, pme->m_pTitle, -1, pme->m_rc.x, pme->m_rc.y, &pme->m_rc,dwTitleAlignment);
+          if(pme->m_bUserCustomColor)
+          {
+            (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, oldColor);
+          }
+      }
       if(pme->m_dwProps & ST_UNDERLINE){
          rc.y  = pme->m_rc.y + pme->m_cyTitle - 1;
          rc.dy = 1;
@@ -729,6 +834,12 @@ static boolean AStatic_Redraw(IStatic * po)
          IDISPLAY_FrameRect(pme->m_pDisplay, &rc);
       }
    }
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+    if(TRUE == bContAppDetail)
+    {
+        AleSetTextDirection (ALE_TEXTDIR_ARABIC_SMART, gAleWorkBuffer) ;
+    }
+#endif
 
    return(TRUE);
 }
@@ -1150,7 +1261,7 @@ static void AStatic_SetPageLineCount(AStatic * pme)
    if(pme->m_pTitle)
       cy -= pme->m_cyTitle;
       
-   pme->m_nPageLines = cy / pme->m_cyText;
+   pme->m_nPageLines = (cy + TEXT_BETWEEN_LINE_PIXEL) / (pme->m_cyText + TEXT_BETWEEN_LINE_PIXEL);
 }
    
 /*===========================================================================
@@ -1168,12 +1279,16 @@ static boolean AStatic_Recalc(AStatic * pme)
    uint32         dwParagraphAlignment;
    boolean        bAlignmentDontCare = ((pme->m_dwProps & ST_ASCII)!=0) || ((pme->m_dwProps & ST_CENTERTEXT)!=0);
    AECHAR         wLastChar;
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+   AEEDeviceInfo DeviceInfo;
 
+   ISHELL_GetDeviceInfo(pme->m_pShell, &DeviceInfo);
+#endif
    // Determine the number of lines we can fit...
 
    AStatic_SetPageLineCount(pme);
 
-   cxMax = pme->m_rc.dx;
+   cxMax = pme->m_rc.dx - 2*TEXT_BETWEEN_LINE_PIXEL;
 
    // Determine the place we need to pickup from.  If the line array is set, we will
    // start adding entries from there...
@@ -1227,14 +1342,32 @@ static boolean AStatic_Recalc(AStatic * pme)
                if (bAlignmentDontCare)
                   dwParagraphAlignment = IDF_ALIGN_NONE;
                else
-                  dwParagraphAlignment = ParagraphAlignment((AECHAR *)(pme->m_pText + pl->nOffset), pl->nLen);
+               {
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+                        if((LNG_ENGLISH == DeviceInfo.dwLang) && (pme->m_dwProps & ST_DISPLAY_CONT_DETAIL))
+                        {
+                            dwParagraphAlignment = IDF_ALIGN_LEFT;
+                        }
+                        else//other static control (sms's drafts and templates module)
+                        {
+                            dwParagraphAlignment = ParagraphAlignment((AECHAR *)(pme->m_pText + pl->nOffset), pl->nLen);
+                        }
+#else                    
+                        dwParagraphAlignment = ParagraphAlignment((AECHAR *)(pme->m_pText + pl->nOffset), pl->nLen);
+#endif
+                }
             }
             pl->dwAlignment = dwParagraphAlignment;
 
             // if we care about alignment, check to see if we just finished calculating a paragraph.
             if (!bAlignmentDontCare) {
                wLastChar = *((AECHAR *)(pme->m_pText + pl->nOffset) + pl->nLen);
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+               if ((wLastChar == 0x000A) || (wLastChar == 0x2029) || 
+                    (wLastChar == 0x000D) || (pme->m_dwProps & ST_DISPLATSMS)) //0X0A:NEWLINE,0X0D:CR
+#else
                if ((wLastChar == 0x000A) || (wLastChar == 0x2029))
+#endif               
                   dwParagraphAlignment = (uint32)-1; // Determine the alignment of the next paragraph.
             }
 
@@ -1268,9 +1401,9 @@ static boolean AStatic_Recalc(AStatic * pme)
 
    // Determine the starting point for text drawing...
 
-   pme->m_yText = pme->m_cyTitle + pme->m_rc.y;
+   pme->m_yText = pme->m_cyTitle + pme->m_rc.y + TEXT_BETWEEN_LINE_PIXEL;
    if(!pme->m_bAutoScroll && (pme->m_dwProps & ST_MIDDLETEXT)){
-      cy = nLines * pme->m_cyText;
+      cy = nLines * (pme->m_cyText + TEXT_BETWEEN_LINE_PIXEL);
       cyAvail = pme->m_rc.dy - pme->m_cyTitle;
       if(cy < cyAvail)
          pme->m_yText += ((cyAvail - cy) / 2);
@@ -1320,7 +1453,7 @@ static boolean AStatic_AddText(AStatic * pme, byte * pbText)
       if(bsb)
          (void)STRLCPY((char *)(pTemp + nOrig),(char *)pbText, (size_t)(nSize - nOrig));
       else
-         (void)WSTRLCPY((AECHAR *)(pTemp + nOrig), (AECHAR *)pbText, (size_t)(nSize - nOrig));
+         (void)WSTRLCPY((AECHAR *)(pTemp + nOrig), (AECHAR *)pbText, (size_t)(nSize - nOrig)/sizeof(AECHAR));// Gemsea AECHAR Lens
    }
    else{
       if(pme->m_dwProps & ST_TEXTALLOC)
@@ -1376,10 +1509,30 @@ static void AStatic_RedrawText(AStatic * pme)
    rc.dx -= 2;
    rc.y++;
    rc.dy -= 2;
-   IDISPLAY_EraseRect(pd,&rc);
+   if(pme->m_dwProps & ST_TRANSPARENT) 
+    {
+        AStatic_FillRect_Transparence(pme, rc);
+    }   
+    else
+    {   
+    	 if(!(pme->m_dwProps & ST_TRANSPARENTBACK))
+    	 {
+            if(pme->m_dwProps & ST_GRAPHIC_BG)
+            {
+                AStatic_DrawBackground(pme, &rc);
+            }
+            else
+            {
+                IDISPLAY_EraseRect(pd,&rc);
+            }
+    }
+    }
    // Now back... the ys are  already adjusted below
    rc.x--;
    rc.dx += 2;
+
+   rc.x += TEXT_BETWEEN_LINE_PIXEL;
+   rc.dx -= 2*TEXT_BETWEEN_LINE_PIXEL;
 
    rc.dy = pme->m_cyText;
 
@@ -1388,11 +1541,72 @@ static void AStatic_RedrawText(AStatic * pme)
     // the ST_MIDDLETEXT property
     rc.y = pme->m_yText;
 
-   for(i = 0; i < pme->m_nPageLines && nIdx < pme->m_nLines; pl++, nIdx++, i++){
-      psz = AStatic_GetLineText(pme, pl);
-      IDISPLAY_DrawText(pd,pme->m_fntText,psz,pl->nLen,rc.x,rc.y,&rc,(uint32)((pme->m_dwProps & ST_CENTERTEXT) ? IDF_ALIGN_CENTER : pl->dwAlignment));    
-      rc.y += rc.dy;
+   for(i = 0; i < pme->m_nPageLines && nIdx < pme->m_nLines; pl++, nIdx++, i++)
+    {
+        uint32 TextProps=0;
+        RGBVAL oldColor=RGB_BLACK;
+        
+        psz = AStatic_GetLineText(pme, pl);  
+
+        if (pme->m_dwProps & ST_CENTERTEXT)
+        {
+            TextProps = IDF_ALIGN_CENTER;
+        }
+        else
+        {
+            TextProps = pl->dwAlignment;
+        }
+        
+        if(pme->m_dwProps & ST_TRANSPARENT)
+        {
+            TextProps = TextProps |IDF_TEXT_TRANSPARENT;
+            oldColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, RGB_WHITE);
+        }        
+
+        if(pme->m_dwProps & ST_TRANSPARENTBACK)
+        {
+        	TextProps = TextProps|IDF_TEXT_TRANSPARENT;
+        }
+        if(!(pme->m_dwProps & ST_TRANSPARENTBACK))
+        {
+            RGBVAL oldFontColor;
+            
+            if(pme->m_dwProps & ST_GRAPHIC_BG)
+            {
+                TextProps = TextProps|IDF_TEXT_TRANSPARENT;
+                oldFontColor = TEXT_GRAPHIC_FONT_COLOR;
+            }
+            else
+            {
+                oldFontColor = pme->m_nFontColor;
+            }
+            
+            oldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, oldFontColor);
+            IDISPLAY_DrawText(pd,pme->m_fntText,psz,pl->nLen,rc.x,rc.y,&rc,TextProps);
+            (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, oldFontColor);
+        }
+        else
+        {
+            RGBVAL oldFontColor;
+
+            if(pme->m_bUserCustomColor)
+            {
+                oldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, pme->m_nFontColor);
+            }
+            IDISPLAY_DrawText(pd,pme->m_fntText,psz,pl->nLen,rc.x,rc.y,&rc,TextProps);
+            if(pme->m_bUserCustomColor)
+            {
+                (void)IDISPLAY_SetColor(pd, CLR_USER_TEXT, oldFontColor);
+            }
+        }
+        
+        if(pme->m_dwProps & ST_TRANSPARENT)
+        {
+            (void)IDISPLAY_SetColor(pd, CLR_USER_TEXT, oldColor);
+        }
+        rc.y += (rc.dy + TEXT_BETWEEN_LINE_PIXEL);
    }
+
 
    if(pme->m_nLines > pme->m_nPageLines)
       AStatic_DrawScrollBar(pme,pme->m_nIdx);
@@ -1401,9 +1615,13 @@ static void AStatic_RedrawText(AStatic * pme)
 
    if(pme->m_bAutoScroll){
       nMS = 0;
+#if defined( AEE_SIMULATOR)
+	  nMS = SCROLL_TIME_PER_LINE;
+#else
       if(OEM_GetConfig(CFGI_ISTATIC_SCROLL, &nMS, sizeof(uint32)) || nMS == 0){
          nMS = SCROLL_TIME_PER_LINE;
       }
+#endif
       nMS *= pme->m_nPageLines;
       ISHELL_SetTimer(pme->m_pShell, nMS, (PFNNOTIFY)(AStatic_ScrollTimerCB), pme);
    }
@@ -1578,8 +1796,23 @@ static void AStatic_DrawScrollBar(AStatic * pme,int nScrollItem)
 
    if( !AStatic_GetScrollBarRects(pme, nScrollItem, &rcFrame, &rcThumb) ){
       // Draw the frame and Thumb...
+#ifdef FEATURE_SCROLLBAR_USE_STYLE
+        {
+            RGBVAL  ScrollbarClr = MAKE_RGB(0xDE, 0xDE, 0xDE),
+                        ScrollbarFillClr = MAKE_RGB(0xFF, 0x70, 0x00);
+            
+            IDISPLAY_FrameRect(pd, &rcFrame);
+            rcFrame.x++;
+            rcFrame.y++;
+            rcFrame.dx--;
+            rcFrame.dy-=2;
+            IDISPLAY_FillRect(pd, &rcFrame, ScrollbarClr);
+            IDISPLAY_FillRect(pd, &rcThumb, ScrollbarFillClr);
+         }
+#else
       IDISPLAY_DrawFrame(pd, &rcFrame, AEE_FT_BOX, CLR_SYS_SCROLLBAR);
       IDISPLAY_FillRect(pd, &rcThumb, CLR_SYS_SCROLLBAR_FILL);
+#endif
    }
 }
 /*===========================================================================
@@ -1613,14 +1846,24 @@ static int AStatic_GetScrollBarRects(AStatic * pme, int nOptionalItem, AEERect *
       y = prcFrame->y;
       cx = prcFrame->dx;
       cy = prcFrame->dy;
-
+#ifdef FEATURE_SCROLLBAR_USE_STYLE
+      cy -= (AEE_FRAME_SIZE * 2);
+      cx -= AEE_FRAME_SIZE;
+      y += AEE_FRAME_SIZE;
+      x += AEE_FRAME_SIZE;
+#else
       cy -= (AEE_FRAME_SIZE * 2);
       cx -= (AEE_FRAME_SIZE * 2);
       y += AEE_FRAME_SIZE;
       x += AEE_FRAME_SIZE;
+#endif
 
       nRange = cy * 10;    // multiply by 10 for rounding
+#ifdef FEATURE_SCROLLBAR_USE_STYLE
       nScrollRange = pme->m_nLines - pme->m_nPageLines;
+#else
+      nScrollRange = pme->m_nLines - pme->m_nPageLines + 1;
+#endif
 
       nLen = nRange * pme->m_nPageLines / pme->m_nLines;
       if( nOptionalItem != -1 ){
@@ -2164,6 +2407,57 @@ SIDE EFFECTS
 ===========================================================================*/
 uint32 ParagraphAlignment(AECHAR *pszText, int nChars)
 {
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE 
+   AECHAR *pszSpot = pszText;
+   AEEDeviceInfo di;
+   static uint16 gwEncoding = 0;
+   static boolean bInited = FALSE;
+
+   // determine the handset's default ewncoding.  Once.
+   if (bInited == FALSE) {
+      ISHELL_GetDeviceInfo(AEE_GetShell(), &di);
+      gwEncoding = di.wEncoding;
+      bInited = TRUE;
+   }
+
+   // return Left to Right if this handset doesn't do Unicode.
+   switch (gwEncoding) {
+      // only apply the Unicode Bidirectional Algorithm to Unicode characters.
+      case AEE_ENC_UNICODE:
+         break;     
+
+      // Otherwise, we haven't been passed Unicode characters.  Punt.  Nicely.
+      default:
+      return (IDF_ALIGN_LEFT);
+   }
+
+   // determine this paragraph's base direction, which is the same as 
+   // the directionality of the first strong character in the paragraph.
+   while (pszSpot && (pszSpot < (pszText + nChars))) {
+      switch (UnicodeCharClass(*pszSpot)) {
+         // strong left (L)
+         case BIDICLASS_L:
+            //return (IDF_ALIGN_LEFT);
+            break;
+
+         // strong right (R or AL)
+         case BIDICLASS_R:
+         case BIDICLASS_AL:
+            return (IDF_ALIGN_RIGHT);
+          
+         // neither strong left or right
+         default:
+            break;
+      }
+      // check next character
+      pszSpot++;
+   }
+
+   // Left to Right by default
+    return (IDF_ALIGN_LEFT);
+   
+#else //FEATURE_LANG_ARABIC_HEBREW_DISP
+
    AECHAR *pszSpot = pszText;
    AEEDeviceInfo di;
    static uint16 gwEncoding = 0;
@@ -2210,6 +2504,88 @@ uint32 ParagraphAlignment(AECHAR *pszText, int nChars)
 
    // Left to Right by default
    return IDF_ALIGN_LEFT;
+#endif //normal version
 }
 
+static void AStatic_FillRect_Transparence(AStatic * pme, AEERect rc)
+{
+    if(pme->m_dwProps & ST_TRANSPARENT)
+    {
+#if 0        
+        //Draw background picture
+        if(pme->m_backgroundImg == NULL)
+        {
+            pme->m_backgroundImg = ISHELL_LoadResImage(pme->m_pShell,
+                                    AEE_APPSCOMMONRES_IMAGESFILE,
+                                    IDB_PROMPT_MSG_BG); 
+    
+        }
 
+        if(pme->m_backgroundImg != NULL)
+        {
+            IIMAGE_Draw(pme->m_backgroundImg, pme->m_rc.x, pme->m_rc.y);
+        }
+         else
+#endif//Q1´ËÍ¼Æ¬¸ü¸Äºó£¬static²»ÄÜÔÙ Ê¹ÓÃ´ËÍ¼Æ¬£¬Gemsea 2008.11.25            
+        {
+            if(pme->m_dwProps & ST_GRAPHIC_BG)
+            {
+                AStatic_DrawBackground(pme, &rc);
+            }
+            else
+            {
+                IDISPLAY_FillRect(pme->m_pDisplay, &rc, RGB_BLACK);
+            }
+        }
+    }
+    else
+    {
+        IDISPLAY_FillRect(pme->m_pDisplay, &rc, CLR_USER_BACKGROUND);
+    }
+}
+
+static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
+{
+    IImage *pImageBg = NULL;
+
+    if(pme->m_nBgImgResID != 0 && STRLEN(pme->m_strBgImgResFile) != 0)
+    {
+        pImageBg = ISHELL_LoadResImage(pme->m_pShell, pme->m_strBgImgResFile, pme->m_nBgImgResID);
+    }
+    else
+    {
+        pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEXT_BACKGROUND);
+    }
+    
+    Appscommon_ResetBackground(pme->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, rc, 0, 0);
+
+    if(pImageBg != NULL)
+    {
+        IImage_Release(pImageBg);
+        pImageBg = NULL;
+    }
+}
+static void AStatic_SetBackGround(IStatic * po, char *pstrImgResFile, uint16 nImgResID)
+{
+    AStatic * pme = (AStatic *) po;
+    
+    if(pme != NULL)
+    {
+        if(pstrImgResFile != NULL && STRLEN(pstrImgResFile) != 0 && nImgResID != 0)
+        {
+            pme->m_nBgImgResID = nImgResID;
+            MEMSET(pme->m_strBgImgResFile, 0, sizeof(pme->m_strBgImgResFile));
+            STRCPY(pme->m_strBgImgResFile, pstrImgResFile);
+        }
+    }
+}
+static void AStatic_SetFontColor(IStatic * po, RGBVAL nFontColor)
+{
+    AStatic * pme = (AStatic *) po;
+    
+    if(pme != NULL)
+    {
+        pme->m_nFontColor = nFontColor;
+        pme->m_bUserCustomColor = TRUE;
+    }
+}

@@ -1489,9 +1489,9 @@ static int registerPowerdownAlarmclockIf( uint32 now)
     JulianType  jdate           = {0};
     int         result          = 0;
     int         i               = 0;
-
+#ifdef FEATURE_APP_WORLDTIME
     extern boolean Calendar_FormatDateTime( uint32 seconds, AECHAR* resultString, int resultStringLength);
-
+#endif /*FEATURE_APP_WORLDTIME*/
     DBGPRINTF( ";---------------------");
     DBGPRINTF( ";try to register powerdown alarmclock");
 
@@ -1714,8 +1714,10 @@ static int registerPowerdownAlarmclockIf( uint32 now)
             alarmCfg.alarm_id   = i;
             alarmCfg.dwWATime   = last;
             OEM_SetConfig( CFGI_POWERDOWN_ALARM, (void*)&alarmCfg, sizeof(alarmCfg));
-
+#ifdef FEATURE_APP_WORLDTIME
             Calendar_FormatDateTime( time, text, sizeof( text));
+#endif /*FEATURE_APP_WORLDTIME*/
+
             DBGPRINTF( ";set CFGI_POWERDOWN_ALARM, id=%d, time=%S", alarmCfg.alarm_id, text);
 
             registered ++;
@@ -1771,7 +1773,9 @@ void snoozePowerdownAlarmclock( void)
     int                 result      = 0;
 
     AECHAR text[64] = {0};
+#ifdef FEATURE_APP_WORLDTIME    
     extern boolean Calendar_FormatDateTime( uint32 seconds, AECHAR* resultString, int resultStringLength);
+#endif /*FEATURE_APP_WORLDTIME*/
 
     DBGPRINTF( ";-----------------------------------------------------------");
     DBGPRINTF( ";snoozePowerdownAlarmClock");
@@ -1822,14 +1826,19 @@ void snoozePowerdownAlarmclock( void)
 #else
 		newtime = oldtime / 1000 + today;
 #endif
-
+#ifdef FEATURE_APP_WORLDTIME
         Calendar_FormatDateTime( newtime, text, sizeof( text));
+#endif /*FEATURE_APP_WORLDTIME*/
+
         DBGPRINTF( ";alarm time: %S", text);
         while( newtime < now)
         {
             newtime += snooze;
         }
+#ifdef FEATURE_APP_WORLDTIME        
         Calendar_FormatDateTime( newtime, text, sizeof( text));
+#endif /*FEATURE_APP_WORLDTIME*/
+
         DBGPRINTF( ";snooze time: %S", text);
 
 #if defined( FEATURE_ONCE_ALARM)

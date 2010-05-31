@@ -324,7 +324,7 @@ when       who     what, where, why
 
 #ifdef CUST_EDITION
 #ifdef FEATURE_UIM_TOOLKIT_UTK
-#define FEATURE_UTK2
+#undef FEATURE_UTK2
 #endif //FEATURE_UIM_TOOLKIT
 #endif  
 

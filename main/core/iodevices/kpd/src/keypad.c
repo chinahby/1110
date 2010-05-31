@@ -16,7 +16,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   keypad_register is then called to register for service.
 
 
-  Copyright (c) 2001-2009 QUALCOMM Incorporated. 
+  Copyright (c) 2001-2008 QUALCOMM Incorporated. 
   All Rights Reserved.
   Qualcomm Confidential and Proprietary
 
@@ -29,11 +29,10 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //depot/asic/qsc6055/drivers/kpd/keypad.c#15 $ $DateTime: 2009/07/20 12:03:28 $ $Author: rtilak $
+  $Header: //depot/asic/qsc6055/drivers/kpd/keypad.c#14 $ $DateTime: 2008/12/05 12:12:15 $ $Author: rtilak $
 
 when       who      what, where, why
 --------   ---      ---------------------------------------------------------
-07/20/09   rt       Change key 'HS_F1_K' to 'HS_FA_K' to support BMP
 11/20/08   rt       Add support for PMIC based headset insertion detection
 11/10/08   sg       Add check to avoid initializing keypad multiple times
 11/03/08   rt       Make keypad_init() atomic with respect to interrupts
@@ -183,15 +182,15 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 
    /* KEYSENSE_2 */
    /* 5,17          5,15        5,11        5,9          5,Memo*/
-   { HS_SEL_K,      HS_4_K,     HS_5_K,     HS_6_K,      HS_NONE_K},
+   { HS_INFO_K,      HS_4_K,     HS_5_K,     HS_6_K,      HS_NONE_K},
 
    /* KEYSENSE_3 */
    /* 7,17          7,15        7,11        7,9          7,Memo*/
-   { HS_RIGHT_K,      HS_7_K,     HS_8_K,     HS_9_K,      HS_SF2_K},
+   { HS_RIGHT_K,      HS_7_K,     HS_8_K,     HS_9_K,      HS_CLR_K},
 
    /* KEYSENSE_4 */
    /* 9,17          9,15        9,11        9,9          9,Memo*/
-   { HS_UP_K,  		HS_STAR_K,  HS_0_K,     HS_POUND_K,  HS_SF1_K}
+   { HS_UP_K,  		HS_STAR_K,  HS_0_K,     HS_POUND_K,  HS_SEL_K}
 };
 #else
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {

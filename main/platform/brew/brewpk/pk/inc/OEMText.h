@@ -72,7 +72,7 @@ when       who     what, where, why
 #ifdef WIN32  //add by ydc
 #define FEATURE_LANG_ENGLISH
 #define FEATURE_TOUCHPANEL
-#define FEATURE_LANG_CHINESE
+//#define FEATURE_LANG_CHINESE
 #endif
 
 #define AEE_APPSTISIMAPP_RES_FILE AEE_RES_LANGDIR ZHCNIME_RES_FILE

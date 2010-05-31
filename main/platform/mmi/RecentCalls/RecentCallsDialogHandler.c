@@ -2890,7 +2890,10 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
    AEEDeviceInfo DeviceInfo;
 #endif
+#ifdef FEATURE_APP_WORLDTIME
     extern boolean Calendar_FormatDateTime( uint32 seconds, AECHAR* resultString, int resultStringSizeByByte);
+#endif /*FEATURE_APP_WORLDTIME*/
+
     int                 nTextWidth = 0;
     int                 nLineHeight = BETWEEN_LINE_PIXELS + IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
     int                 nNumberWidth  = GetSingleNumberWidth(pMe->m_pDisplay, AEE_FONT_BOLD);
@@ -2936,7 +2939,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
     {
         return;
     }
-
+#ifdef FEATURE_APP_WORLDTIME
     // draw start time
     if( Calendar_FormatDateTime(pMe->list_record[pMe->record_selected].time_stamp, buffer, sizeof( buffer)))
     {
@@ -2950,6 +2953,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                       IDF_TEXT_TRANSPARENT
                   );
     }
+#endif /*FEATURE_APP_WORLDTIME*/
 
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH   
     // draw duration

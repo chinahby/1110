@@ -6003,6 +6003,9 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                 sizeof(wszDate));
     
     wszDate[3] = (AECHAR)'\0';
+    //wszDate[0] = (AECHAR)'0';
+    //wszDate[1] = (AECHAR)'1';
+    //wszDate[2] = (AECHAR)'2';
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,

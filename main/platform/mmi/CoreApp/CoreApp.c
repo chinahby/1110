@@ -168,7 +168,7 @@ static void CoreNotifyMP3PlayerAlertEvent(CCoreApp *pMe, boolean toStartAlert);
 static void CoreNotifyMP3PlayerAlertEventCB(CCoreApp *pMe);
 
 static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe);
-static void CoreAppLoadTimepImage(CCoreApp *pMe);   //add by ydc
+//static void CoreAppLoadTimepImage(CCoreApp *pMe);   //add by ydc
 /*==============================================================================
 
                                  º¯Êý¶¨Òå

@@ -35,7 +35,7 @@ INCLUDE FILES FOR MODULE
 #include "AEEDate_priv.h"
 #include "AEEControls_res.h"
 #else
-#include "OEMAEEControls.brh"
+#include "AEEControls.brh"
 #include "Appscommon.h"
 #include "appscommon_color.brh"
 #include "AEEDate.h"

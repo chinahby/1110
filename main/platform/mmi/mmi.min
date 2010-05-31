@@ -70,7 +70,9 @@ endif
 
 include $(STOPWATCH)/stopwatch.min
 include $(TIMERAPP)/timerapp.min
+ifeq ($(MMI_ADD_WORLDTIME),yes)
 include $(WORLDTIME)/worldtime.min
+endif
 include $(NOTEBOOK)/notebook.min
 
 #Games

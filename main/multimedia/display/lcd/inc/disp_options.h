@@ -59,6 +59,11 @@
 #endif
 
 /* Display width and height in number of pixels */
+
+#ifdef CUST_EDITION
+   #define DISP_WIDTH       128
+   #define DISP_HEIGHT       128
+#else
 #ifdef FEATURE_TMD_20_QVGA
    #define DISP_WIDTH        240
    #define DISP_HEIGHT       320
@@ -68,5 +73,6 @@
    #define DISP_HEIGHT       220
 #endif /* FEATURE_TMD_QVGA */
 
+#endif
 #endif    /* DISP_OPTIONS_H */
 

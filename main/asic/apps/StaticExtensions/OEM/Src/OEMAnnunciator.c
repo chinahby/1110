@@ -433,6 +433,13 @@ OEMAnnun_content batt_content =
     #define TEXT_HEIGHT    11
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1
+#elif defined(FEATURE_DISP_128X128)
+    #define IMG_WIDTH      10
+    #define IMG_HEIGHT     10
+    #define LG_IMG_WIDTH 20
+    #define TEXT_HEIGHT    10
+    #define ROW1_Y           0
+    #define BETWEEN_ICON_PIXEL 1
 #else
 /* Standard image fields are 10 x 10 (pixels)    */
 /* while large image fields are 20 x 10 (pixels) */

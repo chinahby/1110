@@ -664,11 +664,11 @@ static void tm_cstn128x128_disp_powerup(void)
     	TM_SCTN_WRITE_CMD(0x11);  //sleep out
     	TM_SCTN_DELAY(10);
     	
-                //////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////
     	/////VOP set///////////
     	TM_SCTN_WRITE_CMD(0xc0);  //vo voltage set   
-    	TM_SCTN_WRITE_DATA(0x04);//////////ff
-    	TM_SCTN_WRITE_DATA(0x01);//00//01
+    	TM_SCTN_WRITE_DATA(0xfb);//////////ff
+    	TM_SCTN_WRITE_DATA(0x00);//00//01
 
         TM_SCTN_WRITE_CMD(0x25);   //write contrast for mobile
     	TM_SCTN_WRITE_DATA(0x3f);
