@@ -962,7 +962,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 
     {AEEFS_MIF_DIR"wms.mif", CWMSMod_Load},
     
-    {AEEFS_MIF_DIR"extramenu.mif", ExtraMenuMod_Load},
+    //{AEEFS_MIF_DIR"extramenu.mif", ExtraMenuMod_Load},
     {AEEFS_MIF_DIR"quicktest.mif", QuickTest_Load},
 
     {AEEFS_MIF_DIR"clockapps.mif", ClockAppsMod_Load},
@@ -978,7 +978,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif //FEATURE_SHORT_CODE_NAM_COUNT
 
 
-    {AEEFS_MIF_DIR"mainmenu.mif", MainMenuMod_Load},
+    //{AEEFS_MIF_DIR"mainmenu.mif", MainMenuMod_Load},
 
 #if defined( FEATURE_GAME_TETRIS)
     {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
