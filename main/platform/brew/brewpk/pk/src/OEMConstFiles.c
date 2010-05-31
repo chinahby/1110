@@ -147,6 +147,8 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
 #if defined(FEATURE_APP_QTCAM)
                                                             &gQTCAM_MIF,
 #endif
+
+#ifndef CUST_EDITION
 #ifndef FEATURE_MANGO_BREW                                                            // Const MIF files for USB Host Mass Storage
                                                             &g26108_MIF,
                                                             &g26109_MIF,
@@ -157,7 +159,7 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
                                                             &gAEEPDIPARSERS_MOD,                                                            
 #endif
 #endif      
-                                                            
+#endif //#ifndef CUST_EDITION
 #endif
                                                             NULL};
 
