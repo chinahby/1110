@@ -4028,7 +4028,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
 //#endif
                 case AVK_SELECT:
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
+                    DBGPRINTF("CoreApp_LaunchApplet AVK_SELECT............");
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 
                 case AVK_INFO:
 					/*
@@ -4091,17 +4092,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 					}
                 case AVK_CLR:
-                    #if 0
-#ifdef FEATURE_KEYGUARD
-                    if(OEMKeyguard_IsEnabled())
-                    {
-                        //OEMKeyguard_SetState(FALSE);
-                        //pMe->m_b_set_lock = TRUE;
-                        //CLOSE_DIALOG(DLGRET_EMGCALL)
-                        return TRUE;
-                    }
-#endif /* FEATURE_KEYGUARD*/
-#endif
+                    DBGPRINTF("CoreApp_LaunchApplet AVK_CLR............");
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 
                 default:
@@ -4356,7 +4347,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     break;
             }
             break;
-
+#if 0
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 		case EVT_PEN_UP:
 			{
@@ -4929,6 +4920,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			}
 			break;
 #endif//FEATURE_LCD_TOUCH_ENABLE    
+#endif
         default:
             break;
     }
@@ -6029,10 +6021,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 {
     BottomBar_e_Type    eBBarType = BTBAR_NONE;
-    IImage *pBottomMask;
-	IImage *pBottomMaskleft;
-	IImage *pBottomMaskcenter;
-	IImage *pBottomMaskright;
+
     
     if(pMe->m_bemergencymode)
     {
@@ -6049,30 +6038,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
         eBBarType = BTBAR_MENU_CONTACTS;
     }
 
-    //draw idle bottom zone background
-    pBottomMask       = ISHELL_LoadResImage(pMe->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BOTTOMMASK);
-	pBottomMaskleft   = ISHELL_LoadResImage(pMe->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BOHAO);
-	pBottomMaskcenter = ISHELL_LoadResImage(pMe->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CAIDAN);
-	pBottomMaskright  = ISHELL_LoadResImage(pMe->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_DIANHUABEN);
-    if((NULL != pBottomMask) || (NULL != pBottomMaskleft) || (NULL != pBottomMaskcenter) || (NULL != pBottomMaskright))
-    {
-        IIMAGE_Draw(pBottomMask, pMe->m_rc.x, pMe->m_rc.dy - 40);//BOTTOMBAR_HEIGHT);
-        IIMAGE_Release(pBottomMask);
-        pBottomMask = NULL;
-
-		IIMAGE_Draw(pBottomMaskleft, pMe->m_rc.x + 5, pMe->m_rc.dy - 38);
-        IIMAGE_Release(pBottomMaskleft);
-        pBottomMaskleft = NULL;
-
-		IIMAGE_Draw(pBottomMaskcenter, pMe->m_rc.x + 5+36+5, pMe->m_rc.dy - 38);
-        IIMAGE_Release(pBottomMaskcenter);
-        pBottomMaskcenter = NULL;
-
-        IIMAGE_Draw(pBottomMaskright, pMe->m_rc.x + 5+36*2+5+5, pMe->m_rc.dy - 38);
-        IIMAGE_Release(pBottomMaskright);
-        pBottomMaskright = NULL;
-    }
-    //DrawBottomBar_Ex(pMe->a.m_pIShell, pMe->m_pDisplay,eBBarType);
+    DrawBottomBar_Ex(pMe->a.m_pIShell, pMe->m_pDisplay,eBBarType);
 }
 
 /*==============================================================================

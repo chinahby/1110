@@ -227,7 +227,7 @@ typedef PACKED struct {
 //#define CALL_LINE_HIGHT           (pMe->m_LineHeight + 3)
 
 /*来电去电动画图片高度*/
-#define CALL_ANIM_IMG_HEIGHT            (90)
+#define CALL_ANIM_IMG_HEIGHT              (60)
 
 /*上下各空3个像素*/
 //#define CALL_LINE_HIGHT             ((int)((pMe->m_rc.dy - CALL_ANNU_HEIGHT - CALL_SOFT_KEY_HIGHT)/4))
@@ -240,7 +240,7 @@ typedef PACKED struct {
 #define CALL_FOURTH_LINE_Y               (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
 
 /*来电去电动画图片Y坐标*/
-#define CALL_ANIM_IMG_Y                     (CALL_FIRST_LINE_Y + 4*CALL_LINE_HIGHT)
+#define CALL_ANIM_IMG_Y                  (CALL_FIRST_LINE_Y + 2*CALL_LINE_HIGHT+CALL_LINE_HIGHT/2)
 
 /*拨号大数字图片行距*/
 #define BETWEEN_LINE_PIXEL                (6)

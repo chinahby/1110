@@ -10,20 +10,8 @@
 	<Object Id="5003" Name="IDI_DIALOG">
 		<File>..\images\color\Appscommon\Background\dialog.png</File>
 	</Object>
-	<Object Id="5004" Name="IDI_BOTTOMMASK">
-		<File>..\images\color\Appscommon\Background\BottomMask.png</File>
-	</Object>
 	<Object Id="5009" Name="IDB_SPORT_RACE" MimeType="image/bmp">
 		<File>..\images\color\Sports\Icons\step_race.bmp</File>
-	</Object>
-	<Object Id="5012" Name="IDI_BOHAO">
-		<File>..\images\color\Appscommon\Background\bohao.png</File>
-	</Object>
-	<Object Id="5013" Name="IDI_CAIDAN">
-		<File>..\images\color\Appscommon\Background\caidan.png</File>
-	</Object>
-	<Object Id="5014" Name="IDI_DIANHUABEN">
-		<File>..\images\color\Appscommon\Background\dianhuaben .png</File>
 	</Object>
 	<Object Id="5015" Name="IDI_TEXT_BACKGROUND">
 		<File>..\images\color\Appscommon\Background\background_text.png</File>

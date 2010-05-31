@@ -470,10 +470,12 @@ boolean CoreApp_InitAppData(IApplet* po)
 	pMe->m_dial_rc.dx = 176;//wlh 20090427 add 时间表盘
 	pMe->m_dial_rc.dy = 24;//wlh 20090427 add 时间表盘
 	*/
+	#if 0
 	pMe->m_dial_rc.x = 50;//wlh 20090427 add 时间表盘
 	pMe->m_dial_rc.y = 80;//wlh 20090427 add 时间表盘
 	pMe->m_dial_rc.dx = 55;//wlh 20090427 add 时间表盘
 	pMe->m_dial_rc.dy = 24;//wlh 20090427 add 时间表盘
+	#endif
 	////modi ydc 20090408
 /*
 	pMe->m_dial_Image = ISHELL_LoadResImage( AEE_GetShell(),
