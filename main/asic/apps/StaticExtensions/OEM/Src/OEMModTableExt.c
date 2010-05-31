@@ -566,6 +566,7 @@ extern int CoreStartApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
 extern int QuickTest_Load(IShell *pIShell,void *ph,IModule **ppMod);
+extern int CWMSMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 
 extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int StopWatchMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -959,7 +960,8 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif
 #endif // FEATURE_UIONE_HDK
 
-
+    {AEEFS_MIF_DIR"wms.mif", CWMSMod_Load},
+    
     {AEEFS_MIF_DIR"extramenu.mif", ExtraMenuMod_Load},
     {AEEFS_MIF_DIR"quicktest.mif", QuickTest_Load},
 
