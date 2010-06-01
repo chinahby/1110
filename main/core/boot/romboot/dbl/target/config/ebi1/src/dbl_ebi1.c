@@ -128,6 +128,13 @@ dbl_nor_device K5N6433ABM =
   {0x00EC, 0x2255}                   /* Manufacture codes. */
 };
 
+dbl_nor_device K5N6433ATM = 
+{
+  "SAMSUNG K5N6433ATM",
+  2,                                 /* # of codes to match */
+  {0x00EC, 0x2254}                   /* Manufacture codes. */
+};
+
  /* List only flash parts tested by this target */
  const dbl_nor_device *(spansion_parts[]) = {
   &S29WS256N0SB,
@@ -149,6 +156,7 @@ const dbl_nor_device *(intel_parts[]) = {
 const dbl_nor_device *(samsung_parts[]) = {
   &K5N5629ABM,
   &K5N6433ABM,
+  &K5N6433ATM,
   NULL
 };
 
@@ -1263,7 +1271,7 @@ dbl_nor_device *dev = dbl_nor_device_probe();
 	
 	  DBL_VERIFY(dev != NULL, DBL_ERR_NOR_DETECTION_FAILED );
 
-	  if ((dev == &K5N5629ABM)|| (dev == &K5N6433ABM))
+	  if ((dev == &K5N5629ABM)|| (dev == &K5N6433ABM) || (dev == &K5N6433ATM))
 	  	{
 			dbl_parse_cfg_data(ebi1_cfg_data_ebi1_default);
 		if( configured_clk_speed->ebi1 == 48 )
@@ -1412,7 +1420,7 @@ else if (dev == &Intel_64W18_ADMux)
      dbl_parse_cfg_data(ebi1_cfg_data_Intel_W18_48MHZ);
 	 	
   }  
-  else if (dev == &K5N6433ABM)
+  else if (dev == &K5N6433ABM || dev == &K5N6433ATM)
   {
     dbl_parse_cfg_data(ebi1_cfg_data_K5N6433ABM_48MHZ);
   }

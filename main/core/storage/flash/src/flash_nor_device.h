@@ -152,6 +152,8 @@ extern flashi_nor_device S71PL032J80_srw;
 extern flashi_nor_device K5N5629ABM;
 extern flashi_nor_device K5N5666ATM;
 extern flashi_nor_device K5N6433ABM;
+extern flashi_nor_device K5N6433ATM;
+
 
 /* Intel Parts */
 extern flashi_nor_device Intel_PH28F256L18B85;

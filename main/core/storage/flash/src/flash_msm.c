@@ -65,6 +65,7 @@ const flashi_nor_device *(spansion_parts[]) = {
 const flashi_nor_device *(samsung_parts[]) = {
   &K5N5629ABM,  /* 256 Mbit Samsung NOR */
   &K5N6433ABM,  /* 64 Mbit Samsung NOR  */
+  &K5N6433ATM,  /* 64 Mbit Samsung NOR  */
   NULL
 };
 
