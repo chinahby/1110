@@ -72,9 +72,9 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 	#undef FEATURE_WMS_APP
 #endif
 
-#ifdef FEATURE_WMS_APP
+//#ifdef FEATURE_WMS_APP
 	#include "AEEWMS.h"
-#endif
+//#endif
 
 #ifdef FEATURE_BREWAPPCOORD
 	#include "BACProxyApp.bid"
@@ -383,9 +383,9 @@ extern const AEEStaticClass gOEMOverlayClasses[];
 #endif
 
 ////WMSAPP
-#ifdef FEATURE_WMS_APP
+//#ifdef FEATURE_WMS_APP
 	extern int OEMWMS_New (IShell *piShell, AEECLSID cls, void **pp);
-#endif
+//#endif
 
 #ifdef FEATURE_IWMSDIAG
 	extern int AEEWMSDIAG_New (IShell *piShell, AEECLSID cls, void **pp);
@@ -1349,8 +1349,8 @@ static const AEEStaticClass gOEMStaticClassList[] = {
 #if defined(FEATURE_ICM)
    {AEECLSID_CM,                   ASCF_PRIV,0,NULL,OEMCM_New},
    {AEECLSID_CM_NOTIFIER,          ASCF_PRIV,0,NULL,OEMCMNotifier_New},
-   {AEECLSID_CALLOPTS,             ASCF_PRIV,0,NULL,OEMCallOpts_New},
-   {AEECLSID_CM_MODEL,                   ASCF_PRIV,0,NULL,OEMCMModel_New},
+   //{AEECLSID_CALLOPTS,             ASCF_PRIV,0,NULL,OEMCallOpts_New},
+   //{AEECLSID_CM_MODEL,                   ASCF_PRIV,0,NULL,OEMCMModel_New},
 #if !defined(FEATURE_MANGO_UI)
    {AEECLSID_ALERT,                   ASCF_PRIV,0,NULL,OEMALERT_New},
    {AEECLSID_ALERT_NOTIFIER,          ASCF_PRIV,0,NULL,OEMALERT_NOTIFIER_New},
@@ -1380,9 +1380,9 @@ static const AEEStaticClass gOEMStaticClassList[] = {
    {AEECLSID_SEC_WAP_APP,        (ASCF_PRIV | ASCF_UPGRADE),0,NULL,AEESEC_New},
 #endif
 
-#if defined (FEATURE_WMS_APP)
+//#if defined (FEATURE_WMS_APP)
    {AEECLSID_WMS,                ASCF_PRIV,0,NULL,OEMWMS_New},
-#endif
+//#endif
 
 #if defined(FEATURE_IWMSDIAG) && !defined(FEATURE_MANGO_UI)
    {AEECLSID_WMSDIAG,         ASCF_PRIV,0,NULL,AEEWMSDIAG_New},

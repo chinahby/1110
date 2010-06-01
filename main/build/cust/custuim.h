@@ -365,7 +365,7 @@ when       who     what, where, why
 #define FEATURE_UIM_RUIM_SUPPORT_SCI
 
 /* Support for ICardSession */
-#define FEATURE_ICARDSESSION
+//#define FEATURE_ICARDSESSION
 
 #ifdef T_QSC1110
 #define FEATURE_CCAT
@@ -377,7 +377,7 @@ when       who     what, where, why
   #define FEATURE_DATA_PS_INTERNAL_AUTH
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
 
-#define FEATURE_ICARD_IMODEL
+//#define FEATURE_ICARD_IMODEL
 
 /* Features to support Code Reduction */
 #define FEATURE_UIM_MEMORY_REDUCTION
@@ -401,10 +401,10 @@ when       who     what, where, why
 #endif
 
 /* ICard Extension */
-#define FEATURE_ICARD_IMODEL
-#define FEATURE_ICARD
+//#define FEATURE_ICARD_IMODEL
+//#define FEATURE_ICARD
 /* Feature for model support */
-#define FEATURE_ICARDSESSION_IMODEL
+//#define FEATURE_ICARDSESSION_IMODEL
 
 /* MMGSDI DIAG Automation */
 #ifndef FEATURE_UIM_QSC1100_LOW_MEMORY
