@@ -22,7 +22,7 @@ Notice that changes are listed in reverse chronological order.
 ===========================================================================*/
 #include "comdef.h"
 #include "customer.h"
-#include "gpio_60x0.h"
+#include "gpio_1100.h"
 #include "bio.h"
 #include "i2c.h"
 #include "clk.h"
