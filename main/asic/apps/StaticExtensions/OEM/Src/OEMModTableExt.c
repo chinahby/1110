@@ -567,7 +567,7 @@ extern int CoreStartApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 
 extern int QuickTest_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int CWMSMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
-
+extern int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int StopWatchMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int ClockAppsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
@@ -584,7 +584,6 @@ extern int ScheduleApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int OtkMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif //FEATURE_SHORT_CODE_NAM_COUNT
 
-extern int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 #if defined( FEATURE_GAME_TETRIS)
 extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
@@ -978,7 +977,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif //FEATURE_SHORT_CODE_NAM_COUNT
 
 
-    //{AEEFS_MIF_DIR"mainmenu.mif", MainMenuMod_Load},
+    {AEEFS_MIF_DIR"mainmenu.mif", MainMenuMod_Load},
 
 #if defined( FEATURE_GAME_TETRIS)
     {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},

@@ -20,43 +20,31 @@
 		<Text>Customer service</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_TITLE_1">
-		<Text>Games</Text>
+		<Text>FM Radio</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MAIN_MENU_TITLE_2">
-		<Text>Media gallery</Text>
-	</STRING>
-	<STRING Id="1013" Name="IDS_MAIN_MENU_TITLE_3">
 		<Text>Tools</Text>
 	</STRING>
-	<STRING Id="1014" Name="IDS_MAIN_MENU_TITLE_4">
-		<Text>Camera</Text>
-	</STRING>
-	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_5">
+	<STRING Id="1013" Name="IDS_MAIN_MENU_TITLE_3">
 		<Text>Contacts</Text>
 	</STRING>
-	<STRING Id="1016" Name="IDS_MAIN_MENU_TITLE_6">
+	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_4">
 		<Text>Messages</Text>
 	</STRING>
-	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_7">
+	<STRING Id="1016" Name="IDS_MAIN_MENU_TITLE_5">
 		<Text>Recent calls</Text>
 	</STRING>
-	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_8">
+	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_6">
 		<Text>Settings</Text>
 	</STRING>
-	<STRING Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
+	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_7">
 		<Text>Sports</Text>
 	</STRING>
-	<STRING Id="1020" Name="IDS_MAIN_MENU_TITLE_10">
+	<STRING Id="1019" Name="IDS_MAIN_MENU_TITLE_8">
 		<Text>Profiles</Text>
 	</STRING>
-	<STRING Id="1021" Name="IDS_MAIN_MENU_TITLE_11">
-		<Text>Multimedia player</Text>
-	</STRING>
-	<STRING Id="1022" Name="IDS_MAIN_MENU_TITLE_12">
-		<Text>Data service</Text>
-	</STRING>
-	<String Id="1023" Name="IDS_MAIN_MENU_TITLE_13">
-		<Text>Best tone</Text>
+	<String Id="1020" Name="IDS_MAIN_MENU_TITLE_9">
+		<Text>Timer</Text>
 	</String>
 	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
 		<Text>Tetris</Text>
@@ -90,41 +78,9 @@
 	</STRING>
 </Strings>
 <Dialogs>
-	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
-		<Controls/>
-		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
-	</DIALOG>
-	<Dialog Id="6002" Name="IDD_GAME_MENU" Focus="7002">
-		<Controls>
-			<Menu Id="7002" Name="IDC_GAME_MENU">
-				<TitleID>IDS_MAIN_MENU_TITLE_1</TitleID>
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
 	<Dialog Id="6003" Name="IDD_LIST_MENU" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_MENU_LIST">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6004" Name="IDD_PLAYER_MENU" Focus="7003">
-		<Controls>
-			<Menu Id="7003" Name="IDC_PLAYER_MENU">
-				<TitleID>IDS_MAIN_MENU_TITLE_11</TitleID>
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6005" Name="IDD_MSGBOX_MENU" Focus="0">
-		<Controls/>
-		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
-	</Dialog>
-	<Dialog Id="6006" Name="IDD_DATA_MENU" Focus="7004">
-		<Controls>
-			<Menu Id="7004" Name="IDC_DATA_MENU">
-				<TitleID>IDS_MAIN_MENU_TITLE_12</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

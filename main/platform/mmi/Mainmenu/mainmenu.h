@@ -40,8 +40,6 @@ typedef struct _IMainMenu  IMainMenu;
 #define IMainMenu_Release(p)    GET_PVTBL(p,IMainMenu)->Release(p)
 #define IMainMenu_HandleEvent(p,ec,wp,dw) GET_PVTBL(p,IMainMenu)->HandleEvent(p, ec, wp, dw)
 
-// 外部快速进入到多媒体列表
-#define IMainMenu_StartPlayer(p)          GET_PVTBL(p,IMainMenu)->MainMenuService(p, STARTMETHOD_PLAYER);
 
 // 外部快速进入到数据服务列表
 #define IMainMenu_StartData(p)            GET_PVTBL(p,IMainMenu)->MainMenuService(p, STARTMETHOD_DATA);

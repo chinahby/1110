@@ -126,32 +126,6 @@
 #define MAX_STRING_LENGTH      64
 #define MAX_BATTERY_POP_COUNT  3
 
-//wlh 20090427 add start
-//时间条
-#define TIMEBACK_X 0
-#define TIMEBACK_Y 0
-#define TIMEBACK_W 176
-#define TIMEBACK_H 24
-
-//表盘
-#define DIAL_X 0
-#define DIAL_Y 0
-#define DIAL_W 73
-#define DIAL_H 73
-
-//时钟条
-#define HOUR_X 
-#define HOUR_Y 
-#define HOUR_W 
-#define HOUR_H
-//分钟条
-#define MINUTE_X 
-#define MINUTE_Y 
-#define MINUTE_W 
-#define MINUTE_H
-
-
-//wlh 20090427 add end
 
 #ifdef FEATURE_SPN_FROM_BSMCCMNC
 #define OPERATOR_NAME_MAX_SIZE   32
@@ -492,66 +466,7 @@ typedef struct _IdleAPP_Config_Type
 
 // 对话框事件处理函数指针类型定义
 typedef boolean (*PFNDLGHANDLER)(void *pUser, AEEEvent evt, uint16 w, uint32 dw);
-#if 0
-//wlh 20090521 add start 
-typedef  struct _xIcon_AppList//一共11个小程序
-{
-	boolean  m_b_Max;//true显示大图标
-	boolean  m_b_Move;//true显示正在移动
-	AEERect  m_rc;   //只有在m_b_Max为true的情况下使用，显示当前的大图标坐标
-	int      xIconAppNum;//当前xIcon_AppList链表中的小程序显示序号，1在最上面
-	IImage              *m_ImageSmall;
-	IImage              *m_ImageSmallCheck;
-	IImage              *m_ImageBig;
-} xIcon_AppList;
-typedef struct _IdleIcon
-{
-	boolean             m_b_leftflag;//true 表示左边箭头显示
-	boolean             m_b_rightflag;//true 表示右边箭头显示
-	boolean             m_b_show;//true 表示显示程序条
-	AEERect             m_icon_rc;
-	IImage *            m_iconback_Image;//背景条
-	IImage *            m_arrow_uncheck;//显示箭头
-	IImage *            m_arrow_check;//隐藏箭头
-	IImage *            m_arrowleft_Image;//左箭头
-	IImage *            m_arrowright_Image;//右箭头
-	xIcon_AppList       *m_IconList[11];
-	int                 m_fisticon;//当前第一个icon,指小图标
-	int                 m_checkicon;//当前选中的icon,指小图标
-	//小图标
-	//IImage              *m_ImageSmall[11];
-	//IImage              *m_ImageSmallCheck[11];
-	/*
-	IImage *            m_blue_ImageSmall;//蓝牙             1
-	IImage *            m_browser_ImageSmall;//网络浏览器    2
-	IImage *            m_calc_ImageSmall;//计算器           3
-	IImage *            m_date_ImageSmall;//日程表           4
-	IImage *            m_file_ImageSmall;//多媒体文件夹     5
-	IImage *            m_health_ImageSmall;//健康           6
-	IImage *            m_mediaplay_ImageSmall;//视频播放器  7
-	IImage *            m_music_ImageSmall;//MP3             8
-	IImage *            m_sms_ImageSmall;//短信              9
-	IImage *            m_sports_ImageSmall;//计步器         10
-	IImage *            m_usb_ImageSmall;//USB               11
-	*/
-	//大图标
-	//IImage              *m_ImageBig[11];
-	/*
-	IImage *            m_blue_ImageBig;//蓝牙                1
-	IImage *            m_browser_ImageBig;//网络浏览器       2
-	IImage *            m_calc_ImageBig;//计算器              3
-	IImage *            m_date_ImageBig;//日程表              4
-	IImage *            m_file_ImageBig;//多媒体文件夹        5
-	IImage *            m_health_ImageBig;//健康              6
-	IImage *            m_mediaplay_ImageBig;//视频播放器     7
-	IImage *            m_music_ImageBig;//MP3                8
-	IImage *            m_sms_ImageBig;//短信                 9
-	IImage *            m_sports_ImageBig;//计步器            10
-	IImage *            m_usb_ImageBig;//USB                  11
-	*/
-}IdleIcon;
-//wlh 20090521 add end 
-#endif
+
 typedef struct _CCoreApp
 {
     // 本结构的第一个数据成员必须是 AEEApplet 型
@@ -696,28 +611,7 @@ boolean bPlaneModeOn;
 #ifndef  FEATURE_2008_POWERON_LOGIC
     On_line_from             m_b_online_from;
 #endif
-	//wlh 20090427 add start 用于 Dial时间表盘 的显示区域
-	boolean             m_b_dialflag;//true 显示表盘，false 显示时间条
-	//boolean             m_b_dialmove;//true 表示移动，false 没移动
-    AEERect             m_dial_rc;
-	IImage *            m_dial_Image;
-	IImage *            m_time_Image;
-	
-	//add by ydc 20090525
-	IImage *            m_dial_minue_image[60];
-	IImage *            m_dial_hour_image[60];
 
-	uint16              m_move_xstation;
-	uint16              m_move_ystation;
-	uint16              m_down_xstation;
-	uint16              m_down_ystation;
-	uint16              m_up_xstation;
-	uint16              m_up_ystation;
-	int                 m_now_Num;//当前移动的对象序号0是时间,默认-1
-#if 0
-	//wlh 20090427 add end 
-	IdleIcon *          m_Idle_Icon;
-#endif
 } CCoreApp;
 
 /*==============================================================================
