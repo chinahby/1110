@@ -108,23 +108,11 @@ typedef struct _MainMenu
     IModule     *m_pModule;
     IDisplay    *m_pDisplay;
     IShell      *m_pShell;
-    IConfig     *m_pConfig;
 
     IDialog     *m_pActiveIDlg;
     uint32       m_pActivedlgID;
     uint16       m_MainSel;   //一级菜单光标
-    uint16       m_MenuSel;   //二级菜单光标
     DLGRetValue  m_eDlgReturn;
-    
-    int         m_nRow;
-    int         m_nColumn;
-#ifdef FEATURE_ICON_MOVE_ANIMATION
-    int         m_nPrevRow;
-    int         m_nPrevColumn;
-#endif
-#ifdef FEATURE_FOCUS_ANIMATION
-    int         m_nIconAniFrameIdx;            // 图标动画当前帧索引
-#endif
 
     MAINMENU_STATUS_e_type  m_eAppStatus;   // Applet 当前运行状态
     
@@ -136,20 +124,6 @@ typedef struct _MainMenu
     
     MainmenuState             m_prevState;        // Applet前一状态
     MainmenuState             m_currState;        // Applet当前状态
-
-    #ifdef FEATRUE_SUPPORT_G_SENSOR
-    uint16           m_wMsgResID;
-    #endif
-    
-#ifdef FEATURE_RANDOM_MENU_COLOR
-    RGBVAL         m_nBgColor; //added by chengxiao 2009.02.23
-    boolean         m_nRandomMenu; //added by chengxiao 2009.02.23
-#endif
-#ifdef FEATURE_ICON_MOVE_ANIMATION
-    IBitmap       *m_pDevImage;
-    boolean       m_bMoveing;
-#endif
-
 
 } MainMenu;
 

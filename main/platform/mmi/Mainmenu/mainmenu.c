@@ -382,15 +382,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     }
 
     pMe->m_MainSel  = 0;
-    pMe->m_MenuSel  = 0;
     pMe->m_bNormalStart = TRUE;
-
-    // 接口创建及相关初始化
-    if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG,
-            (void **)&pMe->m_pConfig) != SUCCESS)
-    {
-        return EFAILED;
-    }
     
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
             (void **) &pMe->m_pDisplay) != SUCCESS)
@@ -424,12 +416,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
         return;
     }
 
-    pMe->m_eAppStatus = MAINMENU_STOP;
-    if (NULL != pMe->m_pConfig)
-    {
-        ICONFIG_Release(pMe->m_pConfig);
-        pMe->m_pConfig = NULL;
-    }    
+    pMe->m_eAppStatus = MAINMENU_STOP; 
     
     if (pMe->m_pDisplay != NULL)
     {
@@ -931,6 +918,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_7, IDS_MAIN_MENU_TITLE_7, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_8, IDS_MAIN_MENU_TITLE_8, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_9, IDS_MAIN_MENU_TITLE_9, NULL, 0);
+            DBGPRINTF("EVT_DIALOG_INIT:::::::1");
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1056,7 +1044,8 @@ static boolean StartApplet(MainMenu *pMe, int i)
     switch(i)
     {
         case 0:
-            CLOSE_DIALOG(DLGRET_GAME);
+            //CLOSE_DIALOG(DLGRET_GAME);  //FM
+            return TRUE;
             break;
             
         case 1:
@@ -1082,10 +1071,10 @@ static boolean StartApplet(MainMenu *pMe, int i)
             break;
     
         case 6:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
             break;    
         case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
     
         case 8:

@@ -28,22 +28,22 @@
 	<STRING Id="1013" Name="IDS_MAIN_MENU_TITLE_3">
 		<Text>Contacts</Text>
 	</STRING>
-	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_4">
+	<STRING Id="1014" Name="IDS_MAIN_MENU_TITLE_4">
 		<Text>Messages</Text>
 	</STRING>
-	<STRING Id="1016" Name="IDS_MAIN_MENU_TITLE_5">
+	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_5">
 		<Text>Recent calls</Text>
 	</STRING>
-	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_6">
+	<STRING Id="1016" Name="IDS_MAIN_MENU_TITLE_6">
 		<Text>Settings</Text>
 	</STRING>
-	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_7">
+	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_7">
 		<Text>Sports</Text>
 	</STRING>
-	<STRING Id="1019" Name="IDS_MAIN_MENU_TITLE_8">
+	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_8">
 		<Text>Profiles</Text>
 	</STRING>
-	<String Id="1020" Name="IDS_MAIN_MENU_TITLE_9">
+	<String Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
 		<Text>Timer</Text>
 	</String>
 	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
