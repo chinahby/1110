@@ -38,13 +38,13 @@
 		<Text>Settings</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_7">
-		<Text>Sports</Text>
+		<Text>Timer</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_8">
-		<Text>Profiles</Text>
+		<Text>Alarm</Text>
 	</STRING>
 	<String Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
-		<Text>Timer</Text>
+		<Text>Sportwatch</Text>
 	</String>
 	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
 		<Text>Tetris</Text>

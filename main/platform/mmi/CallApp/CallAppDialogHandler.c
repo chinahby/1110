@@ -2222,7 +2222,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
         IIMAGE_GetInfo(pMe->m_pCallingImage, &ImageSize);
         SETAEERECT(&rect,
                                                 (pMe->m_rc.dx - ImageSize.cxFrame)/2+12,
-                                                CALL_ANIM_IMG_Y - CALL_LINE_HIGHT,
+                                                CALL_ANIM_IMG_Y - CALL_LINE_HIGHT + MAX_COUNT_TO_CHANGE,
                                                 ImageSize.cx,
                                                 ImageSize.cy);
         
