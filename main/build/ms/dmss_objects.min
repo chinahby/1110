@@ -318,6 +318,8 @@ ifeq ($(USES_EGL),yes)
   include $(OGLES_OEM_SRC)/ogles_oem.min
 endif
 
+include $(FM_INC)/fm.min
+
 include $(EFUSE)/efuse.min
 include $(EFS)/efs.min
 ifeq ($(USES_FDI),yes)

@@ -272,6 +272,7 @@ OBJECTS += \
                 $(XMLLIB_OBJS) \
                 $(EFUSE_OBJS) \
                 $(FM_RDS_OBJS) \
+                $(FM_OBJS) \
 		$(ERR_OBJS) \
 		$(ALARMCLOCK_OBJS)
 

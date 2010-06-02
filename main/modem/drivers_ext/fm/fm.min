@@ -2,16 +2,10 @@
 # FM (FM Radio Service)
 #-------------------------------------------------------------------------------
 
-ifeq ($(USES_FM_RADIO),SI4702)
-FM_SOURCES=\
-        fm_si470x.c
-endif
-
-ifeq ($(USES_FM_RADIO),BCM2048)
 FM_SOURCES=\
         fm_bcm2048.c
-endif
 
 FM_OBJS :=  $(addprefix $(TARGETDIR)/, $(FM_SOURCES:%.c=%.o))
 FM_DEPS :=  $(addprefix $(TARGETDIR)/, $(FM_SOURCES:%.c=%.dep))
-vpath %.c $(FM)
+
+vpath %.c $(FM_INC)
