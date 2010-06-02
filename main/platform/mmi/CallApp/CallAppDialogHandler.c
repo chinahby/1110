@@ -8706,36 +8706,6 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         {
             uint16 wIndex;
 
-#ifdef FEATURE_SUPPORT_TORCH 
-            {
-                    if((AVKType)wParam == AVK_5 && WSTRLEN(pMe->m_DialString) == 1)
-                    {
-                        #ifdef FEATURE_MORSE
-                        if(gMorseSendingFlag == FALSE)
-                        #endif
-                        {
-                        
-                        IBacklight   *pBacklight = NULL;
-                        ISHELL_CreateInstance(pMe->m_pShell,
-                                                 AEECLSID_BACKLIGHT,
-                                                 (void**)&pBacklight);
-            
-                        IBACKLIGHT_SetTorch(pBacklight);
-                        IBACKLIGHT_Release(pBacklight);
-                        pBacklight = NULL;
-                        CLOSE_DIALOG(DLGRET_OK);
-                        }
-                        #ifdef FEATURE_MORSE
-                        else
-                        {
-                            Morse_PopPrompt(pMe,IDS_REFUI_SEND);
-                        }
-                        #endif
-                        return TRUE;
-                    }
-            }
-#endif
-
             // TBD - dial string format should be typedef'd
             //if more than 2 digits then bail out because
             // we only support from to 1 to 99

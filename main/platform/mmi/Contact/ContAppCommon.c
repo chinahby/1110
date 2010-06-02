@@ -6688,14 +6688,12 @@ boolean CContApp_OnedialExit(CContApp * pMe)
             }
             break;
         
-#ifndef FEATURE_SUPPORT_TORCH
         case CONTCFG_ONEDIAL4:
             if(WSTRSIZE(pCFGCache->wOneDial4)) 
             {
                 rnt = TRUE;
             }
             break;
-#endif
         
         case CONTCFG_ONEDIAL5:
             if(WSTRSIZE(pCFGCache->wOneDial5)) 

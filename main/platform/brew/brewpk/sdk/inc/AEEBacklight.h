@@ -77,9 +77,6 @@ AEEINTERFACE(IBacklight)
    int (*SigLedEnable)(IBacklight *p, sig_led_type SigLed_type);   
    int (*SigLedDisable)(IBacklight *p); 
 #endif
-#ifdef FEATURE_SUPPORT_TORCH
-    void (*SetTorch)(IBacklight *p);
-#endif
 #endif /*CUST_EDITION*/
 
 };
@@ -99,10 +96,6 @@ AEEINTERFACE(IBacklight)
 #ifdef FEATURE_LED_CONTROL
 #define IBACKLIGHT_SigLedEnable(p,profile)         AEEGETPVTBL((p),IBacklight)->SigLedEnable((p),(profile))
 #define IBACKLIGHT_SigLedDisable(p)                AEEGETPVTBL((p),IBacklight)->SigLedDisable((p))
-#endif
-
-#ifdef FEATURE_SUPPORT_TORCH
-#define IBACKLIGHT_SetTorch(p)                       AEEGETPVTBL((p),IBacklight)->SetTorch((p))
 #endif
 #endif /*CUST_EDITION*/
 

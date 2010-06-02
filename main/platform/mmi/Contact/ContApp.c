@@ -1353,7 +1353,6 @@ int CContApp_GetConfig( CContApp        *pMe,
             WSTRCPY((AECHAR *)data, pCFGCache->wOneDial3);
             return SUCCESS;
             
-#ifndef FEATURE_SUPPORT_TORCH
         case CONTCFG_ONEDIAL4:
             // 校验数据长度
             if(dataLen < WSTRSIZE(pCFGCache->wOneDial4))
@@ -1363,7 +1362,7 @@ int CContApp_GetConfig( CContApp        *pMe,
             
             WSTRCPY((AECHAR *)data, pCFGCache->wOneDial4);
             return SUCCESS;
-#endif
+            
         case CONTCFG_ONEDIAL5:
             // 校验数据长度
             if(dataLen < WSTRSIZE(pCFGCache->wOneDial5))
@@ -1625,7 +1624,6 @@ int CContApp_SetConfig(CContApp        *pMe,
             WSTRCPY(pCFGCache->wOneDial3, (AECHAR *)data);
             break;
             
-#ifndef FEATURE_SUPPORT_TORCH
         case CONTCFG_ONEDIAL4:
             // 校验数据长度
             if(WSTRLEN((AECHAR *)data) > MAX_INPUT_NUM)
@@ -1635,7 +1633,6 @@ int CContApp_SetConfig(CContApp        *pMe,
             
             WSTRCPY(pCFGCache->wOneDial4, (AECHAR *)data);
             break;
-#endif
             
         case CONTCFG_ONEDIAL5:
             // 校验数据长度

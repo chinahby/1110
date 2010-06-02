@@ -3,7 +3,7 @@
 
   This file contains sample source to the IBacklight interface.
 
-        Copyright © 2004 QUALCOMM Incorporated.
+        Copyright ? 2004 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ============================================================================*/
@@ -12,12 +12,26 @@
 #include "AEEBacklight.h"
 #include "disp.h"
 #include "keypad.h"
+#include "AEEConfig.h"
+#include "OEMCFGI.h"
+#include "oemui.h"
+#include "OEMSVC.h"
+#include "AEE_OEMDispatch.h"
 
+#ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
+#define MSAFTER_DISABLEBACKLIGHT_TIMER    60000
+#endif
 struct IBacklight {
    const AEEVTBL(IBacklight)     *pvt;
    uint32                        uRef;
    IShell                        *pIShell;
    AEECLSID                      uCls;
+#ifdef FEATURE_LED_CONTROL
+    sig_led_type                    sigLedType;
+    byte                            sigLedSequence;
+    hs_sig_led_onoff_type           sigLedOnoff;
+#endif
+    byte                            btBKLevel;      // ±³¹â¼¶±ð£¬·Ç¾ßÌåÖµ
 };
 
 /*===============================================================================
@@ -25,6 +39,8 @@ FUNCTION DEFINITIONS
 =============================================================================== */
 #define FARF_BACKLIGHT 0
 
+// ½«±³¹â¼¶±ð»»Ëãµ½¾ßÌåÖµµÄ±ÈÀý
+#define SCAL_KEYPAD_LIGHT   35
 #ifdef FARF
 #undef FARF
 #endif // FARF
@@ -43,6 +59,26 @@ static int AEEBacklight_GetBacklightInfo(IBacklight *pme, AEEBacklightInfo * pBa
 static int AEEBacklight_GetBrightnessLevel(IBacklight *pme, uint32* pdwBrightnessLevel);
 static int AEEBacklight_SetBrightnessLevel(IBacklight *pme, uint32 dwBrightnessLevel);
 
+static void AEEBacklight_CancelDisableTimer(IBacklight *pme);
+static void AEEBacklight_SetDisableTimer(IBacklight *pme);
+static void AEEBacklight_DisableTimer(void *pUser);
+static void AEEBacklight_TurnOn(IBacklight *pme);
+static void AEEBacklight_TurnOff(IBacklight *pme);
+
+#ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
+static void AEEBacklight_NotifyAutoExitApp(IBacklight *pme);
+static void AEEBacklight_SetNotifyTimer(IBacklight *pme);
+static void AEEBacklight_CancelNotifyTimer(IBacklight *pme);
+#endif //FEATURE_AUTOEXIT_AFTER_BLDISABLE
+#ifdef FEATURE_LED_CONTROL
+static int AEEBacklight_SigLedEnable(IBacklight *pme,sig_led_type SigLed_type);
+static int AEEBacklight_SigLedDisable(IBacklight *pme);
+static void AEEBacklight_SigLed_EnableTimer(void *pUser);
+static int AEEBacklight_SigLedFlash_Enable(IBacklight *pme);
+static int AEEBacklight_SigLedFlash_Disable(IBacklight *pme);
+static void AEEBacklight_SigLedFlash_DisableTimer(void *pUser);
+static void AEEBacklight_SigLedFlash_EnableTimer(void *pUser);
+#endif//#ifdef FEATURE_LED_CONTROL
 static const IBacklightVtbl gvtIBacklight = {
    AEEBacklight_AddRef,
    AEEBacklight_Release,
@@ -52,14 +88,23 @@ static const IBacklightVtbl gvtIBacklight = {
    AEEBacklight_IsEnabled,
    AEEBacklight_GetBacklightInfo,
    AEEBacklight_GetBrightnessLevel,
-   AEEBacklight_SetBrightnessLevel
+   AEEBacklight_SetBrightnessLevel,
+   AEEBacklight_TurnOn,     
+   AEEBacklight_TurnOff  
+#ifdef FEATURE_LED_CONTROL 
+  ,AEEBacklight_SigLedEnable
+  ,AEEBacklight_SigLedDisable
+#endif
 };
 
+static IBacklight  gDisplay1Backlight={0};
+static IBacklight  gKeyBacklight={0};
 static boolean gbBacklightDisplay1Enabled = TRUE;
 static boolean gbBacklightDisplay1Initialized = FALSE;
 static uint32  gdwBacklightDisplay1Level = 0;
 
 #ifdef FEATURE_BACKLIGHT_DISPLAY2
+static IBacklight  gDisplay21Backlight={0};
 static boolean gbBacklightDisplay2Enabled = TRUE;
 static boolean gbBacklightDisplay2Initialized = FALSE;
 static uint32  gdwBacklightDisplay2Level = 0;
@@ -98,6 +143,17 @@ int AEEBacklight_New(IShell *pIShell, AEECLSID uCls, void **ppif)
       pme->pIShell = pIShell;
       ISHELL_AddRef(pIShell);
       pme->uCls = uCls;
+
+      // ±³¹âÏà¹Ø³õÊ¼»¯--±³¹â¼¶±ðÐèÒÔºóµ¥¶ÀÉèÖÃ
+      OEM_SVCGetConfig(CFGI_BACKLIGHT_LEVEL, 
+                       &pme->btBKLevel, 
+                       sizeof(pme->btBKLevel));
+                               
+      if (0 == pme->btBKLevel)
+      {
+         pme->btBKLevel = OEMNV_BACKLIGHT_LEVEL;
+      }
+      AEEBacklight_SetBrightnessLevel(pme, pme->btBKLevel);
    }
    else
    {
@@ -185,7 +241,17 @@ static int AEEBacklight_Enable(IBacklight *pme)
 {
    int nErr = SUCCESS;
    FARF(BACKLIGHT, ("==>  AEEBacklight_Enable"));
-
+   
+   AEEBacklight_CancelDisableTimer(pme);
+#ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
+   AEEBacklight_CancelNotifyTimer(pme);
+#endif
+   if (AEEBacklight_IsEnabled(pme))
+   {
+      AEEBacklight_SetDisableTimer(pme);
+      return SUCCESS;
+   }
+   
    switch (pme->uCls)
    {
       AEEBacklightInfo backlightInfo;
@@ -222,10 +288,63 @@ static int AEEBacklight_Enable(IBacklight *pme)
 
       case AEECLSID_BACKLIGHT_KEYPAD:
 #ifdef FEATURE_PMIC_LCDKBD_LED_DRIVER
+#ifdef FEATRUE_KEY_PAD_CTL
+         {
+            Key_pad_Cfg KeyPad_control;
+            JulianType  jDate;
+            uint32 current_time;
+            uint32 from_time;   
+            uint32 to_time; 
+            boolean bOn = FALSE;  
+                
+            OEM_GetConfig(CFGI_KEY_PAD_CTL, (void*)&KeyPad_control, sizeof(Key_pad_Cfg));
+            current_time = GETTIMESECONDS();             
+            GETJULIANDATE(current_time, &jDate);
+            from_time = KeyPad_control.from_Time;
+            to_time = KeyPad_control.to_Time;
+            ERR( "OEM_GetConfig time is %d  end time is  %d", from_time, to_time, 0 );
+            from_time = from_time / 1000;
+            to_time = to_time / 1000;
+            jDate.wHour = 0;
+            jDate.wMinute = 0;
+            jDate.wSecond = 0;
+            from_time += JULIANTOSECONDS(&jDate);
+            to_time += JULIANTOSECONDS(&jDate);    
+    		if(TRUE== KeyPad_control.bStateOn)
+    		{
+    			if(current_time > 630720000)
+    			{
+    				if(to_time < from_time)
+    				{
+    					if((current_time < to_time) ||(current_time > from_time))
+    					{
+    						bOn = TRUE;
+    					}
+    				}
+    				else if((to_time > from_time)&&(current_time > from_time) && (current_time < to_time))
+    				{
+    					bOn = TRUE;
+    				}
+    			}
+    			else
+			    {
+    				bOn = TRUE;
+    			}
+    		}
+
+            
+            keypad_set_backlight((bOn ? pme->btBKLevel*SCAL_KEYPAD_LIGHT : 0));
+            if (bOn == FALSE)
+	        {
+	            return SUCCESS;
+	        }
+         }
+#else
          {
             byte val = KEYPAD_BACKLIGHT_LVL_4;
             keypad_set_backlight(val);
          }
+#endif
 #else
          keypad_set_backlight(TRUE);
 #endif
@@ -237,6 +356,7 @@ static int AEEBacklight_Enable(IBacklight *pme)
          nErr = EUNSUPPORTED;
          break;
    }
+   AEEBacklight_SetDisableTimer(pme);
    return nErr;
 }
 
@@ -253,12 +373,17 @@ static int AEEBacklight_Disable(IBacklight *pme)
    int nErr = SUCCESS;
    FARF(BACKLIGHT, ("==>  AEEBacklight_Disable"));
 
+   AEEBacklight_CancelDisableTimer(pme);
    switch (pme->uCls)
    {
       case AEECLSID_BACKLIGHT_DISPLAY1:
          gbBacklightDisplay1Enabled = FALSE;
          disp_set_backlight(0);
          nErr = SUCCESS;
+#ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
+         AEEBacklight_CancelNotifyTimer(pme);
+         AEEBacklight_SetNotifyTimer(pme);
+#endif
          break;
 
 #ifdef FEATURE_BACKLIGHT_DISPLAY2
@@ -443,6 +568,7 @@ static int AEEBacklight_SetBrightnessLevel(IBacklight *pme, uint32 dwBrightnessL
          gbBacklightDisplay1Initialized = TRUE;
          disp_set_backlight((byte)dwBrightnessLevel);
          nErr = SUCCESS;
+         pme->btBKLevel = (byte)dwBrightnessLevel;
          break;
 
    #ifdef FEATURE_BACKLIGHT_DISPLAY2
@@ -451,6 +577,7 @@ static int AEEBacklight_SetBrightnessLevel(IBacklight *pme, uint32 dwBrightnessL
          gbBacklightDisplay2Initialized = TRUE;
          disp_set_backlight((byte)dwBrightnessLevel);
          nErr = SUCCESS;
+         pme->btBKLevel = (byte)dwBrightnessLevel;
          break;
    #endif
 
@@ -461,3 +588,547 @@ static int AEEBacklight_SetBrightnessLevel(IBacklight *pme, uint32 dwBrightnessL
 
    return nErr;
 }
+
+/*==============================================================================
+Function:
+    AEEBacklight_CancelDisableTimer
+
+Description:
+    Cancel disable back light relative timer.
+
+Parameter:
+    pUser [in]: IBacklight *
+
+Return value:
+    none
+
+Remark:
+
+==============================================================================*/
+static void AEEBacklight_CancelDisableTimer(IBacklight *pme)
+{
+    AEE_CancelTimer(AEEBacklight_DisableTimer, pme);
+}
+
+/*==============================================================================
+Function:
+    AEEBacklight_SetDisableTimer
+
+Description:
+    Setup disable back light relative timer.
+
+Parameter:
+    pUser [in]: IBacklight *
+
+Return value:
+    none
+
+Remark:
+
+==============================================================================*/
+static void AEEBacklight_SetDisableTimer(IBacklight *pme)
+{
+    byte  nVal=0;
+    int32 nMSecs=0;
+    
+    OEM_SVCGetConfig(CFGI_BACK_LIGHT, &nVal, sizeof(nVal));
+    
+    if ((nVal > 0) && (nVal <100))
+    {
+        nMSecs = nVal*1000;
+        
+        AEE_SetSysTimer(nMSecs, AEEBacklight_DisableTimer, pme);
+    }
+}
+
+/*==============================================================================
+Function:
+    AEEBacklight_DisableTimer
+
+Description:
+    Disable display1 back light callback funtion.
+
+Parameter:
+    pUser [in]: IBacklight *
+
+Return value:
+    none
+
+Remark:
+
+==============================================================================*/
+static void AEEBacklight_DisableTimer(void *pUser)
+{
+    IBacklight *pMe = (IBacklight*)pUser;
+
+    if (NULL == pMe)
+    {
+        return;
+    }
+    
+    if (AEEBacklight_IsEnabled(pMe) || pMe->uCls == AEECLSID_BACKLIGHT_KEYPAD)
+    {
+        AEEBacklight_Disable(pMe);
+    }
+}
+
+static void AEEBacklight_TurnOn(IBacklight *pme)
+{
+    if (NULL == pme)
+    {
+        return;
+    }
+    
+    AEEBacklight_Enable(pme);
+}
+
+static void AEEBacklight_TurnOff(IBacklight *pme)
+{   
+    if (NULL == pme)
+    {
+        return;
+    }
+    
+    AEEBacklight_CancelDisableTimer(pme);
+    
+    AEEBacklight_Disable(pme);
+}
+
+#ifdef FEATURE_LED_CONTROL
+/*===========================================================================
+
+Function: AEEBacklight_SigLedEnable
+
+Description:
+   Turns led ON
+
+===========================================================================*/
+static int AEEBacklight_SigLedEnable(IBacklight *pme,sig_led_type SigLed_type)
+{
+    byte led_ctr;
+    int nErr = SUCCESS;
+    int32 repeattimer=0;
+    FARF(BACKLIGHT, ("==>  AEEBacklight_LEDEnable"));
+    
+    if (pme->uCls != AEECLSID_BACKLIGHT)
+    {
+        return nErr;
+    }
+    
+    OEM_SVCGetConfig(CFGI_LED_CONTROL, &led_ctr, sizeof(byte));
+
+    switch (SigLed_type)
+    {
+        case SIG_LED_SMS:
+            if (led_ctr&0x1)
+            {
+                repeattimer = 10*1000;
+                pme->sigLedSequence = 3;
+            }
+            else 
+            {
+                return FALSE;
+            }
+            break;
+
+        case SIG_LED_INCOMING_CALL:
+            if (led_ctr&0x2)
+            {
+                repeattimer = 1300;
+                pme->sigLedSequence = 4;
+            }
+            else 
+            {
+                return FALSE;
+            }        
+            break;
+
+        case SIG_LED_MISSED_CALL:
+            if (led_ctr &0x2)
+            {
+                repeattimer = 10*1000;
+                pme->sigLedSequence = 3;
+            }
+            else 
+            {
+                return FALSE;
+            }        
+            break;
+
+        case SIG_LED_NETWORK:
+#if defined( FEATURE_HAS_NETWORK_LED_CONTROL)
+            if (led_ctr &0x4)
+            {
+                repeattimer = 8*1000;
+                pme->sigLedSequence = 0;
+            }
+            else
+            {
+                return FALSE;
+            }
+            break;
+#else
+            return FALSE;
+#endif
+
+        case SIG_LED_ALARM:
+            if (led_ctr &0x8)
+            {
+#if defined( FEATURE_HAS_NETWORK_LED_CONTROL)
+                pme->sigLedSequence = 3;
+                repeattimer = 1900;
+#else
+                pme->sigLedSequence = 2;
+                repeattimer = 1300;
+#endif
+            }
+            else 
+            {
+                return FALSE;
+            }              
+            break;
+            
+        default:
+            break;
+    }
+
+    // if return in switch(), pme->sigLedType should not be changed
+    pme->sigLedType = SigLed_type;
+
+    AEEBacklight_SigLedFlash_Enable(pme);
+    AEE_SetSysTimer(repeattimer, AEEBacklight_SigLed_EnableTimer, pme);
+    
+    return nErr;
+}
+
+/*===========================================================================
+
+Function: AEEBacklight_SigLedDisable
+
+Description:
+   Turns led off
+
+===========================================================================*/
+static int AEEBacklight_SigLedDisable(IBacklight *pme)
+{
+    int nErr = SUCCESS;
+    FARF(BACKLIGHT, ("==>  AEEBacklight_LEDDisable"));
+    
+    if (pme->uCls != AEECLSID_BACKLIGHT)
+    {
+        return nErr;
+    }
+
+    AEEBacklight_SigLedFlash_Disable(pme);
+    AEE_CancelTimer(AEEBacklight_SigLed_EnableTimer, pme);
+    return nErr;    
+}
+
+/*==============================================================================
+Function:
+    AEEBacklight_SigLedEnableTimer
+
+Description:
+    Disable sig led callback funtion.
+
+Parameter:
+    pUser [in]: IBacklight *
+
+Return value:
+    none
+
+Remark:
+
+==============================================================================*/
+static void AEEBacklight_SigLed_EnableTimer(void *pUser)
+{
+    IBacklight *pme = (IBacklight*)pUser;
+
+    if (NULL == pme)
+    {
+        return;
+    }
+    
+    if (pme->uCls != AEECLSID_BACKLIGHT)
+    {
+        return;
+    }
+
+    AEEBacklight_SigLedEnable(pme,pme->sigLedType);
+}
+
+/*===========================================================================
+
+Function: AEEBacklight_SigLedEnable
+
+Description:
+   Turns led ON
+
+===========================================================================*/
+static int AEEBacklight_SigLedFlash_Enable(IBacklight *pme)
+{
+    int nErr = SUCCESS;
+    int32 lightlong=0;
+    FARF(BACKLIGHT, ("==>  AEEBacklight_SigLedFlash_Eable"));
+    
+    if (pme->uCls != AEECLSID_BACKLIGHT)
+    {
+        return nErr;
+    }
+    
+    switch(pme->sigLedType)
+    {
+        case SIG_LED_SMS:
+#if defined(FEATURE_HAS_NETWORK_LED_CONTROL)
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_RED_ON;
+#else
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_WHITE_ON;
+#endif
+            lightlong = 500;
+            break;
+
+        case SIG_LED_INCOMING_CALL:
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_ORANGE_ON;
+            lightlong = 200;
+            break;
+
+        case SIG_LED_MISSED_CALL:
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_ORANGE_ON;
+            lightlong = 500;
+            break;
+
+        case SIG_LED_NETWORK:
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_WHITE_ON;
+            lightlong = 100;
+            break;
+
+        case SIG_LED_ALARM:
+            {
+#if defined(FEATURE_HAS_NETWORK_LED_CONTROL)
+            hs_sig_led_onoff_type led[] =
+				{
+                    HS_SIG_LED_COLOR_ORANGE_ON,
+                    HS_SIG_LED_COLOR_WHITE_ON,
+                    HS_SIG_LED_COLOR_RED_ON
+            	};
+                pme->sigLedOnoff = led[pme->sigLedSequence - 1];
+#else
+                hs_sig_led_onoff_type led[] = 
+                        {
+                            HS_SIG_LED_COLOR_WHITE_ON,
+                            HS_SIG_LED_COLOR_ORANGE_ON
+                        };
+                pme->sigLedOnoff = led[pme->sigLedSequence - 1];
+#endif
+                lightlong = 500;
+            }
+            break;
+            
+        default:   
+            break;
+    }
+
+    nErr = disp_set_sigled_cmd(pme->sigLedOnoff);
+    if (pme->sigLedSequence != 0)
+    {
+        pme->sigLedSequence--;
+        AEE_SetSysTimer(lightlong, AEEBacklight_SigLedFlash_DisableTimer, pme);
+    }
+    else
+    {
+        AEEBacklight_SigLedFlash_Disable(pme);
+    }
+    
+    return nErr;
+}
+
+/*===========================================================================
+
+Function: AEEBacklight_SigLedFlash_Disable
+
+Description:
+   Turns led off
+
+===========================================================================*/
+static int AEEBacklight_SigLedFlash_Disable(IBacklight *pme)
+{
+    int nErr = SUCCESS; 
+    FARF(BACKLIGHT, ("==>  AEEBacklight_SigLedFlash_Disable"));
+    
+    if (pme->uCls != AEECLSID_BACKLIGHT)
+    {
+        return nErr;
+    }
+    
+    switch( pme->sigLedType)
+    {
+        case SIG_LED_SMS:
+#if defined(FEATURE_HAS_NETWORK_LED_CONTROL)
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_RED_OFF;
+#else
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_WHITE_OFF;
+#endif
+            break;
+
+        case SIG_LED_INCOMING_CALL:
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_ORANGE_OFF;
+            break;
+
+        case SIG_LED_MISSED_CALL:
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_ORANGE_OFF;
+            break;
+
+        case SIG_LED_NETWORK:
+            pme->sigLedOnoff = HS_SIG_LED_COLOR_WHITE_OFF;
+            break;
+
+        case SIG_LED_ALARM:
+            {
+#if defined( FEATURE_HAS_NETWORK_LED_CONTROL)
+                hs_sig_led_onoff_type led[] = 
+                        {
+                            HS_SIG_LED_COLOR_WHITE_OFF,
+                            HS_SIG_LED_COLOR_ORANGE_OFF,
+                            HS_SIG_LED_COLOR_RED_OFF
+                        };
+                pme->sigLedOnoff = led[pme->sigLedSequence];
+#else
+                hs_sig_led_onoff_type led[] = 
+                        {
+                            HS_SIG_LED_COLOR_WHITE_OFF,
+                            HS_SIG_LED_COLOR_ORANGE_OFF
+                        };
+                pme->sigLedOnoff = led[pme->sigLedSequence];
+#endif
+            }
+            break;
+            
+        default:   
+            break;            
+    }
+
+    nErr = disp_set_sigled_cmd(pme->sigLedOnoff);
+    AEE_CancelTimer(AEEBacklight_SigLedFlash_EnableTimer, pme);
+    AEE_CancelTimer(AEEBacklight_SigLedFlash_DisableTimer, pme);    
+    
+    return nErr;
+}
+
+/*==============================================================================
+Function:
+    AEEBacklight_SigLedFlash_DisableTimer
+
+Description:
+    Disable sig led callback funtion.
+
+Parameter:
+    pUser [in]: IBacklight *
+
+Return value:
+    none
+
+Remark:
+
+==============================================================================*/
+static void AEEBacklight_SigLedFlash_DisableTimer(void *pUser)
+{
+    IBacklight *pme = (IBacklight*)pUser;
+
+    if (NULL == pme)
+    {
+        return;
+    }
+    
+    if (pme->uCls != AEECLSID_BACKLIGHT)
+    {
+        return;
+    }
+    
+    AEEBacklight_SigLedFlash_Disable(pme);
+    if (pme->sigLedSequence != 0)
+    {
+        AEE_SetSysTimer(100, AEEBacklight_SigLedFlash_EnableTimer, pme); 
+    }
+}
+
+/*==============================================================================
+Function:
+    AEEBacklight_SigLedFlash_EnableTimer
+
+Description:
+    Disable sig led callback funtion.
+
+Parameter:
+    pUser [in]: IBacklight *
+
+Return value:
+    none
+
+Remark:
+
+==============================================================================*/
+static void AEEBacklight_SigLedFlash_EnableTimer(void *pUser)
+{
+    IBacklight *pme = (IBacklight*)pUser;
+
+    if (NULL == pme)
+    {
+        return;
+    }
+    
+    if (pme->uCls != AEECLSID_BACKLIGHT)
+    {
+        return;
+    }
+
+    if (pme->sigLedSequence != 0)
+    {
+        AEEBacklight_SigLedFlash_Enable(pme);
+    }
+}
+
+#endif //#ifdef FEATURE_LED_CONTROL
+#ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
+/*===========================================================================
+
+Function: AEEBacklight_NotifyAutoExitApp
+
+Description:
+   notify active app to exit after disable backlight to decrease power,because 848 
+
+===========================================================================*/
+static void AEEBacklight_NotifyAutoExitApp(IBacklight *pme)
+{
+    AEECLSID nClsId = 0;
+    nClsId = ISHELL_ActiveApplet(pme->pIShell);
+    (void)ISHELL_PostEvent(pme->pIShell,
+                           nClsId,
+                           EVT_APP_EXIT,
+                           0,
+                           0);
+}
+/*===========================================================================
+
+Function: AEEBacklight_SetNotifyTimer
+Description:
+   setTimer to notify after disable backlight 
+
+===========================================================================*/
+
+static void AEEBacklight_SetNotifyTimer(IBacklight *pme)
+{
+     //AEE_SetSysTimer(MSAFTER_DISABLEBACKLIGHT_TIMER, (PFNNOTIFY)AEEBacklight_NotifyAutoExitApp, pme);
+     AEE_SetTimer(MSAFTER_DISABLEBACKLIGHT_TIMER, (PFNNOTIFY)AEEBacklight_NotifyAutoExitApp, pme);
+}
+/*===========================================================================
+
+Function: AEEBacklight_SetNotifyTimer
+Description:
+   cancelTimer to notify when enable backlight 
+
+===========================================================================*/
+static void AEEBacklight_CancelNotifyTimer(IBacklight *pme)
+{
+    AEE_CancelTimer((PFNNOTIFY)AEEBacklight_NotifyAutoExitApp, pme);
+}
+#endif

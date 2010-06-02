@@ -1419,16 +1419,6 @@ static void route_brew_event(AEEEvent evt, uint16 wParam)
 #endif
     {
 #ifdef FEATURE_HEADSET_SWITCH
-#if 0
-        // AVK_HEADSET_SWITCH_OFF means headset key release
-        if(wParam == AVK_HEADSET_SWITCH_OFF)
-        {
-            if(AEECM_IS_VOICECALL_CONNECTED(gpICM))
-            {
-                wParam = AVK_END;
-            }
-        }
-#endif
         // AVK_HEADSET_SWITCH means headset key press
         if (wParam == AVK_HEADSET_SWITCH)      	
         {

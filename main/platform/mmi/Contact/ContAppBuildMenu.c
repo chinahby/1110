@@ -1581,13 +1581,6 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 
     for( i = CONTCFG_ONEDIAL1; i <= CONTCFG_ONEDIAL8; i++)
     {
-#ifdef FEATURE_SUPPORT_TORCH
-        if(CONTCFG_ONEDIAL4 == i)
-        {
-            continue;
-        }
-#endif
-
         if(SUCCESS != CContApp_GetConfig( pMe,
                                           (ContAppCFG)i,
                                           pMe->m_pOneDialBuf,

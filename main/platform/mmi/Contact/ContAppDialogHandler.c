@@ -13033,12 +13033,6 @@ static boolean CContApp_SaveLocal_Input(CContApp  *pMe, ITextCtl *pTextCtl)
                 // 检查当前单键拨号中是否存在当前被编辑的记录
                 for(i=CONTCFG_ONEDIAL1; i<=CONTCFG_ONEDIAL8; i++)
                 {
-#ifdef FEATURE_SUPPORT_TORCH
-                    if(CONTCFG_ONEDIAL4 == i)
-                    {
-                        continue;
-                    }
-#endif 
                     if(SUCCESS != CContApp_GetConfig( pMe,
                                                     (ContAppCFG)i,
                                                     pMe->m_pOneDialBuf,
