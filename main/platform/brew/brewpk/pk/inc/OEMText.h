@@ -149,7 +149,7 @@ when       who     what, where, why
 #endif //FEATURE_LANG_ITALIAN
 
 #endif //#ifdef FEATURE_T9_ALPHABETIC
-
+#if 0
 #ifdef FEATURE_LANG_CHINESE
 #define FEATURE_T9_CHINESE
 #define FEATURE_T9_PINYIN
@@ -162,7 +162,7 @@ when       who     what, where, why
 #define FEATURE_T9_ZHUYIN
 #endif
 #endif //FEATURE_LANG_TCHINESE
-
+#endif
 #ifdef FEATURE_T9_MT_ENGLISH
 #define FEATURE_3STYLE_MULTITAP
 #endif //FEATURE_T9_MT_ENGLISH
@@ -181,7 +181,7 @@ when       who     what, where, why
 #ifdef FEATURE_T9_RAPID_ENGLISH
 #define TEXT_MODE_T9_RAPID_ENGLISH AEE_TM_RAPID 
 #endif //FEATURE_T9_RAPID_ENGLISH
-
+#if 0
 #ifdef FEATURE_T9_PINYIN
 #define TEXT_MODE_T9_PINYIN        AEE_TM_PINYIN 
 #endif //FEATURE_T9_PINYIN
@@ -193,7 +193,7 @@ when       who     what, where, why
 #ifdef FEATURE_T9_ZHUYIN
 #define TEXT_MODE_T9_ZHUYIN        AEE_TM_ZHUYIN 
 #endif //FEATURE_T9_ZHUYIN
-
+#endif
 #ifdef FEATURE_T9_MT_ARABIC
 #define TEXT_MODE_T9_MT_ARABIC     AEE_TM_ARABIC
 #endif //FEATURE_T9_MT_ARABIC

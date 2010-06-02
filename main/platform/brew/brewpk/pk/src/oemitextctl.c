@@ -1302,7 +1302,7 @@ NormalKeyEvent:
             break;
 
         case EVT_KEY_RELEASE:  
-            if ((wParam == AVK_STAR)&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE)))
+            if ((wParam == AVK_STAR)/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/) //modi by yangdecai
             {
                 (void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
                 return TRUE;
