@@ -1044,6 +1044,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
     switch(i)
     {
         case 0:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
             //CLOSE_DIALOG(DLGRET_GAME);  //FM
             return TRUE;
             break;
