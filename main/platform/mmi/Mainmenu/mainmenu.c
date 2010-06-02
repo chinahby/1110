@@ -1040,13 +1040,11 @@ static boolean StartApplet(MainMenu *pMe, int i)
 {
     int Result = FALSE;
 
-   DBGPRINTF("StartApplet:::::%d",i);
+   	//MSG_ERROR("StartApplet:::::%d",i,0,0);
     switch(i)
     {
         case 0:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
-            //CLOSE_DIALOG(DLGRET_GAME);  //FM
-            return TRUE;
             break;
             
         case 1:
@@ -1083,7 +1081,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             break;
 
     }
-    DBGPRINTF("Result   :::::%d",Result);
+    //MSG_ERROR("Result   :::::%d",Result,0,0);
     return TRUE;
 }
 

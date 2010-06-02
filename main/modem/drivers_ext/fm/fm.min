@@ -3,7 +3,7 @@
 #-------------------------------------------------------------------------------
 
 FM_SOURCES=\
-        fm_bcm2048.c
+        fm_rd5802.c
 
 FM_OBJS :=  $(addprefix $(TARGETDIR)/, $(FM_SOURCES:%.c=%.o))
 FM_DEPS :=  $(addprefix $(TARGETDIR)/, $(FM_SOURCES:%.c=%.dep))
