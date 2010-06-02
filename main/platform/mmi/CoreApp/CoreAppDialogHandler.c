@@ -2960,7 +2960,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
 
                 case AVK_SELECT:
-                    return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
+                    //return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
+                    return TRUE;
                  // ÖØ²¦
                 case AVK_SEND:
                     if (pMe->m_bAcquiredTime && !pMe->m_bemergencymode)
