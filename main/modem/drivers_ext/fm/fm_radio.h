@@ -69,4 +69,4 @@ boolean fm_radio_is_tuning( void);
 word    fm_radio_get_playing_channel( void);
 void fm_mute(boolean on);
 #endif //__FM_RADIO_H_
-#define VC0848_HEADSET_PA      //PA OPTION
+//#define VC0848_HEADSET_PA      //PA OPTION
