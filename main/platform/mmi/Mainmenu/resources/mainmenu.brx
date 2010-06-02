@@ -44,7 +44,7 @@
 		<Text>Alarm</Text>
 	</STRING>
 	<String Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
-		<Text>Sportwatch</Text>
+		<Text>Stopwatch</Text>
 	</String>
 	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
 		<Text>Tetris</Text>
