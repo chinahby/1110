@@ -1051,6 +1051,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
                 
                 //FREE ((void*) wszText);
             }
+
             FREEIF ((void*) wszText);
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
             return TRUE;
@@ -3966,9 +3967,9 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                pMe->m_nNormalFontHeight);
 #elif defined(FEATURE_DISP_128X128)
 	SETAEERECT(&rc, 
-               1,
+               45,
                20,
-               pMe->m_rc.dx-100, 
+               pMe->m_rc.dx-30, 
                pMe->m_nNormalFontHeight);
     SETAEERECT(&rc_week, 
                15,//1,
@@ -4037,17 +4038,17 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     }
 	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test               
     // Display the string of date or time or weekday
-	/*wlh 测试临时屏蔽
+	
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-                              AEE_FONT_NORMAL,
+                              AEE_FONT_BOLD,
                               wszDate, -1,
                               0, 0, &rc, 
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_LEFT 
                               | IDF_TEXT_TRANSPARENT);
-							  */
+
         
  	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test  
     // 格式化日期字符串并绘制
