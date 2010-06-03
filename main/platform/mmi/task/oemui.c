@@ -1878,6 +1878,7 @@ boolean is_dummy_key(byte key_code, byte key_parm)
     {
         case HS_CHARGING_OFF_K:
         case HS_CHARGING_ON_K:
+            return TRUE;
 #ifdef FEATRUE_SUPPORT_G_SENSOR    
         case HS_GSENSOR_STEP_K:
             return TRUE;
