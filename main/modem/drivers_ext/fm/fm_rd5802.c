@@ -1,7 +1,8 @@
 #include "fm_radio.h"
 #include "Assert.h"
 #include "OEMCFGI.h"
-
+#include "snd.h"
+#include "err.h"
 /******************************************************************************
  ** File Name:      fm_drv.c                                                  *
  ** Author:         Wangliang                                             	  *
@@ -35,6 +36,14 @@
  /**---------------------------------------------------------------------------*
  **                         Macro			                                  *
  **---------------------------------------------------------------------------*/
+#define FM_RD5802_I2C_ID	(0x20)
+	
+typedef enum
+{
+	FM_I2C_WRITE,
+	FM_I2C_READ,
+	FM_I2C_MAX
+}FM_I2C_COMM_TYPE;
 
 
 /***************************************************
@@ -44,33 +53,19 @@ Extern Definitions and Types
 /***************************************************
 Local Definitions and Types
 ****************************************************/
+static uint32	RDA5802_FreqToChan(uint32 frequency);
+static uint8 	RDA5802_ValidStop(int16 freq);
+static uint8 	RDA5802_GetSigLvl(int16 curf );
+
 /***************************************************
 RDA5802 interfaces
 ****************************************************/
 static fm_status_type fm_work_status = FM_NOT_INIT;
 static word fm_playing_channel = 0;
-#if 0
-static void  	RDA5802_PowerOn(void);
-static void  	RDA5802_PowerOffProc(void);
-static void		RDA5802_ChipInit(void);
-static boolean	RDA5802_Mute(boolean mute);
-static uint32	RDA5802_FreqToChan(uint32 frequency);
-static boolean	RDA5802_SetFreq(int16 curf);
-static uint8 	RDA5802_ValidStop(int16 freq);
-static uint8 	RDA5802_GetSigLvl(int16 curf );
-static boolean	RDA5802_SetVolumeLevel(uint8 level);
-static boolean  RDA5802_Intialization(void);
 
 /* Used to send I2C command */
 i2c_rw_cmd_type fm_i2c_command;
 
-/***************************************************
-Local variables
-****************************************************/
-
-static int16 CurrFrequency = -1;
-
-//static uint8 fm_comm_buf[100];
 /***************************************************
 RDA5802
 ****************************************************/
@@ -109,15 +104,6 @@ uint8 RDA5802_initialization_reg[]={
 	0x45, 0x80,                    
 };
 
-static void HardwareCommInit(void)
-{
-	/* Configure I2C parameters */
-	fm_i2c_command.bus_id     = I2C_BUS_HW_CTRL;
-	fm_i2c_command.slave_addr = FM_RD5802_I2C_ID;
-	/*lint -save -e655 */
-	fm_i2c_command.options    = (i2c_options_type) (I2C_DFLT_ADDR_DEV | I2C_START_BEFORE_READ);
-}
-
 static uint8 OperationRDAFM_2w(FM_I2C_COMM_TYPE operation, uint8 *data, uint8 numBytes)
 {
 	uint8  	i = 0;
@@ -128,6 +114,11 @@ static uint8 OperationRDAFM_2w(FM_I2C_COMM_TYPE operation, uint8 *data, uint8 nu
 		return FALSE;
 	}
 
+	/* Configure I2C parameters */
+	fm_i2c_command.bus_id     = I2C_BUS_HW_CTRL;
+	fm_i2c_command.slave_addr = FM_RD5802_I2C_ID;
+	/*lint -save -e655 */
+	fm_i2c_command.options    = (i2c_options_type) (I2C_DFLT_ADDR_DEV | I2C_START_BEFORE_READ);
 	fm_i2c_command.addr.reg = 0;
 	fm_i2c_command.buf_ptr  = (byte *)(data);
 	fm_i2c_command.len      = numBytes;
@@ -154,6 +145,7 @@ static uint8 OperationRDAFM_2w(FM_I2C_COMM_TYPE operation, uint8 *data, uint8 nu
 
 	if ( ret == 1 )
 	{
+		ERR("OperationRDAFM_2w OK numBytes =%d",numBytes,0,0);
 		return TRUE;
 	}
 
@@ -163,96 +155,130 @@ static uint8 OperationRDAFM_2w(FM_I2C_COMM_TYPE operation, uint8 *data, uint8 nu
 
 }
 
-static void  RDA5802_PowerOn(void)
-{	
-	ERR("RDA5802_PowerOnReset!!!",0,0,0);
-	pm_xtal_sleep_osc_cmd(PM_ON_CMD);
-	pm_xo_sel_alt_sleep_clk_src(PM_XO_32KHZ_SLEEP_CLOCK_XTAL_OSC);
+static  uint8 RDA5802_GetSigLvl(int16 curf )  /*当满足rssi 的条件时，将信号记录，再选最强的9个频段*/
+{    
+	uint8 RDA5802_reg_data[4]={0};	
+
+	ERR("RDA5802_GetSigLvl!!!",0,0,0);
+	OperationRDAFM_2w(FM_I2C_READ,&(RDA5802_reg_data[0]), 4);
+	return  (RDA5802_reg_data[2]>>1);  /*返回rssi*/
 }
 
-static void  RDA5802_PowerOffProc(void)
+
+boolean fm_radio_is_inited( void)
 {
-	uint8 RDA5802_poweroff[] ={0x00,0x00};  
-
-	ERR("RDA5802_PowerOffProc!!!",0,0,0);
-	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_poweroff[0]), 2);
+    return fm_work_status > FM_NOT_INIT;
 }
 
-static void RDA5802_ChipInit(void)
+boolean fm_radio_is_power_up( void)
+{    
+    return fm_work_status >= FM_POWER_UP;
+}
+
+boolean fm_radio_is_power_down( void)
 {
-	ERR("RDA5802_ChipInit!!!",0,0,0);
-	clk_busy_wait(10*1000);	//Dealy 10ms
-	HardwareCommInit();
-	RDA5802_Intialization();
-	//RDA5802_PowerOffProc();
+    
+    return fm_work_status == FM_POWER_DOWN;
 }
 
-static boolean RDA5802_Mute(boolean mute)
+boolean fm_radio_is_tuning( void)
+{    
+    return fm_work_status == FM_IN_PROGRESS;
+}
+
+word fm_radio_get_playing_channel( void)
+{ 
+    return fm_playing_channel;
+}
+
+void fm_radio_pre_init(void)
 {
-	return TRUE;
+	ERR("fm_radio_pre_init!!!",0,0,0);
+	/* Configure I2C parameters */
+	fm_i2c_command.bus_id     = I2C_BUS_HW_CTRL;
+	fm_i2c_command.slave_addr = FM_RD5802_I2C_ID;
+	/*lint -save -e655 */
+	fm_i2c_command.options    = (i2c_options_type) (I2C_DFLT_ADDR_DEV | I2C_START_BEFORE_READ);
+	return;
 }
 
-static uint32 RDA5802_FreqToChan(uint32 frequency) 
+int fm_radio_init(void)
 {
-	uint8 	channelSpacing = 0;
-	uint32 	bottomOfBand = 0;
-	uint32 	channel = 0;
+	ERR("fm_radio_init!!!",0,0,0);
+#if (defined(T_QSC1100) || defined(T_QSC1110))
+	// qsc1100 platform
+	// - enable platform power here if necessary
+	pm_vote_clk_32k(ON, PM_32K_CLK_FM_APP);  // vote to enable 32KHz clock
+	clk_busy_wait(20*1000);			//Must Delay 10ms
+#else
+	// other platforms
+	// - enable platform here
+#endif
 
-	if ((RDA5802_initialization_reg[3] & 0x0c) == 0x00)
-	{
-		bottomOfBand = 870;
-	}
-	else if ((RDA5802_initialization_reg[3] & 0x0c) == 0x04)
-	{
-		bottomOfBand = 760;
-	}
-	else if ((RDA5802_initialization_reg[3] & 0x0c) == 0x08)	
-	{
-		bottomOfBand = 760;	
-	}
-	if ((RDA5802_initialization_reg[3] & 0x03) == 0x00) 
-	{
-		channelSpacing = 1;
-	}
-	else if ((RDA5802_initialization_reg[3] & 0x03) == 0x01) 
-	{
-		channelSpacing = 2;
-	}
-
-	channel = (frequency - bottomOfBand) / channelSpacing;
-	return (channel);
+	fm_work_status = FM_POWER_DOWN;
+	return 0;
 }
 
-static  boolean RDA5802_SetFreq(int16 curFreq)
-{   
-	uint8 	RDA5802_channel_start_tune[] ={0xc0,0x01,0x00,0x10}; 	//87.0MHz
-	uint8 	RDA5802_reg_data[4]={0};
-	uint32 	curChan;
+int fm_radio_power_up(void)
+{
+	uint8 error_ind = 0;
+	uint8 RDA5802_REG[]={0x00,0x02};
 
-	CurrFrequency = curFreq;
-	curChan=RDA5802_FreqToChan(curFreq);
-	RDA5802_channel_start_tune[2]=curChan>>2;
-	RDA5802_channel_start_tune[3]=(((curChan&0x0003)<<6)|0x10) | (RDA5802_initialization_reg[3]&0x0f);	//set tune bit
+	ERR("fm_radio_power_up start!!!",0,0,0);
 	
-	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_channel_start_tune[0]), 4);
-	clk_busy_wait(30*1000); //at least delay 20ms
-	OperationRDAFM_2w(FM_I2C_READ, &(RDA5802_reg_data[0]), 4);
-	clk_busy_wait(200*1000); //at least delay 20ms
+	if(fm_work_status == FM_NOT_INIT)
+    {
+		return FM_RADIO_FAILED;
+    }        
+    else if(fm_work_status == FM_IN_PROGRESS)
+    {
+        return FM_RADIO_SUCCESSFUL;
+    }  
+
+	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+	clk_busy_wait(20*1000);			//Must Delay 10ms
 	
-	if ( (RDA5802_reg_data[2]&0x01) == 0x01 )
+	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_initialization_reg[0], sizeof(RDA5802_initialization_reg));
+	clk_busy_wait(50*1000);		//Must Delay 20ms	
+
+	ERR("fm_radio_power_up end error_ind = %d!!!",error_ind,0,0);
+    if (error_ind)
 	{
-		ERR("RDA5802_SetFreq = %d is a station!",curFreq,0,0);
-		return TRUE;
+		fm_work_status = FM_POWER_UP; 
+		return 0;
 	}
 	else
 	{
-		return FALSE;
+		fm_work_status = FM_POWER_DOWN;
+		return 1;
 	}
+	
+	return 0;
 }
 
-static int16 RDA5802_GetFreq(void)
+int fm_radio_power_down(void)
 {
-	return CurrFrequency;
+	uint8 RDA5802_poweroff[] ={0x00,0x00};  
+
+	if(fm_work_status == FM_NOT_INIT)
+    {
+        return FM_RADIO_FAILED;
+    }
+    
+	ERR("fm_radio_power_down!!!",0,0,0);
+	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_poweroff[0]), 2);
+	
+#if (defined(T_QSC1100) || defined(T_QSC1110))
+	// qsc1100 platform
+	pm_vote_clk_32k(OFF, PM_32K_CLK_FM_APP);  // vote to disable 32KHz clock
+	// - disable platform power here if necessary
+#else
+	// other platforms
+	// - disable platform power here
+#endif
+
+	fm_work_status = FM_POWER_DOWN;
+	return 0;
 }
 
 /************************************************************************************
@@ -303,54 +329,13 @@ static  uint8 RDA5802_ValidStop(int16 freq)
 	}
 }
 
-static  uint8 RDA5802_GetSigLvl(int16 curf )  /*当满足rssi 的条件时，将信号记录，再选最强的9个频段*/
-{    
-	uint8 RDA5802_reg_data[4]={0};	
-
-	ERR("RDA5802_GetSigLvl!!!",0,0,0);
-	OperationRDAFM_2w(FM_I2C_READ,&(RDA5802_reg_data[0]), 4);
-	return  (RDA5802_reg_data[2]>>1);  /*返回rssi*/
-}
-
-static  boolean RDA5802_SetVolumeLevel(uint8 level)   /*一般不调用，即不用芯片来调节音量。*/
-{
-	if ( level > 0x0f )
-	{
-		return FALSE;
-	}
-	
-	RDA5802_initialization_reg[7]=( RDA5802_initialization_reg[7] & 0xf0 ) | level; 
-	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_initialization_reg[0]), 8);
-	return TRUE;
-}
-
-static  boolean  RDA5802_Intialization(void)
-{
-	uint8 error_ind = 0;
-	uint8 RDA5802_REG[]={0x00,0x02};
-
-	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
-	clk_busy_wait(20*1000);			//Must Delay 10ms
-	
-	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_initialization_reg[0], sizeof(RDA5802_initialization_reg));
-	clk_busy_wait(50*1000);		//Must Delay 20ms	
-	
-    if (error_ind)
-	{
-		return FALSE;
-	}
-	else
-	{
-		return TRUE;
-	}
-}
 
 static uint16 RDA5802_Seek(uint8 seekDirection) 
 {
 	uint8 	falseStation=0;
 	uint32 	StartFrequency; 
 	
-	StartFrequency=CurrFrequency;	 /*stop flag*/
+	StartFrequency=fm_playing_channel;	 /*stop flag*/
 
 	do
 	{
@@ -358,122 +343,203 @@ static uint16 RDA5802_Seek(uint8 seekDirection)
 
 		if(seekDirection)
 		{
-			CurrFrequency++;  /*seek up*/
+			fm_playing_channel++;  /*seek up*/
 		}
 		else
 		{
-			CurrFrequency--;  /*seek down*/
+			fm_playing_channel--;  /*seek down*/
 		}
 		
-		if(CurrFrequency>1080)
+		if(fm_playing_channel>1080)
 		{
-			CurrFrequency=875; /* china band */
+			fm_playing_channel=875; /* china band */
 		}
 		
-		if(CurrFrequency<875)
+		if(fm_playing_channel<875)
 		{
-			CurrFrequency=1080;
+			fm_playing_channel=1080;
 		}
 		
-		if(RDA5802_ValidStop(CurrFrequency)==0) 
+		if(RDA5802_ValidStop(fm_playing_channel)==0) 
 		{
 			falseStation =0;      		
 		}
 	}
-	while((falseStation==1)&&(StartFrequency!=CurrFrequency));	
+	while((falseStation==1)&&(StartFrequency!=fm_playing_channel));	
 		
-	return CurrFrequency;
+	return fm_playing_channel;
 }
 
-static boolean RDA5802_SetBand(uint32 band)
+
+static uint32 RDA5802_FreqToChan(uint32 frequency) 
 {
-	return TRUE;
-}
-#endif
+	uint8 	channelSpacing = 0;
+	uint32 	bottomOfBand = 0;
+	uint32 	channel = 0;
 
-boolean fm_radio_is_inited( void)
-{
+	if ((RDA5802_initialization_reg[3] & 0x0c) == 0x00)
+	{
+		bottomOfBand = 870;
+	}
+	else if ((RDA5802_initialization_reg[3] & 0x0c) == 0x04)
+	{
+		bottomOfBand = 760;
+	}
+	else if ((RDA5802_initialization_reg[3] & 0x0c) == 0x08)	
+	{
+		bottomOfBand = 760;	
+	}
+	if ((RDA5802_initialization_reg[3] & 0x03) == 0x00) 
+	{
+		channelSpacing = 1;
+	}
+	else if ((RDA5802_initialization_reg[3] & 0x03) == 0x01) 
+	{
+		channelSpacing = 2;
+	}
 
-    return fm_work_status > FM_NOT_INIT;
-}
-
-boolean fm_radio_is_power_up( void)
-{
-    
-    return fm_work_status >= FM_POWER_UP;
-}
-
-boolean fm_radio_is_power_down( void)
-{
-    
-    return fm_work_status == FM_POWER_DOWN;
-}
-
-boolean fm_radio_is_tuning( void)
-{
-    
-    return fm_work_status == FM_IN_PROGRESS;
-}
-
-word fm_radio_get_playing_channel( void)
-{
- 
-    return fm_playing_channel;
+	channel = (frequency - bottomOfBand) / channelSpacing;
+	return (channel);
 }
 
-void fm_radio_pre_init(void)
-{
-	return;
-}
-
-int fm_radio_init(void)
-{
-	return 0;
-}
-
-int fm_radio_power_up(void)
-{
-	return 0;
-}
-
-int fm_radio_power_down(void)
-{
-	return 0;
-}
 
 int fm_tune_channel(word wChannel)
 {
-	return 0;
+	uint8 	RDA5802_channel_start_tune[] ={0xc0,0x01,0x00,0x10}; 	//87.0MHz
+	uint8 	RDA5802_reg_data[4]={0};
+	uint32 	curChan;
+
+	ERR("fm_tune_channel wChannel = %d!!!",wChannel,0,0);
+	if(fm_work_status != FM_IDLE_STATUS)
+    {
+        return FM_RADIO_FAILED;
+    }      
+    
+    fm_work_status = FM_IN_PROGRESS;
+
+    fm_set_volume(7);
+	fm_playing_channel = wChannel;
+	curChan=RDA5802_FreqToChan(wChannel);
+	RDA5802_channel_start_tune[2]=curChan>>2;
+	RDA5802_channel_start_tune[3]=(((curChan&0x0003)<<6)|0x10) | (RDA5802_initialization_reg[3]&0x0f);	//set tune bit
+	
+	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_channel_start_tune[0]), 4);
+	clk_busy_wait(30*1000); //at least delay 20ms
+	OperationRDAFM_2w(FM_I2C_READ, &(RDA5802_reg_data[0]), 4);
+	clk_busy_wait(200*1000); //at least delay 20ms
+
+
+	if ( (RDA5802_reg_data[2]&0x01) == 0x01 )
+	{
+		ERR("RDA5802_SetFreq = %d is a station!",wChannel,0,0);
+		fm_work_status = FM_IDLE_STATUS;
+    	fm_playing_channel = wChannel;
+		return 0;
+	}
+	else
+	{
+		ERR("RDA5802_SetFreq = %d is not a station!",wChannel,0,0);
+		fm_work_status = FM_IDLE_STATUS;
+    	fm_playing_channel = wChannel;
+		return 1;
+	}
 }
 
 //Synchronization Seek Function
 int fm_seek_up(word* pChannel)
 {
+	if(fm_work_status != FM_IDLE_STATUS)
+    {
+        return FM_RADIO_FAILED;
+    }      
+    fm_work_status = FM_IN_PROGRESS;
+
+	ERR("fm_seek_up!!!",0,0,0);
+    fm_set_volume(7);
+	fm_playing_channel = RDA5802_Seek(1);
+	*pChannel = fm_playing_channel;
+
+	fm_work_status = FM_IDLE_STATUS;
+	
 	return 0;
 }
 
 int fm_seek_down(word* pChannel)
 {
+	if(fm_work_status != FM_IDLE_STATUS)
+    {
+        return FM_RADIO_FAILED;
+    }      
+    fm_work_status = FM_IN_PROGRESS;
+
+	ERR("fm_seek_down!!!",0,0,0);
+    fm_set_volume(7);
+	fm_playing_channel = RDA5802_Seek(0);
+	*pChannel = fm_playing_channel;
+
+	fm_work_status = FM_IDLE_STATUS;
 	return 0;
 }
 
 //Asynchronization Seek Function
 int fm_seek_start(boolean bIsUp, boolean bIsWrap)
 {
+	fm_work_status = FM_IDLE_STATUS;
 	return 0;
 }
 
 int fm_get_seek_status(boolean* pIsFinish, boolean* pIsBandLimit, word* pChannel)
 {
+	fm_work_status = FM_IDLE_STATUS;
 	return 0;
 }
 
 int fm_set_volume(word wVolume)
 {
-	return 0;
+	uint8 level = (uint8)wVolume;
+	
+	if(fm_work_status != FM_IDLE_STATUS)
+    {
+        return FM_RADIO_FAILED;
+    } 	
+
+	if ( level == 0 )
+	{
+		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED,
+                       NULL, NULL);
+	}
+	else
+	{
+		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED,
+                       NULL, NULL);
+        snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_VOICE,5,NULL,NULL);
+        snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_MESSAGE,5,NULL,NULL);
+        snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_RING,5,NULL,NULL);
+        snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_MIDI,5,NULL,NULL);
+		snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_AUX,5,NULL,NULL);
+	}
+	if ( level > 0x0f )
+	{
+		return 0;
+	}
+	
+	RDA5802_initialization_reg[7]=( RDA5802_initialization_reg[7] & 0xf0 ) | level; 
+	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_initialization_reg[0]), 8);
+	return 1;
 }
 
 void fm_mute(boolean on)
 {
+	ERR("fm_mute %d !!!",on,0,0);
+	
+	if ( on == TRUE )
+	{
+		fm_set_volume(0);
+	}
+	else
+	{
+		fm_set_volume(7);
+	}
+	
 	return;
 }
