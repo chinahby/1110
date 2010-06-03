@@ -19,7 +19,12 @@ vpath %.bar $(DISPLAYMENU_RES)
 vpath %.brx $(DISPLAYMENU_RES)
 vpath %.png $(APPSCOMMON)/images/color/Wallpaper
 vpath %.bmp $(APPSCOMMON)/images/color/Wallpaper
-
+ifeq ($(USES_LOWMEM), yes)
+CONSTFILE_FILES+=\
+	displaymenu.mif|fs:/mif/displaymenu.mif \
+	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
+	wallpaper11.png|fs:/hsmm/pictures/wallpaper.png
+else
 ifeq ($(USES_WALLPAPER),CHINA_VERTU)
 ifeq ($(USES_MEDIAGALLERY), yes)
 CONSTFILE_FILES+=\
@@ -96,7 +101,8 @@ endif#($(USES_WALLPAPER),SUDAN_SUDATEL)
 endif#($(USES_WALLPAPER),THAILAND_CAT)
 endif#($(USES_MEDIAGALLERY), yes)
 endif#($(USES_WALLPAPER),CHINA_VERTU)
-	
+endif #ifeq ($(USES_LOWMEM), yes)
+
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
