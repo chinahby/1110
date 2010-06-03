@@ -627,3 +627,24 @@ int GreyBitBrewFont_Create(int nSize, void **ppif)
     *ppif = pMe;
     return AEE_SUCCESS;
 }
+
+#include "AEEDisp.h"
+int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags)
+{
+    int nErr;
+    IFont *pOldFont;
+    IFont *pNewFont = NULL;
+
+    nErr = GreyBitBrewFont_Create(nSize, (void **)&pNewFont);
+    if(SUCCESS != nErr)
+    {
+        return nErr;
+    }
+    
+    pOldFont = IDISPLAY_SetFont(p, AEE_FONT_USER_1, pNewFont);
+    nErr = IDISPLAY_DrawText(p, AEE_FONT_USER_1, psz, nl, x, y, prcb, flags);
+    IDISPLAY_SetFont(p, AEE_FONT_USER_1, pOldFont);
+    RELEASEIF(pNewFont);
+    return nErr;
+}
+
