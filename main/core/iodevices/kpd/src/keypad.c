@@ -128,18 +128,30 @@ and other items needed by this module.
  * Pandora FFA. */
 #define KEYPAD_POLLING_DELAY_USEC 10
 
+#if defined(FEATURE_PROJECT_W023C)
+#define FEATURE_ALL_KEY_PAD
+#elif defined (FEATURE_PROJECT_W021C)
 #define KEYPAD_5_BY_5_MATRIX
+#else
+#error code not present
+#endif
+
+
 
 /* Given a row and column, decode it into a keycode.  The comment above
 ** each entry is its row/column address.
 */
+
 #if defined(KEYPAD_5_BY_5_MATRIX)
+
 /* Define the rows/columns constants */
   #define KEYPAD_ROWS             5
   #define KEYPAD_COLUMNS          5
 
 #ifndef BUILD_BOOT_CHAIN
+
 #ifdef CUST_EDITION
+
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* JoyStick keys [up, down, left, right] uses 2 simultaneous row inputs
     * on KEYSENSE0_N routed by SC2x FFA's Panasonic MultiFunction Switch 
@@ -318,22 +330,15 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 #define RIGHT_KEY_COLUMN   3
 
 #endif
-
-#else /* !KEYPAD_5_BY_5_MATRIX */
-#error code not present
-#endif
-
-/* Sanity check - we need rows/columns to be defined from here onward */
 #if !defined(KEYPAD_ROWS) || !defined(KEYPAD_COLUMNS)
-  #error A keypad matrix mapping must be defined to derive row/column constants
+//  #error A keypad matrix mapping must be defined to derive row/column constants
 #endif
 
 #ifdef FEATURE_KEYPAD_USES_GPIO_FOR_PWR_KEY
 #error code not present
 #endif
 
-/* The order of the following array must match column assignments in the
- * key matrix mapping table. */
+
 static const GPIO_SignalType keytbl_col_to_keyscan_gpio_map[KEYPAD_COLUMNS] = 
 {
    KYPD_17,
@@ -353,6 +358,129 @@ static const GPIO_SignalType keytbl_row_to_keysense_gpio_map[KEYPAD_ROWS] =
    KEYSENSE_3_N,
    KEYSENSE_4_N
 };
+
+
+#else /* !KEYPAD_5_BY_5_MATRIX */
+//#error code not present
+#endif
+
+
+
+#ifdef FEATURE_ALL_KEY_PAD
+
+#define KEYPAD_ROWS             5
+#define KEYPAD_COLUMNS          8
+#ifndef BUILD_BOOT_CHAIN
+
+#ifdef SJDFJSADKF
+static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS+1] =
+{
+	/* KIN0 */
+	/* KOUT1 */		 /*KOUT2*/   /*KOUT3*/	 /*KOUT4*/    /*KOUT5*/     /*KOUT6*/   /*KOUT7*/
+    { HS_SEND_K,     HS_TV_K,    HS_1_K,     HS_4_K,      HS_7_K,       HS_STAR_K, HS_STAR_K},
+
+    /* KIN1 */
+    { HS_SEL_K,      HS_DOWN_K,  HS_2_K,     HS_5_K,      HS_8_K,       HS_0_K, 	HS_0_K},
+
+    /* KIN2 */
+    { HS_CLR_K,      HS_END_K,   HS_3_K,     HS_6_K,      HS_9_K,       HS_POUND_K, HS_POUND_K },
+
+    /* KIN3 */
+    { HS_LS1_K,      HS_LEFT_K,  HS_RIGHT_K, HS_UP_K,     HS_LS2_K,     HS_NONE_K, 	HS_NONE_K},
+
+    /* KIN4 */
+    { HS_NONE_K,     HS_NONE_K,  HS_NONE_K,  HS_VOL_UP_K, HS_VOL_DOWN_K, HS_NONE_K ,HS_NONE_K},
+
+    /* KIN5 */
+    { HS_NONE_K,     HS_NONE_K,  HS_NONE_K,  HS_VOL_UP_K, HS_VOL_DOWN_K, HS_NONE_K ,HS_NONE_K},
+
+    /* KIN6 */
+    { HS_NONE_K,     HS_NONE_K,  HS_NONE_K,  HS_VOL_UP_K, HS_VOL_DOWN_K, HS_NONE_K ,HS_NONE_K},
+};
+#endif
+static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
+{
+    /*KYPD_9           KYPD_11        KYPD_15        KYPD_17      KYPD_MEMO GPIO_OUTPUT_41 
+                                                                                                                                           GPIO_OUTPUT_42 
+                                                                                                                                                                GPIO_OUTPUT_44 
+                                                                                                                                                                                    GND*/
+    /*KEYSENSE_0_N*/
+    {HS_RIGHT_K,    HS_UP_K,    HS_INFO_K,  HS_4_K,  HS_DOWN_K,  HS_LEFT_K,  HS_SEND_K,   HS_1_K,  HS_SEL_K},
+     /*KEYSENSE_1_N*/
+    {HS_END_K,      HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_7_K,  HS_NONE_K,  HS_0_K,  HS_NONE_K},
+     /*KEYSENSE_2_N*/
+    {HS_NONE_K,     HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_9_K,  HS_8_K,  HS_NONE_K},
+     /*KEYSENSE_3_N*/
+    {HS_CLR_K,     HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_6_K,  HS_5_K,   HS_STAR_K},
+     /*KEYSENSE_4_N*/
+    {HS_NONE_K,     HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_3_K,  HS_2_K,  HS_POUND_K}
+};
+
+
+#define ONE_KEY_ROW      1
+#define ONE_KEY_COLUMN   1
+
+/* '*' Key */
+#define STAR_KEY_ROW     3
+#define STAR_KEY_COLUMN  8
+
+/* '#' Key */
+#define POUND_KEY_ROW    4
+#define POUND_KEY_COLUMN 8
+
+/* 
+ * Table positions of navigation keys 
+ */
+/* Nav-Up Key */
+#define UP_KEY_ROW         0
+#define UP_KEY_COLUMN      1
+
+/* Nav-Down Key */
+#define DOWN_KEY_ROW       0
+#define DOWN_KEY_COLUMN    3
+
+/* Nav-Left Key */
+#define LEFT_KEY_ROW       0
+#define LEFT_KEY_COLUMN    5
+
+/* Nav-Right Key */
+#define RIGHT_KEY_ROW      0
+#define RIGHT_KEY_COLUMN   0
+
+/* The order of the following array must match column assignments in the
+ * key matrix mapping table. */
+ #endif /* BUILD_BOOT_CHAIN*/
+static const GPIO_SignalType keytbl_col_to_keyscan_gpio_map[KEYPAD_COLUMNS] = 
+{
+   KYPD_9,
+   KYPD_11,
+   KYPD_15,
+   KYPD_17,
+   KYPD_MEMO,
+   GPIO_OUTPUT_41,
+   GPIO_OUTPUT_42,
+   GPIO_OUTPUT_44
+   
+};
+
+/* The order of the following array must match row assignments in the
+ * key matrix mapping table. */
+static const GPIO_SignalType keytbl_row_to_keysense_gpio_map[KEYPAD_ROWS] = 
+{
+   KEYSENSE_0_N,
+   KEYSENSE_1_N,
+   KEYSENSE_2_N,
+   KEYSENSE_3_N,
+   KEYSENSE_4_N
+};
+
+
+
+#endif
+
+/* Sanity check - we need rows/columns to be defined from here onward */
+
+
 #else
 #error code not present
 #endif /* T_QSC60X5 */
@@ -414,7 +542,11 @@ typedef enum
 
 #ifndef BUILD_BOOT_CHAIN
 /* current key processing state */
+#ifdef FEATURE_ALL_KEY_PAD
+static keypad_state_type keypad_key_state[KEYPAD_ROWS][KEYPAD_COLUMNS+1];
+#else
 static keypad_state_type keypad_key_state[KEYPAD_ROWS][KEYPAD_COLUMNS];
+#endif
 static keypad_state_type keypad_power_key_state;
 
 
@@ -478,8 +610,11 @@ static boolean keypad_locked = FALSE;       /* The keypad starts out unlocked */
  */
 static boolean keypad_polling;
 #endif /* FEATURE_KEYPAD_OWNS_KEYPRESS_ISR */
-
+#ifdef FEATURE_ALL_KEY_PAD
+static boolean keys_pressed[KEYPAD_ROWS][KEYPAD_COLUMNS+1];
+#else
 static boolean keys_pressed[KEYPAD_ROWS][KEYPAD_COLUMNS];
+#endif
 
 #if defined(T_SLEEP) && defined(FEATURE_NEW_SLEEP_API)
 /* Variable to use the new sleep API */
@@ -760,6 +895,20 @@ static void keypad_drive_all_scan_cols_low(void)
   }
 }
 
+#ifdef FEATURE_ALL_KEY_PAD
+static void keypad_drive_all_scan_cols_high(void)
+{
+   int i;
+
+  /* Drive all column scan lines low */
+  for (i = 0; i < KEYPAD_COLUMNS; i++)
+  {
+        gpio_out(keytbl_col_to_keyscan_gpio_map[i], GPIO_HIGH_VALUE);
+        gpio_tristate(keytbl_col_to_keyscan_gpio_map[i], 
+                      GPIO_TRISTATE_ENABLE);
+  }
+}
+#endif
 #ifndef BUILD_BOOT_CHAIN
 /*===========================================================================
 
@@ -911,6 +1060,26 @@ static void keypad_scan_keypad_matrix(void)
    * and look for 0 value in the sense lines. If 0 is found, then
    * the corresponding key is pressed.
    */
+
+#ifdef FEATURE_ALL_KEY_PAD    
+    keypad_drive_all_scan_cols_high();
+    for ( row = 0; row < KEYPAD_ROWS; row++ )
+    {
+      if (GPIO_LOW_VALUE == gpio_in(keytbl_row_to_keysense_gpio_map[row]))
+      {
+         /* A low keysense reading indicates a closed switch (pressed) */
+         keys_pressed[row][KEYPAD_COLUMNS] = TRUE;
+         keypad_drive_all_scan_cols_low();
+         return;
+         
+      }
+      else
+      {
+         /* A high keysense reading indicates an open switch (unpressed) */
+         keys_pressed[row][KEYPAD_COLUMNS] = FALSE;
+      }
+    }
+#endif
   for ( column = 0; column < KEYPAD_COLUMNS; column++ )
   {
     /* Set the column LOW (0), the pressed key will show a LOW (0)
@@ -940,6 +1109,7 @@ static void keypad_scan_keypad_matrix(void)
       }
     }
   }
+ 
 
   /* When done scanning, leave the columns as 0.  This costs ~0.05ma
    * during key presses, but allows for 0 setup when going to sleep.
@@ -1041,7 +1211,11 @@ static void keypad_scan_keypad
   */
   for (row=0; row < KEYPAD_ROWS; row++)
   {
-    for (column=0; column < KEYPAD_COLUMNS; column++)
+#ifdef FEATURE_ALL_KEY_PAD  
+    for (column=0; column < KEYPAD_COLUMNS+1; column++)
+#else
+	for (column=0; column < KEYPAD_COLUMNS; column++)
+#endif	
     {
       switch ( keypad_key_state[row][column] )
       {
@@ -1543,7 +1717,11 @@ void keypad_init_matrix( void )
    */
   for ( i = 0; i < KEYPAD_ROWS; i++ )
   {
-    for ( j = 0; j < KEYPAD_COLUMNS; j++ )
+#ifdef FEATURE_ALL_KEY_PAD
+    for ( j = 0; j < KEYPAD_COLUMNS+1; j++ )
+#else
+	for ( j = 0; j < KEYPAD_COLUMNS; j++ )
+#endif
     {
       if ( keys[i][j] == HS_NONE_K )
       {

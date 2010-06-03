@@ -265,14 +265,22 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #if defined(TLMM_USES_CAMIF)
   #define GPIO_41_SIGNAL CAMIF_DISABLE
 #else
+#ifdef FEATURE_PROJECT_W023C
+#define GPIO_41_SIGNAL GPIO_OUTPUT_41
+#else
 #define GPIO_41_SIGNAL GPIO_INPUT_41
+#endif
 #endif
 
 /* GPIO 42 */
 #if defined(TLMM_USES_CAMIF)
   #define GPIO_42_SIGNAL CAMIF_DATA_0
 #else
-  #define GPIO_42_SIGNAL GPIO_INPUT_42
+#ifdef FEATURE_PROJECT_W023C
+    #define GPIO_41_SIGNAL GPIO_OUTPUT_42
+#else
+    #define GPIO_41_SIGNAL GPIO_INPUT_42
+#endif
 #endif
 
 /* GPIO 43 */
@@ -286,8 +294,11 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #if defined(TLMM_USES_CAMIF)
   #define GPIO_44_SIGNAL CAMIF_DATA_2
 #else
-  #define GPIO_44_SIGNAL GPIO_INPUT_44
-#endif
+#ifdef FEATURE_PROJECT_W023C
+    #define GPIO_41_SIGNAL GPIO_OUTPUT_44
+#else
+    #define GPIO_41_SIGNAL GPIO_INPUT_44
+#endif#endif
 
 /* GPIO 45 */
 #if defined(TLMM_USES_CAMIF)
