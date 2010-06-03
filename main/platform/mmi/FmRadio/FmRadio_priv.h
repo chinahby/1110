@@ -62,11 +62,10 @@
 #include "OEMSMS.h"
 #include "AEEText.h"
 #include "AEEAnnunciator.h"
-#if !defined( AEE_SIMULATOR)
 
+#if !defined( AEE_SIMULATOR)
 #include "fm_radio.h"
 #include "err.h"
-
 #endif //#if !defined( AEE_SIMULATOR)
 
 
@@ -75,7 +74,7 @@
 #define FEATURE_DIRECT_INPUT_CHANNEL_NUMBER                     1
 #define FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY    0
 
-#if defined( FEATURE_Q1_SPECIAL_TARGET) || defined( FEATURE_Q2_SPECIAL_TARGET) || defined( FEATURE_CS09) || FEATURE_FMRADIO_TEST_VERSION
+#if defined( FEATURE_Q1_SPECIAL_TARGET) || defined( FEATURE_Q2_SPECIAL_TARGET) || defined( FEATURE_CS09) || defined(FEATURE_FMRADIO_TEST_VERSION)
 //#define FEATURE_FMRADIO_NO_MODE_SELECT
 #define FEATURE_FMRADIO_KEY_OK_TO_MUTE
 #define FEATURE_FMRADIO_PROMPT_HEADSET_PLUG_OUT
