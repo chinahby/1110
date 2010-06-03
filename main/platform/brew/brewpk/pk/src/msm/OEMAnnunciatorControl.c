@@ -242,10 +242,60 @@ void OEMAnnunciatorControl_Enable(IAnnunciatorControl *pme, boolean bEnable)
       (void) IANNUNCIATOR_EnableAnnunciatorBar(pme->pAnnun,
                                                clsDisp,
                                                bEnable);
-      if(bEnable) {
-         (void) IANNUNCIATOR_Redraw(pme->pAnnun);
-      }
+//      if(bEnable) {
+//         (void) IANNUNCIATOR_Redraw(pme->pAnnun);
+//      }
    }
+#endif
+   return;
+}
+
+void OEMAnnunciatorControl_EnableEx(IAnnunciatorControl *pme, boolean bEnable, boolean bForceRearaw)
+{
+#ifdef FEATURE_UIONE_HDK
+    if (AEECLSID_AnnunciatorControl_Display1 == pme->uCls) 
+    {
+        if (bEnable) 
+        {
+            OEMDisplayDev_AnnunBar1_Activate();
+        }
+        else 
+        {
+            OEMDisplayDev_AnnunBar1_Deactivate();
+        }
+    }
+#else //if defined(FEATURE_ANNUNCIATOR)
+    AEECLSID clsDisp;
+    switch (pme->uCls)
+    {
+        case AEECLSID_AnnunciatorControl_Display1:
+            clsDisp = AEECLSID_DISPLAY1;
+            break;
+            
+        case AEECLSID_AnnunciatorControl_Display2:
+            clsDisp = AEECLSID_DISPLAY2;
+            break;
+            
+        case AEECLSID_AnnunciatorControl_Display3:
+            clsDisp = AEECLSID_DISPLAY3;
+            break;
+            
+        case AEECLSID_AnnunciatorControl_Display4:
+            clsDisp = AEECLSID_DISPLAY4;
+            break;
+            
+        default:
+            clsDisp = 0;
+            break;
+    }
+
+    if (0 != clsDisp) 
+    {
+        (void) IANNUNCIATOR_EnableAnnunciatorBarEx(pme->pAnnun,
+                                               clsDisp,
+                                               bEnable,
+                                               bForceRearaw);
+    }
 #endif
    return;
 }
@@ -255,7 +305,8 @@ static const IAnnunciatorControlVtbl gvtIAnnunciatorControl = {
    OEMAnnunciatorControl_Release,
    OEMAnnunciatorControl_QueryInterface,
    OEMAnnunciatorControl_GetRegion,
-   OEMAnnunciatorControl_Enable
+   OEMAnnunciatorControl_Enable,
+   OEMAnnunciatorControl_EnableEx
 };
 
 /*===========================================================================
