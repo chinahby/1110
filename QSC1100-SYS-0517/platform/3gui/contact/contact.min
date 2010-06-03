@@ -1,0 +1,21 @@
+#-------------------------------------------------------------------------------
+# CONTACT - Contact Application
+#-------------------------------------------------------------------------------
+CONTACT_SOURCES=\
+	ContApp.c \
+	ContDlgHandler.c \
+	ContStateMachine.c 
+
+CONTACT_OBJS :=  $(addprefix $(TARGETDIR)/, $(CONTACT_SOURCES:%.c=%.o))
+$(CONTACT_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+CONTACT_DEPS :=  $(addprefix $(TARGETDIR)/, $(CONTACT_SOURCES:%.c=%.dep))
+$(CONTACT_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(CONTACT)	
+vpath %.bar $(CONTACT)/resources/en/256Color
+vpath %.mif $(CONTACT)
+
+CONSTFILE_FILES+=\
+	contactapp.mif|fs:/mif/contactapp.mif \
+	contactapp.bar|fs:/mod/contactapp/contactapp.bar

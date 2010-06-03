@@ -1,0 +1,28 @@
+#-------------------------------------------------------------------------------
+# AUXSETTINGS - AUXSettings Application
+#-------------------------------------------------------------------------------
+
+AUXSETTINGS_SOURCES=\
+   AUXSettings.c \
+   AUXMenu.c \
+   AUXUtils.c
+
+ifeq ($(USES_WLAN),yes)  
+AUXSETTINGS_SOURCES+=\
+   AUXWLANMenu.c \
+   AUXWLANUtils.c
+endif
+
+AUXSETTINGS_OBJS :=  $(addprefix $(TARGETDIR)/, $(AUXSETTINGS_SOURCES:%.c=%.o))
+$(AUXSETTINGS_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+AUXSETTINGS_DEPS :=  $(addprefix $(TARGETDIR)/, $(AUXSETTINGS_SOURCES:%.c=%.dep))
+$(AUXSETTINGS_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(AUXSETTINGS)	
+vpath %.bar $(AUXSETTINGS)/resources/en/256Color
+vpath %.mif $(AUXSETTINGS)
+
+CONSTFILE_FILES+=\
+	auxsettings.mif|fs:/mif/auxsettings.mif \
+	auxsettings.bar|fs:/mod/auxsettings/auxsettings.bar

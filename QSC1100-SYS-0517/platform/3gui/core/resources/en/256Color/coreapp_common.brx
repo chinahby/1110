@@ -1,0 +1,3771 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="coreapp_common" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_COREMENU_TITLE">
+		<Text>UI Application</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_DEBUG">
+		<Text>Debug</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_GUARDNOW">
+		<Text>Guard now</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_ON">
+		<Text>On</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_OFF">
+		<Text>Off</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_SET">
+		<Text>SET</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_VIEW">
+		<Text>View</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_AUTOANSWER">
+		<Text>Auto Answer</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_AUTOHYPHEN">
+		<Text>Auto Hyphen</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_ONETOUCH">
+		<Text>One-Touch</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_PRIVACY">
+		<Text>Privacy</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_EXTRAS">
+		<Text>Extras</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_AUTORETRY">
+		<Text>Auto Retry</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_SOUND">
+		<Text>Sound</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_DISPLAY">
+		<Text>Display</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_15AUTOGUARD">
+		<Text>15 S auto-guard</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_SECURITY">
+		<Text>Security</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_SETTIME">
+		<Text>Set Time</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_SIOCONFIGURATION">
+		<Text>SIO Configuration</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_30AUTOGUARD">
+		<Text>30 S auto-guard</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_1AUTOGUARD">
+		<Text>1 M auto-guard</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_SERVICEALERT">
+		<Text>Service Alert</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_DURATION">
+		<Text>Duration</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_RESTRICT">
+		<Text>Restrict</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_KEYGUARD">
+		<Text>Key Guard</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_BACKLIGHT">
+		<Text>Backlight</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_INTENSITY">
+		<Text>Intensity</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_RESTORESETTINGS">
+		<Text>Restore Settings</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_VOLUME">
+		<Text>Volume</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_RINGTYPE">
+		<Text>Ring Type</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_DTMFLEN">
+		<Text>DTMF Length</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_SMARTSOUND">
+		<Text>Smart Sound</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_RINGERVOL">
+		<Text>Ringer Volume</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_KEYBEEPVOL">
+		<Text>Key Beep Volume</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_EARPIECEVOL">
+		<Text>Earpiece Volume</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_MESSAGEVOL">
+		<Text>Message Volume</Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_SILENCEALL">
+		<Text>Silence All</Text>
+	</STRING>
+	<STRING Id="38" Name="IDS_VOL1">
+		<Text>volume</Text>
+	</STRING>
+	<STRING Id="39" Name="IDS_BANNER">
+		<Text>Banner</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_QUALCOMM">
+		<Text>QUALCOMM</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_TEST">
+		<Text>Test</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_EDIT">
+		<Text>EDIT</Text>
+	</STRING>
+	<STRING Id="44" Name="IDS_NV_INCORRECT">
+		<Text>NV Code Incorrect</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_TIMEDATEENTER">
+		<Text>Enter new date &amp; time</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_MESSAGE">
+		<Text>Message</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_RSSI">
+		<Text>RSSI</Text>
+	</STRING>
+	<STRING Id="49" Name="IDS_VOICEMAIL">
+		<Text>Voice Mail</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_USAGE">
+		<Text>Usage</Text>
+	</STRING>
+	<STRING Id="52" Name="IDS_LOCK">
+		<Text>Lock</Text>
+	</STRING>
+	<STRING Id="53" Name="IDS_ALERT">
+		<Text>Alert</Text>
+	</STRING>
+	<STRING Id="54" Name="IDS_BATTERY">
+		<Text>Battery</Text>
+	</STRING>
+	<STRING Id="55" Name="IDS_DATA">
+		<Text>Data Call</Text>
+	</STRING>
+	<STRING Id="57" Name="IDS_TIMEDATE">
+		<Text>Time &amp; Date</Text>
+	</STRING>
+	<STRING Id="58" Name="IDS_HOURGLASS">
+		<Text>Please Wait</Text>
+	</STRING>
+	<STRING Id="59" Name="IDS_PIN_CHNG_SUCCESS">
+		<Text>Change Successful</Text>
+	</STRING>
+	<STRING Id="60" Name="IDS_OPTION1">
+		<Text>Option 1</Text>
+	</STRING>
+	<STRING Id="61" Name="IDS_PINLOCK">
+		<Text>PIN Lock</Text>
+	</STRING>
+	<STRING Id="62" Name="IDS_PINCHANGE">
+		<Text>PIN Change</Text>
+	</STRING>
+	<STRING Id="63" Name="IDS_NOCARD">
+		<Text>No Card</Text>
+	</STRING>
+	<STRING Id="64" Name="IDS_EMERGENCY">
+		<Text>EMERGENCY CALL</Text>
+	</STRING>
+	<STRING Id="65" Name="IDS_SETTINGS">
+		<Text>Settings</Text>
+	</STRING>
+	<STRING Id="66" Name="IDS_DISPLAYTIME">
+		<Text>Display Time</Text>
+	</STRING>
+	<STRING Id="67" Name="IDS_AUTO">
+		<Text>Auto</Text>
+	</STRING>
+	<STRING Id="68" Name="IDS_MANUAL">
+		<Text>Manual</Text>
+	</STRING>
+	<STRING Id="69" Name="IDS_KEYGUARD_ACTIVE">
+		<Text>Key guard is active</Text>
+	</STRING>
+	<STRING Id="70" Name="IDS_ALWAYSON">
+		<Text>Always on</Text>
+	</STRING>
+	<STRING Id="71" Name="IDS_10_S">
+		<Text>10 Sec</Text>
+	</STRING>
+	<STRING Id="72" Name="IDS_30_S">
+		<Text>30 Sec</Text>
+	</STRING>
+	<STRING Id="73" Name="IDS_ALWAYSOFF">
+		<Text>Always off</Text>
+	</STRING>
+	<STRING Id="74" Name="IDS_LEVEL0">
+		<Text>Level 0</Text>
+	</STRING>
+	<STRING Id="75" Name="IDS_LEVEL1">
+		<Text>Level 1</Text>
+	</STRING>
+	<STRING Id="76" Name="IDS_LEVEL2">
+		<Text>Level 2</Text>
+	</STRING>
+	<STRING Id="77" Name="IDS_LEVEL3">
+		<Text>Level 3</Text>
+	</STRING>
+	<STRING Id="78" Name="IDS_LEVEL4">
+		<Text>Level 4</Text>
+	</STRING>
+	<STRING Id="83" Name="IDS_10_SECONDS">
+		<Text>10 Seconds</Text>
+	</STRING>
+	<STRING Id="84" Name="IDS_30_SECONDS">
+		<Text>30 Seconds</Text>
+	</STRING>
+	<STRING Id="85" Name="IDS_60_SECONDS">
+		<Text>60 Seconds</Text>
+	</STRING>
+	<STRING Id="86" Name="IDS_STANDARD">
+		<Text>Standard</Text>
+	</STRING>
+	<STRING Id="87" Name="IDS_ENHANCED">
+		<Text>Enhanced</Text>
+	</STRING>
+	<STRING Id="88" Name="IDS_NORMAL">
+		<Text>Normal</Text>
+	</STRING>
+	<STRING Id="89" Name="IDS_LONG">
+		<Text>Long</Text>
+	</STRING>
+	<STRING Id="90" Name="IDS_YES">
+		<Text>Yes</Text>
+	</STRING>
+	<STRING Id="91" Name="IDS_NO">
+		<Text>No</Text>
+	</STRING>
+	<STRING Id="92" Name="IDS_PIN2_LOCK">
+		<Text>Secondary PIN (PIN2) Lock</Text>
+	</STRING>
+	<STRING Id="93" Name="IDS_PIN2">
+		<Text>Secondary PIN (PIN2)</Text>
+	</STRING>
+	<STRING Id="94" Name="IDS_PIN1">
+		<Text>PIN</Text>
+	</STRING>
+	<STRING Id="95" Name="IDS_MUTE">
+		<Text>Mute</Text>
+	</STRING>
+	<STRING Id="96" Name="IDS_OPTION2">
+		<Text>Option 2</Text>
+	</STRING>
+	<STRING Id="97" Name="IDS_OPTION3">
+		<Text>Option 3</Text>
+	</STRING>
+	<STRING Id="98" Name="IDS_OPTION4">
+		<Text>Option 4</Text>
+	</STRING>
+	<STRING Id="99" Name="IDS_CANCEL">
+		<Text>CANCEL</Text>
+	</STRING>
+	<STRING Id="100" Name="IDS_RESTRICT_CALLING">
+		<Text>Restrict Calling</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_RESTRICT_PHONE">
+		<Text>Restrict Phone</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_KEYGUARD_ON_UNLOCK_MESSAGE">
+		<Text>Key guard is active, Press 123 to unlock</Text>
+	</STRING>
+	<STRING Id="103" Name="IDS_CARKEYVOLUME">
+		<Text>Car Key Volume</Text>
+	</STRING>
+	<STRING Id="104" Name="IDS_PRIVACYKEYVOLUME">
+		<Text>Privacy Key Volume</Text>
+	</STRING>
+	<STRING Id="105" Name="IDS_BEEPSDACVOLUME">
+		<Text>Beep SDAC Volume</Text>
+	</STRING>
+	<STRING Id="106" Name="IDS_CARRINGERVOLUME">
+		<Text>Car Ringer Volume</Text>
+	</STRING>
+	<STRING Id="107" Name="IDS_CARSPKRVOLUME">
+		<Text>Car Speaker Volume</Text>
+	</STRING>
+	<STRING Id="108" Name="IDS_HEADSETVOLUME">
+		<Text>Headset Volume</Text>
+	</STRING>
+	<STRING Id="109" Name="IDS_SDACVOLUME">
+		<Text>SDAC Volume</Text>
+	</STRING>
+	<STRING Id="110" Name="IDS_CARMESSAGEVOL">
+		<Text>Car Message Volume</Text>
+	</STRING>
+	<STRING Id="111" Name="IDS_TIMEDATEVIEW">
+		<Text>Current Date &amp; Time</Text>
+	</STRING>
+	<STRING Id="112" Name="IDS_RESTORING">
+		<Text>Restoring...</Text>
+	</STRING>
+	<STRING Id="113" Name="IDS_CONTACT">
+		<Text>Contacts</Text>
+	</STRING>
+	<STRING Id="114" Name="IDS_RECENTCALL">
+		<Text>Call History</Text>
+	</STRING>
+	<STRING Id="115" Name="IDS_WIRELESS_MESSAGING">
+		<Text>Wireless Messaging</Text>
+	</STRING>
+	<STRING Id="116" Name="IDS_MEDIAPLAYER">
+		<Text>Media Player</Text>
+	</STRING>
+	<STRING Id="117" Name="IDS_BROWSER">
+		<Text>Browser</Text>
+	</STRING>
+	<STRING Id="118" Name="IDS_ICONV_EMERGENCY">
+		<Text>Emergency</Text>
+	</STRING>
+	<STRING Id="119" Name="IDS_INVALID_PIN2">
+		<Text>Invalid Secondary PIN (PIN2).   See Service Provider</Text>
+	</STRING>
+	<STRING Id="120" Name="IDS_PIN2_REQUEST">
+		<Text>Enter Secondary PIN (PIN2) Lock Code</Text>
+	</STRING>
+	<STRING Id="121" Name="IDS_PIN2_BLOCKED">
+		<Text>SECONDARY PIN (PIN2) IS BLOCKED</Text>
+	</STRING>
+	<STRING Id="122" Name="IDS_PUK2_REQUEST">
+		<Text>Enter Unblock Key for Secondary PIN (PIN2)</Text>
+	</STRING>
+	<STRING Id="123" Name="IDS_QCAMERA">
+		<Text>QCamera</Text>
+	</STRING>
+	<STRING Id="124" Name="IDS_NEW_PIN2_REENTER">
+		<Text>Re-Enter New Secondary PIN (PIN2) Lock Code</Text>
+	</STRING>
+	<STRING Id="125" Name="IDS_NEW_PIN2_MISMATCH">
+		<Text>New Secondary PINs (PIN2) Do Not Match</Text>
+	</STRING>
+	<STRING Id="126" Name="IDS_PUK2_INCORRECT">
+		<Text>Secondary PIN (PIN2) Unblock Key Incorrect</Text>
+	</STRING>
+	<STRING Id="127" Name="IDS_PIN2_NONEXIST">
+		<Text>Secondary PIN (PIN2) does not exist</Text>
+	</STRING>
+	<STRING Id="128" Name="IDS_OLD_PIN2_REQUEST">
+		<Text>Enter old Secondary PIN (PIN2) Lock Code</Text>
+	</STRING>
+	<STRING Id="129" Name="IDS_PIN2_CHANGE_REQUEST">
+		<Text>Enter New Secondary PIN (PIN2) Lock Code</Text>
+	</STRING>
+	<STRING Id="130" Name="IDS_PIN2_CHANGED">
+		<Text>Secondary PIN (PIN2) Changed</Text>
+	</STRING>
+	<STRING Id="131" Name="IDS_PIN_NONEXIST">
+		<Text>PIN does not exist</Text>
+	</STRING>
+	<STRING Id="132" Name="IDS_OLD_PIN_REQUEST">
+		<Text>Enter old PIN Lock Code</Text>
+	</STRING>
+	<STRING Id="133" Name="IDS_NEW_NV_CODE">
+		<Text>Enter New NV Code</Text>
+	</STRING>
+	<STRING Id="134" Name="IDS_NV_REENTER">
+		<Text>Re-Enter New NV Code</Text>
+	</STRING>
+	<STRING Id="135" Name="IDS_PIN_CHANGED">
+		<Text>PIN Changed</Text>
+	</STRING>
+	<STRING Id="136" Name="IDS_PIN2_INCORRECT">
+		<Text>Secondary PIN (PIN2) Lock Code Incorrect</Text>
+	</STRING>
+	<STRING Id="137" Name="IDS_CARD_INVALID">
+		<Text>Card Invalid</Text>
+	</STRING>
+	<STRING Id="138" Name="IDS_JAVA">
+		<Text>Java</Text>
+	</STRING>
+	<STRING Id="139" Name="IDS_ENTERPIN">
+		<Text>Enter PIN Lock Code</Text>
+	</STRING>
+	<STRING Id="140" Name="IDS_ENTERPUK">
+		<Text>Enter Unblock Key for PIN</Text>
+	</STRING>
+	<STRING Id="141" Name="IDS_NEWPIN">
+		<Text>Enter new PIN</Text>
+	</STRING>
+	<STRING Id="142" Name="IDS_REENTER">
+		<Text>Re-Enter New PIN</Text>
+	</STRING>
+	<STRING Id="143" Name="IDS_RESTORE_COMPLETED">
+		<Text>Restore Completed!</Text>
+	</STRING>
+	<STRING Id="144" Name="IDS_PIN_CHNG_FAILED">
+		<Text>Change Failed</Text>
+	</STRING>
+	<STRING Id="154" Name="IDS_SKUI">
+		<Text>SK UI</Text>
+	</STRING>
+	<STRING Id="155" Name="IDS_APPMANAGER">
+		<Text>App Manager</Text>
+	</STRING>
+	<STRING Id="156" Name="IDS_FEATURE_AVAILABLE_IN_CALL">
+		<Text>Feature available during call only!</Text>
+	</STRING>
+	<STRING Id="157" Name="IDS_PIN1_BLOCKED">
+		<Text>PIN IS BLOCKED</Text>
+	</STRING>
+	<STRING Id="158" Name="IDS_NEW_PIN1_MISMATCH">
+		<Text>New PINs (PIN1) Do Not Match</Text>
+	</STRING>
+	<STRING Id="159" Name="IDS_EMERGENCY_ONLY">
+		<Text>Emergency Calls Only</Text>
+	</STRING>
+	<STRING Id="160" Name="IDS_PIN1_INCORRECT">
+		<Text>PIN (PIN1) Lock Code Incorrect</Text>
+	</STRING>
+	<STRING Id="161" Name="IDS_PUK1_INCORRECT">
+		<Text>PIN (PIN1) Unblock Key Incorrect</Text>
+	</STRING>
+	<STRING Id="162" Name="IDS_CALLING_EMERGENCY">
+		<Text>Placing Emergency Call</Text>
+	</STRING>
+	<STRING Id="163" Name="IDS_FEATURE_UNAVAILABLE">
+		<Text>Feature Not Avaliable!</Text>
+	</STRING>
+	<STRING Id="164" Name="IDS_TTY">
+		<Text>TTY Mode</Text>
+	</STRING>
+	<STRING Id="165" Name="IDS_TTY_FULL">
+		<Text>Full</Text>
+	</STRING>
+	<STRING Id="166" Name="IDS_TTY_TALK">
+		<Text>Talk</Text>
+	</STRING>
+	<STRING Id="167" Name="IDS_TTY_HEAR">
+		<Text>Hear</Text>
+	</STRING>
+	<STRING Id="168" Name="IDS_QCAMCORDER">
+		<Text>QCamcorder</Text>
+	</STRING>
+	<STRING Id="169" Name="IDS_LOW_BATTERY">
+		<Text>Warning:  Low Battery!!!</Text>
+	</STRING>
+	<STRING Id="170" Name="IDS_MM_EAR_VOL">
+		<Text>MM Earpiece Volume</Text>
+	</STRING>
+	<STRING Id="171" Name="IDS_MM_HS_VOL">
+		<Text>MM Headset Volume</Text>
+	</STRING>
+	<STRING Id="172" Name="IDS_MM_SPKR_VOL">
+		<Text>MM Car Volume</Text>
+	</STRING>
+	<STRING Id="173" Name="IDS_NV_CODE">
+		<Text>Enter NV Lock Code</Text>
+	</STRING>
+	<STRING Id="174" Name="IDS_RTRECONFIG">
+		<Text>RTRE Configuration</Text>
+	</STRING>
+	<STRING Id="175" Name="IDS_RTRE_NV">
+		<Text>NV</Text>
+	</STRING>
+	<STRING Id="176" Name="IDS_RTRE_SIM">
+		<Text>R-UIM</Text>
+	</STRING>
+	<STRING Id="177" Name="IDS_RTRE_SIMNV">
+		<Text>R-UIM dropback NV</Text>
+	</STRING>
+	<STRING Id="178" Name="IDS_GPS">
+		<Text>GPS</Text>
+	</STRING>
+	<STRING Id="179" Name="IDS_ANY">
+		<Text>Any</Text>
+	</STRING>
+	<STRING Id="180" Name="IDS_MM_VOLUME">
+		<Text>Multimedia Volume</Text>
+	</STRING>
+	<STRING Id="181" Name="IDS_POWERDOWN">
+		<Text>Low Battery! Phone powering down</Text>
+	</STRING>
+	<STRING Id="182" Name="IDS_CONT">
+		<Text>Continuous</Text>
+	</STRING>
+	<STRING Id="183" Name="IDS_BURST">
+		<Text>Burst</Text>
+	</STRING>
+	<STRING Id="184" Name="IDS_NETWORK">
+		<Text>Network</Text>
+	</STRING>
+	<STRING Id="189" Name="IDS_SAVE">
+		<Text>Save</Text>
+	</STRING>
+	<STRING Id="202" Name="IDS_FIND">
+		<Text>Find</Text>
+	</STRING>
+	<STRING Id="204" Name="IDS_ERROR">
+		<Text>Error</Text>
+	</STRING>
+	<STRING Id="207" Name="IDS_RATE_230400">
+		<Text>230.4 Kbps</Text>
+	</STRING>
+	<STRING Id="208" Name="IDS_RATE_115200">
+		<Text>115.2 Kbs</Text>
+	</STRING>
+	<STRING Id="209" Name="IDS_RATE_19200">
+		<Text>19.2 Kbs</Text>
+	</STRING>
+	<STRING Id="210" Name="IDS_AUTOMATIC">
+		<Text>Automatic</Text>
+	</STRING>
+	<STRING Id="216" Name="IDS_SAVENEW">
+		<Text>Save New</Text>
+	</STRING>
+	<STRING Id="219" Name="IDS_HOME_IS">
+		<Text>Home is</Text>
+	</STRING>
+	<STRING Id="220" Name="IDS_FEATURE_UNAVAILABLE_IN_CALL">
+		<Text>Feature unavailable during call!</Text>
+	</STRING>
+	<STRING Id="229" Name="IDS_PHONE_RESTRICTED_ERROR">
+		<Text>Phone is restricted!</Text>
+	</STRING>
+	<STRING Id="230" Name="IDS_RESET">
+		<Text>Reset</Text>
+	</STRING>
+	<STRING Id="231" Name="IDS_CATAPP">
+		<Text>Cat App</Text>
+	</STRING>
+	<STRING Id="232" Name="IDS_ADDTO">
+		<Text>Add To...</Text>
+	</STRING>
+	<STRING Id="233" Name="IDS_MY_INFO">
+		<Text>My Info</Text>
+	</STRING>
+	<STRING Id="244" Name="IDS_SAVESIM">
+		<Text>Save to SIM</Text>
+	</STRING>
+	<STRING Id="245" Name="IDS_SYSTIME">
+		<Text>System Time:</Text>
+	</STRING>
+	<STRING Id="246" Name="IDS_EMPTY_STRING">
+		<Text> </Text>
+	</STRING>
+	<STRING Id="247" Name="IDS_RTCTIME">
+		<Text>RTC Time:</Text>
+	</STRING>
+	<STRING Id="248" Name="IDS_INVALID">
+		<Text>Invalid</Text>
+	</STRING>
+	<STRING Id="249" Name="IDS_PHONENO">
+		<Text>Phone No:</Text>
+	</STRING>
+	<STRING Id="250" Name="IDS_SWVERSION">
+		<Text>S/W Version:</Text>
+	</STRING>
+	<STRING Id="251" Name="IDS_SELECT">
+		<Text>Select</Text>
+	</STRING>
+	<STRING Id="252" Name="IDS_ESN">
+		<Text>ESN:</Text>
+	</STRING>
+	<STRING Id="253" Name="IDS_PRLVERSION">
+		<Text>PRL Version:</Text>
+	</STRING>
+	<STRING Id="254" Name="IDS_IMSI">
+		<Text>IMSI:</Text>
+	</STRING>
+	<STRING Id="255" Name="IDS_TRUEIMSI">
+		<Text>True IMSI:</Text>
+	</STRING>
+	<STRING Id="256" Name="IDS_NOINFO">
+		<Text>No information</Text>
+	</STRING>
+	<STRING Id="257" Name="IDS_POWERSAVE">
+		<Text>Powersave</Text>
+	</STRING>
+	<STRING Id="258" Name="IDS_FACTORYTEST">
+		<Text>FTM</Text>
+	</STRING>
+	<STRING Id="259" Name="IDS_SVCREQD">
+		<Text>Svc Rqd</Text>
+	</STRING>
+	<STRING Id="260" Name="IDS_RESTOREALL">
+		<Text>Restore All Settings ?</Text>
+	</STRING>
+	<STRING Id="277" Name="IDS_PLMN">
+		<Text>PLMN:</Text>
+	</STRING>
+	<STRING Id="284" Name="IDS_CUG">
+		<Text>CUG Settings</Text>
+	</STRING>
+	<STRING Id="285" Name="IDS_CUG_ENABLE">
+		<Text>Enable</Text>
+	</STRING>
+	<STRING Id="286" Name="IDS_CHANGE_SUCCESS">
+		<Text>Setting saved successfully !</Text>
+	</STRING>
+	<STRING Id="287" Name="IDS_CHANGE_FAILED">
+		<Text>Setting failed !</Text>
+	</STRING>
+	<STRING Id="288" Name="IDS_NVLOCK">
+		<Text>NV Lock Code</Text>
+	</STRING>
+	<STRING Id="289" Name="IDS_OLD_NV_REQUEST">
+		<Text>Enter Old NV Lock Code</Text>
+	</STRING>
+	<STRING Id="290" Name="IDS_NEW_NV_MISMATCH">
+		<Text>Mismatch NV Code</Text>
+	</STRING>
+	<STRING Id="292" Name="IDS_SUPS_REQUESTING">
+		<Text>Supplementary Service Requesting...</Text>
+	</STRING>
+	<STRING Id="293" Name="IDS_SUPS_COMPLETE">
+		<Text>Supplementary Service Completed.</Text>
+	</STRING>
+	<STRING Id="294" Name="IDS_CHANGE_SUCCESS_NO_UPDATE">
+		<Text>Change Successfully but No Update to the Original Request</Text>
+	</STRING>
+	<STRING Id="295" Name="IDS_DIALER">
+		<Text>Dialer</Text>
+	</STRING>
+	<STRING Id="296" Name="IDS_GSM_PIN1_SLOT1">
+		<Text>Enter GSM PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="297" Name="IDS_CDMA_PIN1_SLOT1">
+		<Text>Enter CDMA PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="298" Name="IDS_GSM_CDMA_PIN1_SLOT1">
+		<Text>Enter CDMA,GSM PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="299" Name="IDS_GSM_PIN1_SLOT2">
+		<Text>Enter GSM PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="300" Name="IDS_CDMA_PIN1_SLOT2">
+		<Text>Enter CDMA PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="301" Name="IDS_GSM_CDMA_PIN1_SLOT2">
+		<Text>Enter CDMA,GSM PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="302" Name="IDS_GSM_PIN2_SLOT1">
+		<Text>Enter GSM Secondary PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="303" Name="IDS_CDMA_PIN2_SLOT1">
+		<Text>Enter CDMA Secondary PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="304" Name="IDS_GSM_CDMA_PIN2_SLOT1">
+		<Text>Enter CDMA,GSM Secondary PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="305" Name="IDS_GSM_PIN2_SLOT2">
+		<Text>Enter GSM Secondary PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="306" Name="IDS_CDMA_PIN2_SLOT2">
+		<Text>Enter CDMA Secondary PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="307" Name="IDS_GSM_CDMA_PIN2_SLOT2">
+		<Text>Enter CDMA, GSM Secondary PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="308" Name="IDS_GSM_PUK1_SLOT1">
+		<Text>Enter GSM PIN Unblock Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="309" Name="IDS_CDMA_PUK1_SLOT1">
+		<Text>Enter CDMA PIN Unblock Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="310" Name="IDS_GSM_CDMA_PUK1_SLOT1">
+		<Text>Enter CDMA,GSM PIN Unblock Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="311" Name="IDS_GSM_PUK1_SLOT2">
+		<Text>Enter GSM PIN Unblock Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="312" Name="IDS_CDMA_PUK1_SLOT2">
+		<Text>Enter CDMA PIN Unblock Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="313" Name="IDS_GSM_CDMA_PUK1_SLOT2">
+		<Text>Enter CDMA,GSM PIN Unblock Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="314" Name="IDS_GSM_PUK2_SLOT1">
+		<Text>Enter GSM Secondary PIN Unblock Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="315" Name="IDS_CDMA_PUK2_SLOT1">
+		<Text>Enter CDMA Secondary PIN Unblock Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="316" Name="IDS_GSM_CDMA_PUK2_SLOT1">
+		<Text>Enter CDMA,GSM Secondary PIN Unblock Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="317" Name="IDS_GSM_PUK2_SLOT2">
+		<Text>Enter GSM Secondary PIN Unblock Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="318" Name="IDS_CDMA_PUK2_SLOT2">
+		<Text>Enter CDMA Secondary PIN Unblock Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="319" Name="IDS_GSM_CDMA_PUK2_SLOT2">
+		<Text>Enter CDMA,GSM Secondary PIN Unblock Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="320" Name="IDS_GSM_OLD_PIN1_SLOT1">
+		<Text>Enter Old GSM PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="321" Name="IDS_CDMA_OLD_PIN1_SLOT1">
+		<Text>Enter Old CDMA PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="322" Name="IDS_GSM_CDMA_OLD_PIN1_SLOT1">
+		<Text>Enter Old CDMA,GSM PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="323" Name="IDS_GSM_OLD_PIN1_SLOT2">
+		<Text>Enter Old GSM PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="324" Name="IDS_CDMA_OLD_PIN1_SLOT2">
+		<Text>Enter Old CDMA PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="325" Name="IDS_GSM_CDMA_OLD_PIN1_SLOT2">
+		<Text>Enter Old CDMA,GSM PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="326" Name="IDS_GSM_OLD_PIN2_SLOT1">
+		<Text>Enter Old GSM Secondary PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="327" Name="IDS_CDMA_OLD_PIN2_SLOT1">
+		<Text>Enter Old CDMA Secondary PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="328" Name="IDS_GSM_CDMA_OLD_PIN2_SLOT1">
+		<Text>Enter Old CDMA,GSM Secondary PIN Code (Slot1)</Text>
+	</STRING>
+	<STRING Id="329" Name="IDS_GSM_OLD_PIN2_SLOT2">
+		<Text>Enter Old GSM Secondary PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="330" Name="IDS_CDMA_OLD_PIN2_SLOT2">
+		<Text>Enter Old CDMA Secondary PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="331" Name="IDS_GSM_CDMA_OLD_PIN2_SLOT2">
+		<Text>Enter Old CDMA,GSM Secondary PIN Code (Slot2)</Text>
+	</STRING>
+	<STRING Id="332" Name="IDS_PIN_SLOT2">
+		<Text>PIN (Slot2)</Text>
+	</STRING>
+	<STRING Id="333" Name="IDS_PIN2_SLOT2">
+		<Text>Secondary PIN (Slot2)</Text>
+	</STRING>
+	<STRING Id="334" Name="IDS_PIN2_SLOT2_LOCK">
+		<Text>Secondary PIN (Slot2) Lock</Text>
+	</STRING>
+	<STRING Id="335" Name="IDS_PIN_SLOT2_LOCK">
+		<Text>PIN (Slot2) Lock</Text>
+	</STRING>
+	<STRING Id="336" Name="IDS_USER_SLOT_PREF">
+		<Text>User Slot Preference</Text>
+	</STRING>
+	<STRING Id="337" Name="IDS_GSM_SLOT1">
+		<Text>GSM Slot 1</Text>
+	</STRING>
+	<STRING Id="338" Name="IDS_GSM_SLOT2">
+		<Text>GSM Slot2</Text>
+	</STRING>
+	<STRING Id="339" Name="IDS_CDMA_SLOT1">
+		<Text>CDMA Slot1</Text>
+	</STRING>
+	<STRING Id="340" Name="IDS_CDMA_SLOT2">
+		<Text>CDMA Slot2</Text>
+	</STRING>
+	<STRING Id="341" Name="IDS_GSM_SLOT_NONE">
+		<Text>No GSM Slot Pref</Text>
+	</STRING>
+	<STRING Id="342" Name="IDS_CDMA_SLOT_NONE">
+		<Text>No CDMA Slot Pref</Text>
+	</STRING>
+	<STRING Id="343" Name="IDS_BREWVERSION">
+		<Text>BREW Version: </Text>
+	</STRING>
+	<STRING Id="356" Name="IDS_SUBMIT">
+		<Text>Submit</Text>
+	</STRING>
+	<STRING Id="357" Name="IDS_USER_SLOT_PREF_GSM">
+		<Text>User Slot Preference for GSM</Text>
+	</STRING>
+	<STRING Id="358" Name="IDS_USER_SLOT_PREF_CDMA">
+		<Text>User Slot Preference for CDMA</Text>
+	</STRING>
+	<STRING Id="359" Name="IDS_SIM_INITIALIZING">
+		<Text>Initializing SIM</Text>
+	</STRING>
+	<STRING Id="360" Name="IDS_EFS">
+		<Text>Phone EFS Entries</Text>
+	</STRING>
+	<STRING Id="361" Name="IDS_SPEED">
+		<Text>Phone Speed Dial Entries</Text>
+	</STRING>
+	<STRING Id="362" Name="IDS_ADN_SLOT1">
+		<Text>SIM ADN Entries (Slot1)</Text>
+	</STRING>
+	<STRING Id="363" Name="IDS_ADN_SLOT2">
+		<Text>SIM ADN Entries (Slot2)</Text>
+	</STRING>
+	<STRING Id="364" Name="IDS_FDN_SLOT1">
+		<Text>SIM FDN Entries (Slot1)</Text>
+	</STRING>
+	<STRING Id="365" Name="IDS_FDN_SLOT2">
+		<Text>SIM FDN Entries (Slot2)</Text>
+	</STRING>
+	<STRING Id="366" Name="IDS_DATASTATS">
+		<Text>DataStats App</Text>
+	</STRING>
+	<STRING Id="367" Name="IDS_MAINTENANCE_REQ">
+		<Text>Maintenance Required</Text>
+	</STRING>
+	<STRING Id="368" Name="IDS_POWER_SAVE_MODE">
+		<Text>Power Save</Text>
+	</STRING>
+	<STRING Id="369" Name="IDS_GAME_MODE">
+		<Text>Game Mode</Text>
+	</STRING>
+	<STRING Id="370" Name="IDS_ANSWER_VOICE_AS_DATA_SUCCESS">
+		<Text>Answer Voice Setting Change Successful!</Text>
+	</STRING>
+	<STRING Id="371" Name="IDS_EXIT_USER_ZONE">
+		<Text>Exiting User Zone...</Text>
+	</STRING>
+	<STRING Id="372" Name="IDS_TC_TEST_MODE">
+		<Text>TC Test Mode</Text>
+	</STRING>
+	<STRING Id="373" Name="IDS_MODE_PREF_ERROR">
+		<Text>Mode Preference Setting Failed!</Text>
+	</STRING>
+	<STRING Id="378" Name="IDS_HYBRID_PREF_ERROR">
+		<Text>Hybrid Preference Setting Failed!</Text>
+	</STRING>
+	<STRING Id="379" Name="IDS_NETWORK_SEL_ERROR">
+		<Text>Network Selection Setting Failed!</Text>
+	</STRING>
+	<STRING Id="380" Name="IDS_NAM_ERROR">
+		<Text>Nam Change Failed!</Text>
+	</STRING>
+	<STRING Id="381" Name="IDS_RTRE_CONFIG_ERROR">
+		<Text>RTRE Configuration Setting Failed!</Text>
+	</STRING>
+	<STRING Id="382" Name="IDS_ANSWER_VOICE_ERROR">
+		<Text>Answer Voice Parameter Setting Failed!</Text>
+	</STRING>
+	<STRING Id="383" Name="IDS_LOOPBACK1">
+		<Text>Loopback1</Text>
+	</STRING>
+	<STRING Id="384" Name="IDS_LOOPBACK2">
+		<Text>Loopback2</Text>
+	</STRING>
+	<STRING Id="385" Name="IDS_LOOPBACK1_DS">
+		<Text>Loopback1 DS</Text>
+	</STRING>
+	<STRING Id="386" Name="IDS_LOOPBACK2_DS">
+		<Text>Loopback2 DS</Text>
+	</STRING>
+	<STRING Id="387" Name="IDS_INVALID_TC_TYPE">
+		<Text>Invalid TC Type</Text>
+	</STRING>
+	<STRING Id="388" Name="IDS_SIM_REINIT">
+		<Text>SIM Reinitializing</Text>
+	</STRING>
+	<STRING Id="394" Name="IDS_SEARCHING">
+		<Text>Searching....Press End to Cancel</Text>
+	</STRING>
+	<STRING Id="395" Name="IDS_PLMN_LIST">
+		<Text>PLMN List</Text>
+	</STRING>
+	<STRING Id="396" Name="IDS_PLMN_LIST_EMPTY">
+		<Text>No PLMNs Available</Text>
+	</STRING>
+	<STRING Id="397" Name="IDS_VIDEOPHONE">
+		<Text>QVideoPhone</Text>
+	</STRING>
+	<STRING Id="398" Name="IDS_BLUETOOTH">
+		<Text>Bluetooth</Text>
+	</STRING>
+	<STRING Id="399" Name="IDS_CUG_GROUPID">
+		<Text>Group ID</Text>
+	</STRING>
+	<STRING Id="400" Name="IDS_CUG_PREF_GROUP">
+		<Text>Preferred Group</Text>
+	</STRING>
+	<STRING Id="401" Name="IDS_CUG_OUT_ACCESS">
+		<Text>Out Access</Text>
+	</STRING>
+	<STRING Id="402" Name="IDS_CUG_SUPPRESS">
+		<Text>Supress</Text>
+	</STRING>
+	<STRING Id="403" Name="IDS_CUG_NO_SUPPRESS">
+		<Text>No Supress</Text>
+	</STRING>
+	<STRING Id="404" Name="IDS_READ_FAILED">
+		<Text>Unable to read the setting!</Text>
+	</STRING>
+	<STRING Id="405" Name="IDS_VR">
+		<Text>Voice Prompts</Text>
+	</STRING>
+	<STRING Id="410" Name="IDS_LOW_POWER_MODE">
+		<Text>Low Power Mode</Text>
+	</STRING>
+	<STRING Id="411" Name="IDS_MMS">
+		<Text>MMS</Text>
+	</STRING>
+	<STRING Id="412" Name="IDS_NW_PERSO_KEY">
+		<Text>Network Personalization Key</Text>
+	</STRING>
+	<STRING Id="413" Name="IDS_NW_SUB_PERSO_KEY">
+		<Text>Network Subset Personalization Key</Text>
+	</STRING>
+	<STRING Id="414" Name="IDS_SP_PERSO_KEY">
+		<Text>Service Provider Personalization Key</Text>
+	</STRING>
+	<STRING Id="415" Name="IDS_CP_KEY">
+		<Text>Corporate Personalization Key</Text>
+	</STRING>
+	<STRING Id="416" Name="IDS_SIM_PERSO_KEY">
+		<Text>SIM/USIM Personalization Key</Text>
+	</STRING>
+	<STRING Id="417" Name="IDS_PERSO_INDICATOR">
+		<Text>Personalization Feature Indicators</Text>
+	</STRING>
+	<STRING Id="418" Name="IDS_ENTER_NW_PERSO_KEY">
+		<Text>Enter Network Personalization Key</Text>
+	</STRING>
+	<STRING Id="419" Name="IDS_ENTER_NW_SUB_PERSO_KEY">
+		<Text>Enter Network Subset Personalization Key</Text>
+	</STRING>
+	<STRING Id="420" Name="IDS_ENTER_SP_PERSO_KEY">
+		<Text>Enter Service Provider Personalization Key</Text>
+	</STRING>
+	<STRING Id="421" Name="IDS_ENTER_CP_KEY">
+		<Text>Enter Corporate Personalization Key</Text>
+	</STRING>
+	<STRING Id="422" Name="IDS_ENTER_SIM_PERSO_KEY">
+		<Text>Enter SIM/USIM Personalization Key</Text>
+	</STRING>
+	<STRING Id="423" Name="IDS_PERSO_DEACTIVATE_FAILED">
+		<Text>Personalization Deactivation Failed</Text>
+	</STRING>
+	<STRING Id="424" Name="IDS_PERSO_ACTIVATE_FAILED">
+		<Text>Personalization Activation Failed</Text>
+	</STRING>
+	<STRING Id="425" Name="IDS_PERSO_DEACTIVATE_SUCCESS">
+		<Text>Personalization Deactivation Success</Text>
+	</STRING>
+	<STRING Id="426" Name="IDS_PERSO_ACTIVATE_SUCCESS">
+		<Text>Personalization Activation Success</Text>
+	</STRING>
+	<STRING Id="427" Name="IDS_GET_PERSO_FAIL">
+		<Text>Not able to obtain Personalization Feature Indication</Text>
+	</STRING>
+	<STRING Id="428" Name="IDS_PERSO_DATA">
+		<Text>Personalization Data</Text>
+	</STRING>
+	<STRING Id="429" Name="IDS_NW_PERSO">
+		<Text>Network Personalization</Text>
+	</STRING>
+	<STRING Id="430" Name="IDS_NW_SUB_PERSO">
+		<Text>Network Subset Personalization</Text>
+	</STRING>
+	<STRING Id="431" Name="IDS_SP_PERSO">
+		<Text>Service Provider Personalization</Text>
+	</STRING>
+	<STRING Id="432" Name="IDS_CP_PERSO">
+		<Text>Corporate Personalization</Text>
+	</STRING>
+	<STRING Id="433" Name="IDS_SIM_PERSO">
+		<Text>SIM/USIM Personalizaton</Text>
+	</STRING>
+	<STRING Id="434" Name="IDS_PLMN_PERFORM_NETWORK_SCAN_QUESTION">
+		<Text>Perform PLMN network scan?</Text>
+	</STRING>
+	<STRING Id="435" Name="IDS_LIMITED">
+		<Text>Limited</Text>
+	</STRING>
+	<STRING Id="436" Name="IDS_LCD">
+		<Text>LCD Display</Text>
+	</STRING>
+	<STRING Id="437" Name="IDS_PERSO_SET_DATA_FAIL">
+		<Text>Personalization Data Setting Failed</Text>
+	</STRING>
+	<STRING Id="438" Name="IDS_PERSO_SET_DATA_SUCCESS">
+		<Text>Personalization Data Setting Success</Text>
+	</STRING>
+	<STRING Id="439" Name="IDS_DATE_FORMAT">
+		<Text>%02d/%02d/%04d</Text>
+	</STRING>
+	<STRING Id="440" Name="IDS_ALS_LINE_SELECTION">
+		<Text>ALS Line Selection</Text>
+	</STRING>
+	<STRING Id="441" Name="IDS_ALS_LINE1">
+		<Text>ALS Line 1</Text>
+	</STRING>
+	<STRING Id="442" Name="IDS_ALS_LINE2">
+		<Text>ALS Line 2</Text>
+	</STRING>
+	<STRING Id="443" Name="IDS_ALS_LINE_SWITCHING">
+		<Text>ALS Line Switching</Text>
+	</STRING>
+	<STRING Id="444" Name="IDS_ALS_LINE_FORBID_SWITCH">
+		<Text>Forbidden</Text>
+	</STRING>
+	<STRING Id="445" Name="IDS_ALS_LINE_ALLOW_SWITCH">
+		<Text>Allowed</Text>
+	</STRING>
+	<STRING Id="446" Name="IDS_ALS">
+		<Text>Alternate Line Selection (ALS)</Text>
+	</STRING>
+	<STRING Id="447" Name="IDS_CPHS">
+		<Text>Common PCN Handset Specification (CPHS)</Text>
+	</STRING>
+	<STRING Id="448" Name="IDS_CSP">
+		<Text>Customer Service Profile (CSP)</Text>
+	</STRING>
+	<STRING Id="449" Name="IDS_ALS_LINE_SELECTION_ERROR">
+		<Text>ALS Line Selection Failed!</Text>
+	</STRING>
+	<STRING Id="450" Name="IDS_ALS_LINE_SWITCHING_ERROR">
+		<Text>ALS Line Switching Failed!</Text>
+	</STRING>
+	<STRING Id="451" Name="IDS_ALS_OPERATION_ERROR">
+		<Text>ALS Operation Failed!</Text>
+	</STRING>
+	<STRING Id="452" Name="IDS_CONTRAST_SETTINGS">
+		<Text>Contrast Settings</Text>
+	</STRING>
+	<STRING Id="453" Name="IDS_CONTRAST_VALUE">
+		<Text>Contrast Value</Text>
+	</STRING>
+	<STRING Id="454" Name="IDS_PLMN_SEARCH_CANCELED">
+		<Text>PLMN Search Cancelled</Text>
+	</STRING>
+	<STRING Id="455" Name="IDS_CARD_1">
+		<Text>Card 1</Text>
+	</STRING>
+	<STRING Id="456" Name="IDS_CARD_2">
+		<Text>Card 2</Text>
+	</STRING>
+	<STRING Id="457" Name="IDS_CARD_ERROR">
+		<Text>Card Error</Text>
+	</STRING>
+	<STRING Id="458" Name="IDS_CDMA">
+		<Text>CDMA</Text>
+	</STRING>
+	<STRING Id="459" Name="IDS_CDMA_1">
+		<Text>CDMA for Card 1</Text>
+	</STRING>
+	<STRING Id="460" Name="IDS_CDMA_2">
+		<Text>CDMA for Card 2</Text>
+	</STRING>
+	<STRING Id="461" Name="IDS_DEFAULT">
+		<Text>Default</Text>
+	</STRING>
+	<STRING Id="462" Name="IDS_GSM">
+		<Text>GSM</Text>
+	</STRING>
+	<STRING Id="463" Name="IDS_GSM_1">
+		<Text>GSM for Card 1</Text>
+	</STRING>
+	<STRING Id="464" Name="IDS_GSM_2">
+		<Text>GSM for Card 2</Text>
+	</STRING>
+	<STRING Id="465" Name="IDS_SELECT_CARD">
+		<Text>Select Card</Text>
+	</STRING>
+	<STRING Id="466" Name="IDS_SELECT_TECHNOLOGY">
+		<Text>Select Technology</Text>
+	</STRING>
+	<STRING Id="467" Name="IDS_SELECT_TECHNOLOGY_FOR_CARD_1">
+		<Text>Select Technology for Card 1</Text>
+	</STRING>
+	<STRING Id="468" Name="IDS_SELECT_TECHNOLOGY_FOR_CARD_2">
+		<Text>Select Technology for Card 2</Text>
+	</STRING>
+	<STRING Id="469" Name="IDS_LCD_2_MIN">
+		<Text>2 Min</Text>
+	</STRING>
+	<STRING Id="470" Name="IDS_LCD_10">
+		<Text>10 Min</Text>
+	</STRING>
+	<STRING Id="471" Name="IDS_LCD_ALWAYS_ON">
+		<Text>Always On</Text>
+	</STRING>
+	<STRING Id="472" Name="IDS_NO_BATTERY">
+		<Text>No Battery</Text>
+	</STRING>
+	<STRING Id="473" Name="IDS_AVOID_CURR_SYSTEM">
+		<Text>Avoid Current Serving System</Text>
+	</STRING>
+	<STRING Id="483" Name="IDS_WLAN_SETTINGS">
+		<Text>WLAN Settings</Text>
+	</STRING>
+	<STRING Id="490" Name="IDS_ENABLED">
+		<Text>Enabled</Text>
+	</STRING>
+	<STRING Id="491" Name="IDS_DISABLED">
+		<Text>Disabled</Text>
+	</STRING>
+	<String Id="506" Name="IDS_GAP">
+		<Text>:  </Text>
+	</String>
+	<String Id="510" Name="IDS_SIM_NOT_READY">
+		<Text>SIM not initialized yet</Text>
+	</String>
+	<String Id="530" Name="IDS_NONE">
+		<Text>None</Text>
+	</String>
+	<String Id="563" Name="IDS_SK_SAVE">
+		<Text>SAVE</Text>
+		<Comment>All caps, suitable for soft keys. unlike IDS_SAVE.</Comment>
+	</String>
+	<String Id="566" Name="IDS_ERROR_HEX_STRING">
+		<Text>Input must be in hexadecimal format</Text>
+	</String>
+	<String Id="567" Name="IDS_PASSWORD">
+		<Text>Password</Text>
+	</String>
+	<String Id="568" Name="IDS_USER_ID">
+		<Text>User ID</Text>
+	</String>
+	<String Id="569" Name="IDS_UI3D">
+		<Text>3DUI App</Text>
+	</String>
+	<String Id="570" Name="IDS_CCBS_ACCEPT">
+		<Text>Accept</Text>
+	</String>
+	<String Id="571" Name="IDS_CCBS_REJECT">
+		<Text>Reject</Text>
+	</String>
+	<String Id="572" Name="IDS_CCBS_HOLD_N_ACCEPT">
+		<Text>Hold Active Call and Accept Recall</Text>
+	</String>
+	<String Id="573" Name="IDS_RELEASE_N_ACCEPT">
+		<Text>Release Active Call and Accept Recall</Text>
+	</String>
+	<String Id="574" Name="IDS_CCBS_AUTO_ACCEPT">
+		<Text>Recall Indication</Text>
+	</String>
+	<String Id="576" Name="IDS_NW_SEL_MODE">
+		<Text>Network Select Mode</Text>
+	</String>
+	<String Id="577" Name="IDS_SOUND_DEVICE">
+		<Text>Sound Device</Text>
+	</String>
+	<String Id="578" Name="IDS_SOUNDDEV_TTYHEAD">
+		<Text>TTY Headset</Text>
+	</String>
+	<String Id="579" Name="IDS_SOUNDDEV_TTYHCO">
+		<Text>TTY HCO</Text>
+	</String>
+	<String Id="580" Name="IDS_SOUNDDEV_TTYVCO">
+		<Text>TTY VCO</Text>
+	</String>
+	<String Id="581" Name="IDS_SOUNDDEV_STEREO_HEADSET">
+		<Text>Stereo Headset</Text>
+	</String>
+	<String Id="582" Name="IDS_SOUNDDEV_HEADSET">
+		<Text>Headset</Text>
+	</String>
+	<String Id="583" Name="IDS_SOUNDDEV_HFK">
+		<Text>Hands Free Kit</Text>
+	</String>
+	<String Id="584" Name="IDS_SOUNDDEV_USB_HFK">
+		<Text>USB Hands Free Kit</Text>
+	</String>
+	<String Id="585" Name="IDS_SOUNDDEV_SDAC">
+		<Text>Stereo DAC</Text>
+	</String>
+	<String Id="586" Name="IDS_SOUNDDEV_BT_A2DP_SCO">
+		<Text>BlueTooth A2DP SCO Headset</Text>
+	</String>
+	<String Id="587" Name="IDS_SOUNDDEV_BT_HEADSET">
+		<Text>BlueTooth Headset</Text>
+	</String>
+	<String Id="588" Name="IDS_SOUNDDEV_BT_A2DP_HEADSET">
+		<Text>BlueTooth A2DP Headset</Text>
+	</String>
+	<String Id="589" Name="IDS_SOUNDDEV_SPEAKERPHONE">
+		<Text>Speakerphone</Text>
+	</String>
+	<String Id="590" Name="IDS_SOUNDDEV_HANDSET">
+		<Text>Handset</Text>
+	</String>
+	<String Id="591" Name="IDS_SOUNDDEV_AUTOSELECT">
+		<Text>Auto Select</Text>
+	</String>
+	<String Id="592" Name="IDS_SAP_CONNECTION">
+		<Text>BT SAP Connection</Text>
+	</String>
+	<String Id="593" Name="IDS_SAP_DISCONNECT_IMMED">
+		<Text>Immediately</Text>
+	</String>
+	<String Id="594" Name="IDS_SAP_DISCONNECT_GRACE">
+		<Text>Gracefully</Text>
+	</String>
+	<String Id="595" Name="IDS_CONNECT">
+		<Text>Connect</Text>
+	</String>
+	<String Id="596" Name="IDS_DISCONNECT">
+		<Text>Disconnect</Text>
+	</String>
+	<String Id="597" Name="IDS_SERVER">
+		<Text>Server</Text>
+	</String>
+	<String Id="598" Name="IDS_CLIENT">
+		<Text>Client</Text>
+	</String>
+	<String Id="599" Name="IDS_CONNECT_AS">
+		<Text>Connect As</Text>
+	</String>
+	<String Id="600" Name="IDS_SAP_COULD_NOT_DISCONNECT">
+		<Text>Could Not Disconnect SAP Connection</Text>
+	</String>
+	<String Id="601" Name="IDS_SAP_COULD_NOT_CONNECT">
+		<Text>Could not make a SAP Connection</Text>
+	</String>
+	<String Id="602" Name="IDS_SAP_PIN_INCORRECT">
+		<Text>Incorrect SAP PIN</Text>
+	</String>
+	<String Id="603" Name="IDS_SAP_PIN">
+		<Text>SAP Pin</Text>
+	</String>
+	<String Id="605" Name="IDS_NETWORK_TIME">
+		<Text>Enable Network Time</Text>
+	</String>
+	<String Id="622" Name="IDS_SK_DONE">
+		<Text>DONE</Text>
+	</String>
+	<String Id="630" Name="IDS_NITZ_SETTINGS">
+		<Text>NITZ settings</Text>
+	</String>
+	<String Id="631" Name="IDS_DELETE_NITZ_PLMN">
+		<Text>Delete NITZ PLMN</Text>
+	</String>
+	<String Id="632" Name="IDS_SK_YES">
+		<Text>YES</Text>
+	</String>
+	<String Id="633" Name="IDS_SK_NO">
+		<Text>NO</Text>
+	</String>
+	<String Id="635" Name="IDS_CONNECT_FAILED">
+		<Text>Connect failed.</Text>
+	</String>
+	<String Id="640" Name="IDS_DISABLE_BG_IMAGE">
+		<Text>Disable Background Image</Text>
+	</String>
+	<STRING Id="644" Name="IDS_CHANNEL_TITLE">
+		<Text>Channel (0 = "any channel")</Text>
+	</STRING>
+	<String Id="645" Name="IDS_LANG_ENG">
+		<Text>English</Text>
+	</String>
+	<String Id="646" Name="IDS_LANG_GER">
+		<Text>German</Text>
+	</String>
+	<String Id="647" Name="IDS_LANGUAGE_SELECTION">
+		<Text>Language Selection</Text>
+	</String>
+        <STRING Id="648" Name="IDS_MAILBOXNUM">
+		<Text>Mailbox No:</Text>
+	</STRING>
+	<String Id="652" Name="IDS_DISPLAY_MAPPING">
+		<Text>Display Mapping</Text>
+	</String>
+	<String Id="653" Name="IDS_DISPLAY_MAIN">
+		<Text>Main Display</Text>
+	</String>
+	<String Id="654" Name="IDS_DISPLAY_SECOND">
+		<Text>Second Display</Text>
+	</String>
+	<String Id="655" Name="IDS_DISPLAY_THIRD">
+		<Text>Third Display</Text>
+	</String>
+	<String Id="656" Name="IDS_DISPLAY_FOURTH">
+		<Text>Fourth Display</Text>
+	</String>
+	<String Id="657" Name="IDS_DISPLAY_PRIMARY">
+		<Text>Primary</Text>
+	</String>
+	<String Id="658" Name="IDS_DISPLAY_SECONDARY">
+		<Text>Secondary</Text>
+	</String>
+	<String Id="663" Name="IDS_IMS_VIDEOSHARE">
+		<Text>IMS VideoShare</Text>
+	</String>
+	<String Id="664" Name="IDS_IMS_SETTINGS">
+		<Text>IMS Settings</Text>
+	</String>
+        <String Id="665" Name="IDS_INCALL_MIXING">
+		<Text>Incall Mixing</Text>
+	</String>
+	<String Id="666" Name="IDS_SIDETONE_ON" Encoding="Unicode">
+		<Text>Sidetone On</Text>
+	</String>
+	<String Id="667" Name="IDS_SIDETONE_OFF" Encoding="Unicode">
+		<Text>Sidetone Off</Text>
+	</String>
+	<String Id="668" Name="IDS_SIDETONE_MENU" Encoding="Unicode">
+		<Text>Sidetone Settings</Text>
+	</String>
+	<STRING Id="672" Name="IDS_5_S">
+		<Text>5 Sec</Text>
+	</STRING>
+	<STRING Id="680" Name="IDS_SETSECURETIME">
+		<Text>Set Secure Time</Text>
+	</STRING>
+	<STRING Id="700" Name="IDS_USBDEVICESWITCH">
+		<Text>USB Device</Text>
+	</STRING>
+	<String Id="1001" Name="IDS_ALARMCLOCK">
+		<Text>ALARMCLOCK</Text>
+	</String>
+	<STRING Id="1102" Name="IDS_FMRADIO">
+		<Text>FM Radio</Text>
+	</STRING>
+
+</Strings>
+<Dialogs>
+	<DIALOG Id="1" Name="IDD_CORE" Focus="1" Flags="00000001">
+		<Controls>
+			<IconView Id="1" Name="IDC_ICONV_CORE" Flags="00000001">
+				<Items>
+					<Item Id="8025" Name="IDL_CONTACT">
+						<TextID>IDS_CONTACT</TextID>
+						<ImageID>IDB_CONTACT</ImageID>
+					</Item>
+					<Item Id="8064" Name="IDL_WMS">
+						<TextID>IDS_WIRELESS_MESSAGING</TextID>
+						<ImageID>IDB_MESSAGE</ImageID>
+					</Item>
+					<Item Id="8065" Name="IDL_RECENTCALL">
+						<TextID>IDS_RECENTCALL</TextID>
+						<ImageID>IDB_RECENTCALL</ImageID>
+					</Item>
+					<Item Id="8066" Name="IDL_MY_INFO">
+						<TextID>IDS_MY_INFO</TextID>
+						<ImageID>IDB_MYINFO</ImageID>
+					</Item>
+					<Item Id="8079" Name="IDL_SETTINGS">
+						<TextID>IDS_SETTINGS</TextID>
+						<ImageID>IDB_SETTINGS</ImageID>
+					</Item>
+					<Item Id="8080" Name="IDL_MEDIAPLAYER">
+						<TextID>IDS_MEDIAPLAYER</TextID>
+						<ImageID>IDB_MEDIAPLAYER</ImageID>
+					</Item>
+					<Item Id="8081" Name="IDL_BROWSER">
+						<TextID>IDS_BROWSER</TextID>
+						<ImageID>IDB_BROWSER</ImageID>
+					</Item>
+					<Item Id="8082" Name="IDL_UI3D">
+						<TextID>IDS_UI3D</TextID>
+						<ImageID>IDB_3DUI</ImageID>
+					</Item>
+					<Item Id="8083" Name="IDL_DIALER">
+						<TextID>IDS_DIALER</TextID>
+						<ImageID>IDB_DIALER</ImageID>
+					</Item>
+					<Item Id="8093" Name="IDL_APPMANAGER">
+						<TextID>IDS_APPMANAGER</TextID>
+						<ImageID>IDB_APPMGR</ImageID>
+					</Item>
+					<Item Id="8094" Name="IDL_GPS">
+						<TextID>IDS_GPS</TextID>
+						<ImageID>IDB_GPS</ImageID>
+					</Item>
+					<Item Id="8096" Name="IDL_QCAMERA">
+						<TextID>IDS_QCAMERA</TextID>
+						<ImageID>IDB_QCAMERA</ImageID>
+					</Item>
+					<Item Id="8097" Name="IDL_QCAMCORDER">
+						<TextID>IDS_QCAMCORDER</TextID>
+						<ImageID>IDB_QCAMCORDER</ImageID>
+					</Item>
+					<Item Id="8098" Name="IDL_JAVA">
+						<TextID>IDS_JAVA</TextID>
+						<ImageID>IDB_JAVA</ImageID>
+					</Item>
+					<Item Id="8129" Name="IDL_CATAPP">
+						<TextID>IDS_CATAPP</TextID>
+						<ImageID>IDB_CATAPP</ImageID>
+					</Item>
+					<Item Id="8151" Name="IDL_DATASTATS">
+						<TextID>IDS_DATASTATS</TextID>
+						<ImageID>IDB_DATASTATS</ImageID>
+					</Item>
+					<Item Id="8159" Name="IDL_VIDEOPHONE">
+						<TextID>IDS_VIDEOPHONE</TextID>
+						<ImageID>IDB_VIDEOPHONE</ImageID>
+					</Item>
+					<Item Id="8160" Name="IDL_BLUETOOTH">
+						<TextID>IDS_BLUETOOTH</TextID>
+						<ImageID>IDB_BLUETOOTH</ImageID>
+					</Item>
+					<Item Id="8161" Name="IDL_MMS">
+						<TextID>IDS_MMS</TextID>
+						<ImageID>IDB_MMS</ImageID>
+					</Item>
+					<Item Id="8299" Name="IDL_DEBUG">
+						<TextID>IDS_DEBUG</TextID>
+						<ImageID>IDB_DEBUG</ImageID>
+					</Item>
+					<Item Id="8300" Name="IDL_IMS_VIDEOSHARE">
+						<TextID>IDS_IMS_VIDEOSHARE</TextID>
+						<ImageID>IDB_VIDEOSHARE</ImageID>
+					</Item>
+					<Item Id="8303" Name="IDL_IMS_SETTINGS">
+						<TextID>IDS_IMS_SETTINGS</TextID>
+						<ImageID>IDB_IMS_SETTINGS</ImageID>
+					</Item>
+					<Item Id="8520" Name="IDL_ALARMCLOCK">
+						<TextID>IDS_ALARMCLOCK</TextID>
+						<ImageID>IDB_ALARMCLOCK</ImageID>
+					</Item>
+					<Item Id="8550" Name="IDL_FMRADIO">
+						<TextID>IDS_FMRADIO</TextID>
+						<ImageID>IDB_FMRADIO</ImageID>
+					</Item>
+
+				</Items>
+			</IconView>
+			<Static Id="7061" Name="IDC_STATIC_CORE_MESSAGE">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="2" Name="IDD_SETTINGS" Focus="2" Flags="00000001">
+		<Controls>
+			<Menu Id="2" Name="IDC_MENU_SETTINGS" Flags="00000001">
+				<TitleID>IDS_SETTINGS</TitleID>
+				<Items>
+					<Item Id="4" Name="IDL_SOUND" Data="00000000">
+						<TextID>IDS_SOUND</TextID>
+						<ImageID>IDB_SOUND</ImageID>
+					</Item>
+					<Item Id="5" Name="IDL_DISPLAY" Data="00000000">
+						<TextID>IDS_DISPLAY</TextID>
+						<ImageID>IDB_DISPLAY</ImageID>
+					</Item>
+					<Item Id="8" Name="IDL_SECURITY" Data="00000000">
+						<TextID>IDS_SECURITY</TextID>
+						<ImageID>IDB_SECURITY</ImageID>
+					</Item>
+					<Item Id="9" Name="IDL_EXTRAS" Data="00000000">
+						<TextID>IDS_EXTRAS</TextID>
+						<ImageID>IDB_EXTRAS</ImageID>
+					</Item>
+					<Item Id="45" Name="IDL_KEYGUARD" Data="00000011">
+						<TextID>IDS_KEYGUARD</TextID>
+						<ImageID>IDB_KEYGUARD</ImageID>
+					</Item>
+					<Item Id="8035" Name="IDL_NETWORK" Data="00000000">
+						<TextID>IDS_NETWORK</TextID>
+						<ImageID>IDB_NETWORK</ImageID>
+					</Item>
+					<Item Id="8222" Name="IDL_CPHS">
+						<TextID>IDS_CPHS</TextID>
+						<ImageID>IDB_EXTRAS</ImageID>
+					</Item>
+					<Item Id="8292" Name="IDL_WLAN">
+						<TextID>IDS_WLAN_SETTINGS</TextID>
+						<ImageID>IDB_WIFI_BMP</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="3" Name="IDD_EXTRAS" Focus="3" Flags="00000001">
+		<Controls>
+			<Menu Id="3" Name="IDC_MENU_EXTRAS" Flags="00000001">
+				<TitleID>IDS_EXTRAS</TitleID>
+				<Items>
+					<Item Id="10" Name="IDL_SIOCONFIGURATION" Data="00000001">
+						<TextID>IDS_SIOCONFIGURATION</TextID>
+					</Item>
+					<Item Id="11" Name="IDL_AUTOANSWER" Data="00000000">
+						<TextID>IDS_AUTOANSWER</TextID>
+					</Item>
+					<Item Id="12" Name="IDL_AUTORETRY" Data="00000000">
+						<TextID>IDS_AUTORETRY</TextID>
+					</Item>
+					<Item Id="13" Name="IDL_ONETOUCH" Data="00000000">
+						<TextID>IDS_ONETOUCH</TextID>
+					</Item>
+					<Item Id="14" Name="IDL_PRIVACY" Data="00000000">
+						<TextID>IDS_PRIVACY</TextID>
+					</Item>
+					<Item Id="8028" Name="IDL_VR">
+						<TextID>IDS_VR</TextID>
+					</Item>
+					<Item Id="8128" Name="IDL_GAME_MODE">
+						<TextID>IDS_GAME_MODE</TextID>
+					</Item>
+					<Item Id="8196" Name="IDL_CUG">
+						<TextID>IDS_CUG</TextID>
+					</Item>
+					<Item Id="8369" Name="IDL_CCBS">
+						<TextID>IDS_CCBS_AUTO_ACCEPT</TextID>
+					</Item>
+					<Item Id="8407" Name="IDL_NITZ">
+						<TextID>IDS_NITZ_SETTINGS</TextID>
+					</Item>
+					<Item Id="9000" Name="IDL_USBDEVICESWITCH" Data="00000001">
+						<TextID>IDS_USBDEVICESWITCH</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="4" Name="IDD_SILENCEALL" Focus="15" Flags="00000001">
+		<Controls>
+			<Menu Id="15" Name="IDC_MENU_SILENCEALL" Flags="00000001">
+				<TitleID>IDS_SILENCEALL</TitleID>
+				<Items>
+					<Item Id="126" Name="IDL_SILENCEALL_ON" Data="00000001">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="127" Name="IDL_SILENCEALL_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="5" Name="IDD_SETTIME_EDIT" Focus="5" Flags="00000001">
+		<Controls>
+			<Date Id="5" Name="IDC_DATE" Flags="00000000">
+				<Items/></Date>
+			<Clock Id="6" Name="IDC_TIME" Flags="00000000">
+				<Items/></Clock>
+			<SoftKey Id="17" Name="IDC_SK_SETTIME_EDIT" Flags="00000001">
+				<Items>
+					<Item Id="46" Name="IDL_SETTIME_EDIT_OK" Data="00000001">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Static Id="7054" Name="IDC_EDIT_TITLE">
+				<TextID>IDS_TIMEDATEENTER</TextID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6" Name="IDD_DTMFLENGTH" Focus="19" Flags="1">
+		<Controls>
+			<Menu Id="19" Name="IDC_MENU_DTMFLENGTH" Flags="1">
+				<TitleID>IDS_DTMFLEN</TitleID>
+				<Items>
+					<Item Id="71" Name="IDL_DTMFLENGTH_OFF" Data="1">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="80" Name="IDL_DTMFLENGTH_CONT" Data="1">
+						<TextID>IDS_CONT</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8027" Name="IDL_DTMFLENGTH_BURST">
+						<TextID>IDS_BURST</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="7" Name="IDD_SECURITY" Focus="9" Flags="00000001">
+		<Controls>
+			<Menu Id="9" Name="IDC_MENU_SECURITY" Flags="00000001">
+				<TitleID>IDS_SECURITY</TitleID>
+				<Items>
+					<Item Id="23" Name="IDL_RESTRICT" Data="00000001">
+						<TextID>IDS_RESTRICT</TextID>
+					</Item>
+					<Item Id="24" Name="IDL_RESTORESETTINGS" Data="00000001">
+						<TextID>IDS_RESTORESETTINGS</TextID>
+					</Item>
+					<Item Id="69" Name="IDL_PINLOCK" Data="00000001">
+						<TextID>IDS_PINLOCK</TextID>
+					</Item>
+					<Item Id="70" Name="IDL_PINCHANGE" Data="00000001">
+						<TextID>IDS_PINCHANGE</TextID>
+					</Item>
+					<Item Id="8024" Name="IDL_RTRE_CONFIG" Data="00000001">
+						<TextID>IDS_RTRECONFIG</TextID>
+					</Item>
+					<Item Id="8139" Name="IDL_USER_SLOT_PREF">
+						<TextID>IDS_USER_SLOT_PREF</TextID>
+					</Item>
+					<Item Id="8198" Name="IDL_PERSO_FEATURE_IND">
+						<TextID>IDS_PERSO_INDICATOR</TextID>
+					</Item>
+					<Item Id="8205" Name="IDL_PERSO_FEATURE_DATA">
+						<TextID>IDS_PERSO_DATA</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="8" Name="IDD_DISPLAY" Focus="8" Flags="00000001">
+		<Controls>
+			<Menu Id="8" Name="IDC_MENU_DISPLAY" Flags="00000001">
+				<TitleID>IDS_DISPLAY</TitleID>
+				<Items>
+					<Item Id="22" Name="IDL_BACKLIGHT" Data="00000000">
+						<TextID>IDS_BACKLIGHT</TextID>
+					</Item>
+					<Item Id="44" Name="IDL_BANNER" Data="00000000">
+						<TextID>IDS_BANNER</TextID>
+					</Item>
+					<Item Id="82" Name="IDL_AUTOHYPHEN" Data="00000001">
+						<TextID>IDS_AUTOHYPHEN</TextID>
+					</Item>
+					<Item Id="8031" Name="IDL_SETTIME" Data="00000000">
+						<TextID>IDS_SETTIME</TextID>
+					</Item>
+					<Item Id="8143" Name="IDL_SETSECURETIME" Data="00000000">
+						<TextID>IDS_SETSECURETIME</TextID>
+					</Item>
+					<Item Id="8213" Name="IDL_SETLCD">
+						<TextID>IDS_LCD</TextID>
+					</Item>
+					<Item Id="8223" Name="IDL_CONTRAST">
+						<TextID>IDS_CONTRAST_SETTINGS</TextID>
+					</Item>
+					<Item Id="8295" Name="IDL_LANGUAGE_SELECT">
+						<TextID>IDS_LANGUAGE_SELECTION</TextID>
+					</Item>
+					<Item Id="8310" Name="IDL_DISP_DISABLE_BG_IMAGE">
+						<TextID>IDS_DISABLE_BG_IMAGE</TextID>
+					</Item>
+					<Item Id="8333" Name="IDL_DISPLAY_MAP">
+						<TextID>IDS_DISPLAY_MAPPING</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="9" Name="IDD_SOUND" Focus="10" Flags="1">
+		<Controls>
+			<Menu Id="10" Name="IDC_MENU_SOUND" Flags="00000001">
+				<TitleID>IDS_SOUND</TitleID>
+				<Items>
+					<Item Id="28" Name="IDL_VOLUME" Data="00000000">
+						<TextID>IDS_VOLUME</TextID>
+					</Item>
+					<Item Id="29" Name="IDL_RINGTYPE" Data="00000000">
+						<TextID>IDS_RINGTYPE</TextID>
+					</Item>
+					<Item Id="30" Name="IDL_DTMFLEN">
+						<TextID>IDS_DTMFLEN</TextID>
+					</Item>
+					<Item Id="31" Name="IDL_SMARTSOUND" Data="00000001">
+						<TextID>IDS_SMARTSOUND</TextID>
+					</Item>
+					<Item Id="76" Name="IDL_SERVICEALERT" Data="00000001">
+						<TextID>IDS_SERVICEALERT</TextID>
+					</Item>
+					<Item Id="77" Name="IDL_SILENCEALL" Data="00000001">
+						<TextID>IDS_SILENCEALL</TextID>
+					</Item>
+					<Item Id="138" Name="IDL_MUTE" Data="00000001">
+						<TextID>IDS_MUTE</TextID>
+					</Item>
+					<Item Id="8001" Name="IDL_TTY">
+						<TextID>IDS_TTY</TextID>
+					</Item>
+					<Item Id="8304" Name="IDL_SOUND_DEVICE">
+						<TextID>IDS_SOUND_DEVICE</TextID>
+					</Item>
+					<Item Id="8350" Name="IDL_INCALL_MIXING">
+						<TextID>IDS_INCALL_MIXING</TextID>
+					</Item>
+					<Item Id="8518" Name="IDL_SIDETONE">                                       
+						<TextID>IDS_SIDETONE_MENU</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="10" Name="IDD_VOLUME" Focus="11" Flags="00000001">
+		<Controls>
+			<Menu Id="11" Name="IDC_MENU_VOLUME" Flags="00000001">
+				<TitleID>IDS_VOLUME</TitleID>
+				<Items>
+					<Item Id="32" Name="IDL_RINGERVOL" Data="00000000">
+						<TextID>IDS_RINGERVOL</TextID>
+					</Item>
+					<Item Id="33" Name="IDL_KEYBEEPVOL" Data="00000000">
+						<TextID>IDS_KEYBEEPVOL</TextID>
+					</Item>
+					<Item Id="34" Name="IDL_EARPIECEVOL" Data="00000000">
+						<TextID>IDS_EARPIECEVOL</TextID>
+					</Item>
+					<Item Id="35" Name="IDL_MESSAGEVOL" Data="00000000">
+						<TextID>IDS_MESSAGEVOL</TextID>
+					</Item>
+					<Item Id="8026" Name="IDL_MMVOL">
+						<TextID>IDS_MM_VOLUME</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="11" Name="IDD_RESTORE_SETTINGS" Focus="16">
+		<Controls>
+			<Static Id="13" Name="IDC_STATIC_RESTORESETTINGS">
+				<TextID>IDS_RESTORESETTINGS</TextID>
+				<Items/></Static>
+			<SoftKey Id="16" Name="IDC_SK_RESTORESETTINGS">
+				<Items>
+					<Item Id="6" Name="IDL_RESTORESETTINGS_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+					<Item Id="16" Name="IDL_RESTORESETTINGS_CANCEL">
+						<TextID>IDS_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="12" Name="IDD_BANNER_EDIT" Focus="58" Flags="00000001">
+		<Controls>
+			<SoftKey Id="14" Name="IDC_SK_BANNER_EDIT">
+				<Items>
+					<Item Id="15" Name="IDL_BANNER_EDIT_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Text Id="58" Name="IDC_TEXT_BANNER_EDIT">
+				<TitleID>IDS_BANNER</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="13" Name="IDD_KEYGUARD_ON" Focus="12">
+		<Controls>
+			<Static Id="12" Name="IDC_STATIC_KEYGUARD_ON">
+				<TextID>IDS_KEYGUARD_ON_UNLOCK_MESSAGE</TextID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="14" Name="IDD_RESTORE_SETTINGS_NOW" Focus="21">
+		<Controls>
+			<Static Id="21" Name="IDC_STATIC_RESTORESETTINGSCOMPLETED">
+				<TextID>IDS_RESTORE_COMPLETED</TextID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="15" Name="IDD_HOURGLASS" Focus="18">
+		<Controls>
+			<Static Id="18" Name="IDC_HRGLS_MESSAGE">
+				<TextID>IDS_HOURGLASS</TextID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="16" Name="IDD_USER_SLOT_PREF" Focus="7055">
+		<Controls>
+			<Menu Id="7055" Name="IDC_MENU_USER_SLOT_PREF">
+				<TitleID>IDS_USER_SLOT_PREF</TitleID>
+				<Items>
+					<Item Id="8156" Name="IDL_USER_SLOT_PREF_GSM">
+						<TextID>IDS_USER_SLOT_PREF_GSM</TextID>
+					</Item>
+					<Item Id="8157" Name="IDL_USER_SLOT_PREF_CDMA">
+						<TextID>IDS_USER_SLOT_PREF_CDMA</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="17" Name="IDD_GENERAL_MESSAGE" Focus="7034">
+		<Controls>
+			<Static Id="7034" Name="IDC_STATIC_MESSAGE">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="18" Name="IDD_PIN2_REQUEST" Focus="25">
+		<Controls>
+			<Text Id="25" Name="IDC_PIN2_REQUEST">
+				<TitleID>IDS_PIN2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="19" Name="IDD_OLD_PIN2_REQUEST" Focus="65">
+		<Controls>
+			<Text Id="65" Name="IDC_OLD_PIN2_REQUEST">
+				<TitleID>IDS_OLD_PIN2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="20" Name="IDD_BANNER_VIEW" Focus="26" Flags="00000001">
+		<Controls>
+			<SoftKey Id="26" Name="IDC_SK_BANNER_VIEW" Flags="00000001">
+				<Items>
+					<Item Id="58" Name="IDL_BANNER_VIEW_EDIT" Data="00000001">
+						<TextID>IDS_EDIT</TextID>
+					</Item>
+					<Item Id="59" Name="IDL_BANNER_VIEW_OK" Data="00000001">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Static Id="28" Name="IDC_STATIC_BANNER">
+				<TitleID>IDS_BANNER</TitleID>
+				<TextID>IDS_QUALCOMM</TextID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="21" Name="IDD_OLD_PIN_REQUEST" Focus="69">
+		<Controls>
+			<Text Id="69" Name="IDC_OLD_PIN_REQUEST">
+				<TitleID>IDS_OLD_PIN_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="22" Name="IDD_PUK2_REQUEST" Focus="42">
+		<Controls>
+			<Text Id="42" Name="IDC_PUK2_REQUEST">
+				<TitleID>IDS_PUK2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="23" Name="IDD_DURATION" Focus="45" Flags="00000001">
+		<Controls>
+			<Menu Id="45" Name="IDC_MENU_DURATION" Flags="00000001">
+				<TitleID>IDS_DURATION</TitleID>
+				<Items>
+					<Item Id="90" Name="IDL_DURATION_ALWAYSON" Data="00000001">
+						<TextID>IDS_ALWAYSON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="91" Name="IDL_DURATION_5" Data="00000001">
+						<TextID>IDS_5_S</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="146" Name="IDL_DURATION_10" Data="00000001">
+						<TextID>IDS_10_S</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="147" Name="IDL_DURATION_30" Data="00000001">
+						<TextID>IDS_30_S</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8529" Name="IDL_DURATION_ALWAYSOFF" Data="00000001">
+						<TextID>IDS_ALWAYSOFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="24" Name="IDD_SETTIME_VIEW" Focus="29" Flags="00000001">
+		<Controls>
+			<Static Id="20" Name="IDC_STATIC_SETTIME_VIEW">
+				<TitleID>IDS_TIMEDATEVIEW</TitleID>
+				<Items/></Static>
+			<SoftKey Id="29" Name="IDC_SK_SETTIME_VIEW" Flags="00000001">
+				<Items>
+					<Item Id="39" Name="IDL_SETTIME_VIEW_SET" Data="00000001">
+						<TextID>IDS_SET</TextID>
+					</Item>
+					<Item Id="61" Name="IDL_SETTIME_VIEW_OK" Data="00000011">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="25" Name="IDD_KEYGUARD" Focus="30" Flags="00000001">
+		<Controls>
+			<Menu Id="30" Name="IDC_MENU_KEYGUARD" Flags="00000001">
+				<TitleID>IDS_KEYGUARD</TitleID>
+				<Items>
+					<Item Id="63" Name="IDL_GUARDNOW" Data="00000001">
+						<TextID>IDS_GUARDNOW</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="64" Name="IDL_15SAUTOGUARD" Data="00000011">
+						<TextID>IDS_15AUTOGUARD</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="65" Name="IDL_30SAUTOGUARD" Data="00000001">
+						<TextID>IDS_30AUTOGUARD</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="66" Name="IDL_1MAUTOGUARD" Data="00000001">
+						<TextID>IDS_1AUTOGUARD</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="26" Name="IDD_BACKLIGHT" Focus="31" Flags="00000001">
+		<Controls>
+			<Menu Id="31" Name="IDC_MENU_BACKLIGHT" Flags="00000011">
+				<TitleID>IDS_BACKLIGHT</TitleID>
+				<Items>
+					<Item Id="67" Name="IDL_DURATION" Data="00000001">
+						<TextID>IDS_DURATION</TextID>
+					</Item>
+					<Item Id="68" Name="IDL_INTENSITY" Data="00000001">
+						<TextID>IDS_INTENSITY</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="27" Name="IDD_MYINFO" Focus="7" Flags="00000001">
+		<Controls>
+			<SoftKey Id="7" Name="IDC_SK_MYINFO" Flags="00000001">
+				<Items>
+					<Item Id="3" Name="IDL_MYINFO_OK" Data="00000001">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Static Id="66" Name="IDC_STATIC_INFO">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="28" Name="IDD_SERVICEALERT" Focus="34" Flags="00000001">
+		<Controls>
+			<Menu Id="34" Name="IDC_MENU_SERVICEALERT" Flags="00000001">
+				<TitleID>IDS_SERVICEALERT</TitleID>
+				<Items>
+					<Item Id="74" Name="IDL_SERVICEALERT_ON" Data="00000001">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="75" Name="IDL_SERVICEALERT_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="29" Name="IDD_RINGERVOLUME" Focus="24" Flags="00000001">
+		<Controls>
+			<Menu Id="24" Name="IDC_MENU_RINGERVOLUME" Flags="00000001">
+				<TitleID>IDS_RINGERVOL</TitleID>
+				<Items>
+					<Item Id="18" Name="IDL_RINGERVOLUME_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="115" Name="IDL_RINGERVOLUME_1" Data="00000001">
+						<TextID>IDS_LEVEL1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="116" Name="IDL_RINGERVOLUME_2" Data="00000001">
+						<TextID>IDS_LEVEL2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="117" Name="IDL_RINGERVOLUME_3" Data="00000001">
+						<TextID>IDS_LEVEL3</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="145" Name="IDL_RINGERVOLUME_4" Data="00000001">
+						<TextID>IDS_LEVEL4</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="30" Name="IDD_SMARTSOUND" Focus="33" Flags="00000001">
+		<Controls>
+			<Menu Id="33" Name="IDC_MENU_SMARTSOUND" Flags="00000001">
+				<TitleID>IDS_SMARTSOUND</TitleID>
+				<Items>
+					<Item Id="72" Name="IDL_SMARTSOUND_ON" Data="00000001">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="73" Name="IDL_SMARTSOUND_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="31" Name="IDD_KEYBEEPVOLUME" Focus="35" Flags="00000001">
+		<Controls>
+			<Menu Id="35" Name="IDC_MENU_KEYBEEPVOLUME" Flags="00000001">
+				<TitleID>IDS_KEYBEEPVOL</TitleID>
+				<Items>
+					<Item Id="20" Name="IDL_KEYBEEPVOLUME_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="111" Name="IDL_KEYBEEPVOLUME_1" Data="00000001">
+						<TextID>IDS_LEVEL1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="112" Name="IDL_KEYBEEPVOLUME_2" Data="00000001">
+						<TextID>IDS_LEVEL2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="113" Name="IDL_KEYBEEPVOLUME_3" Data="00000001">
+						<TextID>IDS_LEVEL3</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="114" Name="IDL_KEYBEEPVOLUME_4" Data="00000001">
+						<TextID>IDS_LEVEL4</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="32" Name="IDD_EARPIECEVOLUME" Focus="36" Flags="00000001">
+		<Controls>
+			<Menu Id="36" Name="IDC_MENU_EARPIECEVOLUME" Flags="00000001">
+				<TitleID>IDS_EARPIECEVOL</TitleID>
+				<Items>
+					<Item Id="122" Name="IDL_EARPIECEVOLUME_1" Data="00000001">
+						<TextID>IDS_LEVEL1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="123" Name="IDL_EARPIECEVOLUME_2" Data="00000001">
+						<TextID>IDS_LEVEL2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="124" Name="IDL_EARPIECEVOLUME_3" Data="00000001">
+						<TextID>IDS_LEVEL3</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="125" Name="IDL_EARPIECEVOLUME_4" Data="00000001">
+						<TextID>IDS_LEVEL4</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="33" Name="IDD_RESTRICT" Focus="32" Flags="00000001">
+		<Controls>
+			<Menu Id="32" Name="IDC_MENU_RESTRICT" Flags="00000001">
+				<TitleID>IDS_RESTRICT_CALLING</TitleID>
+				<Items>
+					<Item Id="78" Name="IDL_RESTRICT_EFS" Data="00000001">
+						<TextID>IDS_EFS</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="79" Name="IDL_RESTRICT_SPEED" Data="00000001">
+						<TextID>IDS_SPEED</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8145" Name="IDL_RESTRICT_ADN_SLOT1">
+						<TextID>IDS_ADN_SLOT1</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8146" Name="IDL_RESTRICT_ADN_SLOT2">
+						<TextID>IDS_ADN_SLOT2</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8147" Name="IDL_RESTRICT_FDN_SLOT1">
+						<TextID>IDS_FDN_SLOT1</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8158" Name="IDL_RESTRICT_FDN_SLOT2">
+						<TextID>IDS_FDN_SLOT2</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="34" Name="IDD_MESSAGEVOLUME" Focus="37" Flags="00000001">
+		<Controls>
+			<Menu Id="37" Name="IDC_MENU_MESSAGEVOLUME" Flags="00000001">
+				<TitleID>IDS_MESSAGEVOL</TitleID>
+				<Items>
+					<Item Id="27" Name="IDL_MESSAGEVOLUME_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="118" Name="IDL_MESSAGEVOLUME_1" Data="00000001">
+						<TextID>IDS_LEVEL1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="119" Name="IDL_MESSAGEVOLUME_2" Data="00000001">
+						<TextID>IDS_LEVEL2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="120" Name="IDL_MESSAGEVOLUME_3" Data="00000001">
+						<TextID>IDS_LEVEL3</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="121" Name="IDL_MESSAGEVOLUME_4" Data="00000001">
+						<TextID>IDS_LEVEL4</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="35" Name="IDD_NOCARD_EMERGENCY" Focus="55">
+		<Controls>
+			<Text Id="55" Name="IDC_TEXT_NOCARD_EMERGENCY">
+				<TitleID>IDS_NOCARD</TitleID>
+				<TextID>IDS_NOCARD</TextID>
+				<Items/></Text>
+			<SoftKey Id="73" Name="IDC_SK_NOCARD_EMERGENCY">
+				<Items>
+					<Item Id="1" Name="IDL_NOCARDEMERG">
+						<TextID>IDS_EMERGENCY</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="36" Name="IDD_CARD_INVALID" Focus="74">
+		<Controls>
+			<Text Id="74" Name="IDC_TEXT_INVALID_EMERGENCY">
+				<TitleID>IDS_CARD_INVALID</TitleID>
+				<TextID>IDS_CARD_INVALID</TextID>
+				<Items/></Text>
+			<SoftKey Id="75" Name="IDC_SK_INVALID_EMERGENCY">
+				<Items>
+					<Item Id="2" Name="IDL_INVALIDEMERG">
+						<TextID>IDS_EMERGENCY</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="37" Name="IDD_AUTOHYPHEN" Focus="41" Flags="00000001">
+		<Controls>
+			<Menu Id="41" Name="IDC_MENU_AUTOHYPHEN" Flags="00000001">
+				<TitleID>IDS_AUTOHYPHEN</TitleID>
+				<Items>
+					<Item Id="83" Name="IDL_AUTOHYPHEN_ON" Data="00000011">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="84" Name="IDL_AUTOHYPHEN_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="38" Name="IDD_USER_SLOT_PREF_CDMA" Focus="7035">
+		<Controls>
+			<Menu Id="7035" Name="IDC_MENU_USER_SLOT_PREF_CDMA">
+				<TitleID>IDS_USER_SLOT_PREF_CDMA</TitleID>
+				<Items>
+					<Item Id="8153" Name="IDL_USER_SLOT_PREF_CDMA1">
+						<TextID>IDS_CDMA_SLOT1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8154" Name="IDL_USER_SLOT_PREF_CDMA2">
+						<TextID>IDS_CDMA_SLOT2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8155" Name="IDL_USER_SLOT_PREF_CDMANONE">
+						<TextID>IDS_CDMA_SLOT_NONE</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="39" Name="IDD_DISPLAYTIME" Focus="43" Flags="00000001">
+		<Controls>
+			<Menu Id="43" Name="IDC_MENU_DISPLAYTIME" Flags="00000001">
+				<TitleID>IDS_DISPLAYTIME</TitleID>
+				<Items>
+					<Item Id="86" Name="IDL_DISPLAYTIME_AUTO" Data="00000001">
+						<TextID>IDS_AUTO</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="87" Name="IDL_DISPLAYTIME_MANUAL" Data="00000001">
+						<TextID>IDS_MANUAL</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="40" Name="IDD_INTENSITY" Focus="46" Flags="00000001">
+		<Controls>
+			<Menu Id="46" Name="IDC_MENU_INTENSITY" Flags="00000001">
+				<TitleID>IDS_INTENSITY</TitleID>
+				<Items>
+					<Item Id="92" Name="IDL_INTENSITY_0" Data="00000001">
+						<TextID>IDS_LEVEL0</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="93" Name="IDL_INTENSITY_1" Data="00000001">
+						<TextID>IDS_LEVEL1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="94" Name="IDL_INTENSITY_2" Data="00000001">
+						<TextID>IDS_LEVEL2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="95" Name="IDL_INTENSITY_3" Data="00000001">
+						<TextID>IDS_LEVEL3</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="96" Name="IDL_INTENSITY_4" Data="00000001">
+						<TextID>IDS_LEVEL4</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="42" Name="IDD_AUTOANSWER" Focus="48" Flags="00000001">
+		<Controls>
+			<Menu Id="48" Name="IDC_MENU_AUTOANSWER" Flags="00000001">
+				<TitleID>IDS_AUTOANSWER</TitleID>
+				<Items>
+					<Item Id="101" Name="IDL_AUTOANSWER_ON" Data="00000001">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="102" Name="IDL_AUTOANSWER_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="43" Name="IDD_AUTORETRY" Focus="49" Flags="00000001">
+		<Controls>
+			<Menu Id="49" Name="IDC_MENU_AUTORETRY" Flags="00000001">
+				<TitleID>IDS_AUTORETRY</TitleID>
+				<Items>
+					<Item Id="103" Name="IDL_AUTORETRY_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="104" Name="IDL_AUTORETRY_10" Data="00000001">
+						<TextID>IDS_10_SECONDS</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="105" Name="IDL_AUTORETRY_30" Data="00000001">
+						<TextID>IDS_30_SECONDS</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="106" Name="IDL_AUTORETRY_60" Data="00000001">
+						<TextID>IDS_60_SECONDS</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="44" Name="IDD_ONETOUCH" Focus="50" Flags="00000001">
+		<Controls>
+			<Menu Id="50" Name="IDC_MENU_ONETOUCH" Flags="00000001">
+				<TitleID>IDS_ONETOUCH</TitleID>
+				<Items>
+					<Item Id="107" Name="IDL_ONETOUCH_ON" Data="00000001">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="108" Name="IDL_ONETOUCH_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="45" Name="IDD_PRIVACY" Focus="51" Flags="00000001">
+		<Controls>
+			<Menu Id="51" Name="IDC_MENU_PRIVACY" Flags="00000001">
+				<TitleID>IDS_PRIVACY</TitleID>
+				<Items>
+					<Item Id="109" Name="IDL_PRIVACY_STANDARD" Data="00000001">
+						<TextID>IDS_STANDARD</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="110" Name="IDL_PRIVACY_ENHANCED" Data="00000001">
+						<TextID>IDS_ENHANCED</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="46" Name="IDD_PINLOCK1" Focus="57" Flags="00000001">
+		<Controls>
+			<Menu Id="57" Name="IDC_MENU_PINLOCK1" Flags="00000001">
+				<TitleID>IDS_PINLOCK</TitleID>
+				<Items>
+					<Item Id="128" Name="IDL_PINLOCK1_ON" Data="00000001">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="129" Name="IDL_PINLOCK1_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="47" Name="IDD_PINLOCK2" Focus="52" Flags="00000001">
+		<Controls>
+			<Menu Id="52" Name="IDC_MENU_PINLOCK2" Flags="00000001">
+				<TitleID>IDS_PIN2_LOCK</TitleID>
+				<Items>
+					<Item Id="130" Name="IDL_PINLOCK2_ON" Data="00000001">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="131" Name="IDL_PINLOCK2_OFF" Data="00000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="48" Name="IDD_PINLOCK" Focus="53" Flags="00000001">
+		<Controls>
+			<Menu Id="53" Name="IDC_MENU_PINLOCK" Flags="00000001">
+				<TitleID>IDS_PINLOCK</TitleID>
+				<Items>
+					<Item Id="132" Name="IDL_PINLOCK_1">
+						<TextID>IDS_PIN1</TextID>
+					</Item>
+					<Item Id="133" Name="IDL_PINLOCK_2">
+						<TextID>IDS_PIN2</TextID>
+					</Item>
+					<Item Id="8118" Name="IDL_PINLOCK_NV">
+						<TextID>IDS_NVLOCK</TextID>
+					</Item>
+					<Item Id="8131" Name="IDL_PINLOCK_1_SLOT2">
+						<TextID>IDS_PIN_SLOT2</TextID>
+					</Item>
+					<Item Id="8132" Name="IDL_PINLOCK_2_SLOT2">
+						<TextID>IDS_PIN2_SLOT2</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="49" Name="IDD_PINCHANGE" Focus="54" Flags="00000001">
+		<Controls>
+			<Menu Id="54" Name="IDC_MENU_PINCHANGE" Flags="00000001">
+				<TitleID>IDS_PINCHANGE</TitleID>
+				<Items>
+					<Item Id="134" Name="IDL_PINCHANGE_1" Data="00000001">
+						<TextID>IDS_PIN1</TextID>
+					</Item>
+					<Item Id="135" Name="IDL_PINCHANGE_2" Data="00000001">
+						<TextID>IDS_PIN2</TextID>
+					</Item>
+					<Item Id="8095" Name="IDL_NVCHANGE">
+						<TextID>IDS_NVLOCK</TextID>
+					</Item>
+					<Item Id="8137" Name="IDL_PINCHANGE_1_SLOT2">
+						<TextID>IDS_PIN_SLOT2</TextID>
+					</Item>
+					<Item Id="8138" Name="IDL_PINCHANGE_2_SLOT2">
+						<TextID>IDS_PIN2_SLOT2</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="50" Name="IDD_MUTE" Focus="80" Flags="00000011">
+		<Controls>
+			<Menu Id="80" Name="IDC_MENU_MUTE" Flags="00000001">
+				<TitleID>IDS_MUTE</TitleID>
+				<Items>
+					<Item Id="136" Name="IDL_MUTE_ON" Data="00000001">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="137" Name="IDL_MUTE_OFF" Data="0000001">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="51" Name="IDD_RINGTYPE" Focus="56" Flags="00000001">
+		<Controls>
+			<Menu Id="56" Name="IDC_MENU_RINGTYPE" Flags="00000001">
+				<TitleID>IDS_RINGTYPE</TitleID>
+				<Items>
+					<Item Id="139" Name="IDL_RINGTYPE_STANDARD" Data="00000001">
+						<TextID>IDS_STANDARD</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="140" Name="IDL_RINGTYPE_1" Data="0000001">
+						<TextID>IDS_OPTION1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="141" Name="IDL_RINGTYPE_2" Data="0000001">
+						<TextID>IDS_OPTION2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="142" Name="IDL_RINGTYPE_3" Data="00000001">
+						<TextID>IDS_OPTION3</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="143" Name="IDL_RINGTYPE_4" Data="00000001">
+						<TextID>IDS_OPTION4</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8003" Name="IDL_RINGTYPE_5" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8007" Name="IDL_RINGTYPE_6" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8008" Name="IDL_RINGTYPE_7" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8009" Name="IDL_RINGTYPE_8" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8010" Name="IDL_RINGTYPE_9" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8011" Name="IDL_RINGTYPE_10" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8012" Name="IDL_RINGTYPE_11" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8013" Name="IDL_RINGTYPE_12" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8014" Name="IDL_RINGTYPE_13" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8015" Name="IDL_RINGTYPE_14" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8016" Name="IDL_RINGTYPE_15" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8017" Name="IDL_RINGTYPE_16" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8018" Name="IDL_RINGTYPE_17" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8019" Name="IDL_RINGTYPE_18" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8020" Name="IDL_RINGTYPE_19" Data="00000001">
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="52" Name="IDD_NEW_PIN2_REQUEST" Focus="59">
+		<Controls>
+			<Text Id="59" Name="IDC_NEW_PIN2_REQUEST">
+				<TitleID>IDS_PIN2_CHANGE_REQUEST</TitleID>
+				<Items/></Text>
+			<Text Id="60" Name="IDC_NEW_PIN2_REENTER">
+				<TitleID>IDS_NEW_PIN2_REENTER</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="55" Name="IDD_TTY" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_MENU_TTY">
+				<TitleID>IDS_TTY</TitleID>
+				<Items>
+					<Item Id="8002" Name="IDL_TTY_FULL">
+						<TextID>IDS_TTY_FULL</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8004" Name="IDL_TTY_WITH_TALK">
+						<TextID>IDS_TTY_TALK</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8005" Name="IDL_TTY_WITH_HEAR">
+						<TextID>IDS_TTY_HEAR</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8006" Name="IDL_TTY_OFF">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="56" Name="IDD_ENTERPIN" Focus="76">
+		<Controls>
+			<Text Id="76" Name="IDC_TEXT_ENTERPIN">
+				<TitleID>IDS_ENTERPIN</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7124" Name="IDC_SK_ENTERPIN_EMERGENCY" Flags="2">
+				<Items>
+					<Item Id="8432" Name="IDL_ENTERPINEMERG">
+						<TextID>IDS_EMERGENCY</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="57" Name="IDD_ENTERPUK" Focus="77">
+		<Controls>
+			<Text Id="77" Name="IDC_TEXT_ENTERPUK">
+				<TitleID>IDS_ENTERPUK</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="58" Name="IDD_NEWPIN" Focus="78">
+		<Controls>
+			<Text Id="78" Name="IDC_TEXT_NEWPIN">
+				<TitleID>IDS_NEWPIN</TitleID>
+				<Items/></Text>
+			<Text Id="79" Name="IDC_TEXT_REENTER">
+				<TitleID>IDS_REENTER</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="61" Name="IDD_CUG" Focus="7062">
+		<Controls>
+			<Menu Id="7062" Name="IDC_MENU_CUG">
+				<TitleID>IDS_CUG</TitleID>
+				<Items>
+					<Item Id="8130" Name="IDL_CUG_ENABLE">
+						<TextID>IDS_CUG_ENABLE</TextID>
+					</Item>
+					<Item Id="8186" Name="IDL_CUG_GROUP_ID">
+						<TextID>IDS_CUG_GROUPID</TextID>
+					</Item>
+					<Item Id="8187" Name="IDL_CUG_PREF_GROUP">
+						<TextID>IDS_CUG_PREF_GROUP</TextID>
+					</Item>
+					<Item Id="8188" Name="IDL_CUG_OUT_ACCESS">
+						<TextID>IDS_CUG_OUT_ACCESS</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="62" Name="IDD_ENTERNVCODE" Focus="7005">
+		<Controls>
+			<Text Id="7005" Name="IDC_TEXT_ENTERNVCODE">
+				<TitleID>IDS_NV_CODE</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="63" Name="IDD_RTRE_CONFIG" Focus="7006" Flags="00000001">
+		<Controls>
+			<Menu Id="7006" Name="IDC_MENU_RTRE_CONFIG" Flags="00000001">
+				<TitleID>IDS_RTRECONFIG</TitleID>
+				<Items>
+					<Item Id="8021" Name="IDL_RTRE_NV" Data="00000001">
+						<TextID>IDS_RTRE_NV</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8022" Name="IDL_RTRE_SIM" Data="00000001">
+						<TextID>IDS_RTRE_SIM</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8023" Name="IDL_RTRE_SIMNV" Data="00000001">
+						<TextID>IDS_RTRE_SIMNV</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="64" Name="IDD_GAME_MODE" Focus="7060">
+		<Controls>
+			<Menu Id="7060" Name="IDC_MENU_GAME_MODE">
+				<TitleID>IDS_GAME_MODE</TitleID>
+				<Items>
+					<Item Id="8061" Name="IDL_GAME_MODE_ON">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8127" Name="IDL_GAME_MODE_OFF">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="65" Name="IDD_CUG_ENABLE" Focus="7063">
+		<Controls>
+			<Menu Id="7063" Name="IDC_MENU_CUG_ENABLE">
+				<TitleID>IDS_CUG_ENABLE</TitleID>
+				<Items>
+					<Item Id="8189" Name="IDL_CUG_ENABLE_OFF">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8190" Name="IDL_CUG_ENABLE_ON">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="66" Name="IDD_CUG_PREF_GROUP" Focus="7064">
+		<Controls>
+			<Menu Id="7064" Name="IDC_MENU_CUG_PREF_GROUP">
+				<TitleID>IDS_CUG_PREF_GROUP</TitleID>
+				<Items>
+					<Item Id="8191" Name="IDL_CUG_PREF_GROUP_NO_SUPRESS">
+						<TextID>IDS_CUG_NO_SUPPRESS</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8192" Name="IDL_CUG_PREF_GROUP_SUPRESS">
+						<TextID>IDS_CUG_SUPPRESS</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="67" Name="IDD_CUG_OUT_ACCESS" Focus="7065">
+		<Controls>
+			<Menu Id="7065" Name="IDC_MENU_CUG_OUT_ACCESS">
+				<TitleID>IDS_CUG_OUT_ACCESS</TitleID>
+				<Items>
+					<Item Id="8193" Name="IDL_CUG_OUT_ACCESS_NO_SUPRESS">
+						<TextID>IDS_CUG_NO_SUPPRESS</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8194" Name="IDL_CUG_OUT_ACCESS_SUPRESS">
+						<TextID>IDS_CUG_SUPPRESS</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="68" Name="IDD_CUG_GROUP_ID" Focus="7066">
+		<Controls>
+			<Text Id="7066" Name="IDC_TEXT_CUG_GROUP_ID">
+				<TitleID>IDS_CUG_GROUPID</TitleID>
+				<Position PosX="0" PosW="176" PosY="0" PosH="30"/>
+				<Items/></Text>
+			<SoftKey Id="7067" Name="IDC_SK_CUG_GROUP_ID">
+				<Items>
+					<Item Id="8195" Name="IDL_CUG_GROUP_ID_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="69" Name="IDD_NVLOCK" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MENU_NVLOCK">
+				<TitleID>IDS_NVLOCK</TitleID>
+				<Items>
+					<Item Id="8062" Name="IDL_NVLOCK_ON">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8111" Name="IDL_NVLOCK_OFF">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="70" Name="IDD_OLD_NV_REQUEST" Focus="7003">
+		<Controls>
+			<Text Id="7003" Name="IDC_TEXT_OLD_NV_REQUEST">
+				<TitleID>IDS_OLD_NV_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="71" Name="IDD_NEW_NV_CODE" Focus="7004">
+		<Controls>
+			<Text Id="7004" Name="IDC_TEXT_NEW_NV">
+				<TitleID>IDS_NEW_NV_CODE</TitleID>
+				<Items/></Text>
+			<Text Id="7021" Name="IDC_TEXT_NV_REENTER">
+				<TitleID>IDS_NV_REENTER</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="72" Name="IDD_ENTERPINENABLE" Focus="7023">
+		<Controls>
+			<Text Id="7023" Name="IDC_TEXT_ENTERPINENABLE">
+				<TitleID>IDS_ENTERPIN</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="73" Name="IDD_ENTERNVCODEENABLE" Focus="7031">
+		<Controls>
+			<Text Id="7031" Name="IDC_TEXT_ENTERNVCODEENABLE">
+				<TitleID>IDS_NV_CODE</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="74" Name="IDD_ENTERPIN2ENABLE" Focus="7037">
+		<Controls>
+			<Text Id="7037" Name="IDC_TEXT_ENTERPIN2ENABLE">
+				<TitleID>IDS_PIN2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="75" Name="IDD_ENTERPINDISABLE" Focus="7038">
+		<Controls>
+			<Text Id="7038" Name="IDC_TEXT_ENTERPINDISABLE">
+				<TitleID>IDS_ENTERPIN</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="76" Name="IDD_ENTERPIN2DISABLE" Focus="7039">
+		<Controls>
+			<Text Id="7039" Name="IDC_TEXT_ENTERPIN2DISABLE">
+				<TitleID>IDS_PIN2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="77" Name="IDD_ENTERNVCODEDISABLE" Focus="7040">
+		<Controls>
+			<Text Id="7040" Name="IDC_TEXT_ENTERNVCODEDISABLE">
+				<TitleID>IDS_NV_CODE</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="78" Name="IDD_ENTERPIN_SLOT2" Focus="7041">
+		<Controls>
+			<Text Id="7041" Name="IDC_TEXT_ENTERPIN_SLOT2">
+				<TitleID>IDS_ENTERPIN</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="79" Name="IDD_ENTERPUK_SLOT2" Focus="7042">
+		<Controls>
+			<Text Id="7042" Name="IDC_TEXT_ENTERPUK_SLOT2">
+				<TitleID>IDS_ENTERPUK</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="80" Name="IDD_OLD_PIN_REQUEST_SLOT2" Focus="7043">
+		<Controls>
+			<Text Id="7043" Name="IDC_TEXT_OLD_PIN_REQUEST_SLOT2">
+				<TitleID>IDS_OLD_PIN_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="81" Name="IDD_ENTERPINENABLE_SLOT2" Focus="7044">
+		<Controls>
+			<Text Id="7044" Name="IDC_TEXT_ENTERPINENABLE_SLOT2">
+				<TitleID>IDS_ENTERPIN</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="82" Name="IDD_ENTERPINDISABLE_SLOT2" Focus="7045">
+		<Controls>
+			<Text Id="7045" Name="IDC_TEXT_ENTERPINDISABLE_SLOT2">
+				<TitleID>IDS_ENTERPIN</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="83" Name="IDD_PIN2_REQUEST_SLOT2" Focus="7046">
+		<Controls>
+			<Text Id="7046" Name="IDC_TEXT_PIN2_REQUEST_SLOT2">
+				<TitleID>IDS_PIN2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="84" Name="IDD_ENTERPIN2ENABLE_SLOT2" Focus="7047">
+		<Controls>
+			<Text Id="7047" Name="IDC_TEXT_ENTERPIN2ENABLE_SLOT2">
+				<TitleID>IDS_PIN2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="85" Name="IDD_ENTERPIN2DISABLE_SLOT2" Focus="7048">
+		<Controls>
+			<Text Id="7048" Name="IDC_TEXT_ENTERPIN2DISABLE_SLOT2">
+				<TitleID>IDS_PIN2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="86" Name="IDD_PUK2_REQUEST_SLOT2" Focus="7049">
+		<Controls>
+			<Text Id="7049" Name="IDC_TEXT_PUK2_REQUEST_SLOT2">
+				<TitleID>IDS_PUK2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="87" Name="IDD_OLD_PIN2_REQUEST_SLOT2" Focus="7050">
+		<Controls>
+			<Text Id="7050" Name="IDC_TEXT_OLD_PIN2_REQUEST_SLOT2">
+				<TitleID>IDS_OLD_PIN2_REQUEST</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="88" Name="IDD_PINLOCK1_SLOT2" Focus="7051">
+		<Controls>
+			<Menu Id="7051" Name="IDC_MENU_PINLOCK1_SLOT2">
+				<TitleID>IDS_PIN_SLOT2_LOCK</TitleID>
+				<Items>
+					<Item Id="8133" Name="IDL_PINLOCK1_SLOT2_ON">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8134" Name="IDL_PINLOCK1_SLOT2_OFF">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="89" Name="IDD_PINLOCK2_SLOT2" Focus="7052">
+		<Controls>
+			<Menu Id="7052" Name="IDC_MENU_PINLOCK2_SLOT2">
+				<TitleID>IDS_PIN2_SLOT2_LOCK</TitleID>
+				<Items>
+					<Item Id="8135" Name="IDL_PINLOCK2_SLOT2_ON">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8136" Name="IDL_PINLOCK2_SLOT2_OFF">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="90" Name="IDD_USER_SLOT_PREF_GSM" Focus="7053">
+		<Controls>
+			<Menu Id="7053" Name="IDC_MENU_USER_SLOT_PREF_GSM">
+				<TitleID>IDS_USER_SLOT_PREF_GSM</TitleID>
+				<Items>
+					<Item Id="8140" Name="IDL_USER_SLOT_PREF_GSM_1">
+						<TextID>IDS_GSM_SLOT1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8141" Name="IDL_USER_SLOT_PREF_GSM_2">
+						<TextID>IDS_GSM_SLOT2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8142" Name="IDL_USER_SLOT_PREF_GSM_NONE">
+						<TextID>IDS_GSM_SLOT_NONE</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="91" Name="IDD_SIM_INITIALIZING" Focus="7056">
+		<Controls>
+			<Static Id="7056" Name="IDC_STATIC_SIM_INITIALIZING">
+				<TextID>IDS_SIM_INITIALIZING</TextID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="92" Name="IDD_TC_TEST_MODE" Focus="7057">
+		<Controls>
+			<Static Id="7057" Name="IDC_STATIC_TC_TEST_MODE">
+				<TitleID>IDS_TC_TEST_MODE</TitleID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="93" Name="IDD_PLMN_LIST" Focus="7058">
+		<Controls>
+			<Menu Id="7058" Name="IDC_MENU_PLMN_LIST">
+				<TitleID>IDS_PLMN_LIST</TitleID>
+				<Items>
+					<Item Id="8164" Name="IDL_PLMN1">
+					</Item>
+					<Item Id="8165" Name="IDL_PLMN2">
+					</Item>
+					<Item Id="8166" Name="IDL_PLMN3">
+					</Item>
+					<Item Id="8167" Name="IDL_PLMN4">
+					</Item>
+					<Item Id="8168" Name="IDL_PLMN5">
+					</Item>
+					<Item Id="8169" Name="IDL_PLMN6">
+					</Item>
+					<Item Id="8170" Name="IDL_PLMN7">
+					</Item>
+					<Item Id="8171" Name="IDL_PLMN8">
+					</Item>
+					<Item Id="8172" Name="IDL_PLMN9">
+					</Item>
+					<Item Id="8173" Name="IDL_PLMN10">
+					</Item>
+					<Item Id="8174" Name="IDL_PLMN11">
+					</Item>
+					<Item Id="8175" Name="IDL_PLMN12">
+					</Item>
+					<Item Id="8176" Name="IDL_PLMN13">
+					</Item>
+					<Item Id="8177" Name="IDL_PLMN14">
+					</Item>
+					<Item Id="8178" Name="IDL_PLMN15">
+					</Item>
+					<Item Id="8179" Name="IDL_PLMN16">
+					</Item>
+					<Item Id="8180" Name="IDL_PLMN17">
+					</Item>
+					<Item Id="8181" Name="IDL_PLMN18">
+					</Item>
+					<Item Id="8182" Name="IDL_PLMN19">
+					</Item>
+					<Item Id="8183" Name="IDL_PLMN20">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="94" Name="IDD_PLMN_SEARCHING" Focus="7059">
+		<Controls>
+			<Static Id="7059" Name="IDC_STATIC_PLMN_SEARCHING">
+				<TextID>IDS_SEARCHING</TextID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="95" Name="IDD_VR" Focus="7007">
+		<Controls>
+			<Menu Id="7007" Name="IDC_VR">
+				<TitleID>IDS_VR</TitleID>
+				<Items>
+					<Item Id="8029" Name="IDL_VR_ON">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8030" Name="IDL_VR_OFF">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="96" Name="IDD_LPM" Focus="7008">
+		<Controls>
+			<Static Id="7008" Name="IDC_STATIC_LPM">
+				<TextID>IDS_LOW_POWER_MODE</TextID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="97" Name="IDD_PERSO_FEATURE_INDICATION" Focus="7009">
+		<Controls>
+			<Menu Id="7009" Name="IDC_MENU_PERSO_FEATURE_INDICATION">
+				<TitleID>IDS_PERSO_INDICATOR</TitleID>
+				<Items>
+					<Item Id="8162" Name="IDL_NW_PERSO">
+						<TextID>IDS_NW_PERSO_KEY</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8163" Name="IDL_NW_SUB_PERSO">
+						<TextID>IDS_NW_SUB_PERSO_KEY</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8184" Name="IDL_SP_PERSO">
+						<TextID>IDS_SP_PERSO_KEY</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8185" Name="IDL_CORPORATE_PERSO">
+						<TextID>IDS_CP_KEY</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8197" Name="IDL_SIM_PERSO">
+						<TextID>IDS_SIM_PERSO_KEY</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+			<SoftKey Id="7015" Name="IDC_SK_MENU_PERSO_FEATURE_INDICATION">
+				<Items>
+					<Item Id="8199" Name="IDL_PERO_FEATURE_INDICATION_DONE">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="98" Name="IDD_ENTER_NW_PERSO_KEY" Focus="7010">
+		<Controls>
+			<Text Id="7010" Name="IDC_TEXT_ENTER_NW_PERSO_KEY">
+				<TitleID>IDS_ENTER_NW_PERSO_KEY</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="99" Name="IDD_ENTER_NW_SUB_PERSO_KEY" Focus="7011">
+		<Controls>
+			<Text Id="7011" Name="IDC_TEXT_ENTER_NW_SUB_PERSO_KEY">
+				<TitleID>IDS_ENTER_NW_SUB_PERSO_KEY</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="100" Name="IDD_ENTER_SP_PERSO_KEY" Focus="7012">
+		<Controls>
+			<Text Id="7012" Name="IDC_TEXT_ENTER_SP_PERSO_KEY">
+				<TitleID>IDS_ENTER_SP_PERSO_KEY</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="101" Name="IDD_ENTER_CP_PERSO_KEY" Focus="7013">
+		<Controls>
+			<Text Id="7013" Name="IDC_TEXT_ENTER_CP_KEY">
+				<TitleID>IDS_ENTER_CP_KEY</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="102" Name="IDD_ENTER_SIM_PERSO_KEY" Focus="7014">
+		<Controls>
+			<Text Id="7014" Name="IDC_TEXT_ENTER_SIM_PERSO_KEY">
+				<TitleID>IDS_ENTER_SIM_PERSO_KEY</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="103" Name="IDD_ENTER_ACTIVATE_NW_PERSO_KEY" Focus="7068">
+		<Controls>
+			<Text Id="7068" Name="IDC_TEXT_ENTER_ACTIVATE_NW_PERSO_KEY">
+				<TitleID>IDS_ENTER_NW_PERSO_KEY</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="104" Name="IDD_ENTER_ACTIVATE_NW_SUB_PERSO_KEY" Focus="7069">
+		<Controls>
+			<Text Id="7069" Name="IDC_TEXT_ENTER_ACTIVATE_NW_SUB_PERSO_KEY">
+				<TitleID>IDS_ENTER_NW_SUB_PERSO_KEY</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="105" Name="IDD_ENTER_ACTIVATE_SP_PERSO_KEY" Focus="7070">
+		<Controls>
+			<Text Id="7070" Name="IDC_TEXT_ENTER_ACTIVATE_SP_PERSO_KEY">
+				<TitleID>IDS_ENTER_SP_PERSO_KEY</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="106" Name="IDD_ENTER_ACTIVATE_CP_PERSO_KEY" Focus="7071">
+		<Controls>
+			<Text Id="7071" Name="IDC_TEXT_ENTER_ACTIVATE_CP_PERSO_KEY">
+				<TitleID>IDS_ENTER_CP_KEY</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="107" Name="IDD_ENTER_ACTIVATE_SIM_PERSO_KEY" Focus="7072">
+		<Controls>
+			<Text Id="7072" Name="IDC_TEXT_ENTER_ACTIVATE_SIM_PERSO_KEY">
+				<TextID>IDS_ENTER_SIM_PERSO_KEY</TextID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="108" Name="IDD_PERSO_FEATURE_DATA" Focus="7073">
+		<Controls>
+			<Menu Id="7073" Name="IDC_MENU_PERSO_FEATURE_DATA">
+				<TitleID>IDS_PERSO_INDICATOR</TitleID>
+				<Items>
+					<Item Id="8200" Name="IDL_NW_PERSO_DATA">
+						<TextID>IDS_NW_PERSO</TextID>
+					</Item>
+					<Item Id="8201" Name="IDL_NW_SUB_PERSO_DATA">
+						<TextID>IDS_NW_SUB_PERSO</TextID>
+					</Item>
+					<Item Id="8202" Name="IDL_SP_PERSO_DATA">
+						<TextID>IDS_SP_PERSO</TextID>
+					</Item>
+					<Item Id="8203" Name="IDL_CP_PERSO_DATA">
+						<TextID>IDS_CP_PERSO</TextID>
+					</Item>
+					<Item Id="8204" Name="IDL_SIM_PERSO_DATA">
+						<TextID>IDS_SIM_PERSO</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="109" Name="IDD_SCAN_NETWORK" Focus="7074">
+		<Controls>
+			<SoftKey Id="7074" Name="IDC_SCAN_NETWORK">
+				<Items>
+					<Item Id="8527" Name="IDL_SCANNETWORK_YES">
+						<TextID>IDS_YES</TextID>
+					</Item>
+					<Item Id="8528" Name="IDL_SCANNETWORK_NO">
+						<TextID>IDS_NO</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Static Id="7205" Name="IDC_STATIC_PLMN_PERFORM_NETWORK_SCAN_NOW">
+				<TextID>IDS_PLMN_PERFORM_NETWORK_SCAN_QUESTION</TextID>
+			</Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="110" Name="IDD_LCD" Focus="7075">
+		<Controls>
+			<Menu Id="7075" Name="IDC_LCD">
+				<TitleID>IDS_LCD</TitleID>
+				<Items>
+					<Item Id="8206" Name="IDL_LCD_5_SEC">
+						<TextID>IDS_5_S</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8207" Name="IDL_LCD_10_SEC">
+						<TextID>IDS_10_S</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8248" Name="IDL_LCD_30_SEC">
+						<TextID>IDS_30_S</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8249" Name="IDL_LCD_2_MIN">
+						<TextID>IDS_LCD_2_MIN</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8250" Name="IDL_LCD_10_MIN">
+						<TextID>IDS_LCD_10</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8251" Name="IDL_LCD_ALWAYS_ON">
+						<TextID>IDS_LCD_ALWAYS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="111" Name="IDD_ENTER_NW_PERSO_DATA" Focus="7076">
+		<Controls>
+			<Text Id="7076" Name="IDC_TEXT_ENTER_NW_PERSO_DATA">
+				<TitleID>IDS_NW_PERSO</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7081" Name="IDC_SK_ENTER_NW_PERSO_DATA">
+				<Items>
+					<Item Id="8208" Name="IDL_ENTER_NW_PERSO_DATA_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="112" Name="IDD_ENTER_NW_SUB_PERSO_DATA" Focus="7077">
+		<Controls>
+			<Text Id="7077" Name="IDC_TEXT_ENTER_NW_SUB_PERSO_DATA">
+				<TitleID>IDS_NW_SUB_PERSO</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7082" Name="IDC_SK_ENTER_NW_SUB_PERSO_DATA">
+				<Items>
+					<Item Id="8209" Name="IDL_ENTER_NW_SUB_PERSO_DATA_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="113" Name="IDD_ENTER_SP_PERSO_DATA" Focus="7078">
+		<Controls>
+			<Text Id="7078" Name="IDC_TEXT_ENTER_SP_PERSO_DATA">
+				<TitleID>IDS_SP_PERSO</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7083" Name="IDC_SK_ENTER_SP_PERSO_DATA">
+				<Items>
+					<Item Id="8210" Name="IDL_ENTER_SP_PERSO_DATA_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="114" Name="IDD_ENTER_CP_PERSO_DATA" Focus="7079">
+		<Controls>
+			<Text Id="7079" Name="IDC_TEXT_ENTER_CP_PERSO_DATA">
+				<TitleID>IDS_CP_PERSO</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7084" Name="IDC_SK_ENTER_CP_PERSO_DATA">
+				<Items>
+					<Item Id="8211" Name="IDL_ENTER_CP_PERSO_DATA_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="115" Name="IDD_ENTER_SIM_PERSO_DATA" Focus="7080">
+		<Controls>
+			<Text Id="7080" Name="IDC_TEXT_ENTER_SIM_PERSO_DATA">
+				<TitleID>IDS_SIM_PERSO</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7085" Name="IDC_SK_ENTER_SIM_PERSO_DATA">
+				<Items>
+					<Item Id="8212" Name="IDL_ENTER_SIM_PERSO_DATA_OK">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="116" Name="IDD_ALS_LINE_SELECTION" Focus="7086">
+		<Controls>
+			<Menu Id="7086" Name="IDC_MENU_ALS_LINE_SELECTION">
+				<TitleID>IDS_ALS_LINE_SELECTION</TitleID>
+				<Items>
+					<Item Id="8214" Name="IDL_LINE_SELECTION_LINE1">
+						<TextID>IDS_ALS_LINE1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8215" Name="IDL_LINE_SELECTION_LINE2">
+						<TextID>IDS_ALS_LINE2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="117" Name="IDD_ALS_LINE_SWITCHING" Focus="7087">
+		<Controls>
+			<Menu Id="7087" Name="IDC_MENU_ALS_LINE_SWITCHING">
+				<TitleID>IDS_ALS_LINE_SWITCHING</TitleID>
+				<Items>
+					<Item Id="8216" Name="IDL_ALS_LINE_SWITCH_FORBID">
+						<TextID>IDS_ALS_LINE_FORBID_SWITCH</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8217" Name="IDL_ALS_LINE_SWITCH_ALLOW">
+						<TextID>IDS_ALS_LINE_ALLOW_SWITCH</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="118" Name="IDD_ALS" Focus="7088">
+		<Controls>
+			<Menu Id="7088" Name="IDC_MENU_ALS">
+				<TitleID>IDS_ALS</TitleID>
+				<Items>
+					<Item Id="8218" Name="IDL_ALS_LINE_SWITCHING">
+						<TextID>IDS_ALS_LINE_SWITCHING</TextID>
+					</Item>
+					<Item Id="8219" Name="IDL_ALS_LINE_SELECTION">
+						<TextID>IDS_ALS_LINE_SELECTION</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="119" Name="IDD_CPHS" Focus="7089">
+		<Controls>
+			<Menu Id="7089" Name="IDC_MENU_CPHS">
+				<TitleID>IDS_CPHS</TitleID>
+				<Items>
+					<Item Id="8220" Name="IDL_CSP">
+						<TextID>IDS_CSP</TextID>
+					</Item>
+					<Item Id="8221" Name="IDL_ALS">
+						<TextID>IDS_ALS</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="120" Name="IDD_CONTRAST" Focus="7090">
+		<Controls>
+			<Static Id="7090" Name="IDC_STATIC_CONTRAST_BMP">
+				<TitleID>IDS_CONTRAST_SETTINGS</TitleID>
+				<ImageID>IDB_CONTRAST_CHART</ImageID>
+				<Position PosX="0" PosW="-1" PosY="0" PosH="160"/>
+				<Items/></Static>
+			<Static Id="7091" Name="IDC_STATIC_CONTRAST">
+				<TextID>IDS_CONTRAST_VALUE</TextID>
+				<Position PosX="0" PosW="-1" PosY="0" PosH="20"/>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="121" Name="IDD_SELECT_TECH_FOR_CARD_1" Focus="7092">
+		<Controls>
+			<Menu Id="7092" Name="IDC_SELECT_TECH_CARD_1">
+				<TitleID>IDS_SELECT_TECHNOLOGY_FOR_CARD_1</TitleID>
+				<Items>
+					<Item Id="8224" Name="IDL_GSM_1">
+						<TextID>IDS_GSM</TextID>
+					</Item>
+					<Item Id="8225" Name="IDL_CDMA_1">
+						<TextID>IDS_CDMA</TextID>
+					</Item>
+				</Items>
+			</Menu>
+			<SoftKey Id="7093" Name="IDC_SK_SELECT_TECH_1">
+				<Items>
+					<Item Id="8226" Name="IDL_SK_SELECT_TECH_CARD_2">
+						<TextID>IDS_CARD_2</TextID>
+					</Item>
+					<Item Id="8227" Name="IDL_SK_SELECT_TECH_DEF_1">
+						<TextID>IDS_DEFAULT</TextID>
+					</Item>
+					<Item Id="8228" Name="IDL_SK_SELECT_TECH_DONE_1">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="122" Name="IDD_SELECT_TECH_FOR_CARD_2" Focus="7094">
+		<Controls>
+			<Menu Id="7094" Name="IDC_SELECT_TECH_CARD_2">
+				<TitleID>IDS_SELECT_TECHNOLOGY_FOR_CARD_2</TitleID>
+				<Items>
+					<Item Id="8229" Name="IDL_GSM_2">
+						<TextID>IDS_GSM</TextID>
+					</Item>
+					<Item Id="8230" Name="IDL_CDMA_2">
+						<TextID>IDS_CDMA</TextID>
+					</Item>
+				</Items>
+			</Menu>
+			<SoftKey Id="7095" Name="IDC_SK_SELECT_TECH_2">
+				<Items>
+					<Item Id="8231" Name="IDL_SK_SELECT_TECH_CARD_1">
+						<TextID>IDS_CARD_1</TextID>
+					</Item>
+					<Item Id="8232" Name="IDL_SK_SELECT_TECH_DEF_2">
+						<TextID>IDS_DEFAULT</TextID>
+					</Item>
+					<Item Id="8233" Name="IDL_SK_SELECT_TECH_DONE_2">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="123" Name="IDD_CARD_1_ERROR" Focus="7096">
+		<Controls>
+			<Static Id="7096" Name="IDC_STATIC_CARD1_ERROR">
+				<TitleID>IDS_CARD_1</TitleID>
+				<TextID>IDS_CARD_ERROR</TextID>
+				<Items/></Static>
+			<SoftKey Id="7097" Name="IDC_SK_CARD1_ERR">
+				<Items>
+					<Item Id="8234" Name="IDL_SK_CARD1_ERR_CARD2">
+						<TextID>IDS_CARD_2</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="124" Name="IDD_CARD_2_ERROR" Focus="7098">
+		<Controls>
+			<Static Id="7098" Name="IDC_STATIC_CARD2_ERROR">
+				<TitleID>IDS_CARD_2</TitleID>
+				<TextID>IDS_CARD_ERROR</TextID>
+				<Items/></Static>
+			<SoftKey Id="7099" Name="IDC_SK_CARD2_ERR">
+				<Items>
+					<Item Id="8235" Name="IDL_SK_CARD2_ERR_CARD1">
+						<TextID>IDS_CARD_1</TextID>
+					</Item>
+					<Item Id="8236" Name="IDL_SK_CARD2_ERR_DEF">
+						<TextID>IDS_DEFAULT</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="125" Name="IDD_SELECT_CARD" Focus="7100">
+		<Controls>
+			<Menu Id="7100" Name="IDC_SELECT_CARD">
+				<TitleID>IDS_SELECT_CARD</TitleID>
+				<Items>
+					<Item Id="8237" Name="IDL_SELECT_DEFAULT">
+						<TextID>IDS_DEFAULT</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8238" Name="IDL_SELECT_CARD1">
+						<TextID>IDS_CARD_1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8239" Name="IDL_SELECT_CARD2">
+						<TextID>IDS_CARD_2</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="126" Name="IDD_SELECT_CARD1" Focus="7101">
+		<Controls>
+			<Menu Id="7101" Name="IDC_MENU_SELECT_CARD1">
+				<TitleID>IDS_SELECT_CARD</TitleID>
+				<Items>
+					<Item Id="8240" Name="IDL_MENU_SELECT_CARD1">
+						<TextID>IDS_CARD_1</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8241" Name="IDL_MENU_SELECT_CARD_DEF">
+						<TextID>IDS_DEFAULT</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="127" Name="IDD_SELECT_TECH_FOR_BOTH_CARDS" Focus="7102">
+		<Controls>
+			<Menu Id="7102" Name="IDC_SELECT_TECHNOLOGY">
+				<TitleID>IDS_SELECT_TECHNOLOGY</TitleID>
+				<Items>
+					<Item Id="8242" Name="IDL_SELECT_GSM_1">
+						<TextID>IDS_GSM_1</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8243" Name="IDL_SELECT_CDMA_1">
+						<TextID>IDS_CDMA_1</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8244" Name="IDL_SELECT_GSM_2">
+						<TextID>IDS_GSM_2</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+					<Item Id="8245" Name="IDL_SELECT_CDMA_2">
+						<TextID>IDS_CDMA_2</TextID>
+						<ImageID>IDB_CHECK_OFF</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+			<SoftKey Id="7103" Name="IDC_SK_SELECT_TECHNOLOGY">
+				<Items>
+					<Item Id="8246" Name="IDL_SK_DEFAULT">
+						<TextID>IDS_DEFAULT</TextID>
+					</Item>
+					<Item Id="8247" Name="IDL_SK_SELECT_DONE">
+						<TextID>IDS_OK</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="128" Name="IDD_SIM_REINIT" Focus="7104">
+		<Controls>
+			<Static Id="7104" Name="IDC_STATIC_SIM_REINIT">
+				<TextID>IDS_SIM_REINIT</TextID>
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="129" Name="IDD_AUTO_ACCEPT_RECALL" Focus="7160">
+		<Controls>
+			<Menu Id="7160" Name="IDC_CCBS_AUTO_ACCEPT">
+				<TitleID>IDS_CCBS_AUTO_ACCEPT</TitleID>
+				<Items>
+					<Item Id="8400" Name="IDL_CCBS_ACCEPT">
+						<TextID>IDS_CCBS_ACCEPT</TextID>
+					</Item>
+					<Item Id="8401" Name="IDL_CCBS_REJECT">
+						<TextID>IDS_CCBS_REJECT</TextID>
+					</Item>
+					<Item Id="8402" Name="IDL_CCBS_HOLD_N_ACCEPT">
+						<TextID>IDS_CCBS_HOLD_N_ACCEPT</TextID>
+					</Item>
+					<Item Id="8403" Name="IDL_CCBS_REL_N_ACCEPT">
+						<TextID>IDS_RELEASE_N_ACCEPT</TextID>
+					</Item>
+					<Item Id="8404" Name="IDL_CCBS_NONE">
+						<TextID>IDS_NONE</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="130" Name="IDD_SOUND_DEVICE_DIALOG" Focus="7123">
+		<Controls>
+			<Menu Id="7123" Name="IDC_MENU_SOUND_DEVICE">
+				<Items>
+					<Item Id="8306" Name="IDL_SOUNDDEV_TTY_HEADSET">
+						<TextID>IDS_SOUNDDEV_TTYHEAD</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8311" Name="IDL_SOUNDDEV_TTY_HCO">
+						<TextID>IDS_SOUNDDEV_TTYHCO</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8312" Name="IDL_SOUNDDEV_TTY_VCO">
+						<TextID>IDS_SOUNDDEV_TTYVCO</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8319" Name="IDL_SOUNDDEV_STEREO_HEADSET">
+						<TextID>IDS_SOUNDDEV_STEREO_HEADSET</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8320" Name="IDL_SOUNDDEV_HEADSET">
+						<TextID>IDS_SOUNDDEV_HEADSET</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8321" Name="IDL_SOUNDDEV_HFK">
+						<TextID>IDS_SOUNDDEV_HFK</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8322" Name="IDL_SOUNDDEV_USB_HFK">
+						<TextID>IDS_SOUNDDEV_USB_HFK</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8323" Name="IDL_SOUNDDEV_STEREO_DAC">
+						<TextID>IDS_SOUNDDEV_SDAC</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8324" Name="IDL_SOUNDDEV_BT_A2DP_SCO">
+						<TextID>IDS_SOUNDDEV_BT_A2DP_SCO</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8325" Name="IDL_SOUNDDEV_BT_HEADSET">
+						<TextID>IDS_SOUNDDEV_BT_HEADSET</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8326" Name="IDL_SOUNDDEV_BT_A2DP">
+						<TextID>IDS_SOUNDDEV_BT_A2DP_HEADSET</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8327" Name="IDL_SOUNDDEV_SPEAKERPHONE">
+						<TextID>IDS_SOUNDDEV_SPEAKERPHONE</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8331" Name="IDL_SOUNDDEV_HANDSET">
+						<TextID>IDS_SOUNDDEV_HANDSET</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8332" Name="IDL_SOUNDDEV_AUTOSELECT">
+						<TextID>IDS_SOUNDDEV_AUTOSELECT</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="131" Name="IDD_NETWORK_TIME" Focus="7198">
+		<Controls>
+			<Menu Id="7198" Name="IDC_MENU_NETWORK_TIME">
+				<TitleID>IDS_NETWORK_TIME</TitleID>
+				<Items>
+					<Item Id="8408" Name="IDL_NETWORK_TIME_ENABLE">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8409" Name="IDL_NETWORK_TIME_DISABLE">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="132" Name="IDD_NITZ" Focus="7193">
+		<Controls>
+			<Menu Id="7193" Name="IDC_MENU_NITZ">
+				<TitleID>IDS_NITZ_SETTINGS</TitleID>
+				<Items>
+					<Item Id="8265" Name="IDL_NETWORK_TIME">
+						<TextID>IDS_NETWORK_TIME</TextID>
+					</Item>
+					<Item Id="8302" Name="IDL_DELETE_NITZ_PLMN">
+						<TextID>IDS_DELETE_NITZ_PLMN</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="133" Name="IDD_DELETE_NITZ_PLMN" Focus="7194">
+		<Controls>
+			<Menu Id="7194" Name="IDC_MENU_DELETE_NITZ_PLMN">
+				<TitleID>IDS_DELETE_NITZ_PLMN</TitleID>
+				<Items>
+					<Item Id="8305" Name="IDL_DELETE_NITZ_PLMN_ON">
+						<TextID>IDS_YES</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8307" Name="IDL_DELETE_NITZ_PLMN_OFF">
+						<TextID>IDS_NO</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="134" Name="IDD_DISABLE_BG_IMAGE" Focus="7161">
+		<Controls>
+			<Menu Id="7161" Name="IDL_DISABLE_BG_IMAGE">
+				<TitleID>IDS_DISABLE_BG_IMAGE</TitleID>
+				<Items>
+					<Item Id="8308" Name="IDC_DISABLE_BG_IMAGE_YES">
+						<TextID>IDS_YES</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8309" Name="IDC_DISABLE_BG_IMAGE_NO">
+						<TextID>IDS_NO</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="135" Name="IDD_LANGUAGE_SELECT" Focus="7163">
+		<Controls>
+			<Menu Id="7163" Name="IDC_MENU_LANGUAGE_SELECT">
+				<TitleID>IDS_LANGUAGE_SELECTION</TitleID>
+				<Items>
+					<Item Id="8293" Name="IDL_LANG_SEL_ENG">
+						<TextID>IDS_LANG_ENG</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8294" Name="IDL_LANG_SEL_GER">
+						<TextID>IDS_LANG_GER</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="136" Name="IDD_DISPLAY_MAPPING" Focus="8340">
+		<Controls>
+			<Menu Id="8340" Name="IDC_MENU_DISPLAY_MAPPING">
+				<TitleID>IDS_DISPLAY_MAPPING</TitleID>
+				<Items>
+					<Item Id="8500" Name="IDL_DISP_MAP_1">
+						<TextID>IDS_DISPLAY_MAIN</TextID>
+					</Item>
+					<Item Id="8501" Name="IDL_DISP_MAP_2">
+						<TextID>IDS_DISPLAY_SECOND</TextID>
+					</Item>
+					<Item Id="8502" Name="IDL_DISP_MAP_3">
+						<TextID>IDS_DISPLAY_THIRD</TextID>
+					</Item>
+					<Item Id="8503" Name="IDL_DISP_MAP_4">
+						<TextID>IDS_DISPLAY_FOURTH</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="137" Name="IDD_DISPLAY_MAP_1" Focus="8341">
+		<Controls>
+			<Menu Id="8341" Name="IDC_MENU_DISP_MAP_1">
+				<TitleID>IDS_DISPLAY_MAIN</TitleID>
+				<Items>
+					<Item Id="8504" Name="IDL_DISP_MAP_1_PRI">
+						<TextID>IDS_DISPLAY_PRIMARY</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8505" Name="IDL_DISP_MAP_1_SEC">
+						<TextID>IDS_DISPLAY_SECONDARY</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8506" Name="IDL_DISP_MAP_1_NONE">
+						<TextID>IDS_NONE</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="138" Name="IDD_DISPLAY_MAP_2" Focus="8342">
+		<Controls>
+			<Menu Id="8342" Name="IDC_MENU_DISP_MAP_2">
+				<TitleID>IDS_DISPLAY_SECOND</TitleID>
+				<Items>
+					<Item Id="8507" Name="IDL_DISP_MAP_2_PRI">
+						<TextID>IDS_DISPLAY_PRIMARY</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8508" Name="IDL_DISP_MAP_2_SEC">
+						<TextID>IDS_DISPLAY_SECONDARY</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8509" Name="IDL_DISP_MAP_2_NONE">
+						<TextID>IDS_NONE</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="139" Name="IDD_DISPLAY_MAP_3" Focus="8343">
+		<Controls>
+			<Menu Id="8343" Name="IDC_MENU_DISP_MAP_3">
+				<TitleID>IDS_DISPLAY_THIRD</TitleID>
+				<Items>
+					<Item Id="8510" Name="IDL_DISP_MAP_3_PRI">
+						<TextID>IDS_DISPLAY_PRIMARY</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8511" Name="IDL_DISP_MAP_3_SEC">
+						<TextID>IDS_DISPLAY_SECONDARY</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8512" Name="IDL_DISP_MAP_3_NONE">
+						<TextID>IDS_NONE</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="140" Name="IDD_DISPLAY_MAP_4" Focus="8344">
+		<Controls>
+			<Menu Id="8344" Name="IDC_MENU_DISP_MAP_4">
+				<TitleID>IDS_DISPLAY_FOURTH</TitleID>
+				<Items>
+					<Item Id="8513" Name="IDL_DISP_MAP_4_PRI">
+						<TextID>IDS_DISPLAY_PRIMARY</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8514" Name="IDL_DISP_MAP_4_SEC">
+						<TextID>IDS_DISPLAY_SECONDARY</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8515" Name="IDL_DISP_MAP_4_NONE">
+						<TextID>IDS_NONE</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="141" Name="IDD_INCALL_MIXING" Focus="0">
+		<Controls>
+			<Menu Id="7203" Name="IDC_INCALL_MIXING">
+				<TitleID>IDS_INCALL_MIXING</TitleID>
+				<Items>
+					<Item Id="8516" Name="IDL_INCALL_MIXING_ON">
+						<TextID>IDS_ON</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+					<Item Id="8517" Name="IDL_INCALL_MIXING_OFF">
+						<TextID>IDS_OFF</TextID>
+						<ImageID>IDB_RADIO_UNFILLED</ImageID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="142" Name="IDD_SIDETONE" Focus="0">
+		<Controls>
+			<Menu Id="7204" Name="IDC_MENU_SIDETONE">
+				<TitleID>IDS_SIDETONE_MENU</TitleID>
+				<Items>
+					<Item Id="8519" Name="IDL_SIDETONE_ON">
+						<TextID>IDS_SIDETONE_ON</TextID>
+					</Item>
+					<Item Id="8351" Name="IDL_SIDETONE_OFF">
+						<TextID>IDS_SIDETONE_OFF</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

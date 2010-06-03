@@ -1,0 +1,498 @@
+;-----------------------------------------------------------------------------
+; T32 SCRIPT
+;
+;   save_target_state.cmm
+;
+; DESCRIPTION
+;
+;   For L4 builds, saves the state of the target including registers and RAM
+;   such that one can load the state onto T32 at a later time to examine the 
+;   state of the system.
+;
+; USAGE
+;
+;   To Save:
+;     do save_target_state <filename>
+;     it will take 10-15 minutes. 
+;
+;     <filename> is optional.  If not specified, the filename "target_state" 
+;     will be used.
+;
+;     <filename>.cmm and <filename>.bin will be created.  <filename>.cmm is the
+;     T32 script to run to restore the target state.  It will use 
+;     <filename>.bin, which contains the contents in RAM.
+;
+;   To Restore:
+;     1) Launch T32 and attach
+;
+;     2) Load symbols (optional)
+;        - do loadsym smbrla
+;
+;     4) Reset: 
+;        - do jnresetl4
+;
+;     5) Restore
+;        - cd <path_to_saved_state>
+;	 - do file.cmm 
+;
+;       Both <file>.cmm and <file>.bin must exist
+;
+; ISSUES AND TODOS
+;
+;   1)  there is a warning saying overlap error (0x10000) in file ...etc
+;       just ignore it, the stack frame and target state are stored correctly
+; 
+; Copyright (c) 2002-2007 by QUALCOMM, Incorporated.  All Rights Reserved.
+;----------------------------------------------------------------------------
+;============================================================================
+;
+;                        EDIT HISTORY FOR MODULE
+;
+; $Header: //depot/asic/qsc1100/build/ms/cmm/std_savelogs.cmm#2 $ $DateTime: 2008/08/27 10:36:53 $ $Author: bcalder $
+;
+; when       who     what, where, why
+; -------    ---     --------------------------------------------------------
+; 04/05/07   ts      Fixed binary file restore in building the cmm script.
+;                    Also limited saving to first 2 chip selects.  If CS2 or 
+;                    CS3 are used, change MAX_NUM_CS to proper value.
+; 03/15/07   ts      Removed PVCS header
+; 03/13/07   ts      Initial creation
+;============================================================================;
+
+ENTRY &filename
+local &cmm_filename
+local &bin_filename
+gosub main &filename
+enddo
+
+
+;-----------------------------------------------------------------------------
+; FUNCTION: 
+;   main
+;
+; DESCRIPTION:
+;   The main program.
+;-----------------------------------------------------------------------------
+main:
+  ENTRY &filename
+
+  IF !Y.EXIST(HWIO_EBI1_BUFC_CFG_ADDR)
+  (
+   PRINT "LOADING HWIO.CMM"
+   DO ../../core/systemdrivers/hw/src/hwio.cmm
+  )
+
+  if "&filename"==""
+  (
+    &filename="c:\temp\target_state"
+  )
+
+  &cmm_filename="&filename.cmm"
+
+  print "Saving target state to &cmm_filename ..."
+
+  ; Create empty file
+  open #1 &cmm_filename /create
+
+  write #1 "IF SIMULATOR()"
+  write #1 "("
+  write #1 "  system.CPU ARM926EJ"
+  write #1 "  SYS.Up"
+  write #1 ")"
+
+  ; Save all regs
+  gosub save_regs
+
+  ; Save all MMU regs and RAM
+  gosub save_mmu_regs_and_ram
+
+  write #1 "IF SIMULATOR()"
+  write #1 "("
+  write #1 "  MMU.SCAN"
+  write #1 "  MMU.ON"
+  write #1 ")"
+
+  ; Close CMM file
+  close #1
+
+  print "Done saving target state."
+
+  return
+
+;-----------------------------------------------------------------------------
+; FUNCTION: 
+;   save_regs
+;
+; DESCRIPTION:
+;   Saves all registers of all modes.
+;-----------------------------------------------------------------------------
+save_regs:
+
+  print "Saving regs to &cmm_filename..."
+
+  ; Save current cpsr so we can later on restore it
+  &cur_cpsr=r(cpsr)
+
+  ; Save PC
+  gosub save_reg pc
+
+  ; Goto USR mode and save regs
+  gosub goto_and_save_mode 0xd0
+  gosub save_reg r0
+  gosub save_reg r1
+  gosub save_reg r2
+  gosub save_reg r3
+  gosub save_reg r4
+
+  gosub save_reg r5
+  gosub save_reg r6
+  gosub save_reg r7
+  gosub save_reg r8
+  gosub save_reg r9
+
+  gosub save_reg r10
+  gosub save_reg r11
+  gosub save_reg r12
+  gosub save_reg r13
+  gosub save_reg r14
+
+  ; Goto FIQ mode and save regs
+  gosub goto_and_save_banked_regs 0xd1
+
+  ; FIQ has extra banked regs
+  gosub save_reg r8
+  gosub save_reg r9
+  gosub save_reg r10
+  gosub save_reg r11
+  gosub save_reg r12
+
+  ; Save IRQ mode registers
+  gosub goto_and_save_banked_regs 0xd2
+  
+  ; Save SVC mode registers
+  gosub goto_and_save_banked_regs 0xd3
+  
+  ; Save ABT mode registers
+  gosub goto_and_save_banked_regs 0xd7
+
+  ; Save UND mode registers
+  gosub goto_and_save_banked_regs 0xdb
+
+  ; Save SYS mode registers
+  gosub goto_and_save_banked_regs 0xdf
+
+  ; Restore CPSR
+  gosub goto_and_save_mode &cur_cpsr
+
+  return
+
+;-----------------------------------------------------------------------------
+; FUNCTION: 
+;   save_reg
+;
+; DESCRIPTION:
+;   Saves the value of a particular register
+;
+; PARAMETERS:
+;   &reg - the register to save
+;-----------------------------------------------------------------------------
+save_reg:
+  ENTRY &reg
+
+  &reg_value=r(&reg)
+  write #1 "r.s &reg &reg_value"
+
+  return
+
+;-----------------------------------------------------------------------------
+; FUNCTION: 
+;   goto_and_save_mode
+;
+; DESCRIPTION:
+;   Switches to new mode and save switch mode command
+;
+; PARAMETERS:
+;   &mode - the CPU mode to save registers for.
+;-----------------------------------------------------------------------------
+goto_and_save_mode:
+  ENTRY &mode
+
+  ; Switch to new mode
+  r.s cpsr &mode
+  write #1 "r.s cpsr &mode"
+
+  return
+
+;-----------------------------------------------------------------------------
+; FUNCTION: 
+;   goto_and_save_banked_regs
+;
+; DESCRIPTION:
+;   Switches to new mode and saves banked registers.
+;
+; PARAMETERS:
+;   &mode - the CPU mode to save registers for.
+;-----------------------------------------------------------------------------
+goto_and_save_banked_regs:
+  ENTRY &mode
+
+  ; Switch to new mode
+  gosub goto_and_save_mode &mode
+
+  ; Save banked regs
+  gosub save_reg r13
+  gosub save_reg r14
+  gosub save_reg spsr
+
+  return
+
+;-----------------------------------------------------------------------------
+; FUNCTION: 
+;   save_mmu_regs_and_ram
+;
+; DESCRIPTION:
+;   Saves all mmu regs and RAM.  This script tests for RAM at predefined 
+;   locations (as defined in CS definition table below).  It writes to the 
+;   first and second memory locations of the chip select and reads back the 
+;   first location to determine if it holds the value written to it.
+;   When RAM is found, this script writes to the memory size chip boundaries,
+;   from the declared size, down to 16MB, to determine the size of the memory.
+;   The tested addresses are restored to their original values and the entire
+;   memory is saved.  This script will work with more tham one RAM chip.  A 
+;   seperate file will contain the different RAM chip values.  Also, for each
+;   RAM chip saved, a command is included in the .cmm script to restore 
+;   afterwards
+;-----------------------------------------------------------------------------
+save_mmu_regs_and_ram:
+
+  local &CS_index
+  local &CS_first_address
+  local &memory_test_index
+  local &memory_test_address
+  local &test_pattern
+  local &divisor
+  local &mem_size
+  ; This holds the value of the first memory location in the chip select
+  local &data_at_0x0
+  ;
+  ; There are 5 variables to hold data when testing RAM.  Make sure to have 
+  ; enough data variables declared to save all memory that is written when
+  ; testing for memory size.  This is: 0x0--log2(CS_size/OFFSET_16MB)
+  ;
+  local &data_0x0
+  local &data_0x1
+  local &data_0x2
+  local &data_0x3
+
+  local &OFFSET_16MB
+  &OFFSET_16MB=0x1000000
+
+  local &MAX_NUM_CS
+  local &CS_start_address0x0
+  local &CS_start_address0x1
+  local &CS_start_address0x2
+  local &CS_start_address0x3
+  local &CS_size0x0
+  local &CS_size0x1
+  local &CS_size0x2
+  local &CS_size0x3
+  local &EBI1_BUFC_CFG_FLUSH_CMD
+  local &EBI1_BUFC_CFG_IMM_SNG_BUF
+  local &EBI1_BUFC_CFG_IMM_SNG_BUF_M
+  local &ebi1_bufc_cfg_value
+  local &EBI1_BUFC_STATUS_BUFF_EMPTY
+  local &ebi1_bufc_status_value
+  ;
+  ; This is where the CS definition of the chip is declared.
+  ; Make sure this matches your chip definitions
+  ;
+  &MAX_NUM_CS=3
+  &CS_start_address0x0=0x00000000
+  &CS_start_address0x1=0x08000000
+  &CS_start_address0x2=0x58000000
+  &CS_start_address0x3=0x00000000
+  &CS_size0x0=0x02000000
+  &CS_size0x1=0x01000000
+  &CS_size0x2=0x00020000
+  &CS_size0x3=0x00000000
+  &EBI1_BUFC_CFG_FLUSH_CMD=0x00800000
+  ; bit 23 - FLUSH_ALL_BUF
+  ; &EBI1_BUFC_CFG_IMM_SNG_BUF=0xFF004000
+  &EBI1_BUFC_CFG_IMM_SNG_BUF_M=0xFFCFFFF0
+  &EBI1_BUFC_CFG_IMM_SNG_BUF=0x0000000F
+  ; bit 23-31 IMM_FL_CS - immediate flush all 8 chip selects, SING_BUF_MODE
+  &EBI1_BUFC_STATUS_BUFF_EMPTY=0x400
+  ; bit 10 - BUFF_EMPTY
+
+
+  print "Saving RAM to &bin_filename..."
+
+  ; Get MMU register values
+  &mmu_cr=data.long(C15:0x1)
+  &mmu_ttb=data.long(C15:0x2)
+  &mmu_dac=data.long(C15:0x3)
+
+  ; "flush" writeback cache by touching 64Kbytes
+  do flush_cache.cmm
+
+  ; Disable MMU
+  D.S C15:0x1 %Long 0x52178
+  ; Disable MMU in the restore script
+  write #1 "D.S C15:0x1 %LONG 0x52178"
+
+  ; New requirement: flush the memory controller buffers.  This is specific
+  ; to SC2x.
+  ;
+  ; With the MMU disabled, write to the physical addresses.
+  ; Write the command to flush the buffers.
+  &ebi1_bufc_cfg_value=Data.Long(HWIO_EBI1_BUFC_CFG_ADDR)
+  d.Set HWIO_EBI1_BUFC_CFG_ADDR %Long ((&ebi1_bufc_cfg_value)|(&EBI1_BUFC_CFG_FLUSH_CMD))
+  ; Wait for the buffers to be emptied
+  &ebi1_bufc_status_value=Data.Long(HWIO_EBI1_BUFC_STATUS_ADDR)
+  while !((&ebi1_bufc_status_value)&(&EBI1_BUFC_STATUS_BUFF_EMPTY))==&EBI1_BUFC_STATUS_BUFF_EMPTY
+  (
+    &ebi1_bufc_status_value=Data.Long(HWIO_EBI1_BUFC_STATUS_ADDR)
+  )
+  
+  ; Now stop the buffering in the memory controller
+  d.Set HWIO_EBI1_BUFC_CFG_ADDR %Long (((&ebi1_bufc_cfg_value)&(&EBI1_BUFC_CFG_IMM_SNG_BUF_M))|&EBI1_BUFC_CFG_IMM_SNG_BUF)
+
+  ; Skip the rest of the memory if a problem happens.  This was added because
+  ; on SC2x, reading or writing to some chip selects cause an emulator reset
+  ON ERROR GOSUB
+  (
+    return
+  )
+
+  ;
+  ; Look for start of RAM at each chip select
+  ;
+  &CS_index=0
+
+  while (&CS_index<&MAX_NUM_CS)
+  (
+    ; Make a different filename for each chip select - in case there are more
+    ; than one RAM chips
+    &bin_filename="&filename&CS_index.bin"
+    ; Get the starting address of the chip selct
+    &&CS_first_address=&CS_start_address&CS_index
+
+    ; Save the first two words of the chip select
+    &data_at_0x0=Data.Long(SD:(&CS_first_address))
+    &data_0x1=Data.Long(SD:(&CS_first_address+4))
+  
+    ; Write a different pattern to the first 2 words of the chip select.  This 
+    ; is done to make sure there is memory at this location.  If there is no 
+    ; memory, any writes would stay on the bus and would be read back - 
+    ; indicating there was RAM at that location.  So we write 2 words to make
+    ; sure the value read back from the first write was the same as what was
+    ; written.  The patterns that are picked are the bit-wise XOR of the value
+    ; read from the first address.  This is to make sure the value read from
+    ; a flash part doesn't happen to be our test pattern.
+    D.Set (&CS_first_address) %long (&data_at_0x0^0xffffffff)
+    D.Set (&CS_first_address+4) %long (&data_at_0x0)
+  
+    ; Now read back the first word and see if it is what was written
+    &data_0x2=Data.Long(SD:(&CS_first_address))
+  
+    if (&data_0x2==(&data_at_0x0^0xffffffff))
+    (
+      ;
+      ; RAM exists here
+      ;
+      ; Put the second word back into memory
+      D.Set (&CS_first_address+4) %long (&data_0x1)
+      ;
+      ; Determine the size of RAM that is at this chip select
+      ;
+      ; Initialize the test address loop
+      &memory_test_index=0x0
+      ; Start with half of the available address space in the chip select
+      &&memory_test_address=((&CS_size&CS_index)/2)
+      ; Initialize the pattern written to memory
+      &test_pattern=1
+      ; Write this to the starting address of the chip select
+      D.Set (&CS_first_address) %long (&test_pattern)
+
+      ; Write a divisor (1, 2, 4...) to the chip select address space by every
+      ; other size block of memory (down to 16MB).  With aliasing (wrap around)
+      ; the value at the first chip select address (offset 0) would be the last
+      ; wrap around value written - indicating how large the memory is.  
+      while (&memory_test_address>=&OFFSET_16MB)
+      (
+        ; First, save what is in memory at this location
+        &data_&memory_test_index=Data.Long(SD:(&memory_test_address+&CS_first_address))
+
+        ; Get the next pattern to write
+        &test_pattern=&test_pattern*2
+
+        ; Write the pattern to memory
+        D.Set (&memory_test_address+&CS_first_address) %long (&test_pattern)
+
+        ; Get the next address.  It will be half of last address
+        &memory_test_address=(&memory_test_address/2)
+        ; Write to the next smaller half of memory
+        &memory_test_index=&memory_test_index+1
+      )
+
+      ; Now get the divisor from the first chip select address
+      ; This is used to determine the memory size.
+      &divisor=Data.Long(SD:(&CS_first_address))
+      &&mem_size=((&CS_size&CS_index)/&divisor)
+
+      ;
+      ; Restore the memory and save it in a file.  Add a commend to the cmm
+      ; script to load the memory while debugging.
+      ;
+      &&memory_test_address=((&CS_size&CS_index)/2)
+      ; Index the first saved data index
+      &memory_test_index=0x0
+      while (&memory_test_address>=&OFFSET_16MB)
+      (
+        ; Place the saved data back into memory
+        &&test_pattern=&data_&memory_test_index
+        D.Set (&memory_test_address+&CS_first_address) %long (&test_pattern)
+        ; Get the next address.  It will be half of last address
+        &memory_test_address=(&memory_test_address/2)
+        ; Index the next saved data index
+        &memory_test_index=&memory_test_index+1
+      )
+      ; Now restore the first address of the memory CS.
+      D.Set (&CS_first_address) %long (&data_at_0x0)
+
+      ; Save the memory in a seperate file for each memory block.
+      data.save.binary &bin_filename &CS_first_address--(&CS_first_address+&mem_size-1)
+
+      ; Update restore script to restore RAM (assumes file is in current dir)
+      &bin_file_no_path=os.file.name(&bin_filename)
+      write #1 "data.load.binary &bin_file_no_path &CS_first_address /noclear /nosymbol"
+    )
+    else
+    (
+      &&mem_size=(&CS_size&CS_index)
+
+      ; ROM here
+      ; Save the memory in a seperate file for each memory block.
+      data.save.binary &bin_filename &CS_first_address--(&CS_first_address+&mem_size-1)
+
+      ; Update restore script to restore RAM (assumes file is in current dir)
+      &bin_file_no_path=os.file.name(&bin_filename)
+      write #1 "data.load.binary &bin_file_no_path &CS_first_address /noclear /nosymbol"
+    )
+    &CS_index=&CS_index+1
+  )
+
+  ; Restore MMU
+  D.S C15:0x1 %LONG &mmu_cr
+
+  ; Update restore script to set DACR for kernel
+  write #1 "D.S C15:0x3 %LONG &mmu_dac"
+
+  ; Update restore script to set translation table base
+  write #1 "D.S C15:0x2 %LONG &mmu_ttb"
+
+  ; Update restore script to enable MMU and other goodies
+  write #1 "D.S C15:0x1 %LONG &mmu_cr"
+
+  return
+

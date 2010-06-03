@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="oemannunciator" VERSION="1">
+<Objects MimeType="image/bmp">
+	<Object Id="1" Name="IDB_NO_BATT">
+		<File>.\deadbatt.bmp</File>
+	</Object>
+	<Object Id="2" Name="IDB_BATT1">
+		<File>.\batt1.bmp</File>
+	</Object>
+	<Object Id="3" Name="IDB_BATT2">
+		<File>.\batt2.bmp</File>
+	</Object>
+	<Object Id="4" Name="IDB_BATT3">
+		<File>.\batt3.bmp</File>
+	</Object>
+	<Object Id="5" Name="IDB_FULLBATT">
+		<File>.\fullbatt.bmp</File>
+	</Object>
+	<Object Id="6" Name="IDB_RSSI0">
+		<File>.\rssi0.bmp</File>
+	</Object>
+	<Object Id="7" Name="IDB_RSSI1">
+		<File>.\rssi1.bmp</File>
+	</Object>
+	<Object Id="8" Name="IDB_RSSI2">
+		<File>.\rssi2.bmp</File>
+	</Object>
+	<Object Id="9" Name="IDB_RSSI3">
+		<File>.\rssi3.bmp</File>
+	</Object>
+	<Object Id="10" Name="IDB_RSSI4">
+		<File>.\rssi4.bmp</File>
+	</Object>
+	<Object Id="11" Name="IDB_DIGITAL">
+		<File>.\digital.bmp</File>
+	</Object>
+	<Object Id="12" Name="IDB_ANALOG">
+		<File>.\analog.bmp</File>
+	</Object>
+	<Object Id="13" Name="IDB_CDMA">
+		<File>.\cdma.bmp</File>
+	</Object>
+	<Object Id="14" Name="IDB_GSM">
+		<File>.\gsm.bmp</File>
+	</Object>
+	<Object Id="15" Name="IDB_HDR">
+		<File>.\hdr.bmp</File>
+	</Object>
+	<Object Id="16" Name="IDB_MBOX">
+		<File>.\mailbox.bmp</File>
+	</Object>
+	<Object Id="17" Name="IDB_MSG">
+		<File>.\msg.bmp</File>
+	</Object>
+	<Object Id="18" Name="IDB_LOGO">
+		<File>.\qclogo.bmp</File>
+	</Object>
+	<Object Id="19" Name="IDB_LOCK">
+		<File>.\lock.bmp</File>
+	</Object>
+	<Object Id="20" Name="IDB_ROAM">
+		<File>.\roam.bmp</File>
+	</Object>
+	<Object Id="21" Name="IDB_PS">
+		<File>.\ps.bmp</File>
+	</Object>
+	<Object Id="22" Name="IDB_WCDMA">
+		<File>.\wcdma.bmp</File>
+	</Object>
+	<Object Id="23" Name="IDB_SILENCE">
+		<File>.\noalert.bmp</File>
+	</Object>
+	<Object Id="24" Name="IDB_ALERT">
+		<File>.\alert.bmp</File>
+	</Object>
+	<Object Id="25" Name="IDB_INUSE">
+		<File>.\inuse.bmp</File>
+	</Object>
+	<Object Id="26" Name="IDB_NOSVC">
+		<File>.\nosvc.bmp</File>
+	</Object>
+	<Object Id="27" Name="IDB_DATA">
+		<File>.\data.bmp</File>
+	</Object>
+	<Object Id="28" Name="IDB_HDR_RSSI0">
+		<File>.\hdr_rssi0.bmp</File>
+	</Object>
+	<Object Id="29" Name="IDB_HDR_RSSI1">
+		<File>.\hdr_rssi1.bmp</File>
+	</Object>
+	<Object Id="30" Name="IDB_HDR_RSSI2">
+		<File>.\hdr_rssi2.bmp</File>
+	</Object>
+	<Object Id="32" Name="IDB_HDR_RSSI3">
+		<File>.\hdr_rssi3.bmp</File>
+	</Object>
+	<Object Id="33" Name="IDB_HDR_RSSI4">
+		<File>.\hdr_rssi4.bmp</File>
+	</Object>
+	<Object Id="34" Name="IDB_CS">
+		<File>.\cs.bmp</File>
+	</Object>
+	<Object Id="35" Name="IDB_CSPS">
+		<File>.\csps.bmp</File>
+	</Object>
+	<Object Id="36" Name="IDB_DORMANT">
+		<File>.\dormant.bmp</File>
+	</Object>
+	<Object Id="37" Name="IDB_GPS">
+		<File>.\gps.bmp</File>
+	</Object>
+	<Object Id="38" Name="IDB_HYBRID">
+		<File>.\hybrid.bmp</File>
+	</Object>
+	<Object Id="39" Name="IDB_NETWORK">
+		<File>.\network.bmp</File>
+	</Object>
+	<Object Id="40" Name="IDB_SIMULTANEOUS">
+		<File>.\simultaneous.bmp</File>
+	</Object>
+	<Object Id="41" Name="IDB_WIFI_RSSI0">
+		<File>.\wifi_rssi0.bmp</File>
+	</Object>
+	<Object Id="42" Name="IDB_WIFI_RSSI1">
+		<File>.\wifi_rssi1.bmp</File>
+	</Object>
+	<Object Id="43" Name="IDB_WIFI_RSSI2">
+		<File>.\wifi_rssi2.bmp</File>
+	</Object>
+	<Object Id="44" Name="IDB_WIFI_RSSI3">
+		<File>.\wifi_rssi3.bmp</File>
+	</Object>
+	<Object Id="45" Name="IDB_WIFI_RSSI4">
+		<File>.\wifi_rssi4.bmp</File>
+	</Object>
+	<Object Id="46" Name="IDB_VT">
+		<File>.\vt.bmp</File>
+	</Object>
+	<Object Id="47" Name="IDB_HSDPA">
+		<File>.\hsdpa.bmp</File>
+	</Object>
+	<Object Id="48" Name="IDB_HSUPA">
+		<File>.\hsupa.bmp</File>
+	</Object>
+	<Object Id="49" Name="IDB_HSDPAHSUPA">
+		<File>.\hsdpahsupa.bmp</File>
+	</Object>
+	<Object Id="50" Name="IDB_BCMCS">
+		<File>.\bcmcs.bmp</File>
+	</Object>
+	<Object Id="51" Name="IDB_HDR_REV_A">
+		<File>.\hdrrevA.bmp</File>
+	</Object>
+	<Object Id="52" Name="IDB_HYBRID_REV_A">
+		<File>.\hybridrevA.bmp</File>
+	</Object>
+</Objects>
+</BREWRes>

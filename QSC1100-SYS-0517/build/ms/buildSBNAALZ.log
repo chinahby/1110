@@ -1,0 +1,131 @@
+../../modem/uim/nvruim/src/nvruim.min:20: 警告：覆盖关于目标“SXNAALZ/nvim_ruim.lib”的命令
+../../core/services/nv/nv.min:35: 警告：忽略关于目标“SXNAALZ/nvim_ruim.lib”的旧命令
+../../platform/brew/nonpkbrew/pk/src/msm/oem_nonpk.min:51: 警告：覆盖关于目标“SXNAALZ/oem.lib”的命令
+../../platform/brew/brewpk/pk/src/msm/oem.min:341: 警告：忽略关于目标“SXNAALZ/oem.lib”的旧命令
+
+Building NOR Flash Tools
+
+make -C ../../tools/mjflash -f jflash.mak BUILDID=SBNAALZ veryclean
+make[1]: Entering directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/mjflash'
+rm -fr   jflash
+rm -f jflash.sym
+rm -f jflash.map
+rm -f jflash.hex
+rm -f jflash.elf
+rm -f jflash.elf.map
+rm -f mjflash.exe
+rm -f aptemp.hex
+rm -f jflash.dep
+rm -f jflash.scl
+rm -f jflash_param.cmm
+rm -f *.bak
+rm -f *.map
+rm -f jflash_ext_error.cmm
+make[1]: Leaving directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/mjflash'
+make -C ../../tools/hostdl -f ap_arm.mak BUILDID=SBNAALZ ADS120HOME=C:/ARM/ADSv1_2 FLASHTYPE=NOR veryclean
+make[1]: Entering directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/hostdl'
+rm -f norprg/*.o
+rm -f norprg/*.i
+rm -f norprg/*.lst
+rm -f norprg/exist
+rm -f norprg.sym
+rm -f norprg.map
+rm -f norprg.hex
+rm -f norprg.elf
+rm -f norprg.elf.map
+rm -f norprg.exe
+rm -f APRG1100.hex
+rm -f aptemp.hex
+rm -f .hex
+rm -f ap_depend.dep
+rm -f norprg/*.dep
+make[1]: Leaving directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/hostdl'
+
+Done Building Flash Tools
+
+
+------------------------------------------------------------------------
+Deleting the Progressive Boot Scatter Loader
+------------------------------------------------------------------------
+CLEAN
+... remove elf, hex, sym, map, scl files
+... remove static BREW txt files
+... remove .i and .lst files
+------------------------------------------------------------------------
+CLEAN FSBL for target build SBNAALZ
+make[1]: Entering directory `/cygdrive/f/project/QSC1100-SYS-0517/core/boot/romboot/fsbl/target/src'
+---------------------------------------------------------------
+CLEAN
+if test -d ../../fsblobj_SBNAALZ; then rm -f ../../fsblobj_SBNAALZ/*.*; fi
+if test -d ../../fsblobj_SBNAALZ; then rm -rf ../../fsblobj_SBNAALZ; fi
+if test -d ../../fsbllint_SBNAALZ; then rm -rf ../../fsbllint_SBNAALZ; fi
+if test -f ../../fsbl_SBNAALZ.elf; then rm -f ../../fsbl_SBNAALZ.elf; fi
+if test -f ../../fsbl_SBNAALZ.mbn; then rm -f ../../fsbl_SBNAALZ.mbn; fi
+if test -f ../../fsbl_SBNAALZ.map; then rm -f ../../fsbl_SBNAALZ.map; fi
+if test -f ../../fsbl_SBNAALZ.sym; then rm -f ../../fsbl_SBNAALZ.sym; fi
+if test -f ../../fsbl_SBNAALZ.scl; then rm -f ../../fsbl_SBNAALZ.scl; fi
+if test -f ../../fsbl_SBNAALZ_depend.dep; then rm -f ../../fsbl_SBNAALZ_depend.dep; fi
+if test -f ../../fsbl_objects_SBNAALZ.txt; then rm -f ../../fsbl_objects_SBNAALZ.txt; fi
+---------------------------------------------------------------
+make[1]: Leaving directory `/cygdrive/f/project/QSC1100-SYS-0517/core/boot/romboot/fsbl/target/src'
+rm: 无法删除 “../../build/ms/bin/SBNAALZ/fsbl”: Is a directory
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+CLEAN DBL for target build SBNAALZ
+make[1]: Entering directory `/cygdrive/f/project/QSC1100-SYS-0517/core/boot/romboot/dbl/target/dbl/src'
+---------------------------------------------------------------
+CLEAN
+if test -d ../../../dblobj_SBNAALZ; then rm -f ../../../dblobj_SBNAALZ/*.*; fi
+if test -d ../../../dblobj_SBNAALZ; then rm -rf ../../../dblobj_SBNAALZ; fi
+if test -d ../../../dbllint_SBNAALZ; then rm -rf ../../../dbllint_SBNAALZ; fi
+if test -f ../../../dbl_SBNAALZ.elf; then rm -f ../../../dbl_SBNAALZ.elf; fi
+if test -f ../../../dbl_SBNAALZ.mbn; then rm -f ../../../dbl_SBNAALZ.mbn; fi
+if test -f ../../../dbl_SBNAALZ.map; then rm -f ../../../dbl_SBNAALZ.map; fi
+if test -f ../../../dbl_SBNAALZ.sym; then rm -f ../../../dbl_SBNAALZ.sym; fi
+if test -f ../../../dbl_SBNAALZ.scl; then rm -f ../../../dbl_SBNAALZ.scl; fi
+if test -f ../../../dbl_SBNAALZ_depend.dep; then rm -f ../../../dbl_SBNAALZ_depend.dep; fi
+if test -f ../../../dbl_objects_SBNAALZ.txt; then rm -f ../../../dbl_objects_SBNAALZ.txt; fi
+---------------------------------------------------------------
+make[1]: Leaving directory `/cygdrive/f/project/QSC1100-SYS-0517/core/boot/romboot/dbl/target/dbl/src'
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+CLEAN OSBL for target build SBNAALZ
+make[1]: Entering directory `/cygdrive/f/project/QSC1100-SYS-0517/core/boot/romboot/osbl/target/src'
+------------------------------------------------------------------------
+CLEAN
+if test -d ../../osblobj_SBNAALZ; then rm -rf ../../osblobj_SBNAALZ; fi
+if test -d ../../osbllint_SBNAALZ; then rm -rf ../../osbllint_SBNAALZ; fi
+if test -f ../../osbl_SBNAALZ.elf; then rm -f ../../osbl_SBNAALZ.elf; fi
+if test -f ../../osbl_SBNAALZ.mbn; then rm -f ../../osbl_SBNAALZ.mbn; fi
+if test -f ../../osbl_SBNAALZ.map; then rm -f ../../osbl_SBNAALZ.map; fi
+if test -f ../../osbl_SBNAALZ.sym; then rm -f ../../osbl_SBNAALZ.sym; fi
+if test -f ../../osbl_SBNAALZ.scl; then rm -f ../../osbl_SBNAALZ.scl; fi
+if test -f ../../osbl_SBNAALZ_depend.dep; then rm -f ../../osbl_SBNAALZ_depend.dep; fi
+if test -f ../../osbl_objects_SBNAALZ.txt; then rm -f ../../osbl_objects_SBNAALZ.txt; fi
+------------------------------------------------------------------------
+make[1]: Leaving directory `/cygdrive/f/project/QSC1100-SYS-0517/core/boot/romboot/osbl/target/src'
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+CLEAN AMSSHASH for target build SBNAALZ
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+CLEAN AMSSMBNS for target build SBNAALZ
+rm: 无法删除 “../../build/ms/bin/SBNAALZ/amss.mbn”: No such file or directory
+make: [cleanamssmbns] 错误 1 (忽略)
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+CLEAN ALL.MBN for target build SBNAALZ
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+CLEAN HEADERGEN TOOLS for target build SBNAALZ
+make[1]: Entering directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/headergen'
+make[1]: Leaving directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/headergen'
+make[1]: Entering directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/headergen'
+make[1]: Leaving directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/headergen'
+make[1]: Entering directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/headergen'
+NOCYGWIN=-mno-cygwin
+make[1]: Leaving directory `/cygdrive/f/project/QSC1100-SYS-0517/tools/headergen'
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+CLEAN ARMPRG for target build SBNAALZ
+------------------------------------------------------------------------

@@ -1,0 +1,6 @@
+#ifndef BREWPORT_BID
+#define BREWPORT_BID
+
+#define AEECLSID_BREWPORT        0x45646576
+
+#endif //BREWPORT_BID

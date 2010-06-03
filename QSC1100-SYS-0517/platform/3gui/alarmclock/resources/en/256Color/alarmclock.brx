@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="alarmclock" VERSION="1">
+<Strings Encoding="Unicode">
+	<String Id="1001" Name="IDS_STRING_ALARMS">
+		<Text>Alarms</Text>
+	</String>
+	<String Id="1002" Name="IDS_STRING_TURN_ON">
+		<Text>Turn on</Text>
+	</String>
+	<String Id="1003" Name="IDS_STRING_TURN_OFF">
+		<Text>Turn off</Text>
+	</String>
+	<String Id="1004" Name="IDS_STRING_SAVE">
+		<Text>Save</Text>
+	</String>
+	<String Id="1005" Name="IDS_STRING_CANCEL">
+		<Text>Cancel</Text>
+	</String>
+	<String Id="1006" Name="IDS_STRING_DISMISS">
+		<Text>Dismiss</Text>
+	</String>
+	<String Id="1007" Name="IDS_STRING_SNOOZE">
+		<Text>Snooze</Text>
+	</String>
+	<String Id="1008" Name="IDS_STRING_ONCE">
+		<Text>Once</Text>
+	</String>
+	<String Id="1009" Name="IDS_STRING_DAILY">
+		<Text>Daily</Text>
+	</String>
+	<String Id="1010" Name="IDS_STRING_ALARM_FMT">
+		<Text>%2u:%02u%cm%c</Text>
+	</String>
+	<String Id="1011" Name="IDS_STRING_UNASSIGNED">
+		<Text>Unassigned</Text>
+	</String>
+	<String Id="1012" Name="IDS_STRING_OPTIONS">
+		<Text>Options</Text>
+	</String>
+	<String Id="1013" Name="IDS_STRING_EDIT">
+		<Text>Edit Time</Text>
+	</String>
+	<String Id="1014" Name="IDS_STRING_DESC">
+		<Text>Description</Text>
+	</String>
+</Strings>
+<Objects MimeType="image/png">
+	<Object Id="5001" Name="IDI_INIT_STATE">
+		<File>.\init.png</File>
+	</Object>
+	<Object Id="5002" Name="IDI_READY_STATE">
+		<File>.\ready.png</File>
+	</Object>
+	<Object Id="5003" Name="IDI_RUNNING_STATE">
+		<File>.\running.png</File>
+	</Object>
+	<Object Id="5004" Name="IDI_EXPIRED_STATE">
+		<File>.\expired.png</File>
+	</Object>
+	<Object Id="5005" Name="IDI_SNOOZE_STATE">
+		<File>.\snooze.png</File>
+	</Object>
+</Objects>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_DIALOG_ALARM_LIST" Focus="0">
+		<Controls>
+			<Menu Id="7001" Name="IDC_ALARM_LIST_MENU">
+				<TitleID>IDS_STRING_ALARMS</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_DIALOG_ALARM_EDIT" Focus="0">
+		<Controls>
+			<List Id="7003" Name="IDC_LIST_ALARM_SETTING">
+				<Items>
+					<Item Id="8004" Name="IDC_CONTROL_ITEM_ONCE">
+						<TextID>IDS_STRING_ONCE</TextID>
+					</Item>
+					<Item Id="8005" Name="IDC_CONTROL_ITEM_DAILY">
+						<TextID>IDS_STRING_DAILY</TextID>
+					</Item>
+				</Items>
+			</List>
+			<SoftKey Id="7004" Name="IDC_SOFTKEY_ALARM_SETTING">
+				<Items>
+					<Item Id="8001" Name="IDC_SOFTKEY_ITEM_SAVE">
+						<TextID>IDS_STRING_SAVE</TextID>
+					</Item>
+					<Item Id="8002" Name="IDC_SOFTKEY_ITEM_CANCEL">
+						<TextID>IDS_STRING_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Clock Id="7008" Name="IDC_CLOCK_ALARM_SETTING">
+				<Items/></Clock>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_DIALOG_ALARM_ALERT" Focus="0">
+		<Controls>
+			<Static Id="7005" Name="IDC_STATIC_ALARM_MSG">
+				<Items/></Static>
+			<SoftKey Id="7006" Name="IDC_SOFTKEY_ALARM_MSG">
+				<Items>
+					<Item Id="8003" Name="IDC_SOFTKEY_ITEM_DISMISS">
+						<TextID>IDS_STRING_DISMISS</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_DIALOG_ALARM_OPTIONS" Focus="0">
+		<Controls>
+			<Menu Id="7002" Name="IDC_OPTIONS_MENU">
+				<TitleID>IDS_STRING_OPTIONS</TitleID>
+				<Items>
+					<Item Id="8006" Name="IDC_CONTROL_ALARM_EDIT">
+						<TextID>IDS_STRING_EDIT</TextID>
+					</Item>
+					<Item Id="8007" Name="IDC_CONTROL_ALARM_TURN_ON">
+						<TextID>IDS_STRING_TURN_ON</TextID>
+					</Item>
+					<Item Id="8008" Name="IDC_CONTROL_ALARM_TURN_OFF">
+						<TextID>IDS_STRING_TURN_OFF</TextID>
+					</Item>
+					<Item Id="8011" Name="IDC_CONTROL_ALARM_DESC">
+						<TextID>IDS_STRING_DESC</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_DIALOG_ALARM_DESC" Focus="0">
+		<Controls>
+			<Text Id="7007" Name="IDC_TEXT_ALARM_DESC" Flags="10000">
+				<TitleID>IDS_STRING_DESC</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7009" Name="IDC_SOFTKEY_ALARM_DESC">
+				<Items>
+					<Item Id="8009" Name="IDC_ALARM_DESC_SAVE">
+						<TextID>IDS_STRING_SAVE</TextID>
+					</Item>
+					<Item Id="8010" Name="IDC_ALARM_DESC_CANCEL">
+						<TextID>IDS_STRING_CANCEL</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

@@ -1,0 +1,23 @@
+#============================================================================
+#
+#  Description:
+#    An includable component of the makefile to build the lib software for
+#    the ULC.
+#
+#    This file specifies the make file rules that are common across all
+#    targets and makefiles
+#
+# Copyright (c) 2008,2009 Mango Technologies Pvt. Ltd. All Rights Reserved.
+#----------------------------------------------------------------------------
+#============================================================================
+
+
+vpath %.c $(BREWPORT)
+vpath %.mif $(BREWPORT)
+vpath %.bar $(BREWPORTSOURCESINC)
+
+CONSTFILE_FILES+=\
+    brewport.mif|fs:/mif/brewport.mif \
+    brewport.bar|fs:/mod/brewport/brewport.bar
+
+
