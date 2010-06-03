@@ -542,7 +542,7 @@ static int DisplayMenu_InitAppData(CDisplayMenu *pMe)
         DisplayMenu_FreeAppData(pMe);
         return EFAILED;
     }
-
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_BACKLIGHT_KEYPAD,
                                             (void **)&pMe->m_pKeypadBacklight))
@@ -550,10 +550,10 @@ static int DisplayMenu_InitAppData(CDisplayMenu *pMe)
         DisplayMenu_FreeAppData(pMe);
         return EFAILED;
     }
-
+#endif
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
     {
-        IANNUNCIATOR_Release(pMe->m_pIAnn);
+        DisplayMenu_FreeAppData(pMe);
         return EFAILED;
     }
     
@@ -601,13 +601,13 @@ static void DisplayMenu_FreeAppData(CDisplayMenu *pMe)
         IBACKLIGHT_Release(pMe->m_pIBacklight);
         pMe->m_pIBacklight = NULL;
     }
-
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
     if(pMe->m_pKeypadBacklight)
     {
         IBACKLIGHT_Release(pMe->m_pKeypadBacklight);
         pMe->m_pKeypadBacklight = NULL;
     }
-
+#endif
     if(pMe->m_pIAnn)
     {
         IANNUNCIATOR_Release(pMe->m_pIAnn);

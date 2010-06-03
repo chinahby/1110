@@ -236,7 +236,9 @@ typedef struct _CDisplayMenu
     byte            m_lightlevel;      /*背光*/
     //byte            m_contrastlevel;     /* //对比度*/
     IBacklight      *m_pIBacklight;   /* 用来在设置完背光后立即生效用*/
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
     IBacklight      *m_pKeypadBacklight;   /* 用来在设置完按键灯控制时间后立即生效用*/
+#endif
     IFileMgr        *m_pIFileMgr;     /* IFILEMGR指针*/
     PICTURE_TYPE     m_PICType;        /* 墙纸类型,开/关机动画*/
     image_name_table *m_CurPaper;       /* 目前显示的墙纸*/

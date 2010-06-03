@@ -236,7 +236,9 @@ static rex_timer_type oemui_keyhold_timer;
 // 除非退出 BREW
 static IShell       *gpShell = NULL;  
 static IBacklight   *gpBacklight = NULL;
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
 static IBacklight   *gpKeyBacklight = NULL;
+#endif
 static IALERT       *gpAlert = NULL;
 static ISound       *gpSound= NULL;
 //static IPhone       *gpPhone = NULL;
@@ -1132,7 +1134,7 @@ static void oemui_post_start_init(void)
             {
                 IBACKLIGHT_Enable(gpBacklight);
             } 
-            
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
             (void) ISHELL_CreateInstance(gpShell,
                                  AEECLSID_BACKLIGHT_KEYPAD,
                                  (void**)&gpKeyBacklight);
@@ -1140,7 +1142,7 @@ static void oemui_post_start_init(void)
             {
                 IBACKLIGHT_Enable(gpKeyBacklight);
             } 
-                                 
+#endif
             (void) ISHELL_CreateInstance(gpShell,
                                  AEECLSID_ALERT,
                                  (void**)&gpAlert);
@@ -1944,6 +1946,7 @@ static void process_key(kpd_key_event_type      key)
     // 背光处理
     if(FALSE == is_dummy_key(key.key_code, key.key_parm))//Don't turn on blight at dummy key event of g_sensor.
     {
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
         if (gpKeyBacklight) 
         {
             if (HS_FLIP_CLOSE_K == key.key_code)
@@ -1959,7 +1962,7 @@ static void process_key(kpd_key_event_type      key)
                 IBACKLIGHT_Enable(gpKeyBacklight);
             }
         }   
-        
+#endif
         if (gpBacklight)
         {
             if (HS_FLIP_CLOSE_K == key.key_code)
@@ -2138,13 +2141,13 @@ static void  oemui_shutdown_brew(void)
         IBACKLIGHT_Release(gpBacklight);
         gpBacklight = NULL;
     }
-    
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
     if (gpKeyBacklight) 
     {
         IBACKLIGHT_Release(gpKeyBacklight);
         gpKeyBacklight = NULL;
     }
-    
+#endif
     if (gpAlert) 
     {
         IALERT_Release(gpAlert);
@@ -2709,12 +2712,13 @@ void BrewUI_EnableKeys(boolean flag)
 
         return;
     }
-    
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
     // 这里做此操作以解决新手机第一次开机时键盘背光不熄灭的问题CR6935
     if (gpKeyBacklight) 
     {
         IBACKLIGHT_Enable(gpKeyBacklight);
     }
+#endif
     if (gpBacklight) 
     {
         IBACKLIGHT_Enable(gpBacklight);
