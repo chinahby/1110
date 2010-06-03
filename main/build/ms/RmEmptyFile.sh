@@ -1,3 +1,4 @@
+
 lfs=`find . -name "*.lst"`
 prefix=`echo $lfs | sed 's/\.lst//g'`
 echo $prefix
@@ -9,8 +10,7 @@ do
 	rm -f $i.o
 done	
 
-seconddir=./W021/W021
-
+seconddir=./$1/$1
 
 rm $seconddir/boot_vectors.o
 rm $seconddir/boot_data.o
