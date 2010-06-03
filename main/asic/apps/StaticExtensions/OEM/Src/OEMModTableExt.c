@@ -651,9 +651,9 @@ extern int CCatApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
 // Recent Calls App
-#if defined(FEATURE_APP_RECENTCALLS)
+//#if defined(FEATURE_APP_RECENTCALLS)
 extern int RecentCalls_Load(IShell *ps, void * pHelpers, IModule ** pMod);
-#endif
+//#endif
 
 // UTK App
 #if defined(FEATURE_APP_UTK)
@@ -1038,9 +1038,9 @@ static const AEEStaticMod gOEMStaticModList[] =
    {AEEFS_MIF_DIR"catapp.mif", CCatApp_Load},
 #endif
 
-#if defined (FEATURE_APP_RECENTCALLS)
+//#if defined (FEATURE_APP_RECENTCALLS)
     {AEEFS_MIF_DIR"recentcalls.mif", RecentCalls_Load},
-#endif
+//#endif
 
 #if defined (FEATURE_APP_UTK)
     {AEEFS_MIF_DIR"utk.mif", UTK_Load},
