@@ -3973,7 +3973,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                pMe->m_nNormalFontHeight);
     SETAEERECT(&rc_week, 
                15,//1,
-               68,//160,//40, 
+               58,//160,//40, 
                (pMe->m_rc.dx-30),//130, 
                pMe->m_nNormalFontHeight);
 #else
