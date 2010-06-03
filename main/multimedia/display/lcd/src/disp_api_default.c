@@ -91,6 +91,10 @@ extern boolean mdp_disp_fatal_err_flag;
 
 extern int epson_S1D19120_install(char *);
 
+#ifdef FEATURE_PROJECT_W023C
+extern int zgd_tft177_install(char *);
+#endif
+
 #ifdef FEATURE_MDP
 extern int mdp_install(char *);
 extern void mdp_set_lcd_size(LCD_TYPE dest, LCD_TYPE_PHYS physDest, uint32 width, uint32 height);
@@ -113,7 +117,13 @@ void disp_init(void)
   if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
     return;
 #else
+#if defined (FEATURE_PROJECT_W021C)
   if(tm_cstn128x128_install(PRIMARY_LCD_NAME) == -1)
+#elif defined (FEATURE_PROJECT_W023C)  
+   if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
+#else
+#error code not present
+#endif   
     return;  
 #endif
 
