@@ -827,7 +827,7 @@ nv_stat_enum_type OEMNV_Get
 
       case NV_BACK_LIGHT_HFK_I: 
       case NV_BACK_LIGHT_I:       /* Backlighting manual/auto mode */
-        data_ptr->back_light = 255;  /* 255: always on */
+        data_ptr->back_light = 10;  /* 255: always on */
         break;
 
       case NV_CONFIG_CHKSUM_I:    /* Configuration checksum */
