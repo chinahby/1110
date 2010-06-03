@@ -97,11 +97,11 @@ static NextFSMAction SettingMenu_StateNetSelectHandler(CSettingMenu *pMe);
 #ifdef FEATRUE_AUTO_POWER
 static NextFSMAction SettingMenu_StateAutoPowerHandler(CSettingMenu *pMe);
 #endif
-
+#ifdef FEATURE_SUPPORT_G_SENSOR
 static NextFSMAction SettingMenu_StateShake(CSettingMenu *pMe);
 
 static NextFSMAction SettingMenu_StateShakeSub(CSettingMenu *pMe);
-
+#endif
 static NextFSMAction SettingMenu_StatePasswordHandler(CSettingMenu *pMe); 
 
 static NextFSMAction SettingMenu_StateCallRestrictHandler(CSettingMenu *pMe); 
@@ -248,7 +248,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             retVal = SettingMenu_StateAutoPowerHandler(pMe);
             break;
 #endif
-
+#ifdef FEATURE_SUPPORT_G_SENSOR
         case SETTINGMENUST_SHAKE:
             retVal = SettingMenu_StateShake(pMe);
             break;
@@ -256,6 +256,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_SHAKESUB:
             retVal = SettingMenu_StateShakeSub(pMe);
             break;
+#endif
         case SETTINGMENUST_PASSWORD:
             retVal = SettingMenu_StatePasswordHandler(pMe);
             break;
@@ -413,11 +414,11 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_AUTO_POWER)
             return NFSMACTION_CONTINUE;
 #endif
-
+#ifdef FEATURE_SUPPORT_G_SENSOR
         case DLGRET_SHAKE:
             MOVE_TO_STATE(SETTINGMENUST_SHAKE)
             return NFSMACTION_CONTINUE;
-
+#endif
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SETTINGMENUST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -1478,6 +1479,7 @@ static NextFSMAction Sound_StateAutoAnswerSubHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 } // StateAutoAnswerSubHandler
+#ifdef FEATURE_SUPPORT_G_SENSOR
 /*==============================================================================
 º¯Êý£º
        StateShake
@@ -1587,7 +1589,7 @@ static NextFSMAction SettingMenu_StateShakeSub(CSettingMenu *pMe)
     return NFSMACTION_WAIT;	     
 
 }
-
+#endif //#ifdef FEATURE_SUPPORT_G_SENSOR
 /*==============================================================================
 º¯Êý£º
        SettingMenu_StateCallRestrictHandler

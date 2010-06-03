@@ -23,7 +23,7 @@ ifeq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\
 	displaymenu.mif|fs:/mif/displaymenu.mif \
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-	wallpaper11.png|fs:/hsmm/pictures/wallpaper.png
+	wallpaper11.png|fs:/image/wallpaper/wallpaper01.png
 else
 ifeq ($(USES_WALLPAPER),CHINA_VERTU)
 ifeq ($(USES_MEDIAGALLERY), yes)

@@ -18,7 +18,20 @@ vpath %.c $(SOUNDMENU_SRC)
 vpath %.bar $(SOUNDMENU_RES)
 vpath %.brx $(SOUNDMENU_RES)
 vpath %.mid $(SOUNDMENU_RES)
-  
+
+ifeq ($(USES_LOWMEM), yes)
+CONSTFILE_FILES+=\
+        soundmenu.mif|fs:/mif/soundmenu.mif \
+        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+        blue_load.mid|fs:/ringers/blue_load.mid \
+        champagne.mid|fs:/ringers/champagne.mid \
+        clock.mid|fs:/ringers/clock.mid \
+        green_line.mid|fs:/ringers/green_line.mid \
+        lucky.mid|fs:/ringers/lucky.mid \
+        street_tale.mid|fs:/ringers/street_tale.mid \
+        feeling_on.mid|fs:/ringers/feeling_on.mid \
+        feeling_off.mid|fs:/ringers/feeling_off.mid
+else
 ifeq ($(USES_RINGTONE_ARABIC_SUDANI), yes)
 CONSTFILE_FILES+=\
         soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -77,7 +90,7 @@ CONSTFILE_FILES+=\
         feeling_off.mid|fs:/ringers/feeling_off.mid
     endif      
 endif
-
+endif # ifeq ($(USES_LOWMEM), yes)
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

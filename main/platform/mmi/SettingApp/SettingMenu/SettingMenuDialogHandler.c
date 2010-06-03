@@ -45,6 +45,9 @@
 #include "MusicPlayer.h"
 #endif 
 boolean start_security_setting_by_user;
+
+#define FEATURE_SET_SCENEMODE
+#define FEATURE_SET_SOUND_TITLE
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -213,6 +216,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
 );
+#ifdef FEATURE_SUPPORT_G_SENSOR
 static boolean Setting_Handle_Shake(CSettingMenu *pMe,
 	AEEEvent eCode,
 	uint16 wParam,
@@ -223,6 +227,7 @@ static boolean Setting_Handle_ShakeSub(CSettingMenu *pMe,
 	uint16 wParam,
 	uint32 dwParam
 );
+#endif
 static boolean Setting_Handle_CallRestrict(CSettingMenu *pMe,
 	AEEEvent eCode,
 	uint16 wParam,
@@ -440,12 +445,13 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_AUTO_POWER:
             return Setting_HandleAuto_Power_DialogEvent(pMe,eCode,wParam,dwParam);
 #endif
-
+#ifdef FEATURE_SUPPORT_G_SENSOR
         case IDD_SHAKE:
             return Setting_Handle_Shake(pMe,eCode,wParam,dwParam);
 
         case IDD_SHAKESUB:
             return Setting_Handle_ShakeSub(pMe,eCode,wParam,dwParam);
+#endif
         case IDD_PASSWORD:
             return Setting_Handle_Password(pMe,eCode,wParam,dwParam);
                      
@@ -520,28 +526,17 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            {
-#ifdef FEATURE_APP_NUMBERMANAGER
-                IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
-#endif
-            }
-           {
-#if (defined( FEATURE_UTK) || defined( FEATURE_FM_RADIO))
-#if defined( FEATURE_UTK) && !defined( FEATURE_FM_RADIO)
-            extern boolean isUimPluged( IShell* pShell);
-            if( isUimPluged( pMe->m_pShell))
-#endif
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
-#endif
-            }
 
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_TITLE, IDS_CALLSETTING_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONESETTING_TITLE, IDS_PHONESETTING_TITLE, NULL, 0);
 #ifdef FEATRUE_AUTO_POWER
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_POWER_TITLE, IDS_AUTO_POWER_TITLE, NULL, 0);
  //           IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_POWER_OFF_TIME, IDS_AUTO_POWER_OFF_TIME, NULL, 0);
 #endif
+#ifdef FEATURE_SUPPORT_G_SENSOR
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SHAKE_TITLE, IDS_SHAKE_TITLE, NULL, 0);
+#endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SECURITY_TITLE, IDS_SECURITY_TITLE, NULL, 0);
 #ifdef FEATURE_SET_SCENEMODE
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
@@ -621,9 +616,6 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                                               AEECLSID_APP_SOUNDMENU);
                     break;
 #endif
-                case IDS_SCENEMODE_TITLE:
-                    ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SOUNDMENU);
-                    break;
                 case IDS_DISPLAY_TITLE:      //显示设置
                     (void) ISHELL_StartApplet(pMe->m_pShell,
                                               AEECLSID_APP_DISPLAYMENU);
@@ -650,11 +642,11 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_AUTO_POWER)
                     break;
 #endif
-
+#ifdef FEATURE_SUPPORT_G_SENSOR
                 case IDS_SHAKE_TITLE:
                     CLOSE_DIALOG(DLGRET_SHAKE)
                     break;
-
+#endif
 #ifdef FEATURE_PERU_VERSION
                 case IDS_PHONE_NUMBER:
                     CLOSE_DIALOG(DLGRET_PHONE_NUMBER)
@@ -5824,6 +5816,7 @@ static boolean Setting_inquire_Sid_lock_Cmd(byte cur_set)
     }
 }
 #endif
+#ifdef FEATURE_SUPPORT_G_SENSOR
 /*==============================================================================
 函数：
        Setting_Handle_Shake
@@ -6155,7 +6148,7 @@ static boolean Setting_Handle_ShakeSub(CSettingMenu *pMe,
     }
     return FALSE;    
 }
-
+#endif //#ifdef FEATURE_SUPPORT_G_SENSOR
 /*==============================================================================
 函数：
        Setting_Handle_CallRestrict
