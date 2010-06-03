@@ -1434,11 +1434,9 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
    // NOTE: This code should be replaced by code that stores/retrieves values in
    // NV-RAM.  You will need to add NV items for each of the items referenced here.
    //
-#ifdef FEATURE_APP_SVCPRG
    /* found a match in our cache */
    if (OEM_GetCachedConfig(i, pBuff, nSize) == 0)
      return 0;
-#endif  //def FEATURE_APP_SVCPRG
 
    // Make sure we have a valid buffer
    if(!pBuff)
@@ -3576,13 +3574,11 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
     // NOTE: This code should be replaced by code that stores/retrieves values in
     // NV-RAM.  You will need to add NV items for each of the items referenced here.
     //
-#ifdef FEATURE_APP_SVCPRG
     /* found a match in our cache */
     if (OEM_GetCachedConfig(i, pBuff, nSize) == 0)
     {
         return 0;
     }
-#endif  //def FEATURE_APP_SVCPRG
 
     // Make sure we have a valid buffer
     if (!pBuff)
@@ -4684,11 +4680,9 @@ int OEM_SVCSetConfig(AEEConfigItem i, void * pBuff, int nSize)
    if(!pBuff)
       return(EBADPARM);
 
-#ifdef FEATURE_APP_SVCPRG
    /* Try to save it our cache */
    if (OEM_SetCachedConfig(i, pBuff, nSize) == 0)
      return 0;
-#endif //FEATURE_APP_SVCPRG
 
    switch(i) {
       case CFGI_USER_CLOCK_OFFSET:
