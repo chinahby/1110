@@ -2334,10 +2334,12 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
         case EVT_DIALOG_START: 
             if(pMe->m_wStartupAniTime == 0)
             {
+#ifndef FEATURE_USES_LOWMEM
                 if ( NULL == pMe->m_pStartupAniImg )
                 {
                     pMe->m_pStartupAniImg = ISHELL_LoadImage( pMe->a.m_pIShell, PWRON_ANI_FILE);
                 }
+#endif
                 (void) ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW, 0, 0);
             }
             else
@@ -2365,15 +2367,18 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 
                 // 播放开机动画
                 //pMe->m_wStartupAniTime = 0;
-
+#ifndef FEATURE_USES_LOWMEM
                 if ( NULL != pMe->m_pStartupAniImg )
+#endif
                 {     
                     CoreApp_PlayPwrOnAni(pMe);
                 }
+#ifndef FEATURE_USES_LOWMEM
                 else
                 {
                     CLOSE_DIALOG( DLGRET_OK ); 
                 }
+#endif
                 //ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_DIALER, "S");
             }
             return TRUE; 
@@ -2382,6 +2387,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             //IALERT_StopRingerAlert(pMe->m_pAlert);
             if (pMe->m_eDlgRet != DLGRET_OK)
             {// 开机动画播放过程中被其他应用启动时中断
+#ifndef FEATURE_USES_LOWMEM
                 if (NULL != pMe->m_pStartupAniImg)
                 {     
                     (void)ISHELL_CancelTimer(pMe->a.m_pIShell, (PFNNOTIFY)CoreApp_PlayPwrOnAni, pMe);
@@ -2391,6 +2397,10 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                     
                     pMe->m_eDlgRet = DLGRET_OK;
                 }
+#else
+                (void)ISHELL_CancelTimer(pMe->a.m_pIShell, (PFNNOTIFY)CoreApp_PlayPwrOnAni, pMe);
+                pMe->m_eDlgRet = DLGRET_OK;
+#endif
                 IALERT_StopRingerAlert(pMe->m_pAlert);
             }
             return TRUE;
@@ -3445,8 +3455,9 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                             }
                             
                             //pMe->m_wStartupAniTime = 0; //  控制播放次数
-                             
+#ifndef FEATURE_USES_LOWMEM
                             if ( NULL != pMe->m_pStartupAniImg )
+#endif
                             {     
                                 CoreApp_PlayPwrOffAni(pMe);
                             }
@@ -3460,12 +3471,14 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                         }
                         else
                         {
+#ifndef FEATURE_USES_LOWMEM
                             if ( NULL != pMe->m_pStartupAniImg )
                             {     
                                 IIMAGE_Stop(pMe->m_pStartupAniImg);
                                 IIMAGE_Release(pMe->m_pStartupAniImg);
                                 pMe->m_pStartupAniImg = NULL;
                             }
+#endif
                             (void)ISHELL_PostEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP, EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
                         }
                     
@@ -4248,8 +4261,13 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 
     ASSERT(pMe != NULL);
     CORE_ERR("%x %x  CoreApp_PlayPwrOnAni",pMe->m_pStartupAniImg,pMe->m_wStartupAniTime);
+#ifndef FEATURE_USES_LOWMEM
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  )
+#else
+    if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT )
+#endif
     {
+#ifndef FEATURE_USES_LOWMEM
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
         // 设置动画速度(毫秒)
@@ -4272,29 +4290,40 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
                              PWRON_ANI_TIME,
                              (PFNNOTIFY)CoreApp_PlayPwrOnAni,
                              (void*)pMe);
-
+#else
+        {
+            #define PWRON_STR L"Welcome"
+            extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
+            IDISPLAY_ClearScreen(pMe->m_pDisplay);
+            GreyBitBrewFont_DrawText(pMe->m_pDisplay, 
+                                     8+2*pMe->m_wStartupAniTime,
+                                     PWRON_STR,
+                                     -1,
+                                     0,0,
+                                     NULL,
+                                     IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+        }
+        pMe->m_wStartupAniTime++; // 滚动播放次数
+        //AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOnAni,  (void*)pMe);
+       (void) ISHELL_SetTimer(pMe->a.m_pIShell,
+                             PWRON_ANI_RATE,
+                             (PFNNOTIFY)CoreApp_PlayPwrOnAni,
+                             (void*)pMe);
+#endif
     }
     else
     {
-#if 0
-        if ( NULL != pMe->m_pStartupAniImg )
-        {
-            IIMAGE_Stop(pMe->m_pStartupAniImg);
-            IIMAGE_Release(pMe->m_pStartupAniImg);
-            pMe->m_pStartupAniImg = NULL;
-        }
-        // 发送事件关闭开机动画播放对话
-        (void)ISHELL_PostEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP,  EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
-#else
         IALERT_StopRingerAlert(pMe->m_pAlert);
+#ifndef FEATURE_USES_LOWMEM
         if ( NULL != pMe->m_pStartupAniImg )
         {     
             IIMAGE_Stop(pMe->m_pStartupAniImg);
             IIMAGE_Release(pMe->m_pStartupAniImg);
             pMe->m_pStartupAniImg = NULL;
         }
-        CLOSE_DIALOG(DLGRET_OK)
 #endif
+        CLOSE_DIALOG(DLGRET_OK)
     }
     
 }
@@ -4317,9 +4346,13 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
-
+#ifndef FEATURE_USES_LOWMEM
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  ) 
-    {      
+#else
+    if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT) 
+#endif
+    {
+#ifndef FEATURE_USES_LOWMEM
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
         // 设置动画速度(毫秒)
@@ -4336,22 +4369,41 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         IIMAGE_Start( pMe->m_pStartupAniImg, 
                                 (pMe->m_rc.dx - ImgInfo.cx/PWROFF_ANI_FRAME_COUNT)/2, 
                                 (pMe->m_rc.dy - ImgInfo.cy)/2 );
-
+        
         pMe->m_wStartupAniTime++; // 滚动播放次数
         AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
         //(void) ISHELL_SetTimer(pMe->a.m_pIShell,
         //                      PWROFF_ANI_TIME,
         //                      (PFNNOTIFY)CoreApp_PlayPwrOffAni,
         //                      (void*)pMe);
+#else
+        {
+            #define PWROFF_STR L"Bye-Bye"
+            extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
+            IDISPLAY_ClearScreen(pMe->m_pDisplay);
+            GreyBitBrewFont_DrawText(pMe->m_pDisplay, 
+                                     8+2*(PWRON_ANI_FRAME_COUNT-pMe->m_wStartupAniTime),
+                                     PWROFF_STR,
+                                     -1,
+                                     0,0,
+                                     NULL,
+                                     IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+        }
+        pMe->m_wStartupAniTime++; // 滚动播放次数
+        AEE_SetSysTimer( PWROFF_ANI_RATE,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
+#endif
     }
     else
     {
+#ifndef FEATURE_USES_LOWMEM
         if ( NULL != pMe->m_pStartupAniImg )
         {     
             IIMAGE_Stop(pMe->m_pStartupAniImg);
             IIMAGE_Release(pMe->m_pStartupAniImg);
             pMe->m_pStartupAniImg = NULL;
-        }    
+        }
+#endif
         // 发送事件关闭开机动画播放对话
         (void)ISHELL_SendEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP, 
                                 EVT_DISPLAYDIALOGTIMEOUT,  0, 0);

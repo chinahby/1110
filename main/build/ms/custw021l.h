@@ -208,7 +208,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 //#define FEATURE_WMS_APP
 #endif
-#define FEATURE_LOWMEM
+#define FEATURE_USES_LOWMEM
 
 #include "custuim.h"
 #include "custcmx.h"

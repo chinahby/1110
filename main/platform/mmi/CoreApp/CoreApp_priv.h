@@ -551,9 +551,11 @@ typedef struct _CCoreApp
     boolean             m_bemergencymode;
 
     IALERT              *m_pAlert;           //IALERT指针
-    
+#ifndef FEATURE_USES_LOWMEM
     //开机动画图片
     IImage             *m_pStartupAniImg;
+#else
+#endif
     //IImage             *m_pSubStartupAniImg;//not used,2008/03/31
     
     // 开机动画每帧显示的毫秒数

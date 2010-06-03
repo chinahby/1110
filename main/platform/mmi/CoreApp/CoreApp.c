@@ -373,7 +373,9 @@ boolean CoreApp_InitAppData(IApplet* po)
     MEMSET(pMe->m_strPUK, 0, PUKCODE_LENGTH + 1);   
     pMe->m_SYS_MODE_NO_SRV = TRUE;
     MEMSET(pMe->svc_p_name, 0, UIM_CDMA_HOME_SERVICE_SIZE + 1); 
+#ifndef FEATURE_USES_LOWMEM
     pMe->m_pStartupAniImg = NULL;
+#endif
     pMe->m_battery_time = 0;
     pMe->m_battery_state = TRUE;
 #ifdef FEATURE_KEYGUARD

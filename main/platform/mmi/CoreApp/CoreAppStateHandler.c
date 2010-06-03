@@ -1623,10 +1623,12 @@ static NextFSMAction COREST_POWEROFF_Handler(CCoreApp *pMe)
 #ifdef FEATRUE_AUTO_POWER
         case DLGRET_MSGOK:
 #endif
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_ePowerDownType == POWERDOWN_NORMAL)
             {
                 pMe->m_pStartupAniImg = ISHELL_LoadImage( pMe->a.m_pIShell, PWROFF_ANI_FILE);
             }
+#endif
             CoreApp_ShowDialog(pMe, IDD_POWERDOWN);
             return NFSMACTION_WAIT;
             
