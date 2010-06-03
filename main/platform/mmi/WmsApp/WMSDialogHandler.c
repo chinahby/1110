@@ -8230,6 +8230,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_MENUCTL, 
                             (void **) &pMe->m_pMenu) == SUCCESS)
                     {
+                    
+                        AEERect rc={0};
+                        AEERect Temprc={0};
+
                         // 将文本控件置于非激活状态
                         ITEXTCTL_SetActive(pIText, FALSE);
                         
@@ -8244,6 +8248,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         
                         // 设置菜单属性
                         IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
+
+                        IMENUCTL_GetRect(pMe->m_pMenu, &rc);
+                        Temprc.y = rc.y+8;
+                        Temprc.x = rc.x;
+                        Temprc.dx = rc.dx;
+                        Temprc.dy = rc.dy-8;
+                        IMENUCTL_SetRect(pMe->m_pMenu, &Temprc);
                         
                         IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
                         IMENUCTL_SetBottomBarType(pMe->m_pMenu,BTBAR_SELECT_BACK);

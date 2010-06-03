@@ -68,10 +68,18 @@ SEE ALSO:
 int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
 {
     CtlAddItem ai;
-    
+    AEERect rc={0};
+    AEERect Temprc={0};
     ASSERT(pMe != NULL); 
     
     FARF(ADDR, ("CContApp_BuildOptsMenu bAll%d ", bAll));
+    IMENUCTL_GetRect(pMenuCtl, &rc);
+    Temprc.y = 0;
+    Temprc.x = rc.x;
+    Temprc.dx = rc.dx;
+    Temprc.dy = rc.dy-8;
+
+    IMENUCTL_SetRect(pMenuCtl, &Temprc);
     
     // Check Parameter
     if(!pMenuCtl)

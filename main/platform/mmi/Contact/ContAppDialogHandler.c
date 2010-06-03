@@ -3550,7 +3550,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             byte      inputHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL); 
             
             menurc = pMe->m_rc;
-            menurc.dy =  pMe->m_rc.dy- nBarHeight - inputHeight - 7; 
+            menurc.dy =  pMe->m_rc.dy- nBarHeight - inputHeight; 
             /*if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType)
             {
                 menurc.dy -= nBarHeight;//在复选界面中，要显示CContApp_DisplaySelectField
@@ -3575,7 +3575,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 menurc.dy += nBarHeight;//留空间给CContApp_DisplaySelectField
             */
             SETAEERECT(&textrc,  
-                       SEARCH_IMEICON_WIDTH,   menurc.y + menurc.dy ,    
+                       SEARCH_IMEICON_WIDTH,   menurc.y + menurc.dy - 2,    
                        pMe->m_rc.dx - SEARCH_IMEICON_WIDTH, nBarHeight);
             ITEXTCTL_SetRect(pTextCtl, &textrc);
 #ifdef FEATURE_LANG_CHINESE
@@ -3804,12 +3804,12 @@ static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
     IconRect.x = 0;
     IconRect.dx = SEARCH_IMEICON_WIDTH;
     IconRect.dy = GetBottomBarHeight(pIDisplay);/* + SEARCH_INPUTBOX_GAP*/ 
-    IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.textColor); 
+    IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor); 
     
     RightTopImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE, nResID);
     if(RightTopImg != NULL)
     {
-        IIMAGE_Draw(RightTopImg, IconRect.x, IconRect.y + 4);           
+        IIMAGE_Draw(RightTopImg, IconRect.x, IconRect.y);           
         IIMAGE_Release(RightTopImg);
         RightTopImg = NULL;
     }
