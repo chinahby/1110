@@ -73,7 +73,7 @@ when         who            what, where, why
 #define TIMER_SCREEN_HEIGHT   38
 #define TIMER_SCREEN_YOFFSET 33
 #define TIMER_SCREEN_WIDTH    60
-#define TIMER_IMAGE_WIDTH      130
+#define TIMER_IMAGE_WIDTH      100
 /*===========================================================================
 
                     TYPE DECLARATIONs
@@ -348,8 +348,8 @@ static boolean InitAppTimer(CAppTimer *pme)
         //uint32 dwProps;
         
         SETAEERECT( &rect, 
-                            (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET + 12,
-                            pme->titleBarHeight + MENUITEM_HEIGHT*2 +  TIMER_SCREEN_YOFFSET + 3,
+                            (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET,
+                            pme->titleBarHeight + MENUITEM_HEIGHT*2 +  TIMER_SCREEN_YOFFSET - 13,
                             TIMER_SCREEN_WIDTH,
                             0);
         //SETAEERECT( &rect, 0, (pme->cyScreen - pme->titleBarHeight) / 2 , pme->cxScreen, pme->titleBarHeight*2);
