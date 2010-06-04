@@ -37,7 +37,7 @@
 #-------------------------------------------------------------------------------
 
 LCD_SURF_C_SOURCES=\
-        disp_zgd_tft177.c \
+        disp_tm_cstn128x128.c \
         disp_api_default.c
 
 LCD_SURF_A_SOURCES=#
