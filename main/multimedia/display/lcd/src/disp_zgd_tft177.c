@@ -6,7 +6,7 @@ GENERAL DESCRIPTION
   This module is the driver for the Epson S1D19120 QVGA LCD Display panel.
 
 EXTERNALIZED FUNCTIONS
-  tm_cstn128x128_disp_init
+  zgd_tft177_disp_init
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
   None
@@ -46,7 +46,7 @@ when       who     what, where, why
 #include "drvLib.h"
 #include "clk.h"
 #include "clkrgm_msm.h"
-#include "disp_tm_cstn128x128.h"
+#include "disp_zgd_tft177.h"
 #include "gpio_1100.h"
 #include "pm.h"
 #include "pmapp.h"
@@ -60,19 +60,19 @@ when       who     what, where, why
 
 ============================================================================*/
 
-#define TM_CSTN128x128_DISP_WIDTH             128
-#define TM_CSTN128x128_DISP_HEIGHT            128
+#define ZGD_TFT177_DISP_WIDTH             128
+#define ZGD_TFT177_DISP_HEIGHT            160
 
-#define TM_CSTN128x128_DISP_MIN_CONTRAST      0
-#define TM_CSTN128x128_DISP_MAX_CONTRAST      255
-#define TM_CSTN128x128_DISP_DEFAULT_CONTRAST  128
+#define ZGD_TFT177_DISP_MIN_CONTRAST      0
+#define ZGD_TFT177_DISP_MAX_CONTRAST      255
+#define ZGD_TFT177_DISP_DEFAULT_CONTRAST  128
 
-#define TM_CSTN128x128_DISP_MIN_BACKLIGHT     0 
-#define TM_CSTN128x128_DISP_MAX_BACKLIGHT     7
-#define TM_CSTN128x128_DISP_DEFAULT_BACKLIGHT 3
+#define ZGD_TFT177_DISP_MIN_BACKLIGHT     0 
+#define ZGD_TFT177_DISP_MAX_BACKLIGHT     7
+#define ZGD_TFT177_DISP_DEFAULT_BACKLIGHT 3
 
-#define TM_CSTN128x128_DISP_ENABLE            TRUE
-#define TM_CSTN128x128_DISP_DISABLE           FALSE
+#define ZGD_TFT177_DISP_ENABLE            TRUE
+#define ZGD_TFT177_DISP_DISABLE           FALSE
 
 #define LCD_MAX_DISPLAYS 1
 /*=====================================================================
@@ -82,7 +82,7 @@ when       who     what, where, why
  * defined in another display driver module */
 
 #define LCD_VISIBLE_BACKLIGHT_LEVELS   \
-        ( (TM_CSTN128x128_DISP_MAX_BACKLIGHT) - (TM_CSTN128x128_DISP_MIN_BACKLIGHT) )
+        ( (ZGD_TFT177_DISP_MAX_BACKLIGHT) - (ZGD_TFT177_DISP_MIN_BACKLIGHT) )
 // GYOCKEY: The following was borrowed from SC2x AMSS for the Verde display card
 
 // Minimum PDM val for most dim display (without flicker) is different
@@ -140,7 +140,7 @@ typedef struct
 } lcd_properties_type;
 
 
-static void tm_cstn128x128_disp_update
+static void zgd_tft177_disp_update
 (
   const void *buf_ptr,        /* Buffer pointer */
   uint32 src_width,           /* Source image width */
@@ -153,9 +153,9 @@ static void tm_cstn128x128_disp_update
 );
 
 
-#define TM_SCTN_WRITE_CMD(v)  out_byte(lcatDispCfg[0].cmd_addr,(v))
-#define TM_SCTN_WRITE_DATA(v)  out_byte(lcatDispCfg[0].param_addr,(v))
-#define TM_SCTN_DELAY(v) clk_busy_wait(v*1000)
+#define HEXING_LCD_WRITE_CMD(v)  out_byte(lcatDispCfg[0].cmd_addr,(v))
+#define HEXING_LCD_WRITE_DATA(v)  out_byte(lcatDispCfg[0].param_addr,(v))
+#define HEXING_LCD_DELAY(v) clk_busy_wait(v*1000)
 
 
 /*=====================================================================
@@ -169,9 +169,9 @@ static lcd_properties_type lptDispInfo[LCD_MAX_DISPLAYS] =
    /* 
     * Display 0 (Primary - QVGA)
     */
-   {
-      TM_CSTN128x128_DISP_WIDTH, //240
-      TM_CSTN128x128_DISP_HEIGHT, //320
+   {      
+      ZGD_TFT177_DISP_HEIGHT, //320
+	  ZGD_TFT177_DISP_WIDTH, //240
       8,             // Bits per pixel    
       PEGS_EPSON_MFR_CODE, //0
       PEGS_EPSON_PRODUCT_CODE, //0
@@ -237,7 +237,7 @@ typedef struct
 	boolean disp_powered_up;
 	uint16  disp_area_start_row;
 	uint16  disp_area_end_row;
-} tm_cstn128x128_state_type;
+} zgd_tft177_state_type;
 
 /*============================================================================
 
@@ -245,9 +245,9 @@ typedef struct
 
 ============================================================================*/
 
-static rex_crit_sect_type        tm_cstn128x128_crit_sect = {0};
-static disp_info_type            tm_cstn128x128_disp_info = {0};
-static tm_cstn128x128_state_type tm_cstn128x128_state = {0};
+static rex_crit_sect_type        zgd_tft177_crit_sect = {0};
+static disp_info_type            zgd_tft177_disp_info = {0};
+static zgd_tft177_state_type zgd_tft177_state = {0};
 
 /*===========================================================================
 
@@ -255,7 +255,7 @@ static tm_cstn128x128_state_type tm_cstn128x128_state = {0};
 
 ============================================================================*/
 
-int tm_cstn128x128_install(char *str);
+int zgd_tft177_install(char *str);
 
 /*===========================================================================
 
@@ -264,7 +264,7 @@ int tm_cstn128x128_install(char *str);
 ===========================================================================*/
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_reset
+FUNCTION      zgd_tft177_reset
 
 DESCRIPTION
   Reset LCD controller
@@ -280,17 +280,17 @@ SIDE EFFECTS
   
 ===========================================================================*/
 
-static void tm_cstn128x128_reset(void)
+static void zgd_tft177_reset(void)
 {
      /* Reset controller to ensure clean state */
      /* Transfer command to display hardware*/  
-     TM_SCTN_WRITE_CMD(TM_CSTN128x128_SOFT_RESET_C);
+     HEXING_LCD_WRITE_CMD(ZGD_TFT177_SOFT_RESET_C);
      clk_busy_wait(1000);	 
-} /*tm_cstn128x128_reset */
+} /*zgd_tft177_reset */
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_HW_INIT
+FUNCTION      zgd_tft177_HW_INIT
 
 DESCRIPTION
   Initialize MSM for TMD display
@@ -305,7 +305,7 @@ SIDE EFFECTS
   MSM initialized for TMD LCD operation
 
 ===========================================================================*/
-static void tm_cstn128x128_hw_init(void)
+static void zgd_tft177_hw_init(void)
 {
 	uint32 regval = 0;
 
@@ -342,12 +342,12 @@ static void tm_cstn128x128_hw_init(void)
 #error code not present
 #endif /* T_FFA */
 
-} /* tm_cstn128x128_hw_init() */
+} /* zgd_tft177_hw_init() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_SET_SCREEN_AREA
+FUNCTION      zgd_tft177_SET_SCREEN_AREA
 
 DESCRIPTION
   Set up the LCD for a section of the screen to start displaying data.
@@ -362,7 +362,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static void tm_cstn128x128_set_screen_area(uint32 start_row, uint32 start_col,
+static void zgd_tft177_set_screen_area(uint32 start_row, uint32 start_col,
                                            uint32 end_row, uint32 end_col)
 {
 	int nDisp  = LCD_PRIMARY; /*TODO - Should come as a parameter */
@@ -390,21 +390,25 @@ static void tm_cstn128x128_set_screen_area(uint32 start_row, uint32 start_col,
 		/* Set LCD hardware to new drawing rectangle */
 		/* Set LCD hardware to set start address */
 		/* Transfer command to display hardware*/
-		TM_SCTN_WRITE_CMD(TM_CSTN128x128_SET_START_ADDRESS_C);
-		TM_SCTN_WRITE_DATA((uint8)start_col);
-		TM_SCTN_WRITE_DATA((uint8)end_col);
+		HEXING_LCD_WRITE_CMD(ZGD_TFT177_SET_START_ADDRESS_C);
+        HEXING_LCD_WRITE_DATA(0x0);
+		HEXING_LCD_WRITE_DATA((uint8)start_col);
+        HEXING_LCD_WRITE_DATA(0x0);
+		HEXING_LCD_WRITE_DATA((uint8)end_col);
 
 		/* Set LCD hardware to set start address */
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(TM_CSTN128x128_SET_END_ADDRESS_C);
-		TM_SCTN_WRITE_DATA((uint8)start_row);
-		TM_SCTN_WRITE_DATA((uint8)end_row);
+		HEXING_LCD_WRITE_CMD(ZGD_TFT177_SET_END_ADDRESS_C);
+        HEXING_LCD_WRITE_DATA(0x0);        
+		HEXING_LCD_WRITE_DATA((uint8)start_row);
+        HEXING_LCD_WRITE_DATA(0x0);        
+		HEXING_LCD_WRITE_DATA((uint8)end_row);
 	}
-} /* tm_cstn128x128_set_screen_area() */
+} /* zgd_tft177_set_screen_area() */
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_SET_BACKLIGHT
+FUNCTION      zgd_tft177_DISP_SET_BACKLIGHT
 
 DESCRIPTION
   This function sets the backlight level.
@@ -420,27 +424,27 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static void tm_cstn128x128_disp_set_backlight(byte level)
+static void zgd_tft177_disp_set_backlight(byte level)
 {
-	static uint32 current_level =  TM_CSTN128x128_DISP_MIN_BACKLIGHT;
+	static uint32 current_level =  ZGD_TFT177_DISP_MIN_BACKLIGHT;
   
-	if(tm_cstn128x128_state.disp_initialized &&
-		tm_cstn128x128_state.disp_powered_up  &&
-		tm_cstn128x128_state.display_on)
+	if(zgd_tft177_state.disp_initialized &&
+		zgd_tft177_state.disp_powered_up  &&
+		zgd_tft177_state.display_on)
 	{
 		if (level!= current_level)
 		{
-			rex_enter_crit_sect(&tm_cstn128x128_crit_sect);
+			rex_enter_crit_sect(&zgd_tft177_crit_sect);
 
 			/* Bound given intensity */
-			if (level > TM_CSTN128x128_DISP_MAX_BACKLIGHT )
+			if (level > ZGD_TFT177_DISP_MAX_BACKLIGHT )
 			{
-				level = TM_CSTN128x128_DISP_MAX_BACKLIGHT;
+				level = ZGD_TFT177_DISP_MAX_BACKLIGHT;
 			}
-			else if (TM_CSTN128x128_DISP_MIN_BACKLIGHT - level > 0)
+			else if (ZGD_TFT177_DISP_MIN_BACKLIGHT - level > 0)
 			{
 				/* Turn backlight off */
-				level = TM_CSTN128x128_DISP_MIN_BACKLIGHT;
+				level = ZGD_TFT177_DISP_MIN_BACKLIGHT;
 			}
 
 		{
@@ -455,7 +459,8 @@ static void tm_cstn128x128_disp_set_backlight(byte level)
 				0);
 			}
 
-			pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
+			//pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
+			pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)ZGD_TFT177_DISP_MAX_BACKLIGHT);
 			if (PM_ERR_FLAG__SUCCESS != pefRet)
 			{
 				MSG_MED("PMIC LCD backlight set failed: pefRet=%d, nLevel=%d",
@@ -466,14 +471,14 @@ static void tm_cstn128x128_disp_set_backlight(byte level)
 		}
 
 			current_level = level;   
-			rex_leave_crit_sect(&tm_cstn128x128_crit_sect);
+			rex_leave_crit_sect(&zgd_tft177_crit_sect);
 		}
 	}
-} /* tm_cstn128x128_disp_set_backlight */
+} /* zgd_tft177_disp_set_backlight */
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_CLEAR_SCREEN_AREA
+FUNCTION      zgd_tft177_DISP_CLEAR_SCREEN_AREA
 
 DESCRIPTION
   This function clears an area of the screen.
@@ -488,42 +493,35 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static void tm_cstn128x128_disp_clear_screen_area(word start_row, word start_col,
+static void zgd_tft177_disp_clear_screen_area(word start_row, word start_col,
                                                   word end_row, word end_col)
 {
   uint32 i = (end_row - start_row + 1) * (end_col - start_col + 1);
   static uint32 whitebpp = 0xFF;
 
-	if (tm_cstn128x128_state.disp_initialized &&
-		tm_cstn128x128_state.disp_powered_up  &&
-		tm_cstn128x128_state.display_on)
+	if (zgd_tft177_state.disp_initialized &&
+		zgd_tft177_state.disp_powered_up  &&
+		zgd_tft177_state.display_on)
 	{
-		rex_enter_crit_sect(&tm_cstn128x128_crit_sect);
+		rex_enter_crit_sect(&zgd_tft177_crit_sect);
 
-		//tm_cstn128x128_set_screen_area(start_row, start_col, end_row, end_col);
-		TM_SCTN_WRITE_CMD(0x2a);     //col
-		TM_SCTN_WRITE_DATA(start_col);   //0~127
-		TM_SCTN_WRITE_DATA(end_col);
-
-		TM_SCTN_WRITE_CMD(0x2b);     //page
-		TM_SCTN_WRITE_DATA(start_row);   //0~127
-		TM_SCTN_WRITE_DATA(end_col);
+		zgd_tft177_set_screen_area(start_row, start_col, end_row, end_col);
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(TM_CSTN128x128_RAM_WRITE_C);  
+		HEXING_LCD_WRITE_CMD(ZGD_TFT177_RAM_WRITE_C);  
 		while(i--)
 		{
-			TM_SCTN_WRITE_DATA((uint8)(whitebpp));
-			TM_SCTN_WRITE_DATA((uint8)(whitebpp));
+			HEXING_LCD_WRITE_DATA((uint8)(whitebpp));
+			HEXING_LCD_WRITE_DATA((uint8)(whitebpp));
 		}
 
-		rex_leave_crit_sect(&tm_cstn128x128_crit_sect);
+		rex_leave_crit_sect(&zgd_tft177_crit_sect);
 	}
-} /* tm_cstn128x128_disp_clear_screen_area() */
+} /* zgd_tft177_disp_clear_screen_area() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_CLEAR_WHOLE_SCREEN
+FUNCTION      zgd_tft177_DISP_CLEAR_WHOLE_SCREEN
 
 DESCRIPTION
   This function clears the whole screen.
@@ -538,18 +536,18 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static void tm_cstn128x128_disp_clear_whole_screen(void)
+static void zgd_tft177_disp_clear_whole_screen(void)
 {
-	tm_cstn128x128_disp_clear_screen_area(0, 
+	zgd_tft177_disp_clear_screen_area(0, 
 	                                    0,
-	                                    tm_cstn128x128_disp_info.disp_height-1,
-	                                    tm_cstn128x128_disp_info.disp_width-1);
-} /* tm_cstn128x128_disp_clear_whole_screen() */
+	                                    zgd_tft177_disp_info.disp_height-1,
+	                                    zgd_tft177_disp_info.disp_width-1);
+} /* zgd_tft177_disp_clear_whole_screen() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_OFF
+FUNCTION      zgd_tft177_DISP_OFF
 
 DESCRIPTION
   This function turns off the display.
@@ -564,28 +562,28 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static void tm_cstn128x128_disp_off(void)
+static void zgd_tft177_disp_off(void)
 {
-	rex_enter_crit_sect(&tm_cstn128x128_crit_sect);
+	rex_enter_crit_sect(&zgd_tft177_crit_sect);
 
-	if(tm_cstn128x128_state.disp_powered_up && tm_cstn128x128_state.display_on)
+	if(zgd_tft177_state.disp_powered_up && zgd_tft177_state.display_on)
 	{
 		/* Add code here */
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(TM_CSTN128x128_DISPLAY_OFF_C); 
+		HEXING_LCD_WRITE_CMD(ZGD_TFT177_DISPLAY_OFF_C); 
 		clk_busy_wait(1000);
-		tm_cstn128x128_disp_set_backlight(TM_CSTN128x128_DISP_MIN_BACKLIGHT);
+		zgd_tft177_disp_set_backlight(ZGD_TFT177_DISP_MIN_BACKLIGHT);
 		/* Display put to SLEEP state */
-		tm_cstn128x128_state.display_on = FALSE;
+		zgd_tft177_state.display_on = FALSE;
 	}
 
-	rex_leave_crit_sect(&tm_cstn128x128_crit_sect);
-} /* tm_cstn128x128_disp_off() */
+	rex_leave_crit_sect(&zgd_tft177_crit_sect);
+} /* zgd_tft177_disp_off() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_ON
+FUNCTION      zgd_tft177_DISP_ON
 
 DESCRIPTION
   This function turns on the display.
@@ -600,27 +598,27 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static void tm_cstn128x128_disp_on(void)
+static void zgd_tft177_disp_on(void)
 {
-	rex_enter_crit_sect(&tm_cstn128x128_crit_sect);
+	rex_enter_crit_sect(&zgd_tft177_crit_sect);
 
-	if(tm_cstn128x128_state.disp_powered_up && !tm_cstn128x128_state.display_on)
+	if(zgd_tft177_state.disp_powered_up && !zgd_tft177_state.display_on)
 	{  
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(TM_CSTN128x128_DISPLAY_ON_C); 
+		HEXING_LCD_WRITE_CMD(ZGD_TFT177_DISPLAY_ON_C); 
 		clk_busy_wait(1000);
 
 		/* Display put to ACTIVE state */
-		tm_cstn128x128_state.display_on = TRUE;
+		zgd_tft177_state.display_on = TRUE;
 	}
 
-	rex_leave_crit_sect(&tm_cstn128x128_crit_sect);
-} /* tm_cstn128x128_disp_on() */
+	rex_leave_crit_sect(&zgd_tft177_crit_sect);
+} /* zgd_tft177_disp_on() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_POWERUP
+FUNCTION      zgd_tft177_DISP_POWERUP
 
 DESCRIPTION
   This function powers up the device.
@@ -638,113 +636,119 @@ SIDE EFFECTS
 
 #ifdef CUST_EDITION
 
-static void tm_cstn128x128_disp_powerup(void)
+static void zgd_tft177_disp_powerup(void)
 {
-    rex_enter_crit_sect(&tm_cstn128x128_crit_sect);
+    rex_enter_crit_sect(&zgd_tft177_crit_sect);
 
-    if (!tm_cstn128x128_state.disp_powered_up && !tm_cstn128x128_state.display_on)
+    if (!zgd_tft177_state.disp_powered_up && !zgd_tft177_state.display_on)
     {
-     	TM_SCTN_WRITE_CMD(0x01);  //software reset
-    	TM_SCTN_DELAY(150);       //delay 150ms
-    	TM_SCTN_WRITE_CMD(0xD7); // Auto load set
-    	TM_SCTN_WRITE_DATA(0x9f);//auto load disable//0x9f
-    	TM_SCTN_WRITE_CMD(0xe0);  //EE read/write mode
-    	TM_SCTN_WRITE_DATA(0x00); //set read  mode
-    	TM_SCTN_DELAY(50);          //delay 50 ms
-    	//TM_SCTN_WRITE_CMD(0xfa);  //EE read/write control
-    	//TM_SCTN_WRITE_DATA(0x01); //set read  enble
-    	TM_SCTN_DELAY(50);          //delay 50 ms
-    	TM_SCTN_WRITE_CMD(0xe3);   //read active
-    	TM_SCTN_DELAY(20);       //delay 20 ms
-    	TM_SCTN_WRITE_CMD(0xe1);   //cancel control close read mode
+     //   RSB = 1;
+     //   HEXING_LCD_DELAY(1); // Delay 1ms
+    //    RSB = 0;
+     //   HEXING_LCD_DELAY(10); // Delay 10ms // This delay time is necessary
+     //   RSB = 1;
+     //   HEXING_LCD_DELAY(120); // Delay 50 ms
 
-    	/////sleep out ///////
-    	TM_SCTN_WRITE_CMD(0x28);  //display off
-    	TM_SCTN_WRITE_CMD(0x11);  //sleep out
-    	TM_SCTN_DELAY(10);
-    	
-		//////////////////////////////////////////////////////
-    	/////VOP set///////////
-    	TM_SCTN_WRITE_CMD(0xc0);  //vo voltage set   
-    	TM_SCTN_WRITE_DATA(0x1f);//////////ff
-    	TM_SCTN_WRITE_DATA(0x01);//00//01
 
-        TM_SCTN_WRITE_CMD(0x25);   //write contrast for mobile
-    	TM_SCTN_WRITE_DATA(0x3f);
-    	//-----------OTPB SET----------------------//
-    	TM_SCTN_WRITE_CMD(0xc3);// bias set
-    	TM_SCTN_WRITE_DATA(0x01);    //1/12
-    	TM_SCTN_WRITE_CMD(0xc4);   //booster set
-    	TM_SCTN_WRITE_DATA(0x06);//  //06   7±¶Ñ¹
-    	TM_SCTN_WRITE_CMD(0xc5);   //booster efficiency set
-    	TM_SCTN_WRITE_DATA(0x01);    //11
-    	TM_SCTN_WRITE_CMD(0xcb);   //vg  booster set
-    	TM_SCTN_WRITE_DATA(0x01);
-    	
-    	TM_SCTN_WRITE_CMD(0xd0);   //set vg source
-    	TM_SCTN_WRITE_DATA(0x1d);
-    	
-    //------------MTP SET-------------------------//		
-    	TM_SCTN_WRITE_CMD(0xb5);   //n-line set
-    	TM_SCTN_WRITE_DATA(0x89);//00
-    	
-    	TM_SCTN_WRITE_CMD(0xbd);  //x-talk compensation
-    	TM_SCTN_WRITE_DATA(0x02); //step2=level3
 
-        TM_SCTN_WRITE_CMD(0xf0);  
-        TM_SCTN_WRITE_DATA(0x06); 
-        TM_SCTN_WRITE_DATA(0x0b); 
-        TM_SCTN_WRITE_DATA(0x0d);
-        TM_SCTN_WRITE_DATA(0x15);
-    	
-    	TM_SCTN_WRITE_CMD(0x36); //MEMORY ACCESS CONTROL
-    	TM_SCTN_WRITE_DATA(0x88);//c8
-    	
-    	TM_SCTN_WRITE_CMD(0x3a);   //interface pixer format
-    	TM_SCTN_WRITE_DATA(0x05);   //16bits pixel
-    	
-    	TM_SCTN_WRITE_CMD(0xb0);   //duty setting
-    	TM_SCTN_WRITE_DATA(0x7f); //duty=128
-    	//=====================new		    	     
-    	TM_SCTN_WRITE_CMD(0x2a);     //col
-    	TM_SCTN_WRITE_DATA(0x00);   //0~127
-    	TM_SCTN_WRITE_DATA(0x7f);
+        //--************ Start Initial Sequence **********--//
+        HEXING_LCD_WRITE_CMD(0x11); //Exit Sleep
+        HEXING_LCD_DELAY(120);
 
-    	TM_SCTN_WRITE_CMD(0x2b);     //page
-    	TM_SCTN_WRITE_DATA(0x00);   //0~127
-    	TM_SCTN_WRITE_DATA(0x7f);
-    	
-    //-------------------gamma table set------------------//
-    	TM_SCTN_WRITE_CMD(0xf9);   //gamma
-    	TM_SCTN_WRITE_DATA(0x00);
-    	TM_SCTN_WRITE_DATA(0x03);
-    	TM_SCTN_WRITE_DATA(0x05);
-    	TM_SCTN_WRITE_DATA(0x07);
-    	TM_SCTN_WRITE_DATA(0x09);
-    	TM_SCTN_WRITE_DATA(0x0b);
-    	TM_SCTN_WRITE_DATA(0x0d);
-    	TM_SCTN_WRITE_DATA(0x0f);
-    	TM_SCTN_WRITE_DATA(0x11);
-    	TM_SCTN_WRITE_DATA(0x13);
-    	TM_SCTN_WRITE_DATA(0x15);
-    	TM_SCTN_WRITE_DATA(0x17);
-    	TM_SCTN_WRITE_DATA(0x19);
-    	TM_SCTN_WRITE_DATA(0x1b);
-    	TM_SCTN_WRITE_DATA(0x1d);
-    	TM_SCTN_WRITE_DATA(0x1f);
 
-        TM_SCTN_WRITE_CMD(0x29);
-    	TM_SCTN_WRITE_CMD(0x2c);
-        tm_cstn128x128_state.disp_powered_up = TRUE;
+
+        HEXING_LCD_WRITE_CMD(0x26); //Set Default Gamma
+        HEXING_LCD_WRITE_DATA(0x04);
+
+        HEXING_LCD_WRITE_CMD(0xB1);
+        HEXING_LCD_WRITE_DATA(0x08);
+        HEXING_LCD_WRITE_DATA(0x10);
+
+        HEXING_LCD_WRITE_CMD(0xC0); //Set VRH1[4:0] & VC[2:0] for VCI1 & GVDD
+        HEXING_LCD_WRITE_DATA(0x02);
+        HEXING_LCD_WRITE_DATA(0x00);
+
+        HEXING_LCD_WRITE_CMD(0xC1); //Set BT[2:0] for AVDD & VCL & VGH & VGL
+        HEXING_LCD_WRITE_DATA(0x02);
+
+        HEXING_LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
+        HEXING_LCD_WRITE_DATA(0x4C);//0x4C
+        HEXING_LCD_WRITE_DATA(0x5E);
+
+        HEXING_LCD_WRITE_CMD(0xC7); 
+        HEXING_LCD_WRITE_DATA(0x00);
+
+
+
+
+        HEXING_LCD_WRITE_CMD(0x3a); //Set Color Format
+        HEXING_LCD_WRITE_DATA(0x05);
+
+        HEXING_LCD_WRITE_CMD(0x2A); //Set Column Address
+        HEXING_LCD_WRITE_DATA(0x00);
+        HEXING_LCD_WRITE_DATA(0x00);
+        HEXING_LCD_WRITE_DATA(0x00);
+        HEXING_LCD_WRITE_DATA(0x7F);
+        HEXING_LCD_WRITE_CMD(0x2B); //Set Page Address
+        HEXING_LCD_WRITE_DATA(0x00);
+        HEXING_LCD_WRITE_DATA(0x00);
+        HEXING_LCD_WRITE_DATA(0x00);
+        HEXING_LCD_WRITE_DATA(0x9F);
+
+        HEXING_LCD_WRITE_CMD(0x36); //Set Scanning Direction
+		HEXING_LCD_WRITE_DATA(0x60);  //..0x60 //..0x40 //..0x20 //..0x00 //..0x80 //0xa0 //..0xc0 //0xe0
+
+        HEXING_LCD_WRITE_CMD(0xB7); //Set Source Output Direction
+        HEXING_LCD_WRITE_DATA(0x00);
+
+        HEXING_LCD_WRITE_CMD(0xf2); //Enable Gamma bit
+        HEXING_LCD_WRITE_DATA(0x01);
+
+        HEXING_LCD_WRITE_CMD(0xE0);
+        HEXING_LCD_WRITE_DATA(0x3F);//p1
+        HEXING_LCD_WRITE_DATA(0x22);//p2
+        HEXING_LCD_WRITE_DATA(0x20);//p3
+        HEXING_LCD_WRITE_DATA(0x24);//p4
+        HEXING_LCD_WRITE_DATA(0x20);//p5
+        HEXING_LCD_WRITE_DATA(0x0C);//p6
+        HEXING_LCD_WRITE_DATA(0x4E);//p7
+        HEXING_LCD_WRITE_DATA(0xB7);//p8
+        HEXING_LCD_WRITE_DATA(0x3C);//p9
+        HEXING_LCD_WRITE_DATA(0x19);//p10
+        HEXING_LCD_WRITE_DATA(0x22);//p11
+        HEXING_LCD_WRITE_DATA(0x1E);//p12
+        HEXING_LCD_WRITE_DATA(0x02);//p13
+        HEXING_LCD_WRITE_DATA(0x01);//p14
+        HEXING_LCD_WRITE_DATA(0x00);//p15
+
+        HEXING_LCD_WRITE_CMD(0xE1);
+        HEXING_LCD_WRITE_DATA(0x00);//p1
+        HEXING_LCD_WRITE_DATA(0x1B);//p2
+        HEXING_LCD_WRITE_DATA(0x1F);//p3
+        HEXING_LCD_WRITE_DATA(0x0B);//p4
+        HEXING_LCD_WRITE_DATA(0x0F);//p5
+        HEXING_LCD_WRITE_DATA(0x13);//p6
+        HEXING_LCD_WRITE_DATA(0x31);//p7
+        HEXING_LCD_WRITE_DATA(0x84);//p8
+        HEXING_LCD_WRITE_DATA(0x43);//p9
+        HEXING_LCD_WRITE_DATA(0x06);//p10
+        HEXING_LCD_WRITE_DATA(0x1D);//p11
+        HEXING_LCD_WRITE_DATA(0x21);//p12
+        HEXING_LCD_WRITE_DATA(0x3D);//p13
+        HEXING_LCD_WRITE_DATA(0x3E);//p14
+        HEXING_LCD_WRITE_DATA(0x3F);//p15
+
+        HEXING_LCD_WRITE_CMD(0x29); // Display On
+        zgd_tft177_state.disp_powered_up = TRUE;
    }
    
-   rex_leave_crit_sect(&tm_cstn128x128_crit_sect);
+   rex_leave_crit_sect(&zgd_tft177_crit_sect);
 }
 #endif
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_POWERDOWN
+FUNCTION      zgd_tft177_DISP_POWERDOWN
 
 DESCRIPTION
   This function powers down the device.
@@ -759,33 +763,34 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static int tm_cstn128x128_disp_powerdown(void)
+static int zgd_tft177_disp_powerdown(void)
 {
-	rex_enter_crit_sect(&tm_cstn128x128_crit_sect);
+	rex_enter_crit_sect(&zgd_tft177_crit_sect);
 
-	if (tm_cstn128x128_state.disp_powered_up && !tm_cstn128x128_state.display_on) 
+	if (zgd_tft177_state.disp_powered_up && !zgd_tft177_state.display_on) 
 	{
 		/* 
 		* Power-down the controller 
 		*/
 		/* Transfer command to display hardware */
-		tm_cstn128x128_reset();
+		zgd_tft177_reset();
+		HEXING_LCD_WRITE_CMD(0x10); //Sleep in
 		/* Reset controller to ensure clean state */
 		/* Transfer command to display hardware*/
-		//out_word(lcatDispCfg[0].cmd_addr, DISP_EPSON_CMD9(TM_CSTN128x128_VDD_OFF_C));   miaoxiaoming
+		//out_word(lcatDispCfg[0].cmd_addr, DISP_EPSON_CMD9(ZGD_TFT177_VDD_OFF_C));   miaoxiaoming
 		clk_busy_wait(100);
-		tm_cstn128x128_state.disp_powered_up = FALSE;
+		zgd_tft177_state.disp_powered_up = FALSE;
 	}
 
-	rex_leave_crit_sect(&tm_cstn128x128_crit_sect);
+	rex_leave_crit_sect(&zgd_tft177_crit_sect);
 
 	return FALSE;
-} /* tm_cstn128x128_disp_powerdown() */
+} /* zgd_tft177_disp_powerdown() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_INIT
+FUNCTION      zgd_tft177_DISP_INIT
 
 DESCRIPTION
   This function initialize the Pegs Toshiba display panel
@@ -800,52 +805,52 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-int tm_cstn128x128_disp_init(void)
+int zgd_tft177_disp_init(void)
 {
-	if (tm_cstn128x128_state.disp_initialized) 
+	if (zgd_tft177_state.disp_initialized) 
 	{
 		/* Do not re-initialize the display */
 		return 1;
 	}
 
-	tm_cstn128x128_disp_info.disp_width         = TM_CSTN128x128_DISP_WIDTH;
-	tm_cstn128x128_disp_info.disp_height        = TM_CSTN128x128_DISP_HEIGHT;
-	tm_cstn128x128_disp_info.bpp                = DISP_8BPP;
-	tm_cstn128x128_disp_info.palette_support    = FALSE;
-	tm_cstn128x128_disp_info.contrast_support   = FALSE;
-	tm_cstn128x128_disp_info.contrast_min       = TM_CSTN128x128_DISP_MIN_CONTRAST;
-	tm_cstn128x128_disp_info.contrast_max       = TM_CSTN128x128_DISP_MAX_CONTRAST;
-	tm_cstn128x128_disp_info.contrast_default   = TM_CSTN128x128_DISP_DEFAULT_CONTRAST;
-	tm_cstn128x128_disp_info.backlight_support  = TRUE;
-	tm_cstn128x128_disp_info.backlight_min      = TM_CSTN128x128_DISP_MIN_BACKLIGHT;
-	tm_cstn128x128_disp_info.backlight_max      = TM_CSTN128x128_DISP_MAX_BACKLIGHT;
-	tm_cstn128x128_disp_info.backlight_default  = TM_CSTN128x128_DISP_DEFAULT_BACKLIGHT;
-    tm_cstn128x128_disp_info.lcd_type           = TM_SCTN128;
-    tm_cstn128x128_disp_info.phys_width         = TM_CSTN128x128_DISP_WIDTH;    
-    tm_cstn128x128_disp_info.phys_height        = TM_CSTN128x128_DISP_HEIGHT; 
+	zgd_tft177_disp_info.disp_width         = ZGD_TFT177_DISP_HEIGHT;
+	zgd_tft177_disp_info.disp_height        = ZGD_TFT177_DISP_WIDTH;
+	zgd_tft177_disp_info.bpp                = DISP_16BPP;
+	zgd_tft177_disp_info.palette_support    = FALSE;
+	zgd_tft177_disp_info.contrast_support   = FALSE;
+	zgd_tft177_disp_info.contrast_min       = ZGD_TFT177_DISP_MIN_CONTRAST;
+	zgd_tft177_disp_info.contrast_max       = ZGD_TFT177_DISP_MAX_CONTRAST;
+	zgd_tft177_disp_info.contrast_default   = ZGD_TFT177_DISP_DEFAULT_CONTRAST;
+	zgd_tft177_disp_info.backlight_support  = TRUE;
+	zgd_tft177_disp_info.backlight_min      = ZGD_TFT177_DISP_MIN_BACKLIGHT;
+	zgd_tft177_disp_info.backlight_max      = ZGD_TFT177_DISP_MAX_BACKLIGHT;
+	zgd_tft177_disp_info.backlight_default  = ZGD_TFT177_DISP_DEFAULT_BACKLIGHT;
+  zgd_tft177_disp_info.lcd_type           = ZGD_TFT128X160;
+  zgd_tft177_disp_info.phys_width         = ZGD_TFT177_DISP_WIDTH;    
+  zgd_tft177_disp_info.phys_height        = ZGD_TFT177_DISP_HEIGHT; 
 
-	rex_init_crit_sect(&tm_cstn128x128_crit_sect);
+	rex_init_crit_sect(&zgd_tft177_crit_sect);
 
-	tm_cstn128x128_hw_init();
+	zgd_tft177_hw_init();
 
-	tm_cstn128x128_disp_powerup();
+	zgd_tft177_disp_powerup();
 
-	tm_cstn128x128_disp_on();
+	zgd_tft177_disp_on();
 
-	tm_cstn128x128_state.disp_initialized = TRUE;
+	zgd_tft177_state.disp_initialized = TRUE;
 	
 
-	tm_cstn128x128_disp_clear_whole_screen();
+	zgd_tft177_disp_clear_whole_screen();
 
-	tm_cstn128x128_disp_set_backlight(TM_CSTN128x128_DISP_MAX_BACKLIGHT);
+	zgd_tft177_disp_set_backlight(ZGD_TFT177_DISP_MAX_BACKLIGHT);
 
 	return 1;
-} /* tm_cstn128x128_disp_init() */
+} /* zgd_tft177_disp_init() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_GET_INFO
+FUNCTION      zgd_tft177_DISP_GET_INFO
 
 DESCRIPTION
   This function returns display information
@@ -860,15 +865,15 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static disp_info_type tm_cstn128x128_disp_get_info(void)
+static disp_info_type zgd_tft177_disp_get_info(void)
 {
-	return tm_cstn128x128_disp_info;
-} /* tm_cstn128x128_disp_get_info() */
+	return zgd_tft177_disp_info;
+} /* zgd_tft177_disp_get_info() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_COPY
+FUNCTION      zgd_tft177_DISP_COPY
 
 DESCRIPTION
   Copy image data from a buffer to the LCD display
@@ -883,7 +888,7 @@ SIDE EFFECTS
   LCD is updated
 
 ===========================================================================*/
-static void tm_cstn128x128_disp_copy(void *src_ptr, dword copy_count)
+static void zgd_tft177_disp_copy(void *src_ptr, dword copy_count)
 {  
 	int i;
 	uint16 *pdata = src_ptr;
@@ -904,8 +909,8 @@ static void tm_cstn128x128_disp_copy(void *src_ptr, dword copy_count)
         for ( i = 0; i < copy_count; i++ )
         {
             data = (uint16)(*pdata);
-			TM_SCTN_WRITE_DATA((uint8)(data>>8));
-			TM_SCTN_WRITE_DATA((uint8)(data&(0x00ff)));
+			HEXING_LCD_WRITE_DATA((uint8)(data>>8));
+			HEXING_LCD_WRITE_DATA((uint8)(data&(0x00ff)));
             pdata++;
         }        
     }
@@ -913,12 +918,13 @@ static void tm_cstn128x128_disp_copy(void *src_ptr, dword copy_count)
     {
       	MSG_ERROR(" Illegal Src Ptr assigned",0,0,0);
     }
-} /* tm_cstn128x128_disp_copy() */
+    
+} /* zgd_tft177_disp_copy() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_UPDATE
+FUNCTION      zgd_tft177_DISP_UPDATE
 
 DESCRIPTION
   Update LCD display with image from a buffer. The position of the image
@@ -934,7 +940,7 @@ SIDE EFFECTS
   LCD is updated
 
 ===========================================================================*/
-static void tm_cstn128x128_disp_update
+static void zgd_tft177_disp_update
 (
 	const void *buf_ptr,        /* Buffer pointer */
 	uint32 src_width,           /* Source image width */
@@ -949,33 +955,33 @@ static void tm_cstn128x128_disp_update
 	uint16* src_ptr = NULL;
 
 	if (!buf_ptr                          || 
-		!tm_cstn128x128_state.disp_initialized ||
-		!tm_cstn128x128_state.disp_powered_up  ||
-		!tm_cstn128x128_state.display_on)
+		!zgd_tft177_state.disp_initialized ||
+		!zgd_tft177_state.disp_powered_up  ||
+		!zgd_tft177_state.display_on)
 	{
 		return;
 	}
 
-	if ((dst_starting_row + num_of_rows) > tm_cstn128x128_disp_info.disp_height)
+	if ((dst_starting_row + num_of_rows) > zgd_tft177_disp_info.disp_height)
 	{
-		num_of_rows = tm_cstn128x128_disp_info.disp_height - dst_starting_row;
+		num_of_rows = zgd_tft177_disp_info.disp_height - dst_starting_row;
 	}
 	
-	if ((dst_starting_column + num_of_columns) > tm_cstn128x128_disp_info.disp_width)
+	if ((dst_starting_column + num_of_columns) > zgd_tft177_disp_info.disp_width)
 	{
-		num_of_columns = tm_cstn128x128_disp_info.disp_width - dst_starting_column;
+		num_of_columns = zgd_tft177_disp_info.disp_width - dst_starting_column;
 	}
 
 	/* Ensure buffer aligned and parameters valid */
-	if((src_starting_row    < tm_cstn128x128_disp_info.disp_height) &&
-		(src_starting_column < tm_cstn128x128_disp_info.disp_width)  &&
-		(dst_starting_row    < tm_cstn128x128_disp_info.disp_height) &&
-		(dst_starting_column < tm_cstn128x128_disp_info.disp_width)  &&
+	if((src_starting_row    < zgd_tft177_disp_info.disp_height) &&
+		(src_starting_column < zgd_tft177_disp_info.disp_width)  &&
+		(dst_starting_row    < zgd_tft177_disp_info.disp_height) &&
+		(dst_starting_column < zgd_tft177_disp_info.disp_width)  &&
 		(!(((uint32)buf_ptr) & 0x3)))
 	{
-		rex_enter_crit_sect(&tm_cstn128x128_crit_sect);    
+		rex_enter_crit_sect(&zgd_tft177_crit_sect);    
 
-		tm_cstn128x128_set_screen_area(dst_starting_row, dst_starting_column, 
+		zgd_tft177_set_screen_area(dst_starting_row, dst_starting_column, 
 	                       				dst_starting_row + num_of_rows - 1,
 	                       				dst_starting_column + num_of_columns -1);
 
@@ -983,7 +989,7 @@ static void tm_cstn128x128_disp_update
 		src_ptr += src_starting_row * src_width + src_starting_column;
 
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(TM_CSTN128x128_RAM_WRITE_C); 
+		HEXING_LCD_WRITE_CMD(ZGD_TFT177_RAM_WRITE_C); 
 
 		if((src_starting_column == 0) && (num_of_columns == src_width)) 
 		{
@@ -992,7 +998,7 @@ static void tm_cstn128x128_disp_update
 			/* The whole row is updated, copy the whole update area */
 			copy_count = num_of_rows * num_of_columns;
 
-			tm_cstn128x128_disp_copy(src_ptr, copy_count);
+			zgd_tft177_disp_copy(src_ptr, copy_count);
 		} 
 		else 
 		{
@@ -1003,14 +1009,14 @@ static void tm_cstn128x128_disp_update
 			copy_count = num_of_columns;
 			for (row = 0; row < num_of_rows; row++)
 			{
-				tm_cstn128x128_disp_copy(src_ptr, copy_count);
+				zgd_tft177_disp_copy(src_ptr, copy_count);
 				src_ptr += src_width;
 			}
 		}
 		
-		rex_leave_crit_sect(&tm_cstn128x128_crit_sect);
+		rex_leave_crit_sect(&zgd_tft177_crit_sect);
 	}  
-} /* tm_cstn128x128_disp_update() */
+} /* zgd_tft177_disp_update() */
 
 
 /*===========================================================================
@@ -1030,15 +1036,15 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static void tm_cstn128x128_disp_set_contrast(word contrast)
+static void zgd_tft177_disp_set_contrast(word contrast)
 {
 	return;
-} /* tm_cstn128x128_disp_set_contrast() */
+} /* zgd_tft177_disp_set_contrast() */
 
 
 /*===========================================================================
 
-FUNCTION      tm_cstn128x128_DISP_IOCTL
+FUNCTION      zgd_tft177_DISP_IOCTL
 
 DESCRIPTION
   This function installs LCD device driver
@@ -1053,7 +1059,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-static int tm_cstn128x128_disp_ioctl ( int cmd, void *arg )
+static int zgd_tft177_disp_ioctl ( int cmd, void *arg )
 {
 	disp_update_type *disp_update_cmd;
 
@@ -1072,7 +1078,7 @@ static int tm_cstn128x128_disp_ioctl ( int cmd, void *arg )
 		    disp_update_cmd->dst_starting_row |
 		    disp_update_cmd->dst_starting_column ) >= 0)
 		{
-			tm_cstn128x128_disp_update(disp_update_cmd->buf_ptr,
+			zgd_tft177_disp_update(disp_update_cmd->buf_ptr,
 			                        (uint32)disp_update_cmd->src_width,
 			                        (uint32)disp_update_cmd->src_starting_row,
 			                        (uint32)disp_update_cmd->src_starting_column,
@@ -1084,35 +1090,35 @@ static int tm_cstn128x128_disp_ioctl ( int cmd, void *arg )
 		break;
 
 	case IOCTL_DISP_GET_INFO:
-		*(disp_info_type *)arg = tm_cstn128x128_disp_get_info();
+		*(disp_info_type *)arg = zgd_tft177_disp_get_info();
 		break;
 
 	case IOCTL_DISP_OFF:
-		tm_cstn128x128_disp_off();
+		zgd_tft177_disp_off();
 		break;
 
 	case IOCTL_DISP_ON:
-		tm_cstn128x128_disp_on();
+		zgd_tft177_disp_on();
 		break;
 
 	case IOCTL_DISP_POWERUP:
-		tm_cstn128x128_disp_powerup();
+		zgd_tft177_disp_powerup();
 		break;
 
 	case IOCTL_DISP_SET_CONTRAST:
-		tm_cstn128x128_disp_set_contrast(*(word *)arg);
+		zgd_tft177_disp_set_contrast(*(word *)arg);
 		break;
 
 	case IOCTL_DISP_SET_BACKLIGHT:
-		tm_cstn128x128_disp_set_backlight(*(byte *)arg);
+		zgd_tft177_disp_set_backlight(*(byte *)arg);
 		break;
 
 	case IOCTL_DISP_CLEAR_WHOLE_SCREEN:
-		tm_cstn128x128_disp_clear_whole_screen();
+		zgd_tft177_disp_clear_whole_screen();
 		break;
 
 	case IOCTL_DISP_CLEAR_SCREEN_AREA:
-		tm_cstn128x128_disp_clear_screen_area(((disp_cls_type *)arg)->start_row,
+		zgd_tft177_disp_clear_screen_area(((disp_cls_type *)arg)->start_row,
 		                                      ((disp_cls_type *)arg)->start_column,
 		                                      ((disp_cls_type *)arg)->end_row,                                          
 		                                      ((disp_cls_type *)arg)->end_column);
@@ -1122,12 +1128,12 @@ static int tm_cstn128x128_disp_ioctl ( int cmd, void *arg )
 	}
 	
 	return 1;
-} /* tm_cstn128x128_disp_ioctl() */
+} /* zgd_tft177_disp_ioctl() */
 
 
 /*===========================================================================
 
-FUNCTION      TM_CSTN128x128_INSTALL
+FUNCTION      ZGD_TFT177_INSTALL
 
 DESCRIPTION
   This function installs LCD device driver
@@ -1142,13 +1148,13 @@ SIDE EFFECTS
   None
 
 ========================================================================*/
-int tm_cstn128x128_install(char * str)
+int zgd_tft177_install(char * str)
 {
 	return drv_install(str,
 	                 NULL,
 	                 NULL,
-	                 tm_cstn128x128_disp_ioctl,
-	                 tm_cstn128x128_disp_init,
-	                 tm_cstn128x128_disp_powerdown);
-} /* tm_cstn128x128_install() */
+	                 zgd_tft177_disp_ioctl,
+	                 zgd_tft177_disp_init,
+	                 zgd_tft177_disp_powerdown);
+} /* zgd_tft177_install() */
 
