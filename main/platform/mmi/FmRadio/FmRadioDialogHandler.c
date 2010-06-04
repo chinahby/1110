@@ -1051,11 +1051,10 @@ static void changeChannel( CFmRadio *pMe, int direction)
 
 static void setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
 {
-
     pMe->cfg.channel = theNewChannel;
 
 #if !defined( AEE_SIMULATOR)
-    if( fm_tune_channel( pMe->cfg.channel) == FM_RADIO_SUCCESSFUL)
+    if( fm_tune_channel( (LOWEST_BAND_FREQ + CHANNEL_SPACE * pMe->cfg.channel)/100) == FM_RADIO_SUCCESSFUL)
     {
         pMe->ledLightType = FM_RADIO_LED_LIGHT_PLAYING;
     }
@@ -1562,7 +1561,7 @@ static boolean isDigital( AECHAR theChar)
 
     return ( theChar >= '0' && theChar <= '9');
 }
-
+ 
 static boolean channelNumberIsvalid( AECHAR *text)
 {
 

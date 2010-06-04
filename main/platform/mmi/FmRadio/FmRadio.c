@@ -44,7 +44,7 @@
 //static void FmRadio_APPIsReadyTimer(void *pme);
 
 /*----------------------模块相关函数声明---------------------*/
-
+ 
 int  FmRadioMod_Load(IShell   *pIShell,
     void     *ph,
     IModule **ppMod
@@ -868,12 +868,13 @@ static void FmRadio_RunFSM(CFmRadio *pMe)
 static void FmRadio_CheckRefuse( CFmRadio* pMe)
 {
 #if !FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY
-    boolean             headsetPresent   = FALSE;
+    boolean             headsetPresent   = TRUE;
 #endif
     db_items_value_type dbItemValue      = {0};
 
 #if !FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY
-    ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headsetPresent, sizeof(boolean));
+    //ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headsetPresent, sizeof(boolean));
+    //headsetPresent = HS_HEADSET_ON();
 #endif
     db_get( DB_IN_USE, &dbItemValue);
 
