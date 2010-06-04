@@ -2866,8 +2866,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
                 case AVK_DOWN:
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
-                    return TRUE;  
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
                 case AVK_LEFT:
                 {
 
@@ -2877,20 +2876,17 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_RIGHT:
 					
 					{
-						return CoreApp_LaunchApplet(pMe, AEECLSID_EXTRAMENU);//
+						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 					}
                 case AVK_SELECT:
-                    DBGPRINTF("CoreApp_LaunchApplet AVK_SELECT............");
                     return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 
                 case AVK_INFO:
-					
 					{
-					    ERR("CoreApp_LaunchApplet AVK_INFO............",0,0,0);
+                        ERR("AEECLSID_MAIN_MENU",0,0,0);
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 					}
                 case AVK_CLR:
-                    ERR("CoreApp_LaunchApplet AVK_CLR............",0,0,0);
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 
                 default:
