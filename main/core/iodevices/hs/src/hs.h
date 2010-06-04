@@ -325,7 +325,7 @@ typedef enum {            /* KEYS                                        */
   HS_INFO_K        = 0x70,/* Info key                            0x70    */
 #if defined(FEATURE_NAV_KEYPAD) || defined(FEATURE_RESISTIVE_KEYPAD)
   //HS_SEL_K = HS_INFO_K,   /* Select key                          0x70    */
-  HS_SEL_K         = 0x3A,   /* Select key   
+  HS_SEL_K         = 0x3A,   /* Select key   */
 #endif /* FEATURE_NAV_KEYPAD */
   HS_FREE_K        = 0x71,/* Phone placed in hands-free cradle   0x71    */
   HS_PHONE_K       = 0x72,/* Phone lifted from hands-free cradle 0x72    */
