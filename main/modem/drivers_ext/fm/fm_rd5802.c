@@ -509,7 +509,7 @@ int fm_set_volume(word wVolume)
     {
         return FM_RADIO_FAILED;
     } 	
-
+#ifdef FEATURE_FM_OEM
 	if ( level == 0 )
 	{
 		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED,
@@ -525,6 +525,7 @@ int fm_set_volume(word wVolume)
        // snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_MIDI,5,NULL,NULL);
 		//snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_AUX,5,NULL,NULL);
 	}
+#endif
 	if ( level > 0x0f )
 	{
 		return FM_RADIO_FAILED;
