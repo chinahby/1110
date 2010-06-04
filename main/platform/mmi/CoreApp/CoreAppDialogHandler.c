@@ -4307,7 +4307,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
         pMe->m_wStartupAniTime++; // 滚动播放次数
         //AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOnAni,  (void*)pMe);
        (void) ISHELL_SetTimer(pMe->a.m_pIShell,
-                             PWRON_ANI_RATE,
+                             ANI_RATE,
                              (PFNNOTIFY)CoreApp_PlayPwrOnAni,
                              (void*)pMe);
 #endif
@@ -4391,7 +4391,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         }
         pMe->m_wStartupAniTime++; // 滚动播放次数
-        AEE_SetSysTimer( PWROFF_ANI_RATE,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
+        AEE_SetSysTimer( ANI_RATE,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
 #endif
     }
     else

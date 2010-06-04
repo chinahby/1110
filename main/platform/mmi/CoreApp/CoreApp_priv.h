@@ -113,6 +113,7 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/tianyioff.png"
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (300)
+#define    ANI_RATE                              (150)
 
 
 // 下列变量为临时定义
