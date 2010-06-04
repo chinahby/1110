@@ -6,7 +6,7 @@ set OUTPUT_CHARSET=GBK
 call w021 preobjs
 call XGConsole /command="w021 genobjs -j20" /openmonitor /profile="XGConsole.xml"
 rem 删除由s文件生成的o文件
-call \bin\sh RmEmptyFile.sh W001
+call \bin\sh RmEmptyFile.sh w021
 call w021
 goto EXIT
 
