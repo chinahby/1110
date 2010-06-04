@@ -205,6 +205,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DISP_128X128
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO
+#define FEATURE_FM_OEM
 #define FEATURE_PROJECT_W021C
 //#define FEATURE_WMS_APP
 #endif
