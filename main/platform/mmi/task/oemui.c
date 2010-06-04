@@ -128,28 +128,61 @@
 #define RUIM_SELECT_RSP_NUM_BYTES  22
 #endif /* FEATURE_UIM_RUIM */
 
-#ifdef FEATURE_SLEEP
-#define UI_ENABLE_SLEEP()                                       \
-{                                                               \
-    if (!brewui_ok_to_sleep)                                    \
-    {                                                           \
-        (void)rex_set_sigs(&sleep_tcb, SLEEP_UI_OKTS_SIG);      \
-        MSG_LOW( "UI Sleep enable", 0, 0, 0 );                  \
-        brewui_ok_to_sleep = TRUE;                              \
-    }                                                           \
+#ifdef FEATURE_NEW_SLEEP_API
+
+#define UI_ENABLE_SLEEP()                                \
+{                                                        \
+  if (!brewui_ok_to_sleep) {                             \
+    (void)sleep_assert_okts(gNewSleepHandle);            \
+    MSG_LOW( "UI Sleep enable", 0, 0, 0 );               \
+    brewui_ok_to_sleep = TRUE;                           \
+  }                                                      \
 }
 
-#define UI_DISABLE_SLEEP()                                      \
-{                                                               \
-    if (brewui_ok_to_sleep)                                     \
-    {                                                           \
-        (void)rex_clr_sigs(&sleep_tcb, SLEEP_UI_OKTS_SIG);      \
-        MSG_LOW( "UI Sleep disable", 0, 0, 0 );                 \
-        brewui_ok_to_sleep = FALSE;                             \
-    }                                                           \
+#define UI_DISABLE_SLEEP()                               \
+{                                                        \
+  if (brewui_ok_to_sleep) {                              \
+    (void)sleep_negate_okts(gNewSleepHandle);            \
+    MSG_LOW( "UI Sleep disable", 0, 0, 0 );              \
+    brewui_ok_to_sleep = FALSE;                          \
+  }                                                      \
 }
-#endif 
 
+#elif defined(FEATURE_SLEEP)
+
+#define UI_ENABLE_SLEEP()                                \
+{                                                        \
+  if (!brewui_ok_to_sleep) {                             \
+    (void)rex_set_sigs( &sleep_tcb, SLEEP_UI_OKTS_SIG ); \
+    MSG_LOW( "UI Sleep enable", 0, 0, 0 );               \
+    brewui_ok_to_sleep = TRUE;                           \
+  }                                                      \
+}
+
+#define UI_DISABLE_SLEEP()                               \
+{                                                        \
+  if (brewui_ok_to_sleep) {                              \
+    (void)rex_clr_sigs( &sleep_tcb, SLEEP_UI_OKTS_SIG ); \
+    MSG_LOW( "UI Sleep disable", 0, 0, 0 );              \
+    brewui_ok_to_sleep = FALSE;                          \
+  }                                                      \
+}
+
+#else
+
+#define UI_ENABLE_SLEEP()                                \
+{                                                        \
+    MSG_LOW( "UI Sleep enable", 0, 0, 0 );               \
+    brewui_ok_to_sleep = TRUE;                           \
+}
+
+#define UI_DISABLE_SLEEP()                               \
+{                                                        \
+    MSG_LOW( "UI Sleep disable", 0, 0, 0 );              \
+    brewui_ok_to_sleep = FALSE;                          \
+}
+
+#endif /* FEATURE_NEW_SLEEP_API */
 
 #define KEY(h,a,c,b)    {HS_##h##_K, AVK_##a, KC_##c, b}
 
@@ -385,6 +418,10 @@ static boolean oemui_busy = FALSE;
 #ifdef FEATRUE_AUTO_SET_NEED_NV_VALUE
 extern boolean bIsResetOemNv;
 #endif
+
+#ifdef FEATURE_NEW_SLEEP_API
+  sleep_okts_handle gNewSleepHandle;
+#endif /* FEATURE_NEW_SLEEP_API */
 
 /*==============================================================================
                                  
@@ -1228,6 +1265,10 @@ void ui_task(dword dummy   /*lint -esym(715,dummy) */)
     
     // 完成 task 启动前的一些初始化工作
     oemui_pre_start_init();
+    
+#if !defined(FEATURE_UI_CORE_REMOVED) && defined (FEATURE_NEW_SLEEP_API)
+      gNewSleepHandle = sleep_register("UI_TASK", FALSE);
+#endif /* FEATURE_NEW_SLEEP_API */
 
     // 真正启动 oemui task 。此后，可以完成使用其它 task 需要的初始化。
 #ifdef FEATURE_MULTIMODE_ARCH
@@ -2869,27 +2910,21 @@ void ui_cmd(ui_cmd_type *cmd_ptr)
 ==============================================================================*/
 void VoteForSleep(boolean flag)
 {
-    static boolean is_sleeping = FALSE;
-    
-    if (is_sleeping == flag) 
-    {// 与当前状态相同，返回
-        return;
-    }
-    
-    is_sleeping = flag;
-    
-#ifdef FEATURE_SLEEP
-    if (flag == FALSE)
-    {
-        // 不能睡眠
-        UI_DISABLE_SLEEP();
-    }
-    else
-    {
-        // 可以睡眠
-        UI_ENABLE_SLEEP();
-    }
-#endif    
+  static boolean is_sleeping = FALSE;
+
+  if (is_sleeping == flag) {
+    /* nothing to do */
+    return;
+  }
+
+  is_sleeping = flag; /* update state */
+
+  if (flag == FALSE) {
+    UI_DISABLE_SLEEP(); /* not okay to sleep */
+  }
+  else {
+    UI_ENABLE_SLEEP();       /* okay to sleep */
+  }   
 }
 
 #ifdef FEATURE_OTASP

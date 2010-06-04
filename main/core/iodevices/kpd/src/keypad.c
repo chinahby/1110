@@ -130,10 +130,8 @@ and other items needed by this module.
 
 #if defined(FEATURE_PROJECT_W023C)
 #define FEATURE_ALL_KEY_PAD
-#elif defined (FEATURE_PROJECT_W021C)
+#else //if defined (FEATURE_PROJECT_W021C)
 #define KEYPAD_5_BY_5_MATRIX
-#else
-#error code not present
 #endif
 
 
