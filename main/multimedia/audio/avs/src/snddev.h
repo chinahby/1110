@@ -126,6 +126,9 @@ typedef enum {
   SND_DEVICE_BT_A2DP_SCO_HEADSET, /* A BT headset supporting A2DP and SCO */
 #endif /* FEATURE_SBC_CODEC */
 #endif /* FEATURE_BT */
+#ifdef FEATURE_FM_OEM
+	SND_DEVICE_HEADSET_FM,
+#endif
   SND_DEVICE_SURF_HANDSET,	/* To test on SURF */
   SND_DEVICE_SURF_HEADSET,	/* To test on SURF */
   SND_DEVICE_SURF_SPEAKER_PHONE,	/* To test on SURF */

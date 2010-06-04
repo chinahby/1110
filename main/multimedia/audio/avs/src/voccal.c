@@ -467,6 +467,9 @@ sint15 voc_cal_mic_gain_adjust[VOC_CODEC_MAX] =
 #ifdef FEATURE_SPEAKER_PHONE
   /*  VOC_CODEC_SPEAKER_SURF      */,0
 #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM
+  /* VOC_CODEC_HEADSET_FM */		,0
+#endif
 };
 #endif /* FEATURE_VOC_MIC_GAIN_ADJUST */
 
@@ -554,6 +557,9 @@ voc_codec_class_type voc_cal_codec_class[VOC_CODEC_MAX] =
 #ifdef FEATURE_SPEAKER_PHONE
   /*  VOC_CODEC_SPEAKER_SURF      */,VOC_CODEC_CLASS_INTERNAL
 #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM
+/*  VOC_CODEC_HEADSET    */  ,VOC_CODEC_CLASS_INTERNAL
+#endif
 };
 
 
@@ -622,6 +628,9 @@ voc_codec_vr_type voc_cal_codec_vr_types[VOC_CODEC_MAX] =
 #ifdef FEATURE_SPEAKER_PHONE
   /*  VOC_CODEC_SPEAKER_SURF      */,VOC_CODEC_VR_TYPE_CARKIT
 #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM
+/*  VOC_CODEC_HEADSET    */  ,VOC_CODEC_VR_TYPE_HEADSET
+#endif
 };
 #endif /* FEATURE_PHONE_VR */
 
@@ -2849,6 +2858,129 @@ CONSTANT voc_adie_codec_config_type voc_adie_codec_speaker_no_mic_config =
   voc_adie_speaker_no_mic_config
 };
 
+#ifdef FEATURE_FM_OEM
+const adie_codec_reg_type voc_adie_headset_fm_config[] =
+{																		   \
+	/* Enable bandgap */													\
+	ADIE_REFERENCE_CONTROL1_R,		   ADIE_REFERENCE_CONTROL1_INIT_M,			ADIE_REF_CNTL1_BANDGAP_OPAMP_M, 0, \
+	ADIE_REFERENCE_CONTROL2_R,		   ADIE_REFERENCE_CONTROL2_INIT_M,			ADIE_REFERENCE_CONTROL2_INIT_V, 		  0, \
+	/*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R, 	 ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,	  ADIE_RX_PA_CONTROL_REGISTER7_INIT_V,	0,					\
+	/* Turn on bias current and reference buffer for hph L */																						\
+	/*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,		 ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,	  (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V 		   \
+															 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_ENA_V								\
+															 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V					\
+															 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_REF_BUFFER_ENA_V					\
+															 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_ENA_V),				 0, \
+	/* Configure Tx control registers */																											\
+	/*0x88*/ADIE_CODEC_TX_CNTL_REGISTER1_R, 	 ADIE_CODEC_TX_CNTL_REGISTER1_INIT_M,	  (ADIE_CODEC_TX_CNTL_REG1_TX_FE_ENA_V						\
+															 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_GAIN_24_DB_V						\
+															 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_LINE_IN_SEL_ENA_V					\
+															 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_LINE_IN_MODE_STEREO_SINGLE_ENDED_V ),			 0, \
+	/*0x89*/ADIE_CODEC_TX_CNTL_REGISTER2_R, 	 ADIE_CODEC_TX_CNTL_REGISTER2_INIT_M,	  ADIE_CODEC_TX_CNTL_REGISTER2_INIT_V,					  0, \
+	ADIE_CODEC_TX_ADC_REGISTER_R,	   ADIE_CODEC_TX_ADC_REGISTER_INIT_M,		ADIE_CODEC_TX_ADC_REF_DIS_V,									  0, \
+	ADIE_CODEC_TX_ADC_CNTL_REGISTER1_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER1_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG1_DAC_REF_DDA_BIAS_05_UA_V, 			0, \
+	ADIE_CODEC_TX_ADC_CNTL_REGISTER2_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER2_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REGISTER2_INIT_V,							  0, \
+	ADIE_CODEC_TX_ADC_CNTL_REGISTER3_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER3_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG3_VOCM_REF_BUFFER_OUTPUT_0P90_VOLT_V,	  0, \
+	/* Configure AUX_PGA control registers */																											\
+	/*0x86*/ADIE_AUX_PGA_CONTROL1_R,			 ADIE_AUX_PGA_CONTROL1_INIT_M,			  (ADIE_AUX_PGA_CNTL1_LEFT_CHAN_ENA_V							 \
+															|ADIE_AUX_PGA_CNTL1_L_R_CHAN_GAIN_PLUS_08P5_DB_V						 \
+															| ADIE_AUX_PGA_CNTL1_RIGHT_CHAN_ENA_V), 							   0, \
+	/* TBD: Wakeup DSP and send PCM offset for XYZ mV then wait 10ms*/																						\
+	/* Configure Rx filter control registers */ 																											\
+	/*0x91*/ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, (ADIE_RX_FILTER_CONTROL1_FILTER_ENA_V 											  \
+															 | ADIE_RX_FILTER_CONTROL1_FILTER_LEFT_CHAN_ENA_V											\
+															 | ADIE_RX_FILTER_CONTROL1_FILTER_RIGHT_CHAN_ENA_V											\
+															 | ADIE_RX_FILTER_CONTROL1_FILTER_CONFIG_1ST_ORDER_V),									   0, \
+	/*0x92*/ADIE_RX_FILTER_CONTROL_REGISTER2_R,  ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_V,										   0, \
+	/*0x93*/ADIE_RX_FILTER_CONTROL_REGISTER3_R,  ADIE_RX_FILTER_CONTROL_REGISTER3_INIT_M, (ADIE_RX_FILTER_CONTROL3_CMFB_REF_BUFFER_BIAS_15_UA_V 							  \
+															 | ADIE_RX_FILTER_CONTROL3_VOCM_REF_BUFFER_BIAS_075_UA_V),								   0, \
+	/*0x94*/ADIE_RX_FILTER_CONTROL_REGISTER4_R,  ADIE_RX_FILTER_CONTROL_REGISTER4_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER4_INIT_V,										   0, \
+	/* Configure Rx PA control registers */ 																																\
+	/*0x98*/ADIE_RX_PA_ENABLE_REGISTER2_R,		 ADIE_RX_PA_ENABLE_REGISTER2_INIT_M,	  ADIE_RX_PA_ENABLE_REGISTER2_INIT_V,											   0, \
+	/*0x9A*/ADIE_RX_PA_CONTROL_REGISTER2_R, 	 ADIE_RX_PA_CONTROL_REGISTER2_INIT_M,	  ADIE_RX_PA_CONTROL2_AUX_PGA_TO_HPH_CONNECT_STEREO_V,								0, \
+	/*0x9B*/ADIE_RX_PA_CONTROL_REGISTER3_R, 	 ADIE_RX_PA_CONTROL_REGISTER3_INIT_M,	  ADIE_RX_PA_CONTROL_REGISTER3_INIT_V,											   0, \
+	/*0x9C*/ADIE_RX_PA_CONTROL_REGISTER4_R, 	 ADIE_RX_PA_CONTROL_REGISTER4_INIT_M,	  ADIE_RX_PA_CONTROL4_HPH_PA_OUTPUT_STAGE_BIAS_180_UA_LEGACY_0830_UA_CAPLESS_V,    0, \
+	/*0x9D*/ADIE_RX_PA_CONTROL_REGISTER5_R, 	 ADIE_RX_PA_CONTROL_REGISTER5_INIT_M,	  ADIE_RX_PA_CONTROL5_HPH_PA_INPUT_BIAS_10P0_UA_V,								   0, \
+	/*0x9E*/ADIE_RX_PA_CONTROL_REGISTER6_R, 	 ADIE_RX_PA_CONTROL_REGISTER6_INIT_M,	  ADIE_RX_PA_CONTROL_REGISTER6_INIT_V,											   0, \
+	
+	
+	/*0x99*/ADIE_RX_PA_CONTROL_REGISTER1_R,	   ADIE_RX_PA_CONTROL_REGISTER1_INIT_M, 	(ADIE_RX_PA_CONTROL1_RX_FILTER_TO_HPH_CONNECT_STEREO_V								  \
+															 | ADIE_RX_PA_CONTROL1_HPH_PA_CONFIG_CAPLESS_V),										 0,\
+	/*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R, 	 ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,	  ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_34P5_LEGACY_MINUS_34P5_CAPLESS_DB_V,  0, \
+	/*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R, 	 ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,	  ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_22P5_LEGACY_MINUS_22P5_CAPLESS_DB_V,  0, \
+	/*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R, 	 ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,	  ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_16P5_LEGACY_MINUS_16P5_CAPLESS_DB_V,  0, \
+	/*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R, 	 ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,	  ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_10P5_LEGACY_MINUS_10P5_CAPLESS_DB_V,  0, \
+	/*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R, 	 ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,	  ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_04P5_LEGACY_MINUS_04P5_CAPLESS_DB_V,  0, \
+	/*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R, 	 ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,	  ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_NONE_LEGACY_PLUS_0P0_CAPLESS_DB_V,		   0, \
+};
+
+
+//add miaoxiaoming
+const adie_codec_reg_type voc_adie_speaker_fm_config[] = 
+{                                                                   \
+ /* Enable bandgap */													\
+	/*0x83*/ADIE_REFERENCE_CONTROL1_R,		   ADIE_REFERENCE_CONTROL1_INIT_M,			ADIE_REFERENCE_CONTROL1_INIT_V , 0, \
+	/*0x84*/ADIE_REFERENCE_CONTROL2_R,		   ADIE_REFERENCE_CONTROL2_INIT_M,			ADIE_REFERENCE_CONTROL2_INIT_V, 		  0, \
+	/*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R, 	 ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,	  ADIE_RX_PA_CONTROL_REGISTER7_INIT_V,	0,					\
+	/* Turn on bias current and reference buffer for hph L */																						\
+	 /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V,                              /*40ms*/0, \
+	/* Configure Tx control registers */																											\
+	/*0x88*/ADIE_CODEC_TX_CNTL_REGISTER1_R, 	 ADIE_CODEC_TX_CNTL_REGISTER1_INIT_M,	  (ADIE_CODEC_TX_CNTL_REG1_TX_FE_ENA_V						\
+															 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_GAIN_24_DB_V						\
+															 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_LINE_IN_SEL_ENA_V					\
+															 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_LINE_IN_MODE_STEREO_SINGLE_ENDED_V ),			 0, \
+	/*0x89*/ADIE_CODEC_TX_CNTL_REGISTER2_R, 	 ADIE_CODEC_TX_CNTL_REGISTER2_INIT_M,	  ADIE_CODEC_TX_CNTL_REGISTER2_INIT_V,					  0, \
+	/*0x8b*/ADIE_CODEC_TX_ADC_REGISTER_R,	   ADIE_CODEC_TX_ADC_REGISTER_INIT_M,		ADIE_CODEC_TX_ADC_REF_DIS_V,									  0, \
+	/*0x8c*/ADIE_CODEC_TX_ADC_CNTL_REGISTER1_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER1_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REGISTER1_INIT_V, 			0, \
+	/*0x8d*/ADIE_CODEC_TX_ADC_CNTL_REGISTER2_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER2_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REGISTER2_INIT_V,							  0, \
+	/*0x8e*/ADIE_CODEC_TX_ADC_CNTL_REGISTER3_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER3_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REGISTER3_INIT_V,	  0, \
+	/* Configure AUX_PGA control registers */																											\
+	/*0x86*/ADIE_AUX_PGA_CONTROL1_R,			 ADIE_AUX_PGA_CONTROL1_INIT_M,			  (ADIE_AUX_PGA_CNTL1_LEFT_CHAN_ENA_V							 \
+															|ADIE_AUX_PGA_CNTL1_L_R_CHAN_GAIN_PLUS_08P5_DB_V						 \
+															| ADIE_AUX_PGA_CNTL1_RIGHT_CHAN_ENA_V), 							   0, \
+	/* TBD: Wakeup DSP and send PCM offset for XYZ mV then wait 10ms*/																						\
+	/* Configure Rx filter control registers */ 																											\
+	/*0x91*/ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_V,									   0, \
+	/*0x92*/ADIE_RX_FILTER_CONTROL_REGISTER2_R,  ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_V,										   0, \
+	/*0x93*/ADIE_RX_FILTER_CONTROL_REGISTER3_R,  ADIE_RX_FILTER_CONTROL_REGISTER3_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER3_INIT_V,								   0, \
+	/*0x94*/ADIE_RX_FILTER_CONTROL_REGISTER4_R,  ADIE_RX_FILTER_CONTROL_REGISTER4_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER4_INIT_V,										   0, \
+	/* Configure Rx PA control registers */ 																																\
+	/*0x98*/ADIE_RX_PA_ENABLE_REGISTER2_R,		 ADIE_RX_PA_ENABLE_REGISTER2_INIT_M,	  ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_REF_BUFFER_ENA_V \
+                                                                                        	|ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_ENA_V  \
+                                                                                        	|ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_REF_BUFFER_ENA_V \
+                                                                                        	|ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_ENA_V,											   0, \
+	/*0x9A*/ADIE_RX_PA_CONTROL_REGISTER2_R, 	 ADIE_RX_PA_CONTROL_REGISTER2_INIT_M,	  ADIE_RX_PA_CONTROL2_AUX_PGA_TO_PMIC_LINEOUT_CONNECT_STEREO_V,								0, \
+	/*0x9B*/ADIE_RX_PA_CONTROL_REGISTER3_R, 	 ADIE_RX_PA_CONTROL_REGISTER3_INIT_M,	  ADIE_RX_PA_CONTROL_REGISTER3_INIT_V,											   0, \
+	/*0x9C*/ADIE_RX_PA_CONTROL_REGISTER4_R, 	 ADIE_RX_PA_CONTROL_REGISTER4_INIT_M,	  ADIE_RX_PA_CONTROL4_PMIC_LINEOUT_PA_OUTPUT_STAGE_BIAS_NOMINAL_V,    0, \
+	/*0x9D*/ADIE_RX_PA_CONTROL_REGISTER5_R, 	 ADIE_RX_PA_CONTROL_REGISTER5_INIT_M,	  ADIE_RX_PA_CONTROL5_LINEOUT_PA_INPUT_BIAS_10P0_UA_V,								   0, \
+	/*0x9E*/ADIE_RX_PA_CONTROL_REGISTER6_R, 	 ADIE_RX_PA_CONTROL_REGISTER6_INIT_M,	  ADIE_RX_PA_CONTROL6_PMIC_LINEOUT_RIGHT_PA_POLARITY_INVERTED_ENA_V,											   0, \
+  
+  /*0x99*/ADIE_RX_PA_CONTROL_REGISTER1_R,      ADIE_RX_PA_CONTROL_REGISTER1_INIT_M,     (ADIE_RX_PA_CONTROL1_RX_FILTER_TO_PMIC_LINEOUT_CONNECT_STEREO_V          \
+                                                                                                    | MSMAUD_ADIE_RX_PA_CNTL1_HPH_PA_CNFIG_MODE),              0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER7_INIT_V,  0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER8_INIT_V,                                  0, \
+};
+	
+//wangliang add!
+const voc_adie_codec_config_type voc_adie_codec_headset_fm_config =
+{
+  sizeof(voc_adie_headset_fm_config)/sizeof(adie_codec_reg_type),
+  MSMAUD_ADIE_CODEC_MONO_HEADSET_FM_DELAY_CONFIG_SIZE,
+  voc_adie_headset_fm_config
+};
+
+//const adie_codec_reg_type voc_adie_speaker_fm_config[] =
+//	MSMAUD_ADIE_CODEC_MONO_SPEAKER_FM_CONFIG_SEQ;
+
+//wangliang add!
+const voc_adie_codec_config_type voc_adie_codec_speaker_fm_config =
+{
+  sizeof(voc_adie_speaker_fm_config)/sizeof(adie_codec_reg_type),
+  MSMAUD_ADIE_CODEC_MONO_HEADSET_FM_DELAY_CONFIG_SIZE,
+  voc_adie_speaker_fm_config
+};
+#endif
+
 #ifdef MSMAUD_SCMM
 #error code not present
 #endif /* MSMAUD_SCMM */
@@ -3279,7 +3411,18 @@ const voc_cal_audio_path_config_type
                         &voc_adie_codec_speaker_config,
                         &voc_cal_pmic_config_legacy_mic) }
     #endif /* FEATURE_SPEAKER_PHONE */
-
+#ifdef FEATURE_FM_OEM
+		/* VOC_CODEC_STEREO_HEADSET 	   */
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+	   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+							&voc_adie_codec_headset_fm_config,
+							&voc_cal_pmic_config_capless_mic) }
+    #else
+	   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+							&voc_adie_codec_headset_fm_config,
+							&voc_cal_pmic_config_legacy_mic) }
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#endif
     }
 
 #ifdef FEATURE_AVS_INCALL_MIXER_ADEC_PB
@@ -3493,6 +3636,17 @@ const voc_cal_audio_path_config_type
                         &voc_adie_codec_speaker_config,
                         &voc_cal_pmic_config_legacy_mic) }
     #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM   
+	#ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_headset_fm_config,
+                        &voc_cal_pmic_config_capless_mic) }
+    #else
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_headset_fm_config,
+                        &voc_cal_pmic_config_legacy_mic) }
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#endif
   }
 #endif /* FEATURE_AVS_INCALL_MIXER_ADEC_PB */
 
@@ -3703,6 +3857,18 @@ const voc_cal_audio_path_config_type
    ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_16k_speaker,
                         &voc_adie_codec_speaker_no_mic_config, NULL) }
     #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+	   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+							&voc_adie_codec_headset_fm_config,
+							&voc_cal_pmic_config_capless_mic) }
+    #else
+	   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+							&voc_adie_codec_headset_fm_config,
+							&voc_cal_pmic_config_legacy_mic) }
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#endif
+
   }
 #endif /* FEATURE_QSYNTH_COMMON || FEATURE_QTUNES_COMMON */
 
@@ -3946,6 +4112,18 @@ const voc_cal_audio_path_config_type
                         &voc_adie_codec_speaker_config,
                         &voc_cal_pmic_config_legacy_mic) }
     #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+	   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+							&voc_adie_codec_headset_fm_config,
+							&voc_cal_pmic_config_capless_mic) }
+    #else
+	   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+							&voc_adie_codec_headset_fm_config,
+							&voc_cal_pmic_config_legacy_mic) }
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#endif
+
   }
 #endif /* FEATURE_MM_REC */
 
@@ -4155,6 +4333,18 @@ const voc_cal_audio_path_config_type
    ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_16k_speaker,
                         &voc_adie_codec_speaker_no_mic_config, NULL) }
     #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM
+
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_headset_fm_config,
+                        &voc_cal_pmic_config_capless_mic) }
+    #else
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_headset_fm_config,
+                        &voc_cal_pmic_config_legacy_mic) }
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#endif
   }
 #endif /* FEATURE_AVS_I2SSBC */
 
@@ -4368,6 +4558,19 @@ const voc_cal_audio_path_config_type
                         &voc_adie_codec_speaker_config,
                         &voc_cal_pmic_config_legacy_mic) }
     #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM
+	
+	#ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+	   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+							&voc_adie_codec_headset_fm_config,
+							&voc_cal_pmic_config_capless_mic) }
+    #else
+	   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+							&voc_adie_codec_headset_fm_config,
+							&voc_cal_pmic_config_legacy_mic) }
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#endif
+
   }
 #if defined(FEATURE_GSM) || defined(FEATURE_WCDMA)
 #error code not present
@@ -17850,6 +18053,10 @@ const voc_pcm_path_cal_type
 #ifdef FEATURE_SPEAKER_PHONE
 	/* VOC_CODEC_SPEAKER_SURF    */ ,&voc_pcm_on_chip_speaker_surf_cal
 #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM  
+	  ,&voc_pcm_on_chip_1_cal
+#endif
+
   }
 #if defined(FEATURE_GSM) || defined(FEATURE_WCDMA)
 #error code not present
@@ -17913,6 +18120,10 @@ const voc_pcm_path_cal_type
 #ifdef FEATURE_SPEAKER_PHONE
 	/* VOC_CODEC_SPEAKER_SURF     */,&voc_pcm_on_chip_speaker_surf_cal_wb
 #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM  
+	 /* VOC_CODEC_HEADSET_AND_SPEAKER */,&voc_pcm_on_chip_1_cal
+#endif
+
   }
 #if defined(FEATURE_GSM) || defined(FEATURE_WCDMA)
 #error code not present

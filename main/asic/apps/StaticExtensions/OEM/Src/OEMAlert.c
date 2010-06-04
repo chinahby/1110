@@ -281,6 +281,9 @@ typedef enum {
 #ifdef FEATURE_BT
 #error code not present
 #endif /* FEATURE_BT */
+#ifdef FEATURE_FM_OEM
+	  SND_DEVICE_HEADSET_FM,
+#endif
   SND_DEVICE_MAX,
   SND_DEVICE_CURRENT,
 
