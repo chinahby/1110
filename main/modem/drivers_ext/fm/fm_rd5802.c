@@ -56,7 +56,7 @@ Local Definitions and Types
 static uint32	RDA5802_FreqToChan(uint32 frequency);
 static uint8 	RDA5802_ValidStop(int16 freq);
 static uint8 	RDA5802_GetSigLvl(int16 curf );
-
+static uint8    fm_playing_mute = TRUE;
 /***************************************************
 RDA5802 interfaces
 ****************************************************/
@@ -194,11 +194,6 @@ word fm_radio_get_playing_channel( void)
 void fm_radio_pre_init(void)
 {
 	ERR("fm_radio_pre_init!!!",0,0,0);
-	/* Configure I2C parameters */
-	fm_i2c_command.bus_id     = I2C_BUS_HW_CTRL;
-	fm_i2c_command.slave_addr = FM_RD5802_I2C_ID;
-	/*lint -save -e655 */
-	fm_i2c_command.options    = (i2c_options_type) (I2C_DFLT_ADDR_DEV | I2C_START_BEFORE_READ);
 	return;
 }
 
@@ -216,7 +211,7 @@ int fm_radio_init(void)
 #endif
 
 	fm_work_status = FM_POWER_DOWN;
-	return 0;
+	return FM_RADIO_SUCCESSFUL;
 }
 
 int fm_radio_power_up(void)
@@ -245,15 +240,15 @@ int fm_radio_power_up(void)
     if (error_ind)
 	{
 		fm_work_status = FM_POWER_UP; 
-		return 0;
+		return FM_RADIO_SUCCESSFUL;
 	}
 	else
 	{
 		fm_work_status = FM_POWER_DOWN;
-		return 1;
+		return FM_RADIO_FAILED;
 	}
 	
-	return 0;
+	return FM_RADIO_SUCCESSFUL;
 }
 
 int fm_radio_power_down(void)
@@ -278,7 +273,7 @@ int fm_radio_power_down(void)
 #endif
 
 	fm_work_status = FM_POWER_DOWN;
-	return 0;
+	return FM_RADIO_SUCCESSFUL;
 }
 
 /************************************************************************************
@@ -414,10 +409,20 @@ int fm_tune_channel(word wChannel)
     {
         return FM_RADIO_FAILED;
     }      
-    
+
+	if ( (wChannel < 875) || (wChannel > 1080))
+	{
+		return FM_RADIO_FAILED;
+	}
+
+	if ( fm_playing_mute )
+	{
+		fm_mute(FALSE);
+	}
+	
     fm_work_status = FM_IN_PROGRESS;
 
-    fm_set_volume(7);
+    
 	fm_playing_channel = wChannel;
 	curChan=RDA5802_FreqToChan(wChannel);
 	RDA5802_channel_start_tune[2]=curChan>>2;
@@ -434,14 +439,14 @@ int fm_tune_channel(word wChannel)
 		ERR("RDA5802_SetFreq = %d is a station!",wChannel,0,0);
 		fm_work_status = FM_IDLE_STATUS;
     	fm_playing_channel = wChannel;
-		return 0;
+		return FM_RADIO_SUCCESSFUL;
 	}
 	else
 	{
 		ERR("RDA5802_SetFreq = %d is not a station!",wChannel,0,0);
 		fm_work_status = FM_IDLE_STATUS;
     	fm_playing_channel = wChannel;
-		return 1;
+		return FM_RADIO_FAILED;
 	}
 }
 
@@ -451,17 +456,18 @@ int fm_seek_up(word* pChannel)
 	if(fm_work_status != FM_IDLE_STATUS)
     {
         return FM_RADIO_FAILED;
-    }      
+    }    
+
     fm_work_status = FM_IN_PROGRESS;
 
 	ERR("fm_seek_up!!!",0,0,0);
-    fm_set_volume(7);
+    
 	fm_playing_channel = RDA5802_Seek(1);
 	*pChannel = fm_playing_channel;
 
 	fm_work_status = FM_IDLE_STATUS;
 	
-	return 0;
+	return FM_RADIO_SUCCESSFUL;
 }
 
 int fm_seek_down(word* pChannel)
@@ -470,28 +476,29 @@ int fm_seek_down(word* pChannel)
     {
         return FM_RADIO_FAILED;
     }      
+
     fm_work_status = FM_IN_PROGRESS;
 
 	ERR("fm_seek_down!!!",0,0,0);
-    fm_set_volume(7);
+    
 	fm_playing_channel = RDA5802_Seek(0);
 	*pChannel = fm_playing_channel;
 
 	fm_work_status = FM_IDLE_STATUS;
-	return 0;
+	return FM_RADIO_SUCCESSFUL;
 }
 
 //Asynchronization Seek Function
 int fm_seek_start(boolean bIsUp, boolean bIsWrap)
 {
 	fm_work_status = FM_IDLE_STATUS;
-	return 0;
+	return FM_RADIO_SUCCESSFUL;
 }
 
 int fm_get_seek_status(boolean* pIsFinish, boolean* pIsBandLimit, word* pChannel)
 {
 	fm_work_status = FM_IDLE_STATUS;
-	return 0;
+	return FM_RADIO_SUCCESSFUL;
 }
 
 int fm_set_volume(word wVolume)
@@ -512,20 +519,20 @@ int fm_set_volume(word wVolume)
 	{
 		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED,
                        NULL, NULL);
-        snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_VOICE,5,NULL,NULL);
-        snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_MESSAGE,5,NULL,NULL);
-        snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_RING,5,NULL,NULL);
-        snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_MIDI,5,NULL,NULL);
-		snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_AUX,5,NULL,NULL);
+        //snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_VOICE,5,NULL,NULL);
+        //snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_MESSAGE,5,NULL,NULL);
+        //snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_RING,5,NULL,NULL);
+       // snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_MIDI,5,NULL,NULL);
+		//snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_AUX,5,NULL,NULL);
 	}
 	if ( level > 0x0f )
 	{
-		return 0;
+		return FM_RADIO_FAILED;
 	}
 	
 	RDA5802_initialization_reg[7]=( RDA5802_initialization_reg[7] & 0xf0 ) | level; 
 	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_initialization_reg[0]), 8);
-	return 1;
+	return FM_RADIO_SUCCESSFUL;
 }
 
 void fm_mute(boolean on)
@@ -534,11 +541,13 @@ void fm_mute(boolean on)
 	
 	if ( on == TRUE )
 	{
+		fm_playing_mute = TRUE;
 		fm_set_volume(0);
 	}
 	else
 	{
-		fm_set_volume(7);
+		fm_playing_mute = FALSE;
+		fm_set_volume(8);
 	}
 	
 	return;
