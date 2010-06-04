@@ -1039,49 +1039,39 @@ PARAMETERS:  如果APPLET 有变动，只需改动次函数
 static boolean StartApplet(MainMenu *pMe, int i)
 {
     int Result = FALSE;
-
-   	//MSG_ERROR("StartApplet:::::%d",i,0,0);
     switch(i)
     {
         case 0:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
-            break;
-            
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT);
+            break; 
         case 1:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_EXTRAMENU);
-            break;
-    
-        case 2:
-            {
-                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT);
-            }
-            break;
-    
-        case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-            break;
-    
-        case 4:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
             break;
-    
-        case 5:
+        case 2:
+            {
+                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            }
+            break;
+        case 3:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;
-    
-        case 6:
+        case 4:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+            break;
+        case 5:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
             break;    
-        case 7:
+        case 6:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
-    
-        case 8:
+        case 7:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
+            break;
+        case 8:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_QUICKTEST);
             break;
 
     }
-    //MSG_ERROR("Result   :::::%d",Result,0,0);
     return TRUE;
 }
 
