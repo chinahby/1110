@@ -1036,7 +1036,9 @@ static int TimeCtl_TimeText(TimeCtl * pme, AECHAR * pBuff,int x,boolean bDraw)
    }
 
    // Erase flag may have been set directly or by transition from small to large text, etc.
+#ifndef CUST_EDITION   /*部分应用出现白屏的原因*/
    IDisplay_ClearScreen(pd);
+#endif 
    if(bAllSmall != pme->m_bSmallDisplay){
       pme->m_bErase = TRUE;
       pme->m_bSmallDisplay = bAllSmall;
