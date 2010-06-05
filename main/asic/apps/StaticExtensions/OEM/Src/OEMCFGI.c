@@ -1603,7 +1603,9 @@ static OEMConfigListType oemi_cache = {
    	#ifdef FEATURE_SPORTS_APP
 	,0                                      //CFGI_SPORT_FLAG
 	#endif
+    #ifdef FEATURE_MENU_STYLE
    ,OEMNV_MENU_STYLE_ICON
+   #endif
 
    ,OEMNV_CAMERA_ENVIR_AUTO         /*CFGI_CAMERA_ENVIROMENT*/
    ,OEMNV_CAMERA_QUALITY_HIGH       /*CFGI_CAMERA_QUALITY*/
@@ -2551,9 +2553,9 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.fmRadio_chan_total = 0;
    
    oemi_cache.input_mode=OEMNV_INPUTMODE_DEFAULT;
-
+#ifdef FEATURE_MENU_STYLE
    oemi_cache.menu_style= OEMNV_MENU_STYLE_ICON;
-
+#endif
    oemi_cache.camera_enviroment = OEMNV_CAMERA_ENVIR_AUTO;
    oemi_cache.camera_quality = OEMNV_CAMERA_QUALITY_HIGH;
    oemi_cache.camera_size = OEMNV_CAMERA_SIZE_176_220;//   oemi_cache.camera_size = OEMNV_CAMERA_SIZE_640_480;
@@ -10026,7 +10028,7 @@ static int OEMPriv_SetItem_CFGI_SPORT_FLAG(void *pBuff)
     return SUCCESS;
 }
 #endif
-
+#ifdef FEATURE_MENU_STYLE
 static int OEMPriv_GetItem_CFGI_MENU_STYLE(void *pBuff)
 {
    *(byte *) pBuff = oemi_cache.menu_style;
@@ -10042,7 +10044,7 @@ static int OEMPriv_SetItem_CFGI_MENU_STYLE(void *pBuff)
 
    return SUCCESS;
 }
-
+#endif
 static int OEMPriv_GetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff)
 {
    *(byte *) pBuff = oemi_cache.camera_enviroment;
