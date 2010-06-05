@@ -4334,7 +4334,7 @@ static boolean  HandleColorSettingDialogEvent(CDisplayMenu *pMe,
                     rect.x += pMe->m_rc.dx/3;
                     IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
                     rect.x -= pMe->m_rc.dx/3;
-                    rect.y += 2*MENUITEM_HEIGHT;
+                    rect.y += MENUITEM_HEIGHT;
                 }
 
                 rect.x = pMe->m_rc.x + nPixelsToEdge + pMe->m_rc.dx/2;
@@ -4371,7 +4371,7 @@ static boolean  HandleColorSettingDialogEvent(CDisplayMenu *pMe,
                                 0,
                                 &rect,
                                 IDF_ALIGN_BOTTOM | IDF_ALIGN_LEFT| IDF_TEXT_TRANSPARENT);
-                    rect.y += 2*MENUITEM_HEIGHT;
+                    rect.y += MENUITEM_HEIGHT;
                 }
 
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldFontColor);
