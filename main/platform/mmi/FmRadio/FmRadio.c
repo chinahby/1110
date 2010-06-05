@@ -489,10 +489,7 @@ static uint32  FmRadio_Release (IFmRadio *pi)
 
 static int FmRadio_InitAppData(CFmRadio *pMe)
 {
-
-//    OEMSMSMgr* sms = NULL;
-
-    if (NULL  == pMe)
+	if (NULL  == pMe)
     {
         return EFAILED;
     }
@@ -518,16 +515,6 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
     pMe->m_eDlgRet              = DLGRET_CREATE;
     pMe->m_bNotOverwriteDlgRet  = FALSE;
     pMe->startFromBackground    = TRUE;
-#if 0//def FEATURE_APP_MUSICPLAYER
-   if(GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)
-   {
-       (void)ISHELL_PostEvent(pMe->m_pShell,
-                              AEECLSID_APP_MUSICPLAYER,
-                              EVT_ALARM,
-                              TRUE,
-                              0);
-   }
-#endif
     //初始化必要的数据
     FmRadio_InitFmRadioResource( pMe);
     return SUCCESS;
@@ -548,7 +535,6 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
 备注:
 
 ==============================================================================*/
-#if 1
 static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 {
 
@@ -625,117 +611,6 @@ __FmRadio_InitFmRadioResource_end__:
 	pMe->opMode         = FM_RADIO_OPMODE_PLAY;
 	pMe->refuseReason   = FM_RADIO_REFUSE_REASON_NOT_REFUSE;
 }
-#else
-static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
-{
-	int         index = 0;
-	byte        byMax;
-	sChanInfo   channelInfos[MAX_FMRADIO_STORED_CHANNEL] = {0};
-
-	//初始化FM Radio音量
-	(void) ICONFIG_GetItem(pMe->m_pConfig,
-                           CFGI_FMRADIO_VOLUME,
-                           &pMe->byVolumeLevel,
-                           sizeof(byte));
-    if( pMe->byVolumeLevel > MAX_FMRADIO_VOLUME || pMe->byVolumeLevel == 0)
-    {
-        pMe->byVolumeLevel = (MAX_FMRADIO_VOLUME + 1) / 2;
-    }
-
-#if defined( AEE_SIMULATOR)
-    pMe->cfg.channel            = 0;
-    pMe->cfg.tuningMode         = FM_RADIO_TUNNING_MODE_LIST;
-
-    pMe->pChanListRoot = (sChanListNode*)MALLOC(sizeof(sChanListNode));
-    pMe->pChanListRoot->chanInfo.wChannel = 0;
-    pMe->pChanListRoot->pNextNode         = pMe->pChanListRoot;
-    pMe->pChanListRoot->pPreNode          = pMe->pChanListRoot;
-    pMe->byChannelMax                     = 0;
-    pMe->pCurChanNode                     = NULL;
-    pMe->pCurChanNodeWithLoop             = NULL;
-
-    for( index = 10; index < 30; index ++ )
-    {
-        channelInfos[0].wChannel = index;
-        FmRadio_AddChanListNode( &channelInfos[0]);
-    }
-    FmRadio_ChanList_EnumInit_WithLoop( pMe);
-#else
-    //初始化各频道的信息
-    (void) ICONFIG_GetItem(pMe->m_pConfig,
-                           CFGI_FMRADIO_CHAN_INFO,
-                           (void*) channelInfos,
-                           sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
-
-    //初始化频道总数
-    (void) ICONFIG_GetItem(pMe->m_pConfig,
-                           CFGI_FMRADIO_CHAN_TOTAL,
-                           &byMax,
-                           sizeof(byte));
-
-    //在下面将Node添加到List的过程中byChannelMax会自动增加。
-    if(byMax > MAX_FMRADIO_STORED_CHANNEL)
-    {
-        byMax = MAX_FMRADIO_STORED_CHANNEL;
-    }
-
-    pMe->pChanListRoot = (sChanListNode*)MALLOC(sizeof(sChanListNode));
-    pMe->pChanListRoot->chanInfo.wChannel = 0;
-    pMe->pChanListRoot->pNextNode         = pMe->pChanListRoot;
-    pMe->pChanListRoot->pPreNode          = pMe->pChanListRoot;
-    pMe->byChannelMax                     = 0;
-    pMe->pCurChanNode                     = NULL;
-    pMe->pCurChanNodeWithLoop             = NULL;
-    pMe->channelListMenuSelectedItemId    = -1;
-
-    while(index < byMax)
-    {
-        FmRadio_AddChanListNode( &channelInfos[index]);
-        index++;
-    }
-
-    FmRadio_ChanList_EnumInit_WithLoop( pMe);
-    if( ISHELL_GetPrefs( pMe->m_pShell, AEECLSID_APP_FMRADIO, 1, &pMe->cfg, sizeof(pMe->cfg)) == SUCCESS)
-    {
-        sChanListNode* node     = NULL;
-        int            counter  = 0;
-        while( FmRadio_ChanList_EnumNext_WithLoop( pMe, &node) == TRUE && counter < pMe->byChannelMax)
-        {
-            if( node->chanInfo.wChannel == pMe->cfg.channel)
-            {
-                goto __FmRadio_InitFmRadioResource_end__;
-            }
-            counter ++;
-        }
-//        FmRadio_ChanList_EnumInit_WithLoop( pMe);
-
-        if( pMe->cfg.tuningMode < 0 || pMe->cfg.tuningMode > 2)
-        {
-            pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_LIST;
-        }
-    }
-    else
-    {
-        sChanListNode *node;
-        if( FmRadio_ChanList_EnumNext_WithLoop( pMe, &node) == TRUE)
-        {
-            pMe->cfg.channel = node->chanInfo.wChannel;
-        }
-        else
-        {
-            pMe->cfg.channel = 0;
-        }
-
-        pMe->cfg.tuningMode     = FM_RADIO_TUNNING_MODE_LIST;
-    }
-
-#endif
-
-__FmRadio_InitFmRadioResource_end__:
-	pMe->opMode         = FM_RADIO_OPMODE_PLAY;
-	pMe->refuseReason   = FM_RADIO_REFUSE_REASON_NOT_REFUSE;
-}
-#endif
 
 /*==============================================================================
 函数:
@@ -792,16 +667,6 @@ static void FmRadio_FreeAppData(CFmRadio *pMe)
         IANNUNCIATOR_Release( pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
     }
-#if 0
-	if( pMe->pChanListRoot != NULL)
-	{
-		FmRadio_ReleaseChanList( pMe);
-		FREE( pMe->pChanListRoot);
-		pMe->pChanListRoot = NULL;
-		pMe->byChannelMax  = 0;
-	}
-#endif
-
 }
 
 /*==============================================================================
@@ -925,6 +790,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             {
                 AEEDeviceInfo di; 
                 ISHELL_GetDeviceInfo(pMe->m_pShell,&di);
+                pMe->m_rc.dx = di.cxScreen;
                 pMe->m_rc.dy = di.cyScreen;
             }
 
@@ -972,18 +838,6 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                 FmRadio_PowerDown( pMe);
 				FmRadio_SaveChannelList( pMe);
 				ISHELL_SetPrefs( pMe->m_pShell, AEECLSID_APP_FMRADIO, 1, &pMe->cfg, sizeof(pMe->cfg));
-#if 0
-#if 0//def FEATURE_APP_MUSICPLAYER
-               if(GetMp3PlayerStatus()==MP3STATUS_RUNONBACKGROUND)
-               {
-                   (void)ISHELL_PostEvent(pMe->m_pShell,
-                                          AEECLSID_APP_MUSICPLAYER,
-                                          EVT_ALARM,
-                                          FALSE,
-                                          0);
-               }
-#endif
-#endif
             }
 #endif//#if !defined( AEE_SIMULATOR)
             pMe->m_bSuspending = TRUE;
@@ -1351,7 +1205,7 @@ static void FmRadio_PowerUp(void *pme)
         FM_CloseKeyBeepVol(pMe);
         Fm_Shake_Open();
 
-        if( fm_tune_channel( pMe->cfg.channel) == FM_RADIO_SUCCESSFUL)
+        if( fm_tune_channel((LOWEST_BAND_FREQ + CHANNEL_SPACE * pMe->cfg.channel)/100) == FM_RADIO_SUCCESSFUL)
         {
             pMe->ledLightType = FM_RADIO_LED_LIGHT_PLAYING;
         }
@@ -1389,8 +1243,6 @@ boolean get_fm_play_state(void)
 ==============================================================================*/
 boolean FmRadio_AddChanListNode( sChanInfo* pChInfo)
 {
-
-#if 1 
 	if( pChInfo != NULL &&
 	    gFmRadio.byChannelMax < MAX_FMRADIO_STORED_CHANNEL &&
 	    FmRadio_IsChannelValid( pChInfo->wChannel)
@@ -1401,32 +1253,6 @@ boolean FmRadio_AddChanListNode( sChanInfo* pChInfo)
 		gFmRadio.byChannelMax ++;
 		return TRUE;
 	}
-#else
-	if( pChInfo != NULL && gFmRadio.byChannelMax < MAX_FMRADIO_STORED_CHANNEL)
-	{
-		sChanListNode* pChanNode = NULL;
-
-		pChanNode = (sChanListNode*)MALLOC(sizeof(sChanListNode));
-
-        if(pChanNode == NULL)
-        {
-            return FALSE;
-        }
-
-        //把频道信息复制到List Node
-        MEMCPY((void*) &(pChanNode->chanInfo),(void*) pChInfo, sizeof(sChanInfo));
-
-        pChanNode->pNextNode = gFmRadio.pChanListRoot;
-        pChanNode->pPreNode  = gFmRadio.pChanListRoot->pPreNode;
-
-        gFmRadio.pChanListRoot->pPreNode->pNextNode = pChanNode;
-        gFmRadio.pChanListRoot->pPreNode            = pChanNode;
-
-        gFmRadio.byChannelMax++;
-
-        return TRUE;
-	}
-#endif
 
     return FALSE;
 }
@@ -1447,7 +1273,6 @@ boolean FmRadio_AddChanListNode( sChanInfo* pChInfo)
 备注:
 
 ==============================================================================*/
-#if 1
 boolean FmRadio_ChanList_DeleteByIndex( CFmRadio* pMe, int index)
 {
 
@@ -1469,28 +1294,7 @@ boolean FmRadio_ChanList_DeleteByIndex( CFmRadio* pMe, int index)
 	return FALSE;
 }
 
-#else
-boolean FmRadio_DeleteChanListNode( sChanListNode* pNode)
-{
-    if( pNode            == NULL ||
-        pNode->pPreNode  == NULL ||
-        pNode->pNextNode == NULL
-    )
-    {
-        return FALSE;
-    }
 
-    pNode->pPreNode->pNextNode = pNode->pNextNode;
-    pNode->pNextNode->pPreNode = pNode->pPreNode;
-    FREE(pNode);
-
-    gFmRadio.byChannelMax--;
-
-    return TRUE;
-}
-#endif
-
-#if 1 
 sChanInfo* FmRadio_ChanList_GetByIndex( CFmRadio* pMe, int index)
 {
 
@@ -1503,51 +1307,11 @@ sChanInfo* FmRadio_ChanList_GetByIndex( CFmRadio* pMe, int index)
 		return NULL;
 	}
 }
-#else
-// change FmRadio_FindChanListNodeByIndex to FmRadio_PeekChanListNodeByIndex
-boolean FmRadio_PeekChanListNodeByIndex( int index, sChanListNode **ppnode)
-{
 
-    if( index < gFmRadio.byChannelMax && index > -1)
-    {
-        sChanListNode *pnode;
-        int           i = 0;
-
-        FmRadio_ChanList_EnumInit( &gFmRadio);
-        while( FmRadio_ChanList_EnumNext( &gFmRadio, &pnode) == TRUE)
-        {
-            if( i == index)
-            {
-                *ppnode = pnode;
-                return TRUE;
-            }
-            i ++;
-        }
-    }
-
-    return FALSE;
-}
-
-boolean FmRadio_DeleteChanListNodeByIndexAndSave( int index)
-{
-
-    sChanListNode *pnode;
-
-    // change FmRadio_FindChanListNodeByIndex to FmRadio_PeekChanListNodeByIndex
-    if( FmRadio_PeekChanListNodeByIndex( index, &pnode) == TRUE && FmRadio_DeleteChanListNode( pnode) == TRUE)
-    {
-        FmRadio_SaveChannelList( (void*)&gFmRadio);
-        return TRUE;
-    }
-
-    return FALSE;
-}
-#endif
 
 void FmRadio_SaveChannelList( CFmRadio* pMe)
 {
 
-#if 1
 	byte byMax = pMe->byChannelMax;
 
 	if( pMe->byChannelMax > MAX_FMRADIO_STORED_CHANNEL)
@@ -1563,48 +1327,8 @@ void FmRadio_SaveChannelList( CFmRadio* pMe)
 						   CFGI_FMRADIO_CHAN_INFO,
 						   (void*) pMe->chanInfoList,
 						   sizeof(pMe->chanInfoList));
-#else
-	CFmRadio*       pMe = (CFmRadio *)pme;
-	byte            byMax;
-	int             index = 0;
-	sChanInfo       sChannelNode[MAX_FMRADIO_STORED_CHANNEL] = {0};
-	sChanListNode*  pChanNode;
-
-    if(pMe->pChanListRoot == NULL)
-    {
-        return;
-    }
-
-    if(pMe->byChannelMax > MAX_FMRADIO_STORED_CHANNEL)
-    {
-        byMax = MAX_FMRADIO_STORED_CHANNEL;
-    }
-    else
-    {
-        byMax = pMe->byChannelMax;
-    }
-
-    (void) ICONFIG_SetItem(pMe->m_pConfig,
-                           CFGI_FMRADIO_CHAN_TOTAL,
-                           &byMax,
-                           sizeof(byte));
-
-    FmRadio_ChanList_EnumInit( pMe);
-    while( index < byMax && FmRadio_ChanList_EnumNext( pMe, &pChanNode) == TRUE)
-    {
-        MEMCPY((void*) &sChannelNode[index], (void*) &(pChanNode->chanInfo), sizeof(sChanInfo));
-        index++;
-    }
-
-    (void) ICONFIG_SetItem(pMe->m_pConfig,
-                           CFGI_FMRADIO_CHAN_INFO,
-                           (void*) sChannelNode,
-						   sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
-#endif
 }
 
-
-#if 1
 void FmRadio_ClearChanList( CFmRadio* pMe)
 {
 	int i = 0;
@@ -1616,24 +1340,8 @@ void FmRadio_ClearChanList( CFmRadio* pMe)
 	}
 	pMe->byChannelMax = 0;
 }
-#else
-void FmRadio_ReleaseChanList( CFmRadio *pMe)
-{
 
-	sChanListNode *node = NULL;
 
-	FmRadio_ChanList_EnumInit( pMe);
-    while( FmRadio_ChanList_EnumNext( pMe, &node) == TRUE)
-    {
-		FmRadio_DeleteChanListNode( node);
-	}
-
-	pMe->pChanListRoot->pNextNode = pMe->pChanListRoot;
-	pMe->pChanListRoot->pPreNode  = pMe->pChanListRoot;
-}
-#endif
-
-#if 1
 boolean FmRadio_IsChannelValid( uint16 channel)
 {
 
@@ -1717,86 +1425,11 @@ sChanInfo* FmRadio_ChanList_GetCurrent_WithLoop( CFmRadio* pMe)
 
 	return FmRadio_ChanList_GetByIndex( pMe, pMe->enumCursorWithLoop);
 }
-#else
-void FmRadio_ChanList_EnumInit( CFmRadio *pMe)
-{
-    pMe->pCurChanNode = pMe->pChanListRoot->pNextNode;
-}
 
-boolean FmRadio_ChanList_EnumNext( CFmRadio *pMe, sChanListNode **nextNode)
-{
-
-    if( pMe->pCurChanNode != pMe->pChanListRoot)
-    {
-        *nextNode = pMe->pCurChanNode;
-
-        pMe->pCurChanNode = pMe->pCurChanNode->pNextNode;
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-void FmRadio_ChanList_EnumInit_WithLoop( CFmRadio *pMe)
-{
-    pMe->pCurChanNodeWithLoop = pMe->pChanListRoot;
-}
-
-boolean FmRadio_ChanList_EnumNext_WithLoop( CFmRadio *pMe, sChanListNode **nextNode)
-{
-
-    if( pMe->pCurChanNodeWithLoop == NULL)
-    {
-        FmRadio_ChanList_EnumInit_WithLoop( pMe);
-    }
-
-    pMe->pCurChanNodeWithLoop = pMe->pCurChanNodeWithLoop->pNextNode;
-    pMe->currentChannelListNodeIndex ++;
-    if( pMe->pCurChanNodeWithLoop == pMe->pChanListRoot)
-    {
-        pMe->pCurChanNodeWithLoop = pMe->pCurChanNodeWithLoop->pNextNode;
-        pMe->currentChannelListNodeIndex = 0;
-    }
-
-    if( pMe->pCurChanNodeWithLoop != pMe->pChanListRoot)
-    {
-        *nextNode = pMe->pCurChanNodeWithLoop;
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-boolean FmRadio_ChanList_EnumPrevious_WithLoop( CFmRadio *pMe, sChanListNode **nextNode)
-{
-
-    if( pMe->pCurChanNodeWithLoop == NULL)
-    {
-        FmRadio_ChanList_EnumInit_WithLoop( pMe);
-    }
-
-    pMe->pCurChanNodeWithLoop = pMe->pCurChanNodeWithLoop->pPreNode;
-    pMe->currentChannelListNodeIndex --;
-    if( pMe->pCurChanNodeWithLoop == pMe->pChanListRoot)
-    {
-        pMe->pCurChanNodeWithLoop = pMe->pCurChanNodeWithLoop->pPreNode;
-        pMe->currentChannelListNodeIndex = 0;
-    }
-
-    if( pMe->pCurChanNodeWithLoop != pMe->pChanListRoot)
-    {
-        *nextNode = pMe->pCurChanNodeWithLoop;
-        return TRUE;
-    }
-
-    return FALSE;
-}
-#endif
 
 boolean FmRadio_FindChanListNode(int channel)
 {
 
-#if 1
 	int i = 0;
 
 	for( i = 0; i < MAX_FMRADIO_STORED_CHANNEL; i++)
@@ -1806,18 +1439,7 @@ boolean FmRadio_FindChanListNode(int channel)
 			return TRUE;
 		}
 	}
-#else
-	sChanListNode *tmp_pnode;
 
-	FmRadio_ChanList_EnumInit( &gFmRadio);
-	while( FmRadio_ChanList_EnumNext( &gFmRadio, &tmp_pnode) == TRUE)
-	{
-		if(channel == tmp_pnode->chanInfo.wChannel)
-		{
-			return TRUE;
-		}
-	}
-#endif
 
     return FALSE;
 

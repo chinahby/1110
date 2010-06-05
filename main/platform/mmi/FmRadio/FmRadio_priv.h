@@ -74,7 +74,7 @@
 #define FEATURE_DIRECT_INPUT_CHANNEL_NUMBER                     1
 #define FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY    0
 #define FEATURE_FMRADIO_TEST_VERSION
-
+#define FEATURE_FMRADIO_SIMPLE_VERSION							1
 #if defined( FEATURE_Q1_SPECIAL_TARGET) || defined( FEATURE_Q2_SPECIAL_TARGET) || defined( FEATURE_CS09) || defined(FEATURE_FMRADIO_TEST_VERSION)
 #define FEATURE_FMRADIO_NO_MODE_SELECT
 #define FEATURE_FMRADIO_KEY_OK_TO_MUTE
@@ -309,27 +309,49 @@ typedef struct _CFmRadio
 // FmRadio_APPIsReadyTimer发出
 #define APPISREADY_TIMER       100           
 
+#if defined(FEATURE_DISP_128X128)
 //当前操作字符串显示y偏移
-#define FMRADIO_OPERATION_YOFFSET   14
+#define FMRADIO_OPERATION_YOFFSET   	14
 //频率图像显示区域x偏移
-#define FMRADIO_CHANNEL_XOFFSET      30//12
+#define FMRADIO_CHANNEL_XOFFSET      	12//30//12
 //频率图像显示区域y偏移
-#define FMRADIO_CHANNEL_YOFFSET      46//52
+#define FMRADIO_CHANNEL_YOFFSET      	46//52
 //频率字符显示y偏移
-#define FMRADIO_CHANNEL_FREQ_YOFFSET 77//97
+#define FMRADIO_CHANNEL_FREQ_YOFFSET 	10//97
 //频率指针高度
-#define FMRADIO_CURSOR_DY           4
+#define FMRADIO_CURSOR_DY           	4
 //音量显示区域x偏移
-#define FMRADIO_VOLUME_XOFFSET        49
+#define FMRADIO_VOLUME_XOFFSET        	30//49
 //音量显示区域长度
-#define FMRADIO_VOLUME_LENGTH         93
+#define FMRADIO_VOLUME_LENGTH         	60//93
 //音量显示区域y偏移
-#define FMRADIO_VOLUME_YOFFSET        94//113
+#define FMRADIO_VOLUME_YOFFSET        	40//94//113
 //音量滑块大小
-#define FMRADIO_VOLUME_BLOCK_SIZE   5
+#define FMRADIO_VOLUME_BLOCK_SIZE   	4//5
 //状态指示灯大小
 #define FMRADIO_LED_LIGHT_SIZE          12
-
+#else
+//当前操作字符串显示y偏移
+#define FMRADIO_OPERATION_YOFFSET   	14
+//频率图像显示区域x偏移
+#define FMRADIO_CHANNEL_XOFFSET      	12//30//12
+//频率图像显示区域y偏移
+#define FMRADIO_CHANNEL_YOFFSET      	30//46//52
+//频率字符显示y偏移
+#define FMRADIO_CHANNEL_FREQ_YOFFSET 	50//77//97
+//频率指针高度
+#define FMRADIO_CURSOR_DY           	4
+//音量显示区域x偏移
+#define FMRADIO_VOLUME_XOFFSET        	30//49
+//音量显示区域长度
+#define FMRADIO_VOLUME_LENGTH         	60//93
+//音量显示区域y偏移
+#define FMRADIO_VOLUME_YOFFSET        	70//94//113
+//音量滑块大小
+#define FMRADIO_VOLUME_BLOCK_SIZE   	4//5
+//状态指示灯大小
+#define FMRADIO_LED_LIGHT_SIZE          12
+#endif
 // 根据 BREW 3 的需要，重定义资源文件宏
 #ifndef WIN32
 #if defined( AEE_SIMULATOR)

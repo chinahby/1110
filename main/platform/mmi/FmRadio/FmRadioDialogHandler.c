@@ -616,13 +616,22 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             pMe->directInputChannel[0] = (AECHAR)( key - AVK_0 + '0');
             pMe->directInputChannel[1] = 0;
 
-            SETAEERECT( &rect, ( 176 - width) / 2, ( 220 - fontHeight) / 2, width, fontHeight);
+		#if defined(FEATURE_DISP_128X128)
+			width = 40;
+            SETAEERECT( &rect, ( 128 - width) / 2, ( 128 - fontHeight) / 2, width, fontHeight);
+        #else
+        	SETAEERECT( &rect, ( 176 - width) / 2, ( 220 - fontHeight) / 2, width, fontHeight);
+        #endif
             ITEXTCTL_SetRect( pMe->pText, &rect);
             ITEXTCTL_SetProperties(pMe->pText, TP_FIXSETRECT|TP_FIXOEM|TP_FIXSETRECT|TP_FOCUS_NOSEL);
 #if defined FEATURE_FM_SPACE_50KHZ
             ITEXTCTL_SetMaxSize( pMe->pText, 6);
 #else
-            ITEXTCTL_SetMaxSize( pMe->pText, 5);
+		#if defined(FEATURE_DISP_128X128)
+            ITEXTCTL_SetMaxSize( pMe->pText, 4);
+        #else
+        	ITEXTCTL_SetMaxSize( pMe->pText, 5);
+        #endif
 #endif			
             ITEXTCTL_SetActive( pMe->pText, TRUE);
             ITEXTCTL_SetText( pMe->pText, pMe->directInputChannel, WSTRLEN( pMe->directInputChannel));
@@ -1073,7 +1082,7 @@ static void setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
 static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 {
 
-    static const int limitValue[] = { 7, 0};
+    static const int limitValue[] = { 15, 0};
     static const int increment[]  = { 1, -1};
                  int theKey       = keyCode - AVK_UP;
 
@@ -1132,7 +1141,7 @@ static void FMRadioMute( CFmRadio *pMe)
 
 static void popTuningModeSelectMenu( CFmRadio *pMe)
 {
-
+#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
     int         i   = 0;
     CtlAddItem  ai;
     AEERect     rect;
@@ -1154,11 +1163,19 @@ static void popTuningModeSelectMenu( CFmRadio *pMe)
     }
 
     drawImage( pMe, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BGMASK, 0, 0);
+#if defined(FEATURE_DISP_128X128)
+	SETAEERECT( &rect, (128 >> 3) + 6, (128 >> 3) + 6, 128 * 3 >> 2, 128 * 3 >> 2);
+    IDISPLAY_FillRect( pMe->m_pDisplay, &rect, 0);
+
+    SETAEERECT( &rect, 128 >> 3, 128 >> 3, 128 * 3 >> 2, 128 * 3 >> 2);
+    IMENUCTL_SetRect( pMe->m_pMenu, &rect);
+#else
     SETAEERECT( &rect, (128 >> 3) + 6, (128 >> 3) + 6, 128 * 3 >> 2, 128 * 3 >> 2);
     IDISPLAY_FillRect( pMe->m_pDisplay, &rect, 0);
 
     SETAEERECT( &rect, 128 >> 3, 128 >> 3, 128 * 3 >> 2, 128 * 3 >> 2);
     IMENUCTL_SetRect( pMe->m_pMenu, &rect);
+#endif
 //    IMENUCTL_SetProperties( pMe->m_pMenu, IMENUCTL_GetProperties( pMe->m_pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY);
 	IMENUCTL_SetOemProperties(pMe->m_pMenu, IMENUCTL_GetOemProperties( pMe->m_pMenu)&~OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
     IMENUCTL_SetBottomBarType( pMe->m_pMenu, BTBAR_SELECT_BACK);
@@ -1169,6 +1186,7 @@ static void popTuningModeSelectMenu( CFmRadio *pMe)
     IMENUCTL_SetActive( pMe->m_pMenu, TRUE);
 
     pMe->opMode = FM_RADIO_OPMODE_MODE_SELECTION;
+#endif
 }
 
 static void hideTuningModeSelectMenu( CFmRadio *pMe)
@@ -1291,7 +1309,7 @@ static void refreshChannelList( CFmRadio *pMe, boolean begin)
         pMe->seekChannelClockwise = TRUE;
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST);
 #if !defined( AEE_SIMULATOR)
-        fm_tune_channel( 0);
+        fm_tune_channel((LOWEST_BAND_FREQ)/100);
 #endif//#if !defined( AEE_SIMULATOR)
 
         if( pMe->globalSearching)
@@ -1530,8 +1548,11 @@ static void showChannelEditingScreen( CFmRadio *pMe)
 #if defined FEATURE_FM_SPACE_50KHZ
     ITEXTCTL_SetMaxSize(pMe->pText, 6/*bw:5*/);
 #else
-    ITEXTCTL_SetMaxSize(pMe->pText, 5);
-
+	#if defined(FEATURE_DISP_128X128)
+		ITEXTCTL_SetMaxSize(pMe->pText, 4);
+	#else
+    	ITEXTCTL_SetMaxSize(pMe->pText, 5);
+    #endif
 #endif
     ITEXTCTL_SetInputMode(pMe->pText, AEE_TM_NUMBERS);
 
@@ -1624,7 +1645,6 @@ static void hideChannelEditingScreen( CFmRadio *pMe)
 #else
     if( WSTRLEN( text) <= 5 &&
         channelNumberIsvalid( text)
-
 #endif //#if defined FEATURE_FM_SPACE_50KHZ
     )
     {
@@ -1715,29 +1735,58 @@ static void paint( CFmRadio *pMe)
     drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
 
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT)
-	if( pMe->tuneVolumeByLeftRightArrowKey)
-	{
-		static int x = 0;
-
-		if( (x % 2) == 0)
+	#if defined(FEATURE_DISP_128X128)
+		if( pMe->tuneVolumeByLeftRightArrowKey)
 		{
-			drawImage( pMe, FMRADIOLN_RES_FILE, IDI_VOLUME1, 49, 113);
+			static int x = 0;
+
+			if( (x % 2) == 0)
+			{
+				drawImage( pMe, FMRADIOLN_RES_FILE, IDI_VOLUME1, 49, 80);
+			}
+			x++;
 		}
-		x ++;
-	}
+	#else
+		if( pMe->tuneVolumeByLeftRightArrowKey)
+		{
+			static int x = 0;
+
+			if( (x % 2) == 0)
+			{
+				drawImage( pMe, FMRADIOLN_RES_FILE, IDI_VOLUME1, 49, 113);
+			}
+			x++;
+		}
+	#endif
 #endif
 #if defined( FEATURE_FMRADIO_KEY_OK_TO_MUTE)
-     if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
-     {
-        if(pMe->key_to_mute)
-        {
-            drawImage( pMe, FMRADIOLN_RES_FILE, IDI_MUTE, 81, 146); 
-        }
-        else
-        {
-            drawImage( pMe, FMRADIOLN_RES_FILE, IDI_UNMUTE, 81, 146);     
-        } 
-     }
+#ifndef FEATURE_FMRADIO_SIMPLE_VERSION// draw cursor
+	#if defined(FEATURE_DISP_128X128)
+		if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+		{
+			if(pMe->key_to_mute)
+			{
+		    	drawImage( pMe, FMRADIOLN_RES_FILE, IDI_MUTE, 60, 80); 
+			}
+			else
+			{
+			    drawImage( pMe, FMRADIOLN_RES_FILE, IDI_UNMUTE, 60, 80);     
+			} 
+		}
+	#else
+		if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+		{
+			if(pMe->key_to_mute)
+			{
+		    	drawImage( pMe, FMRADIOLN_RES_FILE, IDI_MUTE, 81, 146); 
+			}
+			else
+			{
+			    drawImage( pMe, FMRADIOLN_RES_FILE, IDI_UNMUTE, 81, 146);     
+			} 
+		}
+	#endif
+#endif
 #endif
     if( pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM)
     {
@@ -1800,8 +1849,21 @@ static void paint( CFmRadio *pMe)
         {
             AEERect     rect        = {0};
             int         fontHeight  = IDISPLAY_GetFontMetrics( pMe->m_pDisplay, AEE_FONT_BOLD, 0, 0);
-            int         width       = 86;
-
+        #if defined(FEATURE_DISP_128X128)
+            int         width       = 46;
+		
+            SETAEERECT( &rect, ( 128 - width) / 2, (( 128 - fontHeight) / 2) - fontHeight, width, fontHeight);
+            drawText( pMe,
+                        FMRADIOLS_RES_FILE_LANG,
+                        IDS_FMRADIO_FREQ_INPUT,
+                        &rect,
+                        MAKE_RGB(255,105,0),
+                        AEE_FONT_NORMAL,
+                        IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+                    );
+        #else
+        	int         width       = 86;
+		
             SETAEERECT( &rect, ( 176 - width) / 2, (( 220 - fontHeight) / 2) - fontHeight, width, fontHeight);
             drawText( pMe,
                         FMRADIOLS_RES_FILE_LANG,
@@ -1811,6 +1873,7 @@ static void paint( CFmRadio *pMe)
                         AEE_FONT_NORMAL,
                         IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
                     );
+        #endif
             //IDISPLAY_UpdateEx( pMe->m_pDisplay, FALSE);            
         }
     }
@@ -1885,6 +1948,8 @@ static void drawBg( CFmRadio *pMe)
 
 static void drawOperationPrompt( CFmRadio *pMe, int16 resId, RGBVAL color)
 {
+//wangliang close!
+#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
     static AEERect rect = {0};
     int nFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
 
@@ -1903,6 +1968,7 @@ static void drawOperationPrompt( CFmRadio *pMe, int16 resId, RGBVAL color)
             IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
         );
     IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
+#endif
 }
 
 static int getIndexByMenuItemId( CFmRadio *pMe, uint16 menuItemId)
@@ -2005,26 +2071,28 @@ static void drawChannelIndicator( CFmRadio *pMe)
     AECHAR  szBuf[20] = {0};            //Êä³ö»º´æ
     int nFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
 
-    // draw cursor
+#ifndef FEATURE_FMRADIO_SIMPLE_VERSION// draw cursor
     SETAEERECT(&rect, 
-                        pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET, 
-                        pMe->m_rc.y + FMRADIO_CHANNEL_YOFFSET, 
-                        pMe->m_rc.dx - 2*FMRADIO_CHANNEL_XOFFSET, 
-                        FMRADIO_CURSOR_DY);
+                pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET, 
+                pMe->m_rc.y + FMRADIO_CHANNEL_YOFFSET, 
+                pMe->m_rc.dx - 2*FMRADIO_CHANNEL_XOFFSET, 
+                FMRADIO_CURSOR_DY);
     drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);
     drawImage( pMe,
             FMRADIOLN_RES_FILE,
             IDI_CURSOR,
             pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET  + 7* pMe->cfg.channel/10,//(CHANNEL_SPACE * pMe->cfg.channel / 200),
             pMe->m_rc.y + FMRADIO_CHANNEL_YOFFSET);
+#endif
 
-    // draw Channel Name, Channel Freq
+#ifdef FEATURE_FMRADIO_SIMPLE_VERSION
+	// draw Channel Name, Channel Freq
     convertChannelValueToText( pMe->cfg.channel, szBuf, 40);
     SETAEERECT(&rect, 
-                        pMe->m_rc.x, 
-                        pMe->m_rc.y + FMRADIO_CHANNEL_FREQ_YOFFSET, 
-                        pMe->m_rc.dx,
-                        nFontHeight);
+                pMe->m_rc.x, 
+                pMe->m_rc.y + FMRADIO_CHANNEL_FREQ_YOFFSET, 
+                pMe->m_rc.dx,
+                nFontHeight);
     drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);
     drawText2( pMe->m_pDisplay,
             szBuf,
@@ -2033,19 +2101,37 @@ static void drawChannelIndicator( CFmRadio *pMe)
             AEE_FONT_BOLD,
             IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
         );
+#else
+    // draw Channel Name, Channel Freq
+    convertChannelValueToText( pMe->cfg.channel, szBuf, 40);
+    SETAEERECT(&rect, 
+                pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET, 
+                pMe->m_rc.y + FMRADIO_CHANNEL_FREQ_YOFFSET, 
+                pMe->m_rc.dx,
+                nFontHeight);
+    drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);
+    drawText2( pMe->m_pDisplay,
+            szBuf,
+            &rect,
+            RGB_WHITE,
+            AEE_FONT_BOLD,
+            IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+        );
+#endif
     IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
 }
 
 static void drawVolumeIndicator( CFmRadio *pMe)
 {
+#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
     AEERect rect;
 
     // draw background
     SETAEERECT(&rect,
-                        pMe->m_rc.x + FMRADIO_VOLUME_XOFFSET, 
-                        pMe->m_rc.y + FMRADIO_VOLUME_YOFFSET, 
-                        FMRADIO_VOLUME_LENGTH, 
-                        FMRADIO_VOLUME_BLOCK_SIZE);
+                pMe->m_rc.x + FMRADIO_VOLUME_XOFFSET, 
+                pMe->m_rc.y + FMRADIO_VOLUME_YOFFSET, 
+                FMRADIO_VOLUME_LENGTH, 
+                FMRADIO_VOLUME_BLOCK_SIZE);
     drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);
 
     // draw volume
@@ -2055,12 +2141,13 @@ static void drawVolumeIndicator( CFmRadio *pMe)
                         FMRADIO_VOLUME_BLOCK_SIZE, 
                         FMRADIO_VOLUME_BLOCK_SIZE);
     drawImageWithOffset( pMe, 
-                                        FMRADIOLN_RES_FILE, 
-                                        IDI_VOLUME, 
-                                        pMe->m_rc.x + FMRADIO_VOLUME_XOFFSET+ (FMRADIO_VOLUME_LENGTH - FMRADIO_VOLUME_BLOCK_SIZE)*pMe->byVolumeLevel/7, 
-                                        pMe->m_rc.y + FMRADIO_VOLUME_YOFFSET, 
-                                        &rect);
+                        FMRADIOLN_RES_FILE, 
+                        IDI_VOLUME, 
+                        pMe->m_rc.x + FMRADIO_VOLUME_XOFFSET+ (FMRADIO_VOLUME_LENGTH - FMRADIO_VOLUME_BLOCK_SIZE)*pMe->byVolumeLevel/7, 
+                        pMe->m_rc.y + FMRADIO_VOLUME_YOFFSET, 
+                        &rect);
     IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
+#endif
 }
 
 static void drawSoftkey( CFmRadio *pMe)
@@ -2070,10 +2157,10 @@ static void drawSoftkey( CFmRadio *pMe)
     AEERect rectMask = {0};
 
     SETAEERECT(&rectMask,
-                        pMe->m_rc.x + 3, 
-                        pMe->m_rc.dy - nFontHeight, 
-                        pMe->m_rc.dx - 5, 
-                        nFontHeight);
+                pMe->m_rc.x + 3, 
+                pMe->m_rc.dy - nFontHeight, 
+                pMe->m_rc.dx - 5, 
+                nFontHeight);
 
     for( i = 0; i < 3; i ++)
     {
@@ -2104,7 +2191,7 @@ static void drawSoftkey( CFmRadio *pMe)
 
 static void drawRefreshListPrompt( void *pme)
 {
-
+#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
     RGBVAL   color = 0;
     CFmRadio *pMe  = (CFmRadio*)pme;
 
@@ -2122,6 +2209,7 @@ static void drawRefreshListPrompt( void *pme)
     {
         ISHELL_SetTimer( pMe->m_pShell, 200, drawRefreshListPrompt, pme);
     }
+#endif
 }
 
 static void stopDrawRefreshListPrompt( CFmRadio *pMe)
@@ -2133,6 +2221,7 @@ static void stopDrawRefreshListPrompt( CFmRadio *pMe)
 
 static void drawLedLight( CFmRadio *pMe)
 {
+#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
     int nFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
     AEERect rect[] = {
             { 0, FMRADIO_LED_LIGHT_SIZE, FMRADIO_LED_LIGHT_SIZE, FMRADIO_LED_LIGHT_SIZE}, //FM_RADIO_LED_LIGHT_PLAYING, green1
@@ -2150,18 +2239,19 @@ static void drawLedLight( CFmRadio *pMe)
     switcher %= 2;
 
     drawImageWithOffset( pMe, 
-                                        FMRADIOLN_RES_FILE, 
-                                        IDI_LED_LIGHT, 
-                                        pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET, 
-                                        pMe->m_rc.y + FMRADIO_OPERATION_YOFFSET + (nFontHeight - FMRADIO_LED_LIGHT_SIZE)/2, 
-                                        &rect[pMe->cfg.tuningMode + 3]);
+                        FMRADIOLN_RES_FILE, 
+                        IDI_LED_LIGHT, 
+                        pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET, 
+                        pMe->m_rc.y + FMRADIO_OPERATION_YOFFSET + (nFontHeight - FMRADIO_LED_LIGHT_SIZE)/2, 
+                        &rect[pMe->cfg.tuningMode + 3]);
     drawImageWithOffset( pMe, 
-                                        FMRADIOLN_RES_FILE, 
-                                        IDI_LED_LIGHT, 
-                                        pMe->m_rc.dx - FMRADIO_CHANNEL_XOFFSET - FMRADIO_LED_LIGHT_SIZE, 
-                                        pMe->m_rc.y + FMRADIO_OPERATION_YOFFSET + (nFontHeight - FMRADIO_LED_LIGHT_SIZE)/2, 
-                                        &rect[pMe->ledLightType]);
+                        FMRADIOLN_RES_FILE, 
+                        IDI_LED_LIGHT, 
+                        pMe->m_rc.dx - FMRADIO_CHANNEL_XOFFSET - FMRADIO_LED_LIGHT_SIZE, 
+                        pMe->m_rc.y + FMRADIO_OPERATION_YOFFSET + (nFontHeight - FMRADIO_LED_LIGHT_SIZE)/2, 
+                        &rect[pMe->ledLightType]);
     IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
+#endif
 }
 
 static void drawImage( CFmRadio *pMe, char *resFile, int16 resId, int x, int y)
@@ -2280,9 +2370,6 @@ static void drawText2( IDisplay *pDisplay,
             break;
         }
 
-#if 0 
-        #define min( a, b)  ( (a) < (b)) ? (a) : (b)
-#endif
         {
             AECHAR* result = WSTRCHR( text + textOffset, '\\');
             int     length = result - text - textOffset;
