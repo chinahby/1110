@@ -3760,7 +3760,7 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
 	if(pMe->m_SYS_MODE_NO_SRV)
 #endif
     {// 搜网提示优先
-
+#ifdef FEATURE_PLANEMODE 
         byte planeMode_cfg;
         (void) ICONFIG_GetItem(pMe->m_pConfig,
                                CFGI_PLANEMODE,
