@@ -22,7 +22,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
-#define FEATURE_LANG_CHINESE
+#undef FEATURE_LANG_CHINESE
 #endif
 
 #ifndef TARGSB2_H
