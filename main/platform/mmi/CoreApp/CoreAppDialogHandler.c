@@ -3756,6 +3756,9 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
     
 #ifdef FEATURE_PLANEMODE    
     if(pMe->m_SYS_MODE_NO_SRV || pMe->bPlaneModeOn == TRUE)
+#else
+	if(pMe->m_SYS_MODE_NO_SRV)
+#endif
     {// 搜网提示优先
 
         byte planeMode_cfg;
