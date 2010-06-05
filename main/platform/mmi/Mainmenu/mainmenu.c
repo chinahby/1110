@@ -874,10 +874,8 @@ boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
     }    
     switch( pMe->m_pActivedlgID)
     {
-#ifdef FEATURE_MENU_STYLE
         case IDD_LIST_MENU:
             return MainMenu_ListMenuHandler(pMe, eCode, wParam, dwParam);
-#endif
 
         default:
             return FALSE;
@@ -894,7 +892,7 @@ DESCRIPTION:   ÁÐ±í²Ëµ¥
 PARAMETERS:
 
 =============================================================================*/
-#ifdef FEATURE_MENU_STYLE
+
 static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     PARAM_NOT_REF(dwParam)
@@ -1024,7 +1022,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
     }             
     return FALSE;
 }
-#endif
+
 
 
 

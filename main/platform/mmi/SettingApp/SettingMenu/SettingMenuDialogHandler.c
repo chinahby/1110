@@ -153,12 +153,14 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
 );
 #endif
 
+#ifdef FEATURE_LANGUAGE
 // 对话框 IDD_LANGUAGE_MENU 事件处理函数
 static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
     uint32 dwParam
 );
+#endif
 
 #ifdef FEATURE_PLANEMODE
 // 对话框 IDD_LANGUAGE_MENU 事件处理函数
@@ -422,9 +424,10 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_DATESETTING:
             return HandleDateDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
+#ifdef FEATURE_LANGUAGE
         case IDD_LANGUAGE_MENU:
             return HandleLanguageDialogEvent(pMe,eCode,wParam,dwParam);
-
+#endif
 #ifdef FEATURE_PLANEMODE
         case IDD_PLANEMODE:
             return HandlePlaneModeDialogEvent(pMe,eCode,wParam,dwParam);
@@ -886,7 +889,9 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_PLANEMODE
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PLANE_MODE, IDS_PLANE_MODE, NULL, 0);
 #endif
+#ifdef FEATURE_LANGUAGE
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_LANGUAGE, IDS_LANGUAGE, NULL, 0);
+#endif
 #ifdef FEATURE_SET_BANNER
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_BANNER_TITLE, IDS_BANNER_TITLE, NULL, 0);
 #endif
@@ -959,9 +964,11 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                         CLOSE_DIALOG(DLGRET_PLANEMODE)
                     break;
 #endif //FEATURE_PLANEMODE
+#ifdef FEATURE_LANGUAGE
                 case IDS_LANGUAGE:    //语言选择
                     CLOSE_DIALOG(DLGRET_LANGUAGE)
                     break;
+#endif
 #ifdef FEATURE_KEYGUARD
                 case IDS_AUTOKEYGUARD_TITLE:         //自动锁键盘
                     CLOSE_DIALOG(DLGRET_AKG)
@@ -3030,6 +3037,7 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
 } // HandleDATEDialogEvent
 
 #endif
+
 /*==============================================================================
 函数：
        HandleLanguageDialogEvent
@@ -3049,6 +3057,7 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
 备注：
 
 ==============================================================================*/
+#ifdef FEATURE_LANGUAGE
 static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -3400,7 +3409,7 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
     }
     return FALSE;
 } // HandleLanguageDialogEvent
-
+#endif
 
 /*==============================================================================
 函数：

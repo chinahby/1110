@@ -82,8 +82,9 @@ static NextFSMAction SettingMenu_StateTimeHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe);
 #endif
 // 状态 SETTINGMENUST_LANGUAGE 处理函数
+#ifdef FEATURE_LANGUAGE
 static NextFSMAction SettingMenu_StateLanguageHandler(CSettingMenu *pMe);
-
+#endif
 // 状态 SETTINGMENUST_EXIT 处理函数
 static NextFSMAction SettingMenu_StateExitHandler(CSettingMenu *pMe);
 
@@ -225,10 +226,11 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             retVal = SettingMenu_StateDateHandler(pMe);
             break;
 #endif
+#ifdef FEATURE_LANGUAGE
         case SETTINGMENUST_LANGUAGE:
             retVal = SettingMenu_StateLanguageHandler(pMe);
             break;
-
+#endif
         case SETTINGMENUST_EXIT:
             retVal = SettingMenu_StateExitHandler(pMe);
             break;
@@ -550,9 +552,11 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_PLANEMODE)
             return NFSMACTION_CONTINUE;
 #endif
+#ifdef FEATURE_LANGUAGE
         case DLGRET_LANGUAGE:
             MOVE_TO_STATE(SETTINGMENUST_LANGUAGE)
             return NFSMACTION_CONTINUE;
+#endif
 #ifdef FEATURE_KEYGUARD
         case DLGRET_AKG:
             MOVE_TO_STATE(SETTINGMENUST_AKG)
@@ -1123,6 +1127,7 @@ static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe)
 备注：
 
 ==============================================================================*/
+#ifdef FEATURE_LANGUAGE
 static NextFSMAction SettingMenu_StateLanguageHandler(CSettingMenu *pMe)
 {
     if (NULL == pMe)
@@ -1158,7 +1163,7 @@ static NextFSMAction SettingMenu_StateLanguageHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 } // StateLanguageHandler
-
+#endif
 
 /*==============================================================================
 函数：
