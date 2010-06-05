@@ -509,23 +509,7 @@ int fm_set_volume(word wVolume)
     {
         return FM_RADIO_FAILED;
     } 	
-#ifdef FEATURE_FM_OEM
-	if ( level == 0 )
-	{
-		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED,
-                       NULL, NULL);
-	}
-	else
-	{
-		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED,
-                       NULL, NULL);
-        //snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_VOICE,5,NULL,NULL);
-        //snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_MESSAGE,5,NULL,NULL);
-        //snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_RING,5,NULL,NULL);
-       // snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_MIDI,5,NULL,NULL);
-		//snd_set_volume(SND_DEVICE_HEADSET_FM,SND_METHOD_AUX,5,NULL,NULL);
-	}
-#endif
+
 	if ( level > 0x0f )
 	{
 		return FM_RADIO_FAILED;
@@ -543,12 +527,16 @@ void fm_mute(boolean on)
 	if ( on == TRUE )
 	{
 		fm_playing_mute = TRUE;
-		fm_set_volume(0);
+		//fm_set_volume(0);
+		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED,
+                       NULL, NULL);
 	}
 	else
 	{
 		fm_playing_mute = FALSE;
-		fm_set_volume(8);
+		//fm_set_volume(8);
+		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED,
+                       NULL, NULL);
 	}
 	
 	return;
