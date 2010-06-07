@@ -3989,6 +3989,18 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                58,//160,//40, 
                (pMe->m_rc.dx-30),//130, 
                pMe->m_nNormalFontHeight);
+#elif defined(FEATURE_DISP_160X128)
+		SETAEERECT(&rc, 
+				   15,
+				   20,
+				   pMe->m_rc.dx-30, 
+				   pMe->m_nNormalFontHeight);
+		SETAEERECT(&rc_week, 
+				   15,//1,
+				   58,//160,//40, 
+				   (pMe->m_rc.dx-30),//130, 
+				   pMe->m_nNormalFontHeight);
+
 #else
 	SETAEERECT(&rc, 
 	           1,
@@ -4059,7 +4071,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               wszDate, -1,
                               0, 0, &rc, 
                               IDF_ALIGN_MIDDLE
-                              | IDF_ALIGN_LEFT 
+                              | IDF_ALIGN_CENTER
                               | IDF_TEXT_TRANSPARENT);
 
         
@@ -4129,6 +4141,17 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   IDF_ALIGN_MIDDLE
                                   | IDF_ALIGN_LEFT
                                   | IDF_TEXT_TRANSPARENT); 
+#elif defined(FEATURE_DISP_160X128)
+        DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_week, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_LEFT
+                                  | IDF_TEXT_TRANSPARENT); 
+
 #else
         DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
@@ -4170,6 +4193,17 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_160X128)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_week, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+
 #else
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
@@ -4210,6 +4244,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 							  | IDF_ALIGN_RIGHT
 #elif defined(FEATURE_DISP_128X128)
                               | IDF_ALIGN_RIGHT
+#elif defined(FEATURE_DISP_160X128)
+							  | IDF_ALIGN_RIGHT
 #else
                               | IDF_ALIGN_LEFT
 #endif //FEATURE_DISP_176X220
