@@ -47,10 +47,6 @@
 #else
 
 
-void oemui_cm_init(void)
-{
-	return;
-}
 dword uim_power_control(int mask,boolean uim_reqd)
 {
 	return 0;
@@ -61,32 +57,16 @@ boolean MakeVoiceCall(IShell *pShell, boolean bCloseAll, AECHAR *number)
 	return TRUE;
 }
 
-
-
-boolean IsRunAsUIMVersion(void)
-{
-	return FALSE;//wlh ÎÞ¿¨Ä£Ê½
-}
-void oemui_set_powerup_state(boolean flg)
-{
-	return ;
-}
 boolean   IsRunAsFactoryTestMode(void)
 {
     return TRUE;
 }
-void InitProvisioning(void)
-{
-	return ;
-}
+
 void UTK_SendTerminalProfile (void)
 {
 	return;
 }
-void oemui_set_uim_esn(void)
-{
-	return;
-}
+
 void oemui_unlockuim(void)
 {
 	return;
@@ -388,7 +368,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 
 #ifndef WIN32
-    BrewUI_EnableKeys(TRUE);
+    EnableUIKeys(TRUE);
 #endif//WIN32
 #ifdef FEATURE_PLANEMODE
     pMe->bPlaneModeOn = FALSE;
@@ -1193,9 +1173,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 
                 // Phone information is now available
                 case AEECM_EVENT_PH_INFO_AVAIL:
-                    pMe->m_b_PH_INFO_AVAIL = TRUE;
-                    //InitProvisioning();
-                    
+                    pMe->m_b_PH_INFO_AVAIL = TRUE;                    
                     return TRUE;
 
                 // Operating mode was changed

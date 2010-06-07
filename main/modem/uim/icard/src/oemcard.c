@@ -286,15 +286,10 @@ when       who     what, where, why
 #endif
 
 #include "BREWVersion.h"
-#ifndef USES_MMI
 #include "ui.h"
 #if !defined(FEATURE_ICARD_NO_UI_BASE) && defined(FEATURE_UIM)
 #include "ui_base.h"
 #endif /* FEATURE_ICARD_NO_UI_BASE */
-#else
-#include "oemui.h"
-#endif
-
 #include "mmgsdilib.h"
 
 #ifdef FEATURE_MMGSDI

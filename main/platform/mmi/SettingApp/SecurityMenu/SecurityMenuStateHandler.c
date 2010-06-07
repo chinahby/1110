@@ -1136,9 +1136,7 @@ static NextFSMAction Security_StateEmergencyCallHandler(CSecurityMenu * pMe)
     {
         return NFSMACTION_WAIT;
     }
-    
-    oemui_cm_init();
-    
+        
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:

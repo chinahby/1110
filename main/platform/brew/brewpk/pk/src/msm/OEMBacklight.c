@@ -131,11 +131,30 @@ int AEEBacklight_New(IShell *pIShell, AEECLSID uCls, void **ppif)
       return EPRIVLEVEL;
    }
 
-   pme = (IBacklight *)MALLOC(sizeof(IBacklight));
+   //pme = (IBacklight *)MALLOC(sizeof(IBacklight));
+   switch (uCls)
+   {
+      case AEECLSID_BACKLIGHT_DISPLAY1:
+         pme = &gDisplay1Backlight;
+         break;
 
+#ifdef FEATURE_BACKLIGHT_DISPLAY2
+      case AEECLSID_BACKLIGHT_DISPLAY2:
+         pme = &gDisplay2Backlight;
+         break;
+#endif
+
+      case AEECLSID_BACKLIGHT_KEYPAD:
+         pme = &gKeyBacklight;
+         break;
+
+      default:
+         return  EUNSUPPORTED;
+   }
+   
    *ppif = pme;
 
-   if (pme)
+   if (0 == pme->uRef)
    {
       pme->pvt = &gvtIBacklight;
 
@@ -157,7 +176,7 @@ int AEEBacklight_New(IShell *pIShell, AEECLSID uCls, void **ppif)
    }
    else
    {
-      nErr = ENOMEMORY;
+      pme->uRef++;
    }
 
    return nErr;
@@ -194,7 +213,7 @@ static uint32 AEEBacklight_Release(IBacklight *pme)
    }
 
    RELEASEIF(pme->pIShell);
-   FREEIF(pme);
+   //FREEIF(pme);
 
    return 0;
 }
@@ -680,7 +699,20 @@ static void AEEBacklight_TurnOn(IBacklight *pme)
         return;
     }
     
+    if (AEEBacklight_IsEnabled(pme))
+    {
+#ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
+        AEEBacklight_CancelNotifyTimer(pme);
+#endif
+        AEEBacklight_CancelDisableTimer(pme);
+        return;
+    }
+    
     AEEBacklight_Enable(pme);
+    AEEBacklight_CancelDisableTimer(pme);
+#ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
+    AEEBacklight_CancelNotifyTimer(pme);
+#endif
 }
 
 static void AEEBacklight_TurnOff(IBacklight *pme)
@@ -689,8 +721,6 @@ static void AEEBacklight_TurnOff(IBacklight *pme)
     {
         return;
     }
-    
-    AEEBacklight_CancelDisableTimer(pme);
     
     AEEBacklight_Disable(pme);
 }

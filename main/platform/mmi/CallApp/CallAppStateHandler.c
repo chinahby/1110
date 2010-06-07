@@ -520,7 +520,7 @@ static NextFSMAction STATE_CALLING_FROM_ANOTHERAPP_Handler(CCallApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-#if 1
+    
     //CALL_ERR("curstate %d prestate %d dlgret %d STATE_CALLING_FROM_ANOTHERAPP_Handler",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
     switch(pMe->m_eDlgRet)
     {
@@ -576,89 +576,6 @@ static NextFSMAction STATE_CALLING_FROM_ANOTHERAPP_Handler(CCallApp *pMe)
             break;
     }
     return NFSMACTION_WAIT;
-#else
-    if(DLGRET_OK == pMe->m_eDlgRet)
-    {
-        MOVE_TO_STATE(STATE_EXIT)
-        return NFSMACTION_CONTINUE;
-    }
-    b_emerg = CallApp_IsEmergency_Number(pMe->m_DialString);
-    //CALL_ERR("STATE_CALLING_FROM_ANOTHERAPP_Handler",0,0,0);
-    if(! b_emerg)
-    {
-        if(CallApp_IsRestictCallNumber_Ex(pMe,pMe->m_DialString,TRUE))
-        {
-            MOVE_TO_STATE(STATE_OUT_RESTRICT)
-            return NFSMACTION_CONTINUE;
-        }
-    }
-    if ((CallApp_IsEmergencyMode(pMe->m_pICM)
-        ||pMe->idle_info.uimLocked)
-        &&!b_emerg)
-    {
-        CallApp_ShowMsgBox(pMe, IDS_INVALIDEMGNUM);
-        /*
-        CallApp_Init_Msgbox_String(pMe, IDS_INVALIDEMGNUM, NULL);
-        CallApp_ShowDialog(pMe, IDD_MSGBOX);*/
-        return NFSMACTION_WAIT;
-    }
-
-    if(IsRunAsFactoryTestMode() && !b_emerg)
-    {
-        CallApp_ShowMsgBox(pMe, IDS_EMGNUMBER_CALL_ONLY);
-        /*
-        CallApp_Init_Msgbox_String(pMe, IDS_EMGNUMBER_CALL_ONLY, NULL);
-        CallApp_ShowDialog(pMe, IDD_MSGBOX);*/
-        return NFSMACTION_WAIT;
-    }
-    result = CallApp_MakeCall(pMe);
-    CALL_ERR("CallApp_MakeCal result = %d",result,0,0);
-
-    pMe->m_b_incall = AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM);
-    //if (pMe->m_lastCallState == AEECM_CALL_STATE_CONV)
-    if(pMe->m_b_incall)
-    {
-        MOVE_TO_STATE(STATE_CONVERSATION)
-        return NFSMACTION_CONTINUE;
-    }
-    else
-    {
-
-        if (result == CALL_SUCESS)
-        {
-            if(pMe->m_eDlgRet == DLGRET_MSGBOX)
-            {
-                CallApp_ShowDialog(pMe, IDD_MSGBOX);
-                return NFSMACTION_WAIT;
-            }
-
-            // Normally the call state notifier will move the Idle applet to
-            // the Dialing dialog.  However in this case manually move to
-            // the Dialing dialog because it looks confusing to the user
-            // to move to the Idle dialog then to the Dialing dialog after
-            // a second or so.
-            MOVE_TO_STATE(STATE_CALLING)
-            return NFSMACTION_CONTINUE;
-        }
-        else if(CALL_FAIL_ANOTHER != result)
-        {
-            //in the case ,we will show msg, wait msg ok,DLGRET_OK == pMe->m_eDlgRet
-            CallApp_ShowDialog(pMe, IDD_MSGBOX);
-            return NFSMACTION_WAIT;
-        }
-        else //call fail
-        {
-#ifdef FEATURE_FDN
-            CallApp_ShowDialog(pMe, IDD_MO_NOT_ALLOWED);
-            return NFSMACTION_WAIT;
-#else
-            MOVE_TO_STATE(STATE_EXIT)
-            return NFSMACTION_CONTINUE;
-#endif /* FEATURE_FDN */
-        }
-    }
-    //return NFSMACTION_WAIT;
-#endif
 } // STATE_CALLNUMBERHandler
 /*==============================================================================
 º¯Êý£º

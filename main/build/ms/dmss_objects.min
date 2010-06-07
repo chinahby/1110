@@ -230,19 +230,16 @@ ifneq ($(USES_MMI),yes)
 endif  
 endif
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_gifviewer.min
-  #include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_uim.min
 ifneq ($(USES_MANGO_BREW),yes)
 #Gemsea Remove  include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_addrbookext.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_icm.min
 endif
 ifneq ($(USES_MANGO_UI),yes)
-ifneq ($(USES_MMI),yes)
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ialert.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ipdp.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_isuppsvc.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_irats.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ivector.min
-endif  
 endif
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_oemcfgi.min
   include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_sysmodelbase.min
@@ -254,10 +251,8 @@ endif
 include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ibatt.min
 ifneq ($(USES_UIONE),yes)
 ifneq ($(USES_MANGO_UI),yes)
-ifneq ($(USES_MMI),yes)
        include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_iannunciator.min
-       include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ibatt.min
-endif       
+       include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ibatt.min    
 endif
   endif
   ifeq ($(USES_SVGDOM), yes)
@@ -598,8 +593,6 @@ ifeq ($(USES_KEYGUARD),yes)
 	include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/keyguard.min
 	
 	include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_oem.min
-  include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_uim.min
-
 endif
 
 ifeq ($(USES_BREW_AEE_SRC), yes)

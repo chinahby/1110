@@ -1159,7 +1159,6 @@ static void oemui_post_start_init(void)
                                         AEECLSID_WMSAPP,
                                         AEECLSID_SHELL,
                                         NMASK_SHELL_START_STATUS);
-            oemui_cm_init();
 #endif
             (void) ISHELL_CreateInstance(gpShell,
                                  AEECLSID_BACKLIGHT,

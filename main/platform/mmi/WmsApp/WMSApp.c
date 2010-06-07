@@ -100,10 +100,6 @@ wms_cache_info_node *wms_cacheinfolist_getnode(wms_box_e_type  eBox,
 {
 	return NULL;
 }
-void oemui_setbusymode(boolean flag)
-{
-	return;
-}
 void wms_cacheinfolist_updatexuhao(wms_box_e_type ebox)
 {
 	return;

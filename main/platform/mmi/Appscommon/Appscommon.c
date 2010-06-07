@@ -51,6 +51,7 @@
 #else
 #include "oemhelperfunctype.h"
 #endif//WIN32
+#include "OEMClassIDs.h"
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -3650,3 +3651,41 @@ boolean Appscommon_FormatTimeString(uint32 nSeconds, AECHAR* wstrTime, int nTime
         return TRUE;
     }
 }
+
+
+/*==============================================================================
+函数: 
+    app_media_scheduler
+       
+说明: 
+    判断当前需要的多媒体设备(VC0848)是否已被占用
+       
+参数: 
+    none
+返回值:
+    APP_MEDIA_ALLOW:            允许使用
+    APP_MEDIA_IMPACT_BY_FM:     已被FM占用
+    APP_MEDIA_IMPACT_BY_MP3:    已被MP3占用
+       
+备注:
+    
+==============================================================================*/
+int app_media_scheduler(void)
+{
+    boolean b_FMBackground = FALSE;
+    
+    OEM_GetConfig(CFGI_FM_BACKGROUND,&b_FMBackground, sizeof(b_FMBackground));
+    if((TRUE == b_FMBackground) && (AEECLSID_APP_FMRADIO != ISHELL_ActiveApplet(AEE_GetShell())))
+    {
+        return APP_MEDIA_IMPACT_BY_FM;
+    }
+#ifdef FEATURE_APP_MUSICPLAYER    
+    else if(IsMp3PlayerStatusOnBG()) 
+    {
+        return APP_MEDIA_IMPACT_BY_MP3;        
+    }
+#endif    
+    return APP_MEDIA_ALLOW;
+}
+
+

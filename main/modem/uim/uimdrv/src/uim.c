@@ -8567,8 +8567,7 @@ dword dummy
     ** signal, report to DOG, set the timer again and proceed.
     ** ------------------------------------------------------- */
     if ((rex_signals_mask & UIM_RPT_TIMER_SIG) != 0)
-    {      
-      (void) rex_clr_sigs( &uim_tcb, UIM_RPT_TIMER_SIG);
+    {
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
       if (btCurInitFlg == 0)
       {

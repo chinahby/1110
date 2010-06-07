@@ -952,4 +952,10 @@ boolean IPAdd_FromStringToNetValue(uint32 *pdwAddNet, char *pszbuf);
 ==============================================================================*/
 boolean Appscommon_FormatTimeString(uint32 nSeconds, AECHAR* wstrTime, int nTimeStringLength);
 
+
+#define APP_MEDIA_ALLOW         0    
+#define APP_MEDIA_IMPACT_BY_FM  1
+#define APP_MEDIA_IMPACT_BY_MP3 2
+extern int app_media_scheduler(void);
+
 #endif // APPSCOMMON_H

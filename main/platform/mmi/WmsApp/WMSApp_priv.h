@@ -108,7 +108,6 @@ uint8 wms_ts_unpack_ascii
 wms_cache_info_node *wms_cacheinfolist_getnode(wms_box_e_type  eBox,
                                                wms_memory_store_e_type mem_store, 
                                                uint16 index);
-void oemui_setbusymode(boolean flag);
 void wms_cacheinfolist_updatexuhao(wms_box_e_type ebox);
 #endif//win32
 

@@ -1844,6 +1844,53 @@ LOCAL void hs_init( void )
   /* Initialize keypad */
   keypad_init();
 
+  {
+    db_items_value_type  db_item;
+    boolean status  = FALSE;
+    pm_err_flag_type errFlag = PM_ERR_FLAG__SUCCESS;
+
+    errFlag = pm_get_rt_status(PM_RTC_ALRM_IRQ_HDL,&status);
+    if ((errFlag == PM_ERR_FLAG__SUCCESS) && (status == TRUE))
+    {
+        db_item.db_poweruptype = DB_POWERUP_BYRTCTIMER;
+    }
+    else
+    {
+        errFlag = pm_get_rt_status(PM_VALID_CHG_IRQ_HDL,&status);
+        if ((errFlag != PM_ERR_FLAG__SUCCESS) || (status != TRUE))
+        {
+            errFlag = pm_get_rt_status(PM_VALID_USB_CHG_IRQ_HDL,&status);
+        }
+        if ((errFlag == PM_ERR_FLAG__SUCCESS) && (status == TRUE))
+        {
+            db_item.db_poweruptype = DB_POWERUP_BYEXTERNALPWR;
+        }
+        else
+        {
+            db_item.db_poweruptype = DB_POWERUP_BYKEY;
+        }
+    }
+
+    db_put(DB_POWERUPTYPE, &db_item);
+    if (db_item.db_poweruptype == DB_POWERUP_BYKEY)
+    {
+        if (!keypad_is_power_key_pressed())
+        {
+            hw_power_off();
+        }
+    }
+
+    if (db_item.db_poweruptype != DB_POWERUP_BYEXTERNALPWR)
+    {
+        extern boolean oembatt_cansupportpowerup(void);
+
+        if (!oembatt_cansupportpowerup())
+        {
+            hw_power_off();
+        }
+    }
+  }
+
   /* Initialize the GPIO outputs - - - - - - - - - - - - - - - - - - - - - - */
 
   HS_CALL_LED_INIT();           /* Call LED control GPIO  */

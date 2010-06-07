@@ -1824,61 +1824,42 @@ static boolean  QuickTest_VERTestHandler(CQuickTest *pMe,
                         n = WSTRLEN(szBuf);
                         szBuf[n++] = (AECHAR) '\n';
 
+                        {
+                            (void) ISHELL_LoadResString(pMe->m_pShell,
+                                                       AEE_QUICKTEST_RES_FILE,
+                                                       IDS_ESN,
+                                                       (szBuf + n),
+                                                       sizeof(szBuf));
 
-                        if (IsRunAsUIMVersion()&&(IRUIM_IsCardConnected(pMe->m_pIRUIM)))
-              {
-                                STRTOWSTR("ESN : \n%u%u\n", fmt_str, sizeof(fmt_str));
-                                WSPRINTF((szBuf + n),
-                                        sizeof(szBuf),
-                                        fmt_str,
-                                        ((OEM_GetMEESN() & 0xFF000000) >> 24),
-                                        (OEM_GetMEESN() & 0x00FFFFFF));
-                                n = WSTRLEN(szBuf);
+                            n = WSTRLEN(szBuf);
+                            szBuf[n++] = (AECHAR) '\n';
 
-                                    STRTOWSTR("0x%08X", fmt_str, sizeof(fmt_str));
-                                    WSPRINTF((szBuf + n),
-                                            sizeof(szBuf),
-                                            fmt_str,
-                                            OEM_GetMEESN());
-                                    n = WSTRLEN(szBuf);
-              }
-              else
-              {
-                                (void) ISHELL_LoadResString(pMe->m_pShell,
-                                                           AEE_QUICKTEST_RES_FILE,
-                                                           IDS_ESN,
-                                                           (szBuf + n),
-                                                           sizeof(szBuf));
+                            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                                  CFGI_ESN,
+                                                  &esn,
+                                                  sizeof(esn));
 
-                                n = WSTRLEN(szBuf);
-                                szBuf[n++] = (AECHAR) '\n';
+                            STRTOWSTR("%u %u", fmt_str, sizeof(fmt_str));
 
-                                (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                                      CFGI_ESN,
-                                                      &esn,
-                                                      sizeof(esn));
+                            WSPRINTF((szBuf + n),
+                                    sizeof(szBuf),
+                                    fmt_str,
+                                    ((esn & 0xFF000000) >> 24),
+                                    (esn & 0x00FFFFFF));
 
-                                STRTOWSTR("%u %u", fmt_str, sizeof(fmt_str));
+                            n = WSTRLEN(szBuf);
+                            szBuf[n++] = (AECHAR) '\n';
 
-                                WSPRINTF((szBuf + n),
-                                        sizeof(szBuf),
-                                        fmt_str,
-                                        ((esn & 0xFF000000) >> 24),
-                                        (esn & 0x00FFFFFF));
+                            //Display ESN with hexadecimal
+                            STRTOWSTR("0x%08X", fmt_str, sizeof(fmt_str));
+                            WSPRINTF((szBuf + n),
+                                    sizeof(szBuf),
+                                    fmt_str,
+                                    esn);
 
-                                n = WSTRLEN(szBuf);
-                                szBuf[n++] = (AECHAR) '\n';
-
-                                //Display ESN with hexadecimal
-                                STRTOWSTR("0x%08X", fmt_str, sizeof(fmt_str));
-                                WSPRINTF((szBuf + n),
-                                        sizeof(szBuf),
-                                        fmt_str,
-                                        esn);
-
-                                n = WSTRLEN(szBuf);
-                                szBuf[n++] = (AECHAR) '\n';
-                  }
+                            n = WSTRLEN(szBuf);
+                            szBuf[n++] = (AECHAR) '\n';
+                        }
                         p_dlg = ISHELL_GetActiveDialog(pMe->m_pShell);
                         p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_VER_STAT);
 

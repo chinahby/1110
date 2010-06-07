@@ -5642,7 +5642,6 @@ static boolean IDD_SENDING_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            oemui_setbusymode(TRUE);
             if (pMe->m_eCreateWMSType == SEND_MSG_RESEND)
             {
                 (void)ISHELL_SetTimer(pMe->m_pShell,
@@ -5986,7 +5985,6 @@ static boolean IDD_SENDING_Handler(void *pUser,
                                     &pMe->m_callback,
                                     (void*)pMe,
                                     FALSE);
-            oemui_setbusymode(FALSE);
             (void) ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)WmsApp_PlaySendingAni, pMe);
             if (pMe->m_pImage != NULL)
             {

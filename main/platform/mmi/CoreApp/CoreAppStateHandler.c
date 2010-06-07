@@ -113,8 +113,6 @@ static NextFSMAction COREST_POWEROFF_Handler(CCoreApp *pMe);
 static NextFSMAction COREST_UTKREFRESH_Handler(CCoreApp *pMe);
 #endif //FEATURE_UTK2
 
-extern void oemui_set_uim_esn(void);
-
 #ifdef FEATURE_UTK2
 extern void UTK_SendTerminalProfile (void);
 #endif //FEATURE_UTK2
@@ -476,7 +474,6 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                 if (tepState != COREST_NONE)
                 {
                     MOVE_TO_STATE(tepState)
-                    oemui_set_powerup_state(TRUE);
                     return NFSMACTION_CONTINUE;
                 }
                 else
@@ -503,7 +500,6 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
 #else
             MOVE_TO_STATE(COREST_VERIFYPHONEPWD)
 #endif
-            oemui_set_powerup_state(TRUE);
             return NFSMACTION_CONTINUE;
         case DLGRET_RTC:
         {
@@ -524,7 +520,6 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                 tepState = COREST_VERIFYPHONEPWD;
             }
             MOVE_TO_STATE( tepState)
-            oemui_set_powerup_state(TRUE);
             return NFSMACTION_CONTINUE;
         }
 
@@ -1074,15 +1069,11 @@ static NextFSMAction COREST_EMERGENCYCALL_Handler(CCoreApp *pMe)
     if(pMe->m_b_PH_INFO_AVAIL == TRUE)
     {
         pMe->m_b_PH_INFO_AVAIL = FALSE;
-        InitProvisioning();
     }
     // 为进行紧急呼叫，将话机置于在线状态
     //CoreApp_SetOperatingModeOnline(pMe);
-#ifdef  FEATURE_2008_POWERON_LOGIC
-    oemui_cm_init();
-#else
     pMe->m_b_online_from = ON_LINE_FROM_EMERGENCY;
-#endif
+    
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1133,17 +1124,9 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
-#if 0
-            // 将话机置于在线状态
-            CoreApp_SetOperatingModeOnline(pMe);
-
-            oemui_cm_init();
-#endif
 #ifdef  FEATURE_2008_POWERON_LOGIC
             if (IsRunAsUIMVersion() && (pMe->m_eUIMErrCode == UIMERR_NONE))
             { // 系统运行于有卡版本且卡正确无误
-                // UTK Profile download
-                (void) oemui_set_uim_esn();	
 #ifdef FEATURE_UTK2
                 UTK_SendTerminalProfile();
 #endif //FEATURE_UTK2
@@ -1251,7 +1234,6 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
-            oemui_set_powerup_state(TRUE);
  #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
                 if (IsRunAsUIMVersion() && IRUIM_IsCardConnected(pMe->m_pIRUIM))
                 {   
@@ -1274,18 +1256,14 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             if(pMe->m_b_PH_INFO_AVAIL == TRUE)
             {
                 pMe->m_b_PH_INFO_AVAIL = FALSE;
-                InitProvisioning();
             }
             // 将话机置于在线状态
             //CoreApp_SetOperatingModeOnline(pMe);
-
-            oemui_cm_init();
 #else
             if(ON_LINE_FROM_EMERGENCY == pMe->m_b_online_from)
             {
                 pMe->m_b_online_from = ON_LINE_FROM_NORMAL;
             }
-            InitProvisioning();
 #endif
 
             CoreApp_ShowDialog(pMe, IDD_STARTUPANI);
@@ -1329,9 +1307,7 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
     
     switch (pMe->m_eDlgRet)
     {
-        case DLGRET_CREATE:
-            oemui_unlockuim();
-        
+        case DLGRET_CREATE:        
 #ifndef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
             CoreApp_ShowDialog(pMe, IDD_LOADING);
             return NFSMACTION_WAIT;
@@ -1832,8 +1808,6 @@ void CoreApp_load_uim_esn(CCoreApp *pMe)
     if (IsRunAsUIMVersion() && (pMe->m_eUIMErrCode == UIMERR_NONE) && (ON_LINE_FROM_NORMAL== pMe->m_b_online_from))
     { // 系统运行于有卡版本且卡正确无误
         pMe->m_b_online_from = ON_LINE_FROM_NONE;// set to ture!
-        // UTK Profile download
-        (void) oemui_set_uim_esn();
         // 现在 UIM 卡可用，通过改变 NAM 让 MC 重新装载 ESN
         (void) ICM_SetNAMSel(pMe->m_pCM, AEECM_NAM_1);
         //CORE_ERR("CoreApp_load_uim_esn2 %x %x %x",IsRunAsUIMVersion(),pMe->m_b_online_from,pMe->m_eUIMErrCode);

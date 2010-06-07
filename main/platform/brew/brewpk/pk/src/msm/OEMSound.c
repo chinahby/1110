@@ -1073,14 +1073,7 @@ void OEMSound_SetDevice(AEESoundInfo * psi, void * pUser)
    //
 #if defined(FEATURE_OEMSOUND_NATIVE_IF)
    uisnd_SetSoundInfo(psi);
-#endif
-#ifdef CUST_EDITION	  
-   uisnd_set_forced_audio_path(OEMSound_GetSndDevice(psi->eDevice), 
-                               (snd_mute_control_type)psi->eEarMuteCtl, 
-                               (snd_mute_control_type)psi->eMicMuteCtl, 
-                               &OEMSound_StatusCB, 
-                               pUser);
-#endif /*CUST_EDITION*/							   
+#endif				   
    snd_set_device( OEMSound_GetSndDevice(psi->eDevice), 
                    (snd_mute_control_type)psi->eEarMuteCtl, 
                    (snd_mute_control_type)psi->eMicMuteCtl, 

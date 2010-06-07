@@ -63,7 +63,7 @@ when       who     what, where, why
  /* Enable IWmsDiag static extension
   */
 #if (!defined(FEATURE_UI_CORE_REMOVED) && defined(FEATURE_WMS_APP))
-  #define FEATURE_IWMSDIAG
+//  #define FEATURE_IWMSDIAG
 #endif /* do not define for ThinUI  */
 
 #endif /*defined(FEATURE_CDSMS) || defined(FEATURE_GWSMS)*/
