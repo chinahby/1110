@@ -24,10 +24,17 @@ CONSTFILE_FILES+=\
         enhufmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar \
         fmradioln.bar|fs:/mod/fmradio/fmradioln.bar
 else
+ifeq ($(USES_160X128),yes)
+CONSTFILE_FILES+=\
+        fmradio.mif|fs:/mif/fmradio.mif \
+        fmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar \
+        fmradioln160x128.bar|fs:/mod/fmradio/fmradioln160x128.bar
+else
 CONSTFILE_FILES+=\
         fmradio.mif|fs:/mif/fmradio.mif \
         fmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar \
         fmradioln.bar|fs:/mod/fmradio/fmradioln.bar
+endif
 endif
 
 ifneq ($(EXTLANG1),NO)
