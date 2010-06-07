@@ -17,8 +17,13 @@ $(DISPLAYMENU_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.c $(DISPLAYMENU_SRC)
 vpath %.bar $(DISPLAYMENU_RES)
 vpath %.brx $(DISPLAYMENU_RES)
+ifeq ($(USES_160X128),yes)
+vpath %.png $(APPSCOMMON)/images/160x128/Wallpaper
+vpath %.bmp $(APPSCOMMON)/images/160x128/Wallpaper
+else
 vpath %.png $(APPSCOMMON)/images/color/Wallpaper
 vpath %.bmp $(APPSCOMMON)/images/color/Wallpaper
+endif
 ifeq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\
 	displaymenu.mif|fs:/mif/displaymenu.mif \

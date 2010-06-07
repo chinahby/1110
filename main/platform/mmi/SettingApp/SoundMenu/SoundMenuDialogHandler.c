@@ -28,7 +28,13 @@
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif 
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
 #include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
 
 #ifdef FEATURE_APP_MEDIAGALLERY
 #include "MediaGallery.h"
