@@ -1417,30 +1417,15 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-#ifndef FEATURE_CARRIER_TAIWAN_APBW
-#ifndef FEATURE_CARRIER_THAILAND_HUTCH
-            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL1, IDS_CONTRAST_LEVEL1, NULL, 0);
-#endif //FEATURE_CARRIER_THAILAND_HUTCH
-#endif
-            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL2, IDS_CONTRAST_LEVEL2, NULL, 0);
-#ifndef FEATURE_CARRIER_TAIWAN_APBW
-            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL3, IDS_CONTRAST_LEVEL3, NULL, 0);
-#endif
-            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL4, IDS_CONTRAST_LEVEL4, NULL, 0);
-#ifndef FEATURE_CARRIER_TAIWAN_APBW
-            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL5, IDS_CONTRAST_LEVEL5, NULL, 0);
-#endif
-            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL6, IDS_CONTRAST_LEVEL6, NULL, 0);
-#ifndef FEATURE_CARRIER_TAIWAN_APBW
-#ifndef FEATURE_CARRIER_THAILAND_HUTCH
-            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL7, IDS_CONTRAST_LEVEL7, NULL, 0);
-#endif //FEATURE_CARRIER_THAILAND_HUTCH 
-#endif
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL_DARK, IDS_CONTRAST_LEVEL_DARK, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL_NORMAL, IDS_CONTRAST_LEVEL_NORMAL, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL_BRIGHT, IDS_CONTRAST_LEVEL_BRIGHT, NULL, 0);
+
             return TRUE;
             
         case EVT_DIALOG_START:
         {
-            uint16    ui16_return = IDS_CONTRAST_LEVEL5;
+            uint16    ui16_return = OEMNV_BACKLIGHT_LEVEL_NORMAL;
 
             if( pMe->m_contrast_backlight == SET_CONTRAST)
             {
@@ -1454,6 +1439,7 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
                                         sizeof(pMe->m_BiasV));
                   switch(pMe->m_BiasV)
                  {
+#if 0                   
                     case OEMNV_CONTRAST_LEVEL_1:
                         ui16_return = IDS_CONTRAST_LEVEL1;
                         break;
@@ -1477,6 +1463,7 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
                     case OEMNV_CONTRAST_LEVEL_7:
                         ui16_return = IDS_CONTRAST_LEVEL7;
                         break;
+#endif                        
                 }
             }
             else
@@ -1492,34 +1479,22 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
 
                 switch(pMe->m_lightlevel)
                 {
-                    case OEMNV_BACKLIGHT_LEVEL_1:
-                        ui16_return = IDS_CONTRAST_LEVEL1;
+                    case OEMNV_BACKLIGHT_LEVEL_DARK:
+                        ui16_return = IDS_CONTRAST_LEVEL_DARK;
                         break;
 
-                    case OEMNV_BACKLIGHT_LEVEL_2:
-                        ui16_return = IDS_CONTRAST_LEVEL2;
+                    case OEMNV_BACKLIGHT_LEVEL_NORMAL:
+                        ui16_return = IDS_CONTRAST_LEVEL_NORMAL;
                         break;
                         
 
-                    case OEMNV_BACKLIGHT_LEVEL_3:
-                        ui16_return = IDS_CONTRAST_LEVEL3;
+                    case OEMNV_BACKLIGHT_LEVEL_BRIGHT:
+                        ui16_return = IDS_CONTRAST_LEVEL_BRIGHT;
                         break;
 
-                    case OEMNV_BACKLIGHT_LEVEL_4:
-                        ui16_return = IDS_CONTRAST_LEVEL4;
-                        break;
-
-                    case OEMNV_BACKLIGHT_LEVEL_5:
-                        ui16_return = IDS_CONTRAST_LEVEL5;
-                        break;
-                        
-                    case OEMNV_BACKLIGHT_LEVEL_6:
-                        ui16_return = IDS_CONTRAST_LEVEL6;
-                        break;
 
                     default:
-                    case OEMNV_BACKLIGHT_LEVEL_7:
-                        ui16_return = IDS_CONTRAST_LEVEL7;
+                        ui16_return = IDS_CONTRAST_LEVEL_NORMAL;
                         break;
 
                 }
@@ -1589,6 +1564,7 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
                 byte      BiasV;
                 switch (wParam)
                 {
+#if 0                  
                     case IDS_CONTRAST_LEVEL1:
                         BiasV = OEMNV_CONTRAST_LEVEL_1;
                         break;
@@ -1612,6 +1588,7 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
                     case IDS_CONTRAST_LEVEL7:
                         BiasV = OEMNV_CONTRAST_LEVEL_7;
                         break;
+#endif                        
                }
                 //lcd_setBiasV( BiasV);
                 disp_set_contrast( BiasV);
@@ -1622,31 +1599,16 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
 
                 switch (wParam)
                 {
-                    case IDS_CONTRAST_LEVEL1:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_1;
+                    case IDS_CONTRAST_LEVEL_DARK:
+                     lightlevel = OEMNV_BACKLIGHT_LEVEL_DARK;
                      break;
-                    case IDS_CONTRAST_LEVEL2:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_2;
-                     break;
-
-                    case IDS_CONTRAST_LEVEL3:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_3;
-                     break;
-                    case IDS_CONTRAST_LEVEL4:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_4;
-                     break;
-                    case IDS_CONTRAST_LEVEL5:
-                    default:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_5;
-                     break;
-                    case IDS_CONTRAST_LEVEL6:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_6;
-                     break;
-                    case IDS_CONTRAST_LEVEL7:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_7;
+                    case IDS_CONTRAST_LEVEL_NORMAL:
+                     lightlevel = OEMNV_BACKLIGHT_LEVEL_NORMAL;
                      break;
 
-
+                    case IDS_CONTRAST_LEVEL_BRIGHT:
+                     lightlevel = OEMNV_BACKLIGHT_LEVEL_BRIGHT;
+                     break;
                 }
 
                 IBACKLIGHT_Enable(pMe->m_pIBacklight);
@@ -1673,6 +1635,7 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
             {
                 switch (wParam)
                 {
+#if 0                
                     case IDS_CONTRAST_LEVEL1:
                         pMe->m_BiasV = OEMNV_CONTRAST_LEVEL_1;
                         break;
@@ -1695,6 +1658,7 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
                     case IDS_CONTRAST_LEVEL7:
                         pMe->m_BiasV = OEMNV_CONTRAST_LEVEL_7;
                         break;
+#endif                        
 
                 }
             }
@@ -1704,28 +1668,16 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
 
                 switch (wParam)
                 {
-                  case IDS_CONTRAST_LEVEL1:
-                      lightlevel = OEMNV_BACKLIGHT_LEVEL_1;
-                      break;
-                  case IDS_CONTRAST_LEVEL2:
-                      lightlevel = OEMNV_BACKLIGHT_LEVEL_2;
-                      break;
-                  case IDS_CONTRAST_LEVEL3:
-                      lightlevel = OEMNV_BACKLIGHT_LEVEL_3;
-                      break;
-                  case IDS_CONTRAST_LEVEL4:
-                      lightlevel = OEMNV_BACKLIGHT_LEVEL_4;
-                      break;
-                  case IDS_CONTRAST_LEVEL5:
-                  default:
-                      lightlevel = OEMNV_BACKLIGHT_LEVEL_5;
-                      break;
-                  case IDS_CONTRAST_LEVEL6:
-                      lightlevel = OEMNV_BACKLIGHT_LEVEL_6;
-                      break;
-                  case IDS_CONTRAST_LEVEL7:
-                      lightlevel = OEMNV_BACKLIGHT_LEVEL_7;
-                      break;
+                    case IDS_CONTRAST_LEVEL_DARK:
+                     lightlevel = OEMNV_BACKLIGHT_LEVEL_DARK;
+                     break;
+                    case IDS_CONTRAST_LEVEL_NORMAL:
+                     lightlevel = OEMNV_BACKLIGHT_LEVEL_NORMAL;
+                     break;
+
+                    case IDS_CONTRAST_LEVEL_BRIGHT:
+                     lightlevel = OEMNV_BACKLIGHT_LEVEL_BRIGHT;
+                     break;
                 }
                 pMe->m_lightlevel = lightlevel;
             }

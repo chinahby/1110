@@ -68,7 +68,7 @@ when       who     what, where, why
 #define TM_CSTN128x128_DISP_DEFAULT_CONTRAST  128
 
 #define TM_CSTN128x128_DISP_MIN_BACKLIGHT     0 
-#define TM_CSTN128x128_DISP_MAX_BACKLIGHT     7
+#define TM_CSTN128x128_DISP_MAX_BACKLIGHT     15
 #define TM_CSTN128x128_DISP_DEFAULT_BACKLIGHT 3
 
 #define TM_CSTN128x128_DISP_ENABLE            TRUE
@@ -420,10 +420,128 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+
+static void epson_S1D19120_set_backlight_pdm_util(uint16 nLevel)
+{
+   static uint16 wPdmVal = LCD_PDM_MAX_VISIBLE_BACKLIGHT;
+
+   /* Handle min and max explicitly to be sure backlight is all the way off
+    * or on. If level is intermediate, calculate PDM value */
+   /* nLevel is guaranteed by the caller to be bound by the valid range */
+  if (nLevel == TM_CSTN128x128_DISP_MIN_BACKLIGHT)
+   {
+      wPdmVal = LCD_PDM_MIN_BACKLIGHT;
+   }
+   else if (nLevel == TM_CSTN128x128_DISP_MAX_BACKLIGHT)
+   {
+      wPdmVal = LCD_PDM_MAX_VISIBLE_BACKLIGHT;
+   }
+   else
+   {
+      /* For levels (min+1)..(max-1), calculate PDM value */
+      wPdmVal = (uint16)(LCD_PDM_MIN_VISIBLE_BACKLIGHT +
+      ((nLevel - 1) * LCD_PDM_BACKLIGHT_STEP));                    
+   }
+
+/* Make sure TCXO4_CLK is running since TCXO_PDM_CTL has to be clocked by
+      TCXO4_CLK. If TCXO4_CLK is disabled, then enable it */
+  if(!clk_regime_msm_is_on(CLK_RGM_GEN_M ))
+   {
+    /*Switch on the clock if it is already not switched on*/
+    clk_regime_msm_enable( CLK_RGM_GEN_M );
+   }
+
+   /* Set new PDM0 value */
+   HWIO_PDM0_CTL_OUT(
+      (wPdmVal & HWIO_PDM0_CTL_PDM0_DAT_BMSK) << HWIO_PDM0_CTL_PDM0_DAT_SHFT);
+
+   if (nLevel > TM_CSTN128x128_DISP_MIN_BACKLIGHT)
+   {
+      /* Set PDM signal to normal polarity (sense of PDM output not inverted)*/
+      HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,
+         (0 << HWIO_TCXO_PDM_CTL_PDM0_POLARITY_SHFT));
+
+      /* Drive backlight by enabling PDM output*/
+      HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,
+         (1 << HWIO_TCXO_PDM_CTL_PDM0_EN_SHFT));
+   }
+   else
+   {
+      /* Shutoff backlight completely by disabling PDM output */
+      HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,
+      //   (HWIO_TCXO_PDM_CTL_PDM0_EN_ENABLES_THE_PDM0_PIN_FVAL <<
+          (0<<  HWIO_TCXO_PDM_CTL_PDM0_EN_SHFT));   
+   }
+}
+
+static void epson_S1D19120_disp_set_backlight(byte level)
+{
+   static uint32 current_level =  TM_CSTN128x128_DISP_MIN_BACKLIGHT;
+  
+  if(tm_cstn128x128_state.disp_initialized &&
+     tm_cstn128x128_state.disp_powered_up  &&
+     tm_cstn128x128_state.display_on)
+  {
+    
+	  if (level!= current_level)
+	  {
+	    rex_enter_crit_sect(&tm_cstn128x128_crit_sect);
+
+        /* Bound given intensity */
+        if (level > TM_CSTN128x128_DISP_MAX_BACKLIGHT )
+		{
+         level = TM_CSTN128x128_DISP_MAX_BACKLIGHT;
+		}
+        else if (TM_CSTN128x128_DISP_MIN_BACKLIGHT - level > 0)
+		{
+         /* Turn backlight off */
+         level = TM_CSTN128x128_DISP_MIN_BACKLIGHT;
+		}
+
+  #ifdef FEATURE_PMIC_LCDKBD_LED_DRIVER
+		{
+         pm_err_flag_type pefRet = (pm_err_flag_type)~PM_ERR_FLAG__SUCCESS;  // Assume failure
+
+         pefRet = pm_set_led_intensity(PM_KBD_LED, (uint8)level);
+         if (PM_ERR_FLAG__SUCCESS != pefRet)
+		 {
+          MSG_FATAL("PMIC KBD backlight set failed: pefRet=%d, nLevel=%d",
+                pefRet,
+                level,
+                0);
+		 }
+
+  #ifdef FEATURE_PDM_BACKLIGHT
+        /* SC2X/ULC use GPIO PDM to drive the LCD backlight, not the PMIC core */
+        epson_S1D19120_set_backlight_pdm_util(level);
+  #else  /* FEATURE_PDM_BACKLIGHT*/
+        pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);   
+        if (PM_ERR_FLAG__SUCCESS != pefRet)
+		{
+         MSG_MED("PMIC LCD backlight set failed: pefRet=%d, nLevel=%d",
+                pefRet,
+                nLevel,
+                0);
+		}
+  #endif /* FEATURE_PDM_BACKLIGHT */
+		}
+  #else  /* FEATURE_PMIC_LCDKBD_LED_DRIVER */
+    #ifdef FEATURE_PDM_BACKLIGHT
+       epson_S1D19120_set_backlight_pdm_util(level);
+    #endif /* FEATURE_PDM_BACKLIGHT */
+  #endif /* FEATURE_PMIC_LCDKBD_LED_DRIVER */
+
+       current_level = level;   
+       rex_leave_crit_sect(&tm_cstn128x128_crit_sect);
+      }
+    }
+} /* epson_S1D19120_disp_set_backlight */
+
+
 static void tm_cstn128x128_disp_set_backlight(byte level)
 {
 	static uint32 current_level =  TM_CSTN128x128_DISP_MIN_BACKLIGHT;
-  
+    
 	if(tm_cstn128x128_state.disp_initialized &&
 		tm_cstn128x128_state.disp_powered_up  &&
 		tm_cstn128x128_state.display_on)
@@ -445,7 +563,7 @@ static void tm_cstn128x128_disp_set_backlight(byte level)
 
 		{
 			pm_err_flag_type pefRet = (pm_err_flag_type)~PM_ERR_FLAG__SUCCESS;  // Assume failure
-
+            MSG_HIGH("miaoxiaoming: level = %d",level,0,0);
 			pefRet = pm_set_led_intensity(PM_KBD_LED, (uint8)level);
 			if (PM_ERR_FLAG__SUCCESS != pefRet)
 			{
@@ -463,6 +581,7 @@ static void tm_cstn128x128_disp_set_backlight(byte level)
 				level,
 				0);
 			}
+
 		}
 
 			current_level = level;   
@@ -1104,7 +1223,11 @@ static int tm_cstn128x128_disp_ioctl ( int cmd, void *arg )
 		break;
 
 	case IOCTL_DISP_SET_BACKLIGHT:
+        #if 0
+        epson_S1D19120_disp_set_backlight(*(byte *)arg);
+        #else
 		tm_cstn128x128_disp_set_backlight(*(byte *)arg);
+        #endif
 		break;
 
 	case IOCTL_DISP_CLEAR_WHOLE_SCREEN:

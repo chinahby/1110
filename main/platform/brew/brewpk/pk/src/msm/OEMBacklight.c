@@ -560,7 +560,8 @@ static int AEEBacklight_SetBrightnessLevel(IBacklight *pme, uint32 dwBrightnessL
 {
    int nErr;
    FARF(BACKLIGHT, ("==>  AEEBacklight_SetBrightnessLevel"));
-
+   ERR("miaoxiaoming:AEEBacklight_SetBrightnessLevel gdwBacklightDisplay1Level = %d, dwBrightnessLevel=%d",gdwBacklightDisplay1Level,dwBrightnessLevel,0);
+   ERR("pme->uCls = %d",pme->uCls,0,0);
    switch (pme->uCls)
    {
       case AEECLSID_BACKLIGHT_DISPLAY1:
@@ -636,7 +637,7 @@ static void AEEBacklight_SetDisableTimer(IBacklight *pme)
     if ((nVal > 0) && (nVal <100))
     {
         nMSecs = nVal*1000;
-        
+        ERR("~~~~~~~~nMSecs = %d",nMSecs,0,0);
         AEE_SetSysTimer(nMSecs, AEEBacklight_DisableTimer, pme);
     }
 }
