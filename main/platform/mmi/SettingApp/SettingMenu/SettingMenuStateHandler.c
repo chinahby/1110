@@ -77,7 +77,9 @@ static NextFSMAction SettingMenu_StateBannerHandler(CSettingMenu *pMe);
 #ifdef FEATURE_TIME_DATA_SETTING
 // 状态 TIMESETTING 处理函数
 static NextFSMAction SettingMenu_StateTimeHandler(CSettingMenu *pMe);
-
+#ifdef FEATURE_DOUBLE_SIM_CARD
+static NextFSMAction   SettingMenu_StateSimHandler(CSettingMenu *pMe);
+#endif
 // 状态 dateSETTING 处理函数
 static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe);
 #endif
@@ -295,6 +297,11 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_PLANEMODE:
             retVal = SettingMenu_StatePlaneModeHandler(pMe);
             break; 
+#endif
+#ifdef FEATURE_DOUBLE_SIM_CARD
+        case SETTINGMENUST_SIMSETTING:
+            retVal = SettingMenu_StateSimHandler(pMe);
+            break;
 #endif
         default:
             ASSERT_NOT_REACHABLE;
@@ -581,6 +588,11 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SETTINGMENUST_MAIN)
             return NFSMACTION_CONTINUE;
+#ifdef  FEATURE_DOUBLE_SIM_CARD
+        case DLGRET_SIMSETTING:
+            MOVE_TO_STATE(SETTINGMENUST_SIMSETTING)
+            return NFSMACTION_CONTINUE;
+#endif
 
         default:
             ASSERT_NOT_REACHABLE;
@@ -1060,7 +1072,6 @@ static NextFSMAction SettingMenu_StateTimeHandler(CSettingMenu *pMe)
 } // StateTimeHandler
 
 
-
 /*==============================================================================
 函数：
        StatedateHandler
@@ -1110,7 +1121,54 @@ static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe)
 } // StatedateHandler
 
 #endif
+/*==============================================================================
+函数：
+       StateTimeHandler
+说明：
+       SETTINGMENUST_timesetting 状态处理函数
 
+参数：
+       pMe [in]：指向DisplayMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+#ifdef FEATURE_DOUBLE_SIM_CARD
+static NextFSMAction   SettingMenu_StateSimHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_SIMSETTING);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+#endif
 /*==============================================================================
 函数：
        StateLanguageHandler

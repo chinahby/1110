@@ -136,6 +136,9 @@ typedef enum DLGRetValue
     DLGRET_RESTRICTINCOMING,
     DLGRET_MSGBOX_OK,
     DLGRET_MSGBOX_CANCEL
+    #ifdef  FEATURE_DOUBLE_SIM_CARD
+    ,DLGRET_SIMSETTING
+    #endif
 
 } DLGRet_Value_e_Type;
 
@@ -188,6 +191,9 @@ typedef enum _SettingMenuState
    SETTINGMENUST_RESTRICTINCOMING
 #ifdef FEATURE_PLANEMODE
    ,SETTINGMENUST_PLANEMODE
+#endif
+#ifdef  FEATURE_DOUBLE_SIM_CARD
+   ,SETTINGMENUST_SIMSETTING
 #endif
 } SettingMenuState;
 

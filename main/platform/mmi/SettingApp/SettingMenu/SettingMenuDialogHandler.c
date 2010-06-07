@@ -143,7 +143,13 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 #endif
-
+#ifdef  FEATURE_DOUBLE_SIM_CARD
+static boolean HandleSimDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+    );
+#endif
 #ifdef FEATURE_KEYGUARD
 //对话框 IDD_AKG_MENU 事件处理函数
 static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
@@ -482,6 +488,10 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 
         case IDD_AUTOANSWER_SUB:
             return HandleAutoAnswerSubDialogEvent(pMe,eCode,wParam,dwParam);
+#ifdef  FEATURE_DOUBLE_SIM_CARD
+        case IDD_SIMSETTING:
+            return HandleSimDialogEvent(pMe,eCode,wParam,dwParam);
+#endif
         default:
             return FALSE;
     }
@@ -895,6 +905,9 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_SET_BANNER
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_BANNER_TITLE, IDS_BANNER_TITLE, NULL, 0);
 #endif
+#ifdef FEATURE_DOUBLE_SIM_CARD
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE,IDS_SIM_SET,IDS_SIM_SET,NULL,0);
+#endif
 #ifdef FEATURE_TIME_DATA_SETTING
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_TIMESETTING, IDS_TIMESETTING, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DATESETTING, IDS_DATESETTING, NULL, 0);
@@ -977,6 +990,11 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_SET_BANNER
                 case IDS_BANNER_TITLE:      //待机问候语
                     CLOSE_DIALOG(DLGRET_BANNER)
+                    break;
+#endif
+#ifdef FEATURE_DOUBLE_SIM_CARD
+                case IDS_SIM_SET:          //开机选卡
+                    CLOSE_DIALOG(DLGRET_SIMSETTING)
                     break;
 #endif
 #ifdef FEATURE_TIME_DATA_SETTING
@@ -3037,7 +3055,155 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
 } // HandleDATEDialogEvent
 
 #endif
+/*==============================================================================
+函数：
+       HandleSimDialogEvent
+说明：
+       IDD_PHONESETTING_MENU 对话框事件处理函数
 
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+#ifdef  FEATURE_DOUBLE_SIM_CARD
+static boolean HandleSimDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+    )
+{
+    PARAM_NOT_REF(dwParam)
+    static byte bytData = 0;
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_SIMSET);
+    SETTING_ERR("%x, %x ,%x,HandleDateDialogEvent",eCode,wParam,dwParam);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SIM_ONE, IDS_SIM_ONE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SIM_TWO, IDS_SIM_TWO, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SIM_SWITCH, IDS_SIM_SWITCH, NULL, 0);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            {
+                uint16 wItemID;
+
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+#endif
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_SIM_SWITCH,
+                                       &bytData,
+                                       sizeof(bytData));
+
+                switch (bytData)
+                {
+                    case OEMNV_SIMFORM_ONE:
+                        wItemID = IDS_SIM_ONE;
+                        break;
+
+                    case OEMNV_SIMFORM_TWO:
+                        wItemID = IDS_SIM_TWO;
+                        break;
+
+                    default:
+                    case OEMNV_SIMFORM_SWITCH:
+                        wItemID = IDS_SIM_SWITCH;
+                        break;
+                }
+
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wItemID, TRUE);
+                IMENUCTL_SetSel(pMenu, wItemID);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_APP_SETTINGMENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                  default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+                byte bytNewData = 0;
+
+                switch (wParam)
+                {
+                    case  IDS_SIM_ONE:
+                       bytNewData = OEMNV_SIMFORM_ONE ;
+                       break;
+
+                    case IDS_SIM_TWO:
+                       bytNewData = OEMNV_SIMFORM_TWO ;
+                       break;
+
+                    case IDS_SIM_SWITCH:
+                       bytNewData = OEMNV_SIMFORM_SWITCH ;
+                       break;
+
+                    default:
+                       ASSERT_NOT_REACHABLE;
+
+                }
+
+                if (bytNewData != bytData)
+                {
+                    (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                          CFGI_SIM_SWITCH,
+                                          &bytNewData, sizeof(bytNewData));
+                    //将选中的选项标出
+                    bytData = bytNewData;
+                    InitMenuIcons(pMenu);
+                    SetMenuIcon(pMenu, wParam, TRUE);
+                    (void)IMENUCTL_Redraw(pMenu);
+                }
+                CLOSE_DIALOG(DLGRET_WARNING)
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+    
+}
+#endif
 /*==============================================================================
 函数：
        HandleLanguageDialogEvent

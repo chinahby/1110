@@ -367,6 +367,18 @@
 	<String Id="1122" Name="IDS_ADJUSTSETTING">
 		<Text>Screen Calibration</Text>
 	</String>
+	<String Id="1123" Name="IDS_SIM_SET">
+		<Text>SIM Settings</Text>
+	</String>
+	<String Id="1124" Name="IDS_SIM_ONE">
+		<Text>SIM Slot One</Text>
+	</String>
+	<String Id="1125" Name="IDS_SIM_TWO">
+		<Text>SIM Slot Two</Text>
+	</String>
+	<String Id="1126" Name="IDS_SIM_SWITCH">
+		<Text>Switch SIM Card</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -576,6 +588,14 @@
 		<Controls>
 			<Menu Id="7025" Name="IDC_USB_FUNCTION">
 				<TitleID>IDS_USB_FUNCTION</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6031" Name="IDD_SIMSETTING" Focus="7026">
+		<Controls>
+			<Menu Id="7026" Name="IDC_SIMSET">
+				<TitleID>IDS_SIM_SET</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

@@ -409,6 +409,9 @@ enum{
 #ifdef FEATURE_TOUCHPAD
     CFGI_PEN_CAL,     // ¡À¨ºD¡ê¡Á?2?¨ºy
 #endif
+#ifdef  FEATURE_DOUBLE_SIM_CARD
+    CFGI_SIM_SWITCH,
+#endif
     CFGI_CUST_END
 };
 
