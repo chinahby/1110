@@ -1345,7 +1345,7 @@ boolean hs_poll_gpio( void )
 
 
   }
-
+#ifdef FEATRUE_DEVICETYPE_FLIP
 #if defined(T_MSM6550) && defined(T_SURF)
   /* Check the state of the clamshell (open/closed)
   */
@@ -1356,7 +1356,7 @@ boolean hs_poll_gpio( void )
     KEYPAD_PASS_KEY_CODE( new_clamshell_state, HS_NONE_K );
   }
 #endif /* T_MSM6550 && T_SURF */
-
+#endif
 #ifdef T_FFA6550_SS
 #error code not present
 #endif /* T_FFA6550_SS */
