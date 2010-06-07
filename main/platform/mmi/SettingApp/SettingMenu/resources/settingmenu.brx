@@ -77,10 +77,10 @@
 		<Text>Voice privacy</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_AUTO_POWER_ON_TIME">
-		<Text>Auto power on</Text>
+		<Text>power on</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_AUTO_POWER_OFF_TIME">
-		<Text>Auto power off</Text>
+		<Text>power off</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_AUTO_POWER_TIME">
 		<Text>Time</Text>

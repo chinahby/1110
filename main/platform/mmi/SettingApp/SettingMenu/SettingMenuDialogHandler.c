@@ -4158,6 +4158,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_TIME_FORMAT, (void*)&pMe->m_b_ampm_mode, sizeof(byte));
 #endif
 
+        ITIMECTL_SetFont( pMe->m_pTime, AEE_FONT_BOLD, AEE_FONT_BOLD);
 #if defined( FEATURE_CARRIER_THAILAND_HUTCH)
         ITIMECTL_SetFont( pMe->m_pTime, AEE_FONT_BOLD, AEE_FONT_BOLD);
 #endif

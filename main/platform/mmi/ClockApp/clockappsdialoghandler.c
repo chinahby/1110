@@ -1422,12 +1422,10 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 
             if( wParam == AVK_UP || wParam == AVK_DOWN || wParam == AVK_INFO || wParam == AVK_STAR)
             {
-                ERR("pMe->m_nCtlID = %d, timeFormatType = %d",pMe->m_nCtlID,timeFormatType,0);
                 if( pMe->m_nCtlID == IDC_CLOCK_TIME && timeFormatType == OEMNV_TIMEFORM_AMPM)
                 {
                     if( ITIMECTL_GetTime( pMe->m_pTime) >= 12*3600000)
                     {
-                        ERR("ITIMECTL_GetTime( pMe->m_pTime) >= 12*3600000",0,0,0);
                         CLOCK_DRAW_BOTTOMBAR( BTBAR_SAVE_AM_BACK);
                     }
                     else
