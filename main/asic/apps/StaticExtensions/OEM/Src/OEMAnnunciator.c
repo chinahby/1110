@@ -217,11 +217,7 @@ static OEMState_data sms_image_data[]=
     {ANNUN_STATE_SMS_VMAIL_ON, IDB_VMAIL, NULL},
     {ANNUN_STATE_SMS_SMAIL_ON, IDB_SMS, NULL}
 };
-/*Push/Sports*/
-static OEMState_data sports_image_data[]=
-{
-    {ANNUN_STATE_SPORTS_ON, IDB_SPORTS, NULL}
-};
+
 /*FMRadio/Headset*/
 static OEMState_data fmradio_image_data[]=
 {
@@ -289,9 +285,6 @@ OEMAnnun_content call_content =
 /*ANNUN_FIELD_SMS*/
 OEMAnnun_content sms_content =
      {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)sms_image_data};
-/*ANNUN_FIELD_SPORT*/
-OEMAnnun_content sports_content =
-     {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)sports_image_data};
 /*ANNUN_FIELD_FMRADIO*/
 OEMAnnun_content fmradio_content =
      {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
@@ -352,7 +345,6 @@ OEMAnnun_content batt_content =
 #define ANNUN_ICON_POSITION_8      (LG_IMG_WIDTH + 6*IMG_WIDTH + 7*BETWEEN_ICON_PIXEL)
 #define ANNUN_ICON_POSITION_9      (LG_IMG_WIDTH + 7*IMG_WIDTH + 8*BETWEEN_ICON_PIXEL)
 #define ANNUN_ICON_POSITION_10    (LG_IMG_WIDTH + 8*IMG_WIDTH + 9*BETWEEN_ICON_PIXEL)
-#define ANNUN_ICON_POSITION_11    (LG_IMG_WIDTH + 9*IMG_WIDTH + 10*BETWEEN_ICON_PIXEL)
 #define ANNUN_ICON_POSITION_END  ((DISP_WIDTH) - (LG_IMG_WIDTH))
 
 /* Row layouts for annunciator, assuming 40-row annunciator region
@@ -415,13 +407,12 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},  
   {ANNUN_FIELD_LOCKSTATUS,     ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
   {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
-  {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content},
-  {ANNUN_FIELD_SPORTS,            ANNUN_ICON_POSITION_6,     ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sports_content}, 
-  {ANNUN_FIELD_FMRADIO,          ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &fmradio_content},
-  {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_8,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
-  {ANNUN_FIELD_ALARM,             ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
-  {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
-  {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_11,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+  {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
+  {ANNUN_FIELD_FMRADIO,          ANNUN_ICON_POSITION_6,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &fmradio_content},
+  {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
+  {ANNUN_FIELD_ALARM,             ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+  {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
+  {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
   {ANNUN_FIELD_BATT,                ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 };
 //lint +e545

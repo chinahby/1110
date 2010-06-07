@@ -44,62 +44,19 @@ typedef struct IAnnunciator IAnnunciator;
 // Global Constant Declarations
 //---------------------------------------------------------------------
 // Annunciator Fields
-#if 0
-#define ANNUN_FIELD_OPERATOR  0   /* PLMN in GSM; other network info in CDMA */
-#define ANNUN_FIELD_MSG       1
-#define ANNUN_FIELD_NET       2
-#define ANNUN_FIELD_ALARM     3
-#define ANNUN_FIELD_SECURITY  4
-#define ANNUN_FIELD_MODE      5
-#define ANNUN_FIELD_ROAM      6
-#define ANNUN_FIELD_DOMAIN    7
-#define ANNUN_FIELD_RSSI      8
-#define ANNUN_FIELD_INUSE     9
-#define ANNUN_FIELD_BATT      10
-#define ANNUN_FIELD_TIME      11
-#define ANNUN_FIELD_BANNER    12
-#define ANNUN_FIELD_MMS       13
-#define ANNUN_FIELD_HDR_RSSI  14
-#define ANNUN_FIELD_WLAN_RSSI 15
-#define ANNUN_FIELD_VT        16
-#else
-#if 1
 /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
 #define ANNUN_FIELD_RSSI                       0   /*Airplane Mode/RSSI*/
 #define ANNUN_FIELD_WAP                       1   /*Wap/1x/Roam*/
 #define ANNUN_FIELD_LOCKSTATUS           2   /*Voice Privacy/Lockstatus*/
 #define ANNUN_FIELD_CALL                      3   /*Loudspeaker/Mute/Emergency/Inuse/Missed Call*/
 #define ANNUN_FIELD_SMS                       4   /*VMail/SMS/SMS Memory Full*/
-#define ANNUN_FIELD_SPORTS                  5   /*Push/Sport*/
-#define ANNUN_FIELD_FMRADIO                6   /*FMRadio/Headset*/
-#define ANNUN_FIELD_BLUETOOTH            7   /*BT Trans/BT Headset/BT On*/
-#define ANNUN_FIELD_ALARM                    8   /*Timer/Alarm/Schedule*/
-#define ANNUN_FIELD_MMS                       9   /*MMS Full/MMS Unread/MMS Unreceive/Push*/
-#define ANNUN_FIELD_RINGTONE              10   /*Ringtone*/
-#define ANNUN_FIELD_BATT                     11   /*Battery*/
-#else
-#define ANNUN_FIELD_RSSI       0
-#define ANNUN_FIELD_RING       1
-#define ANNUN_FIELD_SILENT   2 
-#define ANNUN_FIELD_ALERT     3
-#define ANNUN_FIELD_VIBRATE 4
-#define ANNUN_FIELD_HEADSET 5
-#define ANNUN_FIELD_FMRADIO 6
-#define ANNUN_FIELD_VOICE_PRIVACY 7
-#define ANNUN_FIELD_CALLFORWARD 8
-#define ANNUN_FIELD_MISSEDCALL    9
-#define ANNUN_FIELD_VMAIL 10
-#define ANNUN_FIELD_SMSMEMORYFULL  11
-#define ANNUN_FIELD_SMS  12
-#define ANNUN_FIELD_ALARM 13
-#define ANNUN_FIELD_ROAM   14
-#define ANNUN_FIELD_BATT  15
-#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
-#define ANNUN_FIELD_MUTE 16
-#endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
-#endif
-//end added
-#endif
+#define ANNUN_FIELD_FMRADIO                5   /*FMRadio/Headset*/
+#define ANNUN_FIELD_BLUETOOTH            6   /*BT Trans/BT Headset/BT On*/
+#define ANNUN_FIELD_ALARM                    7   /*Timer/Alarm/Schedule*/
+#define ANNUN_FIELD_MMS                       8   /*MMS Full/MMS Unread/MMS Unreceive/Push*/
+#define ANNUN_FIELD_RINGTONE              9   /*Ringtone*/
+#define ANNUN_FIELD_BATT                     10   /*Battery*/
+
 
 // Possible State of each annunciator field
 #define ANNUN_STATE_OFF       0
