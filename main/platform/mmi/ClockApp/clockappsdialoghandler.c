@@ -160,6 +160,8 @@ static void CClockApps_Draw_Arrow(CClockApps *pMe, AEERect* pRect);
 
 static void CClockApps_DialogTimeout(void *pme);
 
+
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -187,7 +189,6 @@ static void CClockApps_DialogTimeout(void *pme);
        无
 
 备注:
-
 
 ==============================================================================*/
 void ClockApps_ShowDialog(CClockApps *pMe,uint16  dlgResId)
@@ -337,9 +338,6 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
 
         case EVT_USER_REDRAW:
         {
-#ifdef FEATURE_APP_WORLDTIME            
-            extern boolean Calendar_FormatTime( uint32 seconds, AECHAR* resultString, int resultStringLength);
-#endif /*FEATURE_APP_WORLDTIME*/
             AECHAR  alarmClockInfo[64]  = {0};
             int     length              = 0;
             int     i                   = 0;
@@ -409,6 +407,7 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
 
                 if( pMe->m_ClockCfg.dwWATime[i] > 0 || pMe->m_ClockCfg.bStateOn[i] || pMe->m_ClockCfg.RepMode[i] || pMe->m_ClockCfg.Snooze[i])
                 {
+                    MEMSET(alarmClockInfo,0X00,sizeof(alarmClockInfo));
                     length = ISHELL_LoadResString( pMe->m_pShell,
                                             AEE_CLOCKAPPS_RES_FILE,
                                             Ret,
@@ -416,19 +415,19 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
                                             (64 - length) << 1
                                         );
                     alarmClockInfo[length ++] = (AECHAR)' ';
-#ifdef FEATURE_APP_WORLDTIME                    
+
                     #if defined( FEATURE_ONCE_ALARM)                 
-                        Calendar_FormatTime( pMe->m_ClockCfg.dwWATime[i],
+                        Appscommon_FormatTimeString( pMe->m_ClockCfg.dwWATime[i],
                                              alarmClockInfo + length,
                                              18
                                          );
                     #else
-                        Calendar_FormatTime( pMe->m_ClockCfg.dwWATime[i] / 1000,
+                        Appscommon_FormatTimeString( pMe->m_ClockCfg.dwWATime[i] / 1000,
                                              alarmClockInfo + length,
                                              18
                                          );
                     #endif
-#endif /*FEATURE_APP_WORLDTIME*/                    
+
                     length = WSTRLEN( alarmClockInfo);
                     alarmClockInfo[length ++] = (AECHAR)' ';
 #if defined( FEATURE_ON_OFF_USE_LOCAL_LANGUAGE)
@@ -1820,9 +1819,6 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
         }
         case EVT_USER_REDRAW:
             {
-#ifdef FEATURE_APP_WORLDTIME                
-                extern boolean Calendar_FormatTime( uint32 seconds, AECHAR* resultString, int resultStringLength);
-#endif /*FEATURE_APP_WORLDTIME*/
                 uint32  dwAlarmTime;         //用户设置的起闹时间 单位:毫秒
                 AECHAR  wszTime[16];        //时间
 #ifdef FEATURE_SUB_LCD
@@ -1852,9 +1848,9 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
 #else
                 dwAlarmTime = pMe->m_ClockCfg.dwWATime[pMe->m_eCurAlarmType] / 1000;
 #endif
-#ifdef FEATURE_APP_WORLDTIME
-                Calendar_FormatTime( dwAlarmTime, wszTime, sizeof( wszTime));
-#endif /*FEATURE_APP_WORLDTIME*/
+
+                Appscommon_FormatTimeString( dwAlarmTime, wszTime, sizeof( wszTime));
+
 #ifdef FEATURE_SUB_LCD
                 WSTRCPY(subTimeBuf, wszTime);
                 if (bFlipClosed)

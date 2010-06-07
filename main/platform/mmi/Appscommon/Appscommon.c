@@ -3604,7 +3604,7 @@ boolean IPAdd_FromStringToNetValue(uint32 *pdwAddNet, char *pszbuf)
 ==============================================================================*/
 boolean Appscommon_FormatTimeString(uint32 nSeconds, AECHAR* wstrTime, int nTimeStringLength)
 {
-    if( NULL == wstrTime || nTimeStringLength < 12*(sizeof(AECHAR)))
+    if( NULL == wstrTime || nTimeStringLength < 9*(sizeof(AECHAR)))
     {
         return FALSE;
     }
