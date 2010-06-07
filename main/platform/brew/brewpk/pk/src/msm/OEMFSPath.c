@@ -48,6 +48,8 @@ No additional module-level initialization or sequencing requirements.
 
 #define OEMFS_MAX_PATH (FS_FILENAME_MAX_LENGTH - 3)
 
+#define AEEFS_USER_RINGERS_DIR  "fs:/user/sound/ringer/"
+
 #undef CSTRLEN
 #define CSTRLEN(x)      (sizeof(x) - 1)
 
@@ -70,7 +72,7 @@ static const OEMFSGNPMap gapmBrewToOEM[] = {
 #if defined(FEATURE_MMC)
    { AEEFS_CARD0_DIR           , OEMFS_CARD0_DIR  , FALSE },
 #else /* #if defined(FEATURE_MMC) */
-   { AEEFS_CARD0_DIR           , 0                , FALSE },
+   { AEEFS_CARD0_DIR           , OEMFS_CARD0_DIR  , FALSE },
 #endif /* #if defined(FEATURE_MMC) */
 #if (defined(FEATURE_USB_HOST_MASS_STORAGE) && defined(FEATURE_USB_HOST))
    { AEEFS_MOD_DIR"26108", OEMFS_UHMS1_DIR, FALSE  },
@@ -80,6 +82,7 @@ static const OEMFSGNPMap gapmBrewToOEM[] = {
    { AEEFS_MOD_DIR"26109", 0, FALSE  },
 #endif /* #if (defined(FEATURE_USB_HOST_MASS_STORAGE) && defined(FEATURE_USB_HOST)) */
    { AEEFS_RINGERS_DIR         , OEMFS_RINGERS_DIR, TRUE  },
+   { AEEFS_USER_RINGERS_DIR    , OEMFS_RINGERS_DIR, FALSE },
 #if defined(FEATURE_EFS_FTL)
    { AEEFS_FTL_DIR             , OEMFS_FTL_DIR  , FALSE },
 #else /* #if defined(FEATURE_EFS_FTL) */

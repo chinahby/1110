@@ -294,7 +294,8 @@ static int AEEPhone_GetMinStr(IPhone * po, int nNAM, char * pszDest, int nSize)
    if( (char *)0 == pszDest || 0 == nSize ) return 0;
 
    OEM_GetConfig(CFGI_MOBILEINFO, &mi, sizeof(AEEMobileInfo));
-   STRLCPY(pszDest,mi.szMobileID, nSize);
+   STRNCPY(pszDest,mi.szMobileID, nSize);
+   pszDest[nSize - 1] = 0;
    return STRLEN(pszDest);
 }
 

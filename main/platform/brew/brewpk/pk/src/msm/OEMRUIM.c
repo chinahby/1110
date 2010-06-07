@@ -7,7 +7,7 @@ GENERAL DESCRIPTION:
   This file provides the prorotypes of the functions that OEMs must
   provide in order to support the BREW IRUIM interface.
 
-        Copyright © 1999-2002 QUALCOMM Incorporated.
+        Copyright ? 1999-2002 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -31,7 +31,7 @@ GENERAL DESCRIPTION:
 #include "ui.h"
 #include "uim.h"
 #include "nvruimi.h"
-
+#include "uimdrv.h"
 /************************************************************************
  ** I N T E R F A C E   F U N C T I O N   D E C L A R A T I O N S
  ************************************************************************/
@@ -41,7 +41,8 @@ GENERAL DESCRIPTION:
 #endif
 
 #define BAD_PIN_CHAR 0xff
-
+#define UIM_CDMA_FEATURE_CODE_SIZE 50
+#define UIM_CDMA_FEATURE_CODE_NUM_DIGI 2*2
 struct IRUIM
 {
    IRUIMVtbl  *pvt;
@@ -74,7 +75,15 @@ static int OEMRUIM_GetId(IRUIM *pMe, char *pId, int *pnLen);
 // Local helper function prototypes.
 static void OEMRUIM_report (uim_rpt_type *report);
 static void OEMRUIM_send_uim_cmd_and_wait (uim_cmd_type *uim_cmd_ptr);
+static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable);
 
+static byte OEMRUIM_bcd_to_ascii(byte num_digi, /* Number of dialing digits */
+                                 byte *from_ptr,/* Convert from */
+                                 byte *to_ptr   /* Convert to */);
+
+static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name);
+static void OEMRUIM_ExchangeByte(byte *Inputbuf,int size);
+static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,int Endpoint);
 static const VTBL(IRUIM) gOEMRUIMFuncs = {
    OEMRUIM_AddRef,
    OEMRUIM_Release,
@@ -87,7 +96,9 @@ static const VTBL(IRUIM) gOEMRUIMFuncs = {
    OEMRUIM_CHVDisable,
    OEMRUIM_UnBlockCHV,
    OEMRUIM_GetPrefLang,
-   OEMRUIM_GetId
+   OEMRUIM_GetId,
+   OEMRUIM_Get_Feature_Code,
+   OEMRUIM_Read_Svc_P_Name
 };
 
 /************************************************************************
@@ -701,6 +712,305 @@ static void OEMRUIM_send_uim_cmd_and_wait (uim_cmd_type *uim_cmd_ptr)
    uim_cmd (uim_cmd_ptr);
 
    (void) rex_wait( UI_RUIM_SIG);
+}
+static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
+{
+    byte pData[UIM_CDMA_FEATURE_CODE_SIZE+2];
+    int pnDataSize = UIM_CDMA_FEATURE_CODE_SIZE;
+    int status = EFAILED;
+    if ((!pMe) || (!Buf))
+    {
+        return EFAILED;
+    }
+    // Check to see if the card is connected.
+    if (!IRUIM_IsCardConnected (pMe))
+    {
+        return EFAILED;
+    }
+    gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+    gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+    gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+    gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+    gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+    gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+    gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
+
+    gUimCmd.access_uim.item      = UIM_CDMA_SUP_SVCS_FEATURE_CODE_TABLE;
+    gUimCmd.access_uim.access    = UIM_READ_F;
+    gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+    gUimCmd.access_uim.num_bytes = UIM_CDMA_FEATURE_CODE_SIZE;
+    gUimCmd.access_uim.offset    = 0;
+    gUimCmd.access_uim.data_ptr  = pData;
+
+    // From nvruim_access():  Access an EF, do not signal any task, use no
+    // signal, no done queue, use a callback, always report status.
+
+    // Send the command to the R-UIM:
+    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+
+    if (   (gCallBack.rpt_type != UIM_ACCESS_R)
+        || (gCallBack.rpt_status != UIM_PASS)
+        )
+    {
+        status = EFAILED;
+        return EFAILED;
+    }
+
+    //if (pData == NULL)
+    //{
+    //    pnDataSize = gUimCmd.access_uim.num_bytes_rsp;
+    //}
+    //else
+    //{
+    //int i=0;
+    pnDataSize = MIN(pnDataSize, gUimCmd.access_uim.num_bytes_rsp);
+    status = SUCCESS;
+    //}
+
+    //if(status == SUCCESS)
+    {
+        /*int i = 0;
+        //below one of line be only for test
+        for(i=0;i<pnDataSize;i++)
+        {
+            ERR("OEMRUIM_G.I.:: featurecodedata[%03d]:0x%02X",i,pData[i],0);
+        }*/
+        if(UIM_CDMA_FEATURE_CODE_NUM_DIGI==OEMRUIM_bcd_to_ascii(UIM_CDMA_FEATURE_CODE_NUM_DIGI,
+                                        (byte *)&pData[Lable],
+                                        (byte *)Buf))
+        {
+            Buf[UIM_CDMA_FEATURE_CODE_NUM_DIGI]='\0';
+        }
+    }
+    return status;
+}
+
+static byte OEMRUIM_bcd_to_ascii(byte num_digi, /* Number of dialing digits */
+                                 byte *from_ptr,/* Convert from */
+                                 byte *to_ptr   /* Convert to */)
+{
+    byte lower_nibble, upper_nibble;
+    byte i = 0;
+    byte  k=num_digi;
+
+    while (i < num_digi )
+    {
+        if(*from_ptr==0xFF)
+        {
+            *to_ptr = '*';
+            to_ptr++;
+            from_ptr++;
+            //num_digi=num_digi-2;
+            i=i+2;
+            k--;
+        }
+        else
+        {
+            upper_nibble = (*from_ptr & 0xF0) >> 4;
+            switch (upper_nibble)
+            {
+                case 0x00:
+                case 0x01:
+                case 0x02:
+                case 0x03:
+                case 0x04:
+                case 0x05:
+                case 0x06:
+                case 0x07:
+                case 0x08:
+                case 0x09:
+                    /* Digits 0 - 9 */
+                    *to_ptr = upper_nibble + '0';
+                    break;
+                case 0x0F:
+                    *to_ptr = '*';
+                    break;
+                default:
+                    /* Impossible to come here */
+                    break;
+            } /* switch upper_nibble */
+            i++;
+            to_ptr++;
+            lower_nibble = *from_ptr & 0x0F;
+            switch (lower_nibble)
+            {
+                case 0x00:
+                case 0x01:
+                case 0x02:
+                case 0x03:
+                case 0x04:
+                case 0x05:
+                case 0x06:
+                case 0x07:
+                case 0x08:
+                case 0x09:
+                    /* Digits 0 - 9 */
+                    *to_ptr = lower_nibble + '0';
+                    break;
+
+
+                case 0x0F:
+                    *to_ptr = '*';
+                    break;
+
+                default:
+                    /* Impossible to come here */
+                    break;
+            }
+            i++;
+            to_ptr++;
+            from_ptr++;
+        }
+    } /* for */
+    to_ptr[k] = '\0';
+
+    return i;
+}
+
+static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
+{
+    int    pnDataSize = UIM_CDMA_HOME_SERVICE_SIZE;
+    byte pData[UIM_CDMA_HOME_SERVICE_SIZE+2];
+    int    status = EFAILED;
+    ERR("OEMRUIM_Read_Svc_P_Name",0,0,0);
+    // Check to see if the card is connected.
+    if (!IRUIM_IsCardConnected (pMe))
+    {
+        return EFAILED;
+    }
+    gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+    gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+    gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+    gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+    gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+    gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+    gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
+
+    gUimCmd.access_uim.item      = UIM_CDMA_HOME_SVC_PVDR_NAME;
+    gUimCmd.access_uim.access    = UIM_READ_F;
+    gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+    gUimCmd.access_uim.num_bytes = UIM_CDMA_HOME_SERVICE_SIZE;
+    gUimCmd.access_uim.offset    = 0;
+    gUimCmd.access_uim.data_ptr  = pData;
+
+    // From nvruim_access():  Access an EF, do not signal any task, use no
+    // signal, no done queue, use a callback, always report status.
+
+    // Send the command to the R-UIM:
+    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+
+    if (   (gCallBack.rpt_type != UIM_ACCESS_R) || (gCallBack.rpt_status != UIM_PASS) )
+    {
+        status = EFAILED;
+    }
+    else
+    {
+        /*int i;
+        for(i=0;i<pnDataSize;i++)
+        {
+            ERR("OEMRUIM_G.I.:: featurecodedata[%03d]:0x%02X",i,pData[i],0);
+        }*/
+        status = SUCCESS;
+        OEMRUIM_Conversion_Uimdata_To_Spn(pData,svc_p_name,pnDataSize);//wszBufÖÐ´æ·Å´ÓUIM¿¨ÖÐ¶Á³öµÄÊý?
+    }    
+    return status;
+}
+
+//¶ÔÓÚUNICODE ±àÂëµÄ×Ö·û´®½»»»¸ßµÍ×Ö½Ú
+static void OEMRUIM_ExchangeByte(byte *Inputbuf,int size)
+{
+    int h=0;
+    byte tempbuf;
+
+    while(h<size)
+    {
+        tempbuf=Inputbuf[h];
+        Inputbuf[h]=Inputbuf[h+1];
+        Inputbuf[h+1]=tempbuf;
+        h=h+2;
+    }
+    return;
+}
+
+//Endpoint must is 35 ,when  parsing the home service name
+static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,int Endpoint)
+{
+    int i=0;
+    int k;
+    int m =0;
+    byte tempbuf[UIM_CDMA_HOME_SERVICE_SIZE+1]={(byte)'\0'};
+    if((Inputbuf[0]&0x01==0x01)&&(Inputbuf[0]!=0xFF))//TOBUFÖÐµÄµÚÒ»Î»Èç¹ûÊÇ1,ÔòÏÔÊ¾ÔËÓªÉÌÃû³Æ
+    {
+            for( i=3;i<Endpoint;i++)//I-3+1 ±íÊ¾TOBUFÖÐµÄÓÐÐ§×Ö·ûÊýÄ¿
+            {
+                if(Inputbuf[i]==0xFF)
+                {
+                    break;
+                }
+            }
+            ERR("number len = %d Inputbuf[1]= %x",i,Inputbuf[1],0);
+            switch(Inputbuf[1]&0x1F)
+            {
+                case AEERUIM_LANG_ENCODING_7BIT:                  //acsii±àÂë
+                    for(k=0;k<i-3;k++)
+                    {
+                        tempbuf[k]=Inputbuf[k+3];
+                    }
+                    tempbuf[k]='\0';
+                    //DBGPRINTF("tempbuf0 = %s",tempbuf);
+                    STRTOWSTR((char *)tempbuf, svc_p_name,Endpoint*sizeof(AECHAR));
+                    //OEMRUIM_AnsiiToUnicodeString((AECHAR *)Inputbuf,(AECHAR *)tempbuf);
+                    break;
+
+                case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE±àÂë
+                    for(k=0;k<i-3;k++)
+                    {
+                        tempbuf[k]=Inputbuf[k+3];
+                        //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
+                    }
+                    OEMRUIM_ExchangeByte(tempbuf,k);
+                    //DBGPRINTF("tempbuf2 = %S",tempbuf);
+                    tempbuf[k++]='\0';
+                    tempbuf[k]='\0';
+                    WSTRLCPY(svc_p_name,(AECHAR*)tempbuf,UIM_CDMA_HOME_SERVICE_SIZE);
+                    break;
+
+                case AEERUIM_LANG_ENCODING_LATINHEBREW:
+                case AEERUIM_LANG_ENCODING_LATIN:
+                case AEERUIM_LANG_ENCODING_OCTET:
+                    //DBGPRINTF("tempbuf5 = %s",tempbuf);
+                    for(k=0;k<i-3;k++)
+                    {
+                        tempbuf[m]= Inputbuf[k+3];
+                        tempbuf[m+1] =0x00;// '0' -30;
+                        m = m+2;
+                    }
+                    tempbuf[m]='\0';
+                    tempbuf[m+1]='\0';
+                    #if 0
+                    while(1)
+                    {
+                        if(tempbuf[h++]!='\0')
+                            ERR("OEMRUIM_G.I.:: temp data[%03d]:0x%02X::M=%d",h,tempbuf[h],m);
+                        else
+                            break;
+                    }
+                    #endif
+                    MEMCPY(svc_p_name,tempbuf,UIM_CDMA_HOME_SERVICE_SIZE*sizeof(AECHAR));
+                    break;
+                default:
+                    //ERR("tempbuf6 ",0,0,0);
+                    break;
+
+            }
+    }
+    else
+    {
+        //InputbufÎª¿Õ,±íÊ¾´Ë¿¨ÄÚ²»´æ´¢ÔËÓªÉÌÃû×Ö.ËùÒÔÐèÒªÁíÍâ´¦Àí
+        svc_p_name[0]='\0';
+        svc_p_name[1]='\0';
+    }
+    return;
 }
 
 #endif    // FEATURE_IRUIM
