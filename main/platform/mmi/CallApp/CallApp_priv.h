@@ -35,7 +35,14 @@
 #include "recorder.h"
 #include "recorder.brh"
 #include "recorder_images.brh"
-#include "appscommon_color.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
+
 #include "appscommon.h"
 #define  APP_RECORDER_RES_FILE ("fs:/mod/recorder/" AEE_RES_LANGDIR RECORDER_RES_FILE)
 #define  APP_RECORDER_IMAGES_RES_FILE ("fs:/mod/recorder/" RECORDER_IMAGES_RES_FILE)
@@ -97,11 +104,14 @@
 #include "AEEAnnunciator.h"
 #include "OEMCFGI.h"
 // 图片资源文件
-#ifdef FEATURE_COLOR_DISPLAY
-#include "appscommon_color.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
 #else
-#include "appscommon_momo.brh"
+#include "Appscommon_color.brh"
 #endif
+
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 //#include "AEEVirtualkey.h"//wlh for vkey number
