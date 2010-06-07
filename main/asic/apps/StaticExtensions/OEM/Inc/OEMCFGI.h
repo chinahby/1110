@@ -496,7 +496,5 @@ int GetRepeatRawNumber(AECHAR * number,AECHAR * rawnumber);
 void OEM_RestoreFactorySetting( void );
 
 boolean OEM_IsEmergency_Number(char *pNumber,int len);
-extern dword OEM_GetMEESN(void);
-extern void OEM_SetMEESN(dword esn);
 #endif // !OEMCFGI_H
 
