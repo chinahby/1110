@@ -108,7 +108,7 @@ static void FmRadio_AppIsReadyCB(void *pUser);
    uint32 g_dwAEEStdLibEntry;
 #endif
 
-
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 void FmRadio_ClearChanList( CFmRadio* pMe);
 void FmRadio_ChanList_EnumInit( CFmRadio* pMe);
 void FmRadio_ChanList_EnumInit_WithLoop( CFmRadio* pMe);
@@ -120,6 +120,7 @@ sChanInfo* FmRadio_ChanList_GetCurrent_WithLoop( CFmRadio* pMe);
 sChanInfo* FmRadio_ChanList_GetByIndex( CFmRadio* pMe, int index);
 boolean FmRadio_ChanList_DeleteByIndex( CFmRadio* pMe, int index);
 boolean FmRadio_IsChannelValid( uint16 channel);
+#endif
 void Fm_Shake_Open(void);
 /*==============================================================================
                                  本地（静态）数据
@@ -540,8 +541,9 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 
 	byte byMax = 0;
 
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 	FmRadio_ClearChanList( pMe);
-
+#endif
 	//初始化FM Radio音量
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
 						   CFGI_FMRADIO_VOLUME,
@@ -552,6 +554,7 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 		pMe->byVolumeLevel = (MAX_FMRADIO_VOLUME + 1) / 2;
 	}
 
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 	//初始化各频道的信息
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
 						   CFGI_FMRADIO_CHAN_INFO,
@@ -605,6 +608,10 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 
 		pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_LIST;
 	}
+#else
+	pMe->cfg.channel = 96;
+	pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_MANUAL;
+#endif
 
 
 __FmRadio_InitFmRadioResource_end__:
@@ -739,7 +746,7 @@ static void FmRadio_CheckRefuse( CFmRadio* pMe)
 
 #if !FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY
     //ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headsetPresent, sizeof(boolean));
-    headsetPresent = HS_HEADSET_ON();
+    //headsetPresent = HS_HEADSET_ON();
 #endif
     db_get( DB_IN_USE, &dbItemValue);
 
@@ -836,7 +843,9 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             if( !pMe->runOnBackground)
             {
                 FmRadio_PowerDown( pMe);
+            #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 				FmRadio_SaveChannelList( pMe);
+			#endif
 				ISHELL_SetPrefs( pMe->m_pShell, AEECLSID_APP_FMRADIO, 1, &pMe->cfg, sizeof(pMe->cfg));
             }
 #endif//#if !defined( AEE_SIMULATOR)
@@ -1223,6 +1232,7 @@ boolean get_fm_play_state(void)
     return g_m_fm_is_on;
 }
 
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 /*==============================================================================
 函数:
        FmRadio_AddChannel
@@ -1444,7 +1454,7 @@ boolean FmRadio_FindChanListNode(int channel)
     return FALSE;
 
 }
-
+#endif
 /*==============================================================================
 函数:
        closeApp

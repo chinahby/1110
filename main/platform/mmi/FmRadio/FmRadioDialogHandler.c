@@ -79,6 +79,9 @@ static void popTuningModeSelectMenu( CFmRadio *pMe);
 static void FMRadioMute( CFmRadio *pMe);
 static void hideTuningModeSelectMenu( CFmRadio *pMe);
 static void popOptionMenu( CFmRadio *pMe);
+
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
+
 static void popChannelListOptionMenu( CFmRadio *pMe);
 
 static void refreshChannelList( CFmRadio *pMe, boolean begin);
@@ -87,7 +90,7 @@ static void showChannelList( void *pme);
 static boolean hideChannelList( CFmRadio *pMe);
 static void showChannelEditingScreen( CFmRadio *pMe);
 static void hideChannelEditingScreen( CFmRadio *pMe);
-
+#endif
 static int  getIndexByMenuItemId( CFmRadio *pMe, uint16 menuItemId);
 static void convertChannelValueToText( int channel, AECHAR *textBuffer, int bufferSizeInBytes);
 static int  convertChannelValueFromText( AECHAR *textBuffer);
@@ -103,8 +106,10 @@ static void drawChannelIndicator( CFmRadio *pMe);
 static void drawVolumeIndicator( CFmRadio *pMe);
 
 static void drawSoftkey( CFmRadio *pMe);
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 static void drawRefreshListPrompt( void *pMe);
 static void stopDrawRefreshListPrompt( CFmRadio *pMe);
+#endif
 static void drawLedLight( CFmRadio *pMe);
 
 static void drawImage( CFmRadio *pMe, char *resFile, int16 resId, int x, int y);
@@ -128,6 +133,7 @@ static void drawText2( IDisplay *pDisplay,
 
 static void drawPrompt( CFmRadio* pMe, uint16 stringResId, BottomBar_e_Type bottomBarType, boolean informative);
 
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 extern void FmRadio_ClearChanList( CFmRadio* pMe);
 extern void FmRadio_ChanList_EnumInit( CFmRadio* pMe);
 extern void FmRadio_ChanList_EnumInit_WithLoop( CFmRadio* pMe);
@@ -139,6 +145,7 @@ extern sChanInfo* FmRadio_ChanList_GetCurrent_WithLoop( CFmRadio* pMe);
 extern sChanInfo* FmRadio_ChanList_GetByIndex( CFmRadio* pMe, int index);
 extern boolean FmRadio_ChanList_DeleteByIndex( CFmRadio* pMe, int index);
 extern boolean FmRadio_IsChannelValid( uint16 channel);
+#endif
 void resume( CFmRadio* pMe);
 void FmRadio_ShowDialog(CFmRadio *pMe, uint16 dlgResId);
 
@@ -246,6 +253,8 @@ static void closeIncomingSmsPrompt( void* pUser)
     resume(pMe);
 }
 
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
+
 static void resumeChannelList( CFmRadio *pMe)
 {
     switch( pMe->opMode)
@@ -273,7 +282,7 @@ static void resumeChannelList( CFmRadio *pMe)
 
 	pMe->m_bAppIsReady = TRUE;
 }
-
+#endif
 
 void resume( CFmRadio* pMe)
 {
@@ -281,13 +290,16 @@ void resume( CFmRadio* pMe)
 	{
 
 		case FM_RADIO_OPMODE_AUTO_TUNE:
+	#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 		case FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST:
 		{
 			pMe->opMode = FM_RADIO_OPMODE_PLAY;
 		}
-
+	#endif
 		case FM_RADIO_OPMODE_PLAY:
+	#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 		case FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM:
+	#endif
 #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 		case FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL:
 #endif
@@ -305,7 +317,7 @@ void resume( CFmRadio* pMe)
 			ISHELL_SetTimer( pMe->m_pShell, 300, (PFNNOTIFY)popOptionMenu, pMe);
 		}
 		break;
-
+	#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 		case FM_RADIO_OPMODE_EDIT_CHANNEL_LIST:
 		case FM_RADIO_OPMODE_EDIT_CHANNEL_LIST_OPTION_SELECTION:
 		case FM_RADIO_OPMODE_EDIT_CHANNEL:
@@ -314,6 +326,7 @@ void resume( CFmRadio* pMe)
 			ISHELL_SetTimer( pMe->m_pShell, 10, (PFNNOTIFY)resumeChannelList, pMe);
 		}
 		break;
+	#endif
 	}
 }
 static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
@@ -336,9 +349,6 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
         case EVT_DIALOG_START:
         {
 			resume( pMe);
-#if 0
-			repaint( pMe, FALSE);
-#endif
             return TRUE;
         }
 
@@ -350,11 +360,13 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 
         case EVT_DIALOG_END:
         {
+        #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             if(FM_RADIO_OPMODE_EDIT_CHANNEL == pMe->opMode)
             {
                 pMe->edit_chann_interrupt = 1;
                 ITEXTCTL_GetText( pMe->pText, pMe->EditChannel, sizeof( pMe->EditChannel));
             }
+        #endif
             hideMenu( pMe);
             ISHELL_CancelTimer( pMe->m_pShell, NULL, (void*)pMe);
             return TRUE;
@@ -364,6 +376,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 		case EVT_KEY_RELEASE:
 		case EVT_KEY_HELD:
 		{
+		#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 			if( pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL
 #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 				|| pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL
@@ -375,7 +388,18 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 					ITEXTCTL_HandleEvent( pMe->pText, eCode, wParam, dwParam);
 				}
 			}
-
+		#else
+		#if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
+			if ( pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL)
+			{
+				if( !( eCode == EVT_KEY_RELEASE && wParam == AVK_STAR))
+				{
+					ITEXTCTL_HandleEvent( pMe->pText, eCode, wParam, dwParam);
+				}
+			}
+		#endif
+		#endif
+		#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 			if( pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL &&
 				( eCode == EVT_KEY_RELEASE || eCode == EVT_KEY_HELD)
 			)
@@ -393,6 +417,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 					   DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
 				   }
 			}
+		#endif
 		}
 		return TRUE;
 
@@ -421,12 +446,13 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
         {
 		    pMe->newSmsIncomingWparam = wParam;
             ShowNewSmsIncoming( pMe);
+		#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             if(FM_RADIO_OPMODE_EDIT_CHANNEL == pMe->opMode)
             {
                 pMe->edit_chann_interrupt = 1;
                 ITEXTCTL_GetText( pMe->pText, pMe->EditChannel, sizeof( pMe->EditChannel));
             }
-
+		#endif
 			ISHELL_SetTimer( pMe->m_pShell, pMe->wmsEventTimer * 2000, closeIncomingSmsPrompt, (void*)pMe);
 			return TRUE;
         }
@@ -468,9 +494,13 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 
     if( ( ( pMe->opMode  == FM_RADIO_OPMODE_MODE_SELECTION   ||
             pMe->opMode  == FM_RADIO_OPMODE_OPTION_SELECTION ||
+         #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             pMe->opMode  == FM_RADIO_OPMODE_EDIT_CHANNEL_LIST_OPTION_SELECTION ||
-            pMe->opMode  == FM_RADIO_OPMODE_USER_MSG ||
-            (pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL_LIST && key != AVK_INFO)
+         #endif
+            pMe->opMode  == FM_RADIO_OPMODE_USER_MSG
+         #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
+            || (pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL_LIST && key != AVK_INFO)
+         #endif
           )
           &&
           key != AVK_SELECT &&
@@ -486,15 +516,22 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         return TRUE;
     }
 
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 	if( pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL
 #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 		|| pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL
 #endif
 	)
+#else
+#if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
+	if ( pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL)
+#endif
+#endif
     {
         //boolean handle_key_success = FALSE;
         if (key == AVK_STAR)
         {
+        #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 			int len = 0;
 			ITEXTCTL_GetText( pMe->pText, pMe->directInputChannel, sizeof( pMe->directInputChannel));
 			len = WSTRLEN( pMe->directInputChannel);
@@ -503,6 +540,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 
 			ITEXTCTL_SetText( pMe->pText, pMe->directInputChannel, len);
 			ITEXTCTL_SetCursorPos( pMe->pText, TC_CURSOREND);
+		#endif
 			return TRUE;
         }
         else if( key == AVK_POUND)
@@ -565,6 +603,8 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             return TRUE;   
         }
     }
+    
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 
     if(FM_RADIO_OPMODE_CHANNEL_LIST_DELETE == pMe->opMode)
     {
@@ -605,7 +645,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         }
         return TRUE;
     }
-
+#endif
     #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 	if( (key >= AVK_0 && key <= AVK_9) && pMe->opMode == FM_RADIO_OPMODE_PLAY)
         {
@@ -651,18 +691,25 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         case AVK_SELECT:
 #endif
         {
+        #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             if( pMe->opMode != FM_RADIO_OPMODE_EDIT_CHANNEL_LIST    &&
                 IMENUCTL_IsActive( pMe->m_pMenu)
             )
             {
                 return handleCommandEvent( pMe, IMENUCTL_GetSel( pMe->m_pMenu));
             }
-
+		#else
+			if(IMENUCTL_IsActive( pMe->m_pMenu))
+            {
+                return handleCommandEvent( pMe, IMENUCTL_GetSel( pMe->m_pMenu));
+            }
+		#endif
 
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
                 popOptionMenu( pMe);
             }
+        #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             else if( pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM)
             {
                 pMe->globalSearching = TRUE;
@@ -671,11 +718,12 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             else if(  pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL_LIST)
             {
                 popChannelListOptionMenu( pMe);
-            }
+            }        
             else if( pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL)
             {
                 hideChannelEditingScreen( pMe);
             }
+       #endif
 #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 			else if( pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL)
 			{
@@ -688,7 +736,9 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 #if defined( AEE_SIMULATOR)
         case AVK_SELECT:
 #else
+	#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
         case AVK_INFO:
+    #endif
 #endif
         {
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
@@ -703,6 +753,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 				popTuningModeSelectMenu( pMe);
 #endif
             }
+        #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             else if(  pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL_LIST)
             {
 #if (defined( FEATURE_FMRADIO_NO_MODE_SELECT) || defined( FEATURE_FMRADIO_KEY_OK_TO_MUTE))
@@ -729,6 +780,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             {
                 hideChannelEditingScreen( pMe);
             }
+        #endif
 #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 			else if( pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL)
 			{
@@ -759,6 +811,7 @@ __handleKeyEvent_input_channel_done__:
             {
                 hideTuningModeSelectMenu( pMe);
             }
+        #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             else if( pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM    ||
                      ( pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL_LIST && hideChannelList( pMe)) ||
                      (  pMe->opMode == FM_RADIO_OPMODE_OPTION_SELECTION && hideMenu( pMe))
@@ -774,6 +827,7 @@ __handleKeyEvent_input_channel_done__:
             {
                 showChannelList( pMe);
             }
+        #endif
 #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 			else if( pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL)
 			{
@@ -815,8 +869,10 @@ __handleKeyEvent_input_channel_done__:
 
         case AVK_GSENSOR_FORWARD:
         case AVK_GSENSOR_BACKWARD:
+    #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 		case AVK_UP:
 		case AVK_DOWN:
+	#endif
 		{
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 			{
@@ -896,11 +952,13 @@ static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId)
         pMe->runOnBackground = (itemId == IDS_FMRADIO_OPTION_MENU_QUIT) ? FALSE : TRUE;
         ISHELL_CloseApplet( pMe->m_pShell, (itemId == IDS_FMRADIO_OPTION_MENU_QUIT) ? FALSE : TRUE);
     }
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
     else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
     {
         hideMenu( pMe);
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM);
     }
+
     else if( itemId == IDS_FMRADIO_OPTION_MENU_LIST)
     {
     //    pMe->channelListIsEmptyHasPrompted = FALSE;
@@ -962,6 +1020,7 @@ static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId)
              showChannelList( pMe);
         }
     }
+
 	else if( itemId == IDS_EDIT)
 	{
 		 pMe->m_channellist_bottom_type = FM_SAVE_DELETE;
@@ -980,6 +1039,7 @@ static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId)
 		hideMenu( pMe);
 		moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
 	}
+#endif
     else
     {
         return FALSE;
@@ -1009,7 +1069,7 @@ static void changeChannelClockwise( CFmRadio *pMe)
 
 static void changeChannel( CFmRadio *pMe, int direction)
 {
-
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
     if( pMe->cfg.tuningMode == FM_RADIO_TUNNING_MODE_LIST)
     {
 
@@ -1033,7 +1093,9 @@ static void changeChannel( CFmRadio *pMe, int direction)
             refreshChannelList( pMe, BEGIN_TO_REFRESH_CHANNEL_LIST);
         }
     }
-    else if( pMe->cfg.tuningMode == FM_RADIO_TUNNING_MODE_MANUAL)
+    else 
+#endif
+	if( pMe->cfg.tuningMode == FM_RADIO_TUNNING_MODE_MANUAL)
     {
         int increment[] = { -1, 1};
         int channel     = pMe->cfg.channel;
@@ -1054,7 +1116,9 @@ static void changeChannel( CFmRadio *pMe, int direction)
     {
         pMe->opMode                 = FM_RADIO_OPMODE_AUTO_TUNE;
         pMe->seekChannelClockwise   = direction == CHANGE_CHANNEL_CLOCKWISE;
+    #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
         refreshChannelList( pMe, CONTINUE_TO_REFRESH_CHANNEL_LIST);
+    #endif
     }
 }
 
@@ -1210,19 +1274,27 @@ static void popOptionMenu( CFmRadio *pMe)
 {
 
 	int i = 0;
-	char*   resFile[] = {// FMRADIOLS_RES_FILE_LANG,
+	char*   resFile[] = {
+	#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
+							// FMRADIOLS_RES_FILE_LANG,
 						  FMRADIOLS_RES_FILE_LANG,
 						  FMRADIOLS_RES_FILE_LANG,
 						  AEE_APPSCOMMONRES_LANGFILE,
+	#endif
 						  FMRADIOLS_RES_FILE_LANG
 					};
-	uint16  resId[] = { //IDS_FMRADIO_OPTION_MENU_QUIT,
+					
+	uint16  resId[] = { 
+	#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
+						//IDS_FMRADIO_OPTION_MENU_QUIT,
 						IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH,
 						IDS_FMRADIO_OPTION_MENU_LIST,
 						IDS_SAVE,
+	#endif
 						IDS_FMRADIO_OPTION_MENU_PLAY_ON_BACKGROUND
 					};
 
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 	for( i = 0; i < 4; i ++)
 	{
 
@@ -1235,11 +1307,15 @@ static void popOptionMenu( CFmRadio *pMe)
 
 		IMENUCTL_AddItem( pMe->m_pMenu, resFile[i], resId[i], resId[i], 0, 0);
 	}
-
+#else
+	IMENUCTL_AddItem( pMe->m_pMenu, resFile[0], resId[0], resId[0], 0, 0);
+#endif
 	repaint( pMe, TRUE);
     pMe->opMode = FM_RADIO_OPMODE_OPTION_SELECTION;
     setOptionMenuProperties( pMe);
 }
+
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 
 static void popChannelListOptionMenu( CFmRadio *pMe)
 {
@@ -1522,6 +1598,9 @@ static boolean hideChannelList( CFmRadio *pMe)
     hideMenu( pMe);
     return TRUE;
 }
+#endif
+
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 
 static void showChannelEditingScreen( CFmRadio *pMe)
 {
@@ -1576,7 +1655,7 @@ static void showChannelEditingScreen( CFmRadio *pMe)
 
     pMe->opMode = FM_RADIO_OPMODE_EDIT_CHANNEL;
 }
-
+#endif
 static boolean isDigital( AECHAR theChar)
 {
 
@@ -1632,6 +1711,8 @@ static boolean channelNumberIsvalid( AECHAR *text)
         }
     }
 }
+
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 
 static void hideChannelEditingScreen( CFmRadio *pMe)
 {
@@ -1719,6 +1800,7 @@ static void hideChannelEditingScreen( CFmRadio *pMe)
     }
 
 }
+#endif
 
 static void paint( CFmRadio *pMe)
 {
@@ -1733,6 +1815,8 @@ static void paint( CFmRadio *pMe)
     drawVolumeIndicator( pMe);
     drawSoftkey( pMe);
     drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
+
+#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
 
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT)
 	#if defined(FEATURE_DISP_128X128)
@@ -1788,6 +1872,10 @@ static void paint( CFmRadio *pMe)
 	#endif
 #endif
 #endif
+#endif
+
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
+
     if( pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM)
     {
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH          
@@ -1804,7 +1892,7 @@ static void paint( CFmRadio *pMe)
                 );
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
     }
-
+#endif
     if( pMe->refuseReason != FM_RADIO_REFUSE_REASON_NOT_REFUSE)
     {
 
@@ -2189,6 +2277,8 @@ static void drawSoftkey( CFmRadio *pMe)
     IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
 }
 
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
+
 static void drawRefreshListPrompt( void *pme)
 {
 #ifndef FEATURE_FMRADIO_SIMPLE_VERSION
@@ -2218,6 +2308,7 @@ static void stopDrawRefreshListPrompt( CFmRadio *pMe)
     ISHELL_CancelTimer( pMe->m_pShell, drawRefreshListPrompt, (void*)pMe);
     pMe->drawRefreshListPrompt = FALSE;
 }
+#endif
 
 static void drawLedLight( CFmRadio *pMe)
 {
