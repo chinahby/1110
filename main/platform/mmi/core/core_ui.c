@@ -766,7 +766,7 @@ static int GetHsToVcodeIdx(hs_key_type key)
             return i;
         }
     }
-    return (i-1);
+    return 0;
 } /* End GetHsToVcodeIdx */
 
 static void KeyRepeatCB(void *pUser)
