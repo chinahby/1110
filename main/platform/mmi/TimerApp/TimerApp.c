@@ -50,7 +50,13 @@ when         who            what, where, why
 #include "AEEAnnunciator.h"
 
 #include "apptimerres.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
 #include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
 
 #if defined( AEE_SIMULATOR)
     #define  AEE_APPTIMER_RES_FILE "fs:/mod/apptimer/en/apptimerres.bar"
