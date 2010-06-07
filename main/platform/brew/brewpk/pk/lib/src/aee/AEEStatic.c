@@ -32,11 +32,14 @@ Copyright ?1999-2002 QUALCOMM Incorporated.
 #include "AEEStdLib.h"
 #include "AEEText.h"
 // 图片资源文件
-#if !defined( FEATURE_COLOR_DISPLAY) || !defined( AEESIMULATOR)
-#include "appscommon_color.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
 #else
-#include "appscommon_momo.brh"
+#include "Appscommon_color.brh"
 #endif
+
 #include "Appscommon.h"
 #include "AEEPointerHelpers.h"
 

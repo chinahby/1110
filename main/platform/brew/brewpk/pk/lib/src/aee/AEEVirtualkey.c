@@ -60,8 +60,14 @@ when         who     what, where, why
 
 
 #include "Appscommon.h"
-#include "Appscommon_color.brh"
 
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
 
 #define AEEFS_SHAREDVK_DIR "fs:/image/virtualkey/"
 

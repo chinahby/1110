@@ -44,7 +44,14 @@ INCLUDE FILES FOR MODULE
 
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 #include "Appscommon.h"
-#include "appscommon_color.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
+
 #endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
     
 /*===========================================================================
