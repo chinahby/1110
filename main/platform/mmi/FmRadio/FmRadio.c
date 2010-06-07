@@ -746,7 +746,7 @@ static void FmRadio_CheckRefuse( CFmRadio* pMe)
 
 #if !FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY
     //ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headsetPresent, sizeof(boolean));
-    //headsetPresent = HS_HEADSET_ON();
+    headsetPresent = HS_HEADSET_ON();
 #endif
     db_get( DB_IN_USE, &dbItemValue);
 
