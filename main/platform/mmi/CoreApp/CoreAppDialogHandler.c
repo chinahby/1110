@@ -37,7 +37,14 @@
 #include "OEMRTC.h"
 //#include "AEECallList.h"
 #include "clockapps_images.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
 #include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
+
 #include "AEEGraphics.h "
 
 #include "clockapps.brh"
@@ -3980,7 +3987,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                pMe->m_nNormalFontHeight);
 #elif defined(FEATURE_DISP_128X128)
 	SETAEERECT(&rc, 
-               45,
+               15,
                20,
                pMe->m_rc.dx-30, 
                pMe->m_nNormalFontHeight);

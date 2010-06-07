@@ -37,7 +37,14 @@
 
 #include "AEEClipboard.h"
 
-#include "Appscommon_color.brh"//wlh add
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
+
 #include "Appscommon.h"//wlh add
 #ifndef WIN32
 #include "ui.h"
