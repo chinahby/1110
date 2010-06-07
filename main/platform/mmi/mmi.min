@@ -6,8 +6,12 @@ vpath %.mif $(BREW_STATIC_MIFS)
 
 #APPFLAGS := -DBREW_STATIC_APP -DAEE_STATIC
 
-include $(APPSCOMMON)/appscommon.min
 
+ifeq ($(USES_160X128),yes)
+include $(APPSCOMMON)/appscommon160x128.min
+else
+include $(APPSCOMMON)/appscommon.min
+endif
 #Core App
 include $(COREAPP)/coreapp.min
 include $(MAINMENU)/mainmenu.min
