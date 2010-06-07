@@ -926,7 +926,6 @@ void db_init( void )
 #ifdef CUST_EDITION
 #if defined(FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK)
 #if defined( FEATURE_RUIM_PHONEBOOK) && !defined(FEATURE_MINI_DLOADER)
-#include "Oemui.h"
 boolean PhoneBookCache_IsIninited(void)
 {
     db_items_value_type  db_value;    

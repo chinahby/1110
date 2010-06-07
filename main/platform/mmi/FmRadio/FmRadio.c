@@ -26,10 +26,8 @@
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif 
-
-#ifndef WIN32
-#include "oemui.h"
-#endif//WIN32
+#include "Appscommon.h"
+#include "hs.h"
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/

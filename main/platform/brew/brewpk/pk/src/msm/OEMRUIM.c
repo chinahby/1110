@@ -28,12 +28,7 @@ GENERAL DESCRIPTION:
 
 // DMSS headers.
 #include "rex.h"
-
-#ifndef USES_MMI
 #include "ui.h"
-#else
-#include "oemui.h"
-#endif
 #include "uim.h"
 #include "nvruimi.h"
 

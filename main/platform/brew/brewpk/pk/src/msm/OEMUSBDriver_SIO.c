@@ -16,11 +16,8 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
             QUALCOMM Proprietary/GTDR
 =====================================================*/
 
-#ifndef USES_MMI
 #include "ui.h"
-#else
-#include "oemui.h"
-#endif#include "dsm.h"
+#include "dsm.h"
 #include "usbcdc.h"
 #include "usbdc.h"
 #include "sio.h"

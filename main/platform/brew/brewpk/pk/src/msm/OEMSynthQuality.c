@@ -67,12 +67,7 @@ This setting is only valid when a callback is returned with CMX_SUCCESS.
 
 #include "cmx.h"
 #include "rex.h"
-
-#ifndef USES_MMI
 #include "ui.h"
-#else
-#include "oemui.h"
-#endif
 #include "OEMHeap.h"
 #include "OEMObjectMgr.h"
 #include "OEMCriticalSection.h"

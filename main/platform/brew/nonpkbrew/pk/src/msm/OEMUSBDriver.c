@@ -18,12 +18,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
 #include "OEMFeatures.h"
 
 #ifdef FEATURE_BREW_USBDRIVER
-
-#ifndef USES_MMI
 #include "ui.h"
-#else
-#include "oemui.h"
-#endif
 #include "dsm.h"
 
 #ifdef FEATURE_USB

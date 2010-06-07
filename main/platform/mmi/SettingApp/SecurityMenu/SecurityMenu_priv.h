@@ -71,11 +71,6 @@
 //#include "OEMAnnun.h"         // for ANNUN_ALERT
 #include "AEEAnnunciator.h"
 #include "OEMCFGI.h"
-#ifndef WIN32
-#include "Oemui.h"
-#else
-#include "oemhelperfunctype.h"
-#endif//WIN32
 #include "AEERUIM.h"
 #include "AEE_OEM.h"
 //#include "AEECallList.h"

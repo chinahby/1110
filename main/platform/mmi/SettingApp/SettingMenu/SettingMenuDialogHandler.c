@@ -44,6 +44,7 @@
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif 
+#include "nv.h"
 boolean start_security_setting_by_user;
 
 #define FEATURE_SET_SCENEMODE

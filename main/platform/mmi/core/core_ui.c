@@ -321,6 +321,7 @@ extern IEnv *gpiRexEnv;
 
 
 #include "AEECLSID_LOGICALDISPLAYCFG.BID"
+#include "OEMClassIDs.h"
 
 /* <EJECT> */
 /*===========================================================================
@@ -1069,7 +1070,7 @@ rex_sigs_type CoreApp_Getsigs( void )
 #ifdef FEATURE_BREW_NET_SIG
   sigs |= AEE_NET_SIG;
 #endif
-
+  sigs |= UI_RTC_SIG;
   return sigs;
 }
 
@@ -1617,7 +1618,6 @@ int oemui_is_lcd_test_state(int bb)
 #include "OEMKeyguard.h"
 #endif
 #include "AEEConfig.h"
-#include "OEMClassIDs.h"
 #include "OEMCFGI.h"
 #include "OEMDeviceNotifier.h"
 
@@ -1885,11 +1885,11 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
     case EVT_KEY_PRESS:
 #if defined(FEATURE_BACKLIGHT_KEYPAD)
         if (gpKeyBacklight) {
-            IBACKLIGHT_TurnOn(gpKeyBacklight);
+            IBACKLIGHT_Enable(gpKeyBacklight);
         }
 #endif
         if (gpBacklight){
-            IBACKLIGHT_TurnOn(gpBacklight);
+            IBACKLIGHT_Enable(gpBacklight);
         }
         
         if (gpAlert){

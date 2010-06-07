@@ -1849,3 +1849,44 @@ void ui_task (
 
   }
 }
+
+#include "AEE.h"
+#include "AEE_OEM.h"
+#include "AEECM.h"
+void InitProvisioning(void)
+{
+    AEECMPhInfo phInfo;
+    ICM  *pCM = NULL;
+    int nRet;
+    
+    nRet = ISHELL_CreateInstance(AEE_GetShell(),
+                                 AEECLSID_CALLMANAGER,
+                                 (void **) &pCM);
+    if ((nRet != SUCCESS) || (pCM == NULL))
+    {
+        return;
+    }
+
+    ICM_GetPhoneInfo(pCM, &phInfo, sizeof(phInfo));
+    
+    if (phInfo.oprt_mode != AEECM_OPRT_MODE_FTM)
+    {
+        if (ui_check_provisioning() && phInfo.oprt_mode != AEECM_OPRT_MODE_OFFLINE)
+        {
+            cm_ph_cmd_subscription_available(NULL,
+                                             NULL,
+                                             cm_client_id,
+                                             CM_SUBSCRIPTION_STATUS_CHANGE,
+                                             CM_SUBSCRIPTION_STATUS_NO_CHANGE,
+                                             CM_SUBSCRIPTION_STATUS_NO_CHANGE);
+            cm_ph_cmd_oprt_mode(NULL, NULL, cm_client_id, SYS_OPRT_MODE_ONLINE);
+        }
+        else
+        {
+            cm_ph_cmd_oprt_mode(NULL, NULL, cm_client_id, SYS_OPRT_MODE_OFFLINE);
+        }
+    }
+    
+    ICM_Release(pCM);
+}
+

@@ -36,14 +36,11 @@
 #include "CoreApp_priv.h"        /* CoreApp external data and function prototypes */
 
 #include "AEEClipboard.h"
-#ifdef FEATURE_RANDOM_MENU_REND
-#include "Rendering.h"
-#endif
 
 #include "Appscommon_color.brh"//wlh add
 #include "Appscommon.h"//wlh add
 #ifndef WIN32
-#include "oemui.h"
+#include "ui.h"
 #else
 
 

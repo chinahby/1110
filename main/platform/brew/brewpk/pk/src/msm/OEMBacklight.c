@@ -14,7 +14,7 @@
 #include "keypad.h"
 #include "AEEConfig.h"
 #include "OEMCFGI.h"
-#include "oemui.h"
+#include "ui.h"
 #include "OEMSVC.h"
 #include "AEE_OEMDispatch.h"
 

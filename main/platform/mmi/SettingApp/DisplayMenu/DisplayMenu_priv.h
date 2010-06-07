@@ -59,7 +59,6 @@
 #include "AEEBacklight.h"
 #include "AEEFile.h"
 #ifndef WIN32
-#include "Oemui.h"
 #include "db.h"
 #else
 #include "oemhelperfunctype.h"

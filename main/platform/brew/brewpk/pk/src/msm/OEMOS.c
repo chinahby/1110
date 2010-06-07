@@ -44,11 +44,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
 #include "OEMFeatures.h"
 
 #if !defined(AEE_SIMULATOR)
-#ifndef USES_MMI
 # include "ui.h"
-#else
-#include "oemui.h"
-#endif
 # include "dog.h"
 # include "clki.h"
 

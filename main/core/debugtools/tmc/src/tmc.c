@@ -559,13 +559,7 @@ extern int cacheWT;
 #endif /* FEATURE_NV */
 
 #ifdef FEATURE_UI
-
-#ifndef USES_MMI
 #include "ui.h"
-#else
-#include "oemui.h"
-#endif
-
 #endif /* FEATURE_UI */
 
 #ifdef FEATURE_CM

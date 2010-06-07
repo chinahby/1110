@@ -125,7 +125,6 @@ when       who     what, where, why
 #endif
 #ifndef WIN32
 #include "tmc.h"
-#include "Oemui.h"
 #endif
 #include "BREWVersion.h"
 

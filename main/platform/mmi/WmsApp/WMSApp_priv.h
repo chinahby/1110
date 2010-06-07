@@ -61,55 +61,6 @@
 #include "OEMWMS_CacheInfo.h"
 #include "OEMHeap.h"
 #include "wmsi.h"
-#ifndef WIN32
-#include "oemui.h"
-#else
-#define ERR(p,p1,p2,p3)
-#define MSG_ERROR(p,p1,p2,p3)
-#define MSG_HIGH(p,p1,p2,p3)
-#define MSG_MED(p,p1,p2,p3)
-void wms_cacheinfolist_getcounts(wms_box_e_type box, 
-                                 uint16 *pNew, 
-                                 uint16 *pOnUIM,
-                                 uint16 *pTotal);
-void wms_cacheinfolist_enumbegin(wms_box_e_type ebox);
-wms_cache_info_node *wms_cacheinfolist_enumnext(wms_box_e_type ebox);
-void wms_cacheinfolist_enumtoxuhao(wms_box_e_type ebox, int xuhao);
-wms_cache_info_list * wms_get_cacheinfolist(wms_box_e_type ebox);
-uint8 wms_ts_pack_ascii
-(
-  const char        * ascii_ptr,       /* IN */
-  uint8              * data,            /* OUT */
-  uint8              * data_len_ptr,    /* OUT */
-  uint8              * padding_bits_ptr /* OUT */
-);
-void wms_ts_decode_relative_time
-(
-  uint8                     v,
-  wms_timestamp_s_type    * timestamp
-);
-wms_status_e_type wms_ts_decode
-(
-  const wms_raw_ts_data_s_type            * raw_ts_data_ptr,
-  wms_client_ts_data_s_type               * client_ts_data_ptr
-);
-uint8 wms_ts_dtmf2ascii
-(
-  uint8            len,
-  const uint8      *dtmf,
-  uint8            *ascii
-);
-uint8 wms_ts_unpack_ascii
-(
-  const wms_cdma_user_data_s_type    *ud,        /* IN */
-  uint8    buf_len,                /* IN */
-  uint8    *buf                    /* OUT */
-);
-wms_cache_info_node *wms_cacheinfolist_getnode(wms_box_e_type  eBox,
-                                               wms_memory_store_e_type mem_store, 
-                                               uint16 index);
-void wms_cacheinfolist_updatexuhao(wms_box_e_type ebox);
-#endif//win32
 
 #include "Appscommon.h"
 // 图片资源文件

@@ -23,12 +23,7 @@ GENERAL DESCRIPTION:
 #include "sio.h"
 #include "dsm.h"
 #include "rdevmap.h"
-
-#ifndef USES_MMI
 #include "ui.h"
-#else
-#include "oemui.h"
-#endif
 //BREW header files   
 #include "OEMSIO.h"
 #include "AEE_OEMDispatch.h"

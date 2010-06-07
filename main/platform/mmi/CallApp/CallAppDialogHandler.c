@@ -24,10 +24,6 @@
 #include "CallApp_priv.h"
 #include "recentcalls.h"
 #include "wmsapp.h"
-//#include "uiutils.h"
-#ifndef WIN32
-#include "Oemui.h"
-#endif
 #include "AEE_OEMEvent.h"
 #ifdef FEATURE_SUPPORT_BT_APP
 #include "Bcmapp_ag.h"

@@ -108,4 +108,6 @@ ifeq ($(MMI_ADD_NUMBER_MANAGER),yes)
 include $(NUMBERMANAGER)/numbermanager.min
 endif
 
-include $(UI)/oemui.min
+#include $(UI)/oemui.min
+
+include $(MMIDIR)/core/core.min

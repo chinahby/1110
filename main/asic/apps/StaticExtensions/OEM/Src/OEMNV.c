@@ -60,11 +60,7 @@ when         who     what, where, why
 
 ===========================================================================*/
 #include "customer.h"
-#ifndef FEATURE_OEMUI_TASK
 #include "ui.h"
-#else
-#include "oemui.h"
-#endif
 #include "uixsnd.h"
 
 #include "OEMNV.h"

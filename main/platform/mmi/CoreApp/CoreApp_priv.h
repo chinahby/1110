@@ -41,7 +41,7 @@
 #include "AEECM.h"
 #include "coreapp.brh"
 #ifndef WIN32
-#include "oemui.h"
+#include "ui.h"
 #else
 #include "OEMHelperFuncType.h"
 #define ASSERT(p)

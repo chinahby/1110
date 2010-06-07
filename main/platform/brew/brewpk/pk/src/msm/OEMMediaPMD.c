@@ -64,11 +64,7 @@ when       who     what, where, why
 
 #if defined(FEATURE_SVGDOM)
 
-#ifndef USES_MMI
 #include "ui.h"
-#else
-#include "oemui.h"
-#endif
 #include "task.h"
 
 #include "OEMSVGDOM.h"

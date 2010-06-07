@@ -22,15 +22,7 @@
 #include "disp.h"
 #include "bit.h"
 #endif
-
-#ifndef USES_MMI
 #include "ui.h"
-#else
-#ifndef WIN32
-#include "oemui.h"
-#include "uixsnd.h"
-#endif
-#endif
 #ifndef WIN32
 #include "voc.h"
 #endif

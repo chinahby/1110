@@ -55,11 +55,6 @@
 #include "Appscommon.h"
 #include "AEERinger.h"
 #include "AEEAlert.h"
-#ifndef WIN32
-#include "Oemui.h"
-#else
-#include "oemhelperfunctype.h"
-#endif//WIN32
 //#include "AEEPhone.h"
 //#include "cm.h"
 //#include "cmcall.h"

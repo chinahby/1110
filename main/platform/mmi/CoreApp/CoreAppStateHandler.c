@@ -1069,6 +1069,7 @@ static NextFSMAction COREST_EMERGENCYCALL_Handler(CCoreApp *pMe)
     if(pMe->m_b_PH_INFO_AVAIL == TRUE)
     {
         pMe->m_b_PH_INFO_AVAIL = FALSE;
+        InitProvisioning();
     }
     // 为进行紧急呼叫，将话机置于在线状态
     //CoreApp_SetOperatingModeOnline(pMe);
@@ -1256,6 +1257,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             if(pMe->m_b_PH_INFO_AVAIL == TRUE)
             {
                 pMe->m_b_PH_INFO_AVAIL = FALSE;
+                InitProvisioning();
             }
             // 将话机置于在线状态
             //CoreApp_SetOperatingModeOnline(pMe);
@@ -1264,6 +1266,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             {
                 pMe->m_b_online_from = ON_LINE_FROM_NORMAL;
             }
+            InitProvisioning();
 #endif
 
             CoreApp_ShowDialog(pMe, IDD_STARTUPANI);

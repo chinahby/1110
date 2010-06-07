@@ -54,11 +54,6 @@
 #include "AEEConfig.h"
 #include "AppComFunc.h"
 #include "AEEText.h"
-#ifndef WIN32
-#include "Oemui.h"
-#else
-#include "oemhelperfunctype.h"
-#endif//WIN32
 #include "AEEAnnunciator.h"
 //#include "AEEPhone.h"//add by lzhl20040823
 #include "SoundMenu.h"

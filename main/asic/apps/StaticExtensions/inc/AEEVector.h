@@ -52,11 +52,7 @@ when         who     what, where, why
    // Use the .bid file if compiling as dynamic module 
    #include "IVector.bid"		
 #else
-#ifndef USES_MMI  
    #define AEECLSID_VECTOR    	0x01011e62
-#else   
-    #include "OEMClassIDs.h"   
-#endif	
 #endif
 
 

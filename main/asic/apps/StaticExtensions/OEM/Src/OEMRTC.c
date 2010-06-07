@@ -34,7 +34,6 @@ INCLUDE FILES FOR MODULE
 ===========================================================================*/
 #include "Pm.h"
 #include "Pmapp_rtc.h"
-#include "Oemui.h"
 #include "OEMRTC.h"
 #include "AEEStdLib.h"
 #include "OEMCFGI.h"
@@ -43,6 +42,8 @@ INCLUDE FILES FOR MODULE
 #include "OEMHeap.h"
 #include "AEE_OEMDispatch.h"
 #include "AEECM.h"
+#include "ui.h"
+#include "Task.h"
 /*===========================================================================
 
                        TYPE DECLARATIONs

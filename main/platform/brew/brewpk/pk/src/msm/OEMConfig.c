@@ -56,11 +56,8 @@
 #include "AEEFile.h"
 #include "AEEDownload.h"
 #include "AEEDeviceNotifier.h"
-
-#ifndef USES_MMI
 #include "ui.h"
-#else
-#include "oemui.h"
+#ifdef USES_MMI
 #include "mobile.h"
 #endif
 

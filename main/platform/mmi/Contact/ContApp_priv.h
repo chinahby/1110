@@ -53,7 +53,7 @@
 #include "AppComFunc.h"
 #ifndef WIN32
 #include "err.h"
-#include "oemui.h"
+#include "ui.h"
 #else
 #include "oemhelperfunctype.h"
 #endif//WIN32
