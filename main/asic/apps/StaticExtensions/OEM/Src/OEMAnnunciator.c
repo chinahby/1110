@@ -176,7 +176,6 @@ typedef struct {
  * Image data for the annunciator fields.
  *
  *******************************************************************/
-#if 1
  /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
  /*RSSI/Airplane Mode*/
  static OEMState_data rssi_image_data[]=
@@ -269,74 +268,11 @@ static OEMState_data batt_image_data[]=
   {ANNUN_STATE_BATT_FULL, IDB_BATT_FULL, NULL}
 };
 
-#else
-static OEMState_data rssi_image_data[]=
-{
-  {ANNUN_STATE_RSSI_0, IDB_RSSI0, NULL},
-  {ANNUN_STATE_RSSI_1, IDB_RSSI1, NULL},
-  {ANNUN_STATE_RSSI_2, IDB_RSSI2, NULL},
-  {ANNUN_STATE_RSSI_3, IDB_RSSI3, NULL},
-  {ANNUN_STATE_RSSI_4, IDB_RSSI4, NULL}
-};
-
-static OEMState_data ring_image_data[]={ANNUN_STATE_ON, IDB_ALERT, NULL};
-
-static OEMState_data silent_image_data[]={ANNUN_STATE_ON, IDB_SILENCE, NULL};
-
-static OEMState_data alert_image_data[]={ANNUN_STATE_ON, IDB_RING_THEN_VIBRATOR, NULL};
-
-static OEMState_data vibrate_image_data[]={ANNUN_STATE_ON, IDB_VIBRATOR, NULL};
-#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
-static OEMState_data mute_image_data[]={ANNUN_STATE_ON, IDB_MUTE, NULL};
-#endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
-static OEMState_data headset_image_data[]={ANNUN_STATE_ON, IDB_HEADSET, NULL};
-
-static OEMState_data fmradio_image_data[]={ANNUN_STATE_ON, IDB_FM_RADIO_PLAY, NULL};
-
-//static OEMState_data lockstatus_image_data[]={ANNUN_STATE_ON, IDB_LOCK, NULL};
-
-static OEMState_data voiceprivacy_image_data[]={ANNUN_STATE_ON, IDB_VOICE_PRIVACY, NULL};
-
-static OEMState_data callforward_image_data[]={ANNUN_STATE_ON, IDB_INUSE, NULL};
-
-static OEMState_data missedcall_image_data[]={ANNUN_STATE_ON, IDB_MISS_INDICATOR, NULL};
-
-static OEMState_data smsmemoryfull_image_data[]={ANNUN_STATE_ON, IDB_SMS_FULL, NULL};
-
-static OEMState_data sms_image_data[]={ANNUN_STATE_ON, IDB_MSG, NULL};
-
-static OEMState_data vmail_image_data[]={ANNUN_STATE_ON, IDB_MBOX, NULL};
-
-static OEMState_data alarm_image_data[]={ANNUN_STATE_ON, IDB_ALARM_ACTIVATED, NULL};
-
-static OEMState_data roam_image_data[]={ANNUN_STATE_ON, IDB_ROAM, NULL};
-
-//static OEMState_data homezone_image_data[]={ANNUN_STATE_ON, IDB_HOMEZONE_INDICATOR, NULL};
-
-//static OEMState_data divertedcall_image_data[]={ANNUN_STATE_ON, IDB_DIVERTED_INDICATOR, NULL};
-
-//static OEMState_data callfirewall_image_data[]={ANNUN_STATE_ON, IDB_CALL_FIREWALL_ACTIVATED, NULL};
-
-//static OEMState_data smsfirewall_image_data[]={ANNUN_STATE_ON, IDB_SMS_FIREWALL_ACTIVATED, NULL};
-
-//static OEMState_data callandsms_firewall_image_data[]={ANNUN_STATE_ON, IDB_CALL_AND_SMS, NULL};
-
-static OEMState_data batt_image_data[]=
-{
-  {ANNUN_STATE_BATT_LOW, IDB_NO_BATT, NULL},
-  {ANNUN_STATE_BATT_1, IDB_BATT1, NULL},
-  {ANNUN_STATE_BATT_2, IDB_BATT2, NULL},
-  {ANNUN_STATE_BATT_3, IDB_BATT3, NULL},
-  {ANNUN_STATE_BATT_FULL, IDB_FULLBATT, NULL}
-};
-#endif
-
 /********************************************************************
  *
  * Content data for the annunciator fields
  *
  *******************************************************************/
-#if 1
  /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
  /*ANNUN_FIELD_RSSI*/
 OEMAnnun_content rssi_content =
@@ -374,57 +310,6 @@ OEMAnnun_content ringtone_content =
 /*ANNUN_FIELD_BATT*/
 OEMAnnun_content batt_content =
      {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)batt_image_data};
- #else
- 
-OEMAnnun_content rssi_content =
-     {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)rssi_image_data};
-OEMAnnun_content ring_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)ring_image_data};
-OEMAnnun_content silent_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)silent_image_data};
-OEMAnnun_content alert_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)alert_image_data};
-OEMAnnun_content vibrate_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)vibrate_image_data};
-#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
-OEMAnnun_content mute_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)mute_image_data};
-#endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
-OEMAnnun_content headset_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)headset_image_data};
-OEMAnnun_content fmradio_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
-//OEMAnnun_content lockstatus_content =
-//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)lockstatus_image_data};
-OEMAnnun_content voiceprivacy_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)voiceprivacy_image_data};  
-OEMAnnun_content callforward_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)callforward_image_data};
-OEMAnnun_content missedcall_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)missedcall_image_data};
-OEMAnnun_content smsmemoryfull_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)smsmemoryfull_image_data};
-OEMAnnun_content sms_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)sms_image_data};
-OEMAnnun_content vmail_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)vmail_image_data};
-OEMAnnun_content alarm_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)alarm_image_data};
-OEMAnnun_content roam_content =
-     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)roam_image_data};
-//OEMAnnun_content homezone_content =
-//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)homezone_image_data};
-//OEMAnnun_content divertedcall_content =
-//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)divertedcall_image_data};
-//OEMAnnun_content callfirewall_content =
-//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)callfirewall_image_data};
-//OEMAnnun_content smsfirewall_content =
-//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)smsfirewall_image_data};
-//OEMAnnun_content callandsms_firewall_content =
-//     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)callandsms_firewall_image_data};
-OEMAnnun_content batt_content =
-     {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)batt_image_data};
-#endif
 
 #ifdef FEATURE_DISP_176X220
     #define IMG_WIDTH      12
@@ -440,6 +325,13 @@ OEMAnnun_content batt_content =
     #define TEXT_HEIGHT    10
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1
+#elif defined(FEATURE_DISP_160X128)
+    #define IMG_WIDTH      12
+    #define IMG_HEIGHT     13
+    #define LG_IMG_WIDTH 20
+    #define TEXT_HEIGHT    10
+    #define ROW1_Y           0
+    #define BETWEEN_ICON_PIXEL 1    
 #else
 /* Standard image fields are 10 x 10 (pixels)    */
 /* while large image fields are 20 x 10 (pixels) */
@@ -499,8 +391,6 @@ OEMAnnun_content batt_content =
 
 /* Annunciator Definitions */
 //lint -save -e545  Suppress complaints about "suspicious use of &"
-
-#if 1
 /*The first place is reserved for the signal icon, and the last place is reserved for the battery icon. 
     Those icons between them are arranged one by one, and their positions are now decided by macro*/
 /* Q1 Annunciator layout:
@@ -534,37 +424,6 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_11,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
   {ANNUN_FIELD_BATT,                ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 };
-#else
-
-static OEMAnnun_data Annunciators[] =
-{
-  {ANNUN_FIELD_RSSI,             0, ROW1_Y, LG_IMG_WIDTH, IMG_HEIGHT, &rssi_content},
-  {ANNUN_FIELD_RING,            21, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &ring_content},
-  {ANNUN_FIELD_SILENT,         21, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &silent_content},
-  {ANNUN_FIELD_ALERT,          21, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &alert_content},  
-  {ANNUN_FIELD_VIBRATE,      21, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &vibrate_content},    
-  {ANNUN_FIELD_HEADSET,      32, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &headset_content},  
-  {ANNUN_FIELD_FMRADIO,         32, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &fmradio_content},    
-//  {ANNUN_FIELD_LOCKSTATUS,  43, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &lockstatus_content},
-//  {ANNUN_FIELD_CALLFIREWALL,      54, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &callfirewall_content}, 
-//  {ANNUN_FIELD_CALLANDSMS_FIREWALL, 54, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &callandsms_firewall_content},   
-//  {ANNUN_FIELD_DIVERTEDCALL,   54, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &divertedcall_content},  
-  {ANNUN_FIELD_VOICE_PRIVACY,43, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &voiceprivacy_content},    
-  {ANNUN_FIELD_CALLFORWARD,  54, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &callforward_content}, 
-  {ANNUN_FIELD_MISSEDCALL,      65, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &missedcall_content},   
-  {ANNUN_FIELD_VMAIL,      76, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &vmail_content},  
-//  {ANNUN_FIELD_SMSFIREWALL, 65, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &smsfirewall_content},  
-  {ANNUN_FIELD_SMSMEMORYFULL,   76, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &smsmemoryfull_content},
-  {ANNUN_FIELD_SMS,         76, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &sms_content},
-  {ANNUN_FIELD_ALARM,     135, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &alarm_content},
-  {ANNUN_FIELD_ROAM,       146, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &roam_content},
-//  {ANNUN_FIELD_HOMEZONE,97, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &homezone_content},     
-  {ANNUN_FIELD_BATT,         156, ROW1_Y, LG_IMG_WIDTH, IMG_HEIGHT, &batt_content}, 
-  #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
-  {ANNUN_FIELD_MUTE,      65, ROW1_Y, IMG_WIDTH, IMG_HEIGHT, &mute_content},
-  #endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
-};
-#endif
 //lint +e545
 #define ANNUN_BUFFER_BITS    (10)
 
