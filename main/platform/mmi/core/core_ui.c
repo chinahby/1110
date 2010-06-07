@@ -1546,8 +1546,6 @@ void CoreTask_init( void )
 //lint -restore
 
 #ifdef USES_MMI
-// 用来判断当前软件是否运行为厂测模式
-static boolean gbRunAsFactoryTestMode = FALSE;
 /*==============================================================================
 函数: 
     IsRunAsFactoryTestMode
@@ -1569,7 +1567,17 @@ static boolean gbRunAsFactoryTestMode = FALSE;
 ==============================================================================*/
 boolean   IsRunAsFactoryTestMode(void)
 {
-    return gbRunAsFactoryTestMode;
+#ifndef WIN32
+    nv_item_type nvi;
+
+    if (NV_DONE_S != OEMNV_Get(NV_ESN_I, &nvi)) {
+        return TRUE;
+    }
+    return (nvi.esn.esn == 0);
+#else
+    return TRUE;
+#endif
+
 }
 
 
