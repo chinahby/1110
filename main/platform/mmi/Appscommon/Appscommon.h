@@ -60,6 +60,12 @@
     #define MENUITEM_HEIGHT          16
     #define SCROLLBAR_WIDTH          5
     #define STATUSBAR_HEIGHT         16
+#elif defined(FEATURE_DISP_160X128)
+    #define BOTTOMBAR_HEIGHT        16
+    #define TITLEBAR_HEIGHT         16
+    #define MENUITEM_HEIGHT          16
+    #define SCROLLBAR_WIDTH          5
+    #define STATUSBAR_HEIGHT         16
 #else
     #define BOTTOMBAR_HEIGHT        16
     #define TITLEBAR_HEIGHT         16
