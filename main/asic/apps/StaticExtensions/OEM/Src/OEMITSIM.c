@@ -57,7 +57,13 @@ when         who     what, where, why
 #include "Oemnvint.h"
 #include "t9api.h"  
 #include "Appscommon.h"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
 #include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
 #ifndef FETURE_HW_ON
 #include "HWOEMAPI.h"
 #endif
