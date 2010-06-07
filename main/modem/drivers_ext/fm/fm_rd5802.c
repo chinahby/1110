@@ -199,6 +199,9 @@ void fm_radio_pre_init(void)
 
 int fm_radio_init(void)
 {
+	uint8 error_ind = 0;
+	uint8 RDA5802_REG[]={0x00,0x02};
+	
 	ERR("fm_radio_init!!!",0,0,0);
 #if (defined(T_QSC1100) || defined(T_QSC1110))
 	// qsc1100 platform
@@ -210,15 +213,19 @@ int fm_radio_init(void)
 	// - enable platform here
 #endif
 
+	fm_playing_mute = TRUE;
+	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+	clk_busy_wait(20*1000);			//Must Delay 10ms
+	
+	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_initialization_reg[0], sizeof(RDA5802_initialization_reg));
+	clk_busy_wait(50*1000);
+	
 	fm_work_status = FM_POWER_DOWN;
 	return FM_RADIO_SUCCESSFUL;
 }
 
 int fm_radio_power_up(void)
 {
-	uint8 error_ind = 0;
-	uint8 RDA5802_REG[]={0x00,0x02};
-
 	ERR("fm_radio_power_up start!!!",0,0,0);
 	
 	if(fm_work_status == FM_NOT_INIT)
@@ -230,23 +237,7 @@ int fm_radio_power_up(void)
         return FM_RADIO_SUCCESSFUL;
     }  
 
-	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
-	clk_busy_wait(20*1000);			//Must Delay 10ms
-	
-	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_initialization_reg[0], sizeof(RDA5802_initialization_reg));
-	clk_busy_wait(50*1000);		//Must Delay 20ms	
-
-	ERR("fm_radio_power_up end error_ind = %d!!!",error_ind,0,0);
-    if (error_ind)
-	{
-		fm_work_status = FM_POWER_UP; 
-		return FM_RADIO_SUCCESSFUL;
-	}
-	else
-	{
-		fm_work_status = FM_POWER_DOWN;
-		return FM_RADIO_FAILED;
-	}
+	fm_work_status = FM_POWER_UP; 
 	
 	return FM_RADIO_SUCCESSFUL;
 }
@@ -265,7 +256,7 @@ int fm_radio_power_down(void)
 	
 #if (defined(T_QSC1100) || defined(T_QSC1110))
 	// qsc1100 platform
-	pm_vote_clk_32k(OFF, PM_32K_CLK_FM_APP);  // vote to disable 32KHz clock
+	//pm_vote_clk_32k(OFF, PM_32K_CLK_FM_APP);  // vote to disable 32KHz clock
 	// - disable platform power here if necessary
 #else
 	// other platforms
