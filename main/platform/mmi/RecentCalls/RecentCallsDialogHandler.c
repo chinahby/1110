@@ -23,7 +23,14 @@
                                  本文件包含的外部文件
 ==============================================================================*/
 #include "recentcalls_priv.h"
-#include "appscommon_color.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
+
 //#ifdef FEATURE_CARRIER_SUDAN_SUDATEL
 #include "nv_items.h"
 //#endif
