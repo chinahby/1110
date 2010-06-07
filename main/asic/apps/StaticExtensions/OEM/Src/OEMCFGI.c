@@ -2961,19 +2961,6 @@ static void OEMPriv_MIN1_TO_STR(uint32  min1,
 
 }
 
-#ifdef CUST_EDITION
-static dword g_me_esn=0;
-
-dword OEM_GetMEESN(void)
-{
-    return g_me_esn;
-}
-
-void OEM_SetMEESN(dword esn)
-{
-    g_me_esn = esn;
-}
-#endif
 /*=============================================================================
 FUNCTION:  OEM_InitPreference
 

@@ -198,9 +198,9 @@ when       who     what, where, why
 
 #include "cm.h"
 #include "cmutil.h"
-
+#ifdef FEATURE_UI_PBM
 #include "pbmlib.h"
-
+#endif
 #include "AEE.h"         // BREW headers.
 #include "AEEStdLib.h"
 #include "AEE_OEM.h"     // Brew OEM Headers.

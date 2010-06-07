@@ -1,6 +1,0 @@
-#ifndef IVECTOR_BID
-#define IVECTOR_BID
-
-#define AEECLSID_VECTOR    	0x01006119
-
-#endif //IVECTOR_BID

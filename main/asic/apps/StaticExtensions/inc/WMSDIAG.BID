@@ -1,6 +1,0 @@
-#ifndef WMSDIAG_BID
-#define WMSDIAG_BID
-
-#define AEECLSID_WMSDIAG    	0x0101ed96
-
-#endif //WMSDIAG_BID

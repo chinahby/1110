@@ -4,88 +4,17 @@
 # $Header: //depot/asic/qsc60x0/apps/StaticExtensions/oem/Src/ext_oem.min#5 $ $DateTime: 2007/10/28 23:02:33 $ $Author: sborra $
 #
 #-------------------------------------------------------------------------------
-ifeq ($(USES_MMI),yes)
 EXT_OEM_LIB_SOURCES=\
-  OEMAnnunciator.c \
-  OEMCFGI.c \
-  OEMNV.c \
-  OEMVector.c \
-  OEMVR.c \
-  OEMWMS.c \
-  OEMRats.c \
-  OEMAlert.c \
-  AEEBatt.c \
-  OEMBatt.c\
   OEMCallList.c\
   OEMRTC.c \
   OEMTPanel.c \
   OEMDrawAni.c \
   pinyin.c
-else
-EXT_OEM_LIB_SOURCES=\
-  OEMAnnunciator.c \
-  OEMCFGI.c \
-  OEMNV.c \
-  OEMVector.c \
-  OEMVR.c \
-  OEMWMS.c \
-  OEMRats.c \
-  OEMAlert.c \
-  AEEBatt.c \
-  OEMBatt.c\
-  OEMCallList.c\
-  OEMRTC.c \
-  OEMITSIM.c \
-  OEMTPanel.c \
-  OEMDrawAni.c \
-  pinyin.c
-endif
 
 EXT_OEM_LIB_CPP_SOURCES=
 
-ifeq ($(USES_GIF_AGIF),yes)
-  EXT_OEM_LIB_SOURCES += AEEGIFViewer.c
-endif
-
-ifeq ($(USES_MSUITE),yes)
-  EXT_OEM_LIB_SOURCES += AEEGIFViewer.c
-endif
-
-ifeq ($(USES_ICM),yes)
-  EXT_OEM_LIB_SOURCES += OEMCM.c
-endif
-
-ifeq ($(USES_IBT),yes)
-  EXT_OEM_LIB_SOURCES += AEEBTExt.c
-  EXT_OEM_LIB_SOURCES += AEEBTExtNA.c
-  EXT_OEM_LIB_SOURCES += AEEBTExtAG.c
-  EXT_OEM_LIB_SOURCES += AEEBTExtSD.c
-  EXT_OEM_LIB_SOURCES += AEEBTExtRM.c
-  EXT_OEM_LIB_SOURCES += AEEBTExtSPP.c
-
-  EXT_OEM_LIB_SOURCES += OEMBTExt.c
-  EXT_OEM_LIB_SOURCES += OEMBTExtAG.c
-  EXT_OEM_LIB_SOURCES += OEMBTExtNA.c
-  EXT_OEM_LIB_SOURCES += OEMBTExtSD.c
-  EXT_OEM_LIB_SOURCES += OEMBTExtRM.c
-  EXT_OEM_LIB_SOURCES += OEMBTExtSPP.c
-endif
-
 ifeq ($(USES_MP4), yes)
-  EXT_OEM_LIB_SOURCES     += OEMMediaMPEG4.c
-  EXT_OEM_LIB_CPP_SOURCES += OEMMediaMPEG42PV.cpp
   EXT_OEM_LIB_SOURCES     += OEMMovieFile.c
-  EXT_OEM_LIB_SOURCES     += OEMMediaMultipleFile.c
-endif
-
-ifeq ($(USES_REAL), yes)
-   EXT_OEM_LIB_SOURCES    += OEMMediaReal.c
-endif
-
-ifeq ($(USES_IDIAG),yes)
-ifneq ($(USES_STRIP),yes)
-  EXT_OEM_LIB_SOURCES  += OEMDiag.c
-endif
 endif
 
 EXT_OEM_LIB_OBJS :=  $(addprefix $(TARGETDIR)/, $(EXT_OEM_LIB_SOURCES:%.c=%.o))
@@ -105,6 +34,3 @@ vpath %.mif $(BREW_STATIC_MIFS)
 vpath %.bar $(BREW_STATIC_EXTENSIONS_RESINC)
 vpath %.brx $(BREW_STATIC_EXTENSIONS_RESINC)
 
-CONSTFILE_FILES+=\
-	vector.mif|fs:/mif/vector.mif \
-	oemannunciator.bar|fs:/shared/oemannunciator.bar
