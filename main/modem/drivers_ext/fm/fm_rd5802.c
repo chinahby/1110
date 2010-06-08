@@ -61,7 +61,7 @@ static uint8    fm_playing_mute = TRUE;
 RDA5802 interfaces
 ****************************************************/
 static fm_status_type fm_work_status = FM_NOT_INIT;
-static word fm_playing_channel = 0;
+static word fm_playing_channel = 971;
 
 /* Used to send I2C command */
 i2c_rw_cmd_type fm_i2c_command;

@@ -1538,7 +1538,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
 #ifndef WIN32
             if( pMe->m_fmIsPowerupBeforeFmTest)
             {
-                fm_tune_channel( LOWEST_BAND_FREQ/100 + pMe->m_fmChannelBeforeFmTest);
+                fm_tune_channel( pMe->m_fmChannelBeforeFmTest);
             }
             else
             {
@@ -1562,7 +1562,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
 #else
                     channel = channel + ( wParam == AVK_UP ? 1 : -1);
 #endif
-					if( channel * CHANNEL_SPACE > UPPEST_BAND_FREQ - LOWEST_BAND_FREQ)
+					if( channel * CHANNEL_SPACE > UPPEST_BAND_FREQ)
 			        {
 			            channel = 0;
 			        }
@@ -1583,7 +1583,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
 #else
                     channel = channel + ( wParam == AVK_RIGHT ? 1 : -1);
 #endif
-					if( channel * CHANNEL_SPACE > UPPEST_BAND_FREQ - LOWEST_BAND_FREQ)
+					if( channel * CHANNEL_SPACE > UPPEST_BAND_FREQ )
 			        {
 			            channel = 0;
 			        }
@@ -2779,7 +2779,7 @@ static void convertChannelValueToText( int channel, AECHAR *textBuffer, int buff
     uint32  iFreqInt    = 0;              //频率的整数部分
     uint32  iFreqFra    = 0;              //频率的小数部分
 
-    iFreqInt = ( LOWEST_BAND_FREQ + CHANNEL_SPACE * channel);
+    iFreqInt = ( CHANNEL_SPACE * channel);
     iFreqFra = ( iFreqInt % 1000) / 100;
     iFreqInt /= 1000;
     WSPRINTF( textBuffer, bufferSizeInBytes, format, iFreqInt, iFreqFra);
@@ -2801,6 +2801,8 @@ static int convertChannelValueFromText( AECHAR *textBuffer)
     fraction = fractionStr == NULL ? 0 : WSTRTOFLOAT( ++ fractionStr);
 
     result = ( integral * 1000 + fraction * 100 - LOWEST_BAND_FREQ) / CHANNEL_SPACE;
+
+    ERR("result = %d",result,0,0);
     return result;
 }
 
@@ -2845,7 +2847,7 @@ static void quicktest_fm_power_up( void* pme)
 static void quicktest_fm_set_channel_to( CQuickTest* pMe, uint16 theNewChannel)
 {
 #ifndef WIN32
-    fm_tune_channel( LOWEST_BAND_FREQ/100 + theNewChannel);
+    fm_tune_channel( theNewChannel);
 #endif
     quicktest_fm_paint( pMe);
 }
@@ -2870,7 +2872,7 @@ static void quicktest_fm_paint( CQuickTest* pMe)
 #else
         convertChannelValueToText( channel, text[0], 32);
 #endif
-        for( i = 0; i < 2; i ++)
+        for( i = 0; i < 3; i ++)
         {
             IDISPLAY_DrawText( pMe->m_pDisplay,
                         AEE_FONT_NORMAL,
