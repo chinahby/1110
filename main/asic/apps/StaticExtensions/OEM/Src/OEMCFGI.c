@@ -282,7 +282,7 @@ when       who     what, where, why
 
 
 /* Closed user group index */
-typedef PACKED struct
+typedef struct
 {
    boolean                         present;
    byte                            msb;
@@ -290,7 +290,7 @@ typedef PACKED struct
 } OEMConfigIndex;
 
 /* Forward CUG info */
-typedef PACKED struct
+typedef struct
 {
    boolean                         present;
    OEMConfigIndex                  cug_index;
@@ -308,7 +308,7 @@ typedef PACKED struct
 #define OEMCFG_DL_BKEY_SIZE           16
 #define OEMCFG_DL_SERVER_LEN          64
 
-typedef PACKED struct {
+typedef struct {
    uint32   dwCID;         // Carrier ID
    uint32   dwPID;         // Platform ID
    uint8    bBKey[OEMCFG_DL_BKEY_SIZE];     // BKey
@@ -385,7 +385,7 @@ typedef PACKED struct {
 //       OEMCONFIGLIST_VERSION must be incremented.   It does not need to be
 //       incremented after adding a new item to the end of the structure.
 //
-typedef PACKED struct
+typedef struct
 {
    byte          alert_type;                   // CFGI_ALERT_TYPE
    byte          silence_all;                  // CFGI_SILENCEALL
