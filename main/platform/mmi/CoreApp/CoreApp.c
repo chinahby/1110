@@ -1727,20 +1727,9 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
         CoreApp_FreeAppData( (IApplet*)pMe );
         return FALSE;
     }
-#if 0
-    // Create Phone instance
-    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                              AEECLSID_PHONE,
-                              (void **)&pMe->m_pPhone);
-    if (nRet != SUCCESS) 
-    {
-        return FALSE;
-    }
-    if (pMe->m_pPhone == NULL) 
-    {
-        return FALSE;
-    }
-#endif
+    
+    IDisplay_SetPrefs(pMe->m_pDisplay, "a:0", 3);
+    IDisplay_SetClipRect(pMe->m_pDisplay, NULL);
     pMe->m_bemergencymode = FALSE;
     return TRUE;
 
