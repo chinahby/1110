@@ -613,27 +613,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 return TRUE;
             }
             return FALSE;
-
-        case EVT_GSENSOR_SHAKE:
-        case EVT_KEY:
-#if MIN_BREW_VERSION(3,0)
-            // do not want to handle au
-            if ((dwParam & KB_AUTOREPEAT) != 0)
-            {
-                if ((wParam & AVK_CLR)!=0)
-                {
-                    return TRUE;
-                }
-                else
-                {
-                    return FALSE;
-                }
-            }
-#endif
-            
+        case EVT_KEY_HELD:
             switch (wParam)
             {
                 case AVK_POWER:
+                case AVK_END:
 #ifdef FEATURE_KEYGUARD
 		            if(OEMKeyguard_IsEnabled())
                     {
@@ -658,17 +642,27 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 default:
                     break;
             }
+            break;
+            
+        case EVT_GSENSOR_SHAKE:
+        case EVT_KEY:
+#if MIN_BREW_VERSION(3,0)
+            // do not want to handle au
+            if ((dwParam & KB_AUTOREPEAT) != 0)
+            {
+                if ((wParam & AVK_CLR)!=0)
+                {
+                    return TRUE;
+                }
+                else
+                {
+                    return FALSE;
+                }
+            }
+#endif
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             
         case EVT_KEY_PRESS:
-/*#ifdef FEATURE_APP_MUSICPLAYER
-            if(wParam == AVK_END)
-            {
-                return CoreApp_RouteDialogEvent(pMe,(AEEEvent)EVT_UPDATEIDLE,wParam,dwParam);
-            }
-            //else don't break
-#endif*/
-                
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
@@ -692,13 +686,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return CoreApp_HandleNotify(pMe, (AEENotify *)dwParam);
             
         case EVT_UPDATEIDLE:
-       /*     if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP) &&
-                (pMe->m_wActiveDlgID == IDD_IDLE))
-            { 
-                (void)CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-            }
-   
-            return TRUE;*/
             if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) != AEECLSID_CORE_APP) ||
                 (pMe->m_wActiveDlgID != IDD_IDLE))
             {

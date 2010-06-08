@@ -1260,7 +1260,7 @@ static void keypad_scan_keypad
       }
     }
   }
-
+#ifndef CUST_EDITION
   /* Sample then process PWR/END key */
   if ( keypad_is_power_key_pressed() )
   {
@@ -1333,7 +1333,7 @@ static void keypad_scan_keypad
       ERR_FATAL( "Illegal key state %d", keypad_power_key_state, 0, 0 );
       /* does not return */
   }
-
+#endif // #ifndef CUST_EDITION
 
 #if defined(FEATURE_PMIC_HS_SEND_END_DETECT)
 
