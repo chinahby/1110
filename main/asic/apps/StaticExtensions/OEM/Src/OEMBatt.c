@@ -119,7 +119,7 @@ when       who     what, where, why
 
 #include "msg.h"
 
-#if defined(FEATURE_BATTERY_CHARGER) || defined (FEATURE_PM_CHARGING)
+#if defined(FEATURE_BATTERY_CHARGER) || defined (FEATURE_PM_CHARGING) || defined(FEATURE_CHG_TASK)
 #include "charger.h"
 
 #endif
@@ -443,7 +443,7 @@ AEEChargerStatus OEMBatt_GetChargerState(void)
     if(!OEMBatt_GetExternalPower())
         return AEECHG_STATUS_NO_CHARGER;
 
-#if defined(FEATURE_BATTERY_CHARGER) || defined (FEATURE_PM_CHARGING)
+#if defined(FEATURE_BATTERY_CHARGER) || defined (FEATURE_PM_CHARGING)  || defined(FEATURE_CHG_TASK)
    switch(chg_ui_event_read() )
    {
      // No Charger
