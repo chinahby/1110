@@ -71,10 +71,6 @@ extern void OEMPriv_DrawMessageCB(void *pUnused);
     DrawBottomBar(pMe->m_pDisplay, &BarParam);      \
 }
 
-#ifndef CUST_EDITION
-extern boolean g_b_no_batt;
-#endif
-
 // 开关机动画播放时间
 #define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))
 #define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))
@@ -1115,12 +1111,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             switch (wParam)
             {
                 case AVK_END:
-#ifndef CUST_EDITION                    
-                    if(!g_b_no_batt)
-                    {
-                        CLOSE_DIALOG(DLGRET_OK)
-                    }
-#endif                    
+                    CLOSE_DIALOG(DLGRET_OK)                  
                     return TRUE;
                     
                 default:
