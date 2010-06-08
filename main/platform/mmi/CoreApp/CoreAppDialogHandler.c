@@ -959,27 +959,34 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 
 #ifdef FEATURE_USES_LOWMEM
 #include "AEERGBVAL.h"
+#define BATT_HEIGHT     80
+#define BATT_WIDTH      60
+
 static void CoreApp_DrawChargeing(CCoreApp *pMe, int iLevel)
 {
     AEERect bgRect;
     AEERect fgRect;
+    AEERect hdRect;
     uint16  chHeight;
     RGBVAL  chColor;
     byte    R,G;
     
-    SETAEERECT(&bgRect, pMe->m_rc.x+(pMe->m_rc.dx>>2), pMe->m_rc.y+(pMe->m_rc.dy>>3), (pMe->m_rc.dx>>1), pMe->m_rc.dy-(pMe->m_rc.dy>>2));
-    fgRect.x  = bgRect.x+1;
-    fgRect.y  = bgRect.y+1;
-    fgRect.dx = bgRect.dx-2;
-    fgRect.dy = bgRect.dy-2;
-    chHeight = fgRect.dy/CHARGING_FRAME_COUNT;
+    SETAEERECT(&bgRect, pMe->m_rc.x+((pMe->m_rc.dx-BATT_WIDTH)>>1), pMe->m_rc.y+((pMe->m_rc.dy-BATT_HEIGHT)>>1), BATT_WIDTH, BATT_HEIGHT);
+    fgRect  = bgRect;
+    hdRect.dx = BATT_WIDTH/5;
+    hdRect.dy = BATT_HEIGHT/15;
+    hdRect.x  = bgRect.x+(bgRect.dx-hdRect.dx)/2;
+    hdRect.y  = bgRect.y-hdRect.dy;
+    chHeight = BATT_HEIGHT/CHARGING_FRAME_COUNT;
     fgRect.dy = chHeight*(iLevel+1);
     fgRect.y  = bgRect.y + chHeight*(CHARGING_FRAME_COUNT-(iLevel+1));
 
-    IDISPLAY_DrawRect(pMe->m_pDisplay, &bgRect, RGB_BLACK, RGB_WHITE, IDF_RECT_FILL);
+    IDISPLAY_DrawRect(pMe->m_pDisplay, &bgRect, RGB_NONE, RGB_WHITE, IDF_RECT_FILL);
     G = 0xFF*iLevel/(CHARGING_FRAME_COUNT-1);
     R = 0xFF - G;
     IDISPLAY_DrawRect(pMe->m_pDisplay, &fgRect, RGB_NONE,  MAKE_RGB(R, G, 0), IDF_RECT_FILL);
+    IDISPLAY_DrawRect(pMe->m_pDisplay, &bgRect, RGB_BLACK, RGB_NONE, IDF_RECT_FRAME);
+    IDISPLAY_DrawRect(pMe->m_pDisplay, &hdRect, RGB_NONE, RGB_BLACK, IDF_RECT_FILL);
     IDISPLAY_Update(pMe->m_pDisplay);
 }
 #endif
@@ -1067,6 +1074,10 @@ static boolean  IDD_LPM_Handler(void       *pUser,
                                                 wszText,
                                                 nSize);
                 }
+            }
+            else
+            {
+                CoreApp_DrawChargeing(pMe, CHARGING_FRAME_COUNT - 1);
             }
 
             // 绘制提示文本
