@@ -1256,7 +1256,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 CoreApp_Poweroff_Phone(pMe);
                 return TRUE;
             }
-            (void) ISHELL_SetTimer(pMe->a.m_pIShell,1000,CCharger_EnableICONCB,(void *) pMe);
+            //(void) ISHELL_SetTimer(pMe->a.m_pIShell,1000,CCharger_EnableICONCB,(void *) pMe);
             CoreApp_Process_Charger_Msg(pMe);
             pMe->m_battery_time= 0;
             pMe->m_battery_state = TRUE ;
