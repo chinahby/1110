@@ -4099,6 +4099,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_160X128)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
 #endif //FEATURE_DISP_176X220
@@ -4110,6 +4112,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_160X128)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
 #endif //FEATURE_DISP_176X220
@@ -4122,6 +4126,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_160X128)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
 #endif //FEATURE_DISP_176X220
