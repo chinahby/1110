@@ -2058,10 +2058,12 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
 	     CLOSE_DIALOG(DLGRET_BATT_INFO)
 
         }
-    //    else
-     //   {
-    //        pMe->m_nMsgID = IDS_CHARGER_OFF;
-    //    }
+       else
+       {
+          pMe->m_nMsgID = IDS_CHARGER_OFF;
+          CLOSE_DIALOG(DLGRET_BATT_INFO)
+
+       }
     }
 }
 
