@@ -157,8 +157,6 @@ static void quicktest_fm_init( CQuickTest* pMe);
 static void quicktest_fm_power_up( void* pMe);
 static void quicktest_fm_set_channel_to( CQuickTest* pMe, uint16 theNewChannel);
 static void quicktest_fm_paint( CQuickTest* pMe);
-static void quicktest_fm_seek_next_channel( CQuickTest* pMe);
-static void quicktest_fm_seek_next_channel_cb( void* pMe);
 #endif
 #ifdef FEATURE_LED_CONTROL
 static int disp_set_sigled_cmd(hs_sig_led_onoff_type onoff);
@@ -1540,7 +1538,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
 #ifndef WIN32
             if( pMe->m_fmIsPowerupBeforeFmTest)
             {
-                fm_tune_channel( pMe->m_fmChannelBeforeFmTest);
+                fm_tune_channel( LOWEST_BAND_FREQ/100 + pMe->m_fmChannelBeforeFmTest);
             }
             else
             {
@@ -1564,15 +1562,39 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
 #else
                     channel = channel + ( wParam == AVK_UP ? 1 : -1);
 #endif
+					if( channel * CHANNEL_SPACE > UPPEST_BAND_FREQ - LOWEST_BAND_FREQ)
+			        {
+			            channel = 0;
+			        }
+			        else if( channel < 0)
+			        {
+			            channel = ( UPPEST_BAND_FREQ - LOWEST_BAND_FREQ) / CHANNEL_SPACE;
+			        }
+			        
                     quicktest_fm_set_channel_to( pMe, channel);
                 }
                 break;
 
                 case AVK_LEFT:
                 case AVK_RIGHT:
-                    pMe->m_fmClockwise = wParam == AVK_RIGHT;
-                    quicktest_fm_seek_next_channel( pMe);
-                    break;
+                {
+#ifndef WIN32 
+                    uint16 channel = fm_radio_get_playing_channel() + ( wParam == AVK_RIGHT ? 1 : -1);
+#else
+                    channel = channel + ( wParam == AVK_RIGHT ? 1 : -1);
+#endif
+					if( channel * CHANNEL_SPACE > UPPEST_BAND_FREQ - LOWEST_BAND_FREQ)
+			        {
+			            channel = 0;
+			        }
+			        else if( channel < 0)
+			        {
+			            channel = ( UPPEST_BAND_FREQ - LOWEST_BAND_FREQ) / CHANNEL_SPACE;
+			        }
+			        
+                    quicktest_fm_set_channel_to( pMe, channel);
+				}
+				break;
 
                 default:
                     break;
@@ -2812,7 +2834,7 @@ static void quicktest_fm_power_up( void* pme)
     {
         fm_radio_power_up();
     }
-    fm_set_volume( 7);
+    fm_set_volume(7);
 #endif
     quicktest_fm_set_channel_to( pMe, convertChannelValueFromText( defaultChannel));
 
@@ -2823,7 +2845,7 @@ static void quicktest_fm_power_up( void* pme)
 static void quicktest_fm_set_channel_to( CQuickTest* pMe, uint16 theNewChannel)
 {
 #ifndef WIN32
-    fm_tune_channel( theNewChannel);
+    fm_tune_channel( LOWEST_BAND_FREQ/100 + theNewChannel);
 #endif
     quicktest_fm_paint( pMe);
 }
@@ -2838,7 +2860,7 @@ static void quicktest_fm_paint( CQuickTest* pMe)
 
         AECHAR text[][32] = {
                 { 0},
-                { 'L', 'E', 'F', 'T', ',', 'R', 'I', 'G', 'H', 'T', ':', ' ', 'a', 'u', 't', 'o', 0},
+                { 'L', 'E', 'F', 'T', ',', 'R', 'I', 'G', 'H', 'T', ':', ' ', 'm', 'a', 'n', 'u', 'a', 'l', 0},
                 { 'U', 'P', ',', 'D', 'O', 'W', 'N', ':', ' ', 'm', 'a', 'n', 'u', 'a', 'l', 0}
         };
         int i = 0;
@@ -2848,7 +2870,7 @@ static void quicktest_fm_paint( CQuickTest* pMe)
 #else
         convertChannelValueToText( channel, text[0], 32);
 #endif
-        for( i = 0; i < 3; i ++)
+        for( i = 0; i < 2; i ++)
         {
             IDISPLAY_DrawText( pMe->m_pDisplay,
                         AEE_FONT_NORMAL,
@@ -2865,7 +2887,7 @@ static void quicktest_fm_paint( CQuickTest* pMe)
     else
     {
 
-        AECHAR text[] = { 'F', 'M', ' ', 't', 'u', 'n', 'i', 'n', 'g', '.', '.', '.', 0};
+        AECHAR text[] = { 'F', 'M', ' ', 'p', 'l', 'a', 'y','i', 'n', 'g', '.', '.', 0};
         IDISPLAY_DrawText( pMe->m_pDisplay,
                     AEE_FONT_NORMAL,
                     text,
@@ -2878,65 +2900,6 @@ static void quicktest_fm_paint( CQuickTest* pMe)
     }
 
     IDISPLAY_Update( pMe->m_pDisplay);
-}
-
-static void quicktest_fm_seek_next_channel( CQuickTest* pMe)
-{
-
-    pMe->m_bAppIsReady = FALSE;
-    quicktest_fm_paint( pMe);
-#ifndef WIN32
-    fm_seek_start( pMe->m_fmClockwise, FALSE);
-#endif
-    ISHELL_SetTimer( pMe->m_pShell, 200, quicktest_fm_seek_next_channel_cb, (void*)pMe);
-}
-
-static void quicktest_fm_seek_next_channel_cb( void* pme)
-{
-
-    CQuickTest* pMe             = (CQuickTest*)pme;
-    boolean     ready           = FALSE;
-    boolean     reachBandLimit  = FALSE;
-    word        wChannel        = 0;
-    static int  numberOfloop    = 0;
-#ifndef WIN32
-    if( fm_get_seek_status( &ready, &reachBandLimit, &wChannel) == FM_RADIO_SUCCESSFUL)
-    {
-
-        if( ready)
-        {
-
-            if( reachBandLimit)
-            {
-
-                numberOfloop ++;
-                if( numberOfloop > 2)
-                {
-                    numberOfloop = 0;
-                    goto __refreshChannelListCB_no_channel_found;
-                }
-                quicktest_fm_seek_next_channel( pMe);
-            }
-            else
-            {
-
-                quicktest_fm_set_channel_to( pMe, wChannel);
-                goto __refreshChannelListCB_no_channel_found;
-            }
-        }
-        else
-        {
-            ISHELL_SetTimer( pMe->m_pShell, 200, quicktest_fm_seek_next_channel_cb, (void*)pMe);
-        }
-    }
-    else
-#endif
-    {
-
-__refreshChannelListCB_no_channel_found:
-        pMe->m_bAppIsReady = TRUE;
-        quicktest_fm_paint( pMe);
-    }
 }
 
 #endif
