@@ -766,7 +766,7 @@ static int GetHsToVcodeIdx(hs_key_type key)
             return i;
         }
     }
-    return 0;
+    return i-1;
 } /* End GetHsToVcodeIdx */
 
 static void KeyRepeatCB(void *pUser)
@@ -855,7 +855,7 @@ void handle_keys(void)
             hs2vcodeidx = GetHsToVcodeIdx(key.key_parm);
 #endif
             last_vcode = hs_to_aee_tbl[hs2vcodeidx].aee_vcode;
-            if (last_vcode > AEE_AVK_BASE && hs_to_aee_tbl[hs2vcodeidx].bpressed){
+            if (last_vcode != AVK_UNDEFINED && hs_to_aee_tbl[hs2vcodeidx].bpressed){
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = FALSE;
                 if (CoreTask_HandleAEEEvt(EVT_KEY_RELEASE, last_vcode)){
                     continue;
@@ -870,7 +870,7 @@ void handle_keys(void)
         }else{
             hs2vcodeidx = GetHsToVcodeIdx(key.key_code);
             last_vcode = hs_to_aee_tbl[hs2vcodeidx].aee_vcode;
-            if(last_vcode > AEE_AVS_BASE){
+            if(last_vcode != AVK_UNDEFINED){
                 CoreTask_HandleAEEEvt(EVT_KEY_PRESS, last_vcode);
                 if (CoreTask_HandleAEEEvt(EVT_KEY, last_vcode)){
                     continue;
