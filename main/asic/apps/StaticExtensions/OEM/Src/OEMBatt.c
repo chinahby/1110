@@ -947,16 +947,3 @@ static void OEMBattPriv_ReportChargerChange(AEEChargerStatus newState)
    }
 }
 
-boolean oembatt_cansupportpowerup(void)
-{
-    word batt = 0;
-    batt = vbatt_read();
-    
-    if ((batt != 0) && (batt < batt_level_pwr_off))
-    {
-        return FALSE;
-    }
-    
-    return TRUE;
-}
-

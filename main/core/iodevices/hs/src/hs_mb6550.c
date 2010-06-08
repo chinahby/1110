@@ -1870,25 +1870,8 @@ LOCAL void hs_init( void )
             db_item.db_poweruptype = DB_POWERUP_BYKEY;
         }
     }
-
+    
     db_put(DB_POWERUPTYPE, &db_item);
-    if (db_item.db_poweruptype == DB_POWERUP_BYKEY)
-    {
-        if (!keypad_is_power_key_pressed())
-        {
-            hw_power_off();
-        }
-    }
-
-    if (db_item.db_poweruptype != DB_POWERUP_BYEXTERNALPWR)
-    {
-        extern boolean oembatt_cansupportpowerup(void);
-
-        if (!oembatt_cansupportpowerup())
-        {
-            hw_power_off();
-        }
-    }
   }
 
   /* Initialize the GPIO outputs - - - - - - - - - - - - - - - - - - - - - - */
