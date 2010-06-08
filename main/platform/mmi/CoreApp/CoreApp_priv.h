@@ -587,8 +587,9 @@ typedef struct _CCoreApp
 #ifdef FEATURE_UTK2
     uint16     wRefreshMask;
 #endif
-    
+#ifndef FEATURE_USES_LOWMEM
     IImage *            m_battery_Image;
+#endif
     byte                m_battery_count;
 #ifdef FEATURE_KEYGUARD
     boolean             m_b_set_lock;

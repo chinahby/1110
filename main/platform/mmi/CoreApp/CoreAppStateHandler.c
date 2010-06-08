@@ -423,42 +423,28 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                     tepState = COREST_ALARM;
                 }
                 else if (IBATT_GetExternalPower(pMe->m_pBatt))
-                { 
+                {
+                    static boolean lpm   = 0;
                     // 若接入了外部电源，进入关机充电状态
                     CORE_ERR("LPM test: have extern power!",0);
-                    if (IBATT_GetChargerStatus(pMe->m_pBatt) != AEECHG_STATUS_CHARGING)
+
+                    //DBGPRINTF( ";-----------------------------------------");
+                    //DBGPRINTF( ";now is charging");
+
+                    if( !lpm)
                     {
-                        // 当前没进行充电
-                        // 到手机密码验证状态
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-                        tepState = COREST_IMSIMCCPWD;
-#else 
-                        tepState = COREST_VERIFYPHONEPWD;
-#endif
-                        CORE_ERR("LPM test: batter not in charging!",0);
+                        lpm = 1;
                     }
                     else
                     {
-                        static boolean lpm   = 0;
-
-                        //DBGPRINTF( ";-----------------------------------------");
-                        //DBGPRINTF( ";now is charging");
-
-                        if( !lpm)
-                        {
-                            lpm = 1;
-                        }
-                        else
-                        {
-                            OEMRTC_Process_Auto_Power_On();
+                        OEMRTC_Process_Auto_Power_On();
 
 #if defined( FEATURE_POWERDOWN_ALARM)
-                            {
-                                extern void registerAgainPowerdownAlarmclock( void);
-                                registerAgainPowerdownAlarmclock();
-                            }
-#endif
+                        {
+                            extern void registerAgainPowerdownAlarmclock( void);
+                            registerAgainPowerdownAlarmclock();
                         }
+#endif
                     }
                 }
                 else

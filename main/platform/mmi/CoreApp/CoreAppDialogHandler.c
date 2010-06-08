@@ -957,6 +957,32 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 
 #endif
 
+#ifdef FEATURE_USES_LOWMEM
+#include "AEERGBVAL.h"
+static void CoreApp_DrawChargeing(CCoreApp *pMe, int iLevel)
+{
+    AEERect bgRect;
+    AEERect fgRect;
+    uint16  chHeight;
+    RGBVAL  chColor;
+    byte    R,G;
+    
+    SETAEERECT(&bgRect, pMe->m_rc.x+(pMe->m_rc.dx>>2), pMe->m_rc.y+(pMe->m_rc.dy>>3), (pMe->m_rc.dx>>1), pMe->m_rc.dy-(pMe->m_rc.dy>>2));
+    fgRect.x  = bgRect.x+1;
+    fgRect.y  = bgRect.y+1;
+    fgRect.dx = bgRect.dx-2;
+    fgRect.dy = bgRect.dy-2;
+    chHeight = fgRect.dy/CHARGING_FRAME_COUNT;
+    fgRect.dy = chHeight*(iLevel+1);
+    fgRect.y  = bgRect.y + chHeight*(CHARGING_FRAME_COUNT-(iLevel+1));
+
+    IDISPLAY_DrawRect(pMe->m_pDisplay, &bgRect, RGB_BLACK, RGB_WHITE, IDF_RECT_FILL);
+    G = 0xFF*iLevel/(CHARGING_FRAME_COUNT-1);
+    R = 0xFF - G;
+    IDISPLAY_DrawRect(pMe->m_pDisplay, &fgRect, RGB_NONE,  MAKE_RGB(R, G, 0), IDF_RECT_FILL);
+    IDISPLAY_Update(pMe->m_pDisplay);
+}
+#endif
 /*==============================================================================
 º¯Êý:
     IDD_LPM_Handler
@@ -989,14 +1015,10 @@ static boolean  IDD_LPM_Handler(void       *pUser,
     {
         case EVT_DIALOG_INIT:
             pMe->m_battery_count = 0;
+#ifndef FEATURE_USES_LOWMEM
             pMe->m_battery_Image = ISHELL_LoadImage(pMe->a.m_pIShell, CHARGING_ANIFILE "charge.png");
             IIMAGE_SetParm(pMe->m_battery_Image, IPARM_NFRAMES, CHARGING_FRAME_COUNT, 0);
-            /*pMe->m_battery_Image[0] = ISHELL_LoadImage(pMe->a.m_pIShell, CHARGING_ANIFILE "charge011.png");
-            pMe->m_battery_Image[1] = ISHELL_LoadImage(pMe->a.m_pIShell, CHARGING_ANIFILE "charge021.png");
-            pMe->m_battery_Image[2] = ISHELL_LoadImage(pMe->a.m_pIShell, CHARGING_ANIFILE "charge031.png");
-            pMe->m_battery_Image[3] = ISHELL_LoadImage(pMe->a.m_pIShell, CHARGING_ANIFILE "charge041.png");
-            pMe->m_battery_Image[4] = ISHELL_LoadImage(pMe->a.m_pIShell, CHARGING_ANIFILE "charge051.png");*/
-            //CORE_ERR("%x %x %x ",pMe->m_battery_Image[0],pMe->m_battery_Image[1],pMe->m_battery_Image[2]);
+#endif
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1025,14 +1047,14 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             else if (AEECHG_STATUS_FULLY_CHARGE == status)
             {
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
+#ifndef FEATURE_USES_LOWMEM
                 if (NULL != pMe->m_battery_Image)
                 {
                     IIMAGE_DrawFrame(pMe->m_battery_Image, CHARGING_FRAME_COUNT - 1, 0, 0);
                 }
-                /*if (NULL != pMe->m_battery_Image[4] )
-                {
-                    IIMAGE_Draw(pMe->m_battery_Image[4] , 0, 0);
-                }*/
+#else
+                CoreApp_DrawChargeing(pMe, CHARGING_FRAME_COUNT - 1);
+#endif
             } 
             else if (AEECHG_STATUS_OVERVOLTAGE == status) 
             {
@@ -1069,20 +1091,13 @@ static boolean  IDD_LPM_Handler(void       *pUser,
         {
             //int i = 0;
             ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
+#ifndef FEATURE_USES_LOWMEM
             if (NULL != pMe->m_battery_Image)
             {
                 IIMAGE_Release(pMe->m_battery_Image);
                 pMe->m_battery_Image = NULL;
             }
-            //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);
-            /*for (i = 0;i <5; i++)
-            {
-                if (NULL != pMe->m_battery_Image[i])
-                {
-                    IIMAGE_Release(pMe->m_battery_Image[i]);
-                    pMe->m_battery_Image[i] = NULL;
-                }
-            }*/
+#endif
             return TRUE;
         }
         case EVT_KEY:
@@ -4864,31 +4879,15 @@ void CoreApp_Draw_Charger_image(void *pp)
     {
         pMe->m_battery_count = 0;
     }
+#ifndef FEATURE_USES_LOWMEM
     if(NULL != pMe->m_battery_Image)
     {
         IIMAGE_DrawFrame(pMe->m_battery_Image, pMe->m_battery_count, 0, 0);
     }
-    /*if (NULL != pMe->m_battery_Image[pMe->m_battery_count])
-    {
-        IIMAGE_Draw(pMe->m_battery_Image[pMe->m_battery_count], 0, 0);
-    }*/
+#else
+    CoreApp_DrawChargeing(pMe, pMe->m_battery_count);
+#endif
     pMe->m_battery_count ++; 
-#ifndef CUST_EDITION    
-    if(g_b_no_batt)
-    {
-           ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
-           IDISPLAY_DrawText(pMe->m_pDisplay,
-                                                     AEE_FONT_BOLD,
-                                                     L"NO BATTERY", -1,
-                                                     0, 0, &pMe->m_rc, 
-                                                     IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT| 
-                                                     IDF_ALIGN_CENTER);
-           //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-
-           return;
-    }
-#endif    
-    //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
     ISHELL_SetTimer(pMe->a.m_pIShell, CHARGING_ANIMATE_RATE,CoreApp_Draw_Charger_image, pMe);
 }
 #ifdef FEATURE_UTK2
