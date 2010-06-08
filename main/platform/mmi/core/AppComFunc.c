@@ -91,8 +91,17 @@ when         who     what, where, why
 #include "AEE_OEM.h"
 #include "OEMClassIDs.h"
 #include "Appscommon.h"
-#include "appscommon_color.brh"
+
 #include "appscommon.brh"
+
+#if defined(FEATURE_DISP_160X128)
+#include "appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "appscommon_color.brh"
+#else
+#include "appscommon_color.brh"
+#endif
+
 
 #ifdef WIN32
 #include "oemhelperfunctype.h"
