@@ -383,13 +383,6 @@ typedef struct _CFmRadio
 
 #else//#if defined( AEE_SIMULATOR)
 
-#if defined(FEATURE_DISP_160X128)
-#define  FMRADIOLN_RES_FILE      "fs:/mod/fmradio/fmradioln160x128.bar"
-#elif defined(FEATURE_DISP_128X128)
-#define  FMRADIOLN_RES_FILE      "fs:/mod/fmradio/fmradioln.bar"
-#else
-#define  FMRADIOLN_RES_FILE      "fs:/mod/fmradio/fmradioln.bar"
-#endif
 #define  FMRADIOLS_RES_FILE_LANG (AEE_RES_LANGDIR FMRADIOLS_RES_FILE)
 
 #endif//#if defined( AEE_SIMULATOR)
