@@ -947,3 +947,33 @@ static void OEMBattPriv_ReportChargerChange(AEEChargerStatus newState)
    }
 }
 
+#ifdef CUST_EDITION
+void OEMBatt_Refresh(void)
+{
+    OEMBattPriv_PeriodicBattCheck(NULL);
+}
+
+static void OEMBatt_OnBatteryChange(void *unused)
+{
+    OEMBatt_Refresh();
+}
+
+void oembatt_notify_chg_event(void)
+{
+    static AEECallback cbChgEvent;
+    AEECallback* pCb = NULL;
+    if(AEE_IsInitialized())
+    {
+        if(pCb)
+        {
+            CALLBACK_Cancel(pCb);
+        }
+        else
+        {
+            pCb = &cbChgEvent;
+        }
+        CALLBACK_Init(pCb,OEMBatt_OnBatteryChange,NULL);
+        AEE_SYS_RESUME(pCb);
+    }
+}
+#endif

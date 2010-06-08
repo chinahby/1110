@@ -85,6 +85,10 @@ when       who     what, where, why
 extern "C"
 {
 #include "clk.h"               /* For clk_busy_wait()                      */
+#ifdef CUST_EDITION
+void oembatt_notify_chg_event(void);
+#endif
+
 }
 
                       /*************************************/
@@ -382,7 +386,7 @@ void AutoChargingManager::getCurrentState()
 
     /* Update current state */
     err |= pm_chg_charge_state_get(&mCurrentState);
-
+	ERR("miaoxiaoming: mCurrentState=%d",mCurrentState,0,0);
     /* If the charge state was changed, send the notification */
     if(mCurrentState != mPreviousState)
     {
@@ -401,6 +405,13 @@ void AutoChargingManager::getCurrentState()
         #ifdef FEATURE_VBATT_TASK
           vbatt_notify_chg_event ( ) ;
         #endif
+#ifdef CUST_EDITION		
+        //when state is CHG_AUTO__PWR_ON_BATT_ST,dont need to notify mmi
+		if (mCurrentState != CHG_AUTO__PWR_ON_BATT_ST)
+		{
+			oembatt_notify_chg_event();
+		}
+#endif		
     }
 
     /* Find out if there was an PMIC API error. */
@@ -435,7 +446,7 @@ void AutoChargingManager::getCurrentState()
             {
                 /* Then debounce batt_temp IRQ. */
                 err |= pm_get_rt_status(PM_BATTTEMP_RT_ST, &rt_status);
-
+				
                 if(rt_status) /* Battery temp is bad */
                 {
                     mGeneralStatus.battery_status = BATTERY_STATUS__BAD_TEMP;
@@ -468,6 +479,7 @@ void AutoChargingManager::getCurrentState()
                 /* The final charging cycle has just finished, Charging is complete */
                 if(true == mIsInFinalCycle)
                 {
+                	ERR("miaoxiaoming:mIsInFinalCycle=%d",mIsInFinalCycle,0,0);
                     /* Set charging-complete flag */
                     mIsChargingComplete = true;
 
@@ -659,7 +671,7 @@ void AutoChargingManager::EventFired(ChargingEvent* event)
             ASSERT( irqevent != NULL );
 
             pm_irq_hdl_type irqid = irqevent->GetIrqId();
-
+			ERR("miaoxiaoming: irqid = %d",irqid,0,0);
             if(irqid == PM_VALID_CHG_IRQ_HDL) /* A charging source is attached */
             {
                 /* Start autonomous charging */
@@ -667,11 +679,17 @@ void AutoChargingManager::EventFired(ChargingEvent* event)
 
                 /* Update charger hardware type */
                 mGeneralStatus.charger_hardware_type = CHARGER_TYPE__WALL;
+#ifdef CUST_EDITION
+				oembatt_notify_chg_event();
+#endif				
             }
             else if(irqid == PM_INVALID_CHG_IRQ_HDL ) /* A charging source is removed */
             {
                 /* Stop autonomous charging */
                 stopAutoCharging();
+#ifdef CUST_EDITION		
+			oembatt_notify_chg_event();
+#endif				
             }
             else if( irqid == PM_BATTCONNECT_IRQ_HDL ) /* Battery connected/removed */
             {
@@ -806,7 +824,7 @@ void AutoChargingManager::EventFired(ChargingEvent* event)
             ASSERT( timerevent != NULL );
 
             unsigned int  firstdelay = timerevent->GetFirstDelay();
-            
+            ERR("miaoxiaoming: firstdelay=%d",firstdelay,0,0);
             /* Charger state machine heart beat */
             if(firstdelay == CHG_HEART_BEAT_FIRST_TIME )
             {
