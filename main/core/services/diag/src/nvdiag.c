@@ -880,10 +880,14 @@ PACK(void *) nvdiag_write (
   /* MEID is supported */
   if ( eItem == NV_ESN_I || eItem == NV_MEID_I)
   {
-
+#if 0
     ok_to_write = FALSE;    /* set default value of ok_to_write to FALSE */
+#else
+    ok_to_write = TRUE; 
+#endif
 
     /* check if the ESN is zero */
+
     if (diagnv_get_esn() == 0L)
     {
       /* ESN is zero */

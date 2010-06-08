@@ -2303,7 +2303,7 @@ nvio_write_meid (
     MSG_HIGH (" MEID Read was successful. ",0,0,0);
     return status;
   }
-
+#if 0
   if (!(((local_meid[0] == 0) && (local_meid[1] == 0)) ||
          ((local_meid[0] == 0xFFFFFFFF) 
           && (local_meid[1] == 0x00FFFFFF)))) {
@@ -2311,6 +2311,7 @@ nvio_write_meid (
     MSG_HIGH (" MEID is neither all 0s nor all Fs. ",0,0,0);
     return NV_READONLY_S;
   }
+#endif
   status = nvio_write_item(cmd_ptr->item,
                            0,
                            (byte*)cmd_ptr->data_ptr,
@@ -2590,7 +2591,11 @@ nvio_write (
         /* request.  This request is denied and the NV task   */
         /* initiates transition of the DMSS to offline state  */
         /* (not yet implemented).                             */
+#if 0
         status = NV_READONLY_S;      
+#else
+        status = NV_DONE_S;
+#endif
         break;
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
