@@ -459,8 +459,7 @@ static void zgd_tft177_disp_set_backlight(byte level)
 				0);
 			}
 
-			//pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
-			pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)ZGD_TFT177_DISP_MAX_BACKLIGHT);
+			pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
 			if (PM_ERR_FLAG__SUCCESS != pefRet)
 			{
 				MSG_MED("PMIC LCD backlight set failed: pefRet=%d, nLevel=%d",

@@ -90,6 +90,9 @@ static disp_cls_type cls_arg;
 extern boolean mdp_disp_fatal_err_flag;
 
 extern int epson_S1D19120_install(char *);
+#ifdef FEATURE_PROJECT_W021C
+extern int tm_cstn128x128_install(char * str);
+#endif
 
 #ifdef FEATURE_PROJECT_W023C
 extern int zgd_tft177_install(char *);
