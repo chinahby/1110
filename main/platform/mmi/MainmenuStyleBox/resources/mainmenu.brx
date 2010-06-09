@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="mainmenu" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1001" Name="IDS_MAIN_MENU_ROLL_BALL">
+		<Text>Roll ball</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_GAME_PROCCESS" Encoding="Unicode">
+		<Text>Sport off</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_GAME_SHAKE" Encoding="Unicode">
+		<Text>Shake off</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_MAIN_MENU_ROLL_TOTEM" Encoding="Unicode">
+		<Text>Roll totem</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_MAIN_MENU_TITLE_ESURFING" Encoding="Unicode">
+		<Text>Esurfing</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_MAIN_MENU_TITLE_CUSTSERVICE" Encoding="Unicode">
+		<Text>Customer service</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_MAIN_MENU_TITLE_1">
+		<Text>Contacts</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_MAIN_MENU_TITLE_2">
+		<Text>Recent calls</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_MAIN_MENU_TITLE_3">
+		<Text>Messages</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_MAIN_MENU_TITLE_4">
+		<Text>Settings</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_5">
+		<Text>Fm Radio</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_MAIN_MENU_TITLE_6">
+		<Text>Timer</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_7">
+		<Text>Alarm</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_8">
+		<Text>Stopwatch</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
+		<Text>Quicktest</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
+		<Text>Tetris</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_GAME_SUB_MENU_ITEM_2">
+		<Text>Brick Attack</Text>
+	</STRING>
+	<STRING Id="1033" Name="IDS_GAME_SUB_MENU_ITEM_3">
+		<Text>Black Jack</Text>
+	</STRING>
+	<STRING Id="1034" Name="IDS_MENU_LIST">
+		<Text>Menu</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_PLAYER_SUBMENU_ITEM1">
+		<Text>Music player</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_PLAYER_SUBMENU_ITEM2">
+		<Text>Video player</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_PLAYER_SUBMENU_ITEM3">
+		<Text>FM radio</Text>
+	</STRING>
+	<STRING Id="1051" Name="IDS_DATA_SUBMENU_ITEM1">
+		<Text>WAP</Text>
+	</STRING>
+	<STRING Id="1052" Name="IDS_DATA_SUBMENU_ITEM2">
+		<Text>Download</Text>
+	</STRING>
+	<STRING Id="1053" Name="IDS_DATA_SUBMENU_ITEM3">
+		<Text>UTK</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6002" Name="IDD_GAME_MENU" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_GAME_MENU">
+				<TitleID>IDS_MAIN_MENU_TITLE_1</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_LIST_MENU" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MENU_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_PLAYER_MENU" Focus="7003">
+		<Controls>
+			<Menu Id="7003" Name="IDC_PLAYER_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_MSGBOX_MENU" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6006" Name="IDD_DATA_MENU" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_DATA_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>
