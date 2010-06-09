@@ -197,6 +197,17 @@ void OEMBattery_OnBatteryItemUpdate(OEMBatteryMgr *pme, uint32 dwItemID, AEECall
    pcb->pfnCancel = OEMBattery_CancelBatteryItemListener;
    pcb->pCancelData = (void *)dwItemID;
    pme->pcbOnInfoUpdate[dwItemID] = pcb;
+#ifdef CUST_EDITION
+   switch(dwItemID){
+   case AEEBATTERY_ITEM_CHARGERSTATUS:
+   case AEEBATTERY_ITEM_LEVEL:
+      if (pme->pcbOnInfoUpdate[dwItemID])
+         AEE_SYS_RESUME(pme->pcbOnInfoUpdate[dwItemID]);
+      break;
+   default:
+      break;
+   }
+#endif
 }
 
 /*===========================================================================
@@ -254,7 +265,7 @@ static void OEMBattery_Init(void)
          }
       }
    }
-
+   
    // Check Battery Status
    OEMBattery_CheckBatteryStatus(&gpBattery->dwBatteryStatus);
 

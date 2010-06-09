@@ -317,17 +317,17 @@ boolean CoreApp_InitAppData(IApplet* po)
     GreyBitBrewFont_Init();
 }
 #endif
-    pMe->m_bSuspended = FALSE;
-
-    if (TRUE != CoreApp_InitExtInterface(pMe))
-    {
-        return FALSE;
-    }	
+    pMe->m_bSuspended = FALSE;	
 	
     if (TRUE != CoreApp_RegisterNotify(pMe))
     {
         return FALSE;
-    }	
+    }
+    
+    if (TRUE != CoreApp_InitExtInterface(pMe))
+    {
+        return FALSE;
+    }
     
     if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
     {
@@ -1280,27 +1280,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     (void) ISHELL_SetTimer(pMe->a.m_pIShell,1000, CCharger_EnableICONCB, (void *) pMe);
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
                     break;
-                }                                
-                
-#ifdef FEATURE_CHARGER_OVER_VOLTAGE_CONTROL
-                case AEEBATTERY_CHARGERSTATUS_OVERVOLTAGE:
-                {
-                    byte level1 = ((AEEBattLevel *)(pNotify->pData))->level ;
-                    uint32 nBattState = 0;
-                    
-                    CoreApp_Process_Batty_Msg(pMe, IDS_OVERVOLTAGE);                    
-                    (void) ISHELL_CancelTimer(pMe->a.m_pIShell, CCharger_EnableICONCB, (void *) pMe);
-                    if(level1 > CHARGE_FULL_STATE)
-                    {
-                        level1 = CHARGE_FULL_STATE;
-                    }
-                    
-                    nBattState = CoreApp_ConvertBattLvToAnnunState(((int)level1));
-                    //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_OFF);
-                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
-                    break;
-                }                                 
-#endif //FEATURE_CHARGER_OVER_VOLTAGE_CONTROL
+                }
 
                 default:
             	    break;
@@ -1821,7 +1801,12 @@ static void CCharger_EnableICONCB(void *pUser)
 #else
         (void) ISHELL_SetTimer(pMe->a.m_pIShell, 1000, CCharger_EnableICONCB, (void *) pMe);
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
-    } 
+    }
+    else
+    {
+        uint32 nBattState = CoreApp_ConvertBattLvToAnnunState(CoreApp_GetBatteryLevel(pMe));
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
+    }
 }
 
 /*=============================================================================
@@ -1968,9 +1953,9 @@ static void CoreApp_Process_Batty_Msg(CCoreApp   *pMe, uint16  msg_id)
     {
         CoreNotifyMP3PlayerAlertEvent(pMe, TRUE);
         if(msg_id == IDS_LOWBATTMSG_TEXT)
-        IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
-	else
-        IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_ROAMING);
+            IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
+	    else
+            IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_ROAMING);
         ISHELL_SetTimer(pMe->a.m_pIShell, 1500,(PFNNOTIFY)CoreNotifyMP3PlayerAlertEventCB, pMe);
         if((pMe->m_wActiveDlgID == IDD_PWDIMSIMCC ||
 	        pMe->m_wActiveDlgID == IDD_PWDINPUT ||
