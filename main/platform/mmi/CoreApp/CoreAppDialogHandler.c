@@ -1038,11 +1038,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             CORE_ERR("ChargerStatus %d ",status);
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
 
-            if (AEEBATTERY_CHARGERSTATUS_CHARGING == status) 
-            {
-                CoreApp_Draw_Charger_image(pMe);
-            } 
-            else if (AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE == status)
+            if (AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE == status)
             {
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
 #ifndef FEATURE_USES_LOWMEM
@@ -1066,11 +1062,9 @@ static boolean  IDD_LPM_Handler(void       *pUser,
                                                 nSize);
                 }
             }
-            else
+            else // AEEBATTERY_CHARGERSTATUS_CHARGING
             {
-#ifdef FEATURE_USES_LOWMEM            
-                CoreApp_DrawChargeing(pMe, CoreApp_GetBatteryLevel(pMe));
-#endif
+                CoreApp_Draw_Charger_image(pMe);
             }
 
             // 绘制提示文本
