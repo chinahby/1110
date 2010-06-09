@@ -311,8 +311,7 @@ static int OEMRUIM_GetCHVStatus(IRUIM *pMe, AEECHVStatus *pCHVStatus)
       status = EFAILED;
    } else {
       if (gCallBack.rpt.status.num_bytes >= 22) {
-         pCHVStatus->chv1_enabled      = (gCallBack.rpt.status.data[13] & 0x80)
-                                                                           >> 7;
+         pCHVStatus->chv1_enabled      = (gCallBack.rpt.status.data[13] & 0x80)?FALSE:TRUE; // Gemsea Add
          pCHVStatus->chv1CountRemain   = gCallBack.rpt.status.data[18] & 0xf;
          pCHVStatus->chv1UnblockRemain = gCallBack.rpt.status.data[19] & 0xf;
          pCHVStatus->chv2CountRemain   = gCallBack.rpt.status.data[20] & 0xf;
