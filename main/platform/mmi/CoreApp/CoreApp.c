@@ -1242,12 +1242,6 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 #ifdef FEATURE_APP_MEDIAGALLERY
             MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
 #endif
-
-            //if(pMe->m_bExtPwrState == FALSE && charging_mark == 1 && charging_mark2 == 0)//phil 20080321
-            //{
-            //    ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_PWROFF);
-            //}
-
             if(pMe->m_bExtPwrState == FALSE && pMe->m_wActiveDlgID == IDD_LPM)
             {
                 // in this time ,we need power down the phone
@@ -1256,42 +1250,26 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 CoreApp_Poweroff_Phone(pMe);
                 return TRUE;
             }
-            //(void) ISHELL_SetTimer(pMe->a.m_pIShell,1000,CCharger_EnableICONCB,(void *) pMe);
+            
             CoreApp_Process_Charger_Msg(pMe);
             pMe->m_battery_time= 0;
             pMe->m_battery_state = TRUE ;
             AEE_CancelTimer( CoreApp_Process_Batty_Msg_CB, (void*)pMe);
+            IBACKLIGHT_Enable(pMe->m_pBacklight);
             break;
 		
         // ³äµç×´Ì¬¸Ä±ä
         case NMASK_BATTNOTIFIER_CHARGERSTATUS_CHANGE:
             pChargerStatus = pNotify->pData;
+            if(pMe->m_wActiveDlgID == IDD_LPM)
+            {
+                CoreApp_RouteDialogEvent(pMe,(AEEEvent)EVT_UPDATEIDLE,0,0);
+            }
             switch(*pChargerStatus)
             {
                 case AEECHG_STATUS_FULLY_CHARGE:
                 {
-#if 0
-                    AECHAR    wszMsgText[128];
-                    wszMsgText[0] = 0;
-                    
-                    (void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                                                   AEE_COREAPPRES_LANGFILE,
-                                                   IDS_LPM_FULLY_CHARGED,
-                                                   wszMsgText,
-                                                   sizeof(wszMsgText));
-                    
-                    IDISPLAY_ClearScreen(pMe->m_pDisplay);
-                    
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                                 AEE_FONT_BOLD,
-                                                 wszMsgText, -1,
-                                                 0, 0, &pMe->m_rc, 
-                                                 IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT| 
-                                                 IDF_ALIGN_CENTER);
-                    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-#else
                     CoreApp_Process_Batty_Msg(pMe, IDS_FULLY_CHARGED);
-#endif
                     (void) ISHELL_CancelTimer(pMe->a.m_pIShell, CCharger_EnableICONCB, (void *) pMe);
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_FULL);
                     break;
