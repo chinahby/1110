@@ -4816,12 +4816,7 @@ void CoreApp_Draw_Charger_image(void *pp)
 {
     CCoreApp *pMe = (CCoreApp *)pp;
     AEEBatteryChargerStatus status;
-    status = IBATTERY_GetChargerStatus(pMe->m_pBatt);
-    if(status  != AEEBATTERY_CHARGERSTATUS_CHARGING)
-    {
-        ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
-        return;
-    }
+    
     //CORE_ERR("%d  %d Charger_image",pMe->m_battery_count,pMe->m_bExtPwrState);
     IDISPLAY_ClearScreen(pMe->m_pDisplay);
     if(pMe->m_battery_count >= CHARGING_FRAME_COUNT)
