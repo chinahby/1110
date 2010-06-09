@@ -55,7 +55,7 @@ when         who            what, where, why
 #define  RUNNING_UPDATE_MSECS  25
 
 #define  MSECS_PER_DAY         (3600 * 24 * 1000)
-#define  SPACE_BETWEEN_MENU                     (2)
+#define  SPACE_BETWEEN_MENU                     (1)
 
 #define ARROW_WIDTH             (9)
 #define ARROW_HEIGHT            (13)
@@ -266,8 +266,8 @@ static boolean InitStopWatch(CStopWatch *pme)
         StopWatch_Free(pme);
         return FALSE;
     }
-    yMenu        = TITLEBAR_HEIGHT + 2*SPACE_BETWEEN_MENU;
-    dyMenu      = MENUITEM_HEIGHT;
+    yMenu        = TITLEBAR_HEIGHT + 1*SPACE_BETWEEN_MENU;
+    dyMenu       = MENUITEM_HEIGHT - SPACE_BETWEEN_MENU;
     xMenu        = SPACE_BETWEEN_MENU + ARROW_WIDTH;
     dxMenu       = pme->m_rc.dx - 2*(SPACE_BETWEEN_MENU + ARROW_WIDTH);
 
@@ -298,7 +298,7 @@ static boolean InitStopWatch(CStopWatch *pme)
     pme->m_endTimeIndex = 0;
     pme->m_suspending = FALSE;
 
-    yMenu = TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT + 3*SPACE_BETWEEN_MENU;
+    yMenu = TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT + SPACE_BETWEEN_MENU;
     SETAEERECT( &rect, 0, yMenu, pme->m_rc.dx,  pme->m_rc.dy - yMenu);
     IMENUCTL_SetRect(pme->m_pmenu, &rect);
     IMENUCTL_SetOemProperties(pme->m_pmenu, OEMMP_USE_MENU_STYLE);
@@ -348,7 +348,7 @@ static boolean InitStopWatch(CStopWatch *pme)
         (void) ITIMECTL_SetTimeEx(pme->m_pTime, (int32)pme->timeData.stopWatchTime2, TRUE);
     }
 
-    yMenu = TITLEBAR_HEIGHT + MENUITEM_HEIGHT + 2*SPACE_BETWEEN_MENU;
+    yMenu = TITLEBAR_HEIGHT + MENUITEM_HEIGHT + SPACE_BETWEEN_MENU;
     SETAEERECT(&rect, 0, yMenu, pme->m_rc.dx, dyMenu);
     ITIMECTL_SetRect(pme->m_pTime, &rect);
     ITIMECTL_SetOemProperties(pme->m_pTime, OEMMP_USE_MENU_STYLE);
