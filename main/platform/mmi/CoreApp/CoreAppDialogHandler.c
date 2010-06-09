@@ -1068,7 +1068,9 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             }
             else
             {
+#ifdef FEATURE_USES_LOWMEM            
                 CoreApp_DrawChargeing(pMe, CoreApp_GetBatteryLevel(pMe));
+#endif
             }
 
             // 绘制提示文本
