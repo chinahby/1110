@@ -18,6 +18,9 @@
 #include "comdef.h"
 #include "charger.h"
 #include "vbatt.h"
+#ifdef CUST_EDITION
+#include "chg_common.h"
+#endif
 #endif // FEATURE_BREW_BATTERY
 
 #include "OEMHeap.h"
@@ -44,6 +47,14 @@
 #define BATTERY_LEVEL_WARN                            ((VBATT_SCALE*10)/100)
 #define BATTERY_LEVEL_POWERDOWN                       ((VBATT_SCALE*5)/100)
 #endif // FEATURE_BREW_BATTERY
+
+#ifdef CUST_EDITION
+#define BATT_MV_MIN 3200
+#define BATT_MV_MAX 4200
+#endif
+
+#define VBATT_MEAN_RANGE                              12
+
 /*===========================================================================
                  PRIVATE DATA DECLARATIONS
 ===========================================================================*/
@@ -347,13 +358,15 @@ static void OEMBattery_TelephoneModelListener(void *unused, ModelEvent *pEvent)
 /*===========================================================================
 Makes battery check and calls status update callbacks
 ===========================================================================*/
+#include "err.h"
 static void OEMBattery_PeriodicBatteryCheck(void * pUser)
 {
    uint32 dwBatteryStatus = AEEBATTERY_STATUS_UNKNOWN;
    uint32 dwBatteryLevel = 0;
    uint32 dwChargerStatus = AEEBATTERY_CHARGERSTATUS_UNKNOWN;
    uint32 dwExternalPower = 0;
-
+   uint32 nDelta =0;
+   
    if (NULL == gpBattery) {
       return;
    }
@@ -377,7 +390,11 @@ static void OEMBattery_PeriodicBatteryCheck(void * pUser)
 
    // Check Battery Level
    OEMBattery_CheckBatteryLevel(&dwBatteryLevel);
-   if (gpBattery->dwBatteryLevel != dwBatteryLevel)
+   nDelta = dwBatteryLevel - gpBattery->dwBatteryLevel;
+   nDelta = (nDelta) < 0 ? (-(nDelta)) : (nDelta);
+   ERR("miaoxiaoming:gpBattery->dwBatteryLevel =%d, dwBatteryLevel=%d, nDelta=%d",gpBattery->dwBatteryLevel,dwBatteryLevel,nDelta);
+   if (nDelta > VBATT_MEAN_RANGE)        /*µç³Ø¶¶¶¯*/
+  // if (gpBattery->dwBatteryLevel != dwBatteryLevel)
    {
       gpBattery->dwBatteryLevel = dwBatteryLevel;
       if (gpBattery->pcbOnInfoUpdate[AEEBATTERY_ITEM_LEVEL])
@@ -419,8 +436,24 @@ static void OEMBattery_CheckBatteryStatus(uint32 * pdwBatteryStatus)
 {
    if (pdwBatteryStatus)
    {
-      uint8 level = vbatt_read();
+#ifdef CUST_EDITION
+      chg_plvl_rtn_type wBattMV = chg_get_parameter_level(CHG_PARAMETER__BATTERY_VOLT);
+      uint16 level;
+      
+      if(wBattMV < BATT_MV_MIN)
+      {
+          wBattMV = BATT_MV_MIN;
+      }
 
+      if(wBattMV > BATT_MV_MAX)
+      {
+          wBattMV = BATT_MV_MAX;
+      }
+      
+      level = (((wBattMV - BATT_MV_MIN)*VBATT_SCALE)/(BATT_MV_MAX-BATT_MV_MIN)) + VBATT_SCALED_MIN;
+#else
+      uint8 level = vbatt_read();
+#endif
       if (level < BATTERY_LEVEL_POWERDOWN)
       {
          *pdwBatteryStatus = AEEBATTERY_STATUS_POWERDOWN;
@@ -443,7 +476,25 @@ static void OEMBattery_CheckBatteryLevel(uint32 * pdwBatteryLevel)
 {
    if (pdwBatteryLevel)
    {
+#ifdef CUST_EDITION
+      chg_plvl_rtn_type wBattMV = chg_get_parameter_level(CHG_PARAMETER__BATTERY_VOLT);
+      uint16 wBattLevel;
+      
+      if(wBattMV < BATT_MV_MIN)
+      {
+          wBattMV = BATT_MV_MIN;
+      }
+
+      if(wBattMV > BATT_MV_MAX)
+      {
+          wBattMV = BATT_MV_MAX;
+      }
+      
+      wBattLevel = (((wBattMV - BATT_MV_MIN)*VBATT_SCALE)/(BATT_MV_MAX-BATT_MV_MIN)) + VBATT_SCALED_MIN;
+      *pdwBatteryLevel = ((VBATT_SCALE << 16)|wBattLevel);
+#else
       *pdwBatteryLevel = ((VBATT_SCALE << 16)|vbatt_read());
+#endif
    }
 }
 
