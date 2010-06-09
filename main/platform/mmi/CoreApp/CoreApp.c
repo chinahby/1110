@@ -1614,6 +1614,11 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
     {
         return FALSE;
     }
+    else
+    {
+        uint32 nBattState = CoreApp_ConvertBattLvToAnnunState(CoreApp_GetBatteryLevel(pMe));
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
+    }
     
 #ifndef WIN32
     // 创建 IRUIM 接口
