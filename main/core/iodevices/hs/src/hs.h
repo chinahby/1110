@@ -408,6 +408,41 @@ typedef enum {            /* KEYS                                        */
 #endif
   HS_TV_K          = 0xB2,
                           /* TV Key on JAFFA FFA for 6280+UBM    0xB2    */
+#ifdef FEATURE_ALL_KEY_PAD
+	  HS_Q_K = 0xD0,
+	  HS_W_K = 0xD1,
+	  HS_E_K = 0xD2,
+	  HS_R_K = 0xD3,
+	  HS_T_K = 0xD4,
+	  HS_Y_K = 0xD5,
+	  HS_U_K = 0xD6,
+	  HS_I_K = 0xD7,
+	  HS_O_K = 0xD8,
+	  HS_P_K = 0xD9,
+	  HS_A_K = 0xDA,
+	  HS_S_K = 0xDB,
+	  HS_D_K = 0xDC,
+	  HS_F_K = 0xDD,
+	  HS_G_K = 0xDE,
+	  HS_H_K = 0xDF,
+	  HS_J_K = 0xE0,
+	  HS_K_K = 0xE1,
+	  HS_L_K = 0xE2,
+	  HS_SHIFT_K = 0xE3,
+	  HS_Z_K = 0xE4,
+	  HS_X_K = 0xE5,
+	  HS_C_K = 0xE6,
+	  HS_V_K = 0xE7,
+	  HS_B_K = 0xE8,
+	  HS_N_K = 0xE9,
+	  HS_M_K = 0xEA,
+	  HS_DOLLAR_K = 0xEB,
+	  HS_ENTER_K = 0xEC,
+	  HS_CAPLK_K = 0xED,
+	  HS_SPACE_K = 0xEE,
+	  HS_SYMBOL_K = 0xEF,
+	  HS_LCTRL_K = 0xF0,
+#endif
 
   HS_RELEASE_K     = 0xFF /* Key to note that all keys are up    0xFF    */
 } hs_key_type;

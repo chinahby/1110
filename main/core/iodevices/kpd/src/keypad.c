@@ -128,9 +128,7 @@ and other items needed by this module.
  * Pandora FFA. */
 #define KEYPAD_POLLING_DELAY_USEC 10
 
-#if defined(FEATURE_PROJECT_W023C)
-#define FEATURE_ALL_KEY_PAD
-#else //if defined (FEATURE_PROJECT_W021C)
+#if !defined(FEATURE_PROJECT_W023C)
 #define KEYPAD_5_BY_5_MATRIX
 #endif
 
@@ -398,20 +396,17 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS+1] =
 #endif
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
 {
-    /*KYPD_9           KYPD_11        KYPD_15        KYPD_17      KYPD_MEMO GPIO_OUTPUT_41 
-                                                                                                                                           GPIO_OUTPUT_42 
-                                                                                                                                                                GPIO_OUTPUT_44 
-                                                                                                                                                                                    GND*/
+    /*KYPD_9        KYPD_11     KYPD_15     KYPD_17  KYPD_MEMO   GPIO_OUTPUT_41 GPIO_OUTPUT_42 GPIO_OUTPUT_44 GND*/
     /*KEYSENSE_0_N*/
     {HS_RIGHT_K,    HS_UP_K,    HS_INFO_K,  HS_4_K,  HS_DOWN_K,  HS_LEFT_K,  HS_SEND_K,   HS_1_K,  HS_SEL_K},
      /*KEYSENSE_1_N*/
-    {HS_END_K,      HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_7_K,  HS_NONE_K,  HS_0_K,  HS_NONE_K},
+    {HS_END_K,      HS_NONE_K,  HS_SYMBOL_K,  HS_NONE_K,  HS_SPACE_K,  HS_7_K,  HS_CAPLK_K,  HS_0_K,  HS_SHIFT_K},
      /*KEYSENSE_2_N*/
-    {HS_NONE_K,     HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_9_K,  HS_8_K,  HS_NONE_K},
+    {HS_ENTER_K,     HS_DOLLAR_K,  HS_M_K,  HS_N_K,  HS_B_K,  HS_V_K,  HS_9_K,  HS_8_K,  HS_SHIFT_K},
      /*KEYSENSE_3_N*/
-    {HS_CLR_K,     HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_6_K,  HS_5_K,   HS_STAR_K},
+    {HS_CLR_K,     HS_L_K,  HS_K_K,  HS_J_K,  HS_H_K,  HS_G_K,  HS_6_K,  HS_5_K,   HS_STAR_K},
      /*KEYSENSE_4_N*/
-    {HS_NONE_K,     HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_NONE_K,  HS_3_K,  HS_2_K,  HS_POUND_K}
+    {HS_P_K,     HS_O_K,  HS_I_K,  HS_U_K,  HS_Y_K,  HS_T_K,  HS_3_K,  HS_2_K,  HS_POUND_K}
 };
 
 

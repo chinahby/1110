@@ -207,6 +207,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
 #define FEATURE_PROJECT_W023C
+#define FEATURE_ALL_KEY_PAD
+
 //#define FEATURE_WMS_APP
 #endif
 
