@@ -266,8 +266,8 @@ static boolean InitStopWatch(CStopWatch *pme)
         StopWatch_Free(pme);
         return FALSE;
     }
-    yMenu        = TITLEBAR_HEIGHT + SPACE_BETWEEN_MENU;
-    dyMenu      = MENUITEM_HEIGHT - SPACE_BETWEEN_MENU;
+    yMenu        = TITLEBAR_HEIGHT + 2*SPACE_BETWEEN_MENU;
+    dyMenu      = MENUITEM_HEIGHT;
     xMenu        = SPACE_BETWEEN_MENU + ARROW_WIDTH;
     dxMenu       = pme->m_rc.dx - 2*(SPACE_BETWEEN_MENU + ARROW_WIDTH);
 
@@ -298,7 +298,7 @@ static boolean InitStopWatch(CStopWatch *pme)
     pme->m_endTimeIndex = 0;
     pme->m_suspending = FALSE;
 
-    yMenu = TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT;
+    yMenu = TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT + 3*SPACE_BETWEEN_MENU;
     SETAEERECT( &rect, 0, yMenu, pme->m_rc.dx,  pme->m_rc.dy - yMenu);
     IMENUCTL_SetRect(pme->m_pmenu, &rect);
     IMENUCTL_SetOemProperties(pme->m_pmenu, OEMMP_USE_MENU_STYLE);
@@ -348,10 +348,10 @@ static boolean InitStopWatch(CStopWatch *pme)
         (void) ITIMECTL_SetTimeEx(pme->m_pTime, (int32)pme->timeData.stopWatchTime2, TRUE);
     }
 
-    yMenu = TITLEBAR_HEIGHT + MENUITEM_HEIGHT;
+    yMenu = TITLEBAR_HEIGHT + MENUITEM_HEIGHT + 2*SPACE_BETWEEN_MENU;
     SETAEERECT(&rect, 0, yMenu, pme->m_rc.dx, dyMenu);
     ITIMECTL_SetRect(pme->m_pTime, &rect);
-    ITIMECTL_SetOemProperties(pme->m_pTime, TP_OEM_CUSTOM_BG_COLOR);
+    ITIMECTL_SetOemProperties(pme->m_pTime, OEMMP_USE_MENU_STYLE);
 
     ITIMECTL_SetActive( pme->m_pTime, TRUE);
     IMENUCTL_SetActive( pme->m_pmenu, TRUE);
@@ -799,7 +799,7 @@ static void StopWatch_Redraw(CStopWatch *pme)
     AECHAR                   wszTitle[16] = { 0 };
     BottomBar_e_Type     btbType = 0;
     IImage                    *pImage = NULL;
-    int yArrow               = TITLEBAR_HEIGHT + SPACE_BETWEEN_MENU + (MENUITEM_HEIGHT - ARROW_HEIGHT - 2)/2;
+    int yArrow               = TITLEBAR_HEIGHT + 2*SPACE_BETWEEN_MENU + (MENUITEM_HEIGHT - ARROW_HEIGHT)/2;
 
     //clear background first
     Appscommon_ResetBackgroundEx(pme->a.m_pIDisplay, &pme->m_rc, FALSE);
@@ -844,7 +844,7 @@ static void StopWatch_Redraw(CStopWatch *pme)
     pImage = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_UNDERLINE);
     if(pImage)
     {
-        IIMAGE_Draw(pImage, 0, TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT - 1);
+        IIMAGE_Draw(pImage, 0, TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT + 2*SPACE_BETWEEN_MENU);
         IIMAGE_Release(pImage);
     }
     
