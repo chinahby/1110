@@ -223,7 +223,7 @@ void CoreApp_FreeAppData(IApplet* po)
     // 释放 IBatt 接口
     if (pMe->m_pBatt != NULL)
     {
-        IBATT_Release(pMe->m_pBatt);
+        IBATTERY_Release(pMe->m_pBatt);
         pMe->m_pBatt = NULL;
     }
     
@@ -888,7 +888,7 @@ static boolean CoreApp_HandleNotify(CCoreApp * pMe, AEENotify *pNotify)
         case AEECLSID_CM_NOTIFIER:
             return CoreApp_HandleCMNotify(pMe, pNotify);
 
-        case AEECLSID_BATT_NOTIFIER:
+        case AEECLSID_BATTERYNOTIFIER:
             return CoreApp_HandleBattNotify(pMe, pNotify);			
      
         default:
@@ -1221,12 +1221,9 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 {
     //AEEBattLevel *pBattLevel;
-    AEEChargerStatus *pChargerStatus;
-    AEEBattStatus * pBattStatus;
-    boolean * pExtPwrState;    	
-
-    //extern int charging_mark;
-    //extern int charging_mark2;
+    AEEBatteryChargerStatus nChargerStatus;
+    AEEBatteryStatus nBattStatus;	
+    
     if ((NULL == pMe) || (pNotify == NULL))
     {
         return FALSE;
@@ -1235,9 +1232,8 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
     switch (pNotify->dwMask) 
     {
         // 外部电源接入或拔除
-        case NMASK_BATTNOTIFIER_EXTPWR_CHANGE:
-            pExtPwrState = pNotify->pData;
-            pMe->m_bExtPwrState = *pExtPwrState;
+        case NMASK_BATTERY_EXTPWR_CHANGE:
+            pMe->m_bExtPwrState = IBATTERY_GetExternalPower(pMe->m_pBatt);
 
 #ifdef FEATURE_APP_MEDIAGALLERY
             MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
@@ -1259,15 +1255,15 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             break;
 		
         // 充电状态改变
-        case NMASK_BATTNOTIFIER_CHARGERSTATUS_CHANGE:
-            pChargerStatus = pNotify->pData;
+        case NMASK_BATTERY_CHARGERSTATUS_CHANGE:
+            nChargerStatus = IBATTERY_GetChargerStatus(pMe->m_pBatt);
             if(pMe->m_wActiveDlgID == IDD_LPM)
             {
                 CoreApp_RouteDialogEvent(pMe,(AEEEvent)EVT_UPDATEIDLE,0,0);
             }
-            switch(*pChargerStatus)
+            switch(nChargerStatus)
             {
-                case AEECHG_STATUS_FULLY_CHARGE:
+                case AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE:
                 {
                     CoreApp_Process_Batty_Msg(pMe, IDS_FULLY_CHARGED);
                     (void) ISHELL_CancelTimer(pMe->a.m_pIShell, CCharger_EnableICONCB, (void *) pMe);
@@ -1275,7 +1271,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     break;
                 }
 
-                case AEECHG_STATUS_CHARGING:
+                case AEEBATTERY_CHARGERSTATUS_CHARGING:
                 {
                     pMe->m_bExtPwrState = TRUE;
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH                        
@@ -1287,7 +1283,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 }                                
                 
 #ifdef FEATURE_CHARGER_OVER_VOLTAGE_CONTROL
-                case AEECHG_STATUS_OVERVOLTAGE:
+                case AEEBATTERY_CHARGERSTATUS_OVERVOLTAGE:
                 {
                     byte level1 = ((AEEBattLevel *)(pNotify->pData))->level ;
                     uint32 nBattState = 0;
@@ -1311,13 +1307,13 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             }
             break;
             
-        case NMASK_BATTNOTIFIER_BATTSTATUS_CHANGE:
+        case NMASK_BATTERY_STATUS_CHANGE:
             if (FALSE == pMe->m_bExtPwrState)
             {
-                pBattStatus = pNotify->pData;
-                switch(*pBattStatus)
+                nBattStatus = IBATTERY_GetStatus(pMe->m_pBatt);
+                switch(nBattStatus)
                 {
-                    case AEEBATTSTATUS_POWERDOWN:  // Phone must be powered down
+                    case AEEBATTERY_STATUS_POWERDOWN:  // Phone must be powered down
                     {
                         ISHELL_SendEvent(pMe->a.m_pIShell,AEECLSID_DIALER, EVT_BATT_POWERDOWN, 0, 0);
                         CoreApp_Process_Batty_Msg(pMe, IDS_POWEROFF_1);
@@ -1325,7 +1321,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                         break;
                     }
 
-                    case AEEBATTSTATUS_LOW:        // Battery is low
+                    case AEEBATTERY_STATUS_LOW:        // Battery is low
                     {
                         (void) ISHELL_CancelTimer(pMe->a.m_pIShell,CCharger_BlinkLowBattIcon, (void *) pMe);                        
                         IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_LOW | ANNUN_STATE_BLINK);
@@ -1334,24 +1330,16 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                         break;
                     }
 
-                    case AEEBATTSTATUS_NORMAL:      // Battery is normal
+                    case AEEBATTERY_STATUS_NORMAL:      // Battery is normal
                     default:
                         break;
                 }
             }
             break;
 
-        case NMASK_BATTNOTIFIER_BATTLEVEL_CHANGE:
+        case NMASK_BATTERY_LEVEL_CHANGE:
         {
-            byte level1 = ((AEEBattLevel *)(pNotify->pData))->level ;
-            uint32 nBattState = 0;
-            
-            if(level1 > CHARGE_FULL_STATE)
-            {
-                level1 = CHARGE_FULL_STATE;
-            }
-
-            nBattState = CoreApp_ConvertBattLvToAnnunState(((int)level1));
+            uint32 nBattState = CoreApp_ConvertBattLvToAnnunState(CoreApp_GetBatteryLevel(pMe));
             //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_OFF);
             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
             break;
@@ -1559,14 +1547,14 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
 
     // 注册 IBatt 通知事件：仅注册外部电源和充电状态通知事件，其余
     // 通知事件一旦话机启动并运行将被注册
-    dwMask = NMASK_BATTNOTIFIER_EXTPWR_CHANGE 
-    			|NMASK_BATTNOTIFIER_BATTSTATUS_CHANGE
-    			|NMASK_BATTNOTIFIER_BATTLEVEL_CHANGE
-    			|NMASK_BATTNOTIFIER_CHARGERSTATUS_CHANGE;
+    dwMask = NMASK_BATTERY_STATUS_CHANGE 
+    	    |NMASK_BATTERY_LEVEL_CHANGE
+    		|NMASK_BATTERY_CHARGERSTATUS_CHANGE
+    		|NMASK_BATTERY_EXTPWR_CHANGE;
                                            
     nRet = ISHELL_RegisterNotify(pMe->a.m_pIShell,
                         AEECLSID_CORE_APP, 
-                        AEECLSID_BATT_NOTIFIER,  
+                        AEECLSID_BATTERYNOTIFIER,  
                         dwMask);
     if (nRet != SUCCESS) 
     {
@@ -1640,16 +1628,13 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
     }
     // 创建 IBatt 接口
     nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                 AEECLSID_BATT,
+                                 AEECLSID_BATTERY,
                                  (void **) &pMe->m_pBatt);
     if (nRet != SUCCESS) 
     {
         return FALSE;
     }
-    if (pMe->m_pBatt == NULL) 
-    {
-        return FALSE;
-    }
+    
 #ifndef WIN32
     // 创建 IRUIM 接口
     nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
@@ -2181,6 +2166,61 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
     return result;
 }
 #endif
+
+int CoreApp_GetBatteryLevel(CCoreApp *pMe)
+{
+    uint32  pdwData;
+    uint16  uBattLevel ;
+    uint16  uBattScale;
+    uint8   ATBattLevel;
+    uint8   uLevel;
+  
+    if ( IBATTERY_GetBatteryLevel( pMe->m_pBatt, &(pdwData) ) != SUCCESS )
+    {
+        return 0;
+    }
+    
+    uBattLevel = GETBATTERYLEVEL(pdwData);
+    uBattScale = GETBATTERYSCALE(pdwData);
+    
+    if ( uBattScale == 0 )
+    {
+        return 0;
+    }
+    
+    if ( uBattLevel == 0 )
+    {
+        ATBattLevel = 0;
+    }
+    else
+    {
+        ATBattLevel = (uBattLevel * 100) / uBattScale;
+    }
+    /* convert to 0-4 levels */
+    if ( ATBattLevel <= 10 )
+    {
+        uLevel = 0;
+    }
+    else if ( ATBattLevel <= 40 )
+    {
+        uLevel = 1;
+    }
+    else if ( ATBattLevel <= 60 )
+    {
+        uLevel = 2;
+    }
+    else if ( ATBattLevel <= 80 )
+    {
+        uLevel = 3;
+    }
+    else
+    {
+        uLevel = 4;
+    }
+    
+    return uLevel;
+}
+
 /*==============================================================================
 函数：
        CoreApp_ConvertBattLvToAnnunState

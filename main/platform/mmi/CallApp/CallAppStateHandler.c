@@ -273,48 +273,7 @@ static NextFSMAction STATE_INITHandler(CCallApp *pMe)
     }
 
     pMe->m_running   = TRUE;
-#if 0
-    //pMe->m_extrnPwrState = IBATT_GetChargerStatus(pMe->m_pBatt);
-    //Returns the state of the battery charger.
-    //Register for IBatt notifications.  External power and Status change
-    //notifications only, the rest will be registered once the phone is
-    //up and running...
-    dwMask = NMASK_BATTNOTIFIER_BATTLEVEL_CHANGE;
-    if (AEE_SUCCESS != ISHELL_RegisterNotify(pMe->m_pShell,
-                                            AEECLSID_DIALER,
-                                            AEECLSID_BATT_NOTIFIER,
-                                            dwMask))
-    {
-        ASSERT_NOT_REACHABLE
-    }
-
-    // Register for phone, call, and serving system notifications
-    if (AEE_SUCCESS != ISHELL_RegisterNotify(pMe->m_pShell,
-                                             AEECLSID_DIALER,
-                                             AEECLSID_CM_NOTIFIER,
-                                             NMASK_CM_VOICE_CALL
-                                             | NMASK_CM_OTHER_CALL
-                                             | NMASK_CM_TEST_CALL
-                                             ))
-    {
-        ASSERT_NOT_REACHABLE;
-    }
-
-    if(ISHELL_RegisterNotify(pMe->m_pShell, AEECLSID_DIALER,
-        AEECLSID_ALERT_NOTIFIER, NMASK_ALERT_ONOFF | NMASK_ALERT_MUTED) != SUCCESS)
-    {
-        ASSERT_NOT_REACHABLE;
-    }
-#endif
-#ifdef Temp_remove
-    IIDLE_GetState(pMe->m_pIdle, &pMe->idle_info);
-    if(!IsRunAsUIMVersion(void))
-    {
-        pMe->idle_info.uimLocked = FALSE;
-    }
-
-    //Call Idle applets service
-#endif/*Temp_remove*/
+    
     // Setup the current audio path (maybe the headset is already plugged in)
     //CallApp_SetupCallAudio(pMe);
 

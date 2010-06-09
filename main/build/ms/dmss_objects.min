@@ -248,11 +248,10 @@ ifeq ($(USES_BT), yes)
     include $(BTHOSTSTATEXT_SRC)/bthoststatext.min
 endif
 
-include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ibatt.min
+#include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ibatt.min
 ifneq ($(USES_UIONE),yes)
 ifneq ($(USES_MANGO_UI),yes)
        include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_iannunciator.min
-       include $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_ibatt.min    
 endif
   endif
   ifeq ($(USES_SVGDOM), yes)

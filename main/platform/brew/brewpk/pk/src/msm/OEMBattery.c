@@ -594,3 +594,29 @@ void OEMBattery_Refresh(void)
 }
 #endif // FEATURE_BREW_BATTERY
 
+#ifdef CUST_EDITION
+static void OEMBatt_OnBatteryChange(void *unused)
+{
+    OEMBattery_Refresh();
+}
+
+void oembatt_notify_chg_event(void)
+{
+    static AEECallback cbChgEvent;
+    AEECallback* pCb = NULL;
+    if(AEE_IsInitialized())
+    {
+        if(pCb)
+        {
+            CALLBACK_Cancel(pCb);
+        }
+        else
+        {
+            pCb = &cbChgEvent;
+        }
+        CALLBACK_Init(pCb,OEMBatt_OnBatteryChange,NULL);
+        AEE_SYS_RESUME(pCb);
+    }
+}
+#endif
+

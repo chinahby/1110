@@ -154,22 +154,6 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 	#endif /* FEATURE_ANNUNCIATOR */
 
 #include "AEEAlert.h"
-
-	#ifndef FEATURE_UIONE_HDK
-		#include "AEEBatt.h"
-	#endif /* FEATURE_UIONE_HDK */
-
-	#if defined(FEATURE_WLAN)
-#error code not present
-	#endif /* FEATURE_WLAN */
-
-	#if defined (FEATURE_WCDMA) || defined (FEATURE_GSM_GPRS)
-#error code not present
-	#endif/* FEATURE_WCDMA || FEATURE_GSM_GPRS */
-#else /*!FEATURE_ICM*/
-#ifdef FEATURE_MANGO_UI
-#include "AEEBatt.h"
-#endif //FEATURE_MANGO_UI
 #endif /* FEATURE_ICM */
 
 #if defined(FEATURE_GSM) || defined(FEATURE_WCDMA)
@@ -1354,23 +1338,6 @@ static const AEEStaticClass gOEMStaticClassList[] = {
    {AEECLSID_ALERT,                   ASCF_PRIV,0,NULL,OEMALERT_New},
    {AEECLSID_ALERT_NOTIFIER,          ASCF_PRIV,0,NULL,OEMALERT_NOTIFIER_New},
 #endif
-#if !defined(FEATURE_UIONE_HDK)
-   //IBatt
-   {AEECLSID_BATT,                ASCF_PRIV,0,NULL,AEEBatt_New},
-   {AEECLSID_BATT_NOTIFIER,       ASCF_PRIV, 0,NULL, AEEBatt_New},
-#endif /* FEATURE_UIONE_HDK */
-#if defined (FEATURE_WCDMA) || defined (FEATURE_GSM_GPRS)
-#error code not present
-#endif
-#if defined(FEATURE_WLAN)
-#error code not present
-#endif /* FEATURE_WLAN */
-#else /* !FEATURE_ICM */
-#if defined(FEATURE_MANGO_UI)
-   //IBatt
-   {AEECLSID_BATT,                ASCF_PRIV,0,NULL,AEEBatt_New},
-   {AEECLSID_BATT_NOTIFIER,       ASCF_PRIV, 0,NULL,AEEBatt_New},
-#endif /* FEATURE_MANGO_UI*/
 #endif /* FEATURE_ICM */
 #if defined(FEATURE_UIALARM)
     {AEECLSID_UIALARM,      ASCF_PRIV,0,NULL,AEEAlarm_New},

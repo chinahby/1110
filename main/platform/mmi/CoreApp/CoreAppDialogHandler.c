@@ -228,10 +228,6 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe);
 static void CoreApp_GetSPN(CCoreApp *pMe);
 
 static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, int nErr);
-
-//add by ydc 20090523
-static void CoreApp_SetMintueImageID(CCoreApp *pMe,uint16 MINUTE_angle);
-static double CoreApp_sin(uint16 angle);
 /*==============================================================================
 
                                  函数定义
@@ -964,7 +960,6 @@ static void CoreApp_DrawChargeing(CCoreApp *pMe, int iLevel)
     AEERect fgRect;
     AEERect hdRect;
     uint16  chHeight;
-    RGBVAL  chColor;
     byte    R,G;
     
     SETAEERECT(&bgRect, pMe->m_rc.x+((pMe->m_rc.dx-BATT_WIDTH)>>1), pMe->m_rc.y+((pMe->m_rc.dy-BATT_HEIGHT)>>1), BATT_WIDTH, BATT_HEIGHT);
@@ -1032,22 +1027,22 @@ static boolean  IDD_LPM_Handler(void       *pUser,
         case EVT_USER_REDRAW:
         case EVT_UPDATEIDLE:
         {
-            AEEChargerStatus status;
+            AEEBatteryChargerStatus status;
             AECHAR  *wszText=NULL;
             int32   nSize;
 
             nSize = 32 * sizeof(AECHAR);
             wszText =  (AECHAR *) MALLOC(nSize);
             wszText[0] = 0;
-            status = IBATT_GetChargerStatus(pMe->m_pBatt);
+            status = IBATTERY_GetChargerStatus(pMe->m_pBatt);
             CORE_ERR("ChargerStatus %d ",status);
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
 
-            if (AEECHG_STATUS_CHARGING == status) 
+            if (AEEBATTERY_CHARGERSTATUS_CHARGING == status) 
             {
                 CoreApp_Draw_Charger_image(pMe);
             } 
-            else if (AEECHG_STATUS_FULLY_CHARGE == status)
+            else if (AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE == status)
             {
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
 #ifndef FEATURE_USES_LOWMEM
@@ -1059,7 +1054,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
                 CoreApp_DrawChargeing(pMe, CHARGING_FRAME_COUNT - 1);
 #endif
             } 
-            else if (AEECHG_STATUS_OVERVOLTAGE == status) 
+            else if (AEEBATTERY_CHARGERSTATUS_OVERVOLTAGE == status) 
             {
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
                 if (NULL != wszText)
@@ -1073,7 +1068,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             }
             else
             {
-                CoreApp_DrawChargeing(pMe, CHARGING_FRAME_COUNT - 1);
+                CoreApp_DrawChargeing(pMe, CoreApp_GetBatteryLevel(pMe));
             }
 
             // 绘制提示文本
@@ -1158,8 +1153,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
     IMenuCtl *pMenu = NULL;
-  
-    PARAM_NOT_REF(dwParam)
+    
     CORE_ERR("%x %x %x IDD_EMERGENCYNUMLIST_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
@@ -2335,9 +2329,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                                        uint32     dwParam)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
-
-    PARAM_NOT_REF(wParam)
-    PARAM_NOT_REF(dwParam)
+    
     CORE_ERR("%x %x %x IDD_STARTUPANI_Handler",eCode,wParam,dwParam);
     switch (eCode) 
     {
@@ -2471,7 +2463,6 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
     CCoreApp *pMe = (CCoreApp *)pUser;
     IStatic * pStatic = NULL;
     
-    PARAM_NOT_REF(wParam)
     CORE_ERR("%x %x %x IDD_LOADING_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
@@ -2702,11 +2693,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                  uint16     wParam,
                                  uint32     dwParam)
 {
-	int i,j,l;
-	boolean flag;
-    PARAM_NOT_REF(dwParam)
-    static boolean bHideText = FALSE;
-    
+	int i;
     CCoreApp *pMe = (CCoreApp *)pUser;
 #ifdef FEATURE_KEYGUARD	 
     boolean  bData;
@@ -2735,7 +2722,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             
         case EVT_DIALOG_START:
         {
+#ifdef FEATRUE_SUPPORT_G_SENSOR
             dword shake;
+#endif
 #ifndef CUST_EDITION
             if(!((MMI_GSENSOR_SHAKE_OPEN == mmi_g_sensor_state) 
                 ||(MMI_GSENSOR_SHAKE_OPEN_IN_IDLE == mmi_g_sensor_state)))   //ignore if sensor has been open.
@@ -2921,8 +2910,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         case EVT_GSENSOR_SHAKE:
         case EVT_KEY:
             {
+#ifdef FEATRUE_SUPPORT_G_SENSOR
                 boolean b_FMBackground = FALSE;
                 dword shake;
+#endif
 #ifndef CUST_EDITION
                 if((wParam != AVK_END)&&(wParam != AVK_GSENSOR_FORWARD)&&(wParam != AVK_GSENSOR_BACKWARD))
                 {
@@ -3125,16 +3116,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                      break;
                  }
 #endif                 
-/*
-                 case AVK_END:
-                     bHideText = !bHideText;
-                     ISHELL_PostEventEx(pMe->a.m_pIShell, 
-                                        EVTFLG_ASYNC, 
-                                        AEECLSID_CORE_APP,
-                                        EVT_UPDATEIDLE,
-                                        0,0L);
-                    return TRUE; 
-      */          
+          
                 default:
                     break;
             }
@@ -3349,8 +3331,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                                       AEEEvent   eCode,
                                       uint16     wParam,
                                       uint32     dwParam)
-{
-    PARAM_NOT_REF(dwParam)    
+{ 
     CCoreApp *pMe = (CCoreApp *)pUser;    
     CORE_ERR("%x %x %x IDD_POWERDOWN_Handler",eCode,wParam,dwParam);
     switch (eCode)
@@ -3553,40 +3534,10 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
 
         case EVT_DISPLAYDIALOGTIMEOUT:
         {
-#if 0
-            IBacklight   *pBacklight = NULL;
-            ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                 AEECLSID_BACKLIGHT,
-                                 (void**)&pBacklight);
-            if(pBacklight != NULL)
-            {
-                IBACKLIGHT_TurnOff(pBacklight);
-                IBACKLIGHT_Release(pBacklight);
-            }
-            CLOSE_DIALOG(DLGRET_OK);
-            // 不再关心 IBatt 通知消息
-            (void) ISHELL_RegisterNotify(pMe->a.m_pIShell,
-                        AEECLSID_CORE_APP,
-                        AEECLSID_BATT_NOTIFIER,
-                        0);
-
-            // Turn off RSSI indicator
-            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_OFF);
-           
-            // 关闭电池图标
-            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_OFF);
-            //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);            
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_PWROFF); 
-                           
-            return TRUE;
-#else
             IALERT_StopRingerAlert(pMe->m_pAlert);
             CoreApp_Poweroff_Phone(pMe);
             CLOSE_DIALOG(DLGRET_OK);
             return TRUE;
-#endif
-
         }
           
         default:
@@ -4850,7 +4801,7 @@ void CoreApp_Poweroff_Phone(void *pp)
     // 不再关心 IBatt 通知消息
     (void) ISHELL_RegisterNotify(pMe->a.m_pIShell,
                 AEECLSID_CORE_APP,
-                AEECLSID_BATT_NOTIFIER,
+                AEECLSID_BATTERYNOTIFIER,
                 0);
     
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
@@ -4868,9 +4819,9 @@ void CoreApp_Poweroff_Phone(void *pp)
 void CoreApp_Draw_Charger_image(void *pp)
 {
     CCoreApp *pMe = (CCoreApp *)pp;
-    AEEChargerStatus status;
-    status = IBATT_GetChargerStatus(pMe->m_pBatt);
-    if(status  != AEECHG_STATUS_CHARGING)
+    AEEBatteryChargerStatus status;
+    status = IBATTERY_GetChargerStatus(pMe->m_pBatt);
+    if(status  != AEEBATTERY_CHARGERSTATUS_CHARGING)
     {
         ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
         return;
@@ -4973,7 +4924,6 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
                                    uint16     wParam,
                                    uint32     dwParam)
 {
-    PARAM_NOT_REF(dwParam)    
     IStatic * pStatic;    
     CCoreApp *pMe = (CCoreApp *)pUser;    
     

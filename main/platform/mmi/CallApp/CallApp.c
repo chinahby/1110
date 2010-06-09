@@ -686,41 +686,13 @@ static int CallApp_InitAppData(CCallApp *pMe)
     {
         return EFAILED;
     }
-#if 0
-    // Create IBatt instance
-    if (ISHELL_CreateInstance(pMe->m_pShell,
-                                            AEECLSID_BATT,
-                                            (void **)&pMe->m_pBatt)!=AEE_SUCCESS)
-    {
-        return EFAILED;
-    }
-
-    //Create IDISPLAY interface
-    if (ISHELL_CreateInstance(pMe->m_pShell,
-                                            AEECLSID_DISPLAY,
-                                            (void **)&pMe->m_pDisplay)!=AEE_SUCCESS)
-    {
-        return EFAILED;
-    }
-
-    // Create the instance of Idle applet
-    if (ISHELL_CreateInstance(pMe->m_pShell,
-                                            AEECLSID_CORE_APP,
-                                            (void **)&pMe->m_pIdle)!=AEE_SUCCESS)
-    {
-        return EFAILED;
-    }
-#endif/*Temp_remove*/
+    
     // Create the instance of backlight
     if (ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_BACKLIGHT,
                                             (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
     {
-#if 0
-        CALL_ERR("Creat m_pBacklight FAIL",0,0,0);
-#else
         return EFAILED;
-#endif
     }
 
     if (ISHELL_CreateInstance(pMe->m_pShell,
@@ -736,21 +708,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     {
         return EFAILED;
     }
-#if 1
-    //pMe->m_extrnPwrState = IBATT_GetChargerStatus(pMe->m_pBatt);
-    //Returns the state of the battery charger.
-    //Register for IBatt notifications.  External power and Status change
-    //notifications only, the rest will be registered once the phone is
-    //up and running...
-    //dwMask = NMASK_BATTNOTIFIER_BATTSTATUS_CHANGE|NMASK_BATTNOTIFIER_CHARGERSTATUS_CHANGE;
-    //if (AEE_SUCCESS != ISHELL_RegisterNotify(pMe->m_pShell,
-    //                                        AEECLSID_DIALER,
-    //                                        AEECLSID_BATT_NOTIFIER,
-    //                                        dwMask))
-    //{
-    //    return EFAILED;
-    //}
-
+    
     // Register for phone, call, and serving system notifications
     if (AEE_SUCCESS != ISHELL_RegisterNotify(pMe->m_pShell,
                                              AEECLSID_DIALER,
@@ -767,7 +725,6 @@ static int CallApp_InitAppData(CCallApp *pMe)
     {
         return EFAILED;
     }
-#endif
 
 #if defined( FEATURE_CALL_RECORDER)
 	if( !recorder_init_media( &pMe->m_Media))
@@ -962,13 +919,6 @@ static void CallApp_FreeAppData(CCallApp *pMe)
         IALERT_Release(pMe->m_pAlert);
         pMe->m_pAlert = NULL;
     }
-#if 0
-    if (pMe->m_pBatt != NULL)
-    {
-        IBATT_Release(pMe->m_pBatt);
-        pMe->m_pBatt = NULL;
-    }
-#endif
 #ifdef KEYSND_ZY
     if (pMe->m_SndPlayer != NULL)
     {
@@ -977,34 +927,7 @@ static void CallApp_FreeAppData(CCallApp *pMe)
         pMe->m_SndPlayer = NULL;
     }
 #endif /* KEYSND_ZY */
-#if 0
-    if (pMe->m_pDisplay != NULL)
-    {
-        IDISPLAY_Release(pMe->m_pDisplay);
-        pMe->m_pDisplay = NULL;
-    }
 
-    if (pMe->m_pIdle != NULL)
-    {
-        IIDLE_Release(pMe->m_pIdle);
-        pMe->m_pIdle = NULL;
-    }
-#endif/*Temp_remove*/
-#if 0
-    if (pMe->m_msg_text != NULL)
-    {
-        CALLAPP_FREE(pMe->m_msg_text);
-        pMe->m_msg_text = NULL;
-    }
-#endif
-#if 0
-    if (pMe->m_IStatic != NULL)
-    {
-        ISTATIC_Reset(pMe->m_IStatic);
-        (void) ISTATIC_Release(pMe->m_IStatic);
-        pMe->m_IStatic = NULL;
-    }
-#endif
     if(pMe->m_pBacklight)
     {
         IBACKLIGHT_Release(pMe->m_pBacklight);
@@ -1024,7 +947,6 @@ static void CallApp_FreeAppData(CCallApp *pMe)
         pMe->m_pMenu = NULL;
     }
     CallApp_Free_All_Call_Table(pMe);//ok
-    ISHELL_RegisterNotify(pMe->m_pShell,AEECLSID_DIALER,  AEECLSID_BATT_NOTIFIER,0);
     ISHELL_RegisterNotify(pMe->m_pShell,AEECLSID_DIALER,  AEECLSID_CM_NOTIFIER,0);
     ISHELL_RegisterNotify(pMe->m_pShell,AEECLSID_DIALER,  AEECLSID_ALERT_NOTIFIER,0);
 
@@ -1774,11 +1696,6 @@ static boolean CallApp_Notify(void *pUser, AEEEvent eCode,
     //CALL_ERR("Notify_msg->cls %x",Notify_msg->cls,0,0);
     switch (Notify_msg->cls)
     {
-
-        //case AEECLSID_BATT_NOTIFIER:
-        //    CallApp_ProcessBattNotify(pMe, Notify_msg);
-        //    return TRUE;
-
         case AEECLSID_ALERT_NOTIFIER:
             switch(wParam)
             {

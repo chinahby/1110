@@ -447,7 +447,7 @@ GENERAL DESCRIPTION:
 
 // Enables IBATTERY interface
 #if defined (FEATURE_BATTERY_CHARGER) || defined(FEATURE_CHG_TASK)
-//#define FEATURE_BREW_BATTERY
+#define FEATURE_BREW_BATTERY
 #endif
 
 //Enable the following to support IFLIP interface

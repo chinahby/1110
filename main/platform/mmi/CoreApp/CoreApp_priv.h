@@ -36,7 +36,7 @@
 #include "AEE_OEM.h"
 #include "AEEConfig.h"
 #include "OEMCFGI.h"
-#include "AEEBatt.h"
+#include "AEEBattery.h"
 #include "AEERUIM.h"
 #include "AEECM.h"
 #include "coreapp.brh"
@@ -477,7 +477,7 @@ typedef struct _CCoreApp
     IDisplay            *m_pDisplay;
     IAnnunciator        *m_pIAnn;
     IConfig             *m_pConfig;
-    IBatt               *m_pBatt;
+    IBattery            *m_pBatt;
     IRUIM               *m_pIRUIM;
     ICM                 *m_pCM;
     //IPhone       *m_pPhone;
@@ -836,4 +836,6 @@ int CoreApp_SendReginfo(CCoreApp *pMe);
 #ifndef  FEATURE_2008_POWERON_LOGIC
 void CoreApp_load_uim_esn(CCoreApp *pMe);
 #endif
+int CoreApp_GetBatteryLevel(CCoreApp *pMe);
+
 #endif

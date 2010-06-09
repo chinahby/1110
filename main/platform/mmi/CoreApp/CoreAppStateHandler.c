@@ -422,7 +422,7 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                 {
                     tepState = COREST_ALARM;
                 }
-                else if (IBATT_GetExternalPower(pMe->m_pBatt))
+                else if (IBATTERY_GetExternalPower(pMe->m_pBatt))
                 {
                     static boolean lpm   = 0;
                     // 若接入了外部电源，进入关机充电状态

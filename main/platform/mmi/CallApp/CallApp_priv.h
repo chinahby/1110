@@ -74,7 +74,6 @@
 #include "AEEAlarm.h"
 #endif
 #include "AEEAlert.h"
-#include "AEEBatt.h"
 #include "OEMText.h"  // for TP_LARGE_FONT
 //#include "OEMRUIM.h"
 #include "OEMDisp.h"       // TBD - hack until available somewhere else
@@ -490,7 +489,6 @@ typedef struct _CCallApp
 
     ISound                 *m_pSound;      // Sound interface
     IALERT                 *m_pAlert;      // IAlert interface
-    //IBatt                  *m_pBatt;       // IBatt interface
     IConfig                *m_pConfig;     // IConfig interface
     //IStatic                *m_IStatic;       // Used in the IDD_SILENCED& IDD_MSGBOX dialog
     ICM                    *m_pICM;                         // instance of ICM

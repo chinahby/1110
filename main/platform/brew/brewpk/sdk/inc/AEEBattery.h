@@ -156,6 +156,35 @@ static __inline int IBATTERY_IsExternalPowerPresent(IBattery *p, boolean *pbData
    return nErr;
 }
 
+static __inline boolean IBATTERY_GetExternalPower(IBattery *p)
+{
+   uint32 dwData = 0;
+   int nErr;
+
+   nErr = AEEGETPVTBL(p,IBattery)->GetBatteryItem(p, AEEBATTERY_ITEM_EXTPWR, &dwData);
+
+   if (nErr == SUCCESS)
+   {
+      return (dwData ? TRUE : FALSE);
+   }
+   return FALSE;
+}
+
+static __inline AEEBatteryChargerStatus IBATTERY_GetChargerStatus(IBattery *p)
+{
+   AEEBatteryChargerStatus dwData = AEEBATTERY_CHARGERSTATUS_UNKNOWN;
+   AEEGETPVTBL(p,IBattery)->GetBatteryItem(p, AEEBATTERY_ITEM_CHARGERSTATUS, (uint32*)&dwData);
+   return dwData;
+}
+
+static __inline AEEBatteryStatus IBATTERY_GetStatus(IBattery *p)
+{
+   AEEBatteryStatus dwData = AEEBATTERY_STATUS_UNKNOWN;
+   AEEGETPVTBL(p,IBattery)->GetBatteryItem(p, AEEBATTERY_ITEM_STATUS, (uint32*)&dwData);
+   return dwData;
+}
+
+
 #define GETBATTERYSCALE(dwLevel)       (uint16)(dwLevel >> 16)
 #define GETBATTERYLEVEL(dwLevel)       (uint16)(dwLevel & 0x0000ffff)
 /*=============================================================================
