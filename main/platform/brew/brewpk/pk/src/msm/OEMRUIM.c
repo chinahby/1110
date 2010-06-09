@@ -260,9 +260,7 @@ static boolean OEMRUIM_IsCardConnected(IRUIM *pMe)
       case UIM_RECEIVED_S:               // Recd the command
       case UIM_INITIALIZED_S:            // UIM is initialized
       case UIM_POWERED_DOWN_S:           // UIM is powered down
-#ifdef FEATURE_UIM_TOOLKIT
       case UIM_CLK_OFF_S:                // UIM does not have a clock
-#endif /* FEATURE_UIM_TOOLKIT */ 
          bCardConnected = TRUE;
          break;
       default:
