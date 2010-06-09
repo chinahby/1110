@@ -1808,7 +1808,7 @@ static void CCharger_EnableICONCB(void *pUser)
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
     }
     else
-    {
+    {   //及时更新停止充电时的电池level显示
         uint32 nBattState = CoreApp_ConvertBattLvToAnnunState(CoreApp_GetBatteryLevel(pMe));
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
     }
