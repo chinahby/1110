@@ -616,6 +616,10 @@ boolean bPlaneModeOn;
     On_line_from             m_b_online_from;
 #endif
 
+#ifdef FEATURE_FLASHLIGHT_SUPPORT
+	boolean flashLightOn;
+#endif
+
 } CCoreApp;
 
 /*==============================================================================

@@ -383,6 +383,11 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifndef  FEATURE_2008_POWERON_LOGIC
     pMe->m_b_online_from = ON_LINE_FROM_NORMAL;
 #endif
+
+#ifdef FEATURE_FLASHLIGHT_SUPPORT
+	pMe->flashLightOn = FALSE;
+#endif
+
     CoreAppReadNVKeyBeepValue(pMe);
     g_pCoreApp = pMe;
     return TRUE;
@@ -643,7 +648,56 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                     }
 
                     return TRUE;
+           #ifdef FEATURE_FLASHLIGHT_SUPPORT
+				#ifdef FEATURE_PROJECT_W023C
+					case AVK_SPACE:
+					{
+						if ( pMe->flashLightOn == FALSE )
+						{
+							pMe->flashLightOn = TRUE;
+							if (pMe->m_pBacklight)
+							{
+			        			IBACKLIGHT_TurnOnFlashlight(pMe->m_pBacklight);
+			    			}
+						}
+						else
+						{
+							pMe->flashLightOn = FALSE;
+							if (pMe->m_pBacklight)
+							{
+			        			IBACKLIGHT_TurnOffFlashlight(pMe->m_pBacklight);
+			    			}
+						}
+						
+					}
 
+					return TRUE;
+				#endif
+
+				#ifdef FEATURE_PROJECT_W021C
+					case AVK_SPACE:
+					{
+						if ( pMe->flashLightOn == FALSE )
+						{
+							pMe->flashLightOn = TRUE;
+							if (pMe->m_pBacklight)
+							{
+			        			IBACKLIGHT_TurnOnFlashlight(pMe->m_pBacklight);
+			    			}
+						}
+						else
+						{
+							pMe->flashLightOn = FALSE;
+							if (pMe->m_pBacklight)
+							{
+			        			IBACKLIGHT_TurnOffFlashlight(pMe->m_pBacklight);
+			    			}
+						}
+					}
+
+					return TRUE;
+				#endif
+			#endif
                 default:
                     break;
             }
