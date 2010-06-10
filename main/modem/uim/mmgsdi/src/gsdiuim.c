@@ -260,7 +260,7 @@ when       who     what, where, why
 #include "virtuim.h"
 #endif
 #ifdef CUST_EDITION
-#ifndef FEATURE_UIM_TOOLKIT
+#ifdef FEATURE_UIM_TOOLKIT
 #include "uimtk.h"
 #endif
 #endif
