@@ -75,6 +75,7 @@
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif 
+#include "core_ui.h"
 
 /*==============================================================================
                                  

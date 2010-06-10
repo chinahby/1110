@@ -4816,7 +4816,8 @@ void CoreApp_Poweroff_Phone(void *pp)
     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_OFF);
     //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
     //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-    ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_PWROFF);                    
+    ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_PWROFF);
+    CoreTask_SetPwrDnComplete(TRUE);
 }
 
 void CoreApp_Draw_Charger_image(void *pp)

@@ -331,6 +331,8 @@ boolean CoreApp_InitAppData(IApplet* po)
     {
         return FALSE;
     }
+
+    CoreTask_SetPwrDnComplete(FALSE);
     
     if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
     {
@@ -909,6 +911,20 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             pMe->m_SYS_MODE_NO_SRV = TRUE;
             break;
 #endif
+        case EVT_USER:
+            switch(wParam) {
+            case EVT_UI_EXIT:
+                /* AEE is about to exit, set the exit flag to TRUE */
+                pMe->m_bExit = TRUE;
+                return TRUE;
+                
+            case EVT_MC_PWR_DOWN:
+                CoreApp_Poweroff_Phone(pMe);
+                break;
+            default:
+                break;
+            }
+            break;
         default:
             break;
     }

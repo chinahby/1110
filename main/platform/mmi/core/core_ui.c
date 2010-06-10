@@ -576,7 +576,10 @@ SIDE EFFECTS
 void EnableUIKeys (boolean flag)
 {
   send_keys = flag;
-  (void) rex_set_sigs (&ui_tcb, UI_KEY_SIG);
+  if(send_keys)
+  {
+    (void) rex_set_sigs (&ui_tcb, UI_KEY_SIG);
+  }
 }
 
 /* <EJECT> */
@@ -600,20 +603,22 @@ void CoreAppHandleStopSig(void)
 {
     StopKeyRepeat(NULL);
     StopKeyHold(NULL);
-
+    uisnd_snd_stop();
+    uisnd_multi_stop();
+    uisnd_tone_stop();
+    
 #ifdef FEATURE_OTASP
     /* If MC initiates the power-down we will get the signal, before */
     /* we went through our power-down procedure. In that case we do  */
     /* not want to ack right now.                                    */
     if ( ui_pwrdown_complete == TRUE ) {
       {
-#ifndef USES_MMI
         IShell *shell_ptr = AEE_GetShell();
         if (shell_ptr != NULL) {
           ISHELL_SendEvent(shell_ptr, AEECLSID_CORE_APP,
                           EVT_USER,EVT_UI_EXIT,0L);
         }
-#endif
+        
         /* Terminate BREW */
         EnableUIKeys(FALSE);
 #if defined(FEATURE_BREWAPPCOORD)
@@ -634,7 +639,6 @@ void CoreAppHandleStopSig(void)
     }
     else
     {
-#ifndef USES_MMI
       IShell *shell_ptr = AEE_GetShell();
       if (shell_ptr != NULL) {
         ISHELL_SendEvent(shell_ptr, AEECLSID_CORE_APP,
@@ -642,13 +646,10 @@ void CoreAppHandleStopSig(void)
       } else {
         ui_pwrdown_complete = TRUE;
       }
-#else
-      ui_pwrdown_complete = TRUE;
-#endif
+      
       CoreAppHandleStopSig();
     }
 #else /* FEATURE_OTASP */
-#ifndef USES_MMI
     {
       IShell* shell_ptr = AEE_GetShell();
       if (shell_ptr != NULL) {
@@ -656,7 +657,6 @@ void CoreAppHandleStopSig(void)
                            EVT_USER,EVT_UI_EXIT,0L);
       }
     }
-#endif
     /* Terminate BREW */
     EnableUIKeys(FALSE);
 #if defined(FEATURE_BREWAPPCOORD)
