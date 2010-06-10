@@ -259,7 +259,11 @@ when       who     what, where, why
 #ifdef FEATURE_GSDI_UIM_SERVER
 #include "virtuim.h"
 #endif
-
+#ifdef CUST_EDITION
+#ifndef FEATURE_UIM_TOOLKIT
+#include "uimtk.h"
+#endif
+#endif
 #include "mmgsdi.h"
 #include "mmgsdiutil.h"
 #include "mmgsdi_refresh.h"

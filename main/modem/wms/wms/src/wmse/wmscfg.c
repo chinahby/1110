@@ -1477,7 +1477,34 @@ wms_message_number_type wms_cfg_get_ruim_next_message_number
 #error code not present
 #endif /* FEATURE_GWSMS */
 
+#ifdef CUST_EDITION
+#if defined(FEATURE_UIM_TOOLKIT)
+/*===========================================================================
+FUNCTION wms_cfg_do_refresh_done_event
 
+DESCRIPTION
+  Notify RUIM sms Refresh Done
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+void wms_cfg_do_refresh_done_event
+(
+  void
+)
+{
+  cfg_s_ptr->refresh_in_progress = FALSE;
+
+  wms_cfg_event_notify(WMS_CFG_EVENT_REFRESH_DONE, &cfg_event_info);
+}
+#endif
+#endif
 /*===========================================================================
 FUNCTION wms_cfg_do_memory_status
 
