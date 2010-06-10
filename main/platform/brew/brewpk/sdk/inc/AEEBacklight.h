@@ -63,19 +63,24 @@ typedef struct IBacklight         IBacklight;
 
 AEEINTERFACE(IBacklight)
 {
-   INHERIT_IQueryInterface(IBacklight);
-   int (*Enable)(IBacklight *p);
-   int (*Disable)(IBacklight *p);
-   boolean (*IsEnabled)(IBacklight *p);
-   int (*GetBacklightInfo)(IBacklight *p, AEEBacklightInfo * pBacklightInfo);
-   int (*GetBrightnessLevel)(IBacklight *p, uint32* pdwBrightnessLevel);
-   int (*SetBrightnessLevel)(IBacklight *p, uint32 dwBrightnessLevel);
+	INHERIT_IQueryInterface(IBacklight);
+	int (*Enable)(IBacklight *p);
+	int (*Disable)(IBacklight *p);
+	boolean (*IsEnabled)(IBacklight *p);
+	int (*GetBacklightInfo)(IBacklight *p, AEEBacklightInfo * pBacklightInfo);
+	int (*GetBrightnessLevel)(IBacklight *p, uint32* pdwBrightnessLevel);
+	int (*SetBrightnessLevel)(IBacklight *p, uint32 dwBrightnessLevel);
 #ifdef CUST_EDITION	   
-   void (*TurnOn)(IBacklight *p);   
-   void (*TurnOff)(IBacklight *p);
+	void (*TurnOn)(IBacklight *p);   
+	void (*TurnOff)(IBacklight *p);
 #ifdef FEATURE_LED_CONTROL
-   int (*SigLedEnable)(IBacklight *p, sig_led_type SigLed_type);   
-   int (*SigLedDisable)(IBacklight *p); 
+	int (*SigLedEnable)(IBacklight *p, sig_led_type SigLed_type);   
+	int (*SigLedDisable)(IBacklight *p); 
+#endif
+//wangliang add!  2010-06-10
+#ifdef FEATURE_FLASHLIGHT_SUPPORT
+	void (*TurnOnFlashlight)(IBacklight *p);   
+   	void (*TurnOffFlashlight)(IBacklight *p);
 #endif
 #endif /*CUST_EDITION*/
 
@@ -96,6 +101,11 @@ AEEINTERFACE(IBacklight)
 #ifdef FEATURE_LED_CONTROL
 #define IBACKLIGHT_SigLedEnable(p,profile)         AEEGETPVTBL((p),IBacklight)->SigLedEnable((p),(profile))
 #define IBACKLIGHT_SigLedDisable(p)                AEEGETPVTBL((p),IBacklight)->SigLedDisable((p))
+#endif
+//wangliang add!  2010-06-10
+#ifdef FEATURE_FLASHLIGHT_SUPPORT
+#define IBACKLIGHT_TurnOnFlashlight(p)         		AEEGETPVTBL((p),IBacklight)->TurnOnFlashlight((p))
+#define IBACKLIGHT_TurnOffFlashlight(p)				AEEGETPVTBL((p),IBacklight)->TurnOffFlashlight((p))
 #endif
 #endif /*CUST_EDITION*/
 

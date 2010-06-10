@@ -761,6 +761,12 @@ void disp_capture32
   dword count
 );
 
+
+#ifdef FEATURE_FLASHLIGHT_SUPPORT
+void disp_set_flashlight(void);
+void disp_clear_flashlight(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

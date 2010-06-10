@@ -197,7 +197,11 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #ifdef FEATURE_DRV_SDCC
 #define GPIO_24_SIGNAL SDCC_CLK
 /* GPIO 25 */
+#ifdef FEATURE_PROJECT_W021C
+#define GPIO_25_SIGNAL GPIO_OUTPUT_25
+#else
 #define GPIO_25_SIGNAL SDCC_DAT_0
+#endif
 /* GPIO 26 */
 #define GPIO_26_SIGNAL SDCC_DATOUT_1
 /* GPIO 27 */
@@ -209,7 +213,11 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #else
 #define GPIO_24_SIGNAL GPIO_INPUT_24
 /* GPIO 25 */
+#ifdef FEATURE_PROJECT_W021C
+#define GPIO_25_SIGNAL GPIO_OUTPUT_25
+#else
 #define GPIO_25_SIGNAL GPIO_INPUT_25
+#endif
 /* GPIO 26 */
 #define GPIO_26_SIGNAL GPIO_INPUT_26
 /* GPIO 27 */
@@ -316,12 +324,15 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #endif
 
 /* GPIO 47 */
+#ifdef FEATURE_PROJECT_W023C
+#define GPIO_47_SIGNAL GPIO_OUTPUT_47
+#else
 #if defined(TLMM_USES_CAMIF)
   #define GPIO_47_SIGNAL CAMIF_DATA_5
 #else
   #define GPIO_47_SIGNAL GPIO_INPUT_47
 #endif
-
+#endif
 /* GPIO 48 */
 #if defined(TLMM_USES_CAMIF)
   #define GPIO_48_SIGNAL CAMIF_DATA_6
