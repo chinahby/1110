@@ -209,6 +209,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_PROJECT_W023C
 #define FEATURE_ALL_KEY_PAD
 #define FEATURE_FLASHLIGHT_SUPPORT		// ÷µÁÕ≤
+#define FEATURE_COMBINED_PWR_END_KEYS
 //#define FEATURE_WMS_APP
 #endif
 
