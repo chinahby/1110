@@ -278,6 +278,13 @@ variables and other items needed by this module.
 ===========================================================================*/
 LOCAL rex_timer_type  ui_rpt_timer; /* Timer for kicking the watchdog. */
 
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_TOOLKIT
+static  q_type          ui_cmd_q;       // 命令队列：管理待处理命令
+static IShell       *gpShell = NULL;  
+#endif
+#endif
+
 #if !defined(FEATURE_UI_DUALPROC_APPS) || defined(FEATURE_UI_CORE_REMOVED) || defined (FEATURE_UIM_RUN_TIME_ENABLE)
 LOCAL cm_client_id_type cm_client_id = (cm_client_id_type) -1;
 #endif
@@ -295,6 +302,8 @@ static cm_call_id_type ui_origCall_id;
 static cm_call_id_type ui_incomCall_id;
 static cm_call_type_e_type ui_incomCall_type;
 cm_mm_call_info_s_type ui_calls[CM_CALL_ID_MAX];
+
+
 #endif /* defined(FEATURE_UI_CORE_REMOVED) && !defined(FEATURE_UI_DUALPROC_MDM) */
 
 #ifdef FEATURE_NEW_SLEEP_API
@@ -696,6 +705,185 @@ void ui_answer_call ()
   }
 }
 #endif
+
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_TOOLKIT
+/*==============================================================================
+函数: 
+    ui_get_cmd
+       
+说明: 
+    函数用来动态分配一块 ui 命令 buffer 返回。
+       
+参数: 
+    none
+    
+返回值:
+    ui_cmd_type 指针。
+       
+备注:
+    REX 、NV 、 DIAG 及 HS 任务必须已运行，TMC heap is initialized.
+    
+==============================================================================*/
+ui_cmd_type* ui_get_cmd(void)
+{
+    ui_cmd_type* cmd_ptr = NULL;
+    
+    cmd_ptr = (ui_cmd_type *)mem_malloc(&(tmc_heap), sizeof(ui_cmd_type));
+    if (cmd_ptr == NULL)
+    {
+        ERR("Could not allocate memory for Call object!", 0, 0, 0);
+    }
+    else
+    {
+        // Initialize to a default value 
+        cmd_ptr->hdr.cmd = UI_NUM_UI_COMMANDS;  
+    }
+    
+    return cmd_ptr;
+} 
+
+/*==============================================================================
+函数: 
+    ui_cmd
+       
+说明: 
+    Allows other tasks to queue up messages to the UI.  Grab a buffer from the
+    ui_cmd_free_q, fill it in, and call ui_cmd with it.  All this will
+    do is queue it and set a signal for the UI task.  When the command
+    is done, the buffer will be queued as directed in the command header,
+    and a task you specify may be signaled.
+       
+参数: 
+    cmd_ptr [in]: ui 命令块指针
+    
+返回值:
+    none
+       
+备注:
+    REX 、NV 、 DIAG 及 HS 任务必须已运行，ui_cmd_q already initialized.
+    
+==============================================================================*/
+void ui_cmd(ui_cmd_type *cmd_ptr)
+{
+    MSG_HIGH( "UI cmd %d", cmd_ptr->hdr.cmd, 0, 0 );
+    
+    // init link
+    (void) q_link(cmd_ptr, &cmd_ptr->hdr.link);
+    
+    // and queue it
+    q_put(&ui_cmd_q, &cmd_ptr->hdr.link);
+    
+    // signal the UI task
+    (void) rex_set_sigs(&ui_tcb, UI_CMD_Q_SIG);
+}
+
+
+
+/*==============================================================================
+函数: 
+    oemui_handlecmd
+       
+说明: 
+    函数处理发给 oemui task 的命令。
+       
+参数: 
+    none
+    
+返回值:
+    none
+       
+备注:
+    
+==============================================================================*/
+static void oemui_handlecmd(ui_cmd_type *cmd_ptr)
+{
+    ERR("oemui_handlecmd:0X%x,",cmd_ptr->hdr.cmd,0,0);
+
+    switch(cmd_ptr->hdr.cmd)
+    {
+#ifdef FEATURE_UIM_TOOLKIT
+        case UI_PROACTIVE_UIM_F:
+#ifdef FEATURE_UIM_TOOLKIT_UTK
+#ifdef FEATURE_UTK2
+            if (gpShell != NULL)
+            {
+                byte cmd_type;
+                static boolean first_set_menu = TRUE;
+                cmd_type = UTK_parse_proactive_command(cmd_ptr->proactive_cmd.cmd_data, cmd_ptr->proactive_cmd.num_bytes);
+                              
+//                DBGPRINTF("UTK cmd_type = 0x%02x %d",cmd_type,first_set_menu,0);
+                if(first_set_menu == TRUE && cmd_type == UIM_TK_SETUP_MENU)
+                {
+                    first_set_menu = FALSE;
+                    return;
+                }  
+                (void)ISHELL_PostEvent(gpShell,
+                                       AEECLSID_APP_UTK,
+                                       (int)EVT_RUIM_PROACTIVE,
+                                       cmd_type,
+                                       0);
+            }
+#endif //FEATURE_UTK2
+#endif
+            break;
+#endif
+
+        default:
+            ERR( "ui command 0X%x is ignored!", cmd_ptr->hdr.cmd, 0, 0 );
+            break;
+    } 
+}
+
+/*==============================================================================
+函数: 
+    process_command_sig
+       
+说明: 
+    函数处理 oemui task 收到的命令信号。
+       
+参数: 
+    none
+    
+返回值:
+    none
+       
+备注:
+    
+==============================================================================*/
+static void process_command_sig(void)
+{
+    ui_cmd_type     *cmd_ptr;
+    rex_tcb_type    *ctask_ptr;
+    rex_sigs_type   csigs;
+    
+    // 处理命令队列中的命令直到队列为空
+    while ((cmd_ptr = (ui_cmd_type *) q_get(&ui_cmd_q)) != NULL)
+    {
+        // 实际处理命令
+        oemui_handlecmd(cmd_ptr);
+        
+        ctask_ptr = cmd_ptr->hdr.task_ptr;
+        csigs = cmd_ptr->hdr.sigs;
+        
+#ifdef FEATURE_REX_DYNA_MEM_UI
+        mem_free(&tmc_heap, cmd_ptr);
+#else
+        if (cmd_ptr->hdr.done_q_ptr)
+        {
+            q_put( cmd_ptr->hdr.done_q_ptr, &cmd_ptr->hdr.link );
+        }
+#endif        
+        
+        if (ctask_ptr)
+        {
+            (void) rex_set_sigs(ctask_ptr, csigs);
+        }
+    }
+}
+#endif
+#endif
+
   /*===========================================================================
 FUNCTION HandleSignals
 
@@ -756,6 +944,15 @@ void HandleSignals (
     //The autoanswer timer expired, so answer the call.
     ui_answer_call();
   }
+#endif
+
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_TOOLKIT
+    if ( sigs & UI_CMD_Q_SIG )
+    {
+        process_command_sig();
+    }
+#endif
 #endif
 }
 
@@ -1647,6 +1844,13 @@ void ui_init( void )
 #if !defined(FEATURE_UI_CORE_REMOVED)
 
   CoreTask_init();
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_TOOLKIT
+  (void) q_init(&ui_cmd_q);
+  gpShell = AEE_Init(AEE_APP_SIG);
+#endif
+#endif
+
 #else
 #if !defined(FEATURE_UI_DUALPROC_MDM)
   /* Initialize timers */
@@ -1805,6 +2009,12 @@ void ui_task (
   waitMask |= UI_AUTOANSWER_SIG ;
 #endif //FEATURE_UI_DUALPROC_MDM
 #endif /* FEATURE_UI_CORE_REMOVED. */
+
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_TOOLKIT
+   waitMask |= UI_CMD_Q_SIG;
+#endif
+#endif
 
   for( ;; ) {                 /* Wait on REX signals, repeat forever */
      rex_sigs_type sigs;      /* hold signals */

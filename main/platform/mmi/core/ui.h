@@ -52,10 +52,69 @@ when       who     what, where, why
                       PUBLIC DATA DECLARATIONS
 
 ===========================================================================*/
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_TOOLKIT
+#include "uim.h"
+#include "uimtk.h"
+#include "OEMClassIDs.h"
+// oemui task 支持的命令名
+typedef enum 
+{
+    UI_PROACTIVE_UIM_F,
+    
+    UI_NUM_UI_COMMANDS,              /* End of command list (note no comma!)    */
+    UI_ITEMS_ENUM_PAD = 0x7FFF
+} ui_name_type;
 
+// 命令 buffer 中， oemui task 返回的状态
+typedef enum
+{
+    UI_DONE_S,                      /* General OK return */
+    UI_BUSY_S,                      /* Command is being processed */
+    UI_BADCMD_S,                    /* Invalid command */
+    UI_BADPARM_S                    /* Bad Parameters */
+} ui_status_type;
+
+typedef struct 
+{
+    q_link_type        link;         /* Queue link */                          
+    ui_name_type       cmd;          /* Command to execute */                  
+    rex_tcb_type       *task_ptr;    /* Pointer to requesting task TCB */
+    rex_sigs_type      sigs;         /* Signal to set upon cmd completion */
+    ui_status_type     status;       /* Completion code status */
+    q_type             *done_q_ptr;  /* Queue to place this cmd on when done */
+} ui_hdr_type;
+
+#ifdef FEATURE_UIM_TOOLKIT
+// UIM 原语命令类型
+typedef struct
+{
+    ui_hdr_type                hdr;                       /* header */
+    byte                       num_bytes;                 /* length */
+    byte                       cmd_data[UIM_MAX_CHARS];   /* data */
+} ui_proactive_uim_cmd_type;
+#endif 
+
+// ui 命令类型
+// 全部命令的联合体。命令头总是存在，它指定命令类型和属性。若命令带参数，则
+// 参数紧随联合体命令头后
+typedef union ui_cmd_u 
+{
+    ui_hdr_type                   hdr;
+
+#ifdef FEATURE_UIM_TOOLKIT
+    ui_proactive_uim_cmd_type     proactive_cmd;
+#endif
+} ui_cmd_type;
+
+
+extern ui_cmd_type* ui_get_cmd(void);
+#endif
+#endif
 
 /* Signals for the UI task */
 /* avoid common signals listed in task.h */
+#define UI_CMD_Q_SIG       0x0001UL  /* Something on the command queue */
 #define UI_KEY_SIG         0x0002  /* Key from HS task */
 #define UI_RPT_TIMER_SIG   0x0004  /* Time to kick watchdog */
 #define UI_NV_SIG          0x0008  /* Return from NV */
