@@ -7267,7 +7267,7 @@ LOCAL void uim_init( void )
   byte i; /* Index into free buffer pool */
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+  gpio_out(GPIO_34_SIGNAL, 0);
   /* -----------------
   ** Initialize timers
   ** ----------------- */

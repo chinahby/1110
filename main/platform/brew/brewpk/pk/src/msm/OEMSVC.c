@@ -1770,7 +1770,7 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
       case CFGI_MOBILEINFO:
         if (nSize != sizeof(AEEMobileInfo))
            return(EBADPARM);
-           GetMobileInfoEx((AEEMobileInfo *) pBuff);
+           GetMobileInfo((AEEMobileInfo *) pBuff);
 
          return SUCCESS;
 
@@ -3294,83 +3294,6 @@ static void SetImsiFromSim (
   // NULL terminate the string
   *txt = (char)0;
 }  /* GetMobileInfo */
-#ifdef CUST_EDITION	 
-// 在测PEK时，因目前取 CFGI_SUBSCRIBERID 时我们以MIN表示(BREW 设置亦如�?)，若用GetMobileInfo返回�?
-// szMobileID,长度�?15，此时DPK中MIN设为15位的号码，GetConfigComplex.18 测不过；若设�?10位的号码�?
-// GetConfigComplex.25 测不过�?��?�过分析，oat 测试软件认为对以 MIN 表示 SUBSCRIBERID ，则�? 10 位号
-// 码的 MIN 且与�? CFGI_MOBILEINFO 取得�? szMobileID �?致�?�目前，仅部�? UI 用到 15 位的 szMobileID
-// 。为满足双方�?要，添加�?个取 10 位的函数用于系统级，原来的函数仅供需�?15位的UI应用使用�?
-void GetMobileInfoEx(AEEMobileInfo * pmi)
-{
-    nv_item_type nvi;  // buffer to read NV
-    uint8 curr_nam;    // current NAM
-    char* txt;         // destination text
-    word temp;         // working buffer
-    dword value;       // to store value read from nv
-  
-    if (pmi != NULL)
-    {
-        MEMSET(pmi, 0, sizeof(AEEMobileInfo));
-    }
-#ifndef WIN32
-    (void)OEMNV_Get(NV_ESN_I, &nvi);
-    pmi->dwESN = nvi.esn.esn;
-    
-    (void)OEMNV_Get(NV_CURR_NAM_I, &nvi);
-    pmi->nCurrNAM = nvi.curr_nam;
-    curr_nam = nvi.curr_nam;
-    
-    // szMobileID's composed of the following
-    // - min2: area code (3 digits)
-    // - min1: phone number (7 digits)
-    
-    // set up destination text buffer
-    txt = pmi->szMobileID;
-
-#if defined(T_MSM6250)
-    // get IMSI from NV or SIM card?
-    (void)OEMNV_Get(NV_RTRE_CONFIG_I, &nvi);
-    if (nvi.rtre_config != NV_RTRE_CONFIG_NV_ONLY) 
-    {
-        SetImsiFromSim(txt);
-        return;
-    }
-#endif /* defined(T_MSM6250) */
-
-    nvi.imsi_mcc.nam = curr_nam;
-    nvi.imsi_11_12.nam = curr_nam;
-    
-    // read MIN2
-    (void)OEMNV_Get(NV_MIN2_I, &nvi);
-    value = nvi.min2.min2[1];
-    *txt++ = mintable[ (value/100) %10];
-    value %= 100;
-    *txt++ = mintable[ value/10 ];
-    *txt++ = mintable[ value%10 ];
-    
-    // read MIN1
-    (void)OEMNV_Get(NV_MIN1_I, &nvi);
-    value = nvi.min1.min1[1];
-    temp = (word) (value>>14 );
-    *txt++ = mintable[ (temp/100) %10];
-    temp %= 100;
-    *txt++ = mintable[ temp/10 ];
-    *txt++ = mintable[ temp%10 ];
-    value &= 0x3FFFL;                /* get bottom 14 bits */
-    /* next digit is top 4 bits */
-    temp = (word) (( value >> 10 ) & 0xF );
-    *txt++ = (char) ( ( ( temp == 10 ) ? 0 : temp ) + '0' );
-    temp = (word) ( value & 0x3FF ); /* get bottom 10 bits */
-    *txt++ = mintable[ (temp/100) %10];
-    temp %= 100;
-    *txt++ = mintable[ temp/10 ];
-    *txt++ = mintable[ temp%10 ];
-    
-    // NULL terminate the string
-    *txt = (char)0;
-#endif // #ifndef AEE_SIMULATOR
-}  /* GetMobileInfoEx */
-#endif /*CUST_EDITION*/
 
 static int GetSoftwareVersion(byte *pVer, int *pnVerLen)
 {

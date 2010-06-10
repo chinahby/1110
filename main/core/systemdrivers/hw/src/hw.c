@@ -344,6 +344,13 @@ void hw_power_off( void )
   pm_smpld_switch(PM_OFF_CMD);
 
   #endif
+  
+  // Gemsea Add For PowerDown
+  // 此处必须关掉PM的DOG，否则将导致关机变重启
+  // 原来的处理在POWERKEY的检测部分，局限性太大，因此转移到此处
+  #if defined(FEATURE_PMIC_WDOG)
+  pm_watchdog_reset_detect_switch(PM_OFF_CMD);
+  #endif
   #endif
 
   #ifndef FEATURE_GSM_PLT    

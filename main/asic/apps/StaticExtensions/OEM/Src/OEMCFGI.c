@@ -4149,9 +4149,8 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       {
          int nLen;
          AEEMobileInfo info;
-         extern void GetMobileInfoEx(AEEMobileInfo * pmi);
          
-         GetMobileInfoEx(&info);
+         GetMobileInfo(&info);
          nLen = STRLEN(info.szMobileID);
              
          if (!pBuff || nSize <= nLen)
@@ -4167,14 +4166,13 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       {
          int nLen;
          AEEMobileInfo info;
-         extern void GetMobileInfoEx(AEEMobileInfo * pmi);
          
          if (!pBuff || nSize != sizeof(int32))
          {
             return EBADPARM;
          }
          
-         GetMobileInfoEx(&info);
+         GetMobileInfo(&info);
          nLen = STRLEN(info.szMobileID);
          *((int32 *)pBuff) = nLen+1;
 
@@ -4206,12 +4204,11 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_MOBILEINFO:
    {
-      extern void GetMobileInfoEx(AEEMobileInfo * pmi);
       if (nSize != sizeof(AEEMobileInfo))
       {
          return(EBADPARM);
       }
-      GetMobileInfoEx((AEEMobileInfo *) pBuff);
+      GetMobileInfo((AEEMobileInfo *) pBuff);
    }
       return SUCCESS;
     

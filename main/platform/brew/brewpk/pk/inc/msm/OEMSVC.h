@@ -166,12 +166,7 @@ int OEM_SetPppAccounts(PppAccounts *pAccount, DataSvcType dsType);
 int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType);
 
 void GetMobileInfo(AEEMobileInfo * pmi);
-// 在测PEK时，因目前取 CFGI_SUBSCRIBERID 时我们以MIN表示(BREW 设置亦如此)，若用GetMobileInfo返回的
-// szMobileID,长度为15，此时DPK中MIN设为15位的号码，GetConfigComplex.18 测不过；若设为10位的号码，
-// GetConfigComplex.25 测不过。通过分析，oat 测试软件认为对以 MIN 表示 SUBSCRIBERID ，则是 10 位号
-// 码的 MIN 且与用 CFGI_MOBILEINFO 取得的 szMobileID 一致。目前，仅部分 UI 用到 15 位的 szMobileID
-// 。为满足双方需要，添加一个取 10 位的函数用于系统级，原来的函数仅供需要15位的UI应用使用。
-void GetMobileInfoEx(AEEMobileInfo * pmi);
+
 // 正在活动的设备类型
 typedef enum
 {

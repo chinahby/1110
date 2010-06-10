@@ -2912,11 +2912,6 @@ SIDE EFFECTS
 ===========================================================================*/
 LOCAL   void                       tmc_powerdown_handler( void )
 {
-   // Gemsea Add For PowerDown
-   #if defined(FEATURE_PMIC_WDOG)
-   pm_watchdog_reset_detect_switch(PM_OFF_CMD);
-   #endif
-   
    #ifdef FEATURE_UIM_RUIM
      /* Indicate to power down the RUIM
      */

@@ -958,13 +958,7 @@ else
     VoteForSleep(FALSE);
     ret_val = AEE_Dispatch();
     if (ret_val == 0) {
-// need this change for Mango too.	    
-#ifdef T_QSC1100
-	   if(TRUE != gbIsBacklightOn)
-#endif
-	   {
-          VoteForSleep(TRUE); /* okay to sleep */
-       }
+      VoteForSleep(TRUE); /* okay to sleep */
     }
     else {
       VoteForSleep(FALSE); /* not okay to sleep */
@@ -977,13 +971,7 @@ else
     VoteForSleep(FALSE);
     ret_val =  AEE_Dispatch();
     if (ret_val == 0) {
-//Need this change for Mango too.	    
-#if (defined(T_QSC1100) )
-       if(TRUE != gbIsBacklightOn)
-#endif
-	   {
-          VoteForSleep(TRUE); /* okay to sleep */
-       }
+      VoteForSleep(TRUE); /* okay to sleep */
     }
     else {
       VoteForSleep(FALSE); /* not okay to sleep */

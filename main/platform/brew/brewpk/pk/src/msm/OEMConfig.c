@@ -684,14 +684,7 @@ static int OEM_GetHWIDList(byte * pList, int * pwLength, boolean bPrimary)
    {
       uint32 esn_me;
       
-      {
-         AEEMobileInfo info;
-         
-         GetMobileInfoEx(&info);
-         esn_me = info.dwESN;
-      }
-      if (esn_me != 0) {
-      //if (SUCCESS == OEM_ReadESN(&esn_me) && esn_me != 0) {
+      if (SUCCESS == OEM_ReadESN(&esn_me) && esn_me != 0) {
          len = sizeof(AEEHWIDType) + ((sizeof(esn_me)-1) & 0xFFFC);
          listLength += len;
          // big enough?

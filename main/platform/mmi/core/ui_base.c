@@ -2063,6 +2063,80 @@ void ui_task (
 #include "AEE.h"
 #include "AEE_OEM.h"
 #include "AEECM.h"
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+/*===========================================================================
+FUNCTION GetRTREConfig
+
+DESCRIPTION
+  Get RTRE Config.
+
+DEPENDENCIES
+  SK UI
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+uint64 GetRTREConfig(void)
+{
+  nv_item_type nvi;
+  nv_stat_enum_type result;
+
+  result = ui_get_nv (NV_RTRE_CONFIG_I, &nvi);
+
+  if(result != NV_DONE_S) {  /* write to NV */
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+    nvi.rtre_config = NV_RTRE_CONFIG_NV_ONLY;
+#else
+    nvi.rtre_config = NV_RTRE_CONFIG_RUIM_ONLY;
+#endif
+    (void) ui_put_nv (NV_RTRE_CONFIG_I, &nvi);
+  }
+  return (uint64)(nvi.rtre_config);
+}
+
+/*===========================================================================
+FUNCTION SetRTREConfig
+
+DESCRIPTION
+  Set RTRE Config.
+
+DEPENDENCIES
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+boolean SetRTREConfig(ICM *pCM, uint64 nNewSetting)
+{
+  int retVal;
+
+  if (pCM == NULL) {
+    return FALSE;
+  }
+
+  switch (nNewSetting)
+  {
+#ifdef FEATURE_UIM_RUIM_W_GSM_ACCESS
+    case NV_RTRE_CONFIG_SIM_ACCESS:
+      retVal = ICM_SetRTREConfig(pCM, AEECM_RTRE_CONFIG_SIM_ACCESS);
+      break;
+#endif
+    case NV_RTRE_CONFIG_RUIM_ONLY:
+      retVal = ICM_SetRTREConfig(pCM, AEECM_RTRE_CONFIG_RUIM_ONLY);
+      break;
+    case NV_RTRE_CONFIG_NV_ONLY:
+      retVal = ICM_SetRTREConfig(pCM, AEECM_RTRE_CONFIG_NV_ONLY);
+      break;
+    case NV_RTRE_CONFIG_RUIM_OR_DROP_BACK:
+    default:
+      retVal = ICM_SetRTREConfig(pCM, AEECM_RTRE_CONFIG_RUIM_OR_DROP_BACK);
+      break;
+  }
+  return (retVal == AEE_SUCCESS) ? TRUE : FALSE;
+}
+#endif /* F_UIM_RUN_TIME_ENABLE */
+
 void InitProvisioning(void)
 {
     AEECMPhInfo phInfo;
@@ -2078,6 +2152,14 @@ void InitProvisioning(void)
     }
 
     ICM_GetPhoneInfo(pCM, &phInfo, sizeof(phInfo));
+    
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+    {
+        uint64 val;
+        val = GetRTREConfig();
+        SetRTREConfig(pCM, val);
+    }
+#endif
     
     if (phInfo.oprt_mode != AEECM_OPRT_MODE_FTM)
     {
