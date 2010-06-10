@@ -181,7 +181,7 @@ when       who     what, where, why
 /*---------------------------------------------------------------------------
                               TOOLKIT
 ---------------------------------------------------------------------------*/
-#ifdef FEATURE_UIM_QSC1100_LOW_MEMORY
+#ifndef FEATURE_UIM_QSC1100_LOW_MEMORY
   /* Adds support for the basic toolkit features */
   #define FEATURE_UIM_TOOLKIT
 
