@@ -476,6 +476,8 @@ extern void keypad_set_backlight( byte level );
 static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam);
 static void CoreTask_CreateAEEInstance(void);
 static void CoreTask_FreeAEEInstance(void);
+void VoteForSleep (boolean flag);
+
 /*===========================================================================
 FUNCTION CoreTask_SetPwrDnComplete
 
@@ -491,6 +493,10 @@ SIDE EFFECTS
 void CoreTask_SetPwrDnComplete(boolean new_value)
 /*lint -esym(715,new_value)*/
 {
+  if(new_value) // 避免关机过程中发生进入睡眠的状况
+  {
+    VoteForSleep(FALSE);
+  }
 #ifdef FEATURE_OTASP
   ui_pwrdown_complete = new_value;
 #endif
@@ -546,7 +552,11 @@ void VoteForSleep (boolean flag)
     /* nothing to do */
     return;
   }
-
+  
+  if(ui_pwrdown_complete && !is_sleeping) {
+    return;
+  }
+  
   is_sleeping = flag; /* update state */
 
   if (flag == FALSE) {
