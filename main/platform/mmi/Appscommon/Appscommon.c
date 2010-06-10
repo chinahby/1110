@@ -3655,7 +3655,6 @@ boolean Appscommon_FormatTimeString(uint32 nSeconds, AECHAR* wstrTime, int nTime
     }
 }
 
-
 /*==============================================================================
 º¯Êý: 
     app_media_scheduler
@@ -3676,7 +3675,7 @@ boolean Appscommon_FormatTimeString(uint32 nSeconds, AECHAR* wstrTime, int nTime
 int app_media_scheduler(void)
 {
     boolean b_FMBackground = FALSE;
-    
+  
     OEM_GetConfig(CFGI_FM_BACKGROUND,&b_FMBackground, sizeof(b_FMBackground));
     if((TRUE == b_FMBackground) && (AEECLSID_APP_FMRADIO != ISHELL_ActiveApplet(AEE_GetShell())))
     {
@@ -3689,6 +3688,7 @@ int app_media_scheduler(void)
     }
 #endif    
     return APP_MEDIA_ALLOW;
-}
 
+
+}
 

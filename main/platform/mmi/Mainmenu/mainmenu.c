@@ -1072,7 +1072,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
             break;
         case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_QUICKTEST);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
             break;
 
     }

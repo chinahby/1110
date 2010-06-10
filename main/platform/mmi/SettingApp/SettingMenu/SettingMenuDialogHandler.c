@@ -4865,6 +4865,8 @@ static boolean Setting_Process_Auto_Power(Auto_Power_Cfg *other_set, Auto_Power_
 备注：:
 
 ==============================================================================*/
+    #include "err.h"
+
 static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe)
 {
     Auto_Power_Cfg   another_set;
@@ -4883,6 +4885,7 @@ static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe)
     else
 #endif
     {
+    ERR("pMe->m_pStatus= %d pMe->m_ClockCfg.dwWATime=%d",IMENUCTL_GetSel(pMe->m_pState),ITIMECTL_GetTime(pMe->m_pTime),0);
         //保存STATE的值
         if(IMENUCTL_GetSel(pMe->m_pState) == IDS_ENABLE)
         {
@@ -4894,7 +4897,8 @@ static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe)
         }
         pMe->m_ClockCfg.dwWATime = ITIMECTL_GetTime(pMe->m_pTime);
     }
-    
+
+    ERR("pMe->m_pStatus= %d",IMENUCTL_GetSel(pMe->m_pStatus),0,0);
     if(IMENUCTL_GetSel(pMe->m_pStatus) == IDS_AUTO_POWER_ON_TIME)
     {
         ICONFIG_GetItem(pMe->m_pConfig, CFGI_AUTO_POWER_OFF, (void*)&another_set, sizeof(Auto_Power_Cfg));
