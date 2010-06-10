@@ -2798,8 +2798,15 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     }
                 }
             }
-#endif		  
-            return TRUE;
+#endif		
+#ifdef CUST_EDITION    
+            {
+				extern void CoreApp_InitBattStatus(CCoreApp * pMe);
+
+            	ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
+            }
+#endif			
+        return TRUE;
         }
             
         case EVT_UPDATEIDLE:

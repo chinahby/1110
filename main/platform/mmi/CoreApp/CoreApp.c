@@ -150,6 +150,9 @@ static void CoreNotifyMP3PlayerAlertEvent(CCoreApp *pMe, boolean toStartAlert);
 static void CoreNotifyMP3PlayerAlertEventCB(CCoreApp *pMe);
 
 static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe);
+#ifdef CUST_EDITION
+ void CoreApp_InitBattStatus(CCoreApp * pMe);
+#endif
 //static void CoreAppLoadTimepImage(CCoreApp *pMe);   //add by ydc
 /*==============================================================================
 
@@ -450,6 +453,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
             // 开始 Core Applet 状态机, 当前状态已初始为 COREST_INIT
             CoreApp_RunFSM(pMe);
+           // CoreApp_InitBattStatus(pMe);
+
             return TRUE;
 
         case EVT_APP_STOP:
@@ -1197,6 +1202,22 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
     return TRUE;
 }
 
+#ifdef CUST_EDITION
+ void CoreApp_InitBattStatus(CCoreApp * pMe)
+{
+    AEENotify pNotify;
+
+    MEMSET(&pNotify,0x00,sizeof(AEENotify));
+	if(pMe->m_pBatt != NULL)
+	{        
+		pNotify.dwMask = NMASK_BATTERY_CHARGERSTATUS_CHANGE;
+		CoreApp_HandleBattNotify(pMe,&pNotify);
+		pNotify.dwMask = NMASK_BATTERY_STATUS_CHANGE;
+		CoreApp_HandleBattNotify(pMe,&pNotify);	
+	}		
+}
+#endif
+
 
 
 /*==============================================================================
@@ -1288,6 +1309,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             break;
             
         case NMASK_BATTERY_STATUS_CHANGE:
+            pMe->m_bExtPwrState = IBATTERY_GetExternalPower(pMe->m_pBatt);
             if (FALSE == pMe->m_bExtPwrState)
             {
                 nBattStatus = IBATTERY_GetStatus(pMe->m_pBatt);
@@ -2186,16 +2208,17 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe)
     {
         ATBattLevel = (uBattLevel * 100) / uBattScale;
     }
+    ERR("miaoxiaoming: ATBattLevel =%d",ATBattLevel ,0,0);
     /* convert to 0-4 levels */
-    if ( ATBattLevel <= 10 )
+    if ( ATBattLevel <= 40 )
     {
         uLevel = 0;
     }
-    else if ( ATBattLevel <= 40 )
+    else if ( ATBattLevel <= 50 )
     {
         uLevel = 1;
     }
-    else if ( ATBattLevel <= 60 )
+    else if ( ATBattLevel <= 65 )
     {
         uLevel = 2;
     }

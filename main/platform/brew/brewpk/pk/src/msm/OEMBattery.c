@@ -44,8 +44,8 @@
 
 
 #ifdef FEATURE_BREW_BATTERY
-#define BATTERY_LEVEL_WARN                            ((VBATT_SCALE*10)/100)
-#define BATTERY_LEVEL_POWERDOWN                       ((VBATT_SCALE*5)/100)
+#define BATTERY_LEVEL_WARN                            ((VBATT_SCALE*35)/100)   //modify by mxm
+#define BATTERY_LEVEL_POWERDOWN                       ((VBATT_SCALE*15)/100)
 #endif // FEATURE_BREW_BATTERY
 
 #ifdef CUST_EDITION
@@ -353,7 +353,6 @@ static void OEMBattery_TelephoneModelListener(void *unused, ModelEvent *pEvent)
       OEMBattery_SetPeriodicBatteryCheckTimer();
    }
 }
-
 
 /*===========================================================================
 Makes battery check and calls status update callbacks
