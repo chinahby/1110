@@ -3015,6 +3015,7 @@ void uim_tk_process_proactive_command
 
             } /* end switch - process TLVs according to the tag */
           } /* end case - UIM_TK_MESSAGE_IS_VALID */
+          break;
 
         default:
           {
