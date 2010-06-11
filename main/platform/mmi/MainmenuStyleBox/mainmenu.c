@@ -137,23 +137,11 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId);
 // MAINST_MAIN 状态处理函数
 static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe);
 
-//MAINST_MSGBOX 状态处理函数
-#ifdef FEATRUE_SUPPORT_G_SENSOR
-static NextFSMAction MAINST_MSGBOX_Handler(MainMenu *pMe);
-#endif
 
 static boolean  MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 
-#ifdef FEATRUE_SUPPORT_G_SENSOR
-static boolean  MainMenu_MsgBoxHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
-static void Mainmenu_DialogTimeout(void *pme);
-
-boolean MainMenu_Set_Shake_Disable(MainMenu *pMe);
-boolean MainMenu_Get_Shake_OnOrOff(MainMenu *pMe);
-void MainMenu_CloseSportBgRun(MainMenu *pMe);
-
-
-#endif
+//MAINST_EXIT  状态处理函数
+static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe);
 
 void MainMenu_DraImage(MainMenu *pMe,int16 index,int16 imgid);
 
@@ -381,7 +369,6 @@ static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
     int retVal = SUCCESS;
     if( 0 == gMainMenu.referenceCounter)
     {
-        ERR("hELLO......",0,0,0);
         if( pIModule == NULL || ps == NULL)
         {
             return EFAILED;
@@ -396,7 +383,6 @@ static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
         retVal = CMainMenu_InitAppData(&gMainMenu);
         if(retVal != SUCCESS)
         {
-            ERR("SUCESSS...............FAUKE",0,0,0);
             CMainMenu_FreeAppData((MainMenu*)&gMainMenu);
             return retVal;
         }
@@ -446,12 +432,10 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_bMoveing = FALSE;
     pMe->m_pDevImage = NULL; 
 #endif
-    pMe->m_MainSel  = 0;
-    pMe->m_MenuSel  = 0;
+
 #ifdef FEATURE_FOCUS_ANIMATION
     pMe->m_nIconAniFrameIdx      = 0;
 #endif
-    pMe->m_bNormalStart = TRUE;
 
 
     // 接口创建及相关初始化
@@ -487,7 +471,6 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	{
 		if(pMe->m_pImageTurn[i] == NULL)
         {
-            ERR(":::::::::::::::%d:::::::::::::",i,0,0);
 			iamgeflag = TRUE;
 			break;
 		}
@@ -731,7 +714,6 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
     {
         case EVT_APP_START:
             // 此事件dwParam为指针，不应为0
-            ERR("AEECLSID_MAIN_MENU:::::::11111",0,0,0);
             if (dwParam == 0) 
             {
                 return FALSE;
@@ -743,7 +725,6 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             pMe->m_currState = MAINST_MAIN;
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = MAINMENU_RUNNING;
-            pMe->m_bNormalStart = TRUE;
             MainMenu_RunFSM(pMe);
             return TRUE;
 
@@ -751,16 +732,11 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             {
                 int theFocus = 4;
                 setCursor( pMe, theFocus / 3, theFocus % 3);
-                pMe->m_MainSel  = 0;
-                pMe->m_MenuSel  = 0;                  
-                (void)ISHELL_CancelTimer( pMe->m_pShell, NULL, pMe);
                 pMe->m_eAppStatus = MAINMENU_STOP;
-                
                 return TRUE;
             }
 
         case EVT_APP_SUSPEND:
-            (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
             pMe->m_eAppStatus = MAINMENU_SUSPEND;
             
             return TRUE;
@@ -791,14 +767,13 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
-            /*
             (void) MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveIDlg = NULL;
             pMe->m_pActivedlgID = 0;
             if(pMe->m_eAppStatus == MAINMENU_RUNNING)
             {
                 MainMenu_RunFSM(pMe);
-            }*/
+            }
             return TRUE;
             
         case EVT_KEY:
@@ -884,17 +859,13 @@ NextFSMAction MainMenu_ProcessState(MainMenu *pMe)
     {
         return retVal;
     }
-    ERR("pMe->m_currState::::%d",pMe->m_currState,0,0);
-    pMe->m_currState = MAINST_MAIN;
+
     switch(pMe->m_currState)
     {
         case MAINST_MAIN:
             return MAINST_MAIN_Handler(pMe);
-            
-        #ifdef FEATRUE_SUPPORT_G_SENSOR 
-        case MAINST_MSGBOX:
-            return MAINST_MSGBOX_Handler(pMe);
-        #endif
+        case MAINST_EXIT:
+            return MAINST_EXIT_Handler(pMe);  
         default:
             break;
 
@@ -933,23 +904,6 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
                 MainMenu_ShowDialog(pMe, IDD_MAIN_MENU);
             }
             return NFSMACTION_WAIT;
-
-        case DLGRET_GAME:
-            MOVE_TO_STATE(MAINST_GAME)
-            return NFSMACTION_CONTINUE;
-
-        case DLGRET_MEDIA:
-            MOVE_TO_STATE(MAINST_PLAYER)
-            return NFSMACTION_CONTINUE;
-
-        case DLGRET_DATA:
-            MOVE_TO_STATE(MAINST_DATA)
-            return NFSMACTION_CONTINUE;
-            
-        case DLGRET_CANCELED:
-            MOVE_TO_STATE(MAINST_EXIT)
-            return NFSMACTION_CONTINUE;
-
         default:
             MOVE_TO_STATE(MAINST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -957,15 +911,16 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
 }
 
 
+
 /*==============================================================================
 函数:
-    MAINST_MSGBOX_Handler
+    MAINST_EXIT_Handler
 
 说明:
-    MAINST_MSGBOX 状态处理函数。
+    MAINST_EXIT 状态处理函数。
 
 参数:
-    pMe [in]: 指向MAINMENU Applet对象结构的指针。该结构包含小程序的特定信息。
+    pMe [in]: 指向MAINMENU  Applet对象结构的指针。该结构包含小程序的特定信息。
 
 返回值:
     NFSMACTION_CONTINUE: 指示不停状态机。
@@ -974,39 +929,11 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
 备注:
 
 ==============================================================================*/
-
-#ifdef FEATRUE_SUPPORT_G_SENSOR
-static NextFSMAction MAINST_MSGBOX_Handler(MainMenu *pMe)
+static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe)
 {
-    if (NULL == pMe)
-    {
-        return NFSMACTION_WAIT;
-    }
-    switch (pMe->m_eDlgReturn)
-    {
-        // 进入主界面
-        case DLGRET_CREATE:
-            MainMenu_ShowDialog(pMe,IDD_MSGBOX_MENU);
-            return NFSMACTION_WAIT;
-
-        case DLGRET_GAME:
-            MOVE_TO_STATE(MAINST_GAME)
-            return NFSMACTION_CONTINUE;
-
-        case DLGRET_CANCELED:
-            MOVE_TO_STATE(MAINST_MAIN)
-            return NFSMACTION_CONTINUE;
-
-        default:
-            MOVE_TO_STATE(MAINST_EXIT)
-            return NFSMACTION_CONTINUE;            
-
-    }
-
-}
-#endif
-
-
+    (void) ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+    return NFSMACTION_WAIT;
+} 
 
 
 /*==============================================================================
@@ -1106,10 +1033,7 @@ boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
         case IDD_MAIN_MENU:
             return MainMenu_IconMenuHandler(pMe, eCode, wParam, dwParam);
 
-    #ifdef FEATRUE_SUPPORT_G_SENSOR
-        case IDD_MSGBOX_MENU:
-            return MainMenu_MsgBoxHandler(pMe, eCode, wParam, dwParam);
-    #endif
+
         default:
             return FALSE;
     }
@@ -1210,7 +1134,6 @@ static movepen_anddo(MainMenu *pMe,uint32 dwParam)
 	
 	{		
 		int i;
-		ISHELL_CancelTimer (pMe->m_pShell, (PFNNOTIFY)DrawFocusIconAnimation, pMe);//这里是为了防止动画没有画完而取消画动画的定时器
 		if (pMe->m_pAnimate != NULL)
         {
             IIMAGE_Release(pMe->m_pAnimate);
@@ -1274,7 +1197,6 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
         case EVT_USER_REDRAW:
             // 初始整个背景及全部初始图标
-            ERR("EVT_USER_REDRAW:::::::::::1111111111",0,0,0);
             DrawMatrix(pMe);
 #ifdef FEATURE_ICON_MOVE_ANIMATION
             {
@@ -1329,18 +1251,18 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     pMe->m_pDevImage = NULL;
                 }
 #endif
-                ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);
             }
             return TRUE;
 
 
         case EVT_KEY:
-            //ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);
             switch( wParam)
             {
                 case AVK_CLR:
-                    ERR("AVK_CLR:::::::::::::::::::!111111111111",0,0,0);
-                     CLOSE_DIALOG(DLGRET_CANCELED)
+                    {
+                        pMe->m_eDlgReturn = DLGRET_CANCELED;     
+                        i = ISHELL_EndDialog(pMe->m_pShell);
+                    }
                     return TRUE;
                     
                 case AVK_UP:
@@ -1585,7 +1507,6 @@ static void DrawMatrix(MainMenu *pMe)
         return;
     }
     //draw bg image
-    ERR("DrawMatrix:::::::::::::::::11111111",0,0,0);
     MainMenu_DrawBackGround(pMe, &pMe->m_rc); //modified by chengxiao 2009.04.10
 
     //Draw icon
@@ -1618,11 +1539,9 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
         xOldPos = pMe->m_IconFocus_Pt[thePrevFocus].x + (nFrame)*(pMe->m_IconFocus_Pt[theFocus].x - pMe->m_IconFocus_Pt[thePrevFocus].x)/ICON_ANIMATED_MOVE_FRAME, 
         yOldPos = pMe->m_IconFocus_Pt[thePrevFocus].y + (nFrame)*(pMe->m_IconFocus_Pt[theFocus].y - pMe->m_IconFocus_Pt[thePrevFocus].y)/ICON_ANIMATED_MOVE_FRAME;
 
-    ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)DrawFocusMoveAnimation, pMe);
     
     if(pMe->m_pAnimate == NULL)
     {
-        nFrame = 0;
         pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[theFocus]);
     }
 
@@ -1640,7 +1559,6 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
         }
         pMe->m_bMoveing = TRUE;
         SETAEERECT(&rect, xPos, yPos, ICON_ANIMATED_WIDTH, ICON_ANIMATED_HEIGHT);
-        ERR("DrawFocusMoveAnimation:::::::::!1111111111111111",0,0,0);
         Appscommon_ResetBackground(pMe->m_pDisplay,pMe->m_pAnimate, 
 #ifdef FEATURE_RANDOM_MENU_COLOR
                                                     pMe->m_nBgColor, 
@@ -1649,8 +1567,6 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
 #endif
                                                     &rect, rect.x, rect.y);
         IDISPLAY_Update(pMe->m_pDisplay);
-        nFrame++;
-        ISHELL_SetTimer(pMe->m_pShell, ICON_ANIMATED_MOVE_RATE, (PFNNOTIFY)DrawFocusMoveAnimation, pMe);
     }
     else
     {
@@ -1663,10 +1579,8 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
                                 pMe->m_pDevImage, xOldPos, yOldPos, AEE_RO_COPY);
         }
 #ifdef FEATURE_FOCUS_ANIMATION
-        ERR("DrawFocusMoveAnimation:::::::::222222222222222222",0,0,0);
         DrawFocusIconAnimation(pMe);
 #else
-        ERR("DrawFocusMoveAnimation:::::::::33333333333333333",0,0,0);
         DrawFocusIcon(pMe);
 #endif
     }
@@ -1824,7 +1738,6 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
     }
 #endif
 	//wlh end
-    ERR("MainMenu_IconMenuHandler::::::::2222222",0,0,0);
 	if((row != pMe->m_nRow) || (column != pMe->m_nColumn))//避免已经是焦点的情况
 	{
  
@@ -1875,7 +1788,6 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 		DrawTitleBar(pMe->m_pDisplay, &titleBarParms);	//wlh add 0404
     }
 
-    ISHELL_CancelTimer (pMe->m_pShell, NULL, ( void*)&pMe);
     
     // 绘制聚焦后矩阵初始界面
     SETAEERECT(&rect, pMe->m_IconFocus_Pt[theFocus].x, 
@@ -1960,128 +1872,7 @@ static void setCursor(MainMenu *pMe, int row, int column)
     }
 }
 
-#ifdef FEATRUE_SUPPORT_G_SENSOR
-/*=============================================================================
-FUNCTION:  MainMenu_MsgBoxHandler
 
-DESCRIPTION:  在主菜单中添加对话框
-PARAMETERS:
-
-=============================================================================*/
-
-static boolean  MainMenu_MsgBoxHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
-{
-    static IStatic * pStatic = NULL;
-
-    if (NULL == pStatic)
-    {
-        AEERect rect = {0};
-        if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-                                                     AEECLSID_STATIC,
-                                                     (void **)&pStatic))
-        {
-            return FALSE;
-        }        
-        ISTATIC_SetRect(pStatic, &rect);  
-    }
-
-    if ((NULL == pStatic) ||(NULL == pMe))
-    {
-        return FALSE;
-    }
-
-    switch(eCode)
-    {
-        case EVT_DIALOG_INIT:
-            return TRUE;
-
-        case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_MAIN_MENU,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            {
-                PromptMsg_Param_type  Msg_Param={0};
-                AECHAR  wstrText[MSGBOX_MAXTEXTLEN] = {(AECHAR)'\0'};
-
-                (void)ISHELL_LoadResString(pMe->m_pShell,
-                                MAINMENU_RES_FILE_LANG,                                
-                                pMe->m_wMsgResID,
-                                wstrText,
-                                sizeof(wstrText));
-                                
-                Msg_Param.ePMsgType = MESSAGE_CONFIRM;
-                Msg_Param.pwszMsg = wstrText;
-
-                Msg_Param.eBBarType = BTBAR_OK_CANCEL;
-
-                
-                DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
-            }
-
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            #if 0
-            (void) ISHELL_SetTimer(pMe->m_pShell,
-                        PROMPTMSG_TIMER,
-                        Mainmenu_DialogTimeout,
-                        pMe);
-            #endif
-            
-            return TRUE;
-
-        case EVT_DIALOG_END:
-                    #if 0
-                     (void) ISHELL_CancelTimer(pMe->m_pShell,Morse_DialogTimeout, pMe);
-                    #endif
-            ISTATIC_Release(pStatic);
-            pStatic = NULL;
-            
-            return TRUE;
-
-        case EVT_KEY:
-            switch( wParam)
-            {
-                case AVK_CLR:
-                    ERR("AVK_CLR:::::::::::::::::::!111111111111",0,0,0);
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    break;
-                case AVK_INFO:
-                case AVK_SELECT:
-                    if(is_g_sportsapp_pedometer_bground_flag())
-                    {
-                        MainMenu_CloseSportBgRun(pMe);
-                    }
-                    else if(MainMenu_Get_Shake_OnOrOff(pMe))
-                    {
-                        MainMenu_Set_Shake_Disable(pMe);
-                    }
-                    CLOSE_DIALOG(DLGRET_GAME)
-                    break;
-                    default:
-                        return TRUE;
-
-            }
-            return TRUE;
-        
-        case EVT_DISPLAYDIALOGTIMEOUT:
-            CLOSE_DIALOG(DLGRET_GAME)
-            return TRUE;
-
-        default:
-            break;
-    }
-
-    return FALSE;
-}
-
-
-#endif
 
 
 /*=============================================================================
@@ -2102,7 +1893,6 @@ static boolean StartApplet(MainMenu *pMe, int i)
 		pMe->m_pAnimate = NULL;
 	}
 #endif//FEATURE_LCD_TOUCH_ENABLE
-   DBGPRINTF("StartApplet:::::%d",i);
     switch(i)
     {
          case 0:
@@ -2136,157 +1926,12 @@ static boolean StartApplet(MainMenu *pMe, int i)
             break;
 
     }
-    DBGPRINTF("Result   :::::%d",Result);
     setCursor(pMe, i/MAX_MATRIX_COLS, i%MAX_MATRIX_COLS);
     return TRUE;
 }
 
 
-/*=============================================================================
-FUNCTION:  StartApplet
 
-DESCRIPTION:  启动applet
-
-PARAMETERS:  如果APPLET 有变动，只需改动次函数
-
-=============================================================================*/
-#ifdef FEATRUE_SUPPORT_G_SENSOR
-static void Mainmenu_DialogTimeout(void *pme)
-{
-    MainMenu *pMe = (MainMenu*)pme;
-
-    if (NULL == pMe)
-    {
-        return;
-    }
-
-    (void) ISHELL_PostEvent(pMe->m_pShell,
-                            AEECLSID_MAIN_MENU,
-                            EVT_DISPLAYDIALOGTIMEOUT,
-                            0,
-                            0);
-}
-
-/*=============================================================================
-FUNCTION:  MainMenu_Set_Shake_Disable
-
-DESCRIPTION:  将shake 设置成disable
-
-PARAMETERS:  如果APPLET 有变动，只需改动次函数
-
-=============================================================================*/
-boolean MainMenu_Set_Shake_Disable(MainMenu *pMe)
-{
-    
-    dword shake;
-    boolean isShakeOn = FALSE;
-    (void)ICONFIG_GetItem(pMe->m_pConfig,CFGI_GSENSOR,&shake,sizeof(shake));
-    if(shake)
-    {
-        
-        if(shake & OEMNV_SHAKE_MUSIC_MASK)
-        {
-            isShakeOn = FALSE;                                      
-            /*Set Shake Reset*/
-            mmi_g_sensor_process(G_SENSOR_SHAKE_DISABLE);
-
-            mmi_g_sensor_process(G_SENSOR_VIDEO_CIRC_DISABLE); 
-        }
-        
-        else if(shake & OEMNV_SHAKE_FM_RADIO_MASK)
-        {
-            isShakeOn = FALSE;                                      
-            mmi_g_sensor_process(G_SENSOR_SHAKE_DISABLE);
-                        mmi_g_sensor_process(G_SENSOR_VIDEO_CIRC_DISABLE);
-        }
-        else if(shake & OEMNV_SHAKE_WALLPAPER_MASK)
-        {
-            isShakeOn = FALSE;                                      
-            mmi_g_sensor_process(G_SENSOR_SHAKE_DISABLE);
-                        mmi_g_sensor_process(G_SENSOR_VIDEO_CIRC_DISABLE);          
-        
-        }
-        else if(shake & OEMNV_SHAKE_SNOOZE_ALARM_MASK)
-        {
-            isShakeOn = FALSE;                                      
-            mmi_g_sensor_process(G_SENSOR_SHAKE_DISABLE);
-                        mmi_g_sensor_process(G_SENSOR_VIDEO_CIRC_DISABLE);              
-        }
-        else if(shake & OEMNV_SHAKE_VIDEO_MASK)
-        {
-            isShakeOn = FALSE;      
-            mmi_g_sensor_process(G_SENSOR_VIDEO_CIRC_DISABLE);
-                        mmi_g_sensor_process(G_SENSOR_SHAKE_DISABLE);
-            
-        }
-
-            (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_SHAKE_MUSIC_CHECK,&isShakeOn,
-                            sizeof(isShakeOn));
-            (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_SHAKE_FM_RADIO_CHECK,&isShakeOn,
-                                    sizeof(isShakeOn));
-            (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_SHAKE_WALLPAPER_CHECK,&isShakeOn,
-                                    sizeof(isShakeOn));
-            
-            (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_SHAKE_SNOOZE_ALARM_CHECK,&isShakeOn,
-                                    sizeof(isShakeOn));
-
-            (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_SHAKE_VIDEO_CHECK,&isShakeOn,
-                                    sizeof(isShakeOn)); 
-
-            return TRUE;            
-    
-    }
-    else
-    {
-        return FALSE;
-    }
-        
-
-    
-}
-
-/*=============================================================================
-FUNCTION:  MainMenu_Get_Shake_OnOrOff
-
-DESCRIPTION:  将shake 设置成disable
-
-PARAMETERS:  如果APPLET 有变动，只需改动次函数
-
-=============================================================================*/
-
-boolean MainMenu_Get_Shake_OnOrOff(MainMenu *pMe)
-{
-    dword shake;
-    (void)ICONFIG_GetItem(pMe->m_pConfig,CFGI_GSENSOR,&shake,sizeof(shake));
-
-    if(shake)
-    {
-        return TRUE;
-    }
-    else
-    {
-        return FALSE;
-    }
-
-}
-/*=============================================================================
-FUNCTION:  MainMenu_CloseSportBgRun
-
-DESCRIPTION:  将shake 设置成disable
-
-PARAMETERS:  如果APPLET 有变动，只需改动次函数
-
-=============================================================================*/
-void MainMenu_CloseSportBgRun(MainMenu *pMe)
-{
-    (void) ISHELL_PostEvent( pMe->m_pShell,AEECLSID_SPORTSAPP,
-                                EVT_CLOSEAPP,
-                                0,
-                                0);
-    
-}
-
-#endif
 
 
 /*=============================================================================
