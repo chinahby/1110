@@ -44,7 +44,7 @@
 		<Text>Stopwatch</Text>
 	</String>
 	<String Id="1020" Name="IDS_MAIN_MENU_TITLE_9">
-		<Text>Quicktest</Text>
+		<Text>Display</Text>
 	</String>
 	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
 		<Text>Tetris</Text>
