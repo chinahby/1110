@@ -354,8 +354,8 @@ static boolean InitAppTimer(CAppTimer *pme)
         //uint32 dwProps;
         
         SETAEERECT( &rect, 
-                            (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET,
-                            pme->titleBarHeight + MENUITEM_HEIGHT*2 +  TIMER_SCREEN_YOFFSET - 13,
+                            (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+2,
+                            pme->titleBarHeight + MENUITEM_HEIGHT*2 +  TIMER_SCREEN_YOFFSET - 16,
                             TIMER_SCREEN_WIDTH,
                             0);
         //SETAEERECT( &rect, 0, (pme->cyScreen - pme->titleBarHeight) / 2 , pme->cxScreen, pme->titleBarHeight*2);
