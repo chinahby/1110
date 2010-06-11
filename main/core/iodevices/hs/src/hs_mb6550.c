@@ -1823,24 +1823,7 @@ LOCAL void hs_init( void )
 #if defined(T_FFA6500) && !defined(T_FFA6550_SS)
 #error code not present
 #endif // #ifdef T_FFA6500 && !T_FFA6550_SS
-
-#ifdef FEATURE_BITMAP
-  /* Initialize the display */
-  dog_report(DOG_HS_RPT);
-  disp_init();
-  dog_report(DOG_HS_RPT);
-  /* For color LCD we're testing the backlight has to be on to see
-     anything on the screen, so don't wait for UI, do it here */
-  disp_powerup();
-
-#ifdef FEATURE_HWTC
-#error code not present
-#endif /* FEATURE_HWTC */
-#else /* FEATURE_BITMAP */
-  /* Initialize the LCD controller - - - - - - - - - - - - - - - - - - - - - */
-  hs_lcd_init();
-#endif /* FEATURE_BITMAP */
-
+#ifdef CUST_EDITION
   /* Initialize keypad */
   keypad_init();
 
@@ -1872,8 +1855,38 @@ LOCAL void hs_init( void )
     }
     
     db_put(DB_POWERUPTYPE, &db_item);
+    if (db_item.db_poweruptype == DB_POWERUP_BYKEY)
+    {
+        if (!keypad_is_power_key_pressed())
+        {
+            hw_power_off();
+        }
+    }
   }
 
+#endif
+#ifdef FEATURE_BITMAP
+  /* Initialize the display */
+  dog_report(DOG_HS_RPT);
+  disp_init();
+  dog_report(DOG_HS_RPT);
+  /* For color LCD we're testing the backlight has to be on to see
+     anything on the screen, so don't wait for UI, do it here */
+#ifndef CUST_EDITION
+  disp_powerup();
+#endif
+#ifdef FEATURE_HWTC
+#error code not present
+#endif /* FEATURE_HWTC */
+#else /* FEATURE_BITMAP */
+  /* Initialize the LCD controller - - - - - - - - - - - - - - - - - - - - - */
+  hs_lcd_init();
+#endif /* FEATURE_BITMAP */
+
+#ifndef CUST_EDITION
+  /* Initialize keypad */
+  keypad_init();
+#endif
   /* Initialize the GPIO outputs - - - - - - - - - - - - - - - - - - - - - - */
 
   HS_CALL_LED_INIT();           /* Call LED control GPIO  */
