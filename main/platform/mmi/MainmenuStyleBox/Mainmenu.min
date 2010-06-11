@@ -39,7 +39,7 @@ CONSTFILE_FILES+=\
 	Setting.png|fs:/image/mainmenu/Setting.png \
 	Alarm.png|fs:/image/mainmenu/Alarm.png \
 	FmRadio.png|fs:/image/mainmenu/FmRadio.png \
-	Quicktest.png|fs:/image/mainmenu/Quicktest.png \
+	Display.png|fs:/image/mainmenu/Display.png \
 	Timer.png|fs:/image/mainmenu/Timer.png \
 	Stopwatch.png|fs:/image/mainmenu/Stopwatch.png\
 	Contact_focus.png|fs:/image/mainmenu/Contact_focus.png \
@@ -48,9 +48,11 @@ CONSTFILE_FILES+=\
 	Setting_focus.png|fs:/image/mainmenu/Setting_focus.png \
 	Alarm_focus.png|fs:/image/mainmenu/Alarm_focus.png \
 	FmRadio_focus.png|fs:/image/mainmenu/FmRadio_focus.png \
-	Quicktest_focus.png|fs:/image/mainmenu/Quicktest_focus.png \
+	Display_focus.png|fs:/image/mainmenu/Display_focus.png \
 	Timer_focus.png|fs:/image/mainmenu/Timer_focus.png \
-	Stopwatch_focus.png|fs:/image/mainmenu/Stopwatch_focus.png
+	Stopwatch_focus.png|fs:/image/mainmenu/Stopwatch_focus.png\
+	Focus_default.png|fs:/image/mainmenu/Focus_default.png \
+	Backgroud.png|fs:/image/mainmenu/Backgroud.png
 
 INC  += $(MAINMENU_INC) $(MAINMENU_RES)
 #SRC  += $(MAINMENU_SOURCES)

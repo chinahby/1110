@@ -171,6 +171,7 @@ typedef struct _MainMenu
 #endif
 
 	IImage		*m_pImageTurn[MAX_TURN_NUM];//wlh 20090409 add
+	IImage      *m_pImageFocus;
 
 } MainMenu;
 
@@ -180,8 +181,8 @@ typedef struct _MainMenu
                                  
 ==============================================================================*/
 
-#define ICON_WIDTH              34
-#define ICON_HEIGHT             28
+#define ICON_WIDTH              42
+#define ICON_HEIGHT             32
 #define ICON_ANIMATED_WIDTH     42
 #define ICON_ANIMATED_HEIGHT    32
 #define ICON_ANIMATED_FRAME     1 //½¹µãÍ¼Æ¬µÄÖ¡Êý
@@ -205,8 +206,9 @@ typedef struct _MainMenu
 #define ICON6_ANI      "fs:/image/mainmenu/Timer.png"
 #define ICON7_ANI      "fs:/image/mainmenu/Alarm.png"
 #define ICON8_ANI      "fs:/image/mainmenu/Stopwatch.png"
-#define ICON9_ANI      "fs:/image/mainmenu/Quicktest.png"
+#define ICON9_ANI      "fs:/image/mainmenu/Display.png"
 
+#define ICON_ANI_BACKGROUND    "fs:/image/mainmenu/Backgroud.png"
 
 #define ICON1_ANI_1    "fs:/image/mainmenu/Contact_focus.png"
 #define ICON2_ANI_1    "fs:/image/mainmenu/Recentcall_focus.png"
@@ -216,7 +218,8 @@ typedef struct _MainMenu
 #define ICON6_ANI_1    "fs:/image/mainmenu/Timer_focus.png"
 #define ICON7_ANI_1    "fs:/image/mainmenu/Alarm_focus.png"
 #define ICON8_ANI_1    "fs:/image/mainmenu/Stopwatch_focus.png"
-#define ICON9_ANI_1    "fs:/image/mainmenu/Quicktest_focus.png"
+#define ICON9_ANI_1    "fs:/image/mainmenu/Display_focus.png"
+#define ICON_ANI_FOCUSDEFAULT    "fs:/image/mainmenu/Focus_default.png"
 
 
 

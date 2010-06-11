@@ -477,7 +477,12 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	pMe->m_pImageTurn[7] = ISHELL_LoadImage(pMe->m_pShell,ICON8_ANI_1);
 	pMe->m_pImageTurn[8] = ISHELL_LoadImage(pMe->m_pShell,ICON9_ANI_1);
 
-
+    pMe->m_pImageFocus   = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_FOCUSDEFAULT);
+    if(pMe->m_pImageFocus == NULL)
+    {
+        return EFAILED;
+    }
+    
 	for (i = 0; i < MAX_TURN_NUM; i ++)
 	{
 		if(pMe->m_pImageTurn[i] == NULL)
@@ -580,6 +585,11 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
 				pMe->m_pImageTurn[i] = NULL;
 			}
 		}
+        if(pMe->m_pImageFocus != NULL)
+        {
+            IImage_Release(pMe->m_pImageFocus);
+            pMe->m_pImageFocus = NULL;
+        }
     }    
 }
 
@@ -1630,7 +1640,7 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
         }
         pMe->m_bMoveing = TRUE;
         SETAEERECT(&rect, xPos, yPos, ICON_ANIMATED_WIDTH, ICON_ANIMATED_HEIGHT);
-        
+        ERR("DrawFocusMoveAnimation:::::::::!1111111111111111",0,0,0);
         Appscommon_ResetBackground(pMe->m_pDisplay,pMe->m_pAnimate, 
 #ifdef FEATURE_RANDOM_MENU_COLOR
                                                     pMe->m_nBgColor, 
@@ -1653,8 +1663,10 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
                                 pMe->m_pDevImage, xOldPos, yOldPos, AEE_RO_COPY);
         }
 #ifdef FEATURE_FOCUS_ANIMATION
+        ERR("DrawFocusMoveAnimation:::::::::222222222222222222",0,0,0);
         DrawFocusIconAnimation(pMe);
 #else
+        ERR("DrawFocusMoveAnimation:::::::::33333333333333333",0,0,0);
         DrawFocusIcon(pMe);
 #endif
     }
@@ -1704,6 +1716,9 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
 
 	if( pMe->m_pAnimate != NULL)
    {
+        IIMAGE_Draw(pMe->m_pImageFocus,
+                         pMe->m_IconFocus_Pt[theFocus].x, 
+                        pMe->m_IconFocus_Pt[theFocus].y);
 		IIMAGE_Draw(pMe->m_pAnimate,
                          pMe->m_IconFocus_Pt[theFocus].x, 
                         pMe->m_IconFocus_Pt[theFocus].y);
@@ -1752,6 +1767,7 @@ static void DrawFocusIcon(MainMenu *pMe)
 
 	if( pMe->m_pAnimate != NULL)
    {
+        
 		IIMAGE_Draw(pMe->m_pAnimate,
                          pMe->m_IconFocus_Pt[theFocus].x, 
                         pMe->m_IconFocus_Pt[theFocus].y);
@@ -1852,7 +1868,8 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 		turnlengthy = lengthYY/5;
 
 		m_pImageTurns[0] = pMe->m_pImageTurn[theFocus];
-		IIMAGE_Draw(m_pImageTurns[0], x, y);
+       // IIMAGE_Draw(pMe->m_pImageFocus,x,y);
+		//IIMAGE_Draw(m_pImageTurns[0], x, y);
 		IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 		DrawMatrix(pMe);
 		DrawTitleBar(pMe->m_pDisplay, &titleBarParms);	//wlh add 0404
@@ -2115,7 +2132,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
             break;
         case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_QUICKTEST);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_DISPLAYMENU);
             break;
 
     }
