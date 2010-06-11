@@ -677,7 +677,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				#endif
 
 				#ifdef FEATURE_PROJECT_W021C
-					case AVK_SPACE:
+					case AVK_CAMERA:
 					{
 						if ( pMe->flashLightOn == FALSE )
 						{
