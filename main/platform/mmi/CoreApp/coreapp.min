@@ -18,8 +18,11 @@ $(COREAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.c $(COREAPP_SRC)
 vpath %.bar $(COREAPP_RES)
 vpath %.brx $(COREAPP_RES)
+ifeq ($(USES_160X128),yes)
+vpath %.png $(APPSCOMMON)/images/160x128/Pwronoffani
+else
 vpath %.png $(APPSCOMMON)/images/color/Pwronoffani
-
+endif
 ifeq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\
 	coreapp.mif|fs:/mif/coreapp.mif \

@@ -13,8 +13,11 @@ $(MAINMENU_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.c $(MAINMENU_SRC)
 vpath %.bar $(MAINMENU_RES)
 vpath %.brx $(MAINMENU_RES)
+ifeq ($(USES_160X128),yes)
+vpath %.png $(APPSCOMMON)/images/160x128/Mainmenu/focus
+else
 vpath %.png $(APPSCOMMON)/images/color/Mainmenu/focus
-
+endif
 
 CONSTFILE_FILES+=\
 mainmenu.mif|fs:/mif/mainmenu.mif \
