@@ -312,8 +312,9 @@ osbl_pm_auto_low_batt_chg( void )
         /* Then turning off Boost Regulator */
         pm_vreg_control(PM_OFF_CMD, PM_VREG_BOOST_M);
         #endif /* endif FEATURE_PMIC_USB_DETECTION_USING_VCHG */
-
+#if defined(FEATURE_OSBL_CHG_SCREEN)
         disp_off();
+#endif
 }
 
 /*===========================================================================
@@ -714,8 +715,9 @@ osbl_pm_get_usb_status ( uint32 *retry_count , boolean *new_usb_event, boolean *
                 /* in SUSPENDED mode, slow charge the battery */
                 osbl_shp_autocharging_setup (OBSL_AUTO_CHG_IMAXSEL_MIN,
                                              OBSL_AUTO_CHG_TRICKLE_LOW_CURRENT) ;
-
+#if defined(FEATURE_OSBL_CHG_SCREEN)
                 disp_off();
+#endif
                 usb_stimulus = RETRY_MULTIPLE_TIMES ;
             }
 
