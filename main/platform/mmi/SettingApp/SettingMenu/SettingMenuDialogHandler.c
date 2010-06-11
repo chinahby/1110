@@ -3191,6 +3191,8 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                     InitMenuIcons(pMenu);
                     SetMenuIcon(pMenu, wParam, TRUE);
                     (void)IMENUCTL_Redraw(pMenu);
+                    (void)ISHELL_SendEvent( pMe->m_pShell,  AEECLSID_CORE_APP, 
+                                EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
                 }
                 CLOSE_DIALOG(DLGRET_WARNING)
             }
