@@ -1816,11 +1816,11 @@ void ui_init( void )
   ui_subs_info.cdma_subs_from_card_avail = FALSE;
   ui_subs_info.gw_subs_from_card_avail   = FALSE;
 #endif
-#endif /* FEATURE_UI_CORE_REMOVED && !FEATURE_UI_DUALPROC_MDM */
 
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
   ui_init_rtre();
 #endif
+#endif /* FEATURE_UI_CORE_REMOVED && !FEATURE_UI_DUALPROC_MDM */
 
 #if !defined(FEATURE_UI_DUALPROC_APPS)
 #ifndef FEATURE_MANGO_UI
