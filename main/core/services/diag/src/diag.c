@@ -3020,6 +3020,12 @@ diag_panic_end (void)
     /* Need this option to allow automation */
     hw_reset ();
   }
+#ifdef CUST_EDITION
+  else if(err_get_auto_action() == ERR_NO_ACTION)
+  {
+    return;
+  }
+#endif
   else
   {
 #ifdef FEATURE_ERR_EXTENDED_STORE
