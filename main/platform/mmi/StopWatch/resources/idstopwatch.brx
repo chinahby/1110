@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="idstopwatch" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_STOPWATCH_TITLE">
+		<Text>Stop Watch</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_RESET_CONFIRM">
+		<Text>Reset?</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_RESET_RECORDFULL">
+		<Text>Data penuh,set ulang?</Text>
+	</STRING>
+</Strings>
+</BREWRes>

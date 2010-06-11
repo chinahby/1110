@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="idappscommon" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_SELECT">
+		<Text>Pilih </Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_DEL">
+		<Text>Hapus</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_CANCEL">
+		<Text>Kembali</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_SEND">
+		<Text>Kirim </Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_CONTINU">
+		<Text>Ulang</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_BACK">
+		<Text>Kembali</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_FIND">
+		<Text>Cari</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_EDIT">
+		<Text>Ubah</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_SAVE">
+		<Text>Simpn</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_MENU">
+		<Text>Menu</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_NEXT">
+		<Text>Selanjutnya</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_READ">
+		<Text>Baca</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_OPTION">
+		<Text>Pilih</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_SOS">
+		<Text>Darurat</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_CLOSE">
+		<Text>Tutup</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_RESET">
+		<Text>Atur ulang</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_END">
+		<Text>Akhir</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_STRING_CONTACTS">
+		<Text>Kontak</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_STRING_END_CALL">
+		<Text>Akhiri</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_STRING_CANCEL">
+		<Text>Batalkan</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_MSG_CONFIRM_DELETE">
+		<Text>Hapus ini?</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_MSG_INFORMATIVE_DELETE">
+		<Text>Hapus?</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_MSG_CONFIRM_DELETEALL">
+		<Text>Hapus semua data panggilan sekarang?</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_MSG_INFORMATIVE_DELETEALL">
+		<Text>Hapus semua data panggilan sekarang!</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_MSG_CONFIRM_COPY">
+		<Text>Salin?</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_MSG_INFORMATIVE_COPYED">
+		<Text>Penyalinan berhasil!</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_SETTING">
+		<Text>Set</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_TOTODAY">
+		<Text>Today</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_STRING_IP">
+		<Text>IP</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_INPUT_NORMAL">
+		<Text>Normal</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_INPUT_STROKE">
+		<Text>Stroke</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_INPUT_ZHUYIN">
+		<Text>Zhuyin</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_INPUT_RAPIDEN">
+		<Text>RapidEN</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_INPUT_NUMBERS">
+		<Text>Numbers</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
+		<Text>Tekan 123 untuk buka kunci</Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
+		<Text>RapidTH</Text>
+	</STRING>
+	<STRING Id="38" Name="IDS_INPUT_MULTITH">
+		<Text>MultiTH</Text>
+	</STRING>
+	<STRING Id="39" Name="IDS_INPUT_MAJUSCULE">
+		<Text>Abc</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_INPUT_SMALL_LETTER">
+		<Text>Abc</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_ANSWER">
+		<Text>Jawab</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_IGNORE">
+		<Text>Abaikan</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_REJECT">
+		<Text>Batal</Text>
+	</STRING>
+	<STRING Id="44" Name="IDS_MUTE">
+		<Text>diam</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_UNMUTE">
+		<Text>Bersuara</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_STRING_UNLOCK" Encoding="Unicode">
+		<Text>Buka </Text>
+	</STRING>
+	<STRING Id="47" Name="IDS_START">
+		<Text>Mulai</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_CALL">
+		<Text>Call</Text>
+	</STRING>
+	<STRING Id="49" Name="IDS_RESUME" Encoding="Unicode">
+		<Text>Resume</Text>
+	</STRING>
+	<STRING Id="114" Name="IDS_OPTION_FM">
+		<Text>Pilih</Text>
+	</STRING>
+	<STRING Id="1001" Name="IDS_RECORD">
+		<Text>lagu</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_STOP">
+		<Text>Berhenti</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_APPSCOMMON_AM">
+		<Text>AM</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_APPSCOMMON_PM">
+		<Text>PM</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_JEWISH">
+		<Text>Jewish</Text>
+	</STRING>
+	<STRING Id="2000" Name="IDS_DONE">
+		<Text>Done</Text>
+	</STRING>
+	<STRING Id="2001" Name="IDS_SNOOZE">
+		<Text>Snooze</Text>
+	</STRING>
+	<STRING Id="2002" Name="IDS_FM_BACK">
+		<Text>Kmbl</Text>
+	</STRING>
+</Strings>
+</BREWRes>
