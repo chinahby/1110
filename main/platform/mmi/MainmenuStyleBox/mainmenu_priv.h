@@ -145,6 +145,7 @@ typedef struct _MainMenu
     MAINMENU_STATUS_e_type  m_eAppStatus;   // Applet 当前运行状态
     
     boolean     m_bDoNotOverwriteDlgResult; //是否不重写对话框结果    
+    boolean     m_bNormalStart;
     
     IImage      *m_pImageBg;
     IImage      *m_pImageIcon[MAX_MATRIX_ITEMS];
