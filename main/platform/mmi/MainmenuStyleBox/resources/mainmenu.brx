@@ -58,17 +58,8 @@
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>Menu</Text>
 	</STRING>
-	<STRING Id="1041" Name="IDS_PLAYER_SUBMENU_ITEM1">
-		<Text>Music player</Text>
-	</STRING>
-	<STRING Id="1042" Name="IDS_PLAYER_SUBMENU_ITEM2">
-		<Text>Video player</Text>
-	</STRING>
 	<STRING Id="1043" Name="IDS_PLAYER_SUBMENU_ITEM3">
 		<Text>FM radio</Text>
-	</STRING>
-	<STRING Id="1051" Name="IDS_DATA_SUBMENU_ITEM1">
-		<Text>WAP</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_DATA_SUBMENU_ITEM2">
 		<Text>Download</Text>
