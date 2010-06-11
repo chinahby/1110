@@ -58,6 +58,10 @@ extern void OEMPriv_DrawMessageCB(void *pUnused);
 #include "DisplayMenu.h"
 #endif
 
+#ifdef USES_MMI
+extern boolean   IsRunAsUIMVersion(void);
+extern boolean   IsRunAsFactoryTestMode(void);
+#endif
 /*==============================================================================
 
                                宏定义和常数
@@ -74,6 +78,52 @@ extern void OEMPriv_DrawMessageCB(void *pUnused);
 // 开关机动画播放时间
 #define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))
 #define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))
+
+
+#if defined(FEATURE_DISP_128X128)
+#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y + 30) 
+
+#elif defined(FEATURE_DISP_160X128)
+
+#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+30)
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y + 30) 
+
+#elif defined(FEATURE_DISP_176X220)
+
+#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y + 30) 
+
+#else
+
+#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y + 30) 
+
+#endif
 
 /*==============================================================================
 
@@ -2689,7 +2739,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                  uint16     wParam,
                                  uint32     dwParam)
 {
-	int i;
+	//int i;
     CCoreApp *pMe = (CCoreApp *)pUser;
 #ifdef FEATURE_KEYGUARD	 
     boolean  bData;
@@ -3711,7 +3761,6 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
     AEERect   rc;
     AECHAR    *wszBuf = NULL;
     int32     nSize;
-    int32     y;
     //AEECMSSInfo  *pssinfo = NULL;
     boolean   bSetsearchingTimer = FALSE;
     
@@ -3728,8 +3777,7 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
                               pMe);
 
     // Determine displaying rectangle     
-    y = 130; 
-    SETAEERECT(&rc, 0, y, pMe->m_rc.dx, pMe->m_nLargeFontHeight);
+	SETAEERECT(&rc, RPLMN_X, RPLMN_Y, pMe->m_rc.dx-2*RPLMN_X, pMe->m_nLargeFontHeight);
     wszBuf[0] = 0;
     
 #ifdef FEATURE_PLANEMODE    
@@ -3862,7 +3910,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     //AECHAR      wszBuf[16]= {(AECHAR)'\0'}; //fj remark ,Define but no used
 #ifndef FEATURE_CARRIER_SUDAN_SUDATEL
     uint16   nWeekResID;
-    AEEDeviceInfo di;
+    //AEEDeviceInfo di;
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
     byte      bTFmt;
     
@@ -3944,53 +3992,18 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
             break;
     }
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
-#ifdef FEATRUE_SET_ANN_FULL_SCREEN
-#if defined(FEATURE_DISP_176X220)
-    SETAEERECT(&rc, 
-               1,
-               20,
-               pMe->m_rc.dx-2, 
-               pMe->m_nNormalFontHeight);
-    SETAEERECT(&rc_week, 
-               26,//1,
-               160,//40, 
-               130, 
-               pMe->m_nNormalFontHeight);
-#elif defined(FEATURE_DISP_128X128)
-	SETAEERECT(&rc, 
-               15,
-               20,
-               pMe->m_rc.dx-30, 
-               pMe->m_nNormalFontHeight);
-    SETAEERECT(&rc_week, 
-               15,//1,
-               58,//160,//40, 
-               (pMe->m_rc.dx-30),//130, 
-               pMe->m_nNormalFontHeight);
-#elif defined(FEATURE_DISP_160X128)
-		SETAEERECT(&rc, 
-				   15,
-				   20,
-				   pMe->m_rc.dx-30, 
-				   pMe->m_nNormalFontHeight);
-		SETAEERECT(&rc_week, 
-				   15,//1,
-				   58,//160,//40, 
-				   (pMe->m_rc.dx-30),//130, 
-				   pMe->m_nNormalFontHeight);
 
-#else
+#ifdef FEATRUE_SET_ANN_FULL_SCREEN
 	SETAEERECT(&rc, 
-	           1,
-	           15, 
-	           pMe->m_rc.dx-2, 
-	           pMe->m_nNormalFontHeight);
+			   IDLE_D_CLOCK_X,
+			   IDLE_D_CLOCK_Y,
+			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
+			   26);
 	SETAEERECT(&rc_week, 
-	           (pMe->m_rc.dx-10)/2 ,
-	           15, 
-	           pMe->m_rc.dx-(pMe->m_rc.dx-10)/2, 
-	           pMe->m_nNormalFontHeight);
-#endif //FEATURE_DISP_176X220
+			   DATA_X,
+			   DATA_Y,
+			   (pMe->m_rc.dx-2*DATA_X), 
+			   pMe->m_nNormalFontHeight);
 #else
     SETAEERECT(&rc, 
                1,
@@ -4041,17 +4054,32 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     }
 	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test               
     // Display the string of date or time or weekday
-	
+	#if 1
+	{
+		int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
+		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              24,
+	                              wszDate, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT);
+        IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+	}
+
+	#else
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-                              AEE_FONT_BOLD,
+                              AEE_FONT_LARGE,
                               wszDate, -1,
                               0, 0, &rc, 
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_CENTER
                               | IDF_TEXT_TRANSPARENT);
-
+	#endif
         
  	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test  
     // 格式化日期字符串并绘制
@@ -4214,9 +4242,6 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                 sizeof(wszDate));
     
     wszDate[3] = (AECHAR)'\0';
-    //wszDate[0] = (AECHAR)'0';
-    //wszDate[1] = (AECHAR)'1';
-    //wszDate[2] = (AECHAR)'2';
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -4823,7 +4848,7 @@ void CoreApp_Poweroff_Phone(void *pp)
 void CoreApp_Draw_Charger_image(void *pp)
 {
     CCoreApp *pMe = (CCoreApp *)pp;
-    AEEBatteryChargerStatus status;
+    //AEEBatteryChargerStatus status;
     
     //CORE_ERR("%d  %d Charger_image",pMe->m_battery_count,pMe->m_bExtPwrState);
     IDISPLAY_ClearScreen(pMe->m_pDisplay);
@@ -5380,9 +5405,3 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
 #endif //FEATURE_SPN_FROM_BSMCCMNC   
 #endif//WIN32
 }
-
-
-
-
-
-

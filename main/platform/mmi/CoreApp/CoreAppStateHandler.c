@@ -120,6 +120,13 @@ static boolean CoreApp_Start_Alarm(CCoreApp *pMe);
 #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
 void static isAllowIMSI(CCoreApp *pMe,boolean *lockFlg);
 #endif
+
+#ifdef USES_MMI
+extern boolean   IsRunAsUIMVersion(void);
+extern boolean   IsRunAsFactoryTestMode(void);
+extern void InitProvisioning(void);
+#endif
+
 /*==============================================================================
 
                                  全局数据
