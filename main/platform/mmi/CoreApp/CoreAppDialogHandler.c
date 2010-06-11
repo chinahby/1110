@@ -4056,7 +4056,6 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     // Display the string of date or time or weekday
 	#if 1
 	{
-		int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
@@ -4066,14 +4065,14 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              IDF_ALIGN_MIDDLE
 	                              | IDF_ALIGN_CENTER
 	                              | IDF_TEXT_TRANSPARENT);
-        IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+        //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 	}
 
 	#else
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-                              AEE_FONT_LARGE,
+                              AEE_FONT_BOLD,
                               wszDate, -1,
                               0, 0, &rc, 
                               IDF_ALIGN_MIDDLE

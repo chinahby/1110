@@ -1432,6 +1432,8 @@ void DrawBackground( IDisplay *pDisplay, AEERect *pRect)
 备注:
     同时本函数不负责界面的更新，界面的更新由调用者自行完成。
 ==============================================================================*/
+extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
+
 void DrawGreyBitTextWithProfile(IShell* pShell, 
     IDisplay * pDisplay, 
     RGBVAL ProfileColor, 
@@ -1460,6 +1462,7 @@ void DrawGreyBitTextWithProfile(IShell* pShell,
 	// 设置文本描边时边的颜色，同时保存原来文本颜色值
 	oldTextClr = IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);
 
+	#if 0
 	// 求绘制文本时的剪切矩形
 	ISHELL_GetDeviceInfo(pShell, &di);
 	ClipRc.x = 0;
@@ -1600,7 +1603,21 @@ void DrawGreyBitTextWithProfile(IShell* pShell,
 					NULL, 
 					dwFlags);
 	}
-	
+	#else
+	// 绘制文本
+	rc.dx = prcBackground->dx;
+	rc.dy = prcBackground->dy;
+	rc.x = prcBackground->x-1;
+	rc.y = prcBackground->y-1;
+	(void) GreyBitBrewFont_DrawText(pDisplay, 
+				Font+2, 
+				pcText, 
+				nChars, 
+				x, 
+				y, 
+				&rc,//prcBackground, 
+				dwFlags);
+	#endif
 	// 恢复初始文本颜色
 	(void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, oldTextClr);
 	
