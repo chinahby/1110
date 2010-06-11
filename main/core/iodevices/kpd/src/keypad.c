@@ -902,7 +902,7 @@ static void keypad_drive_all_scan_cols_high(void)
   }
 }
 #endif
-#ifndef BUILD_BOOT_CHAIN
+
 /*===========================================================================
 
 FUNCTION KEYPAD_DRIVE_ONE_SCAN_COL_LOW
@@ -957,7 +957,7 @@ static void keypad_drive_one_scan_col_low(int column)
   }
 }
 
-
+#ifndef BUILD_BOOT_CHAIN
 #ifdef FEATURE_KEYPAD_USES_GPIO_FOR_PWR_KEY
 #error code not present
 #endif /* FEATURE_KEYPAD_USES_GPIO_FOR_PWR_KEY */
@@ -2057,12 +2057,8 @@ void keypad_clear_headset_key(void)
 #ifdef CUST_EDITION
 boolean keypad_is_dload_key_pressed(void)
 {
-#ifndef FEATURE_ALL_KEY_PAD    
-    /* Set the column LOW (0), the pressed key will show a LOW (0)
-     * in it's position in the row being scanned.  This sets the other
-     * columns HI-Z.
-     */
-    keypad_drive_all_scan_cols_low();
+    boolean bPressed = FALSE;
+    keypad_drive_one_scan_col_low(0);
     
     /* The following delays the polling of sense signals to make sure the
      * signals are stable. You may tweak the delay if you wish.
@@ -2072,10 +2068,11 @@ boolean keypad_is_dload_key_pressed(void)
     if (GPIO_LOW_VALUE == gpio_in(keytbl_row_to_keysense_gpio_map[0]))
     {
          /* A low keysense reading indicates a closed switch (pressed) */
-        return TRUE;
+        bPressed = TRUE;
     }
-#endif
-    return FALSE;
+
+    keypad_drive_all_scan_cols_low();
+    return bPressed;
 }
 #endif
 
