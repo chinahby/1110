@@ -543,8 +543,8 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
+             //modi by yangdecai
+            //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_TITLE, IDS_CALLSETTING_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONESETTING_TITLE, IDS_PHONESETTING_TITLE, NULL, 0);
 #ifdef FEATRUE_AUTO_POWER
@@ -633,11 +633,12 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                                               AEECLSID_APP_SOUNDMENU);
                     break;
 #endif
+/*//modi by yangdecai
                 case IDS_DISPLAY_TITLE:      //显示设置
                     (void) ISHELL_StartApplet(pMe->m_pShell,
                                               AEECLSID_APP_DISPLAYMENU);
                     break;
-
+*/
                case IDS_PHONESETTING_TITLE:  //话机设置
                     CLOSE_DIALOG(DLGRET_PHONESETTING)
                     break;
@@ -3086,7 +3087,11 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
     )
 {
     PARAM_NOT_REF(dwParam)
-    static byte bytData = 0;
+    //static byte bytData = 0;
+    //static boolean isSwitch = FALSE;
+    nv_item_type nvi;
+    int ret = 0;
+
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_SIMSET);
     SETTING_ERR("%x, %x ,%x,HandleDateDialogEvent",eCode,wParam,dwParam);
@@ -3099,7 +3104,7 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
         case EVT_DIALOG_INIT:
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SIM_ONE, IDS_SIM_ONE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SIM_TWO, IDS_SIM_TWO, NULL, 0);
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SIM_SWITCH, IDS_SIM_SWITCH, NULL, 0);
+            //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SIM_SWITCH, IDS_SIM_SWITCH, NULL, 0);
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -3112,27 +3117,24 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-                (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                       CFGI_SIM_SWITCH,
-                                       &bytData,
-                                       sizeof(bytData));
-
-                switch (bytData)
+               
+                ret =OEMNV_Get(NV_ESN_OVER_WRITE_I,&nvi);
+                if( NV_NOTACTIVE_S != OEMNV_Get(NV_ESN_OVER_WRITE_I,&nvi))
                 {
-                    case OEMNV_SIMFORM_ONE:
-                        wItemID = IDS_SIM_ONE;
-                        break;
+                    switch (nvi.over_write_esn.esn)
+                    {
+                        case OEMNV_SIMFORM_ONE:
+                            wItemID = IDS_SIM_ONE;
+                            break;
 
-                    case OEMNV_SIMFORM_TWO:
-                        wItemID = IDS_SIM_TWO;
-                        break;
-
-                    default:
-                    case OEMNV_SIMFORM_SWITCH:
-                        wItemID = IDS_SIM_SWITCH;
-                        break;
+                        case OEMNV_SIMFORM_TWO:
+                            wItemID = IDS_SIM_TWO;
+                            break;
+                         default:
+                            break;
+                    }
                 }
-
+                ERR("HandleSimDialogEvent:::::%d::::ret:::%d",nvi.over_write_esn.esn,ret,0);
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, wItemID, TRUE);
                 IMENUCTL_SetSel(pMenu, wItemID);
@@ -3165,34 +3167,27 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
 
         case EVT_COMMAND:
             {
-                byte bytNewData = 0;
-
+                 nv_item_type nviNew;
                 switch (wParam)
                 {
                     case  IDS_SIM_ONE:
-                       bytNewData = OEMNV_SIMFORM_ONE ;
+                       nviNew.over_write_esn.esn = OEMNV_SIMFORM_ONE ;
                        break;
 
                     case IDS_SIM_TWO:
-                       bytNewData = OEMNV_SIMFORM_TWO ;
+                       nviNew.over_write_esn.esn = OEMNV_SIMFORM_TWO ;
                        break;
-
-                    case IDS_SIM_SWITCH:
-                       bytNewData = OEMNV_SIMFORM_SWITCH ;
-                       break;
-
                     default:
                        ASSERT_NOT_REACHABLE;
 
                 }
 
-                if (bytNewData != bytData)
+                if (nviNew.over_write_esn.esn != nvi.over_write_esn.esn)
                 {
-                    (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                          CFGI_SIM_SWITCH,
-                                          &bytNewData, sizeof(bytNewData));
+                    ERR("HandleSimDialogEvent:::::22222%d",nviNew.over_write_esn.esn,0,0);
+                    (void)OEMNV_Put(NV_ESN_OVER_WRITE_I,&nviNew);
                     //将选中的选项标出
-                    bytData = bytNewData;
+                    nvi.over_write_esn.esn = nviNew.over_write_esn.esn;
                     InitMenuIcons(pMenu);
                     SetMenuIcon(pMenu, wParam, TRUE);
                     (void)IMENUCTL_Redraw(pMenu);

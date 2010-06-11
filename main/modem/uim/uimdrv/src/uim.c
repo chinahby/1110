@@ -616,7 +616,7 @@ when       who     what, where, why
 
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #include "db.h"
-
+#include "CustomOEMConfigItems.h"
 #define INIT_DELAY_TIME 1000
 static rex_timer_type uim_initsmsadd_timer;
 static byte btCurInitFlg = 0;
@@ -750,6 +750,11 @@ boolean uim_passive_clk_stop_allowed = FALSE;
    down. */
 boolean uim_powering_down_task = FALSE;
 
+//add by yangdecai
+#ifdef FEATURE_DUAL_UIMCARD
+#define BUFER_SIZE  1
+#endif
+//add by yangdecai
 /* This is set to UIM_MC in R-UIM targets so that the UIM is powered down
    only after MC indicates that is finished with power up */
 uim_voter_type uim_ctl = (uim_voter_type)
@@ -8447,6 +8452,10 @@ dword dummy
   uim_cmd_type *cmd_ptr;           /* Pointer to received command */
   uim_status_type uim_temp_status;
   uim_status_type notification_reason = UIM_ERR_S;
+  #ifdef FEATURE_DUAL_UIMCARD
+  nv_item_type nvi;
+  int ret = 0;
+  #endif
 
 #ifdef FEATURE_UIM_TOOLKIT
   uim_proactive_uim_data_type uim_temp_type;
@@ -8538,6 +8547,23 @@ dword dummy
 #error code not present
 #endif /* FEATURE_UIM_USB_UICC */
 
+#ifdef FEATURE_DUAL_UIMCARD
+{
+   if( NV_NOTACTIVE_S != OEMNV_Get(NV_ESN_OVER_WRITE_I,&nvi))
+   {
+       if(nvi.over_write_esn.esn == 2 )
+        {
+            gpio_out(GPIO_OUTPUT_34,(GPIO_ValueType)GPIO_HIGH_VALUE);
+        }
+   }
+   else
+   {
+        nvi.over_write_esn.esn = 1;
+        ret = OEMNV_Put(NV_ESN_OVER_WRITE_I,&nvi);
+   }
+    uim_dev_init();
+}
+#endif
   for (;;)
   {
     /* Never exit this loop... */

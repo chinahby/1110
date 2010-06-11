@@ -615,9 +615,7 @@ typedef struct
    pen_cal_type m_pencal_data;
 #endif
 #endif //#ifdef CUST_EDITION
-#ifdef FEATURE_DOUBLE_SIM_CARD
-  byte  sim_slot_default;
-#endif 
+
 } OEMConfigListType;
 
 
@@ -1377,10 +1375,7 @@ static int OEMPriv_SetItem_CFGI_PLANEMODE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_MISSED_CALL_ICON(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MISSED_CALL_ICON(void *pBuff);
 #endif //#ifdef CUST_EDITION
-#ifdef   FEATURE_DOUBLE_SIM_CARD
-static int OEMPriv_GetItem_CFGI_SIM_SWITCH(void *pBuff);
-static int OEMPriv_SetItem_CFGI_SIM_SWITCH(void *pBuff);
-#endif
+
 /*===========================================================================
 
                      STATIC/LOCAL DATA
@@ -1644,9 +1639,7 @@ static OEMConfigListType oemi_cache = {
    ,{-1,-1,-1,-1}
 #endif//FEATURE_TOUCHPAD
 #endif //CUST_EDITION
-#ifdef FEATURE_DOUBLE_SIM_CARD
-    ,OEMNV_SIMFORM_ONE
-#endif
+
 };
 
 ////
@@ -2153,9 +2146,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_DEFAULT_REND,sizeof(uint32)),
    CFGTABLEITEM(CFGI_REND_STATE,sizeof(byte)),
 #endif//FEATURE_RANDOM_MENU_REND
-#ifdef FEATURE_DOUBLE_SIM_CARD
-  CFGTABLEITEM(CFGI_SIM_SWITCH, sizeof(byte)),           /* CFGI_SIM_SWITCH*/
-#endif
+
 #ifdef FEATURE_TOUCHPAD
    CFGTABLEITEM(CFGI_PEN_CAL,sizeof(pen_cal_type))
 #endif//FEATURE_TOUCHPAD
@@ -9998,19 +9989,7 @@ static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff)
 }
 #endif//FEATURE_TOUCHPAD
 
-#ifdef FEATURE_DOUBLE_SIM_CARD
-static int OEMPriv_GetItem_CFGI_SIM_SWITCH(void *pBuff)
-{
-    MEMCPY(pBuff,(void*) &oemi_cache.sim_slot_default,sizeof(byte));
-    return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_SIM_SWITCH(void *pBuff)
-{
-    MEMCPY((void*) &oemi_cache.sim_slot_default, pBuff, sizeof(byte));
-    OEMPriv_WriteOEMConfigList();
-    return SUCCESS;
-}
-#endif
+
 static int OEMPriv_GetItem_CFGI_ALARM_FLAG(void *pBuff)
 {
    MEMCPY(pBuff, (void*) &oemi_cache.alarm_flag, sizeof(boolean));

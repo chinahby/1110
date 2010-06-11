@@ -2826,9 +2826,10 @@ nvio_write (
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 #ifdef CUST_EDITION
+/*
       case NV_ESN_OVER_WRITE_I:
         status = nvio_over_write_esn(cmd_ptr);
-        break;
+        break;*/
 #endif
       default:
         /* All other items get generic treatment, if they have 

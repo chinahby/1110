@@ -376,9 +376,6 @@
 	<String Id="1125" Name="IDS_SIM_TWO">
 		<Text>SIM Slot Two</Text>
 	</String>
-	<String Id="1126" Name="IDS_SIM_SWITCH">
-		<Text>Switch SIM Card</Text>
-	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

@@ -457,7 +457,6 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_SIMFORM_INVALID  0
 #define   OEMNV_SIMFORM_ONE    1
 #define   OEMNV_SIMFORM_TWO    2
-#define   OEMNV_SIMFORM_SWITCH   3
 #endif
 /////////////////////////////////////////////////////////////////////////
 // Banner -- CFGI_BNNER

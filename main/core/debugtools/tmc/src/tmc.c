@@ -3637,8 +3637,10 @@ LOCAL   void                       tmc_libraries_init_before_tasks_start(
   #ifndef FEATURE_BRINGUP_DIAG_ONLY
   #if (defined ( FEATURE_UIM_DRIVER ) && !defined (FEATURE_GSM_PLT))
   {
+    #ifndef FEATURE_DUAL_UIMCARD
     extern int uim_dev_init( void );
     uim_dev_init();
+    #endif
   }
   #endif /* FEATURE_UIM_DRIVER && !FEATURE_GSM_PLT*/
   #endif /* FEATURE_BRINGUP_DIAG_ONLY */
