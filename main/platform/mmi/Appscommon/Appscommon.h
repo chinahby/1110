@@ -464,6 +464,39 @@ void DrawTextWithProfile(IShell* pShell,
 
 /*==============================================================================
 函数:
+    DrawGreyBitTextWithProfile
+
+说明:
+    函数用于绘制带轮廓的文本。
+
+参数:
+    pShell [in]：IShell 接口指针。
+    pDisplay [in]：IDisplay 接口指针。
+    ProfileColor [in]：文本轮廓的RGBVAL颜色值。
+    参数 Font、pcText、nChars、x、y、prcBackground、dwFlags 含义同接口函数
+    IDISPLAY_DrawText 。
+
+返回值:
+    none
+
+备注:
+    同时本函数不负责界面的更新，界面的更新由调用者自行完成。
+==============================================================================*/
+void DrawGreyBitTextWithProfile(IShell* pShell, 
+    IDisplay * pDisplay, 
+    RGBVAL ProfileColor, 
+    int Font, 
+    const AECHAR * pcText, 
+    int nChars,
+    int x, 
+    int y, 
+    const AEERect * prcBackground, 
+    uint32 dwFlags
+);
+
+
+/*==============================================================================
+函数:
     EncodePWDToUint16
 
 说明:

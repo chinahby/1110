@@ -1411,6 +1411,210 @@ void DrawBackground( IDisplay *pDisplay, AEERect *pRect)
     }
 
 }
+
+/*==============================================================================
+函数:
+    DrawGreyBitTextWithProfile
+
+说明:
+    函数用于绘制带轮廓的文本。
+
+参数:
+    pShell [in]：IShell 接口指针。
+    pDisplay [in]：IDisplay 接口指针。
+    ProfileColor [in]：文本轮廓的RGBVAL颜色值。
+    参数 Font、pcText、nChars、x、y、prcBackground、dwFlags 含义同接口函数
+    IDISPLAY_DrawText 。
+
+返回值:
+    none
+
+备注:
+    同时本函数不负责界面的更新，界面的更新由调用者自行完成。
+==============================================================================*/
+void DrawGreyBitTextWithProfile(IShell* pShell, 
+    IDisplay * pDisplay, 
+    RGBVAL ProfileColor, 
+    int Font, 
+    const AECHAR * pcText, 
+    int nChars,
+    int x, 
+    int y, 
+    const AEERect * prcBackground, 
+    uint32 dwFlags
+)
+{
+	RGBVAL oldTextClr;
+	AEERect ClipRc;
+	AEERect rc;
+	AEEDeviceInfo di;
+
+	// 满足下列任意条件程序应立即返回
+	if ((NULL == pDisplay) || 
+		(NULL == pcText) || 
+		(NULL == pShell))
+	{
+		return;
+	}
+
+	// 设置文本描边时边的颜色，同时保存原来文本颜色值
+	oldTextClr = IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);
+
+	// 求绘制文本时的剪切矩形
+	ISHELL_GetDeviceInfo(pShell, &di);
+	ClipRc.x = 0;
+	ClipRc.y = 0;
+	ClipRc.dx = di.cxScreen;
+	ClipRc.dy = di.cyScreen;
+	if (NULL != prcBackground)	
+	{
+		ClipRc = *prcBackground;
+	}
+	
+	rc = ClipRc;
+	
+	// 绘制文本的边
+	if (dwFlags & IDF_ALIGN_RIGHT)
+	{
+		rc.dx = ClipRc.dx - 1;
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y, 
+					&rc, 
+					dwFlags);
+					
+		rc.dx = ClipRc.dx + 1;
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y, 
+					&rc, 
+					dwFlags);
+	}
+	else if ( (dwFlags & IDF_ALIGN_LEFT) || (dwFlags & IDF_ALIGN_CENTER) )
+	{
+		rc.x = ClipRc.x - 1;
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y, 
+					&rc, 
+					dwFlags);
+		rc.x = ClipRc.x + 1;
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y, 
+					&rc, 
+					dwFlags);
+	}
+	else
+	{
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x-1, 
+					y, 
+					NULL, 
+					dwFlags);
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x+1, 
+					y, 
+					NULL, 
+					dwFlags);
+	}
+	
+	rc = (prcBackground ? *prcBackground : ClipRc); 
+	
+	if (dwFlags & IDF_ALIGN_BOTTOM)
+	{
+		rc.dy = ClipRc.dy - 1;
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y, 
+					&rc,
+					dwFlags);
+		rc.dy = ClipRc.dy + 1;
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y, 
+					&rc, 
+					dwFlags);
+	}
+	else if ( (dwFlags & IDF_ALIGN_TOP) || (dwFlags & IDF_ALIGN_MIDDLE) )
+	{
+		rc.y = ClipRc.y - 1;
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y, 
+					&rc, 
+					dwFlags);
+		rc.y = ClipRc.y + 1;
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y, 
+					&rc, 
+					dwFlags);
+	}
+	else
+	{
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y - 1, 
+					NULL, 
+					dwFlags);
+		(void) GreyBitBrewFont_DrawText(pDisplay, 
+					Font, 
+					pcText, 
+					nChars, 
+					x, 
+					y + 1, 
+					NULL, 
+					dwFlags);
+	}
+	
+	// 恢复初始文本颜色
+	(void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, oldTextClr);
+	
+	// 绘制文本
+	(void) GreyBitBrewFont_DrawText(pDisplay, 
+				Font, 
+				pcText, 
+				nChars, 
+				x, 
+				y, 
+				prcBackground, 
+				dwFlags);
+}
+
 /*==============================================================================
 函数:
     DrawTextWithProfile
