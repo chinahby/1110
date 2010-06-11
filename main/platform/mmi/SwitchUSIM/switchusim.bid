@@ -1,6 +1,0 @@
-#ifndef SWITCHUSIM_BID
-#define SWITCHUSIM_BID
-
-#define AEECLSID_SWITCHUSIM        0x01006600
-
-#endif //SWITCHUSIM_BID
