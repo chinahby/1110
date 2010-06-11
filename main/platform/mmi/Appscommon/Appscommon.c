@@ -214,7 +214,7 @@ static void ALKWSTRLOWER(AECHAR * pszDest);
                                  
 ==============================================================================*/
 #if !defined( AEE_SIMULATOR)
-static call_start_info_type call_start_info_call;
+//static call_start_info_type call_start_info_call;
 #endif
 
  static boolean gbArrowFlag = FALSE;
@@ -1462,7 +1462,7 @@ void DrawGreyBitTextWithProfile(IShell* pShell,
 	// 设置文本描边时边的颜色，同时保存原来文本颜色值
 	oldTextClr = IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);
 
-	#if 0
+	#if 1
 	// 求绘制文本时的剪切矩形
 	ISHELL_GetDeviceInfo(pShell, &di);
 	ClipRc.x = 0;
