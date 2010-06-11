@@ -78,9 +78,9 @@ AEEINTERFACE(IBacklight)
 	int (*SigLedDisable)(IBacklight *p); 
 #endif
 //wangliang add!  2010-06-10
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
-	void (*TurnOnFlashlight)(IBacklight *p);   
-   	void (*TurnOffFlashlight)(IBacklight *p);
+#ifdef FEATURE_TORCH_SUPPORT
+	void (*TurnOnTorch)(IBacklight *p);   
+   	void (*TurnOffTorch)(IBacklight *p);
 #endif
 #endif /*CUST_EDITION*/
 
@@ -103,9 +103,9 @@ AEEINTERFACE(IBacklight)
 #define IBACKLIGHT_SigLedDisable(p)                AEEGETPVTBL((p),IBacklight)->SigLedDisable((p))
 #endif
 //wangliang add!  2010-06-10
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
-#define IBACKLIGHT_TurnOnFlashlight(p)         		AEEGETPVTBL((p),IBacklight)->TurnOnFlashlight((p))
-#define IBACKLIGHT_TurnOffFlashlight(p)				AEEGETPVTBL((p),IBacklight)->TurnOffFlashlight((p))
+#ifdef FEATURE_TORCH_SUPPORT
+#define IBACKLIGHT_TurnOnTorch(p)         		AEEGETPVTBL((p),IBacklight)->TurnOnTorch((p))
+#define IBACKLIGHT_TurnOffTorch(p)				AEEGETPVTBL((p),IBacklight)->TurnOffTorch((p))
 #endif
 #endif /*CUST_EDITION*/
 

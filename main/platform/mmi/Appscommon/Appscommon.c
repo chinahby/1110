@@ -30,6 +30,7 @@
 #include "appscommon.brh"
 
 // 图片资源文件
+#if !defined( FEATURE_COLOR_DISPLAY) || !defined( AEESIMULATOR)
 #if defined(FEATURE_DISP_160X128)
 #include "Appscommon_160x128.brh"
 #elif defined(FEATURE_DISP_128X128)
@@ -37,7 +38,7 @@
 #else
 #include "Appscommon_color.brh"
 #endif
-
+#endif
 
 #include "CallApp.h"
 

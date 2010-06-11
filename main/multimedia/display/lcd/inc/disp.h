@@ -762,9 +762,9 @@ void disp_capture32
 );
 
 
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
-void disp_set_flashlight(void);
-void disp_clear_flashlight(void);
+#ifdef FEATURE_TORCH_SUPPORT
+void disp_set_torch(void);
+void disp_clear_torch(void);
 #endif
 
 #ifdef __cplusplus

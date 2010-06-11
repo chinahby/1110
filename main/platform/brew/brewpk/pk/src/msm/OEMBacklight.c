@@ -32,8 +32,8 @@ struct IBacklight {
     hs_sig_led_onoff_type           sigLedOnoff;
 #endif
 //wangliang add!  2010-06-10
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
-	byte							flashLightOnoff;
+#ifdef FEATURE_TORCH_SUPPORT
+	byte							TorchOnoff;
 #endif
     byte                            btBKLevel;      // 背光级别，非具体值
 };
@@ -70,9 +70,9 @@ static void AEEBacklight_TurnOn(IBacklight *pme);
 static void AEEBacklight_TurnOff(IBacklight *pme);
 
 //wangliang add!  2010-06-10
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
-static void AEEBacklight_TurnOnFlashlight(IBacklight *pme);
-static void AEEBacklight_TurnOffFlashlight(IBacklight *pme);
+#ifdef FEATURE_TORCH_SUPPORT
+static void AEEBacklight_TurnOnTorch(IBacklight *pme);
+static void AEEBacklight_TurnOffTorch(IBacklight *pme);
 #endif
 
 #ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
@@ -106,9 +106,9 @@ static const IBacklightVtbl gvtIBacklight = {
   ,AEEBacklight_SigLedDisable
 #endif
 //wangliang add!  2010-06-10
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
-	,AEEBacklight_TurnOnFlashlight
-	,AEEBacklight_TurnOffFlashlight
+#ifdef FEATURE_TORCH_SUPPORT
+	,AEEBacklight_TurnOnTorch
+	,AEEBacklight_TurnOffTorch
 #endif
 
 };
@@ -179,8 +179,8 @@ int AEEBacklight_New(IShell *pIShell, AEECLSID uCls, void **ppif)
       ISHELL_AddRef(pIShell);
       pme->uCls = uCls;
 
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
-		pme->flashLightOnoff = FALSE;
+#ifdef FEATURE_TORCH_SUPPORT
+		pme->TorchOnoff = FALSE;
 #endif
       // 背光相关初始化--背光级别需以后单独设置
       OEM_SVCGetConfig(CFGI_BACKLIGHT_LEVEL, 
@@ -710,37 +710,37 @@ static void AEEBacklight_DisableTimer(void *pUser)
 }
 
 //wangliang add!  2010-06-10
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
-static void AEEBacklight_TurnOnFlashlight(IBacklight *pme)
+#ifdef FEATURE_TORCH_SUPPORT
+static void AEEBacklight_TurnOnTorch(IBacklight *pme)
 {
 	if (NULL == pme)
     {
         return;
     }
 
-    if ( pme->flashLightOnoff == TRUE )
+    if ( pme->TorchOnoff == TRUE )
     {
 		return;
     }
 
-    pme->flashLightOnoff = TRUE;
-    disp_set_flashlight();
+    pme->TorchOnoff = TRUE;
+    disp_set_torch();
 }
 
-static void AEEBacklight_TurnOffFlashlight(IBacklight *pme)
+static void AEEBacklight_TurnOffTorch(IBacklight *pme)
 {
 	if (NULL == pme)
     {
         return;
     }
 
-    if ( pme->flashLightOnoff == FALSE )
+    if ( pme->TorchOnoff == FALSE )
     {
 		return;
     }
 
-	pme->flashLightOnoff = FALSE;
-    disp_clear_flashlight();
+	pme->TorchOnoff = FALSE;
+    disp_clear_torch();
 }
 #endif
 

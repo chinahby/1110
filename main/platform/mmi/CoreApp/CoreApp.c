@@ -386,8 +386,8 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_b_online_from = ON_LINE_FROM_NORMAL;
 #endif
 
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
-	pMe->flashLightOn = FALSE;
+#ifdef FEATURE_TORCH_SUPPORT
+	pMe->TorchOn = FALSE;
 #endif
 
     CoreAppReadNVKeyBeepValue(pMe);
@@ -650,27 +650,19 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                     }
 
                     return TRUE;
-           #ifdef FEATURE_FLASHLIGHT_SUPPORT
+           #ifdef FEATURE_TORCH_SUPPORT
 				#ifdef FEATURE_PROJECT_W023C
 					case AVK_SPACE:
 					{
-						if ( pMe->flashLightOn == FALSE )
+						if ( pMe->TorchOn == FALSE )
 						{
-							pMe->flashLightOn = TRUE;
+							pMe->TorchOn = TRUE;
 							if (pMe->m_pBacklight)
 							{
-			        			IBACKLIGHT_TurnOnFlashlight(pMe->m_pBacklight);
-			    			}
-						}
-						else
-						{
-							pMe->flashLightOn = FALSE;
-							if (pMe->m_pBacklight)
-							{
-			        			IBACKLIGHT_TurnOffFlashlight(pMe->m_pBacklight);
-			    			}
-						}
-						
+				        		IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+				        		IBACKLIGHT_Disable(pMe->m_pBacklight);
+				    		}
+						}					
 					}
 
 					return TRUE;
@@ -679,21 +671,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				#ifdef FEATURE_PROJECT_W021C
 					case AVK_CAMERA:
 					{
-						if ( pMe->flashLightOn == FALSE )
+						if ( pMe->TorchOn == FALSE )
 						{
-							pMe->flashLightOn = TRUE;
+							pMe->TorchOn = TRUE;
 							if (pMe->m_pBacklight)
 							{
-			        			IBACKLIGHT_TurnOnFlashlight(pMe->m_pBacklight);
-			    			}
-						}
-						else
-						{
-							pMe->flashLightOn = FALSE;
-							if (pMe->m_pBacklight)
-							{
-			        			IBACKLIGHT_TurnOffFlashlight(pMe->m_pBacklight);
-			    			}
+				        		IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+				        		IBACKLIGHT_Disable(pMe->m_pBacklight);
+				    		}
 						}
 					}
 
@@ -726,7 +711,41 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
-            return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+        {
+        #ifdef FEATURE_TORCH_SUPPORT
+        	#ifdef FEATURE_PROJECT_W023C
+        	if ( eCode == EVT_KEY_RELEASE && wParam == AVK_SPACE && pMe->TorchOn == TRUE)
+        	{
+				if (pMe->m_pBacklight)
+				{
+	        		IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+	        		pMe->TorchOn = FALSE;
+	        		IBACKLIGHT_Enable(pMe->m_pBacklight);
+	    			return TRUE;
+	    		}
+        	}
+        	#endif
+
+        	#ifdef FEATURE_PROJECT_W021C
+        	if ( eCode == EVT_KEY_RELEASE && wParam == AVK_CAMERA && pMe->TorchOn == TRUE)
+        	{
+				if (pMe->m_pBacklight)
+				{
+	        		IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+	        		pMe->TorchOn = FALSE;
+	        		IBACKLIGHT_Enable(pMe->m_pBacklight);
+	        		return TRUE;
+	    		}
+        	}
+        	#endif
+
+        	return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+        	
+        #else
+			return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+		#endif
+        }
+            
 
         case EVT_NOTIFY:
             if(((AEENotify *)dwParam)->cls == AEECLSID_ALERT_NOTIFIER)

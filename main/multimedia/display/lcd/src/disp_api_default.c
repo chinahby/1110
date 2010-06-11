@@ -66,7 +66,7 @@ INCLUDE FILES FOR MODULE
 #endif 
 #include "pm.h"
 
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
+#ifdef FEATURE_TORCH_SUPPORT
 #include "gpio_1100.h"
 #endif
 
@@ -464,7 +464,7 @@ dword disp_capture2
   return 0;
  }
 
-#ifdef FEATURE_FLASHLIGHT_SUPPORT
+#ifdef FEATURE_TORCH_SUPPORT
 
 #if defined(FEATURE_PROJECT_W021C)
 #define GPIO_LAMP_EN GPIO_OUTPUT_25
@@ -473,12 +473,12 @@ dword disp_capture2
 #else
 #define GPIO_LAMP_EN GPIO_GENERIC_DEFAULT
 #endif
-void disp_set_flashlight(void)
+void disp_set_torch(void)
 {
 	gpio_tlmm_config(GPIO_LAMP_EN);
 	gpio_out(GPIO_LAMP_EN,GPIO_HIGH_VALUE);
 }
-void disp_clear_flashlight(void)
+void disp_clear_torch(void)
 {
 	gpio_tlmm_config(GPIO_LAMP_EN);
 	gpio_out(GPIO_LAMP_EN,GPIO_LOW_VALUE);
