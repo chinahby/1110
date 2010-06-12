@@ -92,9 +92,9 @@ endif
 ifeq ($(MMI_ADD_WAPBROWSER),yes)
 include $(WAPBROWSER)/WapBrowser.min
 endif
-ifneq ($(USES_LOW),yes)
+#ifneq ($(USES_LOW),yes)
 include $(BREW_APPMGR)/BREWAppMgr.min
-endif
+#endif
 ifeq ($(MMI_ADD_ESURFING),yes)
 include $(ESURFING)/Esurfing.min
 include $(CUSTSERVICE)/custservice.min

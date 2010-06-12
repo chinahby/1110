@@ -2169,7 +2169,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
             break;
         case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_DISPLAYMENU);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
             break;
 
     }
