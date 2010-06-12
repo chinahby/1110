@@ -1046,15 +1046,24 @@ static boolean StartApplet(MainMenu *pMe, int i)
     switch(i)
     {
         case 0:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT);
-            break; 
+        {
+            IContactApp *ca = NULL;
+            if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_APP_CONTACT, (void**)&ca))
+            {
+                return FALSE;
+            }
+            else
+            {
+                ICONTAPP_MainMenu(ca);
+                IContactApp_Release(ca);
+            }
+            break;
+        }
         case 1:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
             break;
         case 2:
-            {
-                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-            }
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
             break;
         case 3:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
