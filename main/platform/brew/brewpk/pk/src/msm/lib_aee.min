@@ -55,13 +55,30 @@ QCTLIBS :=\
 	$(BREW_LIB)/aee.lib \
 	$(BREW_LIB)/aeeaddrbk.lib \
 	$(BREW_LIB)/aeebattery.lib \
+	$(BREW_LIB)/aeebtil.lib \
+	$(BREW_LIB)/aeecamera.lib \
+	$(BREW_LIB)/aeecodesig.lib \
 	$(BREW_LIB)/aeecontrols.lib \
 	$(BREW_LIB)/aeedb.lib \
+	$(BREW_LIB)/aeedebugger.lib \
+	$(BREW_LIB)/aeedialog.lib \
+	$(BREW_LIB)/aeefont.lib \
+	$(BREW_LIB)/aeeijg.lib \
+	$(BREW_LIB)/aeevcalstore.lib \
+	$(BREW_LIB)/aeemenu.lib \
 	$(BREW_LIB)/aeemm.lib \
+	$(BREW_LIB)/aeenet.lib \
+	$(BREW_LIB)/aeeposdet.lib \
+	$(BREW_LIB)/aeersa.lib \
 	$(BREW_LIB)/aeesecurity.lib \
+	$(BREW_LIB)/aeeseed.lib \
 	$(BREW_LIB)/aeesms.lib \
 	$(BREW_LIB)/aeetapi.lib \
+        $(BREW_LIB)/aeeitemstore.lib \
+	$(BREW_LIB)/aeepdiparsers.lib \
+	$(BREW_LIB)/aeeweb.lib \
 	$(BREW_LIB)/a1litesignal.lib \
+	$(BREW_LIB)/brew.lib
    
 ifeq ($(USES_BREW_PREFIX_LIBS), yes)
     QCTLIBS +=\
@@ -89,8 +106,4 @@ endif
 ifeq ($(USES_JOYST),yes)
         QCTLIBS += $(BREW_LIB)/aeejoystick.lib
 endif
-endif
-
-ifeq ($(USES_MMI),yes)
-QCTLIBS += $(BREW_LIB)/others.lib
 endif
