@@ -61,10 +61,10 @@
 /* Display width and height in number of pixels */
 
 #ifdef CUST_EDITION
-#if defined(FEATURE_PROJECT_W023C)
+#if defined(FEATURE_PROJECT_W203)
 	#define DISP_WIDTH       160
    	#define DISP_HEIGHT       128
-#elif defined(FEATURE_PROJECT_W021C)
+#elif defined(FEATURE_PROJECT_W021)
 	#define DISP_WIDTH       128
 	#define DISP_HEIGHT       128
 #else

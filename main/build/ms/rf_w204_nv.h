@@ -10,6 +10,7 @@
         3.使用QCN View转为txt文件。
         4.将其中的值复制到本表中。
 ----------------------------------------------------------------*/
+#define AUTO_NV_RF_VERSION      0x204
 
 //Fixed rf nv, it'may adjust for certain target.
 const nv_auto_set_type nv_auto_set_rf_fixed_list[] =

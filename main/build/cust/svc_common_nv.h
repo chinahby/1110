@@ -19,7 +19,7 @@
 #error AUTO_NV_MIN_VERSION msut be less than AUTO_NV_MODIFY_TIME_FOR_CUSTOMER
 #endif
 
-#define AUTO_NV_ITME_VERSION                (AUTO_NV_CUST_CODE_ALCN + AUTO_NV_MIN_VERSION)
+#define AUTO_NV_ITME_VERSION                (AUTO_NV_CUST_CODE_ALCN + AUTO_NV_MIN_VERSION + AUTO_NV_RF_VERSION)
 
 //NOTICE: we only auto set NAM-0's value 
 //you can change those nv value for different operator.

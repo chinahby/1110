@@ -94,12 +94,12 @@ static disp_cls_type cls_arg;
 extern boolean mdp_disp_fatal_err_flag;
 
 extern int epson_S1D19120_install(char *);
-#ifdef FEATURE_PROJECT_W021C
+#ifdef FEATURE_PROJECT_W021
 extern int tm_cstn128x128_install(char * str);
 extern void disp_epson_S1D19120_boot_chg_splash_screen (void);
 #endif
 
-#ifdef FEATURE_PROJECT_W023C
+#ifdef FEATURE_PROJECT_W203
 extern int zgd_tft177_install(char *);
 extern void disp_epson_S1D19120_boot_chg_splash_screen (void);
 #endif
@@ -126,9 +126,9 @@ void disp_init(void)
   if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
     return;
 #else
-#if defined (FEATURE_PROJECT_W021C)
+#if defined (FEATURE_PROJECT_W021)
   if(tm_cstn128x128_install(PRIMARY_LCD_NAME) == -1)
-#elif defined (FEATURE_PROJECT_W023C)  
+#elif defined (FEATURE_PROJECT_W203)  
    if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
 #else
 #error code not present
@@ -469,9 +469,9 @@ dword disp_capture2
 
 #ifdef FEATURE_TORCH_SUPPORT
 
-#if defined(FEATURE_PROJECT_W021C)
+#if defined(FEATURE_PROJECT_W021)
 #define GPIO_LAMP_EN GPIO_OUTPUT_25
-#elif defined(FEATURE_PROJECT_W023C)
+#elif defined(FEATURE_PROJECT_W203)
 #define GPIO_LAMP_EN GPIO_OUTPUT_47
 #else
 #define GPIO_LAMP_EN GPIO_GENERIC_DEFAULT
