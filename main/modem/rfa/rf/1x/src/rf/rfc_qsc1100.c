@@ -659,7 +659,7 @@ PM_VREG_RFA2_ID
     }
 
     #ifdef RF_SUPPORTS_NON_BYPASS_PA_FOR_BC0
-    if(rft_da_select_set(RF_BC0_BAND, RFT_DA_SELECT_DA_1_ALWAYS) != RFT_WRITE_SUCCESS)
+    if(rft_da_select_set(RF_BC0_BAND, RFT_DA_SELECT_DA_1_PA_R0) != RFT_WRITE_SUCCESS)
     {
       RF_FATAL_ERROR("The value for DA Selection control for BC0 Band is not written successfully");
     }
