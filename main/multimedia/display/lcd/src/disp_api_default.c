@@ -98,7 +98,7 @@ extern int epson_S1D19120_install(char *);
 extern int tm_cstn128x128_install(char * str);
 #endif
 
-#ifdef FEATURE_PROJECT_W203
+#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
 extern int zgd_tft177_install(char *);
 #endif
 
@@ -129,7 +129,7 @@ void disp_init(void)
 #else
 #if defined (FEATURE_PROJECT_W021)
   if(tm_cstn128x128_install(PRIMARY_LCD_NAME) == -1)
-#elif defined (FEATURE_PROJECT_W203)  
+#elif defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
    if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
 #else
 #error code not present
@@ -475,7 +475,7 @@ dword disp_capture2
 
 #if defined(FEATURE_PROJECT_W021)
 #define GPIO_LAMP_EN GPIO_OUTPUT_25
-#elif defined(FEATURE_PROJECT_W203)
+#elif defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
 #define GPIO_LAMP_EN GPIO_OUTPUT_47
 #else
 #define GPIO_LAMP_EN GPIO_GENERIC_DEFAULT

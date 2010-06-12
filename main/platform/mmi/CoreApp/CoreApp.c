@@ -651,7 +651,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
                     return TRUE;
            #ifdef FEATURE_TORCH_SUPPORT
-				#ifdef FEATURE_PROJECT_W203
+				#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
 					case AVK_SPACE:
 					{
 						if ( pMe->TorchOn == FALSE )
@@ -668,7 +668,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 					return TRUE;
 				#endif
 
-				#ifdef FEATURE_PROJECT_W021
+				#if defined(FEATURE_PROJECT_W021)
 					case AVK_CAMERA:
 					{
 						if ( pMe->TorchOn == FALSE )
@@ -713,7 +713,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         case EVT_COMMAND:
         {
         #ifdef FEATURE_TORCH_SUPPORT
-        	#ifdef FEATURE_PROJECT_W203
+        	#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
         	if ( eCode == EVT_KEY_RELEASE && wParam == AVK_SPACE && pMe->TorchOn == TRUE)
         	{
 				if (pMe->m_pBacklight)

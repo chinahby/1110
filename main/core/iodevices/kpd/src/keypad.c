@@ -128,7 +128,7 @@ and other items needed by this module.
  * Pandora FFA. */
 #define KEYPAD_POLLING_DELAY_USEC 10
 
-#if !defined(FEATURE_PROJECT_W203)
+#if !(defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204))
 #define KEYPAD_5_BY_5_MATRIX
 #endif
 
@@ -1255,7 +1255,7 @@ static void keypad_scan_keypad
       }
     }
   }
-#ifndef CUST_EDITION
+#ifdef CUST_EDITION
   /* Sample then process PWR/END key */
   if ( keypad_is_power_key_pressed() )
   {
