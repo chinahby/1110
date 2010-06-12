@@ -96,14 +96,15 @@ extern boolean mdp_disp_fatal_err_flag;
 extern int epson_S1D19120_install(char *);
 #ifdef FEATURE_PROJECT_W021
 extern int tm_cstn128x128_install(char * str);
-extern void disp_epson_S1D19120_boot_chg_splash_screen (void);
 #endif
 
 #ifdef FEATURE_PROJECT_W203
 extern int zgd_tft177_install(char *);
-extern void disp_epson_S1D19120_boot_chg_splash_screen (void);
 #endif
 
+#ifdef FEATURE_BOOT_SPLASH_SCREEN
+extern void disp_epson_S1D19120_boot_chg_splash_screen (void);
+#endif
 #ifdef FEATURE_MDP
 extern int mdp_install(char *);
 extern void mdp_set_lcd_size(LCD_TYPE dest, LCD_TYPE_PHYS physDest, uint32 width, uint32 height);
@@ -144,7 +145,10 @@ void disp_init(void)
   lcd_info_1 = disp_get_info();
 #endif /* FEATURE_MDDI */
 
+#ifdef FEATURE_BOOT_SPLASH_SCREEN
 	disp_epson_S1D19120_boot_chg_splash_screen();
+#endif
+
 #ifdef FEATURE_MDP
   mdp_init();
 #endif
