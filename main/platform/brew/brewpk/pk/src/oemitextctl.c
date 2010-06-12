@@ -1332,7 +1332,7 @@ NormalKeyEvent:
                 (void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
                 return TRUE;
             }
-
+#ifndef FEATURE_DISP_160X128
             if ((!pme->m_pSoftKey) &&       // press the * key switch the Ab(ab,AB) and the En(en,EN) inputmethod 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_STAR) &&
@@ -1493,7 +1493,8 @@ NormalKeyEvent:
                    pme->m_eAutoState = MULTITAP_USER_DENY_AUTOSET;
                 } 
 #endif
-            }     
+            }   
+#endif
 #if defined (FEATURE_DISP_160X128)
             if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
