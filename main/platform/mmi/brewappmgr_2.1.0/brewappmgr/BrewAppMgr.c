@@ -21,7 +21,6 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "AEEConfig.h"
 #include "AEEDeviceNotifier.h"
 #include "AEECLSID_FLIP.bid"
-#include "err.h"
 #ifdef USE_IDL2
 #include "AEEDownload2.bid"
 #endif
@@ -160,7 +159,6 @@ static int AppManager_Load(IShell *ps, void * pHelpers, IModule ** pMod)
 int AppMgr_Load(IShell *ps, void * pHelpers, IModule ** pMod)
 #endif // AEE_FA_CONST
 {
-    ERR("1111111111111111111111111111111111111111111111",0,0,0);
    return(AEEStaticMod_New((int16)(sizeof(AEEMod)),ps,pHelpers,pMod,(PFNMODCREATEINST)AppMgr_CreateInstance,(PFNFREEMODDATA)NULL));
 }
 
@@ -189,12 +187,8 @@ static int AppMgr_CreateInstance(AEECLSID ClsId,IShell * pIShell,IModule * po,vo
 int AEEClsCreateInstance(AEECLSID ClsId,IShell * pIShell,IModule * po,void ** ppObj)
 #endif
 {
-   ERR("AEECLSID_BREWAPPMGR_BID::::111111111111",0,0,0);
    if (ClsId == AEECLSID_BREWAPPMGR_BID)
-    {
-        ERR("AEECLSID_BREWAPPMGR_BID::::22222222222",0,0,0);
       return AppMgrClsCreateInstance(ClsId, pIShell, po, ppObj);
-    }
 #if defined(FEATURE_BREW_DOWNLOAD)
    else if (ClsId == AEECLSID_MOBILESHOP_BID)
       return MShopClsCreateInstance(ClsId, pIShell, po, ppObj);
@@ -218,7 +212,7 @@ int AEEClsCreateInstance(AEECLSID ClsId,IShell * pIShell,IModule * po,void ** pp
 int AppMgrClsCreateInstance(AEECLSID ClsId,IShell * pIShell,IModule * po,void ** ppObj)
 {
    AppMgr *   pme; 
-    ERR("AEECLSID_BREWAPPMGR_BID::::333333333333333333",0,0,0);
+
    if (!AEEApplet_New(sizeof(AppMgr), ClsId, pIShell, po,
       (IApplet**)ppObj, (AEEHANDLER)AppMgr_HandleEvent,
       (PFNFREEAPPDATA)AppMgr_Free))
@@ -227,11 +221,10 @@ int AppMgrClsCreateInstance(AEECLSID ClsId,IShell * pIShell,IModule * po,void **
    }
    
    pme = (AppMgr *)*ppObj;
-    ERR("AEECLSID_BREWAPPMGR_BID::::4444444444444444",0,0,0);
+
    if (!AppMgr_Init(pme)) {
       IAPPLET_Release((IApplet*)pme);
       *ppObj = NULL;
-       ERR("AEECLSID_BREWAPPMGR_BID::::555555555555555",0,0,0);
       return EFAILED;
    }
 
@@ -255,9 +248,8 @@ static boolean AppMgr_Init(AppMgr * pme)
    AEEDeviceInfo  di;
 
    IShell* pIShell = pme->a.m_pIShell;
-#if 0
+
    IFlip       *pIFlip = NULL;
-#endif
    AEECLSID    *pClsList = NULL;
    AEEFlipInfo *pFlipInfo = NULL;
    int32       dwNumDisplays = 0;
@@ -410,8 +402,7 @@ static boolean AppMgr_Init(AppMgr * pme)
 #ifdef FEATURE_OEMCFG
    AppMgr_LoadOEMCfg(pme);
 #endif
-     ERR("AppMgr_Init::::11111111111111111111111111",0,0,0);
-#if 0
+
    CreateInstance(pme->a.m_pIShell, AEECLSID_FLIP, 
                             (void **)&pIFlip);
 
@@ -423,7 +414,6 @@ static boolean AppMgr_Init(AppMgr * pme)
       // draw to, but it could be more if we are allowed to draw to more than one at a time.
       // This result of this chunk is that we will get a list of class ids for the displays that
       // we can access at this point
-      ERR("AppMgr_Init::::2222222222222222222222",0,0,0);
       if ((SUCCESS == IFLIP_GetDisplayList(pIFlip, NULL, &dwNumDisplays)) && (dwNumDisplays > 0))
       {
 
@@ -507,7 +497,7 @@ static boolean AppMgr_Init(AppMgr * pme)
       FreePtr((void**)&pClsList);
       FreeObj((void**)& pIFlip);
    }
-#endif
+
    // If we don't have a display yet, all we can do is use the one they passed us.
    // This should only happen if IFLIP is not fully implemented, like might happen
    // on a CandyBar phone.
@@ -542,7 +532,7 @@ static boolean AppMgr_Init(AppMgr * pme)
          pme->m_cfg.bCreditBackWarning = OEM_SHOW_CREDITBACK_WARNING;
       }
    }
-    ERR("AppMgr_Init::::2222222222222222222222",0,0,0);
+
 #ifndef ENABLE_LARGE_ICON_VIEW
    // Force small icon view to true if large icon mode is disabled
    pme->m_cfg.bSmallIconView = TRUE;
@@ -557,7 +547,7 @@ static boolean AppMgr_Init(AppMgr * pme)
    {
       return FALSE;
    }
-    ERR("AppMgr_Init::::3333333333333333333333333",0,0,0);
+
    if (IDOWNLOAD2_QueryInterface(pme->m_pDownload2, AEECLSID_DOWNLOAD, 
                                  (void**)&pme->m_pDownload) != AEE_SUCCESS)
    {
@@ -571,7 +561,7 @@ static boolean AppMgr_Init(AppMgr * pme)
    }
 #endif //USE_IDL2
 #endif // FEATURE_BREW_DOWNLOAD
-    ERR("AppMgr_Init::::4444444444444444444444444",0,0,0);
+
     // No saved fonts yet.
    pme->m_bNormalFontSaved = FALSE;
    pme->m_bBoldFontSaved = FALSE;
@@ -581,7 +571,7 @@ static boolean AppMgr_Init(AppMgr * pme)
    // GetFontMetrics() and before the menu controls are instantiated.
    AppMgr_InstallTTFonts(pme);
 #endif // USE_TT_FONTS
-ERR("AppMgr_Init::::55555555555555555555555",0,0,0);
+
 #ifdef FEATURE_HAPTIC_SUPPORT
    if(ISHELL_CreateInstance(pIShell, AEECLSID_Sound, (void**)&pme->m_pHapticResponse) != AEE_SUCCESS)
    {
@@ -619,7 +609,7 @@ ERR("AppMgr_Init::::55555555555555555555555",0,0,0);
    //    return FALSE;
    //}
 
-ERR("AppMgr_Init::::555555555555555555555555555555555",0,0,0);
+
    if ((CreateInstance(pIShell, GetMenuCtlClassID(pme->m_bDispTouchEnabled),
          (void**)&pme->m_pMenu) != AEE_SUCCESS) ||
       (CreateInstance(pIShell, GetSoftKeyClassID(pme->m_bDispTouchEnabled),
@@ -679,7 +669,7 @@ ERR("AppMgr_Init::::555555555555555555555555555555555",0,0,0);
 
    // Set Menu Selection History Index
    pme->m_nIndex = -1;
-ERR("AppMgr_Init::::666666666666666666666",0,0,0);
+
    // Get MShop Configuration
    if (SUCCESS != ISHELL_GetPrefs(pme->a.m_pIShell, AEECLSID_MOBILESHOP_BID,
       MSHOP_CFG_VER, &pme->m_MShopCfg, sizeof(pme->m_MShopCfg)))
@@ -745,7 +735,7 @@ ERR("AppMgr_Init::::666666666666666666666",0,0,0);
 
    // Show Busy between UI states by default
    pme->m_bShowBusy = FALSE;
-ERR("AppMgr_Init::::7777777777777777777777777777",0,0,0);
+
    // Cache Credit Sequence
    STRCPY(pme->m_pCS, CREDIT_SEQUENCE);
 
@@ -1350,7 +1340,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
          boolean bResult;
          AEEAppStart* pStartInfo = (AEEAppStart*)dwParam;
          AEECLSID cls = pme->m_nLaunchCls; // store our launch class in case we need it
-         ERR("APP_START111111111111111111111111111111",0,0,0);
+         FARF(BAM, ("APP_START"));
 #ifdef FEATURE_COREAPPUI
          // Notify CoreAppUI that BAM is starting or resuming so it can
          // do whatever it thinks needs to be done.
@@ -1363,7 +1353,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
 
          // We have gotten our start event, so we can draw to the screen
          pme->m_bHasStarted = TRUE;
-         ERR("APP_START2222222222222222222222222222222",0,0,0);
+         
          {
             extern void OEM_SetBAM_ADSAccount(void);
             
@@ -1376,7 +1366,6 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
          }
 
          bResult = AppMgr_Start(pme);
-         ERR("APP_START333333333333333333333333333333:%d",bResult,0,0);
          if (FALSE == bResult)
          {
             // If AppMgr_Start() returns FALSE we don't want to run,
@@ -1464,9 +1453,8 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
 						ISHELL_CloseApplet(pme->a.m_pIShell, TRUE);
 						return FALSE;
 					}
-#if 0
+
                resumeRet &= AppMgr_SwitchDisplays(pme, TRUE);
-               #endif
             }
             else if (!IDISPLAY_IsEnabled(pme->m_pIDisplay) && !pme->m_bExitAfterSANotification)
             {
@@ -1620,9 +1608,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
 
 #ifdef FEATURE_LESS_THAN_6_KEYS
          // Map keys, if any need to be mapped
-         #if 0
          AppMgr_SetKeyList(pme, NULL, 0);
-#endif
 #endif
          
          return TRUE;
@@ -1654,9 +1640,8 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
             }
  
             FARF(BAM, ("Trying to switch displays"));
-#if 0
+
             return AppMgr_SwitchDisplays(pme, (boolean)wParam);
-            #endif
 #else
             // Return that We don't handle the Flip event, and let 
             // BREW take care of the rest.
@@ -10035,7 +10020,7 @@ static boolean AppMgr_Browse(AppMgr * pme, const char * url)
    return bHandled;
 }
 
-#if 0
+
 //===========================================================================
 //
 // DESCRIPTION
@@ -10188,7 +10173,7 @@ static boolean AppMgr_SetKeyList(AppMgr* pme, IFlip* pIFlip, AEECLSID cls)
 
    return FALSE;
 }
-#endif
+
 #ifdef FEATURE_INTERACT_WITH_SA_APP
 static boolean AppMgr_SetAppShortcutStatus(AppMgr* pme, AEECLSID cls, boolean hasShortcut)
 {
@@ -10715,7 +10700,7 @@ static void AppMgr_RecreateUICallback(void* pData)
    AppMgr_RecreateUI(pme);
 }
 
-#if 0
+
 //===========================================================================
 //
 // DESCRIPTION
@@ -10852,9 +10837,8 @@ static boolean AppMgr_SwitchDisplays(AppMgr* pme, boolean useDisplay1)
 #endif
 
    // Set up the key mappings for this new display that we are about to use.
-#if 0
    AppMgr_SetKeyList(pme, pIFlip, newDisplayId);
-#endif
+
 
    CreateInstance(pme->a.m_pIShell, newDisplayId, 
                             (void **)&pNewDisplay);
@@ -10928,7 +10912,7 @@ static boolean AppMgr_SwitchDisplays(AppMgr* pme, boolean useDisplay1)
 
    return TRUE;
 }
-#endif
+
 static boolean AppMgr_RecreateUI(AppMgr* pme)
 {
    IMenuCtl *pNewMainMenu = NULL;

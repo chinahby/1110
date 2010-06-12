@@ -990,12 +990,10 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
          {AEECLSID_QOSBUNDLE  ,0 ,PL_NETWORK, NULL, IQoSBundle_New},
          {AEECLSID_PRIMARYQOSSESSION  ,0 ,PL_NETWORK, NULL, IPrimaryQoSSession_New},
 #endif // defined(FEATURE_BREW_QOS)
-#ifndef CUST_EDITION
 #ifndef FEATURE_MANGO_BREW
          {AEECLSID_NETWORK  ,0 ,PL_NETWORK, NULL, INetwork_New},
          {AEECLSID_NETUTILS ,0 ,PL_NETWORK, NULL, INetUtils_New},
          {AEECLSID_NETUTILS2 ,0 ,0, NULL, INetUtils2_New},
-#endif
 #endif
 #if defined(FEATURE_BACKLIGHT) // {
          {AEECLSID_BACKLIGHT, ASCF_UPGRADE, 0, NULL, AEEBacklight_New},
@@ -1030,10 +1028,8 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
 #if (defined(FEATURE_BREW_JOYSTICK))
          {AEECLSID_IJOYSTICK, ASCF_UPGRADE, 0, NULL, AEEJoystick_New},
 #endif
-#ifndef CUST_EDITION
 #ifndef FEATURE_MANGO_BREW
          {AEECLSID_MEMCACHE, 0, 0, NULL, OEMMemCache_New},
-#endif
 #endif
 #if defined(FEATURE_BREW_ISYNTH)
          {AEECLSID_SYNTH, (ASCF_PRIV | ASCF_UPGRADE), 0, NULL, ISynth_New},
@@ -1047,12 +1043,10 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
          {AEECLSID_FMRadio, 0, 0, NULL, OEMFMRadio_New},
          {AEECLSID_FMRDS,0,0,NULL,OEMFMRDS_New},
 #endif
-#ifndef CUST_EDITION
 #ifndef FEATURE_MANGO_BREW
          {AEECLSID_ServingNetworks, (ASCF_UPGRADE), 0, NULL, CServingNetworks_New},
          {AEECLSID_GPSOneLock, ASCF_PRIV, 0, NULL, AEEGPSOneConfig_New},
          {AEECLSID_MannerMode, ASCF_PRIV, 0, NULL, AEEMannerModeStore_New},
-#endif
 #endif
          {0,0,0,NULL,NULL}
       };
@@ -1115,12 +1109,10 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
       gascICipherWrapper,
       gascICipherFactory,
 #endif
-#ifndef CUST_EDITION
 #ifndef FEATURE_MANGO_BREW
       gascIWebUtil,
 #endif
       gascIWebOpts,
-#endif
 #if defined(FEATURE_BREW_SECURITY)
       gascIHashCTX,
       gascIHash,

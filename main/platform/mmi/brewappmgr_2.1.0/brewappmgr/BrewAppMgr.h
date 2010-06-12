@@ -562,9 +562,8 @@ static boolean       IsTimeBased(DL2AppModInfo* pai);
 static boolean       ImageFits(IImage * pImage, IShell* pIShell, const char* pszResFile, uint16 wImage, int w, int h);
 
 static boolean       AppMgr_Browse(AppMgr * pme, const char * url);
-#if 0
 static boolean       AppMgr_SetKeyList(AppMgr* pme, IFlip* pIFlip, AEECLSID cls);
-#endif
+
 #ifdef FEATURE_INTERACT_WITH_SA_APP
 static boolean       AppMgr_SetAppShortcutStatus(AppMgr* pme, AEECLSID cls, boolean hasShortcut);
 static boolean       AppMgr_WriteAppList(AppMgr* pme);
@@ -585,9 +584,7 @@ static void          AppMgr_RecreateUICallback(void* pData);
 static void          AppMgr_EnableDispRedrawCallback(void* pData);
 static void          AppMgr_EnableDispCallback(void* pData);
 static boolean       AppMgr_RecreateUI(AppMgr* pme);
-#if 0
 static boolean       AppMgr_SwitchDisplays(AppMgr* pme, boolean useDisplay1);
-#endif
 #endif //FEATURE_SUPPORT_MULTIPLE_DISPLAYS
 static void          AppMgr_StoreMainMenuTitleInfo(AppMgr* pme, char* pszResFile, uint16 wResID, AECHAR* pwszText);
 static void          AppMgr_StoreMenuTitleInfo(AppMgr* pme, char* pszResFile, uint16 wResID, AECHAR* pwszText);
