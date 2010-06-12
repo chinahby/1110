@@ -7,9 +7,6 @@
 	<Object Id="5002" Name="IDB_BACKGROUND">
 		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
 	</Object>
-	<Object Id="5003" Name="IDI_DIALOG">
-		<File>..\images\160x128\Appscommon\Background\dialog.png</File>
-	</Object>
 	<Object Id="5009" Name="IDB_SPORT_RACE" MimeType="image/bmp">
 		<File>..\images\160x128\Sports\Icons\step_race.bmp</File>
 	</Object>
@@ -72,33 +69,6 @@
 	</Object>
 	<Object Id="5062" Name="IDI_MENU_BACKGROUND_TRANS">
 		<File>..\images\160x128\Appscommon\Menu\background\background_trans.png</File>
-	</Object>
-	<Object Id="5063" Name="IDI_MEDIA_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
-	</Object>
-	<Object Id="5064" Name="IDI_CONTACT_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
-	</Object>
-	<Object Id="5065" Name="IDI_SECURITY_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
-	</Object>
-	<Object Id="5066" Name="IDI_RECENTCALLS_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
-	</Object>
-	<Object Id="5067" Name="IDI_TOOLS_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
-	</Object>
-	<Object Id="5068" Name="IDI_ALARM_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
-	</Object>
-	<Object Id="5069" Name="IDI_SCHEDULE_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
-	</Object>
-	<Object Id="5070" Name="IDI_SETTING_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
-	</Object>
-	<Object Id="5071" Name="IDI_MESSAGE_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
 	</Object>
 	<Object Id="5081" Name="IDI_BOTTOMBAR">
 		<File>..\images\160x128\Appscommon\Menu\bottombar\bottombar.png</File>
@@ -406,9 +376,6 @@
 	<Object Id="6201" Name="IDB_UTKMENU" MimeType="image/bmp">
 		<File>..\images\160x128\UTK\utkmenu.bmp</File>
 	</Object>
-	<Object Id="6401" Name="IDB_CALCAPP">
-		<File>..\images\160x128\Calculator\Calculator.png</File>
-	</Object>
 	<Object Id="6421" Name="IDI_TIMER">
 		<File>..\images\160x128\Timer\timer.png</File>
 	</Object>
@@ -418,23 +385,8 @@
 	<Object Id="6441" Name="IDI_CALENDAR">
 		<File>..\images\160x128\Calendar\background.png</File>
 	</Object>
-	<Object Id="6442" Name="IDI_SCHEDULE">
-		<File>..\images\160x128\Calendar\calendar.png</File>
-	</Object>
-	<Object Id="6443" Name="IDI_NOTE_BOOK">
-		<File>..\images\160x128\Calendar\notebook.png</File>
-	</Object>
 	<Object Id="6444" Name="IDI_DATE_BAR">
 		<File>..\images\160x128\Calendar\bar.png</File>
-	</Object>
-	<Object Id="6445" Name="IDI_SPORTS">
-		<File>..\images\160x128\Calendar\Schedule.png</File>
-	</Object>
-	<Object Id="6461" Name="IDI_CONV_POUND">
-		<File>..\images\160x128\Converter\converter_pound.png</File>
-	</Object>
-	<Object Id="6462" Name="IDI_CONV_STAR">
-		<File>..\images\160x128\Converter\converter_star.png</File>
 	</Object>
 </Objects>
 </BREWRes>

@@ -385,5 +385,8 @@
 	<Object Id="6441" Name="IDI_CALENDAR">
 		<File>..\images\color\Calendar\background.png</File>
 	</Object>
+	<Object Id="6444" Name="IDI_DATE_BAR">
+		<File>..\images\color\Calendar\bar.png</File>
+	</Object>
 </Objects>
 </BREWRes>
