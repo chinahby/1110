@@ -462,7 +462,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
         //是否锁住电话簿
         (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_PHONEBOOK_LOCK_CHECK,
                                             &isLocked, sizeof(isLocked));
-        isLocked = FALSE;
+
         if (isLocked)
         {
             MOVE_TO_STATE(STATE_LOCKED)
@@ -674,9 +674,7 @@ static NextFSMAction Handler_STATE_LOCKED(CContApp *pMe)
             break;
         
         case DLGRET_MSGBOX_OK:
-            #if 0
             MOVE_TO_STATE(STATE_LOCKED);
-            #endif
             break;
             
         case DLGRET_INPUT_NULL:

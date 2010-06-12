@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="tetris" VERSION="1">
+	<Strings Encoding="Unicode">
+		<STRING Id="1" Name="IDS_TETRIS_TITLE">
+			<Text>Tetris</Text>
+		</STRING>
+		<STRING Id="2" Name="IDS_TETRIS_START">
+			<Text>Empezar a jugar</Text>
+		</STRING>
+		<STRING Id="3" Name="IDS_TETRIS_CONTINUE">
+			<Text>Continuar a jugar</Text>
+		</STRING>
+		<STRING Id="4" Name="IDS_TETRIS_LEVEL">
+			<Text>Sel. nivel</Text>
+		</STRING>
+		<STRING Id="5" Name="IDS_TETRIS_SCORE">
+			<Text>Marca</Text>
+		</STRING>
+		<STRING Id="6" Name="IDS_TETRIS_HELP">
+			<Text>Ayuda</Text>
+		</STRING>
+		<STRING Id="8" Name="IDS_TETRIS_SOUND">
+			<Text>Ajustar sonido</Text>
+		</STRING>
+		<STRING Id="9" Name="IDS_TETRIS_GRID">
+			<Text>Fijar crucigrama</Text>
+		</STRING>
+		<STRING Id="21" Name="IDS_TETRIS_LEVEL_1">
+			<Text>Fácil</Text>
+		</STRING>
+		<STRING Id="22" Name="IDS_TETRIS_LEVEL_2">
+			<Text>Normal</Text>
+		</STRING>
+		<STRING Id="23" Name="IDS_TETRIS_LEVEL_3">
+			<Text>Difícil</Text>
+		</STRING>
+		<STRING Id="24" Name="IDS_YES">
+			<Text>YES</Text>
+		</STRING>
+		<STRING Id="25" Name="IDS_NO">
+			<Text>NO</Text>
+		</STRING>
+		<STRING Id="26" Name="IDS_GRID_ON">
+			<Text>On</Text>
+		</STRING>
+		<STRING Id="27" Name="IDS_GRID_OFF">
+			<Text>Off</Text>
+		</STRING>
+		<STRING Id="31" Name="IDS_TETRIS_OK">
+			<Text>Ok</Text>
+		</STRING>
+		<STRING Id="32" Name="IDS_CLEAR">
+			<Text>Borrar</Text>
+		</STRING>
+		<STRING Id="41" Name="IDS_THELP_CONTENT">
+			<Text>1. Reglas: Este juego presenta siete formas y colores de bloques distintos. Puede escoger uno de los tres niveles: fácil, normal y difícil. A cada nivel se asocial una velocidad. El nivel fácil empieza con velocidad cero. Cuando marca más que 500 puntos, la velocidad se incrementa de una unidad. Al alcanzar 8 ó 16, tiene la posibilidad de seleccionar el nivel siguiente.\  2. Explicación del funcionamiento: Puede controlar el bloque pulsando en las teclas.\  Las teclas “5”/OK/SOFT1/ENVIO permiten pausar o continuar la partida en curso, con la tecla arriba, gira el bloque ; con la tecla izquierda o derecha, desplaza el bloque a la izquierda o a la derecha respectivamente; con la tecla abajo, baja el bloque al fondo.\  3. Ajustar el sonido: Este juego viene con la función sonido que puede activar o desactivar.\  4. Fijar el crucigrama. Se le propone un crucigrama en la zona principal que puede visualizar o esconder. .\  5. Marca: Muestra la mejor marca para el nivel asociado. Las marcas pueden reinicializarse.   </Text>
+		</STRING>
+		<STRING Id="42" Name="IDS_REPORT_SCORE">
+			<Text>Ha marcado %d, la mejor puntuación de este nivel es %d. Vuelva a intentarlo!</Text>
+		</STRING>
+		<STRING Id="43" Name="IDS_REPORT_RECORD">
+			<Text>Felicitaciones! Ha marcado %d puntos. Tiene la mejor puntuación para este nivel!</Text>
+		</STRING>
+		<STRING Id="44" Name="IDS_PASS">
+			<Text>¡Bueno! Ha alcanzado este nivel. Su puntuación es: %d. ¿Quiere acceder al nivel superior?</Text>
+		</STRING>
+		<STRING Id="45" Name="IDS_PASS_LAST">
+			<Text>¡Qué bien! Ha alcanzado el más alto nivel del juego marcando: %d. ¡No hay nada imposible para un corazón valiente!</Text>
+		</STRING>
+		<STRING Id="48" Name="IDS_HERO_TITLE">
+			<Text>Nivel           Marca</Text>
+		</STRING>
+	</Strings>
+	<Objects MimeType="image/bmp">
+		<Object Id="5008" Name="IDI_SCORE">
+			<File>../../../appscommon/images/color/tetris/score.en.bmp</File>
+		</Object>
+		<Object Id="5010" Name="IDI_SPEED">
+			<File>../../../appscommon/images/color/tetris/speed.en.bmp</File>
+		</Object>
+		<Object Id="5030" Name="IDI_PAUSED" MimeType="image/png">
+			<File>../../../appscommon/images/color/tetris/paused.en.png</File>
+		</Object>
+	</Objects>
+</BREWRes>
