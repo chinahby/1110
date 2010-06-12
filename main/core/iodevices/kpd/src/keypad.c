@@ -400,7 +400,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
     /*KEYSENSE_0_N*/
     {HS_RIGHT_K,    HS_UP_K,    HS_INFO_K,  HS_4_K,  HS_DOWN_K,  HS_LEFT_K,  HS_SEL_K,   HS_1_K,  HS_SEND_K},
      /*KEYSENSE_1_N*/
-    {HS_CLR_K,      HS_CAPLK_K,  HS_SYMBOL_K,  HS_NONE_K,  HS_SPACE_K,  HS_7_K,  HS_CAPLK_K,  HS_0_K,  HS_CAPLK_K},
+    {HS_CLR_K,      HS_LCTRL_K,  HS_SYMBOL_K,  HS_DOWN_K,  HS_SPACE_K,  HS_7_K,  HS_UP_K,  HS_0_K,  HS_CAPLK_K},
      /*KEYSENSE_2_N*/
     {HS_ENTER_K,     HS_DOLLAR_K,  HS_M_K,  HS_N_K,  HS_B_K,  HS_V_K,  HS_9_K,  HS_8_K,  HS_SHIFT_K},
      /*KEYSENSE_3_N*/
