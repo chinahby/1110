@@ -495,8 +495,8 @@ SIDE EFFECTS
 static void zgd_tft177_disp_clear_screen_area(word start_row, word start_col,
                                                   word end_row, word end_col)
 {
-  uint32 i = (end_row - start_row + 1) * (end_col - start_col + 1);
-  static uint32 whitebpp = 0xFF;
+  	uint32 i = (end_row - start_row + 1) * (end_col - start_col + 1);
+  	static uint32 whitebpp = 0x00;
 
 	if (zgd_tft177_state.disp_initialized &&
 		zgd_tft177_state.disp_powered_up  &&
@@ -824,9 +824,9 @@ int zgd_tft177_disp_init(void)
 	zgd_tft177_disp_info.backlight_min      = ZGD_TFT177_DISP_MIN_BACKLIGHT;
 	zgd_tft177_disp_info.backlight_max      = ZGD_TFT177_DISP_MAX_BACKLIGHT;
 	zgd_tft177_disp_info.backlight_default  = ZGD_TFT177_DISP_DEFAULT_BACKLIGHT;
-  zgd_tft177_disp_info.lcd_type           = ZGD_TFT128X160;
-  zgd_tft177_disp_info.phys_width         = ZGD_TFT177_DISP_WIDTH;    
-  zgd_tft177_disp_info.phys_height        = ZGD_TFT177_DISP_HEIGHT; 
+  	zgd_tft177_disp_info.lcd_type           = ZGD_TFT128X160;
+  	zgd_tft177_disp_info.phys_width         = ZGD_TFT177_DISP_WIDTH;    
+  	zgd_tft177_disp_info.phys_height        = ZGD_TFT177_DISP_HEIGHT; 
 
 	rex_init_crit_sect(&zgd_tft177_crit_sect);
 
@@ -837,11 +837,10 @@ int zgd_tft177_disp_init(void)
 	zgd_tft177_disp_on();
 
 	zgd_tft177_state.disp_initialized = TRUE;
-	
 
 	zgd_tft177_disp_clear_whole_screen();
-
-	zgd_tft177_disp_set_backlight(ZGD_TFT177_DISP_MAX_BACKLIGHT);
+	
+	zgd_tft177_disp_set_backlight(ZGD_TFT177_DISP_DEFAULT_BACKLIGHT);
 
 	return 1;
 } /* zgd_tft177_disp_init() */

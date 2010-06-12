@@ -476,8 +476,8 @@ SIDE EFFECTS
 static void tm_cstn128x128_disp_clear_screen_area(word start_row, word start_col,
                                                   word end_row, word end_col)
 {
-  uint32 i = (end_row - start_row + 1) * (end_col - start_col + 1);
-  static uint32 whitebpp = 0xFF;
+  	uint32 i = (end_row - start_row + 1) * (end_col - start_col + 1);
+  	static uint32 whitebpp = 0x00;
 
 	if (tm_cstn128x128_state.disp_initialized &&
 		tm_cstn128x128_state.disp_powered_up  &&
@@ -819,10 +819,9 @@ int tm_cstn128x128_disp_init(void)
 
 	tm_cstn128x128_state.disp_initialized = TRUE;
 	
-
 	tm_cstn128x128_disp_clear_whole_screen();
 
-	tm_cstn128x128_disp_set_backlight(TM_CSTN128x128_DISP_MAX_BACKLIGHT);
+	tm_cstn128x128_disp_set_backlight(TM_CSTN128x128_DISP_DEFAULT_BACKLIGHT);
 
 	return 1;
 } /* tm_cstn128x128_disp_init() */

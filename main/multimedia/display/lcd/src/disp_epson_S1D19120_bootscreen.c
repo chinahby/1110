@@ -59,8 +59,6 @@ and other items needed by this module.
 
 /*  130*34 image  */
 
-
-
 uint16 phone_charging_data[] = 
 {
    0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 
@@ -506,7 +504,7 @@ uint16 phone_charging_data[] =
    0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 
    0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff
 };
-
+#if 0
 uint16 charging_failed_data[4420] = 
 {
    0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 0x7fff, 
@@ -954,7 +952,7 @@ uint16 charging_failed_data[4420] =
 };
 
 
-
+#endif
 
 
 
@@ -1025,8 +1023,8 @@ DEPENDENCY
 void disp_epson_S1D19120_boot_chg_splash_screen (void)
 {
 
-#if 0//def FEATURE_BOOT_SPLASH_SCREEN
-	disp_update(phone_charging_data, 130, 0, 0, 34, 130, 130, 56);
+#ifdef FEATURE_BOOT_SPLASH_SCREEN
+	disp_update(phone_charging_data, 130, 0, 0, 34, 130, 0, 0);
 #endif  
 }
 
