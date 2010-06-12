@@ -709,22 +709,36 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 goto NormalKeyEvent;
                 return TRUE;
             }  
-             
+             #if defined(FEATURE_DISP_160X128)
              if ( (!pme->m_pSoftKey) 
                  && (pme->m_dwProps & TP_STARKEY_SWITCH) 
-                 && (wParam == AVK_STAR) 
+                 && (wParam == AVK_SYMBOL) 
                  && (!(pme->m_dwProps & TP_NOSYMBOL))
                  && (!pme->m_bShowSyms || !pme->m_bShowFaceSyms || !pme->m_bShowNetSyms))                  
                 // 按*键切换到符号输入法
+            #else
+            if ( (!pme->m_pSoftKey) 
+             && (pme->m_dwProps & TP_STARKEY_SWITCH) 
+             && (wParam == AVK_STAR) 
+             && (!(pme->m_dwProps & TP_NOSYMBOL))
+             && (!pme->m_bShowSyms || !pme->m_bShowFaceSyms || !pme->m_bShowNetSyms))                  
+            // 按*键切换到符号输入法
+            #endif
             {  
                 (void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
                 return TRUE;
             }  
-
+#if defined (FEATURE_DISP_160X128)
+            if ((!pme->m_pSoftKey) && 
+                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
+                (wParam == AVK_LCTRL) &&
+                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+#else
             if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_POUND) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+#endif
             {
                 if (!pme->m_bActive)
                 {
@@ -1309,7 +1323,11 @@ NormalKeyEvent:
             break;
 
         case EVT_KEY_RELEASE:  
-            if ((wParam == AVK_STAR)/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/) //modi by yangdecai
+            #if defined(FEATURE_DISP_160X128)
+            if ((wParam == AVK_SYMBOL)/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/) //modi by yangdecai
+            #else
+            if ((wParam == AVK_STAR))
+            #endif
             {
                 (void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
                 return TRUE;
@@ -1476,12 +1494,19 @@ NormalKeyEvent:
                 } 
 #endif
             }     
-
+#if defined (FEATURE_DISP_160X128)
+            if ((!pme->m_pSoftKey) && 
+                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
+                (wParam == AVK_LCTRL) &&
+                (shortkey == TRUE) &&
+                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+#else
             if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_POUND) &&
                 (shortkey == TRUE) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+#endif
             {
                 if (!pme->m_bActive)
                 {
@@ -1524,6 +1549,25 @@ NormalKeyEvent:
                 OEM_SetInputMode((CTextCtl *)pme);
                 return TRUE;
             }  
+#if defined (FEATURE_DISP_160X128)
+            if ((!pme->m_pSoftKey) && 
+                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
+                (wParam == AVK_CAPLK) &&
+                (shortkey == TRUE) &&
+                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+                {
+                    if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH)
+                    {
+                        pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
+                    }
+                    else if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_ENGLISH)
+                    {
+                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
+                    }
+                    OEM_SetInputMode((CTextCtl *)pme);
+                    return TRUE;
+                }
+#endif
             if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_POUND) &&
@@ -2577,7 +2621,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW
 	         pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH;
 #else
+#if defined(FEATURE_DISP_160X128)
+             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#else
 	         pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW            
                 break;
 
@@ -2585,7 +2633,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW
 	         pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH;
 #else
+#if defined(FEATURE_DISP_160X128)
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#else
 	         pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW				
                 break;
 #ifdef FEATURE_T9_MT_SPANISH
@@ -4380,7 +4432,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
 	        pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH;
 #else
+#if defined(FEATURE_DISP_160X128)
+             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#else
 	        pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
             OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);            
             break;            
@@ -4412,7 +4468,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
 	        pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH;
 #else
+#if defined(FEATURE_DISP_160X128)
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#else
 	        pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
             OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);              
             break;

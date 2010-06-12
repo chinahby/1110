@@ -1085,6 +1085,8 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
    sszNetSymbol4
 };
 
+
+
 #elif defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
 
 #define MAX_NET_SYMBOL          (6)//网络符号的总个数
