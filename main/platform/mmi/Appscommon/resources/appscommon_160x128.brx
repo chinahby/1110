@@ -7,6 +7,24 @@
 	<Object Id="5002" Name="IDB_BACKGROUND">
 		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
 	</Object>
+	<Object Id="5003" Name="IDB_CALCAPP">
+		<File>..\images\160x128\Calculator\Calculator.png</File>
+	</Object>
+	<Object Id="5004" Name="IDI_SCHEDULE">
+		<File>..\images\160x128\Calendar\calendar.png</File>
+	</Object>
+	<Object Id="5005" Name="IDI_NOTE_BOOK">
+		<File>..\images\160x128\Calendar\notebook.png</File>
+	</Object>
+	<Object Id="5006" Name="IDI_SPORTS">
+		<File>..\images\160x128\Calendar\Schedule.png</File>
+	</Object>
+	<Object Id="5007" Name="IDI_CONV_POUND">
+		<File>..\images\160x128\Converter\converter_pound.png</File>
+	</Object>
+	<Object Id="5008" Name="IDI_CONV_STAR">
+		<File>..\images\160x128\Converter\converter_star.png</File>
+	</Object>
 	<Object Id="5009" Name="IDB_SPORT_RACE" MimeType="image/bmp">
 		<File>..\images\160x128\Sports\Icons\step_race.bmp</File>
 	</Object>
