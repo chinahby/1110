@@ -245,6 +245,13 @@ extern void OEMDRM_ProcessIPCRsp( union ipc_msg_type**  rsp_msg_ptr );
 #endif /* defined(FEATURE_SEC_DRM) */
 #endif /* !defined(FEATURE_UI_CORE_REMOVED) */
 
+#ifdef FEATURE_UTK2
+#ifdef  FEATURE_UIM_RUIM
+#include "nvruimi.h"
+uim_rpt_type    oemui_uim_rpt_buf;
+static rex_timer_type oemui_rpt_timer;
+#endif 
+#endif /*FEATURE_UTK2*/
 
 #if defined (FEATURE_UI_CORE_REMOVED) && !defined(FEATURE_UI_DUALPROC_MDM)
 void ui_call_err_cb(void *data_ptr, cm_call_cmd_e_type call_cmd,
@@ -279,10 +286,13 @@ variables and other items needed by this module.
 LOCAL rex_timer_type  ui_rpt_timer; /* Timer for kicking the watchdog. */
 
 #ifdef CUST_EDITION
-#ifdef FEATURE_UIM_TOOLKIT
+#ifdef FEATURE_UTK2
 static  q_type          ui_cmd_q;       // 命令队列：管理待处理命令
 static IShell       *gpShell = NULL;  
-#endif
+// 使用软件的版本是否有卡版本：无论 RTRE 配置如何，使用的软件版本要不无卡、要不
+// 有卡，二者只能取一，无其它选择!初始值带卡，检测后根据配置和具体状态调整。
+static boolean gbRunAsUIMVersion = TRUE;
+#endif /*FEATURE_UTK2*/
 #endif
 
 #if !defined(FEATURE_UI_DUALPROC_APPS) || defined(FEATURE_UI_CORE_REMOVED) || defined (FEATURE_UIM_RUN_TIME_ENABLE)
@@ -707,7 +717,319 @@ void ui_answer_call ()
 #endif
 
 #ifdef CUST_EDITION
-#ifdef FEATURE_UIM_TOOLKIT
+#ifdef FEATURE_UTK2
+void ui_cmd(ui_cmd_type *cmd_ptr);
+
+
+
+/*==============================================================================
+函数: 
+    oemui_rex_wait
+       
+说明: 
+    函数等待 oemui task 被设置了指定信号后返回。在等待过程中会维护 watchdog 定时
+    器。
+       
+参数: 
+    waitSig [in]: 要等的信号。
+    
+返回值:
+    none
+       
+备注:
+    凡等待 UI task 被设置指定信号,请用此函数,避免直接调用 rex_wait ! 尽管参数
+    可以传入多个信号，但只要其中之一出现，函数立即返回!! 调用函数之前，请先清除
+    相关信号!
+==============================================================================*/
+void oemui_rex_wait(rex_sigs_type waitSig)
+{
+    rex_sigs_type sigs;
+    
+    // 等待特定信号的同时，注意踢狗
+    do 
+    {
+        sigs = rex_wait(UI_RPT_TIMER_SIG | waitSig);
+    
+        (void) rex_clr_sigs(rex_self(), (UI_RPT_TIMER_SIG | waitSig));
+        
+        if ((sigs & UI_RPT_TIMER_SIG) != 0) 
+        {
+            // Kick the dog
+            (void) rex_set_timer(&oemui_rpt_timer, DOG_UI_RPT_TIME);
+            dog_report(DOG_UI_RPT);
+        }
+    
+    } while ((sigs & waitSig) == 0);
+}
+#ifdef FEATURE_UIM
+/*==============================================================================
+函数: 
+    oemui_ruim_report
+       
+说明: 
+    函数接收来自 R-UIM 的状态报告。状态保存在全局变量中，并设置信号通知 oemui 
+    task
+       
+参数: 
+    none
+    
+返回值:
+    none
+       
+备注:
+    函数不可重入
+    
+==============================================================================*/
+void oemui_ruim_report(uim_rpt_type *report)
+{
+    oemui_uim_rpt_buf = *report;
+    rex_set_sigs(&ui_tcb, UI_RUIM_SIG);
+} 
+
+/*==============================================================================
+函数: 
+    oemui_set_uim_dir_present
+       
+说明: 
+    函数通过读卡来确定卡是否接上。并设置 UIM DIR 指示。
+       
+参数: 
+    none
+    
+返回值:
+    none
+       
+备注:
+    
+==============================================================================*/
+void oemui_set_uim_dir_present(void)
+{
+    uim_cmd_type        *uim_cmd_ptr = NULL;
+    byte                ui_uim_dir_indicator = NVRUIM_NO_DIR_PRESENT;
+
+    // Execute a Select on the MF
+    if ((uim_cmd_ptr = (uim_cmd_type*) q_get( &uim_free_q )) != NULL)
+    {
+        // 设置命令及相关参数
+        uim_cmd_ptr->hdr.command = UIM_SELECT_F;
+        uim_cmd_ptr->select.file_type = UIM_MF;
+        uim_cmd_ptr->hdr.rpt_function = oemui_ruim_report;
+        uim_cmd_ptr->hdr.options = UIM_OPTION_ALWAYS_RPT;
+        uim_cmd_ptr->hdr.protocol = UIM_CDMA;
+        uim_cmd_ptr->hdr.cmd_hdr.task_ptr = NULL;
+        uim_cmd_ptr->hdr.cmd_hdr.sigs = NULL;
+
+        // 先清除信号
+        (void) rex_clr_sigs(&ui_tcb, UI_RUIM_SIG);
+        
+        // 发布命令
+        uim_cmd(uim_cmd_ptr);
+
+        // 等待命令处理完毕返回
+        (void) oemui_rex_wait(UI_RUIM_SIG);
+
+        if (oemui_uim_rpt_buf.rpt_status != UIM_PASS)
+        {
+            // 卡没插入
+			MSG_ERROR( "rpt_status UIM_MF FAIL!", 0, 0, 0 );            
+            nvruim_set_uim_dir_present(ui_uim_dir_indicator);
+            return;
+        }
+        
+        // The MF presents
+        ui_uim_dir_indicator |= NVRUIM_MF_PRESENT;
+    }
+    else /* No free queue */
+    {
+        MSG_ERROR( "No free queue for UIM", 0, 0, 0 );
+    }
+
+    /* Execute a Select on the CDMA DF */
+    if ((uim_cmd_ptr = (uim_cmd_type*) q_get( &uim_free_q )) != NULL)
+    {
+        // 设置命令及相关参数
+        uim_cmd_ptr->hdr.command          = UIM_SELECT_F;
+        uim_cmd_ptr->select.file_type     = UIM_DF;
+        uim_cmd_ptr->select.dir           = UIM_CDMA_DF;
+        uim_cmd_ptr->hdr.rpt_function     = oemui_ruim_report;
+        uim_cmd_ptr->hdr.options          = UIM_OPTION_ALWAYS_RPT;
+        uim_cmd_ptr->hdr.protocol         = UIM_CDMA;
+        uim_cmd_ptr->hdr.cmd_hdr.task_ptr = NULL;
+        uim_cmd_ptr->hdr.cmd_hdr.sigs     = NULL;
+        
+        // 先清除信号
+        (void) rex_clr_sigs( &ui_tcb, UI_RUIM_SIG );
+        
+        // 发布命令
+        uim_cmd( uim_cmd_ptr );
+        
+        // 等待命令处理完毕返回
+        (void) oemui_rex_wait(UI_RUIM_SIG);
+        
+        if (oemui_uim_rpt_buf.rpt_status == UIM_PASS)
+        {
+            ui_uim_dir_indicator |= NVRUIM_CDMA_DF_PRESENT;
+        }
+        else
+        {
+	     	MSG_ERROR( "rpt_status UIM_DF FAIL!", 0, 0, 0 );                    
+        }
+    }
+    else /* No free queue */
+    {
+        MSG_ERROR( "No free queue for UIM", 0, 0, 0 );
+    }
+    
+    nvruim_set_uim_dir_present(ui_uim_dir_indicator);
+}
+
+#ifdef  FEATURE_UIM_RUN_TIME_ENABLE
+/*==============================================================================
+函数: 
+    oemui_send_rtre_command
+       
+说明: 
+    函数发布 NV_RTRE_OP_CONFIG_F 命令配置当前软件版本。
+       
+参数: 
+    data_ptr [in]: 指向命令相关数据指针
+    
+返回值:
+    none
+       
+备注:
+    none
+       
+==============================================================================*/
+static void oemui_send_rtre_command(void)
+{
+    nv_cmd_type     nvi;
+    nv_item_type    ui_nv_buf;
+    nv_rtre_configuration_type  rtre_config;
+    
+    nvi.tcb_ptr = rex_self();
+    nvi.sigs = UI_NV_SIG;
+    nvi.done_q_ptr = NULL;
+    
+    // 需要处理的项
+    nvi.item = NV_RTRE_CONFIG_I;
+    
+    // 发布的命令
+    nvi.cmd = NV_RTRE_OP_CONFIG_F;
+    
+    // 设置指向命令相关的数据
+    nvi.data_ptr = &ui_nv_buf;
+    
+    // 缺省值
+    ui_nv_buf.rtre_config = NV_RTRE_CONFIG_RUIM_OR_DROP_BACK;
+    
+    if (NV_DONE_S != OEMNV_Get(NV_RTRE_CONFIG_I, &ui_nv_buf))
+    {
+        MSG_ERROR("Could not read NV_RTRE_CONFIG_I, assuming DROP_BACK",0,0,0);
+    }
+    
+    // Hutch 要求必须为有卡版且不能更改设置
+#if defined(FEATURE_CARRIER_THAILAND_HUTCH)
+    ui_nv_buf.rtre_config = NV_RTRE_CONFIG_RUIM_ONLY;
+#endif
+    
+    rtre_config = ui_nv_buf.rtre_config;
+        
+    // 清除返回信号并等待响应
+    (void) rex_clr_sigs(rex_self(), UI_NV_SIG);
+    nv_cmd(&nvi);
+    oemui_rex_wait(UI_NV_SIG);
+    
+    // 现在可确定使用的软件是否支持卡了
+    if (NV_RTRE_CONTROL_USE_RUIM != nv_rtre_control())
+    {
+        gbRunAsUIMVersion = FALSE;
+      // oemui_unlockuim();
+    }
+}
+#endif
+
+
+/*==============================================================================
+函数: 
+    oemui_wait_ruim_inited
+       
+说明: 
+    函数等待直到 uim 启动完成。
+       
+参数: 
+    none
+    
+返回值:
+    none
+       
+备注:
+    函数监视 uim_get_uim_status 返回值，等待直到 UIM_INITIALIZED_S 状态返回或
+    超时。
+    
+    注意: 在本函数中就要确定出手机应使用的软件版本，即有卡还是无卡，二者只能取一
+==============================================================================*/
+static void oemui_wait_ruim_inited(void)
+{
+    
+    //int status;
+    //boolean bCardConnected = FALSE;
+    nv_item_type nvi; // TODO
+    
+    // 关于 UTK 的概要下载 (Profile Download) 、手机ESN存在卡上等读写卡操作请在
+    // 待机主界面检测到卡相关验证通过后进行
+   
+    // 读取手机 ESN 并保存。BREW 鉴权或其它应用会用到
+    nvruim_set_esn_usage( NV_RUIM_USE_ESN );
+    (void)OEMNV_Get(NV_ESN_I, &nvi);
+   // OEM_SetMEESN(nvi.esn.esn);
+    //temp add ,only for test
+    //nvi.esn.esn = 0;
+    //temp add ,only for test
+    //DBGPRINTF("nvi.esn.esn %d",nvi.esn.esn);
+    if(nvi.esn.esn == 0)
+    {
+      //  gbRunAsFactoryTestMode = TRUE;
+    }
+}
+#endif
+
+
+void set_UTK_session_status(byte st)
+{
+	ui_cmd_type  *ui_buf_ptr;
+
+#ifdef FEATURE_REX_DYNA_MEM_UI
+	ui_buf_ptr = ui_get_cmd();
+#else
+	if( (ui_buf_ptr = (ui_cmd_type*) q_get( &ui_cmd_free_q)) == NULL )
+	{
+		ERR("Out of UI cmd buffer", 0,0,0);
+		return;
+	}
+	ui_buf_ptr->proactive_cmd.hdr.done_q_ptr = &ui_cmd_free_q;;
+#endif /* FEATURE_REX_DYNA_MEM_UI */
+
+	ui_buf_ptr->proactive_cmd.hdr.cmd        = UI_PROACTIVE_UIM_F;
+	ui_buf_ptr->proactive_cmd.hdr.task_ptr   = NULL;
+	ui_buf_ptr->proactive_cmd.hdr.sigs       = 0;
+	//ui_buf_ptr->proactive_cmd.hdr.done_q_ptr = &ui_cmd_free_q;
+
+	ui_buf_ptr->proactive_cmd.num_bytes = 1;
+	ui_buf_ptr->proactive_cmd.cmd_data[0] = st; //UIM_TK_END_PROACTIVE_SESSION;
+
+	/* send command to ui */
+	ui_cmd( ui_buf_ptr );
+
+	if (st == UIM_TK_END_PROACTIVE_SESSION)
+	{
+	    uim_power_control( UIM_PROACTIVE_UIM, FALSE);
+	    
+	    /* Make sure task can process this control */
+	    (void) rex_set_sigs( &uim_tcb, UIM_STATE_TOGGLE_SIG);
+	}
+}
+
 /*==============================================================================
 函数: 
     ui_get_cmd
@@ -881,7 +1203,7 @@ static void process_command_sig(void)
         }
     }
 }
-#endif
+#endif /*FEATURE_UTK2*/
 #endif
 
   /*===========================================================================
@@ -1782,9 +2104,14 @@ void ui_init( void )
   nv_item_type nvi;
 #endif
 
+
   /* Initialize timers */
   rex_def_timer( &ui_rpt_timer, &ui_tcb, UI_RPT_TIMER_SIG );
-
+#ifdef FEATURE_UTK2
+  
+      // 定义踢狗定时器
+    rex_def_timer(&oemui_rpt_timer, &ui_tcb, UI_RPT_TIMER_SIG);
+#endif /*FEATURE_UTK2*/      
 #if !defined(FEATURE_UI_CORE_REMOVED) && defined (FEATURE_NEW_SLEEP_API)
   gNewSleepHandle = sleep_register("UI_TASK", FALSE);
 #endif /* FEATURE_NEW_SLEEP_API */
@@ -1847,6 +2174,29 @@ void ui_init( void )
 #ifdef CUST_EDITION
 #ifdef FEATURE_UIM_TOOLKIT
   (void) q_init(&ui_cmd_q);
+#ifdef FEATURE_UTK2
+        // 执行卡相关操作前，需检查卡是否插上，并调用 nvruim_set_uim_dir_present
+        oemui_set_uim_dir_present();
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+        // 先根据设置配置当前软件
+        oemui_send_rtre_command();
+#else        
+        // 无动态确定功能，软件编译时就确定了软件为有卡版本
+        gbRunAsUIMVersion = TRUE;        
+#endif
+        
+        if (gbRunAsUIMVersion)
+        {
+            // 等待 RUIM 初始化完成
+            oemui_wait_ruim_inited();
+        }
+#else
+        // 无动态确定功能，软件编译时就确定了软件为无卡版本
+        gbRunAsUIMVersion = FALSE; 
+        oemui_unlockuim();       
+#endif // FEATURE_UTK2
+
   gpShell = AEE_Init(AEE_APP_SIG);
 #endif
 #endif

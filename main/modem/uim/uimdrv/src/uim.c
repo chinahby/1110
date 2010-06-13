@@ -617,6 +617,13 @@ when       who     what, where, why
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #include "db.h"
 #include "CustomOEMConfigItems.h"
+#ifdef FEATURE_UIM_TOOLKIT_UTK
+#ifdef FEATURE_UTK2
+#include "uimtk.h"
+extern set_UTK_session_status(byte st);
+#endif
+#endif
+
 #define INIT_DELAY_TIME 1000
 static rex_timer_type uim_initsmsadd_timer;
 static byte btCurInitFlg = 0;
@@ -4059,6 +4066,18 @@ uim_cmd_type     *cmd
     default:
       status = uim_generic_command_response (rsp_ptr, cmd);
       break;
+
+    // 没有本段代码的后果：进入UTK二级菜单后不能退到一级菜单
+    #ifdef FEATURE_UIM_TOOLKIT
+    #ifdef FEATURE_UTK2
+    if (cmd->hdr.command == UIM_TERMINAL_RESPONSE_F &&
+        status != UIM_CMD_FETCH)
+    {
+        set_UTK_session_status(UIM_TK_END_PROACTIVE_SESSION);
+    }
+    #endif  
+    #endif
+      
   }
   return(status);
 } /* uim_command_response */

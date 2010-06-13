@@ -668,6 +668,8 @@ void UTK_SendTerminalProfile (void)
         if ((ui_uim_rpt_buf.rpt_type == UIM_ACCESS_R) &&
             (ui_uim_rpt_buf.rpt_status == UIM_PASS))
         {
+        	
+            ERR("UTK_SendTerminalProfile 2",0,0,0);
             /* Check to see if UIM is Pro-Active */
             svc = uim_return_cdma_svc_availabililty ( UIM_CDMA_SVC_PROACTIVE_UIM,
             uim_cdma_svc_table_buffer);
@@ -1020,6 +1022,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     int pos=0;
     int nLen,nValLen,nSize,nTep;
     command_describe cmd_describe;
+	AECHAR wsFmt[5] = {0};
 
     if (pMe == NULL)
     {
@@ -1099,13 +1102,15 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                         ai.pszResText = NULL;
                         ai.wText = 0;
                         ai.pImage = NULL;
-                        ai.wImage = IDB_UTKMENU;
+                        ai.wImage = NULL;
                         ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
                         ai.wFont = AEE_FONT_NORMAL;
                         ai.dwData = 0;
                         ai.pText = wszBuf;
                         MEMSET(wszBuf, 0, nSize);
-                        DecodeAlphaString(&utk_ptr[pos+1], nValLen-1, wszBuf, 256);
+						STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
+						WSPRINTF(wszBuf,sizeof(wszBuf),wsFmt,nItemCount+1);
+                        //DecodeAlphaString(&utk_ptr[pos+1], nValLen-1, wszBuf, 256);
                         (void)IMENUCTL_AddItemEx(pMenu, &ai );
                         nItemCount++;
                     }
