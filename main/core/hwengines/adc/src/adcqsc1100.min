@@ -13,5 +13,4 @@ ADC_SOURCES = \
 #              rft_adc_sm.c
 
 ADC_OBJS :=  $(addprefix $(TARGETDIR)/, $(ADC_SOURCES:%.c=%.o))
-ADC_DEPS :=  $(addprefix $(TARGETDIR)/, $(ADC_SOURCES:%.c=%.dep))
 vpath %.c $(ADC)
