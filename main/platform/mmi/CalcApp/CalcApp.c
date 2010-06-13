@@ -35,7 +35,11 @@ when         who            what, where, why
 #include "AEEModGen.h"
 #include "AEEAppGen.h"
 #include "OEMClassIDs.h"
+#if defined(FEATURE_DISP_160X128)
+#include "appscommon_160X128.brh"
+#else
 #include "appscommon_color.brh"
+#endif
 #include "AppComFunc.h"
 #include "calcapp.brh"
 #include "Appscommon.h"
@@ -69,7 +73,7 @@ when         who            what, where, why
 /*显示计算区域X坐标原点*/
 #define CALC_VAL_RECT_X                  10
 /*显示计算区域最底行Y坐标原点*/
-#define CALC_VAL_RECT_Y                  53
+#define CALC_VAL_RECT_Y                  16
 /*显示计算区域宽度*/
 #define CALC_VAL_RECT_WIDTH          156
 /*显示单行计算区域高度*/
@@ -265,7 +269,6 @@ static double  Calc_GetVal(CCalcApp *pme);
 static int     Calc_GetOpPrecedence(OpType op);
 static uint16  Calc_GetOpResourceId(OpType op);
 static boolean Calc_FloatToWStr(double v, AECHAR * psz, int nSize);
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 
 //wlh 20090417 add 为了区别点击，加，减，乘除，等号等等
 static void CALC_drawClipRectWithOffset(CCalcApp *pMe,uint32 imageId,AEERect *rect)
@@ -561,88 +564,10 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
     {
         return FALSE;
     }
-#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
-	if (eCode == EVT_PEN_UP)
-	{
-		int i;
-		AEEDeviceInfo devinfo;
-		int nBarH ;
-		AEERect rc;
-		int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-		int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 
-
-		//+-
-		SETAEERECT(&rc,CALC_ZHENFU_Xs,CALC_ZHENFU_Ys,CALC_ZHENFU_Ws, CALC_ZHENFU_Hs);
-		if(CALCAPP_PT_IN_RECT(wXPos,wYPos,rc))
-		{
-			eCode = EVT_KEY;
-			wParam = AVK_SELECT;
-		}
-		//-
-		SETAEERECT(&rc,CALC_SUBTRACT_Xs,CALC_SUBTRACT_Ys,CALC_SUBTRACT_Ws, CALC_SUBTRACT_Hs);
-		if(CALCAPP_PT_IN_RECT(wXPos,wYPos,rc))
-		{
-			eCode = EVT_KEY;
-			wParam = AVK_LEFT;
-		}
-		//%
-		SETAEERECT(&rc,CALC_DIVIDE_Xs,CALC_DIVIDE_Ys,CALC_DIVIDE_Ws, CALC_DIVIDE_Hs);
-	    if(CALCAPP_PT_IN_RECT(wXPos,wYPos,rc))
-		{
-			eCode = EVT_KEY;
-			wParam = AVK_RIGHT;
-		}
-		//+
-		SETAEERECT(&rc,CALC_PLUS_Xs,CALC_PLUS_Ys,CALC_PLUS_Ws, CALC_PLUS_Hs);
-		if(CALCAPP_PT_IN_RECT(wXPos,wYPos,rc))
-		{
-			eCode = EVT_KEY;
-			wParam = AVK_UP;
-		}
-		//X
-		SETAEERECT(&rc,CALC_MULTI_Xs,CALC_MULTI_Ys,CALC_MULTI_Ws, CALC_MULTI_Hs);
-		if(CALCAPP_PT_IN_RECT(wXPos,wYPos,rc))
-		{
-			eCode = EVT_KEY;
-			wParam = AVK_DOWN;
-		}
-		//<-
-		SETAEERECT(&rc,CALC_RETURN_Xs,CALC_RETURN_Ys,CALC_RETURN_Ws, CALC_RETURN_Hs);
-		if(CALCAPP_PT_IN_RECT(wXPos,wYPos,rc))
-		{
-			eCode = EVT_KEY_RELEASE;
-			wParam = AVK_CLR;
-		}
-		//=
-		SETAEERECT(&rc,CALC_EQUAL_Xs,CALC_EQUAL_Ys,CALC_EQUAL_Ws, CALC_EQUAL_Hs);
-		if(CALCAPP_PT_IN_RECT(wXPos,wYPos,rc))
-		{
-			eCode = EVT_KEY;
-			wParam = AVK_INFO;
-		}
-		//底部操作栏
-		SETAEERECT(&rc, 0, 220 - 22 -14, 176, 22);
-		if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
-		{
-			if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
-			{
-			}
-			else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
-			{
-			}
-			else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
-			{	
-				eCode = EVT_KEY_RELEASE;
-				wParam = AVK_CLR;
-			}
-		}
-	} 
-#endif//FEATURE_LCD_TOUCH_ENABLE
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             pme->m_TempValue = 0.0;
             pme->m_bIdle = TRUE;
             Calc_Startup(pme, (AEEAppStart *) dwParam);
@@ -818,53 +743,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
             return TRUE;
         } // case EVT_KEY
 
-#if defined( AEE_SIMULATOR)
-            case EVT_PEN_UP:
-            {
-				int i;
-				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				int xy[][4] = {
-								{82,108,94,120},    // +
-								{46,146,58,158},    // -
-								{82,181,94,193},    // *
-								{118,146,130,158},  // /
-								{82,146,94,158},    // =
-								{18,142,30,160},    // -
-								{144,146,156,158}  // clear
 
-							  };
-				for( i = 0; i < 7; i ++)
-				{
-					if( wXPos >= xy[i][0] &&
-						wXPos <= xy[i][2] &&
-						wYPos >= xy[i][1] &&
-						wYPos <= xy[i][3]
-					)
-					{
-						if( i < 5)
-						{
-							Calc_PushVal( pme, i + 1);
-						}
-						else if( i == 5)
-						{
-							Calc_ToggleSign( pme);
-						}
-						else if( i == 6)
-						{
-							Calc_Backspace( pme);
-						}
-						else
-						{
-							Calc_AddChar( pme, (AECHAR)'.', TRUE);
-						}
-						break;
-					}
-				}
-
-
-            }
-#endif
 
     } // switch( eCode)
 

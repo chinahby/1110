@@ -455,8 +455,8 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {
         return EFAILED;
     }
-    pMe->m_nRow        = 1;
-    pMe->m_nColumn     = 1;
+    pMe->m_nRow        = 0;
+    pMe->m_nColumn     = 3;
 #ifdef FEATURE_ICON_MOVE_ANIMATION
     pMe->m_nPrevRow   = 1;
     pMe->m_nPrevColumn = 1;
@@ -2145,54 +2145,60 @@ static boolean StartApplet(MainMenu *pMe, int i)
 #endif//FEATURE_LCD_TOUCH_ENABLE
     switch(i)
     {
+    #if defined (FEATURE_DISP_128X128)
+    
+    #endif
+    #if defined (FEATURE_DISP_160X128)
          case 0:
          {
-            IContactApp *ca = NULL;
-            if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_APP_CONTACT, (void**)&ca))
-            {
-                return FALSE;
-            }
-            else
-            {
-                ICONTAPP_MainMenu(ca);
-                IContactApp_Release(ca);
-            }
-            break;
-        }
-            break; 
-        case 1:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
-            break;
-        case 2:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-            break;
-        case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
-            break;
-        case 4:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
-            break;
-        case 5:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-            break;    
-        case 6:
+            
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
-        case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
+         }
+        case 1:
+            {
+                IContactApp *ca = NULL;
+                if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
+                {
+                    return FALSE;
+                }
+                else
+                {
+                    ICONTAPP_MainMenu(ca);
+                    IContactApp_Release(ca);
+                }
+            }
             break;
-        case 8:
+        case 2:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
+            break;
+        case 3:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+            break;
+        case 4:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+            break;
+        case 5:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            break;    
+        case 6:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+            break;
+        case 7:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
             break;
-#if defined (FEATURE_DISP_160X128)
+        case 8:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            break;
+
         case 9:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME_TETRIS);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;
         case 10:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME_TETRIS);
             break;
         case 11:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
             break;
 #endif
         default:

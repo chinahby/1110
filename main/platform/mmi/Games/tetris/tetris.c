@@ -107,7 +107,6 @@ static boolean  updateGameScoreAndGoToNextLevelIf( void);
 
 static boolean  playMusic( MusicTypeEnum type);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 //---------------------- mod related method definition
 
 #if defined(AEE_STATIC)
@@ -443,7 +442,6 @@ static boolean Tetris_HandleEvent( CTetris *ptetris,
             returnValue = ICONFIG_GetItem(me->config, CFGI_BEEP_VOL, &me->keyBeepVolumeSetting, sizeof(byte));
             returnValue = ICONFIG_SetItem(me->config, CFGI_BEEP_VOL, &mute, sizeof(byte));
         #endif
-            Rendering_UpdateEx();//wlh add for 3D test
             displaySplashScreen();
             return TRUE;
         } // EVT_APP_START

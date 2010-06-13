@@ -60,7 +60,7 @@
 #include "g_sensor.h"
 #endif
 #ifndef WIN32
-#include "Oemui.h"
+#include "ui.h"
 #else
 #include "oemhelperfunctype.h"
 #endif//WIN32

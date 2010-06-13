@@ -110,7 +110,6 @@ static void Draw_WorldTimeContent(CWorldTime *pme);
 static void WorldTime_DrawNextCity(CWorldTime * pMe, boolean left);
 static int get_timezone(void);
 static void WorldTime_DrawBackGround(CWorldTime * pMe);
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*===========================================================================
 
                     LOCAL/STATIC DATA
@@ -893,7 +892,6 @@ static boolean WorldTime_HandleEvent(CWorldTime * pMe, AEEEvent eCode, uint16 wP
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             InitWorldTime(pMe);
             Draw_WorldTimeContent(pMe);
             return TRUE;

@@ -1487,6 +1487,7 @@ static void MP3_SetStartStatus(CMusicPlayer *pMe)
 
 static void Music_Shake_Open(void)
 {
+#ifdef FEATRUE_SUPPORT_G_SENSOR
     dword shake;
     //g_bMp3PlayerRun = TRUE;
     if((MMI_GSENSOR_SHAKE_OPEN == mmi_g_sensor_state) 
@@ -1507,12 +1508,13 @@ static void Music_Shake_Open(void)
             mmi_g_sensor_state = MMI_GSENSOR_SHAKE_OPEN;
         }    
     }
+#endif
 }
 
 static void Music_Shake_Close(void)
 {
     dword shake;
-
+#ifdef FEATRUE_SUPPORT_G_SENSOR
      //g_bMp3PlayerRun = FALSE;
     if((MMI_GSENSOR_SHAKE_CLOSE == mmi_g_sensor_state) 
         ||(MMI_GSENSOR_SHAKE_CLOSE_IN_IDLE == mmi_g_sensor_state))  //return if sensor has been closed.
@@ -1536,6 +1538,7 @@ static void Music_Shake_Close(void)
             mmi_g_sensor_state = MMI_GSENSOR_SHAKE_CLOSE;
         }            
     }
+    #endif
 }
 
 Mp3Player_Status GetMp3PlayerStatus(void)

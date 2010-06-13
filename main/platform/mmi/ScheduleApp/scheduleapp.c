@@ -73,7 +73,6 @@ static void     Schedule_APPIsReadyTimer(void *pme);
 
 static boolean  Schedule_CanAlert(CScheduleApp *pme);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 
 /*==============================================================================
                                  全局数据
@@ -511,7 +510,6 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
     switch (eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             pme->m_bAppIsReady = FALSE;
             as = (AEEAppStart*)dwParam;
             pme->m_rc = as->rc;
@@ -627,7 +625,6 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
             return CScheduleApp_RouteDialogEvent(pme,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-			Rendering_UpdateEx();//wlh add for 3D test
             if (wParam == OEM_IME_DIALOG)
             {
                 return TRUE;

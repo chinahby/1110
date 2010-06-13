@@ -63,10 +63,10 @@ include $(ADJUSTPENAPP)/AdjustPenApp.min
 endif
 
 #Tools
-#include $(CALCAPP)/calcapp.min
+include $(CALCAPP)/calcapp.min
 include $(CLOCKAPP)/clockapps.min
-#include $(CONVERTER)/converter.min
-#include $(SCHEDULEAPP)/scheduleapp.min
+include $(CONVERTER)/converter.min
+include $(SCHEDULEAPP)/scheduleapp.min
 
 ifeq ($(MMI_ADD_SPORT),yes)
 include $(SPORTS)/sports.min
@@ -80,7 +80,7 @@ endif
 #include $(NOTEBOOK)/notebook.min
 
 #Games
-#include $(TETRIS)/tetris.min
+include $(TETRIS)/tetris.min
 
 #Apps
 #include $(EXTRAMENU)/extramenu.min

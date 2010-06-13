@@ -209,37 +209,58 @@ typedef struct _MainMenu
 #define STARTARGPREFIX_VIEWPLAYER            'P'
 #define STARTARGPREFIX_VIEWDATA              'D'
 
-
-#define ICON1_ANI      "fs:/image/mainmenu/Contact.png"
-#define ICON2_ANI      "fs:/image/mainmenu/Recentcall.png"
-#define ICON3_ANI      "fs:/image/mainmenu/Message.png"
-#define ICON4_ANI      "fs:/image/mainmenu/Setting.png"
-#define ICON5_ANI      "fs:/image/mainmenu/FmRadio.png"
-#define ICON6_ANI      "fs:/image/mainmenu/Timer.png"
-#define ICON7_ANI      "fs:/image/mainmenu/Alarm.png"
-#define ICON8_ANI      "fs:/image/mainmenu/Stopwatch.png"
-#define ICON9_ANI      "fs:/image/mainmenu/Display.png"
 #if defined (FEATURE_DISP_160X128)
-#define ICON10_ANI      "fs:/image/mainmenu/Calendar.png"
-#define ICON11_ANI      "fs:/image/mainmenu/Digit.png"
-#define ICON12_ANI      "fs:/image/mainmenu/Document.png"
+
+    #define ICON1_ANI      "fs:/image/mainmenu/Document.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/Alarm.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/Digit.png"
+    #define ICON5_ANI      "fs:/image/mainmenu/Recentcall.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Message.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/FmRadio.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/Stopwatch.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/Calendar.png"
+    #define ICON10_ANI     "fs:/image/mainmenu/Setting.png"
+    #define ICON11_ANI     "fs:/image/mainmenu/Timer.png"
+    #define ICON12_ANI     "fs:/image/mainmenu/Display.png"
+#endif
+#if defined (FEATURE_DISP_128X128)
+    #define ICON1_ANI      "fs:/image/mainmenu/Contact.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Recentcall.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/Message.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/Setting.png"
+    #define ICON5_ANI      "fs:/image/mainmenu/FmRadio.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Timer.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/Alarm.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/Stopwatch.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/Display.png"
 #endif
 
 #define ICON_ANI_BACKGROUND    "fs:/image/mainmenu/Backgroud.png"
-
-#define ICON1_ANI_1    "fs:/image/mainmenu/Contact_focus.png"
-#define ICON2_ANI_1    "fs:/image/mainmenu/Recentcall_focus.png"
-#define ICON3_ANI_1    "fs:/image/mainmenu/Message_focus.png"
-#define ICON4_ANI_1    "fs:/image/mainmenu/Setting_focus.png"
-#define ICON5_ANI_1    "fs:/image/mainmenu/FmRadio_focus.png"
-#define ICON6_ANI_1    "fs:/image/mainmenu/Timer_focus.png"
-#define ICON7_ANI_1    "fs:/image/mainmenu/Alarm_focus.png"
-#define ICON8_ANI_1    "fs:/image/mainmenu/Stopwatch_focus.png"
-#define ICON9_ANI_1    "fs:/image/mainmenu/Display_focus.png"
 #if defined (FEATURE_DISP_160X128)
-#define ICON10_ANI_1    "fs:/image/mainmenu/Calendar_focus.png"
-#define ICON11_ANI_1    "fs:/image/mainmenu/Digit_focus.png"
-#define ICON12_ANI_1    "fs:/image/mainmenu/Document_focus.png"
+    #define ICON1_ANI_1      "fs:/image/mainmenu/Document_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/Contact_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/Alarm_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/Digit_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/Recentcall_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/Message_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/FmRadio_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/Stopwatch_focus.png"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/Calendar_focus.png"
+    #define ICON10_ANI_1     "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON11_ANI_1     "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON12_ANI_1     "fs:/image/mainmenu/Display_focus.png"
+#endif
+#if defined (FEATURE_DISP_128X128)
+    #define ICON1_ANI_1    "fs:/image/mainmenu/Contact_focus.png"
+    #define ICON2_ANI_1    "fs:/image/mainmenu/Recentcall_focus.png"
+    #define ICON3_ANI_1    "fs:/image/mainmenu/Message_focus.png"
+    #define ICON4_ANI_1    "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON5_ANI_1    "fs:/image/mainmenu/FmRadio_focus.png"
+    #define ICON6_ANI_1    "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON7_ANI_1    "fs:/image/mainmenu/Alarm_focus.png"
+    #define ICON8_ANI_1    "fs:/image/mainmenu/Stopwatch_focus.png"
+    #define ICON9_ANI_1    "fs:/image/mainmenu/Display_focus.png"
 #endif
 #define ICON_ANI_FOCUSDEFAULT    "fs:/image/mainmenu/Focus_default.png"
 
