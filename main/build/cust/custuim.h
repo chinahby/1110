@@ -181,13 +181,13 @@ when       who     what, where, why
 /*---------------------------------------------------------------------------
                               TOOLKIT
 ---------------------------------------------------------------------------*/
-#ifndef FEATURE_UIM_QSC1100_LOW_MEMORY
+//#ifndef FEATURE_UIM_QSC1100_LOW_MEMORY
   /* Adds support for the basic toolkit features */
   #define FEATURE_UIM_TOOLKIT
 
   /* This configures the Application toolkit for the Unicom Toolkit design */
  #define FEATURE_UIM_TOOLKIT_UTK
-#endif /* FEATURE_UIM_QSC1100_LOW_MEMORY */
+//#endif /* FEATURE_UIM_QSC1100_LOW_MEMORY */
 
 #ifdef FEATURE_UIM_TOOLKIT
   /* Diag feature to display variable length strings */
