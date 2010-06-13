@@ -396,22 +396,22 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS+1] =
 #endif
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
 {
-    /*KYPD_9        KYPD_11     KYPD_15     KYPD_17  KYPD_MEMO   GPIO_OUTPUT_41 GPIO_OUTPUT_42 GPIO_OUTPUT_44 GND*/
+    /*KYPD_9            KYPD_11         KYPD_15         KYPD_17     KYPD_MEMO       GPIO_OUTPUT_41  GPIO_OUTPUT_42  GPIO_OUTPUT_44   GND*/
     /*KEYSENSE_0_N*/
-    {HS_RIGHT_K,    HS_UP_K,    HS_INFO_K,  HS_4_K,  HS_DOWN_K,  HS_LEFT_K,  HS_SEL_K,   HS_1_K,  HS_SEND_K},
+    {HS_RIGHT_K,        HS_UP_K,        HS_INFO_K,      HS_4_K,     HS_DOWN_K,      HS_LEFT_K,      HS_SEL_K,       HS_1_K,         HS_SEND_K},
      /*KEYSENSE_1_N*/
-    {HS_CLR_K,      HS_LCTRL_K,  HS_SYMBOL_K,  HS_DOWN_K,  HS_SPACE_K,  HS_7_K,  HS_UP_K,  HS_0_K,  HS_CAPLK_K},
+    {HS_CLR_K,          HS_LCTRL_K,     HS_SYMBOL_K,    HS_DOWN_K,  HS_SPACE_K,     HS_7_K,         HS_UP_K,        HS_0_K,         HS_CAPLK_K},
      /*KEYSENSE_2_N*/
-    {HS_ENTER_K,     HS_DOLLAR_K,  HS_M_K,  HS_N_K,  HS_B_K,  HS_V_K,  HS_9_K,  HS_8_K,  HS_SHIFT_K},
+    {HS_ENTER_K,        HS_DOLLAR_K,    HS_M_K,         HS_N_K,     HS_B_K,         HS_V_K,         HS_9_K,         HS_8_K,         HS_SHIFT_K},
      /*KEYSENSE_3_N*/
-    {HS_CLR_K,     HS_L_K,  HS_K_K,  HS_J_K,  HS_H_K,  HS_G_K,  HS_6_K,  HS_5_K,   HS_STAR_K},
+    {HS_CLR_K,          HS_L_K,         HS_K_K,         HS_J_K,     HS_H_K,         HS_G_K,         HS_6_K,         HS_5_K,         HS_STAR_K},
      /*KEYSENSE_4_N*/
-    {HS_P_K,     HS_O_K,  HS_I_K,  HS_U_K,  HS_Y_K,  HS_T_K,  HS_3_K,  HS_2_K,  HS_POUND_K}
+    {HS_P_K,            HS_O_K,         HS_I_K,         HS_U_K,     HS_Y_K,         HS_T_K,         HS_3_K,         HS_2_K,         HS_POUND_K}
 };
 
 
-#define ONE_KEY_ROW      1
-#define ONE_KEY_COLUMN   1
+#define ONE_KEY_ROW      0
+#define ONE_KEY_COLUMN   7
 
 /* '*' Key */
 #define STAR_KEY_ROW     3
@@ -442,7 +442,8 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
 
 /* The order of the following array must match column assignments in the
  * key matrix mapping table. */
- #endif /* BUILD_BOOT_CHAIN*/
+#endif /* BUILD_BOOT_CHAIN*/
+
 static const GPIO_SignalType keytbl_col_to_keyscan_gpio_map[KEYPAD_COLUMNS] = 
 {
    KYPD_9,
@@ -450,9 +451,9 @@ static const GPIO_SignalType keytbl_col_to_keyscan_gpio_map[KEYPAD_COLUMNS] =
    KYPD_15,
    KYPD_17,
    KYPD_MEMO,
-   GPIO_OUTPUT_41,
-   GPIO_OUTPUT_42,
-   GPIO_OUTPUT_44
+   KYPD_EX1,
+   KYPD_EX2,
+   KYPD_EX3
    
 };
 
@@ -893,12 +894,11 @@ static void keypad_drive_all_scan_cols_high(void)
 {
    int i;
 
-  /* Drive all column scan lines low */
+  /* Drive all column scan lines high */
   for (i = 0; i < KEYPAD_COLUMNS; i++)
   {
-        gpio_out(keytbl_col_to_keyscan_gpio_map[i], GPIO_HIGH_VALUE);
-        gpio_tristate(keytbl_col_to_keyscan_gpio_map[i], 
-                      GPIO_TRISTATE_ENABLE);
+     gpio_out(keytbl_col_to_keyscan_gpio_map[i], GPIO_HIGH_VALUE);
+     gpio_tristate(keytbl_col_to_keyscan_gpio_map[i], GPIO_TRISTATE_ENABLE);
   }
 }
 #endif
@@ -1055,24 +1055,27 @@ static void keypad_scan_keypad_matrix(void)
    */
 
 #ifdef FEATURE_ALL_KEY_PAD    
-    keypad_drive_all_scan_cols_high();
-    for ( row = 0; row < KEYPAD_ROWS; row++ )
+  keypad_drive_all_scan_cols_high();
+
+  clk_busy_wait(KEYPAD_POLLING_DELAY_USEC);
+  
+  for ( row = 0; row < KEYPAD_ROWS; row++ )
+  {
+    if (GPIO_LOW_VALUE == gpio_in(keytbl_row_to_keysense_gpio_map[row]))
     {
-      if (GPIO_LOW_VALUE == gpio_in(keytbl_row_to_keysense_gpio_map[row]))
-      {
-         /* A low keysense reading indicates a closed switch (pressed) */
-         keys_pressed[row][KEYPAD_COLUMNS] = TRUE;
-         keypad_drive_all_scan_cols_low();
-         return;
-         
-      }
-      else
-      {
-         /* A high keysense reading indicates an open switch (unpressed) */
-         keys_pressed[row][KEYPAD_COLUMNS] = FALSE;
-      }
+       /* A low keysense reading indicates a closed switch (pressed) */
+       keys_pressed[row][KEYPAD_COLUMNS] = TRUE;
+       keypad_drive_all_scan_cols_low();
+       return;
     }
+    else
+    {
+       /* A high keysense reading indicates an open switch (unpressed) */
+       keys_pressed[row][KEYPAD_COLUMNS] = FALSE;
+    }
+  }
 #endif
+
   for ( column = 0; column < KEYPAD_COLUMNS; column++ )
   {
     /* Set the column LOW (0), the pressed key will show a LOW (0)

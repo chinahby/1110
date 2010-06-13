@@ -274,7 +274,7 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
   #define GPIO_41_SIGNAL CAMIF_DISABLE
 #else
 #if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
-#define GPIO_41_SIGNAL GPIO_OUTPUT_41
+#define GPIO_41_SIGNAL KYPD_EX1
 #else
 #define GPIO_41_SIGNAL GPIO_INPUT_41
 #endif
@@ -285,7 +285,7 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
   #define GPIO_42_SIGNAL CAMIF_DATA_0
 #else
 #if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
-    #define GPIO_42_SIGNAL GPIO_OUTPUT_42
+    #define GPIO_42_SIGNAL KYPD_EX2
 #else
     #define GPIO_42_SIGNAL GPIO_INPUT_42
 #endif
@@ -303,7 +303,7 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
   #define GPIO_44_SIGNAL CAMIF_DATA_2
 #else
 #if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
-    #define GPIO_44_SIGNAL GPIO_OUTPUT_44
+    #define GPIO_44_SIGNAL KYPD_EX3
 #else
     #define GPIO_44_SIGNAL GPIO_INPUT_44
 #endif
