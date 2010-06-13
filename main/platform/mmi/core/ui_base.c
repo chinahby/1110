@@ -2080,18 +2080,21 @@ SIDE EFFECTS
 uint64 GetRTREConfig(void)
 {
   nv_item_type nvi;
-  nv_stat_enum_type result;
+  //nv_stat_enum_type result;
 
-  result = ui_get_nv (NV_RTRE_CONFIG_I, &nvi);
+  //result = ui_get_nv (NV_RTRE_CONFIG_I, &nvi);
 
-  if(result != NV_DONE_S) {  /* write to NV */
-#ifdef FEATURE_RTRE_DEFAULT_IS_NV
-    nvi.rtre_config = NV_RTRE_CONFIG_NV_ONLY;
+  //if(result != NV_DONE_S) {  /* write to NV */
+  //  nvi.rtre_config = NV_RTRE_CONFIG_RUIM_OR_DROP_BACK;
+  //  (void) ui_put_nv (NV_RTRE_CONFIG_I, &nvi);
+  //}
+  
+  // Hutch 要求必须为有卡版且不能更改设置
+#if defined(FEATURE_CARRIER_THAILAND_HUTCH)
+  nvi.rtre_config = NV_RTRE_CONFIG_RUIM_ONLY;
 #else
-    nvi.rtre_config = NV_RTRE_CONFIG_RUIM_ONLY;
+  nvi.rtre_config = NV_RTRE_CONFIG_RUIM_OR_DROP_BACK;
 #endif
-    (void) ui_put_nv (NV_RTRE_CONFIG_I, &nvi);
-  }
   return (uint64)(nvi.rtre_config);
 }
 
