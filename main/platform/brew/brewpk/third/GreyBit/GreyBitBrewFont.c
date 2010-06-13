@@ -16,6 +16,8 @@
 
 #define BIGNUMBER_FONT_SIZE 24
 #define NORMAL_FONT_SIZE    14
+#define LARGE_FONT_SIZE     16
+
 
 /* IDIB_COLORSCHEME_565 */
 #define CGreyBit_COLORSCHEME565_GET_R(color)       ((unsigned short)((color) >> 11))
@@ -52,7 +54,7 @@ struct IFont {
 
 static IFont gFontNormal           = {&gOEMFontFuncs, 0, NORMAL_FONT_SIZE,   FALSE, FALSE, NULL};
 static IFont gFontNormalBold       = {&gOEMFontFuncs, 0, NORMAL_FONT_SIZE,   TRUE,  FALSE, NULL};
-static IFont gFontNormalItalic     = {&gOEMFontFuncs, 0, NORMAL_FONT_SIZE,   FALSE, TRUE , NULL};
+static IFont gFontLarge            = {&gOEMFontFuncs, 0, LARGE_FONT_SIZE,    FALSE, FALSE, NULL};
 static IFont gFontBigNumber        = {&gOEMFontFuncs, 0, BIGNUMBER_FONT_SIZE,FALSE, FALSE, NULL};
 
 static GBHANDLE g_pLibrary = NULL;
@@ -91,7 +93,7 @@ void GreyBitBrewFont_Done(void)
 	// Destroy All Font
 	OEMFont_Destroy(&gFontNormal);
 	OEMFont_Destroy(&gFontNormalBold);
-	OEMFont_Destroy(&gFontNormalItalic);
+	OEMFont_Destroy(&gFontLarge);
 	OEMFont_Destroy(&gFontBigNumber);
 
     if(g_pLoader){
@@ -589,8 +591,8 @@ int GreyBitBrewFont_New(IShell *piShell, AEECLSID cls, void **ppif)
     case AEECLSID_FONTSYSBOLD:
         pMe = &gFontNormalBold;
         break;
-    case AEECLSID_FONTSYSITALIC:
-        pMe = &gFontNormalItalic;
+    case AEECLSID_FONTSYSLARGE:
+        pMe = &gFontLarge;
         break;
     case AEECLSID_FONTSYSBIGNUMBER:
         pMe = &gFontBigNumber;
