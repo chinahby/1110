@@ -293,6 +293,9 @@ typedef PACKED struct {
 #define DIALER_TIMER_AECHAR              ((AECHAR)'T')
 #endif
 #define FEATURE_EDITABLE_NUMBER
+
+#define FEATURE_DIALER_ANIMAION_SUPPORT	0
+
 /*==============================================================================
                                  类型定义
 ==============================================================================*/

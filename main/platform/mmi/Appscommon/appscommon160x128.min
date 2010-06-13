@@ -56,8 +56,8 @@ endif
 CONSTFILE_FILES+=\
 	sendingsms.png|fs:/image/notice/sendingsms.png \
 	volume.png|fs:/image/notice/volume.png \
-	callin.png|fs:/image/notice/callin.png \
-	callout.png|fs:/image/notice/callout.png
+#	callin.png|fs:/image/notice/callin.png \
+#	callout.png|fs:/image/notice/callout.png
 
 INC  += $(APPSCOMMON_INC) $(APPSCOMMON_RES)
 #SRC  += $(APPSCOMMON_SOURCES)
