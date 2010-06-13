@@ -7,6 +7,12 @@
 	<Object Id="5002" Name="IDB_BACKGROUND">
 		<File>..\images\color\Appscommon\Menu\background\background.png</File>
 	</Object>
+	<Object Id="5003" Name="IDI_CONV_POUND">
+		<File>..\images\color\Converter\converter_pound.png</File>
+	</Object>
+	<Object Id="5004" Name="IDI_CONV_STAR">
+		<File>..\images\color\Converter\converter_star.png</File>
+	</Object>
 	<Object Id="5009" Name="IDB_SPORT_RACE" MimeType="image/bmp">
 		<File>..\images\color\Sports\Icons\step_race.bmp</File>
 	</Object>

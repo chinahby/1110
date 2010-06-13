@@ -30,17 +30,23 @@
 #endif
 
 
-
+#if defined (FEATURE_DISP_160X128)
+#define  MAX_MATRIX_ITEMS 12
+#define  MAX_MATRIX_ROWS 3
+#define  MAX_MATRIX_COLS 4
+#define MAX_TURN_NUM   12
+#elif defined (FEATURE_DISP_128X128)
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
-
+#define MAX_TURN_NUM   9
+#endif
 #define FEATURE_ICON_MOVE_ANIMATION //added by chengxiao 2009.04.10
 
 #if !defined(FEATURE_CARRIER_CHINA_VERTU)
 #define FEATURE_FOCUS_ANIMATION
 #endif
-#define MAX_TURN_NUM   9
+
 
 /*==============================================================================
                                  
@@ -180,15 +186,21 @@ typedef struct _MainMenu
                                  宏定义和常数
                                  
 ==============================================================================*/
-
+#if defined (FEATURE_DISP_160X128)
+#define ICON_WIDTH              40
+#define ICON_HEIGHT             32
+#define ICON_ANIMATED_WIDTH     40
+#define ICON_ANIMATED_HEIGHT    32
+#elif defined (FEATURE_DISP_128X128)
 #define ICON_WIDTH              42
 #define ICON_HEIGHT             32
 #define ICON_ANIMATED_WIDTH     42
 #define ICON_ANIMATED_HEIGHT    32
+#endif
 #define ICON_ANIMATED_FRAME     1 //焦点图片的帧数
 #ifdef FEATURE_ICON_MOVE_ANIMATION
-#define ICON_ANIMATED_MOVE_FRAME  6
-#define ICON_ANIMATED_MOVE_RATE    15
+#define ICON_ANIMATED_MOVE_FRAME  3
+#define ICON_ANIMATED_MOVE_RATE    10
 #endif
 
 #define MAINMENU_RES_FILE_LANG        AEE_RES_LANGDIR MAINMENU_RES_FILE
@@ -207,6 +219,11 @@ typedef struct _MainMenu
 #define ICON7_ANI      "fs:/image/mainmenu/Alarm.png"
 #define ICON8_ANI      "fs:/image/mainmenu/Stopwatch.png"
 #define ICON9_ANI      "fs:/image/mainmenu/Display.png"
+#if defined (FEATURE_DISP_160X128)
+#define ICON10_ANI      "fs:/image/mainmenu/Calendar.png"
+#define ICON11_ANI      "fs:/image/mainmenu/Digit.png"
+#define ICON12_ANI      "fs:/image/mainmenu/Document.png"
+#endif
 
 #define ICON_ANI_BACKGROUND    "fs:/image/mainmenu/Backgroud.png"
 
@@ -219,6 +236,11 @@ typedef struct _MainMenu
 #define ICON7_ANI_1    "fs:/image/mainmenu/Alarm_focus.png"
 #define ICON8_ANI_1    "fs:/image/mainmenu/Stopwatch_focus.png"
 #define ICON9_ANI_1    "fs:/image/mainmenu/Display_focus.png"
+#if defined (FEATURE_DISP_160X128)
+#define ICON10_ANI_1    "fs:/image/mainmenu/Calendar_focus.png"
+#define ICON11_ANI_1    "fs:/image/mainmenu/Digit_focus.png"
+#define ICON12_ANI_1    "fs:/image/mainmenu/Document_focus.png"
+#endif
 #define ICON_ANI_FOCUSDEFAULT    "fs:/image/mainmenu/Focus_default.png"
 
 

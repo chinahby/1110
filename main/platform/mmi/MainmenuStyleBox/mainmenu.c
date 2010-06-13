@@ -182,6 +182,11 @@ static char* ICON_ANI[] =
     ICON7_ANI,
     ICON8_ANI,
     ICON9_ANI,
+    #if defined (FEATURE_DISP_160X128)
+    ICON10_ANI,
+    ICON11_ANI,
+    ICON12_ANI,
+    #endif
 
 };
 
@@ -196,7 +201,11 @@ static char* ICON_ANI_1[] =
     ICON7_ANI_1,
     ICON8_ANI_1,
     ICON9_ANI_1,
-
+    #if defined (FEATURE_DISP_160X128)
+    ICON10_ANI_1,
+    ICON11_ANI_1,
+    ICON12_ANI_1,
+    #endif
 };
 
 /*=============================================================================
@@ -484,7 +493,11 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	pMe->m_pImageTurn[6] = ISHELL_LoadImage(pMe->m_pShell,ICON7_ANI_1);
 	pMe->m_pImageTurn[7] = ISHELL_LoadImage(pMe->m_pShell,ICON8_ANI_1);
 	pMe->m_pImageTurn[8] = ISHELL_LoadImage(pMe->m_pShell,ICON9_ANI_1);
-
+    #if defined (FEATURE_DISP_160X128)
+    pMe->m_pImageTurn[9] = ISHELL_LoadImage(pMe->m_pShell,ICON10_ANI_1);
+	pMe->m_pImageTurn[10] = ISHELL_LoadImage(pMe->m_pShell,ICON11_ANI_1);
+	pMe->m_pImageTurn[11] = ISHELL_LoadImage(pMe->m_pShell,ICON12_ANI_1);
+    #endif
     pMe->m_pImageFocus   = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_FOCUSDEFAULT);
     if(pMe->m_pImageFocus == NULL)
     {
@@ -1474,7 +1487,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 case AVK_SELECT:
                 case AVK_INFO:
                     {
-                        int Focus = pMe->m_nRow * 3 + pMe->m_nColumn;
+                        int Focus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
                         StartApplet(pMe, Focus);
                     }
                     return TRUE;
@@ -1641,8 +1654,8 @@ static void DrawMatrix(MainMenu *pMe)
 static void DrawFocusMoveAnimation(MainMenu * pMe)
 {
     static int nFrame = 0;
-    int theFocus = pMe->m_nRow * 3 + pMe->m_nColumn,
-        thePrevFocus = pMe->m_nPrevRow * 3 + pMe->m_nPrevColumn,
+    int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn,
+        thePrevFocus = pMe->m_nPrevRow * MAX_MATRIX_COLS + pMe->m_nPrevColumn,
         xOldPos = pMe->m_IconFocus_Pt[thePrevFocus].x + (nFrame)*(pMe->m_IconFocus_Pt[theFocus].x - pMe->m_IconFocus_Pt[thePrevFocus].x)/ICON_ANIMATED_MOVE_FRAME, 
         yOldPos = pMe->m_IconFocus_Pt[thePrevFocus].y + (nFrame)*(pMe->m_IconFocus_Pt[theFocus].y - pMe->m_IconFocus_Pt[thePrevFocus].y)/ICON_ANIMATED_MOVE_FRAME;
 
@@ -1718,7 +1731,7 @@ COMMENTS:
 =============================================================================*/
 static void DrawFocusIconAnimation(MainMenu *pMe)
 {
-    int theFocus = pMe->m_nRow * 3 + pMe->m_nColumn;
+    int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
     
     if (NULL == pMe)
     {
@@ -1772,7 +1785,7 @@ COMMENTS:
 =============================================================================*/
 static void DrawFocusIcon(MainMenu *pMe)
 {
-    int theFocus = pMe->m_nRow * 3 + pMe->m_nColumn;
+    int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
     TitleBar_Param_type  titleBarParms;
     
     if (NULL == pMe)
@@ -1826,7 +1839,7 @@ SEE ALSO:
 =============================================================================*/
 static void MoveCursorTo(MainMenu *pMe, int row, int column)
 {
-    int theFocus = pMe->m_nRow * 3 + pMe->m_nColumn;
+    int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
     AEERect rect;
 	int i;
 	AEERect turnrect;
@@ -2170,6 +2183,19 @@ static boolean StartApplet(MainMenu *pMe, int i)
             break;
         case 8:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+            break;
+#if defined (FEATURE_DISP_160X128)
+        case 9:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME_TETRIS);
+            break;
+        case 10:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
+            break;
+        case 11:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
+            break;
+#endif
+        default:
             break;
 
     }

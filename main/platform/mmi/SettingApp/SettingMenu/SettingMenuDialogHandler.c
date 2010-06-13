@@ -543,8 +543,8 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-             //modi by yangdecai
-            //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
+
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_TITLE, IDS_CALLSETTING_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONESETTING_TITLE, IDS_PHONESETTING_TITLE, NULL, 0);
 #ifdef FEATRUE_AUTO_POWER
@@ -633,12 +633,12 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                                               AEECLSID_APP_SOUNDMENU);
                     break;
 #endif
-/*//modi by yangdecai
+
                 case IDS_DISPLAY_TITLE:      //显示设置
                     (void) ISHELL_StartApplet(pMe->m_pShell,
                                               AEECLSID_APP_DISPLAYMENU);
                     break;
-*/
+
                case IDS_PHONESETTING_TITLE:  //话机设置
                     CLOSE_DIALOG(DLGRET_PHONESETTING)
                     break;

@@ -56,7 +56,16 @@ CONSTFILE_FILES+=\
 	Stopwatch_focus.png|fs:/image/mainmenu/Stopwatch_focus.png\
 	Focus_default.png|fs:/image/mainmenu/Focus_default.png \
 	Backgroud.png|fs:/image/mainmenu/Backgroud.png
-
+	
+ifeq ($(USES_160X128),yes)
+CONSTFILE_FILES+=\
+	Calendar.png|fs:/image/mainmenu/Calendar.png \
+	Digit.png|fs:/image/mainmenu/Digit.png\
+	Document.png|fs:/image/mainmenu/Document.png\
+	Calendar_focus.png|fs:/image/mainmenu/Calendar_focus.png \
+	Digit_focus.png|fs:/image/mainmenu/Digit_focus.png\
+	Document_focus.png|fs:/image/mainmenu/Document_focus.png
+endif
 INC  += $(MAINMENU_INC) $(MAINMENU_RES)
 #SRC  += $(MAINMENU_SOURCES)
 OBJECTS+=$(MAINMENU_OBJS)
