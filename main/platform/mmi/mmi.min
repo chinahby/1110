@@ -18,9 +18,9 @@ include $(MAINMENU)/mainmenu.min
 include $(CALLAPP)/CallApp.min
 include $(CONTAPP)/contact.min
 include $(WMSAPP)/wmsapp.min
-//ifeq ($(USES_LOW),yes)
+#ifeq ($(USES_LOW),yes)
 include $(UTK)/utk.min
-//endif
+#endif
 include $(RECENTCALLS)/recentcalls.min
 
 #MultiMedia
