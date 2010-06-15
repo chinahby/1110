@@ -2051,7 +2051,7 @@ static boolean Converter_FloatToWstr(double source, AECHAR * pdest, int nSize)
     
     MEMSET(pdest, 0, nSize);
 
-    (void)sprintf(szBuff, "%15.6f", source);
+    (void)snprintf(szBuff, 32,"%15.6f", source);
     (void)STRTOWSTR(szBuff, pdest, nSize);
 
     // Clip leading spaces...
