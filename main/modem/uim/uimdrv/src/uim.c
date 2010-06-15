@@ -8568,18 +8568,23 @@ dword dummy
 
 #ifdef FEATURE_DUAL_UIMCARD
 {
-   if( NV_NOTACTIVE_S != OEMNV_Get(NV_ESN_OVER_WRITE_I,&nvi))
-   {
-       if(nvi.over_write_esn.esn == 2 )
+    if( NV_DONE_S == OEMNV_Get(NV_ESN_OVER_WRITE_I,&nvi))
+    {
+        if(nvi.over_write_esn.esn == 2 )
         {
             gpio_out(GPIO_OUTPUT_34,(GPIO_ValueType)GPIO_HIGH_VALUE);
         }
-   }
-   else
-   {
+        else
+        {
+            gpio_out(GPIO_OUTPUT_34,(GPIO_ValueType)GPIO_LOW_VALUE);
+        }
+    }
+    else
+    {
         nvi.over_write_esn.esn = 1;
         ret = OEMNV_Put(NV_ESN_OVER_WRITE_I,&nvi);
-   }
+        gpio_out(GPIO_OUTPUT_34,(GPIO_ValueType)GPIO_LOW_VALUE);
+    }
     uim_dev_init();
 }
 #endif

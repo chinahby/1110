@@ -382,6 +382,9 @@
 	<Object Id="6201" Name="IDB_UTKMENU" MimeType="image/bmp">
 		<File>..\images\color\UTK\utkmenu.bmp</File>
 	</Object>
+	<Object Id="6401" Name="IDB_CALCAPP">
+		<File>..\images\color\Calculator\Calculator.png</File>
+	</Object>
 	<Object Id="6421" Name="IDI_TIMER">
 		<File>..\images\color\Timer\timer.png</File>
 	</Object>
@@ -391,8 +394,17 @@
 	<Object Id="6441" Name="IDI_CALENDAR">
 		<File>..\images\color\Calendar\background.png</File>
 	</Object>
+	<Object Id="6442" Name="IDI_SCHEDULE">
+		<File>..\images\color\Calendar\calendar.png</File>
+	</Object>
+	<Object Id="6443" Name="IDI_NOTE_BOOK">
+		<File>..\images\color\Calendar\notebook.png</File>
+	</Object>
 	<Object Id="6444" Name="IDI_DATE_BAR">
 		<File>..\images\color\Calendar\bar.png</File>
+	</Object>
+	<Object Id="6445" Name="IDI_SPORTS">
+		<File>..\images\color\Calendar\Schedule.png</File>
 	</Object>
 </Objects>
 </BREWRes>
