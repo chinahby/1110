@@ -48,7 +48,7 @@ INCLUDE FILES FOR MODULE
 #include "AEEDate.h"
 #endif
 #include "AEEPointerHelpers.h"
-
+#include "err.h"
 /*===========================================================================
 
 DEFINITIONS
@@ -189,6 +189,8 @@ static void        DateCtl_DisplayDateText(DateCtl * pme);
 static void        DateCtl_SetGridRect(DateCtl * pme);
 static void        DateCtl_Digit(DateCtl * pme, int nDigit, int x, int y);
 static void        DateCtl_DrawDay(DateCtl * pme, int nDay, AEERect * prc);
+static void        DateCtl_DrawDayEx(DateCtl * pme, int nDay, AEERect * prc);
+
 #ifdef CUST_EDITION	
 static boolean     DateCtl_IsToday(IDateCtl * po, int nday);
 #endif /*CUST_EDITION*/
@@ -1870,9 +1872,14 @@ static void DateCtl_DisplayMonthDays(DateCtl * pme, int nStartDOW, int nMonLen)
    int      i;
    AEERect  rc;
 
-   for (i = 0; i < nMonLen; i++) {
+   for (i = 0; i < nMonLen; i++) { 
       DateCtl_GetGridRect(pme, &rc, i+nStartDOW);
+      //DateCtl_DrawDay(pme, i+1, &rc);
+      #ifdef CUST_EDITION   //modi by yangdecai 2010.06.15
+      DateCtl_DrawDayEx(pme, i+1, &rc);
+      #else
       DateCtl_DrawDay(pme, i+1, &rc);
+      #endif
    }
 }
 #ifdef CUST_EDITION	
@@ -1888,7 +1895,7 @@ phone screen.
 static boolean DateCtl_DrawMonthView(DateCtl * pme)
 {
     AEERect rc = pme->m_rc;
-
+    ERR("DateCtl_DrawMonthView:1111111:%d",pme->m_bValidDate,0,0);
     if (pme->m_bValidDate)
     {
 
@@ -1945,11 +1952,10 @@ static boolean DateCtl_DrawMonthView(DateCtl * pme)
       DateCtl_DisplayDateText(pme);
    
    // draw line separator   
-
+        
       IDISPLAY_DrawHLine(pme->m_pIDisplay, pme->m_rc.x, pme->m_rc.y+pme->m_nFontTitleHeight, pme->m_rc.dx);
    
    // display the array of days for this month
-
       DateCtl_DisplayMonthDays(pme, pme->m_nStartDayOfWeek, GetMonthLength(pme->m_nMonth, pme->m_nYear));
    
    // highlight the current day
@@ -2363,7 +2369,7 @@ static void DateCtl_DrawDayEx(DateCtl * pme, int nDay, AEERect * prc)
             {
                 AEERect rc = { 0 };
 
-                SETAEERECT( &rc, prc->x, prc->y + prc->dy - 3, prc->dx, 1);
+                SETAEERECT( &rc, prc->x, prc->y + prc->dy, prc->dx, 1);   //modi by yangdecai 2010.06.15
                 IDISPLAY_FillRect(pme->m_pIDisplay, &rc, DATECTL_UNDELINE_COLOR);//modifed by chengxiao 2009.03.19
             }
         }
