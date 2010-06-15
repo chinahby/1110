@@ -2936,7 +2936,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                     buffer,
                     -1,
                     PIXELS_TO_EDGE,
-                    PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((4 + nSinkingLines)*nLineHeight),
+                    PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((3 + nSinkingLines)*nLineHeight),
                     NULL,
                     IDF_TEXT_TRANSPARENT
                 );  //画出"通话时间"字符串
@@ -2991,7 +2991,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                   buffer,
                   -1,
                   nTextWidth + nNumberWidth,
-                  PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((4 + nSinkingLines)*nLineHeight),
+                  PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((3 + nSinkingLines)*nLineHeight),
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );
@@ -3073,7 +3073,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                             buffer,
                             -1,
                             128 - 56 - (IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_BOLD, (const AECHAR * )buffer)),
-                            PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((4 + nSinkingLines)*nLineHeight),
+                            PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((3 + nSinkingLines)*nLineHeight),
                             NULL,
                             IDF_TEXT_TRANSPARENT
                         );  //画出"日期/时间"字符串
@@ -3087,7 +3087,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                   buffer,
                   -1,
                   nTextWidth + nNumberWidth,
-                  PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((4 + nSinkingLines)*nLineHeight),
+                  PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((3 + nSinkingLines)*nLineHeight),
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );

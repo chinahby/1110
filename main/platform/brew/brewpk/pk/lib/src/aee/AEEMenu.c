@@ -51,7 +51,7 @@ INCLUDE FILES FOR MODULE
 #else
 #include "Appscommon_color.brh"
 #endif
-
+#include "err.h"
 #endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
     
 /*===========================================================================
@@ -3978,7 +3978,8 @@ static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft)
             {
                 IIMAGE_Release(pme->imageSelectBar);
             }*/
-            pme->imageSelectBar = ISHELL_LoadResImage( pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_SELECT_BAR_SHORT);
+
+            pme->imageSelectBar = ISHELL_LoadResImage( pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_SELECT_BAR);
         }
         else if(IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL))
         {
@@ -3986,6 +3987,7 @@ static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft)
             {
                 IIMAGE_Release(pme->imageSelectBar);
             }*/
+
             pme->imageSelectBar = ISHELL_LoadResImage( pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_SELECT_BAR_SHORT);
         }
         else
@@ -3994,6 +3996,7 @@ static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft)
             {
                 IIMAGE_Release(pme->imageSelectBar);
             }*/
+
             pme->imageSelectBar = ISHELL_LoadResImage( pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_SELECT_BAR);
         }
     }

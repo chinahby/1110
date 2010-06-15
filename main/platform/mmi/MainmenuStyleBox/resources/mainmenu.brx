@@ -20,7 +20,7 @@
 		<Text>Customer service</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_TITLE_1">
-		<Text>Alarm</Text>
+		<Text>MediaGallery</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MAIN_MENU_TITLE_2">
 		<Text>Contacts</Text>
@@ -53,7 +53,7 @@
 		<Text>Game</Text>
 	</String>
 	<String Id="1022" Name="IDS_MAIN_MENU_TITLE_12">
-		<Text>Converter</Text>
+		<Text>MusicPlayer</Text>
 	</String>
 	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
 		<Text>Tetris</Text>
