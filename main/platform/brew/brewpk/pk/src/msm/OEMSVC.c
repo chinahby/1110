@@ -4163,4 +4163,58 @@ void OEMSVC_UpdateRUIMNVCacheReq(nv_items_enum_type nItem)
             break;
     }
 }
+
+void SetDeviceState(DeviceType dt,DeviceStateType dst)
+{   
+    switch(dt)
+    {
+        case DEVICE_TYPE_MP4:
+             if(dst==DEVICE_MP4_STATE_ON)
+             {
+                 DeviceMp4State=DEVICE_MP4_STATE_ON;
+             }
+             else if(dst==DEVICE_MP4_STATE_OFF)
+             {   DeviceMp4State=DEVICE_MP4_STATE_OFF;
+                
+             }
+             break;
+
+        case DEVICE_TYPE_CAMERA:
+            if(dst==DEVICE_CAMERA_STATE_ON)
+            {
+                DeviceCameraState=DEVICE_CAMERA_STATE_ON;
+            }
+            else if(dst==DEVICE_CAMERA_STATE_OFF)
+            {
+                DeviceCameraState=DEVICE_CAMERA_STATE_OFF;
+            }
+
+            break;
+
+        default:
+            break;
+    }
+}
+
+int GetDeviceState(DeviceType dt)
+{   
+    int state = 0;
+    
+    switch(dt)
+    {
+        case DEVICE_TYPE_MP4:
+            state = DeviceMp4State;
+            break;
+
+        case DEVICE_TYPE_CAMERA:
+            state = DeviceCameraState;
+            break;
+
+        default:
+            break;
+    }
+
+    return  state;
+}
+
 #endif /*CUST_EDITION*/

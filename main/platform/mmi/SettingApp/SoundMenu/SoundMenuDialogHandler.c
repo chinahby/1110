@@ -171,6 +171,8 @@ static boolean  HandleKeyVolumeDialogEvent(CSoundMenu *pMe,
 #define MG_MAX_FILE_NAME            128
 #endif
 typedef char (*FileNamesBuf)[MG_MAX_FILE_NAME];
+
+#ifndef MEDIAGALLERY_H
 typedef struct _ExplorerPara{
    /*下面几项为MMS选择文件使用*/
    AEECLSID    nClsId; /*the applet which invoke the interface class ID */
@@ -185,6 +187,7 @@ typedef struct _ExplorerPara{
     * 项的模式*/
    byte        nSelectProfile;
 }ExplorerPara;
+#endif
 #endif
 
 // 对话框 IDD_MESSAGE_DIALOG 事件处理函数

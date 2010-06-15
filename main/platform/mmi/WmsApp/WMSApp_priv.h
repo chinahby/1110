@@ -77,6 +77,9 @@
 #include "AEESound.h"
 #include "AEE_OEM.h"
 
+#ifdef CUST_EDITION  /*add by miaoxiaoming*/
+#include "OEMSVC.h"
+#endif
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define WMSAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )

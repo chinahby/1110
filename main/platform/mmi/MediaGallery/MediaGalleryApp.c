@@ -307,7 +307,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
       {
          AEEAppStart* as = (AEEAppStart*) dwParam;
          boolean           bRet;
-         Rendering_UpdateEx();//wlh add for 3D test
+    //     Rendering_UpdateEx();//wlh add for 3D test
          pMe->m_rc = as->rc;
          pMe->m_bSuspending = FALSE;
 
@@ -398,7 +398,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
 
    case EVT_DIALOG_INIT:
       {
-         Rendering_UpdateEx();//wlh add for 3D test
+      //   Rendering_UpdateEx();//wlh add for 3D test
          // Update the active dialog info in the one and only Media gallery
          // applet object.
          pMe->m_pActiveDlg = (IDialog*)dwParam;

@@ -51,7 +51,9 @@ typedef boolean (*MG_PFN_DIALOG_HANDLEEVENT)(CMediaGalleryApp* pMe,
                                           uint16   wParam,
                                           uint32   dwParam);
 #ifndef AEE_SIMULATOR
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE
 extern vc_jpeg_decode display_jpg_done; //zhangxiang add for state of jpg decode 20090207
+#endif
 #else
 typedef enum {
   VC_JPEG_DECODE_INIT,
@@ -2585,6 +2587,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                                          &pMe->m_ClipRect,
                                          FALSE);
 
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE
          if(display_jpg_done == VC_JPEG_DECODE_DOING)
          {
             DBGPRINTF("VC_ITM_JPG_STOP_DECODE_I");
@@ -2592,8 +2595,11 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
             VC_DeviceControl(VC_ITM_JPG_STOP_DECODE_I,VC_FUNC_PLAY_ON,0);
 #endif
          }
+#endif		 
          return TRUE;
       }
+
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 	  case EVT_USER:
 #endif
@@ -2602,8 +2608,11 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          switch(wParam)
          {
          case AVK_CLR:
-            if( (pMe->m_bImgLoadDone == FALSE ||
-                 display_jpg_done == VC_JPEG_DECODE_DOING))
+            if( (pMe->m_bImgLoadDone == FALSE 
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE				
+				||display_jpg_done == VC_JPEG_DECODE_DOING
+#endif			
+				))
             {
                //return TRUE;
             }
@@ -2649,8 +2658,11 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          case AVK_SELECT:
             {
                if(eDlgStat == MG_DLGSTAT_NORMAL &&
-                  (pMe->m_bImgLoadDone == TRUE ||
-                   display_jpg_done == VC_JPEG_DECODE_DONE))
+                  (pMe->m_bImgLoadDone == TRUE 				   
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE                   
+                   ||display_jpg_done == VC_JPEG_DECODE_DONE
+#endif                   
+                   ))
                {
                   MenuInsItem ImgViewOptions[]={
                      {IDS_MG_ZOOM, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
@@ -2658,9 +2670,10 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                   };
                   AEEImageInfo ImgInfo;
                   IImage *pi = pMe->m_pImage;
-
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE
                   MG_FARF(ADDR, ("V0848 JPG DONE %d, BREW DECODE %d",
                                  display_jpg_done, pMe->m_bImgLoadDone));
+#endif 
 
                   if(pi)
                   {
@@ -2709,13 +2722,17 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 
          case AVK_INFO:
             if( eDlgStat == MG_DLGSTAT_IMGZOOM &&
-               ( pMe->m_bImgLoadDone == TRUE ||
-                display_jpg_done == VC_JPEG_DECODE_DONE ))
+               ( pMe->m_bImgLoadDone == TRUE 
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE               
+                ||display_jpg_done == VC_JPEG_DECODE_DONE 
+#endif                
+                ))
             {
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE                
                MG_FARF(ADDR, ("V0848 JPG DONE %d, BREW DECODE %d",
                               display_jpg_done,
                               pMe->m_bImgLoadDone));
-
+#endif
                //do zoom
                if(pMe->m_pImage)
                {
@@ -2741,8 +2758,11 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          case AVK_RIGHT:
          case AVK_LEFT:
             if(eDlgStat == MG_DLGSTAT_NORMAL &&
-               (pMe->m_bImgLoadDone == TRUE ||
-                display_jpg_done == VC_JPEG_DECODE_DONE))
+               (pMe->m_bImgLoadDone == TRUE 
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE                   
+               ||display_jpg_done == VC_JPEG_DECODE_DONE
+#endif               
+               ))
             {
                AEEImageInfo ImgInfo;
                IImage *pi = pMe->m_pImage;
@@ -2753,9 +2773,11 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                   if(ImgInfo.bAnimated)
                      IIMAGE_Stop(pi);
                }
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE 			   
                MG_FARF(ADDR, ("V0848 JPG DONE %d, BREW DECODE %d",
                               display_jpg_done,
                               pMe->m_bImgLoadDone));
+#endif
                MGAppUtil_ChangeMediaMenuItemByType(pMe,
                                                    pMe->m_pMediaMenu,
                                                    (boolean)(wParam == AVK_RIGHT),
@@ -6428,8 +6450,10 @@ static boolean MGAppUtil_UpdateImgViewerSoftkey(CMediaGalleryApp* pMe)
           pMe->m_bV0848DecodeImg == TRUE
           /*display_jpg_done == VC_JPEG_DECODE_DONE*/ ))
       {
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE       
          MG_FARF(ADDR, ("V0848 JPG DONE %d, BREW DECODE %d",
                         display_jpg_done,  pMe->m_bImgLoadDone));
+#endif
          nLeftResID = IDS_OPTION;
       }
 
@@ -8232,18 +8256,21 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
 
 
 #ifndef AEE_SIMULATOR
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE    
+
    /*如果是使用中星微848解码*/
    if(pMe->m_bV0848DecodeImg == TRUE)
    {
       vc_union_type vc_data;
       char *pplayfile = NULL;
       AEERect OldRc;
-
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE    	  
       if(display_jpg_done == VC_JPEG_DECODE_DONE)
       {
          MG_FARF(ADDR, ("848 already decode!"));
          //return EFAILED;
       }
+#endif
       //MGAppUtil_DrawImageViewerBG(pMe);
       //  IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
       IDISPLAY_DrawRect(pMe->m_pDisplay,
@@ -8276,11 +8303,13 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
       vc_data.play_info.entry = VC_JPEG_ENTRY_FS;
 
       //if we use VIM848 decode jpeg photo, now call it
+#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE       
       VC_DeviceControl(VC_ITM_JPG_DECODE_I, VC_FUNC_PLAY_ON, &vc_data);
       while(  display_jpg_done != VC_JPEG_DECODE_DONE)
       {
          AEEOS_Sleep(20);
       }
+#endif	  
       DrawTextWithProfile(pMe->m_pShell,
                           pDisp,
                           RGB_WHITE,//_NO_TRANS,
@@ -8301,6 +8330,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
       FREEIF(pszTitle);
       return SUCCESS;
    }
+#endif /*FEATURE_MEDIAPLAYER_DECODER_INTERFACE*/   
 #endif
 
    po = pMe->m_pImage;

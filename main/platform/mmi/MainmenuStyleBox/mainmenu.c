@@ -2193,13 +2193,13 @@ static boolean StartApplet(MainMenu *pMe, int i)
             break;
 
         case 9:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
             break;
         case 10:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME_TETRIS);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
             break;
         case 11:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_VIDEOPLAYER);
             break;
 #endif
         default:

@@ -198,7 +198,6 @@ typedef enum _FileDF
 #define MGMIME_BASE_MUSIC       0x0002
 #define MGMIME_BASE_VIDEO       0x0004
 #define MGMIME_BASE_ALL         0xFFFF
-
 typedef struct _ExplorerPara{
    /*下面几项为MMS选择文件使用*/
    AEECLSID    nClsId; /*the applet which invoke the interface class ID */
@@ -213,7 +212,6 @@ typedef struct _ExplorerPara{
     * 项的模式*/
    byte        nSelectProfile;
 }ExplorerPara;
-
 #ifndef ARRAYSIZE
 #define ARRAYSIZE(a)            (sizeof(a)/sizeof(a[0]))
 #endif
