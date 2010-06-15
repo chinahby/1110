@@ -73,7 +73,7 @@ when         who            what, where, why
 /*显示计算区域X坐标原点*/
 #define CALC_VAL_RECT_X                  10
 /*显示计算区域最底行Y坐标原点*/
-#define CALC_VAL_RECT_Y                  16
+#define CALC_VAL_RECT_Y                  22
 /*显示计算区域宽度*/
 #define CALC_VAL_RECT_WIDTH          128
 /*显示单行计算区域高度*/
@@ -1132,20 +1132,23 @@ static void Calc_AddChar(CCalcApp *pme, AECHAR chAdd, boolean bUnique)
     bMenuSel = FALSE;
 
 	DBGPRINTF("chAdd = 0x%x, bUnique = %d, m_wLastOperator = %d",chAdd,bUnique,pme->m_wLastOperator);
-	
+	DBGPRINTF("111111111111111111111111111111",0,0,0);
     if (pme->m_wLastOperator != OP_UNDEFINED)
     {
         if (pme->m_wLastOperator != OP_EQUAL)
         {
+        	DBGPRINTF("111111111111111111111111111111",0,0,0);
             bMenuSel = TRUE;
         }
         pme->m_wLastOperator = OP_UNDEFINED;
     }
 
+	DBGPRINTF("111111111111111111111111111111",0,0,0);
     if(chAdd >= '0' && chAdd <= '9')
     {
         int nZeroPos = (pszBase[0] == '-')?(1):(0);
 
+		DBGPRINTF("nZeroPos = %d,pszBase[nZeroPos]=0x%x",nZeroPos,pszBase[nZeroPos],0);
         if(pszBase[nZeroPos] == '0' && WSTRLEN( pme->m_szText) == 1 + nZeroPos)
         {
             pszBase[nZeroPos] = chAdd;
@@ -1154,6 +1157,8 @@ static void Calc_AddChar(CCalcApp *pme, AECHAR chAdd, boolean bUnique)
             goto __calc_addchar__end__;
         }
     }
+
+    DBGPRINTF("m_bClearLast = %d",pme->m_bClearLast,0,0);
     if (pme->m_bClearLast)
     {
         if( pme->m_nValNum == 0 &&
@@ -1179,7 +1184,10 @@ static void Calc_AddChar(CCalcApp *pme, AECHAR chAdd, boolean bUnique)
             // the user presses a new digit after the Equals operator
             // was used.  The equals annunciator should be removed
             // from the display.
-//            Calc_ShowAnnun(pme, OP_UNDEFINED, FALSE);
+            //pme->m_wLastOperator = OP_UNDEFINED;
+            //Calc_SetVal(pme,chAdd,FALSE);
+            //Calc_AddChar( pme, 'B', FALSE);
+			Calc_ShowAnnun(pme);
         }
     }
 
@@ -1364,154 +1372,6 @@ static void Calc_ShowAnnun( void* pMe)
     {
        return ;
     }
-    /*//not using
-    nHeight = (int16) IDISPLAY_GetFontMetrics(pd,
-                                              AEE_FONT_BOLD,
-                                              NULL,
-                                              NULL);*/
-
-#if 0
-    // Draw the memory annunciator directly above the value
-    // (which is centred on the screen)
-    SETAEERECT(&rc,
-               1,
-               pme->m_valRect.y - nHeight,
-               pme->m_cxInd,
-               nHeight*2);
-
-    if (rc.y < nHeight) {
-       // Ensure we don't overwrite the "Calculator" title at the top
-       // of the screen if the display height is too small.
-       rc.y = nHeight;
-    }
-
-    IDISPLAY_FillRect(pd, &rc, MAKE_RGB(155, 117, 219));
-
-    // The RC rectangle previously included the 'Operator' annunicator
-    // in the height so it would be cleared with the IDISPLAY_FillRect(),
-    // but we don't want that anymore.
-    rc.dy = nHeight;
-
-    if (!FCMP_E(pme->m_cfg.vMem,0.0)) {
-       (void) IDISPLAY_DrawText(pd,
-                                AEE_FONT_BOLD,
-                                pme->m_szMemAnnun,
-                                1,
-                                1,
-                                rc.y,
-                                &rc,
-                                IDF_RECT_FILL|IDF_TEXT_INVERTED|IDF_TEXT_TRANSPARENT);
-    }
-#endif
-
-#if 0
-    if (OP_UNDEFINED == wOp) {
-       for (pn = pme->m_pValList; pn != NULL ; pn = pn->pNext) {
-           wOp = pn->wOp;
-       }
-    }
-
-    if (wOp != OP_UNDEFINED)
-    {
-
-        rc.x    = pme->m_valRect.x;
-        rc.y    = pme->m_valRect.y + (pme->m_valRect.dy - nHeight) / 2;
-        rc.dx   = 16;
-        rc.dy   = nHeight;
-        drawImageWithOffset( pme,
-                     AEE_APPSCOMMONRES_IMAGESFILE,
-                     IDB_CALCAPP,
-                     rc.x,
-                     rc.y,
-                     &rc
-                 );
-
-        (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                   AEE_CALCAPP_RES_FILE,
-                                   Calc_GetOpResourceId(wOp),
-                                   szBuff,
-                                   sizeof(szBuff));
-        IDISPLAY_SetColor( pd, CLR_USER_TEXT, RGB_WHITE);
-        (void) IDISPLAY_DrawText(pd,
-                                AEE_FONT_BOLD,
-                                szBuff,
-                                1,
-                                rc.x,
-                                rc.y,
-                                NULL,
-                                IDF_TEXT_TRANSPARENT);
-        IDISPLAY_SetColor( pd, CLR_USER_TEXT, RGB_BLACK);
-    }
-#endif
-
-#if 0
-    {
-        AECHAR    text[128] = {0};
-        int       length    = 0;
-        int       i         = 0;
-
-        for( i = 1; i <= pme->m_nValNum; i ++)
-        {
-            Calc_FloatToWStr( pme->m_pValList[i].v, text + length, (128 - length) * 2);
-            length = WSTRLEN( text);
-            if( length == 0)
-            {
-                text[length ++] = (AECHAR)'0';
-            }
-            text[length ++] = (AECHAR)' ';
-            (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                   AEE_CALCAPP_RES_FILE,
-                                   Calc_GetOpResourceId( pme->m_pValList[i].wOp),
-                                   text + length,
-                                   (128 - length) * 2
-                               );
-            length = WSTRLEN( text);
-            text[length ++] = (AECHAR)' ';
-        }
-        text[length] = 0;
-
-        SETAEERECT( &rc, pme->m_valRect.x, pme->m_valRect.y-(3*pme->m_valRect.dy), pme->m_valRect.dx, 3*pme->m_valRect.dy);
-        drawImageWithOffset( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, rc.x, rc.y, &rc);
-        
-        if( length > 0)
-        {
-            static int x = 0;
-            int16 width = 0;
-
-            width = Calc_NumText( pme, text, -1, RGB_WHITE/*RGB_BLACK*/, FALSE, TRUE);
-            
-            if( width <= rc.dx)
-            {
-                x = rc.x + rc.dx - width;
-            }
-            else
-            {
-                if( pme->operatorPushed || x <= ( rc.x - width + rc.dx))
-                {
-                    x = rc.x;
-                    pme->operatorPushed = FALSE;
-                }
-                else
-                {
-                    x -= 12;
-                }
-
-                ISHELL_SetTimer( pme->a.m_pIShell, 500, Calc_ShowAnnun, pme);
-            }
-            rc.x = pme->m_valRect.x;
-            rc.y = pme->m_valRect.y - pme->m_valRect.dy; 
-            rc.dy = pme->m_valRect.dy;
-            x = rc.x + rc.dx - width;
-            IDISPLAY_SetClipRect( pme->a.m_pIDisplay, &rc);
-
-            SETAEERECT( &pme->m_valRect, rc.x, rc.y, rc.dx, rc.dy);
-            Calc_NumText( pme, text, x, RGB_WHITE/*RGB_BLACK*/, TRUE, TRUE);
-            Calc_SetupValRect( pme);
-
-            IDISPLAY_SetClipRect( pme->a.m_pIDisplay, &pme->m_rc);
-        }
-    }
-#else
     {
         AECHAR    text[32] = {0};
         int           length    = 0;
@@ -1552,7 +1412,6 @@ static void Calc_ShowAnnun( void* pMe)
         Calc_SetupValRect( pme);
         IDISPLAY_SetClipRect( pme->a.m_pIDisplay, &pme->m_rc);
     }
-#endif
 
     IDISPLAY_Update(pd);
 }
