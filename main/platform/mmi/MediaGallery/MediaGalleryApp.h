@@ -41,11 +41,14 @@
 #include "Appscommon.h"
 #include "appscommon.brh"
 // pictures resource
-#ifdef FEATURE_COLOR_DISPLAY
-#include "appscommon_color.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
 #else
-#include "appscommon_momo.brh"
-#endif//FEATURE_COLOR_DISPLAY
+#include "Appscommon_color.brh"
+#endif
+
 #ifdef FEATURE_ANICTL
 #include "AEEDrawAni.h"
 #endif

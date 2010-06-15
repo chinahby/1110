@@ -49,7 +49,13 @@
 #include "AEEBacklight.h" 
 #include "Appscommon.h"
 #include "AppComFunc.h"
-#include "appscommon_color.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
 #include "AEESound.h"
 #include "OEMCFGI.h"
 #include "AEECM.h"

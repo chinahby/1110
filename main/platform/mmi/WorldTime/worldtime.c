@@ -29,11 +29,14 @@ when         who            what, where, why
 #include "worldtime.brh"
 #include "AppComFunc.h"
 #include "Appscommon.h"
-#ifdef FEATURE_COLOR_DISPLAY
-#include "appscommon_color.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
 #else
-#include "appscommon_momo.brh"
+#include "Appscommon_color.brh"
 #endif
+
 
 #include "OEMCFGI.h"
 #include "OEMOS.h"
