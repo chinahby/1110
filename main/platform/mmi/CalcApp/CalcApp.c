@@ -1131,6 +1131,8 @@ static void Calc_AddChar(CCalcApp *pme, AECHAR chAdd, boolean bUnique)
 
     bMenuSel = FALSE;
 
+	DBGPRINTF("chAdd = 0x%x, bUnique = %d, m_wLastOperator = %d",chAdd,bUnique,pme->m_wLastOperator);
+	
     if (pme->m_wLastOperator != OP_UNDEFINED)
     {
         if (pme->m_wLastOperator != OP_EQUAL)
@@ -1995,7 +1997,7 @@ static boolean Calc_FloatToWStr(double v, AECHAR * pdest, int nSize)
         return TRUE;
     }
 
-    (void)sprintf( szBuff, "%13.4f", v);
+    (void)snprintf( szBuff, 32,"%13.4f", v);
     (void)STRTOWSTR(szBuff, pdest, nSize);
 
     // Clip leading spaces...
