@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="idcallapp" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1001" Name="IDS_SK_MENU">
+		<Text>Menu</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_PREPAGO">
+		<Text>Recarga Prepago</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_RELEASE">
+		<Text>Bab</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_INVALID_IP_NUMBER">
+		<Text>No IP kosong</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_CALLING_DIALOG_TEXT">
+		<Text>Panggil</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_ENDCALL_DIALOG_TEXT">
+		<Text>Panggilan selesai</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_SAVE_NEW">
+		<Text>Simpn</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_MSG_EXCEPTIONAL_CHAR">
+		<Text>Nomor tidak diketahui, tidak bisa dibalas!</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_TIME_TEXT">
+		<Text>jam  </Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_NO_NUMBER">
+		<Text>Nomor tidak diketahui</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_NUMBER_RESTRICTED">
+		<Text>Ulangi lagi</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_IP_NUMBER_SELECT">
+		<Text>Nomor IP</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_EMGCALL">
+		<Text>Emergency call</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_AUTO_REDIAL">
+		<Text>Redial otomatis</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_REJECT">
+		<Text>Batal</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_SALDO">
+		<Text>cek saldo</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_WAITING_CALL">
+		<Text>Panggilan tunggu</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_MUTI_CALL">
+		<Text>Tiga panggilan bersamaan</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_ANSWER">
+		<Text>Jawab</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_NUMBER_UNAVAILABLE">
+		<Text>Tidak cocok</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_CLIENTE">
+		<Text>Atencion al cliente</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_NONHANDFREE">
+		<Text>Bebas genggam mati</Text>
+	</STRING>
+	<STRING Id="1024" Name="IDS_HANDFREE">
+		<Text>Bebas genggam hidup</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_VOICEMAIL_EMPTY">
+		<Text>Tidak ada pesan suara!</Text>
+	</STRING>
+	<STRING Id="1026" Name="IDS_MUTE">
+		<Text>diam</Text>
+	</STRING>
+	<STRING Id="1027" Name="IDS_UNMUTE">
+		<Text>Bersuara</Text>
+	</STRING>
+	<STRING Id="1028" Name="IDS_FORWARD_TO_VOICEMAIL">
+		<Text>Pesan suara</Text>
+	</STRING>
+	<STRING Id="1029" Name="IDS_RESTRICT_OUTGOING">
+		<Text>Panggilan ulang!</Text>
+	</STRING>
+	<STRING Id="1030" Name="IDS_SPEED_DIAL_EMPTY">
+		<Text>Panggilan cepat %s  kosong</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_RELEASEHOLD">
+		<Text>Tahan</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_RESCUE_RUIM">
+		<Text>buka kartu yg terblokir</Text>
+	</STRING>
+	<STRING Id="1033" Name="IDS_IGNORE">
+		<Text>Abaikan</Text>
+	</STRING>
+	<STRING Id="1034" Name="IDS_INCOMINGCALL_TEXT">
+		<Text>Pangilan masuk</Text>
+	</STRING>
+	<STRING Id="1035" Name="IDS_MISSED">
+		<Text>Panggilan tidak dijawab</Text>
+	</STRING>
+	<STRING Id="1036" Name="IDS_CALLAPP_TITLE">
+		<Text>pengaturan panggilan</Text>
+	</STRING>
+	<STRING Id="1037" Name="IDS_CANCEL">
+		<Text>K'bali</Text>
+	</STRING>
+	<STRING Id="1038" Name="IDS_MISSED_1CALL">
+		<Text>1 panggilan</Text>
+	</STRING>
+	<STRING Id="1039" Name="IDS_CALLLOST">
+		<Text>panggilan tdk tersambung</Text>
+	</STRING>
+	<STRING Id="1040" Name="IDS_CALLFAILED">
+		<Text>Panggilan gagal</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_SK_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_INVALIDEMGNUM">
+		<Text>Peringatan: jika Anda memulihkan layanan normal, operator darurat mungkin tidak dapat menjangkau Anda.</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_MISSED_NCALLS">
+		<Text>%d panggilan</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_EMGNUMBER_CALL_ONLY">
+		<Text>Hanya panggilan darurat saja! </Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_CALL_CENTER_NUMBER">
+		<Text>Hotline number</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6002" Name="IDD_CALLING" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6003" Name="IDD_CONVERSATION" Focus="7004">
+		<Controls>
+			<SoftKey Id="7001" Name="IDDC_CONVERSATION_SK">
+				<Items/>
+			</SoftKey>
+			<Stopwatch Id="7004" Name="IDDC_CONVERSATION_TIMER">
+				<Items/></Stopwatch>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6004" Name="IDD_ENDCALL" Focus="7005">
+		<Controls>
+			<Countdown Id="7005" Name="IDDC_ENDCALL_TIMER">
+				<Items/></Countdown>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6005" Name="IDD_INCOMINGCALL" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6006" Name="IDD_MISSED" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6007" Name="IDD_USERCONFIRM" Focus="7006">
+		<Controls>
+			<Static Id="7006" Name="IDC_USERCONFIRM_STATIC">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6008" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6009" Name="IDD_IP_NUMBER" Focus="0">
+		<Controls/>
+	</Dialog>
+</Dialogs>
+</BREWRes>

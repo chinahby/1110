@@ -158,7 +158,7 @@
 		<Text>เพิ่ม</Text>
 	</STRING>
 	<STRING Id="53" Name="IDS_FULL">
-		<Text>เต็ม</Text>
+		<Text>Preset messages full</Text>
 	</STRING>
 	<STRING Id="54" Name="IDS_SAVED">
 		<Text>ทำงาน</Text>
@@ -508,6 +508,9 @@
 	<STRING Id="175" Name="IDS_EXIT_EDITOR">
 		<Text>Exit editor</Text>
 	</STRING>
+	<String Id="176" Name="IDS_BROWSE">
+		<Text>Browse</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -524,6 +527,7 @@
 				<Items/>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6003" Name="IDD_MSGBOX" Focus="0">
 		<Controls/>

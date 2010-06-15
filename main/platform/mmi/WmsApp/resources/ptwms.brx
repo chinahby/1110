@@ -430,6 +430,87 @@
 	<STRING Id="149" Name="IDS_INPUTNULL">
 		<Text>Content can not be empty!</Text>
 	</STRING>
+	<STRING Id="150" Name="IDS_SETCALLBACKNUM">
+		<Text>Set call back number</Text>
+	</STRING>
+	<STRING Id="151" Name="IDS_SENDMODE">
+		<Text>Send mode</Text>
+	</STRING>
+	<STRING Id="152" Name="IDS_MSGMANAGEMENT">
+		<Text>Messages management</Text>
+	</STRING>
+	<STRING Id="153" Name="IDS_COPYINBOX">
+		<Text>Copy inbox</Text>
+	</STRING>
+	<STRING Id="154" Name="IDS_MOVEINBOX">
+		<Text>Move inbox</Text>
+	</STRING>
+	<STRING Id="155" Name="IDS_UIMTOPHONE">
+		<Text>UIM card to phone</Text>
+	</STRING>
+	<STRING Id="156" Name="IDS_PHONETOUIM">
+		<Text>Phone to UIM card</Text>
+	</STRING>
+	<STRING Id="157" Name="IDS_SAVEASPRESET">
+		<Text>Save as preset</Text>
+	</STRING>
+	<STRING Id="158" Name="IDS_SETTING">
+		<Text>Settings</Text>
+	</STRING>
+	<STRING Id="159" Name="IDS_CONTACTS">
+		<Text>Contacts</Text>
+	</STRING>
+	<STRING Id="160" Name="IDS_GROUPLIST">
+		<Text>Group list</Text>
+	</STRING>
+	<STRING Id="161" Name="IDS_RECENT_CALLS">
+		<Text>Recent calls</Text>
+	</STRING>
+	<STRING Id="162" Name="IDS_LANGUAGE">
+		<Text>Language</Text>
+	</STRING>
+	<STRING Id="163" Name="IDS_LANGUAGE_NOSPEC">
+		<Text>Unspecified</Text>
+	</STRING>
+	<STRING Id="164" Name="IDS_LANGUAGE_ENGLISH">
+		<Text>English</Text>
+	</STRING>
+	<STRING Id="165" Name="IDS_LANGUAGE_FRENCH">
+		<Text>French</Text>
+	</STRING>
+	<STRING Id="166" Name="IDS_LANGUAGE_SPANISH">
+		<Text>Spanish</Text>
+	</STRING>
+	<STRING Id="167" Name="IDS_LANGUAGE_JAPANESE">
+		<Text>Japanese</Text>
+	</STRING>
+	<STRING Id="168" Name="IDS_LANGUAGE_KOREAN">
+		<Text>Korean</Text>
+	</STRING>
+	<STRING Id="169" Name="IDS_LANGUAGE_CHINESE">
+		<Text>Chinese</Text>
+	</STRING>
+	<STRING Id="170" Name="IDS_LANGUAGE_HEBREW">
+		<Text>Hebrew</Text>
+	</STRING>
+	<STRING Id="171" Name="IDS_AUTOREPLACE">
+		<Text>Auto replace</Text>
+	</STRING>
+	<STRING Id="172" Name="IDS_VOICEMAIL_NOTI">
+		<Text>Voice mail notification</Text>
+	</STRING>
+	<STRING Id="173" Name="IDS_MOVED">
+		<Text>%d Moved</Text>
+	</STRING>
+	<STRING Id="174" Name="IDS_SAVETOCONTACT">
+		<Text>Save to contacts</Text>
+	</STRING>
+	<STRING Id="175" Name="IDS_EXIT_EDITOR">
+		<Text>Exit editor</Text>
+	</STRING>
+	<String Id="176" Name="IDS_BROWSE">
+		<Text>Browse</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -446,18 +527,19 @@
 				<Items/>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6003" Name="IDD_MSGBOX" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
-	<DIALOG Id="6004" Name="IDD_MSGOPTS" Focus="7004">
+	<DIALOG Id="6004" Name="IDD_MSGOPTS" Focus="0">
 		<Controls>
 			<Menu Id="7004" Name="IDC_MSGOPTS_MENU">
-				<TitleID>IDS_OPTION</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6005" Name="IDD_VIEWMSG" Focus="7005">
 		<Controls>
@@ -592,10 +674,10 @@
 	<DIALOG Id="6024" Name="IDD_EXTARCTEDITEM_OPT" Focus="7021">
 		<Controls>
 			<Menu Id="7021" Name="IDC_SAVENUMLISTOPT_MENU">
-				<TitleID>IDS_OPTION</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<Dialog Id="6025" Name="IDD_RESERVEDMSG" Focus="0">
 		<Controls>
@@ -663,6 +745,10 @@
 			<Text Id="7029" Name="IDC_TEXT_CBNUM">
 				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/></Text>
+			<List Id="7037" Name="IDC_MENU_CBNUM">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
 		</Controls>
 	</Dialog>
 	<Dialog Id="6030" Name="IDD_CALLBACKNUMSWITCH" Focus="7008">
@@ -712,6 +798,55 @@
 	</Dialog>
 	<Dialog Id="6037" Name="IDD_GETDT" Focus="0">
 		<Controls/>
+	</Dialog>
+	<Dialog Id="6038" Name="IDD_MANAGEMENT" Focus="7020">
+		<Controls>
+			<Menu Id="7020" Name="IDC_MANAGEMENT_MENU">
+				<TitleID>IDS_MSGMANAGEMENT</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6039" Name="IDD_COPYINBOX" Focus="7033">
+		<Controls>
+			<Menu Id="7033" Name="IDC_COPYINBOX_MENU">
+				<TitleID>IDS_COPYINBOX</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6040" Name="IDD_MOVEINBOX" Focus="7034">
+		<Controls>
+			<Menu Id="7034" Name="IDC_MOVEINBOX_MENU">
+				<TitleID>IDS_MOVEINBOX</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6041" Name="IDD_SENDMODE" Focus="7035">
+		<Controls>
+			<Menu Id="7035" Name="IDC_SENDMODE_MENU">
+				<TitleID>IDS_SENDMODE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6042" Name="IDD_SELECTFROMOPT" Focus="7036">
+		<Controls>
+			<Menu Id="7036" Name="IDC_SELECTFROM_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6043" Name="IDD_AUTOREPLACE" Focus="7038">
+		<Controls>
+			<Menu Id="7038" Name="IDC_AUTOREPLACE_MENU">
+				<TitleID>IDS_AUTOREPLACE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
 	</Dialog>
 </Dialogs>
 </BREWRes>

@@ -50,7 +50,7 @@
 		<Text>Forward</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_LISTENVM">
-		<Text>Voice mail</Text>
+		<Text>Listen to voice mail</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_SEND">
 		<Text>Send</Text>
@@ -131,7 +131,7 @@
 		<Text>Delivery reports</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_STORAGE">
-		<Text>Save location</Text>
+		<Text>Prefer save</Text>
 	</STRING>
 	<STRING Id="45" Name="IDS_NOTSAVE">
 		<Text>Do not save</Text>
@@ -158,7 +158,7 @@
 		<Text>Add</Text>
 	</STRING>
 	<STRING Id="53" Name="IDS_FULL">
-		<Text>Full</Text>
+		<Text>Preset messages full</Text>
 	</STRING>
 	<STRING Id="54" Name="IDS_SAVED">
 		<Text>Done</Text>
@@ -269,7 +269,7 @@
 		<Text>Insert Domain Symbol</Text>
 	</STRING>
 	<STRING Id="96" Name="IDS_INSERTEMOTIONSYMBOL">
-		<Text>Insert Emotion Symbol</Text>
+		<Text>Insert Emotion</Text>
 	</STRING>
 	<STRING Id="97" Name="IDS_MSGVALIDITY">
 		<Text>Messages validity</Text>
@@ -317,10 +317,10 @@
 		<Text>IP call</Text>
 	</STRING>
 	<STRING Id="112" Name="IDS_VMNUM">
-		<Text>Voicemail number</Text>
+		<Text>Voice mail number</Text>
 	</STRING>
 	<STRING Id="113" Name="IDS_VMNUM_WARNING">
-		<Text>No voicemail number,add now</Text>
+		<Text>No voice mail number,add now</Text>
 	</STRING>
 	<STRING Id="114" Name="IDS_RESEND">
 		<Text>Resend</Text>
@@ -508,6 +508,9 @@
 	<STRING Id="175" Name="IDS_EXIT_EDITOR">
 		<Text>Exit editor</Text>
 	</STRING>
+	<String Id="176" Name="IDS_BROWSE">
+		<Text>Browse</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -524,6 +527,7 @@
 				<Items/>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6003" Name="IDD_MSGBOX" Focus="0">
 		<Controls/>

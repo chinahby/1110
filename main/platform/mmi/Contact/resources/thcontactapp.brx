@@ -433,6 +433,24 @@
 	<STRING Id="1079" Name="IDS_RENAME">
 		<Text>เปลี่ยนชื่อ</Text>
 	</STRING>
+	<STRING Id="1080" Name="IDS_SAVE_EDIT" Encoding="Unicode">
+		<Text>Save edit</Text>
+	</STRING>
+	<STRING Id="1081" Name="IDS_GROUP_UIM" Encoding="Unicode">
+		<Text>การ์ด UIM</Text>
+	</STRING>
+	<STRING Id="1082" Name="IDS_SAME_NAME" Encoding="Unicode">
+		<Text>Same name,rename</Text>
+	</STRING>
+	<STRING Id="1083" Name="IDS_BT_COPYN" Encoding="Unicode">
+		<Text>Send via bluetooth</Text>
+	</STRING>
+	<STRING Id="1084" Name="IDS_NO_NUMBER_TO_MAKECALL" Encoding="Unicode">
+		<Text>No number to make call</Text>
+	</STRING>
+	<STRING Id="1085" Name="IDS_NO_SELECTION" Encoding="Unicode">
+		<Text>No selection</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
@@ -462,8 +480,9 @@
 				<TitleID>IDS_NAME</TitleID>
 				<Items/></Text>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
-	<DIALOG Id="6005" Name="IDD_ADDNEW" Focus="0">
+	<DIALOG Id="6005" Name="IDD_ADDNEW" Focus="7041">
 		<Controls>
 			<List Id="7039" Name="IDC_ADD_GROUPLIST">
 				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
@@ -585,29 +604,7 @@
 		<Controls>
 			<Menu Id="7013" Name="IDC_GROUP_MENU">
 				<TitleID>IDS_INPUT_GROUP</TitleID>
-				<Items>
-					<Item Id="8027" Name="IDI_GROUP_MENU_NONE">
-						<TextID>IDS_GROUP_NONE</TextID>
-					</Item>
-					<Item Id="8028" Name="IDI_GROUP_MENU_VIP">
-						<TextID>IDS_GROUP_VIP</TextID>
-					</Item>
-					<Item Id="8029" Name="IDI_GROUP_MENU_HOME">
-						<TextID>IDS_GROUP_HOME</TextID>
-					</Item>
-					<Item Id="8030" Name="IDI_GROUP_MENU_WORK">
-						<TextID>IDS_GROUP_WORK</TextID>
-					</Item>
-					<Item Id="8031" Name="IDI_GROUP_MENU_FRIEND">
-						<TextID>IDS_GROUP_FRIEND</TextID>
-					</Item>
-					<Item Id="8032" Name="IDI_GROUP_MENU_PERSONAL">
-						<TextID>IDS_GROUP_PERSONAL</TextID>
-					</Item>
-					<Item Id="8033" Name="IDI_GROUP_MENU_BUSINESS">
-						<TextID>IDS_GROUP_BUSINESS</TextID>
-					</Item>
-				</Items>
+				<Items/>
 			</Menu>
 		</Controls>
 	</DIALOG>
@@ -723,7 +720,7 @@
 				<Items/></Static>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="6022" Name="IDD_EDIT" Focus="7024">
+	<DIALOG Id="6022" Name="IDD_EDIT" Focus="7030">
 		<Controls>
 			<Menu Id="7024" Name="IDC_EDIT_MENU">
 				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
@@ -865,11 +862,11 @@
 	<DIALOG Id="6030" Name="IDD_DETAIL" Focus="7006">
 		<Controls>
 			<Menu Id="7006" Name="IDC_MENU_TITLE">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/>
 			</Menu>
-			<Static Id="7020" Name="IDC_DETAIL_STATIC">
-				<Items/></Static>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<Dialog Id="6031" Name="IDD_POPNUMFLD" Focus="0">
 		<Controls>
@@ -946,5 +943,21 @@
 		</Controls>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
+	<Dialog Id="6039" Name="IDD_SELECT_RECORD" Focus="7020">
+		<Controls>
+			<Menu Id="7020" Name="IDC_SELECT_RECORD">
+				<Items/>
+			</Menu>
+			<Text Id="7042" Name="IDC_SELECT_RECORD_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6040" Name="IDD_DETAIL_MULTI" Focus="0">
+		<Controls>
+			<Menu Id="7043" Name="IDC_MENU_DETAIL_MULTI">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 </Dialogs>
 </BREWRes>

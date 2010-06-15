@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="idblackjack" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="10" Name="IDC_NEW_GAME">
+		<Text>Permainan baru</Text>
+	</STRING>
+	<STRING Id="11" Name="IDC_INSTRUCTIONS_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="12" Name="IDC_NEW_GAME_SHORT_TITLE">
+		<Text>Baru</Text>
+	</STRING>
+	<STRING Id="13" Name="IDC_CONTINUE_GAME">
+		<Text>Lanjutkan</Text>
+	</STRING>
+	<STRING Id="20" Name="IDC_DEAL">
+		<Text>Bagi</Text>
+	</STRING>
+	<STRING Id="21" Name="IDC_CHANGE_BET">
+		<Text>Pasang</Text>
+	</STRING>
+	<STRING Id="30" Name="IDC_HIT">
+		<Text>Tambah</Text>
+	</STRING>
+	<STRING Id="31" Name="IDC_STAND">
+		<Text>Bertahan</Text>
+	</STRING>
+	<STRING Id="32" Name="IDC_DOUBLE_DOWN">
+		<Text>Double Down</Text>
+	</STRING>
+	<STRING Id="33" Name="IDC_SPLIT">
+		<Text>Dipecah</Text>
+	</STRING>
+	<STRING Id="40" Name="IDC_WANT_INSURANCE">
+		<Text>Ya</Text>
+	</STRING>
+	<STRING Id="41" Name="IDC_NO_INSURANCE">
+		<Text>Tidak</Text>
+	</STRING>
+	<STRING Id="100" Name="IDS_TITLE">
+		<Text>BlackJack</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_INSTRUCTIONS">
+		<Text>Raih mendekati 21 daripada bandar tanpa melebihi 21. Nilai kartu adalah : As, 1 or 11; raja, ratu, jack, 10, masing2 bernilai 10; kartu lainnya, nilainya sesuai nomor kartu tsb.</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_CONTINUE_OR_NEW_TEXT">
+		<Text>Lanjutkan game sebelumnya atau mulai dengan game baru</Text>
+	</STRING>
+	<STRING Id="110" Name="IDS_CASH_STATUS_FORMAT">
+		<Text>Tunai</Text>
+	</STRING>
+	<STRING Id="111" Name="IDS_BET_STATUS_FORMAT">
+		<Text>Pasang</Text>
+	</STRING>
+	<STRING Id="120" Name="IDS_HAND_VALUE_FORMAT">
+		<Text>%d</Text>
+	</STRING>
+	<STRING Id="121" Name="IDS_BLACKJACK_HAND">
+		<Text>BlackJack!</Text>
+	</STRING>
+	<STRING Id="130" Name="IDS_BETWEEN_HANDS_DEFAULT_TITLE">
+		<Text>Daerah</Text>
+	</STRING>
+	<STRING Id="131" Name="IDS_PLAYER_BUSTED_TITLE">
+		<Text>Anda bangkrut</Text>
+	</STRING>
+	<STRING Id="132" Name="IDS_DEALER_BUSTED_TITLE">
+		<Text>Bandar bangkrut!  </Text>
+	</STRING>
+	<STRING Id="133" Name="IDS_PLAYER_WON_TITLE">
+		<Text>Anda Menang!</Text>
+	</STRING>
+	<STRING Id="134" Name="IDS_DEALER_WON_TITLE">
+		<Text>Anda kalah</Text>
+	</STRING>
+	<STRING Id="135" Name="IDS_PUSH_TITLE">
+		<Text>Push</Text>
+	</STRING>
+	<STRING Id="136" Name="IDS_PLAYER_BLACKJACK_TITLE">
+		<Text>BlackJack!  </Text>
+	</STRING>
+	<STRING Id="137" Name="IDS_DEALER_BLACKJACK_TITLE">
+		<Text>bandar Blackjack</Text>
+	</STRING>
+	<STRING Id="140" Name="IDS_PLAYER_WINNINGS">
+		<Text>Bandar membayar anda $%d.</Text>
+	</STRING>
+	<STRING Id="141" Name="IDS_PLAYER_LOSINGS">
+		<Text>Bandar mengambil $%d.</Text>
+	</STRING>
+	<STRING Id="142" Name="IDS_PUSH_NO_WINNINGS">
+		<Text>Tidak ada yang menang atau kalah</Text>
+	</STRING>
+	<STRING Id="143" Name="IDS_BJ_PUSH_NO_WINNINGS">
+		<Text>Anda memiliki BlackJack, tetapi bandar juga punya :-(.  Push. Tidak ada yang menang dan kalah.</Text>
+	</STRING>
+	<STRING Id="144" Name="IDS_BJ_BUT_INSURANCE_NO_WINNINGS">
+		<Text>Bandar memiliki BlackJack, tetapi Anda memilih asuransi. Anda kembali modal.</Text>
+	</STRING>
+	<STRING Id="145" Name="IDS_BJ_PUSH_BUT_INSURANCE_WINNINGS">
+		<Text>Anda  memiliki BlackJack, tetapi bandar juga punya. Bandar membayar Anda $%d untuk taruhan asuransi Anda.</Text>
+	</STRING>
+	<STRING Id="150" Name="IDS_BET_LOW_CASH_TITLE">
+		<Text>Dana sedikit</Text>
+	</STRING>
+	<STRING Id="151" Name="IDS_BET_INSUFFICIENT_CASH_TITLE">
+		<Text>Dana tidak cukup</Text>
+	</STRING>
+	<STRING Id="152" Name="IDS_BET_TOO_HIGH_TITLE">
+		<Text>Taruhan tertinggi</Text>
+	</STRING>
+	<STRING Id="153" Name="IDS_BET_TOO_LOW_TITLE">
+		<Text>Taruhan terendah</Text>
+	</STRING>
+	<STRING Id="154" Name="IDS_BET_LOW_CASH_MSG">
+		<Text>Anda tidak memiliki cukup uang untuk $%d taruhan.  Sisa uang Anda hanya $%d .</Text>
+	</STRING>
+	<STRING Id="155" Name="IDS_BET_INSUFFICIENT_CASH_MSG">
+		<Text>Anda tidak memiliki cukup uang untuk taruhan minimum $%d.  Sisa uang Anda hanya $%d .</Text>
+	</STRING>
+	<STRING Id="156" Name="IDS_BET_TOO_HIGH_MSG">
+		<Text>Taruhan Anda sebesar $%d melebihi maksimum taruhan sebesar $%d.</Text>
+	</STRING>
+	<STRING Id="157" Name="IDS_BET_TOO_LOW_MSG">
+		<Text>Taruhan Anda sebesar $%d dibawah minimum taruhans sebesar $%d.</Text>
+	</STRING>
+	<STRING Id="160" Name="IDS_SHUFFLING_TITLE">
+		<Text>Mengocok Kartu</Text>
+	</STRING>
+	<STRING Id="161" Name="IDS_SHUFFLING_MSG">
+		<Text>Mendekati akhir tumpukan %d kartu bandar. Waktu untuk mengocok.</Text>
+	</STRING>
+	<STRING Id="170" Name="IDC_BET_AMOUNT_10">
+		<Text>Jumlah Taruhan 10</Text>
+	</STRING>
+	<STRING Id="171" Name="IDC_BET_AMOUNT_20">
+		<Text>Jumlah Taruhan 20</Text>
+	</STRING>
+	<STRING Id="172" Name="IDC_BET_AMOUNT_50">
+		<Text>Jumlah Taruhan 50</Text>
+	</STRING>
+	<STRING Id="173" Name="IDC_BET_AMOUNT_100">
+		<Text>Jumlah Taruhan 100</Text>
+	</STRING>
+	<STRING Id="174" Name="IDC_BET_AMOUNT_150">
+		<Text>Jumlah Taruhan 150</Text>
+	</STRING>
+	<STRING Id="175" Name="IDC_BET_AMOUNT_200">
+		<Text>Jumlah Taruhan 200</Text>
+	</STRING>
+	<STRING Id="180" Name="IDS_INSURANCE_OFFER_TITLE">
+		<Text>Bandar as</Text>
+	</STRING>
+	<STRING Id="181" Name="IDS_INSURANCE_OFFER_MSG">
+		<Text>Ingin asuransi? Sisihan $%d taruhan yang membayar $%d jika bandar memiliki BlackJack.</Text>
+	</STRING>
+	<STRING Id="182" Name="IDS_INSURANCE_RESULT_TITLE">
+		<Text>Bukan BlackJack</Text>
+	</STRING>
+	<STRING Id="183" Name="IDS_INSURANCE_RESULT_MSG">
+		<Text>Dealer tidak memiliki BlackJack. Anda kehilangan $%d taruhan asuransi Anda.</Text>
+	</STRING>
+</Strings>
+</BREWRes>

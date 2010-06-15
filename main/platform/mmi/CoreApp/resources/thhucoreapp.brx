@@ -162,6 +162,7 @@
 	</Dialog>
 	<Dialog Id="6011" Name="IDD_ALARM" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6012" Name="IDD_WMSTIPS" Focus="0">
 		<Controls/>

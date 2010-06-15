@@ -63,9 +63,7 @@
 		<Object Id="5001" Name="IDB_COLOR_UTK_SPLASH">
 			<File>..\..\Appscommon\images\color\UTK\utksplash.png</File>
 		</Object>
-		<Object Id="5002" Name="IDB_BLACK_WHITE_UTK_SPLASH" MimeType="image/bmp">
-			<File>..\..\Appscommon\images\mono\utksplash.bmp</File>
-		</Object>
+
 	</Objects>
 	<Dialogs>
 		<DIALOG Id="1" Name="IDD_SPLASH_DIALOG" Focus="0">

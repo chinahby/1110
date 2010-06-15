@@ -143,6 +143,7 @@
 	</DIALOG>
 	<DIALOG Id="6003" Name="IDD_ALARMTIME_REACH" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6004" Name="IDD_ALARMCLOCK_MESSEGE" Focus="7006">
 		<Controls>

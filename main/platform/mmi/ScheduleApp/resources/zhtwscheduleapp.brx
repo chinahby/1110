@@ -145,8 +145,8 @@
 	<STRING Id="1085" Name="IDS_SETUP_AUTO_DELETE_OPTION_NEVER">
 		<Text>從不刪除</Text>
 	</STRING>
-	<STRING Id="1090" Name="IDS_SETUP_SNOOZE_OPTION_1_MIN">
-		<Text>1分鐘</Text>
+	<STRING Id="1090" Name="IDS_SETUP_SNOOZE_OPTION_OFF">
+		<Text>關</Text>
 	</STRING>
 	<STRING Id="1091" Name="IDS_SETUP_SNOOZE_OPTION_5_MIN">
 		<Text>5分鐘</Text>
@@ -292,6 +292,7 @@
 			<Text Id="7020" Name="IDC_TEXT_INPUT">
 				<Items/></Text>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6204" Name="IDD_VIEWDAY" Focus="7010">
 		<Controls>
