@@ -601,8 +601,11 @@ abort:
    }
 
    pme->m_bReady = TRUE;
-
-   ADialog_Redraw(po);
+   
+   if(!(pme->m_dwProps & DLG_NOT_REDRAW_AFTER_START))
+   {
+      ADialog_Redraw(po);
+   }
 
    if(bLoadFromRes){
       ISHELL_FreeResData(ps, pInfoRes);

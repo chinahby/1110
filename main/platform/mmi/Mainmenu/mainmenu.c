@@ -923,6 +923,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_8, IDS_MAIN_MENU_TITLE_8, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_9, IDS_MAIN_MENU_TITLE_9, NULL, 0);
             DBGPRINTF("EVT_DIALOG_INIT:::::::1");
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
         case EVT_DIALOG_START:

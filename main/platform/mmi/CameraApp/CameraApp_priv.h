@@ -78,7 +78,6 @@
 #include "db.h"
 #include "Vc0848.h"
 #include "Appscommon.brh"
-#include "oemui.h"
 #include "OEMSVC.h"
 
 

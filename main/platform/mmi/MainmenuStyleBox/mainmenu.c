@@ -1285,6 +1285,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
         case EVT_DIALOG_INIT:
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
 
         case EVT_DIALOG_START:

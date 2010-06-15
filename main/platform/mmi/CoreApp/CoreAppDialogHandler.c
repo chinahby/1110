@@ -2391,6 +2391,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                                                 NULL, NULL, NULL);
                 pMe->m_bemergencymode = FALSE;
             }
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
 
         case EVT_DIALOG_START: 

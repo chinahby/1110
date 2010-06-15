@@ -39,6 +39,7 @@ typedef struct _IStatic    IStatic;
 #define DLG_HANDLE_ALL_EVENTS 0x00010000
 #ifdef CUST_EDITION	
 #define DLG_NOT_SET_FOCUS_AUTO 0x00001000
+#define DLG_NOT_REDRAW_AFTER_START 0x00002000
 #endif /*CUST_EDITION*/
 //
 // Arguments sent on EVT_APP_START/EVT_APP_RESUME

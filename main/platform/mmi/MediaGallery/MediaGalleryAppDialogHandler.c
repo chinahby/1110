@@ -22,10 +22,6 @@
 #ifdef WIN32
 #include "oemhelperfunctype.h"
 #endif//WIN32
-#ifdef FEATURE_SUPPORT_VC0848
-#include "Vc0848.h"
-#include "oemui.h"
-#endif
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
 #include "simutils.h"
 #endif
