@@ -456,7 +456,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
         return EFAILED;
     }
     pMe->m_nRow        = 0;
-    pMe->m_nColumn     = 3;
+    pMe->m_nColumn     = 2;
 #ifdef FEATURE_ICON_MOVE_ANIMATION
     pMe->m_nPrevRow   = 1;
     pMe->m_nPrevColumn = 1;
