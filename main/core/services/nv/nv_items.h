@@ -7312,13 +7312,12 @@ typedef enum {
   NV_EDGE_1800_LINEAR_TX_GAIN_PARAM_I            = 6476,
   NV_EDGE_1900_LINEAR_TX_GAIN_PARAM_I            = 6477,
 #ifdef CUST_EDITION
-  NV_SID_LOCK_I                                  = 6478,
+  NV_NET_LOCK_I                                  = 6478,
   NV_AUTO_SET_ITEM_VERSION_I                     = 6479,
-  NV_CRITICAL_ITEM_I                             = 6480,
-  NV_ESN_OVER_WRITE_I                            = 6481,
+  NV_SIM_SELECT_I                                = 6480,
 #endif  
   
-  NV_MAX_I                                       = 6482
+  NV_MAX_I                                       = 6481
 
 #ifdef FEATURE_NV_RPC_SUPPORT
    , NV_ITEMS_ENUM_MAX                             = 0x7fffffff
@@ -7612,38 +7611,15 @@ typedef PACKED struct {
 
 #ifdef CUST_EDITION 
 /* Generic enabled/disabled sid lock type */
-typedef PACKED struct { 
-  /* NAM id 0-N */
-  byte                                             nam;
-  /* Enabled flag */
-  byte                                             b_sid_lock;
-} nv_enabled_sid_lock;
-
-typedef enum
-{
-    NV_CRITICAL_CLEAN,
-    NV_CRITICAL_MARK_INVALID,
-    NV_CRITICAL_BACKUP_RF,
-    NV_CRITICAL_RESTORE,
-
-    NV_CRITICAL_OP_MAX = 0xFFFF
-}nv_critical_item_op_type;
-
-typedef enum
-{
-    NV_CRITICAL_NOT_BACKUP = 0x0000,
-    NV_CRITICAL_RF_BACKUP = 0x0001,
-    NV_CRITICAL_ESN_BACKUP = 0x0002,
-    NV_CRITICAL_ESN_FULL = 0x0002,
-    
-    NV_CRITICAL_NEED_CLEAN = 0x8000  
-}nv_critical_backup_status;
-
 typedef PACKED struct {
-  nv_critical_item_op_type                          operation;
-  nv_critical_backup_status                         dwStatus;                                     
-} nv_critical_item_type;
+  /* Enabled flag */
+  word                                             b_lock;
+  word                                             mnc[NV_MAX_SID_LOCK];
+  word                                             mcc[NV_MAX_SID_LOCK];
+  word                                             sid[NV_MAX_SID_LOCK];
+} nv_enabled_net_lock;
 #endif
+
 /* DATA SERVICES default SIO baud rate */
 typedef  word  nv_sio_baudrate_type;
   
@@ -25411,10 +25387,9 @@ typedef PACKED union {
   
 #ifdef CUST_EDITION
   /* Generic enabled/disabled sid lock type */
-  nv_enabled_sid_lock                              enabled_sid_lock;
+  nv_enabled_net_lock                              enabled_net_lock;
   dword                                            auto_set_item_version;
-  nv_critical_item_type                            critical_item;
-  nv_esn_type                                      over_write_esn;
+  byte                                             sim_select;
 #endif
 } nv_item_type;
 

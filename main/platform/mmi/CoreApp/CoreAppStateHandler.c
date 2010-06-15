@@ -1229,23 +1229,35 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
     {
         case DLGRET_CREATE:
  #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
-                if (IsRunAsUIMVersion() && IRUIM_IsCardConnected(pMe->m_pIRUIM))
-                {   
-                     boolean lockFlg = TRUE;     //not find right MCC and MNC value lable should lock current RUIM 
-                     isAllowIMSI(pMe,&lockFlg);
-                     if (lockFlg)
-                     {
-                         // 卡不符合运营商要求，卡无效
-                         pMe->m_eUIMErrCode = UIMERR_LOCKED;
-                         MOVE_TO_STATE(COREST_UIMERR)
-                         return NFSMACTION_CONTINUE;
-                     }
-                     if(pMe->bunlockuim)                   //如果输入锁卡密码正确，此参数为真                     
-                     {                     
-                          pMe->m_eUIMErrCode = UIMERR_NONE;                     
-                     }                     
-                  }
+            if (IsRunAsUIMVersion() && IRUIM_IsCardConnected(pMe->m_pIRUIM))
+            {
+                boolean lockFlg = TRUE;     //not find right MCC and MNC value lable should lock current RUIM 
+                isAllowIMSI(pMe,&lockFlg);
+                if (lockFlg)
+                {
+                     // 卡不符合运营商要求，卡无效
+                     pMe->m_eUIMErrCode = UIMERR_LOCKED;
+                     MOVE_TO_STATE(COREST_UIMERR)
+                     return NFSMACTION_CONTINUE;
+                }
+                if(pMe->bunlockuim)                   //如果输入锁卡密码正确，此参数为真                     
+                {                     
+                     pMe->m_eUIMErrCode = UIMERR_NONE;                     
+                }
+            }
 #endif //defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
+#ifdef FEATURE_NET_LOCK
+{
+            extern boolean OEM_IsNetLock(void);
+            if(IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
+            {
+                pMe->m_eUIMErrCode = UIMERR_LOCKED;
+                MOVE_TO_STATE(COREST_UIMERR)
+                return NFSMACTION_CONTINUE;
+            }
+}
+#endif
+
 #ifdef  FEATURE_2008_POWERON_LOGIC
             if(pMe->m_b_PH_INFO_AVAIL == TRUE)
             {
@@ -1303,7 +1315,7 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
     
     switch (pMe->m_eDlgRet)
     {
-        case DLGRET_CREATE:        
+        case DLGRET_CREATE:
 #ifndef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
             CoreApp_ShowDialog(pMe, IDD_LOADING);
             return NFSMACTION_WAIT;
@@ -1311,7 +1323,7 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
         case DLGRET_INITED:
 #else
             db_setuiminitmask(INITUIMSMSMASK);
-#endif            
+#endif
             //if(CoreApp_Start_Alarm(pMe)) //is need show rtc power on alarm?
             //{
             //    CORE_ERR("COREST_ALARM:",0,0,0);

@@ -2795,18 +2795,6 @@ void OEM_RestoreFactorySetting( void )
    (void) OEMNV_Put( NV_AUTO_REDIAL_I, &nvi);   
    nvi_cache.auto_redial.enable = FALSE;
    nvi_cache.auto_redial.rings    = 10;
-
-#ifdef FEATURE_SID_LOCK
-    {
-        db_items_value_type sid_lock;
-        
-        sid_lock.b_sid_lock = 1;
-        db_put(DB_SID_LOCK, &sid_lock);
-        nvi.enabled_sid_lock.nam = cm_get_curr_nam();
-        nvi.enabled_sid_lock.b_sid_lock = 1;
-        (void) OEMNV_Put(NV_SID_LOCK_I, &nvi);
-    }
-#endif //FEATURE_SID_LOCK
    
    //CFGI_VOICEPRIVACY
    nvi.voice_priv = CM_PRIVACY_PREF_STANDARD;

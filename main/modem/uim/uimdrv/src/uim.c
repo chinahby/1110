@@ -8568,9 +8568,9 @@ dword dummy
 
 #ifdef FEATURE_DUAL_UIMCARD
 {
-    if( NV_DONE_S == OEMNV_Get(NV_ESN_OVER_WRITE_I,&nvi))
+    if( NV_DONE_S == OEMNV_Get(NV_SIM_SELECT_I,&nvi))
     {
-        if(nvi.over_write_esn.esn == 2 )
+        if(nvi.sim_select == 2 )
         {
             gpio_out(GPIO_OUTPUT_34,(GPIO_ValueType)GPIO_HIGH_VALUE);
         }
@@ -8581,8 +8581,8 @@ dword dummy
     }
     else
     {
-        nvi.over_write_esn.esn = 1;
-        ret = OEMNV_Put(NV_ESN_OVER_WRITE_I,&nvi);
+        nvi.sim_select = 1;
+        ret = OEMNV_Put(NV_SIM_SELECT_I,&nvi);
         gpio_out(GPIO_OUTPUT_34,(GPIO_ValueType)GPIO_LOW_VALUE);
     }
     uim_dev_init();

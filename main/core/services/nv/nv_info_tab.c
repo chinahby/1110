@@ -6497,9 +6497,8 @@ const nvim_item_info_type nvim_item_info_table[] = {
       { sizeof(nvi_uint16_type), 0, 1},
       { sizeof(nvi_uint16_type), 0, 1}
 #ifdef CUST_EDITION
-      ,{ sizeof(nv_enabled_sid_lock), 2, 1}
+      ,{ sizeof(nv_enabled_net_lock), 0, 1}
       ,{ sizeof(dword), 0, 1}
-      ,{ sizeof(nv_critical_item_type), 0, 1}
-      ,{ sizeof(nv_esn_type), 0, 1}
+      ,{ sizeof(byte),  0, 1}
 #endif
 };

@@ -93,9 +93,6 @@ static NextFSMAction SettingMenu_StateExitHandler(CSettingMenu *pMe);
 #ifdef FEATURE_PERU_VERSION
 static NextFSMAction SettingMenu_StatePhoneNumerHandler(CSettingMenu *pMe);
 #endif
-#ifdef FEATURE_SID_LOCK
-static NextFSMAction SettingMenu_StateNetSelectHandler(CSettingMenu *pMe);
-#endif
 
 #ifdef FEATRUE_AUTO_POWER
 static NextFSMAction SettingMenu_StateAutoPowerHandler(CSettingMenu *pMe);
@@ -242,11 +239,6 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             retVal = SettingMenu_StatePhoneNumerHandler(pMe);
             break;
 #endif
-#ifdef FEATURE_SID_LOCK
-        case SETTINGMENUST_NETSELECT:
-            retVal = SettingMenu_StateNetSelectHandler(pMe);
-            break;
-#endif    //FEATURE_NETWORK_SET
 #ifdef FEATRUE_AUTO_POWER
         case SETTINGMENUST_AUTO_POWER:
             retVal = SettingMenu_StateAutoPowerHandler(pMe);
@@ -412,12 +404,6 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_PHONENUMBER)
             return NFSMACTION_CONTINUE;
 #endif
-#ifdef FEATURE_SID_LOCK
-        case DLGRET_NET_SELECT:
-            MOVE_TO_STATE(SETTINGMENUST_NETSELECT)
-            return NFSMACTION_CONTINUE;
-#endif   //FEATURE_NETWORK_SET
-
 #ifdef FEATRUE_AUTO_POWER
          case DLGRET_AUTO_POWER:
             MOVE_TO_STATE(SETTINGMENUST_AUTO_POWER)
@@ -664,13 +650,6 @@ static NextFSMAction SettingMenu_StateCallSettingSelHandler(CSettingMenu *pMe)
                 MOVE_TO_STATE(SETTINGMENUST_AUTO_POWER)
             }
 #endif //#ifdef FEATRUE_AUTO_POWER
-#ifdef FEATURE_SID_LOCK
-            else if(pMe->m_CallSettingSel == IDS_LOCALNET)
-            {
-                MOVE_TO_STATE(SETTINGMENUST_NETSELECT)
-            }
-#endif //#ifdef FEATURE_SID_LOCK
-
             else
             {
                 MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
@@ -689,13 +668,7 @@ static NextFSMAction SettingMenu_StateCallSettingSelHandler(CSettingMenu *pMe)
             {
                 MOVE_TO_STATE(SETTINGMENUST_AUTO_POWER)
             }          
-#endif  
-#ifdef FEATURE_SID_LOCK            
-            else
-            {
-                MOVE_TO_STATE(SETTINGMENUST_NETSELECT)
-            }
-#endif //#ifdef FEATURE_SID_LOCK 
+#endif
             return NFSMACTION_CONTINUE;
 
         default:
@@ -1291,56 +1264,6 @@ static NextFSMAction SettingMenu_StatePhoneNumerHandler(CSettingMenu *pMe)
     return NFSMACTION_WAIT;
 }
 #endif
-#ifdef FEATURE_SID_LOCK
-/*==============================================================================
-函数：
-       StatePhoneNumerHandler
-说明：
-       SETTINGMENUST_PHONENUMBER 状态处理函数
-
-参数：
-       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
-
-返回值：
-       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
-       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
-
-备注：
-
-==============================================================================*/
-static NextFSMAction SettingMenu_StateNetSelectHandler(CSettingMenu *pMe)
-{
-    if (NULL == pMe)
-    {
-        return NFSMACTION_WAIT;
-    }
-
-    switch(pMe->m_eDlgRet)
-    {
-        case DLGRET_CREATE:
-            SettingMenu_ShowDialog(pMe, IDD_NET_SELECT);
-            return NFSMACTION_WAIT;
-
-        case DLGRET_CANCELED:
-        case DLGRET_MSGBOX_OK:
-            MOVE_TO_STATE(SETTINGMENUST_MAIN)
-            return NFSMACTION_CONTINUE;
-
-        case DLGRET_CALLSETTINGSEL:
-            MOVE_TO_STATE(SETTINGMENUST_CALLSETTINGSEL)
-            return NFSMACTION_CONTINUE;
-
-        case DLGRET_WARNING:
-            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
-            return NFSMACTION_WAIT;        
-
-        default:
-            ASSERT_NOT_REACHABLE;
-    }
-
-    return NFSMACTION_WAIT;
-}
-#endif  //FEATURE_PERU_VERSION
 #ifdef FEATRUE_AUTO_POWER
 static NextFSMAction SettingMenu_StateAutoPowerHandler(CSettingMenu *pMe)
 {

@@ -4218,3 +4218,54 @@ int GetDeviceState(DeviceType dt)
 }
 
 #endif /*CUST_EDITION*/
+
+#ifdef FEATURE_NET_LOCK
+boolean OEM_IsNetLock(void)
+{
+    nv_item_type nvi;  // buffer to read NV
+    uint8 curr_nam;    // current NAM
+    dword mcc;       // to store value read from nv
+    dword mnc;
+    dword sid;
+    nv_item_type nvilock;  // buffer to read NV
+    int i;
+    
+    if(NV_DONE_S != ui_get_nv(NV_NET_LOCK_I, &nvilock))
+    {
+        return FALSE;
+    }
+
+    if(!nvilock.enabled_net_lock.b_lock)
+    {
+        return FALSE;
+    }
+    
+    ui_get_nv(NV_CURR_NAM_I, &nvi);
+    curr_nam = nvi.curr_nam;
+
+    nvi.imsi_mcc.nam = curr_nam;
+    ui_get_nv( NV_IMSI_MCC_I, &nvi );
+    mcc = nvi.imsi_mcc.imsi_mcc;
+
+    // read Mobile Network Code
+    nvi.imsi_11_12.nam = curr_nam;
+    ui_get_nv( NV_IMSI_11_12_I, &nvi );
+    mnc = nvi.imsi_11_12.imsi_11_12;
+
+    ui_get_nv( NV_SID_NID_I, &nvi );
+    sid = nvi.sid_nid.pair[NV_CDMA_MIN_INDEX][0].sid;
+    
+    for(i=0;i<nvilock.enabled_net_lock.b_lock;i++)
+    {
+        if( (mcc == nvilock.enabled_net_lock.mcc[i] || nvilock.enabled_net_lock.mcc[i] == -1)
+          &&(mnc == nvilock.enabled_net_lock.mnc[i] || nvilock.enabled_net_lock.mnc[i] == -1)
+          &&(sid == nvilock.enabled_net_lock.sid[i] || nvilock.enabled_net_lock.sid[i] == -1)
+          )
+        {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+#endif
+

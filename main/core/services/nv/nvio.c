@@ -685,29 +685,6 @@ nvio_read_roaming_list (
 
 
 
-#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
-/*===========================================================================
- 
-FUNCTION nvio_read_critical_item
- 
-DESCRIPTION
-  This function get the critical nv backup status.
- 
-DEPENDENCIES
-  None.
- 
-RETURN VALUE
-  NV_DONE_S if it worked error status code if it failed. 
- 
-SIDE EFFECTS
-  None
- 
-===========================================================================*/
-LOCAL nv_stat_enum_type nvio_read_critical_item(byte* pData)
-{   
-    return nv_critical_get_backup_status((byte*)&((nv_critical_item_type*)pData)->dwStatus);
-}
-#endif //FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
 
 /*===========================================================================
 
@@ -1103,14 +1080,6 @@ nvio_read (
 #error code not present
 #endif
 
-/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH      
-      case NV_CRITICAL_ITEM_I:
-        status = nvio_read_critical_item((byte *)cmd_ptr->data_ptr); 
-        break;
-#endif //FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
-/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
       default:
 
         /* Check if there's an actual entry */
@@ -1341,9 +1310,7 @@ nvio_write_esn(
   nv_stat_enum_type status;   /* Function return value */
   dword local_esn;            /* tmp buffer for esn */
   dword local_esn_chksum;     /**/     
-#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
-  dword new_esn;
-#endif
+  
 //endif 
   /* Read the current ESN value */
   status = nvio_read_item(NV_ESN_I,/* file handle */
@@ -1362,19 +1329,6 @@ nvio_write_esn(
     /* The file is now considered read-only */
     return NV_READONLY_S;
   }
-#endif 
-
-#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
-    //pEsn from diag is a byte ptr.
-    //if we use it directly, it may cause data-abort.
-    memcpy(&new_esn, (byte*)&cmd_ptr->data_ptr->esn, sizeof(dword));
-    if(0 != new_esn)
-    {
-      if(nv_critical_update_esn(new_esn) != NV_DONE_S)
-      {
-        return NV_READONLY_S;
-      }
-    }
 #endif
 
   /* Write the ESN, the ESN checksum, and the ESN valid flag. */
@@ -1394,16 +1348,7 @@ nvio_write_esn(
                             sizeof(local_esn_chksum));  /* data count */
 
   }
-#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
-  else
-  {
-     if(0 != new_esn)
-     {
-       nv_critical_mark_area_invalid();
-     }
-  }
-#endif
-        
+  
   return status;
 }
 
@@ -2451,56 +2396,7 @@ nvio_write_imei
 
     return status;
 }
-#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
-/*===========================================================================
- 
-FUNCTION nvio_write_critical_item
- 
-DESCRIPTION
-  This function processed the critical nv operations.
- 
-DEPENDENCIES
-  None.
- 
-RETURN VALUE
-  NV_DONE_S if it worked error status code if it failed. 
- 
-SIDE EFFECTS
-  None
- 
-===========================================================================*/
-LOCAL nv_stat_enum_type nvio_write_critical_item(nv_critical_item_type* pData)
-{
-    nv_stat_enum_type  retStatus;
 
-    //ESN backup operation is always done with ESN_WRITE. 
-    switch(pData->operation)
-    {
-        case NV_CRITICAL_CLEAN:
-            retStatus = nv_clean_critical_backup_area();
-            break;
-            
-        case NV_CRITICAL_MARK_INVALID:
-            retStatus = nv_critical_mark_area_invalid();
-            break;
-                            
-        case NV_CRITICAL_BACKUP_RF:
-            retStatus = nv_critical_update_rf();
-            break;
-            
-        case NV_CRITICAL_RESTORE:
-            retStatus = nv_critical_restore();
-            break;
-            
-        default:
-            retStatus = NV_BADPARM_S;
-            break;
-    }
-    
-    return retStatus;
-}
-#endif //FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
-
 /*===========================================================================
 
 FUNCTION NVIO_WRITE
@@ -2817,20 +2713,7 @@ nvio_write (
                                   (byte *)cmd_ptr->data_ptr, 
                                   nvim_op_get_size(cmd_ptr->item));
         break;
-/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-#ifdef FEATURE_BACKUP_CRITICAL_NV_TO_FLASH      
-      case NV_CRITICAL_ITEM_I:
-        status = nvio_write_critical_item((nv_critical_item_type *)cmd_ptr->data_ptr); 
-        break;
-#endif //FEATURE_BACKUP_CRITICAL_NV_TO_FLASH
-  /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-#ifdef CUST_EDITION
-/*
-      case NV_ESN_OVER_WRITE_I:
-        status = nvio_over_write_esn(cmd_ptr);
-        break;*/
-#endif
+        
       default:
         /* All other items get generic treatment, if they have 
             a valid entry */

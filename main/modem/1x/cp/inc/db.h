@@ -155,9 +155,6 @@ typedef enum {
   DB_POWERONCHK,           /* 开机检查是否通过                             */
   DB_POWERUPTYPE,          /* 开机方式                                     */
   DB_REFRESHING,
-#ifdef FEATURE_SID_LOCK
-  DB_SID_LOCK,
-#endif
   DB_CAPTURE_WALLPER,
 #endif /*CUST_EDITION*/
   DB_LAST_ITEM             /* Internal Use Only                            */
@@ -342,9 +339,6 @@ typedef union {
   boolean               db_poweronchk;
   db_powerup_type       db_poweruptype;
   boolean               bRefreshing;
-#ifdef FEATURE_SID_LOCK
-  byte                    b_sid_lock;
-#endif
   db_capture_type  b_capture;
 #endif /*CUST_EDITION*/
 } db_items_value_type;

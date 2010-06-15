@@ -23,10 +23,6 @@
 #include "SettingMenu_priv.h"
 #include "AEECM.h"
 #include "CallApp.h"
-#ifdef FEATURE_SID_LOCK
-#include "OEMNV.h"
-//#include "OEMFeatures.h"
-#endif
 #include "OEMRTC.h"
 #if defined(FEATURE_DISP_160X128)
 #include "Appscommon_160x128.brh"
@@ -204,13 +200,6 @@ static boolean  HandleNetSelectDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 #endif //FEATURE_PERU_VERSION
-#ifdef FEATURE_SID_LOCK
-static boolean  HandleNet_Sid_Lock_SettingDialogEvent(CSettingMenu *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-);
-#endif
 // 呼叫一个号码，处理呼叫转移和等待
 static void SettingMenu_MakeForwardCall(CSettingMenu *pMe,char *Number);
 
@@ -300,9 +289,6 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 
-#ifdef FEATURE_SID_LOCK
-static boolean Setting_inquire_Sid_lock_Cmd(byte cur_set);
-#endif
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -449,11 +435,6 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_PHONE_NUMBER:
             return HandlePhoneNumberDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
-#ifdef FEATURE_SID_LOCK
-        case IDD_NET_SELECT:
-            return HandleNet_Sid_Lock_SettingDialogEvent(pMe,eCode,wParam,dwParam);
-#endif //FEATURE_PERU_VERSION
-
 #ifdef FEATRUE_AUTO_POWER
         case IDD_AUTO_POWER:
             return Setting_HandleAuto_Power_DialogEvent(pMe,eCode,wParam,dwParam);
@@ -564,9 +545,6 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_PERU_VERSION
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_NUMBER, IDS_PHONE_NUMBER, NULL, 0);
 #endif
-#ifdef FEATURE_SID_LOCK
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_NET_SEL, IDS_NET_SEL, NULL, 0);
-#endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -670,12 +648,6 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_PHONE_NUMBER)
                     break;
 #endif
-#ifdef FEATURE_SID_LOCK
-                case IDS_NET_SEL:
-                    CLOSE_DIALOG(DLGRET_NET_SELECT)
-                    break;
-#endif  //FEATURE_PERU_VERSION
-
                 default:
                     ASSERT_NOT_REACHABLE;
             }
@@ -1055,12 +1027,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
 {
     PARAM_NOT_REF(dwParam)
 
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                                    IDC_CALLSETTINGSEL);
-#ifdef FEATURE_SID_LOCK  
-    nv_item_type nvi;
-    nv_stat_enum_type ret;
-#endif
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CALLSETTINGSEL);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -1089,15 +1056,6 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
             }
             else
 #endif //#ifdef FEATRUE_AUTO_POWER
-#ifdef FEATURE_SID_LOCK
-            if(pMe->m_CallSettingSel == IDS_LOCALNET)
-            {
-                IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_OPEN_ROAM, IDS_OPEN_ROAM, NULL, 0);
-                IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CLOSE_ROAM, IDS_CLOSE_ROAM, NULL, 0);
-            }
-            else
-#endif //#ifdef FEATRUE_AUTO_POWER
-
             {
                 IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ENABLE, IDS_ENABLE, NULL, 0);
                 IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISABLE, IDS_DISABLE, NULL, 0);
@@ -1142,18 +1100,6 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                         break;
                     }
 #endif
-#endif
-#ifdef FEATURE_SID_LOCK  
-                    case IDS_LOCALNET:
-                    {
-                        nvi.enabled_sid_lock.nam = cm_get_curr_nam();
-                        ret = OEMNV_Get(NV_SID_LOCK_I,&nvi);
-                        if(NV_DONE_S == ret )
-                        {
-                            byte_return = nvi.enabled_sid_lock.b_sid_lock;
-                        }
-                        break;
-                    }
 #endif
                     case IDS_AUTO_REDIAL:
                     {
@@ -1256,22 +1202,6 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             SetMenuIcon(pMenu, IDS_DISABLE, TRUE);
                         }
                     }
-#ifdef FEATURE_SID_LOCK
-                    else if(pMe->m_CallSettingSel == IDS_LOCALNET)
-                    {
-                        if(byte_return == 0) 
-                        {
-                            IMENUCTL_SetSel(pMenu, IDS_CLOSE_ROAM);
-                            SetMenuIcon(pMenu, IDS_CLOSE_ROAM, TRUE);
-                        }
-                        else
-                        {
-                            IMENUCTL_SetSel(pMenu, IDS_OPEN_ROAM);
-                            SetMenuIcon(pMenu, IDS_OPEN_ROAM, TRUE);
-                        }
-                    }
-#endif //#ifdef FEATURE_SID_LOCK
-
                     else
                     {
                         if(byte_return != 0)    //开
@@ -1326,47 +1256,6 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
             SetMenuIcon(pMenu, wParam, TRUE);
             switch(wParam)
             {
-#ifdef FEATURE_SID_LOCK
-                case IDS_CLOSE_ROAM://net reset the phone
-                {
-                    if(Setting_inquire_Sid_lock_Cmd(0))
-                    {
-                        db_items_value_type sid_lock;
-                        sid_lock.b_sid_lock = 0;
-                        db_put(DB_SID_LOCK, &sid_lock);
-                        nvi.enabled_sid_lock.nam = cm_get_curr_nam();
-                        nvi.enabled_sid_lock.b_sid_lock = 0;
-                        ret = OEMNV_Put(NV_SID_LOCK_I,&nvi);
-                        pMe->m_msg_id = IDS_RESET_PHONE;
-                        CLOSE_DIALOG(DLGRET_WARNING)
-                    }
-                    else
-                    {
-                        CLOSE_DIALOG(DLGRET_CANCELED)
-                    }
-                    return TRUE;
-                }
-
-                case IDS_OPEN_ROAM:
-                {
-                    if(Setting_inquire_Sid_lock_Cmd(1))
-                    {
-                        db_items_value_type sid_lock;
-                        sid_lock.b_sid_lock = 1;
-                        db_put(DB_SID_LOCK, &sid_lock);
-                        nvi.enabled_sid_lock.nam = cm_get_curr_nam();
-                        nvi.enabled_sid_lock.b_sid_lock = 1;
-                        ret = OEMNV_Put(NV_SID_LOCK_I,&nvi);
-                        pMe->m_msg_id = IDS_SET_SUCESS;
-                        CLOSE_DIALOG(DLGRET_WARNING)
-                    }
-                    else
-                    {
-                        CLOSE_DIALOG(DLGRET_CANCELED)
-                    }
-                    return TRUE;
-                }
-#endif
                 case IDS_DISABLE:      //关
                     switch(pMe->m_CallSettingSel)
                     {
@@ -2444,25 +2333,6 @@ static boolean  HandleWarningMessegeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_DISPLAYDIALOGTIMEOUT:
-#ifdef FEATURE_SID_LOCK
-            if(pMe->m_msg_id == IDS_RESET_PHONE)
-            {
-#if 0
-                ICM *pIcm = NULL;
-                if(ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_CM,
-                                                        (void **) &pIcm) != SUCCESS)
-                {
-                    SETTING_ERR("Unable to create ICM interface", 0, 0, 0);
-                    return FALSE;
-                }
-                //ICM_SetOperatingMode(pIcm, AEECM_OPRT_MODE_OFFLINE);
-                ICM_SetOperatingMode(pIcm, AEECM_OPRT_MODE_PWROFF);
-                ICM_Release(pIcm);
-#else
-                OEMRTC_Phone_Reset(pMe->m_pShell);
-#endif
-            }
-#endif
             CLOSE_DIALOG(DLGRET_MSGBOX_OK)
             return TRUE;
 
@@ -3118,10 +2988,10 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                
-                ret =OEMNV_Get(NV_ESN_OVER_WRITE_I,&nvi);
-                if( NV_NOTACTIVE_S != OEMNV_Get(NV_ESN_OVER_WRITE_I,&nvi))
+                ret =OEMNV_Get(NV_SIM_SELECT_I,&nvi);
+                if( NV_NOTACTIVE_S != OEMNV_Get(NV_SIM_SELECT_I,&nvi))
                 {
-                    switch (nvi.over_write_esn.esn)
+                    switch (nvi.sim_select)
                     {
                         case OEMNV_SIMFORM_ONE:
                             wItemID = IDS_SIM_ONE;
@@ -3134,7 +3004,7 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                             break;
                     }
                 }
-                ERR("HandleSimDialogEvent:::::%d::::ret:::%d",nvi.over_write_esn.esn,ret,0);
+                ERR("HandleSimDialogEvent:::::%d::::ret:::%d",nvi.sim_select,ret,0);
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, wItemID, TRUE);
                 IMENUCTL_SetSel(pMenu, wItemID);
@@ -3171,23 +3041,23 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                 switch (wParam)
                 {
                     case  IDS_SIM_ONE:
-                       nviNew.over_write_esn.esn = OEMNV_SIMFORM_ONE ;
+                       nviNew.sim_select = OEMNV_SIMFORM_ONE ;
                        break;
 
                     case IDS_SIM_TWO:
-                       nviNew.over_write_esn.esn = OEMNV_SIMFORM_TWO ;
+                       nviNew.sim_select = OEMNV_SIMFORM_TWO ;
                        break;
                     default:
                        ASSERT_NOT_REACHABLE;
 
                 }
 
-                if (nviNew.over_write_esn.esn != nvi.over_write_esn.esn)
+                if (nviNew.sim_select != nvi.sim_select)
                 {
-                    ERR("HandleSimDialogEvent:::::22222%d",nviNew.over_write_esn.esn,0,0);
-                    (void)OEMNV_Put(NV_ESN_OVER_WRITE_I,&nviNew);
+                    ERR("HandleSimDialogEvent:::::22222%d",nviNew.sim_select,0,0);
+                    (void)OEMNV_Put(NV_SIM_SELECT_I,&nviNew);
                     //将选中的选项标出
-                    nvi.over_write_esn.esn = nviNew.over_write_esn.esn;
+                    nvi.sim_select = nviNew.sim_select;
                     InitMenuIcons(pMenu);
                     SetMenuIcon(pMenu, wParam, TRUE);
                     (void)IMENUCTL_Redraw(pMenu);
@@ -3881,116 +3751,6 @@ static boolean  HandleNetSelectDialogEvent(CSettingMenu *pMe,
              SETTING_ERR("NV_SYSTEM_PREF_I1 %d %d %d",ret,nvi.system_pref.sys,nvi.system_pref.nam);
              CLOSE_DIALOG(DLGRET_CANCELED)
              return TRUE;
-        }
-
-        case EVT_KEY:
-            if(wParam == AVK_CLR)
-            {
-                CLOSE_DIALOG(DLGRET_CANCELED)
-            }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            return TRUE;
-
-        case EVT_DIALOG_END:
-            return TRUE;
-
-        default:
-            break;
-     }
-     return FALSE;
-}
-#endif
-#ifdef FEATURE_SID_LOCK
-/*==============================================================================
-函数：
-       HandleNetSelectDialogEvent
-说明：
-       IDD_NET_SELECT对话框事件处理函数
-
-参数：
-       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
-       eCode [in]：事件代码。
-       wParam：事件相关数据。
-       dwParam：事件相关数据。
-
-返回值：
-       TRUE：传入事件被处理。
-       FALSE：传入事件被忽略。
-
-备注：
-
-==============================================================================*/
-static boolean  HandleNet_Sid_Lock_SettingDialogEvent(CSettingMenu *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-)
-{
-
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                                    IDC_NET_SELECT);
-    if (pMenu == NULL)
-    {
-        return FALSE;
-    }
-    SETTING_ERR("%x, %x ,%x,HandleNet_Sid_Lock_SettingDialogEvent",eCode,wParam,dwParam);
-    switch (eCode)
-    {
-        case EVT_DIALOG_INIT:
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_LOCALNET, IDS_LOCALNET, NULL, 0);
-         //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTONET, IDS_AUTONET, NULL, 0);
-            return TRUE;
-
-        case EVT_DIALOG_START:
-        {            
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
-#endif
-            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-            ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER_REDRAW, 0,0);
-            return TRUE;
-        }
-
-
-        case EVT_COMMAND:
-        {
-            switch(wParam)
-            {
-                case IDS_LOCALNET:
-                    pMe->m_CallSettingSel =  IDS_LOCALNET;
-                    CLOSE_DIALOG(DLGRET_CALLSETTINGSEL)
-                    break;
-                #if 0
-                case IDS_AUTONET:
-                {
-                    if(Setting_inquire_Sid_lock_Cmd(0))
-                    {
-                        nv_item_type nvi;
-                        nv_stat_enum_type ret;
-                        db_items_value_type sid_lock;
-                        sid_lock.b_sid_lock = 0;
-                        db_put(DB_SID_LOCK, &sid_lock);
-                        nvi.enabled_sid_lock.nam = cm_get_curr_nam();
-                        nvi.enabled_sid_lock.b_sid_lock = 0;
-                        ret = OEMNV_Put(NV_SID_LOCK_I,&nvi);
-                        pMe->m_msg_id = IDS_RESET_PHONE;
-                    }
-                    else
-                    {
-                        pMe->m_msg_id = IDS_SET_SUCESS;                        
-                    }
-                    CLOSE_DIALOG(DLGRET_WARNING)
-                    break;
-                }
-               #endif
-                default:
-                    break;
-            }
-            return TRUE;
         }
 
         case EVT_KEY:
@@ -5982,21 +5742,7 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
     }
     return FALSE;
 } // HandleAutoAnswerSubDialogEvent
-#ifdef FEATURE_SID_LOCK
-static boolean Setting_inquire_Sid_lock_Cmd(byte cur_set)
-{
-    db_items_value_type sid_lock;
-    db_get(DB_SID_LOCK, &sid_lock);
-    if(sid_lock.b_sid_lock == cur_set)
-    {
-        return FALSE;
-    }
-    else
-    {
-        return TRUE;
-    }
-}
-#endif
+
 #ifdef FEATURE_SUPPORT_G_SENSOR
 /*==============================================================================
 函数：

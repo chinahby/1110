@@ -1123,24 +1123,6 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                             pMe->m_SYS_MODE_NO_SRV = FALSE;
                         }
                         CORE_ERR("ANNUN_FIELD_RSSI %d rssi= %d",pMe->m_SYS_MODE_NO_SRV,pEvtInfo->event_data.ss.ss_info.rssi);
-#ifdef FEATURE_SID_LOCK
-                        {
-                            db_items_value_type sid_lock;
-                            db_items_value_type sid;
-                            db_get(DB_SID_LOCK, &sid_lock);
-                            db_get(DB_SID, &sid);
-                            if ( (sid_lock.b_sid_lock == 0) && (sid.sid != 13505) )
-                            {
-                                bUpdate = FALSE;
-                                pMe->m_SYS_MODE_NO_SRV = TRUE;
-                            }
-                        }
-                        if(pMe->m_SYS_MODE_NO_SRV)
-                        {
-                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_NO_SERV);
-                        }
-                        else
-#endif
                         {
                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
                         }

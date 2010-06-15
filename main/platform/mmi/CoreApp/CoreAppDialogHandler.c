@@ -715,22 +715,6 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                                                         AEECM_SRV_DOMAIN_PREF_NO_CHANGE, AEECM_NETWORK_SEL_MODE_PREF_NO_CHANGE,
                                                         NULL, NULL, NULL);
                         pMe->m_bemergencymode = FALSE;
-#ifdef FEATURE_SID_LOCK
-                        {
-                            nv_item_type nvi;
-                            nvi.enabled_sid_lock.nam = cm_get_curr_nam();
-                            if(NV_DONE_S == OEMNV_Get(NV_SID_LOCK_I,&nvi))
-                            {
-                                db_items_value_type sid_lock;
-                                db_get(DB_SID_LOCK, &sid_lock);
-                                if((TRUE == sid_lock.b_sid_lock) && (FALSE == nvi.enabled_sid_lock.b_sid_lock))
-                                {
-                                    sid_lock.b_sid_lock = FALSE;
-                                    db_put(DB_SID_LOCK, &sid_lock);
-                                }
-                            }
-                        }
-#endif
                     }
 #ifdef FEATRUE_AUTO_POWER
                     else if(pMe->m_nMsgID == IDS_AUTO_POWER_OFF)
@@ -3868,11 +3852,7 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);
     
-    if (bSetsearchingTimer
-#ifdef FEATURE_SID_LOCK
-            && !pMe->m_bAcquiredTime
-#endif
-            )
+    if (bSetsearchingTimer)
     {
         (void)ISHELL_SetTimer(pMe->a.m_pIShell,
                               IDLESEARCHINTIME,

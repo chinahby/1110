@@ -5333,14 +5333,6 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
             wbuf[len] = (AECHAR) '\0';
         }
     }
-#ifdef FEATURE_SID_LOCK
-    else
-    {
-        db_items_value_type sid_lock;
-        sid_lock.b_sid_lock = TRUE;
-        db_put(DB_SID_LOCK, &sid_lock);
-    }
-#endif
 
     if ((CallApp_IsEmergencyMode(pMe->m_pICM)
         ||pMe->idle_info.uimLocked)

@@ -107,9 +107,6 @@ typedef enum DLGRetValue
 #ifdef FEATURE_PERU_VERSION
     DLGRET_PHONE_NUMBER,
 #endif
-#ifdef FEATURE_SID_LOCK
-    DLGRET_NET_SELECT,
-#endif
 #ifdef FEATRUE_AUTO_POWER
     DLGRET_AUTO_POWER,
 #endif
@@ -162,9 +159,6 @@ typedef enum _SettingMenuState
 #endif
 #ifdef FEATURE_PERU_VERSION
    SETTINGMENUST_PHONENUMBER,
-#endif
-#ifdef FEATURE_SID_LOCK
-   SETTINGMENUST_NETSELECT,
 #endif
 #ifdef FEATRUE_AUTO_POWER
    SETTINGMENUST_AUTO_POWER,

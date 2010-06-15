@@ -346,7 +346,7 @@ typedef struct {
 
 /* Determines NV Major version number */
 #ifdef CUST_EDITION
-#define NVI_KLT_REV            0x84
+#define NVI_KLT_REV            0x85
 #else
 #define NVI_KLT_REV            0x83
 #endif

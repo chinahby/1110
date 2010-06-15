@@ -140,9 +140,6 @@ LOCAL boolean      db_pwkcleared;           /* 开机按键是否清除                 
 LOCAL boolean      db_poweronchk;           /* 开机检查是否通过                             */
 LOCAL db_powerup_type      db_poweruptype;  /* 开机方式                                     */
 LOCAL boolean      db_bRefreshing = FALSE;
-#ifdef FEATURE_SID_LOCK
-LOCAL byte            db_sid_lock;
-#endif
 #endif /*CUST_EDITION*/  
 LOCAL db_capture_type  db_capture;
 
@@ -459,11 +456,7 @@ void db_put
     case DB_REFRESHING:
       db_bRefreshing = value_ptr->bRefreshing;
       break;
-#ifdef FEATURE_SID_LOCK
-    case DB_SID_LOCK:
-        db_sid_lock = value_ptr->b_sid_lock;
-        break;
-#endif
+      
     case DB_CAPTURE_WALLPER:
         db_capture = value_ptr->b_capture;
         break;
@@ -679,11 +672,7 @@ void db_get
     case DB_REFRESHING:
       value_ptr->bRefreshing = db_bRefreshing;
       break;
-#ifdef FEATURE_SID_LOCK
-    case DB_SID_LOCK:
-        value_ptr->b_sid_lock = db_sid_lock;
-        break;
-#endif
+      
     case DB_CAPTURE_WALLPER:
         value_ptr->b_capture = db_capture;
         break;
@@ -903,11 +892,7 @@ void db_init( void )
       case DB_REFRESHING:
         db_bRefreshing = FALSE;
         break;
-#ifdef FEATURE_SID_LOCK
-      case DB_SID_LOCK:
-        db_sid_lock = 0;
-        break;
-#endif
+        
     case DB_CAPTURE_WALLPER:
         db_capture = DB_CAPTURE_NONE;
         break;
