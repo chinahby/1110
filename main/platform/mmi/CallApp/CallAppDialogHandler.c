@@ -47,7 +47,6 @@
 #define CALLAPP_CALLOUT_ANI    "fs:/image/notice/callout.png"  
 
 #endif
-
 // 通话动画图片帧数
 #define CALLAPP_ANI_FRAMES      (7)
 
