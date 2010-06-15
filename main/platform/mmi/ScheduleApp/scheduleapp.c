@@ -159,7 +159,6 @@ static int ScheduleApp_CreateInstance( AEECLSID    ClsId,
 {
     if (ClsId == AEECLSID_SCHEDULEAPP)
     {
-        //debug( ";****************ScheduleApp_CreateInstance*******************");
         return ScheduleApp_New(pIShell, po, ppObj);
     }
     else
@@ -244,7 +243,6 @@ static int ScheduleApp_New(IShell * pIShell, IModule * po, void ** ppObj)
 
     ++pme->m_nRefs;
     *ppObj = (IScheduleApp*)pme;
-    //debug( ";****************ScheduleApp_New, %d*******************", pme->m_nRefs);
     return retVal;
 } // ScheduleApp_Load
 
@@ -532,8 +530,10 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
                 pme->m_sports = FALSE;
             }
             // Do not allow the app to start if there is no valid timestamp...
+
             if (ISHELL_GetSeconds(pme->m_pShell) < ONE_YEAR_SECS)
             {
+                
                 AEEAppStart * pas = (AEEAppStart *)dwParam;
                 pas->error = EINVALIDTIME;
                 return FALSE;

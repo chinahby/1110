@@ -1453,7 +1453,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             int32 startdate, enddate;
 
             rc = pme->m_rc;
-
+            
 #if FEATURE_DRAW_LUNAR_CALENDAR
             rc.dy -= (HEIGHT_PROMPT_BAR+14);
 #else
@@ -1574,6 +1574,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             IDATECTL_SetActiveDayMask( pDatePick, pme->m_CalMgr.m_dwMask);
             (void)IDATECTL_Redraw(pDatePick);
             drawBottomBar(BTBAR_OPTION_TODAY_BACK);
+
 #if FEATURE_DRAW_LUNAR_CALENDAR
 #if 1
             CScheduleApp_DrawLunarStr(pme);
@@ -1633,6 +1634,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             {
                 bRedrawDone = TRUE;
             }
+
             IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
             return TRUE;
 		case EVT_KEY:

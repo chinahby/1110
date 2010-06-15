@@ -79,6 +79,7 @@ static NextFSMAction state_handler_of_state_init(CScheduleApp *pme)
     boolean locksel;
     
     OEM_GetConfig( CFGI_CALENDAR_LOCK_CHECK, &locksel, sizeof( locksel));
+
     if(locksel)
     {
         MOVE_TO_STATE(STATE_PWD)
