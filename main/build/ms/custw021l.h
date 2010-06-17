@@ -23,6 +23,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
 #undef FEATURE_LANG_CHINESE
+#define FEATURE_NET_LOCK
+#define FEATURE_SEAMLESS_SMS
+
 #endif
 
 #ifndef TARGSB2_H
@@ -203,10 +206,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #ifdef CUST_EDITION
 #define FEATURE_DISP_128X128
+#define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
 #define FEATURE_PROJECT_W021
+#define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
+
 //#define FEATURE_WMS_APP
 #endif
 #define FEATURE_USES_LOWMEM
