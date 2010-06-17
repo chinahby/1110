@@ -331,16 +331,7 @@ typedef PACKED struct _Key_pad_Cfg
 
 #define OEMNV_DEFAULT_BANNER     "OT-I650C"   //·±Ìå°æºÚ°×»ú
 
-#ifdef FEATURE_ANIMATION_POWERUPDOWN
-#define  OEMNV_STARTUPANI   "\\image\\wallpaper\\kawind_8.bmp"  
-#define  OEMNV_POWEROFFANI  "\\image\\wallpaper\\gdiamond_8.bmp"
-#endif
-
-#if defined FEATURE_APP_MEDIAGALLERY
-#define  OEMNV_WALLPAPER    "fs:/hsmm/pictures/wallpaper01.png"
-#else
 #define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper01.png"
-#endif
 #ifdef FEATURE_SCREEN_SAVE
 #define  OEMNV_SCREENSAVE_TYPE "\\image\\wallpaper\\w1.bmp"
 #endif

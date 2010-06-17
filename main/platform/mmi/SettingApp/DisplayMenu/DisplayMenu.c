@@ -1074,29 +1074,25 @@ static void Display_EnumFile(CDisplayMenu *pMe)
     char      PhotoName[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
 
     p_wallpaper = Display_Creat_Double_list();
-
-#ifdef FEATURE_APP_MEDIAGALLERY
-        if(IFILEMGR_EnumInit(pMe->m_pIFileMgr, "fs:/hsmm/pictures/", FALSE)  == SUCCESS)
-#else
-        if(IFILEMGR_EnumInit(pMe->m_pIFileMgr, "fs:/image/wallpaper/", FALSE)  == SUCCESS)
-#endif
-        {
-            while(IFILEMGR_EnumNext(pMe->m_pIFileMgr, &Photopos))
-            {                	    
-			    DBGPRINTF("PhotoName %s",PhotoName,0,0);
-			    //判断是桌面墙纸、开机动画还是关机动画，分别以w、k、g字母开头
-			    if(Photopos.attrib & AEE_FA_CONST)
-			    {
-			    	MEMSET(PhotoName,0,sizeof(PhotoName));                 
-			    	STRCPY(PhotoName,Photopos.szName);   /*将列举出的文件名存入PhotoName中*/
-			        //DISP_ERR("Photopos.szName: %d,Photopos.attrib: %d",Photopos.szName ,Photopos.attrib,0);
-			        if(p_wallpaper)
-			        {
-			            Display_Add_Node_To_Double_list_Tail(p_wallpaper,PhotoName);
-			        }
-			    }
-             }
-        }
+    
+    if(IFILEMGR_EnumInit(pMe->m_pIFileMgr, "fs:/image/wallpaper/", FALSE)  == SUCCESS)
+    {
+        while(IFILEMGR_EnumNext(pMe->m_pIFileMgr, &Photopos))
+        {                	    
+		    DBGPRINTF("PhotoName %s",PhotoName,0,0);
+		    //判断是桌面墙纸、开机动画还是关机动画，分别以w、k、g字母开头
+		    if(Photopos.attrib & AEE_FA_CONST)
+		    {
+		    	MEMSET(PhotoName,0,sizeof(PhotoName));                 
+		    	STRCPY(PhotoName,Photopos.szName);   /*将列举出的文件名存入PhotoName中*/
+		        //DISP_ERR("Photopos.szName: %d,Photopos.attrib: %d",Photopos.szName ,Photopos.attrib,0);
+		        if(p_wallpaper)
+		        {
+		            Display_Add_Node_To_Double_list_Tail(p_wallpaper,PhotoName);
+		        }
+		    }
+         }
+    }
 }
 
 
