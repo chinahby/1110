@@ -5341,12 +5341,13 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         CLOSE_DIALOG(DLGRET_DIALER_INVALID_EMGNUMBER)
         return CALL_FAIL_EMERGENCY_MODE;
     }
-
+#if 0
     if(IsRunAsFactoryTestMode() && !b_energency)
     {
         CLOSE_DIALOG(DLGRET_EMGNUMBER_CALL_ONLY)
         return CALL_FAIL_EMERGENCY_MODE;
     }
+#endif
     // 呼出限制不仅是拨号界面，还包括电话本、呼叫记录等的直接呼出限制
     if(b_restict)
     {
