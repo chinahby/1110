@@ -1846,11 +1846,11 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
         if (EVT_KEY_PRESS == evt){
 #if defined(FEATURE_BACKLIGHT_KEYPAD)
             if (gpKeyBacklight) {
-                IBACKLIGHT_TurnOn(gpKeyBacklight);
+                IBACKLIGHT_Enable(gpKeyBacklight);
             }
 #endif
             if (gpBacklight){
-                IBACKLIGHT_TurnOn(gpBacklight);
+                IBACKLIGHT_Enable(gpBacklight);
             }
             // ºÏ¸Ç´ò¿ª
             AEE_Event (EVT_FLIP, TRUE, 0);
