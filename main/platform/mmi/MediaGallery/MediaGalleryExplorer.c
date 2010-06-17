@@ -2746,11 +2746,11 @@ boolean MGAppUtil_SpaceUnitConvert(IShell *pShell,
           * use sprintf, and then convert string to wide-string.*/
          if(nUnitID[*pMuTemp] != IDS_MG_BYTE)
          {
-            sprintf( szConBuf, " %4.3f ", dConvertData);
+            snprintf( szConBuf, MG_CONVERT_DATALEN, " %4.3f ", dConvertData);
          }
          else
          {
-            sprintf( szConBuf, " %4.0f ", dConvertData);
+            snprintf( szConBuf, MG_CONVERT_DATALEN, " %4.0f ", dConvertData);
          }
          STRTOWSTR(szConBuf, wszConBuf, sizeof(wszConBuf));
 
