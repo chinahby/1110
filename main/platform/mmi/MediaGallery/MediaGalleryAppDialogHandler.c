@@ -17,7 +17,9 @@
 #include "AppComFunc.h"
 #include "AEEMediaUtil.h"
 #include "MusicPlayer.h"
+#if defined(FEATURE_VIDEOPLAYER)
 #include "VideoPlayer.h"
+#endif
 #include "AEEAnnunciator.h"
 #ifdef WIN32
 #include "oemhelperfunctype.h"
@@ -226,8 +228,10 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                                             uint32 dwParam);
 static int MGAppPopupMenu_OnMusicPlay(CMediaGalleryApp* pMe,
                                       IMenuCtl* pMenuCtl);
+#if defined(FEATURE_VIDEOPLAYER)
 static int MGAppPopupMenu_OnVideoPlay(CMediaGalleryApp* pMe,
                                       IMenuCtl* pMenuCtl);
+#endif
 static boolean MGAppPopupMenu_OnOpenSubFolder(CMediaGalleryApp *pMe,
                                               MGFileInfo *pCurNode);
 static int MGAppPopupMenu_OnCopy(CMediaGalleryApp* pMe,
@@ -2183,11 +2187,13 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
          if(SUCCESS != MGAppPopupMenu_OnMusicPlay(pMe, pMenuCtl))
             bRet = FALSE;
       }
+#if defined(FEATURE_VIDEOPLAYER)
       else if(MG_BETWEEN(eMimeBase, MG_MIME_VIDEOBASE, MG_MIME_VIDEOMAX))
       {
          if(SUCCESS != MGAppPopupMenu_OnVideoPlay(pMe, pMenuCtl))
             bRet = FALSE;
       }
+#endif
       else
       {
          bRet = FALSE;
@@ -2919,7 +2925,7 @@ static int MGAppPopupMenu_OnMusicPlay(CMediaGalleryApp* pMe,
    return SUCCESS;
 }//MGAppPopupMenu_OnMusicPlay
 
-
+#if defined(FEATURE_VIDEOPLAYER)
 /*===========================================================================
  * FUNCTION: MGAppPopupMenu_OnVideoPlay
  *
@@ -2969,7 +2975,7 @@ static int MGAppPopupMenu_OnVideoPlay(CMediaGalleryApp* pMe, IMenuCtl* pMenuCtl)
 
    return SUCCESS;
 }//MGAppPopupMenu_OnVideoPlay
-
+#endif
 /*
  * ==========================================================================
  * FUNCTION     :  MGAppPopupMenu_OnOpenSubFolder
