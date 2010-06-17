@@ -1132,23 +1132,19 @@ static void Calc_AddChar(CCalcApp *pme, AECHAR chAdd, boolean bUnique)
     bMenuSel = FALSE;
 
 	DBGPRINTF("chAdd = 0x%x, bUnique = %d, m_wLastOperator = %d",chAdd,bUnique,pme->m_wLastOperator);
-	DBGPRINTF("111111111111111111111111111111",0,0,0);
     if (pme->m_wLastOperator != OP_UNDEFINED)
     {
         if (pme->m_wLastOperator != OP_EQUAL)
         {
-        	DBGPRINTF("111111111111111111111111111111",0,0,0);
             bMenuSel = TRUE;
         }
         pme->m_wLastOperator = OP_UNDEFINED;
     }
 
-	DBGPRINTF("111111111111111111111111111111",0,0,0);
     if(chAdd >= '0' && chAdd <= '9')
     {
         int nZeroPos = (pszBase[0] == '-')?(1):(0);
 
-		DBGPRINTF("nZeroPos = %d,pszBase[nZeroPos]=0x%x",nZeroPos,pszBase[nZeroPos],0);
         if(pszBase[nZeroPos] == '0' && WSTRLEN( pme->m_szText) == 1 + nZeroPos)
         {
             pszBase[nZeroPos] = chAdd;
@@ -1158,7 +1154,6 @@ static void Calc_AddChar(CCalcApp *pme, AECHAR chAdd, boolean bUnique)
         }
     }
 
-    DBGPRINTF("m_bClearLast = %d",pme->m_bClearLast,0,0);
     if (pme->m_bClearLast)
     {
         if( pme->m_nValNum == 0 &&
