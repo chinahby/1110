@@ -1082,6 +1082,130 @@ void wms_cfg_set_memory_full_proc
 
 } /* wms_cfg_set_memory_full_proc() */
 
+#ifdef CUST_EDITION
+/*===========================================================================
+FUNCTION wms_cfg_set_multisend_proc
+
+DESCRIPTION
+  Set the multisend Status for the Primary Client
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+void wms_cfg_set_multisend_proc
+(
+  wms_cmd_type      *cmd_ptr
+)
+{
+  wms_cmd_err_e_type   cmd_err = WMS_CMD_ERR_NONE;
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+  MSG_MED("wms_cfg_set_multisend_proc()",0,0,0);
+
+  if (cfg_s_ptr == NULL)
+  {
+    cmd_err = WMS_CMD_ERR_NO_RESOURCE;
+  }
+  else
+  {
+    /* Check for Valid Client */
+    if (cmd_ptr->hdr.client_id >= (uint8)WMS_CLIENT_TYPE_MAX)
+    {
+      cmd_err = WMS_CMD_ERR_CLIENT_ID;
+    }
+    else
+    {
+      /* Set / Reset Memory Full for Primary Client */
+      if (cfg_s_ptr->primary_client != cmd_ptr->hdr.client_id)
+      {
+        /* Only Primary Client can Set / Reset Memory Full */
+        cmd_err = WMS_CMD_ERR_CFG_UNPRIVILEGED_CLIENT;
+      }
+      else
+      {
+        cfg_s_ptr->multisend = cmd_ptr->cmd.cfg_set_multisend.multisend;
+      }
+    }
+  }
+
+  /* Notify Command Error in Command Callback */
+  wms_client_cmd_status( cmd_ptr, cmd_err );
+
+  /* done */
+  return;
+
+} /* wms_cfg_set_multisend_proc() */
+
+#ifdef FEATURE_AUTOREPLACE
+/*===========================================================================
+FUNCTION wms_cfg_set_autoreplace_proc
+
+DESCRIPTION
+  Set the autoreplace Status for the Primary Client
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+void wms_cfg_set_autoreplace_proc
+(
+  wms_cmd_type      *cmd_ptr
+)
+{
+  wms_cmd_err_e_type   cmd_err = WMS_CMD_ERR_NONE;
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+  MSG_MED("wms_cfg_set_autoreplace_proc()",0,0,0);
+
+  if (cfg_s_ptr == NULL)
+  {
+    cmd_err = WMS_CMD_ERR_NO_RESOURCE;
+  }
+  else
+  {
+    /* Check for Valid Client */
+    if (cmd_ptr->hdr.client_id >= (uint8)WMS_CLIENT_TYPE_MAX)
+    {
+      cmd_err = WMS_CMD_ERR_CLIENT_ID;
+    }
+    else
+    {
+      /* Set / Reset Memory Full for Primary Client */
+      if (cfg_s_ptr->primary_client != cmd_ptr->hdr.client_id)
+      {
+        /* Only Primary Client can Set / Reset Memory Full */
+        cmd_err = WMS_CMD_ERR_CFG_UNPRIVILEGED_CLIENT;
+      }
+      else
+      {
+        cfg_s_ptr->autoreplace = cmd_ptr->cmd.cfg_set_autoreplace.autoreplace;
+      }
+    }
+  }
+
+  /* Notify Command Error in Command Callback */
+  wms_client_cmd_status( cmd_ptr, cmd_err );
+
+  /* done */
+  return;
+
+} /* wms_cfg_set_autoreplace_proc() */
+#endif
+#endif // CUST_EDITION
+
 /*===========================================================================
 FUNCTION wms_cfg_do_memory_full
 
@@ -1160,9 +1284,35 @@ void wms_cfg_do_cdma_ready_event
 
   wms_cfg_event_notify( WMS_CFG_EVENT_CDMA_READY, &cfg_event_info );
 }
+#ifdef CUST_EDITION
+#if defined(FEATURE_UIM_TOOLKIT)
+/*===========================================================================
+FUNCTION wms_cfg_do_refresh_done_event
+
+DESCRIPTION
+  Notify RUIM sms Refresh Done
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+void wms_cfg_do_refresh_done_event
+(
+  void
+)
+{
+  cfg_s_ptr->refresh_in_progress = FALSE;
+
+  wms_cfg_event_notify(WMS_CFG_EVENT_REFRESH_DONE, &cfg_event_info);
+}
+#endif
+#endif // CUST_EDITION
 #endif /* FEATURE_CDSMS */
-
-
 
 #ifdef FEATURE_GWSMS
 #error code not present
@@ -1220,7 +1370,17 @@ void wms_cfg_process_cmd
     case WMS_CMD_CFG_SET_MEMORY_FULL:
       wms_cfg_set_memory_full_proc( cmd_ptr );
       break;
-
+#ifdef CUST_EDITION
+    case WMS_CMD_CFG_SET_MULTISEND:
+      wms_cfg_set_multisend_proc( cmd_ptr );
+      break;
+      
+#ifdef FEATURE_AUTOREPLACE
+    case WMS_CMD_CFG_SET_AUTOREPLACE:
+      wms_cfg_set_autoreplace_proc( cmd_ptr );
+      break;
+#endif      
+#endif
     default:
       MSG_ERROR("Invalid cmd: %d", cmd_ptr->hdr.cmd_id, 0,0);
       break;
@@ -1256,6 +1416,8 @@ void wms_cfg_pre_init
 #ifdef FEATURE_GSTK
   cfg_s_ptr->refresh_registered  = FALSE;
   cfg_s_ptr->refresh_in_progress = FALSE;
+#elif defined(FEATURE_UIM_TOOLKIT) // Gemsea
+  cfg_s_ptr->refresh_in_progress = FALSE;
 #endif /* FEATURE_GSTK */
 
 #ifdef FEATURE_CDSMS
@@ -1266,6 +1428,12 @@ void wms_cfg_pre_init
 #ifdef FEATURE_GWSMS
 #error code not present
 #endif /* FEATURE_GWSMS */
+#ifdef CUST_EDITION
+  cfg_s_ptr->multisend = FALSE;
+#ifdef FEATURE_AUTOREPLACE
+  cfg_s_ptr->autoreplace = FALSE;
+#endif 
+#endif //#ifdef CUST_EDITION
 }
 
 /*===========================================================================
@@ -1477,34 +1645,7 @@ wms_message_number_type wms_cfg_get_ruim_next_message_number
 #error code not present
 #endif /* FEATURE_GWSMS */
 
-#ifdef CUST_EDITION
-#if defined(FEATURE_UIM_TOOLKIT)
-/*===========================================================================
-FUNCTION wms_cfg_do_refresh_done_event
 
-DESCRIPTION
-  Notify RUIM sms Refresh Done
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  None
-
-SIDE EFFECTS
-  None
-===========================================================================*/
-void wms_cfg_do_refresh_done_event
-(
-  void
-)
-{
-  cfg_s_ptr->refresh_in_progress = FALSE;
-
-  wms_cfg_event_notify(WMS_CFG_EVENT_REFRESH_DONE, &cfg_event_info);
-}
-#endif
-#endif
 /*===========================================================================
 FUNCTION wms_cfg_do_memory_status
 
@@ -1550,11 +1691,15 @@ void wms_cfg_do_memory_status
 
       case WMS_MEMORY_STORE_NV_CDMA:
         // TBD: support multiple templates in NV in the future
+#ifdef CUST_EDITION
+        cfg_event_info.memory_status.max_slots      = 0;
+#else
         {
           cfg_event_info.memory_status.max_slots      = 1;
           cfg_event_info.memory_status.free_slots     = 0;
           cfg_event_info.memory_status.used_tag_slots = 1;
         }
+#endif
         break;
 
 #ifdef FEATURE_CDSMS_RUIM
@@ -1753,8 +1898,16 @@ void wms_cfg_cdma_update_voice_mail_index
     return;
   }
 
+#ifdef CUST_EDITION
+  if ((cdma_tl.mask & WMS_MASK_TL_BEARER_DATA) &&
+      (cdma_tl.cl_bd.mask & WMS_MASK_BD_NUM_OF_MSGS) &&
+      ((cdma_tl.teleservice == WMS_TELESERVICE_VMN_95) ||
+       (cdma_tl.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL) ||
+       (cdma_tl.teleservice == WMS_TELESERVICE_MWI)))
+#else
   if( (cdma_tl.mask & WMS_MASK_TL_BEARER_DATA) &&
       (cdma_tl.cl_bd.mask & WMS_MASK_BD_NUM_OF_MSGS) )
+#endif// #ifdef CUST_EDITION
   {
     /* This is a voice mail msg
     */
@@ -2021,6 +2174,13 @@ void wms_cfg_update_dup_info_cache
 #ifdef FEATURE_GSM1x
 #error code not present
 #endif /* FEATURE_GSM1x */
+#ifdef CUST_EDITION
+#if defined(FEATURE_QMA)
+  || new_tl_msg->teleservice == WMS_TELESERVICE_QMA_WPUSH
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+  || new_tl_msg->teleservice == WMS_TELESERVICE_WPUSH
+#endif
+#endif //#ifdef CUST_EDITION
     )
   {
     /* No dup detection to be done for the above teleservices
@@ -2121,7 +2281,17 @@ void wms_cfg_update_msg_info_cache
 
   client_message.msg_hdr.mem_store    = mem_store;
   client_message.msg_hdr.index        = index;
-
+#ifdef CUST_EDITION
+  // 利用此标记删除节点
+#ifdef  FEATURE_CDSMS_CACHE_USELIST
+  if (tag == WMS_TAG_NONE)
+  {
+    client_message.msg_hdr.tag  = WMS_TAG_NONE;
+    wms_msg_info_cache_cb(&client_message, data[0]);
+    return;
+  }
+#endif          
+#endif // #ifdef CUST_EDITION
   if( tag == WMS_TAG_MO_TEMPLATE )
   {
     client_message.msg_hdr.tag          = WMS_TAG_MO_TEMPLATE;
@@ -2133,7 +2303,8 @@ void wms_cfg_update_msg_info_cache
 #endif/*FEATURE_GWSMS_CACHE*/
 
 #ifdef FEATURE_CDSMS
-#if (defined(FEATURE_CDSMS_RUIM) && defined(FEATURE_CDSMS_CACHE))
+//#if (defined(FEATURE_CDSMS_RUIM) && defined(FEATURE_CDSMS_CACHE))
+#if (defined(FEATURE_CDSMS_RUIM) && (defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST))) // Gemsea
       case WMS_MEMORY_STORE_RUIM:
         client_message.msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
         if( wms_ts_cdma_decode_smsp( data,
@@ -2144,10 +2315,14 @@ void wms_cfg_update_msg_info_cache
         }
         else
         {
+#ifdef  FEATURE_CDSMS_CACHE_USELIST // Gemsea
+          wms_msg_info_cache_cb(&client_message, WMS_TAG_NONE);
+#else
           /* Update the cache
           */
           wms_msg_info_cache_cb( & client_message,
                                    cfg_s_ptr->ruim_template_info_cache[index] );
+#endif
         }
         break;
 #endif /* defined(FEATURE_CDSMS_RUIM) && defined(FEATURE_CDSMS_CACHE) */
@@ -2169,7 +2344,8 @@ void wms_cfg_update_msg_info_cache
 #endif /*FEATURE_GWSMS_CACHE*/
 
 #ifdef FEATURE_CDSMS
-#if (defined(FEATURE_CDSMS_RUIM) && defined(FEATURE_CDSMS_CACHE))
+//#if (defined(FEATURE_CDSMS_RUIM) && defined(FEATURE_CDSMS_CACHE))
+#if (defined(FEATURE_CDSMS_RUIM) && (defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST))) // Gemsea
       case WMS_MEMORY_STORE_RUIM:
         client_message.msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
         client_message.msg_hdr.tag          = (wms_message_tag_e_type)data[0];
@@ -2190,10 +2366,14 @@ void wms_cfg_update_msg_info_cache
         {
           wms_ts_convert_tl2cl( & cdma_tl, & client_message.u.cdma_message );
 
+#ifdef  FEATURE_CDSMS_CACHE_USELIST // Gemsea
+          wms_msg_info_cache_cb(&client_message, WMS_TAG_NONE);
+#else
           /* Update the cache
           */
           wms_msg_info_cache_cb( & client_message,
                                         cfg_s_ptr->ruim_sms_info_cache[index] );
+#endif
         }
         break;
 #endif /* defined(FEATURE_CDSMS_RUIM) && defined(FEATURE_CDSMS_CACHE) */
@@ -2210,7 +2390,20 @@ void wms_cfg_update_msg_info_cache
         cdma_ota.format        = (wms_format_e_type) data[0];
         cdma_ota.data_len      = MIN (data[2], WMS_MAX_LEN-3);
         memcpy( (uint8*) cdma_ota.data, data+3, cdma_ota.data_len );
-
+#ifdef CUST_EDITION
+        if ((client_message.msg_hdr.tag == WMS_TAG_MO_SENT) ||
+            (client_message.msg_hdr.tag == WMS_TAG_MO_NOT_SENT) ||
+            (client_message.msg_hdr.tag == WMS_TAG_MO_DRAFT) ||
+            (client_message.msg_hdr.tag == WMS_TAG_RESERVE) ||
+            (client_message.msg_hdr.tag == WMS_TAG_RSVFAILED))
+        {
+            int nPos = 2+data[2];
+            
+            client_message.u.cdma_message.concat_8.msg_ref = data[nPos+1];
+            client_message.u.cdma_message.concat_8.total_sm = data[nPos+2];
+            client_message.u.cdma_message.concat_8.seq_num = data[nPos+3];
+        }
+#endif
         st = wms_ts_decode_CDMA_tl( & cdma_ota,
                                     & cdma_tl,
                                     & client_message.u.cdma_message.raw_ts );
@@ -2223,6 +2416,8 @@ void wms_cfg_update_msg_info_cache
           */
           wms_msg_info_cache_cb( & client_message,
                                          cfg_s_ptr->nv_cdma_info_cache[index] );
+#elif defined(FEATURE_CDSMS_CACHE_USELIST) // Gemsea
+          wms_msg_info_cache_cb(&client_message, WMS_TAG_NONE);
 #endif /* FEATURE_CDSMS_CACHE */
         }
         break;
@@ -2560,7 +2755,13 @@ boolean wms_cfg_check_wap_push_message
   {
 #ifdef FEATURE_CDSMS
     /* Check for WAP teleservice */
-    if(msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_WAP)
+    if(msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_WAP
+#if defined(FEATURE_QMA) // Gemsea
+       || msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_QMA_WPUSH
+#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+       || msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_WPUSH
+#endif
+      )
     {
       ret_value = TRUE;
     }

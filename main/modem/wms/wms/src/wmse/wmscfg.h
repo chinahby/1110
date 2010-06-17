@@ -302,7 +302,12 @@ typedef struct wms_cfg_struct
   cm_country_code_type         home_mobile_country_code;
   cm_country_code_type         current_mobile_country_code;
 #endif /* CM_API_PLUS_DIALING */
-
+#ifdef CUST_EDITION
+  boolean                         multisend;
+#ifdef FEATURE_AUTOREPLACE
+  boolean                         autoreplace;
+#endif 
+#endif // #ifdef CUST_EDITION
 } wms_cfg_s_type;
 
 
@@ -543,7 +548,29 @@ void wms_cfg_do_cdma_ready_event
   void
 );
 
+#ifdef CUST_EDITION
+#if defined(FEATURE_UIM_TOOLKIT)
+/*===========================================================================
+FUNCTION wms_cfg_do_refresh_done_event
 
+DESCRIPTION
+  Notify RUIM sms Refresh Done
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+void wms_cfg_do_refresh_done_event
+(
+  void
+);
+#endif
+#endif //#ifdef CUST_EDITION
 /* Update CDMA voice mail info
 */
 void wms_cfg_cdma_update_voice_mail_index

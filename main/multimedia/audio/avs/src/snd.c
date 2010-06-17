@@ -1294,6 +1294,14 @@ LOCAL snd_packets_type *snd_get_packet( void )
   if( packet == NULL ) {
     ERR( "Ran Out of Sound Packets!", 0, 0, 0 );
   } else {
+#ifdef FIX_LINKITEM_INITBUG
+    // 注意: 结构需清零，原因在于结构中的指针变量没被清除会产生负作用。
+    //       但不能清除 packet->hdr.link 中的队列信息
+    q_link_type teplink; 
+    (void)memcpy(&teplink,  &(packet->hdr.link), sizeof(q_link_type));
+    (void) memset(packet, 0, sizeof(snd_packets_type));
+    (void)memcpy(&(packet->hdr.link), &teplink,  sizeof(q_link_type));
+#else    
 #ifdef SND_DEBUG
     /* Fill the entire sound packet with invalid values to 
     ** catch any un-initialized fields.
@@ -1305,6 +1313,7 @@ LOCAL snd_packets_type *snd_get_packet( void )
     */
     (void) memset(packet, 0, sizeof(snd_packets_type));
 #endif /* SND_DEBUG */
+#endif
     packet->hdr.cmd        = SND_INVALID;       /* Invalid Command Value */
   }
 

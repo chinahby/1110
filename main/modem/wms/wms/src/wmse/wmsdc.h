@@ -173,6 +173,9 @@ void wms_dc_idle_timer_proc( void );
 
 #endif /* FEATURE_CDSMS */
 
+#ifdef CUST_EDITION
+void wms_dc_setTCflag(boolean bFlg);
+#endif
 
 #endif /* FEATURE_CDSMS || FEATURE_GWSMS */
 

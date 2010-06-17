@@ -359,6 +359,7 @@ extern void wms_msg_cdma_mc_state_changed
   void
 );
 
+#ifndef CUST_EDITION
 /*=========================================================================
 FUNCTION
   wms_msg_cdma_mt_ack_timer_proc
@@ -380,6 +381,7 @@ void wms_msg_cdma_mt_ack_timer_proc
 (
   void
 );
+#endif
 
 /*=========================================================================
 FUNCTION
@@ -622,6 +624,7 @@ void wms_msg_stop_dc_resend
 #error code not present
 #endif /* FEATURE_GWSMS_BROADCAST */
 
+#ifndef CUST_EDITION
 /*=========================================================================
 FUNCTION
   wms_set_retry_timer
@@ -665,6 +668,7 @@ void wms_msg_process_retry_sig
 (
   void
 );
+#endif
 #ifdef CUST_EDITION
 /*=========================================================================
 FUNCTION

@@ -2306,6 +2306,599 @@ PACKED void * wmsdiag_enable_disable_auto_disconnect (
   return NULL;
 }
 
+#ifdef CUST_EDITION
+/*===========================================================================
+
+FUNCTION WMSDIAG_SEND_AUTO_MESSAGE
+
+DESCRIPTION
+  This function attempts to auto-retry MO messages entry.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  Pointer to response packet.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+
+
+PACKED void * wmsdiag_send_auto_message (
+  PACKED void *req_pkt_ptr,  /* pointer to request packet  */
+  uint16 pkt_len               /* length of request packet   */
+)
+{
+  /*  Response Pointer */
+  wmsdiag_send_auto_message_rsp_type *rsp_ptr  = NULL;
+
+  /*  Cast copy of request pointer to proper type */
+  wmsdiag_send_auto_message_req_type *req_ptr  =
+        (wmsdiag_send_auto_message_req_type *) req_pkt_ptr;
+
+  wms_status_e_type st = WMS_OK_S;
+
+  static wms_auto_message_s_type        auto_message;
+
+  wms_address_s_type                    *dest_addr_ptr;
+  wms_address_s_type                    *sc_addr_ptr;
+
+  /*  Loop Counter */
+  uint32 i;
+#ifdef FEATURE_SMS_UDH
+  uint32 j;
+#endif /* FEATURE_SMS_UDH */
+
+  /*  Initialize counters for the number of destination address/service center address, email address, user data headers, and user data */
+  uint8  D = 0; /* dest addr length */
+  uint8  S = 0; /* sc addr length */
+  uint8  E = 0; /* email length */
+  uint8  H = 0; /* header length all type */
+  uint32 U = 0; /* user data length */
+#ifdef FEATURE_SMS_UDH
+  uint8  P = 0; /* previous headers length */
+  uint8  C = 0; /* current header length */
+#endif /* FEATURE_SMS_UDH */
+
+  if ( req_ptr -> dest_addr_digit_mode         >= WMSDIAG_ADDR_DIGIT_MODE_MAX ||
+       req_ptr -> dest_addr_num_mode           >= WMSDIAG_ADDR_NUM_MODE_MAX ||
+       req_ptr -> sc_addr_digit_mode           >= WMSDIAG_ADDR_DIGIT_MODE_MAX ||
+       req_ptr -> sc_addr_num_mode             >= WMSDIAG_ADDR_NUM_MODE_MAX ||
+       req_ptr -> dest_addr_num_digits         >  WMSDIAG_ADDRESS_MAX ||
+       req_ptr -> sc_addr_num_digits           >  WMSDIAG_SUBADDRESS_MAX ||
+       req_ptr -> email_length                 >  WMSDIAG_ADDRESS_MAX * 2 ||
+       req_ptr -> user_data_length             >  WMSDIAG_MAX_LEN )
+  {
+    return (diagpkt_err_rsp (DIAG_BAD_PARM_F, req_pkt_ptr, pkt_len));
+  }
+
+  /*  If no client ID has been established, do so now. */
+  if (wmsdiag_client_id == WMSDIAG_INVALID_CLIENT_ID)
+  {
+    wmsdiag_client_init ();
+  }
+
+  D = req_ptr -> dest_addr_num_digits;
+  S = req_ptr -> sc_addr_num_digits;
+  E = req_ptr -> email_length;
+  H = req_ptr -> header_length_all_type;
+  U = req_ptr -> user_data_length;
+
+  if( D+S+E+H+U > WMSDIAG_DEFAULT_AUTO_DATA_BUF_MAX )
+  {
+    return (diagpkt_err_rsp (DIAG_BAD_PARM_F, req_pkt_ptr, pkt_len));
+  }
+
+  /*  Allocate our packet */
+  rsp_ptr = (wmsdiag_send_auto_message_rsp_type*) diagpkt_subsys_alloc (DIAG_SUBSYS_WMS, WMSDIAG_SEND_AUTO_MESSAGE_CMD,
+                        sizeof (wmsdiag_send_auto_message_rsp_type));
+
+  if (rsp_ptr)
+  {
+    /*  Set the message header variables */
+    msg_hdr.message_mode = WMS_MESSAGE_MODE_AUTO;
+    msg_hdr.tag = WMS_TAG_NONE;
+    msg_hdr.mem_store = WMS_MEMORY_STORE_NONE;
+    msg_hdr.index = 0;
+
+    /* Set the destination address information */
+    dest_addr_ptr = &auto_message.dest_addr.address;
+
+    dest_addr_ptr->number_of_digits = D;
+    dest_addr_ptr->digit_mode = WMSDIAG_ADDR_DIGIT_MODE_VALS [req_ptr -> dest_addr_digit_mode];
+    dest_addr_ptr->number_mode = WMSDIAG_ADDR_NUM_MODE_VALS [req_ptr -> dest_addr_num_mode];
+    dest_addr_ptr->number_type = (wms_number_type_e_type) req_ptr -> dest_addr_num_type;
+    dest_addr_ptr->number_plan = (wms_number_plan_e_type) req_ptr -> dest_addr_num_plan;
+
+    for (i = 0; i < D; i++)
+    {
+      dest_addr_ptr->digits [i] = req_ptr -> data[i];
+    }
+
+    /* Set the service center address information */
+    sc_addr_ptr = &auto_message.dest_addr.reply_sc_address;
+
+    sc_addr_ptr->number_of_digits = S;
+    sc_addr_ptr->digit_mode = (wms_digit_mode_e_type) req_ptr -> sc_addr_digit_mode;
+    sc_addr_ptr->number_mode = (wms_number_mode_e_type)req_ptr -> sc_addr_num_mode;
+    sc_addr_ptr->number_type = (wms_number_type_e_type) req_ptr -> sc_addr_num_type;
+    sc_addr_ptr->number_plan = (wms_number_plan_e_type) req_ptr -> sc_addr_num_plan;
+
+    for (i = 0; i < S; i ++)
+    {
+      sc_addr_ptr->digits [i] = req_ptr -> data [i + D];
+    }
+
+    /* email length and address */
+    auto_message.dest_addr.email_length = req_ptr -> email_length;
+
+    for (i = 0; i < E; i++)
+    {
+      auto_message.dest_addr.email_address[i] = req_ptr->data[i + D + S];
+    }
+
+#ifdef FEATURE_SMS_UDH 
+    /* headers: header_length, header_id, header_value */
+    auto_message.num_of_headers = req_ptr-> num_of_headers;
+
+    for (j = 0; j < auto_message.num_of_headers; j++)
+    {
+      /* store the current header length */
+      C = req_ptr -> data [D + S + E + P];
+
+      auto_message.headers[j].header_id = (wms_udh_id_e_type) req_ptr -> data [D + S + E + P + 1];
+
+      switch (auto_message.headers[j].header_id)
+      {
+        case WMS_UDH_CONCAT_8:
+          auto_message.headers[j].u.concat_8.msg_ref = req_ptr -> data [D + S + E + P + 2];
+          auto_message.headers[j].u.concat_8.total_sm = req_ptr -> data [D + S + E + P + 3];
+          auto_message.headers[j].u.concat_8.seq_num = req_ptr -> data [D + S + E + P + 4];
+          break;
+
+        case WMS_UDH_SPECIAL_SM:
+          auto_message.headers[j].u.special_sm.msg_waiting = (wms_gw_msg_waiting_e_type) req_ptr -> data [D + S + E + P + 2];
+          auto_message.headers[j].u.special_sm.msg_waiting_kind = (wms_gw_msg_waiting_kind_e_type) req_ptr -> data [D + S + E + P + 3];
+          auto_message.headers[j].u.special_sm.message_count = req_ptr -> data [D + S + E + P + 4];
+          break;
+
+        case WMS_UDH_PORT_8:
+          auto_message.headers[j].u.wap_8.dest_port = req_ptr -> data [D + S + E + P + 2];
+          auto_message.headers[j].u.wap_8.orig_port = req_ptr -> data [D + S + E + P + 3];
+          break;
+
+        case WMS_UDH_PORT_16:
+          auto_message.headers[j].u.wap_16.dest_port = req_ptr -> data [D + S + E + P + 2];
+          auto_message.headers[j].u.wap_16.orig_port = req_ptr -> data [D + S + E + P + 3];
+          break;
+
+        case WMS_UDH_CONCAT_16:
+          auto_message.headers[j].u.concat_16.msg_ref = req_ptr -> data [D + S + E + P + 2];
+          auto_message.headers[j].u.concat_16.total_sm = req_ptr -> data [D + S + E + P + 3];
+          auto_message.headers[j].u.concat_16.seq_num = req_ptr -> data [D + S + E + P + 4];
+          break;
+
+        case WMS_UDH_TEXT_FORMATING:
+          auto_message.headers[j].u.text_formating.start_position = req_ptr -> data [D + S + E + P + 2];
+          auto_message.headers[j].u.text_formating.text_formatting_length = req_ptr->data[D + S + E + P + 3];
+          auto_message.headers[j].u.text_formating.alignment_type = (wms_udh_alignment_e_type) req_ptr->data[D + S + E + P + 4];
+          auto_message.headers[j].u.text_formating.font_size = (wms_udh_font_size_e_type) req_ptr->data[D + S + E + P + 5];
+          auto_message.headers[j].u.text_formating.style_bold = req_ptr->data[D + S + E + P + 6];
+          auto_message.headers[j].u.text_formating.style_italic = req_ptr->data[D + S + E + P + 7];
+          auto_message.headers[j].u.text_formating.style_underlined = req_ptr->data[D + S + E + P + 8];
+          auto_message.headers[j].u.text_formating.style_strikethrough = req_ptr->data[D + S + E + P + 9];
+          break;
+
+        case WMS_UDH_PRE_DEF_SOUND:
+          auto_message.headers[j].u.pre_def_sound.position = req_ptr->data[D + S + E + P + 2];
+          auto_message.headers[j].u.pre_def_sound.snd_number = req_ptr->data[D + S + E + P + 3];
+          break;
+
+        case WMS_UDH_USER_DEF_SOUND:
+          auto_message.headers[j].u.user_def_sound.data_length = req_ptr->data[D + S + E + P + 2];
+          auto_message.headers[j].u.user_def_sound.position = req_ptr->data[D + S + E + P + 3];
+          memcpy ( (void *) auto_message.headers[j].u.user_def_sound.user_def_sound, (void *) &req_ptr->data[D + S + E + P + 4], C - 2);
+          break;
+
+        case WMS_UDH_PRE_DEF_ANIM:
+          auto_message.headers[j].u.pre_def_anim.position = req_ptr->data[D + S + E + P + 2];
+          auto_message.headers[j].u.pre_def_anim.animation_number = req_ptr->data[D + S + E + P + 3];
+          break;
+
+        case WMS_UDH_LARGE_ANIM:
+          auto_message.headers[j].u.large_anim.position = req_ptr->data[D + S + E + P + 2];
+          memcpy ( (void *) auto_message.headers[j].u.large_anim.data, (void *) &req_ptr->data[D + S + E + P + 3], 128);
+          break;
+
+        case WMS_UDH_SMALL_ANIM:
+          auto_message.headers[j].u.small_anim.position = req_ptr->data[D + S + E + P + 2];
+          memcpy ( (void *) auto_message.headers[j].u.large_anim.data, (void *) &req_ptr->data[D + S + E + P + 3], 32);
+          break;
+
+        case WMS_UDH_LARGE_PICTURE:
+          auto_message.headers[j].u.large_picture.position = req_ptr->data[D + S + E + P + 2];
+          memcpy ( (void *) auto_message.headers[j].u.large_picture.data, (void *) &req_ptr->data[D + S + E + P + 3], 128);
+          break;
+
+        case WMS_UDH_SMALL_PICTURE:
+          auto_message.headers[j].u.small_picture.position = req_ptr->data[D + S + E + P + 2];
+          memcpy ( (void *) auto_message.headers[j].u.small_picture.data, (void *) &req_ptr->data[D + S + E + P + 3], 32);
+          break;
+
+        case WMS_UDH_VAR_PICTURE:
+          auto_message.headers[j].u.var_picture.position = req_ptr->data[D + S + E + P + 2];
+          auto_message.headers[j].u.var_picture.width = req_ptr->data[D + S + E + P + 3];
+          auto_message.headers[j].u.var_picture.height = req_ptr->data[D + S + E + P + 4];
+          memcpy( (void *) auto_message.headers[j].u.var_picture.data, (void *) &req_ptr->data[D + S + E + P + 5], C - 3);
+          break;
+
+        case WMS_UDH_RFC822:
+          auto_message.headers[j].u.rfc822.header_length = req_ptr->data[D + S + E + P + 2];
+          break;
+
+        /* wms_udh_other_s_type */
+        default:
+          auto_message.headers[j].u.other.header_id = (wms_udh_id_e_type) req_ptr->data[D + S + E + P + 2];
+          auto_message.headers[j].u.other.header_length = req_ptr->data[D + S + E + P + 3];
+          memcpy( (void *) auto_message.headers[j].u.other.data, (void *) &req_ptr->data[D + S + E + P + 4], C - 2);
+          break;
+      }
+
+      /* increment the previous header length value by adding to it the current header length and 2 more bytes (header_length and header_id) */
+      P = P + C + 2;
+    }
+
+    memcpy( (void *) auto_message.user_data, (void *) & req_ptr -> data[D + S + H + 2*req_ptr -> num_of_headers], req_ptr -> user_data_length);
+#endif /* FEATURE_SMS_UDH */
+
+    auto_message.mem_store = (wms_auto_memory_store_e_type) req_ptr -> auto_storage_type;
+    auto_message.reply_request = req_ptr -> reply_request;
+    auto_message.status_request = req_ptr -> status_request;
+    auto_message.user_data_length = (uint8) U;
+
+    client_message.msg_hdr = msg_hdr;
+    client_message.u.auto_message = auto_message;
+
+    /*  Send the message */
+    st = wms_msg_send(wmsdiag_client_id, NULL, (void *) req_ptr -> transaction_ID, WMS_SEND_MODE_CLIENT_MESSAGE, &client_message);
+
+    if (st != WMS_OK_S)
+    {
+      rsp_ptr -> status = 1;
+      MSG_ERROR("DTC command failed",0,0,0);
+    }
+    else
+    {
+      rsp_ptr -> status = 0;
+    }
+
+    /*  Send out our packet now */
+    diagpkt_commit (rsp_ptr);
+  }
+
+  return NULL;
+}
+
+
+/*===========================================================================
+
+FUNCTION WMSDIAG_SET_DEFAULT_AUTO_CDMA_PARAMS
+
+DESCRIPTION
+  This function attempts to set default CDMA parameters when sending a message in transparent SMS auto-retry.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  Pointer to response packet.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+
+
+PACKED void * wmsdiag_set_default_auto_cdma_params (
+  PACKED void *req_pkt_ptr,  /* pointer to request packet  */
+  uint16 pkt_len               /* length of request packet   */
+)
+{
+  /*  Response Pointer */
+  wmsdiag_set_default_auto_cdma_params_rsp_type *rsp_ptr  = NULL;
+
+  /*  Cast copy of request pointer to proper type */
+  wmsdiag_set_default_auto_cdma_params_req_type *req_ptr  =                 (wmsdiag_set_default_auto_cdma_params_req_type *) req_pkt_ptr;
+
+  wms_status_e_type st = WMS_OK_S;
+
+  static wms_cdma_template_s_type     cdma_message;
+  static wms_client_ts_data_s_type    client_ts_data;
+  static wms_raw_ts_data_s_type       cdma_raw_data;
+
+  wms_address_s_type                  *addr_ptr;
+  wms_subaddress_s_type               *subaddr_ptr;
+
+  /*  Loop Counter */
+  uint32 i;
+
+  uint8  A = 0;
+  uint8  S = 0;
+  uint32 U = 0;
+
+  if (req_ptr -> addr_digit_mode        >= WMSDIAG_ADDR_DIGIT_MODE_MAX ||
+      req_ptr -> addr_num_mode          >= WMSDIAG_ADDR_NUM_MODE_MAX ||
+      req_ptr -> addr_num_digits        >  WMSDIAG_ADDRESS_MAX ||
+      req_ptr -> subaddr_num_digits     >  WMSDIAG_SUBADDRESS_MAX ||
+      req_ptr -> user_data_length       >  WMSDIAG_MAX_LEN )
+  {
+    return (diagpkt_err_rsp (DIAG_BAD_PARM_F, req_pkt_ptr, pkt_len));
+  }
+
+  /*  If no client ID has been established, do so now. */
+  if (wmsdiag_client_id == WMSDIAG_INVALID_CLIENT_ID)
+  {
+    wmsdiag_client_init ();
+  }
+
+  A = (uint8)req_ptr -> addr_num_digits;
+  S = (uint8)req_ptr -> subaddr_num_digits;
+  U = req_ptr -> user_data_length;
+
+  if( A + S + U > WMSDIAG_DEFAULT_AUTO_DATA_BUF_MAX )
+  {
+    return (diagpkt_err_rsp (DIAG_BAD_PARM_F, req_pkt_ptr, pkt_len));
+  }
+
+
+  rsp_ptr = (wmsdiag_set_default_auto_cdma_params_rsp_type*) diagpkt_subsys_alloc (DIAG_SUBSYS_WMS, WMSDIAG_SET_DEFAULT_AUTO_CDMA_PARAMS_CMD,
+                        sizeof (wmsdiag_set_default_auto_cdma_params_rsp_type));
+
+  if (rsp_ptr)
+  {
+    /*  Set the message header variables */
+    msg_hdr.message_mode = WMS_MESSAGE_MODE_AUTO;
+    msg_hdr.tag = WMS_TAG_NONE;
+    msg_hdr.mem_store = WMS_MEMORY_STORE_NONE;
+    msg_hdr.index = 0;
+
+    /* Set the address information */
+    if (req_ptr -> addr_present)
+    {
+      addr_ptr = &cdma_message.address;
+
+      addr_ptr->number_of_digits = A;
+      addr_ptr->digit_mode = (wms_digit_mode_e_type) req_ptr -> addr_digit_mode;
+      addr_ptr->number_mode = (wms_number_mode_e_type) req_ptr -> addr_num_mode;
+      addr_ptr->number_type = (wms_number_type_e_type) req_ptr -> addr_num_type;
+      addr_ptr->number_plan = (wms_number_plan_e_type) req_ptr -> addr_num_plan;
+
+      for (i = 0; i < A; i++)
+      {
+        addr_ptr->digits [i] = req_ptr -> data[i];
+      }
+    }
+
+    /* Set the subaddress information */
+    if (req_ptr -> subaddr_present)
+    {
+      subaddr_ptr = &cdma_message.subaddress;
+
+      subaddr_ptr->number_of_digits = S;
+      subaddr_ptr->type = (wms_subaddress_type_e_type) req_ptr -> subaddr_type;
+      subaddr_ptr->odd = req_ptr -> subaddr_odd_or_even;
+
+      for (i = 0; i < S; i++)
+      {
+        subaddr_ptr->digits [i] = req_ptr->data[i + A];
+      }
+    }
+
+    if (req_ptr -> service_present)
+    {
+      cdma_message.service = (wms_service_e_type) req_ptr -> service_type;
+    }
+
+    cdma_raw_data.format = WMS_FORMAT_CDMA;
+    cdma_raw_data.len = U;
+
+    for (i = 0; i < U; i++)
+    {
+      cdma_raw_data.data [i] = req_ptr->data[i + A + S];
+    }
+
+    /* decode the raw cdma bearer data */
+    st = wms_ts_decode (&cdma_raw_data, &client_ts_data);
+
+    if (st != WMS_OK_S)
+    {
+      rsp_ptr -> status = 1;
+      MSG_ERROR("RAW bearer data decode failed",0,0,0);
+    }
+    else
+    {
+      rsp_ptr -> status = 0;
+
+      /* copy the bearer data after it is decoded correctly */
+      cdma_message.client_bd = client_ts_data.u.cdma;
+
+      /*  Send the message */
+      st = wms_msg_set_auto_cdma_params(wmsdiag_client_id, &cdma_message);
+
+      if (st != WMS_OK_S)
+      {
+        rsp_ptr -> status = 1;
+        MSG_ERROR("DTC command failed",0,0,0);
+      }
+      else
+      {
+        rsp_ptr -> status = 0;
+      }
+    }
+
+    /*  Send out our packet now */
+    diagpkt_commit (rsp_ptr);
+  }
+
+  return NULL;
+}
+
+
+/*===========================================================================
+
+FUNCTION WMSDIAG_SET_DEFAULT_AUTO_GW_PARAMS
+
+DESCRIPTION
+  This function attempts to set default GW parameters when sending a message in transparent SMS auto-retry.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  Pointer to response packet.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+PACKED void * wmsdiag_set_default_auto_gw_params (
+  PACKED void *req_pkt_ptr,  /* pointer to request packet  */
+  uint16 pkt_len               /* length of request packet   */
+)
+{
+  /*  Response Pointer */
+  wmsdiag_set_default_auto_gw_params_rsp_type *rsp_ptr  = NULL;
+
+  /*  Cast copy of request pointer to proper type */
+  wmsdiag_set_default_auto_gw_params_req_type *req_ptr  =
+        (wmsdiag_set_default_auto_gw_params_req_type *) req_pkt_ptr;
+
+  wms_status_e_type st = WMS_OK_S;
+
+  static wms_gw_template_s_type         gw_message;
+
+  wms_address_s_type                    *dest_addr_ptr;
+  wms_address_s_type                    *sc_addr_ptr;
+  wms_timestamp_s_type                  *relative_validity_ptr;
+  wms_gw_dcs_s_type                     *dcs_ptr;
+
+  /* Loop Counter */
+  uint32 i;
+
+  /*  Initialize counters for the number of destination address/service center */
+  uint8 D = 0;
+  uint8 S = 0;
+
+  if ( req_ptr -> dest_addr_num_mode     >= WMSDIAG_ADDR_NUM_MODE_MAX ||
+       req_ptr -> dest_addr_num_digits   >  WMSDIAG_ADDRESS_MAX ||
+       req_ptr -> sc_addr_num_digits     >  WMSDIAG_ADDRESS_MAX )
+  {
+    return (diagpkt_err_rsp (DIAG_BAD_PARM_F, req_pkt_ptr, pkt_len));
+  }
+
+  /*  If no client ID has been established, do so now. */
+  if (wmsdiag_client_id == WMSDIAG_INVALID_CLIENT_ID)
+  {
+    wmsdiag_client_init ();
+  }
+
+  D = (uint8)req_ptr -> dest_addr_num_digits;
+  S = (uint8)req_ptr -> sc_addr_num_digits;
+
+  /*  Allocate our packet */
+  rsp_ptr = (wmsdiag_set_default_auto_gw_params_rsp_type*) diagpkt_subsys_alloc (DIAG_SUBSYS_WMS, WMSDIAG_SET_DEFAULT_AUTO_GW_PARAMS_CMD,
+                        sizeof (wmsdiag_set_default_auto_gw_params_rsp_type) );
+
+  if (rsp_ptr)
+  {
+    /*  Set the message header variables */
+    msg_hdr.message_mode = WMS_MESSAGE_MODE_AUTO;
+    msg_hdr.tag = WMS_TAG_NONE;
+    msg_hdr.mem_store = WMS_MEMORY_STORE_NONE;
+    msg_hdr.index = 0;
+
+    if (req_ptr -> dest_addr_present)
+    {
+      dest_addr_ptr = &gw_message.dest_addr;
+
+      dest_addr_ptr->number_mode = (wms_number_mode_e_type) req_ptr -> dest_addr_num_mode;
+      dest_addr_ptr->number_type = (wms_number_type_e_type) req_ptr -> dest_addr_num_type;
+      dest_addr_ptr->number_plan = (wms_number_plan_e_type) req_ptr -> dest_addr_num_plan;
+      dest_addr_ptr->number_of_digits = D;
+
+      for (i = 0; i < D; i++)
+      {
+        dest_addr_ptr->digits[i] = req_ptr -> data[i];
+      }
+    }
+
+    if (req_ptr -> sc_addr_present)
+    {
+      sc_addr_ptr = &gw_message.sc_addr;
+
+      sc_addr_ptr->number_mode = (wms_number_mode_e_type) req_ptr -> dest_addr_num_mode;
+      sc_addr_ptr->number_type = (wms_number_type_e_type) req_ptr -> dest_addr_num_type;
+      sc_addr_ptr->number_plan = (wms_number_plan_e_type) req_ptr -> dest_addr_num_plan;
+      sc_addr_ptr->number_of_digits = S;
+
+      for (i = 0; i < S; i++)
+      {
+        sc_addr_ptr->digits[i] = req_ptr->data[i + D];
+      }
+    }
+
+    if (req_ptr -> pid_present)
+    {
+       gw_message.pid = (wms_pid_e_type) req_ptr -> pid;
+    }
+
+    if (req_ptr -> dcs_present)
+    {
+      dcs_ptr = &gw_message.dcs;
+
+      dcs_ptr -> msg_class = (wms_message_class_e_type) req_ptr -> dcs_message_class;
+      dcs_ptr -> is_compressed = req_ptr -> dcs_is_compress;
+      dcs_ptr -> alphabet = (wms_gw_alphabet_e_type) req_ptr -> dcs_alphabet;
+      dcs_ptr -> msg_waiting = (wms_gw_msg_waiting_e_type) req_ptr -> dcs_msg_waiting;
+      dcs_ptr -> msg_waiting_active = req_ptr -> dcs_msg_waiting_active;
+      dcs_ptr -> msg_waiting_kind = (wms_gw_msg_waiting_kind_e_type) req_ptr -> dcs_msg_waiting_kind;
+    }
+
+    if (req_ptr -> relative_validity_present)
+    {
+      relative_validity_ptr = &gw_message.relative_validity;
+
+      relative_validity_ptr->year = req_ptr -> relative_validity_year;
+      relative_validity_ptr->month = req_ptr -> relative_validity_month;
+      relative_validity_ptr->day = req_ptr -> relative_validity_day;
+      relative_validity_ptr->hour = req_ptr -> relative_validity_hour;
+      relative_validity_ptr->minute = req_ptr -> relative_validity_minute;
+      relative_validity_ptr->second = req_ptr -> relative_validity_second;
+      relative_validity_ptr->timezone = (sint7) req_ptr -> relative_validity_timezone;
+    }
+
+    /*  Send the message */
+    st = wms_msg_set_auto_gw_params(wmsdiag_client_id, &gw_message);
+
+    if (st != WMS_OK_S)
+    {
+      rsp_ptr -> status = 1;
+      MSG_ERROR("DTC command failed",0,0,0);
+    }
+    else
+    {
+      rsp_ptr -> status = 0;
+    }
+
+    /*  Send out our packet now */
+    diagpkt_commit (rsp_ptr);
+  }
+
+  return NULL;
+}
+#endif //#ifdef CUST_EDITION
 /*===========================================================================
 FUNCTION wmsdiag_broadcast_add_delete_serviceid
 
@@ -2827,6 +3420,11 @@ static const diagpkt_user_table_entry_type wmsdiag_tbl[] =
   {WMSDIAG_SET_ROUTES_CMD, WMSDIAG_SET_ROUTES_CMD, wmsdiag_set_routes},
   {WMSDIAG_ORIG_END_SMS_CALL_CMD, WMSDIAG_ORIG_END_SMS_CALL_CMD, wmsdiag_orig_end_sms_call},
   {WMSDIAG_AUTO_DISCONNECT_CMD, WMSDIAG_AUTO_DISCONNECT_CMD, wmsdiag_enable_disable_auto_disconnect},
+#ifdef CUST_EDITION
+  {WMSDIAG_SEND_AUTO_MESSAGE_CMD, WMSDIAG_SEND_AUTO_MESSAGE_CMD, wmsdiag_send_auto_message},
+  {WMSDIAG_SET_DEFAULT_AUTO_CDMA_PARAMS_CMD, WMSDIAG_SET_DEFAULT_AUTO_CDMA_PARAMS_CMD, wmsdiag_set_default_auto_cdma_params},
+  {WMSDIAG_SET_DEFAULT_AUTO_GW_PARAMS_CMD, WMSDIAG_SET_DEFAULT_AUTO_GW_PARAMS_CMD, wmsdiag_set_default_auto_gw_params},
+#endif
 };
 
 static const diagpkt_user_table_entry_type wmsdiag_tbl_delay_rsp[] =

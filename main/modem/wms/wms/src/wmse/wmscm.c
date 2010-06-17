@@ -130,7 +130,9 @@ when       who     what, where, why
 #endif /* FEATURE_CDSMS */
 
 #include "sys.h"
-
+#ifdef CUST_EDITION
+#include "wmsdc.h"
+#endif
 /*===========================================================================
 ======================== STATIC DATA ========================================
 ===========================================================================*/
@@ -559,6 +561,23 @@ void wms_cm_call_event_cb
   if( call_info_ptr->call_type != CM_CALL_TYPE_SMS )
   {
     /* ignore this non-SMS call event */
+#ifdef CUST_EDITION
+    switch( call_event )
+    {
+      case CM_CALL_EVENT_CONNECT:
+        wms_dc_setTCflag(TRUE);
+        break;
+
+      case CM_CALL_EVENT_END:
+        wms_dc_setTCflag(FALSE);
+        break;
+
+      default:
+        /* events that we are not interested in */
+        break;
+
+    } /* switch */
+#endif
   }
   else
   {

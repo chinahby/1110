@@ -5238,7 +5238,7 @@ boolean cm_ph_cmd_nam_sel(
 /*lint -esym(715, client) */
 /*lint -esym(715, nam_sel) */
 {
-  #if (defined(FEATURE_CDMA_800) && defined(FEATURE_CDMA_1900))
+  #if (defined(FEATURE_CDMA_800) || defined(FEATURE_CDMA_1900)) // Gemsea Modify
   cm_cmd_s_type           *cmd_ptr;
   cm_ph_cmd_s_type        *ph_cmd_ptr;
   cm_ph_cmd_info_s_type   *cmd_info_ptr;

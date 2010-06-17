@@ -4278,7 +4278,16 @@ static nv_ruim_support_status nvruim_check_mandatory(
       }
       else
         break;
-
+#ifdef CUST_EDITION
+    // ÏÂÁÐÏî¿¨²»Ö§³ÖÔòÓÃ NV Ïî
+    case NV_DIR_NUMBER_PCS_I:
+      if((nvruim_sw1 == SW1_REFERENCE) && (nvruim_sw2 == SW2_NOT_FOUND))
+      {
+        /* File not found */
+        return NV_RUIM_ITEM_NOT_SUPPORTED;
+      }
+      break;
+#endif
     default:  
       break;
   }
@@ -8320,7 +8329,7 @@ static nv_ruim_support_status nvruim_read_lbs_v2_pde_adress(
       if(NV_DONE_S == *op_status)
       {
         /*If this is requested, the value from the card should be returned 
-          if the address type is “2” (IPV4).  
+          if the address type is ?2? (IPV4).  
           If the address type is something else, we should fill this with 0’s.  
           The Address length should not be more than 15 bytes.
         */
@@ -8358,7 +8367,7 @@ static nv_ruim_support_status nvruim_read_lbs_v2_pde_adress(
       if(NV_DONE_S == *op_status)
       {
         /*If this is requested, the value from the card should be returned 
-          if the address type is “2” (IPV4).  
+          if the address type is ?2? (IPV4).  
           If the address type is something else, we should fill this with 0’s.  
           The Address length should not be more than 15 bytes.      */
         if (lbs_pde_address_length > NVRUIM_MAX_LBS_IPV4_ADDRESS_LENGTH) 
@@ -8381,7 +8390,7 @@ static nv_ruim_support_status nvruim_read_lbs_v2_pde_adress(
       if(NV_DONE_S == *op_status)
       {
         /* If this is requested, the value from the card should be returned 
-           if the address type is “3” (IPV6).  
+           if the address type is ?3? (IPV6).  
            If the address type is something else, we should fill this with 0’s.
            The Address length should not be more than 39 bytes */
         if (lbs_pde_address_length > NVRUIM_MAX_LBS_IPV6_ADDRESS_LENGTH) 
@@ -8411,7 +8420,7 @@ static nv_ruim_support_status nvruim_read_lbs_v2_pde_adress(
       if(NV_DONE_S == *op_status)
       {
         /* If this is requested, the value from the card should be returned 
-        if the address type is “1” (Domain Name).  
+        if the address type is ?1? (Domain Name).  
         If the address type is something else, we should just insert a NULL character. 
         The address length can be anything, as long as it is less than 128 bytes.  
         It should be null terminated. */
@@ -8554,7 +8563,7 @@ static nv_ruim_support_status nvruim_read_lbs_v2_mpc_adress(
       if(NV_DONE_S == *op_status)
       {
         /* If these are requested, the value from the card should be returned 
-           if the address type is “2” (IPV4).  
+           if the address type is ?2? (IPV4).  
            If the address type is something else, we should fill this with 0’s.
            The Address length should be not more than 15 bytes              */
         nv_cmd_ptr->data_ptr->cgps_1x_mpc_server_addr_ipv4 =0x00000000;
@@ -8576,7 +8585,7 @@ static nv_ruim_support_status nvruim_read_lbs_v2_mpc_adress(
       if(NV_DONE_S == *op_status)
       {
         /* If these are requested, the value from the card should be returned 
-           if the address type is “3” (IPV6).  
+           if the address type is ?3? (IPV6).  
            If the address type is something else, we should fill this with 0’s.
            The Address length should be not more than 39 bytes              */
         if (lbs_mpc_address_length > NVRUIM_MAX_LBS_IPV6_ADDRESS_LENGTH) 
@@ -8604,7 +8613,7 @@ static nv_ruim_support_status nvruim_read_lbs_v2_mpc_adress(
       if(NV_DONE_S == *op_status)
       {
         /* If these are requested, the value from the card should be returned 
-           if the address type is “1” (Domain Name).  
+           if the address type is ?1? (Domain Name).  
            If the address type is something else, we should just insert a NULL character. 
            The address length can be anything, as long as it is less than 128 bytes.  
            It should be null terminated. */
@@ -10283,7 +10292,11 @@ void nvruim_set_uim_dir_present(
   byte dir
 )
 {
+#ifndef CUST_EDITION
   nvruim_dir_present = dir;
+#else
+  nvruim_dir_present = (nvruim_dir_present | dir);
+#endif
 }
 
 #ifdef FEATURE_RUIM_PHONEBOOK
@@ -11696,7 +11709,7 @@ FUNCTION nvruim_get_ipv6_hex_char_string
 
 DESCRIPTION
    IPv6 have eight groups of 4 hex digits separated by colons.
-   it also can have 2 colon ‘::’ together but only once is allowed in entire string.
+   it also can have 2 colon ?::? together but only once is allowed in entire string.
    For example, all are pointing to same addresss:
    2001:0db8:0000:0000:0000:0000:1428:57ab
    2001:0db8:0000:0000:0000::1428:57ab

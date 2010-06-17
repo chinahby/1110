@@ -83,6 +83,11 @@ when       who     what, where, why
 #define WMSDIAG_SET_ROUTES_CMD                     0x0006
 #define WMSDIAG_ORIG_END_SMS_CALL_CMD              0x0007
 #define WMSDIAG_AUTO_DISCONNECT_CMD                0x0008
+#ifdef CUST_EDITION
+#define WMSDIAG_SEND_AUTO_MESSAGE_CMD              0x0009
+#define WMSDIAG_SET_DEFAULT_AUTO_CDMA_PARAMS_CMD   0x000A
+#define WMSDIAG_SET_DEFAULT_AUTO_GW_PARAMS_CMD     0x000B
+#endif // #ifdef CUST_EDITION
 #define WMSDIAG_BROADCAST_ADD_DELETE_SERVICEID_CMD 0x000C
 #define WMSAPPDIAG_CB_SAVE_CMD                     0x000D
 #define WMSAPPDIAG_CB_READ_CMD                     0x000E
@@ -102,7 +107,11 @@ when       who     what, where, why
 /* Default max size of data buffer of diag req, resp and log packets */
 #define WMSDIAG_DEFAULT_DATA_BUF_MAX \
         ( WMSDIAG_ADDRESS_MAX + WMSDIAG_SUBADDRESS_MAX + WMSDIAG_MAX_LEN )
-
+#ifdef CUST_EDITION
+/* Default max size of data buffer of auto diag req, resp and log packets */
+#define WMSDIAG_DEFAULT_AUTO_DATA_BUF_MAX \
+        ( WMSDIAG_ADDRESS_MAX * 2 + 255 + 7 * (1+1+255) + WMSDIAG_MAX_LEN )
+#endif
 #define WMSAPPDIAG_MAX_STORAGE_TYPE 1
 #define WMSAPPDIAG_MAX_CB_MSG_RAM 50
 #define WMSAPPDIAG_MAX_BC_MSG_NV 99
@@ -652,6 +661,196 @@ typedef struct
   diagpkt_subsys_header_type header;
 } wmsdiag_enable_disable_auto_disconnect_rsp_type;
 
+#ifdef CUST_EDITION
+/*============================================================================
+
+PACKET   WMS_SEND_AUTO_MESSAGE_CMD
+
+PURPOSE  Sent from the DM to the DMSS to auto-retry a MO SMS message.
+
+
+RESPONSE The DM sends back a wmsdiag_send_auto_message_rsp_type packet to
+         indicate that it has attempted to send the auto message.
+
+============================================================================*/
+
+typedef struct
+{
+  diagpkt_subsys_header_type header;
+
+  uint8 transaction_ID;
+
+  uint8 dest_addr_num_digits;
+  uint8 dest_addr_digit_mode;
+  uint8 dest_addr_num_mode;
+  uint8 dest_addr_num_type;
+  uint8 dest_addr_num_plan;
+
+  uint8 sc_addr_num_digits;
+  uint8 sc_addr_digit_mode;
+  uint8 sc_addr_num_mode;
+  uint8 sc_addr_num_type;
+  uint8 sc_addr_num_plan;
+
+  uint8 email_length;
+
+  uint32 auto_storage_type;
+
+  uint8 num_of_headers;
+  uint8 header_length_all_type;
+
+  uint8 reply_request;
+  uint8 status_request;
+
+  uint32 user_data_length;
+
+  /*  This is actually of variable length equal to dest_addr
+  **  (dest_addr_num_digits number of bytes) +
+  **  sc_addr (sc_addr_num_digits number of bytes) +
+  **  email_address (email_length number of bytes) +
+  **  (num_of_headers with the following fields:
+  **  header_length + header_id + header_value) +
+  **  user_data (user_data_length number of bytes)
+  */
+  uint8 data [WMSDIAG_DEFAULT_AUTO_DATA_BUF_MAX];
+
+} wmsdiag_send_auto_message_req_type;
+
+
+typedef struct
+{
+  diagpkt_subsys_header_type header;
+
+  uint32 status;
+
+} wmsdiag_send_auto_message_rsp_type;
+
+
+/*============================================================================
+
+PACKET   WMS_SET_DEFAULT_AUTO_CDMA_PARAMS_CMD
+
+PURPOSE  Sent from the DM to the DMSS to set the default CDMA parameters
+         when sending a message in transparent SMS auto-retry.
+
+
+RESPONSE The DM sends back a wmsdiag_set_default_auto_cdma_params_rsp_type
+         packet to indicate that it has attempted to send the auto message.
+
+============================================================================*/
+typedef struct
+{
+  diagpkt_subsys_header_type header;
+
+  uint32 teleservice_type;
+
+  uint8 transaction_ID;
+  uint8 addr_present;
+  uint8 reserved_byte1;
+  uint8 reserved_byte2;
+
+  uint8 addr_num_digits;
+  uint8 addr_digit_mode;
+  uint8 addr_num_mode;
+  uint8 addr_num_type;
+
+  uint8 addr_num_plan;
+  uint8 subaddr_present;
+  uint8 subaddr_num_digits;
+  uint8 subaddr_type;
+
+  uint8 subaddr_odd_or_even;
+  uint8 service_present;
+  uint16 service_type;
+
+  uint32 user_data_length;
+
+  /* This is actually of variable length equal to:
+  ** dest_addr (addr_num_digits) +
+  ** dest_subaddr (subaddr_num_digits number of bytes) +
+  ** raw_cdma_bd_Data (data_length number of bytes)
+  */
+  uint8 data [WMSDIAG_DEFAULT_AUTO_DATA_BUF_MAX];
+
+} wmsdiag_set_default_auto_cdma_params_req_type;
+
+
+typedef struct
+{
+  diagpkt_subsys_header_type header;
+
+  uint32 status;
+
+} wmsdiag_set_default_auto_cdma_params_rsp_type;
+
+
+/*============================================================================
+
+PACKET   WMS_SET_DEFAULT_AUTO_GW_PARAMS_CMD
+
+PURPOSE  Sent from the DM to the DMSS to set the default GW parameters when
+         sending a message in transparent SMS auto-retry.
+
+
+RESPONSE The DM sends back a wmsdiag_set_default_auto_gw_params_rsp_type packet
+         to indicate that it has attempted to send the auto message.
+
+============================================================================*/
+typedef struct
+{
+  diagpkt_subsys_header_type header;
+
+  uint8 transaction_ID;
+
+  uint8 dest_addr_present;
+  uint8 dest_addr_num_mode;
+  uint8 dest_addr_num_type;
+  uint8 dest_addr_num_plan;
+  uint8 dest_addr_num_digits;
+
+  uint8 sc_addr_present;
+  uint8 sc_addr_num_mode;
+  uint8 sc_addr_num_type;
+  uint8 sc_addr_num_plan;
+  uint8 sc_addr_num_digits;
+
+  uint8 pid_present;
+  uint8 pid;
+
+  uint8 dcs_present;
+  uint8 dcs_message_class;
+  uint8 dcs_is_compress;
+  uint8 dcs_alphabet;
+  uint8 dcs_msg_waiting;
+  uint8 dcs_msg_waiting_active;
+  uint8 dcs_msg_waiting_kind;
+
+  uint8 relative_validity_present;
+  uint8 relative_validity_year;
+  uint8 relative_validity_month;
+  uint8 relative_validity_day;
+  uint8 relative_validity_hour;
+  uint8 relative_validity_minute;
+  uint8 relative_validity_second;
+  uint8 relative_validity_timezone;
+
+  /* This is actually of variable length equal to:
+  ** dest_addr (dest_addr_num_digits number of bytes) +
+  ** sc_addr (sc_addr_num_digits number of bytes)
+  */
+  uint8 data [WMSDIAG_DEFAULT_AUTO_DATA_BUF_MAX];
+
+} wmsdiag_set_default_auto_gw_params_req_type;
+
+
+typedef struct
+{
+  diagpkt_subsys_header_type header;
+
+  uint32 status;
+
+} wmsdiag_set_default_auto_gw_params_rsp_type;
+#endif
 /*============================================================================
 
 PACKET   WMSDIAG_BROADCAST_ADD_DELETE_SERVICEID_CMD 

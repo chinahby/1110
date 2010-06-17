@@ -98,8 +98,9 @@ typedef struct
 
   /* each message has its own timer to wake up the SMS task
   */
+#ifndef CUST_EDITION
   rex_timer_type                 timer;
-#ifdef CUST_EDITION	 
+#else	 
   clk_cb_type                    clk_timer;
 #endif /*CUST_EDITION*/
   boolean                        large_msg;

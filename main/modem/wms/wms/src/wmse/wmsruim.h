@@ -149,6 +149,25 @@ boolean wms_ruim_write_smss
 (
   uint8   *data
 );
+#ifdef CUST_EDITION
+boolean AT_wms_ruim_read_sms
+(
+  wms_message_index_type   index,
+  uint8                    * data
+);
+
+boolean AT_wms_ruim_write_sms
+(
+  wms_message_index_type   index,
+  uint8                    * data,
+  boolean                  is_prl_update
+);
+
+boolean AT_wms_ruim_delete_sms
+(
+  wms_message_index_type  index
+);
+#endif //#ifndef CUST_EDITION
 
 #endif /* FEATURE_CDSMS_RUIM */
 #endif /* WMSRUIM_H */

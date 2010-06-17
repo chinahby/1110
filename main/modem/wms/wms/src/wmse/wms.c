@@ -485,7 +485,8 @@ wms_cmd_err_e_type wms_check_for_valid_command
 {
   wms_cmd_err_e_type ret_cmd_err = WMS_CMD_ERR_NONE;
 
-#ifdef FEATURE_GSTK
+//#ifdef FEATURE_GSTK
+#if defined(FEATURE_GSTK) || defined(FEATURE_UIM_TOOLKIT) // Gemsea
   /* Checking for 1st Special Scenario - REFRESH */
   if (cfg_s_ptr->refresh_in_progress)
   {
@@ -1334,10 +1335,12 @@ void wms_process_signals
   }
 #endif /* FEATURE_CDSMS */
 
+#ifndef CUST_EDITION
   if(sigs & WMS_MO_RETRY_TIMER_SIG)
   {
     wms_msg_process_retry_sig();
   }
+#endif
 
   /* done */
   return;
@@ -2304,8 +2307,7 @@ wms_status_e_type wms_msg_send
     cmd_ptr = wms_get_cmd_buf();
 
     if( cmd_ptr != NULL)
-    {
-#ifdef CUST_EDITION		
+    {	
 #if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
       q_link_type teplink;
     
@@ -2315,7 +2317,6 @@ wms_status_e_type wms_msg_send
 #else    
       * cmd_ptr = cmd_backup;
 #endif    
-#endif /*CUST_EDITION*/
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -6816,8 +6817,16 @@ void wms_card_refresh_fcn_ind_proc
          ** initialize the RUIM card. If the card initialization completes
          ** successfully we set the CDMA init state */
          cfg_s_ptr->cdma_init_complete = FALSE;
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+    db_setuiminitmask(INITUIMSMSMASK);
+    //wms_ruim_init_stepbystep();
+#ifdef FEATURE_OMH_SMS
+    wms_ruim_OMH_init();
+#endif
+#else
          wms_ruim_init();  /* this function sets cdma_init_complete to TRUE
                            ** on succesful (sort of) initialization */
+#endif
       }
 #endif /* FEATURE_CDSMS_RUIM */
 

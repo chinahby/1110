@@ -85,7 +85,9 @@ when       who     what, where, why
 #include "wmsnv.h"
 
 #define WMS_RUIM_EF_BUF_SIZE        255
-
+#ifdef CUST_EDITION
+#include "Dstask.h"
+#endif
 static wms_cfg_s_type         *cfg_s_ptr;
 static uint8                  ruim_data[WMS_RUIM_EF_BUF_SIZE];
 
@@ -98,9 +100,11 @@ static uim_cmd_type    cmd;
 
 /* Status reported by R-UIM for each command */
 static uim_rpt_status wms_ruim_status_report = UIM_FAIL;
-
-
-
+#ifdef CUST_EDITION
+#if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+extern void wms_cacheinfo_deleteruimtemplatecache(wms_message_index_type index);
+#endif
+#endif // #ifdef CUST_EDITION
 /*===========================================================================
 
 FUNCTION wms_ruim_report
@@ -223,7 +227,6 @@ void wms_ruim_init
   boolean       has_bcsms = FALSE;
   boolean       has_3gpd = FALSE;
 
-
   uim_rpt_status status; /* status of ruim operation */
 
 
@@ -234,6 +237,13 @@ void wms_ruim_init
     MSG_HIGH("wms_ruim_init already done",0,0,0);
     return;
   }
+#ifdef CUST_EDITION
+  if (!IsRunAsUIMVersion())
+  {// 当前软件运行于无卡版本
+      wms_cfg_do_cdma_ready_event();
+      return;
+  }
+#endif
   MSG_MED("In wms_ruim_init module",0,0,0);
 
   cfg_s_ptr->ruim_sms_file_name     = UIM_CDMA_SMS;
@@ -324,12 +334,19 @@ void wms_ruim_init
 
       if(cfg_s_ptr->ruim_tags[i] != WMS_TAG_NONE)
       {
+#ifndef CUST_EDITION
         wms_cfg_update_msg_info_cache( WMS_TAG_NONE,
                                        WMS_MEMORY_STORE_RUIM,
                                        i,
                                        ruim_data,
                                        (uint8)cfg_s_ptr->ruim_sms_rec_len );
-
+#else
+        wms_cfg_update_msg_info_cache( cfg_s_ptr->ruim_tags[i],
+                                       WMS_MEMORY_STORE_RUIM,
+                                       i,
+                                       ruim_data,
+                                       (uint8)cfg_s_ptr->ruim_sms_rec_len );
+#endif //#ifdef CUST_EDITION
         /* Update the duplicate detection cache if message is MT */
         if(WMS_IS_MT(cfg_s_ptr->ruim_tags[i]))
         {
@@ -508,7 +525,7 @@ void wms_ruim_access_ext(uim_cmd_type *cmd_ptr)
     none
 
 返回值:
-    TRUE : 初始化完成
+    TRUE : 初始?瓿?
     FALSE: 初始化未完成
 
 备注:
@@ -950,7 +967,7 @@ void wms_ruim_OMH_init(void)
     if (status == UIM_PASS)
     {
         has_bcsms  = WMS_RUIM_SERVICE_TABLE_HAS_BCSMS(data_table[3]);
-        has_smscap = WMS_RUIM_SERVICE_TABLE_HAS_SMSCAP(data_table[3]);
+        has_smscap = WMS_RUIM_SERVICE_TABLE_HAS_3GPD(data_table[3]);
         MSG_HIGH("RUIM BCSMS support: %d", has_bcsms,0,0);
         MSG_HIGH("RUIM SMSCAP support: %d", has_smscap,0,0);
     }
@@ -1017,6 +1034,16 @@ boolean wms_ruim_write_sms
   uim_rpt_status status; /* status of ruim operation */
 
   /* cmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE; */
+#ifdef CUST_EDITION
+  if ((data[1]+2) <= cfg_s_ptr->ruim_sms_rec_len)
+  {
+     cmd.access_uim.num_bytes = data[1]+2;
+  }
+  else
+  {
+     cmd.access_uim.num_bytes = cfg_s_ptr->ruim_sms_rec_len;
+  }
+#endif
   cmd.access_uim.data_ptr = data;
   cmd.access_uim.offset   = (uint16)(index+1);
 
@@ -1035,6 +1062,7 @@ boolean wms_ruim_write_sms
     }
   }
 
+#ifndef CUST_EDITION  
   if( status == UIM_PASS )
   {
     wms_cfg_update_msg_info_cache( WMS_TAG_NONE,
@@ -1043,6 +1071,7 @@ boolean wms_ruim_write_sms
                                    data,
                                    (uint8)cfg_s_ptr->ruim_sms_rec_len );
   }
+#endif
 
   return (status==UIM_PASS) ? TRUE : FALSE;
 
@@ -1058,7 +1087,11 @@ boolean wms_ruim_delete_sms
   /* Clear out the record
   */
   ruim_data[0] = WMS_TAG_NONE;
+#ifndef CUST_EDITION
   memset( ruim_data+1, 0xFF, cfg_s_ptr->ruim_sms_rec_len-1 );
+#else
+  ruim_data[1] = 0;
+#endif
 
   return wms_ruim_write_sms( index, ruim_data, FALSE );
 
@@ -1112,6 +1145,7 @@ boolean wms_ruim_write_smsp
   cmd.access_uim.access   = UIM_WRITE_F;
   status = wms_ruim_access( &cmd );
 
+#ifndef CUST_EDITION
   if( status == UIM_PASS )
   {
     wms_cfg_update_msg_info_cache( WMS_TAG_MO_TEMPLATE,
@@ -1120,6 +1154,7 @@ boolean wms_ruim_write_smsp
                                    data,
                                    (uint8)cfg_s_ptr->ruim_smsp_rec_len );
   }
+#endif
   return (status==UIM_PASS) ? TRUE : FALSE;
 
 } /* wms_ruim_write_smsp() */
@@ -1189,6 +1224,194 @@ boolean wms_ruim_write_smss
 
 } /* wms_ruim_write_smss() */
 
+#ifdef CUST_EDITION
+/*===========================================================================
+
+FUNCTION AT_wms_ruim_report
+
+DESCRIPTION
+  Accept status reports from R-UIM
+  Set the global status and signal WMS task that status has arrived.
+
+DEPENDENCIES
+  Non-reentrant
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+void AT_wms_ruim_report
+(
+  uim_rpt_type *report           /* R-UIM command status report */
+)
+{
+  wms_ruim_status_report = report->rpt_status;
+  //(void)rex_set_sigs( &wms_tcb, WMS_RUIM_ACCESS_SIG );
+  (void) rex_set_sigs( &ds_tcb, DS_UIM_CMD_SIG);
+
+} /* sms_ruim_report() */
+
+/*===========================================================================
+
+FUNCTION AT_wms_ruim_access
+
+DESCRIPTION
+  Access the R-UIM
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+uim_rpt_status AT_wms_ruim_access
+(
+  uim_cmd_type *cmd_ptr       /* R-UIM command                               */
+)
+{
+  rex_sigs_type sigs;
+  cmd_ptr->access_uim.hdr.command = UIM_ACCESS_F; /* "Access" an EF    */
+
+  /* Indicate command completion is to be signaled:
+   *    Do not signal the WMS Task
+   *    Use no signal
+   *    No "done" queue
+   *    Status call-back function
+   *    Always Report status
+   */
+  cmd_ptr->access_uim.hdr.cmd_hdr.task_ptr = NULL;
+  cmd_ptr->access_uim.hdr.cmd_hdr.sigs = 0;
+  cmd_ptr->access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+
+  cmd_ptr->hdr.rpt_function = AT_wms_ruim_report;
+  cmd_ptr->hdr.protocol = UIM_CDMA;
+  cmd_ptr->hdr.slot     = UIM_SLOT_AUTOMATIC;
+  cmd_ptr->access_uim.hdr.options = UIM_OPTION_ALWAYS_RPT;
+
+  /* Send the command to the R-UIM:
+   *    Clear the "command done signal"
+   *    Send the command
+   *    Wait for the command to be done
+   */
+
+  //(void) rex_clr_sigs( &wms_tcb, WMS_RUIM_ACCESS_SIG );
+  (void) rex_clr_sigs( &ds_tcb, DS_UIM_CMD_SIG);
+  
+  uim_cmd( cmd_ptr );
+  wms_kick_dog();
+   
+  dog_report( DOG_DS_RPT );
+  while(1)
+  {
+    /* wait for DOG signal at the same time */
+    sigs = rex_wait( DS_UIM_CMD_SIG | WMS_RPT_TIMER_SIG );
+
+    /* Kick the dog during the wait */
+    if( sigs & WMS_RPT_TIMER_SIG )
+    {
+      wms_kick_dog();
+      dog_report( DOG_DS_RPT );
+    }
+    if( sigs & DS_UIM_CMD_SIG )
+    {
+      /* Done */
+      (void) rex_clr_sigs( &ds_tcb, DS_UIM_CMD_SIG);
+      break;
+    }
+    /* Otherwise continue to wait */
+  }
+
+  return(wms_ruim_status_report);
+
+} /* AT_wms_ruim_access */
+
+
+boolean AT_wms_ruim_read_sms
+(
+  wms_message_index_type   index,
+  uint8                    * data
+)
+{
+  uim_rpt_status status; /* status of ruim operation */
+  /* Set up cmd item */
+  cmd.access_uim.num_bytes = (uint16)cfg_s_ptr->ruim_sms_rec_len;
+  cmd.access_uim.data_ptr  = data;
+  cmd.access_uim.offset    = (uint16)(index + 1);
+
+  cmd.access_uim.item      = cfg_s_ptr->ruim_sms_file_name;
+
+  cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+  cmd.access_uim.access    = UIM_READ_F;
+  status = AT_wms_ruim_access( &cmd );
+
+  return (status==UIM_PASS) ? TRUE : FALSE;
+
+} /* AT_wms_ruim_read_sms() */
+
+
+boolean AT_wms_ruim_write_sms
+(
+  wms_message_index_type   index,
+  uint8                    * data,
+  boolean                  is_prl_update
+)
+{
+  uim_rpt_status status; /* status of ruim operation */
+
+  /* cmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE; */
+  if ((data[1]+2) <= cfg_s_ptr->ruim_sms_rec_len)
+  {
+     cmd.access_uim.num_bytes = data[1]+2;
+  }
+  else
+  {
+     cmd.access_uim.num_bytes = cfg_s_ptr->ruim_sms_rec_len;
+  }
+  cmd.access_uim.data_ptr = data;
+  cmd.access_uim.offset   = (uint16)(index+1);
+
+  cmd.access_uim.item     = cfg_s_ptr->ruim_sms_file_name;
+
+  cmd.access_uim.rec_mode = UIM_ABSOLUTE;
+  cmd.access_uim.access   = UIM_WRITE_F;
+  status = AT_wms_ruim_access( &cmd );
+
+  if(is_prl_update && (status == UIM_PASS))
+  {
+    /* Must do 1 more read to get the correct user data */
+    if(AT_wms_ruim_read_sms(index, data) == FALSE)
+    {
+      status = UIM_FAIL;
+    }
+  }
+
+  return (status==UIM_PASS) ? TRUE : FALSE;
+
+} /* AT_wms_ruim_write_sms() */
+
+/*
+*/
+boolean AT_wms_ruim_delete_sms
+(
+  wms_message_index_type  index
+)
+{
+  /* Clear out the record
+  */
+  ruim_data[0] = WMS_TAG_NONE;
+  ruim_data[1] = 0;
+
+  return AT_wms_ruim_write_sms( index, ruim_data, FALSE );
+} /* AT_wms_ruim_delete_sms() */
+
+#endif
 #endif /* FEATURE_CDSMS_RUIM */
 
 /* End of wmsruim.c */

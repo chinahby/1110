@@ -4066,19 +4066,19 @@ uim_cmd_type     *cmd
     default:
       status = uim_generic_command_response (rsp_ptr, cmd);
       break;
-
-    // 没有本段代码的后果：进入UTK二级菜单后不能退到一级菜单
-    #ifdef FEATURE_UIM_TOOLKIT
-    #ifdef FEATURE_UTK2
-    if (cmd->hdr.command == UIM_TERMINAL_RESPONSE_F &&
-        status != UIM_CMD_FETCH)
-    {
-        set_UTK_session_status(UIM_TK_END_PROACTIVE_SESSION);
-    }
-    #endif  
-    #endif
-      
   }
+  
+// 没有本段代码的后果：进入UTK二级菜单后不能退到一级菜单
+#ifdef FEATURE_UIM_TOOLKIT
+#ifdef FEATURE_UTK2
+  if (cmd->hdr.command == UIM_TERMINAL_RESPONSE_F &&
+      status != UIM_CMD_FETCH)
+  {
+    set_UTK_session_status(UIM_TK_END_PROACTIVE_SESSION);
+  }
+#endif  
+#endif
+
   return(status);
 } /* uim_command_response */
 
@@ -8618,6 +8618,9 @@ dword dummy
     ** ------------------------------------------------------- */
     if ((rex_signals_mask & UIM_RPT_TIMER_SIG) != 0)
     {
+#ifdef CUST_EDITION
+      (void) rex_clr_sigs( &uim_tcb, UIM_RPT_TIMER_SIG);
+#endif
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
       if (btCurInitFlg == 0)
       {

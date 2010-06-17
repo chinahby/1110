@@ -1386,12 +1386,14 @@ typedef enum
   WMS_TELESERVICE_GSM1x_08           = 4111,  /* Reserved for now */
   WMS_TELESERVICE_GSM1x_09           = 4112,  /* Reserved for now */
   WMS_TELESERVICE_GSM1x_10           = 4113,  /* Reserved for now */
+
+  WMS_TELESERVICE_IMSST              = 4242,  /* IMS Services Teleservice */
 #ifdef CUST_EDITION  
 #ifdef FEATURE_CARRIER_ISRAEL_PELEPHONE
   WMS_TELESERVICE_ISRAEL_SILENT      = 49858,  /* silent sms      */
 #endif
   
-#ifdef FEATURE_CHINAUNICOM_REG
+#ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
   WMS_TELESERVICE_CHINAUNICOMREG     = 65005, /* 联通开机注册 */
 #endif  
 
@@ -1399,10 +1401,10 @@ typedef enum
   WMS_TELESERVICE_QMA_EMAIL          = 65490,  /* UMS for QMA */
   WMS_TELESERVICE_QMA_WPUSH          = 65002,  /* QMA Wap push message service ID */
   WMS_TELESERVICE_QMA_PMAIL          = 65497,  /* Photo Mail for QMA */
+#elif defined (FEATURE_CARRIER_CHINA_TELCOM)
+  WMS_TELESERVICE_WPUSH              = 65002,  /* China telecom Wap push message service ID  */
 #endif
 #endif /*CUST_EDITION*/
-  WMS_TELESERVICE_IMSST              = 4242,  /* IMS Services Teleservice */
-
   /*---------------------------------------------------------------------
      The following are defined as extensions to the standard teleservices
   -----------------------------------------------------------------------*/

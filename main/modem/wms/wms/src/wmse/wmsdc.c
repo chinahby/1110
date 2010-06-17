@@ -408,8 +408,13 @@ void wms_dc_enable_auto_disc_proc
   MSG_MED("wms_dc_enable_auto_disc_proc()",0,0,0);
 
   dc_s_ptr->idle_timeout = cmd_ptr->cmd.dc_enable_auto_disc.timeout * 1000;
-
-
+#ifdef CUST_EDITION
+  if ((dc_s_ptr->call_active) && (dc_s_ptr->idle_timeout != 0))
+  {
+     dc_s_ptr->auto_disc_active = TRUE;
+     (void) rex_set_timer(&dc_s_ptr->idle_timer, dc_s_ptr->idle_timeout);
+  }
+#endif
   wms_client_cmd_status( cmd_ptr, cmd_err );
 
   /* Send event
@@ -960,12 +965,19 @@ void wms_dc_init
 #endif /* FEATURE_APPS_POWER_COLLAPSE */
 
 #endif /* FEATURE_CDSMS */
-
+#ifdef CUST_EDITION
+  dc_s_ptr->bInTC = FALSE;
+#endif
   /* done */
   return;
 } /* wms_dc_init */
-
-
+#ifdef CUST_EDITION
+void wms_dc_setTCflag(boolean bFlg)
+{
+    dc_s_ptr = wms_dc_s_ptr();
+    dc_s_ptr->bInTC = bFlg;
+}
+#endif
 #endif /* FEATURE_CDSMS || FEATURE_GWSMS */
 
 /* END of wms_dc.c */

@@ -405,6 +405,7 @@ SIDE EFFECTS
   None
 
 =========================================================================*/
+#ifndef CUST_EDITION
 wms_status_e_type wms_ts_encode_CDMA_bd
 (
   const wms_client_bd_s_type                * cl_bd_ptr,       /* IN */
@@ -1386,6 +1387,946 @@ wms_status_e_type wms_ts_encode_CDMA_bd
 
 } /* end of wms_ts_encode_CDMA_bd() */
 
+#else
+wms_status_e_type wms_ts_encode_CDMA_bd
+(
+  const wms_client_bd_s_type                * cl_bd_ptr,       /* IN */
+  wms_raw_ts_data_s_type                    * raw_bd_ptr       /* OUT */
+)
+{
+    uint16      pos;      /* running position in bytes */
+    uint16      bit_pos;  /* position in bits */
+    uint8       parm_len;
+    uint8       * parm_len_ptr;
+    uint8       i;
+    uint8       digit_size = 8;
+    uint8       data_length = 0;
+    
+    static wms_client_bd_s_type is91ep_raw_bd;
+    
+    wms_status_e_type           st = WMS_OK_S;
+    uint8                       * data;
+#ifdef FEATURE_SMS_UDH
+    uint8                   padding_bits = 0;
+    int                     num_digits =0;
+#endif /* FEATURE_SMS_UDH */
+
+#ifdef FEATURE_CDSMS_IS637B_BROADCAST_SCPT
+    uint16                    j, k;
+#endif /* FEATURE_CDSMS_IS637B_BROADCAST_SCPT */
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /*---- checking ---- */
+    if (cl_bd_ptr == NULL || raw_bd_ptr == NULL)
+    {
+        MSG_ERROR("wms_ts_encode_CDMA_bd null ptr!",0,0,0);
+        return WMS_NULL_PTR_S;
+    }
+
+    data = raw_bd_ptr->data;
+
+    /* encoding for only CDMA format is needed at this time */
+    raw_bd_ptr->format = WMS_FORMAT_CDMA;
+
+    pos = 0;
+    
+    if (cl_bd_ptr->mask & WMS_MASK_BD_MSG_ID)
+    {
+        data[pos] = (uint8) WMS_BD_MSG_ID; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 3;
+        pos++; /* skip parm len */
+        
+        bit_pos = (uint16)(8 * pos);
+        
+        b_packb((uint8) cl_bd_ptr->message_id.type, data, (uint16)(bit_pos), 4);
+        bit_pos += 4;
+        
+        b_packw((uint16) cl_bd_ptr->message_id.id_number, data, (uint16)(bit_pos), 16);
+        bit_pos += 16;
+
+#ifdef FEATURE_SMS_UDH
+        b_packb((cl_bd_ptr->message_id.udh_present ? 1:0), data, bit_pos, 1);
+        bit_pos += 1;
+#endif /* FEATURE_SMS_UDH */
+
+        /* pad reserved bits with 0
+        */
+#ifdef FEATURE_SMS_UDH
+        b_packb(0, data, bit_pos, 3);
+        bit_pos += 3;
+#else /* FEATURE_SMS_UDH */
+        b_packb(0, data, bit_pos, 4);
+        bit_pos += 4;
+#endif /* FEATURE_SMS_UDH */
+
+        pos += parm_len; /* skip parm data */
+    } /* end of MsgId */
+
+
+    if ((cl_bd_ptr->mask & WMS_MASK_BD_USER_DATA) ||
+        (cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP &&
+         cl_bd_ptr->user_data.is91ep_type == WMS_IS91EP_CLI_ORDER))
+    {
+        data[pos] = (uint8) WMS_BD_USER_DATA; /* parm id */
+        pos++;
+    
+        parm_len_ptr = data+pos;
+        pos++; /* skip parm len */
+    
+        bit_pos = (uint16)(pos * 8);
+    
+        b_packb((uint8) cl_bd_ptr->user_data.encoding, data, bit_pos, 5);
+        bit_pos += 5;
+
+        if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP)
+        {
+            /* verify that number_of_digits == data_len
+            */
+            if (cl_bd_ptr->user_data.number_of_digits != cl_bd_ptr->user_data.data_len)
+            {
+                MSG_HIGH("enc UD sz err: %d!=%d", cl_bd_ptr->user_data.number_of_digits,
+                          cl_bd_ptr->user_data.data_len, 0 );
+                st = WMS_INVALID_USER_DATA_SIZE_S;
+            }
+
+            if (st == WMS_OK_S)
+            {
+                b_packb((uint8) cl_bd_ptr->user_data.is91ep_type, data, bit_pos, 8);
+                bit_pos += 8;
+
+                if (cl_bd_ptr->user_data.is91ep_type == WMS_IS91EP_CLI_ORDER)
+                {
+                    digit_size = 4;
+                }
+                else
+                {
+                    digit_size = 6;
+                }
+                
+                /* Must encode is91ep first before packing user_data */
+                st = wms_ts_encode_IS91EP_payload(cl_bd_ptr, & is91ep_raw_bd);
+            } /* if st==OK */
+        }
+        else /* all the other encoding types */
+        {
+            /* will pack the raw bits */
+            digit_size = 8;
+        }
+
+
+        if (st == WMS_OK_S)
+        {
+            /* pack the num_fields parameter
+            */
+#ifdef FEATURE_SMS_UDH
+            if (cl_bd_ptr->message_id.udh_present)
+            {
+                uint8   udhl = 0;
+                uint8   fill_bits = 0;
+                //int     position =0;
+                //uint8   shift_bits = 0;
+                int     nTep;
+                num_digits = cl_bd_ptr->user_data.number_of_digits;
+                
+                memset(raw_ts.data,0,WMS_MAX_LEN);
+                
+                /* Check for Memory Corruption - raw_ts.data[WMS_MAX_LEN] */
+                if (wms_ts_compute_user_data_header_length(cl_bd_ptr->user_data.num_headers, cl_bd_ptr->user_data.headers) <= WMS_CDMA_USER_DATA_MAX)
+                {
+                    /* Use raw_ts as a temporay buffer of the result */
+                    udhl = wms_ts_encode_user_data_header(cl_bd_ptr->user_data.num_headers,
+                                                          cl_bd_ptr->user_data.headers,
+                                                          raw_ts.data ); /* OUT */
+                }
+                else
+                {
+                    MSG_ERROR("Encode User Data Header Exceeds Capacity - Skipping UDH", 0, 0, 0);
+                    st = WMS_INVALID_USER_DATA_SIZE_S;
+                }
+
+                if (st == WMS_OK_S)
+                {
+                    data_length = udhl+1;
+                    if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_GSM_7_BIT_DEFAULT ||
+                        cl_bd_ptr->user_data.encoding == WMS_ENCODING_ASCII || 
+                        cl_bd_ptr->user_data.encoding == WMS_ENCODING_IA5)
+                    {
+                        uint32 total_bits_occupied = (udhl+1)*8;
+                        // 计算填充位: 消息体与头部间?奶畛湮?(Septet Boundary)
+                        fill_bits = total_bits_occupied % 7;
+                        
+                        if (fill_bits != 0)
+                        {
+                            fill_bits = 7 - fill_bits;
+                        }
+                        
+                        // Calculate the new value of number of septets that make the User data
+                        num_digits = cl_bd_ptr->user_data.number_of_digits + (total_bits_occupied + fill_bits) / 7;
+                
+                        // 计算尾部填充位
+                        padding_bits =  8 - (num_digits * 7) % 8; 
+                        padding_bits = (padding_bits==8 ? 0 : padding_bits);
+                        
+                        /* Pack in the num_fields */
+                        b_packb((uint8)num_digits, data, bit_pos, 8);
+                        bit_pos += 8;
+                        
+                        /* Pack in the header fields */
+                        for (i=0; i< data_length; i++, bit_pos += 8)
+                        {
+                            b_packb(raw_ts.data[i], data, bit_pos, 8);
+                        }
+                          
+                        /* Pack in the user_data fields */
+                        nTep = WMS_MAX_LEN - data_length;
+                        data_length = cl_bd_ptr->user_data.data_len;
+                        if (nTep >= data_length)
+                        {
+                            // 填充位填0
+                            if (fill_bits > 0)
+                            {
+                                b_packb(0, data, bit_pos, fill_bits);
+                                bit_pos+=fill_bits;
+                            }
+                            
+                            for (i=0; i<data_length; i++, bit_pos += 8)
+                            {
+                                b_packb(cl_bd_ptr->user_data.data[i], data, bit_pos, 8);
+                            }
+                            
+                            bit_pos -= padding_bits;
+                        }
+                        else
+                        {
+                            MSG_ERROR("Encode User Data Exceeds Capacity", 0, 0, 0);
+                            st = WMS_INVALID_USER_DATA_SIZE_S;
+                        }
+                        //position = udhl+ 1;
+                        //shift_bits = fill_bits;
+                    }
+                    else if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_UNICODE)
+                    {
+                        /* if not an even number, add fill bits */
+                        /*
+                        if ((udhl+1) % 2 != 0)
+                        {
+                            fill_bits = 8;
+                        }
+                        num_digits = (cl_bd_ptr->user_data.number_of_digits * 16 + (udhl + 1)*8 + fill_bits)/16;
+                        shift_bits = fill_bits;*/
+                        /* if not an even number, add fill bits */
+                        if ((udhl+1) % 2 != 0)
+                        {
+                            padding_bits = 8;
+                        }
+                        else
+                        {
+                            padding_bits = 0;
+                        }
+                        num_digits = cl_bd_ptr->user_data.number_of_digits + ((udhl + 1)*8 + padding_bits)/16;
+                        fill_bits = 0;
+              
+                        /* Pack in the num_fields */
+                        b_packb((uint8)num_digits, data, bit_pos, 8);
+                        
+                        bit_pos += 8;
+              
+                        /* Pack in the header fields */
+                        for (i=0; i< data_length; i++, bit_pos += 8)
+                        {
+                            b_packb(raw_ts.data[i], data, bit_pos, 8);
+                        }
+              
+                        /* Pack in the user_data fields */
+                        nTep = WMS_MAX_LEN - data_length;
+                        data_length = cl_bd_ptr->user_data.data_len;
+                        if (nTep >= data_length)
+                        {
+                            //MSG_ERROR("data_length=%d   %d", data_length, num_digits, 0);
+                            for (i=0; i< data_length; i++, bit_pos += 8 )
+                            {
+                                b_packb(cl_bd_ptr->user_data.data[i], data, bit_pos, 8);
+                            }
+                        }
+                        else
+                        {
+                            MSG_ERROR("Encode User Data Exceeds Capacity", 0, 0, 0);
+                            st = WMS_INVALID_USER_DATA_SIZE_S;
+                        }
+                    }
+                    else
+                    {
+                        num_digits += udhl + 1;
+                        
+                        padding_bits=0;
+                        
+                        data_length = udhl+1;
+              
+                        /* Pack in the num_fields */
+                        b_packb((uint8)num_digits, data, bit_pos, 8);
+                        
+                        bit_pos += 8;
+              
+                        /* Pack in the header fields */
+                        for (i=0; i< data_length; i++, bit_pos += digit_size)
+                        {
+                            b_packb(raw_ts.data[i], data, bit_pos, digit_size);
+                        }
+              
+                        /* Pack in the user_data fields */
+                        nTep = WMS_MAX_LEN - data_length;
+                        data_length = cl_bd_ptr->user_data.data_len;
+                        if (nTep >= data_length)
+                        {
+                            for (i=0; i< data_length; i++, bit_pos += digit_size)
+                            {
+                                b_packb(cl_bd_ptr->user_data.data[i], data, bit_pos, digit_size);
+                            }
+                        }
+                        else
+                        {
+                            MSG_ERROR("Encode User Data Exceeds Capacity", 0, 0, 0);
+                            st = WMS_INVALID_USER_DATA_SIZE_S;
+                        }
+                    }
+                }
+            }
+            else /* ELSE for if (cl_bd_ptr->message_id.udh_present == TRUE )*/
+#endif /* FEATURE_SMS_UDH */
+            {
+                if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP)
+                {
+                    b_packb((uint8) is91ep_raw_bd.user_data.number_of_digits, data, bit_pos, 8);
+                }
+                else
+                {
+                    b_packb(cl_bd_ptr->user_data.number_of_digits, data, bit_pos, 8);
+                }
+                bit_pos += 8;
+            }
+
+#ifdef FEATURE_SMS_UDH
+            if (!cl_bd_ptr->message_id.udh_present)
+#endif /* FEATURE_SMS_UDH */
+            {
+                /* Use the correct data_len */
+                if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP)
+                {
+                    data_length = is91ep_raw_bd.user_data.data_len;
+                }
+                else
+                {
+                    if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_GSM_7_BIT_DEFAULT)
+                    {
+                        data_length = (uint8) wms_ts_pack_gw_7_bit_chars(
+                                               cl_bd_ptr->user_data.data,
+                                               cl_bd_ptr->user_data.number_of_digits,
+                                               0,
+                                               (uint16) WMS_MAX_LEN - (bit_pos/8),
+                                               raw_ts.data);
+                    }
+                    else
+                    {
+                        data_length = cl_bd_ptr->user_data.data_len;
+                    }
+                }
+    
+                /* pack the raw data bits
+                */
+                for (i=0; i<data_length; i++, bit_pos += digit_size)
+                {
+                    if (i >= WMS_CDMA_USER_DATA_MAX)
+                    {
+                        MSG_HIGH( "encoding: UD too big: %d",
+                                cl_bd_ptr->user_data.data_len, 0, 0 );
+                        st = WMS_INVALID_USER_DATA_SIZE_S;
+                        break; /* out of for loop */
+                    }
+
+                    if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP)
+                    {
+                        b_packb(is91ep_raw_bd.user_data.data[i], data, bit_pos, digit_size);
+                    }
+                    else if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_GSM_7_BIT_DEFAULT)
+                    {
+                        b_packb(raw_ts.data[i], data, bit_pos, digit_size);
+                    }
+                    else
+                    {
+                        b_packb(cl_bd_ptr->user_data.data[i], data, bit_pos, digit_size);
+                    }
+                } /* for */
+            } 
+        } /* if st==OK */
+
+        if (st == WMS_OK_S)
+        {
+            /*
+            ** The 'data' field has padded with bits of 'padding_bits', which should
+            ** be subtracted from the final padding.
+            */
+#ifdef FEATURE_SMS_UDH
+            if (cl_bd_ptr->message_id.udh_present)
+            {
+                // Add The Padding bits to make an octet boundary
+                bit_pos += padding_bits;
+            }
+            else
+#endif /* FEATURE_SMS_UDH */
+            {
+                bit_pos -= cl_bd_ptr->user_data.padding_bits;
+            }
+
+            if (bit_pos % 8 != 0)
+            {
+                /* pad 0 to remaining bits
+                */
+                digit_size = 8 - bit_pos % 8;
+                b_packb( 0, data, bit_pos,  digit_size );
+                bit_pos += digit_size;
+            }
+            
+            * parm_len_ptr = (uint8)(bit_pos / 8 - pos);
+            
+            pos += * parm_len_ptr; /* skip parm data */
+        }
+    } /* end of UserData encoding */
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_USER_RESP)
+    {
+        data[pos] = (uint8) WMS_BD_USER_RESP; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        data[pos] = cl_bd_ptr->user_response;
+        
+        pos += parm_len; /* skip parm data */
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_MC_TIME)
+    {
+        data[pos] = (uint8) WMS_BD_MC_TIME; /* parm id */
+        pos++;
+        
+        data[pos] = 6;
+        pos++; /* skip parm len */
+        
+        data[pos++] = cl_bd_ptr->mc_time.year;
+        data[pos++] = cl_bd_ptr->mc_time.month;
+        data[pos++] = cl_bd_ptr->mc_time.day;
+        data[pos++] = cl_bd_ptr->mc_time.hour;
+        data[pos++] = cl_bd_ptr->mc_time.minute;
+        data[pos++] = cl_bd_ptr->mc_time.second;
+        
+        /* pos: parm data already skipped */
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_VALID_ABS)
+    {
+        data[pos] = (uint8) WMS_BD_VALID_ABS; /* parm id */
+        pos++;
+        
+        data[pos] = 6;
+        pos++; /* skip parm len */
+        
+        data[pos++] = cl_bd_ptr->validity_absolute.year;
+        data[pos++] = cl_bd_ptr->validity_absolute.month;
+        data[pos++] = cl_bd_ptr->validity_absolute.day;
+        data[pos++] = cl_bd_ptr->validity_absolute.hour;
+        data[pos++] = cl_bd_ptr->validity_absolute.minute;
+        data[pos++] = cl_bd_ptr->validity_absolute.second;
+        
+        /* pos: parm data already skipped */
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_VALID_REL)
+    {
+        data[pos] = (uint8) WMS_BD_VALID_REL; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        data[pos] = wms_ts_encode_relative_time( & cl_bd_ptr->validity_relative );
+        
+        pos += parm_len; /* skip parm data */
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_DEFER_ABS)
+    {
+        data[pos] = (uint8) WMS_BD_DEFER_ABS; /* parm id */
+        pos++;
+        
+        data[pos] = 6;
+        pos++; /* skip parm len */
+        
+        data[pos++] = cl_bd_ptr->deferred_absolute.year;
+        data[pos++] = cl_bd_ptr->deferred_absolute.month;
+        data[pos++] = cl_bd_ptr->deferred_absolute.day;
+        data[pos++] = cl_bd_ptr->deferred_absolute.hour;
+        data[pos++] = cl_bd_ptr->deferred_absolute.minute;
+        data[pos++] = cl_bd_ptr->deferred_absolute.second;
+        
+        /* pos: parm data already skipped */
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_DEFER_REL)
+    {
+        data[pos] = (uint8) WMS_BD_DEFER_REL; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        data[pos] = wms_ts_encode_relative_time(&cl_bd_ptr->deferred_relative);
+        
+        pos += parm_len; /* skip parm data */
+    }
+
+    /* if is91ep_type is _VOICE_MAIL then the priority has been packed
+    ** in the user data
+    */
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_PRIORITY  &&
+        !(cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP &&
+          cl_bd_ptr->user_data.is91ep_type == WMS_IS91EP_VOICE_MAIL))
+    {
+        data[pos] = (uint8) WMS_BD_PRIORITY; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        b_packb((uint8)(cl_bd_ptr->priority), data, (uint16)(pos * 8), (uint16)2);
+        b_packb(0, data, (uint16)(pos * 8 + 2), 8); /* padding */
+        
+        pos += parm_len; /* skip parm data */
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_PRIVACY)
+    {
+        data[pos] = (uint8) WMS_BD_PRIVACY; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        b_packb((uint8) cl_bd_ptr->privacy, data, (uint16)(pos * 8), 2);
+        b_packb(0, data, (uint16)(pos * 8 + 2), 8); /* padding */
+        
+        pos += parm_len; /* skip parm data */
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_REPLY_OPTION)
+    {
+        data[pos] = (uint8) WMS_BD_REPLY_OPTION; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        bit_pos = (uint16)(pos * 8);
+        
+        data[pos] = 0; /* reset all 8 bits to 0 */
+        
+        b_packb(cl_bd_ptr->reply_option.user_ack_requested, data, bit_pos, 1);
+        bit_pos ++;
+        
+        b_packb(cl_bd_ptr->reply_option.delivery_ack_requested, data, bit_pos, 1);
+        bit_pos ++;
+        
+        b_packb(cl_bd_ptr->reply_option.read_ack_requested, data, bit_pos, 1);
+        bit_pos ++;
+        
+        pos += parm_len; /* skip parm data */
+    }
+
+    /* if is91ep_type is _VOICE_MAIL then the num of msgs has been packed
+    ** in the user data
+    */
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_NUM_OF_MSGS &&
+        !(cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP &&
+          cl_bd_ptr->user_data.is91ep_type == WMS_IS91EP_VOICE_MAIL))
+    {
+        data[pos] = (uint8) WMS_BD_NUM_OF_MSGS; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        /* two BCD digits ( e.g. 93 -> 1001 0011 ) */
+        b_packb(cl_bd_ptr->num_messages / 10, data+pos, 0, 4);
+        b_packb(cl_bd_ptr->num_messages % 10, data+pos, 4, 4);
+        
+        
+        if ((cl_bd_ptr->num_messages / 10) > 9)
+        {
+            MSG_ERROR("Param not in range", 0, 0, 0);
+            st = WMS_INVALID_PARM_VALUE_S;
+        }
+        
+        pos += parm_len; /* skip parm data */
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_ALERT)
+    {
+        data[pos] = (uint8) WMS_BD_ALERT; /* parm id */
+        pos++;
+        
+        if ((cl_bd_ptr->alert_mode == WMS_ALERT_MODE_OFF)
+            ||(cl_bd_ptr->alert_mode == WMS_ALERT_MODE_DEFAULT))
+        {
+            data[pos] = parm_len = 0;
+        }
+        else
+        {
+            data[pos] = parm_len = 1;
+            pos++; /* skip parm len */
+            
+            data[pos] = 0x00;
+            /* pack the 2-bit alert mode */
+            b_packb((uint8) cl_bd_ptr->alert_mode, data, (uint16)(pos*8), 2);
+        }
+        
+        pos += parm_len;
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_LANGUAGE)
+    {
+        data[pos] =  (uint8) WMS_BD_LANGUAGE; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        data[pos] = (uint8) (cl_bd_ptr->language);
+        
+        pos += parm_len;
+    }
+
+    /* if is91ep_type is _CLI_ORDER then the callback number has been packed
+    ** in the user data
+    */
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_CALLBACK &&
+        !(cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP &&
+          cl_bd_ptr->user_data.is91ep_type == WMS_IS91EP_CLI_ORDER))
+    {
+        data[pos] =  (uint8) WMS_BD_CALLBACK; /* parm id */
+        pos++;
+        
+        parm_len_ptr = data + pos; /* remember where is the len */
+        pos++; /* skip parm len */
+        
+        bit_pos = (uint16) (pos * 8);
+        
+        b_packb((uint8) cl_bd_ptr->callback.digit_mode, data, bit_pos, 1);
+        bit_pos ++;
+        
+        if (cl_bd_ptr->callback.digit_mode == WMS_DIGIT_MODE_8_BIT)
+        {
+            digit_size = 8;
+            
+            b_packb((uint8) cl_bd_ptr->callback.number_type, data, bit_pos, 3);
+            bit_pos += 3;
+            
+            b_packb((uint8) cl_bd_ptr->callback.number_plan, data, bit_pos, 4);
+            bit_pos += 4;
+        }
+        else
+        {
+            digit_size = 4;
+        }
+
+        b_packb(cl_bd_ptr->callback.number_of_digits, data, bit_pos, 8);
+        bit_pos += 8;
+        
+        for (i= 0; i < cl_bd_ptr->callback.number_of_digits; i ++)
+        {
+            b_packb(cl_bd_ptr->callback.digits[i], data, bit_pos, digit_size);
+            bit_pos += digit_size;
+        }
+
+        if (bit_pos % 8 != 0)
+        {
+            /* pad 0 to remaining bits
+            */
+            digit_size = 8 - bit_pos % 8;
+            b_packb(0, data, bit_pos,  digit_size);
+            bit_pos += digit_size;
+        }
+
+        /* pos points to beginning parm data. */
+        * parm_len_ptr = (uint8) (bit_pos / 8 - pos);
+        
+        pos += * parm_len_ptr; /* skip parm data */
+    } /* end of Callback Number */
+
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_DISPLAY_MODE)
+    {
+        data[pos] =  (uint8) WMS_BD_DISPLAY_MODE; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        data[pos] = 0x00;
+        /* pack the 2-bit display mode */
+        b_packb((uint8) cl_bd_ptr->display_mode, data, (uint16) (pos*8), 2);
+
+#if (defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT))
+        if (cl_bd_ptr->display_mode == WMS_DISPLAY_MODE_RESERVED)
+        {
+            /* pack the remaining 6 bits */
+            b_packb((uint8) cl_bd_ptr->download_mode, data, pos*8+2, 6);
+        }
+#endif /* defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT) */
+
+        pos += parm_len;
+    }
+
+
+#ifdef FEATURE_CDSMS_IS637B_BROADCAST_SCPT
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_SCPT_DATA)
+    {
+        data[pos] = (uint8) WMS_BD_SCPT_DATA; /* parm id */
+        pos++;
+        
+        parm_len_ptr = data + pos;
+        pos++; /* skip parm len */
+        
+        bit_pos = (uint8)pos * 8;
+        
+        /* Encoding is 5 bits. After this is one or more of the service
+        ** specific information
+        */
+        b_packb((uint8)cl_bd_ptr->scpt_data_ptr->encoding, data, bit_pos, 5);
+        bit_pos += 5;
+        
+        for (i = 0; i < cl_bd_ptr->scpt_data_ptr->num_entries; i ++)
+        {
+            /* Operation code
+            */
+            b_packb((uint8)cl_bd_ptr->scpt_data_ptr->entry[i].op_code, data, bit_pos, 4);
+            bit_pos += 4;
+            
+            /* Service category
+            */
+            b_packb((uint8)cl_bd_ptr->scpt_data_ptr->entry[i].srv_id.service, data, bit_pos, 16);
+            bit_pos += 16;
+            
+            /* Language
+            */
+            b_packb((uint8) cl_bd_ptr->scpt_data_ptr->entry[i].srv_id.language, data, bit_pos, 8);
+            bit_pos += 8;
+            
+            /* Max messages
+            */
+            b_packb(cl_bd_ptr->scpt_data_ptr->entry[i].max_messages, data, bit_pos, 8);
+            bit_pos += 8;
+            
+            /* Alert options
+            */
+            b_packb((uint8) cl_bd_ptr->scpt_data_ptr->entry[i].bc_alert, data, bit_pos, 4);
+            bit_pos += 4;
+            
+            /* Label length
+            */
+            b_packb(cl_bd_ptr->scpt_data_ptr->entry[i].label_len, data, bit_pos, 8);
+            bit_pos += 8;
+
+            /* NOTE: SHIFT-JIS or Korean are not supported here, since
+            ** they have variable digit sizes.
+            */
+            digit_size = wms_ts_cdma_encoding_digit_size(cl_bd_ptr->scpt_data_ptr->encoding);
+
+            if (digit_size == 16)
+            {
+                for (j=0, k=0; j < cl_bd_ptr->scpt_data_ptr->entry[i].label_len; j++)
+                {
+                    b_packb(cl_bd_ptr->scpt_data_ptr->entry[i].label[k], data, bit_pos, 8);
+                    bit_pos += 8;
+                    k ++;
+                    
+                    b_packb(cl_bd_ptr->scpt_data_ptr->entry[i].label[k], data, bit_pos, 8);
+                    bit_pos += 8;
+                    k ++;
+                } /* for */
+            }
+            else
+            {
+                for (j=0; j < cl_bd_ptr->scpt_data_ptr->entry[i].label_len; j++)
+                {
+                    b_packb(cl_bd_ptr->scpt_data_ptr->entry[i].label[j], data, bit_pos, digit_size);
+                    bit_pos += digit_size;
+                } /* for */
+            }
+        } /* for( i = 0; i < cl_bd_ptr->scpt_data_ptr->num_entries; i ++ ) */
+
+        if (bit_pos % 8 != 0)
+        {
+            /* pad 0 to remaining bits
+            */
+            digit_size = 8 - bit_pos % 8;
+            b_packb(0, data, bit_pos,  digit_size);
+            bit_pos += digit_size;
+        }
+
+        /* pos is pointing to the beginning of the parm data. */
+        /* Now fill in the parm len field */
+        * parm_len_ptr = (uint8)(bit_pos / 8 - pos);
+        
+        pos += * parm_len_ptr; /* skip parm data */
+    } /* end of SCPT data */
+
+    if (st == WMS_OK_S && (cl_bd_ptr->mask & WMS_MASK_BD_SCPT_RESULT))
+    {
+        uint16   old_pos;
+        
+        data[pos] = (uint8) WMS_BD_SCPT_RESULT; /* parm id */
+        pos++;
+        
+        parm_len_ptr = data + pos;
+        pos++; /* skip parm len */
+        
+        old_pos = pos; /* remember the start of the parm data */
+
+        for (i = 0; i < cl_bd_ptr->scpt_result_ptr->num_entries; i ++)
+        {
+            data[pos] = (uint8)((uint32)cl_bd_ptr->scpt_result_ptr->entry[i].srv_id.service >> 8);
+            pos ++;
+            
+            data[pos] = (uint8) ((uint32)cl_bd_ptr->scpt_result_ptr->entry[i].srv_id.service & 0xFF);
+            pos ++;
+            
+            data[pos] = (uint8)(cl_bd_ptr->scpt_result_ptr->entry[i].srv_id.language);
+            pos ++;
+            
+            data[pos] = (uint8) ((uint32)cl_bd_ptr->scpt_result_ptr->entry[i].status << 4);
+            pos ++;
+        }
+        
+        /* Now fill in the parm len field */
+        * parm_len_ptr = (uint8)(pos - old_pos);
+    } /* end of SCPT result */
+
+#endif /* FEATURE_CDSMS_IS637B_BROADCAST_SCPT */
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_DEPOSIT_INDEX)
+    {
+        data[pos] = (uint8) WMS_BD_DEPOSIT_INDEX; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 2;
+        pos++; /* skip parm len */
+        
+        /* Pack 16 bits of data for the deposit index field */
+        b_packw((uint16)cl_bd_ptr->deposit_index, data, (uint16) (pos * 8),  parm_len * 8);
+        
+        pos += parm_len; /* skip parm data */
+    }
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_DELIVERY_STATUS)
+    {
+        data[pos] = (uint8) WMS_BD_DELIVERY_STATUS; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        /* Pack 2 bits of data for the error class field */
+        b_packb((uint8) cl_bd_ptr->delivery_status.error_class,
+                data,
+                (uint16) (pos * 8),
+                2);
+        
+        /* Pack 6 bits of data for the message status field */
+        b_packb((uint8) cl_bd_ptr->delivery_status.status,
+                data,
+                (uint16) (pos * 8 + 2),
+                6 );
+    
+        pos += parm_len; /* skip parm data */
+    }
+
+#ifdef FEATURE_CDSMS_JCDMA
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_IP_ADDRESS)
+    {
+        data[pos] = (uint8) WMS_BD_IP_ADDRESS; /* parm id */
+        pos++;
+        
+        data[pos] = parm_len = 5;
+        pos++; /* skip parm len */
+        
+        {
+            uint16 old_pos = pos;
+            
+            for (i=0; i < WMS_IP_ADDRESS_SIZE; i++)
+            {
+                b_packb((uint8) cl_bd_ptr->ip_address.address[i],
+                        data,
+                        old_pos*8,
+                        8);
+                old_pos++;
+            }
+            
+            b_packb(cl_bd_ptr->ip_address.is_valid,
+                    data,
+                    old_pos*8,
+                    8);
+        }
+        pos += parm_len;
+    } /* end of ip address */
+
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_RSN_NO_NOTIFY)
+    {
+        data[pos] = (uint8) WMS_BD_RSN_NO_NOTIFY; /* parm id */
+        pos++;
+        
+        
+        data[pos] = parm_len = 1;
+        pos++; /* skip parm len */
+        
+        /* Pack pp and ss */
+        b_packb((uint8) cl_bd_ptr->rsn_no_notify, data, pos*8, 8);
+        
+        pos += parm_len; /* skip parm data */
+    } /* end of reason no notify */
+#endif /* FEATURE_CDSMS_JCDMA */
+
+    /* Encode generic other bearer data parameters */
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_OTHER)
+    {
+        if (NULL == cl_bd_ptr->other.other_data)
+        {
+            st = WMS_NULL_PTR_S;
+            MSG_ERROR("other_data=NULL!", 0,0,0);
+        }
+        else
+        {
+            memcpy(data+pos,
+                 cl_bd_ptr->other.other_data,
+                 cl_bd_ptr->other.input_other_len);
+            pos += cl_bd_ptr->other.input_other_len;
+        }
+    }
+
+    raw_bd_ptr->len = pos;
+    
+    if (st == WMS_OK_S && pos > WMS_MAX_LEN)
+    {
+        // encoded data has too many bytes
+        st = WMS_INVALID_PARM_SIZE_S;
+    }
+    
+    /* done */
+    return st;
+} /* end of wms_ts_encode_CDMA_bd() */
+#endif // #ifndef CUST_EDITION
 
 /* <EJECT> */
 /*=========================================================================
@@ -2057,7 +2998,11 @@ wms_status_e_type wms_ts_decode_CDMA_tl
     MSG_ERROR("wms_ts_decode_CDMA_tl null ptr!",0,0,0);
     return WMS_NULL_PTR_S;
   }
+#ifndef CUST_EDITION
   else if ( OTA_msg_ptr->data_len <= TL_HEADER_SIZE )
+#else
+  else if ( OTA_msg_ptr->data_len < TL_HEADER_SIZE )
+#endif
   {
     MSG_ERROR("** TL Msg too short: %d", OTA_msg_ptr->data_len, 0, 0 );
     return WMS_INVALID_PARM_SIZE_S;  /* SHORT-CIRCUIT RETURN */
@@ -2867,6 +3812,7 @@ COMMENTS
   If is_unpacked_user_data = TRUE, then there should be no UDH.
 
 =========================================================================*/
+#ifndef CUST_EDITION
 wms_status_e_type  wms_ts_decode_CDMA_bd
 (
   const wms_raw_ts_data_s_type       * raw_bd_ptr,   /* IN */
@@ -4033,6 +4979,1254 @@ wms_status_e_type  wms_ts_decode_CDMA_bd
 
 } /* end of wms_ts_decode_CDMA_bd() */
 
+#else
+wms_status_e_type  wms_ts_decode_CDMA_bd
+(
+  const wms_raw_ts_data_s_type       * raw_bd_ptr,   /* IN */
+  boolean                            is_unpacked_user_data, /* IN */
+  boolean                            decode_other,     /* IN */
+  wms_client_bd_s_type               * cl_bd_ptr       /* OUT */
+)
+{
+    wms_status_e_type           st = WMS_OK_S;
+    uint16                      pos;      /* running position in bytes */
+    uint16                      bit_pos;  /* position in bits */
+    wms_bd_sub_parm_id_e_type   parm_id = WMS_BD_DUMMY;
+    uint8                       parm_len;
+    uint8                       digit_size;
+    uint8                       i;
+    
+    uint8                       bd_len;
+    uint8                       * bd_data;
+    uint8                       desired_other_len = 0;
+    
+    static wms_client_bd_s_type is91ep_bd;  /* static for saving stack */
+
+#ifdef FEATURE_CDSMS_IS637B_BROADCAST_SCPT
+    int                         j, k;
+#endif /* FEATURE_CDSMS_IS637B_BROADCAST_SCPT */
+
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /*---- checking ---- */
+    if (raw_bd_ptr == NULL || cl_bd_ptr == NULL)
+    {
+        MSG_ERROR("wms_ts_decode_CDMA_bd null ptr!",0,0,0);
+        return WMS_NULL_PTR_S;
+    }
+    
+    bd_len = (uint8) MIN(raw_bd_ptr->len,WMS_MAX_LEN);
+    bd_data = (uint8*) raw_bd_ptr->data;
+    
+    cl_bd_ptr->mask = 0;
+
+    /* in case of null bearer data, return successful */
+    if (raw_bd_ptr->len == 0)
+    {
+        return WMS_OK_S;  /* SHORT-RETURN */
+    }
+
+    pos = 0;
+    
+    /*---- checking ----*/
+    
+    if (bd_len < 2)   /* the 2 bytes are parm id + parm len */
+    {
+        MSG_HIGH("** BD Msg too short: %d", bd_len, 0, 0 );
+        return WMS_INVALID_PARM_SIZE_S;  /* SHORT-CIRCUIT RETURN */
+    }
+    
+    /* bd_len is uint8, so it won't be greater than WMS_MAX_LEN */
+
+
+    /*------ start decoding ------*/
+    
+    /* the remain data has one or more of the following:
+     - PARAMETER_ID    8 bits
+     - PARAMETER_LEN   8 bits
+     - Parameter Data  8 x PARAMETER_LEN
+    */
+    
+    while (st == WMS_OK_S)
+    {
+        if (pos == bd_len)
+        {
+            /* Good. Done with parameter processing successfully */
+            break; /* out of while loop */
+        }
+        else if (pos + 2 > bd_len)   // 1 byte for parm_id, 1 for parm_len
+        {
+            /* Current position goes beyond the bearer data size. */
+            MSG_HIGH( "decoding: parameter (id=%d) extends beyond bd size %d",
+                    parm_id, bd_len, 0 );
+            st = WMS_INVALID_PARM_SIZE_S;
+            break; /* out of while loop */
+        }
+        
+        parm_id = (wms_bd_sub_parm_id_e_type) bd_data[ pos ];
+        pos ++;  /* skip parm id */
+        
+        parm_len = bd_data[ pos ];
+        pos ++;  /* skip parm len */
+
+
+        if (pos + parm_len > bd_len)
+        {
+            /* parm data passes the max length of bearer data
+            */
+            MSG_HIGH( "decoding: parameter (id=%d) extends beyond bd size %d",
+                    parm_id, bd_len, 0 );
+            st = WMS_INVALID_PARM_SIZE_S;
+            break; /* out of while loop */
+        }
+
+
+        /* Now pos should point to the parm data */
+        /* After each case below, pos should point to the next parm Id */
+
+        switch (parm_id)
+        {
+            case WMS_BD_MSG_ID:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_MSG_ID)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_MSG_ID;
+                
+                if (pos + parm_len > bd_len || parm_len < 3)
+                {
+                    MSG_ERROR("decoding: BD msg id len is not 3: %d. Reset to 3.", parm_len, 0, 0 );
+                    return WMS_INVALID_PARM_SIZE_S;
+                }
+                
+                bit_pos = (uint16) (pos * 8); /* prepare for using bit_pos */
+                
+                cl_bd_ptr->message_id.type = (wms_bd_message_type_e_type)
+                                                 b_unpackb( bd_data, bit_pos, 4 );
+                bit_pos += 4;
+                
+                cl_bd_ptr->message_id.id_number = b_unpackw(bd_data, bit_pos, 16);
+                bit_pos += 16;
+                
+#ifdef FEATURE_SMS_UDH
+                cl_bd_ptr->message_id.udh_present = b_unpackb(bd_data, bit_pos, 1);
+                bit_pos += 1;
+#else /* FEATURE_SMS_UDH */
+                cl_bd_ptr->message_id.udh_present = FALSE;
+#endif /* FEATURE_SMS_UDH */
+                
+                pos += parm_len; /* skip parm data */
+                
+                break;
+
+
+            case WMS_BD_USER_DATA:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_USER_DATA)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+
+                cl_bd_ptr->mask |= WMS_MASK_BD_USER_DATA;
+                
+                /* Now start using bit positions instead of byte positions
+                */
+                bit_pos = (uint16) (pos * 8);
+                
+                cl_bd_ptr->user_data.encoding = (wms_user_data_encoding_e_type)
+                                            b_unpackb( bd_data, bit_pos, 5 );
+                bit_pos += 5;
+
+                /* -------------------------------------------------------------------
+                  If the encoding is IS91EP, unpack the digits into user_data.data
+                  and set user_data.data_len to the number of digits. Then at the
+                  end of this function. these digits are further translated into
+                  corresponding BD fields (num_digits, callback, user_data). The final
+                  user_data is in the form of ASCII characters, each occupying a byte.
+                
+                  OTHERWISE, copy the raw bits into user_data.data and set
+                  user_data.data_len to the number of bytes of raw data, but not
+                  the number of digits, since we don't know/care the digit sizes
+                  of the other and potentially new user data encoding types.
+                ---------------------------------------------------------------------*/
+
+                if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP)
+                {
+                    cl_bd_ptr->user_data.is91ep_type = (wms_IS91EP_type_e_type)
+                                                 b_unpackb(bd_data, bit_pos, 8);
+                    bit_pos += 8;
+                    
+                    if (cl_bd_ptr->user_data.is91ep_type == WMS_IS91EP_CLI_ORDER)
+                    {
+                        digit_size = 4;
+                    }
+                    else
+                    {
+                        digit_size = 6;
+                    }
+                }
+                else /* for all the other encoding tpyes, copy the raw bits */
+                {
+                    digit_size = 8;
+                }
+
+                /* extract the number of digits field. this is only useful
+                   for IS91EP user data, since for other encoding types, we don't
+                   know the digit sizes.
+                */
+                cl_bd_ptr->user_data.number_of_digits = b_unpackb(bd_data,bit_pos,8 );
+                bit_pos += 8;
+
+
+                /* Extract each digits according to parm_len: */
+                for (i=0; bit_pos < (pos+parm_len)*8; i++, bit_pos += digit_size)
+                {
+                    if (i >= WMS_CDMA_USER_DATA_MAX)
+                    {
+                        MSG_HIGH("decoding: BD user data too big. len=%d", parm_len,0,0);
+                        st = WMS_INVALID_USER_DATA_SIZE_S;
+                        break; /* out of for loop */
+                    }
+                    
+                    cl_bd_ptr->user_data.data[i] = b_unpackb(bd_data, bit_pos, digit_size);
+                } /* for */
+
+                if (st == WMS_OK_S)
+                {
+                    if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP)
+                    {
+                        /* since we extracted each digit into a byte, hence the
+                        following two are the same to the client:
+                        */
+                        cl_bd_ptr->user_data.data_len = cl_bd_ptr->user_data.number_of_digits;
+                        
+                        /* 'i' might be greater than num_digits because of padding, but
+                        it cannot be smaller:
+                        */
+                        if (i < cl_bd_ptr->user_data.number_of_digits)
+                        {
+                            MSG_HIGH("decoding: UD sz error(%d<%d)", i, cl_bd_ptr->user_data.number_of_digits, 0);
+                            st = WMS_INVALID_USER_DATA_SIZE_S;
+                        }
+                    }
+#ifndef FEATURE_SMS_UDH
+                    else if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_ASCII ||
+                             cl_bd_ptr->user_data.encoding == WMS_ENCODING_IA5)
+                    {
+                        /* Reply on the number of characters/digits to set the
+                        ** data_len correctly.
+                        */
+                        cl_bd_ptr->user_data.data_len = (uint8) (( cl_bd_ptr->user_data.number_of_digits * 7 + 7 ) / 8);
+                        cl_bd_ptr->user_data.padding_bits =(uint8) ((cl_bd_ptr->user_data.data_len * 8) -
+                                        (cl_bd_ptr->user_data.number_of_digits * 7));
+                    }
+                    else if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_UNICODE)
+                    {
+                        cl_bd_ptr->user_data.data_len = (uint8) (cl_bd_ptr->user_data.number_of_digits * 2);
+                        cl_bd_ptr->user_data.padding_bits = 0;
+                    }
+                    else /* all the other encoding types */
+                    {
+                        /* in many cases, the len is not equal to num of digits */
+                        /* The last byte unpacked does not have useful data */
+                        // 缺省为 8 位编码，故 len == num of digits
+                        cl_bd_ptr->user_data.data_len = cl_bd_ptr->user_data.number_of_digits;
+                        //cl_bd_ptr->user_data.data_len = i - 1; /* ignore the last byte */
+                        cl_bd_ptr->user_data.padding_bits = 0;
+                    }
+#else
+                    else /* all the other encoding types */
+                    {
+                        cl_bd_ptr->user_data.data_len = i; 
+                        cl_bd_ptr->user_data.padding_bits = 0;
+                    }
+#endif
+                } /* if st==OK */
+                
+                pos += parm_len;  /* skip parm data */
+                
+                break;
+
+
+            case WMS_BD_USER_RESP:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_USER_RESP)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_USER_RESP;
+                
+                if (pos + parm_len > bd_len || parm_len < 1)
+                {
+                    /* bd data too short , or bad len field */
+                    st = WMS_INVALID_PARM_SIZE_S;
+                }
+                else
+                {
+                    cl_bd_ptr->user_response = b_unpackb(bd_data,
+                                              (uint16) (pos*8),
+                                              parm_len*8);
+                    pos += parm_len; /* skip parm data */
+                }
+                
+                break;
+
+
+            case WMS_BD_MC_TIME:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_MC_TIME)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_MC_TIME;
+                
+                cl_bd_ptr->mc_time.year   = bd_data[pos++];
+                cl_bd_ptr->mc_time.month  = bd_data[pos++];
+                cl_bd_ptr->mc_time.day    = bd_data[pos++];
+                cl_bd_ptr->mc_time.hour   = bd_data[pos++];
+                cl_bd_ptr->mc_time.minute = bd_data[pos++];
+                cl_bd_ptr->mc_time.second = bd_data[pos++];
+                break;
+
+
+            case WMS_BD_VALID_ABS:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_VALID_ABS)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_VALID_ABS;
+                
+                cl_bd_ptr->validity_absolute.year   = bd_data[pos++];
+                cl_bd_ptr->validity_absolute.month  = bd_data[pos++];
+                cl_bd_ptr->validity_absolute.day    = bd_data[pos++];
+                cl_bd_ptr->validity_absolute.hour   = bd_data[pos++];
+                cl_bd_ptr->validity_absolute.minute = bd_data[pos++];
+                cl_bd_ptr->validity_absolute.second = bd_data[pos++];
+                break;
+
+
+            case WMS_BD_VALID_REL:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_VALID_REL)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_VALID_REL;
+                
+                wms_ts_decode_relative_time(bd_data[pos++], &cl_bd_ptr->validity_relative);
+                break;
+
+
+            case WMS_BD_DEFER_ABS:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_DEFER_ABS)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_DEFER_ABS;
+                
+                cl_bd_ptr->deferred_absolute.year   = bd_data[pos++];
+                cl_bd_ptr->deferred_absolute.month  = bd_data[pos++];
+                cl_bd_ptr->deferred_absolute.day    = bd_data[pos++];
+                cl_bd_ptr->deferred_absolute.hour   = bd_data[pos++];
+                cl_bd_ptr->deferred_absolute.minute = bd_data[pos++];
+                cl_bd_ptr->deferred_absolute.second = bd_data[pos++];
+                break;
+
+
+            case WMS_BD_DEFER_REL:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_DEFER_REL)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_DEFER_REL;
+                
+                wms_ts_decode_relative_time(bd_data[pos++],
+                                     & cl_bd_ptr->deferred_relative);
+                
+                break;
+
+
+            case WMS_BD_PRIORITY:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_PRIORITY)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                if (parm_len == 0)
+                {
+                    /* bd data too short , or bad len field */
+                    return WMS_INVALID_PARM_SIZE_S;
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_PRIORITY;
+                
+                cl_bd_ptr->priority = (wms_priority_e_type)
+                                  b_unpackb(bd_data, (uint16) (pos * 8), 2);
+                
+                pos += parm_len;
+                
+                break;
+
+
+            case WMS_BD_PRIVACY:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_PRIVACY)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                cl_bd_ptr->mask |= WMS_MASK_BD_PRIVACY;
+                
+                cl_bd_ptr->privacy = (wms_privacy_e_type)
+                                  b_unpackb(bd_data, (uint16)(pos * 8), 2);
+                
+                pos += parm_len;
+                
+                break;
+
+
+            case WMS_BD_REPLY_OPTION:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_REPLY_OPTION)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                cl_bd_ptr->mask |= WMS_MASK_BD_REPLY_OPTION;
+                
+                cl_bd_ptr->reply_option.user_ack_requested =
+                           b_unpackb( bd_data, (uint16)(pos * 8), 1 );
+                cl_bd_ptr->reply_option.delivery_ack_requested =
+                           b_unpackb( bd_data, (uint16)(pos * 8 + 1), 1 );
+                cl_bd_ptr->reply_option.read_ack_requested =
+                           b_unpackb( bd_data, (uint16)(pos * 8 + 2), 1 );
+                
+                pos += parm_len;
+                
+                break;
+
+
+            case WMS_BD_NUM_OF_MSGS:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_NUM_OF_MSGS)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_NUM_OF_MSGS;
+                
+                if (pos + parm_len > bd_len || parm_len < 1)
+                {
+                    /* bd data too short , or bad len field */
+                    MSG_ERROR("Bearer data too short or bad len field",0,0,0);
+                    st = WMS_INVALID_PARM_SIZE_S;
+                }
+                else
+                {
+                    /* two BCD digits ( e.g. 93 -> 1001 0011 ) */
+                    
+                    cl_bd_ptr->num_messages  = 0;
+                    
+                    /* extract the first BCD digit */
+                    i = b_unpackb(bd_data, (uint16)(pos*8), 4);
+                    if (i < 10)
+                    {
+                        cl_bd_ptr->num_messages  = (uint8)(i * 10);
+                    }
+                    else
+                    {
+                        MSG_ERROR("Param not in range", 0, 0, 0);
+                        st = WMS_INVALID_PARM_VALUE_S;
+                        break;
+                    }
+                    
+                    /* extract the second BCD digit */
+                    i = b_unpackb(bd_data, (uint16)(pos*8 + 4), 4);
+                    if (i < 10)
+                    {
+                        cl_bd_ptr->num_messages  += i;
+                    }
+                    else
+                    {
+                        MSG_ERROR("Param not in range", 0, 0, 0);
+                        st = WMS_INVALID_PARM_VALUE_S;
+                        break;
+                    }
+                    
+                    pos += parm_len; /* skip parm data */
+                }
+                
+                break;
+
+
+            case WMS_BD_ALERT:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_ALERT)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_ALERT;
+                
+                if (parm_len == 0)
+                {
+                    /* The network still uses 637, not 637A/B yet */
+                    cl_bd_ptr->alert_mode = WMS_ALERT_MODE_DEFAULT;
+                }
+                else
+                {
+                    cl_bd_ptr->alert_mode = (wms_alert_mode_e_type)b_unpackb( bd_data, (uint16)(pos*8), 2 );
+                }
+                
+                pos += parm_len;   /* skip parm data */
+                
+                break;
+
+            case WMS_BD_LANGUAGE:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_LANGUAGE)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_LANGUAGE;
+                
+                if (pos + parm_len > bd_len || parm_len < 1)
+                {
+                    /* bd data too short */
+                    MSG_ERROR("Bearer data too short", 0, 0, 0);
+                    st = WMS_INVALID_PARM_SIZE_S;
+                }
+                else
+                {
+                    cl_bd_ptr->language = (wms_language_e_type)
+                              b_unpackb( bd_data, (uint16)(pos*8), parm_len*8 );
+                    pos += parm_len; /* skip parm data */
+                }
+                
+                break;
+
+
+            case WMS_BD_CALLBACK:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_CALLBACK)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_CALLBACK;
+                
+                /* Now start using bit positions instead of byte positions
+                */
+                bit_pos = (uint16) (pos * 8);
+                
+                cl_bd_ptr->callback.digit_mode = (wms_digit_mode_e_type)b_unpackb(bd_data, bit_pos, 1);
+                bit_pos ++;
+                
+                if (cl_bd_ptr->callback.digit_mode == WMS_DIGIT_MODE_8_BIT)
+                {
+                    cl_bd_ptr->callback.number_type = (wms_number_type_e_type)b_unpackb(bd_data,bit_pos,3);
+                    bit_pos += 3;
+                    
+                    cl_bd_ptr->callback.number_plan = (wms_number_plan_e_type)b_unpackb(bd_data, bit_pos, 4);
+                    bit_pos += 4;
+                    
+                    digit_size = 8;
+                }
+                else
+                {
+                    cl_bd_ptr->callback.number_type = WMS_NUMBER_UNKNOWN;
+                    cl_bd_ptr->callback.number_plan = WMS_NUMBER_PLAN_UNKNOWN;
+                    digit_size = 4;
+                }
+                
+                cl_bd_ptr->callback.number_of_digits = b_unpackb( bd_data, bit_pos, 8 );
+                bit_pos += 8;
+                
+                
+                /* extract all digits. if too long, truncate it.
+                */
+                if (cl_bd_ptr->callback.number_of_digits > WMS_ADDRESS_MAX)
+                {
+                    MSG_HIGH( "decoding: callback number too big: %d",
+                            cl_bd_ptr->callback.number_of_digits, 0, 0 );
+                            cl_bd_ptr->callback.number_of_digits = WMS_ADDRESS_MAX;
+                }
+                
+                for (i=0; i < cl_bd_ptr->callback.number_of_digits; i++)
+                {
+                    cl_bd_ptr->callback.digits[i] = b_unpackb(bd_data, bit_pos, digit_size);
+                    bit_pos += digit_size;
+                }
+                
+                pos += parm_len;  /* skip parm data */
+                
+                break;
+
+
+            case WMS_BD_DISPLAY_MODE:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_DISPLAY_MODE)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_DISPLAY_MODE;
+                
+                if (pos + parm_len > bd_len || parm_len < 1)
+                {
+                    /* bd data too short , or bad len field */
+                    MSG_ERROR("Bearer data too short or bad len field",0,0,0);
+                    st = WMS_INVALID_PARM_SIZE_S;
+                }
+                else
+                {
+                    cl_bd_ptr->display_mode = (wms_display_mode_e_type)
+                                                b_unpackb(bd_data, (uint16)(pos*8), 2);
+#if (defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT))
+                    if (cl_bd_ptr->display_mode == WMS_DISPLAY_MODE_RESERVED)
+                    {
+                        cl_bd_ptr->download_mode = (wms_download_mode_e_type)
+                        b_unpackb( bd_data, pos*8+2, 6 );
+                    }
+                    else
+                    {
+                        cl_bd_ptr->download_mode = WMS_DOWNLOAD_MODE_NONE;
+                    }
+#endif /* defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT) */
+                    pos += parm_len; /* skip parm data */
+                }
+                
+                break;
+
+
+#ifdef FEATURE_CDSMS_IS637B_BROADCAST_SCPT
+            case WMS_BD_SCPT_DATA:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_SCPT_DATA)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_SCPT_DATA;
+                
+                /* Now start using bit positions instead of byte positions
+                */
+                bit_pos = (uint16) (pos * 8);
+                
+                /* Encoding is 5 bits. After this is one or more of the service
+                ** specific information
+                */
+                
+                if (cl_bd_ptr->scpt_data_ptr == NULL)
+                {
+                    MSG_ERROR("null pointer in wms_ts_decode_CDMA_bd",0,0,0);
+                    return WMS_NULL_PTR_S;
+                }
+                else
+                {
+                    cl_bd_ptr->scpt_data_ptr->encoding = (wms_user_data_encoding_e_type)b_unpackb(bd_data, bit_pos, 5);
+                    bit_pos += 5;
+                    
+                    for (i = 0; i < WMS_BC_SCPT_MAX_SERVICES; i ++)
+                    {
+                        /* Operation code
+                        */
+                        cl_bd_ptr->scpt_data_ptr->entry[i].op_code =
+                                (wms_bc_scpt_op_code_e_type) b_unpackb(bd_data, bit_pos, 4);
+                        bit_pos += 4;
+                    
+                        /* Service category
+                        */
+                        cl_bd_ptr->scpt_data_ptr->entry[i].srv_id.service =
+                                    (wms_service_e_type) b_unpackw(bd_data, bit_pos, 16);
+                        bit_pos += 16;
+                        
+                        /* Language
+                        */
+                        cl_bd_ptr->scpt_data_ptr->entry[i].srv_id.language =
+                                    (wms_language_e_type) b_unpackb(bd_data, bit_pos, 8);
+                        bit_pos += 8;
+                        
+                        /* Max messages
+                        */
+                        cl_bd_ptr->scpt_data_ptr->entry[i].max_messages = b_unpackb(bd_data, bit_pos, 8);
+                        bit_pos += 8;
+                        
+                        /* Alert options
+                        */
+                        cl_bd_ptr->scpt_data_ptr->entry[i].bc_alert = (wms_bc_alert_e_type)
+                                    b_unpackb(bd_data, bit_pos, 4);
+                        bit_pos += 4;
+                        
+                        /* Label length
+                        */
+                        cl_bd_ptr->scpt_data_ptr->entry[i].label_len = b_unpackb(bd_data, bit_pos, 8);
+                        bit_pos += 8;
+                    
+                        /* NOTE: SHIFT-JIS or Korean are not supported here, since
+                        ** they have variable digit sizes.
+                        */
+                        digit_size = wms_ts_cdma_encoding_digit_size(cl_bd_ptr->scpt_data_ptr->encoding);
+                        
+                        /* Clear the label before assigning its new value */
+                        memset(cl_bd_ptr->scpt_data_ptr->entry[i].label, 0, WMS_BC_SRV_LABEL_SIZE);
+                    
+                    
+                        if (digit_size == 16)
+                        {
+                            for (j=0, k=0; j < cl_bd_ptr->scpt_data_ptr->entry[i].label_len; j++)
+                            {
+                                /* skip the digits if max label size has been reached */
+                                if (k < WMS_BC_SRV_LABEL_SIZE)
+                                {
+                                    cl_bd_ptr->scpt_data_ptr->entry[i].label[k] = b_unpackb(bd_data, bit_pos, 8);
+                                    k ++;
+                                }
+                                bit_pos += 8;
+                            
+                                if (k < WMS_BC_SRV_LABEL_SIZE)
+                                {
+                                    cl_bd_ptr->scpt_data_ptr->entry[i].label[k] = b_unpackb(bd_data, bit_pos, 8);
+                                    k ++;
+                                }
+                                bit_pos += 8;
+                            }
+                        }
+                        else
+                        {
+                            /* Handle 8-bit or 7-bit digit sizes
+                            */
+                            for (j=0; j < cl_bd_ptr->scpt_data_ptr->entry[i].label_len; j++)
+                            {
+                                /* skip the digits if max label size has been reached */
+                                if (j < WMS_BC_SRV_LABEL_SIZE)
+                                {
+                                    cl_bd_ptr->scpt_data_ptr->entry[i].label[j] = b_unpackb(bd_data, bit_pos, digit_size);
+                                }
+                                bit_pos += digit_size;
+                            } /* for */
+                        } /* if( digit_size == 16 ) */
+                    
+                        /* Check if it is the end of this parameter:
+                        ** (max padding bits is 7)
+                        */
+                        if (bit_pos+7 >= (pos+parm_len) * 8)
+                        {
+                            i ++; /* 'i' will be used as the number of entries */
+                            break;
+                        }
+                    } /* for( i = 0; i < WMS_SCPT_MAX_SERVICES; i ++ ) */
+                    
+                    cl_bd_ptr->scpt_data_ptr->num_entries = i;
+                    
+                    pos += parm_len;  /* skip parm data */
+                }
+                
+                break;
+
+            case WMS_BD_SCPT_RESULT:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_SCPT_RESULT)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+
+                cl_bd_ptr->mask |= WMS_MASK_BD_SCPT_RESULT;
+
+                /* Now start using bit positions instead of byte positions
+                */
+                bit_pos = (uint16) (pos * 8);
+                
+                if (cl_bd_ptr->scpt_result_ptr == NULL)
+                {
+                    MSG_ERROR("null pointer in wms_ts_decode_CDMA_bd",0,0,0);
+                    return WMS_NULL_PTR_S;
+                }
+                else
+                {
+                    for (i = 0; i < WMS_BC_SCPT_MAX_SERVICES; i++)
+                    {
+                        cl_bd_ptr->scpt_result_ptr->entry[i].srv_id.service =
+                                        (wms_service_e_type ) b_unpackw(bd_data, bit_pos, 16);
+                        bit_pos += 16;
+                        
+                        cl_bd_ptr->scpt_result_ptr->entry[i].srv_id.language =
+                                        (wms_language_e_type ) b_unpackb(bd_data, bit_pos, 8);
+                        bit_pos += 8;
+                        
+                        cl_bd_ptr->scpt_result_ptr->entry[i].status = (wms_bc_scpt_status_e_type)
+                                            b_unpackb(bd_data, bit_pos, 4);
+                        bit_pos += 4;
+                        
+                        bit_pos += 4; /* skip reserved bits */
+                        
+                        /* Check if it is the end of this parameter:
+                        */
+                        if (bit_pos >= (pos+parm_len) * 8)
+                        {
+                            i ++; /* 'i' will be used as the number of entries */
+                            break;
+                        }
+                    } /* for( i = 0; i < WMS_BC_SCPT_MAX_SERVICES; i ++ ) */
+                    
+                    cl_bd_ptr->scpt_result_ptr->num_entries = i;
+                    
+                    pos += parm_len;  /* skip parm data */
+                }
+                
+                break;
+
+#endif /* FEATURE_CDSMS_IS637B_BROADCAST_SCPT */
+
+            case WMS_BD_DEPOSIT_INDEX:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_DEPOSIT_INDEX)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_DEPOSIT_INDEX;
+                
+                /* Unpack message deposit index field, which has 16 bits */
+                cl_bd_ptr->deposit_index = b_unpackw(bd_data, (uint16)(pos * 8), 16);
+                
+                pos += parm_len;  /* skip parm data */
+                break;
+
+            case WMS_BD_DELIVERY_STATUS:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_DELIVERY_STATUS)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+
+                cl_bd_ptr->mask |= WMS_MASK_BD_DELIVERY_STATUS;
+
+                /* Unpack error class field, which has 2 bits */
+                cl_bd_ptr->delivery_status.error_class = (wms_error_class_e_type)
+                                             b_unpackb(bd_data, (uint16)(pos * 8), 2);
+                
+                /* Unpack message status field, which has 6 bits */
+                cl_bd_ptr->delivery_status.status = (wms_delivery_status_e_type) b_unpackb(bd_data, (uint16)(pos*8 + 2), 6);
+                
+                pos += parm_len;  /* skip parm data */
+                
+                break;
+
+#ifdef FEATURE_CDSMS_JCDMA
+            case WMS_BD_IP_ADDRESS:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_IP_ADDRESS)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                {
+                    uint16 old_pos = pos;
+                    
+                    cl_bd_ptr->mask |= WMS_MASK_BD_IP_ADDRESS;
+                    
+                    for (i = 0; i < WMS_IP_ADDRESS_SIZE; i++)
+                    {
+                    cl_bd_ptr->ip_address.address[i] =
+                      (uint8) b_unpackb(bd_data, old_pos*8, 8);
+                    old_pos++;
+                    }
+                    
+                    cl_bd_ptr->ip_address.is_valid =
+                      (boolean) b_unpackb(bd_data, old_pos*8, 8);
+                }
+                pos += parm_len;  /* skip parm data */
+                
+                break;
+
+            case WMS_BD_RSN_NO_NOTIFY:
+                if (cl_bd_ptr->mask & WMS_MASK_BD_RSN_NO_NOTIFY)
+                {
+                    MSG_DUP_PARM;
+                    pos += parm_len;    /* skip parm data */
+                    break;              /* continue with next parm */
+                }
+                
+                cl_bd_ptr->mask |= WMS_MASK_BD_RSN_NO_NOTIFY;
+                
+                /* Unpack pp and ss*/
+                cl_bd_ptr->rsn_no_notify = b_unpackb(bd_data, pos*8, 8);
+                
+                pos += parm_len; /* skip parm data */
+                
+                break;
+#endif /* FEATURE_CDSMS_JCDMA */
+
+            default:
+                MSG_HIGH( "Decoding BD: unrecognized parm_id: %d",  parm_id, 0, 0 );
+                MSG_HIGH( "Decoding BD: unrecognized parm_len: %d", parm_len, 0, 0 );
+                MSG_HIGH( "Decoding BD: new desired_other_len=%d", 
+                desired_other_len + parm_len + 2, 0, 0 );
+                cl_bd_ptr->mask |= WMS_MASK_BD_OTHER;
+                
+                if (TRUE == decode_other)
+                {
+                    MSG_HIGH("Decoding other parameters",0,0,0);
+                    if (cl_bd_ptr->other.input_other_len < desired_other_len+parm_len+2)
+                    {
+                        MSG_ERROR( "input_other_len %d < desired_other_len!",
+                        cl_bd_ptr->other.input_other_len, 0, 0 );
+                    }
+                    else if (NULL == cl_bd_ptr->other.other_data)
+                    {
+                        MSG_ERROR( "other_data==NULL!", 0,0,0);
+                    }
+                    else
+                    {
+                        cl_bd_ptr->other.other_data[desired_other_len]   = parm_id;
+                        cl_bd_ptr->other.other_data[desired_other_len+1] = parm_len;
+                        memcpy(cl_bd_ptr->other.other_data + desired_other_len + 2, bd_data+pos, parm_len);
+                    }
+                } /* if TRUE == decode_other */
+                
+                desired_other_len += parm_len + 2;
+                
+                pos += parm_len;    /* skip parm data */
+                break;              /* continue with next parm */
+        } /* switch */
+    } /* while loop */
+    
+    cl_bd_ptr->other.desired_other_len = desired_other_len;
+
+
+    /**** decode embedded IS91EP message *****/
+    
+    if (st == WMS_OK_S &&
+        cl_bd_ptr->mask & WMS_MASK_BD_USER_DATA &&
+        cl_bd_ptr->user_data.encoding == WMS_ENCODING_IS91EP)
+    {
+        /* To avoid memory conflict, copy the bearer data to a different place.
+        */
+        is91ep_bd = * cl_bd_ptr;
+        
+        st = wms_ts_decode_IS91EP_payload(is91ep_bd.user_data.is91ep_type,
+                                          is91ep_bd.user_data.number_of_digits,
+                                          (uint8*) is91ep_bd.user_data.data,
+                                          cl_bd_ptr   /* OUT */);
+        
+        if (st == WMS_OK_S)
+        {
+            /* Restore the previously decoded msg id field:
+            */
+            if (is91ep_bd.mask & WMS_MASK_BD_MSG_ID)
+            {
+                cl_bd_ptr->mask |= WMS_MASK_BD_MSG_ID;
+                cl_bd_ptr->message_id = is91ep_bd.message_id;
+            }
+        }
+        else
+        {
+            MSG_HIGH("error in function wms_ts_decode_IS91EP_payload",0,0,0);
+            return WMS_GENERAL_ERROR_S;
+        }
+    }  /* if */
+    /* end of embedded IS91EP msg processing */
+
+    cl_bd_ptr->user_data.num_headers = 0;
+
+#ifdef FEATURE_SMS_UDH
+    /* Decode GSM 7 bit characters and User Data Headers */
+    {
+        uint8    udhl = 0;
+        uint8    fill_bits = 0;
+        boolean  bIsStandard = TRUE;
+
+        /* Decode UDH's first
+        */
+        if ((cl_bd_ptr->message_id.udh_present == TRUE) && (!is_unpacked_user_data))
+        {
+            /* To avoid memory conflict, copy the user data to a different place.
+            */
+            cdma_user_data = cl_bd_ptr->user_data;
+            
+            udhl = wms_ts_decode_user_data_header(cdma_user_data.number_of_digits,
+                                                cdma_user_data.data,
+                                                & cl_bd_ptr->user_data.num_headers,/*OUT*/
+                                                cl_bd_ptr->user_data.headers);    /*OUT*/
+        
+            if ((udhl == 0) &&
+                (cdma_user_data.data[0] != 0) &&
+                (cdma_user_data.number_of_digits != 0) &&
+                ((cl_bd_ptr->user_data.encoding == WMS_ENCODING_ASCII) ||
+                 (cl_bd_ptr->user_data.encoding == WMS_ENCODING_IA5)))
+            {// 解码出错，尝试检查是否头部是按7位编码处理的
+                word  maxbitpos = cl_bd_ptr->user_data.data_len*8;
+                int nTep=0;
+                bit_pos = 0;
+                bIsStandard = FALSE;
+                
+                // 先将消息解码
+                for (i = 0; bit_pos<maxbitpos; i++)
+                {
+                    cl_bd_ptr->user_data.data[i] = b_unpackb(cdma_user_data.data, bit_pos, 7);
+                    bit_pos += 7;
+                }
+                
+                nTep = i;
+                for (i=0; i<nTep; i++)
+                {
+                    cdma_user_data.data[i]= cl_bd_ptr->user_data.data[i];
+                }
+                cl_bd_ptr->user_data.number_of_digits = nTep;
+                
+                // 再分析头部
+                udhl = wms_ts_decode_user_data_header(cdma_user_data.number_of_digits,
+                                                    cdma_user_data.data,
+                                                    & cl_bd_ptr->user_data.num_headers,/*OUT*/
+                                                    cl_bd_ptr->user_data.headers);    /*OUT*/
+                
+                
+                if (udhl+1 > cl_bd_ptr->user_data.number_of_digits)
+                {
+                    st = WMS_INVALID_PARM_SIZE_S;
+                }
+                else
+                {
+                    cl_bd_ptr->user_data.number_of_digits -= (udhl+1);
+                    
+                    bit_pos = 0;
+                    memset(&cdma_user_data, 0, sizeof(cdma_user_data));
+                    for (i = 0; i<cl_bd_ptr->user_data.number_of_digits; i++)
+                    {// 重新打包文本部份
+                        b_packb(cl_bd_ptr->user_data.data[udhl+1+i], cdma_user_data.data, bit_pos, 7);
+                        bit_pos += 7;
+                    }
+                    
+                    nTep = cl_bd_ptr->user_data.number_of_digits * 7;
+                    
+                    cl_bd_ptr->user_data.data_len = nTep/8;
+                    
+                    // 尾部填充位
+                    cl_bd_ptr->user_data.padding_bits = 0;
+                    if (nTep % 8 != 0)
+                    {
+                        cl_bd_ptr->user_data.data_len++;
+                        cl_bd_ptr->user_data.padding_bits = 8-nTep % 8;
+                    }
+                    for (i=0; i<cl_bd_ptr->user_data.data_len; i++)
+                    {
+                        cl_bd_ptr->user_data.data[i]=cdma_user_data.data[i];
+                    }
+                }
+            }
+            else if (udhl+1 > cdma_user_data.data_len)
+            {
+                st = WMS_INVALID_PARM_SIZE_S;
+            }
+            else if (cdma_user_data.encoding == WMS_ENCODING_GSM_7_BIT_DEFAULT)
+            {// 根据协议解码
+                /* Unpack GSM 7-bit characters */
+                
+                if (udhl > 0)
+                {
+                    /*The number of fill bits required to make a septet boundary*/
+                    fill_bits =((cl_bd_ptr->user_data.number_of_digits * 7) - ((udhl+1)*8) ) % 7;
+                    
+                    cl_bd_ptr->user_data.data_len = (uint8) (((cl_bd_ptr->user_data.number_of_digits * 7) - ((udhl+1)*8) ) / 7);
+                    
+                    if (fill_bits !=0)
+                    {
+                        fill_bits = 8-fill_bits;
+                    }
+                }
+            
+                cl_bd_ptr->user_data.number_of_digits =cl_bd_ptr->user_data.data_len;
+            
+                (void)wms_ts_unpack_gw_7_bit_chars(cdma_user_data.data + udhl + 1,
+                                                cl_bd_ptr->user_data.data_len,
+                                                WMS_CDMA_USER_DATA_MAX,
+                                                fill_bits,
+                                                cl_bd_ptr->user_data.data /* OUT */);
+            }
+            else if (cdma_user_data.encoding == WMS_ENCODING_ASCII || cdma_user_data.encoding == WMS_ENCODING_IA5)
+            {// 根据协议解码
+#if 0                
+                if (udhl > 0)
+                {
+                    fill_bits =( (cl_bd_ptr->user_data.number_of_digits * 7) - ((udhl+1)*8) ) % 7;
+                    if (fill_bits == 7)
+                    {
+                        fill_bits = 0;
+                    }
+                }
+            
+                cl_bd_ptr->user_data.number_of_digits = (uint8) (((cl_bd_ptr->user_data.number_of_digits * 7) - ((udhl+1)*8)) / 7);
+                
+                cl_bd_ptr->user_data.padding_bits = fill_bits;
+                
+                digit_size = 8;
+                bit_pos = ((udhl+1) * 8) + fill_bits;
+                cl_bd_ptr->user_data.data_len = cl_bd_ptr->user_data.number_of_digits;
+            
+                for (i = 0; i<cl_bd_ptr->user_data.number_of_digits; i++)
+                {
+                    cl_bd_ptr->user_data.data[i] = b_unpackb((uint8 *)cdma_user_data.data,
+                            (((udhl+1) * 8) + fill_bits) + (i*digit_size), digit_size);
+                }
+#else
+                if( udhl > 0 )
+                {
+                    /*The number of fill bits required to make a septet boundary*/
+                    fill_bits = 7 - ((udhl+1)*8) % 7;
+                    fill_bits = (fill_bits==7 ? 0 : fill_bits);
+                }
+                
+                // 先计算尾部填充位
+                cl_bd_ptr->user_data.padding_bits = 8 - cl_bd_ptr->user_data.number_of_digits * 7 % 8;
+                if (cl_bd_ptr->user_data.padding_bits == 8)
+                {
+                    cl_bd_ptr->user_data.padding_bits = 0;
+                }
+                
+                cl_bd_ptr->user_data.number_of_digits = cl_bd_ptr->user_data.number_of_digits - ((udhl+1)*8+fill_bits) / 7;
+                cl_bd_ptr->user_data.padding_bits = 8 - cl_bd_ptr->user_data.number_of_digits * 7 % 8;
+                
+                digit_size = 8;
+                // 解码时跳过填充位
+                bit_pos = ((udhl+1) * 8) + fill_bits;
+                cl_bd_ptr->user_data.data_len = cl_bd_ptr->user_data.number_of_digits*7/8;
+                if (cl_bd_ptr->user_data.number_of_digits*7%8!=0)
+                {
+                    cl_bd_ptr->user_data.data_len++;
+                }
+                
+                for (i = 0; i<cl_bd_ptr->user_data.data_len; i++)
+                {
+                    cl_bd_ptr->user_data.data[i] = b_unpackb(cdma_user_data.data, bit_pos, digit_size);
+                    bit_pos += digit_size;
+                }
+#endif                
+            }
+            else if (cdma_user_data.encoding == WMS_ENCODING_UNICODE)
+            {
+#if 0                
+                if ((udhl+1) % 2 == 0)
+                {
+                    fill_bits = 0;
+                }
+                else
+                {
+                    fill_bits = 8;
+                }
+                cl_bd_ptr->user_data.data_len = cdma_user_data.data_len - (udhl + 1 + fill_bits/8);
+                cl_bd_ptr->user_data.number_of_digits   = cl_bd_ptr->user_data.data_len / 2;
+                cl_bd_ptr->user_data.padding_bits = fill_bits;
+                memcpy( cl_bd_ptr->user_data.data,
+                cdma_user_data.data + udhl + 1 + fill_bits/8,
+                cdma_user_data.data_len - (udhl + 1 + fill_bits/8));
+#else                
+                if ((udhl+1) % 2 == 0)
+                {
+                    cl_bd_ptr->user_data.padding_bits = 0;
+                }
+                else
+                {
+                    cl_bd_ptr->user_data.padding_bits = 8;
+                }
+                fill_bits = 0;
+                //cl_bd_ptr->user_data.data_len = cl_bd_ptr->user_data.data_len - (udhl + 1 + cl_bd_ptr->user_data.padding_bits/8);
+                //cl_bd_ptr->user_data.number_of_digits   = cl_bd_ptr->user_data.data_len / 2;
+                cl_bd_ptr->user_data.number_of_digits -= (udhl + 1 + cl_bd_ptr->user_data.padding_bits/8)/2;
+                cl_bd_ptr->user_data.data_len = cl_bd_ptr->user_data.number_of_digits * 2;
+                memcpy(cl_bd_ptr->user_data.data, 
+                       &(cdma_user_data.data[udhl + 1 + fill_bits/8]), 
+                       cl_bd_ptr->user_data.data_len);
+#endif      
+            }
+            else // 8 Bit Encoding
+            {
+                /* Unpack 8-bit encoding
+                */
+                /* Copy the user data bits to the result by skipping the headers */
+                //cl_bd_ptr->user_data.data_len = MIN (cdma_user_data.data_len - (udhl+1), WMS_CDMA_USER_DATA_MAX-1);
+                cl_bd_ptr->user_data.number_of_digits =
+                cdma_user_data.number_of_digits - (udhl+1);
+                cl_bd_ptr->user_data.data_len = cl_bd_ptr->user_data.number_of_digits;
+                memcpy(cl_bd_ptr->user_data.data, cdma_user_data.data + udhl+1, cl_bd_ptr->user_data.data_len);
+            }
+        }
+        else
+        {
+            if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_ASCII ||
+                cl_bd_ptr->user_data.encoding == WMS_ENCODING_IA5)
+            {
+                cl_bd_ptr->user_data.data_len = (uint8) ((cl_bd_ptr->user_data.number_of_digits * 7 + 7 ) / 8);
+                cl_bd_ptr->user_data.padding_bits =(uint8) ((cl_bd_ptr->user_data.data_len * 8) -
+                                (cl_bd_ptr->user_data.number_of_digits * 7));
+            }
+            else if (cl_bd_ptr->user_data.encoding == WMS_ENCODING_UNICODE)
+            {
+                cl_bd_ptr->user_data.data_len = (uint8) (cl_bd_ptr->user_data.number_of_digits * 2);
+                cl_bd_ptr->user_data.padding_bits = 0;
+            }
+            else
+            {
+                cl_bd_ptr->user_data.data_len = cl_bd_ptr->user_data.number_of_digits;
+                cl_bd_ptr->user_data.padding_bits = 0;
+            }
+            
+            if ((cl_bd_ptr->user_data.encoding == WMS_ENCODING_GSM_7_BIT_DEFAULT) && (!is_unpacked_user_data))
+            {
+                /* Unpack GSM 7-bit characters */
+                
+                cdma_user_data = cl_bd_ptr->user_data;
+                
+                /* Make sure 'data_len' means the number of digits for GSM-7-bit
+                ** when this function returns
+                */
+                cl_bd_ptr->user_data.data_len = cl_bd_ptr->user_data.number_of_digits;
+                
+                (void)wms_ts_unpack_gw_7_bit_chars(cdma_user_data.data,
+                                        cl_bd_ptr->user_data.data_len, /* number of 7-bit chars */
+                                        WMS_MAX_LEN,
+                                        fill_bits,
+                                        cl_bd_ptr->user_data.data /* OUT */);
+            }
+        }
+    }
+#endif /* FEATURE_SMS_UDH */
+
+    /* done */
+    return st;
+} /* end of wms_ts_decode_CDMA_bd() */
+#endif // #ifndef CUST_EDITION
 
 /* <EJECT> */
 /*=========================================================================
@@ -4897,6 +7091,9 @@ uint8 wms_ts_dtmf2ascii
         break;
 
       case 0xA:
+#ifdef CUST_EDITION
+      case 0: //modify for can't display incoming number with "o" in inbox
+#endif
         ascii[i] = '0';
         break;
 
