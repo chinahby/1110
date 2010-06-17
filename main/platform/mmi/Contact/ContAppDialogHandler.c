@@ -5594,11 +5594,11 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             //if(pMe->m_ePreState == STATE_ADDNEW_INPUT || (TRUE == pMe->m_bInputNotComplete) )
             {
                 // Update the menu item text
-                if (pMe->m_pAddNewName&& WSTRLEN(pMe->m_pAddNewName) != 0)
+                if (pMe->m_pAddNewName ) // && WSTRLEN(pMe->m_pAddNewName) != 0)
                 {
                     IMENUCTL_SetItemText(pMenuCtl, IDI_ADDNEW_MENU_NAME, NULL, 0, pMe->m_pAddNewName);
                 }
-                else if(pMe->m_wSelectEdit != IDI_ADDNEW_MENU_NAME)
+                else// if(pMe->m_wSelectEdit != IDI_ADDNEW_MENU_NAME)
                 {
                     IMENUCTL_SetItemText(pMenuCtl, IDI_ADDNEW_MENU_NAME, CONTAPP_RES_FILE_LANG, IDS_NAME, NULL);
                 }
@@ -5711,10 +5711,12 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 }
             }
 
-            IMENUCTL_Redraw(pMenuCtl);
+            //IMENUCTL_Redraw(pMenuCtl);
             CContApp_SetInputMode(pMe);
-            IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectEdit);
-
+            IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectEdit);            
+			CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
+			IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+			
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -5763,6 +5765,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             {
                 pMe->m_nFldInputID = AEE_ADDRFIELD_NAME;
                 CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             }
             else if(IDI_ADDNEW_MENU_SELECTRINGTONE == pMe->m_wSelectEdit)
             {
@@ -5880,6 +5883,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             if(wParam !=  IDI_ADDNEW_MENU_SELECTGROUP && wParam != IDI_ADDNEW_MENU_SELECTRINGTONE)
             {
                 CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             }
 
             return TRUE;
@@ -9237,6 +9241,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             {
                 pMe->m_nFldInputID = AEE_ADDRFIELD_NAME;
                 CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             }
             else if(IDI_EDIT_MENU_RINGTONE == pMe->m_wSelectEdit)
             {
@@ -9356,6 +9361,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             if(wParam !=  IDI_EDIT_MENU_GROUP && wParam != IDI_EDIT_MENU_RINGTONE)
             {
                 CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             }
 
             return TRUE;
@@ -13006,7 +13012,6 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
         IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_TEXT_LOCAL_INPUT);
     }
     //ITEXTCTL_Redraw(pTextCtl);
-    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 }
 
 static boolean CContApp_SaveLocal_Input(CContApp  *pMe, ITextCtl *pTextCtl)
