@@ -1096,6 +1096,7 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
                     &rc, 
                     IDF_ALIGN_BOTTOM | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
 #else
+/*
         rc.y -= 2;
         (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);
         DrawTextWithProfile(pShell, 
@@ -1110,6 +1111,15 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
                             IDF_ALIGN_BOTTOM|IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
         (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
         rc.y += 2;
+        */  //modi by yangdecai
+            (void) IDISPLAY_DrawText(pIDisplay, 
+                    AEE_FONT_BOLD, 
+                    wszBar_M, 
+                    -1, 
+                    0, 
+                    0, 
+                    &rc, 
+                    IDF_ALIGN_BOTTOM | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
 #endif
     }
 
