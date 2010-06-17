@@ -174,6 +174,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             break;
 
         case SETTINGMENUST_MAIN:
+            ERR("SettingMenu_ProcessState1111111111111111111111111",0,0,0);
             retVal = SettingMenu_StateMainHandler(pMe);
             break;
 

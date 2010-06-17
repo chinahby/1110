@@ -2231,7 +2231,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
             break;
         case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
             break;
         case 8:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);

@@ -556,6 +556,7 @@ extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int StopWatchMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int ClockAppsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int CalcMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+extern int ApplicationMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 
 //#ifdef FEATURE_APP_WORLDTIME
 extern int WorldTimeMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
@@ -962,7 +963,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 
     {AEEFS_MIF_DIR"mainmenu.mif", MainMenuMod_Load},
-
+    {AEEFS_MIF_DIR"application.mif", ApplicationMod_Load},
 //#if defined( FEATURE_GAME_TETRIS)
     {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
 //#endif

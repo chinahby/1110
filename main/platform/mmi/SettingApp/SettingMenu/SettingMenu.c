@@ -708,6 +708,7 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
             pMe->m_rc = as->rc;
             pMe->m_rc.dy = di.cyScreen;
             pMe->m_rc.y = pMe->m_rc.y - SETTING_MENU_SOFK_HIGHT;
+            
             pMe->m_bSuspending = FALSE;
 
             // ¿ªÊ¼SettingMenu×´Ì¬»ú
@@ -744,6 +745,7 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
             pMe->m_rc = as->rc;
             pMe->m_rc.y = pMe->m_rc.y - SETTING_MENU_SOFK_HIGHT;
             pMe->m_rc.dy = di.cyScreen;
+            ERR("pMe->m_rc.y:%d,pMe->m_rc.dy:%d",pMe->m_rc.y,pMe->m_rc.dy,0);
             SettingMenu_RunFSM(pMe);
             return TRUE;
 
