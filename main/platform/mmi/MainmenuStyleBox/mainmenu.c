@@ -2147,15 +2147,60 @@ static boolean StartApplet(MainMenu *pMe, int i)
     switch(i)
     {
     #if defined (FEATURE_DISP_128X128)
-    
+        case 0:
+            {
+                IContactApp *ca = NULL;
+                if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
+                {
+                    return FALSE;
+                }
+                else
+                {
+                    ICONTAPP_MainMenu(ca);
+                    IContactApp_Release(ca);
+                }
+            }
+            break;
+        case 1:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+            break;
+            
+        case 2:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            break;
+        
+        case 3:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            break;
+            
+        case 4:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+            break;
+            
+        case 5:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
+            break;
+            
+        case 6:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+            break;
+            
+        case 7:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            break;
+            
+        case 8:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
+            break;
+            
     #endif
     #if defined (FEATURE_DISP_160X128)
-         case 0:
-         {
+        case 0:
+        {
             
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
             break;
-         }
+        }
         case 1:
             {
                 IContactApp *ca = NULL;

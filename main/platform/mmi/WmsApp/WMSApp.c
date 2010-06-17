@@ -2727,7 +2727,6 @@ static void WmsApp_ArgsStartInit(WmsApp *pMe, const char *pszArgs)
         {
             case STARTARGPREFIX_SENDTEXTMESSAGE:
             case STARTARGPREFIX_WRITENEWMESSAGE:
-                bsmslock = FALSE;
                 if (bsmslock)
                 {
                     pMe->m_currState = WMSST_CHKPWD;
@@ -2746,7 +2745,6 @@ static void WmsApp_ArgsStartInit(WmsApp *pMe, const char *pszArgs)
                 break;
             
             case STARTARGPREFIX_SHOWINBOXLIST:
-                bsmslock = FALSE;
                 if (bsmslock)
                 {
                     pMe->m_currState = WMSST_CHKPWD;
@@ -2765,7 +2763,6 @@ static void WmsApp_ArgsStartInit(WmsApp *pMe, const char *pszArgs)
                 break;
                 
             case STARTARGPREFIX_VIEWVMAIL:
-                bsmslock = FALSE;
                 if (bsmslock)
                 {
                     pMe->m_currState = WMSST_CHKPWD;
@@ -2786,7 +2783,7 @@ static void WmsApp_ArgsStartInit(WmsApp *pMe, const char *pszArgs)
                 // 不再继续发送
                 pMe->m_bNeedContinueSend = FALSE;
                 pMe->m_ContinueSendType = NONE_CONTINUE;
-                bsmslock = FALSE;
+                
                 if (bsmslock)
                 {
                     pMe->m_currState = WMSST_CHKPWD;

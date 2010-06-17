@@ -575,7 +575,6 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             if (pMe->m_wMsgResID != IDS_EMPTY)
             {
-                bsmslock = FALSE;
                 switch (pMe->m_eMBoxType)
                 {
                     case WMS_MB_OUTBOX:
@@ -614,7 +613,6 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
 
         // 用户在主界面选择-- 收件箱(RUIM+Phone)
         case DLGRET_INBOXES:
-            bsmslock = FALSE;
             pMe->m_eMBoxType = WMS_MB_INBOX;
             {
                 uint16  nMsgID = 0;
@@ -639,7 +637,7 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
         // 用户在主界面选择-- 新建短消息
         case DLGRET_WRITEMSG:
             pMe->m_bTextFullAlert = FALSE;
-            bsmslock = FALSE;
+            
             // 清空群发地址链表
             WmsApp_FreeMultiSendList(pMe->m_pSendList);
             pMe->m_eCreateWMSType = SEND_MSG_NEW;
@@ -657,7 +655,6 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
 
         // 用户在主界面选择-- 发件箱
         case DLGRET_OUTBOX:
-            bsmslock = FALSE;
             pMe->m_eMBoxType = WMS_MB_OUTBOX;
             {
                 uint16  nMsgID=0;
@@ -680,7 +677,6 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
             
         // 用户在主界面选择-- 语音信箱
         case DLGRET_VIEWVOICEMSG:
-            bsmslock = FALSE;
             pMe->m_eMBoxType = WMS_MB_VOICEMAIL;
             MOVE_TO_STATE(WMSST_VOICEMAIL)
             if (bsmslock)
@@ -692,7 +688,6 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
             
         // 用户在主界面选择-- 草稿箱
         case DLGRET_DRAFT:
-            bsmslock = FALSE;
             pMe->m_eMBoxType = WMS_MB_DRAFT;
             {
                 uint16  nMsgID=0;
@@ -716,7 +711,6 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
 
         // 用户在主界面选择-- 消息模板
         case DLGRET_TEMPLATES:
-            bsmslock = FALSE;
             pMe->m_eInsertType = INSERT_NONE;
             pMe->m_eMBoxType = WMS_MB_TEMPLATE;
             MOVE_TO_STATE(WMSST_TEMPLATES)
@@ -740,7 +734,6 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
 
         // 用户在主界面选择-- 删除消息
         case DLGRET_DELETEMSGS:
-            bsmslock = FALSE;
             {
                 uint16  nInMsgs=0;
                 uint16  nOutMsgs=0;
@@ -769,7 +762,6 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
 
         // 用户在主界面选择-- 消息设置
         case DLGRET_SETTINGS:
-            bsmslock = FALSE;
             MOVE_TO_STATE(WMSST_MSGSETTING)
             if (bsmslock)
             {
@@ -780,7 +772,6 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
 
         // 用户在主界面选择-- 预约信息
         case DLGRET_RESERVEDMSG:
-            bsmslock = FALSE;
             MOVE_TO_STATE(WMSST_RESERVEDMSG)
             if (bsmslock)
             {
@@ -5599,7 +5590,6 @@ static NextFSMAction WMSST_MANAGEMENT_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_DELETEMSGS:
-            bsmslock = FALSE;
             {
                 uint16  nInMsgs=0;
                 uint16  nOutMsgs=0;
