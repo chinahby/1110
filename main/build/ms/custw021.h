@@ -24,6 +24,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_LANG_ENGLISH
 #undef FEATURE_LANG_CHINESE
 #define FEATURE_NET_LOCK
+#define FEATURE_SEAMLESS_SMS
+
 #endif
 
 #ifndef TARGSB2_H

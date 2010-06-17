@@ -873,6 +873,21 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             return TRUE;
 #endif
+#ifdef FEATURE_SEAMLESS_SMS
+        case EVT_SEND_SEAMLESSSMS:
+            // 发送注册短信
+            if (CoreApp_SendSeamlessSMS(pMe) != SUCCESS)
+            {
+                // 设置发送注册短信的定时器函数
+                (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                                      SENDSEAMLESSSMS_TIME,
+                                      CoreApp_SendSeamlessSMSTimer, 
+                                      pMe);
+            }
+            
+            CORE_ERR("EVT_SEND_SEAMLESSSMS",0,0,0);
+            return TRUE;
+#endif
 
 #ifdef FEATURE_UTK2
         case EVT_UTKREFRESH:           
@@ -2248,7 +2263,60 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
     
     CORE_ERR("END CoreApp_SendReginfo",0,0,0);
     return result;
+}   
+#endif
+
+#ifdef FEATURE_SEAMLESS_SMS
+void CoreApp_SendSeamlessSMSTimer(void *pme)
+{
+   CCoreApp *pMe = (CCoreApp *)pme;
+   
+   if (NULL == pMe)
+   {
+      return;
+   }
+   
+   // 发送EVT_DISPLAYDIALOGTIMEOUT事件
+  (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                          AEECLSID_CORE_APP,
+                          EVT_SEND_SEAMLESSSMS,
+                          0,
+                          0);
 }
+
+int CoreApp_SendSeamlessSMS(CCoreApp   *pMe)
+{
+    int  result = SUCCESS;
+    AEEMobileInfo     mi;
+    IWmsApp *pIWmsApp = NULL;
+    AECHAR  wstrType[2] = {(AECHAR)POWERUP_REGISTER_SEAMLESSSMS, 0};
+    CORE_ERR("START CoreApp_SendSeamlessSMS",0,0,0);
+    
+    if (pMe == NULL)
+    {
+        return EFAILED;
+    }
+    
+    // 获取手机电子串号
+    OEM_GetConfig (CFGI_MOBILEINFO, &mi,  sizeof(AEEMobileInfo));
+    if (mi.dwESN == 0)
+    {
+        return EFAILED;
+    }
+    
+    result = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_WMSAPP,
+                                 (void **) &pIWmsApp);
+    if ((result == SUCCESS) && (NULL != pIWmsApp))
+    {
+        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
+        IWmsApp_Release(pIWmsApp);
+    }
+    
+    CORE_ERR("END CoreApp_SendSeamlessSMS",0,0,0);
+    return result;
+}   
+
 #endif
 
 int CoreApp_GetBatteryLevel(CCoreApp *pMe)

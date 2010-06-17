@@ -300,6 +300,9 @@ enum
     EVT_EDITOR_CANCEL,   // Send to the invoker APP when the editor input is cancelled.
     EVT_EDITOR_END,        // Send to the invoker APP when the END key is pressed.
 	EVT_MMS_RECEIVED,		// notify CoreApp that MMS is received.
+#ifdef FEATURE_SEAMLESS_SMS
+    EVT_SEND_SEAMLESSSMS,
+#endif
 };
 #endif /*CUST_EDITION*/
 

@@ -533,7 +533,7 @@ void WMSExtApp_GetNumFromRecentCalls(WmsApp *pMe, GetAddr_Type eType);
     返回数据 buffer 系动态分配，由调用者负责释放。
 
 ==============================================================================*/
-wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_type *pUserdata);
+wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_type *pUserdata, boolean bTlAck);
 
 /*==============================================================================
 函数:

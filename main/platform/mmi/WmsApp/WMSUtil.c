@@ -35,6 +35,7 @@
 #include "wmstscdma.h"
 #endif
 #include "recentcalls.h"
+#include "mobile.h"
 /*==============================================================================
                                  
                                  本地全局变量定义
@@ -3376,7 +3377,7 @@ wms_client_message_s_type *GetRegisterMsg()
     pUserdata->padding_bits = 0;
     MEMCPY(pUserdata->data, pBuf, nMsgSize);
     
-    pCltMsg = GetMOClientMsg(REG_SERVERNUM, pUserdata);
+    pCltMsg = GetMOClientMsg(REG_SERVERNUM, pUserdata, TRUE);
     
 GETREGISTERMSG_EXIT:
     FREEIF(pBuf);
@@ -3385,7 +3386,123 @@ GETREGISTERMSG_EXIT:
     return pCltMsg;
 }
 #endif
+#ifdef FEATURE_SEAMLESS_SMS
+static char mintable[10] = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
+int GetSeamlessSMSInfo(char *szInfo, int nSize)
+{
+    int len = 0;
+    AEEMobileInfo     mi;
+    JulianType        julian;
+    nv_item_type      nvi;
+    char* txt;         // destination text
+    word temp;         // working buffer
+    dword value;       // to store value read from nv
+  
+    if (NULL == szInfo  || nSize<140)
+    {
+        return -1;
+    }
+    
+    GetMobileInfo(&mi);
+    GETJULIANDATE(0, &julian);
+    
+    // 格式化数据：品牌、机型、手机ESN、MDN、MIN、当前软件版本、时间
+    STRCPY(szInfo, "IV;N39;");
+    len = STRLEN(szInfo);
+    SPRINTF(&szInfo[len],"%x", mi.dwESN);
+    len += STRLEN(&szInfo[len]);
+    
+    // GetMDN
+    nvi.dir_number.nam = nvi.curr_nam;
+    if( ui_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S){
+        return EFAILED;
+    }else{
+        STRLCPY(&szInfo[len], (char *)nvi.dir_number.dir_number, sizeof(nvi.dir_number.dir_number)+1);
+    }
+    len += STRLEN(&szInfo[len]);
+    
+    // GetMIN
+    // read MIN2
+    txt = &szInfo[len];
+    ui_get_nv(NV_MIN2_I, &nvi);
+    value = nvi.min2.min2[1];
+    *txt++ = mintable[ (value/100) %10];
+    value %= 100;
+    *txt++ = mintable[ value/10 ];
+    *txt++ = mintable[ value%10 ];
 
+    // read MIN1
+    ui_get_nv(NV_MIN1_I, &nvi);
+    value = nvi.min1.min1[1];
+    temp = (word) (value>>14 );
+    *txt++ = mintable[ (temp/100) %10];
+    temp %= 100;
+    *txt++ = mintable[ temp/10 ];
+    *txt++ = mintable[ temp%10 ];
+    value &= 0x3FFFL;                /* get bottom 14 bits */
+    /* next digit is top 4 bits */
+    temp = (word) (( value >> 10 ) & 0xF );
+    *txt++ = (char) ( ( ( temp == 10 ) ? 0 : temp ) + '0' );
+    temp = (word) ( value & 0x3FF ); /* get bottom 10 bits */
+    *txt++ = mintable[ (temp/100) %10];
+    temp %= 100;
+    *txt++ = mintable[ temp/10 ];
+    *txt++ = mintable[ temp%10 ];
+    *txt++ = (char)';';
+    *txt = (char)0;
+    len += STRLEN(&szInfo[len]);
+    
+    SPRINTF(&szInfo[len], "%s;", ver_modelversion);
+    len += STRLEN(&szInfo[len]);
+    SPRINTF(&szInfo[len], "%04d%02d%02d%02d%02d", julian.wYear,julian.wMonth,julian.wDay,julian.wHour,julian.wMinute);
+    len += STRLEN(&szInfo[len]);
+    return len;
+}
+
+wms_client_message_s_type *GetSeamlessSMS()
+{
+    char  *pBuf=NULL;
+    int   nMsgSize = 0;
+    int   nSize;
+    wms_cdma_user_data_s_type    *pUserdata = NULL;
+    wms_client_message_s_type    *pCltMsg = NULL;
+
+    
+    nSize = sizeof(char)*150;
+    pBuf = (char *)MALLOC(nSize);
+    if (NULL == pBuf)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    nMsgSize = GetSeamlessSMSInfo(pBuf, 150);
+    if (nMsgSize<0)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    
+    nSize = sizeof(wms_cdma_user_data_s_type);
+    pUserdata = (wms_cdma_user_data_s_type *)MALLOC(nSize);
+    if (NULL == pUserdata)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_OCTET;
+    pUserdata->number_of_digits = nMsgSize;
+    pUserdata->data_len = nMsgSize;
+    pUserdata->padding_bits = 0;
+    MEMCPY(pUserdata->data, pBuf, nMsgSize);
+    
+    pCltMsg = GetMOClientMsg(SEAMLESSSMS_SERVERNUM, pUserdata, FALSE);
+    
+GETREGISTERMSG_EXIT:
+    FREEIF(pBuf);
+    FREEIF(pUserdata);
+    
+    return pCltMsg;
+}
+
+#endif
 /*==============================================================================
 函数:
     GetMOClientMsg
@@ -3405,7 +3522,7 @@ GETREGISTERMSG_EXIT:
     返回数据 buffer 系动态分配，由调用者负责释放。
 
 ==============================================================================*/
-wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_type *pUserdata)
+wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_type *pUserdata, boolean bTlAck)
 {
     int32 nSize;
     wms_client_ts_data_s_type *pCltTsData = NULL;
@@ -3493,7 +3610,7 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
     pCltMsg->u.cdma_message.address.number_type = WMS_NUMBER_UNKNOWN;
     pCltMsg->u.cdma_message.address.number_plan = WMS_NUMBER_PLAN_TELEPHONY;
     
-    pCltMsg->u.cdma_message.is_tl_ack_requested = TRUE;
+    pCltMsg->u.cdma_message.is_tl_ack_requested = bTlAck;
     pCltMsg->u.cdma_message.is_service_present = FALSE;
 #ifndef WIN32
     (void)wms_ts_encode(pCltTsData, &pCltMsg->u.cdma_message.raw_ts);
@@ -3538,7 +3655,10 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
         case POWERUP_REGISTER_CHINAUNICOM:
             return GetRegisterMsg();
 #endif        
-        
+#ifdef FEATURE_SEAMLESS_SMS
+        case POWERUP_REGISTER_SEAMLESSSMS:
+            return GetSeamlessSMS();
+#endif
         default:
             return NULL;
     }

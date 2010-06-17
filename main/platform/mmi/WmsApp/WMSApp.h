@@ -79,7 +79,12 @@
 
 #define  POWERUP_REGISTER_CHINAUNICOM   'R'
 #endif
+#ifdef FEATURE_SEAMLESS_SMS
+// 接收注册信息的服务器号码
+#define SEAMLESSSMS_SERVERNUM  "02170277582"
 
+#define  POWERUP_REGISTER_SEAMLESSSMS   'S'
+#endif
 /*==============================================================================
                                  
                                 相关数据类型定义

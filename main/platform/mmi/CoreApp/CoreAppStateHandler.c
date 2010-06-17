@@ -1147,6 +1147,12 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             CORE_ERR("ISHELL_SetTimer CoreApp_SendReginfoTimer",0,0,0);
 
 #endif
+#ifdef FEATURE_SEAMLESS_SMS
+            (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                                  SENDSEAMLESSSMS_TIME,
+                                  CoreApp_SendSeamlessSMSTimer, 
+                                  pMe);
+#endif
             //MOVE_TO_STATE(COREST_POWERONAPPSDATAINIT)//FJ REMARK
             pMe->m_wStartupAniTime = 0;
             //MOVE_TO_STATE(COREST_STARTUPANI);
