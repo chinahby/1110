@@ -1573,8 +1573,14 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
         case EVT_USER_REDRAW:
             IDATECTL_SetActiveDayMask( pDatePick, pme->m_CalMgr.m_dwMask);
             (void)IDATECTL_Redraw(pDatePick);
-            drawBottomBar(BTBAR_OPTION_TODAY_BACK);
 
+        //wangliang modify! 2010-06-17
+        #if 0
+            drawBottomBar(BTBAR_OPTION_TODAY_BACK);
+        #else
+            drawBottomBar(BTBAR_OPTION_BACK);
+		#endif
+		
 #if FEATURE_DRAW_LUNAR_CALENDAR
 #if 1
             CScheduleApp_DrawLunarStr(pme);
