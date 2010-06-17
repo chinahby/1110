@@ -985,6 +985,7 @@ void HandleSignals (
 #ifdef FEATURE_UIM_TOOLKIT
     if ( sigs & UI_CMD_Q_SIG )
     {
+        (void) rex_clr_sigs( &ui_tcb, UI_CMD_Q_SIG );
         process_command_sig();
     }
 #endif
