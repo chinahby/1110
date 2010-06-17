@@ -175,8 +175,8 @@ if(!(x))         \
 #define ANI_NUM 5
 
 //进度条
-#define SCHEDULEBAR_X 17
-#define SCHEDULEBAR_Y 87
+#define SCHEDULEBAR_X 15
+#define SCHEDULEBAR_Y 26
 #define SCHEDULEBAR_W 144
 #define SCHEDULEBAR_H 7
 
@@ -187,8 +187,8 @@ if(!(x))         \
 #define SIMSCHEDULEBAR_H 7
 
 //播放按钮
-#define PLAY_X 65
-#define PLAY_Y 108
+#define PLAY_X 66
+#define PLAY_Y 43
 #define PLAY_W 45
 #define PLAY_H 44
 
@@ -217,8 +217,8 @@ if(!(x))         \
 #define ADDVOLUMEPRESS_H 26
 
 //音量
-#define VOLUME_X 70
-#define VOLUME_Y 163
+#define VOLUME_X 61
+#define VOLUME_Y 78
 #define VOLUME_W 34
 #define VOLUME_H 13
 
