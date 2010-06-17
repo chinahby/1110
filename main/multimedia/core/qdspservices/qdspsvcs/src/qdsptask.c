@@ -2709,10 +2709,10 @@ qdsp_packet_type* qdsp_get_packet( void )
     q_link_type teplink;
     
     (void)memcpy(&teplink,  &(packet->hdr.link), sizeof(q_link_type));
-    (void) memset (packet, 0, sizeof (graph_packet_type));
+    (void) memset (packet, 0, sizeof (voc_packet_type));
     (void)memcpy(&(packet->hdr.link), &teplink, sizeof(q_link_type));
 #else    
-    (void) memset (packet, 0, sizeof (graph_packet_type));
+    (void) memset (packet, 0, sizeof (voc_packet_type));
 #endif
     packet->hdr.cmd = QDSP_CMD_INVALID;
   }

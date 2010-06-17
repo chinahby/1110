@@ -1017,7 +1017,15 @@ vs_packet_type *vs_cmd_get_pkt (void)
     /* Fill the entire VS packet with 0's to get default behavior on 
     ** un-initialized fields.
     */
+#ifdef  FIX_LINKITEM_INITBUG
+    q_link_type teplink;
+    
+    (void)memcpy(&teplink,  &(packet->hdr.link), sizeof(q_link_type));
     (void) memset (packet, 0, sizeof (vs_packet_type));
+    (void)memcpy(&(packet->hdr.link), &teplink, sizeof(q_link_type));
+#else    
+    (void) memset (packet, 0, sizeof (vs_packet_type));
+#endif
     packet->hdr.cmd        = VS_INVALID;        /* Invalid Command Value   */
   }
 
