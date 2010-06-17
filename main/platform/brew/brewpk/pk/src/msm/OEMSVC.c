@@ -4229,6 +4229,16 @@ boolean OEM_IsNetLock(void)
     dword sid;
     nv_item_type nvilock;  // buffer to read NV
     int i;
+
+    if (NV_DONE_S != ui_get_nv(NV_ESN_I, &nvi)) 
+    {
+        return FALSE;
+    }
+    
+    if(nvi.esn.esn == 0)
+    {
+        return FALSE;
+    }
     
     if(NV_DONE_S != ui_get_nv(NV_NET_LOCK_I, &nvilock))
     {
