@@ -642,7 +642,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                         return FALSE;
                     }
                     pMe->m_ePowerDownType = POWERDOWN_NORMAL;
-                    if (pMe->m_eCurState != COREST_POWEROFF)
+                    if (pMe->m_eCurState != COREST_POWEROFF
+                      &&pMe->m_eCurState != COREST_STARTUPANI
+                      &&pMe->m_eCurState != COREST_INIT
+                      &&pMe->m_eCurState != COREST_POWERONSYSINIT
+                      &&pMe->m_eCurState != COREST_POWERONAPPSDATAINIT)
                     {
                         pMe->m_wStartupAniTime = 0;
                         MOVE_TO_STATE(COREST_POWEROFF)
