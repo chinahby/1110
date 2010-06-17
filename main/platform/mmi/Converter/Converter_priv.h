@@ -232,8 +232,8 @@ typedef struct _CConverter
 #define MAX_INT_NUMBER         (9)
 #define CONVERTER_PROMPTMSG_TIMER (3000)
 
-#define ARROW_WIDTH             (9)
-#define ARROW_HEIGHT            (13)
+#define ARROW_WIDTH             (8)
+#define ARROW_HEIGHT            (8)
 #define CHARACTOR_PIC_WIDTH (32)
 #define RGB_ORANGE                (MAKE_RGB(0xFF,0x90,0x30))
 

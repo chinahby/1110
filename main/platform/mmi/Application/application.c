@@ -571,7 +571,6 @@ static boolean Application_HandleEvent( IApplication *pi,
             as = (AEEAppStart*)dwParam;
    
             pMe->m_rc = as->rc;
-            ERR("pMe->m_rc.y::::%d,pMe->m_rc.dy:::::%d",pMe->m_rc.y,pMe->m_rc.dy,0);
             pMe->m_currState  = APPLICATIONST_MAIN;
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = APPLICATION_RUNNING;
@@ -601,8 +600,6 @@ static boolean Application_HandleEvent( IApplication *pi,
                 AEEAppStart* as = ( AEEAppStart*)dwParam;
                 pMe->m_rc    = as->rc;
                 pMe->m_rc.dy = di.cyScreen;
-                ERR("pMe->m_rc.y::::%d,pMe->m_rc.dy:::::%d",pMe->m_rc.y,pMe->m_rc.dy,0);
-
                 pMe->m_eAppStatus = APPLICATION_RUNNING;
                 Application_RunFSM(pMe); 
                 return TRUE;
@@ -883,6 +880,8 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -933,6 +932,8 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 case AVK_2:
                 case AVK_3:
                 case AVK_4:
+                case AVK_5:
+                case AVK_6:
                 case AVK_STAR:
                     {
                         int Focus = (wParam - AVK_1);
@@ -958,6 +959,8 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 case IDS_APPLICATION_TITLE_2:
                 case IDS_APPLICATION_TITLE_3:
                 case IDS_APPLICATION_TITLE_4:
+                case IDS_APPLICATION_TITLE_5:
+                case IDS_APPLICATION_TITLE_6:
                     StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_1);
                     return TRUE;
             }
@@ -1004,7 +1007,12 @@ static boolean StartApplet(Application *pMe, int i)
         case 3:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
-    
+        case 4:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
+            break;
+        case 5:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
+            break;
         default:
             break;
     }

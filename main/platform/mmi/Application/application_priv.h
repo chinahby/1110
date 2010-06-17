@@ -123,7 +123,7 @@ typedef struct _Application
                                  
 ==============================================================================*/
 
-#define  MAX_MATRIX_ITEMS 4
+#define  MAX_MATRIX_ITEMS 6
 
 #define ICON_ANIMATED_FRAME     1 //½¹µãÍ¼Æ¬µÄÖ¡Êý
 

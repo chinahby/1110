@@ -57,8 +57,8 @@ when         who            what, where, why
 #define  MSECS_PER_DAY         (3600 * 24 * 1000)
 #define  SPACE_BETWEEN_MENU                     (1)
 
-#define ARROW_WIDTH             (9)
-#define ARROW_HEIGHT            (13)
+#define ARROW_WIDTH             (8)
+#define ARROW_HEIGHT            (8)
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define STOPWATCH_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )

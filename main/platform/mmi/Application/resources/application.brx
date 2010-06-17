@@ -16,6 +16,12 @@
 	<STRING Id="1014" Name="IDS_APPLICATION_TITLE_4">
 		<Text>Alarm</Text>
 	</STRING>
+	<String Id="1015" Name="IDS_APPLICATION_TITLE_5">
+		<Text>Converter</Text>
+	</String>
+	<String Id="1016" Name="IDS_APPLICATION_TITLE_6">
+		<Text>WorldTime</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">

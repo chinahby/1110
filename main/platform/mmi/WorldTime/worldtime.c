@@ -47,7 +47,7 @@ when         who            what, where, why
 #endif
 #endif//WIN32
 #include "worldtime_images.brh"
-
+#include "err.h"
 #if defined( AEE_SIMULATOR)
     #define WORLDTIME_IMAGES_RES_FILE "fs:/mod/worldtime/worldtime_images.bar"
     #define WORLDTIME_RES_FILE_LANG   ("fs:/mod/worldtime/en/" WORLDTIME_RES_FILE)
@@ -811,6 +811,7 @@ static void Draw_WorldTimeContent(CWorldTime *pme)
     {
         //IDISPLAY_FillRect( pme->a.m_pIDisplay, &pme->m_rectScreen, RGB_BLACK);
         IIMAGE_Draw( pme->m_pImageBg, pme->m_xBg, pme->m_yBg);
+        ERR("pme->m_yBg::::%d,",pme->m_yBg,0,0);
         IIMAGE_Draw( pme->m_pImageBar, pme->m_xBg + pme->m_xBar, pme->m_yBg);
         
         //draw title
@@ -849,6 +850,7 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
 
         IIMAGE_GetInfo( pme->m_pImageBar, &ii);
         SETAEERECT( &rect, pme->m_xBar, 0, ii.cx, ii.cy);
+        ERR("ii.cy:::::%d",pme->m_yBg,0,0);
         drawImageWithOffset( pme, pme->m_pImageBg, pme->m_xBg + pme->m_xBar, pme->m_yBg, &rect);
 
         pme->m_timeZone += left ? -1 : 1;
@@ -865,6 +867,7 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         SETAEERECT( &rect, pme->m_xBg, pme->m_yBg, pme->m_widthBg, pme->m_rectScreen.dy);
         IDISPLAY_SetClipRect( pme->a.m_pIDisplay, &rect);
         IIMAGE_Draw( pme->m_pImageBar, pme->m_xBg + pme->m_xBar, pme->m_yBg);
+        ERR("pme->m_yBg:::::%d",pme->m_yBg,0,0);
         IDISPLAY_SetClipRect( pme->a.m_pIDisplay, &pme->m_rectScreen);
 
         CWorldTime_DrawCityTime(pme);
