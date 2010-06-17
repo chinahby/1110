@@ -177,7 +177,6 @@ typedef struct _MainMenu
 #endif
 
 	IImage		*m_pImageTurn[MAX_TURN_NUM];//wlh 20090409 add
-	IImage      *m_pImageFocus;
 
 } MainMenu;
 

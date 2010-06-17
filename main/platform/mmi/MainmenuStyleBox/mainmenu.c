@@ -498,11 +498,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	pMe->m_pImageTurn[10] = ISHELL_LoadImage(pMe->m_pShell,ICON11_ANI_1);
 	pMe->m_pImageTurn[11] = ISHELL_LoadImage(pMe->m_pShell,ICON12_ANI_1);
     #endif
-    pMe->m_pImageFocus   = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_FOCUSDEFAULT);
-    if(pMe->m_pImageFocus == NULL)
-    {
-        return EFAILED;
-    }
+
     
 	for (i = 0; i < MAX_TURN_NUM; i ++)
 	{
@@ -606,11 +602,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
 				pMe->m_pImageTurn[i] = NULL;
 			}
 		}
-        if(pMe->m_pImageFocus != NULL)
-        {
-            IImage_Release(pMe->m_pImageFocus);
-            pMe->m_pImageFocus = NULL;
-        }
+       
     }    
 }
 
@@ -1758,9 +1750,7 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
 
 	if( pMe->m_pAnimate != NULL)
    {
-        IIMAGE_Draw(pMe->m_pImageFocus,
-                         pMe->m_IconFocus_Pt[theFocus].x, 
-                        pMe->m_IconFocus_Pt[theFocus].y);
+
 		IIMAGE_Draw(pMe->m_pAnimate,
                          pMe->m_IconFocus_Pt[theFocus].x, 
                         pMe->m_IconFocus_Pt[theFocus].y);

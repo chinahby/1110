@@ -54,7 +54,6 @@ CONSTFILE_FILES+=\
 	Display_focus.png|fs:/image/mainmenu/Display_focus.png \
 	Timer_focus.png|fs:/image/mainmenu/Timer_focus.png \
 	Stopwatch_focus.png|fs:/image/mainmenu/Stopwatch_focus.png\
-	Focus_default.png|fs:/image/mainmenu/Focus_default.png \
 	Backgroud.png|fs:/image/mainmenu/Backgroud.png
 	
 ifeq ($(USES_160X128),yes)
