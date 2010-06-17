@@ -1283,9 +1283,9 @@ static void keypad_scan_keypad
         KEYPAD_PASS_KEY_CODE( HS_END_K, HS_NONE_K );
       #else /* FEATURE_COMBINED_PWR_END_KEYS */
         KEYPAD_PASS_KEY_CODE( HS_PWR_K, HS_NONE_K );
-        keypad_power_key_passed = TRUE;
       #endif /* FEATURE_COMBINED_PWR_END_KEYS */
         keypad_power_key_state = KS_UP_WAIT;
+        keypad_power_key_passed = TRUE;
         keypad_power_key_hold_time = KEYPAD_POLL_TIME;
         MSG_MED( "Debounced %d", (int)HS_END_K, 0, 0 );
         sleep_allowed = FALSE;
@@ -1302,6 +1302,7 @@ static void keypad_scan_keypad
       if ( power_key_pressed )
       {
         sleep_allowed = FALSE;
+#ifndef CUST_EDITION
         if ( !keypad_power_key_passed )
         {
           keypad_power_key_hold_time += KEYPAD_POLL_TIME;
@@ -1314,14 +1315,16 @@ static void keypad_scan_keypad
 
           }
         }
+#endif
       }
       else
       {
         keypad_power_key_state = KS_KEY_UP;
       #ifdef FEATURE_COMBINED_PWR_END_KEYS
         KEYPAD_PASS_KEY_CODE( HS_RELEASE_K, HS_END_K );
-      #endif /* FEATURE_COMBINED_PWR_END_KEYS */
+      #else /* FEATURE_COMBINED_PWR_END_KEYS */
         KEYPAD_PASS_KEY_CODE( HS_RELEASE_K, HS_PWR_K );
+      #endif /* FEATURE_COMBINED_PWR_END_KEYS */
         keypad_power_key_passed = FALSE;
         MSG_MED( "Key up %d", (int)HS_END_K, 0, 0 );
       }

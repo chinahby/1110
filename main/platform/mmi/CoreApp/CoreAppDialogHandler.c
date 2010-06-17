@@ -4339,6 +4339,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     }
     else
     {
+        IBACKLIGHT_Enable(pMe->m_pBacklight);
         IALERT_StopRingerAlert(pMe->m_pAlert);
 #ifndef FEATURE_USES_LOWMEM
         if ( NULL != pMe->m_pStartupAniImg )

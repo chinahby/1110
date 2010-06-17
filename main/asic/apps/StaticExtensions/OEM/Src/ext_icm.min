@@ -10,8 +10,7 @@ EXT_ICM_SOURCES =
 
 ifeq ($(USES_ICM), yes)
   EXT_ICM_SOURCES += \
-        OEMCM.c \
-        OEMCMHelper.c
+        OEMCM.c 
 endif
 
 EXT_ICM_OBJS :=  $(addprefix $(TARGETDIR)/, $(EXT_ICM_SOURCES:%.c=%.o))       
