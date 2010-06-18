@@ -1,410 +1,410 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="appscommon_color" VERSION="1">
+<BREWRes Name="appscommon_160x128" VERSION="1">
 <Objects MimeType="image/png">
 	<Object Id="5001" Name="IDB_BGMASK">
-		<File>..\images\color\Appscommon\Background\bgmask.png</File>
+		<File>..\images\160x128\Appscommon\Background\bgmask.png</File>
 	</Object>
 	<Object Id="5002" Name="IDB_BACKGROUND">
-		<File>..\images\color\Appscommon\Menu\background\background.png</File>
+		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
 	</Object>
-	<Object Id="5003" Name="IDI_CONV_POUND">
-		<File>..\images\color\Converter\converter_pound.png</File>
+	<Object Id="5003" Name="IDB_CALCAPP">
+		<File>..\images\160x128\Calculator\Calculator.png</File>
 	</Object>
-	<Object Id="5004" Name="IDI_CONV_STAR">
-		<File>..\images\color\Converter\converter_star.png</File>
+	<Object Id="5004" Name="IDI_SCHEDULE">
+		<File>..\images\160x128\Calendar\calendar.png</File>
+	</Object>
+	<Object Id="5005" Name="IDI_NOTE_BOOK">
+		<File>..\images\160x128\Calendar\notebook.png</File>
+	</Object>
+	<Object Id="5006" Name="IDI_SPORTS">
+		<File>..\images\160x128\Calendar\Schedule.png</File>
+	</Object>
+	<Object Id="5007" Name="IDI_CONV_POUND">
+		<File>..\images\160x128\Converter\converter_pound.png</File>
+	</Object>
+	<Object Id="5008" Name="IDI_CONV_STAR">
+		<File>..\images\160x128\Converter\converter_star.png</File>
 	</Object>
 	<Object Id="5009" Name="IDB_SPORT_RACE" MimeType="image/bmp">
-		<File>..\images\color\Sports\Icons\step_race.bmp</File>
+		<File>..\images\160x128\Sports\Icons\step_race.bmp</File>
 	</Object>
 	<Object Id="5015" Name="IDI_TEXT_BACKGROUND">
-		<File>..\images\color\Appscommon\Background\background_text.png</File>
+		<File>..\images\160x128\Appscommon\Background\background_text.png</File>
 	</Object>
 	<Object Id="5016" Name="IDI_INPUT_BACKGROUND">
-		<File>..\images\color\Appscommon\Background\background_input.png</File>
+		<File>..\images\160x128\Appscommon\Background\background_input.png</File>
 	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON">
-		<File>..\images\color\Appscommon\Icon\check_yes.png</File>
+		<File>..\images\160x128\Appscommon\Icon\check_yes.png</File>
 	</Object>
 	<Object Id="5022" Name="IDB_CHECK_OFF">
-		<File>..\images\color\Appscommon\Icon\check_no.png</File>
+		<File>..\images\160x128\Appscommon\Icon\check_no.png</File>
 	</Object>
 	<Object Id="5023" Name="IDB_RADIO_FILLED" MimeType="image/bmp">
-		<File>..\images\color\Appscommon\Icon\radio_on.bmp</File>
+		<File>..\images\160x128\Appscommon\Icon\radio_on.bmp</File>
 	</Object>
 	<Object Id="5024" Name="IDB_RADIO_UNFILLED" MimeType="image/bmp">
-		<File>..\images\color\Appscommon\Icon\radio_off.bmp</File>
+		<File>..\images\160x128\Appscommon\Icon\radio_off.bmp</File>
 	</Object>
 	<Object Id="5025" Name="IDI_ALARM">
-		<File>..\images\color\Appscommon\Icon\alarm.png</File>
+		<File>..\images\160x128\Appscommon\Icon\alarm.png</File>
 	</Object>
 	<Object Id="5026" Name="IDB_OK">
-		<File>..\images\color\Appscommon\Icon\ok.png</File>
+		<File>..\images\160x128\Appscommon\Icon\ok.png</File>
 	</Object>
 	<Object Id="5027" Name="IDB_NUMBER">
-		<File>..\images\color\Appscommon\Icon\number.png</File>
+		<File>..\images\160x128\Appscommon\Icon\number.png</File>
 	</Object>
 	<Object Id="5028" Name="IDB_LEFTARROW">
-		<File>..\images\color\Appscommon\Icon\LeftArrow.png</File>
+		<File>..\images\160x128\Appscommon\Icon\LeftArrow.png</File>
 	</Object>
 	<Object Id="5029" Name="IDB_RIGHTARROW">
-		<File>..\images\color\Appscommon\Icon\RightArrow.png</File>
+		<File>..\images\160x128\Appscommon\Icon\RightArrow.png</File>
 	</Object>
 	<Object Id="5041" Name="IDB_ERROR">
-		<File>..\images\color\Appscommon\MessageBox\error.png</File>
+		<File>..\images\160x128\Appscommon\MessageBox\error.png</File>
 	</Object>
 	<Object Id="5042" Name="IDB_WARNNING">
-		<File>..\images\color\Appscommon\MessageBox\WarningMsgBox.png</File>
+		<File>..\images\160x128\Appscommon\MessageBox\WarningMsgBox.png</File>
 	</Object>
 	<Object Id="5043" Name="IDB_CONFIRM">
-		<File>..\images\color\Appscommon\MessageBox\YesNoMsgBox.png</File>
+		<File>..\images\160x128\Appscommon\MessageBox\YesNoMsgBox.png</File>
 	</Object>
 	<Object Id="5044" Name="IDB_INFORMATION">
-		<File>..\images\color\Appscommon\MessageBox\information.png</File>
+		<File>..\images\160x128\Appscommon\MessageBox\information.png</File>
 	</Object>
 	<Object Id="5045" Name="IDB_WAITING">
-		<File>..\images\color\Appscommon\MessageBox\waiting.png</File>
+		<File>..\images\160x128\Appscommon\MessageBox\waiting.png</File>
 	</Object>
 	<Object Id="5046" Name="IDB_INFORMATIVE">
-		<File>..\images\color\Appscommon\MessageBox\informative.png</File>
+		<File>..\images\160x128\Appscommon\MessageBox\informative.png</File>
 	</Object>
 	<Object Id="5047" Name="IDB_PROMPT_MSG_BG">
-		<File>..\images\color\Appscommon\MessageBox\background.png</File>
+		<File>..\images\160x128\Appscommon\MessageBox\background.png</File>
 	</Object>
 	<Object Id="5061" Name="IDI_MENU_BACKGROUND">
-		<File>..\images\color\Appscommon\Menu\background\background.png</File>
+		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
 	</Object>
 	<Object Id="5062" Name="IDI_MENU_BACKGROUND_TRANS">
-		<File>..\images\color\Appscommon\Menu\background\background_trans.png</File>
+		<File>..\images\160x128\Appscommon\Menu\background\background_trans.png</File>
 	</Object>
 	<Object Id="5081" Name="IDI_BOTTOMBAR">
-		<File>..\images\color\Appscommon\Menu\bottombar\bottombar.png</File>
+		<File>..\images\160x128\Appscommon\Menu\bottombar\bottombar.png</File>
 	</Object>
 	<Object Id="5101" Name="IDI_TITLEBAR">
-		<File>..\images\color\Appscommon\Menu\titlebar\titlebar.png</File>
+		<File>..\images\160x128\Appscommon\Menu\titlebar\titlebar.png</File>
 	</Object>
 	<Object Id="5121" Name="IDB_SELECT_BAR">
-		<File>..\images\color\Appscommon\Menu\selectbar\selectbar.png</File>
+		<File>..\images\160x128\Appscommon\Menu\selectbar\selectbar.png</File>
 	</Object>
 	<Object Id="5122" Name="IDB_SELECT_BAR_SHORT">
-		<File>..\images\color\Appscommon\Menu\selectbar\selectbarshort.png</File>
+		<File>..\images\160x128\Appscommon\Menu\selectbar\selectbarshort.png</File>
 	</Object>
 	<Object Id="5141" Name="IDI_UNDERLINE">
-		<File>..\images\color\Appscommon\Menu\underline\underline.png</File>
+		<File>..\images\160x128\Appscommon\Menu\underline\underline.png</File>
 	</Object>
 	<Object Id="5142" Name="IDI_UNDERLINE_SHORT">
-		<File>..\images\color\Appscommon\Menu\underline\underlineshort.png</File>
+		<File>..\images\160x128\Appscommon\Menu\underline\underlineshort.png</File>
 	</Object>
 	<Object Id="5201" Name="IDB_PHONE" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\Mobile.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\Mobile.bmp</File>
 	</Object>
 	<Object Id="5202" Name="IDB_RUIM" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\Card.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\Card.bmp</File>
 	</Object>
 	<Object Id="5203" Name="IDB_NAME" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\First_Name.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\First_Name.bmp</File>
 	</Object>
 	<Object Id="5204" Name="IDB_EMAIL" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\Email.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\Email.bmp</File>
 	</Object>
 	<Object Id="5205" Name="IDB_ADDRESS" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\Home_addr.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\Home_addr.bmp</File>
 	</Object>
 	<Object Id="5206" Name="IDB_URL" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\URL.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\URL.bmp</File>
 	</Object>
 	<Object Id="5207" Name="IDB_NOTES" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\remark.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\remark.bmp</File>
 	</Object>
 	<Object Id="5208" Name="IDB_GROUP" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\Group.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\Group.bmp</File>
 	</Object>
 	<Object Id="5209" Name="IDB_HOMENUM" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\Phone_Home.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\Phone_Home.bmp</File>
 	</Object>
 	<Object Id="5210" Name="IDB_WORKNUM" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\Phone_Work.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\Phone_Work.bmp</File>
 	</Object>
 	<Object Id="5211" Name="IDB_RING" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\Ring_VP.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\Ring_VP.bmp</File>
 	</Object>
 	<Object Id="5212" Name="IDB_FAXNUM" MimeType="image/bmp">
-		<File>..\images\color\Contact\AddressBook\Fax.bmp</File>
+		<File>..\images\160x128\Contact\AddressBook\Fax.bmp</File>
 	</Object>
 	<Object Id="5401" Name="IDB_MODE_T9_MT_ENGLISH">
-		<File>..\images\color\IME\Abc.png</File>
+		<File>..\images\160x128\IME\Abc.png</File>
 	</Object>
 	<Object Id="5402" Name="IDB_MODE_T9_MT_ENGLISH_LOW">
-		<File>..\images\color\IME\lowabc.png</File>
+		<File>..\images\160x128\IME\lowabc.png</File>
 	</Object>
 	<Object Id="5403" Name="IDB_MODE_T9_MT_ENGLISH_UP">
-		<File>..\images\color\IME\upabc.png</File>
+		<File>..\images\160x128\IME\upabc.png</File>
 	</Object>
 	<Object Id="5404" Name="IDB_MODE_NUMBERS">
-		<File>..\images\color\IME\123.png</File>
+		<File>..\images\160x128\IME\123.png</File>
 	</Object>
 	<Object Id="5405" Name="IDB_MODE_T9_ZHUYIN">
-		<File>..\images\color\IME\T9zhu.png</File>
+		<File>..\images\160x128\IME\T9zhu.png</File>
 	</Object>
 	<Object Id="5406" Name="IDB_MODE_T9_STROKE">
-		<File>..\images\color\IME\T9str.png</File>
+		<File>..\images\160x128\IME\T9str.png</File>
 	</Object>
 	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH">
-		<File>..\images\color\IME\ezenglish.png</File>
+		<File>..\images\160x128\IME\ezenglish.png</File>
 	</Object>
 	<Object Id="5408" Name="IDB_MODE_T9_MT_THAI">
-		<File>..\images\color\IME\thai.png</File>
+		<File>..\images\160x128\IME\thai.png</File>
 	</Object>
 	<Object Id="5409" Name="IDB_MODE_T9_RAPID_THAI">
-		<File>..\images\color\IME\T9th.png</File>
+		<File>..\images\160x128\IME\T9th.png</File>
 	</Object>
 	<Object Id="5410" Name="IDB_MODE_T9_PINYIN">
-		<File>..\images\color\IME\T9pin.png</File>
+		<File>..\images\160x128\IME\T9pin.png</File>
 	</Object>
 	<Object Id="5411" Name="IDB_MODE_T9_RAPID_ENGLISH_LOW">
-		<File>..\images\color\IME\lowezenglish.png</File>
+		<File>..\images\160x128\IME\lowezenglish.png</File>
 	</Object>
 	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP">
-		<File>..\images\color\IME\upezenglish.png</File>
+		<File>..\images\160x128\IME\upezenglish.png</File>
 	</Object>
 	<Object Id="5413" Name="IDB_MODE_T9_MT_INDONESIAN">
-		<File>..\images\color\IME\Indo.png</File>
+		<File>..\images\160x128\IME\Indo.png</File>
 	</Object>
 	<Object Id="5414" Name="IDB_MODE_T9_RAPID_INDONESIAN">
-		<File>..\images\color\IME\T9In.png</File>
+		<File>..\images\160x128\IME\T9In.png</File>
 	</Object>
 	<Object Id="5415" Name="IDB_MODE_T9_RAPID_PORTUGUESE">
-		<File>..\images\color\IME\T9Por.png</File>
+		<File>..\images\160x128\IME\T9Por.png</File>
 	</Object>
 	<Object Id="5416" Name="IDB_MODE_T9_MT_SPANISH">
-		<File>..\images\color\IME\Es.png</File>
+		<File>..\images\160x128\IME\Es.png</File>
 	</Object>
 	<Object Id="5417" Name="IDB_MODE_T9_RAPID_SPANISH">
-		<File>..\images\color\IME\T9Es.png</File>
+		<File>..\images\160x128\IME\T9Es.png</File>
 	</Object>
 	<Object Id="5418" Name="IDB_MODE_T9_RAPID_SPANISH_LOW">
-		<File>..\images\color\IME\T9pes.png</File>
+		<File>..\images\160x128\IME\T9pes.png</File>
 	</Object>
 	<Object Id="5419" Name="IDB_MODE_T9_RAPID_SPANISH_UP">
-		<File>..\images\color\IME\T9ESP.png</File>
+		<File>..\images\160x128\IME\T9ESP.png</File>
 	</Object>
 	<Object Id="5420" Name="IDB_MODE_T9_MT_SPANISH_LOW">
-		<File>..\images\color\IME\pes.png</File>
+		<File>..\images\160x128\IME\pes.png</File>
 	</Object>
 	<Object Id="5421" Name="IDB_MODE_T9_MT_SPANISH_UP">
-		<File>..\images\color\IME\ESP.png</File>
+		<File>..\images\160x128\IME\ESP.png</File>
 	</Object>
 	<Object Id="5422" Name="IDB_MODE_T9_MT_HEBREW">
-		<File>..\images\color\IME\He.png</File>
+		<File>..\images\160x128\IME\He.png</File>
 	</Object>
 	<Object Id="5423" Name="IDB_MODE_T9_RAPID_HEBREW">
-		<File>..\images\color\IME\T9He.png</File>
+		<File>..\images\160x128\IME\T9He.png</File>
 	</Object>
 	<Object Id="5424" Name="IDB_MODE_T9_MT_ARABIC">
-		<File>..\images\color\IME\Ar.png</File>
+		<File>..\images\160x128\IME\Ar.png</File>
 	</Object>
 	<Object Id="5425" Name="IDB_MODE_T9_RAPID_ARABIC">
-		<File>..\images\color\IME\T9Ar.png</File>
+		<File>..\images\160x128\IME\T9Ar.png</File>
 	</Object>
 	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP">
-		<File>..\images\color\IME\arrow.png</File>
+		<File>..\images\160x128\IME\arrow.png</File>
 	</Object>
 	<Object Id="5427" Name="IDB_MODE_T9_MT_FRENCH">
-		<File>..\images\color\IME\Fr.png</File>
+		<File>..\images\160x128\IME\Fr.png</File>
 	</Object>
 	<Object Id="5428" Name="IDB_MODE_T9_RAPID_FRENCH">
-		<File>..\images\color\IME\T9Fr.png</File>
+		<File>..\images\160x128\IME\T9Fr.png</File>
 	</Object>
 	<Object Id="5429" Name="IDB_MODE_T9_RAPID_FRENCH_LOW">
-		<File>..\images\color\IME\T9pfr.png</File>
+		<File>..\images\160x128\IME\T9pfr.png</File>
 	</Object>
 	<Object Id="5430" Name="IDB_MODE_T9_RAPID_FRENCH_UP">
-		<File>..\images\color\IME\T9FRP.png</File>
+		<File>..\images\160x128\IME\T9FRP.png</File>
 	</Object>
 	<Object Id="5431" Name="IDB_MODE_T9_MT_FRENCH_LOW">
-		<File>..\images\color\IME\pfr.png</File>
+		<File>..\images\160x128\IME\pfr.png</File>
 	</Object>
 	<Object Id="5432" Name="IDB_MODE_T9_MT_FRENCH_UP">
-		<File>..\images\color\IME\FRP.png</File>
+		<File>..\images\160x128\IME\FRP.png</File>
 	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE" MimeType="image/bmp">
-		<File>..\images\color\Message\Icon\Template.bmp</File>
+		<File>..\images\160x128\Message\Icon\Template.bmp</File>
 	</Object>
 	<Object Id="5802" Name="IDB_DRAFT" MimeType="image/bmp">
-		<File>..\images\color\Message\Icon\Draft.bmp</File>
+		<File>..\images\160x128\Message\Icon\Draft.bmp</File>
 	</Object>
 	<Object Id="5821" Name="IDB_SENT_URGENT" MimeType="image/bmp">
-		<File>..\images\color\Message\SentMessage\Sent_urgent.bmp</File>
+		<File>..\images\160x128\Message\SentMessage\Sent_urgent.bmp</File>
 	</Object>
 	<Object Id="5822" Name="IDB_SENT_NORMAL" MimeType="image/bmp">
-		<File>..\images\color\Message\SentMessage\Sent_normal.bmp</File>
+		<File>..\images\160x128\Message\SentMessage\Sent_normal.bmp</File>
 	</Object>
 	<Object Id="5823" Name="IDB_SENT_EMERGENCY" MimeType="image/bmp">
-		<File>..\images\color\Message\SentMessage\Sent_emergency.bmp</File>
+		<File>..\images\160x128\Message\SentMessage\Sent_emergency.bmp</File>
 	</Object>
 	<Object Id="5824" Name="IDB_UNSENT_URGENT" MimeType="image/bmp">
-		<File>..\images\color\Message\SentMessage\Unsent_urgent.bmp</File>
+		<File>..\images\160x128\Message\SentMessage\Unsent_urgent.bmp</File>
 	</Object>
 	<Object Id="5825" Name="IDB_UNSENT_NORMAL" MimeType="image/bmp">
-		<File>..\images\color\Message\SentMessage\Unsent_normal.bmp</File>
+		<File>..\images\160x128\Message\SentMessage\Unsent_normal.bmp</File>
 	</Object>
 	<Object Id="5826" Name="IDB_UNSENT_EMERGENCY" MimeType="image/bmp">
-		<File>..\images\color\Message\SentMessage\Unsent_emergency.bmp</File>
+		<File>..\images\160x128\Message\SentMessage\Unsent_emergency.bmp</File>
 	</Object>
 	<Object Id="5841" Name="IDB_UREAD_UIM_R" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Unread_UIM_reply.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Unread_UIM_reply.bmp</File>
 	</Object>
 	<Object Id="5842" Name="IDB_UREAD_UIM_URGENT" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Unread_UIM_urgent.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Unread_UIM_urgent.bmp</File>
 	</Object>
 	<Object Id="5843" Name="IDB_UREAD_UIM_NORMAL" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Unread_UIM_normal.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Unread_UIM_normal.bmp</File>
 	</Object>
 	<Object Id="5844" Name="IDB_UREAD_UIM_EMERGENCY" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Unread_UIM_emergency.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Unread_UIM_emergency.bmp</File>
 	</Object>
 	<Object Id="5845" Name="IDB_UREAD_PH_R" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Unread_phone_reply.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Unread_phone_reply.bmp</File>
 	</Object>
 	<Object Id="5846" Name="IDB_UREAD_PH_URGENT" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Unread_phone_urgent.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Unread_phone_urgent.bmp</File>
 	</Object>
 	<Object Id="5847" Name="IDB_UREAD_PH_NORMAL" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Unread_phone_normal.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Unread_phone_normal.bmp</File>
 	</Object>
 	<Object Id="5848" Name="IDB_UREAD_PH_EMERGENCY" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Unread_phone_emergency.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Unread_phone_emergency.bmp</File>
 	</Object>
 	<Object Id="5849" Name="IDB_UREAD_VM" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Unread_voice_message.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Unread_voice_message.bmp</File>
 	</Object>
 	<Object Id="5850" Name="IDB_READ_UIM_R" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Read_UIM_reply.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Read_UIM_reply.bmp</File>
 	</Object>
 	<Object Id="5851" Name="IDB_READ_UIM_URGENT" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Read_UIM_urgent.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Read_UIM_urgent.bmp</File>
 	</Object>
 	<Object Id="5852" Name="IDB_READ_UIM_NORMAL" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Read_UIM_normal.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Read_UIM_normal.bmp</File>
 	</Object>
 	<Object Id="5853" Name="IDB_READ_UIM_EMERGENCY" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Read_UIM_emergency.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Read_UIM_emergency.bmp</File>
 	</Object>
 	<Object Id="5854" Name="IDB_READ_PH_R" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Read_phone_reply.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Read_phone_reply.bmp</File>
 	</Object>
 	<Object Id="5855" Name="IDB_READ_PH_URGENT" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Read_phone_urgent.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Read_phone_urgent.bmp</File>
 	</Object>
 	<Object Id="5856" Name="IDB_READ_PH_NORMAL" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Read_phone_normal.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Read_phone_normal.bmp</File>
 	</Object>
 	<Object Id="5857" Name="IDB_READ_PH_EMERGENCY" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Read_phone_emergency.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Read_phone_emergency.bmp</File>
 	</Object>
 	<Object Id="5858" Name="IDB_READ_VM" MimeType="image/bmp">
-		<File>..\images\color\Message\ReceiveMessage\Read_voice_message.bmp</File>
+		<File>..\images\160x128\Message\ReceiveMessage\Read_voice_message.bmp</File>
 	</Object>
 	<Object Id="6001" Name="IDB_ORIG" MimeType="image/bmp">
-		<File>..\images\color\CallApp\Calltype\org.bmp</File>
+		<File>..\images\160x128\CallApp\Calltype\org.bmp</File>
 	</Object>
 	<Object Id="6002" Name="IDB_INCOMING" MimeType="image/bmp">
-		<File>..\images\color\CallApp\Calltype\incoming.bmp</File>
+		<File>..\images\160x128\CallApp\Calltype\incoming.bmp</File>
 	</Object>
 	<Object Id="6003" Name="IDB_MISS_CALL" MimeType="image/bmp">
-		<File>..\images\color\CallApp\Calltype\miss_call.bmp</File>
+		<File>..\images\160x128\CallApp\Calltype\miss_call.bmp</File>
 	</Object>
 	<Object Id="6021" Name="IDI_REFUI_INCOMING">
-		<File>..\images\color\CallApp\Call\incoming_call.png</File>
+		<File>..\images\160x128\CallApp\Call\incoming_call.png</File>
 	</Object>
 	<Object Id="6022" Name="IDI_REFUI_OUTGOING">
-		<File>..\images\color\CallApp\Call\outgoing_call.png</File>
+		<File>..\images\160x128\CallApp\Call\outgoing_call.png</File>
 	</Object>
 	<Object Id="6023" Name="IDI_REFUI_CALLING">
-		<File>..\images\color\CallApp\Call\calling.png</File>
+		<File>..\images\160x128\CallApp\Call\calling.png</File>
 	</Object>
 	<Object Id="6024" Name="IDI_REFUI_ENDCALL">
-		<File>..\images\color\CallApp\Call\end_call.png</File>
+		<File>..\images\160x128\CallApp\Call\end_call.png</File>
 	</Object>
 	<Object Id="6025" Name="IDI_REFUI_MISSEDCALL">
-		<File>..\images\color\CallApp\Call\missed_call.png</File>
+		<File>..\images\160x128\CallApp\Call\missed_call.png</File>
 	</Object>
 	<Object Id="6026" Name="IDI_REFUI_LOUDSPEAKER">
-		<File>..\images\color\CallApp\Call\loudspeaker.png</File>
+		<File>..\images\160x128\CallApp\Call\loudspeaker.png</File>
 	</Object>
 	<Object Id="6041" Name="IDI_NUMBER_0">
-		<File>..\images\color\CallApp\DialedNumber\0.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\0.png</File>
 	</Object>
 	<Object Id="6042" Name="IDI_NUMBER_1">
-		<File>..\images\color\CallApp\DialedNumber\1.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\1.png</File>
 	</Object>
 	<Object Id="6043" Name="IDI_NUMBER_2">
-		<File>..\images\color\CallApp\DialedNumber\2.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\2.png</File>
 	</Object>
 	<Object Id="6044" Name="IDI_NUMBER_3">
-		<File>..\images\color\CallApp\DialedNumber\3.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\3.png</File>
 	</Object>
 	<Object Id="6045" Name="IDI_NUMBER_4">
-		<File>..\images\color\CallApp\DialedNumber\4.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\4.png</File>
 	</Object>
 	<Object Id="6046" Name="IDI_NUMBER_5">
-		<File>..\images\color\CallApp\DialedNumber\5.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\5.png</File>
 	</Object>
 	<Object Id="6047" Name="IDI_NUMBER_6">
-		<File>..\images\color\CallApp\DialedNumber\6.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\6.png</File>
 	</Object>
 	<Object Id="6048" Name="IDI_NUMBER_7">
-		<File>..\images\color\CallApp\DialedNumber\7.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\7.png</File>
 	</Object>
 	<Object Id="6049" Name="IDI_NUMBER_8">
-		<File>..\images\color\CallApp\DialedNumber\8.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\8.png</File>
 	</Object>
 	<Object Id="6050" Name="IDI_NUMBER_9">
-		<File>..\images\color\CallApp\DialedNumber\9.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\9.png</File>
 	</Object>
 	<Object Id="6051" Name="IDI_NUMBER_STAR">
-		<File>..\images\color\CallApp\DialedNumber\Star.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\Star.png</File>
 	</Object>
 	<Object Id="6052" Name="IDI_NUMBER_POUND">
-		<File>..\images\color\CallApp\DialedNumber\Pound.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\Pound.png</File>
 	</Object>
 	<Object Id="6053" Name="IDI_NUMBER_P">
-		<File>..\images\color\CallApp\DialedNumber\P.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\P.png</File>
 	</Object>
 	<Object Id="6054" Name="IDI_NUMBER_T">
-		<File>..\images\color\CallApp\DialedNumber\T.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\T.png</File>
 	</Object>
 	<Object Id="6055" Name="IDI_NUMBER_PLUS">
-		<File>..\images\color\CallApp\DialedNumber\+.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\+.png</File>
 	</Object>
 	<Object Id="6056" Name="IDI_NUMBER_SUB">
-		<File>..\images\color\CallApp\DialedNumber\-.png</File>
+		<File>..\images\160x128\CallApp\DialedNumber\-.png</File>
 	</Object>
 	<Object Id="6201" Name="IDB_UTKMENU" MimeType="image/bmp">
-		<File>..\images\color\UTK\utkmenu.bmp</File>
-	</Object>
-	<Object Id="6401" Name="IDB_CALCAPP">
-		<File>..\images\color\Calculator\Calculator.png</File>
+		<File>..\images\160x128\UTK\utkmenu.bmp</File>
 	</Object>
 	<Object Id="6421" Name="IDI_TIMER">
-		<File>..\images\color\Timer\timer.png</File>
+		<File>..\images\160x128\Timer\timer.png</File>
 	</Object>
 	<Object Id="6422" Name="IDI_TIMER_CLOCK">
-		<File>..\images\color\Timer\timer_clock.png</File>
+		<File>..\images\160x128\Timer\timer_clock.png</File>
 	</Object>
 	<Object Id="6441" Name="IDI_CALENDAR">
-		<File>..\images\color\Calendar\background.png</File>
-	</Object>
-	<Object Id="6442" Name="IDI_SCHEDULE">
-		<File>..\images\color\Calendar\calendar.png</File>
-	</Object>
-	<Object Id="6443" Name="IDI_NOTE_BOOK">
-		<File>..\images\color\Calendar\notebook.png</File>
+		<File>..\images\160x128\Calendar\background.png</File>
 	</Object>
 	<Object Id="6444" Name="IDI_DATE_BAR">
-		<File>..\images\color\Calendar\bar.png</File>
-	</Object>
-	<Object Id="6445" Name="IDI_SPORTS">
-		<File>..\images\color\Calendar\Schedule.png</File>
+		<File>..\images\160x128\Calendar\bar.png</File>
 	</Object>
 </Objects>
 </BREWRes>
