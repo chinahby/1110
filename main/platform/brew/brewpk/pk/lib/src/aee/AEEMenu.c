@@ -8240,7 +8240,7 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
             {
                 pme->m_pBgImage = ISHELL_LoadResImage(pme->m_pIShell,
                                    AEE_APPSCOMMONRES_IMAGESFILE,
-                                   IDI_MENU_BACKGROUND);
+                                   IDB_BACKGROUND);  //modi by yangdecai
             }
        }
        Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, pme->m_c.cBack, pRect, 0, 0);
