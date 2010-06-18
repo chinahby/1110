@@ -1295,7 +1295,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 else
 #endif
                 {
-                    pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MENU_BACKGROUND);
+                    pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modi by yangdecai
                 }
             }
             (void) ISHELL_PostEvent( pMe->m_pShell,
@@ -1674,7 +1674,6 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
         }
         pMe->m_bMoveing = TRUE;
         SETAEERECT(&rect, xPos, yPos, ICON_ANIMATED_WIDTH, ICON_ANIMATED_HEIGHT);
-        ERR("DrawFocusMoveAnimation:::::::::!1111111111111111",0,0,0);
         Appscommon_ResetBackground(pMe->m_pDisplay,pMe->m_pAnimate, 
 #ifdef FEATURE_RANDOM_MENU_COLOR
                                                     pMe->m_nBgColor, 
@@ -1697,10 +1696,8 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
                                 pMe->m_pDevImage, xOldPos, yOldPos, AEE_RO_COPY);
         }
 #ifdef FEATURE_FOCUS_ANIMATION
-        ERR("DrawFocusMoveAnimation:::::::::222222222222222222",0,0,0);
         DrawFocusIconAnimation(pMe);
 #else
-        ERR("DrawFocusMoveAnimation:::::::::33333333333333333",0,0,0);
         DrawFocusIcon(pMe);
 #endif
     }
@@ -1758,7 +1755,6 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
        pMe->m_pAnimate = NULL;
 	   IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
 	}
-	//wlh 20090410 add end
 }
 #else
 /*=============================================================================
@@ -1855,8 +1851,7 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
         titleBarParms.nTitleResID = IDS_MAIN_MENU_TITLE_13;
     }
 #endif
-	//wlh end
-    ERR("MainMenu_IconMenuHandler::::::::2222222",0,0,0);
+
 	if((row != pMe->m_nRow) || (column != pMe->m_nColumn))//避免已经是焦点的情况
 	{
  
@@ -1900,8 +1895,6 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 		turnlengthy = lengthYY/5;
 
 		m_pImageTurns[0] = pMe->m_pImageTurn[theFocus];
-       // IIMAGE_Draw(pMe->m_pImageFocus,x,y);
-		//IIMAGE_Draw(m_pImageTurns[0], x, y);
 		IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 		DrawMatrix(pMe);
 		DrawTitleBar(pMe->m_pDisplay, &titleBarParms);	//wlh add 0404
@@ -2080,7 +2073,6 @@ static boolean  MainMenu_MsgBoxHandler(MainMenu *pMe, AEEEvent eCode, uint16 wPa
             switch( wParam)
             {
                 case AVK_CLR:
-                    ERR("AVK_CLR:::::::::::::::::::!111111111111",0,0,0);
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     break;
                 case AVK_INFO:

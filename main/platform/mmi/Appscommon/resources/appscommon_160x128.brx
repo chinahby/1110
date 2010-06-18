@@ -82,9 +82,6 @@
 	<Object Id="5047" Name="IDB_PROMPT_MSG_BG">
 		<File>..\images\160x128\Appscommon\MessageBox\background.png</File>
 	</Object>
-	<Object Id="5061" Name="IDI_MENU_BACKGROUND">
-		<File>..\images\160x128\Appscommon\Menu\background\background.png</File>
-	</Object>
 	<Object Id="5062" Name="IDI_MENU_BACKGROUND_TRANS">
 		<File>..\images\160x128\Appscommon\Menu\background\background_trans.png</File>
 	</Object>
@@ -154,89 +151,14 @@
 	<Object Id="5404" Name="IDB_MODE_NUMBERS">
 		<File>..\images\160x128\IME\123.png</File>
 	</Object>
-	<Object Id="5405" Name="IDB_MODE_T9_ZHUYIN">
-		<File>..\images\160x128\IME\T9zhu.png</File>
-	</Object>
-	<Object Id="5406" Name="IDB_MODE_T9_STROKE">
-		<File>..\images\160x128\IME\T9str.png</File>
-	</Object>
 	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH">
 		<File>..\images\160x128\IME\ezenglish.png</File>
-	</Object>
-	<Object Id="5408" Name="IDB_MODE_T9_MT_THAI">
-		<File>..\images\160x128\IME\thai.png</File>
-	</Object>
-	<Object Id="5409" Name="IDB_MODE_T9_RAPID_THAI">
-		<File>..\images\160x128\IME\T9th.png</File>
-	</Object>
-	<Object Id="5410" Name="IDB_MODE_T9_PINYIN">
-		<File>..\images\160x128\IME\T9pin.png</File>
 	</Object>
 	<Object Id="5411" Name="IDB_MODE_T9_RAPID_ENGLISH_LOW">
 		<File>..\images\160x128\IME\lowezenglish.png</File>
 	</Object>
 	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP">
 		<File>..\images\160x128\IME\upezenglish.png</File>
-	</Object>
-	<Object Id="5413" Name="IDB_MODE_T9_MT_INDONESIAN">
-		<File>..\images\160x128\IME\Indo.png</File>
-	</Object>
-	<Object Id="5414" Name="IDB_MODE_T9_RAPID_INDONESIAN">
-		<File>..\images\160x128\IME\T9In.png</File>
-	</Object>
-	<Object Id="5415" Name="IDB_MODE_T9_RAPID_PORTUGUESE">
-		<File>..\images\160x128\IME\T9Por.png</File>
-	</Object>
-	<Object Id="5416" Name="IDB_MODE_T9_MT_SPANISH">
-		<File>..\images\160x128\IME\Es.png</File>
-	</Object>
-	<Object Id="5417" Name="IDB_MODE_T9_RAPID_SPANISH">
-		<File>..\images\160x128\IME\T9Es.png</File>
-	</Object>
-	<Object Id="5418" Name="IDB_MODE_T9_RAPID_SPANISH_LOW">
-		<File>..\images\160x128\IME\T9pes.png</File>
-	</Object>
-	<Object Id="5419" Name="IDB_MODE_T9_RAPID_SPANISH_UP">
-		<File>..\images\160x128\IME\T9ESP.png</File>
-	</Object>
-	<Object Id="5420" Name="IDB_MODE_T9_MT_SPANISH_LOW">
-		<File>..\images\160x128\IME\pes.png</File>
-	</Object>
-	<Object Id="5421" Name="IDB_MODE_T9_MT_SPANISH_UP">
-		<File>..\images\160x128\IME\ESP.png</File>
-	</Object>
-	<Object Id="5422" Name="IDB_MODE_T9_MT_HEBREW">
-		<File>..\images\160x128\IME\He.png</File>
-	</Object>
-	<Object Id="5423" Name="IDB_MODE_T9_RAPID_HEBREW">
-		<File>..\images\160x128\IME\T9He.png</File>
-	</Object>
-	<Object Id="5424" Name="IDB_MODE_T9_MT_ARABIC">
-		<File>..\images\160x128\IME\Ar.png</File>
-	</Object>
-	<Object Id="5425" Name="IDB_MODE_T9_RAPID_ARABIC">
-		<File>..\images\160x128\IME\T9Ar.png</File>
-	</Object>
-	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP">
-		<File>..\images\160x128\IME\arrow.png</File>
-	</Object>
-	<Object Id="5427" Name="IDB_MODE_T9_MT_FRENCH">
-		<File>..\images\160x128\IME\Fr.png</File>
-	</Object>
-	<Object Id="5428" Name="IDB_MODE_T9_RAPID_FRENCH">
-		<File>..\images\160x128\IME\T9Fr.png</File>
-	</Object>
-	<Object Id="5429" Name="IDB_MODE_T9_RAPID_FRENCH_LOW">
-		<File>..\images\160x128\IME\T9pfr.png</File>
-	</Object>
-	<Object Id="5430" Name="IDB_MODE_T9_RAPID_FRENCH_UP">
-		<File>..\images\160x128\IME\T9FRP.png</File>
-	</Object>
-	<Object Id="5431" Name="IDB_MODE_T9_MT_FRENCH_LOW">
-		<File>..\images\160x128\IME\pfr.png</File>
-	</Object>
-	<Object Id="5432" Name="IDB_MODE_T9_MT_FRENCH_UP">
-		<File>..\images\160x128\IME\FRP.png</File>
 	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE" MimeType="image/bmp">
 		<File>..\images\160x128\Message\Icon\Template.bmp</File>
@@ -399,9 +321,6 @@
 	</Object>
 	<Object Id="6422" Name="IDI_TIMER_CLOCK">
 		<File>..\images\160x128\Timer\timer_clock.png</File>
-	</Object>
-	<Object Id="6441" Name="IDI_CALENDAR">
-		<File>..\images\160x128\Calendar\background.png</File>
 	</Object>
 	<Object Id="6444" Name="IDI_DATE_BAR">
 		<File>..\images\160x128\Calendar\bar.png</File>

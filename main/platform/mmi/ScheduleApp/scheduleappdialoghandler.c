@@ -6124,7 +6124,7 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SCHEDULE_BACKGROUND);
 #else
-            ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MENU_BACKGROUND);
+            ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
 #endif
             {
                 AEERect rect = pme->m_rc;

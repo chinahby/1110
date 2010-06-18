@@ -84,7 +84,6 @@ static void MP3_SetStartCurState(CMusicPlayer *pMe);
 static void MP3_SetStartStatus(CMusicPlayer *pMe);
 
 static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe);
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -650,7 +649,6 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
         #if defined(AEE_STATIC)
             ASSERT(dwParam != 0);
         #endif
-			//Rendering_UpdateEx();//wlh add for 3D test
             as = (AEEAppStart*)dwParam;
             pMe->m_rc = as->rc;
             pMe->m_bSuspending = FALSE;
@@ -737,7 +735,6 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             return TRUE;
 
         case EVT_DIALOG_INIT:
-			//Rendering_UpdateEx();//wlh add for 3D test
             // 更新对话框控制参数信息！！！
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;

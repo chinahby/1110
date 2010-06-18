@@ -1514,7 +1514,7 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
          ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
 #else
-         ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MENU_BACKGROUND);
+         ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
 #endif
          return TRUE;
       }
@@ -1777,7 +1777,7 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
          ISTATIC_SetBackGround(pText, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
 #else
-         ISTATIC_SetBackGround(pText, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MENU_BACKGROUND);
+         ISTATIC_SetBackGround(pText, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
 #endif
 
          return TRUE;
@@ -4681,7 +4681,7 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
          ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
 #else
-         ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MENU_BACKGROUND);
+         ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
 #endif
          //end added
 
@@ -8202,7 +8202,7 @@ static boolean MGAppUtil_DrawImageViewerBG(CMediaGalleryApp *pMe)
 
    pImage = ISHELL_LoadResImage(pMe->m_pShell,
          AEE_APPSCOMMONRES_IMAGESFILE,
-         IDI_MENU_BACKGROUND);
+         IDB_BACKGROUND);  //modified by yangdecai
 
    if(NULL != pImage)
    {

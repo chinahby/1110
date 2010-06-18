@@ -3678,7 +3678,7 @@ void Appscommon_ResetBackgroundEx(IDisplay *pDisplay, AEERect * rect, boolean bD
 #endif
         {
             /* 由于透明通道会大大降低图像的显示速度，默认使用一张无透明色的图片*/
-            pImageBg = ISHELL_LoadResImage(pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MENU_BACKGROUND);
+            pImageBg = ISHELL_LoadResImage(pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);  //moci by yangdecai
         }
 
         Appscommon_ResetBackground(pDisplay, pImageBg, nBgColor, rect, xPos, yPos);

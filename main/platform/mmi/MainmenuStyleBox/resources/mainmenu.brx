@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="mainmenu" VERSION="1">
 <Strings Encoding="ISOLATIN1">
-	<STRING Id="1001" Name="IDS_MAIN_MENU_ROLL_BALL">
-		<Text>Roll ball</Text>
-	</STRING>
-	<STRING Id="1002" Name="IDS_GAME_PROCCESS" Encoding="Unicode">
-		<Text>Sport off</Text>
-	</STRING>
-	<STRING Id="1003" Name="IDS_GAME_SHAKE" Encoding="Unicode">
-		<Text>Shake off</Text>
-	</STRING>
-	<STRING Id="1004" Name="IDS_MAIN_MENU_ROLL_TOTEM" Encoding="Unicode">
-		<Text>Roll totem</Text>
-	</STRING>
 	<STRING Id="1005" Name="IDS_MAIN_MENU_TITLE_ESURFING" Encoding="Unicode">
 		<Text>Esurfing</Text>
 	</STRING>
@@ -66,15 +54,6 @@
 	</STRING>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>Menu</Text>
-	</STRING>
-	<STRING Id="1043" Name="IDS_PLAYER_SUBMENU_ITEM3">
-		<Text>FM radio</Text>
-	</STRING>
-	<STRING Id="1052" Name="IDS_DATA_SUBMENU_ITEM2">
-		<Text>Download</Text>
-	</STRING>
-	<STRING Id="1053" Name="IDS_DATA_SUBMENU_ITEM3">
-		<Text>UTK</Text>
 	</STRING>
 </Strings>
 <Dialogs>
