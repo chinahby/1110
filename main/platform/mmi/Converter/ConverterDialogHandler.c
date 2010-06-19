@@ -780,7 +780,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
                 IIMAGE_Release(Image);
             }
-
+#if 0
             if(pMe->m_converterMode == CONVERTER_MODE_TEMPERATURE)
             {
                 Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONV_POUND);
@@ -798,6 +798,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 IIMAGE_Release(Image);
                 Image = NULL;
             }
+            #endif
 
             //画底条
             nLen = STRLEN(m_inputNumber);
@@ -1408,7 +1409,6 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
     {
         return FALSE;
     }
-    
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -1508,7 +1508,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             {
                 BBarParam.eBBarType = BTBAR_OK_DELETE;
             }
-            DrawBottomBar(pMe->m_pDisplay, &BBarParam);
+            
             //更新高亮显示
             SETAEERECT(&rect, 
                                 pMe->m_rc.x, 
@@ -1552,7 +1552,6 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 (void)Converter_FloatToWstr(source, wstrDisplay, sizeof(wstrDisplay));
                 ITEXTCTL_SetText(pMe->coeff3, wstrDisplay, -1);
             }
-            
             (void)IMENUCTL_Redraw(pMe->currency);
             IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_ORANGE);
             if(bChangable == FALSE)
@@ -1568,6 +1567,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 (void)ITEXTCTL_Redraw(pMe->coeff3);
             }
             (void)IMENUCTL_Redraw(pMe->title);
+            DrawBottomBar(pMe->m_pDisplay, &BBarParam);
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                         
             return TRUE;
