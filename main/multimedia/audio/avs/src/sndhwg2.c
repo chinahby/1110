@@ -4524,8 +4524,10 @@ boolean sndhw_qtunes_gen_tone
           ((voc_get_status() == VOC_INFORM_MIXER_IDLE) ||
            (voc_get_status() == VOC_INFORM_MIXER_ACTIVE)) &&
 #endif /* FEATURE_AVS_INCALL_ADEC_PB */
-          ((voc_capability   == VOC_CAP_QTUNES) ||
-           (voc_capability   == VOC_CAP_QTUNES_AAC)
+          ((voc_capability   == VOC_CAP_QTUNES) 
+#ifdef FEATURE_QTUNES_AAC // Gemsea ADD
+          || (voc_capability   == VOC_CAP_QTUNES_AAC)
+#endif
 #ifdef FEATURE_WMA
            ||(voc_capability   == VOC_CAP_QTUNES_WMA)
            ||(voc_capability   == VOC_CAP_QTUNES_WMA_PRO)

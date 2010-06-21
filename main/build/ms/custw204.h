@@ -43,7 +43,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_PLL_192 
 #define FEATURE_CLKREGIM_1X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
-#define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
+//Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
 #define FEATURE_IPL_NO_CAMERA 
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
@@ -58,7 +58,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_FS_LOW_MEMORY_USAGE 
 #define FEATURE_DSM_MINIMIZE 
 //#define FEATURE_MSG_LOW_MEMORY_USAGE 
-//#define FEATURE_SIO_NO_DEBUG_TRACE 
+#define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
 #define FEATURE_APP_DIALER 
@@ -219,7 +219,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 #define FEATURE_COMBINED_PWR_END_KEYS
-//#define FEATURE_WMS_APP
+#define FEATURE_AUDIO_CAMERA_CONCURRENCY
 #endif
 
 #include "custuim.h"
@@ -255,9 +255,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
    #undef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
 #endif
-#ifdef FEATURE_MP3
-   #undef FEATURE_MP3
-#endif
+//Gemsea Remove #ifdef FEATURE_MP3
+//Gemsea Remove   #undef FEATURE_MP3
+//Gemsea Remove #endif
 #ifdef FEATURE_MDP_LAYER1_PRIMARY
    #undef FEATURE_MDP_LAYER1_PRIMARY
 #endif
@@ -285,9 +285,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_SAF
    #undef FEATURE_SAF
 #endif
-#ifdef FEATURE_QTUNES
-   #undef FEATURE_QTUNES
-#endif
+//Gemsea Remove #ifdef FEATURE_QTUNES
+//Gemsea Remove   #undef FEATURE_QTUNES
+//Gemsea Remove #endif
 #ifdef FEATURE_IS2000_F_SCH
    #undef FEATURE_IS2000_F_SCH
 #endif
