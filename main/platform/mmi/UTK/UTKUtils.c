@@ -1102,15 +1102,13 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                         ai.pszResText = NULL;
                         ai.wText = 0;
                         ai.pImage = NULL;
-                        ai.wImage = NULL;
+                        ai.wImage = IDB_UTKMENU;
                         ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
                         ai.wFont = AEE_FONT_NORMAL;
                         ai.dwData = 0;
                         ai.pText = wszBuf;
                         MEMSET(wszBuf, 0, nSize);
-						STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
-						WSPRINTF(wszBuf,sizeof(wszBuf),wsFmt,nItemCount+1);
-                        //DecodeAlphaString(&utk_ptr[pos+1], nValLen-1, wszBuf, 256);
+                        DecodeAlphaString(&utk_ptr[pos+1], nValLen-1, wszBuf, 256);
                         (void)IMENUCTL_AddItemEx(pMenu, &ai );
                         nItemCount++;
                     }
