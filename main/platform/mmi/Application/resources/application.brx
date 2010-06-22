@@ -22,6 +22,15 @@
 	<String Id="1016" Name="IDS_APPLICATION_TITLE_6">
 		<Text>WorldTime</Text>
 	</String>
+	<String Id="1017" Name="IDS_APPLICATION_TITLE_7">
+		<Text>Calendar</Text>
+	</String>
+	<String Id="1018" Name="IDS_APPLICATION_TITLE_8">
+		<Text>Game</Text>
+	</String>
+	<String Id="1019" Name="IDS_APPLICATION_TITLE_9">
+		<Text>Calculator</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">

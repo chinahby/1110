@@ -1550,6 +1550,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             return TRUE;
  
         case EVT_KEY:
+            #ifdef FEATURE_SUPPORT_VC0848
             // jpg 解码未完成，禁止按键事件
             if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
             {
@@ -1566,7 +1567,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
                     return TRUE;
                 }
             }
-
+            #endif
             MEMSET(pMe->m_sCurrentFileName, '\0', STRLEN(pMe->m_sCurrentFileName));
         
             if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
@@ -2192,9 +2193,9 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
                                          NULL);                  
                         
                         pMe->m_nTicks = ISHELL_GetTimeMS(pMe->m_pShell) - pMe->m_dwDispTime; 
-
+#ifdef FEATURE_SUPPORT_VC0848
                         VC_SetVideoRecorderDoneState(FALSE); 
-                        
+                        #endif
                         CameraApp_VideoRunning(pMe);
 
                         ICAMERA_RecordMovie(pMe->m_pCamera); 
@@ -3203,8 +3204,7 @@ static boolean CameraApp_PopMenu_SizeCommandHandleEvent(CCameraApp *pMe, uint16 
         ICAMERA_Stop(pMe->m_pCamera);
         pMe->m_nCameraState = CAM_STOP;
     }
-    
-#if 1
+
     if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_176_220)
     {
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 1, 0);
@@ -3213,7 +3213,6 @@ static boolean CameraApp_PopMenu_SizeCommandHandleEvent(CCameraApp *pMe, uint16 
     {
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 0, 0);
     }
-#endif
   
     CLOSE_DIALOG(DLGRET_CANCELED);
     return TRUE;
@@ -3366,7 +3365,6 @@ static boolean CameraApp_PopMenu_CaptureCommandHandleEvent(CCameraApp *pMe, uint
         default:
             return FALSE;
     }
-
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_MULTISHOT, 1, 0);
     CLOSE_DIALOG(DLGRET_CANCELED);
     return TRUE;
@@ -3404,9 +3402,7 @@ static boolean CameraApp_PopMenu_BandingCommandHandleEvent(CCameraApp *pMe, uint
         default:
             return FALSE;
     }
-
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_BANDING, pMe->m_nCameraBanding, 0);
-    
     (void)ICONFIG_SetItem(pMe->m_pConfig,
                           CFGI_CAMERA_BANDING,
                           &pMe->m_nCameraBanding,
@@ -3750,7 +3746,6 @@ static boolean CameraApp_HotKeyAVK_3_CaptureHandleEvent(CCameraApp *pMe,
         default:
             return FALSE; 
     }
-
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_MULTISHOT, 1, 0);
     return CameraApp_DisplayHotKeyText(pMe, eCode, wParam, dwParam); 
 }
@@ -5503,7 +5498,7 @@ static void CameraApp_VideoRunning(CCameraApp *pMe)
     nMS = (RUNNING_UPDATE_MSECS - (ISHELL_GetTimeMS(pMe->m_pShell) - nMS)) + 1;
 
     DBGPRINTF("nMS = %d",nMS);
-    
+#ifdef FEATURE_SUPPORT_VC0848    
     if(VC_GetVideoRecorderDoneState())
     {
         pMe->m_bVideoRecStart = FALSE;
@@ -5514,7 +5509,7 @@ static void CameraApp_VideoRunning(CCameraApp *pMe)
         CLOSE_DIALOG(DLGRET_VIDEOSAVE);
         return;
     }
-
+#endif
     (void)ISHELL_SetTimer(pMe->m_pShell,
                           (int32)nMS,
                           (PFNNOTIFY)CameraApp_VideoRunning,
@@ -6684,17 +6679,19 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     {
         displaySize.cx = 176;
         displaySize.cy = 220;
-        
+
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 0);
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 1, 0);
+
     }
     else
     {
         displaySize.cx = 176;
         displaySize.cy = 132;
-        
+
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 28);
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 0, 0);
+
     }
 
     // set camera quality
@@ -7103,8 +7100,8 @@ static void CameraApp_DialogTimeout(void *pme)
 
 static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe)
 {   
+    #ifdef FEATURE_SUPPORT_VC0848
     static vc_union_type vc_data;
-    
     VC_DeviceControl(VC_ITM_SD_STAT_I, VC_FUNC_GET_PARM, &vc_data);
     
     if( vc_data.sd == VC_SD_FIND_ERR)
@@ -7115,6 +7112,9 @@ static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe)
     {
         return TRUE;
     }
+    #else
+    return FALSE;
+    #endif
 }
 
 
@@ -7483,6 +7483,7 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
          displaySize.cx = 176;
          displaySize.cy = 220;
          ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 0);
+
  
      }
      else
@@ -7695,6 +7696,7 @@ static void CameraApp_HandleVideoFile(CCameraApp *pMe)
 // VIM Jpg decode方式
 void CameraApp_DecodeJPG(CCameraApp *pMe)
 {
+    #ifdef FEATURE_SUPPORT_VC0848
     vc_union_type vc_data;
     
     vc_data.play_info.cam_size = pMe->m_nCameraSize;
@@ -7714,6 +7716,7 @@ void CameraApp_DecodeJPG(CCameraApp *pMe)
     DBGPRINTF("VC JPEG Decode:%s, file_src:%d", (char *)&vc_data.play_info.szFileName, vc_data.play_info.file_scr);
     
     VC_DeviceControl(VC_ITM_JPG_DECODE_I, VC_FUNC_PLAY_ON, &vc_data);
+    #endif
 }
 
 // jpg decode回调函数,176x220拍摄到手机里,jpg decode采取qualcomm方式
@@ -7795,9 +7798,7 @@ static void CameraApp_SetParamAfterPreview(CCameraApp *pMe)
     }
 
     ICAMERA_SetFramesPerSecond(pMe->m_pCamera, dwFPS);
-    
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_BANDING, pMe->m_nCameraBanding, 0);
-
     ICAMERA_SetZoom(pMe->m_pCamera, pMe->m_nCameraZoom); 
         
     ICAMERA_SetBrightness(pMe->m_pCamera, pMe->m_nCameraBrightness);   

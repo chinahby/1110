@@ -122,9 +122,11 @@ typedef struct _Application
                                  宏定义和常数
                                  
 ==============================================================================*/
-
+#if defined (FEATURE_DISP_128X128)
+#define  MAX_MATRIX_ITEMS 9
+#elif defined(FEATURE_DISP_160X128)
 #define  MAX_MATRIX_ITEMS 6
-
+#endif
 #define ICON_ANIMATED_FRAME     1 //焦点图片的帧数
 
 

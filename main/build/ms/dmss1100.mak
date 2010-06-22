@@ -141,12 +141,12 @@ MMI_ADD_FM=yes
 MMI_ADD_MUSICPLAYER=yes
 MMI_ADD_FLDDBG=no
 MMI_ADD_MEDIAGALLERY=yes
-MMI_ADD_CAMERA=no
+MMI_ADD_CAMERA=yes
 MMI_ADD_SPORT=no
 MMI_ADD_RECORDER=no
 MMI_ADD_TOUCHPAD=no
 #”Ô—‘ÃÌº”
-EXTLANG1=NO
+EXTLANG1=id
 EXTLANG2=NO
 endif
 #-------------------------------------------------------------------------------

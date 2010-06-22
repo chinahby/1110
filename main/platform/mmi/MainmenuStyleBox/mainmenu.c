@@ -483,7 +483,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {
         return EFAILED;
     }
-//wlh 20090409 add start
+
 	pMe->m_pImageTurn[0] = ISHELL_LoadImage(pMe->m_pShell,ICON1_ANI_1);
 	pMe->m_pImageTurn[1] = ISHELL_LoadImage(pMe->m_pShell,ICON2_ANI_1);
 	pMe->m_pImageTurn[2] = ISHELL_LoadImage(pMe->m_pShell,ICON3_ANI_1);
@@ -504,7 +504,6 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	{
 		if(pMe->m_pImageTurn[i] == NULL)
         {
-            ERR(":::::::::::::::%d:::::::::::::",i,0,0);
 			iamgeflag = TRUE;
 			break;
 		}
@@ -1735,8 +1734,11 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
             
         titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
         STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
-        titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
-
+    #if defined (FEATURE_DISP_160X128)
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
+    #elif defined (FEATURE_DISP_128X128)
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
+    #endif
         DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
     }
     
@@ -1784,8 +1786,11 @@ static void DrawFocusIcon(MainMenu *pMe)
         
     titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
+    #if defined (FEATURE_DISP_160X128)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
-
+    #elif defined (FEATURE_DISP_128X128)
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
+    #endif
     DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
     
     if(pMe->m_pAnimate == NULL)
@@ -1844,7 +1849,11 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
             
     titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
+    #if defined (FEATURE_DISP_160X128)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
+    #elif defined (FEATURE_DISP_128X128)
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
+    #endif
 #ifdef FEATURE_APP_NUMBERMANAGER
     if(theFocus == 9)
     {
@@ -2130,6 +2139,9 @@ static boolean StartApplet(MainMenu *pMe, int i)
     {
     #if defined (FEATURE_DISP_128X128)
         case 0:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            break;
+        case 1:
             {
                 IContactApp *ca = NULL;
                 if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
@@ -2142,37 +2154,33 @@ static boolean StartApplet(MainMenu *pMe, int i)
                     IContactApp_Release(ca);
                 }
             }
-            break;
-        case 1:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
-            break;
-            
+            break; 
         case 2:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
             break;
         
         case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
-            break;
-            
-        case 4:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
             break;
             
+        case 4:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            break;
+            
         case 5:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
             break;
             
         case 6:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
             break;
             
         case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;
             
         case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
             break;
             
     #endif

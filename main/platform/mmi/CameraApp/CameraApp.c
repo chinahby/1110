@@ -95,7 +95,6 @@ static void CameraApp_APPIsReadyTimer(void *pme);
 
 static void CameraApp_ShowBusyStateImage(CCameraApp *pMe);
 
-extern int Rendering_UpdateEx(void);//wlh 20090409 add
 /*==============================================================================
 全局数据
 ==============================================================================*/
@@ -679,9 +678,11 @@ static void CameraApp_FreeAppData(CCameraApp *pMe)
     // Note: if SD card detected after Creating ICamera interface, it needn't to stop sd card in this way, cause's SD won't be pushed in stack for low dev priority
     if(pMe->m_bMemoryCardExist)
     {
+    #ifdef FEATURE_SUPPORT_VC0848
         vc_union_type vc_data;
         vc_data.dev_run.curr_dev = VC_DEV_SD;
         VC_DeviceControl(VC_ITM_DEV_STOP_I, VC_FUNC_CONTROL, &vc_data);
+    #endif
     }
 
 }
@@ -761,7 +762,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
     switch(eCode)
     {
         case EVT_APP_START:
-			Rendering_UpdateEx();//wlh 20090409 add
             pMe->m_bAppIsReady = FALSE;
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
@@ -819,6 +819,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
         case EVT_APP_STOP:
              // 在848 jpg解码过程中按end键的处理
              {
+             #ifdef FEATURE_SUPPORT_VC0848
                 extern vc_jpeg_decode display_jpg_done;
                 DBGPRINTF("EVT_APP_STOP!!!");
                 if(display_jpg_done == VC_JPEG_DECODE_DOING)
@@ -826,6 +827,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                     DBGPRINTF("VC_ITM_JPG_STOP_DECODE_I");
                     VC_DeviceControl(VC_ITM_JPG_STOP_DECODE_I, VC_FUNC_PLAY_ON, 0);
                 }
+                #endif
             }
      
             if(pMe->m_pDisplay != NULL)
@@ -906,7 +908,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 
       
         case EVT_APP_RESUME: 
-			Rendering_UpdateEx();//wlh 20090409 add
             if(pMe->m_pCamera == NULL)
             {
                 ISHELL_CreateInstance(pMe->m_pShell, 
@@ -935,7 +936,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_DIALOG_START:
-			Rendering_UpdateEx();//wlh 20090409 add
             return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_USER_REDRAW:

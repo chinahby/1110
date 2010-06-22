@@ -18,7 +18,8 @@ vpath %.brx $(STOPWATCH_RES)
 
 CONSTFILE_FILES+=\
 	stopwatch.mif|fs:/mif/stopwatch.mif \
-	stopwatch.bar|fs:/mod/stopwatch/en/stopwatch.bar
+	stopwatch.bar|fs:/mod/stopwatch/en/stopwatch.bar 
+	
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

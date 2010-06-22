@@ -889,6 +889,11 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
+            #if defined (FEATURE_DISP_128X128)
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_8, IDS_APPLICATION_TITLE_8, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0);
+            #endif
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -968,6 +973,11 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 case IDS_APPLICATION_TITLE_4:
                 case IDS_APPLICATION_TITLE_5:
                 case IDS_APPLICATION_TITLE_6:
+            #if defined (FEATURE_DISP_128X128)
+                case IDS_APPLICATION_TITLE_7:
+                case IDS_APPLICATION_TITLE_8:
+                case IDS_APPLICATION_TITLE_9:
+            #endif
                     StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_1);
                     return TRUE;
             }
@@ -1019,6 +1029,15 @@ static boolean StartApplet(Application *pMe, int i)
             break;
         case 5:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
+            break;
+        case 6:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            break;
+        case 7:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME_TETRIS);
+            break;
+        case 8:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
             break;
         default:
             break;

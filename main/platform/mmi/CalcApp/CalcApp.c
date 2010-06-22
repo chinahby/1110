@@ -64,6 +64,7 @@ when         who            what, where, why
                     MACRO DEFINITIONS
 
 ===========================================================================*/
+#if defined (FEATURE_DISP_160X128)
 /*显示数字线条宽度*/
 #define CALC_NUMBER_LINE_WIDTH     2
 /*显示数字宽度*/
@@ -152,7 +153,97 @@ when         who            what, where, why
 #define CALC_RETURN_Ys 113
 #define CALC_RETURN_Ws 47
 #define CALC_RETURN_Hs 54
+#elif defined(FEATURE_DISP_128X128)
+/*显示数字线条宽度*/
+#define CALC_NUMBER_LINE_WIDTH     2
+/*显示数字宽度*/
+#define CALC_NUMBER_WIDTH             9
+/*显示数字高度*/
+#define CALC_NUMBER_HEIGHT            19
+/*显示计算区域X坐标原点*/
+#define CALC_VAL_RECT_X                  10
+/*显示计算区域最底行Y坐标原点*/
+#define CALC_VAL_RECT_Y                  22
+/*显示计算区域宽度*/
+#define CALC_VAL_RECT_WIDTH          116
+/*显示单行计算区域高度*/
+#define CALC_VAL_RECT_HEIGHT         26
+/*显示数字间间隔*/
+#define CALC_BETWEEN_NUM_PIXEL     1
+    
 
+//wlh 20090417 add icon x/y
+//正负号
+#define CALC_ZHENFU_X 12
+#define CALC_ZHENFU_Y 113
+#define CALC_ZHENFU_W 46
+#define CALC_ZHENFU_H 53
+#define CALC_ZHENFU_Xs 12
+#define CALC_ZHENFU_Ys 113
+#define CALC_ZHENFU_Ws 46
+#define CALC_ZHENFU_Hs 53
+
+//减号
+#define CALC_SUBTRACT_X 58
+#define CALC_SUBTRACT_Y 108
+#define CALC_SUBTRACT_W 61
+#define CALC_SUBTRACT_H 62
+#define CALC_SUBTRACT_Xs 63
+#define CALC_SUBTRACT_Ys 133
+#define CALC_SUBTRACT_Ws 20
+#define CALC_SUBTRACT_Hs 20
+
+//加号
+#define CALC_PLUS_X 58
+#define CALC_PLUS_Y 108
+#define CALC_PLUS_W 61
+#define CALC_PLUS_H 62
+#define CALC_PLUS_Xs 82
+#define CALC_PLUS_Ys 113
+#define CALC_PLUS_Ws 20
+#define CALC_PLUS_Hs 20
+
+//乘号
+#define CALC_MULTI_X 58
+#define CALC_MULTI_Y 108
+#define CALC_MULTI_W 61
+#define CALC_MULTI_H 62
+#define CALC_MULTI_Xs 82
+#define CALC_MULTI_Ys 152
+#define CALC_MULTI_Ws 20
+#define CALC_MULTI_Hs 20
+
+//除号
+#define CALC_DIVIDE_X 58
+#define CALC_DIVIDE_Y 108
+#define CALC_DIVIDE_W 61
+#define CALC_DIVIDE_H 62
+#define CALC_DIVIDE_Xs 102
+#define CALC_DIVIDE_Ys 133
+#define CALC_DIVIDE_Ws 20
+#define CALC_DIVIDE_Hs 20
+
+//等号
+#define CALC_EQUAL_X 75
+#define CALC_EQUAL_Y 126
+#define CALC_EQUAL_W 28
+#define CALC_EQUAL_H 28
+#define CALC_EQUAL_Xs 83
+#define CALC_EQUAL_Ys 133
+#define CALC_EQUAL_Ws 20
+#define CALC_EQUAL_Hs 20
+
+//删除
+#define CALC_RETURN_X 119
+#define CALC_RETURN_Y 113
+#define CALC_RETURN_W 47
+#define CALC_RETURN_H 54
+#define CALC_RETURN_Xs 119
+#define CALC_RETURN_Ys 113
+#define CALC_RETURN_Ws 47
+#define CALC_RETURN_Hs 54
+
+#endif
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define CALCAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )

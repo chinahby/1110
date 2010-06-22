@@ -55,6 +55,33 @@
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>Menu</Text>
 	</STRING>
+	<String Id="1101" Name="IDS_MAIN_MENU_TITLE_21">
+		<Text>MediaGallery</Text>
+	</String>
+	<String Id="1102" Name="IDS_MAIN_MENU_TITLE_22">
+		<Text>Contacts</Text>
+	</String>
+	<String Id="1103" Name="IDS_MAIN_MENU_TITLE_23">
+		<Text>UTK</Text>
+	</String>
+	<String Id="1104" Name="IDS_MAIN_MENU_TITLE_24">
+		<Text>FM Radio</Text>
+	</String>
+	<String Id="1105" Name="IDS_MAIN_MENU_TITLE_25">
+		<Text>Messages</Text>
+	</String>
+	<String Id="1106" Name="IDS_MAIN_MENU_TITLE_26">
+		<Text>Recent calls</Text>
+	</String>
+	<String Id="1107" Name="IDS_MAIN_MENU_TITLE_27">
+		<Text>MusicPlayer</Text>
+	</String>
+	<String Id="1108" Name="IDS_MAIN_MENU_TITLE_28">
+		<Text>Setting</Text>
+	</String>
+	<String Id="1109" Name="IDS_MAIN_MENU_TITLE_29">
+		<Text>Application</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">

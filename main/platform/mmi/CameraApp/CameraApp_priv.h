@@ -76,7 +76,9 @@
 #include "AEECamera.h"
 #include "cameraapp_image.brh"
 #include "db.h"
+#ifdef FEATURE_SUPPORT_VC0848
 #include "Vc0848.h"
+#endif
 #include "Appscommon.brh"
 #include "OEMSVC.h"
 

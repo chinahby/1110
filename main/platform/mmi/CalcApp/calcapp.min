@@ -18,7 +18,7 @@ vpath %.brx $(CALCAPP_RES)
 
 CONSTFILE_FILES+=\
 	calcapp.mif|fs:/mif/calcapp.mif \
-	calcapp.bar|fs:/mod/calcapp/en/calcapp.bar	
+	calcapp.bar|fs:/mod/calcapp/en/calcapp.bar  
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

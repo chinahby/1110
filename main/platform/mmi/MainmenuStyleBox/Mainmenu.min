@@ -34,7 +34,29 @@ ifneq ($(EXTLANG2),NO)
 CONSTFILE_FILES+=\
 $(EXTLANG2)mainmenu.bar|fs:/mod/mainmenu/$(EXTLANG2)/mainmenu.bar
 endif
+ifeq ($(USES_128X128),yes)
+CONSTFILE_FILES+=\
+	Contact.png|fs:/image/mainmenu/Contact.png\
+	Message.png|fs:/image/mainmenu/Message.png \
+	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
+	Setting.png|fs:/image/mainmenu/Setting.png \
+	FmRadio.png|fs:/image/mainmenu/FmRadio.png \
+	UTK.png|fs:/image/mainmenu/UTK.png\
+	MusicPlayer.png|fs:/image/mainmenu/MusicPlayer.png \
+	MediaGallery.png|fs:/image/mainmenu/MediaGallery.png\
+	application.png|fs:/image/mainmenu/application.png\
+	Contact_focus.png|fs:/image/mainmenu/Contact_focus.png \
+	Message_focus.png|fs:/image/mainmenu/Message_focus.png \
+	Recentcall_focus.png|fs:/image/mainmenu/Recentcall_focus.png \
+	Setting_focus.png|fs:/image/mainmenu/Setting_focus.png \
+	FmRadio_focus.png|fs:/image/mainmenu/FmRadio_focus.png \
+	UTK_focus.png|fs:/image/mainmenu/UTK_focus.png\
+	MusicPlayer_focus.png|fs:/image/mainmenu/MusicPlayer_focus.png \
+	MediaGallery_focus.png|fs:/image/mainmenu/MediaGallery_focus.png\
+	application_focus.png|fs:/image/mainmenu/application_focus.png
+endif
 
+ifeq ($(USES_160X128),yes)
 CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
 	Message.png|fs:/image/mainmenu/Message.png \
@@ -54,9 +76,6 @@ CONSTFILE_FILES+=\
 	Display_focus.png|fs:/image/mainmenu/Display_focus.png \
 	Timer_focus.png|fs:/image/mainmenu/Timer_focus.png \
 	Stopwatch_focus.png|fs:/image/mainmenu/Stopwatch_focus.png\
-	
-ifeq ($(USES_160X128),yes)
-CONSTFILE_FILES+=\
 	Calendar.png|fs:/image/mainmenu/Calendar.png \
 	Digit.png|fs:/image/mainmenu/Digit.png\
 	Document.png|fs:/image/mainmenu/Document.png\

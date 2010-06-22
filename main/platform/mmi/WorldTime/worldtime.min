@@ -16,12 +16,13 @@ vpath %.c $(WORLDTIME_SRC)
 vpath %.bar $(WORLDTIME_RES)
 vpath %.brx $(WORLDTIME_RES)
 
-ifeq ($(EXTLANG1),id)
+ifeq ($(USES_128X128),yes)
 CONSTFILE_FILES+=\
     worldtime.mif|fs:/mif/worldtime.mif \
-    enidworldtime.bar|fs:/mod/worldtime/en/worldtime.bar \
-    worldtime_images.bar|fs:/mod/worldtime/worldtime_images.bar
-else
+    worldtime.bar|fs:/mod/worldtime/en/worldtime.bar \
+    worldtime_images128x128.bar|fs:/mod/worldtime/worldtime_images.bar
+endif
+ifeq ($(USES_160X128),yes)
 CONSTFILE_FILES+=\
     worldtime.mif|fs:/mif/worldtime.mif \
     worldtime.bar|fs:/mod/worldtime/en/worldtime.bar \

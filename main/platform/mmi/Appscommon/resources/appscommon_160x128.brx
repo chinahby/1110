@@ -154,6 +154,12 @@
 	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH">
 		<File>..\images\160x128\IME\ezenglish.png</File>
 	</Object>
+	<Object Id="5408" Name="IDB_MODE_T9_MT_INDONESIAN">
+		<File>..\images\160x128\IME\Indo.png</File>
+	</Object>
+	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN">
+		<File>..\images\160x128\IME\T9In.png</File>
+	</Object>
 	<Object Id="5411" Name="IDB_MODE_T9_RAPID_ENGLISH_LOW">
 		<File>..\images\160x128\IME\lowezenglish.png</File>
 	</Object>

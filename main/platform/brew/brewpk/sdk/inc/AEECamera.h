@@ -138,6 +138,8 @@ Qualcomm Confidential and Proprietary
 #define CAM_PARM_SENSOR_INFO        (CAM_PARM_BASE + 21)    // [Set/Get] Sensor info
 #define CAM_PARM_PREVIEW_FPS        (CAM_PARM_BASE + 22)    // [Set/Get] FPS control in preview mode
 #define CAM_PARM_FRAME_TIMESTAMP   (CAM_PARM_BASE + 23)     // [Set/Get] Enable encoding of time stamp in movie frames
+#define  CAM_PARM_DISPLAY_OFFSET    (CAM_PARM_BASE + 24)
+
 
 #define CAM_PARM_CTL_BASE           (CAM_PARM_BASE + 0x100)
 #define CAM_PARM_QUALITY            (CAM_PARM_CTL_BASE)     // [Set/Get] Quality
@@ -161,6 +163,9 @@ Qualcomm Confidential and Proprietary
 #define CAM_PARM_FOCUS_RECT         (CAM_PARM_CTL_BASE + 18)// [Set/Get] Set the focus rectangle
 #define CAM_PARM_BITRATE            (CAM_PARM_CTL_BASE + 19)// [Set/Get] Set the encoding bit rate for video
 #define CAM_PARM_QCOM_RESERVED_BEGIN (CAM_PARM_CTL_BASE + 20)     // Reserved parameter ID's begin
+#define CAM_PARM_MULTISHOT          (CAM_PARM_CTL_BASE + 21)// [Set]  Multishot 
+#define CAM_PARM_BANDING            (CAM_PARM_CTL_BASE + 22)// [Set] Camera Banding
+#define CAM_PARM_PREVIEWWITHFRAME   (CAM_PARM_CTL_BASE + 23)// [Set] Camera Preview with frame or not
 #define CAM_PARM_FADE               CAM_PARM_QCOM_RESERVED_BEGIN //[Set] Set the fading for movie recording mode
 #define CAM_PARM_QCOM_RESERVED_END  (CAM_PARM_QCOM_RESERVED_BEGIN + 100) // Reserved parameter ID's end
 #define CAM_PARM_EXPOSURE_METERING  (CAM_PARM_CTL_BASE + 121)// [Set/Get] Set exposure metering
