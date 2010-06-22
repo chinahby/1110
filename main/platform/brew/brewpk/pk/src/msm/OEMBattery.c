@@ -391,7 +391,7 @@ static void OEMBattery_PeriodicBatteryCheck(void * pUser)
    OEMBattery_CheckBatteryLevel(&dwBatteryLevel);
    nDelta = dwBatteryLevel - gpBattery->dwBatteryLevel;
    nDelta = (nDelta) < 0 ? (-(nDelta)) : (nDelta);
-   ERR("miaoxiaoming:gpBattery->dwBatteryLevel =%d, dwBatteryLevel=%d, nDelta=%d",gpBattery->dwBatteryLevel,dwBatteryLevel,nDelta);
+//   ERR("miaoxiaoming:gpBattery->dwBatteryLevel =%d, dwBatteryLevel=%d, nDelta=%d",gpBattery->dwBatteryLevel,dwBatteryLevel,nDelta);
    if (nDelta > VBATT_MEAN_RANGE)        /*µç³Ø¶¶¶¯*/
   // if (gpBattery->dwBatteryLevel != dwBatteryLevel)
    {
