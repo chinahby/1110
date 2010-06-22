@@ -188,7 +188,7 @@ if(!(x))         \
 
 //播放按钮
 #define PLAY_X 66
-#define PLAY_Y 43
+#define PLAY_Y 51
 #define PLAY_W 45
 #define PLAY_H 44
 
@@ -238,6 +238,7 @@ if(!(x))         \
 #define OLDPLAY_Y 68
 #define OLDPLAY_W 114
 #define OLDPLAY_H 45
+
 #elif defined (FEATURE_DISP_128X128)
 //开机动画
 #define ANI_X 0
@@ -260,8 +261,8 @@ if(!(x))         \
 #define SIMSCHEDULEBAR_H 7
 
 //播放按钮
-#define PLAY_X 66
-#define PLAY_Y 43
+#define PLAY_X 54
+#define PLAY_Y 51
 #define PLAY_W 45
 #define PLAY_H 44
 
