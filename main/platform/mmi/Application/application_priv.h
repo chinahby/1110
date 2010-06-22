@@ -123,9 +123,9 @@ typedef struct _Application
                                  
 ==============================================================================*/
 #if defined (FEATURE_DISP_128X128)
-#define  MAX_MATRIX_ITEMS 9
+#define  MAX_MATRIX_ITEMS 10
 #elif defined(FEATURE_DISP_160X128)
-#define  MAX_MATRIX_ITEMS 6
+#define  MAX_MATRIX_ITEMS 7
 #endif
 #define ICON_ANIMATED_FRAME     1 //½¹µãÍ¼Æ¬µÄÖ¡Êý
 

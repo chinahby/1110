@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="application" VERSION="1">
+<BREWRes Name="idapplication" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
 		<Text>Application</Text>
@@ -23,12 +23,15 @@
 		<Text>WorldTime</Text>
 	</String>
 	<String Id="1017" Name="IDS_APPLICATION_TITLE_7">
-		<Text>Calendar</Text>
+		<Text>Recorder</Text>
 	</String>
 	<String Id="1018" Name="IDS_APPLICATION_TITLE_8">
-		<Text>Game</Text>
+		<Text>Calendar</Text>
 	</String>
 	<String Id="1019" Name="IDS_APPLICATION_TITLE_9">
+		<Text>Game</Text>
+	</String>
+	<String Id="1020" Name="IDS_APPLICATION_TITLE_10">
 		<Text>Calculator</Text>
 	</String>
 </Strings>

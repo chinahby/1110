@@ -1781,8 +1781,10 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
         {
             if( pMe->m_RingerType == SET_RINGER || pMe->m_RingerType == SET_ALARMRING)
             {
+            #if 0
                 extern boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo);
                 OEMRinger_SetupQcpSoundInfo( pMe->m_pISound, 0);
+		    #endif
             }
         }
         break;      
@@ -3707,8 +3709,10 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
             {
                 if( pMe->m_VolType == SET_RINGER_VOL)
                 {
+                	#if 0
                     extern boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo);
                     OEMRinger_SetupQcpSoundInfo( pMe->m_pISound, 0);
+					#endif
                 }
             }
 #endif

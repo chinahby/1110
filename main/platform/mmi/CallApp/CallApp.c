@@ -202,6 +202,7 @@ static int CallApp_Make_UTK_Call_F(ICallApp *p);
 static void CallApp_DisableLedSig( CCallApp *pMe);
 #endif
 #endif
+
 static void CallApp_Settime_To_EndCall(CCallApp *pMe);
 static void CallApp_Conver_Buf(AECHAR *buf);
 static int CallApp_BtCallNumber(ICallApp *p, AECHAR *number);
@@ -1348,7 +1349,10 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             //    }
             //}
 #if defined( FEATURE_RECORDER)
+			#if 0
+			extern boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo);
 	        if( !OEMRinger_SetupQcpSoundInfo( pMe->m_pSound, 0))
+		   #endif
 #endif
                 CallApp_SetupCallAudio(pMe);
             return TRUE;
