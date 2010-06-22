@@ -129,7 +129,7 @@ chg_plvl_rtn_type chg_get_parameter_level(chg_parameter_type parm)
           #else
           rtnValue = (chg_plvl_rtn_type)Adc_Volt.mV;
           #endif
-          ERR("CHG_PARAMETER__BATTERY_VOLT:  rtnValue = %d",rtnValue,0,0);
+          //ERR("CHG_PARAMETER__BATTERY_VOLT:  rtnValue = %d",rtnValue,0,0);
           break;
        
   case CHG_PARAMETER__WALL_CHARGER_VOLT:
@@ -142,7 +142,7 @@ chg_plvl_rtn_type chg_get_parameter_level(chg_parameter_type parm)
           #else
           rtnValue = (chg_plvl_rtn_type)(Adc_Volt.mV);
           #endif
-          ERR("CHG_PARAMETER__WALL_CHARGER_VOLT:  rtnValue = %d",rtnValue,0,0);
+         // ERR("CHG_PARAMETER__WALL_CHARGER_VOLT:  rtnValue = %d",rtnValue,0,0);
           break;
 
   case CHG_PARAMETER__USB_CHARGER_VOLT:
@@ -158,7 +158,7 @@ chg_plvl_rtn_type chg_get_parameter_level(chg_parameter_type parm)
           #else
           rtnValue = (chg_plvl_rtn_type)Adc_Volt.mV;
           #endif
-          ERR("CHG_PARAMETER__USB_CHARGER_VOLT:  rtnValue = %d",rtnValue,0,0);
+          //ERR("CHG_PARAMETER__USB_CHARGER_VOLT:  rtnValue = %d",rtnValue,0,0);
           
           break;
 
@@ -205,7 +205,7 @@ chg_plvl_rtn_type chg_get_parameter_level(chg_parameter_type parm)
         #endif /* T_WINNT */
           
           
-		ERR("CHG_PARAMETER__CHARGER_I:  rtnValue = %d",rtnValue,0,0);
+		//ERR("CHG_PARAMETER__CHARGER_I:  rtnValue = %d",rtnValue,0,0);
           break;
 
   case CHG_PARAMETER__BATTERY_ID:
