@@ -78,6 +78,8 @@ endif
 
 #Games
 include $(TETRIS)/tetris.min
+include $(BRICKATTACK)/brickattack.min
+include $(BLACKJACK)/blackjack.min
 
 #Apps
 #include $(EXTRAMENU)/extramenu.min
@@ -113,3 +115,4 @@ endif
 
 include $(MMIDIR)/core/core.min
 include $(APPLICATION)/application.min
+include $(GAME)/game.min

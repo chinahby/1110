@@ -707,7 +707,7 @@ static void recorder_show_media_spec( Media* pme)
 		recorder_get_time_string( pme, time);
 		SETAEERECT( &rect,
 		            0,
-		            y - GetBottomBarHeight( pRecorder->m_pDisplay) - 2,
+		            y - GetBottomBarHeight( pRecorder->m_pDisplay),
 		            pme->m_bRecorder ? pRecorder->m_rc.dx :
 		            		max( info.cx, IDISPLAY_MeasureText( pRecorder->m_pDisplay, AEE_FONT_NORMAL, time)),
 		            GetTitleBarHeight( pRecorder->m_pDisplay)

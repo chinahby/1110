@@ -177,18 +177,18 @@ if(!(x))         \
 //进度条
 #define SCHEDULEBAR_X 25
 #define SCHEDULEBAR_Y 40
-#define SCHEDULEBAR_W 122
+#define SCHEDULEBAR_W 94
 #define SCHEDULEBAR_H 7
 
 //进度条(简单播放)
 #define SIMSCHEDULEBAR_X 17
 #define SIMSCHEDULEBAR_Y 147
-#define SIMSCHEDULEBAR_W 122
+#define SIMSCHEDULEBAR_W 94
 #define SIMSCHEDULEBAR_H 7
 
 //播放按钮
-#define PLAY_X 66
-#define PLAY_Y 51
+#define PLAY_X 60
+#define PLAY_Y 54
 #define PLAY_W 45
 #define PLAY_H 44
 
@@ -227,8 +227,8 @@ if(!(x))         \
 #define LISTINDEX_Y 95
 
 //当前播放时间
-#define PLAYINGTICK_X 60
-#define PLAYINGTICK_Y 95
+#define PLAYINGTICK_X 105
+#define PLAYINGTICK_Y 47
 //当前播放时间（简单播放）
 #define SIMPLAYINGTICK_X 60
 #define SIMPLAYINGTICK_Y 155
@@ -251,30 +251,30 @@ if(!(x))         \
 //进度条
 #define SCHEDULEBAR_X 25
 #define SCHEDULEBAR_Y 40
-#define SCHEDULEBAR_W 122
+#define SCHEDULEBAR_W 94
 #define SCHEDULEBAR_H 7
 
 //进度条(简单播放)
 #define SIMSCHEDULEBAR_X 17
 #define SIMSCHEDULEBAR_Y 147
-#define SIMSCHEDULEBAR_W 122
+#define SIMSCHEDULEBAR_W 94
 #define SIMSCHEDULEBAR_H 7
 
 //播放按钮
-#define PLAY_X 54
-#define PLAY_Y 51
+#define PLAY_X 51
+#define PLAY_Y 58
 #define PLAY_W 45
 #define PLAY_H 44
 
 //前一个曲目
 #define PREVIOUSPRESS_X 23
-#define PREVIOUSPRESS_Y 56
+#define PREVIOUSPRESS_Y 62
 #define PREVIOUSPRESS_W 31
 #define PREVIOUSPRESS_H 32
 
 //后一个曲目
 #define NEXTPRESS_X 93
-#define NEXTPRESS_Y 56
+#define NEXTPRESS_Y 62
 #define NEXTPRESS_W 31
 #define NEXTPRESS_H 32
 
@@ -301,8 +301,8 @@ if(!(x))         \
 #define LISTINDEX_Y 95
 
 //当前播放时间
-#define PLAYINGTICK_X 60
-#define PLAYINGTICK_Y 95
+#define PLAYINGTICK_X 75
+#define PLAYINGTICK_Y 47
 //当前播放时间（简单播放）
 #define SIMPLAYINGTICK_X 60
 #define SIMPLAYINGTICK_Y 155
@@ -310,7 +310,7 @@ if(!(x))         \
 //播放区域，包含前一首，播放，下一首
 #define OLDPLAY_X 30
 #define OLDPLAY_Y 68
-#define OLDPLAY_W 114
+#define OLDPLAY_W 96
 #define OLDPLAY_H 45
 
 #endif

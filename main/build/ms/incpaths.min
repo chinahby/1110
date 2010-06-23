@@ -823,6 +823,7 @@ BREW_APPMGR=            $(MMIDIR)/brewappmgr_2.1.0/brewappmgr
 NUMBERMANAGER =         $(MMIDIR)/NumberManager
 ADJUSTPENAPP =          $(MMIDIR)/AdjustPenApp
 APPLICATION   =         $(MMIDIR)/Application
+GAME     =              $(MMIDIR)/Games/game
 #头文件的路径在这里加
 ALL_PATHS+=$(INC) $(BREW_OEM_SIM_INC) $(BREW_OEM_RESINC) $(BREW_AEE_SRC) $(BREW_STATIC_EXTENSIONS_RESINC)
 endif

@@ -1041,7 +1041,7 @@ static boolean StartApplet(Application *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
             break;
         case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME_TETRIS);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
             break;
         case 9:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);

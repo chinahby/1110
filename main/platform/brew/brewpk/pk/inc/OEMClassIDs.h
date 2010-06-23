@@ -92,6 +92,8 @@ GENERAL DESCRIPTION:
 #define AEECLSID_OEMITSIM          (AEECLSID_OEM + 0x501)   //   //add by ydc
 #define AEECLSID_VKEY_CONTROL      (AEECLSID_OEM + 0x502)   //0x01006131
 #define AEECLSID_APPLICATION       (AEECLSID_OEM + 0x503)   //add by yangdecai
+#define AEECLSID_GAME              (AEECLSID_OEM + 0x504)   //add by yangdecai
+
 #endif /*CUST_EDITION*/
 /*=====================================================================
   DATA STRUCTURE DOCUMENTATION
