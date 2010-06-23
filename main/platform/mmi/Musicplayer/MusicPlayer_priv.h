@@ -187,20 +187,20 @@ if(!(x))         \
 #define SIMSCHEDULEBAR_H 7
 
 //播放按钮
-#define PLAY_X 60
-#define PLAY_Y 54
+#define PLAY_X 65
+#define PLAY_Y 56
 #define PLAY_W 45
 #define PLAY_H 44
 
 //前一个曲目
 #define PREVIOUSPRESS_X 37
-#define PREVIOUSPRESS_Y 56
+#define PREVIOUSPRESS_Y 60
 #define PREVIOUSPRESS_W 31
 #define PREVIOUSPRESS_H 32
 
 //后一个曲目
 #define NEXTPRESS_X 107
-#define NEXTPRESS_Y 56
+#define NEXTPRESS_Y 60
 #define NEXTPRESS_W 31
 #define NEXTPRESS_H 32
 
@@ -227,7 +227,7 @@ if(!(x))         \
 #define LISTINDEX_Y 95
 
 //当前播放时间
-#define PLAYINGTICK_X 105
+#define PLAYINGTICK_X 117
 #define PLAYINGTICK_Y 47
 //当前播放时间（简单播放）
 #define SIMPLAYINGTICK_X 60

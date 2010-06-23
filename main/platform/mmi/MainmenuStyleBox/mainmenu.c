@@ -2231,7 +2231,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;
         case 10:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME_TETRIS);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
             break;
         case 11:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
