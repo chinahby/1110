@@ -13,7 +13,13 @@
 
 #include "recorder_priv.h"
 #include "aeemediaformats.h"
+#if defined(FEATURE_DISP_160X128)
+#include "appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
 #include "appscommon_color.brh"
+#else
+#include "appscommon_color.brh"
+#endif
 #if defined( FEATURE_RECORDER_SUPPORT_CHINESE_FILE_NAME)
 #if defined( FEATURE_LANG_CHINESE)
 #include "gbk2unicode.h"
