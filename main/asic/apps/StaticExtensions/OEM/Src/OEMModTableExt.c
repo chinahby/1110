@@ -15,7 +15,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 
    See Exported Routines
 
-        Copyright © 1999-2006 QUALCOMM Incorporated.
+        Copyright ?1999-2006 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -770,9 +770,9 @@ extern int CSvcPrgMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
 // Field Debug
-#if defined (FEATURE_APP_FLDDBG)
+//#if defined (FEATURE_APP_FLDDBG)
 extern int CFieldDebugMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
-#endif
+//#endif
 
 #if defined (FEATURE_SECSERVICES_TESTAPP)
 extern int SecurityServices_Load (IShell *pIShell, void *pHelpers, IModule **ppIMod);
@@ -921,9 +921,9 @@ extern int MorseMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif
 
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
-extern int CustServiceMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
-extern int EsurfingMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
-extern int NotebookMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+//extern int CustServiceMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+//extern int EsurfingMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+//extern int NotebookMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif /*FEATURE_CARRIER_CHINA_TELCOM*/
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
 extern int AdjustPenMod_Load(IShell *p,void *ph,IModule **ppMod);
@@ -1136,9 +1136,9 @@ static const AEEStaticMod gOEMStaticModList[] =
       {AEEFS_MIF_DIR"svcprog.mif", CSvcPrgMod_Load},
 #endif
 
-#if defined (FEATURE_APP_FLDDBG)
+//#if defined (FEATURE_APP_FLDDBG)
       {AEEFS_MIF_DIR"flddbg.mif", CFieldDebugMod_Load},
-#endif
+//#endif
 #if defined (FEATURE_APP_DIALER)
     {AEEFS_MIF_DIR"callapp.mif", CallAppMod_Load},
 #endif
@@ -1265,9 +1265,9 @@ static const AEEStaticMod gOEMStaticModList[] =
    { AEEFS_MIF_DIR"morse.mif",MorseMod_Load},
 #endif
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
-            {AEEFS_MIF_DIR"custservice.mif",CustServiceMod_Load},
-            {AEEFS_MIF_DIR"esurfing.mif",EsurfingMod_Load},
-            {AEEFS_MIF_DIR"notebook.mif",NotebookMod_Load},
+            //{AEEFS_MIF_DIR"custservice.mif",CustServiceMod_Load},
+            //{AEEFS_MIF_DIR"esurfing.mif",EsurfingMod_Load},
+            //{AEEFS_MIF_DIR"notebook.mif",NotebookMod_Load},
 #endif /*FEATURE_CARRIER_CHINA_TELCOM*/
 
 

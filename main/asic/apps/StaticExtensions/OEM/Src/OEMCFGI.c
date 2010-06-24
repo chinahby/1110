@@ -606,6 +606,13 @@ typedef struct
 #ifdef FEATURE_PLANEMODE
    byte planeMode;         /*CFGI_PLANEMODE*/
 #endif
+#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
+   byte brew_username[126];                          /* CFGI_BREW_USERNAME       */
+   byte brew_password[32];                           /* CFGI_BREW_PASSWORD       */
+#else
+   byte brew_username[NV_MAX_PAP_USER_ID_LENGTH];    /* CFGI_BREW_USERNAME       */
+   byte brew_password[NV_MAX_PAP_PASSWORD_LENGTH];   /* CFGI_BREW_PASSWORD       */
+#endif
     boolean missed_call_icon;                            /* CFGI_MISSED_CALL_ICON    */
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
    uint32 m_ndefaulerend;                       //CFGI_DEFAULT_REND
@@ -707,6 +714,13 @@ typedef struct
   nv_auto_redial_type auto_redial;     /*CFGI_AUTO_REDIAL*/
 
   keyToneLength key_tone_length;       /* CFGI_KEYTONE_LENGTH*/
+  dword brew_carrier_id;                            /* CFGI_BREW_CARRIER_ID     */
+  byte brew_bkey[NV_BREW_BKEY_SIZ];                 /* CFGI_BREW_BKEY           */
+  dword brew_auth_policy;                           /* CFGI_BREW_AUTH_POLICY    */
+  dword brew_privacy_policy;                        /* CFGI_BREW_PRIVACY_POLICY */
+  byte brew_subscriber_id[NV_BREW_SID_SIZ];         /* CFGI_BREW_SUBSCRIBER_ID  */
+  dword brew_platform_id;                           /* CFGI_BREW_PLATFORM_ID  */
+  word brew_download_flags;                         /* Flgs                     */
 #endif //#ifdef CUST_EDITION
 } NVConfigListType;
 
@@ -766,6 +780,10 @@ typedef struct {
 static void OEMPriv_WriteOEMConfigList(void);
 static void OEMPriv_ReadOEMConfigList(void);
 
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+static int OEMPriv_GetItem_CFGI_RTRE_CONFIGURATION(void *pBuff);
+static int OEMPriv_SetItem_CFGI_RTRE_CONFIGURATION(void *pBuff);
+#endif
 
 // OEM Config Item Get/Set functions
 static int OEMPriv_GetItem_CFGI_SILENCEALL(void *pBuff);
@@ -1033,6 +1051,7 @@ static int OEMPriv_SetItem_CFGI_SHAKE_WALLPAPER_CHECK(void *pBuff);
 
 static int OEMPriv_GetItem_CFGI_SHAKE_SNOOZE_ALARM_CHECK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SHAKE_SNOOZE_ALARM_CHECK(void *pBuff);
+static int OEMPriv_GetItem_CFGI_DEBUG_ECIO(void *pBuff);
 
 static int OEMPriv_GetItem_CFGI_SHAKE_VIDEO_CHECK (void *pBuff);
 static int OEMPriv_SetItem_CFGI_SHAKE_VIDEO_CHECK(void *pBuff);
@@ -1830,6 +1849,10 @@ static ConfigItemTableEntry const customItemTable[] =
 #endif /* FEATURE_ACP */
    CFGTABLEITEM(CFGI_DATA_QNC_ENABLED,sizeof(boolean)),
    CFGTABLEITEM_EMPTY(CFGI_DATA_DIALSTRING),
+   
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+   CFGTABLEITEM(CFGI_RTRE_CONFIGURATION,sizeof(nv_rtre_configuration_type)),
+#endif 
    CFGTABLEITEM_EMPTY(CFGI_BREW_CID),
    CFGTABLEITEM_EMPTY(CFGI_BREW_PID),
    CFGTABLEITEM_EMPTY(CFGI_BREW_BKEY),
@@ -1861,6 +1884,22 @@ static ConfigItemTableEntry const customItemTable[] =
    CFGTABLEITEM(CFGI_DISABLE_IN_CALL_DISP, sizeof(boolean)),
    CFGTABLEITEM(CFGI_DISABLE_BG_IMAGE, sizeof(boolean)),
    CFGTABLEITEM(CFGI_MANUAL_PLMN_SEL_ALLOWED, sizeof(boolean)),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_USERNAME),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_PASSWORD),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_CARRIER_ID),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_AUTH_POLICY),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_PRIVACY_POLICY),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_SUBSCRIBER_ID),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_PLATFORM_ID),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_TESTOPT),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_USEAKEY),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_AUTOUPGRADE_FLG),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_USEMINFORSID_FLG),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_PREPAY_FLG),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_NOAUTOACK_FLG),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_SIDENCODE_FLG),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_SIDVALIDATAALL_FLG),
+   CFGTABLEITEM_EMPTY(CFGI_BREW_IDS_RUIMDELETE_FLG),
 
 };
 
@@ -1886,6 +1925,7 @@ static ConfigItemTableEntry const customStateItemTable[] =
    CFGTABLEITEM_READONLY(CFGI_DEBUG_TX_AGC_IN_DBM,sizeof(int16)),
    CFGTABLEITEM_READONLY(CFGI_DEBUG_RX_AGC,sizeof(signed char)),
    CFGTABLEITEM_READONLY(CFGI_DEBUG_RX_AGC_IN_DBM,sizeof(int32)),
+   CFGTABLEITEM_READONLY(CFGI_DEBUG_ECIO,sizeof(byte)), 
    CFGTABLEITEM_READONLY(CFGI_DEBUG_SID,sizeof(uint16)),
    CFGTABLEITEM_READONLY(CFGI_DEBUG_NID,sizeof(uint16)),
    CFGTABLEITEM_READONLY(CFGI_DEBUG_TX_ADJUST,sizeof(signed char)),
@@ -2952,6 +2992,23 @@ static void OEMPriv_MIN1_TO_STR(uint32  min1,
 
 
 }
+/*=============================================================================
+
+=============================================================================*/
+
+
+static dword g_me_esn=0;
+
+dword OEM_GetMEESN(void)
+{
+    return g_me_esn;
+}
+
+void OEM_SetMEESN(dword esn)
+{
+    g_me_esn = esn;
+}
+
 
 /*=============================================================================
 FUNCTION:  OEM_InitPreference
@@ -5026,6 +5083,266 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #else
 #endif
       return AEE_SUCCESS;
+case CFGI_BREW_USERNAME:
+      {
+         if ((!pBuff) || WSTRLEN((AECHAR *)pBuff) > BREW_USERNAME_LEN)
+         {
+            return EFAILED;
+         }
+
+         (void)WSTRTOSTR((AECHAR *)pBuff, (char*)oemi_cache.brew_username, sizeof(oemi_cache.brew_username));
+         OEMPriv_WriteOEMConfigList();
+      }
+      return AEE_SUCCESS;
+      
+   case CFGI_BREW_PASSWORD:
+      {
+         if ((!pBuff) || WSTRLEN((AECHAR *)pBuff) > BREW_PASSWORD_LEN)
+         {
+            return EFAILED;
+         }
+         oemi_cache.brew_password[0] = 0;
+         (void)WSTRTOSTR((AECHAR *)pBuff, (char*)oemi_cache.brew_password, sizeof(oemi_cache.brew_password));
+         OEMPriv_WriteOEMConfigList();
+      }
+      return AEE_SUCCESS;
+ 
+   case CFGI_BREW_CARRIER_ID:
+      {
+         if ((!pBuff) || nSize != sizeof(dword))
+         {
+            return EFAILED;
+         }
+#ifndef WIN32         
+         nvi.brew_carrier_id = *((dword *)pBuff);
+         
+         if (OEMNV_Put(NV_BREW_CARRIER_ID_I, &nvi) != NV_DONE_S)
+         {
+            DBGPRINTF(";put NVI_BREW_CARRIER_ID_I failed");
+            return EFAILED;
+         }
+         nvi_cache.brew_carrier_id = nvi.brew_carrier_id;
+#endif
+      }
+      return AEE_SUCCESS;
+
+   case CFGI_BREW_AUTH_POLICY:
+      {
+         if ((!pBuff) || nSize != sizeof(uint8))
+         {
+            return EFAILED;
+         }
+#ifndef WIN32         
+         nvi.brew_auth_policy = *(uint8 *)pBuff;
+         
+         if (OEMNV_Put(NV_BREW_AUTH_POLICY_I, &nvi) != NV_DONE_S)
+         {
+            DBGPRINTF(";put NVI_BREW_AUTH_POLICY_I failed");
+            return EFAILED;
+         }
+         nvi_cache.brew_auth_policy = nvi.brew_auth_policy;
+#endif
+      }
+      return AEE_SUCCESS;
+    
+   case CFGI_BREW_PRIVACY_POLICY:
+      {
+         if ((!pBuff) || nSize != sizeof(uint8))
+         {
+            return EFAILED;
+         }
+ #ifndef WIN32        
+         nvi.brew_privacy_policy = *(uint8 *)pBuff;
+         
+         if (OEMNV_Put(NV_BREW_PRIVACY_POLICY_I, &nvi) != NV_DONE_S)
+         {
+            DBGPRINTF(";put NVI_BREW_PRIVACY_POLICY_I failed");
+            return EFAILED;
+         }
+         nvi_cache.brew_privacy_policy = nvi.brew_privacy_policy;
+#endif
+      }
+      return AEE_SUCCESS;
+    
+   case CFGI_BREW_SUBSCRIBER_ID:
+      {
+         int k;
+         AECHAR *pWStr = (AECHAR *)pBuff;
+         
+         if ((!pWStr) || WSTRLEN(pWStr) >= NV_BREW_SID_SIZ)
+         {
+            return EFAILED;
+         }
+#ifndef WIN32         
+         for (k=0; k<WSTRLEN(pWStr); k++)
+         {
+            nvi.brew_subscriber_id[k] = (byte)pWStr[k];
+         }
+         nvi.brew_subscriber_id[k] = 0;
+         
+         if (OEMNV_Put(NV_BREW_SUBSCRIBER_ID_I, &nvi) != NV_DONE_S)
+         {
+            DBGPRINTF(";put CFGI_BREW_SUBSCRIBER_ID failed");
+            return EFAILED;
+         }
+         (void)STRCPY((char *)nvi_cache.brew_subscriber_id, (char *)nvi.brew_subscriber_id);
+#endif
+      }
+      return AEE_SUCCESS;
+      
+   case CFGI_BREW_PLATFORM_ID:
+      {
+         if ((!pBuff) || nSize != sizeof(dword))
+         {
+            return EFAILED;
+         }
+#ifndef WIN32         
+         nvi.brew_platform_id = *(dword *)pBuff;
+         
+         if (OEMNV_Put(NV_BREW_PLATFORM_ID_I, &nvi) != NV_DONE_S)
+         {
+            DBGPRINTF(";put NV_BREW_PLATFORM_ID_I failed");
+            return EFAILED;
+         }
+         nvi_cache.brew_platform_id = nvi.brew_platform_id;
+#endif
+      }
+      return AEE_SUCCESS;
+      
+   case CFGI_BREW_TESTOPT:              // DIF_TEST_ALLOWED  
+   case CFGI_BREW_USEAKEY:              // DIF_USE_A_KEY
+   case CFGI_BREW_AUTOUPGRADE_FLG:      // DIF_AUTO_UPGRADE 
+   case CFGI_BREW_USEMINFORSID_FLG:     // DIF_MIN_FOR_SID
+   case CFGI_BREW_PREPAY_FLG:           // DIF_PREPAY
+   case CFGI_BREW_NOAUTOACK_FLG:        // DIF_NO_AUTO_ACK
+   case CFGI_BREW_SIDENCODE_FLG:        // DIF_SID_ENCODE
+   case CFGI_BREW_SIDVALIDATAALL_FLG:   // DIF_SID_VALIDATE_ALL
+   case CFGI_BREW_IDS_RUIMDELETE_FLG:   // DIF_RUIM_DEL_OVERRIDE
+      {
+         if ((!pBuff) || nSize != sizeof(boolean))
+         {
+            return EFAILED;
+         }
+#ifndef WIN32         
+         if (OEMNV_Get(NV_BREW_DOWNLOAD_FLAGS_I, &nvi) != NV_DONE_S)
+         {
+            DBGPRINTF(";put NV_BREW_DOWNLOAD_FLAGS_I failed");
+            nvi.brew_download_flags = 0;
+         }
+         switch (i)
+         {
+            case CFGI_BREW_TESTOPT:             // DIF_TEST_ALLOWED  
+                if (*(boolean *)pBuff)
+                {
+                    nvi.brew_download_flags |= DIF_TEST_ALLOWED;
+                }
+                else
+                {
+                    nvi.brew_download_flags &= ~DIF_TEST_ALLOWED;
+                }
+                break;
+                
+            case CFGI_BREW_USEAKEY:              // DIF_USE_A_KEY
+                if (*(boolean *)pBuff)
+                {
+                    nvi.brew_download_flags |= DIF_USE_A_KEY;
+                }
+                else
+                {
+                    nvi.brew_download_flags &= ~DIF_USE_A_KEY;
+                }
+                break;
+            
+            case CFGI_BREW_AUTOUPGRADE_FLG:      // DIF_AUTO_UPGRADE 
+                if (*(boolean *)pBuff)
+                {
+                    nvi.brew_download_flags |= DIF_AUTO_UPGRADE;
+                }
+                else
+                {
+                    nvi.brew_download_flags &= ~DIF_AUTO_UPGRADE;
+                }
+                break;
+                
+            case CFGI_BREW_USEMINFORSID_FLG:     // DIF_MIN_FOR_SID
+                if (*(boolean *)pBuff)
+                {
+                    nvi.brew_download_flags |= DIF_MIN_FOR_SID;
+                }
+                else
+                {
+                    nvi.brew_download_flags &= ~DIF_MIN_FOR_SID;
+                }
+                break;
+                
+            case CFGI_BREW_PREPAY_FLG:           // DIF_PREPAY
+                if (*(boolean *)pBuff)
+                {
+                    nvi.brew_download_flags |= DIF_PREPAY;
+                }
+                else
+                {
+                    nvi.brew_download_flags &= ~DIF_PREPAY;
+                }
+                break;
+                
+            case CFGI_BREW_NOAUTOACK_FLG:        // DIF_NO_AUTO_ACK
+                if (*(boolean *)pBuff)
+                {
+                    nvi.brew_download_flags |= DIF_NO_AUTO_ACK;
+                }
+                else
+                {
+                    nvi.brew_download_flags &= ~DIF_NO_AUTO_ACK;
+                }
+                break;
+                
+            case CFGI_BREW_SIDENCODE_FLG:        // DIF_SID_ENCODE
+                if (*(boolean *)pBuff)
+                {
+                    nvi.brew_download_flags |= DIF_SID_ENCODE;
+                }
+                else
+                {
+                    nvi.brew_download_flags &= ~DIF_SID_ENCODE;
+                }
+                break;
+                
+            case CFGI_BREW_SIDVALIDATAALL_FLG:   // DIF_SID_VALIDATE_ALL
+                if (*(boolean *)pBuff)
+                {
+                    nvi.brew_download_flags |= DIF_SID_VALIDATE_ALL;
+                }
+                else
+                {
+                    nvi.brew_download_flags &= ~DIF_SID_VALIDATE_ALL;
+                }
+                break;
+                
+            case CFGI_BREW_IDS_RUIMDELETE_FLG:   // DIF_RUIM_DEL_OVERRIDE
+                if (*(boolean *)pBuff)
+                {
+                    nvi.brew_download_flags |= DIF_RUIM_DEL_OVERRIDE;
+                }
+                else
+                {
+                    nvi.brew_download_flags &= ~DIF_RUIM_DEL_OVERRIDE;
+                }
+                break;
+                
+            default:
+                break;
+				    }
+
+         if (OEMNV_Put(NV_BREW_DOWNLOAD_FLAGS_I, &nvi) != NV_DONE_S)
+         {
+            DBGPRINTF(";put NVI_BREW_DOWNLOAD_FLAGS_I failed");
+            return EFAILED;
+         }
+         nvi_cache.brew_download_flags = nvi.brew_download_flags;
+#endif
+	}
+	return AEE_SUCCESS;
 #endif //#ifdef CUST_EDITION
    default:
       return(EUNSUPPORTED);
@@ -6680,6 +6997,37 @@ static int OEMPriv_SetItem_CFGI_SECCODE(void *pBuff)
 #endif
    return SUCCESS;
 }
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+static int OEMPriv_GetItem_CFGI_RTRE_CONFIGURATION(void *pBuff)
+{
+#ifndef WIN32
+   nv_item_type nvi;
+
+   if (NV_DONE_S != OEMNV_Get(NV_RTRE_CONFIG_I, &nvi)) {
+      // Default to R-UIM only.
+      *(nv_rtre_configuration_type *) pBuff = NV_RTRE_CONFIG_RUIM_ONLY;
+      return SUCCESS;
+   }
+
+   *(nv_rtre_configuration_type *) pBuff = nvi.rtre_config;
+#endif
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_RTRE_CONFIGURATION(void *pBuff)
+{
+#ifndef WIN32
+   nv_item_type nvi;
+
+   nvi.rtre_config = *(nv_rtre_configuration_type *) pBuff;
+
+   if (NV_DONE_S != OEMNV_Put(NV_RTRE_CONFIG_I, &nvi)) {
+      return EFAILED;
+   }
+#endif
+   return SUCCESS;
+}
+#endif 
 
 #ifdef FEATURE_ENABLE_OTKSL
 static int OEMPriv_GetItem_CFGI_OTKSLCODE(void *pBuff)
@@ -6760,6 +7108,24 @@ static int OEMPriv_GetItem_CFGI_RFCAL_VERSION(void *pBuff)
 }
 
 
+static int OEMPriv_GetItem_CFGI_DEBUG_ECIO(void *pBuff)
+{
+#if (defined (FEATURE_CDMA_800) || defined (FEATURE_CDMA_1900))&& defined(FEATURE_RF_ZIF)  
+#ifndef WIN32
+ db_items_value_type dbi;
+
+  db_get(DB_CDMA_ECIO, &dbi); 
+    *(byte*)pBuff =  dbi.cdma_ecio;
+#ifdef FEATURE_OEM_DEBUG
+  MSG_ERROR("cdma_ecio = %d,%d", *(byte*)pBuff,dbi.cdma_ecio,0);
+#endif
+#endif
+   return SUCCESS;
+#else
+   *(byte *)pBuff = (byte) 0;
+   return EUNSUPPORTED;
+#endif
+}
 
 
 static int OEMPriv_GetItem_CFGI_RFCAL_DATE(void *pBuff)
