@@ -197,11 +197,7 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #ifdef FEATURE_DRV_SDCC
 #define GPIO_24_SIGNAL SDCC_CLK
 /* GPIO 25 */
-#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022)
-#define GPIO_25_SIGNAL GPIO_OUTPUT_25
-#else
 #define GPIO_25_SIGNAL SDCC_DAT_0
-#endif
 /* GPIO 26 */
 #define GPIO_26_SIGNAL SDCC_DATOUT_1
 /* GPIO 27 */
@@ -213,11 +209,7 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #else
 #define GPIO_24_SIGNAL GPIO_INPUT_24
 /* GPIO 25 */
-#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022)
-#define GPIO_25_SIGNAL GPIO_OUTPUT_25
-#else
 #define GPIO_25_SIGNAL GPIO_INPUT_25
-#endif
 /* GPIO 26 */
 #define GPIO_26_SIGNAL GPIO_INPUT_26
 /* GPIO 27 */
@@ -232,11 +224,18 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #define GPIO_30_SIGNAL XO_EN_N
 
 /* GPIO 31 */
+#if defined(FEATURE_PROJECT_W021)
+#define GPIO_31_SIGNAL GPIO_OUTPUT_31
+#else
 #define GPIO_31_SIGNAL FM_INT
-
+#endif
 /* GPIO 32 */
-#define GPIO_32_SIGNAL LCD_FLAG
 
+#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
+#define GPIO_32_SIGNAL GPIO_OUTPUT_32
+#else
+#define GPIO_32_SIGNAL LCD_FLAG
+#endif
 /* GPIO 33, we need to feature it, as we don't use it if Mem size is < 16 MB */
 #define GPIO_33_SIGNAL EBI1_A_D_24
 
