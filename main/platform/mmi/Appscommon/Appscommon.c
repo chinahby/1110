@@ -3666,6 +3666,7 @@ void Appscommon_ResetBackgroundEx(IDisplay *pDisplay, AEERect * rect, boolean bD
         byte     nRandomMenu = 0;
 
         (void)OEM_GetConfig(CFGI_RANDOM_MENU, (void*)&nRandomMenu, sizeof(nRandomMenu));
+		#if 0
         if(nRandomMenu != 0)
         {
             /* 有透明通道的图片尽量减小尺寸，仅留下有颜色的部分，起始坐标重设*/
@@ -3675,6 +3676,7 @@ void Appscommon_ResetBackgroundEx(IDisplay *pDisplay, AEERect * rect, boolean bD
             IDisplay_FillRect(pDisplay, rect, nBgColor);
         }
         else
+	    #endif
 #endif
         {
             /* 由于透明通道会大大降低图像的显示速度，默认使用一张无透明色的图片*/

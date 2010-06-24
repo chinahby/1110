@@ -78,7 +78,7 @@ static boolean       gbInResetBREW = FALSE;
 #include "catapp.bid"
 #endif
 #ifdef FEATURE_APP_FLDDBG
-#include "FLDDBGAPP.BID"
+//#include "FLDDBGAPP.BID"
 #endif
 #ifdef FEATURE_GRAPHICS_APP_GIGAMON
 #include "gigamon.bid"
@@ -117,7 +117,7 @@ static boolean       gbInResetBREW = FALSE;
 #include "recentcalls.bid"
 #endif
 #ifdef FEATURE_APP_SVCPRG
-#include "SVCPRGAPP.BID"
+//#include "SVCPRGAPP.BID"
 #endif
 #ifdef FEATURE_WMS_APP
 #include "WMSAPP.BID"
@@ -168,11 +168,11 @@ static boolean       gbInResetBREW = FALSE;
 #endif
 #endif
 #ifdef FEATURE_APP_FLDDBG
-#include "FLDDBGAPP.BID"
+//#include "FLDDBGAPP.BID"
 #endif
 
 #ifdef FEATURE_APP_SVCPRG
-#include "SVCPRGAPP.BID"
+//#include "SVCPRGAPP.BID"
 #endif
 
 #ifdef FEATURE_DYNAMIC_CLOCK_FREQUENCY_CHANGING

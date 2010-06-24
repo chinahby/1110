@@ -54,7 +54,7 @@ when       who     what, where, why
 #include "comdef.h"
 
 #if !defined(BREW_STATIC_APP)
-#include "SVCPRGAPP.BID"
+//#include "SVCPRGAPP.BID"
 #else
 #include "OEMClassIds.h"      // Applet Ids
 #endif

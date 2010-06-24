@@ -105,7 +105,7 @@ include $(FLDDBG)/flddbg.min
 endif
 
 include $(QUICKTEST)/quicktest.min
-#include $(SVCPRG)/svcprg.min
+include $(SVCPRG)/svcprg.min
 
 ifeq ($(MMI_ADD_NUMBER_MANAGER),yes)
 include $(NUMBERMANAGER)/numbermanager.min

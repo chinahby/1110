@@ -121,27 +121,6 @@
 	<Object Id="5040" Name="IDI_FRAME_1">
 		<File>..\..\Appscommon\images\color\CameraApp\frame1.png</File>
 	</Object>
-	<Object Id="5041" Name="IDI_FRAME_2">
-		<File>..\..\Appscommon\images\color\CameraApp\frame2.png</File>
-	</Object>
-	<Object Id="5042" Name="IDI_FRAME_3">
-		<File>..\..\Appscommon\images\color\CameraApp\frame3.png</File>
-	</Object>
-	<Object Id="5043" Name="IDI_FRAME_4">
-		<File>..\..\Appscommon\images\color\CameraApp\frame4.png</File>
-	</Object>
-	<Object Id="5044" Name="IDI_FRAME_5">
-		<File>..\..\Appscommon\images\color\CameraApp\frame5.PNG</File>
-	</Object>
-	<Object Id="5045" Name="IDI_FRAME_6">
-		<File>..\..\Appscommon\images\color\CameraApp\frame6.png</File>
-	</Object>
-	<Object Id="5046" Name="IDI_FRAME_7">
-		<File>..\..\Appscommon\images\color\CameraApp\frame7.png</File>
-	</Object>
-	<Object Id="5047" Name="IDI_FRAME_8">
-		<File>..\..\Appscommon\images\color\CameraApp\frame8.png</File>
-	</Object>
 	<Object Id="5048" Name="IDI_SCROLLBAR">
 		<File>..\..\Appscommon\images\color\CameraApp\scrollbar.png</File>
 	</Object>

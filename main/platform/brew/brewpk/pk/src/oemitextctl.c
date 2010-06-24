@@ -4457,7 +4457,12 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
 	        pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH_UP;
 #else
-            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#if defined(FEATURE_DISP_160X128)
+             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#else
+	        pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
+
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW         
             OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS);            
             break;            
@@ -4483,7 +4488,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW  
 	        pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH_LOW;
 #else
-	        pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_LOW;
+#if defined(FEATURE_DISP_160X128)
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#else
+	        pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW			
             OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);             
             break;
@@ -4493,7 +4502,12 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
 	        pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH_UP;
 #else
-	        pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_UP;
+#if defined(FEATURE_DISP_160X128)
+						 pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_UP;
+#else
+						pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
+
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
             OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS);              
             break;            
@@ -5234,6 +5248,7 @@ uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size)
 #else
 static uint16 TextCtl_QuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size) 
 {
+#if 0   //modi by yangdecai  2010/06/24
    if ((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))
    {
        if (!pszOut || size < (sizeof(sszSymbolListCn)/sizeof(sszSymbolListCn[0])))
@@ -5245,13 +5260,14 @@ static uint16 TextCtl_QuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size)
    }
    else
    {
+   #endif   
        if (!pszOut || size < (sizeof(sszSymbolListEn)/sizeof(sszSymbolListEn[0])))
           return(0);
 
        MEMCPY(pszOut, sszSymbolListEn, sizeof(sszSymbolListEn));
 
        return(sizeof(sszSymbolListEn)/sizeof(sszSymbolListEn[0])) - 1;     
-   }
+   //}
 }
 #endif // FEATURE_CARRIER_CHINA_TELCOM  
 /*=============================================================================

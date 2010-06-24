@@ -896,6 +896,9 @@ typedef struct _CContApp
     uint16 m_wDelReturnSelId;                                      // 删除一条记录后，返回list该选中的id
     boolean m_bDelOk;                                          // 删除一条记录成功
     int m_nleftNum;
+#ifdef FEATURE_GIVEUP_EDIT
+	boolean m_bIsEndKey;
+#endif
 #ifdef FEATURE_LANG_CHINESE
     uint16 m_nInputModeTable[2];                                   // only support two input mode: AEE_TM_LETTERS and AEE_TM_NUMBERS
     byte  m_nCurrentInputMode;                                  

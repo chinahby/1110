@@ -33,9 +33,7 @@
 #ifdef FEATURE_TEST_ANNUN_ICONS
     #include "oemannunciator.brh" 
 #endif
-#ifdef FEATURE_APP_FLDDBG
-#include "FLDDBGAPP.BID"
-#endif
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -944,8 +942,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
                         if (WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)
                         {
+                        	int i = 0;
                             //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
+                            ERR("AEECLSID_FIELDDEBUGAPP START:000000000000000000",0,0,0);
                             ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#0000#");
+							ERR("AEECLSID_FIELDDEBUGAPP START:000000000000000000end:%d",i,0,0);
                             return TRUE;
                         }
 #endif
@@ -9216,7 +9217,7 @@ static void CallApp_Load_Numer_Img(CCallApp *pMe)
     int i;
     for(i = 0; i<REFUI_CALL_MAX_IMAGSIZE ;i++)
     {
-        pMe->num_image[i]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_0 + i);
+        //pMe->num_image[i]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_0 + i);
     }
 #else
     pMe->num_image[0]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_0);
@@ -9648,7 +9649,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
         dy -= NUM_IMAGE_HIGHT;
     }
 #endif
-
+#ifdef FEATURE_IMAGE_DIALING_DIGITS
     xNum = pMe->m_rc.dx /NUM_IMAGE_WIDTH;
     yNum = (dy - BOTTOMBAR_HEIGHT)/(NUM_IMAGE_HIGHT + BETWEEN_LINE_PIXEL);
     xPos = (pMe->m_rc.dx + NUM_IMAGE_WIDTH *xNum) /2 - (pMe->m_nCursorPos%xNum)*NUM_IMAGE_WIDTH - 2;
@@ -9667,8 +9668,28 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             yPos += (NUM_IMAGE_HIGHT + BETWEEN_LINE_PIXEL);
         }
     }
-
-    SETAEERECT(pRect, xPos, yPos, 4, NUM_IMAGE_HIGHT);
+	SETAEERECT(pRect, xPos, yPos, 4, NUM_IMAGE_HIGHT);
+#else
+	xNum = pMe->m_rc.dx /8;
+    yNum = (dy - BOTTOMBAR_HEIGHT)/(16 + BETWEEN_LINE_PIXEL);
+    xPos = (pMe->m_rc.dx + 8 *xNum) /2 - (pMe->m_nCursorPos%xNum)*8 - 2;
+    yPos = dy - BOTTOMBAR_HEIGHT - (1 + pMe->m_nCursorPos/xNum)*(16 + BETWEEN_LINE_PIXEL);
+    if(pMe->m_nCursorPos >= xNum*yNum)
+    {
+        yPos = dy - BOTTOMBAR_HEIGHT - yNum*(16 + BETWEEN_LINE_PIXEL);
+    }
+    if(pMe->m_nCursorPos != 0 &&
+        pMe->m_nCursorPos == WSTRLEN(pMe->m_DialString) &&
+        pMe->m_nCursorPos%xNum == 0)
+    {
+        xPos = (pMe->m_rc.dx - 8 *xNum) /2 - 2;
+        if(pMe->m_nCursorPos < xNum*yNum)
+        {
+            yPos += (16 + BETWEEN_LINE_PIXEL);
+        }
+    }
+	SETAEERECT(pRect, xPos, yPos, 4, 16);
+#endif
 }
 
 

@@ -272,7 +272,9 @@ typedef PACKED struct {
 #define MISSED_CALL_Y                         (CALL_ANNU_HEIGHT + pMe->m_LineHeight+2)
 /*Temp add */
 #define FEATURE_APP_PAUSE_TIMER
+#if 0
 #define FEATURE_IMAGE_DIALING_DIGITS
+#endif
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
 #if defined(FEATURE_DISP_176X220)
     #define NUM_IMAGE_HIGHT                    (30)

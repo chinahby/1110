@@ -8214,6 +8214,7 @@ Draw menu background image
 static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
 {
 #ifdef FEATURE_RANDOM_MENU_COLOR
+	#if 0
     if(pme->m_nRandomMenu != 0)
     {
         if(pme->m_pBgImage == NULL)
@@ -8226,6 +8227,7 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
         Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, pme->m_c.cBack, pRect, APPSCOMMON_MENUBG_XPOS, APPSCOMMON_MENUBG_YPOS);
     }
     else
+    #endif
 #endif
     {
        if(pme->m_pBgImage == NULL)

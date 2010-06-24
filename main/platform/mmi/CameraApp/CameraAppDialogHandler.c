@@ -6157,7 +6157,7 @@ static void CameraApp_SetCameraFunFrame(CCameraApp *pMe)
         case OEMNV_CAMERA_FRAME_1:
             nFrameID = IDI_FRAME_1;
             break;
-            
+           /* 
         case OEMNV_CAMERA_FRAME_2:
             nFrameID = IDI_FRAME_2;
             break;
@@ -6184,7 +6184,7 @@ static void CameraApp_SetCameraFunFrame(CCameraApp *pMe)
 
         case OEMNV_CAMERA_FRAME_8:
             nFrameID = IDI_FRAME_8;
-            break;                           
+            break;  */                         
     }
 
     if(nFrameID != 0)
