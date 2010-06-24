@@ -1211,11 +1211,13 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined(FEATURE_APP_MEDIAGALLERY)
       {AEEFS_MIF_DIR"mediagallery.mif", MediaGalleryApp_Load},
 #endif
+
 #ifndef WIN32
 #ifdef FEATURE_APP_CAMERA
-    {AEEFS_MIF_DIR"cameraapp.mif", CCameraAppMod_Load},
+    {AEEFS_MIF_DIR"cameraapp.mif", CCameraAppMod_Load}, 
 #endif
 #endif
+
 #if defined(FEATURE_APP_MUSICPLAYER)
       {AEEFS_MIF_DIR"musicplayer.mif", MusicPlayer_Load},
 #endif

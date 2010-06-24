@@ -31,6 +31,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CDSMS_CACHE_USELIST
 #define FIX_LINKITEM_INITBUG
 #define FEATURE_SPN_FROM_BSMCCMNC
+#define FEATURE_ADD_CAMERA
 #endif
 
 #ifndef TARGSB2_H
@@ -45,7 +46,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CLKREGIM_1X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
-#define FEATURE_IPL_NO_CAMERA 
+//#define FEATURE_IPL_NO_CAMERA     miaoxiaoming remove
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
@@ -56,7 +57,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_HS_USB_USER_EVENT_POST 
 #define FEATURE_RRC_SIB_HEAP 
 #define FEATURE_LOW_MEMORY_USAGE 
-//#define FEATURE_FS_LOW_MEMORY_USAGE 
+#define FEATURE_FS_LOW_MEMORY_USAGE 
 #define FEATURE_DSM_MINIMIZE 
 #define FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
@@ -76,8 +77,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AUTH_DIGITS 
 #define SCL_AMSS_DATA_BASE_ADDR 0x08005000
 #define T_QSC6055 
-//#define FEATURE_JPEG_DECODER 
-//#define FEATURE_JPEG_ARM_STANDALONE_DECODER 
+#ifdef FEATURE_ADD_CAMERA
+#define FEATURE_JPEG_DECODER 
+#define FEATURE_JPEG_ARM_STANDALONE_DECODER 
+#endif
 #define FEATURE_VOC_4GV 
 #define FEATURE_AUDIO_CONFIGURATION_STANDARD 
 #define FEATURE_MDM_AHB 
@@ -243,6 +246,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custrex.h"
 #include "custbmp.h"
 #include "custsurf.h"
+#ifdef FEATURE_ADD_CAMERA
+#include "custcamera.h"
+#include "custjpeg.h"
+#endif
 
 #ifdef FEATURE_DS_MOBILE_IP
    #undef FEATURE_DS_MOBILE_IP

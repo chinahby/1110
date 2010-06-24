@@ -153,17 +153,17 @@ ifeq ($(USES_CAMERA), yes)
   include $(CAMERA_3A_AF)/camera_af.min
   include $(CAMERA_3A_COMMON)/camera_3a_common.min
   include $(CAMERA_CAMERADRIVETASK)/camera_cameradrivetask.min
-  include $(CAMERA_QMOBICAT)/camera_qmobicat.min
+  #include $(CAMERA_QMOBICAT)/camera_qmobicat.min#remove by miaoxiaoming 
   include $(CAMSENSORCOMMON)/camsensorcommon.min
   include $(CAMSENSOR_MT9D112_MU2M0YU)/camsensor_mt9d112_mu2m0yu.min
   include $(QCAMCOMMON)/qcamcommon.min
 ifneq ($(USES_MANGO_UI),yes)
  ifneq ($(USES_MMI), yes)
-  include $(QCAMERA)/qcamera.min
-  include $(QALBUM)/qalbum.min
+  #include $(QCAMERA)/qcamera.min#remove by miaoxiaoming 
+  #include $(QALBUM)/qalbum.min#remove by miaoxiaoming 
  endif
 endif
-  include $(CAMERA_MOBICAT)/camera_mobicat.min
+  #include $(CAMERA_MOBICAT)/camera_mobicat.min#remove by miaoxiaoming 
 endif
 
 # include $(CHG)/chg.min
@@ -273,7 +273,7 @@ endif
 ifeq ($(USES_HDR),yes)
 include $(HDR)/hdr.min
 endif
-ifneq ($(USES_LOW),yes)
+ifeq ($(USES_CAMERA),yes)
 include $(VIDEO_RESOURCES)/video_resources.min
 endif
 include $(JPEGADSPDRIVER)/jpegadspdriver.min

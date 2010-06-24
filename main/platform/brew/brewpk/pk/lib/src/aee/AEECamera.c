@@ -30,10 +30,8 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #include "AEECamera.h"
 #include "OEMCamera.h"
 #include "OEMClassIDs.h"
-//#include "OEMCameraDMSS.h"
-#ifndef WIN32
-#include "camera_vc0848_defi.h"
-#endif
+#include "OEMCameraDMSS.h"
+
 #include "aeestdlib.h"
 #include "oemcamera.h"
 
