@@ -128,7 +128,7 @@ endif
 
 #应用的标签
 ifeq ($(USES_MMI),yes)
-USES_CAMERA=yes#
+USES_CAMERA=no#
 USES_REND=no
 USES_T9=yes
 USES_DISP_SIZE=176X220#
