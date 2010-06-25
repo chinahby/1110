@@ -1467,7 +1467,7 @@ void CoreTask_init( void )
 #endif
 
   //uisnd_snd_init();               /* packets for talking to sound task */
-  snd_set_device(SND_DEVICE_SPEAKER_PHONE,SND_MUTE_MUTED,SND_MUTE_MUTED,NULL,NULL);   
+  snd_set_device(SND_DEVICE_HANDSET,SND_MUTE_MUTED,SND_MUTE_MUTED,NULL,NULL);   
   
   /* Set the watchdog report timer signal so that we'll
   ** reset the watchdog as soon as we start checking for events
