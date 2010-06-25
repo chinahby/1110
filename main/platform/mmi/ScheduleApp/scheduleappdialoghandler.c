@@ -209,7 +209,7 @@ Sport_Appointment pSportAppt;
 int CScheduleApp_ShowDialog(CScheduleApp *pme, uint16  dlgResId)
 {
     int nRet;
-
+    DBGPRINTF("CScheduleApp_ShowDialog Start");
     // At most one dialog open at once
     if (ISHELL_GetActiveDialog(pme->m_pShell) != NULL)
     {
@@ -238,6 +238,7 @@ int CScheduleApp_ShowDialog(CScheduleApp *pme, uint16  dlgResId)
         MOVE_TO_STATE( pme->m_ePreState)
     }
 #endif
+    DBGPRINTF("CScheduleApp_ShowDialog End, ret=%d", nRet);
     return nRet;
 }
 
@@ -266,7 +267,7 @@ boolean CScheduleApp_RouteDialogEvent( CScheduleApp* pme,
                                        uint16     wParam,
                                        uint32     dwParam)
 {
-
+    DBGPRINTF("CScheduleApp_RouteDialogEvent Start");
     switch (pme->m_pActiveDlgID)
     {
         
@@ -306,6 +307,7 @@ boolean CScheduleApp_RouteDialogEvent( CScheduleApp* pme,
         default:
             return FALSE;
     }
+    DBGPRINTF("CScheduleApp_RouteDialogEvent End");
 }
 
 
@@ -395,6 +397,7 @@ static void addEventToList( CalEvent** ppHead, CalEvent* pElement)
     CalEvent* pHead = *ppHead;
     //debug( ";-------------------");
     //debug( ";addEventToList, pElement.id = %d", pElement->nPermRecID);
+    DBGPRINTF("addEventToList Start");
 
     if( pHead == NULL)
     {
@@ -432,6 +435,7 @@ static void addEventToList( CalEvent** ppHead, CalEvent* pElement)
         pEventLast->pPrev           = pElement;
 
     }
+    DBGPRINTF("addEventToList End");
 
 //    {
 //
@@ -477,7 +481,7 @@ static int registerEventIf( CCalApp* pme,
     uint32 jdayEvent    = 0;
     uint32 timeEvent    = 0;
     int    result       = NO_ALARM;
-
+    DBGPRINTF("registerEventIf Start");
     MEMSET( pJulianEvent, 0, sizeof( JulianType));
     jdayEvent   = GETDATE( pRecordFields->b.dwTime);
     timeEvent   = GETTIME( pRecordFields->b.dwTime);
@@ -525,7 +529,7 @@ static int registerEventIf( CCalApp* pme,
         }
 
     }
-
+    DBGPRINTF("registerEventIf End");
     return result;
 }
 
@@ -536,43 +540,60 @@ static void releaseMonthEvents( CCalApp* pme)
     CalEvent*   pHead   = 0;
     CalEvent*   pEvent  = 0;
     CalEvent*   pFree   = 0;
-
+    CalEvent*       pEventFirst  = 0;
+    DBGPRINTF("releaseMonthEvents Start");
     for( i = 0; i < 31; i ++)
     {
         pHead = pme->m_pMonthEvents[i];
         pEvent = pHead;
-        while( NULL != pEvent) // Gemsea Modify
+        DBGPRINTF("releaseMonthEvents i=%d", i);  
+        if( NULL != pEvent)
         {
-            pFree  = pEvent;// Gemsea Add
-            pEvent = pEvent->pNext;
-            FREEIF( pFree);
+            pEventFirst = pEvent;
+            while( NULL != pEvent) 
+            {
+                pFree  = pEvent;
+                pEvent = pEvent->pNext;
+                DBGPRINTF("releaseMonthEvents pFree address=%x", pFree);
+                DBGPRINTF("releaseMonthEvents pEvent address=%x", pEvent);
+                FREEIF( pFree);
+                if(pEvent == pEventFirst)
+                {
+                    pEvent = NULL; 
+                }                    
+            }
         }
         //FREEIF( pHead); Remove by Gemsea
         pme->m_pMonthEvents[i] = NULL;
     }
 
     MEMSET( &pme->m_pMonthEvents, 0, sizeof( pme->m_pMonthEvents));
+    DBGPRINTF("releaseMonthEvents End");
 }
 
 void closeDatabaseIf( CCalApp *pme)
 {
+    DBGPRINTF("closeDatabaseIf Start");
     if( pme->m_pIDatabase)
     {
         //debug( ";closeDatabaseIf, close db firstly");
         IDATABASE_Release( pme->m_pIDatabase);
         pme->m_pIDatabase = 0;
     }
+    DBGPRINTF("closeDatabaseIf End");
 }
 
 
 static boolean openDatabase( CCalApp *pme, char* dbName)
 {
+    DBGPRINTF("openDatabase Start");
     pme->m_pIDatabase = IDBMGR_OpenDatabase( pme->m_pIDBMgr, dbName, 1);
     if (!pme->m_pIDatabase)
     {
         return FALSE;
     }
     //debug( ";openDatabase, open db %s successful", dbName);
+    DBGPRINTF("openDatabase End");
     return TRUE;
 }
 
@@ -615,7 +636,7 @@ static boolean retrieveMonthEventsFromDB( CCalApp* pme)
     IDBRecord*      pRecord                 = 0;
     CalDBRecFields  recordFields            = {0};
     JulianType      julianEvent             = {0};
-
+    DBGPRINTF("retrieveMonthEventsFromDB Start");
     releaseMonthEvents( pme);
     //debug(";---------------------------------------------------");
     //debug(";retrieveMonthEvents");
@@ -753,7 +774,7 @@ static boolean retrieveMonthEventsFromDB( CCalApp* pme)
     } // for
 
 
-
+    DBGPRINTF("retrieveMonthEventsFromDB End");
     return TRUE;
 }
 
@@ -761,6 +782,7 @@ static boolean retrieveMonthEventsFromDB( CCalApp* pme)
 static void deleteEventFromDB( CCalApp *pme, uint16 recordId)
 {
 
+    DBGPRINTF("deleteEventFromDB Start");
 #if FEATURE_ONE_DB
     if( !openDatabaseIf( pme))
 #else
@@ -785,6 +807,7 @@ static void deleteEventFromDB( CCalApp *pme, uint16 recordId)
             //debug( ";deleteEventFromDB, recordID %d, ok", recordId);
         }
     }
+    DBGPRINTF("deleteEventFromDB End");
 }
 
 static void deleteEventsOfTodayFromDB( CCalApp *pme, uint16 theDay)
@@ -792,7 +815,7 @@ static void deleteEventsOfTodayFromDB( CCalApp *pme, uint16 theDay)
 
     CalEvent* pHead  = pme->m_pMonthEvents[theDay - 1];
     CalEvent* pEvent = pHead;
-
+    DBGPRINTF("deleteEventsOfTodayFromDB Start");
     //debug( ";  ");
     //debug( ";deleteEventsOfTodayFromDB, day[%d]", theDay);
     while( pEvent)
@@ -804,6 +827,7 @@ static void deleteEventsOfTodayFromDB( CCalApp *pme, uint16 theDay)
             break;
         }
     }
+    DBGPRINTF("deleteEventsOfTodayFromDB End");
     //debug( ";  ");
 }
 
@@ -811,13 +835,14 @@ static void deleteEventsOfThisMonthFromDB( CCalApp *pme)
 {
 
     int i = 0;
-
+    DBGPRINTF("deleteEventsOfThisMonthFromDB Start");
     //debug( ";------------------------------------------------------------------------");
     //debug( ";deleteEventsOfThisMonthFromDB, %d.%02d", pme->m_julianCurrentDay.wYear, pme->m_julianCurrentDay.wMonth);
     for( i = 1; i < 32; i ++)
     {
         deleteEventsOfTodayFromDB( pme, i);
     }
+    DBGPRINTF("deleteEventsOfThisMonthFromDB End");
     //debug( ";------------------------------------------------------------------------");
 }
 
@@ -827,7 +852,7 @@ void deleteAllEventsFromDB( CCalApp *pme)
 
     //debug( ";------------------------------------------------------------------------");
     //debug( ";deleteAllEventsFromDB");
-
+    DBGPRINTF("deleteAllEventsFromDB Start");
     closeDatabaseIf( pme);
 
 #if FEATURE_ONE_DB
@@ -869,7 +894,7 @@ void deleteAllEventsFromDB( CCalApp *pme)
     pme->m_nNextPermRecID   = 1;
     CScheduleApp_WriteCFG( pme->m_pFileMgr, &pme->m_cfg);
 #endif
-
+    DBGPRINTF("deleteAllEventsFromDB End");
     //debug( ";------------------------------------------------------------------------");
 }
 
@@ -877,10 +902,9 @@ void deleteAllEventsFromDB( CCalApp *pme)
 //---------------------------------
 static void drawModalDialog( IDisplay* pd, IStatic* pStatic, uint16 stringResId, boolean confirm)
 {
-
     PromptMsg_Param_type    parm;
     AECHAR                  text[128];
-
+    DBGPRINTF("drawModalDialog Start");
     MEMSET( &parm, 0, sizeof( parm));
     parm.ePMsgType  = MESSAGE_CONFIRM;
     parm.eBBarType  = confirm ? BTBAR_OK_CANCEL : BTBAR_BACK;
@@ -893,6 +917,7 @@ static void drawModalDialog( IDisplay* pd, IStatic* pStatic, uint16 stringResId,
                    );
     parm.pwszMsg = text;
     DrawPromptMessage( pd, pStatic, &parm);
+    DBGPRINTF("drawModalDialog End");
 }
 
 
@@ -1038,6 +1063,7 @@ static boolean  dialog_handler_of_state_msgbox(CScheduleApp* pme,
 )
 {
     static IStatic * pStatic = NULL;
+    DBGPRINTF("dialog_handler_of_state_msgbox Start");
     if (NULL == pme)
     {
         return FALSE;
@@ -1094,9 +1120,10 @@ static boolean  dialog_handler_of_state_msgbox(CScheduleApp* pme,
             return TRUE;
 
         case EVT_DIALOG_END:
-
+            DBGPRINTF("dialog_handler_of_state_msgbox 1");
             ISTATIC_Release(pStatic);
             pStatic = NULL;
+            DBGPRINTF("dialog_handler_of_state_msgbox 2");
             return TRUE;
 
         case EVT_DISPLAYDIALOGTIMEOUT:
@@ -1114,7 +1141,7 @@ static boolean  dialog_handler_of_state_msgbox(CScheduleApp* pme,
         default:
             break;
     }
-
+    DBGPRINTF("dialog_handler_of_state_msgbox End");
     return FALSE;
 }
 
@@ -1381,7 +1408,7 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
 static void Schedule_DialogTimeout(void *pMe)
 {
     CScheduleApp *pme = (CScheduleApp *)pMe;
-
+    DBGPRINTF("Schedule_DialogTimeout Start");
     if (NULL == pme)
     {
         return;
@@ -1392,6 +1419,7 @@ static void Schedule_DialogTimeout(void *pMe)
                             EVT_DISPLAYDIALOGTIMEOUT,
                             0,
                             0);
+    DBGPRINTF("Schedule_DialogTimeout End");
 }
 
 
@@ -1411,6 +1439,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
     // 1 - deleting    2- done
     static int     subState = 0;
     static boolean bRedrawDone = FALSE;
+    DBGPRINTF("dialog_handler_of_state_viewmonth Start");
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 
 	if (eCode == EVT_PEN_UP)
@@ -1444,8 +1473,10 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             return TRUE;
 
         case EVT_DIALOG_END:
+            DBGPRINTF("dialog_handler_of_state_viewmonth 1");
             pDatePick = 0;
             bRedrawDone = FALSE;
+            DBGPRINTF("dialog_handler_of_state_viewmonth 2");
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -1563,6 +1594,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 
         case EVT_LOAD_DATA:
 #ifndef WIN32//wlh 临时
+            DBGPRINTF("dialog_handler_of_state_viewmonth 1");
             retrieveMonthEventsFromDB( &pme->m_CalMgr);
             pme->m_CalMgr.m_pceCurrent = NULL;
 #endif//WIN32
@@ -1672,6 +1704,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                         
                         if( pme->m_CalMgr.m_dwThisMonthEventsNumber > 0)
                         {
+                            DBGPRINTF("dialog_handler_of_state_viewmonth 2");
                             retrieveMonthEventsFromDB( &pme->m_CalMgr);
                         }
                         OEMOS_Sleep( 200);
@@ -1786,6 +1819,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                     //debug( ";---------month changed to %d.%02d", pnYear, pnMonth, pnDay);
 
                     closeDatabaseIf( &pme->m_CalMgr);
+                    DBGPRINTF("dialog_handler_of_state_viewmonth 3");
                     retrieveMonthEventsFromDB( &pme->m_CalMgr);
                     repaint(pme, TRUE);
                     return TRUE;
@@ -1805,7 +1839,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
         }
         break;
     }
-
+    DBGPRINTF("dialog_handler_of_state_viewmonth End");
     return FALSE;
 } // CScheduleApp_HandleViewMonthDlgEvent
 
@@ -1813,6 +1847,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 static void initDataForEditEventAtOptionState( CScheduleApp* pme, boolean newEvent)
 {
 
+    DBGPRINTF("initDataForEditEventAtOptionState Start");
     if( newEvent)
     {
         pme->m_CalMgr.m_szEventDes[0]   = 0;
@@ -1850,6 +1885,7 @@ static void initDataForEditEventAtOptionState( CScheduleApp* pme, boolean newEve
 
         pme->m_subStateEventEdit = SUBSTATE_EVENT_EDIT_EDIT;
     }
+    DBGPRINTF("initDataForEditEventAtOptionState End");
 }
 
 /*==============================================================================
@@ -2342,7 +2378,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                                                     uint32      dwParam
 )
 {
-
+    DBGPRINTF("dialog_handler_of_state_gotodate Start");
     switch(eCode)
     {
         case EVT_DIALOG_INIT:
@@ -2799,6 +2835,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
             }
             return TRUE;
     }
+    DBGPRINTF("dialog_handler_of_state_gotodate End");
     return FALSE;
 
 }
@@ -2879,6 +2916,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
     static boolean  exitByUser                = 0;
     static byte     timeFormatType            = 0;
 
+    DBGPRINTF("dialog_handler_of_state_event_edit Start");
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 
 		if ((eCode == EVT_PEN_UP) || (eCode == EVT_PEN_DOWN))
@@ -3120,6 +3158,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
 
         case EVT_DIALOG_END:
         {
+            DBGPRINTF("dialog_handler_of_state_event_edit 1");
             MEMSET( subjectValue, 0, sizeof( subjectValue));
             MEMSET( locationValue, 0, sizeof( locationValue));
             startTimeValue      = 0;
@@ -3146,6 +3185,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             exitByUser = 0;
             pSubject   = 0;
         }
+        DBGPRINTF("dialog_handler_of_state_event_edit 2");
         return TRUE;
 
         case EVT_DIALOG_START:
@@ -3652,7 +3692,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             {
                 case AVK_SOFT2:
                 case AVK_CLR:
-                    
+                DBGPRINTF("dialog_handler_of_state_event_edit 3");    
                 if(pme->m_sports)
                 {
                     exitByUser = TRUE;
@@ -3697,6 +3737,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                         CLOSE_DIALOG(DLGRET_CANCELED)
                     }
                 }
+                DBGPRINTF("dialog_handler_of_state_event_edit 4");
                 break;
                 case AVK_SELECT:
                 case AVK_INFO:
@@ -3808,6 +3849,7 @@ _scheduleapp_event_edit_save_:
                             (pme->m_subStateEventEdit == SUBSTATE_EVENT_EDIT_NEW || changed)
                         )
                         {
+                            DBGPRINTF("dialog_handler_of_state_event_edit");
                             retrieveMonthEventsFromDB( &pme->m_CalMgr);
                         }
                         OEMOS_Sleep( 200);
@@ -3887,7 +3929,7 @@ _scheduleapp_event_edit_save_:
         }
         return TRUE;
     }
-
+    DBGPRINTF("dialog_handler_of_state_event_edit End");
     return FALSE;
 }
 
@@ -4055,7 +4097,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
     static uint32   startTimeValue          = 0;
     static boolean  exitByUser              = 0;
     static byte     timeFormatType          = 0;
-
+    DBGPRINTF("dialog_handler_of_state_setup Start");
     switch (eCode)
     {
 
@@ -4505,7 +4547,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
 #endif
 
     }
-
+    DBGPRINTF("dialog_handler_of_state_setup End");
     return FALSE;
 } // dialog_handler_of_state_SETUP
 
@@ -4528,7 +4570,7 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
     AECHAR          subject[MAXTEXT]    = {0};
     AECHAR          location[MAXTEXT]   = {0};
     AECHAR          text[160]           = {0};
-
+    DBGPRINTF("initMenuItemWhenViewDay Start");
 #if FEATURE_ONE_DB
     if( !openDatabaseIf( pme))
 #else
@@ -4626,6 +4668,7 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
     }
 
     IMENUCTL_SetSel( pMenu, nFirstSel);
+    DBGPRINTF("initMenuItemWhenViewDay End");
 }
 
 static void initDataForEditEventAtViewDayState( CCalApp *pme, IMenuCtl* pMenu)
@@ -4685,7 +4728,7 @@ static boolean dialog_handler_of_state_viewday(CScheduleApp *pme, AEEEvent eCode
     static boolean     inited   = 0;
     // 1 - deleting
     static int         subState = 0;
-
+    DBGPRINTF("dialog_handler_of_state_viewday Start");
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -4841,6 +4884,7 @@ static boolean dialog_handler_of_state_viewday(CScheduleApp *pme, AEEEvent eCode
                         
                         if( pme->m_CalMgr.m_dwThisMonthEventsNumber > 0)
                         {
+                            DBGPRINTF("dialog_handler_of_state_viewday");
                             retrieveMonthEventsFromDB( &pme->m_CalMgr);
                         }
 
@@ -4929,7 +4973,7 @@ state_viewday_evt_command:
         }
         return TRUE;
     }
-
+    DBGPRINTF("dialog_handler_of_state_viewday End");
     return FALSE;
 } // CScheduleApp_HandleViewDayDlgEvent
 
@@ -4940,7 +4984,7 @@ static boolean readRecordFields( IDBRecord * prec, CalDBRecFields * pf)
     AEEDBFieldType fType;
     AEEDBFieldName dbfname;
     uint16 len;
-
+    DBGPRINTF("readRecordFields Start");
     pf->nPermRecID = 0;
     pf->nCurrRecID = 0;
     MEMSET(&pf->b, 0, sizeof(CalBaseFields));
@@ -5019,7 +5063,7 @@ static boolean readRecordFields( IDBRecord * prec, CalDBRecFields * pf)
     {
         pf->nCurrRecID = IDBRECORD_GetID(prec);
     }
-
+    DBGPRINTF("readRecordFields End bValid=%d", bValid);
     return bValid;
 }
 
@@ -5182,7 +5226,7 @@ static void initRecordField(AEEDBField*         pFields,
 
 static void releaseExpiredAppointmentArrayIf( CCalApp* pme)
 {
-
+    DBGPRINTF("releaseExpiredAppointmentArrayIf Start");
 
     if( pme->m_expiredAppointment != NULL)
     {
@@ -5197,12 +5241,12 @@ static void releaseExpiredAppointmentArrayIf( CCalApp* pme)
         FREEIF( pme->m_expiredAppointment);
         pme->m_expiredAppointment = NULL;
     }
-
+    DBGPRINTF("releaseExpiredAppointmentArrayIf End");
 }
 
 static void creatExpiredAppointmentArray( CCalApp* pme, int num, int offset)
 {
-
+    DBGPRINTF("creatExpiredAppointmentArray Start");
     offset ++;
 
     pme->m_expiredAppointment = (Appointment**)MALLOC( sizeof(Appointment*) * (num + 1));
@@ -5225,10 +5269,12 @@ static void creatExpiredAppointmentArray( CCalApp* pme, int num, int offset)
             SET_EXPIREDAPPOINTMENT_ARRAYSIZE( pme, num);
         }
     }
+    DBGPRINTF("creatExpiredAppointmentArray End");
 }
 
 static void creatExpiredAppointmentArrayIf( CCalApp* pme)
 {
+    DBGPRINTF("creatExpiredAppointmentArrayIf Start");
     if( pme->m_expiredAppointment == NULL)
     {
         creatExpiredAppointmentArray( pme, 8, 0);
@@ -5254,6 +5300,7 @@ static void creatExpiredAppointmentArrayIf( CCalApp* pme)
             pme->m_expiredAppointment = pOld;
         }
     }
+    DBGPRINTF("creatExpiredAppointmentArrayIf End");
 }
 
 static Appointment* getNextAvailableAppointment( CCalApp* pme)
@@ -5287,7 +5334,7 @@ static void callbackTheNextAvailableAppointment( CCalApp* pme)
 
 static void clearAllDoneAppointment( CCalApp* pme)
 {
-
+    DBGPRINTF("clearAllDoneAppointment Start");
     if( pme->m_expiredAppointment)
     {
         int         j       = 0;
@@ -5359,6 +5406,7 @@ static void clearAllDoneAppointment( CCalApp* pme)
         }
 
     }
+    DBGPRINTF("clearAllDoneAppointment End");
 }
 
 static int getAppointmentByPermId( CCalApp *pme, uint16 permId, CalDBRecFields* pfields, Appointment** pResult)
@@ -6108,7 +6156,7 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
 {
     static IStatic*     pStatic        = 0;
     static Appointment* pappointment   = 0;
-
+    DBGPRINTF("dialog_handler_of_state_viewevent Start");
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -6375,7 +6423,7 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
             }
             break;
     }
-
+    DBGPRINTF("dialog_handler_of_state_viewevent End");
     return FALSE;
 } // CScheduleApp_HandleViewEvent
 
@@ -6466,7 +6514,7 @@ void CalMgr_FreeAppData(CCalApp *pme)
 //        (void) IDISPLAY_Release(pme->m_pIDisplay);
 //        pme->m_pIDisplay = NULL;
 //    }
-
+    DBGPRINTF("CalMgr_FreeAppData Start");
 #ifdef FEATURE_UIALARM
     if (pme->m_pIAlarm)
     {
@@ -6491,10 +6539,19 @@ void CalMgr_FreeAppData(CCalApp *pme)
         pme->m_pIDBMgr = NULL;
     }   
 
+#if defined(FILECFG)
+    if(pme->m_pFileMgr != NULL)
+    {
+        IFILEMGR_Release(pme->m_pFileMgr);
+        pme->m_pFileMgr = NULL;
+    }
+#endif
+
     releaseMonthEvents( pme);
     //debug( ";********* free, 2*********");
     releaseExpiredAppointmentArrayIf( pme);
     //debug( ";********* free, 3*********");
+    DBGPRINTF("CalMgr_FreeAppData End");
 }
 
 
@@ -6522,7 +6579,7 @@ static int CScheduleApp_ReadCFG(IFileMgr *pFileMgr, CalCfg *pCFGCache)
 {
     IFile  *pFile;
     uint16  version;
-
+    DBGPRINTF("CScheduleApp_ReadCFG Start");
     if(pCFGCache == NULL || pFileMgr == NULL)
     {
         return EBADPARM;
@@ -6568,7 +6625,7 @@ static int CScheduleApp_ReadCFG(IFileMgr *pFileMgr, CalCfg *pCFGCache)
     }
 
     (void)IFILE_Release(pFile);
-
+    DBGPRINTF("CScheduleApp_ReadCFG End");
     return SUCCESS;
 } //
 
@@ -6595,7 +6652,7 @@ static int CScheduleApp_WriteCFG(IFileMgr *pFileMgr, CalCfg *pCFGCache)
 {
     IFile  *pFile;
     uint16  version = CAL_CFG_VERSION;
-
+    DBGPRINTF("CScheduleApp_WriteCFG Start");
     if(pCFGCache == NULL || pFileMgr == NULL)
     {
         return EBADPARM;
@@ -6639,7 +6696,7 @@ static int CScheduleApp_WriteCFG(IFileMgr *pFileMgr, CalCfg *pCFGCache)
     }
 
     (void)IFILE_Release(pFile);
-
+    DBGPRINTF("CScheduleApp_WriteCFG End");
     return SUCCESS;
 } // CContApp_WriteCFG
 
@@ -6688,7 +6745,7 @@ static void CScheduleApp_CFGCacheInit(CalCfg *pCFGCache)
 boolean Calendar_InitAppData(CCalendarApp * pme, IShell* pIShell)
 {
    int i;
-
+   DBGPRINTF("Calendar_InitAppData Start");
    //要增加addreference 函数在这里
 
    //存入阴历1899年到2051年每年中的月天数信息
@@ -6801,7 +6858,7 @@ boolean Calendar_InitAppData(CCalendarApp * pme, IShell* pIShell)
                                pme->mLunDay_String,
                                sizeof(pme->mLunDay_String));
 
-
+    DBGPRINTF("Calendar_InitAppData End");
    return TRUE;
 }
 
@@ -6824,7 +6881,7 @@ void CScheduleApp_GetLunarDate(CCalendarApp * pme,uint16 iYear, uint16 iMonth, u
    uint32 tmp;
    uint16 LeapMonth=0;
    uint8  rcode=0;
-
+   DBGPRINTF("CScheduleApp_GetLunarDate Start");
    if(pme == NULL)
    {
      return;
@@ -6882,7 +6939,7 @@ void CScheduleApp_GetLunarDate(CCalendarApp * pme,uint16 iYear, uint16 iMonth, u
    pme->m_yDay += (uint16)iSpanDays;
 
    pme->m_LeapMonth = rcode;
-
+   DBGPRINTF("CScheduleApp_GetLunarDate End");
    return;
 }
 
@@ -6890,7 +6947,7 @@ void CScheduleApp_GetLunarDate(CCalendarApp * pme,uint16 iYear, uint16 iMonth, u
 void CScheduleApp_GetChineseLunar(CCalendarApp * pme)
 {
    uint16 GzYear,SxYear;
-
+   DBGPRINTF("CScheduleApp_GetChineseLunar Start");
    if(pme == NULL)
    {
      return ;
@@ -6928,7 +6985,7 @@ void CScheduleApp_GetChineseLunar(CCalendarApp * pme)
 
    pme->m_pResLunD = pme->mLunDay_String;
    pme->m_pResLunD += (pme->m_yDay - 1)* 2;
-
+   DBGPRINTF("CScheduleApp_GetChineseLunar End");
 }
 
 
@@ -7058,7 +7115,7 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
 {
    AECHAR * strTep;
    int  nCount, nLen;
-
+   DBGPRINTF("CScheduleApp_GetLunarStr Start");
    if(pme == NULL)
    {
       return ;
@@ -7093,12 +7150,13 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
 
    //加入日子字符
    (void)WSTRNCOPYN(strTep,nCount, pme->m_calendar.m_pResLunD,2);
+   DBGPRINTF("CScheduleApp_GetLunarStr End");
 }
 
 static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 {
     AEERect rc;
-
+    DBGPRINTF("CScheduleApp_DrawLunarStr Start");
     SETAEERECT(&rc, 0, pme->m_rc.dy - (HEIGHT_PROMPT_BAR + LUNAR_RECT_HEIGHT), pme->m_rc.dx, LUNAR_RECT_HEIGHT);
     
     IDISPLAY_FillRect(pme->m_pDisplay, &rc, LUNAR_BG_COLOR);
@@ -7111,6 +7169,7 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
                     IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
         (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
     }
+    DBGPRINTF("CScheduleApp_DrawLunarStr End");
 }
 /*************************************************************************
 ===>处理阴历的程序结束

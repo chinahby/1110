@@ -289,7 +289,7 @@ static uint32  IScheduleApp_AddRef(IScheduleApp *pi)
 static uint32  IScheduleApp_Release (IScheduleApp *pi)
 {
     CScheduleApp *pme = (CScheduleApp*)pi;
-
+    DBGPRINTF("IScheduleApp_Release Start");
     if (pme->m_nRefs == 0)
     {
         //debug( ";********IScheduleApp_Release, m_nRefs = 0, return");
@@ -300,6 +300,7 @@ static uint32  IScheduleApp_Release (IScheduleApp *pi)
     if (--pme->m_nRefs)
     {
         //debug( ";********IScheduleApp_Release, m_nRefs = %d, return", pme->m_nRefs);
+        DBGPRINTF("IScheduleApp_Release m_nRefs= %d", pme->m_nRefs);
         return pme->m_nRefs;
     }
 
@@ -317,6 +318,8 @@ static uint32  IScheduleApp_Release (IScheduleApp *pi)
     FREE_VTBL(pme, IScheduleApp);
     FREE(pme);
 #endif
+    DBGPRINTF("IScheduleApp_Release End");
+
     return 0;
 } // IScheduleApp_Release
 
@@ -410,6 +413,7 @@ static void CScheduleApp_FreeAppData(CScheduleApp *pme)
 //        (void) IDISPLAY_Release(pme->m_pDisplay);
 //        pme->m_pDisplay = NULL;
 //    }
+    DBGPRINTF("CScheduleApp_FreeAppData Start");
     FREEIF(pme->m_strPhonePWD);
 #if FEATURE_DRAW_LUNAR_CALENDAR
     Calendar_FreeAppData(&pme->m_calendar);
@@ -426,8 +430,15 @@ static void CScheduleApp_FreeAppData(CScheduleApp *pme)
         pme->m_pSound = NULL;
     }
 
+    if(pme->m_pActiveDlg != NULL)
+    {
+        (void) IDIALOG_Release(pme->m_pActiveDlg);
+        pme->m_pActiveDlg = NULL;
+    }
+
     //debug( ";********CScheduleApp_FreeAppData, to call CalMgr_FreeAppData");
     CalMgr_FreeAppData(&pme->m_CalMgr);
+    DBGPRINTF("CScheduleApp_FreeAppData End");
 } // CScheduleApp_FreeAppData
 
 /*==============================================================================
@@ -449,7 +460,7 @@ static void CScheduleApp_FreeAppData(CScheduleApp *pme)
 static void CScheduleApp_RunFSM(CScheduleApp *pme)
 {
     NextFSMAction nextFSMAction = NFSMACTION_WAIT;
-
+    DBGPRINTF("CScheduleApp_RunFSM Start");
     for ( ; ; )
     {
         nextFSMAction = CScheduleApp_ProcessState(pme);
@@ -468,6 +479,7 @@ static void CScheduleApp_RunFSM(CScheduleApp *pme)
             break;
         }
     }
+    DBGPRINTF("CScheduleApp_RunFSM End");
 } // CScheduleApp_RunFSM
 
 /*==============================================================================
@@ -504,7 +516,6 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
     AEEAppStart *as;
     uint32   lDateTime;
     extern uint32 getNowCompositeTime( void);
-
     switch (eCode)
     {
         case EVT_APP_START:
@@ -561,6 +572,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
 
         case EVT_APP_STOP:
             //debug( ";***************EVT_APP_STOP");
+            DBGPRINTF("EVT_APP_STOP");
             pme->m_bInactive = TRUE;
             ISHELL_CancelTimer( pme->m_pShell, 0, pme);
             return TRUE;
@@ -579,6 +591,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
             return TRUE;
 
         case EVT_APP_RESUME:
+            DBGPRINTF("EVT_APP_RESUME");
             as = (AEEAppStart*)dwParam;
             pme->m_rc = as->rc;
             {
@@ -633,7 +646,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
             return CScheduleApp_RouteDialogEvent(pme,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
-
+            DBGPRINTF("EVT_DIALOG_END 1");
             if (wParam == OEM_IME_DIALOG)
             {
                 // For redraw the dialog
@@ -642,6 +655,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
                                        EVT_USER_REDRAW,
                                        0,
                                        0);
+                DBGPRINTF("EVT_DIALOG_END 2");
                 return TRUE;
             }
 
@@ -671,6 +685,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
                     CScheduleApp_RunFSM(pme);
                 }
             }
+            DBGPRINTF("EVT_DIALOG_END 3");
             return TRUE;
 
         case EVT_ALARM:
@@ -710,6 +725,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
             return TRUE;
 
         case EVT_USER_REDRAW:
+            DBGPRINTF("EVT_USER_REDRAW 1");
             if(pme->m_bSuspended && pme->m_bRepaint)
             {
                 return TRUE;
@@ -719,6 +735,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
                                    APPISREADY_TIMER,
                                    Schedule_APPIsReadyTimer,
                                    pme);
+            DBGPRINTF("EVT_USER_REDRAW 2");
             return TRUE;
 
         case EVT_APPISREADY:
@@ -901,7 +918,7 @@ static boolean Schedule_CanAlert(CScheduleApp *pme)
 {    
     ICM *pICM = NULL;
     uint16 num = 0;
-    
+    DBGPRINTF("Schedule_CanAlert Start");
     if(AEE_SUCCESS != ISHELL_CreateInstance(pme->m_pShell, 
                                             AEECLSID_CM, 
                                             (void **)&pICM))
@@ -949,6 +966,7 @@ static boolean Schedule_CanAlert(CScheduleApp *pme)
     {
         return TRUE;
     }
+    DBGPRINTF("Schedule_CanAlert End");
 }
 
 /*==============================================================================
@@ -968,18 +986,20 @@ static boolean Schedule_CanAlert(CScheduleApp *pme)
 static int  IScheduleApp_DeleteAllEntry(IScheduleApp *pi)
 {
     CScheduleApp *pme = (CScheduleApp*)pi;
+    DBGPRINTF("IScheduleApp_DeleteAllEntry Start");
     if (NULL == pme)
     {
         return EFAILED;
     } 
     
     deleteAllEventsFromDB(&(pme->m_CalMgr));
-
+    DBGPRINTF("IScheduleApp_DeleteAllEntry End");
     return SUCCESS;
 }
 
 void repaint(CScheduleApp *pme, boolean deferred)  
 {
+    DBGPRINTF("repaint Start");
     if(deferred)
     {
         postEvent( EVT_USER_REDRAW);
@@ -990,5 +1010,6 @@ void repaint(CScheduleApp *pme, boolean deferred)
     }
     pme->m_bDeferred = deferred;
     pme->m_bRepaint = TRUE;
+    DBGPRINTF("repaint End");
 }
 
