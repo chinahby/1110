@@ -237,10 +237,10 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #define GPIO_32_SIGNAL LCD_FLAG
 #endif
 /* GPIO 33, we need to feature it, as we don't use it if Mem size is < 16 MB */
-#define GPIO_33_SIGNAL EBI1_A_D_24
+#define GPIO_33_SIGNAL KYPD_EX1
 
 /* GPIO 34 */
-#define GPIO_34_SIGNAL GPIO_OUTPUT_34
+#define GPIO_34_SIGNAL KYPD_EX2
 
 /* GPIO 35 */
 #define GPIO_35_SIGNAL PA_ON_0
@@ -272,22 +272,14 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #if defined(TLMM_USES_CAMIF)
   #define GPIO_41_SIGNAL CAMIF_DISABLE
 #else
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
-#define GPIO_41_SIGNAL KYPD_EX1
-#else
-#define GPIO_41_SIGNAL GPIO_INPUT_41
-#endif
+  #define GPIO_41_SIGNAL GPIO_INPUT_41
 #endif
 
 /* GPIO 42 */
 #if defined(TLMM_USES_CAMIF)
   #define GPIO_42_SIGNAL CAMIF_DATA_0
 #else
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
-    #define GPIO_42_SIGNAL KYPD_EX2
-#else
-    #define GPIO_42_SIGNAL GPIO_INPUT_42
-#endif
+  #define GPIO_42_SIGNAL GPIO_INPUT_42
 #endif
 
 /* GPIO 43 */
@@ -301,11 +293,7 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #if defined(TLMM_USES_CAMIF)
   #define GPIO_44_SIGNAL CAMIF_DATA_2
 #else
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
-    #define GPIO_44_SIGNAL KYPD_EX3
-#else
-    #define GPIO_44_SIGNAL GPIO_INPUT_44
-#endif
+  #define GPIO_44_SIGNAL GPIO_INPUT_44
 #endif
 
 /* GPIO 45 */
@@ -378,7 +366,7 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #if defined(TLMM_USES_CAMIF)
   #define GPIO_54_SIGNAL MDP_VSYNC_P
 #else
-  #define GPIO_54_SIGNAL GPIO_INPUT_54
+  #define GPIO_54_SIGNAL KYPD_EX3
 #endif
 
 /* GPIO 55 */
