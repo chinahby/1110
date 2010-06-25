@@ -128,7 +128,7 @@ endif
 
 #应用的标签
 ifeq ($(USES_MMI),yes)
-#USES_CAMERA=yes#
+USES_CAMERA=yes#
 USES_REND=no
 USES_T9=yes
 USES_DISP_SIZE=176X220#
@@ -396,6 +396,9 @@ ifeq ($(USES_PWRDB),yes)
         OBJECTS2 += $(PWRDB_OBJS)
 endif
 
+ifeq ($(USES_CAMERA),yes)
+		   OBJECTS2 += $(CAMSENSOR_GC0309_OBJS)
+endif
 #-------------------------------------------------------------------------------
 # Object List Modifiers
 #    Alter the object list based on the requested features

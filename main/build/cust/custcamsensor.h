@@ -30,5 +30,6 @@ when       who     what, where, why
  * all sensors. */
 
 #define USE_CAMSENSOR_MICRON_MT9D112_MU2M0YU
+#define USE_CAMSENSOR_GC0309
 
 #endif /* CUSTCAMSENSOR_H */

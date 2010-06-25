@@ -4128,6 +4128,27 @@ camera_ret_code_type camsensor_get_fps_list(int32 *p1, int32 *p2)
   }
 }
 
+//≤‚ ‘ ±÷”
+void testclk()
+{
+	ERR("testclk 12000000",0,0,0);
+//	gpio_tlmm_config(GPIO_OUTPUT_53);
+
+//	gpio_out(GPIO_OUTPUT_53,GPIO_HIGH_VALUE);
+
+    clk_regime_enable( CLK_RGM_BT_M );
+    clk_regime_enable( CLK_RGM_SBI_M );
+
+#if defined( T_MSM6500 )
+ // clk_regime_enable( CLK_RGM_BT_SLP_M );
+#endif
+
+  /* Prevent TCXO from shutting down. */
+  //sleep_bt_clock_rgm = TRUE;
+//	testsetclk();
+	camsensor_config_camclk_po(24000000);
+}
+
 /*============================================================================
                         INTERNAL API DEFINITIONS
 ============================================================================*/

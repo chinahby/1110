@@ -31,7 +31,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CDSMS_CACHE_USELIST
 #define FIX_LINKITEM_INITBUG
 #define FEATURE_SPN_FROM_BSMCCMNC
-#undef FEATURE_ADD_CAMERA
+#define FEATURE_ADD_CAMERA
 #endif
 
 #ifndef TARGSB2_H
