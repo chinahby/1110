@@ -328,25 +328,28 @@
 	<String Id="205" Name="IDS_AUTH_POLICY">
 		<Text>Auth Policy</Text>
 	</String>
-	<String Id="206" Name="IDS_PRIMARY_DNS">
+	<String Id="206" Name="IDS_PRIVACY_POLICY">
+		<Text>Privacy Policy</Text>
+	</String>
+	<String Id="207" Name="IDS_PRIMARY_DNS">
 		<Text>Primary DNS</Text>
 	</String>
-	<String Id="207" Name="IDS_SECONDARY_DNS">
+	<String Id="208" Name="IDS_SECONDARY_DNS">
 		<Text>Secondary DNS</Text>
 	</String>
-	<String Id="208" Name="IDS_USER_NAME">
+	<String Id="209" Name="IDS_USER_NAME">
 		<Text>User Name</Text>
 	</String>
-	<String Id="209" Name="IDS_USER_PASSWORD">
+	<String Id="210" Name="IDS_USER_PASSWORD">
 		<Text>User Password</Text>
 	</String>
-	<String Id="210" Name="IDS_PRIMARY_SERVER">
+	<String Id="211" Name="IDS_PRIMARY_SERVER">
 		<Text>Primary Server</Text>
 	</String>
-	<String Id="211" Name="IDS_SECONDARY_SERVER">
+	<String Id="212" Name="IDS_SECONDARY_SERVER">
 		<Text>Secondary Server</Text>
 	</String>
-	<String Id="212" Name="IDS_BREWSETSCRN">
+	<String Id="213" Name="IDS_BREWSETSCRN">
 		<Text>BrewSetting Screen</Text>
 	</String>
 </Strings>
