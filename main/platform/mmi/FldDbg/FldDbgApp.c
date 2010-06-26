@@ -116,7 +116,13 @@ when         who     what, where, why
 #include "AEEConfig.h"
 #include "OEMCFGI.h"
 #include "cm.h"
-#include "appscommon_color.brh"
+#if defined(FEATURE_DISP_160X128)
+#include "Appscommon_160x128.brh"
+#elif defined(FEATURE_DISP_128X128)
+#include "Appscommon_color.brh"
+#else
+#include "Appscommon_color.brh"
+#endif
  #include "Appscommon.h"
 #include "AEEClipboard.h"
 
