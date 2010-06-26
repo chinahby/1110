@@ -310,7 +310,7 @@
 	<STRING Id="103" Name="IDS_BACK">
 		<Text>            返回</Text>
 	</STRING>
-	<STRING Id="104" Name="IDS_HW_VERSION" Encoding="Unicode">
+	<STRING Id="104" Name="IDS_HW_VERSION">
 		<Text>HW Ver: </Text>
 	</STRING>
 </Strings>
@@ -570,5 +570,15 @@
 	<DIALOG Id="29" Name="IDD_PROG_DIALOG" Focus="0">
 		<Controls/>
 	</DIALOG>
+	<Dialog Id="30" Name="IDD_ESN_DIALOG" Focus="7040">
+		<Controls>
+			<Static Id="7040" Name="IDC_ESN_STATIC">
+				<TitleID>IDS_ESN</TitleID>
+				<Items/></Static>
+			<SoftKey Id="7041" Name="IDC_ESN_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>

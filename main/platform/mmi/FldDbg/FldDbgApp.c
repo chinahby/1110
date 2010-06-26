@@ -517,6 +517,13 @@ static int CFieldDebugMod_CreateInstance(AEECLSID  ClsId,
 #error code not present
 #endif
 
+
+static boolean CFieldDebug_EsnMenuHandleEvent(CFieldDebug *pme,
+                                               AEEEvent  eCode,
+                                               uint16    wParam,
+                                               uint32    dwParam);
+static void CFieldDebug_DrawEsnScreen(CFieldDebug *pme);
+
 /*===========================================================================
 全局数据
 ===========================================================================*/
@@ -565,7 +572,8 @@ static const PFNAEEEVENT sDialogEventHandlers[] =
    (PFNAEEEVENT) CFieldDebug_IPHandleEvent,          // IDD_RATS_IP_DIALOG
    (PFNAEEEVENT) CFieldDebug_RATS_TESTHandleEvent,    // IDD_RATS_TEST_DIALOG
    (PFNAEEEVENT) CFieldDebug_HDRDebugHandleEvent,     // IDD_HDR_DEBUG_INFORMATION
-   (PFNAEEEVENT) CFieldDebug_VoiceDebugHandleEvent   //IDD_VOICE_DEBUG
+   (PFNAEEEVENT) CFieldDebug_VoiceDebugHandleEvent,   //IDD_VOICE_DEBUG
+   (PFNAEEEVENT) CFieldDebug_EsnMenuHandleEvent, // IDD_ESN_DIALOG   
 };
 
 
@@ -976,7 +984,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
                                      uint32       dwParam)
 {
   IMenuCtl *pm = NULL ,*psk=NULL;
-
+  MSG_ERROR("CFieldDebug_OnDialogStart Start", 0, 0, 0);
   switch (wParam) {
     case IDD_TOP_DIALOG:
     	{
@@ -987,6 +995,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DEBUG_TITLE,  IDS_DEBUG_TITLE, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_VERSION_TITLE,  IDS_VERSION_TITLE, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PROGRAM_TITLE,  IDS_PROGRAM_TITLE, NULL, 0);
+      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_ESN,  IDS_ESN, NULL, 0);      
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_JPEG_DECODE,  IDS_JPEG_DECODE, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_RATS_TITLE,  IDS_RATS_TITLE, NULL, 0);   
        
@@ -1033,6 +1042,17 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       
        }
       break;
+    case IDD_ESN_DIALOG:
+    	{
+	    MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_ESN_SOFTKEY);
+        if(psk == NULL)
+        {
+            MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+        }
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);       
+       }
+      break;      
     case IDD_DEBUG_SCREEN_DIALOG:
     	{		
 		
@@ -1187,6 +1207,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       MSG_ERROR ("Unhandled dialog %d", wParam, 0,0);
       return FALSE;
   }
+  MSG_ERROR("CFieldDebug_OnDialogStart End", 0, 0, 0);
   return TRUE;
 }
 
@@ -1212,13 +1233,15 @@ SEE ALSO:
 static boolean CFieldDebug_MoveToDialog(CFieldDebug *pme, uint16 id)
 {
    // Close the current dialog (if there is one)
+   int ret = 0;
    (void) ISHELL_EndDialog(pme->a.m_pIShell);
 
-   if (ISHELL_CreateDialog(pme->a.m_pIShell,
+   ret = ISHELL_CreateDialog(pme->a.m_pIShell,
                            AEE_FLDDBG_RES_FILE,
                            id,
-                           NULL) != AEE_SUCCESS) {
-      MSG_FATAL ("Could not create dialog", 0, 0, 0);
+                           NULL);
+   if (ret != AEE_SUCCESS) {
+      MSG_FATAL ("Could not create dialog ret=%d", ret, 0, 0);
       return FALSE;
    }
    return TRUE;
@@ -3084,6 +3107,12 @@ static boolean CFieldDebug_TopMenuHandleEvent(CFieldDebug * pme,
          (void) CFieldDebug_MoveToDialog(pme, IDD_VERSION_DIALOG);
          return TRUE;
       }
+      if (wParam == IDS_ESN)
+      {
+         MSG_FATAL ("CFieldDebug_TopMenuHandleEvent wParam == IDS_ESN", 0, 0, 0);
+         (void) CFieldDebug_MoveToDialog(pme, IDD_ESN_DIALOG);
+         return TRUE;
+      }      
       if (wParam == IDS_RATS_TITLE)
       {
          (void) CFieldDebug_MoveToDialog(pme, IDD_RATS_DIALOG);
@@ -4009,6 +4038,13 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
                   pme->m_dlgID = IDD_VERSION_DIALOG;
                }
 #endif
+#ifdef FEATURE_CARRIER_CHINA_TELCOM
+              if(STRNCMP(args->pszArgs,"*#06#",5) == 0)
+              {
+                 pme->m_dlgID = IDD_ESN_DIALOG;
+              }
+#endif
+
                if(STRNCMP(args->pszArgs,"*#*#8378#0#",11) == 0)
                {
                   pme->m_dlgID = IDD_TOP_DIALOG;
@@ -6004,5 +6040,168 @@ static void CFieldDebug_DisplayImage(CFieldDebug * pme)
 }
 #endif /* FEATURE_JPEG_DECODER */
 
+
+/*===========================================================================
+
+FUNCTION CFieldDebug_EsnMenuHandleEvent
+
+DESCRIPTION
+  Handle the key/command event for the version sub-menu.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+static boolean CFieldDebug_EsnMenuHandleEvent(CFieldDebug *pme,
+                                               AEEEvent  eCode,
+                                               uint16    wParam,
+                                               uint32    dwParam)
+{
+   PARAM_NOT_REF(dwParam)
+
+   MSG_ERROR("CFieldDebug_EsnMenuHandleEvent Start", 0, 0, 0);
+   switch (eCode) {
+
+   case EVT_COMMAND:
+      if (wParam == IDS_DONE_SK) {
+         (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
+         return TRUE;
+      }
+      return FALSE;
+
+   case EVT_KEY:
+      switch (wParam) {
+
+      case AVK_CLR:
+#ifdef FEATURE_CARRIER_CHINA_TELCOM 
+         if (pme->m_dlgID == IDD_ESN_DIALOG)
+         {
+            //ISHELL_CloseApplet(pme->a.m_pIShell, FALSE); // This return the EditNum dialog
+            ISHELL_CloseApplet(pme->a.m_pIShell, TRUE); // This return the Idle dialog
+         }
+#endif
+         if (pme->m_dlgID == IDD_TOP_DIALOG)
+         {
+            (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
+         }
+         return TRUE;
+
+      default:
+         break;
+      }
+      return FALSE;
+
+   case EVT_DIALOG_START:
+      (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+      CFieldDebug_DrawEsnScreen(pme);
+      return TRUE;
+
+   case EVT_DIALOG_END:
+      return TRUE;
+
+   default:
+      break;
+   }
+   MSG_ERROR("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
+   return FALSE;
+}
+
+
+
+/*===========================================================================
+FUNCTION CFieldDebug_DrawEsnScreen
+
+DESCRIPTION
+
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  none
+/===========================================================================*/
+static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
+{
+    AECHAR szBuf[64];
+    IDialog *p_dlg;
+    IStatic *p_stk;
+    int n = 0;
+    uint32 esn;
+    dword date = 0;
+    AECHAR fmt_str[20];
+    int i, j, count;
+    AECHAR  sTitle[20]; 
+    int ret = 0;
+    
+	MSG_ERROR("CFieldDebug_DrawEsnScreen Start", 0, 0, 0);
+    MEMSET (sTitle, 0, sizeof(sTitle));
+
+    (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf));    
+    ret = ISHELL_LoadResString(pme->a.m_pIShell,
+                               AEE_FLDDBG_RES_FILE,
+                               IDS_ESN,
+                               (szBuf + n),
+                               sizeof(szBuf));
+    MSG_ERROR("CFieldDebug_DrawEsnScreen 1 ret=%d", ret, 0, 0);
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+    
+    (void) ICONFIG_GetItem(pme->m_pIConfig,
+                          CFGI_ESN,
+                          &esn,
+                          sizeof(esn));
+
+    STRTOWSTR("%u %u", fmt_str, sizeof(fmt_str));
+    
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            ((esn & 0xFF000000) >> 24),
+            (esn & 0x00FFFFFF));
+    
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+
+    //Display ESN with hexadecimal
+    STRTOWSTR("0x%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            esn);
+    
+    n = WSTRLEN(szBuf);
+    
+   p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+   p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_ESN_STATIC);
+
+   if(p_stk == NULL)
+   {
+       MSG_ERROR("CFieldDebug_DrawEsnScreen 2 p_stk == NULL", 0, 0, 0);
+   }
+   // Set the values of the title and text strings for this control
+    ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
+   (void) ISHELL_LoadResString(pme->a.m_pIShell,
+                                        AEE_FLDDBG_RES_FILE,
+                                        IDS_ESN,
+                                        sTitle,
+                                        sizeof(sTitle));
+   (void) ISTATIC_SetText(p_stk,
+                          sTitle,
+                          szBuf,
+                          AEE_FONT_NORMAL,
+                          AEE_FONT_NORMAL);
+   
+   (void) ISTATIC_Redraw(p_stk);
+   MSG_ERROR("CFieldDebug_DrawEsnScreen End", 0, 0, 0);
+}
 
 
