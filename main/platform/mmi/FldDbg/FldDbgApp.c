@@ -1057,6 +1057,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PLATFORM_ID,       IDS_PLATFORM_ID, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DLFLAGS,           IDS_DLFLAGS, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_AUTH_POLICY,       IDS_AUTH_POLICY, NULL, 0);
+			IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PRIVACY_POLICY,    IDS_PRIVACY_POLICY, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PRIMARY_DNS,       IDS_PRIMARY_DNS, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SECONDARY_DNS,     IDS_SECONDARY_DNS, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_USER_NAME,         IDS_USER_NAME, NULL, 0);
@@ -3202,6 +3203,10 @@ static boolean CFieldDebug_BREW_SETTINGSHandleEvent(CFieldDebug *pme,
 				 return TRUE;
 		
 		case IDS_AUTH_POLICY:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_EXPORTER);
+				 return TRUE;
+		case IDS_PRIVACY_POLICY:
 		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
 		//									 AEECLSID_APP_CONTACT_EXPORTER);
 				 return TRUE;
