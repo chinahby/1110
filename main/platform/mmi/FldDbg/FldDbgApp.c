@@ -414,6 +414,14 @@ static boolean CFieldDebug_RATS_TESTHandleEvent(CFieldDebug *pme,
                                            uint16    wParam,
                                            uint32    dwParam);
 
+static boolean CFieldDebug_BREW_SETTINGSHandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+static boolean CFieldDebug_BREWSETTINGSScreenHandleEvent(CFieldDebug *pme,
+                                               AEEEvent  eCode,
+                                               uint16    wParam,
+                                               uint32    dwParam);
 static void CFieldDebug_DebugScreenRefresh(CFieldDebug *pme);
 static void CFieldDebug_DrawErrorScreen(CFieldDebug * pme);
 static void CFieldDebug_DrawSMSMOSOScreen(CFieldDebug *pme);
@@ -580,6 +588,7 @@ static const PFNAEEEVENT sDialogEventHandlers[] =
    (PFNAEEEVENT) CFieldDebug_HDRDebugHandleEvent,     // IDD_HDR_DEBUG_INFORMATION
    (PFNAEEEVENT) CFieldDebug_VoiceDebugHandleEvent,   //IDD_VOICE_DEBUG
    (PFNAEEEVENT) CFieldDebug_EsnMenuHandleEvent, // IDD_ESN_DIALOG   
+   (PFNAEEEVENT) CFieldDebug_BREW_SETTINGSHandleEvent
 };
 
 
@@ -999,6 +1008,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
                                            IDC_SYS_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DEBUG_TITLE,  IDS_DEBUG_TITLE, NULL, 0);
+	  IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_BREWSETTUBG_TITLE, IDS_BREWSETTUBG_TITLE,NULL,0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_VERSION_TITLE,  IDS_VERSION_TITLE, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PROGRAM_TITLE,  IDS_PROGRAM_TITLE, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_ESN,  IDS_ESN, NULL, 0);      
@@ -1035,6 +1045,26 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 
       MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
 
+       }                                    
+      break;
+	case IDD_BREWSET_DIALOG:
+		{
+			MSG_FATAL ("EVT_DIALOG_START wParam == IDS_BREWSETTUBG_TITLE1111111111", 0, 0, 0);
+			pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
+                                             IDC_BREWSET_MENU);
+      		IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+			IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CARRIER_ID,        IDS_CARRIER_ID, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PLATFORM_ID,       IDS_PLATFORM_ID, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DLFLAGS,           IDS_DLFLAGS, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_AUTH_POLICY,       IDS_AUTH_POLICY, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PRIMARY_DNS,       IDS_PRIMARY_DNS, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SECONDARY_DNS,     IDS_SECONDARY_DNS, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_USER_NAME,         IDS_USER_NAME, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_USER_PASSWORD,     IDS_USER_PASSWORD, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PRIMARY_SERVER,    IDS_PRIMARY_SERVER, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SECONDARY_SERVER,  IDS_SECONDARY_SERVER, NULL, 0);
+			MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
+			MSG_FATAL ("EVT_DIALOG_START wParam == IDS_BREWSETTUBG_TITLE222222222", 0, 0, 0);
        }                                    
       break;
     case IDD_VERSION_DIALOG:
@@ -1790,7 +1820,71 @@ static boolean CFieldDebug_DebugScreenHandleEvent(CFieldDebug * pme,
    }
    return FALSE;
 }
+/*===========================================================================
+FUNCTION CFieldDebug_BREWSETTINGSScreenHandleEvent
 
+DESCRIPTION
+  Event handler for the the brew settings screen dialog
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  none 
+/===========================================================================*/
+static boolean CFieldDebug_BREWSETTINGSScreenHandleEvent(CFieldDebug *pme,
+                                               AEEEvent  eCode,
+                                               uint16    wParam,
+                                               uint32    dwParam)
+{
+	PARAM_NOT_REF(dwParam)
+	
+	   switch (eCode) {
+	   case EVT_COMMAND:
+		  if (wParam == IDS_OK) {
+			if(pme->bEndKeyProcess == FALSE)
+			{
+			  (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
+			}
+			return TRUE;
+		  }
+		  return FALSE;
+	
+	   case EVT_KEY:
+		  switch (wParam) {
+		  case AVK_CLR:
+			 if(pme->bEndKeyProcess == FALSE)
+			 {
+			   (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
+			 }
+			 //Other wise ignore the clear key so that the dialog is not ended.
+			 return TRUE;
+	
+		  default:
+			 break;
+		  }
+		  return FALSE;
+	
+	   case EVT_DIALOG_START:
+		 CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+		 CFieldDebug_DebugScreenRefresh(pme);
+		 return TRUE;
+	
+	   case EVT_DIALOG_END:
+		  (void) ISHELL_CancelTimer(pme->a.m_pIShell,
+									(PFNNOTIFY) CFieldDebug_DebugScreenRefresh,
+									pme);
+		  return TRUE;
+	
+	   default:
+		  break;
+	   }
+	   return FALSE;
+
+}
 
 
 /*===========================================================================
@@ -3067,6 +3161,112 @@ static boolean CFieldDebug_DebugMenuHandleEvent(CFieldDebug  *pme,
    }
    return FALSE;
 }
+/*===========================================================================
+
+FUNCTION CFieldDebug_BREW_SETTINGSHandleEvent
+
+DESCRIPTION
+  Handle the key/command event for the BREW SETTING menu.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+static boolean CFieldDebug_BREW_SETTINGSHandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam)
+{
+	switch (eCode) {
+   case EVT_COMMAND:
+      switch (wParam) {
+	  	
+		case IDS_CARRIER_ID:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_IMPORTER);
+				 return TRUE;
+		
+		case IDS_PLATFORM_ID:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_EXPORTER);
+				 return TRUE;
+		case IDS_DLFLAGS:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_IMPORTER);
+				 return TRUE;
+		
+		case IDS_AUTH_POLICY:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_EXPORTER);
+				 return TRUE;
+		case IDS_PRIMARY_DNS:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_IMPORTER);
+				 return TRUE;
+		
+		case IDS_SECONDARY_DNS:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_EXPORTER);
+				 return TRUE;
+		case IDS_USER_NAME:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_IMPORTER);
+				 return TRUE;
+		
+		case IDS_USER_PASSWORD:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_EXPORTER);
+				 return TRUE;
+		case IDS_PRIMARY_SERVER:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_IMPORTER);
+				 return TRUE;
+		
+		case IDS_SECONDARY_SERVER:
+		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
+		//									 AEECLSID_APP_CONTACT_EXPORTER);
+				 return TRUE;
+		default:
+			break;
+      	}
+	  	break;
+	  case EVT_KEY:
+      switch (wParam) {
+      case AVK_CLR:
+         pme->m_debugmenu_sel = IDS_CARRIER_ID;
+         (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
+         return TRUE;
+
+      default:
+         break;
+      }
+      break;
+	 case EVT_DIALOG_START:
+	  MSG_FATAL ("EVT_DIALOG_START wParam == IDS_BREWSETTUBG_TITLE", 0, 0, 0);
+      CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+	  MSG_FATAL ("EVT_DIALOG_START wParam == IDS_BREWSETTUBG_TITLE end", 0, 0, 0);
+	  {
+         IMenuCtl *ctl;
+         IDialog *dlg;
+
+         dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+         ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
+	  }
+      return TRUE;
+   case EVT_DIALOG_END:
+      return TRUE;
+
+   default:
+      break;
+   }
+   return FALSE;
+}
 
 /*===========================================================================
 
@@ -3108,6 +3308,12 @@ static boolean CFieldDebug_TopMenuHandleEvent(CFieldDebug * pme,
          return TRUE;
       }
 
+	  if (wParam == IDS_BREWSETTUBG_TITLE)     //ADD BY YANGDECAI
+	  {
+	  	 MSG_FATAL ("CFieldDebug_TopMenuHandleEvent wParam == IDS_BREWSETTUBG_TITLE", 0, 0, 0);
+	  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);//Ω¯»ÎBREWSETING ≤Àµ•
+         return TRUE;
+	  }
       if (wParam == IDS_VERSION_TITLE)
       {
          (void) CFieldDebug_MoveToDialog(pme, IDD_VERSION_DIALOG);
