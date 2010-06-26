@@ -313,6 +313,42 @@
 	<STRING Id="104" Name="IDS_HW_VERSION" Encoding="Unicode">
 		<Text>HW Ver: </Text>
 	</STRING>
+	<String Id="201" Name="IDS_BREWSETTUBG_TITLE">
+		<Text>Brew Settings</Text>
+	</String>
+	<String Id="202" Name="IDS_CARRIER_ID">
+		<Text>Carrier ID</Text>
+	</String>
+	<String Id="203" Name="IDS_PLATFORM_ID">
+		<Text>Platform ID</Text>
+	</String>
+	<String Id="204" Name="IDS_DLFLAGS">
+		<Text>DL Flags</Text>
+	</String>
+	<String Id="205" Name="IDS_AUTH_POLICY">
+		<Text>Auth Policy</Text>
+	</String>
+	<String Id="206" Name="IDS_PRIMARY_DNS">
+		<Text>Primary DNS</Text>
+	</String>
+	<String Id="207" Name="IDS_SECONDARY_DNS">
+		<Text>Secondary DNS</Text>
+	</String>
+	<String Id="208" Name="IDS_USER_NAME">
+		<Text>User Name</Text>
+	</String>
+	<String Id="209" Name="IDS_USER_PASSWORD">
+		<Text>User Password</Text>
+	</String>
+	<String Id="210" Name="IDS_PRIMARY_SERVER">
+		<Text>Primary Server</Text>
+	</String>
+	<String Id="211" Name="IDS_SECONDARY_SERVER">
+		<Text>Secondary Server</Text>
+	</String>
+	<String Id="212" Name="IDS_BREWSETSCRN">
+		<Text>BrewSetting Screen</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
@@ -567,17 +603,22 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="29" Name="IDD_PROG_DIALOG" Focus="0">
-		<Controls/>
-	</DIALOG>
-	<Dialog Id="30" Name="IDD_ESN_DIALOG" Focus="7040">
+	<Dialog Id="29" Name="IDD_ESN_DIALOG" Focus="7040">
 		<Controls>
-			<Static Id="7040" Name="IDC_ESN_STATIC" Flags="40000">
+			<Static Id="7040" Name="IDC_ESN_STATIC" Flags="40001">
 				<TitleID>IDS_ESN</TitleID>
 				<Items/></Static>
 			<SoftKey Id="7041" Name="IDC_ESN_SOFTKEY">
 				<Items/>
 			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="30" Name="IDD_BREWSET_DIALOG" Focus="30">
+		<Controls>
+			<Menu Id="30" Name="IDC_BREWSET_MENU" Flags="4000001">
+				<TitleID>IDS_BREWSETTUBG_TITLE</TitleID>
+				<Items/>
+			</Menu>
 		</Controls>
 	</Dialog>
 </Dialogs>
