@@ -207,6 +207,18 @@ extern DRMTestApp( IShell* pIShell );
 #define MAX_IP_SIZE     15   /* Size of an IP address string. */
 #define MAX_TEST_DIGITS 8    /* Size of the test number of digits. */
 
+typedef struct {
+   uint32   dwCID;         // Carrier ID
+   uint32   dwPID;         // Platform ID
+   uint8    bBKey[16];     // BKey
+   uint8    bAKey[8];      // AKey
+   char     szServer[64];  // DL Server
+   uint16   wFlags;        // DL Flags
+   uint16   wAuth;         // Auth policy
+   uint16   wPrivP;        // Privacy policy
+} OEMConfigDownloadInfo;
+
+
 
 // EVT_USER type events
 #define EVT_SIM_WRITTEN_FINAL 0x0001
@@ -306,6 +318,7 @@ typedef struct _CFieldDebug {
 
    boolean    m_bSuspended;    // True if app is either background or suspended
    int16      m_wStatusResID;  // Resource to load into status dialog.
+   IDialog                         *m_pActiveIDlg;
 
 } CFieldDebug;
 
@@ -430,6 +443,30 @@ static AECHAR* CFieldDebug_DebugScreenReadItem(CFieldDebug *pme);
 static void CFieldDebug_DrawVersionScreen(CFieldDebug *pme);
 static void CFieldDebug_ClearCallBackFn(IShell *ps);
 static boolean CFieldDebug_ClearFPLMN(CFieldDebug* pme);
+static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+static boolean CFieldDebug_DLFLAGSHandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+static boolean CFieldDebug_AUTHPOLICYHandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+static boolean CFieldDebug_PRIVACYPOLICYHandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
 
 #ifdef FEATURE_JPEG_DECODER
 static void CFieldDebug_RGB24toRGB16(uint16 * outPtr, uint8 * inPtr, uint32 num_bytes);
@@ -538,6 +575,13 @@ static boolean CFieldDebug_EsnMenuHandleEvent(CFieldDebug *pme,
                                                uint32    dwParam);
 static void CFieldDebug_DrawEsnScreen(CFieldDebug *pme);
 
+static void CFieldDebug_DrawCarrierIdScreen(CFieldDebug *pme);
+static void CFieldDebug_DrawPlatformIdScreen(CFieldDebug *pme);
+static void CFieldDebug_DrawDLFlagsScreen(CFieldDebug *pme);
+static void CFieldDebug_DrawAutlPolicyScreen(CFieldDebug *pme);
+static void CFieldDebug_DrawPrivacyPolicyScreen(CFieldDebug *pme);
+static void CFieldDebug_DrawPrimaryDnsScreen(CFieldDebug *pme);
+
 /*===========================================================================
 全局数据
 ===========================================================================*/
@@ -588,7 +632,15 @@ static const PFNAEEEVENT sDialogEventHandlers[] =
    (PFNAEEEVENT) CFieldDebug_HDRDebugHandleEvent,     // IDD_HDR_DEBUG_INFORMATION
    (PFNAEEEVENT) CFieldDebug_VoiceDebugHandleEvent,   //IDD_VOICE_DEBUG
    (PFNAEEEVENT) CFieldDebug_EsnMenuHandleEvent, // IDD_ESN_DIALOG   
-   (PFNAEEEVENT) CFieldDebug_BREW_SETTINGSHandleEvent
+   (PFNAEEEVENT) CFieldDebug_BREW_SETTINGSHandleEvent,  //IDD_BREWSET_DIALOG
+   (PFNAEEEVENT) CFieldDebug_CARRIERIDHandleEvent,      //IDD_CARRIERID_DIALOG
+   (PFNAEEEVENT) CFieldDebug_PLATFORMIDHandleEvent,     //IDD_PLATFORMID_DIALOG
+   (PFNAEEEVENT) CFieldDebug_DLFLAGSHandleEvent,        //IDD_DLFLAGS_DIALOG
+   (PFNAEEEVENT) CFieldDebug_AUTHPOLICYHandleEvent,     //IDD_AUTHPOLICY_DIALOG
+   (PFNAEEEVENT) CFieldDebug_PRIVACYPOLICYHandleEvent,  //IDD_PRIVACYPOLICY_DIALOG
+   (PFNAEEEVENT) CFieldDebug_PRIMARYDNSHandleEvent      //IDD_PRIMARYDNS_DIALOG
+   
+   
 };
 
 
@@ -690,6 +742,13 @@ int AEEClsCreateInstance(AEECLSID  ClsId,
                                 (void **)(&pme->m_pIConfig )) != AEE_SUCCESS) {
          break;
       }
+	   // Create IDisplay instance
+      if (ISHELL_CreateInstance(pIShell, AEECLSID_DISPLAY, 
+            (void **) &pme->m_pDisplay) != SUCCESS)
+      {
+          MSG_ERROR ("pMe->m_pDisplay could not be created", 0, 0, 0);
+          return EFAILED;
+      }
 
       /* Attempt to create the Remote API Test object.  If the creation
        * or registration for events fail, then make sure the object stays
@@ -745,7 +804,11 @@ SIDE EFFECTS
 
 static void CFieldDebug_Free(CFieldDebug * pme)
 {
-
+   if (pme->m_pDisplay != NULL)
+    {
+        (void) IDISPLAY_Release(pme->m_pDisplay);
+        pme->m_pDisplay = NULL;
+    }
    if (pme->m_pIConfig) {
       (void) ICONFIG_Release(pme->m_pIConfig);
    }
@@ -1089,7 +1152,75 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         }
         IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);       
        }
-      break;      
+      break; 
+
+	case IDD_CARRIERID_DIALOG:
+	  {
+	  	MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+        //psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_CARRIERID_SOFTKEY);
+        //if(psk == NULL)
+		//
+        //{
+        //  MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+        //}
+        //IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
+	  }
+	  break;
+	case IDD_PLATFORMID_DIALOG:
+	  {
+	  	MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_PLATFORMID_SOFTKEY);
+        if(psk == NULL)
+        {
+            MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+        }
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
+	  }
+	case IDD_DLFLAGS_DIALOG:
+	  {
+	  	MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_DLFLAGS_SOFTKEY);
+        if(psk == NULL)
+        {
+            MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+        }
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
+	  }
+	  break;
+	case IDD_AUTHPOLICY_DIALOG:
+	  {
+	  	MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_AUTHPOLICY_SOFTKEY);
+        if(psk == NULL)
+        {
+            MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+        }
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
+	  }
+	   break;
+	case IDD_PRIVACYPOLICY_DIALOG:
+	  {
+	  	MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_PRIVACYPOLICY_SOFTKEY);
+        if(psk == NULL)
+        {
+            MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+        }
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
+	  }
+	  break;
+	case IDD_PRIMARYDNS_DIALOG:
+	  {
+	  	MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_PRIMARYDNS_SOFTKEY);
+        if(psk == NULL)
+        {
+            MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+        }
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
+	  }
+	  break;
+	
     case IDD_DEBUG_SCREEN_DIALOG:
     	{		
 		
@@ -3189,31 +3320,74 @@ static boolean CFieldDebug_BREW_SETTINGSHandleEvent(CFieldDebug *pme,
       switch (wParam) {
 	  	
 		case IDS_CARRIER_ID:
-		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
-		//									 AEECLSID_APP_CONTACT_IMPORTER);
+		{
+            IMenuCtl *ctl;
+            IDialog *dlg;
+
+            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
+            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+         }
+		  MSG_FATAL ("IDS_CARRIER_ID wParam == IDS_CARRIER_ID111111111111", 0, 0, 0);
+         (void) CFieldDebug_MoveToDialog(pme, IDD_CARRIERID_DIALOG);
 				 return TRUE;
 		
 		case IDS_PLATFORM_ID:
-		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
-		//									 AEECLSID_APP_CONTACT_EXPORTER);
+		{
+            IMenuCtl *ctl;
+            IDialog *dlg;
+
+            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
+            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+         }
+         (void) CFieldDebug_MoveToDialog(pme, IDD_PLATFORMID_DIALOG);								
 				 return TRUE;
 		case IDS_DLFLAGS:
-		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
-		//									 AEECLSID_APP_CONTACT_IMPORTER);
+		{
+            IMenuCtl *ctl;
+            IDialog *dlg;
+
+            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
+            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+         }
+         (void) CFieldDebug_MoveToDialog(pme, IDD_DLFLAGS_DIALOG);									
 				 return TRUE;
 		
 		case IDS_AUTH_POLICY:
-		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
-		//									 AEECLSID_APP_CONTACT_EXPORTER);
+		{
+            IMenuCtl *ctl;
+            IDialog *dlg;
+
+            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
+            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+         }
+         (void) CFieldDebug_MoveToDialog(pme, IDD_AUTHPOLICY_DIALOG);									
 				 return TRUE;
 		case IDS_PRIVACY_POLICY:
-		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
-		//									 AEECLSID_APP_CONTACT_EXPORTER);
-				 return TRUE;
+		{
+            IMenuCtl *ctl;
+            IDialog *dlg;
+
+            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
+            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+         }
+         (void) CFieldDebug_MoveToDialog(pme, IDD_PRIVACYPOLICY_DIALOG);	
+		 return TRUE;
 		case IDS_PRIMARY_DNS:
-		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
-		//									 AEECLSID_APP_CONTACT_IMPORTER);
-				 return TRUE;
+		{
+            IMenuCtl *ctl;
+            IDialog *dlg;
+
+            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
+            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+         }
+         (void) CFieldDebug_MoveToDialog(pme, IDD_PRIMARYDNS_DIALOG);								
+		return TRUE;
 		
 		case IDS_SECONDARY_DNS:
 		//		   (void) ISHELL_StartApplet(pme->a.m_pIShell,
@@ -3272,6 +3446,214 @@ static boolean CFieldDebug_BREW_SETTINGSHandleEvent(CFieldDebug *pme,
    }
    return FALSE;
 }
+/*===========================================================================
+
+FUNCTION CFieldDebug_CARRIERIDHandleEvent
+
+DESCRIPTION
+  Handle the key/command event for the CARRIERID.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
+											   AEEEvent  eCode,
+											   uint16	 wParam,
+											   uint32	 dwParam)
+{
+	    
+	   PARAM_NOT_REF(dwParam)
+	   
+	   MSG_ERROR("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
+	   switch (eCode) {
+	
+	   case EVT_COMMAND:
+		  if (wParam == IDS_DONE_SK) {
+			 (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
+			 return TRUE;
+		  }
+		  return FALSE;
+	
+	   case EVT_KEY:
+		  switch (wParam) {
+	
+		  case AVK_CLR:
+#ifdef FEATURE_CARRIER_CHINA_TELCOM 
+			 if (pme->m_dlgID == IDD_CARRIERID_DIALOG)
+			 {
+				//ISHELL_CloseApplet(pme->a.m_pIShell, FALSE); // This return the EditNum dialog
+				ISHELL_CloseApplet(pme->a.m_pIShell, TRUE); // This return the Idle dialog
+			 }
+#endif
+			 if (pme->m_dlgID == IDD_TOP_DIALOG)
+			 {
+				(void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
+			 }
+			 return TRUE;
+		  case AVK_SELECT:
+		  case AVK_INFO:
+		     {
+			 	ITextCtl *pIText = NULL; 
+				AECHAR *pwstrText = NULL;
+				pIText = (ITextCtl*)IDIALOG_GetControl(pme->m_pActiveIDlg, IDC_CARRIERID_TEXT);
+		  	    pwstrText = ITEXTCTL_GetTextPtr(pIText);
+			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
+                return TRUE;    
+		     }
+		     break;
+		  default:
+			 break;
+		  }
+		  return FALSE;
+	
+	   case EVT_DIALOG_START:
+	   	  pme->m_pActiveIDlg = (IDialog*)dwParam;
+          //pme->m_wActiveDlgID = wParam;
+	   	  MSG_FATAL ("EVT_DIALOG_START wParam == IDS_CARRIER_ID222222222222222", 0, 0, 0);
+		  (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+		  MSG_FATAL ("EVT_DIALOG_START wParam == IDS_CARRIER_ID333333333333333", 0, 0, 0);
+		  CFieldDebug_DrawCarrierIdScreen(pme);
+		  
+		  return TRUE;
+	
+	   case EVT_DIALOG_END:
+		  return TRUE;
+	
+	   default:
+		  break;
+	   }
+	   MSG_ERROR("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
+	   return FALSE;
+
+}
+/*===========================================================================
+	
+FUNCTION CFieldDebug_PLATFORMIDHandleEvent
+
+DESCRIPTION
+  Handle the key/command event for the PLATFORMID.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+
+static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
+										   AEEEvent  eCode,
+										   uint16	 wParam,
+										   uint32	 dwParam)
+{
+
+}
+/*===========================================================================
+
+FUNCTION CFieldDebug_DLFLAGSHandleEvent
+
+DESCRIPTION
+  Handle the key/command event for the DLFLAGS.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+	static boolean CFieldDebug_DLFLAGSHandleEvent(CFieldDebug *pme,
+											   AEEEvent  eCode,
+											   uint16	 wParam,
+											   uint32	 dwParam)
+{
+}
+/*===========================================================================
+
+FUNCTION CFieldDebug_AUTHPOLICYHandleEvent
+
+DESCRIPTION
+  Handle the key/command event for the AUTHPOLICY
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+static boolean CFieldDebug_AUTHPOLICYHandleEvent(CFieldDebug *pme,
+											   AEEEvent  eCode,
+											   uint16	 wParam,
+											   uint32	 dwParam)
+
+{
+}
+/*===========================================================================
+
+FUNCTION CFieldDebug_PRIVACYPOLICYHandleEvent
+
+DESCRIPTION
+  Handle the key/command event for the PRIVACYPOLICY
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+static boolean CFieldDebug_PRIVACYPOLICYHandleEvent(CFieldDebug *pme,
+											   AEEEvent  eCode,
+											   uint16	 wParam,
+											   uint32	 dwParam)
+{
+}
+/*===========================================================================
+
+FUNCTION CFieldDebug_PRIMARYDNSHandleEvent
+
+DESCRIPTION
+  Handle the key/command event for the PRIMARYDNS menu.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
+											   AEEEvent  eCode,
+											   uint16	 wParam,
+											   uint32	 dwParam)
+{
+
+}
+
+
 
 /*===========================================================================
 
@@ -4153,7 +4535,8 @@ static boolean CFieldDebug_InitDialog( CFieldDebug *pme, IDialog *dlg )
       ERR("Unknown dialog id", 0, 0, 0);
       return FALSE;
    }
-
+   
+	
    IDIALOG_SetEventHandler(dlg,
                            (PFNAEEEVENT) sDialogEventHandlers[id],
                            (void *) pme);
@@ -6419,6 +6802,179 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    
    (void) ISTATIC_Redraw(p_stk);
    MSG_ERROR("CFieldDebug_DrawEsnScreen End", 0, 0, 0);
+}
+/*===========================================================================
+FUNCTION CFieldDebug_DrawEsnScreen
+
+DESCRIPTION
+
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  none
+/===========================================================================*/
+
+static void CFieldDebug_DrawCarrierIdScreen(CFieldDebug *pme)
+{
+    ITextCtl *pIText = NULL; 
+	AECHAR szBuf[64];
+    IDialog *p_dlg;
+    IStatic *p_stk;
+    int n = 0;
+    OEMConfigDownloadInfo DownLoadInfo;
+    dword date = 0;
+    AECHAR fmt_str[20];
+    int i, j, count;
+    AECHAR  sTitle[20]; 
+    int ret = 0;
+	BottomBar_Param_type BarParam;  
+	
+	pIText = (ITextCtl*)IDIALOG_GetControl(pme->m_pActiveIDlg, IDC_CARRIERID_TEXT);
+	(void) ICONFIG_GetItem(pme->m_pIConfig,
+                          CFGI_DOWNLOAD,
+                          &DownLoadInfo,
+                          sizeof(OEMConfigDownloadInfo));
+	STRTOWSTR("%u %u", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            ((DownLoadInfo.dwCID & 0xFF000000) >> 24),
+            (DownLoadInfo.dwCID& 0x00FFFFFF));
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+
+    //Display ESN with hexadecimal
+    STRTOWSTR("0x%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            DownLoadInfo.dwCID);
+    
+    n = WSTRLEN(szBuf);
+	MSG_FATAL ("EVT_DIALOG_START wParam == IDS_CARRIER_ID33333::%d:::%s", n, szBuf, 0);
+	MSG_FATAL ("EVT_DIALOG_START wParam == IDS_CARRIER_ID8888888888", 0, 0, 0);
+	ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+	MSG_FATAL ("EVT_DIALOG_START wParam == IDS_CARRIER_ID999999", 0, 0, 0);
+	if (NULL != szBuf)
+    {
+            ITEXTCTL_SetMaxSize ( pIText, 100);
+			(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_CARRIER_ID,NULL);
+            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
+    }
+	MSG_FATAL ("EVT_DIALOG_START wParam == IDS_CARRIER_IDaaaaaaaa", 0, 0, 0);
+	{
+		                                               
+     	              
+    	MEMSET(&BarParam, 0, sizeof(BarParam));        
+    	BarParam.eBBarType = BTBAR_OK;                        
+    	DrawBottomBar(pme->m_pDisplay, &BarParam);     
+    }
+	MSG_FATAL ("EVT_DIALOG_START wParam == IDS_CARRIER_IDbbbbbbbb", 0, 0, 0);
+    //IDISPLAY_UpdateEx(pme->m_pDisplay, FALSE);  
+	
+}
+/*===========================================================================
+FUNCTION CFieldDebug_DrawEsnScreen
+
+DESCRIPTION
+
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  none
+/===========================================================================*/
+
+static void CFieldDebug_DrawPlatformIdScreen(CFieldDebug *pme)
+{
+
+}
+/*===========================================================================
+FUNCTION CFieldDebug_DrawDLFlagsScreen
+
+DESCRIPTION
+
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  none
+/===========================================================================*/
+
+static void CFieldDebug_DrawDLFlagsScreen(CFieldDebug *pme)
+{}
+/*===========================================================================
+FUNCTION CFieldDebug_DrawAutlPolicyScreen
+
+DESCRIPTION
+
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  none
+/===========================================================================*/
+
+static void CFieldDebug_DrawAutlPolicyScreen(CFieldDebug *pme)
+{
+
+}
+/*===========================================================================
+FUNCTION CFieldDebug_DrawPrivacyPolicyScreen
+
+DESCRIPTION
+
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  none
+/===========================================================================*/
+
+static void CFieldDebug_DrawPrivacyPolicyScreen(CFieldDebug *pme)
+{
+
+}
+/*===========================================================================
+FUNCTION CFieldDebug_DrawPrimaryDnsScreen
+
+DESCRIPTION
+
+
+DEPENDENCIES
+  none
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  none
+/===========================================================================*/
+
+static void CFieldDebug_DrawPrimaryDnsScreen(CFieldDebug *pme)
+{
+	
 }
 
 
