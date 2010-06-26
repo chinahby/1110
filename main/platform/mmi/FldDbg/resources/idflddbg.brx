@@ -572,10 +572,10 @@
 	</DIALOG>
 	<Dialog Id="30" Name="IDD_ESN_DIALOG" Focus="7040">
 		<Controls>
-			<Static Id="7040" Name="IDC_ESN_STATIC">
+			<Static Id="7040" Name="IDC_ESN_STATIC" Flags="40000">
 				<TitleID>IDS_ESN</TitleID>
 				<Items/></Static>
-			<SoftKey Id="7041" Name="IDC_SOFTKEY_7041">
+			<SoftKey Id="7041" Name="IDC_ESN_SOFTKEY">
 				<Items/>
 			</SoftKey>
 		</Controls>
