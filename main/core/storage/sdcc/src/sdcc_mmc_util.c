@@ -171,10 +171,10 @@ sdcc_config_mmc_modes_segment( void )
             DPRINTF(("MMCPlus card found\n"));
          }
       }
-
+#ifndef T_QSC1100
       /* re-program the clock according to the MMC card type */
       sdcc_config_clk(SDCC_DATA_TRANSFER_MODE, sdcc_pdata.card_type);
-
+#endif
       /* configure MMC BUS_WIDTH to 4-bit mode */
       bus_width          = SDCC_MMC_BUSWIDTH_4BIT;
       sdcc_cmd.cmd       = SD_CMD6_SWITCH;

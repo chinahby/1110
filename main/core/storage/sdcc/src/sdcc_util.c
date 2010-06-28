@@ -178,10 +178,10 @@ sdcc_data_type sdcc_pdata;
 static sleep_okts_handle sdcc_sleep_okts_handle;
 static boolean sleep_handle_register=FALSE;
 #endif
-
+#ifndef T_QSC1100
 /* Use for the generic signal */
 static uint32 sdcc_sigs =0;
-
+#endif
 extern unsigned int sdio_card;
 
 static boolean sdcc_crit_sec_initialized;
@@ -216,9 +216,11 @@ static void sdcc_decode_hc_csd(const uint32 *data, sdcc_csd_type *csd);
 ******************************************************************************/
 void sdcc_timer_cb(unsigned long sdcc_pdata_cb)
 {
+#ifndef T_QSC1100
    sdcc_data_type *sdcc_pdata = (sdcc_data_type *)sdcc_pdata_cb;
    sdcc_sigs |= SDCC_TIMER_TIMEOUT_SIG_VAL;
    (void) rex_set_sigs(sdcc_pdata->sdcc_tcb, SDCC_RW_COMPLETE_SIG);
+#endif
 } /* sdcc_timer_cb */
 
 /******************************************************************************
@@ -324,6 +326,7 @@ sdcc_blk_in_bits(uint32 size)
 SDCC_STATUS
 sdcc_cmd_send_verify( void )
 {
+#ifndef T_QSC1100
   uint32 t      = 0;
   uint32 status = 0;
 
@@ -375,7 +378,9 @@ sdcc_cmd_send_verify( void )
   }
     
   return SDCC_ERR_CMD_SENT;
-
+#else
+  return SDCC_NO_ERROR;
+#endif
 }/* sdcc_cmd_send_verify */
 
 /******************************************************************************
@@ -390,11 +395,12 @@ sdcc_cmd_send_verify( void )
 void
 sdcc_config_dma( void )
 {
+#ifndef T_QSC1100
   HWIO_OUTM(MCI_DMA_CONFIG,
             HWIO_FMSK(MCI_DMA_CONFIG, ENDIAN_CHANGE) |
             HWIO_FMSK(MCI_DMA_CONFIG, ENDIAN_CHANGE),
             0x03);
-    
+#endif    
     /* Don't start the DMA engine here
        HWIO_OUTM(MCI_DATA_CTL,
                  HWIO_FMSK(MCI_DATA_CTL, DMA_ENABLE),
@@ -628,9 +634,11 @@ sdcc_config_rca( void )
 SDCC_STATUS
 sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
 {
+#ifndef T_QSC1100
   uint32        count  = 0;
   uint32        i;
   uint32       *resp = NULL;
+#endif
   SDCC_STATUS   rc   = SDCC_NO_ERROR;
 
   /*---------------------------------------------------------------------*/
@@ -638,6 +646,7 @@ sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
   /* loading command responses */    
   if (sdcc_cmd->resp_type)
   {
+#ifndef T_QSC1100
     count = ( SDCC_RESP_LONG == sdcc_cmd->resp_type ) ? 4 : 1;
     resp  = sdcc_cmd->resp;
     
@@ -646,7 +655,7 @@ sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
       *resp = HWIO_INI(MCI_RESPn, i);
       resp++;
     }
-
+#endif
     /* check the R5 response flags */ 
     if (( SD_CMD52_IO_RW_DIRECT   == sdcc_cmd->cmd ) ||
         ( SD_CMD53_IO_RW_EXTENDED == sdcc_cmd->cmd ))
@@ -682,6 +691,7 @@ sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
 SDCC_STATUS
 sdcc_poll_status(sdcc_cmd_type *sdcc_cmd)
 {
+#ifndef T_QSC1100
   uint32        i      = 0;
   uint32        status = 0;
   SDCC_STATUS   rc     = SDCC_ERR_UNKNOWN;
@@ -733,8 +743,20 @@ sdcc_poll_status(sdcc_cmd_type *sdcc_cmd)
   }
 
   sdcc_cmd->status = status;
-
-       
+#else
+  SDCC_STATUS   rc;
+  
+  rc = sdcc_cmd->status;
+  if(rc == SDCC_ERR_CMD_CRC_FAIL)
+  {
+    if(( SD_ACMD41_SD_APP_OP_COND == sdcc_cmd->cmd ) ||
+       ( SD_CMD1_SEND_OP_COND     == sdcc_cmd->cmd ) ||
+       ( SD_CMD5_IO_SEND_OP_COND  == sdcc_cmd->cmd ))
+    {
+        rc = SDCC_NO_ERROR;
+    }
+  }
+#endif
 
   if( rc != SDCC_NO_ERROR)
   {
@@ -765,6 +787,7 @@ sdcc_poll_status(sdcc_cmd_type *sdcc_cmd)
 SDCC_STATUS
 sdcc_poll_dma( void )
 {
+#ifndef T_QSC1100
   SDCC_STATUS      rc = SDCC_ERR_UNKNOWN;
   volatile uint32  status;
   int              t = 0;
@@ -797,7 +820,10 @@ sdcc_poll_dma( void )
   sdcc_pdata.errno = rc;
   
   return rc;
-
+#else
+  sdcc_pdata.errno = SDCC_NO_ERROR;
+  return SDCC_NO_ERROR;
+#endif
 }/* sdcc_poll_dma */
 
 /******************************************************************************
@@ -831,12 +857,13 @@ sdcc_setup_data_xfer
   /* set data timeout */
   timeout = (SDCC_DATA_READ == direction) ? MCI_READ_TIMEOUT :
                                             MCI_WRITE_TIMEOUT;
+#ifndef T_QSC1100
 #ifdef FEATURE_6275_COMPILE
     HWIO_OUT(MCI_DATA_TIMER, clk_hclk_freq_khz * timeout );
 #else    
     HWIO_OUT(MCI_DATA_TIMER, clk_mclk_freq_mhz * timeout * 1000 );
 #endif
-
+#endif
     /* Note:
        1. data size in byte_mode should be the power of 2
        2. DMA doesn't work for small data size
@@ -846,16 +873,20 @@ sdcc_setup_data_xfer
   if(SDCC_SDIO_BYTE_MODE == sdcc_pdata.block_mode ||
      SDCC_MEM_BYTE_MODE == sdcc_pdata.block_mode)
   {
+#ifndef T_QSC1100
     sdcc_pdata.enable_dma = FALSE;
-        
+#endif
     /* set data length */
     data_length = units;
+#ifndef T_QSC1100
     HWIO_OUT(MCI_DATA_LENGTH, data_length);
+#endif
   }
   else
   {
+#ifndef T_QSC1100
     sdcc_pdata.enable_dma = TRUE;
-    
+#endif
     if(SDCC_CARD_SDIO == sdcc_pdata.card_type)
     {
         blksz = sdcc_pdata.io.fn_blksz;
@@ -868,12 +899,14 @@ sdcc_setup_data_xfer
     
     /* set data length */
     data_length = units * blksz;
+#ifndef T_QSC1100
     HWIO_OUT(MCI_DATA_LENGTH, data_length);
 
 // Targets such as ULC have data cache-enabled MMU. The data 
 // cache is shared and might have stale data.
 #ifdef FEATURE_SDCC_DCACHE_ENABLED
     mmu_dcache_flush_all();
+#endif
 #endif
   }
   if ( data_length )
@@ -884,7 +917,7 @@ sdcc_setup_data_xfer
 #endif
      /* only set TCXO to high if data_length is non-zero */
      sdcc_set_tcxo_clk(TRUE);
-     
+#ifndef T_QSC1100
      /************************************************************************
       *
       *       Setup the TCB for rex signal
@@ -895,6 +928,7 @@ sdcc_setup_data_xfer
 
      if( NULL == sdcc_pdata.sdcc_tcb )
         ASSERT(0);
+#endif
   }
   return data_length;
 
@@ -949,7 +983,11 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
        finished sending command */
   if( SD_CMD0_GO_IDLE_STATE == sdcc_cmd->cmd )
   {
+#ifndef T_QSC1100
     rc =  sdcc_cmd_send_verify();
+#else
+    rc = sdcc_cmd->status;
+#endif
     return rc;
   }
 
@@ -974,7 +1012,7 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
       rc = sdcc_get_resp(sdcc_cmd);
     }
   }
-
+#ifndef T_QSC1100
   /***********************************************************************
    *
    *     wait for the device is done
@@ -984,7 +1022,7 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
   {
     rc = sdcc_process_interrupts(sdcc_cmd);
   }
-
+#endif
   return rc;
 
 }/* sdcc_command */
@@ -1006,6 +1044,7 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
 ****************************************************************************/
 void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
 {
+#ifndef T_QSC1100
   uint32   command  = 0;
  
   
@@ -1042,8 +1081,90 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
   HWIO_OUT(MCI_ARGUMENT, sdcc_cmd->cmd_arg);
 
   HWIO_OUT(MCI_CMD, command);
-
-
+#else
+    // Send Command
+    static byte cmd[20];
+    register uint32 arg = sdcc_cmd->cmd_arg;
+    
+    cmd[0] = 0x40|(((byte)sdcc_cmd->cmd)&0x3F);
+    cmd[1] = (byte)(arg>>24);
+    cmd[2] = (byte)(arg>>16);
+    cmd[3] = (byte)(arg>>8);
+    cmd[4] = (byte)(arg);
+    cmd[5] = CRC7(cmd, 5);
+  
+    sdcc_send_cmd_bytes(cmd, 6);
+  
+    // Get Respond
+    sdcc_cmd->status = SDCC_NO_ERROR;
+    if(sdcc_cmd->resp_type)
+    {
+        switch(sdcc_cmd->cmd){
+        case SD_ACMD51_SEND_SCR:
+        case SD_CMD17_READ_BLOCK:
+        case SD_CMD18_READ_MULTIPLE_BLOCK:
+            // 忽略RESPONSE
+            gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
+            return;
+            
+        default:
+            gpio_tlmm_config(GPIO_SDCC_CMD_IN);
+            cmd[0] = sdcc_recv_cmd_byte_wait();
+            break;
+        }
+        if(sdcc_cmd->resp_type == SDCC_RESP_SHORT) // 6Bytes
+        {
+            sdcc_recv_cmd_bytes(cmd+1, 5);
+            arg  = cmd[1]<<24;
+            arg |= cmd[2]<<16;
+            arg |= cmd[3]<<8;
+            arg |= cmd[4];
+            sdcc_cmd->resp[0] = arg;
+            if(cmd[0]&0xC0) // 根据协议，回复的高两位应该为0
+            {
+                sdcc_cmd->status = SDCC_ERR_CMD_TIMEOUT;
+            }
+            else if(cmd[5] != CRC7(cmd, 5))
+            {
+                sdcc_cmd->status = SDCC_ERR_CMD_CRC_FAIL;
+            }
+        }
+        else if(sdcc_cmd->resp_type == SDCC_RESP_LONG) // 18Bytes
+        {
+            sdcc_recv_cmd_bytes(cmd+1, 16);
+            arg  = cmd[1]<<24;
+            arg |= cmd[2]<<16;
+            arg |= cmd[3]<<8;
+            arg |= cmd[4];
+            sdcc_cmd->resp[0] = arg;
+            arg  = cmd[5]<<24;
+            arg |= cmd[6]<<16;
+            arg |= cmd[7]<<8;
+            arg |= cmd[8];
+            sdcc_cmd->resp[1] = arg;
+            arg  = cmd[9]<<24;
+            arg |= cmd[10]<<16;
+            arg |= cmd[11]<<8;
+            arg |= cmd[12];
+            sdcc_cmd->resp[2] = arg;
+            arg  = cmd[13]<<24;
+            arg |= cmd[14]<<16;
+            arg |= cmd[15]<<8;
+            arg |= cmd[16];
+            sdcc_cmd->resp[3] = arg;
+            if(cmd[0]&0xC0)// 根据协议，回复的高两位应该为0
+            {
+                sdcc_cmd->status = SDCC_ERR_CMD_TIMEOUT;
+            }
+            else if(cmd[16] != CRC7(cmd+1, 15))
+            {
+                sdcc_cmd->status = SDCC_ERR_CMD_CRC_FAIL;
+            }
+        }
+        gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
+    }
+    sdcc_clock_out(8); // Nrc
+#endif
 }/* sdcc_send_cmd */
 
 
@@ -1101,13 +1222,15 @@ SDCC_CARD_STATUS sdcc_send_status( void )
 ****************************************************************************/
 SDCC_STATUS sdcc_wait_prog_done( void )
 {
+#ifndef T_QSC1100
   uint32               t      = 0;
+#endif
   volatile uint32      status = 0;
   SDCC_STATUS          rc          = SDCC_ERR_PROG_DONE;
   SDCC_CARD_STATUS     card_status = SDCC_CARD_IGNORE;
 
   /*--------------------------------------------------------------------*/
-  
+#ifndef T_QSC1100
   while (t++ < SDCC_PROG_DONE_MAX  )
   {
     status = HWIO_IN(MCI_STATUS);
@@ -1123,7 +1246,10 @@ SDCC_STATUS sdcc_wait_prog_done( void )
 
     sdcc_udelay(25);
   }
-    
+#else
+  // TODO:
+  rc = SDCC_NO_ERROR;
+#endif
   /* CMD13: if no prog_done indication, give it one more
      chance by polling the card directly */
   if(SDCC_NO_ERROR != rc)
@@ -1166,7 +1292,7 @@ sdcc_find_card( void )
    SDCC_STATUS    rc        = SDCC_ERR_UNKNOWN;
    SDCC_CARD_TYPE card_type = SDCC_CARD_UNKNOWN;
    uint32         cmd41_arg = SDCC_NEGOTIATE_OCR;
-
+#ifndef T_QSC1100
    /* Try to detect SDIO device first */
    card_type = sdcc_find_sdio_card();
 
@@ -1185,7 +1311,10 @@ sdcc_find_card( void )
 
    /* lower the clock to < 400KHz for card identification */
    sdcc_config_clk(SDCC_IDENTIFICATION_MODE, SDCC_CARD_UNKNOWN);
-
+#else
+   // output 74 clock
+   sdcc_clock_out_slow(100);
+#endif
    /* CMD0: reset card first */
    sdcc_cmd.cmd       = SD_CMD0_GO_IDLE_STATE;
    sdcc_cmd.cmd_arg   = MCI_ARGU_NULL;
@@ -1351,6 +1480,7 @@ sdcc_find_card( void )
 SDCC_STATUS
 sdcc_process_interrupts( sdcc_cmd_type *sdcc_cmd)
 {
+#ifndef T_QSC1100
    rex_sigs_type      sigs;
    SDCC_STATUS        rc = SDCC_NO_ERROR;
    rex_timer_type    *sdcc_timer_ptr;
@@ -1457,6 +1587,9 @@ sdcc_process_interrupts( sdcc_cmd_type *sdcc_cmd)
    }
    sdcc_pdata.errno = rc;
    return rc;
+#else
+   return SDCC_NO_ERROR;
+#endif
 }
 
 /******************************************************************************
@@ -1475,6 +1608,7 @@ sdcc_process_interrupts( sdcc_cmd_type *sdcc_cmd)
 void
 sdcc_enable_int( uint32 int_mask )
 {
+#ifndef T_QSC1100
   uint32  reg_value = 0;
 
   /*
@@ -1506,6 +1640,7 @@ sdcc_enable_int( uint32 int_mask )
      reg_value |= int_mask;
      HWIO_MCI_INT_MASKn_OUTI(0, reg_value);
   }
+#endif
 }/* sdcc_enable_int */
 
 /******************************************************************************
@@ -1524,6 +1659,7 @@ sdcc_enable_int( uint32 int_mask )
 void
 sdcc_disable_int( uint32 int_mask )
 {
+#ifndef T_QSC1100
    uint32  reg_value = 0;
 
    if(MCI_INT_MASK_SDIO_INTR == int_mask)
@@ -1556,6 +1692,7 @@ sdcc_disable_int( uint32 int_mask )
          tramp_set_isr(TRAMP_SDCC_0_ISR, NULL);
       }
    }
+#endif
 }/* sdcc_disable_int */
 
 /******************************************************************************
@@ -1572,6 +1709,7 @@ sdcc_disable_int( uint32 int_mask )
 void
 sdcc_isr(void)
 {
+#ifndef T_QSC1100
   uint32 status;
      
   /*---------------------------------------------------------------------------*/
@@ -1606,7 +1744,7 @@ sdcc_isr(void)
     (void)rex_set_sigs(sdcc_pdata.sdcc_tcb,
                        SDCC_RW_COMPLETE_SIG);
   }
-
+#endif
 }/* sdcc_isr */
 
 /******************************************************************************
@@ -1623,6 +1761,7 @@ sdcc_isr(void)
 
 void sdio_isr()
 {
+#ifndef T_QSC1100
    uint32 status;
    status = HWIO_IN(MCI_STATUS);
    if(status & HWIO_MCI_STATUS_SDIO_INTR_BMSK)
@@ -1631,6 +1770,7 @@ void sdio_isr()
          (void)sdcc_pdata.io.isr((void*)sdcc_pdata.io.isr_param);
       SDCC_CLR_STATUS(HWIO_MCI_CLEAR_SDIO_INTR_CLR_BMSK);
    }
+#endif
 }
 
 
@@ -1911,6 +2051,7 @@ SDCC_STATUS sdcc_config_memory_device(void)
   /* default device clk freq to regular speed */
   sdcc_pdata.mem.clk_freq = 0;
 
+#ifndef T_QSC1100
   /* program the bus width for MMC */
   if ( SDCC_CARD_MMC == sdcc_pdata.card_type ||
        SDCC_CARD_MMCHC == sdcc_pdata.card_type )
@@ -1918,9 +2059,14 @@ SDCC_STATUS sdcc_config_memory_device(void)
      /* default MMC bus width to 1-bit mode */
      (void) sdcc_config_mmc_bus_width(0 /*don't care*/, SDCC_MMC_BUSWIDTH_1BIT);
   }
-  else if ( SDCC_CARD_SD == sdcc_pdata.card_type ||
-            SDCC_CARD_SDHC == sdcc_pdata.card_type )
+  else 
+#endif
+  if ( SDCC_CARD_SD == sdcc_pdata.card_type ||
+       SDCC_CARD_SDHC == sdcc_pdata.card_type )
   {
+#ifdef T_QSC1100
+     sdcc_pdata.wide_bus = FALSE;
+#endif
      /* default SD bus width to 1-bit mode */
      rc = sdcc_set_sd_bus_width(SDCC_SD_BUS_WIDTH_1BIT);
      if ( SDCC_NO_ERROR != rc )
@@ -1945,6 +2091,10 @@ SDCC_STATUS sdcc_config_memory_device(void)
         {
            return rc;
         }
+        
+#ifdef T_QSC1100
+        sdcc_pdata.wide_bus = TRUE;
+#endif
      }
   }
 
@@ -2094,6 +2244,7 @@ SDCC_STATUS sdcc_read_fifo
    uint16     length
 )
 {
+#ifndef T_QSC1100
    volatile uint32 status = 0;
    SDCC_STATUS rc = SDCC_NO_ERROR;
    uint32 data_size = (uint32)length;
@@ -2213,6 +2364,16 @@ SDCC_STATUS sdcc_read_fifo
    /* clear the static status bits */
    SDCC_CLR_STATUS(MCI_STATUS_STATIC_MASK);
    return rc;
+#else
+    SDCC_STATUS rc = SDCC_NO_ERROR;
+    
+    if(NULL == buff)
+    {
+       return(SDCC_ERR_READ_FIFO);
+    }
+    
+    return rc;
+#endif
 }/* sdcc_read_fifo */
 
 
@@ -2237,6 +2398,7 @@ SDCC_STATUS sdcc_write_fifo
   uint16    length
 )
 {
+#ifndef T_QSC1100
   volatile uint32  status;
   SDCC_STATUS      rc        = SDCC_NO_ERROR;
   uint32           i         = 0;
@@ -2281,7 +2443,12 @@ SDCC_STATUS sdcc_write_fifo
   SDCC_CLR_STATUS(MCI_STATUS_STATIC_MASK);
 
   return rc;
-
+#else
+    SDCC_STATUS rc = SDCC_NO_ERROR;
+    if(!buff)
+          return(SDCC_ERR_WRITE_FIFO);
+    return rc;
+#endif
 }/* sdcc_write_fifo */
 
 /******************************************************************************
@@ -2419,13 +2586,17 @@ sdcc_do_transfer
    uint16             xfer_size
 )
 {
+#ifndef T_QSC1100
    uint8            data_ctrl = 0;
    uint32           blk_in_bits = 0;
+#endif
    SDCC_STATUS      status     = SDCC_NO_ERROR;
    SDCC_STATUS      status_complete = SDCC_NO_ERROR;
    uint16           length     = 0;
+#ifndef T_QSC1100
    boolean          use_dma    = FALSE;
    uint32           isave      = 0;
+#endif
    boolean          send_stop_command;
 
    /*------------------------------------------------------------------*/
@@ -2449,6 +2620,7 @@ sdcc_do_transfer
       return SDCC_ERR_UNKNOWN;
    }
 
+#ifndef T_QSC1100
    if ( SDCC_MEM_BLK_MODE == sdcc_pdata.block_mode &&
         xfer_size > SDCC_MAX_NO_BLOCKS )
    {
@@ -2490,7 +2662,7 @@ sdcc_do_transfer
    {
       HWIO_OUT(MCI_DATA_CTL, data_ctrl);
    }
-
+#endif
    /* Send the command to the memory device.  Note that app. commands use a */
    /* different function since they actually send two commands. */
    if ((xfer_flags & SDCC_APP_COMMAND_FLAG) != 0)
@@ -2501,7 +2673,7 @@ sdcc_do_transfer
    {
       status = sdcc_command(xfer_cmd_ptr);
    }
-
+#ifndef T_QSC1100
    /* This register needs to be done before sending the command */
    /* on reads and after on writes. */
    if (SDCC_IS_WRITE_TRANSFER(xfer_flags))
@@ -2510,24 +2682,34 @@ sdcc_do_transfer
    }
 
    INTFREE_SAV(isave);
-
+#endif
    /* Transfer the data to or from the device, either using DMA or */
    /* by reading or writing the FIFO registers directly */
    if (status == SDCC_NO_ERROR)
    {
+#ifndef T_QSC1100
       if (use_dma)
       {
          status = sdcc_process_interrupts(xfer_cmd_ptr /*don't care*/);
       }
       else
+#endif
       {
          if (SDCC_IS_READ_TRANSFER(xfer_flags))
          {
+#ifndef T_QSC1100
             status = sdcc_read_fifo(buff, length);
+#else
+            status = sdcc_read_data(buff, length);
+#endif
          }
          else
          {
+#ifndef T_QSC1100
             status = sdcc_write_fifo(buff, length);
+#else
+            status = sdcc_write_data(buff, length);
+#endif
          }
       }
    }
@@ -2844,3 +3026,900 @@ boolean sdcc_silent_reinit()
    return TRUE;
 }
 /*lint -restore */
+
+#ifdef T_QSC1100
+#include "crc.h"
+/******************************************************************************************************
+* FunName : CRC7                                                                                                 
+* Function : Get CRC7 value
+* Input    : chr - point to the Arrarybuff; cnt - number needed to workout
+* Output   : CRC value
+******************************************************************************************************/
+byte CRC7( unsigned char * chr, int cnt )
+{
+    int i,a; 
+    unsigned char crc,Data; 
+    crc=0; 
+    for (a=0;a<cnt;a++)
+    { 
+        Data=chr[a]; 
+        for (i=0;i<8;i++) 
+        {
+            crc <<= 1;
+
+            if ((Data ^ crc) & 0x80) 
+            {
+                crc ^=0x09; 
+            }
+            
+            Data <<= 1; 
+        } 
+    } 
+    crc=(crc<<1)|1; 
+    return(crc); 
+}
+
+/* Mask for CRC-16 4line polynomial:
+**
+**      x^16 + x^12 + x^5 + 1
+**      x^64 + x^48 + x^20 + 1
+**
+** This is more commonly referred to as CCITT-16.
+** Note:  the x^16 tap is left off, it's implicit.
+*/
+static const unsigned long long crc16_4_table[256] = 
+{
+    0x0000000000000000LL,0x0001000000100001LL,0x0002000000200002LL,0x0003000000300003LL,0x0004000000400004LL,0x0005000000500005LL,0x0006000000600006LL,0x0007000000700007LL,
+    0x0008000000800008LL,0x0009000000900009LL,0x000A000000A0000ALL,0x000B000000B0000BLL,0x000C000000C0000CLL,0x000D000000D0000DLL,0x000E000000E0000ELL,0x000F000000F0000FLL,
+    0x0010000001000010LL,0x0011000001100011LL,0x0012000001200012LL,0x0013000001300013LL,0x0014000001400014LL,0x0015000001500015LL,0x0016000001600016LL,0x0017000001700017LL,
+    0x0018000001800018LL,0x0019000001900019LL,0x001A000001A0001ALL,0x001B000001B0001BLL,0x001C000001C0001CLL,0x001D000001D0001DLL,0x001E000001E0001ELL,0x001F000001F0001FLL,
+    0x0020000002000020LL,0x0021000002100021LL,0x0022000002200022LL,0x0023000002300023LL,0x0024000002400024LL,0x0025000002500025LL,0x0026000002600026LL,0x0027000002700027LL,
+    0x0028000002800028LL,0x0029000002900029LL,0x002A000002A0002ALL,0x002B000002B0002BLL,0x002C000002C0002CLL,0x002D000002D0002DLL,0x002E000002E0002ELL,0x002F000002F0002FLL,
+    0x0030000003000030LL,0x0031000003100031LL,0x0032000003200032LL,0x0033000003300033LL,0x0034000003400034LL,0x0035000003500035LL,0x0036000003600036LL,0x0037000003700037LL,
+    0x0038000003800038LL,0x0039000003900039LL,0x003A000003A0003ALL,0x003B000003B0003BLL,0x003C000003C0003CLL,0x003D000003D0003DLL,0x003E000003E0003ELL,0x003F000003F0003FLL,
+    0x0040000004000040LL,0x0041000004100041LL,0x0042000004200042LL,0x0043000004300043LL,0x0044000004400044LL,0x0045000004500045LL,0x0046000004600046LL,0x0047000004700047LL,
+    0x0048000004800048LL,0x0049000004900049LL,0x004A000004A0004ALL,0x004B000004B0004BLL,0x004C000004C0004CLL,0x004D000004D0004DLL,0x004E000004E0004ELL,0x004F000004F0004FLL,
+    0x0050000005000050LL,0x0051000005100051LL,0x0052000005200052LL,0x0053000005300053LL,0x0054000005400054LL,0x0055000005500055LL,0x0056000005600056LL,0x0057000005700057LL,
+    0x0058000005800058LL,0x0059000005900059LL,0x005A000005A0005ALL,0x005B000005B0005BLL,0x005C000005C0005CLL,0x005D000005D0005DLL,0x005E000005E0005ELL,0x005F000005F0005FLL,
+    0x0060000006000060LL,0x0061000006100061LL,0x0062000006200062LL,0x0063000006300063LL,0x0064000006400064LL,0x0065000006500065LL,0x0066000006600066LL,0x0067000006700067LL,
+    0x0068000006800068LL,0x0069000006900069LL,0x006A000006A0006ALL,0x006B000006B0006BLL,0x006C000006C0006CLL,0x006D000006D0006DLL,0x006E000006E0006ELL,0x006F000006F0006FLL,
+    0x0070000007000070LL,0x0071000007100071LL,0x0072000007200072LL,0x0073000007300073LL,0x0074000007400074LL,0x0075000007500075LL,0x0076000007600076LL,0x0077000007700077LL,
+    0x0078000007800078LL,0x0079000007900079LL,0x007A000007A0007ALL,0x007B000007B0007BLL,0x007C000007C0007CLL,0x007D000007D0007DLL,0x007E000007E0007ELL,0x007F000007F0007FLL,
+    0x0080000008000080LL,0x0081000008100081LL,0x0082000008200082LL,0x0083000008300083LL,0x0084000008400084LL,0x0085000008500085LL,0x0086000008600086LL,0x0087000008700087LL,
+    0x0088000008800088LL,0x0089000008900089LL,0x008A000008A0008ALL,0x008B000008B0008BLL,0x008C000008C0008CLL,0x008D000008D0008DLL,0x008E000008E0008ELL,0x008F000008F0008FLL,
+    0x0090000009000090LL,0x0091000009100091LL,0x0092000009200092LL,0x0093000009300093LL,0x0094000009400094LL,0x0095000009500095LL,0x0096000009600096LL,0x0097000009700097LL,
+    0x0098000009800098LL,0x0099000009900099LL,0x009A000009A0009ALL,0x009B000009B0009BLL,0x009C000009C0009CLL,0x009D000009D0009DLL,0x009E000009E0009ELL,0x009F000009F0009FLL,
+    0x00A000000A0000A0LL,0x00A100000A1000A1LL,0x00A200000A2000A2LL,0x00A300000A3000A3LL,0x00A400000A4000A4LL,0x00A500000A5000A5LL,0x00A600000A6000A6LL,0x00A700000A7000A7LL,
+    0x00A800000A8000A8LL,0x00A900000A9000A9LL,0x00AA00000AA000AALL,0x00AB00000AB000ABLL,0x00AC00000AC000ACLL,0x00AD00000AD000ADLL,0x00AE00000AE000AELL,0x00AF00000AF000AFLL,
+    0x00B000000B0000B0LL,0x00B100000B1000B1LL,0x00B200000B2000B2LL,0x00B300000B3000B3LL,0x00B400000B4000B4LL,0x00B500000B5000B5LL,0x00B600000B6000B6LL,0x00B700000B7000B7LL,
+    0x00B800000B8000B8LL,0x00B900000B9000B9LL,0x00BA00000BA000BALL,0x00BB00000BB000BBLL,0x00BC00000BC000BCLL,0x00BD00000BD000BDLL,0x00BE00000BE000BELL,0x00BF00000BF000BFLL,
+    0x00C000000C0000C0LL,0x00C100000C1000C1LL,0x00C200000C2000C2LL,0x00C300000C3000C3LL,0x00C400000C4000C4LL,0x00C500000C5000C5LL,0x00C600000C6000C6LL,0x00C700000C7000C7LL,
+    0x00C800000C8000C8LL,0x00C900000C9000C9LL,0x00CA00000CA000CALL,0x00CB00000CB000CBLL,0x00CC00000CC000CCLL,0x00CD00000CD000CDLL,0x00CE00000CE000CELL,0x00CF00000CF000CFLL,
+    0x00D000000D0000D0LL,0x00D100000D1000D1LL,0x00D200000D2000D2LL,0x00D300000D3000D3LL,0x00D400000D4000D4LL,0x00D500000D5000D5LL,0x00D600000D6000D6LL,0x00D700000D7000D7LL,
+    0x00D800000D8000D8LL,0x00D900000D9000D9LL,0x00DA00000DA000DALL,0x00DB00000DB000DBLL,0x00DC00000DC000DCLL,0x00DD00000DD000DDLL,0x00DE00000DE000DELL,0x00DF00000DF000DFLL,
+    0x00E000000E0000E0LL,0x00E100000E1000E1LL,0x00E200000E2000E2LL,0x00E300000E3000E3LL,0x00E400000E4000E4LL,0x00E500000E5000E5LL,0x00E600000E6000E6LL,0x00E700000E7000E7LL,
+    0x00E800000E8000E8LL,0x00E900000E9000E9LL,0x00EA00000EA000EALL,0x00EB00000EB000EBLL,0x00EC00000EC000ECLL,0x00ED00000ED000EDLL,0x00EE00000EE000EELL,0x00EF00000EF000EFLL,
+    0x00F000000F0000F0LL,0x00F100000F1000F1LL,0x00F200000F2000F2LL,0x00F300000F3000F3LL,0x00F400000F4000F4LL,0x00F500000F5000F5LL,0x00F600000F6000F6LL,0x00F700000F7000F7LL,
+    0x00F800000F8000F8LL,0x00F900000F9000F9LL,0x00FA00000FA000FALL,0x00FB00000FB000FBLL,0x00FC00000FC000FCLL,0x00FD00000FD000FDLL,0x00FE00000FE000FELL,0x00FF00000FF000FFLL
+};
+
+/******************************************************************************************************
+* FunName : CRC16_4                                                                                                 
+* Function : Get CRC16 4line value
+* Input    : chr - point to the Arrarybuff; cnt - number needed to workout
+* Output   : CRC value
+******************************************************************************************************/
+unsigned long long CRC16_4( unsigned char * buf_ptr, int len )
+{
+    unsigned long long crc = 0; 
+    unsigned char *pCrc = (unsigned char *)&crc;
+
+    for (; len >= 1; len--, buf_ptr++) {
+        crc = (unsigned long long)(crc16_4_table[ pCrc[7] ^ *buf_ptr ] ^ (crc << 8));
+    }
+    return(crc); 
+}
+
+static INLINE void sdcc_clock_out(int cnt)
+{
+    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    while(cnt--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+    }
+}
+
+boolean g_entertestmode = FALSE;
+static INLINE void sdcc_clock_out_slow(int cnt)
+{
+    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    while(cnt--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        outp(pDest, 0x3F);
+        outp(pDest, 0x3F);
+    }
+    
+    if(g_entertestmode)
+    {
+        while(1)
+        {
+            outp(pDest, 0x0);
+            outp(pDest, 0x3F);
+            cnt++;
+            if(cnt%10000 == 0)
+            {
+                dog_kick();
+                if(!g_entertestmode)
+                {
+                    break;
+                }
+            }
+        }
+        
+        while(1) // CLK
+        {
+            outp(pDest, 0x3E);
+            outp(pDest, 0x3F);
+            cnt++;
+            if(cnt%10000 == 0)
+            {
+                dog_kick();
+                if(!g_entertestmode)
+                {
+                    break;
+                }
+            }
+        }
+
+        while(1) // DAT_0
+        {
+            outp(pDest, 0x3D);
+            outp(pDest, 0x3F);
+            cnt++;
+            if(cnt%10000 == 0)
+            {
+                dog_kick();
+                if(!g_entertestmode)
+                {
+                    break;
+                }
+            }
+        }
+
+        while(1)// DAT_1
+        {
+            outp(pDest, 0x3B);
+            outp(pDest, 0x3F);
+            cnt++;
+            if(cnt%10000 == 0)
+            {
+                dog_kick();
+                if(!g_entertestmode)
+                {
+                    break;
+                }
+            }
+        }
+
+        while(1)// DAT_2
+        {
+            outp(pDest, 0x37);
+            outp(pDest, 0x3F);
+            cnt++;
+            if(cnt%10000 == 0)
+            {
+                dog_kick();
+                if(!g_entertestmode)
+                {
+                    break;
+                }
+            }
+        }
+
+        while(1)// DAT_3
+        {
+            outp(pDest, 0x2F);
+            outp(pDest, 0x3F);
+            cnt++;
+            if(cnt%10000 == 0)
+            {
+                dog_kick();
+                if(!g_entertestmode)
+                {
+                    break;
+                }
+            }
+        }
+        
+        while(1)//CMD
+        {
+            outp(pDest, 0x1F);
+            outp(pDest, 0x3F);
+            cnt++;
+            if(cnt%10000 == 0)
+            {
+                dog_kick();
+                if(!g_entertestmode)
+                {
+                    break;
+                }
+            }
+        }
+
+        gpio_tlmm_config(CAMIF_MCLK);
+        clk_regime_msm_sel_camclk(1000000);
+        clk_regime_msm_enable(CLK_RGM_CAMCLK_M);
+        gpio_tlmm_config(GPIO_OUTPUT_30);
+        gpio_out(GPIO_OUTPUT_30, 1);
+        
+        while(1)// Clock output test
+        {
+            outp(pDest, 0x3E);
+            outp(pDest, 0x3E);
+            outp(pDest, 0x3E);
+            outp(pDest, 0x3E);
+            outp(pDest, 0x3F);
+            outp(pDest, 0x3F);
+            outp(pDest, 0x3F);
+            cnt--;
+        }
+    }
+}
+
+static INLINE void sdcc_send_cmd_bytes(byte *pdata, int len)
+{
+    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register byte data;
+    while(len--)
+    {
+        data = *pdata++;
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>2)|0x1F);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>1)|0x1F);
+        outp(pDest, 0x3E);
+        outp(pDest, (data)   |0x1F);
+        outp(pDest, 0x3E);
+        outp(pDest, (data<<1)|0x1F);
+        outp(pDest, 0x3E);
+        outp(pDest, (data<<2)|0x1F);
+        outp(pDest, 0x3E);
+        outp(pDest, (data<<3)|0x1F);
+        outp(pDest, 0x3E);
+        outp(pDest, (data<<4)|0x1F);
+        outp(pDest, 0x3E);
+        outp(pDest, (data<<5)|0x1F);
+    }
+}
+
+static INLINE void sdcc_recv_cmd_bytes(byte *pdata, int len)
+{
+    register byte data = 0;
+    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
+    while(len--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data  = (inp(pIn)<<2)&0x80;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<1)&0x40;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)   )&0x20;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)>>1)&0x10;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)>>2)&0x08;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)>>3)&0x04;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)>>4)&0x02;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)>>5)&0x01;
+        *pdata++ = data;
+    }
+}
+
+static INLINE byte sdcc_recv_cmd_byte_wait(void)
+{
+    register byte data = 0;
+    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
+    int i = 64; //最大等待周期
+    
+    while(i--) // Ncr
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data  = (inp(pIn)<<2)&0x80;
+        if(data == 0)
+        {
+            break;
+        }
+    }
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)<<1)&0x40;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)   )&0x20;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)>>1)&0x10;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)>>2)&0x08;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)>>3)&0x04;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)>>4)&0x02;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)>>5)&0x01;
+    return data;
+}
+
+static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
+{
+    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
+    register byte data;
+    uint16 wCRC16 = crc_16_bytes(pdata, len);
+    int i; //最大等待周期
+    
+    // Deley 2 Cycle -- Nwr
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    
+    // START Bit
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3D);
+
+    // Data
+    while(len--)
+    {
+        data = *pdata++;
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>6)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>5)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>4)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>3)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>2)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>1)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data   )|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data<<1)|0x3D);
+    }
+    
+    // CRC
+    len = 2;
+    data = (byte)(wCRC16>>8);
+    while(len--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>6)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>5)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>4)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>3)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>2)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>1)|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data   )|0x3D);
+        outp(pDest, 0x3E);
+        outp(pDest, (data<<1)|0x3D);
+        data = (byte)wCRC16;
+    }
+    
+    // END Bit
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+
+    // 2 delay Cycles, HOST control
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    
+    // Check CRC status
+    gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
+    
+    // START Bit
+    i = 8;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        if((inp(pIn) & 0x02) == 0)
+        {
+            break;
+        }
+    }
+    
+    // CRC status
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data  = (inp(pIn)<<1)&0x04;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)   )&0x02;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)>>1)&0x01;
+
+    // END Bit
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    
+    if(data != 0x2)
+    {
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+        return SDCC_ERR_DATA_CRC_FAIL;
+    }
+    
+    // Busy Start bit
+    i = 8;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        if((inp(pIn) & 0x02) == 0)
+        {
+            break;
+        }
+    }
+
+    if(i == 0)
+    {
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+        return SDCC_ERR_DATA_TIMEOUT;
+    }
+    
+    // Wait until write finished
+    i = 4096;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        if(inp(pIn)&0x02 == 1)
+        {
+            // Busy End bit
+            break;
+        }
+    }
+    
+    if(i == 0)
+    {
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+        return SDCC_ERR_DATA_TIMEOUT;
+    }
+    
+    gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+    return SDCC_NO_ERROR;
+}
+
+static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
+{
+    register byte  data;
+    register byte *pdata = buff;
+    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
+    int i;
+    uint16 wCRC16 = 0;
+
+    // Wait 2 Clock cycles
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    
+    // START Bit
+    i = 2048;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        if((inp(pIn) & 0x02) == 0)
+        {
+            break;
+        }
+    }
+    
+    if(i == 0)
+    {
+        return SDCC_ERR_DATA_TIMEOUT;
+    }
+
+    // Data
+    i = len;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data  = (inp(pIn)<<6)&0x80;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<5)&0x40;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<4)&0x20;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<3)&0x10;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<2)&0x08;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<1)&0x04;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)   )&0x02;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)>>1)&0x01;
+        *pdata++ = data;
+    }
+    
+    // CRC16
+    i = 2;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data  = (inp(pIn)<<6)&0x80;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<5)&0x40;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<4)&0x20;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<3)&0x10;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<2)&0x08;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)<<1)&0x04;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)   )&0x02;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)>>1)&0x01;
+        wCRC16 = (wCRC16<<8)|data;
+    }
+    
+    // END Bit, Dont care
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+
+    // CRC verify
+    if(wCRC16 != crc_16_bytes(buff, len))
+    {
+        return SDCC_ERR_DATA_CRC_FAIL;
+    }
+    return SDCC_NO_ERROR;
+}
+
+static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
+{
+    register byte data;
+    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
+    uint64 wCRC64 = CRC16_4(pdata, len);
+    int i;
+    
+    // Deley 2 Cycle -- Nwr
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    
+    // START Bit
+    outp(pDest, 0x3E);
+    outp(pDest, 0x21);
+    
+    while(len--)
+    {
+        data = *pdata++;
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>3)|0x21);
+        outp(pDest, 0x3E);
+        outp(pDest, (data<<1)|0x21);
+    }
+    
+    // CRC
+    len = 8;
+    pdata = (byte *)&wCRC64;
+    pdata += 7;
+    while(len--)
+    {
+        data = *pdata--;
+        outp(pDest, 0x3E);
+        outp(pDest, (data>>3)|0x21);
+        outp(pDest, 0x3E);
+        outp(pDest, (data<<1)|0x21);
+    }
+    
+    // END Bit
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+
+    // 2 delay Cycles, HOST Control
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    
+    // Check CRC status
+    gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
+    
+    // START Bit
+    i = 8;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        if((inp(pIn) & 0x02) == 0)
+        {
+            break;
+        }
+    }
+    
+    // CRC status
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data  = (inp(pIn)<<1)&0x04;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)   )&0x02;
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    data |= (inp(pIn)>>1)&0x01;
+
+    // END Bit
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    
+    if(data != 0x2)
+    {
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+        return SDCC_ERR_DATA_CRC_FAIL;
+    }
+    
+    // Busy Start bit
+    i = 8;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        if((inp(pIn) & 0x02) == 0)
+        {
+            break;
+        }
+    }
+
+    if(i == 0)
+    {
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+        return SDCC_ERR_DATA_TIMEOUT;
+    }
+    
+    // Wait until write finished
+    i = 4096;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        if(inp(pIn)&0x02 == 1)
+        {
+            // Busy End bit
+            break;
+        }
+    }
+    
+    if(i == 0)
+    {
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+        return SDCC_ERR_DATA_TIMEOUT;
+    }
+    gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+    return SDCC_NO_ERROR;
+}
+
+static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
+{
+    register byte data;
+    register byte *pdata = buff;
+    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
+    int i;
+    uint64 wCRC64 = 0;
+
+    // START Bit
+    i = 2048;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        if((inp(pIn) & 0x1E) == 0)
+        {
+            break;
+        }
+    }
+    
+    if(i == 0)
+    {
+        return SDCC_ERR_DATA_TIMEOUT;
+    }
+    
+    // Data
+    i = len;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data  = (inp(pIn)<<3)&0xF0;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)>>1)&0x0F;
+        *pdata++ = data;
+    }
+
+    i = 8;
+    while(i--)
+    {
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data  = (inp(pIn)<<3)&0xF0;
+        outp(pDest, 0x3E);
+        outp(pDest, 0x3F);
+        data |= (inp(pIn)>>1)&0x0F;
+        wCRC64 = (wCRC64<<8)|data;
+    }
+
+    // END Bit, Dont care
+    outp(pDest, 0x3E);
+    outp(pDest, 0x3F);
+    
+    // CRC verify
+    if(wCRC64 != CRC16_4(buff, len))
+    {
+        return SDCC_ERR_DATA_CRC_FAIL;
+    }
+    return SDCC_NO_ERROR;
+}
+
+SDCC_STATUS sdcc_write_data(byte *buff, uint16 length)
+{
+    SDCC_STATUS rc = SDCC_NO_ERROR;
+    uint32 blksize = sdcc_pdata.mem.block_len;
+    
+    if(NULL == buff)
+    {
+        return(SDCC_ERR_WRITE_FIFO);
+    }
+
+    if(length < blksize)
+    {
+        blksize = length;
+    }
+    
+    if(sdcc_pdata.wide_bus)
+    {
+        while(length)
+        {
+            rc = sdcc_send_widedata_bytes(buff, blksize);
+            length -= blksize;
+            buff += blksize;
+            if(rc != SDCC_NO_ERROR)
+            {
+                break;
+            }
+        }
+    }
+    else
+    {
+        while(length)
+        {
+            rc = sdcc_send_data_bytes(buff, blksize);
+            length -= blksize;
+            buff += blksize;
+            if(rc != SDCC_NO_ERROR)
+            {
+                break;
+            }
+        }
+    }
+    sdcc_clock_out(8);
+    return rc;
+}
+
+SDCC_STATUS sdcc_read_data(byte *buff, uint16 length)
+{
+    SDCC_STATUS rc = SDCC_NO_ERROR;
+    uint32 blksize = sdcc_pdata.mem.block_len;
+    
+    if(!buff)
+    {
+        return(SDCC_ERR_READ_FIFO);
+    }
+
+    if(length < blksize)
+    {
+        blksize = length;
+    }
+    
+    gpio_tlmm_config(GPIO_SDCC_CMD_IN);
+    if(sdcc_pdata.wide_bus)
+    {
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
+        gpio_tlmm_config(GPIO_SDCC_DATOUT_1_IN);
+        gpio_tlmm_config(GPIO_SDCC_DATOUT_2_IN);
+        gpio_tlmm_config(GPIO_SDCC_DATOUT_3_IN);
+        while(length)
+        {
+            rc = sdcc_recv_widedata_bytes(buff, blksize);
+            length -= blksize;
+            buff += blksize;
+            if(rc != SDCC_NO_ERROR)
+            {
+                break;
+            }
+        }
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+        gpio_tlmm_config(GPIO_SDCC_DATOUT_1_OUT);
+        gpio_tlmm_config(GPIO_SDCC_DATOUT_2_OUT);
+        gpio_tlmm_config(GPIO_SDCC_DATOUT_3_OUT);
+    }
+    else
+    {
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
+        while(length)
+        {
+            rc = sdcc_recv_data_bytes(buff, blksize);
+            length -= blksize;
+            buff += blksize;
+            if(rc != SDCC_NO_ERROR)
+            {
+                break;
+            }
+        }
+        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+    }
+    gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
+    sdcc_clock_out(8);
+    return rc;
+}
+#endif
+

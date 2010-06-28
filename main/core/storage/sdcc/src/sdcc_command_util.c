@@ -75,10 +75,12 @@ sdcc_dma_usable
       DPRINTF(("Number of sectors requested %d exceeds max number of blocks\n",
                data_length));
    }
+#ifndef T_QSC1100
    else if ( TRUE == sdcc_pdata.enable_dma && IS_ALIGNED(buffer) )
    {
       use_dma = TRUE;
    }
+#endif
    else
    {
       /* print a debug message indicate using FIFO */

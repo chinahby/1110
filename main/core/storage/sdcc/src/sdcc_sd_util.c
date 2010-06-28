@@ -156,11 +156,11 @@ sdcc_set_sd_bus_width
       DPRINTF(("Invalid bus_width %d setting\n", bus_width));
       return SDCC_ERR_INVALID_PARAM;
    }
-
+#ifndef T_QSC1100
    HWIO_OUTM(MCI_CLK,
              HWIO_FMSK(MCI_CLK, WIDEBUS),
              (bus_width << HWIO_MCI_CLK_WIDEBUS_SHFT));
-   
+#endif
    sdcc_cmd.resp_type = SDCC_RESP_SHORT;
    sdcc_cmd.prog_scan = 0;
    

@@ -154,6 +154,7 @@ sdcc_find_sdio_card( void )
   uint32         voltage;
   uint32         mem_present = 0;
 
+#ifndef T_QSC1100
   /*-----------------------------------------------------------------------*/
   sdcc_config_clk(SDCC_IDENTIFICATION_MODE,
                   SDCC_CARD_UNKNOWN);
@@ -179,7 +180,9 @@ sdcc_find_sdio_card( void )
               HWIO_FMSK(MCI_CLK, ENABLE)| HWIO_FMSK(MCI_CLK, PWRSAVE),
              MCI_CLK_ENABLED | MCI_CLK_SET_PWRSAVE);
   }
-  
+#else
+  // TODO:
+#endif
 
   /* power ramp up time: 1ms */
   sdcc_mdelay(1);
@@ -347,7 +350,7 @@ SDCC_STATUS sdio_post_init( uint16            dev_manfid,
       rc = SDCC_NO_ERROR;
       goto SDCC_EXIT_POST_INIT;
    }
-
+#ifndef T_QSC1100
    if(sdio_card == SDIO_PHILLIP_MANFID)
    {
       /* enable the clock with the INVERT_IN set to 1*/
@@ -362,15 +365,17 @@ SDCC_STATUS sdio_post_init( uint16            dev_manfid,
                 HWIO_FMSK(MCI_CLK, ENABLE)| HWIO_FMSK(MCI_CLK, PWRSAVE),
                 MCI_CLK_ENABLED | MCI_CLK_SET_PWRSAVE);
    }
-
+#else
+   // TODO:
+#endif
    /* re-program the clock */
    sdcc_config_clk(SDCC_DATA_TRANSFER_MODE,
                    sdcc_pdata.card_type);
-
+#ifndef T_QSC1100
    HWIO_OUTM(MCI_CLK,
              HWIO_FMSK(MCI_CLK, FLOW_ENA),
              MCI_CLK_SET_FLOW);
-
+#endif
 #ifdef T_MSM6800
 #ifdef FEATURE_SDCC_WLAN_CONFIG_API
    switch(sdcc_pdata.sdcc_wlan_params.drive_strength)
@@ -612,7 +617,7 @@ sdcc_sdio_init(uint16 dev_manfid)
       goto SDCC_EXIT_SDIO_INIT;
    }
 
-
+#ifndef T_QSC1100
    if(sdio_card == SDIO_PHILLIP_MANFID)
    {
       /* enable the clock with the INVERT_IN set to 1*/
@@ -627,15 +632,17 @@ sdcc_sdio_init(uint16 dev_manfid)
                 HWIO_FMSK(MCI_CLK, ENABLE)| HWIO_FMSK(MCI_CLK, PWRSAVE),
                 MCI_CLK_ENABLED | MCI_CLK_SET_PWRSAVE);
    }
-
+#else
+   // TODO:
+#endif
    /* re-program the clock */
    sdcc_config_clk(SDCC_DATA_TRANSFER_MODE,
                    sdcc_pdata.card_type);
-    
+#ifndef T_QSC1100
    HWIO_OUTM(MCI_CLK,
              HWIO_FMSK(MCI_CLK, FLOW_ENA),
              MCI_CLK_SET_FLOW);
-
+#endif
 #ifdef T_MSM6800
 #ifdef FEATURE_SDCC_WLAN_CONFIG_API
    switch(sdcc_pdata.sdcc_wlan_params.drive_strength)
@@ -1010,7 +1017,7 @@ sdcc_sdio_read
 
       /* set up the DPSM flags */
       data_ctrl = MCI_DATA_DPSM_ENABLED | MCI_DATA_READ;
-
+#ifndef T_QSC1100
       /* program DMA mode if needed */
       if (TRUE == sdcc_pdata.enable_dma)
       {
@@ -1018,7 +1025,7 @@ sdcc_sdio_read
          mmu_invalidate_data_cache_lines((uint32 *)buff, length);
          data_ctrl |= MCI_DATA_DMA_ENABLED;
       }
-
+#endif
       /* set block size */
       if(SDCC_SDIO_BYTE_MODE == sdcc_pdata.block_mode)
       {
@@ -1044,7 +1051,7 @@ sdcc_sdio_read
                                                  count);
 
       INTLOCK_SAV(isave);
-
+#ifndef T_QSC1100
       if (TRUE == sdcc_pdata.enable_dma)
       {
          if(sdio_card == SDIO_ATHEROS_MANFID)
@@ -1071,18 +1078,23 @@ sdcc_sdio_read
          HWIO_OUT(MCI_DATA_CTL, data_ctrl);
          rc = sdcc_command(&sdcc_cmd);
       }
-
+#else
+      // TODO:
+      rc = sdcc_command(&sdcc_cmd);
+#endif
       INTFREE_SAV(isave);
 
       if(SDCC_NO_ERROR != rc)
       {
          DPRINTF(("CMD53(read) failed\n"));
       }
-
+#ifndef T_QSC1100
       /* process read data */
       rc = ( TRUE == sdcc_pdata.enable_dma) ? sdcc_process_interrupts(&sdcc_cmd) :
                                               sdcc_read_fifo(dw_buff,length);
-
+#else
+      rc = sdcc_read_fifo(dw_buff,length);
+#endif
       if(SDCC_NO_ERROR == rc)
       {
          rc = sdcc_sdio_stop_xfer(SDCC_DATA_READ);
@@ -1170,11 +1182,12 @@ sdcc_sdio_write
 
       /* set up DPSM flags */
       data_ctrl = MCI_DATA_DPSM_ENABLED | MCI_DATA_WRITE;
+#ifndef T_QSC1100
       if (TRUE == sdcc_pdata.enable_dma)
       {
          data_ctrl |= MCI_DATA_DMA_ENABLED;
       }
-    
+#endif
       /* CMD53: write command */
       sdcc_cmd.cmd       = SD_CMD53_IO_RW_EXTENDED;
       sdcc_cmd.resp_type = SDCC_RESP_SHORT;
@@ -1203,7 +1216,7 @@ sdcc_sdio_write
       INTLOCK_SAV(isave);
 
       rc = sdcc_command(&sdcc_cmd);
-
+#ifndef T_QSC1100
       /* program DMA mode if needed */
       if (TRUE == sdcc_pdata.enable_dma)
       {
@@ -1227,17 +1240,21 @@ sdcc_sdio_write
       {
          HWIO_OUT(MCI_DATA_CTL, data_ctrl);
       }
-
+#else
+      // TODO:
+#endif
       INTFREE_SAV(isave);
 
       if(SDCC_NO_ERROR != rc)
       {
          DPRINTF(("CMD53(write) failed\n"));
       }
-
+#ifndef T_QSC1100
       rc = (TRUE == sdcc_pdata.enable_dma) ? sdcc_process_interrupts(&sdcc_cmd):
                                           sdcc_write_fifo(dw_buff, length);
-      
+#else
+      rc = sdcc_write_fifo(dw_buff, length);
+#endif
       if(SDCC_NO_ERROR == rc)
       {
          (void)sdcc_sdio_stop_xfer(SDCC_DATA_WRITE);
@@ -1378,18 +1395,20 @@ sdcc_sdio_set_buswidth(SDCC_SDIO_INTERFACE_MODE  buswidth)
        CCCR: set the 4bit bus mode and disable the card detection */
     if ( SDCC_INTERFACE_SDIO_4BIT == buswidth )
     {
+#ifndef T_QSC1100
         HWIO_OUTM(MCI_CLK,
                   HWIO_FMSK(MCI_CLK, WIDEBUS),
                   MCI_CLK_SET_WIDE);
-        
+#endif
         data |= (SDCC_SDIO_CD_DISABLE  | SDCC_SDIO_BUS_WIDTH_4BIT);
     }
     else
     {
+#ifndef T_QSC1100
         HWIO_OUTM(MCI_CLK,
                   HWIO_FMSK(MCI_CLK, WIDEBUS),
                   0);
-        
+#endif
         data |= (SDCC_SDIO_CD_DISABLE  | SDCC_SDIO_BUS_WIDTH_1BIT);
     }
     
@@ -1440,9 +1459,11 @@ sdcc_sdio_set_blksz
     {
       /* program the controller */
       blk_in_bits = sdcc_blk_in_bits(blksz);
+#ifndef T_QSC1100
       HWIO_OUTM( MCI_DATA_CTL,
                  HWIO_FMSK(MCI_DATA_CTL, BLOCKSIZE),
                  blk_in_bits << HWIO_MCI_DATA_CTL_BLOCKSIZE_SHFT );
+#endif
     } 
   }
    
@@ -1560,12 +1581,12 @@ sdcc_sdio_stop_xfer(uint32 direction)
     uint32               isave    = 0;
 
     /*----------------------------------------------------------------------*/
-
+#ifndef T_QSC1100
      /* tell the controller to stop */
     HWIO_OUTM(MCI_ABORT,
               HWIO_FMSK(MCI_ABORT, MCIABORT),
               0x1);
-
+#endif
      
     /* code the dummy command */
     sdcc_cmd.cmd       = SD_CMD52_IO_RW_DIRECT;
@@ -1574,7 +1595,11 @@ sdcc_sdio_stop_xfer(uint32 direction)
     sdcc_cmd.resp[0]   = 0;
 
     /* Set the prog_scan to on for Atheros FIFO write */
+#ifndef T_QSC1100
     if((SDCC_DATA_WRITE == direction) && (FALSE == sdcc_pdata.enable_dma))
+#else
+    if((SDCC_DATA_WRITE == direction))
+#endif
     {
       sdcc_cmd.prog_scan = 1;
     }
@@ -1583,20 +1608,20 @@ sdcc_sdio_stop_xfer(uint32 direction)
       sdcc_cmd.prog_scan = 0;
     }
 
-    
+#ifndef T_QSC1100
     if(sdcc_pdata.enable_dma)
     {
       INTLOCK_SAV(isave);
     }
-
+#endif
     rc = sdcc_command(&sdcc_cmd);
 
-
+#ifndef T_QSC1100
     if(sdcc_pdata.enable_dma)
     {
       INTFREE_SAV(isave);
     }
-
+#endif
     if(rc)
     {
         DPRINTF(("SDCC sdio abort error, status = 0x%x.\n", rc));
