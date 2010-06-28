@@ -409,6 +409,7 @@ enum{
 #ifdef FEATURE_TOUCHPAD
     CFGI_PEN_CAL,     // ¡À¨ºD¡ê¡Á?2?¨ºy
 #endif
+    CFGI_DL_FLAGS,
     CFGI_CUST_END
 };
 

@@ -622,6 +622,7 @@ typedef struct
    pen_cal_type m_pencal_data;
 #endif
 #endif //#ifdef CUST_EDITION
+   uint32 brew_dlflags;
 
 } OEMConfigListType;
 
@@ -1332,6 +1333,10 @@ static int OEMPriv_GetItem_CFGI_PEN_CAL(void *pBuff);
 static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff);
 #endif//FEATURE_TOUCHPAD
 
+static int OEMPriv_GetItem_CFGI_DL_FLAGS(void *pBuff);
+static int OEMPriv_SetItem_CFGI_DL_FLAGS(void *pBuff);
+
+
 static int OEMPriv_GetItem_CFGI_ALARM_FLAG(void *pBuff);
 static int OEMPriv_SetItem_CFGI_ALARM_FLAG(void *pBuff);
 
@@ -1658,6 +1663,7 @@ static OEMConfigListType oemi_cache = {
    ,{-1,-1,-1,-1}
 #endif//FEATURE_TOUCHPAD
 #endif //CUST_EDITION
+   ,99
 
 };
 
@@ -2190,6 +2196,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #ifdef FEATURE_TOUCHPAD
    CFGTABLEITEM(CFGI_PEN_CAL,sizeof(pen_cal_type))
 #endif//FEATURE_TOUCHPAD
+   CFGTABLEITEM(CFGI_DL_FLAGS,sizeof(uint32)),
 };
 #endif
 
@@ -4265,6 +4272,62 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
         }
         return AEE_SUCCESS;
 #endif // CUST_EDITION
+   case CFGI_BREW_CARRIER_ID:
+   {
+      nv_item_type nvi;
+        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID",0,0,0);
+      if (OEMNV_Get(NV_BREW_CARRIER_ID_I, &nvi) != NV_DONE_S)
+      {
+         ERR("OEM_GetCachedConfig: OEMNV_Get failed",0,0,0);
+         return EFAILED;
+      }
+
+      *(dword *)pBuff  = nvi.brew_carrier_id;
+        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_carrier_id,0,0);
+      return SUCCESS;
+   }
+   case CFGI_BREW_PLATFORM_ID:
+   {
+      nv_item_type nvi;
+        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID",0,0,0);
+      if (OEMNV_Get(NV_BREW_PLATFORM_ID_I, &nvi) != NV_DONE_S)
+      {
+         ERR("OEM_GetCachedConfig: OEMNV_Get failed",0,0,0);
+         return EFAILED;
+      }
+
+      *(dword *)pBuff  = nvi.brew_platform_id;
+        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_platform_id,0,0);
+      return SUCCESS;
+   }
+   case CFGI_BREW_AUTH_POLICY:
+   {
+      nv_item_type nvi;
+        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID",0,0,0);
+      if (OEMNV_Get(NV_BREW_AUTH_POLICY_I, &nvi) != NV_DONE_S)
+      {
+         ERR("OEM_GetCachedConfig: OEMNV_Get failed",0,0,0);
+         return EFAILED;
+      }
+
+      *(dword *)pBuff  = nvi.brew_auth_policy;
+        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_auth_policy,0,0);
+      return SUCCESS;
+   }
+   case CFGI_BREW_PRIVACY_POLICY:
+   {
+      nv_item_type nvi;
+        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID",0,0,0);
+      if (OEMNV_Get(NV_BREW_PRIVACY_POLICY_I, &nvi) != NV_DONE_S)
+      {
+         ERR("OEM_GetCachedConfig: OEMNV_Get failed",0,0,0);
+         return EFAILED;
+      }
+
+      *(dword *)pBuff  = nvi.brew_privacy_policy;
+        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_privacy_policy,0,0);
+      return SUCCESS;
+   }
    default:
       return(EUNSUPPORTED);
 
@@ -10342,6 +10405,18 @@ static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff)
     return SUCCESS;
 }
 #endif//FEATURE_TOUCHPAD
+
+static int OEMPriv_GetItem_CFGI_DL_FLAGS(void *pBuff)
+{
+	MEMCPY(pBuff,(void*)&oemi_cache.brew_dlflags,sizeof(uint32));
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_DL_FLAGS(void *pBuff)
+{
+	 MEMCPY((void*) &oemi_cache.brew_dlflags, pBuff, sizeof(uint32));
+     OEMPriv_WriteOEMConfigList();
+     return SUCCESS;
+}
 
 
 static int OEMPriv_GetItem_CFGI_ALARM_FLAG(void *pBuff)
