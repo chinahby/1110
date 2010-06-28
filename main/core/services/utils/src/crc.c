@@ -830,3 +830,28 @@ uint32 crc_32_calc
   return( crc );
 
 } /* crc_32_calc */
+
+word crc_16_bytes
+(
+  byte *buf_ptr,
+    /* Pointer to bytes containing the data to CRC.  The bit stream starts
+    ** in the MS bit of the first byte.
+    */
+
+  word len
+    /* Number of data bytes to calculate the CRC over */
+)
+{
+  word data, crc_16;
+  
+  /* Generate a CRC-16 by looking up the transformation in a table and
+  ** XOR-ing it into the CRC, one byte at a time.
+  */
+  for (crc_16 = 0 ; len >= 1; len--, buf_ptr++) {
+    crc_16 = (word)(crc16_table[ (crc_16 >> (16 - 8)) ^ *buf_ptr ] ^ (crc_16 << 8));
+  }
+
+  return(crc_16);            /* return the 1's complement of the CRC */
+
+} /* end of crc_16_bytes */
+
