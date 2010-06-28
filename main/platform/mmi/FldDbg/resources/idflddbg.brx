@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="idflddbg" VERSION="1">
+<BREWRes Name="flddbg" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_OPTION_TITLE">
 		<Text>Options</Text>
@@ -313,6 +313,45 @@
 	<STRING Id="104" Name="IDS_HW_VERSION" Encoding="Unicode">
 		<Text>HW Ver: </Text>
 	</STRING>
+	<String Id="201" Name="IDS_BREWSETTUBG_TITLE">
+		<Text>Brew Settings</Text>
+	</String>
+	<String Id="202" Name="IDS_CARRIER_ID">
+		<Text>Carrier ID</Text>
+	</String>
+	<String Id="203" Name="IDS_PLATFORM_ID">
+		<Text>Platform ID</Text>
+	</String>
+	<String Id="204" Name="IDS_DLFLAGS">
+		<Text>DL Flags</Text>
+	</String>
+	<String Id="205" Name="IDS_AUTH_POLICY">
+		<Text>Auth Policy</Text>
+	</String>
+	<String Id="206" Name="IDS_PRIVACY_POLICY">
+		<Text>Privacy Policy</Text>
+	</String>
+	<String Id="207" Name="IDS_PRIMARY_DNS">
+		<Text>Primary DNS</Text>
+	</String>
+	<String Id="208" Name="IDS_SECONDARY_DNS">
+		<Text>Secondary DNS</Text>
+	</String>
+	<String Id="209" Name="IDS_USER_NAME">
+		<Text>User Name</Text>
+	</String>
+	<String Id="210" Name="IDS_USER_PASSWORD">
+		<Text>User Password</Text>
+	</String>
+	<String Id="211" Name="IDS_PRIMARY_SERVER">
+		<Text>Primary Server</Text>
+	</String>
+	<String Id="212" Name="IDS_SECONDARY_SERVER">
+		<Text>Secondary Server</Text>
+	</String>
+	<String Id="213" Name="IDS_BREWSETSCRN">
+		<Text>BrewSetting Screen</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
@@ -567,15 +606,130 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="29" Name="IDD_PROG_DIALOG" Focus="0">
-		<Controls/>
-	</DIALOG>
-	<Dialog Id="30" Name="IDD_ESN_DIALOG" Focus="7040">
+	<Dialog Id="29" Name="IDD_ESN_DIALOG" Focus="7040">
 		<Controls>
-			<Static Id="7040" Name="IDC_ESN_STATIC" Flags="40000">
+			<Static Id="7040" Name="IDC_ESN_STATIC" Flags="40001">
 				<TitleID>IDS_ESN</TitleID>
 				<Items/></Static>
 			<SoftKey Id="7041" Name="IDC_ESN_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="30" Name="IDD_BREWSET_DIALOG" Focus="30">
+		<Controls>
+			<Menu Id="30" Name="IDC_BREWSET_MENU" Flags="4000001">
+				<TitleID>IDS_BREWSETTUBG_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="31" Name="IDD_CARRIERID_DIALOG" Focus="7036">
+		<Controls>
+			<Text Id="7036" Name="IDC_CARRIERID_TEXT">
+				<TitleID>IDS_CARRIER_ID</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7042" Name="IDC_CARRIERID_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="32" Name="IDD_PLATFORMID_DIALOG" Focus="7046">
+		<Controls>
+			<Text Id="7046" Name="IDC_PLATFORMID_TEXT">
+				<TitleID>IDS_PLATFORM_ID</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7063" Name="IDC_PLATFORMID_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="33" Name="IDD_DLFLAGS_DIALOG" Focus="7048">
+		<Controls>
+			<SoftKey Id="7044" Name="IDC_DLFLAGS_SOFTKEY">
+				<Items/>
+			</SoftKey>
+			<Text Id="7048" Name="IDC_DLFLAGS_TEXT">
+				<TitleID>IDS_DLFLAGS</TitleID>
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="34" Name="IDD_AUTHPOLICY_DIALOG" Focus="7051">
+		<Controls>
+			<Text Id="7051" Name="IDC_AUTHPOLICY_TEXT">
+				<TitleID>IDS_AUTH_POLICY</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7053" Name="IDC_AUTHPOLICY_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="35" Name="IDD_PRIVACYPOLICY_DIALOG" Focus="7054">
+		<Controls>
+			<Text Id="7054" Name="IDC_PRIVACYPOLICY_TEXT">
+				<TitleID>IDS_PRIVACY_POLICY</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7055" Name="IDC_PRIVACYPOLICY_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="36" Name="IDD_PRIMARYDNS_DIALOG" Focus="7057">
+		<Controls>
+			<SoftKey Id="7056" Name="IDC_PRIMARYDNS_SOFTKEY">
+				<Items/>
+			</SoftKey>
+			<Text Id="7057" Name="IDC_PRIMARYDNS_TEXT">
+				<TitleID>IDS_PRIMARY_DNS</TitleID>
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="37" Name="IDD_SECONDARY_DNS_DIALOG" Focus="0">
+		<Controls>
+			<Text Id="7045" Name="IDC_SECONDARY_DNS_TEXT">
+				<TitleID>IDS_SECONDARY_DNS</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7058" Name="IDC_SECONDARY_DNS_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="38" Name="IDD_USER_NAME_DIALOG" Focus="0">
+		<Controls>
+			<Text Id="7047" Name="IDC_USER_NAME_TEXT">
+				<TitleID>IDS_USER_NAME</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7059" Name="IDC_USER_NAME_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="39" Name="IDD_USER_PASSWORD_DIALOG" Focus="0">
+		<Controls>
+			<Text Id="7049" Name="IDC_USER_PASSWORD_TEXT">
+				<TitleID>IDS_USER_PASSWORD</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7060" Name="IDC_USER_PASSWORD_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="40" Name="IDD_PRIMARY_SERVER_DIALOG" Focus="0">
+		<Controls>
+			<Text Id="7050" Name="IDC_PRIMARY_SERVER_TEXT">
+				<TitleID>IDS_PRIMARY_SERVER</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7061" Name="IDC_PRIMARY_SERVER_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="41" Name="IDD_SECONDARY_SERVER_DIALOG" Focus="0">
+		<Controls>
+			<Text Id="7052" Name="IDC_SECONDARY_SERVER_TEXT">
+				<TitleID>IDS_SECONDARY_SERVER</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7062" Name="IDC_SECONDARY_SERVER_SOFTKEY">
 				<Items/>
 			</SoftKey>
 		</Controls>
