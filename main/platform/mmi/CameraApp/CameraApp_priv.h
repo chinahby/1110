@@ -76,6 +76,7 @@
 #include "AEECamera.h"
 #ifdef FEATURE_DISP_160X128
 #include "cameraapp_image160x128.brh"
+#define CAMERAAPP_IMAGE_RES_FILE CAMERAAPP_IMAGE160X128_RES_FILE
 #else
 #include "cameraapp_image.brh"
 #endif
