@@ -352,6 +352,36 @@
 	<String Id="213" Name="IDS_BREWSETSCRN">
 		<Text>BrewSetting Screen</Text>
 	</String>
+	<String Id="1001" Name="IDS_AUTH_POLICY_NONE" Encoding="Unicode">
+		<Text>None</Text>
+	</String>
+	<String Id="1002" Name="IDS_AUTH_POLICY_SID" Encoding="Unicode">
+		<Text>SID</Text>
+	</String>
+	<String Id="1003" Name="IDS_AUTH_POLICY_TEXT" Encoding="Unicode">
+		<Text>Text</Text>
+	</String>
+	<String Id="1004" Name="IDS_AUTH_POLICY_NUM" Encoding="Unicode">
+		<Text>Num</Text>
+	</String>
+	<String Id="1005" Name="IDS_PRIVACY_POLICY_BREW" Encoding="Unicode">
+		<Text>BREW</Text>
+	</String>
+	<String Id="1006" Name="IDS_PRIVACY_POLICY_CARRIER" Encoding="Unicode">
+		<Text>Carrier</Text>
+	</String>
+	<String Id="1007" Name="IDS_PRIVACY_POLICY_BREW_AND_CARRIER" Encoding="Unicode">
+		<Text>BREW and Carrier</Text>
+	</String>
+	<String Id="1008" Name="IDS_PRIVACY_POLICY_BREW_OR_CARRIER" Encoding="Unicode">
+		<Text>BREW or Carrier</Text>
+	</String>
+	<String Id="1009" Name="IDS_STRING_AUTH_POLICY" Encoding="Unicode">
+		<Text>Auth Policy</Text>
+	</String>
+	<String Id="1010" Name="IDS_STRING_PRIVACY_POLICY" Encoding="Unicode">
+		<Text>Privacy Policy</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
@@ -656,22 +686,18 @@
 	</Dialog>
 	<Dialog Id="34" Name="IDD_AUTHPOLICY_DIALOG" Focus="7051">
 		<Controls>
-			<Text Id="7051" Name="IDC_AUTHPOLICY_TEXT">
+			<Menu Id="7051" Name="IDC_MENU_AUTH_POLICY">
 				<TitleID>IDS_AUTH_POLICY</TitleID>
-				<Items/></Text>
-			<SoftKey Id="7053" Name="IDC_AUTHPOLICY_SOFTKEY">
 				<Items/>
-			</SoftKey>
+			</Menu>
 		</Controls>
 	</Dialog>
-	<Dialog Id="35" Name="IDD_PRIVACYPOLICY_DIALOG" Focus="7054">
+	<Dialog Id="35" Name="IDD_PRIVACYPOLICY_DIALOG" Focus="7043">
 		<Controls>
-			<Text Id="7054" Name="IDC_PRIVACYPOLICY_TEXT">
-				<TitleID>IDS_PRIVACY_POLICY</TitleID>
-				<Items/></Text>
-			<SoftKey Id="7055" Name="IDC_PRIVACYPOLICY_SOFTKEY">
+			<Menu Id="7043" Name="IDC_MENU_PRIVACY_POLICY">
+				<TitleID>IDS_STRING_PRIVACY_POLICY</TitleID>
 				<Items/>
-			</SoftKey>
+			</Menu>
 		</Controls>
 	</Dialog>
 	<Dialog Id="36" Name="IDD_PRIMARYDNS_DIALOG" Focus="7057">
