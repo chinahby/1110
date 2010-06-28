@@ -221,6 +221,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_PROJECT_W021
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY
+#define FEATURE_DRV_SDCC
+#define FEATURE_SDCC_CLK_CONFIG
 #endif
 
 #include "custuim.h"
@@ -246,6 +248,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custrex.h"
 #include "custbmp.h"
 #include "custsurf.h"
+#ifdef FEATURE_DRV_SDCC
+#include "Custsdcc.h"
+#endif
 #ifdef FEATURE_ADD_CAMERA
 #include "custcamera.h"
 #include "custjpeg.h"
