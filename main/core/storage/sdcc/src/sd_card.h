@@ -23,6 +23,7 @@
 #include "pm.h"
 #endif
 
+#include "sdcc_priv.h"
 /******************************** Basic command set **************************/
 /* Reset cards to idle state */
 #define CMD0 0
@@ -251,4 +252,123 @@ uint8 SD_ReadMultiBlock(uint32 sector, uint8 *buffer, uint8 count);
 *                   other：失败
 *******************************************************************************/
 uint8 SD_WriteMultiBlock(uint32 sector, const uint8 *data, uint8 count);
+
+/*******************************************************************************
+* Function Name : SD_GetCID
+* Description    : 获取SD卡的CID信息，包括制造商信息
+* Input          : uint8 *cid_data(存放CID的内存，至少16Byte）
+* Output         : None
+* Return         : uint8 
+*                  0：NO_ERR
+*                  1：TIME_OUT
+*                  other：错误信息
+*******************************************************************************/
+uint8 SD_GetCID(uint8 *cid_data);
+
+/*******************************************************************************
+* Function Name : SD_GetCSD
+* Description    : 获取SD卡的CSD信息，包括容量和速度信息
+* Input          : uint8 *cid_data(存放CID的内存，至少16Byte）
+* Output         : None
+* Return         : uint8 
+*                  0：NO_ERR
+*                  1：TIME_OUT
+*                  other：错误信息
+*******************************************************************************/
+uint8 SD_GetCSD(uint8 *csd_data);
+
+/*******************************************************************************
+* Function Name : SD_GetCapacity
+* Description    : 获取SD卡的容量
+* Input          : None
+* Output         : None
+* Return         : uint32 capacity 
+*                   0： 取容量出错 
+*******************************************************************************/
+uint32 SD_GetCapacity(void);
+
+/******************************************************************************
+* Name: SD_DecodeCsd
+*
+* Description:
+*    This function is to parse out the CSD data.
+*
+* Arguments:
+*       data  pointer to data read in from response registers.
+*       csd   pointer to the stucture to save the csd data to.
+*
+******************************************************************************/
+void SD_DecodeCsd(const uint32   *data,sdcc_csd_type  *csd);
+
+/******************************************************************************
+* Name: SD_DecodeHcCcsd
+*
+* Description:
+*    This function is to read the passed in data of the High Capacity
+*    SD memory card (CSD version 2.0) and assign the proper bit values
+*    to the fields in csd structure.
+
+*
+* Arguments:
+*       data             pointer to data read in from response registers.
+*       csd              pointer to the stucture to save the csd data to.
+*
+* Returns:
+*    None
+*
+******************************************************************************/
+void SD_DecodeHcCcsd(const uint32 *data,sdcc_csd_type *csd);
+
+/******************************************************************************
+* Name: SD_DecodeStdCsd
+*
+* Description:
+*    This function is to read the passed in data of the Standard Capacity
+*    SD memory card (CSD version 1.0) and assign the proper bit values
+*    to the fields in csd structure.
+*
+* Arguments:
+*       data             pointer to data read in from response registers.
+*       csd              pointer to the stucture to save the csd data to.
+*
+* Returns:
+*    None
+*
+******************************************************************************/
+void SD_DecodeStdCsd(const uint32 *data,sdcc_csd_type  *csd);
+
+/******************************************************************************
+* Name: SD_GetStdMemoryInfo
+*
+* Description:
+*    This function is to calculate the block length and memory capacity
+*    of the Standard Capacity SD memory card.
+*
+* Arguments:
+*       block_len        data block length
+*       c_size_mult      device size multiplier
+*       c_size           device size
+*
+* Returns:
+*    None
+*
+******************************************************************************/
+void SD_GetStdMemoryInfo(uint32 block_len,uint8 c_size_mult,uint32 c_size);
+
+/******************************************************************************
+* Name: SD_GetHcMemoryInfo
+*
+* Description:
+*    This function is to calculate the block length and memory capacity
+*    of the High Capacity SD memory card.
+*
+* Arguments:
+*       block_len        data block length
+*       c_size           device size
+*
+* Returns:
+*    None
+*
+******************************************************************************/
+void SD_GetHcMemoryInfo(uint32 block_len,uint32 c_size);
 #endif

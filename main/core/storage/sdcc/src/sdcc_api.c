@@ -132,6 +132,9 @@ when       who     what, where, why
 #include "sdcc_mmc_util.h"
 #include "assert.h"
 #include "sdcc_bsp.h"
+#ifdef FEATURE_DRV_SD_SPI_MODE
+#include "sd_card.h"
+#endif
 
 extern unsigned int sdio_card;
 
@@ -141,6 +144,7 @@ extern unsigned int sdio_card;
 
 
 #ifdef FEATURE_DRV_SD_SPI_MODE
+
 /*lint -save -e641 Suppress 'Converting enum to int' warning */
 /******************************************************************************
 * Name: sdcc_open.
@@ -167,6 +171,7 @@ sdcc_open(int16 driveno)
 
 	if ( SD_Initialize() == 0)
 	{
+		(void)SD_GetCapacity();
 		return TRUE;
 	}
 	else
@@ -304,53 +309,43 @@ int16    driveno,
 uint8    what
 )
 {
-   uint32 value = (uint32)SDCC_NO_ERROR;
-   (void)driveno;
+	uint32 value = (uint32)SDCC_NO_ERROR;
+	(void)driveno;
 
-   if (sdcc_pdata.slot_state_changed)
-      return SDCC_CARD_UNKNOWN;
+	sdcc_enter_crit_sect();
 
-   sdcc_enter_crit_sect();
+	switch (what)
+	{
+		case SDCC_CARD_STATE:
+		{
+			value = (uint32)SDCC_NO_ERROR;
+			break;
+		}
 
-   switch (what)
-   {
-      case SDCC_CARD_STATE:
-      {
-         SDCC_CARD_STATUS  card_status;
+		case SDCC_GET_TYPE:
+			value = (uint32)sdcc_pdata.card_type;
+			break;
 
-         card_status = SDCC_CARD_IDLE;//sdcc_send_status();
+		case SDCC_GET_ERROR:
+			value = (uint32)SDCC_NO_ERROR;
+			break;
 
-         if (SDCC_CARD_IGNORE == card_status)
-         {
-            sdcc_pdata.card_type = SDCC_CARD_UNKNOWN;
-            value = (uint32)SDCC_ERR_UNKNOWN;
-         }
-         break;
-      }
+		case SDCC_CARD_SIZE:
+			value = sdcc_pdata.mem.card_size;
+			break;
 
-      case SDCC_GET_TYPE:
-         value = (uint32)sdcc_pdata.card_type;
-         break;
+		case SDCC_BLOCK_LEN:
+			value = sdcc_pdata.mem.block_len;
+			break;
 
-      case SDCC_GET_ERROR:
-         value = (uint32)sdcc_pdata.errno;
-         break;
-
-      case SDCC_CARD_SIZE:
-         value = sdcc_pdata.mem.card_size;
-         break;
-
-      case SDCC_BLOCK_LEN:
-         value = sdcc_pdata.mem.block_len;
-         break;
-
-      default:
-         DPRINTF(("Invalid request:(0x%x)?", what));
-         value = (uint32)SDCC_ERR_UNKNOWN;
-         break;
-   }
-   sdcc_leave_crit_sect();
-   return value;
+		default:
+			DPRINTF(("Invalid request:(0x%x)?", what));
+			value = (uint32)SDCC_ERR_UNKNOWN;
+			break;
+	}
+	
+	sdcc_leave_crit_sect();
+	return value;
 }/* sdcc_ioctl */
 
 /******************************************************************************
@@ -376,24 +371,21 @@ sdcc_read_serial
    DRV_GEOMETRY_DESC *iDrvPtr
 )
 {
-   if (sdcc_pdata.slot_state_changed)
-      return FALSE;
+	(void)driveno;
+	sdcc_enter_crit_sect();
 
-   (void)driveno;
-   sdcc_enter_crit_sect();
+	iDrvPtr->dfltCyl          = 0;     
+	iDrvPtr->dfltHd           = 0; 
+	iDrvPtr->dfltSct          = 0;
 
-   iDrvPtr->dfltCyl          = 0;     
-   iDrvPtr->dfltHd           = 0; 
-   iDrvPtr->dfltSct          = 0;
+	iDrvPtr->totalLBA         = sdcc_pdata.mem.card_size;
+	iDrvPtr->dfltBytesPerSect = sdcc_pdata.mem.block_len;
 
-   iDrvPtr->totalLBA         = sdcc_pdata.mem.card_size;
-   iDrvPtr->dfltBytesPerSect = sdcc_pdata.mem.block_len;
+	iDrvPtr->serialNum[0]     = sdcc_pdata.mem.psn;
 
-   iDrvPtr->serialNum[0]     = sdcc_pdata.mem.psn;
-
-   memcpy(iDrvPtr->modelNum, sdcc_pdata.mem.pnm, sizeof(sdcc_pdata.mem.pnm));
-   sdcc_leave_crit_sect();
-   return TRUE;
+	memcpy(iDrvPtr->modelNum, sdcc_pdata.mem.pnm, sizeof(sdcc_pdata.mem.pnm));
+	sdcc_leave_crit_sect();
+	return TRUE;
 }/* sdcc_read_serial */
 
 

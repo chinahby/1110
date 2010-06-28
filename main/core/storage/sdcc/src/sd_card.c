@@ -13,7 +13,7 @@
 #include "pm.h"
 #include CLKRGM_H
 #include "sd_card.h"
-#include "sdcc_priv.h"
+
 
 #include "assert.h"
 
@@ -208,7 +208,6 @@ uint8 SD_Init(void)
     uint8 r1;      // 存放SD卡的返回值
     uint16 retry; // 用来进行超时计数
     uint8 buff[6];
-	SD_TYPE SD_Type;
 	
     // 纯延时，等待SD卡上电完成
     for(i=0;i<0xf00;)i++;
@@ -243,7 +242,7 @@ uint8 SD_Init(void)
     if(r1 == 0x05)
     {
         //设置卡类型为SDV1.0，如果后面检测到为MMC卡，再修改为MMC
-        SD_Type = SD_TYPE_V1;
+        sdcc_pdata.card_type = SDCC_CARD_SD;
 
         //如果是V1.0卡，CMD8指令后没有后续数据
         //片选置高，结束本次命令
@@ -287,14 +286,11 @@ uint8 SD_Init(void)
                 return r1;   //MMC卡初始化超时
             }
             //写入卡类型
-            SD_Type = SD_TYPE_MMC;
+            sdcc_pdata.card_type = SDCC_CARD_MMC;
         }
         //----------MMC卡额外初始化操作结束------------
         
-        //设置SPI为高速模式
-        //SPI_SetSpeed(1);
-
-   		SD_WriteByte(0xFF);
+        SD_WriteByte(0xFF);
         
         //禁止CRC校验
         
@@ -369,11 +365,7 @@ uint8 SD_Init(void)
             //如果CCS=1：SDHC   CCS=0：SD2.0
             if(buff[0]&0x40)    //检查CCS
             {
-                SD_Type = SD_TYPE_V2HC;
-            }
-            else
-            {
-                SD_Type = SD_TYPE_V2;
+                sdcc_pdata.card_type = SDCC_CARD_SDHC;
             }
             //-----------鉴别SD2.0卡版本结束-----------
         }
@@ -738,5 +730,331 @@ uint32 SD_Initialize(void)
 	if(i >= SD_MAXTEST_TIMES)
 		ERR("not find tflash in many times",0,0,0);//added by lipengyu for n times init of sd card.
 	return 0;
+}
+
+/*******************************************************************************
+* Function Name : SD_GetCID
+* Description    : 获取SD卡的CID信息，包括制造商信息
+* Input          : uint8 *cid_data(存放CID的内存，至少16Byte）
+* Output         : None
+* Return         : uint8 
+*                  0：NO_ERR
+*                  1：TIME_OUT
+*                  other：错误信息
+*******************************************************************************/
+uint8 SD_GetCID(uint8 *cid_data)
+{
+	uint8 r1;
+
+    //发CMD10命令，读CID
+    r1 = SD_SendCommand(CMD10, 0, 0xFF);
+    if(r1 != 0x00)
+    {
+        return r1; //没返回正确应答，则退出，报错
+    }
+    //接收16个字节的数据
+    SD_ReceiveData(cid_data, 16, 1);
+
+    return 0;
+}
+
+/*******************************************************************************
+* Function Name : SD_GetCSD
+* Description    : 获取SD卡的CSD信息，包括容量和速度信息
+* Input          : uint8 *cid_data(存放CID的内存，至少16Byte）
+* Output         : None
+* Return         : uint8 
+*                  0：NO_ERR
+*                  1：TIME_OUT
+*                  other：错误信息
+*******************************************************************************/
+uint8 SD_GetCSD(uint8 *csd_data)
+{
+	uint8 r1;
+
+    //发CMD9命令，读CSD
+    r1 = SD_SendCommand(CMD9, 0, 0xFF);
+    if(r1 != 0x00)
+    {
+        return r1; //没返回正确应答，则退出，报错
+    }
+    //接收16个字节的数据
+    SD_ReceiveData(csd_data, 16, 1);
+
+    return 0;
+}
+
+/*******************************************************************************
+* Function Name : SD_GetCapacity
+* Description    : 获取SD卡的容量
+* Input          : None
+* Output         : None
+* Return         : uint32 capacity 
+*                   0： 取容量出错 
+*******************************************************************************/
+uint32 SD_GetCapacity(void)
+{
+	uint8 rsp[16];
+	sdcc_csd_type    csd;
+
+    //取CSD信息，如果期间出错，返回0
+    if(SD_GetCSD(rsp)!=0)
+    {
+        return 0;
+    }
+       
+    SD_DecodeCsd((uint32*)rsp, &csd);
+
+	switch (sdcc_pdata.card_type)
+	{
+		case SDCC_CARD_SD:
+		case SDCC_CARD_SDHC:
+		{
+			if (csd.csd_structure == 1)
+			{
+				/* csd_structure = 1 means CSD Version 2.0 for */
+				/* High Capacity SD memory card */
+				SD_GetHcMemoryInfo(csd.read_bl_len, csd.c_size);
+			}
+			else
+			{
+				/* csd_structure = 0 means CSD Version 1.0 for */
+				/* Standard Capacity SD memory card */
+				SD_GetStdMemoryInfo(csd.read_bl_len, csd.c_size_mult,csd.c_size);
+			}
+		}
+		break;
+
+		case SDCC_CARD_MMCHC:
+		{
+			/* defer to sdcc_config_mmc_modes_segment as EXT_CSD register */
+			/* is read there.  SEC_COUNT must be used to calculate the high */
+			/* density card size. */
+		}
+		break;
+
+		case SDCC_CARD_MMC:
+		default:
+		{
+			/* get the standard memory info anyway */
+			SD_GetStdMemoryInfo(csd.read_bl_len, csd.c_size_mult,csd.c_size);
+		}
+		break;
+	}
+    return csd.c_size;
+}
+
+/******************************************************************************
+* Name: SD_DecodeCsd
+*
+* Description:
+*    This function is to parse out the CSD data.
+*
+* Arguments:
+*       data  pointer to data read in from response registers.
+*       csd   pointer to the stucture to save the csd data to.
+*
+******************************************************************************/
+void SD_DecodeCsd(const uint32   *data,sdcc_csd_type  *csd)
+{
+	uint32   value;
+
+	/*----------------------------------------------------------------------*/
+
+	if(!csd)
+		return;
+
+	/* In resp[0] */
+	value = *data;
+	csd->csd_structure      = (uint8)(value >> 30);
+
+	switch (sdcc_pdata.card_type)
+	{
+		case SDCC_CARD_SD:
+		case SDCC_CARD_SDHC:
+		{
+			if (csd->csd_structure == 1)
+			{
+				/* CSD Version 2.0: CSD_STRUCTURE = 1 */
+				SD_DecodeHcCcsd(data, csd);
+			}
+			else
+			{
+				/* CSD Version 1.0: CSD_STRUCTURE = 0 */
+				SD_DecodeStdCsd(data, csd);
+			}
+		}
+		break;
+
+		case SDCC_CARD_MMC:
+		case SDCC_CARD_MMCHC:
+		default:
+		{
+			SD_DecodeStdCsd(data, csd);
+			/* System Specification version is for MMC only. */
+			sdcc_pdata.mem.spec_vers = csd->spec_vers;
+		}
+		break;
+	}
+
+	return;
+}
+
+/******************************************************************************
+* Name: SD_DecodeHcCcsd
+*
+* Description:
+*    This function is to read the passed in data of the High Capacity
+*    SD memory card (CSD version 2.0) and assign the proper bit values
+*    to the fields in csd structure.
+
+*
+* Arguments:
+*       data             pointer to data read in from response registers.
+*       csd              pointer to the stucture to save the csd data to.
+*
+* Returns:
+*    None
+*
+******************************************************************************/
+void SD_DecodeHcCcsd(const uint32 *data,sdcc_csd_type *csd)
+{
+	uint32    value;
+	uint32    tmp;
+
+	if (NULL == csd)
+	{
+		return;
+	}
+
+	/* In resp[0] */
+	value                   = *data;
+	/* taac: data read access-time is fixed to 0Eh (means 1ms) --> csd[119:112]*/
+	csd->taac               = SDCC_CSD_TAAC;
+	/* nsac: data read access-time in CLK cycles is fixed to 00h --> csd[111:104] */
+	csd->nsac               = SDCC_CSD_NSAC;
+	/* tran_speed: max. data transfer rate --> csd[103:96] */
+	csd->tran_speed         = (uint8)(value & 0x000000FF);
+
+	/* read_bl_len: max. read data block length is fixed to */
+	/* 9h (means 512 Bytes) --> csd[83:80] */
+	value                   = *(++data);
+	csd->read_bl_len        = SDCC_CSD_READ_BL_LEN;
+
+	/* c_size: device size --> csd[69:48] */
+	/* This field is expanded to 22 bits and can indicate up to 2TBytes. */
+	tmp         = value & 0x0000003F;
+	value       = *(++data);
+	csd->c_size = (uint32)((tmp << 16) | ((value & 0xFFFF0000) >> 16));
+}
+
+/******************************************************************************
+* Name: SD_DecodeStdCsd
+*
+* Description:
+*    This function is to read the passed in data of the Standard Capacity
+*    SD memory card (CSD version 1.0) and assign the proper bit values
+*    to the fields in csd structure.
+*
+* Arguments:
+*       data             pointer to data read in from response registers.
+*       csd              pointer to the stucture to save the csd data to.
+*
+* Returns:
+*    None
+*
+******************************************************************************/
+void SD_DecodeStdCsd(const uint32 *data,sdcc_csd_type  *csd)
+{
+	uint32    value;
+	uint32    tmp;
+
+	if (NULL == csd)
+	{
+		return;
+	}
+
+	/* In resp[0] */
+	value                   = *data;
+	/* For MMC only: spec_vers: system specification version --> csd[125:122] */
+	csd->spec_vers          = (uint8)((value & 0x3C000000) >> 26);
+	/* taac: data read access-time-1 --> csd[119:112] */
+	csd->taac               = (uint8)((value & 0x00FF0000) >> 16);
+	/* nsac: data read access-time-2 in CLK cycles --> csd[111:104] */
+	csd->nsac               = (uint8)((value & 0x0000FF00) >> 8);
+	/* tran_speed: max. data transfer rate --> csd[103:96] */
+	csd->tran_speed         = (uint8)(value & 0x000000FF);
+
+	/* read_bl_len: max. read data block length --> csd[83:80] */
+	value                   = *(++data);
+	csd->read_bl_len        = (uint8)((value & 0x000F0000) >> 16);
+
+	/* c_size: device size --> csd[73:62] */
+	tmp         = value & 0x000003FF;
+	value       = *(++data);
+	csd->c_size = (uint32)((tmp << 2) | ((value & 0xC0000000) >> 30));
+
+	/* c_size_mult: device size multiplier --> csd[49:47] */
+	csd->c_size_mult        = (uint16)((value & 0x00038000) >> 15);
+}
+
+/******************************************************************************
+* Name: SD_GetStdMemoryInfo
+*
+* Description:
+*    This function is to calculate the block length and memory capacity
+*    of the Standard Capacity SD memory card.
+*
+* Arguments:
+*       block_len        data block length
+*       c_size_mult      device size multiplier
+*       c_size           device size
+*
+* Returns:
+*    None
+*
+******************************************************************************/
+void SD_GetStdMemoryInfo(uint32 block_len,uint8 c_size_mult,uint32 c_size)
+{
+	uint32    card_size;
+
+	card_size     = 1 << (c_size_mult + 2);
+	card_size    *= (c_size + 1); 
+
+	sdcc_pdata.mem.block_len = 1UL << block_len; /* in Bytes */
+
+	/* Since the block length can be in diffrent size
+	* 512, 1024, 2048 etc..Calculate the card size in the absolute 
+	* block length of multiple 512 (i.e., SDCC_DEFAULT_BLK_LENGTH_SIZE)
+	*/
+	sdcc_pdata.mem.card_size = card_size*(sdcc_pdata.mem.block_len/SDCC_DEFAULT_BLK_LENGTH_SIZE);
+}
+
+/******************************************************************************
+* Name: SD_GetHcMemoryInfo
+*
+* Description:
+*    This function is to calculate the block length and memory capacity
+*    of the High Capacity SD memory card.
+*
+* Arguments:
+*       block_len        data block length
+*       c_size           device size
+*
+* Returns:
+*    None
+*
+******************************************************************************/
+void SD_GetHcMemoryInfo(uint32 block_len,uint32 c_size)
+{
+	sdcc_pdata.mem.block_len = 1UL << block_len; /* in Bytes */
+
+	/* The user data area capacity is calculated from the c_size as follows: */
+	/*    memory capacity = (c_size+1)*512K byte    */
+	/* where 512 is the block len of the High Capacity SD memory card and */
+	/*       1K byte = 1024 bytes */
+	/* Calculate the card size in the absolute block length of muliple */
+	/* 512 (i.e., SDCC_DEFAULT_BLK_LENGTH_SIZE) */
+	sdcc_pdata.mem.card_size = (c_size + 1)*((sdcc_pdata.mem.block_len*1024)/SDCC_DEFAULT_BLK_LENGTH_SIZE);
 }
 #endif
