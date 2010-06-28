@@ -2640,7 +2640,7 @@ int OEM_SVCSetConfig(AEEConfigItem i, void * pBuff, int nSize)
          }
          return SUCCESS;
 #endif /* FEATURE_GSM1x */
-
+#if 0 
       case CFGI_DOWNLOAD:
       {
          IFileMgr* pFileMgr;
@@ -2686,7 +2686,7 @@ int OEM_SVCSetConfig(AEEConfigItem i, void * pBuff, int nSize)
          return EFAILED;
       }
          break;
-
+#endif
       case CFGI_SUBSCRIBERID:
          return SetSubscriberID((byte *)pBuff, nSize);
 
