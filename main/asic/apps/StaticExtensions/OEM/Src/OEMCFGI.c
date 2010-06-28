@@ -328,6 +328,7 @@ typedef struct {
     #define KEY_PDA_CTL_TO_TIME      32400000
 #endif
 #endif
+#define   IP_STRING   "0.0.0.0"
 
 #if defined(FEATURE_PEKTEST)
 // 为方便 PEK 测试，PEK 测试配置放在最前面
@@ -622,6 +623,13 @@ typedef struct
    pen_cal_type m_pencal_data;
 #endif
 #endif //#ifdef CUST_EDITION
+   
+   byte   brewsetings_usename[MAS_BREWSETINT_STRING];
+   byte   brewsetings_password[MAS_BREWSETINT_STRING];
+   char   brewsetings_primarydns[MAS_BREWSETINT_STRING];
+   char   brewsetings_secondarydns[MAS_BREWSETINT_STRING];
+   char   brewsetings_primaryserver[MAS_BREWSETINT_STRING];
+   char   brewsetings_secondaryserver[MAS_BREWSETINT_STRING];
    uint32 brew_dlflags;
 
 } OEMConfigListType;
@@ -1333,8 +1341,28 @@ static int OEMPriv_GetItem_CFGI_PEN_CAL(void *pBuff);
 static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff);
 #endif//FEATURE_TOUCHPAD
 
+
+static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff);
+static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff);
+static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff);
+static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff);
+static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff);
+
 static int OEMPriv_GetItem_CFGI_DL_FLAGS(void *pBuff);
 static int OEMPriv_SetItem_CFGI_DL_FLAGS(void *pBuff);
+
 
 
 static int OEMPriv_GetItem_CFGI_ALARM_FLAG(void *pBuff);
@@ -1663,7 +1691,13 @@ static OEMConfigListType oemi_cache = {
    ,{-1,-1,-1,-1}
 #endif//FEATURE_TOUCHPAD
 #endif //CUST_EDITION
-   ,99
+   ,{0}  //CFGI_BREWSET_USENAME
+   ,{0}  //CFGI_BREWSET_PASSWORD
+   ,{0}  //CFGI_BREWSET_PRIMARYDNS
+   ,{0}  //CFGI_BREWSET_SECONDARYDNS
+   ,{0}  //CFGI_BREWSET_PRIMARYSERVER
+   ,{0}  //CFGI_BREWSET_SECONDARYSERVER
+   ,0    //CFGI_DL_FLAGS
 
 };
 
@@ -2196,6 +2230,12 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #ifdef FEATURE_TOUCHPAD
    CFGTABLEITEM(CFGI_PEN_CAL,sizeof(pen_cal_type))
 #endif//FEATURE_TOUCHPAD
+   CFGTABLEITEM(CFGI_BREWSET_USENAME,sizeof(byte)*MAS_BREWSETINT_STRING),
+   CFGTABLEITEM(CFGI_BREWSET_PASSWORD,sizeof(byte)*MAS_BREWSETINT_STRING),
+   CFGTABLEITEM(CFGI_BREWSET_PRIMARYDNS,sizeof(char)*MAS_BREWSETINT_STRING),
+   CFGTABLEITEM(CFGI_BREWSET_SECONDARYDNS,sizeof(char)*MAS_BREWSETINT_STRING),
+   CFGTABLEITEM(CFGI_BREWSET_PRIMARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
+   CFGTABLEITEM(CFGI_BREWSET_SECONDARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_DL_FLAGS,sizeof(uint32)),
 };
 #endif
@@ -4048,7 +4088,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_BREW_AUTH:
       {
-         byte *val = (byte *)pBuff;
+         uint16 *val = (uint16 *)pBuff;
          if (nSize != (int) sizeof(*val)) {
             return EBADPARM;
          }
@@ -4058,7 +4098,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_BREW_PRIVP:
       {
-         byte *val = (byte *)pBuff;
+         uint16 *val = (uint16 *)pBuff;
          if (nSize != (int) sizeof(*val)) {
             return EBADPARM;
          }
@@ -4300,34 +4340,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
         ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_platform_id,0,0);
       return SUCCESS;
    }
-   case CFGI_BREW_AUTH_POLICY:
-   {
-      nv_item_type nvi;
-        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID",0,0,0);
-      if (OEMNV_Get(NV_BREW_AUTH_POLICY_I, &nvi) != NV_DONE_S)
-      {
-         ERR("OEM_GetCachedConfig: OEMNV_Get failed",0,0,0);
-         return EFAILED;
-      }
-
-      *(dword *)pBuff  = nvi.brew_auth_policy;
-        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_auth_policy,0,0);
-      return SUCCESS;
-   }
-   case CFGI_BREW_PRIVACY_POLICY:
-   {
-      nv_item_type nvi;
-        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID",0,0,0);
-      if (OEMNV_Get(NV_BREW_PRIVACY_POLICY_I, &nvi) != NV_DONE_S)
-      {
-         ERR("OEM_GetCachedConfig: OEMNV_Get failed",0,0,0);
-         return EFAILED;
-      }
-
-      *(dword *)pBuff  = nvi.brew_privacy_policy;
-        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_privacy_policy,0,0);
-      return SUCCESS;
-   }
+   
    default:
       return(EUNSUPPORTED);
 
@@ -4922,7 +4935,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_BREW_AUTH:
       {
-         byte *val = (byte *)pBuff;
+         uint16 *val = (uint16 *)pBuff;
          if (!pBuff || nSize != (int) sizeof(*val)) {
             return EBADPARM;
          }
@@ -4933,7 +4946,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_BREW_PRIVP:
       {
-         byte *val = (byte *)pBuff;
+         uint16 *val = (uint16 *)pBuff;
          if (!pBuff || nSize != (int) sizeof(*val)) {
             return EBADPARM;
          }
@@ -10258,6 +10271,93 @@ static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_INFO(void *pBuff)
     return SUCCESS;
 }
 
+static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
+     return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.brewsetings_usename, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.brewsetings_password, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+
+static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_primarydns, sizeof(char) * MAS_BREWSETINT_STRING);
+	return SUCCESS;
+
+}
+static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.brewsetings_primarydns, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_secondarydns, sizeof(char) * MAS_BREWSETINT_STRING);
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.brewsetings_secondarydns, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_primaryserver, sizeof(char) * MAS_BREWSETINT_STRING);
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.brewsetings_primaryserver, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_secondaryserver, sizeof(char) * MAS_BREWSETINT_STRING);
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.brewsetings_secondaryserver, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_DL_FLAGS(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.brew_dlflags, sizeof(uint32));
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_DL_FLAGS(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.brew_dlflags, pBuff, sizeof(uint32));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+
 static int OEMPriv_GetItem_CFGI_FMRADIO_CHAN_TOTAL(void *pBuff) 
 {
    *(byte *) pBuff = oemi_cache.fmRadio_chan_total;
@@ -10406,17 +10506,6 @@ static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff)
 }
 #endif//FEATURE_TOUCHPAD
 
-static int OEMPriv_GetItem_CFGI_DL_FLAGS(void *pBuff)
-{
-	MEMCPY(pBuff,(void*)&oemi_cache.brew_dlflags,sizeof(uint32));
-	return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_DL_FLAGS(void *pBuff)
-{
-	 MEMCPY((void*) &oemi_cache.brew_dlflags, pBuff, sizeof(uint32));
-     OEMPriv_WriteOEMConfigList();
-     return SUCCESS;
-}
 
 
 static int OEMPriv_GetItem_CFGI_ALARM_FLAG(void *pBuff)

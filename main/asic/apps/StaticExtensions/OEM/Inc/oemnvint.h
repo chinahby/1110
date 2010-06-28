@@ -723,6 +723,8 @@ typedef enum {
 #define MAX_FMRADIO_STORED_CHANNEL 20
 #endif
 
+#define MAS_BREWSETINT_STRING    64
+
 typedef PACKED struct _sChanInfo
 {
     AECHAR          szName[MAX_FMRADIO_NAME_CHAR + 1];              //¹ã²¥Ì¨Ãû
