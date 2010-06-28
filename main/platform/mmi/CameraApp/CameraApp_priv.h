@@ -74,7 +74,11 @@
 #include "AEEMediaUtil.h"
 #include "AEEMedia.h"
 #include "AEECamera.h"
+#ifdef FEATURE_DISP_160X128
+#include "cameraapp_image160x128.brh"
+#else
 #include "cameraapp_image.brh"
+#endif
 #include "db.h"
 #ifdef FEATURE_SUPPORT_VC0848
 #include "Vc0848.h"
