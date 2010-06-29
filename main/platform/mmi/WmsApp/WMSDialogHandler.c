@@ -6560,21 +6560,14 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 AEERect rc;
                 AECHAR wstrText[2] = {0};
                 CMultiSendItemInfo *pItem = NULL;
+				int32 nCount = IVector_Size(pMe->m_pSendList);
                 uint16 nSelID = WmsApp_UpdateAddListMenu(pMe, pMenu);
 
-				//add by ydc 090603
-			    AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
 				int nLen=0;
 
-				if (NULL != pwsText)
-				{
-					nLen = WSTRLEN(pwsText);
-				}
-                //add by ydc end 090603
                 if (pMe->m_eMakeAddListMode != MAKEADDLIST_NONE)
                 {// 群发: 提示当前已输入地址数和最大允许输入地址数
                     AECHAR wstrTitle[MAX_TITLE_LEN] = {0};
-                    int32 nCount = IVector_Size(pMe->m_pSendList);
                     int nLen = 0;
                     
                     (void)ISHELL_LoadResString(pMe->m_pShell, 
@@ -6595,23 +6588,21 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 IMENUCTL_SetSel(pMenu, nSelID);
                 
                 pItem = WmsApp_GetAddItem(pMe->m_pSendList, (nSelID-MSG_CMD_BASE));
-                if (nLen<=0)
+                if (nCount<=0)
                 {
-                    //ITEXTCTL_SetText(pIText, wstrText, -1);     //dele by ydc 090603
+                    ITEXTCTL_SetText(pIText, wstrText, -1);     
                     
                     // 绘制底条提示
                     // Search      Back
                     //MENU_SETBOTTOMBAR(pMenu, BTBAR_FIND_BACK);
-                    //DRAW_BOTTOMBAR(BTBAR_FIND_BACK);
                     DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
                 }
                 else
                 {
-                   // (void)ITEXTCTL_SetText(pIText, pItem->m_szTo, -1);   //dele by ydc 090603
+                   (void)ITEXTCTL_SetText(pIText, pItem->m_szTo, -1);   
                     
                     // 绘制底条提示
-                    // Send       Delete
-                    //MENU_SETBOTTOMBAR(pMenu, BTBAR_SEND_EARSE);
+                    
                     if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
                         (pMe->m_eCreateWMSType == SEND_MSG_EDITRESERVE))
                     {
