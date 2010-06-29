@@ -840,14 +840,14 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
          MG_FARF(ADDR, ("Allocate memory failed"));
        return EFAILED;
       }
+      MEMCPY(pExpPara, pPara, sizeof(ExplorerPara));
    }
-   else
-   {
-	   return EFAILED;
-   }
+   //else
+   //{
+   //   return EFAILED;
+   //}
 
    MG_FARF(ADDR, ("copy explorer data, later just take pointer"));
-   MEMCPY(pExpPara, pPara, sizeof(ExplorerPara));
 
    SNPRINTF(pszArg, sizeof(pszArg),
             "%c,%u,%u",MG_STARTARGPREFIX_FILEEXPLORER,eType,pExpPara);
