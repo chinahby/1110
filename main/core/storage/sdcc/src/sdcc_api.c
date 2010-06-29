@@ -552,10 +552,9 @@ sdcc_open(int16 driveno)
           close_drive = TRUE;
           break;
       }
-#ifndef T_QSC1100
       /* re-program the clock for data transfer */
       sdcc_config_clk(SDCC_DATA_TRANSFER_MODE, sdcc_pdata.card_type);
-
+#ifndef T_QSC1100
       HWIO_OUTM(MCI_CLK,
                 HWIO_FMSK(MCI_CLK, FLOW_ENA),
                 MCI_CLK_SET_FLOW);
@@ -583,7 +582,6 @@ sdcc_open(int16 driveno)
 #endif
       /* Set the host state */
       sdcc_pdata.host_state = SDCC_HOST_TRAN;
-#ifndef T_QSC1100
       /* config MMC modes segment after enabling the DMA interrupt */
       if ( SDCC_CARD_MMC == sdcc_pdata.card_type ||
            SDCC_CARD_MMCHC == sdcc_pdata.card_type )
@@ -593,7 +591,6 @@ sdcc_open(int16 driveno)
             close_drive = TRUE;
          }
       }
-#endif
    }
    while (0);
    if(TRUE == close_drive)
@@ -1117,10 +1114,10 @@ sdcc_init(void)
          break;
 
       sdcc_pdata.curr_sd_drv = 0;
-#ifndef T_QSC1100
+      
       /* Turn on the SDCC clock */
       sdcc_config_clk(SDCC_INIT_MODE, SDCC_CARD_UNKNOWN);
-
+#ifndef T_QSC1100
       /* Re-configure the GPIO pins for SDCC */
 #ifdef FEATURE_6275_COMPILE
       gpio_config(SDCC_CLK);
@@ -1210,8 +1207,6 @@ sdcc_init(void)
       HWIO_OUTM(MCI_POWER,
                 HWIO_FMSK(MCI_POWER, CONTROL),
                 MCI_POWER_CTRL_ON);
-#else
-      gpio_out(SD_PWR_EN_N, 1);
 #endif
       if(sdcc_bsp_slot_interrupt_exists())
       {
@@ -1267,8 +1262,6 @@ sdcc_close(int16 driveno)
                        SDCC_CMD_INTERRUPTS    |
                        MCI_INT_MASK_PROG_DONE |
                        MCI_INT_MASK_SDIO_INTR );
-#else
-            gpio_out(SD_PWR_EN_N, 0);
 #endif
 #if defined(FEATURE_SDCC_FIX_FOR_EXTRA_10MA_ON_TCXO)  
 

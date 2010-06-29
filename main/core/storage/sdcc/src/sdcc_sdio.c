@@ -154,11 +154,11 @@ sdcc_find_sdio_card( void )
   uint32         voltage;
   uint32         mem_present = 0;
 
-#ifndef T_QSC1100
   /*-----------------------------------------------------------------------*/
   sdcc_config_clk(SDCC_IDENTIFICATION_MODE,
                   SDCC_CARD_UNKNOWN);
-    
+  
+#ifndef T_QSC1100
   if(sdio_card == SDIO_ATHEROS_MANFID)
   {
     sdcc_mdelay(SDCC_SDIO_WAIT_ATHEROS_CARD_RAMP_UP_TIME_MS);
@@ -180,8 +180,6 @@ sdcc_find_sdio_card( void )
               HWIO_FMSK(MCI_CLK, ENABLE)| HWIO_FMSK(MCI_CLK, PWRSAVE),
              MCI_CLK_ENABLED | MCI_CLK_SET_PWRSAVE);
   }
-#else
-  // TODO:
 #endif
 
   /* power ramp up time: 1ms */
@@ -365,8 +363,6 @@ SDCC_STATUS sdio_post_init( uint16            dev_manfid,
                 HWIO_FMSK(MCI_CLK, ENABLE)| HWIO_FMSK(MCI_CLK, PWRSAVE),
                 MCI_CLK_ENABLED | MCI_CLK_SET_PWRSAVE);
    }
-#else
-   // TODO:
 #endif
    /* re-program the clock */
    sdcc_config_clk(SDCC_DATA_TRANSFER_MODE,
@@ -632,8 +628,6 @@ sdcc_sdio_init(uint16 dev_manfid)
                 HWIO_FMSK(MCI_CLK, ENABLE)| HWIO_FMSK(MCI_CLK, PWRSAVE),
                 MCI_CLK_ENABLED | MCI_CLK_SET_PWRSAVE);
    }
-#else
-   // TODO:
 #endif
    /* re-program the clock */
    sdcc_config_clk(SDCC_DATA_TRANSFER_MODE,
@@ -1079,7 +1073,6 @@ sdcc_sdio_read
          rc = sdcc_command(&sdcc_cmd);
       }
 #else
-      // TODO:
       rc = sdcc_command(&sdcc_cmd);
 #endif
       INTFREE_SAV(isave);
@@ -1093,7 +1086,7 @@ sdcc_sdio_read
       rc = ( TRUE == sdcc_pdata.enable_dma) ? sdcc_process_interrupts(&sdcc_cmd) :
                                               sdcc_read_fifo(dw_buff,length);
 #else
-      rc = sdcc_read_fifo(dw_buff,length);
+      rc = sdcc_read_data(dw_buff,length);
 #endif
       if(SDCC_NO_ERROR == rc)
       {
@@ -1240,8 +1233,6 @@ sdcc_sdio_write
       {
          HWIO_OUT(MCI_DATA_CTL, data_ctrl);
       }
-#else
-      // TODO:
 #endif
       INTFREE_SAV(isave);
 
@@ -1253,7 +1244,7 @@ sdcc_sdio_write
       rc = (TRUE == sdcc_pdata.enable_dma) ? sdcc_process_interrupts(&sdcc_cmd):
                                           sdcc_write_fifo(dw_buff, length);
 #else
-      rc = sdcc_write_fifo(dw_buff, length);
+      rc = sdcc_write_data(dw_buff, length);
 #endif
       if(SDCC_NO_ERROR == rc)
       {

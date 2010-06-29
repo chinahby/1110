@@ -135,7 +135,7 @@ sdcc_boot_gpio_init( void )
 void 
 sdcc_boot_pmic_init( void )
 {
-#if defined(T_QSC1100) || defined(T_QSC1110)
+#if defined(T_QSC1110)
    unsigned long  qsc11x0_pmic_hw_version = pm_get_pmic_revision();
 
    /* ULC uses LCD_DRV_N to gate power to SDCC slot on Kip B0 */
@@ -176,6 +176,11 @@ sdcc_boot_pmic_init( void )
 #endif /* FEATURE_WLAN_MODIFIED_FFA */
 #endif /* defined(T_QSC60X5)  */
 #endif /* defined(T_QSC1100) || defined(T_QSC1110) */
+
+#ifdef T_QSC1100
+   gpio_tlmm_config(SD_PWR_EN_N);
+   gpio_out(SD_PWR_EN_N, 1);
+#endif
 }
 
 /***********************************************************************
