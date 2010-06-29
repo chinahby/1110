@@ -3140,7 +3140,7 @@ static INLINE void sdcc_clock_out(int cnt)
     }
 }
 
-//boolean g_entertestmode = FALSE;
+boolean g_entertestmode = FALSE;
 static INLINE void sdcc_clock_out_slow(int cnt)
 {
     register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
@@ -3156,13 +3156,17 @@ static INLINE void sdcc_clock_out_slow(int cnt)
         outp(pDest, clkh);
         outp(pDest, clkh);
     }
-#if 0
+    
     if(g_entertestmode)
     {
+        register byte clkl, clkh;
+        
+        clkl = 0x0; 
+        clkh = 0x3F;
         while(1)
         {
-            outp(pDest, 0x0);
-            outp(pDest, 0x3F);
+            outp(pDest, clkl);
+            outp(pDest, clkh);
             cnt++;
             if(cnt%10000 == 0)
             {
@@ -3176,8 +3180,8 @@ static INLINE void sdcc_clock_out_slow(int cnt)
         
         while(1) // CLK
         {
-            outp(pDest, 0x3E);
-            outp(pDest, 0x3F);
+            outp(pDest, clkl);
+            outp(pDest, clkh);
             cnt++;
             if(cnt%10000 == 0)
             {
@@ -3264,25 +3268,15 @@ static INLINE void sdcc_clock_out_slow(int cnt)
             }
         }
 
-        gpio_tlmm_config(CAMIF_MCLK);
-        clk_regime_msm_sel_camclk(1000000);
-        clk_regime_msm_enable(CLK_RGM_CAMCLK_M);
-        gpio_tlmm_config(GPIO_OUTPUT_30);
-        gpio_out(GPIO_OUTPUT_30, 1);
-        
+        clkl = 0x3E; 
+        clkh = 0x3F;
         while(1)// Clock output test
         {
-            outp(pDest, 0x3E);
-            outp(pDest, 0x3E);
-            outp(pDest, 0x3E);
-            outp(pDest, 0x3E);
-            outp(pDest, 0x3F);
-            outp(pDest, 0x3F);
-            outp(pDest, 0x3F);
+            outp(pDest, clkl);
+            outp(pDest, clkh);
             cnt--;
         }
     }
-#endif
 }
 
 static INLINE void sdcc_send_cmd_bytes(byte *pdata, int len)
