@@ -329,7 +329,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_LOCKCODE_MAXLEN 5
 #define OEMNV_LOCKUIM_MAXLEN 10
 
-#define OEMNV_DEFAULT_BANNER     "OT-I650C"   //·±Ìå°æºÚ°×»ú
+#define OEMNV_DEFAULT_BANNER     "IVIO"   //·±Ìå°æºÚ°×»ú
 
 #define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper01.png"
 #ifdef FEATURE_SCREEN_SAVE
