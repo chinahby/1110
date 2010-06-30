@@ -382,6 +382,21 @@
 	<String Id="1010" Name="IDS_STRING_PRIVACY_POLICY" Encoding="Unicode">
 		<Text>Privacy Policy</Text>
 	</String>
+	<String Id="1011" Name="IDS_STRING_NET_LOCK" Encoding="Unicode">
+		<Text>net lock</Text>
+	</String>
+	<String Id="1012" Name="IDS_STRING_NET_LOCK_FLAG" Encoding="Unicode">
+		<Text>Enabled net lock</Text>
+	</String>
+	<String Id="1013" Name="IDS_STRING_NET_LOCK_MNC" Encoding="Unicode">
+		<Text>mnc</Text>
+	</String>
+	<String Id="1014" Name="IDS_STRING_NET_LOCK_MCC" Encoding="Unicode">
+		<Text>mcc</Text>
+	</String>
+	<String Id="1015" Name="IDS_STRING_NET_LOCK_SID" Encoding="Unicode">
+		<Text>sid</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
@@ -756,6 +771,54 @@
 				<TitleID>IDS_SECONDARY_SERVER</TitleID>
 				<Items/></Text>
 			<SoftKey Id="7062" Name="IDC_SECONDARY_SERVER_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="42" Name="IDD_NET_LOCK_DIALOG" Focus="7053">
+		<Controls>
+			<Menu Id="7053" Name="IDC_NET_LOCK_MENU">
+				<TitleID>IDS_STRING_NET_LOCK</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="43" Name="IDD_LOCK_DIALOG" Focus="7054">
+		<Controls>
+			<Text Id="7054" Name="IDC_TEXT_LOCK_FLAG">
+				<TitleID>IDS_STRING_NET_LOCK_FLAG</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7055" Name="IDC_SOFTKEY_LOCK_FLAG">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="44" Name="IDD_MNC_DIALOG" Focus="7064">
+		<Controls>
+			<Text Id="7064" Name="IDC_TEXT_MNC">
+				<TitleID>IDS_STRING_NET_LOCK_MNC</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7065" Name="IDC_SOFTKEY_MNC">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="45" Name="IDD_MCC_DIALOG" Focus="7066">
+		<Controls>
+			<Text Id="7066" Name="IDC_TEXT_MCC">
+				<TitleID>IDS_STRING_NET_LOCK_MCC</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7067" Name="IDC_SOFTKEY_MCC">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="46" Name="IDD_SID_DIALOG" Focus="7068">
+		<Controls>
+			<Text Id="7068" Name="IDC_TEXT_SID">
+				<TitleID>IDS_STRING_NET_LOCK_SID</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7069" Name="IDC_SOFTKEY_SID">
 				<Items/>
 			</SoftKey>
 		</Controls>

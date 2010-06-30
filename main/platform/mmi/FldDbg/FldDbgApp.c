@@ -495,6 +495,28 @@ static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
                                                AEEEvent  eCode,
                                                uint16    wParam,
                                                uint32    dwParam);
+static boolean CFieldDebug_NET_LOCK_HandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+
+static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
+
+static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
 
 #ifdef FEATURE_JPEG_DECODER
 static void CFieldDebug_RGB24toRGB16(uint16 * outPtr, uint8 * inPtr, uint32 num_bytes);
@@ -666,7 +688,12 @@ static const PFNAEEEVENT sDialogEventHandlers[] =
    (PFNAEEEVENT) CFieldDebug_UserNameMenuHandleEvent,
    (PFNAEEEVENT) CFieldDebug_UserPasswordMenuHandleEvent,
    (PFNAEEEVENT) CFieldDebug_PrimaryServerMenuHandleEvent,
-   (PFNAEEEVENT) CFieldDebug_SecondaryServerMenuHandleEvent
+   (PFNAEEEVENT) CFieldDebug_SecondaryServerMenuHandleEvent,
+   (PFNAEEEVENT) CFieldDebug_NET_LOCK_HandleEvent,
+   (PFNAEEEVENT) CFieldDebug_Enabled_Lock_HandleEvent,
+   (PFNAEEEVENT) CFieldDebug_MNC_HandleEvent,
+   (PFNAEEEVENT) CFieldDebug_MCC_HandleEvent,
+   (PFNAEEEVENT) CFieldDebug_SID_HandleEvent
 };
 
 
@@ -773,7 +800,7 @@ int AEEClsCreateInstance(AEECLSID  ClsId,
       if (ISHELL_CreateInstance(pIShell, AEECLSID_DISPLAY, 
             (void **) &pme->m_pDisplay) != SUCCESS)
       {
-          MSG_ERROR ("pMe->m_pDisplay could not be created", 0, 0, 0);
+          MSG_FATAL ("pMe->m_pDisplay could not be created", 0, 0, 0);
           return EFAILED;
       }*/
 
@@ -1121,7 +1148,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
                                      uint32       dwParam)
 {
   IMenuCtl *pm = NULL ,*psk=NULL;
-  MSG_ERROR("CFieldDebug_OnDialogStart Start", 0, 0, 0);
+  MSG_FATAL("CFieldDebug_OnDialogStart Start", 0, 0, 0);
   switch (wParam) {
     case IDD_TOP_DIALOG:
     	{
@@ -1136,7 +1163,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_ESN,  IDS_ESN, NULL, 0);      
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_JPEG_DECODE,  IDS_JPEG_DECODE, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_RATS_TITLE,  IDS_RATS_TITLE, NULL, 0);   
-       
+      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK,  IDS_STRING_NET_LOCK, NULL, 0);  
       MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
       }                                     
       break;
@@ -1190,6 +1217,20 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 			MSG_FATAL ("EVT_DIALOG_START wParam == IDS_BREWSETTUBG_TITLE222222222", 0, 0, 0);
        }                                    
       break;
+	case IDD_NET_LOCK_DIALOG:
+		{
+			MSG_FATAL ("EVT_DIALOG_START wParam == IDD_NET_LOCK_DIALOG1111111111", 0, 0, 0);
+			pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
+                                             IDC_NET_LOCK_MENU);
+      		IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+			IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_FLAG,  IDS_STRING_NET_LOCK_FLAG, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_MNC,   IDS_STRING_NET_LOCK_MNC, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_MCC,   IDS_STRING_NET_LOCK_MCC, NULL, 0);
+      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_SID,   IDS_STRING_NET_LOCK_SID, NULL, 0);
+			MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
+			MSG_FATAL ("EVT_DIALOG_START wParam == IDD_NET_LOCK_DIALOG222222222", 0, 0, 0);
+       }                                    
+      break;      
     case IDD_VERSION_DIALOG:
     	{
 	    
@@ -1203,11 +1244,11 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       break;
     case IDD_ESN_DIALOG:
     	{
-	    MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+	    MSG_FATAL("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
         psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_ESN_SOFTKEY);
         if(psk == NULL)
         {
-            MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+            MSG_FATAL("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
 			break;
         }
         IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);       
@@ -1240,11 +1281,11 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 	  break;
 	case IDD_DLFLAGS_DIALOG:
 	  {
-	  	MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+	  	MSG_FATAL("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
         psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_DLFLAGS_SOFTKEY);
         if(psk == NULL)
         {
-            MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+            MSG_FATAL("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
 			break;
         }
         IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
@@ -1333,11 +1374,11 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 	  break;
 	case IDD_PRIMARYDNS_DIALOG:
 	  {
-	  	MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
+	  	MSG_FATAL("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG", 0, 0, 0);
         psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_PRIMARYDNS_SOFTKEY);
         if(psk == NULL)
         {
-            MSG_ERROR("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
+            MSG_FATAL("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
 			break;
         }
         IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
@@ -1539,12 +1580,48 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 
     case IDD_RATS_TEST_DIALOG:
       break;
+      
+    case IDD_LOCK_DIALOG:
+    {
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
+                                          IDC_SOFTKEY_LOCK_FLAG);
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+    }
+    break;
+
+    case IDD_MNC_DIALOG:
+    {
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
+                                          IDC_SOFTKEY_MNC);
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+    }
+    break;    
+
+    case IDD_MCC_DIALOG:
+    {
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
+                                          IDC_SOFTKEY_MCC);
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+    }
+    break;       
+
+    case IDD_SID_DIALOG:
+    {
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
+                                          IDC_SOFTKEY_SID);
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+    }
+    break;        
 
     default:
-      MSG_ERROR ("Unhandled dialog %d", wParam, 0,0);
+      MSG_FATAL ("Unhandled dialog %d", wParam, 0,0);
       return FALSE;
   }
-  MSG_ERROR("CFieldDebug_OnDialogStart End", 0, 0, 0);
+  MSG_FATAL("CFieldDebug_OnDialogStart End", 0, 0, 0);
   return TRUE;
 }
 
@@ -1991,7 +2068,7 @@ static AECHAR* CFieldDebug_DebugScreenReadItem(CFieldDebug *pme)
    }
    else
    {
-     MSG_ERROR("Malloc failed!", 0, 0, 0);
+     MSG_FATAL("Malloc failed!", 0, 0, 0);
    }
    return pszBuf;
 }
@@ -3051,7 +3128,7 @@ static boolean CFieldDebug_MMCDownloadHandleEvent(CFieldDebug * pme,
             pme->old_port_map2 = RDM_NULL_DEV;
 
 #else
-            MSG_ERROR("Non NMEA state reached",0, 0, 0);
+            MSG_FATAL("Non NMEA state reached",0, 0, 0);
 #endif
             break;
 
@@ -3071,7 +3148,7 @@ static boolean CFieldDebug_MMCDownloadHandleEvent(CFieldDebug * pme,
             break;
 
           default:
-            MSG_ERROR("Unhandled RDM Status state", 0, 0, 0);
+            MSG_FATAL("Unhandled RDM Status state", 0, 0, 0);
             break;
 
           }
@@ -3079,7 +3156,7 @@ static boolean CFieldDebug_MMCDownloadHandleEvent(CFieldDebug * pme,
         else
         {
           //Error
-          MSG_ERROR("RDM status error", 0, 0, 0);
+          MSG_FATAL("RDM status error", 0, 0, 0);
           ISHELL_EndDialog(pme->a.m_pIShell);
           ISHELL_CreateDialog(pme->a.m_pIShell,
             AEE_FLDDBG_RES_FILE, IDD_ERROR_DIALOG, NULL);
@@ -3087,7 +3164,7 @@ static boolean CFieldDebug_MMCDownloadHandleEvent(CFieldDebug * pme,
         return TRUE;
 
       default:
-        MSG_ERROR("Unidentified EVT_USER:%d", wParam, 0, 0);
+        MSG_FATAL("Unidentified EVT_USER:%d", wParam, 0, 0);
         break;
       }
       return TRUE;
@@ -3677,7 +3754,7 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
 	   IMenuCtl *psk = NULL;
 	   PARAM_NOT_REF(dwParam)
 	   
-	   MSG_ERROR("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
 	   switch (eCode) {
 	
 	   case EVT_COMMAND:
@@ -3784,7 +3861,7 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
 	   default:
 		  break;
 	   }
-	   MSG_ERROR("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
 	   return FALSE;
 
 }
@@ -3815,7 +3892,7 @@ static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
 	   IDialog * p_diag = NULL;
 	   IMenuCtl *psk = NULL;
 	   PARAM_NOT_REF(dwParam)
-	   MSG_ERROR("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
 	   switch (eCode) {
 	
 	   case EVT_COMMAND:
@@ -3916,7 +3993,7 @@ static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
 	   default:
 		  break;
 	   }
-	   MSG_ERROR("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
 	   return FALSE;
 
 }
@@ -3947,7 +4024,7 @@ SIDE EFFECTS
 	       IMenuCtl *psk = NULL;
 	 	   PARAM_NOT_REF(dwParam)
 		   
-		   MSG_ERROR("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
+		   MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
 		   switch (eCode) {
 		
 		   case EVT_COMMAND:
@@ -4054,7 +4131,7 @@ SIDE EFFECTS
 		   default:
 			  break;
 		   }
-		   MSG_ERROR("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
+		   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
 		   return FALSE;
 
 }
@@ -4306,7 +4383,7 @@ static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
 	 IDialog * p_diag = NULL;
 	 IMenuCtl *psk = NULL;
 	 PARAM_NOT_REF(dwParam)  
-     MSG_ERROR("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
+     MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
      switch (eCode) {
   
      case EVT_COMMAND:
@@ -4395,7 +4472,7 @@ static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
      default:
   	  break;
      }
-     MSG_ERROR("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
+     MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
      return FALSE;
 
 
@@ -4465,6 +4542,12 @@ static boolean CFieldDebug_TopMenuHandleEvent(CFieldDebug * pme,
          (void) CFieldDebug_MoveToDialog(pme, IDD_RATS_DIALOG);
          return TRUE;
       }
+	  if (wParam == IDS_STRING_NET_LOCK)     //ADD BY YANGDECAI
+	  {
+	  	 MSG_FATAL ("CFieldDebug_TopMenuHandleEvent wParam == IDS_BREWSETTUBG_TITLE", 0, 0, 0);
+	  	(void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);//进入BREWSETING 菜单
+         return TRUE;
+	  }      
 
       //Create JPEG Dialog
       if (wParam == IDS_JPEG_DECODE)
@@ -5345,7 +5428,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
 
    if(ps == NULL)
    {
-     MSG_ERROR("IShell Null", 0, 0, 0);
+     MSG_FATAL("IShell Null", 0, 0, 0);
      return FALSE;
    }
 
@@ -5359,7 +5442,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
        
        if (ISHELL_CloseApplet(pme->a.m_pIShell, FALSE) != SUCCESS)
        {
-         MSG_ERROR("Unable to go background.", 0, 0, 0);
+         MSG_FATAL("Unable to go background.", 0, 0, 0);
        }
      }
      else
@@ -5484,7 +5567,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
          pGSDIConf = (gsdi_cnf_T*) dwParam;
          if(pGSDIConf == NULL)
          {
-           MSG_ERROR("PGSDIConf NULL", 0, 0, 0);
+           MSG_FATAL("PGSDIConf NULL", 0, 0, 0);
            return FALSE;
          }
          //First check that App is not suspended, otherwise nothing to do!
@@ -5516,7 +5599,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
          else
          {
           //Wrong response..display error message
-           MSG_ERROR("Failed in EVT_SIM_WRITTEN_FINAL", 0, 0, 0);
+           MSG_FATAL("Failed in EVT_SIM_WRITTEN_FINAL", 0, 0, 0);
            FREE(pGSDIConf);
            return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
              IDD_ERROR_DIALOG, NULL));
@@ -5530,7 +5613,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
          pGSDIConf = (gsdi_cnf_T*) dwParam;
          if(pGSDIConf == NULL)
          {
-           MSG_ERROR("PGSDIConf NULL", 0, 0, 0);
+           MSG_FATAL("PGSDIConf NULL", 0, 0, 0);
            return FALSE;
          }
          //First check that App is not suspended, otherwise nothing to do!
@@ -5563,7 +5646,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
          }
          if(bGSDIError)
          {
-           MSG_ERROR("Failed in EVT_SIM_WRITTEN", 0, 0, 0);
+           MSG_FATAL("Failed in EVT_SIM_WRITTEN", 0, 0, 0);
            //Wrong response..display error message
            //Clear the "wait" dialog
            if(IDD_WAIT_FPLMN_CLEAR_DIALOG == wDlgID)
@@ -5585,7 +5668,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
          pGSDIConf = (gsdi_cnf_T*) dwParam;
          if(pGSDIConf == NULL)
          {
-           MSG_ERROR("PGSDIConf NULL", 0, 0, 0);
+           MSG_FATAL("PGSDIConf NULL", 0, 0, 0);
            return FALSE;
          }
          if(pIDialog == NULL)
@@ -5642,14 +5725,14 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
              break;
 
            default:
-             MSG_ERROR("Invalid card mode", 0, 0, 0);
+             MSG_FATAL("Invalid card mode", 0, 0, 0);
              FREE(pGSDIConf);
              return FALSE;
            }
          }
          if(bGSDIError)
          {
-           MSG_ERROR("Failed in EVT_GET_FILE_ATTR", 0, 0, 0);
+           MSG_FATAL("Failed in EVT_GET_FILE_ATTR", 0, 0, 0);
            //Wrong response..display error message
            //Clear the "wait" dialog
            if(IDD_WAIT_FPLMN_CLEAR_DIALOG == wDlgID)
@@ -6370,7 +6453,7 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
       pIMenuCtl = (IMenuCtl*) IDIALOG_GetControl((IDialog*) dwParam, wMenuID);
       if(pIMenuCtl == NULL)
       {
-        MSG_ERROR("Unable to get menu for %d", wParam, 0, 0);
+        MSG_FATAL("Unable to get menu for %d", wParam, 0, 0);
         return FALSE;
       }
       if(wParam == IDD_SECURITY_SERVICES)
@@ -6697,7 +6780,7 @@ void EndErrorMessageDlg(void *pUser)
 
   if(pme == NULL)
   {
-     MSG_ERROR("pme NULL", 0, 0, 0);
+     MSG_FATAL("pme NULL", 0, 0, 0);
      return;
   }
 
@@ -6705,7 +6788,7 @@ void EndErrorMessageDlg(void *pUser)
 
   if(pIShell == NULL)
   {
-     MSG_ERROR("pIShell NULL", 0, 0, 0);
+     MSG_FATAL("pIShell NULL", 0, 0, 0);
      return;
   }
 
@@ -6713,13 +6796,13 @@ void EndErrorMessageDlg(void *pUser)
 
   if(pIDialog == NULL)
   {
-    MSG_ERROR("pIDialog NULL", 0, 0, 0);
+    MSG_FATAL("pIDialog NULL", 0, 0, 0);
     return;
   }
 
   if(IDD_ERROR_DIALOG != IDIALOG_GetID(pIDialog))
   {
-    MSG_ERROR("Non-error dialog end", 0, 0, 0);
+    MSG_FATAL("Non-error dialog end", 0, 0, 0);
     return;
   }
 
@@ -6762,14 +6845,14 @@ void CFieldDebug_SIMWrittenFinalCb(gsdi_cnf_T* pGSDIConf)
 
   if(pIShell == NULL)
   {
-     MSG_ERROR("pIShell NULL", 0, 0, 0);
+     MSG_FATAL("pIShell NULL", 0, 0, 0);
      return;
   }
 
   pLGSDIConf= (gsdi_cnf_T*)MALLOC(sizeof(gsdi_cnf_T));
   if(pLGSDIConf == NULL)
   {
-    MSG_ERROR("Malloc failed!", 0, 0, 0);
+    MSG_FATAL("Malloc failed!", 0, 0, 0);
     return;
   }
   MEMCPY((void*) pLGSDIConf, (void*) pGSDIConf, sizeof(gsdi_cnf_T));
@@ -6799,14 +6882,14 @@ void CFieldDebug_SIMWrittenCb(gsdi_cnf_T* pGSDIConf)
 
   if(pIShell == NULL)
   {
-     MSG_ERROR("pIShell NULL", 0, 0, 0);
+     MSG_FATAL("pIShell NULL", 0, 0, 0);
      return;
   }
 
   pLGSDIConf= (gsdi_cnf_T*)MALLOC(sizeof(gsdi_cnf_T));
   if(pLGSDIConf == NULL)
   {
-    MSG_ERROR("Malloc failed!", 0, 0, 0);
+    MSG_FATAL("Malloc failed!", 0, 0, 0);
     return;
   }
   MEMCPY((void*) pLGSDIConf, (void*) pGSDIConf, sizeof(gsdi_cnf_T));
@@ -6836,13 +6919,13 @@ void CFieldDebug_GetFileAttrCb(gsdi_cnf_T * pGSDIConf)
 
   if(pIShell == NULL)
   {
-     MSG_ERROR("pIShell NULL", 0, 0, 0);
+     MSG_FATAL("pIShell NULL", 0, 0, 0);
      return;
   }
   pLGSDIConf= (gsdi_cnf_T*)MALLOC(sizeof(gsdi_cnf_T));
   if(pLGSDIConf == NULL)
   {
-    MSG_ERROR("Malloc failed!", 0, 0, 0);
+    MSG_FATAL("Malloc failed!", 0, 0, 0);
     return;
   }
   MEMCPY((void*) pLGSDIConf, (void*) pGSDIConf, sizeof(gsdi_cnf_T));
@@ -6875,7 +6958,7 @@ void CFieldDebug_RDMCb(rdm_assign_status_type status,
   PRINT_FUNCTION_NAME();
   if(pIShell == NULL)
   {
-    MSG_ERROR("pIShell NULL", 0, 0, 0);
+    MSG_FATAL("pIShell NULL", 0, 0, 0);
     return;
   }
   ISHELL_PostEventEx(pIShell, 0, AEECLSID_FIELDDEBUGAPP, EVT_USER,
@@ -7420,7 +7503,7 @@ static boolean CFieldDebug_EsnMenuHandleEvent(CFieldDebug *pme,
 {
    PARAM_NOT_REF(dwParam)
 
-   MSG_ERROR("CFieldDebug_EsnMenuHandleEvent Start", 0, 0, 0);
+   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent Start", 0, 0, 0);
    switch (eCode) {
 
    case EVT_COMMAND:
@@ -7463,7 +7546,7 @@ static boolean CFieldDebug_EsnMenuHandleEvent(CFieldDebug *pme,
    default:
       break;
    }
-   MSG_ERROR("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
+   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
    return FALSE;
 }
 
@@ -7497,7 +7580,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     AECHAR  sTitle[20]; 
     int ret = 0;
     
-	MSG_ERROR("CFieldDebug_DrawEsnScreen Start", 0, 0, 0);
+	MSG_FATAL("CFieldDebug_DrawEsnScreen Start", 0, 0, 0);
     MEMSET (sTitle, 0, sizeof(sTitle));
 
     (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf));    
@@ -7506,7 +7589,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
                                IDS_ESN,
                                (szBuf + n),
                                sizeof(szBuf));
-    MSG_ERROR("CFieldDebug_DrawEsnScreen 1 ret=%d", ret, 0, 0);
+    MSG_FATAL("CFieldDebug_DrawEsnScreen 1 ret=%d", ret, 0, 0);
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
     
@@ -7540,7 +7623,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 
    if(p_stk == NULL)
    {
-       MSG_ERROR("CFieldDebug_DrawEsnScreen 2 p_stk == NULL", 0, 0, 0);
+       MSG_FATAL("CFieldDebug_DrawEsnScreen 2 p_stk == NULL", 0, 0, 0);
    }
    // Set the values of the title and text strings for this control
     ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
@@ -7556,7 +7639,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
                           AEE_FONT_NORMAL);
    
    (void) ISTATIC_Redraw(p_stk);
-   MSG_ERROR("CFieldDebug_DrawEsnScreen End", 0, 0, 0);
+   MSG_FATAL("CFieldDebug_DrawEsnScreen End", 0, 0, 0);
 }
 
 
@@ -7570,7 +7653,7 @@ static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
 	   IMenuCtl *psk = NULL;
 	   PARAM_NOT_REF(dwParam)
 	   
-	   MSG_ERROR("CFieldDebug_SecondaryDNSMenuHandleEvent Start", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_SecondaryDNSMenuHandleEvent Start", 0, 0, 0);
 	   switch (eCode) {
 	
 	   case EVT_COMMAND:
@@ -7656,7 +7739,7 @@ static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
 	   default:
 		  break;
 	   }
-	   MSG_ERROR("CFieldDebug_SecondaryDNSMenuHandleEvent End", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_SecondaryDNSMenuHandleEvent End", 0, 0, 0);
 	   return FALSE;
 
 }
@@ -7671,7 +7754,7 @@ static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
 	   IMenuCtl *psk = NULL;
 	   PARAM_NOT_REF(dwParam)
 	   
-	   MSG_ERROR("CFieldDebug_UserNameMenuHandleEvent Start", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_UserNameMenuHandleEvent Start", 0, 0, 0);
 	   switch (eCode) {
 	
 	   case EVT_COMMAND:
@@ -7778,7 +7861,7 @@ static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
 	   default:
 		  break;
 	   }
-	   MSG_ERROR("CFieldDebug_UserNameMenuHandleEvent End", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_UserNameMenuHandleEvent End", 0, 0, 0);
 	   return FALSE;
 
 }
@@ -7793,7 +7876,7 @@ static boolean CFieldDebug_UserPasswordMenuHandleEvent(CFieldDebug *pme,
 	   IMenuCtl *psk = NULL;
 	   PARAM_NOT_REF(dwParam)
 	   
-	   MSG_ERROR("CFieldDebug_UserPasswordMenuHandleEvent Start", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_UserPasswordMenuHandleEvent Start", 0, 0, 0);
 	   switch (eCode) {
 	
 	   case EVT_COMMAND:
@@ -7885,7 +7968,7 @@ static boolean CFieldDebug_UserPasswordMenuHandleEvent(CFieldDebug *pme,
 	   default:
 		  break;
 	   }
-	   MSG_ERROR("CFieldDebug_UserPasswordMenuHandleEvent End", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_UserPasswordMenuHandleEvent End", 0, 0, 0);
 	   return FALSE;
 
 }
@@ -7900,7 +7983,7 @@ static boolean CFieldDebug_PrimaryServerMenuHandleEvent(CFieldDebug *pme,
 	   IMenuCtl *psk = NULL;
 	   PARAM_NOT_REF(dwParam)
 	   
-	   MSG_ERROR("CFieldDebug_PrimaryServerMenuHandleEvent Start", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_PrimaryServerMenuHandleEvent Start", 0, 0, 0);
 	   switch (eCode) {
 	
 	   case EVT_COMMAND:
@@ -7983,7 +8066,7 @@ static boolean CFieldDebug_PrimaryServerMenuHandleEvent(CFieldDebug *pme,
 	   default:
 		  break;
 	   }
-	   MSG_ERROR("CFieldDebug_PrimaryServerMenuHandleEvent End", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_PrimaryServerMenuHandleEvent End", 0, 0, 0);
 	   return FALSE;
 
 }
@@ -7998,7 +8081,7 @@ static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
 	   IMenuCtl *psk = NULL;
 	   PARAM_NOT_REF(dwParam)
 	   
-	   MSG_ERROR("CFieldDebug_SecondaryServerMenuHandleEvent Start", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_SecondaryServerMenuHandleEvent Start", 0, 0, 0);
 	   switch (eCode) {
 	
 	   case EVT_COMMAND:
@@ -8083,8 +8166,669 @@ static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
 	   default:
 		  break;
 	   }
-	   MSG_ERROR("CFieldDebug_SecondaryServerMenuHandleEvent End", 0, 0, 0);
+	   MSG_FATAL("CFieldDebug_SecondaryServerMenuHandleEvent End", 0, 0, 0);
 	   return FALSE;
 
 }
+
+static boolean CFieldDebug_NET_LOCK_HandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam)
+{
+    MSG_FATAL("CFieldDebug_NET_LOCK_HandleEvent Start", 0,0,0);
+    switch (eCode) 
+    {
+        case EVT_COMMAND:
+            switch (wParam) 
+            {
+                case IDS_STRING_NET_LOCK_FLAG:
+                {
+                    IMenuCtl *ctl;
+                    IDialog *dlg;
+                    MSG_FATAL ("IDS_STRING_NET_LOCK_FLAG 1", 0, 0, 0);
+                    dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+                    ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_NET_LOCK_MENU);
+                    pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+                    MSG_FATAL ("IDS_STRING_NET_LOCK_FLAG 2", 0, 0, 0);
+                    (void) CFieldDebug_MoveToDialog(pme, IDD_LOCK_DIALOG);
+                    return TRUE;
+                }
+
+                case IDS_STRING_NET_LOCK_MNC:
+                {
+                    IMenuCtl *ctl;
+                    IDialog *dlg;
+
+                    dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+                    ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_NET_LOCK_MENU);
+                    pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+                    (void) CFieldDebug_MoveToDialog(pme, IDD_MNC_DIALOG);								
+                    return TRUE;
+                }
+                
+                case IDS_STRING_NET_LOCK_MCC:
+                {
+                    IMenuCtl *ctl;
+                    IDialog *dlg;
+
+                    dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+                    ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_NET_LOCK_MENU);
+                    pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+                    (void) CFieldDebug_MoveToDialog(pme, IDD_MCC_DIALOG);									
+                    return TRUE;
+                }
+
+                case IDS_STRING_NET_LOCK_SID:
+                {
+                    IMenuCtl *ctl;
+                    IDialog *dlg;
+
+                    dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+                    ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_NET_LOCK_MENU);
+                    pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+                    (void) CFieldDebug_MoveToDialog(pme, IDD_SID_DIALOG);									
+                    return TRUE;
+                } 
+                    
+                default:
+                break;
+            }
+            break;
+        case EVT_KEY:
+            switch (wParam) 
+            {
+                case AVK_CLR:
+                    (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
+                    return TRUE;
+                default:
+                break;
+            }
+        break;
+        case EVT_DIALOG_START:
+            MSG_FATAL ("EVT_DIALOG_START wParam == IDS_STRING_NET_LOCK", 0, 0, 0);
+            CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+            return TRUE;
+        case EVT_DIALOG_END:
+            return TRUE;
+        default:
+            break;
+    }
+    return FALSE;
+}
+
+static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
+											   AEEEvent  eCode,
+											   uint16	 wParam,
+											   uint32	 dwParam)
+{
+    ITextCtl *pIText = NULL; 
+    IDialog * p_diag = NULL;
+    IMenuCtl *psk = NULL;
+    PARAM_NOT_REF(dwParam)
+
+    MSG_FATAL("CFieldDebug_Enabled_Lock_HandleEvent Start", 0, 0, 0);
+    switch (eCode) 
+    {
+        case EVT_COMMAND:
+        {
+            if(wParam == IDS_OK)
+            {
+                AECHAR pwstrText[2] = {0};
+                char string[2];
+                word enabledFlag = 0;
+                p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+             //   (void) ICONFIG_GetItem(pme->m_pIConfig,
+             //   CFGI_NET_LOCK_ENABLED,
+              //  &enabledFlag,
+             //   sizeof(uint8));
+                DBGPRINTF("enabledFlag::::::111111111::::::::::%d",enabledFlag);
+                pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_TEXT_LOCK_FLAG);
+                ITEXTCTL_SetActive(pIText,TRUE);
+                (void)ITEXTCTL_GetText(pIText,pwstrText,2);
+                (void) WSTRTOSTR(pwstrText, string, sizeof(string));
+                enabledFlag= (word)ATOI(string);
+                DBGPRINTF("enabledFlag:::::::2222222222:::::::::%d",enabledFlag);
+                (void) ICONFIG_SetItem(pme->m_pIConfig,
+                CFGI_NET_LOCK_ENABLED,
+                &enabledFlag,
+                sizeof(word));
+                (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                return TRUE;    
+            }
+            if(wParam == IDS_CANCEL)
+            {
+                (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                return TRUE; 
+            }
+            return FALSE;
+        }
+        case EVT_KEY:
+        {
+            switch (wParam) 
+            {
+                case AVK_CLR:
+                {
+                    if (pme->m_dlgID == IDD_NET_LOCK_DIALOG)
+                    {
+                    (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                    }
+                    return TRUE;
+                }
+                case AVK_SELECT:
+                case AVK_INFO:
+                {
+                    return TRUE;    
+                }
+                break;
+                default:
+                    break;
+            }
+            return FALSE;
+        }
+        case EVT_DIALOG_START:
+        {
+            char szBuf[2] = {0};
+            int n = 0;
+            word enabledFlag = 0;
+            AECHAR string[2]={0};
+            pme->m_pActiveIDlg = (IDialog*)dwParam;
+            (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+            pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_TEXT_LOCK_FLAG);
+            (void) ICONFIG_GetItem(pme->m_pIConfig,
+            CFGI_NET_LOCK_ENABLED,
+            &enabledFlag,
+            sizeof(word));
+            DBGPRINTF("enabledFlag::::::00000000::::::::::%d",enabledFlag);
+            SPRINTF(szBuf,"%d\0", enabledFlag);
+            STRTOWSTR(szBuf, string, NV_MAX_SID_LOCK); 
+            n = WSTRLEN(string);
+            ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            if (NULL != szBuf)
+            {
+                ITEXTCTL_SetMaxSize ( pIText, 1);
+                (void)ITEXTCTL_SetText(pIText,string,-1);
+                ITEXTCTL_SetCursorPos(pIText, n+1);
+            }  
+            return TRUE;
+        }
+        case EVT_DIALOG_END:
+            return TRUE;
+        default:
+            break;
+    }
+    MSG_FATAL("CFieldDebug_Enabled_Lock_HandleEvent End", 0, 0, 0);
+    return FALSE;
+}
+
+static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
+											   AEEEvent  eCode,
+											   uint16	 wParam,
+											   uint32	 dwParam)
+{
+    ITextCtl *pIText = NULL; 
+    IDialog * p_diag = NULL;
+    IMenuCtl *psk = NULL;
+    PARAM_NOT_REF(dwParam)
+
+    MSG_FATAL("CFieldDebug_MNC_HandleEvent Start", 0, 0, 0);
+    switch (eCode) 
+    {
+        case EVT_COMMAND:
+        {
+            MSG_FATAL("mnc:EVT_COMMAND",0,0,0);
+            if(wParam == IDS_OK)
+            {
+                AECHAR pwstrText[30] = {0};
+                char string[30];
+                word mnc[NV_MAX_SID_LOCK] = {0};
+                int i, j, k = 0;
+                int total = 0;
+                int step = 0, temp;
+                p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+             //   (void) ICONFIG_GetItem(pme->m_pIConfig,
+             //   CFGI_NET_LOCK_ENABLED,
+              //  &enabledFlag,
+             //   sizeof(uint8));
+                pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_TEXT_MNC);
+                ITEXTCTL_SetActive(pIText,TRUE);
+                (void)ITEXTCTL_GetText(pIText,pwstrText,30);
+                (void) WSTRTOSTR(pwstrText, string, sizeof(string));
+                MSG_FATAL("mnc:text=%s",string,0,0);
+                MSG_FATAL("mnc:::::::2222222222:::::::::text length=%d",STRLEN(string),0,0);
+                temp = string[0];
+                for(i = 0; i < STRLEN(string); i++)
+                {
+                    MSG_FATAL("mnc::string[%d]=%d",i,string[i],0);
+                    if(((string[i] < 48) || (string[i] > 57)) || (i == STRLEN(string)-1))//输入的不是数字时就表示一个MNC
+                    {
+                        if(k >= NV_MAX_SID_LOCK)
+                        {
+                            MSG_FATAL("mnc:::::::3333333333:::::::::k=%d",k,0,0);
+                            break;
+                        }
+                        if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
+                        {
+                            step++;
+                        }
+                        MSG_FATAL("mnc:::::::3333333333:::::::::step=%d",step,0,0);
+                        for(j = 0; j < step; j++)
+                        {
+                           //MSG_FATAL("mnc:::::::3333333333:::::::::i-j-1=%d, FPOW(10, j)=%d, j=%d",i-j-1,FPOW(10, j),j);
+                            if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
+                            {
+                                total += (string[i-j] - '0')*FPOW(10, j);
+                            }
+                            else
+                            {
+                                total += (string[i-j-1] - '0')*FPOW(10, j);
+                            }
+                        }
+                        MSG_FATAL("mnc:::::::444444444:::::::::total=%d",total,0,0);
+                        if((temp >= 48) && (temp <= 57))
+                        {
+                            //如果当前输入项是非数字，且上一个也是非数字，
+                            //则不将它统计到mnc中
+                            MSG_FATAL("mnc:::::::555555:::::::::mnc[%d]=%d",k,total,0);
+                            mnc[k++] = total;
+                        }
+                        total = 0;
+                        step = 0;
+                        temp = string[i];
+                        continue;
+                    }
+                    temp = string[i];
+                    step++;
+                }
+                (void) ICONFIG_SetItem(pme->m_pIConfig,
+                CFGI_NET_LOCK_MNC,
+                &mnc,
+                sizeof(word));
+                (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                return TRUE;    
+            }
+            if(wParam == IDS_CANCEL)
+            {
+                (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                return TRUE; 
+            }
+            return FALSE;
+        }
+        case EVT_KEY:
+        {
+            switch (wParam) 
+            {
+                case AVK_CLR:
+                {
+                    if (pme->m_dlgID == IDD_NET_LOCK_DIALOG)
+                    {
+                    (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                    }
+                    return TRUE;
+                }
+                case AVK_SELECT:
+                case AVK_INFO:
+                {
+                    return TRUE;    
+                }
+                break;
+                default:
+                    break;
+            }
+            return FALSE;
+        }
+        case EVT_DIALOG_START:
+        {
+            char szBuf[30] = {0};
+            int n = 0;
+            word mnc[NV_MAX_SID_LOCK] = {0};
+            AECHAR string[30]={0};
+            int i, j;
+            pme->m_pActiveIDlg = (IDialog*)dwParam;
+            (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+            pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_TEXT_MNC);
+            (void) ICONFIG_GetItem(pme->m_pIConfig,
+            CFGI_NET_LOCK_MNC,
+            &mnc,
+            sizeof(word));
+            //MSG_FATAL("enabledFlag::::::00000000::::::::::%d",mnc[0],0,0);
+            for(i = 0; i < NV_MAX_SID_LOCK; i++)
+            {
+                MSG_FATAL("enabledFlag::::::00000000::::::::::mnc[%d]=%d",i,mnc[i],0);  
+                if(mnc[i] != 0)
+                {
+                    n = WSTRLEN(string);
+                    MSG_FATAL("enabledFlag::::::00000000::::::::::i=%d,WSTRLEN(string)=%d",i,n,0);
+                    WSPRINTF( string+n, 30, L"%d.", mnc[i]);  
+                }
+            }
+            n = WSTRLEN(string);
+            MSG_FATAL("enabledFlag::::::00000000::::::::::text=%s",string,0,0);          
+            ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetMaxSize ( pIText, 30);
+            (void)ITEXTCTL_SetText(pIText,string,-1);
+            ITEXTCTL_SetCursorPos(pIText, n+1);
+            return TRUE;
+        }
+        case EVT_DIALOG_END:
+            return TRUE;
+        default:
+            break;
+    }
+    MSG_FATAL("CFieldDebug_MNC_HandleEvent End", 0, 0, 0);
+    return FALSE;
+}
+
+static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
+											   AEEEvent  eCode,
+											   uint16	 wParam,
+											   uint32	 dwParam)
+{
+    ITextCtl *pIText = NULL; 
+    IDialog * p_diag = NULL;
+    IMenuCtl *psk = NULL;
+    PARAM_NOT_REF(dwParam)
+
+    MSG_FATAL("CFieldDebug_MCC_HandleEvent Start", 0, 0, 0);
+    switch (eCode) 
+    {
+        case EVT_COMMAND:
+        {
+            if(wParam == IDS_OK)
+            {
+                AECHAR pwstrText[30] = {0};
+                char string[30];
+                word mcc[NV_MAX_SID_LOCK] = {0};
+                int i, j, k = 0;
+                int total = 0;
+                int step = 0, temp;
+                p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+             //   (void) ICONFIG_GetItem(pme->m_pIConfig,
+             //   CFGI_NET_LOCK_ENABLED,
+              //  &enabledFlag,
+             //   sizeof(uint8));
+                pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_TEXT_MCC);
+                ITEXTCTL_SetActive(pIText,TRUE);
+                (void)ITEXTCTL_GetText(pIText,pwstrText,30);
+                (void) WSTRTOSTR(pwstrText, string, sizeof(string));
+                temp = string[0];
+                for(i = 0; i < STRLEN(string); i++)
+                {
+                    MSG_FATAL("mcc::string[%d]=%d",i,string[i],0);
+                    if(((string[i] < 48) || (string[i] > 57)) || (i == STRLEN(string)-1))//输入的不是数字时就表示一个MNC
+                    {
+                        if(k >= NV_MAX_SID_LOCK)
+                        {
+                            MSG_FATAL("mcc:::::::3333333333:::::::::k=%d",k,0,0);
+                            break;
+                        }
+                        if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
+                        {
+                            step++;
+                        }
+                        MSG_FATAL("mcc:::::::3333333333:::::::::step=%d",step,0,0);
+                        for(j = 0; j < step; j++)
+                        {
+                           //MSG_FATAL("mnc:::::::3333333333:::::::::i-j-1=%d, FPOW(10, j)=%d, j=%d",i-j-1,FPOW(10, j),j);
+                            if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
+                            {
+                                total += (string[i-j] - '0')*FPOW(10, j);
+                            }
+                            else
+                            {
+                                total += (string[i-j-1] - '0')*FPOW(10, j);
+                            }
+                        }
+                        MSG_FATAL("mcc:::::::444444444:::::::::total=%d",total,0,0);
+                        if((temp >= 48) && (temp <= 57))
+                        {
+                            //如果当前输入项是非数字，且上一个也是非数字，
+                            //则不将它统计到mnc中
+                            MSG_FATAL("mcc:::::::555555:::::::::mnc[%d]=%d",k,total,0);
+                            mcc[k++] = total;
+                        }
+                        total = 0;
+                        step = 0;
+                        temp = string[i];
+                        continue;
+                    }
+                    temp = string[i];
+                    step++;
+                }
+
+                (void) ICONFIG_SetItem(pme->m_pIConfig,
+                CFGI_NET_LOCK_MCC,
+                &mcc,
+                sizeof(word));
+                (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                return TRUE;    
+            }
+            if(wParam == IDS_CANCEL)
+            {
+                (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                return TRUE; 
+            }
+            return FALSE;
+        }
+        case EVT_KEY:
+        {
+            switch (wParam) 
+            {
+                case AVK_CLR:
+                {
+                    if (pme->m_dlgID == IDD_NET_LOCK_DIALOG)
+                    {
+                    (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                    }
+                    return TRUE;
+                }
+                case AVK_SELECT:
+                case AVK_INFO:
+                {
+                    return TRUE;    
+                }
+                break;
+                default:
+                    break;
+            }
+            return FALSE;
+        }
+        case EVT_DIALOG_START:
+        {
+            char szBuf[30] = {0};
+            int n = 0;
+            word mcc[NV_MAX_SID_LOCK] = {0};
+            AECHAR string[30]={0};
+            int i, j;
+            pme->m_pActiveIDlg = (IDialog*)dwParam;
+            (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+            pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_TEXT_MCC);
+            (void) ICONFIG_GetItem(pme->m_pIConfig,
+            CFGI_NET_LOCK_MCC,
+            &mcc,
+            sizeof(word));
+            MSG_FATAL("enabledFlag::::::00000000::::::::::%d",mcc[0],0,0);
+            for(i = 0; i < NV_MAX_SID_LOCK; i++)
+            {
+                MSG_FATAL("enabledFlag::::::00000000::::::::::mcc[%d]=%d",i,mcc[i],0);  
+                if(mcc[i] != 0)
+                {
+                    n = WSTRLEN(string);
+                    MSG_FATAL("enabledFlag::::::00000000::::::::::i=%d,WSTRLEN(string)=%d",i,n,0);
+                    WSPRINTF( string+n, 30, L"%d.", mcc[i]);  
+                }
+            }
+            n = WSTRLEN(string);
+            MSG_FATAL("enabledFlag::::::00000000::::::::::text=%s",string,0,0);          
+            ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetMaxSize ( pIText, 30);
+            (void)ITEXTCTL_SetText(pIText,string,-1);
+            ITEXTCTL_SetCursorPos(pIText, n+1);
+            return TRUE;
+        }
+        case EVT_DIALOG_END:
+            return TRUE;
+        default:
+            break;
+    }
+    MSG_FATAL("CFieldDebug_MCC_HandleEvent End", 0, 0, 0);
+    return FALSE;
+}
+
+static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
+											   AEEEvent  eCode,
+											   uint16	 wParam,
+											   uint32	 dwParam)
+{
+    ITextCtl *pIText = NULL; 
+    IDialog * p_diag = NULL;
+    IMenuCtl *psk = NULL;
+    PARAM_NOT_REF(dwParam)
+
+    MSG_FATAL("CFieldDebug_SID_HandleEvent Start", 0, 0, 0);
+    switch (eCode) 
+    {
+        case EVT_COMMAND:
+        {
+            if(wParam == IDS_OK)
+            {
+                AECHAR pwstrText[30] = {0};
+                char string[30];
+                word sid[NV_MAX_SID_LOCK] = {0};
+                int i, j, k = 0;
+                int total = 0;
+                int step = 0, temp;
+                p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+             //   (void) ICONFIG_GetItem(pme->m_pIConfig,
+             //   CFGI_NET_LOCK_ENABLED,
+              //  &enabledFlag,
+             //   sizeof(uint8));
+                pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_TEXT_SID);
+                ITEXTCTL_SetActive(pIText,TRUE);
+                (void)ITEXTCTL_GetText(pIText,pwstrText,30);
+                (void) WSTRTOSTR(pwstrText, string, sizeof(string));
+                temp = string[0];
+                for(i = 0; i < STRLEN(string); i++)
+                {
+                    MSG_FATAL("sid::string[%d]=%d",i,string[i],0);
+                    if(((string[i] < 48) || (string[i] > 57)) || (i == STRLEN(string)-1))//输入的不是数字时就表示一个MNC
+                    {
+                        if(k >= NV_MAX_SID_LOCK)
+                        {
+                            MSG_FATAL("sid:::::::3333333333:::::::::k=%d",k,0,0);
+                            break;
+                        }
+                        if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
+                        {
+                            step++;
+                        }
+                        MSG_FATAL("sid:::::::3333333333:::::::::step=%d",step,0,0);
+                        for(j = 0; j < step; j++)
+                        {
+                           //MSG_FATAL("mnc:::::::3333333333:::::::::i-j-1=%d, FPOW(10, j)=%d, j=%d",i-j-1,FPOW(10, j),j);
+                            if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
+                            {
+                                total += (string[i-j] - '0')*FPOW(10, j);
+                            }
+                            else
+                            {
+                                total += (string[i-j-1] - '0')*FPOW(10, j);
+                            }
+                        }
+                        MSG_FATAL("sid:::::::444444444:::::::::total=%d",total,0,0);
+                        if((temp >= 48) && (temp <= 57))
+                        {
+                            //如果当前输入项是非数字，且上一个也是非数字，
+                            //则不将它统计到mnc中
+                            MSG_FATAL("mnc:::::::555555:::::::::mnc[%d]=%d",k,total,0);
+                            sid[k++] = total;
+                        }
+                        total = 0;
+                        step = 0;
+                        temp = string[i];
+                        continue;
+                    }
+                    temp = string[i];
+                    step++;
+                }
+
+                (void) ICONFIG_SetItem(pme->m_pIConfig,
+                CFGI_NET_LOCK_SID,
+                &sid,
+                sizeof(word));
+                (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                return TRUE;    
+            }
+            if(wParam == IDS_CANCEL)
+            {
+                (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                return TRUE; 
+            }
+            return FALSE;
+        }
+        case EVT_KEY:
+        {
+            switch (wParam) 
+            {
+                case AVK_CLR:
+                {
+                    if (pme->m_dlgID == IDD_NET_LOCK_DIALOG)
+                    {
+                    (void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);
+                    }
+                    return TRUE;
+                }
+                case AVK_SELECT:
+                case AVK_INFO:
+                {
+                    return TRUE;    
+                }
+                break;
+                default:
+                    break;
+            }
+            return FALSE;
+        }
+        case EVT_DIALOG_START:
+        {
+            char szBuf[30] = {0};
+            int n = 0;
+            word sid[NV_MAX_SID_LOCK] = {0};
+            AECHAR string[30]={0};
+            int i, j;
+            pme->m_pActiveIDlg = (IDialog*)dwParam;
+            (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+            pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_TEXT_SID);
+            (void) ICONFIG_GetItem(pme->m_pIConfig,
+            CFGI_NET_LOCK_SID,
+            &sid,
+            sizeof(word));
+            DBGPRINTF("enabledFlag::::::00000000::::::::::%d",sid[0]);
+            for(i = 0; i < NV_MAX_SID_LOCK; i++)
+            {
+                MSG_FATAL("enabledFlag::::::00000000::::::::::sid[%d]=%d",i,sid[i],0);  
+                if(sid[i] != 0)
+                {
+                    n = WSTRLEN(string);
+                    MSG_FATAL("enabledFlag::::::00000000::::::::::i=%d,WSTRLEN(string)=%d",i,n,0);
+                    WSPRINTF( string+n, 30, L"%d.", sid[i]);  
+                }
+            }
+            MSG_FATAL("enabledFlag::::::00000000::::::::::text=%s",string,0,0); 
+            n = WSTRLEN(string);
+            ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetMaxSize ( pIText, 30);
+            (void)ITEXTCTL_SetText(pIText,string,-1);
+            ITEXTCTL_SetCursorPos(pIText, n+1);
+            return TRUE;
+        }
+        case EVT_DIALOG_END:
+            return TRUE;
+        default:
+            break;
+    }
+    MSG_FATAL("CFieldDebug_SID_HandleEvent End", 0, 0, 0);
+    return FALSE;
+}
+
 
