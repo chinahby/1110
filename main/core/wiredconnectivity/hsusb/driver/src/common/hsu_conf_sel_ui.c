@@ -115,8 +115,8 @@
    accomodate the UI menu. The main reason for this featurization is to
    save memory footprint for devices with small memory parts.
 */
-#if !defined(FEATURE_HS_USB_MEM_OPTIMIZATION) || \
-    defined(FEATURE_PICTBRIDGE_HS) || defined(FEATURE_HSU_MTP)
+#if 1//!defined(FEATURE_HS_USB_MEM_OPTIMIZATION) || \
+    //defined(FEATURE_PICTBRIDGE_HS) || defined(FEATURE_HSU_MTP)
 
 #include "hsu_conf_sel_ui.h"
 #include "hsu_common.h"

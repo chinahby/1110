@@ -2183,6 +2183,37 @@ void MediaGalleryApp_StopSDCard(void)
 }
 #endif//ifdef FEATURE_SUPPORT_VC0848
 
+#include "rdevmap.h"
+#include "hsu_conf_sel_i.h"  /* Dynamic composition switching */
+#include "hsu_conf_sel_ui.h" /* Dynamic composition switching */
+static hsu_conf_sel_composition_id_enum g_comp_id;
+
+static void MediaGallery_rdm_event_cb (rdm_assign_status_type status,
+                                       rdm_service_enum_type service,
+                                       rdm_device_enum_type device)
+{
+    switch(status) 
+    {
+    case RDM_DONE_S:
+        break;    
+
+    case RDM_NOT_ALLOWED_S:
+        break;
+        
+    case RDM_DEVMAP_BUSY_S:
+        break;
+
+    case RDM_APP_BUSY_S:
+        break;
+
+    default:
+        break;        
+    }
+    
+    //pictbridge_notify(PICTBRIDGE_RDM_CHANGE_STATUS, &pb_rdm_status);
+  
+} /* pictbridge_rdm_event_cb */
+
 /*
  * ==========================================================================
  * FUNCTION     :  MediaGallery_StartUDisk
@@ -2191,25 +2222,25 @@ void MediaGalleryApp_StopSDCard(void)
  * RETURN VALUE :
  * ==========================================================================
  */
-#ifdef FEATURE_SUPPORT_VC0848
 boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
 {
-   ICM *pCM = NULL;
-   vc_union_type vc_data;
+    ICM *pCM = NULL;
+    boolean bRet = TRUE;
+    
+    if(!pMe)
+    {
+        MG_FARF(STATE, ("ERR PARAMTER"));
+        return FALSE;
+    }
 
-   if(!pMe)
-   {
-      MG_FARF(STATE, ("ERR PARAMTER"));
-      return FALSE;
-   }
-
-   if(FALSE == pMe->m_bCardExist ||
-      FALSE == MediaGallery_CheckUSBCableConnect())
-   {
-      /*if no mass storge card, do not permit to turn UDisk function on*/
-      MG_FARF(STATE, ("Card do not exist"));
-      return FALSE;
-   }
+    if(FALSE == pMe->m_bCardExist ||
+       FALSE == MediaGallery_CheckUSBCableConnect())
+    {
+        /*if no mass storge card, do not permit to turn UDisk function on*/
+        MG_FARF(STATE, ("Card do not exist"));
+        return FALSE;
+    }
+    
      // Create ICM instance
     if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                  AEECLSID_CALLMANAGER,
@@ -2218,24 +2249,63 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
        MG_FARF(STATE, ("Create ICM instance failed"));
        return FALSE;
     }
+    
+    // Dynamic switch
+    while(1)
+    {
+        const hsu_conf_sel_comp_info_type * comp_info = hsu_conf_sel_get_cur_comp_details();
 
-   /*
-    * stop UDisk function , set the handset in Low power mode(LPM), so incoming
-    * call do not interrupt U-disk operation .
-    * */
-   if(pCM)
-   {
-      ICM_SetOperatingMode(pCM, AEECM_OPRT_MODE_LPM);
-   }
-   //ICM_Release, release ICM interface.
-   RELEASEIF(pCM);
-   gbUDiskOn = TRUE;
-   vc_data.dev_run.curr_dev = VC_DEV_UDISK;
-   VC_DeviceControl(VC_ITM_DEV_OPEN_I, VC_FUNC_CONTROL, &vc_data); // start udisk
+        if (NULL == comp_info)
+        {
+            bRet = FALSE;
+            break;
+        }
+        
+        if (HSU_CONF_SEL_MS_COMP == comp_info->hsu_comp_id)
+        {
+            bRet = TRUE;
+            break;
+        }
+        
+        /* Check if we can switch the composition dynamically right now */
+        if (!hsu_conf_sel_ui_dynamic_switch_is_allowed())
+        {
+            bRet = FALSE;
+            break;
+        }
+        
+        /* Save current composition.  Restore it when disconnecting the printer */
+        g_comp_id = comp_info->hsu_comp_id;
 
-   return TRUE;
+        /* Dynamically swtich over to PictBridge composition */
+        if ( !hsu_conf_sel_ui_switch_comp(HSU_CONF_SEL_MS_COMP, MediaGallery_rdm_event_cb) )
+        {
+            bRet = FALSE;
+            break;
+        }
+        else
+        {
+            break;
+        }
+    }
+    
+    if(bRet)
+    {
+        /*
+         * Start UDisk function , set the handset in Low power mode(LPM), so incoming
+         * call do not interrupt U-disk operation .
+         * */
+        if(pCM)
+        {
+            ICM_SetOperatingMode(pCM, AEECM_OPRT_MODE_LPM);
+        }
+        gbUDiskOn = TRUE;
+    }
+    
+    //ICM_Release, release ICM interface.
+    RELEASEIF(pCM);
+    return bRet;
 }//MediaGallery_StartUDisk
-#endif
 
 /*
  * ==========================================================================
@@ -2247,12 +2317,11 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
  *          FALSE : Failed to stop UDisk
  *==========================================================================
  */
-#ifdef FEATURE_SUPPORT_VC0848
 boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe)
 {
    ICM *pCM = NULL;
-   vc_union_type vc_data;
-
+   boolean bRet = TRUE;
+   
    if(!pMe)
    {
       MG_FARF(STATE, ("ERR PARAMTER"));
@@ -2272,12 +2341,34 @@ boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe)
    }
 
    gbUDiskOn = FALSE;
-   vc_data.dev_run.curr_dev = VC_DEV_UDISK;
-   VC_DeviceControl(VC_ITM_DEV_STOP_I, VC_FUNC_CONTROL, &vc_data); // stop udisk
 
-   return TRUE;
+   // Dynamic switch
+    while(1)
+    {
+        /* Check if we can switch the composition dynamically right now */
+        if (!hsu_conf_sel_ui_dynamic_switch_is_allowed())
+        {
+            bRet = FALSE;
+            break;
+        }
+        
+        /* Dynamically swtich over to PictBridge composition */
+        if ( !hsu_conf_sel_ui_switch_comp(g_comp_id, MediaGallery_rdm_event_cb) )
+        {
+            bRet = TRUE;
+            break;
+        }
+        else
+        {
+            bRet = FALSE;
+            break;
+        }
+        
+        g_comp_id = 0;
+    }
+    
+   return bRet;
 }//MediaGallery_StopUDisk
-#endif
 
 /*
  * ==========================================================================

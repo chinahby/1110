@@ -840,13 +840,11 @@ int MGExplorer_RecoverMediaMenu(CMediaGalleryApp *pMe,  IMenuCtl *pMenuCtl);
 boolean MediaGalleryApp_CheckSDCard(void);
 
 void MediaGalleryApp_StopSDCard(void);
+#endif//ifdef FEATURE_SUPPORT_VC0848
 
 boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe);
 
 boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe);
-
-#endif//ifdef FEATURE_SUPPORT_VC0848
-
 
 /*
  * ==========================================================================

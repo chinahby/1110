@@ -1828,9 +1828,7 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
       {
          boolean bRet = FALSE;
 
-#ifdef FEATURE_SUPPORT_VC0848
          bRet = MediaGallery_StopUDisk(pMe);
-#endif
       }
       return TRUE;
 
@@ -9132,10 +9130,8 @@ static void MGAppUtil_StartUDisk(void *po)
       MG_FARF(ADDR, ("MGAppUtil_StartUDisk bad parameter!!!"));
       return;
    }
-
-#ifdef FEATURE_SUPPORT_VC0848
+   
    bRet = MediaGallery_StartUDisk(pMe);
-#endif
 
    if(FALSE == bRet)
    {

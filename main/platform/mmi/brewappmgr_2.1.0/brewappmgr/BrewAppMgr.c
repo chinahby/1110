@@ -540,28 +540,6 @@ static boolean AppMgr_Init(AppMgr * pme)
 
    // Creating classes which we would need later
 
-#if defined(FEATURE_BREW_DOWNLOAD)
-#ifdef USE_IDL2
-   if (CreateInstance(pIShell, AEECLSID_DOWNLOAD2,
-      (void**)&pme->m_pDownload2) != AEE_SUCCESS)
-   {
-      return FALSE;
-   }
-
-   if (IDOWNLOAD2_QueryInterface(pme->m_pDownload2, AEECLSID_DOWNLOAD, 
-                                 (void**)&pme->m_pDownload) != AEE_SUCCESS)
-   {
-      return FALSE;
-   }
-#else
-   if (CreateInstance(pIShell, AEECLSID_DOWNLOAD,
-      (void**)&pme->m_pDownload) != AEE_SUCCESS)
-   {
-      return FALSE;
-   }
-#endif //USE_IDL2
-#endif // FEATURE_BREW_DOWNLOAD
-
     // No saved fonts yet.
    pme->m_bNormalFontSaved = FALSE;
    pme->m_bBoldFontSaved = FALSE;
@@ -3533,6 +3511,27 @@ boolean AppMgr_Start(AppMgr* pme)
       FARF(BAM, ("Able to start on this display"));
    }	 
    
+#if defined(FEATURE_BREW_DOWNLOAD) // Gemsea move here from AppMgr_Init
+#ifdef USE_IDL2
+   if (CreateInstance(pme->a.m_pIShell, AEECLSID_DOWNLOAD2,
+      (void**)&pme->m_pDownload2) != AEE_SUCCESS)
+   {
+      return FALSE;
+   }
+
+   if (IDOWNLOAD2_QueryInterface(pme->m_pDownload2, AEECLSID_DOWNLOAD, 
+                                 (void**)&pme->m_pDownload) != AEE_SUCCESS)
+   {
+      return FALSE;
+   }
+#else
+   if (CreateInstance(pme->a.m_pIShell, AEECLSID_DOWNLOAD,
+      (void**)&pme->m_pDownload) != AEE_SUCCESS)
+   {
+      return FALSE;
+   }
+#endif //USE_IDL2
+#endif // FEATURE_BREW_DOWNLOAD
 
    // Don't paint UI if AppMgr is started to display error
    if (!pme->m_nErrCls)
