@@ -261,8 +261,8 @@ if(!(x))         \
 #define SIMSCHEDULEBAR_H 7
 
 //²¥·Å°´Å¥
-#define PLAY_X 51
-#define PLAY_Y 58
+#define PLAY_X 52
+#define PLAY_Y 57
 #define PLAY_W 45
 #define PLAY_H 44
 
