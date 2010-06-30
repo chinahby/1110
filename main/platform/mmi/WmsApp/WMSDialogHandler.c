@@ -846,6 +846,8 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                             
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNews, NULL, NULL);
 				//add by yangdecai 
+				// 更新链表序号
+    			wms_cacheinfolist_updatexuhao(WMS_MB_INBOX);
 				temp = nNews;
 				nNews =  nNews/LONGSMS_MAX_PACKAGES;
 				i = temp%LONGSMS_MAX_PACKAGES;
@@ -877,6 +879,8 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 nMsgs = 0;
                 //wms_cacheinfolist_getcounts(WMS_MB_OUTBOX, NULL, NULL, &nMsgs);   //DELETE by yangdecai
 				//add by yangdecai 
+				// 更新链表序号
+    			wms_cacheinfolist_updatexuhao(WMS_MB_OUTBOX);
 				pList = wms_get_cacheinfolist(WMS_MB_OUTBOX);
                 if (NULL != pList)
                 {
@@ -898,6 +902,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 nMsgs = 0;
                 //wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);    //DELETE by yangdecai
 				//add by yangdecai 
+				wms_cacheinfolist_updatexuhao(WMS_MB_DRAFT);
 				pList = wms_get_cacheinfolist(WMS_MB_DRAFT);
                 if (NULL != pList)
                 {
