@@ -3238,13 +3238,24 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
                 uint16  nNewsVmail=0, nNewsSMS=0;
                 PromptMsg_Param_type  Msg_Param={0};
                 db_items_value_type  need_capture;
+				int i = 0;
+				int temp = 0;
                 
                 need_capture.b_capture = DB_CAPTURE_NONE;
                 db_put(DB_CAPTURE_WALLPER,&need_capture);
                 // 获取消息数
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
-                
+                //add by yangdecai
+                temp = nNewsSMS;
+                nNewsSMS = nNewsSMS/5;
+				i = temp%5;
+				if(i>0)
+				{
+					nNewsSMS ++;
+				}
+				
+                //add end
                 
                 if (nNewsVmail > 0)
                 {

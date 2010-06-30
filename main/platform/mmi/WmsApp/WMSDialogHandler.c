@@ -819,6 +819,9 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 int nLen;
                 AECHAR wstrFmt[20] = {0};
                 uint16 nNews=0, nMsgs=0;
+				wms_cache_info_list   *pList = NULL;
+			    uint16 i = 0;
+				uint16 temp = 0;
                 
                 dwSize = 64 * sizeof(AECHAR);
                 pwsz = (AECHAR *)MALLOC(dwSize);
@@ -841,7 +844,22 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                             IDS_INBOX,
                             pwsz, dwSize);
                             
-                wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNews, NULL, &nMsgs);
+                wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNews, NULL, NULL);
+				//add by yangdecai 
+				temp = nNews;
+				nNews =  nNews/LONGSMS_MAX_PACKAGES;
+				i = temp%LONGSMS_MAX_PACKAGES;
+				if(i>0)
+				{
+					nNews ++;
+				}
+				pList = wms_get_cacheinfolist(WMS_MB_INBOX);
+                if (NULL != pList)
+                {
+                     nMsgs = pList->nBranches;
+					 
+                }
+				//add end
                 nLen = WSTRLEN(pwsz);
                 if (nLen<30)
                 {
@@ -857,7 +875,14 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                             pwsz, dwSize);
                 nLen = WSTRLEN(pwsz);
                 nMsgs = 0;
-                wms_cacheinfolist_getcounts(WMS_MB_OUTBOX, NULL, NULL, &nMsgs);
+                //wms_cacheinfolist_getcounts(WMS_MB_OUTBOX, NULL, NULL, &nMsgs);   //DELETE by yangdecai
+				//add by yangdecai 
+				pList = wms_get_cacheinfolist(WMS_MB_OUTBOX);
+                if (NULL != pList)
+                {
+                     nMsgs = pList->nBranches;
+                }
+				//add end
                 if (nLen<30)
                 {
                     WSPRINTF(&pwsz[nLen], (64-nLen)*sizeof(AECHAR), 
@@ -871,7 +896,13 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                             pwsz, dwSize);
                 nLen = WSTRLEN(pwsz);
                 nMsgs = 0;
-                wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
+                //wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);    //DELETE by yangdecai
+				//add by yangdecai 
+				pList = wms_get_cacheinfolist(WMS_MB_DRAFT);
+                if (NULL != pList)
+                {
+                     nMsgs = pList->nBranches;
+                }
                 if (nLen<30)
                 {
                     WSPRINTF(&pwsz[nLen], (64-nLen)*sizeof(AECHAR), wstrFmt, nMsgs); 
