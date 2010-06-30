@@ -6,7 +6,7 @@
 # possible.
 #-------------------------------------------------------------------------------
 CAMSENSOR_GC0309_SOURCES = \
- camsensor_gc0309.c
+ camsensor_gc0309_0p1mp.c
 
 
 vpath %.c $(CAMSENSOR_GC0309)  
