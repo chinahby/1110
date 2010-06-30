@@ -4340,7 +4340,79 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
         ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_platform_id,0,0);
       return SUCCESS;
    }
-   
+
+    case CFGI_NET_LOCK_SID:
+    {
+        nv_item_type nvi;
+        int k;
+#ifndef WIN32         
+        if (OEMNV_Get(NV_NET_LOCK_I, &nvi) != NV_DONE_S)
+        {
+           DBGPRINTF("OEM_GetCachedConfig: CFGI_NET_LOCK_SID failed");
+           return EFAILED;   
+        }
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+            *((word *)(pBuff)+k) = *(nvi.enabled_net_lock.sid+k);
+        }
+#endif        
+        return SUCCESS;
+    }    
+
+    case CFGI_NET_LOCK_MNC:
+    {
+        nv_item_type nvi;
+        int k;
+#ifndef WIN32         
+        if (OEMNV_Get(NV_NET_LOCK_I, &nvi) != NV_DONE_S)
+        {
+           DBGPRINTF("OEM_GetCachedConfig: CFGI_NET_LOCK_MNC failed");
+           return EFAILED;   
+        }
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+            *((word *)(pBuff)+k) = *(nvi.enabled_net_lock.mnc+k);
+            //DBGPRINTF("lock.mnc[%d]=%d", k, (word *)pBuff[k]);
+        }
+#endif        
+        return SUCCESS;
+    }  
+
+    case CFGI_NET_LOCK_MCC:
+    {
+        nv_item_type nvi;
+        int k;
+#ifndef WIN32         
+        if (OEMNV_Get(NV_NET_LOCK_I, &nvi) != NV_DONE_S)
+        {
+           DBGPRINTF("OEM_GetCachedConfig: CFGI_NET_LOCK_MNC failed");
+           return EFAILED;   
+        }
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+            ((word *)pBuff)[k] = nvi.enabled_net_lock.mcc[k];
+            //*((word *)(pBuff)+k) = *(nvi.enabled_net_lock.mcc+k);
+         //   DBGPRINTF("lock.mcc[%d]=%d", k, (word *)pBuff[k]);
+        }
+#endif        
+        return SUCCESS;
+    }   
+
+    case CFGI_NET_LOCK_ENABLED:
+    {
+        nv_item_type nvi;
+#ifndef WIN32         
+        if (OEMNV_Get(NV_NET_LOCK_I, &nvi) != NV_DONE_S)
+        {
+             DBGPRINTF("OEM_GetCachedConfig: CFGI_NET_LOCK_ENABLED failed",0,0,0);
+             return EFAILED;
+        }
+
+        *(word *)pBuff  = nvi.enabled_net_lock.b_lock;
+        DBGPRINTF("OEM_GetCachedConfig: CFGI_NET_LOCK_ENABLED %d",nvi.enabled_net_lock.b_lock);
+#endif        
+        return SUCCESS;
+    }    
    default:
       return(EUNSUPPORTED);
 
@@ -5420,6 +5492,143 @@ case CFGI_BREW_USERNAME:
 	}
 	return AEE_SUCCESS;
 #endif //#ifdef CUST_EDITION
+
+    case CFGI_NET_LOCK_ENABLED:
+    {
+        nv_item_type nvi, nvi2;
+        int k;
+        if ( (NULL == pBuff) || (nSize != sizeof(word)) ) 
+        {
+            return EBADPARM;
+        }
+        if (OEMNV_Get(NV_NET_LOCK_I, &nvi2) != NV_DONE_S)
+        {
+           DBGPRINTF("OEM_GetCachedConfig: CFGI_NET_LOCK_MCC failed");
+           return EFAILED;   
+        }
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+            nvi.enabled_net_lock.mnc[k] = *(nvi2.enabled_net_lock.mnc+k);
+            DBGPRINTF("lock.mnc[%d]=%d", k, nvi.enabled_net_lock.mnc[k]);
+            nvi.enabled_net_lock.mcc[k] = *(nvi2.enabled_net_lock.mcc+k);
+            DBGPRINTF("lock.mcc[%d]=%d", k, nvi.enabled_net_lock.mcc[k]);
+            nvi.enabled_net_lock.sid[k] = *(nvi2.enabled_net_lock.sid+k);
+            DBGPRINTF("lock.sid[%d]=%d", k, nvi.enabled_net_lock.sid[k]);            
+        }
+        
+        nvi.enabled_net_lock.b_lock = *(word *) pBuff;
+        DBGPRINTF(";put CFGI_NET_LOCK_ENABLED b_lock=%d", nvi.enabled_net_lock.b_lock);
+        if (NV_DONE_S != OEMNV_Put(NV_NET_LOCK_I, &nvi)) 
+        {
+            DBGPRINTF(";put CFGI_NET_LOCK_ENABLED failed");
+            return EFAILED;  
+        }
+        return SUCCESS;
+    }
+
+    case CFGI_NET_LOCK_MNC:
+    {
+        nv_item_type nvi;
+        int k;
+        word *pWStr = (word *)pBuff;    
+        nv_item_type nvi2;    
+#ifndef WIN32         
+        if (OEMNV_Get(NV_NET_LOCK_I, &nvi2) != NV_DONE_S)
+        {
+           DBGPRINTF("OEM_GetCachedConfig: CFGI_NET_LOCK_MNC failed");
+           return EFAILED;   
+        }
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+            nvi.enabled_net_lock.mcc[k] = *(nvi2.enabled_net_lock.mcc+k);
+            DBGPRINTF("lock.mcc[%d]=%d", k, nvi.enabled_net_lock.mcc[k]);
+            nvi.enabled_net_lock.sid[k] = *(nvi2.enabled_net_lock.sid+k);
+            DBGPRINTF("lock.sid[%d]=%d", k, nvi.enabled_net_lock.sid[k]);
+        }
+        nvi.enabled_net_lock.b_lock = nvi2.enabled_net_lock.b_lock;
+        
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+           nvi.enabled_net_lock.mnc[k] = (word)pWStr[k];
+           DBGPRINTF("lock.mnc[%d]=%d", k, (word)pWStr[k]);
+        }
+        if (OEMNV_Put(NV_NET_LOCK_I, &nvi) != NV_DONE_S)
+        {
+           DBGPRINTF(";put CFGI_NET_LOCK_MNC failed");
+           return EFAILED;
+        }
+#endif
+        return SUCCESS;
+    }    
+
+    case CFGI_NET_LOCK_MCC:
+    {
+        nv_item_type nvi ,nvi2;
+        int k;
+        word *pWStr = (word *)pBuff;        
+#ifndef WIN32         
+        if (OEMNV_Get(NV_NET_LOCK_I, &nvi2) != NV_DONE_S)
+        {
+           DBGPRINTF("OEM_GetCachedConfig: CFGI_NET_LOCK_MCC failed");
+           return EFAILED;   
+        }
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+            nvi.enabled_net_lock.mnc[k] = *(nvi2.enabled_net_lock.mnc+k);
+            DBGPRINTF("lock.mnc[%d]=%d", k, nvi.enabled_net_lock.mnc[k]);
+            nvi.enabled_net_lock.sid[k] = *(nvi2.enabled_net_lock.sid+k);
+            DBGPRINTF("lock.sid[%d]=%d", k, nvi.enabled_net_lock.sid[k]);
+        }
+        nvi.enabled_net_lock.b_lock = nvi2.enabled_net_lock.b_lock;
+
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+           nvi.enabled_net_lock.mcc[k] = (word)pWStr[k];
+           DBGPRINTF("lock.mcc[%d]=%d", k, (word)pWStr[k]);
+        }
+        if (OEMNV_Put(NV_NET_LOCK_I, &nvi) != NV_DONE_S)
+        {
+           DBGPRINTF(";put CFGI_NET_LOCK_MCC failed");
+           return EFAILED;
+        }
+#endif
+        return SUCCESS;
+    }       
+
+    case CFGI_NET_LOCK_SID:
+    {
+        nv_item_type nvi,nvi2;
+        int k;
+        word *pWStr = (word *)pBuff;        
+#ifndef WIN32   
+        if (OEMNV_Get(NV_NET_LOCK_I, &nvi2) != NV_DONE_S)
+        {
+           DBGPRINTF("OEM_GetCachedConfig: CFGI_NET_LOCK_MCC failed");
+           return EFAILED;   
+        }
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+            nvi.enabled_net_lock.mnc[k] = *(nvi2.enabled_net_lock.mnc+k);
+            DBGPRINTF("lock.mnc[%d]=%d", k, nvi.enabled_net_lock.mnc[k]);
+            nvi.enabled_net_lock.mcc[k] = *(nvi2.enabled_net_lock.mcc+k);
+            DBGPRINTF("lock.mcc[%d]=%d", k, nvi.enabled_net_lock.mcc[k]);
+        }
+        nvi.enabled_net_lock.b_lock = nvi2.enabled_net_lock.b_lock;
+
+        for (k=0; k<NV_MAX_SID_LOCK; k++)
+        {
+            nvi.enabled_net_lock.sid[k] = (word)pWStr[k];
+            DBGPRINTF("lock.sid[%d]=%d", k, (word)pWStr[k]);
+        }
+        if (OEMNV_Put(NV_NET_LOCK_I, &nvi) != NV_DONE_S)
+        {
+            DBGPRINTF(";put CFGI_NET_LOCK_SID failed");
+            return EFAILED;
+        }
+#endif
+        return SUCCESS;
+    }   
+
    default:
       return(EUNSUPPORTED);
    }
