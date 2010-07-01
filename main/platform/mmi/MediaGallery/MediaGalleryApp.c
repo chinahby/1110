@@ -2186,33 +2186,53 @@ void MediaGalleryApp_StopSDCard(void)
 #include "rdevmap.h"
 #include "hsu_conf_sel_i.h"  /* Dynamic composition switching */
 #include "hsu_conf_sel_ui.h" /* Dynamic composition switching */
-static hsu_conf_sel_composition_id_enum g_comp_id;
+//static hsu_conf_sel_composition_id_enum g_comp_id;
+static boolean      g_bcomp_change_done;
+static AEECallback  g_rdm_ui_cb;
 
-static void MediaGallery_rdm_event_cb (rdm_assign_status_type status,
-                                       rdm_service_enum_type service,
-                                       rdm_device_enum_type device)
+static void MediaGallery_UDisk_CB(rdm_assign_status_type status)
 {
+    //rdm_assign_status_type status = (rdm_assign_status_type)pUser;
     switch(status) 
     {
     case RDM_DONE_S:
+        /* Ignore subsequent RDM_DONE_S notifications after the initial one.
+           Calling hsu_conf_sel_ui_rdm_done() multiple times will result in
+           ERROR FATAL.
+        */
+        if (TRUE == g_bcomp_change_done)
+        {
+            break;
+        }
+        
+        if(hsu_conf_sel_ui_rdm_done() == TRUE)
+        {
+            if(hsu_conf_sel_ui_comp_change_is_done() == TRUE)
+            {
+                /* Successful composition change */
+                g_bcomp_change_done = TRUE;
+            }
+        }
         break;    
 
     case RDM_NOT_ALLOWED_S:
-        break;
-        
     case RDM_DEVMAP_BUSY_S:
-        break;
-
     case RDM_APP_BUSY_S:
+        hsu_conf_sel_ui_rdm_event_received((uint16)status);
         break;
 
     default:
         break;        
     }
-    
-    //pictbridge_notify(PICTBRIDGE_RDM_CHANGE_STATUS, &pb_rdm_status);
-  
-} /* pictbridge_rdm_event_cb */
+}
+
+static void MediaGallery_rdm_event_cb (rdm_assign_status_type status,
+                                       rdm_service_enum_type service,
+                                       rdm_device_enum_type device)
+{
+    CALLBACK_Init(&g_rdm_ui_cb,(CallbackNotifyFunc*)MediaGallery_UDisk_CB,(void *)status);
+    AEE_SYS_RESUME(&g_rdm_ui_cb);
+} /* MediaGallery_rdm_event_cb */
 
 /*
  * ==========================================================================
@@ -2224,7 +2244,6 @@ static void MediaGallery_rdm_event_cb (rdm_assign_status_type status,
  */
 boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
 {
-    ICM *pCM = NULL;
     boolean bRet = TRUE;
     
     if(!pMe)
@@ -2241,15 +2260,6 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
         return FALSE;
     }
     
-     // Create ICM instance
-    if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-                                 AEECLSID_CALLMANAGER,
-                                 (void **) &pCM))
-    {
-       MG_FARF(STATE, ("Create ICM instance failed"));
-       return FALSE;
-    }
-    
     // Dynamic switch
     while(1)
     {
@@ -2261,7 +2271,7 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
             break;
         }
         
-        if (HSU_CONF_SEL_MS_COMP == comp_info->hsu_comp_id)
+        if (HSU_CONF_SEL_DIAG_MS_COMP == comp_info->hsu_comp_id)
         {
             bRet = TRUE;
             break;
@@ -2275,10 +2285,11 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
         }
         
         /* Save current composition.  Restore it when disconnecting the printer */
-        g_comp_id = comp_info->hsu_comp_id;
+        //g_comp_id = comp_info->hsu_comp_id;
+        g_bcomp_change_done = FALSE;
 
         /* Dynamically swtich over to PictBridge composition */
-        if ( !hsu_conf_sel_ui_switch_comp(HSU_CONF_SEL_MS_COMP, MediaGallery_rdm_event_cb) )
+        if ( !hsu_conf_sel_ui_switch_comp(HSU_CONF_SEL_DIAG_MS_COMP, MediaGallery_rdm_event_cb) )
         {
             bRet = FALSE;
             break;
@@ -2289,21 +2300,7 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
         }
     }
     
-    if(bRet)
-    {
-        /*
-         * Start UDisk function , set the handset in Low power mode(LPM), so incoming
-         * call do not interrupt U-disk operation .
-         * */
-        if(pCM)
-        {
-            ICM_SetOperatingMode(pCM, AEECM_OPRT_MODE_LPM);
-        }
-        gbUDiskOn = TRUE;
-    }
-    
-    //ICM_Release, release ICM interface.
-    RELEASEIF(pCM);
+    gbUDiskOn = bRet;
     return bRet;
 }//MediaGallery_StartUDisk
 
@@ -2319,32 +2316,33 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
  */
 boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe)
 {
-   ICM *pCM = NULL;
-   boolean bRet = TRUE;
+    boolean bRet = TRUE;
    
-   if(!pMe)
-   {
-      MG_FARF(STATE, ("ERR PARAMTER"));
-      return FALSE;
-   }
+    if(!pMe)
+    {
+        MG_FARF(STATE, ("ERR PARAMTER"));
+        return FALSE;
+    }
 
-   // Create ICM instance
-   if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
-            AEECLSID_CALLMANAGER,
-            (void **) &pCM))
-   {
-      MG_FARF(STATE, ("Create ICM instance failed"));
-      /*stop UDisk function , set the handset online*/
-
-      ICM_SetOperatingMode(pCM, AEECM_OPRT_MODE_ONLINE);
-      RELEASEIF(pCM);
-   }
-
-   gbUDiskOn = FALSE;
-
-   // Dynamic switch
+    gbUDiskOn = FALSE;
+    
+    // Dynamic switch
     while(1)
     {
+        const hsu_conf_sel_comp_info_type * comp_info = hsu_conf_sel_get_cur_comp_details();
+
+        if (NULL == comp_info)
+        {
+            bRet = FALSE;
+            break;
+        }
+        
+        if (HSU_CONF_SEL_DIAG_MDM_COMP == comp_info->hsu_comp_id)
+        {
+            bRet = TRUE;
+            break;
+        }
+        
         /* Check if we can switch the composition dynamically right now */
         if (!hsu_conf_sel_ui_dynamic_switch_is_allowed())
         {
@@ -2352,22 +2350,20 @@ boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe)
             break;
         }
         
+        g_bcomp_change_done = FALSE;
         /* Dynamically swtich over to PictBridge composition */
-        if ( !hsu_conf_sel_ui_switch_comp(g_comp_id, MediaGallery_rdm_event_cb) )
-        {
-            bRet = TRUE;
-            break;
-        }
-        else
+        if ( !hsu_conf_sel_ui_switch_comp(HSU_CONF_SEL_DIAG_MDM_COMP, MediaGallery_rdm_event_cb) )
         {
             bRet = FALSE;
             break;
         }
-        
-        g_comp_id = 0;
+        else
+        {
+            break;
+        }
     }
     
-   return bRet;
+    return bRet;
 }//MediaGallery_StopUDisk
 
 /*

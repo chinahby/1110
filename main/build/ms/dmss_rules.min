@@ -276,7 +276,9 @@ endif
 
 QCTLIBS := $(QCTLIBS) $(LIBSTDLIB)/a1std.lib
 
+ifneq ($(USES_MMI), yes)
 QCTLIBS := $(QCTLIBS) $(LIBDIR)/hsusb/$(BUILD)/hsu_core.lib 
+endif
 
 ifeq ($(USES_MANGO_UI),yes)
 ifeq ($(USES_MANGO_UI_HIGHLIBS),yes)

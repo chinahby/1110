@@ -85,6 +85,12 @@ ifeq ($(USES_HSU_ECM_APP_STUB),yes)
    HSU_OBJS += $(HSU_ECM_APP_STUB_OBJS)
 endif
 
+ifeq ($(USES_MMI),yes)
+HSU_CORE_LIB_OBJS_DIR = $(TARGETDIR)
+include  $(HSU)/core/src/hsu_core.min
+HSU_OBJS += $(HSU_CORE_LIB_OBJS)
+endif
+
 # HAL
 HSU_OBJS += $(HSU_HAL_OBJS)
 

@@ -115,8 +115,7 @@
    accomodate the UI menu. The main reason for this featurization is to
    save memory footprint for devices with small memory parts.
 */
-#if 1//!defined(FEATURE_HS_USB_MEM_OPTIMIZATION) || \
-    //defined(FEATURE_PICTBRIDGE_HS) || defined(FEATURE_HSU_MTP)
+#if 1//!defined(FEATURE_HS_USB_MEM_OPTIMIZATION) || defined(FEATURE_PICTBRIDGE_HS) || defined(FEATURE_HSU_MTP)
 
 #include "hsu_conf_sel_ui.h"
 #include "hsu_common.h"
@@ -858,7 +857,6 @@ boolean hsu_conf_sel_ui_comp_change_is_done(void)
   nv_stat_enum_type nv_status;
   nv_item_type      nv_item_data; 
 #endif 
-
   if(comp_change_state == HSU_COMP_CHANGE_STATE_COMPLETED)
   {
     HSU_MSG_HIGH("*_comp_change_is_done(): reporting completion", 
@@ -885,6 +883,7 @@ boolean hsu_conf_sel_ui_comp_change_is_done(void)
     reset_state_machine_and_data();
     return TRUE;
   }
+  
   HSU_MSG_MED("*_comp_change_is_done(): not completed yet...", 
     0,0,0);
   return FALSE;

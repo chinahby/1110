@@ -123,8 +123,9 @@ $(HSU_CORE_LIB_OBJS): ALL_PATHS += $(HSU_CORE_INC_PATHS)
 HSU_CORE_OBJS_FOR_CLEAN := \
   $(addprefix $(TARGETDIR)/, $(HSU_CORE_C_SOURCES:%.c=%.o))
 
-clean_hsu_core_files:
-	@for hsu_core_obj_file in $(HSU_CORE_OBJS_FOR_CLEAN); do \
-      rm -vf $$hsu_core_obj_file; \
-    done
-	@echo Removed HS-USB stack core object files.
+#Gemsea Remove clean_hsu_core_files:
+#Gemsea Remove 	@for hsu_core_obj_file in $(HSU_CORE_OBJS_FOR_CLEAN); do \
+#Gemsea Remove       rm -vf $$hsu_core_obj_file; \
+#Gemsea Remove     done
+#Gemsea Remove 	@echo Removed HS-USB stack core object files.
+

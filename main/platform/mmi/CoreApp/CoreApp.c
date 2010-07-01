@@ -1376,15 +1376,22 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             {
                 case AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE:
                 {
+                    pMe->m_bExtPwrState = TRUE;
                     CoreApp_Process_Batty_Msg(pMe, IDS_FULLY_CHARGED);
                     (void) ISHELL_CancelTimer(pMe->a.m_pIShell, CCharger_EnableICONCB, (void *) pMe);
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_FULL);
+#ifdef FEATURE_APP_MEDIAGALLERY
+                    MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
+#endif
                     break;
                 }
 
                 case AEEBATTERY_CHARGERSTATUS_CHARGING:
                 {
                     pMe->m_bExtPwrState = TRUE;
+#ifdef FEATURE_APP_MEDIAGALLERY
+                    MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
+#endif
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH                        
                     (void) ISHELL_SetTimer(pMe->a.m_pIShell,500, CCharger_EnableICONCB, (void *) pMe);
 #else
