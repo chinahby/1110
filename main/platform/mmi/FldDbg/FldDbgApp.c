@@ -8386,16 +8386,11 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
                 int total = 0;
                 int step = 0, temp;
                 p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-             //   (void) ICONFIG_GetItem(pme->m_pIConfig,
-             //   CFGI_NET_LOCK_ENABLED,
-              //  &enabledFlag,
-             //   sizeof(uint8));
                 pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_TEXT_MNC);
                 ITEXTCTL_SetActive(pIText,TRUE);
                 (void)ITEXTCTL_GetText(pIText,pwstrText,30);
                 (void) WSTRTOSTR(pwstrText, string, sizeof(string));
-                MSG_FATAL("mnc:text=%s",string,0,0);
-                MSG_FATAL("mnc:::::::2222222222:::::::::text length=%d",STRLEN(string),0,0);
+                MSG_FATAL("mnc:text=%s, length=%d",string,STRLEN(string),0);
                 temp = string[0];
                 for(i = 0; i < STRLEN(string); i++)
                 {
@@ -8404,7 +8399,6 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
                     {
                         if(k >= NV_MAX_SID_LOCK)
                         {
-                            MSG_FATAL("mnc:::::::3333333333:::::::::k=%d",k,0,0);
                             break;
                         }
                         if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
@@ -8414,7 +8408,6 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
                         MSG_FATAL("mnc:::::::3333333333:::::::::step=%d",step,0,0);
                         for(j = 0; j < step; j++)
                         {
-                           //MSG_FATAL("mnc:::::::3333333333:::::::::i-j-1=%d, FPOW(10, j)=%d, j=%d",i-j-1,FPOW(10, j),j);
                             if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
                             {
                                 total += (string[i-j] - '0')*FPOW(10, j);
@@ -8424,13 +8417,19 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
                                 total += (string[i-j-1] - '0')*FPOW(10, j);
                             }
                         }
-                        MSG_FATAL("mnc:::::::444444444:::::::::total=%d",total,0,0);
                         if((temp >= 48) && (temp <= 57))
                         {
                             //如果当前输入项是非数字，且上一个也是非数字，
-                            //则不将它统计到mnc中
+                            //则不将它统计到mnc中，否则则保存
                             MSG_FATAL("mnc:::::::555555:::::::::mnc[%d]=%d",k,total,0);
                             mnc[k++] = total;
+                        }
+                        else if ((step ==1) && (i == STRLEN(string)-1) && ((string[i] >= 48) || (string[i] <= 57)))
+                        {
+                            //当前项是最后一位数字，且当前项是一位数时，要保存起来
+                            //上面的IF语句处理不了这种情况
+                            MSG_FATAL("mnc:::::::5555552:::::::::mnc[%d]=%d",k,total,0);
+                            mnc[k++] = total;                            
                         }
                         total = 0;
                         step = 0;
@@ -8439,6 +8438,15 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
                     }
                     temp = string[i];
                     step++;
+                }
+                MSG_FATAL("mnc:::::::666666:::::::::k=%d",k,0,0);
+                if(k < NV_MAX_SID_LOCK)
+                {
+                    for(i = k; i < NV_MAX_SID_LOCK; i++)
+                    {
+                        MSG_FATAL("mnc:::::::777777:::::::::i=%d, k=%d",i,k,0);
+                        mnc[i] = 'a';
+                    }
                 }
                 (void) ICONFIG_SetItem(pme->m_pIConfig,
                 CFGI_NET_LOCK_MNC,
@@ -8487,15 +8495,11 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
             pme->m_pActiveIDlg = (IDialog*)dwParam;
             (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
             pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_TEXT_MNC);
-            (void) ICONFIG_GetItem(pme->m_pIConfig,
-            CFGI_NET_LOCK_MNC,
-            &mnc,
-            sizeof(word));
-            //MSG_FATAL("enabledFlag::::::00000000::::::::::%d",mnc[0],0,0);
+            (void) ICONFIG_GetItem(pme->m_pIConfig,CFGI_NET_LOCK_MNC,&mnc,sizeof(word));
             for(i = 0; i < NV_MAX_SID_LOCK; i++)
             {
                 MSG_FATAL("enabledFlag::::::00000000::::::::::mnc[%d]=%d",i,mnc[i],0);  
-              //  if(mnc[i] != 0)
+                if(mnc[i] != 'a')
                 {
                     n = WSTRLEN(string);
                     MSG_FATAL("enabledFlag::::::00000000::::::::::i=%d,WSTRLEN(string)=%d",i,n,0);
@@ -8543,10 +8547,6 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
                 int total = 0;
                 int step = 0, temp;
                 p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-             //   (void) ICONFIG_GetItem(pme->m_pIConfig,
-             //   CFGI_NET_LOCK_ENABLED,
-              //  &enabledFlag,
-             //   sizeof(uint8));
                 pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_TEXT_MCC);
                 ITEXTCTL_SetActive(pIText,TRUE);
                 (void)ITEXTCTL_GetText(pIText,pwstrText,30);
@@ -8559,7 +8559,6 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
                     {
                         if(k >= NV_MAX_SID_LOCK)
                         {
-                            MSG_FATAL("mcc:::::::3333333333:::::::::k=%d",k,0,0);
                             break;
                         }
                         if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
@@ -8569,7 +8568,6 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
                         MSG_FATAL("mcc:::::::3333333333:::::::::step=%d",step,0,0);
                         for(j = 0; j < step; j++)
                         {
-                           //MSG_FATAL("mnc:::::::3333333333:::::::::i-j-1=%d, FPOW(10, j)=%d, j=%d",i-j-1,FPOW(10, j),j);
                             if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
                             {
                                 total += (string[i-j] - '0')*FPOW(10, j);
@@ -8587,6 +8585,13 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
                             MSG_FATAL("mcc:::::::555555:::::::::mnc[%d]=%d",k,total,0);
                             mcc[k++] = total;
                         }
+                        else if ((step ==1) && (i == STRLEN(string)-1) && ((string[i] >= 48) || (string[i] <= 57)))
+                        {
+                            //当前项是最后一位数字，且当前项是一位数时，要保存起来
+                            //上面的IF语句处理不了这种情况
+                            MSG_FATAL("mcc:::::::555555:::::::::mcc[%d]=%d",k,total,0);
+                            mcc[k++] = total;                            
+                        }                        
                         total = 0;
                         step = 0;
                         temp = string[i];
@@ -8594,6 +8599,13 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
                     }
                     temp = string[i];
                     step++;
+                }
+                if(k < NV_MAX_SID_LOCK)
+                {
+                    for(i = k; i < NV_MAX_SID_LOCK; i++)
+                    {
+                        mcc[i] = 'a';
+                    }
                 }
 
                 (void) ICONFIG_SetItem(pme->m_pIConfig,
@@ -8643,15 +8655,12 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
             pme->m_pActiveIDlg = (IDialog*)dwParam;
             (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
             pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_TEXT_MCC);
-            (void) ICONFIG_GetItem(pme->m_pIConfig,
-            CFGI_NET_LOCK_MCC,
-            &mcc,
-            sizeof(word));
+            (void) ICONFIG_GetItem(pme->m_pIConfig,CFGI_NET_LOCK_MCC,&mcc, sizeof(word));
             MSG_FATAL("enabledFlag::::::00000000::::::::::%d",mcc[0],0,0);
             for(i = 0; i < NV_MAX_SID_LOCK; i++)
             {
                 MSG_FATAL("enabledFlag::::::00000000::::::::::mcc[%d]=%d",i,mcc[i],0);  
-              //  if(mcc[i] != 0)
+                if(mcc[i] != 'a')
                 {
                     n = WSTRLEN(string);
                     MSG_FATAL("enabledFlag::::::00000000::::::::::i=%d,WSTRLEN(string)=%d",i,n,0);
@@ -8699,10 +8708,6 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
                 int total = 0;
                 int step = 0, temp;
                 p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-             //   (void) ICONFIG_GetItem(pme->m_pIConfig,
-             //   CFGI_NET_LOCK_ENABLED,
-              //  &enabledFlag,
-             //   sizeof(uint8));
                 pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_TEXT_SID);
                 ITEXTCTL_SetActive(pIText,TRUE);
                 (void)ITEXTCTL_GetText(pIText,pwstrText,30);
@@ -8715,7 +8720,6 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
                     {
                         if(k >= NV_MAX_SID_LOCK)
                         {
-                            MSG_FATAL("sid:::::::3333333333:::::::::k=%d",k,0,0);
                             break;
                         }
                         if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
@@ -8725,7 +8729,6 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
                         MSG_FATAL("sid:::::::3333333333:::::::::step=%d",step,0,0);
                         for(j = 0; j < step; j++)
                         {
-                           //MSG_FATAL("mnc:::::::3333333333:::::::::i-j-1=%d, FPOW(10, j)=%d, j=%d",i-j-1,FPOW(10, j),j);
                             if((i == STRLEN(string)-1) && ((string[i] >= 48) && (string[i] <= 57)))
                             {
                                 total += (string[i-j] - '0')*FPOW(10, j);
@@ -8743,6 +8746,13 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
                             MSG_FATAL("mnc:::::::555555:::::::::mnc[%d]=%d",k,total,0);
                             sid[k++] = total;
                         }
+                        else if ((step ==1) && (i == STRLEN(string)-1) && ((string[i] <= 48) || (string[i] <= 57)))
+                        {
+                            //当前项是最后一位数字，且当前项是一位数时，要保存起来
+                            //上面的IF语句处理不了这种情况
+                            MSG_FATAL("sid:::::::555555:::::::::sid[%d]=%d",k,total,0);
+                            sid[k++] = total;                            
+                        }                        
                         total = 0;
                         step = 0;
                         temp = string[i];
@@ -8751,7 +8761,13 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
                     temp = string[i];
                     step++;
                 }
-
+                if(k < NV_MAX_SID_LOCK)
+                {
+                    for(i = k; i < NV_MAX_SID_LOCK; i++)
+                    {
+                        sid[i] = 'a';
+                    }
+                }
                 (void) ICONFIG_SetItem(pme->m_pIConfig,
                 CFGI_NET_LOCK_SID,
                 &sid,
@@ -8799,15 +8815,12 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
             pme->m_pActiveIDlg = (IDialog*)dwParam;
             (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
             pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_TEXT_SID);
-            (void) ICONFIG_GetItem(pme->m_pIConfig,
-            CFGI_NET_LOCK_SID,
-            &sid,
-            sizeof(word));
+            (void) ICONFIG_GetItem(pme->m_pIConfig,CFGI_NET_LOCK_SID,&sid,sizeof(word));
             DBGPRINTF("enabledFlag::::::00000000::::::::::%d",sid[0]);
             for(i = 0; i < NV_MAX_SID_LOCK; i++)
             {
                 MSG_FATAL("enabledFlag::::::00000000::::::::::sid[%d]=%d",i,sid[i],0);  
-            //    if(sid[i] != 0)
+                if(sid[i] != 'a')
                 {
                     n = WSTRLEN(string);
                     MSG_FATAL("enabledFlag::::::00000000::::::::::i=%d,WSTRLEN(string)=%d",i,n,0);
