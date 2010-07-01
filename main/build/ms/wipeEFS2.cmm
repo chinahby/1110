@@ -15,6 +15,7 @@
 ;
 break.reset
 break.set fs_super_init /onchip
+break.set oemui_init_resources /onchip
 go
 PRINT "Waiting for breakpoint"
 WAIT !run()
