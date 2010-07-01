@@ -8495,7 +8495,7 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
             for(i = 0; i < NV_MAX_SID_LOCK; i++)
             {
                 MSG_FATAL("enabledFlag::::::00000000::::::::::mnc[%d]=%d",i,mnc[i],0);  
-                if(mnc[i] != 0)
+              //  if(mnc[i] != 0)
                 {
                     n = WSTRLEN(string);
                     MSG_FATAL("enabledFlag::::::00000000::::::::::i=%d,WSTRLEN(string)=%d",i,n,0);
@@ -8651,7 +8651,7 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
             for(i = 0; i < NV_MAX_SID_LOCK; i++)
             {
                 MSG_FATAL("enabledFlag::::::00000000::::::::::mcc[%d]=%d",i,mcc[i],0);  
-                if(mcc[i] != 0)
+              //  if(mcc[i] != 0)
                 {
                     n = WSTRLEN(string);
                     MSG_FATAL("enabledFlag::::::00000000::::::::::i=%d,WSTRLEN(string)=%d",i,n,0);
@@ -8807,7 +8807,7 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
             for(i = 0; i < NV_MAX_SID_LOCK; i++)
             {
                 MSG_FATAL("enabledFlag::::::00000000::::::::::sid[%d]=%d",i,sid[i],0);  
-                if(sid[i] != 0)
+            //    if(sid[i] != 0)
                 {
                     n = WSTRLEN(string);
                     MSG_FATAL("enabledFlag::::::00000000::::::::::i=%d,WSTRLEN(string)=%d",i,n,0);
