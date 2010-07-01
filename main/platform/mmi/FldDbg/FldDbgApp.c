@@ -8507,7 +8507,6 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
                 }
             }
             n = WSTRLEN(string);
-            MSG_FATAL("enabledFlag::::::00000000::::::::::text=%s",string,0,0);          
             ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
             ITEXTCTL_SetMaxSize ( pIText, 30);
             (void)ITEXTCTL_SetText(pIText,string,-1);
@@ -8668,7 +8667,6 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
                 }
             }
             n = WSTRLEN(string);
-            MSG_FATAL("enabledFlag::::::00000000::::::::::text=%s",string,0,0);          
             ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
             ITEXTCTL_SetMaxSize ( pIText, 30);
             (void)ITEXTCTL_SetText(pIText,string,-1);
@@ -8827,7 +8825,6 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
                     WSPRINTF( string+n, 30, L"%d.", sid[i]);  
                 }
             }
-            MSG_FATAL("enabledFlag::::::00000000::::::::::text=%s",string,0,0); 
             n = WSTRLEN(string);
             ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
             ITEXTCTL_SetMaxSize ( pIText, 30);
