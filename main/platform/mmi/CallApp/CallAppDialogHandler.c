@@ -950,12 +950,18 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             return TRUE;
                         }
 #endif
+                        if (WSTRCMP(pMe->m_DialString, L"*#06#") == 0)
+                        {
+                            //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
+                            ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#06#");
+                            return TRUE;
+                        }
                         if (WSTRCMP(pMe->m_DialString, L"*#*#8378#0#") == 0)
                         {
                             //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
                             ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#*#8378#0#");
                             return TRUE;
-                        }
+                        }                        
 #endif
                         if (WSTRCMP(pMe->m_DialString, L"123456#") == 0)
                         {
