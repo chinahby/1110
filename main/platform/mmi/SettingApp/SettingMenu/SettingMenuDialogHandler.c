@@ -3061,7 +3061,7 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
          		
                 if ((nviNew.sim_select != nvi.sim_select) && (SUCCESS == nReturnStatus))
                 {
-                    ERR("HandleSimDialogEvent:::::22222%d",nviNew.sim_select,0,0);
+                    MSG_FATAL("HandleSimDialogEvent:::::22222%d",nviNew.sim_select,0,0);
 					
                     (void)OEMNV_Put(NV_SIM_SELECT_I,&nviNew);
                     //将选中的选项标出
@@ -3069,9 +3069,8 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                     InitMenuIcons(pMenu);
                     SetMenuIcon(pMenu, wParam, TRUE);
                     (void)IMENUCTL_Redraw(pMenu);
-                    (void)ISHELL_SendEvent( pMe->m_pShell,  AEECLSID_CORE_APP, 
-                                EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
 					 ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_PWROFF);
+					 CoreTask_SetPwrDnComplete(TRUE);
 					 if (pICM != NULL)
     				 {
 					 	ICM_Release(pICM);
