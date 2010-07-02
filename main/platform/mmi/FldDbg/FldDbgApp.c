@@ -5469,13 +5469,10 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
                   pme->m_dlgID = IDD_VERSION_DIALOG;
                }
 #endif
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
               if(STRNCMP(args->pszArgs,"*#06#",5) == 0)
               {
                  pme->m_dlgID = IDD_ESN_DIALOG;
               }
-#endif
-
                if(STRNCMP(args->pszArgs,"*#*#8378#0#",11) == 0)
                {
                   pme->m_dlgID = IDD_TOP_DIALOG;
@@ -7593,10 +7590,11 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
     
-    (void) ICONFIG_GetItem(pme->m_pIConfig,
-                          CFGI_ESN,
-                          &esn,
-                          sizeof(esn));
+    //(void) ICONFIG_GetItem(pme->m_pIConfig,
+    //                      CFGI_ESN,
+    //                      &esn,
+    //                      sizeof(esn));//插了卡时，从卡中读取
+    OEM_ReadESN(&esn);//永远从NV中读取
 
     STRTOWSTR("%u %u", fmt_str, sizeof(fmt_str));
     
