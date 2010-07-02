@@ -3018,6 +3018,7 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
 
         case EVT_USER_REDRAW:
             (void)IMENUCTL_Redraw(pMenu);
+			
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -3038,6 +3039,8 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
         case EVT_COMMAND:
             {
                  nv_item_type nviNew;
+				 ICM *pICM = NULL;
+				 int nReturnStatus = -1;
                 switch (wParam)
                 {
                     case  IDS_SIM_ONE:
@@ -3051,10 +3054,15 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                        ASSERT_NOT_REACHABLE;
 
                 }
+				nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell,
+                                    AEECLSID_CM,
+                                    (void **) &pICM);
 
-                if (nviNew.sim_select != nvi.sim_select)
+         		
+                if ((nviNew.sim_select != nvi.sim_select) && (SUCCESS == nReturnStatus))
                 {
                     ERR("HandleSimDialogEvent:::::22222%d",nviNew.sim_select,0,0);
+					
                     (void)OEMNV_Put(NV_SIM_SELECT_I,&nviNew);
                     //将选中的选项标出
                     nvi.sim_select = nviNew.sim_select;
@@ -3063,6 +3071,13 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                     (void)IMENUCTL_Redraw(pMenu);
                     (void)ISHELL_SendEvent( pMe->m_pShell,  AEECLSID_CORE_APP, 
                                 EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
+					 ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_PWROFF);
+					 if (pICM != NULL)
+    				 {
+					 	ICM_Release(pICM);
+         			 	pICM = NULL;
+					 }
+					 break;
                 }
                 CLOSE_DIALOG(DLGRET_WARNING)
             }
