@@ -46,10 +46,10 @@ const nv_auto_set_type nv_auto_set_rf_fixed_list[] =
     {NV_BC0_PA_R_MAP_I,                     {0xfe}},
     {NV_C0_BC0_TX_CAL_CHAN_I,               {0xfa, 0x03, 0x2e, 0x00, 0x62, 0x00, 0x96, 0x00, 0xca, 0x00, 0xfe, 0x00, 0x32, 0x01, 0x66, 0x01,
                                              0x9a, 0x01, 0xce, 0x01, 0x02, 0x02, 0x36, 0x02, 0x6a, 0x02, 0x9e, 0x02, 0xd2, 0x02, 0x06, 0x03}},
-    {NV_BC0_PA_R1_RISE_I,                   {0xb0}},
+    {NV_BC0_PA_R1_RISE_I,                   {0xba}},
     {NV_BC0_PA_R2_RISE_I,                   {0xff}},
     {NV_BC0_PA_R3_RISE_I,                   {0xff}},
-    {NV_BC0_PA_R1_FALL_I,                   {0xab}},
+    {NV_BC0_PA_R1_FALL_I,                   {0xb5}},
     {NV_BC0_PA_R2_FALL_I,                   {0xff}},
     {NV_BC0_PA_R3_FALL_I,                   {0xff}}
 };
