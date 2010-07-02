@@ -407,7 +407,7 @@ static int GetNVItem(nv_items_enum_type item, nv_item_type *data_ptr)
    }
 }
 
-static int OEM_ReadESN(uint32 *pESN)
+int OEM_ReadESN(uint32 *pESN)
 {
    nv_stat_enum_type status;
 #ifdef FEATURE_UIM_RUIM
