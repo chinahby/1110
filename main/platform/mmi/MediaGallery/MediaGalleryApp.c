@@ -2186,9 +2186,10 @@ void MediaGalleryApp_StopSDCard(void)
 #include "rdevmap.h"
 #include "hsu_conf_sel_i.h"  /* Dynamic composition switching */
 #include "hsu_conf_sel_ui.h" /* Dynamic composition switching */
-//static hsu_conf_sel_composition_id_enum g_comp_id;
+static hsu_conf_sel_composition_id_enum g_comp_id;
 static boolean      g_bcomp_change_done;
 static AEECallback  g_rdm_ui_cb;
+extern void hsu_api_spoof_reconnect(void);
 
 static void MediaGallery_UDisk_CB(rdm_assign_status_type status)
 {
@@ -2211,9 +2212,10 @@ static void MediaGallery_UDisk_CB(rdm_assign_status_type status)
             {
                 /* Successful composition change */
                 g_bcomp_change_done = TRUE;
+                hsu_api_spoof_reconnect();
             }
         }
-        break;    
+        break;
 
     case RDM_NOT_ALLOWED_S:
     case RDM_DEVMAP_BUSY_S:
@@ -2271,7 +2273,7 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
             break;
         }
         
-        if (HSU_CONF_SEL_DIAG_MS_COMP == comp_info->hsu_comp_id)
+        if (HSU_CONF_SEL_MS_COMP == comp_info->hsu_comp_id)
         {
             bRet = TRUE;
             break;
@@ -2285,11 +2287,11 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
         }
         
         /* Save current composition.  Restore it when disconnecting the printer */
-        //g_comp_id = comp_info->hsu_comp_id;
+        g_comp_id = comp_info->hsu_comp_id;
         g_bcomp_change_done = FALSE;
 
         /* Dynamically swtich over to PictBridge composition */
-        if ( !hsu_conf_sel_ui_switch_comp(HSU_CONF_SEL_DIAG_MS_COMP, MediaGallery_rdm_event_cb) )
+        if ( !hsu_conf_sel_ui_switch_comp(HSU_CONF_SEL_MS_COMP, MediaGallery_rdm_event_cb) )
         {
             bRet = FALSE;
             break;
@@ -2337,10 +2339,15 @@ boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe)
             break;
         }
         
-        if (HSU_CONF_SEL_DIAG_MDM_COMP == comp_info->hsu_comp_id)
+        if(!g_comp_id || g_comp_id == HSU_CONF_SEL_MS_COMP)
         {
-            bRet = TRUE;
-            break;
+            if (HSU_CONF_SEL_DIAG_MDM_COMP == comp_info->hsu_comp_id)
+            {
+                bRet = TRUE;
+                break;
+            }
+            
+            g_comp_id = HSU_CONF_SEL_DIAG_MDM_COMP;
         }
         
         /* Check if we can switch the composition dynamically right now */
@@ -2352,13 +2359,15 @@ boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe)
         
         g_bcomp_change_done = FALSE;
         /* Dynamically swtich over to PictBridge composition */
-        if ( !hsu_conf_sel_ui_switch_comp(HSU_CONF_SEL_DIAG_MDM_COMP, MediaGallery_rdm_event_cb) )
+        if ( !hsu_conf_sel_ui_switch_comp(g_comp_id, MediaGallery_rdm_event_cb) )
         {
             bRet = FALSE;
+            g_comp_id = 0;
             break;
         }
         else
         {
+            g_comp_id = 0;
             break;
         }
     }
