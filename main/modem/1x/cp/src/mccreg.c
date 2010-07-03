@@ -1790,6 +1790,9 @@ SIDE EFFECTS
   None.
 
 ===========================================================================*/
+#ifdef CUST_EDITION
+extern dword tmc_get_stored_esn_me ( void );
+#endif
 
 void mccreg_idle_init( void )
 {
@@ -1799,6 +1802,14 @@ void mccreg_idle_init( void )
   ** ---------------------------------------------------------------- */
   if ((mccreg_vars.reg_status == MCCREG_REG_NEEDED) && (mccreg_vars.powering_up))
   {
+#if defined(CUST_EDITION) && defined(FEATURE_UIM_RUIM)
+    if( tmc_get_stored_esn_me()==0 )
+    {
+       clk_reg( &mccreg_powerup_timer, mccreg_powerup_timer_done,
+           (uint32) 2000, 0L,  FALSE );
+    }
+    else
+#endif
     clk_reg( &mccreg_powerup_timer, mccreg_powerup_timer_done,
              (uint32) cai_tmo.t57m, 0L,  FALSE );
     mccreg_vars.powerup_timer_on = TRUE;

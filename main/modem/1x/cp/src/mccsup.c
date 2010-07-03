@@ -13046,6 +13046,14 @@ boolean mcc_setup_vpm_and_akey
     {
       cdma.vp_desired = ( bs_auth_mode == CAI_AUTH ) ? TRUE : FALSE;
     }
+#ifdef CUST_EDITION
+    {
+      db_items_value_type sa_value;
+      
+      sa_value.voice_privacy = cdma.vp_desired;
+      db_put( DB_VOICE_PRIVACY, &sa_value );
+    }
+#endif
   }
 
   /* ---------------

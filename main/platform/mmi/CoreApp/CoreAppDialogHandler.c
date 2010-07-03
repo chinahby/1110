@@ -4881,9 +4881,10 @@ void CoreApp_Draw_Charger_image(void *pp)
 static void CoreApp_CloseRefreshDlgTimer(void *pme)
 {
     CCoreApp *pMe = (CCoreApp *)pme;
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
     db_items_value_type  db_item;
     boolean  bIninted = FALSE;
-    
+#endif
     if (NULL == pMe)
     {
         return;
@@ -4893,7 +4894,7 @@ static void CoreApp_CloseRefreshDlgTimer(void *pme)
     {
         return;
     }
-#ifndef WIN32    
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
     db_get(DB_UIMSMSINIT, &db_item);
     bIninted = db_item.db_uimsmsinited;
     db_get(DB_UIMADDINIT, &db_item);
@@ -4981,8 +4982,9 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
         case EVT_USER_REDRAW:
             {
                 AECHAR    wszMsgText[32];
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
                 db_items_value_type db_item;
-                
+#endif
                 (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                                             AEE_COREAPPRES_LANGFILE,
                                             IDS_UTKREFRESH,
@@ -5006,10 +5008,10 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
                     (pMe->wRefreshMask & REFRESHMASK_UIMSMS))
                 {
                     IWmsApp *pWmsApp=NULL;
-                    
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
                     db_item.db_uimsmsinited = FALSE;
                     db_put(DB_UIMSMSINIT, &db_item);
-                    
+#endif
                     if (ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_WMSAPP,
                             (void**)&pWmsApp) == SUCCESS)
                     {
@@ -5027,12 +5029,11 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
                     (pMe->wRefreshMask & REFRESHMASK_UIMADD))
                 {
                     extern void OEMRUIMAddr_Refresh(void);
-#ifndef WIN32                    
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
                     db_item.db_uimaddinited = FALSE;
                     db_put(DB_UIMADDINIT, &db_item);
-                    
-                    OEMRUIMAddr_Refresh();
 #endif
+                    OEMRUIMAddr_Refresh();
                 }
 #endif
 

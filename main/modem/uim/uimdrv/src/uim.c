@@ -617,12 +617,6 @@ when       who     what, where, why
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #include "db.h"
 #include "CustomOEMConfigItems.h"
-#ifdef FEATURE_UIM_TOOLKIT_UTK
-#ifdef FEATURE_UTK2
-#include "uimtk.h"
-extern set_UTK_session_status(byte st);
-#endif
-#endif
 
 #define INIT_DELAY_TIME 1000
 static rex_timer_type uim_initsmsadd_timer;
@@ -630,6 +624,13 @@ static byte btCurInitFlg = 0;
 extern boolean  InitRUIMAddrBkCacheCb(void);
 extern boolean  wms_ruim_init_stepbystep(void);
 #endif
+#ifdef FEATURE_UIM_TOOLKIT_UTK
+#ifdef FEATURE_UTK2
+#include "uimtk.h"
+extern set_UTK_session_status(byte st);
+#endif
+#endif
+
 /* <EJECT> */
 /*===========================================================================
 
