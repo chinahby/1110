@@ -79,6 +79,7 @@ static NextFSMAction SettingMenu_StateBannerHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StateTimeHandler(CSettingMenu *pMe);
 #ifdef FEATURE_DOUBLE_SIM_CARD
 static NextFSMAction   SettingMenu_StateSimHandler(CSettingMenu *pMe);
+static NextFSMAction   SettingMenu_StateSimChoiceHandler(CSettingMenu *pMe);
 #endif
 // 状态 dateSETTING 处理函数
 static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe);
@@ -157,6 +158,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
 {
     NextFSMAction retVal = NFSMACTION_WAIT;
 
+    MSG_FATAL("SettingMenu_ProcessState Start",0,0,0);
     if (NULL == pMe)
     {
         return retVal;
@@ -295,11 +297,15 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_SIMSETTING:
             retVal = SettingMenu_StateSimHandler(pMe);
             break;
+        case SETTINGMENUST_SIMSETTING_CHOICE:
+            MSG_FATAL("SettingMenu_ProcessState SETTINGMENUST_SIMSETTING_CHOICE",0,0,0);
+            retVal = SettingMenu_StateSimChoiceHandler(pMe);
+            break;            
 #endif
         default:
             ASSERT_NOT_REACHABLE;
     }
-    SETTING_ERR("curstate %d prestate %d dlgret %d CallApp_ProcessState",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
+    MSG_FATAL("curstate %d prestate %d dlgret %d CallApp_ProcessState",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
     return retVal;
 }
 
@@ -579,6 +585,7 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
         case DLGRET_SIMSETTING:
             MOVE_TO_STATE(SETTINGMENUST_SIMSETTING)
             return NFSMACTION_CONTINUE;
+        
 #endif
 
         default:
@@ -1112,8 +1119,47 @@ static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe)
 
 ==============================================================================*/
 #ifdef FEATURE_DOUBLE_SIM_CARD
+static NextFSMAction   SettingMenu_StateSimChoiceHandler(CSettingMenu *pMe)
+{
+    MSG_FATAL("SettingMenu_StateSimChoiceHandler Start",0,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            MSG_FATAL("SettingMenu_StateSimChoiceHandler DLGRET_CREATE",0,0,0);
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_SIMSETTING_CHOICE_DIALOG);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_SIMSETTING)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_SIMSETTING:
+            MSG_FATAL("SettingMenu_StateSimChoiceHandler DLGRET_SIMSETTING",0,0,0);
+            MOVE_TO_STATE(DLGRET_SIMSETTING)
+            return NFSMACTION_CONTINUE;            
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
 static NextFSMAction   SettingMenu_StateSimHandler(CSettingMenu *pMe)
 {
+    MSG_FATAL("SettingMenu_StateSimHandler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -1135,6 +1181,11 @@ static NextFSMAction   SettingMenu_StateSimHandler(CSettingMenu *pMe)
             pMe->m_msg_id = IDS_DONE;
             SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
             return NFSMACTION_WAIT;
+            
+        case DLGRET_SIMSETTING_CHOICE:
+            MSG_FATAL("SettingMenu_StateSimHandler DLGRET_SIMSETTING_CHOICE",0,0,0);
+            MOVE_TO_STATE(SETTINGMENUST_SIMSETTING_CHOICE)
+            return NFSMACTION_CONTINUE;
 
         default:
             ASSERT_NOT_REACHABLE;
@@ -1143,6 +1194,7 @@ static NextFSMAction   SettingMenu_StateSimHandler(CSettingMenu *pMe)
     return NFSMACTION_WAIT;
 }
 #endif
+
 /*==============================================================================
 函数：
        StateLanguageHandler

@@ -64,6 +64,7 @@
 #include "Appscommon.h"
 #include "AEERUIM.h"
 #include "OEMText.h"
+#include "OEMNV.h"
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
@@ -129,7 +130,8 @@ typedef enum DLGRetValue
     DLGRET_MSGBOX_OK,
     DLGRET_MSGBOX_CANCEL
     #ifdef  FEATURE_DOUBLE_SIM_CARD
-    ,DLGRET_SIMSETTING
+    ,DLGRET_SIMSETTING,
+    DLGRET_SIMSETTING_CHOICE
     #endif
 
 } DLGRet_Value_e_Type;
@@ -182,7 +184,8 @@ typedef enum _SettingMenuState
    ,SETTINGMENUST_PLANEMODE
 #endif
 #ifdef  FEATURE_DOUBLE_SIM_CARD
-   ,SETTINGMENUST_SIMSETTING
+   ,SETTINGMENUST_SIMSETTING,
+   SETTINGMENUST_SIMSETTING_CHOICE
 #endif
 } SettingMenuState;
 
@@ -301,6 +304,8 @@ typedef struct _CSettingMenu
     uint16           m_ip_sel_num;
     uint16           m_msg_id ;
     char             *m_strPhonePWD; 
+    nv_item_type    nviNewSimChoice;
+    nv_item_type    nviOldSimChoice;
 } CSettingMenu;
 
 /*==============================================================================

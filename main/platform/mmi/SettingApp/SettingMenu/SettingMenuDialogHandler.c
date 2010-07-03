@@ -149,6 +149,13 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
     );
+
+static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+    );
+
 #endif
 #ifdef FEATURE_KEYGUARD
 //对话框 IDD_AKG_MENU 事件处理函数
@@ -289,6 +296,7 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -324,13 +332,14 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
 void SettingMenu_ShowDialog(CSettingMenu *pMe,uint16  dlgResId)
 {
     int nRet;
+    MSG_FATAL("SettingMenu_ShowDialog Start",0,0,0);
     //SETTING_ERR("next show %d dialog", dlgResId, 0, 0);
     // At most one dialog open at once
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
         // Looks like there is one dialog already opened.
         // Flag an error an return without doing anything.
-        ERR("Trying to create a dialog without closing the previous one",0,0,0);
+        MSG_FATAL("Trying to create a dialog without closing the previous one",0,0,0);
         return;
     }
 
@@ -338,8 +347,9 @@ void SettingMenu_ShowDialog(CSettingMenu *pMe,uint16  dlgResId)
 
     if (nRet != SUCCESS)
     {
-        ERR("Failed to create the dialog in the SettingMenu applet",0,0,0);
+        MSG_FATAL("Failed to create the dialog in the SettingMenu applet",0,0,0);
     }
+    MSG_FATAL("SettingMenu_ShowDialog END",0,0,0);
 }
 
 /*==============================================================================
@@ -367,13 +377,16 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 )
 {
+    MSG_FATAL("SettingMenu_RouteDialogEvent Start",0,0,0);
     if (NULL == pMe)
     {
+        MSG_FATAL("SettingMenu_RouteDialogEvent pMe==NULL",0,0,0);
         return FALSE;
     }
 
     if (NULL == pMe->m_pActiveDlg)
     {
+        MSG_FATAL("SettingMenu_RouteDialogEvent NULL == pMe->m_pActiveDlg",0,0,0);
         return FALSE;
     }
     //SETTING_ERR("%d SettingMenu_RouteDialogEvent", pMe->m_pActiveDlgID, 0, 0);
@@ -476,10 +489,13 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 #ifdef  FEATURE_DOUBLE_SIM_CARD
         case IDD_SIMSETTING:
             return HandleSimDialogEvent(pMe,eCode,wParam,dwParam);
+        case IDD_SIMSETTING_CHOICE_DIALOG:
+            return HandleSimChoiceEvent(pMe,eCode,wParam,dwParam);
 #endif
         default:
             return FALSE;
     }
+    MSG_FATAL("SettingMenu_RouteDialogEvent End",0,0,0);
 }
 
 /*==============================================================================
@@ -2959,7 +2975,6 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
     PARAM_NOT_REF(dwParam)
     //static byte bytData = 0;
     //static boolean isSwitch = FALSE;
-    nv_item_type nvi;
     int ret = 0;
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
@@ -2988,10 +3003,10 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                
-                ret =OEMNV_Get(NV_SIM_SELECT_I,&nvi);
-                if( NV_NOTACTIVE_S != OEMNV_Get(NV_SIM_SELECT_I,&nvi))
+                ret =OEMNV_Get(NV_SIM_SELECT_I,&pMe->nviOldSimChoice);
+                if( NV_NOTACTIVE_S != ret)
                 {
-                    switch (nvi.sim_select)
+                    switch (pMe->nviOldSimChoice.sim_select)
                     {
                         case OEMNV_SIMFORM_ONE:
                             wItemID = IDS_SIM_ONE;
@@ -3004,7 +3019,7 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                             break;
                     }
                 }
-                ERR("HandleSimDialogEvent:::::%d::::ret:::%d",nvi.sim_select,ret,0);
+                ERR("HandleSimDialogEvent:::::%d::::ret:::%d",pMe->nviOldSimChoice.sim_select,ret,0);
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, wItemID, TRUE);
                 IMENUCTL_SetSel(pMenu, wItemID);
@@ -3038,47 +3053,29 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
 
         case EVT_COMMAND:
             {
-                 nv_item_type nviNew;
-				 ICM *pICM = NULL;
-				 int nReturnStatus = -1;
                 switch (wParam)
                 {
                     case  IDS_SIM_ONE:
-                       nviNew.sim_select = OEMNV_SIMFORM_ONE ;
+                       pMe->nviNewSimChoice.sim_select = OEMNV_SIMFORM_ONE ;
                        break;
 
                     case IDS_SIM_TWO:
-                       nviNew.sim_select = OEMNV_SIMFORM_TWO ;
+                       pMe->nviNewSimChoice.sim_select = OEMNV_SIMFORM_TWO ;
                        break;
                     default:
                        ASSERT_NOT_REACHABLE;
 
                 }
-				nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell,
-                                    AEECLSID_CM,
-                                    (void **) &pICM);
-
-         		
-                if ((nviNew.sim_select != nvi.sim_select) && (SUCCESS == nReturnStatus))
+                if ((pMe->nviNewSimChoice.sim_select != pMe->nviOldSimChoice.sim_select))
                 {
-                    MSG_FATAL("HandleSimDialogEvent:::::22222%d",nviNew.sim_select,0,0);
-					
-                    (void)OEMNV_Put(NV_SIM_SELECT_I,&nviNew);
+                    MSG_FATAL("HandleSimDialogEvent:::::22222 sim_select=%d",pMe->nviNewSimChoice.sim_select,0,0);				
                     //将选中的选项标出
-                    nvi.sim_select = nviNew.sim_select;
                     InitMenuIcons(pMenu);
                     SetMenuIcon(pMenu, wParam, TRUE);
                     (void)IMENUCTL_Redraw(pMenu);
-					 ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_PWROFF);
-					 CoreTask_SetPwrDnComplete(TRUE);
-					 if (pICM != NULL)
-    				 {
-					 	ICM_Release(pICM);
-         			 	pICM = NULL;
-					 }
+                    CLOSE_DIALOG(DLGRET_SIMSETTING_CHOICE)
 					 break;
                 }
-                CLOSE_DIALOG(DLGRET_WARNING)
             }
             return TRUE;
 
@@ -3088,6 +3085,105 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
     return FALSE;
     
 }
+
+static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+    )
+{
+    PARAM_NOT_REF(dwParam)
+    nv_item_type nvi;
+    int ret = 0;
+
+    MSG_FATAL("%x, %x ,%x,HandleSimChoiceEvent",eCode,wParam,dwParam);
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+        {      
+            return TRUE;
+        }
+
+        case EVT_DIALOG_START:
+        {
+            ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER_REDRAW,0,0);
+            return TRUE;
+        }
+        case EVT_USER_REDRAW:
+        {
+            BottomBar_Param_type BarParam;                  
+            MEMSET(&BarParam, 0, sizeof(BarParam));         
+            BarParam.eBBarType = BTBAR_OK_CANCEL;                         
+            DrawBottomBar(pMe->m_pDisplay, &BarParam);                  
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+        }
+        case EVT_DIALOG_END:
+            return TRUE;
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                {
+                    MSG_FATAL("HandleSimChoiceEvent AVK_CLR1",0,0,0);
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    MSG_FATAL("HandleSimChoiceEvent AVK_CLR2",0,0,0);
+                    return TRUE;
+                }
+                case AVK_SEND:
+                case AVK_INFO:
+                {
+                    nv_item_type nviNew;
+                    ICM *pICM = NULL;
+                    int nReturnStatus = -1;    
+                    MSG_FATAL("HandleSimChoiceEvent AVK_SEND",0,0,0);
+
+                    MSG_FATAL("HandleSimChoiceEvent:::::22222 sim_select=%d",pMe->nviNewSimChoice.sim_select,0,0);
+                    (void)OEMNV_Put(NV_SIM_SELECT_I,&pMe->nviNewSimChoice);
+                    pMe->nviOldSimChoice.sim_select = pMe->nviNewSimChoice.sim_select;
+
+                    nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CM, (void **) &pICM);   
+                    if((pICM == NULL) || (SUCCESS != nReturnStatus))
+                    {
+                        MSG_FATAL("HandleSimDialogEvent:::::33333 ICM cerate Failed",0,0,0);
+                        return FALSE;
+                    }                    
+#ifdef FEATURE_ICM
+                    ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_OFFLINE);
+#else
+                    ui_set_ph_oprt_mode (SYS_OPRT_MODE_OFFLINE);
+#endif
+#ifdef FEATURE_ICM
+                    ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_RESET);
+#else
+                    ui_set_ph_oprt_mode(SYS_OPRT_MODE_RESET);
+#endif                        
+#ifdef FEATURE_ICM
+                    ICM_Release(pICM);
+                    pICM = NULL;
+                    MSG_FATAL("HandleSimChoiceEvent AVK_SEND2",0,0,0);
+                    return TRUE;
+#endif                    
+                }
+
+                  default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+                break;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    MSG_FATAL("HandleSimChoiceEvent END",0,0,0);
+    return FALSE;
+    
+}
+
 #endif
 /*==============================================================================
 函数：
