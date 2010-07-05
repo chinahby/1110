@@ -623,7 +623,7 @@ typedef struct _CCallApp
     AECHAR                     wszPrivateString_tw[20];
     ERefreshVol                m_bRefreshVol;      //for display conversation text
 
-    //IFont                      *m_pBigNumFont;       //IFont interface for the dialing big number
+    IFont                      *m_pBigNumFont;       //IFont interface for the dialing big number
     int                        m_large_Num_Height;   //Dialing Number's Height,onle used for NumEdit
     boolean                    m_bShowPopMenu;//indicate current focus is pop_menu
     IMenuCtl                  *m_pMenu;          // pop menu

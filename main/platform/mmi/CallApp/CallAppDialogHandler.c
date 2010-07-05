@@ -5708,8 +5708,14 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     int                   fits;
     int                   pixelLen;
     AEERect           dialerRect;
+    IFont *pOldFont = NULL;
 
     CALL_FUN_START("CallApp_DrawDialerString", 0, 0, 0);
+
+    if(pMe->m_pBigNumFont)
+    {
+        pOldFont = IDISPLAY_SetFont(pMe->m_pDisplay, AEE_FONT_USER_1, pMe->m_pBigNumFont);
+    }
 
     SETAEERECT(&dialerRect,
                                             0,
@@ -5757,10 +5763,20 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     ASSERT(dstStr == revStr);
     //OEMFont_SetBigNumber(TRUE);
     //SetLargeFontBold(pMe->m_pOEM_TSGBridge,pMe->m_pDisplay);(Null Function)
-    largeLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
-                                            AEE_FONT_NORMAL,
+    if(pMe->m_pBigNumFont)
+    {
+        largeLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
+                                            AEE_FONT_USER_1,
                                             NULL,
                                             NULL);
+    }
+    else
+    {
+        largeLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
+                                            AEE_FONT_NORMAL,
+                                            NULL,
+                                            NULL);    
+    }
 
     // Main drawing loop.
     //
@@ -5794,12 +5810,24 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
 
         // Determine how much of the string will fit on the line
         // (the 'fits' var will return the number of characters that will fit)
-        pixelLen = IDISPLAY_MeasureTextEx(pMe->m_pDisplay,
-                                            AEE_FONT_NORMAL,
+        if(pMe->m_pBigNumFont)
+        {
+            pixelLen = IDISPLAY_MeasureTextEx(pMe->m_pDisplay,
+                                            AEE_FONT_USER_1,
                                             dstStr,
                                             -1,
                                             dialerRect.dx,
                                             &fits);
+        }
+        else
+        {
+            pixelLen = IDISPLAY_MeasureTextEx(pMe->m_pDisplay,
+                                            AEE_FONT_NORMAL,
+                                            dstStr,
+                                            -1,
+                                            dialerRect.dx,
+                                            &fits);        
+        }
 
         if (pixelLen <= 0)
         {
@@ -5816,20 +5844,37 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         srcStr -= fits;
         
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-        (void) IDISPLAY_DrawText(pMe->m_pDisplay,
+        if(pMe->m_pBigNumFont)
+        {
+            (void) IDISPLAY_DrawText(pMe->m_pDisplay,
+                                            AEE_FONT_USER_1,
+                                            srcStr,
+                                            -1,
+                                            pixelLen,
+                                            y,
+                                            &dialerRect,
+                                            IDF_TEXT_TRANSPARENT);
+        }
+        else
+        {
+            (void) IDISPLAY_DrawText(pMe->m_pDisplay,
                                             AEE_FONT_NORMAL,
                                             srcStr,
                                             -1,
                                             pixelLen,
                                             y,
                                             &dialerRect,
-                                            IDF_TEXT_TRANSPARENT);
+                                            IDF_TEXT_TRANSPARENT);        
+        }
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
         // Forget about the characeters that were just drawn.
         *srcStr = '\0';
     }
-    //SetLargeFontPlain(pMe->m_pOEM_TSGBridge,pMe->m_pDisplay);
+    if(pMe->m_pBigNumFont)
+    {
+        IDISPLAY_SetFont(pMe->m_pDisplay, AEE_FONT_USER_1, pOldFont);
+    }
 }
 #endif //#ifdef FEATURE_LARGE_DIALING_DIGITS
 

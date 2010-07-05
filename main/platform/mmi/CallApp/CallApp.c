@@ -208,6 +208,9 @@ static void CallApp_Conver_Buf(AECHAR *buf);
 static int CallApp_BtCallNumber(ICallApp *p, AECHAR *number);
 //修改Config项中的通话时长
 static void CallApp_AddToCFGCallTimer(CCallApp *pMe, uint16 call_type, uint32 durationS);
+static int CallApp_Start(CCallApp *pMe);
+static void CallApp_Stop(CCallApp *pMe);
+
 //static void CallApp_Process_Batty_Msg(CCallApp  *pMe, uint16  msg_id);
 
 /*==============================================================================
@@ -799,7 +802,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->IsRestrictNumber = FALSE;
     pMe->m_bmissCallWaiting = FALSE;
 
-    //pMe->m_pBigNumFont = NULL;
+    pMe->m_pBigNumFont = NULL;
 #ifdef FEATURE_UTK2
     pMe->m_bEndcurcallForUTKCall = FALSE;
 #endif
@@ -1059,7 +1062,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             //pMe->m_rc = as->rc;
-            //CallApp_Start ( pMe );
+            CallApp_Start ( pMe );
 
             // Save text line height for normal and large fonts
             pMe->m_LineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
@@ -1188,7 +1191,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                 pMe->m_pActiveDlgID = 0;
             }
 
-            //CallApp_Stop( pMe );
+            CallApp_Stop( pMe );
             //pMe->m_RedirNumStr[0] = 0;
             //pMe->m_DispInfo[0] = 0;
             //pMe->m_ExtendedDispInfo[0] = 0;
@@ -5183,51 +5186,33 @@ void CallApp_DrawTextWithProfile(IShell* pShell,
                                         );
 }
 
-#if 0
+#if 1
 static int CallApp_Start(CCallApp *pMe)
 {
-    CALL_FUN_START("CallApp_Start",0,0,0);
-
-
-    if ( SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-                                          AEECLSID_USER_FONT,
-                                          (void **)&pMe->m_pBigNumFont))
+    DBGPRINTF("CallApp_Start");
+    
+    if ( SUCCESS != GreyBitBrewFont_Create(26, (void **)&pMe->m_pBigNumFont))
     {
+        DBGPRINTF("GreyBitBrewFont_Create Failed");
         return EFAILED;
     }
-    if(pMe->m_pBigNumFont)
-    {
-        AEEFontInfo nFontInfo;
-        if ( SUCCESS != IFONT_GetInfo(pMe->m_pBigNumFont, &nFontInfo, sizeof(AEEFontInfo)) )
-        {
-            CALL_ERR( "IFONT_GetInfo EFAILED :(",0,0,0);
-            return EFAILED;
-        }
-        pMe->m_large_Num_Height = nFontInfo.nAscent + nFontInfo.nDescent;
-    }
-
-    if ( SUCCESS != ISHELL_CreateInstance ( pMe->m_pShell,
-                                            AEECLSID_MENUCTL,
-                                            (void **)&pMe->m_pMenu) )
-    {
-        return EFAILED;
-    }
+  //  if(pMe->m_pBigNumFont)
+  //  {
+  //      IDISPLAY_SetFont(pMe->m_pDisplay, AEE_FONT_USER_1, pMe->m_pBigNumFont);
+  //  }
+    DBGPRINTF("CallApp_Start END");
     return SUCCESS;
 }
 
 static void CallApp_Stop(CCallApp *pMe)
 {
-    CALL_FUN_START("CallApp_Stop",0,0,0);
+    DBGPRINTF("CallApp_Stop Start");
     if( pMe->m_pBigNumFont )
     {
         IFONT_Release(pMe->m_pBigNumFont);
         pMe->m_pBigNumFont = NULL;
     }
-    if ( pMe->m_pMenu )
-    {
-        IMENUCTL_Release ( pMe->m_pMenu );
-        pMe->m_pMenu = NULL;
-    }
+    DBGPRINTF("CallApp_Stop End");
 }
 #endif
 #ifdef DIALER_MEM_CHECK
