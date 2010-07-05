@@ -5833,9 +5833,13 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         {
             break;
         }
-
+        DBGPRINTF("1111111111111111111pixelLen=%d", pixelLen);
         ASSERT(pixelLen <= dialerRect.dx);
         pixelLen = dialerRect.dx - pixelLen;
+        if(pixelLen == 0)
+        {
+            pixelLen = 12;
+        }
 
         // Move dstStr past the characters about to be drawn
         dstStr += fits;
@@ -9692,8 +9696,8 @@ static void notifyFMRadioAlertEvent( CCallApp *pMe, boolean toStartAlert)
 ==============================================================================*/
 static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 {
-    int xPos = 0, yPos = 0, xNum = 0, yNum = 0, dy = pMe->m_rc.dy;
-    
+    int xPos = 0, yPos = 0, xNum = 0, yNum = 0, dy = pMe->m_rc.dy, Line_Pixel = 2;
+    DBGPRINTF("CallApp_Calc_Cursor_Rect Start");
 #if defined( FEATURE_CALL_RECORDER)
     if(pMe->m_bRecorderOn)
     {
@@ -9721,26 +9725,52 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
     }
 	SETAEERECT(pRect, xPos, yPos, 4, NUM_IMAGE_HIGHT);
 #else
-	xNum = pMe->m_rc.dx /8;
-    yNum = (dy - BOTTOMBAR_HEIGHT)/(16 + BETWEEN_LINE_PIXEL);
-    xPos = (pMe->m_rc.dx + 8 *xNum) /2 - (pMe->m_nCursorPos%xNum)*8 - 2;
-    yPos = dy - BOTTOMBAR_HEIGHT - (1 + pMe->m_nCursorPos/xNum)*(16 + BETWEEN_LINE_PIXEL);
+	xNum = pMe->m_rc.dx /13;
+    yNum = (dy - BOTTOMBAR_HEIGHT)/(25 + Line_Pixel);
+    
+  //  if(WSTRLEN(pMe->m_DialString) > xNum)
+  //  {
+  //      xPos = pMe->m_rc.dx - (pMe->m_nCursorPos%xNum)*13 -(pMe->m_rc.dx -  13*xNum);
+  //  }
+    if(((pMe->m_nCursorPos%xNum == 0)&& (pMe->m_nCursorPos != 0)) || (pMe->m_nCursorPos > 3*xNum ))
+    {
+        xPos = pMe->m_rc.dx -  13*xNum -2 ;
+    }
+    else
+    {
+        xPos = pMe->m_rc.dx - (pMe->m_nCursorPos%xNum)*13 -2 ;
+    }
+    if((pMe->m_nCursorPos%xNum == 0) && (pMe->m_nCursorPos/xNum != 0))
+    {
+        yPos = dy - BOTTOMBAR_HEIGHT - (pMe->m_nCursorPos/xNum)*(25 + Line_Pixel);
+    }
+    else if((pMe->m_nCursorPos%xNum == 0) && (pMe->m_nCursorPos/xNum == 0))
+    {
+        yPos = dy - BOTTOMBAR_HEIGHT - (1 + pMe->m_nCursorPos/xNum)*(25 + Line_Pixel);
+    }
+    else
+    {
+        yPos = dy - BOTTOMBAR_HEIGHT - (1 + pMe->m_nCursorPos/xNum)*(25 + Line_Pixel);
+    }
     if(pMe->m_nCursorPos >= xNum*yNum)
     {
-        yPos = dy - BOTTOMBAR_HEIGHT - yNum*(16 + BETWEEN_LINE_PIXEL);
+        yPos = dy - BOTTOMBAR_HEIGHT - yNum*(25 + Line_Pixel);
     }
     if(pMe->m_nCursorPos != 0 &&
         pMe->m_nCursorPos == WSTRLEN(pMe->m_DialString) &&
         pMe->m_nCursorPos%xNum == 0)
     {
-        xPos = (pMe->m_rc.dx - 8 *xNum) /2 - 2;
+        //xPos = 2;
         if(pMe->m_nCursorPos < xNum*yNum)
         {
-            yPos += (16 + BETWEEN_LINE_PIXEL);
+            yPos += (25 + Line_Pixel);
         }
     }
-	SETAEERECT(pRect, xPos, yPos, 4, 16);
+    DBGPRINTF("sssssssssssssssss m_DialString Length=%d", WSTRLEN(pMe->m_DialString));
+    DBGPRINTF("dx=%d, xNum=%d, m_nCursorPos=%d, xPos=%d", pMe->m_rc.dx, xNum, pMe->m_nCursorPos, xPos);
+	SETAEERECT(pRect, xPos, yPos, 4, 25);
 #endif
+    DBGPRINTF("CallApp_Calc_Cursor_Rect End");
 }
 
 
@@ -9763,13 +9793,14 @@ static void CallApp_Draw_Cursor(CCallApp* pMe, AEERect *pRect)
 {
     AEERect rect = {0};
     RGBVAL  nCursorColor = MAKE_RGB(0xE6, 0xE6, 0xE6);
-    
+    DBGPRINTF("CallApp_Draw_Cursor Start");
     SETAEERECT(&rect, pRect->x, pRect->y, pRect->dx, 1);
     IDISPLAY_FillRect(pMe->m_pDisplay, &rect, nCursorColor);
     SETAEERECT(&rect, pRect->x+1, pRect->y+1, 2, pRect->dy-2);
     IDISPLAY_FillRect(pMe->m_pDisplay, &rect, nCursorColor);
     SETAEERECT(&rect, pRect->x, pRect->y+pRect->dy-1, pRect->dx, 1);
     IDISPLAY_FillRect(pMe->m_pDisplay, &rect, nCursorColor);
+    DBGPRINTF("CallApp_Draw_Cursor End");
 }
 
 
@@ -9791,7 +9822,7 @@ static void CallApp_Set_Cursor_Blink(void* pUser)
 {
     CCallApp* pMe = (CCallApp*) pUser;
     AEERect rect = {0};
-    
+    DBGPRINTF("CallApp_Set_Cursor_Blink Start");
     ISHELL_CancelTimer(pMe->m_pShell, CallApp_Set_Cursor_Blink, pMe);
 
     CallApp_Calc_Cursor_Rect(pMe, &rect);
@@ -9808,6 +9839,7 @@ static void CallApp_Set_Cursor_Blink(void* pUser)
     IDISPLAY_Update(pMe->m_pDisplay);
     
     ISHELL_SetTimer(pMe->m_pShell, 600, CallApp_Set_Cursor_Blink, (void*)pMe);
+    DBGPRINTF("CallApp_Set_Cursor_Blink End");
 }
 #endif
 
