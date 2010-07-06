@@ -4229,8 +4229,10 @@ boolean OEM_IsNetLock(void)
     dword sid;
     nv_item_type nvilock;  // buffer to read NV
     int i;
-    
-    if (SUCCESS != OEM_ReadESN(&nvi.esn.esn))
+    word original_mcc,original_mnc,final_mcc,final_mnc;
+  //  MSG_FATAL("OEM_IsNetLock",0,0,0);
+
+    if (NV_DONE_S != ui_get_nv(NV_ESN_I, &nvi)) 
     {
         return FALSE;
     }
@@ -4239,12 +4241,12 @@ boolean OEM_IsNetLock(void)
     {
         return FALSE;
     }
-    
+  //  MSG_FATAL("nvilock.enabled_net_lock.b_lock = %d",nvilock.enabled_net_lock.b_lock,0,0);
     if(NV_DONE_S != ui_get_nv(NV_NET_LOCK_I, &nvilock))
     {
         return FALSE;
     }
-
+//    MSG_FATAL("nvilock.enabled_net_lock.b_lock = %d",nvilock.enabled_net_lock.b_lock,0,0);
     if(!nvilock.enabled_net_lock.b_lock)
     {
         return FALSE;
@@ -4255,20 +4257,51 @@ boolean OEM_IsNetLock(void)
 
     nvi.imsi_mcc.nam = curr_nam;
     ui_get_nv( NV_IMSI_MCC_I, &nvi );
-    mcc = nvi.imsi_mcc.imsi_mcc;
+    original_mcc = nvi.imsi_mcc.imsi_mcc;
 
     // read Mobile Network Code
     nvi.imsi_11_12.nam = curr_nam;
     ui_get_nv( NV_IMSI_11_12_I, &nvi );
-    mnc = nvi.imsi_11_12.imsi_11_12;
+    original_mnc = nvi.imsi_11_12.imsi_11_12;
 
     ui_get_nv( NV_SID_NID_I, &nvi );
     sid = nvi.sid_nid.pair[NV_CDMA_MIN_INDEX][0].sid;
-    
+
+    MSG_FATAL("original_mcc = %d original_mnc=%d",original_mcc,original_mnc,0);	
+    final_mcc = original_mcc+ 111;
+    final_mnc = original_mnc + 11; 
+
+    //ERR("BS mcc(%d), BS mnc(%d)",cur_bs_ptr->esp.mcc,cur_bs_ptr->esp.imsi_11_12,0);
+
+    if ( final_mcc % 10 == 0 )
+    {
+       final_mcc -= 10;
+    }
+    if ( (final_mcc/10) % 10 == 0 )
+    {
+       final_mcc -= 100;
+    }
+    if ( final_mcc >= 1000 )
+    {
+       final_mcc -= 1000; 
+    } 
+
+    if ( final_mnc % 10 == 0 )
+    {
+       final_mnc -= 10;
+    }
+    if ( final_mnc >= 100 )
+    {
+       final_mnc -= 100;
+    } 
+
     for(i=0;i<nvilock.enabled_net_lock.b_lock;i++)
     {
-        if( (mcc == nvilock.enabled_net_lock.mcc[i] || nvilock.enabled_net_lock.mcc[i] == -1)
-          &&(mnc == nvilock.enabled_net_lock.mnc[i] || nvilock.enabled_net_lock.mnc[i] == -1)
+    	  MSG_FATAL("final_mcc = %d mcc1=%d",final_mcc,nvilock.enabled_net_lock.mcc[i],0);
+         MSG_FATAL("final_mnc= %d mnc1=%d",final_mnc,nvilock.enabled_net_lock.mnc[i],0);
+	  MSG_FATAL("sid = %d sid1=%d",sid,nvilock.enabled_net_lock.sid[i] ,0);
+        if( (final_mcc == nvilock.enabled_net_lock.mcc[i] || nvilock.enabled_net_lock.mcc[i] == -1)
+          &&(final_mnc == nvilock.enabled_net_lock.mnc[i] || nvilock.enabled_net_lock.mnc[i] == -1)
           &&(sid == nvilock.enabled_net_lock.sid[i] || nvilock.enabled_net_lock.sid[i] == -1)
           )
         {
