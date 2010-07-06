@@ -335,9 +335,6 @@ boolean CoreApp_InitAppData(IApplet* po)
     //if phone power down abnormal, we need set CFGI_FM_BACKGROUND  false to avoid show FM in idle
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 
-#ifndef WIN32
-    EnableUIKeys(TRUE);
-#endif//WIN32
 #ifdef FEATURE_PLANEMODE
     pMe->bPlaneModeOn = FALSE;
 #endif
@@ -417,7 +414,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             // 开始 Core Applet 状态机, 当前状态已初始为 COREST_INIT
             CoreApp_RunFSM(pMe);
            // CoreApp_InitBattStatus(pMe);
-
+#ifndef WIN32
+            EnableUIKeys(TRUE);
+#endif//WIN32
             return TRUE;
 
         case EVT_APP_STOP:

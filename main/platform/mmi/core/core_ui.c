@@ -1149,6 +1149,36 @@ void ui_key_event_cb
 {
   word isave;                   /* PSW parameter for INTLOCK/FREE_SAV    */
 
+  if(!send_keys)
+  {
+    uint16 keycode = key_event.key_code;
+#ifndef FEATURE_KEYPAD_MULTI_KEY
+    static uint16 prevkey = HS_RELEASE_K;
+#endif
+    if(keycode == HS_RELEASE_K)
+    {
+#ifdef FEATURE_KEYPAD_MULTI_KEY
+        keycode = key_event.key_parm;
+#else
+        keycode = prevkey;
+#endif
+    }
+#ifndef FEATURE_KEYPAD_MULTI_KEY
+    else
+    {
+        prevkey = keycode;
+    }
+#endif
+    switch(key_event.key_code){
+    case HS_HEADSET_K:
+    case HS_STEREO_HEADSET_K:
+    case HS_HEADSET_OFF_K:
+        break;
+    default:
+        return;
+    }
+  }
+  
   /* If the ring buffer is not full (full is when the write index is
   ** circularly 1 less than the read index), put the keycode into the
   ** ring buffer.
