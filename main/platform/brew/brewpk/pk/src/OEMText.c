@@ -4383,11 +4383,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
     uint16   nBufLen   = pContext->sT9awFieldInfo.G.nBufLen;
     sFocusType sFocus = pContext->sFocus;     
     boolean bFlag = GetArrowFlagonIM();
-    ERR("T9TextCtl_Latin_Rapid_Key:::::::::::::::::::",0,0,0);
+    ERR("T9TextCtl_Latin_Rapid_Key Start",0,0,0);
 #if defined (FEATURE_DISP_128X128)
     //handle key
     t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext, key );
-    
+    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 1 t9Key=%d", t9Key,0,0);
     if(key == AVK_SELECT|| key == AVK_INFO)
     {
         if(FOCUS_SELECTION == pContext->sFocus)
@@ -4411,6 +4411,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
         return FALSE;       
     }
     
+    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 2", 0,0,0);
     switch ( t9Key) 
     {
         case T9KEYAMBIG1:
@@ -4425,6 +4426,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
         case T9KEYAMBIGA:
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
+            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 3", 0,0,0);
              if (TEXT_MODE_T9_RAPID_ENGLISH== OEM_TextGetCurrentMode(pContext)
                  && MULTITAP_FIRST_CAP == pContext->nMultitapCaps
                  && !OEM_isFirstCap(pContext)
@@ -4448,6 +4450,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;        
 
         case T9KEYLEFT:
+            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 4", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {   
                 pContext->sFocus = FOCUS_TEXT;               
@@ -4493,6 +4496,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;
 
         case T9KEYRIGHT:
+            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 5", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {   
                 pContext->sFocus = FOCUS_TEXT;             
@@ -4537,6 +4541,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;
 
          case T9KEYPREV:
+            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 6", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {            
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key);   
@@ -4570,6 +4575,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;
 
         case T9KEYNEXT:
+            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 7", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {            
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key);  
@@ -4627,6 +4633,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break; 
             
         case T9KEYCLEAR:
+            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 8", 0,0,0);
             if ((0 == pContext->wSelStart) && (pContext->wSelStart == pContext->wSelEnd))
             {
                 return FALSE;
@@ -4638,6 +4645,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;
             
         case T9KEYSPACE:  
+            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 9", 0,0,0);
             if((FOCUS_SELECTION == pContext->sFocus)&&
                 (pContext->wMaxChars == nBufLen))
             {
@@ -4654,7 +4662,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
             break;  
     }  
-        
+    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 10", 0,0,0);    
     if( pContext->sT9awFieldInfo.G.nCurSelObj == 0)
     {
        bFlag =  FALSE;
@@ -4669,7 +4677,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
         }else{
             bFlag = FALSE; }
     }
-     
+    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 11", 0,0,0);  
     if(bFlag != GetArrowFlagonIM() )
     {
         SetArrowFlagonIM( bFlag);
@@ -4681,6 +4689,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
     {          
         bRet = T9_AW_DisplayText ( pContext, key);  
     }
+    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 12", 0,0,0);
 #elif defined(FEATURE_DISP_160X128)
     if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
     {
@@ -4979,6 +4988,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
     }   
         
 #endif
+    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: END bRet=%d", bRet,0,0);
     return bRet;
 }
 
@@ -5137,10 +5147,10 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
     T9STATUS sT9Status = T9STATERROR;  
     T9KEY    t9Key;
     uint16   nBufLen = pContext->sT9awFieldInfo.G.nBufLen;
-    ERR("T9TextCtl_MultitapKey::111111111111",0,0,0);
+    ERR("T9TextCtl_MultitapKey::start",0,0,0);
     //handle key
 #if defined (FEATURE_DISP_128X128)
-    ERR("T9TextCtl_MultitapKey::2222222222222222bbbbbbbbbbbb",0,0,0);
+    ERR("T9TextCtl_MultitapKey::1",0,0,0);
     t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext, key );
     
     if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
@@ -5160,7 +5170,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             return FALSE;          
         }
     }    
-
+    ERR("T9TextCtl_MultitapKey::2",0,0,0);
     if ( pContext->wMaxChars != 0 && 
          nBufLen >= pContext->wMaxChars &&
          (( t9Key >= T9KEYAMBIG1 && t9Key <= T9KEYAMBIGC) || T9KEYSPACE == t9Key ) )
@@ -5172,7 +5182,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             return FALSE;
         }
     }    
-    
+    ERR("T9TextCtl_MultitapKey::3",0,0,0);
     switch ( t9Key) 
     {
         case T9KEYAMBIG1:
@@ -5187,6 +5197,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
         case T9KEYAMBIGA:
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
+            ERR("T9TextCtl_MultitapKey::4",0,0,0);
             pContext->sFocus = FOCUS_SELECTION;              
             if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
             { 
@@ -5220,6 +5231,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             break;        
 
         case T9KEYLEFT:
+            ERR("T9TextCtl_MultitapKey::5",0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {
                 pContext->sFocus = FOCUS_TEXT;             
@@ -5263,6 +5275,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             break;
 
         case T9KEYRIGHT:
+            ERR("T9TextCtl_MultitapKey::6",0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {
                 pContext->sFocus = FOCUS_TEXT;             
@@ -5307,6 +5320,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             break;
 
          case T9KEYPREV:
+            ERR("T9TextCtl_MultitapKey::7",0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {
                 pContext->sFocus = FOCUS_TEXT;             
@@ -5343,6 +5357,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             break;
 
         case T9KEYNEXT:
+            ERR("T9TextCtl_MultitapKey::8",0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {
                 pContext->sFocus = FOCUS_TEXT;             
@@ -5403,6 +5418,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             break; 
             
         case T9KEYCLEAR:
+            ERR("T9TextCtl_MultitapKey::9",0,0,0);
             pContext->sFocus = FOCUS_TEXT;                
             // Turn off the timer until another numeric key is pressed
             (void) ISHELL_CancelTimer((IShell *)pContext->pIShell,
@@ -5419,6 +5435,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             break;               
 
         case T9KEYNONE:
+            ERR("T9TextCtl_MultitapKey::10",0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {
                 pContext->sFocus = FOCUS_TEXT;             
@@ -5427,11 +5444,12 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             }
 
         default:
+            ERR("T9TextCtl_MultitapKey::11",0,0,0);
             pContext->sFocus = FOCUS_TEXT;   
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
             break;  
     }   
-    
+    ERR("T9TextCtl_MultitapKey::12",0,0,0);
     pContext->uModeInfo.mtap.kLast = key;   
 
     //display strings
@@ -5449,6 +5467,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
                         TextCtl_MultitapTimer,
                         pContext);  
     }
+    ERR("T9TextCtl_MultitapKey::13",0,0,0);
 #elif defined (FEATURE_DISP_160X128)
     
     if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
@@ -5755,6 +5774,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
     
    
 #endif
+    DBGPRINTF("T9TextCtl_MultitapKey::END bRet=%d", bRet,0,0);
     return bRet;
 }
 

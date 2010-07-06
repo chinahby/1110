@@ -80,6 +80,7 @@ int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
     Temprc.dy = rc.dy-8;
 
     IMENUCTL_SetRect(pMenuCtl, &Temprc);
+    MSG_FATAL("CContApp_BuildOptsMenu",0,0,0);
     
     // Check Parameter
     if(!pMenuCtl)
@@ -1470,7 +1471,7 @@ int CContApp_BuildViewMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     CtlAddItem    ai;
     
     ASSERT(pMe != NULL); 
-    
+    MSG_FATAL("CContApp_BuildViewMenu start",0,0,0);
     FARF(ADDR, ("Build View menu"));
     
     if(pMenuCtl == NULL)
@@ -1521,7 +1522,7 @@ int CContApp_BuildViewMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             }   
         }        
     }
-    
+    MSG_FATAL("CContApp_BuildViewMenu End",0,0,0);
     return SUCCESS;
 }// CContApp_BuildViewMenu
 

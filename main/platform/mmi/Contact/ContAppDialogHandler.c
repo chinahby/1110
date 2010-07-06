@@ -3557,6 +3557,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             }
             */
             IMENUCTL_SetRect(pMenuCtl, &menurc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType)
             {
                 dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE;
@@ -6223,6 +6224,7 @@ static boolean  CContApp_HandleOptsDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             IMENUCTL_SetPopMenuRect(pMenuCtl); 
 
             // Draw prompt bar here
@@ -6539,6 +6541,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             //IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -6741,6 +6744,7 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
 
             (void)IMENUCTL_SetTitle( pMenuCtl, NULL, 0,
                                      (AECHAR *)CContApp_GetFldBuf(pMe, 0));            
@@ -7039,6 +7043,7 @@ static boolean  CContApp_HandleFldOptsDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
            
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
@@ -7430,6 +7435,7 @@ static boolean  CContApp_HandleGroupDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
@@ -7629,6 +7635,7 @@ static boolean  CContApp_HandlePositionDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             if(STATE_SELECTPOS == pMe->m_eCurState)
             {
                 IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -7783,6 +7790,7 @@ static boolean  CContApp_HandleCopyMoveDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
@@ -7992,6 +8000,7 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
   
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_INIT",0,0,0);
       
             dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE | MP_MULTI_SEL;
             IMENUCTL_SetProperties(pMenuCtl, dwMask);
@@ -8239,6 +8248,7 @@ static boolean  CContApp_HandleOnOffDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
 
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
@@ -8383,6 +8393,7 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             // list the one dial menu
             (void)CContApp_BuildOneDialMenu(pMe, pMenuCtl);
@@ -8570,6 +8581,7 @@ static boolean  CContApp_HandleOneDialOptDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             IMENUCTL_SetPopMenuRect(pMenuCtl); 
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
@@ -8698,6 +8710,7 @@ static boolean  CContApp_HandleOneDialNumFldSelDlgEvent( CContApp  *pMe,
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
@@ -9053,6 +9066,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
 
             (void)IMENUCTL_SetTitle( pMenuCtl, NULL, 0, (AECHAR *)CContApp_GetFldBuf(pMe, 0));  
             
@@ -9663,6 +9677,7 @@ static boolean  CContApp_HandleSettingDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
 
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
@@ -10127,6 +10142,7 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
            
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
@@ -10298,6 +10314,7 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
            
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
@@ -10703,6 +10720,7 @@ static boolean  CContApp_HandleDeleteDlgEvent( CContApp  *pMe,
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay); 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_INIT",0,0,0);
 
             dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE;
             IMENUCTL_SetProperties(pMenuCtl, dwMask);
@@ -10912,6 +10930,7 @@ static boolean  CContApp_HandleSelectRecordDlgEvent( CContApp  *pMe,
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay); 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_INIT",0,0,0);
 
             dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE;
             IMENUCTL_SetProperties(pMenuCtl, dwMask);
@@ -11121,6 +11140,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
             rc.dy -= 2*GetBottomBarHeight(pMe->m_pDisplay);
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_INIT",0,0,0);
             
             dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE;
             IMENUCTL_SetProperties(pMenuCtl, dwMask);
@@ -11513,6 +11533,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
 
             (void)IMENUCTL_SetTitle( pMenuCtl,
                                      NULL,
@@ -11704,6 +11725,7 @@ static boolean  CContApp_HandleDetailMultiDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
 
             (void)IMENUCTL_SetTitle( pMenuCtl,
                                      NULL,
@@ -12092,6 +12114,7 @@ static boolean  CContApp_HandleGroupOptDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
@@ -12446,6 +12469,7 @@ static boolean  CContApp_HandleDeleteSelectDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
            
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
@@ -12600,6 +12624,7 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
             rc.dy = CContApp_GetCurrFldNum(pMe, AEE_ADDRFIELD_PHONE_GENERIC) * MENUITEM_HEIGHT; 
             rc.y = devinfo.cyScreen - rc.dy - GetBottomBarHeight(pMe->m_pDisplay);
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
 
             topLine.x = 0;
             topLine.y = devinfo.cyScreen - GetBottomBarHeight(pMe->m_pDisplay) - rc.dy - 2;;
@@ -13144,6 +13169,7 @@ static void CContApp_ShowGroupSelect(CContApp  *pMe, IMenuCtl  *pMenuCtl, IMenuC
     rect.x += (info.cx + 4);
     rect.dx -= (info.cx + 4) * 2;
     IMENUCTL_SetRect(groupList, &rect);
+    MSG_FATAL("CContApp_ShowGroupSelect",0,0,0);
 
     IIMAGE_Draw( left_arrow, rect.x - info.cx - 2, rect.y + 4);
     IIMAGE_Draw( right_arrow, rect.x + rect.dx + 2 , rect.y + 4);
@@ -13214,6 +13240,7 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("CContApp_HandleNunFldDlgEvent",0,0,0);
 
             (void)IMENUCTL_SetTitle( pMenuCtl, NULL, 0,
                                      (AECHAR *)CContApp_GetFldBuf(pMe, 0));            
@@ -13450,6 +13477,7 @@ static boolean  CContApp_HandleSelectOptDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
            
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
 
@@ -13818,6 +13846,7 @@ static boolean  CContApp_HandleNunFldViewDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
            
             IMENUCTL_SetRect(pMenuCtl, &rc);
+            MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);

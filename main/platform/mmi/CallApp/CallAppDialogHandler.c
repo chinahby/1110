@@ -6674,7 +6674,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
 {
     //AEERect     menurc;
     //IMenuCtl *pSKMenu = pMenuCtl;
-    CALL_FUN_START("CallApp_BuildDialerMenu",0,0,0);
+    MSG_FATAL("CallApp_BuildDialerMenu Start",0,0,0);
 
     ASSERT(IDD_NUMEDIT== pMe->m_pActiveDlgID);
 
@@ -6781,7 +6781,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
     IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_SELECT_BACK);
     IMENUCTL_SetActive ( pMenuCtl, TRUE );
     (void) IMENUCTL_Redraw ( pMenuCtl );
-
+    MSG_FATAL("CallApp_BuildDialerMenu End",0,0,0);
 }
 
 /*=============================================================================

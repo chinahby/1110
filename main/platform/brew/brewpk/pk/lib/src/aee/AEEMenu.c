@@ -4537,8 +4537,8 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
        if(bSel){
           IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_WHITE);
-          //IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);//wlh mod 更改选中条的序号颜色
-		   IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_YELLOW_EX);
+          IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);//wlh mod 更改选中条的序号颜色
+	//	   IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_YELLOW_EX);
        }
        else{
           IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_BLACK);

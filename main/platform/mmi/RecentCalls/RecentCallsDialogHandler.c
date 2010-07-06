@@ -1561,7 +1561,6 @@ static boolean RecentCalls_DealMenuEvent(CRecentCalls *pMe,
    {
        return FALSE;
    }
-   
    switch(eCode)
    {
       case EVT_DIALOG_INIT:
@@ -1628,8 +1627,23 @@ static boolean RecentCalls_DealMenuEvent(CRecentCalls *pMe,
          }
          return TRUE;
       
-      case EVT_DIALOG_START:     
-         IMENUCTL_SetPopMenuRect(pMe->pMenu);
+      case EVT_DIALOG_START:    
+#if defined(FEATURE_DISP_160X128)          
+      {
+          AEERect rc = {0};
+          IMENUCTL_SetPopMenuRect(pMe->pMenu); 
+          IMENUCTL_GetRect(pMe->pMenu, &rc);
+          MSG_FATAL("pMenu x=%d, y=%d, dx=%d",rc.x, rc.y, rc.dx); 
+          MSG_FATAL("pMenu dy=%d", rc.dy,0,0);           
+          rc.y += 8;
+          rc.dy -= 8;
+          IMENUCTL_SetRect(pMe->pMenu, &rc);
+          MSG_FATAL("pMenu x=%d, y=%d, dx=%d",rc.x, rc.y, rc.dx); 
+          MSG_FATAL("pMenu dy=%d", rc.dy,0,0);
+     }
+#endif
+
+         //IMENUCTL_SetPopMenuRect(pMe->pMenu);
          IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
          IMENUCTL_SetBottomBarType(pMe->pMenu,BTBAR_SELECT_BACK);
          (void)ISHELL_PostEvent(pMe->m_pShell, 

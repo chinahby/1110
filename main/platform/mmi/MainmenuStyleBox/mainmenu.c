@@ -1594,8 +1594,8 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
                                                     pMe->m_pImageBg, 
                                                     pMe->m_nBgColor, 
                                                     pRect, 
-                                                    APPSCOMMON_MENUBG_XPOS, 
-                                                    APPSCOMMON_MENUBG_YPOS);
+                                                    0, 
+                                                    0);
     }
     else
 #endif
@@ -1606,7 +1606,7 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
                                                     pRect, 
                                                     0, 
                                                     0);
-    }
+    } 
 }
 
 /*=============================================================================

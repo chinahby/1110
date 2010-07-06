@@ -6795,6 +6795,7 @@ void CContApp_DrawScrollBar(CContApp * pMe, IMenuCtl   *pMenuCtl)
         IMENUCTL_GetRect(pMenuCtl, &menuRect);
         menuRect.dx = rect.dx - SCROLLBAR_WIDTH;
         IMENUCTL_SetRect(pMenuCtl, &menuRect);
+        MSG_FATAL("CContApp_DrawScrollBar",0,0,0);
         
         rect.x = rect.dx - SCROLLBAR_WIDTH;
         rect.dx = SCROLLBAR_WIDTH;
@@ -6820,7 +6821,7 @@ void CContApp_RestoreMenuRect(CContApp * pMe, IMenuCtl   *pMenuCtl)
     IMENUCTL_GetRect(pMenuCtl, &menuRect);
     menuRect.dx = rect.dx ;
     IMENUCTL_SetRect(pMenuCtl, &menuRect);
-    
+    MSG_FATAL("CContApp_RestoreMenuRect",0,0,0);
 }
 
 // currItemIdx 是当前菜单选中的项，最大MAX_NUM_MENUPOP

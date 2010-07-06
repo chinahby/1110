@@ -380,7 +380,7 @@ void AutoChargingManager::stopAutoCharging()
 void AutoChargingManager::getCurrentState()
 {
     pm_err_flag_type  err = PM_ERR_FLAG__SUCCESS;
-
+	ERR("getCurrentState Start", 0, 0, 0);
     /* Update previous state */
     mPreviousState = mCurrentState;
 
@@ -656,10 +656,12 @@ void AutoChargingManager::getCurrentState()
         }
         break;
     } /* end switch() */
+	ERR("getCurrentState End", 0, 0, 0);
 }
 
 void AutoChargingManager::EventFired(ChargingEvent* event)
 {
+	ERR("EventFired Start", 0, 0, 0);
     ASSERT(event != NULL);
 
     switch( event->GetEventId() )
@@ -1182,6 +1184,7 @@ void AutoChargingManager::EventFired(ChargingEvent* event)
         } /* end CHG_CMD__SYSTEM_STATUS_CHANGED */
         break;
     } /* switch() */
+	ERR("EventFired End", 0, 0, 0);
 } /* EventFired() */
 
                   /******************************************/
