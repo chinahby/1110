@@ -267,12 +267,8 @@ static ServiceProviderList List_SP[] =
 };
 #endif //FEATURE_SPN_FROM_BSMCCMNC
 
-//#define CORE_DEBUG
-#ifdef FEATURE_OEM_DEBUG
 #define CORE_ERR  DBGPRINTF
-#else
-#define CORE_ERR(format, ...) //ERR(format, code1, code2, code3)
-#endif
+
 // 关闭对话框宏
 #define CLOSE_DIALOG(DlgRet)                    \
 {                                               \
@@ -442,14 +438,6 @@ typedef enum
     , POWERDOWN_RUIM_DOOR_RESET     // 卡要求关机重起
 #endif
 } PowerDownType;
-#ifndef  FEATURE_2008_POWERON_LOGIC
-typedef enum
-{
-    ON_LINE_FROM_NONE = 0x00,
-    ON_LINE_FROM_NORMAL,
-    ON_LINE_FROM_EMERGENCY
-} On_line_from;
-#endif
 
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
 typedef struct _REGISTER_ITEM
@@ -598,25 +586,23 @@ typedef struct _CCoreApp
     boolean             m_b_set_lock;
 #endif
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
-    db_capture_type    m_capture;
+    db_capture_type     m_capture;
 #endif
-    boolean             m_b_PH_INFO_AVAIL;
-    AECHAR            *m_cdg_msgptr;
+    boolean             m_bProvisioned; 
+    boolean             m_bConfigSent;
+    AECHAR             *m_cdg_msgptr;
 
 #if defined( FEATURE_POWERDOWN_ALARM)
-	boolean powerupByAlarm;
+	boolean             powerupByAlarm;
 #endif
-boolean bunlockuim;
+    boolean             bunlockuim;
 
 #ifdef FEATURE_PLANEMODE
-boolean bPlaneModeOn;
+    boolean             bPlaneModeOn;
 #endif
 #ifdef FEATURE_APP_MUSICPLAYER
-    uint16  m_nAutoScrollIdx;
-    AECHAR  *m_pMusicName;
-#endif
-#ifndef  FEATURE_2008_POWERON_LOGIC
-    On_line_from             m_b_online_from;
+    uint16              m_nAutoScrollIdx;
+    AECHAR              *m_pMusicName;
 #endif
 
 #ifdef FEATURE_TORCH_SUPPORT
@@ -840,12 +826,11 @@ void CoreApp_SendReginfoTimer(void *pme);
 ==============================================================================*/
 int CoreApp_SendReginfo(CCoreApp *pMe);
 #endif
-#ifndef  FEATURE_2008_POWERON_LOGIC
 void CoreApp_load_uim_esn(CCoreApp *pMe);
-#endif
 int CoreApp_GetBatteryLevel(CCoreApp *pMe);
 #ifdef FEATURE_SEAMLESS_SMS
 void CoreApp_SendSeamlessSMSTimer(void *pme);
 int  CoreApp_SendSeamlessSMS(CCoreApp *pMe);
 #endif //#ifdef FEATURE_SEAMLESS_SMS
+void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode);
 #endif

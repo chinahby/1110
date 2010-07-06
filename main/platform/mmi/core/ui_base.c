@@ -1852,18 +1852,16 @@ void ui_init( void )
   ui_subs_info.cdma_subs_from_card_avail = FALSE;
   ui_subs_info.gw_subs_from_card_avail   = FALSE;
 #endif
+#endif /* FEATURE_UI_CORE_REMOVED && !FEATURE_UI_DUALPROC_MDM */
 
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
   ui_init_rtre();
 #endif
-#endif /* FEATURE_UI_CORE_REMOVED && !FEATURE_UI_DUALPROC_MDM */
 
 #if !defined(FEATURE_UI_DUALPROC_APPS)
 #ifndef FEATURE_MANGO_UI
-#ifndef CUST_EDITION
   //init provisioning here
   ui_init_provisioning(cm_client_id);
-#endif
 
 #if defined(FEATURE_GSTK_FDN_CC_SUPPORT)
   cm_nc_reg_with_call_control_mod(ui_nc_type_allowed_and_callcontrol_cb,
@@ -2095,133 +2093,3 @@ void ui_task (
 
   }
 }
-
-#include "AEE.h"
-#include "AEE_OEM.h"
-#include "AEECM.h"
-
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-/*===========================================================================
-FUNCTION GetRTREConfig
-
-DESCRIPTION
-  Get RTRE Config.
-
-DEPENDENCIES
-  SK UI
-
-SIDE EFFECTS
-  None
-===========================================================================*/
-uint64 GetRTREConfig(void)
-{
-  nv_item_type nvi;
-  nv_stat_enum_type result;
-  nv_rtre_configuration_type rtrecfg;
-  
-  // Hutch 要求必须为有卡版且不能更改设置
-#if defined(FEATURE_CARRIER_THAILAND_HUTCH)
-  rtrecfg = NV_RTRE_CONFIG_RUIM_ONLY;
-#else
-  rtrecfg = NV_RTRE_CONFIG_RUIM_OR_DROP_BACK;
-#endif
-
-  result = ui_get_nv (NV_RTRE_CONFIG_I, &nvi);
-
-  if(result != NV_DONE_S || nvi.rtre_config != rtrecfg) {  /* write to NV */
-    nvi.rtre_config = rtrecfg;
-    (void) ui_put_nv (NV_RTRE_CONFIG_I, &nvi);
-  }
-  
-  return (uint64)(nvi.rtre_config);
-}
-
-/*===========================================================================
-FUNCTION SetRTREConfig
-
-DESCRIPTION
-  Set RTRE Config.
-
-DEPENDENCIES
-  None
-
-SIDE EFFECTS
-  None
-===========================================================================*/
-boolean SetRTREConfig(ICM *pCM, uint64 nNewSetting)
-{
-  int retVal;
-
-  if (pCM == NULL) {
-    return FALSE;
-  }
-
-  switch (nNewSetting)
-  {
-#ifdef FEATURE_UIM_RUIM_W_GSM_ACCESS
-    case NV_RTRE_CONFIG_SIM_ACCESS:
-      retVal = ICM_SetRTREConfig(pCM, AEECM_RTRE_CONFIG_SIM_ACCESS);
-      break;
-#endif
-    case NV_RTRE_CONFIG_RUIM_ONLY:
-      retVal = ICM_SetRTREConfig(pCM, AEECM_RTRE_CONFIG_RUIM_ONLY);
-      break;
-    case NV_RTRE_CONFIG_NV_ONLY:
-      retVal = ICM_SetRTREConfig(pCM, AEECM_RTRE_CONFIG_NV_ONLY);
-      break;
-    case NV_RTRE_CONFIG_RUIM_OR_DROP_BACK:
-    default:
-      retVal = ICM_SetRTREConfig(pCM, AEECM_RTRE_CONFIG_RUIM_OR_DROP_BACK);
-      break;
-  }
-  return (retVal == AEE_SUCCESS) ? TRUE : FALSE;
-}
-#endif /* F_UIM_RUN_TIME_ENABLE */
-
-void InitProvisioning(void)
-{
-    AEECMPhInfo phInfo;
-    ICM  *pCM = NULL;
-    int nRet;
-    
-    nRet = ISHELL_CreateInstance(AEE_GetShell(),
-                                 AEECLSID_CALLMANAGER,
-                                 (void **) &pCM);
-    if ((nRet != SUCCESS) || (pCM == NULL))
-    {
-        return;
-    }
-
-    ICM_GetPhoneInfo(pCM, &phInfo, sizeof(phInfo));
-    
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-    {
-        uint64 val;
-        val = GetRTREConfig();
-        SetRTREConfig(pCM, val);
-    }
-#endif
-
-    ui_init_provisioning(cm_client_id);
-
-    if (phInfo.oprt_mode != AEECM_OPRT_MODE_FTM)
-    {
-        if (ui_check_provisioning() && phInfo.oprt_mode != AEECM_OPRT_MODE_OFFLINE)
-        {
-            cm_ph_cmd_subscription_available(NULL,
-                                             NULL,
-                                             cm_client_id,
-                                             CM_SUBSCRIPTION_STATUS_CHANGE,
-                                             CM_SUBSCRIPTION_STATUS_NO_CHANGE,
-                                             CM_SUBSCRIPTION_STATUS_NO_CHANGE);
-            cm_ph_cmd_oprt_mode(NULL, NULL, cm_client_id, SYS_OPRT_MODE_ONLINE);
-        }
-        else
-        {
-            cm_ph_cmd_oprt_mode(NULL, NULL, cm_client_id, SYS_OPRT_MODE_OFFLINE);
-        }
-    }
-    
-    ICM_Release(pCM);
-}
-

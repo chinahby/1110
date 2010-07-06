@@ -328,6 +328,15 @@ static NextFSMAction COREST_INIT_Handler(CCoreApp *pMe)
                 }*/
                 
             }
+            {
+                AEECMPhInfo phInfo;
+                /* If phone info is available, do not wait for PH_INFO_AVAIL event for
+                   * starting provisioning */
+                if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
+                {
+                    InitAfterPhInfo(pMe, phInfo.oprt_mode);
+                }
+            }
             MOVE_TO_STATE(tepState)
             
             return NFSMACTION_CONTINUE;
@@ -863,7 +872,6 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     // UIM OK
                     //MOVE_TO_STATE(COREST_POWERONSYSINIT)
                     MOVE_TO_STATE(COREST_STARTUPANI);
-
                 }
             }
             else
@@ -1059,14 +1067,9 @@ static NextFSMAction COREST_EMERGENCYCALL_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-    if(pMe->m_b_PH_INFO_AVAIL == TRUE)
-    {
-        pMe->m_b_PH_INFO_AVAIL = FALSE;
-        InitProvisioning();
-    }
+    
     // 为进行紧急呼叫，将话机置于在线状态
     //CoreApp_SetOperatingModeOnline(pMe);
-    pMe->m_b_online_from = ON_LINE_FROM_EMERGENCY;
     
     switch (pMe->m_eDlgRet)
     {
@@ -1118,17 +1121,6 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
-#ifdef  FEATURE_2008_POWERON_LOGIC
-            if (IsRunAsUIMVersion() && (pMe->m_eUIMErrCode == UIMERR_NONE))
-            { // 系统运行于有卡版本且卡正确无误
-#ifdef FEATURE_UTK2
-                UTK_SendTerminalProfile();
-#endif //FEATURE_UTK2
-
-                // 现在 UIM 卡可用，通过改变 NAM 让 MC 重新装载 ESN
-                (void) ICM_SetNAMSel(pMe->m_pCM, AEECM_NAM_1);
-            }
-#else
 #ifdef FEATURE_UTK2
             if (IsRunAsUIMVersion() && (pMe->m_eUIMErrCode == UIMERR_NONE))
             { // 系统运行于有卡版本且卡正确无误
@@ -1136,7 +1128,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                 UTK_SendTerminalProfile();
             }
 #endif //FEATURE_UTK2
-#endif
+
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
             // 设置发送注册短信的定时器函数
             (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
@@ -1147,6 +1139,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             CORE_ERR("ISHELL_SetTimer CoreApp_SendReginfoTimer",0,0,0);
 
 #endif
+
 #ifdef FEATURE_SEAMLESS_SMS
             (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
                                   SENDSEAMLESSSMS_TIME,
@@ -1262,22 +1255,6 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
                 return NFSMACTION_CONTINUE;
             }
 }
-#endif
-
-#ifdef  FEATURE_2008_POWERON_LOGIC
-            if(pMe->m_b_PH_INFO_AVAIL == TRUE)
-            {
-                pMe->m_b_PH_INFO_AVAIL = FALSE;
-                InitProvisioning();
-            }
-            // 将话机置于在线状态
-            //CoreApp_SetOperatingModeOnline(pMe);
-#else
-            if(ON_LINE_FROM_EMERGENCY == pMe->m_b_online_from)
-            {
-                pMe->m_b_online_from = ON_LINE_FROM_NORMAL;
-            }
-            InitProvisioning();
 #endif
 
             CoreApp_ShowDialog(pMe, IDD_STARTUPANI);
@@ -1815,18 +1792,5 @@ void static isAllowIMSI(CCoreApp *pMe,boolean *lockFlg)
     return;
 }
 #endif //defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
-#ifndef  FEATURE_2008_POWERON_LOGIC 
-void CoreApp_load_uim_esn(CCoreApp *pMe)
-{
-    CORE_ERR("CoreApp_load_uim_esn %x %x %x",IsRunAsUIMVersion(),pMe->m_b_online_from,pMe->m_eUIMErrCode);
-    if (IsRunAsUIMVersion() && (pMe->m_eUIMErrCode == UIMERR_NONE) && (ON_LINE_FROM_NORMAL== pMe->m_b_online_from))
-    { // 系统运行于有卡版本且卡正确无误
-        pMe->m_b_online_from = ON_LINE_FROM_NONE;// set to ture!
-        // 现在 UIM 卡可用，通过改变 NAM 让 MC 重新装载 ESN
-        (void) ICM_SetNAMSel(pMe->m_pCM, AEECM_NAM_1);
-        //CORE_ERR("CoreApp_load_uim_esn2 %x %x %x",IsRunAsUIMVersion(),pMe->m_b_online_from,pMe->m_eUIMErrCode);
-    }
-}
-#endif
 
 

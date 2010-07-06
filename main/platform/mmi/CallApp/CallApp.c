@@ -1767,7 +1767,6 @@ static boolean CallApp_Notify(void *pUser, AEEEvent eCode,
             }
 
         }
-#ifndef  FEATURE_2008_POWERON_LOGIC
         case AEECLSID_SHELL:
             CALL_ERR("AEECLSID_SHELL %x",Notify_msg->dwMask,0,0);
             if (Notify_msg->dwMask == NMASK_SHELL_START_STATUS)
@@ -1779,7 +1778,7 @@ static boolean CallApp_Notify(void *pUser, AEEEvent eCode,
                 ICallApp_AddRef((ICallApp*)pMe);
             }
             return TRUE;
-#endif
+            
         default:
             CALL_ERR("Unhandled notification class (0x%X).",Notify_msg->cls,0,0);
             return FALSE;

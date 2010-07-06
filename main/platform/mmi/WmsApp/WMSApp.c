@@ -2017,7 +2017,7 @@ static boolean WmsApp_HandleNotifyEvent(WmsApp *pMe, AEENotify *pN)
     {
         case AEECLSID_CM_NOTIFIER:
             return WmsApp_HandleCMNotify(pMe, pN);
-#ifndef  FEATURE_2008_POWERON_LOGIC
+
         case AEECLSID_SHELL:
             if (pN->dwMask == NMASK_SHELL_START_STATUS)
             {
@@ -2037,7 +2037,6 @@ static boolean WmsApp_HandleNotifyEvent(WmsApp *pMe, AEENotify *pN)
             }
             
             return TRUE;
-#endif
         default:
             break;
     }

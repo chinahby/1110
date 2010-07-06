@@ -46,53 +46,7 @@
 #endif
 
 #include "Appscommon.h"//wlh add
-#ifndef WIN32
 #include "ui.h"
-#else
-
-
-dword uim_power_control(int mask,boolean uim_reqd)
-{
-	return 0;
-}
-
-boolean MakeVoiceCall(IShell *pShell, boolean bCloseAll, AECHAR *number)
-{
-	return TRUE;
-}
-
-boolean   IsRunAsFactoryTestMode(void)
-{
-    return TRUE;
-}
-
-void UTK_SendTerminalProfile (void)
-{
-	return;
-}
-
-void oemui_unlockuim(void)
-{
-	return;
-}
-/*
-void db_put(db_items_type  item,db_items_value_type  *value_ptr )
-{
-	return;
-}*/
-boolean OEMKeyguard_IsEnabled(void)
-{
-	return FALSE;//wlh
-}
-void OEMKeyguard_SetState(boolean bEnabled)
-{
-	return;
-}
-void OEMKeyguard_Init(void *pShell,void *pPhone,void *pAlert,void *ann)
-{
-	return;
-}
-#endif
 #if defined(FEATURE_WMS_APP)
 #include "WMSApp.h"
 #endif
@@ -154,6 +108,10 @@ static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe);
  void CoreApp_InitBattStatus(CCoreApp * pMe);
 #endif
 //static void CoreAppLoadTimepImage(CCoreApp *pMe);   //add by ydc
+void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe);
+boolean CoreApp_ProcessOffLine(CCoreApp *pMe);
+static boolean CoreApp_ProcessFTMMode(CCoreApp *pMe);
+
 /*==============================================================================
 
                                  函数定义
@@ -370,7 +328,8 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifdef FEATURE_KEYGUARD
     pMe->m_b_set_lock = FALSE ;
 #endif
-    pMe->m_b_PH_INFO_AVAIL = FALSE;
+    pMe->m_bProvisioned = FALSE;
+    pMe->m_bConfigSent  = FALSE;
     pMe->m_cdg_msgptr = NULL;
     pMe->m_bActive = TRUE;
     //if phone power down abnormal, we need set CFGI_FM_BACKGROUND  false to avoid show FM in idle
@@ -381,9 +340,6 @@ boolean CoreApp_InitAppData(IApplet* po)
 #endif//WIN32
 #ifdef FEATURE_PLANEMODE
     pMe->bPlaneModeOn = FALSE;
-#endif
-#ifndef  FEATURE_2008_POWERON_LOGIC
-    pMe->m_b_online_from = ON_LINE_FROM_NORMAL;
 #endif
 
 #ifdef FEATURE_TORCH_SUPPORT
@@ -963,6 +919,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 break;
             }
             break;
+        case EVT_SET_OPERATING_MODE:
+            CORE_ERR("EVT_SET_OPERATING_MODE %d", wParam, 0, 0);
+            ICM_SetOperatingMode(pMe->m_pCM, (AEECMOprtMode)wParam);
+            break;
+            
         default:
             break;
     }
@@ -1094,6 +1055,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
     switch (pNotify->dwMask)
     {
 	case NMASK_CM_DATA_CALL:
+            DBGPRINTF("NMASK_CM_DATA_CALL %d",pEvtInfo->event);
             switch (pEvtInfo->event)
             {
                 case AEECM_EVENT_CALL_CONNECT:
@@ -1117,6 +1079,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
             }
             break;
        case NMASK_CM_SS:
+            DBGPRINTF("NMASK_CM_SS %d %d",pEvtInfo->event,SysMode);
             switch (pEvtInfo->event)
             {
                 case AEECM_EVENT_SS_SRV_CHANGED:
@@ -1163,32 +1126,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 
                     CoreApp_Process_SS_info(pMe,&pEvtInfo->event_data.ss);
                     break;
-               
-#if 0                    
-                case AEECM_EVENT_SS_RSSI:
-                    if (SysMode == SYS_SYS_MODE_NO_SRV)
-                    {
-                        pMe->m_SYS_MODE_NO_SRV = TRUE;
-                        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_OFF);
-                        bUpdate = TRUE;
-                    }
-                    else if (AEECM_SYS_MODE_NONE != SysMode)
-                    {
-                        if (pMe->m_bAcquiredTime == FALSE)
-                        {
-                            pMe->m_bAcquiredTime = TRUE;
-                        }
-                        if(pMe->m_SYS_MODE_NO_SRV == TRUE)
-                        {
-                            bUpdate = TRUE;                        
-                            pMe->m_SYS_MODE_NO_SRV = FALSE;
-                        }
-                        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));                        
-                    }
                     
-                    // 其它处理
-                    break;
-#endif
                 case AEECM_EVENT_SS_HDR_RSSI:
                     break;
                     
@@ -1198,6 +1136,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
             break;
             
         case NMASK_CM_PHONE:
+            DBGPRINTF("NMASK_CM_PHONE %d",pEvtInfo->event);
             switch(pEvtInfo->event)
             {
                 // System preference changed
@@ -1259,17 +1198,42 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 
                 // Phone information is now available
                 case AEECM_EVENT_PH_INFO_AVAIL:
-                    pMe->m_b_PH_INFO_AVAIL = TRUE;                    
+                    /* If phone info is available, do not wait for PH_INFO_AVAIL event for
+                     * starting provisioning */
+                    if (!pMe->m_bProvisioned) {
+                       InitAfterPhInfo(pMe, pEvtInfo->event_data.ph.oprt_mode);
+                    }
                     return TRUE;
 
                 // Operating mode was changed
                 case AEECM_EVENT_PH_OPRT_MODE:
-#ifndef  FEATURE_2008_POWERON_LOGIC
-                    if(AEECM_OPRT_MODE_ONLINE == pEvtInfo->event_data.ph.oprt_mode)
+                    /* continue processing of the event, e.g., update banner etc
+                       this is done regardless of whether we are in the Test Mode
+                       dialog or not */
+                    switch (pEvtInfo->event_data.ph.oprt_mode)
                     {
-                        CoreApp_load_uim_esn(pMe);
+                    case AEECM_OPRT_MODE_FTM:
+                      return CoreApp_ProcessFTMMode(pMe);
+                      
+                    case AEECM_OPRT_MODE_OFFLINE:
+                      return CoreApp_ProcessOffLine(pMe);
+                      
+                    case AEECM_OPRT_MODE_ONLINE:
+                      /* if we just went online, check subscription */
+                      CoreApp_ProcessSubscriptionStatus(pMe);
+                      return TRUE;
+                      
+                    case AEECM_OPRT_MODE_LPM:
+                      return TRUE;
+                      
+                    default:
+                      /* unhandled OPRT events */
+                      return FALSE;
                     }
-#endif
+                    //if(AEECM_OPRT_MODE_ONLINE == pEvtInfo->event_data.ph.oprt_mode)
+                    //{
+                    //    CoreApp_load_uim_esn(pMe);
+                    //}
                     break;
 
                 default:
@@ -1827,30 +1791,11 @@ static void CoreApp_PoweronStartApps(CCoreApp *pMe)
     {
         return;
     }
-#ifdef  FEATURE_2008_POWERON_LOGIC
-#ifdef FEATURE_WMS_APP    
-    {
-        IWmsApp *pIWmsApp = NULL;
-        int nRet;
-        
-        nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                     AEECLSID_WMSAPP,
-                                     (void **) &pIWmsApp);
-        if ((nRet == SUCCESS) && (NULL != pIWmsApp))
-        {
-            IWMSApp_PoweronStart(pIWmsApp);
-            IWmsApp_Release(pIWmsApp);
-        }
-    }
-#endif   
-#endif
+    
 #ifdef FEATURE_SUPPORT_WAP_APP
    PushMod_StartPush(pMe->a.m_pIShell);
 #endif
 
-#ifdef  FEATURE_2008_POWERON_LOGIC
-    ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_DIALER, "S");
-#endif
 #ifdef FEATURE_KEYGUARD
     OEMKeyguard_Init(pMe->a.m_pIShell,pMe->m_pCM,pMe->m_pAlert,pMe->m_pIAnn);
 #endif
@@ -2481,5 +2426,216 @@ static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe)
          ICONFIG_SetItem(pMe->m_pConfig,CFGI_BEEP_VOL, &btKeyVol,sizeof(byte));
     }
 
+}
+
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+/*===========================================================================
+FUNCTION GetRTREConfig
+
+DESCRIPTION
+  Get RTRE Config.
+
+DEPENDENCIES
+  SK UI
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+uint64 GetRTREConfig(CCoreApp *pMe)
+{
+  nv_item_type nvi;
+  nv_stat_enum_type result;
+
+  result = ui_get_nv (NV_RTRE_CONFIG_I, &nvi);
+
+  if(result != NV_DONE_S) {  /* write to NV */
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+    nvi.rtre_config = NV_RTRE_CONFIG_NV_ONLY;
+#else
+    nvi.rtre_config = NV_RTRE_CONFIG_RUIM_ONLY;
+#endif
+    (void) ui_put_nv (NV_RTRE_CONFIG_I, &nvi);
+  }
+  return (uint64)(nvi.rtre_config);
+}
+
+/*===========================================================================
+FUNCTION SetRTREConfig
+
+DESCRIPTION
+  Set RTRE Config.
+
+DEPENDENCIES
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+boolean SetRTREConfig(CCoreApp *pMe, uint64 nNewSetting)
+{
+  int retVal;
+  
+  if (pMe == NULL) {
+    CORE_ERR("pMe is Null", 0, 0, 0);
+    return FALSE;
+  }
+
+  switch (nNewSetting)
+  {
+#ifdef FEATURE_UIM_RUIM_W_GSM_ACCESS
+    case NV_RTRE_CONFIG_SIM_ACCESS:
+      retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_SIM_ACCESS);
+      break;
+#endif
+    case NV_RTRE_CONFIG_RUIM_ONLY:
+      retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_RUIM_ONLY);
+      break;
+    case NV_RTRE_CONFIG_NV_ONLY:
+      retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_NV_ONLY);
+      break;
+    case NV_RTRE_CONFIG_RUIM_OR_DROP_BACK:
+    default:
+      retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_RUIM_OR_DROP_BACK);
+      break;
+  }
+  return (retVal == AEE_SUCCESS) ? TRUE : FALSE;
+}
+
+/*=============================================================================
+FUNCTION: SendRTREConfig
+
+DESCRIPTION:
+  Read config from NV and send it to CM.
+  This function is only executed once at powerup.
+
+SIDE EFFECTS:
+  None.
+
+=============================================================================*/
+void SendRTREConfig (CCoreApp *pMe)
+{
+  uint32 val;
+
+  if ((pMe->m_bConfigSent == FALSE)
+#ifdef FEATURE_MMGSDI_DUAL_SLOT
+      &&
+      (IsBothSlotReady(pMe))
+#endif /*FEATURE_MMGSDI_DUAL_SLOT */
+     )
+  {
+    val = GetRTREConfig(pMe);
+    pMe->m_bConfigSent = SetRTREConfig(pMe, val);
+  }
+}
+#endif /* F_UIM_RUN_TIME_ENABLE */
+
+/*===========================================================================
+FUNCTION InitAfterPhInfo
+
+DESCRIPTION
+  Executes startup sequence after phone information is available from ICM.
+  If phone info is available at Core App startup, no need to wait for
+  AEECM_EVENT_PH_INFO_AVAIL event.
+
+DEPENDENCIES
+  ICM interface should have been created previously.
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode)
+{
+  if (pMe == NULL)
+  {
+    CORE_ERR("Null pMe",0,0,0);
+    return;
+  }
+  DBGPRINTF("InitAfterPhInfo %d",mode,0,0);
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+  /* Send RTRE config changed to CM - response from CM will */
+  /* generate subscription changed event */
+  SendRTREConfig(pMe);
+#endif
+
+  //Change modes if we're provisioned properly.
+  if (mode != AEECM_OPRT_MODE_FTM)
+  {
+    if (ui_check_provisioning() && mode != AEECM_OPRT_MODE_OFFLINE &&
+        mode != AEECM_OPRT_MODE_OFFLINE_CDMA &&
+        mode != AEECM_OPRT_MODE_OFFLINE_AMPS) {
+      //ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_ONLINE);
+      ISHELL_PostEventEx (pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP,
+                          EVT_SET_OPERATING_MODE,AEECM_OPRT_MODE_ONLINE,0L);
+    }
+    else
+    {
+      ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_OFFLINE);
+    }
+  }
+  else
+  {
+    ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_OFFLINE);
+  }
+  pMe->m_bProvisioned = TRUE;
+}
+
+/*=============================================================================
+FUNCTION: ProcessSubscriptionStatus
+
+DESCRIPTION:
+  Look at various parameters to see the subscription status and send it to CM
+
+SIDE EFFECTS:
+  None.
+
+=============================================================================*/
+void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe)
+{
+  CORE_ERR("CoreApp_ProcessSubscriptionStatus", 0, 0, 0);
+  ICM_SetSubscriptionStatus(pMe->m_pCM, AEECM_SYS_MODE_CDMA, TRUE);
+}
+
+/*=============================================================================
+FUNCTION: CoreApp_ProcessOffLine
+
+DESCRIPTION:
+  Display the corresponding message for offline mode
+
+SIDE EFFECTS:
+  None.
+
+=============================================================================*/
+boolean CoreApp_ProcessOffLine(CCoreApp *pMe)
+{
+  if (pMe == NULL)
+  {
+     CORE_ERR("Null pMe Ptr", 0, 0, 0);
+     return FALSE;
+  }
+  CORE_ERR("CoreApp_ProcessOffLine", 0, 0, 0);
+  return TRUE;
+
+}
+
+/*=============================================================================
+FUNCTION: CoreApp_ProcessFTMMode
+
+DESCRIPTION:
+  Display the corresponding message for FTM mode
+
+SIDE EFFECTS:
+  None.
+
+=============================================================================*/
+static boolean CoreApp_ProcessFTMMode(CCoreApp *pMe)
+{
+#if defined (FEATURE_APP_FLDDBG)
+    // Launch the debug screen of the field debug app.
+    if((ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_FIELDDEBUGAPP, "FTM")) != AEE_SUCCESS) {
+        CORE_ERR("Could not start FldDbg App", 0, 0, 0);
+    }
+#endif
+    CORE_ERR("CoreApp_ProcessFTMMode", 0, 0, 0);
+    return TRUE;
 }
 
