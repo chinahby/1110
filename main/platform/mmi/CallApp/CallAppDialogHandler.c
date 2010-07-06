@@ -5836,10 +5836,17 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         DBGPRINTF("1111111111111111111pixelLen=%d", pixelLen);
         ASSERT(pixelLen <= dialerRect.dx);
         pixelLen = dialerRect.dx - pixelLen;
+#if defined(FEATURE_DISP_128X128)        
         if(pixelLen == 0)
         {
             pixelLen = 12;
         }
+#elif defined(FEATURE_DISP_160X128)       
+        if(pixelLen == 0)
+        {
+            pixelLen = 5;
+        }        
+#endif      
 
         // Move dstStr past the characters about to be drawn
         dstStr += fits;
