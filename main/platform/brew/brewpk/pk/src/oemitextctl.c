@@ -3428,9 +3428,17 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
         int   count;
         RGBVAL nOldFontColor;
         x = 0;
-        y = TITLEBAR_HEIGHT - pme->m_nFontHeight/2;//0;
 
-       if(pme->m_dwProps & TP_GRAPHIC_BG)
+		if (pme->m_nSymbolPage%2 == 1)
+        {
+        	y = TITLEBAR_HEIGHT + 3*(pme->m_nFontHeight)/2;
+		}
+		else
+		{
+			y = TITLEBAR_HEIGHT - 3*(pme->m_nFontHeight)/2;
+		}
+
+       if (pme->m_dwProps & TP_GRAPHIC_BG)
        {
             nOldFontColor = TEXT_GRAPHIC_FONT_COLOR;
        }
@@ -3459,8 +3467,8 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
             {
                 y += (2*pme->m_nFontHeight);
             }
-#endif
-            
+#endif            
+
             *sz = (AECHAR)('1' + (count-pme->m_SymOnePageNum*pme->m_nSymbolPage));  
             IDISPLAY_DrawText(pd, 
                     AEE_FONT_NORMAL, 
