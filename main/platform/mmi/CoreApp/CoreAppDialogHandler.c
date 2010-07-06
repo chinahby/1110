@@ -3386,6 +3386,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            EnableUIKeys(FALSE);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -4809,6 +4810,11 @@ void CoreApp_Poweroff_Phone(void *pp)
     CCoreApp *pMe = (CCoreApp *)pp;
     IBacklight   *pBacklight = NULL;
     boolean b_FMBackground = FALSE;
+    
+    EnableUIKeys(FALSE);
+    uisnd_snd_stop();
+    uisnd_multi_stop();
+    uisnd_tone_stop();
     
     ISHELL_CreateInstance(pMe->a.m_pIShell,
                          AEECLSID_BACKLIGHT,

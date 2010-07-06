@@ -613,9 +613,6 @@ void CoreAppHandleStopSig(void)
 {
     StopKeyRepeat(NULL);
     StopKeyHold(NULL);
-    uisnd_snd_stop();
-    uisnd_multi_stop();
-    uisnd_tone_stop();
     
 #ifdef FEATURE_OTASP
     /* If MC initiates the power-down we will get the signal, before */

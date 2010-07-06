@@ -1240,7 +1240,10 @@ void lcd_debug_message (char* msg)
 {
   static char text[CHARS_PER_LINE * MAX_NUM_LINES];
   int len;
-
+#ifdef CUST_EDITION
+  // Open Backlight
+  disp_set_backlight(LCD_BACKLIGHT_LVL_2);
+#endif
   /* Make sure we copy 4 lines of text */
   memset (text, ' ', sizeof(text));
   len = strlen(msg);
