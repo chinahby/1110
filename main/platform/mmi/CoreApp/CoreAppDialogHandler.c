@@ -541,7 +541,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
     static IStatic * pStatic = NULL;
-    CORE_ERR("%x %x %x IDD_MSGBOX_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_MSGBOX_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -846,7 +846,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
     static PowerDown_Alarm_Cfg time = {0};
 
     CCoreApp *pMe = (CCoreApp *)pUser;
-    CORE_ERR("%x %x %x IDD_ALARM_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_ALARM_Handler",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -879,7 +879,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             dwAlarmTime = time.dwWATime;
             Appscommon_FormatTimeString(dwAlarmTime, wszTime, sizeof(wszTime));
             pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, "fs:/mod/clockapps/clockapps_images.bar", IDI_ALARMCLOCK);
-            CORE_ERR("ALARM %x %S",pResImg,wszTime);
+            MSG_FATAL("ALARM %x %S",pResImg,wszTime,0);
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
             if( pResImg != NULL)
             {
@@ -1045,7 +1045,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
                                 uint32     dwParam)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
-    CORE_ERR("%x %x %x IDD_LPM_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_LPM_Handler",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -1072,7 +1072,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             wszText =  (AECHAR *) MALLOC(nSize);
             wszText[0] = 0;
             status = IBATTERY_GetChargerStatus(pMe->m_pBatt);
-            CORE_ERR("ChargerStatus %d ",status);
+            MSG_FATAL("ChargerStatus %d ",status,0,0);
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
 
             if (AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE == status)
@@ -1187,7 +1187,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
     CCoreApp *pMe = (CCoreApp *)pUser;
     IMenuCtl *pMenu = NULL;
     
-    CORE_ERR("%x %x %x IDD_EMERGENCYNUMLIST_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_EMERGENCYNUMLIST_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -1352,7 +1352,7 @@ static boolean  IDD_PWDIMSIMCC_Handler(void       *pUser,
     {
         return FALSE;
     }
-    CORE_ERR("%x %x %x IDD_PWDINPUT_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_PWDINPUT_Handler",eCode,wParam,dwParam);
     //pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PHONEPWD_MENU);
     //if (NULL == pMenu)
     //{
@@ -1593,7 +1593,7 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
     {
         return FALSE;
     }
-    CORE_ERR("%x %x %x IDD_PWDINPUT_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_PWDINPUT_Handler",eCode,wParam,dwParam);
     //pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PHONEPWD_MENU);
     //if (NULL == pMenu)
     //{
@@ -1835,7 +1835,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
     {
         return FALSE;
     }
-    CORE_ERR("%x %x %x IDD_UIMSECCODE_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_UIMSECCODE_Handler",eCode,wParam,dwParam);
     //pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_UIMSECCODE_MENU);
     //if (NULL == pMenu)
     //{
@@ -2161,7 +2161,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
     {
         return FALSE;
     }
-    CORE_ERR("%x %x %x IDD_UIMERR_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_UIMERR_Handler",eCode,wParam,dwParam);
     pStatic = (IStatic*)IDIALOG_GetControl(pMe->m_pActiveDlg, 
                             IDC_UIMERR_STATIC);
 
@@ -2363,7 +2363,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
     
-    CORE_ERR("%x %x %x IDD_STARTUPANI_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_STARTUPANI_Handler",eCode,wParam,dwParam);
     switch (eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -2497,7 +2497,7 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
     CCoreApp *pMe = (CCoreApp *)pUser;
     IStatic * pStatic = NULL;
     
-    CORE_ERR("%x %x %x IDD_LOADING_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_LOADING_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -2732,7 +2732,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_KEYGUARD	 
     boolean  bData;
 #endif
-    CORE_ERR("%x %x %x IDD_IDLE_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_IDLE_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -3198,7 +3198,7 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
     static IStatic * pStatic = NULL;
     static IBitmap * pDevBmp = NULL;
     CCoreApp *pMe = (CCoreApp *)pUser;
-    CORE_ERR("%x %x %x IDD_WMSTIPS_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_WMSTIPS_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -3385,7 +3385,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                                       uint32     dwParam)
 { 
     CCoreApp *pMe = (CCoreApp *)pUser;    
-    CORE_ERR("%x %x %x IDD_POWERDOWN_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_POWERDOWN_Handler",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -4001,12 +4001,13 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 			   DATA_Y,
 			   (pMe->m_rc.dx-2*DATA_X), 
 			   pMe->m_nNormalFontHeight);
-
+#if defined(FEATURE_DISP_160X128)
 	SETAEERECT(&rc_week, 
 		   WEEK_X,
 		   WEEK_Y,
 		   (pMe->m_rc.dx-2*WEEK_X), 
 		   pMe->m_nNormalFontHeight);
+#endif
 #else
     SETAEERECT(&rc, 
                1,
@@ -4313,7 +4314,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
-    CORE_ERR("%x %x  CoreApp_PlayPwrOnAni",pMe->m_pStartupAniImg,pMe->m_wStartupAniTime);
+    MSG_FATAL("%x %x  CoreApp_PlayPwrOnAni",pMe->m_pStartupAniImg,pMe->m_wStartupAniTime,0);
 #ifndef FEATURE_USES_LOWMEM
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  )
 #else

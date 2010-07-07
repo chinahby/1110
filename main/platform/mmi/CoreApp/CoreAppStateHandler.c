@@ -166,7 +166,7 @@ extern void InitProvisioning(void);
 NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
 {
     NextFSMAction retVal = NFSMACTION_WAIT;
-
+    MSG_FATAL("CoreApp_ProcessState Start",0,0,0);
     if (NULL == pMe)
     {
         return retVal;
@@ -176,87 +176,105 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
     switch (pMe->m_eCurState)
     {
         case COREST_NONE:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_NONE",0,0,0);
             retVal = COREST_NONE_Handler(pMe);
             break;
             
         case COREST_INIT:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_INIT",0,0,0);
             retVal = COREST_INIT_Handler(pMe);
             break;
         
         case COREST_ALARM:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_ALARM",0,0,0);
             retVal = COREST_ALARM_Handler(pMe);
             break;    
                     
         case COREST_LPM:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_LPM",0,0,0);
             retVal = COREST_LPM_Handler(pMe);
             break;
         //case COREST_SERVICEREQ:
         //    retVal = COREST_SERVICEREQ_Handler(pMe);
         //    break;
         case COREST_VERIFYPHONEPWD:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_VERIFYPHONEPWD",0,0,0);
             retVal = COREST_VERIFYPHONEPWD_Handler(pMe);
             break;
             
         case COREST_VERIFYUIM:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_VERIFYUIM",0,0,0);
             retVal = COREST_VERIFYUIM_Handler(pMe);
             break;
             
         case COREST_UIMERR:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_UIMERR",0,0,0);
             retVal = COREST_UIMERR_Handler(pMe);
             break;
 
         case COREST_EMERGENCYCALL:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_EMERGENCYCALL",0,0,0);
             retVal = COREST_EMERGENCYCALL_Handler(pMe);
             break;
             
         case COREST_POWERONSYSINIT:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_POWERONSYSINIT",0,0,0);
             retVal = COREST_POWERONSYSINIT_Handler(pMe);
             break;
             
         case COREST_STARTUPANI:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_STARTUPANI",0,0,0);
             retVal = COREST_STARTUPANI_Handler(pMe);
             break;
             
         case COREST_POWERONAPPSDATAINIT:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_POWERONAPPSDATAINIT",0,0,0);
             retVal = COREST_POWERONAPPSDATAINIT_Handler(pMe);
             break;
             
         case COREST_STANDBY:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_STANDBY",0,0,0);
             retVal = COREST_STANDBY_Handler(pMe);
             break;
             
         case COREST_NOTICE:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_NOTICE",0,0,0);
             retVal = COREST_NOTICE_Handler(pMe);
             break;
             
 #if defined(FEATURE_WMS_APP)
         case COREST_SMSTIP:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_SMSTIP",0,0,0);
             retVal = COREST_SMSTIP_Handler(pMe);
             break;
 #endif            
         
         case COREST_DEEPSLEEP:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_DEEPSLEEP",0,0,0);
             retVal = COREST_DEEPSLEEP_Handler(pMe);
             break;
             
         case COREST_POWEROFF:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_POWEROFF",0,0,0);
             retVal = COREST_POWEROFF_Handler(pMe);
             break;
             
 #ifdef FEATURE_UTK2
         case COREST_UTKREFRESH:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_UTKREFRESH",0,0,0);
             retVal = COREST_UTKREFRESH_Handler(pMe);
             break;            
 #endif //FEATURE_UTK2
 #ifdef FATRUE_LOCK_IMSI_MCCMNC
 	    case COREST_IMSIMCCPWD:
+            MSG_FATAL("CoreApp_ProcessState Start COREST_IMSIMCCPWD",0,0,0);
             retVal = COREST_IMSIMCCPWD_Handler(pMe);
 	        break;
 #endif
         default:
             break;
     }
-    CORE_ERR("curstate %d prestate %d dlgret %d CoreApp_ProcessState",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
+    MSG_FATAL("curstate %d prestate %d dlgret %d CoreApp_ProcessState",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
     return retVal;
 } // CoreApp_ProcessState
 
@@ -307,7 +325,7 @@ static NextFSMAction COREST_NONE_Handler(CCoreApp *pMe)
 static NextFSMAction COREST_INIT_Handler(CCoreApp *pMe)
 {
     CoreAppState    tepState = COREST_LPM;
-    
+    MSG_FATAL("COREST_INIT_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -345,7 +363,7 @@ static NextFSMAction COREST_INIT_Handler(CCoreApp *pMe)
             break;            
         
     }
-    
+    MSG_FATAL("COREST_INIT_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_INIT_Handler
 
@@ -369,7 +387,7 @@ static NextFSMAction COREST_INIT_Handler(CCoreApp *pMe)
 static NextFSMAction COREST_ALARM_Handler(CCoreApp *pMe)
 {
     //CoreAppState    tepState;
-    
+    MSG_FATAL("COREST_ALARM_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -391,7 +409,7 @@ static NextFSMAction COREST_ALARM_Handler(CCoreApp *pMe)
         default:
             break;            
     }
-    
+    MSG_FATAL("COREST_ALARM_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_LPM_Handler
 
@@ -416,6 +434,7 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
 {
     CoreAppState    tepState;
     uint32 esn=0;
+    MSG_FATAL("COREST_LPM_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -442,7 +461,7 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                 {
                     static boolean lpm   = 0;
                     // 若接入了外部电源，进入关机充电状态
-                    CORE_ERR("LPM test: have extern power!",0);
+                    MSG_FATAL("LPM test: have extern power!",0,0,0);
 
                     //DBGPRINTF( ";-----------------------------------------");
                     //DBGPRINTF( ";now is charging");
@@ -472,7 +491,7 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                     tepState = COREST_VERIFYPHONEPWD;
 #endif
                 }
-                CORE_ERR("LPM test:new state is %d",tepState);
+                MSG_FATAL("LPM test:new state is %d",tepState,0,0);
                 if (tepState != COREST_NONE)
                 {
                     MOVE_TO_STATE(tepState)
@@ -528,7 +547,7 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
         default:
             break;            
     }
-    
+    MSG_FATAL("COREST_LPM_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_LPM_Handler
 #if 0 
@@ -594,7 +613,7 @@ static NextFSMAction COREST_IMSIMCCPWD_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+    MSG_FATAL("COREST_IMSIMCCPWD_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -694,7 +713,7 @@ static NextFSMAction COREST_IMSIMCCPWD_Handler(CCoreApp *pMe)
         default:
             break;
     }
-
+    MSG_FATAL("COREST_IMSIMCCPWD_Handler End",0,0,0);
     return NFSMACTION_CONTINUE;
 } // COREST_VERIFYPHONEPWD_Handler
 #endif
@@ -721,7 +740,7 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-    
+    MSG_FATAL("COREST_VERIFYPHONEPWD_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -793,7 +812,7 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
         default:
             break;
     }
-
+    MSG_FATAL("COREST_VERIFYPHONEPWD_Handler End",0,0,0);
     return NFSMACTION_CONTINUE;
 } // COREST_VERIFYPHONEPWD_Handler
 
@@ -817,7 +836,7 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
 static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
 {
     NextFSMAction  eRet = NFSMACTION_CONTINUE;
-    
+    MSG_FATAL("COREST_VERIFYUIM_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -981,7 +1000,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
         default:
             break;
     }
-                
+    MSG_FATAL("COREST_VERIFYUIM_Handler End",0,0,0);            
     return NFSMACTION_WAIT;
 } // COREST_VERIFYUIM_Handler
 
@@ -1008,7 +1027,7 @@ static NextFSMAction COREST_UIMERR_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-    
+    MSG_FATAL("COREST_UIMERR_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1040,7 +1059,7 @@ static NextFSMAction COREST_UIMERR_Handler(CCoreApp *pMe)
         default:
             break;
     }
-    
+    MSG_FATAL("COREST_UIMERR_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_UIMERR_Handler
 
@@ -1067,7 +1086,7 @@ static NextFSMAction COREST_EMERGENCYCALL_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-    
+    MSG_FATAL("COREST_EMERGENCYCALL_Handler Start",0,0,0);
     // 为进行紧急呼叫，将话机置于在线状态
     //CoreApp_SetOperatingModeOnline(pMe);
     
@@ -1089,7 +1108,7 @@ static NextFSMAction COREST_EMERGENCYCALL_Handler(CCoreApp *pMe)
         default:
             break;
     }
-        
+    MSG_FATAL("COREST_EMERGENCYCALL_Handler End",0,0,0);    
     return NFSMACTION_WAIT;
 } // COREST_EMERGENCYCALL_Handler
 
@@ -1117,7 +1136,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+    MSG_FATAL("COREST_POWERONSYSINIT_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1136,7 +1155,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                                   CoreApp_SendReginfoTimer, 
                                   pMe);
 
-            CORE_ERR("ISHELL_SetTimer CoreApp_SendReginfoTimer",0,0,0);
+            MSG_FATAL("ISHELL_SetTimer CoreApp_SendReginfoTimer",0,0,0);
 
 #endif
 
@@ -1196,7 +1215,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
         default:
             break;
     }
-    
+    MSG_FATAL("COREST_POWERONSYSINIT_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_POWERONSYSINIT_Handler
 
@@ -1223,7 +1242,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+    MSG_FATAL("COREST_STARTUPANI_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1267,7 +1286,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
         default:
             break;
     }
-    
+    MSG_FATAL("COREST_STARTUPANI_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_STARTUPANI_Handler
 
@@ -1295,7 +1314,7 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
         return NFSMACTION_WAIT;
     }
 
-    
+    MSG_FATAL("COREST_POWERONAPPSDATAINIT_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1345,7 +1364,7 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
         default:
             break;
     }
-    
+    MSG_FATAL("COREST_POWERONAPPSDATAINIT_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_POWERONAPPSDATAINIT_Handler
 
@@ -1375,6 +1394,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
     //#ifdef FEATRUE_AUTO_POWER
     //DBGPRINTF("EVT_AUTO_POWERDOWN %d %d",pMe->m_b_autopower_off,pMe->m_eDlgRet);
     //#endif
+    MSG_FATAL("COREST_STANDBY_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1433,7 +1453,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
         default:
             break;
     }
-    
+    MSG_FATAL("COREST_STANDBY_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_STANDBY_Handler
 
@@ -1461,7 +1481,7 @@ static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+    MSG_FATAL("COREST_SMSTIP_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1501,7 +1521,7 @@ static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe)
         default:
             break;
     }
-    
+    MSG_FATAL("COREST_SMSTIP_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_SMSTIP_Handler
 #endif
@@ -1583,7 +1603,7 @@ static NextFSMAction COREST_POWEROFF_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+    MSG_FATAL("COREST_POWEROFF_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1602,7 +1622,7 @@ static NextFSMAction COREST_POWEROFF_Handler(CCoreApp *pMe)
         default:
             break;
     }	
-    
+    MSG_FATAL("COREST_POWEROFF_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_POWEROFF_Handler
 static boolean CoreApp_Start_Alarm(CCoreApp *pMe)
@@ -1615,7 +1635,7 @@ static boolean CoreApp_Start_Alarm(CCoreApp *pMe)
     boolean flag = FALSE;
     db_get(DB_POWERUPTYPE, &need_capture);
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_ALARM_FLAG,(void*)&flag, sizeof(flag));
-    CORE_ERR("db_poweruptype= %d: flag= %d",need_capture.db_poweruptype,flag,0);
+    MSG_FATAL("db_poweruptype= %d: flag= %d",need_capture.db_poweruptype,flag,0);
     if(need_capture.db_poweruptype == DB_POWERUP_BYRTCTIMER && flag == TRUE)
     {
         flag = FALSE;
@@ -1702,7 +1722,7 @@ static NextFSMAction COREST_UTKREFRESH_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-    
+    MSG_FATAL("COREST_UTKREFRESH_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1735,7 +1755,7 @@ static NextFSMAction COREST_UTKREFRESH_Handler(CCoreApp *pMe)
             }
             MOVE_TO_STATE(COREST_STANDBY)
     }
-    
+    MSG_FATAL("COREST_UTKREFRESH_Handler End",0,0,0);
     return NFSMACTION_CONTINUE;
 } // IDLEST_UTKREFRESH_Handler
 #endif
