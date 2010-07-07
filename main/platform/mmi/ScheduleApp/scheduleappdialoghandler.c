@@ -3315,8 +3315,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             {
                 IMENUCTL_SetSel( pAlarm, alarmValue);
             }
-            else
-            if( pme->m_subStateEventEdit == SUBSTATE_EVENT_EDIT_EDIT && pme->m_CalMgr.m_pceCurrent)
+            else if( pme->m_subStateEventEdit == SUBSTATE_EVENT_EDIT_EDIT && pme->m_CalMgr.m_pceCurrent)
             {
                 static uint16 alarmTime[]   = { 65535, 0, 1, 5, 10, 15, 30, 60, 360, 720, 1440};
                        int    alarmSetting  = 0;
@@ -3348,8 +3347,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             {
                 IMENUCTL_SetSel( pRingtone, ringtoneValue);
             }
-            else
-            if( pme->m_subStateEventEdit == SUBSTATE_EVENT_EDIT_EDIT &&
+            else if( pme->m_subStateEventEdit == SUBSTATE_EVENT_EDIT_EDIT &&
                 pme->m_CalMgr.m_pceCurrent &&
                 pme->m_CalMgr.m_pceCurrent->m_b.alertst == SILENCE
             )
@@ -4263,6 +4261,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
                     IMENUCTL_SetSel( pAutoDelete, IDS_SETUP_AUTO_DELETE_OPTION_NEVER);
                 }
             }
+						
             ITIMECTL_SetProperties( pStart, TP_NO_SECONDS | TP_AUTOREDRAW);
             ITIMECTL_SetOemProperties( pStart, TP_OEM_COUNTDOWNCTL_EDITABLE|((timeFormatType==OEMNV_TIMEFORM_AMPM)?TP_OEM_COUNTDOWNCTL_12_FORMAT:0));
             ITIMECTL_SetTimeEx( pStart, startTimeValue>0?startTimeValue:(pme->m_CalMgr.m_cfg.wDayStart*60*1000), TRUE);
@@ -4276,7 +4275,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
 
         case EVT_USER_REDRAW:
         {
-
+			
             int     i               = 0;
             int     y               = 0;
             int     x               = 3;
@@ -4335,7 +4334,8 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
             DrawBottomBar( pme->m_pDisplay, &bottomBarParms);
 
             IDISPLAY_SetColor( pme->m_pDisplay, CLR_USER_TEXT, themeParms.textColor);
-            if( inited)
+
+			if( inited)
             {
                 SETAEERECT( &rc, 1-pme->m_rc.dx, 1-pme->m_rc.dy, 0, 0);
                 IDISPLAY_SetClipRect( pme->m_pDisplay, &rc);
@@ -4351,7 +4351,8 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
                 y = rectWindow.y + (itemSpace + itemHeight) * ( currentItem - itemStart) + itemSpace + 3 + height;
                 SETAEERECT( &rc, x - 1, y, width + 2, height + 2);
                 IDISPLAY_DrawRect( pme->m_pDisplay, &rc, themeParms.themeColor, 0, IDF_RECT_FRAME);
-                IDISPLAY_SetColor( pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+
+				IDISPLAY_SetColor( pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
 
                 // show valid controls
                 for( i = itemStart, y = rectWindow.y; i < itemEnd; i ++)
@@ -4382,6 +4383,8 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
                 ICONTROL_SetActive( pControls[(currentItem<<1)+1], TRUE);
 
                 IDISPLAY_SetClipRect( pme->m_pDisplay, &pme->m_rc);
+
+				
                 // draw scroll bar
                 if( itemNumberPerPage < itemNumber)
                 {
@@ -4413,7 +4416,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
             }
             IDISPLAY_SetColor( pme->m_pDisplay, CLR_USER_TEXT, 0);
 
-            IDISPLAY_Update( pme->m_pDisplay);
+            IDISPLAY_Update( pme->m_pDisplay);			
         }
         return TRUE;
 

@@ -331,11 +331,16 @@ static boolean ITimeCtl_HandleEvent(ITimeCtl * po, AEEEvent eCode, uint16 wParam
             int            nSel = pme->m_nSelect;
 
             aee_MSECSToHM(pme->m_dwTime, &nHours, &nMins, &nSecs, &nHSecs, (IsAlarmClock(pme) ? &bPM : NULL));
-            if(nSel < IGNORE1_IDX){
+            if(nSel < IGNORE1_IDX)
+			{
                if(IsCountDown(pme))
-                  nHours = TimeCtl_BumpCDTime(nHours, nDir, 99);
+               {
+               	nHours = TimeCtl_BumpCDTime(nHours, nDir, 99);
+               }
                else
-                  TimeCtl_BumpHours(&nHours, (IsAlarmClock(pme) ? &bPM : NULL), nDir);
+               {
+               	TimeCtl_BumpHours(&nHours, (IsAlarmClock(pme) ? &bPM : NULL), nDir);
+               }
             }
             else{
                if(nSel < IGNORE2_IDX){
@@ -1017,13 +1022,18 @@ static int TimeCtl_TimeText(TimeCtl * pme, AECHAR * pBuff,int x,boolean bDraw)
    nFontLetterWidthChar  = pme->m_nFontLetterWidthChar;
    nFontNumWidth         = pme->m_nFontNumWidth;
 
-   if(nFontNumHeight > pme->m_rc.dy || (bDraw && (x < 0))){
+   if (nFontNumHeight > pme->m_rc.dy || (bDraw && (x < 0)))
+   {
       bAllSmall = TRUE;
-      if(x < 0)
-         x = 0;
+      if (x < 0)
+      {
+      	x = 0;
+	  }
       ySmall = yColon = yLarge = pme->m_rc.y;
       nFontNumHeight = nFontLetterHeight;
-   } else{
+   } 
+   else
+   {
       bAllSmall = FALSE;
 
       yLarge = pme->m_rc.y + ((pme->m_rc.dy - nFontNumHeight) / 2);
@@ -1039,27 +1049,26 @@ static int TimeCtl_TimeText(TimeCtl * pme, AECHAR * pBuff,int x,boolean bDraw)
 #ifndef CUST_EDITION   /*部分应用出现白屏的原因*/
    IDisplay_ClearScreen(pd);
 #endif 
-   if(bAllSmall != pme->m_bSmallDisplay){
+   if (bAllSmall != pme->m_bSmallDisplay)
+   {
       pme->m_bErase = TRUE;
       pme->m_bSmallDisplay = bAllSmall;
    }
 
-   if( IsCountDown( pme) && ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE) && !pme->m_bActive)
+   if (IsCountDown( pme) && ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE) && !pme->m_bActive)
    {
        pme->m_bErase = TRUE;
    }
 
    if (pme->m_bErase && bDraw)
-    {
-
-   // Reset the last time displayed...
-
+   {
+	  // Reset the last time displayed...
       MEMSET(pme->m_szLast, 0, sizeof(pme->m_szLast));
       IDISPLAY_FillRect(pd, &pme->m_rc, CLR_USER_BACKGROUND);
       pme->m_bErase = FALSE;
    }
     if ( IsStopWatch( pme))
-    {
+    {    	
         if(pme->m_dwOemProperties & TP_OEM_CUSTOM_BG_COLOR)
         {
             Appscommon_ResetBackgroundEx(pd, &pme->m_rc, FALSE);
@@ -1074,83 +1083,102 @@ static int TimeCtl_TimeText(TimeCtl * pme, AECHAR * pBuff,int x,boolean bDraw)
 
    rc.x = x;
 
-   for(i = 0, pchLast = pme->m_szLast, pch = pBuff; (ch = *pch) != 0; pch++, i++, pchLast++){
+   for(i = 0, pchLast = pme->m_szLast, pch = pBuff; (ch = *pch) != 0; pch++, i++, pchLast++)
+   {
      nResult = EFAILED;
 
-      if(!bAllSmall &&  (ch <= (AECHAR)'9' && ch >= (AECHAR)'0')){
+      if(!bAllSmall &&  (ch <= (AECHAR)'9' && ch >= (AECHAR)'0'))
+	  {
          fnt = pme->m_fntNum;
 
          rc.y = yLarge;
          rc.dx = nFontNumWidth;
          rc.dy = nFontNumHeight;
       }
-      else{
+      else
+	  {
          if(ch == (AECHAR)'.')
-            bAllSmall = TRUE;
+         {
+         	bAllSmall = TRUE;
+         }
          fnt = pme->m_fntLetter;
          rc.y = (ch == (AECHAR)':' ? yColon : ySmall);
          rc.dy = nFontLetterHeight;
          // If ch is part of AM or PM use char width, othewise use digit width
-         rc.dx = ((AECHAR)'A' <= ch && ch <= (AECHAR)'Z') ?
-            nFontLetterWidthChar :  nFontLetterWidthDigit;
+         rc.dx = ((AECHAR)'A' <= ch && ch <= (AECHAR)'Z') ? nFontLetterWidthChar :  nFontLetterWidthDigit;
+         
       }
 
 
       // Only draw when we need to!!!
-
-      if(bDraw && (ch != *pchLast || pme->m_bActive)){
-         dwFlags = 0;
+      if (bDraw && (ch != *pchLast || pme->m_bActive))
+	  {
+         dwFlags = 0;		 
          // Not Left Justified so must CENTER
          if(!(pme->m_dwProps & TP_LEFT_JUSTIFY))
-            dwFlags |= IDF_ALIGN_CENTER;
+         {
+         	dwFlags |= IDF_ALIGN_CENTER;
+         }		 	
 
 #if FEATURE_EDIT_SINGLE_DIGIT
             if( IsCountDown( pme) && ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE))
-            {
+            {            	
                 if( ( i - pme->m_nSelect / 3) == pme->m_nEditingDigit)
-                {
+                {                	
                     dwFlags |= IDF_TEXT_INVERTED;
-                }
+                }                
             }
             else
 #endif
             if (nHiIdx >= 0 && nHiIdx <= i)
-            {
+            {            	
                 dwFlags |= IDF_TEXT_INVERTED;
                 if (bAlready)
-                    nHiIdx = -1;
+                {
+                	nHiIdx = -1;
+                }
                 else
-                    bAlready = TRUE;
-            }
+                {
+                	bAlready = TRUE;
+                }
+            }            
 
 		   if ( IsStopWatch( pme))
-            {
+            {            	            	
                 nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, RGB_WHITE);
                 dwFlags |= IDF_TEXT_TRANSPARENT;
             }
 
             else if( IsCountDown( pme) && ( pme->m_dwOemProperties & TP_OEM_COUNTDOWNCTL_EDITABLE))
-            {
+            { 
 				if( !pme->m_bActive)
-				{
+				{	
                     nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, 0x84848400);
                 	dwFlags &= ~IDF_TEXT_INVERTED;
                 	fnt = AEE_FONT_BOLD;
 				}
 				else if( fnt == AEE_FONT_BOLD)
-				{
+				{	
 					IDISPLAY_FillRect( pd, &rc, CLR_USER_BACKGROUND);
+				}	
+				//Add By zzg 2010_07_07
+				else
+				{
+					nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, 0x84848400);	
 				}
+				//Add End
             }
             /* must get the former font color and then set it back, or some interface might display the wrong color!*/
             else
-            {
+            {               	
                 nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, RGB_BLACK);
             }
-         IDISPLAY_DrawText(pd,fnt,pch,1,rc.x,rc.y,&rc,dwFlags);
+			
+         	IDISPLAY_DrawText(pd,fnt,pch,1,rc.x,rc.y,&rc,dwFlags);
       }
 
-      if(dwFlags & IDF_ALIGN_CENTER){
+      if(dwFlags & IDF_ALIGN_CENTER)
+	  {
 
         int nWidth = 0, nFits = 0;
         nWidth = IDisplay_MeasureTextEx(pd, fnt, pch, 1, rc.dx, &nFits);
@@ -1163,7 +1191,8 @@ static int TimeCtl_TimeText(TimeCtl * pme, AECHAR * pBuff,int x,boolean bDraw)
         nResult = SUCCESS;
       }
 
-      if(SUCCESS != nResult){
+      if(SUCCESS != nResult)
+	  {
         nTotalWidth += rc.dx;
         rc.x += rc.dx;
       }
