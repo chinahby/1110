@@ -3435,7 +3435,7 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
 		}
 		else
 		{
-			y = TITLEBAR_HEIGHT - 3*(pme->m_nFontHeight)/2;
+			y = TITLEBAR_HEIGHT - (pme->m_nFontHeight)/2;
 		}
 
        if (pme->m_dwProps & TP_GRAPHIC_BG)
