@@ -92,14 +92,17 @@ extern boolean   IsRunAsFactoryTestMode(void);
 
 #elif defined(FEATURE_DISP_160X128)
 
-#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_X 		5
 #define IDLE_D_CLOCK_Y 		25
 
-#define RPLMN_X				IDLE_D_CLOCK_X
-#define RPLMN_Y				(IDLE_D_CLOCK_Y+30)
+#define RPLMN_X				5
+#define RPLMN_Y				20
 
-#define DATA_X				IDLE_D_CLOCK_X
-#define DATA_Y				(RPLMN_Y + 30) 
+#define DATA_X				5
+#define DATA_Y				36
+
+#define WEEK_X                        5
+#define WEEK_Y                        52
 
 #elif defined(FEATURE_DISP_176X220)
 
@@ -3860,7 +3863,7 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
                               AEE_FONT_NORMAL,
                               wszBuf, -1,
                               0, 0, &rc, 
-                              IDF_ALIGN_CENTER 
+                              IDF_ALIGN_RIGHT 
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);
     
@@ -3899,6 +3902,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     AECHAR      wFormat[64]= {0};
     JulianType  jDate;
     AEERect     rc;
+    AEERect     rc_date;
     AEERect     rc_week;
     //AECHAR      wszBuf[16]= {(AECHAR)'\0'}; //fj remark ,Define but no used
 #ifndef FEATURE_CARRIER_SUDAN_SUDATEL
@@ -3992,21 +3996,33 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 			   IDLE_D_CLOCK_Y,
 			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
 			   26);
-	SETAEERECT(&rc_week, 
+	SETAEERECT(&rc_date, 
 			   DATA_X,
 			   DATA_Y,
 			   (pMe->m_rc.dx-2*DATA_X), 
 			   pMe->m_nNormalFontHeight);
+
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
 #else
     SETAEERECT(&rc, 
                1,
                1, 
                pMe->m_rc.dx-2, 
                pMe->m_nNormalFontHeight);
-    SETAEERECT(&rc_week, 
+    SETAEERECT(&rc_date, 
                (pMe->m_rc.dx-10)/2 ,
                1, 
                pMe->m_rc.dx-(pMe->m_rc.dx-10)/2, 
+               pMe->m_nNormalFontHeight);
+
+	SETAEERECT(&rc_week, 
+		   1,
+		   1,
+		   (pMe->m_rc.dx-2*DATA_X), 
                pMe->m_nNormalFontHeight);
 #endif
     // 格式化时间字符串并绘制
@@ -4052,11 +4068,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
-	                              24,
+	                              16,
 	                              wszDate, -1,
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
-	                              | IDF_ALIGN_CENTER
+	                              | IDF_ALIGN_LEFT
 	                              | IDF_TEXT_TRANSPARENT);
         //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 	}
@@ -4131,7 +4147,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   RGB_WHITE_NO_TRANS,
                                   AEE_FONT_NORMAL,
                                   &wszDate[0], -1,
-                                  0, 0, &rc_week, 
+                                  0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE
                                   | IDF_ALIGN_LEFT
                                   | IDF_TEXT_TRANSPARENT);
@@ -4141,19 +4157,19 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   RGB_WHITE_NO_TRANS,
                                   AEE_FONT_NORMAL,
                                   &wszDate[0], -1,
-                                  0, 0, &rc_week, 
+                                  0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE
                                   | IDF_ALIGN_LEFT
-                                  | IDF_TEXT_TRANSPARENT); 
+                                  | IDF_TEXT_TRANSPARENT); 		
 #elif defined(FEATURE_DISP_160X128)
-        DrawTextWithProfile(pMe->a.m_pIShell,
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
-                                  AEE_FONT_NORMAL,
+                                  10,
                                   &wszDate[0], -1,
-                                  0, 0, &rc_week, 
+                                  0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE
-                                  | IDF_ALIGN_LEFT
+                                  | IDF_ALIGN_RIGHT
                                   | IDF_TEXT_TRANSPARENT); 
 
 #else
@@ -4183,7 +4199,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               RGB_WHITE_NO_TRANS,
                               AEE_FONT_NORMAL,
                               &wszDate[5], -1,
-                              0, 0, &rc_week, 
+                              0, 0, &rc_date, 
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);  
@@ -4193,7 +4209,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               RGB_WHITE_NO_TRANS,
                               AEE_FONT_NORMAL,
                               &wszDate[5], -1,
-                              0, 0, &rc_week, 
+                              0, 0, &rc_date, 
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);
@@ -4203,7 +4219,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               RGB_WHITE_NO_TRANS,
                               AEE_FONT_NORMAL,
                               &wszDate[5], -1,
-                              0, 0, &rc_week, 
+                              0, 0, &rc_date, 
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);
