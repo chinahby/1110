@@ -438,8 +438,8 @@ sdcc_init(void)
 	gpio_tlmm_config(GPIO_OUTPUT_26);
 	gpio_tlmm_config(GPIO_OUTPUT_27);
 	gpio_tlmm_config(GPIO_OUTPUT_28);
-	gpio_tlmm_config(GPIO_OUTPUT_10);
-	gpio_out(GPIO_OUTPUT_10,1);
+	//gpio_tlmm_config(GPIO_OUTPUT_10);
+	//gpio_out(GPIO_OUTPUT_10,1);
 	gpio_out(GPIO_OUTPUT_28,1);
 	(void)sdcc_bsp_vdd_control(SDCC_BSP_VDD_ON);
 
@@ -1149,7 +1149,7 @@ sdcc_init(void)
       gpio_tlmm_config(GPIO_SDCC_DATOUT_1_OUT);
       gpio_tlmm_config(GPIO_SDCC_DATOUT_2_OUT);
       gpio_tlmm_config(GPIO_SDCC_DATOUT_3_OUT);
-      gpio_tlmm_config(SD_PWR_EN_N);
+      //gpio_tlmm_config(SD_PWR_EN_N);
 #endif
       /* Initializes the sdcc_pdata structure */
 #ifdef FEATURE_SDCC_WLAN_CONFIG_API

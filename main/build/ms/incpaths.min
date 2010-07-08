@@ -403,6 +403,8 @@ QALBUMINC= $(SRCROOT)/multimedia/camera/apps/qalbum/common/inc
 QALBUMRESOURCESINC= $(SRCROOT)/multimedia/camera/apps/qalbum/6k/resources
 CAMSENSOR_GC0309=$(SRCROOT)/multimedia/camera/sensordriver/camsensor_gc0309/src
 CAMSENSOR_GC0309INC=$(SRCROOT)/multimedia/camera/sensordriver/camsensor_gc0309/inc
+CAMSENSOR_SIV121A=$(SRCROOT)/multimedia/camera/sensordriver/camsensor_siv121a/src
+CAMSENSOR_SIV121AINC=$(SRCROOT)/multimedia/camera/sensordriver/camsensor_siv121a/inc
 endif
 
 IPL= $(SRCROOT)/multimedia/ipl
@@ -503,7 +505,8 @@ CAMERA_UNIT= $(CAMERA_3A_AECINC) \
    $(OEM_IMAGEPROINC)\
    $(BREW_STATIC_EXTENSIONS_IYCBCRINC)\
    $(BREW_STATIC_EXTENSIONS_IIPLINC) \
-   $(CAMSENSOR_GC0309INC)
+   $(CAMSENSOR_GC0309INC) \
+   $(CAMSENSOR_SIV121AINC)
    
 CAMERA_SNAPSHOTPROCESS= $(CAMERA_HJRINC)\
    $(CAMERA_LPMINC)

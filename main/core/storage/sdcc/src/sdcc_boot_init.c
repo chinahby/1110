@@ -178,8 +178,8 @@ sdcc_boot_pmic_init( void )
 #endif /* defined(T_QSC1100) || defined(T_QSC1110) */
 
 #ifdef T_QSC1100
-   gpio_tlmm_config(SD_PWR_EN_N);
-   gpio_out(SD_PWR_EN_N, 1);
+   //gpio_tlmm_config(SD_PWR_EN_N);
+   //gpio_out(SD_PWR_EN_N, 1);
 #endif
 }
 

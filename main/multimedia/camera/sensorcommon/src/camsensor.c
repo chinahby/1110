@@ -376,6 +376,13 @@
 #include "camsensor_mt9m112_mu1m3yu.h"
 #endif /*USE_MICRON_MU1M3YU_MT9M112*/
 
+#ifdef USE_CAMSENSOR_GC0309
+#include "camsensor_gc0309_0p1mp.h"
+#endif
+
+#ifdef USE_CAMSENSOR_SIV121A
+#include "camsensor_siv121a.h"
+#endif
 
 #endif /* FEATURE_NI_GPIO*/
 
@@ -728,9 +735,16 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
   /* This Sony 1.3 MP does not auto-detect, therefore it must be last
      in this list */
 #ifdef USE_CAMSENSOR_SONY_IMX006FQ
-  camsensor_imx006fq_sn1m3_init
+  camsensor_imx006fq_sn1m3_init,
 #endif /* USE_CAMSENSOR_SONY_IMX006FQ */
 
+#ifdef USE_CAMSENSOR_GC0309
+  camsensor_gc0309_0p1mp_init,
+#endif
+  
+#ifdef USE_CAMSENSOR_SIV121A
+  camsensor_siv121a_init
+#endif
 #endif /* FEATURE_NI_GPIO */
 };
 
@@ -2892,7 +2906,23 @@ uint32 camsensor_config_camclk_po (uint32 freq)
   /* Return the average frequency */
   return avg_camclk_freq;
 } /* camsensor_config_camclk_po */
+#elif defined(T_QSC1100)
+uint32 camsensor_config_camclk_po (uint32 freq)
+{
+  /* GPIO - 10 */
+  CAMERA_CONFIG_GPIO (GP_PDM);
 
+  /* Set new PDM0 value */
+  HWIO_PDM0_CTL_OUT((0  & HWIO_PDM0_CTL_PDM0_DAT_BMSK) << HWIO_PDM0_CTL_PDM0_DAT_SHFT);
+    
+  /* Set PDM signal to normal polarity (sense of PDM output not inverted)*/
+  HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(1 << HWIO_TCXO_PDM_CTL_PDM0_POLARITY_SHFT));
+
+  /* Drive backlight by enabling PDM output*/
+  HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(1 << HWIO_TCXO_PDM_CTL_PDM0_EN_SHFT));
+  
+  return freq;
+}
 #else  /* MSM6550 */
 
 /*===========================================================================
@@ -4126,27 +4156,6 @@ camera_ret_code_type camsensor_get_fps_list(int32 *p1, int32 *p2)
   {
     return CAMERA_NO_SENSOR;
   }
-}
-
-//²âÊÔÊ±ÖÓ
-void testclk()
-{
-	ERR("testclk 12000000",0,0,0);
-//	gpio_tlmm_config(GPIO_OUTPUT_53);
-
-//	gpio_out(GPIO_OUTPUT_53,GPIO_HIGH_VALUE);
-
-    clk_regime_enable( CLK_RGM_BT_M );
-    clk_regime_enable( CLK_RGM_SBI_M );
-
-#if defined( T_MSM6500 )
- // clk_regime_enable( CLK_RGM_BT_SLP_M );
-#endif
-
-  /* Prevent TCXO from shutting down. */
-  //sleep_bt_clock_rgm = TRUE;
-//	testsetclk();
-	camsensor_config_camclk_po(24000000);
 }
 
 /*============================================================================

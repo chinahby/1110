@@ -4308,7 +4308,7 @@ boolean OEM_IsNetLock(void)
             return FALSE;
         }
     }
-    return TRUE;
+    return FALSE;
 }
 #endif
 

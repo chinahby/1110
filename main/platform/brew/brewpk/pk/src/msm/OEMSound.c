@@ -15,6 +15,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
 INITIALIZATION AND SEQUENCING REQUIREMENTS:
 No additional module-level initialization or sequencing requirements.
 
+        Copyright © 1999-2002 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =============================================================================*/
@@ -56,10 +57,7 @@ No additional module-level initialization or sequencing requirements.
 #include "OEMHeap.h"
 #include "OEMACM.h"
 #endif // FEATURE_ACM && !FEATURE_ODM_UI
-#ifdef CUST_EDITION	  
-#include "clk.h" 
-#include "keypad.h"
-#endif /*CUST_EDITION*/
+
 /*-------------------------------------------------------------------
             Type Declarations
 -------------------------------------------------------------------*/
@@ -91,9 +89,7 @@ static int gsRefs = 0;
 static AEESoundInfo gsDevice;
 
 static OEMCriticalSection gSoundCriticalSection;
-#ifdef CUST_EDITION	  
-static clk_cb_type oemVibratorCB;    /* Timer to vibrating the phone */
-#endif /*CUST_EDITION*/
+
 #if defined(FEATURE_ACM) && !defined(FEATURE_ODM_UI)
 #define OPERATION_PLAY_TONE        1
 #define OPERATION_PLAY_FREQ_TONE   2
@@ -142,14 +138,12 @@ static void OEMSound_LevelCB( const void * pClientData, snd_status_type status, 
 
 // AEE to/from snd enum conversions
 static AEESoundStatus OEMSound_GetAEESoundStatus(snd_status_type e);
-#ifndef CUST_EDITION
 static snd_device_type OEMSound_GetSndDevice(AEESoundDevice e);
-#endif
 static snd_method_type OEMSound_GetSndMethod(AEESoundMethod e);
 static snd_tone_type OEMSound_GetSndTone(AEESoundTone e);
-
-AEESoundDevice OEMSound_GetAEESndDevice(snd_device_type  e);
-
+#ifdef FEATURE_UIXSND_IMPLEMENTATION
+static AEESoundDevice OEMSound_GetAEESndDevice(snd_device_type  e);
+#endif // FEATURE_UIXSND_IMPLEMENTATION
 
 #if defined(FEATURE_ACM) && !defined(FEATURE_ODM_UI)
 
@@ -174,10 +168,8 @@ static void OEMSound_Vibrate_ACM_StatusCB      (void *uniqueID);
 static void OEMSound_Tone_ACM_TimerCallback    (void *pClientData);
 static void OEMSound_Vibrate_ACM_TimerCallback (void *pClientData);
 #endif // FEATURE_ACM && !FEATURE_ODM_UI
-#ifdef CUST_EDITION	  
-static void OEMSound_vibrate_cmd(boolean vibrate);
-static void OEMSound_VibratorCB( int4 interval );
-#endif /*CUST_EDITION*/
+
+
 /*==================================================================
 Function: OEMSound_Init
 
@@ -305,10 +297,6 @@ void OEMSound_Init(void)
       }
    }
 #endif // FEATURE_ACM && !FEATURE_ODM_UI
-#ifdef CUST_EDITION	  
-   // Define the vibrator timer
-   clk_def( &oemVibratorCB );
-#endif /*CUST_EDITION*/   
 }
 
 /*===========================================================================
@@ -1073,7 +1061,8 @@ void OEMSound_SetDevice(AEESoundInfo * psi, void * pUser)
    //
 #if defined(FEATURE_OEMSOUND_NATIVE_IF)
    uisnd_SetSoundInfo(psi);
-#endif				   
+#endif
+
    snd_set_device( OEMSound_GetSndDevice(psi->eDevice), 
                    (snd_mute_control_type)psi->eEarMuteCtl, 
                    (snd_mute_control_type)psi->eMicMuteCtl, 
@@ -1233,70 +1222,8 @@ void OEMSound_GetVolume(AEESoundInfo * psi, void * pUser)
                   pUser);
 
 }
-#ifdef CUST_EDITION	 
-/*===========================================================================
 
-FUNCTION OEMSOUND_Sound_Id_Start
 
-DESCRIPTION
-  Start playing a sound from the database using a particular device and method
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  None
-
-SIDE EFFECTS
-  Command Packet queued to Sound Task.
-
-===========================================================================*/
-void OEMSOUND_Sound_Id_Start
-(
-  snd_device_type       device,
-   /* The device chosen for this command    */
-  snd_method_type       method,
-    /* method                               */
-  snd_sound_id_type     sound_id,
-    /* Sound id                             */
-  snd_priority_type     priority,
-    /* Priority of the tone                 */
-  snd_apath_type        dtmf_path,
-    /* Play this tone OTA when in DFM call  */
-  snd_cb_func_ptr_type  callback_ptr
-    /* Call back function                   */
-)
-{
-   snd_sound_id_start( device,
-                       method,
-                       sound_id,
-                       priority,
-                       dtmf_path,
-                       callback_ptr,
-                       NULL          );
-} /* end of OEM_Snd_Sound_Id_Start */
-
-/*===========================================================================
-FUNCTION OEMSOUND_Sound_Stop
-
-DESCRIPTION
-  Stop playing the current sound
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  None
-
-SIDE EFFECTS
-  Command Packet queued to Sound Task.
-
-===========================================================================*/
-void OEMSOUND_Sound_Stop(snd_priority_type priority)
-{
-   snd_sound_stop(priority, NULL, NULL);
-} /* end of OEM_Snd_Sound_Stop */
-#endif /*CUST_EDITION*/
 /*==================================================================
 Function: OEM_Vibrate
 
@@ -1341,30 +1268,8 @@ void OEMSound_Vibrate(uint16 wDuration, void * pUser)
 
    gsVibrateON = TRUE;
 }
-#ifdef CUST_EDITION	  
-/*==================================================================
-Function: OEMSound_Vibrator_Cb
 
-Description:
-  Callback function
 
-Prototype:
-  static void oemsound_motor_cb( int4 interval )
-
-Parameter(s):
-
-Return Value:  None
-Comments:      None
-Side Effects:  None
-See Also:      None
-
-==================================================================*/
-static void OEMSound_VibratorCB( int4 interval )
-{
-   OEMSound_vibrate_cmd(FALSE);
-   clk_dereg( &oemVibratorCB );
-}
-#endif /*CUST_EDITION*/
 /*==================================================================
 Function: OEMSound_StopVibrate
 
@@ -1397,42 +1302,8 @@ void OEMSound_StopVibrate(void * pUser)
 
    gsVibrateON = FALSE;
 }
-#ifdef CUST_EDITION	  
-/*===========================================================================
 
-FUNCTION OEMSound_vibrate_cmd
 
-DESCRIPTION
-  This function is used by the client to switch the display backlight on or off
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  The function returns TRUE if the command could be sent successfully to the hs
-  command queue and FALSE otherwise.
-
-SIDE EFFECTS
-  None
-
-===========================================================================*/
-static void OEMSound_vibrate_cmd(boolean vibrate)
-{
-    hs_packets_type* hs_cmd_ptr = NULL;      /* command to handset */
-
-    /* If no available command buffers return */
-    if(( hs_cmd_ptr = (hs_packets_type *) q_get( &hs_cmd_free_q )) == NULL )
-    {
-        return;
-    }
-
-    hs_cmd_ptr->vib_moto_ctrl.hdr.cmd        = HS_SET_VIB_MOTO_ONOFF;
-    hs_cmd_ptr->vib_moto_ctrl.hdr.task_ptr   = NULL;
-    hs_cmd_ptr->vib_moto_ctrl.hdr.done_q_ptr = &hs_cmd_free_q;
-    hs_cmd_ptr->vib_moto_ctrl.onoff         = vibrate;
-    hs_cmd( hs_cmd_ptr );
-}
-#endif /*CUST_EDITION*/
 /*==================================================================
 Function: OEMSound_IsVibratorON
 
@@ -1912,7 +1783,7 @@ static AEESoundStatus OEMSound_GetAEESoundStatus(snd_status_type e)
    return eResult;
 }
 
-snd_device_type OEMSound_GetSndDevice(AEESoundDevice e)
+static snd_device_type OEMSound_GetSndDevice(AEESoundDevice e)
 {
    snd_device_type dt = SND_DEVICE_HANDSET;
    if (e < AEE_SOUND_DEVICE_LAST && e >= 0)
@@ -1948,12 +1819,11 @@ static snd_method_type OEMSound_GetSndMethod(AEESoundMethod e)
    return mt;
 }
 
-// 鍘绘帀 feature 鍙� static 灞炴�э紝浣跨敤姝ゅ嚱鏁�
-//#ifdef FEATURE_UIXSND_IMPLEMENTATION
+#ifdef FEATURE_UIXSND_IMPLEMENTATION
 /*
  *  Maps the snd_device_type to AEESoundDevice
  */
-AEESoundDevice OEMSound_GetAEESndDevice(snd_device_type  e)
+static AEESoundDevice OEMSound_GetAEESndDevice(snd_device_type  e)
 {
    if (e == (uint16) SND_DEVICE_MAX)
       return AEE_SOUND_DEVICE_UNKNOWN;
@@ -2010,8 +1880,7 @@ AEESoundDevice OEMSound_GetAEESndDevice(snd_device_type  e)
    else
       return AEE_SOUND_DEVICE_UNKNOWN;
 }
-//#endif // FEATURE_UIXSND_IMPLEMENTATION
-//#endif // FEATURE_UIXSND_IMPLEMENTATION
+#endif // FEATURE_UIXSND_IMPLEMENTATION
 
 static snd_tone_type OEMSound_GetSndTone(AEESoundTone e)
 {
@@ -2056,4 +1925,69 @@ static snd_tone_type OEMSound_GetSndTone(AEESoundTone e)
       return (snd_tone_type)((uint16)e + gsSoundCaps.sndToneBase);
    }
 }
+
+#ifdef CUST_EDITION	 
+/*===========================================================================
+
+FUNCTION OEMSOUND_Sound_Id_Start
+
+DESCRIPTION
+  Start playing a sound from the database using a particular device and method
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  Command Packet queued to Sound Task.
+
+===========================================================================*/
+void OEMSOUND_Sound_Id_Start
+(
+  snd_device_type       device,
+   /* The device chosen for this command    */
+  snd_method_type       method,
+    /* method                               */
+  snd_sound_id_type     sound_id,
+    /* Sound id                             */
+  snd_priority_type     priority,
+    /* Priority of the tone                 */
+  snd_apath_type        dtmf_path,
+    /* Play this tone OTA when in DFM call  */
+  snd_cb_func_ptr_type  callback_ptr
+    /* Call back function                   */
+)
+{
+   snd_sound_id_start( device,
+                       method,
+                       sound_id,
+                       priority,
+                       dtmf_path,
+                       callback_ptr,
+                       NULL          );
+} /* end of OEM_Snd_Sound_Id_Start */
+
+/*===========================================================================
+FUNCTION OEMSOUND_Sound_Stop
+
+DESCRIPTION
+  Stop playing the current sound
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  Command Packet queued to Sound Task.
+
+===========================================================================*/
+void OEMSOUND_Sound_Stop(snd_priority_type priority)
+{
+   snd_sound_stop(priority, NULL, NULL);
+} /* end of OEM_Snd_Sound_Stop */
+#endif /*CUST_EDITION*/
 

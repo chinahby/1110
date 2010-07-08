@@ -29,7 +29,7 @@ when       who     what, where, why
  * requires one or more of the following to be added as well - enables
  * all sensors. */
 
-#define USE_CAMSENSOR_MICRON_MT9D112_MU2M0YU
-#define USE_CAMSENSOR_GC0309
-
+//#define USE_CAMSENSOR_MICRON_MT9D112_MU2M0YU
+//#define USE_CAMSENSOR_GC0309
+#define USE_CAMSENSOR_SIV121A
 #endif /* CUSTCAMSENSOR_H */

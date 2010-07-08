@@ -892,11 +892,11 @@ extern int  OEMCallList_New(IShell *pIShell, AEECLSID cls, void **ppif);
 #if defined(FEATURE_APP_MEDIAGALLERY)
 extern int MediaGalleryApp_Load(IShell* ps, void* pHelpers, IModule** ppMod); 
 #endif
-#ifndef WIN32
+
 #if defined(FEATURE_APP_CAMERA)
 extern int  CCameraAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
-#endif
+
 #if defined(FEATURE_APP_MUSICPLAYER)
 extern int MusicPlayer_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
@@ -1212,10 +1212,8 @@ static const AEEStaticMod gOEMStaticModList[] =
       {AEEFS_MIF_DIR"mediagallery.mif", MediaGalleryApp_Load},
 #endif
 
-#ifndef WIN32
 #ifdef FEATURE_APP_CAMERA
     {AEEFS_MIF_DIR"cameraapp.mif", CCameraAppMod_Load}, 
-#endif
 #endif
 
 #if defined(FEATURE_APP_MUSICPLAYER)

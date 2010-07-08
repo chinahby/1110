@@ -31,7 +31,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CDSMS_CACHE_USELIST
 #define FIX_LINKITEM_INITBUG
 #define FEATURE_SPN_FROM_BSMCCMNC
-#undef FEATURE_ADD_CAMERA
 #endif
 
 #ifndef TARGSB2_H
@@ -77,7 +76,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AUTH_DIGITS 
 #define SCL_AMSS_DATA_BASE_ADDR 0x08005000
 #define T_QSC6055 
-#ifdef FEATURE_ADD_CAMERA
+#ifdef USES_CAMERA
 #define FEATURE_JPEG_DECODER 
 #define FEATURE_JPEG_ARM_STANDALONE_DECODER 
 #endif
@@ -254,7 +253,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_DRV_SDCC
 #include "Custsdcc.h"
 #endif
-#ifdef FEATURE_ADD_CAMERA
+#ifdef USES_CAMERA
 #include "custcamera.h"
 #include "custjpeg.h"
 #endif

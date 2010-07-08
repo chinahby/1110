@@ -158,6 +158,7 @@ ifeq ($(USES_CAMERA), yes)
   include $(CAMSENSOR_MT9D112_MU2M0YU)/camsensor_mt9d112_mu2m0yu.min
   include $(QCAMCOMMON)/qcamcommon.min
   include $(CAMSENSOR_GC0309)/camsensor_gc0309.min
+  include $(CAMSENSOR_SIV121A)/camsensor_siv121a.min
 ifneq ($(USES_MANGO_UI),yes)
  ifneq ($(USES_MMI), yes)
   #include $(QCAMERA)/qcamera.min#remove by miaoxiaoming 

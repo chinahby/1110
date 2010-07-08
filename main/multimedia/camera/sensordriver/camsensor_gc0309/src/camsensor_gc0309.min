@@ -17,6 +17,3 @@ else
   CAMSENSOR_GC0309_OBJS := $(addprefix $(TARGETDIR)/, $(CAMSENSOR_GC0309_SOURCES:%.c=%.o))
 endif
 
-
-$(warning $(CAMSENSOR_GC0309_OBJS))
-

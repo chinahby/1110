@@ -396,14 +396,15 @@ ifeq ($(USES_PWRDB),yes)
 endif
 
 ifeq ($(USES_CAMERA),yes)
-		   OBJECTS2 += $(CAMSENSOR_GC0309_OBJS)
+		OBJECTS2 += $(CAMSENSOR_GC0309_OBJS)
+		OBJECTS2 += $(CAMSENSOR_SIV121A_OBJS)
 endif
 #-------------------------------------------------------------------------------
 # Object List Modifiers
 #    Alter the object list based on the requested features
 #-------------------------------------------------------------------------------
 
-    ifeq ($(USES_FDI),yes)
+ifeq ($(USES_FDI),yes)
 	OBJECTS += $(FDI_OBJS)
 endif
 

@@ -882,20 +882,24 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            IMENUCTL_SetTitle(pMenu, APPLICATION_RES_FILE_LANG, IDS_APPLICATION_LIST, NULL);                
+            IMENUCTL_SetTitle(pMenu, APPLICATION_RES_FILE_LANG, IDS_APPLICATION_LIST, NULL);
+#ifdef FEATURE_APP_MANAGER
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
+#endif
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
-            #if defined (FEATURE_DISP_128X128)
+#if defined (FEATURE_DISP_128X128)
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_8, IDS_APPLICATION_TITLE_8, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);
-            #endif
-
+#endif
+#ifdef FEATURE_APP_CAMERA
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_11, IDS_APPLICATION_TITLE_11, NULL, 0);
+#endif
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1020,32 +1024,41 @@ static boolean StartApplet(Application *pMe, int i)
             break;
     
         case 2:
-            {
-                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-            }
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
             break;
     
         case 3:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
+            
         case 4:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
             break;
+            
         case 5:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
             break;
+            
 		case 6:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
             break;
+            
         case 7:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
             break;
+            
         case 8:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
             break;
+            
         case 9:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
             break;
+            
+        case 10:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
+            break;
+            
         default:
             break;
     }

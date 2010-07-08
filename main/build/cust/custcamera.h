@@ -102,7 +102,7 @@ when       who     what, where, why
 #endif /* FEATURE_WHITE_LED_FLASH || FEATURE_STROBE_FLASH */
 
 /* 5x5 ASF */
-#define FEATURE_CAMERA_5x5_ASF
+//#define FEATURE_CAMERA_5x5_ASF
 
 /* Bayer Vignette Correction */
 //#define FEATURE_CAMERA_BVCM
@@ -150,22 +150,22 @@ when       who     what, where, why
 #define CAMERA_NO_MDDI
 
 /* Enable Best Shot Feature */
-#define FEATURE_CAMERA_BESTSHOT_MODE
+//#define FEATURE_CAMERA_BESTSHOT_MODE
 
 /* Enabling UI support for Hand Jitter */
-#define FEATURE_CAMERA_HJR
+//#define FEATURE_CAMERA_HJR
 
 /*Added support for DCVS for SC2X*/
-#define FEATURE_CAMERA_REGISTER_CLOCK_RESOURCE_III
+//#define FEATURE_CAMERA_REGISTER_CLOCK_RESOURCE_III
 
-#define FEATURE_CAMERA_LCD_DIRECT_MODE
+//#define FEATURE_CAMERA_LCD_DIRECT_MODE
 /*MDP Related */
 #ifdef FEATURE_CAMERA_LCD_DIRECT_MODE
   #ifndef FEATURE_MDP
     #undef FEATURE_CAMERA_LCD_DIRECT_MODE
   #endif /* FEATURE_MDP */
 #endif /* FEATURE_CAMERA_LCD_DIRECT_MODE */
-#define FEATURE_CAMERA_YCBCR_ONLY
+//#define FEATURE_CAMERA_YCBCR_ONLY
 
 #ifndef CUST_EDITION
 #define FEATURE_CAMERA_MOBICAT
@@ -184,7 +184,7 @@ when       who     what, where, why
 #define CAMERA_USES_LIBSTD
 /* SC2X related */
 //#define CAMERA_USE_PMIC_TO_POWER_SENSOR
-#define FEATURE_CAMERA_VFE_SNAPSHOT_YCBCR420
+//#define FEATURE_CAMERA_VFE_SNAPSHOT_YCBCR420
 //#define CAMERA_USES_CAMIF_PAD
 //#define CAMERA_THUMBNAIL_SIZE_QCIF
 #define FEATURE_CAMERA_USE_STANDALONE_DOWNSIZER

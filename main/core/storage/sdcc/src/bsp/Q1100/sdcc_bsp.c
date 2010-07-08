@@ -74,7 +74,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
                                             PM_MPP__DLOGIC_OUT__CTRL_LOW);
       }
 #else
-      gpio_out(SD_PWR_EN_N, 1);
+      //gpio_out(SD_PWR_EN_N, 1);
 #endif
    }
    else if (SDCC_BSP_VDD_OFF == state)
@@ -91,7 +91,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
                                       PM_MPP__I_SINK__SWITCH_DIS);
       }
 #else
-      gpio_out(SD_PWR_EN_N, 0);
+      //gpio_out(SD_PWR_EN_N, 0);
 #endif
       /*Configure all SDCC GPIOs as input to avoid current drain*/
       gpio_tlmm_config(GPIO_INPUT_24);
