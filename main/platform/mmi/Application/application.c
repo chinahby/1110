@@ -905,7 +905,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
         case EVT_DIALOG_START:
             {  
                 int i;
-                for (i=1;i<=MAX_MATRIX_ITEMS;)
+                for (i=1;i<=IMENUCTL_GetItemCount(pMenu);)
                 {
                     AECHAR pwsz[67] = {0};
                     AECHAR pstr[64] = {0};
