@@ -148,6 +148,10 @@ MMI_ADD_TOUCHPAD=no
 #语言添加
 EXTLANG1=id
 EXTLANG2=NO
+
+#不同运营商版本
+OPERATORS_VERSION_NAME = IVIO
+
 endif
 #-------------------------------------------------------------------------------
 # Core includes
