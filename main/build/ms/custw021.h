@@ -15,6 +15,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_COLOR_DISPLAY
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_SMS_UDH
+#define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #undef  FEATRUE_SUPPORT_G_SENSOR
@@ -31,6 +32,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CDSMS_CACHE_USELIST
 #define FIX_LINKITEM_INITBUG
 #define FEATURE_SPN_FROM_BSMCCMNC
+#define FEATURE_VERSION_IVIO
+//#define FEATURE_VERSION_SMART
 #endif
 
 #ifndef TARGSB2_H
