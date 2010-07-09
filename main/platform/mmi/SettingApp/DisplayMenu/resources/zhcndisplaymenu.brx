@@ -274,6 +274,7 @@
 	</DIALOG>
 	<DIALOG Id="6002" Name="IDD_PICTURE_DLG" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6003" Name="IDD_IMGDELMSG_DLG" Focus="0">
 		<Controls/>
