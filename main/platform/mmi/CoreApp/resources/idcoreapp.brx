@@ -141,6 +141,7 @@
 	</DIALOG>
 	<DIALOG Id="6006" Name="IDD_IDLE" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6007" Name="IDD_EMERGENCYNUMLIST" Focus="7005">
 		<Controls>
