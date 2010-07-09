@@ -23,7 +23,6 @@ endif
 CONSTFILE_FILES+=\
 tetris.mif|fs:/mif/tetris.mif \
 tetris.bar|fs:/mod/tetris/en/tetris.bar \
-tetrisimages.bar|fs:/mod/tetris/tetrisimages.bar \
 blink.mid|fs:/mod/tetris/blink.mid \
 drop.mid|fs:/mod/tetris/drop.mid \
 droppiece.mid|fs:/mod/tetris/droppiece.mid \
@@ -34,6 +33,15 @@ over.mid|fs:/mod/tetris/over.mid \
 select.mid|fs:/mod/tetris/select.mid \
 singleline.mid|fs:/mod/tetris/singleline.mid \
 undrop.mid|fs:/mod/tetris/undrop.mid
+
+ifeq ($(OPERATORS_VERSION_NAME),IVIO)
+    	 CONSTFILE_FILES+=\
+    	 tetrisimages_ivio.bar|fs:/mod/tetris/tetrisimages.bar
+endif
+ifeq ($(OPERATORS_VERSION_NAME),SMART)
+    	 CONSTFILE_FILES+=\
+    	 tetrisimages_smart.bar|fs:/mod/tetris/tetrisimages.bar
+endif
 
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

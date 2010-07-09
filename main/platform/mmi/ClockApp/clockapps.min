@@ -20,8 +20,16 @@ vpath %.brx $(CLOCKAPP_RES)
 
 CONSTFILE_FILES+=\
     clockapps.mif|fs:/mif/clockapps.mif \
-    clockapps.bar|fs:/mod/clockapps/en/clockapps.bar \
-    clockapps_images.bar|fs:/mod/clockapps/clockapps_images.bar
+    clockapps.bar|fs:/mod/clockapps/en/clockapps.bar 
+    
+ifeq ($(OPERATORS_VERSION_NAME),IVIO)
+    	 CONSTFILE_FILES+=\
+    	 clockapps_images_ivio.bar|fs:/mod/clockapps/clockapps_images.bar
+endif
+ifeq ($(OPERATORS_VERSION_NAME),SMART)
+    	 CONSTFILE_FILES+=\
+    	 clockapps_images_smart.bar|fs:/mod/clockapps/clockapps_images.bar
+endif
 
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)

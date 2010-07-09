@@ -17,10 +17,18 @@ vpath %.bar $(WORLDTIME_RES)
 vpath %.brx $(WORLDTIME_RES)
 
 ifeq ($(USES_128X128),yes)
+
 CONSTFILE_FILES+=\
     worldtime.mif|fs:/mif/worldtime.mif \
-    worldtime.bar|fs:/mod/worldtime/en/worldtime.bar \
-    worldtime_images128x128.bar|fs:/mod/worldtime/worldtime_images.bar
+    worldtime.bar|fs:/mod/worldtime/en/worldtime.bar 
+    ifeq ($(OPERATORS_VERSION_NAME),IVIO)
+    CONSTFILE_FILES+=\
+    worldtime_images_ivio.bar|fs:/mod/worldtime/worldtime_images.bar
+    endif
+    ifeq ($(OPERATORS_VERSION_NAME),SMART)
+    CONSTFILE_FILES+=\
+    worldtime_images_smart.bar|fs:/mod/worldtime/worldtime_images.bar
+    endif
 endif
 ifeq ($(USES_160X128),yes)
 CONSTFILE_FILES+=\

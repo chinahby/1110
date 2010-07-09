@@ -27,8 +27,16 @@ else
 ifeq ($(USES_160X128),yes)
 CONSTFILE_FILES+=\
         fmradio.mif|fs:/mif/fmradio.mif \
-        fmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar \
-        fmradioln160x128.bar|fs:/mod/fmradio/fmradioln160x128.bar
+        fmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar
+
+ifeq ($(OPERATORS_VERSION_NAME),IVIO)
+    	 CONSTFILE_FILES+=\
+    	 fmradioln160x128_ivio.bar|fs:/mod/fmradio/fmradioln160x128.bar
+endif
+ifeq ($(OPERATORS_VERSION_NAME),SMART)
+    	 CONSTFILE_FILES+=\
+    	 fmradioln160x128_smart.bar|fs:/mod/fmradio/fmradioln160x128.bar
+endif
 else
 CONSTFILE_FILES+=\
         fmradio.mif|fs:/mif/fmradio.mif \

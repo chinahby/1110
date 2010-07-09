@@ -19,9 +19,19 @@ vpath %.c $(COREAPP_SRC)
 vpath %.bar $(COREAPP_RES)
 vpath %.brx $(COREAPP_RES)
 ifeq ($(USES_160X128),yes)
-vpath %.png $(APPSCOMMON)/images/160x128/Pwronoffani
+    ifeq ($(OPERATORS_VERSION_NAME),IVIO)
+        vpath %.png $(APPSCOMMON)/images/160x128/ivio/Pwronoffani
+    endif
+    ifeq ($(OPERATORS_VERSION_NAME),SMART)
+        vpath %.png $(APPSCOMMON)/images/160x128/smart/Pwronoffani
+    endif
 else
-vpath %.png $(APPSCOMMON)/images/color/Pwronoffani
+    ifeq ($(OPERATORS_VERSION_NAME),IVIO)
+	    vpath %.png $(APPSCOMMON)/images/color/ivio/Pwronoffani
+	endif
+	ifeq ($(OPERATORS_VERSION_NAME),SMART)
+	    vpath %.png $(APPSCOMMON)/images/color/smart/Pwronoffani
+	endif
 endif
 ifeq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\

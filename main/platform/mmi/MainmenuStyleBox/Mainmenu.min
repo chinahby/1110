@@ -14,7 +14,14 @@ vpath %.c $(MAINMENU_SRC)
 vpath %.bar $(MAINMENU_RES)
 vpath %.brx $(MAINMENU_RES)
 ifeq ($(USES_160X128),yes)
-vpath %.png $(APPSCOMMON)/images/160x128/Mainmenu/focus
+
+ifeq ($(OPERATORS_VERSION_NAME),IVIO)
+   vpath %.png $(APPSCOMMON)/images/160x128/ivio/Mainmenu/focus
+endif
+ifeq ($(OPERATORS_VERSION_NAME),SMART)
+   vpath %.png $(APPSCOMMON)/images/160x128/smart/Mainmenu/focus
+endif
+
 else
 vpath %.png $(APPSCOMMON)/images/color/Mainmenu/focus
 endif

@@ -41,10 +41,16 @@ CONSTFILE_FILES+=\
 	appscommon_160x128.bar|fs:/sys/appscommonimages.bar 
 else
     ifeq ($(USES_DISP_128X160), yes)
-    vpath %.png $(APPSCOMMON)/images/color/GraphicNotice
-    
+    ifeq ($(OPERATORS_VERSION_NAME),IVIO)
+    vpath %.png $(APPSCOMMON)/images/160x128/ivio/GraphicNotice
     CONSTFILE_FILES+=\
-    	appscommon_160x128.bar|fs:/sys/appscommonimages.bar 
+    	appscommon_160x128_ivio.bar|fs:/sys/appscommonimages.bar 
+    endif
+    ifeq ($(OPERATORS_VERSION_NAME),SMART)
+    vpath %.png $(APPSCOMMON)/images/160x128/smart/GraphicNotice
+    CONSTFILE_FILES+=\
+    	appscommon_160x128_smart.bar|fs:/sys/appscommonimages.bar 
+    endif
     else
     vpath %.png $(APPSCOMMON)/images/mono
     
