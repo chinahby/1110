@@ -492,6 +492,7 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
             pMe->m_bAppIsReady = FALSE;
             pMe->m_pDialog = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
+
             return Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
@@ -870,33 +871,40 @@ static void Converter_SetMenuPosition(CConverter *pMe)
     
     SETAEERECT(&rect, 
                         pMe->m_rc.x + ARROW_WIDTH + FRAME_SIZE, 
-                        TITLEBAR_HEIGHT + FRAME_SIZE, 
+                        //TITLEBAR_HEIGHT + FRAME_SIZE, 
+                        pMe->m_rc.y + TITLEBAR_HEIGHT + FRAME_SIZE, 	//Add By zzg 2010_07_08
                         pMe->m_rc.dx - (2*(ARROW_WIDTH + FRAME_SIZE)), 
                         pMe->dyMenu - 2*FRAME_SIZE);
     IMENUCTL_SetRect(pMe->pUnitMenu1, &rect);
 
     rect.x -= ARROW_WIDTH;
     rect.dx += 2*ARROW_WIDTH;
-    rect.y += pMe->dyMenu;
+    rect.y += pMe->dyMenu;		
+	rect.dy += 5*FRAME_SIZE;					//Add By zzg 2010_07_07
     ITEXTCTL_SetRect(pMe->pNumber1, &rect);
-
+	
     rect.x += ARROW_WIDTH;
     rect.dx -= 2*ARROW_WIDTH;
-    rect.y += pMe->dyMenu;
+    //rect.y += pMe->dyMenu;		
+    rect.y += (rect.dy + 5*FRAME_SIZE);			//Add By zzg 2010_07_07
+	rect.dy -= 5*FRAME_SIZE; 					//Add By zzg 2010_07_07
     IMENUCTL_SetRect(pMe->pUnitMenu2, &rect);
     
     rect.x -= ARROW_WIDTH;
     rect.dx += 2*ARROW_WIDTH;
-    rect.y += pMe->dyMenu;
+    rect.y += pMe->dyMenu;		
+	rect.dy += 5*FRAME_SIZE;					//Add By zzg 2010_07_07
     ITEXTCTL_SetRect(pMe->pNumber2, &rect);
-    
+	rect.dy -= 5*FRAME_SIZE;					//Add By zzg 2010_07_07
+	    
     rect.x += ARROW_WIDTH;
     rect.y = pMe->m_rc.y + TITLEBAR_HEIGHT + FRAME_SIZE;
-    rect.dx = pMe->m_rc.dx - (2*ARROW_WIDTH) - 2*FRAME_SIZE;
+    rect.dx = pMe->m_rc.dx - (2*ARROW_WIDTH) - 2*FRAME_SIZE;		
     IMENUCTL_SetRect(pMe->title, &rect);
         
     rect.x   = pMe->m_rc.x;
-    rect.y += pMe->dyMenu;
+    //rect.y += pMe->dyMenu;    
+    rect.y += pMe->dyMenu - FRAME_SIZE;   		//Add By zzg 2010_07_08
     rect.dx = pMe->m_rc.dx;
     rect.dy = pMe->m_rc.dy - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT - pMe->dyMenu - STATUSBAR_HEIGHT;
     IMENUCTL_SetRect(pMe->currency, &rect);
@@ -904,15 +912,21 @@ static void Converter_SetMenuPosition(CConverter *pMe)
     rect.x += FRAME_SIZE;
     rect.y = pMe->m_rc.y + TITLEBAR_HEIGHT + 2*pMe->dyMenu + FRAME_SIZE;
     rect.dx = pMe->m_rc.dx - SCROLLBAR_WIDTH - 2*FRAME_SIZE;
-    rect.dy = pMe->dyMenu - 2*FRAME_SIZE;
+    rect.dy = pMe->dyMenu - 2*FRAME_SIZE;	
+    rect.y -= 3*FRAME_SIZE;						//Add By zzg 2010_07_08
     ITEXTCTL_SetRect(pMe->coeff1, &rect);
-    rect.y += (2*pMe->dyMenu);
+	rect.y += 3*FRAME_SIZE;						//Add By zzg 2010_07_08
+	
+    rect.y += (2*pMe->dyMenu);    
     ITEXTCTL_SetRect(pMe->coeff2, &rect);
-    rect.y += (2*pMe->dyMenu);
+	
+    //rect.y += (2*pMe->dyMenu);	
+    rect.y += (2*pMe->dyMenu - FRAME_SIZE);		//Add By zzg 2010_07_08
     ITEXTCTL_SetRect(pMe->coeff3, &rect);
-    
-    ITEXTCTL_SetProperties(pMe->pNumber1, TP_FRAME|TP_FOCUS_NOSEL);
-    ITEXTCTL_SetProperties(pMe->pNumber2, TP_FRAME|TP_FOCUS_NOSEL);
+	
+
+	ITEXTCTL_SetProperties(pMe->pNumber1, TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT);
+    ITEXTCTL_SetProperties(pMe->pNumber2, TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT);	
     ITEXTCTL_SetProperties(pMe->coeff1, TP_FRAME|TP_FOCUS_NOSEL);
     ITEXTCTL_SetProperties(pMe->coeff2, TP_FRAME|TP_FOCUS_NOSEL);
     ITEXTCTL_SetProperties(pMe->coeff3, TP_FRAME|TP_FOCUS_NOSEL);

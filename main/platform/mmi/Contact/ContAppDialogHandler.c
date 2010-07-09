@@ -5714,7 +5714,8 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
 
             //IMENUCTL_Redraw(pMenuCtl);
             CContApp_SetInputMode(pMe);
-            IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectEdit);            
+            IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectEdit);    
+						
 			CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
 			IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
 			
@@ -5764,7 +5765,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
 
             if(IDI_ADDNEW_MENU_NAME == pMe->m_wSelectEdit)
             {
-                pMe->m_nFldInputID = AEE_ADDRFIELD_NAME;
+                pMe->m_nFldInputID = AEE_ADDRFIELD_NAME;				
                 CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             }
@@ -5882,7 +5883,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             }
 
             if(wParam !=  IDI_ADDNEW_MENU_SELECTGROUP && wParam != IDI_ADDNEW_MENU_SELECTRINGTONE)
-            {
+            {            	
                 CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             }
@@ -9204,9 +9205,13 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             
             //IMENUCTL_SetActive(pMenuCtl, FALSE);
 
-            IMENUCTL_Redraw(pMenuCtl);
+            //IMENUCTL_Redraw(pMenuCtl);
             CContApp_SetInputMode(pMe);
             IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectEdit);
+
+			CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
+			IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+			
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -9253,7 +9258,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
 
             if(IDI_EDIT_MENU_NAME == pMe->m_wSelectEdit)
             {
-                pMe->m_nFldInputID = AEE_ADDRFIELD_NAME;
+                pMe->m_nFldInputID = AEE_ADDRFIELD_NAME;				
                 CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             }
@@ -9373,7 +9378,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             }
 
             if(wParam !=  IDI_EDIT_MENU_GROUP && wParam != IDI_EDIT_MENU_RINGTONE)
-            {
+            {            	
                 CContApp_ShowEditItem(pMe, pMenuCtl, pTextCtl);
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             }
@@ -9399,8 +9404,8 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                             {
                                 if (AEE_ADDRFIELD_NONE != pMe->m_nFldInputID)
                                 {
-                            IMENUCTL_SetActive(pMenuCtl, TRUE);
-                            IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
+                            		IMENUCTL_SetActive(pMenuCtl, TRUE);
+                            		IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
                                     CContApp_SetRecByFLDID(pMe, pMe->m_nFldInputID);
                                 } 
                                 
@@ -12943,7 +12948,8 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
     ITEXTCTL_SetRect( pTextCtl, &rect);
     CContApp_SetFldMaxSize(pMe,pTextCtl,pMe->m_nFldInputID);
     // 只有数字域才真正在本地编辑，按数字域的属性设置
-    ITEXTCTL_SetProperties( pTextCtl, CContApp_GetFldInputProp(pMe,AEE_ADDRFIELD_PHONE_GENERIC));
+    ITEXTCTL_SetProperties( pTextCtl, CContApp_GetFldInputProp(pMe,AEE_ADDRFIELD_PHONE_GENERIC));	
+		
     (void)ITEXTCTL_SetInputMode(pTextCtl, CContApp_GetFldInputMode(pMe->m_nFldInputID));
 
     switch(pMe->m_wSelectEdit)

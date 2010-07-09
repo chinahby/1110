@@ -768,17 +768,27 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
             if(Image)
             {
-                IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2);
-                IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
+                //IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2);
+                //IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
+
+				//Add By zzg 2010_07_08
+                IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE);
+                IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE);
+                //Add End
                 IIMAGE_Release(Image);
             }
             
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
             if(Image)
             {
-                IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2);
-                IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
-                IIMAGE_Release(Image);
+                //IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2);
+                //IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
+
+				//Add By zzg 2010_07_08
+				IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE);
+                IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE);
+                //Add End
+				IIMAGE_Release(Image);
             }
 #if 0
             if(pMe->m_converterMode == CONVERTER_MODE_TEMPERATURE)
@@ -825,18 +835,46 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 }
             }
             DrawBottomBar(pMe->m_pDisplay, &BBarParam);
+			
             //更新高亮显示
             SETAEERECT(&rect, 
                                 pMe->m_rc.x, 
                                 pMe->m_rc.y + TITLEBAR_HEIGHT + ((int)pMe->m_nCtlID - 2)*pMe->dyMenu, 
                                 pMe->m_rc.dx, 
                                 pMe->dyMenu);
+			/*
             if(pMe->m_nCtlID == IDC_UNIT_MENU1 || pMe->m_nCtlID == IDC_UNIT_MENU2)
             {
                 rect.x  += ARROW_WIDTH;
                 rect.dx -= (2*ARROW_WIDTH);
             }
+            */	
+
+			//Add By zzg 2010_07_08
+			if (pMe->m_nCtlID == IDC_UNIT_MENU1 )
+            {
+                rect.x  += ARROW_WIDTH;
+                rect.dx -= (2*ARROW_WIDTH);
+            }
+			else if (pMe->m_nCtlID == IDC_UNIT_MENU2)
+			{
+				rect.x  += ARROW_WIDTH;
+                rect.dx -= (2*ARROW_WIDTH);
+				rect.y  += 8*FRAME_SIZE;
+			}
+			else if(pMe->m_nCtlID == IDC_NUMBER1)
+            {                
+                rect.dy += 6*FRAME_SIZE;
+            }
+			else if (pMe->m_nCtlID == IDC_NUMBER2)
+			{
+				rect.dy += 6*FRAME_SIZE;
+				rect.y  += 8*FRAME_SIZE;
+			}
+			//Add End
+			
             IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_ORANGE);
+            
             // 更新显示
             (void)IMENUCTL_Redraw(pMe->pUnitMenu1);
             (void)IMENUCTL_Redraw(pMe->pUnitMenu2);
