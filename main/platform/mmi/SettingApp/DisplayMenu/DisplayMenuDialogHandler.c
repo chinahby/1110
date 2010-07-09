@@ -238,13 +238,12 @@ static double_list *p_screensave_image = NULL;
 void DisplayMenu_ShowDialog(CDisplayMenu *pMe,uint16  dlgResId)
 {
     int nRet;
-    //DISP_ERR("next show %d dialog", dlgResId, 0, 0);
-    // At most one dialog open at once
+    MSG_FATAL("DisplayMenu_ShowDialog Start",0,0,0);
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
         // Looks like there is one dialog already opened.
         // Flag an error an return without doing anything.
-        ERR("Trying to create a dialog without closing the previous one",0,0,0);
+        MSG_FATAL("Trying to create a dialog without closing the previous one",0,0,0);
         return;
     }
     if (NULL != pMe->m_pDisplay)
@@ -252,10 +251,12 @@ void DisplayMenu_ShowDialog(CDisplayMenu *pMe,uint16  dlgResId)
         AEEDeviceInfo di={0,};
         if (dlgResId == IDD_PICTURE_DLG)
         {
+            MSG_FATAL("DisplayMenu_ShowDialog dlgResId == IDD_PICTURE_DLG",0,0,0);
             (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:0", STRLEN("a:0"));
         }
         else
         {
+            MSG_FATAL("DisplayMenu_ShowDialog dlgResId != IDD_PICTURE_DLG",0,0,0);
             (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
         }
         ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
@@ -268,8 +269,9 @@ void DisplayMenu_ShowDialog(CDisplayMenu *pMe,uint16  dlgResId)
 
     if (nRet != SUCCESS)
     {
-        ERR("Failed to create the dialog in the DisplayMenu applet",0,0,0);
+        MSG_FATAL("Failed to create the dialog in the DisplayMenu applet",0,0,0);
     }
+    MSG_FATAL("DisplayMenu_ShowDialog End",0,0,0);
 }
 
 /*==============================================================================
@@ -523,7 +525,7 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
 #endif
                 case IDS_WALLPAPER_TITLE:     /*×ÀÃæÇ½Ö½*/
 #ifdef FEATURE_APP_MEDIAGALLERY
-			pMe->m_PICType = WALLPAPER_MAIN;
+			        pMe->m_PICType = WALLPAPER_MAIN;
                     CMediaGallery_FileExplorer(GALLERY_IMAGE_SETTING, NULL);
                     CLOSE_DIALOG(DLGRET_PICTURE)
 #else
@@ -637,7 +639,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
     uint32 dwParam
 )
 {
-    DISP_ERR("%x, %x ,%x,HandlePictureDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandlePictureDialogEvent",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:

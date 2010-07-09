@@ -366,6 +366,7 @@ static NextFSMAction Display_StateMainHandler(CDisplayMenu *pMe)
 ==============================================================================*/
 static NextFSMAction Display_StatePictureHandler(CDisplayMenu *pMe)
 {
+    MSG_FATAL("Display_StatePictureHandler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -389,7 +390,7 @@ static NextFSMAction Display_StatePictureHandler(CDisplayMenu *pMe)
         default:
             ASSERT_NOT_REACHABLE;
     }
-
+    MSG_FATAL("Display_StatePictureHandler End",0,0,0);
     return NFSMACTION_WAIT;
 } // StatePictureHandler
 
