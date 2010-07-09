@@ -831,7 +831,7 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
    char pszArg[100];
    ExplorerPara *pExpPara = NULL;
    int nRet;
-
+   DBGPRINTF("CMediaGallery_FileExplorer Start"); 
    if (NULL != pPara)
    {
       pExpPara = (ExplorerPara *)MALLOC(sizeof(ExplorerPara));
@@ -858,7 +858,7 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
    /*If failed to start applet, free the memory*/
    if(SUCCESS != nRet)
       FREEIF(pExpPara);
-
+   DBGPRINTF("CMediaGallery_FileExplorer End"); 
    return SUCCESS;
 }//CMediaGallery_FileExplorer
 

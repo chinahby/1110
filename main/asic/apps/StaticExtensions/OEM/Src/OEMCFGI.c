@@ -11154,18 +11154,26 @@ void OEM_SetBAM_ADSAccount(void)
 {
 #ifndef WIN32
     nv_item_type nvi;
-    
+    char username[MAS_BREWSETINT_STRING] = {0};
+    char password[MAS_BREWSETINT_STRING] = {0};
+
+    OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
+    OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
     // ук╨е
 #ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
     nvi.ds_sip_nai_info.index = 0;
     (void)OEMNV_Put(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi);
 
-    (void)STRCPY((char *)nvi.ds_sip_nai_info.nai, (char *)DEFAULT_BREW_USERNAME);
-    nvi.ds_sip_nai_info.nai_length = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    //(void)STRCPY((char *)nvi.ds_sip_nai_info.nai, (char *)DEFAULT_BREW_USERNAME);
+    //nvi.ds_sip_nai_info.nai_length = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    (void)STRCPY((char *)nvi.ds_sip_nai_info.nai, username);
+    nvi.ds_sip_nai_info.nai_length = STRLEN((char *)username);
     (void)OEMNV_Put(NV_DS_SIP_NAI_INFO_I, &nvi);
 #else /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
-    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
-    nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
+    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
     (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
 #endif /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
 
@@ -11173,14 +11181,17 @@ void OEM_SetBAM_ADSAccount(void)
 #ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
     nvi.ds_sip_nai_info.index = 0;
     
-    (void)STRCPY((char *)nvi.ds_sip_ppp_ss_info.ss, (char *)DEFAULT_BREW_PASSWORD);
-    nvi.ds_sip_ppp_ss_info.ss_length = STRLEN((char *)DEFAULT_BREW_PASSWORD);
+    //(void)STRCPY((char *)nvi.ds_sip_ppp_ss_info.ss, (char *)DEFAULT_BREW_PASSWORD);
+    //nvi.ds_sip_ppp_ss_info.ss_length = STRLEN((char *)DEFAULT_BREW_PASSWORD);
+    (void)STRCPY((char *)nvi.ds_sip_ppp_ss_info.ss, (char *)password);
+    nvi.ds_sip_ppp_ss_info.ss_length = STRLEN((char *)password);
 
     (void)OEMNV_Put(NV_DS_SIP_PPP_SS_INFO_I, &nvi);
 #else /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
-    (void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
-    nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
-    
+    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
+    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
+    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+    nvi.pap_password.password_len = STRLEN((char *)password);
     (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
 #endif /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
 #endif

@@ -547,6 +547,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 ==============================================================================*/
 static void CMainMenu_FreeAppData(MainMenu *pMe)
 {
+    MSG_FATAL("CMainMenu_FreeAppData Start",0,0,0);
     if (NULL == pMe)
     {
         return;
@@ -607,7 +608,8 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
 			}
 		}
        
-    }    
+    }  
+    MSG_FATAL("CMainMenu_FreeAppData End",0,0,0);
 }
 
 /*=============================================================================
@@ -650,7 +652,7 @@ SEE ALSO:
 static uint32  MainMenu_Release( IMainMenu *pi)
 {
     register MainMenu *pMe = (MainMenu*)pi;
-
+    MSG_FATAL("MainMenu_Release Start",0,0,0);
     if (pMe->referenceCounter == 0)
     {
         return 0;
@@ -658,6 +660,7 @@ static uint32  MainMenu_Release( IMainMenu *pi)
     
     if( --pMe->referenceCounter)
     {
+        MSG_FATAL("MainMenu_Release referenceCounter=%d",pMe->referenceCounter,0,0);
         return pMe->referenceCounter;
     }
 
@@ -666,7 +669,7 @@ static uint32  MainMenu_Release( IMainMenu *pi)
 
     (void) ISHELL_Release(pMe->m_pShell);
     (void) IMODULE_Release(pMe->m_pModule);
-
+    MSG_FATAL("MainMenu_Release End referenceCounter=%d",pMe->referenceCounter,0,0);
     return 0;
 }
 
@@ -744,10 +747,12 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
 {
     MainMenu *pMe = (MainMenu*)pi;
     AEEAppStart* as = NULL;
+    MSG_FATAL("MainMenu_HandleEvent Start",0,0,0);
     switch ( eCode)
     {
         case EVT_APP_START:
             // 此事件dwParam为指针，不应为0
+            MSG_FATAL("MainMenu_HandleEvent EVT_APP_START",0,0,0);
             if (dwParam == 0) 
             {
                 return FALSE;
@@ -766,6 +771,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
         case EVT_APP_STOP:
             {
                 int theFocus = 4;
+                MSG_FATAL("MainMenu_HandleEvent EVT_APP_STOP",0,0,0);
                 setCursor( pMe, theFocus / 3, theFocus % 3);
                 pMe->m_MainSel  = 0;
                 pMe->m_MenuSel  = 0;                  
@@ -776,6 +782,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             }
 
         case EVT_APP_SUSPEND:
+            MSG_FATAL("MainMenu_HandleEvent EVT_APP_SUSPEND",0,0,0);
             (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
             pMe->m_eAppStatus = MAINMENU_SUSPEND;
             
@@ -785,6 +792,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
         case EVT_APP_RESUME:
             {
                 AEEAppStart* as = ( AEEAppStart*)dwParam;
+                MSG_FATAL("MainMenu_HandleEvent EVT_APP_RESUME",0,0,0);
                 pMe->m_rc    = as->rc;
                 pMe->m_eAppStatus = MAINMENU_RUNNING;
 
@@ -794,19 +802,22 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             }
 
         case EVT_DIALOG_INIT:
-            
+            MSG_FATAL("MainMenu_HandleEvent EVT_DIALOG_INIT",0,0,0);
             pMe->m_pActiveIDlg = (IDialog*)dwParam;
             pMe->m_pActivedlgID = wParam;
             
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
+            MSG_FATAL("MainMenu_HandleEvent EVT_DIALOG_START",0,0,0);
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:
+            MSG_FATAL("MainMenu_HandleEvent EVT_USER_REDRAW",0,0,0);
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
+            MSG_FATAL("MainMenu_HandleEvent EVT_DIALOG_END",0,0,0);
             (void) MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveIDlg = NULL;
             pMe->m_pActivedlgID = 0;
@@ -842,6 +853,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
 			return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 		}
         case EVT_USER:  
+            MSG_FATAL("MainMenu_HandleEvent EVT_USER",0,0,0);
 			if(eCode == EVT_USER)
 			{
 				if(dwParam != MAINMENU_SELECT)
@@ -870,6 +882,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
         default:
+            MSG_FATAL("MainMenu_HandleEvent default",0,0,0);
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
     }
 }
@@ -894,7 +907,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
 NextFSMAction MainMenu_ProcessState(MainMenu *pMe)
 {
     NextFSMAction retVal = NFSMACTION_WAIT;
-    
+    MSG_FATAL("MainMenu_ProcessState Start",0,0,0);
     if (NULL == pMe)
     {
         return retVal;
@@ -902,12 +915,15 @@ NextFSMAction MainMenu_ProcessState(MainMenu *pMe)
     switch(pMe->m_currState)
     {
         case MAINST_MAIN:
+            MSG_FATAL("MainMenu_ProcessState MAINST_MAIN",0,0,0);
             return MAINST_MAIN_Handler(pMe);
         case MAINST_EXIT:
+            MSG_FATAL("MainMenu_ProcessState MAINST_EXIT",0,0,0);
             return MAINST_EXIT_Handler(pMe);  
             
         #ifdef FEATRUE_SUPPORT_G_SENSOR 
         case MAINST_MSGBOX:
+            MSG_FATAL("MainMenu_ProcessState MAINST_MSGBOX",0,0,0);
             return MAINST_MSGBOX_Handler(pMe);
         #endif
         default:
@@ -936,6 +952,7 @@ NextFSMAction MainMenu_ProcessState(MainMenu *pMe)
 ==============================================================================*/
 static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
 {
+    MSG_FATAL("MAINST_MAIN_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -945,27 +962,33 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
         // 进入主界面
         case DLGRET_CREATE:
             {
+                MSG_FATAL("MAINST_MAIN_Handler DLGRET_CREATE",0,0,0);
                 MainMenu_ShowDialog(pMe, IDD_MAIN_MENU);
             }
             return NFSMACTION_WAIT;
 
         case DLGRET_GAME:
+            MSG_FATAL("MAINST_MAIN_Handler DLGRET_GAME",0,0,0);
             MOVE_TO_STATE(MAINST_GAME)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_MEDIA:
+            MSG_FATAL("MAINST_MAIN_Handler DLGRET_MEDIA",0,0,0);
             MOVE_TO_STATE(MAINST_PLAYER)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_DATA:
+            MSG_FATAL("MAINST_MAIN_Handler DLGRET_DATA",0,0,0);
             MOVE_TO_STATE(MAINST_DATA)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_CANCELED:
+            MSG_FATAL("MAINST_MAIN_Handler DLGRET_CANCELED",0,0,0);
             MOVE_TO_STATE(MAINST_EXIT)
             return NFSMACTION_CONTINUE;
 
         default:
+            MSG_FATAL("MAINST_MAIN_Handler default",0,0,0);
             MOVE_TO_STATE(MAINST_EXIT)
             return NFSMACTION_CONTINUE;
     }
@@ -990,6 +1013,7 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
 ==============================================================================*/
 static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe)
 {
+    MSG_FATAL("MAINST_EXIT_Handler",0,0,0);
     (void) ISHELL_CloseApplet(pMe->m_pShell, FALSE);
     return NFSMACTION_WAIT;
 } 
@@ -1015,6 +1039,7 @@ static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe)
 #ifdef FEATRUE_SUPPORT_G_SENSOR
 static NextFSMAction MAINST_MSGBOX_Handler(MainMenu *pMe)
 {
+    MSG_FATAL("MAINST_MSGBOX_Handler",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -1067,18 +1092,19 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
 {
     int nRet;
 
+    MSG_FATAL("MainMenu_ShowDialog Start",0,0,0);
     // 每次最多打开一个对话框
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
         // 如果当前已经有对话框被打开，直接返回
-        DBGPRINTF("Trying to create dialog %d without closing previous one",dlgResId,0,0);
+        MSG_FATAL("Trying to create dialog %d without closing previous one",dlgResId,0,0);
         return;
     }
     
     if (NULL != pMe->m_pDisplay)
     {
         AEEDeviceInfo di={0,};
-        
+        MSG_FATAL("MainMenu_ShowDialog NULL != pMe->m_pDisplay",0,0,0);
         if (dlgResId == IDD_MAIN_MENU)
         {
             (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:0", STRLEN("a:0"));
@@ -1098,8 +1124,9 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
     nRet = ISHELL_CreateDialog(pMe->m_pShell,MAINMENU_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)
     {
-        DBGPRINTF("Failed to create the dialog %d in the MAINMENU applet.",dlgResId,0,0);
+        MSG_FATAL("Failed to create the dialog %d in the MAINMENU applet.",dlgResId,0,0);
     }
+    MSG_FATAL("MainMenu_ShowDialog End",0,0,0);
 }
 
 
@@ -1129,6 +1156,7 @@ boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
 )
 
 {
+    MSG_FATAL("MainMenu_RouteDialogEvt Start",0,0,0);
     if (NULL == pMe)
     {
         return FALSE;
@@ -1141,6 +1169,7 @@ boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
     switch( pMe->m_pActivedlgID)
     {
         case IDD_MAIN_MENU:
+            MSG_FATAL("IDD_MAIN_MENU ",0,0,0);
             return MainMenu_IconMenuHandler(pMe, eCode, wParam, dwParam);
 
     #ifdef FEATRUE_SUPPORT_G_SENSOR
@@ -1272,6 +1301,7 @@ PARAMETERS:
 static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     PARAM_NOT_REF( dwParam)
+    MSG_FATAL("MainMenu_IconMenuHandler Start",0,0,0);
     switch ( eCode)
     {
     
@@ -1586,6 +1616,7 @@ static void calculateScreenParameters(MainMenu *pMe)
 
 static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
 {
+    MSG_FATAL("MainMenu_DrawBackGround Start",0,0,0);
 #ifdef FEATURE_RANDOM_MENU_COLOR
     IDISPLAY_FillRect(pMe->m_pDisplay, pRect, pMe->m_nBgColor);
     if(pMe->m_nRandomMenu != 0)
@@ -1607,6 +1638,7 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
                                                     0, 
                                                     0);
     } 
+    MSG_FATAL("MainMenu_DrawBackGround End",0,0,0);
 }
 
 /*=============================================================================
@@ -1619,13 +1651,14 @@ static void DrawMatrix(MainMenu *pMe)
 {
     int i = 0;
 	BottomBar_Param_type BarParam={0};//wlh add
+	MSG_FATAL("DrawMatrix Start",0,0,0);
     
     if (NULL == pMe)
     {
         return;
     }
     //draw bg image
-    ERR("DrawMatrix:::::::::::::::::11111111",0,0,0);
+    MSG_FATAL("DrawMatrix:::::::::::::::::11111111",0,0,0);
     MainMenu_DrawBackGround(pMe, &pMe->m_rc); //modified by chengxiao 2009.04.10
 
     //Draw icon
@@ -1647,6 +1680,7 @@ static void DrawMatrix(MainMenu *pMe)
 
     BarParam.eBBarType = BTBAR_SELECT_BACK;
     DrawBottomBar(pMe->m_pDisplay, &BarParam);//wlh 20090412 add
+    MSG_FATAL("DrawMatrix End",0,0,0);
 }
 
 #ifdef FEATURE_ICON_MOVE_ANIMATION
@@ -1657,7 +1691,7 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
         thePrevFocus = pMe->m_nPrevRow * MAX_MATRIX_COLS + pMe->m_nPrevColumn,
         xOldPos = pMe->m_IconFocus_Pt[thePrevFocus].x + (nFrame)*(pMe->m_IconFocus_Pt[theFocus].x - pMe->m_IconFocus_Pt[thePrevFocus].x)/ICON_ANIMATED_MOVE_FRAME, 
         yOldPos = pMe->m_IconFocus_Pt[thePrevFocus].y + (nFrame)*(pMe->m_IconFocus_Pt[theFocus].y - pMe->m_IconFocus_Pt[thePrevFocus].y)/ICON_ANIMATED_MOVE_FRAME;
-
+    MSG_FATAL("DrawFocusMoveAnimation Start",0,0,0);
     ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)DrawFocusMoveAnimation, pMe);
     
     if(pMe->m_pAnimate == NULL)
@@ -1707,7 +1741,7 @@ static void DrawFocusMoveAnimation(MainMenu * pMe)
         DrawFocusIcon(pMe);
 #endif
     }
-
+    MSG_FATAL("DrawFocusMoveAnimation End",0,0,0);
 }
 #endif
 

@@ -333,7 +333,7 @@ void SettingMenu_ShowDialog(CSettingMenu *pMe,uint16  dlgResId)
 {
     int nRet;
     MSG_FATAL("SettingMenu_ShowDialog Start",0,0,0);
-    //SETTING_ERR("next show %d dialog", dlgResId, 0, 0);
+    //MSG_FATAL("next show %d dialog", dlgResId, 0, 0);
     // At most one dialog open at once
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
@@ -389,7 +389,7 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         MSG_FATAL("SettingMenu_RouteDialogEvent NULL == pMe->m_pActiveDlg",0,0,0);
         return FALSE;
     }
-    //SETTING_ERR("%d SettingMenu_RouteDialogEvent", pMe->m_pActiveDlgID, 0, 0);
+    //MSG_FATAL("%d SettingMenu_RouteDialogEvent", pMe->m_pActiveDlgID, 0, 0);
     switch (pMe->m_pActiveDlgID)
     {
         case IDD_MAIN_MENU:
@@ -533,7 +533,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleMainDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleMainDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SettingMenu_AutoScroll(pMenu,eCode,wParam);
 
@@ -708,7 +708,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleCallSettingDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleCallSettingDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SettingMenu_AutoScroll(pMenu,eCode,wParam);
 
@@ -882,7 +882,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandlePhoneSettingDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandlePhoneSettingDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SettingMenu_AutoScroll(pMenu,eCode,wParam);
 
@@ -1048,7 +1048,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleCallSettingSelDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleCallSettingSelDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SettingMenu_AutoScroll(pMenu,eCode,wParam);
 
@@ -1537,7 +1537,7 @@ static boolean  HandleNetworkDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleNetworkDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleNetworkDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SettingMenu_AutoScroll(pMenu,eCode,wParam);
 
@@ -1663,7 +1663,7 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleDivertDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleDivertDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SettingMenu_AutoScroll(pMenu,eCode,wParam);
 
@@ -1808,7 +1808,7 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleCallForwardSelDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleCallForwardSelDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SettingMenu_AutoScroll(pMenu,eCode,wParam);
 
@@ -2105,7 +2105,7 @@ static boolean  HandleCallForwardInputDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleCallForwardInputDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleCallForwardInputDialogEvent",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -2307,7 +2307,7 @@ static boolean  HandleWarningMessegeDialogEvent(CSettingMenu *pMe,
 {
     //PARAM_NOT_REF(dwParam)
     static IStatic * pStatic = NULL;
-    SETTING_ERR("%x, %x ,%x,HandleWarningMessegeDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleWarningMessegeDialogEvent",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -2317,7 +2317,7 @@ static boolean  HandleWarningMessegeDialogEvent(CSettingMenu *pMe,
                 if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_STATIC,(void **)&pStatic))
 
                 {
-                    SETTING_ERR("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
+                    MSG_FATAL("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
                     return FALSE;
                 }
                 ISTATIC_SetRect(pStatic, &rect);
@@ -2398,7 +2398,7 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleAKGDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleAKGDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SettingMenu_AutoScroll(pMenu,eCode,wParam);
 
@@ -2537,7 +2537,7 @@ static boolean  HandleBannerDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleBannerDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleBannerDialogEvent",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -2677,7 +2677,7 @@ static boolean  HandleTimeDialogEvent(CSettingMenu *pMe,
     static byte bytData = 0;
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_TIMESET);
-    SETTING_ERR("%x, %x ,%x,HandleTimeDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleTimeDialogEvent",eCode,wParam,dwParam);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -2823,7 +2823,7 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
     static byte bytData = 0;
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_DATESET);
-    SETTING_ERR("%x, %x ,%x,HandleDateDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleDateDialogEvent",eCode,wParam,dwParam);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -2979,7 +2979,7 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_SIMSET);
-    SETTING_ERR("%x, %x ,%x,HandleDateDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleDateDialogEvent",eCode,wParam,dwParam);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -3217,7 +3217,7 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 
     IMenuCtl  *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                      IDC_LANGUAGE);
-    SETTING_ERR("%x, %x ,%x,HandleLanguageDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleLanguageDialogEvent",eCode,wParam,dwParam);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -3655,7 +3655,7 @@ static boolean  HandlePhoneNumberDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 )
 {
-    SETTING_ERR("%x, %x ,%x,HandlePhoneNumberDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandlePhoneNumberDialogEvent",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -3778,7 +3778,7 @@ static boolean  HandleNetSelectDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,HandleNetSelectDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleNetSelectDialogEvent",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -3793,7 +3793,7 @@ static boolean  HandleNetSelectDialogEvent(CSettingMenu *pMe,
             nv_item_type nvi;
             nvi.system_pref.nam = cm_get_curr_nam();
             ret = OEMNV_Get(NV_SYSTEM_PREF_I,&nvi);
-            SETTING_ERR("NV_SYSTEM_PREF_I %d %d %d",ret,nvi.system_pref.sys,nvi.system_pref.nam);
+            MSG_FATAL("NV_SYSTEM_PREF_I %d %d %d",ret,nvi.system_pref.sys,nvi.system_pref.nam);
             InitMenuIcons(pMenu);
             switch(nvi.system_pref.sys)
             {
@@ -3858,7 +3858,7 @@ static boolean  HandleNetSelectDialogEvent(CSettingMenu *pMe,
                 break;
              }
              ret = OEMNV_Put(NV_SYSTEM_PREF_I,&nvi);
-             SETTING_ERR("NV_SYSTEM_PREF_I1 %d %d %d",ret,nvi.system_pref.sys,nvi.system_pref.nam);
+             MSG_FATAL("NV_SYSTEM_PREF_I1 %d %d %d",ret,nvi.system_pref.sys,nvi.system_pref.nam);
              CLOSE_DIALOG(DLGRET_CANCELED)
              return TRUE;
         }
@@ -3970,7 +3970,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 
     static byte timeFormatType = 0;
 
-    SETTING_ERR("%x, %x ,%x,Setting_HandleAuto_Power_DialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,Setting_HandleAuto_Power_DialogEvent",eCode,wParam,dwParam);
 
     switch (eCode)
     {
@@ -4006,7 +4006,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 
             if(pMe->m_pTime == NULL ||pMe->m_pState == NULL)
             {
-                SETTING_ERR("EVT_DIALOG_INIT FAIL", 0, 0, 0);
+                MSG_FATAL("EVT_DIALOG_INIT FAIL", 0, 0, 0);
                 return FALSE;
             }
 #ifdef SET_REP_MOD_LIST
@@ -4059,7 +4059,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             int         lineSpace = ( pMe->m_rc.dy - titleheight  - bottomheight - itemheight*3) / 4;
             nv_language_enum_type language = NV_LANGUAGE_ENGLISH;
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
-            //SETTING_ERR("EVT_USER_REDRAW", 0, 0, 0);
+            //MSG_FATAL("EVT_USER_REDRAW", 0, 0, 0);
             MEMSET(wszTitle,0,sizeof(wszTitle));
             MEMSET(wszState,0,sizeof(wszState));
             MEMSET(wszTime,0,sizeof(wszTime));
@@ -4102,7 +4102,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             pMe->m_dwHour = pMe->m_dwDispTime/MSSEC_PER_HOUR;
             pMe->m_dwMin   = pMe->m_dwDispTime%MSSEC_PER_HOUR;
 
-            SETTING_ERR("m_dwHour = %d;m_dwMin = %d cfg= %d",pMe->m_dwHour,pMe->m_dwMin,pMe->m_dwDispTime);
+            MSG_FATAL("m_dwHour = %d;m_dwMin = %d cfg= %d",pMe->m_dwHour,pMe->m_dwMin,pMe->m_dwDispTime);
 
             //设置给定的时间,并刷新屏幕
             (void)ITIMECTL_SetTimeEx(pMe->m_pTime,  pMe->m_dwDispTime, TRUE);
@@ -4343,7 +4343,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_KEY:
-            //SETTING_ERR("EVT_KEY_RELEASE", 0, 0, 0);
+            //MSG_FATAL("EVT_KEY_RELEASE", 0, 0, 0);
             //时间控件下处理数字键设置时间
             if (ITIMECTL_IsActive(pMe->m_pTime))
             {
@@ -4405,7 +4405,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 
                 case AVK_SELECT:
                 case AVK_INFO:
-                    //SETTING_ERR("EVT_KEY_RELEASE->AVK_SELECT", 0, 0, 0);
+                    //MSG_FATAL("EVT_KEY_RELEASE->AVK_SELECT", 0, 0, 0);
                     //当处于clockctl控件,不接收command事件
                     //处理Clock编辑界面应用COMMAND键保存设置内容.
 #if 0
@@ -4424,7 +4424,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
                         {
                             if(Setting_CClockApps_HandleCmdEvent(pMe))
                             {
-                                //SETTING_ERR("EVT_KEY->AVK_SELECT", 0, 0, 0);
+                                //MSG_FATAL("EVT_KEY->AVK_SELECT", 0, 0, 0);
                                 CLOSE_DIALOG(DLGRET_CANCELED)
                                 return TRUE;
                             }
@@ -4438,7 +4438,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
                     {
                         if(Setting_CClockApps_HandleCmdEvent(pMe))
                         {
-                            //SETTING_ERR("EVT_KEY->AVK_SELECT", 0, 0, 0);
+                            //MSG_FATAL("EVT_KEY->AVK_SELECT", 0, 0, 0);
                             pMe->m_msg_id = IDS_DONE;
                             CLOSE_DIALOG(DLGRET_WARNING)
                         }
@@ -4546,8 +4546,8 @@ static boolean Setting_CClockApps_HandleKeyEvent(CSettingMenu *pMe, uint16 wPara
         return FALSE;
     }
 
-    SETTING_ERR("%x %d Setting_CClockApps_HandleKeyEvent", wParam, pMe->m_nCtlID, 0);
-    SETTING_ERR("CtlCount= %d KeyCount= %d ",pMe->m_nTimeCtlCount ,pMe->m_nNumKeyCount,0);
+    MSG_FATAL("%x %d Setting_CClockApps_HandleKeyEvent", wParam, pMe->m_nCtlID, 0);
+    MSG_FATAL("CtlCount= %d KeyCount= %d ",pMe->m_nTimeCtlCount ,pMe->m_nNumKeyCount,0);
     switch(wParam)
     {
         case AVK_DOWN:
@@ -4703,7 +4703,7 @@ static boolean Setting_Process_Auto_Power(Auto_Power_Cfg *other_set, Auto_Power_
         {
             time = cur->dwWATime - other_set->dwWATime;
         }
-        SETTING_ERR("%d %d %d ",time ,other_set->dwWATime, cur->dwWATime);
+        MSG_FATAL("%d %d %d ",time ,other_set->dwWATime, cur->dwWATime);
         if(time >= 180000/*3 min*/)
         {
             return TRUE;
@@ -4741,7 +4741,7 @@ static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe)
     {
         return FALSE;
     }
-    SETTING_ERR("Setting_CClockApps_HandleCmdEvent %d %d %d", pMe->m_ClockCfg.dwWATime, pMe->m_b_selete_Pm, pMe->m_ClockCfg.bStateOn);
+    MSG_FATAL("Setting_CClockApps_HandleCmdEvent %d %d %d", pMe->m_ClockCfg.dwWATime, pMe->m_b_selete_Pm, pMe->m_ClockCfg.bStateOn);
 
     //保存现在设置的时间
 #if 0
@@ -4861,7 +4861,7 @@ static boolean Setting_CClockApps_HandleNumKeyEvent(CSettingMenu *pMe, uint16 wP
     {
         return FALSE;
     }
-    SETTING_ERR("%x %d Setting_CClockApps_HandleNumKeyEvent", wParam, pMe->m_nNumKeyCount, 0);
+    MSG_FATAL("%x %d Setting_CClockApps_HandleNumKeyEvent", wParam, pMe->m_nNumKeyCount, 0);
     switch(wParam)
     {
         case AVK_0:
@@ -5056,7 +5056,7 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,Handle_ANSWER_MODE_DialogEveng",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,Handle_ANSWER_MODE_DialogEveng",eCode,wParam,dwParam);
 
     switch (eCode)
     {
@@ -5151,7 +5151,7 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x, %x ,%x,Handle_ANSWER_MODE_DialogEveng",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,Handle_ANSWER_MODE_DialogEveng",eCode,wParam,dwParam);
 
     switch (eCode)
     {
@@ -5389,7 +5389,7 @@ static boolean Handle_IP_Number_Set_DialogEveng(CSettingMenu *pMe,
         return FALSE;
     }
 
-    SETTING_ERR("%x, %x ,%x,Handle_IP_Number_Set_DialogEveng",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,Handle_IP_Number_Set_DialogEveng",eCode,wParam,dwParam);
 
     switch (eCode)
     {
@@ -5641,7 +5641,7 @@ static boolean  SettingMenu_HandleKeyToneLengthDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x,%x,%x,HandleKeyToneLengthDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x,%x,%x,HandleKeyToneLengthDialogEvent",eCode,wParam,dwParam);
 
     switch (eCode)
     {
@@ -5757,7 +5757,7 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
     {
         return FALSE;
     }
-    SETTING_ERR("%x,%x,%x,HandleAutoAnswerSubDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x,%x,%x,HandleAutoAnswerSubDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SoundMenu_AutoScroll(pMenu,eCode,wParam);
 
@@ -6980,7 +6980,7 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
     static byte planeMode_cfg = 0;
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_PLANEMODE);
-    SETTING_ERR("%x, %x ,%x,HandlePlaneModeDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandlePlaneModeDialogEvent",eCode,wParam,dwParam);
     if (pMenu == NULL)
     {
         return FALSE;

@@ -1214,6 +1214,7 @@ static NextFSMAction   SettingMenu_StateSimHandler(CSettingMenu *pMe)
 #ifdef FEATURE_LANGUAGE
 static NextFSMAction SettingMenu_StateLanguageHandler(CSettingMenu *pMe)
 {
+    MSG_FATAL("SettingMenu_StateLanguageHandler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -1222,16 +1223,19 @@ static NextFSMAction SettingMenu_StateLanguageHandler(CSettingMenu *pMe)
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
+            MSG_FATAL("SettingMenu_StateLanguageHandler DLGRET_CREATE",0,0,0);
             pMe->m_bNotOverwriteDlgRet = FALSE;
             SettingMenu_ShowDialog(pMe, IDD_LANGUAGE_MENU);
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-        case DLGRET_MSGBOX_OK:            
+        case DLGRET_MSGBOX_OK:    
+            MSG_FATAL("SettingMenu_StateLanguageHandler DLGRET_MSGBOX_OK",0,0,0);
             MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_WARNING:
+            MSG_FATAL("SettingMenu_StateLanguageHandler DLGRET_WARNING",0,0,0);
             pMe->m_bNotOverwriteDlgRet = FALSE;
             pMe->m_msg_id = IDS_DONE;
             SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
@@ -1244,7 +1248,7 @@ static NextFSMAction SettingMenu_StateLanguageHandler(CSettingMenu *pMe)
         default:
             ASSERT_NOT_REACHABLE;
     }
-
+    MSG_FATAL("SettingMenu_StateLanguageHandler End",0,0,0);
     return NFSMACTION_WAIT;
 } // StateLanguageHandler
 #endif

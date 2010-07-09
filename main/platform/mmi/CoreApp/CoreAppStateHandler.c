@@ -1399,6 +1399,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
     {
         case DLGRET_CREATE:
         case DLGRET_MSGOK:
+            MSG_FATAL("COREST_STANDBY_Handler DLGRET_CREATE",0,0,0);
 #ifdef FEATRUE_AUTO_POWER
             if(pMe->m_b_autopower_off)
             {
@@ -1414,7 +1415,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
             return NFSMACTION_WAIT;
             
         case DLGRET_MSG:
-
+            MSG_FATAL("COREST_STANDBY_Handler DLGRET_MSG",0,0,0);
 #ifdef FEATRUE_AUTO_POWER
             if(pMe->m_b_autopower_off)
             {
@@ -1435,19 +1436,23 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
             
 #if defined(FEATURE_WMS_APP)
         case DLGRET_SMSTIPS:
+            MSG_FATAL("COREST_STANDBY_Handler DLGRET_SMSTIPS",0,0,0);
             MOVE_TO_STATE(COREST_SMSTIP)
             return NFSMACTION_CONTINUE;
 #endif            
 
         case DLGRET_BATT_INFO:
+            MSG_FATAL("COREST_STANDBY_Handler DLGRET_BATT_INFO",0,0,0);
             CoreApp_ShowDialog(pMe,IDD_MSGBOX);
             return NFSMACTION_WAIT;
 #ifdef FEATURE_KEYGUARD
         case DLGRET_EMGCALL:
+            MSG_FATAL("COREST_STANDBY_Handler DLGRET_EMGCALL",0,0,0);
             MOVE_TO_STATE(COREST_EMERGENCYCALL)
             return NFSMACTION_CONTINUE;
 #endif
         case DLGRET_GS_SHAKE:
+            MSG_FATAL("COREST_STANDBY_Handler DLGRET_GS_SHAKE",0,0,0);
             MOVE_TO_STATE(COREST_STANDBY)
             return NFSMACTION_CONTINUE; 
         default:

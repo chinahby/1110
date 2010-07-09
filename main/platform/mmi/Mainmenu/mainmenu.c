@@ -249,11 +249,13 @@ SEE ALSO:
 =============================================================================*/
 static uint32 MainMenuMod_Release( IModule *po)
 {
+    ERR("MainMenuMod_Release Start",0,0,0);
     if ( ( ( MainMenuMod *) po)->referenceCounter == 0)
     {
+        ERR("MainMenuMod_Release referenceCounter == 0",0,0,0);
         return 0;
     }
-
+    ERR("MainMenuMod_Release referenceCounter == %d",( ( MainMenuMod *)po)->referenceCounter,0,0);
     return( --( ( MainMenuMod *)po)->referenceCounter);
 }
 
@@ -328,6 +330,7 @@ SEE ALSO:
 static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
 {
     int retVal = SUCCESS;
+    ERR("MainMenu_New Start",0,0,0);
     if( 0 == gMainMenu.referenceCounter)
     {
 
@@ -357,7 +360,7 @@ static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
 
     ++ gMainMenu.referenceCounter;
     *ppObj = ( IMainMenu*)&gMainMenu;
-    
+    ERR("MainMenu_New End",0,0,0);
     return retVal;
 }
 
@@ -382,6 +385,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 {
 	int i;
 	boolean iamgeflag = FALSE;
+    ERR("CMainMenu_InitAppData Start",0,0,0);
     if (NULL == pMe)
     {
         return EFAILED;
@@ -395,7 +399,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {
         return EFAILED;
     }
-
+    ERR("CMainMenu_InitAppData End",0,0,0);
     return SUCCESS;
 }
 
@@ -421,7 +425,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
     {
         return;
     }
-
+    ERR("CMainMenu_FreeAppData Start",0,0,0);
     pMe->m_eAppStatus = MAINMENU_STOP; 
     
     if (pMe->m_pDisplay != NULL)
@@ -436,11 +440,13 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
         
         if (pMe->m_pImageBg !=NULL)
         {
+            ERR("CMainMenu_FreeAppData IIMAGE_Release",0,0,0);
             (void) IIMAGE_Release(pMe->m_pImageBg);
             pMe->m_pImageBg = NULL;
         }
 
-    }    
+    }  
+    ERR("CMainMenu_FreeAppData End",0,0,0);
 }
 
 /*=============================================================================
@@ -483,7 +489,7 @@ SEE ALSO:
 static uint32  MainMenu_Release( IMainMenu *pi)
 {
     register MainMenu *pMe = (MainMenu*)pi;
-
+    ERR("MainMenu_Release Start",0,0,0);
     if (pMe->referenceCounter == 0)
     {
         return 0;
@@ -499,7 +505,7 @@ static uint32  MainMenu_Release( IMainMenu *pi)
 
     (void) ISHELL_Release(pMe->m_pShell);
     (void) IMODULE_Release(pMe->m_pModule);
-
+    ERR("MainMenu_Release End",0,0,0);
     return 0;
 }
 
@@ -522,6 +528,7 @@ static uint32  MainMenu_Release( IMainMenu *pi)
 static void MainMenu_RunFSM(MainMenu *pMe)
 {
     NextFSMAction nextFSMAction = NFSMACTION_WAIT;
+    ERR("MainMenu_RunFSM Start",0,0,0);
     for ( ; ; )
     {
         nextFSMAction = MainMenu_ProcessState(pMe);
@@ -550,7 +557,8 @@ static void MainMenu_RunFSM(MainMenu *pMe)
         {
             break;
         }
-    }
+    }
+    ERR("MainMenu_RunFSM End",0,0,0);
 }
 
 /*=============================================================================
@@ -580,7 +588,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
     switch ( eCode)
     {
         case EVT_APP_START:
-			
+			ERR("MainMenu_HandleEvent EVT_APP_START",0,0,0);
             // 此事件dwParam为指针，不应为0
             if (dwParam == 0) 
             {
@@ -613,7 +621,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
 
         case EVT_APP_STOP:
             {
-                              
+                ERR("MainMenu_HandleEvent EVT_APP_STOP",0,0,0);              
                 (void)ISHELL_CancelTimer( pMe->m_pShell, NULL, pMe);
                 pMe->m_eAppStatus = MAINMENU_STOP;
                 
@@ -621,6 +629,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             }
 
         case EVT_APP_SUSPEND:
+            ERR("MainMenu_HandleEvent EVT_APP_SUSPEND",0,0,0);
             (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
             pMe->m_eAppStatus = MAINMENU_SUSPEND;
             
@@ -630,7 +639,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
         case EVT_APP_RESUME:
             {
                 AEEAppStart* as = ( AEEAppStart*)dwParam;
-              
+                ERR("MainMenu_HandleEvent EVT_APP_RESUME",0,0,0);
                 pMe->m_rc    = as->rc;
                 pMe->m_eAppStatus = MAINMENU_RUNNING;
 			  
@@ -641,21 +650,21 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             }
 
         case EVT_DIALOG_INIT:
-            
+            ERR("MainMenu_HandleEvent EVT_DIALOG_INIT",0,0,0);
             pMe->m_pActiveIDlg = (IDialog*)dwParam;
             pMe->m_pActivedlgID = wParam;
             
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-
+            ERR("MainMenu_HandleEvent EVT_DIALOG_START",0,0,0);
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
-		  
+		    ERR("MainMenu_HandleEvent EVT_DIALOG_END",0,0,0);
             (void) MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveIDlg = NULL;
             pMe->m_pActivedlgID = 0;
@@ -790,7 +799,9 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
 ==============================================================================*/
 static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe)
 {
+    ERR("MAINST_EXIT_Handler Start",0,0,0);
     (void) ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+    ERR("MAINST_EXIT_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } 
 
@@ -815,7 +826,7 @@ static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe)
 void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
 {
     int nRet;
-
+    ERR("MainMenu_ShowDialog Start",0,0,0);
     // 每次最多打开一个对话框
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
@@ -840,6 +851,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
     {
         DBGPRINTF("Failed to create the dialog %d in the MAINMENU applet.",dlgResId,0,0);
     }
+    ERR("MainMenu_ShowDialog End",0,0,0);
 }
 
 
@@ -912,6 +924,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            ERR("MainMenu_ListMenuHandler EVT_DIALOG_INIT",0,0,0);
             IMENUCTL_SetTitle(pMenu, MAINMENU_RES_FILE_LANG, IDS_MENU_LIST, NULL);                
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_1, IDS_MAIN_MENU_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_2, IDS_MAIN_MENU_TITLE_2, NULL, 0);
@@ -929,6 +942,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
         case EVT_DIALOG_START:
             {  
                 int i;
+                ERR("MainMenu_ListMenuHandler EVT_DIALOG_START",0,0,0);
                 for (i=1;i<=MAX_MATRIX_ITEMS;)
                 {
                     AECHAR pwsz[67] = {0};
@@ -1104,7 +1118,7 @@ static int  MainMenu_MainMenuService( IMainMenu *pi, MainMenuServiceType eStype)
     char  *args = NULL;
     MainMenu *pMe = (MainMenu*)pi;
     int    nRet;  
-
+    ERR("MainMenu_MainMenuService Start",0,0,0);
     if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_MAIN_MENU)
     {
         // applet is already running
@@ -1142,6 +1156,7 @@ static int  MainMenu_MainMenuService( IMainMenu *pi, MainMenuServiceType eStype)
         
     FREEIF(args);
     args = NULL;
+    ERR("MainMenu_MainMenuService End",0,0,0);
     return nRet;    
 }
 
