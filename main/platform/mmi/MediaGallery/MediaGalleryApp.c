@@ -830,7 +830,7 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
 {
    char pszArg[100];
    ExplorerPara *pExpPara = NULL;
-   int nRet;
+   int nRet = EFAILED;
    DBGPRINTF("CMediaGallery_FileExplorer Start"); 
    if (NULL != pPara)
    {
