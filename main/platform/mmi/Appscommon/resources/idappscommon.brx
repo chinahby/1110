@@ -107,7 +107,7 @@
 		<Text>Numbers</Text>
 	</STRING>
 	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
-		<Text>Tekan 123 untuk buka kunci</Text>
+		<Text>Tekan * untuk buka kunci</Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
 		<Text>RapidTH</Text>

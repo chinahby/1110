@@ -107,7 +107,7 @@
 		<Text>Numbers</Text>
 	</STRING>
 	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
-		<Text>Pulse 123 para desblo o teclado</Text>
+		<Text>Pulse * para desblo o teclado</Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
 		<Text>RapidTH</Text>
