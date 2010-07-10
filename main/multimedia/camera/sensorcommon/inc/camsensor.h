@@ -496,6 +496,10 @@ typedef enum
   CAMSENSOR_SIV121A_ID,
 #endif
 
+#ifdef USE_CAMSENSOR_OV7675
+  CAMSENSOR_OV7675_ID,
+#endif
+
   CAMSENSOR_ID_MAX
 
 #endif/* FEATURE_NI_GPIO */

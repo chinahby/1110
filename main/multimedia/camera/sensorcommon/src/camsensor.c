@@ -384,6 +384,10 @@
 #include "camsensor_siv121a.h"
 #endif
 
+#ifdef USE_CAMSENSOR_OV7675
+#include "camsensor_ov7675.h"
+#endif
+
 #endif /* FEATURE_NI_GPIO*/
 
 #include "ipl.h"
@@ -745,6 +749,11 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
 #ifdef USE_CAMSENSOR_SIV121A
   camsensor_siv121a_init
 #endif
+
+#ifdef USE_CAMSENSOR_OV7675
+  camsensor_ov7675_init
+#endif
+
 #endif /* FEATURE_NI_GPIO */
 };
 
@@ -2832,6 +2841,24 @@ SIDE EFFECTS
 
 ===========================================================================*/
 #if defined (T_MSM6275) || defined (T_MSM6800)
+#if defined(T_QSC1100)
+uint32 camsensor_config_camclk_po (uint32 freq)
+{
+  /* GPIO - 10 */
+  CAMERA_CONFIG_GPIO (GP_PDM);
+  
+  /* Set new PDM0 value */
+  HWIO_PDM0_CTL_OUT((0  & HWIO_PDM0_CTL_PDM0_DAT_BMSK) << HWIO_PDM0_CTL_PDM0_DAT_SHFT);
+    
+  /* Set PDM signal to normal polarity (sense of PDM output not inverted)*/
+  HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(0 << HWIO_TCXO_PDM_CTL_PDM0_POLARITY_SHFT));
+
+  /* Drive backlight by enabling PDM output*/
+  HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(1 << HWIO_TCXO_PDM_CTL_PDM0_EN_SHFT));
+  
+  return freq;
+}
+#else
 uint32 camsensor_config_camclk_po (uint32 freq)
 {
   uint32 avg_camclk_freq = 0;
@@ -2906,23 +2933,7 @@ uint32 camsensor_config_camclk_po (uint32 freq)
   /* Return the average frequency */
   return avg_camclk_freq;
 } /* camsensor_config_camclk_po */
-#elif defined(T_QSC1100)
-uint32 camsensor_config_camclk_po (uint32 freq)
-{
-  /* GPIO - 10 */
-  CAMERA_CONFIG_GPIO (GP_PDM);
-
-  /* Set new PDM0 value */
-  HWIO_PDM0_CTL_OUT((0  & HWIO_PDM0_CTL_PDM0_DAT_BMSK) << HWIO_PDM0_CTL_PDM0_DAT_SHFT);
-    
-  /* Set PDM signal to normal polarity (sense of PDM output not inverted)*/
-  HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(1 << HWIO_TCXO_PDM_CTL_PDM0_POLARITY_SHFT));
-
-  /* Drive backlight by enabling PDM output*/
-  HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(1 << HWIO_TCXO_PDM_CTL_PDM0_EN_SHFT));
-  
-  return freq;
-}
+#endif // T_QSC1100
 #else  /* MSM6550 */
 
 /*===========================================================================
@@ -3992,6 +4003,22 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+#if defined(T_QSC1100)
+void camsensor_unconfig_camclk_po(void)
+{
+    /* GPIO - 10 */
+    CAMERA_CONFIG_GPIO (GP_PDM);
+    
+    /* Set new PDM0 value */
+    HWIO_PDM0_CTL_OUT((0  & HWIO_PDM0_CTL_PDM0_DAT_BMSK) << HWIO_PDM0_CTL_PDM0_DAT_SHFT);
+      
+    /* Set PDM signal to normal polarity (sense of PDM output not inverted)*/
+    HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(0 << HWIO_TCXO_PDM_CTL_PDM0_POLARITY_SHFT));
+    
+    /* Drive backlight by enabling PDM output*/
+    HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(0 << HWIO_TCXO_PDM_CTL_PDM0_EN_SHFT));
+} /* camsensor_unconfig_camclk_po */
+#else
 void camsensor_unconfig_camclk_po(void)
 {
 
@@ -4002,7 +4029,7 @@ void camsensor_unconfig_camclk_po(void)
   CAMERA_CLK_REGIME_DISABLE (CLK_RGM_CAMCLK_M);
 
 } /* camsensor_unconfig_camclk_po */
-
+#endif
 #endif /* MSMHW_CAMCLK_PO */
 
 #ifndef CAMERA_USES_XO4_CLK

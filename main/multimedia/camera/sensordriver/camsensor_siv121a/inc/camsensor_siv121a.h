@@ -33,9 +33,15 @@
 #include "camctrl.h"
 
 // sensor's chip ID and version
-#define SIV121A_SENSOR_ID       (0xa0)
+#define SIV121A_SENSOR_ID       				(0x92)
+#define SIV121A_SENSOR_VERSION  				(0x11)
 
-#define SIV121A_I2C_SLAVE_ID (0x42)
+#define SIV121A_I2C_WRITE_ID   	                (0x66)
+#define SIV121A_I2C_READ_ID		                (0x67)
+
+/* SENSOR REGISTER DEFINE */
+#define SIV121A_ID_REG           	            (0x01)
+#define SIV121A_INFO_REG                		(0x02)
 
 #define IMAGE_SENSOR_VGA_WIDTH  (640)
 #define IMAGE_SENSOR_VGA_HEIGHT (480)
