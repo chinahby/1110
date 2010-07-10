@@ -428,7 +428,7 @@
 		<Text>Hapus semua</Text>
 	</STRING>
 	<STRING Id="149" Name="IDS_INPUTNULL">
-		<Text>Content tidak boleh kosong/Text>
+		<Text>Content tidak boleh kosong</Text>
 	</STRING>
 	<STRING Id="150" Name="IDS_SETCALLBACKNUM">
 		<Text>Tetapkan nomor telepon kembali</Text>
