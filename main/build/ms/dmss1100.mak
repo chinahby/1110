@@ -402,6 +402,7 @@ endif
 ifeq ($(USES_CAMERA),yes)
 		OBJECTS2 += $(CAMSENSOR_GC0309_OBJS)
 		OBJECTS2 += $(CAMSENSOR_SIV121A_OBJS)
+		OBJECTS2 += $(CAMSENSOR_OV7675_OBJS)
 endif
 #-------------------------------------------------------------------------------
 # Object List Modifiers
