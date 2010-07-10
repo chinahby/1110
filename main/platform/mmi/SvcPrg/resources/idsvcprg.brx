@@ -113,7 +113,7 @@
 		<Text>Masukkan SID</Text>
 	</STRING>
 	<STRING Id="42" Name="IDS_EDIT_NID">
-		<TextMasukkan PIN</Text>
+		<Text>Masukkan PIN</Text>
 	</STRING>
 	<STRING Id="43" Name="IDS_CMD_SID_OK">
 		<Text>Terus</Text>
@@ -293,7 +293,7 @@
 		<Text>Speaker</Text>
 	</STRING>
 	<STRING Id="103" Name="IDS_VOCCAL_USE_NVMODE">
-		<Text>Aktifkan modus nv <Text>
+		<Text>Aktifkan modus nv </Text>
 	</STRING>
 	<STRING Id="104" Name="IDS_VOCCAL_EC_MODE">
 		<Text>ec_mode</Text>
@@ -490,4 +490,3 @@
 	</DIALOG>
 </Dialogs>
 </BREWRes>
-+
