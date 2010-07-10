@@ -38,7 +38,8 @@
 		<Text>Pencarian selesai, simpan</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_FMRADIO_TUNING_MODE_PROMPT_LIST">
-		<Text>Cara Daftar </ Teks></STRING>
+		<Text>Cara Daftar </Text>
+	</STRING>
 	<STRING Id="1014" Name="IDS_FMRADIO_TUNING_MODE_PROMPT_MANUAL">
 		<Text>Modus Manual</Text>
 	</STRING>
@@ -61,7 +62,8 @@
 		<Text>Silahkan input \ nheadset</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_FMRADIO_CHANNEL_LIST_IS_EMPTY">
-		<Text>catatan No </ Teks></STRING>
+		<Text>catatan No </Text>
+	</STRING>
 	<STRING Id="1022" Name="IDS_FMRADIO_CHANNEL_NODE_IS_INVALID">
 		<Text>Invalid number</Text>
 	</STRING>
