@@ -747,7 +747,7 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
         case DLGRET_MSGOK: // 从消息对话框返回
             {
                 boolean bValue = FALSE;
-                
+                MSG_FATAL("COREST_VERIFYPHONEPWD_Handler DLGRET_MSGOK",0,0,0);
                 // 检查是否开启了手机锁密码检测功能
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
                             CFGI_PHONE_PASSWORD_CHECK,
@@ -773,7 +773,7 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
         case DLGRET_ENTEROK:
             {
                 uint16 wPWD=0;
-                
+                MSG_FATAL("COREST_VERIFYPHONEPWD_Handler DLGRET_ENTEROK",0,0,0);
                 (void) ICONFIG_GetItem(pMe->m_pConfig, 
                                        CFGI_PHONE_PASSWORD,
                                        &wPWD,
@@ -802,10 +802,12 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
             }
         
         case DLGRET_EMGCALL:
+            MSG_FATAL("COREST_VERIFYPHONEPWD_Handler DLGRET_EMGCALL",0,0,0);
             MOVE_TO_STATE(COREST_EMERGENCYCALL)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_BATT_INFO:
+            MSG_FATAL("COREST_VERIFYPHONEPWD_Handler DLGRET_BATT_INFO",0,0,0);
             CoreApp_ShowDialog(pMe,IDD_MSGBOX);
             return NFSMACTION_WAIT;
             
@@ -1098,10 +1100,12 @@ static NextFSMAction COREST_EMERGENCYCALL_Handler(CCoreApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            MSG_FATAL("COREST_EMERGENCYCALL_Handler DLGRET_CANCELED",0,0,0);
             MOVE_TO_STATE(pMe->m_ePreState)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_BATT_INFO:
+            MSG_FATAL("COREST_EMERGENCYCALL_Handler DLGRET_BATT_INFO",0,0,0);
             CoreApp_ShowDialog(pMe,IDD_MSGBOX);
             return NFSMACTION_WAIT;
         

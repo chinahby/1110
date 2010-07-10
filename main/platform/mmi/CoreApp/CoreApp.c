@@ -1925,7 +1925,7 @@ SEE ALSO:
 boolean CoreApp_IsEmergencyMode(ICM* pICM)
 {
     AEECMPhInfo phoneInfo;
-
+    MSG_FATAL("CoreApp_IsEmergencyMode Start",0,0,0);    
     //PRINT_FUNCTION_NAME();
 
     if (!pICM)
@@ -1942,6 +1942,7 @@ boolean CoreApp_IsEmergencyMode(ICM* pICM)
     {
         return FALSE;
     }
+    MSG_FATAL("CoreApp_IsEmergencyMode End",0,0,0); 
 }
 #ifdef FEATRUE_AUTO_POWER
 static void CoreApp_Process_AutoPower_Event(void *pUser)
@@ -2034,6 +2035,7 @@ static void CoreApp_Process_Batty_Msg(CCoreApp   *pMe, uint16  msg_id)
             ) && (pMe->m_bSuspended == FALSE))
         {
             pMe->m_nMsgID = msg_id;
+            MSG_FATAL("CoreApp_Process_Batty_Msg 1",0,0,0); 
             CLOSE_DIALOG(DLGRET_BATT_INFO)
         }
         pMe->m_battery_time ++;
@@ -2058,6 +2060,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
             pMe->m_wActiveDlgID == IDD_IDLE
             ) && (pMe->m_bSuspended == FALSE))
     {
+        MSG_FATAL("CoreApp_Process_Charger_Msg Start",0,0,0); 
         if(pMe->m_bExtPwrState)
         {
             pMe->m_nMsgID = IDS_CHARGER_ON;

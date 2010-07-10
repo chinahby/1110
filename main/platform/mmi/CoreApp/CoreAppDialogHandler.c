@@ -372,73 +372,90 @@ void CoreApp_ShowMsgDialog(CCoreApp *pMe,uint16  nResId)
 ==============================================================================*/
 void CoreApp_SetDialogHandler(CCoreApp *pMe)
 {
+    MSG_FATAL("CoreApp_SetDialogHandler Start",0,0,0);
     switch (pMe->m_wActiveDlgID)
     {
 #if defined( FEATURE_POWERDOWN_ALARM)
         case IDD_ALARM:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_ALARM",0,0,0);
             pMe->m_pDialogHandler = IDD_ALARM_Handler;
             break;
 #endif //#if FEATURE_POWERDOWN_ALARM
         case IDD_LPM:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_LPM",0,0,0);
             pMe->m_pDialogHandler = IDD_LPM_Handler;
             break;
             
         case IDD_PWDINPUT:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_PWDINPUT",0,0,0);
             pMe->m_pDialogHandler = IDD_PWDINPUT_Handler;
             break;
         #ifdef FATRUE_LOCK_IMSI_MCCMNC
 	  case IDD_PWDIMSIMCC:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_PWDIMSIMCC",0,0,0);
             pMe->m_pDialogHandler = IDD_PWDIMSIMCC_Handler;
             break;
         #endif     	
         case IDD_UIMSECCODE:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_UIMSECCODE",0,0,0);
             pMe->m_pDialogHandler = IDD_UIMSECCODE_Handler;
             break;
             
         case IDD_UIMERR:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_UIMERR",0,0,0);
             pMe->m_pDialogHandler = IDD_UIMERR_Handler;
             break;
             
         case IDD_MSGBOX:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_MSGBOX",0,0,0);
             pMe->m_pDialogHandler = IDD_MSGBOX_Handler;
             break;
             
         case IDD_EMERGENCYNUMLIST:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_EMERGENCYNUMLIST",0,0,0);
             pMe->m_pDialogHandler = IDD_EMERGENCYNUMLIST_Handler;
             break;
             
         case IDD_STARTUPANI:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_STARTUPANI",0,0,0);
             pMe->m_pDialogHandler = IDD_STARTUPANI_Handler;
             break;
             
         case IDD_LOADING:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_LOADING",0,0,0);
             pMe->m_pDialogHandler = IDD_LOADING_Handler;
             break;
             
         case IDD_IDLE:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_IDLE",0,0,0);
             pMe->m_pDialogHandler = IDD_IDLE_Handler;
             break;
 
 #if defined(FEATURE_WMS_APP)
         case IDD_WMSTIPS:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_WMSTIPS",0,0,0);
             pMe->m_pDialogHandler = IDD_WMSTIPS_Handler;
             break;
 #endif            
         
         case IDD_POWERDOWN:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_POWERDOWN",0,0,0);
             pMe->m_pDialogHandler = IDD_POWERDOWN_Handler;
             break;
             
 #ifdef FEATURE_UTK2
         case IDD_UTKREFRESH:
+            MSG_FATAL("CoreApp_SetDialogHandler IDD_UTKREFRESH",0,0,0);
             pMe->m_pDialogHandler = IDD_UTKREFRESH_Handler;
             break;            
 #endif //FEATURE_UTK2
 
         default:
+            MSG_FATAL("CoreApp_SetDialogHandler default",0,0,0);
             pMe->m_pDialogHandler = NULL;
             break;
     }
+    MSG_FATAL("CoreApp_SetDialogHandler End",0,0,0);
 }
 
 /*==============================================================================
@@ -1216,6 +1233,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                 //EmergencyNumber pTepItem ;
                 //EmergencyNumber pItem;
                 int   i = 0;
+                MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_DIALOG_START)",0,0,0);
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_EMERGENCYNUM_TABLE, (void*)&emerg_tab, sizeof(EmergencyNum_Table));
                 
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
@@ -1266,11 +1284,13 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
             // 绘制底条提示
             // Select       Back
             //CoreDrawBottomBar(BTBAR_SELECT_BACK)
+            MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_USER_REDRAW)",0,0,0);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
+            MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_DIALOG_END)",0,0,0);
             if (pMe->m_eDlgRet != DLGRET_CANCELED)
             {
                 pMe->m_eDlgRet = DLGRET_CANCELED;
@@ -1306,7 +1326,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
         case EVT_COMMAND:
             {
                 CtlAddItem ai;
-                
+                MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_COMMAND)",0,0,0);
                 if (IMENUCTL_GetItem(pMenu, wParam, &ai))
                 {
                      (void)MakeVoiceCall(pMe->a.m_pIShell, FALSE, (AECHAR *)ai.pText);
@@ -2961,7 +2981,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
                 case AVK_CLR:
                     MSG_FATAL("IDD_IDLE_Handler AVK_CLR",0,0,0);
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+                    if(!OEMKeyguard_IsEnabled())
+                    {
+                        return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+                    }
 
                 default:
                     break;
@@ -3039,6 +3062,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_CLR:
                     MSG_FATAL("IDD_IDLE_Handler AVK_CLR",0,0,0);
 #ifdef FEATURE_KEYGUARD
+                    MSG_FATAL("IDD_IDLE_Handler sbKeyguardEnabled=%d",OEMKeyguard_IsEnabled(),0,0);
                     if(OEMKeyguard_IsEnabled())
                     {
                         MSG_FATAL("IDD_IDLE_Handler 5",0,0,0);
