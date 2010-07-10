@@ -824,7 +824,7 @@ static const AEETextInputModeInfo sBREWTextModes_face[] =
    {AEE_TM_RESERVE_LAST, {0}}
 };
 
-#define MAX_FACE_SYMBOL          (20)//网络符号的总个数
+#define MAX_FACE_SYMBOL          (20)//网络符号的总个�?
 
 static const AECHAR   sszFaceSymbol0[] =
 {
@@ -941,7 +941,7 @@ static const AECHAR *const sszFaceSymbolList[MAX_FACE_SYMBOL] =
 #if defined(FEATURE_LANG_ENGLISH) && defined(FEATURE_LANG_TCHINESE) && \
     defined(_T9_NUMBER_MODES)
 
-#define MAX_NET_SYMBOL          (20)//台湾版本网络符号的总个数
+#define MAX_NET_SYMBOL          (20)//台湾版本网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1052,7 +1052,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
 
 #elif (defined(FEATURE_CARRIER_THAILAND_CAT) ) || (defined(FEATURE_CARRIER_THAILAND_HUTCH) )
 
-#define MAX_NET_SYMBOL          (5)//网络符号的总个数
+#define MAX_NET_SYMBOL          (5)//网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1089,7 +1089,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
 
 #elif defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
 
-#define MAX_NET_SYMBOL          (6)//网络符号的总个数
+#define MAX_NET_SYMBOL          (6)//网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1128,7 +1128,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
 };
 #elif defined(FEATURE_PREPAID_ISRAEL_HEBREW)
 
-#define MAX_NET_SYMBOL          (6)//网络符号的总个数
+#define MAX_NET_SYMBOL          (6)//网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1166,7 +1166,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
    sszNetSymbol4, sszNetSymbol5
 };
 #elif defined(FEATURE_CARRIER_SUDAN_SUDATEL)
-#define MAX_NET_SYMBOL          (7)//网络符号的总个数
+#define MAX_NET_SYMBOL          (7)//网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1209,7 +1209,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
    sszNetSymbol4, sszNetSymbol5,sszNetSymbol6
 };
 #elif defined(FEATURE_CARRIER_INDONESIA)
-#define MAX_NET_SYMBOL          (7)//网络符号的总个数
+#define MAX_NET_SYMBOL          (7)//网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1252,7 +1252,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
    sszNetSymbol4, sszNetSymbol5,sszNetSymbol6
 };
 #elif defined(FEATURE_CARRIER_ANGOLA_MOVICEL)
-#define MAX_NET_SYMBOL          (7)//网络符号的总个数
+#define MAX_NET_SYMBOL          (7)//网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1295,7 +1295,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
    sszNetSymbol4, sszNetSymbol5,sszNetSymbol6
 };
 #elif defined(FEATURE_CARRIER_MAROC_WANA)
-#define MAX_NET_SYMBOL          (7)//网络符号的总个数
+#define MAX_NET_SYMBOL          (7)//网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1338,7 +1338,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
    sszNetSymbol4, sszNetSymbol5,sszNetSymbol6
 };
 #elif defined(FEATURE_CARRIER_CHINA_TELCOM)
-#define MAX_NET_SYMBOL          (8)//网络符号的总个数
+#define MAX_NET_SYMBOL          (8)//网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1388,7 +1388,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
 
 #else
 
-#define MAX_NET_SYMBOL          (7)//网络符号的总个数
+#define MAX_NET_SYMBOL          (7)//网络符号的总个�?
 
 static const AECHAR   sszNetSymbol0[] =
 {
@@ -1744,7 +1744,7 @@ static const AECHAR sszT9MultitapPound1SpecialThai[] =
 };
 
 static const AECHAR sszT9MultitapPound2SpecialThai[] =
-{//#,去除上元音 none 0x0e47,0x0e4c
+{//#,去除上元�?none 0x0e47,0x0e4c
     0x0e48, 0x0e49, 0x0e4a, 0x0e4b, 0x0e46, 0x0e2f, 0x0e3f,0
 };
 #endif//FEATURE_T9_MT_THAI
@@ -1767,8 +1767,11 @@ static const AECHAR sszT9Multitap1SpecialUnicom[] =
 // OTHER DEFINED
 //===============================================================================        
 #define MULTITAP_TIMEOUT        (1000)  // In milliseconds
-    
+#ifdef FEATURE_SUPPORT_ID
+#define MAX_INPUTTEXT_SIZE      1537
+#else
 #define MAX_INPUTTEXT_SIZE      1024
+#endif
 
 typedef struct
 {

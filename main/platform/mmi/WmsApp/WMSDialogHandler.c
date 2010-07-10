@@ -843,7 +843,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                             IDS_INBOX,
                             pwsz, dwSize);
-                            
+                #ifdef FEATURE_SUPPORT_ID
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNews, NULL, NULL);
 				//add by yangdecai 
 				// 更新链表序号
@@ -862,6 +862,9 @@ static boolean IDD_MAIN_Handler(void        *pUser,
 					 
                 }
 				//add end
+				#else
+                wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNews, NULL, &nMsgs);
+				#endif
                 nLen = WSTRLEN(pwsz);
                 if (nLen<30)
                 {
@@ -877,8 +880,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                             pwsz, dwSize);
                 nLen = WSTRLEN(pwsz);
                 nMsgs = 0;
-                //wms_cacheinfolist_getcounts(WMS_MB_OUTBOX, NULL, NULL, &nMsgs);   //DELETE by yangdecai
-				//add by yangdecai 
+				#ifdef FEATURE_SUPPORT_ID
 				// 更新链表序号
     			wms_cacheinfolist_updatexuhao(WMS_MB_OUTBOX);
 				pList = wms_get_cacheinfolist(WMS_MB_OUTBOX);
@@ -886,6 +888,9 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 {
                      nMsgs = pList->nBranches;
                 }
+				#else
+				wms_cacheinfolist_getcounts(WMS_MB_OUTBOX, NULL, NULL, &nMsgs); 
+				#endif
 				//add end
                 if (nLen<30)
                 {
@@ -902,12 +907,16 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 nMsgs = 0;
                 //wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);    //DELETE by yangdecai
 				//add by yangdecai 
+				#ifdef FEATURE_SUPPORT_ID
 				wms_cacheinfolist_updatexuhao(WMS_MB_DRAFT);
 				pList = wms_get_cacheinfolist(WMS_MB_DRAFT);
                 if (NULL != pList)
                 {
                      nMsgs = pList->nBranches;
                 }
+				#else
+                wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
+				#endif
                 if (nLen<30)
                 {
                     WSPRINTF(&pwsz[nLen], (64-nLen)*sizeof(AECHAR), wstrFmt, nMsgs); 
@@ -12390,11 +12399,13 @@ static void WmsApp_PlaySendingAni(void *pUser)
     AEEImageInfo info;
     AEERect rect;
     static int imageIndex = 0;
-    //int x,y;
+	AECHAR wszPrsend[64] = {0};
+	AECHAR fmt_str[4] = {0};
+	RGBVAL oldColor = 0;
     WmsApp *pMe = (WmsApp *)pUser;
 
     (void) ISHELL_CancelTimer(pMe->m_pShell, WmsApp_PlaySendingAni,pMe);
-    
+    STRTOWSTR("%d", fmt_str, sizeof(fmt_str));
     if (pMe->m_pImage == NULL)
     {
         //IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, SENDINGSMS_ANI_G);
@@ -12427,7 +12438,24 @@ static void WmsApp_PlaySendingAni(void *pUser)
     IIMAGE_DrawFrame(pMe->m_pImage, imageIndex, rect.x, rect.y);
     //x = (pMe->m_rc.dx - info.cx/SENDINGSMS_ANI_N)/2;
     //y = SENDINGSMS_ANI_Y;
-    
+    #ifdef FEATURE_SUPPORT_ID
+     WSPRINTF(wszPrsend,
+                sizeof(wszPrsend),
+                fmt_str,
+                pMe->m_idxCurSend);
+	WSTRCAT(wszPrsend,L"/");
+	WSPRINTF(wszPrsend+2,
+                sizeof(wszPrsend),
+                fmt_str,
+                pMe->m_nSendItems);
+	oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, SENDINGSMS_TEXT_COLOR);
+    IDISPLAY_DrawText( pMe->m_pDisplay, 
+                                AEE_FONT_NORMAL, wszPrsend,
+                                -1, 0, 68, NULL, 
+                                IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER);
+	IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
+     MSG_FATAL("EVT_USER_REDRAW...::::::::::::::::::::::::: WMS:%d:::%d",pMe->m_idxCurSend,pMe->m_nSendItems,0);
+	 #endif
     (void) ISHELL_SetTimer(pMe->m_pShell,
                                             SENDINGSMS_ANI_R,
                                             (PFNNOTIFY)WmsApp_PlaySendingAni,

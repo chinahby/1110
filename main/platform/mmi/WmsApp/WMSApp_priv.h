@@ -84,6 +84,7 @@
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define WMSAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 #endif
+#define NMSGLEN    153
 
 /*==============================================================================
                                  
@@ -783,7 +784,11 @@ typedef struct WmsApp
 #define WMSAPP_AUTO_DISCONNECT_TIME         (5)
 
 // 对于长短信，未收到的数据包的文本提示内容
+#ifdef FEATURE_SUPPORT_ID
+#define DATA_NOT_RECEIVED    "<...>"
+#else
 #define DATA_NOT_RECEIVED    "(Data not received)"
+#endif
 
 // 调用接口的目的
 #define STARTARGPREFIX_SENDTEXTMESSAGE      'S'

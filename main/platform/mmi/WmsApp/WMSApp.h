@@ -54,7 +54,12 @@
 #elif defined(FEATURE_CARRIER_ISRAEL_PELEPHONE)
 #define  WMS_MSG_MAXCHARS       MAX_OCTETMSG_PAYLOAD
 #else
+#ifdef FEATURE_SUPPORT_ID
+#define  WMS_MSG_MAXCHARS       1537
+#else
 #define  WMS_MSG_MAXCHARS       1024
+
+#endif
 #endif
 
 // 对于模板短信，最大支持文本的长度

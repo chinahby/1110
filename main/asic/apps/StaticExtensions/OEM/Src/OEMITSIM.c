@@ -113,7 +113,11 @@ when         who     what, where, why
 #define T9KEYTYPE_CONTROL       (2)
 #define T9KEYTYPE_UNKNOWN       (6)
 #define SELECTION_BUFFER_SIZE   (8)
+#ifdef FEATURE_SUPPORT_ID
+#define MAX_INPUTTEXT_SIZE      1537
+#else
 #define MAX_INPUTTEXT_SIZE      1024
+#endif
 #define MAX_BUFFER_LENGTH       MAX_INPUTTEXT_SIZE
 #define CAUDB_SIZE              (110)
 T9CCAudbInfo         *hs_gpSimpCAUdbInfo = NULL;
