@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="idworldtime" VERSION="1">
+<BREWRes Name="worldtime" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_TITLE">
 		<Text>Waktu dunia</Text>
@@ -8,10 +8,10 @@
 		<Text>Casablanca, London</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_CITY_1">
-		<Text>Berlin, Madrid, Roma, Paris</Text>
+		<Text>Berlin,Madrid,Rome,Paris</Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_CITY_2">
-		<Text>Athena, Helsinki</Text>
+		<Text>Athens, Helsinki</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_CITY_3">
 		<Text>Baghdad, Moscow</Text>
@@ -29,7 +29,7 @@
 		<Text>Bangkok, Jakarta</Text>
 	</STRING>
 	<STRING Id="10" Name="IDS_CITY_8">
-		<Text>Beijing, Hong Kong, Taipei</Text>
+		<Text>Taipei, Beijing, Hong Kong</Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_CITY_9">
 		<Text>Seoul, Tokyo</Text>
@@ -56,7 +56,7 @@
 		<Text>Anchorage</Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_CITY_17">
-		<Text>Los Angeles, San Francisco</Text>
+		<Text>Los Angeles,San Francisco</Text>
 	</STRING>
 	<STRING Id="20" Name="IDS_CITY_18">
 		<Text>Denver, Phoenix</Text>

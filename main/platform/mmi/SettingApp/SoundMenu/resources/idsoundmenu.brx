@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="idsoundmenu" VERSION="1">
+<BREWRes Name="soundmenu" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_STARTUP_RINGER">
-		<Text>Mulai berdering</Text>
+		<Text>Aktifkan nada dering</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RINGER_VOLUME_TITLE">
 		<Text>Dering</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_EARPIECE_VOLUME_TITLE">
-		<Text>Earphone</Text>
+		<Text>Headset</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_KEYBEEP_VOLUME_TITLE">
-		<Text>Suara tombol</Text>
+		<Text>Tombol nada dering</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_CALLHINT">
-		<Text>Mode nada panggilan</Text>
+		<Text>Telepon modus siaga</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_SMSHINT">
-		<Text>Mode nada SMS</Text>
+		<Text>SMS modus siaga</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_PROFILE_RESTORE">
-		<Text>Kembali ke pengaturan awal</Text>
+		<Text>Default</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_VOLUME_TITLE">
-		<Text>Volume</Text>
+		<Text>Pengeras suara</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_CALLRING">
-		<Text>Nada dering pribadi</Text>
+		<Text>Nada dering</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_SMSRING">
-		<Text>Nada sms</Text>
+		<Text>Nada SMS</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_ITEM_OFF">
-		<Text>Matikan</Text>
+		<Text>Non aktifkan</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_ALERTTYPE_RINGER">
 		<Text>Dering</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_ALERTTYPE_VIB">
-		<Text>Getar</Text>
+		<Text>Bergetar</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_SOUNDMENU_TITLE">
 		<Text>Bunyi</Text>
@@ -50,16 +50,16 @@
 		<Text>Nada alarm</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_ITEM_VIBRING">
-		<Text>Getar dulu baru dering</Text>
+		<Text>Getar dahulu lalu dering</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_ITEM_DISABLE">
-		<Text>Matikan</Text>
+		<Text>nonaktifkan</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_ITEM_ENABLE">
 		<Text>Aktifkan</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_ITEM_TONE">
-		<Text>Tone</Text>
+		<Text>Nada</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_ITEM_CLICK">
 		<Text>Klik</Text>
@@ -68,31 +68,34 @@
 		<Text>1</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_VOLUME_0">
-		<Text>Matikan</Text>
+		<Text>-</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_MISSEDCALL_ALERT">
-		<Text>Nada panggilan tidak terjawab</Text>
+		<Text>Tanda panggilan tidak terjawab</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_WARNING_MESSEGE">
-		<Text>Kata tidak cukup</Text>
+		<Text>Selesai</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_VOLUME_2">
-		<Text>Volume 2</Text>
+		<Text>2</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_VOLUME_3">
-		<Text>Volume 3</Text>
+		<Text>3</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_VOLUME_4">
-		<Text>Volume 4</Text>
+		<Text>4</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_VOLUME_5">
-		<Text>Taruhan 5</Text>
+		<Text>5</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_MINUTE_ALERT">
-		<Text>50 detik getar</Text>
+		<Text>50' Panggilan</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_COLORKEYSND">
 		<Text>Nada tombol</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_GALLERY_PROFILE">
+		<Text>Galery</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_SCENEMODE_TITLE">
 		<Text>Profil</Text>
@@ -101,25 +104,25 @@
 		<Text>Normal</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_QUIETMODE">
-		<Text>Diam</Text>
+		<Text>Tak bersuara</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_MEETING">
 		<Text>Rapat</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_NOISEMODE">
-		<Text>Diluar</Text>
+		<Text>Ruangan terbuka</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_CARMODE">
-		<Text>Di mobil</Text>
+		<Text>Dalam kendaraan</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_ACTIVATE">
-		<Text>Mengaktifkan</Text>
+		<Text>Aktif</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_PERSONALISE">
-		<Text>Personalisasi</Text>
+		<Text>Merubah</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_ACTIVATING">
-		<Text>Aktivasi...</Text>
+		<Text>Mengaktifkan...</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_RESTORED">
 		<Text>Mengembalikan...</Text>
@@ -128,10 +131,10 @@
 		<Text>Diam</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_POWERONOFF_ALERT">
-		<Text>Power tanda hidup/mati </Text>
+		<Text>Nyalakan/Matikan</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ALERTTYPE_VIBANDRING">
-		<Text>Vibrate and ring</Text>
+		<Text>Getar dan dering</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_ARABIC_RINGTONE_1">
 		<Text>Adela</Text>
@@ -162,6 +165,9 @@
 	</STRING>
 	<STRING Id="1058" Name="IDS_ARABIC_RINGTONE_10">
 		<Text>Aldowbeet</Text>
+	</STRING>
+	<STRING Id="1059" Name="IDS_DEFAULT">
+		<Text>Utama</Text>
 	</STRING>
 </Strings>
 <Dialogs>
@@ -231,13 +237,8 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="6010" Name="IDD_VOLUME_SUB" Focus="7008">
-		<Controls>
-			<Menu Id="7008" Name="IDC_VOLUME_SUB">
-				<TitleID>IDS_VOLUME_TITLE</TitleID>
-				<Items/>
-			</Menu>
-		</Controls>
+	<DIALOG Id="6010" Name="IDD_VOLUME_SUB" Focus="0">
+		<Controls/>
 	</DIALOG>
 	<DIALOG Id="6011" Name="IDD_KEYSND_MENU" Focus="7006">
 		<Controls>
@@ -250,10 +251,10 @@
 	<DIALOG Id="6012" Name="IDD_SCENEMODE_SUB" Focus="7014">
 		<Controls>
 			<Menu Id="7014" Name="IDC_SCENEMODE_SUB">
-				<TitleID>IDS_SCENEMODE_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 </Dialogs>
 </BREWRes>

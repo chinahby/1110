@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="converter" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1000" Name="IDS_CONVERTER_TITLE">
-		<Text>Converter</Text>
+		<Text>Konverter</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_CURRENCY_TITLE">
-		<Text>Currency</Text>
+		<Text>Mata uang</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_LENGTH_TITLE">
-		<Text>Length</Text>
+		<Text>Panjangnya</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_WEIGHT_TITLE">
-		<Text>Weight</Text>
+		<Text>Berat</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_VOLUME_TITLE">
 		<Text>Volume</Text>
@@ -20,7 +20,7 @@
 		<Text>Area</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_TEMPERATURE_TITLE">
-		<Text>Temperature</Text>
+		<Text>Temperatur</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_CURRENCY_EUR">
 		<Text>EUR</Text>
@@ -155,16 +155,16 @@
 		<Text>°F</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_CHANGE_TITLE">
-		<Text>Currency of reference</Text>
+		<Text>Mata Uang referensi</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_DONE">
-		<Text>Done</Text>
+		<Text>Selesai</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_OVERFLOW">
-		<Text>Overflow</Text>
+		<Text>Melimpah</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_SAVE_ZERO">
-		<Text>Unable to save zero</Text>
+		<Text>Tidak dapat menyimpan nol</Text>
 	</STRING>
 </Strings>
 <Dialogs>

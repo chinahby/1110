@@ -2,19 +2,19 @@
 <BREWRes Name="scheduleapp" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_OPTION_NEW_EVENT">
-		<Text>New</Text>
+		<Text>Baru</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_OPTION_GOTODATE">
-		<Text>Go to date</Text>
+		<Text>Pergi ke tanggal</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_OPTION_DELETE_ALL">
-		<Text>Delete all</Text>
+		<Text>Hapus semua</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_PWD_TITLE">
-		<Text>Enter Password</Text>
+		<Text>Masukkan kata sandi</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_INVALID">
-		<Text>Invalid password</Text>
+		<Text>Kata sandi salah</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_SPORTS">
 		<Text>Sports! Go Go Go!</Text>
@@ -23,52 +23,52 @@
 		<Text>YYYY : MM : DD</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-		<Text>Enter year from 1900 to 2051</Text>
+		<Text>Masukkan tahun 1900 hingga 2051</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
-		<Text>Done</Text>
+		<Text>Selesai</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_OPTION_VIEWMONTH_VIEW_EVENT">
-		<Text>View</Text>
+		<Text>Tampilkan</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_OPTION_DELETE_TODAY">
-		<Text>Delete this day</Text>
+		<Text>Hapus hari ini</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_OPTION_DELETE_MONTH">
-		<Text>Delete this month</Text>
+		<Text>Hapus bulan ini</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_OPTION_SETUP">
-		<Text>Settings</Text>
+		<Text>Pengaturan</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_OPTION_VIEWDAY_DELETE_CONFIRM">
-		<Text>Delete it</Text>
+		<Text>Hapus</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_OPTION_DELETE_ALL_CONFIRM">
-		<Text>Delete all appointments</Text>
+		<Text>Hapus semua janji</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_OPTION_DELETE_TODAY_CONFIRM">
-		<Text>Delete all appointments of this day</Text>
+		<Text>Hapus semua janji hari ini</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_OPTION_DELETE_MONTH_CONFIRM">
-		<Text>Delete all appointments of this month</Text>
+		<Text>Hapus semua janji bulan ini</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_OPTION_VIEWDAY_EDIT_EVENT">
 		<Text>Edit</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_OPTION_VIEWDAY_DELETE">
-		<Text>Delete</Text>
+		<Text>Hapus</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_EVENT_EDIT_TITLE_SUBJECT">
-		<Text>Subject</Text>
+		<Text>Subyek</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_EVENT_EDIT_TITLE_NOTE">
-		<Text>Location</Text>
+		<Text>Lokasi</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_EVENT_EDIT_TITLE_START">
-		<Text>Start time</Text>
+		<Text>Waktu mulai</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_EVENT_EDIT_TITLE_DURATION">
-		<Text>Duration</Text>
+		<Text>Lamanya</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_EVENT_EDIT_TITLE_ALARM">
 		<Text>Alarm</Text>
@@ -77,139 +77,139 @@
 		<Text>Ringtone</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_EVENT_EDIT_ALARM_OPTION_NO_ALARM">
-		<Text>No alarm</Text>
+		<Text>Tanpa alarm</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_EVENT_EDIT_ALARM_OPTION_ON_TIME">
-		<Text>On time</Text>
+		<Text>Tepat waktu</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_EVENT_EDIT_ALARM_OPTION_1_MIN_BEFORE">
-		<Text>1 min before</Text>
+		<Text>1 menit sebelum</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_EVENT_EDIT_ALARM_OPTION_5_MIN_BEFORE">
-		<Text>5 min before</Text>
+		<Text>5 menit sebelum</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_EVENT_EDIT_ALARM_OPTION_10_MIN_BEFORE">
-		<Text>10 min before</Text>
+		<Text>10 menit sebelum</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_EVENT_EDIT_ALARM_OPTION_15_MIN_BEFORE">
-		<Text>15 min before</Text>
+		<Text>15 menit sebelum</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_EVENT_EDIT_ALARM_OPTION_30_MIN_BEFORE">
-		<Text>30 min before</Text>
+		<Text>30 menit sebelum</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_EVENT_EDIT_ALARM_OPTION_1_HOUR_BEFORE">
-		<Text>1 hour before</Text>
+		<Text>1 jam sebelum</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_EVENT_EDIT_ALARM_OPTION_6_HOUR_BEFORE">
-		<Text>6 hour before</Text>
+		<Text>6 jam sebelum</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_EVENT_EDIT_ALARM_OPTION_12_HOUR_BEFORE">
-		<Text>12 hour before</Text>
+		<Text>12 jam sebelum</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_EVENT_EDIT_ALARM_OPTION_1_DAY_BEFORE">
-		<Text>1 day before</Text>
+		<Text>1 hari sebelum</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_EVENT_EDIT_RINGTONE_OPTION_ALARM_CLOCK">
-		<Text>Alarm clock</Text>
+		<Text>Weker</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_EVENT_EDIT_RINGTONE_OPTION_SILENCE">
-		<Text>Silence</Text>
+		<Text>Diam</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_SETUP_TITLE">
 		<Text>Setup</Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_SETUP_TITLE_AUTO_DELETE">
-		<Text>Auto Delete</Text>
+		<Text>Hapus otomatis</Text>
 	</STRING>
 	<STRING Id="1072" Name="IDS_SETUP_TITLE_DAILY_START_TIME">
-		<Text>Daily start time</Text>
+		<Text>Harian waktu mulai</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_SETUP_TITLE_REMINDER_SNOOZE">
-		<Text>Reminder snooze</Text>
+		<Text>Pengingat tunda</Text>
 	</STRING>
 	<STRING Id="1080" Name="IDS_SETUP_AUTO_DELETE_OPTION_30_DAY">
-		<Text>30 day</Text>
+		<Text>30 hari</Text>
 	</STRING>
 	<STRING Id="1081" Name="IDS_SETUP_AUTO_DELETE_OPTION_60_DAY">
-		<Text>60 day</Text>
+		<Text>60 hari</Text>
 	</STRING>
 	<STRING Id="1082" Name="IDS_SETUP_AUTO_DELETE_OPTION_90_DAY">
-		<Text>90 day</Text>
+		<Text>90 hari</Text>
 	</STRING>
 	<STRING Id="1083" Name="IDS_SETUP_AUTO_DELETE_OPTION_180_DAY">
-		<Text>180 day</Text>
+		<Text>180 hari</Text>
 	</STRING>
 	<STRING Id="1084" Name="IDS_SETUP_AUTO_DELETE_OPTION_1_YEAR">
-		<Text>1 year</Text>
+		<Text>1 tahun</Text>
 	</STRING>
 	<STRING Id="1085" Name="IDS_SETUP_AUTO_DELETE_OPTION_NEVER">
-		<Text>Never delete</Text>
+		<Text>Jangan pernah menghapus</Text>
 	</STRING>
 	<STRING Id="1090" Name="IDS_SETUP_SNOOZE_OPTION_OFF">
 		<Text>Off</Text>
 	</STRING>
 	<STRING Id="1091" Name="IDS_SETUP_SNOOZE_OPTION_5_MIN">
-		<Text>5 min</Text>
+		<Text>5 menit</Text>
 	</STRING>
 	<STRING Id="1092" Name="IDS_SETUP_SNOOZE_OPTION_10_MIN">
-		<Text>10 min</Text>
+		<Text>10 menit</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_SETUP_SNOOZE_OPTION_15_MIN">
-		<Text>15 min</Text>
+		<Text>15 menit</Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_SETUP_SNOOZE_OPTION_30_MIN">
-		<Text>30 min</Text>
+		<Text>30 menit</Text>
 	</STRING>
 	<STRING Id="1100" Name="IDS_VIEW_PLAN_DETAIL_TITLE">
-		<Text>Plan detail</Text>
+		<Text>Rencana detail</Text>
 	</STRING>
 	<STRING Id="2200" Name="IDS_APP">
-		<Text>Scheduler</Text>
+		<Text>Jadwal</Text>
 	</STRING>
 	<STRING Id="2300" Name="IDS_INITING">
-		<Text>Loading...</Text>
+		<Text>Pemuatan...</Text>
 	</STRING>
 	<STRING Id="2301" Name="IDS_SAVING">
-		<Text>Saving...</Text>
+		<Text>Simpan...</Text>
 	</STRING>
 	<STRING Id="2302" Name="IDS_DELETING">
-		<Text>Deleting...</Text>
+		<Text>Hapus...</Text>
 	</STRING>
 	<STRING Id="2303" Name="IDS_DB_ERROR">
-		<Text>Save data failed</Text>
+		<Text>Simpan data gagal</Text>
 	</STRING>
 	<STRING Id="2304" Name="IDS_DB_ERROR_NOMEMORY">
-		<Text>Out of memory, pls delete some appointments</Text>
+		<Text>Diluar jangkauan memori, silakan hapus beberapa janji</Text>
 	</STRING>
 	<STRING Id="2305" Name="IDS_SPORTS_VIEW">
-		<Text>View plan of this day</Text>
+		<Text>Lihat rencana hari ini</Text>
 	</STRING>
 	<STRING Id="2306" Name="IDS_SPORTS_LIST">
-		<Text>List all plans</Text>
+		<Text>Daftar semua rencana</Text>
 	</STRING>
 	<STRING Id="2307" Name="IDS_SPORTS_JUMP">
-		<Text>Jump to date</Text>
+		<Text>Langsung ke tanggal</Text>
 	</STRING>
 	<STRING Id="2308" Name="IDS_SPORTS_CREATE">
-		<Text>Create</Text>
+		<Text>Membuat</Text>
 	</STRING>
 	<STRING Id="2309" Name="IDS_SPORTS_RUN">
-		<Text>Run</Text>
+		<Text>Lari</Text>
 	</STRING>
 	<STRING Id="2310" Name="IDS_SPORTS_WALK">
-		<Text>Walk</Text>
+		<Text>Berjalan</Text>
 	</STRING>
 	<STRING Id="2311" Name="IDS_SPORTS_DISTANCE">
-		<Text>Distance(m)</Text>
+		<Text>Jarak(m)</Text>
 	</STRING>
 	<STRING Id="2312" Name="IDS_SPORTS_TIME">
-		<Text>Time(min)</Text>
+		<Text>Waktu(min)</Text>
 	</STRING>
 	<STRING Id="2313" Name="IDS_SPORTS_MODE">
 		<Text>Mode</Text>
 	</STRING>
 	<STRING Id="2314" Name="IDS_SPORTS_TITLE">
-		<Text>Sports plan</Text>
+		<Text>Rencana sports</Text>
 	</STRING>
 </Strings>
 <Dialogs>

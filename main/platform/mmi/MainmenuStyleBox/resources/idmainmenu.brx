@@ -5,43 +5,43 @@
 		<Text>Esurfing</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_MAIN_MENU_TITLE_CUSTSERVICE" Encoding="Unicode">
-		<Text>Customer service</Text>
+		<Text>Pelayanan pelanggan</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_TITLE_1">
-		<Text>MediaGallery</Text>
+		<Text>Galeri Media</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MAIN_MENU_TITLE_2">
-		<Text>Contacts</Text>
+		<Text>Kontak</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MAIN_MENU_TITLE_3">
 		<Text>UTK</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MAIN_MENU_TITLE_4">
-		<Text>Calculator</Text>
+		<Text>Kalkulator</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_5">
-		<Text>Recent calls</Text>
+		<Text>Panggilan terakhir</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_MAIN_MENU_TITLE_6">
-		<Text>Messages</Text>
+		<Text>Pesan</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_7">
-		<Text>FM Radio</Text>
+		<Text>Radio FM</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_8">
-		<Text>Application</Text>
+		<Text>Aplikasi</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
-		<Text>Calendar</Text>
+		<Text>Kalender</Text>
 	</STRING>
 	<String Id="1020" Name="IDS_MAIN_MENU_TITLE_10">
-		<Text>Setting</Text>
+		<Text>Pengaturan</Text>
 	</String>
 	<String Id="1021" Name="IDS_MAIN_MENU_TITLE_11">
-		<Text>Game</Text>
+		<Text>Permainan</Text>
 	</String>
 	<String Id="1022" Name="IDS_MAIN_MENU_TITLE_12">
-		<Text>MusicPlayer</Text>
+		<Text>Pemutar Musik</Text>
 	</String>
 	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
 		<Text>Tetris</Text>
@@ -56,31 +56,31 @@
 		<Text>Menu</Text>
 	</STRING>
 	<String Id="1101" Name="IDS_MAIN_MENU_TITLE_21">
-		<Text>MediaGallery</Text>
+		<Text>Galeri Media</Text>
 	</String>
 	<String Id="1102" Name="IDS_MAIN_MENU_TITLE_22">
-		<Text>Contacts</Text>
+		<Text>Kontak</Text>
 	</String>
 	<String Id="1103" Name="IDS_MAIN_MENU_TITLE_23">
 		<Text>UTK</Text>
 	</String>
 	<String Id="1104" Name="IDS_MAIN_MENU_TITLE_24">
-		<Text>FM Radio</Text>
+		<Text>Radio FM</Text>
 	</String>
 	<String Id="1105" Name="IDS_MAIN_MENU_TITLE_25">
-		<Text>Messages</Text>
+		<Text>Pesan</Text>
 	</String>
 	<String Id="1106" Name="IDS_MAIN_MENU_TITLE_26">
-		<Text>Recent calls</Text>
+		<Text>Panggilan terakhir</Text>
 	</String>
 	<String Id="1107" Name="IDS_MAIN_MENU_TITLE_27">
-		<Text>MusicPlayer</Text>
+		<Text>Pemutar Musik</Text>
 	</String>
 	<String Id="1108" Name="IDS_MAIN_MENU_TITLE_28">
-		<Text>Setting</Text>
+		<Text>Pengaturan</Text>
 	</String>
 	<String Id="1109" Name="IDS_MAIN_MENU_TITLE_29">
-		<Text>Application</Text>
+		<Text>Aplikasi</Text>
 	</String>
 </Strings>
 <Dialogs>

@@ -2,13 +2,13 @@
 <BREWRes Name="apptimerres" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="2001" Name="IDS_APPTIMER_TITLE">
-		<Text>Timer</Text>
+		<Text>Alat Pengukur Waktu</Text>
 	</STRING>
 	<STRING Id="2002" Name="IDS_APPTIMER_PROMPT">
-		<Text>Timer expire</Text>
+		<Text>Alat Pengukur Waktu Berakhir</Text>
 	</STRING>
 	<STRING Id="2003" Name="IDS_APPTIMER_INFO">
-		<Text>HH:MM:SS</Text>
+		<Text>Jam:Menit:Detik</Text>
 	</STRING>
 </Strings>
 <Dialogs>

@@ -2,699 +2,699 @@
 <BREWRes Name="brewappmgrls" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="2" Name="IDC_NO">
-		<Text>No</Text>
+		<Text>Tidak</Text>
 	</STRING>
 	<STRING Id="3" Name="IDC_YES">
-		<Text>Yes</Text>
+		<Text>Ya</Text>
 	</STRING>
 	<STRING Id="4" Name="IDC_CANCEL">
-		<Text>Cancel</Text>
+		<Text>Batal</Text>
 	</STRING>
 	<STRING Id="5" Name="IDC_OK">
 		<Text>OK</Text>
 	</STRING>
 	<STRING Id="6" Name="IDC_CLOSE">
-		<Text>Close</Text>
+		<Text>Tutup</Text>
 	</STRING>
 	<STRING Id="8" Name="IDC_INFO">
 		<Text>Info.</Text>
 	</STRING>
 	<STRING Id="9" Name="IDS_SELECT">
-		<Text>Select:</Text>
+		<Text>Pilih:</Text>
 	</STRING>
 	<STRING Id="10" Name="IDS_SELECT_APP">
-		<Text>Select App:</Text>
+		<Text>Pilih Aplikasi:</Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_REORDER_APP">
-		<Text>Move Up/Down:</Text>
+		<Text>Naik atas/Turun bawah:</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_MOVE_CONFIRM">
-		<Text>App moved to the selected folder.</Text>
+		<Text>Aplikasih pindah ke folder yang dipilih.</Text>
 	</STRING>
 	<STRING Id="13" Name="IDS_SYSTEMINFO_RAM">
 		<Text>RAM</Text>
 	</STRING>
 	<STRING Id="14" Name="IDS_MAIN_MENU">
-		<Text>Main Menu</Text>
+		<Text>Menu Utama</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_FOLDERSET_CONFIRM">
-		<Text>App folder set to the selected folder.</Text>
+		<Text>Folder aplikasi di set ke folder yang dipilih.</Text>
 	</STRING>
 	<STRING Id="16" Name="IDC_LOCK_APP">
-		<Text>Lock App</Text>
+		<Text>Kunci Aplikasi</Text>
 	</STRING>
 	<STRING Id="17" Name="IDC_AIRTIME_WARNINGS">
-		<Text>Airtime Warnings</Text>
+		<Text>Peringatan Airtime</Text>
 	</STRING>
 	<STRING Id="18" Name="IDC_SMALL_ICON_VIEW">
-		<Text>Small Icon</Text>
+		<Text>Ikon kecil</Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_ORDER_CONFIRM">
-		<Text>New order has been saved.</Text>
+		<Text>Urutan baru telah disimpan.</Text>
 	</STRING>
 	<STRING Id="20" Name="IDS_LICENSE_NOT_FOUND">
-		<Text>License not found. Insert the card used to download this app.</Text>
+		<Text>Lisensi tidak ditemukan. Masukkan kartu yang digunakan untuk men-download aplikasi ini.</Text>
 	</STRING>
 	<STRING Id="21" Name="IDS_NEED_ORIGINAL_CARD">
-		<Text>This app is already installed. Insert the card used to download this app to upgrade or extend its license.</Text>
+		<Text>Aplikasi ini sudah diinstal. Masukkan kartu yang digunakan untuk men-download aplikasi ini untuk meng-upgrade atau memperpanjang izin.</Text>
 	</STRING>
 	<STRING Id="22" Name="IDC_SET_SS">
-		<Text>Set</Text>
+		<Text>Setel</Text>
 	</STRING>
 	<STRING Id="23" Name="IDC_REMOVE_SS">
-		<Text>Remove</Text>
+		<Text>Menghapus</Text>
 	</STRING>
 	<STRING Id="24" Name="IDC_BACK">
-		<Text>Back</Text>
+		<Text>Kembali</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_UP">
-		<Text>Up</Text>
+		<Text>Naik</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_DOWN">
-		<Text>Down</Text>
+		<Text>Turun</Text>
 	</STRING>
 	<STRING Id="102" Name="IDC_NEXT">
-		<Text>Next</Text>
+		<Text>Berikutnya</Text>
 	</STRING>
 	<STRING Id="104" Name="IDS_EXP_EXPIREDON">
-		<Text>Expired on %s</Text>
+		<Text>Berakhir pada %s</Text>
 	</STRING>
 	<STRING Id="105" Name="IDS_EXP_EXPIRED">
-		<Text>No Uses Left</Text>
+		<Text>Tidak Menggunakan Waktu</Text>
 	</STRING>
 	<STRING Id="107" Name="IDS_EXP_USES">
-		<Text>%d Uses</Text>
+		<Text>%d digunakan</Text>
 	</STRING>
 	<STRING Id="108" Name="IDS_APP_LICENSE">
-		<Text>License: %s</Text>
+		<Text>Lisensi: %s</Text>
 	</STRING>
 	<STRING Id="109" Name="IDS_APP_LASTUSED">
-		<Text>Last Used: %s</Text>
+		<Text>Terakhir digunakan: %s</Text>
 	</STRING>
 	<STRING Id="110" Name="IDC_OPT_INFO">
-		<Text>System Info</Text>
+		<Text>Info sistim</Text>
 	</STRING>
 	<STRING Id="114" Name="IDS_MOVE">
-		<Text>Move To:</Text>
+		<Text>Pindah ke:</Text>
 	</STRING>
 	<STRING Id="115" Name="IDS_SET_CATEGORY">
-		<Text>Set Folder To:</Text>
+		<Text>Atur folder :</Text>
 	</STRING>
 	<STRING Id="116" Name="IDS_EMPTY_CATEGORY">
-		<Text>This folder is empty.</Text>
+		<Text>Folder ini kosong.</Text>
 	</STRING>
 	<STRING Id="117" Name="IDC_LAUNCHER_RUN_NOW">
-		<Text>Run</Text>
+		<Text>Jalankan sekarang</Text>
 	</STRING>
 	<STRING Id="201" Name="IDC_BREW_APPS">
-		<Text>BREW Apps</Text>
+		<Text>APlikasi BREW</Text>
 	</STRING>
 	<STRING Id="202" Name="IDC_FAVORITES">
-		<Text>Favorites</Text>
+		<Text>Favorit</Text>
 	</STRING>
 	<STRING Id="203" Name="IDC_WORK">
-		<Text>Work</Text>
+		<Text>Kerja</Text>
 	</STRING>
 	<STRING Id="204" Name="IDC_FUN">
-		<Text>Fun</Text>
+		<Text>Bersenang-senang</Text>
 	</STRING>
 	<STRING Id="205" Name="IDC_MSHOP">
-		<Text>Get It Now</Text>
+		<Text>Dapatkan sekarang</Text>
 	</STRING>
 	<STRING Id="206" Name="IDC_OPTIONS">
-		<Text>Settings</Text>
+		<Text>Pengaturan</Text>
 	</STRING>
 	<STRING Id="207" Name="IDC_HELP">
-		<Text>Help</Text>
+		<Text>Bantuan</Text>
 	</STRING>
 	<STRING Id="301" Name="IDS_LAUNCHER_DISABLED">
-		<Text>Disabled</Text>
+		<Text>Nonaktifkan</Text>
 	</STRING>
 	<STRING Id="302" Name="IDS_LAUNCHER_DEMO">
 		<Text>Demo</Text>
 	</STRING>
 	<STRING Id="303" Name="IDS_LAUNCHER_EXPIREDDEMO">
-		<Text>Expired Demo</Text>
+		<Text>Demo berakhir</Text>
 	</STRING>
 	<STRING Id="304" Name="IDS_LAUNCHER_EXPIRED">
-		<Text>Expired</Text>
+		<Text>Berakhir</Text>
 	</STRING>
 	<STRING Id="306" Name="IDS_LAUNCHER_DISABLED_MSG">
-		<Text>This app was disabled to save space. Would you like to restore it now?</Text>
+		<Text>Aplikasi ini telah dinonaktifkan untuk menghemat ruang. Apakah Anda ingin mengembalikannya sekarang?</Text>
 	</STRING>
 	<STRING Id="307" Name="IDC_LAUNCHER_RESTORE">
-		<Text>Restore</Text>
+		<Text>Mengmbalikan</Text>
 	</STRING>
 	<STRING Id="308" Name="IDS_LAUNCHER_EXPIRED_MSG">
-		<Text>This app has expired. Would you like to buy additional uses of this app?</Text>
+		<Text>Aplikasi ini telah berakhir. Apakah Anda ingin membeli menggunakan tambahan dari aplikasi ini?</Text>
 	</STRING>
 	<STRING Id="309" Name="IDS_LAUNCHER_EXPIREDDEMO_MSG">
-		<Text>This demo app has expired. Would you like to buy the app?</Text>
+		<Text>Aplikasi demo ini telah berakhir. Apakah Anda ingin membeli aplikasi ini?</Text>
 	</STRING>
 	<STRING Id="310" Name="IDC_LAUNCHER_BUY">
-		<Text>Buy</Text>
+		<Text>Beli</Text>
 	</STRING>
 	<STRING Id="311" Name="IDS_LAUNCHER_DEMO_MSG">
-		<Text>This is a demo version. You may purchase the app by selecting "Buy Now."</Text>
+		<Text>Ini adalah versi demo. Anda dapat membeli aplikasi tersebut dengan memilih "Beli Sekarang."</Text>
 	</STRING>
 	<STRING Id="312" Name="IDC_LAUNCHER_BUY_NOW">
-		<Text>Buy Now</Text>
+		<Text>Beli Sekarang</Text>
 	</STRING>
 	<STRING Id="313" Name="IDC_LAUNCHER_VERIFY">
-		<Text>Verify</Text>
+		<Text>Memeriksa</Text>
 	</STRING>
 	<STRING Id="314" Name="IDS_LAUNCHER_ACKPENDING_MSG">
-		<Text>This application has not been verified. Would you like to verify it now?</Text>
+		<Text>Aplikasi ini belum diverifikasi. Apakah Anda ingin memverifikasi sekarang?</Text>
 	</STRING>
 	<STRING Id="315" Name="IDS_LAUNCHER_ACKPENDING">
-		<Text>Verify</Text>
+		<Text>Verifikasi</Text>
 	</STRING>
 	<STRING Id="401" Name="IDC_MSHOP_CATALOG">
-		<Text>Catalog</Text>
+		<Text>Katalog</Text>
 	</STRING>
 	<STRING Id="402" Name="IDC_MSHOP_FIND">
-		<Text>Search</Text>
+		<Text>Cari</Text>
 	</STRING>
 	<STRING Id="403" Name="IDC_MSHOP_GUIDE">
-		<Text>MobileShop Help</Text>
+		<Text>Bantuan MobileShop</Text>
 	</STRING>
 	<STRING Id="404" Name="IDS_ANY">
-		<Text>Search</Text>
+		<Text>Cari</Text>
 	</STRING>
 	<STRING Id="405" Name="IDS_ALL">
-		<Text>All</Text>
+		<Text>Semua</Text>
 	</STRING>
 	<STRING Id="406" Name="IDS_AUTH_FAILED">
-		<Text>Unable to verify your account information. Please call Customer Service.</Text>
+		<Text>Tidak dapat memverifikasi informasi account Anda. Silahkan hubungi Customer Service.</Text>
 	</STRING>
 	<STRING Id="407" Name="IDS_EXP_UPGRADE">
-		<Text>Upgrade</Text>
+		<Text>Meningkatkan</Text>
 	</STRING>
 	<STRING Id="408" Name="IDS_EXP_SUBSCRIPTION">
-		<Text>Subscription</Text>
+		<Text>Berlangganan</Text>
 	</STRING>
 	<STRING Id="409" Name="IDC_ACCEPT">
-		<Text>Accept</Text>
+		<Text>Terima</Text>
 	</STRING>
 	<STRING Id="410" Name="IDS_FREE">
-		<Text>FREE</Text>
+		<Text>Gratis</Text>
 	</STRING>
 	<STRING Id="411" Name="IDS_LICENSE">
-		<Text>License Agreement</Text>
+		<Text>Lisensi perjanjian</Text>
 	</STRING>
 	<STRING Id="412" Name="IDS_PURCHASE_CONFIRM">
-		<Text>You will be charged %s for this app. Proceed?</Text>
+		<Text>Anda akan dikenakan biaya %s Untuk aplikasi ini. lanjutkan?</Text>
 	</STRING>
 	<STRING Id="413" Name="IDS_SUBSCRIPTION_PURCHASE_CONFIRM">
-		<Text>You will be charged %s monthly for this app. Proceed?</Text>
+		<Text>Anda akan dikenakan biaya %s bulanan Untuk aplikasi ini. lanjutkan?</Text>
 	</STRING>
 	<STRING Id="414" Name="IDS_INSTALLED_APP">
-		<Text>App installed successfully. Would you like to run it?</Text>
+		<Text>Aplikasi berhasil diinstal. Apakah Anda ingin menjalankannya?</Text>
 	</STRING>
 	<STRING Id="415" Name="IDS_ALREADY">
-		<Text>This app is already installed. You will be charged %s for the additional purchase. Proceed?</Text>
+		<Text>Aplikasi ini sudah diinstal. Anda akan dikenakan biaya %s untuk pembelian tambahan. Lanjutkan?</Text>
 	</STRING>
 	<STRING Id="416" Name="IDS_RESTORE_FAILED">
-		<Text>App could not be restored.</Text>
+		<Text>App tidak dapat dikembalikan.</Text>
 	</STRING>
 	<STRING Id="417" Name="IDS_INSTALLED">
-		<Text>Item Installed</Text>
+		<Text>Item telah terpasang</Text>
 	</STRING>
 	<STRING Id="418" Name="IDS_APP_RAM_SIZE">
-		<Text>Due to memory allocation, your phone needs to be turned off and back on to allow downloading this application. Please turn your phone off, then back on, and retry download.</Text>
+		<Text>Karena alokasi memori, telepon Anda harus dimatikan dan kembali untuk memungkinkan men-download aplikasi ini. Silakan mengaktifkan telepon Anda, kemudian kembali, dan coba lagi download.</Text>
 	</STRING>
 	<STRING Id="419" Name="IDS_SEARCH_TITLE">
-		<Text>Enter Keywords</Text>
+		<Text>Masukan kata kunci</Text>
 	</STRING>
 	<STRING Id="420" Name="IDS_APP_FILES_NEEDED">
-		<Text>File Space Full:  Your phone does not have enough file space to download this app. Unlock or remove apps and try again.</Text>
+		<Text>Ruang Memori penuh: Telepon Anda tidak punya cukup ruang untuk men-download file aplikasi ini. Membuka atau menghapus aplikasi dan coba lagi.</Text>
 	</STRING>
 	<STRING Id="421" Name="IDS_DOWNLOAD_CONFIRM">
-		<Text>You are about to download this app. Proceed?</Text>
+		<Text>Apakah Anda akan unduh aplikasi ini, lanjutkan?</Text>
 	</STRING>
 	<STRING Id="422" Name="IDC_SEARCH_ALL">
-		<Text>Match all words</Text>
+		<Text>Semua kata sama</Text>
 	</STRING>
 	<STRING Id="423" Name="IDC_SEARCH_ANY">
-		<Text>Match any word</Text>
+		<Text>Pencocokan kata apapun</Text>
 	</STRING>
 	<STRING Id="424" Name="IDC_INPUT_MODE">
-		<Text>Input Mode</Text>
+		<Text>Mode masukan</Text>
 	</STRING>
 	<STRING Id="426" Name="IDS_NOAPPINFO_AVAILABLE">
-		<Text>No information available about this application.</Text>
+		<Text>Tidak ada informasi tersedia tentang aplikasi ini.</Text>
 	</STRING>
 	<STRING Id="427" Name="IDS_SEARCH_RESULTS">
-		<Text>Search Results</Text>
+		<Text>Hasil pencarian</Text>
 	</STRING>
 	<STRING Id="428" Name="IDS_APP_EFS_SIZE">
-		<Text>Memory Full:  Your phone does not have enough memory to download this app. Unlock or remove apps and try again.</Text>
+		<Text>Memory penuh:  Telepon Anda tidak memiliki cukup memori untuk mendownload aplikasi ini. Membuka atau menghapus aplikasi dan coba lagi.</Text>
 	</STRING>
 	<STRING Id="429" Name="IDS_APP_NOT_FOUND">
-		<Text>The specified app was not found on the server.</Text>
+		<Text>Aplikasi yang ditentukan tidak ditemukan pada server.</Text>
 	</STRING>
 	<STRING Id="430" Name="IDC_PROCEED">
-		<Text>Proceed</Text>
+		<Text>Lanjutkan</Text>
 	</STRING>
 	<STRING Id="431" Name="IDS_MEM_FORMAT">
-		<Text>Memory %d%% Full</Text>
+		<Text>Memori %d%% penuh</Text>
 	</STRING>
 	<STRING Id="432" Name="IDC_MSHOP_CREDITBACK">
-		<Text>Credit Back</Text>
+		<Text>Kredit kembali</Text>
 	</STRING>
 	<STRING Id="433" Name="IDS_CREDITBACK_TITLE">
-		<Text>Enter the code:</Text>
+		<Text>Masukan kode:</Text>
 	</STRING>
 	<STRING Id="434" Name="IDS_CREDITBACK_FAILED">
-		<Text>Get It Now has failed to credit the remaining number of uses. Try Again.</Text>
+		<Text>Dapatkan Sekarang telah gagal kredit jumlah sisa yang digunakan. Coba lagi.</Text>
 	</STRING>
 	<STRING Id="435" Name="IDS_CREDITBACK_SUCCESSFUL">
-		<Text>The account has been successfully credited for the remaining number of uses.</Text>
+		<Text>Akun tersebut telah berhasil dikreditkan untuk jumlah sisa yang digunakan.</Text>
 	</STRING>
 	<STRING Id="436" Name="IDC_REMOVE_WARNING">
-		<Text>Remove</Text>
+		<Text>Menghapus</Text>
 	</STRING>
 	<STRING Id="437" Name="IDS_FILE_MEMORY_FULL">
-		<Text>File Memory Full. To make enough storage space to install this app, the following app(s) will be temporarily disabled: %s. You can restore disabled apps by simply starting them, at no additional purchase cost. Proceed?</Text>
+		<Text>File Memori Penuh. Untuk membuat ruang penyimpanan yang cukup untuk menginstal aplikasi ini, aplikasi berikut akan dimatikan sementara:% s. Anda dapat mengembalikan aplikasi dinonaktifkan oleh hanya mulai mereka, tanpa biaya tambahan pembelian. Lanjutkan?</Text>
 	</STRING>
 	<STRING Id="438" Name="IDS_APP_SIZE_PREVIEW">
-		<Text>[Size: %s]</Text>
+		<Text>[Ukuran: %s]</Text>
 	</STRING>
 	<STRING Id="439" Name="IDS_APP_VERIFY_FAILED">
-		<Text>App could not be verified.</Text>
+		<Text>Aplikasi tidak bisa diverifikasi.</Text>
 	</STRING>
 	<STRING Id="440" Name="IDS_MSHOP_OUT_OF_MEMORY">
-		<Text>Memory Full:  Please turn off and restart your phone.</Text>
+		<Text>Memori penuh:  Harap matikan dan restart telepon Anda.</Text>
 	</STRING>
 	<STRING Id="450" Name="IDS_PURCHASE_DONT_PANIC">
-		<Text>Download not completed. Try downloading again. You were not billed for this app.</Text>
+		<Text>Unduhan tidak selesai. Coba unduh lagi. Anda tidak menerima tagihan untuk aplikasi ini.</Text>
 	</STRING>
 	<STRING Id="451" Name="IDS_PURCHASE_DONT_PANIC_TITLE">
-		<Text>Download did not complete</Text>
+		<Text>Unduh tidak selesai</Text>
 	</STRING>
 	<STRING Id="452" Name="IDS_STILL_DOWNLOADING">
-		<Text>Application is still downloading.</Text>
+		<Text>Aplikasi masih di unduh</Text>
 	</STRING>
 	<STRING Id="453" Name="IDS_CONTINUE_DOWNLOAD_FINISHED">
-		<Text>Application download finished.</Text>
+		<Text>Aplikasi selesai di unduh</Text>
 	</STRING>
 	<STRING Id="454" Name="IDS_CONTINUE_DOWNLOAD_FAILED">
-		<Text>Application download failed.</Text>
+		<Text>Aplikasi yang di unduh gagal.</Text>
 	</STRING>
 	<STRING Id="502" Name="IDC_OPTIONS_APP_MANAGEMENT">
-		<Text>Manage Apps</Text>
+		<Text>Kelola Aplikasi</Text>
 	</STRING>
 	<STRING Id="503" Name="IDC_OPTIONS_VIEW_LOG">
-		<Text>View Log</Text>
+		<Text>Lihat Log</Text>
 	</STRING>
 	<STRING Id="506" Name="IDC_OPTIONS_MSHOP_SERVER">
-		<Text>MobileShop Servers</Text>
+		<Text>MobileShop Server</Text>
 	</STRING>
 	<STRING Id="510" Name="IDC_OPTIONS_MOVE_APPS">
-		<Text>Move Apps</Text>
+		<Text>Aplikasi Pindah</Text>
 	</STRING>
 	<STRING Id="511" Name="IDC_OPTIONS_ORDER_APPS">
-		<Text>Order Apps</Text>
+		<Text>Pesan aplikasi</Text>
 	</STRING>
 	<STRING Id="512" Name="IDS_DL_DISABLE">
-		<Text>%s: Disabled (%s)</Text>
+		<Text>%s: nonaktif (%s)</Text>
 	</STRING>
 	<STRING Id="513" Name="IDS_DL_PURCHASE">
-		<Text>%s: Installed (%s)</Text>
+		<Text>%s: terpasang (%s)</Text>
 	</STRING>
 	<STRING Id="514" Name="IDS_DL_PURCHASE_FAILED">
-		<Text>%s: Installation Failed (%s)</Text>
+		<Text>%s: proses instal gagal (%s)</Text>
 	</STRING>
 	<STRING Id="515" Name="IDS_DL_RESTORE">
-		<Text>%s: Restored (%s)</Text>
+		<Text>%s: Pulih (%s)</Text>
 	</STRING>
 	<STRING Id="516" Name="IDS_DL_DELETE">
-		<Text>%s: Removed (%s)</Text>
+		<Text>%s: Dihapus (%s)</Text>
 	</STRING>
 	<STRING Id="517" Name="IDS_DL_RECALL_FAILED">
-		<Text>%s: Recall Failed (%s)</Text>
+		<Text>%s: Gagal penarikan (%s)</Text>
 	</STRING>
 	<STRING Id="518" Name="IDS_DL_DELETE_FAILED">
-		<Text>%s: Remove Failed (%s)</Text>
+		<Text>%s: Gagal Hapus (%s)</Text>
 	</STRING>
 	<STRING Id="519" Name="IDS_DL_RESTORE_FAILED">
-		<Text>%s: Restore Failed (%s)</Text>
+		<Text>%s: Gagal pengembalian (%s)</Text>
 	</STRING>
 	<STRING Id="520" Name="IDS_OPTIONS_BREW_INFO">
 		<Text>Platform:</Text>
 	</STRING>
 	<STRING Id="521" Name="IDS_DL_DISABLE_FAILED">
-		<Text>%s: Disable Failed (%s)</Text>
+		<Text>%s: Gagal Nonaktifkan (%s)</Text>
 	</STRING>
 	<STRING Id="522" Name="IDS_DL_UPGRADE_FAILED">
-		<Text>%s: Upgrade Failed (%s)</Text>
+		<Text>%s: Gagal Updgrade (%s)</Text>
 	</STRING>
 	<STRING Id="523" Name="IDS_DL_UPGRADE">
-		<Text>%s: Upgraded (%s)</Text>
+		<Text>%s: Upgrade (%s)</Text>
 	</STRING>
 	<STRING Id="524" Name="IDC_LARGE_ICON_VIEW">
-		<Text>Large Icon</Text>
+		<Text>Ikon besar</Text>
 	</STRING>
 	<STRING Id="525" Name="IDC_LIST_VIEW">
-		<Text>List</Text>
+		<Text>Daftar</Text>
 	</STRING>
 	<STRING Id="526" Name="IDS_DL_ENDSSN">
-		<Text>%s: Subscription End (%s)</Text>
+		<Text>%s: Berlangganan berakhir (%s)</Text>
 	</STRING>
 	<STRING Id="531" Name="IDC_OPTIONS_SCREEN_SAVERS">
 		<Text>Screen Savers</Text>
 	</STRING>
 	<STRING Id="532" Name="IDS_OPTIONS_SCREEN_SAVERS">
-		<Text>You have no screen savers. You may purchase them from Get It Now Shop.</Text>
+		<Text>Anda tidak memiliki screen saver. Anda dapat membeli dan Dapatkan Sekarang di Shop.</Text>
 	</STRING>
 	<STRING Id="534" Name="IDS_OPTIONS_NO_SCREEN_SAVER">
-		<Text>No Screen Saver</Text>
+		<Text>Tidak ada  Screen Saver</Text>
 	</STRING>
 	<STRING Id="535" Name="IDS_DL_RECALL">
-		<Text>%s: Recalled (%s)</Text>
+		<Text>%s: Penarikan (%s)</Text>
 	</STRING>
 	<STRING Id="536" Name="IDS_DL_ENDSSN_FAILED">
-		<Text>%s: Subscription End Failed (%s)</Text>
+		<Text>%s: Akhir Berlangganan Gagal (%s)</Text>
 	</STRING>
 	<STRING Id="538" Name="IDC_AIRTIME_WARNINGS_DISABLED">
-		<Text>All Disabled</Text>
+		<Text>Nonaktifkan semua</Text>
 	</STRING>
 	<STRING Id="539" Name="IDC_AIRTIME_WARNINGS_ENABLED">
-		<Text>All Enabled</Text>
+		<Text>Aktifkan semua</Text>
 	</STRING>
 	<STRING Id="540" Name="IDS_SET_IMAGE">
-		<Text>Set Image</Text>
+		<Text>Pasang Gambar</Text>
 	</STRING>
 	<STRING Id="541" Name="IDC_CONFIGURE_SOUND">
-		<Text>Sound </Text>
+		<Text>Bunyi </Text>
 	</STRING>
 	<STRING Id="542" Name="IDC_CONFIGURE_IMAGE">
-		<Text>Image </Text>
+		<Text>Gambar </Text>
 	</STRING>
 	<STRING Id="543" Name="IDC_CONFIGURE_RESET">
-		<Text>Reset </Text>
+		<Text>Pengaturan kembali </Text>
 	</STRING>
 	<STRING Id="544" Name="IDS_SET_SOUND">
-		<Text>Set Sound</Text>
+		<Text>Pasang Bunyi</Text>
 	</STRING>
 	<STRING Id="545" Name="IDC_CONFIGURE_DONE">
-		<Text>Done</Text>
+		<Text>Selesai</Text>
 	</STRING>
 	<STRING Id="546" Name="IDC_SET_SOUND_IMAGE">
-		<Text>Set Sound/Image</Text>
+		<Text>Pasang Bunyi/Gambar</Text>
 	</STRING>
 	<STRING Id="547" Name="IDS_CONFIGURE_NO_FILES">
-		<Text>No Files Available</Text>
+		<Text>File tidak tersedia</Text>
 	</STRING>
 	<STRING Id="548" Name="IDC_OPTIONS_MAINMENU_STYLE">
-		<Text>Main Menu View</Text>
+		<Text>Lihat Menu Utama</Text>
 	</STRING>
 	<STRING Id="601" Name="IDS_MT_AVAILABLE">
-		<Text>%s available</Text>
+		<Text>%s tersedia</Text>
 	</STRING>
 	<STRING Id="602" Name="IDS_MT_USED">
-		<Text>%s used (%s total)</Text>
+		<Text>%s terpakai (%s total)</Text>
 	</STRING>
 	<STRING Id="603" Name="IDS_MT_MEMORYUSE">
-		<Text>Size: %s</Text>
+		<Text>Ukuran: %s</Text>
 	</STRING>
 	<STRING Id="604" Name="IDS_MT_USES_LEFT">
-		<Text>%d Uses Remaining</Text>
+		<Text>%d Tersisa</Text>
 	</STRING>
 	<STRING Id="605" Name="IDS_MT_MIN_REMAINING">
-		<Text>%d Minutes Remaining</Text>
+		<Text>%d Menit yang tersisa</Text>
 	</STRING>
 	<STRING Id="606" Name="IDS_MT_EXP_DATE">
-		<Text>Expires on %s</Text>
+		<Text>Berakhir pada %s</Text>
 	</STRING>
 	<STRING Id="607" Name="IDC_REMOVE">
-		<Text>Remove</Text>
+		<Text>Hapus</Text>
 	</STRING>
 	<STRING Id="608" Name="IDC_LOCKED">
-		<Text>Locked</Text>
+		<Text>Terkunci</Text>
 	</STRING>
 	<STRING Id="609" Name="IDC_UNLOCKED">
-		<Text>Unlocked</Text>
+		<Text>Tak terkunci</Text>
 	</STRING>
 	<STRING Id="610" Name="IDC_VIEW_PROPERTIES">
-		<Text>View Properties</Text>
+		<Text>Lihat properti</Text>
 	</STRING>
 	<STRING Id="611" Name="IDC_SET_CATEGORY">
-		<Text>Set Folder</Text>
+		<Text>Mengatur folder</Text>
 	</STRING>
 	<STRING Id="612" Name="IDC_UPGRADE_CHECK">
-		<Text>Upgrade Check</Text>
+		<Text>Cek Upgrade</Text>
 	</STRING>
 	<STRING Id="613" Name="IDS_CANCEL_SUBSCRIPTION">
-		<Text>Cancel Subscription</Text>
+		<Text>Batal berlangganan</Text>
 	</STRING>
 	<STRING Id="614" Name="IDS_MT_REMOVE_EXPIRED">
-		<Text>Are you sure you want to completely remove this app?</Text>
+		<Text>Apakah Anda yakin ingin menghapus aplikasi ini?</Text>
 	</STRING>
 	<STRING Id="615" Name="IDS_MT_CANCEL_SUBSCRIPTION">
-		<Text>Are you sure you want to completely cancel the subscription to this app? This app will be completely removed. </Text>
+		<Text>Apakah Anda yakin ingin membatalkan langganan sepenuhnya untuk aplikasi ini? app ini akan benar-benar dihapus.</Text>
 	</STRING>
 	<STRING Id="616" Name="IDS_SUBSCRIPTION_CANCELED">
-		<Text>The subscription has been cancelled successfully.</Text>
+		<Text>Berlangganan telah berhasil dibatalkan.</Text>
 	</STRING>
 	<STRING Id="617" Name="IDS_SUBSCRIPTION_CANCEL_LATER">
-		<Text>This app has been removed from the phone, but the network was not available at this time. The cancellation will be completed the next time you access the Get It Now Shop. Your subscription will be cancelled as of today.</Text>
+		<Text>Aplikasi ini telah dihapus dari telepon, namun jaringan ini tidak tersedia waktu ini. pembatalan ini akan selesai pada saat Anda mengakses Get It Now Shop. Langganan Anda akan dibatalkan pada hari ini.</Text>
 	</STRING>
 	<STRING Id="618" Name="IDS_MT_REMOVE">
-		<Text>This app hasn't expired. Are you sure you want to completely remove this app?</Text>
+		<Text>Aplikasi ini belum kedaluwarsa. Apakah Anda yakin ingin menghapus aplikasi ini?</Text>
 	</STRING>
 	<STRING Id="619" Name="IDS_APP_TOTALSIZE">
-		<Text>Total Size %s</Text>
+		<Text>Ukuran Total %s</Text>
 	</STRING>
 	<STRING Id="620" Name="IDS_APP_APPSIZE">
-		<Text>App Size %s</Text>
+		<Text>Ukuran Aplikasi %s</Text>
 	</STRING>
 	<STRING Id="621" Name="IDS_APP_APPDATASIZE">
-		<Text>Data Size %s</Text>
+		<Text>Ukuan data %s</Text>
 	</STRING>
 	<STRING Id="622" Name="IDS_EXP_UNLIMITED">
-		<Text>Unlimited</Text>
+		<Text>Tak terbatas</Text>
 	</STRING>
 	<STRING Id="623" Name="IDS_SS_REMOVE">
-		<Text>Are you sure you want to completely remove this screen saver?</Text>
+		<Text>Apakah Anda yakin ingin menghapus screen saver ini?</Text>
 	</STRING>
 	<STRING Id="624" Name="IDS_PRELOADED_SS_REMOVE">
-		<Text>This screen saver cannot be removed.</Text>
+		<Text>Screen saver ini tidak dapat dihapus.</Text>
 	</STRING>
 	<STRING Id="625" Name="IDS_SS_REMOVE_SHORTCUT">
-		<Text>A shortcut is assigned to this screen saver. Are you sure you want to completely remove this screen saver?</Text>
+		<Text>Sebuah shortcut dipasang pada screen saver ini. Apakah Anda yakin ingin menghapus screen saver ini?</Text>
 	</STRING>
 	<STRING Id="626" Name="IDS_MT_REMOVE_EXPIRED_SHORTCUT">
-		<Text>A shortcut is assigned to this app. Are you sure you want to completely remove this app?</Text>
+		<Text>Sebuah shortcut dipasang pada Aplikasi ini. Apakah Anda yakin ingin menghapus aplikasi ini?</Text>
 	</STRING>
 	<STRING Id="627" Name="IDS_MT_REMOVE_SHORTCUT">
-		<Text>This app hasn't expired and a shortcut is assigned to it. Are you sure you want to completely remove this app?</Text>
+		<Text>Aplikasi ini belum berakhir dan terdapat shortcut. Apakah Anda yakin ingin menghapus aplikasi ini?</Text>
 	</STRING>
 	<STRING Id="628" Name="IDS_MT_CANCEL_SUBSCRIPTION_SHORTCUT">
-		<Text>A shortcut is assigned to this app. Are you sure you want to completely cancel the subscription to this app? This app will be completely removed.</Text>
+		<Text>SHortcuk ditugaskan untuk aplikasi ini. Apakah Anda yakin ingin membatalkan langganan sepenuhnya untuk aplikasi ini? Aplikasi ini akan benar-benar dihapus.</Text>
 	</STRING>
 	<STRING Id="630" Name="IDS_LOCK_APP_FAILED">
-		<Text>This application cannot be locked.</Text>
+		<Text>Aplikasi ini tidak dapat dikunci.</Text>
 	</STRING>
 	<STRING Id="631" Name="IDS_UNLOCK_APP_FAILED">
-		<Text>This application cannot be unlocked.</Text>
+		<Text>Aplikasi ini tidak dapat dibuka.</Text>
 	</STRING>
 	<STRING Id="701" Name="IDS_CONNECTING">
-		<Text>Connecting...</Text>
+		<Text>Menghubungkan...</Text>
 	</STRING>
 	<STRING Id="703" Name="IDS_DOWNLOADING">
-		<Text>Downloading...</Text>
+		<Text>Unduh...</Text>
 	</STRING>
 	<STRING Id="704" Name="IDS_READING">
-		<Text>Reading...</Text>
+		<Text>Membaca...</Text>
 	</STRING>
 	<STRING Id="705" Name="IDS_CANCELLING">
-		<Text>Cancelling...</Text>
+		<Text>Membatalkan...</Text>
 	</STRING>
 	<STRING Id="706" Name="IDS_VERIFYING">
-		<Text>Verifying...</Text>
+		<Text>Memverifikasi...</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_PPP_ERROR">
-		<Text>Unable to connect to the wireless network. Please try again later.</Text>
+		<Text>Tidak dapat tersambung ke jaringan nirkabel. Silakan coba lagi.</Text>
 	</STRING>
 	<String Id="1002" Name="IDS_UPGRADEAUTOPROMPT_TEXT" Encoding="Unicode">
-		<Text>An upgrade of %S is available.
+		<Text>Upgrade dari %s tersedia.
 
-Would you like to download the upgrade?</Text>
+Apakah Anda ingin meng-unduh upgrade?</Text>
 	</String>
 	<String Id="1003" Name="IDS_UPGRADEAUTOPROMPT_TITLE" Encoding="Unicode">
-		<Text>Upgrade Available</Text>
+		<Text>Tersedia Upgrade</Text>
 	</String>
 	<STRING Id="1004" Name="IDS_DOWNLOAD_FAILED">
-		<Text>Install Failed. You will not be charged for this application. Try again later.</Text>
+		<Text>Gagal instal. Anda tidak akan dikenakan biaya untuk aplikasi ini. Coba lagi nanti.</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDC_UPGRADEAUTOPROMPT_PURCHASE">
-		<Text>Yes</Text>
+		<Text>Ya</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_LIST_FAILED">
-		<Text>Unable to retrieve catalog. Please try again later.</Text>
+		<Text>Tidak dapat mengambil katalog. Silakan coba lagi nanti.</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_NO_CATEGORIES">
-		<Text>No items were found.</Text>
+		<Text>Item tidak ditemukan</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INDETERMINATE_APP_STATUS_TEXT">
-		<Text>This app can't be launched because the license status is unknown.</Text>
+		<Text>Aplikasi ini tidak dapat diluncurkan karena status lisensi tidak diketahui.</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_INDETERMINATE_APP_STATUS_TITLE">
-		<Text>License Status Unknown .</Text>
+		<Text>Status License tidak diketahui .</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_RECALLED">
-		<Text>%s has been recalled and removed from your phone. Expect further information shortly.</Text>
+		<Text>%s telah ingat dan dihapus dari telepon Anda. Mengharapkan informasi lebih lanjut segera.</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_VERIFICATION_FAILED">
-		<Text>%s failed verification. This app is removed from your phone. See log for details.</Text>
+		<Text>%s gagal verifikasi. Aplikasi ini akan dihapus dari telepon Anda. Lihat log untuk rincian.</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_BROWSE_AIRTIME_WARNING">
-		<Text>Browsing MobileShop and downloading apps uses airtime.</Text>
+		<Text>Browsing MobileShop dan unduh aplikasi akan menggunakan airtime.</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_UPGRADE_AIRTIME_WARNING">
-		<Text>Airtime charges will apply for connecting to the server to check the upgrade availability.</Text>
+		<Text>Biaya Airtime akan berlaku untuk menghubungkan ke server untuk memeriksa ketersediaan upgrade.</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_BUY_AIRTIME_WARNING">
-		<Text>Airtime charges will apply for connecting to the server to buy the application.</Text>
+		<Text>Biaya Airtime akan berlaku untuk menghubungkan ke server untuk membeli aplikasi tersebut.</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_RESTORE_AIRTIME_WARNING">
-		<Text>Airtime charges will apply for connecting to the server to restore the application.</Text>
+		<Text>Biaya Airtime akan berlaku untuk menghubungkan ke server untuk mengembalikan aplikasi.</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_AIRTIME_WARNING_AGAIN">
-		<Text>Select "Remove" if you don't want to see the airtime warning again.</Text>
+		<Text>Pilih "Hapus" jika Anda tidak ingin melihat lagi peringatan airtime.</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_CREDITBACK_AIRTIME_WARNING">
-		<Text>Airtime will be used briefly to credit the remaining number of uses.</Text>
+		<Text>Airtime akan digunakan sebentar untuk kredit jumlah sisa dari yang digunakan.</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_SEARCH_AIRTIME_WARNING">
-		<Text>Searching MobileShop and downloading apps uses airtime.</Text>
+		<Text>Pencarian di MobileShop dan mengunduh aplikasi menggunakan airtime.</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_SEARCH_NOT_SUPPORTED">
-		<Text>Search is not available on this MobileShop server. The Search option will be removed from the menu until it becomes available.</Text>
+		<Text>Pencarian tidak tersedia di server ini MobileShop. Pilihan Pencarian akan dihapus dari menu sampai menjadi tersedia.</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_UPGRADECHECK_NOT_SUPPORTED">
-		<Text>Upgrade Check is not available. </Text>
+		<Text>Cek upgrade tak tersedia </Text>
 	</STRING>
 	<STRING Id="2001" Name="IDC_HELP_DISABLED_APPS">
-		<Text>Disabled Apps</Text>
+		<Text>Nonaktifkan Aplikasi</Text>
 	</STRING>
 	<STRING Id="2002" Name="IDC_HELP_REMOVING_APPS">
-		<Text>Removing Apps</Text>
+		<Text>Menghapus Aplikasi</Text>
 	</STRING>
 	<STRING Id="2003" Name="IDC_HELP_RESTORING_APPS">
-		<Text>Restoring Apps</Text>
+		<Text>Mengembalikan Aplikasi</Text>
 	</STRING>
 	<STRING Id="2004" Name="IDC_HELP_EXPIRED_APPS">
-		<Text>Expired Apps</Text>
+		<Text>Masa berlaku Aplikasi habis</Text>
 	</STRING>
 	<STRING Id="2005" Name="IDC_HELP_DEMO_APPS">
 		<Text>Demo Apps</Text>
 	</STRING>
 	<STRING Id="2006" Name="IDC_HELP_BUYING_NEW_APPS">
-		<Text>Buying New Apps</Text>
+		<Text>Beli Aplikasi baru</Text>
 	</STRING>
 	<STRING Id="2007" Name="IDC_HELP_WHAT_DO_I_PAY">
-		<Text>What do I pay?</Text>
+		<Text>Apa yang harus saya bayar?</Text>
 	</STRING>
 	<STRING Id="2008" Name="IDC_HELP_AIRTIME_CHARGES">
-		<Text>Charges</Text>
+		<Text>Beban</Text>
 	</STRING>
 	<STRING Id="2009" Name="IDC_HELP_CANCELING_SUBSCRIPTION">
-		<Text>Cancelling Subscription</Text>
+		<Text>Membatalkan Berlangganan</Text>
 	</STRING>
 	<STRING Id="2101" Name="IDS_HELP_DISABLING_APPS">
-		<Text>You can install new apps even if the memory of your phone is full by partially removing (disabling) apps you haven't used recently. When you need to use a disabled app, you can restore it at no additional purchase cost. </Text>
+		<Text>Anda dapat menginstal aplikasi baru bahkan jika memori telepon sudah penuh oleh sebagian menghapus (menonaktifkan) aplikasi Anda belum pernah menggunakan baru-baru ini. Bila Anda perlu menggunakan aplikasi dinonaktifkan, Anda dapat mengembalikannya tanpa biaya tambahan pembelian.</Text>
 	</STRING>
 	<STRING Id="2102" Name="IDS_HELP_REMOVING_APP">
-		<Text>You may remove apps that are no longer needed. When you remove an app, you cannot use the application unless you purchase it again. To remove an app, choose Settings &gt; Manage Apps. Then, select the app you want to remove.</Text>
+		<Text>Anda dapat menghapus aplikasi yang tidak lagi diperlukan. Bila Anda menghapus aplikasi, Anda tidak dapat menggunakan aplikasi kecuali Anda membeli lagi. Untuk menghapus aplikasi, pilih Pengaturan &gt; Kelola Apps. Lalu, pilih aplikasi yang ingin Anda hapus.</Text>
 	</STRING>
 	<STRING Id="2103" Name="IDS_HELP_RESTORING_APPS">
-		<Text>Disabled apps can be quickly restored at no additional purchase cost. To restore an app, run the application you want to restore from the Main Menu. You will be guided through the restoration process.</Text>
+		<Text>Aplikasi yang diaktifkan dapat dengan cepat dikembalikan tanpa biaya tambahan pembelian. Untuk mengembalikan dan menjalankan aplikasi Anda yang ingin dikembalikan dari Menu Utama. Anda akan dipandu melalui proses restorasi.</Text>
 	</STRING>
 	<STRING Id="2104" Name="IDS_HELP_EXPIRED_APPS">
-		<Text>Apps that were purchased based on the number of uses or time expire. You can purchase additional uses from the Get It Now Shop.</Text>
+		<Text>Aplikasi yang dibeli berdasarkan jumlah menggunakan atau waktu berakhir. Anda dapat membeli menggunakan tambahan dari Get It Now Shop.</Text>
 	</STRING>
 	<STRING Id="2105" Name="IDS_HELP_DEMO_APPS">
-		<Text>A Demo app is free and is designed to demonstrate the app's main features. It usually expires after a certain period of time or a number of uses and often has limited functions. When you run a demo app, you will be presented with a purchase option so you won't have to look for the app in the Get It Now Shop.</Text>
+		<Text>Sebuah aplikasi Demo bebas dan dirancang untuk menunjukkan fitur utama app. Ini biasanya berakhir setelah periode waktu tertentu atau jumlah pengunaan dan seringkali memiliki fungsi terbatas. Ketika Anda menjalankan aplikasi demo, Anda akan disajikan dengan opsi beli sehingga Anda tidak perlu mencari aplikasi di Get It Now Shop.</Text>
 	</STRING>
 	<STRING Id="2106" Name="IDS_HELP_BUYING_NEW_APPS">
-		<Text>To buy new and exciting apps, visit the Get It Now Shop. It provides you with a variety of apps you can choose from. </Text>
+		<Text>Untuk membeli aplikasi baru dan menarik, kunjungi Get It Now Shop. Ini menyediakan Anda dengan berbagai aplikasi Anda dapat memilih dari. </Text>
 	</STRING>
 	<STRING Id="2107" Name="IDS_HELP_WHAT_DO_I_PAY">
-		<Text>When you buy an app you will be charged for the purchase cost of the app and the network connections to download it. Charges will also apply when you use apps that require network connections, such as downloading information and sending text messages.</Text>
+		<Text>Ketika Anda membeli sebuah aplikasi Anda akan dikenakan biaya untuk biaya pembelian app dan koneksi jaringan untuk meng-unduh. Biaya juga akan berlaku bila Anda menggunakan aplikasi yang memerlukan sambungan jaringan, seperti men-download informasi dan mengirim pesan teks.</Text>
 	</STRING>
 	<STRING Id="2108" Name="IDS_HELP_AIRTIME_CHARGES">
-		<Text>Charges will apply for network connections. A network connection is used when you are browsing the Get It Now Shop, downloading and restoring apps, or canceling subscription apps. Charges will also apply when you use apps that require network connections, such as downloading information and sending text messages.</Text>
+		<Text>Biaya akan dikenakan untuk koneksi jaringan. Sambungan jaringan digunakan ketika Anda sedang melihat Get It Now Shop, unduh dan memulihkan aplikasi, atau membatalkan aplikasi berlangganan. Biaya juga akan berlaku bila Anda menggunakan aplikasi yang memerlukan sambungan jaringan, seperti meng-unduh informasi dan mengirim pesan teks.</Text>
 	</STRING>
 	<STRING Id="2109" Name="IDS_HELP_CANCELING_SUBSCRIPTION">
-		<Text>To cancel a subscription to an app, choose Settings &gt; Manage Apps. Then, select the app subscription you want to cancel.</Text>
+		<Text>Untuk membatalkan langganan ke aplikasi, pilih Pengaturan &gt; Kelola Apps. Lalu, pilih aplikasi berlangganan Anda ingin membatalkan.</Text>
 	</STRING>
 	<STRING Id="3001" Name="IDC_MSHOPGUIDE_MSHOP">
 		<Text>MobileShop?</Text>
 	</STRING>
 	<STRING Id="3002" Name="IDC_MSHOPGUIDE_CATALOG">
-		<Text>Catalog</Text>
+		<Text>Katalog</Text>
 	</STRING>
 	<STRING Id="3003" Name="IDC_MSHOPGUIDE_FIND">
-		<Text>Search</Text>
+		<Text>Cari</Text>
 	</STRING>
 	<STRING Id="3004" Name="IDC_MSHOPGUIDE_PREVIEW">
-		<Text>Preview</Text>
+		<Text>Perlihatkan</Text>
 	</STRING>
 	<STRING Id="3005" Name="IDC_MSHOPGUIDE_PURCHASE_OPTIONS">
-		<Text>Purchase Options</Text>
+		<Text>Pilihan Pembelian</Text>
 	</STRING>
 	<STRING Id="3006" Name="IDC_MSHOPGUIDE_PAYMENT">
-		<Text>Payment</Text>
+		<Text>Pembayaran</Text>
 	</STRING>
 	<STRING Id="3007" Name="IDC_MSHOPGUIDE_MEMORY_FULL">
-		<Text>Memory Full?</Text>
+		<Text>Memori penuh?</Text>
 	</STRING>
 	<STRING Id="3008" Name="IDC_MSHOPGUIDE_RESTORING_APPS">
-		<Text>Restoring Apps</Text>
+		<Text>Mengembalikan Aplikasi</Text>
 	</STRING>
 	<STRING Id="3009" Name="IDC_MSHOPGUIDE_CAN_I_RETURN_APPS">
-		<Text>Can I return apps?</Text>
+		<Text>Dapatkah saya kembali aplikasi?</Text>
 	</STRING>
 	<STRING Id="3101" Name="IDS_MSHOPGUIDE_MSHOP">
-		<Text>MobileShop allows you to browse, purchase, and download apps. Apps will be charged on your regular phone invoice.</Text>
+		<Text>MobileShop memungkinkan Anda untuk melihat, membeli, dan meng-unduh aplikasi. Apps akan dikenakan biaya pada tagihan telepon biasa Anda.</Text>
 	</STRING>
 	<STRING Id="3102" Name="IDS_MSHOPGUIDE_CATALOG">
-		<Text>Apps are organized in a catalog based on their categories such as games and tools.</Text>
+		<Text>Aplikasi diatur dalam katalog berdasarkan kategori mereka seperti permainan dan peralatan.</Text>
 	</STRING>
 	<STRING Id="3103" Name="IDS_MSHOPGUIDE_FIND">
-		<Text>You may also search for applications by keywords. In the find dialog box, select "All" if you want to match all the keywords. Select "Any" for at least one match.</Text>
+		<Text>Anda juga dapat mencari aplikasi oleh kata kunci. Dalam menemukan kotak dialog, pilih "Semua" jika Anda ingin mencocokkan semua kata kunci. Pilih "Ada" untuk setidaknya satu pertandingan.</Text>
 	</STRING>
 	<STRING Id="3104" Name="IDS_MSHOPGUIDE_PREVIEW">
-		<Text>Most BREW apps provide you with a brief description. Some BREW apps also provide you with a free demo version to try.</Text>
+		<Text>Sebagian besar aplikasi BREW menyediakan deskripsi singkat. Beberapa aplikasi BREW juga menyediakan versi demo gratis untuk dicoba.</Text>
 	</STRING>
 	<STRING Id="3105" Name="IDS_MSHOPGUIDE_PURCHASE_OPTIONS">
-		<Text>You may purchase apps by the number of uses, by time, or by subscription. Purchase options are decided by app developers.</Text>
+		<Text>Anda dapat membeli aplikasi dengan jumlah penggunaan, oleh waktu, atau dengan berlangganan. Pembelian pilihan yang ditentukan oleh pengembang aplikasi.</Text>
 	</STRING>
 	<STRING Id="3106" Name="IDS_MSHOPGUIDE_PAYMENT">
-		<Text>When you buy an app, you will be charged for the purchase cost of the app and the airtime that is required to download it.</Text>
+		<Text>Ketika Anda membeli sebuah aplikasi, Anda akan dikenakan biaya pembelian app dan airtime yang diperlukan untuk mendownloadnya.</Text>
 	</STRING>
 	<STRING Id="3107" Name="IDS_MSHOPGUIDE_MEMORY_FULL">
-		<Text>Even if your phone's memory is full, you can still download new apps. Just purchase an app from MobileShop. If the memory is full, it'll help you partially remove (disable) apps you haven't used recently to free storage space for the new app. You can prevent certain apps from being disabled by locking them.</Text>
+		<Text>Bahkan jika memori ponsel Anda penuh, Anda masih dapat men-download aplikasi baru. Hanya membeli sebuah aplikasi dari MobileShop. Jika memori penuh, itu akan membantu Anda menghapus sebagian (menonaktifkan) aplikasi Anda belum pernah menggunakan baru-baru ini untuk ruang penyimpanan gratis untuk aplikasi baru. Anda dapat mencegah aplikasi tertentu dari dinonaktifkan dengan cara mengunci mereka.</Text>
 	</STRING>
 	<STRING Id="3108" Name="IDS_MSHOPGUIDE_RESTORING_APPS">
-		<Text>Disabled apps can be restored at no additional purchase cost. To restore an app, start the app in the Main Menu. You'll be guided to restore the app.</Text>
+		<Text>Aplikasi yang diaktifkan dapat dikembalikan tanpa biaya tambahan pembelian. Untuk mengembalikan aplikasi, mulai app dalam Menu Utama. Anda akan dipandu untuk memulihkan app</Text>
 	</STRING>
 	<STRING Id="3109" Name="IDS_MSHOPGUIDE_CAN_I_RETURN_APPS">
-		<Text>Once you purchase an app, you cannot return it. However, most apps provide an inexpensive purchase option or free demo options for you to try out.</Text>
+		<Text>Setelah Anda membeli sebuah aplikasi, Anda tidak dapat mengembalikannya. Namun, aplikasi yang paling memberikan opsi beli atau opsi murah demo gratis untuk Anda untuk mencoba</Text>
 	</STRING>
 	<STRING Id="4000" Name="IDS_MOBILESHOP">
-		<Text>Get It Now</Text>
+		<Text>Dapatkan sekarang</Text>
 	</STRING>
 	<STRING Id="5000" Name="IDS_APPLICATION_MANAGER">
 		<Text>Software:</Text>
 	</STRING>
 	<STRING Id="6000" Name="IDS_MONTHLY">
-		<Text>/month</Text>
+		<Text>/bulan</Text>
 	</STRING>
 	<STRING Id="6010" Name="IDS_EMPTY_SEARCH">
-		<Text>The search text was empty</Text>
+		<Text>Teks yang dicari kosong</Text>
 	</STRING>
 </Strings>
 <Objects MimeType="image/bmp">

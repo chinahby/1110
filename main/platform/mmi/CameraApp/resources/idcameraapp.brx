@@ -2,94 +2,94 @@
 <BREWRes Name="cameraapp" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_ITEM_CAMERA">
-		<Text>Camera</Text>
+		<Text>Kamera</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_ITEM_VIDEO">
-		<Text>Video recorder</Text>
+		<Text>Perekam Video</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
-		<Text>Photo gallery</Text>
+		<Text>Album Foto</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_ITEM_VIDEO_GALLERY">
-		<Text>Video gallery</Text>
+		<Text>Album Video</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_CFG_ENVIR">
-		<Text>Environment</Text>
+		<Text>Lingkungan</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_ENVIR_MODE_AUTO">
-		<Text>Auto</Text>
+		<Text>Otomatis</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_ENVIR_MODE_NIGHT">
-		<Text>Night mode</Text>
+		<Text>Malam</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_ENVIR_MODE_CLOUDY">
-		<Text>Cloudy mode</Text>
+		<Text>Berawan</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_ENVIR_MODE_SUNNY">
-		<Text>Sunny mode</Text>
+		<Text>Siang Hari</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_CFG_FUN">
-		<Text>Fun</Text>
+		<Text>Bersenang-senang</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_FUN_FRAME">
-		<Text>Fun frame</Text>
+		<Text>Bingkai Lucu</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_FUN_COLOR">
-		<Text>Color effect</Text>
+		<Text>Efek Warna</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_CFG_QUALITY">
-		<Text>Quality</Text>
+		<Text>Kualitas</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_QUALITY_HIGH">
-		<Text>High</Text>
+		<Text>Tinggi</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_QUALITY_MED">
-		<Text>Med</Text>
+		<Text>Tengah</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_QUALITY_LOW">
-		<Text>Low</Text>
+		<Text>Rendah</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_CFG_SIZE">
-		<Text>Size</Text>
+		<Text>Ukuran</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_CFG_TONE">
-		<Text>Shutter tone</Text>
+		<Text>Nada Bidikan</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_TONE_DISABLE">
-		<Text>Off</Text>
+		<Text>Matikan</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_TONE_ENABLE">
-		<Text>On</Text>
+		<Text>Nyalakan</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_CFG_SELFTIMER">
-		<Text>Self timer</Text>
+		<Text>Penghitung Detik</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_SELFTIME_OFF">
-		<Text>Off</Text>
+		<Text>Nonaktifkan Penghitung Detik</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_SELFTIME_SEC1">
-		<Text>5 Sec</Text>
+		<Text>5 Detik</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_SELFTIME_SEC2">
-		<Text>10 Sec</Text>
+		<Text>10 Detik</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_SELFTIME_SEC3">
-		<Text>15 Sec</Text>
+		<Text>15 Detik</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_CFG_CAPMODE">
-		<Text>Capture mode</Text>
+		<Text>Cara Membidik</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_CAPTURE_OFF">
-		<Text>Off</Text>
+		<Text>Matikan</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_CAPTURE_MODE1">
-		<Text>1 Shot</Text>
+		<Text>1 Bidikan</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_CAPTURE_MODE2">
-		<Text>3 Shot</Text>
+		<Text>3 Bidikan</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_CAPTURE_MODE3">
-		<Text>5 Shot</Text>
+		<Text>5 Bidikan</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_CFG_BANDING">
 		<Text>Banding</Text>
@@ -101,76 +101,76 @@
 		<Text>60 Hz</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_CFG_STORAGE">
-		<Text>Storage</Text>
+		<Text>Pengimpanan</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_STORAGE_PHONE">
-		<Text>Phone</Text>
+		<Text>Telepon</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_STORAGE_SDCARD">
-		<Text>Memory card</Text>
+		<Text>Kartu Memory</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_CFG_RESET">
-		<Text>Reset</Text>
+		<Text>Pengaturan kembali</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_CFG_HOTKEY">
-		<Text>Hot key</Text>
+		<Text>Tombol Penting</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_QUALITY_TITLE">
-		<Text>{ Quality }</Text>
+		<Text>{ Kualitas }</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_CAPTURE_MODE_TITLE">
-		<Text>{ Capture mode }</Text>
+		<Text>{ Cara Membidik }</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_TONE_TITLE">
-		<Text>{ Shutter tone }</Text>
+		<Text>{ Suara Bidikan }</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_ENVIR_TITLE">
-		<Text>{ Environment }</Text>
+		<Text>{ Lingkungan }</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_COLOR_TITLE">
-		<Text>{ Color effect }</Text>
+		<Text>{ Efek Warna }</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_SELFTIME_TITLE">
-		<Text>{ Self timer }</Text>
+		<Text>{ Penghitung Detik }</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_HOTKEY_QUALITY">
-		<Text>1-Quality</Text>
+		<Text>1-Kualitas</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_HOTKEY_CHOOSE">
-		<Text>2-Camera/Video</Text>
+		<Text>2-Kamera/Video</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_HOTKEY_CAPMODE">
-		<Text>3-Capture mode</Text>
+		<Text>3-Cara Membidik</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_HOTKEY_TONE">
-		<Text>4-Shutter tone</Text>
+		<Text>4-Nada Bidikan</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_HOTKEY_ENVIR">
-		<Text>5-Environment</Text>
+		<Text>5-Lingkungan</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_HOTKEY_FRAME">
-		<Text>6-Add frame</Text>
+		<Text>6-Tambah Bingkai</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_HOTKEY_COLOR">
-		<Text>7-Color effect</Text>
+		<Text>7-Efek Warna</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_HOTKEY_SELFTIME">
-		<Text>8-Self timer</Text>
+		<Text>8-Pengitung Detik</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_HOTKEY_ZOOM">
-		<Text>Up/Down-Zoom</Text>
+		<Text>Atas/Bawah-Besarkan</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_HOTKEY_BRIGHT">
-		<Text>Left/Right-Brightness</Text>
+		<Text>Kiri/Kanan-Kecerahan</Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_HOTKEY_RES">
-		<Text>*-Size</Text>
+		<Text>*-Ukuran</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_HOTKEY_HIDEICO">
-		<Text>#-Hide icons</Text>
+		<Text>#-Sembunyikan Ikon</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_CFG_CHOOSE">
-		<Text>Camera/Video</Text>
+		<Text>Kamera/Video</Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_NORMAL">
 		<Text>Normal</Text>
@@ -185,40 +185,40 @@
 		<Text>Negative</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_COLOR_RED">
-		<Text>Red</Text>
+		<Text>Merah</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_COLOR_GREEN">
-		<Text>Green</Text>
+		<Text>Hijau</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_MSG_NOCAMERA">
-		<Text>No Camera</Text>
+		<Text>Matikan Kamera</Text>
 	</STRING>
 	<STRING Id="1065" Name="IDS_FRAME">
-		<Text>Frame</Text>
+		<Text>Bingkai</Text>
 	</STRING>
 	<STRING Id="1066" Name="IDS_MSG_NOSDCARD">
-		<Text>Insert memory card</Text>
+		<Text>Masukan Kartu Memori</Text>
 	</STRING>
 	<STRING Id="1067" Name="IDS_CAPTURE_SIZE_TITLE">
-		<Text>{ Size }</Text>
+		<Text>{ Ukuran }</Text>
 	</STRING>
 	<STRING Id="1068" Name="IDS_DONE">
-		<Text>Done</Text>
+		<Text>Selesai</Text>
 	</STRING>
 	<STRING Id="1069" Name="IDS_MSG_NOMEMORY">
-		<Text>No enough memory</Text>
+		<Text>Memory Penuh</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MSG_WAITING">
-		<Text>Waiting</Text>
+		<Text>Menunggu</Text>
 	</STRING>
 	<String Id="1071" Name="IDS_TONE_SHUTTER1">
-		<Text>Shutter1</Text>
+		<Text>Bidikan1</Text>
 	</String>
 	<String Id="1072" Name="IDS_TONE_SHUTTER2">
-		<Text>Shutter2</Text>
+		<Text>Bidikan2</Text>
 	</String>
 	<String Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
-		<Text>Capture failed</Text>
+		<Text>Bidikan Gagal</Text>
 	</String>
 </Strings>
 <Dialogs>

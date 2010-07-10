@@ -2,43 +2,43 @@
 <BREWRes Name="brickattack" VERSION="1">
 	<Strings Encoding="ISOLATIN1">
 		<STRING Id="1" Name="IDC_RESUME">
-			<Text>Rangkuman</Text>
+			<Text>Resume</Text>
 		</STRING>
 		<STRING Id="2" Name="IDC_NEW_GAME">
-			<Text>Permainan baru</Text>
+			<Text>Baru</Text>
 		</STRING>
 		<STRING Id="3" Name="IDC_EXIT">
-			<Text>Keluar  </Text>
+			<Text>TUtup</Text>
 		</STRING>
 		<STRING Id="5" Name="IDS_NEXT_SCREEN">
-			<Text>berhasil</Text>
+			<Text>Kerja yang bagus!</Text>
 		</STRING>
 		<STRING Id="6" Name="IDS_PAUSED">
-			<Text>- Jeda -</Text>
+			<Text>- Berhenti sebentar -</Text>
 		</STRING>
 		<STRING Id="7" Name="IDS_NEXT_BALL">
 			<Text>Coba lagi</Text>
 		</STRING>
 		<STRING Id="8" Name="IDS_GAME_OVER">
-			<Text>GAME OVER</Text>
+			<Text>Permainan Selesai</Text>
 		</STRING>
 		<STRING Id="9" Name="IDS_WELCOME">
-			<Text>Pedal Kiri</Text>
+			<Text>  Dayung kiri</Text>
 		</STRING>
 		<STRING Id="10" Name="IDS_WELCOME_R">
-			<Text>Pedal Kanan</Text>
+			<Text>  Dayung kanan</Text>
 		</STRING>
 		<STRING Id="11" Name="IDS_WELCOME_P">
-			<Text>Tunda permainan  </Text>
+			<Text>  OK/Jedah Jelas</Text>
 		</STRING>
 		<STRING Id="12" Name="IDS_SCORE">
-			<Text>Skor = %d</Text>
+			<Text>Nilai = %d</Text>
 		</STRING>
 		<STRING Id="13" Name="IDS_TURNS">
-			<Text>Turns = %d</Text>
+			<Text>Giliran = %d</Text>
 		</STRING>
 		<STRING Id="14" Name="IDS_HI_SCORES">
-			<Text>-Nilai Tertinggi-</Text>
+			<Text>- Nilai tertinggi -</Text>
 		</STRING>
 		<STRING Id="15" Name="IDS_NUM">
 			<Text>%d</Text>

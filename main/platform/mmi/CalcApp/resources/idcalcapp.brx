@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="calcapp" VERSION="1">
 	<Strings Encoding="ISOLATIN1">
 		<STRING Id="1" Name="IDS_OVERFLOW">
-			<Text>Kelebihan</Text>
+			<Text>Melimpah</Text>
 		</STRING>
 		<STRING Id="3" Name="IDC_ADD">
 			<Text>+</Text>
@@ -14,7 +14,7 @@
 			<Text>=</Text>
 		</STRING>
 		<STRING Id="6" Name="IDC_MUL">
-			<Text>*</Text>
+			<Text>x</Text>
 		</STRING>
 		<STRING Id="7" Name="IDC_DIV">
 			<Text>÷</Text>
@@ -44,16 +44,16 @@
 			<Text>C</Text>
 		</STRING>
 		<STRING Id="16" Name="IDS_AMOUNT">
-			<Text>Jumlah Tagihan</Text>
+			<Text>Bill jumlah</Text>
 		</STRING>
 		<STRING Id="17" Name="IDS_TIP">
-			<Text>Jumlah Tip</Text>
+			<Text>Tip jumlah</Text>
 		</STRING>
 		<STRING Id="18" Name="IDS_PERCENT">
 			<Text>%</Text>
 		</STRING>
 		<STRING Id="19" Name="IDS_RATE">
-			<Text>Pilih Tarif</Text>
+			<Text>Pilih rate:</Text>
 		</STRING>
 		<STRING Id="20" Name="IDC_RATE15">
 			<Text>0.15</Text>
@@ -71,28 +71,28 @@
 			<Text>0.05</Text>
 		</STRING>
 		<STRING Id="25" Name="IDC_RATEOTHER">
-			<Text>&lt;Lain-lain&gt;</Text>
+			<Text>&lt;Other&gt;</Text>
 		</STRING>
 		<STRING Id="26" Name="IDS_BILL">
-			<Text>Tagihan:</Text>
+			<Text>Bill:</Text>
 		</STRING>
 		<STRING Id="27" Name="IDS_TIPDESC">
 			<Text>Tip:</Text>
 		</STRING>
 		<STRING Id="28" Name="IDS_TOTAL">
-			<Text>Total</Text>
+			<Text>Total:</Text>
 		</STRING>
 		<STRING Id="29" Name="IDC_OK">
 			<Text>OK</Text>
 		</STRING>
 		<STRING Id="30" Name="IDC_NEXT">
-			<Text>Selanjutnya</Text>
+			<Text>Berikutnya</Text>
 		</STRING>
 		<STRING Id="31" Name="IDS_ZEROTIP">
 			<Text>0</Text>
 		</STRING>
 		<STRING Id="32" Name="IDC_SPLIT">
-			<Text>Dipecah</Text>
+			<Text>Pisah</Text>
 		</STRING>
 		<STRING Id="34" Name="IDC_DONE">
 			<Text>Selesai</Text>
@@ -104,16 +104,16 @@
 			<Text>Tamu:</Text>
 		</STRING>
 		<STRING Id="37" Name="IDS_SPLITBILL">
-			<Text>Anda Bayar:</Text>
+			<Text>Anda bayar:</Text>
 		</STRING>
 		<STRING Id="38" Name="IDS_DIV_0">
-			<Text>Dibagi dengan 0</Text>
+			<Text>Bagi dengan 0</Text>
 		</STRING>
 		<STRING Id="100" Name="IDS_CALCTITLE">
 			<Text>Kalkulator</Text>
 		</STRING>
 		<STRING Id="200" Name="IDS_TIPTITLE">
-			<Text>Petunjuk Kalkulator</Text>
+			<Text>Tip kalkulator</Text>
 		</STRING>
 	</Strings>
 </BREWRes>

@@ -2,13 +2,13 @@
 <BREWRes Name="flddbg" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_OPTION_TITLE">
-		<Text>Options</Text>
+		<Text>Pilihan</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_VERSION_TITLE">
-		<Text>Version</Text>
+		<Text>Versi</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_PROGRAM_TITLE">
-		<Text>Programming</Text>
+		<Text>Pemrograman</Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_DEBUG_TITLE">
 		<Text>Debug</Text>
@@ -17,7 +17,7 @@
 		<Text>SW Ver: </Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_PRL_VERSION">
-		<Text>PRL Vers</Text>
+		<Text>PRL vers</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_ESN">
 		<Text>ESN </Text>
@@ -32,67 +32,67 @@
 		<Text>Debug Screen</Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_VPN3_START">
-		<Text>VPN3 Start</Text>
+		<Text>Mulai VPN3</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_ERRORS">
-		<Text>Errors</Text>
+		<Text>Kesalahan</Text>
 	</STRING>
 	<STRING Id="13" Name="IDS_CLR_ERR">
-		<Text>Clear Errors</Text>
+		<Text>Hapus Kesalahan</Text>
 	</STRING>
 	<STRING Id="14" Name="IDS_DATA_DM">
-		<Text>Data/DM</Text>
+		<Text>Data / DM</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_SMS_MO_SO">
 		<Text>SMS MO SO</Text>
 	</STRING>
 	<STRING Id="16" Name="IDS_NEXT_SK">
-		<Text>Next</Text>
+		<Text>Berikutnya</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_DONE_SK">
-		<Text>Done</Text>
+		<Text>Selesai</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_SMSMO_SO_NONE">
-		<Text>None</Text>
+		<Text>Tidak ada</Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_OK">
-		<Text> Ok </Text>
+		<Text>Oke</Text>
 	</STRING>
 	<STRING Id="20" Name="IDS_DIAG">
-		<Text>Diagnostic</Text>
+		<Text>Diagnostik</Text>
 	</STRING>
 	<STRING Id="21" Name="IDS_DATA_19200">
-		<Text>19200 bps Data</Text>
+		<Text>19.200 bps Data</Text>
 	</STRING>
 	<STRING Id="22" Name="IDS_DATA_38400">
-		<Text>38400 bps Data</Text>
+		<Text>38.400 bps Data</Text>
 	</STRING>
 	<STRING Id="23" Name="IDS_DATA_57600">
-		<Text>57600 bps Data</Text>
+		<Text>57.600 bps Data</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_DATA_115200">
-		<Text>115200 bps Data</Text>
+		<Text>115.200 bps Data</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_CANCEL">
-		<Text>            Cancel   </Text>
+		<Text>Membatalkan</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_RFCAL_VER">
-		<Text>RF Cal Version: </Text>
+		<Text>RF Cal Versi:</Text>
 	</STRING>
 	<STRING Id="27" Name="IDS_RFCAL_DATE">
-		<Text>RF Cal Date: </Text>
+		<Text>RF Cal Tanggal:</Text>
 	</STRING>
 	<STRING Id="28" Name="IDS_VOICE_PRIVACY">
-		<Text>Voice Privacy</Text>
+		<Text>Privasi suara</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_VP_STANDARD">
-		<Text>Standard</Text>
+		<Text>Standar</Text>
 	</STRING>
 	<STRING Id="30" Name="IDS_VP_ENHANCED">
 		<Text>Enhanced</Text>
 	</STRING>
 	<STRING Id="31" Name="IDS_GIGATEST">
-		<Text>GIGA Test</Text>
+		<Text>Uji GIGA</Text>
 	</STRING>
 	<STRING Id="32" Name="IDS_MMC">
 		<Text>MMC</Text>
@@ -101,52 +101,52 @@
 		<Text>MMC Download</Text>
 	</STRING>
 	<STRING Id="34" Name="IDS_MMC_FORMAT">
-		<Text>MMC Format</Text>
+		<Text>Format MMC</Text>
 	</STRING>
 	<STRING Id="35" Name="IDS_NO_CARD">
-		<Text>No Card !</Text>
+		<Text>Kartu Tidak!</Text>
 	</STRING>
 	<STRING Id="36" Name="IDS_SUCCESSFUL">
-		<Text>Operation was successful !</Text>
+		<Text>Operasi berhasil!</Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_FAILED">
-		<Text>Operation failed !</Text>
+		<Text>Operasi gagal!</Text>
 	</STRING>
 	<STRING Id="38" Name="IDS_FORMATTING">
-		<Text>Formatting...</Text>
+		<Text>Memformat ...</Text>
 	</STRING>
 	<STRING Id="39" Name="IDS_CLEAR_FPLMN">
-		<Text>Clear FPLMN</Text>
+		<Text>Hapus FPLMN</Text>
 	</STRING>
 	<STRING Id="40" Name="IDS_FPLMN_CLEARING">
-		<Text>Clearing FPLMN... Wait</Text>
+		<Text>Kliring FPLMN ... Tunggu</Text>
 	</STRING>
 	<STRING Id="41" Name="IDS_ERROR">
-		<Text>Error! Unable to perform the requested operation</Text>
+		<Text>Kesalahan! Tidak dapat melakukan operasi yang diminta</Text>
 	</STRING>
 	<STRING Id="42" Name="IDS_YES_TXT">
-		<Text>Yes</Text>
+		<Text>Ya</Text>
 	</STRING>
 	<STRING Id="43" Name="IDS_NO_TXT">
-		<Text>No</Text>
+		<Text>Tidak</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_QUIT">
-		<Text>Quit</Text>
+		<Text>Berhenti</Text>
 	</STRING>
 	<STRING Id="45" Name="IDS_AMR_PREF">
-		<Text>AMR Preference</Text>
+		<Text>AMR Preferensi</Text>
 	</STRING>
 	<STRING Id="46" Name="IDS_ON">
-		<Text>On</Text>
+		<Text>Pada</Text>
 	</STRING>
 	<STRING Id="47" Name="IDS_OFF">
-		<Text>Off</Text>
+		<Text>Lepas</Text>
 	</STRING>
 	<STRING Id="48" Name="IDS_SSL_TEST">
-		<Text>SSL Tests</Text>
+		<Text>SSL Tes</Text>
 	</STRING>
 	<STRING Id="49" Name="IDS_SSL_HTTP">
-		<Text>SSL HTTP</Text>
+		<Text>HTTP SSL</Text>
 	</STRING>
 	<STRING Id="50" Name="IDS_SSL_FUNCT">
 		<Text>SSL Funct</Text>
@@ -155,10 +155,10 @@
 		<Text>SSL Multi</Text>
 	</STRING>
 	<STRING Id="52" Name="IDS_CLR_ERR_LOG">
-		<Text>Clear Error Log ?</Text>
+		<Text>Hapus Kesalahan Log?</Text>
 	</STRING>
 	<STRING Id="53" Name="IDS_CLEAR_EFS">
-		<Text>Clear EFS ?</Text>
+		<Text>Hapus EFS?</Text>
 	</STRING>
 	<STRING Id="54" Name="IDS_SET_SMSMO_SO">
 		<Text>Set SMS MO SO</Text>
@@ -173,31 +173,31 @@
 		<Text>Set DM mode ?</Text>
 	</STRING>
 	<STRING Id="58" Name="IDS_TCALL_N_13K">
-		<Text>New 13K Markov</Text>
+		<Text>Baru 13k Markov</Text>
 	</STRING>
 	<STRING Id="59" Name="IDS_TCALL_N_8K">
-		<Text>New 8K Markov</Text>
+		<Text>Baru 8K Markov</Text>
 	</STRING>
 	<STRING Id="60" Name="IDS_TCALL_13K_LOOP">
-		<Text>13K Loopback</Text>
+		<Text>13k Loopback</Text>
 	</STRING>
 	<STRING Id="61" Name="IDS_TCALL_8K_LOOP">
 		<Text>8K Loopback</Text>
 	</STRING>
 	<STRING Id="62" Name="IDS_SHOW_DBG_SCRN">
-		<Text>Show Debug Screen ?</Text>
+		<Text>Tampilkan Debug Screen?</Text>
 	</STRING>
 	<STRING Id="63" Name="IDS_SSL_LONG">
 		<Text>SSL Long</Text>
 	</STRING>
 	<STRING Id="64" Name="IDS_CLEARING_TXT">
-		<Text>Clearing...</Text>
+		<Text>Kliring ...</Text>
 	</STRING>
 	<STRING Id="65" Name="IDS_CLR_EFS">
-		<Text>Clear EFS</Text>
+		<Text>Hapus EFS</Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_WRITE_ERROR">
-		<Text>Write Error!  code=%d</Text>
+		<Text>Write Error! kode =% d</Text>
 	</STRING>
 	<STRING Id="67" Name="IDS_SECAPI_PKX">
 		<Text>SECAPI PKX</Text>
@@ -206,10 +206,10 @@
 		<Text>SECAPI ENC</Text>
 	</STRING>
 	<STRING Id="69" Name="IDS_CONTACTIMPORT">
-		<Text>Import Contacts</Text>
+		<Text>Impor Kontak</Text>
 	</STRING>
 	<STRING Id="70" Name="IDS_CONTACTEXPORT">
-		<Text>Export Contacts</Text>
+		<Text>Ekspor Kontak</Text>
 	</STRING>
 	<STRING Id="71" Name="IDS_SECAPI_HSH">
 		<Text>SECAPI HSH</Text>
@@ -218,34 +218,34 @@
 		<Text>SEC Crypto</Text>
 	</STRING>
 	<STRING Id="73" Name="IDS_SEC_CUSTOM">
-		<Text>SEC Custom</Text>
+		<Text>Custom SEC</Text>
 	</STRING>
 	<STRING Id="74" Name="IDS_SECURITY_SERVICES">
-		<Text>Security Services</Text>
+		<Text>Layanan Keamanan</Text>
 	</STRING>
 	<STRING Id="75" Name="IDS_SECURITY_TESTS">
-		<Text>Security Tests</Text>
+		<Text>Tes Keamanan</Text>
 	</STRING>
 	<STRING Id="76" Name="IDS_SSL_TESTS">
-		<Text>SSL Tests</Text>
+		<Text>SSL Tes</Text>
 	</STRING>
 	<STRING Id="77" Name="IDS_SEC_TESTS">
-		<Text>Sec Tests</Text>
+		<Text>Tes Sec</Text>
 	</STRING>
 	<STRING Id="78" Name="IDS_DRM_TESTS">
-		<Text>DRM Tests</Text>
+		<Text>Tes DRM</Text>
 	</STRING>
 	<STRING Id="79" Name="IDS_VPN_TESTS">
-		<Text>VPN Tests</Text>
+		<Text>VPN Tes</Text>
 	</STRING>
 	<STRING Id="80" Name="IDS_DRM_ADD_RO">
-		<Text>DRM Add RO</Text>
+		<Text>DRM Tambahkan RO</Text>
 	</STRING>
 	<STRING Id="81" Name="IDS_DRM_READ_RO">
-		<Text>DRM Read RO</Text>
+		<Text>DRM Baca RO</Text>
 	</STRING>
 	<STRING Id="82" Name="IDS_DRM_USE_RO">
-		<Text>DRM Use RO</Text>
+		<Text>Gunakan DRM RO</Text>
 	</STRING>
 	<STRING Id="83" Name="IDS_DRM_DEL_RO">
 		<Text>DRM Del RO</Text>
@@ -254,31 +254,31 @@
 		<Text>DRM DelARO</Text>
 	</STRING>
 	<STRING Id="85" Name="IDS_VPN1_START">
-		<Text>VPN1 Start</Text>
+		<Text>Mulai VPN1</Text>
 	</STRING>
 	<STRING Id="86" Name="IDS_VPN2_START">
-		<Text>VPN2 Start</Text>
+		<Text>Mulai VPN2</Text>
 	</STRING>
 	<STRING Id="87" Name="IDS_VPN_STOP">
-		<Text>VPN Stop</Text>
+		<Text>VPN Berhenti</Text>
 	</STRING>
 	<STRING Id="88" Name="IDS_TEST_CALL">
-		<Text>Test Call</Text>
+		<Text>Uji Panggil</Text>
 	</STRING>
 	<STRING Id="89" Name="IDS_JPEG_DECODE">
-		<Text>Decode JPEG File</Text>
+		<Text>File JPEG decode</Text>
 	</STRING>
 	<STRING Id="90" Name="IDS_CHOOSE_FILE">
-		<Text>Choose JPEG File</Text>
+		<Text>Pilih File JPEG</Text>
 	</STRING>
 	<STRING Id="91" Name="IDS_CALTEST">
-		<Text>Calmon Test</Text>
+		<Text>Uji Calmon</Text>
 	</STRING>
 	<STRING Id="92" Name="IDS_RATS_TITLE">
 		<Text>Remote API Test Suite</Text>
 	</STRING>
 	<STRING Id="93" Name="IDS_SERVER_UP">
-		<Text>Local Server</Text>
+		<Text>Server Lokal</Text>
 	</STRING>
 	<STRING Id="94" Name="IDS_CLIENT_UP">
 		<Text>Remote Client</Text>
@@ -287,19 +287,19 @@
 		<Text>Set Remote IP</Text>
 	</STRING>
 	<STRING Id="96" Name="IDS_RUN_TESTS">
-		<Text>Run Tests</Text>
+		<Text>Jalankan Tes</Text>
 	</STRING>
 	<STRING Id="97" Name="IDS_ENTER_TEST">
-		<Text>Enter Test to Run</Text>
+		<Text>Uji Enter untuk Jalankan</Text>
 	</STRING>
 	<STRING Id="98" Name="IDS_LOCAL_IP">
-		<Text>jg del</Text>
+		<Text>del jg</Text>
 	</STRING>
 	<STRING Id="99" Name="IDS_HDR_INFO">
 		<Text>HDR Debug Screen</Text>
 	</STRING>
 	<STRING Id="100" Name="IDS_VOICE_DEBUG">
-		<Text>Voice Debug</Text>
+		<Text>Suara Debug</Text>
 	</STRING>
 	<STRING Id="101" Name="IDS_MODEL">
 		<Text>Model</Text>
@@ -308,13 +308,13 @@
 		<Text>Del</Text>
 	</STRING>
 	<STRING Id="103" Name="IDS_BACK">
-		<Text>            Back</Text>
+		<Text>Kembali</Text>
 	</STRING>
 	<STRING Id="104" Name="IDS_HW_VERSION" Encoding="Unicode">
-		<Text>HW Ver: </Text>
+		<Text>HW Ver:</Text>
 	</STRING>
 	<String Id="201" Name="IDS_BREWSETTUBG_TITLE">
-		<Text>Brew Settings</Text>
+		<Text>Pengaturan Brew</Text>
 	</String>
 	<String Id="202" Name="IDS_CARRIER_ID">
 		<Text>Carrier ID</Text>
@@ -326,13 +326,13 @@
 		<Text>DL Flags</Text>
 	</String>
 	<String Id="205" Name="IDS_AUTH_POLICY">
-		<Text>Auth Policy</Text>
+		<Text>Kebijakan auth</Text>
 	</String>
 	<String Id="206" Name="IDS_PRIVACY_POLICY">
-		<Text>Privacy Policy</Text>
+		<Text>Kebijakan Privasi</Text>
 	</String>
 	<String Id="207" Name="IDS_PRIMARY_DNS">
-		<Text>Primary DNS</Text>
+		<Text>Primer DNS</Text>
 	</String>
 	<String Id="208" Name="IDS_SECONDARY_DNS">
 		<Text>Secondary DNS</Text>
@@ -344,13 +344,58 @@
 		<Text>User Password</Text>
 	</String>
 	<String Id="211" Name="IDS_PRIMARY_SERVER">
-		<Text>Primary Server</Text>
+		<Text>Server Primer</Text>
 	</String>
 	<String Id="212" Name="IDS_SECONDARY_SERVER">
 		<Text>Secondary Server</Text>
 	</String>
 	<String Id="213" Name="IDS_BREWSETSCRN">
 		<Text>BrewSetting Screen</Text>
+	</String>
+	<String Id="1001" Name="IDS_AUTH_POLICY_NONE" Encoding="Unicode">
+		<Text>Tidak ada</Text>
+	</String>
+	<String Id="1002" Name="IDS_AUTH_POLICY_SID" Encoding="Unicode">
+		<Text>SID</Text>
+	</String>
+	<String Id="1003" Name="IDS_AUTH_POLICY_TEXT" Encoding="Unicode">
+		<Text>Teks</Text>
+	</String>
+	<String Id="1004" Name="IDS_AUTH_POLICY_NUM" Encoding="Unicode">
+		<Text>Num</Text>
+	</String>
+	<String Id="1005" Name="IDS_PRIVACY_POLICY_BREW" Encoding="Unicode">
+		<Text>BREW</Text>
+	</String>
+	<String Id="1006" Name="IDS_PRIVACY_POLICY_CARRIER" Encoding="Unicode">
+		<Text>Pembawa</Text>
+	</String>
+	<String Id="1007" Name="IDS_PRIVACY_POLICY_BREW_AND_CARRIER" Encoding="Unicode">
+		<Text>BREW dan Carrier</Text>
+	</String>
+	<String Id="1008" Name="IDS_PRIVACY_POLICY_BREW_OR_CARRIER" Encoding="Unicode">
+		<Text>BREW atau Carrier</Text>
+	</String>
+	<String Id="1009" Name="IDS_STRING_AUTH_POLICY" Encoding="Unicode">
+		<Text>Kebijakan auth</Text>
+	</String>
+	<String Id="1010" Name="IDS_STRING_PRIVACY_POLICY" Encoding="Unicode">
+		<Text>Kebijakan Privasi</Text>
+	</String>
+	<String Id="1011" Name="IDS_STRING_NET_LOCK" Encoding="Unicode">
+		<Text>bersih kunci</Text>
+	</String>
+	<String Id="1012" Name="IDS_STRING_NET_LOCK_FLAG" Encoding="Unicode">
+		<Text>Diaktifkan bersih kunci</Text>
+	</String>
+	<String Id="1013" Name="IDS_STRING_NET_LOCK_MNC" Encoding="Unicode">
+		<Text>MNC</Text>
+	</String>
+	<String Id="1014" Name="IDS_STRING_NET_LOCK_MCC" Encoding="Unicode">
+		<Text>pks</Text>
+	</String>
+	<String Id="1015" Name="IDS_STRING_NET_LOCK_SID" Encoding="Unicode">
+		<Text>sid</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -656,22 +701,18 @@
 	</Dialog>
 	<Dialog Id="34" Name="IDD_AUTHPOLICY_DIALOG" Focus="7051">
 		<Controls>
-			<Text Id="7051" Name="IDC_AUTHPOLICY_TEXT">
+			<Menu Id="7051" Name="IDC_MENU_AUTH_POLICY">
 				<TitleID>IDS_AUTH_POLICY</TitleID>
-				<Items/></Text>
-			<SoftKey Id="7053" Name="IDC_AUTHPOLICY_SOFTKEY">
 				<Items/>
-			</SoftKey>
+			</Menu>
 		</Controls>
 	</Dialog>
-	<Dialog Id="35" Name="IDD_PRIVACYPOLICY_DIALOG" Focus="7054">
+	<Dialog Id="35" Name="IDD_PRIVACYPOLICY_DIALOG" Focus="7043">
 		<Controls>
-			<Text Id="7054" Name="IDC_PRIVACYPOLICY_TEXT">
-				<TitleID>IDS_PRIVACY_POLICY</TitleID>
-				<Items/></Text>
-			<SoftKey Id="7055" Name="IDC_PRIVACYPOLICY_SOFTKEY">
+			<Menu Id="7043" Name="IDC_MENU_PRIVACY_POLICY">
+				<TitleID>IDS_STRING_PRIVACY_POLICY</TitleID>
 				<Items/>
-			</SoftKey>
+			</Menu>
 		</Controls>
 	</Dialog>
 	<Dialog Id="36" Name="IDD_PRIMARYDNS_DIALOG" Focus="7057">
@@ -730,6 +771,54 @@
 				<TitleID>IDS_SECONDARY_SERVER</TitleID>
 				<Items/></Text>
 			<SoftKey Id="7062" Name="IDC_SECONDARY_SERVER_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="42" Name="IDD_NET_LOCK_DIALOG" Focus="7053">
+		<Controls>
+			<Menu Id="7053" Name="IDC_NET_LOCK_MENU">
+				<TitleID>IDS_STRING_NET_LOCK</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="43" Name="IDD_LOCK_DIALOG" Focus="7054">
+		<Controls>
+			<Text Id="7054" Name="IDC_TEXT_LOCK_FLAG">
+				<TitleID>IDS_STRING_NET_LOCK_FLAG</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7055" Name="IDC_SOFTKEY_LOCK_FLAG">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="44" Name="IDD_MNC_DIALOG" Focus="7064">
+		<Controls>
+			<Text Id="7064" Name="IDC_TEXT_MNC">
+				<TitleID>IDS_STRING_NET_LOCK_MNC</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7065" Name="IDC_SOFTKEY_MNC">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="45" Name="IDD_MCC_DIALOG" Focus="7066">
+		<Controls>
+			<Text Id="7066" Name="IDC_TEXT_MCC">
+				<TitleID>IDS_STRING_NET_LOCK_MCC</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7067" Name="IDC_SOFTKEY_MCC">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="46" Name="IDD_SID_DIALOG" Focus="7068">
+		<Controls>
+			<Text Id="7068" Name="IDC_TEXT_SID">
+				<TitleID>IDS_STRING_NET_LOCK_SID</TitleID>
+				<Items/></Text>
+			<SoftKey Id="7069" Name="IDC_SOFTKEY_SID">
 				<Items/>
 			</SoftKey>
 		</Controls>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="idapplication" VERSION="1">
+<BREWRes Name="application" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
-		<Text>Application</Text>
+		<Text>Aplikasi</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_APPLICATION_TITLE_1">
 		<Text>APPManger</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_APPLICATION_TITLE_2">
-		<Text>Timer</Text>
+		<Text>Penanda Waktu</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_APPLICATION_TITLE_3">
 		<Text>StopWatch</Text>
@@ -17,28 +17,22 @@
 		<Text>Alarm</Text>
 	</STRING>
 	<String Id="1015" Name="IDS_APPLICATION_TITLE_5">
-		<Text>Converter</Text>
+		<Text>Konverter</Text>
 	</String>
 	<String Id="1016" Name="IDS_APPLICATION_TITLE_6">
 		<Text>WorldTime</Text>
 	</String>
 	<String Id="1017" Name="IDS_APPLICATION_TITLE_7">
-		<Text>Recorder</Text>
+		<Text>Perekam</Text>
 	</String>
 	<String Id="1018" Name="IDS_APPLICATION_TITLE_8">
-		<Text>Calendar</Text>
+		<Text>Kalender</Text>
 	</String>
 	<String Id="1019" Name="IDS_APPLICATION_TITLE_9">
-		<Text>Game</Text>
+		<Text>Permainan</Text>
 	</String>
 	<String Id="1020" Name="IDS_APPLICATION_TITLE_10">
-		<Text>Calculator</Text>
-	</String>
-	<String Id="1021" Name="IDS_APPLICATION_TITLE_11">
-		<Text>Camera</Text>
-	</String>
-	<String Id="1022" Name="IDS_APPLICATION_TITLE_12">
-		<Text>FM</Text>
+		<Text>Kalkulator</Text>
 	</String>
 </Strings>
 <Dialogs>
