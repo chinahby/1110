@@ -3114,7 +3114,7 @@ static int CContApp_GetOneDial( CContApp   *pMe,
     
     wIndex = (uint16)WSTRTOFLOAT(pSpeedDial);
     
-    FARF(ADDR, ("Get Onedial %s %d", pSpeedDial, wIndex));
+    MSG_FATAL("Get Onedial %s %d", pSpeedDial, wIndex,0);
     
     // No index 0 in one dial
     if(wIndex == 0)
@@ -3138,7 +3138,7 @@ static int CContApp_GetOneDial( CContApp   *pMe,
         // No onedial data
         if(pMe->m_pOneDialBuf[0] == ONEDIAL_NULL)
         {
-            FARF(ADDR, ("Failed to get ONEDIAL %d", wIndex));
+            MSG_FATAL("Failed to get ONEDIAL %d", wIndex,0,0);
             return EFAILED;
         }
 

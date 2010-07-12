@@ -943,7 +943,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
     
     ASSERT(pMe != NULL); 
 
-    ERR("BuildEditMenu",0,0,0);
+    MSG_FATAL("CContApp_BuildEditMenuMenu Start",0,0,0);
      // Check Parameter
     if(!pMenuCtl)
     {
@@ -1235,6 +1235,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                 // group
                 AECHAR pGroup[MAX_INPUT_NAME_EN + 1];
                 pGroup[0] = ONEDIAL_NULL;
+                MSG_FATAL("pGroup[0] = ONEDIAL_NULL",0,0,0);
                 switch(pMe->m_nGroupCat)
                 {
                     case AEE_ADDR_CAT_VIP:
@@ -1567,7 +1568,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 
     ASSERT(pMe != NULL); 
 
-    FARF(ADDR, ("Build one dial menu"));
+    MSG_FATAL("CContApp_BuildOneDialMenu Start",0,0,0);
 
     if(pMenuCtl == NULL)
     {
@@ -1595,7 +1596,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
                                           pMe->m_pOneDialBuf,
                                           sizeof(pMe->m_pOneDialBuf)))
         {
-            FARF(ADDR, ("Failed to get %d onedial", i));
+            MSG_FATAL("Failed to get %d onedial", i,0,0);
             continue;
         }
         
@@ -1603,6 +1604,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         ai.wItemID = (uint16)i;
         if(pMe->m_pOneDialBuf[0] == ONEDIAL_NULL)
         {
+            MSG_FATAL("pMe->m_pOneDialBuf[0] == ONEDIAL_NULL",0,0,0);
             //ERR("pMe->m_szBuf == NULL", 0, 0, 0);
             ISHELL_LoadResString(pMe->m_pShell, CONTAPP_RES_FILE_LANG, IDS_ONEDIAL_NULL, wszNull, sizeof(wszNull));
             STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
@@ -1617,10 +1619,12 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         }
         else
         {
+            MSG_FATAL("pMe->m_pOneDialBuf[0] != ONEDIAL_NULL",0,0,0);
             if(SUCCESS != CContApp_GetNameByNum(pMe, 
                                      pMe->m_pOneDialBuf, 
                                      &pContInfo))
             {
+                MSG_FATAL("SUCCESS != CContApp_GetNameByNum",0,0,0);
                 //当已经被设置的号码字段被删除后会获取不到姓名，直接添加"未设置"
                 STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
                 WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL1+2));
@@ -1641,7 +1645,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             
             if(pContInfo.pName == NULL)
             {
-                ERR("pContInfo.pName == NULL", 0, 0, 0);
+                MSG_FATAL("pContInfo.pName == NULL", 0, 0, 0);
                 STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
                 WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL1+2));
 //#if defined FEATURE_CARRIER_THAILAND_HUTCH
@@ -1654,6 +1658,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             }
             else
             {
+                MSG_FATAL("pContInfo.pName != NULL", 0, 0, 0);
                 STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
                 WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL1+2));
 //#if defined FEATURE_CARRIER_THAILAND_HUTCH
@@ -3030,6 +3035,7 @@ int CContApp_BuildGroupMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     for( i = CONTCFG_GROUP1; i <= CONTCFG_GROUP6; i++)
     {
         pGroup[0] = ONEDIAL_NULL;
+        MSG_FATAL("pGroup[0] = ONEDIAL_NULL",0,0,0);
         if(SUCCESS != CContApp_GetConfig( pMe,
                                           (ContAppCFG)i,
                                           pGroup,
@@ -3335,6 +3341,7 @@ int CContApp_BuildGroupList(CContApp  *pMe, IMenuCtl  *groupList)
     for( i = CONTCFG_GROUP1; i <= CONTCFG_GROUP6; i++)
     {
         pGroup[0] = ONEDIAL_NULL;
+        MSG_FATAL("pGroup[0] = ONEDIAL_NULL",0,0,0);
         if(SUCCESS != CContApp_GetConfig( pMe,
                                           (ContAppCFG)i,
                                           pGroup,

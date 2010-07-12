@@ -2552,7 +2552,7 @@ int CContApp_GetNameByNum( CContApp   *pMe,
 #endif
     
     int nRet;
-
+    MSG_FATAL("CContApp_GetNameByNum Start",0,0,0);
     ASSERT(pMe != NULL); 
 
     if ((pNumber == NULL) || (NULL == pContInfo))
@@ -2563,6 +2563,7 @@ int CContApp_GetNameByNum( CContApp   *pMe,
     if (WSTRLEN(pNumber) <= 1)
     {
         // 小于1位的号码不查找
+        MSG_FATAL("CContApp_GetNameByNum WSTRLEN(pNumber) <= 1",0,0,0);
         return EFAILED;
     }
 
@@ -2571,6 +2572,7 @@ int CContApp_GetNameByNum( CContApp   *pMe,
                                          AEECLSID_ADDRBOOK,
                                          (void **)&pAddr))
     {
+        MSG_FATAL("Create IAddrbokk instance Failed",0,0,0);
         return EFAILED;
     }
     
@@ -2611,7 +2613,7 @@ int CContApp_GetNameByNum( CContApp   *pMe,
         {
             FREEIF(info.szName);
             FREEIF(info.szNumber);
-            return EFAILED;
+           // return EFAILED;
         }
         
         nRet = IADDRBOOK_GetCacheinfoByNumber(pAddr, pNumber, &uiminfo, ContApp_NumberMatch);
@@ -2695,7 +2697,7 @@ int CContApp_GetNameByNum( CContApp   *pMe,
     FREEIF(uiminfo.szName);
     FREEIF(uiminfo.szNumber);
 #endif    
-    
+   MSG_FATAL("Create CContApp_GetNameByNum End",0,0,0); 
    return nRet;
 } // CContApp_GetNameByNum
 

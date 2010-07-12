@@ -5502,6 +5502,7 @@ static NextFSMAction Handler_STATE_ONEDIAL_OPT(CContApp *pMe)
         case DLGRET_YES:
             // Clear the onedial config
             pMe->m_pOneDialBuf[0] = ONEDIAL_NULL;
+            MSG_FATAL("pMe->m_pOneDialBuf[0] = ONEDIAL_NULL",0,0,0);
             (void)CContApp_SetConfig( pMe,
                                       (ContAppCFG)pMe->m_wSelectOneDial,
                                       pMe->m_pOneDialBuf,

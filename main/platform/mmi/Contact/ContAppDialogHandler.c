@@ -2000,13 +2000,13 @@ int CContApp_DeletePhoneFld(CContApp *pMe, uint16 wContID, uint16 idx)
                                       pMe->m_pOneDialBuf,
                                       sizeof(pMe->m_pOneDialBuf)))
             {
-                ERR("Get Config Failed~",0,0,0);
+                MSG_FATAL("Get Config Failed~",0,0,0);
                 continue;
             }
             // 存在单键拨号则需要修改单键拨号
             if(WSTRCMP(pMe->m_tmpBuf, pMe->m_pOneDialBuf) == 0)
             {
-                ERR("==========",0,0,0);
+                MSG_FATAL("pMe->m_pOneDialBuf[0] = ONEDIAL_NULL",0,0,0);
                 // Clear the onedial config
                 pMe->m_pOneDialBuf[0] = ONEDIAL_NULL;
                 (void)CContApp_SetConfig( pMe,
@@ -2099,7 +2099,7 @@ int CContApp_DeleteCont(CContApp *pMe, uint16 wContID)
                                       pMe->m_pOneDialBuf,
                                       sizeof(pMe->m_pOneDialBuf)))
         {
-            ERR("Get Config Failed~",0,0,0);
+            MSG_FATAL("Get Config Failed~",0,0,0);
             continue;
         }
         
@@ -2107,14 +2107,14 @@ int CContApp_DeleteCont(CContApp *pMe, uint16 wContID)
                                  pMe->m_pOneDialBuf, 
                                  &pContInfo))
         {
-            ERR("Get Name Failed~",0,0,0);
+            MSG_FATAL("Get Name Failed~",0,0,0);
             continue;
         }
 
         // 存在单键拨号则清除单键拨号
         if(WSTRCMP(pDelContInfo.pName, pContInfo.pName) == 0)
         {
-            ERR("==========",0,0,0);
+            MSG_FATAL("pMe->m_pOneDialBuf[0] = ONEDIAL_NULL",0,0,0);
             // Clear the onedial config
             pMe->m_pOneDialBuf[0] = ONEDIAL_NULL;
             (void)CContApp_SetConfig( pMe,
@@ -5471,7 +5471,7 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                                                               pMe->m_pOneDialBuf,
                                                               sizeof(pMe->m_pOneDialBuf)))
                                     {
-                                        ERR("Get Config Failed~",0,0,0);
+                                        MSG_FATAL("Get Config Failed~",0,0,0);
                                         continue;
                                     }
 
@@ -12305,6 +12305,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
             ITEXTCTL_SetMaxSize( pTextCtl,MAX_INPUT_NAME_EN);
             
             pGroup[0] = ONEDIAL_NULL;   
+            MSG_FATAL("pGroup[0] = ONEDIAL_NULL",0,0,0);
             if(SUCCESS != CContApp_GetConfig( pMe,
                                               (ContAppCFG)pMe->m_wSelectGroup,
                                               pGroup,
@@ -14058,6 +14059,7 @@ static void CContApp_SetGroupItemText(CContApp *pMe, IMenuCtl *pMenuCtl)
     int ResID, len;
     AECHAR pGroup[MAX_INPUT_NAME_EN + 1];
     pGroup[0] = ONEDIAL_NULL;
+    MSG_FATAL("pGroup[0] = ONEDIAL_NULL",0,0,0);
     switch(pMe->m_nGroupCat)
     {
         case AEE_ADDR_CAT_VIP:
@@ -14184,7 +14186,7 @@ static void CContApp_SetMenuItemText(CContApp *pMe, IMenuCtl *pMenuCtl, int sele
     AECHAR text[MAX_INPUT_ADDRESS + 1];
     
     text[0] = ONEDIAL_NULL;
-    
+    MSG_FATAL("text[0] = ONEDIAL_NULL",0,0,0);
     switch(selectEdit)
     {
         case IDI_ADDNEW_MENU_NAME:
