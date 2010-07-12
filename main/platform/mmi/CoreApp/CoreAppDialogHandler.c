@@ -36,7 +36,9 @@
 #include "Appscommon.h"
 #include "OEMRTC.h"
 //#include "AEECallList.h"
-#include "clockapps_images.brh"
+#ifdef FEATURE_VERSION_IVIO
+#include "clockapps_images_ivio.brh"
+#endif
 #if defined(FEATURE_DISP_160X128)
 #include "Appscommon_160x128.brh"
 #elif defined(FEATURE_DISP_128X128)
@@ -3306,14 +3308,16 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
                 // 获取消息数
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
+				#ifdef FEATURE_SUPPORT_ID
                 //add by yangdecai
                 temp = nNewsSMS;
-                nNewsSMS = nNewsSMS/5;
-				i = temp%5;
+                nNewsSMS = nNewsSMS/LONGSMS_MAX_PACKAGES;
+				i = temp%LONGSMS_MAX_PACKAGES;
 				if(i>0)
 				{
 					nNewsSMS ++;
 				}
+				#endif
 				
                 //add end
                 

@@ -225,8 +225,8 @@ uint8 wms_ts_decode_cdma_bd_id_ex(wms_client_bd_s_type * cl_bd_ptr,uint8 *m_data
 	int bit_pos = 0;
 	int         msg_ref = 53;
 	uint8         TempBuff[10] = {0};
-	uint8 nTolNum = cl_bd_ptr->user_data.data[5];
-	uint8 nSeqNum = cl_bd_ptr->user_data.data[2];
+	uint8 nTolNum = cl_bd_ptr->user_data.data[5]-(uint8)0x30;
+	uint8 nSeqNum = cl_bd_ptr->user_data.data[2]-(uint8)0x30;
 	uint8 Result = 0;
 	
 	if((cl_bd_ptr->user_data.data[0] != (uint8)'(')&&(cl_bd_ptr->user_data.data[6] != (uint8)')'))
@@ -236,7 +236,12 @@ uint8 wms_ts_decode_cdma_bd_id_ex(wms_client_bd_s_type * cl_bd_ptr,uint8 *m_data
     		TempBuff[i] = b_unpackb( (uint8*)cl_bd_ptr->user_data.data, bit_pos, 7 );
   		}
 	}
-	
+	if((cl_bd_ptr->user_data.data[0] == 5)&&(cl_bd_ptr->user_data.data[1] == 0)&&(cl_bd_ptr->user_data.data[2] == 3) &&(cl_bd_ptr->message_id.udh_present == TRUE))
+	{
+		MSG_FATAL("cl_bd_ptr->message_id.udh_present::::%d",cl_bd_ptr->message_id.udh_present,0,0);
+		Result = 3;
+		return Result;
+	}
     MSG_FATAL("TempBuff[0]::::%d",TempBuff[0],0,0);
     MSG_FATAL("TempBuff[1]::::%d",TempBuff[1],0,0);
     MSG_FATAL("TempBuff[2]::::%d",TempBuff[2],0,0);
@@ -1748,12 +1753,12 @@ wms_status_e_type wms_ts_encode_CDMA_bd
                         cl_bd_ptr->user_data.encoding == WMS_ENCODING_IA5)
                     {
                     	#ifdef FEATURE_SUPPORT_ID
-                        uint32 total_bits_occupied = (udhl+2)*8;
+                        uint32 total_bits_occupied = (udhl+1)*8 +1;
 						#else
 						uint32 total_bits_occupied = (udhl+1)*8;
 						#endif
                         // 计算填充位: 消息体与头部间?奶畛湮?(Septet Boundary)
-                        fill_bits = total_bits_occupied % 7;
+						fill_bits = (total_bits_occupied) % 7;
                         
                         if (fill_bits != 0)
                         {
@@ -1779,8 +1784,8 @@ wms_status_e_type wms_ts_encode_CDMA_bd
 							uint8 switch_ref = 0;
 							switch_ref = msg_ref%10;
 							raw_ts.data[0] = (uint8) '(';
-							raw_ts.data[1] = (uint8) 0x00;
-						    raw_ts.data[2] = nSeqNum;
+							raw_ts.data[1] = (uint8) '0';
+						    raw_ts.data[2] = nSeqNum+(uint8)0x30;
 							switch(switch_ref)
 								{
 									case 0:
@@ -1816,24 +1821,32 @@ wms_status_e_type wms_ts_encode_CDMA_bd
 									default:
 										break;
 								}
-							raw_ts.data[4] = (uint8) 0x00;
-							raw_ts.data[5] = nTolNum;
+							raw_ts.data[4] = (uint8) '0';
+							raw_ts.data[5] = nTolNum+(uint8)0x30;
 							raw_ts.data[6] = (uint8) ')';
 							//data_length = data_length+1;
 						}
 						#endif
                         /* Pack in the header fields */
 						#ifdef FEATURE_SUPPORT_ID
-						for (i=0; i< (data_length+1); i++, bit_pos += 8)
+						for (i=0; i< (data_length+1); i++, bit_pos += 7)
+						{
+                            b_packb(raw_ts.data[i], data, bit_pos, 7);
+							
+                        }
 						#else
 						for (i=0; i< (data_length); i++, bit_pos += 8)
-						#endif
-                        {
+						{
                             b_packb(raw_ts.data[i], data, bit_pos, 8);
                         }
+						#endif
                           
                         /* Pack in the user_data fields */
+						#ifdef FEATURE_SUPPORT_ID
+						nTep = WMS_MAX_LEN - (data_length+1);
+						#else
                         nTep = WMS_MAX_LEN - data_length;
+						#endif
                         data_length = cl_bd_ptr->user_data.data_len;
                         if (nTep >= data_length)
                         {
@@ -1842,12 +1855,23 @@ wms_status_e_type wms_ts_encode_CDMA_bd
                             {
                                 b_packb(0, data, bit_pos, fill_bits);
                                 bit_pos+=fill_bits;
+								#ifdef FEATURE_SUPPORT_ID
+								bit_pos += 7;
+								#endif
                             }
-                            
-                            for (i=0; i<data_length; i++, bit_pos += 8)
+                            #ifdef FEATURE_SUPPORT_ID
+                            for (i=0; i<data_length; i++)
+                            {
+                                b_packb(cl_bd_ptr->user_data.data[i], data, bit_pos, 8);
+								bit_pos += 8;
+								
+                            }
+							#else
+							for (i=0; i<data_length; i++, bit_pos += 8)
                             {
                                 b_packb(cl_bd_ptr->user_data.data[i], data, bit_pos, 8);
                             }
+							#endif
                             
                             bit_pos -= padding_bits;
                         }
@@ -6232,7 +6256,10 @@ wms_status_e_type  wms_ts_decode_CDMA_bd
             /* To avoid memory conflict, copy the user data to a different place.
             */
 #ifdef FEATURE_SUPPORT_ID
-            wms_ts_pack_cdma_bd_id(cl_bd_ptr,(uint8 *)m_TempData);
+			if(Result != 3)
+			{
+            	wms_ts_pack_cdma_bd_id(cl_bd_ptr,(uint8 *)m_TempData);
+			}
 #endif
             cdma_user_data = cl_bd_ptr->user_data;
             
