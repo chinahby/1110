@@ -905,29 +905,26 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
         case EVT_DIALOG_START:
             {  
                 int i;
-                for (i=1;i<=IMENUCTL_GetItemCount(pMenu);)
+                uint16 wID;
+                AECHAR pwsz[67] = {0};
+                AECHAR pstr[64] = {0};
+                AECHAR wsFmt[5] = {0};
+                
+                (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
+                for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
                 {
-                    AECHAR pwsz[67] = {0};
-                    AECHAR pstr[64] = {0};
-                    AECHAR wsFmt[5] = {0};
-    
-                    (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
-                    WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i);
+                    wID = IMENUCTL_GetItemID(pMenu, i);
+                    WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i+1);
                     
                     ISHELL_LoadResString( pMe->m_pShell,
                           APPLICATION_RES_FILE_LANG,
-                          IDS_APPLICATION_TITLE_1 + i - 1,
+                          wID,
                           pstr,
                           sizeof(pstr));
-                    
-
                     WSTRLCAT(pwsz,pstr,sizeof(pwsz));
-                    ERR("Application_ListMenuHandler::%d pwsz::%s",i,pwsz,0);
-                    {
-                        IMENUCTL_SetItemText(pMenu, IDS_APPLICATION_TITLE_1 + i - 1, NULL, NULL, pwsz);
-                    }
-                    i++;
+                    IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
                 }
+                
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
@@ -952,10 +949,17 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 case AVK_4:
                 case AVK_5:
                 case AVK_6:
+                case AVK_7:
+                case AVK_8:
+                case AVK_9:
                 case AVK_STAR:
+                case AVK_POUND:
                     {
                         int Focus = (wParam - AVK_1);
-                        StartApplet(pMe, Focus);
+                        if(Focus<IMENUCTL_GetItemCount(pMenu))
+                        {
+                            StartApplet(pMe, Focus);
+                        }
                     }
                     return TRUE;
 
@@ -971,24 +975,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             
         case EVT_COMMAND:
             pMe->m_MainSel = wParam;
-            switch (wParam)
-            {   
-                case IDS_APPLICATION_TITLE_1:
-                case IDS_APPLICATION_TITLE_2:
-                case IDS_APPLICATION_TITLE_3:
-                case IDS_APPLICATION_TITLE_4:
-                case IDS_APPLICATION_TITLE_5:
-                case IDS_APPLICATION_TITLE_6:
-				case IDS_APPLICATION_TITLE_7:
-            #if defined (FEATURE_DISP_128X128)
-                case IDS_APPLICATION_TITLE_8:
-                case IDS_APPLICATION_TITLE_9:
-				case IDS_APPLICATION_TITLE_10:
-            #endif
-				
-                    StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_1);
-                    return TRUE;
-            }
+            StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_1);
             return TRUE;
             
         default:
