@@ -1274,6 +1274,11 @@ ui_provisioning_status_type ui_return_provisioning_status(void)
   }
   else
   {
+#ifdef CUST_EDITION
+    cm_client_id_type my_cm_client_id = (cm_client_id_type) -1;
+    cm_client_init(CM_CLIENT_TYPE_UI, &my_cm_client_id);
+    ui_init_provisioning(my_cm_client_id);
+#endif
     return UI_PROVISIONING_PENDING;
   }
 }

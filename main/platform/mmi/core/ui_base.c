@@ -1860,9 +1860,10 @@ void ui_init( void )
 
 #if !defined(FEATURE_UI_DUALPROC_APPS)
 #ifndef FEATURE_MANGO_UI
+#ifndef CUST_EDITION
   //init provisioning here
   ui_init_provisioning(cm_client_id);
-
+#endif
 #if defined(FEATURE_GSTK_FDN_CC_SUPPORT)
   cm_nc_reg_with_call_control_mod(ui_nc_type_allowed_and_callcontrol_cb,
                                   ui_nc_call_control_preferences);
