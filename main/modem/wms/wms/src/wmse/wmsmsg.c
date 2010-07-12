@@ -1716,7 +1716,7 @@ wms_status_e_type wms_msg_cdma_send_sms_OTA
     memcpy( cdma_wms_msg.address.digits,
             address_ptr->digits,
             address_ptr->number_of_digits );
-
+	MSG_FATAL("wms_cm_sms_send_cdma_msg::::::::::::::111",0,0,0);
     wms_cm_sms_send_cdma_msg( (uint8*) & cdma_wms_msg );
 
 #else /* FEATURE_WMS_NO_CM_MSG2 */

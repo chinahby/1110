@@ -722,7 +722,7 @@ void wms_cm_sms_cmd_cb
 
   if( sms_cmd_err != CM_SMS_CMD_ERR_NOERR )
   {
-    MSG_HIGH("CM cmd %d failed: %d", sms_cmd, sms_cmd_err, 0 );
+    MSG_FATAL("CM cmd %d failed: %d", sms_cmd, sms_cmd_err, 0 );
     if( sms_cmd == CM_SMS_CMD_MO_MSG )
     {
       switch( sms_cmd_err )

@@ -2670,7 +2670,7 @@ static int MGExplorer_GetItemIcon(CFileIcons *pFileIcons,
 
    if(*ppFileIcon == NULL)
       *ppFileIcon = ISHELL_LoadResImage(AEE_GetShell(),
-            MEDIAGALLERY_IMAGE_RES_FILE,
+            MEDIAGALLERY_IMAGE_IVIO_RES_FILE,
             nResID);
 
    *ppIcon = *ppFileIcon;

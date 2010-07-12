@@ -293,7 +293,11 @@ static int Tetris_InitAppData( void)
 
     me->imageScore  = ISHELL_LoadResImage( me->a.m_pIShell, TETRIS_RES_FILE_LANGUAGE, IDI_SCORE);
     me->imageSpeed  = ISHELL_LoadResImage( me->a.m_pIShell, TETRIS_RES_FILE_LANGUAGE, IDI_SPEED);
+	#ifdef FEATURE_VERSION_IVIO
+	me->imageNumber = ISHELL_LoadResImage( me->a.m_pIShell, TETRISIMAGES_IVIO_RES_FILE, IDI_NUMBER);
+	#else
     me->imageNumber = ISHELL_LoadResImage( me->a.m_pIShell, TETRISIMAGES_RES_FILE, IDI_NUMBER);
+	#endif
 
     FREEIF( pDeviceInfo);
 
@@ -1628,7 +1632,11 @@ static void displaySplashScreen(  void)
     AEEImageInfo    rImageInfo;
 
     SETAEERECT( &rect, 0, 0, me->screenWidth, me->screenHeight);
+	#ifdef FEATURE_VERSION_IVIO
+	pImage = ISHELL_LoadResImage( me->a.m_pIShell, TETRISIMAGES_IVIO_RES_FILE, IDB_TETRIS_SPLASH);
+	#else
     pImage = ISHELL_LoadResImage( me->a.m_pIShell, TETRISIMAGES_RES_FILE, IDB_TETRIS_SPLASH);
+	#endif
 
     if( pImage != NULL)
     {
@@ -2163,7 +2171,11 @@ static void addMenuItem( IMenuCtl * pMenu, uint16 itemId, uint16 imageId)
 
     ai.pText        = NULL;
     ai.pImage       = NULL;
+	#ifdef FEATURE_VERSION_IVIO
+	ai.pszResImage  = TETRISIMAGES_IVIO_RES_FILE;
+	#else
     ai.pszResImage  = TETRISIMAGES_RES_FILE;
+	#endif
     ai.pszResText   = TETRIS_RES_FILE_LANGUAGE;
     ai.wFont        = AEE_FONT_NORMAL;
     ai.dwData       = 0;

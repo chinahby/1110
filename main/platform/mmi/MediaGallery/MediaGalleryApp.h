@@ -58,7 +58,9 @@
 #include "MediaGallery.h"
 #include "MediaGalleryExplorer.h"
 #include "Mediagallery.brh"
-#include "mediagallery_image.brh"
+#ifdef FEATURE_VERSION_IVIO
+#include "mediagallery_image_ivio.brh"
+#endif
 
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch

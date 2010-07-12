@@ -57,7 +57,11 @@ when       who     what, where, why
 #include "AEEMenu.h"
 #include "AEEStdLib.h"
 #include "blackjack.brh"
+#ifdef FEATURE_VERSION_IVIO
+#include "blackjack_image_ivio.brh"
+#else
 #include "blackjack_image.brh"
+#endif
 #include "AEEFile.h"
 
 #include "appscommon.h"
@@ -71,7 +75,7 @@ when       who     what, where, why
 #define BLACKJACK_RES_FILE_IMAGES       ("fs:/mod/blackjack/en/"BLACKJACK_IMAGE_RES_FILE)
 #else
 #define BLACKJACK_RES_FILE_LANGUAGE   (AEE_RES_LANGDIR BLACKJACK_RES_FILE)
-#define BLACKJACK_RES_FILE_IMAGES       (AEE_RES_LANGDIR BLACKJACK_IMAGE_RES_FILE)
+#define BLACKJACK_RES_FILE_IMAGES       (AEE_RES_LANGDIR BLACKJACK_IMAGE_IVIO_RES_FILE)
 #endif
 
 #define kNumberCardImages                      19

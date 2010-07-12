@@ -23,7 +23,9 @@
 #include "AEEStdLib.h"
 
 #include "tetris.brh"
-#include "tetrisimages.brh"
+#ifdef FEATURE_VERSION_IVIO
+#include "tetrisimages_ivio.brh"
+#endif
 
 #if defined( AEE_STATIC)
     #include "OEMClassIDs.h" 
