@@ -2620,6 +2620,23 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 case AVK_7:
                 case AVK_8:
                 case AVK_9: 
+                case AVK_T:
+                case AVK_Y:
+                case AVK_U:
+                case AVK_I:
+                case AVK_O:
+                case AVK_P:
+                case AVK_G:
+                case AVK_H:
+                case AVK_J:
+                case AVK_K:
+                case AVK_L:
+                case AVK_V:
+                case AVK_B:
+                case AVK_N:
+                case AVK_M:
+                case AVK_SPACE:
+                case AVK_RWD:                    
                 case AVK_POUND:
                 if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType && IS_ZERO_REC())
                 {
@@ -2929,6 +2946,23 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 case AVK_7:
                 case AVK_8:
                 case AVK_9: 
+                case AVK_T:
+                case AVK_Y:
+                case AVK_U:
+                case AVK_I:
+                case AVK_O:
+                case AVK_P:
+                case AVK_G:
+                case AVK_H:
+                case AVK_J:
+                case AVK_K:
+                case AVK_L:
+                case AVK_V:
+                case AVK_B:
+                case AVK_N:
+                case AVK_M:
+                case AVK_SPACE:
+                case AVK_RWD:
                 case AVK_CLR:
                 case AVK_UP:
                 case AVK_DOWN:
@@ -2938,7 +2972,6 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                     boolean b_TextctlActive = ITEXTCTL_IsActive(pTextCtl);
                     int           n_KeywordsLen =0;
                     boolean isSearchTextChg = FALSE;
-                    
                     // save this alpha,and all param
                     //pMe->m_szAlpha = ITEXTCTL_GetTextPtr(pTextCtl);
                     if(WSTRCMP(pMe->m_szAlpha, ITEXTCTL_GetTextPtr(pTextCtl)) != 0)
@@ -2951,7 +2984,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                     if(NULL != pMe->m_szAlpha && WSTRLEN(pMe->m_szAlpha) > 0)
                     {
                         n_KeywordsLen = WSTRLEN(pMe->m_szAlpha);
-                        DBGPRINTF("Search text : %S", pMe->m_szAlpha);
+                        MSG_FATAL("Search text : %S", pMe->m_szAlpha,0,0);
                     }
                     else
                     {

@@ -1301,7 +1301,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 {
                     char   szStr[2];
                     AECHAR wStr[2];
-
                     if ((dwParam & KB_AUTOREPEAT) != 0 && (AVKType)wParam != AVK_0&& (AVKType)wParam != AVK_STAR&& (AVKType)wParam != AVK_POUND)
                     {
                         CALL_ERR("OK,it is repeat,don't process it ",0,0,0);
@@ -2944,6 +2943,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     // Pass the digit on to the dialer dialog
                     char          digit[2];
                     AECHAR   w_str[2] = {0};
+                    MSG_FATAL("AVK_1-AVK_9", 0, 0, 0);
                     //keyToneLength keyLen;
 
                     // Don't start the incall dialer if we are PIN locked
@@ -7806,7 +7806,7 @@ void CallApp_SpecialKeySnd(CCallApp *pMe, uint16 wParam)
     char file_name[64];
     byte KeySndType;
     byte KeySndVolume;
-
+    MSG_FATAL("CallApp_SpecialKeySnd Start", 0, 0, 0);
     if(wParam < AVK_0 || wParam > AVK_POUND)
     {
         return;
@@ -7871,6 +7871,7 @@ void CallApp_SpecialKeySnd(CCallApp *pMe, uint16 wParam)
         ISOUNDPLAYER_SetVolume(pMe->m_SndPlayer,GET_ISOUND_VOL_LEVEL(KeySndVolume));
     }
     ISOUNDPLAYER_Play(pMe->m_SndPlayer);
+    MSG_FATAL("CallApp_SpecialKeySnd End", 0, 0, 0);
 }
 
 #endif /* KEYSND_ZY */
@@ -8425,7 +8426,7 @@ static void CallApp_Stop_ContDTMF(ICM *m_pICM)
     AEECMCallID CallIDs[DIALERAPP_MAX_NUM_CALLS];
     uint16      wNumCallIDs;
 
-    CALL_FUN_START("CallApp_Stop_ContDTMF", 0, 0, 0);
+    MSG_FATAL("CallApp_Stop_ContDTMF Start", 0, 0, 0);
 
     if(!m_pICM)
     {
@@ -8446,6 +8447,7 @@ static void CallApp_Stop_ContDTMF(ICM *m_pICM)
             CALL_ERR("ICM_StopContDTMF FAILED", 0, 0, 0);
         }
     }
+    MSG_FATAL("CallApp_Stop_ContDTMF End", 0, 0, 0);
 }
 //add for CDG test, CNAP with Forwarding
 /*==============================================================================
@@ -8773,7 +8775,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
         {
             uint16 wIndex;
-
+            MSG_FATAL("CallApp_Process_HeldKey_Event1111111111111",0,0,0);
             // TBD - dial string format should be typedef'd
             //if more than 2 digits then bail out because
             // we only support from to 1 to 99
