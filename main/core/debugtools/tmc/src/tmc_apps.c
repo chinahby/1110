@@ -194,7 +194,7 @@ when       who     what, where, why
 #endif /* FEATURE_NV && ! FEATURE_EXPORT_NV */
 
 #ifdef FEATURE_UI
-#include "ui.h"
+  #include "ui.h"                                        /* UI header file */
 #endif /* FEATURE_UI */
 
 #include "BREWVersion.h"

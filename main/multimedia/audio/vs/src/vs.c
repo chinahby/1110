@@ -1017,15 +1017,7 @@ vs_packet_type *vs_cmd_get_pkt (void)
     /* Fill the entire VS packet with 0's to get default behavior on 
     ** un-initialized fields.
     */
-#ifdef  FIX_LINKITEM_INITBUG
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(packet->hdr.link), sizeof(q_link_type));
     (void) memset (packet, 0, sizeof (vs_packet_type));
-    (void)memcpy(&(packet->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    (void) memset (packet, 0, sizeof (vs_packet_type));
-#endif
     packet->hdr.cmd        = VS_INVALID;        /* Invalid Command Value   */
   }
 
@@ -4443,7 +4435,7 @@ SIDE EFFECTS
   Before jumping ahead specified amount of seconds, the current position is 
   considered to be the very first frame of the current "second"(truncated). 
   It'll always start playing at the beginning of the "second" boundary. 
-  (Current position at 5.6 sec… FF 4 seconds … plays from 9 seconds into 
+  (Current position at 5.6 sec? FF 4 seconds ? plays from 9 seconds into 
  the memo).
 
 ===========================================================================*/
@@ -4492,7 +4484,7 @@ SIDE EFFECTS
     Before jumping back specified amount of seconds, the current position is 
     considered to be the very first frame of the current "second"(truncated).
     It'll always start playing at the beginning of the "second" boundary. 
-    (Current position at 5.6 sec… Rewind 4 seconds… plays from 1 second into
+    (Current position at 5.6 sec? Rewind 4 seconds? plays from 1 second into
     the memo).Will play from the beginning of the memo if the requested rew 
     seconds become  a negative number based on the current position.
 ===========================================================================*/

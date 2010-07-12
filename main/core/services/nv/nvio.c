@@ -1309,9 +1309,7 @@ nvio_write_esn(
 {
   nv_stat_enum_type status;   /* Function return value */
   dword local_esn;            /* tmp buffer for esn */
-  dword local_esn_chksum;     /**/     
-  
-//endif 
+  dword local_esn_chksum;     /**/                                  
   /* Read the current ESN value */
   status = nvio_read_item(NV_ESN_I,/* file handle */
                          0,
@@ -1321,7 +1319,7 @@ nvio_write_esn(
   if (status == NV_FAIL_S){
     return status;
   }
-
+        
 #if 0        
   /* The ESN may only be written once */
   if ((local_esn != 0) &&
@@ -1330,54 +1328,6 @@ nvio_write_esn(
     return NV_READONLY_S;
   }
 #endif
-
-  /* Write the ESN, the ESN checksum, and the ESN valid flag. */
-  status = nvio_write_item(NV_ESN_I,  /* Item name */
-                          0, /* index */
-                          (byte*)&cmd_ptr->data_ptr->esn, /* data ptr */
-                          sizeof(nvi_item.esn));  /* data count */
-
-  if (status == NV_DONE_S)
-  {
-    local_esn_chksum = crc_30_calc((byte *)&cmd_ptr->data_ptr->esn,
-                                      sizeof(nvi_item.esn) * 8);
-
-    status = nvio_write_item(NV_ESN_CHKSUM_I,  /* file handle */
-                            0, /* file position */
-                            (byte*)&local_esn_chksum, /* data ptr */
-                            sizeof(local_esn_chksum));  /* data count */
-
-  }
-  
-  return status;
-}
-
-/*===========================================================================
-
-FUNCTION NVIO_OVER_WRITE_ESN
-
-DESCRIPTION
-  This function processed a over write command to the NV_ESN_I item.
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  NV_DONE_S if it worked error status code if it failed. 
-
-SIDE EFFECTS
-  None
-
-===========================================================================*/
-
-LOCAL nv_stat_enum_type 
-nvio_over_write_esn(
-  nv_cmd_type         *cmd_ptr       /* Command block */
-)
-{
-  nv_stat_enum_type status;   /* Function return value */
-  dword local_esn;            /* tmp buffer for esn */
-  dword local_esn_chksum;     /**/     
 
   /* Write the ESN, the ESN checksum, and the ESN valid flag. */
   status = nvio_write_item(NV_ESN_I,  /* Item name */
@@ -2397,6 +2347,7 @@ nvio_write_imei
     return status;
 }
 
+
 /*===========================================================================
 
 FUNCTION NVIO_WRITE
@@ -2713,7 +2664,8 @@ nvio_write (
                                   (byte *)cmd_ptr->data_ptr, 
                                   nvim_op_get_size(cmd_ptr->item));
         break;
-        
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
       default:
         /* All other items get generic treatment, if they have 
             a valid entry */

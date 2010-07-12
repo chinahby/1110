@@ -559,7 +559,7 @@ extern int cacheWT;
 #endif /* FEATURE_NV */
 
 #ifdef FEATURE_UI
-#include "ui.h"
+  #include "ui.h"                                        /* UI header file */
 #endif /* FEATURE_UI */
 
 #ifdef FEATURE_CM
@@ -2912,6 +2912,7 @@ SIDE EFFECTS
 ===========================================================================*/
 LOCAL   void                       tmc_powerdown_handler( void )
 {
+
    #ifdef FEATURE_UIM_RUIM
      /* Indicate to power down the RUIM
      */

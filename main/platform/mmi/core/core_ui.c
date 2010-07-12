@@ -1774,6 +1774,7 @@ static void CoreTask_FreeAEEInstance(void)
 static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
 {
     AEECLSID cls;
+    boolean  bHandle = FALSE;
     
 #ifdef FEATURE_KEYGUARD
     if (OEMKeyguard_HandleEvent(evt, wParam)){
@@ -1790,6 +1791,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
             // AVK_SEND instead of AVK_HEADSET_SWITCH
             wParam = AVK_SEND;
         }
+        bHandle = TRUE;
     }
     
     cls = AEE_Active();
@@ -1802,15 +1804,18 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
             db_get(DB_IN_USE, &dbItemValue);
             if (dbItemValue.in_use){
                 wParam = AVK_ENDCALL;
+                bHandle = TRUE;
             }
         }
 #ifdef FEATURE_APP_MUSICPLAYER
         if(cls==AEECLSID_APP_MUSICPLAYER){
             wParam = AVK_BGPLAY;
+            bHandle = TRUE;
         }
 #endif
         if(cls == AEECLSID_APP_SECURITYMENU){
             wParam = AVK_WITHDRAW;
+            bHandle = TRUE;
         }
         break;
         
@@ -1866,6 +1871,14 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
                                          );
                     }
                 }
+            }
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
+            if (gpKeyBacklight) {
+                IBACKLIGHT_Enable(gpKeyBacklight);
+            }
+#endif
+            if (gpBacklight){
+                IBACKLIGHT_Enable(gpBacklight);
             }
         }
         return TRUE;
@@ -1958,5 +1971,10 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
     default:
         break;
     }
-    return FALSE;
+    
+    if(bHandle == TRUE)
+    {
+        AEE_Event(evt, wParam, 0);
+    }
+    return bHandle;
 }

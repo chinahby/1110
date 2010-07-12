@@ -380,13 +380,13 @@ void AutoChargingManager::stopAutoCharging()
 void AutoChargingManager::getCurrentState()
 {
     pm_err_flag_type  err = PM_ERR_FLAG__SUCCESS;
-	ERR("getCurrentState Start", 0, 0, 0);
+
     /* Update previous state */
     mPreviousState = mCurrentState;
 
     /* Update current state */
     err |= pm_chg_charge_state_get(&mCurrentState);
-	ERR("miaoxiaoming: mCurrentState=%d",mCurrentState,0,0);
+
     /* If the charge state was changed, send the notification */
     if(mCurrentState != mPreviousState)
     {
@@ -446,7 +446,7 @@ void AutoChargingManager::getCurrentState()
             {
                 /* Then debounce batt_temp IRQ. */
                 err |= pm_get_rt_status(PM_BATTTEMP_RT_ST, &rt_status);
-				
+
                 if(rt_status) /* Battery temp is bad */
                 {
                     mGeneralStatus.battery_status = BATTERY_STATUS__BAD_TEMP;
@@ -479,7 +479,6 @@ void AutoChargingManager::getCurrentState()
                 /* The final charging cycle has just finished, Charging is complete */
                 if(true == mIsInFinalCycle)
                 {
-                	ERR("miaoxiaoming:mIsInFinalCycle=%d",mIsInFinalCycle,0,0);
                     /* Set charging-complete flag */
                     mIsChargingComplete = true;
 
@@ -656,12 +655,10 @@ void AutoChargingManager::getCurrentState()
         }
         break;
     } /* end switch() */
-	ERR("getCurrentState End", 0, 0, 0);
 }
 
 void AutoChargingManager::EventFired(ChargingEvent* event)
 {
-	ERR("EventFired Start", 0, 0, 0);
     ASSERT(event != NULL);
 
     switch( event->GetEventId() )
@@ -673,7 +670,7 @@ void AutoChargingManager::EventFired(ChargingEvent* event)
             ASSERT( irqevent != NULL );
 
             pm_irq_hdl_type irqid = irqevent->GetIrqId();
-			ERR("miaoxiaoming: irqid = %d",irqid,0,0);
+
             if(irqid == PM_VALID_CHG_IRQ_HDL) /* A charging source is attached */
             {
                 /* Start autonomous charging */
@@ -826,7 +823,7 @@ void AutoChargingManager::EventFired(ChargingEvent* event)
             ASSERT( timerevent != NULL );
 
             unsigned int  firstdelay = timerevent->GetFirstDelay();
-            ERR("miaoxiaoming: firstdelay=%d",firstdelay,0,0);
+            
             /* Charger state machine heart beat */
             if(firstdelay == CHG_HEART_BEAT_FIRST_TIME )
             {
@@ -1184,7 +1181,6 @@ void AutoChargingManager::EventFired(ChargingEvent* event)
         } /* end CHG_CMD__SYSTEM_STATUS_CHANGED */
         break;
     } /* switch() */
-	ERR("EventFired End", 0, 0, 0);
 } /* EventFired() */
 
                   /******************************************/

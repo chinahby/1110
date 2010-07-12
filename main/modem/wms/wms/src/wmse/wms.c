@@ -1534,15 +1534,7 @@ wms_status_e_type wms_cfg_set_routes
 
     if(cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -1599,15 +1591,7 @@ wms_status_e_type wms_cfg_get_routes
   cmd_ptr = wms_get_cmd_buf();
   if( cmd_ptr !=NULL )
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -1666,15 +1650,7 @@ wms_status_e_type wms_cfg_get_memory_status
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -1733,15 +1709,7 @@ wms_status_e_type wms_cfg_get_message_list
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -1998,15 +1966,7 @@ wms_status_e_type wms_cfg_set_primary_client
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2066,15 +2026,7 @@ wms_status_e_type wms_cfg_set_memory_full
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2133,15 +2085,7 @@ wms_status_e_type wms_cfg_set_multisend
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+    * cmd_ptr = cmd_backup;  
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2200,16 +2144,8 @@ wms_status_e_type wms_cfg_set_autoreplace
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+  {    
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2307,16 +2243,8 @@ wms_status_e_type wms_msg_send
     cmd_ptr = wms_get_cmd_buf();
 
     if( cmd_ptr != NULL)
-    {	
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    {
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -2380,15 +2308,7 @@ wms_status_e_type wms_msg_ack
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -2453,15 +2373,7 @@ wms_status_e_type wms_msg_read
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2520,15 +2432,7 @@ wms_status_e_type wms_msg_write
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -2596,15 +2500,7 @@ wms_status_e_type wms_msg_delete
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2656,15 +2552,7 @@ wms_status_e_type wms_msg_delete_box
 
     if (cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-        q_link_type teplink;
-        
-        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-        * cmd_ptr = cmd_backup;
-        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-        * cmd_ptr = cmd_backup;
-#endif    
+        * cmd_ptr = cmd_backup;   
         wms_put_cmd( cmd_ptr );
     }
     else
@@ -2717,15 +2605,7 @@ wms_status_e_type wms_msg_copy
 
     if (cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-        q_link_type teplink;
-        
-        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
         * cmd_ptr = cmd_backup;
-        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-        * cmd_ptr = cmd_backup;
-#endif    
         wms_put_cmd( cmd_ptr );
     }
     else
@@ -2772,16 +2652,8 @@ wms_status_e_type wms_msg_refresh_ruimmsg
     cmd_ptr = wms_get_cmd_buf();
 
     if (cmd_ptr != NULL)
-    {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-        q_link_type teplink;
-        
-        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-        * cmd_ptr = cmd_backup;
-        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-        * cmd_ptr = cmd_backup;
-#endif    
+    {    
+        * cmd_ptr = cmd_backup; 
         wms_put_cmd( cmd_ptr );
     }
     else
@@ -2840,15 +2712,7 @@ wms_status_e_type wms_msg_delete_all
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2908,15 +2772,7 @@ wms_status_e_type wms_msg_modify_tag
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -2976,15 +2832,7 @@ wms_status_e_type wms_msg_read_template
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3082,15 +2930,7 @@ wms_status_e_type wms_msg_write_template
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif   
 
     // We cannot assume the client set the right combination of message mode and 
     // memory store. Without this check the phone might crash.
@@ -3171,15 +3011,7 @@ wms_status_e_type wms_msg_delete_template
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3236,15 +3068,7 @@ wms_status_e_type wms_msg_delete_template_all
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3543,15 +3367,7 @@ wms_status_e_type wms_dc_enable_auto_disconnect
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3612,15 +3428,7 @@ wms_status_e_type wms_dc_disable_auto_disconnect
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3685,15 +3493,7 @@ wms_status_e_type wms_dc_connect
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3754,15 +3554,7 @@ wms_status_e_type wms_dc_disconnect
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3832,15 +3624,7 @@ wms_status_e_type wms_bc_get_config
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3898,16 +3682,8 @@ wms_status_e_type wms_bc_get_pref
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+  {    
+    * cmd_ptr = cmd_backup;    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -3969,16 +3745,8 @@ wms_status_e_type wms_bc_set_pref
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+  {  
+    * cmd_ptr = cmd_backup; 
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4043,16 +3811,8 @@ wms_status_e_type wms_bc_get_table
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+  {    
+    * cmd_ptr = cmd_backup;   
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4118,16 +3878,8 @@ wms_status_e_type wms_bc_select_service
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+  {   
+    * cmd_ptr = cmd_backup;   
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4189,16 +3941,8 @@ wms_status_e_type wms_bc_get_all_service_ids
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+  {  
+    * cmd_ptr = cmd_backup;  
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4261,16 +4005,8 @@ wms_status_e_type wms_bc_get_service_info
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+  {    
+    * cmd_ptr = cmd_backup;  
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4333,16 +4069,8 @@ wms_status_e_type wms_bc_add_service
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+  {    
+    * cmd_ptr = cmd_backup; 
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4406,15 +4134,7 @@ wms_status_e_type wms_bc_delete_service
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+    * cmd_ptr = cmd_backup;  
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4489,16 +4209,8 @@ wms_status_e_type wms_bc_change_label
     cmd_ptr = wms_get_cmd_buf();
 
     if( cmd_ptr != NULL)
-    {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
+    {   
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4559,16 +4271,8 @@ wms_status_e_type wms_bc_delete_all_services
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+  {  
+    * cmd_ptr = cmd_backup;  
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4632,16 +4336,8 @@ wms_status_e_type wms_bc_set_priority_for_all
   cmd_ptr = wms_get_cmd_buf();
 
   if( cmd_ptr != NULL)
-  {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
-    * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
+  {   
+    * cmd_ptr = cmd_backup;  
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -4728,15 +4424,7 @@ wms_status_e_type wms_bc_mm_get_config
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4812,15 +4500,7 @@ wms_status_e_type wms_bc_mm_get_pref
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4898,15 +4578,7 @@ wms_status_e_type wms_bc_mm_set_pref
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -4988,15 +4660,7 @@ wms_status_e_type wms_bc_mm_get_table
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -5076,15 +4740,7 @@ wms_status_e_type wms_bc_mm_select_service
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -5163,15 +4819,7 @@ wms_status_e_type wms_bc_mm_get_all_service_ids
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -5250,15 +4898,7 @@ wms_status_e_type wms_bc_mm_get_service_info
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -5365,15 +5005,7 @@ wms_status_e_type wms_bc_mm_add_services
 
       if( cmd_ptr != NULL)
       {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-        q_link_type teplink;
-    
-        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
         * cmd_ptr = cmd_backup;
-        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-        * cmd_ptr = cmd_backup;
-#endif    
         wms_put_cmd( cmd_ptr );
       }
       else
@@ -5468,15 +5100,7 @@ wms_status_e_type wms_bc_mm_delete_services
 
       if( cmd_ptr != NULL)
       {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-        q_link_type teplink;
-    
-        (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
         * cmd_ptr = cmd_backup;
-        (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-        * cmd_ptr = cmd_backup;
-#endif    
         wms_put_cmd( cmd_ptr );
       }
       else
@@ -5556,15 +5180,7 @@ wms_status_e_type wms_bc_mm_change_service_info
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -5640,15 +5256,7 @@ wms_status_e_type wms_bc_mm_delete_all_services
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -5727,15 +5335,7 @@ wms_status_e_type wms_bc_mm_select_all_services
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -5808,15 +5408,7 @@ wms_status_e_type wms_bc_mm_set_priority_for_all_services
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -5981,15 +5573,7 @@ wms_status_e_type wms_bc_mm_get_reading_pref
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -6067,15 +5651,7 @@ wms_status_e_type wms_bc_mm_set_reading_pref
 
     if( cmd_ptr != NULL)
     {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-      q_link_type teplink;
-    
-      (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
       * cmd_ptr = cmd_backup;
-      (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-      * cmd_ptr = cmd_backup;
-#endif    
       wms_put_cmd( cmd_ptr );
     }
     else
@@ -6143,15 +5719,7 @@ wms_status_e_type wms_dbg_reset_tl_seq_num
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -6301,15 +5869,7 @@ wms_status_e_type wms_dbg_get_retry_interval
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else
@@ -6364,15 +5924,7 @@ wms_status_e_type wms_dbg_set_retry_interval
 
   if( cmd_ptr != NULL)
   {
-#if defined(FIX_LINKITEM_INITBUG)&&defined(CUST_EDITION)
-    q_link_type teplink;
-    
-    (void)memcpy(&teplink,  &(cmd_ptr->hdr.link), sizeof(q_link_type));
     * cmd_ptr = cmd_backup;
-    (void)memcpy(&(cmd_ptr->hdr.link), &teplink, sizeof(q_link_type));
-#else    
-    * cmd_ptr = cmd_backup;
-#endif    
     wms_put_cmd( cmd_ptr );
   }
   else

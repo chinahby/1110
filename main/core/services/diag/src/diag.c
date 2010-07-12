@@ -3023,7 +3023,11 @@ diag_panic_end (void)
 #ifdef CUST_EDITION
   else if(err_get_auto_action() == ERR_NO_ACTION)
   {
+#ifdef USES_RELEASE_VERSION
+    hw_reset ();
+#else
     return;
+#endif
   }
 #endif
   else

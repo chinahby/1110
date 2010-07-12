@@ -7292,7 +7292,6 @@ LOCAL void uim_init( void )
   byte i; /* Index into free buffer pool */
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-  gpio_out(GPIO_34_SIGNAL, 0);
   /* -----------------
   ** Initialize timers
   ** ----------------- */
@@ -8573,18 +8572,18 @@ dword dummy
     {
         if(nvi.sim_select == 2 )
         {
-            gpio_out(GPIO_OUTPUT_34,(GPIO_ValueType)GPIO_HIGH_VALUE);
+            gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
         }
         else
         {
-            gpio_out(GPIO_OUTPUT_34,(GPIO_ValueType)GPIO_LOW_VALUE);
+            gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
         }
     }
     else
     {
         nvi.sim_select = 1;
         ret = OEMNV_Put(NV_SIM_SELECT_I,&nvi);
-        gpio_out(GPIO_OUTPUT_34,(GPIO_ValueType)GPIO_LOW_VALUE);
+        gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
     }
     uim_dev_init();
 }

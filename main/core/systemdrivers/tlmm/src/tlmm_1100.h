@@ -239,10 +239,10 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #define GPIO_30_SIGNAL XO_EN_N
 
 /* GPIO 31 */
-#if defined(FEATURE_PROJECT_W021)
+#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022)
 #define GPIO_31_SIGNAL GPIO_OUTPUT_31
 #else
-#define GPIO_31_SIGNAL FM_INT
+#define GPIO_31_SIGNAL SIM_SEL
 #endif
 /* GPIO 32 */
 
@@ -251,12 +251,20 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #else
 #define GPIO_32_SIGNAL LCD_FLAG
 #endif
+
+#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
 /* GPIO 33, we need to feature it, as we don't use it if Mem size is < 16 MB */
 #define GPIO_33_SIGNAL KYPD_EX1
 
 /* GPIO 34 */
 #define GPIO_34_SIGNAL KYPD_EX2
+#else
+/* GPIO 33, we need to feature it, as we don't use it if Mem size is < 16 MB */
+#define GPIO_33_SIGNAL GPIO_INPUT_33
 
+/* GPIO 34 */
+#define GPIO_34_SIGNAL SIM_SEL
+#endif
 /* GPIO 35 */
 #define GPIO_35_SIGNAL PA_ON_0
 

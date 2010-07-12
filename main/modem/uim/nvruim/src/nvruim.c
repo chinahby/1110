@@ -4278,16 +4278,7 @@ static nv_ruim_support_status nvruim_check_mandatory(
       }
       else
         break;
-#ifdef CUST_EDITION
-    // 下列项卡不支持则用 NV 项
-    case NV_DIR_NUMBER_PCS_I:
-      if((nvruim_sw1 == SW1_REFERENCE) && (nvruim_sw2 == SW2_NOT_FOUND))
-      {
-        /* File not found */
-        return NV_RUIM_ITEM_NOT_SUPPORTED;
-      }
-      break;
-#endif
+
     default:  
       break;
   }
@@ -10292,11 +10283,7 @@ void nvruim_set_uim_dir_present(
   byte dir
 )
 {
-#ifndef CUST_EDITION
   nvruim_dir_present = dir;
-#else
-  nvruim_dir_present = (nvruim_dir_present | dir);
-#endif
 }
 
 #ifdef FEATURE_RUIM_PHONEBOOK

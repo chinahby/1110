@@ -17429,7 +17429,6 @@ SIDE EFFECTS
               None
 
 ===========================================================================*/
-extern	uint8* exif_get_date_time_string();
 
 static void camera_svcs_fill_exif_attributes(exif_attributes_type *attributes)
 {
@@ -17526,7 +17525,6 @@ static void camera_svcs_fill_exif_attributes(exif_attributes_type *attributes)
 
     /* Get Sensor dependent attributes */
     attributes->sensor_info = camsensor_static_params[camera_asi].exif_info_from_sensor;
-
 
     /* Set original date & time */
     /* Get Date and time string flag by exif_get_date_time_string() and write date and time on the pointer

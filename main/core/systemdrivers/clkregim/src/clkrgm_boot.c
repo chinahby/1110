@@ -107,7 +107,6 @@ extern   clkrgm_msm_state_type clkrgm;
 #endif
 
 
-
 /*===========================================================================
 
 FUNCTION CLK_REGIME_MSM_ON
@@ -601,14 +600,6 @@ void clk_regime_msm_on
   INTFREE();
 }
 
-
-
-void testsetclk()
-{
-	clk_regime_msm_on(CLK_RGM_VIDEO_M);
-	clk_regime_msm_on(CLK_RGM_CAMIF_PCLK_M);
-}
-
 /*===========================================================================
 
 FUNCTION CLK_REGIME_MSM_ENABLE
