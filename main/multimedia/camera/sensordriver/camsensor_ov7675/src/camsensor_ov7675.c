@@ -36,6 +36,8 @@
 #define CAMSENSOR_30_FPS                    (30*Q8)
 #define CAMSENSOR_15_FPS                    (15*Q8)
 
+#define VGA_EXPOSURE_LIMITATION 			510 //509//508
+
 /*============================================================================
 	LOCAL Variables 
 ============================================================================*/
@@ -60,35 +62,78 @@ static boolean ov7675_i2c_read_byte(uint8 offset, uint8* data);
 ============================================================================*/
 static void write_ov7675_shutter(uint16 shutter)
 {
-	ov7675_i2c_write_byte(0xd2, 0x10);   // close AEC
-
-	ov7675_i2c_write_byte(0x03, shutter/256);
-	ov7675_i2c_write_byte(0x04, shutter & 0x00ff);
-	camera_timed_wait(200);    
-
-	ov7675_i2c_write_byte(0xd2, 0x90);   // Open AEC	
+    uint8 temp_reg;
+    uint16 extra_exposure_lines;
+    
+	if(shutter<=VGA_EXPOSURE_LIMITATION)
+	{
+		extra_exposure_lines=0;
+	}
+	else
+	{
+		extra_exposure_lines=shutter-VGA_EXPOSURE_LIMITATION;
+	}
+    
+	if(shutter>VGA_EXPOSURE_LIMITATION)
+		shutter=VGA_EXPOSURE_LIMITATION;
+		
+	ov7675_i2c_write_byte(0x2D,extra_exposure_lines&0xFF);                  // ADVFL(LSB of extra exposure lines)
+	ov7675_i2c_write_byte(0x2E,(extra_exposure_lines&0xFF00)>>8);           // ADVFH(MSB of extra exposure lines)
+    
+	ov7675_i2c_read_byte(0x04, &temp_reg);
+	ov7675_i2c_write_byte(0x04,((temp_reg&0xFC) | (shutter&0x3)));		// AEC[b1~b0]
+	ov7675_i2c_write_byte(0x10,((shutter&0x3FC)>>2));						// AEC[b9~b2]
+	ov7675_i2c_write_byte(0x07,((shutter&0x7C00)>>10));						// AEC[b10]/AEC[b15~b10]
 }/* write_ov7675_shutter */
 
 static uint16 read_ov7675_shutter(void)
 {
-	uint16 shutter;
-	uint8 temp = 0;
-
-	ov7675_i2c_read_byte(0x03,&temp);
-	shutter = temp<<8;
-
-	ov7675_i2c_read_byte(0x04,&temp);
-	shutter |= temp&0xff;
+	uint8 temp_reg1, temp_reg2, temp_reg3, temp_reg4, temp_reg5;
+	uint16 shutter, extra_exposure_lines;
+    
+	ov7675_i2c_read_byte(0x04, &temp_reg1);										// AEC[b1~b0]
+	ov7675_i2c_read_byte(0x10, &temp_reg2);										// AEC[b9~b2]
+	ov7675_i2c_read_byte(0x07, &temp_reg3);										// AEC[b15~b10]
 	
+	ov7675_i2c_read_byte(0x2D, &temp_reg4);
+	ov7675_i2c_read_byte(0x2E, &temp_reg5);
+	
+	shutter=((temp_reg3&0x1F)<<10)|(temp_reg2<<2)|(temp_reg1&0x3);	// AEC[b10]/AEC[b15~b10]
+	extra_exposure_lines=(temp_reg5<<8)|(temp_reg4);
+	
+	shutter=shutter+extra_exposure_lines;
+
 	return shutter;
 }/* read_ov7675_shutter */
 
 static void ov7675_set_dummy(uint16 pixels, uint16 lines)
 {
-	ov7675_i2c_write_byte(0x0f, ((lines & 0x0f00)>>4) + ((pixels & 0x0f00)>>8)); 
-	ov7675_i2c_write_byte(0x01, pixels & 0x00ff);
-	ov7675_i2c_write_byte(0x02, lines  & 0x00ff);
+	ov7675_i2c_write_byte(0x2A,((pixels&0x700)>>4));
+	ov7675_i2c_write_byte(0x2B,(pixels&0xFF));
+	ov7675_i2c_write_byte(0x92,(lines&0xFF));
+	ov7675_i2c_write_byte(0x93,((lines&0xFF00)>>8));
 }	/* ov7675_set_dummy */
+
+static void ov7675_set_window(uint16 startx,uint16 starty,uint16 width, uint16 height)
+{
+	uint16 endx=(startx+width-1);
+	uint16 endy=(starty+height-1);
+	uint8  temp_reg1, temp_reg2;
+    
+    ov7675_i2c_read_byte(0x03, &temp_reg1);
+	temp_reg1=(temp_reg1&0xF0);
+    ov7675_i2c_read_byte(0x32, &temp_reg2);
+	temp_reg2=(temp_reg2&0xC0);
+    
+	// Horizontal
+	ov7675_i2c_write_byte(0x32,0x80|((endx&0x7)<<3)|(startx&0x7));	// b[5:3]:HREF end low 3bits. b[2:0]:HREF start low 3bits.
+	ov7675_i2c_write_byte(0x17,(startx&0x7F8)>>3);			// HREF start high 8bits
+	ov7675_i2c_write_byte(0x18,(endx&0x7F8)>>3);			// HREF end high 8bits
+	// Vertical
+	ov7675_i2c_write_byte(0x03,temp_reg1|((endy&0x3)<<2)|(starty&0x3));	// b[3:2]:VREF end low 2bits. b[1:0]:VREF start low 2bits.
+	ov7675_i2c_write_byte(0x19,(starty&0x3FC)>>2);   			// VREF start high 8bits
+	ov7675_i2c_write_byte(0x1A,(endy&0x3FC)>>2);		   	// VREF end high 8bits
+}	/* config_OV7675_window */
 
 static camera_ret_code_type camsensor_ov7675_set_exposure_mode(int8 mode)
 {
@@ -160,86 +205,87 @@ boolean camsensor_ov7675_init(camsensor_function_table_type *camsensor_function_
 
 	/* Setup camctrl_tbl */
 	camsensor_ov7675_setup_camctrl_tbl(camctrl_tbl_ptr);
-
 	return TRUE;
 } /* camsensor_ov7675_init */
 
 static boolean initialize_ov7675_registers(void)
 {
     // Initail Sequence Write In.
-    ov7675_i2c_write_byte(0x11,0x00);//0x00  by allen yao
-    ov7675_i2c_write_byte(0x3a,0x0C);
-    ov7675_i2c_write_byte(0x3D,0xC0);
-    ov7675_i2c_write_byte(0x12,0x00);
-    ov7675_i2c_write_byte(0x15,0x40);
-    ov7675_i2c_write_byte(0xc1,0x7f);
+    // Set Format
+    ov7675_i2c_write_byte(0x11,0x00);//时钟分频 = MCLK
+    ov7675_i2c_write_byte(0x3a,0x0C);//YUV输出顺序
+    ov7675_i2c_write_byte(0x3D,0xC0);//GAMMA允许，UV饱和度自动调整
+    ov7675_i2c_write_byte(0x12,0x00);//输出格式YUV
+    ov7675_i2c_write_byte(0x15,0x40);//设置HREF为HYNC
+    ov7675_i2c_write_byte(0xc1,0x7f);//测试模式?
     
-    ov7675_i2c_write_byte(0x17,0x13);
-    ov7675_i2c_write_byte(0x18,0x01);
-    ov7675_i2c_write_byte(0x32,0xbF);
-    ov7675_i2c_write_byte(0x19,0x02);
-    ov7675_i2c_write_byte(0x1a,0x7b);
-    ov7675_i2c_write_byte(0x03,0x0a);
+    // Set Window
+    ov7675_i2c_write_byte(0x17,0x13);//水平窗口起始点高8位
+    ov7675_i2c_write_byte(0x18,0x01);//水平窗口大小高8位
+    ov7675_i2c_write_byte(0x32,0xbF);//水平输出指示
+    ov7675_i2c_write_byte(0x19,0x02);//垂直窗口起始点高8位
+    ov7675_i2c_write_byte(0x1a,0x7b);//垂直窗大小高8位
+    ov7675_i2c_write_byte(0x03,0x0a);//垂直输出指示
     
-    ov7675_i2c_write_byte(0x0c,0x00);
-    ov7675_i2c_write_byte(0x3e,0x00);
-    ov7675_i2c_write_byte(0x70,0x3a);
-    ov7675_i2c_write_byte(0x71,0x35);
-    ov7675_i2c_write_byte(0x72,0x11);
-    ov7675_i2c_write_byte(0x73,0xf0);
-    ov7675_i2c_write_byte(0xa2,0x02);
+    ov7675_i2c_write_byte(0x0c,0x00);//通用控制寄存器3 待机时钟数据输出三态设置
+    ov7675_i2c_write_byte(0x3e,0x00);//通用控制寄存器14 PCLK分频和控制
+    ov7675_i2c_write_byte(0x70,0x3a);//SCALING_XSC
+    ov7675_i2c_write_byte(0x71,0x35);//SCALING_YSC
+    ov7675_i2c_write_byte(0x72,0x11);//测试模式
+    ov7675_i2c_write_byte(0x73,0xf0);//测试模式
+    ov7675_i2c_write_byte(0xa2,0x02);//测试模式
 
-    ov7675_i2c_write_byte(0x13,0xe0);
-    ov7675_i2c_write_byte(0x00,0x00);
-    ov7675_i2c_write_byte(0x10,0x00);
-    ov7675_i2c_write_byte(0x0d,0x40);
-    ov7675_i2c_write_byte(0x14,0x28);//0x28 by allen_yao 2010.06.13
-    ov7675_i2c_write_byte(0xa5,0x06);  
-    ov7675_i2c_write_byte(0xab,0x07);  
-    ov7675_i2c_write_byte(0x24,0x62); 
-    ov7675_i2c_write_byte(0x25,0x58); 
-    ov7675_i2c_write_byte(0x26,0x93);   
-    ov7675_i2c_write_byte(0x9f,0x78);
-    ov7675_i2c_write_byte(0xa0,0x68);
-    ov7675_i2c_write_byte(0xa1,0x03);
-    ov7675_i2c_write_byte(0xa6,0xD8);
-    ov7675_i2c_write_byte(0xa7,0xD8);
-    ov7675_i2c_write_byte(0xa8,0xf0);
-    ov7675_i2c_write_byte(0xa9,0x90);
-    ov7675_i2c_write_byte(0xaa,0x14);
-    ov7675_i2c_write_byte(0x13,0xe5);
+    ov7675_i2c_write_byte(0x13,0xe0);//通用控制寄存器8 自动增益等功能使能
+    ov7675_i2c_write_byte(0x00,0x00);//增益控制
+    ov7675_i2c_write_byte(0x10,0x00);//自动曝光
+    ov7675_i2c_write_byte(0x0d,0x40);//通用控制寄存器 4 窗口比例设置
+    ov7675_i2c_write_byte(0x14,0x28);//通用控制寄存器9 自动增益最大值
+    ov7675_i2c_write_byte(0xa5,0x06);//50Hz 曝光步数限制
+    ov7675_i2c_write_byte(0xab,0x07);//60Hz 曝光步数限制
+    ov7675_i2c_write_byte(0x24,0x62);//自动曝光/自动增益稳定范围
+    ov7675_i2c_write_byte(0x25,0x58);//自动曝光/自动增益稳定范围（下限）
+    ov7675_i2c_write_byte(0x26,0x93);//自动曝光/自动增益快速调节范围
+    ov7675_i2c_write_byte(0x9f,0x78);//测试模式
+    ov7675_i2c_write_byte(0xa0,0x68);//测试模式
+    ov7675_i2c_write_byte(0xa1,0x03);//测试模式
+    ov7675_i2c_write_byte(0xa6,0xD8);//测试模式
+    ov7675_i2c_write_byte(0xa7,0xD8);//测试模式
+    ov7675_i2c_write_byte(0xa8,0xf0);//测试模式
+    ov7675_i2c_write_byte(0xa9,0x90);//测试模式
+    ov7675_i2c_write_byte(0xaa,0x14);//测试模式
+    ov7675_i2c_write_byte(0x13,0xe5);//通用控制寄存器8 自动增益等功能使能
     
-    ov7675_i2c_write_byte(0x0e,0x61);
-    ov7675_i2c_write_byte(0x0f,0x4b);
-    ov7675_i2c_write_byte(0x16,0x02);
-    ov7675_i2c_write_byte(0x1e,0x07);
-    ov7675_i2c_write_byte(0x21,0x02);
-    ov7675_i2c_write_byte(0x22,0x91);
-    ov7675_i2c_write_byte(0x29,0x07);
-    ov7675_i2c_write_byte(0x33,0x0b);
-    ov7675_i2c_write_byte(0x35,0x0b);
-    ov7675_i2c_write_byte(0x37,0x1d);
-    ov7675_i2c_write_byte(0x38,0x71);
-    ov7675_i2c_write_byte(0x39,0x2a);
-    ov7675_i2c_write_byte(0x3c,0x78);
-    ov7675_i2c_write_byte(0x4d,0x40);
-    ov7675_i2c_write_byte(0x4e,0x20);
-    ov7675_i2c_write_byte(0x69,0x00);
+    ov7675_i2c_write_byte(0x0e,0x61);//测试模式
+    ov7675_i2c_write_byte(0x0f,0x4b);//通用控制寄存器6 时序设置
+    ov7675_i2c_write_byte(0x16,0x02);//测试模式
+    ov7675_i2c_write_byte(0x1e,0x07);//镜像/翻转
+    ov7675_i2c_write_byte(0x21,0x02);//测试模式
+    ov7675_i2c_write_byte(0x22,0x91);//测试模式
+    ov7675_i2c_write_byte(0x29,0x07);//测试模式
+    ov7675_i2c_write_byte(0x33,0x0b);//测试模式
+    ov7675_i2c_write_byte(0x35,0x0b);//测试模式
+    ov7675_i2c_write_byte(0x37,0x1d);//测试模式
+    ov7675_i2c_write_byte(0x38,0x71);//测试模式
+    ov7675_i2c_write_byte(0x39,0x2a);//测试模式
+    ov7675_i2c_write_byte(0x3c,0x78);//通用控制寄存器12 行同步设置
+    ov7675_i2c_write_byte(0x4d,0x40);//测试模式
+    ov7675_i2c_write_byte(0x4e,0x20);//测试模式
+    ov7675_i2c_write_byte(0x69,0x00);//固定增益控制
 
-    ov7675_i2c_write_byte(0x6b,0x0a);
-    ov7675_i2c_write_byte(0x74,0x10);
-    ov7675_i2c_write_byte(0x8d,0x4f);
-    ov7675_i2c_write_byte(0x8e,0x00);
-    ov7675_i2c_write_byte(0x8f,0x00);
-    ov7675_i2c_write_byte(0x90,0x00);
-    ov7675_i2c_write_byte(0x91,0x00);
-    ov7675_i2c_write_byte(0x96,0x00);
-    ov7675_i2c_write_byte(0x9a,0x80);
-    ov7675_i2c_write_byte(0xb0,0x84);
-    ov7675_i2c_write_byte(0xb1,0x0c);
-    ov7675_i2c_write_byte(0xb2,0x0e);
-    ov7675_i2c_write_byte(0xb3,0x82);
-    ov7675_i2c_write_byte(0xb8,0x0a);
+    ov7675_i2c_write_byte(0x6b,0x0a);//PLL控制
+    ov7675_i2c_write_byte(0x74,0x10);//数字增益控制
+    ov7675_i2c_write_byte(0x8d,0x4f);//测试模式
+    ov7675_i2c_write_byte(0x8e,0x00);//测试模式
+    ov7675_i2c_write_byte(0x8f,0x00);//测试模式
+    ov7675_i2c_write_byte(0x90,0x00);//测试模式
+    ov7675_i2c_write_byte(0x91,0x00);//测试模式
+    ov7675_i2c_write_byte(0x96,0x00);//测试模式
+    ov7675_i2c_write_byte(0x9a,0x80);//测试模式
+    ov7675_i2c_write_byte(0xb0,0x84);//测试模式
+    ov7675_i2c_write_byte(0xb1,0x0c);//测试模式
+    ov7675_i2c_write_byte(0xb2,0x0e);//测试模式
+    ov7675_i2c_write_byte(0xb3,0x82);//测试模式
+    ov7675_i2c_write_byte(0xb8,0x0a);//测试模式
 
     ov7675_i2c_write_byte(0xbb, 0xa1); //blc target 
     
@@ -548,117 +594,7 @@ static boolean ov7675_i2c_read_byte(uint8 offset, uint8 *data)
 
 static camera_ret_code_type camsensor_ov7675_set_effect(int8 effect)
 {
-	uint16 seteffect_delay=1;
-	uint16 seteffect_zone=1;
-    
-	ERR("camsensor_ov7675_set_effect effect = %d",effect,0,0);
-	
-	switch ((camera_effect_type)effect)
-	{
-		case CAMERA_EFFECT_OFF:
-		{
-			ov7675_i2c_write_byte(0x23,0x00);
-			ov7675_i2c_write_byte(0x2d,0x0a);
-			ov7675_i2c_write_byte(0x20,0xff);
-			ov7675_i2c_write_byte(0xd2,0x90);
-			ov7675_i2c_write_byte(0x73,0x00);
-			ov7675_i2c_write_byte(0x77,0x54);
-			
-			ov7675_i2c_write_byte(0xb3,0x40);
-			ov7675_i2c_write_byte(0xb4,0x80);
-			ov7675_i2c_write_byte(0xba,0x00);
-			ov7675_i2c_write_byte(0xbb,0x00);
-			break;
-		}
-		
-		case CAMERA_EFFECT_MONO:
-		{
-			ov7675_i2c_write_byte(0x23,0x02);
-			ov7675_i2c_write_byte(0x2d,0x0a);
-			ov7675_i2c_write_byte(0x20,0xff);
-			ov7675_i2c_write_byte(0xd2,0x90);
-			ov7675_i2c_write_byte(0x73,0x00);
-
-			ov7675_i2c_write_byte(0xb3,0x40);
-			ov7675_i2c_write_byte(0xb4,0x80);
-			ov7675_i2c_write_byte(0xba,0x50);
-			ov7675_i2c_write_byte(0xbb,0xe0);
-			break;
-		}
-
-		case CAMERA_EFFECT_NEGATIVE:
-		{
-			ov7675_i2c_write_byte(0x23,0x02);
-			ov7675_i2c_write_byte(0x2d,0x0a);
-			ov7675_i2c_write_byte(0x20,0xbf);
-			ov7675_i2c_write_byte(0xd2,0x10);
-			ov7675_i2c_write_byte(0x73,0x01);
-
-			ov7675_i2c_write_byte(0x51,0x40);
-			ov7675_i2c_write_byte(0x52,0x40);
-
-			ov7675_i2c_write_byte(0xb3,0x40);
-			ov7675_i2c_write_byte(0xb4,0x80);
-			ov7675_i2c_write_byte(0xba,0x60);
-			ov7675_i2c_write_byte(0xbb,0x00);
-			break;
-		}
-
-		case CAMERA_EFFECT_SOLARIZE:
-		{
-			break;
-		}
-
-		case CAMERA_EFFECT_SEPIA:
-		{
-			ov7675_i2c_write_byte(0x23,0x02);
-			ov7675_i2c_write_byte(0x2d,0x0a);
-			ov7675_i2c_write_byte(0x20,0xff);
-			ov7675_i2c_write_byte(0xd2,0x90);
-			ov7675_i2c_write_byte(0x73,0x00);
-
-			ov7675_i2c_write_byte(0xb3,0x40);
-			ov7675_i2c_write_byte(0xb4,0x80);
-			ov7675_i2c_write_byte(0xba,0xd0);
-			ov7675_i2c_write_byte(0xbb,0x28);
-			break;
-		}
-		
-		case CAMERA_EFFECT_PASTEL:
-		{
-			ov7675_i2c_write_byte(0x23,0x02);
-			ov7675_i2c_write_byte(0x2d,0x0a);
-			ov7675_i2c_write_byte(0x20,0xbf);
-			ov7675_i2c_write_byte(0xd2,0x10);
-			ov7675_i2c_write_byte(0x73,0x01);
-
-			ov7675_i2c_write_byte(0x51,0x40);
-			ov7675_i2c_write_byte(0x52,0x40);
-
-			ov7675_i2c_write_byte(0xb3,0x40);
-			ov7675_i2c_write_byte(0xb4,0x80);
-			ov7675_i2c_write_byte(0xba,0xc0);
-			ov7675_i2c_write_byte(0xbb,0x20);
-			break;
-		}
-		case CAMERA_EFFECT_MOSAIC:
-		case CAMERA_EFFECT_RESIZE:
-		default:
-		{
-			return CAMERA_NOT_SUPPORTED;
-		}
-	}
-
-	camsensor_ov7675_effect = (camera_effect_type)effect;
-	
-	if(seteffect_zone> 0 && seteffect_zone< 25)
-	{
-		seteffect_delay=(double)(250*seteffect_zone)/(double)(CAMSENSOR_15_FPS/Q8);
-
-		camera_timed_wait(seteffect_delay);
-	}
-	
-	return CAMERA_SUCCESS;
+    return CAMERA_NOT_SUPPORTED;
 } /* camsensor_ov7675_set_effect() */
 
 /*===========================================================================
@@ -870,53 +806,53 @@ static void camsensor_ov7675_power_down(void)
 
 static camera_ret_code_type camsensor_ov7675_set_wb(int8 wb)
 { 
+	uint16 rgain=0x80, ggain=0x80, bgain=0x80;
 	uint8  temp_reg;
 	
-	ov7675_i2c_read_byte(0x22,&temp_reg);
+	ov7675_i2c_read_byte(0x13,&temp_reg);
 		
 	ERR("camsensor_ov7675_set_wb!",0,0,0);
 	switch((camera_wb_type)wb)
 	{
 		case CAMERA_WB_AUTO:
 		{
-			ov7675_i2c_write_byte(0x5a,0x56); //for AWB can adjust back
-			ov7675_i2c_write_byte(0x5b,0x40);
-			ov7675_i2c_write_byte(0x5c,0x4a);			
-			ov7675_i2c_write_byte(0x22,temp_reg|0x02);	 // Enable AWB
+			ov7675_i2c_write_byte(0x13,temp_reg|0x2);   // Enable AWB
 			break;
 		}
-
+        
 		case CAMERA_WB_INCANDESCENT:
 		{
-			ov7675_i2c_write_byte(0x22,temp_reg&~0x02); 
-			ov7675_i2c_write_byte(0x5a,0x48);
-			ov7675_i2c_write_byte(0x5b,0x40);
-			ov7675_i2c_write_byte(0x5c,0x5c);
+			ov7675_i2c_write_byte(0x6a,0x40);
+			ov7675_i2c_write_byte(0x13,temp_reg&~0x2);  // Disable AWB				
+			ov7675_i2c_write_byte(0x01,0x8c);
+			ov7675_i2c_write_byte(0x02,0x59);
 			break;
 		}
+        
 		case CAMERA_WB_FLUORESCENT:
 		{
-			ov7675_i2c_write_byte(0x22,temp_reg&~0x02);   
-			ov7675_i2c_write_byte(0x5a,0x40);
-			ov7675_i2c_write_byte(0x5b,0x42);
-			ov7675_i2c_write_byte(0x5c,0x50);
+			ov7675_i2c_write_byte(0x6a,0x40);
+			ov7675_i2c_write_byte(0x13,temp_reg&~0x2);  // Disable AWB				
+			ov7675_i2c_write_byte(0x01,0x7e);
+			ov7675_i2c_write_byte(0x02,0x49);
 			break;
 		}
+        
 		case CAMERA_WB_DAYLIGHT:
 		{
-			ov7675_i2c_write_byte(0x22,temp_reg&~0x02);   
-			ov7675_i2c_write_byte(0x5a,0x74);  //  50 45 40
-			ov7675_i2c_write_byte(0x5b,0x52);
-			ov7675_i2c_write_byte(0x5c,0x40);
+			ov7675_i2c_write_byte(0x6a,0x40);
+			ov7675_i2c_write_byte(0x13,temp_reg&~0x2);  // Disable AWB				
+			ov7675_i2c_write_byte(0x01,0x52);
+			ov7675_i2c_write_byte(0x02,0x66);
 			break;
 		}
 		
 		case CAMERA_WB_CLOUDY_DAYLIGHT:
 		{
-			ov7675_i2c_write_byte(0x22,temp_reg&~0x02);   // Disable AWB 
-			ov7675_i2c_write_byte(0x5a,0x8c); //WB_manual_gain // 5a 42 40
-			ov7675_i2c_write_byte(0x5b,0x50);
-			ov7675_i2c_write_byte(0x5c,0x40);
+			ov7675_i2c_write_byte(0x6a,0x40);
+			ov7675_i2c_write_byte(0x13,temp_reg&~0x2);  // Disable AWB				
+			ov7675_i2c_write_byte(0x01,0x52);
+			ov7675_i2c_write_byte(0x02,0x6c);
 			break;
 		}
 		
@@ -960,48 +896,39 @@ static camera_ret_code_type camsensor_ov7675_set_ev_compensation(int32 compensat
 		switch(new_luma_target)
 		{
 			case 8:    // -4 EV
-        		ov7675_i2c_write_byte(0xb5, 0xc0);
-				ov7675_i2c_write_byte(0xd3, 0x60);
+        		ov7675_i2c_write_byte(0x55, 0xa8);
        			break;
 
 		    case 9:    // -3 EV
-		        ov7675_i2c_write_byte(0xb5, 0xd0);
-				ov7675_i2c_write_byte(0xd3, 0x68);
+		        ov7675_i2c_write_byte(0x55, 0xa0);
 		        break;
 
 		    case 10:    // -2 EV
-		        ov7675_i2c_write_byte(0xb5, 0xe0);
-				ov7675_i2c_write_byte(0xd3, 0x70);
+		        ov7675_i2c_write_byte(0x55, 0x98);
 		        break;
 
 		    case 11:    // -1 EV
-		        ov7675_i2c_write_byte(0xb5, 0xf0);
-				ov7675_i2c_write_byte(0xd3, 0x78);
+		        ov7675_i2c_write_byte(0x55, 0x90);
 		        break;
 
 		    case 12:   // +0 EV
-		        ov7675_i2c_write_byte(0xb5, 0x00);
-				ov7675_i2c_write_byte(0xd3, 0x80);
+		        ov7675_i2c_write_byte(0x55, 0x00);
 		        break;
 
 		    case 13:    // +1 EV
-		        ov7675_i2c_write_byte(0xb5, 0x20);
-				ov7675_i2c_write_byte(0xd3, 0x88);
+		        ov7675_i2c_write_byte(0x55, 0x10);
 		        break;
 
 		    case 14:    // +2 EV
-		        ov7675_i2c_write_byte(0xb5, 0x30);
-				ov7675_i2c_write_byte(0xd3, 0x90);
+		        ov7675_i2c_write_byte(0x55, 0x18);
 		        break;
 
 		    case 15:    // +3 EV
-		        ov7675_i2c_write_byte(0xb5, 0x40);
-				ov7675_i2c_write_byte(0xd3, 0x98);
+		        ov7675_i2c_write_byte(0x55, 0x20);
 		        break;
 
 		    case 16:    // +4 EV
-		        ov7675_i2c_write_byte(0xb5, 0x50);
-				ov7675_i2c_write_byte(0xd3, 0xa0);
+		        ov7675_i2c_write_byte(0x55, 0x28);
 		        break;
 
 		    default:
