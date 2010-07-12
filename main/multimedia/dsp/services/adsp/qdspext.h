@@ -1388,8 +1388,10 @@ extern const qdspext_data_type qdsp_data_table;
 #define QDSP_IMAGE_CRYPT_LENGTH 20664
 #endif
 #ifdef FEATURE_CAMERA
+#ifndef T_QSC1100
 #define QDSP_IMAGE_SA_DS05_DEFINED
 #define QDSP_IMAGE_SA_DS05_LENGTH 6970
+#endif
 #endif
 #ifdef FEATURE_AUDIO_CAMERA_CONCURRENCY
 #define QDSP_IMAGE_CAM_AUDIO_CONC_DEFINED
@@ -1630,7 +1632,9 @@ typedef enum
 #define QDSP_MODULE_CRYPTO_DEFINED
 #endif
 #if (defined(FEATURE_CAMERA))
+#ifndef T_QSC1100
 #define QDSP_MODULE_SA_DS05_DEFINED
+#endif
 #endif
 #if (defined(FEATURE_AUDIO_CAMERA_CONCURRENCY))
 #define QDSP_MODULE_VFE05_CAPTURE_DEFINED
