@@ -9,17 +9,24 @@ GENERAL DESCRIPTION:
 
 PUBLIC CLASSES AND STATIC FUNCTIONS:
 
-        Copyright ?1999,2000,2001,2002,2003,2004,2005,2006,2007 QUALCOMM Incorporated.
+        Copyright ? 1999,2000,2001,2002,2003,2004,2005,2006,2007,2008
+                    by QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =============================================================================*/
 /*===========================================================================
                         EDIT HISTORY FOR MODULE
 
-$Header: //depot/asic/msmshared/apps/StaticExtensions/OEM/Src/OEMWMS.c#47 $
+$Header: //source/qcom/qct/modem/wms/wmsapp/main/latest/src/OEMWMS.c#7 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+06/27/08   PMD     Cleaned up Feature Flags in Code
+06/11/08   PMD     Removed wms_bc_*** APIs for CDMA Broadcast
+06/04/08   PMD     Removed support for Auto / Transparent SMS 
+05/19/08   HN      Support Read ACK
+01/31/08   PMD     Updated Copyright Information
+04/03/07   HQ      Added support for Apps Power Collapse.
 01/17/07   HQ      Updated copyright info for 2007.
 01/10/07   PMD     Fixed crash with other data parm in OEMWMS_MsgInfoCacheCb 
 11/20/06   PMD     Appended 1 to length for Null Character in wms_ts_unpack_ascii
@@ -96,16 +103,14 @@ when       who     what, where, why
 
 #include "comdef.h"     // Get DMSS type declarations.
 #include "OEMFeatures.h"
-#ifndef WIN32
 #include "err.h"        // Error functions
-#include "tmc.h"
-#endif
+
 #include "AEE.h"         // BREW headers.
 #include "AEE_OEM.h"     // Brew OEM Headers.
 #include "AEEWMS.h"      // Header file for WMS interface
 #include "OEMWMS.h"      // Header file for new WMS interface
 #include "OEMHeap.h"
-
+#include "tmc.h"
 #include "Appscommon.h"
 
 #define VOICEMAIL_ID        "VoiceMail"
@@ -121,14 +126,14 @@ struct IWMS
    uint32                    m_uRefs;           /* Number of references to this obj */
 };
 
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
+#ifdef FEATURE_CDSMS
 typedef struct
 {
   boolean isNonStdEmail;
   uint8  address[WMS_MAX_LEN];
   uint8  len;
 }oemwms_email_address_s_type;
-#endif /* FEATURE_CDSMS_NON_STD_EMAIL */
+#endif /* FEATURE_CDSMS */
 
 
 /************************************************************************
@@ -895,13 +900,13 @@ SIDE EFFECTS
 ===========================================================================*/
 int OEMWMS_New(IShell *pIShell, AEECLSID cls, void **ppif)
 {
-#ifndef WIN32
+
 #ifdef AEE_SIMULATOR
    // Do not create an object is this is being run on the SDK.
    *ppif = NULL;
    return EUNSUPPORTED;
 #endif
-#endif
+
    // Check parameters.
    if ((!pIShell) || (!ppif)) {
       return EBADPARM;
@@ -1054,10 +1059,6 @@ int MapWMSStatusToBREWCode(
      In order to handle all other statuses */
   int retVal = EFAILED;
   
-#ifdef WIN32
-	WMSStatus = WMS_OK_S;
-#endif
-
   switch (WMSStatus)
   {
     case WMS_OK_S:
@@ -1120,15 +1121,19 @@ static int OEMWMS_Init
   wms_client_err_e_type   client_err;
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#ifndef WIN32
+
+#ifdef FEATURE_APPS_POWER_COLLAPSE
+#error code not present
+#else /* FEATURE_APPS_POWER_COLLAPSE */
   client_err = wms_client_init(clientType,  pClientId );
+#endif /* FEATURE_APPS_POWER_COLLAPSE */
 
   if( client_err != WMS_CLIENT_ERR_NONE )
   {
     ERR_FATAL("client_init error", 0,0,0);
   }
 
-#endif
+
   /* done */
   return SUCCESS;
 
@@ -1160,14 +1165,14 @@ static int  OEMWMS_Activate
 )
 {
   wms_client_err_e_type client_err;
-#ifndef WIN32
+
   client_err = wms_client_activate( clientId);
 
   if( client_err  != WMS_CLIENT_ERR_NONE )
   {
     ERR_FATAL("client_act error", 0,0,0);
   }
-#endif
+
   return SUCCESS;
 }
 
@@ -1196,12 +1201,10 @@ static int  OEMWMS_Deactivate
   wms_client_id_type    clientId
 )
 {
-#ifndef WIN32
   if( wms_client_deactivate( clientId ) != WMS_CLIENT_ERR_NONE )
   {
     ERR_FATAL("client_act error", 0,0,0);
   }
-#endif
   return SUCCESS;
 }
 
@@ -1230,9 +1233,13 @@ static int OEMWMS_RegisterCfgCb
 )
 {
   wms_client_err_e_type client_err;
-#ifndef WIN32
+
+#ifdef FEATURE_APPS_POWER_COLLAPSE
+#error code not present
+#else /* FEATURE_APPS_POWER_COLLAPSE */
   client_err = wms_client_reg_cfg_cb( clientId, cfgCb );
-#endif
+#endif /* FEATURE_APPS_POWER_COLLAPSE */
+
   if( client_err != WMS_CLIENT_ERR_NONE )
     return EFAILED;
   else
@@ -1265,9 +1272,13 @@ static int OEMWMS_RegisterMsgCb
 )
 {
   wms_client_err_e_type client_err;
-#ifndef WIN32
+
+#ifdef FEATURE_APPS_POWER_COLLAPSE
+#error code not present
+#else /* FEATURE_APPS_POWER_COLLAPSE */
   client_err = wms_client_reg_msg_cb( clientId, msgCb );
-#endif
+#endif /* FEATURE_APPS_POWER_COLLAPSE */
+
   if( client_err != WMS_CLIENT_ERR_NONE )
     return EFAILED;
   else
@@ -1301,9 +1312,9 @@ static int OEMWMS_RegisterBcCb
 {
 #ifdef FEATURE_BROADCAST_SMS
   wms_client_err_e_type client_err;
-#ifndef WIN32
+
   client_err = wms_client_reg_bc_cb( clientId, bcCb );
-#endif
+
   if( client_err != WMS_CLIENT_ERR_NONE )
     return EFAILED;
   else
@@ -1342,7 +1353,11 @@ static int OEMWMS_RegisterBcMmCb
 #ifdef FEATURE_BROADCAST_SMS_MULTIMODE
   wms_client_err_e_type client_err;
 
+#ifdef FEATURE_APPS_POWER_COLLAPSE
+#error code not present
+#else /* FEATURE_APPS_POWER_COLLAPSE */
   client_err = wms_client_reg_bc_mm_cb( clientId, bcMmCb );
+#endif /* FEATURE_APPS_POWER_COLLAPSE */
 
   if( client_err != WMS_CLIENT_ERR_NONE )
     return EFAILED;
@@ -1380,9 +1395,13 @@ static int OEMWMS_RegisterDcCb
 {
 #ifdef FEATURE_CDSMS
   wms_client_err_e_type client_err;
-#ifndef WIN32
+
+#ifdef FEATURE_APPS_POWER_COLLAPSE
+#error code not present
+#else /* FEATURE_APPS_POWER_COLLAPSE */
   client_err = wms_client_reg_dc_cb( clientId, dcCb );
-#endif
+#endif /* FEATURE_APPS_POWER_COLLAPSE */
+
   if( client_err != WMS_CLIENT_ERR_NONE )
     return EFAILED;
   else
@@ -1418,9 +1437,9 @@ static int OEMWMS_RegisterParsingCb
 )
 {
   wms_client_err_e_type client_err;
-#ifndef WIN32
+
   client_err = wms_client_reg_parse_msg_cb( clientId, parsingCb );
-#endif
+
   if( client_err != WMS_CLIENT_ERR_NONE )
     return EFAILED;
   else
@@ -1455,9 +1474,9 @@ static int OEMWMS_SetPrimaryClient
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
+
   st = wms_cfg_set_primary_client(client_id, (wms_cmd_cb_type)cmd_cb->pfnNotify, user_data, set_primary, use_client_memory);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -1488,9 +1507,9 @@ static int OEMWMS_SetMemoryFull
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
+
   st = wms_cfg_set_memory_full(client_id, (wms_cmd_cb_type)cmd_cb->pfnNotify, user_data, memory_full);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -1522,9 +1541,9 @@ static int OEMWMS_SetMultiSend
 {
   wms_status_e_type   st;
 
-#ifndef WIN32
+
   st = wms_cfg_set_multisend(client_id, (wms_cmd_cb_type)cmd_cb->pfnNotify, user_data, multisend);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -1556,10 +1575,9 @@ static int OEMWMS_SetAutoreplace
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
 
   st = wms_cfg_set_autoreplace(client_id, (wms_cmd_cb_type)cmd_cb->pfnNotify, user_data, autoreplace);
-#endif
+  
   return (MapWMSStatusToBREWCode(st));
 }
 #endif /* FEATURE_AUTOREPLACE */
@@ -1592,14 +1610,12 @@ static int OEMWMS_CfgSetRoutes
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
-
   st = wms_cfg_set_routes( clientId,
                             (wms_cmd_cb_type) cmdCb->pfnNotify,
                             user_data,
                             pRoutes
                           );
- #endif 
+  
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -1631,12 +1647,11 @@ static int OEMWMS_CfgGetRoutes
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
   st = wms_cfg_get_routes( clientId,
                             (wms_cmd_cb_type) cmdCb->pfnNotify,
                             user_data
                           );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -1669,15 +1684,13 @@ static int OEMWMS_CfgGetMemoryStatus
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
-
   st = wms_cfg_get_memory_status( clientId,
                                   (wms_cmd_cb_type) cmdCb->pfnNotify,
                                    user_data, // user_data */
                                    memStore,
                                    tag
                                  );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 /*===========================================================================
@@ -1711,14 +1724,14 @@ static int OEMWMS_CfgGetMessageList
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
+
   st = wms_cfg_get_message_list( clientId,
                                   (wms_cmd_cb_type) cmdCb->pfnNotify,
                                   user_data, // user_data */
                                   memStore,
                                   tag /* all messages */
                                 );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -1861,12 +1874,7 @@ static boolean OEMWMS_CfgCheckCphsMsg
   const wms_address_s_type     *addr
 )
 {
-#ifndef WIN32
   return(wms_cfg_check_cphs_msg(addr));
-#else
-	return TRUE;
-#endif
-
 }
 
 /*===========================================================================
@@ -1892,11 +1900,7 @@ static boolean OEMWMS_CfgLocateVoicemailLine2
   uint32 						*index_line2
 )
 {
-#ifndef WIN32
   return(wms_cfg_locate_voicemail_line2(index_line2));
-#else
-	return TRUE;
-#endif
 }
 
 /*===========================================================================
@@ -1922,12 +1926,7 @@ static boolean OEMWMS_CfgCheckCDMADuplicate
   const wms_client_message_s_type * pMsg
 )
 {
-#ifndef WIN32
   return( wms_cfg_check_cdma_duplicate( pMsg ) );
-#else
-	return TRUE;
-#endif
-
 }
 
 /*===========================================================================
@@ -1953,12 +1952,7 @@ static boolean OEMWMS_CfgCheckWapPushMsg
   const wms_client_message_s_type * pMsg
 )
 {
-#ifndef WIN32
   return( wms_cfg_check_wap_push_message( pMsg ) );
-#else
-	return TRUE;
-#endif
-
 }
 
 /*===========================================================================
@@ -1990,14 +1984,13 @@ static int OEMWMS_CfgSetGWDomainPref
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
 
   st = wms_cfg_set_gw_domain_pref(clientId,
                                   (wms_cmd_cb_type) cmdCb->pfnNotify,
                                   user_data, 
                                   gw_domain_pref
                                  );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2029,12 +2022,12 @@ static int OEMWMS_CfgGetGWDomainPref
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
+
   st = wms_cfg_get_gw_domain_pref(clientId,
                                   (wms_cmd_cb_type) cmdCb->pfnNotify,
                                   user_data 
                                  );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2067,14 +2060,26 @@ static int OEMWMS_MsgSend
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32  
-  st =  wms_msg_send( clientId,
-                      (wms_cmd_cb_type) cmdCb->pfnNotify,
-                      user_data,
-                      send_mode,
-                      pMsg
-                    );
-#endif
+  
+  if (cmdCb != NULL) 
+  {
+    st =  wms_msg_send( clientId,
+                        (wms_cmd_cb_type) cmdCb->pfnNotify,
+                        user_data,
+                        send_mode,
+                        pMsg
+                      );
+  }
+  else
+  {
+    st =  wms_msg_send( clientId,
+                        NULL,
+                        user_data,
+                        send_mode,
+                        pMsg
+                      );
+  }
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2106,13 +2111,13 @@ static int OEMWMS_MsgAck
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
+
   st = wms_msg_ack ( clientId,
                      (wms_cmd_cb_type) cmdCb->pfnNotify,
                      user_data,
                      pAck
                    );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2146,14 +2151,14 @@ static int OEMWMS_MsgWrite
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
+
   st = wms_msg_write( clientId,
                      (wms_cmd_cb_type)cmdCb->pfnNotify,
                       user_data,
                       writeMode,
                       pMsg
                      );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 /*===========================================================================
@@ -2183,14 +2188,14 @@ static int OEMWMS_MsgRead
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
+
   st = wms_msg_read( clientId,
                     (wms_cmd_cb_type) cmdCb->pfnNotify,
                      user_data,
                      memStore,
                      index
                    );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 /*===========================================================================
@@ -2226,14 +2231,14 @@ static int OEMWMS_MsgDelete
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
+
    st = wms_msg_delete( clientId,
                      (wms_cmd_cb_type) cmdCb->pfnNotify,
                       user_data,
                       memStore,
                       index
                     );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2383,15 +2388,13 @@ static int OEMWMS_MsgDeleteAll
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
-
   st = wms_msg_delete_all( clientId,
                            (wms_cmd_cb_type) cmdCb->pfnNotify,
                            user_data,
                            memStore,
                            tag
                          );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2425,7 +2428,6 @@ static int OEMWMS_MsgModifyTag
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
 
   st = wms_msg_modify_tag ( clientId,
                             (wms_cmd_cb_type) cmdCb->pfnNotify,
@@ -2434,7 +2436,7 @@ static int OEMWMS_MsgModifyTag
                             index,
                             tag
                           );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2467,15 +2469,13 @@ static int OEMWMS_MsgReadTemplate
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
-
   st = wms_msg_read_template( clientId,
                                (wms_cmd_cb_type) cmdCb->pfnNotify,
                                user_data,
                                memStore,
                                index
                              );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2509,15 +2509,13 @@ static int OEMWMS_MsgWriteTemplate
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
-
   st = wms_msg_write_template( clientId,
                                 (wms_cmd_cb_type)  cmdCb->pfnNotify,
                                 user_data,
                                 writeMode,
                                 pMsg
                               );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2551,15 +2549,13 @@ static int OEMWMS_MsgDeleteTemplate
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
-
   st = wms_msg_delete_template( clientId,
                                (wms_cmd_cb_type)  cmdCb->pfnNotify,
                                  user_data,
                                  memStore,
                                  index
                                );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2591,14 +2587,12 @@ static int OEMWMS_MsgDeleteAllTemplate
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
-
   st = wms_msg_delete_template_all( clientId,
                                      (wms_cmd_cb_type) cmdCb->pfnNotify,
                                      user_data,
                                      memStore
                                    );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 /*===========================================================================
@@ -2628,7 +2622,6 @@ int OEMWMS_MsgReadStatusReport
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
 
   st = wms_msg_read_sts_report( clientId,
                     (wms_cmd_cb_type) cmdCb->pfnNotify,
@@ -2636,7 +2629,7 @@ int OEMWMS_MsgReadStatusReport
                      memStore,
                      index
                    );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2670,7 +2663,6 @@ static int OEMWMS_MsgWriteStatusReport
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
 
   st = wms_msg_write_sts_report( clientId,
                      (wms_cmd_cb_type)cmdCb->pfnNotify,
@@ -2678,7 +2670,7 @@ static int OEMWMS_MsgWriteStatusReport
                       writeMode,
                       pMsg
                      );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2711,7 +2703,6 @@ static int OEMWMS_MsgDeleteStatusReport
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
 
   st = wms_msg_delete_sts_report( clientId,
                                  (wms_cmd_cb_type)  cmdCb->pfnNotify,
@@ -2719,7 +2710,7 @@ static int OEMWMS_MsgDeleteStatusReport
                                  memStore,
                                  index
                                );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2751,14 +2742,13 @@ static int OEMWMS_MsgDeleteAllStatusReport
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
 
   st = wms_msg_delete_sts_report_all( clientId,
                                      (wms_cmd_cb_type) cmdCb->pfnNotify,
                                      user_data,
                                      memStore
                                    );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2786,11 +2776,11 @@ static int OEMWMS_MsgSetAutoCDMAParams
 )
 {
   wms_status_e_type   st;
- #ifndef WIN32 
+
   st =  wms_msg_set_auto_cdma_params( clientId,
                                       cdma_params
                                     );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2818,11 +2808,11 @@ static int OEMWMS_MsgSetAutoGWParams
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32  
+ 
   st =  wms_msg_set_auto_gw_params( clientId,
                                       gw_params
                                     );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2850,11 +2840,10 @@ static int OEMWMS_MsgGetAutoCDMAParams
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32  
+   
   st =  wms_msg_get_auto_cdma_params( clientId,
                                       cdma_params
                                     );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2881,12 +2870,10 @@ static int OEMWMS_MsgGetAutoGWParams
   wms_gw_template_s_type           * gw_params  
 )
 {
-  wms_status_e_type   st;
-#ifndef WIN32  
+  wms_status_e_type   st;  
   st =  wms_msg_get_auto_gw_params( clientId,
                                       gw_params
                                     );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2914,11 +2901,11 @@ int OEMWMS_MsgGetRetryPeriod
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32  
+  
   st =  wms_msg_get_retry_period( clientId,
                                   period
                                 );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2946,11 +2933,11 @@ int OEMWMS_MsgSetRetryPeriod
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32  
+  
   st =  wms_msg_set_retry_period( clientId,
                                   period
                                 );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -2980,9 +2967,9 @@ static int OEMWMS_MsgGetCacheInfo
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32  
+  
   st =  wms_msg_get_cache_info( mem_store, index, tag, cache_ptr);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3015,12 +3002,11 @@ static int OEMWMS_DcEnableAutoDisconnect
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
   st = wms_dc_enable_auto_disconnect( clientId,
                                       (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                       user_data,
                                       timeout );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3051,12 +3037,10 @@ static int OEMWMS_DcDisableAutoDisconnect
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_dc_disable_auto_disconnect( clientId,
                                        (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                        user_data );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3087,13 +3071,12 @@ static int OEMWMS_DcConnect
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
 
   st = wms_dc_connect( clientId,
                        (wms_cmd_cb_type) cmdCb->pfnNotify,
                        user_data,
                        so );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3124,12 +3107,11 @@ static int OEMWMS_DcDisconnect
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32
 
   st = wms_dc_disconnect( clientId,
                           (wms_cmd_cb_type) cmdCb->pfnNotify,
                           user_data);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3161,11 +3143,10 @@ static int OEMWMS_DbgResetTLSeqNum (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
   st = wms_dbg_reset_tl_seq_num( clientId,
                                  (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                  user_data );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3197,12 +3178,10 @@ static int OEMWMS_DbgSetMsgRefNum (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_dbg_set_msg_ref( clientId,
                             (wms_cmd_cb_type) cmd_cb->pfnNotify,
                             user_data );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3234,12 +3213,10 @@ static int OEMWMS_DbgClearSMMAFlag (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_dbg_clear_smma_flag( clientId,
                                 (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                 user_data );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3271,12 +3248,10 @@ static int OEMWMS_DbgGetRetryInterval (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_dbg_get_retry_interval( clientId,
                                    (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                    user_data );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3309,13 +3284,11 @@ static int OEMWMS_DbgSetRetryInterval (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_dbg_set_retry_interval( clientId,
                                    (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                    user_data,
                                    retry_interval );
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3349,10 +3322,10 @@ static int OEMWMS_TsEncode (
   {
     return EBADPARM;
   }
-#ifndef WIN32
+
   st = wms_ts_encode(ClientTsDataPtr,
                      RawTsDataPtr);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3386,11 +3359,10 @@ static int OEMWMS_TsDecode (
   {
     return EBADPARM;
   }
-#ifndef WIN32
 
   st = wms_ts_decode(RawTsDataPtr,
                      ClientTsDataPtr);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3418,12 +3390,7 @@ static uint8 OEMWMS_TsGetHeaderLength (
   {
     return 0;
   }
-#ifndef WIN32
-
   return (wms_ts_get_udh_length(udhPtr));
-#else
-	return 0;
-#endif
 #else /* FEATURE_SMS_UDH */
   return 0;
 #endif /* FEATURE_SMS_UDH */
@@ -3458,10 +3425,9 @@ static int OEMWMS_TsBcdToAscii (
   {
     return EBADPARM;
   }
-#ifndef WIN32
 
   wms_ts_bcd_to_ascii(InputPtr, length, OutputPtr);
-#endif  
+  
   return SUCCESS;
 }
 
@@ -3494,10 +3460,9 @@ static int OEMWMS_TsAsciiToBcd (
   {
     return EBADPARM;
   }
-#ifndef WIN32
 
   wms_ts_ascii_to_bcd(InputPtr, length, OutputPtr);
-#endif  
+  
   return SUCCESS;
 }
 
@@ -3529,10 +3494,9 @@ int OEMWMS_TsAsciiToDefault (
   {
     return EBADPARM;
   }
-#ifndef WIN32
 
   wms_ts_ascii_to_default(InputPtr, length, OutputPtr);
-#endif  
+  
   return SUCCESS;
 }
 
@@ -3564,10 +3528,9 @@ static int OEMWMS_TsDefaultToAscii(
   {
     return EBADPARM;
   }
-#ifndef WIN32
 
   wms_ts_default_to_ascii(InputPtr, length, OutputPtr);
-#endif  
+  
   return SUCCESS;
 }
 
@@ -3597,10 +3560,9 @@ static int OEMWMS_TsDecodeRelativeTime(
   {
     return EBADPARM;
   }
-#ifndef WIN32
 
   wms_ts_decode_relative_time(nTime, TimeStampPtr);
-#endif  
+  
   return SUCCESS;
 }
 
@@ -3627,12 +3589,8 @@ static uint8 OEMWMS_TsEncodeRelativeTime(
   {
     return 0;
   }
-#ifndef WIN32
 
   return (wms_ts_encode_relative_time(TimeStampPtr));
-#else
-  return 0;
-#endif
 }
 
 /*===========================================================================
@@ -3659,11 +3617,7 @@ static uint8 OEMWMS_TsDecodeDCS(
   {
     return 0;
   }
- #ifndef WIN32
   return (wms_ts_decode_dcs(data, dcs));
- #else
-	return 0;
- #endif
 }
 
 /*===========================================================================
@@ -3690,12 +3644,7 @@ static uint8 OEMWMS_TsEncodeDCS(
   {
     return 0;
   }
-#ifndef WIN32
   return (wms_ts_encode_dcs(dcs, data));
-#else
-   return 0;
-#endif
-
 }
 
 /*===========================================================================
@@ -3729,12 +3678,7 @@ static byte OEMWMS_TsPackAscii(
   {
     return 0;
   }
-#ifndef WIN32
   return (wms_ts_pack_ascii(AsciiPtr, DataPtr, DataLengthPtr, PaddingBitsPtr));
-#else
-   return 0;
-#endif
-
 #else
   return 0;
 #endif /* FEATURE_CDSMS */
@@ -3767,12 +3711,7 @@ static byte OEMWMS_TsUnpackAscii(
   {
     return 0;
   }
-#ifndef WIN32
   return (wms_ts_unpack_ascii(UserDataPtr, length, OutputPtr));
-#else
-   return 0;
-#endif
-
 #else
   return 0;
 #endif /* FEATURE_CDSMS */
@@ -3805,12 +3744,7 @@ static byte OEMWMS_TsDtmfToAscii(
   {
     return 0;
   }
-#ifndef WIN32
   return (wms_ts_dtmf2ascii(length, InputPtr, OutputPtr));
-#else
-   return 0;
-#endif
-
 #else
   return 0;
 #endif /* FEATURE_CDSMS */
@@ -3842,12 +3776,7 @@ static byte OEMWMS_TsAsciiToDtmf(
   {
     return 0;
   }
-#ifndef WIN32
   return (wms_ts_ascii2dtmf(InputPtr, OutputPtr));
-#else
-   return 0;
-#endif
-
 #else
   return 0;
 #endif /* FEATURE_CDSMS */
@@ -3876,12 +3805,11 @@ int OEMWMS_TsConvertCdmaGwMessageToAuto (
 )
 {
   wms_status_e_type   st;
-#ifndef WIN32  
+ 
   st = wms_ts_convert_cdma_gw_msg_to_auto ( InputPtr,
                                              length,
                                              OutputPtr
                                            );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }                              
   
@@ -3908,14 +3836,12 @@ static int OEMWMS_TsConvertAutoToCdmaGwMessage (
   wms_client_message_s_type  * OutputPtr
 )
 {
-  wms_status_e_type   st;
-#ifndef WIN32  
+  wms_status_e_type   st; 
   st = wms_ts_convert_auto_to_cdma_gw_msg( clientId,
                                            MsgMode,
                                            InputPtr,
                                            OutputPtr
                                          );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -3977,11 +3903,9 @@ static int OEMWMS_BcGetConfig
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
   st = wms_bc_get_config( clientId,
                           (wms_cmd_cb_type) cmd_cb->pfnNotify,
                           user_data );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4014,12 +3938,10 @@ static int OEMWMS_BcGetPref
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
 
   st = wms_bc_get_pref( clientId,
                         (wms_cmd_cb_type) cmd_cb->pfnNotify,
                         user_data );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4054,13 +3976,10 @@ static int OEMWMS_BcSetPref (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_set_pref( clientId,
                         (wms_cmd_cb_type) cmd_cb->pfnNotify,
                         user_data,
                         pref );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4092,12 +4011,10 @@ static int OEMWMS_BcGetTable
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
+  
   st = wms_bc_get_table( clientId,
                          (wms_cmd_cb_type) cmd_cb->pfnNotify,
                          user_data );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4132,15 +4049,13 @@ static int OEMWMS_BcSelectService (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
+  
   st = wms_bc_select_service( clientId,
                               (wms_cmd_cb_type) cmd_cb->pfnNotify,
                               user_data,
                               srvcID,
                               selected,
                               priority );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4173,12 +4088,10 @@ static int OEMWMS_BcGetAllServiceIds
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
+  
   st = wms_bc_get_all_service_ids( clientId,
                                    (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                    user_data );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4212,13 +4125,11 @@ static int OEMWMS_BcGetServiceInfo (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
+  
   st = wms_bc_get_service_info( clientId,
                                 (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                 user_data,
                                 srvcID );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4252,13 +4163,11 @@ static int OEMWMS_BcAddService (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
+  
   st = wms_bc_add_service( clientId,
                            (wms_cmd_cb_type) cmd_cb->pfnNotify,
                            user_data,
                            srvcInfo );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4292,13 +4201,10 @@ static int OEMWMS_BcDeleteService (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_delete_service( clientId,
                               (wms_cmd_cb_type) cmd_cb->pfnNotify,
                               user_data,
                               srvcID );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4333,14 +4239,12 @@ static int OEMWMS_BcChangeLabel (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
+  
   st = wms_bc_change_label( clientId,
                             (wms_cmd_cb_type) cmd_cb->pfnNotify,
                             user_data,
                             srvcID,
                             label );
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4373,12 +4277,10 @@ static int OEMWMS_BcDeleteAllServices (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
+  
   st = wms_bc_delete_all_services(clientId,
                                   (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                   user_data);
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4412,13 +4314,11 @@ int OEMWMS_BcSetPriorityForAll (
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
+  
   st = wms_bc_set_priority_for_all(clientId,
                                    (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                    user_data,
                                    priority);
-#endif
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4453,13 +4353,11 @@ static int OEMWMS_BcMmGetConfig
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_get_config (clientId,
                              (wms_cmd_cb_type) cmd_cb->pfnNotify,
                              user_data,
                              message_mode);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4494,13 +4392,11 @@ static int OEMWMS_BcMmGetPref
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_get_pref (clientId,
                            (wms_cmd_cb_type) cmd_cb->pfnNotify,
                            user_data,
                            message_mode);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4537,14 +4433,12 @@ static int OEMWMS_BcMmSetPref
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_set_pref (clientId,
                            (wms_cmd_cb_type) cmd_cb->pfnNotify,
                            user_data,
                            message_mode,
                            pref);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4580,13 +4474,11 @@ static int OEMWMS_BcMmGetTable
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_get_table (clientId,
                             (wms_cmd_cb_type) cmd_cb->pfnNotify,
                             user_data,
                             message_mode);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4623,15 +4515,13 @@ static int OEMWMS_BcMmSelectService
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_select_service (clientId,
                                  (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                  user_data,
                                  message_mode,
                                  srv_id_ptr,
                                  selected);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4666,13 +4556,11 @@ static int OEMWMS_BcMmGetAllServiceIds
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_get_all_service_ids (clientId,
                                       (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                       user_data,
                                       message_mode);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4709,14 +4597,12 @@ static int OEMWMS_BcMmGetServiceInfo
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_get_service_info (clientId,
                                    (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                    user_data,
                                    message_mode,
                                    srv_id_ptr);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4754,15 +4640,13 @@ static int OEMWMS_BcMmAddServices
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_add_services (clientId,
                                (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                user_data,
                                message_mode,
                                num_entries,
                                entries);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4800,15 +4684,13 @@ static int OEMWMS_BcMmDeleteServices
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_delete_services (clientId,
                                   (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                   user_data,
                                   message_mode,
                                   num_entries,
                                   srv_ids);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4845,14 +4727,12 @@ static int OEMWMS_BcMmChangeServiceInfo
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_change_service_info (clientId,
                                       (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                       user_data,
                                       message_mode,
                                       srv_info_ptr);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4888,13 +4768,11 @@ static int OEMWMS_BcMmDeleteAllServices
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_delete_all_services (clientId,
                                       (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                       user_data,
                                       message_mode);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4931,14 +4809,12 @@ static int OEMWMS_BcMmSelectAllServices
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_select_all_services (clientId,
                                       (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                       user_data,
                                       message_mode,
                                       selected);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -4975,14 +4851,12 @@ static int OEMWMS_BcMmSetPriorityAllServices
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_set_priority_for_all_services (clientId,
                                       (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                       user_data,
                                       message_mode,
                                       priority);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -5018,13 +4892,11 @@ static int OEMWMS_BcMmMsgDeleteIndication
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_msg_delete_indication( clientId,
                                         (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                         user_data,
                                         cb_page_header);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -5059,12 +4931,10 @@ static int OEMWMS_BcMmMsgDeleteAllIndication
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_msg_delete_all_indication( clientId,
                                             (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                             user_data);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -5099,13 +4969,11 @@ static int OEMWMS_BcMmGetReadingPref
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_get_reading_pref( clientId,
                                    (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                    user_data,
                                    message_mode);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
@@ -5142,19 +5010,18 @@ static int OEMWMS_BcMmSetReadingPref
 )
 {
   wms_status_e_type st;
-#ifndef WIN32
-
   st = wms_bc_mm_set_reading_pref( clientId,
                                    (wms_cmd_cb_type) cmd_cb->pfnNotify,
                                    user_data,
                                    message_mode,
                                    reading_advised,
                                    reading_optional);
-#endif
+
   return (MapWMSStatusToBREWCode(st));
 }
 
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
+#ifdef FEATURE_CDSMS
+
 /*===========================================================================
 FUNCTION OEMWMS_IsNonStdEmail
 
@@ -5250,9 +5117,6 @@ static uint8 OEMWMS_GetNonStdEmail
   return i;
 } /* OEMWMS_GetNonStdEmail() */
 
-#endif /* FEATURE_CDSMS_NON_STD_EMAIL */
-
-#ifdef FEATURE_CDSMS
 /*===========================================================================
 FUNCTION OEMWMS_ConvertFromUnicode
 
@@ -5289,6 +5153,7 @@ void OEMWMS_ConvertFromUnicode
   }
 
 } /* OEMWMS_ConvertFromUnicode() */
+
 #endif /* FEATURE_CDSMS */
 
 /*===========================================================================
@@ -5367,7 +5232,6 @@ void OEMWMS_MsgInfoCacheCb
   uint8                               *pCache
 )
 {
-#ifndef WIN32
   wms_client_ts_data_s_type   *cl_data;
   uint8                       *buf;
   int                         offset = 0;
@@ -5415,9 +5279,7 @@ void OEMWMS_MsgInfoCacheCb
      (pMsg->msg_hdr.tag == WMS_TAG_MO_TEMPLATE))
   {
     wms_client_bd_s_type *info_data;
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
     oemwms_email_address_s_type *emailAddress;
-#endif
 
     info_data=mem_malloc(&tmc_heap,sizeof(wms_client_bd_s_type));
     if (info_data == NULL)
@@ -5428,7 +5290,6 @@ void OEMWMS_MsgInfoCacheCb
       return;
     }
 
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
     emailAddress= mem_malloc(&tmc_heap,sizeof(oemwms_email_address_s_type));
 
     if (emailAddress == NULL)
@@ -5439,7 +5300,6 @@ void OEMWMS_MsgInfoCacheCb
       mem_free(&tmc_heap,info_data);
       return;
     }
-#endif
 
     if((pMsg->u.cdma_template.mask & WMS_CDMA_TEMPLATE_MASK_BEARER_DATA) &&
        (pMsg->u.cdma_template.client_bd.mask & WMS_MASK_BD_USER_DATA))
@@ -5450,13 +5310,10 @@ void OEMWMS_MsgInfoCacheCb
          (pMsg->u.cdma_template.client_bd.user_data.encoding ==
           WMS_ENCODING_IA5))
       {
-#ifndef WIN32
         info_data->user_data.data_len =
         wms_ts_unpack_ascii((wms_cdma_user_data_s_type*)&pMsg->u.cdma_template.client_bd.user_data,
                             pMsg->u.cdma_template.client_bd.user_data.number_of_digits+1,
                             info_data->user_data.data);
-#endif
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
 
         /* User data field will contain email address if non-std email format
         ** is being used.  Extract it and get the real chari's
@@ -5503,7 +5360,6 @@ void OEMWMS_MsgInfoCacheCb
           }
         }
         else
-#endif /* FEATURE_CDSMS_NON_STD_EMAIL */
         {
           pCache[0] =
           MIN(WMS_MSG_INFO_CACHE_SIZE-1, info_data->user_data.data_len);
@@ -5542,11 +5398,9 @@ void OEMWMS_MsgInfoCacheCb
     {
       if(pMsg->u.cdma_template.address.digit_mode == WMS_DIGIT_MODE_4_BIT)
       {
-#ifndef WIN32
         (void)wms_ts_dtmf2ascii((byte)pMsg->u.cdma_template.address.number_of_digits,
                                 (byte*)pMsg->u.cdma_template.address.digits,
                                 buf);
-#endif
       }
       else
       {
@@ -5572,9 +5426,7 @@ void OEMWMS_MsgInfoCacheCb
     }
 
     mem_free(&tmc_heap,info_data);
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
     mem_free(&tmc_heap,emailAddress);
-#endif /* FEATURE_CDSMS_NON_STD_EMAIL */
   }
   /* Cache is for a CDMA message */
   else if(pMsg->msg_hdr.message_mode == WMS_MESSAGE_MODE_CDMA)
@@ -5583,9 +5435,7 @@ void OEMWMS_MsgInfoCacheCb
     uint8 i=0;
 #endif /* FEATURE_SMS_UDH */
     wms_client_bd_s_type *info_data;
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
     oemwms_email_address_s_type *emailAddress;
-#endif
 
     info_data=mem_malloc(&tmc_heap,sizeof(wms_client_bd_s_type));
     if (info_data == NULL)
@@ -5596,9 +5446,7 @@ void OEMWMS_MsgInfoCacheCb
       return;
     }
 
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
-    emailAddress= sys_malloc(sizeof(oemwms_email_address_s_type));
-
+    emailAddress= mem_malloc(&tmc_heap,sizeof(oemwms_email_address_s_type));
     if (emailAddress == NULL)
     {
       MSG_ERROR("memory allocation failed for email_address in OEMWMS_MsgInfoCacheCb",0,0,0);
@@ -5607,13 +5455,11 @@ void OEMWMS_MsgInfoCacheCb
       mem_free(&tmc_heap,info_data);
       return;
     }
-#endif
 
     /* Initialized other to 0 */
     (void)MEMSET( &cl_data->u.cdma.other, 0, sizeof(wms_other_parm_s_type) );
 
     /* decode the raw bearer data */
-#ifndef WIN32
     if(wms_ts_decode(&pMsg->u.cdma_message.raw_ts, cl_data) != WMS_OK_S)
     {
       MSG_ERROR("Decoding failed for msg list cache!",0,0,0);
@@ -5622,12 +5468,10 @@ void OEMWMS_MsgInfoCacheCb
       mem_free(&tmc_heap,cl_data);
       mem_free(&tmc_heap,buf);
       mem_free(&tmc_heap,info_data);
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
       mem_free(&tmc_heap,emailAddress);
-#endif /* FEATURE_CDSMS_NON_STD_EMAIL */
       return;
     }
-#endif    
+    
 #ifdef FEATURE_SMS_UDH
     /* Concat Header */
     for (i=0; i<cl_data->u.cdma.user_data.num_headers; i++)
@@ -5669,7 +5513,7 @@ void OEMWMS_MsgInfoCacheCb
     /* Check if this is a voicemail message */
     if(cl_data->u.cdma.mask & WMS_MASK_BD_NUM_OF_MSGS)
     {
-      MEMCPY(pCache, VOICEMAIL_ID, VOICEMAIL_ID_LEN);
+      (void)MEMCPY(pCache, VOICEMAIL_ID, VOICEMAIL_ID_LEN);
     }
     /* Check for user data */
     else if(cl_data->u.cdma.mask & WMS_MASK_BD_USER_DATA)
@@ -5678,13 +5522,10 @@ void OEMWMS_MsgInfoCacheCb
       if((cl_data->u.cdma.user_data.encoding == WMS_ENCODING_ASCII) ||
          (cl_data->u.cdma.user_data.encoding == WMS_ENCODING_IA5))
       {
-#ifndef WIN32
         info_data->user_data.data_len =
         wms_ts_unpack_ascii((wms_cdma_user_data_s_type*)&cl_data->u.cdma.user_data,
                             cl_data->u.cdma.user_data.number_of_digits+1,
                             info_data->user_data.data);
-#endif
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
 
         /* User data field will contain email address if non-std email format
         ** is being used.  Extract it and get the real chari's
@@ -5727,7 +5568,6 @@ void OEMWMS_MsgInfoCacheCb
           }
         }
         else
-#endif /* FEATURE_CDSMS_NON_STD_EMAIL */
         {
           pCache[0] =
           MIN(WMS_MSG_INFO_CACHE_SIZE-1, info_data->user_data.data_len);
@@ -5774,11 +5614,9 @@ void OEMWMS_MsgInfoCacheCb
     {
       if(pMsg->u.cdma_message.address.digit_mode == WMS_DIGIT_MODE_4_BIT)
       {
-#ifndef WIN32
         (void)wms_ts_dtmf2ascii((byte)pMsg->u.cdma_message.address.number_of_digits,
                                 (byte*)pMsg->u.cdma_message.address.digits,
                                 buf);
-#endif
       }
       else
       {
@@ -5795,9 +5633,7 @@ void OEMWMS_MsgInfoCacheCb
                  pMsg->u.cdma_message.address.number_of_digits));
     }
     mem_free(&tmc_heap,info_data);
-#ifdef FEATURE_CDSMS_NON_STD_EMAIL
     mem_free(&tmc_heap,emailAddress);
-#endif /* FEATURE_CDSMS_NON_STD_EMAIL */
   }
 #endif /* FEATURE_CDSMS */
 
@@ -5822,7 +5658,6 @@ void OEMWMS_MsgInfoCacheCb
   }
   mem_free(&tmc_heap,cl_data);
   mem_free(&tmc_heap,buf);
-#endif
 }
 
 
@@ -6537,7 +6372,7 @@ static int wms_cacheinfolist_insertsort(wms_cache_info_list *plist,
                     return EFAILED;
                 }
                 
-                // 重复性检查
+                // 重复?约觳?
                 j = (pnode->seq_num - 1) % LONGSMS_MAX_PACKAGES;
                 if (ptepnode->pItems[j] != NULL)
                 {// 重复! 对此情况继续往后查找。
