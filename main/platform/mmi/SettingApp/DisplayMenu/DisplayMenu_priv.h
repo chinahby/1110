@@ -102,9 +102,11 @@ typedef enum DLGRetValue
     DLGRET_LED_CONTROL  , 
     DLGRET_KEY_PAD_CTL ,
     DLGRET_MENU_STYLE_CTL,
+#if 0    
 #ifdef FEATURE_RANDOM_MENU_COLOR
     DLGRET_COLORFUL_MENU_CTL,
     DLGRET_COLOR_SETTING,
+#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
     DLGRET_REND_MENU_CTL,
@@ -128,10 +130,13 @@ typedef enum _DisplayMenuState
     DISPLAYMENUST_LED_CONTROL,
     DISPLAYMENUST_KEY_PAD_CONTROL,
     DISPLAYMENUST_MENU_STYLE_CONTROL,
+#if 0    
 #ifdef FEATURE_RANDOM_MENU_COLOR
     DISPLAYMENUST_COLORFUL_MENU,
     DISPLAYMENUST_COLOR_SETTING,
 #endif
+#endif
+
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
     DISPLAYMENUST_REND_MENU,
 #endif
@@ -277,10 +282,13 @@ typedef struct _CDisplayMenu
 #endif
     uint16            m_msg_id;
 
+#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
     RGBVAL         m_nCFGColor; 
     boolean         m_bCustomColor;
 #endif
+#endif
+
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
     uint32          m_nCFGRend;//当前效果 
     boolean         m_bRandomRend;//是否启用随机效果

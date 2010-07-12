@@ -710,14 +710,15 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
     CContApp *pMe = (CContApp*)pi;
     AEEAppStart *as;
     AEEDeviceInfo di;
-
+    MSG_FATAL("IContApp_HandleEvent Start",0,0,0);
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di);    
     
-    FARF(EVENT,("Handle evt 0x%x, w %x, dw %x",eCode, wParam, dwParam ));
+    MSG_FATAL("Handle evt 0x%x, w %x, dw %x",eCode, wParam, dwParam );
     
     switch (eCode)
     {
         case EVT_APP_START:
+            MSG_FATAL("IContApp_HandleEvent EVT_APP_START",0,0,0);
 #if defined(AEE_STATIC)
             ASSERT(dwParam != 0);
 #endif
@@ -765,6 +766,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 #endif /* FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK*/            
             
             // 开始ContApp状态机
+            MSG_FATAL("IContApp_HandleEvent Start CContApp_RunFSM",0,0,0);
             CContApp_RunFSM(pMe);
             return TRUE;
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD) 
@@ -783,6 +785,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
         }
 #endif
         case EVT_FLIP:
+            MSG_FATAL("IContApp_HandleEvent EVT_FLIP",0,0,0);
             if( !wParam)
             {
                 if(pMe->m_eCurState != STATE_COPYING)
@@ -798,6 +801,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             return TRUE;
             
         case EVT_APP_STOP:
+            MSG_FATAL("IContApp_HandleEvent EVT_APP_STOP",0,0,0);
             pMe->m_bSuspending = TRUE;
             pMe->m_bActive = FALSE;
 			
@@ -808,11 +812,13 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             return TRUE;
             
         case EVT_APP_SUSPEND:
+            MSG_FATAL("IContApp_HandleEvent EVT_APP_SUSPEND",0,0,0);
             pMe->m_bSuspending = TRUE;
             (void)ISHELL_CancelTimer(pMe->m_pShell, CContApp_AppIsReadyCB, pMe);
             return TRUE;
             
         case EVT_APP_RESUME:
+            MSG_FATAL("IContApp_HandleEvent EVT_APP_RESUME",0,0,0);
 #if defined(AEE_STATIC)
             ASSERT(dwParam != 0);
 #endif
@@ -840,6 +846,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             return TRUE;
             
         case EVT_DIALOG_INIT:
+            MSG_FATAL("IContApp_HandleEvent EVT_DIALOG_INIT",0,0,0);
             // 更新对话框控制参数信息！！！
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
@@ -847,6 +854,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             return CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             
         case EVT_DIALOG_END:
+            MSG_FATAL("IContApp_HandleEvent EVT_DIALOG_END",0,0,0);
             if (wParam == 0)
             {
                 return TRUE;

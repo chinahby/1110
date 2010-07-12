@@ -398,7 +398,7 @@ static NextFSMAction Handler_STATE_INIT(CContApp *pMe)
     ASSERT(pMe != NULL);
 #endif
     
-    FARF(STATE, ("STATE_INIT"));
+    MSG_FATAL("Handler_STATE_INIT Start",0,0,0);
 
     if (NULL == pMe)
     {
@@ -426,7 +426,8 @@ static NextFSMAction Handler_STATE_INIT(CContApp *pMe)
             return NFSMACTION_CONTINUE;
     }   
     
-    MOVE_TO_STATE(STATE_LOAD);    
+    MOVE_TO_STATE(STATE_LOAD); 
+    MSG_FATAL("Handler_STATE_INIT End",0,0,0);
     return NFSMACTION_CONTINUE;
 } // Handler_STATE_INIT
 
@@ -455,7 +456,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
     ASSERT(pMe != NULL);
 #endif
     
-    FARF(STATE, ("STATE_LOAD"));
+    MSG_FATAL("Handler_STATE_LOAD Start",0,0,0);
   
     if (FALSE == pMe->m_bUnLock)    
     {
@@ -466,6 +467,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
         if (isLocked)
         {
             MOVE_TO_STATE(STATE_LOCKED)
+            MSG_FATAL("Handler_STATE_LOAD isLocked",0,0,0);
             return NFSMACTION_CONTINUE;
         }
     }
@@ -479,6 +481,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
     {
         pMe->m_wErrStrID = IDS_ERR_GETCONFIG;
         MOVE_TO_STATE(STATE_ERROR);
+        MSG_FATAL("Handler_STATE_LOAD nRet != SUCCESS nRet=%d",nRet,0,0);
         return NFSMACTION_CONTINUE;
     }
     
@@ -487,6 +490,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
     {
         //if the applet started normally by clicking contacts applet
         case STARTMETHOD_NORMAL:
+            MSG_FATAL("Handler_STATE_LOAD STARTMETHOD_NORMAL",0,0,0);
             pMe->m_wMainListSel = MENU_SELECT_NULL;
             pMe->m_eListFrom = LISTFROMNOMAL;
             FREEIF(pMe->m_szAlpha);
@@ -495,12 +499,14 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
 
         case STARTMETHOD_ADDEMAIL:
         case STARTMETHOD_ADDURL:
+            MSG_FATAL("Handler_STATE_LOAD STARTMETHOD_ADDURL",0,0,0);
             CContApp_LoadPhoneBook(pMe, CONTCFG_VIEWTYPE_PHONE);
             pMe->m_wMainListSel = MENU_SELECT_NULL;
             MOVE_TO_STATE(STATE_MAINLIST);
             return NFSMACTION_CONTINUE;
             
         case STARTMETHOD_ADDFIELD:
+            MSG_FATAL("Handler_STATE_LOAD STARTMETHOD_ADDFIELD",0,0,0);
             MOVE_TO_STATE(STATE_MAINLIST);
             break;
         
@@ -510,6 +516,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
 #ifdef FEATURE_RUIM_PHONEBOOK
             if( IsRunAsUIMVersion() )
             {
+                MSG_FATAL("Handler_STATE_LOAD IsRunAsUIMVersion()",0,0,0);
                 //guoys modified for PR4.2.1 begin
                 (void)CContApp_GetConfig(pMe, CONTCFG_SAVETYPE, &pMe->m_nSaveType, sizeof(byte));
                 if(pMe->m_nSaveType == CONTCFG_SAVETYPE_SELECT)
@@ -524,10 +531,12 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
             }
             else
             {
+                MSG_FATAL("Handler_STATE_LOAD IsRunAsUIMVersion() 2",0,0,0);
                 MOVE_TO_STATE(STATE_ADDNEW);
             }
 #else            
             {
+                MSG_FATAL("Handler_STATE_LOAD IsRunAsUIMVersion() 3",0,0,0);
                 MOVE_TO_STATE(STATE_ADDNEW);
             }
 #endif// FEATURE_RUIM_PHONEBOOK
@@ -539,6 +548,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
             break;
             
         case STARTMETHOD_FINDNUMBER:
+            MSG_FATAL("Handler_STATE_LOAD STARTMETHOD_FINDNUMBER",0,0,0);
             pMe->m_nViewType = CONTCFG_VIEWTYPE_ALL;
             if(SUCCESS != CContApp_LoadByNum(pMe, pMe->m_pFindNum))
             {
@@ -552,12 +562,14 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case STARTMETHOD_GROUPLIST:
+            MSG_FATAL("Handler_STATE_LOAD STARTMETHOD_GROUPLIST",0,0,0);
             pMe->m_wselGroupId = IDS_GROUP_NONE_STRING;
             MOVE_TO_STATE(STATE_GROUPVIEW);
             break;
             
         case STARTMETHOD_SELECTFIELD:
             //pMe->m_wSelectSmart = CONTAPP_RECID_NULL;
+            MSG_FATAL("Handler_STATE_LOAD STARTMETHOD_SELECTFIELD",0,0,0);
             pMe->m_wMainListSel = MENU_SELECT_NULL;
             if(pMe->m_wSelFldType == SINGLE_SELECT_NUMBER)
             {
@@ -573,6 +585,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
             break;
 
         case STARTMETHOD_SMARTCALL:
+            MSG_FATAL("Handler_STATE_LOAD STARTMETHOD_SMARTCALL",0,0,0);
             pMe->m_nViewType = CONTCFG_VIEWTYPE_ALL;
             if(SUCCESS != CContApp_LoadbySmart(pMe, pMe->m_pFindNum))
             {
@@ -586,12 +599,14 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case STARTMETHOD_MAINMENU:
+            MSG_FATAL("Handler_STATE_LOAD STARTMETHOD_MAINMENU",0,0,0);
             pMe->m_wMainMenuSel=IDI_MAINMENU_MENU_DIRECTORTLIST;
             MOVE_TO_STATE(STATE_MAINMENU);
 		break;
 		
         default:
 #if defined(AEE_STATIC)
+            MSG_FATAL("Handler_STATE_LOAD default",0,0,0);
             ASSERT_NOT_REACHABLE;
 #endif
             break;
@@ -600,6 +615,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
     // Load contacts
     if(SUCCESS != CContApp_LoadPhoneBook(pMe, pMe->m_nViewType))
     {
+        MSG_FATAL("Handler_STATE_LOAD SUCCESS != CContApp_LoadPhoneBook(pMe, pMe->m_nViewType)",0,0,0);
         pMe->m_wErrStrID = IDS_ERR_LOAD;
         MOVE_TO_STATE(STATE_ERROR);
         return NFSMACTION_CONTINUE;
@@ -630,7 +646,7 @@ static NextFSMAction Handler_STATE_LOCKED(CContApp *pMe)
     ASSERT(pMe != NULL);
 #endif
     
-    FARF(STATE, ("STATE_LOCKED %d", pMe->m_eDlgRet));
+    MSG_FATAL("Handler_STATE_LOCKED Start",0,0,0);
     
     switch(pMe->m_eDlgRet)
     {
@@ -668,6 +684,7 @@ static NextFSMAction Handler_STATE_LOCKED(CContApp *pMe)
                 // Get old pass word
                 {
                     pMe->m_bUnLock = TRUE;
+                    MSG_FATAL("Handler_STATE_LOCKED DLGRET_OK",0,0,0);
                     MOVE_TO_STATE(STATE_LOAD);
                 }
             }
@@ -693,7 +710,7 @@ static NextFSMAction Handler_STATE_LOCKED(CContApp *pMe)
 #endif
             break;
     }
-    
+    MSG_FATAL("Handler_STATE_LOCKED End",0,0,0);
     return NFSMACTION_CONTINUE;
 } // Handler_STATE_LOCKED
 
@@ -722,13 +739,13 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-
-    FARF(STATE, ("STATE_MAINLIST %d",pMe->m_eDlgRet));
+    MSG_FATAL("STATE_MAINLIST %d",pMe->m_eDlgRet,0,0);
     
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
             // ¼ÇÂ¼ÊÇ·ñÎª¿Õ
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_CREATE",0,0,0);
             if(IS_ZERO_REC())
             {
                 if(pMe->m_ePreState == STATE_OPTS)
@@ -768,6 +785,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
 
         case DLGRET_YES:
             // check speed dial
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_YES",0,0,0);
             for(oneDialIndex=CONTCFG_ONEDIAL1; oneDialIndex<=CONTCFG_ONEDIAL8; oneDialIndex++)
             {
                 if(SUCCESS != CContApp_GetConfig( pMe,
@@ -805,12 +823,14 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             break;
             
         case DLGRET_NO:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_NO",0,0,0);
             MOVE_TO_STATE(STATE_MAINLIST);
             break;
             
         //Proccess yourself dialog retrn value here
         case DLGRET_OK:
             // store the menu select
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_OK",0,0,0);
             PUSH_LISTMENU_SEL(pMe->m_wMainListSel);
             
             // store the menu index
@@ -857,6 +877,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
                 break;
 
                 case STARTMETHOD_ADDEMAIL:
+                    MSG_FATAL("Handler_STATE_MAINLIST STARTMETHOD_ADDEMAIL",0,0,0);
                     if(SUCCESS != CContApp_LoadAddrFlds( pMe, 
                                                          pMe->m_wEditCont,
                                                          SELECT_ALL))
@@ -905,6 +926,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
                     break;
                     
                 case STARTMETHOD_ADDURL:
+                    MSG_FATAL("Handler_STATE_MAINLIST STARTMETHOD_ADDURL",0,0,0);
                     if(SUCCESS != CContApp_LoadAddrFlds( pMe, 
                                                          pMe->m_wEditCont,
                                                          SELECT_ALL))
@@ -952,6 +974,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
                     break;
 
                 case STARTMETHOD_SELECTFIELD:
+                    MSG_FATAL("Handler_STATE_MAINLIST STARTMETHOD_SELECTFIELD",0,0,0);
                     if(pMe->m_wSelFldType == SINGLE_SELECT_NUMBER)
                     {
                         MOVE_TO_STATE(STATE_SELECT_RETURN)
@@ -961,6 +984,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
                      
                 default:
                 {
+                    MSG_FATAL("Handler_STATE_MAINLIST default",0,0,0);
                      if(IS_ZERO_REC())
                     {
                         // Show dialog message
@@ -979,6 +1003,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             break;
 
         case DLGRET_POPNUMFLD:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_POPNUMFLD",0,0,0);
             if(pMe->m_wSelFldType == SINGLE_SELECT_NUMBER && STARTMETHOD_SELECTFIELD == pMe->m_eStartMethod)
             {
                 MOVE_TO_STATE(STATE_VIEW)
@@ -987,6 +1012,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             break;
         
         case DLGRET_DETAIL:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_DETAIL",0,0,0);
             // store the menu select
             PUSH_LISTMENU_SEL(pMe->m_wMainListSel);
             // Save the menu select
@@ -996,6 +1022,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             break;  
     
         case DLGRET_CALL:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_CALL",0,0,0);
             // store the menu select
             PUSH_LISTMENU_SEL(pMe->m_wMainListSel);
             
@@ -1025,6 +1052,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_VIEW: 
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_VIEW",0,0,0);
             // store the menu select
             PUSH_LISTMENU_SEL(pMe->m_wMainListSel);
             
@@ -1045,6 +1073,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
          break;
 
         case DLGRET_ADDNEW:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_ADDNEW",0,0,0);
             // store the menu select
             PUSH_LISTMENU_SEL(pMe->m_wMainListSel);
             
@@ -1081,6 +1110,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             break;
         
         case DLGRET_CANCELED:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_CANCELED",0,0,0);
             pMe->m_wSelectCont = 0;
             (void)CContApp_GetConfig(pMe, CONTCFG_SAVETYPE, &pMe->m_nSaveType, sizeof(byte));
             if (pMe->m_eStartMethod == STARTMETHOD_NORMAL || pMe->m_eStartMethod == STARTMETHOD_ADDFIELD)
@@ -1099,6 +1129,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_ERR:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_ERR",0,0,0);
             // Show dialog message
             pMe->m_wErrStrID = IDS_ERR_ADDFIELD;
             MOVE_TO_STATE(STATE_ERROR);
@@ -1106,6 +1137,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
 
         case DLGRET_NUMBER_TOOLONG:
             // Show dialog message
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_ERR",0,0,0);
             pMe->m_eMsgType = MESSAGE_WARNNING;
             if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_NUMBER_TOOLONG))
             {
@@ -1115,6 +1147,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             return NFSMACTION_WAIT;
             
         case DLGRET_MSGBOX_OK:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_MSGBOX_OK",0,0,0);
             if(STARTMETHOD_ADDFIELD == pMe->m_eStartMethod)
             {
                 MOVE_TO_STATE(STATE_EXIT);
@@ -1123,6 +1156,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             
         default:
 #if defined(AEE_STATIC)
+            MSG_FATAL("Handler_STATE_MAINLIST default",0,0,0);
             ASSERT_NOT_REACHABLE
 #endif
             break;

@@ -503,6 +503,7 @@ boolean CContApp_RouteDialogEvent( CContApp  *pMe,
                                    uint16     wParam,
                                    uint32     dwParam)
 {
+    MSG_FATAL("CContApp_RouteDialogEvent Start",0,0,0);
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
@@ -512,6 +513,7 @@ boolean CContApp_RouteDialogEvent( CContApp  *pMe,
     {
         if(STATE_EDIT != pMe->m_eCurState && STATE_EDIT_INPUT != pMe->m_eCurState)
         {
+            MSG_FATAL("CContApp_RouteDialogEvent ISHELL_CloseApplet",0,0,0);
             ISHELL_CloseApplet(pMe->m_pShell, TRUE);
             return TRUE;
         }
@@ -529,70 +531,92 @@ boolean CContApp_RouteDialogEvent( CContApp  *pMe,
     switch (pMe->m_pActiveDlgID)
     {
         case IDD_MSGBOX:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_MSGBOX",0,0,0);
             return CContApp_HandleMsgBoxDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_YESNO:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_YESNO",0,0,0);
             return CContApp_HandleYesNoDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_LIST:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_LIST",0,0,0);
             return CContApp_HandleListDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_INPUTFLD:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_INPUTFLD",0,0,0);
             return CContApp_HandleInputFldDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_ADDNEW:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_ADDNEW",0,0,0);
             return CContApp_HandleAddNewDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_OPTS:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_OPTS",0,0,0);
             return CContApp_HandleOptsDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_MAINMENU:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_MAINMENU",0,0,0);
             return CContApp_HandleMainMenuDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_VIEW:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_VIEW",0,0,0);
             return CContApp_HandleViewDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_FLDOPTS:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_FLDOPTS",0,0,0);
             return CContApp_HandleFldOptsDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_FIND:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_FIND",0,0,0);
             return CContApp_HandleFindDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_SEARCH:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_SEARCH",0,0,0);
             return CContApp_HandleSearchDlgEvent(pMe,eCode,wParam,dwParam);     
 
         case IDD_MANAGEMENT:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_MANAGEMENT",0,0,0);
             return CContApp_HandleManagementDlgEvent(pMe,eCode,wParam,dwParam);     
 
         case IDD_DELETE_SELECT:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_DELETE_SELECT",0,0,0);
             return CContApp_HandleDeleteSelectDlgEvent(pMe,eCode,wParam,dwParam);   
 
         case IDD_POPNUMFLD:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_POPNUMFLD",0,0,0);
             return CContApp_HandlePopNumFldDlgEvent(pMe,eCode,wParam,dwParam);  
 
         case IDD_VIEW_NUMFLD:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_VIEW_NUMFLD",0,0,0);
             return CContApp_HandleNunFldDlgEvent(pMe,eCode,wParam,dwParam);  
 
         case IDD_SELECTOPT:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_SELECTOPT",0,0,0);
             return CContApp_HandleSelectOptDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_NUMFLDVIEW:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_NUMFLDVIEW",0,0,0);
             return CContApp_HandleNunFldViewDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_SEARCHNAME:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_SEARCHNAME",0,0,0);
             return CContApp_HandleSearchNameDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_GROUP:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_GROUP",0,0,0);
             return CContApp_HandleGroupDlgEvent(pMe,eCode,wParam,dwParam);
 
 #ifdef FEATURE_RUIM_PHONEBOOK
         case IDD_POSITION:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_POSITION",0,0,0);
             return CContApp_HandlePositionDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_COPYMOVE:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_COPYMOVE",0,0,0);
             return CContApp_HandleCopyMoveDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_COPY:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_COPY",0,0,0);
             return CContApp_HandleCopyDlgEvent(pMe,eCode,wParam,dwParam);
 #endif /* FEATURE_RUIM_PHONEBOOK*/
            
@@ -600,58 +624,76 @@ boolean CContApp_RouteDialogEvent( CContApp  *pMe,
 //            return CContApp_HandleRingDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_ONOFF:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_ONOFF",0,0,0);
             return CContApp_HandleOnOffDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_ONEDIAL:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_ONEDIAL",0,0,0);
             return CContApp_HandleOneDialDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_ONEDIALOPT:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_ONEDIALOPT",0,0,0);
             return CContApp_HandleOneDialOptDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_ONEDIAL_SET_NUM_SEL:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_ONEDIAL_SET_NUM_SEL",0,0,0);
             return CContApp_HandleOneDialNumFldSelDlgEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_CAPACITY:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_CAPACITY",0,0,0);
             return CContApp_HandleCapacityDlgEvent(pMe,eCode,wParam,dwParam);
         
         case IDD_EDIT:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_EDIT",0,0,0);
             return CContApp_HandleEditDlgEvent(pMe,eCode,wParam,dwParam);
 
 #ifdef FEATURE_RUIM_PHONEBOOK
         case IDD_SETTING:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_SETTING",0,0,0);
             return CContApp_HandleSettingDlgEvent(pMe,eCode,wParam,dwParam);
 #endif /* FEATURE_RUIM_PHONEBOOK */            
         
         case IDD_INPUT:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_INPUT",0,0,0);
             return CContApp_HandleInputDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_DELETE:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_DELETE",0,0,0);
             return CContApp_HandleDeleteDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_SELECT:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_SELECT",0,0,0);
             return CContApp_HandleSelectDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_DETAIL:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_DETAIL",0,0,0);
             return CContApp_HandleDetailDlgEvent(pMe,eCode,wParam,dwParam);
         case IDD_COPYING:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_COPYING",0,0,0);
             return CContApp_HandleCopyingDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_GROUPOPT:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_GROUPOPT",0,0,0);
             return CContApp_HandleGroupOptDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_GROUPOPT_EDIT:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_GROUPOPT_EDIT",0,0,0);
             return CContApp_HandleGroupOptEditDlgEvent(pMe,eCode,wParam,dwParam);            
 
         case IDD_DELETING:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_DELETING",0,0,0);
             return CContApp_HandleDeletingDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_SELECT_RECORD:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_SELECT_RECORD",0,0,0);
             return CContApp_HandleSelectRecordDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_DETAIL_MULTI:
+            MSG_FATAL("CContApp_RouteDialogEvent IDD_DETAIL_MULTI",0,0,0);
             return CContApp_HandleDetailMultiDlgEvent(pMe,eCode,wParam,dwParam);
             
         default:
+            MSG_FATAL("CContApp_RouteDialogEvent default",0,0,0);
             return FALSE;
     }
 }// CContApp_RouteDialogEvent
@@ -718,13 +760,13 @@ int CContApp_LoadPhoneBook(CContApp *pMe, byte nViewType)
     int  nRet = SUCCESS;
     
     ASSERT(pMe != NULL);
-    
-    FARF(ADDR, ("Load Phone book viewType: %d", nViewType));
+    MSG_FATAL("Load Phone book viewType: %d", nViewType,0,0);
     // Load phone record according the viewtype
     switch(nViewType)
     {
         case CONTCFG_VIEWTYPE_ALL:
         case CONTCFG_VIEWTYPE_PHONE:
+            MSG_FATAL("Load Phone book CONTCFG_VIEWTYPE_PHONE", 0,0,0);
             // Save search data
             pMe->m_wFindCat   = AEE_ADDR_CAT_NONE;
             pMe->m_wFindFldID = AEE_ADDRFIELD_NONE;
@@ -748,6 +790,7 @@ int CContApp_LoadPhoneBook(CContApp *pMe, byte nViewType)
             
 #ifdef FEATURE_RUIM_PHONEBOOK
         case CONTCFG_VIEWTYPE_RUIM:
+            MSG_FATAL("Load Phone book CONTCFG_VIEWTYPE_RUIM", 0,0,0);
             if (IsRunAsUIMVersion())
             {
                 // Save search data

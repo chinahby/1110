@@ -1236,6 +1236,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         if(!(CallApp_IsEmergencyMode(pMe->m_pICM)||pMe->idle_info.uimLocked))
                         {
                             pMe->m_b_from_numedit = TRUE;
+                            MSG_FATAL("CallApp_Dialer_NumEdit_DlgHandler AVK_INFO",0,0,0);
                             CLOSE_DIALOG(DLGRET_SEL_IP_NUMBER)
                         }
                     }

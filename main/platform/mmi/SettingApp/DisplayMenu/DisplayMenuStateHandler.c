@@ -72,11 +72,15 @@ static NextFSMAction Display_StateKeyPad_Control_Handler(CDisplayMenu *pMe);
 #ifdef FEATURE_MENU_STYLE
 static NextFSMAction  Display_StateMenuStyle_Control_Handler(CDisplayMenu *pMe);
 #endif
+
+#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
 static NextFSMAction  Display_StateColorfulMenu_Control_Handler(CDisplayMenu *pMe); //added by chengxiao 2009.02.20
 
 static NextFSMAction  Display_StateColorSetting_Handler(CDisplayMenu *pMe);
 #endif
+#endif
+
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
 static NextFSMAction  Display_StateRendMenu_Control_Handler(CDisplayMenu *pMe); 
 #endif
@@ -175,6 +179,7 @@ NextFSMAction DisplayMenu_ProcessState(CDisplayMenu *pMe)
             retVal = Display_StateMenuStyle_Control_Handler(pMe);
             break;
 #endif
+#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
         case DISPLAYMENUST_COLORFUL_MENU:
             retVal = Display_StateColorfulMenu_Control_Handler(pMe);
@@ -183,6 +188,7 @@ NextFSMAction DisplayMenu_ProcessState(CDisplayMenu *pMe)
         case DISPLAYMENUST_COLOR_SETTING:
             retVal = Display_StateColorSetting_Handler(pMe);
             break;
+#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
         case DISPLAYMENUST_REND_MENU:
@@ -330,11 +336,15 @@ static NextFSMAction Display_StateMainHandler(CDisplayMenu *pMe)
             MOVE_TO_STATE(DISPLAYMENUST_MENU_STYLE_CONTROL)
             return NFSMACTION_CONTINUE;           
 #endif
+
+#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
         case DLGRET_COLORFUL_MENU_CTL:
             MOVE_TO_STATE(DISPLAYMENUST_COLORFUL_MENU)
             return NFSMACTION_CONTINUE;
 #endif
+#endif
+
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
         case DLGRET_REND_MENU_CTL:
             MOVE_TO_STATE(DISPLAYMENUST_REND_MENU)
@@ -753,6 +763,7 @@ static NextFSMAction  Display_StateMenuStyle_Control_Handler(CDisplayMenu *pMe)
 } 
 #endif
 
+#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
 /*==============================================================================
 º¯Êý£º
@@ -845,6 +856,7 @@ static NextFSMAction  Display_StateColorSetting_Handler(CDisplayMenu *pMe)
 
     return NFSMACTION_WAIT;
 }
+#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
 /*==============================================================================

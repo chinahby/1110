@@ -106,6 +106,7 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
     uint32 dwParam
 );
 #endif
+#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
 static boolean  HandleColorfulMenuDialogEvent(CDisplayMenu *pMe,
     AEEEvent eCode,
@@ -118,6 +119,7 @@ static boolean  HandleColorSettingDialogEvent(CDisplayMenu *pMe,
     uint16 wParam,
     uint32 dwParam
 );
+#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
 static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
@@ -348,6 +350,7 @@ boolean DisplayMenu_RouteDialogEvent(CDisplayMenu *pMe,
             return HandleMenuStyleDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
 
+#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
         case IDD_COLORFUL_MENU:
             return HandleColorfulMenuDialogEvent(pMe,eCode,wParam,dwParam);
@@ -355,6 +358,8 @@ boolean DisplayMenu_RouteDialogEvent(CDisplayMenu *pMe,
         case IDD_COLOR_SETTING:
             return HandleColorSettingDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
+#endif
+
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
         case IDD_REND_MENU:
             return HandleRENDMenuDialogEvent(pMe,eCode,wParam,dwParam);
@@ -443,8 +448,10 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CLOSE_KEY_PAD, IDS_CLOSE_KEY_PAD, NULL, 0);
 #endif
         }
+#if 0        
 #ifdef FEATURE_RANDOM_MENU_COLOR
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_COLORFUL_MENU_TITLE, IDS_COLORFUL_MENU_TITLE, NULL, 0);
+#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_MENU_TITLE, IDS_REND_MENU_TITLE, NULL, 0);
@@ -592,10 +599,12 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
                     CLOSE_DIALOG(DLGRET_MENU_STYLE_CTL)
                     break;
 #endif
+#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
                 case IDS_COLORFUL_MENU_TITLE:
                     CLOSE_DIALOG(DLGRET_COLORFUL_MENU_CTL)
                     break;
+#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
                 case IDS_REND_MENU_TITLE:
@@ -1141,6 +1150,7 @@ static boolean  HandleImgDelMsgDialogEvent(CDisplayMenu *pMe,
             return TRUE;
 
         case EVT_KEY:
+#if 0            
 #ifdef FEATURE_RANDOM_MENU_COLOR
             if(pMe->m_eCurState == DISPLAYMENUST_COLOR_SETTING)
             {
@@ -1148,6 +1158,7 @@ static boolean  HandleImgDelMsgDialogEvent(CDisplayMenu *pMe,
                 CLOSE_DIALOG(DLGRET_CANCELED)
                 return TRUE;
             }
+#endif
 #endif
             switch(wParam)
             {
@@ -3998,6 +4009,7 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
 #endif
 
 #ifdef FEATURE_RANDOM_MENU_COLOR
+#if 0
 //added by chengxiao 2009.02.20
 /*==============================================================================
 º¯Êý£º
@@ -4553,6 +4565,8 @@ static boolean  HandleColorSettingDialogEvent(CDisplayMenu *pMe,
     }
     return FALSE;
 }
+#endif
+
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
 /*==============================================================================
 º¯Êý£º
