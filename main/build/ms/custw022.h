@@ -223,7 +223,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_FM_OEM
 #define FEATURE_PROJECT_W022
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
-#define FEATURE_AUDIO_CAMERA_CONCURRENCY
 #define FEATURE_DRV_SDCC
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
