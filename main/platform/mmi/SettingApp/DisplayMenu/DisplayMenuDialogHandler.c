@@ -534,7 +534,7 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
 #ifdef FEATURE_APP_MEDIAGALLERY
 			        pMe->m_PICType = WALLPAPER_MAIN;
                     CMediaGallery_FileExplorer(GALLERY_IMAGE_SETTING, NULL);
-                    CLOSE_DIALOG(DLGRET_PICTURE)
+                    //CLOSE_DIALOG(DLGRET_PICTURE)  //dele by yangdecai 2010-07-13
 #else
                     pMe->m_PICType = WALLPAPER_MAIN;
                     CLOSE_DIALOG(DLGRET_PICTURE)
