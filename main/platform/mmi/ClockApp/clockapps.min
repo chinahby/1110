@@ -24,11 +24,11 @@ CONSTFILE_FILES+=\
     
 ifeq ($(OPERATORS_VERSION_NAME),IVIO)
     	 CONSTFILE_FILES+=\
-    	 clockapps_images_ivio.bar|fs:/mod/clockapps/clockapps_images.bar
+    	 clockapps_images_ivio.bar|fs:/mod/clockapps/clockapps_images_ivio.bar
 endif
 ifeq ($(OPERATORS_VERSION_NAME),SMART)
     	 CONSTFILE_FILES+=\
-    	 clockapps_images_smart.bar|fs:/mod/clockapps/clockapps_images.bar
+    	 clockapps_images_smart.bar|fs:/mod/clockapps/clockapps_images_smart.bar
 endif
 
 # 加入另外一种语言资源文件
