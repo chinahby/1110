@@ -1642,11 +1642,7 @@ wms_status_e_type wms_ts_encode_CDMA_bd
         bit_pos += 16;
 
 #ifdef FEATURE_SMS_UDH
-#ifdef FEATURE_SUPPORT_ID
-		b_packb(0, data, bit_pos, 1);
-#else
 		b_packb((cl_bd_ptr->message_id.udh_present ? 1:0), data, bit_pos, 1);
-#endif
         bit_pos += 1;
 #endif /* FEATURE_SMS_UDH */
 
