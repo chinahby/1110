@@ -8959,7 +8959,8 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
 {
     IMenuCtl *pMenu = NULL;
     WmsApp *pMe = (WmsApp *)pUser;
-    
+    AEERect rc={0};
+    AEERect Temprc={0};
     if (pMe == NULL)
     {
         return FALSE;
@@ -9106,6 +9107,12 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                 }
             }
             IMENUCTL_SetPopMenuRect(pMenu);
+			IMENUCTL_GetRect(pMenu, &rc);
+            Temprc.y = rc.y+8;
+            Temprc.x = rc.x;
+            Temprc.dx = rc.dx;
+            Temprc.dy = rc.dy-8;
+            IMENUCTL_SetRect(pMenu, &Temprc);
             IMENUCTL_SetProperties(pMenu,MP_BIND_ITEM_TO_NUMBER_KEY|MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
