@@ -586,7 +586,7 @@ static boolean BlackJack_InitAppData(BlackJackApp *pMe)
 
    if (initGood) {
       pMe->m_pCardImages = ISHELL_LoadResImage(pShell,
-                                               BLACKJACK_RES_FILE_IMAGES, //BLACKJACK_RES_FILE_LANGUAGE,
+                                               BLACKJACK_IMAGE_IVIO_RES_FILE, //BLACKJACK_RES_FILE_LANGUAGE,
                                                IDI_CARDS); //IDB_CARDS);
       if (pMe->m_pCardImages != NULL) {
          AEEImageInfo imageInfo;
@@ -603,6 +603,7 @@ static boolean BlackJack_InitAppData(BlackJackApp *pMe)
          pMe->m_cardOverlappedSpacing =
                      (uint16) (pMe->m_cardImageWidth * kOverlapSpacingFactor);
       } else {
+      	 DBGPRINTF("BlackJack_InitAppData....................................");
          initGood = FALSE;
       }
    }
