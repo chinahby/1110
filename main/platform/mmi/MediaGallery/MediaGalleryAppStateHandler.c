@@ -671,6 +671,7 @@ static NextFSMAction MGStatePhoneMemHandler(CMediaGalleryApp* pMe)
          break;
 
       case MGDLGRET_NOFILES:
+         MSG_FATAL("MGStatePhoneMemHandler IDS_MG_EMPTY", 0, 0, 0);
          MediaGalleryApp_ShowMsgBoxDlg(pMe, MGRES_LANGFILE,IDS_MG_EMPTY,
                                  MESSAGE_INFORMATION,
                                  BTBAR_BACK);
@@ -726,6 +727,7 @@ static NextFSMAction MGStateCardMemHandler(CMediaGalleryApp* pMe)
          break;
 
       case MGDLGRET_NOFILES:
+         MSG_FATAL("MGStateCardMemHandler IDS_MG_EMPTY", 0, 0, 0);
          MediaGalleryApp_ShowMsgBoxDlg(pMe, MGRES_LANGFILE,IDS_MG_EMPTY,
                                  MESSAGE_INFORMATION,
                                  BTBAR_BACK);
@@ -893,6 +895,7 @@ static NextFSMAction MGStateMediaMenuHandler(CMediaGalleryApp* pMe)
 
 
       case MGDLGRET_NOFILES:
+         MSG_FATAL("MGStateMediaMenuHandler IDS_MG_EMPTY", 0, 0, 0);
          MediaGalleryApp_SetMsgBoxID(pMe, MG_MSGID_NOFILE);
          MediaGalleryApp_ShowMsgBoxDlg(pMe, MGRES_LANGFILE,IDS_MG_EMPTY,
                MESSAGE_INFORMATION,
@@ -1251,6 +1254,7 @@ static NextFSMAction MGStateVideoAddHandler(CMediaGalleryApp* pMe)
 #endif
 
       case MGDLGRET_NOFILES:
+         MSG_FATAL("MGStateVideoAddHandler IDS_MG_EMPTY", 0, 0, 0);
          MediaGalleryApp_ShowMsgBoxDlg(pMe, MGRES_LANGFILE,IDS_MG_EMPTY,
                MESSAGE_INFORMATION,
                BTBAR_BACK);
@@ -1432,7 +1436,7 @@ static boolean MGState_StartFileExplorer(CMediaGalleryApp* pMe,
 {
    if(!pMe || !pMe->m_pFileMgr || !pMe->m_pFolderList)
    {
-      MG_FARF(STATE, ("MGState_ExitMediaMenuDialog BAD PARAMETER"));
+      MSG_FATAL("MGState_ExitMediaMenuDialog BAD PARAMETER",0,0,0);
       return FALSE;
    }
 
@@ -1444,7 +1448,7 @@ static boolean MGState_StartFileExplorer(CMediaGalleryApp* pMe,
                                             pMe->m_pFolderList,
                                             TRUE))
    {
-      MG_FARF(STATE, ("Enum files failed!"));
+      MSG_FATAL("Enum files failed!",0,0,0);
    }
 
    return TRUE;
@@ -1465,7 +1469,7 @@ static __inline NextFSMAction MGState_ExitMediaMenuDialog(
    MGStartMode       eStartMode;
    if(!pMe)
    {
-      MG_FARF(STATE, ("MGState_ExitMediaMenuDialog BAD PARAMETER"));
+      MSG_FATAL("MGState_ExitMediaMenuDialog BAD PARAMETER",0,0,0);
       return NFSMACTION_WAIT;
    }
 
@@ -1489,7 +1493,7 @@ static __inline NextFSMAction MGState_ExitMediaMenuDialog(
    else
    {
       MGMOVE_TO_STATE(pMe,STATE_MAINMENU);
-      MG_FARF(STATE, ("back to main menu!start mode %d",eStartMode));
+      MSG_FATAL("back to main menu!start mode %d",eStartMode,0,0);
    }
 
    return NFSMACTION_CONTINUE;

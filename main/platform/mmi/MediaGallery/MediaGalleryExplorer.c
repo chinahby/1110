@@ -64,10 +64,10 @@ boolean MGExplorer_Init(CFSExplorer *pFSExplorer,
 #ifdef FEATURE_MG_LONGPATH
    AEEFileInfoEx fi;
 #endif
-
+   MSG_FATAL("MGExplorer_Init Start",0,0,0); 
    if(NULL == pFSExplorer || NULL == pFileMgr || NULL == cpszPath)
    {
-      MG_FARF(ADDR, ("MGExplorer_Init failed!!!"));
+      MSG_FATAL("MGExplorer_Init failed!!!",0,0,0);
       return FALSE;
    }
 
@@ -108,9 +108,7 @@ boolean MGExplorer_Init(CFSExplorer *pFSExplorer,
    //      sizeof(MGFileInfo));
 
 #endif
-   MG_FARF(ADDR, ("Current folder %s, %d",
-                  BASENAME(pFSExplorer->m_RootNode.szName),
-                  pFSExplorer->m_RootNode.attrib));
+   MSG_FATAL("Current folder %s, %d",BASENAME(pFSExplorer->m_RootNode.szName),pFSExplorer->m_RootNode.attrib,0);
    /*when get MG_MASSCARD_ROOTDIR information. the attrib is not correct*/
    pFSExplorer->m_RootNode.attrib = AEE_FA_DIR;
 
@@ -119,7 +117,7 @@ boolean MGExplorer_Init(CFSExplorer *pFSExplorer,
                                   sizeof(MGFileInfo));
    MGExplorer_SetCurrentDepth(pFSExplorer, MG_CURDEPTH_INIT);
    MGExplorer_SetMime(pFSExplorer, eMimeType);
-
+   MSG_FATAL("MGExplorer_Init End",0,0,0); 
    return TRUE;
 }
 
@@ -136,18 +134,18 @@ boolean MGExplorer_Init(CFSExplorer *pFSExplorer,
 int MGExplorer_InitBuildMediaMenu(CMediaGalleryApp *pMe, PFNNOTIFY pfnNotify)
 {
    const char *pszPath;
-
+   MSG_FATAL("MGExplorer_InitBuildMediaMenu Start",0,0,0);
    if(!pMe || !pMe->m_pMediaMenu || !pMe->m_pFileMgr)
    {
-      MG_FARF(ADDR, ("InitMediaMenu bad parameter!"));
+      MSG_FATAL("InitMediaMenu bad parameter!",0,0,0);
       return EFAILED;
    }
 
    pszPath = MGExplorer_GetCurrentFolderPath(&pMe->m_Explorer);
-
+   MSG_FATAL("pszPath = %s",pszPath,0,0);
    if(!pszPath || !STRLEN(pszPath))
    {
-      MG_FARF(ADDR, ("BuildMediaMenu bad path name!!!"));
+      MSG_FATAL("BuildMediaMenu bad path name!!!",0,0,0);
       return EFAILED;
    }
 
@@ -156,11 +154,13 @@ int MGExplorer_InitBuildMediaMenu(CMediaGalleryApp *pMe, PFNNOTIFY pfnNotify)
    pMe->m_pfnNotify = pfnNotify;
 
    /*clean menu control*/
+   MSG_FATAL("MGExplorer_InitBuildMediaMenu MGExplorer_FreeMediaMenuItem",0,0,0);
    MGExplorer_FreeMediaMenuItem(pMe->m_pMediaMenu);
    IMENUCTL_SetBottomBarType(pMe->m_pMediaMenu, BTBAR_BACK);
 
    pMe->m_nEnumeResult = MG_ENUM_UNKNOWN;
    pMe->m_bCallbackResumed = FALSE;
+   MSG_FATAL("pMe->m_bMediaMenuEmpty = TRUE!",0,0,0);
    pMe->m_bMediaMenuEmpty = TRUE;
    MediaGalleryApp_SetCallbackStateStart(pMe, MG_CBT_BUILDMENU);
    /*when first enumrate a folder, the first node is error, because m_pCurNode
@@ -173,7 +173,7 @@ int MGExplorer_InitBuildMediaMenu(CMediaGalleryApp *pMe, PFNNOTIFY pfnNotify)
       pMe->m_Explorer.m_eType =  MG_DOCTYPE_MAX;
       pMe->m_nEnumeResult = MG_ENUM_FAILED;
 
-      MG_FARF(ADDR, ("InitBuildMediaMenu failed!"));
+      MSG_FATAL("InitBuildMediaMenu failed!",0,0,0);
       CALLBACK_Init(&pMe->m_CallBack,
                     MGExplorer_BuildMediaMenuComplete,
                     (void *)pMe);
@@ -182,7 +182,7 @@ int MGExplorer_InitBuildMediaMenu(CMediaGalleryApp *pMe, PFNNOTIFY pfnNotify)
    }
  //  pMe->m_Explorer.m_eSortOrder = MG_SORT_NONE;
    MGExplorer_BuildMediaMenu(pMe);
-
+   MSG_FATAL("MGExplorer_InitBuildMediaMenu SUCCESS END",0,0,0);
    return SUCCESS;
 }
 
@@ -217,15 +217,18 @@ static void MGExplorer_BuildMediaMenu(void *po)
    MGMimeType eExploreMime;
    IMenuCtl *pMenuCtl = NULL;
 
+   MSG_FATAL("MGExplorer_BuildMediaMenu Start",0,0,0);
    if(!pMe || !pMe->m_pFileMgr || !pMe->m_pMediaMenu)
    {
-      MG_FARF(ADDR, ("BuildMediaMenu bad parameter!!!"));
+      MSG_FATAL("BuildMediaMenu bad parameter!!!",0,0,0);
       return;
    }
 
    pMenuCtl = pMe->m_pMediaMenu;
    eExploreMime = MediaGalleryApp_GetExplorerMime(pMe);
+   MSG_FATAL("MGExplorer_BuildMediaMenu eExploreMime=%d",eExploreMime,0,0);
    nIndex = IMENUCTL_GetItemCount(pMenuCtl);
+   MSG_FATAL("MGExplorer_BuildMediaMenu nIndex=%d",nIndex,0,0);
 
 #ifdef FEATURE_MG_LONGPATH
    MEMSET(&fi, 0, sizeof(fi));
@@ -245,7 +248,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
 
          if(NULL == pInfo)
          {
-            MG_FARF(ADDR, ("BuildMediaMenu memory allocate failed!"));
+            MSG_FATAL("BuildMediaMenu memory allocate failed!",0,0,0);
             goto EXITBUILDMEDIAMENU;
          }
 
@@ -273,7 +276,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
                                             pszPath,
                                             FALSE/*enum file*/))
             {
-               MG_FARF(ADDR, ("BuildMediaMenu file enum failed!"));
+               MSG_FATAL("BuildMediaMenu file enum failed!",0,0,0);
 
                pMe->m_nEnumeResult = MG_ENUM_FAILED;
                pMe->m_Explorer.m_eType = MG_DOCTYPE_MAX;
@@ -283,7 +286,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
          }
          else if( pMe->m_Explorer.m_eType == MG_DOCTYPE_FILE)
          {
-            MG_FARF(ADDR, ("BuildMediaMenu file enum complete!"));
+            MSG_FATAL("BuildMediaMenu file enum complete!",0,0,0);
 
             pMe->m_nEnumeResult = MG_ENUM_SUCCESS;
             pMe->m_Explorer.m_eType = MG_DOCTYPE_MAX;
@@ -293,7 +296,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
          else
          {
             bFinish = TRUE;
-            MG_FARF(ADDR, ("BuildMediaMenu m_eType error !"));
+            MSG_FATAL("BuildMediaMenu m_eType error !",0,0,0);
             goto EXITBUILDMEDIAMENU;
          }
       }
@@ -312,7 +315,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
 
          if(0 == (nBasenameLen = STRLEN(pszBasename)))
          {
-            MG_FARF(ADDR, ("Basename null, %s", pInfo->szName));
+            MSG_FATAL("Basename null, %s", pInfo->szName,0,0);
             continue;
          }
 
@@ -372,7 +375,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
          MenuItem.pText = FileName;
          MenuItem.pImage = pImage;
          MenuItem.dwData = (uint32)pInfo;/*do not FREE pNode when use data*/
-         MG_FARF(ADDR, ("Enum directory tree,%s", pInfo->szName));
+         MSG_FATAL("Enum directory tree,%s", pInfo->szName,0,0);
          IMENUCTL_AddItemEx(pMenuCtl, &MenuItem);
          pInfo = NULL;
 
@@ -406,6 +409,7 @@ EXITBUILDMEDIAMENU:
       pMe->m_bCallbackResumed = TRUE;
       ISHELL_Resume(pMe->m_pShell, &pMe->m_CallBack);
    }
+   MSG_FATAL("MGExplorer_BuildMediaMenu End",0,0,0);
 }//MGExplorer_BuildMediaMenu
 
 
@@ -419,10 +423,10 @@ static void MGExplorer_BuildMediaMenuComplete(void *po)
 {
    CMediaGalleryApp *pMe = (CMediaGalleryApp *)po;
    IMenuCtl *pMenuCtl = NULL;
-
+   MSG_FATAL("MGExplorer_BuildMediaMenuComplete Start",0,0,0);
    if(!pMe || !pMe->m_pMediaMenu)
    {
-      MG_FARF(ADDR, ("BuildFileList Complete bad parameter!!!"));
+      MSG_FATAL("BuildFileList Complete bad parameter!!!",0,0,0);
       return;
    }
 
@@ -431,6 +435,7 @@ static void MGExplorer_BuildMediaMenuComplete(void *po)
    if(MGExplorer_CheckMediaMenuEmpty(pMenuCtl))
    {
       //Media menu is empty
+      MSG_FATAL("pMe->m_bMediaMenuEmpty = TRUE",0,0,0);
       pMe->m_bMediaMenuEmpty = TRUE;
       MGExplorer_UpdateMediaMenuTitle(pMe, pMenuCtl);
       IMENUCTL_Redraw(pMenuCtl);
@@ -439,11 +444,11 @@ static void MGExplorer_BuildMediaMenuComplete(void *po)
    {
       if(MG_SORT_NONE != pMe->m_Explorer.m_eSortOrder)
       {
-         MG_FARF(ADDR, ("Begin sort menu!"));
+         MSG_FATAL("Begin sort menu!",0, 0, 0);
          IMENUCTL_SortCustom(pMenuCtl, MGExplorer_MediaMenuSortCompare, pMe);
          MG_FARF(ADDR, ("Sort finish!"));
       }
-
+      MSG_FATAL("pMe->m_bMediaMenuEmpty = FALSE",0,0,0);
       pMe->m_bMediaMenuEmpty = FALSE;
       if(TRUE == MGExplorer_SetMediaMenuSelItem(&pMe->m_Explorer, pMenuCtl) ||
          (NULL == pMe->m_Explorer.m_pCurNode) )
@@ -458,7 +463,7 @@ static void MGExplorer_BuildMediaMenuComplete(void *po)
       MediaGalleryApp_SetCallbackStateDone(pMe);
    if(pMe->m_pfnNotify)
       pMe->m_pfnNotify(pMe);
-
+   MSG_FATAL("MGExplorer_BuildMediaMenuComplete End",0,0,0);
 }//MGExplorer_BuildMediaMenuComplete
 
 
@@ -498,7 +503,7 @@ int MGExplorer_BuildSubfolderMenu(CFSExplorer *pFSExplorer,
       NULL == pMenuCtl ||
       NULL == pIcons)
    {
-      MG_FARF(ADDR, ("Bad parameter!"));
+      MSG_FATAL("Bad parameter!",0,0,0);
       return EFAILED;
    }
 
@@ -510,7 +515,7 @@ int MGExplorer_BuildSubfolderMenu(CFSExplorer *pFSExplorer,
    fi.nStructSize = sizeof(fi);
    fi.nMaxFile = sizeof(pInfo->szName);
 #endif
-
+   MSG_FATAL("MGExplorer_BuildSubfolderMenu MGExplorer_FreeMediaMenuItem",0,0,0);
    MGExplorer_FreeMediaMenuItem(pMenuCtl);
    MGExplorer_GetItemIcon(pIcons, MG_MIME_FOLDER, &pImage);
 
@@ -521,7 +526,7 @@ int MGExplorer_BuildSubfolderMenu(CFSExplorer *pFSExplorer,
          pInfo = (MGFileInfo*)MALLOC(sizeof(MGFileInfo));
          if(NULL == pInfo)
          {
-            MG_FARF(ADDR, ("memory allocate failed!"));
+            MSG_FATAL("memory allocate failed!",0,0,0);
             return ENOMEMORY;
          }
          MEMSET (pInfo, 0, sizeof(pInfo));
@@ -614,6 +619,7 @@ int MGExplorer_EnumFoldersList(IFileMgr* pIFileMgr,
    MGFileInfo fi;
 #endif
 
+   MSG_FATAL("MGExplorer_EnumFoldersList Start",0,0,0);
    if(!pIFileMgr || !cpszFilePath || !pFolderList)
       return EBADPARM;
 
@@ -635,6 +641,7 @@ int MGExplorer_EnumFoldersList(IFileMgr* pIFileMgr,
     MEMCPY(foldername->m_szNodeName,
            cpszFilePath,
           sizeof(foldername->m_szNodeName));
+    MSG_FATAL("m_szNodeName=%s",foldername->m_szNodeName,0, 0);
     IVector_AddElement(pFolderList, (void*)foldername);
     nIndex++;
 
@@ -646,7 +653,7 @@ int MGExplorer_EnumFoldersList(IFileMgr* pIFileMgr,
             foldername = (NodeName*)MALLOC(sizeof(NodeName));
             if(NULL == foldername)
             {
-               MG_FARF(ADDR, ("memory allocate failed!"));
+               MSG_FATAL("memory allocate failed!",0,0, 0);
                return ENOMEMORY;
             }
             MEMSET (foldername, 0, sizeof(foldername));
@@ -660,7 +667,7 @@ int MGExplorer_EnumFoldersList(IFileMgr* pIFileMgr,
                {
                   MEMCPY(foldername->m_szNodeName, fi.szName, sizeof(fi.szName));
 #endif
-                  MG_FARF(ADDR, ("Enum directory list, folder:%s", foldername));
+                  MSG_FATAL("Enum directory list, folder:%s", foldername->m_szNodeName,0,0);
                   IVector_AddElement(pFolderList, (void*)foldername);
                }
                else
@@ -682,7 +689,7 @@ int MGExplorer_EnumFoldersList(IFileMgr* pIFileMgr,
 
          nIndex++;
       }while(nIndex <= nSize && TRUE == bRecursive);
-
+   MSG_FATAL("MGExplorer_EnumFoldersList End nSize=%d",nSize,0,0);
    return SUCCESS;
 }//MGExplorer_EnumFoldersList
 
@@ -700,10 +707,10 @@ int MGExplorer_InitBuildFileList(CMediaGalleryApp* pMe, PFNNOTIFY pfnNotify)
    NodeName *pFolderName;
    uint32 nSize;
    boolean bRet = EFAILED;
-
+   MSG_FATAL("MGExplorer_InitBuildFileList Start",0,0,0);
    if(!pMe || !pMe->m_pMediaMenu || !pMe->m_pFileMgr || !pMe->m_pFolderList)
    {
-      MG_FARF(ADDR, ("InitMediaMenu bad parameter!"));
+      MSG_FATAL("InitMediaMenu bad parameter!",0,0,0);
       return EFAILED;
    }
 
@@ -712,12 +719,14 @@ int MGExplorer_InitBuildFileList(CMediaGalleryApp* pMe, PFNNOTIFY pfnNotify)
    pMe->m_pfnNotify = pfnNotify;
 
    pMe->m_bCallbackResumed = FALSE;
+   MSG_FATAL("MGExplorer_InitBuildFileList m_bCallbackResumed=%d",pMe->m_bCallbackResumed,0,0);
    pMe->m_bMediaMenuEmpty = TRUE;
    pMe->m_nEnumeResult = MG_ENUM_UNKNOWN;
-MediaGalleryApp_SetCallbackStateStart(pMe, MG_CBT_BUILDMENU);
+    MediaGalleryApp_SetCallbackStateStart(pMe, MG_CBT_BUILDMENU);
    MediaGalleryApp_SetCurrentNode(pMe, NULL);
 
      /*clean menu control*/
+   MSG_FATAL("MGExplorer_InitBuildFileList MGExplorer_FreeMediaMenuItem",0,0,0);
    MGExplorer_FreeMediaMenuItem(pMe->m_pMediaMenu);
    IMENUCTL_SetBottomBarType(pMe->m_pMediaMenu, BTBAR_BACK);
 
@@ -725,25 +734,27 @@ MediaGalleryApp_SetCallbackStateStart(pMe, MG_CBT_BUILDMENU);
 
    if(0 == nSize)
    {
-      MG_FARF(ADDR, ("folder list empty!"));
+      MSG_FATAL("folder list empty!",0,0,0);
       bRet = EFAILED;
       goto EXITINITBUILDFILELIST;
    }
-
+   MSG_FATAL("IVector_Size =%d!",nSize,0,0);
    pMe->m_nListIdx = 0;
    pFolderName = IVector_ElementAt(pMe->m_pFolderList, pMe->m_nListIdx++);
-
    if(NULL == pFolderName)
    {
-      MG_FARF(ADDR, ("folder name pointer NULL!"));
+      MSG_FATAL("folder name pointer NULL!",0,0,0);
       bRet = EFAILED;
       goto EXITINITBUILDFILELIST;
    }
-
+   if(NULL == pFolderName->m_szNodeName)
+   {
+      MSG_FATAL("pFolderName->m_szNodeName pointer NULL!",0,0,0);
+   }
+   DBGPRINTF("pFolderName=%s", pFolderName->m_szNodeName);
    bRet = IFILEMGR_EnumInit(pMe->m_pFileMgr,
                            pFolderName->m_szNodeName,
                            FALSE);
-
    //FREEIF(pFolderName);
    //IVector_RemoveElementAt(pMe->m_pFolderList, nSize - 1);
 
@@ -762,7 +773,7 @@ EXITINITBUILDFILELIST:
       pMe->m_nEnumeResult = MG_ENUM_FAILED;
       MGExplorer_BuildMediaMenuComplete((void *)pMe);
    }
-
+   MSG_FATAL("MGExplorer_InitBuildFileList End bRet=%d",bRet,0,0);
    return bRet;
 }//MGExplorer_InitBuildFileList
 
@@ -801,9 +812,10 @@ static void MGExplorer_BuildFileList(void *po)
    MGMimeType eExploreMime;
    IMenuCtl *pIMenu = NULL;
 
+   MSG_FATAL("MGExplorer_BuildFileList Start",0,0,0);
    if(!pMe || !pMe->m_pFileMgr || !pMe->m_pMediaMenu || !pMe->m_pFolderList)
    {
-      MG_FARF(ADDR, ("BuildFileList bad parameter!!!"));
+      MSG_FATAL("BuildFileList bad parameter!!!",0,0,0);
       return;
    }
 
@@ -827,9 +839,9 @@ static void MGExplorer_BuildFileList(void *po)
       pInfo = (MGFileInfo *)MALLOC(sizeof(MGFileInfo));
       if(!pInfo)
       {
-            pMe->m_nEnumeResult = MG_ENUM_FAILED;
+         pMe->m_nEnumeResult = MG_ENUM_FAILED;
          bFinish = TRUE;
-         MG_FARF(ADDR, ("BuildMediaMenu memory allocate failed!"));
+         MSG_FATAL("BuildMediaMenu memory allocate failed!",0,0,0);
          goto EXITENUMFILESLIST;
       }
 
@@ -843,11 +855,12 @@ static void MGExplorer_BuildFileList(void *po)
 #endif
       {
           FREEIF(pInfo);
-
+         MSG_FATAL("FALSE == IFILEMGR_EnumNext",0,0,0);
          if(pMe->m_nListIdx == nSize)
          {
             pMe->m_nEnumeResult = MG_ENUM_SUCCESS;
             bFinish = TRUE;
+            MSG_FATAL("FALSE == IFILEMGR_EnumNext goto EXITENUMFILESLIST",0,0,0);
             goto EXITENUMFILESLIST;
          }
 
@@ -865,7 +878,7 @@ static void MGExplorer_BuildFileList(void *po)
          {
             pMe->m_nEnumeResult = MG_ENUM_FAILED;
             bFinish = TRUE;
-            MG_FARF(ADDR, ("Enum init failed!"));
+            MSG_FATAL("Enum init failed! goto EXITENUMFILESLIST",0,0,0);
             goto EXITENUMFILESLIST;
          }
 
@@ -878,6 +891,7 @@ static void MGExplorer_BuildFileList(void *po)
          {
             pMe->m_nEnumeResult = MG_ENUM_OVERMAX;
             bFinish = TRUE;
+            MSG_FATAL("FALSE == IFILEMGR_EnumNext goto EXITENUMFILESLIST",0,0,0);
             goto EXITENUMFILESLIST;
          }
 
@@ -886,7 +900,7 @@ static void MGExplorer_BuildFileList(void *po)
 
          if(0 == (nBasenameLen = STRLEN(pszBasename)))
          {
-            MG_FARF(ADDR, ("Basename null, %s", pInfo->szName));
+            MSG_FATAL("Basename null, %s", pInfo->szName,0,0);
             FREEIF(pInfo);
             continue;
          }
@@ -904,7 +918,7 @@ static void MGExplorer_BuildFileList(void *po)
 
          if(pInfo->attrib == AEE_FA_DIR)/*folder*/
          {
-            MG_FARF(ADDR, ("Encount folder when build file list"));
+            MSG_FATAL("Encount folder when build file list",0,0,0);
             FREEIF(pInfo);
             continue;
          }
@@ -922,6 +936,7 @@ static void MGExplorer_BuildFileList(void *po)
          if((SUCCESS != bMime && eExploreMime != MG_MIME_MISCELL) /*||
            SUCCESS != MGExplorer_GetItemIcon(eFileMime, &pImage)*/)
          {
+            MSG_FATAL("SUCCESS != bMime && eExploreMime != MG_MIME_MISCELL",0,0,0);
             FREEIF(pInfo);
             continue;
          }
@@ -930,12 +945,13 @@ static void MGExplorer_BuildFileList(void *po)
          MenuItem.pText = FileName;
          MenuItem.pImage = NULL;
          MenuItem.dwData = (uint32)pInfo;/*do not FREE pNode when use data*/
-         MG_FARF(ADDR, ("Enum directory tree,%s", pInfo->szName));
+         MSG_FATAL("Enum directory tree,%s", pInfo->szName,0,0);
          IMENUCTL_AddItemEx(pIMenu, &MenuItem);
          pInfo = NULL;
 
          nIndex++;
          nCount++;
+         MSG_FATAL("Enum directory nCount = %d", nCount,0,0);
          //if(TRUE == bMulSel)
          //{
          /*do not need, it will result in multi-selection menu very slow!
@@ -973,6 +989,7 @@ EXITENUMFILESLIST:
       pMe->m_bCallbackResumed = TRUE;
       ISHELL_Resume(pMe->m_pShell, &pMe->m_CallBack);
    }
+   MSG_FATAL("MGExplorer_BuildFileList End",0,0,0);
 }//MGExplorer_BuildFileList
 
 /*===========================================================================
@@ -1115,7 +1132,7 @@ int MGExplorer_InitGetFolderInfo(CMediaGalleryApp* pMe, PFNNOTIFY pfnNotify)
 
    if(!pMe )
    {
-      MG_FARF(ADDR, ("MGExplorer_InitGetFolderInfo bad parameter!"));
+      MSG_FATAL("MGExplorer_InitGetFolderInfo bad parameter!",0,0,0);
       return EFAILED;
    }
 
@@ -1124,7 +1141,7 @@ int MGExplorer_InitGetFolderInfo(CMediaGalleryApp* pMe, PFNNOTIFY pfnNotify)
 
    if(NULL == cpszPath || 0 == STRLEN(cpszPath) || NULL == pFolderList)
    {
-      MG_FARF(ADDR, ("MGExplorer_InitGetFolderInfo bad path name!!!"));
+      MSG_FATAL("MGExplorer_InitGetFolderInfo bad path name!!!",0,0,0);
       return EFAILED;
    }
 
@@ -1133,7 +1150,7 @@ int MGExplorer_InitGetFolderInfo(CMediaGalleryApp* pMe, PFNNOTIFY pfnNotify)
 
    if(NULL == pMe->m_pFolderInfo)
    {
-      MG_FARF(ADDR, ("No memory"));
+      MSG_FATAL("No memory",0,0,0);
       return ENOMEMORY;
    }
    MEMSET(pMe->m_pFolderInfo, 0, sizeof(MGFolderInfo));
@@ -1143,10 +1160,11 @@ int MGExplorer_InitGetFolderInfo(CMediaGalleryApp* pMe, PFNNOTIFY pfnNotify)
     foldername = (NodeName*)MALLOC(sizeof(NodeName));
     if(NULL == foldername)
     {
-       MG_FARF(ADDR, ("No memory"));
+       MSG_FATAL("No memory",0,0,0);
        return ENOMEMORY;
     }
    MEMCPY(foldername->m_szNodeName, cpszPath, sizeof(foldername->m_szNodeName));
+   MSG_FATAL("m_szNodeName",foldername->m_szNodeName,0,0);
    IVector_AddElement(pFolderList, (void*)foldername);
    MediaGalleryApp_SetCallbackStateStart(pMe, MG_CBT_GETFOLDERINFO);
 
@@ -1286,7 +1304,7 @@ static void MGExplorer_GetFolderInfo(void *po)
                pFolderName = (NodeName*)MALLOC(sizeof(NodeName));
                if(NULL == pFolderName)
                {
-                  MG_FARF(ADDR, ("No memory"));
+                  MSG_FATAL("No memory",0,0,0);
                   bFinish = TRUE;
                   goto EXITGETFOLDERINFO;
                }
@@ -1300,6 +1318,7 @@ static void MGExplorer_GetFolderInfo(void *po)
                       fi.szName,
                       sizeof(pFolderName->m_szNodeName));
 #endif
+               MSG_FATAL("m_szNodeName",pFolderName->m_szNodeName,0,0);
                IVector_AddElement(pFolderList, (void*)pFolderName);
             }
             else
@@ -1622,15 +1641,18 @@ void MGExplorer_GetMediaMenuSelectItem(CFSExplorer *pFSExplorer,
    uint16 *pSelItemID = NULL;
    uint8 nDirDepth;
    boolean bGet;
-
+   MSG_FATAL("MGExplorer_GetMediaMenuSelectItem Start",0,0,0);
    if(NULL == pFSExplorer || NULL == pMenuCtl)
+   {
+      MSG_FATAL("NULL == pFSExplorer || NULL == pMenuCtl",0,0,0);
       return ;
+   }
 
    nDirDepth = MGExplorer_GetCurrentDepth(pFSExplorer);
 
    if(TRUE == MGExplorer_CheckMediaMenuEmpty(pMenuCtl))
    {
-      MG_FARF(ADDR, ("MENU have no item, set current node to NULL"));
+      MSG_FATAL("MENU have no item, set current node to NULL",0,0,0);
       pFSExplorer->m_pCurNode = NULL;
       return;
    }
@@ -1642,7 +1664,7 @@ void MGExplorer_GetMediaMenuSelectItem(CFSExplorer *pFSExplorer,
    }
    else
    {
-      MG_FARF(ADDR, ("explorer folder depth error!"));
+      MSG_FATAL("explorer folder depth error!",0,0,0);
       return;
    }
 
@@ -1654,12 +1676,13 @@ void MGExplorer_GetMediaMenuSelectItem(CFSExplorer *pFSExplorer,
                                   *pSelItemID,
                                   (uint32*)&pFSExplorer->m_pCurNode);
 
-      MG_FARF(ADDR, ("Current Node addr is 0x%x", pFSExplorer->m_pCurNode));
+      MSG_FATAL("Current Node addr is 0x%x", pFSExplorer->m_pCurNode,0,0);
 
       if(bGet == FALSE)
       {
-         MG_FARF(ADDR, ("IMENUCTL_GetItemData Failed!"));
+         MSG_FATAL("IMENUCTL_GetItemData Failed!",0,0,0);
       }
+      MSG_FATAL("MGExplorer_GetMediaMenuSelectItem End",0,0,0);
    }
 }//MGAppUtil_GetMenuCtlItem
 
@@ -1678,15 +1701,16 @@ boolean MGExplorer_SetMediaMenuSelItem(CFSExplorer *pFSExplorer,
 {
    uint16 *pSelItemID = NULL;
    uint8 nDirDepth;
-
+   MSG_FATAL("MGExplorer_SetMediaMenuSelItem Start",0,0,0);
    if(NULL == pFSExplorer || NULL == pMenuCtl)
    {
+      MSG_FATAL("NULL == pFSExplorer || NULL == pMenuCtl",0,0,0);
       return FALSE;
    }
 
    if(TRUE == MGExplorer_CheckMediaMenuEmpty(pMenuCtl))
    {
-      MG_FARF(ADDR, ("Empty media menu!"));
+      MSG_FATAL("Empty media menu!",0,0,0);
       return FALSE;
    }
 
@@ -1699,7 +1723,7 @@ boolean MGExplorer_SetMediaMenuSelItem(CFSExplorer *pFSExplorer,
    }
    else
    {
-      MG_FARF(ADDR, ("explorer folder depth error!"));
+      MSG_FATAL("explorer folder depth error!",0,0,0);
       return FALSE;
    }
 
@@ -1712,6 +1736,7 @@ boolean MGExplorer_SetMediaMenuSelItem(CFSExplorer *pFSExplorer,
       /*check the item id whether exist*/
       if(FALSE ==IMENUCTL_GetItem(pMenuCtl, *pSelItemID, &ai))
       {
+        MSG_FATAL("FALSE ==IMENUCTL_GetItem(pMenuCtl, *pSelItemID, &ai)",0,0,0);
          return FALSE;
       }
 
@@ -1724,6 +1749,7 @@ boolean MGExplorer_SetMediaMenuSelItem(CFSExplorer *pFSExplorer,
          if(*pSelItemID != IMENUCTL_GetFocus(pMenuCtl))
          {
             IMENUCTL_SetFocus(pMenuCtl, *pSelItemID);
+            MSG_FATAL("*pSelItemID != IMENUCTL_GetFocus(pMenuCtl)",0,0,0);
             return TRUE;
          }
       }
@@ -1733,11 +1759,12 @@ boolean MGExplorer_SetMediaMenuSelItem(CFSExplorer *pFSExplorer,
          if(*pSelItemID != IMENUCTL_GetSel(pMenuCtl))
          {
             IMENUCTL_SetSel(pMenuCtl, *pSelItemID);
+            MSG_FATAL("*pSelItemID != IMENUCTL_GetSel(pMenuCtl)",0,0,0);
             return TRUE;
          }
       }
    }
-
+   MSG_FATAL("MGExplorer_SetMediaMenuSelItem End",0,0,0);
    return FALSE;
 }//MGExplorer_SetMediaMenuSelItem
 
@@ -1777,9 +1804,10 @@ int MGExplorer_RecoverMediaMenu(CMediaGalleryApp *pMe, IMenuCtl *pMenuCtl)
  */
 boolean MGExplorer_ResetPreItemID(CFSExplorer *pFSExplorer, boolean bAll)
 {
+   MSG_FATAL("MGExplorer_ResetPreItemID Start", 0,0,0);
    if(!pFSExplorer)
    {
-      MG_FARF(ADDR, ("Bad parameter"));
+      MSG_FATAL("Bad parameter",0,0,0);
       return FALSE;
    }
 
@@ -1803,11 +1831,11 @@ boolean MGExplorer_ResetPreItemID(CFSExplorer *pFSExplorer, boolean bAll)
       }
       else
       {
-         MG_FARF(ADDR, ("m_nCurDepth is error!!!"));
+         MSG_FATAL("m_nCurDepth is error!!!",0,0,0);
          return FALSE;
       }
    }
-
+   MSG_FATAL("MGExplorer_ResetPreItemID End", 0,0,0); 
    return TRUE;
 }//MGExplorer_ResetPreItemID
 
@@ -1837,7 +1865,7 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
    MGStartMode     eStartMode;
    MGMimeType     eMimeBase;
 
-
+   MSG_FATAL("MGExplorer_UpdateMediaMenuTitle Start", 0,0,0);
    if(!pMe || !pMenuCtl){
       return EFAILED;
    }
@@ -1949,7 +1977,7 @@ UPDATETITLEEXIT:
    FREEIF(wpszTitle);
    FREEIF(pszNewTitle);
    FREEIF(pszCount);
-
+   MSG_FATAL("MGExplorer_UpdateMediaMenuTitle End nRet=%d", nRet,0,0);
    return nRet;
 }//MGExplorer_UpdateMediaMenuTitle
 
@@ -2019,7 +2047,7 @@ int MGExplorer_FreeMediaMenuItem(IMenuCtl *pMediaMenu)
 
    if(!pMediaMenu)
    {
-      MG_FARF(ADDR, ("FreeMediaMenuItem bad parameter!"));
+      MSG_FATAL("FreeMediaMenuItem bad parameter!",0,0,0);
       return EFAILED;
    }
 
@@ -2027,7 +2055,7 @@ int MGExplorer_FreeMediaMenuItem(IMenuCtl *pMediaMenu)
 
    if(nCount == 0)
    {
-      MG_FARF(ADDR, ("FreeMediaMenuItem no item!"));
+      MSG_FATAL("FreeMediaMenuItem no item!",0,0,0);
       return SUCCESS;
    }
 
@@ -2293,9 +2321,10 @@ int MGExplorer_ChangeCurDir(CFSExplorer* pFSExplorer,
  */
 boolean MGExplorer_CheckMediaMenuEmpty(IMenuCtl *pMenuCtl)
 {
+   MSG_FATAL("MGExplorer_CheckMediaMenuEmpty Start",0,0,0);
    if(!pMenuCtl)
    {
-      MG_FARF(ADDR, ("CheckMediaMenuEmpty bad parameter"));
+      MSG_FATAL("CheckMediaMenuEmpty bad parameter",0,0,0);
       return FALSE;
    }
 
@@ -2303,7 +2332,7 @@ boolean MGExplorer_CheckMediaMenuEmpty(IMenuCtl *pMenuCtl)
    {
       return TRUE;
    }
-
+   MSG_FATAL("MGExplorer_CheckMediaMenuEmpty End",0,0,0);
    return FALSE;
 }//MGExplorer_CheckMediaMenuEmpty
 
@@ -2354,7 +2383,7 @@ boolean MGExplorer_CheckFolderExist(IFileMgr* pFileMgr,
                                     boolean bMkdir)
 {
    uint32 i;
-
+   MSG_FATAL("MGExplorer_CheckFolderExist Start",0,0,0);
    if(!pFileMgr || !ppFolders)
    {
       return FALSE;
@@ -2369,7 +2398,7 @@ boolean MGExplorer_CheckFolderExist(IFileMgr* pFileMgr,
 
       if(EFAILED == IFILEMGR_Test(pFileMgr, *(ppFolders + i)))
       {
-         MG_FARF(ADDR, ("File %s is not exist", *(ppFolders + i)));
+         MSG_FATAL("File %s is not exist", *(ppFolders + i),0,0);
 
          if(FALSE == bMkdir)
          {
@@ -2378,11 +2407,12 @@ boolean MGExplorer_CheckFolderExist(IFileMgr* pFileMgr,
 
          if(SUCCESS != IFILEMGR_MkDir(pFileMgr, *(ppFolders + i)))
          {
+            MSG_FATAL("File %s IFILEMGR_MkDir Failed", *(ppFolders + i),0,0);
             return FALSE;
          }
       }
    }
-
+   MSG_FATAL("MGExplorer_CheckFolderExist End",0,0,0);
    return TRUE;
 }//MediaGalleryApp_CheckFolderExist
 

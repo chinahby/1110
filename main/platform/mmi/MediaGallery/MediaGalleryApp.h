@@ -61,7 +61,7 @@
 #ifdef FEATURE_VERSION_IVIO
 #include "mediagallery_image_ivio.brh"
 #endif
-
+#include "Msg.h"
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define MEDIAGALLERYAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
