@@ -209,7 +209,14 @@ static mmgsdi_return_enum_type mmgsdi_store_esn_synch(
   /* Check if service 9 is supported and activated. If the NV read to MEID */
   /* returns an error code then we assume that the handset does not have a */
   /* valid MEID and we continue with sending the ESN as if n9 is not enabled.*/
+#ifdef CUST_EDITION
+  // 此处不能调用NV，因为在UIM Recovery的情况下，NV task本身也有可能处于访问
+  // UIM Task的状态，而UIM要从Recovery状态恢复还必须等MMGSDI的通知，这样形成了信号
+  // 死锁
+  nv_return_staus = tmc_get_stored_meid_me((qword *)&meid_nv_data);
+#else
   nv_return_staus = gsdi_get_nv(NV_MEID_ME_I, (nv_item_type *) &meid_nv_data);
+#endif
   if (nv_return_staus == NV_DONE_S && gsdi_is_meid_svc_activated(gsdi_slot)) 
   {  
     uim_cmd_ptr->hdr.command  = UIM_STORE_ESN_MEID_ME_F;

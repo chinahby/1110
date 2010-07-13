@@ -387,8 +387,11 @@ SIDE EFFECTS
 ===========================================================================*/
 extern  dword                      tmc_get_stored_esn_me (void);
 #endif /* FEATURE_UIM_RUIM */
-
-
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_EUIMID
+extern  int tmc_get_stored_meid_me (qword *pmeid);
+#endif
+#endif
 /*===========================================================================
 
 FUNCTION tmc_is_init_done

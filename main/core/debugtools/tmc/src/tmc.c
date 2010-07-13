@@ -1178,7 +1178,12 @@ typedef struct {
     */
       dword               esn_me;
     #endif /* FEATURE_UIM_RUIM */
-
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_EUIMID
+      qword             meid_me;
+      int               meid_st;
+#endif
+#endif
     boolean             is_init_done;
     /* Inidcate tmc initialization is done or not.
     */
@@ -3029,6 +3034,22 @@ LOCAL   void                       tmc_store_esn_me (
 } /* tmc_store_esn_me */
 #endif /* FEATURE_UIM_RUIM */
 
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_EUIMID
+LOCAL void tmc_store_meid_me (qword meid_me, int status)
+{
+  qw_equ(tmc_data.meid_me, meid_me);
+  tmc_data.meid_st = status;
+} /* tmc_store_meid_me */
+
+EXTERN  int tmc_get_stored_meid_me (qword *pmeid)
+{
+  qw_equ(*pmeid, tmc_data.meid_me);
+  return (tmc_data.meid_st);
+} /* tmc_get_stored_meid_me */
+
+#endif
+#endif
 
 /* <EJECT> */
 /*===========================================================================
@@ -8851,7 +8872,31 @@ LOCAL   void                       tmc_start_service_tasks( void )
   }
   #endif /* FEATURE_UIM_RUIM */
   #endif /* FEATURE_BRINGUP_DIAG_ONLY */
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_EUIMID
+  {
+    nv_item_type          nv_data_buf;                   /* NV data buffer */
+    nv_stat_enum_type     nv_read_status;                /* NV read status */
+    qword                 meid_me;
+    
+    nv_read_status = tmcnv_read( NV_MEID_ME_I, &nv_data_buf );
 
+    if (nv_read_status != NV_DONE_S)
+    {
+      qw_equ(meid_me, 0);
+    }
+    else
+    {
+      qw_equ(meid_me, nv_data_buf.meid);
+    }
+
+    /* Store esn me to TMC internal data buffer.
+    */
+    tmc_store_meid_me(meid_me, nv_read_status);
+  }
+
+#endif
+#endif
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   #ifndef FEATURE_BRINGUP_DIAG_ONLY
