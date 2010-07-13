@@ -36,7 +36,7 @@ undrop.mid|fs:/mod/tetris/undrop.mid
 
 ifeq ($(OPERATORS_VERSION_NAME),IVIO)
     	 CONSTFILE_FILES+=\
-    	 tetrisimages_ivio.bar|fs:/mod/tetris/tetrisimages.bar
+    	 tetrisimages_ivio.bar|fs:/mod/tetris/tetrisimages_ivio.bar
 endif
 ifeq ($(OPERATORS_VERSION_NAME),SMART)
     	 CONSTFILE_FILES+=\
