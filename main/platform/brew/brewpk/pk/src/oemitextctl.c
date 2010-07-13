@@ -1565,6 +1565,14 @@ NormalKeyEvent:
                     {
                         pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
                     }
+					else if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_INDONESIAN)
+					{
+						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_INDONESIAN;
+					}
+					else if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_INDONESIAN)
+					{
+						pme->m_nCurrInputMode = OEM_MODE_T9_MT_INDONESIAN;
+					}
                     OEM_SetInputMode((CTextCtl *)pme);
                     return TRUE;
                 }
