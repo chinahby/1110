@@ -2027,9 +2027,9 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                     return TRUE;
                 }
                
-                SETAEERECT(&rc,  0, pMe->m_rc.y + TITLEBAR_HEIGHT,
+                SETAEERECT(&rc,  0, pMe->m_rc.y + TITLEBAR_HEIGHT - 1,
                             pMe->m_rc.dx,
-                            pMe->m_rc.dy - BOTTOMBAR_HEIGHT - TITLEBAR_HEIGHT);
+                            pMe->m_rc.dy - BOTTOMBAR_HEIGHT - TITLEBAR_HEIGHT + 1);
                 ISTATIC_SetRect(pStatic, &rc);
             }
             
@@ -2530,8 +2530,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             {
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-  
+                    return TRUE;					
                 default:
                     break;
             }
@@ -7277,7 +7276,12 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 
         case EVT_USER_REDRAW:
             {
-                int  i,y = 0,dy=0,ygap = 10;
+                
+#if defined(FEATURE_DISP_160X128)
+                int  i,y = 0,dy=0,ygap = 1;	//Add By zzg 2010_07_10
+#else
+				int  i,y = 0,dy=0,ygap = 10;
+#endif
                 AEERect rc;
                 IImage  *pLeftImg = NULL;
                 IImage  *pRightImg = NULL;
@@ -7289,7 +7293,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 int16  nLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
                                                              AEE_FONT_NORMAL,
                                                              NULL,
-                                                             NULL);
+                                                             NULL);				
 
                 if(cbval == TRUE && wControls[nControls - 1] != IDC_TEXT_CBNUM)
                 {
@@ -7301,14 +7305,14 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     wControls[nControls - 1] = NULL;
                     nControls--;
                 }
-
+			
                 //初始化List Menu的颜色及清屏
 #ifdef FEATURE_COLOR_DISPLAY
                 color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
                 color.cBack = RGB_WHITE;
-                color.cText =  RGB_BLACK;
-                color.cSelBack = MAKE_RGB(255,128,64);
-                color.cSelText = RGB_WHITE;
+                color.cText =  0x84848400;	//RGB_BLACK;				//Add By zzg 2010_07_10	
+                color.cSelBack = RGB_WHITE; //MAKE_RGB(255,128,64);      //Add By zzg 2010_07_10  	        			
+                color.cSelText = RGB_BLACK; //RGB_WHITE;				//Add By zzg 2010_07_10
 #else
                 color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
                 color.cBack = RGB_WHITE;
@@ -7344,7 +7348,12 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 }
                 
                 y = GetTitleBarHeight(pMe->m_pDisplay) + 3;
-                dy = nLineHeight + 2; 
+				
+#if defined(FEATURE_DISP_160X128)
+                dy = nLineHeight; // + 2; 
+#else
+				dy = nLineHeight + 2; 
+#endif
                 
                 pLeftImg = ISHELL_LoadResImage(pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDB_LEFTARROW);
                 pRightImg = ISHELL_LoadResImage(pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDB_RIGHTARROW);
@@ -7415,6 +7424,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     {
                         rc.x  = 2;
                         rc.dx = pMe->m_rc.dx - rc.x - 2;
+#if defined(FEATURE_DISP_160X128)						
+						rc.dy += 2;	//Add By zzg 2010_07_13
+#endif
                         IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
                     }
                     
@@ -7579,6 +7591,97 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     ICONTROL_Redraw(pControl);
                     ICONTROL_SetActive(pControl,FALSE);
                 }
+
+				/*
+				//Add By zzg 2010_07_13
+#if defined(FEATURE_DISP_160X128)
+				{
+					int         titleBarHeight      = 0;
+				    int         bottomBarHeight     = 0;
+				    int         itemNumberPerPage   = 0;				   
+					AEERect     rectWindow       	= {0};
+					int         fontHeight          = 0;
+					int         itemHeight          = 0;
+					int         currentItem         = 0;	
+					int     	y              	 	= 0;	
+		            int     	height          	= 0;
+					fontHeight          = IDISPLAY_GetFontMetrics( pMe->m_pDisplay, AEE_FONT_NORMAL, 0, 0);
+					itemHeight          = fontHeight + 5;
+					titleBarHeight      = GetTitleBarHeight( pMe->m_pDisplay);
+			        bottomBarHeight     = GetBottomBarHeight( pMe->m_pDisplay);
+					SETAEERECT( &rectWindow, 0, titleBarHeight, pMe->m_rc.dx, pMe->m_rc.dy - titleBarHeight - bottomBarHeight);
+					itemNumberPerPage   = (pMe->m_rc.dy - titleBarHeight - bottomBarHeight) / itemHeight;
+
+					switch (pMe->m_wPrevMenuSel)
+					{
+						case IDC_MENU_SENDOPT:
+						{
+							currentItem = 0;
+							break;
+						}
+						case IDC_MENU_PRI:
+						{
+							currentItem = 1;
+							break;
+						}
+						case IDC_MENU_RPT:
+						{
+							currentItem = 2;
+							break;
+						}
+						case IDC_MENU_CBNUM:
+						{
+							currentItem = 3;
+							break;
+						}
+						case IDC_TEXT_CBNUM:
+						{
+							currentItem = 4;
+							break;
+						}
+						default:
+						{
+							break;
+						}
+					}
+
+						
+					// draw scroll bar	
+					if( itemNumberPerPage < nControls)
+					{
+#ifdef FEATURE_SCROLLBAR_USE_STYLE
+												
+						static Theme_Param_type    themeParms       = {0};
+
+		                RGBVAL  ScrollbarClr = MAKE_RGB(0xDE, 0xDE, 0xDE),
+		                        ScrollbarFillClr = MAKE_RGB(0xFF, 0x70, 0x00);
+#endif
+						
+		                height  = (rectWindow.dy / nControls) * nControls;
+		                y       = rectWindow.y + ( rectWindow.dy - height) / 2;		
+
+		                
+#ifdef FEATURE_SCROLLBAR_USE_STYLE
+
+						Appscom_GetThemeParameters( &themeParms);
+
+		                SETAEERECT(&rc, pMe->m_rc.dx - (SCROLLBAR_WIDTH - 2), y, (SCROLLBAR_WIDTH - 2), height);
+		                IDISPLAY_FillRect(pMe->m_pDisplay, &rc, ScrollbarClr);
+		                rc.dy  = rc.dy / nControls;
+		                rc.y  += rc.dy * currentItem;
+		                IDISPLAY_FillRect(pMe->m_pDisplay, &rc, ScrollbarFillClr);
+#else
+		                SETAEERECT(&rc, pMe->m_rc.dx - 1, y, 1, height);
+		                IDISPLAY_FillRect( pMe->m_pDisplay, &rc, themeParms.textColor);
+		                rc.dy  = rc.dy / nControls;
+		                rc.y  += rc.dy * currentItem;
+		                IDISPLAY_FillRect(pMe->m_pDisplay, &rc, themeParms.themeColor);
+#endif                
+					}
+				}
+#endif
+				//Add End
+				*/
                 
                 if (pLeftImg != NULL)
                 {
@@ -7665,6 +7768,30 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
             
             return TRUE;
 
+		/*	
+		//Add By zzg 2010_07_13
+		case EVT_KEY_PRESS:
+        {    
+			switch (wParam)
+			{
+				case AVK_UP:
+				case AVK_DOWN:
+				{
+					(void) ISHELL_PostEventEx(pMe->m_pShell, 
+		                                    EVTFLG_ASYNC,
+		                                    AEECLSID_WMSAPP,
+		                                    EVT_USER_REDRAW,
+		                                    0, 
+		                                    0);
+	            	return TRUE;
+				}
+				default:
+					return TRUE;
+			}
+		}
+		//Add End	
+		*/
+
         case EVT_KEY:
             switch (wParam)
             {
@@ -7703,8 +7830,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             CLOSE_DIALOG(DLGRET_OK)
                         }
                     }                 
-                    break;
-                    
+                    break;	
+				
                 default:
                     break;
             }

@@ -82,7 +82,8 @@ static void OEMFont_Create(IFont *pMe)
 
 static void OEMFont_Destroy(IFont *pMe)
 {
-    if(pMe->pLayout){
+    if (pMe->pLayout)
+	{
         GreyBitType_Layout_Done(pMe->pLayout);
         pMe->pLayout = NULL;
     }

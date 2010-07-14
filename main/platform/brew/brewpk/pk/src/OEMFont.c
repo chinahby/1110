@@ -1052,7 +1052,8 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
  	    dy = yMax - sy + 1;
         bUnderline = FALSE;
     }
-    
+
+	/*
     if(pMe->nFont == AEE_FONT_BOLD)
     {
         bBold =TRUE;
@@ -1061,6 +1062,9 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
     {
        bBold=FALSE;
     }
+    */
+    bBold = FALSE;		//Add By zzg 2010_07_10
+    
     
     if (dy > 0)
     {
