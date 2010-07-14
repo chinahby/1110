@@ -1533,6 +1533,7 @@ static boolean MediaGalleryApp_CheckHsmmDir(CMediaGalleryApp* pMe)
 #ifdef  FEATURE_MG_WAPMMS_SUPPORT
                         MG_PHONEDOWNLOAD_PATH,
 #endif
+                        MG_PHONEWALLPAPER_PATH,//add by xuhui
    };
 
    if(!pMe || !pMe->m_pFileMgr)
@@ -2494,6 +2495,11 @@ int MGMediaInfo_GetForderFromMimeBase(uint16 uMimeBase,
       case MG_MIME_VIDEOBASE:
          cpszFolder = MG_PHONEVIDEOS_PATH;
          break;
+
+      //add by xuhui  
+      case MG_MIME_WALLPAPER:
+         cpszFolder = MG_PHONEWALLPAPER_PATH;
+         break;       
 
       default:
          cpszFolder = MG_PHONEDOWNLOAD_PATH;
