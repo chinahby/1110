@@ -77,7 +77,6 @@ endif
 #include $(NOTEBOOK)/notebook.min
 
 #Games
-include $(TETRIS)/tetris.min
 include $(BRICKATTACK)/brickattack.min
 include $(BLACKJACK)/blackjack.min
 

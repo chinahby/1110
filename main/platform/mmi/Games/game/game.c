@@ -885,7 +885,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
             IMENUCTL_SetTitle(pMenu, GAME_RES_FILE_LANG, IDS_GAME_LIST, NULL);                
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_1, IDS_GAME_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_2, IDS_GAME_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_3, IDS_GAME_TITLE_3, NULL, 0);
+            //IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_3, IDS_GAME_TITLE_3, NULL, 0);
         
 
             return TRUE;
@@ -960,7 +960,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
             {   
                 case IDS_GAME_TITLE_1:
                 case IDS_GAME_TITLE_2:
-                case IDS_GAME_TITLE_3:
+                //case IDS_GAME_TITLE_3:
                     StartApplet(pMe, wParam - IDS_GAME_TITLE_1);
                     return TRUE;
             }
@@ -998,10 +998,11 @@ static boolean StartApplet(Game *pMe, int i)
         case 1:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLACKJACK);
             break;
+#if 0            
         case 2:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME_TETRIS);
             break;
-		
+#endif		
         default:
             break;
     }
