@@ -1850,7 +1850,15 @@ LOCAL void hs_init( void )
         }
         else
         {
-            db_item.db_poweruptype = DB_POWERUP_BYKEY;
+            errFlag = pm_get_rt_status(PM_KPD_PWR_KEY_ON_IRQ_HDL,&status);
+            if ((errFlag == PM_ERR_FLAG__SUCCESS) && (status == TRUE))
+            {
+                db_item.db_poweruptype = DB_POWERUP_BYKEY;
+            }
+            else
+            {
+                db_item.db_poweruptype = DB_POWERUP_BYRESET;
+            }
         }
     }
     
