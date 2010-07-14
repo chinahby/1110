@@ -2026,10 +2026,17 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                 {
                     return TRUE;
                 }
-               
+
+#if defined(FEATURE_DISP_160X128)			   	//Add By zzg 2010_07_14
                 SETAEERECT(&rc,  0, pMe->m_rc.y + TITLEBAR_HEIGHT - 1,
                             pMe->m_rc.dx,
                             pMe->m_rc.dy - BOTTOMBAR_HEIGHT - TITLEBAR_HEIGHT + 1);
+
+#else
+				SETAEERECT(&rc,  0, pMe->m_rc.y + TITLEBAR_HEIGHT,
+                            pMe->m_rc.dx,
+                            pMe->m_rc.dy - BOTTOMBAR_HEIGHT - TITLEBAR_HEIGHT);
+#endif
                 ISTATIC_SetRect(pStatic, &rc);
             }
             

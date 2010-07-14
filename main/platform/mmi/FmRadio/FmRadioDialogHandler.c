@@ -1832,7 +1832,12 @@ static void paint( CFmRadio *pMe)
     drawLedLight( pMe);
     drawChannelIndicator( pMe);
     drawVolumeIndicator( pMe);
-    drawSoftkey( pMe);
+	
+	if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_NOT_REFUSE)	//Add By zzg 2010_07_14
+    {
+    	drawSoftkey( pMe);
+	}
+	
     drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
 
 #ifndef FEATURE_FMRADIO_SIMPLE_VERSION
