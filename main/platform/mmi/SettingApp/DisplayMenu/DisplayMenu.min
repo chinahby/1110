@@ -30,82 +30,15 @@ CONSTFILE_FILES+=\
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
 	wallpaper11.png|fs:/image/wallpaper/wallpaper01.png
 else
-ifeq ($(USES_WALLPAPER),CHINA_VERTU)
-ifeq ($(USES_MEDIAGALLERY), yes)
 CONSTFILE_FILES+=\
 	displaymenu.mif|fs:/mif/displaymenu.mif \
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-  wallpaperVertu01.png|fs:/hsmm/pictures/wallpaper01.png \
-  wallpaperVertu02.png|fs:/hsmm/pictures/wallpaper02.png \
-  wallpaperVertu03.png|fs:/hsmm/pictures/wallpaper03.png \
-  wallpaperVertu04.png|fs:/hsmm/pictures/wallpaper04.png \
-  wallpaperVertu05.png|fs:/hsmm/pictures/wallpaper05.png \
-  wallpaperVertu06.png|fs:/hsmm/pictures/wallpaper06.png
-else
-CONSTFILE_FILES+=\
-	displaymenu.mif|fs:/mif/displaymenu.mif \
-	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-  wallpaperVertu01.png|fs:/image/wallpaper/wallpaper01.png \
-  wallpaperVertu02.png|fs:/image/wallpaper/wallpaper02.png \
-  wallpaperVertu03.png|fs:/image/wallpaper/wallpaper03.png \
-  wallpaperVertu04.png|fs:/image/wallpaper/wallpaper04.png \
-  wallpaperVertu05.png|fs:/image/wallpaper/wallpaper05.png \
-  wallpaperVertu06.png|fs:/image/wallpaper/wallpaper06.png
-endif
-else
-ifeq ($(USES_MEDIAGALLERY), yes)
-CONSTFILE_FILES+=\
-	displaymenu.mif|fs:/mif/displaymenu.mif \
-	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-  wallpaper01.png|fs:/hsmm/pictures/wallpaper01.png \
-  wallpaper02.png|fs:/hsmm/pictures/wallpaper02.png \
-  wallpaper03.png|fs:/hsmm/pictures/wallpaper03.png \
-  wallpaper04.png|fs:/hsmm/pictures/wallpaper04.png \
-  wallpaper05.png|fs:/hsmm/pictures/wallpaper05.png \
-  wallpaper06.png|fs:/hsmm/pictures/wallpaper06.png
-else
-ifeq ($(USES_WALLPAPER),THAILAND_CAT)
-CONSTFILE_FILES+=\
-	displaymenu.mif|fs:/mif/displaymenu.mif \
-	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-  wallpaper01.png|fs:/image/wallpaper/wallpaper01.png \
-  wallpaper02.png|fs:/image/wallpaper/wallpaper02.png \
-  wallpaper03.png|fs:/image/wallpaper/wallpaper03.png \
-  wallpaper04.png|fs:/image/wallpaper/wallpaper04.png \
-  wallpaper05.png|fs:/image/wallpaper/wallpaper05.png \
-  wallpaperThailandCAT1.png|fs:/image/wallpaper/wallpaperThailandCAT1.png \
-  wallpaperThailandCAT2.png|fs:/image/wallpaper/wallpaperThailandCAT2.png \
-  wallpaperThailandCAT3.png|fs:/image/wallpaper/wallpaperThailandCAT3.png \
-  wallpaperThailandCAT4.png|fs:/image/wallpaper/wallpaperThailandCAT4.png \
-  wallpaperThailandCAT5.png|fs:/image/wallpaper/wallpaperThailandCAT5.png
-else
-
-    ifeq ($(USES_WALLPAPER),SUDAN_SUDATEL)
-CONSTFILE_FILES+=\
-	displaymenu.mif|fs:/mif/displaymenu.mif \
-	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-  wallpaperSudan01.bmp|fs:/image/wallpaper/wallpaperSudan01.bmp \
-  wallpaperSudan02.bmp|fs:/image/wallpaper/wallpaperSudan02.bmp \
-  wallpaperSudan03.bmp|fs:/image/wallpaper/wallpaperSudan03.bmp \
-  wallpaperSudan04.bmp|fs:/image/wallpaper/wallpaperSudan04.bmp \
-  wallpaperSudan05.bmp|fs:/image/wallpaper/wallpaperSudan05.bmp \
-  wallpaperSudan06.bmp|fs:/image/wallpaper/wallpaperSudan06.bmp \
-  wallpaperSudan07.bmp|fs:/image/wallpaper/wallpaperSudan07.bmp 
-else
-    
-CONSTFILE_FILES+=\
-	displaymenu.mif|fs:/mif/displaymenu.mif \
-	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-  wallpaper01.png|fs:/image/wallpaper/wallpaper01.png \
-  wallpaper02.png|fs:/image/wallpaper/wallpaper02.png \
-  wallpaper03.png|fs:/image/wallpaper/wallpaper03.png \
-  wallpaper04.png|fs:/image/wallpaper/wallpaper04.png \
-  wallpaper05.png|fs:/image/wallpaper/wallpaper05.png \
-  wallpaper06.png|fs:/image/wallpaper/wallpaper06.png
-endif#($(USES_WALLPAPER),SUDAN_SUDATEL)
-endif#($(USES_WALLPAPER),THAILAND_CAT)
-endif#($(USES_MEDIAGALLERY), yes)
-endif#($(USES_WALLPAPER),CHINA_VERTU)
+    wallpaper01.png|fs:/image/wallpaper/wallpaper01.png \
+    wallpaper02.png|fs:/image/wallpaper/wallpaper02.png \
+    wallpaper03.png|fs:/image/wallpaper/wallpaper03.png \
+    wallpaper04.png|fs:/image/wallpaper/wallpaper04.png \
+    wallpaper05.png|fs:/image/wallpaper/wallpaper05.png \
+    wallpaper06.png|fs:/image/wallpaper/wallpaper06.png
 endif #ifeq ($(USES_LOWMEM), yes)
 
 # 加入另外一种语言资源文件
