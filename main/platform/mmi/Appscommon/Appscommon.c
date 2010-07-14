@@ -966,7 +966,9 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
                                     wszBar_M,
                                     sizeof(wszBar_M));
     }
-    
+
+//Del By zzg 2010_07_14
+/*	
 #ifdef FEATURE_RANDOM_MENU_COLOR
     if(SUCCESS == OEM_GetConfig(CFGI_MENU_BGCOLOR, &nBgColor, sizeof(nBgColor)))
     {
@@ -991,9 +993,10 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
             IDISPLAY_FillRect(pIDisplay, &rect, nBgColor);
         }
     }
-    /* 获取颜色不成功时才加载图片*/
+    // 获取颜色不成功时才加载图片
     else
-#endif/* FEATURE_RANDOM_MENU_COLOR*/
+#endif// FEATURE_RANDOM_MENU_COLOR
+*/
     {
         // 加载底条背景图片
         if ((STRLEN(BParam->strImgResFile) > 0) && 
@@ -1223,6 +1226,8 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
         SETAEERECT(&rc, 0, 0, devinfo.cxScreen, nBarH);
     }
 
+//Del By zzg 2010_07_14
+/*
 #ifdef FEATURE_RANDOM_MENU_COLOR
     if(SUCCESS == OEM_GetConfig(CFGI_MENU_BGCOLOR, &nBgColor, sizeof(nBgColor)))
     {
@@ -1247,9 +1252,10 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
             IDISPLAY_FillRect(pIDisplay, &rect, nBgColor);
         }
     }
-    /* 获取颜色不成功时才加载图片*/
+    // 获取颜色不成功时才加载图片
     else
-#endif/* FEATURE_RANDOM_MENU_COLOR*/
+#endif// FEATURE_RANDOM_MENU_COLOR
+*/
     {
         if ((STRLEN(TParam->strImgResFile) > 0) && 
             (0 != TParam->nImgResID))

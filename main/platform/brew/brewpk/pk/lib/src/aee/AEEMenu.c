@@ -2336,7 +2336,7 @@ static void IMenuCtl_SetColors(IMenuCtl * po, AEEMenuColors * pc)
             pme->m_c.cBack          = RGB_BLACK;
             pme->m_c.cText          = MAKE_RGB( 0xde, 0xde, 0xde);
             pme->m_c.cSelBack       = MAKE_RGB( 0xde, 0xde, 0xde);
-            pme->m_c.cSelText       = RGB_YELLOW_EX;//RGB_BLACK;//wlh mod 更改选中条的文字颜色
+            pme->m_c.cSelText       = RGB_BLACK; //RGB_YELLOW_EX;//RGB_BLACK;//wlh mod 更改选中条的文字颜色
             pme->m_c.cFrame         = CLR_SYS_FRAME_LO;
             pme->m_c.cScrollbar     = MAKE_RGB( 0xde, 0xde, 0xde);
             pme->m_c.cScrollbarFill = MAKE_RGB(0xfe, 0x61, 0x01);
