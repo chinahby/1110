@@ -3171,19 +3171,20 @@ static void CMusicPlayer_Set_CTL(CMusicPlayer *pMe)
     int currentRectIndex = 0;
     int title_height = GetTitleBarHeight( pMe->m_pDisplay);
     int bottomheight = GetBottomBarHeight(pMe->m_pDisplay);
-    int itemheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
-    int lineSpace  = ( pMe->m_rc.dy - title_height - bottomheight - itemheight*4) / 5;
+    int itemheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_NORMAL, NULL, NULL);	//AEE_FONT_BOLD
+    int lineSpace  = ( pMe->m_rc.dy - title_height - bottomheight - itemheight*3) / 4;	//4/5
     int i = 0;
 
     AEERect             rects[3];
-   
-    for( i = 0; i < 3; i ++)
+
+   	//要和MP3_Draw_SettingsText里的坐标对应好
+    for( i = 0; i < 3; i ++)			
     {
      SETAEERECT( &rects[i],
                 CONTROL_RECT_START_X + 9,
                 title_height + lineSpace  * (i + 1)  + itemheight*i- 1,
                 pMe->m_rc.dx - CONTROL_RECT_START_X - 19,
-                itemheight + 10);
+                itemheight + 2); //10);	//高度要比控件高1个像素
     }
 
     //设置控件焦点
@@ -3227,8 +3228,8 @@ static void CMusicPlayer_Draw_Arrow(CMusicPlayer *pMe,int title_hight, int lineS
         //在状态和重复模式后面画该ICON,表示上下键改变值
         IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace + 4);
         //IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 2 + itemheight + 4);
-        IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 2 + itemheight + 4);
-        IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 3 + itemheight * 2 + 4);
+        IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 2 + itemheight + 1);	//4
+        IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 3 + itemheight * 2 + 1);
         IIMAGE_Release(pR_ResImg);
         pR_ResImg = NULL;
     }
@@ -3237,8 +3238,8 @@ static void CMusicPlayer_Draw_Arrow(CMusicPlayer *pMe,int title_hight, int lineS
     {
         //在状态和重复模式后面画该ICON,表示上下键改变值
         IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace + 4);
-        IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 2 + itemheight + 4);
-        IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 3 + itemheight * 2 + 4);
+        IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 2 + itemheight + 1);
+        IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 3 + itemheight * 2 + 1);
        // IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 4 + itemheight * 3 + 4);
         IIMAGE_Release(pL_ResImg);
         pL_ResImg = NULL;
@@ -5203,9 +5204,9 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
     pMe->m_rc.dy = devinfo.cyScreen;
     title_hight = GetTitleBarHeight(pMe->m_pDisplay);
     bottomheight = GetBottomBarHeight(pMe->m_pDisplay);
-    itemheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
-    lineSpace = ( pMe->m_rc.dy - title_hight - bottomheight - itemheight*4) / 5;
-    MEMSET(wszMode,0,sizeof(wszMode));
+    itemheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_NORMAL, NULL, NULL);	//AEE_FONT_BOLD
+    lineSpace = ( pMe->m_rc.dy - title_hight - bottomheight - itemheight*3) / 4;	//4/5
+    MEMSET(wszMode,0,sizeof(wszMode));	
     //MEMSET(wszStyle,0,sizeof(wszStyle));
     MEMSET(wszVolume,0,sizeof(wszVolume));
     MEMSET(wszSort,0,sizeof(wszSort));
@@ -5230,7 +5231,7 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
                 CONTROL_RECT_START_X+10,
                 title_hight + lineSpace,
                 pMe->m_rc.dx - CONTROL_RECT_START_X - 20,
-                itemheight + 8
+                itemheight + 1//8
             );
     IDISPLAY_EraseRect(pMe->m_pDisplay,&rc);
     IMENUCTL_SetRect(pMe->m_pMode, &rc);
@@ -5239,7 +5240,7 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
                 CONTROL_RECT_START_X+10,
                 title_hight + lineSpace*2+itemheight,
                 pMe->m_rc.dx - CONTROL_RECT_START_X - 20,
-                itemheight + 8
+                itemheight + 1//8
             );
     IDISPLAY_EraseRect( pMe->m_pDisplay,&rc);
     IMENUCTL_SetRect(pMe->m_pVolume, &rc);
@@ -5248,7 +5249,7 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
                 CONTROL_RECT_START_X+10,
                 title_hight+lineSpace*3+itemheight*2,
                 pMe->m_rc.dx - CONTROL_RECT_START_X - 20,
-                itemheight + 8
+                itemheight + 1//8
             );
     IDISPLAY_EraseRect( pMe->m_pDisplay,&rc);
     IMENUCTL_SetRect(pMe->m_pSort, &rc);
