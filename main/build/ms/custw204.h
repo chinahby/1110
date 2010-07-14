@@ -226,6 +226,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DRV_SDCC
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
+#define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
 #endif
 
 #include "custuim.h"
