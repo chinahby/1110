@@ -11,8 +11,7 @@ SDCC_SOURCES=    \
     sdcc_mmc_util.c \
     sdcc_command_api.c \
     sdcc_command_util.c \
-    sdcc_sd_util.c \
-    sd_card.c
+    sdcc_sd_util.c
 
 include $(SDCC)/bsp/sdcc_bsp.min
 SDCC_OBJS :=  $(addprefix $(TARGETDIR)/, $(SDCC_SOURCES:%.c=%.o))

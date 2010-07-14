@@ -250,15 +250,17 @@ void sdcc_set_tcxo_clk(boolean set_status)
 #if defined (T_MSM6275) || defined (T_MSM6280) 
 #error code not present
 #endif 
-
+#ifndef T_QSC1100
 #if defined (T_MSM6550) || defined (T_MSM6800) 
       clk_regime_set_sdio_mode (TRUE);
 #endif
-    
+#endif
 #ifdef FEATURE_SDCC_VOTE_AGAINST_SLEEP
       sleep_negate_okts(sdcc_sleep_okts_handle);
       /* Set the clock to high for M6550 & M6800 targets */
+#ifndef T_QSC1100
       clk_regime_set_sdio_mode (TRUE);
+#endif
 #endif
    }
    else if(set_status == FALSE)
@@ -270,7 +272,9 @@ void sdcc_set_tcxo_clk(boolean set_status)
 #endif 
    
 #ifdef FEATURE_SDCC_VOTE_AGAINST_SLEEP
+#ifndef T_QSC1100
       clk_regime_set_sdio_mode (FALSE);
+#endif
       sleep_assert_okts(sdcc_sleep_okts_handle);
 #endif
    }
@@ -2075,9 +2079,6 @@ SDCC_STATUS sdcc_config_memory_device(void)
   else if ( SDCC_CARD_SD == sdcc_pdata.card_type ||
        SDCC_CARD_SDHC == sdcc_pdata.card_type )
   {
-#ifdef T_QSC1100
-     sdcc_pdata.wide_bus = FALSE;
-#endif
      /* default SD bus width to 1-bit mode */
      rc = sdcc_set_sd_bus_width(SDCC_SD_BUS_WIDTH_1BIT);
      if ( SDCC_NO_ERROR != rc )
@@ -2102,10 +2103,6 @@ SDCC_STATUS sdcc_config_memory_device(void)
         {
            return rc;
         }
-        
-#ifdef T_QSC1100
-        sdcc_pdata.wide_bus = TRUE;
-#endif
      }
   }
 
@@ -2606,8 +2603,8 @@ sdcc_do_transfer
    uint16           length     = 0;
 #ifndef T_QSC1100
    boolean          use_dma    = FALSE;
-   uint32           isave      = 0;
 #endif
+   uint32           isave      = 0;
    boolean          send_stop_command;
 
    /*------------------------------------------------------------------*/
@@ -2664,9 +2661,9 @@ sdcc_do_transfer
    data_ctrl |= (blk_in_bits << HWIO_MCI_DATA_CTL_BLOCKSIZE_SHFT);
    data_ctrl |= MCI_DATA_DPSM_ENABLED;
    data_ctrl |= SDCC_MCI_DIRECTION(xfer_flags);
-
+#endif
    INTLOCK_SAV(isave);
-
+#ifndef T_QSC1100
    /* This register needs to be done before sending the command */
    /* on reads and after on writes. */
    if (SDCC_IS_READ_TRANSFER(xfer_flags))
@@ -2691,9 +2688,9 @@ sdcc_do_transfer
    {
       HWIO_OUT(MCI_DATA_CTL, data_ctrl);
    }
-
-   INTFREE_SAV(isave);
 #endif
+   INTFREE_SAV(isave);
+
    /* Transfer the data to or from the device, either using DMA or */
    /* by reading or writing the FIFO registers directly */
    if (status == SDCC_NO_ERROR)

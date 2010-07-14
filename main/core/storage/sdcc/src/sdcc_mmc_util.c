@@ -67,12 +67,14 @@ sdcc_config_mmc_bus_width
       /* invalid mmc bus width */
       return FALSE;
    }
-
+#ifdef T_QSC1100
+   (void) sdcc_set_sd_bus_width(bus_width);
+#else
    /* program the bus width for the mmc card */
    HWIO_OUTM(MCI_CLK,
              HWIO_FMSK(MCI_CLK, WIDEBUS),
              (bus_width << HWIO_MCI_CLK_WIDEBUS_SHFT));
-
+#endif
    return TRUE;
 } /* sdcc_config_mmc_bus_width */
 
@@ -174,7 +176,7 @@ sdcc_config_mmc_modes_segment( void )
 
       /* re-program the clock according to the MMC card type */
       sdcc_config_clk(SDCC_DATA_TRANSFER_MODE, sdcc_pdata.card_type);
-      
+
       /* configure MMC BUS_WIDTH to 4-bit mode */
       bus_width          = SDCC_MMC_BUSWIDTH_4BIT;
       sdcc_cmd.cmd       = SD_CMD6_SWITCH;

@@ -132,9 +132,6 @@ when       who     what, where, why
 #include "sdcc_mmc_util.h"
 #include "assert.h"
 #include "sdcc_bsp.h"
-#ifdef FEATURE_DRV_SD_SPI_MODE
-#include "sd_card.h"
-#endif
 
 extern unsigned int sdio_card;
 
@@ -143,336 +140,6 @@ extern unsigned int sdio_card;
 #endif
 
 
-#ifdef FEATURE_DRV_SD_SPI_MODE
-
-/*lint -save -e641 Suppress 'Converting enum to int' warning */
-/******************************************************************************
-* Name: sdcc_open.
-*
-* Description:
-*    This function returns failure if there is no memory device
-*    attached. If there is a device, it then will initialize the device
-*    and take it out of the identification state. It then sets up the
-*    device for data transfer.
-
-* Arguments:
-*       driveno        Drive Number
-*
-* Returns:
-*       TRUE  if sucessfully configured a SD/MMC device
-*       FALSE if failed
-*
-******************************************************************************/
-boolean
-sdcc_open(int16 driveno)
-{
-	/* find the attached device */
-	sdcc_pdata.card_type = SDCC_CARD_SD;//sdcc_find_card();
-
-	if ( SD_Initialize() == 0)
-	{
-		(void)SD_GetCapacity();
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-}
-
-/******************************************************************************
-* Name: sdcc_read
-*
-* Description:
-*    This function reads n_sectors blocks of data from the s_sector in
-*    the device, storing them at the memory location given by buff.
-*
-* Arguments:
-*       driveno    Drive Number
-*       s_sector   start of the sector
-*       buff       pointer to buffer for the incoming data
-*       n_sector   number of sectors to be read
-*
-* Returns:
-*       TRUE  if sucessful
-*       FALSE if failure
-*
-* Note:
-*    Multiblock transfer is used when more than 1 block data is
-*    transfered. DMA  mode is used only when the buff address is
-*    dword aligned.
-*
-******************************************************************************/
-boolean
-sdcc_read
-(
-int16      driveno,
-uint32     s_sector,
-byte      *buff,
-uint16     n_sectors
-)
-{
-	uint8 ret = 0;
-	//set MMC_Chip_Select to high (MMC/SD-Card Invalid)
-	if ( n_sectors == 1 )
-	{
-		ret = SD_ReadSingleBlock(s_sector,buff);
-	}
-	else
-	{
-		ret = SD_ReadMultiBlock(s_sector,buff,n_sectors);
-	}
-
-	if ( ret == 0 )
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-}
-
-
-/******************************************************************************
-* Name: sdcc_write.
-*
-* Description:
-*    This function writes n_sectors blocks of data, obtained from the
-*    memory location buff, to the s_sector on the device.
-*
-* Arguments:
-*       driveno     Drive Number
-*       s_sector    start of the sector
-*       buff        pointer to buffer for the outgoing data
-*       n_sector    number of sectors to be written
-*
-* Returns:
-*       TRUE  if sucessful
-*       FALSE if failure
-*
-* Note:
-*    Multiblock transfer is used when more than 1 block data is
-*    transfered. DMA  mode is used only when the buff address is
-*    dword aligned.
-******************************************************************************/
-boolean
-sdcc_write
-(
-   int16      driveno,
-   uint32     s_sector,
-   byte      *buff,
-   uint16     n_sectors
-)
-{
-	uint8 ret = 0;
-	//set MMC_Chip_Select to high (MMC/SD-Card Invalid)
-	if ( n_sectors == 1 )
-	{
-		ret = SD_WriteSingleBlock(s_sector,buff);
-	}
-	else
-	{
-		ret = SD_WriteMultiBlock(s_sector,buff,n_sectors);
-	}
-
-	if ( ret == 0 )
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-}
-
-/******************************************************************************
-* Name: sdcc_ioctl
-*
-* Description:
-*    This function is to get various information about the memory device.
-*
-* Arguments:
-*       driveno       Drive Number
-*       what          the field to query
-*       data          the returned data
-*
-* Returns:
-*       YES if sucessful
-*       NO if failure
-*
-******************************************************************************/
-uint32
-sdcc_ioctl
-(
-int16    driveno,
-uint8    what
-)
-{
-	uint32 value = (uint32)SDCC_NO_ERROR;
-	(void)driveno;
-
-	sdcc_enter_crit_sect();
-
-	switch (what)
-	{
-		case SDCC_CARD_STATE:
-		{
-			value = (uint32)SDCC_NO_ERROR;
-			break;
-		}
-
-		case SDCC_GET_TYPE:
-			value = (uint32)sdcc_pdata.card_type;
-			break;
-
-		case SDCC_GET_ERROR:
-			value = (uint32)SDCC_NO_ERROR;
-			break;
-
-		case SDCC_CARD_SIZE:
-			value = sdcc_pdata.mem.card_size;
-			break;
-
-		case SDCC_BLOCK_LEN:
-			value = sdcc_pdata.mem.block_len;
-			break;
-
-		default:
-			DPRINTF(("Invalid request:(0x%x)?", what));
-			value = (uint32)SDCC_ERR_UNKNOWN;
-			break;
-	}
-	
-	sdcc_leave_crit_sect();
-	return value;
-}/* sdcc_ioctl */
-
-/******************************************************************************
-* Name: sdcc_read_serial
-*
-* Description:
-*    This function is to read some drive information for SFAT..
-*
-* Arguments:
-*       driveno       Drive Number
-*       iDrvPtr       Pointer to the drive geometry descriptor that is
-*                     to be filled 
-*
-* Returns:
-*       TRUE   if sucessful
-*       FALSE  if failure
-*
-******************************************************************************/
-boolean
-sdcc_read_serial
-(
-   uint16             driveno,
-   DRV_GEOMETRY_DESC *iDrvPtr
-)
-{
-	(void)driveno;
-	sdcc_enter_crit_sect();
-
-	iDrvPtr->dfltCyl          = 0;     
-	iDrvPtr->dfltHd           = 0; 
-	iDrvPtr->dfltSct          = 0;
-
-	iDrvPtr->totalLBA         = sdcc_pdata.mem.card_size;
-	iDrvPtr->dfltBytesPerSect = sdcc_pdata.mem.block_len;
-
-	iDrvPtr->serialNum[0]     = sdcc_pdata.mem.psn;
-
-	memcpy(iDrvPtr->modelNum, sdcc_pdata.mem.pnm, sizeof(sdcc_pdata.mem.pnm));
-	sdcc_leave_crit_sect();
-	return TRUE;
-}/* sdcc_read_serial */
-
-
-/******************************************************************************
-* Name: sdcc_close
-*
-* Description:
-*    This function de-select the device, turn off the power supply to
-*    the device and switch off the controller clock.
-*
-* Arguments:
-*       driveno  Drive Number
-*
-* Returns:
-*       TRUE  if sucessful
-*       FALSE if failure
-*
-******************************************************************************/
-boolean
-sdcc_close(int16 driveno)
-{
-	sdcc_bsp_vdd_control(SDCC_BSP_VDD_OFF);
-
-	/* Reset the card type & host state */
-	sdcc_pdata.card_type  =  SDCC_CARD_UNKNOWN;
-	sdcc_pdata.host_state =  SDCC_HOST_IDLE;
-
-	return TRUE;
-}
-
-
-/******************************************************************************
-* Name: sdcc_init
-*
-* Description:
-*    This function initializes the SDCC controller. It first turns on
-*    the clock, configures the GPIOs and then turns on the power supply
-*    to the device. It also initializes the related software data
-*    structures.
-*
-* Returns:
-*    Returns TRUE 
-******************************************************************************/
-boolean
-sdcc_init(void)
-{    
-	gpio_tlmm_config(GPIO_OUTPUT_24);
-	gpio_tlmm_config(GPIO_OUTPUT_29);
-	gpio_tlmm_config(GPIO_INPUT_25);
-	gpio_tlmm_config(GPIO_OUTPUT_26);
-	gpio_tlmm_config(GPIO_OUTPUT_27);
-	gpio_tlmm_config(GPIO_OUTPUT_28);
-	//gpio_tlmm_config(GPIO_OUTPUT_10);
-	//gpio_out(GPIO_OUTPUT_10,1);
-	gpio_out(GPIO_OUTPUT_28,1);
-	(void)sdcc_bsp_vdd_control(SDCC_BSP_VDD_ON);
-
-	return TRUE;
-}
-
-/*=============================================================================
- * FUNCTION      sdcc_activity_timeout_event
- *
- * DESCRIPTION   This function tells SDCC that the SD slot has not been accessed 
- *               for a certain period of time. If we have the ability to 
- *               detect card removal / insertion, we shutdown the slot, otherwise
- *               do nothing.
- *
- * DEPENDENCIES  None
- *
- * PARAMETERS    driveno [IN]: The driveno parameter is not used, and is present 
- *               for consistency.
- *
- * RETURN VALUE  SDCC_NO_ERROR if successful, error code otherwise
- *
- * SIDE EFFECTS  None
- *
- *===========================================================================*/
-SDCC_STATUS sdcc_activity_timeout_event( int16 driveno )
-{
-	DPRINTF(("SDCC Activity timeout. Closing the slot.\n")); 
-
-	(void)sdcc_close(driveno);
-	return SDCC_NO_ERROR;
-}
-
-#else
 /*lint -save -e641 Suppress 'Converting enum to int' warning */
 /******************************************************************************
 * Name: sdcc_open.
@@ -552,6 +219,7 @@ sdcc_open(int16 driveno)
           close_drive = TRUE;
           break;
       }
+ 
       /* re-program the clock for data transfer */
       sdcc_config_clk(SDCC_DATA_TRANSFER_MODE, sdcc_pdata.card_type);
 #ifndef T_QSC1100
@@ -582,6 +250,7 @@ sdcc_open(int16 driveno)
 #endif
       /* Set the host state */
       sdcc_pdata.host_state = SDCC_HOST_TRAN;
+
       /* config MMC modes segment after enabling the DMA interrupt */
       if ( SDCC_CARD_MMC == sdcc_pdata.card_type ||
            SDCC_CARD_MMCHC == sdcc_pdata.card_type )
@@ -745,6 +414,7 @@ SDCC_READ_RETRY:
       {
 #ifndef T_QSC1100
          HWIO_OUT(MCI_DATA_CTL, data_ctrl);
+
          /* process read data */
          rc = ( TRUE == use_dma) ? sdcc_process_interrupts(&sdcc_cmd) :
                                    sdcc_read_fifo(buff, length);
@@ -1114,7 +784,6 @@ sdcc_init(void)
          break;
 
       sdcc_pdata.curr_sd_drv = 0;
-      
       /* Turn on the SDCC clock */
       sdcc_config_clk(SDCC_INIT_MODE, SDCC_CARD_UNKNOWN);
 #ifndef T_QSC1100
@@ -1256,7 +925,6 @@ sdcc_close(int16 driveno)
                 HWIO_FMSK(MCI_POWER, CONTROL),
                 MCI_POWER_CTRL_OFF);
 
-
       /* disable all the interrupts */
       sdcc_disable_int(MCI_INT_MASK_DMA_DONE  |
                        SDCC_CMD_INTERRUPTS    |
@@ -1293,11 +961,11 @@ sdcc_close(int16 driveno)
                 HWIO_FMSK(MCI_CLK, FLOW_ENA)|HWIO_FMSK(MCI_CLK, WIDEBUS),
                 MCI_POWER_CTRL_OFF); 
 #endif    
-
+#ifndef T_QSC1100
       /* disable the clock regime */
       CLK_REGIME_DISABLE(CLK_RGM_SDCC_MCLK_M);
       CLK_REGIME_DISABLE(CLK_RGM_SDCC_HCLK_M);
-
+#endif
       /* Reset the card type & host state */
       sdcc_pdata.card_type  =  SDCC_CARD_UNKNOWN;
       sdcc_pdata.host_state =  SDCC_HOST_IDLE;
@@ -1336,4 +1004,3 @@ SDCC_STATUS sdcc_activity_timeout_event( int16 driveno )
    return SDCC_NO_ERROR;
 }
 /*lint -restore */
-#endif

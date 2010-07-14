@@ -32,7 +32,7 @@ when         who     what, where, why
 #include "sdcc_command_util.h"
 #include "sdcc_util.h"
 
-
+#ifndef T_QSC1100
 /* map the raw command response type to internal response type */
 #define SDCC_CMD_RESP_TYPE(resp_type) \
    (SDCC_RESPONSE_NONE == (resp_type)) ? SDCC_RESP_NONE : \
@@ -75,12 +75,10 @@ sdcc_dma_usable
       DPRINTF(("Number of sectors requested %d exceeds max number of blocks\n",
                data_length));
    }
-#ifndef T_QSC1100
    else if ( TRUE == sdcc_pdata.enable_dma && IS_ALIGNED(buffer) )
    {
       use_dma = TRUE;
    }
-#endif
    else
    {
       /* print a debug message indicate using FIFO */
@@ -254,4 +252,4 @@ sdcc_raw_command_core
    }
    return rc;
 } /* sdcc_raw_command_core */
-
+#endif //#ifndef T_QSC1100
