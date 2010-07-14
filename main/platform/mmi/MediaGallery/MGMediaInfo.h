@@ -73,6 +73,7 @@ typedef enum _MGMimeType{
    MG_MIME_JPG,
    MG_MIME_PNG,
    MG_MIME_IMGMAX,
+   MG_MIME_WALLPAPER,//add by xuhui
 
    /*snd: sound*/
    MG_MIME_SNDBASE = 0x30,
