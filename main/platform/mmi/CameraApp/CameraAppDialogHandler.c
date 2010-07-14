@@ -642,10 +642,13 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                      
             // 初始化菜单项
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA, IDS_ITEM_CAMERA, NULL, NULL);
+#ifdef FEATURE_VIDEO_ENCODE
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_VIDEO, IDS_ITEM_VIDEO, NULL, NULL);
+#endif
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
+#ifdef FEATURE_APP_MPEG4
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_VIDEO_GALLERY, IDS_ITEM_VIDEO_GALLERY, NULL, NULL);
-         
+#endif
             IMENUCTL_SetSel(pMenu, pMe->m_nMainMenuItemSel);
             IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
             
