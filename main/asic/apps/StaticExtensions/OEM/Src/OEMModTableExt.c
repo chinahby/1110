@@ -570,7 +570,7 @@ extern int OtkMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif //FEATURE_SHORT_CODE_NAM_COUNT
 
 //#if defined( FEATURE_GAME_TETRIS)
-extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+//extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 //#endif
 #if defined( FEATURE_GAME_BRICKATTACK)
 extern int Brick_Load(IShell *ps, void *pHelpers, IModule **pMod);
@@ -966,7 +966,7 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"mainmenu.mif", MainMenuMod_Load},
     {AEEFS_MIF_DIR"application.mif", ApplicationMod_Load},
 //#if defined( FEATURE_GAME_TETRIS)
-    {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
+//    {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
 	{AEEFS_MIF_DIR"game.mif",GameMod_Load},
 //#endif
 
