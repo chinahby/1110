@@ -4297,9 +4297,6 @@ boolean OEM_IsNetLock(void)
 
     for(i=0;i<nvilock.enabled_net_lock.b_lock;i++)
     {
-    	  MSG_FATAL("final_mcc = %d mcc1=%d",final_mcc,nvilock.enabled_net_lock.mcc[i],0);
-         MSG_FATAL("final_mnc= %d mnc1=%d",final_mnc,nvilock.enabled_net_lock.mnc[i],0);
-	  MSG_FATAL("sid = %d sid1=%d",sid,nvilock.enabled_net_lock.sid[i] ,0);
         if( (final_mcc == nvilock.enabled_net_lock.mcc[i] || nvilock.enabled_net_lock.mcc[i] == -1)
           &&(final_mnc == nvilock.enabled_net_lock.mnc[i] || nvilock.enabled_net_lock.mnc[i] == -1)
           &&(sid == nvilock.enabled_net_lock.sid[i] || nvilock.enabled_net_lock.sid[i] == -1)
@@ -4308,7 +4305,7 @@ boolean OEM_IsNetLock(void)
             return FALSE;
         }
     }
-    return FALSE;
+    return TRUE;
 }
 #endif
 
