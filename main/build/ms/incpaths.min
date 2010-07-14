@@ -816,7 +816,6 @@ EXTRAMENU=              $(MMIDIR)/ExtraMenu
 ESURFING=               $(MMIDIR)/Esurfing
 FLDDBG=                 $(MMIDIR)/FldDbg
 FMRADIOAPP=             $(MMIDIR)/FmRadio
-TETRIS=                 $(MMIDIR)/Games/tetris
 BRICKATTACK=            $(MMIDIR)/Games/brickattack
 BLACKJACK=              $(MMIDIR)/Games/blackjack
 MEDIAGALLERY=           $(MMIDIR)/MediaGallery
