@@ -486,10 +486,15 @@ static NextFSMAction MGStateMainMenuHandler(CMediaGalleryApp* pMe)
             break;
 
          case MGSM_IMAGE_SETTING:
-            MGState_StartFileExplorer(pMe,
+           /* MGState_StartFileExplorer(pMe,
                                       MG_STMED_HANDSET,
                                       MG_PHONEPICTURE_PATH,
-                                      MG_MIME_IMGBASE);
+                                      MG_MIME_IMGBASE);*/
+            //add by xuhui                          
+            MGState_StartFileExplorer(pMe,
+                                      MG_STMED_HANDSET,
+                                      MG_PHONEWALLPAPER_PATH,
+                                      MG_MIME_IMGBASE);                                      
             MGMOVE_TO_STATE(pMe,STATE_IMAGE_SETTING);
             break;
 
