@@ -531,8 +531,14 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
                     break;
 #endif
                 case IDS_WALLPAPER_TITLE:     /*×ÀÃæÇ½Ö½*/
+#ifdef FEATURE_APP_MEDIAGALLERY
+			        pMe->m_PICType = WALLPAPER_MAIN;
+                    CMediaGallery_FileExplorer(GALLERY_IMAGE_SETTING, NULL);
+                    //CLOSE_DIALOG(DLGRET_PICTURE)  //dele by yangdecai 2010-07-13
+#else
                     pMe->m_PICType = WALLPAPER_MAIN;
                     CLOSE_DIALOG(DLGRET_PICTURE)
+#endif
                     break;
 
 #ifdef FEATURE_ANIMATION_POWERUPDOWN

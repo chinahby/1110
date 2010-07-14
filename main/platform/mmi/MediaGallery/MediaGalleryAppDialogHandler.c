@@ -5428,7 +5428,8 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
          IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
 
-         MediaGalleryApp_SetExplorerMime(pMe,MG_MIME_IMGBASE);
+         //MediaGalleryApp_SetExplorerMime(pMe,MG_MIME_IMGBASE);
+         MediaGalleryApp_SetExplorerMime(pMe,MG_MIME_WALLPAPER);//add by xuhui
 
          if(pMe->m_bKeepMediaMenu == FALSE)
             MGAppUtil_StartMediaMenu(pMe, pMenuCtl, eCode, wParam, dwParam);
@@ -6871,16 +6872,6 @@ void MGAppUtil_FileListBuildComplete(void *po)
    }
 
    pMe->m_bKeepMediaMenu = TRUE;
-
-   if(MGExplorer_CheckMediaMenuEmpty(pMe->m_pMediaMenu))
-   {
-       MSG_FATAL("MGAppUtil_FileListBuildComplete pMe->m_bMediaMenuEmpty==TRUE",0,0,0);
-   }
-   else
-   {
-       MSG_FATAL("MGAppUtil_FileListBuildComplete pMe->m_bMediaMenuEmpty==FALSE",0,0,0);
-       pMe->m_bMediaMenuEmpty = FALSE;
-   }
    if(pMe->m_bMediaMenuEmpty)
    {
       MSG_FATAL("MGAppUtil_FileListBuildComplete pMe->m_bMediaMenuEmpty==TRUE",0,0,0);
