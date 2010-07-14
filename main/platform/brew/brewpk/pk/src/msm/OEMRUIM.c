@@ -935,7 +935,7 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
     int i=0;
     int k;
     int m =0;
-    byte tempbuf[UIM_CDMA_HOME_SERVICE_SIZE+1]={(byte)'\0'};
+    byte tempbuf[(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR)]={(byte)'\0'};
     if((Inputbuf[0]&0x01==0x01)&&(Inputbuf[0]!=0xFF))//TOBUF中的第一位如果是1,则显示运营商名称
     {
             for( i=3;i<Endpoint;i++)//I-3+1 表示TOBUF中的有效字符数目
