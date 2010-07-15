@@ -2699,10 +2699,15 @@ static int MGExplorer_GetItemIcon(CFileIcons *pFileIcons,
    }
 
    if(*ppFileIcon == NULL)
-      *ppFileIcon = ISHELL_LoadResImage(AEE_GetShell(),
-            MEDIAGALLERY_IMAGE_IVIO_RES_FILE,
-            nResID);
-
+   {
+#if defined FEATURE_VERSION_IVIO   
+   	*ppFileIcon = ISHELL_LoadResImage(AEE_GetShell(), MEDIAGALLERY_IMAGE_IVIO_RES_FILE, nResID);
+#elif defined FEATURE_VERSION_SMART
+	*ppFileIcon = ISHELL_LoadResImage(AEE_GetShell(), MEDIAGALLERY_IMAGE_SMART_RES_FILE, nResID);
+#else
+	*ppFileIcon = ISHELL_LoadResImage(AEE_GetShell(), MEDIAGALLERY_IMAGE_IVIO_RES_FILE, nResID);
+#endif
+   }
    *ppIcon = *ppFileIcon;
 
    if(*ppFileIcon)

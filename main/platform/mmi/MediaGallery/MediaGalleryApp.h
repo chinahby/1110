@@ -58,8 +58,10 @@
 #include "MediaGallery.h"
 #include "MediaGalleryExplorer.h"
 #include "Mediagallery.brh"
-#ifdef FEATURE_VERSION_IVIO
+#if defined FEATURE_VERSION_IVIO
 #include "mediagallery_image_ivio.brh"
+#elif defined FEATURE_VERSION_SMART
+#include "mediagallery_image_smart.brh"
 #endif
 #include "Msg.h"
 

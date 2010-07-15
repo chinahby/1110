@@ -42,8 +42,10 @@
 #endif
 
 #include "clockapps.brh"
-#ifdef FEATURE_VERSION_IVIO
+#if defined FEATURE_VERSION_IVIO
 #include "clockapps_images_ivio.brh"
+#elif defined FEATURE_VERSION_SMART
+#include "clockapps_images_smart.brh"
 #endif
 #include "AEEShell.h"
 #include "AEEModTable.h"

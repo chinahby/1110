@@ -44,8 +44,10 @@
 #include "fmradiols.brh"
 
 #if defined(FEATURE_DISP_160X128)
-#ifdef FEATURE_VERSION_IVIO
+#if defined FEATURE_VERSION_IVIO
 #include "fmradioln160x128_ivio.brh"
+#elif defined FEATURE_VERSION_SMART
+#include "fmradioln160x128_smart.brh"
 #endif 
 #elif defined(FEATURE_DISP_128X128)
 #include "fmradioln.brh"
