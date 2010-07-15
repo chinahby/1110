@@ -6144,6 +6144,20 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
 
    if(retVal == SUCCESS )
    {
+#if defined(FEATURE_DISP_160X128)          
+        {
+            AEERect rc = {0};
+            IMENUCTL_SetPopMenuRect(pMe->m_pMenuPopup); 
+            IMENUCTL_GetRect(pMe->m_pMenuPopup, &rc);
+            if(rc.y < 0)
+            {
+                int temp = -(rc.y);
+                rc.y += temp;
+                rc.dy -= temp;
+                IMENUCTL_SetRect(pMe->m_pMenuPopup, &rc);
+            }
+        }
+#endif   
       MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_POPUP);
       IMENUCTL_SetActive(pMenuCtl, FALSE);
       IMENUCTL_Redraw(pMe->m_pMenuPopup);
