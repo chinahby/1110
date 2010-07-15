@@ -1133,7 +1133,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif
 
 #if defined(FEATURE_APP_SVCPRG) && !defined( AEE_SIMULATOR)
-      {AEEFS_MIF_DIR"svcprog.mif", CSvcPrgMod_Load},
+      {AEEFS_MIF_DIR"svcprg.mif", CSvcPrgMod_Load},
 #endif
 
 //#if defined (FEATURE_APP_FLDDBG)
