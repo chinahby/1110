@@ -63,7 +63,6 @@
 #elif defined FEATURE_VERSION_SMART
 #include "mediagallery_image_smart.brh"
 #endif
-#include "Msg.h"
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define MEDIAGALLERYAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )

@@ -486,15 +486,10 @@ static NextFSMAction MGStateMainMenuHandler(CMediaGalleryApp* pMe)
             break;
 
          case MGSM_IMAGE_SETTING:
-           /* MGState_StartFileExplorer(pMe,
-                                      MG_STMED_HANDSET,
-                                      MG_PHONEPICTURE_PATH,
-                                      MG_MIME_IMGBASE);*/
-            //add by xuhui                          
             MGState_StartFileExplorer(pMe,
                                       MG_STMED_HANDSET,
-                                      MG_PHONEWALLPAPER_PATH,
-                                      MG_MIME_IMGBASE);                                      
+                                      MG_PHONEPICTURE_PATH,
+                                      MG_MIME_IMGBASE);
             MGMOVE_TO_STATE(pMe,STATE_IMAGE_SETTING);
             break;
 
@@ -676,7 +671,6 @@ static NextFSMAction MGStatePhoneMemHandler(CMediaGalleryApp* pMe)
          break;
 
       case MGDLGRET_NOFILES:
-         MSG_FATAL("MGStatePhoneMemHandler IDS_MG_EMPTY", 0, 0, 0);
          MediaGalleryApp_ShowMsgBoxDlg(pMe, MGRES_LANGFILE,IDS_MG_EMPTY,
                                  MESSAGE_INFORMATION,
                                  BTBAR_BACK);
@@ -732,7 +726,6 @@ static NextFSMAction MGStateCardMemHandler(CMediaGalleryApp* pMe)
          break;
 
       case MGDLGRET_NOFILES:
-         MSG_FATAL("MGStateCardMemHandler IDS_MG_EMPTY", 0, 0, 0);
          MediaGalleryApp_ShowMsgBoxDlg(pMe, MGRES_LANGFILE,IDS_MG_EMPTY,
                                  MESSAGE_INFORMATION,
                                  BTBAR_BACK);
@@ -900,7 +893,6 @@ static NextFSMAction MGStateMediaMenuHandler(CMediaGalleryApp* pMe)
 
 
       case MGDLGRET_NOFILES:
-         MSG_FATAL("MGStateMediaMenuHandler IDS_MG_EMPTY", 0, 0, 0);
          MediaGalleryApp_SetMsgBoxID(pMe, MG_MSGID_NOFILE);
          MediaGalleryApp_ShowMsgBoxDlg(pMe, MGRES_LANGFILE,IDS_MG_EMPTY,
                MESSAGE_INFORMATION,
@@ -1259,7 +1251,6 @@ static NextFSMAction MGStateVideoAddHandler(CMediaGalleryApp* pMe)
 #endif
 
       case MGDLGRET_NOFILES:
-         MSG_FATAL("MGStateVideoAddHandler IDS_MG_EMPTY", 0, 0, 0);
          MediaGalleryApp_ShowMsgBoxDlg(pMe, MGRES_LANGFILE,IDS_MG_EMPTY,
                MESSAGE_INFORMATION,
                BTBAR_BACK);
@@ -1441,7 +1432,7 @@ static boolean MGState_StartFileExplorer(CMediaGalleryApp* pMe,
 {
    if(!pMe || !pMe->m_pFileMgr || !pMe->m_pFolderList)
    {
-      MSG_FATAL("MGState_ExitMediaMenuDialog BAD PARAMETER",0,0,0);
+      MG_FARF(STATE, ("MGState_ExitMediaMenuDialog BAD PARAMETER"));
       return FALSE;
    }
 
@@ -1453,7 +1444,7 @@ static boolean MGState_StartFileExplorer(CMediaGalleryApp* pMe,
                                             pMe->m_pFolderList,
                                             TRUE))
    {
-      MSG_FATAL("Enum files failed!",0,0,0);
+      MG_FARF(STATE, ("Enum files failed!"));
    }
 
    return TRUE;
@@ -1474,7 +1465,7 @@ static __inline NextFSMAction MGState_ExitMediaMenuDialog(
    MGStartMode       eStartMode;
    if(!pMe)
    {
-      MSG_FATAL("MGState_ExitMediaMenuDialog BAD PARAMETER",0,0,0);
+      MG_FARF(STATE, ("MGState_ExitMediaMenuDialog BAD PARAMETER"));
       return NFSMACTION_WAIT;
    }
 
@@ -1498,7 +1489,7 @@ static __inline NextFSMAction MGState_ExitMediaMenuDialog(
    else
    {
       MGMOVE_TO_STATE(pMe,STATE_MAINMENU);
-      MSG_FATAL("back to main menu!start mode %d",eStartMode,0,0);
+      MG_FARF(STATE, ("back to main menu!start mode %d",eStartMode));
    }
 
    return NFSMACTION_CONTINUE;

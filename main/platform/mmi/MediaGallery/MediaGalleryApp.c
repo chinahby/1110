@@ -295,7 +295,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
                                           uint16 wParam,    uint32 dwParam)
 {
    CMediaGalleryApp* pMe = (CMediaGalleryApp*)pi;
-   MSG_FATAL("CMediaGallery_HandleEvent Start",0,0,0);
+
    switch(eCode)
    {
       /* NOTICE>>
@@ -308,7 +308,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
          boolean           bRet;
          pMe->m_rc = as->rc;
          pMe->m_bSuspending = FALSE;
-         MSG_FATAL("case EVT_APP_START as->pszArgs=%s",as->pszArgs,0,0);
+
          bRet = MediaGalleryApp_ParseStartArgs(pMe, as->pszArgs);
          if(FALSE == bRet)
             return FALSE;
@@ -342,7 +342,6 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
    case EVT_APP_EXIT:
       {
          /*当Media gallery正常方式启动，并且不处在U盘模式下自动退出。*/
-         MSG_FATAL("CMediaGallery_HandleEvent EVT_APP_EXIT",0,0,0);
          if(AEE_Active() == AEECLSID_MEDIAGALLERY &&
             MediaGallery_CheckUdiskStat() == FALSE &&
             pMe->m_StartMode == MGSM_NORMAL_EXPLORER)
@@ -356,7 +355,6 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
 
    case EVT_APP_SUSPEND:
       {
-         MSG_FATAL("CMediaGallery_HandleEvent EVT_APP_SUSPEND",0,0,0);
          pMe->m_bSuspending = TRUE;
          /*
           * register key event here, for we do not want receive key event
@@ -384,7 +382,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
 
          pMe->m_rc = as->rc;
          pMe->m_bSuspending = FALSE;
-         MSG_FATAL("case EVT_APP_RESUME as->pszArgs=%s",as->pszArgs,0,0);
+
          bRet = MediaGalleryApp_ParseStartArgs(pMe, as->pszArgs);
 
          if(FALSE == bRet)
@@ -400,7 +398,6 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
       {
          // Update the active dialog info in the one and only Media gallery
          // applet object.
-         MSG_FATAL("CMediaGallery_HandleEvent EVT_DIALOG_INIT",0,0,0);
          pMe->m_pActiveDlg = (IDialog*)dwParam;
          pMe->m_nActiveDlgID = wParam;
          // Route the received event to the current active dialog handler.
@@ -428,7 +425,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
    case EVT_NOTIFY:
       {
          AEENotify* pNotify = (AEENotify*)dwParam;
-         MSG_FATAL("CMediaGallery_HandleEvent EVT_NOTIFY",0,0,0);
+
          switch(pNotify->cls)
          {
          case AEECLSID_DEVICENOTIFIER:
@@ -440,7 +437,6 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
                if(AEE_INSERT_MMC == pDeviceNotify->wParam)
                {
                   /*Now MMC is ready to write!*/
-                  MSG_FATAL("Now MMC is ready to write",0,0,0);
                   pMe->m_bCardExist = TRUE;
                   MediaGalleryApp_CheckMassStorgeDir(pMe);
                }
@@ -448,7 +444,6 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
                {
                   /*AEE_REMOVE_MMC*/
                   /*Now we have to stop writing!*/
-                  MSG_FATAL("Now we have to stop writing",0,0,0);
                   pMe->m_bCardExist = FALSE;
                }
             }
@@ -464,7 +459,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
                    TRUE == MediaGallery_CheckUdiskStat() &&
                    pMe->m_nActiveDlgID == IDD_MG_UDISK)
                {
-                  MSG_FATAL("stop u-disk",0,0,0);
+                  MG_FARF(ADDR, ("stop u-disk"));
                   MediaGalleryApp_RouteDialogEvent(pMe,
                                                    EVT_KEY,
                                                    AVK_CLR,
@@ -479,7 +474,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
 
          case AEECLSID_SHELL:
             {
-               MSG_FATAL("shell notify!",0,0,0);
+               MG_FARF(ADDR, ("shell notify!"));
                if(pNotify->dwMask & NMASK_SHELL_KEY)
                {
                   NotifyKeyEvent *pKeyEvent = pNotify->pData;
@@ -492,13 +487,13 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
                   //   return TRUE;
                   //}
 
-                  MSG_FATAL("Receive key event when suspend",0,0,0);
+                  MG_FARF(ADDR, ("Receive key event when suspend"));
 
                   if( pKeyEvent->eCode != EVT_KEY ||
                      (pKeyEvent->wParam != AVK_LEFT &&
                       pKeyEvent->wParam != AVK_RIGHT))
                   {
-                     MSG_FATAL("NOT need key",0,0,0);
+                     MG_FARF(ADDR, ("NOT need key"));
                      return FALSE;
                   }
 
@@ -507,10 +502,11 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
                   if(nActiveID == AEECLSID_APP_MUSICPLAYER ||
                      nActiveID == AEECLSID_VIDEOPLAYER)
                   {
-                     MSG_FATAL("eCode:0x%x, wParam:0x%x, dwParam:0x%x",
+                     MG_FARF(ADDR,
+                             ("eCode:0x%x, wParam:0x%x, dwParam:0x%x",
                               pKeyEvent->eCode,
                               pKeyEvent->wParam,
-                              pKeyEvent->dwParam);
+                              pKeyEvent->dwParam));
 
                      /*
                       * It is better here, If put this statement in Dialog
@@ -579,7 +575,6 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
    boolean bRet = TRUE;
    //char pData[11];//2^32 = 4294967296
 
-   MSG_FATAL("MediaGalleryApp_ParseStartArgs Start",0,0,0);
    if(!pMe)
       return FALSE;
 
@@ -617,12 +612,12 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
       }
       break;
 #endif
-      MSG_FATAL("pTemp=%s",pTemp,0,0);
+
    case MG_STARTARGPREFIX_FILEEXPLORER:
       {
          GalleryType eType;
          MGStartMode       eStartMode = MGSM_NORMAL_EXPLORER;
-         MSG_FATAL("case MG_STARTARGPREFIX_FILEEXPLORER", 0,0,0);
+
          if(!pMe->m_pFileMgr || !pMe->m_pFolderList)
          {
             bRet =  FALSE;
@@ -631,7 +626,7 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
 
          pTemp++;
          eType = ATOI(pTemp);
-         MSG_FATAL("eType=%d", eType,0,0);
+
          switch(eType)
          {
          case GALLERY_PHOTO_BROWSE:
@@ -687,10 +682,10 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
       {
          SettingsType eSType;
          char* pszName;
-         MSG_FATAL("case MG_STARTARGPREFIX_SETAS", 0,0,0);
+
          pTemp++;
          eSType = ATOI(pTemp);
-         MSG_FATAL("eSType=%d", eSType,0,0);
+
          pTemp = strtok(NULL, ",,");
          if(NULL == pTemp)
          {
@@ -715,7 +710,7 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
       bRet = FALSE;
       goto PARSEEXIT;
    }
-   MSG_FATAL("pMe->m_StartMode=%d", pMe->m_StartMode,0,0);
+
 PARSEEXIT:
    FREEIF(pszArg);
    return bRet;
@@ -1307,7 +1302,7 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
    {
       return EFAILED;
    }
-   MSG_FATAL("MediaGalleryApp_InitAppData Start",0,0,0);
+
    pMe->m_bSuspending = FALSE;
    pMe->m_StartMode = MGSM_NORMAL_EXPLORER;
    pMe->m_bNotOverwriteDlgRet = FALSE;
@@ -1386,7 +1381,7 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
    IDisplay_GetClipRect(pMe->m_pDisplay, &pMe->m_ClipRect);
    CMediaGallery_GetAppPref(pMe);
    MediaGalleryApp_RegisterBatteryNotify(pMe);
-   MSG_FATAL("MediaGalleryApp_InitAppData End",0,0,0);
+
    return SUCCESS;
 }//MediaGalleryApp_InitAppData
 
@@ -1419,7 +1414,7 @@ static void MediaGalleryApp_FreeAppData(CMediaGalleryApp* pMe)
    FREEIF(pMe->m_pFolderInfo);
 
    RELEASEIF(pMe->m_pMenuPopup);
-   MSG_FATAL("MGExplorer_FreeMediaMenuItem",0,0,0);
+
    MGExplorer_FreeMediaMenuItem(pMe->m_pPathMenu);
    RELEASEIF(pMe->m_pPathMenu);
 
@@ -1487,13 +1482,12 @@ static boolean MediaGalleryApp_CheckMassStorgeDir(CMediaGalleryApp* pMe)
 
    if(!pMe || !pMe->m_pFileMgr)
    {
-      MSG_FATAL("Check applet prefs failed!",0,0,0);
+      MG_FARF(ADDR, ("Check applet prefs failed!"));
       return FALSE;
    }
 
    if(pMe->m_bCardExist == TRUE)
    {
-      MSG_FATAL("Card is exist",0,0,0);
       MGExplorer_CheckFolderExist(pMe->m_pFileMgr,
             pMassStorgeFolders,
             ARRAYSIZE(pMassStorgeFolders),
@@ -1533,7 +1527,6 @@ static boolean MediaGalleryApp_CheckHsmmDir(CMediaGalleryApp* pMe)
 #ifdef  FEATURE_MG_WAPMMS_SUPPORT
                         MG_PHONEDOWNLOAD_PATH,
 #endif
-                        MG_PHONEWALLPAPER_PATH,//add by xuhui
    };
 
    if(!pMe || !pMe->m_pFileMgr)
@@ -1843,12 +1836,12 @@ uint8 MediaGalleryApp_GetCallbackState(CMediaGalleryApp *pMe,
    }
    else if(bDoing == FALSE)
    {
-      MSG_FATAL("Bad status!!!!",0,0,0);
+      MG_FARF(ADDR, ("Bad status!!!!"));
       return MG_CBS_DONE;
    }
 
-   MSG_FATAL("GetCallbackState %d,bDiong %d, bIsQueued %d",
-                 nStatus, bDoing, bIsQueued);
+   MG_FARF(ADDR,("GetCallbackState %d,bDiong %d, bIsQueued %d",
+                 nStatus, bDoing, bIsQueued));
 
    if(nDoFor == MG_CBT_NULL)
    {
@@ -2106,13 +2099,13 @@ void MediaGallery_TestCard0(void *po)
 {
    CMediaGalleryApp *pMe = (CMediaGalleryApp *)po;
    boolean bExist = FALSE;
-   MSG_FATAL("MediaGallery_TestCard0 Start",0,0,0);
+
    if(!po || !pMe->m_pFileMgr)
       return;
-   MSG_FATAL("MediaGallery_TestCard0",0,0,0);
+   MG_FARF(ADDR, ("MediaGallery_TestCard0"));
 #ifdef FEATURE_SUPPORT_VC0848
    bExist = MediaGalleryApp_CheckSDCard();
-   MSG_FATAL("stop sd card to save power!",0,0,0);
+   MG_FARF(ADDR, ("stop sd card to save power!"));
    MediaGalleryApp_StopSDCard();
 #else
    if(SUCCESS == IFILEMGR_Test(pMe->m_pFileMgr, MG_MASSCARD_ROOTDIR))
@@ -2122,7 +2115,7 @@ void MediaGallery_TestCard0(void *po)
 #endif
 
    pMe->m_bCardExist = bExist;
- 
+
    MediaGalleryApp_CheckHsmmDir(pMe);
 
    if(TRUE == bExist)
@@ -2131,7 +2124,6 @@ void MediaGallery_TestCard0(void *po)
    }
    MediaGalleryApp_RegisterMMCNotify(pMe);
    pMe->m_bCallbackDoing = FALSE;
-   MSG_FATAL("MediaGallery_TestCard0 End m_bCardExist=%d",pMe->m_bCardExist,0,0);
 }//MediaGallery_TestCard0
 
 /*===========================================================================
@@ -2495,11 +2487,6 @@ int MGMediaInfo_GetForderFromMimeBase(uint16 uMimeBase,
       case MG_MIME_VIDEOBASE:
          cpszFolder = MG_PHONEVIDEOS_PATH;
          break;
-
-      //add by xuhui  
-      case MG_MIME_WALLPAPER:
-         cpszFolder = MG_PHONEWALLPAPER_PATH;
-         break;       
 
       default:
          cpszFolder = MG_PHONEDOWNLOAD_PATH;

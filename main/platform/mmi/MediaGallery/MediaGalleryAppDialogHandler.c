@@ -431,11 +431,11 @@ int MediaGalleryApp_ShowDialog(CMediaGalleryApp* pMe, uint16 nDlgResId)
       /*Looks like there is one dialog already opened.
        * Flag an error  return without doing anything.
        */
-      MSG_FATAL("Try to create a dialog without closing the previous",0,0,0);
+      MG_FARF(ADDR, ("Try to create a dialog without closing the previous"));
       return EFAILED;
    }
 
-   MSG_FATAL("Show MediaGallery %d", nDlgResId,0,0);
+   MG_FARF(ADDR, ("Show MediaGallery %d", nDlgResId));
 
    nRet = ISHELL_CreateDialog(pMe->m_pShell,
                               MGRES_LANGFILE,
@@ -444,7 +444,7 @@ int MediaGalleryApp_ShowDialog(CMediaGalleryApp* pMe, uint16 nDlgResId)
 
    if(nRet != SUCCESS)
    {
-      MSG_FATAL("Failed to create dialog in Media Gallery",0,0,0);
+      MG_FARF(ADDR, ("Failed to create dialog in Media Gallery"));
    }
 
    return nRet;
@@ -883,7 +883,6 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       case EVT_DIALOG_INIT:
       {
          /*add menu item*/
-         MSG_FATAL("MediaGalleryApp_MainMenuDlg_HandleEvent EVT_DIALOG_INIT",0,0,0);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PHONEMEMORY);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_CARDMEMORY);
 
@@ -1053,7 +1052,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
             {
 #ifdef FEATURE_MG_MASSCARD_EXPLORER
                const char* pDirs = MG_MASSCARD_ROOTDIR;
-               MSG_FATAL("Card is Exist",0,0,0); 
+
                pMe->m_Explorer.m_eView = MG_VIEW_DEFAULT;
                pMe->m_StoreMedium = MG_STMED_MASSCARD;
 
@@ -1070,7 +1069,6 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
             else
             {
                /*SD card do not insert*/
-               MSG_FATAL("Card don't Exist",0,0,0); 
                MGCLOSE_DIALOG(MGDLGRET_NOEXTCARD);
             }
             return TRUE;
@@ -1113,7 +1111,7 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
 {
    IMenuCtl* pMenuCtl;
 	 uint16 *pPrevSelItemID;
-   MSG_FATAL("MediaGalleryApp_PhoneMemDlg_HandleEvent Start",0,0,0);
+
    if(!pMe)
    {
       return FALSE;
@@ -1122,7 +1120,6 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
    if(NULL == (pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                       IDC_MG_PHONEMEM)))
    {
-      MSG_FATAL("MediaGalleryApp_PhoneMemDlg_HandleEvent failed",0,0,0);
       return FALSE;
    }
 
@@ -1132,10 +1129,9 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       case EVT_DIALOG_INIT:
       {
-         MSG_FATAL("MediaGalleryApp_PhoneMemDlg_HandleEvent MGMENU_ADDITEM",0,0,0);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PICTURES);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_MUSIC);
-#ifdef FEATURE_APP_MPEG4
+#if !defined(FEATRUE_MG_NOHSVIDEO)
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_VIDEOS);
 #endif
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_CALLMEMO);
@@ -1300,7 +1296,6 @@ static boolean MediaGalleryApp_CardMemDlg_HandleEvent(CMediaGalleryApp* pMe,
    IMenuCtl* pMenuCtl;
 	 uint16 *pPrevSelItemID;
 
-   MSG_FATAL("MediaGalleryApp_CardMemDlg_HandleEvent Start",0,0,0);
    if(!pMe)
    {
       return FALSE;
@@ -1317,12 +1312,9 @@ static boolean MediaGalleryApp_CardMemDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       case EVT_DIALOG_INIT:
       {
-         MSG_FATAL("MediaGalleryApp_CardMemDlg_HandleEvent MGMENU_ADDITEM",0,0,0);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PICTURES);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_MUSIC);
-#ifdef FEATURE_APP_MPEG4
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_VIDEOS);
-#endif
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_VOICEMEMO);
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_DOWNLOAD);
@@ -1515,7 +1507,7 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
          IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE | MP_WRAPSCROLL);
 
          rc.y += rc.dy;
-         rc.dy =  DevInfo.cyScreen - rc.y - GetBottomBarHeight(pMe->m_pDisplay) + 1;	//Add By zzg 2010_07_14
+         rc.dy =  DevInfo.cyScreen - rc.y - GetBottomBarHeight(pMe->m_pDisplay);
 
          ISTATIC_SetRect(pStatic, &rc);
          ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG); //modified by chengxiao 2009.04.07
@@ -1561,14 +1553,13 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
 
             if(pMe->m_bCardExist)
             {
-               MSG_FATAL("Card is exist",0,0,0);
                nStatus = IFILEMGR_GetFreeSpaceEx(pIFileMgr,
                                                  MG_MASSCARD_ROOTDIR,
                                                  &MemStats[1].m_dwTotal,
                                                  &MemStats[1].m_dwFree);
                if(SUCCESS != nStatus)
                {
-                  MSG_FATAL("Error! Get SD CARD MEM FAILED",0,0,0);
+                  MG_FARF(ADDR, ("Error! Get SD CARD MEM FAILED"));
                   //return FALSE;
                }
                else
@@ -1612,7 +1603,7 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
 
             ISHELL_LoadResString(pMe->m_pShell, MGRES_LANGFILE,
                                  nItemID[nCount], szContent, sizeof(szContent));
-            MSG_FATAL("%S",szContent,0,0);
+            MG_FARF(ADDR, ("%S",szContent));
 
             WSTRCAT(pszBuffer, szContent);
             WSTRCAT(pszBuffer, MG_DOUBLELINEBREK_WSTR);
@@ -3152,7 +3143,7 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
 {
    IMenuCtl* pMenuCtl;
    MediaDlgStat eDlgStat;
-   MSG_FATAL("MGAppPopupMenu_OnSetAs Start",0,0,0);
+
    if(!pMe)
    {
       return FALSE;
@@ -3176,7 +3167,6 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
             byte CurProfileNum;
             ringID nNewConfigRinger[PROFILENUMBER];
 
-            MSG_FATAL("MGAppPopupMenu_OnSetAs MGMENU_ADDITEM",0,0,0);
             MGAppUtil_SetMenuCtlRectProp(pMe,
                                          MP_UNDERLINE_TITLE | MP_WRAPSCROLL | MP_MULTI_SEL,
                                          pMenuCtl);
@@ -3782,7 +3772,7 @@ static int MGAppPopupMenu_OnDelete(CMediaGalleryApp* pMe,
          IMENUCTL_DeleteItem(pMenuCtl, SelItemID);
          pMe->m_bMediaMenuEmpty =
 	         MGExplorer_CheckMediaMenuEmpty(pMenuCtl);
-         MSG_FATAL("MGAppPopupMenu_OnDelete m_bMediaMenuEmpty == %d",pMe->m_bMediaMenuEmpty,0,0);
+
          MGExplorer_UpdateMediaMenuTitle(pMe, pMe->m_pMediaMenu);
          MGAppUtil_GetMediaMenuSelectItem(pMe);
 
@@ -3901,7 +3891,6 @@ static int MGAppPopupMenu_OnDeleteAll(CMediaGalleryApp* pMe,
    if(TRUE == bDelAll)
    {
       pMe->m_bMediaMenuEmpty = TRUE;
-      MSG_FATAL("MGAppPopupMenu_OnDeleteAll m_bMediaMenuEmpty=%d",pMe->m_bMediaMenuEmpty,0,0);
       MediaGalleryApp_ShowDoneMsgBox(pMe);
    }
    else if (TRUE == bHaveConstFile)
@@ -4078,7 +4067,6 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
 {
    IMenuCtl* pMenuCtl = NULL;
 
-   MSG_FATAL("MGAppPopupMenu_OnSelectPath Start",0,0,0);
    if(NULL == pMe)
       return FALSE;
 
@@ -4104,7 +4092,7 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
                                                 cls,
                                                 (void **)&pMenuCtl))
             {
-               MSG_FATAL("Create media menu failed!",0,0,0);
+               MG_FARF(ADDR, ("Create media menu failed!"));
                return FALSE;
             }
 
@@ -4122,7 +4110,7 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
    case EVT_DIALOG_START:
       {
          int nItemNum = IMENUCTL_GetItemCount(pMenuCtl);
-         MSG_FATAL("MGAppPopupMenu_OnSelectPath nItemNum=%d",nItemNum,0,0);
+
          if (0 == nItemNum)
          {
             MGAppUtil_SetMenuCtlRectProp(pMe,
@@ -4141,7 +4129,6 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
 #endif
 
             /*add menu item*/
-            MSG_FATAL("MGAppPopupMenu_OnSelectPath MGMENU_ADDITEM MGExplorer_GetCurrentDepth=%d",MGExplorer_GetCurrentDepth(pMe->m_pPathExp),0,0);
             if (0 == MGExplorer_GetCurrentDepth(pMe->m_pPathExp) )
             {
                MGMENU_ADDITEM(pMenuCtl, IDS_MG_PHONEMEMORY);
@@ -4163,7 +4150,6 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
       //EVT_DIALOG_END). Handle suspend for current status.
       if(pMe->m_bSuspending == FALSE)
       {
-         MSG_FATAL("MGAppPopupMenu_OnSelectPath EVT_DIALOG_END",0,0,0);
          MGExplorer_FreeMediaMenuItem(pMe->m_pPathMenu);
          RELEASEIF(pMe->m_pPathMenu);
 
@@ -4199,7 +4185,6 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
             else if(nCurDepth == MG_CURDEPTH_INIT)
             {
                MGExplorer_SetCurrentDepth(pFSExp, 0);
-               MSG_FATAL("MGAppPopupMenu_OnSelectPath MGMENU_ADDITEM",0,0,0);
                MGExplorer_FreeMediaMenuItem(pMenuCtl);
                MGMENU_ADDITEM(pMenuCtl, IDS_MG_PHONEMEMORY);
                MGMENU_ADDITEM(pMenuCtl, IDS_MG_CARDMEMORY);
@@ -4250,13 +4235,11 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
                {
                   if (pMe->m_bCardExist == TRUE)
                   {
-                     MSG_FATAL("Card is Exist",0,0,0);
                      pDirs = MG_MASSCARD_ROOTDIR;
                   }
                   else
                   {
                      /*SD card do not exist*/
-                     MSG_FATAL("Card don't Exist",0,0,0);
                      MGCLOSE_DIALOG(MGDLGRET_NOEXTCARD);
                      return TRUE;
                   }
@@ -4331,13 +4314,11 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
                   {
                      if (pMe->m_bCardExist == TRUE)
                      {
-                        MSG_FATAL("Card is Exist",0,0,0);
                         pDirs = MG_MASSCARD_ROOTDIR;
                      }
                      else
                      {
                         /*SD card do not exist*/
-                        MSG_FATAL("card do not exist",0,0,0);
                         MGCLOSE_DIALOG(MGDLGRET_NOEXTCARD);
                         return TRUE;
                      }
@@ -4459,7 +4440,7 @@ static boolean MGAppPopupMenu_OnSort(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
-   MSG_FATAL("MGAppPopupMenu_OnSort Start",0,0,0);
+
    pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_MG_SORTMENU);
 
    if(NULL == pMenuCtl)
@@ -4496,7 +4477,7 @@ static boolean MGAppPopupMenu_OnSort(CMediaGalleryApp* pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
          IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
-         MSG_FATAL("MGAppPopupMenu_OnSort MGMENU_ADDITEM",0,0,0);
+
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_BYNULL);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_BYNAME);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_BYDATE);
@@ -5428,8 +5409,7 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
          IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
 
-         //MediaGalleryApp_SetExplorerMime(pMe,MG_MIME_IMGBASE);
-         MediaGalleryApp_SetExplorerMime(pMe,MG_MIME_WALLPAPER);//add by xuhui
+         MediaGalleryApp_SetExplorerMime(pMe,MG_MIME_IMGBASE);
 
          if(pMe->m_bKeepMediaMenu == FALSE)
             MGAppUtil_StartMediaMenu(pMe, pMenuCtl, eCode, wParam, dwParam);
@@ -5703,7 +5683,6 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
                   {
                      pMe->m_bCallbackDoing = FALSE;
                      CALLBACK_Cancel(&pMe->m_CallBack);
-                     MSG_FATAL("MediaGalleryApp_SoundSettingDlg_HandleEvent MGExplorer_FreeMediaMenuItem",0,0,0);
                      MGExplorer_FreeMediaMenuItem(pMe->m_pMediaMenu);
                   }
                   else
@@ -6031,7 +6010,7 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
 
    if(!pMe || !pMenuCtl)
       return EFAILED;
-   MSG_FATAL("MGAppUtil_BuildPopupMenuItems Start",0,0,0);
+
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
 
    if(eDlgStat != MG_DLGSTAT_NORMAL)
@@ -6120,7 +6099,6 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
 
       if(MG_BETWEEN(eMimeBase, MG_MIME_IMGBASE, MG_MIME_IMGMAX))
       {
-         MSG_FATAL("MGAppUtil_BuildPopupMenuItems MGMENU_ADDITEM 1",0,0,0);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_VIEW);
          /*Check whether can slide*/
          //if(TRUE  == MGAppUtil_ImageSlideCheck(pMe, pItemData))
@@ -6130,19 +6108,16 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
       else if(MG_BETWEEN(eMimeBase, MG_MIME_SNDBASE, MG_MIME_SNDMAX) ||
             (eMimeBase == MG_MIME_VOICEREC) || (eMimeBase == MG_MIME_CALLREC))
       {
-         MSG_FATAL("MGAppUtil_BuildPopupMenuItems MGMENU_ADDITEM 2",0,0,0);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_PLAY);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SETAS);
       }
       else if(MG_BETWEEN(eMimeBase, MG_MIME_VIDEOBASE, MG_MIME_VIDEOMAX))
       {
-         MSG_FATAL("MGAppUtil_BuildPopupMenuItems MGMENU_ADDITEM 3",0,0,0);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_PLAY);
       }
 
       if(bProtect == FALSE)
       {
-         MSG_FATAL("MGAppUtil_BuildPopupMenuItems MGMENU_ADDITEM 4",0,0,0);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_RENAME);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_DELETE);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_DELALL);
@@ -6200,7 +6175,7 @@ static int MGAppUtil_CreatePopupMenu(IMenuCtl** ppIMenu,
    IMenuCtl*   pPopupMenu = NULL;
    int         retVal;
    uint16      nCount;
-   MSG_FATAL("MGAppUtil_CreatePopupMenu Start nItemNum=%d",nItemNum,0,0);
+
 
    if(NULL == *ppIMenu)
    {
@@ -6221,7 +6196,6 @@ static int MGAppUtil_CreatePopupMenu(IMenuCtl** ppIMenu,
    }
 
    /*if  pItemList is not null*/
-   MSG_FATAL("MGAppUtil_CreatePopupMenu MGMENU_ADDITEM",0,0,0);
    if(NULL != pItemList)
    {
       for(nCount = 0; nCount < nItemNum; nCount++)
@@ -6649,7 +6623,6 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
    AEECLSID cls = AEECLSID_MENUCTL;
    uint8 nState;
 
-   MSG_FATAL("MGAppUtil_CreateMediaMenu Start",0,0,0);
    if(!pMe )
       return FALSE;
 
@@ -6660,7 +6633,7 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
 
    if(nState == MG_CBS_DOING)
    {
-      MSG_FATAL("call back still doing",0,0,0);
+      MG_FARF(ADDR, ("call back still doing"));
       return FALSE;
    }
 
@@ -6688,7 +6661,7 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
                                           cls,
                                           (void **)&pMenuCtl))
       {
-         MSG_FATAL("Create media menu failed!",0,0,0);
+         MG_FARF(ADDR, ("Create media menu failed!"));
          return FALSE;
       }
 
@@ -6699,13 +6672,12 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
    }
    else if(pMe->m_bKeepMediaMenu == FALSE)
    {
-      MSG_FATAL("MGAppUtil_CreateMediaMenu MGExplorer_FreeMediaMenuItem",0,0,0);
       MGExplorer_FreeMediaMenuItem(pMenuCtl);
    }
    else
    {
       nState = MediaGalleryApp_GetCallbackState(pMe, MG_CBT_BUILDMENU);
-      MSG_FATAL("callback state %d", nState,0,0);
+      MG_FARF(ADDR, ("callback state %d", nState));
 
       switch(nState)
       {
@@ -6724,14 +6696,13 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
             }
             else
             {
-               MSG_FATAL("ERROR: Media menu active!",0,0,0);
+               MG_FARF(ADDR, ("ERROR: Media menu active!"));
             }
             IMENUCTL_Redraw(pMenuCtl);
 
          }
          else
          {
-            MSG_FATAL("pMe->m_bMediaMenuEmpty == TRUE",0,0,0);
             MGAppUtil_UpdateMediaMenuSoftkey(pMe);
             MGAppUtil_OnMediaMenuEmpty(pMe,
                                        /*MG_ONMENUEMPTY_MESSAGEBOX*/
@@ -6740,7 +6711,7 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
          break;
 
       case MG_CBS_DOING:
-         MSG_FATAL("Error, invalid status",0,0,0);
+         MG_FARF(ADDR, ("Error, invalid status"));
          break;
 
       default:
@@ -6756,7 +6727,6 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
       MediaGalleryApp_SetOps(pMe, MG_OPS_MEDIAMENU, MG_OP_NULL);
       MediaGalleryApp_SetOps(pMe, MG_OPS_IMAGEVIEW, MG_OP_NULL);
    }
-   MSG_FATAL("MGAppUtil_CreateMediaMenu End",0,0,0);
    return TRUE;
 
 }//MGAppUtil_CreateMediaMenu
@@ -6778,32 +6748,29 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
                                                       uint32 dwParam)
 {
    boolean bRet = FALSE;
-   MSG_FATAL("MGAppUtil_StartMediaMenu Start",0,0,0);
+
    if(!pMe || !pMenuCtl)
    {
-      MSG_FATAL("Bad parameter MGAppUtil_StartMediaMenu",0,0,0);
+      MG_FARF(ADDR, ("Bad parameter MGAppUtil_StartMediaMenu"));
       return FALSE;
    }
 
 
-   MSG_FATAL("pMe->m_StartMode = %d",pMe->m_StartMode,0,0);
    if(pMe->m_StartMode == MGSM_NORMAL_EXPLORER ||
       pMe->m_StartMode == MGSM_FILE_SELECT)
    {
-      MSG_FATAL("MGAppUtil_StartMediaMenu 1",0,0,0);
       bRet = MGExplorer_InitBuildMediaMenu(pMe,
                         MGAppUtil_MediaMenuBuildComplete);
    }
    else
    {
-      MSG_FATAL("MGAppUtil_StartMediaMenu 2",0,0,0);
       MGExplorer_ResetPreItemID(&pMe->m_Explorer, TRUE);
       MediaGalleryApp_SetCurrentDepth(pMe, MG_CURDEPTH_INIT);
       bRet = MGExplorer_InitBuildFileList(pMe,
                         MGAppUtil_FileListBuildComplete);
    }
 
-   MSG_FATAL("MGAppUtil_StartMediaMenu End",0,0,0);
+
    return bRet;
 }//MGAppUtil_StartMediaMenu
 
@@ -6819,10 +6786,10 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
 void MGAppUtil_MediaMenuBuildComplete(void *po)
 {
    CMediaGalleryApp *pMe = (CMediaGalleryApp *)po;
-   MSG_FATAL("MGAppUtil_MediaMenuBuildComplete Start",0,0,0);
+
    if(!pMe || !pMe->m_pMediaMenu)
    {
-      MSG_FATAL("MediaMenuBuildComplete bad parameter!",0,0,0);
+      MG_FARF(ADDR, ("MediaMenuBuildComplete bad parameter!"));
       return;
    }
 
@@ -6830,7 +6797,6 @@ void MGAppUtil_MediaMenuBuildComplete(void *po)
 
    if(pMe->m_bMediaMenuEmpty)
    {
-      MSG_FATAL("MGAppUtil_MediaMenuBuildComplete pMe->m_bMediaMenuEmpty == TRUE",0,0,0);
       //Media menu is empty
       MGAppUtil_OnMediaMenuEmpty(pMe,
             /*MG_ONMENUEMPTY_MESSAGEBOX*/
@@ -6848,7 +6814,6 @@ void MGAppUtil_MediaMenuBuildComplete(void *po)
                                        MESSAGE_INFORMATION,
                                        BTBAR_BACK);
    }
-   MSG_FATAL("MGAppUtil_MediaMenuBuildComplete End",0,0,0);
 }//MGAppUtil_MediaMenuBuildComplete
 
 /*===========================================================================
@@ -6864,17 +6829,16 @@ void MGAppUtil_FileListBuildComplete(void *po)
 {
    CMediaGalleryApp *pMe = (CMediaGalleryApp *)po;
 
-   MSG_FATAL("MGAppUtil_FileListBuildComplete Start",0,0,0);
    if(!pMe || !pMe->m_pMediaMenu)
    {
-      MSG_FATAL("MediaMenuBuildComplete bad parameter!",0,0,0);
+      MG_FARF(ADDR, ("MediaMenuBuildComplete bad parameter!"));
       return;
    }
 
    pMe->m_bKeepMediaMenu = TRUE;
+
    if(pMe->m_bMediaMenuEmpty)
    {
-      MSG_FATAL("MGAppUtil_FileListBuildComplete pMe->m_bMediaMenuEmpty==TRUE",0,0,0);
       MGAppUtil_OnMediaMenuEmpty(pMe,
                                  /*MG_ONMENUEMPTY_MESSAGEBOX*/
                                  MG_ONMENUEMPTY_STAYEMPTY);
@@ -6905,7 +6869,6 @@ void MGAppUtil_FileListBuildComplete(void *po)
       }
 
    }
-   MSG_FATAL("MGAppUtil_FileListBuildComplete End",0,0,0);
 }//MGAppUtil_FileListBuildComplete
 
 
@@ -7149,7 +7112,6 @@ static __inline boolean MGAppUtil_OnMediaMenuClrKeyEvt(CMediaGalleryApp* pMe,
       {
          pMe->m_bCallbackDoing = FALSE;
          CALLBACK_Cancel(&pMe->m_CallBack);
-         MSG_FATAL("MGAppUtil_OnMediaMenuClrKeyEvt MGExplorer_FreeMediaMenuItem",0,0,0);
          MGExplorer_FreeMediaMenuItem(pMe->m_pMediaMenu);
       }
       else
@@ -7169,7 +7131,7 @@ static __inline boolean MGAppUtil_OnMediaMenuClrKeyEvt(CMediaGalleryApp* pMe,
          }
          else
          {
-            MSG_FATAL("return up folder failed!!!",0,0,0);
+            MG_FARF(ADDR, ("return up folder failed!!!"));
             return FALSE;
          }
       }
@@ -7674,7 +7636,7 @@ static boolean MGAppUtil_OnMediaMenuMsgBoxTimeOut(CMediaGalleryApp* pMe,
 
    if(!pMe || !pMenuCtl)
    {
-      MSG_FATAL("Bad parameter, MGAppUtil_OnMediaMenuMsgBoxTimeOut!",0,0,0);
+      MG_FARF(ADDR, ("Bad parameter, MGAppUtil_OnMediaMenuMsgBoxTimeOut!"));
       return FALSE;
    }
 
@@ -7686,7 +7648,7 @@ static boolean MGAppUtil_OnMediaMenuMsgBoxTimeOut(CMediaGalleryApp* pMe,
    {
       MGExplorer_UpdateMediaMenuTitle(pMe,pMenuCtl);
       MGAppUtil_UpdateMediaMenuSoftkey(pMe);
-      MSG_FATAL("pMe->m_bMediaMenuEmpty == TRUE",0,0,0);
+
       MGAppUtil_OnMediaMenuEmpty(pMe,
             /*MG_ONMENUEMPTY_RETURNUP*/
             MG_ONMENUEMPTY_STAYEMPTY);
@@ -7734,16 +7696,14 @@ static boolean MGAppUtil_OnMediaMenuMsgBoxTimeOut(CMediaGalleryApp* pMe,
  */
 static boolean MGAppUtil_OnMediaMenuEmpty(CMediaGalleryApp *pMe, uint8 nType)
 {
-   MSG_FATAL("MGAppUtil_OnMediaMenuEmpty Start", 0, 0, 0);
    if(NULL == pMe)
    {
-      MSG_FATAL("Bad parameter On media menu empty!",0,0,0);
+      MG_FARF(ADDR, ("Bad parameter On media menu empty!"));
       return FALSE;
    }
 
    if(nType == MG_ONMENUEMPTY_MESSAGEBOX)
    {
-      MSG_FATAL("MGAppUtil_OnMediaMenuEmpty IDS_MG_EMPTY 111", 0, 0, 0);
       MediaGalleryApp_SetMsgBoxID(pMe, MG_MSGID_NOFILE);
       MediaGalleryApp_ShowPromptMsgBox(pMe,
                                        IDS_MG_EMPTY,
@@ -7759,7 +7719,7 @@ static boolean MGAppUtil_OnMediaMenuEmpty(CMediaGalleryApp *pMe, uint8 nType)
 
       if(IMENUCTL_IsActive(pMenuCtl))
          IMENUCTL_SetActive(pMenuCtl, FALSE);
-      MSG_FATAL("MGAppUtil_OnMediaMenuEmpty IDS_MG_EMPTY  222", 0, 0, 0);
+
       ISHELL_LoadResString(pMe->m_pShell,
             MGRES_LANGFILE,
             IDS_MG_EMPTY,
@@ -7791,7 +7751,7 @@ static boolean MGAppUtil_OnMediaMenuEmpty(CMediaGalleryApp *pMe, uint8 nType)
          }
          else
          {
-            MSG_FATAL("return up folder failed!!!",0,0,0);
+            MG_FARF(ADDR, ("return up folder failed!!!"));
             return FALSE;
          }
       }
@@ -7805,7 +7765,7 @@ static boolean MGAppUtil_OnMediaMenuEmpty(CMediaGalleryApp *pMe, uint8 nType)
    {
       return FALSE;
    }
-   MSG_FATAL("MGAppUtil_OnMediaMenuEmpty End", 0, 0, 0);
+
    return TRUE;
 }//MGAppUtil_OnMediaMenuEmpty
 
@@ -9177,13 +9137,11 @@ static void MGAppUtil_StartUDisk(void *po)
    {
       if(FALSE == pMe->m_bCardExist)
       {
-         MSG_FATAL("Card don't exist",0,0,0);
          MGCLOSE_DIALOG(MGDLGRET_NOEXTCARD);
       }
       else if(FALSE == MediaGallery_CheckUSBCableConnect())
       {
          /*no usb cable connect*/
-         MSG_FATAL("Card don't cable connect",0,0,0);
          MGCLOSE_DIALOG(MGDLGRET_NOUSBCABLE);
       }
       else
