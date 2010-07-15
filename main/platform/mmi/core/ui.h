@@ -90,7 +90,7 @@ typedef struct
 typedef struct
 {
     ui_hdr_type                hdr;                       /* header */
-    byte                       num_bytes;                 /* length */
+    uint16                     num_bytes;                 /* length */
     byte                       cmd_data[UIM_MAX_CHARS];   /* data */
 } ui_proactive_uim_cmd_type;
 #endif 

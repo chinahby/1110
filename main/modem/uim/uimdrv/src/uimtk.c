@@ -2548,7 +2548,11 @@ void uim_tk_send_cmd_to_ui
   ui_buf_ptr->proactive_cmd.hdr.task_ptr   = NULL;
   ui_buf_ptr->proactive_cmd.hdr.sigs       = 0;
 
-  ui_buf_ptr->proactive_cmd.num_bytes = (byte)rsp_ptr->cmd_rsp_size;
+  if(rsp_ptr->cmd_rsp_size > UIM_MAX_CHARS)
+  {
+    ERR_FATAL("uim_tk_send_cmd_to_ui too LONG %d %d",rsp_ptr->cmd_rsp_size,rsp_ptr->rsp,0);
+  }
+  ui_buf_ptr->proactive_cmd.num_bytes = rsp_ptr->cmd_rsp_size;
   (void) memcpy ( ui_buf_ptr->proactive_cmd.cmd_data,
                   (void *) rsp_ptr->rsp.data, rsp_ptr->cmd_rsp_size );
 

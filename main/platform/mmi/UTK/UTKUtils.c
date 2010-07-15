@@ -72,8 +72,6 @@ extern uim_cmd_type *start_terminal_response_buffer(
 
 extern void proactive_cmd_response(uim_cmd_type *cmd_ptr);
 
-extern void ui_cmd (ui_cmd_type *cmd_ptr);
-
 /*==============================================================================
                                  º¯Êý¶¨Òå
 ==============================================================================*/

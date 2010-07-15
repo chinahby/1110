@@ -1818,6 +1818,12 @@ void ui_init( void )
   nv_item_type nvi;
 #endif
 
+#ifdef CUST_EDITION
+#ifdef FEATURE_UIM_TOOLKIT
+    (void) q_init(&ui_cmd_q);
+#endif
+#endif
+
   /* Initialize timers */
   rex_def_timer( &ui_rpt_timer, &ui_tcb, UI_RPT_TIMER_SIG );
 
@@ -1881,11 +1887,6 @@ void ui_init( void )
 #if !defined(FEATURE_UI_CORE_REMOVED)
 
   CoreTask_init();
-#ifdef CUST_EDITION
-#ifdef FEATURE_UIM_TOOLKIT
-  (void) q_init(&ui_cmd_q);
-#endif
-#endif
 #else
 #if !defined(FEATURE_UI_DUALPROC_MDM)
   /* Initialize timers */
