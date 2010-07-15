@@ -497,14 +497,14 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
         case EVT_DIALOG_END:
             return TRUE;
             
-        case EVT_KEY:
+        case EVT_KEY:			
             switch (wParam)
             {
-                case AVK_CLR:
+                case AVK_CLR:					
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
 
-                case AVK_BGPLAY:
+                case AVK_BGPLAY:					
                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
                     return TRUE;
                     
@@ -512,7 +512,6 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                     break;                    
             }
             break;
-            
         case EVT_COMMAND:
             switch (wParam)
             {
@@ -565,7 +564,7 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                     CLOSE_DIALOG(DLGRET_SETTINGS);
                     return TRUE;
                     
-                case IDS_MINIMIZE:
+                case IDS_MINIMIZE:					 
                      SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
                      ISHELL_CloseApplet(pMe->m_pShell, TRUE);
                     return TRUE;

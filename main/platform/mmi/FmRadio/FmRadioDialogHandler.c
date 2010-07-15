@@ -701,7 +701,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 #else
         case AVK_SELECT:
 #endif
-        {
+        {        	
         #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             if( pMe->opMode != FM_RADIO_OPMODE_EDIT_CHANNEL_LIST    &&
                 IMENUCTL_IsActive( pMe->m_pMenu)
@@ -812,7 +812,7 @@ __handleKeyEvent_input_channel_done__:
 
         case AVK_CLR:
         case AVK_SOFT2:
-        {
+        {			
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
                 pMe->runOnBackground = FALSE;
@@ -822,7 +822,13 @@ __handleKeyEvent_input_channel_done__:
             {
                 hideTuningModeSelectMenu( pMe);
             }
-        #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
+			//Add By zzg 2010_07_15
+			else if ((pMe->opMode == FM_RADIO_OPMODE_OPTION_SELECTION) && hideMenu( pMe))
+			{
+				moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+			}
+			//Add End
+#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             else if( pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM    ||
                      ( pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL_LIST && hideChannelList( pMe)) ||
                      (  pMe->opMode == FM_RADIO_OPMODE_OPTION_SELECTION && hideMenu( pMe))
@@ -838,7 +844,8 @@ __handleKeyEvent_input_channel_done__:
             {
                 showChannelList( pMe);
             }
-        #endif
+#endif
+
 #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 			else if( pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL)
 			{
