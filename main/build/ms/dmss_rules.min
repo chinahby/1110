@@ -314,26 +314,30 @@ ifeq ($(USES_MMI),yes)
 # Rules for building Const File System
 #
 #-------------------------------------------------------------------------------
+CONSTFILE_BIN_FILENAMES = $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(CONSTFILE_BIN_FILES))))
+CONSTFILE_BIN_SOURCES 	= $(addsuffix .c, $(CONSTFILE_BIN_FILENAMES))
+CONSTFILE_BIN_OBJS 		= $(addprefix $(TARGETDIR)/,$(CONSTFILE_BIN_SOURCES:%.c=%.o))
+
 CONSTFILE_FILENAMES 	= $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(CONSTFILE_FILES))))
 CONSTFILE_SOURCES 		= $(addsuffix .c, $(CONSTFILE_FILENAMES))
 
-CONSTFILE_FSLOC 		= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES)))))
-CONSTFILE_FLAGENT 		= $(firstword $(filter FLAGS:%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES)))))
+CONSTFILE_FSLOC 		= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES) $(CONSTFILE_BIN_FILES)))))
+CONSTFILE_FLAGENT 		= $(firstword $(filter FLAGS:%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES) $(CONSTFILE_BIN_FILES)))))
 CONSTFILE_FLAGS 		= $(subst FIXED,-f,$(subst ., ,$(subst FLAGS:, , $(CONSTFILE_FLAGENT))))
 
-CONSTFILE_OBJS 			= $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o))
+CONSTFILE_OBJS 			= $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o)) $(CONSTFILE_BIN_OBJS)
 CONSTFILE_BAR_FSLOC 	= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $(<:%.brx=%.bar))|%, $(CONSTFILE_FILES)))))
 CONSTFILE_BAR  			= $(filter %.bar, $(CONSTFILE_FILENAMES))
 CONSTFILE_BAR_SRC 		= $(addprefix $(TARGETDIR)/, $(addsuffix .c, $(CONSTFILE_BAR)))
-CONSTFILE_BIN  			= $(filter-out %.bar, $(CONSTFILE_FILENAMES))
+CONSTFILE_BIN  			= $(filter-out %.bar, $(CONSTFILE_FILENAMES)) $(CONSTFILE_BIN_FILENAMES)
 CONSTFILE_BIN_SRC 		= $(addprefix $(TARGETDIR)/, $(addsuffix .c, $(CONSTFILE_BIN)))
 
-$(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES)
+$(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES) $(CONSTFILE_BIN_SOURCES)
 	@echo ------------------------------------------------------------------------
 	@echo Generating $@
 	@cp $< $@
 	@chmod 666 $@
-	@perl $(BREWDIR)/pk/utils/OEMConstFileMod.pl $@ $(CONSTFILE_FILENAMES)
+	@perl $(BREWDIR)/pk/utils/OEMConstFileMod.pl $@ $(CONSTFILE_FILENAMES) $(CONSTFILE_BIN_FILENAMES)
 	@echo ------------------------------------------------------------------------
 	
 OBJECTS += $(CONSTFILE_OBJS)
