@@ -175,6 +175,9 @@ when       who     what, where, why
 
 #include "ui.h"
 #include "cm.h"
+#include "wms.h"
+#include "OEMWMS.h"
+#include "OEMWMS_CacheInfo.h"
 
 #include "ipc.h"
 #include "ipcsvc.h"
@@ -1830,6 +1833,14 @@ void ui_init( void )
 #if !defined(FEATURE_UI_CORE_REMOVED) && defined (FEATURE_NEW_SLEEP_API)
   gNewSleepHandle = sleep_register("UI_TASK", FALSE);
 #endif /* FEATURE_NEW_SLEEP_API */
+#if !defined(FEATURE_UI_CORE_REMOVED)  //add by yangdecai 
+	
+#ifdef   FEATURE_CDSMS_CACHE
+	  wms_reg_msg_info_cache_cb(OEMWMS_MsgInfoCacheCb);
+#else
+	  wms_reg_msg_info_cache_cb(OEMWMS_MsgInfoCacheCbExt);
+#endif  
+#endif
 
   /* Wait for start signal from task controller */
   (void) task_start( UI_RPT_TIMER_SIG, DOG_UI_RPT, &ui_rpt_timer );
