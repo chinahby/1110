@@ -920,7 +920,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
     {
         return FALSE;
     }
-   
+	
     switch(eCode)
     {
         case EVT_DIALOG_INIT:
@@ -1022,6 +1022,9 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                     else
                     {
                         nCount = pMe->list_record[i].counter;
+
+						DBGPRINTF("***zzg RecentCallsDialogHandler i=%d, nCount=%d number=%s***", i, nCount, pMe->list_record[i].number);
+						
                         WSTRCPY(wszRawNum, pMe->list_record[i].number); 
                         // get Name for contact
                         // 从电话本中取人名,此处不用pMe->list_record[i].name字段是为了避免
@@ -1065,6 +1068,8 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
 
                     ai.wItemID = (uint16)i;               
                     ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+                    
+					
                     switch(pMe->list_record[i].category)
                     {
                         case AEECALLHISTORY_CALL_TYPE_MISSED://CALLHISTORY_MISSED_CATEGORY:
@@ -1079,8 +1084,9 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                             ai.wImage = IDB_ORIG;
                             break;
                     }
-                    bAdd = IMENUCTL_AddItemEx(pMe->pMenu, &ai);
-                    
+                    					
+                    bAdd = IMENUCTL_AddItemEx(pMe->pMenu, &ai);                   
+										
                     if(bAdd && STARTMETHOD_FINDNUMBER == pMe->m_eStartMethod)
                     {
                         if(RecentCalls_FindSelectRecordListNode(ai.wItemID))
@@ -1094,7 +1100,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                 {
                     pMe->record_selected = pMe->record_count - 1;
                 }
-                    IMENUCTL_SetSel(pMe->pMenu,pMe->record_selected);
+                IMENUCTL_SetSel(pMe->pMenu,pMe->record_selected);
             }    
 
             switch(pMe->m_callsCategory) //分列的类写TITLE

@@ -4972,6 +4972,7 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
     {
         goto ADDENTRY_EXIT;
     }
+	
     pNewEntry->wNumFields = nFields;
     pNewEntry->pFields = (AEECallHistoryField *)MALLOC(sizeof(AEECallHistoryField)*nFields);
     if (NULL == pNewEntry->pFields)
@@ -5077,7 +5078,7 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
         *((uint16 *)pNewEntry->pFields[i].pData) = 1;
         i++;
     }
-    
+	
     if ((pi == PI_ALLOWED) && (NULL != pInNumber))
     {   // 查找是否存在同号码记录
         boolean     bRecordExisted = FALSE;
@@ -5086,19 +5087,22 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
         {
             pEntry = (AEECallHistoryEntry *)ICALLHISTORY_EnumNext(pCallHistory, &nRet);
         }
-        nLen = STRLEN(pInNumber);
+		
+        nLen = STRLEN(pInNumber);		
+		
         while (NULL != pEntry)
-        {
+        {        	
             for (i=0; i<pEntry->wNumFields; i++)
             {
                 if (pEntry->pFields[i].wID == AEECALLHISTORY_FIELD_NUMBER)
-                {
+                {                	
                     if ((pEntry->pFields[i].pData != NULL) &&
                         (nLen == pEntry->pFields[i].wDataLen))
-                    {
+                    {                    	
+						
                         // 判断已有记录号码与待添加号码是否匹配
                         if (STRNCMP(pInNumber, (char *)pEntry->pFields[i].pData, nLen) == 0)
-                        {// 存在号码相同、呼叫类型相同的记录，对此我们只需更新该记录
+                        {// 存在号码相同、呼叫类型相同的记录，对此我们只需更新该记录                        	
                             bRecordExisted = TRUE;
                             break;
                         }
@@ -5124,7 +5128,7 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
                 nCount = *((uint16 *)pEntry->pFields[i].pData);
             }
         }
-        *((uint16 *)pNewEntry->pFields[nFields-1].pData) = nCount+1;
+        *((uint16 *)pNewEntry->pFields[nFields-1].pData) = nCount+1;     
 
         // 删除记录
         (void)ICALLHISTORY_ClearEntry(pCallHistory);

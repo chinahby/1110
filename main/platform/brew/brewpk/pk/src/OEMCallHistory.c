@@ -304,13 +304,16 @@ void OEMCallHistory_Init(IShell *pShell)
 
    // Open the database
    nErr = ISHELL_CreateInstance(pShell, AEECLSID_DBMGR, (void**)&pDBMgr);
-   if (nErr != SUCCESS) {
+   if (nErr != SUCCESS) 
+   {
       return;
    }
    IDBMGR_SetCacheSize(pDBMgr, CH_DB_CACHE_SIZE);
    pDB = IDBMGR_OpenDatabase(pDBMgr, CH_DB_NAME, TRUE);
    IDBMGR_Release(pDBMgr);
-   if (pDB == NULL) {
+   
+   if (pDB == NULL) 
+   {
       return;
    }
 
@@ -321,25 +324,31 @@ void OEMCallHistory_Init(IShell *pShell)
       boolean foundActiveCall = FALSE;
 
       // Make a buffer for the CH data; function frees old data
-      if (ReallocCHEntry(&EnumData, pRec) == SUCCESS) {
+      if (ReallocCHEntry(&EnumData, pRec) == SUCCESS) 
+	  {
          // Copy the data into the buffer
-         if (CopyIntoCHEntry(&EnumData, pRec) != SUCCESS) {  
+         if (CopyIntoCHEntry(&EnumData, pRec) != SUCCESS) 
+		 {  
             // Shouldn't happen
             break;
          }
-      } else {
+      } 
+	  else 
+	  {
          break;
       }
 
       pCHEntry = (const AEECallHistoryEntry *)&EnumData;
 
       // Check it the call is still active
-      for (i = 0, pItems = pCHEntry->pFields; i < pCHEntry->wNumFields; 
-           i++, pItems++) {
-         if (pItems->ClsId == 0 && pItems->wID == AEECALLHISTORY_FIELD_CALLACTIVE) {
+      for (i = 0, pItems = pCHEntry->pFields; i < pCHEntry->wNumFields; i++, pItems++) 
+	  {
+         if (pItems->ClsId == 0 && pItems->wID == AEECALLHISTORY_FIELD_CALLACTIVE) 
+		 {
             // If the call is still active (phone was probably crashed in 
             // the middle of a call), set it to inactive.
-            if (*(boolean *)pItems->pData) {
+            if (*(boolean *)pItems->pData) 
+			{
                *(boolean *)pItems->pData = FALSE;
                foundActiveCall = TRUE;
             }
@@ -347,13 +356,14 @@ void OEMCallHistory_Init(IShell *pShell)
          }
       }
       
-      if (foundActiveCall) {
+      if (foundActiveCall) 
+	  {
          boolean bNumExFound = FALSE;
          AEECallHistoryEntry newCHEntry;
          // Initialize the newEntry
          ZEROAT(&newCHEntry);
-         for (i = 0, pItems = pCHEntry->pFields; i < pCHEntry->wNumFields; 
-              i++, pItems++) {
+         for (i = 0, pItems = pCHEntry->pFields; i < pCHEntry->wNumFields; i++, pItems++) 
+		 {
             if (pItems->ClsId == 0 && pItems->wID == AEECALLHISTORY_FIELD_DURATIONKNOWN) {
                // After setting the active call to inactive,
                // set the call duration to unknown.
@@ -597,9 +607,12 @@ static int OEMCallHistory_AddEntry(ICallHistory *pICallHistory,
 
    // Add this record to our tables and mark it to be read
    pRec = IDATABASE_CreateRecord(pme->m_pDB, pDBFields, nDBFields);
-   if (pRec == NULL) {
+   if (pRec == NULL) 
+   {
       nErr = EFAILED;
-   } else {
+   } 
+   else 
+   {
       IDBRECORD_Release(pRec);
       nErr = SUCCESS;
    }
@@ -702,11 +715,12 @@ static int OEMCallHistory_EnumInitByCallType(ICallHistory *po, uint16 type)
    /*lint +e740 */
 
    pMe->m_nEnumRecord = 0;
-
+  
    // Get a buffer
    if (!BuildEnumByCallTypeTable(pMe, type))
-      return EFAILED;
-   
+   {
+		return EFAILED;
+   }
    return SUCCESS;
 }
 
@@ -758,30 +772,36 @@ static const AEECallHistoryEntry* OEMCallHistory_EnumNext(ICallHistory *po,
 
    // If the enumeration table isn't there, then they probably
    // did EnumInit on an empty callhistory.  Return SUCCESS.
-   if (pMe->m_pwEnumData == NULL) {
+   if (pMe->m_pwEnumData == NULL) 
+   {
       *pnErr = SUCCESS;
       return NULL;
    }
 
    // First find a non-0xFFFF index
-   while (pMe->m_nEnumRecord < pMe->m_nEnumDataEnts) {
+   while (pMe->m_nEnumRecord < pMe->m_nEnumDataEnts) 
+   {
       if (pMe->m_pwEnumData[pMe->m_nEnumRecord] != CH_INVALID_DB_INX)
-         break; 
+      {
+      	break; 
+      }
 
       // That was blank (record deleted after EnumInit) go on to the next
       pMe->m_nEnumRecord++;
    }
 
    // If we've reached the end of the enumeration, tell the user that
-   if (pMe->m_nEnumRecord >= pMe->m_nEnumDataEnts) {
+   if (pMe->m_nEnumRecord >= pMe->m_nEnumDataEnts) 
+   {
       *pnErr = SUCCESS;
       return NULL;
    }
 
    // Open that record
-   pRec = IDATABASE_GetRecordByID(pMe->m_pDB, 
-                                  pMe->m_pwEnumData[pMe->m_nEnumRecord]);
-   if (pRec == NULL) {
+   pRec = IDATABASE_GetRecordByID(pMe->m_pDB, pMe->m_pwEnumData[pMe->m_nEnumRecord]);
+   
+   if (pRec == NULL) 
+   {
       // For whatever reason we can't open that record
       *pnErr = EFAILED;
       return NULL;
@@ -789,16 +809,22 @@ static const AEECallHistoryEntry* OEMCallHistory_EnumNext(ICallHistory *po,
 
    // Make a buffer for the returned data
    *pnErr = SUCCESS;
-   if (ReallocCHEntry(&pMe->m_EnumData, pRec) == SUCCESS) {
+   if (ReallocCHEntry(&pMe->m_EnumData, pRec) == SUCCESS) 
+   {
       // Copy the data into the buffer
-      if (CopyIntoCHEntry(&pMe->m_EnumData, pRec) == SUCCESS) {  
+      if (CopyIntoCHEntry(&pMe->m_EnumData, pRec) == SUCCESS) 
+	  {  
          // Inrement the iterator
          pMe->m_nEnumRecord++;
-      } else {
+      } 
+	  else 
+	  {
          // Shouldn't happen
          *pnErr = EFAILED;
       }
-   } else {
+   } 
+   else 
+   {
       *pnErr = ENOMEMORY;
    }
 
@@ -806,7 +832,8 @@ static const AEECallHistoryEntry* OEMCallHistory_EnumNext(ICallHistory *po,
    IDBRECORD_Release(pRec);
 
    // Check for errors
-   if (*pnErr != SUCCESS) {
+   if (*pnErr != SUCCESS) 
+   {
       return NULL;
    }
 
@@ -1270,6 +1297,7 @@ static int OEMCallHistory_GetRecCountByType(ICallHistory *po, uint16 type)
         nCount += GetRecordCountByType(pme, AEECALLHISTORY_CALL_TYPE_FROM);
         nCount += GetRecordCountByType(pme, AEECALLHISTORY_CALL_TYPE_MISSED);
    }
+   
    return nCount;
 }
 
@@ -1703,14 +1731,17 @@ static int CopyIntoCHEntry(AEECallHistoryEntry *pCHEntry, IDBRecord *pDBRec)
    IDBRECORD_Reset(pDBRec);
 
    // Do the for loop here
-   while ((ft = IDBRECORD_NextField(pDBRec, &fn, &wSize)) != AEEDB_FT_NONE) {
-      switch(fn) {
-
+   while ((ft = IDBRECORD_NextField(pDBRec, &fn, &wSize)) != AEEDB_FT_NONE) 
+   {   	  
+      switch(fn) 
+	  {
          /* Change of classid marker */
          case CHFIELD_CLSID_CHANGE:
-            if (IDBRECORD_GetFieldDWord(pDBRec, &dwClsID) == FALSE)
+         {
+		 	if (IDBRECORD_GetFieldDWord(pDBRec, &dwClsID) == FALSE)
                return EFAILED; // all ClsIDs are dwords, this isn't
             break;
+         }
 
          /* Field type identifier */
          case CHFIELD_CHID:
@@ -1737,12 +1768,13 @@ static int CopyIntoCHEntry(AEECallHistoryEntry *pCHEntry, IDBRecord *pDBRec)
             if (pDBData == NULL)
                return EFAILED;
             bHaveType = FALSE;
-
+			
             // Fill in the record
             pCHEntry->pFields[nCurrRec].ClsId = dwClsID;
             pCHEntry->pFields[nCurrRec].wID = wCHType;
             pCHEntry->pFields[nCurrRec].wDataLen = wSize;
             pCHEntry->pFields[nCurrRec].pData = pWrite;
+
             nCurrRec++;
 
             // Copy the data
@@ -1753,17 +1785,23 @@ static int CopyIntoCHEntry(AEECallHistoryEntry *pCHEntry, IDBRecord *pDBRec)
                // Add UNICODE NULL
                *(uint16*)(pWrite + wSize) = '\0';
                wSize += 2;
-            }else if (wCHType == AEECALLHISTORY_FIELD_NUMBER_EX){
+            }
+			else if (wCHType == AEECALLHISTORY_FIELD_NUMBER_EX)
+			{
                // Add UNICODE NULL
                *(uint16*)(pWrite + wSize) = '\0';
                wSize += 2;
                wNumExSize = wSize;
                pwzNumEX = (AECHAR*)pWrite;
-            }else if (wCHType == AEECALLHISTORY_FIELD_NUMBER){
+            }
+			else if (wCHType == AEECALLHISTORY_FIELD_NUMBER)
+			{
                // Add ASCII NULL
                *(byte*)(pWrite + wSize) = '\0';
                wSize++;
-            } else if (wCHType == AEECALLHISTORY_FIELD_ID){
+            } 
+			else if (wCHType == AEECALLHISTORY_FIELD_ID)
+			{
                // Add UNICODE NULL
                *(uint16*)(pWrite + wSize) = '\0';
                wSize += 2;
@@ -1785,17 +1823,21 @@ static int CopyIntoCHEntry(AEECallHistoryEntry *pCHEntry, IDBRecord *pDBRec)
    {
       wSize = ConvNumEXToNum(pwzNumEX, wNumExSize, pWrite);
       *(char*)(pWrite + wSize) = '\0';
+
       // Fill in the record
       pCHEntry->pFields[nCurrRec].ClsId = 0;
       pCHEntry->pFields[nCurrRec].wID = AEECALLHISTORY_FIELD_NUMBER;
       pCHEntry->pFields[nCurrRec].wDataLen = wSize;
       pCHEntry->pFields[nCurrRec].pData = pWrite;
+	  
       nCurrRec++;
    }
    
    // Make sure we've filled in all of the records
    if (nCurrRec != pCHEntry->wNumFields)
-      return EFAILED;
+   {
+   		return EFAILED;
+   }
 
    // We're done return success
    return SUCCESS;
@@ -2171,7 +2213,7 @@ static boolean BuildEnumByCallTypeTable(OEMCallHistory *pme, uint16 type)
    uint32 nRecs;
    uint32 newIdx = 0;
    uint32 i;
-    
+	
     if (BuildEnumTable(pme) != TRUE)
     {
        return FALSE;
@@ -2182,6 +2224,7 @@ static boolean BuildEnumByCallTypeTable(OEMCallHistory *pme, uint16 type)
     // Allocate a new array of database indexes.  
     // Don't allocate one for the special record   
     pNewList = MALLOC(sizeof(uint16) * nRecs);
+	
     if (pNewList == NULL)
     {
        return FALSE;  
@@ -2197,8 +2240,7 @@ static boolean BuildEnumByCallTypeTable(OEMCallHistory *pme, uint16 type)
        if( pOldList[i] != CH_INVALID_DB_INX )
        {
           // Open that record
-          pRec = IDATABASE_GetRecordByID(pme->m_pDB, 
-                                         pOldList[i]);
+          pRec = IDATABASE_GetRecordByID(pme->m_pDB, pOldList[i]);
         
           if (pRec == NULL) 
           {
@@ -2214,8 +2256,10 @@ static boolean BuildEnumByCallTypeTable(OEMCallHistory *pme, uint16 type)
           IDBRECORD_Reset(pRec);
           while (IDBRECORD_NextField(pRec, &fieldName, NULL) != AEEDB_FT_NONE)
           {
-             if (fieldName == AEEDBFIELD_CATEGORY){
+             if (fieldName == AEEDBFIELD_CATEGORY)
+			 {
                 IDBRECORD_GetFieldWord(pRec, &recType);
+				
                 if (fieldName == AEEDBFIELD_CATEGORY)
                 {
                    if( recType == type )
@@ -2232,10 +2276,12 @@ static boolean BuildEnumByCallTypeTable(OEMCallHistory *pme, uint16 type)
 
     FREE(pOldList);
     pOldList = NULL;
+	
     if (newIdx > 0)
     {
        pOldList = REALLOC(pNewList, sizeof(uint16) * newIdx);
-       if( pOldList == NULL ){
+       if (pOldList == NULL)
+	   {
           pOldList = pNewList;
        }
     }
@@ -2297,9 +2343,12 @@ static int GetRecordCountByType(OEMCallHistory *pme, uint16 wCallType)
    int nRet = 0;
 
    IDATABASE_Reset(pme->m_pDB);
-   while ( (pRec = IDATABASE_GetNextRecord(pme->m_pDB)) != NULL) {
+   while ((pRec = IDATABASE_GetNextRecord(pme->m_pDB)) != NULL) 
+   {
       if (RecCallType(pRec) == wCallType)
-         nRet++;
+      {
+      	nRet++;
+      }
       IDBRECORD_Release(pRec);
    }   
    return nRet;

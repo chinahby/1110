@@ -7251,7 +7251,7 @@ static void OEMCM_HandleCallEnd(cm_mm_call_info_s_type *call_info, AEECMEvent ev
 #error code not present
 #endif
 #ifndef FEATURE_UIONE_HDK
-      OEMCM_AddCallHistory(core_call_info);
+      //OEMCM_AddCallHistory(core_call_info);		//Del By zzg 2010_07_16
 #endif
       break;
 
