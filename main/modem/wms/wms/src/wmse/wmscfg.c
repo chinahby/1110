@@ -2124,7 +2124,7 @@ void wms_cfg_delete_dup_info_cache
 )
 {
 #ifdef FEATURE_CDSMS_DUP_DETECTION
-  uint8 i;
+  uint32 i;
 
   /* Find the entry to delete from the cache */
   for(i=0; i<WMS_MESSAGE_LIST_MAX; i++)
