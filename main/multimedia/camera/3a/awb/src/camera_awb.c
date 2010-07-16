@@ -131,6 +131,7 @@ Notice that changes are listed in reverse chronological order.
 #include "target.h"
 #include "customer.h"
 #include "comdef.h"
+#ifndef CAMERA_USES_SOFTDSP
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
 #include <stdlib.h>             /* Dynamic memory allocation               */
 #include "camera_3a_shared.h"
@@ -2235,7 +2236,7 @@ camera_ret_code_type camera_awb_set_special_effect(int32 parm,
       cam3a_awb_state.color_conversion_state = SPECIAL_EFFECTS_COLOR_CONVERSION;
       ret_val = CAMERA_SUCCESS;
       break;
-
+#ifndef CAMERA_USES_SOFTDSP
     case CAMERA_EFFECT_SOLARIZE:
       //ret_val = camera_enable_solarize();
       ret_val = CAMERA_SUCCESS;
@@ -2244,7 +2245,7 @@ camera_ret_code_type camera_awb_set_special_effect(int32 parm,
         SPECIAL_EFFECTS_COLOR_CONVERSION;
       matrix_ptr = camera_awb_effects_off(current_wb_parm);
       break;
-
+#endif
     case CAMERA_EFFECT_PASTEL:
       ret_val = CAMERA_NOT_SUPPORTED;
       break;
@@ -2279,4 +2280,4 @@ camera_ret_code_type camera_awb_set_special_effect(int32 parm,
 }
 
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
-
+#endif //#ifndef CAMERA_USES_SOFTDSP

@@ -90,7 +90,9 @@ camctrl_tbl_type camctrl_tbl;
 static boolean camctrl_iso_is_supported (void);
 static boolean camctrl_af_use_isp (void);
 static uint32 camctrl_high_luma_compensation_is_supported (void);
+#ifndef CAMERA_USES_SOFTDSP
 static void camctrl_select_vfe_sw_features (const camsensor_static_params_type *camsensorParamsPtr);
+#endif
 static boolean camctrl_lc_is_supported (void);
 
 /*============================================================================
@@ -250,7 +252,9 @@ void camctrl_validate_features (void)
   camctrl_tbl.iso_is_supported = camctrl_iso_is_supported();
   camctrl_tbl.af_use_isp = camctrl_af_use_isp();
   camctrl_tbl.high_luma_region_threshold = camctrl_high_luma_compensation_is_supported();
+#ifndef CAMERA_USES_SOFTDSP
   camctrl_select_vfe_sw_features(camctrl_tbl.camsensor_params_ptr);
+#endif
   /* these are temporary, until new reference points are available */
   /* assigning reference points on D50 as default, if sensor doesn't have any epecific values */
   if((camctrl_tbl.noon_rg == CAMCTRL_TBL_INVALID_LONG) && (camctrl_tbl.noon_bg == CAMCTRL_TBL_INVALID_LONG))
@@ -411,7 +415,7 @@ static uint32 camctrl_high_luma_compensation_is_supported (void)
 
   return camctrl_tbl.high_luma_region_threshold;
 } /* camctrl_high_luma_compensation_is_supported */
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMCTRL_SELECT_VFE_SW_FEATURES
@@ -471,7 +475,7 @@ static void camctrl_select_vfe_sw_features (const camsensor_static_params_type *
 #endif /* FEATURE_CAMERA_BURST_MODE */
   }
 }
-
+#endif
 /*===========================================================================
 
 FUNCTION      CAMCTRL_LC_IS_SUPPORTED

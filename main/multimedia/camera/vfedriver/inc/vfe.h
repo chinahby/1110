@@ -121,6 +121,7 @@ when       who     what, where, why
 #include "camqdsp.h"
 #include "camsensor.h"
 
+#ifndef CAMERA_USES_SOFTDSP
 /*============================================================================
                         INTERNAL FEATURES
 ============================================================================*/
@@ -2166,7 +2167,7 @@ void vfe_select_rolloff
   camsensor_sensor_resolution_type resolution,
   boolean                          preview
 );
-
+#endif //#ifndef CAMERA_USES_SOFTDSP
 #endif /* FEATURE_CAMERA */
 #endif /* VFE_H */
 

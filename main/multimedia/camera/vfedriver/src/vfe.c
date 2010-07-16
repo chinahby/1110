@@ -210,6 +210,7 @@ when       who     what, where, why
 ============================================================================*/
 #include "customer.h"
 #include "comdef.h"
+#ifndef CAMERA_USES_SOFTDSP
 #ifdef FEATURE_CAMERA
 #include "vfe.h"
 #include "qdspext.h"
@@ -5770,4 +5771,5 @@ static camsensor_lc_type VFE_Get_Illuminant_for_LC(void)
  */
 /*lint -restore */
 #endif /* FEATURE_CAMERA */
+#endif
 

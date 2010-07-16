@@ -104,6 +104,7 @@ Notice that changes are listed in reverse chronological order.
 #include <stdlib.h>             /* Dynamic memory allocation               */
 #include "target.h"
 #include "customer.h"
+#ifndef CAMERA_USES_SOFTDSP
 #include "camera_3a_shared.h"
 #include "qdspext.h"
 #include "camctrl.h"
@@ -889,3 +890,4 @@ cam3a_auto_white_balance_illuminant_type camera_3a_shared_get_illuminant(void)
   return cam3a_awb_state.agw_sample_decision;
 }
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
+#endif //#ifndef CAMERA_USES_SOFTDSP

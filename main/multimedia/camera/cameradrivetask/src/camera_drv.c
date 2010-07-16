@@ -520,6 +520,7 @@ static void camera_drv_cmd_parser (void)
   cmd_ptr = (camera_drv_packet_type *) q_get (&camera_drv_cmd_q);
   if (cmd_ptr != NULL)
   {
+#ifndef CAMERA_USES_SOFTDSP
     switch (cmd_ptr->hdr.cmd)
     {
       case CAMERA_DRV_CMD_FOCUS:
@@ -537,6 +538,7 @@ static void camera_drv_cmd_parser (void)
       default:
         ERR_FATAL ("Illegal vs command %x", cmd_ptr->hdr.cmd, 0, 0);
     }
+#endif
     /* Return camera driver packet to free q
     */
     q_put (&camera_drv_free_q, &cmd_ptr->hdr.link);

@@ -78,6 +78,7 @@ Notice that changes are listed in reverse chronological order.
 #include "target.h"
 #include "customer.h"
 #include "comdef.h"
+#ifndef CAMERA_USES_SOFTDSP
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
 #include <stdlib.h>             /* Dynamic memory allocation               */
 #include "camera_awb_core.h"
@@ -4161,3 +4162,5 @@ static int camera_awb_core_get_daylight_from_history(float *rg_ratio, float *bg_
 
 
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
+#endif
+

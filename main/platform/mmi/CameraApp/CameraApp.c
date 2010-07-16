@@ -505,6 +505,10 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
  
     pMe->m_cxWidth    = di.cxScreen; 
     pMe->m_cyHeight   = di.cyScreen;
+    pMe->m_rcStatic.x = pMe->m_cxWidth/5;
+    pMe->m_rcStatic.y = pMe->m_cyHeight/5;
+    pMe->m_rcStatic.dx= pMe->m_cxWidth*3/5;
+    pMe->m_rcStatic.dy= pMe->m_cyHeight*3/5;
  
     pMe->m_bAppIsReady = FALSE;
     pMe->m_bVideoPause = FALSE; 

@@ -206,7 +206,7 @@ typedef enum
   VFE_ROLLOFF_CORRECTION,
 } rolloff_correction_type;
 
-
+#ifndef CAMERA_USES_SOFTDSP
 typedef struct
 {
   boolean enable_hw_filter_3x3_asf;
@@ -220,14 +220,14 @@ typedef struct
   boolean  vfe_idle_msg_failed;          /* Variable used to tell whether the idle message failed */
   boolean  wait_for_dsp_idle;            /* Variable used to wait for DSP idle command response   */
 } camera_vfe_configuration_control_and_status_type;
-
+#endif
 #ifdef FEATURE_CAMERA_BURST_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BURST_MODE */
-
+#ifndef CAMERA_USES_SOFTDSP
 extern camera_vfe_configuration_control_and_status_type 
        camera_vfe_control_and_status;
-
+#endif
 typedef enum
 {
   GAMMA_TABLE_DEFAULT = 0,
@@ -300,9 +300,11 @@ extern camera_nightshot_mode_type camera_nightshot_mode;
 extern byte * camera_current_frame;
 #endif /* FEATURE_VIDEO_ENCODE */
 extern boolean camera_ok_to_sleep;
+#ifndef CAMERA_USES_SOFTDSP
 extern vfe_hw_feature_type vfe_hw_features;
 extern vfe_sw_feature_type vfe_sw_features;
 extern CAMQDSP_VFE_CommandType camera_dsp_command;
+#endif
 extern camera_state_type       camera_state;
 extern int32                   camera_pending_stats_cmds;
 extern camera_parm_info_type   camera_parm_manual_focus;
@@ -311,7 +313,9 @@ extern camera_parm_info_type   camera_parm_manual_focus;
 /*============================================================================
 *                         LOGGING DEFINITIONS
 ============================================================================*/
+#ifndef CAMERA_USES_SOFTDSP
 #define CAMERA_LOGGING
+#endif
 #ifdef CAMERA_LOGGING
 
 typedef enum
@@ -1000,8 +1004,10 @@ void camera_process_pnge_msg(uint32 msg);
 #define camera_enable_solarize() CAMERA_NOT_SUPPORTED
 #define camera_default_gamma() CAMERA_NOT_SUPPORTED
 #else
+#ifndef CAMERA_USES_SOFTDSP
 extern camera_ret_code_type camera_enable_solarize( void ) ;
 extern camera_ret_code_type camera_default_gamma  ( void ) ;
+#endif //#ifndef CAMERA_USES_SOFTDSP
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
 
 extern uint16 camera_recent_fps( void );

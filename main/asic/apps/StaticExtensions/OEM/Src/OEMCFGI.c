@@ -1663,7 +1663,7 @@ static OEMConfigListType oemi_cache = {
 
    ,OEMNV_CAMERA_ENVIR_AUTO         /*CFGI_CAMERA_ENVIROMENT*/
    ,OEMNV_CAMERA_QUALITY_HIGH       /*CFGI_CAMERA_QUALITY*/
-   ,OEMNV_CAMERA_SIZE_176_220         /*CFGI_CAMERA_SIZE*/ 	//   ,OEMNV_CAMERA_SIZE_640_480         /*CFGI_CAMERA_SIZE*/
+   ,OEMNV_CAMERA_SIZE_DEFAULT         /*CFGI_CAMERA_SIZE*/
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
    ,OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1/*CFGI_CAMERA_TONE*/
 #else   
@@ -2649,7 +2649,7 @@ void OEM_RestoreFactorySetting( void )
 #endif
    oemi_cache.camera_enviroment = OEMNV_CAMERA_ENVIR_AUTO;
    oemi_cache.camera_quality = OEMNV_CAMERA_QUALITY_HIGH;
-   oemi_cache.camera_size = OEMNV_CAMERA_SIZE_176_220;//   oemi_cache.camera_size = OEMNV_CAMERA_SIZE_640_480;
+   oemi_cache.camera_size = OEMNV_CAMERA_SIZE_DEFAULT;
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1;
 #else   

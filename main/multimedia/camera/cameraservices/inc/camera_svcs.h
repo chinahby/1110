@@ -123,13 +123,13 @@ typedef struct
 #error code not present
 #endif /*FEATURE_CAMERA_AEC_DURING_MULTISHOT*/
 
-
+#ifndef CAMERA_USES_SOFTDSP
 typedef struct Camera_EndOfFrameMessageType
 {
   CAMQDSP_EndOfFrameMessageType   eof_msg;
   uint32                          time;
 } Camera_EndOfFrameMessageType;
-
+#endif
 typedef enum
 {
   /* */
@@ -220,8 +220,9 @@ extern uint32 camera_preview_dx;
 extern uint32 camera_preview_dy;
 
 extern boolean camera_take_images;
+#ifndef CAMERA_USES_SOFTDSP
 extern VFE_EOF_Ack2Type  ackOutput2;
-
+#endif
 extern boolean camera_blt_ext_recalculate_window;
 
 extern camera_func_type camera_func;
@@ -254,10 +255,10 @@ SIDE EFFECTS
 
 ===========================================================================*/
 void camera_svcs_init_self (camerai_func_type *funcTable);
-
+#ifndef CAMERA_USES_SOFTDSP
 void camera_dsp_error_status_set_default(void);
 void camera_qdsp_cb (CAMQDSP_ResponseType *response);
-
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_PROCESS_FUNC
@@ -281,9 +282,11 @@ void camera_svcs_process_func
   uint32 info3,
   uint32 info4
 );
-
+#ifndef CAMERA_USES_SOFTDSP
 boolean camera_config_vfe(void);
 void camera_initiate_capture (void);
+#endif
+
 void camera_reject
 (
   camera_cb_f_type callback,
@@ -303,10 +306,10 @@ void  camera_deregister_layer1 (void);
 #ifdef  FEATURE_CAMERA_MOBICAT_PREVIEW
 boolean camera_svcs_start_mobicat_preview(uint32 mode, char*);
 #endif  //FEATURE_CAMERA_MOBICAT_PREVIEW
-
+#ifndef CAMERA_USES_SOFTDSP
 /* This function is used by the camcorder_svcs file */
 boolean camera_send_vfe_idle_and_wait(void);
-
+#endif
 #endif /* FEATURE_CAMERA */
 #endif
 

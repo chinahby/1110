@@ -41,7 +41,7 @@ Notice that changes are listed in reverse chronological order.
 #include "camctrl.h"
 #include "camera_af.h"
 
-
+#ifndef CAMERA_USES_SOFTDSP
 /*==============================================================================
   INTERNAL VARIABLES
 ==============================================================================*/
@@ -1108,3 +1108,4 @@ camera_af_do_process_full_sweep (const camsensor_static_params_type
   return ret_val;
 }
 #endif /* CAMERA_AF_USE_FULL_SWEEP */
+#endif //#ifndef CAMERA_USES_SOFTDSP

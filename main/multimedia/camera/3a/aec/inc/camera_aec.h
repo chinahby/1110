@@ -765,7 +765,7 @@ RETURN VALUE:
 
 void camera_aec_adjust_exposure_as_per_hjr(void);
 #endif /* FEATURE_CAMERA_HJR */
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION: CAMERA_AEC_APPLY_DIGITAL_GAIN_FOR_PREVIEW
@@ -799,7 +799,7 @@ RETURN VALUE:
 ============================================================================*/
 
 void camera_aec_apply_digital_gain_for_iso_snapshot(VFE_ColorCorrectionType *packed_cc_ptr);
-
+#endif
 /*===========================================================================
 
 FUNCTION: CAMERA_AEC_UPDATE_COLOR_CORRECTION_MATRIX

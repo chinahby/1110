@@ -1565,7 +1565,9 @@ typedef enum
 #endif
 #if (defined(FEATURE_AUDIO_CAMERA_CONCURRENCY)) || \
  (defined(FEATURE_AVS_NEXTGEN_EC) && defined(FEATURE_AMR_VOCODER))
+#ifndef T_QSC1100
 #define QDSP_MODULE_VFE05_DEFINED
+#endif
 #endif
 #if (defined(FEATURE_AUDIO_CAMERA_CONCURRENCY)) || \
  (defined(FEATURE_AVS_NEXTGEN_EC) && defined(FEATURE_AMR_VOCODER))
@@ -1637,7 +1639,9 @@ typedef enum
 #endif
 #endif
 #if (defined(FEATURE_AUDIO_CAMERA_CONCURRENCY))
+#ifndef T_QSC1100
 #define QDSP_MODULE_VFE05_CAPTURE_DEFINED
+#endif
 #endif
 #if (defined(FEATURE_AUDIO_CAMERA_CONCURRENCY))
 #define QDSP_MODULE_ACC_ADPCM_DEFINED

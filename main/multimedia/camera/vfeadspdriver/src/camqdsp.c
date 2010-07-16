@@ -159,6 +159,7 @@ when       who     what, where, why
 #include "camqdsp.h"
 #include "camerai.h"
 
+#ifndef CAMERA_USES_SOFTDSP
 #include "clk.h"
 #include "msg.h"             /* Message logging/reporting services         */
 #include "qdsp.h"
@@ -2468,5 +2469,5 @@ void CAMQDSP_Reset_Ack(void)
     MSG_HIGH("Unexpected qdsp_disable_event_rsp request",0,0,0);
   }
 }
-
+#endif //CAMERA_USES_SOFTDSP
 

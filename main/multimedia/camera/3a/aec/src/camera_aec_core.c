@@ -82,6 +82,7 @@ Notice that changes are listed in reverse chronological order.
 #include "target.h"
 #include "customer.h"
 #include "comdef.h"
+#ifndef CAMERA_USES_SOFTDSP
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
 #include <stdlib.h>             /* Dynamic memory allocation               */
 #include "camera_aec_core.h"
@@ -1761,6 +1762,6 @@ void camera_aec_core_update_indoor_outdoor_indices
   cam3a_aec_state.outdoor_index = (uint16)((int32)cam3a_aec_state.outdoor_index_init - (int32)compensation);
 } /* camera_update_indoor_outdoor_indices */
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
-
+#endif //#ifndef CAMERA_USES_SOFTDSP
 
 

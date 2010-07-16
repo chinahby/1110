@@ -93,20 +93,6 @@
 ==============================================================================*/
 #define AEE_APPSCAMERAAPP_RES_FILE  AEE_RES_LANGDIR CAMERAAPP_RES_FILE
 
-// resid of camera capture size
-#define IDS_CAMERA_SIZE_1600_1200  0
-#define IDS_CAMERA_SIZE_1280_960   1
-#define IDS_CAMERA_SIZE_640_480    2
-#define IDS_CAMERA_SIZE_320_240    3
-#define IDS_CAMERA_SIZE_176_220    4
-
-// text of camera capture size
-#define SIZE_1600_1200  L"1600x1200"
-#define SIZE_1280_960   L"1280x960"
-#define SIZE_640_480    L"640x480"
-#define SIZE_320_240    L"320x240"
-#define SIZE_176_220    L"176x220"
-
 // camera quality
 #define CAMERA_APP_QUALITY_HIGH  33
 #define CAMERA_APP_QUALITY_MED   67
@@ -146,7 +132,7 @@
 #define MIN_FREE_PHONE_SPACE         1
 
 // file path
-#define FS_EFS_DIRECTORY_STR       "hsmm/"
+#define FS_EFS_DIRECTORY_STR       "fs:/hsmm/"
 #define FS_CARD_PICTURES_FOLDER    MG_PICTURES_FOLDER DIRECTORY_STR
 #define FS_CARD_MUSIC_FOLDER       MG_MUSIC_FOLDER DIRECTORY_STR
 #define FS_CARD_VIDEOS_FOLDER      MG_VIDEOS_FOLDER DIRECTORY_STR
@@ -386,6 +372,7 @@ typedef struct _CCameraApp
     IFileMgr             *m_pFM; 
     IConfig              *m_pConfig;              // IConfig interface
     IStatic              *m_pStatic;              // 快捷键屏幕显示文本  
+    AEERect               m_rcStatic;
     IMedia               *m_pMedia;
     IImage               *m_pBusyStateImage;
     IFileMgr             *m_pFileMgr;

@@ -443,7 +443,7 @@ static void CameraApp_SetFunColorMenuItemSel(CCameraApp *pMe,
 static void CameraApp_SetColorCFGMenuIcon(CCameraApp *pMe, 
                                           IMenuCtl *popMenu);
 #endif
-
+static uint16 CameraApp_NotFullScreen(CCameraApp *pMe);
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -454,6 +454,31 @@ boolean refreshJPG = FALSE;
                                  本地（静态）数据
 ==============================================================================*/
 static boolean jpg_decoder_done = FALSE;
+
+typedef struct
+{
+    uint16 dx;
+    uint16 dy;
+    AECHAR *pStr;
+}CCameraSize;
+
+// 最大OEMNV_CAMERA_SIZE_MAX
+static const CCameraSize g_CameraSizeCFG[] = 
+{
+#if defined(FEATURE_DISP_160X128)
+    {160,128,L"160*128"}, // FULL Screen
+    {220,176,L"220*176"}, // QCIF
+    {320,240,L"320*240"}, // QVGA
+    {640,480,L"640*480"}, // VGA
+#else
+    {128,128,L"128*128"}, // FULL Screen
+    {160,120,L"160*120"}, // QQVGA
+    {220,176,L"220*176"}, // QCIF
+    {320,240,L"320*240"}, // QVGA
+    {640,480,L"640*480"}, // VGA
+#endif
+    {0,0,NULL}
+};
 
 /*==============================================================================
                                  函数定义
@@ -490,7 +515,7 @@ void CameraApp_ShowDialog(CCameraApp *pMe,uint16  dlgResId)
     }
     
     if (NULL != pMe->m_pDisplay)
-    {        
+    {
         if (dlgResId == IDD_CMAINMENU)
         {
             (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
@@ -687,7 +712,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     {
                         pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
                         
-                        pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_176_220;
+                        pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
 
                         (void)ICONFIG_SetItem(pMe->m_pConfig,
                                               CFGI_CAMERA_STORAGE,
@@ -770,8 +795,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
        
 ==============================================================================*/
 static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
-{ 
-    AEERect rectStatic;
+{
     int   nCameraSelfTime = 0;
     
     switch(eCode) 
@@ -834,9 +858,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                                                 IDI_CAMERA_BUSY);*/
             
             // 设置IStatic控件属性，用于显示快捷键提示字符
-            SETAEERECT(&rectStatic, 30, 74, 116, 40);
-
-            ISTATIC_SetRect(pMe->m_pStatic, &rectStatic);
+            ISTATIC_SetRect(pMe->m_pStatic, &pMe->m_rcStatic);
             
             ISTATIC_SetProperties(pMe->m_pStatic, ST_MIDDLETEXT|ST_CENTERTEXT|ST_TRANSPARENTBACK);
             return TRUE;
@@ -880,20 +902,13 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 CameraApp_SetParamAfterPreview(pMe);
                 pMe->m_bRePreview = FALSE;
             }
-     
-            if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_176_220)
-            {
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-                CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG_VERTU, 0, 0);
-
-                CameraApp_DrawBarBg(pMe, IDI_CFG_BG_VERTU, 0, 160); 
-#else            
+            
+            if(CameraApp_NotFullScreen(pMe))
+            {           
                 CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG, 0, 0);
 
-                CameraApp_DrawBarBg(pMe, IDI_CFG_BG, 0, 160); 
-#endif                
+                CameraApp_DrawBarBg(pMe, IDI_CFG_BG, 0, CameraApp_NotFullScreen(pMe)); 
                 DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
-            
             }
             else
             {
@@ -1089,7 +1104,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     // 设置zoom等级，176x220为5级，320x240为4级，640x480,1280x960为2级，1600x1200为1级
                     switch(pMe->m_nCameraSize)
                     {
-                        case OEMNV_CAMERA_SIZE_176_220:
+                        case OEMNV_CAMERA_SIZE_INDEX_0:
                             if(pMe->m_nCameraZoom != OEMNV_CAMERA_ZOOM_LEVEL5)
                             {
                                 pMe->m_nCameraZoom++;
@@ -1102,7 +1117,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                             break;
                             
 
-                        case OEMNV_CAMERA_SIZE_320_240:
+                        case OEMNV_CAMERA_SIZE_INDEX_1:
                             if(pMe->m_nCameraZoom != OEMNV_CAMERA_ZOOM_LEVEL4)
                             {
                                 pMe->m_nCameraZoom++;
@@ -1114,7 +1129,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                             
                             break;
 
-                        case OEMNV_CAMERA_SIZE_640_480:
+                        case OEMNV_CAMERA_SIZE_INDEX_2:
                             if(pMe->m_nCameraZoom != OEMNV_CAMERA_ZOOM_LEVEL2)
                             {
                                 pMe->m_nCameraZoom++;
@@ -1126,7 +1141,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                             
                             break; 
 
-                        case OEMNV_CAMERA_SIZE_1280_960:
+                        case OEMNV_CAMERA_SIZE_INDEX_3:
                             if(pMe->m_nCameraZoom != OEMNV_CAMERA_ZOOM_LEVEL2)
                             {
                                 pMe->m_nCameraZoom++;
@@ -1138,7 +1153,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                             
                             break;
 
-                        case OEMNV_CAMERA_SIZE_1600_1200: 
+                        case OEMNV_CAMERA_SIZE_INDEX_4: 
                         default:
                             return TRUE; 
                     }
@@ -1263,7 +1278,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
         return FALSE;
     }
 
-    SETAEERECT(&eRec, 0, 72, 176, 126);
+    SETAEERECT(&eRec, 0, 72, pMe->m_cxWidth, 126);
           
     switch(eCode) 
     {
@@ -1304,15 +1319,10 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
 
                 IDISPLAY_ClearScreen(pMe->m_pDisplay);
-
-                if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_176_220)
-                {
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-                    CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG_VERTU, 0, 0);
-#else                
+                if(CameraApp_NotFullScreen(pMe))
+                {             
                     CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG, 0, 0);
-#endif
-
+                    
                     DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
                 }
                 else
@@ -1337,19 +1347,19 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             }
             else
             {
-                if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_176_220)
-                {
-                    IDISPLAY_SetClipRect(pMe->m_pDisplay, &eRec);
-                
-                    IDisplay_EraseRect(pMe->m_pDisplay, &eRec);
-
-                    CameraApp_SetCameraFunFrame(pMe);
-                }
-                else
+                if(CameraApp_NotFullScreen(pMe))
                 {
                     IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
                 
                     IDisplay_EraseRect(pMe->m_pDisplay, &eRec);
+                }
+                else
+                {
+                    IDISPLAY_SetClipRect(pMe->m_pDisplay, &eRec);
+                    
+                    IDisplay_EraseRect(pMe->m_pDisplay, &eRec);
+                    
+                    CameraApp_SetCameraFunFrame(pMe);
                 }
 
                 CameraApp_DrawCCFGBar(pMe);
@@ -1357,8 +1367,11 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 CamreaApp_DrawCFGPromptText(pMe); 
 
                 IMENUCTL_Redraw(popMenu);
-
-                if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_176_220)
+                if(CameraApp_NotFullScreen(pMe))
+                {
+                    //IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
+                }
+                else
                 {
                     IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
                 }
@@ -1827,22 +1840,14 @@ static boolean CameraApp_CFunColorEffectHandle(CCameraApp *pMe, AEEEvent eCode, 
 
         case EVT_USER_REDRAW:
             IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
-            
-            if((pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_176_220) || (pMe->m_ePreState == STATE_CVIDEOCFG))
-            {
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-                //draw top bar bg
-                CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG_VERTU, 0, 0);
-
-                //draw cfg bar bg
-                CameraApp_DrawBarBg(pMe, IDI_SCROLLBAR_BG_VERTU, 0, 160);
-#else            
+            if(CameraApp_NotFullScreen(pMe) || (pMe->m_ePreState == STATE_CVIDEOCFG))
+            {           
                 //draw top bar bg
                 CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG, 0, 0);
 
                 //draw cfg bar bg
                 CameraApp_DrawBarBg(pMe, IDI_SCROLLBAR_BG, 0, 160);
-#endif
+                
                 //draw bottom bar
                 DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
             }
@@ -1964,7 +1969,7 @@ static boolean CameraApp_CFunColorEffectHandle(CCameraApp *pMe, AEEEvent eCode, 
 ==============================================================================*/
 static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {  
-    AEERect rectTime,rectStatic;
+    AEERect rectTime;
     
     switch(eCode) 
     {
@@ -1987,9 +1992,7 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
             
             ITIMECTL_SetProperties(pMe->m_pVideoRecTimeCtl, TP_NO_MSECONDS|TP_LEFT_JUSTIFY);
             
-            SETAEERECT(&rectStatic, 30, 74, 116, 40);
-            
-            ISTATIC_SetRect(pMe->m_pStatic, &rectStatic);
+            ISTATIC_SetRect(pMe->m_pStatic, &pMe->m_rcStatic);
 
             ISTATIC_SetProperties(pMe->m_pStatic, ST_MIDDLETEXT|ST_CENTERTEXT|ST_TRANSPARENTBACK);  
 
@@ -2035,9 +2038,9 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
 
                 fsize.cx=176;
                 fsize.cy=144;
-                psize.cx = 176;
-                psize.cy = 132;
-
+                psize.cx = g_CameraSizeCFG[0].dx;
+                psize.cy = (g_CameraSizeCFG[0].dx*3)>>2;
+                
                 ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEW_TYPE, CAM_PREVIEW_MOVIE, 0);
                
                 ICAMERA_SetDisplaySize(pMe->m_pCamera, &psize);
@@ -2198,7 +2201,7 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
                         pMe->m_nTicks = ISHELL_GetTimeMS(pMe->m_pShell) - pMe->m_dwDispTime; 
 #ifdef FEATURE_SUPPORT_VC0848
                         VC_SetVideoRecorderDoneState(FALSE); 
-                        #endif
+#endif
                         CameraApp_VideoRunning(pMe);
 
                         ICAMERA_RecordMovie(pMe->m_pCamera); 
@@ -3207,12 +3210,13 @@ static boolean CameraApp_PopMenu_SizeCommandHandleEvent(CCameraApp *pMe, uint16 
         ICAMERA_Stop(pMe->m_pCamera);
         pMe->m_nCameraState = CAM_STOP;
     }
-
-    if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_176_220)
+#if defined(FEATURE_DISP_128X128)
+    if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_INDEX_0)
     {
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 1, 0);
     }
     else
+#endif
     {
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 0, 0);
     }
@@ -3439,9 +3443,9 @@ static boolean CameraApp_PopMenu_StorageCommandHandleEvent(CCameraApp *pMe, uint
         case IDS_STORAGE_PHONE:
             pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
 
-            if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_176_220)
+            if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_DEFAULT)
             {
-                pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_176_220;
+                pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
                 
                 (void)ICONFIG_SetItem(pMe->m_pConfig,
                                       CFGI_CAMERA_SIZE,
@@ -4043,7 +4047,7 @@ static boolean CameraApp_HotKeyAVK_6_FrameHandleEvent(CCameraApp *pMe,
                                                       uint16 wParam, 
                                                       uint32 dwParam)
 {
-    if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_176_220)
+    if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_DEFAULT)
     {
         return TRUE;
     }
@@ -4273,9 +4277,9 @@ static boolean CameraApp_HotKeyAVK_STAR_SizeHandleEvent(CCameraApp * pMe,
                          &pMe->m_nCameraSize,
                          sizeof(pMe->m_nCameraSize));
     
-    if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_176_220)
+    if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_INDEX_0)
     {
-        pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_1600_1200;
+        pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_INDEX_4;
     }
     else
     {
@@ -4291,34 +4295,7 @@ static boolean CameraApp_HotKeyAVK_STAR_SizeHandleEvent(CCameraApp * pMe,
     pMe->m_szHotKeyTextBuf[n++] = (AECHAR)'\n'; 
 
     CameraApp_SetCameraCaptureSize(pMe, wParam);
-
-    switch(pMe->m_nCameraSize)
-    {
-        case OEMNV_CAMERA_SIZE_176_220:
-            WSTRCPY(pMe->m_szResTextBuf, SIZE_176_220);
-            break;
-
-        case OEMNV_CAMERA_SIZE_320_240:
-            WSTRCPY(pMe->m_szResTextBuf, SIZE_320_240);
-            break;
-
-        case OEMNV_CAMERA_SIZE_640_480:
-            WSTRCPY(pMe->m_szResTextBuf, SIZE_640_480);
-            break;
-
-        case OEMNV_CAMERA_SIZE_1280_960:
-            WSTRCPY(pMe->m_szResTextBuf, SIZE_1280_960);
-            break;
-
-        case OEMNV_CAMERA_SIZE_1600_1200:
-            WSTRCPY(pMe->m_szResTextBuf, SIZE_1600_1200);
-            break;
-
-        default:
-            break;
-                       
-    }
-                          
+    WSTRCPY(pMe->m_szResTextBuf, g_CameraSizeCFG[pMe->m_nCameraSize].pStr);
     WSTRCPY(pMe->m_szHotKeyTextBuf + n, pMe->m_szResTextBuf);
     
     ICAMERA_Stop(pMe->m_pCamera);
@@ -4622,12 +4599,12 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
         if(CameraApp_FindMemoryCardExist(pMe))
         {
             pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
-	     pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_176_220;
+	        pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
         }
         else
         {
             pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
-            pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_176_220;
+            pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
         }
         
         pMe->m_nSelfTimeItemSel = IDS_SELFTIME_OFF;
@@ -4866,7 +4843,7 @@ static void CameraApp_PopMenu_FunInit(CCameraApp *pMe, IMenuCtl *popMenu)
     switch(pMe->m_pActiveDlgID)
     {
         case IDD_CCAMERACFG:
-            if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_176_220)
+            if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_INDEX_0)
             {               
                 CameraApp_SetPopMenuRect(pMe, popMenu, 1);
 
@@ -5047,52 +5024,34 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
     IMENUCTL_DeleteAll(popMenu);
     if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
     {
-        CameraApp_SetPopMenuRect(pMe, popMenu, 4);
-        IMENUCTL_AddItem(popMenu, 
-                         AEE_APPSCAMERAAPP_RES_FILE, 
-                         IDS_CAMERA_SIZE_1600_1200,
-                         IDS_CAMERA_SIZE_1600_1200, 
-                         SIZE_1600_1200, 
-                         NULL);
+        int i=0;
 
-        IMENUCTL_AddItem(popMenu,
-                         AEE_APPSCAMERAAPP_RES_FILE, 
-                         IDS_CAMERA_SIZE_1280_960, 
-                         IDS_CAMERA_SIZE_1280_960, 
-                         SIZE_1280_960,
-                         NULL);
-
-        IMENUCTL_AddItem(popMenu, 
-                         AEE_APPSCAMERAAPP_RES_FILE, 
-                         IDS_CAMERA_SIZE_640_480,
-                         IDS_CAMERA_SIZE_640_480, 
-                         SIZE_640_480, 
-                         NULL);
-
-        IMENUCTL_AddItem(popMenu,
-                         AEE_APPSCAMERAAPP_RES_FILE, 
-                         IDS_CAMERA_SIZE_320_240,
-                         IDS_CAMERA_SIZE_320_240, 
-                         SIZE_320_240, 
-                         NULL);
-
-        IMENUCTL_AddItem(popMenu, 
-                         AEE_APPSCAMERAAPP_RES_FILE, 
-                         IDS_CAMERA_SIZE_176_220, 
-                         IDS_CAMERA_SIZE_176_220, 
-                         SIZE_176_220, 
-                         NULL);
+        while(1)
+        {
+            if(g_CameraSizeCFG[i].dx == 0)
+            {
+                break;
+            }
+            IMENUCTL_AddItem(popMenu, 
+                             NULL, 
+                             0,
+                             i, 
+                             g_CameraSizeCFG[i].pStr, 
+                             NULL);
+            i++;
+        }
+        
+        CameraApp_SetPopMenuRect(pMe, popMenu, i);
     }
     else
     {
-        CameraApp_SetPopMenuRect(pMe, popMenu, 1);
-        
         IMENUCTL_AddItem(popMenu, 
-                         AEE_APPSCAMERAAPP_RES_FILE, 
-                         IDS_CAMERA_SIZE_176_220, 
-                         IDS_CAMERA_SIZE_176_220, 
-                         SIZE_176_220, 
+                         NULL, 
+                         0,
+                         0, 
+                         g_CameraSizeCFG[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
                          NULL);
+        CameraApp_SetPopMenuRect(pMe, popMenu, 1);
     }
     
     InitMenuIcons(popMenu);
@@ -5102,31 +5061,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
                           &pMe->m_nCameraSize,
                           sizeof(pMe->m_nCameraSize));
 
-    switch(pMe->m_nCameraSize)
-    {
-        case OEMNV_CAMERA_SIZE_176_220:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_CAMERA_SIZE_176_220, TRUE);
-            break;
-
-        case OEMNV_CAMERA_SIZE_320_240:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_CAMERA_SIZE_320_240, TRUE);
-            break;
-
-        case OEMNV_CAMERA_SIZE_640_480:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_CAMERA_SIZE_640_480, TRUE);
-            break;
-
-        case OEMNV_CAMERA_SIZE_1280_960:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_CAMERA_SIZE_1280_960, TRUE);
-            break;
-
-        case OEMNV_CAMERA_SIZE_1600_1200:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_CAMERA_SIZE_1600_1200, TRUE);
-            break;
-
-        default:
-            break;
-    }    
+    CameraApp_SetCFGMenuIcon(popMenu, pMe->m_nCameraSize, TRUE);
 }
          
 static void CameraApp_PopMenu_ShutterToneInit(CCameraApp *pMe, IMenuCtl *popMenu)  
@@ -5796,23 +5731,23 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
      
     switch(pMe->m_nCameraSize)
     {
-        case OEMNV_CAMERA_SIZE_176_220:
+        case OEMNV_CAMERA_SIZE_INDEX_0:
             nResID[2] = IDI_SIZE_176_220;
             break;
 
-        case OEMNV_CAMERA_SIZE_320_240:
+        case OEMNV_CAMERA_SIZE_INDEX_1:
             nResID[2] = IDI_SIZE_320_240;
             break;
 
-        case OEMNV_CAMERA_SIZE_640_480:
+        case OEMNV_CAMERA_SIZE_INDEX_2:
             nResID[2] = IDI_SIZE_640_480;
             break;
 
-       case OEMNV_CAMERA_SIZE_1280_960:
+       case OEMNV_CAMERA_SIZE_INDEX_3:
             nResID[2] = IDI_SIZE_1280_960;
             break;
 
-       case OEMNV_CAMERA_SIZE_1600_1200:
+       case OEMNV_CAMERA_SIZE_INDEX_4:
             nResID[2] = IDI_SIZE_1600_1200;
             break;
             
@@ -6038,7 +5973,7 @@ static void CameraApp_DrawCCFGBar(CCameraApp * pMe)
 
     if(pCameraCFGBarBg)
     {
-        if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_176_220)
+        if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_INDEX_0)
         {
             CameraApp_DrawBarBg(pMe, IDI_LEFT_ARROW, 0, CFGBAR_EFFECT_TEXT_Y);        
             CameraApp_DrawBarBg(pMe, IDI_RIGHT_ARROW, 168, CFGBAR_EFFECT_TEXT_Y);
@@ -6441,7 +6376,7 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
                                pcText, 
                                sizeof(pcText));     
 
-    if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_176_220|| (pMe->m_pActiveDlgID == IDD_CVIDEOCFG))
+    if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_INDEX_0|| (pMe->m_pActiveDlgID == IDD_CVIDEOCFG))
     {
         (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
         
@@ -6645,43 +6580,14 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 {
     AEESize displaySize, captureSize; 
     int16 quality = 0;
-                                       
-    // set camera size
-    switch(pMe->m_nCameraSize)
+    
+    captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
+    captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
+    
+    if(!CameraApp_NotFullScreen(pMe))
     {
-        case OEMNV_CAMERA_SIZE_176_220:
-            captureSize.cx = 176;
-            captureSize.cy = 220;
-            break;
-
-        case OEMNV_CAMERA_SIZE_320_240:
-            captureSize.cx = 320;
-            captureSize.cy = 240;
-            break;
-
-        case OEMNV_CAMERA_SIZE_640_480:
-            captureSize.cx = 640;
-            captureSize.cy = 480;
-            break;
-
-        case OEMNV_CAMERA_SIZE_1280_960:
-            captureSize.cx = 1280;
-            captureSize.cy = 960;
-            break;
-
-        case OEMNV_CAMERA_SIZE_1600_1200:
-            captureSize.cx = 1600;
-            captureSize.cy = 1200;
-            break;
-
-        default:
-            break;                    
-    }
-
-    if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_176_220)
-    {
-        displaySize.cx = 176;
-        displaySize.cy = 220;
+        displaySize.cx = g_CameraSizeCFG[0].dx;
+        displaySize.cy = g_CameraSizeCFG[0].dy;
 
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 0);
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 1, 0);
@@ -6689,14 +6595,13 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     }
     else
     {
-        displaySize.cx = 176;
-        displaySize.cy = 132;
-
+        displaySize.cx = g_CameraSizeCFG[0].dx;
+        displaySize.cy = (g_CameraSizeCFG[0].dx*3)>>2;
+        
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 28);
         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 0, 0);
-
     }
-
+    
     // set camera quality
     switch(pMe->m_nCameraQuality)
     {
@@ -6766,7 +6671,7 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
 
     DBGPRINTF("m_sCaptureFileName = %s",pMe->m_sCaptureFileName);
         
-    if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_176_220)
+    if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_INDEX_0)
     {
         IDisplay_SetClipRect(pMe->m_pDisplay, 0);
         
@@ -7240,11 +7145,11 @@ static void CameraApp_DrawHotKeyTextWithFrame(CCameraApp *pMe)
 {
     AEERect topRec, bottomRec, leftRec, rightRec, midRec;
     
-    SETAEERECT(&topRec, 30, 73, 116, 40);
-    SETAEERECT(&bottomRec, 30, 75, 116, 40);
-    SETAEERECT(&leftRec, 29, 74, 116, 40);
-    SETAEERECT(&rightRec, 33, 74, 116, 40);
-    SETAEERECT(&midRec, 30, 74, 116, 40);
+    SETAEERECT(&topRec, pMe->m_rcStatic.x, pMe->m_rcStatic.y-1, pMe->m_rcStatic.dx, pMe->m_rcStatic.dy);
+    SETAEERECT(&bottomRec, pMe->m_rcStatic.x, pMe->m_rcStatic.y+1, pMe->m_rcStatic.dx, pMe->m_rcStatic.dy);
+    SETAEERECT(&leftRec, pMe->m_rcStatic.x-1, pMe->m_rcStatic.y, pMe->m_rcStatic.dx, pMe->m_rcStatic.dy);
+    SETAEERECT(&rightRec, pMe->m_rcStatic.x+1, pMe->m_rcStatic.y, pMe->m_rcStatic.dx, pMe->m_rcStatic.dy);
+    SETAEERECT(&midRec, pMe->m_rcStatic.x, pMe->m_rcStatic.y, pMe->m_rcStatic.dx, pMe->m_rcStatic.dy);
 
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
      
@@ -7441,69 +7346,38 @@ static boolean CameraApp_GetDateForRecordFileName(CCameraApp *pMe, char * pszDes
 
 static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
 {
-     AEESize displaySize, captureSize;
+    AEESize displaySize, captureSize;
      
-     pMe->m_nCameraZoom = OEMNV_CAMERA_ZOOM_LEVEL1;// 重新设置capture大小，重新设置zoom
-        
-     switch(wParam)
-     {
-         case IDS_CAMERA_SIZE_176_220:   
-             captureSize.cx = 176;
-             captureSize.cy = 220;
-             pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_176_220;
-             break;
- 
-         case IDS_CAMERA_SIZE_320_240:     
-             captureSize.cx = 320;
-             captureSize.cy = 240;
-             pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_320_240;
-             break;
- 
-         case IDS_CAMERA_SIZE_640_480:    
-             captureSize.cx = 640;
-             captureSize.cy = 480;
-             pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_640_480;
-             break;
- 
-         case IDS_CAMERA_SIZE_1280_960:            
-             captureSize.cx = 1280;
-             captureSize.cy = 960;
-             pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_1280_960;
-             break;
- 
-         case IDS_CAMERA_SIZE_1600_1200:        
-             captureSize.cx = 1600;
-             captureSize.cy = 1200;
-             pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_1600_1200;
-             break;
- 
-         default:
-             break;
-     }
-     
-     if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_176_220)
-     {
-         displaySize.cx = 176;
-         displaySize.cy = 220;
-         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 0);
+    pMe->m_nCameraZoom = OEMNV_CAMERA_ZOOM_LEVEL1;// 重新设置capture大小，重新设置zoom
+    pMe->m_nCameraSize = wParam;
+    
+    captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
+    captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
+    
+    if(!CameraApp_NotFullScreen(pMe))
+    {
+        displaySize.cx = g_CameraSizeCFG[0].dx;
+        displaySize.cy = g_CameraSizeCFG[0].dy;
 
+        ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 0);
+
+    }
+    else
+    {
+        displaySize.cx = g_CameraSizeCFG[0].dx;
+        displaySize.cy = (g_CameraSizeCFG[0].dx*3)>>2;
+        
+        ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 28);
+    }
+    
+    (void)ICONFIG_SetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                          &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
  
-     }
-     else
-     {
-         displaySize.cx = 176;
-         displaySize.cy = 132;
-         ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 28);
-     }
-     
-     (void)ICONFIG_SetItem(pMe->m_pConfig,
-                           CFGI_CAMERA_SIZE,
-                           &pMe->m_nCameraSize,
-                           sizeof(pMe->m_nCameraSize));
- 
-     ICAMERA_SetSize(pMe->m_pCamera, &captureSize);
- 
-     ICAMERA_SetDisplaySize(pMe->m_pCamera, &displaySize);
+    ICAMERA_SetSize(pMe->m_pCamera, &captureSize);
+    
+    ICAMERA_SetDisplaySize(pMe->m_pCamera, &displaySize);
 }
 
 static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
@@ -7581,7 +7455,7 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
     {
         IDISPLAY_ClearScreen(pMe->m_pDisplay);
         
-        if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_176_220)
+        if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_INDEX_0)
         {      
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG_VERTU, 0, 0);           
@@ -7913,3 +7787,25 @@ static void CameraApp_SetColorCFGMenuIcon(CCameraApp *pMe, IMenuCtl *popMenu)
     }
 }
 #endif
+
+// 判断当前的摄像头分辨率设置是否可以为全屏预览
+// 返回值为0表示全屏预览，否则返回y的偏移
+static uint16 CameraApp_NotFullScreen(CCameraApp *pMe)
+{
+    uint16 hCalc,wCalc;
+    if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_INDEX_0)
+    {
+        return 0;
+    }
+    
+    // 判断屏幕本身是否为4:3横屏
+    wCalc = (pMe->m_cxWidth-(pMe->m_cxWidth%12))>>2;
+    hCalc = (pMe->m_cyHeight-(pMe->m_cyHeight%12))/3;
+    if(wCalc == hCalc)
+    {
+        return 0;
+    }
+    
+    return (pMe->m_cxWidth>>2)*3;
+}
+

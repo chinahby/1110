@@ -1647,12 +1647,12 @@ uint32 *downsizer_out_luma_buffer = NULL;
 uint32 *downsizer_out_chroma_buffer = NULL;
 #endif /* QDSP_MODULE_DS05_DEFINED || QDSP_MODULE_SA_DS05_DEFINED*/
 camera_preview_mode_type   preview_mode;
-
+#ifndef CAMERA_USES_SOFTDSP
 /* When set to true, the VFE is reconfigured */
 //boolean                    camera_reconfigure;
 /* When set to TRUE, the VFE configuration is updated */
 boolean                    camera_update_vfe;
-
+#endif
 boolean                    camera_ok_to_sleep;
 
 #ifdef FEATURE_CAMERA_HJR
@@ -1692,9 +1692,11 @@ static ipl_rect_type camera_lcd_direct_rect;
  * start record or take picture started */
 boolean camera_blt_ext_recalculate_window = TRUE;
 static uint32 ui_resolution[2];
+#ifndef CAMERA_USES_SOFTDSP
 static CAMQDSP_IllegalCommandMessageType illegalCmdMessage;
 static CAMQDSP_AFStatsMessageType        afStatsMessage;
 static CAMQDSP_AE_AWBStatsMessageType    aeAwbStatsMessage;
+#endif
 #ifdef FEATURE_CAMERA_AEC_DURING_MULTISHOT
 #error code not present
 #endif /* FEATURE_CAMERA_AEC_DURING_MULTISHOT */
@@ -1709,10 +1711,10 @@ static camera_terminate_clk_state_type camera_terminate_clk_state = CAMERA_TERMI
 static clk_cb_type camera_terminate_clk;
 static clk_cb_type camera_service_unavailable_clk;
 static boolean camera_service_unavailable = FALSE;
-
+#ifndef CAMERA_USES_SOFTDSP
 static uint16                            frameDoneMessage [MP4E_FRAME_BUF_SIZE];
 VFE_EOF_Ack2Type                        ackOutput2;
-
+#endif
 #if defined QDSP_MODULE_DS05_DEFINED || \
   defined QDSP_MODULE_SA_DS05_DEFINED
 static ycbcr_downsizer_cmd_info_type yds_cmd;
@@ -1849,8 +1851,9 @@ static void* camera_make_information = 0;
 static uint16 camera_make_information_count = 0;
 static void* camera_model_information = 0;
 static uint16 camera_model_information_count = 0;
+#ifndef CAMERA_USES_SOFTDSP
 static VFE_SkipBitMaskType runningOutput2SkipPattern = 0;
-
+#endif
 /* New preview buffer scheme */
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY     2
@@ -1994,11 +1997,15 @@ void             *camera_app_data = 0;
 static boolean           camera_frame_callback_enabled = TRUE;
 static boolean           camera_abort_picture = FALSE;
 camsensor_op_mode_type      camera_camsensor_op_mode;
+#ifndef CAMERA_USES_SOFTDSP
 CAMQDSP_VFE_CommandType camera_dsp_command = CAMQDSP_CMD_MAX;
 static CAMQDSP_ResponseMsgType camera_dsp_response = CAMQDSP_SERVICE_UNAVAILABLE;
+#endif
 static boolean           scale_preview_overlay = FALSE;
+#ifndef CAMERA_USES_SOFTDSP
 static uint32  corrupt_count = 0;
 static uint32  illegal_count = 0;
+#endif
 static uint32  efs_fail_count = 0;
 uint8   preview_red_average = 128;
 uint8   preview_green_average = 128;
@@ -2049,9 +2056,9 @@ static boolean camera_flash_fired;
 #endif /* ANY_FLASH */
 
 JPEGENC_encodeSpecType  encodeInfo;   /* encode specification   */
-
+#ifndef CAMERA_USES_SOFTDSP
 static CAMQDSP_VideoEncStateType videoEncoderState;
-
+#endif
 #ifdef CAMERA_LOGGING
 uint32 log_index = 0;
 typedef struct
@@ -2202,7 +2209,7 @@ static camera_exposure_compensation_type camera_ev_compensation_table=
    12,         /* Value to convert fraction to index    */
    camera_ev_compensation_one_over_six_table,
 };
-
+#ifndef CAMERA_USES_SOFTDSP
 static Camera_EndOfFrameMessageType      endOfFrameMessage[2];
 
 //  The global variable below is no longer static
@@ -2210,6 +2217,7 @@ static Camera_EndOfFrameMessageType      endOfFrameMessage[2];
 //  the Mobile Camera Tuning tool.
 
 camera_vfe_configuration_control_and_status_type camera_vfe_control_and_status;
+#endif
 
 static int32 camera_parm4_value = 0;
 
@@ -2263,8 +2271,9 @@ static clk_cb_type camera_wait_camif_done_clk;
 #ifdef FEATURE_CAMERA_AEC_DURING_MULTISHOT
 #error code not present
 #endif /* FEATURE_CAMERA_AEC_DURING_MULTISHOT */
-
+#ifndef CAMERA_USES_SOFTDSP
 static camera_dsp_error_status_type camera_dsp_error_status;
+#endif
 static camera_output1_frame_rate_type camera_output1_frame_rate;
 
 typedef enum
@@ -2311,7 +2320,9 @@ If we are requesting stats with CAMQDSP_MSG_AE_AWB_STATS_COMPLETE, this flag is 
 However, with any reason, if we don't get CAMQDSP_MSG_AE_AWB_STATS_COMPLETE, this flag
 will be set to be FALSE again and stats will be requested by CAMQDSP_MSG_OUTPUT1_END_OF_FRAME
 *************************************************************************************/
+#ifndef CAMERA_USES_SOFTDSP
 static boolean aec_awb_stats_received = FALSE;
+#endif
 #ifdef FEATURE_CAMERA_AEC_DURING_MULTISHOT
 #error code not present
 #endif /* FEATURE_CAMERA_AEC_DURING_MULTISHOT */
@@ -2372,8 +2383,9 @@ static camera_clk_resource_type camera_clk_resource = CAMERA_CLK_RESOURCE_DEFAUL
 static void camera_svcs_queue_call_to_terminate(void);
 static void camera_process_terminate(void);
 static void camera_terminate_clk_cb (int4 ms);
+#ifndef CAMERA_USES_SOFTDSP
 static void camera_service_unavailable_clk_cb(int4 ms);
-
+#endif
 #ifdef FEATURE_MDP
 void  camera_deregister_video (boolean clear_ovimg);
 void  camera_deregister_layer1 (void);
@@ -2455,6 +2467,7 @@ static void camera_process_set_position ( camera_cb_f_type callback, void *clien
 static void camera_process_set_exif_tag ( camera_cb_f_type callback, void *client_data);
 
 void camera_terminate (camera_cb_type cb, int32 parm4);
+#ifndef CAMERA_USES_SOFTDSP
 static void camera_process_qdsp_idle_state_msg (void);
 static void camera_process_qdsp_output1_msg (Camera_EndOfFrameMessageType *msg);
 static void camera_process_qdsp_output2_msg (Camera_EndOfFrameMessageType *msg);
@@ -2463,6 +2476,7 @@ static void camera_process_qdsp_config_done_msg (CAMQDSP_VideoEncStateType *x);
 static void camera_process_qdsp_illegal_cmd_msg (void);
 static void camera_process_qdsp_update_complete_msg (void);
 static void camera_process_qdsp_hist_stats_complete_msg (void);
+#endif
 static void camera_wait_clk_cb (int4 ms);
 #ifdef HANDLE_CAMIF_ERROR
 static void camera_camif_error_clk_cb (int4 ms);
@@ -2470,8 +2484,9 @@ static void camera_camif_error_clk_cb (int4 ms);
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
 static void camera_clr_icons (void);
 #endif /* FEATURE_CAMERA_SUPPORT_ICON_ARRAY */
+#ifndef CAMERA_USES_SOFTDSP
 void camera_initiate_capture (void);
-
+#endif
 
 boolean camera_set_preview_buffers (void);
 void camera_set_preview_headers (void);
@@ -2481,11 +2496,12 @@ static void camera_set_preview_headers_rotation (void);
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
 static camera_ret_code_type camera_set_icon_and_preview_overlay(void);
 #endif /* FEATURE_CAMERA_SUPPORT_ICON_ARRAY */
+#ifndef CAMERA_USES_SOFTDSP
 boolean camera_config_vfe(void);
 void    camera_qdsp_cb (CAMQDSP_ResponseType *response);
-
 static void camera_calculate_vfe_clipping (void);
 static void camera_calculate_ahb_burst_factors (uint32 *burst_factor1, uint32 *burst_factor2, uint32 image_size);
+#endif
 #ifdef FEATURE_CAMERA_LPM
 #error code not present
 #endif /* FEATURE_CAMERA_LPM */
@@ -2584,8 +2600,10 @@ static void camera_clr_take_picture (void);
 #ifdef CAMERA_MALLOC_LOGGING
 static boolean camera_check_memory_leaks(void);
 #endif /* CAMERA_MALLOC_LOGGING */
+#ifndef CAMERA_USES_SOFTDSP
 static void camera_process_qdsp_camif_done_msg(void);
 static void camera_wait_camif_done_clk_cb (int4 ms);
+#endif
 
 #ifdef FEATURE_CAMERA_AEC_DURING_MULTISHOT
 #error code not present
@@ -2593,8 +2611,9 @@ static void camera_wait_camif_done_clk_cb (int4 ms);
 
 static void camera_process_handle_error (void);
 static void camera_handle_frames_for_takepicture(void);
+#ifndef CAMERA_USES_SOFTDSP
 static uint32 camera_calculate_skip_pattern(uint32 input_sensor_fps, float input_desired_fps, uint32 bitwidth);
-
+#endif
 static void camera_process_take_single_picture(void);
 static boolean camera_abort_takepicture_encoding_operation(void);
 static void camera_show_snapshot_timing( void );
@@ -2630,11 +2649,13 @@ static void camera_rotate_encode_overlay(void);
 #define camera_restore_config_for_preview()
 #define camera_process_qdsp_ae_awb_stats_complete_msg(msg)
 #else
+#ifndef CAMERA_USES_SOFTDSP
 static boolean camera_aec_awb_ready (void);
 static camera_ret_code_type camera_svcs_set_ev_compensation(int32 parm);
 static void camera_restore_config_for_preview(void);
 static void camera_process_qdsp_ae_awb_stats_complete_msg (CAMQDSP_AE_AWBStatsMessageType * msg);
 static void camera_request_aec_awb_stats(void);
+#endif
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
 
 /* Applies the overlay on the main image and thumbnail */
@@ -2643,6 +2664,7 @@ static camera_cb_type camera_svcs_translate_ret_val_to_cb
 (
  camera_ret_code_type ret_val
 );
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_VFE_CONTROL_AND_STATUS_SET_DEFAULT
@@ -2663,7 +2685,7 @@ void camera_vfe_control_and_status_set_default()
   camera_vfe_control_and_status.vfe_idle_msg_failed        = FALSE;
   camera_vfe_control_and_status.wait_for_dsp_idle          = FALSE;
 }
-
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_TAKE_PICTURE_STATUS_SET_DEFAULT
@@ -2700,7 +2722,7 @@ void camera_take_picture_status_set_default()
 #endif /* QDSP_MODULE_DS05_DEFINED || QDSP_MODULE_SA_DS05_DEFINED*/
   camera_take_picture_status.encode_in_progress       = FALSE;
 }
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_DSP_ERROR_STATUS_SET_DEFAULT
@@ -2720,7 +2742,7 @@ void camera_dsp_error_status_set_default()
   camera_dsp_error_status.received_camif_error        = FALSE;
   camera_dsp_error_status.received_ahb_overflow_error = FALSE;
 }
-
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_FREE_PREVIEW_BUFFERS
@@ -3210,19 +3232,22 @@ void camera_svcs_init(void)
 #endif /*FEATURE_CAMERA_BURST_MODE*/
 
   qcamraw_header_size = qcamrawInitHeaderSize();
-
+#ifndef CAMERA_USES_SOFTDSP
   /* Memclear global and locally used structures for 3A */
   camera_3a_init();
-
+#endif
   /* Initialize the trigerring flags */
 
  #ifdef CAMERA_USES_CHROMATIX_0x203
 #error code not present
  #endif /* CAMERA_USES_CHROMATIX_0x203 */
-
+#ifndef CAMERA_USES_SOFTDSP
   /* Runtime detection of VFE features */
   /* renamed. This used to be vfe_features_auto_detect() */
   vfe_init ();
+#else
+  // TODO:
+#endif
 #endif /* nT_IO_CARD */
 }
 
@@ -4188,8 +4213,12 @@ camera_ret_code_type camera_svcs_take_picture
   }
   else
   {
+#ifndef CAMERA_USES_SOFTDSP
     if (camera_flash_auto &&( camsensor_static_params[camera_asi].output_format != CAMSENSOR_YCBCR)\
                                                                      &&(camera_aec_flash_needed()))
+#else
+    if (camera_flash_auto &&( camsensor_static_params[camera_asi].output_format != CAMSENSOR_YCBCR))
+#endif
     {
       camera_fire_flash = TRUE;
     }
@@ -4204,13 +4233,13 @@ camera_ret_code_type camera_svcs_take_picture
   if ((camera_fire_flash) && (camera_parm_red_eye_reduction.current_value))
      strobe_flash_redeye_reduction();
 #endif /* FEATURE_STROBE_FLASH */
-
+#ifndef CAMERA_USES_SOFTDSP
   /* If AF is active, then stop it */
   if (camera_af_is_active())
   {
     camera_af_stop_focus();
   }
-
+#endif
   camera_take_images = FALSE;
   camera_take_picture_retry = CAMERA_TAKE_PICTURE_RETRY_NONE;
 
@@ -4561,8 +4590,12 @@ static camera_ret_code_type camera_encode_picture_common
     {
       raw_image_header      = &my_raw_image_header;
       raw_image_buffer      = frame->buffer;
+#ifndef CAMERA_USES_SOFTDSP
       raw_image_size    = vfeRawConfig.burstFactor2ForBuffers * vfeRawConfig.burstFactor1ForBuffers * sizeof(uint32) * vfeRawConfig.burstLenForBuffers;
-
+#else
+      // TODO:
+      raw_image_size    = 1024;
+#endif
       switch (frame->format)
       {
         case CAMERA_YCBCR_4_2_2:
@@ -6344,6 +6377,7 @@ camera_ret_code_type camera_svcs_blt_ex
 } /* camera_svcs_blt_ex */
 
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_ENABLE_SOLARIZE
@@ -6381,7 +6415,6 @@ camera_ret_code_type camera_enable_solarize()
     matrix_ptr = camera_awb_effects_off(camera_parm_white_balance.current_value);
 
     vfe_set_color_conversion(matrix_ptr, (float)CAMERA_SATURATION_DEFAULT);
-
     camera_update_vfe = TRUE;
     // flag that will re-configure the VFE hence taking the default gammma value
     camera_vfe_control_and_status.reconfigure_vfe = TRUE;
@@ -6391,9 +6424,11 @@ camera_ret_code_type camera_enable_solarize()
   else
     return CAMERA_NO_SENSOR;
 }
+#endif //#ifndef CAMERA_USES_SOFTDSP
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
 
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_DEFAULT_GAMMA
@@ -6426,6 +6461,7 @@ camera_ret_code_type camera_default_gamma()
 
   return CAMERA_SUCCESS;
 }
+#endif //#ifndef CAMERA_USES_SOFTDSP
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
 
 /*===========================================================================
@@ -6581,6 +6617,7 @@ camera_ret_code_type camera_svcs_set_parm
           MSG_HIGH ("Cannot set the sensor's zoom", 0, 0, 0);
         }
       }
+#ifndef CAMERA_USES_SOFTDSP
       else
       {
         camera_calculate_zoom ();
@@ -6601,7 +6638,7 @@ camera_ret_code_type camera_svcs_set_parm
           camera_3a_shared_set_aec_awb_delay_count (ZOOM_STATS_DELAY, AEC_AWB_DELAY_UPDATE);
         }
       }
-
+#endif
       break;
 
     case CAMERA_PARM_PREVIEW_ROTATION:
@@ -6762,7 +6799,7 @@ camera_ret_code_type camera_svcs_set_parm
         if (camera_parm_contrast.current_value != parm)
         {
           camera_parm_contrast.current_value = parm;
-
+#ifndef CAMERA_USES_SOFTDSP
           if (camsensor_static_params[camera_asi].output_format == CAMSENSOR_YCBCR)
           {
             (void) camsensor_set_contrast ((int8) parm);
@@ -6773,6 +6810,9 @@ camera_ret_code_type camera_svcs_set_parm
             camera_vfe_control_and_status.reconfigure_vfe = TRUE;
             camera_vfe_control_and_status.number_of_frames_to_ignore = 1;
           }
+#else
+          (void) camsensor_set_contrast ((int8) parm);
+#endif
         }
       }
       break;
@@ -6788,6 +6828,7 @@ camera_ret_code_type camera_svcs_set_parm
       }
       else
       {
+#ifndef CAMERA_USES_SOFTDSP
         if (camsensor_static_params[camera_asi].output_format == CAMSENSOR_YCBCR)
         {
           (void) camsensor_set_brightness ((int8) parm);
@@ -6818,6 +6859,11 @@ camera_ret_code_type camera_svcs_set_parm
           ret_val = CAMERA_SUCCESS;
         }
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
+#else
+        (void) camsensor_set_brightness ((int8) parm);
+         camera_parm_brightness.current_value = parm;
+         ret_val = CAMERA_SUCCESS;
+#endif //#ifndef CAMERA_USES_SOFTDSP
       }
       break;
 
@@ -6828,6 +6874,7 @@ camera_ret_code_type camera_svcs_set_parm
       }
       else
       {
+#ifndef CAMERA_USES_SOFTDSP
         if (camsensor_static_params[camera_asi].output_format == CAMSENSOR_YCBCR)
         {
           (void) camsensor_set_ev_compensation ((int32)parm);
@@ -6845,6 +6892,11 @@ camera_ret_code_type camera_svcs_set_parm
           }
         }
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
+#else
+        (void) camsensor_set_ev_compensation ((int32)parm);
+        camera_parm_exposure_compensation.current_value =  parm;
+        ret_val = CAMERA_SUCCESS;
+#endif
       }
       break;
 
@@ -6861,7 +6913,7 @@ camera_ret_code_type camera_svcs_set_parm
 #ifdef FEATURE_CAMERA_BESTSHOT_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BESTSHOT_MODE */
-
+#ifndef CAMERA_USES_SOFTDSP
       if (camsensor_static_params[camera_asi].output_format == CAMSENSOR_YCBCR)
       {
          ret_val=camsensor_set_wb ((int8) parm);
@@ -6873,6 +6925,9 @@ camera_ret_code_type camera_svcs_set_parm
          ret_val = camera_awb_set_wb(&(camsensor_static_params[camera_asi]),
                                    parm, camera_parm_special_effects.current_value);
       }
+#else
+      ret_val=camsensor_set_wb ((int8) parm);
+#endif
       if(ret_val == CAMERA_SUCCESS)
       {
         /* Update global wb setting */
@@ -6886,6 +6941,7 @@ camera_ret_code_type camera_svcs_set_parm
 #ifdef FEATURE_CAMERA_BESTSHOT_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BESTSHOT_MODE */
+#ifndef CAMERA_USES_SOFTDSP
      if (camsensor_static_params[camera_asi].output_format == CAMSENSOR_YCBCR)
       {
          ret_val=camsensor_set_effect ((int8) parm);
@@ -6896,9 +6952,13 @@ camera_ret_code_type camera_svcs_set_parm
         ret_val =  camera_awb_set_special_effect(parm, camera_parm_white_balance.current_value,
                                                  &camera_parm_special_effects.current_value);
      }
+#else
+     ret_val=camsensor_set_effect ((int8) parm);
+#endif
      break;
 
     case CAMERA_PARM_FPS:
+#ifndef CAMERA_USES_SOFTDSP
       {
         uint16 numerator = 0;
         uint16 denominator = 0;
@@ -6954,7 +7014,6 @@ camera_ret_code_type camera_svcs_set_parm
 #endif /* FEATURE_VIDEO_ENCODE */
 
         camera_parm_fps.current_value = parm;
-
         skip_pattern = camera_calculate_skip_pattern(sensor_fps, desired_fps,
                                                      CAMERA_VFE_SKIP_PATTERN_WIDTH);
 
@@ -6975,6 +7034,9 @@ camera_ret_code_type camera_svcs_set_parm
           MSG_ERROR ("Camera cannot set fps, skip pattern returned %x", skip_pattern,0,0);
 
       }
+#else
+      ret_val = CAMERA_NOT_SUPPORTED;
+#endif //#ifndef CAMERA_USES_SOFTDSP
       break;
 
 #ifdef FEATURE_VIDEO_SETATOMS_DYNAMIC
@@ -7056,7 +7118,11 @@ camera_ret_code_type camera_svcs_set_parm
       break;
 
     case CAMERA_PARM_NIGHTSHOT_MODE:
+#ifndef CAMERA_USES_SOFTDSP
       ret_val = camera_aec_set_parm(CAMERA_PARM_NIGHTSHOT_MODE, parm);
+#else
+      ret_val = CAMERA_NOT_SUPPORTED;
+#endif
       break;
 
     case CAMERA_PARM_REFLECT:
@@ -7098,6 +7164,7 @@ camera_ret_code_type camera_svcs_set_parm
 #ifdef FEATURE_CAMERA_BESTSHOT_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BESTSHOT_MODE */
+#ifndef CAMERA_USES_SOFTDSP
           if (camsensor_static_params[camera_asi].output_format == CAMSENSOR_YCBCR)
           {
             ret_val=camsensor_set_antibanding ((int8) parm);
@@ -7111,7 +7178,9 @@ camera_ret_code_type camera_svcs_set_parm
            (camera_antibanding_type)camera_parm_antibanding.current_value,
                       &(camsensor_static_params[camera_asi]));
           }
-
+#else
+          ret_val=camsensor_set_antibanding ((int8) parm);
+#endif
         }
         else
         {
@@ -7170,6 +7239,7 @@ camera_ret_code_type camera_svcs_set_parm
          * user to change value after bestshot mode is applied
          */
         camera_parm_auto_exposure_mode.current_value = parm;
+#ifndef CAMERA_USES_SOFTDSP
         if (camsensor_static_params[camera_asi].output_format == CAMSENSOR_YCBCR)
         {
             ret_val= camsensor_set_exposure_mode ((int8) parm);
@@ -7181,7 +7251,9 @@ camera_ret_code_type camera_svcs_set_parm
           (void) camera_aec_set_aec_mode( (camera_auto_exposure_mode_type) parm, \
             &(camsensor_static_params[camera_asi]) );
         }
-
+#else
+        ret_val= camsensor_set_exposure_mode ((int8) parm);
+#endif
       }
 
       break;
@@ -7207,11 +7279,15 @@ camera_ret_code_type camera_svcs_set_parm
 #endif /* FEATURE_VIDENC_TRANSITION_EFFECTS */
 
     case CAMERA_PARM_ISO:
+#ifndef CAMERA_USES_SOFTDSP
       camera_parm_iso.current_value = parm;
 #ifdef FEATURE_CAMERA_BESTSHOT_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BESTSHOT_MODE */
       ret_val = camera_aec_set_parm(CAMERA_PARM_ISO, parm);
+#else
+      ret_val = CAMERA_NOT_SUPPORTED;
+#endif
       break;
 
     case CAMERA_PARM_APERTURE:
@@ -7339,6 +7415,7 @@ camera_ret_code_type camera_svcs_set_parm_2
   {
     /* For now, this parm only has application for Auto Frame Rate */
     case CAMERA_PARM_PREVIEW_FPS:
+#ifndef CAMERA_USES_SOFTDSP
       {
         int32 num_possible_frame_rates = camsensor_static_params[camera_asi].num_possible_frame_rates;
         uint16 max_fps, min_fps, numerator, denominator;
@@ -7421,10 +7498,14 @@ camera_ret_code_type camera_svcs_set_parm_2
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
         } /* max and min are in range */
       }
+#else
+      ret_val = CAMERA_NOT_SUPPORTED;
+#endif
       break;
 
     case CAMERA_PARM_AF_MODE:
       {
+#ifndef CAMERA_USES_SOFTDSP
         camera_parm_af_mode.current_value = parm1;
 #ifdef FEATURE_CAMERA_BESTSHOT_MODE
 #error code not present
@@ -7432,6 +7513,9 @@ camera_ret_code_type camera_svcs_set_parm_2
         ret_val = camera_af_config(&(camsensor_static_params[camera_asi]), 
                                     (camera_af_mode_type)parm1, 
                                     AF_PROCESS_UNCHANGED);
+#else
+        ret_val = CAMERA_NOT_SUPPORTED;
+#endif
         break;
       }
 #ifdef FEATURE_VIDEO_ENCODE
@@ -7546,10 +7630,11 @@ camera_ret_code_type camera_svcs_get_parm
   camera_parm_info_type *parm
 )
 {
+#ifndef CAMERA_USES_SOFTDSP
   camera_parm_info_type camera_parm;
   camera_log (LOG_FUNC, (uint32)CAMERA_FUNC_GET_PARM, (uint32) id, 0, __LINE__);
   MSG_LOW ("Camera get parm", id, 0, 0);
-
+#endif
   if (camsensor_initialized == FALSE)
   {
     event_report (EVENT_CAMERA_NO_SENSOR);
@@ -7637,7 +7722,11 @@ camera_ret_code_type camera_svcs_get_parm
       
 
     case CAMERA_PARM_NIGHTSHOT_MODE:
+#ifndef CAMERA_USES_SOFTDSP
       return camera_aec_get_parm(CAMERA_PARM_NIGHTSHOT_MODE, parm);
+#else
+      return CAMERA_NOT_SUPPORTED;
+#endif
 
     case CAMERA_PARM_REFLECT:
       *parm = camera_parm_reflect;
@@ -7652,6 +7741,7 @@ camera_ret_code_type camera_svcs_get_parm
       break;
 
     case CAMERA_PARM_FOCUS_STEP:
+#ifndef CAMERA_USES_SOFTDSP
       /* AF must be both supported by current sensor and enabled */
       if (!camctrl_tbl.af_is_supported)
       {
@@ -7676,6 +7766,9 @@ camera_ret_code_type camera_svcs_get_parm
         *parm = camera_parm;
       }
       break;
+#else
+      return CAMERA_NOT_SUPPORTED;
+#endif
 
     case CAMERA_PARM_EXPOSURE_METERING:
     case CAMERA_PARM_AUTO_EXPOSURE_MODE:  /* Legacy parm, EXPOSURE_METERING has replaced it */
@@ -7687,6 +7780,7 @@ camera_ret_code_type camera_svcs_get_parm
       break;
 
     case CAMERA_PARM_PREVIEW_FPS:
+#ifndef CAMERA_USES_SOFTDSP
       {
         int32 num_possible_frame_rates = camsensor_static_params[camera_asi].num_possible_frame_rates;
         uint16 max_capable_fps, min_capable_fps;
@@ -7715,13 +7809,18 @@ camera_ret_code_type camera_svcs_get_parm
         *parm = camera_parm_preview_fps;
         break;
       }
+#else
+      return CAMERA_NOT_SUPPORTED;
+#endif
 
     case CAMERA_PARM_ISO:
+#ifndef CAMERA_USES_SOFTDSP
       if( camera_aec_get_parm(CAMERA_PARM_ISO, parm) == CAMERA_SUCCESS )
       {
         parm->current_value = camera_parm_iso.current_value;
       }
       else
+#endif
       {
         return CAMERA_NOT_SUPPORTED;
       }
@@ -7804,6 +7903,7 @@ camera_ret_code_type camera_svcs_get_parm_2
   switch (id)
   {
   case CAMERA_PARM_AF_MODE:
+#ifndef CAMERA_USES_SOFTDSP
     if (camctrl_tbl.af_is_supported)
     {
       *parm1_ptr = camera_parm_af_mode.current_value;
@@ -7815,6 +7915,7 @@ camera_ret_code_type camera_svcs_get_parm_2
   case CAMERA_PARM_FPS_LIST:
     ret_val = camsensor_get_fps_list(parm1_ptr, parm2_ptr);
     break;
+#endif
 
   default:
     ret_val = CAMERA_NOT_SUPPORTED;
@@ -8716,11 +8817,20 @@ void camera_svcs_process_func
 #endif /* FEATURE_VIDEO_ENCODE */
 
     case CAMERA_FUNC_START_FOCUS:
+#ifndef CAMERA_USES_SOFTDSP
       camera_af_process_start_focus(cb, data, (camera_focus_e_type)info1);
+#else
+      if(cb)
+      {
+        cb(CAMERA_RSP_CB_SUCCESS, data, CAMERA_FUNC_START_FOCUS, 0);
+      }
+#endif
       break;
 
     case CAMERA_FUNC_MOVE_LENS_DONE:
+#ifndef CAMERA_USES_SOFTDSP
       camera_af_process_lens_move_done(info1);
+#endif
       break;
 
     case CAMERA_FUNC_HANDLE_ERROR:
@@ -8759,6 +8869,7 @@ SIDE EFFECTS
 ===========================================================================*/
 void camera_svcs_process_qdsp_msg (uint32 msg, void *buffer)
 {
+#ifndef CAMERA_USES_SOFTDSP
   CAMQDSP_ResponseMsgType qdsp_msg = (CAMQDSP_ResponseMsgType) msg;
 
 #ifdef CAMERA_TIMETEST
@@ -8785,7 +8896,7 @@ void camera_svcs_process_qdsp_msg (uint32 msg, void *buffer)
         camera_process_terminate();
         return;
       }
-
+#ifndef CAMERA_USES_SOFTDSP
       if ((camera_state == CAMERA_STATE_TAKE_PICTURE)
 #ifdef FEATURE_CAMERA_BURST_MODE
 #error code not present
@@ -8795,7 +8906,7 @@ void camera_svcs_process_qdsp_msg (uint32 msg, void *buffer)
       {
         (void) camera_config_vfe();
       }
-
+#endif
 #ifdef FEATURE_VIDEO_ENCODE
       /* If in video recording state, initialize the engine,
        * otherwise fall through as if DSP is idle. */
@@ -9003,7 +9114,9 @@ void camera_svcs_process_qdsp_msg (uint32 msg, void *buffer)
 #ifdef CAMERA_TIMETEST
 #error code not present
 #endif /* CAMERA_TIMETEST */
-
+#else //#ifndef CAMERA_USES_SOFTDSP
+    // TODO:
+#endif //#ifndef CAMERA_USES_SOFTDSP
 } /* camera_process_qdsp_msg */
 
 /*===========================================================================
@@ -9635,7 +9748,7 @@ static void camera_calculate_zoom (void)
 #endif /* ! QDSP_MODULE_VFE25_DEFINED */
 } /* camera_calculate_zoom */
 
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_CALCULATE_VFE_CLIPPING
@@ -10054,7 +10167,6 @@ static void camera_calculate_ahb_burst_factors (uint32 *burst_factor1, uint32 *b
   *burst_factor1 = data_len / (*burst_factor2);
 } /* camera_calculate_ahb_burst_factors */
 
-
 /*===========================================================================
 
 FUNCTION      CAMERA_CALCULATE_CEILING_NUMBER
@@ -10083,7 +10195,7 @@ static uint32 camera_calculate_ceiling_number (uint32 numerator, uint32 denomina
     return numerator;
   }
 } /* camera_calculate_ceiling_number */
-
+#endif
 
 /*===========================================================================
 
@@ -10198,9 +10310,9 @@ static void camera_process_start
 )
 {
 #ifndef T_IO_CARD
-
+#ifndef CAMERA_USES_SOFTDSP
   uint32 number_of_fragments;
-
+#endif
   camsensor_static_params_type *camsensor_params = &(camsensor_static_params[camera_asi]);
   
 #ifdef T_FFA
@@ -10234,7 +10346,9 @@ static void camera_process_start
 #ifdef CAMERA_MALLOC_LOGGING
   if (camera_check_memory_leaks() == TRUE)
   {
+#ifndef CAMERA_USES_SOFTDSP
     camera_3a_mem_deallocate();
+#endif
     camera_clr_take_picture ();
     camera_clr_overlays ();
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
@@ -10264,7 +10378,7 @@ static void camera_process_start
 #endif /* CAMERA_USES_CAMIF_PAD */
 
   }
-
+#ifndef CAMERA_USES_SOFTDSP
   /* Neet to get vfe service started */
   /* color matrix converting should be happened before 3a is configured*/
   if (vfe_start(&camsensor_static_params[camera_asi]) != CAMERA_SUCCESS)
@@ -10278,9 +10392,10 @@ static void camera_process_start
     return;
 
   }
-
+  
   camera_update_vfe = TRUE;
   camera_vfe_control_and_status_set_default();
+
   /* Initializes global and locally used structures for AEC/AWB */
   camera_3a_start( camsensor_params );
   /* AF is independent of 3a_config */
@@ -10311,7 +10426,7 @@ static void camera_process_start
     ackOutput2.eofAck2[number_of_fragments].Y_Address    = NULL;
     ackOutput2.eofAck2[number_of_fragments].CbCr_Address = NULL;
   }
-
+#endif
 #ifdef CAMERA_THUMBNAIL_SIZE_QCIF
   thumbnail_width = 176;
   ui_thumbnail_width = 176;
@@ -10366,11 +10481,13 @@ static void camera_process_start
 
   camera_parm_preview_mode.current_value      = (int)preview_mode;
   camera_parm_antibanding.current_value       = (int)CAMERA_ANTIBANDING_OFF;
+#ifndef CAMERA_USES_SOFTDSP
   /* Turn it off in CAM3a */
   if( camsensor_static_params[camera_asi].output_format == CAMSENSOR_BAYER )
   {
     (void) camera_aec_set_antibanding ((camera_antibanding_type)camera_parm_antibanding.current_value, camsensor_params);
   }
+#endif
 #ifdef FEATURE_STROBE_FLASH
   camera_parm_red_eye_reduction.current_value = FALSE;
 #endif /*FEATURE_STROBE_FLASH*/
@@ -10384,6 +10501,7 @@ static void camera_process_start
 #error code not present
 #endif /* FEATURE_CAMERA_BESTSHOT_MODE */
   camera_parm_iso.current_value = camera_parm_iso.default_value;
+#ifndef CAMERA_USES_SOFTDSP
   if( camsensor_static_params[camera_asi].output_format == CAMSENSOR_BAYER )
   {
     /* we need to reset ISO to the not best shot values in
@@ -10401,7 +10519,7 @@ static void camera_process_start
     camera_aec_set_exposure_compensation((uint8) cam3a_aec_state.default_luma_target);
   }
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
-
+#endif
   /* Set these back to default */
   camera_parm_exposure_compensation.current_value = camera_parm_exposure_compensation.default_value;
   camera_parm_brightness.current_value = camera_parm_brightness.default_value;
@@ -10425,7 +10543,9 @@ static void camera_process_start
     camera_parm_preview_fps.current_value = camera_parm_preview_fps.default_value;
 
   }
+#ifndef CAMERA_USES_SOFTDSP
   camera_dsp_error_status_set_default();
+#endif
   camera_take_picture_status_set_default();
   camera_capture_delay = 0;
 
@@ -10441,8 +10561,10 @@ static void camera_process_start
   camera_state = CAMERA_STATE_READY;
 
   camera_func     = CAMERA_FUNC_START;
+#ifndef CAMERA_USES_SOFTDSP
   camera_dsp_error_status.received_camif_error = FALSE;
   MSG_CAMERADEBUG("CAMERA_SVCS: Request camera_stopping=NO_STOPPING", 0, 0, 0);
+#endif
   camera_stopping = FALSE;
   /* Configure the gpios and clk regimes */
   MSG_CAMERADEBUG("CAMERA_SVCS: Configure GPIO settings", 0, 0, 0);
@@ -10630,13 +10752,13 @@ static void camera_process_cleanup
 #ifdef FEATURE_STROBE_FLASH
   strobe_flash_stop_charging();
 #endif /* FEATURE_STROBE_FLASH */
-
+#ifndef CAMERA_USES_SOFTDSP
   /* If AF is active, then stop it */
   if (camera_af_is_active())
   {
     camera_af_stop_focus();
   }
-
+#endif
   if (camsensor_initialized == TRUE)
   {
     MSG_CAMERADEBUG("CAMERA_SVCS: Call power down sequence", 0, 0, 0);
@@ -10648,10 +10770,10 @@ static void camera_process_cleanup
     MSG_CAMERADEBUG("CAMERA_SVCS: Default GPIO settings", 0, 0, 0);
     camsensor_unconfig_sensor_gpios_clks ();
   }
-
+#ifndef CAMERA_USES_SOFTDSP
   /* Deallocate 3A memory  */
   camera_3a_mem_deallocate();
-
+#endif
   exif_terminate(&camera_exif_info);
 
   camera_clr_take_picture ();
@@ -10708,7 +10830,9 @@ static void camera_process_start_preview
 {
 #ifndef T_IO_CARD
   camera_blt_ext_recalculate_window = TRUE;
+#ifndef CAMERA_USES_SOFTDSP
   camera_dsp_error_status.received_camif_error = FALSE;
+#endif
   /* Terminate an existing function first */
   /* Be certain this is the VFE/MP4E image by checking the state */
   if ((camera_state == CAMERA_STATE_PREVIEW) ||
@@ -10750,7 +10874,9 @@ static void camera_process_start_preview
   camera_state = CAMERA_STATE_PREVIEW;
   camera_camsensor_op_mode = CAMSENSOR_OP_MODE_PREVIEW;
   camera_output1_frame_rate.waiting_for_first_output1_frame = FALSE;
+#ifndef CAMERA_USES_SOFTDSP
   camera_dsp_command = CAMQDSP_CMD_MAX;
+#endif
 #ifndef FEATURE_CAMERA_REGISTER_CLOCK_RESOURCE_III
   camera_svcs_optimize_resources ();
 #endif /* FEATURE_CAMERA_REGISTER_CLOCK_RESOURCE_III */
@@ -10803,8 +10929,12 @@ static void camera_process_start_preview
 
     MSG_CAMERADEBUG("CAMERA_SVCS: Initialize Image in Preview", 0, 0, 0);
     camera_dsp_state = DSP_ENABLING;
+#ifndef CAMERA_USES_SOFTDSP
     ret_val = (VFE_Initialize (camera_qdsp_cb) != CAMQDSP_SUCCESS);
-
+#else
+    // TODO:
+    ret_val = 0;
+#endif
     if (ret_val)
     {
       camera_dsp_state = DSP_DISABLED;
@@ -10874,11 +11004,13 @@ static void camera_process_stop_preview ( rex_tcb_type *tcb )
 
   if ( !camera_stopping)
   {
+#ifndef CAMERA_USES_SOFTDSP
     /* If AF is active, then stop it */
     if (camera_af_is_active())
     {
       camera_af_stop_focus();
     }
+#endif
     camera_terminate (CAMERA_EXIT_CB_DONE, 0);
   }
   else
@@ -10924,10 +11056,13 @@ static void camera_process_take_single_picture(void)
   clk_dereg(&camera_wait_camif_done_clk);
   camera_take_picture_status_set_default();
   camera_capture_delay = 0;
+#ifndef CAMERA_USES_SOFTDSP
   camera_dsp_error_status_set_default();
+#endif
   camera_camsensor_op_mode = CAMSENSOR_OP_MODE_SNAPSHOT;
+#ifndef CAMERA_USES_SOFTDSP
   camera_dsp_command = CAMQDSP_CMD_MAX;
-
+#endif
 #if (defined FEATURE_CAMERA_HJR) && (!defined QDSP_MODULE_VFE25_DEFINED)
   if ( (camera_svcs_hjr_enabled() == TRUE) && (camctrl_tbl.hjr_bayer_filtering_enable == TRUE) )
   {
@@ -10960,7 +11095,12 @@ static void camera_process_take_single_picture(void)
 #ifdef QDSP_IMAGE_VFE_SA_DEFINED   
 #error code not present
 #endif	/* QDSP_IMAGE_VFE_SA_DEFINED */   
+#ifndef CAMERA_USES_SOFTDSP
     ret_val = (VFE_Initialize (camera_qdsp_cb) != CAMQDSP_SUCCESS);
+#else
+    // TODO:
+    ret_val = 0;
+#endif
 #if defined QDSP_MODULE_VFE05_CAPTURE_DEFINED || defined QDSP_IMAGE_VFE_SA_DEFINED
     camctrl_tbl.use_vfe_image_swap = FALSE;
 #endif /* defined QDSP_MODULE_VFE05_CAPTURE_DEFINED || defined QDSP_IMAGE_VFE_SA_DEFINED*/
@@ -11202,6 +11342,7 @@ static void camera_preview_set_buffer_status(uint8 buffer_index, camera_preview_
     }
   }
 }
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_SVCS_ACK_VFE_OUTPUT1
@@ -11264,7 +11405,7 @@ static void camera_svcs_ack_vfe_output1 (void)
     }
   }
 }
-
+#endif
 #ifdef FEATURE_MDP
 /*===========================================================================
 
@@ -12904,7 +13045,7 @@ void camera_terminate (camera_cb_type cb, int32 parm4)
   camera_process_terminate();
 #endif /* nT_IO_CARD */
 } /* camera_terminate */
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_PROCESS_QDSP_IDLE_STATE_MSG
@@ -13024,7 +13165,7 @@ static void camera_process_qdsp_idle_state_msg()
 
 
 } /* camera_process_qdsp_idle_state_msg */
-
+#endif
 
 #ifdef  FEATURE_CAMERA_MOBICAT_PREVIEW
 /*===========================================================================
@@ -13054,7 +13195,7 @@ boolean camera_svcs_start_mobicat_preview(uint32 mode, char* ret)
               );
 }
 #endif //FEATURE_CAMERA_MOBICAT_PREVIEW
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_PROCESS_QDSP_OUTPUT1_MSG
@@ -13866,9 +14007,6 @@ static void camera_process_qdsp_config_done_msg (CAMQDSP_VideoEncStateType * vid
 #endif /* FEATURE_VIDEO_ENCODE */
 } /* camera_process_qdsp_config_done_msg */
 
-
-
-
 /*===========================================================================
 
 FUNCTION      CAMERA_INITIATE_CAPTURE
@@ -13954,8 +14092,6 @@ void camera_initiate_capture (void)
     MSG_AFDEBUG("AF Start sent", 0, 0, 0);
   }
 } /* camera_initiate_capture */
-
-
 
 /*===========================================================================
 
@@ -14046,6 +14182,7 @@ static void camera_process_qdsp_update_complete_msg (void)
 
 
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_PROCESS_QDSP_AE_AWB_STATS_COMPLETE_MSG
@@ -14108,6 +14245,7 @@ static void camera_process_qdsp_ae_awb_stats_complete_msg (CAMQDSP_AE_AWBStatsMe
 
 
 } /* camera_process_qdsp_ae_awb_stats_complete_msg */
+#endif
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
 
 /*===========================================================================
@@ -14137,6 +14275,7 @@ static void camera_process_qdsp_hist_stats_complete_msg (void)
 
 
 }
+#endif //#ifndef CAMERA_USES_SOFTDSP
 
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
 /*===========================================================================
@@ -14227,7 +14366,7 @@ boolean camera_set_preview_buffers(void)
   }
   return malloc_fail;
 } /* camera_set_preview_buffers */
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_SVCS_SETPARAM_VFE_VIDEO
@@ -15313,7 +15452,7 @@ boolean camera_svcs_setparam_vfe_offline_snapshot ()
 
 }
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
-
+#endif
 
 /*===========================================================================
 
@@ -16010,7 +16149,7 @@ static camera_ret_code_type camera_set_icon_and_preview_overlay(void)
   return ret_val;
 } /* camera_set_icon_and_preview_overlay */
 #endif /* FEATURE_CAMERA_SUPPORT_ICON_ARRAY */
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_CONFIG_VFE
@@ -16442,7 +16581,7 @@ boolean camera_config_vfe(void)
   return ret_val;
 
 } /* camera_config_vfe */
-
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_NO_MEMORY
@@ -16470,7 +16609,7 @@ void camera_no_memory(void)
   event_report (EVENT_CAMERA_NO_MEMORY);
 } /* camera_no_memory */
 
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_QDSP_CB
@@ -16692,7 +16831,7 @@ void camera_qdsp_cb (CAMQDSP_ResponseType *response)
      graph_queue_camqdsp_msg (response->responseMsg, 0, 0);
   }
 } /* camera_qdsp_cb */
-
+#endif // #ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 FUNCTION      CAMERA_SET_EXIF_MAKE_MODEL
 
@@ -17170,7 +17309,11 @@ void camera_svcs_init_self (camerai_func_type *funcTable)
   funcTable->camera_encode_picture             = camera_svcs_encode_picture;
   funcTable->camera_get_thumbnail_properties   = camera_svcs_get_thumbnail_properties;
   funcTable->camera_set_thumbnail_properties   = camera_svcs_set_thumbnail_properties;
+#ifndef CAMERA_USES_SOFTDSP
   funcTable->camera_start_focus                = camera_af_start_focus;
+#else
+  funcTable->camera_start_focus                = NULL;
+#endif
   funcTable->camera_stop_focus                 = NULL;
   funcTable->camera_enable_frame_callback      = camera_svcs_enable_frame_callback;
   funcTable->camera_disable_frame_callback     = camera_svcs_disable_frame_callback;
@@ -17590,6 +17733,7 @@ static void camera_clr_take_picture()
 #ifdef FEATURE_CAMERA_BURST_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BURST_MODE */
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_WAIT_CAMIF_DONE_CLK_CB
@@ -17612,6 +17756,7 @@ static void camera_wait_camif_done_clk_cb(int4 ms)
                            (void *)0, (void *)0, 0, 0, 0, 0);
 }
 /*lint -restore */
+#endif
 #ifdef FEATURE_CAMERA_AEC_DURING_MULTISHOT
 #error code not present
 #endif /* FEATURE_CAMERA_AEC_DURING_MULTISHOT */
@@ -17662,6 +17807,7 @@ static void camera_process_handle_error ()
       }
       else
       {
+#ifndef CAMERA_USES_SOFTDSP
         MSG_CAMERADEBUG("CAMERA_SVCS: Take Picture Operation Failed", 0, 0, 0);
         MSG_CAMERADEBUG("==================================", 0, 0, 0);
         if ( (camera_take_picture_status.received_output1 == FALSE) ||
@@ -17680,6 +17826,7 @@ static void camera_process_handle_error ()
                          );
         }
         MSG_CAMERADEBUG("==================================", 0, 0, 0);
+#endif
         camera_clr_take_picture();
         camera_terminate(CAMERA_EXIT_CB_FAILED, 0);
       }
@@ -17689,7 +17836,7 @@ static void camera_process_handle_error ()
 #error code not present
 #endif /* FEATURE_CAMERA_BURST_MODE */
 }
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_PROCESS_QDSP_CAMIF_DONE_MSG
@@ -17786,7 +17933,7 @@ static void camera_process_qdsp_camif_done_msg()
 #error code not present
 #endif /* FEATURE_CAMERA_BURST_MODE */
 }
-
+#endif
 #if defined QDSP_MODULE_DS05_DEFINED || \
   defined QDSP_MODULE_SA_DS05_DEFINED 
 /*===========================================================================
@@ -17850,16 +17997,17 @@ static void camera_handle_frames_for_takepicture()
 #ifdef FEATURE_CAMERA_RAW_PREVIEW_CAPTURE
 #error code not present
 #endif /*FEATURE_CAMERA_RAW_PREVIEW_CAPTURE*/
-
+#ifndef CAMERA_USES_SOFTDSP
   if (camera_dsp_error_status.received_ahb_overflow_error)
   {
     MSG_ERROR("Detect AHB bus overflow", 0, 0, 0);
   }
-
+#endif
   if (camera_state == CAMERA_STATE_TAKE_PICTURE)
   {
     if (camera_take_picture_retry == CAMERA_TAKE_PICTURE_RETRY_NEEDED)
     {
+#ifndef CAMERA_USES_SOFTDSP
       /* Send Idle command */
       MSG_CAMERADEBUG("CAMERA_SVCS: Send IDLE Message to DSP to retry", 0, 0, 0);
       camera_dsp_command = CAMQDSP_CMD_IDLE;
@@ -17875,6 +18023,7 @@ static void camera_handle_frames_for_takepicture()
         event_report (EVENT_CAMERA_CANNOT_IDLE_DSP);
       }
       else
+#endif
       {
         camera_take_picture_retry = CAMERA_TAKE_PICTURE_RETRY_IDLING;
       }
@@ -18013,7 +18162,7 @@ static void camera_handle_frames_for_takepicture()
 #endif /*FEATURE_CAMERA_RAW_PREVIEW_CAPTURE*/	
   }
 }
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_SEND_VFE_IDLE_AND_WAIT
@@ -18180,7 +18329,7 @@ static uint32 camera_calculate_skip_pattern(uint32 input_sensor_rate,
   return result;
 
 }
-
+#endif
 uint16  camera_recent_fps( void )
 {
   return camera_output1_frame_rate.last_fps;
@@ -18387,6 +18536,7 @@ static void camera_show_snapshot_timing( void )
 }
 
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION: CAMERA_AEC_AWB_READY
@@ -18416,13 +18566,15 @@ static boolean camera_aec_awb_ready (void)
 
   if (!camera_af_is_active() &&
       (camera_3a_shared_get_aec_awb_delay_count() == 0) &&
-      (camera_dsp_command != CAMQDSP_CMD_IDLE))
+      (camera_dsp_command != CAMQDSP_CMD_IDLE)
+      )
   {
     return TRUE;
   }
 
   return FALSE;
 } /* camera_aec_awb_ready */
+#endif
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
 
 #ifdef FEATURE_CAMERA_HJR
@@ -18818,7 +18970,7 @@ static void camera_rotate_encode_overlay(void)
   camera_rotate_encode_overlay_ex(thumbnail_overlay);
   camera_svcs_adjust_overlay_for_rotation();
 }
-
+#ifndef CAMERA_USES_SOFTDSP
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
 /*===========================================================================
 
@@ -18892,7 +19044,7 @@ static camera_ret_code_type camera_svcs_set_ev_compensation(int32 parm)
     (camera_ev_compensation_table.minimum_denominator_value * camera_ev_compensation_table.step_numerator_value);
   int32  parmVal;
   uint32 new_luma_target;
-
+  
   if( parmCurNum == 0 || parmCurDen == 0)
   {
     parmVal = 0;
@@ -18913,7 +19065,6 @@ static camera_ret_code_type camera_svcs_set_ev_compensation(int32 parm)
   }
   else
   {
-
     if (camsensor_static_params[camera_asi].output_format == CAMSENSOR_YCBCR)
     {
       (void) camsensor_set_contrast ((int8) parm);
@@ -18944,7 +19095,7 @@ static camera_ret_code_type camera_svcs_set_ev_compensation(int32 parm)
   return ret_val;
 } /* camera_svcs_set_ev_compensation */
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
-
+#endif //#ifndef CAMERA_USES_SOFTDSP
 #ifdef FEATURE_CAMERA_BESTSHOT_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BESTSHOT_MODE */
@@ -19228,10 +19379,14 @@ static void camera_process_terminate(void)
 
   if(camera_service_unavailable)
   {
+#ifndef CAMERA_USES_SOFTDSP
     camera_log(LOG_INFO, (uint32)camera_func, 0, (uint32)TERM_SRVC_UNAVAIL, __LINE__);
     MSG_ERROR("CAMERA_SVCS: QDSP Service Unavailable. Call QDSP Terminate", 0, 0, 0);
     camera_dsp_state = DSP_DISABLED;
     CAMQDSP_Terminate();
+#else
+    // TODO:
+#endif
   }
 
 
@@ -19264,14 +19419,19 @@ static void camera_process_terminate(void)
          * b) camera_state is CAMERA_STATE_RECORDING and 
          * c)VFE is alread in Idle state 
          */
+#ifndef CAMERA_USES_SOFTDSP
         #ifndef FEATURE_VIDEO_ENCODE_THROTTLE
         if(camera_state != CAMERA_STATE_RECORDING || 
            (camera_state == CAMERA_STATE_RECORDING && camera_dsp_command != CAMQDSP_CMD_IDLE))
         #endif /* ! FEATURE_VIDEO_ENCODE_THROTTLE */
         {
           MSG_HIGH("CAMERA_SVCS: Call to send IDLE Message to DSP", 0, 0, 0);
+
           (void) camera_send_vfe_idle_and_wait();
         }
+#else
+        // TODO:
+#endif
         MSG_CAMERADEBUG("CAMERA_SVCS: Set camera_state=CAMERA_STATE_READY", 0, 0, 0);
         camera_state = CAMERA_STATE_READY;
         break;
@@ -19287,7 +19447,9 @@ static void camera_process_terminate(void)
     MSG_CAMERADEBUG("CAMERA_SVCS: Termination Cleanup", 0, 0, 0);
 
     camera_take_picture_status_set_default();
+#ifndef CAMERA_USES_SOFTDSP
     camera_dsp_error_status_set_default();
+#endif
     camera_stopping = FALSE;
 #ifdef FEATURE_CAMERA_RAW_PREVIEW_CAPTURE	
 #error code not present
@@ -19319,9 +19481,13 @@ static void camera_process_terminate(void)
     {
       /* Camera DSP image is downloaded, disable it */
       camera_dsp_state = DSP_DISABLED;
+#ifndef CAMERA_USES_SOFTDSP
       camera_log (LOG_VFEC, 0, 0, (uint32)VFE_TERM, __LINE__);
       MSG_CAMERADEBUG("CAMERA_SVCS: Call QDSP Terminate", 0, 0, 0);
       CAMQDSP_Terminate ();
+#else
+      // TODO:
+#endif
     }
 
     /* Return all buffers */
@@ -19417,7 +19583,7 @@ static void camera_terminate_clk_cb(int4 ms)
     camera_svcs_queue_call_to_terminate();
 }
 /*lint -restore */
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_SERVICE_UNAVAILABLE_CLK_CB
@@ -19442,8 +19608,9 @@ static void camera_service_unavailable_clk_cb(int4 ms)
   camera_svcs_queue_call_to_terminate();
 }
 /*lint -restore */
-
+#endif
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_REQUEST_AEC_AWB_STATS
@@ -19484,5 +19651,6 @@ static void camera_request_aec_awb_stats(void)
     }
   }
 }
+#endif //#ifndef CAMERA_USES_SOFTDSP
 #endif /* nFEATURE_CAMERA_YCBCR_ONLY */
 #endif /* FEATURE_CAMERA */

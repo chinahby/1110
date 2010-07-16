@@ -97,6 +97,7 @@ when       who     what, where, why
 #include <comdef.h>
 #include <qdspext.h>
 
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================*/
 /*                                CONSTANTS                                  */
 /*===========================================================================*/
@@ -803,6 +804,6 @@ void camqdsp_frame_clk_cb(int4 ms);
  *
  ==============================================================================*/
 void CAMQDSP_Reset_Ack(void);
-
+#endif //#ifndef CAMERA_USES_SOFTDSP
 #endif
 

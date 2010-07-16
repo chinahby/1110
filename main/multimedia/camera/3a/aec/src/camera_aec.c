@@ -133,6 +133,7 @@ Notice that changes are listed in reverse chronological order.
 #include "target.h"
 #include "customer.h"
 #include "comdef.h"
+#ifndef CAMERA_USES_SOFTDSP
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
 #include "camera_3a_shared.h"
 #include "camera_aec.h"
@@ -1130,7 +1131,7 @@ boolean camera_aec_set_bias_table(
   )
 {
   if(camsensorParamsPtr == NULL) return FALSE;
-
+#ifndef CAMERA_USES_SOFTDSP
   /* Choose an exposure table based on algorith selection above */
   if(vfeExpWbStatDspInput.numberOfRegions == VFE_8x8)
   {
@@ -1148,6 +1149,7 @@ boolean camera_aec_set_bias_table(
       cam3a_aec_state.bias_table = NULL;
     }
   }
+#endif
 #ifdef FEATURE_CAMERA_VFE_16X16_SUPPORT
   else if((VFE_NumberOfRegionsType)vfeExpWbStatDspInput.numberOfRegions == VFE_16x16)
   {
@@ -1166,7 +1168,9 @@ boolean camera_aec_set_bias_table(
     }
   }
 #endif /* FEATURE_CAMERA_VFE_16X16_SUPPORT */
+#ifndef CAMERA_USES_SOFTDSP
   else
+#endif
   {
     if(cam3a_aec_state.aec_algo == CAMERA_AEC_CENTER_WEIGHTED)
     {
@@ -2302,7 +2306,7 @@ void camera_aec_adjust_exposure_as_per_hjr(void)
   hjr = FALSE;
 }
 #endif /* FEATURE_CAMERA_HJR */
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION: CAMERA_AEC_APPLY_DIGITAL_GAIN_FOR_PREVIEW
@@ -2377,7 +2381,7 @@ void camera_aec_apply_digital_gain_for_iso_snapshot(VFE_ColorCorrectionType *pac
     }
   }
 }
-
+#endif
 /*===========================================================================
 
 FUNCTION: CAMERA_AEC_UPDATE_COLOR_CORRECTION_MATRIX
@@ -2598,3 +2602,4 @@ boolean camera_aec_settled(cam3a_aec_state_struct *aec_state)
 
 
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
+#endif //#ifndef CAMERA_USES_SOFTDSP

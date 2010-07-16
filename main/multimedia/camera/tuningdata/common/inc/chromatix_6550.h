@@ -666,12 +666,13 @@ typedef struct
   /******************************************************************************
    Gamma LUT       (Gamma)
   ******************************************************************************/
+#ifndef CAMERA_USES_SOFTDSP
   CAMQDSP_GammaTableType  default_gamma_table;                                      // Default
   CAMQDSP_GammaTableType  lowlight_gamma_table;                                     // LowLight
   CAMQDSP_GammaTableType  outdoor_gamma_table;                                      // Outdoor
   CAMQDSP_GammaTableType  backlight_gamma_table;                                    // Backlight
   uint8                   solarized_gamma_reflection_point;                         // SolarizeReflection
-
+#endif
   /******************************************************************************
    Black Level     (BlackLevel)
   ******************************************************************************/

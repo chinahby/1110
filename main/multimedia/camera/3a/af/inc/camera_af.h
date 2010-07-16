@@ -258,7 +258,7 @@ camera_ret_code_type camera_af_config
   camera_af_mode_type mode,
   int af_process
 );
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_AF_PROCESS_STATS_COMPLETE_MSG
@@ -279,7 +279,7 @@ void camera_af_process_stats_complete_msg
 (
   const CAMQDSP_AFStatsMessageType * msg
 );
-
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_AF_PROCESS_FOCUS_SENSOR

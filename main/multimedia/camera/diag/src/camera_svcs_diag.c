@@ -61,6 +61,7 @@ when       who     what, where, why
 
 #include "target.h"
 #include "customer.h"
+#ifndef CAMERA_USES_SOFTDSP
 #ifdef FEATURE_CAMERA
 
 char * camera_svcs_diag_revision = __DATE__ ;  //  C preprocessor defines that
@@ -2557,4 +2558,4 @@ PACKED void *  camera_svcs_diag_mobicat_preview_stop
 
 #endif /* FEATURE_CAMERA_SVCS_DIAG */
 #endif /* FEATURE_CAMERA */
-
+#endif //#ifndef CAMERA_USES_SOFTDSP

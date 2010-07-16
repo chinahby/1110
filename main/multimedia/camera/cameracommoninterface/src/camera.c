@@ -141,11 +141,11 @@ void camera_init (void)
   camerai_init ();
 
   camerai_client [camerai_current_client].camera_init ();
-
+#ifndef CAMERA_USES_SOFTDSP
   #ifdef  FEATURE_CAMERA_SVCS_DIAG
   camera_svcs_diag_init();
   #endif//FEATURE_CAMERA_SVCS_DIAG
-
+#endif
   /* Initialize the camera_in_voice_call_flg array */
   for (i = 0; i < CM_CALL_ID_MAX; i++)
   {

@@ -86,6 +86,7 @@ Notice that changes are listed in reverse chronological order.
 ==============================================================================*/
 #include "custcam3a.h"
 #include "camctrl.h"
+#ifndef CAMERA_USES_SOFTDSP
 #include "camera_3a_shared.h"
 #include "camera_af.h"
 #include "camera_drv.h"
@@ -561,7 +562,7 @@ camera_ret_code_type camera_af_config
   return CAMERA_SUCCESS;
 }
 
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_AF_PROCESS_STATS_COMPLETE_MSG
@@ -634,7 +635,7 @@ void camera_af_process_stats_complete_msg (const CAMQDSP_AFStatsMessageType * ms
     /* No need to call back here since it was done in the algorithm code. */
   }
 } /* camera_af_process_stats_complete_msg */
-
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_AF_PROCESS_FOCUS_SENSOR
@@ -1417,3 +1418,4 @@ void camera_af_done(camera_cb_type cb)
     cam3a_af_state.callback = NULL;
   }
 }
+#endif //#ifndef CAMERA_USES_SOFTDSP
