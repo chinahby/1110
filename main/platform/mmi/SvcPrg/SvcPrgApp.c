@@ -455,10 +455,13 @@ int AEEClsCreateInstance(AEECLSID  ClsId,
 #endif
 {
    *ppObj = NULL;
-   if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
-   {
-		   return EFAILED;
-	}
+   do {
+         CSvcPrgApp *pMe = (CSvcPrgApp *) *ppObj;
+   		if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
+   		{
+		   	return EFAILED;
+		}
+   	}while (0);
 
    if (AEEApplet_New(sizeof(CSvcPrgApp), 
                       ClsId, 
