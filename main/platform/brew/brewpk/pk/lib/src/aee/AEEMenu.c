@@ -1408,25 +1408,33 @@ static boolean IMenuCtl_AddItemEx(IMenuCtl * po, CtlAddItem * pai)
    boolean        bSingleFrame = (boolean)(SINGLE_FRAME(pme) ? TRUE : FALSE);
 
    // Can't do any thing without pai
-   if(!pai)
-      return(FALSE);
+   if (!pai)
+   {
+   	return(FALSE);
+   }
 
    // If it is not allowing Duplicate ID's, do check
-   if( !(IS_ALLOWING_DUPE(pme)) ){
-   for(pmiLast = NULL, pmi = pme->m_pItemList; pmi != NULL; pmi = pmi->pNext) {
-      pmiLast = pmi;
-         if(pmi->nItemID == pai->wItemID)
-            return(FALSE);
-      }
-   }else{
+   if (!(IS_ALLOWING_DUPE(pme)))
+   {
+	   for (pmiLast = NULL, pmi = pme->m_pItemList; pmi != NULL; pmi = pmi->pNext) 
+	   {
+	    	pmiLast = pmi;
+			
+	   		if(pmi->nItemID == pai->wItemID)
+	        {
+	        	return(FALSE);
+	   		}
+	   }
+   }
+   else
+   {
       pmiLast = pme->m_pLastItem;
    }
 
    // Check Sanity of Image & Text Pointers
-   if(pai->pImage && 
-      !AEE_CHECK_PTR("IMENU_AddItemEx", pai->pImage, 1, FALSE) || 
-      pai->pText && 
-      !AEE_CHECK_PTR("IMENU_AddItemEx", pai->pText, 1, FALSE)) {
+   if(pai->pImage && !AEE_CHECK_PTR("IMENU_AddItemEx", pai->pImage, 1, FALSE) || 
+      pai->pText && !AEE_CHECK_PTR("IMENU_AddItemEx", pai->pText, 1, FALSE)) 
+   {
       return(FALSE);
    }
 
@@ -1434,50 +1442,65 @@ static boolean IMenuCtl_AddItemEx(IMenuCtl * po, CtlAddItem * pai)
    // If not, see they specified valid ID and resource file. If yes,
    // then try to load it. Otherwise fail if this is Icon View.
    // We need to get out on failure.
-   if(!Menu_ResolveImage(pme, pai, &pszResImage, &pImage))
-      return(FALSE);
+   if (!Menu_ResolveImage(pme, pai, &pszResImage, &pImage))
+   {
+   		return(FALSE);
+   }
    
    // Try to load the text if specified
    pText = (AECHAR *)pai->pText;
 
    // We cannot show anything!
-   if(!pImage && !bSingleFrame && !pText && (!pai->pszResText || !pai->wText))
-      return(FALSE);
+   if (!pImage && !bSingleFrame && !pText && (!pai->pszResText || !pai->wText))
+   {
+   		return(FALSE);
+   }
 
    // If text not specified, load it from resource file
    // Note: Icon views do NOT require a text string
    // Note: pai->wText is 0xffff by default for item IDs created in resource editor
-   if(!pText && pai->wText && pai->wText != 0xffff){
-
+   if (!pText && pai->wText && pai->wText != 0xffff)
+   {
       // Allocate memory for item text
       if ((pText = (AECHAR *)MALLOC(MAX_MENU_TEXT * sizeof(AECHAR))) != NULL)
-         bFreeText = TRUE;    // Note that we now need to free the text
-      else {
+      {
+      	bFreeText = TRUE;    // Note that we now need to free the text
+      }
+      else 
+	  {
          aee_releaseobj((void **)&pImage);
          return FALSE;
       }
 
       // Load item text
-      if(!ISHELL_LoadResString(pme->m_pIShell, pai->pszResText, pai->wText, pText, sizeof(AECHAR) * MAX_MENU_TEXT)) {
+      if(!ISHELL_LoadResString(pme->m_pIShell, pai->pszResText, pai->wText, pText, sizeof(AECHAR) * MAX_MENU_TEXT)) 
+	  {
          aee_releaseobj((void **)&pImage);
-         if(bFreeText)
-            FREE(pText);
+         if (bFreeText)
+         {
+         	FREE(pText);
+         }
          return FALSE;
       }
    }
 
    // Allocate memory for the item. If allocation is successful, item is added to the
    // end of the list
-   if ((pmi = Menu_AllocItem(pme, NULL, pText, pszResImage, pmiLast)) == NULL) {
+   if ((pmi = Menu_AllocItem(pme, NULL, pText, pszResImage, pmiLast)) == NULL) 
+   {
       aee_releaseobj((void **)&pImage);
-      if(bFreeText)
-         FREE(pText);
+      if (bFreeText)
+      {
+      	FREE(pText);
+      }
       return(FALSE);
    }
 
    // If we are caching image resource file name, we need to cache resource ID also.
-   if(pmi->pszImage)
-      pmi->wImageID = pai->wImage;
+   if (pmi->pszImage)
+   {
+   		pmi->wImageID = pai->wImage;
+   	}
 
    // Pre-calc the image stuff in case we unload it
    if(pImage){
