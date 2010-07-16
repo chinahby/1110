@@ -2250,7 +2250,9 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 */
 
         totalrect.x = devinfo.cxScreen / 2;
-        totalrect.y = (devinfo.cyScreen - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT)/2 + TITLEBAR_HEIGHT;
+        //totalrect.y = (devinfo.cyScreen - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT)/2 + TITLEBAR_HEIGHT;
+        totalrect.y = (devinfo.cyScreen  - BOTTOMBAR_HEIGHT)/2;	//Add By zzg 2010_07_16
+		
         //Draw string background picture
         StringBgMsgImg = ISHELL_LoadResImage(pShell,
                             AEE_APPSCOMMONRES_IMAGESFILE,
