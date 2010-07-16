@@ -2752,7 +2752,6 @@ int CContApp_BuildOneDialNumFldSelMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
                 (void)IMENUCTL_SetTitle(pMenuCtl, NULL, 0, pFld->pBuffer); 
 				#else
 				{
-					
 					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pFld->pBuffer);
 				}
 				#endif

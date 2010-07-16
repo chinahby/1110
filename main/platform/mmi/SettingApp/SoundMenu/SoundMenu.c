@@ -792,6 +792,7 @@ static void SoundMenu_FreeAppData(CSoundMenu *pMe)
 
     if (pMe->m_pIAnn)
     {
+        IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);//»Ö¸´ÐÅºÅÀ¸Ô­Ê¼×´Ì¬
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn= NULL;
     }
@@ -867,10 +868,13 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
     CSoundMenu *pMe = (CSoundMenu*)pi;
     AEEAppStart *as;
     //SOUND_ERR("%x,%x,%x,SoundMenu_HandleEvent",eCode,wParam,dwParam);
-    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+            }
             pMe->m_bAppIsReady = FALSE;
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;

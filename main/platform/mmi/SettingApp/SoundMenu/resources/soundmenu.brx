@@ -171,10 +171,9 @@
 	</STRING>
 </Strings>
 <Dialogs>
-	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="7009">
+	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="0">
 		<Controls>
 			<Menu Id="7009" Name="IDC_SOUNDMENU_PROFILES">
-				<TitleID>IDS_SOUNDMENU_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -182,7 +181,6 @@
 	<DIALOG Id="6002" Name="IDD_KEY_VOLUME" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_KEY_VOLUME">
-				<TitleID>IDS_KEYBEEP_VOLUME_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

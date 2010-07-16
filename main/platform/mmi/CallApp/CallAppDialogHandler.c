@@ -1658,7 +1658,6 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            
             IMENUCTL_Redraw(pMenu);
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             return TRUE;

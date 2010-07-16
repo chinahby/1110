@@ -945,7 +945,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
             wResID = IDS_MG_MEDIAGALLERY;
          }
 
-         IMENUCTL_SetTitle(pMenuCtl, pszResFile, wResID, NULL);
+         //IMENUCTL_SetTitle(pMenuCtl, pszResFile, wResID, NULL);
 
          MGAppUtil_SetMenuCtlRectProp(pMe,
                MP_UNDERLINE_TITLE | MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY,
@@ -977,7 +977,6 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       {
          int nBackground;
          uint8 nState;
-
          if((nBackground = app_media_scheduler()) != APP_MEDIA_ALLOW)
          {
             MG_FARF(ADDR, ("nBackground is %d", nBackground));
@@ -1722,7 +1721,7 @@ MEMSTATEXIT:
 		IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_BACK);
 		IMENUCTL_SetActive(pMenuCtl, TRUE); 
 #endif
-
+         IANNUNCIATOR_Redraw(pMe->m_pIAnn);
          IDISPLAY_Update(pMe->m_pDisplay);
          return TRUE;
       }
@@ -3228,8 +3227,17 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
             MGMENU_ADDITEM(pMenuCtl, IDS_MG_CALLRINGTONE);
             MGMENU_ADDITEM(pMenuCtl, IDS_MG_SMSRINGTONE);
             MGMENU_ADDITEM(pMenuCtl, IDS_MG_ALARMRINGTONE);
+            {
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MG_SETAS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
 
-            IMENUCTL_SetTitle(pMenuCtl, MGRES_LANGFILE, IDS_MG_SETAS, NULL);
+            //IMENUCTL_SetTitle(pMenuCtl, MGRES_LANGFILE, IDS_MG_SETAS, NULL);
             pMe->m_nSelNum = 0;
             IMENUCTL_SetBottomBarType(pMenuCtl, BTBAR_SAVE_BACK);
 
@@ -4184,8 +4192,17 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
                MGMENU_ADDITEM(pMenuCtl, IDS_MG_PHONEMEMORY);
                MGMENU_ADDITEM(pMenuCtl, IDS_MG_CARDMEMORY);
             }
+            {
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MG_SELECTPATH,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
 
-            IMENUCTL_SetTitle(pMenuCtl, MGRES_LANGFILE, IDS_MG_SELECTPATH, NULL);
+            //IMENUCTL_SetTitle(pMenuCtl, MGRES_LANGFILE, IDS_MG_SELECTPATH, NULL);
             IMENUCTL_SetBottomBarType(pMenuCtl, BTBAR_SELECT_BACK);
          }
 
@@ -4557,7 +4574,7 @@ static boolean MGAppPopupMenu_OnSort(CMediaGalleryApp* pMe,
          SetMenuIcon(pMenuCtl, IDS_MG_BYNULL,
                      (boolean)(eSortOrder == MG_SORT_NONE));
 
-         IMENUCTL_SetTitle(pMenuCtl, MGRES_LANGFILE, IDS_MG_SORT, NULL);
+         //IMENUCTL_SetTitle(pMenuCtl, MGRES_LANGFILE, IDS_MG_SORT, NULL);
          IMENUCTL_SetBottomBarType(pMenuCtl, BTBAR_SAVE_BACK);
 
          ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MEDIAGALLERY,

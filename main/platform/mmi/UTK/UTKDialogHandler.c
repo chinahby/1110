@@ -154,7 +154,7 @@ void UTK_ShowDialog(CUTK *pMe,uint16  dlgResId)
     {
         // Looks like there is one dialog already opened.
         // Flag an error an return without doing anything.
-        ERR("Trying to create a dialog without closing the previous one",0,0,0);
+        MSG_FATAL("Trying to create a dialog without closing the previous one",0,0,0);
         return;
     }
 
@@ -162,7 +162,7 @@ void UTK_ShowDialog(CUTK *pMe,uint16  dlgResId)
 
     if (nRet != SUCCESS)
     {
-        ERR("Failed to create the dialog in the UTK applet:%02d",nRet,0,0);
+        MSG_FATAL("Failed to create the dialog in the UTK applet:%02d",nRet,0,0);
         nRet = ISHELL_CreateDialog(pMe->m_pShell,UTK_RES_FILE,dlgResId,NULL);
     }
 }
@@ -192,6 +192,7 @@ boolean UTK_RouteDialogEvent(CUTK *pMe,
     uint32 dwParam
 )
 {
+    MSG_FATAL("UTK_RouteDialogEvent Start",0,0,0);
     if (NULL == pMe)
     {
         return FALSE;
@@ -266,7 +267,7 @@ static boolean  IDD_SPLASH_Handler(CUTK *pMe,
 )
 {
     PARAM_NOT_REF(wParam)
-    
+    MSG_FATAL("IDD_SPLASH_Handler Start",0,0,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -355,6 +356,7 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                         IDC_MAIN_MENU);
+    MSG_FATAL("IDD_MAIN_Handler Start",0,0,0);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -467,6 +469,7 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                         IDC_LIST_MENU);
+    MSG_FATAL("IDD_LIST_Handler Start",0,0,0);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -594,7 +597,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
 
     ITextCtl *pTextCtl = (ITextCtl *)IDIALOG_GetControl(pMe->m_pActiveDlg,
                         IDC_INPUT_TEXT);                        
-                     
+    MSG_FATAL("IDD_INPUT_Handler Start",0,0,0);                 
     if ((NULL == pTextCtl) || (NULL == pMe))
     {
         return FALSE;
@@ -847,6 +850,7 @@ static boolean  IDD_DISPLAY_Handler(CUTK *pMe,
 
     IStatic * pStatic = (IStatic *)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                         IDC_DISPLAY_STATIC);
+    MSG_FATAL("IDD_DISPLAY_Handler Start",0,0,0); 
     if (pStatic == NULL)
     {
         return FALSE;
@@ -1006,7 +1010,7 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
     PARAM_NOT_REF(wParam)
     static  int nRetrys = 0;
     static  wms_client_message_s_type * pCltMsg = NULL;
-    
+    MSG_FATAL("IDD_SENDMSG_Handler Start",0,0,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -1225,7 +1229,7 @@ static boolean  IDD_PLAYTONE_Handler(CUTK *pMe,
     static boolean bAlertStop = FALSE;
     PARAM_NOT_REF(wParam)
     PARAM_NOT_REF(dwParam)
-            
+    MSG_FATAL("IDD_PLAYTONE_Handler Start",0,0,0);        
     if ((NULL == pMe) || (NULL == pMe->m_pAlert))
     {
         return FALSE;
@@ -1442,7 +1446,7 @@ static boolean  IDD_MSGBOX_Handler( CUTK *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-
+    MSG_FATAL("IDD_MSGBOX_Handler Start",0,0,0);  
     pStatic = (IStatic*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                             IDC_MSGBOX_STATIC);
     switch (eCode)
@@ -1558,7 +1562,7 @@ static boolean  IDD_POPMSG_Handler( CUTK *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-
+    MSG_FATAL("IDD_POPMSG_Handler Start",0,0,0); 
     if (NULL == pStatic)
     {
          AEERect rect = {0};
@@ -1568,7 +1572,7 @@ static boolean  IDD_POPMSG_Handler( CUTK *pMe,
          
          {
              return FALSE;
-             ERR("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
+             MSG_FATAL("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
          }        
          ISTATIC_SetRect(pStatic, &rect);  
     }
@@ -1674,7 +1678,7 @@ static void UTKApp_PlaytoneTimeout(void *pme)
     uint32    timeout;                 
 
     CUTK *pMe = (CUTK *)pme;
-
+    MSG_FATAL("UTKApp_PlaytoneTimeout Start",0,0,0); 
     if (NULL == pMe)
     {
         return;
@@ -1872,7 +1876,7 @@ static void UTKApp_PlaytoneTimeout(void *pme)
 static void UTKApp_DialogTimeout(void *pme)
 {
     CUTK *pMe = (CUTK *)pme;
-
+    MSG_FATAL("UTKApp_DialogTimeout Start",0,0,0); 
     if (NULL == pMe)
     {
         return;
@@ -1883,6 +1887,7 @@ static void UTKApp_DialogTimeout(void *pme)
                             EVT_DIALOGTIMEOUT,
                             0,
                             0);
+    MSG_FATAL("UTKApp_DialogTimeout End",0,0,0); 
 }
 
 /*==============================================================================
@@ -1905,7 +1910,7 @@ static void UTKApp_DialogTimeout(void *pme)
 static void SetMenuLook( CUTK *pMe, IMenuCtl *pMenu)
 {
     AEERect rc;
-
+    MSG_FATAL("SetMenuLook Start",0,0,0); 
     if ((NULL == pMe) || (NULL == pMenu))
     {
         return;
@@ -1915,10 +1920,12 @@ static void SetMenuLook( CUTK *pMe, IMenuCtl *pMenu)
     IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
     SETAEERECT(&rc, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy);
     IMENUCTL_SetRect(pMenu, &rc);
+    MSG_FATAL("SetMenuLook End",0,0,0); 
 } // SetMenuLook
 static void UTKApp_NotifyMp3Player(CUTK *pMe,boolean toStartAlert)
 {
 #ifdef FEATURE_APP_MUSICPLAYER
+    MSG_FATAL("UTKApp_NotifyMp3Player Start",0,0,0); 
     if(IsMp3PlayerStatusOnBG())
     {
         ISHELL_SendEvent(pMe->m_pShell, 
@@ -1927,10 +1934,12 @@ static void UTKApp_NotifyMp3Player(CUTK *pMe,boolean toStartAlert)
                          toStartAlert,
                          0);
     }
-
+    MSG_FATAL("UTKApp_NotifyMp3Player End",0,0,0); 
 #endif
 }
 static void UTKApp_NotifyMp3PlayerCB(CUTK *pMe)
 {
+    MSG_FATAL("UTKApp_NotifyMp3PlayerCB Start",0,0,0); 
     UTKApp_NotifyMp3Player(pMe,FALSE);
+    MSG_FATAL("UTKApp_NotifyMp3PlayerCB End",0,0,0); 
 }

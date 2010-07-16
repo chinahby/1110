@@ -4564,7 +4564,6 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 

@@ -813,8 +813,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
 #endif  
             MENU_ADDITEM(pMenu, IDS_MSGMANAGEMENT);
             MENU_ADDITEM(pMenu, IDS_MSGSETTING);
-            MENU_ADDITEM(pMenu, IDS_TEMPLATES);            
-
+            MENU_ADDITEM(pMenu, IDS_TEMPLATES);           
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -2775,7 +2774,6 @@ static boolean IDD_RESERVEDMSG_Handler(void   *pUser,
         case EVT_USER_REDRAW:
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -6846,7 +6844,6 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
                 (void)ITEXTCTL_Redraw(pIText);
             }
-            
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             return TRUE;
             

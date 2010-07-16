@@ -254,7 +254,6 @@
 	<Dialog Id="6011" Name="IDD_COLORFUL_MENU" Focus="7011">
 		<Controls>
 			<Menu Id="7011" Name="IDC_COLORFUL_MENU">
-				<TitleID>IDS_COLORFUL_MENU_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -262,7 +261,6 @@
 	<Dialog Id="6012" Name="IDD_COLOR_SETTING" Focus="0">
 		<Controls>
 			<Menu Id="7012" Name="IDC_COLOR_SETTING">
-				<TitleID>IDS_PRESET_STYLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="mediagallery" VERSION="1">
+<BREWRes Name="idmediagallery" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
 		<Text>Media galeri</Text>
@@ -324,7 +324,6 @@
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_MG_MAINMENU">
-				<TitleID>IDS_MG_MEDIAGALLERY</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -332,7 +331,6 @@
 	<Dialog Id="6002" Name="IDD_MG_PHONEMEM" Focus="7002">
 		<Controls>
 			<Menu Id="7002" Name="IDC_MG_PHONEMEM">
-				<TitleID>IDS_MG_PHONEMEMORY</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -340,7 +338,6 @@
 	<Dialog Id="6003" Name="IDD_MG_CARDMEM" Focus="7003">
 		<Controls>
 			<Menu Id="7003" Name="IDC_MG_CARDMEM">
-				<TitleID>IDS_MG_CARDMEMORY</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -350,7 +347,6 @@
 			<Static Id="7004" Name="IDC_MG_MEMSTAT">
 				<Items/></Static>
 			<Menu Id="7011" Name="IDC_MG_MEMSTATTITLE">
-				<TitleID>IDS_MG_MEMORYSTATUS</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -422,7 +418,6 @@
 	<Dialog Id="6023" Name="IDD_MG_UDISK" Focus="7020">
 		<Controls>
 			<Menu Id="7019" Name="IDC_MG_UDISK">
-				<TitleID>IDS_MG_UDISK</TitleID>
 				<Items/>
 			</Menu>
 			<Static Id="7020" Name="IDC_MG_UDISKRUN">
@@ -432,7 +427,6 @@
 	<Dialog Id="6024" Name="IDD_MG_SORT" Focus="0">
 		<Controls>
 			<Menu Id="7021" Name="IDC_MG_SORTMENU">
-				<TitleID>IDS_MG_SORT</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

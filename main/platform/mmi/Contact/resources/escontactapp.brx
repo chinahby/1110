@@ -307,7 +307,6 @@
 			<Text Id="7002" Name="IDC_LIST_TEXT">
 				<Items/></Text>
 			<Menu Id="7003" Name="IDC_LIST_MENU">
-				<TitleID>IDS_APPLET</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -315,14 +314,12 @@
 	<DIALOG Id="6004" Name="IDD_INPUTFLD" Focus="7004">
 		<Controls>
 			<Text Id="7004" Name="IDC_INPUTFLD_TEXTCTL">
-				<TitleID>IDS_NAME</TitleID>
 				<Items/></Text>
 		</Controls>
 	</DIALOG>
 	<DIALOG Id="6005" Name="IDD_ADDNEW" Focus="7047">
 		<Controls>
 			<Menu Id="7047" Name="IDC_ADDNEW_MENU">
-				<TitleID>IDS_APPLET</TitleID>
 				<Items>
 					<Item Id="8009" Name="IDI_ADDNEW_MENU_NAME">
 						<TextID>IDS_NAME</TextID>
@@ -364,7 +361,6 @@
 	<DIALOG Id="6006" Name="IDD_OPTS" Focus="7007">
 		<Controls>
 			<Menu Id="7007" Name="IDC_OPTS_MENU">
-				<TitleID>IDS_APPLET</TitleID>
 				<Items>
 					<Item Id="8006" Name="IDI_OPTS_MENU_EDIT">
 					</Item>
@@ -398,7 +394,6 @@
 	<DIALOG Id="6008" Name="IDD_FLDOPTS" Focus="7010">
 		<Controls>
 			<Menu Id="7010" Name="IDC_FLDOPTS_MENU">
-				<TitleID>IDS_APPLET</TitleID>
 				<Items>
 					<Item Id="8012" Name="IDI_FLDOPTS_MENU_EDIT">
 					</Item>
@@ -429,7 +424,6 @@
 	<DIALOG Id="6011" Name="IDD_GROUP" Focus="7013">
 		<Controls>
 			<Menu Id="7013" Name="IDC_GROUP_MENU">
-				<TitleID>IDS_INPUT_GROUP</TitleID>
 				<Items>
 					<Item Id="8027" Name="IDI_GROUP_MENU_NONE">
 						<TextID>IDS_GROUP_NONE</TextID>
@@ -459,7 +453,6 @@
 	<DIALOG Id="6012" Name="IDD_POSITION" Focus="7014">
 		<Controls>
 			<Menu Id="7014" Name="IDC_POSITION_MENU">
-				<TitleID>IDS_POSITION</TitleID>
 				<Items>
 					<Item Id="8008" Name="IDI_POSITION_MENU_ALL">
 						<TextID>IDS_POSITION_ALL</TextID>
@@ -480,7 +473,6 @@
 	<DIALOG Id="6013" Name="IDD_COPYMOVE" Focus="7015">
 		<Controls>
 			<Menu Id="7015" Name="IDC_COPYMOVE_MENU">
-				<TitleID>IDS_COPYMOVE</TitleID>
 				<Items>
 					<Item Id="8025" Name="IDI_COPYMOVE_MENU_COPYTORUIM">
 						<TextID>IDS_COPYTORUIM</TextID>
@@ -509,7 +501,6 @@
 			<Text Id="7009" Name="IDC_COPY_TEXT">
 				<Items/></Text>
 			<Menu Id="7017" Name="IDC_COPY_MENU">
-				<TitleID>IDS_COPY</TitleID>
 				<Items>
 					<Item Id="8036" Name="IDI_COPY_MENU_SELECT_ALL">
 					</Item>
@@ -522,7 +513,6 @@
 	<Dialog Id="6015" Name="IDD_GROUPOPT" Focus="7019">
 		<Controls>
 			<Menu Id="7019" Name="IDC_MENU_GROUPOPT">
-				<TitleID>IDS_INPUT_GROUP</TitleID>
 				<Items>
 					<Item Id="8018" Name="IDI_MENU_GROUPOPT_VIEW">
 						<TextID>IDS_VIEW</TextID>
@@ -547,7 +537,6 @@
 	<Dialog Id="6017" Name="IDD_GROUPOPT_EDIT" Focus="7022">
 		<Controls>
 			<Text Id="7022" Name="IDC_GROUPOPT_EDIT">
-				<TitleID>IDS_INPUT_GROUP</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
@@ -566,7 +555,6 @@
 	<DIALOG Id="6020" Name="IDD_ONEDIAL" Focus="7023">
 		<Controls>
 			<Menu Id="7023" Name="IDC_ONEDIAL_MENU">
-				<TitleID>IDS_ONEDIAL</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -574,7 +562,6 @@
 	<DIALOG Id="6021" Name="IDD_CAPACITY" Focus="7027">
 		<Controls>
 			<Static Id="7027" Name="IDC_CAPACITY_STATIC">
-				<TitleID>IDS_CAPACITY</TitleID>
 				<Items/></Static>
 		</Controls>
 	</DIALOG>
@@ -622,7 +609,6 @@
 	<DIALOG Id="6023" Name="IDD_SETTING" Focus="7026">
 		<Controls>
 			<Menu Id="7026" Name="IDC_SETTING_MENU">
-				<TitleID>IDS_SETTING</TitleID>
 				<Items>
 					<Item Id="8042" Name="IDI_SETTING_MENU_SAVETO">
 						<TextID>IDS_SAVETO</TextID>
@@ -646,7 +632,6 @@
 	<DIALOG Id="6025" Name="IDD_ONEDIALOPT" Focus="7028">
 		<Controls>
 			<Menu Id="7028" Name="IDC_ONEDIALOPT_MENU">
-				<TitleID>IDS_ONEDIAL</TitleID>
 				<Items>
 					<Item Id="8058" Name="IDI_ONEDIALOPT_MENU_SET">
 						<TextID>IDS_ONEDIAL_SET</TextID>
@@ -668,7 +653,6 @@
 	<DIALOG Id="6028" Name="IDD_SELECT" Focus="7005">
 		<Controls>
 			<Menu Id="7005" Name="IDC_SELECT_MENU">
-				<TitleID>IDS_APPLET</TitleID>
 				<Items/>
 			</Menu>
 			<Text Id="7018" Name="IDC_SELECT_TEXT">
@@ -678,7 +662,6 @@
 	<DIALOG Id="6029" Name="IDD_MAINMENU" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_MAINMENU_MENU">
-				<TitleID>IDS_APPLET</TitleID>
 				<Items>
 					<Item Id="8002" Name="IDI_MAINMENU_MENU_DIRECTORTLIST">
 					</Item>
@@ -712,7 +695,6 @@
 	<DIALOG Id="6034" Name="IDD_SEARCH" Focus="7036">
 		<Controls>
 			<Menu Id="7036" Name="IDC_SEARCH_MENU">
-				<TitleID>IDS_APPLET</TitleID>
 				<Items>
 					<Item Id="8001" Name="IDI_SEARCH_MENU_NAME">
 					</Item>
@@ -725,7 +707,6 @@
 	<DIALOG Id="6035" Name="IDD_SEARCHNAME" Focus="7037">
 		<Controls>
 			<Text Id="7037" Name="IDC_SEARCHNAME_TEXTCTL">
-				<TitleID>IDS_SEARCH_NAME</TitleID>
 				<Items/></Text>
 		</Controls>
 	</DIALOG>
@@ -734,7 +715,6 @@
 			<Text Id="7011" Name="IDC_DELETE_TEXT">
 				<Items/></Text>
 			<Menu Id="7040" Name="IDC_DELETE_MENU">
-				<TitleID>IDS_DELETE</TitleID>
 				<Items>
 					<Item Id="8004" Name="IDI_DELETE_MENU_SELECT_ALL">
 					</Item>

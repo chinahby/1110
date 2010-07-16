@@ -4764,8 +4764,7 @@ static boolean dialog_handler_of_state_viewday(CScheduleApp *pme, AEEEvent eCode
             (void)IMENUCTL_SetTitle(pMenu, 0, 0, pme->m_pVDTitle);
 			#else
 		    {
-		  		AECHAR WTitle[40] = {0};
-				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,pme->m_pVDTitle);
 		    }
 			#endif
 

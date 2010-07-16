@@ -2450,7 +2450,6 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 
 		case EVT_USER_REDRAW:
 		{
-
 			if( IMENUCTL_GetItemCount( pMenu) == 0)
 			{
 				IMENUCTL_SetBottomBarType( pMenu, BTBAR_BACK);
@@ -3033,7 +3032,6 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 			IMENUCTL_SetSel( pMenu, selected);
 			IMENUCTL_SetActive( pMenu, subState == 0);
 			IMENUCTL_Redraw( pMenu);
-
 			if( subState == 1)
 			{
 #if 0

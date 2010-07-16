@@ -375,7 +375,7 @@ int CContApp_ShowDialog(CContApp *pMe, uint16  dlgResId)
                                 CONTAPP_RES_FILE_LANG,
                                 dlgResId, 
                                 NULL);
-    
+    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 #if defined(AEE_STATIC)
     if (nRet != SUCCESS)
     {
@@ -4856,6 +4856,18 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 pMe->m_bDelOk = FALSE;
                 pMe->m_wSelectCont = pMe->m_wDelReturnSelId;
             }
+            {
+                //add by xuhui
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                        CONTAPP_RES_FILE_LANG,                                
+                        IDS_APPLET,
+                        WTitle,
+                        sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+            
             //IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);   
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
@@ -4921,7 +4933,6 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
 
             CContApp_DrawScrollBar(pMe, pMenuCtl);
-            
             IDISPLAY_Update(pMe->m_pDisplay); 
         }
             return TRUE;
@@ -5290,11 +5301,24 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                                      NULL,
                                      EmptyTitle);
 #else*/
+#if 0
             (void)ITEXTCTL_SetTitle( pTextCtl,
                                      CONTAPP_RES_FILE_LANG,
                      CContApp_GetFldTitleID(pMe->m_nFldInputID),
                                      NULL);
+#endif
 //#endif
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                CContApp_GetFldTitleID(pMe->m_nFldInputID),
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+
              CContApp_SetFldMaxSize(pMe,pTextCtl,pMe->m_nFldInputID);
                      
             //if(pMe->m_nAddnewOrEdit == ADDOREDIT_EDIT)
@@ -5368,7 +5392,6 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                         CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);            
                     }
                 }
-
                 IDISPLAY_Update(pMe->m_pDisplay);  
             }
             return TRUE;
@@ -5865,7 +5888,6 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             {
                 ITEXTCTL_SetActive(pTextCtl, TRUE);
             }
-            
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
         }
@@ -6644,7 +6666,16 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
             
             // restore the menu select
             POP_OPTSMENU_SEL(pMe->m_wOptsStatSel);
-            
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_APPLET,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }            
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -6671,7 +6702,6 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
             
             // Draw prompt bar here
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
-            
             (void)IMENUCTL_Redraw(pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
@@ -7144,6 +7174,18 @@ static boolean  CContApp_HandleFldOptsDlgEvent( CContApp  *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+            
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_APPLET,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+
 
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
@@ -7543,7 +7585,18 @@ static boolean  CContApp_HandleGroupDlgEvent( CContApp  *pMe,
     
             // Set menu select
             //(void)CContApp_SetGroupMenuSel(pMe, pMenuCtl);
-            
+
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_INPUT_GROUP,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -7742,6 +7795,17 @@ static boolean  CContApp_HandlePositionDlgEvent( CContApp  *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_POSITION,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -7946,7 +8010,6 @@ static boolean  CContApp_HandleCopyMoveDlgEvent( CContApp  *pMe,
             {
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectCopyMove);
             }
-            
             // Draw prompt bar here
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
             IDISPLAY_Update(pMe->m_pDisplay);  
@@ -8136,7 +8199,7 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
             //MP_NO_REDRAW
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
             IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
-            
+            //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             if(COPYMULTIPE_TOUIM == pMe->m_nCopyMoveType || COPYMULTIPE_TOPHONE == pMe->m_nCopyMoveType)
             {
             	#if 0
@@ -8212,7 +8275,6 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
             {
                 CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
             }
-
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
@@ -8545,7 +8607,18 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
             //MENU_SET_COMICON(pMenuCtl);
-            
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_ONEDIAL,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+
+
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -9420,7 +9493,6 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             {
                 ITEXTCTL_SetActive(pTextCtl, TRUE);
             }
-
             //IMENUCTL_Redraw(pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
@@ -9842,6 +9914,17 @@ static boolean  CContApp_HandleSettingDlgEvent( CContApp  *pMe,
             MENU_SET_COMICON(pMenuCtl);
             
             IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectSetting);
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_SETTING,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+
                
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
@@ -10308,6 +10391,17 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_APPLET,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -10701,11 +10795,20 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
             (void)ITEXTCTL_SetInputMode(pTextCtl,
                      CContApp_GetFldInputMode(AEE_ADDRFIELD_NAME));
                      
-            (void)ITEXTCTL_SetTitle( pTextCtl,
+            /*(void)ITEXTCTL_SetTitle( pTextCtl,
                                      CONTAPP_RES_FILE_LANG,
                                      IDS_FIND,
-                                     NULL);
-                                     
+                                     NULL);*/
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_FIND,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }                                     
             ITEXTCTL_SetMaxSize( pTextCtl, MAX_INPUT_NAME_EN);
                      
             if(pMe->m_sSearchStr)
@@ -10921,6 +11024,17 @@ static boolean  CContApp_HandleDeleteDlgEvent( CContApp  *pMe,
             {
                 pMe->m_wSelectCont = IMENUCTL_GetItemID(pMenuCtl, 0);
             }
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_DELETE,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+            
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -10954,7 +11068,6 @@ static boolean  CContApp_HandleDeleteDlgEvent( CContApp  *pMe,
             {
                 CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
             }
-
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
@@ -11175,7 +11288,6 @@ static boolean  CContApp_HandleSelectRecordDlgEvent( CContApp  *pMe,
             {
                 CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
             }
-
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
@@ -11332,7 +11444,16 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
-            
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_APPLET,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }            
             //    IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             //    pMe->m_wSelectCont = IMENUCTL_GetSel(pMenuCtl);
             //    CContApp_DisplaySelectField(pMe, pMe->m_wFieldIndex);         
@@ -11410,7 +11531,6 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
 
             /*必须在textctl初始化完毕后,才能获得icon id,而且要在dialog更新完之后再更新图标*/
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
-
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
         }
@@ -12443,11 +12563,21 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                      
             (void)ITEXTCTL_SetInputMode(pTextCtl,
                      CContApp_GetFldInputMode(AEE_ADDRFIELD_NAME));
-            
+            /*
             (void)ITEXTCTL_SetTitle( pTextCtl,
                                      CONTAPP_RES_FILE_LANG,
                                      IDS_INPUT_GROUP,
-                                     NULL);
+                                     NULL);*/
+            {
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                CONTAPP_RES_FILE_LANG,                                
+                IDS_INPUT_GROUP,
+                WTitle,
+                sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }                                     
             
             ITEXTCTL_SetMaxSize( pTextCtl,MAX_INPUT_NAME_EN);
             
@@ -12533,7 +12663,6 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                 {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);            
                 }
-
                 IDISPLAY_Update(pMe->m_pDisplay);  
             }
             return TRUE;
@@ -12677,6 +12806,7 @@ static boolean  CContApp_HandleDeleteSelectDlgEvent( CContApp  *pMe,
             #else
 			{
 				AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 						CONTAPP_RES_FILE_LANG,								  
 						IDS_DELETE_CONTACTS,

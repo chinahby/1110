@@ -174,7 +174,6 @@
 	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="7009">
 		<Controls>
 			<Menu Id="7009" Name="IDC_SOUNDMENU_PROFILES">
-				<TitleID>IDS_SOUNDMENU_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -182,7 +181,6 @@
 	<DIALOG Id="6002" Name="IDD_KEY_VOLUME" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_KEY_VOLUME">
-				<TitleID>IDS_KEYBEEP_VOLUME_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -190,7 +188,6 @@
 	<DIALOG Id="6003" Name="IDD_HINT_MENU" Focus="7003">
 		<Controls>
 			<Menu Id="7003" Name="IDC_HINT">
-				<TitleID>IDS_SMSHINT</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -205,7 +202,6 @@
 	<DIALOG Id="6005" Name="IDD_SMSRING_MENU" Focus="7005">
 		<Controls>
 			<Menu Id="7005" Name="IDC_SMSRING">
-				<TitleID>IDS_SMSRING</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -217,7 +213,6 @@
 	<DIALOG Id="6007" Name="IDD_VOLUME_MENU" Focus="7007">
 		<Controls>
 			<Menu Id="7007" Name="IDC_VOLUME">
-				<TitleID>IDS_VOLUME_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -232,7 +227,6 @@
 	<DIALOG Id="6009" Name="IDD_SCENEMODE_MENU" Focus="7013">
 		<Controls>
 			<Menu Id="7013" Name="IDC_SCENEMODE">
-				<TitleID>IDS_SCENEMODE_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -243,7 +237,6 @@
 	<DIALOG Id="6011" Name="IDD_KEYSND_MENU" Focus="7006">
 		<Controls>
 			<Menu Id="7006" Name="IDC_KEYSND_MENU">
-				<TitleID>IDS_COLORKEYSND</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

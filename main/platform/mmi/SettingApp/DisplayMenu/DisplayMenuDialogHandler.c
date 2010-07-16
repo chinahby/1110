@@ -28,6 +28,8 @@
 #ifdef FEATURE_APP_MEDIAGALLERY
 #include "MediaGallery.h"
 #endif
+#include "AEEAnnunciator.h"
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -497,7 +499,6 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
 
             // 统一更新界面
             IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);
-            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             IDISPLAY_Update(pMe->m_pDisplay);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
@@ -667,8 +668,8 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
         /*//取NV中的值,用来显示已设置了的图片或动画.*/
         {
             char wallnvtmp[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
+            IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
             IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
-
             switch(pMe->m_PICType)
             {
                 case WALLPAPER_MAIN:    //大屏墙纸
@@ -859,6 +860,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                 pMe->m_CurPaper = NULL;
             }
             IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);
+            IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             return TRUE;
 
         case EVT_KEY:
@@ -1335,7 +1337,6 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
 
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -1593,7 +1594,6 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
 
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -1872,7 +1872,6 @@ static boolean  HandleScreensaverTimeoutDialogEvent(CDisplayMenu *pMe,
 
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 

@@ -1942,8 +1942,8 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
       WSTRCAT(wpszTitle, wszBuffer);
 
    }
-
-   IMENUCTL_SetTitle(pMenuCtl, NULL, 0, wpszTitle);
+   IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wpszTitle);
+   //IMENUCTL_SetTitle(pMenuCtl, NULL, 0, wpszTitle);
 
 UPDATETITLEEXIT:
    FREEIF(wpszTitle);

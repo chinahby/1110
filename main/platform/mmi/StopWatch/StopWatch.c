@@ -455,10 +455,10 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
 		}
 	}
 #endif
-	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:
+            IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
             InitStopWatch(pme);
             StopWatch_Redraw(pme);
             return TRUE;

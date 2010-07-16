@@ -702,6 +702,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
         MSG_ERROR ("pMe->m_pIAnn could not be created", 0, 0, 0);
         return EFAILED;
     }
+    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 	DBGPRINTF("IANNUNCIATOR_SetFieldIsActiveEx::::wmsapp111:::");
 	MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::wmsapp111:::",0,0,0);
     //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);

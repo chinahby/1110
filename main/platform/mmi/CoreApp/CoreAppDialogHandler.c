@@ -3368,7 +3368,6 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
                             pDevBmp, 0, 0, AEE_RO_COPY);
                 }
                 DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
-                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             

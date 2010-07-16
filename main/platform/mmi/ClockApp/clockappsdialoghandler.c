@@ -1316,7 +1316,6 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
             }        
             //STATE为真时,状态选中"开"
             IMENUCTL_SetSel(pMe->m_pState, pMe->m_ClockCfg.bStateOn[pMe->m_eCurAlarmType] ? ITEM_STATE_ON : ITEM_STATE_OFF);
-            
             // 统一更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
@@ -2691,7 +2690,6 @@ static void CClockApps_AniClockImg(CClockApps *pMe)
                             &rc, IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
         (void)IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
     }
-
     IDISPLAY_Update( pMe->m_pDisplay);
 }
 
