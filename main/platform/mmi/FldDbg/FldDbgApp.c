@@ -5438,6 +5438,11 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
      MSG_FATAL("IShell Null", 0, 0, 0);
      return FALSE;
    }
+   if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pme->m_pIAnn))
+    {
+
+        return EFAILED;
+    }
 
    pIDialog = ISHELL_GetActiveDialog(ps);
    IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
@@ -5510,11 +5515,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
        }
        pme->m_pDisplay = args->pDisplay;
        (void) IDISPLAY_AddRef(pme->m_pDisplay);
-	   if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pme->m_pIAnn))
-    	{
-
-        	return EFAILED;
-    	}
+	   
 
      return TRUE;
 

@@ -455,6 +455,10 @@ int AEEClsCreateInstance(AEECLSID  ClsId,
 #endif
 {
    *ppObj = NULL;
+   if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
+   {
+		   return EFAILED;
+	}
 
    if (AEEApplet_New(sizeof(CSvcPrgApp), 
                       ClsId, 
@@ -631,10 +635,7 @@ static boolean CSvcPrg_OnAppStart(CSvcPrgApp  *pMe,
 
    pMe->m_pDisplay = a->pDisplay;
    IDISPLAY_AddRef(pMe->m_pDisplay);
-   if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
-    {
-        return EFAILED;
-    }
+   
 
    return CSvcPrg_DisplaySecCodeDialog(pMe);
 }
