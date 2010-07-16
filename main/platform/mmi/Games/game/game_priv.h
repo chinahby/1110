@@ -23,6 +23,7 @@
 #ifdef FEATRUE_SUPPORT_G_SENSOR
 #include "G_Sensor.h"
 #endif
+#include "AEEAnnunciator.h"
 
 
 
@@ -115,6 +116,7 @@ typedef struct _Game
     GameState             m_prevState;        // Applet前一状态
     GameState             m_currState;        // Applet当前状态
     AEERect     m_rc;
+    IAnnunciator *m_pIAnn;
 } Game;
 
 /*==============================================================================

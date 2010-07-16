@@ -387,12 +387,20 @@ static int CApplication_InitAppData(Application *pMe)
 
     pMe->m_MainSel  = 0;
     
+	
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
             (void **) &pMe->m_pDisplay) != SUCCESS)
     {
         return EFAILED;
     }
 
+	if (ISHELL_CreateInstance(pMe->m_pShell,
+									 AEECLSID_ANNUNCIATOR,
+									 (void **) &pMe->m_pIAnn))
+	{
+			CApplication_FreeAppData(pMe);
+			return FALSE;
+	}
     return SUCCESS;
 }
 
@@ -425,6 +433,11 @@ static void CApplication_FreeAppData(Application *pMe)
     {
         (void) IDISPLAY_Release(pMe->m_pDisplay);
         pMe->m_pDisplay = NULL;
+    }
+	if (pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+        pMe->m_pIAnn= NULL;
     }
 
 }
@@ -566,6 +579,7 @@ static boolean Application_HandleEvent( IApplication *pi,
     AEEDeviceInfo di; 
 
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di); 
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch ( eCode)
     {
         case EVT_APP_START:
@@ -873,16 +887,25 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 {
     PARAM_NOT_REF(dwParam)
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_APPLICATION_LIST);
-        
+    AECHAR WTitle[40] = {0};
     if (pMenu == NULL)
     {
         return FALSE;
     }
-
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			#if 0
             IMENUCTL_SetTitle(pMenu, APPLICATION_RES_FILE_LANG, IDS_APPLICATION_LIST, NULL);
+			#else
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                    APPLICATION_RES_FILE_LANG,                                
+                                    IDS_APPLICATION_LIST,
+                                    WTitle,
+                                    sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			#endif
 #ifdef FEATURE_APP_MANAGER
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
 #endif

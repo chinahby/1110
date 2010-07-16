@@ -702,7 +702,9 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
         MSG_ERROR ("pMe->m_pIAnn could not be created", 0, 0, 0);
         return EFAILED;
     }
-    
+	DBGPRINTF("IANNUNCIATOR_SetFieldIsActiveEx::::wmsapp111:::");
+	MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::wmsapp111:::",0,0,0);
+    //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     // Create IAlert instance
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ALERT, 
             (void **) &pMe->m_pAlert) != SUCCESS)
@@ -863,7 +865,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 {
     WmsApp *pMe = (WmsApp*)pi;
     AEEAppStart *as=NULL;
-    
+    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -1905,7 +1907,11 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
                     sizeof(wszTitle));
             nLen = WSTRLEN(wszTitle);
             WSPRINTF(&wszTitle[nLen], (sizeof(wszTitle) - nLen*sizeof(AECHAR)), wszFmt, pMe->m_wSelItemxuhao, wItemCount);
+			#if 0
             (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszTitle);
+			#else
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+			#endif
         }
         if(wItemCount > MAXITEMS_ONEPAGE)
         {

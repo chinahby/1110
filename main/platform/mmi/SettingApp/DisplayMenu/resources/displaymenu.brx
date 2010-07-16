@@ -186,7 +186,6 @@
 	<DIALOG Id="6001" Name="IDD_DISPLAYMENU_MENU" Focus="7004">
 		<Controls>
 			<Menu Id="7004" Name="IDC_DISPLAYMENU">
-				<TitleID>IDS_DISPLAY_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -202,7 +201,6 @@
 	<DIALOG Id="6004" Name="IDD_SCREENSAVERTIMEOUT_DIALOG" Focus="7008">
 		<Controls>
 			<Menu Id="7008" Name="IDC_SCREENSAVER_TIMEOUT_MENU">
-				<TitleID>IDS_SCREENSAVETIMEOUT</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -210,7 +208,6 @@
 	<DIALOG Id="6005" Name="IDD_BACKLIGHTING_MENU" Focus="7006">
 		<Controls>
 			<Menu Id="7006" Name="IDC_BACKLIGHTING">
-				<TitleID>IDS_BACKLIGHTING_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -218,7 +215,6 @@
 	<DIALOG Id="6006" Name="IDD_CONTRAST_MENU" Focus="7007">
 		<Controls>
 			<Menu Id="7007" Name="IDC_CONTRAST">
-				<TitleID>IDS_CONTRAST_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -226,7 +222,6 @@
 	<DIALOG Id="6007" Name="IDD_DESKTOP_THEME" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_DESKTOP_THEME">
-				<TitleID>IDS_DESKTOP_THEME</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -234,7 +229,6 @@
 	<DIALOG Id="6008" Name="IDD_LED_CONTROL" Focus="7002">
 		<Controls>
 			<Menu Id="7002" Name="IDC_LED_CONTROL">
-				<TitleID>IDS_LED_CONTROL</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -253,7 +247,6 @@
 	<Dialog Id="6010" Name="IDD_MENU_STYLE" Focus="7010">
 		<Controls>
 			<Menu Id="7010" Name="IDC_MENU_STYLE">
-				<TitleID>IDS_MENU_STYLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

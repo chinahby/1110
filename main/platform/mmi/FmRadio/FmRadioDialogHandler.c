@@ -1267,7 +1267,19 @@ static void popTuningModeSelectMenu( CFmRadio *pMe)
 //    IMENUCTL_SetProperties( pMe->m_pMenu, IMENUCTL_GetProperties( pMe->m_pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY);
 	IMENUCTL_SetOemProperties(pMe->m_pMenu, IMENUCTL_GetOemProperties( pMe->m_pMenu)&~OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
     IMENUCTL_SetBottomBarType( pMe->m_pMenu, BTBAR_SELECT_BACK);
+	#if 0
     IMENUCTL_SetTitle( pMe->m_pMenu, FMRADIOLS_RES_FILE_LANG, IDS_FMRADIO_SOFTKEY_MODE, NULL);
+	#else
+    {
+  		AECHAR WTitle[40] = {0};
+		(void)ISHELL_LoadResString(pMe->m_pShell,
+                FMRADIOLS_RES_FILE_LANG,                                
+                IDS_FMRADIO_SOFTKEY_MODE,
+                WTitle,
+                sizeof(WTitle));
+		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+    }
+	#endif
     IMENUCTL_SetSel( pMe->m_pMenu, pMe->cfg.tuningMode);
 
 	repaint( pMe, TRUE);
@@ -1569,7 +1581,19 @@ static void showChannelList( void* pme)
     }
 
     IMENUCTL_SetRect( pMe->m_pMenu, &rect);
+	#if 0
     IMENUCTL_SetTitle( pMe->m_pMenu, FMRADIOLS_RES_FILE_LANG, IDS_FMRADIO_OPTION_MENU_LIST, NULL);
+	#else
+    {
+  		AECHAR WTitle[40] = {0};
+		(void)ISHELL_LoadResString(pMe->m_pShell,
+                FMRADIOLS_RES_FILE_LANG,                                
+                IDS_FMRADIO_OPTION_MENU_LIST,
+                WTitle,
+                sizeof(WTitle));
+		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+    }
+	#endif
     IMENUCTL_SetProperties( pMe->m_pMenu, MP_WRAPSCROLL);
 #if (defined( FEATURE_FMRADIO_NO_MODE_SELECT) || defined( FEATURE_FMRADIO_KEY_OK_TO_MUTE))
 	IMENUCTL_SetBottomBarType( pMe->m_pMenu, BTBAR_OPTION_BACK);

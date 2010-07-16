@@ -342,7 +342,7 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
             int     length              = 0;
             int     i                   = 0;
             uint32  MenuSel;
-
+			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);			
             //获取闹钟首选项的数据结构
             (void) ISHELL_GetPrefs( pMe->m_pShell,
                                     AEECLSID_ALARMCLOCK,
@@ -488,6 +488,15 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
                 }
             }
             MenuSel = IMENUCTL_GetSel( pMenuAlarmList);
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_CLOCKAPPS_RES_FILE,                                
+                        IDS_ALARMCLOCK_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             if(pMe->m_ClockCfg.RepMode[MenuSel - IDC_MENU_ALARMCLOCK_LIST_ITEM_1])
             {
                 IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_OPTION_BACK);
@@ -737,6 +746,7 @@ static boolean  HandleAlarmOptionDialogEvent(CClockApps *pMe,
 
                 if( allClosed)
                 {
+					IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
                     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
                 }
             }
@@ -1071,7 +1081,11 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
             int title_hight = GetTitleBarHeight(pMe->m_pDisplay);
             int bottomheight = GetBottomBarHeight(pMe->m_pDisplay);
             int fontHeight = IDISPLAY_GetFontMetrics( pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
+			#if 0  //add by yangdecai
             int lineSpaceV = ( pMe->m_rc.dy - title_hight - bottomheight - fontHeight * 4) / 5;
+			#else
+			int lineSpaceV = ( pMe->m_rc.dy - bottomheight - fontHeight * 4) / 5;
+			#endif
 
             int     i           = 0;
             int     width       = 0;
@@ -1122,7 +1136,11 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                 MEMSET(&title,0,sizeof(TitleBar_Param_type));
                 title.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
                 title.pwszTitle = wszTitle;
+				#if 0
                 DrawTitleBar(pMe->m_pDisplay,&title);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+				#endif
             }
 
             //状态标题
@@ -1174,13 +1192,21 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                     x = pMe->m_rc.dx - width;
                 }
 #endif
-
+				#if 0  //add by yangdecai
                 SETAEERECT( &pMe->rectLine[i],
                             x,
                             title_hight + (fontHeight + lineSpaceV) * i + lineSpaceV,
                             width,
                             fontHeight
                         );
+				#else
+				SETAEERECT( &pMe->rectLine[i],
+                            x,
+                            (fontHeight + lineSpaceV) * i + lineSpaceV,
+                            width,
+                            fontHeight
+                        );
+				#endif
 
                 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, label[i],-1, pMe->rectLine[i].x, pMe->rectLine[i].y, 0, IDF_TEXT_TRANSPARENT);
             }
@@ -2234,6 +2260,7 @@ static boolean HandleAlarmMsgBox(CClockApps *pMe,
                 }
                 if( allClosed)
                 {
+					IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
                     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF);
                 }
             }               
@@ -2611,7 +2638,11 @@ static void CClockApps_AniClockImg(CClockApps *pMe)
         //title.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER;
         title.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
         title.pwszTitle = wszTitle;
+		#if 0
         DrawTitleBar(pMe->m_pDisplay,&title);
+		#else
+		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+		#endif
         (void) ISHELL_GetPrefs(pMe->m_pShell,
                                AEECLSID_ALARMCLOCK,
                                CLOCK_CFG_VERSION,

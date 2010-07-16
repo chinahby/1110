@@ -696,7 +696,19 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
         case EVT_DIALOG_START:
         {
             MP3_SetMenuCtlRect_Prop(pMe,pMenuCtl,MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
+			#if 0
             IMENUCTL_SetTitle(pMenuCtl, MUSICPLAYER_RES_FILE_LANG, IDS_PLAYLIST, NULL);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MUSICPLAYER_RES_FILE_LANG,                                
+                        IDS_PLAYLIST,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+			#endif
    
             if(SUCCESS!=CMusicPlayer_BuildPlaylist(pMe,pMenuCtl))
             {
@@ -869,7 +881,19 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
             MP3MENU_ADDITEM(pMenuCtl,IDS_SET_CALL_RINGTONE);
             MP3MENU_ADDITEM(pMenuCtl,IDS_SET_SMS_RINGTONE);
             MP3MENU_ADDITEM(pMenuCtl,IDS_SET_ALARM_RINGTONE);
+			#if 0
             IMENUCTL_SetTitle(pMenuCtl, MUSICPLAYER_RES_FILE_LANG, IDS_SET_AS_RINGTONE, NULL);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MUSICPLAYER_RES_FILE_LANG,                                
+                        IDS_SET_AS_RINGTONE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+			#endif
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
             return TRUE;
 
@@ -1674,7 +1698,19 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
         case EVT_DIALOG_START:
         {
            MP3_SetMenuCtlRect_Prop(pMe,pMenuCtl,MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
+		   #if 0
            IMENUCTL_SetTitle(pMenuCtl, MUSICPLAYER_RES_FILE_LANG, IDS_PLAYLIST, NULL);
+		   #else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MUSICPLAYER_RES_FILE_LANG,                                
+                        IDS_PLAYLIST,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+			#endif
    
            if(SUCCESS!=CMusicPlayer_BuildViewList(pMe,pMenuCtl))
             {
@@ -5332,7 +5368,11 @@ static void MP3_Draw_Settings_TitleBar(CMusicPlayer *pMe)
     MEMSET(&title,0,sizeof(TitleBar_Param_type));
     title.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER;
     title.pwszTitle = wszTitle;
+	#if 0
     DrawTitleBar(pMe->m_pDisplay,&title);
+	#else
+	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+	#endif
     MP3_DRAW_BOTTOMBAR( BTBAR_SAVE_BACK);
 }
 /*draw cliprect*/

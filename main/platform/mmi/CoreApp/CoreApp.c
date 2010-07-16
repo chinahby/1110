@@ -289,7 +289,9 @@ boolean CoreApp_InitAppData(IApplet* po)
     {
         return FALSE;
     }
-
+	MSG_FATAL("CoreApp_InitAppData            ::::croeapp111:::",0,0,0);
+    MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::croeapp111:::",0,0,0);
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
     CoreTask_SetPwrDnComplete(FALSE);
     
     if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
@@ -377,6 +379,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 {
     CCoreApp * pMe = (CCoreApp *)pi;
     //DBGPRINTF("%x %x %x CoreApp_HandleEvent",eCode,wParam,dwParam);
+    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -1663,6 +1666,7 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
     {
         return FALSE;
     }
+	
 #ifdef FEATURE_UIALARM
     // 创建 IAlarm 接口
     nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,

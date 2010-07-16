@@ -82,6 +82,7 @@
 #include "AEECM.h"
 #include "OEMSound.h"
 #include "OEMConfig.h"
+#include "AEEAnnunciator.h"
 
 
 /*==============================================================================
@@ -225,6 +226,7 @@ typedef struct _CUTK
     wms_report_status_e_type        m_SendStatus; //发送消息返回的状态码
     wms_cdma_tl_status_e_type       m_SendtlStatus;
     RGBVAL     m_themeColor;    
+    IAnnunciator *m_pIAnn;
 } CUTK;
 
 /*==============================================================================

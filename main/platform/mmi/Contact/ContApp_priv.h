@@ -81,6 +81,7 @@
 #include "Appscommon_color.brh"
 #endif
 
+#include "AEEAnnunciator.h"
 
 #include "AEEControls.brh"
 
@@ -906,6 +907,7 @@ typedef struct _CContApp
     
 #endif
     char  *m_strPhonePWD;
+    IAnnunciator *m_pIAnn;
 } CContApp;
 
 /*==============================================================================

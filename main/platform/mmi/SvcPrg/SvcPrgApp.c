@@ -230,6 +230,8 @@ typedef struct _CSvcPrgApp {
    MenuItemType *m_lockMenu;
    
    int           m_ShowMainMenu;
+   
+   IAnnunciator *m_pIAnn;
 
 #ifdef FEATURE_ENABLE_OTKSL
    // TRUE if access to the Service Programming applet was gained
@@ -509,6 +511,7 @@ static boolean CSvcPrg_HandleEvent(CSvcPrgApp *pMe,
 {
    switch (eCode) {
    case EVT_APP_START:
+   	  IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);   
       return CSvcPrg_OnAppStart(pMe, wParam, dwParam);
 
    case EVT_APP_STOP:
@@ -589,6 +592,11 @@ static void CSvcPrg_FreeAppData(CSvcPrgApp *pMe)
    if (pMe->m_pDisplay) {
       IDISPLAY_Release(pMe->m_pDisplay);
    }
+   if(pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+        pMe->m_pIAnn = NULL;
+    }
 }
 
 
@@ -623,6 +631,10 @@ static boolean CSvcPrg_OnAppStart(CSvcPrgApp  *pMe,
 
    pMe->m_pDisplay = a->pDisplay;
    IDISPLAY_AddRef(pMe->m_pDisplay);
+   if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
+    {
+        return EFAILED;
+    }
 
    return CSvcPrg_DisplaySecCodeDialog(pMe);
 }
@@ -3673,11 +3685,22 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          if (!pm) {
             return FALSE;
          }
-         
+         #if 0
          (void) IMENUCTL_SetTitle(pm, 
                                   AEE_SVCPRG_RES_FILE, 
                                   item->title,
                                   NULL);
+		 #else
+		  {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                        AEE_SVCPRG_RES_FILE,                                
+                        item->title,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		  }
+		  #endif
 
      
          // Add in the menu options
@@ -3723,11 +3746,22 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          if (!pm) {
             return FALSE;
          }
-
+         #if 0
          (void) IMENUCTL_SetTitle(pm, 
                                   AEE_SVCPRG_RES_FILE, 
                                   item->title,
                                   NULL);
+		 #else
+		  {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                        AEE_SVCPRG_RES_FILE,                                
+                        item->title,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		  }
+		  #endif
 
          // booleans are assumed to always be editable
          ASSERT(item->isEditable);  
@@ -3792,11 +3826,22 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          if (!pm) {
             return FALSE;
          }
-
+		 #if 0
          (void) IMENUCTL_SetTitle(pm, 
                                   AEE_SVCPRG_RES_FILE, 
                                   item->title,
                                   NULL);
+		 #else
+		  {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                        AEE_SVCPRG_RES_FILE,                                
+                        item->title,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		  }
+		  #endif
 
          // booleans are assumed to always be editable
          ASSERT(item->isEditable);  
@@ -3880,11 +3925,22 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          if (!pm) {
             return FALSE;
          }
-         
+         #if 0
          (void) IMENUCTL_SetTitle(pm, 
                                   AEE_SVCPRG_RES_FILE, 
                                   item->title,
                                   NULL);
+		 #else
+		  {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                        AEE_SVCPRG_RES_FILE,                                
+                        item->title,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		  }
+		  #endif
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
          if (item->cfgItem == CFGI_RTRE_CONFIGURATION)
          {
@@ -3964,11 +4020,22 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
             FREE((void *) p);
             return FALSE;
          }
-
+		  #if 0
          (void) IMENUCTL_SetTitle(pm, 
                                   AEE_SVCPRG_RES_FILE, 
                                   item->title,
                                   NULL);
+		  #else
+		  {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                        AEE_SVCPRG_RES_FILE,                                
+                        item->title,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		  }
+		  #endif
 
         
          // Add in the menu options

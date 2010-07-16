@@ -171,7 +171,6 @@
 	<DIALOG Id="1" Name="IDD_MAINMENU" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_MAINMENU">
-				<TitleID>IDS_QUICKTEST</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

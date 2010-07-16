@@ -1637,10 +1637,22 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
         }
         case EVT_DIALOG_START:
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+			#if 0
             IMENUCTL_SetTitle(pMenu,
                                         AEE_APPSCALLAPP_RES_FILE,
                                         IDS_IP_NUMBER_SELECT,
                                         NULL);
+			#else
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+			            AEE_APPSCALLAPP_RES_FILE,                                
+			            IDS_IP_NUMBER_SELECT,
+			            WTitle,
+			            sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+			#endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
             return TRUE;

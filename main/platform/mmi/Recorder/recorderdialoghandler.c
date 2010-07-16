@@ -486,8 +486,19 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 
 			
 			IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, IDS_STORAGE_SETUP, IDS_STORAGE_SETUP, 0, 0);
-
+			#if 0
             IMENUCTL_SetTitle( pMenu, AEE_RECORDER_RES_FILE, IDS_TITLE, 0);
+			#else
+			{
+				AECHAR wszTitle[40] = {0};
+                ISHELL_LoadResString( pme->a.m_pIShell,
+                                      AEE_RECORDER_RES_FILE,
+                                      IDS_TITLE,
+                                      wszTitle,
+                                      sizeof(wszTitle));
+				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
+			}
+			#endif
             IMENUCTL_SetProperties( pMenu, IMENUCTL_GetProperties( pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType( pMenu, BTBAR_SELECT_BACK);
@@ -2367,7 +2378,19 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 			ITEXTCTL_SetActive( pTextCtl, FALSE);
 
 			recorder_list_create_menu( pme, pMenu, 0);
+			#if 0
 			IMENUCTL_SetTitle( pMenu, AEE_RECORDER_RES_FILE, IDS_RECORD_LIST_TITLE, 0);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pme->m_pShell,
+                        AEE_RECORDER_RES_FILE,                                
+                        IDS_RECORD_LIST_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+		    }
+			#endif
 			IMENUCTL_SetOemProperties( pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE); //modified by chengxiao 2009.04.02
 			IMENUCTL_SetBottomBarType( pMenu, BTBAR_BACK);
             IMENUCTL_SetProperties( pOption, IMENUCTL_GetProperties( pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -2963,7 +2986,19 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 
 			IMENUCTL_SetProperties( pMenu, MP_MULTI_SEL | MP_WRAPSCROLL);
 			IMENUCTL_SetOemProperties( pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE); //modified by chengxiao 2009.04.15
+			#if 0
 			IMENUCTL_SetTitle( pMenu, AEE_RECORDER_RES_FILE, IDS_RECORD_LIST_OPTION_SET_AS, 0);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pme->m_pShell,
+                        AEE_RECORDER_RES_FILE,                                
+                        IDS_RECORD_LIST_OPTION_SET_AS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+		    }
+			#endif
 			IMENUCTL_SetBottomBarType( pMenu, BTBAR_SAVE_BACK);
 			pme->m_ptr[0] = (int)pMenu;
 			pme->m_ptr[1] = (int)&subState;
@@ -3978,7 +4013,7 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
 	static IMenuCtl* 	pMenu 		= 0;
 	static uint16		selected	= 0;
 	static boolean		reserve		= 0;
-
+	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
 	switch (evt)
 	{
 
@@ -4000,8 +4035,19 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
 
 		case EVT_DIALOG_START:
 		{
-
+			#if 0
 			IMENUCTL_SetTitle( pMenu, AEE_RECORDER_RES_FILE, IDS_TITLE, 0);
+			#else
+			{
+				AECHAR wszTitle[16] = {0};
+                ISHELL_LoadResString( pme->a.m_pIShell,
+                                      AEE_RECORDER_RES_FILE,
+                                      IDS_TITLE,
+                                      wszTitle,
+                                      sizeof(wszTitle));
+				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);            
+			}
+			#endif
 
 			IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, IDS_STORAGE_SETUP_PHONE, IDS_STORAGE_SETUP_PHONE, 0, 0);
 			IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, IDS_STORAGE_SETUP_CARD0, IDS_STORAGE_SETUP_CARD0, 0, 0);

@@ -392,6 +392,10 @@ static int CGame_InitAppData(Game *pMe)
     {
         return EFAILED;
     }
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
+    {
+        return EFAILED;
+    }
 
     return SUCCESS;
 }
@@ -425,6 +429,11 @@ static void CGame_FreeAppData(Game *pMe)
     {
         (void) IDISPLAY_Release(pMe->m_pDisplay);
         pMe->m_pDisplay = NULL;
+    }
+	if(pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+        pMe->m_pIAnn = NULL;
     }
 
 }
@@ -566,6 +575,7 @@ static boolean Game_HandleEvent( IGame *pi,
     AEEDeviceInfo di; 
 
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di); 
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
     switch ( eCode)
     {
         case EVT_APP_START:
@@ -882,7 +892,19 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            IMENUCTL_SetTitle(pMenu, GAME_RES_FILE_LANG, IDS_GAME_LIST, NULL);                
+			#if 0
+            IMENUCTL_SetTitle(pMenu, GAME_RES_FILE_LANG, IDS_GAME_LIST, NULL);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        GAME_RES_FILE_LANG,                                
+                        IDS_GAME_LIST,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+			#endif
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_1, IDS_GAME_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_2, IDS_GAME_TITLE_2, NULL, 0);
             //IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_3, IDS_GAME_TITLE_3, NULL, 0);

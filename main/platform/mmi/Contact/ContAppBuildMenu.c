@@ -2748,7 +2748,14 @@ int CContApp_BuildOneDialNumFldSelMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         switch(pFld->fID)
         {
             case AEE_ADDRFIELD_NAME:
+				#if 0
                 (void)IMENUCTL_SetTitle(pMenuCtl, NULL, 0, pFld->pBuffer); 
+				#else
+				{
+					
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pFld->pBuffer);
+				}
+				#endif
                 break;
             
             case AEE_ADDRFIELD_NOTES:

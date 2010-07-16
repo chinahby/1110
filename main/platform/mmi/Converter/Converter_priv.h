@@ -68,6 +68,7 @@
 #endif//WIN32
 #include "AEE_OEM.h"
 #include "AEEText.h"
+#include "AEEAnnunciator.h"
 
 #define CONVERTER_CURRENCY_NUMBER (15) //汇率种类个数
 /*==============================================================================
@@ -186,6 +187,7 @@ typedef struct _CConverter
     uint16               m_selectedItem; //菜单记录当前选择的项
     ConverterMode   m_converterMode; //切换单位换算模式
     boolean             b_overflow; //结果溢出
+    IAnnunciator *m_pIAnn;
 } CConverter;
 
 /*==============================================================================

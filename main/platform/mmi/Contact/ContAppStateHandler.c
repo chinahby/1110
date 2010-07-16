@@ -5040,11 +5040,22 @@ static NextFSMAction Handler_STATE_SAVETO(CContApp *pMe)
             
             pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                                       IDC_POSITION_MENU);
-            
+            #if 0
             (void)IMENUCTL_SetTitle( pMenuCtl,
                                      CONTAPP_RES_FILE_LANG,
                                      IDS_SAVETO,
                                      NULL);
+			#else
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+			            CONTAPP_RES_FILE_LANG,                                
+			            IDS_SAVETO,
+			            WTitle,
+			            sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+			#endif
                                      
             CContApp_BuildSaveToMenu(pMe, pMenuCtl);
             
@@ -5163,11 +5174,22 @@ static NextFSMAction Handler_STATE_VIEWTYPE(CContApp *pMe)
             
             pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                                       IDC_POSITION_MENU);
-            
+            #if 0
             (void)IMENUCTL_SetTitle( pMenuCtl,
                                      CONTAPP_RES_FILE_LANG,
                                      IDS_VIEWTYPE,
                                      NULL);
+			#else
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+			            CONTAPP_RES_FILE_LANG,                                
+			            IDS_VIEWTYPE,
+			            WTitle,
+			            sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+			#endif
             CContApp_BuildViewTypeMenu(pMe, pMenuCtl);
             
             InitMenuIcons(pMenuCtl);

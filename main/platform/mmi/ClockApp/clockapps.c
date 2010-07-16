@@ -347,6 +347,7 @@ static int ClockApps_InitAppData(CClockApps *pMe)
         ClockApps_FreeAppData(pMe);
         return EFAILED;
     }
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 #endif
 
 #if defined( FEATURE_CARRIER_SUDAN_SUDATEL) && !defined( AEE_SIMULATOR)

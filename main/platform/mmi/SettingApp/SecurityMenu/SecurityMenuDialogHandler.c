@@ -376,6 +376,16 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        IDS_SECURITY_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONE_LOCK, IDS_PHONE_LOCK, NULL, 0);
             if(IsRunAsUIMVersion())
             {
@@ -534,6 +544,16 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        IDS_APPLICATION_LOCK,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
 
@@ -685,6 +705,7 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ON, IDS_ON, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
             return TRUE;
@@ -728,10 +749,22 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
                 string_id = IDS_KEY_LOCK;
             }
 #endif
+			#if 0
             IMENUCTL_SetTitle(pMenu,
                                             AEE_APPSSECURITYMENU_RES_FILE,
                                             string_id,
                                             NULL);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        string_id,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+			#endif
             (void) ICONFIG_GetItem(pMe->m_pConfig,
                                             cfgi_value/*CFGI_PHONE_PASSWORD_CHECK*/,
                                             &bData,
@@ -940,9 +973,11 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                 // 画标题条
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-                
+                #if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
                (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_APPSSECURITYMENU_RES_FILE,
                                                 IDS_OLD_CODE, 
@@ -1179,6 +1214,16 @@ static boolean  SecurityPinCheckDlgHandler(CSecurityMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        IDS_PIN_CHECK,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ON, IDS_ON, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
             return TRUE;
@@ -1644,9 +1689,11 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                 // 画标题条
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-                
+                #if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
                (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_APPSSECURITYMENU_RES_FILE,
                                                 IDS_ENTERPIN, 
@@ -1991,8 +2038,11 @@ void PhoneLock_DrawPasswordInputScreen( IDisplay*   pDisplay,
     titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
     titleBarParms.nTitleResID   = titleResId;
     STRCPY( titleBarParms.strTitleResFile, titleResFile);
+	#if 1
     DrawTitleBar( pDisplay, &titleBarParms);
-
+	#else
+	//IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+	#endif
     PhoneLock_DrawPasswordInputScreenBottomBar( pDisplay, pTextCtl);
 }
 
@@ -2079,9 +2129,11 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                 // 画标题条
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-                
+                #if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
                (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_APPSSECURITYMENU_RES_FILE,
                                                 IDS_SECURITY, 
@@ -2391,9 +2443,11 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                 // 画标题条
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-                
+                #if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
                (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_APPSSECURITYMENU_RES_FILE,
                                                 IDS_ENTERPIN, 
@@ -2722,9 +2776,11 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                 // 画标题条
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-
+				#if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_APPSSECURITYMENU_RES_FILE,
                                             IDS_OLD_CODE, 
@@ -3225,9 +3281,11 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                 // 画标题条
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-
+				#if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
                 if(pMe->m_IsPin)
                 {
                     (void)ISHELL_LoadResString(pMe->m_pShell, 
@@ -3586,9 +3644,11 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                 // 画标题条
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-
+				#if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_APPSSECURITYMENU_RES_FILE,
                                                 IDS_ENTER_PUK, 
@@ -4121,6 +4181,16 @@ static boolean  SecurityEmergencyCallHandler(CSecurityMenu *pMe,
                 
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+				//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        IDS_EMERGENCY_NUMBER,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
@@ -4234,6 +4304,16 @@ static boolean  HandleRestoreDialogEvent(CSecurityMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        IDS_RESTORE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RESTORE_OK, IDS_RESTORE_OK, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RESTORE_CANCEL, IDS_RESTORE_CANCEL, NULL, 0);
             return TRUE;
@@ -4449,6 +4529,16 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        IDS_PHONE_PASSWORD_CHANGE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONE_CODE, IDS_PHONE_CODE, NULL, 0);
             if(IsRunAsUIMVersion())
             {

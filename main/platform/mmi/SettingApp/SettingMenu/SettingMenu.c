@@ -555,6 +555,8 @@ static int SettingMenu_InitAppData(CSettingMenu *pMe)
         SettingMenu_FreeAppData(pMe);
         return EFAILED;
     }
+	MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::settingmunu111:::",0,0,0);
+	//IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pAnn,FALSE);
 #ifndef WIN32    
     // 创建 IRUIM 接口
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
@@ -565,6 +567,7 @@ static int SettingMenu_InitAppData(CSettingMenu *pMe)
         return EFAILED;
     }
 #endif//WIN32
+	
     return SUCCESS;
 }
 
@@ -614,6 +617,7 @@ static void SettingMenu_FreeAppData(CSettingMenu *pMe)
         IRUIM_Release(pMe->m_pIRUIM);
         pMe->m_pIRUIM = NULL;
     }
+	
 }
 
 /*==============================================================================
@@ -689,6 +693,7 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
 
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di);    
     //SETTING_ERR("%x, %x ,%x,SettingMenu_HandleEvent",eCode,wParam,dwParam);
+    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:

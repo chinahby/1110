@@ -43,6 +43,8 @@
 #include "aeeringer.h"
 #include "recorder.h"
 #include "aeesound.h"
+#include "AEEAnnunciator.h"
+
 #ifndef WIN32
 #include "ui.h"
 #else
@@ -175,7 +177,7 @@ typedef struct
 
 	int						m_ptr[8];
 	AEECallback				m_cb;
-	
+    IAnnunciator        *m_pIAnn;
 	RecorderPreference		m_prefs;
 } Recorder;
 

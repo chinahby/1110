@@ -1033,7 +1033,14 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     {
         return 0;
     }
+	#if 0
     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, pMe->m_wszTitle);
+	#else
+	 {
+		
+		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_wszTitle);
+	 }
+	#endif
     utk_ptr = UTK_GetCmddata(cmd_type);
     ERR("miaoxiaoming: UTK_GetCmddata utk_ptr=%x",utk_ptr,0,0);
     if (utk_ptr != NULL)
@@ -1134,7 +1141,13 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                     {
                         MEMSET(wszBuf, 0, nSize);
                         DecodeAlphaString(&utk_ptr[pos], nValLen, wszBuf, 256);
+						#if 0
                         (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszBuf);
+						#else
+						{
+						   IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszBuf);
+						}
+                        #endif
                     }
                     if (pwszTitle)
                     {

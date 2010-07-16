@@ -327,7 +327,8 @@ static boolean InitAppTimer(CAppTimer *pme)
     {
         goto FAILED;
     }
-    
+	MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::timeapp111:::",0,0,0);
+    //IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
     pme->timer_state = W_IDLE;
     pme->m_nTicks = 0;
     pme->m_suspending = FALSE;
@@ -768,6 +769,7 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
 		}
 	}
 #endif
+	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -1092,12 +1094,19 @@ static void AppTimer_Redraw(CAppTimer *pme)
     //Draw title bar
     ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPTIMER_RES_FILE, IDS_APPTIMER_TITLE, wszTitle, sizeof(wszTitle));
     TBarParam.pwszTitle = wszTitle;
+	#if 0
     TBarParam.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER;
     DrawTitleBar(pme->a.m_pIDisplay, &TBarParam);
-    
+    #else
+	IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
+	#endif
     //draw static text info
     MEMSET(wszTitle, 0, sizeof(wszTitle));
+	#if 0
     SETAEERECT( &rect, 0, pme->titleBarHeight + MENUITEM_HEIGHT/2, pme->cxScreen, MENUITEM_HEIGHT);
+	#else
+	SETAEERECT( &rect, 0, MENUITEM_HEIGHT/2, pme->cxScreen, MENUITEM_HEIGHT);
+	#endif
     ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPTIMER_RES_FILE, IDS_APPTIMER_INFO, wszTitle, sizeof(wszTitle));
     nOldFontColor = IDISPLAY_SetColor(pme->a.m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
     IDISPLAY_DrawText(pme->a.m_pIDisplay, 
@@ -1114,7 +1123,11 @@ static void AppTimer_Redraw(CAppTimer *pme)
     pBgImage = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TIMER_CLOCK);
     if(pBgImage != NULL)
     {
+    	#if 0
         IImage_Draw(pBgImage, (rect.dx - TIMER_IMAGE_WIDTH)/2, pme->titleBarHeight + MENUITEM_HEIGHT*2);
+		#else
+		IImage_Draw(pBgImage, (rect.dx - TIMER_IMAGE_WIDTH)/2,  MENUITEM_HEIGHT*2);
+		#endif
         IImage_Release(pBgImage);
         pBgImage = NULL;
     }

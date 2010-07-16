@@ -1352,8 +1352,20 @@ boolean WMSAPPMN_InitIdleMenuDlg
     /*If there are any new messages, then the menu item should be BOLD*/
     if(pMe->m_modeControl == WMSAPP_MODE_CDMA)
     {
+       #if 0
       (void)IMENUCTL_SetTitle(pICurrentMenu, WMSAPP_RES_FILE,
                         IDS_SMS_APP_CDMA, NULL);
+	  #else
+	  {
+		AECHAR WTitle[40] = {0};
+		(void)ISHELL_LoadResString(pMe->m_pShell,
+                        WMSAPP_RES_FILE,                                
+                        IDS_SMS_APP_CDMA,
+                        WTitle,
+                        sizeof(WTitle));
+		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+	   }
+	   #endif
       /*VOICEMAIL*/
       pai.wItemID = IDL_SMS_VOICEMAIL;
       pai.wText = IDS_SMS_VOICEMAIL;
@@ -1420,8 +1432,20 @@ boolean WMSAPPMN_InitIdleMenuDlg
     }
     else //GW
     {
+      #if 0
       (void)IMENUCTL_SetTitle(pICurrentMenu, WMSAPP_RES_FILE,
                         IDS_SMS_APP_GW, NULL);
+	  #else
+		  {
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            WMSAPP_RES_FILE,                                
+                            IDS_SMS_APP_GW,
+                            WTitle,
+                            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+ 		   }
+		   #endif
 
       /*VOICEMAIL*/
       pai.wItemID = IDL_SMS_VOICEMAIL;
@@ -5535,8 +5559,19 @@ boolean WMSAPPMN_CreateMenuSelectedItemDlg(CWMSAPP *pMe)
             MSG_HIGH("Memory Route could not be added to menu!",0,0,0);
             return FALSE;
           }
-
+		   #if 0
           (void)IMENUCTL_SetTitle(pICurrentMenu,WMSAPP_RES_FILE,IDS_ROUTES,NULL);
+		  #else
+		  {
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            WMSAPP_RES_FILE,                                
+                            IDS_ROUTES,
+                            WTitle,
+                            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+ 		   }
+		   #endif
           (void)IMENUCTL_Redraw(pICurrentMenu);
           return TRUE;
 
@@ -6038,11 +6073,35 @@ static boolean WMSAPPMN_SetMsgListDisplay
     case WMS_MEMORY_STORE_RAM_CDMA:
       if(box_type == WMSAPP_INBOX)
       {
+        #if 0
         (void)IMENUCTL_SetTitle(pIMenu,WMSAPP_RES_FILE,IDS_TEMP_MEMORY_INBOX,NULL);
+		#else
+		 {
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            WMSAPP_RES_FILE,                                
+                            IDS_TEMP_MEMORY_INBOX,
+                            WTitle,
+                            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+ 		}
+		#endif
       }
       else
       {
+        #if 0
         (void)IMENUCTL_SetTitle(pIMenu,WMSAPP_RES_FILE,IDS_TEMP_MEMORY_OUTBOX,NULL);
+		#else
+		 {
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            WMSAPP_RES_FILE,                                
+                            IDS_TEMP_MEMORY_OUTBOX,
+                            WTitle,
+                            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+ 		}
+		 #endif
       }
       break;
 
@@ -6050,11 +6109,35 @@ static boolean WMSAPPMN_SetMsgListDisplay
     case WMS_MEMORY_STORE_SIM:
       if(box_type == WMSAPP_INBOX)
       {
+        #if 0
         (void)IMENUCTL_SetTitle(pIMenu,WMSAPP_RES_FILE,IDS_CARD_MEMORY_INBOX,NULL);
+		#else
+		 {
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            WMSAPP_RES_FILE,                                
+                            IDS_CARD_MEMORY_INBOX,
+                            WTitle,
+                            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+ 		}
+		 #endif
       }
       else if(box_type == WMSAPP_OUTBOX)
       {
+         #if 0
         (void)IMENUCTL_SetTitle(pIMenu,WMSAPP_RES_FILE,IDS_CARD_MEMORY_OUTBOX,NULL);
+		 #else
+		 {
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            WMSAPP_RES_FILE,                                
+                            IDS_CARD_MEMORY_OUTBOX,
+                            WTitle,
+                            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+ 		}
+		 #endif
       }
 #ifdef FEATURE_GWSMS_STATUS_REPORTS
 #error code not present
@@ -6066,11 +6149,35 @@ static boolean WMSAPPMN_SetMsgListDisplay
     case WMS_MEMORY_STORE_NV_GW:
       if(box_type == WMSAPP_INBOX)
       {
+      	#if 0
         (void)IMENUCTL_SetTitle(pIMenu,WMSAPP_RES_FILE,IDS_PHONE_MEMORY_INBOX,NULL);
+		#else
+		{
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            WMSAPP_RES_FILE,                                
+                            IDS_PHONE_MEMORY_INBOX,
+                            WTitle,
+                            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+ 		}
+		#endif
       }
       else
       {
+      	#if 0
         (void)IMENUCTL_SetTitle(pIMenu,WMSAPP_RES_FILE,IDS_PHONE_MEMORY_OUTBOX,NULL);
+		#else
+		{
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            WMSAPP_RES_FILE,                                
+                            IDS_PHONE_MEMORY_OUTBOX,
+                            WTitle,
+                            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+ 		}
+		#endif
       }
       break;
 
@@ -7832,7 +7939,19 @@ IDialog *pIDialog
   }
 
   (void)WMSAPPMN_GetRoutes(pMe);
+  #if 0
   (void)IMENUCTL_SetTitle(pICurrentMenu,WMSAPP_RES_FILE,title,NULL);
+  #else
+  {
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            WMSAPP_RES_FILE,                                
+                            title,
+                            WTitle,
+                            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+ }
+  #endif
   return TRUE;
 }
 

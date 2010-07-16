@@ -382,7 +382,11 @@ static int UTK_InitAppData(CUTK *pMe)
         Appscom_GetThemeParameters(&Theme_Param);
         pMe->m_themeColor = Theme_Param.themeColor;        
     }
-#endif /* FEATURE_FUNCS_THEME */      
+#endif /* FEATURE_FUNCS_THEME */    
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
+    {
+        return EFAILED;
+    }
     return SUCCESS;
 }
 
@@ -445,7 +449,11 @@ static void UTK_FreeAppData(CUTK *pMe)
         IWMS_Release(pMe->m_pwms);
         pMe->m_pwms = NULL;
     }
-
+	if(pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+        pMe->m_pIAnn = NULL;
+    }
     return;
 }
 

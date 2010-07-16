@@ -780,7 +780,6 @@ static boolean IDD_MAIN_Handler(void        *pUser,
     {
         return FALSE;
     }
-
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -792,7 +791,15 @@ static boolean IDD_MAIN_Handler(void        *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
-            
+            {
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_APP_WMS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_WRITEMESSAGE);
             MENU_ADDITEM(pMenu, IDS_INBOX);
@@ -1338,9 +1345,13 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                                                 sizeof(text));                  
                 // 画标题条
                 TitleBar_Param.pwszTitle = text;
+				#if 0
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
                 
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
 
                (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_WMSAPPRES_LANGFILE,
@@ -1706,7 +1717,14 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                             sizeof(wszTitle));
                     nLen = WSTRLEN(wszTitle);
                     WSPRINTF(&wszTitle[nLen], (32-nLen)*sizeof(AECHAR), wszFmt, nCount);
+					#if 0
                     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszTitle);
+					#else
+					{
+					
+						IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+					}
+					#endif
                 }
             }
         
@@ -1849,7 +1867,13 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                             sizeof(wszTitle));
                     nLen = WSTRLEN(wszTitle);
                     WSPRINTF(&wszTitle[nLen], (32-nLen)*sizeof(AECHAR), wszFmt, dwcurxuhao, nCount);
+					#if 0
                     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszTitle);
+					#else
+					{
+						IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+					}
+					#endif
                 }
             }
             (void)IMENUCTL_Redraw(pMenu);
@@ -2026,17 +2050,15 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                 {
                     return TRUE;
                 }
-
-#if defined(FEATURE_DISP_160X128)			   	//Add By zzg 2010_07_14
+                #if 0
                 SETAEERECT(&rc,  0, pMe->m_rc.y + TITLEBAR_HEIGHT,
                             pMe->m_rc.dx,
-                            pMe->m_rc.dy - BOTTOMBAR_HEIGHT - TITLEBAR_HEIGHT + 1);
-
-#else
-				SETAEERECT(&rc,  0, pMe->m_rc.y + TITLEBAR_HEIGHT,
-                            pMe->m_rc.dx,
                             pMe->m_rc.dy - BOTTOMBAR_HEIGHT - TITLEBAR_HEIGHT);
-#endif
+				#else
+				SETAEERECT(&rc,  0, pMe->m_rc.y ,
+                            pMe->m_rc.dx,
+                            pMe->m_rc.dy - BOTTOMBAR_HEIGHT);
+				#endif
                 ISTATIC_SetRect(pStatic, &rc);
             }
             
@@ -2101,8 +2123,12 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                 }
 
                 TBarParam.pwszTitle = wszTitle;
+				#if 0
                 TBarParam.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
                 DrawTitleBar(pMe->m_pDisplay, &TBarParam);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+				#endif
 
                 MEMSET(wszTitle, 0, sizeof(wszTitle));
                 
@@ -2313,6 +2339,16 @@ static boolean IDD_DELETEMSGS_Handler(void *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_DELETEMSGS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             //SetControlRect(pMe,pMenu);
             return TRUE;
@@ -2485,6 +2521,16 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_MSGSETTING,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
                      
 
@@ -2655,6 +2701,16 @@ static boolean IDD_RESERVEDMSG_Handler(void   *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_RESERVEDMSG,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
             // 菜单项初始化
@@ -2965,9 +3021,12 @@ static boolean IDD_GETDT_Handler(void   *pUser,
                     TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER;
                     (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                                 IDS_RESERVEDMSG, wstrTitle, sizeof(wstrTitle));
-                    
+                    #if 0
                     // 画标题条
                     DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+					#else
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrTitle);
+					#endif
                     
                     // 填充大背景色
                     MEMCPY(&rc, &pMe->m_rc, sizeof(rc));
@@ -3721,8 +3780,7 @@ static boolean IDD_RESERVEDMSGALERT_Handler(void        *pUser,
                                 AEE_FONT_NORMAL,
                                 NULL,
                                 NULL)+5;
-                
-                // 画标题条
+				// 画标题条
                 {
                     TitleBar_Param_type  TitleBar_Param = {0};
                     
@@ -3730,9 +3788,22 @@ static boolean IDD_RESERVEDMSGALERT_Handler(void        *pUser,
                     TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER;
                     (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                                 IDS_RESERVEDMSG, wstrText,sizeof(wstrText));
-                    
-                    DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-                    MEMSET(wstrText, 0, sizeof(wstrText));
+		            #if 0
+		            // 画标题条
+		            {
+		                TitleBar_Param_type  TitleBar_Param = {0};
+		                
+		                TitleBar_Param.pwszTitle = wstrText;
+		                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER;
+		                (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+		                            IDS_RESERVEDMSG, wstrText,sizeof(wstrText));
+		                
+		                DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+		                MEMSET(wstrText, 0, sizeof(wstrText));
+		            }
+					#else
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrText);
+					#endif
                 }
                 
                 // 绘制"发送 ?"提示字符
@@ -3928,6 +3999,16 @@ static boolean IDD_OUTMSGSAVEOPT_Handler(void *pUser,
         case EVT_DIALOG_START:
             //SetControlRect(pMe,pMenu);
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_AUTOSAVE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
@@ -4055,6 +4136,16 @@ static boolean IDD_PRIORITY_Handler(void *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_PRIORITY,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
             // 菜单项初始化
@@ -4369,6 +4460,16 @@ static boolean IDD_REPORTS_Handler(void *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_DELIVERYREPORTS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
             // 菜单项初始化
@@ -4667,6 +4768,16 @@ static boolean IDD_CALLBACKNUMSWITCH_Handler(void *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_CALLBACKNUM,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
             // 菜单项初始化
@@ -5062,6 +5173,16 @@ static boolean IDD_AUTODELETE_Handler(void *pUser,
 
             //SetControlRect(pMe,pMenu);
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_AUTODELETE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             {// 需根据具体配置选择相应菜单项
                 uint16 nSelID;
@@ -5178,6 +5299,16 @@ static boolean IDD_RSVDMSGALERTTIMEOUT_SETTING_Handler(void *pUser,
         case EVT_DIALOG_INIT:
             //SetControlRect(pMe,pMenu);
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_RESERVEDMSGS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
             // 菜单项初始化
@@ -5321,6 +5452,16 @@ static boolean IDD_STORAGE_Handler(void   *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_STORAGE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
             // 菜单项初始化
@@ -5471,6 +5612,16 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
     {
         case EVT_DIALOG_INIT:
             //SetControlRect(pMe,pMenu);
+            //add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_MSGVALIDITY,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
             // 菜单项初始化
@@ -6579,6 +6730,16 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_RECEIVER,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             ITEXTCTL_SetProperties(pIText, TP_NOUPDATE|TP_FOCUS_NOSEL);
             return TRUE;
 
@@ -6630,7 +6791,14 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     nLen = WSTRLEN(wstrTitle);
                     WSPRINTF(&wstrTitle[nLen], (MAX_TITLE_LEN-nLen)*sizeof(AECHAR), 
                         L" (%d/%d)", nCount, MAXNUM_MULTISEND); 
+					#if 0
                     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wstrTitle);
+					#else
+					{
+					
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrTitle);
+					}
+					#endif
                     
                     // 画底条提示方向键
                     SetArrowFlagonIM(TRUE);
@@ -7341,7 +7509,15 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
-                
+				// 画标题条
+			    {
+				TitleBar_Param_type  TitleBar_Param = {0};
+                    
+                TitleBar_Param.pwszTitle = wstrTitle;
+                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER;
+                (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+                                IDS_OPTION, wstrTitle,sizeof(wstrTitle));
+                #if 0
                 // 画标题条
                 {
                     TitleBar_Param_type  TitleBar_Param = {0};
@@ -7353,6 +7529,10 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     
                     DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
                 }
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrTitle);
+				#endif
+				}
                 
                 y = GetTitleBarHeight(pMe->m_pDisplay) + 3;
 				
@@ -8646,6 +8826,15 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_TEMPLATES,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             {// 添加模板项
                 CtlAddItem  ai;
@@ -10011,20 +10200,32 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
                 
                 Appscom_GetThemeParameters(&Theme_Param);
 #endif /* FEATURE_FUNCS_THEME */
-                
-                // 画标题条
-                {
+				{
+				// 画标题条
+	            
                     TitleBar_Param_type  TitleBar_Param = {0};
                     
                     TitleBar_Param.pwszTitle = wstrDevice;
                     TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER;
                     (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                                 IDS_MENSTATUS, wstrDevice,sizeof(wstrDevice));
-                    
-                    DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-                    MEMSET(wstrDevice, 0, sizeof(wstrDevice));
-                }
-                
+                	#if 0
+	                // 画标题条
+	                {
+	                    TitleBar_Param_type  TitleBar_Param = {0};
+	                    
+	                    TitleBar_Param.pwszTitle = wstrDevice;
+	                    TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER;
+	                    (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+	                                IDS_MENSTATUS, wstrDevice,sizeof(wstrDevice));
+	                    
+	                    DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+	                    MEMSET(wstrDevice, 0, sizeof(wstrDevice));
+	                }
+					#else
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrDevice);
+					#endif
+				}
                 //获得系统字体高度
                 nLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
                                 AEE_FONT_NORMAL,
@@ -10767,7 +10968,19 @@ static boolean IDD_EXTARCTDETAILS_Handler(void *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
+			#if 0
             (void) IMENUCTL_SetTitle(pMenu, AEE_WMSAPPRES_LANGFILE, IDS_EXTRACTDETAIL, NULL);
+			#else
+			{
+					AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+                                    AEE_WMSAPPRES_LANGFILE,                                
+                                    IDS_EXTRACTDETAIL,
+                                    WTitle,
+                                    sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+			#endif
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             MENU_ADDITEM(pMenu, IDS_SAVENUM);
             MENU_ADDITEM(pMenu, IDS_SAVEEMAIL);
@@ -10884,6 +11097,16 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_SAVENUM,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_OPTION_BACK);
             // 此对话框菜单项需动态建立
             {
@@ -10903,11 +11126,36 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
             }
             if (pMe->m_ExtractType == EXTRACT_EMAILADD)
             {
+                #if 0
                 (void) IMENUCTL_SetTitle(pMenu, AEE_WMSAPPRES_LANGFILE, IDS_SAVEEMAIL, NULL);
+				#else
+				{
+					AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+                                    AEE_WMSAPPRES_LANGFILE,                                
+                                    IDS_SAVEEMAIL,
+                                    WTitle,
+                                    sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				}
+				
+				#endif
             }
             else if (pMe->m_ExtractType == EXTRACT_URL)
             {
+                #if 0
                 (void) IMENUCTL_SetTitle(pMenu, AEE_WMSAPPRES_LANGFILE, IDS_SAVEURL, NULL);
+				#else
+				{
+					AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+                                    AEE_WMSAPPRES_LANGFILE,                                
+                                    IDS_SAVEURL,
+                                    WTitle,
+                                    sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				}
+				#endif
             }
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
@@ -11584,6 +11832,16 @@ static boolean IDD_VOICEMAIL_Handler(void   *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_VOICEMAIL,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
             // 菜单项初始化

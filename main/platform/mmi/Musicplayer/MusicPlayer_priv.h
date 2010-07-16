@@ -73,6 +73,7 @@
 #include "MusicPlayer.h"
 #include "musicplayer.brh"
 #include "musicplayerimage.brh"
+#include "AEEAnnunciator.h"
 
 //#ifdef FEATURE_SUPPORT_BT_APP
 //#undef FEATURE_SUPPORT_BT_APP
@@ -608,6 +609,7 @@ typedef struct _CMusicPlayer
     uint8     m_nBTID;
 #endif //FEATURE_SUPPORT_BT_APP
     MP3Recttype m_rtype;////wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+    IAnnunciator *m_pIAnn;
 } CMusicPlayer;
 
 /*==============================================================================

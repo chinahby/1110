@@ -410,6 +410,16 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
     {
         case EVT_DIALOG_INIT:
         {
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSDISPLAYMENU_RES_FILE,                                
+                        IDS_DISPLAY_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
 #ifdef FEATURE_MENU_STYLE
            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_MENU_STYLE, IDS_MENU_STYLE, NULL, 0);
 #endif
@@ -1246,6 +1256,16 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
         {
             byte      backlight = OEMNV_BL_10S;
             uint16    ui16_return = IDS_10S;
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSDISPLAYMENU_RES_FILE,                                
+                        IDS_BACKLIGHTING_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
 #ifdef FEATRUE_SET_LCD_ALWAYS_OFF
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_ALWAYS_OFF, IDS_ALWAYS_OFF, NULL, 0);
 #endif
@@ -1426,6 +1446,16 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSDISPLAYMENU_RES_FILE,                                
+                        IDS_CONTRAST_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL_DARK, IDS_CONTRAST_LEVEL_DARK, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL_NORMAL, IDS_CONTRAST_LEVEL_NORMAL, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL_BRIGHT, IDS_CONTRAST_LEVEL_BRIGHT, NULL, 0);
@@ -1438,10 +1468,22 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
 
             if( pMe->m_contrast_backlight == SET_CONTRAST)
             {
+                #if 0
                 (void)IMENUCTL_SetTitle(pMenu,
                                         AEE_APPSDISPLAYMENU_RES_FILE,
                                         IDS_CONTRAST_TITLE,
                                         NULL);
+				#else
+				{
+					AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+				            AEE_APPSDISPLAYMENU_RES_FILE,                                
+				            IDS_CONTRAST_TITLE,
+				            WTitle,
+				            sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				}
+				#endif
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
                                         CFGI_CONTRAST_LVL,
                                         &pMe->m_BiasV,
@@ -1477,10 +1519,22 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
             }
             else
             {
+            	#if 0
                 (void)IMENUCTL_SetTitle(pMenu,
                                         AEE_APPSDISPLAYMENU_RES_FILE,
                                         IDS_BACKLIGHT_TITLE,
                                         NULL);
+				#else
+				{
+						AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+				            AEE_APPSDISPLAYMENU_RES_FILE,                                
+				            IDS_BACKLIGHT_TITLE,
+				            WTitle,
+				            sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				}
+				#endif
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
                                         CFGI_BACKLIGHT_LEVEL,
                                         &pMe->m_lightlevel,
@@ -1745,6 +1799,16 @@ static boolean  HandleScreensaverTimeoutDialogEvent(CDisplayMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSDISPLAYMENU_RES_FILE,                                
+                        IDS_SCREENSAVETIMEOUT,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_SCREENSAVETIMEOUT_30S, IDS_SCREENSAVETIMEOUT_30S, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_SCREENSAVETIMEOUT_2MIN, IDS_SCREENSAVETIMEOUT_2MIN, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_SCREENSAVETIMEOUT_5MIN, IDS_SCREENSAVETIMEOUT_5MIN, NULL, 0);
@@ -1906,6 +1970,16 @@ static boolean  HandleDesktop_Theme_DialogEvent(CDisplayMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSDISPLAYMENU_RES_FILE,                                
+                        IDS_DESKTOP_THEME,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_STRING_BLUE, IDS_STRING_BLUE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_STRING_GREEN, IDS_STRING_GREEN, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_STRING_DEEP_BLUE, IDS_STRING_DEEP_BLUE, NULL, 0);
@@ -2721,6 +2795,16 @@ static boolean Handle_LED_Control_DialogEvent(CDisplayMenu *pMe,
         case EVT_DIALOG_INIT:
             pMe->m_led_ctr = 0xF;
             pMe->m_currDlgId = 0;
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSDISPLAYMENU_RES_FILE,                                
+                        IDS_LED_CONTROL,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_LED_SMS, IDS_LED_SMS, NULL, 0);
 #endif
@@ -3902,6 +3986,16 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
     {
         case EVT_DIALOG_INIT:
         {
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSDISPLAYMENU_RES_FILE,                                
+                        IDS_MENU_STYLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_MENU_ICON, IDS_MENU_ICON, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_MENU_LIST, IDS_MENU_LIST, NULL, 0);
         }

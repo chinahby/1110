@@ -1948,6 +1948,8 @@ boolean WMSAPP_InitAppData(IApplet* po)
     MSG_ERROR ("Annunciator Interface could not be created", 0, 0, 0);
     return FALSE;
   }
+  MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::wmsapp2222:::",0,0,0);
+  //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 #endif /* FEATURE_ANNUNCIATOR */
 
 

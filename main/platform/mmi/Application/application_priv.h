@@ -19,7 +19,7 @@
 
 #include "application.brh"
 #include "AEEConfig.h"
-
+#include "AEEAnnunciator.h"
 #ifdef FEATRUE_SUPPORT_G_SENSOR
 #include "G_Sensor.h"
 #endif
@@ -115,6 +115,7 @@ typedef struct _Application
     ApplicationState             m_prevState;        // Applet前一状态
     ApplicationState             m_currState;        // Applet当前状态
     AEERect     m_rc;
+    IAnnunciator                    *m_pIAnn;
 } Application;
 
 /*==============================================================================

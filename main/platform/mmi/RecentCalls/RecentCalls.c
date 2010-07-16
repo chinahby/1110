@@ -694,6 +694,8 @@ static int recentcalls_InitAppData(CRecentCalls *pMe)
     {
         return EFAILED;
     }
+	MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::recentcall111:::",0,0,0);
+	//IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 #ifdef FEATURE_LED_CONTROL
     if (ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_BACKLIGHT,
@@ -859,6 +861,7 @@ static boolean recentcalls_HandleEvent(IRecentCalls *pi,
 {
     CRecentCalls *pMe = (CRecentCalls*)pi;
     AEEAppStart* as = 0;
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:

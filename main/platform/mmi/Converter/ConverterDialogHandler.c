@@ -372,6 +372,16 @@ static boolean  Converter_MainEvent(CConverter *pMe, AEEEvent eCode, uint16 wPar
     switch(eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_CONVERTER_LANGFILE,                                
+                        IDS_CONVERTER_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_CONVERTER_LANGFILE, IDS_CURRENCY_TITLE, IDS_CURRENCY_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_CONVERTER_LANGFILE, IDS_LENGTH_TITLE, IDS_LENGTH_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_CONVERTER_LANGFILE, IDS_WEIGHT_TITLE, IDS_WEIGHT_TITLE, NULL, 0);
@@ -763,7 +773,11 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             }
             TBarParam.pwszTitle = text;
             TBarParam.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+			#if 0
             DrawTitleBar(pMe->m_pDisplay, &TBarParam);
+			#else
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+			#endif
             //»­¼ýÍ·
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
             if(Image)
@@ -1514,7 +1528,11 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                                                 sizeof(text));
             TBarParam.pwszTitle = text;
             TBarParam.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+			#if 0
             DrawTitleBar(pMe->m_pDisplay, &TBarParam);
+			#else
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+			#endif
             //»­¼ýÍ·
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
             IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2);

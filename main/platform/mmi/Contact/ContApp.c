@@ -519,6 +519,10 @@ static int CContApp_InitAppData(CContApp *pMe)
     {
         return EFAILED;
     }
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
+    {
+        return EFAILED;
+    }
 
     return SUCCESS;
 } // CContApp_InitAppData
@@ -635,6 +639,11 @@ static void CContApp_FreeAppData(CContApp *pMe)
         IBITMAP_Release(pMe->m_eBitmap);
         pMe->m_eBitmap = NULL;
     }
+	if(pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+        pMe->m_pIAnn = NULL;
+    }
 } // CContApp_FreeAppData
 
 /*==============================================================================
@@ -714,7 +723,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di);    
     
     MSG_FATAL("Handle evt 0x%x, w %x, dw %x",eCode, wParam, dwParam );
-    
+    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:

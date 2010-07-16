@@ -661,7 +661,8 @@ static int SoundMenu_InitAppData(CSoundMenu *pMe)
         SoundMenu_FreeAppData(pMe);
         return FALSE;
     }
-
+	MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::soundmenu111:::",0,0,0);
+	//IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_CONFIG,
                                             (void **)&pMe->m_pConfig))
@@ -866,6 +867,7 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
     CSoundMenu *pMe = (CSoundMenu*)pi;
     AEEAppStart *as;
     //SOUND_ERR("%x,%x,%x,SoundMenu_HandleEvent",eCode,wParam,dwParam);
+    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:

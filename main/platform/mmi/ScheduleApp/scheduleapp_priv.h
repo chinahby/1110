@@ -48,6 +48,7 @@
 #include "OEMCFGI.h"
 #include "oemnvint.h"
 #include "OEMCriticalSection.h"
+#include "AEEAnnunciator.h"
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define NEVT_KEY_PRESSS 10000
@@ -517,6 +518,8 @@ typedef struct _CScheduleApp
     boolean             m_bshowEventDetail; //modify for snooze and see detail when alerting
     boolean             m_bRepaint;  //modify for phone die in display loading menu when incoming call
     boolean             m_bDeferred; //for phone die in display loading menu when incoming call
+    
+    IAnnunciator *m_pIAnn;
 } CScheduleApp;
 
 /*=============================================================================

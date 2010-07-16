@@ -26,7 +26,7 @@ when         who            what, where, why
 #else
 #include "BREWSimFeatures.h"  // Simulator Feature Definitions
 #endif
-
+#include "AEEAnnunciator.h"
 #include "AEEShell.h"
 #include "AEEAppGen.h"
 #include "AEEStdLib.h"
@@ -103,7 +103,7 @@ struct _CStopWatch {
    StopWatchTimeData  timeData;
    IStatic*             pStatic;
    AEERect             m_rc;
-
+   IAnnunciator *m_pIAnn;
    IMenuCtl*           m_pStopWatch;
    //StopWatchTimeData  timeData2;
 };
@@ -252,7 +252,10 @@ static boolean InitStopWatch(CStopWatch *pme)
     pme->m_rc.y = 0;
     pme->m_rc.dx = deviceInfo.cxScreen;
     pme->m_rc.dy = deviceInfo.cyScreen;
-
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pme->m_pIAnn))
+    {
+        return EFAILED;
+    }
     if (SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell, 
                                                                 AEECLSID_MENUCTL,
                                                                 (void **) &pme->m_pmenu) ||
@@ -398,6 +401,11 @@ static void StopWatch_Free(CStopWatch *pme)
     {
         IMENUCTL_Release(pme->m_pStopWatch);
     }
+	if(pme->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pme->m_pIAnn);
+        pme->m_pIAnn = NULL;
+    }
 
     ISHELL_CancelTimer(pme->a.m_pIShell,NULL,pme);
 }
@@ -447,6 +455,7 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
 		}
 	}
 #endif
+	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -813,7 +822,11 @@ static void StopWatch_Redraw(CStopWatch *pme)
                                     sizeof(wszTitle));
     title.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
     title.pwszTitle = wszTitle;
+	#if 0
     DrawTitleBar(pme->a.m_pIDisplay, &title);
+	#else
+	IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
+	#endif
 
     // set bottom bar type
     //IMENUCTL_SetBottomBarType( pme->m_pmenu, btbType[pme->watch_state]);

@@ -883,6 +883,16 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       case EVT_DIALOG_INIT:
       {
          /*add menu item*/
+		 //add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MG_MEDIAGALLERY,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PHONEMEMORY);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_CARDMEMORY);
 
@@ -1129,6 +1139,16 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       case EVT_DIALOG_INIT:
       {
+		 //add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MG_PHONEMEMORY,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PICTURES);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_MUSIC);
 #if !defined(FEATRUE_MG_NOHSVIDEO)
@@ -1312,6 +1332,16 @@ static boolean MediaGalleryApp_CardMemDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       case EVT_DIALOG_INIT:
       {
+		 //add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MG_CARDMEMORY,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PICTURES);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_MUSIC);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_VIDEOS);
@@ -1503,6 +1533,16 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
          ISHELL_GetDeviceInfo(pMe->m_pShell, &DevInfo);
          rc = pMe->m_rc;
          rc.dy =  GetTitleBarHeight(pMe->m_pDisplay);
+		 //add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MG_MEMORYSTATUS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
          IMENUCTL_SetRect(pMenuCtl, &rc);
          IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE | MP_WRAPSCROLL);
 
@@ -1758,6 +1798,16 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
          AEEDeviceInfo DevInfo;
 
          pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_MG_UDISK);
+		 //add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MG_UDISK,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
 
          ISHELL_GetDeviceInfo(pMe->m_pShell, &DevInfo);
          rc = pMe->m_rc;
@@ -4478,6 +4528,16 @@ static boolean MGAppPopupMenu_OnSort(CMediaGalleryApp* pMe,
          IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
 
+		 //add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MG_SORT,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_BYNULL);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_BYNAME);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_BYDATE);

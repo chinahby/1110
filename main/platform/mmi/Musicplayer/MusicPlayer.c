@@ -432,6 +432,10 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
   pMe->m_nVolume = pMe->m_MusicPlayerCfg.eMusicVolume;
   pMe->m_nMusicSort = pMe->m_MusicPlayerCfg.eMusicSortBy;
   pMe->m_nCurrentVolume=pMe->m_MusicPlayerCfg.eMusicVolume*AEE_MAX_VOLUME/5;
+  if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
+    {
+        return EFAILED;
+    }
    if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
                                           AEECLSID_FILEMGR,
                                           (void **)&pMe->m_pFileMgr))
@@ -501,6 +505,12 @@ static void CMusicPlayer_FreeAppData(CMusicPlayer *pMe)
   #endif
 
     (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+  	if(pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+        pMe->m_pIAnn = NULL;
+    }
+	
     if (pMe->m_pDisplay != NULL)
     {
         (void) IDISPLAY_Release(pMe->m_pDisplay);

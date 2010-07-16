@@ -168,6 +168,7 @@ when         who     what, where, why
 
 #include "rdevmap.h"
 #include "cmx.h"
+#include "AEEAnnunciator.h"
 
 #ifdef FEATURE_SEC_TESTAPPS
 #error code not present
@@ -326,6 +327,7 @@ typedef struct _CFieldDebug {
    boolean    m_bSuspended;    // True if app is either background or suspended
    int16      m_wStatusResID;  // Resource to load into status dialog.
    IDialog                         *m_pActiveIDlg;
+   IAnnunciator *m_pIAnn;
 
 } CFieldDebug;
 
@@ -866,6 +868,11 @@ static void CFieldDebug_Free(CFieldDebug * pme)
    if (pme->m_pIConfig) {
       (void) ICONFIG_Release(pme->m_pIConfig);
    }
+   if(pme->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pme->m_pIAnn);
+        pme->m_pIAnn = NULL;
+    }
 }
 
 
@@ -5433,6 +5440,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
    }
 
    pIDialog = ISHELL_GetActiveDialog(ps);
+   IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
 
    switch (eCode) {
 
@@ -5502,6 +5510,11 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
        }
        pme->m_pDisplay = args->pDisplay;
        (void) IDISPLAY_AddRef(pme->m_pDisplay);
+	   if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pme->m_pIAnn))
+    	{
+
+        	return EFAILED;
+    	}
 
      return TRUE;
 
@@ -7269,7 +7282,19 @@ static void InitJPEGFileList(CFieldDebug * pme)
      if (pIJPEGFileListMenuCtl != NULL)
        {
          IMENUCTL_DeleteAll(pIJPEGFileListMenuCtl);
+		 #if 0
          IMENUCTL_SetTitle(pIJPEGFileListMenuCtl, AEE_FLDDBG_RES_FILE, IDS_CHOOSE_FILE, NULL);
+		 #else
+		{
+				AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pme->a.m_pIShell,
+		            AEE_FLDDBG_RES_FILE,                                
+		            IDS_CHOOSE_FILE,
+		            WTitle,
+		            sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+		}
+		#endif
          // Create file manager instance and list all the files under media directory.
          ISHELL_CreateInstance(pme->a.m_pIShell, AEECLSID_FILEMGR, (void **) &pIFileMgr);
          IFILEMGR_EnumInit(pIFileMgr, MEDIA_DIR, FALSE);

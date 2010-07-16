@@ -364,6 +364,10 @@ static int CScheduleApp_InitAppData(CScheduleApp *pme)
     {
         return EFAILED;
     }
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pme->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pme->m_pIAnn))
+    {
+        return EFAILED;
+    }
 
 #if FEATURE_DRAW_LUNAR_CALENDAR
     if(Calendar_InitAppData(&pme->m_calendar, pme->m_pShell)!=TRUE)
@@ -434,6 +438,11 @@ static void CScheduleApp_FreeAppData(CScheduleApp *pme)
     {
         (void) IDIALOG_Release(pme->m_pActiveDlg);
         pme->m_pActiveDlg = NULL;
+    }
+	if(pme->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pme->m_pIAnn);
+        pme->m_pIAnn = NULL;
     }
 
     //debug( ";********CScheduleApp_FreeAppData, to call CalMgr_FreeAppData");
@@ -516,6 +525,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
     AEEAppStart *as;
     uint32   lDateTime;
     extern uint32 getNowCompositeTime( void);
+	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:

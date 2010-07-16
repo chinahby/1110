@@ -592,7 +592,11 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                                                             sizeof(text));
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+				#if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
                     
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_RECENTCALLSRES_LANGFILE,
@@ -791,6 +795,16 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
    {
       case EVT_DIALOG_INIT:
         pMe->m_eStartMethod = STARTMETHOD_MAINMENU;
+		//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_RECENTCALLSRES_LANGFILE,                                
+                        IDS_RECENT_CALLS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_MISSED_CALLS, IDS_MISSED_CALLS, NULL, 0);
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RECEIVED_CALLS, IDS_RECEIVED_CALLS, NULL, 0);
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_OUTGOING_CALLS, IDS_OUTGOING_CALLS, NULL, 0);
@@ -914,6 +928,16 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
 
         case EVT_DIALOG_START:
             RecentCalls_GetRecord(pMe);//获取相应的记录
+            //add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_RECENTCALLSRES_LANGFILE,                                
+                        IDS_MISSED_CALLS,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             if(pMe->m_eStartMethod == STARTMETHOD_NORMAL)
             {
                 IMENUCTL_SetOemProperties(pMe->pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE |OEMMP_ARROW_TITLE);
@@ -1104,10 +1128,22 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                     pMe->selectState = IDS_RECENT_CALLS;
                     break;
             }
+			#if 0
             (void)IMENUCTL_SetTitle(pMe->pMenu,
                                   AEE_RECENTCALLSRES_LANGFILE,
                                   pMe->selectState,
                                   NULL);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_RECENTCALLSRES_LANGFILE,                                
+                        pMe->selectState,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+			#endif
 
             pMe->key_enable = TRUE;
             (void)ISHELL_PostEvent(pMe->m_pShell, 
@@ -1373,6 +1409,16 @@ static boolean RecentCalls_TimeMenuEvent(CRecentCalls *pMe,
    switch(eCode)
    {
       case EVT_DIALOG_INIT:
+	  	//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_RECENTCALLSRES_LANGFILE,                                
+                        IDS_CALL_TIME,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_LAST_CALL, IDS_LAST_CALL, NULL, 0);
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RECEIVED_CALLS, IDS_RECEIVED_CALLS, NULL, 0);
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_OUTGOING_CALLS, IDS_OUTGOING_CALLS, NULL, 0);
@@ -1476,6 +1522,16 @@ static boolean RecentCalls_DelMenuEvent(CRecentCalls *pMe,
    switch(eCode)
    {
       case EVT_DIALOG_INIT:
+	  	//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_RECENTCALLSRES_LANGFILE,                                
+                        IDS_DELETE_ALL,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_MISSED_CALLS, IDS_MISSED_CALLS, NULL, 0);
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RECEIVED_CALLS, IDS_RECEIVED_CALLS, NULL, 0);
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_OUTGOING_CALLS, IDS_OUTGOING_CALLS, NULL, 0);
@@ -1873,8 +1929,12 @@ static boolean RecentCalls_DetailEvent(CRecentCalls *pMe,
                   (void)ISHELL_LoadResString(pMe->m_pShell, AEE_RECENTCALLSRES_LANGFILE,
                                 IDS_RECENT_CALLS, wstrDevice,sizeof(wstrDevice));
                   break;
-            }               
+            }  
+			#if 0
             DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+			#else
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrDevice);
+			#endif
             MEMSET(wstrDevice, 0, sizeof(wstrDevice));
          }
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH         
@@ -2339,7 +2399,11 @@ static boolean RecentCalls_TimeEvent(CRecentCalls *pMe,
                                                     resid, 
                                                     wstrDevice,
                                                     sizeof(wstrDevice));
+			#if 0
             DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+			#else
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrDevice);
+			#endif
             MEMSET(wstrDevice, 0, sizeof(wstrDevice));
             if(pMe->selectState == IDS_LAST_CALL)
             {

@@ -402,6 +402,16 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_SCENEMODE_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             Sound_App_Add_Menu(pMenu,IDS_NORMALMODE);
             Sound_App_Add_Menu(pMenu,IDS_QUIETMODE);
             Sound_App_Add_Menu(pMenu,IDS_MEETING);
@@ -794,37 +804,97 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
     switch(pMe->m_CurProfile)
     {
         case OEMNV_PROFILE_NORMALMODE:
+			#if 0
             (void)IMENUCTL_SetTitle(pMenu,
                                     AEE_APPSSOUNDMENU_RES_FILE,
                                     IDS_NORMALMODE,
                                     NULL);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_NORMALMODE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+		    #endif
             break;
         
         case OEMNV_PROFILE_QUIETMODE:
+			#if 0
             (void)IMENUCTL_SetTitle(pMenu,
                                     AEE_APPSSOUNDMENU_RES_FILE,
                                     IDS_QUIETMODE,
-                                    NULL);    
+                                    NULL); 
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_QUIETMODE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+		    #endif
             break;
         
         case OEMNV_PROFILE_MEETING:
+			#if 0
             (void)IMENUCTL_SetTitle(pMenu,
                                     AEE_APPSSOUNDMENU_RES_FILE,
                                     IDS_MEETING,
-                                    NULL);    
+                                    NULL); 
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_MEETING,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+		    #endif
             break;
         
         case OEMNV_PROFILE_NOISEMODE:
+			#if 0
             (void)IMENUCTL_SetTitle(pMenu,
                                     AEE_APPSSOUNDMENU_RES_FILE,
                                     IDS_NOISEMODE,
-                                    NULL);    
+                                    NULL);  
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_NOISEMODE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+		    #endif
             break;
         case OEMNV_PROFILE_CARMODE:
+			#if 0
             (void)IMENUCTL_SetTitle(pMenu,
                                     AEE_APPSSOUNDMENU_RES_FILE,
                                     IDS_CARMODE,
-                                    NULL);    
+                                    NULL);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_CARMODE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+		    #endif
             break;
         default:
             break;
@@ -1101,6 +1171,16 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_SMSHINT,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             Sound_App_Add_Menu(pMenu,IDS_ITEM_OFF);
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_RINGER);
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIB);
@@ -1176,10 +1256,22 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+				#if 0
                 (void)IMENUCTL_SetTitle(pMenu,
                                         AEE_APPSSOUNDMENU_RES_FILE,
                                         pMe->m_wResID,
                                         NULL);
+				#else
+			    {
+			  		AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+	                        AEE_APPSSOUNDMENU_RES_FILE,                                
+	                        pMe->m_wResID,
+	                        WTitle,
+	                        sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    }
+			    #endif
                 (void) ISHELL_PostEvent( pMe->m_pShell,
                                          AEECLSID_APP_SOUNDMENU,
                                          EVT_USER_REDRAW,
@@ -1475,8 +1567,19 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
             // 设置标题条文本
+            #if 0
             IMENUCTL_SetTitle(pMenu,AEE_APPSSOUNDMENU_RES_FILE,pMe->m_wResID,NULL);
-
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        pMe->m_wResID,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+		    #endif
             IRINGERMGR_RegisterNotify(pMe->m_pRingerMgr, NULL, NULL);
             SoundMenu_UpdateRingerListMenu(pMe, pMenu);
             InitMenuIcons(pMenu);
@@ -1886,7 +1989,16 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
             {
                 pMe->m_lastSmsRingPlayed = smsID[pMe->m_CurProfile].midID;
             }
-
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_SMSRING,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_GALLERY_PROFILE, IDS_GALLERY_PROFILE, NULL, 0);
             // 添加铃声选项
             for (i = 0; i < MAX_SMS_RINGER; i++)
@@ -2057,6 +2169,16 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_VOLUME_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             Sound_App_Add_Menu(pMenu,IDS_RINGER_VOLUME_TITLE);
             Sound_App_Add_Menu(pMenu,IDS_KEYBEEP_VOLUME_TITLE);
             return TRUE;
@@ -2238,10 +2360,22 @@ static boolean  HandleOtherSelDialogEvent(CSoundMenu *pMe,
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                #if 0
                 (void)IMENUCTL_SetTitle(pMenu,
                                         AEE_APPSSOUNDMENU_RES_FILE,
                                         pMe->m_wResID,
                                         NULL);
+				#else
+			    {
+			  		AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+	                        AEE_APPSSOUNDMENU_RES_FILE,                                
+	                        pMe->m_wResID,
+	                        WTitle,
+	                        sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    }
+			    #endif
                 (void) ISHELL_PostEvent( pMe->m_pShell,
                                          AEECLSID_APP_SOUNDMENU,
                                          EVT_USER_REDRAW,
@@ -2400,6 +2534,16 @@ static boolean  HandleKeySndMenuDialogEvent(CSoundMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_COLORKEYSND,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
             Sound_App_Add_Menu(pMenu,IDS_ITEM_TONE);
             Sound_App_Add_Menu(pMenu,IDS_ITEM_CLICK);
             //Sound_App_Add_Menu(pMenu,IDS_KEYSND_SILENT);
@@ -3551,7 +3695,11 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                     ISHELL_LoadResString(pMe->m_pShell,AEE_APPSSOUNDMENU_RES_FILE,pMe->m_wResID, wszTitle, sizeof(wszTitle));
                     TitleBar.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
                     TitleBar.pwszTitle = wszTitle;
+					#if 0
                     DrawTitleBar(pMe->m_pDisplay, &TitleBar);
+					#else
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+					#endif
                 }
                 
                 //draw bottom bar

@@ -428,6 +428,7 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
 {
     CConverter *pMe = (CConverter*)pi;
     AEEAppStart* as = 0;
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -447,6 +448,11 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
                 ISHELL_GetDeviceInfo(pMe->m_pShell,&di);
                 pMe->m_rc.dy = di.cyScreen;
             }
+			if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
+		    {
+
+		        return EFAILED;
+		    }
             pMe->m_bSuspending = FALSE;
             Converter_RunFSM(pMe);
             return TRUE;
@@ -774,6 +780,11 @@ static void Converter_FreeAppData(CConverter *pMe)
     {
         ISTATIC_Release(pMe->m_pStatic);
         pMe->m_pStatic = NULL;        
+    }
+	if(pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+        pMe->m_pIAnn = NULL;
     }
     
 }

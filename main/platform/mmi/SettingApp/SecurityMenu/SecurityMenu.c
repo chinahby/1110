@@ -528,7 +528,8 @@ static int SecurityMenu_InitAppData(CSecurityMenu *pMe)
         SecurityMenu_FreeAppData(pMe);
         return FALSE;
     }
-
+	MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::securitymenu111:::",0,0,0);
+	//IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                         AEECLSID_CONFIG,
                                         (void **)&pMe->m_pConfig))
@@ -711,7 +712,7 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
     //nv_item_type nvi;
     //SEC_ERR("%x,%x,%x,SecurityMenu_HandleEvent",eCode,wParam,dwParam);
     AEEDeviceInfo di;
-
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di);      
     switch (eCode)
     {

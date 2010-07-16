@@ -67,7 +67,12 @@ static boolean Recorder_Init( Recorder* pme)
 	{
 		return FALSE;
 	}
-
+    if (AEE_SUCCESS != ISHELL_CreateInstance(pme->m_pShell,
+                                            AEECLSID_ANNUNCIATOR,
+                                            (void **)&pme->m_pIAnn))
+    {
+        return EFAILED;
+    }
 #ifdef FEATURE_APP_RECORDER
     g_runningflag = TRUE;
 #endif
@@ -141,6 +146,11 @@ static void Recorder_Free( Recorder* pme)
 			}
 		}
 	}
+	if (pme->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pme->m_pIAnn);
+		pme->m_pIAnn = NULL;
+    }
 }
 
 static void Recorder_APPIsReadyTimer( void* pi)
@@ -163,13 +173,14 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 	static byte alertTypeCall			= 0;
 	static byte alertTypeSms			= 0;
 	static byte alertTypeVibrate		= OEMNV_SMS_VIBONLY;
-
+	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
 	switch( evt)
 	{
 		case EVT_APP_START:
 		{
             AEEDeviceInfo di = {0};
 			byte mute = OEMSOUND_MUTE_VOL;
+			AECHAR wszTitle[16] = {0};
 			OEM_GetConfig( CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
 			OEM_SetConfig( CFGI_BEEP_VOL, &mute, sizeof(byte));
 			OEM_GetConfig( CFGI_ALERT_TYPE, &alertTypeCall, sizeof( alertTypeCall));
@@ -185,7 +196,12 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			pme->m_rc = pAppStart->rc;
             ISHELL_GetDeviceInfo( pme->m_pShell, &di);
 			pme->m_rc.dy = di.cyScreen;
-
+            ISHELL_LoadResString( pme->a.m_pIShell,
+                                      AEE_RECORDER_RES_FILE,
+                                      IDS_TITLE,
+                                      wszTitle,
+                                      sizeof(wszTitle));
+		    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
 			Recorder_RunFSM( pme);
 		}
 		return TRUE;

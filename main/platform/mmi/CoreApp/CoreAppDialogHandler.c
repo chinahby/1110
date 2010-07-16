@@ -871,6 +871,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 
     CCoreApp *pMe = (CCoreApp *)pUser;
     MSG_FATAL("%x %x %x IDD_ALARM_Handler",eCode,wParam,dwParam);
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -964,7 +965,11 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
                 //title.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER;
                 title.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
                 title.pwszTitle = wszTitle;
+				#if 0
                 DrawTitleBar(pMe->a.m_pIDisplay,&title);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+				#endif
                 CoreDrawBottomBar( BTBAR_SNOOZE_CONTINUE_STOP);
             }
             IDISPLAY_Update( pMe->a.m_pIDisplay);
@@ -2777,7 +2782,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     {
         return FALSE;
     }
-
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:

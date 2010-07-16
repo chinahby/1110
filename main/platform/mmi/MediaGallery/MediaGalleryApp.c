@@ -296,6 +296,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
 {
    CMediaGalleryApp* pMe = (CMediaGalleryApp*)pi;
 
+   IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
    switch(eCode)
    {
       /* NOTICE>>
@@ -1360,6 +1361,12 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
    {
       return EFAILED;
    }
+   if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                            AEECLSID_ANNUNCIATOR,
+                                            (void **)&pMe->m_pIAnn))
+    {
+        return EFAILED;
+    }
 
    if( SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
             AEECLSID_FILEMGR,
@@ -1427,6 +1434,11 @@ static void MediaGalleryApp_FreeAppData(CMediaGalleryApp* pMe)
       FREE(pMe->m_pPathExp);
       pMe->m_pPathExp = NULL;
    }
+   if(pMe->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+        pMe->m_pIAnn = NULL;
+    } 
 
    MGExplorer_ReleaseFileIcon(pMe->m_pFileIcons);
    FREEIF(pMe->m_pFileIcons);

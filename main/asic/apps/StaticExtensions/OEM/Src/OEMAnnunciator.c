@@ -79,6 +79,8 @@ typedef struct IANNUNCore
    uint16          m_annun_prim_lcd_width;   /* Primary LCD width */
    uint16          m_annun_prim_lcd_height;  /* Primary LCD height */
    boolean         cached;
+   boolean         m_bActive;
+   uint16          m_Title[40];
 }IANNUNCore;
 
 struct IAnnunciator
@@ -91,7 +93,8 @@ struct IAnnunciator
    IANNUNCore         *m_coreObj;
    unsigned short      m_usRef;
    uint32 nAnnunID;
-   uint32 nState;   
+   uint32 nState;  
+   
 };
 
 typedef struct AnnunTimerInfo
@@ -123,6 +126,10 @@ static int ModifyAnnunStateSchedule(IAnnunciator * pMe, uint32 nAnnunID, uint32 
 static int SwitchAnnunState(IAnnunciator * pMe, uint32 nAnnunID, uint32 *nState);
 static int IAnnunciator_EnableAnnunciatorBarEx(IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw);
 static int IAnnunciator_SetUnblinkTimer(IAnnunciator * pMe, uint32 nAnnunID, uint32 nState, uint32 nTimeMs);
+//static int IAnnunciator_SetFieldIsActive(IAnnunciator * pMe , boolean bActive);
+static int IAnnunciator_SetFieldIsActiveEx(IAnnunciator *pMe, boolean bActive);
+
+static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText);
 static void SetFieldUnblink(IAnnunciator * pMe);
 
 IAnnunciatorVtbl gvtIAnnunciator = {
@@ -137,6 +144,8 @@ IAnnunciatorVtbl gvtIAnnunciator = {
    IAnnunciator_GetAnnunciatorBarSize
    ,IAnnunciator_EnableAnnunciatorBarEx
    ,IAnnunciator_SetUnblinkTimer
+   ,IAnnunciator_SetFieldIsActiveEx
+   ,IAnnunciator_SetFieldText
 };
 
 /* OEMAnnun_content defines the text or image that will be displayed
@@ -692,8 +701,11 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   OEMState_data* data_ptr;
   int nWidth, nHeight;
   IBitmap *pBmp = NULL;
+  IImage  *pBackBmp = NULL;
   int i,j;
   uint32 nFirstState = GetAnnunFirstState(nState);
+  AEERect rc = {0};
+  uint32      dwFlags;
 
   if ((pMe == NULL))
     return EFAILED;
@@ -745,17 +757,44 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   if (pBmp == NULL) {
     return EFAILED;
   }
-
-  // First update the primary display
-  IDISPLAY_SetDestination (pMe->m_coreObj->m_piDisplay, IDIB_TO_IBITMAP(pMe->m_coreObj->m_pDDB));
-  IDISPLAY_BitBlt (pMe->m_coreObj->m_piDisplay,
+  //DBGPRINTF("IAnnunCoreObj->m_bActive::::::%d",IAnnunCoreObj->m_bActive);
+  
+  		// First update the primary display
+  		IDISPLAY_SetDestination (pMe->m_coreObj->m_piDisplay, IDIB_TO_IBITMAP(pMe->m_coreObj->m_pDDB));
+  		IDISPLAY_BitBlt (pMe->m_coreObj->m_piDisplay,
                    (int)Annunciators[nAnnunID].x_pos,
                    (int)Annunciators[nAnnunID].y_pos,
                    nWidth, nHeight, pBmp, 0, 0, AEE_RO_COPY);
-  IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); /* restore the destination */
+  		IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); /* restore the destination */
+		annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
 
-  annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
-
+   if(!IAnnunCoreObj->m_bActive)
+	{
+			  	//DBGPRINTF("First update the primary display background..................");
+			 	pBackBmp = ISHELL_LoadResImage (pMe->m_piShell,
+											   AEEFS_SHARED_DIR"oemannunciator.bar",
+											   (uint16)(IDI_BACKGROUD));
+			  	IIMAGE_Draw(pBackBmp,20, 0);
+			  	dwFlags =  IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+				rc.x = 20;
+				rc.y = 0;
+				rc.dx = 120;
+				rc.dy = 16;
+				IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);
+				// 绘制标题文本
+				//DBGPRINTF("IAnnunCoreObj->m_Title:::::::::::::::::%s",IAnnunCoreObj->m_Title);
+			    (void) IDISPLAY_DrawText(pMe->m_coreObj->m_piDisplay, 
+			                AEE_FONT_NORMAL, 
+			                (const AECHAR*)IAnnunCoreObj->m_Title, 
+			                -1, 
+			                0, 
+			                0, 
+			                &rc, 
+			                dwFlags);
+			   (void)IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
+			   IDISPLAY_Update(pMe->m_coreObj->m_piDisplay);
+			   IIMAGE_Release(pBackBmp);
+	}
   return SUCCESS;
 }
 
@@ -1229,8 +1268,9 @@ static IANNUNCore* OEMAnnunCore_New(IShell* piShell)
     ISHELL_AddRef(piShell);
 
     IAnnunCoreObj->m_uRefs = 1;
-
+	IAnnunCoreObj->m_bActive = TRUE;
     IAnnunCoreObj->m_bTimer = FALSE;
+	MEMSET(IAnnunCoreObj->m_Title,0,sizeof(IAnnunCoreObj->m_Title));
 
     IAnnunCoreObj->m_pAnnunciators_ovId = NULL;
     IAnnunCoreObj->m_pAnnunciators2_ovId = NULL;
@@ -1606,6 +1646,40 @@ static int IAnnunciator_GetField(IAnnunciator * pMe, uint32 nAnnunID, uint32 * p
   *pnState = Annunciators[nAnnunID].pcontent->nCurrState;
   return SUCCESS;
 }
+/*===========================================================================
+FUNCTION:IAnnunciator_SetFieldIsActiveEx
+
+=============================================================================*/
+static int IAnnunciator_SetFieldIsActiveEx(IAnnunciator * pMe,boolean bActive)
+{
+	if (pMe == NULL) 
+    {
+      return EFAILED;
+    }
+	IAnnunCoreObj->m_bActive = bActive;
+	return SUCCESS;
+}
+/*===========================================================================
+FUNCTION:IAnnunciator_SetFieldText
+
+=============================================================================*/
+static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText)
+{
+    
+	if (pMe == NULL) 
+	{
+      return EFAILED;
+    }
+	MEMSET(IAnnunCoreObj->m_Title,0,sizeof(IAnnunCoreObj->m_Title));
+	WSTRCPY(IAnnunCoreObj->m_Title,cText);
+
+	
+    if (NULL == cText)
+    {
+        FREE(cText);
+    }
+	return SUCCESS;
+}
 
 /*===========================================================================
 
@@ -1834,7 +1908,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
    db_items_value_type  need_capture;
 #endif
-
+   IImage * pBackBmp = NULL;
    if (NULL == pMe)
    {
       MSG_LOW("Null object ptr in annunciator redraw.", 0, 0, 0);
@@ -1933,6 +2007,18 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         0,
                         AEE_RO_COPY);
 #endif
+
+	  if(!IAnnunCoreObj->m_bActive)
+		{
+			  //DBGPRINTF("First update the primary display background..................");
+			  pBackBmp = ISHELL_LoadResImage (pMe->m_piShell,
+											   AEEFS_SHARED_DIR"oemannunciator.bar",
+											   (uint16)(IDI_BACKGROUD));
+			  IIMAGE_Draw(pBackBmp,20, 0);
+			  IDISPLAY_Update(pMe->m_coreObj->m_piDisplay);
+			  IIMAGE_Release( pBackBmp);
+		}
+
       // 待机界面下不必跟新显示，待机界面绘制完显示信息后再统一更新显示，如此可避免进入待机界面的闪屏
       if (need_capture.b_capture != DB_CAPTURE_INIDLE)
       {

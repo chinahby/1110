@@ -5658,7 +5658,19 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
 
             IMENUCTL_SetRect(pMenuCtl, &rc);
+			#if 0
             (void)IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_ONEDIAL_SET,NULL);
+			#else
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+						CONTAPP_RES_FILE_LANG,								  
+						IDS_ONEDIAL_SET,
+						WTitle,
+						sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+			#endif
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
@@ -6822,9 +6834,14 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
-
+			#if 0
             (void)IMENUCTL_SetTitle( pMenuCtl, NULL, 0,
-                                     (AECHAR *)CContApp_GetFldBuf(pMe, 0));            
+                                     (AECHAR *)CContApp_GetFldBuf(pMe, 0));  
+			#else
+			{
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+			}
+			#endif
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             if(!((pMe->m_wSelFldType == SINGLE_SELECT_NUMBER && STARTMETHOD_SELECTFIELD == pMe->m_eStartMethod)
@@ -7876,11 +7893,35 @@ static boolean  CContApp_HandleCopyMoveDlgEvent( CContApp  *pMe,
 #endif
             if(COPYMULTIPE == pMe->m_nCopyOrMove)
             {
+            	#if 0
                 (void)IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_COPY,NULL);
+				#else
+				{
+					AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+							CONTAPP_RES_FILE_LANG,								  
+							IDS_COPY,
+							WTitle,
+							sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				}
+				#endif
             }
             else if(MOVEMULTIPE == pMe->m_nCopyOrMove)
             {
-                (void)IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_MOVE,NULL);            
+            	#if 0
+                (void)IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_MOVE,NULL);        
+				#else
+				{
+					AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+							CONTAPP_RES_FILE_LANG,								  
+							IDS_MOVE,
+							WTitle,
+							sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				}
+				#endif
             }
             
             // For redraw the dialog
@@ -8098,11 +8139,35 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
             
             if(COPYMULTIPE_TOUIM == pMe->m_nCopyMoveType || COPYMULTIPE_TOPHONE == pMe->m_nCopyMoveType)
             {
+            	#if 0
                 (void)IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_COPY,NULL);
+				#else
+				{
+					AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+							CONTAPP_RES_FILE_LANG,								  
+							IDS_COPY,
+							WTitle,
+							sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				}
+				#endif
             }
             else
             {
-                (void)IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_MOVE,NULL);            
+            	#if 0
+                (void)IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_MOVE,NULL); 
+				#else
+				{
+					AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+							CONTAPP_RES_FILE_LANG,								  
+							IDS_MOVE,
+							WTitle,
+							sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				}
+				#endif
             }
             // Build the list Menu
             if(NULL == pMe->m_szAlpha)
@@ -8996,7 +9061,11 @@ static boolean  CContApp_HandleCapacityDlgEvent( CContApp  *pMe,
                               IDS_CAPACITY, title,sizeof(title));
                 TitleBar.pwszTitle = title;
                 TitleBar.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER;
+				#if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,title);
+				#endif
             }
             // Draw prompt bar here
 //#ifdef FEATURE_CARRIER_THAILAND_HUTCH              
@@ -9144,9 +9213,14 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
-
+			#if 0
             (void)IMENUCTL_SetTitle( pMenuCtl, NULL, 0, (AECHAR *)CContApp_GetFldBuf(pMe, 0));  
-            
+            #else
+			{
+				
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+			}
+			#endif
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
@@ -9974,7 +10048,11 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                                                             sizeof(text));
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+				#if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
                     
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 CONTAPP_RES_FILE_LANG,
@@ -10402,7 +10480,20 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			#if 0
             IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_CONTACTS_MANAGEMENT,NULL);
+			#else
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+						CONTAPP_RES_FILE_LANG,								  
+						IDS_CONTACTS_MANAGEMENT,
+						WTitle,
+						sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+			#endif
+
             CContApp_BuildManagementMenu(pMe, pMenuCtl);
             
             // For redraw the dialog
@@ -11028,8 +11119,20 @@ static boolean  CContApp_HandleSelectRecordDlgEvent( CContApp  *pMe,
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
             IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
             
-            IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_BT_COPYN,NULL);
             // Build the list Menu
+            #if 0
+            IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_BT_COPYN,NULL);
+			#else
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+			            CONTAPP_RES_FILE_LANG,                                
+			            IDS_BT_COPYN,
+			            WTitle,
+			            sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+			#endif
             if(NULL == pMe->m_szAlpha)
             {
                 // 这里就没必要重新copy一个相同的函数了
@@ -11615,11 +11718,16 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
-
+			#if 0
             (void)IMENUCTL_SetTitle( pMenuCtl,
                                      NULL,
                                      0,
-                                     (AECHAR *)CContApp_GetFldBuf(pMe, 0));            
+                                     (AECHAR *)CContApp_GetFldBuf(pMe, 0));   
+			#else
+			{
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+			}
+			#endif
 
             CContApp_FreeBuffer(pMe);
 
@@ -11807,11 +11915,17 @@ static boolean  CContApp_HandleDetailMultiDlgEvent( CContApp  *pMe,
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
-
+			#if 0
             (void)IMENUCTL_SetTitle( pMenuCtl,
                                      NULL,
                                      0,
-                                     (AECHAR *)CContApp_GetFldBuf(pMe, 0));            
+                                     (AECHAR *)CContApp_GetFldBuf(pMe, 0));   
+			#else
+			{
+				
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+			}
+			#endif
 
             CContApp_FreeBuffer(pMe);
 
@@ -12558,7 +12672,20 @@ static boolean  CContApp_HandleDeleteSelectDlgEvent( CContApp  *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+			#if 0
             IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_DELETE_CONTACTS,NULL);
+            #else
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+						CONTAPP_RES_FILE_LANG,								  
+						IDS_DELETE_CONTACTS,
+						WTitle,
+						sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+			#endif
+
             CContApp_BuildDeleteSelectMenu(pMe,pMenuCtl);
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
@@ -13324,9 +13451,14 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
             
             IMENUCTL_SetRect(pMenuCtl, &rc);
             MSG_FATAL("CContApp_HandleNunFldDlgEvent",0,0,0);
-
+			#if 0
             (void)IMENUCTL_SetTitle( pMenuCtl, NULL, 0,
-                                     (AECHAR *)CContApp_GetFldBuf(pMe, 0));            
+                                     (AECHAR *)CContApp_GetFldBuf(pMe, 0)); 
+			#else
+			{
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+			}
+			#endif
             
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
@@ -13936,11 +14068,18 @@ static boolean  CContApp_HandleNunFldViewDlgEvent( CContApp  *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
-
+			#if 0
             (void)IMENUCTL_SetTitle( pMenuCtl,
                                      NULL,
                                      0,
                                      (AECHAR *)CContApp_GetFldBuf(pMe, 0));
+			#else
+			{
+				
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+			}
+			#endif
+
 
             CContApp_BuildNumFldMenuMenu(pMe, pMenuCtl);
             

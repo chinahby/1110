@@ -130,5 +130,8 @@
 	<Object Id="5043" Name="IDB_MMS_FULL">
 		<File>..\..\..\..\..\..\Platform\mmi\Appscommon\images\color\Annunciator\mms_full.bmp</File>
 	</Object>
+	<Object Id="5044" Name="IDI_BACKGROUD">
+		<File>..\..\..\..\..\..\Platform\mmi\Appscommon\images\color\Annunciator\titlegroud.bmp</File>
+	</Object>
 </Objects>
 </BREWRes>

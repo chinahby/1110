@@ -488,7 +488,12 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {
         return EFAILED;
     }
-
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                            AEECLSID_ANNUNCIATOR,
+                                            (void **)&pMe->m_pIAnn))
+    {
+        return EFAILED;
+    }
 	pMe->m_pImageTurn[0] = ISHELL_LoadImage(pMe->m_pShell,ICON1_ANI_1);
 	pMe->m_pImageTurn[1] = ISHELL_LoadImage(pMe->m_pShell,ICON2_ANI_1);
 	pMe->m_pImageTurn[2] = ISHELL_LoadImage(pMe->m_pShell,ICON3_ANI_1);
@@ -564,6 +569,11 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
     {
         (void) IDISPLAY_Release(pMe->m_pDisplay);
         pMe->m_pDisplay = NULL;
+    }
+	if (pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+		pMe->m_pIAnn = NULL;
     }
 
     //ÊÍ·ÅÍ¼Æ¬×ÊÔ´
@@ -748,6 +758,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
     MainMenu *pMe = (MainMenu*)pi;
     AEEAppStart* as = NULL;
     MSG_FATAL("MainMenu_HandleEvent Start",0,0,0);
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE); 
     switch ( eCode)
     {
         case EVT_APP_START:

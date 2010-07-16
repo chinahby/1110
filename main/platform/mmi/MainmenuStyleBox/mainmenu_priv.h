@@ -28,7 +28,7 @@
 #ifdef FEATRUE_SUPPORT_G_SENSOR
 #include "G_Sensor.h"
 #endif
-
+#include "AEEAnnunciator.h"
 
 #if defined (FEATURE_DISP_160X128)
 #define  MAX_MATRIX_ITEMS 12
@@ -177,6 +177,7 @@ typedef struct _MainMenu
 #endif
 
 	IImage		*m_pImageTurn[MAX_TURN_NUM];//wlh 20090409 add
+	IAnnunciator        *m_pIAnn;
 
 } MainMenu;
 

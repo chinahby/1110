@@ -386,6 +386,16 @@ static boolean  QuickTest_MainMenuHandler(CQuickTest *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_QUICKTEST_RES_FILE,                                
+                        IDS_QUICKTEST,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
               IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_START, IDS_START, NULL, 0);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;

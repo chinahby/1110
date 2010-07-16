@@ -37,6 +37,7 @@
 #include "AEEConfig.h"
 #include "OEMCFGI.h"
 #include "AEEUSBDriver.h"
+#include "AEEAnnunciator.h"
 
 #include "Appscommon.h"
 #include "appscommon.brh"
@@ -434,6 +435,7 @@ struct  _CMediaGalleryApp{
 #endif
    boolean           m_bImgLoadDone;
    boolean           m_bV0848DecodeImg;
+   IAnnunciator        *m_pIAnn;
 } ;
 
 /*===========================================================================

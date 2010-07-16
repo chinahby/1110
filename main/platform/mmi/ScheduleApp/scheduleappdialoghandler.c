@@ -1227,8 +1227,11 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
                 // »­±êÌâÌõ
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-                
+                #if 0
                 DrawTitleBar(pme->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,text);
+				#endif
 
                (void)ISHELL_LoadResString(pme->m_pShell, 
                                                 AEE_SCHEDULEAPP_RES_FILE,
@@ -2419,7 +2422,11 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                                             text, sizeof(text));
                     TitleBar.pwszTitle = text;
                     TitleBar.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+					#if 0
                     DrawTitleBar(pme->m_pDisplay, &TitleBar);
+					#else
+					IANNUNCIATOR_SetFieldText(pme->m_pIAnn,text);
+					#endif
 
                 }
 
@@ -3506,7 +3513,11 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                 titleBarParms.nTitleResID   = IDS_APP;
             }
             STRCPY( titleBarParms.strTitleResFile, AEE_SCHEDULEAPP_RES_FILE);
+			#if 0
             DrawTitleBar( pme->m_pDisplay, &titleBarParms);
+			#else
+			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,(uint16*)titleBarParms.strTitleResFile);
+			#endif
 
             if( currentItem == 2 && timeFormatType == OEMNV_TIMEFORM_AMPM)
             {
@@ -4314,7 +4325,11 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
             titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER;
             titleBarParms.nTitleResID   = IDS_SETUP_TITLE;
             STRCPY( titleBarParms.strTitleResFile, AEE_SCHEDULEAPP_RES_FILE);
+			#if 0
             DrawTitleBar( pme->m_pDisplay, &titleBarParms);
+			#else
+			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,(uint16*)titleBarParms.strTitleResFile);
+			#endif
 
             if( currentItem == 2 && timeFormatType == OEMNV_TIMEFORM_AMPM)
             {
@@ -4745,7 +4760,14 @@ static boolean dialog_handler_of_state_viewday(CScheduleApp *pme, AEEEvent eCode
         case EVT_DIALOG_START:
         {
             IMENUCTL_SetProperties(pMenu, MP_WRAPSCROLL);
+			#if 0
             (void)IMENUCTL_SetTitle(pMenu, 0, 0, pme->m_pVDTitle);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+		    }
+			#endif
 
             IMENUCTL_SetBottomBarType( pMenu, BTBAR_OPTION_BACK);
             IMENUCTL_SetRect(pMenu, &pme->m_rc);
@@ -5952,7 +5974,11 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     MEMSET(&TitleBar, 0, sizeof(TitleBar_Param_type));
                     TitleBar.pwszTitle = wstrTitle;
                     TitleBar.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+					#if 0
                     DrawTitleBar(pme->m_pDisplay, &TitleBar);
+					#else
+					IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wstrTitle);
+					#endif
                 }
                 //draw bottombar
                 {
@@ -6353,7 +6379,11 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
             ISHELL_LoadResString(pme->m_pShell, AEE_SCHEDULEAPP_RES_FILE, IDS_VIEW_PLAN_DETAIL_TITLE, wstrTitle, sizeof(wstrTitle));
             TitleBar.pwszTitle = wstrTitle;
             TitleBar.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+			#if 0
             DrawTitleBar(pme->m_pDisplay, &TitleBar);
+			#else
+			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wstrTitle);
+			#endif
 #ifdef FEATURE_FUNCS_THEME
             Appscom_GetThemeParameters( &themeParms);
             scrollbarFillColor  =   themeParms.themeColor;
