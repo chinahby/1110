@@ -376,6 +376,15 @@
 	<String Id="1125" Name="IDS_SIM_TWO">
 		<Text>SIM Slot Dua</Text>
 	</String>
+	<String Id="1126" Name="IDS_SIMSETTING_CHOICE_STRING" Encoding="Unicode">
+		<Text>Are you sure?</Text>
+	</String>
+	<String Id="1127" Name="IDS_CANCEL" Encoding="Unicode">
+		<Text>cancel</Text>
+	</String>
+	<String Id="1128" Name="IDS_YES" Encoding="Unicode">
+		<Text>yes</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -573,6 +582,13 @@
 			<Menu Id="7026" Name="IDC_SIMSET">
 				<Items/>
 			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6032" Name="IDD_SIMSETTING_CHOICE_DIALOG" Focus="0">
+		<Controls>
+			<Static Id="7027" Name="IDC_SIMSETTING_CHOICE_STATIC">
+				<TextID>IDS_SIMSETTING_CHOICE_STRING</TextID>
+				<Items/></Static>
 		</Controls>
 	</Dialog>
 </Dialogs>
