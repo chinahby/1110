@@ -173,7 +173,6 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 	static byte alertTypeCall			= 0;
 	static byte alertTypeSms			= 0;
 	static byte alertTypeVibrate		= OEMNV_SMS_VIBONLY;
-	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
 	switch( evt)
 	{
 		case EVT_APP_START:
@@ -196,6 +195,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			pme->m_rc = pAppStart->rc;
             ISHELL_GetDeviceInfo( pme->m_pShell, &di);
 			pme->m_rc.dy = di.cyScreen;
+            IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
             ISHELL_LoadResString( pme->a.m_pIShell,
                                       AEE_RECORDER_RES_FILE,
                                       IDS_TITLE,
