@@ -1173,6 +1173,20 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                              IDC_DEBUG_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+      {
+        AECHAR WTitle[40] = {0};
+        MSG_FATAL("CFieldDebug_OnDialogStart 2", 0, 0, 0);
+        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_DEBUG_TITLE,
+        WTitle,
+        sizeof(WTitle));
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        }
+      }    
+      MSG_FATAL("CFieldDebug_OnDialogStart 2", 0, 0, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DBGSCRN,  IDS_DBGSCRN, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_TEST_CALL,  IDS_TEST_CALL, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_ERRORS,  IDS_ERRORS, NULL, 0);
@@ -1203,6 +1217,18 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 			pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                              IDC_BREWSET_MENU);
       		IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            {
+                AECHAR WTitle[20] = {0};
+                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                AEE_FLDDBG_RES_FILE,                                
+                IDS_BREWSETTUBG_TITLE,
+                WTitle,
+                sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }               
 			IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CARRIER_ID,        IDS_CARRIER_ID, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PLATFORM_ID,       IDS_PLATFORM_ID, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DLFLAGS,           IDS_DLFLAGS, NULL, 0);
@@ -1224,6 +1250,18 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 			pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                              IDC_NET_LOCK_MENU);
       		IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            {
+                AECHAR WTitle[10] = {0};
+                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                AEE_FLDDBG_RES_FILE,                                
+                IDS_STRING_NET_LOCK,
+                WTitle,
+                sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }     
 			IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_FLAG,  IDS_STRING_NET_LOCK_FLAG, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_MNC,   IDS_STRING_NET_LOCK_MNC, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_MCC,   IDS_STRING_NET_LOCK_MCC, NULL, 0);
@@ -1252,7 +1290,18 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             MSG_FATAL("CFieldDebug_OnDialogStart case IDD_ESN_DIALOG psk == NULL", 0, 0, 0);
 			break;
         }
-        IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);       
+          {
+            AECHAR WTitle[5] = {0};
+            (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+            AEE_FLDDBG_RES_FILE,                                
+            IDS_ESN,
+            WTitle,
+            sizeof(WTitle));
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+          }           
        }
       break; 
 
@@ -1303,6 +1352,18 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
               break;
           }          
           IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+          {
+              AECHAR WTitle[20] = {0};
+              (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+              AEE_FLDDBG_RES_FILE,                                
+              IDS_AUTH_POLICY,
+              WTitle,
+              sizeof(WTitle));
+              if(pMe->m_pIAnn != NULL)
+              {
+                  IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+              }
+          }     
           IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_AUTH_POLICY_NONE, IDS_AUTH_POLICY_NONE, NULL, 0);
           IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_AUTH_POLICY_SID, IDS_AUTH_POLICY_SID, NULL, 0);
           IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_AUTH_POLICY_TEXT, IDS_AUTH_POLICY_TEXT, NULL, 0);
@@ -1343,6 +1404,18 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
                 break;
             }          
             IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            {
+                AECHAR WTitle[30] = {0};
+                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                AEE_FLDDBG_RES_FILE,                                
+                IDS_PRIVACY_POLICY,
+                WTitle,
+                sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }     
             IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_PRIVACY_POLICY_BREW, IDS_PRIVACY_POLICY_BREW, NULL, 0);
             IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_PRIVACY_POLICY_CARRIER, IDS_PRIVACY_POLICY_CARRIER, NULL, 0);
             IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_PRIVACY_POLICY_BREW_AND_CARRIER, IDS_PRIVACY_POLICY_BREW_AND_CARRIER, NULL, 0);
@@ -1448,6 +1521,19 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_CALL_LIST_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+      {
+        AECHAR WTitle[20] = {0};
+        MSG_FATAL("CFieldDebug_OnDialogStart 3", 0, 0, 0);
+        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_VPN3_START,
+        WTitle,
+        sizeof(WTitle));
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        }
+      }       
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_TCALL_N_13K,  IDS_TCALL_N_13K, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_TCALL_N_8K,  IDS_TCALL_N_8K, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_TCALL_13K_LOOP,  IDS_TCALL_13K_LOOP, NULL, 0);
@@ -1479,6 +1565,18 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
     	{
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_CLREFS_SOFTKEY);
+      {
+        AECHAR WTitle[20] = {0};
+        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_CLEAR_EFS,
+        WTitle,
+        sizeof(WTitle));
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        }
+      }            
       IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
       IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_DEL,  IDS_DEL, NULL, 0);
       }                                     
@@ -1488,6 +1586,19 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_DATADM_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+      {
+        AECHAR WTitle[20] = {0};
+        MSG_FATAL("CFieldDebug_OnDialogStart 4", 0, 0, 0);
+        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_DATA_DM,
+        WTitle,
+        sizeof(WTitle));
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        }
+      }        
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DIAG,  IDS_DIAG, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DATA_19200,  IDS_DATA_19200, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DATA_38400,  IDS_DATA_38400, NULL, 0);
@@ -1504,6 +1615,19 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_SMSMOSO_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+      {
+        AECHAR WTitle[20] = {0};
+        MSG_FATAL("CFieldDebug_OnDialogStart 5", 0, 0, 0);
+        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_SET_SMSMO_SO,
+        WTitle,
+        sizeof(WTitle));
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        }
+      }         
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SMSMO_SO_6,  IDS_SMSMO_SO_6, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SMSMO_SO_14,  IDS_SMSMO_SO_14, NULL, 0);
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
@@ -1517,6 +1641,19 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_VOICE_PRIVACY_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+      {
+        AECHAR WTitle[30] = {0};
+        MSG_FATAL("CFieldDebug_OnDialogStart 6", 0, 0, 0);
+        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_VOICE_PRIVACY,
+        WTitle,
+        sizeof(WTitle));
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        }
+      }        
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_VP_STANDARD,  IDS_VP_STANDARD, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_VP_ENHANCED,  IDS_VP_ENHANCED, NULL, 0);
        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
@@ -1531,6 +1668,19 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       pm = (IMenuCtl *) IDIALOG_GetControl ((IDialog *) dwParam,
                                             IDC_MMC_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+      {
+        AECHAR WTitle[10] = {0};
+        MSG_FATAL("CFieldDebug_OnDialogStart 7", 0, 0, 0);
+        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_MMC,
+        WTitle,
+        sizeof(WTitle));
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        }
+      }        
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_MMC_DOWNLOAD,  IDS_MMC_DOWNLOAD, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_MMC_FORMAT,  IDS_MMC_FORMAT, NULL, 0);
 
@@ -1543,6 +1693,19 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
     case IDD_MMC_DOWNLOAD_DIALOG:
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                             IDC_SK_MMC_DOWNLOAD);
+      {
+        AECHAR WTitle[30] = {0};
+        MSG_FATAL("CFieldDebug_OnDialogStart 8", 0, 0, 0);
+        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_MMC_DOWNLOAD,
+        WTitle,
+        sizeof(WTitle));
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        }
+      }         
       IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
       IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
       break;
@@ -1562,6 +1725,19 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       pm = (IMenuCtl *) IDIALOG_GetControl ((IDialog *) dwParam,
                                             IDC_RATS_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+      {
+        AECHAR WTitle[40] = {0};
+        MSG_FATAL("CFieldDebug_OnDialogStart 9", 0, 0, 0);
+        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_RATS_TITLE,
+        WTitle,
+        sizeof(WTitle));
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        }
+      }         
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CLIENT_UP,  IDS_CLIENT_UP, NULL, 0);
       IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SERVER_UP,  IDS_SERVER_UP, NULL, 0);                                      
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
@@ -2114,8 +2290,13 @@ static void CFieldDebug_DebugScreenRefresh( CFieldDebug *pme )
                                         IDS_DBGSCRN,
                                         sTitle,
                                         sizeof(sTitle));
+    if(pme->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_SetFieldText(pme->m_pIAnn,sTitle);
+    }
+     
    (void) ISTATIC_SetText(p_stk,
-                          sTitle,
+                          NULL,
                           szBuf,
                           AEE_FONT_NORMAL,
                           AEE_FONT_NORMAL);
@@ -3244,7 +3425,7 @@ static boolean CFieldDebug_MMCFormatHandleEvent(CFieldDebug * pMe,
                             sizeof(AECHAR)*ARR_SIZE(buf1));
       ISHELL_LoadResString (pMe->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_FORMATTING, buf2,
                             sizeof(AECHAR)*ARR_SIZE(buf2));
-      ISTATIC_SetText (pStatic, buf1, buf2, AEE_FONT_NORMAL, AEE_FONT_NORMAL);
+      ISTATIC_SetText (pStatic, NULL, buf2, AEE_FONT_NORMAL, AEE_FONT_NORMAL);
       fs_format ("mmc1", NULL, &rsp);
       if (rsp.format.status == FS_OKAY_S) {
         ISHELL_LoadResString (pMe->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_SUCCESSFUL, buf2,
@@ -3258,7 +3439,11 @@ static boolean CFieldDebug_MMCFormatHandleEvent(CFieldDebug * pMe,
        ISHELL_LoadResString (pMe->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_FAILED, buf2,
                             sizeof(AECHAR)*ARR_SIZE(buf2));
       }
-      ISTATIC_SetText (pStatic, buf1, buf2, AEE_FONT_NORMAL, AEE_FONT_NORMAL);
+      if(pMe->m_pIAnn != NULL)
+      {
+          IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,buf1);
+      }      
+      ISTATIC_SetText (pStatic, NULL, buf2, AEE_FONT_NORMAL, AEE_FONT_NORMAL);
 	
       return TRUE;
    case EVT_KEY:
@@ -3848,7 +4033,19 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
 				if (NULL != szBuf)
 			    {
 			            ITEXTCTL_SetMaxSize ( pIText, 100);
-						(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_CARRIER_ID,0);
+    				//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_CARRIER_ID,0);
+                    {
+                        AECHAR WTitle[20] = {0};
+                        (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                        AEE_FLDDBG_RES_FILE,                                
+                        IDS_CARRIER_ID,
+                        WTitle,
+                        sizeof(WTitle));
+                        if(pme->m_pIAnn != NULL)
+                        {
+                            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                        }
+                    }                           
 			            (void)ITEXTCTL_SetText(pIText,string,-1);
 						ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  
@@ -3981,7 +4178,19 @@ static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
 			if (NULL != szBuf)
 		    {
 		            ITEXTCTL_SetMaxSize ( pIText, 100);
-					(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_PLATFORM_ID,0);
+					//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_PLATFORM_ID,0);
+                    {
+                        AECHAR WTitle[20] = {0};
+                        (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                        AEE_FLDDBG_RES_FILE,                                
+                        IDS_PLATFORM_ID,
+                        WTitle,
+                        sizeof(WTitle));
+                        if(pme->m_pIAnn != NULL)
+                        {
+                            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                        }
+                    }     					
 		            (void)ITEXTCTL_SetText(pIText,string,-1);
 					ITEXTCTL_SetCursorPos(pIText, n+1);
 		    }  
@@ -4119,7 +4328,19 @@ SIDE EFFECTS
 			   if (NULL != szBuf)
 			   {
 					   ITEXTCTL_SetMaxSize ( pIText, 100);
-					   (void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_DLFLAGS,NULL);
+					   //(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_DLFLAGS,NULL);
+                       {
+                           AECHAR WTitle[20] = {0};
+                           (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                           AEE_FLDDBG_RES_FILE,                                
+                           IDS_DLFLAGS,
+                           WTitle,
+                           sizeof(WTitle));
+                           if(pme->m_pIAnn != NULL)
+                           {
+                               IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                           }
+                       }     
 					   (void)ITEXTCTL_SetText(pIText,string,-1);
 					   ITEXTCTL_SetCursorPos(pIText, n+1);
 			   }	  
@@ -4458,7 +4679,19 @@ static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
 			if (NULL != szBuf)
 		    {
 		            ITEXTCTL_SetMaxSize ( pIText, 100);
-					(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_PRIMARY_DNS,0);
+					//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_PRIMARY_DNS,0);
+                    {
+                        AECHAR WTitle[20] = {0};
+                        (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                        AEE_FLDDBG_RES_FILE,                                
+                        IDS_PRIMARY_DNS,
+                        WTitle,
+                        sizeof(WTitle));
+                        if(pme->m_pIAnn != NULL)
+                        {
+                            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                        }
+                    }     
 		            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
 					ITEXTCTL_SetCursorPos(pIText, n+1);
 		    }  
@@ -4511,6 +4744,7 @@ static boolean CFieldDebug_TopMenuHandleEvent(CFieldDebug * pme,
    case EVT_COMMAND:
       if (wParam == IDS_PROGRAM_TITLE) {
          // Start the service programming applet
+         IANNUNCIATOR_Redraw(pme->m_pIAnn);
          return(SUCCESS == ISHELL_StartApplet(pme->a.m_pIShell,
                                               AEECLSID_SVCPRGAPP));
       }
@@ -5110,6 +5344,18 @@ static boolean CFieldDebug_RATS_TESTHandleEvent(CFieldDebug * pme,
 
         ptext = (ITextCtl *) IDIALOG_GetControl ((IDialog *) dwParam,
                                               IDC_RATS_TEST_TEXT);
+          {
+            AECHAR WTitle[40] = {0};
+            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+            AEE_FLDDBG_RES_FILE,                                
+            IDS_ENTER_TEST,
+            WTitle,
+            sizeof(WTitle));
+            if(pme->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+            }
+          }           
         rect.x = 0;
         rect.y = 0;
         rect.dx = pme->m_screen_rc.dx;
@@ -5302,6 +5548,18 @@ static boolean CFieldDebug_IPHandleEvent(CFieldDebug * pme,
         AECHAR res_string[MAX_RES_SIZE+1];
         ptext = (ITextCtl *) IDIALOG_GetControl ((IDialog *) dwParam,
                                               IDC_RATS_IP_TEXT);
+          {
+            AECHAR WTitle[40] = {0};
+            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+            AEE_FLDDBG_RES_FILE,                                
+            IDS_SET_IP,
+            WTitle,
+            sizeof(WTitle));
+            if(pme->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+            }
+          }           
         (void) ITEXTCTL_SetInputMode(ptext, AEE_TM_NUMBERS);
         ITEXTCTL_SetMaxSize(ptext, MAX_IP_SIZE);
 
@@ -5432,14 +5690,8 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
      MSG_FATAL("IShell Null", 0, 0, 0);
      return FALSE;
    }
-   if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pme->m_pIAnn))
-    {
-
-        return EFAILED;
-    }
 
    pIDialog = ISHELL_GetActiveDialog(ps);
-   IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
 
    switch (eCode) {
 
@@ -5509,8 +5761,29 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
        }
        pme->m_pDisplay = args->pDisplay;
        (void) IDISPLAY_AddRef(pme->m_pDisplay);
-	   
-
+       MSG_FATAL("ISHELL_CreateInstance AEECLSID_ANNUNCIATOR", 0, 0, 0);
+	   if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pme->m_pIAnn))
+       {
+           return EFAILED;
+       }
+       IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
+      {
+        AECHAR WTitle[40] = {0};
+        MSG_FATAL("CFieldDebug_OnDialogStart 1", 0, 0, 0);
+        if(pme->a.m_pIShell == NULL)
+        {
+            MSG_FATAL("pMe->a.m_pIShell == NULL", 0, 0, 0);
+        }
+        (void)ISHELL_LoadResString(pme->a.m_pIShell,
+        AEE_FLDDBG_RES_FILE,                                
+        IDS_OPTION_TITLE,
+        WTitle,
+        sizeof(WTitle));
+        if(pme->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+        }
+      }        
      return TRUE;
 
    case EVT_APP_SUSPEND:
@@ -5942,9 +6215,13 @@ static void CFieldDebug_DrawErrorScreen(CFieldDebug * pme)
                                         IDS_ERRORS,
                                         sTitle,
                                         sizeof(sTitle));
+   if(pme->m_pIAnn != NULL)
+   {
+       IANNUNCIATOR_SetFieldText(pme->m_pIAnn,sTitle);
+   }
 
    (void) ISTATIC_SetText(p_stk,
-                          sTitle,
+                          NULL,
                           szBuf,
                           AEE_FONT_NORMAL,
                           AEE_FONT_NORMAL);
@@ -6264,8 +6541,12 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
                                         IDS_VERSION_TITLE,
                                         sTitle,
                                         sizeof(sTitle));
+    if(pme->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_SetFieldText(pme->m_pIAnn,sTitle);
+    }     
    (void) ISTATIC_SetText(p_stk,
-                          sTitle,
+                          NULL,
                           szBuf,
                           AEE_FONT_NORMAL,
                           AEE_FONT_NORMAL);
@@ -6398,6 +6679,18 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
         wMenuID = IDC_SECURITY_TEST;
         pIMenuCtl = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                                    wMenuID);
+          {
+            AECHAR WTitle[30] = {0};
+            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+            AEE_FLDDBG_RES_FILE,                                
+            IDS_SECURITY_TESTS,
+            WTitle,
+            sizeof(WTitle));
+            if(pme->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+            }
+          }           
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SSL_TEST,  IDS_SSL_TEST, NULL, 0);
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SEC_TESTS,  IDS_SEC_TESTS, NULL, 0);
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_TESTS,  IDS_DRM_TESTS, NULL, 0);
@@ -6410,6 +6703,18 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
         wMenuID = IDC_SSL_TEST;
         pIMenuCtl = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                                    wMenuID);
+          {
+            AECHAR WTitle[30] = {0};
+            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+            AEE_FLDDBG_RES_FILE,                                
+            IDS_SSL_TEST,
+            WTitle,
+            sizeof(WTitle));
+            if(pme->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+            }
+          }           
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SSL_HTTP,  IDS_SSL_HTTP, NULL, 0);
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SSL_FUNCT,  IDS_SSL_FUNCT, NULL, 0);
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SSL_MULTI,  IDS_SSL_MULTI, NULL, 0);
@@ -6422,6 +6727,18 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
         wMenuID = IDC_SEC_TEST;
         pIMenuCtl = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                                    wMenuID);
+          {
+            AECHAR WTitle[20] = {0};
+            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+            AEE_FLDDBG_RES_FILE,                                
+            IDS_SEC_TESTS,
+            WTitle,
+            sizeof(WTitle));
+            if(pme->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+            }
+          }           
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SECAPI_PKX,  IDS_SECAPI_PKX, NULL, 0);
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SECAPI_ENC,  IDS_SECAPI_ENC, NULL, 0);
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SECAPI_HSH,  IDS_SECAPI_HSH, NULL, 0);
@@ -6435,6 +6752,18 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
         wMenuID = IDC_DRM_TEST;
         pIMenuCtl = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                                    wMenuID);
+          {
+            AECHAR WTitle[20] = {0};
+            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+            AEE_FLDDBG_RES_FILE,                                
+            IDS_DRM_TESTS,
+            WTitle,
+            sizeof(WTitle));
+            if(pme->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+            }
+          }           
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_ADD_RO,  IDS_DRM_ADD_RO, NULL, 0);
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_READ_RO,  IDS_DRM_READ_RO, NULL, 0);
         IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_USE_RO,  IDS_DRM_USE_RO, NULL, 0);
@@ -7287,7 +7616,10 @@ static void InitJPEGFileList(CFieldDebug * pme)
 		            IDS_CHOOSE_FILE,
 		            WTitle,
 		            sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+            if(pme->m_pIAnn != NULL)
+            {
+			    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+            }
 		}
 		#endif
          // Create file manager instance and list all the files under media directory.
@@ -7651,7 +7983,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
                                         sTitle,
                                         sizeof(sTitle));
    (void) ISTATIC_SetText(p_stk,
-                          sTitle,
+                          NULL,
                           szBuf,
                           AEE_FONT_NORMAL,
                           AEE_FONT_NORMAL);
@@ -7744,7 +8076,19 @@ static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
 				if (NULL != szBuf)
 			    {
 		            ITEXTCTL_SetMaxSize ( pIText, 65);
-					(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_SECONDARY_DNS,0);
+					//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_SECONDARY_DNS,0);
+                    {
+                        AECHAR WTitle[30] = {0};
+                        (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                        AEE_FLDDBG_RES_FILE,                                
+                        IDS_SECONDARY_DNS,
+                        WTitle,
+                        sizeof(WTitle));
+                        if(pme->m_pIAnn != NULL)
+                        {
+                            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                        }
+                    }     
 		            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
 					ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  	
@@ -7857,7 +8201,19 @@ static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
 				if (NULL != szBuf)
 			    {
 			            ITEXTCTL_SetMaxSize ( pIText, 64);
-						(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_USER_NAME,0);
+						//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_USER_NAME,0);
+                        {
+                            AECHAR WTitle[20] = {0};
+                            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                            AEE_FLDDBG_RES_FILE,                                
+                            IDS_USER_NAME,
+                            WTitle,
+                            sizeof(WTitle));
+                            if(pme->m_pIAnn != NULL)
+                            {
+                                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                            }
+                        }     
 			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
 						ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  
@@ -7972,7 +8328,19 @@ static boolean CFieldDebug_UserPasswordMenuHandleEvent(CFieldDebug *pme,
 				if (NULL != szBuf)
 			    {
 			            ITEXTCTL_SetMaxSize ( pIText, 64);
-						(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_USER_PASSWORD,0);
+						//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_USER_PASSWORD,0);
+                        {
+                            AECHAR WTitle[20] = {0};
+                            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                            AEE_FLDDBG_RES_FILE,                                
+                            IDS_USER_PASSWORD,
+                            WTitle,
+                            sizeof(WTitle));
+                            if(pme->m_pIAnn != NULL)
+                            {
+                                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                            }
+                        }     
 			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
 						ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  
@@ -8072,7 +8440,19 @@ static boolean CFieldDebug_PrimaryServerMenuHandleEvent(CFieldDebug *pme,
 				if (NULL != szBuf)
 			    {
 			            ITEXTCTL_SetMaxSize ( pIText, 64);
-						(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_PRIMARY_SERVER,0);
+						//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_PRIMARY_SERVER,0);
+                        {
+                            AECHAR WTitle[20] = {0};
+                            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                            AEE_FLDDBG_RES_FILE,                                
+                            IDS_PRIMARY_SERVER,
+                            WTitle,
+                            sizeof(WTitle));
+                            if(pme->m_pIAnn != NULL)
+                            {
+                                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                            }
+                        }     
 			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
 						ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  
@@ -8171,7 +8551,19 @@ static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
 				if (NULL != szBuf)
 			    {
 			            ITEXTCTL_SetMaxSize (pIText, 64);
-						(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_SECONDARY_SERVER,0);
+						//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_SECONDARY_SERVER,0);
+                        {
+                            AECHAR WTitle[25] = {0};
+                            (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                            AEE_FLDDBG_RES_FILE,                                
+                            IDS_SECONDARY_SERVER,
+                            WTitle,
+                            sizeof(WTitle));
+                            if(pme->m_pIAnn != NULL)
+                            {
+                                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                            }
+                        }     
 			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
 						ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  
@@ -8364,6 +8756,18 @@ static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
             ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
             if (NULL != szBuf)
             {
+                {
+                    AECHAR WTitle[30] = {0};
+                    (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                    AEE_FLDDBG_RES_FILE,                                
+                    IDS_STRING_NET_LOCK_FLAG,
+                    WTitle,
+                    sizeof(WTitle));
+                    if(pme->m_pIAnn != NULL)
+                    {
+                        IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                    }
+                }     
                 ITEXTCTL_SetMaxSize ( pIText, 1);
                 (void)ITEXTCTL_SetText(pIText,string,-1);
                 ITEXTCTL_SetCursorPos(pIText, n+1);
@@ -8529,6 +8933,18 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
             ITEXTCTL_SetMaxSize ( pIText, 30);
             (void)ITEXTCTL_SetText(pIText,string,-1);
             ITEXTCTL_SetCursorPos(pIText, n+1);
+            {
+                AECHAR WTitle[5] = {0};
+                (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                AEE_FLDDBG_RES_FILE,                                
+                IDS_STRING_NET_LOCK_MNC,
+                WTitle,
+                sizeof(WTitle));
+                if(pme->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                }
+            }     
             return TRUE;
         }
         case EVT_DIALOG_END:
@@ -8689,6 +9105,18 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
             ITEXTCTL_SetMaxSize ( pIText, 30);
             (void)ITEXTCTL_SetText(pIText,string,-1);
             ITEXTCTL_SetCursorPos(pIText, n+1);
+            {
+                AECHAR WTitle[5] = {0};
+                (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                AEE_FLDDBG_RES_FILE,                                
+                IDS_STRING_NET_LOCK_MCC,
+                WTitle,
+                sizeof(WTitle));
+                if(pme->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                }
+            }     
             return TRUE;
         }
         case EVT_DIALOG_END:
@@ -8848,6 +9276,18 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
             ITEXTCTL_SetMaxSize ( pIText, 30);
             (void)ITEXTCTL_SetText(pIText,string,-1);
             ITEXTCTL_SetCursorPos(pIText, n+1);
+            {
+                AECHAR WTitle[5] = {0};
+                (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                AEE_FLDDBG_RES_FILE,                                
+                IDS_STRING_NET_LOCK_SID,
+                WTitle,
+                sizeof(WTitle));
+                if(pme->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                }
+            }     
             return TRUE;
         }
         case EVT_DIALOG_END:
