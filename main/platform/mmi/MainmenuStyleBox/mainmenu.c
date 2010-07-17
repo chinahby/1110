@@ -748,7 +748,6 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
     MainMenu *pMe = (MainMenu*)pi;
     AEEAppStart* as = NULL;
     MSG_FATAL("MainMenu_HandleEvent Start",0,0,0);
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE); 
     switch ( eCode)
     {
         case EVT_APP_START:
@@ -766,6 +765,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = MAINMENU_RUNNING;
             pMe->m_bNormalStart = TRUE;
+            IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE); 
             MainMenu_RunFSM(pMe);
             return TRUE;
 
