@@ -568,7 +568,6 @@ static boolean Game_HandleEvent( IGame *pi,
     AEEDeviceInfo di; 
 
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di); 
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
     switch ( eCode)
     {
         case EVT_APP_START:
@@ -584,7 +583,10 @@ static boolean Game_HandleEvent( IGame *pi,
             pMe->m_currState  = GAMEST_MAIN;
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = GAME_RUNNING;
-           
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
+            }
             Game_RunFSM(pMe);
             return TRUE;
 
@@ -895,7 +897,10 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                         IDS_GAME_LIST,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                if(pMe->m_pIAnn != NULL)
+                {
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
 		    }
 			#endif
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_1, IDS_GAME_TITLE_1, NULL, 0);
