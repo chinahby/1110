@@ -452,8 +452,11 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
     switch (eCode)
     {
         case EVT_APP_START:
-            IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
             InitStopWatch(pme);
+            if(pme->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
+            }
             StopWatch_Redraw(pme);
             return TRUE;
 
@@ -819,7 +822,10 @@ static void StopWatch_Redraw(CStopWatch *pme)
 	#if 0
     DrawTitleBar(pme->a.m_pIDisplay, &title);
 	#else
-	IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
+    if(pme->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
+    }
 	#endif
 
     // set bottom bar type
