@@ -428,7 +428,6 @@
 	<DIALOG Id="6007" Name="IDD_CALLFORWARD_INPUT" Focus="7006">
 		<Controls>
 			<Text Id="7006" Name="IDC_CALLFORWARD_INPUT">
-				<TitleID>IDS_CALLFORWARD_INPUT</TitleID>
 				<Items/></Text>
 		</Controls>
 	</DIALOG>
@@ -477,7 +476,6 @@
 	<DIALOG Id="6014" Name="IDD_BANNER_TXT" Focus="7014">
 		<Controls>
 			<Text Id="7014" Name="IDC_BANNER">
-				<TitleID>IDS_BANNER_TITLE</TitleID>
 				<Items/></Text>
 		</Controls>
 	</DIALOG>
@@ -575,7 +573,6 @@
 	<Dialog Id="6030" Name="IDD_USB_FUNCTION" Focus="0">
 		<Controls>
 			<Menu Id="7025" Name="IDC_USB_FUNCTION">
-				<TitleID>IDS_USB_FUNCTION</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
