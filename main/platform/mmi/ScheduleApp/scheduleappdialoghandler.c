@@ -1588,6 +1588,15 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             }
             repaint(pme, TRUE);
         }
+        {
+            AECHAR WTitle[20] = {0};
+            (void)ISHELL_LoadResString(pme->m_pShell,
+            AEE_SCHEDULEAPP_RES_FILE,                                
+            IDS_APP,
+            WTitle,
+            sizeof(WTitle));
+            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+        }   
         return TRUE;
 
         case EVT_LOAD_DATA:
