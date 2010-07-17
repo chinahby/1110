@@ -368,7 +368,7 @@ static int CScheduleApp_InitAppData(CScheduleApp *pme)
     {
         return EFAILED;
     }
-
+    IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
 #if FEATURE_DRAW_LUNAR_CALENDAR
     if(Calendar_InitAppData(&pme->m_calendar, pme->m_pShell)!=TRUE)
     {
@@ -525,7 +525,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
     AEEAppStart *as;
     uint32   lDateTime;
     extern uint32 getNowCompositeTime( void);
-	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
+	
     switch (eCode)
     {
         case EVT_APP_START:
@@ -565,7 +565,10 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
             pme->m_CalMgr.m_lCurrentDay = GETDATE(lDateTime);
 
             pme->m_CalMgr.m_lToday = pme->m_CalMgr.m_lCurrentDay;
-
+            if(pme->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
+            }
             if(pme->m_CalMgr.m_wPendingAlarmPermID != EMPTY_ALARM_ID)
             {
                 pme->m_eCurState = STATE_SHOWALERT;
