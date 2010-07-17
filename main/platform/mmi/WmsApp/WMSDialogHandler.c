@@ -389,6 +389,13 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
     uint32   dwParam
 );
 
+//add by yangdecai
+static boolean IDD_RESEND_CONFIRM_Handler(void   *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+);
+
 /*==============================================================================
 
                                  函数定义
@@ -666,6 +673,11 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
 
         case IDD_SELECTFROMOPT:
             pMe->m_pDialogHandler = IDD_SELECTFROMOPT_Handler;
+            break;
+		//add by yangdecai
+		case IDD_RESEND_CONFIRM:
+			INIT_STATIC
+			pMe->m_pDialogHandler = IDD_RESEND_CONFIRM_Handler;
             break;
             
         default:
@@ -6114,7 +6126,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
 #endif            
             {// 消息发送结果提示界面
                 AECHAR wszText[32] = {0};
-                uint16 nResID = IDS_FAILED;
+                uint16 nResID = IDS_FAILED_RESENDING;
                 AEERect rc;
                 int x, y;
                 RGBVAL oldColor = 0;
@@ -6160,8 +6172,9 @@ static boolean IDD_SENDING_Handler(void *pUser,
                             break;
                     }
                     pMe->m_FailNum += 1;
+					CLOSE_DIALOG(DLGRET_RESENDCONFIRM)
                 }
-                
+                #if 0
                 (void) ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,
                         nResID,
@@ -6191,7 +6204,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-                
+                #endif
                 // 设置定时器函数启动下一次发送
                 {
                     PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
@@ -13494,3 +13507,115 @@ static boolean IDD_SELECTFROMOPT_Handler(void   *pUser,
     return FALSE;
 }//IDD_SELECTFROMOPT
 
+//add by yangdecai
+/*==============================================================================
+函数:
+    IDD_RESEND_CONFIRM_Handler
+
+说明:
+    WMS Applet对话框  IDD_RESEND_CONFIRM 事件处理函数。
+
+参数:
+    pMe [in]:       指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]:     事件代码。
+    wParam:         事件参数
+    dwParam [in]:   与wParam关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+static boolean IDD_RESEND_CONFIRM_Handler(void	 *pUser,
+		AEEEvent eCode,
+		uint16	 wParam,
+		uint32	 dwParam
+)
+{
+	WmsApp *pMe = (WmsApp *)pUser;
+    DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::%h",eCode);
+    if (NULL == pMe)
+    {
+    	DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::pMe  IS NULL");
+        return FALSE;
+    }
+    
+    if (NULL == pMe->m_pStatic)
+    {
+    	DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::m_pStatic  IS NULL");
+        return FALSE;
+    }
+	
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            return TRUE;
+
+        case EVT_DIALOG_START:
+			DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::00000000000000000000");
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            {
+                AECHAR  wstrText[62];
+                PromptMsg_Param_type  Msg_Param={0};
+ 				DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::1111111111111111111111");
+                (void) ISHELL_LoadResString(pMe->m_pShell,
+                                AEE_WMSAPPRES_LANGFILE,
+                                pMe->m_wMsgResID,
+                                wstrText,
+                                sizeof(wstrText));
+  
+                // 调用公共函数绘制界面
+                Msg_Param.ePMsgType = MESSAGE_CONFIRM;
+                Msg_Param.pwszMsg = wstrText;
+#ifdef FEATURE_CARRIER_THAILAND_HUTCH                  
+                Msg_Param.eBBarType = BTBAR_OK_BACK;
+#else
+                Msg_Param.eBBarType = BTBAR_OK_CANCEL;
+#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH		
+                DrawPromptMessage(pMe->m_pDisplay, pMe->m_pStatic, &Msg_Param);
+            }
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            ISTATIC_Release(pMe->m_pStatic);
+            pMe->m_pStatic = NULL;
+            return TRUE;
+  
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                case AVK_SELECT:
+                    {
+						CLOSE_DIALOG(DLGRET_OK)
+                    	//PFNNOTIFY pfn = WmsApp_ReSendMsgTimer;
+						//(void)ISHELL_SetTimer(pMe->m_pShell, 300, pfn, pMe);
+                    }
+                    return TRUE;
+  
+                default:
+                    break;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    return FALSE;
+}//IDD_RESEND_CONFIRM

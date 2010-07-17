@@ -214,6 +214,10 @@ static NextFSMAction WMSST_SELECTFROM_Handler(WmsApp *pMe);
 // WMSST_CONTINUESEND_QUERY 状态处理函数
 static NextFSMAction WMSST_CONTINUESEND_QUERY_Handler(WmsApp *pMe);
 
+//WMSST_RESENDCONFIRM状态处理函数  add by yangdecai
+static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe);
+
+
 /*==============================================================================
 
                                  函数定义
@@ -438,6 +442,10 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 
         case WMSST_SELECTFROM:
             return WMSST_SELECTFROM_Handler(pMe);
+			
+        //add by yangdecai
+		case WMSST_RESENDCONFIRM:
+			return WMSST_RESENDCONFIRM_Handler(pMe);
             
         case WMSST_EXIT:
             return WMSST_EXIT_Handler(pMe);
@@ -3232,7 +3240,10 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
             }
 
             return NFSMACTION_CONTINUE;
-
+		//add by yangdecai
+        case DLGRET_RESENDCONFIRM:
+			MOVE_TO_STATE(WMSST_RESENDCONFIRM);
+			return NFSMACTION_CONTINUE;
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
@@ -5909,6 +5920,41 @@ static NextFSMAction WMSST_SELECTFROM_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
     }
 } // WMSST_SELECTFROM_Handler
+static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+	
+	switch (pMe->m_eDlgReturn)
+    {
+    	case DLGRET_CREATE:
+			DBGPRINTF("WMSST_RESENDCONFIRM_Handler::::::::::::",0,0,0);
+            pMe->m_wMsgResID = IDS_FAILED_RESENDING;
+            WmsApp_ShowDialog(pMe, IDD_RESEND_CONFIRM);
+            return NFSMACTION_WAIT;
+		case DLGRET_CANCELED:
+			MOVE_TO_STATE(WMSST_MAIN)
+		    break;
+		case DLGRET_OK:
+			pMe->m_eOptType = OPT_VIA_VIEWMSG;
+            pMe->m_eDlgReturn = DLGRET_RESEND;
+            pMe->m_bDoNotOverwriteDlgResult = TRUE;
+            MOVE_TO_STATE(WMSST_OUTMSGOPTS)
+            return NFSMACTION_CONTINUE;
+		
+		default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+            
+    return NFSMACTION_CONTINUE;
+	
+	
+}  //WMSST_RESENDCONFIRM_Handler
+//add by yangdecai end 
 /*==============================================================================
 函数:
     WMSST_EXIT_Handler

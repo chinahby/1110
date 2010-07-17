@@ -486,6 +486,10 @@ typedef enum WMSAPPState
 
     // 选择电话号码来源
     WMSST_SELECTFROM,
+    
+    //用于发送失败是否重发  add by yangdecai
+    WMSST_RESENDCONFIRM,
+    
     // 退出短信应用
     WMSST_EXIT
 } WMSAPPState;
@@ -607,6 +611,7 @@ typedef enum DLGRetValue
    DLGRET_SELECTFROMOPT,
    DLGRET_EXIT_EDITOR,
    DLGRET_SAVEDRAFT
+   ,DLGRET_RESENDCONFIRM
 } DLGRetValue;
 
 
