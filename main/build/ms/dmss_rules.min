@@ -327,6 +327,8 @@ CONSTFILE_FLAGS 		= $(subst FIXED,-f,$(subst ., ,$(subst FLAGS:, , $(CONSTFILE_F
 
 CONSTFILE_OBJS 			= $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o)) $(CONSTFILE_BIN_OBJS)
 CONSTFILE_BAR_FSLOC 	= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $(<:%.brx=%.bar))|%, $(CONSTFILE_FILES)))))
+CONSTFILE_BAR_FSNAME    = $(notdir $(subst /$(EXTLANG2)/,/$(EXTLANG2),$(subst /$(EXTLANG1)/,/$(EXTLANG1),$(CONSTFILE_BAR_FSLOC))))
+CONSTFILE_BAR_BUILD     = $(dir $<)$(CONSTFILE_BAR_FSNAME)
 CONSTFILE_BAR  			= $(filter %.bar, $(CONSTFILE_FILENAMES))
 CONSTFILE_BAR_SRC 		= $(addprefix $(TARGETDIR)/, $(addsuffix .c, $(CONSTFILE_BAR)))
 CONSTFILE_BIN  			= $(filter-out %.bar, $(CONSTFILE_FILENAMES)) $(CONSTFILE_BIN_FILENAMES)
@@ -351,7 +353,8 @@ $(CONSTFILE_BIN_SRC) : $(TARGETDIR)/%.c: %
 $(CONSTFILE_BAR_SRC) : $(TARGETDIR)/%.bar.c: %.brx
 	@echo ------------------------------------------------------------------------
 	@echo Build Resource $(<:%.brx=%.bar)
-	@$(BREWRC) -h $(<:%.brx=%.brh) -o $(<:%.brx=%.bar) $<
+	@$(BREWRC) -h $(CONSTFILE_BAR_BUILD:%.bar=%.brh) -o $(CONSTFILE_BAR_BUILD) $<
+	@-mv -f $(CONSTFILE_BAR_BUILD) $(<:%.brx=%.bar)
 	@echo ------------------------------------------------------------------------
 	@echo ------------------------------------------------------------------------
 	@echo Creating C File $@

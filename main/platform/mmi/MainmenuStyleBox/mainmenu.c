@@ -35,13 +35,8 @@
 
 #include "Appscommon.h"
 #include "appscommon.brh"
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
+
 #include "err.h"
 #if !defined( AEE_SIMULATOR)
 #include "AEERUIM.h" 
@@ -159,12 +154,7 @@ static void Mainmenu_DialogTimeout(void *pme);
 boolean MainMenu_Set_Shake_Disable(MainMenu *pMe);
 boolean MainMenu_Get_Shake_OnOrOff(MainMenu *pMe);
 void MainMenu_CloseSportBgRun(MainMenu *pMe);
-
-
 #endif
-
-void MainMenu_DraImage(MainMenu *pMe,int16 index,int16 imgid);
-
 
 /*==============================================================================
                               
@@ -2501,16 +2491,4 @@ static int  MainMenu_MainMenuService( IMainMenu *pi, MainMenuServiceType eStype)
     
     return nRet;    
 }
-void MainMenu_DraImage(MainMenu *pMe,int16 index,int16 imgid)
-{
-        
-        if(pMe->m_pImageIcon[index] != NULL)
-        {
-            IIMAGE_Release(pMe->m_pImageIcon[index]);
-            pMe->m_pImageIcon[index] = NULL;
-            
-            pMe->m_pImageIcon[index] = ISHELL_LoadResImage(pMe->m_pShell,
-                                                MAINMENU_RES_FILE_IMAGE,
-                                                imgid);
-        }
-}
+

@@ -12,12 +12,7 @@
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif 
-
-#if defined(FEATURE_DISP_160X128)
-#include "appscommon_160X128.brh"
-#else
-#include "appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
 
 #define CLOSE_DIALOG(DlgRet)                         \
         {                                            \

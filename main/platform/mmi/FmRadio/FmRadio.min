@@ -31,11 +31,11 @@ CONSTFILE_FILES+=\
 
 ifeq ($(OPERATORS_VERSION_NAME),IVIO)
     	 CONSTFILE_FILES+=\
-    	 fmradioln160x128_ivio.bar|fs:/mod/fmradio/fmradioln160x128.bar
+    	 fmradioln160x128_ivio.bar|fs:/mod/fmradio/fmradioln.bar
 endif
 ifeq ($(OPERATORS_VERSION_NAME),SMART)
     	 CONSTFILE_FILES+=\
-    	 fmradioln160x128_smart.bar|fs:/mod/fmradio/fmradioln160x128.bar
+    	 fmradioln160x128_smart.bar|fs:/mod/fmradio/fmradioln.bar
 endif
 else
 CONSTFILE_FILES+=\

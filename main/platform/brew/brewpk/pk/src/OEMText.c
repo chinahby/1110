@@ -73,13 +73,7 @@ when       who     what, where, why
 #include "chinconv.h"
 #endif //#ifdef FEATURE_T9_INPUT
 #include "Appscommon.h"
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
 #include "err.h"
 /*===========================================================================
 

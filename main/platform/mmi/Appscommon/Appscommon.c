@@ -31,13 +31,7 @@
 
 // 图片资源文件
 #if !defined( FEATURE_COLOR_DISPLAY) || !defined( AEESIMULATOR)
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
 #endif
 
 #include "CallApp.h"

@@ -85,24 +85,15 @@
 	<STRING Id="1029" Name="IDS_WALLPAPER_TITLE">
 		<Text>Kertas dinding</Text>
 	</STRING>
-	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL2">
+	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL_DARK">
 		<Text>Gelap</Text>
 	</STRING>
-	<String Id="1031" Name="IDS_CONTRAST_LEVEL3">
-		<Text>Gelap sedang</Text>
-	</String>
-	<STRING Id="1032" Name="IDS_CONTRAST_LEVEL4">
+	<STRING Id="1032" Name="IDS_CONTRAST_LEVEL_NORMAL">
 		<Text>Normal</Text>
 	</STRING>
-	<String Id="1033" Name="IDS_CONTRAST_LEVEL5">
-		<Text>Terang teduh</Text>
-	</String>
-	<STRING Id="1034" Name="IDS_CONTRAST_LEVEL6">
+	<STRING Id="1034" Name="IDS_CONTRAST_LEVEL_BRIGHT">
 		<Text>Terang</Text>
 	</STRING>
-	<String Id="1035" Name="IDS_CONTRAST_LEVEL7">
-		<Text>Sangat terang</Text>
-	</String>
 	<STRING Id="1036" Name="IDS_DEL_ITEM_YESNO">
 		<Text>Hapus</Text>
 	</STRING>

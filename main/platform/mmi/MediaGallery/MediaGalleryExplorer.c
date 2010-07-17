@@ -2670,16 +2670,7 @@ static int MGExplorer_GetItemIcon(CFileIcons *pFileIcons,
 
    if(*ppFileIcon == NULL)
    {
-#if defined FEATURE_VERSION_IVIO   
-   	*ppFileIcon = ISHELL_LoadResImage(AEE_GetShell(), MEDIAGALLERY_IMAGE_IVIO_RES_FILE, nResID);
-     MSG_FATAL("IVIO nResID=%d", nResID,0,0);
-#elif defined FEATURE_VERSION_SMART
-	*ppFileIcon = ISHELL_LoadResImage(AEE_GetShell(), MEDIAGALLERY_IMAGE_SMART_RES_FILE, nResID);
-    MSG_FATAL("SMART nResID=%d", nResID,0,0);
-#else
-    MSG_FATAL("IVIO2 nResID=%d", nResID,0,0);
-	*ppFileIcon = ISHELL_LoadResImage(AEE_GetShell(), MEDIAGALLERY_IMAGE_IVIO_RES_FILE, nResID);
-#endif
+	*ppFileIcon = ISHELL_LoadResImage(AEE_GetShell(), MEDIAGALLERY_IMAGE_RES_FILE, nResID);
    }
    *ppIcon = *ppFileIcon;
 

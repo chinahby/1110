@@ -26,11 +26,11 @@ CONSTFILE_FILES+=\
 		 
 ifeq ($(OPERATORS_VERSION_NAME),IVIO)
     CONSTFILE_FILES+=\
-    mediagallery_image_ivio.bar|fs:/mod/mediagallery/mediagallery_image_ivio.bar
+    mediagallery_image_ivio.bar|fs:/mod/mediagallery/mediagallery_image.bar
 endif
 ifeq ($(OPERATORS_VERSION_NAME),SMART)
     CONSTFILE_FILES+=\
-    mediagallery_image_smart.bar|fs:/mod/mediagallery/mediagallery_image_smart.bar
+    mediagallery_image_smart.bar|fs:/mod/mediagallery/mediagallery_image.bar
 endif
 		 
 		 

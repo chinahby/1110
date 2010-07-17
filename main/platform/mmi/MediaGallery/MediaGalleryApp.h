@@ -42,13 +42,7 @@
 #include "Appscommon.h"
 #include "appscommon.brh"
 // pictures resource
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
 
 #ifdef FEATURE_ANICTL
 #include "AEEDrawAni.h"
@@ -59,11 +53,7 @@
 #include "MediaGallery.h"
 #include "MediaGalleryExplorer.h"
 #include "Mediagallery.brh"
-#if defined FEATURE_VERSION_IVIO
-#include "mediagallery_image_ivio.brh"
-#elif defined FEATURE_VERSION_SMART
-#include "mediagallery_image_smart.brh"
-#endif
+#include "mediagallery_image.brh"
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define MEDIAGALLERYAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )

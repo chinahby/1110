@@ -30,9 +30,6 @@ CONSTFILE_FILES+=\
 mainmenu.mif|fs:/mif/mainmenu.mif \
 mainmenu.bar|fs:/mod/mainmenu/en/mainmenu.bar
 
-#CONSTFILE_FILES+=\
-#mainmenuimages.bar|fs:/mod/mainmenu/mainmenuimages.bar \
-
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
 $(EXTLANG1)mainmenu.bar|fs:/mod/mainmenu/$(EXTLANG1)/mainmenu.bar

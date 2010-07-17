@@ -42,11 +42,7 @@
 #endif
 
 #include "clockapps.brh"
-#if defined FEATURE_VERSION_IVIO
-#include "clockapps_images_ivio.brh"
-#elif defined FEATURE_VERSION_SMART
-#include "clockapps_images_smart.brh"
-#endif
+#include "clockapps_images.brh"
 #include "AEEShell.h"
 #include "AEEModTable.h"
 #include "AEEStdLib.h"
@@ -65,13 +61,7 @@
 #include "AEEBacklight.h"
 #include "Appscommon.h"
 #include "appscommon.brh"
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
 
 #ifdef FEATURE_SUB_LCD
 #include "AEEDisp.h"

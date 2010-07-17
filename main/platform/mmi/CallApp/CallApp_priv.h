@@ -35,14 +35,7 @@
 #include "recorder.h"
 #include "recorder.brh"
 #include "recorder_images.brh"
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
-
+#include "appscommonimages.brh"
 #include "appscommon.h"
 #define  APP_RECORDER_RES_FILE ("fs:/mod/recorder/" AEE_RES_LANGDIR RECORDER_RES_FILE)
 #define  APP_RECORDER_IMAGES_RES_FILE ("fs:/mod/recorder/" RECORDER_IMAGES_RES_FILE)
@@ -103,13 +96,7 @@
 #include "AEEAnnunciator.h"
 #include "OEMCFGI.h"
 // 图片资源文件
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
 
 #define FEATURE_DIALER_ANIMAION_SUPPORT	0
 

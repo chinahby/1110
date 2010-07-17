@@ -42,22 +42,7 @@
 #endif
 
 #include "fmradiols.brh"
-
-#if defined(FEATURE_DISP_160X128)
-#if defined FEATURE_VERSION_IVIO
-#include "fmradioln160x128_ivio.brh"
-#elif defined FEATURE_VERSION_SMART
-#include "fmradioln160x128_smart.brh"
-#endif 
-#elif defined(FEATURE_DISP_128X128)
 #include "fmradioln.brh"
-#else
-#include "fmradioln.brh"
-#endif
-
-
-
-
 #include "AEEShell.h"
 #include "AEEStdLib.h"
 #include "AEEModGen.h"
@@ -399,24 +384,9 @@ typedef struct _CFmRadio
 //状态指示灯大小
 #define FMRADIO_LED_LIGHT_SIZE          12
 #endif
+
 // 根据 BREW 3 的需要，重定义资源文件宏
-#ifndef WIN32
-#if defined( AEE_SIMULATOR)
-
-#define  FMRADIOLS_RES_FILE_LANG ("fs:/mod/fmradio/en/" FMRADIOLS_RES_FILE)
-#define  FMRADIOLN_RES_FILE      "fs:/mod/fmradio/fmradioln.bar"
-
-#else//#if defined( AEE_SIMULATOR)
-
-#if defined(FEATURE_DISP_160X128)
-#define  FMRADIOLN_RES_FILE      "fs:/mod/fmradio/fmradioln160x128.bar"
-#endif
 #define  FMRADIOLS_RES_FILE_LANG (AEE_RES_LANGDIR FMRADIOLS_RES_FILE)
-
-#endif//#if defined( AEE_SIMULATOR)
-#else
-#define  FMRADIOLS_RES_FILE_LANG (AEE_RES_LANGDIR FMRADIOLS_RES_FILE)
-#endif//WIN32
 
 // 状态移动宏：先将前一状态用当前状态更新，再将当前状态设为nextState
 #define MOVE_TO_STATE(nextState) {            \

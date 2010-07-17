@@ -24,13 +24,7 @@
 ==============================================================================*/
 #include "CameraApp_priv.h" 
 #include "MediaGallery.h"
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
 
 /*==============================================================================                                 
                                  宏定义和常数                                

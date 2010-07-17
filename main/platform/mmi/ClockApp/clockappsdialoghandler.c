@@ -2658,14 +2658,8 @@ static void CClockApps_AniClockImg(CClockApps *pMe)
     }
     //Draw the picture
     {
-    #if defined FEATURE_VERSION_IVIO
-        IImage* pResImg = ISHELL_LoadResImage( pMe->m_pShell, CLOCKAPPS_IMAGES_IVIO_RES_FILE, IDI_ALARMCLOCK);
-	#elif defined FEATURE_VERSION_SMART
-		IImage* pResImg = ISHELL_LoadResImage( pMe->m_pShell, CLOCKAPPS_IMAGES_SMART_RES_FILE, IDI_ALARMCLOCK);
-	#else
 		IImage* pResImg = ISHELL_LoadResImage( pMe->m_pShell, CLOCKAPPS_IMAGES_RES_FILE, IDI_ALARMCLOCK);
-	#endif
-
+        
         if( pResImg != NULL)
         {
             AEEImageInfo ImageInfo;

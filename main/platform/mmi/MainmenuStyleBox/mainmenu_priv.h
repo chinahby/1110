@@ -18,7 +18,6 @@
 #endif
 
 #include "mainmenu.brh"
-#include "mainmenuimages.brh"
 #include "AEEConfig.h"
 
 #ifdef FEATURE_SUPPORT_WAP_APP

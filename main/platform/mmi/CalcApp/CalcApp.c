@@ -35,11 +35,7 @@ when         who            what, where, why
 #include "AEEModGen.h"
 #include "AEEAppGen.h"
 #include "OEMClassIDs.h"
-#if defined(FEATURE_DISP_160X128)
-#include "appscommon_160X128.brh"
-#else
-#include "appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
 #include "AppComFunc.h"
 #include "calcapp.brh"
 #include "Appscommon.h"

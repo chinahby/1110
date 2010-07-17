@@ -34,6 +34,12 @@
 	<String Id="1020" Name="IDS_APPLICATION_TITLE_10">
 		<Text>Kalkulator</Text>
 	</String>
+	<String Id="1021" Name="IDS_APPLICATION_TITLE_11">
+		<Text>Camera</Text>
+	</String>
+	<String Id="1022" Name="IDS_APPLICATION_TITLE_12">
+		<Text>FM</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">

@@ -36,19 +36,8 @@
 #include "Appscommon.h"
 #include "OEMRTC.h"
 //#include "AEECallList.h"
-#if defined FEATURE_VERSION_IVIO
-#include "clockapps_images_ivio.brh"
-#elif defined FEATURE_VERSION_SMART
-#include "clockapps_images_smart.brh"
-#endif
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
-
+#include "clockapps_images.brh"
+#include "appscommonimages.brh"
 #include "AEEGraphics.h "
 
 #include "clockapps.brh"
@@ -903,14 +892,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             MEMSET(wszTime,0,sizeof(wszTime));
             dwAlarmTime = time.dwWATime;
             Appscommon_FormatTimeString(dwAlarmTime, wszTime, sizeof(wszTime));
-
-#if defined  FEATURE_VERSION_IVIO			
-            pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, CLOCKAPPS_IMAGES_IVIO_RES_FILE, IDI_ALARMCLOCK);
-#elif defined  FEATURE_VERSION_SMART
-			pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, CLOCKAPPS_IMAGES_SMART_RES_FILE, IDI_ALARMCLOCK);
-#else
-			pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, CLOCKAPPS_IMAGES_IVIO_RES_FILE, IDI_ALARMCLOCK);
-#endif
+			pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, "fs:/mod/clockapps/clockapps_images.bar", IDI_ALARMCLOCK);
             MSG_FATAL("ALARM %x %S",pResImg,wszTime,0);
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
             if( pResImg != NULL)

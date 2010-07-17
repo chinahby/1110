@@ -24,13 +24,7 @@
 #include "AEECM.h"
 #include "CallApp.h"
 #include "OEMRTC.h"
-#if defined(FEATURE_DISP_160X128)
-#include "Appscommon_160x128.brh"
-#elif defined(FEATURE_DISP_128X128)
-#include "Appscommon_color.brh"
-#else
-#include "Appscommon_color.brh"
-#endif
+#include "appscommonimages.brh"
 
 #ifdef FEATRUE_SUPPORT_G_SENSOR
 #include "g_sensor.h"
