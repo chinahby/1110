@@ -861,7 +861,6 @@ static boolean recentcalls_HandleEvent(IRecentCalls *pi,
 {
     CRecentCalls *pMe = (CRecentCalls*)pi;
     AEEAppStart* as = 0;
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -906,7 +905,7 @@ static boolean recentcalls_HandleEvent(IRecentCalls *pi,
                //MOVE_TO_STATE(STATE_RECORD_LIST);
             }
             // ¿ªÊ¼recentcalls×´Ì¬»ú
-            
+            IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             recentcalls_RunFSM(pMe);
             return TRUE;
 

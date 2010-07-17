@@ -763,7 +763,6 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
 		}
 	}
 #endif
-	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -779,7 +778,10 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
             }
             return FALSE;
         }
-
+        if(pme->m_pIAnn != NULL)
+         {
+            IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
+        }
         pme->m_suspending = FALSE;
         AppTimer_Redraw(pme);
         return TRUE;

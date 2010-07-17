@@ -245,7 +245,7 @@ int CMusicPlayer_ShowDialog(CMusicPlayer *pMe, uint16  dlgResId)
         // Looks like there is one dialog already opened.
         // Flag an error an return without doing anything.
 #if defined(AEE_STATIC)
-        ERR("Trying to create a dialog without closing the previous one",0,0,0);
+        MSG_FATAL("Trying to create a dialog without closing the previous one",0,0,0);
 #endif
         return EFAILED;
     }
@@ -255,7 +255,7 @@ int CMusicPlayer_ShowDialog(CMusicPlayer *pMe, uint16  dlgResId)
 #if defined(AEE_STATIC)
     if (nRet != SUCCESS)
     {
-        ERR("Failed to create the dialog in the MusicPlayer applet",0,0,0);
+        MSG_FATAL("Failed to create the dialog in the MusicPlayer applet",0,0,0);
     }
 #endif
 
@@ -363,6 +363,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
+    MSG_FATAL("MP3_PlayMusic_Windows_HandleEvent Start",0,0,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:   
@@ -371,6 +372,12 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
         }
         case EVT_DIALOG_START:
         {
+            if(pMe->m_pIAnn != NULL)
+            {
+                MSG_FATAL("IANNUNCIATOR_SetHasTitleText",0,0,0);
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+            }
            (void) ISHELL_PostEvent(pMe->m_pShell, 
                                     AEECLSID_APP_MUSICPLAYER,
                                     EVT_USER_REDRAW,
@@ -413,7 +420,6 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
         case EVT_DIALOG_END:
         {        
             return TRUE;
-            
         }
         //case EVT_GSENSOR_SHAKE:
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
@@ -456,7 +462,7 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-    
+    MSG_FATAL("MP3_MainOptsMenu_HandleEvent Start",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_MAINMENU);
    if (pMenuCtl == NULL)
@@ -680,7 +686,7 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-    
+    MSG_FATAL("MP3_Playlist_HandleEvent Start",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                              IDC_PLAYLIST_MAINMENU);
    if (pMenuCtl == NULL)
@@ -706,6 +712,7 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
                         IDS_PLAYLIST,
                         WTitle,
                         sizeof(WTitle));
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
 		    }
 			#endif
@@ -868,7 +875,7 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-   
+    MSG_FATAL("MP3_SetRingtone_HandleEvent Start",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_SETASRINGTONE);
      if (pMenuCtl == NULL)
@@ -891,6 +898,7 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
                         IDS_SET_AS_RINGTONE,
                         WTitle,
                         sizeof(WTitle));
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
 		    }
 			#endif
@@ -1156,6 +1164,7 @@ static boolean MP3_Settings_HandleEvent(CMusicPlayer *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
+    MSG_FATAL("MP3_Settings_HandleEvent Start",0,0,0);
  switch (eCode)
     {
         case EVT_DIALOG_INIT:   
@@ -1472,6 +1481,7 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
+  MSG_FATAL("MP3_PlaylistOpts_HandleEvent Start",0,0,0);
   pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                         IDC_PLAYLIST_OPTS);
 
@@ -1680,7 +1690,7 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-    
+    MSG_FATAL("MP3_Playlist_View_HandleEvent Start",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_PLAYLIST_VIEWCTL);
     
@@ -1708,6 +1718,7 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
                         IDS_PLAYLIST,
                         WTitle,
                         sizeof(WTitle));
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
 		    }
 			#endif
@@ -1854,7 +1865,7 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
     ASSERT(pMe != NULL);
 #endif
    
-    
+    MSG_FATAL("MP3_View_Opts_HandleEvent Start",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_VIEW_OPTS_MENU);
     if (pMenuCtl == NULL)
@@ -2029,7 +2040,7 @@ static boolean MP3_CreatOrRenamelist_HandleEvent(CMusicPlayer *pMe,
     ASSERT(pMe != NULL);
 #endif
     
-
+    MSG_FATAL("MP3_CreatOrRenamelist_HandleEvent Start",0,0,0);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                              IDC_CREATEORRENAMELIST_TEXTCTL);
     if (pTextCtl == NULL)
@@ -2600,7 +2611,8 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
  {
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
-#endif
+#endif
+    MSG_FATAL("MP3_SimplePlayer_HandleEvent Start",0,0,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:   
@@ -2845,7 +2857,7 @@ static boolean  CMusicPlayer_HandleMsgBoxDlgEvent( CMusicPlayer  *pMe,
                                                uint32     dwParam)
 {
    static IStatic * pStatic = NULL;
-
+   MSG_FATAL("CMusicPlayer_HandleMsgBoxDlgEvent Start",0,0,0);
    if (NULL == pStatic)
    {
         AEERect rect = {0};
@@ -2914,7 +2926,7 @@ static boolean  CMusicPlayer_HandleMsgBoxDlgEvent( CMusicPlayer  *pMe,
             
             return TRUE;
 
-        case EVT_DIALOG_END:
+        case EVT_DIALOG_END:         
             (void) ISHELL_CancelTimer(pMe->m_pShell, CMusicPlayer_HandleDialogTimer, pMe);
   
             // 此对话框返回值仅为 DLGRET_MSGBOX_OK ，为防止挂起 Applet 
@@ -2973,7 +2985,7 @@ static boolean  CMusicPlayer_HandleYesNoDlgEvent( CMusicPlayer  *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-
+   MSG_FATAL("CMusicPlayer_HandleYesNoDlgEvent Start",0,0,0);
    if (NULL == pStatic)
    {
         AEERect rect = {0};
@@ -5371,6 +5383,7 @@ static void MP3_Draw_Settings_TitleBar(CMusicPlayer *pMe)
 	#if 0
     DrawTitleBar(pMe->m_pDisplay,&title);
 	#else
+    IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
 	#endif
     MP3_DRAW_BOTTOMBAR( BTBAR_SAVE_BACK);

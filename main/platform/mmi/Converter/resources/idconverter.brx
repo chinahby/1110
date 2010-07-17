@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="converter" VERSION="1">
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="idconverter" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1000" Name="IDS_CONVERTER_TITLE">
 		<Text>Konverter</Text>
@@ -171,7 +171,6 @@
 	<Dialog Id="6001" Name="IDD_CONVERTERMAIN" Focus="8">
 		<Controls>
 			<Menu Id="8" Name="IDC_CONVERTERMAIN" Flags="1">
-				<TitleID>IDS_CONVERTER_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

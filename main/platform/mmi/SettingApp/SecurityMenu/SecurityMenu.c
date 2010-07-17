@@ -712,7 +712,6 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
     //nv_item_type nvi;
     //SEC_ERR("%x,%x,%x,SecurityMenu_HandleEvent",eCode,wParam,dwParam);
     AEEDeviceInfo di;
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di);      
     switch (eCode)
     {
@@ -731,7 +730,10 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
             pMe->m_rc.y = pMe->m_rc.y - SECRUITY_MENU_SOFK_HIGHT;
             pMe->m_rc.dy = di.cyScreen;
             pMe->m_bSuspending = FALSE;
-
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+            }
             // ¿ªÊ¼SecurityMenu×´Ì¬»ú
             SecurityMenu_RunFSM(pMe);
             start_security_setting_by_user = FALSE;

@@ -5529,6 +5529,8 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     int                   j;
 #endif
     static AECHAR  clrChar[2];
+    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
+
 
     clrChar[0] = '\0';
     clrChar[1] = '\0';

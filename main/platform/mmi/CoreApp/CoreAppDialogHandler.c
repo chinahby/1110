@@ -860,7 +860,6 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 
     CCoreApp *pMe = (CCoreApp *)pUser;
     MSG_FATAL("%x %x %x IDD_ALARM_Handler",eCode,wParam,dwParam);
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -872,6 +871,10 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
         case EVT_DIALOG_START:
         {
             byte mute = OEMSOUND_MUTE_VOL;
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+            }
             ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
             ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
             ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
@@ -950,7 +953,10 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 				#if 0
                 DrawTitleBar(pMe->a.m_pIDisplay,&title);
 				#else
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+                if(pMe->m_pIAnn != NULL)
+                {
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+                }
 				#endif
                 CoreDrawBottomBar( BTBAR_SNOOZE_CONTINUE_STOP);
             }
@@ -2688,7 +2694,10 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
         need_capture.b_capture = DB_CAPTURE_INIDLE;
         db_put(DB_CAPTURE_WALLPER,&need_capture);
-        IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);//added by chengxiao 2008.11.26
+        if(pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);//added by chengxiao 2008.11.26
+        }
 #endif
 
         if (bHideText)
@@ -2764,7 +2773,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     {
         return FALSE;
     }
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
+    if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
+    }
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -2926,7 +2938,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 db_items_value_type  need_capture;
                 need_capture.b_capture = DB_CAPTURE_NONE;
                 db_put(DB_CAPTURE_WALLPER,&need_capture);
-                IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
+                }
             }
 #endif
             return TRUE;
@@ -3277,7 +3292,10 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);
+            }
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -3377,7 +3395,10 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
             }
             ISTATIC_Release(pStatic);
             pStatic = NULL;
-            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
+            }
             return TRUE;
   
         case EVT_KEY:
@@ -4729,6 +4750,8 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));//CFGI_ALERT_TYPE
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_MISSED_CALL_ICON,&missed_call_icon, sizeof(missed_call_icon));
 
+    if(pMe->m_pIAnn != NULL)
+    {
     if (b_headset)
     {
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
@@ -4742,7 +4765,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
     }
-    
+    }
     switch(alertType)
     {
         case OEMNV_PROFILE_QUIETMODE:           //OEMNV_ALERTTYPE_OFF :
@@ -4768,7 +4791,10 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
         default :
             break;            
     }
-    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, iann);
+    if(pMe->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, iann);
+    }
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
     {
         uint32 state = ANNUN_STATE_OFF;
@@ -4785,11 +4811,14 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
         for (i = ANNUN_FIELD_RSSI; i <=ANNUN_FIELD_BATT; i++) 
         {
             state = ANNUN_STATE_OFF;
+            if(pMe->m_pIAnn != NULL)
+            {
             IANNUNCIATOR_GetField (pMe->m_pIAnn,i,&state);
             //CORE_ERR("GetField i= %d state= %d",i,state);
             if(state != ANNUN_STATE_OFF)
             {
                 IANNUNCIATOR_SetField (pMe->m_pIAnn, i, state);
+                }
             }
         }
         /*
@@ -4801,7 +4830,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
         */
     }
 #endif
-    if (missed_call_icon)
+    if((missed_call_icon) && (pMe->m_pIAnn != NULL))
     {
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
     }
@@ -4915,10 +4944,11 @@ void CoreApp_Poweroff_Phone(void *pp)
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 
     // Turn off RSSI indicator
-    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_OFF);
-   
-    // ¹Ø±Õµç³ØÍ¼±ê
-    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_OFF);
+    if(pMe->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_OFF);
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_OFF);
+    }
     //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
     //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
     ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_PWROFF);

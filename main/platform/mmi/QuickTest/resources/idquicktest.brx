@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="quicktest" VERSION="1">
+<BREWRes Name="idquicktest" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_QUICKTEST">
 		<Text>Cepat tes</Text>
@@ -171,7 +171,6 @@
 	<DIALOG Id="1" Name="IDD_MAINMENU" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_MAINMENU">
-				<TitleID>IDS_QUICKTEST</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

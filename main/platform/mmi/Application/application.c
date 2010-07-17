@@ -572,7 +572,6 @@ static boolean Application_HandleEvent( IApplication *pi,
     AEEDeviceInfo di; 
 
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di); 
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch ( eCode)
     {
         case EVT_APP_START:
@@ -588,7 +587,10 @@ static boolean Application_HandleEvent( IApplication *pi,
             pMe->m_currState  = APPLICATIONST_MAIN;
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = APPLICATION_RUNNING;
-           
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+            }
             Application_RunFSM(pMe);
             return TRUE;
 
@@ -885,7 +887,10 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
     {
         return FALSE;
     }
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -897,7 +902,10 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                                     IDS_APPLICATION_LIST,
                                     WTitle,
                                     sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            if(pMe->m_pIAnn != NULL)
+            {
+			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
 			#endif
 #ifdef FEATURE_APP_MANAGER
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="cameraapp" VERSION="1">
+<BREWRes Name="idcameraapp" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_ITEM_CAMERA">
 		<Text>Kamera</Text>
@@ -225,7 +225,6 @@
 	<Dialog Id="6001" Name="IDD_CMAINMENU" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_CAMERA_MAINMENU">
-				<TitleID>IDS_ITEM_CAMERA</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

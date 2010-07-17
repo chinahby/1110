@@ -436,6 +436,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
     {
         return EFAILED;
     }
+  IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
    if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
                                           AEECLSID_FILEMGR,
                                           (void **)&pMe->m_pFileMgr))
@@ -507,6 +508,7 @@ static void CMusicPlayer_FreeAppData(CMusicPlayer *pMe)
     (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
   	if(pMe->m_pIAnn)
     {
+        IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
     }

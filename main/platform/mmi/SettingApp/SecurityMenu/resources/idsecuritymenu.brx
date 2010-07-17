@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="securitymenu" VERSION="1">
+<BREWRes Name="idsecuritymenu" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_PINCHANGE_TITLE">
 		<Text>Ubah PIN</Text>
@@ -192,7 +192,6 @@
 	<DIALOG Id="6001" Name="IDD_PHONELOCK_DIALOG" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDM_PHONELOCK">
-				<TitleID>IDS_PHONE_LOCK</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -214,7 +213,6 @@
 	<DIALOG Id="6004" Name="IDD_RESTRICT_MENU" Focus="7004">
 		<Controls>
 			<Menu Id="7004" Name="IDC_RESTRICT">
-				<TitleID>IDS_RESTRICT</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -236,23 +234,20 @@
 	<DIALOG Id="6007" Name="IDD_RESTORE_MENU" Focus="7009">
 		<Controls>
 			<Menu Id="7009" Name="IDC_RESTORE">
-				<TitleID>IDS_RESTORE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
 	</DIALOG>
 	<DIALOG Id="6008" Name="IDD_PIN_CHECK_DIALOG" Focus="1">
 		<Controls>
-			<Menu Id="1" Name="IDD_MENU_PINLOCK" Flags="00000000">
-				<TitleID>IDS_PIN_CHECK</TitleID>
+			<Menu Id="1" Name="IDD_MENU_PINLOCK">
 				<Items/>
 			</Menu>
 		</Controls>
 	</DIALOG>
 	<DIALOG Id="6009" Name="IDD_MAIN_DIALOG" Focus="8">
 		<Controls>
-			<Menu Id="8" Name="IDC_SECURITY_MENU" Flags="00000001">
-				<TitleID>IDS_SECURITY_TITLE</TitleID>
+			<Menu Id="8" Name="IDC_SECURITY_MENU" Flags="1">
 				<Items/>
 			</Menu>
 		</Controls>
@@ -279,7 +274,6 @@
 	<Dialog Id="6017" Name="IDD_CHANGE_CODE" Focus="7003">
 		<Controls>
 			<Menu Id="7003" Name="IDC_CHANGECODE">
-				<TitleID>IDS_PHONE_PASSWORD_CHANGE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -287,7 +281,6 @@
 	<Dialog Id="6018" Name="IDD_APPLICATIONLOCK_DIALOG" Focus="7011">
 		<Controls>
 			<Menu Id="7011" Name="IDC_APPLICATIONLOCK">
-				<TitleID>IDS_APPLICATION_LOCK</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -308,7 +301,6 @@
 	<Dialog Id="6022" Name="IDD_EMGCALL_DIALOG" Focus="0">
 		<Controls>
 			<Menu Id="7006" Name="IDC_EMGCALL_DIALOG">
-				<TitleID>IDS_EMERGENCY_NUMBER</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

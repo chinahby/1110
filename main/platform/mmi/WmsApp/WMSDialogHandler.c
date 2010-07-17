@@ -4308,6 +4308,18 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
             MENU_ADDITEM(pMenu, IDS_SENDANDSAVE);
             MENU_ADDITEM(pMenu, IDS_SENDONLY);
             MENU_ADDITEM(pMenu, IDS_SAVEONLY);
+            {
+                AECHAR WTitle[40] = {0};
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                AEE_WMSAPPRES_LANGFILE,                                
+                IDS_SENDMODE,
+                WTitle,
+                sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }               
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -4621,6 +4633,18 @@ static boolean IDD_AUTOREPLACE_Handler(void *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_ENABLE);
             MENU_ADDITEM(pMenu, IDS_DISABLE);
+            {
+                AECHAR WTitle[40] = {0};
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                AEE_WMSAPPRES_LANGFILE,                                
+                IDS_AUTOREPLACE,
+                WTitle,
+                sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }               
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -5005,7 +5029,19 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
                 (void) ITEXTCTL_SetText(pTextCtl, wstrNum, -1);
             }
 
-            (void) ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);        
+            (void) ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);    
+              {
+                AECHAR WTitle[40] = {0};
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                AEE_WMSAPPRES_LANGFILE,                                
+                IDS_CALLBACKNUM,
+                WTitle,
+                sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+              }               
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_WMSAPP,
@@ -12102,7 +12138,20 @@ static boolean IDD_VMNUM_Handler(void   *pUser,
                 (void) ITEXTCTL_SetText(pTextCtl, wstrVMNum, -1);
             }
 
-            (void) ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);        
+            (void) ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);       
+            {
+              AECHAR WTitle[40] = {0};
+              (void)ISHELL_LoadResString(pMe->m_pShell,
+              AEE_WMSAPPRES_LANGFILE,                                
+              IDS_VOICEMAIL,
+              WTitle,
+              sizeof(WTitle));
+              if(pMe->m_pIAnn != NULL)
+              {
+                  IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+              }
+            }    
+            
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_WMSAPP,
@@ -12954,6 +13003,18 @@ static boolean IDD_MANAGEMENT_Handler(void   *pUser,
 #endif
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);            
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
+            {
+                AECHAR WTitle[40] = {0};
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                AEE_WMSAPPRES_LANGFILE,                                
+                IDS_MSGMANAGEMENT,
+                WTitle,
+                sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }              
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -13088,6 +13149,19 @@ static boolean IDD_COPYINBOX_Handler(void   *pUser,
 #endif
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);            
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
+            {
+                AECHAR WTitle[40] = {0};
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                AEE_WMSAPPRES_LANGFILE,                                
+                IDS_COPYINBOX,
+                WTitle,
+                sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }       
+            
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -13207,6 +13281,18 @@ static boolean IDD_MOVEINBOX_Handler(void   *pUser,
 #endif
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);            
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
+            {
+                AECHAR WTitle[40] = {0};
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                AEE_WMSAPPRES_LANGFILE,                                
+                IDS_MOVEINBOX,
+                WTitle,
+                sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }               
             return TRUE;
 
         case EVT_DIALOG_START:

@@ -342,7 +342,10 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
             int     length              = 0;
             int     i                   = 0;
             uint32  MenuSel;
-			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);			
+            if(pMe->m_pIAnn != NULL)
+            {
+			    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);	
+            }
             //获取闹钟首选项的数据结构
             (void) ISHELL_GetPrefs( pMe->m_pShell,
                                     AEECLSID_ALARMCLOCK,
@@ -495,7 +498,10 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
                         IDS_ALARMCLOCK_TITLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                if(pMe->m_pIAnn != NULL)
+                {
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
             }
             if(pMe->m_ClockCfg.RepMode[MenuSel - IDC_MENU_ALARMCLOCK_LIST_ITEM_1])
             {
@@ -746,8 +752,11 @@ static boolean  HandleAlarmOptionDialogEvent(CClockApps *pMe,
 
                 if( allClosed)
                 {
-					IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
-                    IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+                    if(pMe->m_pIAnn != NULL)
+                    {
+					    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+                    }
                 }
             }
             CLOSE_DIALOG( DLGRET_CANCELED)
@@ -1139,7 +1148,10 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 				#if 0
                 DrawTitleBar(pMe->m_pDisplay,&title);
 				#else
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+                if(pMe->m_pIAnn != NULL)
+                {
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+                }
 				#endif
             }
 
@@ -2257,7 +2269,7 @@ static boolean HandleAlarmMsgBox(CClockApps *pMe,
                     }
                     CClockApps_UpdateAlarmTimer(pMe, i);
                 }
-                if( allClosed)
+                if((allClosed) && (pMe->m_pIAnn != NULL))
                 {
 					IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
                     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF);
@@ -2640,7 +2652,10 @@ static void CClockApps_AniClockImg(CClockApps *pMe)
 		#if 0
         DrawTitleBar(pMe->m_pDisplay,&title);
 		#else
-		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+        if(pMe->m_pIAnn != NULL)
+        {
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+        }
 		#endif
         (void) ISHELL_GetPrefs(pMe->m_pShell,
                                AEECLSID_ALARMCLOCK,

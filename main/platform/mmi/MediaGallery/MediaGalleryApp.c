@@ -296,7 +296,6 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
 {
    CMediaGalleryApp* pMe = (CMediaGalleryApp*)pi;
 
-   IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
    switch(eCode)
    {
       /* NOTICE>>
@@ -309,11 +308,11 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
          boolean           bRet;
          pMe->m_rc = as->rc;
          pMe->m_bSuspending = FALSE;
-
+         
          bRet = MediaGalleryApp_ParseStartArgs(pMe, as->pszArgs);
          if(FALSE == bRet)
             return FALSE;
-
+         IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
          MediaGalleryApp_RunFSM(pMe);
 #ifdef FEATURE_TIMER_TEST
          MediaGalleryApp_TestTimer(pMe);

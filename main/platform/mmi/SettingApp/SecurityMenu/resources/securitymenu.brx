@@ -192,7 +192,6 @@
 	<DIALOG Id="6001" Name="IDD_PHONELOCK_DIALOG" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDM_PHONELOCK">
-				<TitleID>IDS_PHONE_LOCK</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

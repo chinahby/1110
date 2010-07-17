@@ -455,13 +455,6 @@ int AEEClsCreateInstance(AEECLSID  ClsId,
 #endif
 {
    *ppObj = NULL;
-   do {
-         CSvcPrgApp *pMe = (CSvcPrgApp *) *ppObj;
-   		if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
-   		{
-		   	return EFAILED;
-		}
-   	}while (0);
 
    if (AEEApplet_New(sizeof(CSvcPrgApp), 
                       ClsId, 
@@ -518,7 +511,6 @@ static boolean CSvcPrg_HandleEvent(CSvcPrgApp *pMe,
 {
    switch (eCode) {
    case EVT_APP_START:
-   	  IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);   
       return CSvcPrg_OnAppStart(pMe, wParam, dwParam);
 
    case EVT_APP_STOP:
@@ -638,8 +630,11 @@ static boolean CSvcPrg_OnAppStart(CSvcPrgApp  *pMe,
 
    pMe->m_pDisplay = a->pDisplay;
    IDISPLAY_AddRef(pMe->m_pDisplay);
-   
-
+   if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
+    {
+        return EFAILED;
+    }
+    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
    return CSvcPrg_DisplaySecCodeDialog(pMe);
 }
 
@@ -3702,7 +3697,10 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
                         item->title,
                         WTitle,
                         sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
 		  }
 		  #endif
 
@@ -3763,7 +3761,10 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
                         item->title,
                         WTitle,
                         sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
 		  }
 		  #endif
 
@@ -3843,7 +3844,10 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
                         item->title,
                         WTitle,
                         sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
 		  }
 		  #endif
 
@@ -3942,7 +3946,10 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
                         item->title,
                         WTitle,
                         sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
 		  }
 		  #endif
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
@@ -4037,7 +4044,10 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
                         item->title,
                         WTitle,
                         sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
 		  }
 		  #endif
 
@@ -5190,6 +5200,18 @@ static boolean 	CSvcPrg_DisplaySecCodeDialog(CSvcPrgApp *pMe)
                                         IDC_SECCODE_SK);
    if (!pt || !pm) {
       return FALSE;
+   }
+   {
+       AECHAR WTitle[40] = {0};
+       (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+       AEE_SVCPRG_RES_FILE,                                
+       IDS_ENTER_SECCODE,
+       WTitle,
+       sizeof(WTitle));
+       if(pMe->m_pIAnn != NULL)
+       {
+           IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+       }
    }
 
    (void) IMENUCTL_DeleteAll(pm);

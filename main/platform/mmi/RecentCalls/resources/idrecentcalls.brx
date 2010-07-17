@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="recentcalls" VERSION="1">
+<BREWRes Name="idrecentcalls" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_SAVE">
 		<Text>Menyimpan</Text>
@@ -129,7 +129,6 @@
 	<DIALOG Id="1" Name="IDD_RMAINMENU" Focus="1">
 		<Controls>
 			<Menu Id="1" Name="IDC_MAIN_CATEGORY_MENU">
-				<TitleID>IDS_RECENT_CALLS</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -137,7 +136,6 @@
 	<DIALOG Id="2" Name="IDD_RLISTRECORD" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_RLISTRECORD">
-				<TitleID>IDS_MISSED_CALLS</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -145,7 +143,6 @@
 	<DIALOG Id="3" Name="IDD_RTIME_MENU" Focus="7002">
 		<Controls>
 			<Menu Id="7002" Name="IDC_RTIME_MENU">
-				<TitleID>IDS_CALL_TIME</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -153,7 +150,6 @@
 	<DIALOG Id="4" Name="IDD_RDEL_MENU" Focus="7003">
 		<Controls>
 			<Menu Id="7003" Name="IDC_RDEL_MENU">
-				<TitleID>IDS_DELETE_ALL</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

@@ -507,7 +507,7 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
         FmRadio_FreeAppData( pMe);
         return EFAILED;
     }
-
+    IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
     pMe->m_ePreState            = FMRADIOST_NONE;
     pMe->m_eCurState            = FMRADIOST_INIT;
     pMe->m_pActiveDlg           = NULL;
@@ -669,6 +669,7 @@ static void FmRadio_FreeAppData(CFmRadio *pMe)
     }
     if(pMe->m_pIAnn)
     {
+        IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
         IANNUNCIATOR_Release( pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
     }

@@ -678,7 +678,6 @@
 	<DIALOG Id="6026" Name="IDD_CALLREJECTSMS" Focus="7022">
 		<Controls>
 			<Menu Id="7022" Name="IDC_CALLREJECTSMS_MENU">
-				<TitleID>IDS_CALLREJECTSMS</TitleID>
 				<Items>
 					<Item Id="8010" Name="IDL_CALLREJECTSMS_ENABLE">
 						<TextID>IDS_ENABLE</TextID>
@@ -754,7 +753,6 @@
 	<Dialog Id="6032" Name="IDD_VMNUM" Focus="0">
 		<Controls>
 			<Text Id="7031" Name="IDC_VMNUM_TEXT">
-				<TitleID>IDS_VOICEMAIL</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
@@ -765,7 +763,6 @@
 	<Dialog Id="6034" Name="IDD_CALLBACKNUM" Focus="7016">
 		<Controls>
 			<Text Id="7016" Name="IDC_CALLBACKNUM_TEXT">
-				<TitleID>IDS_CALLBACKNUM</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
@@ -786,7 +783,6 @@
 	<Dialog Id="6038" Name="IDD_MANAGEMENT" Focus="7020">
 		<Controls>
 			<Menu Id="7020" Name="IDC_MANAGEMENT_MENU">
-				<TitleID>IDS_MSGMANAGEMENT</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -794,7 +790,6 @@
 	<Dialog Id="6039" Name="IDD_COPYINBOX" Focus="7033">
 		<Controls>
 			<Menu Id="7033" Name="IDC_COPYINBOX_MENU">
-				<TitleID>IDS_COPYINBOX</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -802,7 +797,6 @@
 	<Dialog Id="6040" Name="IDD_MOVEINBOX" Focus="7034">
 		<Controls>
 			<Menu Id="7034" Name="IDC_MOVEINBOX_MENU">
-				<TitleID>IDS_MOVEINBOX</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -810,7 +804,6 @@
 	<Dialog Id="6041" Name="IDD_SENDMODE" Focus="7035">
 		<Controls>
 			<Menu Id="7035" Name="IDC_SENDMODE_MENU">
-				<TitleID>IDS_SENDMODE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -827,7 +820,6 @@
 	<Dialog Id="6043" Name="IDD_AUTOREPLACE" Focus="7038">
 		<Controls>
 			<Menu Id="7038" Name="IDC_AUTOREPLACE_MENU">
-				<TitleID>IDS_AUTOREPLACE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

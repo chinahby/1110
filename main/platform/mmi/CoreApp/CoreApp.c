@@ -372,7 +372,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 {
     CCoreApp * pMe = (CCoreApp *)pi;
     //DBGPRINTF("%x %x %x CoreApp_HandleEvent",eCode,wParam,dwParam);
-    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -404,7 +403,10 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 pMe->m_bSuspended = FALSE;
                 pMe->m_bActive = TRUE;
             }
-
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
+            }
             CoreApp_PoweronStartApps(pMe);
 
             // 开始 Core Applet 状态机, 当前状态已初始为 COREST_INIT
@@ -450,13 +452,16 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
         case EVT_HEADSET:
         {
-            if((boolean)wParam)
+            if(pMe->m_pIAnn != NULL)
             {
-                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
-            }
-            else
-            {
-                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
+                if((boolean)wParam)
+                {
+                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
+                }
+                else
+                {
+                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
+                }
             }
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
             ISHELL_PostEventEx(pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_UPDATEIDLE,0,0L);//need to redraw IDLE
@@ -1055,7 +1060,10 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
             {
                 case AEECM_EVENT_CALL_CONNECT:
                     DBGPRINTF("AEECM_EVENT_CALL_CONNECT");
-                    IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_ON);
+                    if(pMe->m_pIAnn != NULL)
+                    {
+                        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_ON);
+                    }
                     break;
 #if 0
                 case AEECM_EVENT_CALL_ENTER_DORMANT:
@@ -1069,7 +1077,10 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 #endif
                 case AEECM_EVENT_CALL_END: 
                     DBGPRINTF("AEECM_EVENT_CALL_END");
-                    IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_OFF);                   
+                    if(pMe->m_pIAnn != NULL)
+                    {
+                        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_OFF);   
+                    }
                     break;
             }
             break;
@@ -1082,7 +1093,10 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                     if (SysMode == AEECM_SYS_MODE_NO_SRV)
                     {
                         pMe->m_SYS_MODE_NO_SRV = TRUE;
-                        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_NO_SERV);
+                        if(pMe->m_pIAnn != NULL)
+                        {
+                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_NO_SERV);
+                        }
 #ifdef FEATURE_LED_CONTROL
                         IBACKLIGHT_SigLedDisable(pMe->m_pBacklight);
 #endif
@@ -1101,7 +1115,10 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                         }
                         CORE_ERR("ANNUN_FIELD_RSSI %d rssi= %d",pMe->m_SYS_MODE_NO_SRV,pEvtInfo->event_data.ss.ss_info.rssi);
                         {
-                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
+                            if(pMe->m_pIAnn != NULL)
+                            {
+                                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
+                            }
                         }
                         //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
 #ifdef FEATURE_LED_CONTROL
@@ -1338,7 +1355,10 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     pMe->m_bExtPwrState = TRUE;
                     CoreApp_Process_Batty_Msg(pMe, IDS_FULLY_CHARGED);
                     (void) ISHELL_CancelTimer(pMe->a.m_pIShell, CCharger_EnableICONCB, (void *) pMe);
-                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_FULL);
+                    if(pMe->m_pIAnn != NULL)
+                    {
+                        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_FULL);
+                    }
 #ifdef FEATURE_APP_MEDIAGALLERY
                     MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
 #endif
@@ -1382,7 +1402,10 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     case AEEBATTERY_STATUS_LOW:        // Battery is low
                     {
                         (void) ISHELL_CancelTimer(pMe->a.m_pIShell,CCharger_BlinkLowBattIcon, (void *) pMe);                        
-                        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_LOW | ANNUN_STATE_BLINK);
+                        if(pMe->m_pIAnn != NULL)
+                        {
+                            IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_LOW | ANNUN_STATE_BLINK);
+                        }
                         (void) ISHELL_SetTimer(pMe->a.m_pIShell, 10000, CCharger_BlinkLowBattIcon, (void *) pMe);
                         CoreApp_Process_Batty_Msg(pMe, IDS_LOWBATTMSG_TEXT);
                         break;

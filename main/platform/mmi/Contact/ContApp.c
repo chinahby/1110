@@ -723,7 +723,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di);    
     
     MSG_FATAL("Handle evt 0x%x, w %x, dw %x",eCode, wParam, dwParam );
-    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    
     switch (eCode)
     {
         case EVT_APP_START:
@@ -751,7 +751,10 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             {
                 pMe->m_bUnLock = TRUE;
             }
-
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+            }
 #if defined(FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK)
 #if defined( FEATURE_RUIM_PHONEBOOK)
             if (!PhoneBookCache_IsIninited())
