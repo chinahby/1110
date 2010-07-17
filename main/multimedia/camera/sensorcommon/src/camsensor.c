@@ -5193,6 +5193,23 @@ SIDE EFFECTS
 ===========================================================================*/
 void camsensor_config_sensor_gpios_clks ()
 {
+#if defined(T_QSC1100)
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_51);
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_52);
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_42);
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_43);
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_44);
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_45);
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_46);
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_47);
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_48);
+  CAMERA_CONFIG_GPIO (GPIO_INPUT_49);
+  
+  CAMERA_CONFIG_GPIO (CAMIF_PCLK_DISABLE);
+#ifdef CAMERA_USE_GPIO_TLMM_FOR_CAMIF_FLASH
+  CAMERA_CONFIG_GPIO(CAMIF_FLASH);
+#endif /* CAMERA_USE_GPIO_TLMM_FOR_CAMIF_FLASH */
+#else
   CAMERA_CONFIG_GPIO (CAMIF_HSYNC_OUT);
   CAMERA_CONFIG_GPIO (CAMIF_VSYNC_OUT);
   CAMERA_CONFIG_GPIO (CAMIF_DATA_0);
@@ -5257,6 +5274,7 @@ void camsensor_config_sensor_gpios_clks ()
   CAMERA_CLK_REGIME_ENABLE      (CLK_RGM_VIDEO_M);
   CAMERA_CLK_REGIME_ENABLE      (CLK_RGM_VIDEO_VFE_M);
   CAMERA_CLK_REGIME_ENABLE      (CLK_RGM_CAMCLK_M);
+#endif //#if defined(T_QSC1100)
 } /* camera_svcs_config_sensor_gpios_clks */
 
 /*===========================================================================
@@ -5288,6 +5306,7 @@ void camsensor_unconfig_sensor_gpios_clks ()
   CAMERA_CONFIG_GPIO (CAMIF_DATA_5_DISABLE);
   CAMERA_CONFIG_GPIO (CAMIF_DATA_6_DISABLE);
   CAMERA_CONFIG_GPIO (CAMIF_DATA_7_DISABLE);
+#if !defined(T_QSC1100)
  #ifndef CAMERA_8_BIT_INTERFACE
   CAMERA_CONFIG_GPIO (CAMIF_DATA_8_DISABLE);
   CAMERA_CONFIG_GPIO (CAMIF_DATA_9_DISABLE);
@@ -5305,7 +5324,7 @@ void camsensor_unconfig_sensor_gpios_clks ()
   CAMERA_CLK_REGIME_DISABLE (CLK_RGM_MDDI_CLIENT_DIV4_M);
  #endif
  
-
+#endif
 } /* camsensor_unconfig_sensor_gpios_clks */
 
 

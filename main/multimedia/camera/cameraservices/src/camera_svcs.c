@@ -1855,8 +1855,13 @@ static uint16 camera_model_information_count = 0;
 static VFE_SkipBitMaskType runningOutput2SkipPattern = 0;
 #endif
 /* New preview buffer scheme */
+#ifndef CAMERA_USES_SOFTDSP
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY     2
+#else
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     0
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY     2
+#endif
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS \
    (CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE + \
     CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY)
