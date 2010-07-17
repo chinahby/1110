@@ -16,6 +16,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
 #include "AEE.h"
 #include "AEEStdLib.h"
 #include "AEEShell.h"
+#ifdef FEATURE_IIPL
 #include "AEEIBitmapFX.h"
 #include "IYCbCr.h"
 #include "ipl.h"
@@ -1789,3 +1790,4 @@ static int OEMBitmapFX_CleanTempIPL(const ipl_image_type* iIpl, ipl_image_type**
   }
   return retVal;
 }
+#endif //#ifdef FEATURE_IIPL

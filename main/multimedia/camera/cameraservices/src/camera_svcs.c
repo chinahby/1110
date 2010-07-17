@@ -1957,6 +1957,7 @@ static ipl_icon_type   **blt_icons      = NULL;
 static uint32            camera_icon_dx = 0;
 static uint32            camera_icon_dy = 0;
 #endif /* FEATURE_CAMERA_SUPPORT_ICON_ARRAY */
+#ifndef FEATURE_IPL_NO_CAMERA
 static ipl_image_type   *preview_overlay = NULL;
 static ipl_image_type    ui_overlay;
 typedef struct
@@ -1988,10 +1989,13 @@ typedef struct
 } camera_encode_overlay_type;
 static camera_encode_overlay_type *encode_overlay;
 static camera_encode_overlay_type *thumbnail_overlay;
+#endif
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
 static ipl_image_type   *icon_only_overlay = NULL;
 #endif /* FEATURE_CAMERA_SUPPORT_ICON_ARRAY */
+#ifndef FEATURE_IPL_NO_CAMERA
 static uint16            camera_transparent_color;
+#endif
 static exif_info_type    camera_exif_info;
 void             *camera_app_data = 0;
 static boolean           camera_frame_callback_enabled = TRUE;
@@ -2402,8 +2406,11 @@ static void camera_jpeg_encode_callback(JPEGENC_CBrtnType  *clientData );
 static void camera_jpeg_encode (qcamrawHeaderType *main_image_header, uint8 *main_image_buffer, qcamrawHeaderType *thumbnail_image_header, uint8 *thumbnail_image_buffer);
 void camera_reject (camera_cb_f_type callback, void * client_data,
                            camera_func_type func);
+#ifndef FEATURE_IPL_NO_CAMERA
 static void camera_clr_overlays      (void);
+#endif
 static void camera_calculate_zoom    (void);
+#ifndef FEATURE_IPL_NO_CAMERA
 static camera_ret_code_type camera_svcs_set_encode_overlay(void);
 static camera_ret_code_type camera_svcs_create_encode_overlay(ipl_image_type *overlay);
 static camera_ret_code_type camera_svcs_create_thumbnail_overlay(ipl_image_type *overlay);
@@ -2411,6 +2418,7 @@ static camera_ret_code_type camera_svcs_create_preview_overlay(ipl_image_type   
 static void camera_svcs_clr_encode_overlay(void);
 static void camera_svcs_clr_preview_overlay(void);
 static void camera_svcs_clr_thumbnail_overlay(void);
+#endif
 #ifdef FEATURE_MDP
 void camera_svcs_display_frame_overlay(boolean clear_overlay_layer);
 static void camera_svcs_fill_buffer_16(byte *buffer, uint16 color, uint32 width, uint32 height);
@@ -2641,8 +2649,9 @@ static boolean camera_svcs_hjr_enabled(void);
 #ifdef FEATURE_CAMERA_BESTSHOT_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BESTSHOT_MODE */
+#ifndef FEATURE_IPL_NO_CAMERA
 static void camera_rotate_encode_overlay(void);
-
+#endif
 #ifdef FEATURE_CAMERA_YCBCR_ONLY
 #define camera_aec_awb_ready FALSE
 #define camera_svcs_set_ev_compensation(parm) CAMERA_NOT_SUPPORTED
@@ -2659,7 +2668,9 @@ static void camera_request_aec_awb_stats(void);
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
 
 /* Applies the overlay on the main image and thumbnail */
+#ifndef CAMERA_USES_SOFTDSP
 static void camera_apply_overlay_on_snapshot(void);
+#endif
 static camera_cb_type camera_svcs_translate_ret_val_to_cb
 (
  camera_ret_code_type ret_val
@@ -4932,7 +4943,7 @@ camera_ret_code_type camera_svcs_release_frame (void)
 #endif /* T_IO_CARD */
 } /* camera_release_frame */
 
-
+#ifndef FEATURE_IPL_NO_CAMERA
 /*===========================================================================
 
 FUNCTION      CAMERA_SVCS_SET_OVERLAY
@@ -5164,7 +5175,7 @@ static void camera_clr_overlays(void)
   ui_overlay.imgPtr  = NULL;
   ui_overlay.clrPtr  = NULL;
 } /* camera_clr_overlays */
-
+#endif //#ifndef FEATURE_IPL_NO_CAMERA
 /*===========================================================================
 
 FUNCTION      CAMERA_SET_ICON_ARRAY
@@ -5917,6 +5928,7 @@ camera_ret_code_type camera_svcs_blt_ex
   uint32 *bmy_addr, *cbcr_addr;
   uint32 rotation;
   qcamrawHeaderType *header;
+#ifndef FEATURE_IPL_NO_CAMERA
   /* For snapshot, thumbnail is displayed. Thumbnail dimensions may not
    * be multiple of 16, but the thumbnail frame dimensions are always multiple
    * of 16. Overlay has the same size as thumbnail, and may not be multiple of
@@ -5924,6 +5936,7 @@ camera_ret_code_type camera_svcs_blt_ex
    * encode rotation. The offset must be added in order to display only the
    * area with overlay. */
   boolean adjust_win_for_thumbnail = FALSE;
+#endif
   uint32 size;
 
   /* Do a Null Check for frame pointer */
@@ -6067,11 +6080,12 @@ camera_ret_code_type camera_svcs_blt_ex
       src_window.dx = thumbnail_header->picWidth;
       src_window.dy = thumbnail_header->picHeight;
       }
-
+#ifndef FEATURE_IPL_NO_CAMERA
       if (thumbnail_overlay || (thumbnail_header->picHeight < thumbnail_header->dataHeight))
       {
         adjust_win_for_thumbnail = TRUE;
       }
+#endif
       rotation = frame->rotation;
       /* Try to match picture orientation same as preview */
       if ((camera_default_preview_rotation == 0) ||
@@ -6154,6 +6168,7 @@ camera_ret_code_type camera_svcs_blt_ex
       dst_window.dx = src_window.dx;
       dst_window.dy = src_window.dy;
     }
+#ifndef FEATURE_IPL_NO_CAMERA
     if (adjust_win_for_thumbnail)
     {
       switch (frame->rotation)
@@ -6190,7 +6205,7 @@ camera_ret_code_type camera_svcs_blt_ex
           break;
       }
     }
-
+#endif
 #ifdef FEATURE_MDP
 #ifdef FEATURE_CAMERA_LCD_DIRECT_MODE
     if (camera_lcd_direct_mode)
@@ -6304,6 +6319,7 @@ camera_ret_code_type camera_svcs_blt_ex
 #endif /* FEATURE_CAMERA_LCD_DIRECT_MODE */
 #endif /* FEATURE_MDP */
 #if defined(FEATURE_CAMERA_LCD_DIRECT_MODE) || !defined(FEATURE_MDP)
+#ifndef FEATURE_IPL_NO_CAMERA
     {
       ipl_image_type i_img, o_img;
       ipl_status_type status;
@@ -6350,6 +6366,9 @@ camera_ret_code_type camera_svcs_blt_ex
         MSG_ERROR("ipl_rot_add_crop has failed", 0, 0, 0);
       }
     }
+#else
+    // TODO:
+#endif
 #endif /* FEATURE_CAMERA_LCD_DIRECT_MODE || nFEATURE_MDP */
     if (camera_snapshot_timing.snapshot_completion_callback_start !=0)
     {
@@ -6463,7 +6482,7 @@ camera_ret_code_type camera_default_gamma()
 }
 #endif //#ifndef CAMERA_USES_SOFTDSP
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
-
+#ifndef FEATURE_IPL_NO_CAMERA
 /*===========================================================================
 
 FUNCTION      CAMERA_SVCS_ADJUST_OVERLAY_FOR_ROTATION
@@ -6537,7 +6556,7 @@ static void camera_svcs_adjust_overlay_for_rotation()
       break;
   }
 }
-
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_SVCS_SET_PARM
@@ -6649,7 +6668,9 @@ camera_ret_code_type camera_svcs_set_parm
       if ((parm == (int)CAMERA_SP_NORMAL) || (parm == (int)CAMERA_SP_REVERSE))
       {
        camera_parm_preview_rotation.current_value = parm; 
+#ifndef FEATURE_IPL_NO_CAMERA
        camera_rotate_encode_overlay();
+#endif
        if(parm == (int)CAMERA_SP_NORMAL)
        {
         camera_default_preview_rotation = 0;
@@ -6686,6 +6707,7 @@ camera_ret_code_type camera_svcs_set_parm
       break;
 
     case CAMERA_PARM_ENCODE_ROTATION:
+#ifndef FEATURE_IPL_NO_CAMERA
       if ((camera_state == CAMERA_STATE_RECORDING) ||
           (camera_state == CAMERA_STATE_QVP_ENCODING))
       {
@@ -6779,7 +6801,9 @@ camera_ret_code_type camera_svcs_set_parm
       {
         camera_odd_encode_rotation = TRUE;
       }
-
+#else
+      ret_val = CAMERA_NOT_SUPPORTED;
+#endif
       break;
 
     case CAMERA_PARM_CONTRAST:
@@ -9626,7 +9650,9 @@ camera_ret_code_type camera_svcs_clr_overlay
     event_report (EVENT_CAMERA_INVALID_STATE);
     return CAMERA_INVALID_STATE;
   }
+#ifndef FEATURE_IPL_NO_CAMERA
   camera_clr_overlays ();
+#endif
   graph_queue_camera_func ((uint32) CAMERA_FUNC_CLR_OVERLAY,
                            (void *) callback, client_data, 0, 0, 0, 0);
   return CAMERA_SUCCESS;
@@ -10196,7 +10222,7 @@ static uint32 camera_calculate_ceiling_number (uint32 numerator, uint32 denomina
   }
 } /* camera_calculate_ceiling_number */
 #endif
-
+#ifndef FEATURE_IPL_NO_CAMERA
 /*===========================================================================
 
 FUNCTION      CAMERA_SVCS_SET_ENCODE_OVERLAY
@@ -10277,7 +10303,7 @@ static camera_ret_code_type camera_svcs_set_encode_overlay(void)
   }
   return ret_val;
 } /* camera_svcs_set_encode_overlay */
-
+#endif
 /* ---------------------------------------------------------------- */
 /* Local functions which are executed in the graph task's context.  */
 /* ---------------------------------------------------------------- */
@@ -10783,7 +10809,9 @@ static void camera_process_cleanup
 #ifdef QDSP_MODULE_VFE25_DEFINED 
 #error code not present
 #endif /* QDSP_MODULE_VFE25_DEFINED */
+#ifndef FEATURE_IPL_NO_CAMERA
   camera_clr_overlays ();
+#endif
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
   camera_clr_icons();
 #endif /* FEATURE_CAMERA_SUPPORT_ICON_ARRAY */
@@ -11684,7 +11712,7 @@ void camera_copy_to_file(uint32 size, uint8 *buffer, uint32 size2, uint8 *buffer
 
 #endif /* nT_IO_CARD */
 } /* camera_copy_to_file */
-
+#ifndef FEATURE_IPL_NO_CAMERA
 /*===========================================================================
 FUNCTION      CAMERA_SVCS_IMAGE_ROTATE_FOR_PNG
 
@@ -11800,7 +11828,7 @@ boolean camera_svcs_image_rotate_for_png
     return FALSE;
   }
 }
-
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_ENCODE_PICTURE_HANDLER
@@ -12433,7 +12461,7 @@ static void camera_process_set_overlay
 {
   camera_cb_type cb;
   camera_ret_code_type ret_val;
-
+#ifndef FEATURE_IPL_NO_CAMERA
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
   ret_val = camera_set_icon_and_preview_overlay();
 #else /* FEATURE_CAMERA_SUPPORT_ICON_ARRAY */
@@ -12452,7 +12480,9 @@ static void camera_process_set_overlay
       ret_val = camera_svcs_set_encode_overlay();
     }
   }
-
+#else
+  ret_val = CAMERA_NOT_SUPPORTED;
+#endif
   if (tcb)
   {
     (void) rex_set_sigs (tcb, CAMERA_SIG);
@@ -12461,7 +12491,11 @@ static void camera_process_set_overlay
   if (callback)
   {
     cb = camera_svcs_translate_ret_val_to_cb(ret_val);
+#ifndef FEATURE_IPL_NO_CAMERA
     (callback)(cb, client_data, CAMERA_FUNC_SET_OVERLAY, (int)preview_overlay);
+#else
+    (callback)(cb, client_data, CAMERA_FUNC_SET_OVERLAY, NULL);
+#endif
   }
 } /* camera_process_set_overlay */
 
@@ -12834,7 +12868,7 @@ static void camera_process_set_dimensions ( camera_cb_f_type callback, void *cli
   /* This function will check the overlay frame dimension and clear them if they
    * do not match with the new dimensions
    */
-
+#ifndef FEATURE_IPL_NO_CAMERA
   if (preview_overlay != NULL)
   {
     /* Clear overlay frame if picture size != ui overlay size,
@@ -12867,7 +12901,7 @@ static void camera_process_set_dimensions ( camera_cb_f_type callback, void *cli
       }
     }
   }
-
+#endif
   if (callback)
   {
     (callback) (CAMERA_EXIT_CB_DONE, client_data, CAMERA_FUNC_SET_DIMENSIONS, (int32)&ui_resolution[0]);
@@ -15666,7 +15700,7 @@ static void camera_set_preview_headers_rotation(void)
     }
   }
 } /* camera_set_preview_header */
-
+#ifndef FEATURE_IPL_NO_CAMERA
 /*===========================================================================
 
 FUNCTION      CAMERA_PAD_ENCODE_OVERLAY_FRAME
@@ -15718,7 +15752,7 @@ void camera_svcs_pad_encode_overlay_frame
     }
   }
 }
-
+#endif
 #ifdef FEATURE_MDP
 /*===========================================================================
 
@@ -15757,7 +15791,7 @@ void camera_svcs_fill_buffer_16
   }
 }
 #endif /* FEATURE_MDP */
-
+#ifndef FEATURE_IPL_NO_CAMERA
 /*===========================================================================
 
 FUNCTION      CAMERA_SVCS_CREATE_ENCODE_OVERLAY
@@ -16090,7 +16124,7 @@ ipl_image_type   *overlay
   }
   return CAMERA_SUCCESS;
 }
-
+#endif //#ifndef FEATURE_IPL_NO_CAMERA
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
 /*===========================================================================
 
@@ -17318,8 +17352,13 @@ void camera_svcs_init_self (camerai_func_type *funcTable)
   funcTable->camera_enable_frame_callback      = camera_svcs_enable_frame_callback;
   funcTable->camera_disable_frame_callback     = camera_svcs_disable_frame_callback;
   funcTable->camera_release_frame              = camera_svcs_release_frame;
+#ifndef FEATURE_IPL_NO_CAMERA
   funcTable->camera_set_overlay                = camera_svcs_set_overlay;
   funcTable->camera_clr_overlay                = camera_svcs_clr_overlay;
+#else
+  funcTable->camera_set_overlay                = NULL;
+  funcTable->camera_clr_overlay                = NULL;
+#endif
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
   funcTable->camera_set_icon_array             = camera_svcs_set_icon_array;
   funcTable->camera_clr_icon_array             = camera_svcs_clr_icon_array;
@@ -18116,7 +18155,7 @@ static void camera_handle_frames_for_takepicture()
           /* It is regular snapshot */
           camera_snapshot_timing.snapshot_capture_end = (uint32)timetick_get_ms();
         }
-
+#ifndef CAMERA_USES_SOFTDSP
         MSG_CAMERADEBUG("Camera_Svcs-->UI camera_func:%d", camera_func, 0, 0);
         /* Apply overlay to the main image and thumbnail */
         /* Currently, IPL can only support H2V2 for overlay */
@@ -18124,6 +18163,7 @@ static void camera_handle_frames_for_takepicture()
         {
           camera_apply_overlay_on_snapshot();
         }
+#endif
         camera_terminate(CAMERA_EXIT_CB_DONE, (int32) &snapshot_frame);
         /* reset lens */
         if (camctrl_tbl.reset_lens_after_snap)
@@ -18910,7 +18950,7 @@ static void camera_svcs_set_vfe_clk (camera_svcs_vfe_mode_type mode)
   }
 } /* camera_svcs_set_vfe_clk */
 #endif /* FEATURE_CAMERA_VFE_CONF_INTERNAL_CLK */
-
+#ifndef FEATURE_IPL_NO_CAMERA
 /*===========================================================================
 
 FUNCTION: CAMERA_ROTATE_ENCODE_OVERLAY
@@ -18970,6 +19010,7 @@ static void camera_rotate_encode_overlay(void)
   camera_rotate_encode_overlay_ex(thumbnail_overlay);
   camera_svcs_adjust_overlay_for_rotation();
 }
+#endif
 #ifndef CAMERA_USES_SOFTDSP
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
 /*===========================================================================
@@ -19158,7 +19199,7 @@ static boolean camera_svcs_hjr_enabled(void)
 #ifdef FEATURE_CAMERA_BESTSHOT_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BESTSHOT_MODE */
-
+#ifndef CAMERA_USES_SOFTDSP
 static void camera_apply_overlay_on_snapshot(void)
 {
   ipl_status_type status;
@@ -19225,7 +19266,7 @@ static void camera_apply_overlay_on_snapshot(void)
   }
   camera_snapshot_timing.overlay_end = (uint32)timetick_get_ms();
 }
-
+#endif
 static camera_cb_type camera_svcs_translate_ret_val_to_cb
 (
  camera_ret_code_type ret_val
@@ -19254,7 +19295,7 @@ static camera_cb_type camera_svcs_translate_ret_val_to_cb
   }
   return cb;
 }
-
+#ifndef FEATURE_IPL_NO_CAMERA
 static void camera_svcs_clr_preview_overlay(void)
 {
   if (preview_overlay)
@@ -19284,6 +19325,7 @@ static void camera_svcs_clr_thumbnail_overlay(void)
     thumbnail_overlay = NULL;
   }
 }
+#endif //#ifndef FEATURE_IPL_NO_CAMERA
 /*lint -restore */
 
 /*===========================================================================

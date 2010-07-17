@@ -88,9 +88,9 @@ when       who     what, where, why
 #include "ipl_types.h"
 #include "ipl_compose.h"
 #include "ipl_convert.h"
+#include "ipl_helper.h"
 
 #ifndef FEATURE_IPL_NO_CAMERA
-#include "ipl_helper.h"
 #include "ipl_xform.h"
 #include "ipl_qvp.h"
 
@@ -5016,7 +5016,7 @@ static ipl_status_type ipl_convert_ycrcb420lp_to_rgb888
 
   return IPL_SUCCESS;
 } /* end of function ipl_convert_ycrcb420lp_to_rgb888 */
-
+#endif
 
 
 /* <EJECT> */
@@ -5467,6 +5467,7 @@ extern ipl_status_type ipl3_convert_ycrcb422lp_to_rgb565
 
 
 
+#ifndef FEATURE_IPL_NO_CAMERA
 
 /* <EJECT> */
 /*==========================================================================

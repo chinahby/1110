@@ -76,7 +76,9 @@ extern int DLS_New(IShell * ps, AEECLSID cls, void **ppif);
 
 const AEEStaticClass gAEEMediaClasses[] = 
 {
+#ifdef FEATURE_APP_QALBUM // Gemsea Add
    {AEECLSID_MEDIAUTIL,       ASCF_UPGRADE, 0, NULL,           IMediaUtil_New},
+#endif
    {AEECLSID_MEDIAMIDI,       ASCF_UPGRADE, 0, IMediaBg_Init,  IMediaBg_New},
 #ifdef FEATURE_MP3
    {AEECLSID_MEDIAMP3,        ASCF_UPGRADE, 0, IMediaBg_Init,  IMediaBg_New},

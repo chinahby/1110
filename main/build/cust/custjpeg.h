@@ -60,11 +60,11 @@ when       who     what, where, why
 /*---------------------------------------------------------------------------
                             PNG  Services
 ---------------------------------------------------------------------------*/
-
+#ifndef FEATURE_IPL_NO_CAMERA
 /* Enables the PNG image encoder software.
 */
 #define FEATURE_PNG_ENCODER
-
+#endif
 /* Enables the PNG image decoder software. Moved here from custcmx.h
 */
 #ifndef FEATURE_PNG_DECODER
@@ -92,8 +92,9 @@ when       who     what, where, why
 /*---------------------------------------------------------------------------
                       JPEG Decoder Resize Feature Support
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_IPL_NO_CAMERA
  #define FEATURE_JPEGD_RESIZE 
-
+#endif
 /*---------------------------------------------------------------------------
                       Print Image Matching Support
 ---------------------------------------------------------------------------*/
