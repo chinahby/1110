@@ -161,7 +161,6 @@
 	<DIALOG Id="6007" Name="IDD_EMERGENCYNUMLIST" Focus="7005">
 		<Controls>
 			<Menu Id="7005" Name="IDC_EMERGENCYNUM">
-				<TitleID>IDS_EMERGENCY_NUMBER</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

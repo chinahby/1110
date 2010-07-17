@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="coreapp" VERSION="1">
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="idcoreapp" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_CORE_TITLE">
 		<Text>Core Applet</Text>
@@ -161,7 +161,6 @@
 	<DIALOG Id="6007" Name="IDD_EMERGENCYNUMLIST" Focus="7005">
 		<Controls>
 			<Menu Id="7005" Name="IDC_EMERGENCYNUM">
-				<TitleID>IDS_EMERGENCY_NUMBER</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
