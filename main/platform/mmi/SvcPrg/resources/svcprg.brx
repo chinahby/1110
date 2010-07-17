@@ -475,17 +475,16 @@
 				<Items/></Text>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="3" Name="IDD_SECCODE" Focus="4" Flags="00000000">
+	<DIALOG Id="3" Name="IDD_SECCODE" Focus="4">
 		<Controls>
-			<Text Id="4" Name="IDC_SECCODE_TEXT" Flags="00410000">
-				<TitleID>IDS_ENTER_SECCODE</TitleID>
+			<Text Id="4" Name="IDC_SECCODE_TEXT" Flags="410000">
 				<Items/></Text>
 			<SoftKey Id="6" Name="IDC_SECCODE_SK" Flags="00000000">
 				<Items/>
 			</SoftKey>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="4" Name="IDD_MESSAGE" Focus="0" Flags="00000000">
+	<DIALOG Id="4" Name="IDD_MESSAGE" Focus="0">
 		<Controls/>
 	</DIALOG>
 </Dialogs>
