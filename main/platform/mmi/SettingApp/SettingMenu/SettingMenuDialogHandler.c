@@ -589,7 +589,6 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:    
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -768,7 +767,6 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -960,7 +958,6 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -1284,7 +1281,6 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
         case EVT_USER_REDRAW:
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -1624,7 +1620,6 @@ static boolean  HandleNetworkDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -1761,7 +1756,6 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -1976,7 +1970,6 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
         case EVT_USER_REDRAW:
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -2200,7 +2193,11 @@ static boolean  HandleCallForwardInputDialogEvent(CSettingMenu *pMe,
                 //IP_Number_Cfg   num_cfg;
                 //ICONFIG_GetItem(pMe->m_pConfig, CFGI_IP_NUMBER, (void*)&num_cfg, sizeof(IP_Number_Cfg));
                 ITEXTCTL_SetMaxSize (pTextCtl, OEM_IP_NUMBER_MAX);
-                ITEXTCTL_SetTitle(pTextCtl,AEE_APPSSETTINGMENU_RES_FILE,IDS_IP_NUMBER_SET,NULL);
+                //ITEXTCTL_SetTitle(pTextCtl,AEE_APPSSETTINGMENU_RES_FILE,IDS_IP_NUMBER_SET,NULL);
+                if(pMe->m_pAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pAnn,IDS_IP_NUMBER_SET);
+                }                 
                 //ITEXTCTL_SetText(pTextCtl, (AECHAR*)num_cfg.Number, -1);
                 //ITEXTCTL_SetCursorPos (pTextCtl, TC_CURSOREND);
             }
@@ -2209,7 +2206,11 @@ static boolean  HandleCallForwardInputDialogEvent(CSettingMenu *pMe,
                 number_table * temp = NULL;
                 temp = SettingMenu_Search_Node(&pMe->ip_number_tab,pMe->m_ip_sel_num);
                 ITEXTCTL_SetMaxSize (pTextCtl, OEM_IP_NUMBER_MAX);
-                ITEXTCTL_SetTitle(pTextCtl,AEE_APPSSETTINGMENU_RES_FILE,IDS_IP_NUMBER_SET,NULL);
+                //ITEXTCTL_SetTitle(pTextCtl,AEE_APPSSETTINGMENU_RES_FILE,IDS_IP_NUMBER_SET,NULL);
+                if(pMe->m_pAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pAnn,IDS_IP_NUMBER_SET);
+                }                 
                 if(temp)
                 {
                     if(WSTRNCMP(pMe->ip_number_tab.default_ip,temp->number,OEM_IP_NUMBER_MAX+1) == 0)
@@ -2534,7 +2535,6 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -2653,6 +2653,18 @@ static boolean  HandleBannerDialogEvent(CSettingMenu *pMe,
 
                 ITEXTCTL_SetActive(pTextCtl, TRUE);
                 ITEXTCTL_Redraw(pTextCtl);
+                {
+                    AECHAR WTitle[40] = {0};
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                    AEE_APPSSETTINGMENU_RES_FILE,                                
+                    IDS_BANNER_TITLE,
+                    WTitle,
+                    sizeof(WTitle));
+                    if(pMe->m_pAnn != NULL)
+                    {
+                        IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+                    }
+                }    
 
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                      AEECLSID_APP_SETTINGMENU,
@@ -2828,7 +2840,6 @@ static boolean  HandleTimeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -2988,7 +2999,6 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -3148,7 +3158,6 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
 			
             return TRUE;
@@ -3530,7 +3539,6 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -4009,8 +4017,6 @@ static boolean  HandleNetSelectDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -4393,7 +4399,6 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             DrawTitleBar(pMe->m_pDisplay,&title);
 			#else
 			IANNUNCIATOR_SetFieldText(pMe->m_pAnn,wszTitle);
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
 			#endif
             {
                 RGBVAL nOldFontColor; //added by chengxiao 2009.03.05
@@ -5245,7 +5250,6 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -5365,7 +5369,6 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -5631,7 +5634,6 @@ static boolean Handle_IP_Number_Set_DialogEveng(CSettingMenu *pMe,
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             IMENUCTL_Redraw(pMenu);
             return TRUE;
         }
@@ -5868,7 +5870,6 @@ static boolean  SettingMenu_HandleKeyToneLengthDialogEvent(CSettingMenu *pMe,
         case EVT_USER_REDRAW:
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -6000,7 +6001,6 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -6124,7 +6124,6 @@ static boolean Setting_Handle_Shake(CSettingMenu *pMe,
              return TRUE;
              
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
                     return TRUE;
 
@@ -6300,7 +6299,6 @@ static boolean Setting_Handle_ShakeSub(CSettingMenu *pMe,
         }
              
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
                     return TRUE;
 
@@ -6476,7 +6474,6 @@ static boolean  Setting_Handle_CallRestrict(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
 
             return TRUE;
@@ -6621,7 +6618,6 @@ static boolean  Setting_Handle_OutGoing(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -6786,7 +6782,6 @@ static boolean  Setting_Handle_Incoming(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
            (void)IMENUCTL_Redraw(pMenu);
            return TRUE;
 
@@ -7304,7 +7299,6 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 

@@ -693,7 +693,7 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
 
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di);    
     //SETTING_ERR("%x, %x ,%x,SettingMenu_HandleEvent",eCode,wParam,dwParam);
-    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pAnn,FALSE);
+    
     switch (eCode)
     {
         case EVT_APP_START:
@@ -715,7 +715,10 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
             pMe->m_rc.y = pMe->m_rc.y - SETTING_MENU_SOFK_HIGHT;
             
             pMe->m_bSuspending = FALSE;
-
+            if(pMe->m_pAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pAnn,FALSE);
+            }
             // ¿ªÊ¼SettingMenu×´Ì¬»ú
             SettingMenu_RunFSM(pMe);
             return TRUE;
