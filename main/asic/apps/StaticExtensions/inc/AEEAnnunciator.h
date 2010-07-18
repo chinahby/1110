@@ -263,6 +263,7 @@ AEEINTERFACE(IAnnunciator)
    int     (*SetUnblinkTimer) (IAnnunciator * pMe, uint32 nAnnunID, uint32 nState, uint32 nTimeMs); //added by chengxiao 2009.03.10
    int     (*SetFieldIsActiveEx) (IAnnunciator * pMe,boolean bActive);   //add by yangdecai 2010-07-13
    int     (*SetFieldText)     (IAnnunciator * pMe,uint16 * cText);    //add by yangdecai 2010-07-13
+   int     (*SetHasTitleText)     (IAnnunciator * pMe, boolean hasTitleText);
 };
 
 //---------------------------------------------------------------------
@@ -282,6 +283,7 @@ AEEINTERFACE(IAnnunciator)
 #define IANNUNCIATOR_SetUnblinkTimer(p,id,s,n)   AEEGETPVTBL((p),IAnnunciator)->SetUnblinkTimer((p),(id),(s),(n))
 #define IANNUNCIATOR_SetFieldIsActiveEx(p,b)       AEEGETPVTBL((p),IAnnunciator)->SetFieldIsActiveEx((p),(b))
 #define IANNUNCIATOR_SetFieldText(p,c)           AEEGETPVTBL((p),IAnnunciator)->SetFieldText((p),(c))
+#define IANNUNCIATOR_SetHasTitleText(p,c)           AEEGETPVTBL((p),IAnnunciator)->SetHasTitleText((p),(c))
 
 /*============================================================================
    DATA STRUCTURE DOCUMENTATION
