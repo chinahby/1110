@@ -645,14 +645,16 @@ SDCC_STATUS       sdcc_poll_dma(void);
 uint32            sdcc_blk_in_bits(uint32 size);
 SDCC_CARD_TYPE    sdcc_find_sdio_card( void );
 #ifdef T_QSC1100
-#define GPIO_SDCC_OUT_ADDR      (HWIO_GPIO_OUT_0_ADDR+3)
+#define GPIO_SDCC_OUT_ADDR      (HWIO_GPIO_OUT_0_ADDR)
 #define GPIO_SDCC_IN_ADDR       (HWIO_GPIO_IN_0_ADDR+3)
-#define GPIO_SDCC_CLK_MASK      0x01    //(1<<24)
-#define GPIO_SDCC_DAT_0_MASK    0x02    //(1<<25)
-#define GPIO_SDCC_DAT_1_MASK    0x04    //(1<<26)
-#define GPIO_SDCC_DAT_2_MASK    0x08    //(1<<27)
-#define GPIO_SDCC_DAT_3_MASK    0x10    //(1<<28)
-#define GPIO_SDCC_CMD_MASK      0x20    //(1<<29)
+#define GPIO_SDCC_OUT_MASK      0x3F00000000
+#define GPIO_SDCC_OUT_MASK_I    0xC0FFFFFFFF
+#define GPIO_SDCC_CLK_H_MASK    0x3F00000000
+#define GPIO_SDCC_CLK_L_MASK    0x3E00000000
+#define GPIO_SDCC_CMD_MASK      0x1F00000000
+#define GPIO_SDCC_DAT_0_MASK    0x3D00000000
+#define GPIO_SDCC_DAT_MASK      0x2100000000
+
 byte   CRC7    ( unsigned char * chr, int cnt );
 uint64 CRC16_4 ( unsigned char * chr, int cnt );
 static INLINE void sdcc_clock_out(int cnt);

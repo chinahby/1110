@@ -3142,91 +3142,94 @@ unsigned long long CRC16_4( unsigned char * buf_ptr, int len )
 
 static INLINE void sdcc_clock_out(int cnt)
 {
-    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
-    register byte clkl = 0x3E, clkh = 0x3F;
+    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
+    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
     while(cnt)
     {
-        outp(pDest, clkl);
+        outpdw(pDest, clkl);
         cnt--;
-        outp(pDest, clkh);
+        outpdw(pDest, clkh);
     }
 }
 
 static INLINE void sdcc_clock_out_slow(int cnt)
 {
-    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
+    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
     
     while(cnt--)
     {
-        outp(pDest, 0x3E);
-        outp(pDest, 0x3E);
-        outp(pDest, 0x3E);
-        outp(pDest, 0x3E);
-        outp(pDest, 0x3F);
-        outp(pDest, 0x3F);
-        outp(pDest, 0x3F);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
+        outpdw(pDest, clkh);
+        outpdw(pDest, clkh);
     }
 }
 
 static INLINE void sdcc_send_cmd_bytes(byte *pdata, int len)
 {
-    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
+    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CMD_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
     register byte data;
-    register byte clkl = 0x3E, clkh = 0x1F;
+    
     while(len--)
     {
-        data = *pdata++;
-        outp(pDest, clkl);
-        outp(pDest, (data>>2)|clkh);
-        outp(pDest, clkl);
-        outp(pDest, (data>>1)|clkh);
-        outp(pDest, clkl);
-        outp(pDest, (data)   |clkh);
-        outp(pDest, clkl);
-        outp(pDest, (data<<1)|clkh);
-        outp(pDest, clkl);
-        outp(pDest, (data<<2)|clkh);
-        outp(pDest, clkl);
-        outp(pDest, (data<<3)|clkh);
-        outp(pDest, clkl);
-        outp(pDest, (data<<4)|clkh);
-        outp(pDest, clkl);
-        outp(pDest, (data<<5)|clkh);
+        data = *pdata;
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>2)<<24)|clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>1)<<24)|clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data)   <<24)|clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<1)<<24)|clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<2)<<24)|clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<3)<<24)|clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<4)<<24)|clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<5)<<24)|clkh);
+        pdata++;
     }
 }
 
 static INLINE void sdcc_recv_cmd_bytes(byte *pdata, int len)
 {
-    register byte data = 0;
-    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
+    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
-    register byte clkl = 0x3E, clkh = 0x3F;
+    register byte data = 0;
     
     while(len--)
     {
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data  = (inp(pIn)<<2)&0x80;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<1)&0x40;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)   )&0x20;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)>>1)&0x10;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)>>2)&0x08;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)>>3)&0x04;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)>>4)&0x02;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)>>5)&0x01;
         *pdata++ = data;
     }
@@ -3234,85 +3237,86 @@ static INLINE void sdcc_recv_cmd_bytes(byte *pdata, int len)
 
 static INLINE byte sdcc_recv_cmd_byte_wait(void)
 {
-    register byte data = 0;
-    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
+    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
+    register byte data = 0;
     int i = 64; //最大等待周期
-    register byte clkl = 0x3E, clkh = 0x3F;
     
     while(i--) // Ncr
     {
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data  = (inp(pIn)<<2)&0x80;
         if(data == 0)
         {
             break;
         }
     }
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)<<1)&0x40;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)   )&0x20;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)>>1)&0x10;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)>>2)&0x08;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)>>3)&0x04;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)>>4)&0x02;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)>>5)&0x01;
     return data;
 }
 
 static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
 {
-    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
+    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkm = GPIO_SDCC_DAT_0_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data;
     uint16 wCRC16 = crc_16_bytes(pdata, len);
     int i; //最大等待周期
-    register byte clkl = 0x3E, clkh = 0x3F, clkm = 0x3D;
     
     // Deley 2 Cycle -- Nwr
-    outp(pDest, clkl);
-    outp(pDest, clkh);
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     
     // START Bit
-    outp(pDest, clkl);
-    outp(pDest, clkm);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkm);
 
     // Data
     while(len--)
     {
         data = *pdata++;
-        outp(pDest, clkl);
-        outp(pDest, (data>>6)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>5)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>4)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>3)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>2)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>1)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data   )|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data<<1)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>6)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>5)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>4)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>3)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>2)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>1)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data   )<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<1)<<24)|clkm);
     }
     dog_kick();
     // CRC
@@ -3320,34 +3324,34 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     data = (byte)(wCRC16>>8);
     while(len--)
     {
-        outp(pDest, clkl);
-        outp(pDest, (data>>6)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>5)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>4)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>3)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>2)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data>>1)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data   )|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data<<1)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>6)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>5)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>4)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>3)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>2)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>1)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data   )<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<1)<<24)|clkm);
         data = (byte)wCRC16;
     }
     
     // END Bit
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
 
     // 2 delay Cycles, HOST control
-    outp(pDest, clkl);
-    outp(pDest, clkh);
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     
     // Check CRC status
     gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
@@ -3356,9 +3360,9 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     i = 8;
     while(i)
     {
-        outp(pDest, clkl);
+        outpdw(pDest, clkl);
         i--;
-        outp(pDest, clkh);
+        outpdw(pDest, clkh);
         if((inp(pIn) & 0x02) == 0)
         {
             break;
@@ -3366,19 +3370,19 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     }
     
     // CRC status
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data  = (inp(pIn)<<1)&0x04;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)   )&0x02;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)>>1)&0x01;
     
     // END Bit
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     
     if(data != 0x2)
     {
@@ -3390,9 +3394,9 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     i = 8;
     while(i)
     {
-        outp(pDest, clkl);
+        outpdw(pDest, clkl);
         i--;
-        outp(pDest, clkh);
+        outpdw(pDest, clkh);
         if(!(inp(pIn) & 0x02))
         {
             break;
@@ -3409,9 +3413,9 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     i = 1024*1024;
     while(i)
     {
-        outp(pDest, clkl);
+        outpdw(pDest, clkl);
         i--;
-        outp(pDest, clkh);
+        outpdw(pDest, clkh);
         if(inp(pIn)&0x02)
         {
             // Busy End bit
@@ -3435,27 +3439,28 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
 
 static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
 {
+    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
+    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte  data;
     register byte *pdata = buff;
-    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
-    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     int i;
     uint16 wCRC16 = 0;
-    register byte clkl = 0x3E, clkh = 0x3F;
+    
 
     // Wait 2 Clock cycles
-    outp(pDest, clkl);
-    outp(pDest, clkh);
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
 
     dog_kick();
     // START Bit
     i = 2048;
     while(i--)
     {
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         if((inp(pIn) & 0x02) == 0)
         {
             break;
@@ -3472,29 +3477,29 @@ static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
     i = len;
     while(i--)
     {
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data  = (inp(pIn)<<6)&0x80;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<5)&0x40;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<4)&0x20;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<3)&0x10;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<2)&0x08;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<1)&0x04;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)   )&0x02;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)>>1)&0x01;
         *pdata++ = data;
     }
@@ -3503,36 +3508,36 @@ static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
     i = 2;
     while(i--)
     {
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data  = (inp(pIn)<<6)&0x80;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<5)&0x40;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<4)&0x20;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<3)&0x10;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<2)&0x08;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)<<1)&0x04;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)   )&0x02;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)>>1)&0x01;
         wCRC16 = (wCRC16<<8)|data;
     }
     
     // END Bit, Dont care
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
 
     // CRC verify
     if(wCRC16 != crc_16_bytes(buff, len))
@@ -3544,30 +3549,31 @@ static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
 
 static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
 {
-    register byte data;
-    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
+    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
+    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkm = GPIO_SDCC_DAT_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
+    register byte data;
     uint64 wCRC64 = CRC16_4(pdata, len);
     int i;
-    register byte clkl = 0x3E, clkh = 0x3F, clkm = 0x21;
     
     // Deley 2 Cycle -- Nwr
-    outp(pDest, clkl);
-    outp(pDest, clkh);
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     
     // START Bit
-    outp(pDest, clkl);
-    outp(pDest, clkm);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkm);
     dog_kick();
     while(len--)
     {
         data = *pdata++;
-        outp(pDest, clkl);
-        outp(pDest, (data>>3)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data<<1)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>3)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<1)<<24)|clkm);
     }
     dog_kick();
     // CRC
@@ -3577,21 +3583,21 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     while(len--)
     {
         data = *pdata--;
-        outp(pDest, clkl);
-        outp(pDest, (data>>3)|clkm);
-        outp(pDest, clkl);
-        outp(pDest, (data<<1)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>3)<<24)|clkm);
+        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<1)<<24)|clkm);
     }
     
     // END Bit
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
 
     // 2 delay Cycles, HOST Control
-    outp(pDest, clkl);
-    outp(pDest, clkh);
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     
     // Check CRC status
     gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
@@ -3600,9 +3606,9 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     i = 8;
     while(i)
     {
-        outp(pDest, clkl);
+        outpdw(pDest, clkl);
         i--;
-        outp(pDest, clkh);
+        outpdw(pDest, clkh);
         if((inp(pIn) & 0x02) == 0)
         {
             break;
@@ -3610,19 +3616,19 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     }
     
     // CRC status
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data  = (inp(pIn)<<1)&0x04;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)   )&0x02;
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     data |= (inp(pIn)>>1)&0x01;
 
     // END Bit
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     
     if(data != 0x2)
     {
@@ -3634,9 +3640,9 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     i = 8;
     while(i)
     {
-        outp(pDest, clkl);
+        outpdw(pDest, clkl);
         i--;
-        outp(pDest, clkh);
+        outpdw(pDest, clkh);
         if(!(inp(pIn) & 0x02))
         {
             break;
@@ -3653,9 +3659,9 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     i = 1024*1024;
     while(i)
     {
-        outp(pDest, clkl);
+        outpdw(pDest, clkl);
         i--;
-        outp(pDest, clkh);
+        outpdw(pDest, clkh);
         if(inp(pIn)&0x02)
         {
             // Busy End bit
@@ -3679,21 +3685,22 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
 
 static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
 {
+    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
+    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data;
     register byte *pdata = buff;
-    register volatile byte *pDest = (volatile byte*)GPIO_SDCC_OUT_ADDR;
-    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     int i;
     uint64 wCRC64 = 0;
-    register byte clkl = 0x3E, clkh = 0x3F;
+    
 
     dog_kick();
     // START Bit
     i = 2048;
     while(i--)
     {
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         if((inp(pIn) & 0x1E) == 0)
         {
             break;
@@ -3710,11 +3717,11 @@ static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
     i = len;
     while(i--)
     {
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data  = (inp(pIn)<<3)&0xF0;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)>>1)&0x0F;
         *pdata++ = data;
     }
@@ -3723,18 +3730,18 @@ static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
     i = 8;
     while(i--)
     {
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data  = (inp(pIn)<<3)&0xF0;
-        outp(pDest, clkl);
-        outp(pDest, clkh);
+        outpdw(pDest, clkl);
+        outpdw(pDest, clkh);
         data |= (inp(pIn)>>1)&0x0F;
         wCRC64 = (wCRC64<<8)|data;
     }
 
     // END Bit, Dont care
-    outp(pDest, clkl);
-    outp(pDest, clkh);
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
     
     // CRC verify
     if(wCRC64 != CRC16_4(buff, len))
