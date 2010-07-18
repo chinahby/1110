@@ -492,6 +492,13 @@ enum
   CFGI_DEBUG_BAND_WCDMA
 };
 
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+typedef enum 
+{
+	STATIC_BREW_APP_FLEXI_NASRANI,
+	STATIC_BREW_APP_DEFAULT	
+}STATIC_BREW_APP_e;
+#endif
 /*===========================================================================
 
                      FUNCTION PROTOTYPES

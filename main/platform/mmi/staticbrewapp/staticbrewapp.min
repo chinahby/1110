@@ -1,0 +1,9 @@
+STATIC_BREW_APP_LIB:=#
+#####nasrani application##########
+vpath %.bar $(STATIC_BREW_APP)/nasrani
+
+CONSTFILE_FILES+=nasrani.mif|fs:/mif/nasrani.mif
+CONSTFILE_BIN_FILES+=nasrani.bar|fs:/mod/nasrani/nasrani.bar
+
+STATIC_BREW_APP_LIB+=$(STATIC_BREW_APP)/nasrani/nasrani.o
+

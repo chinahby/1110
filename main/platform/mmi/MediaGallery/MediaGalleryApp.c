@@ -2258,6 +2258,7 @@ static void MediaGallery_rdm_event_cb (rdm_assign_status_type status,
 boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
 {
     boolean bRet = TRUE;
+#ifdef FEATURE_DRV_SDCC
     
     if(!pMe)
     {
@@ -2314,6 +2315,7 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
     }
     
     gbUDiskOn = bRet;
+#endif	
     return bRet;
 }//MediaGallery_StartUDisk
 
@@ -2330,6 +2332,7 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
 boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe)
 {
     boolean bRet = TRUE;
+#ifdef FEATURE_DRV_SDCC
    
     if(!pMe)
     {
@@ -2382,7 +2385,7 @@ boolean MediaGallery_StopUDisk(CMediaGalleryApp *pMe)
             break;
         }
     }
-    
+#endif
     return bRet;
 }//MediaGallery_StopUDisk
 

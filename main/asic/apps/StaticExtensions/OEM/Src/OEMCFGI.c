@@ -11150,6 +11150,43 @@ static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff)
     NV 的相关配置只起临时作用。不同应用的账号信息可能不一样。使用时需自行配置。
     本函数仅供 BREW App Manager 使用。
 ==============================================================================*/
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+    char username[MAS_BREWSETINT_STRING] = {0};
+    char password[MAS_BREWSETINT_STRING] = {0};
+    switch(eApp)
+    	{
+    		case STATIC_BREW_APP_FLEXI_NASRANI:
+			MEMCPY(username,"fm",2);	
+			MEMCPY(password,"fm",2);	
+			break;
+    		default:
+			OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
+			OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+              	break;			
+    	}
+
+    // 账号
+
+    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
+    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
+    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+
+    // 账号密码
+
+    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
+    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
+    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+    nvi.pap_password.password_len = STRLEN((char *)password);
+    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
+#endif
+} /* OEM_SetBAM_ADSAccount */
+#else 
 void OEM_SetBAM_ADSAccount(void)
 {
 #ifndef WIN32
@@ -11196,5 +11233,10 @@ void OEM_SetBAM_ADSAccount(void)
 #endif /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
 #endif
 } /* OEM_SetBAM_ADSAccount */
+
+#endif
+
+
+
 
 #endif // CUST_EDITION

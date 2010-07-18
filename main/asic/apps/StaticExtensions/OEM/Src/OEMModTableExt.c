@@ -325,6 +325,10 @@ extern int AEEPushMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 	extern int OEMVR_New(IShell *pIShell, AEECLSID cls,void **ppo);
 #endif
 
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+int NASRANI_Load(IShell *ps, void * pHelpers, IModule **pMod);
+#endif
+
 #if defined(FEATURE_STATIC_APP_J9)
 	extern int J9Mod_New(IShell * pIShell,AEECLSID ClsId,void ** ppObj);
 #endif
@@ -570,7 +574,6 @@ extern int OtkMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif //FEATURE_SHORT_CODE_NAM_COUNT
 
 //#if defined( FEATURE_GAME_TETRIS)
-//extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 //#endif
 #if defined( FEATURE_GAME_BRICKATTACK)
 extern int Brick_Load(IShell *ps, void *pHelpers, IModule **pMod);
@@ -1272,6 +1275,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
 	  { AEEFS_MIF_DIR"adjustpenapp.mif",AdjustPenMod_Load},
 #endif
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+	   { AEEFS_MIF_DIR"nasrani.mif",NASRANI_Load},
+#endif	   
 
    {NULL, NULL}
 };

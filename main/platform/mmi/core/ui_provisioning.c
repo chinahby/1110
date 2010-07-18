@@ -540,7 +540,7 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
   boolean initialize_imsi_t[NV_MAX_NAMS];
   boolean imsi_t_all_zeros[NV_MAX_NAMS];
   #endif
-
+  rex_sleep(3000);
   for (i=0; i<NV_MAX_NAMS; i++)
   {
     initialize_imsi[i] = FALSE ; /* assume no need */
