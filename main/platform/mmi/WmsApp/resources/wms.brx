@@ -511,6 +511,9 @@
 	<String Id="176" Name="IDS_BROWSE">
 		<Text>Browse</Text>
 	</String>
+	<String Id="177" Name="IDS_FAILED_RESENDING">
+		<Text>Failed,Whether to re-send?</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -823,6 +826,10 @@
 				<Items/>
 			</Menu>
 		</Controls>
+	</Dialog>
+	<Dialog Id="6044" Name="IDD_RESEND_CONFIRM" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 </Dialogs>
 </BREWRes>
