@@ -39,6 +39,8 @@ when         who            what, where, why
 #include "AppComFunc.h"
 #include "calcapp.brh"
 #include "Appscommon.h"
+#include "AEEAnnunciator.h"
+
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS
@@ -310,6 +312,7 @@ typedef struct _CCalcApp {
 #endif
     boolean   m_bIdle;
 	CALCRecttype m_rtype;//wlh 20090417 add区分点击的区域
+	IAnnunciator        *m_pIAnn;
 } CCalcApp;
 
 
@@ -657,8 +660,10 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
         case EVT_APP_START:
             pme->m_TempValue = 0.0;
             pme->m_bIdle = TRUE;
+			
             Calc_Startup(pme, (AEEAppStart *) dwParam);
-			       
+			IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
+			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
 			MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add 
 			BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
 			DrawBottomBar(pme->a.m_pIDisplay,&BarParam);    //wlh 20090417 add
@@ -670,6 +675,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
             CALC_CFG_VERSION, &pme->m_cfg, sizeof(CalcCfg));
 
             Calc_ClearVals(pme);
+			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,TRUE);
             return TRUE;
 
         case EVT_APP_SUSPEND:
@@ -922,6 +928,12 @@ static void Calc_Startup(CCalcApp *pme, AEEAppStart *as)
     if(pme == NULL||as == NULL)
     {
        return ;
+    }
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,
+                                            AEECLSID_ANNUNCIATOR,
+                                            (void **)&pme->m_pIAnn))
+    {
+        return EFAILED;
     }
     pme->m_rc = as->rc;
 

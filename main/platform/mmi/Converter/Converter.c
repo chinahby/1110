@@ -428,7 +428,6 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
 {
     CConverter *pMe = (CConverter*)pi;
     AEEAppStart* as = 0;
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -453,6 +452,7 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
 
 		        return EFAILED;
 		    }
+			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             pMe->m_bSuspending = FALSE;
             Converter_RunFSM(pMe);
             return TRUE;
