@@ -664,6 +664,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
             Calc_Startup(pme, (AEEAppStart *) dwParam);
 			IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
 			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
+			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,NULL);
 			MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add 
 			BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
 			DrawBottomBar(pme->a.m_pIDisplay,&BarParam);    //wlh 20090417 add
