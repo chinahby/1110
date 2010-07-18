@@ -796,20 +796,27 @@ void BlinkTimerCB (void *data)
   int i;
   IAnnunciator *pMe = (IAnnunciator *) data;
 
-  if (pMe == NULL) {
+  if (pMe == NULL) 
+  {
     return;
   }
 
   /* Clear the blinking fields on primary annunciator */
-  for (i=0; i < (int)ARR_SIZE(Annunciators); i++) {
-    if (Annunciators[i].pcontent->nCurrState & ANNUN_STATE_BLINK) {
-      if (bDraw) {
+  for (i=0; i < (int)ARR_SIZE(Annunciators); i++)
+  {
+    if (Annunciators[i].pcontent->nCurrState & ANNUN_STATE_BLINK) 
+	{
+      if (bDraw) 
+	  {
         if (ClearField(pMe, Annunciators[i].nFieldID) != SUCCESS)
         {
           MSG_LOW("Unable to clear field %d for annunciator blink.", i, 0, 0);
         }
       }
-      else {
+      else 
+	  {
+	  	DBGPRINTF("***zzg BlinkTimerCB DrawImageField i=%d***", i);
+		
         if (DrawImageField (pMe, Annunciators[i].nFieldID,
                            (Annunciators[i].pcontent->nCurrState &
                             ANNUN_STATE_BLINK_UNMASK))
@@ -1758,6 +1765,8 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
       CancelBlinkTimer (pMe, nAnnunID);
     }
 
+	DBGPRINTF("***zzg DrawImageField nAnnunID=%d***", nAnnunID);
+	
     /* Image field */
     if (DrawImageField(pMe, nAnnunID, (nState & ANNUN_STATE_BLINK_UNMASK)) !=
         SUCCESS)

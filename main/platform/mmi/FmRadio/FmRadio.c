@@ -746,6 +746,9 @@ static void FmRadio_CheckRefuse( CFmRadio* pMe)
 #if !FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY
     //ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headsetPresent, sizeof(boolean));
     headsetPresent = HS_HEADSET_ON();
+
+	DBGPRINTF("***zzg FmRadio headsetPresent=%d***", headsetPresent);
+	
 #endif
     db_get( DB_IN_USE, &dbItemValue);
 
@@ -787,7 +790,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
     {
         case EVT_APP_START:
         case EVT_APP_RESUME:
-        {            
+        {      
             pMe->startFromBackground = FALSE;
             as = (AEEAppStart*)dwParam;
             pMe->m_pDisplay = as->pDisplay;
@@ -801,6 +804,9 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             }
 
             pMe->m_bSuspending  = FALSE;
+
+			DBGPRINTF("***zzg app_media_scheduler()=%d***", app_media_scheduler());
+			
             if(APP_MEDIA_IMPACT_BY_MP3 == app_media_scheduler())
             {
                 pMe->opMode = FM_RADIO_OPMODE_USER_MSG;
@@ -810,11 +816,21 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                 FmRadio_RunFSM( pMe);
                 return TRUE;
             }
+			
             pMe->m_eCurState = FMRADIOST_INIT;  
             pMe->m_bAppIsReady  = FALSE;
+			
 #if !defined( AEE_SIMULATOR)
             FmRadio_PowerUp( pMe);
-            fm_mute(FALSE);
+			//fm_mute(FALSE);		//Del By zzg 2010_07_18
+
+			//Add By zzg 2010_07_18
+			if (HS_HEADSET_ON())
+			{
+				fm_mute(FALSE);
+			}			
+			//Add End
+			
 #endif//#if !defined( AEE_SIMULATOR)
 
             pMe->runOnBackground = FALSE;
@@ -842,6 +858,14 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             if( !pMe->runOnBackground)
             {
                 FmRadio_PowerDown( pMe);
+				
+				//Add By zzg 2010_07_18
+				if (HS_HEADSET_ON())
+				{
+					fm_mute(TRUE);
+				}			
+				//Add End
+				
             #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 				FmRadio_SaveChannelList( pMe);
 			#endif
@@ -858,6 +882,14 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         case EVT_APP_SUSPEND:
 #if !defined( AEE_SIMULATOR)
             FmRadio_PowerDown( pMe);
+
+			//Add By zzg 2010_07_18
+			if (HS_HEADSET_ON())
+			{
+				fm_mute(TRUE);
+			}			
+			//Add End
+			
 #endif//#if !defined( AEE_SIMULATOR)
             pMe->m_bSuspending = TRUE;
             (void)ISHELL_CancelTimer( pMe->m_pShell,FmRadio_AppIsReadyCB,pMe);
@@ -1185,6 +1217,9 @@ static void FmRadio_PowerUp(void *pme)
     pMe->newSmsIncoming = FALSE;
 
     FmRadio_CheckRefuse( pMe);
+
+	DBGPRINTF("***zzg FmRadio_PowerUp pMe->refuseReason=%d***", pMe->refuseReason);
+	
     if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_VOICE_CALL_CONNECTED)
     {
 #ifndef WIN32
@@ -1197,6 +1232,7 @@ static void FmRadio_PowerUp(void *pme)
     }
 
 #if !defined( AEE_SIMULATOR)
+	DBGPRINTF("***zzg FmRadio_PowerUp fm_radio_is_inited()=%d***", fm_radio_is_inited());
     if( !fm_radio_is_inited())
     {
         fm_radio_init();
@@ -1204,6 +1240,8 @@ static void FmRadio_PowerUp(void *pme)
         return;
     }
     g_m_fm_is_on = TRUE;
+
+	DBGPRINTF("***zzg FmRadio_fm_radio_is_power_up()=%d***", fm_radio_is_power_up());
     if( !fm_radio_is_power_up())
     {
         boolean b_FMBackground = TRUE;

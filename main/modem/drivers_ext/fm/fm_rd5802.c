@@ -238,7 +238,7 @@ int fm_radio_power_up(void)
     }  
 
 	fm_work_status = FM_POWER_UP; 
-	
+
 	return FM_RADIO_SUCCESSFUL;
 }
 
@@ -408,7 +408,7 @@ int fm_tune_channel(word wChannel)
 
 	if ( fm_playing_mute )
 	{
-		fm_mute(FALSE);
+		//fm_mute(FALSE);		//Add By zzg 2010_07_18
 	}
 	
     fm_work_status = FM_IN_PROGRESS;
@@ -519,15 +519,23 @@ void fm_mute(boolean on)
 	{
 		fm_playing_mute = TRUE;
 		//fm_set_volume(0);
-		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED,
-                       NULL, NULL);
+		//snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Del By zzg 2010_07_18
+		
+		//Add By zzg 2010_07_18
+		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+		snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+		//Add End
 	}
 	else
 	{
 		fm_playing_mute = FALSE;
 		//fm_set_volume(8);
-		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED,
-                       NULL, NULL);
+		//snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Del By zzg 2010_07_18
+
+		//Add By zzg 2010_07_18
+		snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);		
+		//Add End	
 	}
 	
 	return;

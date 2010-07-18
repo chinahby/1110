@@ -816,11 +816,12 @@ __handleKeyEvent_input_channel_done__:
             {
                 hideTuningModeSelectMenu( pMe);
             }
+			
 			//Add By zzg 2010_07_15
 			else if ((pMe->opMode == FM_RADIO_OPMODE_OPTION_SELECTION) && hideMenu( pMe))
 			{
 				moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
-			}
+			}			
 			//Add End
 #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             else if( pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM    ||
@@ -1208,7 +1209,7 @@ static void FMRadioMute( CFmRadio *pMe)
 {
     pMe->key_to_mute = (pMe->key_to_mute ? 0 : 1);
 #ifndef WIN32
-    fm_mute(pMe->key_to_mute);
+    //fm_mute(pMe->key_to_mute);		//Del By zzg 2010_07_18
 #endif
 	repaint( pMe, TRUE);
 }
