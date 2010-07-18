@@ -933,7 +933,7 @@ static void Calc_Startup(CCalcApp *pme, AEEAppStart *as)
                                             AEECLSID_ANNUNCIATOR,
                                             (void **)&pme->m_pIAnn))
     {
-        return EFAILED;
+        return ;
     }
     pme->m_rc = as->rc;
 
