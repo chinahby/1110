@@ -647,13 +647,13 @@ SDCC_CARD_TYPE    sdcc_find_sdio_card( void );
 #ifdef T_QSC1100
 #define GPIO_SDCC_OUT_ADDR      (HWIO_GPIO_OUT_0_ADDR)
 #define GPIO_SDCC_IN_ADDR       (HWIO_GPIO_IN_0_ADDR+3)
-#define GPIO_SDCC_OUT_MASK      0x3F00000000
-#define GPIO_SDCC_OUT_MASK_I    0xC0FFFFFFFF
-#define GPIO_SDCC_CLK_H_MASK    0x3F00000000
-#define GPIO_SDCC_CLK_L_MASK    0x3E00000000
-#define GPIO_SDCC_CMD_MASK      0x1F00000000
-#define GPIO_SDCC_DAT_0_MASK    0x3D00000000
-#define GPIO_SDCC_DAT_MASK      0x2100000000
+#define GPIO_SDCC_OUT_MASK      0x3F000000
+#define GPIO_SDCC_OUT_MASK_I    0xC0FFFFFF
+#define GPIO_SDCC_CLK_H_MASK    0x3F000000
+#define GPIO_SDCC_CLK_L_MASK    0x3E000000
+#define GPIO_SDCC_CMD_MASK      0x1F000000
+#define GPIO_SDCC_DAT_0_MASK    0x3D000000
+#define GPIO_SDCC_DAT_MASK      0x21000000
 
 byte   CRC7    ( unsigned char * chr, int cnt );
 uint64 CRC16_4 ( unsigned char * chr, int cnt );
