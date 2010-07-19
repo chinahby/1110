@@ -4369,7 +4369,11 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #endif
     else
     {
+    #ifdef FEATURE_FLEXI_STATIC_BREW_APP
+		eBBarType = BTBAR_FMUSLIM_FNASRANI;
+	#else
         eBBarType = BTBAR_MENU_CONTACTS;
+	#endif
     }
 
     DrawBottomBar_Ex(pMe->a.m_pIShell, pMe->m_pDisplay,eBBarType);

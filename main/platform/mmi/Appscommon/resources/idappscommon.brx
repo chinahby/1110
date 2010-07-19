@@ -223,6 +223,12 @@
 	<STRING Id="1025" Name="IDS_NO">
 		<Text>Tidak</Text>
 	</STRING>
+	<String Id="1026" Name="IDS_FMUSLIM">
+		<Text>fmuslim</Text>
+	</String>
+	<String Id="1027" Name="IDS_FNASRANI">
+		<Text>fnasrani</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Sebentar lagi</Text>
 	</STRING>

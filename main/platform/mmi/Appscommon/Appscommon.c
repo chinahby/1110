@@ -690,7 +690,13 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_VIEW;
             nResID_R = IDS_STOP;
             break;
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP
 
+		case BTBAR_FMUSLIM_FNASRANI:
+			nResID_L = IDS_FMUSLIM;
+            nResID_R = IDS_FNASRANI;
+            break;
+#endif
          default:
             break;
       }
@@ -2615,6 +2621,12 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_L = IDS_SAVE;
             nResID_R = IDS_BACK;
             break;
+		#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+		case BTBAR_FMUSLIM_FNASRANI:
+			nResID_L = IDS_FMUSLIM;
+            nResID_R = IDS_FNASRANI;
+            break;
+		#endif
     }
     if(nResID_L)
     {

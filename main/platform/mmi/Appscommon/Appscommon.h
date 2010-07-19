@@ -276,6 +276,9 @@ typedef enum BottomBar_e_Type
    BTBAR_CONTINUE_RESET_BACK,
    BTBAR_CALL_MODIFY_BACK,
    BTBAR_YES_NO_CANCEL,
+   #ifdef FEATURE_FLEXI_STATIC_BREW_APP
+   BTBAR_FMUSLIM_FNASRANI,    //fmuslim ----fnasrani
+   #endif
 
    BTBAR_MAX = 0xFFFF, /*For ADS compiler allocate one byte to enumerate type
                      variable by default if the max value not exceed 256*/
