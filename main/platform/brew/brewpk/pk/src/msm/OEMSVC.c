@@ -4232,7 +4232,7 @@ boolean OEM_IsNetLock(void)
     word original_mcc,original_mnc,final_mcc,final_mnc;
   //  MSG_FATAL("OEM_IsNetLock",0,0,0);
 
-    if (NV_DONE_S != ui_get_nv(NV_ESN_I, &nvi)) 
+    if (SUCCESS != OEM_ReadESN(&nvi.esn.esn))
     {
         return FALSE;
     }
