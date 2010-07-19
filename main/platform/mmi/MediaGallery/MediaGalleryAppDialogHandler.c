@@ -1545,7 +1545,7 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
          IMENUCTL_SetRect(pMenuCtl, &rc);
          IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE | MP_WRAPSCROLL);
 
-         rc.y += rc.dy;
+         //rc.y += rc.dy;
          rc.dy =  DevInfo.cyScreen - rc.y - GetBottomBarHeight(pMe->m_pDisplay);
 
          ISTATIC_SetRect(pStatic, &rc);

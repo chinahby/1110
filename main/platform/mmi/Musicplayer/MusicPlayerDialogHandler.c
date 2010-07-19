@@ -1498,13 +1498,29 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
               MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_VIEW);
               MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_ADDMUSIC);
               MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_RENAME);
-              MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_DELETE);
+              MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_DELETE);              
               return TRUE;
             
         case EVT_DIALOG_START:
         {
             
-           IMENUCTL_SetPopMenuRect(pMenuCtl);
+//#if defined(FEATURE_DISP_160X128)          
+          {
+              AEERect rc = {0};
+              IMENUCTL_SetPopMenuRect(pMenuCtl); 
+              IMENUCTL_GetRect(pMenuCtl, &rc);
+              MSG_FATAL("rc.y = %d; rc.dy = %d",rc.y, rc.dy, 0);
+              if(rc.y < 0)
+              {
+                  int temp = -(rc.y);
+                  rc.y += temp;
+                  rc.dy -= temp;
+                  IMENUCTL_SetRect(pMenuCtl, &rc);
+              }
+              MSG_FATAL("rc.y = %d; rc.dy = %d",rc.y, rc.dy, 0);
+          }
+//#endif  
+
            IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_SELECT_BACK);
             
            // For redraw the dialog

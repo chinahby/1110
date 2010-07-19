@@ -10279,7 +10279,7 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
                                 NULL);
 
                 // ÏÈÇåÆÁ
-                y = GetTitleBarHeight(pMe->m_pDisplay);
+                y = 0;//GetTitleBarHeight(pMe->m_pDisplay);
                 SETAEERECT(&rc,0, y,pMe->m_rc.dx, pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay) - y);
 #ifdef FEATURE_FUNCS_THEME    
                 IDISPLAY_FillRect(pMe->m_pDisplay, &rc, Theme_Param.bkcolor);
