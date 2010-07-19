@@ -474,8 +474,8 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
                 
             //菜单---电话本
          case BTBAR_MENU_CONTACTS:
-            nResID_L = IDS_STRING_CONTACTS;
-            nResID_R = IDS_MENU;
+            nResID_L = IDS_MENU;
+            nResID_R = IDS_STRING_CONTACTS;
             break;
 
             // 菜单-----返回
@@ -2600,8 +2600,8 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
     switch (eBBarType)
     {
         case BTBAR_MENU_CONTACTS:
-            nResID_L = IDS_STRING_CONTACTS;
-            nResID_R = IDS_MENU;
+            nResID_L = IDS_MENU;
+            nResID_R = IDS_STRING_CONTACTS;
             break;
 
         case BTBAR_UNLOCK_SOS:
