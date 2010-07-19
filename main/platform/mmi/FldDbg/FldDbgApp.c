@@ -1152,8 +1152,17 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
   MSG_FATAL("CFieldDebug_OnDialogStart Start", 0, 0, 0);
   switch (wParam) {
     case IDD_TOP_DIALOG:
-    	{
-     	
+    {
+      AECHAR WTitle[10] = {0};
+      (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+      AEE_FLDDBG_RES_FILE,                                
+      IDS_OPTION_TITLE,
+      WTitle,
+      sizeof(WTitle));
+      if(pMe->m_pIAnn != NULL)
+      {
+          IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+      }  	
       pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_SYS_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);

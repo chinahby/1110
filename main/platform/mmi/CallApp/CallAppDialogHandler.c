@@ -546,7 +546,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifdef FEATURE_EDITABLE_NUMBER
             pMe->m_nCursorPos = 0;
 #endif
-
+            
             if(!pMe->m_b_incall)
             {
 #ifdef FEATRUE_SET_IP_NUMBER
@@ -578,7 +578,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-
+            if(pMe->m_pIAnn != NULL)
+            {
+                //²¦ºÅÅÌ²»ÄÜÏÔÊ¾titlebar
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+            }
             if (WSTRLEN(pMe->m_DialString) > 0) //copy from the start info
             {
                 pMe->m_bShowPopMenu = FALSE; // flag of pop menu
@@ -607,7 +612,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             }
             return TRUE;
 
-        case EVT_USER_REDRAW:
+        case EVT_USER_REDRAW:          
 #if defined( FEATURE_CALL_RECORDER)
         	if( pMe->m_bShowPopMenu)
         	{
@@ -658,6 +663,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
+            if(pMe->m_pIAnn != NULL)
+            {
+                //ÍË³ö²¦ºÅÅÌÊ±£¬»Ö¸´titlebar
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+            }
             // TBD - dial string format should be typedef'd
 #ifdef KEYSND_ZY
             ISOUNDPLAYER_Stop(pMe->m_SndPlayer);
@@ -1494,6 +1504,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 case AVK_ENDCALL:
                     //CALL_ERR("AVK_ENDCALL",0,0,0);
                     //if (pMe->m_lastCallState != AEECM_CALL_STATE_IDLE)
+                    MSG_FATAL("CallApp_Dialer_NumEdit_DlgHandler AVK_ENDCALL",0,0,0);
                     if(pMe->m_b_incall )
                     {
                         ICM_EndAllCalls(pMe->m_pICM);

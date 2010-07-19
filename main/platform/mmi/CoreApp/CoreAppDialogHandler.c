@@ -2781,6 +2781,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     {
         case EVT_DIALOG_INIT:
             MSG_FATAL("IDD_IDLE_Handler EVT_DIALOG_INIT",0,0,0);
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
+            }
             MEMSET(pMe->m_wstrEnterNum, 0, sizeof(pMe->m_wstrEnterNum));
             //CoreApp_GetRecordCount(pMe);
             CoreApp_DrawWallPaper(pMe);

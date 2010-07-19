@@ -705,7 +705,6 @@ static int CallApp_InitAppData(CCallApp *pMe)
     {
         return EFAILED;
     }
-    //IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
     if ( SUCCESS != ISHELL_CreateInstance ( pMe->m_pShell,
                                             AEECLSID_MENUCTL,
                                             (void **)&pMe->m_pMenu) )
@@ -940,7 +939,6 @@ static void CallApp_FreeAppData(CCallApp *pMe)
 
     if (pMe->m_pIAnn)
     {
-        //IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn= NULL;
     }
