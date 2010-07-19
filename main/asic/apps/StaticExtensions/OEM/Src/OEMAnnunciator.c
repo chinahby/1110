@@ -1765,8 +1765,6 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
       CancelBlinkTimer (pMe, nAnnunID);
     }
 
-	DBGPRINTF("***zzg DrawImageField nAnnunID=%d***", nAnnunID);
-	
     /* Image field */
     if (DrawImageField(pMe, nAnnunID, (nState & ANNUN_STATE_BLINK_UNMASK)) !=
         SUCCESS)

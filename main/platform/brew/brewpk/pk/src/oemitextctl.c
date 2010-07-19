@@ -1544,10 +1544,8 @@ NormalKeyEvent:
                 return TRUE;
             }  
 #if defined (FEATURE_DISP_160X128)
-            if ((!pme->m_pSoftKey) && 
-                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
-                (wParam == AVK_CAPLK) &&
-                (shortkey == TRUE) &&
+            if ((!pme->m_pSoftKey) && (pme->m_dwProps & TP_STARKEY_SWITCH) &&
+                (wParam == AVK_CAPLK) && (shortkey == TRUE) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
                 {
                     if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH)
