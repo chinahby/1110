@@ -3397,7 +3397,10 @@ int GetSeamlessSMSInfo(char *szInfo, int nSize)
     char* txt;         // destination text
     word temp;         // working buffer
     dword value;       // to store value read from nv
-  
+     int i=0;
+	 
+
+
     if (NULL == szInfo  || nSize<140)
     {
         return -1;
@@ -3407,24 +3410,30 @@ int GetSeamlessSMSInfo(char *szInfo, int nSize)
     GETJULIANDATE(0, &julian);
     
     // 格式化数据：品牌、机型、手机ESN、MDN、MIN、当前软件版本、时间
-    STRCPY(szInfo, "IV;N39;");
+    STRCPY(szInfo, "IV;C500;");
     len = STRLEN(szInfo);
     SPRINTF(&szInfo[len],"%x", mi.dwESN);
     len += STRLEN(&szInfo[len]);
-    
+    szInfo[len]=';';
+    len++;
+        	
     // GetMDN
     nvi.dir_number.nam = nvi.curr_nam;
     if( ui_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S){
         return EFAILED;
     }else{
-        STRLCPY(&szInfo[len], (char *)nvi.dir_number.dir_number, sizeof(nvi.dir_number.dir_number)+1);
+        STRLCPY(&szInfo[len], (char *)nvi.dir_number.dir_number,STRLEN( (char *)nvi.dir_number.dir_number) );/*sizeof(nvi.dir_number.dir_number)+1*/
     }
     len += STRLEN(&szInfo[len]);
-    
+    szInfo[len]=';';
+    len++;
     // GetMIN
     // read MIN2
     txt = &szInfo[len];
-    ui_get_nv(NV_MIN2_I, &nvi);
+    if( ui_get_nv(NV_MIN2_I, &nvi) != NV_DONE_S)
+    {
+    	  return EFAILED;
+    }
     value = nvi.min2.min2[1];
     *txt++ = mintable[ (value/100) %10];
     value %= 100;
@@ -3432,7 +3441,10 @@ int GetSeamlessSMSInfo(char *szInfo, int nSize)
     *txt++ = mintable[ value%10 ];
 
     // read MIN1
-    ui_get_nv(NV_MIN1_I, &nvi);
+     if( ui_get_nv(NV_MIN1_I, &nvi) != NV_DONE_S)
+	{
+ 	  return EFAILED;
+ 	}
     value = nvi.min1.min1[1];
     temp = (word) (value>>14 );
     *txt++ = mintable[ (temp/100) %10];
@@ -3451,11 +3463,20 @@ int GetSeamlessSMSInfo(char *szInfo, int nSize)
     *txt++ = (char)';';
     *txt = (char)0;
     len += STRLEN(&szInfo[len]);
-    
+
     SPRINTF(&szInfo[len], "%s;", ver_modelversion);
     len += STRLEN(&szInfo[len]);
     SPRINTF(&szInfo[len], "%04d%02d%02d%02d%02d", julian.wYear,julian.wMonth,julian.wDay,julian.wHour,julian.wMinute);
     len += STRLEN(&szInfo[len]);
+	
+#define PRINT_SEAMLESS_INFO	
+#ifdef PRINT_SEAMLESS_INFO	
+    for (i=0;i<STRLEN(szInfo);i++)
+    {
+    	MSG_FATAL("~~~~~~~~~~~~~~~~~GetSeamlessSMSInfo: %x",szInfo[i],0,0);
+    }
+#endif
+
     return len;
 }
 
