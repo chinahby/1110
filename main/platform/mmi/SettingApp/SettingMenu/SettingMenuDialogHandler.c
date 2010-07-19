@@ -3723,7 +3723,7 @@ static void SettingMenu_MakeForwardCall(CSettingMenu *pMe,char *Number)
             return ;
         }
         STRTOWSTR(Number, w_buf, sizeof(w_buf));
-        DBGPRINTF("%S MakeVoiceCall",Number,0,0);
+        DBGPRINTF("%s MakeVoiceCall",Number,0,0);
         //(void)MakeVoiceCall(pMe->m_pShell, FALSE, w_buf);
         ICallApp_CallNumber(pCallApp,w_buf);
         if (pCallApp)

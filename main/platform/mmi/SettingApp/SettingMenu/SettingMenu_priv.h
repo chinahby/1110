@@ -277,7 +277,7 @@ typedef struct _CSettingMenu
     uint16           m_sSubDlgId;       //三级菜单位置
     uint16           m_CallSettingSel;
     SET_SHAKE_TYPE            m_shaketype_sel;          // SHAKE类型
-    char             m_callnumber[18];
+    char             m_callnumber[25];
 #ifdef FEATRUE_AUTO_POWER
     uint16           m_auto_power;
     IMenuCtl*        m_pState;
