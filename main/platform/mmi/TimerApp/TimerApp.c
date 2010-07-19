@@ -347,12 +347,20 @@ static boolean InitAppTimer(CAppTimer *pme)
     if(NULL != pme->m_pTime)
     {
         //uint32 dwProps;
-        
+#if 0        
         SETAEERECT( &rect, 
                             (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+2,
                             pme->titleBarHeight + MENUITEM_HEIGHT*2 +  TIMER_SCREEN_YOFFSET - 16,
                             TIMER_SCREEN_WIDTH,
                             0);
+#else
+        SETAEERECT( &rect, 
+                            (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+2,
+                            MENUITEM_HEIGHT*2 +  TIMER_SCREEN_YOFFSET - 16,
+                            TIMER_SCREEN_WIDTH,
+                            0);
+#endif
+
         //SETAEERECT( &rect, 0, (pme->cyScreen - pme->titleBarHeight) / 2 , pme->cxScreen, pme->titleBarHeight*2);
         ITIMECTL_SetRect(pme->m_pTime, &rect);
         ITIMECTL_SetFont(pme->m_pTime, AEE_FONT_BOLD, AEE_FONT_BOLD);
@@ -576,7 +584,11 @@ static int32 AppTimerPromptMessage(CAppTimer *pme)
 #endif
 
 //        DrawPromptMessage( pme->a.m_pIDisplay, pme->pStatic, &parm);
+#if 0
         SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pme->cxScreen, pme->cyScreen - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT);
+#else
+        SETAEERECT(&rc, 0, 0, pme->cxScreen, pme->cyScreen - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT);
+#endif
         Appscommon_ResetBackgroundEx(pme->a.m_pIDisplay, &rc, TRUE);
         if( prompt != NULL)
         {
@@ -594,8 +606,11 @@ static int32 AppTimerPromptMessage(CAppTimer *pme)
             AEEDeviceInfo di;
             RGBVAL nOldFontColor;
             ISHELL_GetDeviceInfo(pme->a.m_pIShell, &di);
-            
+#if 0            
             SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, di.cxScreen, TITLEBAR_HEIGHT);
+#else
+            SETAEERECT(&rc, 0, 0, di.cxScreen, TITLEBAR_HEIGHT);
+#endif
             nOldFontColor = IDISPLAY_SetColor(pme->a.m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
             IDISPLAY_DrawText(pme->a.m_pIDisplay, 
                                 AEE_FONT_NORMAL, 
@@ -1084,7 +1099,11 @@ static void AppTimer_Redraw(CAppTimer *pme)
                                      BTBAR_STOP_BACK};
     
     //draw background
+#if 0    
     SETAEERECT(&rect, 0, pme->titleBarHeight, pme->cxScreen, pme->cyScreen - BOTTOMBAR_HEIGHT);
+#else
+    SETAEERECT(&rect, 0, 0, pme->cxScreen, pme->cyScreen - BOTTOMBAR_HEIGHT);
+#endif
     Appscommon_ResetBackgroundEx(pme->a.m_pIDisplay, &rect, TRUE);
 
     //Draw title bar

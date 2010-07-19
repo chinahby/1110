@@ -263,7 +263,11 @@ static boolean InitStopWatch(CStopWatch *pme)
         StopWatch_Free(pme);
         return FALSE;
     }
+#if 0    
     yMenu        = TITLEBAR_HEIGHT + 1*SPACE_BETWEEN_MENU;
+#else
+    yMenu        = SPACE_BETWEEN_MENU;
+#endif
     dyMenu       = MENUITEM_HEIGHT - SPACE_BETWEEN_MENU;
     xMenu        = SPACE_BETWEEN_MENU + ARROW_WIDTH;
     dxMenu       = pme->m_rc.dx - 2*(SPACE_BETWEEN_MENU + ARROW_WIDTH);
@@ -294,8 +298,11 @@ static boolean InitStopWatch(CStopWatch *pme)
     pme->m_nTicks = 0;
     pme->m_endTimeIndex = 0;
     pme->m_suspending = FALSE;
-
+#if 0
     yMenu = TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT + SPACE_BETWEEN_MENU;
+#else
+    yMenu = 2*MENUITEM_HEIGHT + SPACE_BETWEEN_MENU;
+#endif
     SETAEERECT( &rect, 0, yMenu, pme->m_rc.dx,  pme->m_rc.dy - yMenu);
     IMENUCTL_SetRect(pme->m_pmenu, &rect);
     IMENUCTL_SetOemProperties(pme->m_pmenu, OEMMP_USE_MENU_STYLE);
@@ -344,8 +351,11 @@ static boolean InitStopWatch(CStopWatch *pme)
         IMENUCTL_SetSel(pme->m_pStopWatch,IDS_STOPWATCH2);
         (void) ITIMECTL_SetTimeEx(pme->m_pTime, (int32)pme->timeData.stopWatchTime2, TRUE);
     }
-
+#if 0
     yMenu = TITLEBAR_HEIGHT + MENUITEM_HEIGHT + SPACE_BETWEEN_MENU;
+#else
+    yMenu = MENUITEM_HEIGHT + SPACE_BETWEEN_MENU;
+#endif
     SETAEERECT(&rect, 0, yMenu, pme->m_rc.dx, dyMenu);
     ITIMECTL_SetRect(pme->m_pTime, &rect);
     ITIMECTL_SetOemProperties(pme->m_pTime, OEMMP_USE_MENU_STYLE);
@@ -732,7 +742,11 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
 		case EVT_PEN_UP:
 			{
 				AEERect rc;
+#if 0                
 				int yMenu = TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT;
+#else
+                int yMenu = 2*MENUITEM_HEIGHT;
+#endif
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 				
@@ -805,7 +819,11 @@ static void StopWatch_Redraw(CStopWatch *pme)
     AECHAR                   wszTitle[16] = { 0 };
     BottomBar_e_Type     btbType = 0;
     IImage                    *pImage = NULL;
+#if 0    
     int yArrow               = TITLEBAR_HEIGHT + 2*SPACE_BETWEEN_MENU + (MENUITEM_HEIGHT - ARROW_HEIGHT)/2;
+#else
+    int yArrow               = 2*SPACE_BETWEEN_MENU + (MENUITEM_HEIGHT - ARROW_HEIGHT)/2;
+#endif
 
     //clear background first
     Appscommon_ResetBackgroundEx(pme->a.m_pIDisplay, &pme->m_rc, FALSE);
@@ -857,7 +875,11 @@ static void StopWatch_Redraw(CStopWatch *pme)
     pImage = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_UNDERLINE);
     if(pImage)
     {
+#if 0    
         IIMAGE_Draw(pImage, 0, TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT + 2*SPACE_BETWEEN_MENU);
+#else
+        IIMAGE_Draw(pImage, 0, 2*MENUITEM_HEIGHT + 2*SPACE_BETWEEN_MENU);
+#endif
         IIMAGE_Release(pImage);
     }
     
