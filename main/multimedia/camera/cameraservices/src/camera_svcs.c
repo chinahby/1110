@@ -1339,6 +1339,7 @@ MCNs 10-VF130-21/-22/-23 with new 3MP (Micron sensor) camera, from branch to mai
 #if defined FEATURE_VIDEO_ENCODE || defined FEATURE_QVPHONE
 #include "camcorder_svcs.h"
 #endif //FEATURE_VIDEO_ENCODE || defined FEATURE_QVPHONE
+#include "softdsp.h"
 #include "vfe.h"
 #include "jpege.h"
 #ifdef FEATURE_CAMERA_HJR
@@ -1696,6 +1697,8 @@ static uint32 ui_resolution[2];
 static CAMQDSP_IllegalCommandMessageType illegalCmdMessage;
 static CAMQDSP_AFStatsMessageType        afStatsMessage;
 static CAMQDSP_AE_AWBStatsMessageType    aeAwbStatsMessage;
+#else
+static CAMSoftDSP_IllegalCommandMessageType illegalCmdMessage;
 #endif
 #ifdef FEATURE_CAMERA_AEC_DURING_MULTISHOT
 #error code not present
@@ -1859,7 +1862,7 @@ static VFE_SkipBitMaskType runningOutput2SkipPattern = 0;
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY     2
 #else
-#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     0
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY     2
 #endif
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS \
@@ -2104,7 +2107,7 @@ camsensor_static_params_type camsensor_static_params[NUM_OF_SENSORS_ON_PHONE];
 static uint32 thumbnail_width, ui_thumbnail_width;
 static uint32 thumbnail_height, ui_thumbnail_height;
 static uint32 thumbnail_quality;
-
+#ifndef CAMERA_USES_SOFTDSP
 /* VFE output1 format for preview */
 static camera_format_type camera_preview_format = CAMERA_YCBCR_4_2_0;
 
@@ -2112,11 +2115,19 @@ static camera_format_type camera_preview_format = CAMERA_YCBCR_4_2_0;
  * allow to specify different formats for output1 and output2.
  */
 static camera_format_type camera_snapshot_format = CAMERA_H2V2;
+#else
+/* VFE output1 format for preview */
+static camera_format_type camera_preview_format = CAMERA_RGB565;
+
+/* VFE output1 and output2 format for snapshot. VFE doesn't
+ * allow to specify different formats for output1 and output2.
+ */
+static camera_format_type camera_snapshot_format = CAMERA_RGB565;
+#endif
 static JPEGENC_OrientType camera_jpeg_encode_rotation_format = JPEGENC_CCLK270;
-
+#ifndef CAMERA_USES_SOFTDSP
 static int dsp_camif_error_count = 0;
-
-
+#endif
 
 static camera_ret_code_type camera_svcs_blt_ex
 (
@@ -2218,9 +2229,9 @@ static camera_exposure_compensation_type camera_ev_compensation_table=
    12,         /* Value to convert fraction to index    */
    camera_ev_compensation_one_over_six_table,
 };
-#ifndef CAMERA_USES_SOFTDSP
-static Camera_EndOfFrameMessageType      endOfFrameMessage[2];
 
+static Camera_EndOfFrameMessageType      endOfFrameMessage[2];
+#ifndef CAMERA_USES_SOFTDSP
 //  The global variable below is no longer static
 //  because systems wants to be able to see it with
 //  the Mobile Camera Tuning tool.
@@ -2255,7 +2266,7 @@ typedef struct
 #error code not present
 #endif /* FEATURE_CAMERA_AEC_DURING_MULTISHOT */
 } camera_take_picture_status_type;
-
+#ifndef CAMERA_USES_SOFTDSP
 typedef struct
 {
   boolean  received_camif_error;        /* Variable used to tell whether we received camif error        */
@@ -2273,7 +2284,7 @@ typedef struct
   uint16   fps[FPS_LOG_SIZE];
   boolean  waiting_for_first_output1_frame;
 } camera_output1_frame_rate_type;
-
+#endif
 static camera_take_picture_status_type camera_take_picture_status;
 static clk_cb_type camera_wait_camif_done_clk;
 
@@ -2282,8 +2293,8 @@ static clk_cb_type camera_wait_camif_done_clk;
 #endif /* FEATURE_CAMERA_AEC_DURING_MULTISHOT */
 #ifndef CAMERA_USES_SOFTDSP
 static camera_dsp_error_status_type camera_dsp_error_status;
-#endif
 static camera_output1_frame_rate_type camera_output1_frame_rate;
+#endif
 
 typedef enum
 {
@@ -2489,6 +2500,10 @@ static void camera_process_qdsp_config_done_msg (CAMQDSP_VideoEncStateType *x);
 static void camera_process_qdsp_illegal_cmd_msg (void);
 static void camera_process_qdsp_update_complete_msg (void);
 static void camera_process_qdsp_hist_stats_complete_msg (void);
+#else
+static void  camera_process_softdsp_output1_msg (Camera_EndOfFrameMessageType *msg);
+static void  camera_process_softdsp_output2_msg (Camera_EndOfFrameMessageType *msg);
+static void camera_process_softdsp_illegal_cmd_msg (void);
 #endif
 static void camera_wait_clk_cb (int4 ms);
 #ifdef HANDLE_CAMIF_ERROR
@@ -2514,6 +2529,8 @@ boolean camera_config_vfe(void);
 void    camera_qdsp_cb (CAMQDSP_ResponseType *response);
 static void camera_calculate_vfe_clipping (void);
 static void camera_calculate_ahb_burst_factors (uint32 *burst_factor1, uint32 *burst_factor2, uint32 image_size);
+#else
+void camera_softdsp_cb (CAMSoftDSP_ResponseType *response);
 #endif
 #ifdef FEATURE_CAMERA_LPM
 #error code not present
@@ -3262,7 +3279,7 @@ void camera_svcs_init(void)
   /* renamed. This used to be vfe_features_auto_detect() */
   vfe_init ();
 #else
-  // TODO:
+  SoftDSP_Init();
 #endif
 #endif /* nT_IO_CARD */
 }
@@ -3387,8 +3404,9 @@ camera_ret_code_type camera_svcs_start
   camera_timer_up = TRUE;
   camera_log (LOG_FUNC, (uint32)CAMERA_FUNC_START, 0, 0, __LINE__);
   MSG_HIGH("camera_start, camera_state %d", camera_state, 0, 0);
+#ifndef CAMERA_USES_SOFTDSP
   dsp_camif_error_count = 0;
-
+#endif
   if (camera_state != CAMERA_STATE_INIT)
   {
     if (callback)
@@ -9144,7 +9162,24 @@ void camera_svcs_process_qdsp_msg (uint32 msg, void *buffer)
 #error code not present
 #endif /* CAMERA_TIMETEST */
 #else //#ifndef CAMERA_USES_SOFTDSP
-    // TODO:
+  CAMSoftDSP_ResponseMsgType qdsp_msg = (CAMSoftDSP_ResponseMsgType) msg;
+  switch (qdsp_msg)
+  {
+    case CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME:
+      camera_process_softdsp_output1_msg ((Camera_EndOfFrameMessageType *) buffer);
+      break;
+      
+    case CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME:
+      camera_process_softdsp_output2_msg ((Camera_EndOfFrameMessageType *) buffer);
+      break;
+      
+    case CAMSOFTDSP_MSG_ILLEGAL_COMMAND:
+      camera_process_softdsp_illegal_cmd_msg ();
+      break;
+      
+    default:
+      break;
+  }
 #endif //#ifndef CAMERA_USES_SOFTDSP
 } /* camera_process_qdsp_msg */
 
@@ -10906,8 +10941,8 @@ static void camera_process_start_preview
   MSG_CAMERADEBUG("CAMERA_SVCS: Set camera_state=CAMERA_STATE_PREVIEW", 0, 0, 0);
   camera_state = CAMERA_STATE_PREVIEW;
   camera_camsensor_op_mode = CAMSENSOR_OP_MODE_PREVIEW;
-  camera_output1_frame_rate.waiting_for_first_output1_frame = FALSE;
 #ifndef CAMERA_USES_SOFTDSP
+  camera_output1_frame_rate.waiting_for_first_output1_frame = FALSE;
   camera_dsp_command = CAMQDSP_CMD_MAX;
 #endif
 #ifndef FEATURE_CAMERA_REGISTER_CLOCK_RESOURCE_III
@@ -11463,7 +11498,7 @@ static void camera_display_async_cb(void * cb_arg, MDP_STATUS status)
 }
 #endif /* FEATURE_MDP */
 
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_CALCULATE_OUTPUT1_FRAMERATE
@@ -11510,6 +11545,7 @@ static void camera_calculate_output1_framerate (void)
     camera_output1_frame_rate.count = 0;
   }
  } /* camera_calculate_output1_framerate */
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_PROCESS_RELEASE_FRAME
@@ -11559,7 +11595,9 @@ static void camera_process_release_frame (uint8 buffer_index)
       return;
     }
   }
+#ifndef CAMERA_USES_SOFTDSP
   camera_calculate_output1_framerate();
+#endif
   /* Set the already displayed buffer to AVAILABLE and also to be the acknowledgement buffer */
   camera_preview_set_buffer_status(buffer_index, AVAILABLE);
   MSG_CAMERAPBUF("PBUF process_release_frame, SET buffer %d AVAILABLE",
@@ -14221,7 +14259,6 @@ static void camera_process_qdsp_update_complete_msg (void)
 
 
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
-#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_PROCESS_QDSP_AE_AWB_STATS_COMPLETE_MSG
@@ -14284,7 +14321,6 @@ static void camera_process_qdsp_ae_awb_stats_complete_msg (CAMQDSP_AE_AWBStatsMe
 
 
 } /* camera_process_qdsp_ae_awb_stats_complete_msg */
-#endif
 #endif /* FEATURE_CAMERA_YCBCR_ONLY */
 
 /*===========================================================================
@@ -14314,6 +14350,284 @@ static void camera_process_qdsp_hist_stats_complete_msg (void)
 
 
 }
+#else
+
+/*===========================================================================
+
+FUNCTION      CAMERA_SVCS_ACK_SOFTDSP_OUTPUT1
+
+DESCRIPTION
+              Send VFE acknowledgement during preview
+
+DEPENDENCIES
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+static void camera_svcs_ack_softdsp_output1 (void)
+{
+  uint32 current_buffer;
+  
+  /* Check if VFE has less than 3 buffers, if it does, send acknowledgement */
+  if (camera_preview_buffers.num_buffers_with_VFE < CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE)
+  {
+    /* select the available buffer if the display has not released frame yet */
+    for (current_buffer = 0; current_buffer < CAMERA_NUM_OF_PREVIEW_BUFFERS; current_buffer++)
+    {
+      if (camera_preview_buffers.buffers[current_buffer].status == AVAILABLE)
+      {
+          (void) SoftDSP_Ack1(camera_preview_buffers.buffers[current_buffer].buf_ptr+qcamraw_header_size);
+          camera_preview_set_buffer_status(current_buffer, BUSY_WITH_VFE);
+        break;
+      }
+    }
+  }
+}
+
+/*===========================================================================
+
+FUNCTION      CAMERA_PROCESS_SOFTDSP_OUTPUT1_MSG
+
+DESCRIPTION
+  Data along output1 path. Preview uses output1 path for display.
+  Handles QDSP events in graph task context. In the snapshot mode,
+  thumbnail is configured on output1.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+
+static void  camera_process_softdsp_output1_msg (Camera_EndOfFrameMessageType *msg)
+{
+#ifdef FEATURE_PMIC_FLASH_LED_DRIVER
+  pm_err_flag_type errFlag = PM_ERR_FLAG__SUCCESS;
+#endif  /* FEATURE_PMIC_FLASH_LED_DRIVER */
+  CAMSoftDSP_EndOfFrameMessageType *eof_msg = &msg->eof_msg;
+  camera_frame_type frame;
+  
+  qcamrawHeaderType *header = (qcamrawHeaderType *)
+    ((uint32)eof_msg->pBuff - qcamraw_header_size);
+  
+  if ((camera_state == CAMERA_STATE_READY) ||
+      (camera_state == CAMERA_STATE_INIT) ||
+      (camera_stopping)) 
+  {
+    MSG_ERROR("CAMERA_SVCS: Output1 Msg received in camera_state %d, camera_dsp_state %d. Ignoring",
+              camera_state, camera_dsp_state,0);
+    return;
+  }
+  
+  if(camera_camsensor_op_mode == CAMSENSOR_OP_MODE_RAW_SNAPSHOT)
+  {
+    MSG_ERROR("CAMERA_SVCS: Output1 Msg received in camera_camsensor_op_mode %d.Ignoring", camera_camsensor_op_mode ,0,0);
+	return;
+  } 
+  
+  camera_preview_set_buffer_status(header->buffer_index, AVAILABLE);
+  
+#ifdef ANY_FLASH
+#ifdef FEATURE_CAMERA_BURST_MODE
+#error code not present
+#else
+  if ((camera_state == CAMERA_STATE_TAKE_PICTURE) && camera_fire_flash)
+#endif /* FEATURE_CAMERA_BURST_MODE */
+  {
+#ifdef FEATURE_CAMERA_BURST_MODE
+#error code not present
+#endif /* FEATURE_CAMERA_BURST_MODE */
+#ifdef FEATURE_WHITE_LED_FLASH
+#ifdef FEATURE_PMIC_FLASH_LED_DRIVER
+      errFlag |= pm_flash_led_set_current(PMIC_FLASH_CURRENT_DOWN);
+      if (errFlag != PM_ERR_FLAG__SUCCESS)
+      {
+        // DM message sent
+        MSG_ERROR("PMIC error", 0, 0, 0);
+      }
+#else
+     /* turoff white LED */
+#ifdef CAMERA_USE_GPIO_TLMM_FOR_CAMIF_FLASH
+     gpio_out(CAMIF_FLASH, GPIO_LOW_VALUE);
+#else
+     BIO_TRISTATE(BIO_USB_SUSPEND_REG, BIO_USB_SUSPEND_M, BIO_USB_SUSPEND_M);
+     BIO_OUT(BIO_USB_SUSPEND_REG, BIO_USB_SUSPEND_M, BIO_USB_SUSPEND_OFF_V);
+#endif  /* CAMERA_USE_GPIO_TLMM_FOR_CAMIF_FLASH */
+#endif /* FEATURE_PMIC_FLASH_LED_DRIVER */
+#endif /* FEATURE_WHITE_LED_FLASH */
+
+#ifdef FEATURE_STROBE_FLASH
+      strobe_flash_stop_trigger();
+      strobe_flash_start_charging();
+      camsensor_static_params[camera_asi].aec_enable = TRUE;
+#endif /* FEATURE_STROBE_FLASH */
+      camera_flash_fired = FALSE;
+#ifdef FEATURE_CAMERA_BURST_MODE
+#error code not present
+#endif /* FEATURE_CAMERA_BURST_MODE */
+  }
+#endif /* ANY_FLASH */
+
+#ifdef CAMERA_TIMETEST
+#error code not present
+#endif /* CAMERA_TIMETEST */
+
+  if (camera_abort_picture)
+  {
+    /* To reconfigure or abort, go back to idle first */
+    camera_take_images = FALSE;
+    if (SoftDSP_Stop () != 0)
+    {
+      camera_terminate (CAMERA_EXIT_CB_DSP_ABORT, (int)CAMERA_ERROR_CONFIG);
+      event_report (EVENT_CAMERA_CANNOT_IDLE_DSP);
+    }
+    return;
+  }
+
+  if (!camera_take_images) return;
+  
+  if (camera_state == CAMERA_STATE_PREVIEW)
+  {
+    if (camera_frame_callback_enabled && camera_app_cb &&
+             (camera_preview_buffers.num_buffers_with_display <
+              CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY)
+            )
+    {
+      /* Callback is enabled and callback present, do callback if
+       * display has less than 2 buffers at the moment.
+       */
+      frame.format   = camera_preview_format;
+      frame.dx       = camera_preview_dx;
+      frame.dy       = camera_preview_dy;
+      frame.rotation = camera_default_preview_rotation;
+      frame.buffer   = (byte *) ((uint32) eof_msg->pBuff - qcamraw_header_size);
+
+      camera_preview_set_buffer_status (header->buffer_index, BUSY_WITH_APP);
+      (camera_app_cb) (CAMERA_EVT_CB_FRAME, camera_app_data, camera_func,
+                       (int32) (&frame));
+    }
+    /* Send acknowledgement if VFE has less than 3 buffers */
+    camera_svcs_ack_softdsp_output1();
+  }
+  else if (camera_state == CAMERA_STATE_TAKE_PICTURE)
+  {
+    /* Thumbnail */
+    snapshot_frame.format            = camera_snapshot_format;
+    snapshot_frame.dx                = camera_preview_dx;
+    snapshot_frame.dy                = camera_preview_dy;
+    snapshot_frame.rotation          = camera_parm_encode_rotation.current_value;
+    snapshot_frame.thumbnail_image   = thumbnail_luma_buf;
+    camera_take_picture_status.received_output1 = TRUE;
+
+    if ((camera_state == CAMERA_STATE_TAKE_PICTURE) &&
+        (camera_camsensor_op_mode == CAMSENSOR_OP_MODE_SNAPSHOT) &&
+        (camera_take_picture_status.received_camif_done == TRUE) &&
+        (camera_take_picture_status.received_output2 == TRUE)
+       )
+    {
+      if (camera_take_picture_status.abort)
+      {
+        camera_svcs_queue_call_to_terminate();
+      }
+      else
+      {
+        clk_dereg(&camera_wait_camif_done_clk);
+        camera_handle_frames_for_takepicture();
+      }
+    }
+  }
+} /*  camera_process_qdsp_output1_msg */
+
+
+/*===========================================================================
+
+FUNCTION      CAMERA_PROCESS_QDSP_OUTPUT2_MSG
+
+DESCRIPTION
+              Handles QDSP events in graph task context.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+
+static void camera_process_softdsp_output2_msg (Camera_EndOfFrameMessageType *msg)
+{
+  CAMSoftDSP_EndOfFrameMessageType *eof_msg = &msg->eof_msg;
+  
+  if ((camera_state == CAMERA_STATE_READY) ||
+      (camera_state == CAMERA_STATE_INIT) ||
+      (camera_stopping))
+  {
+    MSG_ERROR("CAMERA_SVCS: Output2 Msg received in camera_state %d, camera_dsp_state %d. Ignoring",
+              camera_state, camera_dsp_state, 0);
+    return;
+  }
+  
+  if (camera_state == CAMERA_STATE_TAKE_PICTURE)
+  {
+    camera_take_picture_status.received_output2 = TRUE;
+    camera_take_picture_status.Y_Address    = (uint32 *)eof_msg->pBuff;
+    camera_take_picture_status.CbCr_Address = NULL;
+    if (( (camera_camsensor_op_mode == CAMSENSOR_OP_MODE_SNAPSHOT) &&
+          (camera_take_picture_status.received_output1 == TRUE) &&
+          (camera_take_picture_status.received_camif_done == TRUE)
+        ) ||
+        ( (camera_camsensor_op_mode == CAMSENSOR_OP_MODE_RAW_SNAPSHOT)&&
+          (camera_take_picture_status.received_camif_done == TRUE))
+        )
+    {
+      /* Stop the wait_camif_done clock now we have all */
+      clk_dereg(&camera_wait_camif_done_clk);
+    }
+
+    /* main image */
+    snapshot_frame.format       = camera_snapshot_format;
+    snapshot_frame.captured_dx  = camera_dx;
+    snapshot_frame.captured_dy  = camera_dy;
+    snapshot_frame.buffer       = (byte *) (snapshot_luma_buf);
+    
+    if (
+        ((camera_camsensor_op_mode == CAMSENSOR_OP_MODE_SNAPSHOT) &&
+         (camera_take_picture_status.received_output1 == TRUE) &&
+         (camera_take_picture_status.received_camif_done == TRUE)
+        ) ||
+        ((camera_camsensor_op_mode == CAMSENSOR_OP_MODE_RAW_SNAPSHOT)&&
+         (camera_take_picture_status.received_camif_done == TRUE))
+        )
+    {
+      if (camera_take_picture_status.abort)
+      {
+        camera_svcs_queue_call_to_terminate();
+      }
+      else
+      {
+        camera_handle_frames_for_takepicture();
+      }
+    }
+  }
+} /* camera_process_qdsp_output2_msg */
+
+static void camera_process_softdsp_illegal_cmd_msg (void)
+{
+  event_report (EVENT_CAMERA_DSP_REQ_ILLEGAL);
+  camera_terminate(CAMERA_EXIT_CB_FAILED, 0);
+} /* camera_process_qdsp_illegal_cmd_msg */
+
 #endif //#ifndef CAMERA_USES_SOFTDSP
 
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
@@ -15558,6 +15872,18 @@ void camera_set_preview_headers(void)
     cbcrsize_encode = camera_dx * camera_dy;
     y_pad_encode    = y_size_encode % 4;
     break;
+#ifdef CAMERA_USES_SOFTDSP
+  case CAMERA_RGB565:
+    data_type = QCAMRAW_RGB565;
+    y_size    = camera_preview_dx * camera_preview_dy;
+    y_pad     = y_size % 4;
+    cbcrsize  = camera_preview_dx * camera_preview_dy;
+
+    y_size_encode   = camera_dx * camera_dy;
+    cbcrsize_encode = camera_dx * camera_dy;
+    y_pad_encode    = y_size_encode % 4;
+    break;
+#endif
   default:
      MSG_ERROR ("Unsupported preview format %d.", camera_preview_format, 0, 0);
      return;
@@ -16870,6 +17196,36 @@ void camera_qdsp_cb (CAMQDSP_ResponseType *response)
      graph_queue_camqdsp_msg (response->responseMsg, 0, 0);
   }
 } /* camera_qdsp_cb */
+
+#else // #ifndef CAMERA_USES_SOFTDSP
+
+void camera_softdsp_cb (CAMSoftDSP_ResponseType *response)
+{
+  switch (response->responseMsg)
+  {
+  case CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME:
+    /* Reset so error can be reported for the next frame */
+    endOfFrameMessage[0].eof_msg = response->responsePayload.endOfFrame;
+    endOfFrameMessage[0].time = timetick_get_ms();
+    graph_queue_camqdsp_msg (response->responseMsg, (void *) &endOfFrameMessage[0], 0);
+    break;
+    
+  case CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME:
+    endOfFrameMessage[1].eof_msg = response->responsePayload.endOfFrame;
+    endOfFrameMessage[1].time = timetick_get_ms();
+    graph_queue_camqdsp_msg (response->responseMsg, (void *) &endOfFrameMessage[1], 0);
+    break;
+    
+  case CAMSOFTDSP_MSG_ILLEGAL_COMMAND:
+     illegalCmdMessage = response->responsePayload.illegalCmd;
+     graph_queue_camqdsp_msg (response->responseMsg, (void *) &illegalCmdMessage, 0);
+     break;
+     
+  default:
+     graph_queue_camqdsp_msg (response->responseMsg, 0, 0);
+  }
+} /* camera_softdsp_cb */
+
 #endif // #ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 FUNCTION      CAMERA_SET_EXIF_MAKE_MODEL
@@ -18374,11 +18730,12 @@ static uint32 camera_calculate_skip_pattern(uint32 input_sensor_rate,
   return result;
 
 }
-#endif
+
 uint16  camera_recent_fps( void )
 {
   return camera_output1_frame_rate.last_fps;
 }
+#endif
 
 /*===========================================================================
 

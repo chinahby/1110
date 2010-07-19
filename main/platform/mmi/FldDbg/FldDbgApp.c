@@ -2839,7 +2839,7 @@ static boolean CFieldDebug_ClearEFSHandleEvent(CFieldDebug * pme,
          }
 
 #endif
-         if (!(WSTRCMP(input_txt, yes_txt))) { // if the user types Yes
+         if (!(WSTRICMP(input_txt, yes_txt))) { // if the user types Yes
 #ifdef FEATURE_ICM
            ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_OFFLINE);
 #else

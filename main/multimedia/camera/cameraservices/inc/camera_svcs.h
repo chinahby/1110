@@ -48,6 +48,7 @@
 #include "vfe.h"
 #include "camsensor.h"
 #include "sleep.h"
+#include "softdsp.h"
 
 /*============================================================================
 *                         STRUCTURE DEFINITIONS
@@ -128,6 +129,12 @@ typedef struct Camera_EndOfFrameMessageType
 {
   CAMQDSP_EndOfFrameMessageType   eof_msg;
   uint32                          time;
+} Camera_EndOfFrameMessageType;
+#else
+typedef struct Camera_EndOfFrameMessageType
+{
+  CAMSoftDSP_EndOfFrameMessageType   eof_msg;
+  uint32                             time;
 } Camera_EndOfFrameMessageType;
 #endif
 typedef enum

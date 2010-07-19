@@ -81,7 +81,12 @@ when         who     what, where, why
 /*************************************************************/
 /*                     DEFINES                               */
 /*************************************************************/
+#ifndef T_QSC1100
 #define SDCC_RETRY_CNT              1
+#else
+#define SDCC_RETRY_CNT              3
+#endif
+
 #define SDCC_CMD8_RETRIES           3
 
 /* Per section 6.4.1 in SD2.0 System Specification, */

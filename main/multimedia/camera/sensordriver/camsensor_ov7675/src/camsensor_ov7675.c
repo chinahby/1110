@@ -12,6 +12,7 @@
 /*============================================================================
 	TYPE DEFINITIONS 
 ============================================================================*/
+#define OV7675_OUTFORMAT_RGB565
 
 // sensor's chip ID and version
 #define OV7675_SENSOR_ID       				(0x76)
@@ -213,9 +214,16 @@ static boolean initialize_ov7675_registers(void)
     // Initail Sequence Write In.
     // Set Format
     ov7675_i2c_write_byte(0x11,0x00);//时钟分频 = MCLK
+#ifdef OV7675_OUTFORMAT_RGB565
+    ov7675_i2c_write_byte(0x40,0xD0);//RGB565格式
+    ov7675_i2c_write_byte(0x8C,0x00);//禁止RGB444
+    ov7675_i2c_write_byte(0x3D,0xC0);//GAMMA允许，UV饱和度自动调整
+    ov7675_i2c_write_byte(0x12,0x14);//输出格式RGB,QVGA选择
+#else
     ov7675_i2c_write_byte(0x3a,0x0C);//YUV输出顺序
     ov7675_i2c_write_byte(0x3D,0xC0);//GAMMA允许，UV饱和度自动调整
     ov7675_i2c_write_byte(0x12,0x00);//输出格式YUV
+#endif
     ov7675_i2c_write_byte(0x15,0x40);//设置HREF为HYNC
     ov7675_i2c_write_byte(0xc1,0x7f);//测试模式?
     
@@ -230,7 +238,8 @@ static boolean initialize_ov7675_registers(void)
     ov7675_i2c_write_byte(0x0c,0x00);//通用控制寄存器3 待机时钟数据输出三态设置
     ov7675_i2c_write_byte(0x3e,0x00);//通用控制寄存器14 PCLK分频和控制
     ov7675_i2c_write_byte(0x70,0x3a);//SCALING_XSC
-    ov7675_i2c_write_byte(0x71,0x35);//SCALING_YSC
+    //ov7675_i2c_write_byte(0x71,0x35);//SCALING_YSC
+    ov7675_i2c_write_byte(0x71,0xB5);//SCALING_YSC,输出测试彩条
     ov7675_i2c_write_byte(0x72,0x11);//测试模式
     ov7675_i2c_write_byte(0x73,0xf0);//测试模式
     ov7675_i2c_write_byte(0xa2,0x02);//测试模式
