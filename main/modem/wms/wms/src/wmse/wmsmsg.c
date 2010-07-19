@@ -3667,101 +3667,120 @@ wms_cmd_err_e_type wms_msg_do_write
                                    & msg_ptr->u.cdma_message.raw_ts,
                                    & ruim_sms.ota ) == WMS_OK_S )
         {
-          ruim_sms.status = (uint8) msg_ptr->msg_hdr.tag;
-          if( wms_ts_cdma_pack_ruim_sms( & ruim_sms, ruim_data ) == FALSE )
+          //add by yangdecai
+          MSG_FATAL("::::::::add by yangdecai ::%d",msg_ptr->u.cdma_message.concat_8.total_sm,0,0);
+		  MSG_FATAL("cfg_s_ptr->ruim_max_slots=%d,i=%d",cfg_s_ptr->ruim_max_slots,i,0);
+          if((cfg_s_ptr->ruim_max_slots-i)<msg_ptr->u.cdma_message.concat_8.total_sm)
           {
-            cmd_err = WMS_CMD_ERR_MSG_ENCODE;
+          		cmd_err = WMS_CMD_ERR_MSG_MEMORY_FULL;
+          		wms_cfg_do_memory_full( WMS_MEMORY_STORE_RUIM );
           }
+          //add by yangdecai  end
+          if(cmd_err == WMS_CMD_ERR_NONE)
+	      {
+	          ruim_sms.status = (uint8) msg_ptr->msg_hdr.tag;
+	          if( wms_ts_cdma_pack_ruim_sms( & ruim_sms, ruim_data ) == FALSE )
+	          {
+	            cmd_err = WMS_CMD_ERR_MSG_ENCODE;
+	          }
 #if (defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT))
-          /* Check if this is a prl update, if so another read must be invoked
-          ** to get the correct user data from the card.
-          */
-          else if(wms_ts_decode(&msg_ptr->u.cdma_message.raw_ts,
-                                &client_ts) != WMS_OK_S)
-          {
-            cmd_err = WMS_CMD_ERR_MSG_DECODE;
-          }
-          else
-          {
-            if((client_ts.u.cdma.mask & WMS_MASK_BD_DISPLAY_MODE) &&
-               (client_ts.u.cdma.display_mode == WMS_DISPLAY_MODE_RESERVED) &&
-               (client_ts.u.cdma.download_mode == WMS_DOWNLOAD_MODE_UPDATE_PRL))
-            {
-              /* This message contains a PRL Update, set the appropriate flag
-              ** when doing the write.
-              */
-              if(!(wms_ruim_write_sms(i, ruim_data, TRUE)))
-              {
-                cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
-              }
+	          /* Check if this is a prl update, if so another read must be invoked
+	          ** to get the correct user data from the card.
+	          */
+	          else if(wms_ts_decode(&msg_ptr->u.cdma_message.raw_ts,
+	                                &client_ts) != WMS_OK_S)
+	          {
+	            cmd_err = WMS_CMD_ERR_MSG_DECODE;
+	          }
+	          else
+	          {
+	          	
+	          	
+	            if((client_ts.u.cdma.mask & WMS_MASK_BD_DISPLAY_MODE) &&
+	               (client_ts.u.cdma.display_mode == WMS_DISPLAY_MODE_RESERVED) &&
+	               (client_ts.u.cdma.download_mode == WMS_DOWNLOAD_MODE_UPDATE_PRL)&&
+	               cmd_err == WMS_CMD_ERR_NONE)
+	            {
+	              /* This message contains a PRL Update, set the appropriate flag
+	              ** when doing the write.
+	              */
+	              if(!(wms_ruim_write_sms(i, ruim_data, TRUE)))
+	              {
+	                cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
+	              }
 #ifdef CUST_EDITION				  
-              // 亚太宽频粉红色卡更新成功后提示字符串不完整
+	              // 亚太宽频粉红色卡更新成功后提示字符串不完整
 #ifdef FEATURE_CARRIER_TAIWAN_APBW
-              else
-              {
-                extern boolean ChkUpdate(uint8 *ruimdata);
-                
-                if (ChkUpdate(ruim_data))
-                {
-                   (void)wms_ruim_write_sms(i, ruim_data, FALSE);
-                }
-              }
+	              else
+	              {
+	                extern boolean ChkUpdate(uint8 *ruimdata);
+	                
+	                if (ChkUpdate(ruim_data))
+	                {
+	                   (void)wms_ruim_write_sms(i, ruim_data, FALSE);
+	                }
+	              }
 #endif
 #endif /*CUST_EDITION*/
-            }
-            else
-            {
-              /* not a PRL update, do a regular write */
-              if(!(wms_ruim_write_sms(i, ruim_data, FALSE)))
-              {
-                cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
-              }
-            }
-          }
+	            }
+	            else
+	            {
+	              /* not a PRL update, do a regular write */
+	              if(!(wms_ruim_write_sms(i, ruim_data, FALSE)))
+	              {
+	                cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
+	              }
+	            }
+	          }
 
-          if(cmd_err == WMS_CMD_ERR_NONE)
+	          if(cmd_err == WMS_CMD_ERR_NONE)
 #else
-          else if( wms_ruim_write_sms( i, ruim_data, FALSE ) != TRUE )
-          {
-            cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
-          }
-          else
+	          else if( wms_ruim_write_sms( i, ruim_data, FALSE ) != TRUE )
+	          {
+	            cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
+	          }
+	          else
 #endif /* defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT) */
-          {
+	          {
 #ifdef CUST_EDITION
 #if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
-              /* Add new Message Information Cache */
-              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
-                                  WMS_MEMORY_STORE_RUIM,
-                                  i,
-                                  ruim_data,
-                                  (uint8)cfg_s_ptr->ruim_sms_rec_len);
+	              /* Add new Message Information Cache */
+	              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
+	                                  WMS_MEMORY_STORE_RUIM,
+	                                  i,
+	                                  ruim_data,
+	                                  (uint8)cfg_s_ptr->ruim_sms_rec_len);
 #endif            
 #endif // #ifdef CUST_EDITION
-            /* RUIM write was successful, update message list
-            */
-            cfg_s_ptr->ruim_tags[i] = (wms_message_tag_e_type)ruim_sms.status;
-            msg_ptr->msg_hdr.index  = i;
+	            /* RUIM write was successful, update message list
+	            */
+	            cfg_s_ptr->ruim_tags[i] = (wms_message_tag_e_type)ruim_sms.status;
+	            msg_ptr->msg_hdr.index  = i;
 
-            /* Update the duplicate detection info cache if this is a MT msg. */
-            if(WMS_IS_MT(cfg_s_ptr->ruim_tags[i]))
-            {
-              if(wms_ts_decode_bearer_data(&msg_ptr->u.cdma_message.raw_ts,
-                                           &cdma_tl.cl_bd) != WMS_OK_S)
-              {
-                MSG_ERROR("Decode CDMA_bd failed", 0, 0, 0);
-                cmd_err = WMS_CMD_ERR_MSG_DECODE;
-              }
-              /* Check if this message is already in the cache */
-              else if(wms_msg_cdma_check_dups(&cdma_tl) == FALSE)
-              {
-                /* Update the duplicate detection cache */
-                wms_cfg_update_dup_info_cache(msg_ptr->msg_hdr.mem_store,
-                                              i,
-                                              &cdma_tl);
-              }
-            }
+	            /* Update the duplicate detection info cache if this is a MT msg. */
+	            if(WMS_IS_MT(cfg_s_ptr->ruim_tags[i]))
+	            {
+	              if(wms_ts_decode_bearer_data(&msg_ptr->u.cdma_message.raw_ts,
+	                                           &cdma_tl.cl_bd) != WMS_OK_S)
+	              {
+	                MSG_ERROR("Decode CDMA_bd failed", 0, 0, 0);
+	                cmd_err = WMS_CMD_ERR_MSG_DECODE;
+	              }
+	              /* Check if this message is already in the cache */
+	              else if(wms_msg_cdma_check_dups(&cdma_tl) == FALSE)
+	              {
+	                /* Update the duplicate detection cache */
+	                wms_cfg_update_dup_info_cache(msg_ptr->msg_hdr.mem_store,
+	                                              i,
+	                                              &cdma_tl);
+	              }
+	            }
+	          }
           }
+		  else
+		  {
+		  	  break;
+		  }
         }
       }
       break;
@@ -3769,11 +3788,12 @@ wms_cmd_err_e_type wms_msg_do_write
 
 
     case WMS_MEMORY_STORE_NV_CDMA:
+	{
+	  int nMin, nMax;
       if( write_mode == WMS_WRITE_MODE_INSERT )
       {
 #ifdef CUST_EDITION		  
-        int nMin, nMax;
-        
+
         switch (msg_ptr->msg_hdr.tag)
         {
             // 收件箱
@@ -3874,85 +3894,101 @@ wms_cmd_err_e_type wms_msg_do_write
           /* 1: tag/status                */
           /* 2: len                       */
           /* 3+: data                     */
-          ruim_data[0] = (uint8) msg_ptr->u.cdma_message.raw_ts.format;
-          ruim_data[1] = (uint8)msg_ptr->msg_hdr.tag;
-          ruim_data[2] = (uint8)ruim_sms.ota.data_len;
-          memcpy( ruim_data+3, (void*)ruim_sms.ota.data, ruim_sms.ota.data_len );
+		  //add by yangdecai
+		  MSG_FATAL("::::::::add by yangdecai ::%d",msg_ptr->u.cdma_message.concat_8.total_sm,0,0);
+		  MSG_FATAL("::::::::::::::::::nMax=%d,i=%d",nMax,i,0);
+		  if((nMax-i)<msg_ptr->u.cdma_message.concat_8.total_sm)
+		  	{
+		  		 MSG_FATAL("NV_CDMA_MAX_SLOTS is full.......................",0,0,0);
+		  		 cmd_err = WMS_CMD_ERR_MSG_MEMORY_FULL;
+          		 wms_cfg_do_memory_full( WMS_MEMORY_STORE_NV_CDMA );
+		  	}
+		  if(cmd_err == WMS_CMD_ERR_NONE)
+		  {
+	          ruim_data[0] = (uint8) msg_ptr->u.cdma_message.raw_ts.format;
+	          ruim_data[1] = (uint8)msg_ptr->msg_hdr.tag;
+	          ruim_data[2] = (uint8)ruim_sms.ota.data_len;
+	          memcpy( ruim_data+3, (void*)ruim_sms.ota.data, ruim_sms.ota.data_len );
 #ifdef CUST_EDITION
-          {
-             int nPos = 2+ruim_sms.ota.data_len;
-             ruim_data[nPos+1] = msg_ptr->u.cdma_message.concat_8.msg_ref;
-             ruim_data[nPos+2] = msg_ptr->u.cdma_message.concat_8.total_sm;
-             ruim_data[nPos+3] = msg_ptr->u.cdma_message.concat_8.seq_num;
-          }
+	          {
+	             int nPos = 2+ruim_sms.ota.data_len;
+	             ruim_data[nPos+1] = msg_ptr->u.cdma_message.concat_8.msg_ref;
+	             ruim_data[nPos+2] = msg_ptr->u.cdma_message.concat_8.total_sm;
+	             ruim_data[nPos+3] = msg_ptr->u.cdma_message.concat_8.seq_num;
+	          }
 #endif
-          if(write_mode == WMS_WRITE_MODE_INSERT)
-          {
-            if( wms_nv_write_cdma_sms( i, ruim_data ) == FALSE )
-            {
-              cmd_err = WMS_CMD_ERR_MSG_NV_WRITE;
-            }
-            else
-            {
+	          if(write_mode == WMS_WRITE_MODE_INSERT && cmd_err == WMS_CMD_ERR_NONE)
+	          {
+	            if( wms_nv_write_cdma_sms( i, ruim_data ) == FALSE )
+	            {
+	              cmd_err = WMS_CMD_ERR_MSG_NV_WRITE;
+	            }
+	            else
+	            {
 #ifdef CUST_EDITION
 #if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
-              /* Update Message Information Cache */
-              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
-                                  WMS_MEMORY_STORE_NV_CDMA,
-                                  i,
-                                  ruim_data,
-                                  WMS_MAX_LEN);
+	              /* Update Message Information Cache */
+	              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
+	                                  WMS_MEMORY_STORE_NV_CDMA,
+	                                  i,
+	                                  ruim_data,
+	                                  WMS_MAX_LEN);
 #endif                                  
 #endif
-              /* NV write was successful, update message list
-              */
-              cfg_s_ptr->nv_cdma_tags[i]  = msg_ptr->msg_hdr.tag;
-              msg_ptr->msg_hdr.index      = i;
+	              /* NV write was successful, update message list
+	              */
+	              cfg_s_ptr->nv_cdma_tags[i]  = msg_ptr->msg_hdr.tag;
+	              msg_ptr->msg_hdr.index      = i;
 
-              /* Update the duplicate detection info cache if this is a MT msg. */
-              if(WMS_IS_MT(cfg_s_ptr->nv_cdma_tags[i]))
-              {
-                if(wms_ts_decode_bearer_data(&msg_ptr->u.cdma_message.raw_ts,
-                                             &cdma_tl.cl_bd) != WMS_OK_S)
-                {
-                  MSG_ERROR("Decode CDMA_bd failed", 0, 0, 0);
-                  cmd_err = WMS_CMD_ERR_MSG_DECODE;
-                }
-                /* Check if this message is already in the cache */
-                else if(wms_msg_cdma_check_dups(&cdma_tl) == FALSE)
-                {
-                  /* Update the duplicate detection cache */
-                  wms_cfg_update_dup_info_cache(msg_ptr->msg_hdr.mem_store,
-                                                i,
-                                                &cdma_tl);
-                }
-              }
-            }
-          }
-          else if (write_mode == WMS_WRITE_MODE_REPLACE)
-          {
-            if( wms_nv_replace_cdma_sms( i, ruim_data ) == FALSE )
-            {
-               cmd_err = WMS_CMD_ERR_MSG_NV_WRITE;
-            }
-            else
-            {
+	              /* Update the duplicate detection info cache if this is a MT msg. */
+	              if(WMS_IS_MT(cfg_s_ptr->nv_cdma_tags[i]))
+	              {
+	                if(wms_ts_decode_bearer_data(&msg_ptr->u.cdma_message.raw_ts,
+	                                             &cdma_tl.cl_bd) != WMS_OK_S)
+	                {
+	                  MSG_ERROR("Decode CDMA_bd failed", 0, 0, 0);
+	                  cmd_err = WMS_CMD_ERR_MSG_DECODE;
+	                }
+	                /* Check if this message is already in the cache */
+	                else if(wms_msg_cdma_check_dups(&cdma_tl) == FALSE)
+	                {
+	                  /* Update the duplicate detection cache */
+	                  wms_cfg_update_dup_info_cache(msg_ptr->msg_hdr.mem_store,
+	                                                i,
+	                                                &cdma_tl);
+	                }
+	              }
+	            }
+	          }
+	          else if (write_mode == WMS_WRITE_MODE_REPLACE)
+	          {
+	            if( wms_nv_replace_cdma_sms( i, ruim_data ) == FALSE )
+	            {
+	               cmd_err = WMS_CMD_ERR_MSG_NV_WRITE;
+	            }
+	            else
+	            {
 #ifdef CUST_EDITION
 #if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
-              /* Add new Message Information Cache */
-              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
-                                  WMS_MEMORY_STORE_NV_CDMA,
-                                  i,
-                                  ruim_data,
-                                  WMS_MAX_LEN);
+	              /* Add new Message Information Cache */
+	              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
+	                                  WMS_MEMORY_STORE_NV_CDMA,
+	                                  i,
+	                                  ruim_data,
+	                                  WMS_MAX_LEN);
 #endif              
 #endif // #ifdef CUST_EDITION
-              /* NV write was successful, update message list
-              */
-              cfg_s_ptr->nv_cdma_tags[i]  = msg_ptr->msg_hdr.tag;
-              msg_ptr->msg_hdr.index      = i;
-            }
-          }
+	              /* NV write was successful, update message list
+	              */
+	              cfg_s_ptr->nv_cdma_tags[i]  = msg_ptr->msg_hdr.tag;
+	              msg_ptr->msg_hdr.index      = i;
+	            }
+	        }
+        }
+	    else 	
+		{
+			break;
+		}
         }
         else
         {
@@ -3965,6 +4001,7 @@ wms_cmd_err_e_type wms_msg_do_write
                                               ruim_data+3,    /* data */
                                               i );
       }
+	  }
       break;
 
 #endif /* FEATURE_CDSMS */
