@@ -501,7 +501,6 @@ int AEEClsCreateInstance(AEECLSID  clsId,
 
    if (clsId == AEECLSID_BLACKJACK) {
       boolean createGood;
-
       // Allocate the applet class.
       createGood = AEEApplet_New(sizeof(BlackJackApp),
                                  clsId,
@@ -580,9 +579,7 @@ static boolean BlackJack_InitAppData(BlackJackApp *pMe)
    }
 
    if (initGood) {
-	pMe->m_pCardImages = ISHELL_LoadResImage(pShell,
-                                             BLACKJACK_RES_FILE_LANGUAGE,
-                                             IDI_CARDS);
+	pMe->m_pCardImages = ISHELL_LoadResImage(pShell,BLACKJACK_IMAGE_RES_FILE,IDI_CARDS);
       
       if (pMe->m_pCardImages != NULL) {
          AEEImageInfo imageInfo;

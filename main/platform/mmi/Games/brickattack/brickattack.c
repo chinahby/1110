@@ -334,7 +334,6 @@ int BOMod_CreateInstance(AEECLSID  ClsId,
                          void    **ppObj)
 {
    *ppObj = NULL;
-
    if (ClsId == AEECLSID_BRICK) {
       if (AEEApplet_New(sizeof(CBrickAttackApp),
                         ClsId,
@@ -374,7 +373,6 @@ static void Brick_InitAppData(IApplet *po)
 {
    CBrickAttackApp *pme = (CBrickAttackApp *) (void *) po;
    AEEDeviceInfo    dm;
-
    if(pme == NULL)
    {
       return;

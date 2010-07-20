@@ -956,7 +956,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
             {
                 case AVK_1:
                 case AVK_2:
-                case AVK_3:
+                //case AVK_3:
                
                     {
                         int Focus = (wParam - AVK_1);
@@ -981,7 +981,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                 case IDS_GAME_TITLE_1:
                 case IDS_GAME_TITLE_2:
                 //case IDS_GAME_TITLE_3:
-                    StartApplet(pMe, wParam - IDS_GAME_TITLE_1);
+                    StartApplet(pMe, IDS_GAME_TITLE_2 - wParam);
                     return TRUE;
             }
             return TRUE;
