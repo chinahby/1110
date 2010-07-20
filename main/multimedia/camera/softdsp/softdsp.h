@@ -3,15 +3,18 @@
 
 #ifdef CAMERA_USES_SOFTDSP
 
+#define SOFTDSP_PREVIEW_BUFF_MAX    3
 
 /* These are the QDSP response messages.  These are issued from the QDSP to the 
    microprocessor. */
 
 typedef enum CAMSoftDSP_ResponseMsgType
 {
+  CAMSOFTDSP_MSG_START_OF_FRAME,
   CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME,
   CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME,
   CAMSOFTDSP_MSG_ILLEGAL_COMMAND,
+  CAMSOFTDSP_MSG_MAX
 } CAMSoftDSP_ResponseMsgType;
 
 typedef struct CAMSoftDSP_EndOfFrameMessageType
@@ -49,9 +52,10 @@ void    SoftDSP_Init(void);
 void    SoftDSP_Exit(void);
 int     SoftDSP_Start(const camsensor_static_params_type *camsensor_params);
 int     SoftDSP_Stop(void);
-int     SoftDSP_Preview(CAMSoftDSP_MsgCBType cb);
-int     SoftDSP_Capture(CAMSoftDSP_MsgCBType cb);
-int     SoftDSP_Ack1(void *pBuff);
-
+int     SoftDSP_PushPreviewBuff(byte *pBuff);
+int     SoftDSP_Preview(CAMSoftDSP_MsgCBType cb, int dx, int dy);
+int     SoftDSP_SetCaptureBuff(byte *pBuff);
+int     SoftDSP_Capture(CAMSoftDSP_MsgCBType cb, int dx, int dy);
+int     SoftDSP_HandleMSG(int msg, void *pBuff);
 #endif //#ifdef CAMERA_USES_SOFTDSP
 #endif //CAMSOFTDSP_H
