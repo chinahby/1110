@@ -2266,8 +2266,9 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
         return FALSE;
     }
 
-    if(FALSE == pMe->m_bCardExist ||
-       FALSE == MediaGallery_CheckUSBCableConnect())
+    //if(FALSE == pMe->m_bCardExist ||
+    //   FALSE == MediaGallery_CheckUSBCableConnect())
+    if(FALSE == pMe->m_bCardExist) // 只要卡存在就可以启动U盘
     {
         /*if no mass storge card, do not permit to turn UDisk function on*/
         MG_FARF(STATE, ("Card do not exist"));
