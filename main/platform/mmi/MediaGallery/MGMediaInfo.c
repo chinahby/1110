@@ -17,6 +17,7 @@
 #include "MediaGalleryApp.h"
 #include "MediaGalleryExplorer.h"
 #include "MGMediaInfo.h"
+#include "Msg.h"
 
 static int MGMediaInfo_DetectImgType(IFile *  pIFile,
                            MGMimeType* peMime);
@@ -382,7 +383,7 @@ int MGMediaInfo_GetMimeType(IShell* pShell,
    {
       return EBADPARM;
    }
-
+   MSG_FATAL("MGMediaInfo_GetMimeType Start",0,0,0);
    // If it is file name, then first check the extension.
    // If there is no extension, then read the file header data and
    // analyze it to determine its MIME
@@ -394,6 +395,8 @@ int MGMediaInfo_GetMimeType(IShell* pShell,
 
    if (pszExt && *pszExt)
    {
+      MSG_FATAL("pszExt && *pszExt" ,0,0,0);
+      DBGPRINTF("pszExt=%s", pszExt);
       nLen = STRLEN(pszExt)*sizeof(char);
 
       if(MimeBase & MGMIME_BASE_IMAGE)
@@ -404,6 +407,7 @@ int MGMediaInfo_GetMimeType(IShell* pShell,
             if( 0 == STRNICMP(pszExt, ImageFileExt[i].pszFileExt, nLen))
             {
                *peMime = ImageFileExt[i].eMime;
+               MSG_FATAL("peMime = " ,ImageFileExt[i].eMime,0,0);
                return SUCCESS;
             }
          }
@@ -442,7 +446,7 @@ int MGMediaInfo_GetMimeType(IShell* pShell,
       IFile*    pIFile;
       IShell*   ps = pShell;
       int      nRet = EFAILED;
-
+      MSG_FATAL("STRRCHR Failed" ,0,0,0);
       if (!ps)
          ps = AEE_GetShell();
 
@@ -476,7 +480,7 @@ int MGMediaInfo_GetMimeType(IShell* pShell,
 
    *peMime = MG_MIME_UNKNOWN;
 
-   MG_FARF(ADDR, ("GetMimeType failed!"));
+   MSG_FATAL("MGMediaInfo_GetMimeType End GetMimeType failed!",0,0,0);
    return EFAILED;
 }//MGMediaInfo_GetMimeType
 

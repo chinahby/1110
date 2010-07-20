@@ -27,7 +27,7 @@
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
 #include "simutils.h"
 #endif
-
+#include "Msg.h"
 
 /*===========================================================================
  *                      MACRO DECLARATIONs
@@ -619,7 +619,7 @@ static __inline void MediaGalleryApp_ShowYesNoBox(CMediaGalleryApp *pMe,
 static void MediaGalleryApp_MsgBoxTimeout(void* pUser)
 {
    CMediaGalleryApp* pMe = (CMediaGalleryApp*)pUser;
-
+   MSG_FATAL("MediaGalleryApp_MsgBoxTimeout Start",0,0,0);
    if(NULL == pMe || NULL == pMe->m_pActiveDlg)
    {
       return;
@@ -643,6 +643,7 @@ static void MediaGalleryApp_MsgBoxTimeout(void* pUser)
                        0,
                        0);
    }
+   MSG_FATAL("MediaGalleryApp_MsgBoxTimeout End",0,0,0);
 }//MediaGalleryApp_MsgBoxTimeout
 
 
@@ -658,7 +659,7 @@ static boolean MediaGalleryApp_CancelMsgBoxTimer(CMediaGalleryApp* pMe,
                                                  boolean bTimeOut)
 {
    boolean bRet = FALSE;
-
+   MSG_FATAL("MediaGalleryApp_CancelMsgBoxTimer Start",0,0,0);
    if(NULL == pMe)
       return bRet;
 
@@ -676,7 +677,7 @@ static boolean MediaGalleryApp_CancelMsgBoxTimer(CMediaGalleryApp* pMe,
          MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_NORMAL);
       }
    }
-
+   MSG_FATAL("MediaGalleryApp_CancelMsgBoxTimer End",0,0,0);
    return bRet;
 }//MediaGalleryApp_CancelMsgBoxTimer
 
@@ -2295,12 +2296,12 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
 
    if(!pMe || !pMenuCtl)
       return FALSE;
-
+   MSG_FATAL("MediaGalleryApp_OnPopupMenuCommand Start",0,0,0);
    pItemData = MediaGalleryApp_GetCurrentNode(pMe);
 
    if(!pItemData)
    {
-      MG_FARF(ADDR, ("On popup menu command: no item data"));
+      MSG_FATAL("On popup menu command: no item data",0,0,0);
       return FALSE;
    }
 
@@ -2311,7 +2312,7 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
 
    if(pMe->m_PopupOps == MG_OP_VIEWIMG)
    {
-      if(pMe->m_bV0848DecodeImg == FALSE)
+      //if(pMe->m_bV0848DecodeImg == FALSE)
          MGAppUtil_RedrawImage(pMe, NULL, TRUE);
    }
    else
@@ -2484,6 +2485,7 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
    if(FALSE == bRet)
    {
       MediaGalleryApp_SetOps(pMe, MG_OPS_DEFAULT, MG_OP_NULL);
+      MSG_FATAL("MGAppUtil_SetMediaDlgStat(pMe,MG_DLGSTAT_NORMAL)",0,0,0);
       MGAppUtil_SetMediaDlgStat(pMe,MG_DLGSTAT_NORMAL);
 
       IMENUCTL_SetActive(pMenuCtl, TRUE);
@@ -2509,7 +2511,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
    MediaDlgStat eDlgStat;
    static int8 nsScale = 0;
    static AEEImageInfo ImgInfo;
-
+   MSG_FATAL("MGAppPopupMenu_OnImageViewer Start",0,0,0);
    if(!pMe)
    {
       return FALSE;
@@ -2522,7 +2524,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
-
+   MSG_FATAL("MGAppPopupMenu_OnImageViewer 1111111",0,0,0);
    switch(eCode)
    {
    case EVT_DIALOG_INIT:
@@ -2532,6 +2534,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          /*If menu active, timer belong to it will work, and we will find item
           * text still scroll after display other screen.
           * before do hide annunciator */
+         MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_DIALOG_INIT",0,0,0);
          if(pm && TRUE == IMENUCTL_IsActive(pm))
          {
             IMENUCTL_SetActive(pm, FALSE);
@@ -2551,17 +2554,18 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          MGFileInfo *pCurNode;
          MGMimeType  eMimeBase;
          int        nRet;
-
+         MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_DIALOG_START",0,0,0);
          pCurNode = MediaGalleryApp_GetCurrentNode(pMe);
 
          if(!pCurNode || AEE_FA_DIR == pCurNode->attrib){
-            MG_FARF(ADDR, ("OnImageViewer encounter NULL pointor"));
+            MSG_FATAL("OnImageViewer encounter NULL pointor",0,0,0);
             return FALSE;
          }
 
          if((pCurNode->dwSize >= MG_848IMGDECODE_MAX && pMe->m_StoreMedium == MG_STMED_MASSCARD) ||
             (pCurNode->dwSize >= MG_QUALIMGDECODE_MAX && pMe->m_StoreMedium == MG_STMED_HANDSET))
          {
+            MSG_FATAL("Image's Size is too big",0,0,0);
             MediaGalleryApp_ShowPromptMsgBox(pMe,
                                              IDS_MG_LARGEFILE,
                                              MESSAGE_ERR,
@@ -2581,12 +2585,25 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          if(pMe->m_StoreMedium == MG_STMED_MASSCARD &&
             (eMimeBase == MG_MIME_JPEG || eMimeBase == MG_MIME_JPG))
          {
+            MSG_FATAL("m_bV0848DecodeImg == TRUE",0,0,0);
+            DBGPRINTF("pCurNode->szName=%s", pCurNode->szName);
             pMe->m_bV0848DecodeImg = TRUE;
+            if(pMe->m_ImgViewOps == MG_OP_NULL)
+            {
+               RELEASEIF(pMe->m_pImage);
+            }
+            if(pMe->m_pImage == NULL)
+            {
+               pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell,
+                                                pCurNode->szName);
+            }      
+            pMe->m_bImgLoadDone = TRUE;
             MGAppUtil_RedrawImage(pMe, NULL, FALSE);
          }
          else
 #endif
          {
+            MSG_FATAL("m_bV0848DecodeImg == FALSE",0,0,0);
             if(pMe->m_ImgViewOps == MG_OP_NULL)
             {
                RELEASEIF(pMe->m_pImage);
@@ -2618,6 +2635,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 
    case EVT_USER_REDRAW:
       {
+         MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_USER_REDRAW",0,0,0);
          if(pMe->m_bV0848DecodeImg != TRUE)
          {
             MGAppUtil_UpdateImgViewerSoftkey(pMe);
@@ -2631,6 +2649,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          //if we are suspending (EVT_APP_SUSPEND is sent before
          //EVT_DIALOG_END). Handle suspend for current status.
          //TODO : SUSPNED
+         MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_DIALOG_END",0,0,0);
          if(pMe->m_bSuspending)
          {
             ;
@@ -2658,9 +2677,11 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 #endif
    case EVT_KEY:
       {
+        MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_KEY",0,0,0);
          switch(wParam)
          {
          case AVK_CLR:
+            MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_CLR",0,0,0);
             if( (pMe->m_bImgLoadDone == FALSE 
 #ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE				
 				||display_jpg_done == VC_JPEG_DECODE_DOING
@@ -2710,6 +2731,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 
          case AVK_SELECT:
             {
+               MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_SELECT 1",0,0,0);
                if(eDlgStat == MG_DLGSTAT_NORMAL &&
                   (pMe->m_bImgLoadDone == TRUE 				   
 #ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE                   
@@ -2728,6 +2750,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                                  display_jpg_done, pMe->m_bImgLoadDone));
 #endif 
 
+                  MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_SELECT 2",0,0,0);
                   if(pi)
                   {
                      IIMAGE_GetInfo(pi, &ImgInfo);
@@ -2774,6 +2797,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
             }
 
          case AVK_INFO:
+            MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_INFO",0,0,0);
             if( eDlgStat == MG_DLGSTAT_IMGZOOM &&
                ( pMe->m_bImgLoadDone == TRUE 
 #ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE               
@@ -2810,6 +2834,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 
          case AVK_RIGHT:
          case AVK_LEFT:
+            MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_LEFT, eDlgStat=%d",eDlgStat,0,0);
             if(eDlgStat == MG_DLGSTAT_NORMAL &&
                (pMe->m_bImgLoadDone == TRUE 
 #ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE                   
@@ -2877,7 +2902,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
       {
          uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
 
-         MG_FARF(ADDR, ("display dialog time out"));
+         MSG_FATAL("display dialog time out",0,0,0);
 
          MGAppPopupMenu_OperationDone(pMe, 0);
 
@@ -2892,6 +2917,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 
          if(SUCCESS == MGAppUtil_RedrawImage(pMe, NULL, TRUE))
          {
+            MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT MGAppUtil_SetMediaDlgStat",0,0,0);
             MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_NORMAL);
          }
          else
@@ -2911,7 +2937,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
    default:
       break;
    }
-
+   MSG_FATAL("MGAppPopupMenu_OnImageViewer End",0,0,0);
    return FALSE;
 }//MGAppPopupMenu_OnImageViewer
 
@@ -6267,7 +6293,7 @@ static int MGAppUtil_CreatePopupMenu(IMenuCtl** ppIMenu,
    int         retVal;
    uint16      nCount;
 
-
+   MSG_FATAL("MGAppUtil_CreatePopupMenu Start",0,0,0);
    if(NULL == *ppIMenu)
    {
       retVal=ISHELL_CreateInstance(AEE_GetShell(),
@@ -6309,7 +6335,7 @@ static int MGAppUtil_CreatePopupMenu(IMenuCtl** ppIMenu,
 
       IMENUCTL_SetActive(pPopupMenu, TRUE);
    }
-
+   MSG_FATAL("MGAppUtil_CreatePopupMenu End",0,0,0);
    return SUCCESS;
 }
 
@@ -6638,7 +6664,7 @@ static __inline int MGAppUtil_DrawTitleArrow(CMediaGalleryApp* pMe,
       IDB_LEFTARROW,
       IDB_RIGHTARROW
    };
-
+   MSG_FATAL("MGAppUtil_DrawTitleArrow Start",0,0,0);
    dy = GetBottomBarHeight(pMe->m_pDisplay);
 
    for( nIndex = 0; nIndex < ARRAYSIZE(ImageID); nIndex++)
@@ -6663,7 +6689,7 @@ static __inline int MGAppUtil_DrawTitleArrow(CMediaGalleryApp* pMe,
          IIMAGE_Release(pImage);
       }
    }
-
+   MSG_FATAL("MGAppUtil_DrawTitleArrow End",0,0,0);
    return nStart;
 }//MGAppUtil_DrawTitleArrow
 
@@ -6811,6 +6837,7 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
    }
 
    pMe->m_bUpdateSelItem = FALSE;
+   MSG_FATAL("MGAppUtil_CreateMediaMenu MGAppUtil_SetMediaDlgStat",0,0,0);
    MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_NORMAL);
 
    if(pMe->m_bKeepMediaMenu == FALSE)
@@ -7134,17 +7161,18 @@ static uint16 MGAppUtil_GetMediaDlgStat(CMediaGalleryApp *pMe,
 boolean MGAppUtil_SetMediaDlgStat(CMediaGalleryApp *pMe,
                                   MediaDlgStat eSetStat)
 {
+   MSG_FATAL("MGAppUtil_SetMediaDlgStat Start eSetStat=%d",eSetStat,0,0);
    if(!pMe)
       return FALSE;
-
+   
    if(eSetStat >= MG_DLGSTAT_MAX || eSetStat <= MG_DLGSTAT_INIT)
    {
-      MG_FARF(ADDR, ("Invalid dialog status!!!"));
+      MSG_FATAL("Invalid dialog status!!!",0,0,0);
       return FALSE;
    }
 
    pMe->m_MediaDlgStat = eSetStat;
-
+   MSG_FATAL("MGAppUtil_SetMediaDlgStat Start End",0,0,0);
    return TRUE;
 }//MGAppUtil_SetMediaDlgStat
 
@@ -7192,6 +7220,7 @@ static __inline boolean MGAppUtil_OnMediaMenuClrKeyEvt(CMediaGalleryApp* pMe,
    }
 
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
+   MSG_FATAL("MGAppUtil_OnMediaMenuClrKeyEvt MGAppUtil_SetMediaDlgStat",0,0,0);
    MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_NORMAL);
 
    if(eDlgStat == MG_DLGSTAT_NORMAL)
@@ -7393,7 +7422,7 @@ static __inline boolean MGAppUtil_OnMediaMenuSelectKeyEvt(CMediaGalleryApp *pMe,
    {
       uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
       boolean  bActiveMenu = TRUE;
-
+      MSG_FATAL("MGAppUtil_OnMediaMenuSelectKeyEvt MGAppUtil_SetMediaDlgStat",0,0,0);
       MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_NORMAL);
 
       switch(nMsgBoxId)
@@ -8108,9 +8137,9 @@ static boolean MGAppUtil_ImageSlideCheck(CMediaGalleryApp *pMe,
 {
    int        nRet;
    MGMimeType     eMimeBase;
-
+   MSG_FATAL("MGAppUtil_ImageSlideCheck Start",0,0,0);
    if(!pMe || !pMe->m_pShell || !pMe->m_pFileMgr || !pItemInfo){
-      MG_FARF(ADDR, ("Bad parameter"));
+      MSG_FATAL("Bad parameter",0,0,0);
       return FALSE;
    }
 
@@ -8127,7 +8156,7 @@ static boolean MGAppUtil_ImageSlideCheck(CMediaGalleryApp *pMe,
    if(SUCCESS == nRet){
       return TRUE;
    }
-
+   MSG_FATAL("MGAppUtil_ImageSlideCheck End",0,0,0);
    return FALSE;
 }//MGAppUtil_ImageSlideCheck
 
@@ -8283,9 +8312,10 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
 static boolean MGAppUtil_DrawImageViewerBG(CMediaGalleryApp *pMe)
 {
    IImage *pImage = NULL;
+   MSG_FATAL("MGAppUtil_DrawImageViewerBG Start",0,0,0);
    if(!pMe)
    {
-      MG_FARF(ADDR, ("MGAppUtil_DrawImageViewerBG Parameter error!"));
+      MSG_FATAL("MGAppUtil_DrawImageViewerBG Parameter error!",0,0,0);
       return FALSE;
    }
 
@@ -8299,6 +8329,7 @@ static boolean MGAppUtil_DrawImageViewerBG(CMediaGalleryApp *pMe)
    }
 
    RELEASEIF(pImage);
+   MSG_FATAL("MGAppUtil_DrawImageViewerBG End",0,0,0);
    return TRUE;
 }
 
@@ -8330,7 +8361,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
    const char *pszFileName = NULL;
    boolean bRet = FALSE;
    AECHAR wszTitle[MG_MAX_LINETEXTNUM * 2];
-
+   MSG_FATAL("MGAppUtil_RedrawImage Start",0,0,0);
    if(NULL == pMe)
       return EFAILED;
 
@@ -8343,7 +8374,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
               sizeof(char) * (STRLEN(pszFileName) + 1),
               wszTitle,
               sizeof(wszTitle));
-
+   DBGPRINTF("wszTitle = %S", wszTitle);
    IDISPLAY_GetFontMetrics(pDisp,
                            AEE_FONT_BOLD,
                            &nAscent,
@@ -8362,7 +8393,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
 #ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE    	  
       if(display_jpg_done == VC_JPEG_DECODE_DONE)
       {
-         MG_FARF(ADDR, ("848 already decode!"));
+         MSG_FATAL("848 already decode!",0,0,0);
          //return EFAILED;
       }
 #endif
@@ -8432,7 +8463,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
    if(NULL == po)
    {
       FREEIF(pszTitle);
-      MG_FARF(ADDR, ("Image interface have been release"));
+      MSG_FATAL("Image interface have been release",0,0,0);
       return EFAILED;
    }
 
@@ -8454,7 +8485,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
       rc.y++;
    }
 
-   MG_FARF(ADDR, ("APPLET rectangle cx:%d, cy:%d ", rc.dx, rc.dy));
+   MSG_FATAL("APPLET rectangle cx:%d, cy:%d ", rc.dx, rc.dy,0);
 
    nDrawX = pi->cx > rc.dx ? 0 : ((rc.dx - pi->cx) / 2);
    nDrawY = pi->cy > rc.dy ? 0 : ((rc.dy - pi->cy) / 2);
@@ -8466,11 +8497,11 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
    {
       nDrawY += rc.y;
 
-      MG_FARF(ADDR, ("nDrawX:%d, nDrawY:%d, rc.y:%d", nDrawX, nDrawY, rc.y));
+      MSG_FATAL("nDrawX:%d, nDrawY:%d, rc.y:%d", nDrawX, nDrawY, rc.y);
 
       if(FALSE == bResume)
       {
-         MG_FARF(ADDR, ("cx:%d, cxFrame:%d",pi->cx, pi->cxFrame));
+         MSG_FATAL("cx:%d, cxFrame:%d",pi->cx, pi->cxFrame,0);
 #ifdef FEATURE_ANICTL
          if (pMe->m_pAniCtl == NULL)
          {
@@ -8478,7 +8509,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
                                                 AEECLSID_ANICTL,
                                                 (void **)&pMe->m_pAniCtl))
             {
-               MG_FARF(ADDR, ("Error create anictl"));
+               MSG_FATAL("Error create anictl",0,0,0);
                return EFAILED;
             }
          }
@@ -8523,6 +8554,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
    MGAppUtil_UpdateImgViewerSoftkey(pMe);
 
    FREEIF(pszTitle);
+   MSG_FATAL("MGAppUtil_RedrawImage End",0,0,0);
    return SUCCESS;
 }
 
@@ -8549,11 +8581,11 @@ static boolean MGAppUtil_ChangeMediaMenuItemByType(CMediaGalleryApp *pMe,
    uint16 nSize;
    CtlAddItem  ai;
    MGFileInfo *pItemInfo;
-
+   MSG_FATAL("MGAppUtil_ChangeMediaMenuItemByType Start",0,0,0);
    nCurIdx = 0;
 
    if(!pMe || !pMenuCtl){
-      MG_FARF(ADDR, ("Parameter error!"));
+      MSG_FATAL("Parameter error!",0,0,0);
       return FALSE;
    }
 
@@ -8561,9 +8593,9 @@ static boolean MGAppUtil_ChangeMediaMenuItemByType(CMediaGalleryApp *pMe,
                (pMe->m_Explorer.m_nCurDepth - 1);
 
    nSize = IMENUCTL_GetItemCount(pMenuCtl);
-
+   MSG_FATAL("Size:%d", nSize,0,0);
    if(nSize <= 1){
-      MG_FARF(ADDR, ("There only 1 or even 0 item, Size:%d", nSize));
+      MSG_FATAL("There only 1 or even 0 item, Size:%d", nSize,0,0);
       return FALSE;
    }
 
@@ -8575,18 +8607,22 @@ static boolean MGAppUtil_ChangeMediaMenuItemByType(CMediaGalleryApp *pMe,
    }
 
    if(nCurIdx != nIdx || nIdx == nSize) {
-      MG_FARF(ADDR, ("No item match"));
+      MSG_FATAL("No item match",0,0,0);
       return FALSE;
    }
 
-   if( TRUE == bDirection ){
+   if( TRUE == bDirection )
+   {
+      MSG_FATAL("TRUE == bDirection",0,0,0);
       nIdx = (nIdx + 1) % nSize;
       for(; nIdx - nCurIdx < nSize;) {
          nNextSelItemID = IMENUCTL_GetItemID(pMenuCtl, nIdx);
          nIdx = (nIdx + 1) % nSize;
 
          /*check the item id whether exist*/
-         if(FALSE ==IMENUCTL_GetItem(pMenuCtl, nNextSelItemID, &ai)){
+         if(FALSE ==IMENUCTL_GetItem(pMenuCtl, nNextSelItemID, &ai))
+         {
+            MSG_FATAL("FALSE ==IMENUCTL_GetItem",0,0,0);
             return FALSE;
          }
 
@@ -8600,14 +8636,18 @@ static boolean MGAppUtil_ChangeMediaMenuItemByType(CMediaGalleryApp *pMe,
          }
       }
    }
-   else{
+   else
+   {
+      MSG_FATAL("FALSE == bDirection",0,0,0);
       nIdx = (nIdx + nSize - 1) % nSize;
       for(;nCurIdx != nIdx;) {
          nNextSelItemID = IMENUCTL_GetItemID(pMenuCtl, nIdx);
          nIdx = (nIdx + nSize - 1) % nSize;
 
          /*check the item id whether exist*/
-         if(FALSE ==IMENUCTL_GetItem(pMenuCtl, nNextSelItemID, &ai)) {
+         if(FALSE ==IMENUCTL_GetItem(pMenuCtl, nNextSelItemID, &ai)) 
+         {
+            MSG_FATAL("FALSE ==IMENUCTL_GetItem",0,0,0);
             return FALSE;
          }
 
@@ -8623,6 +8663,7 @@ static boolean MGAppUtil_ChangeMediaMenuItemByType(CMediaGalleryApp *pMe,
       }
    }
    //MGAppUtil_GetMediaMenuSelectItem(pMe, pMenuCtl);
+   MSG_FATAL("MGAppUtil_ChangeMediaMenuItemByType End",0,0,0);
    return TRUE;
 }//MGAppUtil_ChangeMediaMenuItemByType
 
