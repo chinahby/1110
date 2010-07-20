@@ -2497,7 +2497,9 @@ sdcc_complete_data_xfer(uint32   direction,
   }
 
   /* Send the status cmd to check for the card write status */
-  else 
+#ifndef CUST_EDITION
+  //else 无论多block还是单block都查询写入之后的状态
+#endif
   {
     if(SDCC_DATA_WRITE == direction)
     {
