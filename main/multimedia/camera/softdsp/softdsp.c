@@ -23,6 +23,7 @@ Copyright(c) 2007 by QUALCOMM, Incorporated. All Rights Reserved.
 #include "camerai.h"
 
 #ifdef CAMERA_USES_SOFTDSP
+#include "camsensor.h"
 #include "softdsp.h"
 
 static void SoftDSP_FrameISR(void)
@@ -37,24 +38,29 @@ void SoftDSP_Exit(void)
 {
 }
 
-int SoftDSP_Start(CAMSoftDSP_MsgCBType cb)
+int SoftDSP_Start(const camsensor_static_params_type *camsensor_params)
 {
+    return 0;
 }
 
 int SoftDSP_Stop(void)
 {
+    return 0;
 }
 
-int SoftDSP_Preview(void)
+int SoftDSP_Preview(CAMSoftDSP_MsgCBType cb)
 {
+    return 0;
 }
 
-int SoftDSP_Capture(void)
+int SoftDSP_Capture(CAMSoftDSP_MsgCBType cb)
 {
+    return 0;
 }
 
 int SoftDSP_Ack1(void *pBuff)
 {
+    return 0;
 }
 
 #endif // CAMERA_USES_SOFTDSP

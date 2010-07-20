@@ -137,6 +137,7 @@ typedef struct Camera_EndOfFrameMessageType
   uint32                             time;
 } Camera_EndOfFrameMessageType;
 #endif
+#ifndef CAMERA_USES_SOFTDSP
 typedef enum
 {
   /* */
@@ -150,7 +151,7 @@ typedef enum
   /* */
   DSP_CONFIGURED
 } camera_dsp_state_type;
-
+#endif
 /*============================================================================
 *                         MACRO DEFINITIONS
 ============================================================================*/
@@ -207,7 +208,9 @@ typedef enum
 /*============================================================================
 *                         GLOBAL VARIABLE DECLARATIONS
 ============================================================================*/
+#ifndef CAMERA_USES_SOFTDSP
 extern camera_dsp_state_type camera_dsp_state;
+#endif
 extern boolean camera_stopping;
 extern boolean camera_stopping_record;
 extern boolean               camera_update_vfe;

@@ -47,8 +47,10 @@ typedef void (* CAMSoftDSP_MsgCBType)(CAMSoftDSP_ResponseType  *pMsgInfo);
 
 void    SoftDSP_Init(void);
 void    SoftDSP_Exit(void);
-int     SoftDSP_Start(CAMSoftDSP_MsgCBType cb);
+int     SoftDSP_Start(const camsensor_static_params_type *camsensor_params);
 int     SoftDSP_Stop(void);
+int     SoftDSP_Preview(CAMSoftDSP_MsgCBType cb);
+int     SoftDSP_Capture(CAMSoftDSP_MsgCBType cb);
 int     SoftDSP_Ack1(void *pBuff);
 
 #endif //#ifdef CAMERA_USES_SOFTDSP

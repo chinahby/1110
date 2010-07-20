@@ -2046,8 +2046,9 @@ static uint8 * camera_svcs_raw_snapshot_copy = NULL;
 /********************************************************/
 
 static uint32 qcamraw_header_size = 0;
-
+#ifndef CAMERA_USES_SOFTDSP
 camera_dsp_state_type camera_dsp_state = DSP_DISABLED;
+#endif
 boolean camera_stopping = FALSE;
 boolean camera_stopping_record = FALSE;
 /* Store Downscaler factor for Preview and Snasphot */
@@ -6390,7 +6391,54 @@ camera_ret_code_type camera_svcs_blt_ex
       }
     }
 #else
-    // TODO:
+    if(format == CAMERA_RGB565 && frame->format == CAMERA_RGB565)
+    {
+        uint16 *pBitsSrc16 = (uint16*)bmy_addr;
+        uint16 *pBitsDst16 = (uint16*)dst_ptr;
+        int i;
+        int nSize;
+        int nSizeMod;
+        uint16 *pDest,*pSrc;
+        int16 wCpyWidth, wCpyHeight, nSrcPitch, nDstPitch;
+        
+        wCpyWidth  = MIN(dx,frame->dx);
+        wCpyHeight = MIN(dy,frame->dy);
+        nSrcPitch  = frame->dx;
+        nDstPitch  = dx;
+        pBitsDst16+= y*nDstPitch+x;
+        
+        for(i=0; i<wCpyHeight; i++)
+        {
+            pDest    = pBitsDst16;
+            pSrc     = pBitsSrc16;
+            nSize    = wCpyWidth>>3;
+            nSizeMod = wCpyWidth&0x7;
+            
+            while(nSize--)
+            {
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+            }
+            
+            while(nSizeMod--)
+            {
+                *pDest++ = *pSrc++;
+            }
+            
+            pBitsDst16 += nDstPitch;
+            pBitsSrc16 += nSrcPitch;
+        }
+    }
+    else
+    {
+        ERR_FATAL("Don't Support Format",0,0,0);
+    }
 #endif
 #endif /* FEATURE_CAMERA_LCD_DIRECT_MODE || nFEATURE_MDP */
     if (camera_snapshot_timing.snapshot_completion_callback_start !=0)
@@ -10492,6 +10540,17 @@ static void camera_process_start
     ackOutput2.eofAck2[number_of_fragments].Y_Address    = NULL;
     ackOutput2.eofAck2[number_of_fragments].CbCr_Address = NULL;
   }
+#else
+  if (SoftDSP_Start(&camsensor_static_params[camera_asi]) != CAMERA_SUCCESS)
+  {
+    *status = CAMERA_FAILED;
+    if (tcb)
+    {
+      (void) rex_set_sigs (tcb, CAMERA_SIG);
+    }
+    return;
+
+  }
 #endif
 #ifdef CAMERA_THUMBNAIL_SIZE_QCIF
   thumbnail_width = 176;
@@ -10992,22 +11051,22 @@ static void camera_process_start_preview
 #endif /* FEATURE_QVPHONE */
   {
     boolean ret_val;
-
+#ifndef CAMERA_USES_SOFTDSP
     camera_log (LOG_VFEC, 0, 0, (uint32)VFE_INIT, __LINE__);
 
     MSG_CAMERADEBUG("CAMERA_SVCS: Initialize Image in Preview", 0, 0, 0);
     camera_dsp_state = DSP_ENABLING;
-#ifndef CAMERA_USES_SOFTDSP
     ret_val = (VFE_Initialize (camera_qdsp_cb) != CAMQDSP_SUCCESS);
 #else
-    // TODO:
-    ret_val = 0;
+    ret_val = (SoftDSP_Preview (camera_softdsp_cb) != 0);
 #endif
     if (ret_val)
     {
+#ifndef CAMERA_USES_SOFTDSP
       camera_dsp_state = DSP_DISABLED;
       camera_log (LOG_INFO, 0, 0, (uint32)INIT_REJ, __LINE__);
       MSG_CAMERADEBUG("camera_terminate called", 0, 0, 0);
+#endif
       camera_terminate (CAMERA_EXIT_CB_DSP_ABORT, (int)CAMERA_ERROR_CONFIG);
       MSG_ERROR ("CAMERA_SVCS: Cannot load DSP. State transition to ready", 0, 0, 0);
       event_report (EVENT_CAMERA_CANNOT_LOAD_DSP);
@@ -11154,6 +11213,7 @@ static void camera_process_take_single_picture(void)
 
   if (camera_take_picture_retry == CAMERA_TAKE_PICTURE_RETRY_NONE)
   {
+#ifndef CAMERA_USES_SOFTDSP
     camera_log (LOG_VFEC, 0, 0, (uint32)VFE_INIT, __LINE__);
     MSG_CAMERADEBUG("CAMERA_SVCS: Initialize Image in Take Picture", 0, 0, 0);
     camera_dsp_state = DSP_ENABLING;
@@ -11163,11 +11223,9 @@ static void camera_process_take_single_picture(void)
 #ifdef QDSP_IMAGE_VFE_SA_DEFINED   
 #error code not present
 #endif	/* QDSP_IMAGE_VFE_SA_DEFINED */   
-#ifndef CAMERA_USES_SOFTDSP
     ret_val = (VFE_Initialize (camera_qdsp_cb) != CAMQDSP_SUCCESS);
 #else
-    // TODO:
-    ret_val = 0;
+    ret_val = (SoftDSP_Capture (camera_softdsp_cb) != 0);
 #endif
 #if defined QDSP_MODULE_VFE05_CAPTURE_DEFINED || defined QDSP_IMAGE_VFE_SA_DEFINED
     camctrl_tbl.use_vfe_image_swap = FALSE;
@@ -11175,9 +11233,11 @@ static void camera_process_take_single_picture(void)
 
     if (ret_val)
     {
+#ifndef CAMERA_USES_SOFTDSP
       camera_dsp_state = DSP_DISABLED;
       camera_log (LOG_INFO, 0, 0, (uint32)INIT_REJ, __LINE__);
       MSG_CAMERADEBUG("camera_terminate called", 0, 0, 0);
+#endif
       camera_terminate (CAMERA_EXIT_CB_DSP_ABORT, (int)CAMERA_ERROR_CONFIG);
       MSG_ERROR ("Cannot load DSP. State transition to ready", 0, 0, 0);
       event_report (EVENT_CAMERA_CANNOT_LOAD_DSP);
@@ -19789,11 +19849,11 @@ static void camera_process_terminate(void)
     camera_dsp_state = DSP_DISABLED;
     CAMQDSP_Terminate();
 #else
-    // TODO:
+    SoftDSP_Stop();
 #endif
   }
 
-
+#ifndef CAMERA_USES_SOFTDSP
   MSG_HIGH("CAMERA_SVCS: camera_process_terminate: camera_state=%d camera_dsp_state=%d",
       camera_state, camera_dsp_state, 0);
   if( (CAMERA_STATE_READY != camera_state) &&
@@ -19823,7 +19883,6 @@ static void camera_process_terminate(void)
          * b) camera_state is CAMERA_STATE_RECORDING and 
          * c)VFE is alread in Idle state 
          */
-#ifndef CAMERA_USES_SOFTDSP
         #ifndef FEATURE_VIDEO_ENCODE_THROTTLE
         if(camera_state != CAMERA_STATE_RECORDING || 
            (camera_state == CAMERA_STATE_RECORDING && camera_dsp_command != CAMQDSP_CMD_IDLE))
@@ -19833,9 +19892,6 @@ static void camera_process_terminate(void)
 
           (void) camera_send_vfe_idle_and_wait();
         }
-#else
-        // TODO:
-#endif
         MSG_CAMERADEBUG("CAMERA_SVCS: Set camera_state=CAMERA_STATE_READY", 0, 0, 0);
         camera_state = CAMERA_STATE_READY;
         break;
@@ -19844,7 +19900,7 @@ static void camera_process_terminate(void)
         break;
     }
   }
-
+#endif
   if( (camera_state == CAMERA_STATE_READY) ||
       (camera_state == CAMERA_STATE_INIT) )
   {
@@ -19876,6 +19932,7 @@ static void camera_process_terminate(void)
 
     camera_svcs_optimize_resources();
 
+#ifndef CAMERA_USES_SOFTDSP
     /* free preview buffers and terminate dsp */
 #ifdef FEATURE_QVPHONE
     if (camera_dsp_state && !camera_qvp_enabled)
@@ -19885,15 +19942,14 @@ static void camera_process_terminate(void)
     {
       /* Camera DSP image is downloaded, disable it */
       camera_dsp_state = DSP_DISABLED;
-#ifndef CAMERA_USES_SOFTDSP
+
       camera_log (LOG_VFEC, 0, 0, (uint32)VFE_TERM, __LINE__);
       MSG_CAMERADEBUG("CAMERA_SVCS: Call QDSP Terminate", 0, 0, 0);
       CAMQDSP_Terminate ();
-#else
-      // TODO:
-#endif
     }
-
+#else
+    SoftDSP_Stop();
+#endif
     /* Return all buffers */
     camera_free_preview_buffers();
 
