@@ -3207,6 +3207,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                         if(SUCCESS != CContApp_FilterSmartItems( pMe,  pMe->m_szAlpha) )
                         {   
                             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
+                            MSG_FATAL("SUCCESS != CContApp_FilterSmartItems 111",0,0,0);
                             IMENUCTL_SetProperties(pMenuCtl, dwMask |MP_NO_REDRAW);
                             
                             pMe->m_bInsmartnofind = TRUE;
@@ -3691,6 +3692,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 ITEXTCTL_SetText(pTextCtl, pMe->m_szAlpha, -1);
                 if(SUCCESS != CContApp_FilterSmartItems( pMe,  pMe->m_szAlpha) )
                 {   
+                    MSG_FATAL("SUCCESS != CContApp_FilterSmartItems 222",0,0,0);
                     pMe->m_bInsmartnofind = TRUE;
                     IMENUCTL_SetActive(pMenuCtl, FALSE);
                     /*guoys add @2008.10.20 for no match dont use select*/    
@@ -6340,7 +6342,7 @@ static boolean  CContApp_HandleOptsDlgEvent( CContApp  *pMe,
             rc = pMe->m_rc;
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
-            
+            MSG_FATAL("rc.x=%d, rc.dx=%d, rc.y=%d", rc.x, rc.dx, rc.y);
             IMENUCTL_SetRect(pMenuCtl, &rc);
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
             IMENUCTL_SetPopMenuRect(pMenuCtl); 
@@ -10849,10 +10851,11 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
             (void)ITEXTCTL_SetInputMode(pTextCtl,
                      CContApp_GetFldInputMode(AEE_ADDRFIELD_NAME));
                      
-            /*(void)ITEXTCTL_SetTitle( pTextCtl,
+            (void)ITEXTCTL_SetTitle( pTextCtl,
                                      CONTAPP_RES_FILE_LANG,
                                      IDS_FIND,
-                                     NULL);*/
+                                     NULL);
+            /*
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
@@ -10865,7 +10868,13 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
                 {
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
-            }                                     
+            }                   */      
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+            }
+            
             ITEXTCTL_SetMaxSize( pTextCtl, MAX_INPUT_NAME_EN);
                      
             if(pMe->m_sSearchStr)
@@ -10909,6 +10918,11 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
             return TRUE;
             
         case EVT_DIALOG_END:
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+            }            
             if (pMe->m_bSuspending)
             {
                 FREEIF(pMe->m_sSearchStr);

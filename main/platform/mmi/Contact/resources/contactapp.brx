@@ -898,6 +898,7 @@
 	<DIALOG Id="6035" Name="IDD_SEARCHNAME" Focus="7037">
 		<Controls>
 			<Text Id="7037" Name="IDC_SEARCHNAME_TEXTCTL">
+				<TitleID>IDS_SEARCH_NAME</TitleID>
 				<Items/></Text>
 		</Controls>
 	</DIALOG>

@@ -73,10 +73,11 @@ int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
     ASSERT(pMe != NULL); 
     
     FARF(ADDR, ("CContApp_BuildOptsMenu bAll%d ", bAll));
+    IMENUCTL_SetPopMenuRect(pMenuCtl);
     IMENUCTL_GetRect(pMenuCtl, &rc);
     Temprc.y = 0;
     Temprc.x = rc.x;
-    Temprc.dx = rc.dx;
+    Temprc.dx = rc.dx+3;
     Temprc.dy = rc.dy-8;
 
     IMENUCTL_SetRect(pMenuCtl, &Temprc);
@@ -260,7 +261,7 @@ int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
             }            
         }
     }
-    
+    IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
     (void)IMENUCTL_Redraw(pMenuCtl);
     return SUCCESS;
 }// CContApp_BuildOptsMenu

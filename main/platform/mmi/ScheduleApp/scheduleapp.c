@@ -532,6 +532,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
             pme->m_bAppIsReady = FALSE;
             as = (AEEAppStart*)dwParam;
             pme->m_rc = as->rc;
+            DBGPRINTF("m_rc.x=%d, m_rc.y=%d, m_rc.dx=%d, m_rc.dx=%d", pme->m_rc.x, pme->m_rc.y, pme->m_rc.dx, pme->m_rc.dy);
             {
                 AEEDeviceInfo di;
                 ISHELL_GetDeviceInfo(pme->m_pShell, &di);

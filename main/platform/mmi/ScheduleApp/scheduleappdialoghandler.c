@@ -1482,7 +1482,6 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             int32 startdate, enddate;
 
             rc = pme->m_rc;
-            
 #if FEATURE_DRAW_LUNAR_CALENDAR
             rc.dy -= (HEIGHT_PROMPT_BAR+14);
 #else
