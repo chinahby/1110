@@ -77,10 +77,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AUTH_DIGITS 
 #define SCL_AMSS_DATA_BASE_ADDR 0x08005000
 #define T_QSC6055 
-#ifdef USES_CAMERA
 #define FEATURE_JPEG_DECODER 
 #define FEATURE_JPEG_ARM_STANDALONE_DECODER 
-#endif
 #define FEATURE_VOC_4GV 
 #define FEATURE_AUDIO_CONFIGURATION_STANDARD 
 #define FEATURE_MDM_AHB 
@@ -258,8 +256,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef USES_CAMERA
-#endif
 #include "custcamera.h"
+#endif
+
 #include "custjpeg.h"
 
 
