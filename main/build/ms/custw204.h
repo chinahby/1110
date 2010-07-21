@@ -258,9 +258,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef USES_CAMERA
+#endif
 #include "custcamera.h"
 #include "custjpeg.h"
-#endif
+
 
 
 
