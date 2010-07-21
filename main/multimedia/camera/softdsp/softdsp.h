@@ -54,8 +54,8 @@ int     SoftDSP_Start(const camsensor_static_params_type *camsensor_params);
 int     SoftDSP_Stop(void);
 int     SoftDSP_PushPreviewBuff(byte *pBuff);
 int     SoftDSP_Preview(CAMSoftDSP_MsgCBType cb, int dx, int dy);
-int     SoftDSP_SetCaptureBuff(byte *pBuff);
-int     SoftDSP_Capture(CAMSoftDSP_MsgCBType cb, int dx, int dy);
+int     SoftDSP_SetCaptureBuff(byte *pBuff, byte *pThumbNail);
+int     SoftDSP_Capture(CAMSoftDSP_MsgCBType cb, int dx, int dy, int thumbdx, int thumbdy);
 int     SoftDSP_HandleMSG(int msg, void *pBuff);
 #endif //#ifdef CAMERA_USES_SOFTDSP
 #endif //CAMSOFTDSP_H

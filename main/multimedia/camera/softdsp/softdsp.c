@@ -40,6 +40,9 @@ struct SoftDSPInfo{
     int                     nCaptureWidth;
     int                     nCaptureHeight;
     uint16                 *pCaptureBuff;
+    uint16                 *pThumbNailBuff;
+    int                     nThumbWidth;
+    int                     nThumbHeight;
     uint16                 *ppPreviewBuff[SOFTDSP_PREVIEW_BUFF_MAX];
     int                     currPreviewBuff;
     int                     nSeqNum;
@@ -48,6 +51,7 @@ struct SoftDSPInfo{
 }g_SoftDSPInfo;
 
 #ifdef TEST_ENABLE
+#define UPDATE_TIME_MS  100
 static clk_cb_type softdsp_test_clk;
 #endif
 
@@ -64,7 +68,10 @@ static void SoftDSP_FrameISR(void)
 static void softdsp_test_clk_cb(int ms)
 {
     SoftDSP_FrameISR();
-    clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) 500, 0, FALSE);
+    if(!g_SoftDSPInfo.bCaptureState)
+    {
+        clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) UPDATE_TIME_MS, 0, FALSE);
+    }
 }
 #endif
 
@@ -139,17 +146,18 @@ static void SoftDSP_CatchSensorData(void)
     if(pBuff)
     {
 #ifdef TEST_ENABLE
-    {
-        static byte color = 0;
-        memset(pBuff, color++, pixelSize);
-    }
+        {
+            static byte color = 0;
+            memset(pBuff, ~color, pixelSize);
+            memset(pBuff+(pixelSize/2), color++, pixelSize);
+        }
 #else
-    // TODO:
-    // 从Sensor获取数据
+        // TODO:
+        // 从Sensor获取数据
 #endif
         if(g_SoftDSPInfo.bCaptureState)
         {
-            uint16 *pDst = SoftDSP_GetPreviewBuff();
+            uint16 *pDst = g_SoftDSPInfo.pThumbNailBuff;
             
             // 发送通知
             if(pDst && g_SoftDSPInfo.msgcb)
@@ -246,20 +254,23 @@ int SoftDSP_Preview(CAMSoftDSP_MsgCBType cb, int dx, int dy)
     return 0;
 }
 
-int SoftDSP_SetCaptureBuff(byte *pBuff)
+int SoftDSP_SetCaptureBuff(byte *pBuff, byte *pThumbNail)
 {
     g_SoftDSPInfo.pCaptureBuff = (uint16*)pBuff;
+    g_SoftDSPInfo.pThumbNailBuff = (uint16*)pThumbNail;
     return 0;
 }
 
-int SoftDSP_Capture(CAMSoftDSP_MsgCBType cb, int dx, int dy)
+int SoftDSP_Capture(CAMSoftDSP_MsgCBType cb, int dx, int dy, int thumbdx, int thumbdy)
 {
     g_SoftDSPInfo.msgcb = cb;
     g_SoftDSPInfo.nCaptureWidth  = dx;
     g_SoftDSPInfo.nCaptureHeight = dy;
+    g_SoftDSPInfo.nThumbWidth    = thumbdx;
+    g_SoftDSPInfo.nThumbHeight   = thumbdy;
     g_SoftDSPInfo.bCaptureState  = TRUE;
 #ifdef TEST_ENABLE
-    clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) 500, 0, FALSE);
+    clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) UPDATE_TIME_MS, 0, FALSE);
 #endif
     return 0;
 }
