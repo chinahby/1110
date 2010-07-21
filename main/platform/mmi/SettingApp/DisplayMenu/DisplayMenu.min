@@ -18,9 +18,11 @@ vpath %.c $(DISPLAYMENU_SRC)
 vpath %.bar $(DISPLAYMENU_RES)
 vpath %.brx $(DISPLAYMENU_RES)
 ifeq ($(USES_160X128),yes)
-vpath %.png $(APPSCOMMON)/images/160x128/Wallpaper
-vpath %.bmp $(APPSCOMMON)/images/160x128/Wallpaper
+vpath %.jpg $(APPSCOMMON)/images/160x128/ivio/Wallpaper
+vpath %.png $(APPSCOMMON)/images/160x128/ivio/Wallpaper
+vpath %.bmp $(APPSCOMMON)/images/160x128/ivio/Wallpaper
 else
+vpath %.jpg $(APPSCOMMON)/images/color/Wallpaper
 vpath %.png $(APPSCOMMON)/images/color/Wallpaper
 vpath %.bmp $(APPSCOMMON)/images/color/Wallpaper
 endif
@@ -33,12 +35,15 @@ else
 CONSTFILE_FILES+=\
 	displaymenu.mif|fs:/mif/displaymenu.mif \
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-    wallpaper01.png|fs:/image/wallpaper/wallpaper01.png \
-    wallpaper02.png|fs:/image/wallpaper/wallpaper02.png \
-    wallpaper03.png|fs:/image/wallpaper/wallpaper03.png \
-    wallpaper04.png|fs:/image/wallpaper/wallpaper04.png \
-    wallpaper05.png|fs:/image/wallpaper/wallpaper05.png \
-    wallpaper06.png|fs:/image/wallpaper/wallpaper06.png
+    wallpaper1.jpg|fs:/image/wallpaper/wallpaper1.jpg \
+    wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
+    wallpaper3.png|fs:/image/wallpaper/wallpaper3.png \
+    wallpaper4.png|fs:/image/wallpaper/wallpaper4.png \
+    wallpaper5.png|fs:/image/wallpaper/wallpaper5.png \
+    wallpaper6.png|fs:/image/wallpaper/wallpaper6.png \
+    wallpaper7.png|fs:/image/wallpaper/wallpaper7.png \
+    wallpaper8.png|fs:/image/wallpaper/wallpaper8.png \
+    wallpaper9.png|fs:/image/wallpaper/wallpaper9.png
 endif #ifeq ($(USES_LOWMEM), yes)
 
 # 加入另外一种语言资源文件

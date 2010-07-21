@@ -658,6 +658,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
     {
         case EVT_DIALOG_INIT:
             // 分类枚举出所有的墙纸或动画
+            MSG_FATAL("HandlePictureDialogEvent EVT_DIALOG_INIT",0,0,0);
             DisplayMenu_EnumFile(pMe, pMe->m_PICType);
             pMe->m_bOkToDo = TRUE;
             pMe->m_count = 0;
@@ -668,6 +669,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
         /*//取NV中的值,用来显示已设置了的图片或动画.*/
         {
             char wallnvtmp[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
+            MSG_FATAL("HandlePictureDialogEvent EVT_DIALOG_START",0,0,0);
             IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
             IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
             switch(pMe->m_PICType)
@@ -2148,8 +2150,10 @@ static void DisplayMenu_EnumFile(CDisplayMenu *pMe,PICTURE_TYPE PICType)
 
     }
     //DISP_ERR("Start Enum wallpaper",0,0,0);
+    MSG_FATAL("HandlePictureDialogEvent IFILEMGR_EnumInit",0,0,0);
     if(IFILEMGR_EnumInit(pMe->m_pIFileMgr, "fs:/image/wallpaper/", FALSE)  == SUCCESS)
     {
+        MSG_FATAL("HandlePictureDialogEvent IFILEMGR_EnumInit SUCCESS",0,0,0);
         //DISP_ERR("IFILEMGR_EnumInit wallpaper ok",0,0,0);
         while(IFILEMGR_EnumNext(pMe->m_pIFileMgr, &Photopos))
         {
@@ -2237,7 +2241,7 @@ static void DisplayMenu_EnumFile(CDisplayMenu *pMe,PICTURE_TYPE PICType)
         }
 
     }
-
+    MSG_FATAL("HandlePictureDialogEvent End",0,0,0);
 }
 
 
@@ -2266,9 +2270,10 @@ static void DisplayMenu_DisplayImg(CDisplayMenu *pMe, PICTURE_TYPE PICType)
 #ifdef FEATURE_ANIMATION_POWERUPDOWN
     AECHAR  szBuf[10];
 #endif//FEATURE_ANIMATION_POWERUPDOWN
+    MSG_FATAL("DisplayMenu_DisplayImg Start",0,0,0);
     if(pMe->m_CurPaper == NULL)
     {
-        DISP_ERR("Warning pMe->m_CurPaper == NULL", 0, 0 ,0);
+        MSG_FATAL("Warning pMe->m_CurPaper == NULL", 0, 0 ,0);
         return;
     }
     // 画title底条
@@ -2295,29 +2300,30 @@ static void DisplayMenu_DisplayImg(CDisplayMenu *pMe, PICTURE_TYPE PICType)
             AECHAR  wFormat[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
             AEEImageInfo  rImageInfo;
 
-
+            MSG_FATAL("DisplayMenu_DisplayImg case WALLPAPER_SUB",0,0,0);
             // 画图片
             if (pMe->m_pWallPaper != NULL)
             {
                 IIMAGE_Release(pMe->m_pWallPaper);
                 pMe->m_pWallPaper = NULL;
             }
-
+            DBGPRINTF("imange_name %s",pMe->m_CurPaper->imange_name,0,0);
             if(PICType == WALLPAPER_MAIN)
             {
                 pMe->m_pWallPaper = ISHELL_LoadImage( pMe->m_pShell,
                                             pMe->m_CurPaper->imange_name);
             }
-            DISP_ERR("pMe->m_CurPaper=%x", pMe->m_CurPaper, 0 ,0);
+            MSG_FATAL("pMe->m_CurPaper=%x", pMe->m_CurPaper, 0 ,0);
 
             if(pMe->m_pWallPaper == NULL)
             {
-                DISP_ERR("FAIL TO LOAD IMG", 0, 0 ,0);
+                MSG_FATAL("FAIL TO LOAD IMG", 0, 0 ,0);
                 return;
             }
 
 
             IIMAGE_GetInfo( pMe->m_pWallPaper, &rImageInfo );
+            MSG_FATAL("rImageInfo.cx = %d, rImageInfo.cy = %d", rImageInfo.cx, rImageInfo.cy ,0);
             if(rImageInfo.cx <= pMe->m_rc.dx)
             {
                 cx += (pMe->m_rc.dx - rImageInfo.cx)/2;
@@ -2326,7 +2332,7 @@ static void DisplayMenu_DisplayImg(CDisplayMenu *pMe, PICTURE_TYPE PICType)
             {
                 cy += (pMe->m_rc.dy - rImageInfo.cy - WALLPAPER_TOP_BAR_HIGHT)/2;
             }
-
+            MSG_FATAL("cx = %d, cy = %d", cx, cy ,0);
             IIMAGE_Draw(pMe->m_pWallPaper, cx, cy);
             break;
         }
@@ -2432,6 +2438,7 @@ static void DisplayMenu_DisplayImg(CDisplayMenu *pMe, PICTURE_TYPE PICType)
         default:
             break;
     }
+    MSG_FATAL("DisplayMenu_DisplayImg End",0,0,0);
 }
 /*==============================================================================
 函数：
