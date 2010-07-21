@@ -257,8 +257,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 #ifdef USES_CAMERA
 #include "custcamera.h"
-#include "custjpeg.h"
 #endif
+#include "custjpeg.h"
+
 
 #ifdef FEATURE_DS_MOBILE_IP
    #undef FEATURE_DS_MOBILE_IP
