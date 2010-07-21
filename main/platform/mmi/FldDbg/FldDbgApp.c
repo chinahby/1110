@@ -7959,6 +7959,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 
     STRTOWSTR("%u %u", fmt_str, sizeof(fmt_str));
     
+ #if 0
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
@@ -7967,6 +7968,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
+#endif
 
     //Display ESN with hexadecimal
     STRTOWSTR("0x%08X", fmt_str, sizeof(fmt_str));
