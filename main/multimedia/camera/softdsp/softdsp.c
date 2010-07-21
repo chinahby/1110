@@ -25,9 +25,17 @@ Copyright(c) 2007 by QUALCOMM, Incorporated. All Rights Reserved.
 #ifdef CAMERA_USES_SOFTDSP
 #include "camsensor.h"
 #include "softdsp.h"
+#include "gpio_int.h"
 
+#define SOFTDSP_INT             GPIO_INT_52
+#define SOFTDSP_DATA_ADDR       HWIO_GPIO2_IN_1_ADDR
+#define SOFTDSP_CLK_ADDR        HWIO_GPIO2_OUT_0_ADDR
+#define SOFTDSP_CLK_MASK        0xFFFFFBFF
+#define SOFTDSP_CLK_H           0x400
+#define SOFTDSP_CLK_L           0x000
 #define MATH_FACTOR_BIT         10
-#define TEST_ENABLE
+//#define SOFT_MCLK
+//#define TEST_ENABLE
 #ifdef TEST_ENABLE
 #include "clk.h"
 #endif
@@ -59,6 +67,9 @@ static void SoftDSP_FrameISR(void)
 {
     if(g_SoftDSPInfo.msgcb)
     {
+#ifdef SOFT_MCLK
+        gpio_tlmm_config(GPIO_OUTPUT_10);
+#endif
         g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_START_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_START_OF_FRAME;
         g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_START_OF_FRAME]);
     }
@@ -126,6 +137,38 @@ static void SoftDSP_BMPScale(uint16 *pBitsDst16, int16 wWidthDst, int16 wHeightD
     }
 }
 
+#ifdef SOFT_MCLK
+static INLINE void SoftDSP_ClockOut(int nCount)
+{
+    register uint32 clkh,clkl;
+    
+    clkh = inpdw(HWIO_GPIO2_OUT_0_ADDR)|SOFTDSP_CLK_H;
+    clkl = inpdw(HWIO_GPIO2_OUT_0_ADDR)&SOFTDSP_CLK_MASK;
+    nCount >>= 3;
+    while(nCount--)
+    {
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+    }
+}
+#endif
+#ifdef SOFT_MCLK
+static boolean g_bTest = FALSE;
+#endif
 static void SoftDSP_CatchSensorData(void)
 {
     uint16 *pBuff = NULL;
@@ -152,9 +195,44 @@ static void SoftDSP_CatchSensorData(void)
             memset(pBuff+(pixelSize/2), color++, pixelSize);
         }
 #else
-        // TODO:
         // 从Sensor获取数据
+        int i;
+        register uint16 data,*pData;
+#ifdef SOFT_MCLK
+        register uint32 clkh,clkl;
+
+        clkh = inpdw(HWIO_GPIO2_OUT_0_ADDR)|SOFTDSP_CLK_H;
+        clkl = inpdw(HWIO_GPIO2_OUT_0_ADDR)&SOFTDSP_CLK_MASK;
+
+        if(g_bTest)
+        {
+            while(g_bTest)
+            {
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+            }
+        }
 #endif
+        pData = pBuff;
+        for(i=0;i<pixelSize;i++)
+        {
+#ifdef SOFT_MCLK
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+#endif
+            data = (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)<<8;
+#ifdef SOFT_MCLK
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+#endif
+            data |= (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)&0xFF;
+            *pData++=data;
+        }
+#ifdef SOFT_MCLK
+        gpio_tlmm_config(GP_PDM);
+#endif
+#endif
+
         if(g_SoftDSPInfo.bCaptureState)
         {
             uint16 *pDst = g_SoftDSPInfo.pThumbNailBuff;
@@ -196,14 +274,29 @@ static void SoftDSP_CatchSensorData(void)
             }
         }
     }
+#ifdef SOFT_MCLK
+    gpio_tlmm_config(GP_PDM);
+#endif
 }
 
+#ifndef TEST_ENABLE
+static void SoftDSP_EnableISR(void)
+{
+    (void)gpio_int_set_handler ( SOFTDSP_INT, ACTIVE_LOW, SoftDSP_FrameISR);
+}
+
+static void SoftDSP_DisableISR(void)
+{
+    (void)gpio_int_set_handler ( SOFTDSP_INT, ACTIVE_LOW, NULL);
+}
+#endif
 //================================================================================================
 // Export Function
 //================================================================================================
 void SoftDSP_Init(void)
 {
     memset(&g_SoftDSPInfo,0,sizeof(g_SoftDSPInfo));
+    (void)gpio_int_set_detect( SOFTDSP_INT, DETECT_EDGE);
 #ifdef TEST_ENABLE
     clk_def (&softdsp_test_clk);
 #endif
@@ -223,6 +316,8 @@ int SoftDSP_Stop(void)
 {
 #ifdef TEST_ENABLE
     clk_dereg (&softdsp_test_clk);
+#else
+    SoftDSP_DisableISR();
 #endif
     memset(&g_SoftDSPInfo,0,sizeof(g_SoftDSPInfo));
     return 0;
@@ -249,7 +344,9 @@ int SoftDSP_Preview(CAMSoftDSP_MsgCBType cb, int dx, int dy)
     g_SoftDSPInfo.nPreviewHeight = dy;
     g_SoftDSPInfo.bCaptureState  = FALSE;
 #ifdef TEST_ENABLE
-    clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) 500, 0, FALSE);
+    clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) UPDATE_TIME_MS, 0, FALSE);
+#else
+    SoftDSP_EnableISR();
 #endif
     return 0;
 }
@@ -271,6 +368,8 @@ int SoftDSP_Capture(CAMSoftDSP_MsgCBType cb, int dx, int dy, int thumbdx, int th
     g_SoftDSPInfo.bCaptureState  = TRUE;
 #ifdef TEST_ENABLE
     clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) UPDATE_TIME_MS, 0, FALSE);
+#else
+    SoftDSP_EnableISR();
 #endif
     return 0;
 }
