@@ -1703,6 +1703,7 @@ static CAMSoftDSP_IllegalCommandMessageType illegalCmdMessage;
 #ifdef FEATURE_CAMERA_AEC_DURING_MULTISHOT
 #error code not present
 #endif /* FEATURE_CAMERA_AEC_DURING_MULTISHOT */
+
 typedef enum
 {
   CAMERA_TERMINATE_CLOCK_STOPPED,
@@ -1714,9 +1715,7 @@ static camera_terminate_clk_state_type camera_terminate_clk_state = CAMERA_TERMI
 static clk_cb_type camera_terminate_clk;
 #ifndef CAMERA_USES_SOFTDSP
 static clk_cb_type camera_service_unavailable_clk;
-#endif
 static boolean camera_service_unavailable = FALSE;
-#ifndef CAMERA_USES_SOFTDSP
 static uint16                            frameDoneMessage [MP4E_FRAME_BUF_SIZE];
 VFE_EOF_Ack2Type                        ackOutput2;
 #endif
@@ -1843,8 +1842,9 @@ static uint32  camera_decimation_factor;
 static uint32  zoom_step_size;
 static uint32  camera_preview_buffer_size = 0;
 static uint32  camera_encode_buffer_size  = 0;
+#ifndef CAMERA_USES_SOFTDSP
 boolean camera_take_images = FALSE;
-
+#endif
 /* Variables needed for EXIF */
 static void *camera_description = 0;
 static uint16 camera_description_count = 0;
@@ -2522,9 +2522,9 @@ void camera_initiate_capture (void);
 
 boolean camera_set_preview_buffers (void);
 void camera_set_preview_headers (void);
-
+#ifndef CAMERA_USES_SOFTDSP
 static void camera_set_preview_headers_rotation (void);
-
+#endif
 #ifdef FEATURE_CAMERA_SUPPORT_ICON_ARRAY
 static camera_ret_code_type camera_set_icon_and_preview_overlay(void);
 #endif /* FEATURE_CAMERA_SUPPORT_ICON_ARRAY */
@@ -2650,8 +2650,9 @@ static uint32 camera_calculate_skip_pattern(uint32 input_sensor_fps, float input
 #endif
 static void camera_process_take_single_picture(void);
 static boolean camera_abort_takepicture_encoding_operation(void);
+#ifndef CAMERA_USES_SOFTDSP
 static void camera_show_snapshot_timing( void );
-
+#endif
 #ifdef FEATURE_CAMERA_BURST_MODE
 #error code not present
 #endif /* FEATURE_CAMERA_BURST_MODE */
@@ -4070,9 +4071,9 @@ camera_ret_code_type camera_svcs_start_preview
     camera_reject (callback, client_data, CAMERA_FUNC_START_PREVIEW);
     return ret_code;
   }
-
+#ifndef CAMERA_USES_SOFTDSP
   camera_take_images = FALSE;
-
+#endif
   graph_queue_camera_func ((uint32)CAMERA_FUNC_START_PREVIEW,
                            (void *)callback, client_data, 0, 0, 0, 0);
 
@@ -4133,8 +4134,9 @@ camera_ret_code_type camera_svcs_stop_preview(void)
     event_report (EVENT_CAMERA_INVALID_STATE);
     return CAMERA_INVALID_STATE;
   }
+#ifndef CAMERA_USES_SOFTDSP
   camera_take_images = FALSE;
-
+#endif
 #ifdef FEATURE_MDP
 #if defined FEATURE_VIDEO_ENCODE
   /* De-register the video */
@@ -4281,7 +4283,9 @@ camera_ret_code_type camera_svcs_take_picture
     camera_af_stop_focus();
   }
 #endif
+#ifndef CAMERA_USES_SOFTDSP
   camera_take_images = FALSE;
+#endif
   camera_take_picture_retry = CAMERA_TAKE_PICTURE_RETRY_NONE;
 
   graph_queue_camera_func((uint32)CAMERA_FUNC_TAKE_PICTURE, (void *)callback, client_data, 0, 0, 0, 0);
@@ -4452,9 +4456,9 @@ static camera_ret_code_type camera_encode_picture_common
     camera_reject(callback, client_data, CAMERA_FUNC_ENCODE_PICTURE);
     return ret_code;
   }
-
+#ifndef CAMERA_USES_SOFTDSP
   camera_take_images = FALSE;
-
+#endif
   /* JPEG Encoding */
   if (camera_encode_properties.format == CAMERA_JPEG)
   {
@@ -5952,6 +5956,7 @@ camera_ret_code_type camera_svcs_blt_ex
 {
 /*lint -save -e715 function param not referenced */
 
+#ifndef CAMERA_USES_SOFTDSP
   static ipl_rect_type src_window, dst_window;
   static uint16 my_dst_dx = 0, my_dst_dy = 0, my_x=0, my_y=0, my_dx=0, my_dy=0;
   boolean picture_frame;
@@ -5980,7 +5985,7 @@ camera_ret_code_type camera_svcs_blt_ex
   {  
      return CAMERA_INVALID_PARM;
   }
-
+  
 #ifdef CAMERA_TIMETEST
 #error code not present
 #endif /* CAMERA_TIMETEST */
@@ -6396,55 +6401,6 @@ camera_ret_code_type camera_svcs_blt_ex
         MSG_ERROR("ipl_rot_add_crop has failed", 0, 0, 0);
       }
     }
-#else
-    if(format == CAMERA_RGB565 && frame->format == CAMERA_RGB565)
-    {
-        uint16 *pBitsSrc16 = (uint16*)bmy_addr;
-        uint16 *pBitsDst16 = (uint16*)dst_ptr;
-        int i;
-        int nSize;
-        int nSizeMod;
-        uint16 *pDest,*pSrc;
-        int16 wCpyWidth, wCpyHeight, nSrcPitch, nDstPitch;
-        
-        wCpyWidth  = MIN(dx,frame->dx);
-        wCpyHeight = MIN(dy,frame->dy);
-        nSrcPitch  = frame->dx;
-        nDstPitch  = dx;
-        pBitsDst16+= y*nDstPitch+x;
-        
-        for(i=0; i<wCpyHeight; i++)
-        {
-            pDest    = pBitsDst16;
-            pSrc     = pBitsSrc16;
-            nSize    = wCpyWidth>>3;
-            nSizeMod = wCpyWidth&0x7;
-            
-            while(nSize--)
-            {
-                *pDest++ = *pSrc++;
-                *pDest++ = *pSrc++;
-                *pDest++ = *pSrc++;
-                *pDest++ = *pSrc++;
-                *pDest++ = *pSrc++;
-                *pDest++ = *pSrc++;
-                *pDest++ = *pSrc++;
-                *pDest++ = *pSrc++;
-            }
-            
-            while(nSizeMod--)
-            {
-                *pDest++ = *pSrc++;
-            }
-            
-            pBitsDst16 += nDstPitch;
-            pBitsSrc16 += nSrcPitch;
-        }
-    }
-    else
-    {
-        ERR_FATAL("Don't Support Format",0,0,0);
-    }
 #endif
 #endif /* FEATURE_CAMERA_LCD_DIRECT_MODE || nFEATURE_MDP */
     if (camera_snapshot_timing.snapshot_completion_callback_start !=0)
@@ -6455,6 +6411,109 @@ camera_ret_code_type camera_svcs_blt_ex
       camera_show_snapshot_timing();
     }
   }
+#else //#ifndef CAMERA_USES_SOFTDSP
+  qcamrawHeaderType *header;
+  byte *bmy_addr;
+  
+  /* Do a Null Check for frame pointer */
+  if(frame->buffer!=NULL)
+  {
+     header= (qcamrawHeaderType *) frame->buffer;
+  }
+  else
+  {  
+     return CAMERA_INVALID_PARM;
+  }
+  
+  if (header->frameType == QCAMRAW_PICTURE_FRAME)
+  {
+    boolean valid = FALSE;
+
+    /* Check if input thumbnail_image looks OK */
+    if ((frame->thumbnail_image != NULL) && ((uint32)(frame->thumbnail_image) % 4 == 0))
+    {
+      /* Check if this is a valid thumbnail frame for single shot */
+      if ((uint8 *)frame->thumbnail_image == thumbnail_luma_buf)
+      {
+        valid = TRUE;
+      }
+    }
+
+    if ((valid == FALSE) ||
+        (*(uint32*)(frame->thumbnail_image)   != 0x4D414351) ||
+        (*(uint32*)(frame->thumbnail_image+4) != 0x20574152))
+    {
+      event_report (EVENT_CAMERA_INVALID_STATE);
+      return CAMERA_INVALID_FORMAT;
+    }
+    bmy_addr = qcamrawGetDataYPtr (frame->thumbnail_image);
+  }
+  else if ((header->frameType == QCAMRAW_PREVIEW_FRAME) &&
+           ((camera_state == CAMERA_STATE_PREVIEW) ||
+            (camera_state == CAMERA_STATE_RECORDING) ||
+            (camera_state == CAMERA_STATE_QVP_ENCODING)))
+  {
+    if ((header->buffer_index >= CAMERA_NUM_OF_PREVIEW_BUFFERS) ||
+        ((uint32)(frame->buffer) % 4 != 0) ||
+        (*(uint32*)(frame->buffer) != 0x4D414351) ||
+        (*(uint32*)(frame->buffer+4) != 0x20574152))
+    {
+      event_report (EVENT_CAMERA_INVALID_STATE);
+      return CAMERA_INVALID_FORMAT;
+    }
+    bmy_addr = qcamrawGetDataYPtr (frame->buffer);
+  }
+  else
+  {
+    event_report (EVENT_CAMERA_INVALID_STATE);
+    return CAMERA_INVALID_FORMAT;
+  }
+  
+  if(format == CAMERA_RGB565 && frame->format == CAMERA_RGB565)
+  {
+    uint16 *pBitsSrc16 = (uint16*)bmy_addr;
+    uint16 *pBitsDst16 = (uint16*)dst_ptr;
+    int i;
+    int nSize;
+    int nSizeMod;
+    uint16 *pDest,*pSrc;
+    int16 wCpyWidth, wCpyHeight, nSrcPitch, nDstPitch;
+    
+    wCpyWidth  = MIN(dx,frame->dx);
+    wCpyHeight = MIN(dy,frame->dy);
+    nSrcPitch  = frame->dx;
+    nDstPitch  = dx;
+    pBitsDst16+= y*nDstPitch+x;
+    
+    for(i=0; i<wCpyHeight; i++)
+    {
+        pDest    = pBitsDst16;
+        pSrc     = pBitsSrc16;
+        nSize    = wCpyWidth>>3;
+        nSizeMod = wCpyWidth&0x7;
+        
+        while(nSize--)
+        {
+            *pDest++ = *pSrc++;
+            *pDest++ = *pSrc++;
+            *pDest++ = *pSrc++;
+            *pDest++ = *pSrc++;
+            *pDest++ = *pSrc++;
+            *pDest++ = *pSrc++;
+            *pDest++ = *pSrc++;
+            *pDest++ = *pSrc++;
+        }
+        
+        while(nSizeMod--)
+        {
+            *pDest++ = *pSrc++;
+        }
+        
+        pBitsDst16 += nDstPitch;
+        pBitsSrc16 += nSrcPitch;
+    }
+  }
+#endif
   else
   {
     return CAMERA_INVALID_FORMAT;
@@ -10681,8 +10740,9 @@ static void camera_process_start
 #endif
   camera_take_picture_status_set_default();
   camera_capture_delay = 0;
-
+#ifndef CAMERA_USES_SOFTDSP
   camera_service_unavailable = FALSE;
+#endif
 #ifdef FEATURE_CAMERA_LCD_DIRECT_MODE
   camera_lcd_direct_mode = 0;
 #endif /* FEATURE_CAMERA_LCD_DIRECT_MODE */
@@ -11066,11 +11126,13 @@ static void camera_process_start_preview
     camera_dsp_state = DSP_ENABLING;
     ret_val = (VFE_Initialize (camera_qdsp_cb) != CAMQDSP_SUCCESS);
 #else
-    SoftDSP_PushPreviewBuff(qcamrawGetDataCbCrPtr(camera_preview_buffers.buffers[0].buf_ptr));
+    camera_reset_preview_buffers();
+
+    SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[0].buf_ptr+qcamraw_header_size);
     camera_preview_set_buffer_status(0, BUSY_WITH_VFE);
-    SoftDSP_PushPreviewBuff(qcamrawGetDataCbCrPtr(camera_preview_buffers.buffers[1].buf_ptr));
+    SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[1].buf_ptr+qcamraw_header_size);
     camera_preview_set_buffer_status(1, BUSY_WITH_VFE);
-    SoftDSP_PushPreviewBuff(qcamrawGetDataCbCrPtr(camera_preview_buffers.buffers[2].buf_ptr));
+    SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[2].buf_ptr+qcamraw_header_size);
     camera_preview_set_buffer_status(2, BUSY_WITH_VFE);
     ret_val = (SoftDSP_Preview (camera_softdsp_cb,camera_preview_dx,camera_preview_dy) != 0);
 #endif
@@ -14457,7 +14519,7 @@ static void camera_svcs_ack_softdsp_output1 (void)
     {
       if (camera_preview_buffers.buffers[current_buffer].status == AVAILABLE)
       {
-        SoftDSP_PushPreviewBuff(qcamrawGetDataCbCrPtr(camera_preview_buffers.buffers[current_buffer].buf_ptr));
+        SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[current_buffer].buf_ptr+qcamraw_header_size);
         camera_preview_set_buffer_status(current_buffer, BUSY_WITH_VFE);
         break;
       }
@@ -14561,7 +14623,6 @@ static void  camera_process_softdsp_output1_msg (Camera_EndOfFrameMessageType *m
   if (camera_abort_picture)
   {
     /* To reconfigure or abort, go back to idle first */
-    camera_take_images = FALSE;
     if (SoftDSP_Stop () != 0)
     {
       camera_terminate (CAMERA_EXIT_CB_DSP_ABORT, (int)CAMERA_ERROR_CONFIG);
@@ -14569,9 +14630,6 @@ static void  camera_process_softdsp_output1_msg (Camera_EndOfFrameMessageType *m
     }
     return;
   }
-
-  if (!camera_take_images) return;
-  
   
   if (camera_frame_callback_enabled && camera_app_cb &&
            (camera_preview_buffers.num_buffers_with_display <
@@ -16010,7 +16068,7 @@ void camera_set_preview_headers(void)
   }
 #endif /* FEATURE_VIDEO_ENCODE */
 } /* camera_set_preview_header */
-
+#ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
 
 FUNCTION      CAMERA_SET_PREVIEW_HEADERS
@@ -16072,6 +16130,7 @@ static void camera_set_preview_headers_rotation(void)
     }
   }
 } /* camera_set_preview_header */
+#endif
 #ifndef FEATURE_IPL_NO_CAMERA
 /*===========================================================================
 
@@ -18780,7 +18839,6 @@ uint16  camera_recent_fps( void )
 {
   return camera_output1_frame_rate.last_fps;
 }
-#endif
 
 /*===========================================================================
 
@@ -18981,7 +19039,7 @@ static void camera_show_snapshot_timing( void )
   memset(&camera_snapshot_timing, 0, sizeof(camera_snapshot_timing));
   memset(&camera_snapshot_information, 0, sizeof(camera_snapshot_information));
 }
-
+#endif
 #ifndef FEATURE_CAMERA_YCBCR_ONLY
 #ifndef CAMERA_USES_SOFTDSP
 /*===========================================================================
@@ -19800,7 +19858,6 @@ static void camera_process_terminate(void)
     camera_state = CAMERA_STATE_READY;
     camera_terminate_clk_state = CAMERA_TERMINATE_CLOCK_STOPPED;
   }
-
   /* camera_abort_takepicture_encoding_operation will set
    * camera_take_picture_status.abort to TRUE, call appropriate abort command
    * if capture, YCBCR downsizer, BVCM, LPM, or encoding is in progress, and
@@ -19825,20 +19882,16 @@ static void camera_process_terminate(void)
     camera_terminate_clk_state = CAMERA_TERMINATE_CLOCK_RUNNING;
     return;
   }
-
+  
+#ifndef CAMERA_USES_SOFTDSP
   if(camera_service_unavailable)
   {
-#ifndef CAMERA_USES_SOFTDSP
     camera_log(LOG_INFO, (uint32)camera_func, 0, (uint32)TERM_SRVC_UNAVAIL, __LINE__);
     MSG_ERROR("CAMERA_SVCS: QDSP Service Unavailable. Call QDSP Terminate", 0, 0, 0);
     camera_dsp_state = DSP_DISABLED;
     CAMQDSP_Terminate();
-#else
-    SoftDSP_Stop();
-#endif
   }
-
-#ifndef CAMERA_USES_SOFTDSP
+  
   MSG_HIGH("CAMERA_SVCS: camera_process_terminate: camera_state=%d camera_dsp_state=%d",
       camera_state, camera_dsp_state, 0);
   if( (CAMERA_STATE_READY != camera_state) &&
@@ -19885,6 +19938,8 @@ static void camera_process_terminate(void)
         break;
     }
   }
+#else
+  camera_state = CAMERA_STATE_READY;
 #endif
   if( (camera_state == CAMERA_STATE_READY) ||
       (camera_state == CAMERA_STATE_INIT) )
@@ -19900,7 +19955,9 @@ static void camera_process_terminate(void)
 #error code not present
 #endif /*FEATURE_CAMERA_RAW_PREVIEW_CAPTURE*/
     camera_stopping_record = FALSE;
+#ifndef CAMERA_USES_SOFTDSP
     camera_service_unavailable = FALSE;
+#endif
 #ifdef FEATURE_VIDEO_ENCODE
     camera_video_engine_stop_requested = FALSE;
     camera_video_engine_start_requested = FALSE;

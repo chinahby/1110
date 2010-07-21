@@ -912,13 +912,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 
       
         case EVT_APP_RESUME: 
-            if(pMe->m_pCamera == NULL)
-            {
-                ISHELL_CreateInstance(pMe->m_pShell, 
-                                      AEECLSID_CAMERA, 
-                                      (void **)&pMe->m_pCamera);              
-            } 
-
+            CameraApp_InitCameraCheck(pMe); 
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
       

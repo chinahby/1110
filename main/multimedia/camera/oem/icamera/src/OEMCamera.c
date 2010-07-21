@@ -4512,6 +4512,7 @@ int OEMCamera_FrameBlt(void * pDst, uint32 dwDstSize, int xDst, int yDst, int cx
    }
 
    nRet = camera_blt_ext(pRawFrame, (uint16)xSrc, (uint16)ySrc, pDst, (uint16)xDst, (uint16)yDst, (uint16)cxDst, (uint16)cyDst, nColorScheme);
+   OEMCamera_ReleaseFrame(NULL);
    rc.x = xDst;
    rc.y = yDst;
    rc.dx = cxDst;
@@ -4553,7 +4554,7 @@ int OEMCamera_FrameBlt(void * pDst, uint32 dwDstSize, int xDst, int yDst, int cx
 
    nRet = camera_blt_ext(pRawFrame, (uint16)(pDstDIB->nPitch / nPixelSize), pDstDIB->cy, (void *)pDstDIB->pBmp, (uint16)xDst, (uint16)yDst, (uint16)cxDst, (uint16)cyDst, nColorScheme);
 
-
+   OEMCamera_ReleaseFrame(NULL);
    //nRet = camera_blt(pRawFrame, (uint16)(pDstDIB->nPitch / OEM_PIXEL_SIZE), pDstDIB->cy, (void *)pDstDIB->pBmp, (uint16)xDst, (uint16)cxDst, (uint16)cyDst);
    //nRet = camera_blt_ext(pRawFrame, (uint16)(pDstDIB->nPitch / OEM_PIXEL_SIZE), pDstDIB->cy, (void *)pDstDIB->pBmp, (uint16)xDst, (uint16)yDst, (uint16)cxDst, (uint16)cyDst, nColorScheme);
 /* If in FrameCallBack Mode display Invalidate the Display buffer*/

@@ -228,9 +228,8 @@ extern uint16 camera_dy;
  * display dimensions. They are always in landscape */
 extern uint32 camera_preview_dx;
 extern uint32 camera_preview_dy;
-
-extern boolean camera_take_images;
 #ifndef CAMERA_USES_SOFTDSP
+extern boolean camera_take_images;
 extern VFE_EOF_Ack2Type  ackOutput2;
 #endif
 extern boolean camera_blt_ext_recalculate_window;

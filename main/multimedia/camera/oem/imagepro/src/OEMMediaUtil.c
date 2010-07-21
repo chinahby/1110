@@ -49,11 +49,15 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  N/A
                      INCLUDES AND VARIABLE DEFINITIONS
 ========================================================================= */
 #include "OEMFeatures.h"
-#ifdef FEATURE_APP_QALBUM // Gemsea Add
+
 #if defined(FEATURE_BREW_MULTIMEDIA)
 
 #include "cmx.h"
 #include "ipl.h"
+
+#ifdef FEATURE_JPEG_ENCODER_REV2
+#undef FEATURE_JPEG_ENCODER_REV2
+#endif
 
 #ifdef FEATURE_JPEG_ENCODER_REV2
 #include "jpege.h"
@@ -1950,6 +1954,5 @@ static void IMediaUtil_FreeSavedEncodeInfo (IMediaUtil *pme)
 
 #endif // FEATURE_ACM || FEATURE_BMP_ACM
 #endif // defined(FEATURE_BREW_MULTIMEDIA)
-#endif //#ifdef FEATURE_APP_QALBUM // Gemsea Add
 /* ============= End of File =============================================== */
 

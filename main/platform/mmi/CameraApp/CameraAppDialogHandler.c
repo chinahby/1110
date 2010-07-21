@@ -906,7 +906,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             }
             else
             {
-                IDisplay_ClearScreen(pMe->m_pDisplay);
+                //IDisplay_ClearScreen(pMe->m_pDisplay);
 
                 CameraApp_SetCameraFunFrame(pMe);
 
@@ -918,8 +918,8 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             if(!pMe->m_bCameraHideIcon)
             {
                 CameraApp_DrawTopBar(pMe);
-            }         
-                        
+            }
+            
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
             return TRUE;
@@ -7675,6 +7675,84 @@ static void CameraApp_SetParamAfterPreview(CCameraApp *pMe)
     ICAMERA_SetBrightness(pMe->m_pCamera, pMe->m_nCameraBrightness);   
 }
 
+/*===========================================================================
+FUNCTION CCameraApp_UpdateFrame
+
+  DESCRIPTION
+    This function updates the display with the frame from the viewfinder.
+
+  PARAMETERS:
+    pMe - Pointer to  QCam struct
+
+  RETURN VALUE:
+    None
+===========================================================================*/
+static void CCameraApp_UpdateFrame(CCameraApp *pMe)
+{
+  IBitmap *pFrame = NULL;
+
+  if (!pMe)
+    return;
+  
+  (void)ICAMERA_GetFrame(pMe->m_pCamera, &pFrame);
+
+  if (!pFrame)
+    return;
+  
+  // Display the frame at center location of the screen
+  IDISPLAY_BitBlt(pMe->m_pDisplay, pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dx, pMe->m_rc.dy, pFrame, 0, 0, AEE_RO_COPY);
+
+  RELEASEIF(pFrame);
+}
+
+static void CCameraApp_EventNotify(CCameraApp *pMe, AEECameraNotify *pcn)
+{
+  if (!pMe || !pcn)
+    return;
+  
+  switch (pcn->nCmd)
+  {
+  case CAM_CMD_START:
+    switch (pcn->nStatus)
+    {
+    case CAM_STATUS_START:
+      // Restart preview
+      if (pMe->m_nCameraState == CAM_CAPTURE)
+      {
+         ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
+      }
+      break;
+
+    case CAM_STATUS_FRAME:
+      //It is the image from the viewfinder.
+      CCameraApp_UpdateFrame(pMe);
+      ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
+      break;
+    
+    case CAM_STATUS_DONE:
+    case CAM_STATUS_FAIL:  
+    default:
+      break;
+    }
+    break;
+  case CAM_CMD_SETPARM:
+    switch (pcn->nStatus)
+    {
+    case CAM_STATUS_UPDATE:
+    case CAM_STATUS_FAIL:
+    case CAM_STATUS_DONE:
+      break;
+    default:
+      break;
+    } //switch (pcn->nStatus)
+    break;
+  case CAM_CMD_ENCODESNAPSHOT:
+    break;
+  default:
+    break;
+  }
+}
+
 void CameraApp_InitCameraCheck(void *po)
 {
     CCameraApp *pMe = (CCameraApp *)po; 
@@ -7687,7 +7765,11 @@ void CameraApp_InitCameraCheck(void *po)
                               AEECLSID_CAMERA, 
                               (void **)&pMe->m_pCamera);
     }
-    
+
+    if(pMe->m_pCamera)
+    {
+        ICAMERA_RegisterNotify(pMe->m_pCamera,(PFNCAMERANOTIFY)CCameraApp_EventNotify,po);
+    }
 }
 
 // 创建文件夹目录
