@@ -329,9 +329,14 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_LOCKCODE_MAXLEN 5
 #define OEMNV_LOCKUIM_MAXLEN 10
 
+#ifdef FEATURE_VERSION_SMART
+#define OEMNV_DEFAULT_BANNER     "SMART"   //·±Ìå°æºÚ°×»ú
+#else
 #define OEMNV_DEFAULT_BANNER     "IVIO"   //·±Ìå°æºÚ°×»ú
+#endif
 
-#define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper1.png"
+
+#define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper1.jpg"
 #ifdef FEATURE_SCREEN_SAVE
 #define  OEMNV_SCREENSAVE_TYPE "\\image\\wallpaper\\w1.bmp"
 #endif
