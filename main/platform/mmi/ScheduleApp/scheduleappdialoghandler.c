@@ -1240,7 +1240,7 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
                                     text,
                                     -1, 
                                     5, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2, 
+                                    MENUITEM_HEIGHT*1/2, 
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                    
@@ -1254,7 +1254,7 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
                                 wstrDisplay,
                                 -1, 
                                 10, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -2509,7 +2509,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
             {
                 AECHAR  dwsz[16];
                 
-                SETAEERECT(&rc, 0, TITLEBAR_HEIGHT * 2, di.cxScreen, TITLEBAR_HEIGHT);
+                SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, di.cxScreen, TITLEBAR_HEIGHT);
                 ISHELL_LoadResString(pme->m_pShell, 
                                         AEE_SCHEDULEAPP_RES_FILE, 
                                         IDS_DATE, 
@@ -3215,7 +3215,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             // init parms
             Appscom_GetThemeParameters( &themeParms);
             fontHeight          = IDISPLAY_GetFontMetrics( pme->m_pDisplay, AEE_FONT_NORMAL, 0, 0);
-            titleBarHeight      = GetTitleBarHeight( pme->m_pDisplay);
+            titleBarHeight      = 0;//GetTitleBarHeight( pme->m_pDisplay);
             bottomBarHeight     = GetBottomBarHeight( pme->m_pDisplay);
             itemHeight          = ( fontHeight + 2) * 2 + 2 + 6;
             itemNumberPerPage   = ( pme->m_rc.dy - titleBarHeight - bottomBarHeight) / itemHeight;
@@ -4147,7 +4147,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
             // init parms
             Appscom_GetThemeParameters( &themeParms);
             fontHeight          = IDISPLAY_GetFontMetrics( pme->m_pDisplay, AEE_FONT_NORMAL, 0, 0);
-            titleBarHeight      = GetTitleBarHeight( pme->m_pDisplay);
+            titleBarHeight      = 0;//GetTitleBarHeight( pme->m_pDisplay);
             bottomBarHeight     = GetBottomBarHeight( pme->m_pDisplay);
             itemHeight          = ( fontHeight + 2) * 2 + 2 + 6;
             itemNumberPerPage   = ( pme->m_rc.dy - titleBarHeight - bottomBarHeight) / itemHeight;
@@ -6209,8 +6209,8 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
             {
                 AEERect rect = pme->m_rc;
 
-                rect.dy -= (TITLEBAR_HEIGHT + BOTTOMBAR_HEIGHT);
-                rect.y   = TITLEBAR_HEIGHT;
+                rect.dy -= BOTTOMBAR_HEIGHT;
+                rect.y   = 0;
                 ISTATIC_SetRect( pStatic, &rect);
             }
             ISTATIC_SetActive( pStatic, TRUE);

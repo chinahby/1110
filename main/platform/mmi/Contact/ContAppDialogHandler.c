@@ -5306,28 +5306,18 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                                      NULL,
                                      NULL,
                                      EmptyTitle);
-#else*/
-#if 0
+#else*/     
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+            }
+
             (void)ITEXTCTL_SetTitle( pTextCtl,
                                      CONTAPP_RES_FILE_LANG,
                      CContApp_GetFldTitleID(pMe->m_nFldInputID),
                                      NULL);
-#endif
 //#endif
-            {
-                AECHAR WTitle[40] = {0};
-                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
-                (void)ISHELL_LoadResString(pMe->m_pShell,
-                CONTAPP_RES_FILE_LANG,                                
-                CContApp_GetFldTitleID(pMe->m_nFldInputID),
-                WTitle,
-                sizeof(WTitle));
-                if(pMe->m_pIAnn != NULL)
-                {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-                }
-            }
-
              CContApp_SetFldMaxSize(pMe,pTextCtl,pMe->m_nFldInputID);
                      
             //if(pMe->m_nAddnewOrEdit == ADDOREDIT_EDIT)
@@ -5412,6 +5402,11 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
             return TRUE; 
         
         case EVT_DIALOG_END:
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);    
+            }
             if (pMe->m_bSuspending)
             {
                 FREEIF(pMe->m_pFldInputBuf);
