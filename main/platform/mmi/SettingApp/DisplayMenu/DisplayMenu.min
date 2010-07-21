@@ -35,7 +35,7 @@ else
 CONSTFILE_FILES+=\
 	displaymenu.mif|fs:/mif/displaymenu.mif \
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-    wallpaper1.jpg|fs:/image/wallpaper/wallpaper1.jpg \
+    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
     wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
     wallpaper3.png|fs:/image/wallpaper/wallpaper3.png \
     wallpaper4.png|fs:/image/wallpaper/wallpaper4.png \

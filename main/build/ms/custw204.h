@@ -252,13 +252,17 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custrex.h"
 #include "custbmp.h"
 #include "custsurf.h"
+
 #ifdef FEATURE_DRV_SDCC
 #include "Custsdcc.h"
 #endif
+
 #ifdef USES_CAMERA
 #include "custcamera.h"
-#endif
 #include "custjpeg.h"
+#endif
+
+
 
 
 #ifdef FEATURE_DS_MOBILE_IP

@@ -331,7 +331,7 @@ typedef PACKED struct _Key_pad_Cfg
 
 #define OEMNV_DEFAULT_BANNER     "IVIO"   //·±Ìå°æºÚ°×»ú
 
-#define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper1.jpg"
+#define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper1.png"
 #ifdef FEATURE_SCREEN_SAVE
 #define  OEMNV_SCREENSAVE_TYPE "\\image\\wallpaper\\w1.bmp"
 #endif
