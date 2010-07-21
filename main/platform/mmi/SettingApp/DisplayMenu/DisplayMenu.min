@@ -18,13 +18,26 @@ vpath %.c $(DISPLAYMENU_SRC)
 vpath %.bar $(DISPLAYMENU_RES)
 vpath %.brx $(DISPLAYMENU_RES)
 ifeq ($(USES_160X128),yes)
+
+ifeq ($(OPERATORS_VERSION_NAME),SMART)
+vpath %.jpg $(APPSCOMMON)/images/160x128/smart/Wallpaper
+vpath %.png $(APPSCOMMON)/images/160x128/smart/Wallpaper
+vpath %.bmp $(APPSCOMMON)/images/160x128/smart/Wallpaper
+endif
+
+ifeq ($(OPERATORS_VERSION_NAME),IVIO)
 vpath %.jpg $(APPSCOMMON)/images/160x128/ivio/Wallpaper
 vpath %.png $(APPSCOMMON)/images/160x128/ivio/Wallpaper
 vpath %.bmp $(APPSCOMMON)/images/160x128/ivio/Wallpaper
+endif
+
+
 else
+
 vpath %.jpg $(APPSCOMMON)/images/color/Wallpaper
 vpath %.png $(APPSCOMMON)/images/color/Wallpaper
 vpath %.bmp $(APPSCOMMON)/images/color/Wallpaper
+
 endif
 ifeq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\
@@ -35,7 +48,7 @@ else
 CONSTFILE_FILES+=\
 	displaymenu.mif|fs:/mif/displaymenu.mif \
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
+    wallpaper1.jpg|fs:/image/wallpaper/wallpaper1.jpg \
     wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
     wallpaper3.png|fs:/image/wallpaper/wallpaper3.png \
     wallpaper4.png|fs:/image/wallpaper/wallpaper4.png \
