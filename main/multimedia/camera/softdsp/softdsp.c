@@ -34,7 +34,7 @@ Copyright(c) 2007 by QUALCOMM, Incorporated. All Rights Reserved.
 #define SOFTDSP_CLK_H           0x400
 #define SOFTDSP_CLK_L           0x000
 #define MATH_FACTOR_BIT         10
-//#define SOFT_MCLK
+#define SOFT_MCLK
 //#define TEST_ENABLE
 #ifdef TEST_ENABLE
 #include "clk.h"
@@ -73,6 +73,13 @@ static void SoftDSP_FrameISR(void)
         g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_START_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_START_OF_FRAME;
         g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_START_OF_FRAME]);
     }
+}
+
+static void SoftDSP_LineISR(void)
+{
+#ifdef SOFT_MCLK
+    gpio_tlmm_config(GPIO_OUTPUT_10);
+#endif
 }
 
 #ifdef TEST_ENABLE

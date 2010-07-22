@@ -12,340 +12,137 @@
 /*============================================================================
 	TYPE DEFINITIONS 
 ============================================================================*/
-typedef enum
-{
-	SENSOR_PREVIEW_MODE,
-	SENSOR_SNAPSHOT_MODE
-}sensor_mode_type;
+#define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_62
+#define SIV121A_OUTFORMAT_RGB565
 
+// sensor's chip ID and version
+#define SIV121A_SENSOR_ID       		    (0x92)
+#define SIV121A_SENSOR_VERSION  			(0x11)
 
-#define CAMSENSOR_SIV121A_FULL_SIZE_WIDTH  640//640
-#define CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT 480//480
+#define SIV121A_I2C_WRITE_ID   	            (0x68)
+#define SIV121A_I2C_READ_ID		            (0x69)
 
-#define CAMSENSOR_SIV121A_QTR_SIZE_WIDTH   640
-#define CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT  480//512
+/* SENSOR REGISTER DEFINE */
+#define SIV121A_ID_REG           	        (0x01)
+#define SIV121A_INFO_REG                	(0x02)
 
-/* For the clock, choose jitter free 48.0MHz, halve in sensor for preview mode.
- * 54MHz max for CAMIF in snapshot mode since it does not go through the VFE. */
-#define CAMSENSOR_SIV121A_GP_CLK_HZ 24000000
+#define CAMSENSOR_SIV121A_FULL_SIZE_WIDTH    640//640
+#define CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT   480//480
+
+#define CAMSENSOR_SIV121A_QTR_SIZE_WIDTH     160
+#define CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT    128//512
+
+#define MAX_EV_COMP                         25
 
 /* FPS supported by this sensor */
-#define CAMSENSOR_30_FPS   (30*Q8)
-#define CAMSENSOR_15_FPS   (15*Q8)
-#define CAMSENSOR_7p5_FPS  (7.5*Q8)
+#define CAMSENSOR_30_FPS                    (30*Q8)
+#define CAMSENSOR_15_FPS                    (15*Q8)
 
-/***************************************************************
-* The following defines are used as UI parameters
-***************************************************************/
-#define CAMSENSOR_MIN_BRIGHTNESS 0
+#define VGA_EXPOSURE_LIMITATION 			510 //509//508
 
-#define CAMSENSOR_MAX_BRIGHTNESS 10
+/*============================================================================
+	LOCAL Variables 
+============================================================================*/
+static camera_effect_type   camsensor_siv121a_effect             = CAMERA_EFFECT_OFF;
+static char                 camsensor_siv121a_sensor_name[32]    = "SIV121A 0.3MP RGB565\0\0\0\0\0\0\0";
+static const char           camsensor_siv121a_sensor_suffix[]    = "SIV121A";
+static boolean              sensor_cap_state 	                = FALSE; //Preview or Capture
+static CAMIF_InputFormatType format_preview,format_snapshot;
 
-#define CAMSENSOR_MIN_CONTRAST 0
-
-#define CAMSENSOR_MAX_CONTRAST 10
-
-#define MAX_EV_COMP 25
-
-#define CAMSENSOR_SIV121A_RESET_PIN GPIO_OUTPUT_13
-
-static camera_effect_type camsensor_siv121a_effect = CAMERA_EFFECT_OFF;
-
-static char camsensor_siv121a_sensor_name[32] =
-  "SIV121A 0.3MP RGB565\0\0\0\0\0\0\0";
-
-static const char camsensor_siv121a_sensor_suffix[]="SIV121A";
-
+/*============================================================================
+	Function Declares
+============================================================================*/
 static void    camsensor_siv121a_register(camsensor_function_table_type *camsensor_function_table_ptr);
 static void    camsensor_siv121a_setup_camctrl_tbl(camctrl_tbl_type *camctrl_tbl_ptr);
-static camera_ret_code_type camsensor_siv121a_set_effect(int8 effect);
 static boolean initialize_siv121a_registers(void);
-static uint16 camsensor_siv121a_get_snapshot_fps(uint16);
-camera_ret_code_type camsensor_siv121a_set_wb(int8 wb);
+static uint16  camsensor_siv121a_get_snapshot_fps(uint16);
 static boolean siv121a_i2c_write_byte(uint8 offset, uint8 data);
 static boolean siv121a_i2c_read_byte(uint8 offset, uint8* data);
 
-static boolean sensor_cap_state 	= FALSE; //Preview or Capture
-
-/* FPS supported by this sensor */
-#define CAMSENSOR_30_FPS   (30*Q8)
-#define CAMSENSOR_15_FPS   (15*Q8)
-#define CAMSENSOR_12p5_FPS  (12.5*Q8)
-
-
-static uint16 current_fps=15*Q8;
-static CAMIF_InputFormatType format_preview,format_snapshot;
-
-#define SIV121A_SET_PAGE0 	siv121a_i2c_write_byte(0xfe, 0x00)
-#define SIV121A_SET_PAGE1 	siv121a_i2c_write_byte(0xfe, 0x01)
-
-
-uint32 set_siv121a_param_banding(uint32 para);
-
-/*************************************************************************
-* FUNCTION
-*  GC0309_GAMMA_Select
-*
-* DESCRIPTION
-*  This function config the GAMMA Curve of GC0308 fitting for  
-*  different LCD performances.
-*
-* PARAMETERS
-*  GammaLvl : Different Gamma curves. Typical level value is from 0 to 5 which 
-*                  means small level gamma to high level gamma.
-*
-* RETURNS
-*  void
-*
-* GLOBALS AFFECTED
-*
-*************************************************************************/
-static void siv121a_gamma_select(uint32 GammaLvl)
+/*============================================================================
+	Function Body
+============================================================================*/
+static void write_siv121a_shutter(uint16 shutter)
 {
-	switch(GammaLvl)
+    uint8 temp_reg;
+    uint16 extra_exposure_lines;
+    
+	if(shutter<=VGA_EXPOSURE_LIMITATION)
 	{
-		case 1:                                             //smallest gamma curve
-			siv121a_i2c_write_byte( 0x9F, 0x0B ); 
-			siv121a_i2c_write_byte( 0xA0, 0x16 ); 
-			siv121a_i2c_write_byte( 0xA1, 0x29 ); 
-			siv121a_i2c_write_byte( 0xA2, 0x3C ); 
-			siv121a_i2c_write_byte( 0xA3, 0x4F ); 
-			siv121a_i2c_write_byte( 0xA4, 0x5F ); 
-			siv121a_i2c_write_byte( 0xA5, 0x6F ); 
-			siv121a_i2c_write_byte( 0xA6, 0x8A ); 
-			siv121a_i2c_write_byte( 0xA7, 0x9F ); 
-			siv121a_i2c_write_byte( 0xA8, 0xB4 ); 
-			siv121a_i2c_write_byte( 0xA9, 0xC6 ); 
-			siv121a_i2c_write_byte( 0xAA, 0xD3 ); 
-			siv121a_i2c_write_byte( 0xAB, 0xDD );  
-			siv121a_i2c_write_byte( 0xAC, 0xE5 );  
-			siv121a_i2c_write_byte( 0xAD, 0xF1 ); 
-			siv121a_i2c_write_byte( 0xAE, 0xFA ); 
-			siv121a_i2c_write_byte( 0xAF, 0xFF ); 	
-			break;
-			
-		case 2:			
-			siv121a_i2c_write_byte( 0x9F, 0x0E ); 
-			siv121a_i2c_write_byte( 0xA0, 0x1C ); 
-			siv121a_i2c_write_byte( 0xA1, 0x34 ); 
-			siv121a_i2c_write_byte( 0xA2, 0x48 ); 
-			siv121a_i2c_write_byte( 0xA3, 0x5A ); 
-			siv121a_i2c_write_byte( 0xA4, 0x6B ); 
-			siv121a_i2c_write_byte( 0xA5, 0x7B ); 
-			siv121a_i2c_write_byte( 0xA6, 0x95 ); 
-			siv121a_i2c_write_byte( 0xA7, 0xAB ); 
-			siv121a_i2c_write_byte( 0xA8, 0xBF );
-			siv121a_i2c_write_byte( 0xA9, 0xCE ); 
-			siv121a_i2c_write_byte( 0xAA, 0xD9 ); 
-			siv121a_i2c_write_byte( 0xAB, 0xE4 );  
-			siv121a_i2c_write_byte( 0xAC, 0xEC ); 
-			siv121a_i2c_write_byte( 0xAD, 0xF7 ); 
-			siv121a_i2c_write_byte( 0xAE, 0xFD ); 
-			siv121a_i2c_write_byte( 0xAF, 0xFF ); 
-			break;
-		
-		case 3:
-			siv121a_i2c_write_byte( 0x9F, 0x10 ); 
-			siv121a_i2c_write_byte( 0xA0, 0x20 ); 
-			siv121a_i2c_write_byte( 0xA1, 0x38 ); 
-			siv121a_i2c_write_byte( 0xA2, 0x4E ); 
-			siv121a_i2c_write_byte( 0xA3, 0x63 ); 
-			siv121a_i2c_write_byte( 0xA4, 0x76 ); 
-			siv121a_i2c_write_byte( 0xA5, 0x87 ); 
-			siv121a_i2c_write_byte( 0xA6, 0xA2 ); 
-			siv121a_i2c_write_byte( 0xA7, 0xB8 ); 
-			siv121a_i2c_write_byte( 0xA8, 0xCA ); 
-			siv121a_i2c_write_byte( 0xA9, 0xD8 ); 
-			siv121a_i2c_write_byte( 0xAA, 0xE3 ); 
-			siv121a_i2c_write_byte( 0xAB, 0xEB ); 
-			siv121a_i2c_write_byte( 0xAC, 0xF0 ); 
-			siv121a_i2c_write_byte( 0xAD, 0xF8 ); 
-			siv121a_i2c_write_byte( 0xAE, 0xFD ); 
-			siv121a_i2c_write_byte( 0xAF, 0xFF );
-			break;
-			
-		case 4:
-			siv121a_i2c_write_byte( 0x9F, 0x14 ); 
-			siv121a_i2c_write_byte( 0xA0, 0x28 ); 
-			siv121a_i2c_write_byte( 0xA1, 0x44 ); 
-			siv121a_i2c_write_byte( 0xA2, 0x5D ); 
-			siv121a_i2c_write_byte( 0xA3, 0x72 ); 
-			siv121a_i2c_write_byte( 0xA4, 0x86 ); 
-			siv121a_i2c_write_byte( 0xA5, 0x95 ); 
-			siv121a_i2c_write_byte( 0xA6, 0xB1 ); 
-			siv121a_i2c_write_byte( 0xA7, 0xC6 ); 
-			siv121a_i2c_write_byte( 0xA8, 0xD5 ); 
-			siv121a_i2c_write_byte( 0xA9, 0xE1 ); 
-			siv121a_i2c_write_byte( 0xAA, 0xEA ); 
-			siv121a_i2c_write_byte( 0xAB, 0xF1 ); 
-			siv121a_i2c_write_byte( 0xAC, 0xF5 ); 
-			siv121a_i2c_write_byte( 0xAD, 0xFB ); 
-			siv121a_i2c_write_byte( 0xAE, 0xFE ); 
-			siv121a_i2c_write_byte( 0xAF, 0xFF );
-			break;
-			
-		case 5:								// largest gamma curve
-			siv121a_i2c_write_byte( 0x9F, 0x15 ); 
-			siv121a_i2c_write_byte( 0xA0, 0x2A ); 
-			siv121a_i2c_write_byte( 0xA1, 0x4A ); 
-			siv121a_i2c_write_byte( 0xA2, 0x67 ); 
-			siv121a_i2c_write_byte( 0xA3, 0x79 ); 
-			siv121a_i2c_write_byte( 0xA4, 0x8C ); 
-			siv121a_i2c_write_byte( 0xA5, 0x9A ); 
-			siv121a_i2c_write_byte( 0xA6, 0xB3 ); 
-			siv121a_i2c_write_byte( 0xA7, 0xC5 ); 
-			siv121a_i2c_write_byte( 0xA8, 0xD5 ); 
-			siv121a_i2c_write_byte( 0xA9, 0xDF ); 
-			siv121a_i2c_write_byte( 0xAA, 0xE8 ); 
-			siv121a_i2c_write_byte( 0xAB, 0xEE ); 
-			siv121a_i2c_write_byte( 0xAC, 0xF3 ); 
-			siv121a_i2c_write_byte( 0xAD, 0xFA ); 
-			siv121a_i2c_write_byte( 0xAE, 0xFD ); 
-			siv121a_i2c_write_byte( 0xAF, 0xFF );
-			break;
-			
-		default:		
-			break;
+		extra_exposure_lines=0;
 	}
-}
-
-void write_siv121a_shutter(uint16 shutter)
-{
-	siv121a_i2c_write_byte(0xd2, 0x10);   // close AEC
-
-	siv121a_i2c_write_byte(0x03, shutter/256);
-	siv121a_i2c_write_byte(0x04, shutter & 0x00ff);
-	camera_timed_wait(200);    
-
-	siv121a_i2c_write_byte(0xd2, 0x90);   // Open AEC	
-}/* write_GC0309_shutter */
-
-
-static void siv121a_H_V_Switch(uint8 direction)
-{
-	switch(direction) 
+	else
 	{
-		case 1:  // normal
-		    siv121a_i2c_write_byte(0x14, 0x10);	
-		  	break;
-		case 2:  // IMAGE_H_MIRROR
-		    siv121a_i2c_write_byte(0x14, 0x11);	
-		  	break;		  
-		case 3:  // IMAGE_V_MIRROR
-		    siv121a_i2c_write_byte(0x14, 0x12);	
-			break;	
-		case 4:  // IMAGE_HV_MIRROR
-		    siv121a_i2c_write_byte(0x14, 0x13);	
-			break;	
-		default:
-			break;
-	} 
-}
-
+		extra_exposure_lines=shutter-VGA_EXPOSURE_LIMITATION;
+	}
+    
+	if(shutter>VGA_EXPOSURE_LIMITATION)
+		shutter=VGA_EXPOSURE_LIMITATION;
+		
+	siv121a_i2c_write_byte(0x2D,extra_exposure_lines&0xFF);                  // ADVFL(LSB of extra exposure lines)
+	siv121a_i2c_write_byte(0x2E,(extra_exposure_lines&0xFF00)>>8);           // ADVFH(MSB of extra exposure lines)
+    
+	siv121a_i2c_read_byte(0x04, &temp_reg);
+	siv121a_i2c_write_byte(0x04,((temp_reg&0xFC) | (shutter&0x3)));		// AEC[b1~b0]
+	siv121a_i2c_write_byte(0x10,((shutter&0x3FC)>>2));						// AEC[b9~b2]
+	siv121a_i2c_write_byte(0x07,((shutter&0x7C00)>>10));						// AEC[b10]/AEC[b15~b10]
+}/* write_siv121a_shutter */
 
 static uint16 read_siv121a_shutter(void)
 {
-	uint16 shutter;
-	uint8 temp = 0;
-
-	siv121a_i2c_read_byte(0x03,&temp);
-	shutter = temp<<8;
-
-	siv121a_i2c_read_byte(0x04,&temp);
-	shutter |= temp&0xff;
+	uint8 temp_reg1, temp_reg2, temp_reg3, temp_reg4, temp_reg5;
+	uint16 shutter, extra_exposure_lines;
+    
+	siv121a_i2c_read_byte(0x04, &temp_reg1);										// AEC[b1~b0]
+	siv121a_i2c_read_byte(0x10, &temp_reg2);										// AEC[b9~b2]
+	siv121a_i2c_read_byte(0x07, &temp_reg3);										// AEC[b15~b10]
 	
+	siv121a_i2c_read_byte(0x2D, &temp_reg4);
+	siv121a_i2c_read_byte(0x2E, &temp_reg5);
+	
+	shutter=((temp_reg3&0x1F)<<10)|(temp_reg2<<2)|(temp_reg1&0x3);	// AEC[b10]/AEC[b15~b10]
+	extra_exposure_lines=(temp_reg5<<8)|(temp_reg4);
+	
+	shutter=shutter+extra_exposure_lines;
+
 	return shutter;
-}/* read_GC0309_shutter */
+}/* read_siv121a_shutter */
 
-/*************************************************************************
-* FUNCTION
-*	GC0309_Write_More_Registers
-*
-* DESCRIPTION
-*	This function is served for FAE to modify the necessary Init Regs. Do not modify the regs
-*     in init_GC0309() directly.
-*
-* PARAMETERS
-*	None
-*
-* RETURNS
-*	None
-*
-* GLOBALS AFFECTED
-*
-*************************************************************************/
-void siv121a_write_more_registers(void)
+static void siv121a_set_dummy(uint16 pixels, uint16 lines)
 {
-	//  TODO: FAE Modify the Init Regs here!!!
-	/*Customer can adjust GAMMA, MIRROR & UPSIDEDOWN here!*/
-	siv121a_gamma_select(2);
-  	siv121a_H_V_Switch(4);
-}
+	siv121a_i2c_write_byte(0x2A,((pixels&0x700)>>4));
+	siv121a_i2c_write_byte(0x2B,(pixels&0xFF));
+	siv121a_i2c_write_byte(0x92,(lines&0xFF));
+	siv121a_i2c_write_byte(0x93,((lines&0xFF00)>>8));
+}	/* siv121a_set_dummy */
 
-
-void siv121a_set_dummy(uint16 pixels, uint16 lines)
+static void siv121a_set_window(uint16 startx,uint16 starty,uint16 width, uint16 height)
 {
-	siv121a_i2c_write_byte(0x0f, ((lines & 0x0f00)>>4) + ((pixels & 0x0f00)>>8)); 
-	siv121a_i2c_write_byte(0x01, pixels & 0x00ff);
-	siv121a_i2c_write_byte(0x02, lines  & 0x00ff);
-}	/* set_GC0309_dummy */
+	uint16 endx=(startx+width-1);
+	uint16 endy=(starty+height-1);
+	uint8  temp_reg1, temp_reg2;
+    
+    siv121a_i2c_read_byte(0x03, &temp_reg1);
+	temp_reg1=(temp_reg1&0xF0);
+    siv121a_i2c_read_byte(0x32, &temp_reg2);
+	temp_reg2=(temp_reg2&0xC0);
+    
+	// Horizontal
+	siv121a_i2c_write_byte(0x32,0x80|((endx&0x7)<<3)|(startx&0x7));	// b[5:3]:HREF end low 3bits. b[2:0]:HREF start low 3bits.
+	siv121a_i2c_write_byte(0x17,(startx&0x7F8)>>3);			// HREF start high 8bits
+	siv121a_i2c_write_byte(0x18,(endx&0x7F8)>>3);			// HREF end high 8bits
+	// Vertical
+	siv121a_i2c_write_byte(0x03,temp_reg1|((endy&0x3)<<2)|(starty&0x3));	// b[3:2]:VREF end low 2bits. b[1:0]:VREF start low 2bits.
+	siv121a_i2c_write_byte(0x19,(starty&0x3FC)>>2);   			// VREF start high 8bits
+	siv121a_i2c_write_byte(0x1A,(endy&0x3FC)>>2);		   	// VREF end high 8bits
+}	/* config_SIV121A_window */
 
-
-void camsensor_siv121a_init_camsensor_info()
-{
-	camsensor_info.pclk_invert=FALSE;
-	camsensor_info.preview_dummy_pixels = 0;
-	format_preview= CAMIF_YCbCr_Y_Cb_Y_Cr;
-	format_snapshot= CAMIF_YCbCr_Y_Cb_Y_Cr;
-	camsensor_camclk_po_hz=24000000;
-
-	switch(camsensor_info.msm_id)
-	{
-		ERR("camsensor_siv121a_init_camsensor_info : %d",camsensor_info.msm_id,0,0);
-		case MSM6280:
-		case MSM6290:
-		   camsensor_info.pclk_invert=FALSE;
-		   break;
-
-
-		case MSM6800B:
-		    camsensor_info.pclk_invert=FALSE;
-		    camsensor_camclk_po_hz=49000000;
-			break;
-
-		case MSM6246:
-		case MSM6260:
-		   camsensor_info.preview_dummy_pixels = 1;
-		   format_preview=CAMIF_YCbCr_Y_Cb_Y_Cr;
-		   format_snapshot=CAMIF_YCbCr_Y_Cb_Y_Cr;
-		   //fmt_reg_val= 0x0200;
-		   break;
-
-		case SC2X:
-		  camsensor_info.pclk_invert=FALSE;
-		  camsensor_info.preview_dummy_pixels = 1;
-		  format_preview = CAMIF_YCbCr_Y_Cb_Y_Cr;
-		  format_snapshot= CAMIF_YCbCr_Y_Cb_Y_Cr;
-		  //fmt_reg_val=0x0200;
-		camsensor_camclk_po_hz=54000000;
-		  break;
-
-		default:
-		  break;
-	}
-
-}/* camsensor_siv121a_init_camsensor_info */
-
-
-camera_ret_code_type camsensor_siv121a_set_exposure_mode(int8 mode)
+static camera_ret_code_type camsensor_siv121a_set_exposure_mode(int8 mode)
 {
 	return CAMERA_SUCCESS;
 }
 
-camera_ret_code_type camsensor_siv121a_set_frame_rate
-(
-  uint16 fps
-)
+static camera_ret_code_type camsensor_siv121a_set_frame_rate(uint16 fps)
 {
 	if (fps > CAMSENSOR_30_FPS)
 	{
@@ -355,13 +152,13 @@ camera_ret_code_type camsensor_siv121a_set_frame_rate
 	return CAMERA_SUCCESS;
 } /* camsensor_siv121a_set_frame_rate() */
 
-static boolean g_bEnterTest = FALSE;
 boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function_table_ptr,
-				   camctrl_tbl_type              *camctrl_tbl_ptr)
+				              camctrl_tbl_type              *camctrl_tbl_ptr)
 {
 	uint8	sensor_id;
 	
 	ERR("camsensor_siv121a_init!",0,0,0);
+    
 	/* Input MCLK = 24MHz */
 	camsensor_camclk_po_hz = 24000000;
     camsensor_camclk_po_hz = camsensor_config_camclk_po(camsensor_camclk_po_hz);
@@ -372,51 +169,41 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
   	
 	/* Configure I2C parameters */
 	camsensor_i2c_command.bus_id     = I2C_BUS_HW_CTRL;
-	camsensor_i2c_command.slave_addr = 0x66;//SIV121A_I2C_WRITE_ID;
+	camsensor_i2c_command.slave_addr = SIV121A_I2C_WRITE_ID;
     
 	/*lint -save -e655 */
 	camsensor_i2c_command.options    = (i2c_options_type) (I2C_REG_DEV | I2C_START_BEFORE_READ); 
 
-    clk_busy_wait(2000);
   	CAMERA_CONFIG_GPIO(CAMSENSOR_SIV121A_RESET_PIN);
-  	gpio_out(CAMSENSOR_SIV121A_RESET_PIN,1);
-  	clk_busy_wait(50000);
   	gpio_out(CAMSENSOR_SIV121A_RESET_PIN,0);
-  	clk_busy_wait(150000);
+  	camera_timed_wait(10);
   	gpio_out(CAMSENSOR_SIV121A_RESET_PIN,1);
-  	clk_busy_wait(10000);
-
-    while(g_bEnterTest)
-    {
-        siv121a_i2c_write_byte(0x00,0x00);
-    }
     
-    while(g_bEnterTest)
-    {
-        siv121a_i2c_write_byte(0x00,0xFF);
-    }
-    
-    if( !siv121a_i2c_write_byte(0x00,0x00))
+    // Reset Sensor
+	camera_timed_wait(10);	//ovt
+	if( !siv121a_i2c_write_byte(0x00,0x00))
     {
         ERR("Block Select Error!",0,0,0);
         return FALSE;
     }
-    
+	
     if( !siv121a_i2c_read_byte(SIV121A_ID_REG,&sensor_id)) 
     {
     	ERR("read sensor_id failed!",0,0,0);
         return FALSE;
     }
     
-    ERR("sensor_id = %x",sensor_id,0,0);
+    ERR("sensor_id 1 = %x",sensor_id,0,0);
     
 	/* Check if it matches it with the value in Datasheet */
 	if ( sensor_id != SIV121A_SENSOR_ID)
 	{
 		return FALSE;
 	}
-	
-	//siv121a_sensor_mode = SENSOR_PREVIEW_MODE;
+    
+    siv121a_i2c_read_byte(SIV121A_INFO_REG,&sensor_id);
+    ERR("sensor_id 2 = %x",sensor_id,0,0);
+    
 	/* Initialize Sensor registers */
 	if (!initialize_siv121a_registers())
 	{
@@ -428,7 +215,6 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
 
 	/* Setup camctrl_tbl */
 	camsensor_siv121a_setup_camctrl_tbl(camctrl_tbl_ptr);
-
 	return TRUE;
 } /* camsensor_siv121a_init */
 
@@ -443,7 +229,7 @@ static boolean initialize_siv121a_registers(void)
 
     siv121a_i2c_write_byte(0x00,0x01);
     siv121a_i2c_write_byte(0x04,0x00);
-    siv121a_i2c_write_byte(0x05,0x02); 
+    siv121a_i2c_write_byte(0x05,0x06); 
     siv121a_i2c_write_byte(0x11,0x25);
     siv121a_i2c_write_byte(0x12,0x21); 
     siv121a_i2c_write_byte(0x13,0x15);
@@ -451,12 +237,12 @@ static boolean initialize_siv121a_registers(void)
     
     //50HZ 12MHZ 12.5FPS
     siv121a_i2c_write_byte(0x20,0x00); 
-    siv121a_i2c_write_byte(0x21,0x6e);
-    siv121a_i2c_write_byte(0x23,0x1d);
+    siv121a_i2c_write_byte(0x21,0x00);
+    siv121a_i2c_write_byte(0x23,0x00);
+
+    
     siv121a_i2c_write_byte(0x00,0x02);
     siv121a_i2c_write_byte(0x34,0x42);
-
-    siv121a_i2c_write_byte(0x00,0x02);
     siv121a_i2c_write_byte(0x11,0x08); 
     siv121a_i2c_write_byte(0x12,0x80); 
     siv121a_i2c_write_byte(0x13,0x80);
@@ -554,7 +340,11 @@ static boolean initialize_siv121a_registers(void)
     siv121a_i2c_write_byte(0x00,0x04);
     siv121a_i2c_write_byte(0x10,0xFF); // IDP function enable
     siv121a_i2c_write_byte(0x11,0x1D); //0x1D // PCLK polarity
+#ifdef SIV121A_OUTFORMAT_RGB565
+    siv121a_i2c_write_byte(0x12,0x0B);
+#else
     siv121a_i2c_write_byte(0x12,0x9D); // Y,Cb,Cr order sequence
+#endif
     // DPCNR
     siv121a_i2c_write_byte(0x17,0x98);
     siv121a_i2c_write_byte(0x18,0x00);
@@ -587,30 +377,6 @@ static boolean initialize_siv121a_registers(void)
     siv121a_i2c_write_byte(0x3F,0xFF);
 
     // Shading
-#if 0
-    siv121a_i2c_write_byte(0x40,0x00);
-    siv121a_i2c_write_byte(0x41,0x21);
-    siv121a_i2c_write_byte(0x42,0x32);
-    siv121a_i2c_write_byte(0x43,0x43);
-    siv121a_i2c_write_byte(0x44,0x55);
-    siv121a_i2c_write_byte(0x45,0x55);
-    siv121a_i2c_write_byte(0x46,0x11); //R left # right
-    siv121a_i2c_write_byte(0x47,0x23); //R top # bottom
-    siv121a_i2c_write_byte(0x48,0x10); //Gr left # right
-    siv121a_i2c_write_byte(0x49,0x12); //Gr top # bottom
-    siv121a_i2c_write_byte(0x4A,0x01); //Gb left # right
-    siv121a_i2c_write_byte(0x4B,0x12); //Gb top # bottom
-    siv121a_i2c_write_byte(0x4C,0x00); //B left # right
-    siv121a_i2c_write_byte(0x4D,0x11); //Br top # bottom
-    siv121a_i2c_write_byte(0x4E,0x04);
-    siv121a_i2c_write_byte(0x4F,0x50);
-    siv121a_i2c_write_byte(0x50,0xF6);
-    siv121a_i2c_write_byte(0x51,0x80);
-    siv121a_i2c_write_byte(0x52,0x00);
-    siv121a_i2c_write_byte(0x53,0x00);
-    siv121a_i2c_write_byte(0x54,0x00);
-    siv121a_i2c_write_byte(0x55,0x00);
-#else
     siv121a_i2c_write_byte(0x40,0x0a);
     siv121a_i2c_write_byte(0x41,0xba);
     siv121a_i2c_write_byte(0x42,0x32);
@@ -633,7 +399,6 @@ static boolean initialize_siv121a_registers(void)
     siv121a_i2c_write_byte(0x53,0x00);   // Shading Gr Offset                               
     siv121a_i2c_write_byte(0x54,0x00);   // Shading Gb Offset                               
     siv121a_i2c_write_byte(0x55,0x00);   // Shading B Offset  
-#endif
 
     // Lowlux Shading
     siv121a_i2c_write_byte(0x56,0x10);
@@ -691,7 +456,7 @@ static boolean initialize_siv121a_registers(void)
     siv121a_i2c_write_byte(0xA1,0x02);
     siv121a_i2c_write_byte(0xA2,0x02);
     siv121a_i2c_write_byte(0xA3,0x0a);
-  siv121a_i2c_write_byte(0xA4,0x0a);
+    siv121a_i2c_write_byte(0xA4,0x0a);
   
     siv121a_i2c_write_byte(0xA8,0x10);
     siv121a_i2c_write_byte(0xA9,0x0f);
@@ -737,22 +502,11 @@ static boolean initialize_siv121a_registers(void)
     siv121a_i2c_write_byte(0x03,0x01);
 
 	/*Customer can adjust GAMMA, MIRROR & UPSIDEDOWN here!*/
-	siv121a_gamma_select(2);
-  	siv121a_H_V_Switch(1);
-	
 	return TRUE;
 } /* end of initialize_siv121a_registers. */
 
-boolean camsensor_siv121a_start
-(
-  /* A pointer to the services layer static camsensor info struct */
-  camsensor_static_params_type *camsensor_params
-)
+static boolean camsensor_siv121a_start( camsensor_static_params_type *camsensor_params)
 {
-
-	ERR("camsensor_siv121a_set_antibanding!",0,0,0);
-	camsensor_siv121a_init_camsensor_info();
-
 	/* Initialize CAMIF operation mode */
 	camsensor_params->camif_config.SyncMode    = CAMIF_APS;
 	camsensor_params->camif_config.HSyncEdge   = CAMIF_High;
@@ -799,15 +553,14 @@ boolean camsensor_siv121a_start
 	camsensor_params->awb_enable=FALSE;
 	/* AF is not required for YUV sensor from VFE side */
 	camsensor_params->af_enable=FALSE;
-
-
+    
 	camsensor_params->num_possible_frame_rates = 1;
 	/* Define these frame rates */
 	/* By convention, the highest frame rate will be first in the
 	array (zeroth index) and the lowest last (in order). */
 	camsensor_params->frame_rate_array[0].fps = (uint16) (15*256.0); /* Q8 */
 	camsensor_params->frame_rate_array[0].use_in_auto_frame_rate = TRUE;
-
+    
 	camsensor_params->frame_rate_array[1].fps = (uint16) (30.0*256.0); /* Q8 */
 	camsensor_params->frame_rate_array[1].use_in_auto_frame_rate = FALSE;
 
@@ -888,7 +641,6 @@ static boolean siv121a_i2c_write_byte(uint8 offset, uint8 data)
 
 	writebyte  = data;
     
-    //camsensor_i2c_command.slave_addr = SIV121A_I2C_WRITE_ID;
 	camsensor_i2c_command.addr.reg = offset;
 	camsensor_i2c_command.buf_ptr  = (byte *)(&writebyte);
 	camsensor_i2c_command.len      = 1;
@@ -897,11 +649,9 @@ static boolean siv121a_i2c_write_byte(uint8 offset, uint8 data)
 	{
 		if (i2c_write(&camsensor_i2c_command) == I2C_SUCCESS)
 		{
-			ERR("siv121a_i2c_write_byte: OK %x,%x",offset,data,0);
 			return TRUE;
 		}
 	}
-	ERR("siv121a_i2c_write_byte: false %x,%x",offset,data,0);
 	return FALSE;
 }
 
@@ -915,7 +665,6 @@ static boolean siv121a_i2c_read_byte(uint8 offset, uint8 *data)
 		return FALSE;
 	}
     
-    //camsensor_i2c_command.slave_addr = SIV121A_I2C_READ_ID;
 	camsensor_i2c_command.addr.reg = offset;
 	camsensor_i2c_command.buf_ptr  = (byte *)(&readbyte);
 	camsensor_i2c_command.len      = 1;
@@ -925,135 +674,20 @@ static boolean siv121a_i2c_read_byte(uint8 offset, uint8 *data)
 		if (i2c_read(&camsensor_i2c_command) == I2C_SUCCESS)
 		{
 			*data  = readbyte;
-			ERR("siv121a_i2c_read_byte: OK %x",offset,0,0);
 			return TRUE;
 		}
 	}
-
-	ERR("siv121a_i2c_read_byte: false %x",offset,0,0);
 	return FALSE;
 } /* end of siv121a_i2c_read_word. */
 
-
-camera_ret_code_type camsensor_siv121a_set_effect(int8 effect)
+static camera_ret_code_type camsensor_siv121a_set_effect(int8 effect)
 {
-	uint16 seteffect_delay=1;
-	uint16 seteffect_zone=1;
-
-
-	ERR("camsensor_siv121a_set_effect effect = %d",effect,0,0);
-	
-	switch ((camera_effect_type)effect)
-	{
-		case CAMERA_EFFECT_OFF:
-		{
-			siv121a_i2c_write_byte(0x23,0x00);
-			siv121a_i2c_write_byte(0x2d,0x0a);
-			siv121a_i2c_write_byte(0x20,0xff);
-			siv121a_i2c_write_byte(0xd2,0x90);
-			siv121a_i2c_write_byte(0x73,0x00);
-			siv121a_i2c_write_byte(0x77,0x54);
-			
-			siv121a_i2c_write_byte(0xb3,0x40);
-			siv121a_i2c_write_byte(0xb4,0x80);
-			siv121a_i2c_write_byte(0xba,0x00);
-			siv121a_i2c_write_byte(0xbb,0x00);
-			break;
-		}
-		
-		case CAMERA_EFFECT_MONO:
-		{
-			siv121a_i2c_write_byte(0x23,0x02);
-			siv121a_i2c_write_byte(0x2d,0x0a);
-			siv121a_i2c_write_byte(0x20,0xff);
-			siv121a_i2c_write_byte(0xd2,0x90);
-			siv121a_i2c_write_byte(0x73,0x00);
-
-			siv121a_i2c_write_byte(0xb3,0x40);
-			siv121a_i2c_write_byte(0xb4,0x80);
-			siv121a_i2c_write_byte(0xba,0x50);
-			siv121a_i2c_write_byte(0xbb,0xe0);
-			break;
-		}
-
-		case CAMERA_EFFECT_NEGATIVE:
-		{
-			siv121a_i2c_write_byte(0x23,0x02);
-			siv121a_i2c_write_byte(0x2d,0x0a);
-			siv121a_i2c_write_byte(0x20,0xbf);
-			siv121a_i2c_write_byte(0xd2,0x10);
-			siv121a_i2c_write_byte(0x73,0x01);
-
-			siv121a_i2c_write_byte(0x51,0x40);
-			siv121a_i2c_write_byte(0x52,0x40);
-
-			siv121a_i2c_write_byte(0xb3,0x40);
-			siv121a_i2c_write_byte(0xb4,0x80);
-			siv121a_i2c_write_byte(0xba,0x60);
-			siv121a_i2c_write_byte(0xbb,0x00);
-			break;
-		}
-
-		case CAMERA_EFFECT_SOLARIZE:
-		{
-			break;
-		}
-
-		case CAMERA_EFFECT_SEPIA:
-		{
-			siv121a_i2c_write_byte(0x23,0x02);
-			siv121a_i2c_write_byte(0x2d,0x0a);
-			siv121a_i2c_write_byte(0x20,0xff);
-			siv121a_i2c_write_byte(0xd2,0x90);
-			siv121a_i2c_write_byte(0x73,0x00);
-
-			siv121a_i2c_write_byte(0xb3,0x40);
-			siv121a_i2c_write_byte(0xb4,0x80);
-			siv121a_i2c_write_byte(0xba,0xd0);
-			siv121a_i2c_write_byte(0xbb,0x28);
-			break;
-		}
-		
-		case CAMERA_EFFECT_PASTEL:
-		{
-			siv121a_i2c_write_byte(0x23,0x02);
-			siv121a_i2c_write_byte(0x2d,0x0a);
-			siv121a_i2c_write_byte(0x20,0xbf);
-			siv121a_i2c_write_byte(0xd2,0x10);
-			siv121a_i2c_write_byte(0x73,0x01);
-
-			siv121a_i2c_write_byte(0x51,0x40);
-			siv121a_i2c_write_byte(0x52,0x40);
-
-			siv121a_i2c_write_byte(0xb3,0x40);
-			siv121a_i2c_write_byte(0xb4,0x80);
-			siv121a_i2c_write_byte(0xba,0xc0);
-			siv121a_i2c_write_byte(0xbb,0x20);
-			break;
-		}
-		case CAMERA_EFFECT_MOSAIC:
-		case CAMERA_EFFECT_RESIZE:
-		default:
-		{
-			return CAMERA_NOT_SUPPORTED;
-		}
-	}
-
-	camsensor_siv121a_effect = (camera_effect_type)effect;
-	
-	if(seteffect_zone> 0 && seteffect_zone< 25)
-	{
-		seteffect_delay=(double)(250*seteffect_zone)/(double)(current_fps/Q8);
-
-		camera_timed_wait(seteffect_delay);
-	}
-	
-	return CAMERA_SUCCESS;
+    return CAMERA_NOT_SUPPORTED;
 } /* camsensor_siv121a_set_effect() */
 
 /*===========================================================================
 
-FUNCTION      CAMSENSOR_SIV100A_SNAPSHOT_CONFIG
+FUNCTION      camsensor_siv121a_snapshot_config
 
 DESCRIPTION
               Configure the camera sensor for Snapshot 
@@ -1070,10 +704,7 @@ SIDE EFFECTS
 
 ===========================================================================*/
 
-boolean camsensor_siv121a_snapshot_config
-(
-	camsensor_static_params_type  *camsensor_params /* Other config params */
-)
+static boolean camsensor_siv121a_snapshot_config( camsensor_static_params_type  *camsensor_params)
 {
 	volatile uint32 shutter=0;
     sensor_cap_state= TRUE;	
@@ -1103,8 +734,8 @@ boolean camsensor_siv121a_snapshot_config
 	/********************************
 	*   Normal camera capture mode  *
 	********************************/
-	shutter=read_siv121a_shutter();  
-	write_siv121a_shutter(shutter);
+	//shutter=read_siv121a_shutter();  
+	//write_siv121a_shutter(shutter);
 		 
 
 	/* Wait for one frame before reconfiguring the VFE since either zero or one
@@ -1118,7 +749,7 @@ boolean camsensor_siv121a_snapshot_config
 }
 /*===========================================================================
 
-FUNCTION      CAMSENSOR_SIV100A_RAW_SNAPSHOT_CONFIG
+FUNCTION      camsensor_siv121a_raw_snapshot_config
 
 DESCRIPTION
               Configure the camera sensor for RAW Snapshot
@@ -1134,11 +765,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-
-boolean camsensor_siv121a_raw_snapshot_config
-(
-   camsensor_static_params_type  *camsensor_params /* Other config params */
-)
+static boolean camsensor_siv121a_raw_snapshot_config(camsensor_static_params_type  *camsensor_params)
 {
 	ERR("camsensor_siv121a_raw_snapshot_config!",0,0,0);
 	return TRUE;
@@ -1146,7 +773,7 @@ boolean camsensor_siv121a_raw_snapshot_config
 
 /*===========================================================================
 
-FUNCTION      CAMSENSOR_SIV100A_VIDEO_CONFIG
+FUNCTION      camsensor_siv121a_video_config
 
 DESCRIPTION
               Configure the camera sensor for Preview
@@ -1162,11 +789,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-
-boolean camsensor_siv121a_video_config
-(
-  camsensor_static_params_type *camsensor_params /* Other config params */
-)
+static boolean camsensor_siv121a_video_config(camsensor_static_params_type *camsensor_params)
 {
 	sensor_cap_state = FALSE;
   	camsensor_params->format = format_preview;
@@ -1242,14 +865,14 @@ boolean camsensor_siv121a_video_config
 }
 
 
-void camsensor_siv121a_power_up(void)
+static void camsensor_siv121a_power_up(void)
 {
 	ERR("camsensor_siv121a_power_up!",0,0,0);
 } /* camsensor_siv121a_power_up */
 
 /*===========================================================================
 
-FUNCTION      camsensor_mt9d112_mu2m0yu_POWER_DOWN
+FUNCTION      camsensor_siv121a_power_down
 
 DESCRIPTION
 Power down the sensor, using I2C driver.
@@ -1264,62 +887,53 @@ SIDE EFFECTS
 None
 
 ===========================================================================*/
-
-void camsensor_siv121a_power_down(void)
+static void camsensor_siv121a_power_down(void)
 {
 	ERR("camsensor_siv121a_power_down!",0,0,0);
 } /* camsensor_siv121a_power_down */
 
-
-camera_ret_code_type camsensor_siv121a_set_wb(int8 wb)
-{ 
-	uint8  temp_reg;
-	
-	siv121a_i2c_read_byte(0x22,&temp_reg);
+static camera_ret_code_type camsensor_siv121a_set_wb(int8 wb)
+{
+	siv121a_i2c_write_byte(0x00,0x03); //bank 3
 		
 	ERR("camsensor_siv121a_set_wb!",0,0,0);
 	switch((camera_wb_type)wb)
 	{
 		case CAMERA_WB_AUTO:
 		{
-			siv121a_i2c_write_byte(0x5a,0x56); //for AWB can adjust back
-			siv121a_i2c_write_byte(0x5b,0x40);
-			siv121a_i2c_write_byte(0x5c,0x4a);			
-			siv121a_i2c_write_byte(0x22,temp_reg|0x02);	 // Enable AWB
+			siv121a_i2c_write_byte(0x10, 0xD3);
 			break;
 		}
-
+        
 		case CAMERA_WB_INCANDESCENT:
 		{
-			siv121a_i2c_write_byte(0x22,temp_reg&~0x02); 
-			siv121a_i2c_write_byte(0x5a,0x48);
-			siv121a_i2c_write_byte(0x5b,0x40);
-			siv121a_i2c_write_byte(0x5c,0x5c);
+			siv121a_i2c_write_byte(0x10, 0x00);  // disable AWB
+    		siv121a_i2c_write_byte(0x60, 0x98);
+    		siv121a_i2c_write_byte(0x61, 0xC8);
 			break;
 		}
+        
 		case CAMERA_WB_FLUORESCENT:
 		{
-			siv121a_i2c_write_byte(0x22,temp_reg&~0x02);   
-			siv121a_i2c_write_byte(0x5a,0x40);
-			siv121a_i2c_write_byte(0x5b,0x42);
-			siv121a_i2c_write_byte(0x5c,0x50);
+			siv121a_i2c_write_byte(0x10, 0x00);  // disable AWB
+		    siv121a_i2c_write_byte(0x60, 0xAA);
+		    siv121a_i2c_write_byte(0x61, 0xBE);
 			break;
 		}
+        
 		case CAMERA_WB_DAYLIGHT:
 		{
-			siv121a_i2c_write_byte(0x22,temp_reg&~0x02);   
-			siv121a_i2c_write_byte(0x5a,0x74);  //  50 45 40
-			siv121a_i2c_write_byte(0x5b,0x52);
-			siv121a_i2c_write_byte(0x5c,0x40);
+			siv121a_i2c_write_byte(0x10, 0x00);  // disable AWB
+    		siv121a_i2c_write_byte(0x60, 0xC2);
+    		siv121a_i2c_write_byte(0x61, 0x9E);
 			break;
 		}
 		
 		case CAMERA_WB_CLOUDY_DAYLIGHT:
 		{
-			siv121a_i2c_write_byte(0x22,temp_reg&~0x02);   // Disable AWB 
-			siv121a_i2c_write_byte(0x5a,0x8c); //WB_manual_gain // 5a 42 40
-			siv121a_i2c_write_byte(0x5b,0x50);
-			siv121a_i2c_write_byte(0x5c,0x40);
+			siv121a_i2c_write_byte(0x10, 0x00);  // disable AWB
+    		siv121a_i2c_write_byte(0x60, 0xD0);
+    		siv121a_i2c_write_byte(0x61, 0x88);
 			break;
 		}
 		
@@ -1329,13 +943,11 @@ camera_ret_code_type camsensor_siv121a_set_wb(int8 wb)
 		default:
 			return CAMERA_NOT_SUPPORTED;
 	}//end of switch
-
-
+	
 	return CAMERA_SUCCESS;
 }
 
-
-camera_ret_code_type camsensor_siv121a_set_ev_compensation(int32 compensation)
+static camera_ret_code_type camsensor_siv121a_set_ev_compensation(int32 compensation)
 {
 	camera_ret_code_type ret_val = CAMERA_SUCCESS;
 	int16  parmCurNum = (int16)(compensation>>16);
@@ -1362,51 +974,70 @@ camera_ret_code_type camsensor_siv121a_set_ev_compensation(int32 compensation)
 	}
 	else
 	{
+        siv121a_i2c_write_byte(0x00,0x02); //bank 1
 		switch(new_luma_target)
 		{
 			case 8:    // -4 EV
-        		siv121a_i2c_write_byte(0xb5, 0xc0);
-				siv121a_i2c_write_byte(0xd3, 0x60);
+        		siv121a_i2c_write_byte(0x12, 0x40);
+                siv121a_i2c_write_byte(0x13, 0x40);
+                siv121a_i2c_write_byte(0x14, 0x40);
+                siv121a_i2c_write_byte(0x70, 0xd4);
        			break;
 
 		    case 9:    // -3 EV
-		        siv121a_i2c_write_byte(0xb5, 0xd0);
-				siv121a_i2c_write_byte(0xd3, 0x68);
+		        siv121a_i2c_write_byte(0x12, 0x50);
+                siv121a_i2c_write_byte(0x13, 0x50);
+                siv121a_i2c_write_byte(0x14, 0x50);
+                siv121a_i2c_write_byte(0x70, 0xd4);
 		        break;
 
 		    case 10:    // -2 EV
-		        siv121a_i2c_write_byte(0xb5, 0xe0);
-				siv121a_i2c_write_byte(0xd3, 0x70);
+		        siv121a_i2c_write_byte(0x12, 0x60);
+                siv121a_i2c_write_byte(0x13, 0x60);
+                siv121a_i2c_write_byte(0x14, 0x60);
+                siv121a_i2c_write_byte(0x70, 0xd4);
 		        break;
 
 		    case 11:    // -1 EV
-		        siv121a_i2c_write_byte(0xb5, 0xf0);
-				siv121a_i2c_write_byte(0xd3, 0x78);
+		        siv121a_i2c_write_byte(0x12, 0x70);
+                siv121a_i2c_write_byte(0x13, 0x70);
+                siv121a_i2c_write_byte(0x14, 0x70);
+                siv121a_i2c_write_byte(0x70, 0xd4);
 		        break;
 
 		    case 12:   // +0 EV
-		        siv121a_i2c_write_byte(0xb5, 0x00);
-				siv121a_i2c_write_byte(0xd3, 0x80);
+		        siv121a_i2c_write_byte(0x12, 0x80);
+                siv121a_i2c_write_byte(0x13, 0x80);
+                siv121a_i2c_write_byte(0x14, 0x80);
+                siv121a_i2c_write_byte(0x70, 0x00);
 		        break;
 
 		    case 13:    // +1 EV
-		        siv121a_i2c_write_byte(0xb5, 0x20);
-				siv121a_i2c_write_byte(0xd3, 0x88);
+		        siv121a_i2c_write_byte(0x12, 0x90);
+                siv121a_i2c_write_byte(0x13, 0x90);
+                siv121a_i2c_write_byte(0x14, 0x90);
+                siv121a_i2c_write_byte(0x70, 0x00);
 		        break;
 
 		    case 14:    // +2 EV
-		        siv121a_i2c_write_byte(0xb5, 0x30);
-				siv121a_i2c_write_byte(0xd3, 0x90);
+		        siv121a_i2c_write_byte(0x12, 0xA0);
+                siv121a_i2c_write_byte(0x13, 0xA0);
+                siv121a_i2c_write_byte(0x14, 0xA0);
+                siv121a_i2c_write_byte(0x70, 0x00);
 		        break;
 
 		    case 15:    // +3 EV
-		        siv121a_i2c_write_byte(0xb5, 0x40);
-				siv121a_i2c_write_byte(0xd3, 0x98);
+		        siv121a_i2c_write_byte(0x12, 0xB0);
+                siv121a_i2c_write_byte(0x13, 0xB0);
+                siv121a_i2c_write_byte(0x14, 0xB0);
+                siv121a_i2c_write_byte(0x70, 0x00);
 		        break;
 
 		    case 16:    // +4 EV
-		        siv121a_i2c_write_byte(0xb5, 0x50);
-				siv121a_i2c_write_byte(0xd3, 0xa0);
+		        siv121a_i2c_write_byte(0x12, 0xC0);
+                siv121a_i2c_write_byte(0x13, 0xC0);
+                siv121a_i2c_write_byte(0x14, 0xC0);
+                siv121a_i2c_write_byte(0x70, 0x00);
 		        break;
 
 		    default:
@@ -1417,30 +1048,27 @@ camera_ret_code_type camsensor_siv121a_set_ev_compensation(int32 compensation)
 	return ret_val;
 }
 
-camera_ret_code_type camsensor_siv121a_set_brightness(int8 brightness)
+static camera_ret_code_type camsensor_siv121a_set_brightness(int8 brightness)
 {
 	ERR("camsensor_siv121a_set_brightness!",0,0,0);
 	return CAMERA_SUCCESS;
 }
 
 
-camera_ret_code_type camsensor_siv121a_set_contrast(int8 contrast)
+static camera_ret_code_type camsensor_siv121a_set_contrast(int8 contrast)
 {
 	ERR("camsensor_siv121a_set_contrast!",0,0,0);
 	return CAMERA_SUCCESS;
 }/* camsensor_siv121a_set_contrast() */
 
-
 static void camsensor_siv121a_setup_camctrl_tbl(camctrl_tbl_type *camctrl_tbl_ptr)
 {
 	ERR("camsensor_siv121a_get_snapshot_fps!",0,0,0);
 	camctrl_tbl_ptr->asf_5x5_is_supported         = FALSE; 
-
 	camctrl_tbl_ptr->get_snapshot_frame_per_sec = camsensor_siv121a_get_snapshot_fps;
 }
 
-
-LOCAL uint16 camsensor_siv121a_get_snapshot_fps(uint16 fps)
+static uint16 camsensor_siv121a_get_snapshot_fps(uint16 fps)
 {
 	ERR("camsensor_siv121a_get_snapshot_fps!",0,0,0);
 	/* In the current driver, the snapshot fps is always 11 */
@@ -1451,7 +1079,6 @@ LOCAL uint16 camsensor_siv121a_get_snapshot_fps(uint16 fps)
 camera_ret_code_type camsensor_siv121a_set_antibanding(int8 antibanding)
 {
 	ERR("camsensor_ov2655_set_antibanding!",0,0,0);
-	
 	return CAMERA_SUCCESS;
 }
 
@@ -1475,7 +1102,5 @@ static void camsensor_siv121a_register(camsensor_function_table_type *camsensor_
 	camsensor_function_table_ptr->camsensor_set_ev_compensation	  = camsensor_siv121a_set_ev_compensation; 
 	camsensor_function_table_ptr->camsensor_set_wb				  = camsensor_siv121a_set_wb;
 } /* camsensor_mt9d112_mu2m0yu_register */
-
-
 #endif
 
