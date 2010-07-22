@@ -5938,10 +5938,20 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe)
 			MOVE_TO_STATE(WMSST_MAIN)
 		    break;
 		case DLGRET_OK:
-			pMe->m_eOptType = OPT_VIA_VIEWMSG;
-            pMe->m_eDlgReturn = DLGRET_RESEND;
-            pMe->m_bDoNotOverwriteDlgResult = TRUE;
-            MOVE_TO_STATE(WMSST_OUTMSGOPTS)
+			if(SEND_MSG_NEW == pMe->m_eCreateWMSType)
+			{
+				pMe->m_eCreateWMSType = SEND_MSG_RESEND;
+				pMe->m_eDlgReturn = DLGRET_CREATE;
+				
+				MOVE_TO_STATE(WMSST_SENDING)//WMSST_WRITEMSG
+			}
+			else
+			{
+				pMe->m_eOptType = OPT_VIA_VIEWMSG;
+            	pMe->m_eDlgReturn = DLGRET_RESEND;
+				pMe->m_bDoNotOverwriteDlgResult = TRUE;
+            	MOVE_TO_STATE(WMSST_OUTMSGOPTS)
+			}
             return NFSMACTION_CONTINUE;
 		
 		default:

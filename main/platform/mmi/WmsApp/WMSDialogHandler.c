@@ -5918,7 +5918,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 else if (pMe->m_SendOPT != SENDOPT_SEND)
                 {// 消息需保存
                     int nRet;
-                    
+                    #if 0
                     // 保存消息
                     nRet = IWMS_MsgWrite(pMe->m_pwms, 
                                         pMe->m_clientId, 
@@ -5931,6 +5931,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                     {
                         bSetTimer = FALSE;
                     }
+					#endif
                 }
                 
                 if (bSetTimer)
@@ -6381,12 +6382,15 @@ static boolean IDD_SENDING_Handler(void *pUser,
                     
                     pMe->m_bSending = TRUE;
                     pMe->m_bDCDisconnectedInSending = FALSE;
+					if((int)WMS_TAG_MO_NOT_SENT == pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag)
+					{
                     nRet = IWMS_MsgSend(pMe->m_pwms, 
                                         pMe->m_clientId, 
                                         &pMe->m_callback,
                                         (void*)pMe,
                                         WMS_SEND_MODE_CLIENT_MESSAGE,
                                         pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
+					}
                                         
                     if (nRet != SUCCESS)
                     {

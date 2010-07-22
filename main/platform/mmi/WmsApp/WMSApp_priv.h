@@ -764,6 +764,7 @@ typedef struct WmsApp
     boolean                         m_bSaveFailedMsg;           // 是否保存过发送失败的短信
     char                             *m_strPhonePWD;
     ISound                          *m_pSound;
+	boolean                         m_bisSendSecond;           //发送失败是否已经重发
 } WmsApp;
 
 /*==============================================================================

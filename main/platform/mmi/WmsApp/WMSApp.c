@@ -4634,6 +4634,53 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
     
     ERR("pRptInfo->report_status = %d", pRptInfo->report_status, 0, 0);
     
+	if (pRptInfo->report_status != WMS_RPT_OK)
+	{
+		int nRet;
+		if(!pMe->m_bisSendSecond)
+		{
+			MSG_FATAL("SECOND SENDING AGGIEN................................",0,0,0);
+			pMe->m_bisSendSecond = TRUE;
+			 // 此情况下将消息重发一次
+			DBGPRINTF("pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]::11:::%d",pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag);
+			if((int)WMS_TAG_MO_NOT_SENT == pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag)
+			{
+		        if ((NULL != pMe->m_pCurSendCltMsg) &&
+		            (pMe->m_idxCurSend < pMe->m_nSendItems))
+		        {
+		            nRet = IWMS_MsgSend(pMe->m_pwms, 
+		                                pMe->m_clientId, 
+		                                &pMe->m_callback,
+		                                (void*)pMe,
+		                                WMS_SEND_MODE_CLIENT_MESSAGE,
+		                                pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
+		                                
+		            if (nRet == SUCCESS)
+		            {
+		                pMe->m_bSending = TRUE;
+		                return;
+		            }
+		        }
+			}
+		}
+		else
+		{
+			uint16 nMsgs = 0;
+			// 当消息自动发送还没发出去 则保存在草稿箱中
+	        if ((NULL != pMe->m_pCurSendCltMsg) &&
+	            (pMe->m_idxCurSend < pMe->m_nSendItems)&&
+	            pMe->m_eCreateWMSType != SEND_MSG_RESEND)
+	        {
+					IWMS_MsgWrite(pMe->m_pwms, 
+                                  pMe->m_clientId, 
+                                  &pMe->m_callback,
+                                  (void*)pMe,
+                                  WMS_WRITE_MODE_INSERT,
+                                  pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
+				
+	        }
+		}
+	}
     if (pRptInfo->report_status != WMS_RPT_OK && 
         pMe->m_nDisconnectedInSendingRetryTimes==0 &&
         pMe->m_bDCDisconnectedInSending)
@@ -4668,10 +4715,22 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
             (pMe->m_idxCurSend < pMe->m_nSendItems))
         {
             wms_client_message_s_type *pItem = pMe->m_pCurSendCltMsg[pMe->m_idxCurSend];
-             
-            if ((NULL != pItem) &&
-                (pItem->msg_hdr.index != WMS_DUMMY_MESSAGE_INDEX))
-            {
+			pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag = WMS_TAG_MO_SENT;
+			if ((NULL != pMe->m_pCurSendCltMsg) &&
+	            (pMe->m_idxCurSend < pMe->m_nSendItems) &&
+	            pMe->m_eCreateWMSType != SEND_MSG_RESEND)
+	        {
+
+				    DBGPRINTF("pMe->m_clientId:::::::::sucess::::::%d",pMe->m_clientId);
+					IWMS_MsgWrite(pMe->m_pwms, 
+                                  pMe->m_clientId, 
+                                  &pMe->m_callback,
+                                  (void*)pMe,
+                                  WMS_WRITE_MODE_INSERT,
+                                  pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
+				   
+				
+	        }
                 (void)IWMS_MsgModifyTag(pMe->m_pwms,
                                         pMe->m_clientId,
                                         &pMe->m_callback,
@@ -4679,7 +4738,7 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
                                         pItem->msg_hdr.mem_store,
                                         pItem->msg_hdr.index,
                                         WMS_TAG_MO_SENT);
-            }
+		
         }
     }
     
@@ -5623,6 +5682,15 @@ boolean WmsApp_CurmessageIsFullSendout(WmsApp * pMe)
             bRet = FALSE;
         }
     }
+	else if(pMe->m_eCreateWMSType == SEND_MSG_NEW)
+	{
+		pMe->m_idxCurSend++;
+        if (pMe->m_idxCurSend<pMe->m_nSendItems)
+        {
+            // 发送完才提示
+            bRet = FALSE;
+        }
+	}
     else
     {
         pMe->m_idxCurSend++;
