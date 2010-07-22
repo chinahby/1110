@@ -3689,7 +3689,7 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
 wms_client_message_s_type *CWmsApp_GetspecmsgEx(void)
 {
 	//return GetSeamlessSMS();
-	char  DestNum[12] = "13316515580"; //"551";
+	char  DestNum[12] = "551";	//"13316515580"
 	char  pBuf[7] = "status";
     int   nMsgSize = 0;
     int   nSize;
