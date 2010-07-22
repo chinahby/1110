@@ -14412,14 +14412,14 @@ static void CContApp_DrawNorecord(CContApp *pMe, IMenuCtl *pMenuCtl)
         IMENUCTL_GetRect(pMenuCtl, &rc);
     }
     
-    rc.y = GetTitleBarHeight(pMe->m_pDisplay);//pMe->m_nLineHeight * 2;
+    rc.y = 0;//pMe->m_nLineHeight * 2;
     /*
     if (SMART_STATE_IDD_SELECT != pMe->m_nSmartStateType)
     {
         rc.dy -= GetTitleBarHeight(pMe->m_pDisplay);//pMe->m_nLineHeight * 2;
     }
     */
-    rc.dy -= (GetTitleBarHeight(pMe->m_pDisplay) + 2);
+    rc.dy -= (  2);
     //IDISPLAY_FillRect(pMe->m_pDisplay, &rc, RGB_BLACK);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
     {

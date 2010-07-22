@@ -377,8 +377,8 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
             	int nIdx;
             	nIdx  = pMe->m_nAutoScrollIdx;
                 MSG_FATAL("IANNUNCIATOR_SetHasTitleText",0,0,0);
-                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+nIdx);
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+				//IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+nIdx);
                 IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
            (void) ISHELL_PostEvent(pMe->m_pShell, 
@@ -4795,7 +4795,10 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
         if(!pMe->m_bStartAni)
         {
         
+           #ifdef FEATURE_VERSION_IVIO
+		   #else
            MP3_DrawWaveAni(pMe);//画动画
+           #endif
          
         }
     }
@@ -5012,11 +5015,9 @@ void MP3_MusicNameAutoScroll(CMusicPlayer *pMe)
         {
             nIdxNew = 0;
         }
-		#ifdef FEATURE_VERSION_IVIO
-		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+nIdx);
-		#else
+		
         MP3_DrawMusicName(pMe,nIdx);
-		#endif
+		
         IDISPLAY_Update(pMe->m_pDisplay);
     }
     else
@@ -5058,11 +5059,9 @@ static void MP3_ResetScroll(CMusicPlayer *pMe)
     else
     {
         ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)MP3_MusicNameAutoScroll,pMe);
-		#ifdef FEATURE_VERSION_IVIO
-		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+0);
-		#else
+		
         MP3_DrawMusicName(pMe,0);  
-        #endif
+        
     }
 }
 
@@ -5278,10 +5277,10 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
     }
     ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
     pMe->m_rc.dy = devinfo.cyScreen;
-    title_hight = GetTitleBarHeight(pMe->m_pDisplay);
+    title_hight = 0;
     bottomheight = GetBottomBarHeight(pMe->m_pDisplay);
     itemheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_NORMAL, NULL, NULL);	//AEE_FONT_BOLD
-    lineSpace = ( pMe->m_rc.dy - title_hight - bottomheight - itemheight*3) / 4;	//4/5
+    lineSpace = ( pMe->m_rc.dy - bottomheight - itemheight*3) / 4;	//4/5
     MEMSET(wszMode,0,sizeof(wszMode));	
     //MEMSET(wszStyle,0,sizeof(wszStyle));
     MEMSET(wszVolume,0,sizeof(wszVolume));
@@ -5305,7 +5304,7 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
     //play mode LIST控件的矩形
     SETAEERECT( &rc,
                 CONTROL_RECT_START_X+10,
-                title_hight + lineSpace,
+                lineSpace,
                 pMe->m_rc.dx - CONTROL_RECT_START_X - 20,
                 itemheight + 1//8
             );
@@ -5314,7 +5313,7 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
     //volume list控件的矩形
     SETAEERECT( &rc,
                 CONTROL_RECT_START_X+10,
-                title_hight + lineSpace*2+itemheight,
+                lineSpace*2+itemheight,
                 pMe->m_rc.dx - CONTROL_RECT_START_X - 20,
                 itemheight + 1//8
             );
@@ -5323,7 +5322,7 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
     // sort by list控件矩形
     SETAEERECT( &rc,
                 CONTROL_RECT_START_X+10,
-                title_hight+lineSpace*3+itemheight*2,
+                lineSpace*3+itemheight*2,
                 pMe->m_rc.dx - CONTROL_RECT_START_X - 20,
                 itemheight + 1//8
             );
@@ -5360,7 +5359,7 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
    
     //模式
     (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
-                          wszMode,-1,1,2+ title_hight + lineSpace,NULL,
+                          wszMode,-1,1,2 + lineSpace,NULL,
                           IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
     //风格
     //(void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
@@ -5368,11 +5367,11 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
     //                      IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
     //音量
     (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
-                          wszVolume,-1,1,2 + title_hight + lineSpace*2+itemheight,NULL,
+                          wszVolume,-1,1,2  + lineSpace*2+itemheight,NULL,
                           IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
      //排序
     (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
-                          wszSort,-1,1,2 + title_hight + lineSpace*3+itemheight*2,NULL,
+                          wszSort,-1,1,2  + lineSpace*3+itemheight*2,NULL,
                           IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
  
     IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
@@ -5383,7 +5382,7 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
     IMENUCTL_SetColors(pMe->m_pMode, &color);
     IMENUCTL_SetColors(pMe->m_pVolume, &color);
     IMENUCTL_SetColors(pMe->m_pSort, &color);
-    CMusicPlayer_Draw_Arrow(pMe, title_hight, lineSpace,itemheight);
+    CMusicPlayer_Draw_Arrow(pMe, 0, lineSpace,itemheight);
     MP3_Draw_Settings_TitleBar(pMe);
     
      CMusicPlayer_Set_CTL(pMe);
