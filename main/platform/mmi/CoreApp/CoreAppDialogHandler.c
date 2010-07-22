@@ -3010,8 +3010,15 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
                 case AVK_CLR:
                     MSG_FATAL("IDD_IDLE_Handler AVK_CLR",0,0,0);
-                    if(!OEMKeyguard_IsEnabled())
+#ifdef FEATURE_VERSION_SMART			//Add By zzg 2010_07_20
+					if(!OEMKeyguard_IsEnabled())
                     {
+                        return CoreApp_LaunchApplet(pMe, AEECLSID_FRENDUO);
+                    }
+#else
+					if(!OEMKeyguard_IsEnabled())
+                    {
+                        return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
                     	#ifdef FEATURE_FLEXI_STATIC_BREW_APP
 							 OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
 							// ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);
@@ -3020,6 +3027,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 						#endif
                     }
+#endif
+                    
 
                 default:
                     break;
@@ -4391,16 +4400,19 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #endif
     else
     {
-#ifndef FEATURE_FLEXI_STATIC_BREW_APP
-    	eBBarType = BTBAR_MENU_CONTACTS;
-#else
-
-#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
-	eBBarType = BTBAR_FNASRANI_FPORTAL;
-#else
-	eBBarType = BTBAR_FMUSLIM_FPORTAL;
-#endif
+#ifdef FEATURE_VERSION_SMART			//Add By zzg 2010_07_20
+		eBBarType = BTBAR_MENU_FRENDUO;
+#else	
+	#ifndef FEATURE_FLEXI_STATIC_BREW_APP
+			eBBarType = BTBAR_MENU_CONTACTS;
+	#elif defined STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+		eBBarType = BTBAR_FNASRANI_FPORTAL;
+	#else
+		eBBarType = BTBAR_FMUSLIM_FPORTAL;
 	#endif
+
+#endif
+	
     }
 
     DrawBottomBar_Ex(pMe->a.m_pIShell, pMe->m_pDisplay,eBBarType);

@@ -210,6 +210,9 @@ typedef enum BottomBar_e_Type
    BTBAR_LEFT_START_NULL,
    BTBAR_MENU_BACK,       // 菜单-----返回
    BTBAR_MENU_CONTACTS,   // 菜单-----电话本
+   //Add By zzg 2010_07_20
+   BTBAR_MENU_FRENDUO,	 // 菜单------FRENDUO
+   //Add End
    BTBAR_OK_BACK,         // 确定-----返回
    BTBAR_OK_CANCEL,       // 确定-----取消
    BTBAR_OK_DEL,

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="arappscommon" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_SELECT">
@@ -166,6 +166,9 @@
 	<STRING Id="1005" Name="IDS_JEWISH">
 		<Text>Display</Text>
 	</STRING>
+	<String Id="1006" Name="IDS_FRENDUO_LIST">
+		<Text>FrenDuo</Text>
+	</String>
 	<STRING Id="2000" Name="IDS_DONE">
 		<Text>Done</Text>
 	</STRING>

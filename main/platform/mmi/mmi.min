@@ -115,6 +115,7 @@ endif
 include $(MMIDIR)/core/core.min
 include $(APPLICATION)/application.min
 include $(GAME)/game.min
+include $(FRENDUO)/frenduo.min
 
 ifeq ($(USE_STATIC_BREW_APP),yes)
 include $(STATIC_BREW_APP)/staticbrewapp.min

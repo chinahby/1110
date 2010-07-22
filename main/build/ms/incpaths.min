@@ -844,6 +844,7 @@ NUMBERMANAGER =         $(MMIDIR)/NumberManager
 ADJUSTPENAPP =          $(MMIDIR)/AdjustPenApp
 APPLICATION   =         $(MMIDIR)/Application
 GAME     =              $(MMIDIR)/Games/game
+FRENDUO  =         		$(MMIDIR)/FrenDuo
 MULTIMEDIA =            $(MMIDIR)/Multimedia
 ifeq ($(USE_STATIC_BREW_APP),yes)
 STATIC_BREW_APP= $(MMIDIR)/staticbrewapp

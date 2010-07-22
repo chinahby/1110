@@ -110,6 +110,23 @@
 #endif
 
 // 关机动画文件播放
+#ifdef FEATURE_VERSION_SMART
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/tianyion.png"
+#define    PWRON_ANI_FRAME_COUNT                 (10)
+#define    PWRON_ANI_RATE                        (380)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/tianyioff.png"
+#define    PWROFF_ANI_FRAME_COUNT                (10)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
+#elif defined FEATURE_VERSION_M8
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/tianyion.png"
+#define    PWRON_ANI_FRAME_COUNT                 (10)
+#define    PWRON_ANI_RATE                        (380)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/tianyioff.png"
+#define    PWROFF_ANI_FRAME_COUNT                (10)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE     
+#else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/tianyion.png"
 #define    PWRON_ANI_FRAME_COUNT                 (19)
 #define    PWRON_ANI_RATE                        (200)
@@ -117,6 +134,9 @@
 #define    PWROFF_ANI_FRAME_COUNT                (19)
 #define    PWROFF_ANI_RATE                       (200)
 #define    ANI_RATE                              (150)
+#endif
+
+
 
 
 // 下列变量为临时定义

@@ -938,6 +938,7 @@ extern int TSIM_New   (IShell * piShell,AEECLSID cls,void **ppif);
 extern int VkeyCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj);
 #endif
 extern int GameMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+extern int FrenDuoAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 
 /* =====================================================
    Statically linked application list.
@@ -977,6 +978,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 //#if defined( FEATURE_GAME_TETRIS)
 //    {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
 	{AEEFS_MIF_DIR"game.mif",GameMod_Load},
+	{AEEFS_MIF_DIR"frenduo.mif",FrenDuoAppMod_Load},
 //#endif
 
 

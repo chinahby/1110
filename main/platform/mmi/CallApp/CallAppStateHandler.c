@@ -141,6 +141,7 @@ NextFSMAction CallApp_ProcessState(CCallApp *pMe)
             break;
 
         case STATE_CALLING_FROM_ANOTHERAPP:
+			DBGPRINTF("***zzg STATE_CALLING_FROM_ANOTHERAPP***");
             retVal = STATE_CALLING_FROM_ANOTHERAPP_Handler(pMe);
             break;
 #if 0
@@ -485,7 +486,9 @@ static NextFSMAction STATE_CALLING_FROM_ANOTHERAPP_Handler(CCallApp *pMe)
         case DLGRET_CREATE:
             pMe->m_bNotOverwriteDlgRet = FALSE;
             result = CallApp_MakeCall(pMe);
-            CALL_ERR("CallApp_MakeCal result = %d",result,0,0);
+			
+            DBGPRINTF("***zzg CallApp_MakeCal result = %d***",result);
+			
             if(CALL_SUCESS == result)
             {
                 MOVE_TO_STATE(STATE_CALLING)

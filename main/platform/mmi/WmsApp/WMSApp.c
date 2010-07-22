@@ -2519,14 +2519,67 @@ static int CWmsApp_MessageService(IWmsApp *p,
     {
         int   nRet;
         wms_client_message_s_type   *pMsg = NULL;
-        
+
+		/*
         if ((pwstrText == NULL) || 
             (pMe->m_bCdmaWmsReady == FALSE) || 
             pMe->m_refresh_in_progress)
         {
             return EFAILED;
         }
-        
+        */
+
+		//Add By zzg 2010_07_20
+		if (NULL == pwstrText)
+		{
+			pMsg = CWmsApp_GetspecmsgEx();
+			
+	        if (NULL == pMsg)
+	        {
+	            return EFAILED;
+	        }
+			
+#ifndef WIN32
+			DBGPRINTF("***zzg CWmsApp_GetspecmsgEx wms_msg_send***");
+	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)
+	        {
+	        	DBGPRINTF("***zzg CWmsApp_GetspecmsgEx wms_msg_send SUCCESS***");
+	            nRet = SUCCESS;
+	        }
+	        else
+	        {
+	        	DBGPRINTF("***zzg CWmsApp_GetspecmsgEx wms_msg_send EFAILED***");
+	            nRet = EFAILED;
+	        }
+#else
+			nRet = SUCCESS;
+#endif
+		}
+		else if ((pMe->m_bCdmaWmsReady != FALSE) && (pMe->m_refresh_in_progress))
+		{
+			pMsg = CWmsApp_Getspecmsg(pwstrText);
+			
+	        if (NULL == pMsg)
+	        {
+	            return EFAILED;
+	        }
+			
+#ifndef WIN32
+	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)
+	        {
+	            nRet = SUCCESS;
+	        }
+	        else
+	        {
+	            nRet = EFAILED;
+	        }
+#else
+			nRet = SUCCESS;
+#endif
+		}
+		//Add End
+
+		/*
         pMsg = CWmsApp_Getspecmsg(pwstrText);
         if (NULL == pMsg)
         {
@@ -2548,6 +2601,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
 #else
 		nRet = SUCCESS;
 #endif
+		*/
         FREEIF(pMsg);
         return nRet;
     }

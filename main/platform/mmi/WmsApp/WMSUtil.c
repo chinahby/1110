@@ -3684,3 +3684,43 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
             return NULL;
     }
 }
+
+//Add By zzg 2010_07_21
+wms_client_message_s_type *CWmsApp_GetspecmsgEx(void)
+{
+	//return GetSeamlessSMS();
+	char  DestNum[12] = "13316515580"; //"551";
+	char  pBuf[7] = "status";
+    int   nMsgSize = 0;
+    int   nSize;
+    wms_cdma_user_data_s_type    *pUserdata = NULL;
+    wms_client_message_s_type    *pCltMsg = NULL;
+
+	DBGPRINTF("***zzg CWmsApp_GetspecmsgEx***");
+	
+    
+    nSize = 7;
+    nMsgSize = 7;
+	    
+    nSize = sizeof(wms_cdma_user_data_s_type);
+    pUserdata = (wms_cdma_user_data_s_type *)MALLOC(nSize);
+	
+    if (NULL == pUserdata)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_OCTET;
+    pUserdata->number_of_digits = nMsgSize;
+    pUserdata->data_len = nMsgSize;
+    pUserdata->padding_bits = 0;
+    MEMCPY(pUserdata->data, pBuf, nMsgSize);
+    
+    pCltMsg = GetMOClientMsg(DestNum, pUserdata, TRUE);	
+    
+GETREGISTERMSG_EXIT:    
+    FREEIF(pUserdata);
+    
+    return pCltMsg;	
+}
+//Add End

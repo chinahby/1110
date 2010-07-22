@@ -25,6 +25,12 @@ vpath %.png $(APPSCOMMON)/images/160x128/smart/Wallpaper
 vpath %.bmp $(APPSCOMMON)/images/160x128/smart/Wallpaper
 endif
 
+ifeq ($(OPERATORS_VERSION_NAME),M8)
+vpath %.jpg $(APPSCOMMON)/images/160x128/smart/Wallpaper
+vpath %.png $(APPSCOMMON)/images/160x128/smart/Wallpaper
+vpath %.bmp $(APPSCOMMON)/images/160x128/smart/Wallpaper
+endif
+
 ifeq ($(OPERATORS_VERSION_NAME),IVIO)
 vpath %.jpg $(APPSCOMMON)/images/160x128/ivio/Wallpaper
 vpath %.png $(APPSCOMMON)/images/160x128/ivio/Wallpaper

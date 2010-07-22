@@ -554,4 +554,8 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
 ==============================================================================*/
 wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType);
 
+//Add By zzg 2010_07_21
+wms_client_message_s_type *CWmsApp_GetspecmsgEx(void);
+//Add End
+
 #endif // _WMSUTIL_H

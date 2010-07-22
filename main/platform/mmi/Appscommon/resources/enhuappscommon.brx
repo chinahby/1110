@@ -217,6 +217,9 @@
 	<STRING Id="1023" Name="IDS_GALLERY">
 		<Text>Gallery</Text>
 	</STRING>
+	<String Id="1024" Name="IDS_FRENDUO_LIST">
+		<Text>FrenDuo</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>

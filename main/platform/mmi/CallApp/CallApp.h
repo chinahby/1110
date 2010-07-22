@@ -44,6 +44,7 @@ typedef struct _ICallApp  ICallApp;
 {
     INHERIT_IApplet(ICallApp);
     int (*CallNumber)(ICallApp *p, AECHAR *number);
+	int (*CallNumberEx)(ICallApp *p, AECHAR *number,  PFNNOTIFY pfn,  uint32 TimeOut); 		//Add by zzg 2010_07_21
     int (*BtCallNumber)(ICallApp *p, AECHAR *number);
     //boolean (*IsRestictCallNumber)(ICallApp *p, AECHAR *n, boolean b);
     //int (*SetStartCallType)(ICallApp *p, start_call_type type, AECHAR *num, callPIType pi, AECHAR *name);
@@ -70,6 +71,10 @@ typedef struct _ICallApp  ICallApp;
 #define ICallApp_HandleEvent(p,ec,wp,dw)  GET_PVTBL(p,ICallApp)->HandleEvent(p,ec,wp,dw)
 //#define ICallApp_SetStartCallType(p,t,nu,pi,na)          GET_PVTBL(p,ICallApp)->SetStartCallType(p,t,nu,pi,na)
 #define ICallApp_CallNumber(p,n)          GET_PVTBL(p,ICallApp)->CallNumber(p,n)
+
+#define ICallApp_CallNumberEx(p,n,pfn,s)          GET_PVTBL(p,ICallApp)->CallNumberEx(p,n,pfn,s)
+
+
 #define ICallApp_BTCallNumber(p,n)          GET_PVTBL(p,ICallApp)->BtCallNumber(p,n)
 //#define ICallApp_IsRestictCallNumber(p,n,b)  GET_PVTBL(p,ICallApp)->IsRestictCallNumber(p,n,b)
 #define ICallApp_Make_IP_Call_F(p,n)  GET_PVTBL(p,ICallApp)->Make_IP_Call_F(p,n)

@@ -145,7 +145,7 @@
 	<STRING Id="48" Name="IDS_CALL">
 		<Text>Call</Text>
 	</STRING>
-	<STRING Id="49" Name="IDS_RESUME" Encoding="Unicode">
+	<STRING Id="49" Name="IDS_RESUME">
 		<Text>Resume</Text>
 	</STRING>
 	<STRING Id="114" Name="IDS_OPTION_FM">
@@ -166,13 +166,16 @@
 	<STRING Id="1005" Name="IDS_JEWISH">
 		<Text>Jewish</Text>
 	</STRING>
+	<String Id="1006" Name="IDS_FRENDUO_LIST">
+		<Text>FrenDuo</Text>
+	</String>
 	<STRING Id="2000" Name="IDS_DONE">
-                <Text>Done</Text>
-        </STRING>
-        <STRING Id="2001" Name="IDS_SNOOZE">
-                <Text>Snooze</Text>
-        </STRING>
-        <STRING Id="2002" Name="IDS_FM_BACK">
+		<Text>Done</Text>
+	</STRING>
+	<STRING Id="2001" Name="IDS_SNOOZE">
+		<Text>Snooze</Text>
+	</STRING>
+	<STRING Id="2002" Name="IDS_FM_BACK">
 		<Text>Atrás</Text>
 	</STRING>
 </Strings>

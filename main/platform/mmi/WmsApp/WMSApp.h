@@ -277,6 +277,15 @@ QINTERFACE(IWmsApp)
 #define IWmsApp_SendSpecMessage(p,t)  \
     GET_PVTBL(p,IWmsApp)->MessageService(p, STARTMETHOD_SENDSPECMESSAGE, NULL, t)
 
+
+
+
+//Add By zzg 2010_07_20
+#define IWmsApp_SendSpecMessageEx(p)  \
+	GET_PVTBL(p,IWmsApp)->MessageService(p, STARTMETHOD_SENDSPECMESSAGE, NULL, NULL)
+
+
+
 /*==============================================================================
 ½Ó¿Ú: 
     IWmsApp_WriteNewMessage
