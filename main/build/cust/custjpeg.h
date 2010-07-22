@@ -38,8 +38,9 @@ when       who     what, where, why
 /*---------------------------------------------------------------------------
                             JPEG  Services
 ---------------------------------------------------------------------------*/
-
+#ifdef FEATURE_CAMERA
 #define FEATURE_JPEG_ENCODER
+#endif
 #define FEATURE_JPEG_DECODER
 #define FEATURE_QCT_JPEG_DECODER // Use the QCT provided JPEG decoder.
 
@@ -79,10 +80,10 @@ when       who     what, where, why
 /* This definition allows jpeg module to clear selective cache lines */
 /* instead of entire cache. */
 #define JPEG_DATA_CACHE_LINES
-
+#ifdef FEATURE_CAMERA
 /* This definition allows jpeg module to use video resources for jpeg */
 #define JPEG_VIDEO_RESOURCES
-
+#endif
 
 /*---------------------------------------------------------------------------
                       JPEG ARM Decoder Support
