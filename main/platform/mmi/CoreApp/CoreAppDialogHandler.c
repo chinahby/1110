@@ -2999,7 +2999,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
                         ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
 #endif
+#else
+               return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
+
 				  return ret;
                 	}
 
