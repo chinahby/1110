@@ -26,7 +26,7 @@ ifeq ($(USES_160X128),yes)
         vpath %.png $(APPSCOMMON)/images/160x128/smart/Pwronoffani
     endif
     ifeq ($(OPERATORS_VERSION_NAME),M8)
-        vpath %.png $(APPSCOMMON)/images/160x128/smart/Pwronoffani
+        vpath %.png $(APPSCOMMON)/images/160x128/m8/Pwronoffani
     endif
 else
     ifeq ($(OPERATORS_VERSION_NAME),IVIO)
@@ -36,7 +36,7 @@ else
 	    vpath %.png $(APPSCOMMON)/images/color/smart/Pwronoffani
 	endif
 	ifeq ($(OPERATORS_VERSION_NAME),M8)
-	    vpath %.png $(APPSCOMMON)/images/color/smart/Pwronoffani
+	    vpath %.png $(APPSCOMMON)/images/color/m8/Pwronoffani
 	endif
 endif
 ifeq ($(USES_LOWMEM), yes)

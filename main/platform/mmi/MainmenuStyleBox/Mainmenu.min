@@ -22,7 +22,7 @@ ifeq ($(OPERATORS_VERSION_NAME),SMART)
    vpath %.png $(APPSCOMMON)/images/160x128/smart/Mainmenu/focus
 endif
 ifeq ($(OPERATORS_VERSION_NAME),M8)
-   vpath %.png $(APPSCOMMON)/images/160x128/smart/Mainmenu/focus
+   vpath %.png $(APPSCOMMON)/images/160x128/m8/Mainmenu/focus
 endif
 
 else

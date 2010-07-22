@@ -52,7 +52,7 @@ else
     	appscommon_160x128_smart.bar|fs:/sys/appscommonimages.bar 
     endif
     ifeq ($(OPERATORS_VERSION_NAME),M8)
-    vpath %.png $(APPSCOMMON)/images/160x128/smart/GraphicNotice
+    vpath %.png $(APPSCOMMON)/images/160x128/m8/GraphicNotice
     CONSTFILE_FILES+=\
     	appscommon_160x128_smart.bar|fs:/sys/appscommonimages.bar 
     endif

@@ -3013,7 +3013,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
                 case AVK_CLR:
                     MSG_FATAL("IDD_IDLE_Handler AVK_CLR",0,0,0);
-#ifdef FEATURE_VERSION_SMART			//Add By zzg 2010_07_20
+#ifdef FEATURE_VERSION_M8			//Add By zzg 2010_07_20
 					if(!OEMKeyguard_IsEnabled())
                     {
                         return CoreApp_LaunchApplet(pMe, AEECLSID_FRENDUO);

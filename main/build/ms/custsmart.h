@@ -221,6 +221,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
 #define FEATURE_PROJECT_SMART
+#define FEATURE_PROJECT_W204
 #define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 #define FEATURE_COMBINED_PWR_END_KEYS
