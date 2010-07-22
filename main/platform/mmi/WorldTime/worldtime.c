@@ -107,6 +107,7 @@ static void Draw_WorldTimeContent(CWorldTime *pme);
 static void WorldTime_DrawNextCity(CWorldTime * pMe, boolean left);
 static int get_timezone(void);
 static void WorldTime_DrawBackGround(CWorldTime * pMe);
+static void Draw_TimeZone(CWorldTime *pme);
 /*===========================================================================
 
                     LOCAL/STATIC DATA
@@ -310,7 +311,7 @@ static boolean InitWorldTime(CWorldTime *pme)
     {
         IIMAGE_GetInfo( pme->m_pImageBg, &ii);
         pme->m_dyMenu = MENUITEM_HEIGHT - 2;
-        pme->m_yBg      = TITLEBAR_HEIGHT + (di.cyScreen - BOTTOMBAR_HEIGHT - TITLEBAR_HEIGHT - ii.cy - 2*(pme->m_dyMenu + SPACE_BETWEEN_MENU))/2;
+        pme->m_yBg      = TITLEBAR_HEIGHT + (di.cyScreen - BOTTOMBAR_HEIGHT-TITLEBAR_HEIGHT- ii.cy - 2*(pme->m_dyMenu + SPACE_BETWEEN_MENU))/2;
         //pme->m_yBg      = ( di.cyScreen - GetBottomBarHeight( pme->a.m_pIDisplay) - ii.cy) / 2 - (pme->m_dyMenu / 2);
         pme->m_xBg      = ( di.cxScreen - ii.cx) / 2;
         pme->m_widthBg  = ii.cx;
@@ -780,7 +781,7 @@ static void CWorldTime_DrawCityTime(CWorldTime *pme)
 	#else
 	SETAEERECT(&rc, 
                         pme->m_xMenu, 
-                        pme->m_yMenu + SPACE_BETWEEN_MENU,
+                        pme->m_yMenu + SPACE_BETWEEN_MENU + pme->m_dyMenu,
                         pme->m_dxMenu, 
                         pme->m_dyMenu);
 	#endif
@@ -797,6 +798,46 @@ static void CWorldTime_DrawCityTime(CWorldTime *pme)
                                 IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
 
     IMENUCTL_Redraw( pme->m_pMenuCity);
+    IDISPLAY_UpdateEx(pme->a.m_pIDisplay, FALSE);
+}
+static void Draw_TimeZone(CWorldTime *pme)
+{
+	AECHAR    text[32] = {0};
+    uint32      sec;
+	AEERect   rc = {0};
+	AECHAR  wFormat[8];
+	AECHAR  Temp[32] = {0};
+    int           timeZone = pme->m_timeZone;
+	rc.x = 0;
+	rc.y = 0;
+	rc.dx = SCREEN_WIDTH;
+    rc.dy = STATEBAR_HEIGHT;
+	WSTRLCPY(wFormat,L"%d",8);
+
+	(void)ISHELL_LoadResString(pme->a.m_pIShell,
+            WORLDTIME_RES_FILE_LANG,                                
+            IDS_TIME_ZONE,
+            text,
+            sizeof(text));
+	WSTRCAT(text,L"  ");
+	WSPRINTF(Temp, sizeof(Temp), wFormat, timeZone);
+	if(timeZone>0)
+	{
+		WSTRCAT(text,L"+");
+	}
+	
+	WSTRCAT(text,Temp);
+	IDISPLAY_DrawRect(pme->a.m_pIDisplay,&rc,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL); 
+	IDISPLAY_SetColor(pme->a.m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
+    IDISPLAY_DrawText(pme->a.m_pIDisplay, 
+                                AEE_FONT_NORMAL, 
+                                text, 
+                                -1, 
+                                rc.x, 
+                                rc.y, 
+                                &rc, 
+                                IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
+
     IDISPLAY_UpdateEx(pme->a.m_pIDisplay, FALSE);
 }
 
@@ -853,8 +894,8 @@ static void Draw_WorldTimeContent(CWorldTime *pme)
             BarParam.eBBarType = BTBAR_BACK;
             DrawBottomBar(pme->a.m_pIDisplay, &BarParam);
         }
-
         CWorldTime_DrawCityTime(pme);
+		Draw_TimeZone(pme);
     }
 }
 
@@ -889,8 +930,8 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         IIMAGE_Draw( pme->m_pImageBar, pme->m_xBg + pme->m_xBar, pme->m_yBg);
         ERR("pme->m_yBg:::::%d",pme->m_yBg,0,0);
         IDISPLAY_SetClipRect( pme->a.m_pIDisplay, &pme->m_rectScreen);
-
         CWorldTime_DrawCityTime(pme);
+		Draw_TimeZone(pme);
         IDISPLAY_Update(pme->a.m_pIDisplay);
     }
 }

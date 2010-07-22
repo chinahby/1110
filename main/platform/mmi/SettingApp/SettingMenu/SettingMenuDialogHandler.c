@@ -39,8 +39,10 @@
 #endif 
 #include "nv.h"
 boolean start_security_setting_by_user;
-
+#ifdef FEATURE_VERSION_IVIO
+#else
 #define FEATURE_SET_SCENEMODE
+#endif
 #define FEATURE_SET_SOUND_TITLE
 /*==============================================================================
                                  宏定义和常数

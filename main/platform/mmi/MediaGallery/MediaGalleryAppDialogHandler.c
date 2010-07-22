@@ -1152,7 +1152,9 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PICTURES);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_MUSIC);
 #if !defined(FEATRUE_MG_NOHSVIDEO)
+#if 0
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_VIDEOS);
+#endif
 #endif
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_CALLMEMO);
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
@@ -1344,7 +1346,9 @@ static boolean MediaGalleryApp_CardMemDlg_HandleEvent(CMediaGalleryApp* pMe,
             }
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PICTURES);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_MUSIC);
+		 #if 0
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_VIDEOS);
+		 #endif
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_VOICEMEMO);
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_DOWNLOAD);

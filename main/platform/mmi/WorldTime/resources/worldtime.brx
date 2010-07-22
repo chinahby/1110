@@ -82,5 +82,8 @@
 	<STRING Id="27" Name="IDS_DATE_FORMAT">
 		<Text>%02d/%02d %02d:%02d</Text>
 	</STRING>
+	<String Id="1001" Name="IDS_TIME_ZONE">
+		<Text>Time zone:</Text>
+	</String>
 </Strings>
 </BREWRes>

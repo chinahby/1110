@@ -17,7 +17,7 @@
 		<Text>UTK</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MAIN_MENU_TITLE_4">
-		<Text>Calculator</Text>
+		<Text>Tools</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_5">
 		<Text>Recent calls</Text>
@@ -26,7 +26,7 @@
 		<Text>Messages</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_7">
-		<Text>FM Radio</Text>
+		<Text>Multimedia</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_8">
 		<Text>Application</Text>
@@ -38,10 +38,10 @@
 		<Text>Setting</Text>
 	</String>
 	<String Id="1021" Name="IDS_MAIN_MENU_TITLE_11">
-		<Text>Game</Text>
+		<Text>User Profile</Text>
 	</String>
 	<String Id="1022" Name="IDS_MAIN_MENU_TITLE_12">
-		<Text>MusicPlayer</Text>
+		<Text>Game</Text>
 	</String>
 	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
 		<Text>Tetris</Text>

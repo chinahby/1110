@@ -1101,7 +1101,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
         MSG_FATAL("Trying to create dialog %d without closing previous one",dlgResId,0,0);
         return;
     }
-    
+   
     if (NULL != pMe->m_pDisplay)
     {
         AEEDeviceInfo di={0,};
@@ -2234,30 +2234,31 @@ static boolean StartApplet(MainMenu *pMe, int i)
             break;
         }
         case 1:
+        {
+            IContactApp *ca = NULL;
+            if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
             {
-                IContactApp *ca = NULL;
-                if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
-                {
-                    return FALSE;
-                }
-                else
-                {
-                    ICONTAPP_MainMenu(ca);
-                    IContactApp_Release(ca);
-                }
+                return FALSE;
             }
-            break;
+            else
+            {
+                ICONTAPP_MainMenu(ca);
+                IContactApp_Release(ca);
+            }
+        }
+        break;
         case 2:
 			//OEM_SetNasraniAccount();
+			/*
 			#ifdef FEATURE_FLEXI_STATIC_BREW_APP
-	     	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-            Result = ISHELL_StartApplet(pMe->m_pShell, 0x0109d6ca);
-			#else
+	     		OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+            		Result = ISHELL_StartApplet(pMe->m_pShell, 0x0109d6ca);
+			#else*/
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
-			#endif
+			//#endif
             break;
         case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
             break;
         case 4:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
@@ -2266,10 +2267,10 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
             break;    
         case 6:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST);
             break;
         case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
             break;
         case 8:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
@@ -2279,10 +2280,10 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;
         case 10:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SOUNDMENU);
             break;
         case 11:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
             break;
 #endif
         default:
