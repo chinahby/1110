@@ -29,6 +29,11 @@ ifeq ($(OPERATORS_VERSION_NAME),SMART)
     	 CONSTFILE_FILES+=\
     	 blackjack_image_smart.bar|fs:/mod/blackjack/blackjack_image.bar
 endif
+
+ifeq ($(OPERATORS_VERSION_NAME),M8)
+    	 CONSTFILE_FILES+=\
+    	 blackjack_image_smart.bar|fs:/mod/blackjack/blackjack_image.bar
+endif
     
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

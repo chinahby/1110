@@ -25,11 +25,17 @@ ifeq ($(USES_160X128),yes)
     ifeq ($(OPERATORS_VERSION_NAME),SMART)
         vpath %.png $(APPSCOMMON)/images/160x128/smart/Pwronoffani
     endif
+    ifeq ($(OPERATORS_VERSION_NAME),M8)
+        vpath %.png $(APPSCOMMON)/images/160x128/smart/Pwronoffani
+    endif
 else
     ifeq ($(OPERATORS_VERSION_NAME),IVIO)
 	    vpath %.png $(APPSCOMMON)/images/color/ivio/Pwronoffani
 	endif
 	ifeq ($(OPERATORS_VERSION_NAME),SMART)
+	    vpath %.png $(APPSCOMMON)/images/color/smart/Pwronoffani
+	endif
+	ifeq ($(OPERATORS_VERSION_NAME),M8)
 	    vpath %.png $(APPSCOMMON)/images/color/smart/Pwronoffani
 	endif
 endif

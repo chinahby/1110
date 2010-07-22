@@ -331,6 +331,8 @@ typedef PACKED struct _Key_pad_Cfg
 
 #ifdef FEATURE_VERSION_SMART
 #define OEMNV_DEFAULT_BANNER     "SMART"   //·±Με°ζΊΪ°Χ»ϊ
+#elif defined FEATURE_VERSION_M8
+#define OEMNV_DEFAULT_BANNER     "M8"   //·±Με°ζΊΪ°Χ»ϊ
 #else
 #define OEMNV_DEFAULT_BANNER     "IVIO"   //·±Με°ζΊΪ°Χ»ϊ
 #endif

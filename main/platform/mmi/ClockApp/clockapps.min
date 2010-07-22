@@ -30,6 +30,10 @@ ifeq ($(OPERATORS_VERSION_NAME),SMART)
     	 CONSTFILE_FILES+=\
     	 clockapps_images_smart.bar|fs:/mod/clockapps/clockapps_images.bar
 endif
+ifeq ($(OPERATORS_VERSION_NAME),M8)
+    	 CONSTFILE_FILES+=\
+    	 clockapps_images_smart.bar|fs:/mod/clockapps/clockapps_images.bar
+endif
 
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)

@@ -41,6 +41,10 @@ ifeq ($(OPERATORS_VERSION_NAME),SMART)
     	CONSTFILE_FILES+=\
     	musicplayerimage_smart.bar|fs:/mod/musicplayer/musicplayerimage.bar
 endif
+ifeq ($(OPERATORS_VERSION_NAME),M8)
+    	CONSTFILE_FILES+=\
+    	musicplayerimage_smart.bar|fs:/mod/musicplayer/musicplayerimage.bar
+endif
 endif
 
 # 加入另外一种语言资源文件

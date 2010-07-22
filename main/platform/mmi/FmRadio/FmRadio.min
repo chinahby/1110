@@ -37,6 +37,10 @@ ifeq ($(OPERATORS_VERSION_NAME),SMART)
     	 CONSTFILE_FILES+=\
     	 fmradioln160x128_smart.bar|fs:/mod/fmradio/fmradioln.bar
 endif
+ifeq ($(OPERATORS_VERSION_NAME),M8)
+    	 CONSTFILE_FILES+=\
+    	 fmradioln160x128_smart.bar|fs:/mod/fmradio/fmradioln.bar
+endif
 else
 CONSTFILE_FILES+=\
         fmradio.mif|fs:/mif/fmradio.mif \

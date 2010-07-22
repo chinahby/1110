@@ -29,6 +29,10 @@ CONSTFILE_FILES+=\
     CONSTFILE_FILES+=\
     worldtime_images_smart.bar|fs:/mod/worldtime/worldtime_images.bar
     endif
+    ifeq ($(OPERATORS_VERSION_NAME),M8)
+    CONSTFILE_FILES+=\
+    worldtime_images_smart.bar|fs:/mod/worldtime/worldtime_images.bar
+    endif
 endif
 
 
