@@ -6801,8 +6801,8 @@ void CContApp_DrawScrollBar(CContApp * pMe, IMenuCtl   *pMenuCtl)
         
         rect.x = rect.dx - SCROLLBAR_WIDTH;
         rect.dx = SCROLLBAR_WIDTH;
-        rect.y = TITLEBAR_HEIGHT;
-        rect.dy = rect.dy - 2 * BOTTOMBAR_HEIGHT - TITLEBAR_HEIGHT;
+        rect.y = 0;
+        rect.dy = rect.dy - 2 * BOTTOMBAR_HEIGHT - 0;
     
         Appscommon_DrawScrollBar(pMe->m_pDisplay, currIdx, totalNum, MAX_NUM_MENUPOP, &rect);
         //IDISPLAY_Update(pMe->m_pDisplay);  // 在这里update会和menu的redraw中的update不同步
