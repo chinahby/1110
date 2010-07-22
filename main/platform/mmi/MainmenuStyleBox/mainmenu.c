@@ -2227,6 +2227,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             
     #endif
     #if defined (FEATURE_DISP_160X128)
+	#ifdef FEATURE_VERSION_IVIO
         case 0:
         {
             
@@ -2267,7 +2268,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
             break;    
         case 6:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST);
+            //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST);
             break;
         case 7:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
@@ -2285,6 +2286,59 @@ static boolean StartApplet(MainMenu *pMe, int i)
         case 11:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
             break;
+		#else
+			 case 0:
+        	{
+            
+            	Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            break;
+        	}
+        case 1:
+            {
+                IContactApp *ca = NULL;
+                if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
+                {
+                    return FALSE;
+                }
+                else
+                {
+                    ICONTAPP_MainMenu(ca);
+                    IContactApp_Release(ca);
+                }
+            }
+            break;
+        case 2:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
+            break;
+        case 3:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+            break;
+        case 4:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+            break;
+        case 5:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            break;    
+        case 6:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+            break;
+        case 7:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
+            break;
+        case 8:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            break;
+
+        case 9:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            break;
+        case 10:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
+            break;
+        case 11:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
+            break;
+		#endif
 #endif
         default:
             break;
