@@ -70,13 +70,18 @@ DEFINITIONS
 #define DATECTL_NORMALDAY_BG_COLOR  (MAKE_RGB(0x70, 0x70, 0x70))
 /* 节假日背景填充色*/
 #define DATECTL_SPECIALDAY_BG_COLOR  (RGB_WHITE)
-/* 今日外框颜色*/
-#define DATECTL_TODAY_FRAME_COLOR     (MAKE_RGB(0xFF, 0x00, 0x00))
 /* 平日字体颜色*/
 #define DATECTL_NORMALDAY_COLOR        (RGB_WHITE)
-/* 节假日字体颜色*/
-#define DATECTL_SPECIALDAY_COLOR        (MAKE_RGB(0x99, 0x00, 0x00))
 #define DATECTL_UNDELINE_COLOR            (RGB_WHITE)
+
+#ifdef FEATURE_VERSION_IVIO
+#define DATECTL_SPECIALDAY_COLOR        (MAKE_RGB(0x00, 0x00, 0xDC))
+#define DATECTL_TODAY_FRAME_COLOR     (MAKE_RGB(0x00, 0x00, 0xFF))
+#else
+#define DATECTL_SPECIALDAY_COLOR        (MAKE_RGB(0x99, 0x00, 0x00))
+#define DATECTL_TODAY_FRAME_COLOR     (MAKE_RGB(0xFF, 0x00, 0x00))
+#endif
+
 #endif /*CUST_EDITION*/
 /*===========================================================================
 
