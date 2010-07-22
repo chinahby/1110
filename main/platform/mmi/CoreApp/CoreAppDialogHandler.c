@@ -3021,7 +3021,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
 					if(!OEMKeyguard_IsEnabled())
                     {
-                        return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+                        //return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
                     	#ifdef FEATURE_FLEXI_STATIC_BREW_APP
 							 OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
 							// ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);
