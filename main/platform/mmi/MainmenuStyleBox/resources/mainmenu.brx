@@ -55,6 +55,42 @@
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>Menu</Text>
 	</STRING>
+	<STRING Id="1040" Name="IDS_MAIN_MENU_TITLE_40">
+		<Text>MediaGallery</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_MAIN_MENU_TITLE_41">
+		<Text>Contacts</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_MAIN_MENU_TITLE_42">
+		<Text>UTK</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_MAIN_MENU_TITLE_43">
+		<Text>Calculator</Text>
+	</STRING>
+	<STRING Id="1044" Name="IDS_MAIN_MENU_TITLE_44">
+		<Text>Recent calls</Text>
+	</STRING>
+	<STRING Id="1045" Name="IDS_MAIN_MENU_TITLE_45">
+		<Text>Messages</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_MAIN_MENU_TITLE_46">
+		<Text>FM Radio</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_MAIN_MENU_TITLE_47">
+		<Text>Application</Text>
+	</STRING>
+	<STRING Id="1048" Name="IDS_MAIN_MENU_TITLE_48">
+		<Text>Calendar</Text>
+	</STRING>
+	<String Id="1049" Name="IDS_MAIN_MENU_TITLE_49">
+		<Text>Setting</Text>
+	</String>
+	<String Id="1050" Name="IDS_MAIN_MENU_TITLE_50">
+		<Text>Game</Text>
+	</String>
+	<String Id="1051" Name="IDS_MAIN_MENU_TITLE_51">
+		<Text>MusicPlayer</Text>
+	</String>
 	<String Id="1101" Name="IDS_MAIN_MENU_TITLE_21">
 		<Text>MediaGallery</Text>
 	</String>

@@ -99,6 +99,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_APPLICATION       (AEECLSID_OEM + 0x503)   //add by yangdecai
 #define AEECLSID_GAME              (AEECLSID_OEM + 0x504)   //add by yangdecai
 #define AEECLSID_FRENDUO           (AEECLSID_OEM + 0x505)   //add by yangdecai
+#define AEECLSID_MULTIMEDIA_LIST   (AEECLSID_OEM + 0x600)   //add by yangdecai
 
 
 #endif /*CUST_EDITION*/

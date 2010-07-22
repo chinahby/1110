@@ -1777,7 +1777,11 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
         titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
         STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
     #if defined (FEATURE_DISP_160X128)
+	#ifdef FEATURE_VERSION_IVIO
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
+	#else
+	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
+	#endif
     #elif defined (FEATURE_DISP_128X128)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
     #endif
@@ -1829,7 +1833,11 @@ static void DrawFocusIcon(MainMenu *pMe)
     titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
     #if defined (FEATURE_DISP_160X128)
+	#ifdef FEATURE_VERSION_IVIO
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
+	#else
+	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
+	#endif
     #elif defined (FEATURE_DISP_128X128)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
     #endif
@@ -1892,7 +1900,11 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
     titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
     #if defined (FEATURE_DISP_160X128)
+	#ifdef FEATURE_VERSION_IVIO
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
+	#else
+	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
+	#endif
     #elif defined (FEATURE_DISP_128X128)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
     #endif
@@ -2268,7 +2280,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
             break;    
         case 6:
-            //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST);
             break;
         case 7:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);

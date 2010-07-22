@@ -17,7 +17,7 @@
 		<Text>UTK</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MAIN_MENU_TITLE_4">
-		<Text>Kalkulator</Text>
+		<Text>alat</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_5">
 		<Text>Panggilan terakhir</Text>
@@ -26,7 +26,7 @@
 		<Text>Pesan</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_7">
-		<Text>Radio FM</Text>
+		<Text>Multimedia</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_8">
 		<Text>Aplikasi</Text>
@@ -38,10 +38,10 @@
 		<Text>Pengaturan</Text>
 	</String>
 	<String Id="1021" Name="IDS_MAIN_MENU_TITLE_11">
-		<Text>Permainan</Text>
+		<Text>Profil Pengguna</Text>
 	</String>
 	<String Id="1022" Name="IDS_MAIN_MENU_TITLE_12">
-		<Text>Pemutar Musik</Text>
+		<Text>Permainan</Text>
 	</String>
 	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
 		<Text>Tetris</Text>
@@ -55,6 +55,42 @@
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>Menu</Text>
 	</STRING>
+	<STRING Id="1040" Name="IDS_MAIN_MENU_TITLE_40">
+		<Text>Galeri Media</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_MAIN_MENU_TITLE_41">
+		<Text>Kontak</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_MAIN_MENU_TITLE_42">
+		<Text>UTK</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_MAIN_MENU_TITLE_43">
+		<Text>Kalkulator</Text>
+	</STRING>
+	<STRING Id="1044" Name="IDS_MAIN_MENU_TITLE_44">
+		<Text>Panggilan terakhir</Text>
+	</STRING>
+	<STRING Id="1045" Name="IDS_MAIN_MENU_TITLE_45">
+		<Text>Pesan</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_MAIN_MENU_TITLE_46">
+		<Text>Radio FM</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_MAIN_MENU_TITLE_47">
+		<Text>Aplikasi</Text>
+	</STRING>
+	<STRING Id="1048" Name="IDS_MAIN_MENU_TITLE_48">
+		<Text>Kalender</Text>
+	</STRING>
+	<String Id="1049" Name="IDS_MAIN_MENU_TITLE_49">
+		<Text>Pengaturan</Text>
+	</String>
+	<String Id="1050" Name="IDS_MAIN_MENU_TITLE_50">
+		<Text>Permainan</Text>
+	</String>
+	<String Id="1051" Name="IDS_MAIN_MENU_TITLE_51">
+		<Text>Pemutar Musik</Text>
+	</String>
 	<String Id="1101" Name="IDS_MAIN_MENU_TITLE_21">
 		<Text>Galeri Media</Text>
 	</String>
