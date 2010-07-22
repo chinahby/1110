@@ -2988,8 +2988,20 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 					}
                 case AVK_SELECT:
-                    MSG_FATAL("IDD_IDLE_Handler AVK_SELECT",0,0,0);
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+		 	{
+				int ret = 0;
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP				
+#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+                        ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
+#else
+
+			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+                        ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
+#endif
+#endif
+				  return ret;
+                	}
 
                 case AVK_INFO:
 					{
@@ -3000,7 +3012,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     MSG_FATAL("IDD_IDLE_Handler AVK_CLR",0,0,0);
                     if(!OEMKeyguard_IsEnabled())
                     {
-                        return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+                    	#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+							 OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+							// ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);
+							 return CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
+						#else
+                        	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+						#endif
                     }
 
                 default:
@@ -4373,10 +4391,15 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #endif
     else
     {
-    #ifdef FEATURE_FLEXI_STATIC_BREW_APP
-		eBBarType = BTBAR_FMUSLIM_FNASRANI;
-	#else
-        eBBarType = BTBAR_MENU_CONTACTS;
+#ifndef CUST_EDITION
+    	eBBarType = BTBAR_MENU_CONTACTS;
+#else
+
+#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+	eBBarType = BTBAR_FNASRANI_FPORTAL;
+#else
+	eBBarType = BTBAR_FMUSLIM_FPORTAL;
+#endif
 	#endif
     }
 

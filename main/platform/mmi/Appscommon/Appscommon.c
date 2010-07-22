@@ -692,10 +692,15 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             break;
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
 
-		case BTBAR_FMUSLIM_FNASRANI:
-			nResID_L = IDS_FMUSLIM;
-            nResID_R = IDS_FNASRANI;
-            break;
+	case BTBAR_FNASRANI_FPORTAL:
+		nResID_L = IDS_FNASRANI;
+		nResID_R = IDS_FPORTAL;
+		break;
+
+	case BTBAR_FMUSLIM_FPORTAL:
+		nResID_L = IDS_FMUSLIM;
+		nResID_R = IDS_FPORTAL;
+			break;
 #endif
          default:
             break;
@@ -2622,10 +2627,14 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_R = IDS_BACK;
             break;
 		#ifdef FEATURE_FLEXI_STATIC_BREW_APP
-		case BTBAR_FMUSLIM_FNASRANI:
-			nResID_L = IDS_FMUSLIM;
-            nResID_R = IDS_FNASRANI;
+		case BTBAR_FNASRANI_FPORTAL:
+	     nResID_L = IDS_FNASRANI;
+            nResID_R = IDS_FPORTAL;
             break;
+		case BTBAR_FMUSLIM_FPORTAL:
+	     nResID_L = IDS_FMUSLIM;
+            nResID_R = IDS_FPORTAL;
+            break;			
 		#endif
     }
     if(nResID_L)
@@ -3509,6 +3518,7 @@ void Appscommon_ResetBackground(IDisplay *pDisplay, IImage *BgImage, RGBVAL BgCo
 ±¸×¢:
 
 ==============================================================================*/
+#include "msg.h"
 void Appscommon_DrawScrollBar(IDisplay *pDisplay, int nCurrentIdx, int nTotalItem, int nPageItem, AEERect *ScrollRect)
 {
     AEERect rctThumb, rectScrollBar = *ScrollRect;

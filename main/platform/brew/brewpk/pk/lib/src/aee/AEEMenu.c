@@ -1268,7 +1268,7 @@ static void IMenuCtl_SetProperties(IMenuCtl * po, uint32 nProperties)
    if (IS_SOFTKEY_MENU(pme) || IS_LIST_MENU(pme))
    {
 	   
-      nProperties |= MP_WRAPSCROLL;
+      //nProperties |= MP_WRAPSCROLL;
    }
    else if (!IS_MENU(pme))
    {
@@ -4481,7 +4481,16 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
        }
        else if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL))
         {
+#ifdef CUST_EDITION
+//只是为了解决背景和前景相同颜色的一个bug，这个bug由于应用导致
+		if (pme->m_c.cSelBack == pme->m_c.cBack)
+		{
+			pme->m_c.cSelBack=MAKE_RGB(0xC0, 0xC0, 0xC0);
+	       }
               IDISPLAY_DrawFrame(pd, prc, ft, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
+#else
+              IDISPLAY_DrawFrame(pd, prc, ft, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
+#endif
         }
     }
 #endif
@@ -5097,6 +5106,10 @@ static void Menu_DrawScrollBar(CMenuCtl * pme)
    AEERect rctFrame, rctThumb;
    uint16   wPos, wLen;
 
+   if (!(pme->m_dwProps&MP_WRAPSCROLL)) 
+   {
+   	return;
+   }
    if( !Menu_GetScrollBarRects(pme, &rctFrame, &rctThumb, &wPos, &wLen) ){
       if (IS_SB_OD(pme))
       {

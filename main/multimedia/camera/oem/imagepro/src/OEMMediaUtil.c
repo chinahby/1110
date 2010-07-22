@@ -14,7 +14,7 @@ PUBLIC CLASSES:
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  N/A
 
 
-           Copyright © 2000-2006 QUALCOMM Incorporated.
+           Copyright ?2000-2006 QUALCOMM Incorporated.
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
 ========================================================================= */
@@ -873,7 +873,10 @@ static int IMediaUtil_ConvertJPEGData(IMediaUtil * pme, uint16 inColor, uint8 *p
     return ENOMEMORY;
 
   pOutData->clrPtr = pOutData->imgPtr + (pOutData->dx * pOutData->dy);
-  ret = ipl_convert_image(&inData, pOutData);
+#ifdef CUST_EDITION  //remove by miaoxiaoming
+  //ret = ipl_convert_image(&inData, pOutData);
+  ret = IPL_FAILURE;
+#endif
 
   if (ret == IPL_SUCCESS)
   {

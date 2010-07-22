@@ -326,7 +326,11 @@ extern int AEEPushMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 #endif
 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
+#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 int NASRANI_Load(IShell *ps, void * pHelpers, IModule **pMod);
+#elif
+int Fmn2010_Load(IShell *ps, void * pHelpers, IModule **pMod);
+#endif  /*STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM*/
 #endif
 
 #if defined(FEATURE_STATIC_APP_J9)
@@ -934,6 +938,7 @@ extern int TSIM_New   (IShell * piShell,AEECLSID cls,void **ppif);
 extern int VkeyCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj);
 #endif
 extern int GameMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+
 /* =====================================================
    Statically linked application list.
 =====================================================*/
@@ -967,6 +972,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 
     {AEEFS_MIF_DIR"mainmenu.mif", MainMenuMod_Load},
+	
     {AEEFS_MIF_DIR"application.mif", ApplicationMod_Load},
 //#if defined( FEATURE_GAME_TETRIS)
 //    {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
@@ -1276,7 +1282,11 @@ static const AEEStaticMod gOEMStaticModList[] =
 	  { AEEFS_MIF_DIR"adjustpenapp.mif",AdjustPenMod_Load},
 #endif
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
+#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 	   { AEEFS_MIF_DIR"nasrani.mif",NASRANI_Load},
+#elif	   
+  	   { AEEFS_MIF_DIR"fmn2010.mif",Fmn2010_Load},
+#endif  	   
 #endif	   
 
    {NULL, NULL}

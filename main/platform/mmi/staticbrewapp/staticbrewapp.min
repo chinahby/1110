@@ -1,9 +1,89 @@
+####app的开关
+ifeq ($(FOR_NASRANI_NOT_MUSLIM),yes)
+NASRANI=yes
+else
+FMN2010=yes
+endif
+
+CAH006=no
+
+#俩个提供外部使用的全局量
+#应用的o文件
 STATIC_BREW_APP_LIB:=#
+#应用的资源文件
+CONSTFILE_STATIC_BREW_APP_FILES:=#
+
+
 #####nasrani application##########
-vpath %.bar $(STATIC_BREW_APP)/nasrani
+ifeq ($(NASRANI),yes)
+#todo something here   应用的名字添加
+NASRANI_DIRS:=$(STATIC_BREW_APP)/nasrani
+
+vpath %.bar $(NASRANI_DIRS)
+vpath %.cfg $(NASRANI_DIRS)
+vpath %.dat $(NASRANI_DIRS)
+
+CONSTFILE_BIN_FILES+=nasrani.bar|fs:/mod/nasrani/nasrani.bar \
+											nasraniconfig.cfg|fs:/mod/nasrani/nasraniconfig.cfg \
+											nasranihomedefault.dat|fs:/mod/nasrani/nasranihomedefault.dat
 
 CONSTFILE_FILES+=nasrani.mif|fs:/mif/nasrani.mif
-CONSTFILE_BIN_FILES+=nasrani.bar|fs:/mod/nasrani/nasrani.bar
+STATIC_BREW_APP_LIB+=$(NASRANI_DIRS)/nasrani.o
+endif
 
-STATIC_BREW_APP_LIB+=$(STATIC_BREW_APP)/nasrani/nasrani.o
+#####fmn2010 application##########
+ifeq ($(FMN2010),yes)
+#todo something here   应用的名字添加
+FMN2010_DIRS:=$(STATIC_BREW_APP)/fmn2010
+#todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
+vpath %.png $(FMN2010_DIRS)
+vpath %.mid $(FMN2010_DIRS)
+vpath %.htm $(FMN2010_DIRS)
+vpath %.bci $(FMN2010_DIRS)
+vpath %.bmp $(FMN2010_DIRS)
 
+#获取所有资源文件名,MGM文件是读写格式所以不能静态编译
+CONSTFILE_STATIC_BREW_APP_TEMPS:=$(wildcard $(FMN2010_DIRS)/*.png) \
+                                     $(wildcard $(FMN2010_DIRS)/*.bci) \
+																			$(wildcard $(FMN2010_DIRS)/*.bmp)\
+                                     $(wildcard $(FMN2010_DIRS)/*.mid) \
+																		$(wildcard $(FMN2010_DIRS)/*.htm) 
+                                     
+CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS:=$(notdir $(CONSTFILE_STATIC_BREW_APP_TEMPS))#                                  
+CONSTFILE_STATIC_BREW_APP_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS),\
+																		$(filename)|fs:/mod/fmn2010/$(filename))#
+
+CONSTFILE_FILES+=fmn2010.mif|fs:/mif/fmn2010.mif
+STATIC_BREW_APP_LIB+=$(STATIC_BREW_APP)/fmn2010/fmn2010.o
+endif
+
+#####cah006 application##########
+ifeq ($(CAH006),yes)
+CAH006_DIRS:=$(STATIC_BREW_APP)/cah006
+
+#todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
+vpath %.png $(CAH006_DIRS)
+vpath %.mid $(CAH006_DIRS)
+vpath %.htm $(CAH006_DIRS)
+vpath %.bci $(CAH006_DIRS)
+vpath %.bmp $(CAH006_DIRS)
+vpath %.fwm $(CAH006_DIRS)
+
+
+#获取所有资源文件名,MGM文件是读写格式所以不能静态编译
+CONSTFILE_STATIC_BREW_APP_TEMPS:=$(wildcard $(CAH006_DIRS)/*.png) \
+                                     $(wildcard $(CAH006_DIRS)/*.bci) \
+																			$(wildcard $(CAH006_DIRS)/*.bmp)\
+                                     $(wildcard $(CAH006_DIRS)/*.mid) \
+																		$(wildcard $(CAH006_DIRS)/*.htm) \
+																		$(wildcard $(CAH006_DIRS)/*.fwm)
+                                     
+CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS:=$(notdir $(CONSTFILE_STATIC_BREW_APP_TEMPS))#                                  
+CONSTFILE_STATIC_BREW_APP_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS),\
+																		$(filename)|fs:/mod/cah006/$(filename))#
+
+$(warning CONSTFILE_STATIC_BREW_APP_FILES=$(CONSTFILE_STATIC_BREW_APP_FILES))
+CONSTFILE_FILES+=cah006.mif|fs:/mif/cah006.mif
+STATIC_BREW_APP_LIB+=$(wildcard $(CAH006_DIRS)/*.o)
+$(warning STATIC_BREW_APP_LIB=$(STATIC_BREW_APP_LIB))			
+endif															

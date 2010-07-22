@@ -11159,9 +11159,15 @@ void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
     char password[MAS_BREWSETINT_STRING] = {0};
     switch(eApp)
     	{
+    		case STATIC_BREW_APP_FLEXI_MUSLIM:
     		case STATIC_BREW_APP_FLEXI_NASRANI:
 			MEMCPY(username,"fm",2);	
 			MEMCPY(password,"fm",2);	
+			break;
+
+               case STATIC_BREW_APP_FLEXI_PORTAL:		
+			MEMCPY(username,"fb",2);	
+			MEMCPY(password,"fb",2);	
 			break;
     		default:
 			OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
