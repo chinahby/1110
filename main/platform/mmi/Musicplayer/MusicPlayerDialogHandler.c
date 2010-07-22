@@ -374,8 +374,11 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
         {
             if(pMe->m_pIAnn != NULL)
             {
+            	int nIdx;
+            	nIdx  = pMe->m_nAutoScrollIdx;
                 MSG_FATAL("IANNUNCIATOR_SetHasTitleText",0,0,0);
-                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+nIdx);
                 IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
            (void) ISHELL_PostEvent(pMe->m_pShell, 
@@ -4791,7 +4794,9 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
         MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);
         if(!pMe->m_bStartAni)
         {
+        
            MP3_DrawWaveAni(pMe);//»­¶¯»­
+         
         }
     }
     else if(!pMe->m_bPaused && !pMe->m_bPlaying && pMe->m_bStartAni)
@@ -5007,7 +5012,11 @@ void MP3_MusicNameAutoScroll(CMusicPlayer *pMe)
         {
             nIdxNew = 0;
         }
+		#ifdef FEATURE_VERSION_IVIO
+		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+nIdx);
+		#else
         MP3_DrawMusicName(pMe,nIdx);
+		#endif
         IDISPLAY_Update(pMe->m_pDisplay);
     }
     else
@@ -5049,7 +5058,11 @@ static void MP3_ResetScroll(CMusicPlayer *pMe)
     else
     {
         ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)MP3_MusicNameAutoScroll,pMe);
+		#ifdef FEATURE_VERSION_IVIO
+		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+0);
+		#else
         MP3_DrawMusicName(pMe,0);  
+        #endif
     }
 }
 
