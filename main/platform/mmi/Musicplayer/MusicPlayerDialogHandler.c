@@ -3235,7 +3235,7 @@ void Imenuctl_SetSortSel(CMusicPlayer *pMe)
 static void CMusicPlayer_Set_CTL(CMusicPlayer *pMe)
 {
     int currentRectIndex = 0;
-    int title_height = GetTitleBarHeight( pMe->m_pDisplay);
+    int title_height = 0;
     int bottomheight = GetBottomBarHeight(pMe->m_pDisplay);
     int itemheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_NORMAL, NULL, NULL);	//AEE_FONT_BOLD
     int lineSpace  = ( pMe->m_rc.dy - title_height - bottomheight - itemheight*3) / 4;	//4/5
