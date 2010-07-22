@@ -61,7 +61,7 @@
 /* Display width and height in number of pixels */
 
 #ifdef CUST_EDITION
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
+#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) || defined(FEATURE_PROJECT_FLEXI) || defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
 	#define DISP_WIDTH       160
    	#define DISP_HEIGHT       128
 #elif defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022)

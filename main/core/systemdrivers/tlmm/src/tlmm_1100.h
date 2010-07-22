@@ -246,13 +246,13 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #endif
 /* GPIO 32 */
 
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
+#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) || defined(FEATURE_PROJECT_FLEXI) || defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
 #define GPIO_32_SIGNAL GPIO_OUTPUT_32
 #else
 #define GPIO_32_SIGNAL LCD_FLAG
 #endif
 
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
+#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) || defined(FEATURE_PROJECT_FLEXI) || defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
 /* GPIO 33, we need to feature it, as we don't use it if Mem size is < 16 MB */
 #define GPIO_33_SIGNAL KYPD_EX1
 
@@ -334,7 +334,7 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #endif
 
 /* GPIO 47 */
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
+#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) || defined(FEATURE_PROJECT_FLEXI) || defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
 #define GPIO_47_SIGNAL GPIO_OUTPUT_47
 #else
 #if defined(TLMM_USES_CAMIF)

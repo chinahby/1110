@@ -616,7 +616,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
                     return TRUE;
            #ifdef FEATURE_TORCH_SUPPORT
-				#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
+				#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) || defined(FEATURE_PROJECT_FLEXI) || defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
 					case AVK_SPACE:
 					{
 						if ( pMe->TorchOn == FALSE )
@@ -678,7 +678,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         case EVT_COMMAND:
         {
         #ifdef FEATURE_TORCH_SUPPORT
-        	#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
+        	#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) || defined(FEATURE_PROJECT_FLEXI) || defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
         	if ( eCode == EVT_KEY_RELEASE && wParam == AVK_SPACE && pMe->TorchOn == TRUE)
         	{
 				if (pMe->m_pBacklight)
