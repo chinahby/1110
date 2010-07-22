@@ -4391,7 +4391,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #endif
     else
     {
-#ifndef CUST_EDITION
+#ifndef FEATURE_FLEXI_STATIC_BREW_APP
     	eBBarType = BTBAR_MENU_CONTACTS;
 #else
 
