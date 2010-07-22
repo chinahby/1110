@@ -302,6 +302,9 @@ static void SoftDSP_DisableISR(void)
 //================================================================================================
 void SoftDSP_Init(void)
 {
+#ifdef SOFT_MCLK
+    g_bTest = FALSE;
+#endif
     memset(&g_SoftDSPInfo,0,sizeof(g_SoftDSPInfo));
     (void)gpio_int_set_detect( SOFTDSP_INT, DETECT_EDGE);
 #ifdef TEST_ENABLE
