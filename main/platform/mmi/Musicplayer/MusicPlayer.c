@@ -1639,56 +1639,99 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
    fi.nStructSize = sizeof(fi);
    fi.pszFile = szFileName.m_szFileName;
    fi.nMaxFile = sizeof(szFileName.m_szFileName);   
+
+	//以前是有T卡时默认加载的就只有T卡里的音乐文件，没有T卡时就只加载PHONE里的音乐文件
+	//现在是PHONE + T卡(如果有)
+
+   (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MP3_PHONE_MUSIC_DIR, FALSE);
+
+   pMe->m_nPlaylistMusicNum = 0;
+
+   while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
+   {
+	   char *			 psz = NULL;
+	   char *			 pf = NULL;
+	   
+	   if(pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
+	   {
+		 break;
+	   }
+	   psz = STRRCHR(fi.pszFile, '.');
+	   if (NULL == psz)
+	   {
+		 continue; 
+	   }
+	   psz++;
+	   
+	   pf = STRRCHR(fi.pszFile, '/');
+	   if (NULL == pf)
+	   {
+		 continue;
+	   }  
+	   pf++;
+	  
+	   if ((*psz) && (*pf) && (0 == STRICMP(psz,MP3_TYPE) || 0 == STRICMP(psz,MIDI_TYPE)) 
+		   && pMe->m_nPlaylistMusicNum < MUSIC_MAX_FILESNUM)
+	   {					 
+		 pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName[0]=(pMe->m_nPlaylistMusicNum+48);
+		 STRLCPY(pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName+1,
+				 fi.pszFile,MP3_MAX_FILE_NAME * sizeof(char));
+		 pMe->m_nPlaylistMusicNum++;
+		  continue; 
+	   }
+	   else
+	   {					
+		 continue;
+	   }
+   }
+   
     //枚举playlist文件夹 
-    if(CMediaGallery_GetTflashStatus())
+    if(CMediaGallery_GetTflashStatus())		//有T 卡时
     {
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MP3_SD_MUSIC_DIR, FALSE);
+
+	     while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
+	     {
+	          char *            psz = NULL;
+	          char *            pf = NULL;
+	          
+	          if(pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
+	          {
+	            break;
+	          }
+	          psz = STRRCHR(fi.pszFile, '.');
+	          if (NULL == psz)
+	          {
+	            continue; 
+	          }
+	          psz++;
+	          
+	          pf = STRRCHR(fi.pszFile, '/');
+	          if (NULL == pf)
+	          {
+	            continue;
+	          }  
+	          pf++;
+	          // 如果是musicplayer 支持的文件则加进来(有支持更多需要在此添加)
+	          if ((*psz) && (*pf) && (0 == STRICMP(psz,MP3_TYPE) || 0 == STRICMP(psz,MIDI_TYPE)) 
+	              && pMe->m_nPlaylistMusicNum < MUSIC_MAX_FILESNUM)
+	          {
+	            //为了保存添加播放列表中歌曲的顺序，这里用第一位来存储该歌曲的添加顺序，这里用'0'开始的50个字符表示
+	            // PS:选择的该段字符最好不能含有'/''.'这两个字符
+	            pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName[0]=(pMe->m_nPlaylistMusicNum+48);
+	            STRLCPY(pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName+1,
+	                    fi.pszFile,MP3_MAX_FILE_NAME * sizeof(char));
+	            pMe->m_nPlaylistMusicNum++;
+	             continue; 
+	          }
+	          else
+	          {
+	            // 如果我们不支持的文件则继续枚举下一个文件
+	            continue;
+	          }
+	     }
     }
-    else
-    {
-       (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MP3_PHONE_MUSIC_DIR, FALSE);
-    }
-     pMe->m_nPlaylistMusicNum = 0;
-     while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
-     {
-          char *            psz = NULL;
-          char *            pf = NULL;
-          
-          if(pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
-          {
-            break;
-          }
-          psz = STRRCHR(fi.pszFile, '.');
-          if (NULL == psz)
-          {
-            continue; 
-          }
-          psz++;
-          
-          pf = STRRCHR(fi.pszFile, '/');
-          if (NULL == pf)
-          {
-            continue;
-          }  
-          pf++;
-          // 如果是musicplayer 支持的文件则加进来(有支持更多需要在此添加)
-          if ((*psz) && (*pf) && (0 == STRICMP(psz,MP3_TYPE) || 0 == STRICMP(psz,MIDI_TYPE)) 
-              && pMe->m_nPlaylistMusicNum < MUSIC_MAX_FILESNUM)
-          {
-            //为了保存添加播放列表中歌曲的顺序，这里用第一位来存储该歌曲的添加顺序，这里用'0'开始的50个字符表示
-            // PS:选择的该段字符最好不能含有'/''.'这两个字符
-            pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName[0]=(pMe->m_nPlaylistMusicNum+48);
-            STRLCPY(pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName+1,
-                    fi.pszFile,MP3_MAX_FILE_NAME * sizeof(char));
-            pMe->m_nPlaylistMusicNum++;
-             continue; 
-          }
-          else
-          {
-            // 如果我们不支持的文件则继续枚举下一个文件
-            continue;
-          }
-     }
+   
      CMusicPlayer_WriteMusiclist(pMe,DEFAULT_PLAYLIST);
      (void)CMediaGallery_GetTflashStatus();
 }

@@ -3,11 +3,6 @@
 @set QUALCOMMNAME=SBNAALZ
 @set QUALCOMMNAME_BUILD=SXNAALZ
 
-rem delete some files for compile muslim or nasrani
-del W203\CoreAppDialogHandler.o
-del W203\OEMConstFiles_Dynamic.c
-del W203\OEMConstFiles_Dynamic.o
-del W203\OEMModTableExt.o
 IF "%*"=="" goto DO_COPY
 goto DO_WORK
 :DO_COPY
