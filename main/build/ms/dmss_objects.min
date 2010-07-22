@@ -222,8 +222,8 @@ include $(MDP_API_SRC)/mdp_api.min
 include $(DISP_SRC)/disp_task.min
 endif
 ifeq ($(USES_BrewStaticExtensions), yes)
-ifeq ($(USES_CAMERA), yes)
   include $(BREW_STATIC_EXTENSIONS_IYCBCR_MIN)
+ifeq ($(USES_CAMERA), yes) #For JPEG Decoder Gemsea
   include $(BREW_STATIC_EXTENSIONS_IIPL_MIN)
 endif
   include $(QTV_STATICEXT_OEM)/../etc/qtv_oem.min

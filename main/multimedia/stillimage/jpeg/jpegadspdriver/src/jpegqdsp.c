@@ -101,7 +101,9 @@ LOCAL void jpegd2_q2a_callback( qdsp_event_data_type *pEvent);
 static boolean ack_reset = FALSE;
 static qdsp_app_type current_qdsp_jpeg_app = QDSP_APP_MAX;
 extern boolean  jpeg_decode_abort;
+#ifdef FEATURE_JPEG_ENCODER // Gemsea Add
 extern boolean  jpeg_encode_abort;
+#endif
 /*===========================================================================
     
                 DEFINITIONS AND DECLARATIONS FOR MODULE
@@ -912,7 +914,9 @@ LOCAL void jpege_q2a_callback
       if( JpegeState == JPEGE_ENCODE_STATE )
       {
         ack_reset = TRUE;
+#ifdef FEATURE_JPEG_ENCODER // Gemsea Add
         jpeg_encode_abort = TRUE;
+#endif
         jpeg_qdsp_command(JPEGE_IDLE, NULL);
         MSG_HIGH("Disable event for JPEGE from QDSP services", 0,0,0);
       }
