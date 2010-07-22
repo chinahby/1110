@@ -1493,8 +1493,7 @@ void CoreTask_init( void )
   IShell *piShell;
 #endif
 
-  //uisnd_snd_init();               /* packets for talking to sound task */
-  snd_set_device(SND_DEVICE_HANDSET,SND_MUTE_MUTED,SND_MUTE_MUTED,NULL,NULL);   
+  uisnd_snd_init();               /* packets for talking to sound task */
   
   /* Set the watchdog report timer signal so that we'll
   ** reset the watchdog as soon as we start checking for events

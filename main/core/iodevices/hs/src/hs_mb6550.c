@@ -1730,7 +1730,18 @@ LOCAL void hs_req( void )
         break;
 
 #endif /* FEATURE_BSPUI_API */
-
+#ifdef CUST_EDITION
+    case HS_SET_VIB_MOTO_ONOFF:
+        if(cmd_ptr->vib_moto_ctrl.onoff)
+        {
+            pm_vib_mot_set_volt(3100);
+        }
+        else
+        {
+            pm_vib_mot_set_volt(0);
+        }
+        break;
+#endif
       default:
         ERR_FATAL("Invalid command: %d", cmd_ptr->hdr.cmd, 0, 0 );
         /* does not return */

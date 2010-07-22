@@ -196,6 +196,9 @@ static boolean vibrator_on = FALSE;              /* True if the vibrator is on *
 static rex_crit_sect_type uisnd_crit_sect;
 static snd_sidetone_mode_type sidetone_setting = SND_SIDETONE_FORCE_DISABLED; // Default to ON every reset
 static boolean enable_sound_mixing = FALSE;     /* status of music mixing while in voice call */
+#ifdef CUST_EDITION
+static clk_cb_type uisnd_vibrator_clk;    /* Timer to vibrating the phone */
+#endif
 
 typedef struct {
   snd_device_type          device;
@@ -2208,6 +2211,10 @@ void uisnd_snd_init( void )
 #endif
 
 #endif /* FEATURE_UI_CORE_REMOVED */
+#ifdef CUST_EDITION
+  // Define the vibrator timer
+  clk_def( &uisnd_vibrator_clk );
+#endif
 }
 
 
@@ -2622,6 +2629,99 @@ void uisnd_freq_tone_start
                       client_data);
 }
 
+#ifdef CUST_EDITION
+static void uisnd_vibrate_cmd(boolean vibrate)
+{
+    hs_packets_type* hs_cmd_ptr = NULL;      /* command to handset */
+
+    /* If no available command buffers return */
+    if(( hs_cmd_ptr = (hs_packets_type *) q_get( &hs_cmd_free_q )) == NULL )
+    {
+        return;
+    }
+
+    hs_cmd_ptr->vib_moto_ctrl.hdr.cmd        = HS_SET_VIB_MOTO_ONOFF;
+    hs_cmd_ptr->vib_moto_ctrl.hdr.task_ptr   = NULL;
+    hs_cmd_ptr->vib_moto_ctrl.hdr.done_q_ptr = &hs_cmd_free_q;
+    hs_cmd_ptr->vib_moto_ctrl.onoff         = vibrate;
+    hs_cmd( hs_cmd_ptr );
+}
+
+static void uisnd_vibrator_cb( int4 interval )
+{
+   uisnd_vibrate_cmd(FALSE);
+   clk_dereg( &uisnd_vibrator_clk );
+}
+
+/*==================================================================
+Function: uisnd_vibrate
+
+Description:
+   It causes the handset to vibrate for the specified amount to time
+   if the feature is supported; otherwise, it doesn't do anything.
+
+Parameter(s):
+   uint16 u16Duration: Duration of vibration in milliseconds
+
+Return Value:
+   None.
+
+Comments:
+   None.
+
+Side Effects:
+   The result of the operation will be sent to the client via the
+   callback function pointer.
+
+See Also:
+   uisnd_stop_vibrate
+
+==================================================================*/
+void uisnd_vibrate(uint16 wDuration,
+       snd_cb_func_ptr_type callback_ptr,
+       const void *client_data)
+{
+  uisnd_vibrate_cmd(TRUE);
+  clk_reg( &uisnd_vibrator_clk,
+            uisnd_vibrator_cb,
+            wDuration,
+            0,
+            FALSE );
+
+  vibrator_on = TRUE;
+}
+
+/*==================================================================
+Function: uisnd_stop_vibrate
+
+Description:
+   It stops the current vibration.
+
+Parameter(s):
+   None.
+
+Return Value:
+   None.
+
+Comments:
+   None.
+
+Side Effects:
+   The result of the operation will be sent to the client via the
+   callback function pointer.
+
+See Also:
+   uisnd_vibrate
+
+==================================================================*/
+void uisnd_stop_vibrate(snd_cb_func_ptr_type callback_ptr, const void *client_data)
+{
+  uisnd_vibrate_cmd(FALSE);
+  clk_dereg( &uisnd_vibrator_clk );
+  vibrator_on = FALSE;
+}
+
+#else
 /*==================================================================
 Function: uisnd_vibrate
 
@@ -2698,7 +2798,7 @@ void uisnd_stop_vibrate(snd_cb_func_ptr_type callback_ptr, const void *client_da
 #endif /* FEATURE_AUDIO_FORMAT */
   vibrator_on = FALSE;
 }
-
+#endif
 /*==================================================================
 Function: uisnd_is_vibrator_on
 
