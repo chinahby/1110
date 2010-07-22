@@ -216,8 +216,9 @@ static ServiceProviderList List_SP[] =
        
        {510,0, "Flexi"},                // Indonesia flexi
        {510,3, "starone"},              // Indonesia starone
-       {510,28,"Flen"},                 // Indonesia flen
+       {510,28,"Fren"},                 // Indonesia fren
        {510,99,"esia"},                 // Indonesia esia
+       {510,9,"SMART"},                 // Indonesia SMART
        
 #ifdef FEATURE_CARRIER_ANGOLA_MOVICEL
        {310,0,"Movicel"},               

@@ -152,7 +152,7 @@ EXTLANG1=id
 EXTLANG2=NO
 
 #不同运营商版本
-#OPERATORS_VERSION_NAME = M8
+OPERATORS_VERSION_NAME = M8
 
 endif
 #-------------------------------------------------------------------------------
