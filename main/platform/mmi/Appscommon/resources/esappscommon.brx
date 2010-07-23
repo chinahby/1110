@@ -169,6 +169,9 @@
 	<String Id="1006" Name="IDS_FRENDUO_LIST">
 		<Text>FrenDuo</Text>
 	</String>
+	<String Id="1007" Name="IDS_VIEWMORE">
+		<Text>ViewMore</Text>
+	</String>
 	<STRING Id="2000" Name="IDS_DONE">
 		<Text>Done</Text>
 	</STRING>

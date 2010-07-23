@@ -2803,7 +2803,7 @@ void CContApp_DisplayRightTopStr(CContApp *pMe,IMenuCtl *pMenuCtl,uint16 wParam)
                                 wStrBuf,sizeof(wStrBuf));//no use 
         oldColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
         (void)IDISPLAY_DrawText( pMe->m_pDisplay,
-                                                            AEE_FONT_BOLD,
+                                                            AEE_FONT_NORMAL, //AEE_FONT_BOLD,
                                                             wStrBuf,
                                                             -1,
                                                             rc.x,
@@ -4647,7 +4647,7 @@ boolean CContApp_DisplaySelectField( CContApp  *pMe, byte Field)
     IDISPLAY_DrawHLine( pMe->m_pDisplay, 0 , pMe->m_rc.dy -2*pMe->m_nLineHeight-SEARCH_INPUTBOX_GAP -1, pMe->m_rc.dx);    
 
     (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                        AEE_FONT_BOLD,
+                        AEE_FONT_NORMAL, //AEE_FONT_BOLD,
                         DisplayString,
                         -1,
                         dlgrc.x,
@@ -6802,7 +6802,7 @@ void CContApp_DrawScrollBar(CContApp * pMe, IMenuCtl   *pMenuCtl)
         rect.x = rect.dx - SCROLLBAR_WIDTH;
         rect.dx = SCROLLBAR_WIDTH;
         rect.y = 0;
-        rect.dy = rect.dy - 2 * BOTTOMBAR_HEIGHT - 0;
+        rect.dy = rect.dy - 2 * BOTTOMBAR_HEIGHT;	
     
         Appscommon_DrawScrollBar(pMe->m_pDisplay, currIdx, totalNum, MAX_NUM_MENUPOP, &rect);
         //IDISPLAY_Update(pMe->m_pDisplay);  // 在这里update会和menu的redraw中的update不同步

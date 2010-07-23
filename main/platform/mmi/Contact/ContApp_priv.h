@@ -112,7 +112,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define TIMEOUT_MS_QUICK                (500)
 #define TIMEOUT_SMARTKEY                (1000)
 
-#define MAX_NUM_MENUPOP                 (6)
+#define MAX_NUM_MENUPOP                 (5) //(6)
 #define MAX_NUM_NAME                    (1)
 #define MAX_NUM_NUM                     (5)
 #define MAX_NUM_EMAIL                   (2)

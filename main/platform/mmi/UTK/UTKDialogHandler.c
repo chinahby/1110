@@ -467,8 +467,7 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
 {
     PARAM_NOT_REF(dwParam)
 
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                        IDC_LIST_MENU);
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_LIST_MENU);
     MSG_FATAL("IDD_LIST_Handler Start",0,0,0);
     if (pMenu == NULL)
     {

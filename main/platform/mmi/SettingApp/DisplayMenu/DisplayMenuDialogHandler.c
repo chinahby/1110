@@ -660,6 +660,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
             // 分类枚举出所有的墙纸或动画
             MSG_FATAL("HandlePictureDialogEvent EVT_DIALOG_INIT",0,0,0);
             DisplayMenu_EnumFile(pMe, pMe->m_PICType);
+							
             pMe->m_bOkToDo = TRUE;
             pMe->m_count = 0;
             pMe->m_b_local = TRUE;
@@ -777,13 +778,15 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                 CLOSE_DIALOG(DLGRET_CANCELED)
                 return TRUE;
             }
-
+			
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
 
             //no need for non-bottom bar,this may case the image do not display well
 
             //显示墙纸或动画
             DisplayMenu_DisplayImg(pMe, pMe->m_PICType);
+
+			DrawBottomBar_Ex(pMe->m_pShell, pMe->m_pDisplay, BTBAR_VIEWMORE_BACK);	//Add By zzg 2010_07_23	
 
             // 统一更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -961,7 +964,13 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                                                     0);
                     break;
 
-                case AVK_SELECT:
+
+                case AVK_SELECT:		//Add By zzg 2010_07_23
+				{
+					CMediaGallery_FileExplorer(GALLERY_IMAGE_SETTING, NULL);
+					break;
+				}						//Add End
+				
                 case AVK_INFO:
                     switch(pMe->m_PICType)
                     {

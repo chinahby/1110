@@ -1431,7 +1431,7 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     }
     
     // Set menu select
-      if(pMe->m_wSelectCont != CONTAPP_RECID_NULL)
+    if(pMe->m_wSelectCont != CONTAPP_RECID_NULL)
     {
         IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectCont);
     }

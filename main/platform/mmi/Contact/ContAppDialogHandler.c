@@ -3627,10 +3627,12 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             AEERect   menurc;
             int       nBarHeight = GetBottomBarHeight(pMe->m_pDisplay);
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
-            byte      inputHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL); 
-            
+            byte      inputHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL); 	//AEE_FONT_NORMAL
+			
             menurc = pMe->m_rc;
-            menurc.dy =  pMe->m_rc.dy- nBarHeight - inputHeight; 
+            //menurc.dy =  pMe->m_rc.dy- nBarHeight - inputHeight; 
+            menurc.dy =  pMe->m_rc.dy- 2*nBarHeight;
+			
             /*if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType)
             {
                 menurc.dy -= nBarHeight;//在复选界面中，要显示CContApp_DisplaySelectField
@@ -3656,7 +3658,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 menurc.dy += nBarHeight;//留空间给CContApp_DisplaySelectField
             */
             SETAEERECT(&textrc,  
-                       SEARCH_IMEICON_WIDTH,   menurc.y + menurc.dy - 2,    
+                       SEARCH_IMEICON_WIDTH,   menurc.y + menurc.dy, // - 2,    
                        pMe->m_rc.dx - SEARCH_IMEICON_WIDTH, nBarHeight);
             ITEXTCTL_SetRect(pTextCtl, &textrc);
 #ifdef FEATURE_LANG_CHINESE
@@ -10168,7 +10170,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
-                //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
+                IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                     
                 // 画标题条
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
@@ -10194,7 +10196,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                                                 sizeof(text));
                 nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
-                                    AEE_FONT_BOLD, 
+                                    AEE_FONT_NORMAL, //AEE_FONT_BOLD, 
                                     text,
                                     -1, 
                                     xOffset, 
@@ -10209,7 +10211,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 strDisplay[nLen + 1] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
-                                AEE_FONT_BOLD, 
+                                AEE_FONT_NORMAL, //AEE_FONT_BOLD, 
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
@@ -13206,7 +13208,8 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
                     return TRUE;
                 }
             }
-            IDisplay_FillRect(pMe->m_pDisplay, &topLine, RGB_WHITE);
+
+			//IDisplay_FillRect(pMe->m_pDisplay, &topLine, RGB_WHITE);
 
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
@@ -14419,7 +14422,9 @@ static void CContApp_DrawNorecord(CContApp *pMe, IMenuCtl *pMenuCtl)
         rc.dy -= GetTitleBarHeight(pMe->m_pDisplay);//pMe->m_nLineHeight * 2;
     }
     */
-    rc.dy -= (  2);
+
+	//rc.dy -= (2); 
+	
     //IDISPLAY_FillRect(pMe->m_pDisplay, &rc, RGB_BLACK);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
     {
@@ -14442,7 +14447,7 @@ static void CContApp_DrawNorecord(CContApp *pMe, IMenuCtl *pMenuCtl)
                                 
     oldColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
     (void)IDISPLAY_DrawText( pMe->m_pDisplay,
-                            AEE_FONT_BOLD,
+                            AEE_FONT_NORMAL, //AEE_FONT_BOLD,
                             wStrBuf,
                             -1,
                             rc.x,
