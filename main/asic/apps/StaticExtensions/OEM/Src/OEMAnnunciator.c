@@ -38,6 +38,9 @@
 #include "OEMHeap.h"
 #include "BREWVersion.h"
 #include "AEE_OEMDispatch.h"
+
+#include "OEMClassIDs.h"		//Add By zzg 2010_07_23
+
 //#include "db.h"
 #ifdef FEATURE_RANDOM_MENU_COLOR
 #include "OEMConfig.h" 
@@ -484,7 +487,16 @@ static void annun_disp_update(
   IDIB *dib_ptr,
   uint32 nAnnunID)
 {
-
+  //Add By zzg 2010_07_23
+  if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
+  {
+		if ((nAnnunID > 0) && (nAnnunID < 10))
+		{
+			return;
+		}
+  }
+  //Add End
+	
   if(NULL == pMe->m_coreObj)
   {
     return;
@@ -525,11 +537,9 @@ static void annun_disp_update(
   }
   else
   {
-    /* Unsupported display bitmap for annunciator */
+    // Unsupported display bitmap for annunciator 
     MSG_LOW("Unsupported display bitmap for IAnnunciator.", 0, 0, 0);
   }
-
-
 }
 
 /*===========================================================================
@@ -709,6 +719,16 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   uint32 nFirstState = GetAnnunFirstState(nState);
 
 
+   //Add By zzg 2010_07_23
+  if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
+  {
+		if ((nAnnunID > 0) && (nAnnunID < 10))
+		{
+			return;
+		}
+  }
+  //Add End
+  
   if ((pMe == NULL))
     return EFAILED;
 
@@ -721,15 +741,15 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
       (pMe->m_coreObj->m_pDDB == NULL))
     return EFAILED;
 
-  if (nFirstState/*nState*/ == 0)
+  if (nFirstState == 0) //nState
   {
-    /* Shouldn't be here */
+    // Shouldn't be here
     return EFAILED;
   }
-  /*no need to clear battery field*/
+  //no need to clear battery field
   else if((nAnnunID != ANNUN_FIELD_BATT) &&
             (nFirstState != GetAnnunFirstState(Annunciators[nAnnunID].pcontent->nCurrState)))
-  {/*if state changed to another one, field needed to be cleared before drawing a new one*/
+  {//if state changed to another one, field needed to be cleared before drawing a new one
     ClearField(pMe, nAnnunID);
   }
   
@@ -737,7 +757,7 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   nHeight = (int)Annunciators[nAnnunID].height;
 
   if (!pMe->m_coreObj->cached) {
-    /* Cache all the bitmaps */
+    // Cache all the bitmaps 
     for (i=0; i < (int)ARR_SIZE(Annunciators); i++) {
       if (Annunciators[i].pcontent->nFieldType == ANNUN_TYPE_IMAGE) {
         data_ptr = (OEMState_data *) Annunciators[i].pcontent->data;
@@ -767,9 +787,8 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
                    (int)Annunciators[nAnnunID].x_pos,
                    (int)Annunciators[nAnnunID].y_pos,
                    nWidth, nHeight, pBmp, 0, 0, AEE_RO_COPY);
-  		IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); /* restore the destination */
+  		IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); // restore the destination 
 		annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
-
 
   return SUCCESS;
 }
