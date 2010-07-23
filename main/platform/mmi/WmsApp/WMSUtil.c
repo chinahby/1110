@@ -3419,10 +3419,16 @@ int GetSeamlessSMSInfo(char *szInfo, int nSize)
         	
     // GetMDN
     nvi.dir_number.nam = nvi.curr_nam;
-    if( ui_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S){
+    if( ui_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S)
+	{
         return EFAILED;
-    }else{
-        STRLCPY(&szInfo[len], (char *)nvi.dir_number.dir_number,STRLEN( (char *)nvi.dir_number.dir_number) );/*sizeof(nvi.dir_number.dir_number)+1*/
+    }
+	else
+	{
+        if (STRNCMP((char *)nvi.dir_number.dir_number,"0000000000",10))
+	 	{
+	 		STRLCPY(&szInfo[len], (char *)nvi.dir_number.dir_number,STRLEN( (char *)nvi.dir_number.dir_number) );/*sizeof(nvi.dir_number.dir_number)+1*/
+	 	}      
     }
     len += STRLEN(&szInfo[len]);
     szInfo[len]=';';
