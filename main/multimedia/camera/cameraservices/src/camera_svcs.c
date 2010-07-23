@@ -11132,7 +11132,7 @@ static void camera_process_start_preview
     ret_val = (VFE_Initialize (camera_qdsp_cb) != CAMQDSP_SUCCESS);
 #else
     camera_reset_preview_buffers();
-
+    camsensor_config(CAMSENSOR_OP_MODE_PREVIEW, &camsensor_static_params[camera_asi]);
     SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[0].buf_ptr+qcamraw_header_size);
     camera_preview_set_buffer_status(0, BUSY_WITH_VFE);
     SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[1].buf_ptr+qcamraw_header_size);
@@ -11308,6 +11308,7 @@ static void camera_process_take_single_picture(void)
 #endif	/* QDSP_IMAGE_VFE_SA_DEFINED */   
     ret_val = (VFE_Initialize (camera_qdsp_cb) != CAMQDSP_SUCCESS);
 #else
+    camsensor_config(CAMSENSOR_OP_MODE_SNAPSHOT, &camsensor_static_params[camera_asi]);
     /* Main image: Allocate exact memory required for the output format */
     CAM_Free (snapshot_luma_buf);
     /* CAM_Malloc gives 32-bit aligned memory buffer. */

@@ -33,6 +33,8 @@ Copyright(c) 2007 by QUALCOMM, Incorporated. All Rights Reserved.
 #define SOFTDSP_CLK_MASK        0xFFFFFBFF
 #define SOFTDSP_CLK_H           0x400
 #define SOFTDSP_CLK_L           0x000
+#define SOFTDSP_PCLK_MASK       0x40000
+#define SOFTDSP_HSYNC_MASK      0x80000
 #define MATH_FACTOR_BIT         10
 #define SOFT_MCLK
 //#define TEST_ENABLE
@@ -73,13 +75,6 @@ static void SoftDSP_FrameISR(void)
         g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_START_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_START_OF_FRAME;
         g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_START_OF_FRAME]);
     }
-}
-
-static void SoftDSP_LineISR(void)
-{
-#ifdef SOFT_MCLK
-    gpio_tlmm_config(GPIO_OUTPUT_10);
-#endif
 }
 
 #ifdef TEST_ENABLE
@@ -148,9 +143,11 @@ static void SoftDSP_BMPScale(uint16 *pBitsDst16, int16 wWidthDst, int16 wHeightD
 static INLINE void SoftDSP_ClockOut(int nCount)
 {
     register uint32 clkh,clkl;
+    int nMod;
     
     clkh = inpdw(HWIO_GPIO2_OUT_0_ADDR)|SOFTDSP_CLK_H;
     clkl = inpdw(HWIO_GPIO2_OUT_0_ADDR)&SOFTDSP_CLK_MASK;
+    nMod = nCount%8;
     nCount >>= 3;
     while(nCount--)
     {
@@ -171,6 +168,12 @@ static INLINE void SoftDSP_ClockOut(int nCount)
         outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
         outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
     }
+
+    while(nMod--)
+    {
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+        outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+    }
 }
 #endif
 #ifdef SOFT_MCLK
@@ -185,12 +188,12 @@ static void SoftDSP_CatchSensorData(void)
     if(g_SoftDSPInfo.bCaptureState)
     {
         pBuff = g_SoftDSPInfo.pCaptureBuff;
-        pixelSize = g_SoftDSPInfo.nCaptureWidth*g_SoftDSPInfo.nCaptureHeight;
+        pixelSize = g_SoftDSPInfo.nCaptureWidth;
     }
     else
     {
         pBuff = SoftDSP_GetPreviewBuff();
-        pixelSize = g_SoftDSPInfo.nPreviewWidth*g_SoftDSPInfo.nPreviewHeight;
+        pixelSize = g_SoftDSPInfo.nPreviewWidth;
     }
     
     if(pBuff)
@@ -203,14 +206,17 @@ static void SoftDSP_CatchSensorData(void)
         }
 #else
         // 从Sensor获取数据
-        int i;
+        int x,y;
         register uint16 data,*pData;
 #ifdef SOFT_MCLK
         register uint32 clkh,clkl;
-
+        int xStart,xOutEnd;
+        
         clkh = inpdw(HWIO_GPIO2_OUT_0_ADDR)|SOFTDSP_CLK_H;
         clkl = inpdw(HWIO_GPIO2_OUT_0_ADDR)&SOFTDSP_CLK_MASK;
-
+        xStart = g_SoftDSPInfo.camsensor_params->camif_window_width_config.firstPixel;
+        xOutEnd = g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine - \
+                  g_SoftDSPInfo.camsensor_params->camif_window_width_config.lastPixel;
         if(g_bTest)
         {
             while(g_bTest)
@@ -219,21 +225,108 @@ static void SoftDSP_CatchSensorData(void)
                 outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
             }
         }
+
+        // First Line
+        while(1)
+        {
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+            if(!(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK))
+            {
+                break;
+            }
+        }
+        
+        while(1)
+        {
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+            if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK)
+            {
+                break;
+            }
+        }
+
+        while(1)
+        {
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+            if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_PCLK_MASK)
+            {
+                break;
+            }
+        }
 #endif
         pData = pBuff;
-        for(i=0;i<pixelSize;i++)
+#ifdef SOFT_MCLK
+        // Second line
+        SoftDSP_ClockOut(g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine);
+        for(y=2;y<g_SoftDSPInfo.camsensor_params->camif_window_height_config.firstLine;y++)
+        {
+            while(1)
+            {
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK)
+                {
+                    break;
+                }
+            }
+            
+            while(1)
+            {
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_PCLK_MASK)
+                {
+                    break;
+                }
+            }
+            SoftDSP_ClockOut(g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine);
+        }
+#endif
+        for(;y<g_SoftDSPInfo.camsensor_params->camif_window_height_config.lastLine;y++)
         {
 #ifdef SOFT_MCLK
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+            while(1)
+            {
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK)
+                {
+                    break;
+                }
+            }
+
+            while(1)
+            {
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_PCLK_MASK)
+                {
+                    break;
+                }
+            }
+            
+            SoftDSP_ClockOut(xStart);
 #endif
-            data = (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)<<8;
+            for(x=0;x<pixelSize;x++)
+            {
 #ifdef SOFT_MCLK
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
 #endif
-            data |= (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)&0xFF;
-            *pData++=data;
+                data = (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)<<8;
+#ifdef SOFT_MCLK
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+#endif
+                data |= (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)&0xFF;
+                *pData++=data;
+            }
+#ifdef SOFT_MCLK
+            SoftDSP_ClockOut(xOutEnd);
+#endif
         }
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GP_PDM);

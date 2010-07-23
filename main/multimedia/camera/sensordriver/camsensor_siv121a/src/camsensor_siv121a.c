@@ -8,6 +8,8 @@
 #include "i2c.h"
 #include "clk.h"
 #include "chromatix_6550.h"
+#include "disp_options.h"
+#include "camera_svcs.h"
 
 /*============================================================================
 	TYPE DEFINITIONS 
@@ -29,16 +31,14 @@
 #define CAMSENSOR_SIV121A_FULL_SIZE_WIDTH    640//640
 #define CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT   480//480
 
-#define CAMSENSOR_SIV121A_QTR_SIZE_WIDTH     160
-#define CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT    128//512
+#define CAMSENSOR_SIV121A_QTR_SIZE_WIDTH     320
+#define CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT    240
 
-#define MAX_EV_COMP                         25
+#define MAX_EV_COMP                          25
 
 /* FPS supported by this sensor */
 #define CAMSENSOR_30_FPS                    (30*Q8)
 #define CAMSENSOR_15_FPS                    (15*Q8)
-
-#define VGA_EXPOSURE_LIMITATION 			510 //509//508
 
 /*============================================================================
 	LOCAL Variables 
@@ -46,8 +46,6 @@
 static camera_effect_type   camsensor_siv121a_effect             = CAMERA_EFFECT_OFF;
 static char                 camsensor_siv121a_sensor_name[32]    = "SIV121A 0.3MP RGB565\0\0\0\0\0\0\0";
 static const char           camsensor_siv121a_sensor_suffix[]    = "SIV121A";
-static boolean              sensor_cap_state 	                = FALSE; //Preview or Capture
-static CAMIF_InputFormatType format_preview,format_snapshot;
 
 /*============================================================================
 	Function Declares
@@ -62,81 +60,6 @@ static boolean siv121a_i2c_read_byte(uint8 offset, uint8* data);
 /*============================================================================
 	Function Body
 ============================================================================*/
-static void write_siv121a_shutter(uint16 shutter)
-{
-    uint8 temp_reg;
-    uint16 extra_exposure_lines;
-    
-	if(shutter<=VGA_EXPOSURE_LIMITATION)
-	{
-		extra_exposure_lines=0;
-	}
-	else
-	{
-		extra_exposure_lines=shutter-VGA_EXPOSURE_LIMITATION;
-	}
-    
-	if(shutter>VGA_EXPOSURE_LIMITATION)
-		shutter=VGA_EXPOSURE_LIMITATION;
-		
-	siv121a_i2c_write_byte(0x2D,extra_exposure_lines&0xFF);                  // ADVFL(LSB of extra exposure lines)
-	siv121a_i2c_write_byte(0x2E,(extra_exposure_lines&0xFF00)>>8);           // ADVFH(MSB of extra exposure lines)
-    
-	siv121a_i2c_read_byte(0x04, &temp_reg);
-	siv121a_i2c_write_byte(0x04,((temp_reg&0xFC) | (shutter&0x3)));		// AEC[b1~b0]
-	siv121a_i2c_write_byte(0x10,((shutter&0x3FC)>>2));						// AEC[b9~b2]
-	siv121a_i2c_write_byte(0x07,((shutter&0x7C00)>>10));						// AEC[b10]/AEC[b15~b10]
-}/* write_siv121a_shutter */
-
-static uint16 read_siv121a_shutter(void)
-{
-	uint8 temp_reg1, temp_reg2, temp_reg3, temp_reg4, temp_reg5;
-	uint16 shutter, extra_exposure_lines;
-    
-	siv121a_i2c_read_byte(0x04, &temp_reg1);										// AEC[b1~b0]
-	siv121a_i2c_read_byte(0x10, &temp_reg2);										// AEC[b9~b2]
-	siv121a_i2c_read_byte(0x07, &temp_reg3);										// AEC[b15~b10]
-	
-	siv121a_i2c_read_byte(0x2D, &temp_reg4);
-	siv121a_i2c_read_byte(0x2E, &temp_reg5);
-	
-	shutter=((temp_reg3&0x1F)<<10)|(temp_reg2<<2)|(temp_reg1&0x3);	// AEC[b10]/AEC[b15~b10]
-	extra_exposure_lines=(temp_reg5<<8)|(temp_reg4);
-	
-	shutter=shutter+extra_exposure_lines;
-
-	return shutter;
-}/* read_siv121a_shutter */
-
-static void siv121a_set_dummy(uint16 pixels, uint16 lines)
-{
-	siv121a_i2c_write_byte(0x2A,((pixels&0x700)>>4));
-	siv121a_i2c_write_byte(0x2B,(pixels&0xFF));
-	siv121a_i2c_write_byte(0x92,(lines&0xFF));
-	siv121a_i2c_write_byte(0x93,((lines&0xFF00)>>8));
-}	/* siv121a_set_dummy */
-
-static void siv121a_set_window(uint16 startx,uint16 starty,uint16 width, uint16 height)
-{
-	uint16 endx=(startx+width-1);
-	uint16 endy=(starty+height-1);
-	uint8  temp_reg1, temp_reg2;
-    
-    siv121a_i2c_read_byte(0x03, &temp_reg1);
-	temp_reg1=(temp_reg1&0xF0);
-    siv121a_i2c_read_byte(0x32, &temp_reg2);
-	temp_reg2=(temp_reg2&0xC0);
-    
-	// Horizontal
-	siv121a_i2c_write_byte(0x32,0x80|((endx&0x7)<<3)|(startx&0x7));	// b[5:3]:HREF end low 3bits. b[2:0]:HREF start low 3bits.
-	siv121a_i2c_write_byte(0x17,(startx&0x7F8)>>3);			// HREF start high 8bits
-	siv121a_i2c_write_byte(0x18,(endx&0x7F8)>>3);			// HREF end high 8bits
-	// Vertical
-	siv121a_i2c_write_byte(0x03,temp_reg1|((endy&0x3)<<2)|(starty&0x3));	// b[3:2]:VREF end low 2bits. b[1:0]:VREF start low 2bits.
-	siv121a_i2c_write_byte(0x19,(starty&0x3FC)>>2);   			// VREF start high 8bits
-	siv121a_i2c_write_byte(0x1A,(endy&0x3FC)>>2);		   	// VREF end high 8bits
-}	/* config_SIV121A_window */
-
 static camera_ret_code_type camsensor_siv121a_set_exposure_mode(int8 mode)
 {
 	return CAMERA_SUCCESS;
@@ -153,14 +76,14 @@ static camera_ret_code_type camsensor_siv121a_set_frame_rate(uint16 fps)
 } /* camsensor_siv121a_set_frame_rate() */
 
 boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function_table_ptr,
-				              camctrl_tbl_type              *camctrl_tbl_ptr)
+				               camctrl_tbl_type              *camctrl_tbl_ptr)
 {
 	uint8	sensor_id;
 	
 	ERR("camsensor_siv121a_init!",0,0,0);
     
 	/* Input MCLK = 24MHz */
-	camsensor_camclk_po_hz = 24000000;
+	camsensor_camclk_po_hz = 2400000;
     camsensor_camclk_po_hz = camsensor_config_camclk_po(camsensor_camclk_po_hz);
     
 	/* Preview must aways be se to quater size */
@@ -229,7 +152,7 @@ static boolean initialize_siv121a_registers(void)
 
     siv121a_i2c_write_byte(0x00,0x01);
     siv121a_i2c_write_byte(0x04,0x00);
-    siv121a_i2c_write_byte(0x05,0x06); 
+    siv121a_i2c_write_byte(0x05,0x07);
     siv121a_i2c_write_byte(0x11,0x25);
     siv121a_i2c_write_byte(0x12,0x21); 
     siv121a_i2c_write_byte(0x13,0x15);
@@ -238,15 +161,16 @@ static boolean initialize_siv121a_registers(void)
     //50HZ 12MHZ 12.5FPS
     siv121a_i2c_write_byte(0x20,0x00); 
     siv121a_i2c_write_byte(0x21,0x00);
+    siv121a_i2c_write_byte(0x22,0x00);
     siv121a_i2c_write_byte(0x23,0x00);
 
     
     siv121a_i2c_write_byte(0x00,0x02);
     siv121a_i2c_write_byte(0x34,0x42);
     siv121a_i2c_write_byte(0x11,0x08); 
-    siv121a_i2c_write_byte(0x12,0x80); 
-    siv121a_i2c_write_byte(0x13,0x80);
-    siv121a_i2c_write_byte(0x14,0x80);
+    siv121a_i2c_write_byte(0x12,0x6D); 
+    siv121a_i2c_write_byte(0x13,0x6D);
+    siv121a_i2c_write_byte(0x14,0x6D);
     siv121a_i2c_write_byte(0x1e,0x00);
     
     siv121a_i2c_write_byte(0x40,0x30);
@@ -274,7 +198,7 @@ static boolean initialize_siv121a_registers(void)
 
     //AWB
     siv121a_i2c_write_byte(0x00,0x03);
-    siv121a_i2c_write_byte(0x10,0xD0);
+    siv121a_i2c_write_byte(0x10,0xc3);//d0
     siv121a_i2c_write_byte(0x11,0xC0);
     siv121a_i2c_write_byte(0x12,0x80);
     siv121a_i2c_write_byte(0x13,0x7f);
@@ -469,11 +393,11 @@ static boolean initialize_siv121a_registers(void)
     siv121a_i2c_write_byte(0xB9,0x10); //Ilimininfo Start
     siv121a_i2c_write_byte(0xBA,0x30); //Slope
 
-    siv121a_i2c_write_byte(0xc0,0x24);
+    siv121a_i2c_write_byte(0xc0,0x10);//24
     siv121a_i2c_write_byte(0xc1,0x00);
-    siv121a_i2c_write_byte(0xc2,0x80);
+    siv121a_i2c_write_byte(0xc2,0x40);
     siv121a_i2c_write_byte(0xc3,0x00);
-    siv121a_i2c_write_byte(0xc4,0xe0);
+    siv121a_i2c_write_byte(0xc4,0xF0);
 
     siv121a_i2c_write_byte(0xDD,0x0F); // ENHCTRL
     siv121a_i2c_write_byte(0xDE,0xfA); // NOIZCTRL
@@ -488,6 +412,9 @@ static boolean initialize_siv121a_registers(void)
     siv121a_i2c_write_byte(0xE5,0x15);
     siv121a_i2c_write_byte(0xE6,0x28);
     siv121a_i2c_write_byte(0xE7,0x04);
+
+    
+    //siv121a_i2c_write_byte(0xE8,0x08); // Test Mode
 
     // AE on
     siv121a_i2c_write_byte(0x00,0x02);
@@ -510,7 +437,7 @@ static boolean camsensor_siv121a_start( camsensor_static_params_type *camsensor_
 	/* Initialize CAMIF operation mode */
 	camsensor_params->camif_config.SyncMode    = CAMIF_APS;
 	camsensor_params->camif_config.HSyncEdge   = CAMIF_High;
-	camsensor_params->camif_config.VSyncEdge   = CAMIF_High;
+	camsensor_params->camif_config.VSyncEdge   = CAMIF_Low;
 	camsensor_params->camif_efs_config.EFS_EOL = 0x0000;
 	camsensor_params->camif_efs_config.EFS_SOL = 0x0000;
 	camsensor_params->camif_efs_config.EFS_EOF = 0x0000;
@@ -565,66 +492,13 @@ static boolean camsensor_siv121a_start( camsensor_static_params_type *camsensor_
 	camsensor_params->frame_rate_array[1].use_in_auto_frame_rate = FALSE;
 
 	/* Sensor output capability */
-
-	/* Full size dimensions - 1280x1024 */
-
-	camsensor_params->full_size_width  =  CAMSENSOR_SIV121A_FULL_SIZE_WIDTH;
-	camsensor_params->full_size_height =  CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT;
-
-
-	/* Quarter size dimensions - 640x512 */
-
+	camsensor_params->full_size_width  = CAMSENSOR_SIV121A_FULL_SIZE_WIDTH;
+	camsensor_params->full_size_height = CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT;
+    
 	camsensor_params->qtr_size_width  =  CAMSENSOR_SIV121A_QTR_SIZE_WIDTH;
 	camsensor_params->qtr_size_height =  CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT;
-
-
-	switch(camsensor_preview_resolution)
-	{
-		case CAMSENSOR_QTR_SIZE:
-
-			camsensor_params->preview_dx_decimation = \
-			            camsensor_params->full_size_width * Q12 / \
-			          camsensor_params->qtr_size_width;
-			camsensor_params->preview_dy_decimation = \
-			          camsensor_params->full_size_height * Q12 / \
-			          camsensor_params->qtr_size_height;
-
-			camsensor_params->camsensor_width  = \
-			          camsensor_params->qtr_size_width;
-			camsensor_params->camsensor_height = \
-			          camsensor_params->qtr_size_height;
-			camsensor_params->format = CAMIF_YCbCr_Y_Cb_Y_Cr;
-
-			break;
-
-		case CAMSENSOR_FULL_SIZE:
-
-			camsensor_params->preview_dx_decimation = Q12;
-			camsensor_params->preview_dy_decimation = Q12;
-			camsensor_params->camsensor_width  = \
-			          camsensor_params->full_size_width;
-			camsensor_params->camsensor_height = \
-			          camsensor_params->full_size_height;
-			camsensor_params->format = CAMIF_YCbCr_Y_Cb_Y_Cr;
-
-			break;
-
-		default:
-
-			MSG_ERROR("Unrecognized preview resolution, assuming full size",0,0,0);
-
-			camsensor_params->camsensor_width  = \
-			      camsensor_params->full_size_width;
-			camsensor_params->camsensor_height = \
-			      camsensor_params->full_size_height;
-
-			break;
-    }
-	/* Pixel Clock Should be inverted for this Sensor */
-
-	camsensor_params->pclk_invert = camsensor_info.pclk_invert;
-
-
+	camsensor_params->pclk_invert     =  camsensor_info.pclk_invert;
+    
 #if defined FEATURE_WHITE_LED_FLASH || defined FEATURE_STROBE_FLASH
 	camsensor_params->support_auto_flash = FALSE;
 #else
@@ -706,45 +580,88 @@ SIDE EFFECTS
 
 static boolean camsensor_siv121a_snapshot_config( camsensor_static_params_type  *camsensor_params)
 {
-	volatile uint32 shutter=0;
-    sensor_cap_state= TRUE;	
+    if(camera_dx > camsensor_params->qtr_size_width)
+    {
+        camsensor_snapshot_resolution = CAMSENSOR_FULL_SIZE;
+    }
+    else
+    {
+        camsensor_snapshot_resolution = CAMSENSOR_QTR_SIZE;
+    }
+    
+	switch ( camsensor_snapshot_resolution )
+    {
+    	case CAMSENSOR_QTR_SIZE:
+			/* Set the current dimensions */
+			camsensor_params->camsensor_width  = \
+			            camsensor_params->qtr_size_width;
+			camsensor_params->camsensor_height = \
+			            camsensor_params->qtr_size_height;
 
-	ERR("camsensor_siv121a_snapshot_config!",0,0,0);
-	camsensor_params->format = format_snapshot;
-	camsensor_params->camsensor_width  = \
-	        camsensor_params->full_size_width;
-	camsensor_params->camsensor_height = \
-	        camsensor_params->full_size_height;
+			/* CAMIF frame */
+			camsensor_params->camif_frame_config.pixelsPerLine = \
+			            camsensor_params->qtr_size_width*2;
 
-	/* CAMIF frame */
-	camsensor_params->camif_frame_config.pixelsPerLine = \
-	        camsensor_params->full_size_width*2;
-	camsensor_params->camif_frame_config.linesPerFrame = \
-	        camsensor_params->full_size_width;
+			camsensor_params->camif_frame_config.linesPerFrame = \
+			            camsensor_params->qtr_size_height;
+            
+			/* CAMIF Window */
+			camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_dx; //°´CLK
+			camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_dx*2);
 
-	/* CAMIF window */
-	camsensor_params->camif_window_width_config.firstPixel = 0;
-	camsensor_params->camif_window_width_config.lastPixel  = \
-	        (camsensor_params->full_size_width*2)-1;
+			camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_dy)/2;
+			camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
+            
+            siv121a_i2c_write_byte(0x00,0x01);
+            siv121a_i2c_write_byte(0x04,0x10);
+            siv121a_i2c_write_byte(0x05,0x06); //QVGA Output
 
-	camsensor_params->camif_window_height_config.firstLine = 0;
-	camsensor_params->camif_window_height_config.lastLine  = \
-	        camsensor_params->full_size_height-1;
+            siv121a_i2c_write_byte(0x00,0x04);
+            siv121a_i2c_write_byte(0xc0,0x10);//24
+            siv121a_i2c_write_byte(0xc1,0x00);
+            siv121a_i2c_write_byte(0xc2,0x40);
+            siv121a_i2c_write_byte(0xc3,0x00);
+            siv121a_i2c_write_byte(0xc4,0xF0);
+      		break;
+            
+		case CAMSENSOR_FULL_SIZE:
+			/* Set the current dimensions */
+			camsensor_params->camsensor_width  = \
+			            camsensor_params->full_size_width;
+			camsensor_params->camsensor_height = \
+			            camsensor_params->full_size_height;
 
-	/********************************
-	*   Normal camera capture mode  *
-	********************************/
-	//shutter=read_siv121a_shutter();  
-	//write_siv121a_shutter(shutter);
-		 
+			/* CAMIF frame */
+			camsensor_params->camif_frame_config.pixelsPerLine = \
+			            camsensor_params->full_size_width*2;
 
+			camsensor_params->camif_frame_config.linesPerFrame = \
+			            camsensor_params->full_size_width;
+            
+			/* CAMIF Window */
+			camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_dx; //°´CLK
+			camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_dx*2);
+
+			camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_dy)/2;
+			camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
+            
+            //siv121a_i2c_write_byte(0x00,0x01);
+            //siv121a_i2c_write_byte(0x04,0x10);
+            //siv121a_i2c_write_byte(0x05,0x02);  //VGA Output
+            // Sensor on
+            //siv121a_i2c_write_byte(0x03,0x01);
+			break;
+
+    	case CAMSENSOR_INVALID_SIZE:
+
+       		return FALSE;
+
+  	}
+    
 	/* Wait for one frame before reconfiguring the VFE since either zero or one
 	* frames will be output after commencing the snapshot program, depending on
 	* when the I2C transaction took place relative to the active frame. */
-	camera_timed_wait(150);
-
-	camsensor_current_resolution = camsensor_snapshot_resolution;
-	
+	camera_timed_wait(150);	
 	return TRUE;
 }
 /*===========================================================================
@@ -791,74 +708,43 @@ SIDE EFFECTS
 ===========================================================================*/
 static boolean camsensor_siv121a_video_config(camsensor_static_params_type *camsensor_params)
 {
-	sensor_cap_state = FALSE;
-  	camsensor_params->format = format_preview;
  	camsensor_params->discardFirstFrame =  TRUE;
 	
 	ERR("camsensor_siv121a_video_config!",0,0,0);
   	switch ( camsensor_preview_resolution )
     {
     	case CAMSENSOR_QTR_SIZE:
+            /* Set the current dimensions */
+            camsensor_params->camsensor_width  = \
+                        camsensor_params->qtr_size_width;
+            camsensor_params->camsensor_height = \
+                        camsensor_params->qtr_size_height;
 
-			/* Set the current dimensions */
-			camsensor_params->camsensor_width  = \
-			            camsensor_params->qtr_size_width;
-			camsensor_params->camsensor_height = \
-			            camsensor_params->qtr_size_height;
+            /* CAMIF frame */
+            camsensor_params->camif_frame_config.pixelsPerLine = \
+                        camsensor_params->qtr_size_width*2;
 
-			/* CAMIF frame */
-			camsensor_params->camif_frame_config.pixelsPerLine = \
-			            camsensor_params->qtr_size_width*2;
+            camsensor_params->camif_frame_config.linesPerFrame = \
+                        camsensor_params->qtr_size_height;
+            
+            /* CAMIF Window */
+            camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_preview_dx; //°´CLK
+            camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_preview_dx*2);
 
-			camsensor_params->camif_frame_config.linesPerFrame = \
-			            camsensor_params->qtr_size_height;
-
-			/* CAMIF Window */
-			camsensor_params->camif_window_width_config.firstPixel = \
-			                 camsensor_info.preview_dummy_pixels*2;
-
-			camsensor_params->camif_window_width_config.lastPixel  = \
-			          (camsensor_info.preview_dummy_pixels) \
-			      +(camsensor_params->qtr_size_width*2)-1;
-
-			camsensor_params->camif_window_height_config.firstLine = 0;
-
-			camsensor_params->camif_window_height_config.lastLine  = \
-			            camsensor_params->qtr_size_height-1;
+            camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_preview_dy)/2;
+            camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_preview_dy;
+            
+            //siv121a_i2c_write_byte(0x00,0x01);
+            //siv121a_i2c_write_byte(0x04,0x10);
+            //siv121a_i2c_write_byte(0x05,0x06); //QVGA Output
+            // Sensor on
+            //siv121a_i2c_write_byte(0x03,0x01);
       		break;
 
 
 		case CAMSENSOR_FULL_SIZE:
-			/* Set the current dimensions */
-			camsensor_params->camsensor_width  = \
-			            camsensor_params->full_size_width;
-			camsensor_params->camsensor_height = \
-			            camsensor_params->full_size_height;
-
-			/* CAMIF frame */
-			camsensor_params->camif_frame_config.pixelsPerLine = \
-			            camsensor_params->full_size_width*2;
-
-			camsensor_params->camif_frame_config.linesPerFrame = \
-			            camsensor_params->full_size_width;
-
-			/* CAMIF window */
-			camsensor_params->camif_window_width_config.firstPixel = 0;
-
-			camsensor_params->camif_window_width_config.lastPixel  = \
-			           (camsensor_params->full_size_width*2)-1;
-
-			camsensor_params->camif_window_height_config.firstLine = 0;
-
-			camsensor_params->camif_window_height_config.lastLine  = \
-			           camsensor_params->full_size_height-1;
-
-			break;
-
     	case CAMSENSOR_INVALID_SIZE:
-
        		return FALSE;
-
   	}
 
 	return TRUE;

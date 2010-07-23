@@ -31,6 +31,6 @@ when       who     what, where, why
 
 //#define USE_CAMSENSOR_MICRON_MT9D112_MU2M0YU
 //#define USE_CAMSENSOR_GC0309
-//#define USE_CAMSENSOR_SIV121A
-#define USE_CAMSENSOR_OV7675
+#define USE_CAMSENSOR_SIV121A
+//#define USE_CAMSENSOR_OV7675
 #endif /* CUSTCAMSENSOR_H */
