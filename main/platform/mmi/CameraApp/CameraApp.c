@@ -523,8 +523,12 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
     pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA;
     pMe->m_nSelfTimeItemSel = IDS_SELFTIME_OFF;
     pMe->m_nCaptureItemSel = IDS_CAPTURE_OFF;
+#ifdef FEATURE_VIDEO_ENCODE
     pMe->m_nCameraCFG = CAMERACFGCHOOSE;
     pMe->m_nVideoCFG = VIDEOCFGCHOOSE;
+#else
+    pMe->m_nCameraCFG = CAMERACFGENVIRMENT;
+#endif
     pMe->m_nCameraZoom = OEMNV_CAMERA_ZOOM_LEVEL1;
     pMe->m_nSnapShotPicNum = 0;
     pMe->m_sCurrentFileName[0] = '\0';

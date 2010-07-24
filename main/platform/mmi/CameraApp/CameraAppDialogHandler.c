@@ -56,7 +56,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe,
                                         AEEEvent eCode, 
                                         uint16 wParam, 
                                         uint32 dwParam);
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
 // 对话框IDD_CFUN事件处理函数
 static boolean CameraApp_FunHandleEvent(CCameraApp *pMe, 
                                         AEEEvent eCode, 
@@ -74,8 +74,8 @@ static boolean CameraApp_CFunColorEffectHandle(CCameraApp *pMe,
                                                AEEEvent eCode, 
                                                uint16 wParam, 
                                                int dwParam);
-
-
+#endif
+#ifdef FEATURE_VIDEO_ENCODE
 // 对话框IDD_CVIDEO事件处理函数
 static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, 
                                           AEEEvent eCode, 
@@ -93,7 +93,7 @@ static boolean CameraApp_VideoSaveHandleEvent(CCameraApp *pMe,
                                               AEEEvent eCode, 
                                               uint16 wParam, 
                                               uint32 dwParam);
-
+#endif
 // 对话框IDD_POPMSG事件处理函数
 static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                             AEEEvent   eCode,
@@ -103,19 +103,19 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 // PopMenu事件路由处理函数
 static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, 
                                                   uint16 wParam);
-
+#ifdef FEATURE_VIDEO_ENCODE
 // PopMenu video/camera切换菜单处理函数
 static boolean CameraApp_PopMenu_ChooseCommandHandleEvent(CCameraApp *pMe, 
                                                           uint16 wParam);
-
+#endif
 // PopMenu环境模式菜单处理函数                           
 static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
                                                                uint16 wParam);
-
+#ifdef FEATURE_VIDEO_ENCODE
 // PopMenu趣味模式菜单处理函数
 static boolean CameraApp_PopMenu_FunCommandHandleEvent(CCameraApp *pMe, 
                                                        uint16 wParam);
-
+#endif
 // PopMenu拍照质量设置菜单处理函数                                                                                                                 
 static boolean CameraApp_PopMenu_QualityCommandHandleEvent(CCameraApp *pMe, 
                                                            uint16 wParam);
@@ -228,19 +228,19 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe,
 
 // 初始化设置数据
 static void CameraApp_InitCFGData(CCameraApp * pMe);
-
+#ifdef FEATURE_VIDEO_ENCODE
 // 初始化Camera/video切换设置菜单
 static void CameraApp_PopMenu_ChooseInit(CCameraApp *pMe, 
                                          IMenuCtl *popMenu);
-
+#endif
 // 初始化拍照环境设置菜单
 static void CameraApp_PopMenu_EnvironmentInit(CCameraApp *pMe, 
                                               IMenuCtl *popMenu);
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
 // 初始化趣味模式设置菜单
 static void CameraApp_PopMenu_FunInit(CCameraApp *pMe, 
                                       IMenuCtl *popMenu);
-
+#endif
 // 初始化拍照质量设置菜单
 static void CameraApp_PopMenu_QualityInit(CCameraApp *pMe, 
                                           IMenuCtl *popMenu);
@@ -276,7 +276,7 @@ static void CameraApp_PopMenu_ResetCFGInit(CCameraApp *pMe,
 // 初始化快捷键说明设置菜单
 static void CameraApp_PopMenu_HotKeyInit(CCameraApp *pMe, 
                                          IMenuCtl *popMenu);
-
+#ifdef FEATURE_VIDEO_ENCODE
 // Video录像时的处理函数
 static void CameraApp_VideoRunning(CCameraApp *pMe);
 
@@ -286,7 +286,7 @@ static void CameraApp_VideoGettime(CCameraApp *pMe,
 
 // Video录像停止处理函数
 static void CameraApp_VideoStop(CCameraApp *pMe);
-
+#endif
 // 拍照快门声处理函数
 static void CameraApp_PlayShutterSound(CCameraApp *pMe);
 
@@ -308,13 +308,14 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe);
 
 // 画Bottombar上的Camera/video图标函数
 static void CameraApp_DrawMidPic(CCameraApp *pMe);
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
 // 设置176x220的相框处理函数
 static void CameraApp_SetCameraFunFrame(CCameraApp *pMe);
-
+#endif
+#ifdef FEATURE_VIDEO_ENCODE
 // 画Video的CFGBar函数
 static void CameraApp_DrawVCFGBar(CCameraApp * pMe);
-
+#endif
 // 设置图片X坐标
 static uint16 CameraApp_SetPositonX(CCameraApp *pMe);
 
@@ -329,23 +330,16 @@ static void CameraApp_DrawBarBg(CCameraApp *pMe,
 
 // 画Camera的CFGBar函数
 static void CameraApp_DrawCCFGBar(CCameraApp * pMe);
-
+#ifdef FEATURE_VIDEO_ENCODE
 // 画Video的TopBar函数
 static void CameraApp_DrawVideoTopBar(CCameraApp *pMe);
-
-#ifndef FEATURE_CAMERAAPP_FUN_FRAME
-// 仅显示effect cloro的设置菜单
-static void CameraApp_HandlePopMenuEffectCFG(CCameraApp *pMe, 
-                                             IMenuCtl *popMenu, 
-                                             boolean bHandleEffect);
 #endif
-
 // Camera Preview的启动函数
 static void CameraApp_CPreviewStart(CCameraApp *pMe);
 
 // Camera Snapshot的处理函数
 static void CameraApp_RecordSnapShot(CCameraApp *pMe);
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
 // Color effect的处理函数
 static void CameraApp_HandleColorEffectCFG(CCameraApp *pMe);
 
@@ -372,7 +366,7 @@ static int CameraApp_SetColorEffect(CCameraApp *pMe);
 
 // 获取颜色特效名的资源id
 static int16 CameraApp_GetColorEffectResID(CCameraApp *pMe);
-
+#endif
 // 找T卡的函数
 static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe);
 
@@ -413,10 +407,10 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe,
 
 // 拍照后，照片处理函数
 static void CameraApp_HandleSnapshotPic(CCameraApp *pMe);
-
+#ifdef FEATURE_VIDEO_ENCODE
 // 录像后，录像文件处理函数
 static void CameraApp_HandleVideoFile(CCameraApp *pMe);
-
+#endif
 // Jpg解码处理函数
 void CameraApp_DecodeJPG(CCameraApp *pMe);
 
@@ -430,13 +424,6 @@ void CameraApp_InitCameraCheck(void *po);
 
 static void CameraApp_CreateDirectory(CCameraApp *pMe);
 
-#ifndef FEATURE_CAMERAAPP_FUN_FRAME
-static void CameraApp_SetFunColorMenuItemSel(CCameraApp *pMe, 
-                                             uint16 wParam);
-
-static void CameraApp_SetColorCFGMenuIcon(CCameraApp *pMe, 
-                                          IMenuCtl *popMenu);
-#endif
 static uint16 CameraApp_NotFullScreen(CCameraApp *pMe);
 /*==============================================================================
                                  全局数据
@@ -575,7 +562,7 @@ boolean CameraApp_RouteDialogEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wPara
   
         case IDD_CPIC:
             return CameraApp_PicHandleEvent(pMe, eCode, wParam, dwParam);
-
+#ifdef FEATURE_VIDEO_ENCODE
         case IDD_CVIDEO:
             return CameraApp_VideoHandleEvent(pMe, eCode, wParam, dwParam);
 
@@ -584,10 +571,11 @@ boolean CameraApp_RouteDialogEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wPara
 
         case IDD_CVIDEOSAVE:
             return CameraApp_VideoSaveHandleEvent(pMe, eCode, wParam, dwParam);
-
+#endif
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
         case IDD_CFUN:
             return CameraApp_FunHandleEvent(pMe, eCode, wParam, dwParam);
-            
+#endif
         case IDD_POPMSG:
             return CameraApp_PopMSGHandleEvent(pMe, eCode, wParam, dwParam);
                            
@@ -632,9 +620,12 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             pMe->m_bIsPreview = FALSE;
             pMe->m_nCameraState = CAM_START;
             //pMe->m_bCalculateLeftPicNum = TRUE;
-			
+#ifdef FEATURE_VIDEO_ENCODE
             pMe->m_nCameraCFG = CAMERACFGCHOOSE;
 	        pMe->m_nVideoCFG = VIDEOCFGCHOOSE;
+#else
+            pMe->m_nCameraCFG = CAMERACFGENVIRMENT;
+#endif
             pMe->m_nCFGBarChoosedID = 0; 
             pMe->m_nCFGBarOffset = 0;
 		 
@@ -907,12 +898,17 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             else
             {
                 //IDisplay_ClearScreen(pMe->m_pDisplay);
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
                 CameraApp_SetCameraFunFrame(pMe);
-
+#endif
                 CameraApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK);             
             }
 
+            if(pMe->m_bDispHotKey)
+            {
+                CameraApp_DrawHotKeyTextWithFrame(pMe);
+            }
+            
             CameraApp_DrawMidPic(pMe);
 
             if(!pMe->m_bCameraHideIcon)
@@ -1263,21 +1259,16 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 ==============================================================================*/
 static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
-    AEERect eRec;
-    
     IMenuCtl *popMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CAMERA_CFGMENU);    
            
     if(popMenu == NULL)
     {
         return FALSE;
     }
-
-    SETAEERECT(&eRec, 0, 72, pMe->m_cxWidth, 126);
-          
+    
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
-            pMe->m_bFirstShowDlg = TRUE;
             pMe->m_bSelNotChanged = TRUE;
 
             IMENUCTL_SetProperties(popMenu, MP_WRAPSCROLL|MP_TRANSPARENT_UNSEL|MP_NO_REDRAW);
@@ -1291,85 +1282,43 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             return TRUE;
          
         case EVT_DIALOG_END:
-#ifndef FEATURE_CAMERAAPP_FUN_FRAME
-            if(pMe->m_nCameraCFG == CAMERACFGFUN)
-            {
-                CameraApp_HandlePopMenuEffectCFG(pMe, popMenu, FALSE);
-            }
-#endif
             return TRUE;
       
-        case EVT_USER_REDRAW:
-            if(pMe->m_bFirstShowDlg == TRUE)
-            {                           
-    			if(pMe->m_bRePreview)
-                {
-                    ICAMERA_Preview(pMe->m_pCamera);
-                    pMe->m_nCameraState = CAM_PREVIEW;
-                    CameraApp_SetParamAfterPreview(pMe);
-                    pMe->m_bRePreview = FALSE;
-                }
-                      
-                IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
+        case EVT_USER_REDRAW:                         
+			if(pMe->m_bRePreview)
+            {
+                ICAMERA_Preview(pMe->m_pCamera);
+                pMe->m_nCameraState = CAM_PREVIEW;
+                CameraApp_SetParamAfterPreview(pMe);
+                pMe->m_bRePreview = FALSE;
+            }
+                  
+            IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
 
-                IDISPLAY_ClearScreen(pMe->m_pDisplay);
-                if(CameraApp_NotFullScreen(pMe))
-                {             
-                    CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG, 0, 0);
-                    
-                    DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
-                }
-                else
-                {
-                    CameraApp_SetCameraFunFrame(pMe);
-                    
-                    CameraApp_DrawBottomBarText(pMe, BTBAR_SELECT_BACK);           
-                }
-
-                CameraApp_DrawCCFGBar(pMe);
-                     
-                if(!pMe->m_bCameraHideIcon)
-                {
-                    CameraApp_DrawTopBar(pMe);   
-                }
-                    
-                CamreaApp_DrawCFGPromptText(pMe);                        
-
-                IMENUCTL_Redraw(popMenu);
-
-                pMe->m_bFirstShowDlg = FALSE;
+            if(CameraApp_NotFullScreen(pMe))
+            {             
+                CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG, 0, 0);
+                
+                DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
             }
             else
             {
-                if(CameraApp_NotFullScreen(pMe))
-                {
-                    IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
-                
-                    IDisplay_EraseRect(pMe->m_pDisplay, &eRec);
-                }
-                else
-                {
-                    IDISPLAY_SetClipRect(pMe->m_pDisplay, &eRec);
-                    
-                    IDisplay_EraseRect(pMe->m_pDisplay, &eRec);
-                    
-                    CameraApp_SetCameraFunFrame(pMe);
-                }
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
+                CameraApp_SetCameraFunFrame(pMe);
+#endif
+                CameraApp_DrawBottomBarText(pMe, BTBAR_SELECT_BACK);           
+            }
 
-                CameraApp_DrawCCFGBar(pMe);
+            CameraApp_DrawCCFGBar(pMe);
+                 
+            if(!pMe->m_bCameraHideIcon)
+            {
+                CameraApp_DrawTopBar(pMe);   
+            }
+            
+            CamreaApp_DrawCFGPromptText(pMe);                        
 
-                CamreaApp_DrawCFGPromptText(pMe); 
-
-                IMENUCTL_Redraw(popMenu);
-                if(CameraApp_NotFullScreen(pMe))
-                {
-                    //IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
-                }
-                else
-                {
-                    IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
-                }
-            }        
+            IMENUCTL_Redraw(popMenu);
             return TRUE;
 
         case EVT_KEY:
@@ -1384,18 +1333,16 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     return TRUE;
 
                 case AVK_LEFT:   
+#ifdef FEATURE_VIDEO_ENCODE
                     if(pMe->m_nCameraCFG == CAMERACFGCHOOSE)
+#else
+                    if(pMe->m_nCameraCFG == CAMERACFGENVIRMENT)
+#endif
                     {
                         pMe->m_nCameraCFG = CAMERACFGHOTKEY;
                     }
                     else
                     {
-#ifndef FEATURE_CAMERAAPP_FUN_FRAME
-                        if(pMe->m_nCameraCFG == CAMERACFGFUN)
-                        {
-                            CameraApp_HandlePopMenuEffectCFG(pMe, popMenu, FALSE);  
-                        }                      
-#endif
                         pMe->m_nCameraCFG--;
                     }
 
@@ -1406,7 +1353,11 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     }
                     else
                     {
+#ifdef FEATURE_VIDEO_ENCODE
                         if(pMe->m_nCameraCFG == CAMERACFGCHOOSE)
+#else
+                        if(pMe->m_nCameraCFG == CAMERACFGENVIRMENT)
+#endif
                         {
                             pMe->m_nCFGBarChoosedID--;
                         }
@@ -1427,20 +1378,23 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 case AVK_RIGHT:
                     if(pMe->m_nCameraCFG == CAMERACFGHOTKEY)
                     {
+#ifdef FEATURE_VIDEO_ENCODE
                         pMe->m_nCameraCFG = CAMERACFGCHOOSE;
+#else
+                        pMe->m_nCameraCFG = CAMERACFGENVIRMENT;
+#endif
                     }
                     else
                     {
-#ifndef FEATURE_CAMERAAPP_FUN_FRAME
-                        if(pMe->m_nCameraCFG == CAMERACFGFUN)
-                        {
-                            CameraApp_HandlePopMenuEffectCFG(pMe, popMenu, FALSE);  
-                        }                      
-#endif
                         pMe->m_nCameraCFG++;
                     }
                     
+#ifdef FEATURE_VIDEO_ENCODE
                     if(pMe->m_nCameraCFG == CAMERACFGCHOOSE)
+#else
+                    if(pMe->m_nCameraCFG == CAMERACFGENVIRMENT)
+#endif
+
                     {
                         pMe->m_nCFGBarChoosedID = 0;
                         pMe->m_nCFGBarOffset = 0;
@@ -1498,20 +1452,10 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 IMENUCTL_GetRect(popMenu, &popMenuRec);
     
                 IDISPLAY_SetClipRect(pMe->m_pDisplay, &popMenuRec);
-       
-                IDISPLAY_ClearScreen(pMe->m_pDisplay);
-       
+                
                 //CameraApp_DrawpopMenuBg(pMe, popMenu);
         
                 IMENUCTL_Redraw(popMenu);
-                
-#ifndef FEATURE_CAMERAAPP_FUN_FRAME
-                //选择条滑动不同的菜单项时，即时反应Camera不同的特效设置
-                if(pMe->m_nCameraCFG == CAMERACFGFUN)
-                {
-                    CameraApp_HandlePopMenuEffectCFG(pMe, popMenu, TRUE);
-                }
-#endif      
                 return TRUE;
             }
             
@@ -1626,7 +1570,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
     return FALSE;
 
 }
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
 /*==============================================================================
 函数：
        CameraApp_FunHandleEvent
@@ -1941,7 +1885,8 @@ static boolean CameraApp_CFunColorEffectHandle(CCameraApp *pMe, AEEEvent eCode, 
 
     return FALSE;
 }
-
+#endif
+#ifdef FEATURE_VIDEO_ENCODE
 /*==============================================================================
 函数：
        CameraApp_VideoHandleEvent
@@ -2312,22 +2257,17 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
        
 ==============================================================================*/
 static boolean CameraApp_VideoCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
-{  
-    AEERect eRec;
-    
+{
     IMenuCtl *popMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_VIDEO_CFGMENU);
         
     if(popMenu == NULL)
     {
         return FALSE;
     }
-
-    SETAEERECT(&eRec, 0, 72, 176, 126);
                  
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
-            pMe->m_bFirstShowDlg = TRUE;
             pMe->m_bSelNotChanged = TRUE;
 
             IMENUCTL_SetProperties(popMenu, MP_WRAPSCROLL|MP_TRANSPARENT_UNSEL|MP_NO_REDRAW);
@@ -2343,54 +2283,35 @@ static boolean CameraApp_VideoCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
         case EVT_DIALOG_END:
             return TRUE;
       
-        case EVT_USER_REDRAW:
-            if(pMe->m_bFirstShowDlg == TRUE)
-            {              
-                if(pMe->m_bRePreview)
-                {
-                    ICAMERA_Preview(pMe->m_pCamera);
-                    pMe->m_nCameraState = CAM_PREVIEW;
-                    CameraApp_SetParamAfterPreview(pMe);
-                    pMe->m_bRePreview = FALSE;
-                }
-                
-                IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
-
-                IDISPLAY_ClearScreen(pMe->m_pDisplay);
-
+        case EVT_USER_REDRAW:           
+            if(pMe->m_bRePreview)
+            {
+                ICAMERA_Preview(pMe->m_pCamera);
+                pMe->m_nCameraState = CAM_PREVIEW;
+                CameraApp_SetParamAfterPreview(pMe);
+                pMe->m_bRePreview = FALSE;
+            }
+            
+            IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
+            
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-               CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG_VERTU, 0, 0);
+            CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG_VERTU, 0, 0);
 #else
-                CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG, 0, 0);
+            CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG, 0, 0);
 #endif
 
-                if(!pMe->m_bVideoHideIcon)
-                {
-                    CameraApp_DrawVideoTopBar(pMe);   
-                }                                       
-                
-                DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
-           
-                CameraApp_DrawVCFGBar(pMe);
-                    
-                CamreaApp_DrawCFGPromptText(pMe);            
-                
-                IMENUCTL_Redraw(popMenu);
-
-                 pMe->m_bFirstShowDlg = FALSE;
-            }
-            else
+            if(!pMe->m_bVideoHideIcon)
             {
-                IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
+                CameraApp_DrawVideoTopBar(pMe);   
+            }                                       
+            
+            DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
+       
+            CameraApp_DrawVCFGBar(pMe);
                 
-                IDisplay_EraseRect(pMe->m_pDisplay, &eRec);
-
-                CameraApp_DrawVCFGBar(pMe);
-                    
-                CamreaApp_DrawCFGPromptText(pMe);            
-                
-                IMENUCTL_Redraw(popMenu);
-            }        
+            CamreaApp_DrawCFGPromptText(pMe);            
+            
+            IMENUCTL_Redraw(popMenu);
             return TRUE;
 
         case EVT_KEY:
@@ -2552,7 +2473,7 @@ static boolean CameraApp_VideoSaveHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
     }
     return FALSE;
 }
-
+#endif
 /*==============================================================================
 函数：
        CameraApp_PopMSGHandleEvent
@@ -2820,15 +2741,16 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
     {
         switch(pMe->m_nCameraCFG)
         {
+#ifdef FEATURE_VIDEO_ENCODE
             case CAMERACFGCHOOSE:
                 return CameraApp_PopMenu_ChooseCommandHandleEvent(pMe, wParam);
-    
+#endif
             case CAMERACFGENVIRMENT:
                 return CameraApp_PopMenu_EnvironmentCommandHandleEvent(pMe, wParam);
-    
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
             case CAMERACFGFUN:
                 return CameraApp_PopMenu_FunCommandHandleEvent(pMe, wParam);
-   
+#endif
             case CAMERACFGQUALITY:
                 return CameraApp_PopMenu_QualityCommandHandleEvent(pMe, wParam);
    
@@ -2857,7 +2779,7 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
                 return FALSE;
         }
     }
-
+#ifdef FEATURE_VIDEO_ENCODE
     if(pMe->m_pActiveDlgID == IDD_CVIDEOCFG)
     {
         switch(pMe->m_nVideoCFG)
@@ -2878,9 +2800,10 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
                 return FALSE;
         }
     }
+#endif
     return TRUE;
 }
-
+#ifdef FEATURE_VIDEO_ENCODE
 /*==============================================================================
 函数：
        CameraApp_PopMenu_ChooseCommandHandleEvent
@@ -2942,7 +2865,7 @@ static boolean CameraApp_PopMenu_ChooseCommandHandleEvent(CCameraApp *pMe, uint1
 
     return TRUE;
 }
-
+#endif
 /*==============================================================================
 函数：
        CameraApp_PopMenu_EnvironmentCommandHandleEvent
@@ -3037,12 +2960,12 @@ static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
             ICAMERA_SetFramesPerSecond(pMe->m_pCamera, dwFPS);
             break;
             
-    }        
+    }
     
     CLOSE_DIALOG(DLGRET_CANCELED); 
     return TRUE;
 }
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
 /*==============================================================================
 函数：
        CameraApp_PopMenu_FunCommandHandleEvent
@@ -3061,8 +2984,7 @@ static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
        
 ==============================================================================*/
 static boolean CameraApp_PopMenu_FunCommandHandleEvent(CCameraApp *pMe, uint16 wParam)
-{ 
-#ifdef FEATURE_CAMERAAPP_FUN_FRAME
+{
     switch(wParam)
     {
         case IDS_FUN_FRAME:
@@ -3078,36 +3000,9 @@ static boolean CameraApp_PopMenu_FunCommandHandleEvent(CCameraApp *pMe, uint16 w
     }
   
     CLOSE_DIALOG(DLGRET_FUN);
-    return TRUE;
-#else 
-    CameraApp_SetFunColorMenuItemSel(pMe, wParam);
-    ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_EFFECT,  pMe->m_nCameraColor, 0);
-
-    switch(pMe->m_pActiveDlgID)
-    {
-        case IDD_CCAMERACFG:       
-            (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                  CFGI_CAMERA_COLOR,
-                                  &pMe->m_nCameraColor,
-                                  sizeof(pMe->m_nCameraColor));           
-            break;
-
-        case IDD_CVIDEOCFG:
-            (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                  CFGI_VIDEO_COLOR,
-                                  &pMe->m_nCameraColor,
-                                  sizeof(pMe->m_nCameraColor));
-            break;
-
-        default:
-            break;
-    }
-    
-    CLOSE_DIALOG(DLGRET_CANCELED);
-    return TRUE;
-#endif  
+    return TRUE; 
 }
-
+#endif
 /*==============================================================================
 函数：
        CameraApp_PopMenu_QualityCommandHandleEvent
@@ -3639,6 +3534,7 @@ static boolean CameraApp_HotKeyAVK_2_ChooseHandleEvent(CCameraApp *pMe,
                                                        uint16 wParam, 
                                                        uint32 dwParam)
 {  
+#ifdef FEATURE_VIDEO_ENCODE
     IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
        
     switch(pMe->m_pActiveDlgID)
@@ -3669,6 +3565,9 @@ static boolean CameraApp_HotKeyAVK_2_ChooseHandleEvent(CCameraApp *pMe,
     pMe->m_nCameraState = CAM_STOP;
 
     return TRUE; //判断返回值，需修改。。20081215
+#else
+    return FALSE;
+#endif
 }
 
 /*==============================================================================
@@ -4041,6 +3940,7 @@ static boolean CameraApp_HotKeyAVK_6_FrameHandleEvent(CCameraApp *pMe,
                                                       uint16 wParam, 
                                                       uint32 dwParam)
 {
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
     if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_DEFAULT)
     {
         return TRUE;
@@ -4061,6 +3961,9 @@ static boolean CameraApp_HotKeyAVK_6_FrameHandleEvent(CCameraApp *pMe,
                           sizeof(pMe->m_nCameraFrame));
 
     return ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
+#else
+    return FALSE;
+#endif
 }
 
 /*==============================================================================
@@ -4088,6 +3991,7 @@ static boolean CameraApp_HotKeyAVK_7_ColorHandleEvent(CCameraApp * pMe,
                                                       uint16 wParam, 
                                                       uint32 dwParam)
 {
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
     int16 nResID = 0;
     int n = 0;
        
@@ -4171,7 +4075,10 @@ static boolean CameraApp_HotKeyAVK_7_ColorHandleEvent(CCameraApp * pMe,
     
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_EFFECT,  pMe->m_nCameraColor, 0);
 
-    return CameraApp_DisplayHotKeyText(pMe, eCode, wParam, dwParam);    
+    return CameraApp_DisplayHotKeyText(pMe, eCode, wParam, dwParam);  
+#else
+    return FALSE;
+#endif
 }
 
 /*==============================================================================
@@ -4350,7 +4257,7 @@ static boolean CameraApp_HotKeyAVK_POUND_HideIconHandleEvent(CCameraApp * pMe,
             break;            
     }
 
-    IDISPLAY_ClearScreen(pMe->m_pDisplay);
+    //IDISPLAY_ClearScreen(pMe->m_pDisplay);
     
     return ISHELL_SendEvent(pMe->m_pShell, 
                             AEECLSID_APP_CAMERA, 
@@ -4388,11 +4295,11 @@ static boolean CameraApp_DisplayHotKeyText(CCameraApp *pMe,
     //防止快速按键，已设定的定时器未取消 
     ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);   
     
-    IDISPLAY_ClearScreen(pMe->m_pDisplay);
-    
+    //IDISPLAY_ClearScreen(pMe->m_pDisplay);
+    pMe->m_bDispHotKey = TRUE;
     ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
     
-    CameraApp_DrawHotKeyTextWithFrame(pMe);    
+    CameraApp_DrawHotKeyTextWithFrame(pMe);
 
     // 设置定时器，刷新屏幕
     ISHELL_SetTimer(pMe->m_pShell, 1500, (PFNNOTIFY)CameraApp_HotKeyDisplayTimeout, pMe);
@@ -4416,8 +4323,8 @@ static boolean CameraApp_DisplayHotKeyText(CCameraApp *pMe,
 ==============================================================================*/
 static void CameraApp_HotKeyDisplayTimeout(CCameraApp *pMe)
 {   
-    IDISPLAY_ClearScreen(pMe->m_pDisplay);
-
+    //IDISPLAY_ClearScreen(pMe->m_pDisplay);
+    pMe->m_bDispHotKey = FALSE;
     ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);    
 }
 
@@ -4474,59 +4381,60 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
     {
         switch(pMe->m_nCameraCFG)
         {
+#ifdef FEATURE_VIDEO_ENCODE
             case CAMERACFGCHOOSE:               
-                    CameraApp_PopMenu_ChooseInit(pMe, popMenu);
-                    break;
-        
-                case CAMERACFGENVIRMENT:
-                    CameraApp_PopMenu_EnvironmentInit(pMe, popMenu);
-                    break;
-        
-                case CAMERACFGFUN:
-                    CameraApp_PopMenu_FunInit(pMe, popMenu);
-                    break;
-       
-                case CAMERACFGQUALITY:
-                    CameraApp_PopMenu_QualityInit(pMe, popMenu);
-                    break;
-       
-                case CAMERACFGSIZE:
-                    CameraApp_PopMenu_SizeInit(pMe, popMenu);
-                    break;
-       
-                case CAMERACFGTONE:
-                    CameraApp_PopMenu_ShutterToneInit(pMe, popMenu);
-                    break;
-       
-                case CAMERACFGSELFTIME:
-                    CameraApp_PopMenu_SelfTimeInit(pMe, popMenu);
-                    break;
-       
-                case CAMERACFGCAPTURE:
-                    CameraApp_PopMenu_CaptureInit(pMe, popMenu);
-                    break;
-       
-                case CAMERACFGBANDING:
-                    CameraApp_PopMenu_BandingInit(pMe, popMenu);
-                    break;
-       
-                case CAMERACFGSTORAGE:
-                    CameraApp_PopMenu_StorageInit(pMe, popMenu);
-                    break;
-       
-                case CAMERACFGRESET:
-                    CameraApp_PopMenu_ResetCFGInit(pMe, popMenu);
-                    break;
-       
-                case CAMERACFGHOTKEY:
-                    CameraApp_PopMenu_HotKeyInit(pMe, popMenu);
-                    break;
-       
-                default:
-                    break; 
+                CameraApp_PopMenu_ChooseInit(pMe, popMenu);
+                break;
+#endif
+            case CAMERACFGENVIRMENT:
+                CameraApp_PopMenu_EnvironmentInit(pMe, popMenu);
+                break;
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
+            case CAMERACFGFUN:
+                CameraApp_PopMenu_FunInit(pMe, popMenu);
+                break;
+#endif
+            case CAMERACFGQUALITY:
+                CameraApp_PopMenu_QualityInit(pMe, popMenu);
+                break;
+   
+            case CAMERACFGSIZE:
+                CameraApp_PopMenu_SizeInit(pMe, popMenu);
+                break;
+   
+            case CAMERACFGTONE:
+                CameraApp_PopMenu_ShutterToneInit(pMe, popMenu);
+                break;
+   
+            case CAMERACFGSELFTIME:
+                CameraApp_PopMenu_SelfTimeInit(pMe, popMenu);
+                break;
+   
+            case CAMERACFGCAPTURE:
+                CameraApp_PopMenu_CaptureInit(pMe, popMenu);
+                break;
+   
+            case CAMERACFGBANDING:
+                CameraApp_PopMenu_BandingInit(pMe, popMenu);
+                break;
+   
+            case CAMERACFGSTORAGE:
+                CameraApp_PopMenu_StorageInit(pMe, popMenu);
+                break;
+   
+            case CAMERACFGRESET:
+                CameraApp_PopMenu_ResetCFGInit(pMe, popMenu);
+                break;
+   
+            case CAMERACFGHOTKEY:
+                CameraApp_PopMenu_HotKeyInit(pMe, popMenu);
+                break;
+   
+            default:
+                break; 
         }
     }
-
+#ifdef FEATURE_VIDEO_ENCODE
     if(pMe->m_pActiveDlgID == IDD_CVIDEOCFG)
     {
         switch(pMe->m_nVideoCFG)
@@ -4538,11 +4446,11 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
             case VIDEOCFGENVIROMENT:
                  CameraApp_PopMenu_EnvironmentInit(pMe, popMenu);
                  break;
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
             case VIDEOCFGFUN:
                 CameraApp_PopMenu_FunInit(pMe, popMenu);
                 break;
- 
+#endif
             case VIDEOCFGRESET:
                  CameraApp_PopMenu_ResetCFGInit(pMe, popMenu);
                  break;
@@ -4555,7 +4463,7 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
                 break;
         }
     }
-
+#endif
     return TRUE;
 }
 
@@ -4685,7 +4593,7 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
                               sizeof(pMe->m_bVideoHideIcon));
     }
 }
-
+#ifdef FEATURE_VIDEO_ENCODE
 // camera/video切换的设置菜单的初始化
 static void CameraApp_PopMenu_ChooseInit(CCameraApp *pMe, IMenuCtl *popMenu)
 {
@@ -4724,7 +4632,7 @@ static void CameraApp_PopMenu_ChooseInit(CCameraApp *pMe, IMenuCtl *popMenu)
     }    
 
 }
-
+#endif
 static void CameraApp_PopMenu_EnvironmentInit(CCameraApp *pMe, IMenuCtl *popMenu)
 {
     IMENUCTL_DeleteAll(popMenu);
@@ -4823,7 +4731,7 @@ static void CameraApp_PopMenu_EnvironmentInit(CCameraApp *pMe, IMenuCtl *popMenu
     }
 
 }
-           
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
 static void CameraApp_PopMenu_FunInit(CCameraApp *pMe, IMenuCtl *popMenu)
 {
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -4833,7 +4741,6 @@ static void CameraApp_PopMenu_FunInit(CCameraApp *pMe, IMenuCtl *popMenu)
     
     IMENUCTL_DeleteAll(popMenu);
     
-#ifdef  FEATURE_CAMERAAPP_FUN_FRAME
     switch(pMe->m_pActiveDlgID)
     {
         case IDD_CCAMERACFG:
@@ -4892,78 +4799,8 @@ static void CameraApp_PopMenu_FunInit(CCameraApp *pMe, IMenuCtl *popMenu)
         default:
             break;
     }
-
-#else
-    CameraApp_SetPopMenuRect(pMe, popMenu, 4);
-
-    IMENUCTL_AddItem(popMenu,
-                     AEE_APPSCAMERAAPP_RES_FILE,
-                     IDS_NORMAL, 
-                     IDS_NORMAL,
-                     NULL, 
-                     0);
-
-    IMENUCTL_AddItem(popMenu,
-                     AEE_APPSCAMERAAPP_RES_FILE,
-                     IDS_COLOR_BANDW, 
-                     IDS_COLOR_BANDW,
-                     NULL, 
-                     0);
-
-    IMENUCTL_AddItem(popMenu,
-                     AEE_APPSCAMERAAPP_RES_FILE,
-                     IDS_COLOR_SEPIA, 
-                     IDS_COLOR_SEPIA,
-                     NULL, 
-                     0);
-
-    IMENUCTL_AddItem(popMenu,
-                     AEE_APPSCAMERAAPP_RES_FILE,
-                     IDS_COLOR_NEGATIVE, 
-                     IDS_COLOR_NEGATIVE,
-                     NULL, 
-                     0);
-
-    IMENUCTL_AddItem(popMenu,
-                     AEE_APPSCAMERAAPP_RES_FILE,
-                     IDS_COLOR_RED, 
-                     IDS_COLOR_RED,
-                     NULL, 
-                     0);
-
-    IMENUCTL_AddItem(popMenu,
-                     AEE_APPSCAMERAAPP_RES_FILE,
-                     IDS_COLOR_GREEN, 
-                     IDS_COLOR_GREEN,
-                     NULL, 
-                     0);
-
-    InitMenuIcons(popMenu);
-    
-    switch(pMe->m_pActiveDlgID)
-    {
-        case IDD_CCAMERACFG:
-            (void)ICONFIG_GetItem(pMe->m_pConfig,
-                                 CFGI_CAMERA_COLOR,
-                                 &pMe->m_nCameraColor,
-                                 sizeof(pMe->m_nCameraColor));      
-            break;
-    
-        case IDD_CVIDEOCFG: 
-            (void)ICONFIG_GetItem(pMe->m_pConfig,
-                                 CFGI_VIDEO_COLOR,
-                                 &pMe->m_nCameraColor,
-                                 sizeof(pMe->m_nCameraColor));          
-            break;
-                        
-        default:
-            break;
-    }
-
-    CameraApp_SetColorCFGMenuIcon(pMe, popMenu);
-#endif
 }
-
+#endif
 static void CameraApp_PopMenu_QualityInit(CCameraApp *pMe, IMenuCtl *popMenu)
 {
     IMENUCTL_DeleteAll(popMenu);
@@ -5413,7 +5250,7 @@ static void CameraApp_PopMenu_HotKeyInit(CCameraApp *pMe, IMenuCtl *popMenu)
             break;           
     }
 }
-
+#ifdef FEATURE_VIDEO_ENCODE
 static void CameraApp_VideoRunning(CCameraApp *pMe)
 {
     uint32   nMS;
@@ -5481,7 +5318,7 @@ static void CameraApp_VideoStop(CCameraApp *pMe)
    
    (void)ITIMECTL_SetTimeEx(pMe->m_pVideoRecTimeCtl, (int32)pMe->m_dwDispTime, TRUE);
 }
-
+#endif
 static void CameraApp_PlayShutterSound(CCameraApp *pMe)
 {
    AEEMediaCmdNotify cmd;
@@ -6013,29 +5850,11 @@ static void CameraApp_DrawCCFGBar(CCameraApp * pMe)
     }
 }
 
-/*static void CameraApp_DrawpopMenuBg(CCameraApp *pMe, IMenuCtl *popMenu)
-{
-    AEERect  mRec;
-    IImage   *popMenuBgImg = NULL; 
-
-    //draw popMenu bg
-    popMenuBgImg = ISHELL_LoadResImage(pMe->m_pShell,
-                                       CAMERAAPP_IMAGE_RES_FILE,
-                                       IDI_POPMENU_BG);
-    
-    IMENUCTL_GetRect(popMenu, &mRec);
-    IIMAGE_SetDrawSize(popMenuBgImg, mRec.dx, mRec.dy);
-    IIMAGE_Draw(popMenuBgImg, mRec.x, mRec.y);
-    if(popMenuBgImg)
-    {
-        IIMAGE_Release(popMenuBgImg);
-        popMenuBgImg = NULL;
-    }     
-}*/
-
 static void CameraApp_DrawMidPic(CCameraApp *pMe)
 {
     IImage *pImage = NULL;
+    AEEImageInfo myInfo;
+    
     switch(pMe->m_pActiveDlgID)
     {
         case IDD_CPREVIEW:
@@ -6044,7 +5863,8 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
                                          IDI_MID_CAMERA);
             if(pImage != NULL)
             {
-                IIMAGE_Draw(pImage, 78, pMe->m_cyHeight - 22);
+                IIMAGE_GetInfo(pImage, &myInfo);
+                IIMAGE_Draw(pImage, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight - myInfo.cy -1 );
                 IIMAGE_Release(pImage);
                 pImage = NULL;
             }
@@ -6056,7 +5876,8 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
                                          IDI_MID_VIDEO);
             if(pImage != NULL)
             {
-                IIMAGE_Draw(pImage, 78, pMe->m_cyHeight - 22);
+                IIMAGE_GetInfo(pImage, &myInfo);
+                IIMAGE_Draw(pImage, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight - myInfo.cy -1 );
                 IIMAGE_Release(pImage);
                 pImage = NULL;
             }
@@ -6066,7 +5887,7 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
             break;
     }
 }
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
 static void CameraApp_SetCameraFunFrame(CCameraApp *pMe)
 {
     IImage *pImage = NULL;
@@ -6133,7 +5954,7 @@ static void CameraApp_SetCameraFunFrame(CCameraApp *pMe)
         }
     }   
 }
-
+#endif
 static void CameraApp_DrawBarBg(CCameraApp *pMe, int16 nResID, int x, int y)
 {
     IImage *pImageBg = NULL;
@@ -6149,7 +5970,7 @@ static void CameraApp_DrawBarBg(CCameraApp *pMe, int16 nResID, int x, int y)
         pImageBg = NULL;
     }   
 }
-
+#ifdef FEATURE_VIDEO_ENCODE
 static void CameraApp_DrawVCFGBar(CCameraApp *pMe)
 {
     IImage   *pCFGBarBg = NULL;    
@@ -6217,7 +6038,7 @@ static void CameraApp_DrawVCFGBar(CCameraApp *pMe)
         pCFGBottomBar = NULL;
     }
 }
-
+#endif
 static uint16 CameraApp_SetPositonX(CCameraApp *pMe)
 {
     uint16 X = 0;
@@ -6233,6 +6054,7 @@ static uint16 CameraApp_SetPositonX(CCameraApp *pMe)
             X = 0;
         }
     }
+#ifdef FEATURE_VIDEO_ENCODE
     else
     {
         switch(pMe->m_nVideoCFG)
@@ -6258,6 +6080,7 @@ static uint16 CameraApp_SetPositonX(CCameraApp *pMe)
                 break;
         }
     }
+#endif
 
     return X;   
 }
@@ -6272,18 +6095,19 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
     {
         switch(pMe->m_nCameraCFG)
         {
+#ifdef FEATURE_VIDEO_ENCODE
             case CAMERACFGCHOOSE:
                 nResID = IDS_CFG_CHOOSE;
                 break;
-                
+#endif
             case CAMERACFGENVIRMENT:
                 nResID = IDS_CFG_ENVIR;
                 break;
-                
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
             case CAMERACFGFUN:
                 nResID = IDS_CFG_FUN;
                 break;
-                
+#endif
             case CAMERACFGQUALITY:
                 nResID = IDS_CFG_QUALITY;
                 break;
@@ -6332,6 +6156,7 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
             SETAEERECT(&prc, 0, 162, 118, 16);
          }
     }
+#ifdef FEATURE_VIDEO_ENCODE
     else
     {
         switch(pMe->m_nVideoCFG)
@@ -6362,7 +6187,7 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
                 break;                                                                   
         }
     }
-
+#endif
     MEMSET(pcText, 0, sizeof(pcText)); 
     (void)ISHELL_LoadResString(pMe->m_pShell, 
                                AEE_APPSCAMERAAPP_RES_FILE,       
@@ -6405,7 +6230,7 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
         (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
     }
 }
-
+#ifdef FEATURE_VIDEO_ENCODE
 static void CameraApp_DrawVideoTopBar(CCameraApp *pMe)
 {
     int i;
@@ -6486,90 +6311,7 @@ static void CameraApp_DrawVideoTopBar(CCameraApp *pMe)
     }
    
 }
-
-#ifndef FEATURE_CAMERAAPP_FUN_FRAME
-static void CameraApp_HandlePopMenuEffectCFG(CCameraApp *pMe, IMenuCtl *popMenu, boolean bHandleEffect)
-{
-    uint16 menuSel = 0;
-
-    int32 color_effect = 0;
-
-    menuSel = IMENUCTL_GetSel(popMenu);
-
-    (void)ICONFIG_GetItem(pMe->m_pConfig,
-                          CFGI_CAMERA_COLOR,
-                          &pMe->m_nCameraColor,
-                          sizeof(pMe->m_nCameraColor)); 
-
-    
-    (void)ICONFIG_GetItem(pMe->m_pConfig,
-                          CFGI_CAMERA_BANDING,
-                          &pMe->m_nCameraBanding,
-                          sizeof(pMe->m_nCameraBanding)); 
-    
-    if(bHandleEffect)
-    {
-        switch(pMe->m_nCameraCFG)
-        {
-            case CAMERACFGFUN:
-                switch(menuSel)
-                {
-                    case IDS_NORMAL:
-                        color_effect = OEMNV_CAMERA_COLOR_NORMAL;
-                        break;
-
-                    case IDS_COLOR_BANDW:
-                        color_effect = OEMNV_CAMERA_COLOR_BANDW;
-                        break;
-
-                    case IDS_COLOR_SEPIA:
-                        color_effect = OEMNV_CAMERA_COLOR_SEPIA;           
-                        break;
-
-                    case IDS_COLOR_NEGATIVE:
-                        color_effect = OEMNV_CAMERA_COLOR_NEGATIVE;
-                        break;
-
-                    case IDS_COLOR_RED:
-                        color_effect = OEMNV_CAMERA_COLOR_REDONLY;
-                        break;
-
-                    case IDS_COLOR_GREEN:
-                        color_effect = OEMNV_CAMERA_COLOR_GREENONLY;
-                        break;
-                        
-                    default:
-                        break;                                   
-                }
-                ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_EFFECT, color_effect, 0);
-                break;
-
-            case CAMERACFGBANDING:
-                switch(menuSel)
-                {
-                    case IDS_BANDING_MODE1:
-                        break;
-                        
-                    case IDS_BANDING_MODE2:
-                        break;              
-        
-                    default:
-                        break;                                   
-                }
-
-                break;
-
-            default:
-                break;
-        }
-    }
-    else
-    {
-        ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_EFFECT, pMe->m_nCameraColor, 0);      
-    }       
-}
 #endif
-
 static void CameraApp_CPreviewStart(CCameraApp *pMe)
 {
     AEESize displaySize, captureSize; 
@@ -6664,7 +6406,7 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     STRCPY(pMe->m_sCaptureFileName+STRLEN(pMe->m_sCaptureFileName), sFileName);
 
     DBGPRINTF("m_sCaptureFileName = %s",pMe->m_sCaptureFileName);
-        
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
     if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_INDEX_0)
     {
         IDisplay_SetClipRect(pMe->m_pDisplay, 0);
@@ -6675,11 +6417,12 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
             IDisplay_ClearScreen(pMe->m_pDisplay);
             pMe->m_bCleanScreen = FALSE;
         }
+        
         CameraApp_SetCameraFunFrame(pMe);
-
+        
         IDisplay_UpdateEx(pMe->m_pDisplay, FALSE);
     }
-
+#endif
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_TONE,
                           &pMe->m_nCameraTone,
@@ -6732,7 +6475,7 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
                               pMe); 
     }
 }
-
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
 static void CameraApp_HandleColorEffectCFG(CCameraApp *pMe)
 {
     OEMCAMERACOLOR color_effect;
@@ -6985,7 +6728,7 @@ static int16 CameraApp_GetColorEffectResID(CCameraApp *pMe)
 
     return nResID;
 }
-
+#endif
 static void CameraApp_DialogTimeout(void *pme)
 {
     CCameraApp *pMe = (CCameraApp *)pme;
@@ -7180,12 +6923,10 @@ static void CameraApp_DrawBottomBarText(CCameraApp *pMe, BottomBar_e_Type eBarTy
     uint16      nResID_L = 0;   // left
     uint16      nResID_R = 0;   // right
     uint16      nResID_M = 0;   // mid
-    AEERect     rc;
+    AEERect     rc = pMe->m_rc;
     AECHAR      wszBar_L[20]={0};// left
     AECHAR      wszBar_R[20]={0};// right
     AECHAR      wszBar_M[20]={0};// mid
-    
-    SETAEERECT(&rc, 5, 198, 166, 22);
     
     switch(eBarType)
     {
@@ -7280,7 +7021,7 @@ static void CameraApp_DrawBottomBarText(CCameraApp *pMe, BottomBar_e_Type eBarTy
                             0, 
                             0, 
                             &rc, 
-                            IDF_ALIGN_BOTTOM|IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+                            IDF_ALIGN_BOTTOM|IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
     }
 
     (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
@@ -7507,7 +7248,7 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
     
     pMe->m_nSnapShotPicNameIndex++;    
 }
-
+#ifdef FEATURE_VIDEO_ENCODE
 static void CameraApp_HandleVideoFile(CCameraApp *pMe)
 {
     AEERect topRect,bottomRect;  
@@ -7563,7 +7304,7 @@ static void CameraApp_HandleVideoFile(CCameraApp *pMe)
 
     IDisplay_SetClipRect(pMe->m_pDisplay, 0);
 }
-
+#endif
 // VIM Jpg decode方式
 void CameraApp_DecodeJPG(CCameraApp *pMe)
 {
@@ -7796,73 +7537,6 @@ static void CameraApp_CreateDirectory(CCameraApp *pMe)
          }   
     }           
 }
-
-#ifndef FEATURE_CAMERAAPP_FUN_FRAME
-static void CameraApp_SetFunColorMenuItemSel(CCameraApp *pMe, uint16 wParam)
-{
-    switch(wParam)
-    {
-        case IDS_NORMAL:
-            pMe->m_nCameraColor = OEMNV_CAMERA_COLOR_NORMAL;                  
-            break;
-
-        case IDS_COLOR_BANDW:
-            pMe->m_nCameraColor = OEMNV_CAMERA_COLOR_BANDW;                   
-            break;
-
-        case IDS_COLOR_SEPIA:
-            pMe->m_nCameraColor = OEMNV_CAMERA_COLOR_SEPIA;                   
-            break;
-
-        case IDS_COLOR_NEGATIVE:
-            pMe->m_nCameraColor = OEMNV_CAMERA_COLOR_NEGATIVE;                   
-            break;
-
-        case IDS_COLOR_RED:
-            pMe->m_nCameraColor = OEMNV_CAMERA_COLOR_REDONLY;                  
-            break;
-            
-        case IDS_COLOR_GREEN:
-            pMe->m_nCameraColor = OEMNV_CAMERA_COLOR_GREENONLY;
-            break;
-
-        default:
-            break;
-    }   
-}
-
-static void CameraApp_SetColorCFGMenuIcon(CCameraApp *pMe, IMenuCtl *popMenu)
-{
-    switch(pMe->m_nCameraColor)
-    {
-        case OEMNV_CAMERA_COLOR_NORMAL:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_NORMAL, TRUE);
-            break;
-
-        case OEMNV_CAMERA_COLOR_BANDW:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_COLOR_BANDW, TRUE);
-            break;
-
-        case OEMNV_CAMERA_COLOR_SEPIA:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_COLOR_SEPIA, TRUE);
-            break;
-
-        case OEMNV_CAMERA_COLOR_NEGATIVE:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_COLOR_NEGATIVE, TRUE);
-            break;
-       
-        case OEMNV_CAMERA_COLOR_REDONLY:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_COLOR_RED, TRUE);
-            break;
-
-        case OEMNV_CAMERA_COLOR_GREENONLY:
-            CameraApp_SetCFGMenuIcon(popMenu, IDS_COLOR_GREEN, TRUE);
-            
-        default:
-            break;
-    }
-}
-#endif
 
 // 判断当前的摄像头分辨率设置是否可以为全屏预览
 // 返回值为0表示全屏预览，否则返回y的偏移

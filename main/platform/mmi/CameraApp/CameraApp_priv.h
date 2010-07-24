@@ -170,9 +170,13 @@ typedef enum
 // 照相机设置参数列表
 typedef enum 
 {
+#ifdef FEATURE_VIDEO_ENCODE
     CAMERACFGCHOOSE,
+#endif
     CAMERACFGENVIRMENT,
+#ifdef FEATURE_CAMERAAPP_FUN_FRAME
     CAMERACFGFUN,
+#endif
     CAMERACFGQUALITY,
     CAMERACFGSIZE,
     CAMERACFGTONE,
@@ -183,7 +187,7 @@ typedef enum
     CAMERACFGRESET,
     CAMERACFGHOTKEY
 } CAMERACFG;
-
+#ifdef FEATURE_VIDEO_ENCODE
 // 摄像机设置参数列表
 typedef enum 
 {
@@ -193,7 +197,7 @@ typedef enum
     VIDEOCFGRESET,
     VIDEOCFGHOTKEY
 } VIDEOCFG;
-
+#endif
 typedef enum 
 {
 	FILE_TYPE_JPG,
@@ -299,7 +303,6 @@ typedef struct _CCameraApp
     boolean              m_bVideoPause;          // 判断摄影是否停止
     boolean              m_bfunFrameSelected;    // 趣味模式相框选择
     boolean              m_bVideoRecStart;        // 判断录像是否开始
-    boolean              m_bFirstShowDlg;        // 判断是否是第一次打开Dlg
     boolean              m_bSelNotChanged;       // 判断Sel是否变化
     boolean              m_bCameraHideIcon;      // 判断Camera Icon是否显示
     boolean              m_bVideoHideIcon;       // 判断Video Icon是否显示
@@ -311,6 +314,7 @@ typedef struct _CCameraApp
     //boolean              m_bCalculateLeftPicNum; // 计算拍照剩余张数
     boolean              m_bCanCapture;          // 检测存储容量后，判断是否可以拍照
     boolean              m_bMemoryCardExist;     // 检测是否存在存储卡
+    boolean              m_bDispHotKey;
     
     uint16               m_wMsgID;               // pop对话框，显示文本的资源ID号
     uint32               m_nMsgTimeout;           // pop对话框，自动关闭所需要的时间 
@@ -347,7 +351,9 @@ typedef struct _CCameraApp
     AEECallback          m_CallBack;
     
     CAMERACFG            m_nCameraCFG;           // camera设置
+#ifdef FEATURE_VIDEO_ENCODE
     VIDEOCFG             m_nVideoCFG;            // video设置
+#endif
     COLOREFFECTSEL       m_nColorSel;            // color设置菜单的选中的item
     CAMERASTATE          m_nCameraState;         // camera的运行状态
     
