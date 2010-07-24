@@ -2199,9 +2199,66 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
             DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
 
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+			
             return TRUE;
+		case EVT_WMS_MSG_RECEIVED_MESSAGE:
+			{
+				switch (pMe->m_currState)
+                {
+                	case WMSST_VIEWINBOXMSG:
+                        {
+							wms_cache_info_node  *pnode = NULL;
+				            uint16 wIndex=pMe->m_wCurindex;
+				            
+				            // 取消息 cache info 节点
+				            if (wIndex>=RUIM_MSGINDEX_BASE)
+				            {
+				                wIndex = wIndex - RUIM_MSGINDEX_BASE;
+				                pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, WMS_MEMORY_STORE_RUIM, wIndex);
+				            }
+				            else
+				            {
+				                pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+				            }
+				            
+				            if (NULL != pnode)
+				            {
+#ifdef FEATURE_SMS_UDH
+				                if (pnode->pItems != NULL)
+				                {
+				                    int i;
+				                    
+				                    for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+				                    {
+				                        pnode = pMe->m_CurMsgNodes[i];
+				                        
+				                        if ((NULL != pnode) &&
+				                            (pnode->msg_tag == WMS_TAG_MT_READ))
+				                        {
+				                            (void)IWMS_MsgModifyTag(pMe->m_pwms,
+				                                                    pMe->m_clientId,
+				                                                    &pMe->m_callback,
+				                                                    (void *)pMe,
+				                                                    pnode->mem_store,
+				                                                    pnode->index,
+				                                                    WMS_TAG_MT_NOT_READ);
+				                        }
+				                    }
+				                }
+ #endif
+				            }
+		
+						CLOSE_DIALOG(DLGRET_CANCELED)
+						}
+                        break;
+					default:
+						break;
+				}
+			}
+			return TRUE;
 
         case EVT_DIALOG_END:
+			
             return TRUE;
             
         case EVT_KEY_PRESS:
