@@ -3450,6 +3450,10 @@ void wms_msg_read_proc
           msg_event_info.status_info.message.msg_hdr.mem_store  = mem_store;
 #ifdef CUST_EDITION
           msg_event_info.status_info.message.msg_hdr.tag = (wms_message_tag_e_type) (ruim_sms.status);
+		  if(msg_event_info.status_info.message.msg_hdr.tag == WMS_TAG_MO_DRAFT)
+		  {
+		  	msg_event_info.status_info.message.msg_hdr.tag = WMS_TAG_MO_NOT_SENT;
+		  }
 #else
           msg_event_info.status_info.message.msg_hdr.tag = (wms_message_tag_e_type) (ruim_sms.status & 0x7);
 #endif

@@ -4345,7 +4345,7 @@ static boolean Menu_Draw(CMenuCtl * pme)
                                         Theme_Param.themeColor, 
                                         0, 
                                         IDF_RECT_FRAME);            
-#else //if 0
+//#else //if 0
         SETAEERECT( &framerect,  
             pme->m_rc.x-AEE_FRAME_SIZE,  
             pme->m_rc.y- AEE_FRAME_SIZE*2,
@@ -8170,10 +8170,17 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     }
 
     //Set pop menu rect
+    #ifdef FEATURE_VERSION_IVIO
     pme->m_rc.dx = cxMax-nFrame;
+    pme->m_rc.dy = (pme->m_cyFont+ cys)*6 + GetBottomBarHeight(pme->m_pIDisplay)+AEE_FRAME_SIZE*4;
+    pme->m_rc.x = 0;
+    pme->m_rc.y = 0;//devinfo.cyScreen - pme->m_rc.dy;
+    #else
+	pme->m_rc.dx = cxMax-nFrame;
     pme->m_rc.dy = cy;
     pme->m_rc.x = AEE_FRAME_SIZE*2;
     pme->m_rc.y = devinfo.cyScreen - pme->m_rc.dy;
+	#endif
 
     {
         uint32 wMask = IMENUCTL_GetOemProperties(po);
