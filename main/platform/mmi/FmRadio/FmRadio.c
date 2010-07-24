@@ -795,12 +795,16 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             as = (AEEAppStart*)dwParam;
             pMe->m_pDisplay = as->pDisplay;
             pMe->m_rc = as->rc;
-
             {
                 AEEDeviceInfo di; 
                 ISHELL_GetDeviceInfo(pMe->m_pShell,&di);
                 pMe->m_rc.dx = di.cxScreen;
                 pMe->m_rc.dy = di.cyScreen;
+            }
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);            
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
 
             pMe->m_bSuspending  = FALSE;
@@ -1304,6 +1308,10 @@ boolean FmRadio_AddChanListNode( sChanInfo* pChInfo)
     return FALSE;
 }
 
+int FmRadio_GetChannelTotal()
+{
+    return gFmRadio.byChannelMax;
+}
 /*==============================================================================
 º¯Êý:
        FmRadio_DeleteChanListNode

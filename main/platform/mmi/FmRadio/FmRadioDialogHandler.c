@@ -70,9 +70,9 @@ static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId);
 static void moveOperationModeTo( CFmRadio *pMe, OpModeTypeEnum newMode);
 
 static void changeChannelAnticlockwise( CFmRadio *pMe);
-static void changeChannelClockwise( CFmRadio *pMe);
-static void changeChannel( CFmRadio *pMe, int direction);
-static void setChannelTo( CFmRadio *pMe, uint16 theNewChannel);
+static boolean changeChannelClockwise( CFmRadio *pMe);
+static boolean changeChannel( CFmRadio *pMe, int direction);
+static boolean setChannelTo( CFmRadio *pMe, uint16 theNewChannel);
 static void changeVolume( CFmRadio *pMe, uint16 keyCode);
 static boolean hideMenu( CFmRadio *pMe);
 static void popTuningModeSelectMenu( CFmRadio *pMe);
@@ -900,6 +900,7 @@ __handleKeyEvent_input_channel_done__:
 #endif                   
 				{
 					pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_AUTO;
+#if 0                    
 					if(( key == AVK_DOWN) || ( key == AVK_GSENSOR_FORWARD))
 					{
 						changeChannelAnticlockwise( pMe);
@@ -908,6 +909,14 @@ __handleKeyEvent_input_channel_done__:
 					{
 						changeChannelClockwise( pMe);
 					}
+#endif
+                    if(( key == AVK_DOWN) || ( key == AVK_UP))
+                    {
+                        if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+                        {
+                            changeVolume( pMe, key);
+                        }                    
+                    }
 				}
 			}
 		}
@@ -1074,19 +1083,17 @@ static void changeChannelAnticlockwise( CFmRadio *pMe)
     changeChannel( pMe, CHANGE_CHANNEL_ANTICLOCKWISE);
 }
 
-static void changeChannelClockwise( CFmRadio *pMe)
+static boolean changeChannelClockwise( CFmRadio *pMe)
 {
-
-    changeChannel( pMe, CHANGE_CHANNEL_CLOCKWISE);
+    return changeChannel( pMe, CHANGE_CHANNEL_CLOCKWISE);
 }
 
-static void changeChannel( CFmRadio *pMe, int direction)
+static boolean changeChannel( CFmRadio *pMe, int direction)
 {
+    boolean result = TRUE;
 #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
     if( pMe->cfg.tuningMode == FM_RADIO_TUNNING_MODE_LIST)
     {
-
-		boolean result = FALSE;
 		if( direction == CHANGE_CHANNEL_ANTICLOCKWISE)
 		{
 			result = FmRadio_ChanList_EnumPrevious_WithLoop( pMe);
@@ -1098,7 +1105,7 @@ static void changeChannel( CFmRadio *pMe, int direction)
 
 		if( result)
 		{
-			setChannelTo( pMe, FmRadio_ChanList_GetCurrent_WithLoop( pMe)->wChannel);
+			result = setChannelTo( pMe, FmRadio_ChanList_GetCurrent_WithLoop( pMe)->wChannel);
         }
         else
         {
@@ -1122,7 +1129,7 @@ static void changeChannel( CFmRadio *pMe, int direction)
         {
             channel = ( UPPEST_BAND_FREQ - LOWEST_BAND_FREQ) / CHANNEL_SPACE;
         }
-        setChannelTo( pMe, channel);
+        result = setChannelTo( pMe, channel);
 
     }
     else if( pMe->cfg.tuningMode == FM_RADIO_TUNNING_MODE_AUTO)
@@ -1133,19 +1140,23 @@ static void changeChannel( CFmRadio *pMe, int direction)
         refreshChannelList( pMe, CONTINUE_TO_REFRESH_CHANNEL_LIST);
     #endif
     }
+    return result;
 }
 
-static void setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
+static boolean setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
 {
+    boolean result =FALSE;
     pMe->cfg.channel = theNewChannel;
 
 #if !defined( AEE_SIMULATOR)
     if( fm_tune_channel( (LOWEST_BAND_FREQ + CHANNEL_SPACE * pMe->cfg.channel)/100) == FM_RADIO_SUCCESSFUL)
     {
+        result = TRUE;
         pMe->ledLightType = FM_RADIO_LED_LIGHT_PLAYING;
     }
     else
     {
+        result = FALSE;
         pMe->ledLightType = FM_RADIO_LED_LIGHT_IDLE;
     }
 #endif//#if !defined( AEE_SIMULATOR)
@@ -1153,6 +1164,7 @@ static void setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
     drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
     drawChannelIndicator( pMe);
     drawLedLight( pMe);
+    return result;
 //    IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
 }
 
@@ -1162,7 +1174,7 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
     static const int limitValue[] = { 15, 0};
     static const int increment[]  = { 1, -1};
                  int theKey       = keyCode - AVK_UP;
-
+#if 0
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT)
 	if( pMe->tuneVolumeByLeftRightArrowKey)
 	{
@@ -1175,7 +1187,7 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 #elif defined( FEATURE_FMRADIO_KEY_OK_TO_MUTE)
 	theKey = keyCode == AVK_STAR ? 1 : 0;
 #endif
-
+#endif
     if( pMe->byVolumeLevel != limitValue[theKey])
     {
 
@@ -1409,7 +1421,7 @@ static void popChannelListOptionMenu( CFmRadio *pMe)
 
 static void refreshChannelList( CFmRadio *pMe, boolean begin)
 {
-
+    fm_mute(TRUE);//add by xuhui
     pMe->ledLightType = FM_RADIO_LED_LIGHT_SEARCHING;
     if( begin == BEGIN_TO_REFRESH_CHANNEL_LIST)
     {
@@ -1439,10 +1451,9 @@ static void refreshChannelList( CFmRadio *pMe, boolean begin)
 
     ISHELL_SetTimer( pMe->m_pShell, 200, refreshChannelListCB, (void*)pMe);
 }
-
+#if 1
 static void refreshChannelListCB( void *pme)
 {
-
     CFmRadio *pMe = pme;
 
 #if defined( AEE_SIMULATOR)
@@ -1470,8 +1481,124 @@ static void refreshChannelListCB( void *pme)
 
     boolean  ready                  = FALSE;
     boolean  reachBandLimit         = FALSE;
+    static   int numberOfloop       = 0;
+    static   int countSearchChanne  = 0;
+    MSG_FATAL("refreshChannelListCB Start",0,0,0);
+    fm_get_seek_status( &ready, &reachBandLimit, NULL);
+    pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_MANUAL;
+    if(((pMe->cfg.channel * CHANNEL_SPACE + LOWEST_BAND_FREQ) >= LOWEST_BAND_FREQ) && 
+        ((pMe->cfg.channel * CHANNEL_SPACE + LOWEST_BAND_FREQ) <= UPPEST_BAND_FREQ) &&
+        (countSearchChanne  < (UPPEST_BAND_FREQ - LOWEST_BAND_FREQ)/CHANNEL_SPACE) )
+    {
+        countSearchChanne++;
+        ready = TRUE;
+    }
+    else
+    {
+        countSearchChanne = 0;
+        ready = FALSE;        
+    }
+    if(ready)
+    {
+        if( changeChannelClockwise(pme))
+        {
+            if( pMe->globalSearching)
+            {
+                sChanInfo sChannelNode = {0};
+                sChannelNode.wChannel = pMe->cfg.channel;
+				if( FmRadio_AddChanListNode( &sChannelNode))
+				{
+					drawChannelIndicator( pMe);
+					//refreshChannelList( pMe, CONTINUE_TO_REFRESH_CHANNEL_LIST);
+				}
+				else // reach number limit
+				{
+					goto __refreshChannelListCB_complete;
+				}
+			}
+			else
+			{
+                goto __refreshChannelListCB_no_channel_found;
+            }
+        }
+       // else
+        {
+            //If Seek don't finish, check status after 200 ms
+            ISHELL_SetTimer( pMe->m_pShell, 200, refreshChannelListCB, (void*)pMe);
+        }
+    }
+    else
+    {
+        fm_mute(FALSE);//add by xuhui
+        //OK, Search Band Completed, tune back to pCurChanNode
+        if( pMe->globalSearching)
+        {
+__refreshChannelListCB_complete:
+            pMe->cfg.channel = 0;
+            FmRadio_ChanList_EnumInit( pMe);
+            if( FmRadio_ChanList_EnumNext( pMe))
+            {
+                //pMe->cfg.channel = FmRadio_ChanList_GetCurrent( pMe)->wChannel;
+            }
+            FmRadio_ChanList_EnumInit_WithLoop( pMe);
+            goto __refreshChannelListCB_no_channel_found;
+        }
+        else
+        {
+            numberOfloop ++;
+            if( numberOfloop > 2)
+            {
+                numberOfloop = 0;
+                goto __refreshChannelListCB_no_channel_found;
+            }
+            refreshChannelList( pMe, CONTINUE_TO_REFRESH_CHANNEL_LIST);
+        }
+
+
+__refreshChannelListCB_no_channel_found:
+        pMe->globalSearching = FALSE;
+        stopDrawRefreshListPrompt( pMe);
+        setChannelTo( pMe, pMe->cfg.channel);
+        moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+    }
+    MSG_FATAL("refreshChannelListCB End",0,0,0);
+#endif//#if !defined( AEE_SIMULATOR)
+}
+
+#else
+static void refreshChannelListCB( void *pme)
+{
+
+    CFmRadio *pMe = pme;
+    
+#if defined( AEE_SIMULATOR)
+
+    pMe->cfg.channel ++;
+
+	if( pMe->cfg.channel < FM_MAX_CHANNEL)
+    {
+        ISHELL_SetTimer(pMe->m_pShell, 200, refreshChannelListCB, (void*)pMe);
+        drawChannelIndicator( pMe);
+
+        {
+            sChanInfo   sChannelNode = {0};
+            sChannelNode.wChannel = pMe->cfg.channel;
+            FmRadio_AddChanListNode( &sChannelNode);
+        }
+
+    }
+    else
+    {
+        moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+    }
+
+#else
+
+    boolean  ready                  = FALSE;
+    boolean  reachBandLimit         = FALSE;
     word     wChannel               = 0;
     static   int numberOfloop       = 0;
+    MSG_FATAL("refreshChannelListCB Start",0,0,0);
     if( fm_get_seek_status( &ready, &reachBandLimit, &wChannel) == FM_RADIO_SUCCESSFUL)
     {
 
@@ -1553,9 +1680,10 @@ __refreshChannelListCB_no_channel_found:
         setChannelTo( pMe, pMe->cfg.channel);
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
     }
-
+    MSG_FATAL("refreshChannelListCB End",0,0,0);
 #endif//#if !defined( AEE_SIMULATOR)
 }
+#endif
 
 static void showChannelList( void* pme)
 {
@@ -1866,8 +1994,8 @@ static void paint( CFmRadio *pMe)
 	
     drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
 
-#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
-
+//#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
+#if 0
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT)
 	#if defined(FEATURE_DISP_128X128)
 		if( pMe->tuneVolumeByLeftRightArrowKey)
@@ -2128,7 +2256,7 @@ static void drawOperationPrompt( CFmRadio *pMe, int16 resId, RGBVAL color)
 
     SETAEERECT(&rect,
                         pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET + FMRADIO_LED_LIGHT_SIZE, 
-                        pMe->m_rc.y + FMRADIO_OPERATION_YOFFSET, 
+                        pMe->m_rc.y + FMRADIO_OPERATION_YOFFSET*2, 
                         pMe->m_rc.dx - 2*(FMRADIO_CHANNEL_XOFFSET + FMRADIO_LED_LIGHT_SIZE), 
                         nFontHeight);
     drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);
@@ -2244,7 +2372,8 @@ static void drawChannelIndicator( CFmRadio *pMe)
     AECHAR  szBuf[20] = {0};            //Êä³ö»º´æ
     int nFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
 
-#ifndef FEATURE_FMRADIO_SIMPLE_VERSION// draw cursor
+//#ifndef FEATURE_FMRADIO_SIMPLE_VERSION// draw cursor
+#if 0
     SETAEERECT(&rect, 
                 pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET, 
                 pMe->m_rc.y + FMRADIO_CHANNEL_YOFFSET, 
@@ -2277,11 +2406,16 @@ static void drawChannelIndicator( CFmRadio *pMe)
 #else
     // draw Channel Name, Channel Freq
     convertChannelValueToText( pMe->cfg.channel, szBuf, 40);
-    SETAEERECT(&rect, 
+/*    SETAEERECT(&rect, 
                 pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET, 
                 pMe->m_rc.y + FMRADIO_CHANNEL_FREQ_YOFFSET, 
                 pMe->m_rc.dx,
-                nFontHeight);
+                nFontHeight);*/
+    SETAEERECT(&rect, 
+                pMe->m_rc.x, 
+                pMe->m_rc.y + FMRADIO_CHANNEL_FREQ_YOFFSET, 
+                pMe->m_rc.dx,
+                nFontHeight);                
     drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);
     drawText2( pMe->m_pDisplay,
             szBuf,
@@ -2296,7 +2430,8 @@ static void drawChannelIndicator( CFmRadio *pMe)
 
 static void drawVolumeIndicator( CFmRadio *pMe)
 {
-#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
+//#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
+#if 0
     AEERect rect;
 
     // draw background
@@ -2397,7 +2532,8 @@ static void stopDrawRefreshListPrompt( CFmRadio *pMe)
 
 static void drawLedLight( CFmRadio *pMe)
 {
-#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
+//#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
+#if 0
     int nFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
     AEERect rect[] = {
             { 0, FMRADIO_LED_LIGHT_SIZE, FMRADIO_LED_LIGHT_SIZE, FMRADIO_LED_LIGHT_SIZE}, //FM_RADIO_LED_LIGHT_PLAYING, green1
