@@ -621,45 +621,46 @@ void UTK_SendTerminalProfile (void)
     /* Initialize buffer for reading CDMA service table */
     if ((uim_cmd_ptr = (uim_cmd_type*) q_get( &uim_free_q )) != NULL)
     {
-        /* Read CDMA service table */
-        
-        /* Fill up the command header info */
-        uim_cmd_ptr->hdr.command = UIM_ACCESS_F;
-        
+       /* Fill up header info */
+        uim_cmd_ptr->hdr.command = UIM_TERMINAL_PROFILE_F;
         /* Set the Protocol to CDMA */
         uim_cmd_ptr->hdr.protocol = UIM_CDMA;
-        
         /* Fill in the callback function */
         uim_cmd_ptr->hdr.rpt_function = ui_ruim_report;
-        
         /* Set the report option to always report upon completion of the cmd */
         uim_cmd_ptr->hdr.options = UIM_OPTION_ALWAYS_RPT;
-        
         /* The task and signal are set to NULL */
         uim_cmd_ptr->hdr.cmd_hdr.task_ptr = NULL;
         uim_cmd_ptr->hdr.cmd_hdr.sigs = NULL;
         
-        /* Access info */
-        uim_cmd_ptr->access_uim.item = UIM_CDMA_CDMA_SVC_TABLE;
+        /* Number of bytes sent in the command */
+        uim_cmd_ptr->terminal_profile.num_bytes =
+                  UIM_TK_TERMINAL_PROFILE_DATA_LENGTH;
         
-        /* Read Access to UIM */
-        uim_cmd_ptr->access_uim.access = UIM_READ_F;
+        /* Initialize buffer for sending terminal profile command */
+        memset (uim_cmd_ptr->terminal_profile.data, 0,
+            UIM_TK_TERMINAL_PROFILE_DATA_LENGTH);
         
-        /* Indicates the offset for read */
-        uim_cmd_ptr->access_uim.offset = 0;
-        
-        /* Buffer to return the data in */
-        uim_cmd_ptr->access_uim.data_ptr = uim_cdma_svc_table_buffer;
-        
-        /* Number of bytes to access */
-        uim_cmd_ptr->access_uim.num_bytes = UIM_CDMA_SVC_TABLE_SIZE;
+        /* Fill bit fields for command data */
+        uim_cmd_ptr->terminal_profile.data[0]  |=
+            ( UIM_TK_B1_PROFILE_DOWNLOAD | UIM_TK_B1_CDMA_SMS_PP_DOWNLOAD );
+
+        uim_cmd_ptr->terminal_profile.data[1]  |= UIM_TK_B2_COMMAND_RESULT;
+        uim_cmd_ptr->terminal_profile.data[2]  |=
+            ( UIM_TK_B3_DISPLAY_TEXT | UIM_TK_B3_GET_INKEY | UIM_TK_B3_GET_INPUT | UIM_TK_B3_MORE_TIME);
+            
+        uim_cmd_ptr->terminal_profile.data[3]  |=
+        ( UIM_TK_B4_SELECT_ITEM | UIM_TK_B4_SETUP_CALL | UIM_TK_B4_SEND_SHORT_MSG | UIM_TK_B4_SETUP_MENU);
+        uim_cmd_ptr->terminal_profile.data[4]  |=  UIM_TK_B5_SETUP_EVENT_LIST;
+        uim_cmd_ptr->terminal_profile.data[19] |=
+            ( UIM_TK_B20_CDMA_SEND_SMS | UIM_TK_B20_CDMA_SMS_PP_DOWNLOAD );
         
         /* Clear the signal */
         (void) rex_clr_sigs( &ui_tcb, UI_UIM_STATUS_SIG );
-
+        
         /* Send the command */
         uim_cmd( uim_cmd_ptr );
-
+        
         /* Wait for the command to be done */
         (void) rex_wait( UI_UIM_STATUS_SIG );
         
