@@ -446,6 +446,7 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
         //add by yangdecai
 		case WMSST_RESENDCONFIRM:
 			return WMSST_RESENDCONFIRM_Handler(pMe);
+
             
         case WMSST_EXIT:
             return WMSST_EXIT_Handler(pMe);
@@ -1927,7 +1928,60 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_DRAFT)
             }
             return NFSMACTION_CONTINUE;
+	#ifdef FEATURE_VERSION_IVIO
+        case DLGRET_RESEND:
+            pMe->m_idxCur = 0;
             
+            {// 对于重发操作不进入消息编辑界面，也不进入地址列表输入界面
+                AECHAR  *pwstrNum = NULL;
+                CMultiSendItemInfo *pItem = NULL;
+                
+                // 先清空群发地址链表
+                WmsApp_FreeMultiSendList(pMe->m_pSendList);
+                
+                // 拷贝地址 
+                DBGPRINTF("pMe->m_msCur.m_szNum::::::%d",pMe->m_msCur.m_szNum);
+				DBGPRINTF("pMe->m_msCur.msg_tag:::::::::%d",pMe->m_msCur.msg_tag);
+				pMe->m_msCur.msg_tag = WMS_TAG_MO_NOT_SENT;
+                if (WSTRLEN(pMe->m_msCur.m_szNum)>0)
+                {
+                    pwstrNum = pMe->m_msCur.m_szNum;
+                }
+                else
+                {
+                    // 状态不发生迁移
+                    DBGPRINTF("pMe->m_msCur.m_szNum::::::NFSMACTION_CONTINUE");
+					pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, IDS_NO_PHONENUMBER);
+                    return NFSMACTION_WAIT;
+                    
+                }
+                
+                pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                    
+                // 将回复号码保存入链表
+                if ((pItem == NULL) || 
+                    (SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem)))
+                {// 空号码无法回复
+                    if (NULL != pItem)
+                    {
+                        sys_free(pItem);
+                    }
+                    
+                    // 状态不发生迁移
+                    return NFSMACTION_CONTINUE;
+                }
+                (void)WSTRCPY(pItem->m_szTo, pwstrNum);
+                pMe->m_CurAddID = MSG_CMD_BASE;
+                
+                // 从电话本中取人名, 用于提示
+                WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
+            }
+            
+            pMe->m_eCreateWMSType = SEND_MSG_RESEND;
+            MOVE_TO_STATE(WMSST_SENDING)
+            return NFSMACTION_CONTINUE;
+#endif
         case DLGRET_EDIT:          // DLGRET_FORWARD
             // 清空群发地址链表
             WmsApp_FreeMultiSendList(pMe->m_pSendList);
@@ -3449,6 +3503,14 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
                 WmsApp_FreeMultiSendList(pMe->m_pSendList);
                 
                 // 拷贝地址 
+ 
+				if((int)WMS_TAG_MO_SENT == pMe->m_msCur.msg_tag)
+				{
+					// 状态不发生迁移
+					pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, IDS_SENT);
+                    return NFSMACTION_WAIT;
+				}
                 if (WSTRLEN(pMe->m_msCur.m_szNum)>0)
                 {
                     pwstrNum = pMe->m_msCur.m_szNum;
@@ -3483,6 +3545,7 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
             pMe->m_eCreateWMSType = SEND_MSG_RESEND;
             MOVE_TO_STATE(WMSST_SENDING)
             return NFSMACTION_CONTINUE;
+
             
         default:
             // 用退出程序代替宏断言
@@ -5964,6 +6027,10 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe)
 	
 	
 }  //WMSST_RESENDCONFIRM_Handler
+
+
+
+
 //add by yangdecai end 
 /*==============================================================================
 函数:

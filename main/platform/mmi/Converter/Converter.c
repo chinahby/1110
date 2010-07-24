@@ -883,7 +883,7 @@ static void Converter_SetMenuPosition(CConverter *pMe)
     SETAEERECT(&rect, 
                         pMe->m_rc.x + ARROW_WIDTH + FRAME_SIZE, 
                         //TITLEBAR_HEIGHT + FRAME_SIZE, 
-                        pMe->m_rc.y + TITLEBAR_HEIGHT + FRAME_SIZE, 	//Add By zzg 2010_07_08
+                        pMe->m_rc.y + TITLEBAR_HEIGHT/2 + FRAME_SIZE, 	//Add By zzg 2010_07_08
                         pMe->m_rc.dx - (2*(ARROW_WIDTH + FRAME_SIZE)), 
                         pMe->dyMenu - 2*FRAME_SIZE);
     IMENUCTL_SetRect(pMe->pUnitMenu1, &rect);
@@ -909,7 +909,7 @@ static void Converter_SetMenuPosition(CConverter *pMe)
 	rect.dy -= 5*FRAME_SIZE;					//Add By zzg 2010_07_07
 	    
     rect.x += ARROW_WIDTH;
-    rect.y = pMe->m_rc.y + TITLEBAR_HEIGHT + FRAME_SIZE;
+    rect.y = pMe->m_rc.y + TITLEBAR_HEIGHT/2 + FRAME_SIZE;
     rect.dx = pMe->m_rc.dx - (2*ARROW_WIDTH) - 2*FRAME_SIZE;		
     IMENUCTL_SetRect(pMe->title, &rect);
         
@@ -917,11 +917,11 @@ static void Converter_SetMenuPosition(CConverter *pMe)
     //rect.y += pMe->dyMenu;    
     rect.y += pMe->dyMenu - FRAME_SIZE;   		//Add By zzg 2010_07_08
     rect.dx = pMe->m_rc.dx;
-    rect.dy = pMe->m_rc.dy - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT - pMe->dyMenu - STATUSBAR_HEIGHT;
+    rect.dy = pMe->m_rc.dy - TITLEBAR_HEIGHT/2 - BOTTOMBAR_HEIGHT - pMe->dyMenu - STATUSBAR_HEIGHT;
     IMENUCTL_SetRect(pMe->currency, &rect);
 
     rect.x += FRAME_SIZE;
-    rect.y = pMe->m_rc.y + TITLEBAR_HEIGHT + 2*pMe->dyMenu + FRAME_SIZE;
+    rect.y = pMe->m_rc.y + TITLEBAR_HEIGHT/2 + 2*pMe->dyMenu + FRAME_SIZE;
     rect.dx = pMe->m_rc.dx - SCROLLBAR_WIDTH - 2*FRAME_SIZE;
     rect.dy = pMe->dyMenu - 2*FRAME_SIZE;	
     rect.y -= 3*FRAME_SIZE;						//Add By zzg 2010_07_08

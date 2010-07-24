@@ -786,8 +786,8 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 //IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
 
 				//Add By zzg 2010_07_08
-                IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE);
-                IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE);
+                IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE);
+                IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE);
                 //Add End
                 IIMAGE_Release(Image);
             }
@@ -799,8 +799,8 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 //IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
 
 				//Add By zzg 2010_07_08
-				IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE);
-                IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE);
+				IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE);
+                IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE);
                 //Add End
 				IIMAGE_Release(Image);
             }
@@ -853,7 +853,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             //更新高亮显示
             SETAEERECT(&rect, 
                                 pMe->m_rc.x, 
-                                pMe->m_rc.y + TITLEBAR_HEIGHT + ((int)pMe->m_nCtlID - 2)*pMe->dyMenu, 
+                                pMe->m_rc.y + TITLEBAR_HEIGHT/2 + ((int)pMe->m_nCtlID - 2)*pMe->dyMenu, 
                                 pMe->m_rc.dx, 
                                 pMe->dyMenu);
 			/*
@@ -1535,10 +1535,10 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
 			#endif
             //画箭头
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
-            IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2);
+            IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
 
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
-            IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2);
+            IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
             if(Image)
             {
                 IIMAGE_Release(Image);
@@ -1568,7 +1568,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             //更新高亮显示
             SETAEERECT(&rect, 
                                 pMe->m_rc.x, 
-                                pMe->m_rc.y + TITLEBAR_HEIGHT, 
+                                pMe->m_rc.y + TITLEBAR_HEIGHT/2, 
                                 pMe->m_rc.dx, 
                                 pMe->dyMenu);
             if(pMe->m_nCtlID == basicCurrency)

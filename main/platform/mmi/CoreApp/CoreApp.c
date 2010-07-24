@@ -536,7 +536,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE;
 
         case EVT_AUTO_POWERDOWN:
-            CORE_ERR("EVT_AUTO_POWERDOWN w= %d dw= %d",wParam,dwParam,0);
+            //CORE_ERR("EVT_AUTO_POWERDOWN w= %d dw= %d",wParam,dwParam,0);
 #ifdef FEATRUE_AUTO_POWER
             if(wParam == 1)
             {
@@ -550,7 +550,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE; 
 
         case EVT_NEWMSGIN:
-            CORE_ERR("EVT_NEWMSGIN w= %d dw= %d",wParam,dwParam);
+            //CORE_ERR("EVT_NEWMSGIN w= %d dw= %d",wParam,dwParam);
             if(dwParam != 0)
             {
                 if(pMe->m_cdg_msgptr == NULL)
@@ -715,7 +715,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         case EVT_NOTIFY:
             if(((AEENotify *)dwParam)->cls == AEECLSID_ALERT_NOTIFIER)
             {
-                CORE_ERR("AEECLSID_ALERT_NOTIFIER %x",wParam,0,0);
+                //CORE_ERR("AEECLSID_ALERT_NOTIFIER %x",wParam,0,0);
                 switch(wParam)
                 {
                     case NMASK_ALERT_ONOFF:
@@ -800,12 +800,12 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                                       pMe);
             }
             
-            CORE_ERR("EVT_SENDREGINFOR",0,0,0);
+            //CORE_ERR("EVT_SENDREGINFOR",0,0,0);
             return TRUE;
             
         // 发送注册短信状态报告事件
         case EVT_SENDSTATUS:
-            CORE_ERR("EVT_SENDSTATUS",0,0,0);
+            //CORE_ERR("EVT_SENDSTATUS",0,0,0);
             if (dwParam != SUCCESS)
             {// 发送注册短信失败
                 // 设置发送注册短信的定时器函数
@@ -818,7 +818,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             
         //收到注册确认短信
         case EVT_UPDATEREGSTATUS:
-            CORE_ERR("----Reg--%d-",wParam,0,0);
+            //CORE_ERR("----Reg--%d-",wParam,0,0);
             if (wParam != 0)
             {
                 IdleAPP_Config_Type cfg;
@@ -850,7 +850,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                                       pMe);
             }
             
-            CORE_ERR("EVT_SEND_SEAMLESSSMS",0,0,0);
+            //CORE_ERR("EVT_SEND_SEAMLESSSMS",0,0,0);
             return TRUE;
 #endif
 
@@ -925,7 +925,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             break;
         case EVT_SET_OPERATING_MODE:
-            CORE_ERR("EVT_SET_OPERATING_MODE %d", wParam, 0, 0);
+            //CORE_ERR("EVT_SET_OPERATING_MODE %d", wParam, 0, 0);
             ICM_SetOperatingMode(pMe->m_pCM, (AEECMOprtMode)wParam);
             break;
             
@@ -1118,7 +1118,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                             bUpdate = TRUE;                        
                             pMe->m_SYS_MODE_NO_SRV = FALSE;
                         }
-                        CORE_ERR("ANNUN_FIELD_RSSI %d rssi= %d",pMe->m_SYS_MODE_NO_SRV,pEvtInfo->event_data.ss.ss_info.rssi);
+                        
                         {
                             if(pMe->m_pIAnn != NULL)
                             {
@@ -1217,6 +1217,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                 case AEECM_EVENT_PH_INFO_AVAIL:
                     /* If phone info is available, do not wait for PH_INFO_AVAIL event for
                      * starting provisioning */
+                     DBGPRINTF("DAIL..................0000000000");
                     if (!pMe->m_bProvisioned) {
                        InitAfterPhInfo(pMe, pEvtInfo->event_data.ph.oprt_mode);
                     }
@@ -1320,7 +1321,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
     {
         return FALSE;
     }
-    CORE_ERR("CoreApp_HandleBattNotify %x",pNotify->dwMask);
+    //CORE_ERR("CoreApp_HandleBattNotify %x",pNotify->dwMask);
     switch (pNotify->dwMask) 
     {
         // 外部电源接入或拔除
@@ -2193,7 +2194,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
     AEEMobileInfo     mi;
     IWmsApp *pIWmsApp = NULL;
     AECHAR  wstrType[2] = {(AECHAR)POWERUP_REGISTER_CHINAUNICOM, 0};
-    CORE_ERR("START CoreApp_SendReginfo",0,0,0);
+    //CORE_ERR("START CoreApp_SendReginfo",0,0,0);
     
     if (pMe == NULL)
     {
@@ -2244,7 +2245,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
         IWmsApp_Release(pIWmsApp);
     }
     
-    CORE_ERR("END CoreApp_SendReginfo",0,0,0);
+    //CORE_ERR("END CoreApp_SendReginfo",0,0,0);
     return result;
 }   
 #endif
@@ -2273,7 +2274,7 @@ int CoreApp_SendSeamlessSMS(CCoreApp   *pMe)
     AEEMobileInfo     mi;
     IWmsApp *pIWmsApp = NULL;
     AECHAR  wstrType[2] = {(AECHAR)POWERUP_REGISTER_SEAMLESSSMS, 0};
-    CORE_ERR("START CoreApp_SendSeamlessSMS",0,0,0);
+    //CORE_ERR("START CoreApp_SendSeamlessSMS",0,0,0);
     
     if (pMe == NULL)
     {
@@ -2296,7 +2297,7 @@ int CoreApp_SendSeamlessSMS(CCoreApp   *pMe)
         IWmsApp_Release(pIWmsApp);
     }
     
-    CORE_ERR("END CoreApp_SendSeamlessSMS",0,0,0);
+    //CORE_ERR("END CoreApp_SendSeamlessSMS",0,0,0);
     return result;
 }   
 
@@ -2503,7 +2504,7 @@ boolean SetRTREConfig(CCoreApp *pMe, uint64 nNewSetting)
   int retVal;
   
   if (pMe == NULL) {
-    CORE_ERR("pMe is Null", 0, 0, 0);
+    //CORE_ERR("pMe is Null", 0, 0, 0);
     return FALSE;
   }
 
@@ -2574,7 +2575,7 @@ void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode)
 {
   if (pMe == NULL)
   {
-    CORE_ERR("Null pMe",0,0,0);
+    //CORE_ERR("Null pMe",0,0,0);
     return;
   }
   DBGPRINTF("InitAfterPhInfo %d",mode,0,0);
@@ -2618,7 +2619,7 @@ SIDE EFFECTS:
 =============================================================================*/
 void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe)
 {
-  CORE_ERR("CoreApp_ProcessSubscriptionStatus", 0, 0, 0);
+  //CORE_ERR("CoreApp_ProcessSubscriptionStatus", 0, 0, 0);
   ICM_SetSubscriptionStatus(pMe->m_pCM, AEECM_SYS_MODE_CDMA, TRUE);
 }
 
@@ -2636,10 +2637,10 @@ boolean CoreApp_ProcessOffLine(CCoreApp *pMe)
 {
   if (pMe == NULL)
   {
-     CORE_ERR("Null pMe Ptr", 0, 0, 0);
+     //CORE_ERR("Null pMe Ptr", 0, 0, 0);
      return FALSE;
   }
-  CORE_ERR("CoreApp_ProcessOffLine", 0, 0, 0);
+  //CORE_ERR("CoreApp_ProcessOffLine", 0, 0, 0);
   return TRUE;
 
 }
@@ -2659,10 +2660,10 @@ static boolean CoreApp_ProcessFTMMode(CCoreApp *pMe)
 #if defined (FEATURE_APP_FLDDBG)
     // Launch the debug screen of the field debug app.
     if((ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_FIELDDEBUGAPP, "FTM")) != AEE_SUCCESS) {
-        CORE_ERR("Could not start FldDbg App", 0, 0, 0);
+        //CORE_ERR("Could not start FldDbg App", 0, 0, 0);
     }
 #endif
-    CORE_ERR("CoreApp_ProcessFTMMode", 0, 0, 0);
+    //CORE_ERR("CoreApp_ProcessFTMMode", 0, 0, 0);
     return TRUE;
 }
 

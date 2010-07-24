@@ -3356,19 +3356,7 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
                 // 获取消息数
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
-				#ifdef FEATURE_SUPPORT_ID
-                //add by yangdecai
-                temp = nNewsSMS;
-                nNewsSMS = nNewsSMS/LONGSMS_MAX_PACKAGES;
-				i = temp%LONGSMS_MAX_PACKAGES;
-				if(i>0)
-				{
-					nNewsSMS ++;
-				}
-				#endif
-				
-                //add end
-                
+
                 if (nNewsVmail > 0)
                 {
                     // 从资源文件取消息内容
@@ -4179,10 +4167,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     // Display the string of date or time or weekday
 	#if 1
 	{
+		rc.y = 20;
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
-	                              16,
+	                              18,
 	                              wszDate, -1,
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
@@ -4279,7 +4268,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
-                                  10,
+                                  12,
                                   &wszDate[0], -1,
                                   0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE

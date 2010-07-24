@@ -866,13 +866,6 @@ static boolean IDD_MAIN_Handler(void        *pUser,
 				//add by yangdecai 
 				// 更新链表序号
     			wms_cacheinfolist_updatexuhao(WMS_MB_INBOX);
-				temp = nNews;
-				nNews =  nNews/LONGSMS_MAX_PACKAGES;
-				i = temp%LONGSMS_MAX_PACKAGES;
-				if(i>0)
-				{
-					nNews ++;
-				}
 				pList = wms_get_cacheinfolist(WMS_MB_INBOX);
                 if (NULL != pList)
                 {
@@ -5918,7 +5911,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 else if (pMe->m_SendOPT != SENDOPT_SEND)
                 {// 消息需保存
                     int nRet;
-                    #if 0
+                  
                     // 保存消息
                     nRet = IWMS_MsgWrite(pMe->m_pwms, 
                                         pMe->m_clientId, 
@@ -5931,7 +5924,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                     {
                         bSetTimer = FALSE;
                     }
-					#endif
+					
                 }
                 
                 if (bSetTimer)
@@ -8647,13 +8640,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         // 设置菜单属性
                         IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
 
-                        IMENUCTL_GetRect(pMe->m_pMenu, &rc);
-                        Temprc.y = rc.y+8;
-                        Temprc.x = rc.x;
-                        Temprc.dx = rc.dx;
-                        Temprc.dy = rc.dy-8;
-                        IMENUCTL_SetRect(pMe->m_pMenu, &Temprc);
-                        
                         IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
                         IMENUCTL_SetBottomBarType(pMe->m_pMenu,BTBAR_SELECT_BACK);
                         
@@ -9443,6 +9429,9 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                         {
                             MENU_ADDITEM(pMenu, IDS_VIEW);
                         }
+						#ifdef FEATURE_VERSION_IVIO
+						MENU_ADDITEM(pMenu, IDS_RESEND);
+						#endif
                         MENU_ADDITEM(pMenu, IDS_EDIT);
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                         MENU_ADDITEM(pMenu, IDS_DELETEALL);
@@ -9480,12 +9469,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                 }
             }
             IMENUCTL_SetPopMenuRect(pMenu);
-			IMENUCTL_GetRect(pMenu, &rc);
-            Temprc.y = rc.y+8;
-            Temprc.x = rc.x;
-            Temprc.dx = rc.dx;
-            Temprc.dy = rc.dy-8;
-            IMENUCTL_SetRect(pMenu, &Temprc);
+			
             IMENUCTL_SetProperties(pMenu,MP_BIND_ITEM_TO_NUMBER_KEY|MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,

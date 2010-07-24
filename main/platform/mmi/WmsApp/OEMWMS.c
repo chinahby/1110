@@ -6398,17 +6398,47 @@ static int wms_cacheinfolist_insertsort(wms_cache_info_list *plist,
                     }
                     else
                     {
-                        plist->nNews++;
+                    	if(pnode->total_sm>0)
+						{
+							if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+							{
+								plist->nNews++;
+							}
+						}
+						else
+						{
+							plist->nNews++;
+						}
                     }
                 }
                 else if ((pnode->msg_tag == WMS_TAG_PHRASE) &&
                          (pnode->index >= PHRASE_START+MAX_OEMTEMPLATES))
                 {// 常用语用 nNews 表示用户新添加的常语数，不含内置修改而得的常语
-                    plist->nNews++;
+	                if(pnode->total_sm>0)
+					{
+						if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+						{
+							plist->nNews++;
+						}
+					}
+					else
+					{
+						plist->nNews++;
+					}
                 }
                 else if (pnode->msg_tag == WMS_TAG_RESERVE)
                 {
-                    plist->nNews++;
+	                if(pnode->total_sm>0)
+					{
+						if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+						{
+							plist->nNews++;
+						}
+					}
+					else
+					{
+						plist->nNews++;
+					}
                 }
                 
                 return SUCCESS;
@@ -6522,17 +6552,47 @@ INSERTSORT_EXIT:
         }
         else
         {
-            plist->nNews++;
+            if(pnode->total_sm>0)
+			{
+				if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+				{
+					plist->nNews++;
+				}
+			}
+			else
+			{
+				plist->nNews++;
+			}
         }
     }
     else if ((pnode->msg_tag == WMS_TAG_PHRASE) &&
              (pnode->index >= PHRASE_START+MAX_OEMTEMPLATES))
     {// 常用语用 nNews 表示用户新添加的常语数，不含内置修改而得的常语
-        plist->nNews++;
+		 if(pnode->total_sm>0)
+		{
+			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+			{
+				plist->nNews++;
+			}
+		}
+		else
+		{
+			plist->nNews++;
+		}
     }
     else if (pnode->msg_tag == WMS_TAG_RESERVE)
     {
-        plist->nNews++;
+         if(pnode->total_sm>0)
+		{
+			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+			{
+				plist->nNews++;
+			}
+		}
+		else
+		{
+			plist->nNews++;
+		}
     }
     
     if (pnode->mem_store == WMS_MEMORY_STORE_RUIM)
@@ -6690,17 +6750,47 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
                     }
                     else
                     {
-                        plist->nNews--;
+                    	if(pnode->total_sm>0)
+						{
+							if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+							{
+                        		plist->nNews--;
+							}
+                    	}
+						else
+						{
+							plist->nNews--;
+						}
                     }
                 }
                 else if ((pnode->msg_tag == WMS_TAG_PHRASE) &&
                          (pnode->index >= PHRASE_START+MAX_OEMTEMPLATES))
                 {// 常用语用 nNews 表示用户新添加的常语数，不含内置修改而得的常语
-                    plist->nNews--;
+                    if(pnode->total_sm>0)
+					{
+						if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+						{
+                    		plist->nNews--;
+						}
+                	}
+					else
+					{
+						plist->nNews--;
+					}
                 }
                 else if (pnode->msg_tag == WMS_TAG_RESERVE)
                 {
-                    plist->nNews--;
+                    if(pnode->total_sm>0)
+					{
+						if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+						{
+                    		plist->nNews--;
+						}
+                	}
+					else
+					{
+						plist->nNews--;
+					}
                 }
                 
                 if (pnode->mem_store == WMS_MEMORY_STORE_RUIM)
@@ -6780,16 +6870,46 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
     }
     else if (pnode->msg_tag == WMS_TAG_MT_NOT_READ)
     {
-        plist->nNews--;
+        if(pnode->total_sm>0)
+		{
+			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+			{
+        		plist->nNews--;
+			}
+    	}
+		else
+		{
+			plist->nNews--;
+		}
     }
     else if (pnode->msg_tag == WMS_TAG_RESERVE)
     {
-        plist->nNews--;
+        if(pnode->total_sm>0)
+		{
+			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+			{
+        		plist->nNews--;
+			}
+    	}
+		else
+		{
+			plist->nNews--;
+		}
     }
     else if ((pnode->msg_tag == WMS_TAG_PHRASE) &&
              (pnode->index >= PHRASE_START+MAX_OEMTEMPLATES))
     {// 常用语用 nNews 表示用户新添加的常语数，不含内置修改而得的常语
-        plist->nNews--;
+        if(pnode->total_sm>0)
+		{
+			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+			{
+        		plist->nNews--;
+			}
+    	}
+		else
+		{
+			plist->nNews--;
+		}
     }
     
     if (pnode->mem_store == WMS_MEMORY_STORE_RUIM)
@@ -7983,13 +8103,33 @@ boolean wms_cacheinfolist_updatenodetag(wms_memory_store_e_type mem_store,
                         }
                         else
                         {
-                            pList->nNews--;
+                            if(pItemNode->total_sm>0)
+							{
+								if(pItemNode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+								{
+		                    		pList->nNews--;
+								}
+		                	}
+							else
+							{
+								pList->nNews--;
+							}
                         }
                     }
                     else if ((pItemNode->msg_tag == WMS_TAG_RESERVE) &&
                         (pItemNode->msg_tag != newtag))
                     {
-                        pList->nNews--;
+                        if(pItemNode->total_sm>0)
+						{
+							if(pItemNode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+							{
+                        		pList->nNews--;
+							}
+                    	}
+						else
+						{
+							pList->nNews--;
+						}
                     }
                     
                     pItemNode->msg_tag = newtag;
@@ -8010,13 +8150,33 @@ boolean wms_cacheinfolist_updatenodetag(wms_memory_store_e_type mem_store,
                 }
                 else
                 {
-                    pList->nNews--;
+                    if(pnode->total_sm>0)
+					{
+						if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+						{
+                    		pList->nNews--;
+						}
+                	}
+					else
+					{
+						pList->nNews--;
+					}
                 }
             }
             else if ((pnode->msg_tag == WMS_TAG_RESERVE) &&
                      (pnode->msg_tag != newtag))
             {
-                pList->nNews--;
+                if(pnode->total_sm>0)
+				{
+					if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
+					{
+                		pList->nNews--;
+					}
+            	}
+				else
+				{
+					pList->nNews--;
+				}
             }
             
             pnode->msg_tag = newtag;

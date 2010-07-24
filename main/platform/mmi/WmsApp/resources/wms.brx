@@ -514,6 +514,12 @@
 	<String Id="177" Name="IDS_FAILED_RESENDING">
 		<Text>Failed,Whether to re-send?</Text>
 	</String>
+	<String Id="178" Name="IDS_NO_PHONENUMBER">
+		<Text>Phone number is NULL,Can't resend!</Text>
+	</String>
+	<String Id="179" Name="IDS_SENT">
+		<Text>The SMS has been sent</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
