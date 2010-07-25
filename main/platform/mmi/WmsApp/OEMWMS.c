@@ -6754,12 +6754,18 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
 						{
 							if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 							{
-                        		plist->nNews--;
+                        		if(plist->nNews>0)
+								{
+	                    			plist->nNews--;
+								}
 							}
                     	}
 						else
 						{
-							plist->nNews--;
+							if(plist->nNews>0)
+							{
+                    			plist->nNews--;
+							}
 						}
                     }
                 }
@@ -6770,12 +6776,18 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
 					{
 						if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 						{
-                    		plist->nNews--;
+							if(plist->nNews>0)
+							{
+                    			plist->nNews--;
+							}
 						}
                 	}
 					else
 					{
-						plist->nNews--;
+						if(plist->nNews>0)
+						{
+                			plist->nNews--;
+						}
 					}
                 }
                 else if (pnode->msg_tag == WMS_TAG_RESERVE)
@@ -6784,12 +6796,18 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
 					{
 						if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 						{
-                    		plist->nNews--;
+                    		if(plist->nNews>0)
+							{
+                    			plist->nNews--;
+							}
 						}
                 	}
 					else
 					{
-						plist->nNews--;
+						if(plist->nNews>0)
+						{
+                			plist->nNews--;
+						}
 					}
                 }
                 
@@ -6874,12 +6892,18 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
 		{
 			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 			{
-        		plist->nNews--;
+        		if(plist->nNews>0)
+				{
+        			plist->nNews--;
+				}
 			}
     	}
 		else
 		{
-			plist->nNews--;
+			if(plist->nNews>0)
+			{
+    			plist->nNews--;
+			}
 		}
     }
     else if (pnode->msg_tag == WMS_TAG_RESERVE)
@@ -6888,12 +6912,18 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
 		{
 			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 			{
-        		plist->nNews--;
+        		if(plist->nNews>0)
+				{
+        			plist->nNews--;
+				}
 			}
     	}
 		else
 		{
-			plist->nNews--;
+			if(plist->nNews>0)
+			{
+    			plist->nNews--;
+			}
 		}
     }
     else if ((pnode->msg_tag == WMS_TAG_PHRASE) &&
@@ -6903,12 +6933,18 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
 		{
 			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 			{
-        		plist->nNews--;
+        		if(plist->nNews>0)
+				{
+        			plist->nNews--;
+				}
 			}
     	}
 		else
 		{
-			plist->nNews--;
+			if(plist->nNews>0)
+			{
+    			plist->nNews--;
+			}
 		}
     }
     
@@ -6926,6 +6962,7 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
     sys_free(pnode);
     
     plist->nCount--;
+	plist->nBranches = 0;
     return SUCCESS;
 }
 
@@ -8107,28 +8144,41 @@ boolean wms_cacheinfolist_updatenodetag(wms_memory_store_e_type mem_store,
 							{
 								if(pItemNode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 								{
-		                    		pList->nNews--;
+		                    		if(pList->nNews>0)
+									{
+		                    			pList->nNews--;
+									}
 								}
 		                	}
 							else
 							{
-								pList->nNews--;
+								if(pList->nNews>0)
+								{
+		                			pList->nNews--;
+								}
 							}
                         }
                     }
                     else if ((pItemNode->msg_tag == WMS_TAG_RESERVE) &&
                         (pItemNode->msg_tag != newtag))
                     {
+                    
                         if(pItemNode->total_sm>0)
 						{
 							if(pItemNode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 							{
-                        		pList->nNews--;
+                        		if(pList->nNews>0)
+								{
+			            			pList->nNews--;
+								}
 							}
                     	}
 						else
 						{
-							pList->nNews--;
+							if(pList->nNews>0)
+							{
+                    			pList->nNews--;
+							}
 						}
                     }
                     
@@ -8154,12 +8204,18 @@ boolean wms_cacheinfolist_updatenodetag(wms_memory_store_e_type mem_store,
 					{
 						if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 						{
-                    		pList->nNews--;
+                    		if(pList->nNews>0)
+							{
+                    			pList->nNews--;
+							}
 						}
                 	}
 					else
 					{
-						pList->nNews--;
+						if(pList->nNews>0)
+						{
+                			pList->nNews--;
+						}
 					}
                 }
             }
@@ -8170,12 +8226,18 @@ boolean wms_cacheinfolist_updatenodetag(wms_memory_store_e_type mem_store,
 				{
 					if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 					{
-                		pList->nNews--;
+                		if(pList->nNews>0)
+						{
+                			pList->nNews--;
+						}
 					}
             	}
 				else
 				{
-					pList->nNews--;
+					if(pList->nNews>0)
+					{
+            			pList->nNews--;
+					}
 				}
             }
             
