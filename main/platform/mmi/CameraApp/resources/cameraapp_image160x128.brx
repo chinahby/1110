@@ -121,6 +121,12 @@
 	<Object Id="5040" Name="IDI_FRAME_1">
 		<File>..\..\Appscommon\images\160x128\CameraApp\frame1.png</File>
 	</Object>
+	<Object Id="5041" Name="IDI_RESET">
+		<File>..\..\Appscommon\images\160x128\CameraApp\Reset.png</File>
+	</Object>
+	<Object Id="5042" Name="IDI_HOTKEY">
+		<File>..\..\Appscommon\images\160x128\CameraApp\Hotkey.png</File>
+	</Object>
 	<Object Id="5048" Name="IDI_SCROLLBAR">
 		<File>..\..\Appscommon\images\160x128\CameraApp\scrollbar.png</File>
 	</Object>

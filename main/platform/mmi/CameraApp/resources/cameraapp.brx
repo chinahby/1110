@@ -143,10 +143,10 @@
 		<Text>3-Capture mode</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_HOTKEY_TONE">
-		<Text>4-Shutter tone</Text>
+		<Text>2-Shutter tone</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_HOTKEY_ENVIR">
-		<Text>5-Environment</Text>
+		<Text>3-Environment</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_HOTKEY_FRAME">
 		<Text>6-Add frame</Text>
@@ -155,7 +155,7 @@
 		<Text>7-Color effect</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_HOTKEY_SELFTIME">
-		<Text>8-Self timer</Text>
+		<Text>4-Self timer</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_HOTKEY_ZOOM">
 		<Text>Up/Down-Zoom</Text>

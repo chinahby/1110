@@ -4782,22 +4782,34 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
     if(pme->m_dwOemProps & OEMMP_GRAPHIC_UNDERLINE)
     {
         IImage*              underline;
-        
-        if(pme->SetPopMenu == TRUE) {
+
+		/*
+        if(pme->SetPopMenu == TRUE)
+		{
             underline = ISHELL_LoadResImage(pme->m_pIShell, 
                                            AEE_APPSCOMMONRES_IMAGESFILE,
                                            IDI_UNDERLINE_SHORT);
         }
-        else if(IS_PROP_SET(pme->m_dwProps, MP_TRANSPARENT_UNSEL)) {
+        else if(IS_PROP_SET(pme->m_dwProps, MP_TRANSPARENT_UNSEL)) 
+		{
             underline = ISHELL_LoadResImage(pme->m_pIShell, 
                                            AEE_APPSCOMMONRES_IMAGESFILE,
                                            IDI_UNDERLINE_SHORT);   
         }
-        else {
+        else 
+		{
             underline = ISHELL_LoadResImage(pme->m_pIShell, 
                                            AEE_APPSCOMMONRES_IMAGESFILE,
                                            IDI_UNDERLINE);
         }
+        */
+       	//Add By zzg 2010_07_25
+        underline = ISHELL_LoadResImage(pme->m_pIShell, 
+                                           AEE_APPSCOMMONRES_IMAGESFILE,
+                                           IDI_UNDERLINE);
+
+	   //Add End
+		
         
         if(NULL != underline)
         {

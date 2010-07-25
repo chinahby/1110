@@ -143,10 +143,10 @@
 		<Text>3-โหมดจับภาพ</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_HOTKEY_TONE">
-		<Text>4-เสียงชัตเตอร์</Text>
+		<Text>2-เสียงชัตเตอร์</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_HOTKEY_ENVIR">
-		<Text>5-แวดล้อม</Text>
+		<Text>3-แวดล้อม</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_HOTKEY_FRAME">
 		<Text>6-เพิ่มกรอบ</Text>
@@ -155,7 +155,7 @@
 		<Text>7-สีเอฟเฟคท์</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_HOTKEY_SELFTIME">
-		<Text>8-เวลา</Text>
+		<Text>4-เวลา</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_HOTKEY_ZOOM">
 		<Text>ขึ้น/ลง-ซูม</Text>

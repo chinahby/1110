@@ -693,6 +693,8 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     pMe->m_bMemoryCardExist = CameraApp_FindMemoryCardExist(pMe);
                     
                     // 如果T卡不存在，defualt保存在手机里
+
+					/*
                     if(!pMe->m_bMemoryCardExist)
                     {
                         pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
@@ -709,6 +711,22 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                                               &pMe->m_nCameraSize,
                                               sizeof(pMe->m_nCameraSize)); 
                     }
+                    */
+                    //Add By zzg 2010_07_25
+                    pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
+                        
+                    pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
+
+                    (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                          CFGI_CAMERA_STORAGE,
+                                          &pMe->m_nCameraStorage,
+                                          sizeof(pMe->m_nCameraStorage));  
+
+                    (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                          CFGI_CAMERA_SIZE,
+                                          &pMe->m_nCameraSize,
+                                          sizeof(pMe->m_nCameraSize)); 
+                    //Add End
          
                     CLOSE_DIALOG(DLGRET_POPMSG);
                     break;
@@ -913,7 +931,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 
             if(!pMe->m_bCameraHideIcon)
             {
-                CameraApp_DrawTopBar(pMe);
+                //CameraApp_DrawTopBar(pMe);
             }
             
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -950,15 +968,17 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             {
                 case AVK_0:
                     return TRUE;
-                    
+
+				/*	
                 case AVK_1:
                     return CameraApp_HotKeyAVK_1_QualityHandleEvent(pMe, eCode, wParam, dwParam);
                     
                 case AVK_2:
                     return CameraApp_HotKeyAVK_2_ChooseHandleEvent(pMe, eCode, wParam, dwParam);
-                    
+
+					
                 case AVK_3:
-                    return CameraApp_HotKeyAVK_3_CaptureHandleEvent(pMe, eCode, wParam, dwParam);
+                    return CameraApp_HotKeyAVK_3_CaptureHandleEvent(pMe, eCode, wParam, dwParam);                   
                     
                 case AVK_4:
                     return CameraApp_HotKeyAVK_4_ShutterToneHandleEvent(pMe, eCode, wParam, dwParam);
@@ -974,7 +994,22 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     
                 case AVK_8:
                     return CameraApp_HotKeyAVK_8_SelfTimeHandleEvent(pMe, eCode, wParam, dwParam);
+                    */
 
+				//Add By zzg 2010_07_25
+				case AVK_1:
+                    return CameraApp_HotKeyAVK_1_QualityHandleEvent(pMe, eCode, wParam, dwParam);
+                    
+                case AVK_2:
+                    return CameraApp_HotKeyAVK_4_ShutterToneHandleEvent(pMe, eCode, wParam, dwParam);
+                    
+                case AVK_3:
+                    return CameraApp_HotKeyAVK_5_EnvironmentHandleEvent(pMe, eCode, wParam, dwParam);                   
+                    
+                case AVK_4:
+                    return CameraApp_HotKeyAVK_8_SelfTimeHandleEvent(pMe, eCode, wParam, dwParam);
+				//Add End
+				
                 case AVK_STAR:
                     return CameraApp_HotKeyAVK_STAR_SizeHandleEvent(pMe, eCode, wParam, dwParam);
 
@@ -1272,7 +1307,8 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             pMe->m_bSelNotChanged = TRUE;
 
             IMENUCTL_SetProperties(popMenu, MP_WRAPSCROLL|MP_TRANSPARENT_UNSEL|MP_NO_REDRAW);
-            IMENUCTL_SetOemProperties(popMenu, OEMMP_GRAPHIC_UNDERLINE);
+
+			IMENUCTL_SetOemProperties(popMenu, OEMMP_GRAPHIC_UNDERLINE);
             
             CameraApp_InitpopMenu(pMe, popMenu);             
             return TRUE;
@@ -1309,7 +1345,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 CameraApp_DrawBottomBarText(pMe, BTBAR_SELECT_BACK);           
             }
 
-            CameraApp_DrawCCFGBar(pMe);
+            //CameraApp_DrawCCFGBar(pMe);
                  
             if(!pMe->m_bCameraHideIcon)
             {
@@ -1378,23 +1414,34 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 case AVK_RIGHT:
                     if(pMe->m_nCameraCFG == CAMERACFGHOTKEY)
                     {
+/*                    
 #ifdef FEATURE_VIDEO_ENCODE
                         pMe->m_nCameraCFG = CAMERACFGCHOOSE;
 #else
                         pMe->m_nCameraCFG = CAMERACFGENVIRMENT;
 #endif
+*/
+					 pMe->m_nCameraCFG = CAMERACFGENVIRMENT;		//Add By zzg 2010_07_25
                     }
                     else
                     {
                         pMe->m_nCameraCFG++;
                     }
-                    
+
+					//Add By zzg 2010_07_25
+					if ((pMe->m_nCameraCFG == CAMERACFGSTORAGE) || (pMe->m_nCameraCFG == CAMERACFGCAPTURE))
+					{
+						pMe->m_nCameraCFG++;
+					}
+					//Add End
+
+/*                    
 #ifdef FEATURE_VIDEO_ENCODE
                     if(pMe->m_nCameraCFG == CAMERACFGCHOOSE)
 #else
                     if(pMe->m_nCameraCFG == CAMERACFGENVIRMENT)
 #endif
-
+*/					if(pMe->m_nCameraCFG == CAMERACFGENVIRMENT)	//Add By zzg 2010_07_25
                     {
                         pMe->m_nCFGBarChoosedID = 0;
                         pMe->m_nCFGBarOffset = 0;
@@ -2768,9 +2815,11 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
    
             case CAMERACFGBANDING:
                 return CameraApp_PopMenu_BandingCommandHandleEvent(pMe, wParam);
-   
+
+   			/*
             case CAMERACFGSTORAGE:
                 return CameraApp_PopMenu_StorageCommandHandleEvent(pMe, wParam);
+                */
    
             case CAMERACFGRESET:
                 return CameraApp_PopMenu_ResetCFGCommandHandleEvent(pMe, wParam);
@@ -4417,10 +4466,12 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
             case CAMERACFGBANDING:
                 CameraApp_PopMenu_BandingInit(pMe, popMenu);
                 break;
-   
+
+   			/*
             case CAMERACFGSTORAGE:
                 CameraApp_PopMenu_StorageInit(pMe, popMenu);
                 break;
+                */
    
             case CAMERACFGRESET:
                 CameraApp_PopMenu_ResetCFGInit(pMe, popMenu);
@@ -4498,16 +4549,26 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
         pMe->m_nCameraColor = OEMNV_CAMERA_COLOR_NORMAL;
         pMe->m_nCameraZoom = OEMNV_CAMERA_ZOOM_LEVEL1;
 
+		/*
         if(CameraApp_FindMemoryCardExist(pMe))
         {
             pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
 	        pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
         }
+
+		
         else
         {
             pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
             pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
         }
+        */
+
+		//手机内存小，所以固定存储位置是T卡
+		//Add By zzg 2010_07_25
+		pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
+	    pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
+		//Add End
         
         pMe->m_nSelfTimeItemSel = IDS_SELFTIME_OFF;
         pMe->m_nCaptureItemSel = IDS_CAPTURE_OFF;
@@ -5127,20 +5188,23 @@ static void CameraApp_PopMenu_HotKeyInit(CCameraApp *pMe, IMenuCtl *popMenu)
                              IDS_HOTKEY_QUALITY, 
                              NULL, 
                              0);
-            
+
+			/*
             IMENUCTL_AddItem(popMenu, 
                              AEE_APPSCAMERAAPP_RES_FILE, 
                              IDS_HOTKEY_CHOOSE, 
                              IDS_HOTKEY_CHOOSE, 
                              NULL, 
                              0);
-            
+
+			
             IMENUCTL_AddItem(popMenu, 
                              AEE_APPSCAMERAAPP_RES_FILE, 
                              IDS_HOTKEY_CAPMODE, 
                              IDS_HOTKEY_CAPMODE, 
                              NULL, 
                              0);
+                             */
             
             IMENUCTL_AddItem(popMenu, 
                              AEE_APPSCAMERAAPP_RES_FILE, 
@@ -5155,13 +5219,15 @@ static void CameraApp_PopMenu_HotKeyInit(CCameraApp *pMe, IMenuCtl *popMenu)
                              IDS_HOTKEY_ENVIR, 
                              NULL, 
                              0);
-            
+
+			/*
             IMENUCTL_AddItem(popMenu, 
                              AEE_APPSCAMERAAPP_RES_FILE, 
                              IDS_HOTKEY_FRAME, 
                              IDS_HOTKEY_FRAME, 
                              NULL, 
                              0);
+                             
             
             IMENUCTL_AddItem(popMenu, 
                              AEE_APPSCAMERAAPP_RES_FILE, 
@@ -5169,6 +5235,7 @@ static void CameraApp_PopMenu_HotKeyInit(CCameraApp *pMe, IMenuCtl *popMenu)
                              IDS_HOTKEY_COLOR, 
                              NULL, 
                              0);
+                             */
             
             IMENUCTL_AddItem(popMenu, 
                              AEE_APPSCAMERAAPP_RES_FILE, 
@@ -5183,13 +5250,15 @@ static void CameraApp_PopMenu_HotKeyInit(CCameraApp *pMe, IMenuCtl *popMenu)
                              IDS_HOTKEY_ZOOM, 
                              NULL, 
                              0);
-            
+
+			/*
             IMENUCTL_AddItem(popMenu, 
                              AEE_APPSCAMERAAPP_RES_FILE, 
                              IDS_HOTKEY_BRIGHT, 
                              IDS_HOTKEY_BRIGHT, 
                              NULL, 
                              0);
+                             */
             
             IMENUCTL_AddItem(popMenu, 
                              AEE_APPSCAMERAAPP_RES_FILE, 
@@ -5480,16 +5549,19 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
     // the number of popMenu Item is no more than 4
     if(menuItemSum < 4)
     {
-        dy = menuItemSum*(pMe->m_nItemH+7);
+        //dy = menuItemSum*(pMe->m_nItemH+7);
+        dy = menuItemSum*(pMe->m_nItemH+2);
     }
     else
     {
-        dy = 4*(pMe->m_nItemH+7);
+        //dy = 4*(pMe->m_nItemH+7);
+        dy = 4*(pMe->m_nItemH+2);
     }
 
     x = CameraApp_SetPositonX(pMe);
        
-    y = pMe->m_cyHeight - dy - POPMENU_BOTTOM_Y;
+    //y = pMe->m_cyHeight - dy - POPMENU_BOTTOM_Y;
+    y = 2*CFGBAR_TEXT_Y;
  
     SETAEERECT(&mRec, x, y, dx, dy);
 
@@ -5637,6 +5709,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     }
 
     // capture cfgID
+    /*
     switch(pMe->m_nCaptureItemSel)
     {
         case IDS_CAPTURE_OFF:
@@ -5658,6 +5731,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
        default:
             break;
     }
+    */
 
     // banding cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -5668,11 +5742,11 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     switch(pMe->m_nCameraBanding)
     {
         case OEMNV_CAMERA_BANDING_50HZ:
-            nResID[6] = IDI_BANDING_50;
+            nResID[5] = IDI_BANDING_50;
             break;
 
         case OEMNV_CAMERA_BANDING_60HZ:
-            nResID[6] = IDI_BANDING_60;
+            nResID[5] = IDI_BANDING_60;
             break;
             
        default:
@@ -5680,6 +5754,8 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     }
 
     // storage cfgID
+
+	/*
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_STORAGE,
                           &pMe->m_nCameraStorage,
@@ -5698,7 +5774,9 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
        default:
             break;
     }
+    */
 
+	/*
      // brightness cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_BRIGHTNESS,
@@ -5708,23 +5786,23 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     switch(pMe->m_nCameraBrightness)
     {
         case OEMNV_CAMERA_BRIGHTNESS_LEVEL1:
-            nResID[8] = IDI_BRIGHTNESS_LEVEL1;
+            nResID[6] = IDI_BRIGHTNESS_LEVEL1;
             break;
 
         case OEMNV_CAMERA_BRIGHTNESS_LEVEL2:
-            nResID[8] = IDI_BRIGHTNESS_LEVEL2;
+            nResID[6] = IDI_BRIGHTNESS_LEVEL2;
             break;
 
         case OEMNV_CAMERA_BRIGHTNESS_LEVEL3:
-            nResID[8] = IDI_BRIGHTNESS_LEVEL3;
+            nResID[6] = IDI_BRIGHTNESS_LEVEL3;
             break;
 
         case OEMNV_CAMERA_BRIGHTNESS_LEVEL4:
-            nResID[8] = IDI_BRIGHTNESS_LEVEL4;
+            nResID[6] = IDI_BRIGHTNESS_LEVEL4;
             break;
 
         case OEMNV_CAMERA_BRIGHTNESS_LEVEL5:
-            nResID[8] = IDI_BRIGHTNESS_LEVEL5;
+            nResID[7] = IDI_BRIGHTNESS_LEVEL5;
             break;
             
         default:
@@ -5732,45 +5810,113 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     }
 
     // zoom cfgID
+
+	
     switch(pMe->m_nCameraZoom)
     {
         case OEMNV_CAMERA_ZOOM_LEVEL1:
-            nResID[9] = IDI_ZOOM_1;
+            nResID[7] = IDI_ZOOM_1;
             break;
 
         case OEMNV_CAMERA_BRIGHTNESS_LEVEL2:
-            nResID[9] = IDI_ZOOM_2;
+            nResID[7] = IDI_ZOOM_2;
             break;
 
         case OEMNV_CAMERA_BRIGHTNESS_LEVEL3:
-            nResID[9] = IDI_ZOOM_3;
+            nResID[7] = IDI_ZOOM_3;
             break;
 
         case OEMNV_CAMERA_BRIGHTNESS_LEVEL4:
-            nResID[9] = IDI_ZOOM_4;
+            nResID[7] = IDI_ZOOM_4;
             break;
 
         case OEMNV_CAMERA_BRIGHTNESS_LEVEL5:
-            nResID[9] = IDI_ZOOM_5;
+            nResID[7] = IDI_ZOOM_5;
             break;
             
         default:
             break;
     }
+    */
+     nResID[6] = IDI_RESET;			//Add By zzg 2010_07_25
+     nResID[7] = IDI_HOTKEY;		//Add By zzg 2010_07_25
 
-    for(i = 0; i < 10; i++)
+    for(i = 0; i < 8; i++)
     {
         pTopBarImage = ISHELL_LoadResImage(pMe->m_pShell, 
                                            CAMERAAPP_IMAGE_RES_FILE, 
                                            nResID[i]);
         if(pTopBarImage)
         {
-            IIMAGE_Draw(pTopBarImage, i*TOPBAR_ICON_WIDTH + 5, TOPBAR_ICON_Y);
+            IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+3), TOPBAR_ICON_Y);	// + 5
             IIMAGE_Release(pTopBarImage);
             pTopBarImage = NULL;
         }
     }
 
+	//Add By zzg 2010_07_25
+    {
+	    IImage   *pCameraCFGChooseIcon = NULL; 
+		pCameraCFGChooseIcon = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_CHOOSE_REC);
+
+		switch (pMe->m_nCameraCFG)
+		{
+			case CAMERACFGENVIRMENT:
+			{
+				pMe->m_nCFGBarChoosedID = 0;
+				break;
+			}
+			case CAMERACFGQUALITY:
+			{
+				pMe->m_nCFGBarChoosedID = 1;
+				break;
+			}
+			case CAMERACFGSIZE:
+			{
+				pMe->m_nCFGBarChoosedID = 2;
+				break;
+			}
+			case CAMERACFGTONE:
+			{
+				pMe->m_nCFGBarChoosedID = 3;
+				break;
+			}
+			case CAMERACFGSELFTIME:
+			{
+				pMe->m_nCFGBarChoosedID = 4;
+				break;
+			}			
+			case CAMERACFGBANDING:
+			{
+				pMe->m_nCFGBarChoosedID = 5;
+				break;
+			}
+			case CAMERACFGRESET:
+			{
+				pMe->m_nCFGBarChoosedID = 6;
+				break;
+			}
+			case CAMERACFGHOTKEY:
+			{
+				pMe->m_nCFGBarChoosedID = 7;
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}
+	   
+	    if (pCameraCFGChooseIcon)
+	    {  
+			IIMAGE_SetDrawSize(pCameraCFGChooseIcon, TOPBAR_ICON_WIDTH, CFGBAR_TEXT_HEIGHT);
+			IIMAGE_Draw(pCameraCFGChooseIcon, (3+TOPBAR_ICON_WIDTH)*(pMe->m_nCFGBarChoosedID), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
+			
+	        IIMAGE_Release(pCameraCFGChooseIcon);
+	        pCameraCFGChooseIcon = NULL;
+	    }
+	}
+	//Add End
 }
 
 static void CameraApp_DrawCCFGBar(CCameraApp * pMe)
@@ -5802,49 +5948,68 @@ static void CameraApp_DrawCCFGBar(CCameraApp * pMe)
                                               CAMERAAPP_IMAGE_RES_FILE,
                                               IDI_CCFG_BAR);
 
-    if(pCameraCFGBarBg)
+    if (pCameraCFGBarBg)
     {
         if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_INDEX_0)
         {
-            CameraApp_DrawBarBg(pMe, IDI_LEFT_ARROW, 0, CFGBAR_EFFECT_TEXT_Y);        
-            CameraApp_DrawBarBg(pMe, IDI_RIGHT_ARROW, 168, CFGBAR_EFFECT_TEXT_Y);
+            //CameraApp_DrawBarBg(pMe, IDI_LEFT_ARROW, 0, CFGBAR_EFFECT_TEXT_Y);        
+            //CameraApp_DrawBarBg(pMe, IDI_RIGHT_ARROW, 168, CFGBAR_EFFECT_TEXT_Y);
+
+			//Add By zzg 2010_07_25
+			//CameraApp_DrawBarBg(pMe, IDI_LEFT_ARROW, 0, TOPBAR_ICON_Y);        
+            //CameraApp_DrawBarBg(pMe, IDI_RIGHT_ARROW, pMe->m_rc.dx-CFGBAR_ARROW_WIDTH, TOPBAR_ICON_Y);			
+			//Add End
         }
         else
         {       
-            IIMAGE_Draw(pCameraCFGBarBg, 0, 160); 
+            //IIMAGE_Draw(pCameraCFGBarBg, 0, 160); 
+            IIMAGE_Draw(pCameraCFGBarBg, 0, TOPBAR_ICON_Y); 	//Add By zzg 2010_07_25
+            
             IIMAGE_Release(pCameraCFGBarBg);
             pCameraCFGBarBg = NULL;
         }
     }
 
-    if(pCameraCFGScrollBar)
+    if (pCameraCFGScrollBar)
     {
         if(pMe->m_nCFGBarChoosedID > 2)
         {
-            IIMAGE_Draw(pCameraCFGScrollBar, SCROLLBAR_X, 160); 
+            //IIMAGE_Draw(pCameraCFGScrollBar, SCROLLBAR_X, 160); 
         }
         else
         {
-            IIMAGE_Draw(pCameraCFGScrollBar, 0, 160);         
+            //IIMAGE_Draw(pCameraCFGScrollBar, 0, 160);      
+            //IIMAGE_Draw(pCameraCFGScrollBar, 0, TOPBAR_ICON_Y);    	//Add By zzg 2010_07_25
         }
         
         IIMAGE_Release(pCameraCFGScrollBar);
         pCameraCFGScrollBar = NULL;
     }
 
-    if(pCameraCFGChooseIcon)
+    if (pCameraCFGChooseIcon)
     {      
-        IIMAGE_Draw(pCameraCFGChooseIcon, (10+27*(pMe->m_nCFGBarChoosedID)), 176); 
+        //IIMAGE_Draw(pCameraCFGChooseIcon, (10+27*(pMe->m_nCFGBarChoosedID)), 176); 
+
+		IIMAGE_SetDrawSize(pCameraCFGBottomBar, TOPBAR_ICON_WIDTH, CFGBAR_TEXT_HEIGHT);
+		IIMAGE_Draw(pCameraCFGChooseIcon, 3+TOPBAR_ICON_WIDTH*(pMe->m_nCFGBarChoosedID), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
+		
         IIMAGE_Release(pCameraCFGChooseIcon);
         pCameraCFGChooseIcon = NULL;
     }
     
-    if(pCameraCFGBottomBar)
-    {
-    
-        IIMAGE_SetDrawSize(pCameraCFGBottomBar, 160, 22);
-        IIMAGE_SetOffset(pCameraCFGBottomBar, 27*(pMe->m_nCFGBarOffset), 0);
-        IIMAGE_Draw(pCameraCFGBottomBar, 10, 176);     
+    if (pCameraCFGBottomBar)
+    {    
+        //IIMAGE_SetDrawSize(pCameraCFGBottomBar, 160, 22);
+        //IIMAGE_SetOffset(pCameraCFGBottomBar, 27*(pMe->m_nCFGBarOffset), 0);
+        //IIMAGE_Draw(pCameraCFGBottomBar, 10, 176);     
+
+
+		//Add By zzg 2010_07_25
+		IIMAGE_SetDrawSize(pCameraCFGBottomBar, pMe->m_rc.dx, TOPBAR_ICON_WIDTH);
+		IIMAGE_SetOffset(pCameraCFGBottomBar, TOPBAR_ICON_WIDTH, 0);
+		IIMAGE_Draw(pCameraCFGBottomBar, 0, TOPBAR_ICON_Y);	 
+		//Add End
+
         IIMAGE_Release(pCameraCFGBottomBar);
         pCameraCFGBottomBar = NULL;
     }
@@ -6043,6 +6208,7 @@ static uint16 CameraApp_SetPositonX(CCameraApp *pMe)
 {
     uint16 X = 0;
 
+	/*
     if(pMe->m_pActiveDlgID == IDD_CCAMERACFG)
     {
         if(pMe->m_nCFGBarChoosedID > 2)
@@ -6054,6 +6220,8 @@ static uint16 CameraApp_SetPositonX(CCameraApp *pMe)
             X = 0;
         }
     }
+    */
+    
 #ifdef FEATURE_VIDEO_ENCODE
     else
     {
@@ -6081,6 +6249,8 @@ static uint16 CameraApp_SetPositonX(CCameraApp *pMe)
         }
     }
 #endif
+
+	X = CFGBAR_TEXT_X;	//Add By zzg 2010_07_24
 
     return X;   
 }
@@ -6131,10 +6301,12 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
             case CAMERACFGBANDING:
                 nResID = IDS_CFG_BANDING;
                 break;
-                
+
+			/*	
             case CAMERACFGSTORAGE:
                 nResID = IDS_CFG_STORAGE;
                 break;
+                 */
                 
             case CAMERACFGRESET:
                 nResID = IDS_CFG_RESET;
@@ -6147,6 +6319,7 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
             default:
                 break; 
         }
+		 
          if(pMe->m_nCFGBarChoosedID > 2)
          {
             SETAEERECT(&prc, 59, 162, 118, 16);
@@ -6154,7 +6327,8 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
          else
          {
             SETAEERECT(&prc, 0, 162, 118, 16);
-         }
+         } 
+		 
     }
 #ifdef FEATURE_VIDEO_ENCODE
     else
@@ -6188,6 +6362,9 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
         }
     }
 #endif
+
+	SETAEERECT(&prc, CFGBAR_TEXT_X, CFGBAR_TEXT_Y, CFGBAR_TEXT_WIDTH, CFGBAR_TEXT_HEIGHT);	//Add By zzg 2010_07_24
+
     MEMSET(pcText, 0, sizeof(pcText)); 
     (void)ISHELL_LoadResString(pMe->m_pShell, 
                                AEE_APPSCAMERAAPP_RES_FILE,       
@@ -6208,7 +6385,7 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
                             0, 
                             0, 
                             &prc, 
-                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+                            IDF_ALIGN_LEFT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);	//IDF_ALIGN_CENTER
 
         (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
     }
@@ -6225,7 +6402,7 @@ static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
                             0, 
                             0, 
                             &prc, 
-                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+                            IDF_ALIGN_LEFT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);	//IDF_ALIGN_CENTER
 
         (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
     }

@@ -143,10 +143,10 @@
 		<Text>3-連拍模式</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_HOTKEY_TONE">
-		<Text>4-快門聲</Text>
+		<Text>2-快門聲</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_HOTKEY_ENVIR">
-		<Text>5-環境模式</Text>
+		<Text>3-環境模式</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_HOTKEY_FRAME">
 		<Text>6-像框</Text>
@@ -155,7 +155,7 @@
 		<Text>7-濾鏡</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_HOTKEY_SELFTIME">
-		<Text>8-自拍時間</Text>
+		<Text>4-自拍時間</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_HOTKEY_ZOOM">
 		<Text>上/下-調焦</Text>

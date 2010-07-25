@@ -73,26 +73,11 @@
 	<Object Id="5024" Name="IDI_BANDING_60">
 		<File>..\..\Appscommon\images\color\CameraApp\60_Hz.PNG</File>
 	</Object>
-	<Object Id="5025" Name="IDI_STORAGE_SDCARD">
-		<File>..\..\Appscommon\images\color\CameraApp\SDCard.PNG</File>
+	<Object Id="5025" Name="IDI_RESET">
+		<File>..\..\Appscommon\images\color\CameraApp\Reset.png</File>
 	</Object>
-	<Object Id="5026" Name="IDI_STORAGE_PHONE">
-		<File>..\..\Appscommon\images\color\CameraApp\phone.PNG</File>
-	</Object>
-	<Object Id="5027" Name="IDI_BRIGHTNESS_LEVEL1">
-		<File>..\..\Appscommon\images\color\CameraApp\level1.PNG</File>
-	</Object>
-	<Object Id="5028" Name="IDI_BRIGHTNESS_LEVEL2">
-		<File>..\..\Appscommon\images\color\CameraApp\level2.PNG</File>
-	</Object>
-	<Object Id="5029" Name="IDI_BRIGHTNESS_LEVEL3">
-		<File>..\..\Appscommon\images\color\CameraApp\level3.PNG</File>
-	</Object>
-	<Object Id="5030" Name="IDI_BRIGHTNESS_LEVEL4">
-		<File>..\..\Appscommon\images\color\CameraApp\level4.PNG</File>
-	</Object>
-	<Object Id="5031" Name="IDI_BRIGHTNESS_LEVEL5">
-		<File>..\..\Appscommon\images\color\CameraApp\level5.PNG</File>
+	<Object Id="5026" Name="IDI_HOTKEY">
+		<File>..\..\Appscommon\images\color\CameraApp\Hotkey.png</File>
 	</Object>
 	<Object Id="5032" Name="IDI_ZOOM_1">
 		<File>..\..\Appscommon\images\color\CameraApp\zoom1.PNG</File>
@@ -141,15 +126,6 @@
 	</Object>
 	<Object Id="5054" Name="IDI_SCROLLBAR_BG">
 		<File>..\..\Appscommon\images\color\CameraApp\scrollbarbg.png</File>
-	</Object>
-	<Object Id="5055" Name="IDI_LEFT_ARROW">
-		<File>..\..\Appscommon\images\color\CameraApp\leftArrow.png</File>
-	</Object>
-	<Object Id="5056" Name="IDI_RIGHT_ARROW">
-		<File>..\..\Appscommon\images\color\CameraApp\rightArrow.png</File>
-	</Object>
-	<Object Id="5057" Name="IDI_COUNT_DOWN">
-		<File>..\..\Appscommon\images\color\CameraApp\countdown.png</File>
 	</Object>
 	<Object Id="5058" Name="IDI_CAMERA_BUSY">
 		<File>..\..\Appscommon\images\color\CameraApp\busystate.png</File>
