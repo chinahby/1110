@@ -2555,7 +2555,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
 			nRet = SUCCESS;
 #endif
 		}
-		else if ((pMe->m_bCdmaWmsReady != FALSE) && (pMe->m_refresh_in_progress))
+		else if ((pMe->m_bCdmaWmsReady != FALSE) && (!pMe->m_refresh_in_progress))  //add by xiaoming
 		{
 			pMsg = CWmsApp_Getspecmsg(pwstrText);
 			
