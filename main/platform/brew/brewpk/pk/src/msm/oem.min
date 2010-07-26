@@ -263,8 +263,9 @@ endif
 
 CONSTFILE_FILES+=\
         oemmsgs.bar|fs:/sys/oemmsgs.bar \
-        OEMAEEControls.bar|fs:/sys/en/OEMAEEControls.bar
-	
+        OEMAEEControls.bar|fs:/sys/en/OEMAEEControls.bar \
+		 aeecontrols.bar|fs:/sys/aeecontrols.bar
+
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
