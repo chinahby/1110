@@ -282,8 +282,8 @@ static uint32 ADialog_Release(IDialog * po)
       IDISPLAY_Release(pme->m_pDisplay);
 
       FREE(pme);
-
-      if(pdNext)
+      
+      if(pdNext && !(((ADialog *)pdNext)->m_dwProps & DLG_NOT_REDRAW_AFTER_START))
          ADialog_Redraw((IDialog *)pdNext);
 
    }

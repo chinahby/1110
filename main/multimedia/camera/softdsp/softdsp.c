@@ -37,10 +37,6 @@ Copyright(c) 2007 by QUALCOMM, Incorporated. All Rights Reserved.
 #define SOFTDSP_HSYNC_MASK      0x80000
 #define MATH_FACTOR_BIT         10
 #define SOFT_MCLK
-//#define TEST_ENABLE
-#ifdef TEST_ENABLE
-#include "clk.h"
-#endif
 
 struct SoftDSPInfo{
     const camsensor_static_params_type *camsensor_params;
@@ -50,20 +46,12 @@ struct SoftDSPInfo{
     int                     nCaptureWidth;
     int                     nCaptureHeight;
     uint16                 *pCaptureBuff;
-    uint16                 *pThumbNailBuff;
-    int                     nThumbWidth;
-    int                     nThumbHeight;
     uint16                 *ppPreviewBuff[SOFTDSP_PREVIEW_BUFF_MAX];
     int                     currPreviewBuff;
     int                     nSeqNum;
     CAMSoftDSP_ResponseType MsgRespones[CAMSOFTDSP_MSG_MAX];
     boolean                 bCaptureState;
 }g_SoftDSPInfo;
-
-#ifdef TEST_ENABLE
-#define UPDATE_TIME_MS  100
-static clk_cb_type softdsp_test_clk;
-#endif
 
 static void SoftDSP_FrameISR(void)
 {
@@ -77,16 +65,15 @@ static void SoftDSP_FrameISR(void)
     }
 }
 
-#ifdef TEST_ENABLE
-static void softdsp_test_clk_cb(int ms)
+static void SoftDSP_EnableISR(void)
 {
-    SoftDSP_FrameISR();
-    if(!g_SoftDSPInfo.bCaptureState)
-    {
-        clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) UPDATE_TIME_MS, 0, FALSE);
-    }
+    (void)gpio_int_set_handler ( SOFTDSP_INT, ACTIVE_LOW, SoftDSP_FrameISR);
 }
-#endif
+
+static void SoftDSP_DisableISR(void)
+{
+    (void)gpio_int_set_handler ( SOFTDSP_INT, ACTIVE_LOW, NULL);
+}
 
 static void SoftDSP_RefreshPreviewBuff(void)
 {
@@ -97,6 +84,7 @@ static void SoftDSP_RefreshPreviewBuff(void)
         if(g_SoftDSPInfo.ppPreviewBuff[i] != NULL)
         {
             g_SoftDSPInfo.currPreviewBuff = i;
+            break;
         }
     }
 }
@@ -176,9 +164,7 @@ static INLINE void SoftDSP_ClockOut(int nCount)
     }
 }
 #endif
-#ifdef SOFT_MCLK
-static boolean g_bTest = FALSE;
-#endif
+
 static void SoftDSP_CatchSensorData(void)
 {
     uint16 *pBuff = NULL;
@@ -189,6 +175,7 @@ static void SoftDSP_CatchSensorData(void)
     {
         pBuff = g_SoftDSPInfo.pCaptureBuff;
         pixelSize = g_SoftDSPInfo.nCaptureWidth;
+        SoftDSP_DisableISR();
     }
     else
     {
@@ -198,13 +185,6 @@ static void SoftDSP_CatchSensorData(void)
     
     if(pBuff)
     {
-#ifdef TEST_ENABLE
-        {
-            static byte color = 0;
-            memset(pBuff, ~color, pixelSize);
-            memset(pBuff+(pixelSize/2), color++, pixelSize);
-        }
-#else
         // 从Sensor获取数据
         int x,y;
         register uint16 data,*pData;
@@ -217,16 +197,8 @@ static void SoftDSP_CatchSensorData(void)
         xStart = g_SoftDSPInfo.camsensor_params->camif_window_width_config.firstPixel;
         xOutEnd = g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine - \
                   g_SoftDSPInfo.camsensor_params->camif_window_width_config.lastPixel;
-        if(g_bTest)
-        {
-            while(g_bTest)
-            {
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-            }
-        }
-
-        // First Line
+        
+        // HSYNC
         while(1)
         {
             outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
@@ -236,32 +208,10 @@ static void SoftDSP_CatchSensorData(void)
                 break;
             }
         }
-        
-        while(1)
-        {
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-            if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK)
-            {
-                break;
-            }
-        }
-
-        while(1)
-        {
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-            if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_PCLK_MASK)
-            {
-                break;
-            }
-        }
 #endif
         pData = pBuff;
 #ifdef SOFT_MCLK
-        // Second line
-        SoftDSP_ClockOut(g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine);
-        for(y=2;y<g_SoftDSPInfo.camsensor_params->camif_window_height_config.firstLine;y++)
+        for(y=0;y<g_SoftDSPInfo.camsensor_params->camif_window_height_config.firstLine;y++)
         {
             while(1)
             {
@@ -328,28 +278,13 @@ static void SoftDSP_CatchSensorData(void)
             SoftDSP_ClockOut(xOutEnd);
 #endif
         }
+        
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GP_PDM);
-#endif
 #endif
 
         if(g_SoftDSPInfo.bCaptureState)
         {
-            uint16 *pDst = g_SoftDSPInfo.pThumbNailBuff;
-            
-            // 发送通知
-            if(pDst && g_SoftDSPInfo.msgcb)
-            {
-                SoftDSP_BMPScale(pDst,  g_SoftDSPInfo.nPreviewWidth, g_SoftDSPInfo.nPreviewHeight, g_SoftDSPInfo.nPreviewWidth,
-                                 pBuff, g_SoftDSPInfo.nCaptureWidth, g_SoftDSPInfo.nCaptureHeight, g_SoftDSPInfo.nCaptureWidth);
-                pEofFrame = &g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME].responsePayload.endOfFrame;
-                pEofFrame->frame_seq_num = g_SoftDSPInfo.nSeqNum++;
-                pEofFrame->pBuff         = (byte*)pDst;
-                g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME;
-                SoftDSP_RefreshPreviewBuff();
-                g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME]);
-            }
-            
             // 发送通知
             if(g_SoftDSPInfo.msgcb)
             {
@@ -374,35 +309,21 @@ static void SoftDSP_CatchSensorData(void)
             }
         }
     }
+    else
+    {
 #ifdef SOFT_MCLK
-    gpio_tlmm_config(GP_PDM);
+        gpio_tlmm_config(GP_PDM);
 #endif
+    }
 }
 
-#ifndef TEST_ENABLE
-static void SoftDSP_EnableISR(void)
-{
-    (void)gpio_int_set_handler ( SOFTDSP_INT, ACTIVE_LOW, SoftDSP_FrameISR);
-}
-
-static void SoftDSP_DisableISR(void)
-{
-    (void)gpio_int_set_handler ( SOFTDSP_INT, ACTIVE_LOW, NULL);
-}
-#endif
 //================================================================================================
 // Export Function
 //================================================================================================
 void SoftDSP_Init(void)
 {
-#ifdef SOFT_MCLK
-    g_bTest = FALSE;
-#endif
     memset(&g_SoftDSPInfo,0,sizeof(g_SoftDSPInfo));
     (void)gpio_int_set_detect( SOFTDSP_INT, DETECT_EDGE);
-#ifdef TEST_ENABLE
-    clk_def (&softdsp_test_clk);
-#endif
 }
 
 void SoftDSP_Exit(void)
@@ -417,12 +338,26 @@ int SoftDSP_Start(const camsensor_static_params_type *camsensor_params)
 
 int SoftDSP_Stop(void)
 {
-#ifdef TEST_ENABLE
-    clk_dereg (&softdsp_test_clk);
-#else
+    int i;
+    
     SoftDSP_DisableISR();
-#endif
-    memset(&g_SoftDSPInfo,0,sizeof(g_SoftDSPInfo));
+    g_SoftDSPInfo.msgcb = NULL;
+    g_SoftDSPInfo.nPreviewWidth  = 0;
+    g_SoftDSPInfo.nPreviewHeight = 0;
+    g_SoftDSPInfo.bCaptureState  = FALSE;
+    g_SoftDSPInfo.currPreviewBuff = 0;
+    
+    for(i=0;i<SOFTDSP_PREVIEW_BUFF_MAX;i++)
+    {
+        if(g_SoftDSPInfo.ppPreviewBuff[i] == NULL)
+        {
+            g_SoftDSPInfo.ppPreviewBuff[i] = NULL;
+        }
+    }
+    
+    g_SoftDSPInfo.pCaptureBuff   = NULL;
+    g_SoftDSPInfo.nCaptureWidth  = 0;
+    g_SoftDSPInfo.nCaptureHeight = 0;
     return 0;
 }
 
@@ -434,6 +369,7 @@ int SoftDSP_PushPreviewBuff(byte *pBuff)
         if(g_SoftDSPInfo.ppPreviewBuff[i] == NULL)
         {
             g_SoftDSPInfo.ppPreviewBuff[i] = (uint16*)pBuff;
+            g_SoftDSPInfo.currPreviewBuff = i;
             return 0;
         }
     }
@@ -446,34 +382,24 @@ int SoftDSP_Preview(CAMSoftDSP_MsgCBType cb, int dx, int dy)
     g_SoftDSPInfo.nPreviewWidth  = dx;
     g_SoftDSPInfo.nPreviewHeight = dy;
     g_SoftDSPInfo.bCaptureState  = FALSE;
-#ifdef TEST_ENABLE
-    clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) UPDATE_TIME_MS, 0, FALSE);
-#else
+    g_SoftDSPInfo.currPreviewBuff = 0;
     SoftDSP_EnableISR();
-#endif
     return 0;
 }
 
-int SoftDSP_SetCaptureBuff(byte *pBuff, byte *pThumbNail)
+int SoftDSP_SetCaptureBuff(byte *pBuff)
 {
     g_SoftDSPInfo.pCaptureBuff = (uint16*)pBuff;
-    g_SoftDSPInfo.pThumbNailBuff = (uint16*)pThumbNail;
     return 0;
 }
 
-int SoftDSP_Capture(CAMSoftDSP_MsgCBType cb, int dx, int dy, int thumbdx, int thumbdy)
+int SoftDSP_Capture(CAMSoftDSP_MsgCBType cb, int dx, int dy)
 {
     g_SoftDSPInfo.msgcb = cb;
     g_SoftDSPInfo.nCaptureWidth  = dx;
     g_SoftDSPInfo.nCaptureHeight = dy;
-    g_SoftDSPInfo.nThumbWidth    = thumbdx;
-    g_SoftDSPInfo.nThumbHeight   = thumbdy;
     g_SoftDSPInfo.bCaptureState  = TRUE;
-#ifdef TEST_ENABLE
-    clk_reg (&softdsp_test_clk, softdsp_test_clk_cb , (int32) UPDATE_TIME_MS, 0, FALSE);
-#else
     SoftDSP_EnableISR();
-#endif
     return 0;
 }
 

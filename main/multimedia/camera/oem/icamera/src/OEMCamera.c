@@ -152,7 +152,9 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #include "AEEPriorityMgr.bid"
 #include "msg.h"
 #endif // FEATURE_BMP_ACM
-
+#ifdef CUST_EDITION
+#include "custcamsensor.h"
+#endif
 /*===========================================================================
 Feature condition - FEATURE_CAMERA_LCD_DIRECT_MODE is under condition of FEATURE_MDP
 They are defined in different cust files and condition could not be set there.
@@ -320,15 +322,42 @@ static AEESize gCameraMovieSizeList[] = {
   { 0, 0 }    // NULL terminator
 };
 
-static AEESize gCameraDisplaySizeList[] = {   
-  { 240,  320 },  // QCAM_SIZE_QVGA 
-  { 144,  176 },  // QCAM_SIZE_QCIF 
+static AEESize gCameraDisplaySizeList[] = {
+#if defined(FEATURE_DISP_160X128)
+  { 160, 128 },
+#elif defined(FEATURE_DISP_128X128)
+  { 128, 128 },
+  { 128, 96  },
+#else
+  { 240, 320 },  // QCAM_SIZE_QVGA 
+  { 144, 176 },  // QCAM_SIZE_QCIF 
   { 96,  128 },  // QCAM_SIZE_SQCIF 
-  { 80, 96 }, // QCAM_SIZE_MOVIEMAIL 
+  { 80,  96  }, // QCAM_SIZE_MOVIEMAIL 
+#endif
   { 0, 0 }    // NULL terminator 
 }; 
 
 static AEESize gCameraSnapshotSizeList [] = { 
+#if defined(USE_CAMSENSOR_SIV121A)
+#if defined(FEATURE_DISP_160X128)
+  { 160, 128 },
+#elif defined(FEATURE_DISP_128X128)
+  { 128, 128 },
+  { 160, 120 },
+#endif
+  { 220 , 176},
+  { 320 , 240},
+  { 640 , 480},
+#elif defined(USE_CAMSENSOR_SIV120)
+#if defined(FEATURE_DISP_160X128)
+  { 160, 128 },
+#elif defined(FEATURE_DISP_128X128)
+  { 128, 128 },
+  { 160, 120 },
+#endif
+  { 220 , 176},
+  { 320 , 240},
+#else
   {1200, 1600},
   { 1024 , 1280},
   {  960 ,1280},
@@ -340,6 +369,7 @@ static AEESize gCameraSnapshotSizeList [] = {
   {  144 , 176},
   { 120 , 160 },
   {  48 , 80},
+#endif
   { 0, 0 } // NULL terminator 
 };
   
@@ -2305,7 +2335,7 @@ int OEMCamera_Start(OEMINSTANCE h, int16 nMode, uint32 dwParam)
    OEMCamera * pme = (OEMCamera *)h;
    int         nRet = EFAILED;
    CameraRsp * pRsp;
-
+   
    if (!OEMCamera_STARTOK(pme))
       return EBADSTATE;
 
@@ -2317,7 +2347,7 @@ int OEMCamera_Start(OEMINSTANCE h, int16 nMode, uint32 dwParam)
    {
      return EBADSTATE;
    }
-
+   
    // Starting a block for restricting scope.
    {
      int nRequestReasonCode;

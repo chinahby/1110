@@ -221,7 +221,8 @@ typedef enum
 {
     CAM_START,
     CAM_PREVIEW,
-    CAM_CAPTURE,    
+    CAM_CAPTURE,
+    CAM_SAVE,
     CAM_RECORD,
     CAM_STOP
 } CAMERASTATE; 
@@ -491,5 +492,6 @@ NextFSMAction CameraApp_ProcessState(CCameraApp *pMe);
    快速按键处理函数
 ============================================================================*/
 void CCameraApp_APPIsReadyTimer(void *pme);
-
+void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus);
+void CameraApp_InitCameraCheck(void *po);
 #endif // end cameraAPP_PRIV_H

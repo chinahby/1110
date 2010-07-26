@@ -304,6 +304,8 @@ enum
 #ifdef FEATURE_SEAMLESS_SMS
     EVT_SEND_SEAMLESSSMS,
 #endif
+    EVT_CAMERA_NOTIFY,
+    EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/
 

@@ -848,7 +848,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 
             SetDeviceState(DEVICE_TYPE_CAMERA, DEVICE_CAMERA_STATE_OFF);
 
-            if(pMe->m_bIsPreview == TRUE)
+            if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
                 ICAMERA_Stop(pMe->m_pCamera);
             }
@@ -866,7 +866,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             return TRUE;
 
         case EVT_ALARM:
-            if(pMe->m_nCameraState == CAM_START)
+            if(pMe->m_nCameraState == CAM_START && pMe->m_pCamera)
             {
                 ICAMERA_Release(pMe->m_pCamera);
                 pMe->m_pCamera = NULL;
@@ -884,14 +884,17 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 {
                     case AEECLSID_DIALER:
                     case AEECLSID_CORE_APP:
-                        if((pMe->m_nCameraState == CAM_PREVIEW) || (pMe->m_nCameraState == CAM_RECORD))
+                        if(pMe->m_pCamera)
                         {
-                            ICAMERA_Stop(pMe->m_pCamera);                            
-                        }
-                        
-                        if(SUCCESS == ICAMERA_Release(pMe->m_pCamera))
-                        {
-                            pMe->m_pCamera = NULL;
+                            if((pMe->m_nCameraState == CAM_PREVIEW) || (pMe->m_nCameraState == CAM_RECORD))
+                            {
+                                ICAMERA_Stop(pMe->m_pCamera);                            
+                            }
+                            
+                            if(SUCCESS == ICAMERA_Release(pMe->m_pCamera))
+                            {
+                                pMe->m_pCamera = NULL;
+                            }
                         }
                         
                         pMe->m_bIsPreview = FALSE;
@@ -900,7 +903,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 
                     case AEECLSID_APPTIMER:
                     case AEECLSID_BTUIAPP:
-                        if(pMe->m_nCameraState == CAM_START)
+                        if(pMe->m_nCameraState == CAM_START && pMe->m_pCamera)
                         {
                             ICAMERA_Release(pMe->m_pCamera);
                             pMe->m_pCamera = NULL;
@@ -947,7 +950,11 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                                   CameraApp_APPIsReadyTimer,
                                   pMe);
             return TRUE;
-      
+            
+        case EVT_CAMERA_NOTIFY:
+            CameraApp_AppEventNotify(pMe, (int16)wParam, (int16)dwParam);
+            return TRUE;
+            
         case EVT_APPISREADY:
             pMe->m_bAppIsReady = TRUE;
             return TRUE;

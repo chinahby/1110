@@ -100,7 +100,7 @@ GENERAL DESCRIPTION:
 #define FEATURE_ADDRBOOK_RUIM
 #endif
 #endif
-//#define FEATURE_ICARD         // ICARD Extension
+#define FEATURE_ICARD         // ICARD Extension
 #endif
 
 #ifndef FEATURE_MANGO_BREW

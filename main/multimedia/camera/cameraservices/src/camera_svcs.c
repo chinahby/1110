@@ -1863,13 +1863,17 @@ static VFE_SkipBitMaskType runningOutput2SkipPattern = 0;
 #ifndef CAMERA_USES_SOFTDSP
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY     2
-#else
-#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE         SOFTDSP_PREVIEW_BUFF_MAX
-#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY     2
-#endif
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS \
    (CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE + \
     CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY)
+#else
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE          SOFTDSP_PREVIEW_BUFF_MAX
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY      1
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS \
+   (CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE + \
+    CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY)
+#endif
+
 typedef enum
 {
   AVAILABLE = 0,
@@ -2125,7 +2129,7 @@ static camera_format_type camera_preview_format = CAMERA_RGB565;
 /* VFE output1 and output2 format for snapshot. VFE doesn't
  * allow to specify different formats for output1 and output2.
  */
-static camera_format_type camera_snapshot_format = CAMERA_RGB565;
+static camera_format_type camera_snapshot_format = CAMERA_H2V2;
 #endif
 static JPEGENC_OrientType camera_jpeg_encode_rotation_format = JPEGENC_CCLK270;
 #ifndef CAMERA_USES_SOFTDSP
@@ -3713,8 +3717,13 @@ camera_ret_code_type camera_svcs_set_dimensions
   }
   else
   {
+#ifndef CAMERA_USES_SOFTDSP
     thumbnail_width  = ui_thumbnail_width;
     thumbnail_height = ui_thumbnail_height;
+#else
+    thumbnail_width  = display_width;
+    thumbnail_height = display_height;
+#endif
   }
 
   /* Set the image size for snapshot */
@@ -8633,7 +8642,8 @@ static void camera_jpeg_encode (qcamrawHeaderType *main_image_header, uint8 *mai
     encodeInfo.Main.Fragmnt[jpeg_encode_fragments].Height     = main_image_header->dataHeight;
     encodeInfo.Main.Fragmnt[jpeg_encode_fragments].Reserved   = 0;
   }
-
+  
+#ifndef CAMERA_USES_SOFTDSP
   /* Encode thumbnail only if the main image is more than QVGA size */
   if ( (main_image_header->picWidth > 320) &&
        (main_image_header->picHeight > 240) )
@@ -8651,6 +8661,7 @@ static void camera_jpeg_encode (qcamrawHeaderType *main_image_header, uint8 *mai
     encodeInfo.Thumbnail.Data.Reserved    = 0;
   }
   else
+#endif
   {
     encodeInfo.HasThumbnail = FALSE;
 
@@ -10624,6 +10635,8 @@ static void camera_process_start
 
   }
 #endif
+
+#ifndef CAMERA_USES_SOFTDSP
 #ifdef CAMERA_THUMBNAIL_SIZE_QCIF
   thumbnail_width = 176;
   ui_thumbnail_width = 176;
@@ -10634,6 +10647,12 @@ static void camera_process_start
   ui_thumbnail_width = 320;
   thumbnail_height = 240;
   ui_thumbnail_height = 240;
+#endif
+#else
+  thumbnail_width = camera_preview_dx;
+  ui_thumbnail_width = camera_preview_dx;
+  thumbnail_height = camera_preview_dy;
+  ui_thumbnail_height = camera_preview_dy;
 #endif
   thumbnail_quality = 90;
 
@@ -11131,14 +11150,14 @@ static void camera_process_start_preview
     camera_dsp_state = DSP_ENABLING;
     ret_val = (VFE_Initialize (camera_qdsp_cb) != CAMQDSP_SUCCESS);
 #else
+    int i;
     camera_reset_preview_buffers();
     camsensor_config(CAMSENSOR_OP_MODE_PREVIEW, &camsensor_static_params[camera_asi]);
-    SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[0].buf_ptr+qcamraw_header_size);
-    camera_preview_set_buffer_status(0, BUSY_WITH_VFE);
-    SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[1].buf_ptr+qcamraw_header_size);
-    camera_preview_set_buffer_status(1, BUSY_WITH_VFE);
-    SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[2].buf_ptr+qcamraw_header_size);
-    camera_preview_set_buffer_status(2, BUSY_WITH_VFE);
+    for(i=0;i<CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE;i++)
+    {
+        SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[i].buf_ptr+qcamraw_header_size);
+        camera_preview_set_buffer_status(i, BUSY_WITH_VFE);
+    }
     ret_val = (SoftDSP_Preview (camera_softdsp_cb,camera_preview_dx,camera_preview_dy) != 0);
 #endif
     if (ret_val)
@@ -11323,36 +11342,13 @@ static void camera_process_take_single_picture(void)
     }
     
     /* Set the header for main image */
-    qcamrawSetHeader((qcamrawHeaderType *) snapshot_luma_buf, 0, camera_dx*camera_dy*sizeof(uint16), QCAMRAW_RGB565, QCAMRAW_PICTURE_FRAME,
-                     QCAMRAW_NO_REFLECT, camera_default_preview_rotation, orig_picture_dx,
+    qcamrawSetHeader((qcamrawHeaderType *) snapshot_luma_buf, 0, camera_dx*camera_dy*sizeof(uint16), camera_snapshot_format, QCAMRAW_PICTURE_FRAME,
+                     QCAMRAW_NO_REFLECT, 0, orig_picture_dx,
                      orig_picture_dy, camera_dx, camera_dy, 0, 0, 0, 0,
                      camera_dx*camera_dy, 0, 0, (uint8 *)0);
-    /* padding required for 32-bit alignment of Y and CbCr components
-     * for thumbnail
-     */
-    CAM_Free (thumbnail_luma_buf);
-    thumbnail_luma_buf = CAM_Malloc (((camera_preview_dx * camera_preview_dy*sizeof(uint16)) + CAMERA_BUF_ALIGN + sizeof (qcamrawHeaderType))
-                    | CAM_ALLOC_NO_ZMEM);
     
-    if (thumbnail_luma_buf == NULL)
-    {
-      CAM_Free (snapshot_luma_buf);
-      snapshot_luma_buf = NULL;
-      camera_terminate (CAMERA_EXIT_CB_DSP_ABORT, (int)CAMERA_ERROR_CONFIG);
-      event_report (EVENT_CAMERA_CANNOT_LOAD_DSP);
-      return;
-    }
-
-    /* Set the header for thumbnail image */
-    qcamrawSetHeader((qcamrawHeaderType *) thumbnail_luma_buf, 0, camera_preview_dx * camera_preview_dy*sizeof(uint16), QCAMRAW_RGB565, QCAMRAW_PICTURE_FRAME,
-                     QCAMRAW_NO_REFLECT, camera_default_preview_rotation, camera_preview_dx, camera_preview_dy, camera_preview_dx,
-                     camera_preview_dy, 0, 0, 0, 0,
-                     camera_preview_dx * camera_preview_dy,
-                     0, camera_preview_dx * camera_preview_dy,
-                     (uint8 *)0);
-    
-    SoftDSP_SetCaptureBuff(snapshot_luma_buf+qcamraw_header_size, thumbnail_luma_buf+qcamraw_header_size);
-    ret_val = (SoftDSP_Capture (camera_softdsp_cb,camera_dx,camera_dy,camera_preview_dx,camera_preview_dy) != 0);
+    SoftDSP_SetCaptureBuff(snapshot_luma_buf+qcamraw_header_size);
+    ret_val = (SoftDSP_Capture (camera_softdsp_cb,camera_dx,camera_dy) != 0);
 #endif
 #if defined QDSP_MODULE_VFE05_CAPTURE_DEFINED || defined QDSP_IMAGE_VFE_SA_DEFINED
     camctrl_tbl.use_vfe_image_swap = FALSE;
@@ -13132,6 +13128,7 @@ static void camera_process_set_dimensions ( camera_cb_f_type callback, void *cli
     }
   }
 #endif
+
   if (callback)
   {
     (callback) (CAMERA_EXIT_CB_DONE, client_data, CAMERA_FUNC_SET_DIMENSIONS, (int32)&ui_resolution[0]);
@@ -14700,32 +14697,6 @@ static void  camera_process_softdsp_output1_msg (Camera_EndOfFrameMessageType *m
     }
     camera_svcs_ack_softdsp_output1();
   }
-  else if(camera_state == CAMERA_STATE_TAKE_PICTURE)
-  {
-    /* Thumbnail */
-    snapshot_frame.format            = camera_snapshot_format;
-    snapshot_frame.dx                = camera_preview_dx;
-    snapshot_frame.dy                = camera_preview_dy;
-    snapshot_frame.rotation          = camera_parm_encode_rotation.current_value;
-    snapshot_frame.thumbnail_image   = thumbnail_luma_buf;
-    
-    camera_take_picture_status.received_output1 = TRUE;
-    
-    if ((camera_state == CAMERA_STATE_TAKE_PICTURE) &&
-        (camera_camsensor_op_mode == CAMSENSOR_OP_MODE_SNAPSHOT) &&
-        (camera_take_picture_status.received_output2 == TRUE)
-       )
-    {
-      if (camera_take_picture_status.abort)
-      {
-        camera_svcs_queue_call_to_terminate();
-      }
-      else
-      {
-        camera_handle_frames_for_takepicture();
-      }
-    }
-  }
 } /*  camera_process_softdsp_output1_msg */
 
 
@@ -14761,20 +14732,15 @@ static void camera_process_softdsp_output2_msg (Camera_EndOfFrameMessageType *ms
   
   if (camera_state == CAMERA_STATE_TAKE_PICTURE)
   {
-    camera_take_picture_status.received_output2 = TRUE;
-    camera_take_picture_status.Y_Address    = (uint32 *)eof_msg->pBuff;
-    camera_take_picture_status.CbCr_Address = NULL;
-    
     /* main image */
     snapshot_frame.format       = camera_snapshot_format;
     snapshot_frame.captured_dx  = camera_dx;
     snapshot_frame.captured_dy  = camera_dy;
+    snapshot_frame.thumbnail_image = NULL;
     snapshot_frame.buffer       = (byte *) (snapshot_luma_buf);
     
     if (
-        ((camera_camsensor_op_mode == CAMSENSOR_OP_MODE_SNAPSHOT) &&
-         (camera_take_picture_status.received_output1 == TRUE)
-        ) ||
+        (camera_camsensor_op_mode == CAMSENSOR_OP_MODE_SNAPSHOT) ||
         (camera_camsensor_op_mode == CAMSENSOR_OP_MODE_RAW_SNAPSHOT)
        )
     {
@@ -16056,7 +16022,7 @@ void camera_set_preview_headers(void)
      MSG_ERROR ("Unsupported preview format %d.", camera_preview_format, 0, 0);
      return;
   }
-
+#ifndef CAMERA_USES_SOFTDSP
   if ((camera_state == CAMERA_STATE_PREVIEW) ||
       (camera_state == CAMERA_STATE_QVP_ENCODING))
   {
@@ -16066,6 +16032,9 @@ void camera_set_preview_headers(void)
   {
     rotation = video_encode_rotation;
   }
+#else
+  rotation = 0;
+#endif
   for (current_buffer = 0; current_buffer < CAMERA_NUM_OF_PREVIEW_BUFFERS; current_buffer++)
   {
     qcamrawSetHeader((qcamrawHeaderType *)camera_preview_buffers.buffers[current_buffer].buf_ptr,
@@ -18663,10 +18632,14 @@ static void camera_handle_frames_for_takepicture()
 
   if (camera_app_cb)
   {
+#ifndef CAMERA_USES_SOFTDSP
     /* If no thumbnail yet, wait for it */
     if ( (camera_camsensor_op_mode == CAMSENSOR_OP_MODE_SNAPSHOT) &&
          (snapshot_frame.thumbnail_image != NULL)
        )
+#else
+    if (camera_camsensor_op_mode == CAMSENSOR_OP_MODE_SNAPSHOT)
+#endif
     {
       /* wait for memory transfer to complete */
       if (offline_read_wait)

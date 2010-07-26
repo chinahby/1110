@@ -411,11 +411,6 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe);
 // 录像后，录像文件处理函数
 static void CameraApp_HandleVideoFile(CCameraApp *pMe);
 #endif
-// Jpg解码处理函数
-void CameraApp_DecodeJPG(CCameraApp *pMe);
-
-// Jpg解码的回调函数
-void CameraApp_JPGNotify(void *po, IImage *pIImage, AEEImageInfo *pii, int nErr);
 
 // 设置Camera Preview的参数
 static void CameraApp_SetParamAfterPreview(CCameraApp * pMe);
@@ -425,16 +420,15 @@ void CameraApp_InitCameraCheck(void *po);
 static void CameraApp_CreateDirectory(CCameraApp *pMe);
 
 static uint16 CameraApp_NotFullScreen(CCameraApp *pMe);
+static void CameraApp_UpdateFrame(CCameraApp *pMe);
+static int CameraApp_SavePhoto(CCameraApp *pMe);
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
-int     jpgSize;
-boolean refreshJPG = FALSE;
 
 /*==============================================================================
                                  本地（静态）数据
 ==============================================================================*/
-static boolean jpg_decoder_done = FALSE;
 
 typedef struct
 {
@@ -691,10 +685,8 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA;
 
                     pMe->m_bMemoryCardExist = CameraApp_FindMemoryCardExist(pMe);
-                    
+#if 0
                     // 如果T卡不存在，defualt保存在手机里
-
-					/*
                     if(!pMe->m_bMemoryCardExist)
                     {
                         pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
@@ -711,23 +703,9 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                                               &pMe->m_nCameraSize,
                                               sizeof(pMe->m_nCameraSize)); 
                     }
-                    */
-                    //Add By zzg 2010_07_25
+#else
                     pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
-                        
-                    pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
-
-                    (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                          CFGI_CAMERA_STORAGE,
-                                          &pMe->m_nCameraStorage,
-                                          sizeof(pMe->m_nCameraStorage));  
-
-                    (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                          CFGI_CAMERA_SIZE,
-                                          &pMe->m_nCameraSize,
-                                          sizeof(pMe->m_nCameraSize)); 
-                    //Add End
-         
+#endif
                     CLOSE_DIALOG(DLGRET_POPMSG);
                     break;
                   
@@ -803,7 +781,21 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
     
     switch(eCode) 
     {
-        case EVT_DIALOG_INIT:         
+        case EVT_DIALOG_INIT:
+            // camera preview start....
+            if(pMe->m_pCamera && (!pMe->m_bIsPreview))
+            {   
+                CameraApp_CPreviewStart(pMe);                
+            }
+            
+            if(pMe->m_bRePreview && pMe->m_pCamera)
+            {
+                ICAMERA_Preview(pMe->m_pCamera);
+                pMe->m_nCameraState = CAM_PREVIEW;
+                CameraApp_SetParamAfterPreview(pMe);
+                pMe->m_bRePreview = FALSE;
+            }
+            
             pMe->m_nSnapShotPicNameIndex = 0;
 
             pMe->m_bCapturePic = FALSE;
@@ -850,12 +842,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                                   CFGI_CAMERA_BANDING,
                                   &pMe->m_nCameraBanding,
                                   sizeof(pMe->m_nCameraBanding));
-
+#if 0
             (void)ICONFIG_GetItem(pMe->m_pConfig,
                                   CFGI_CAMERA_STORAGE,
                                   &pMe->m_nCameraStorage,
                                   sizeof(pMe->m_nCameraStorage));            
-            
+#endif
             /*pMe->m_pImage = ISHELL_LoadResImage(pMe->m_pShell, 
                                                 CAMERAAPP_IMAGE_RES_FILE, 
                                                 IDI_CAMERA_BUSY);*/
@@ -864,14 +856,13 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             ISTATIC_SetRect(pMe->m_pStatic, &pMe->m_rcStatic);
             
             ISTATIC_SetProperties(pMe->m_pStatic, ST_MIDDLETEXT|ST_CENTERTEXT|ST_TRANSPARENTBACK);
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
-     
+            
         case EVT_DIALOG_START:              
             pMe->m_bCanCapture = CameraApp_IsEnoughfMemorySpace(pMe);
-            
-            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);  
             return TRUE;
-         
+            
         case EVT_DIALOG_END:            
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
             return TRUE;
@@ -879,32 +870,6 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
         case EVT_USER_REDRAW:
             // 防止快速按键，已设定的定时器未取消            
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)CameraApp_HotKeyDisplayTimeout, pMe);
-
-            /*if(pMe->m_bshowBusyState)
-            {
-                if(pMe->m_pImage)
-                {
-                    IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_BACKGROUND, RGB_BLACK);
-                    IIMAGE_SetFrameCount(pMe->m_pImage, 6);
-                    IIMAGE_Start(pMe->m_pImage, 53, 75);
-                }
- 
-                pMe->m_bshowBusyState = FALSE;
-            }*/
-
-            // camera preview start....
-            if(pMe->m_pCamera && (!pMe->m_bIsPreview))
-            {   
-                CameraApp_CPreviewStart(pMe);                
-            }
-
-            if(pMe->m_bRePreview)
-            {
-                ICAMERA_Preview(pMe->m_pCamera);
-                pMe->m_nCameraState = CAM_PREVIEW;
-                CameraApp_SetParamAfterPreview(pMe);
-                pMe->m_bRePreview = FALSE;
-            }
             
             if(CameraApp_NotFullScreen(pMe))
             {           
@@ -1042,7 +1007,14 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 
                     if(!pMe->m_bCanCapture)
                     {
-                        pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+                        if(!pMe->m_bMemoryCardExist)
+                        {
+                            pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+                        }
+                        else
+                        {
+                            pMe->m_wMsgID = IDS_MSG_NOSDCARD;
+                        }
                         pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
                         ICAMERA_Stop(pMe->m_pCamera);
                         pMe->m_bIsPreview = FALSE;
@@ -1051,17 +1023,6 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     }
 
                     MEMSET(pMe->m_sCaptureFileName, '\0', sizeof(pMe->m_sCaptureFileName));
-
-                    // find sensor
-                    #if 0
-                    if((pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_SDCARD) && (!CameraApp_FindMemoryCardExist(pMe)))
-                    {
-                        if(CameraApp_PreviewFindNoMemoryCardExistHandle(pMe))
-                        {
-                            return TRUE;
-                        }
-                    }
-                    #endif
 
                     switch(pMe->m_nSelfTimeItemSel)
                     {
@@ -1109,10 +1070,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     
                     pMe->m_nLeftTime = nCameraSelfTime;              
                     pMe->m_bCleanScreen = TRUE;
-                        
+                    
                     if(nCameraSelfTime == 0)
                     {
-                        CameraApp_RecordSnapShot(pMe);
+                        pMe->m_nCameraState = CAM_CAPTURE;
+                        ICAMERA_Stop(pMe->m_pCamera);
+                        //CameraApp_RecordSnapShot(pMe);
                     }
                     else
                     {
@@ -1307,8 +1270,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             pMe->m_bSelNotChanged = TRUE;
 
             IMENUCTL_SetProperties(popMenu, MP_WRAPSCROLL|MP_TRANSPARENT_UNSEL|MP_NO_REDRAW);
-
-			IMENUCTL_SetOemProperties(popMenu, OEMMP_GRAPHIC_UNDERLINE);
+            IMENUCTL_SetOemProperties(popMenu, OEMMP_GRAPHIC_UNDERLINE);
             
             CameraApp_InitpopMenu(pMe, popMenu);             
             return TRUE;
@@ -1544,31 +1506,14 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
         case EVT_DIALOG_START:           
             ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
             return TRUE;
- 
+            
         case EVT_USER_REDRAW:
             IDISPLAY_SetClipRect(pMe->m_pDisplay,0);
-            CameraApp_HandleSnapshotPic(pMe);                     
+            IDISPLAY_ClearScreen(pMe->m_pDisplay);
+            CameraApp_HandleSnapshotPic(pMe);
             return TRUE;
- 
+            
         case EVT_KEY:
-            #ifdef FEATURE_SUPPORT_VC0848
-            // jpg 解码未完成，禁止按键事件
-            if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
-            {
-                extern vc_jpeg_decode display_jpg_done;
-                if(display_jpg_done == VC_JPEG_DECODE_DOING)
-                {
-                    return TRUE;
-                }                               
-            }
-            else
-            {
-                if(!jpg_decoder_done)
-                {
-                    return TRUE;
-                }
-            }
-            #endif
             MEMSET(pMe->m_sCurrentFileName, '\0', STRLEN(pMe->m_sCurrentFileName));
         
             if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
@@ -2739,10 +2684,10 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                 else
                 {
                     CLOSE_DIALOG(DLGRET_VIDEO);
-                }                      
+                }
             }
             else
-            {            
+            {
                 CLOSE_DIALOG(DLGRET_CANCELED);
             }
             
@@ -6614,12 +6559,13 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     }
 #endif
 
-    pMe->m_nCameraState = CAM_CAPTURE;
-    pMe->m_bCapturePic = TRUE;
-
+    pMe->m_nCameraState = CAM_SAVE;
+    pMe->m_bCapturePic  = TRUE;
+    (void)ICAMERA_DeferEncode(pMe->m_pCamera, TRUE);
+    
     // 拍照状态的处理
     if(SUCCESS != ICAMERA_RecordSnapshot(pMe->m_pCamera))
-    {   
+    {
         // 拍照失败,默认保留已经拍照成功的相片,并返回到预览界面,避免UI层出现死机现象
         // Vc848.c中处理过,如果拍照失败,直接删除失败的文件.
         pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
@@ -6636,7 +6582,6 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     if(pMe->m_nSnapShotTimes == 0)
     {
         pMe->m_bCapturePic = FALSE;
-        CLOSE_DIALOG(DLGRET_PICMENU);  
     }
     else
     {
@@ -6922,23 +6867,8 @@ static void CameraApp_DialogTimeout(void *pme)
 
 static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe)
 {   
-    #ifdef FEATURE_SUPPORT_VC0848
-    static vc_union_type vc_data;
-    VC_DeviceControl(VC_ITM_SD_STAT_I, VC_FUNC_GET_PARM, &vc_data);
-    
-    if( vc_data.sd == VC_SD_FIND_ERR)
-    {
-       return FALSE;
-    }
-    else
-    {
-        return TRUE;
-    }
-    #else
-    return FALSE;
-    #endif
+    return IFILEMGR_Test(pMe->m_pFileMgr, AEEFS_CARD0_DIR);
 }
-
 
 // camera preview下没找到存储卡的处理
 static boolean CameraApp_PreviewFindNoMemoryCardExistHandle(CCameraApp *pMe)
@@ -7003,7 +6933,7 @@ static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp * pMe)
 static boolean CameraApp_SelfTimeRecordSnapShot(CCameraApp *pMe)
 {
     // 倒计时先清空屏幕
-    IDisplay_ClearScreen(pMe->m_pDisplay);
+    //IDisplay_ClearScreen(pMe->m_pDisplay);
 
     (void)ISHELL_SendEvent(pMe->m_pShell,
                            AEECLSID_APP_CAMERA,
@@ -7017,7 +6947,9 @@ static boolean CameraApp_SelfTimeRecordSnapShot(CCameraApp *pMe)
 
         if(pMe->m_pCamera)
         {
-            CameraApp_RecordSnapShot(pMe);
+            pMe->m_nCameraState = CAM_CAPTURE;
+            ICAMERA_Stop(pMe->m_pCamera);
+            //CameraApp_RecordSnapShot(pMe);
         }
 
         return TRUE;
@@ -7347,79 +7279,52 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
     WSTRCPY(pMe->m_wFileName, wfileName);
 
     WSTRCPY(pMe->m_nNumOfSnapshot, numOfSnapshot);
-
-    #if 1
-    // jpg解码，刷屏。保存到手机上，采取qualcomm的解码方式。先解码，再刷屏
-    if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_PHONE)
-    {
-        IImage *pIImage;
-        
-        jpg_decoder_done = FALSE;
-        
-        pIImage = ISHELL_LoadImage(pMe->m_pShell, pMe->m_sFileNameWithAllPath);
-        
-        if(NULL != pIImage) 
-        { 
-            IIMAGE_Notify(pIImage, CameraApp_JPGNotify, (void*)pMe);    
-        }   
+    
+    
+    
+    if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_INDEX_0)
+    {      
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+        CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG_VERTU, 0, 0);           
+        CameraApp_DrawBarBg(pMe, IDI_CFG_BG_VERTU, 0, 160);
+#else        
+        CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG, 0, 0);           
+        CameraApp_DrawBarBg(pMe, IDI_CFG_BG, 0, 160);          
+#endif			
+        DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE);               
     }
     else
-    {
-        IDISPLAY_ClearScreen(pMe->m_pDisplay);
-        
-        if(pMe->m_nCameraSize != OEMNV_CAMERA_SIZE_INDEX_0)
-        {      
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-            CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG_VERTU, 0, 0);           
-            CameraApp_DrawBarBg(pMe, IDI_CFG_BG_VERTU, 0, 160);
-#else        
-            CameraApp_DrawBarBg(pMe, IDI_TOPBAR_BG, 0, 0);           
-            CameraApp_DrawBarBg(pMe, IDI_CFG_BG, 0, 160);          
-#endif			
-            DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE);               
-        }
-        else
-        {  
-            CameraApp_DrawBottomBarText(pMe, BTBAR_SAVE_DELETE);
-        }
-        
-        IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, WHITE_TEXT);
-
-        DrawTextWithProfile(pMe->m_pShell, 
-                            pMe->m_pDisplay, 
-                            RGB_BLACK, 
-                            AEE_FONT_NORMAL, 
-                            wfileName, 
-                            -1, 
-                            0, 
-                            0, 
-                            &topRect, 
-                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
-
-        DrawTextWithProfile(pMe->m_pShell, 
-                            pMe->m_pDisplay, 
-                            RGB_BLACK, 
-                            AEE_FONT_NORMAL, 
-                            numOfSnapshot, 
-                            -1, 
-                            0, 
-                            0, 
-                            &numTextRect, 
-                            IDF_ALIGN_RIGHT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
-
-        jpgSize = pMe->m_nCameraSize;
-
-        refreshJPG = TRUE;
-
-        IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE); 
-        
-        IDisplay_UpdateEx(pMe->m_pDisplay, FALSE);
-         
-        refreshJPG = FALSE;
-
-        CameraApp_DecodeJPG(pMe);
+    {  
+        CameraApp_DrawBottomBarText(pMe, BTBAR_SAVE_DELETE);
     }
-    #endif
+    
+    IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, WHITE_TEXT);
+
+    DrawTextWithProfile(pMe->m_pShell, 
+                        pMe->m_pDisplay, 
+                        RGB_BLACK, 
+                        AEE_FONT_NORMAL, 
+                        wfileName, 
+                        -1, 
+                        0, 
+                        0, 
+                        &topRect, 
+                        IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+
+    DrawTextWithProfile(pMe->m_pShell, 
+                        pMe->m_pDisplay, 
+                        RGB_BLACK, 
+                        AEE_FONT_NORMAL, 
+                        numOfSnapshot, 
+                        -1, 
+                        0, 
+                        0, 
+                        &numTextRect, 
+                        IDF_ALIGN_RIGHT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+    
+    IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE); 
+    
+    IDisplay_UpdateEx(pMe->m_pDisplay, FALSE);
     
     pMe->m_nSnapShotPicNum--;
     
@@ -7482,81 +7387,6 @@ static void CameraApp_HandleVideoFile(CCameraApp *pMe)
     IDisplay_SetClipRect(pMe->m_pDisplay, 0);
 }
 #endif
-// VIM Jpg decode方式
-void CameraApp_DecodeJPG(CCameraApp *pMe)
-{
-    #ifdef FEATURE_SUPPORT_VC0848
-    vc_union_type vc_data;
-    
-    vc_data.play_info.cam_size = pMe->m_nCameraSize;
-    vc_data.play_info.entry = VC_JPEG_ENTRY_CAM;
-    
-    if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
-    {
-        vc_data.play_info.file_scr = VC_IN_CORE_FILE;
-    }
-    else
-    {
-         vc_data.play_info.file_scr = VC_IN_BASEBAND_RAM;
-    }
-    
-    STRCPY((char *)&vc_data.play_info.szFileName, (char *)&pMe->m_sFileNameWithAllPath);
-    
-    DBGPRINTF("VC JPEG Decode:%s, file_src:%d", (char *)&vc_data.play_info.szFileName, vc_data.play_info.file_scr);
-    
-    VC_DeviceControl(VC_ITM_JPG_DECODE_I, VC_FUNC_PLAY_ON, &vc_data);
-    #endif
-}
-
-// jpg decode回调函数,176x220拍摄到手机里,jpg decode采取qualcomm方式
-void CameraApp_JPGNotify(void *po, IImage *pIImage, AEEImageInfo *pii, int nErr)
-{   
-    AEERect topRect,numTextRect; 
-
-    CCameraApp *pMe = (CCameraApp *)po;
-
-    SETAEERECT(&topRect, 0, 0, 176, 28);
-    SETAEERECT(&numTextRect, 5, 160, 166, 22);
-    
-    if(SUCCESS == nErr) 
-    {
-         IIMAGE_Draw(pIImage, 0, 0);
-
-         CameraApp_DrawBottomBarText(pMe, BTBAR_SAVE_DELETE);
-         
-         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, WHITE_TEXT);
- 
-         DrawTextWithProfile(pMe->m_pShell, 
-                             pMe->m_pDisplay, 
-                             RGB_BLACK, 
-                             AEE_FONT_NORMAL, 
-                             pMe->m_wFileName, 
-                             -1, 
-                             0, 
-                             0, 
-                             &topRect, 
-                             IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
- 
-         DrawTextWithProfile(pMe->m_pShell, 
-                             pMe->m_pDisplay, 
-                             RGB_BLACK, 
-                             AEE_FONT_NORMAL, 
-                             pMe->m_nNumOfSnapshot, 
-                             -1, 
-                             0, 
-                             0, 
-                             &numTextRect, 
-                             IDF_ALIGN_RIGHT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
-
-        IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
- 
-        IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-
-        IIMAGE_Release(pIImage);
-
-        jpg_decoder_done = TRUE;
-    }   
-}
 
 // Camera一些设置参数,需要在Preview后设置才能生效
 static void CameraApp_SetParamAfterPreview(CCameraApp *pMe)
@@ -7594,7 +7424,7 @@ static void CameraApp_SetParamAfterPreview(CCameraApp *pMe)
 }
 
 /*===========================================================================
-FUNCTION CCameraApp_UpdateFrame
+FUNCTION CameraApp_UpdateFrame
 
   DESCRIPTION
     This function updates the display with the frame from the viewfinder.
@@ -7605,7 +7435,7 @@ FUNCTION CCameraApp_UpdateFrame
   RETURN VALUE:
     None
 ===========================================================================*/
-static void CCameraApp_UpdateFrame(CCameraApp *pMe)
+static void CameraApp_UpdateFrame(CCameraApp *pMe)
 {
   IBitmap *pFrame = NULL;
 
@@ -7623,52 +7453,97 @@ static void CCameraApp_UpdateFrame(CCameraApp *pMe)
   RELEASEIF(pFrame);
 }
 
-static void CCameraApp_EventNotify(CCameraApp *pMe, AEECameraNotify *pcn)
-{
-  if (!pMe || !pcn)
-    return;
-  
-  switch (pcn->nCmd)
-  {
-  case CAM_CMD_START:
-    switch (pcn->nStatus)
-    {
-    case CAM_STATUS_START:
-      // Restart preview
-      if (pMe->m_nCameraState == CAM_CAPTURE)
-      {
-         ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
-      }
-      break;
+/*===========================================================================
+FUNCTION CameraApp_SavePhoto
 
-    case CAM_STATUS_FRAME:
-      //It is the image from the viewfinder.
-      CCameraApp_UpdateFrame(pMe);
-      ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
-      break;
+  DESCRIPTION
+    This function starts the encoding processing to save a new photo to the file.
+
+  PARAMETERS:
+    pMe - pointer to QCam data struct
+
+  RETURN VALUE:
+    NONE
+===========================================================================*/
+static int CameraApp_SavePhoto(CCameraApp *pMe)
+{
+  AEEMediaData   md;
+  
+  if (!pMe)
+    return EBADPARM;
+
+  //Fill media data
+  md.clsData = MMD_FILE_NAME;
+  md.pData = (void *)pMe->m_sCurrentFileName;
+  md.dwSize = 0;
+
+  //Start encoding processing
+  (void)ICAMERA_SetMediaData(pMe->m_pCamera, &md, 0);
+  
+  return ICAMERA_EncodeSnapshot(pMe->m_pCamera);
+} /* END CameraApp_SavePhoto */
+
+static void CameraApp_EventNotify(CCameraApp *pMe, AEECameraNotify *pcn)
+{
+    if (!pMe || !pcn || !pMe->m_pCamera)
+        return;
+  
+    switch (pcn->nCmd){
+    case CAM_CMD_START:
+        switch (pcn->nStatus){
+        case CAM_STATUS_START:
+            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
+            break;
+          
+        case CAM_STATUS_FRAME:
+            //It is the image from the viewfinder.
+            CameraApp_UpdateFrame(pMe);
+            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
+            break;
+          
+        case CAM_STATUS_DONE:
+            if(pMe->m_nCameraState == CAM_CAPTURE)
+            {
+                CameraApp_RecordSnapShot(pMe);
+            }
+            else if(pMe->m_nCameraState == CAM_SAVE)
+            {
+                ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_CAMERA_NOTIFY, pcn->nCmd, pcn->nStatus);
+            }
+            else
+            {
+                ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
+            }
+            break;
+          
+        case CAM_STATUS_FAIL:
+            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_CAMERA_NOTIFY, pcn->nCmd, pcn->nStatus);
+            break;
+          
+        default:
+            break;
+        }
+        break;
     
-    case CAM_STATUS_DONE:
-    case CAM_STATUS_FAIL:  
+    case CAM_CMD_SETPARM:
+        switch (pcn->nStatus)
+        {
+        case CAM_STATUS_UPDATE:
+        case CAM_STATUS_FAIL:
+        case CAM_STATUS_DONE:
+            break;
+        default:
+            break;
+        }
+        break;
+    
+    case CAM_CMD_ENCODESNAPSHOT:
+        ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_CAMERA_NOTIFY, pcn->nCmd, pcn->nStatus);
+        break;
+    
     default:
-      break;
+        break;
     }
-    break;
-  case CAM_CMD_SETPARM:
-    switch (pcn->nStatus)
-    {
-    case CAM_STATUS_UPDATE:
-    case CAM_STATUS_FAIL:
-    case CAM_STATUS_DONE:
-      break;
-    default:
-      break;
-    } //switch (pcn->nStatus)
-    break;
-  case CAM_CMD_ENCODESNAPSHOT:
-    break;
-  default:
-    break;
-  }
 }
 
 void CameraApp_InitCameraCheck(void *po)
@@ -7686,8 +7561,80 @@ void CameraApp_InitCameraCheck(void *po)
 
     if(pMe->m_pCamera)
     {
-        ICAMERA_RegisterNotify(pMe->m_pCamera,(PFNCAMERANOTIFY)CCameraApp_EventNotify,po);
+        ICAMERA_RegisterNotify(pMe->m_pCamera,(PFNCAMERANOTIFY)CameraApp_EventNotify,po);
     }
+}
+
+void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
+{
+    if (!pMe || !pMe->m_pCamera)
+        return;
+  
+    switch (nCmd){
+    case CAM_CMD_START:
+        switch (nStatus){
+        case CAM_STATUS_START:
+            break;
+      
+        case CAM_STATUS_FRAME:
+            break;
+    
+        case CAM_STATUS_DONE:
+            if(pMe->m_nCameraState == CAM_SAVE)
+            {
+                CameraApp_SavePhoto(pMe);
+                //CLOSE_DIALOG(DLGRET_PICMENU);
+            }
+            break;
+      
+        case CAM_STATUS_FAIL:
+            if(pMe->m_nCameraState == CAM_CAPTURE)
+            {
+                pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
+                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
+                CLOSE_DIALOG(DLGRET_POPMSG);
+            }
+            break;
+            
+        default:
+            break;
+        }
+        break;
+    
+    case CAM_CMD_SETPARM:
+        switch (nStatus){
+        case CAM_STATUS_UPDATE:
+        case CAM_STATUS_FAIL:
+        case CAM_STATUS_DONE:
+            break;
+        default:
+            break;
+        }
+        break;
+    case CAM_CMD_ENCODESNAPSHOT:
+        switch (nStatus){
+        case CAM_STATUS_FAIL:
+            if(pMe->m_nCameraState == CAM_SAVE)
+            {
+                pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
+                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
+                CLOSE_DIALOG(DLGRET_POPMSG);
+            }
+            break;
+            
+        case CAM_STATUS_DONE:
+            CLOSE_DIALOG(DLGRET_PICMENU);
+            break;
+            
+        default:
+            break;
+        }
+        
+        break;
+        
+  default:
+    break;
+  }
 }
 
 // 创建文件夹目录
