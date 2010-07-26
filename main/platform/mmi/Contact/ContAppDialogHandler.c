@@ -6057,6 +6057,21 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 case AVK_7:
                 case AVK_8:
                 case AVK_9:
+                case AVK_T:
+                case AVK_Y:
+                case AVK_U:
+                case AVK_I:
+                case AVK_O:
+                case AVK_P:
+                case AVK_G:
+                case AVK_H:
+                case AVK_J:
+                case AVK_K:
+                case AVK_L:
+                case AVK_V:
+                case AVK_B:
+                case AVK_N:
+                case AVK_M:
                 case AVK_STAR:
                 case AVK_POUND:
                 {
@@ -9702,6 +9717,21 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                     case AVK_7:
                     case AVK_8:
                     case AVK_9:
+                    case AVK_T:
+                    case AVK_Y:
+                    case AVK_U:
+                    case AVK_I:
+                    case AVK_O:
+                    case AVK_P:
+                    case AVK_G:
+                    case AVK_H:
+                    case AVK_J:
+                    case AVK_K:
+                    case AVK_L:
+                    case AVK_V:
+                    case AVK_B:
+                    case AVK_N:
+                    case AVK_M:
                     case AVK_STAR:
                     case AVK_POUND:
                     {
