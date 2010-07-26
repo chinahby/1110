@@ -565,8 +565,6 @@ typedef struct _CMusicPlayer
     boolean   m_bUserStopped;
     //是否是用户按键播放下一首
     boolean   m_bUserPressNext;
-    //是否在播WAVE动画
-    boolean   m_bStartAni;
     //App是否准备好
     boolean     m_bAppReady;
     //是否是重命名操作，主要是为了代码复用把创建播放列表和重命名合二为一
@@ -785,10 +783,6 @@ void MP3_SearchIdByName(CMusicPlayer *pMe,char *musicName);
 
 /*滚动显示当前正在播放的歌曲名称*/
 void MP3_MusicNameAutoScroll(CMusicPlayer *pMe);
-
-void MP3_DrawWaveAni(CMusicPlayer *pMe);
-
-void MP3_StopAni(CMusicPlayer *pMe);
 
 /*===========================================================================
    接受CMX底层回调

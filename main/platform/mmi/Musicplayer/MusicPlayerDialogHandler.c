@@ -412,11 +412,6 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
                 MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
             }
             IDISPLAY_Update(pMe->m_pDisplay); //刷屏
-           
-            if(pMe->m_bPaused && pMe->m_bStartAni)
-            {
-               ISHELL_SetTimer(pMe->m_pShell, 205, (PFNNOTIFY)MP3_StopAni, pMe);
-            }
             return TRUE;
             
         }
@@ -2383,11 +2378,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 
   switch(wParam)
   {    
-     case AVK_SELECT:  
-         if(pMe->m_bStartAni)
-         {
-            MP3_StopAni(pMe);
-         }
+     case AVK_SELECT:
         ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)MP3_MusicNameAutoScroll,pMe);
         pMe->m_rtype = TYPE_PLAYER;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
@@ -2915,12 +2906,7 @@ static boolean  CMusicPlayer_HandleMsgBoxDlgEvent( CMusicPlayer  *pMe,
             {
                 PromptMsg_Param_type  Msg_Param={0};
                 AECHAR  wstrText[MSGBOX_MAXTEXTLEN] = {(AECHAR)'\0'};
-
-                // 如果正在播放动画，先把动画停了
-                if(pMe->m_bStartAni)
-                {
-                    MP3_StopAni(pMe);
-                }
+                
                 // 从资源文件取消息内容
                 (void)ISHELL_LoadResString(pMe->m_pShell,
                                 MUSICPLAYER_RES_FILE_LANG,                                
@@ -3911,10 +3897,6 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
                 // 非播放器界面播放时不弹播放失败提示直接往下播
                 if(GetMp3PlayerStatus() == MP3STATUS_RUNONFOREGROUND && pMe->m_eCurState==STATE_PLAYMUSIC_WINDOWS) 
                 {
-                    if(pMe->m_bStartAni)
-                    {
-                        MP3_StopAni(pMe);
-                    }
                     (void)IMEDIA_Stop(pMe->m_pMedia);
                     //pMe->m_bUserStopped = TRUE;
                     pMe->m_bPaused = FALSE;
@@ -4560,45 +4542,7 @@ void CMusicPlayer_PlayingMusiclistSortBy(CMusicPlayer * pMe)
         }
     }
 }
-void MP3_DrawWaveAni(CMusicPlayer *pMe)
-{
-    AEEImageInfo  ImgInfo;
-    FREEIF(pMe->m_paniImage);
-    pMe->m_paniImage= ISHELL_LoadResImage(pMe->m_pShell, 
-                             MUSICPLAYERIMAGE_RES_FILE, 
-                             IDI_FLASH);
-   if(pMe->m_paniImage== NULL)
-   {
-       return;
-   }
-   pMe->m_bStartAni = TRUE;
-    IIMAGE_GetInfo( pMe->m_paniImage, &ImgInfo );
 
-    // 设置动画速度(毫秒)
-    IIMAGE_SetAnimationRate(pMe->m_paniImage, 200);
-
-    // 设置图像中的帧数
-    IIMAGE_SetFrameCount(pMe->m_paniImage, ANI_NUM);
-
-    // 设置要显示的图像的实际大小
-    IIMAGE_SetDrawSize( pMe->m_paniImage, ImgInfo.cx/ANI_NUM, SCHEDULEBAR_Y - 5);// - ANI_Y );
-
-    // 开始播放动画
-    IIMAGE_Start( pMe->m_paniImage,
-                   ANI_X,
-                   ANI_Y);
-}
-
-void MP3_StopAni(CMusicPlayer *pMe)
-{
-    if(pMe->m_paniImage)
-    {
-        pMe->m_bStartAni = FALSE;
-        IIMAGE_Stop(pMe->m_paniImage);
-        IIMAGE_Release(pMe->m_paniImage);
-        pMe->m_paniImage = NULL;
-    }
-}
 /*刷新音量条*/
 static void MP3_RefreshVolBar(CMusicPlayer *pMe)
 {
@@ -4792,19 +4736,6 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
      if(pMe->m_bPlaying)
     {
         MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);
-        if(!pMe->m_bStartAni)
-        {
-        
-           #ifdef FEATURE_VERSION_IVIO
-		   #else
-           MP3_DrawWaveAni(pMe);//画动画
-           #endif
-         
-        }
-    }
-    else if(!pMe->m_bPaused && !pMe->m_bPlaying && pMe->m_bStartAni)
-    {
-        MP3_StopAni(pMe);
     }
 	// IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
 }

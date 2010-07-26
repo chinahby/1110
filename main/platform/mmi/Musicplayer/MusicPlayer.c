@@ -387,7 +387,6 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
     pMe->m_bUserPressNext = FALSE;
     pMe->m_bAppReady = FALSE;
     pMe->m_bRenameOpt = FALSE;
-    pMe->m_bStartAni = FALSE;
     pMe->m_nAutoScrollIdx = 0;
     pMe->m_nCurrentTime = 0;
     pMe->m_nTotalTime = 0;
@@ -709,10 +708,6 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
            else
            {
               ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)MP3_MusicNameAutoScroll,pMe);
-              if(pMe->m_bStartAni)
-             {
-               MP3_StopAni(pMe);
-             }
              (void)ISHELL_PostEvent( pMe->m_pShell,
                                         AEECLSID_CORE_APP,
                                         EVT_DRAWMUSICNAME,
@@ -1246,10 +1241,6 @@ static void MP3_InterruptHandle(CMusicPlayer *pMe)
     {
         //ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)MP3_MusicNameAutoScroll,pMe);
         (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-        if(pMe->m_bStartAni)
-        {
-          MP3_StopAni(pMe);
-        }
         CMusicPlayer_ReleaseMedia(pMe);
     }
 }
@@ -1397,10 +1388,6 @@ void MP3_InitMusicCB(CMusicPlayer *pMe)
      {
       // if(!pMe->m_bStartApp)
        //{
-            if(pMe->m_bStartAni)
-            {
-               MP3_StopAni(pMe);
-            }
             pMe->m_bPlaying = FALSE;
             pMe->m_bPaused = FALSE;
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER, EVT_POPMSGDIALOG, IDS_MSG_ERR_FORMAT, 0);

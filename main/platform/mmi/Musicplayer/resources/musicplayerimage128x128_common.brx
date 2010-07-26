@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="musicplayerimage" VERSION="1">
+<BREWRes Name="musicplayerimage128x128_common" VERSION="1">
 <Objects MimeType="image/png">
 	<Object Id="5001" Name="IDI_MUSICPLAYER">
 		<File>..\..\Appscommon\images\128x128\common\MusicPlayer\musicPlayernew.png</File>
-	</Object>
-	<Object Id="5002" Name="IDI_FLASH">
-		<File>..\..\Appscommon\images\128x128\common\MusicPlayer\Animation.png</File>
 	</Object>
 	<Object Id="5003" Name="IDI_MUSICLOG" MimeType="image/bmp">
 		<File>..\..\Appscommon\images\128x128\common\MusicPlayer\musicicon.bmp</File>
