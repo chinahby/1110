@@ -19,7 +19,6 @@
 #define OEMNV_CALLFORWARD_WAIT_ENABLE               "*74"                       //CFGI_CALLFORWARD_WAIT_ENABLE
 #define OEMNV_CALLFORWARD_WAIT_DISABLE              "*740"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
-#define OEMNV_SERVICE_PROVIDER                      {"000","00","0"}            //CFGI_SERVICE_PROVIDER
 #define OEMNV_VOICEMAIL_NUMBER                      "0"                         //NV_SMS_VM_NUMBER_I  
 
 //Others

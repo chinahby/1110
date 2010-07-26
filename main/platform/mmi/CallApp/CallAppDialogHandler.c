@@ -936,18 +936,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         else
 #endif
                       {
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-                       AECHAR tempStr1[MAX_SIZE_GETIMSI];
-                       AECHAR tempStr2[MAX_SIZE_GETIMSI];
-                       AECHAR tempStr4[MAX_SIZE_GETIMSI];
-                       AECHAR tempStr5[MAX_SIZE_GETIMSI];
-                       AECHAR tempStr6[MAX_SIZE_GETIMSI];
-                       AECHAR tempStr7[MAX_SIZE_GETIMSI];
-                       uint16 tempStr3[MAX_SIZE_GETIMSI];
-                       SetImsi List[OEMNV_MAX_SERVICEPROVIDER_NUMBER];
-                       uint16 mcc;
-                       uint16 mnc;
-#endif
 #ifdef FEATURE_APP_FLDDBG
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
                         if (WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)
@@ -981,49 +969,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         {
                             return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
                         }
-#ifdef FATRUE_LOCK_IMSI_MCCMNC	 
-                        else  if (WSTRNCMP(pMe->m_DialString, L"*953047*",8) == 0)
-                        {
-                            WSTRLCPY(tempStr1,pMe->m_DialString,sizeof("*953047*"));
-                            WSTRLCPY((AECHAR*)tempStr2,pMe->m_DialString+8,3);	
-                            WSTRLCPY((AECHAR*)tempStr4,pMe->m_DialString+9,3);
-                            WSTRLCPY((AECHAR*)tempStr5,pMe->m_DialString+10,3);
-                            WSTRLCPY((AECHAR*)tempStr6,pMe->m_DialString+11,3);
-                            WSTRLCPY((AECHAR*)tempStr7,pMe->m_DialString+12,3);   
-
-                            tempStr3[0] = (uint16)ATOI((char*)tempStr2);
-                            tempStr3[1] = (uint16)ATOI((char*)tempStr4);
-                            tempStr3[2] = (uint16)ATOI((char*)tempStr5);
-
-                            tempStr3[3] = (uint16)ATOI((char*)tempStr6);
-                            tempStr3[4] = (uint16)ATOI((char*)tempStr7);
-
-                            mcc = tempStr3[0]*100 + tempStr3[1]*10 + tempStr3[2];
-                            mnc = tempStr3[3]*10 + tempStr3[4];
-                            //MSG_ERROR("99999999999999999%d,%d,%d", tempStr3[0] , tempStr3[1] , tempStr3[2] );
-                            //MSG_ERROR("99999999999999999%d,%d",mcc,mnc,0);
-       
-                            List[0].mcc = mcc;
-                            List[0].mnc = mnc;
-                            List[0].bsetimsi = TRUE;
-                            //MSG_ERROR("99999999999999999%d,%d", List[0].mcc, List[0].bsetimsi,0);
-                            (void) ICONFIG_SetItem(pMe->m_pConfig, 
-                                              CFGI_IMSI_SETMCC,
-                                              (void*)List,
-                                              sizeof(SetImsi) * OEMNV_MAX_SERVICEPROVIDER_NUMBER);
-
-                        }
-                        else if (WSTRCMP(pMe->m_DialString, L"*953048#") == 0)
-                        {
-                            List[0].bsetimsi = FALSE;
-                            (void) ICONFIG_SetItem(pMe->m_pConfig, 
-                                       CFGI_IMSI_SETMCC,
-                                       (void*)List,
-                                        sizeof(SetImsi) * OEMNV_MAX_SERVICEPROVIDER_NUMBER);	
-                            //MSG_ERROR("99999999999999999%d,%d", List[0].mcc, List[0].bsetimsi,0);
-                        }
-#endif
-
 #ifdef FEATURE_CARRIER_TAIWAN_APBW
 #ifdef FEATRUE_SET_IP_NUMBER
                         else if (WSTRCMP(pMe->m_DialString, L"*1468#") == 0)

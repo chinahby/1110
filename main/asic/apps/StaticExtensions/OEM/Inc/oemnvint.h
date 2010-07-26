@@ -745,26 +745,6 @@ typedef PACKED struct _ringID
     
 }ringID;
 
-
-#define OEMNV_MAX_SERVICEPROVIDER_NUMBER 50
-#define OPERATOR_NAME_MAX_SIZE 32
-#define OEMNV_MAX_MCC_SIZE 4
-#define OEMNV_MAX_MNC_SIZE 3
-typedef PACKED struct _ServiceProvider
-{
-    char   mcc[OEMNV_MAX_MCC_SIZE];
-    char   mnc[OEMNV_MAX_MNC_SIZE];
-    char  ids_name[OPERATOR_NAME_MAX_SIZE];
-} ServiceProvider;
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-typedef PACKED struct _SetImsi
-{
-//add code for set lockimsi
-    uint16 mcc;
-    uint16 mnc;
-    boolean bsetimsi;//set lockimsi state
-} SetImsi;
-#endif
 /////////////////////////////////////////////////////////////////////////
 //  ‰»Î∑®…Ë÷√ -- CFGI_INPUTMODE
 /////////////////////////////////////////////////////////////////////////

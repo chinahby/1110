@@ -306,11 +306,6 @@ enum{
     CFGI_WMS_CALLBACKNUMSWITCH,       // type= boolean
     CFGI_CALLBACKNUM,                 // type= AECHAR *
     CFGI_WMS_MO_CHANNEL_SELECT,       // type= byte
-
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-    CFGI_IMSI_SETMCC,   // tyoe= SetImsi
-#endif
-
     CFGI_PHONE_PASSWORD,        //type = uint16
     CFGI_PHONE_PASSWORD_CHECK,  //type = boolean
     CFGI_RESTRICT_OUTGOING,     //type = byte
@@ -355,7 +350,6 @@ enum{
     CFGI_CALLFORWARD_CNIR_ENABLE,
     CFGI_CALLFORWARD_CNIR_DISABLE,
 #endif
-    CFGI_SERVICE_PROVIDER,
     CFGI_INPUTMODE,
 
 #ifdef FEATRUE_SET_IP_NUMBER

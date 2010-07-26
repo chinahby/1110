@@ -101,8 +101,8 @@ static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe);
  void CoreApp_InitBattStatus(CCoreApp * pMe);
 #endif
 //static void CoreAppLoadTimepImage(CCoreApp *pMe);   //add by ydc
-void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe);
 boolean CoreApp_ProcessOffLine(CCoreApp *pMe);
+void SendRTREConfig (CCoreApp *pMe);
 static boolean CoreApp_ProcessFTMMode(CCoreApp *pMe);
 
 /*==============================================================================
@@ -153,7 +153,6 @@ boolean CoreApp_IsIdle(void)
 ==============================================================================*/
 void CoreApp_FreeAppData(IApplet* po)
 {
-	int i; 
     CCoreApp *pMe = (CCoreApp*)po;
 
     if (pMe->m_pIAnn) 
@@ -186,6 +185,14 @@ void CoreApp_FreeAppData(IApplet* po)
     {
         IRUIM_Release(pMe->m_pIRUIM);
         pMe->m_pIRUIM = NULL;
+    }
+    
+    /* ICard */
+    if (pMe->m_pICard) 
+    {
+        ISHELL_RegisterNotify(pMe->a.m_pIShell,  AEECLSID_CORE_APP, AEECLSID_CARD_NOTIFIER,0);
+        ICARD_Release(pMe->m_pICard);
+        pMe->m_pICard = NULL;
     }
     
     // 释放 ICM 接口
@@ -258,7 +265,6 @@ void CoreApp_FreeAppData(IApplet* po)
 ==============================================================================*/
 boolean CoreApp_InitAppData(IApplet* po)
 {
-	int i;
     CCoreApp *pMe = (CCoreApp*)po;
     boolean b_FMBackground = FALSE;
     if (NULL == pMe)
@@ -271,8 +277,19 @@ boolean CoreApp_InitAppData(IApplet* po)
     GreyBitBrewFont_Init();
 }
 #endif
+#ifdef FEATURE_MMGSDI
+    pMe->m_nCardStatus = AEECARD_NOT_READY;
+#else
+    pMe->m_nCardStatus = AEECARD_NO_CARD;
+#endif
     pMe->m_bSuspended = FALSE;	
-	
+	if(SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                        AEECLSID_CARD,
+                                        (void **) &pMe->m_pICard))
+	{
+        return FALSE;
+	}
+    
     if (TRUE != CoreApp_RegisterNotify(pMe))
     {
         return FALSE;
@@ -297,7 +314,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_eCurState = COREST_INIT;
     pMe->m_eDlgRet = DLGRET_CREATE;
     
-    pMe->m_eUIMErrCode = UIMERR_NONE;
+    pMe->m_eUIMErrCode = UIMERR_UNKNOW;
     pMe->m_bAcquiredTime = FALSE;
     pMe->m_bExit = FALSE;
     
@@ -1290,11 +1307,89 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 }
 #endif
 
+/*=============================================================================
+FUNCTION: CoreApp_GetCardStatus
+
+DESCRIPTION:
+Obtains Card Status for a given slot
+
+SIDE EFFECTS:
+  None.
+
+=============================================================================*/
+static boolean CoreApp_GetCardStatus(CCoreApp *pMe,uint8 slot)
+{
+    /* Get the card status from card */
+    if (AEECARD_SLOT1 == slot) 
+    {
+        ICARD_GetCardStatus(pMe->m_pICard, (uint8 *) &(pMe->m_nCardStatus));
+    }
+    else 
+    {
+        return FALSE;
+    }
+    
+    return TRUE;
+}
+
+/*=============================================================================
+FUNCTION: CoreApp_ProcessICardEvents
+
+DESCRIPTION:
+  Process ICard Notifier events
+
+SIDE EFFECTS:
+  None.
+
+=============================================================================*/
+static boolean CoreApp_ProcessICardEvents(CCoreApp *pMe, uint16 wParam, uint32 dwParam)
+/*lint -esym(715,wParam)*/
+{
+  if (pMe == NULL) 
+  {
+        CORE_ERR("NULL pMe", 0, 0, 0);
+        return FALSE;
+  }
+  
+  switch (((AEENotify *) dwParam)->dwMask )
+  {
+    case NMASK_CARD_STATUS:
+        if (FALSE == CoreApp_GetCardStatus(pMe,AEECARD_SLOT1))
+        {
+            CORE_ERR("CoreApp_GetCardStatus Failed for Slot One",0, 0, 0);
+            return FALSE;
+        }
+
+        CORE_ERR("Got ICARD CARD_STATUS event.  Status %d",pMe->m_nCardStatus,0,0);
+
+        switch(pMe->m_nCardStatus) {
+        case AEECARD_VALID_CARD: /* received SIM_INIT_COMPLETED_EVENT */    
+        case AEECARD_AVAIL_CARD:
+        case AEECARD_ILLEGAL_CARD:
+        case AEECARD_NO_CARD:      /* No card in the slot */
+        case AEECARD_INVALID_CARD: /* card has been permanently blocked */
+        case AEECARD_NOT_INIT:
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+            /* Send RTRE config changed to CM - response from CM will */
+            /* generate subscription changed event */
+            SendRTREConfig(pMe);
+#endif
+            return TRUE;
+     
+        default:
+            return FALSE;
+      }
+      
+    default:
+      break;
+  }
+  return FALSE;
+}
 
 
 /*==============================================================================
 函数: 
-    CoreApp_HandleCMNotify
+    CoreApp_HandleBattNotify
        
 说明: 
     函数处理来自 AEECLSID_CM_NOTIFIER 的通知事件。
@@ -1619,7 +1714,31 @@ void CoreApp_SetOperatingModeOnline(CCoreApp *pMe)
 boolean CoreApp_RegisterNotify(CCoreApp *pMe)
 {
     int nRet;
-    uint32 dwMask;	
+    uint32 dwMask;
+    boolean bNeedToProcessICardEvent = FALSE;
+    AEENotify sCardNotify;
+    
+    /* Register with ICARD to receive event */
+    dwMask = NMASK_CARD_STATUS|NMASK_PIN1_STATUS;
+
+    ISHELL_RegisterNotify(pMe->a.m_pIShell,  AEECLSID_CORE_APP, AEECLSID_CARD_NOTIFIER, dwMask);
+
+    /* Get card status after registering for the event, if the card status is not
+    * not ready, this implies that ICard has already sent out the event to client
+    * and we missed it.  So, resend it */
+    
+    ICARD_GetCardStatus(pMe->m_pICard, (uint8 *) &(pMe->m_nCardStatus));
+    if (pMe->m_nCardStatus != AEECARD_NOT_READY) 
+    {
+        bNeedToProcessICardEvent = TRUE;
+    }
+    
+    if (bNeedToProcessICardEvent )
+    {
+        sCardNotify.dwMask = NMASK_CARD_STATUS;
+        (void)CoreApp_ProcessICardEvents(pMe, 0, (uint32)&sCardNotify);
+    }
+    
     // register with ICM
     dwMask = NMASK_CM_PHONE|NMASK_CM_SS|NMASK_CM_DATA_CALL;
     //dwMask = NMASK_CM_PHONE|NMASK_CM_SS;
@@ -2619,8 +2738,21 @@ SIDE EFFECTS:
 =============================================================================*/
 void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe)
 {
-  //CORE_ERR("CoreApp_ProcessSubscriptionStatus", 0, 0, 0);
-  ICM_SetSubscriptionStatus(pMe->m_pCM, AEECM_SYS_MODE_CDMA, TRUE);
+    boolean bSubAvail = TRUE;
+    
+    /* the technology is in slot 1 */
+    /* is the pin perm disabled? or blocked */
+    if (pMe->m_eUIMErrCode != UIMERR_NONE)
+    {
+        bSubAvail = FALSE;
+    }
+    else
+    {
+        bSubAvail = TRUE;
+    } /* pin is not permanently disabled */
+    
+    //CORE_ERR("CoreApp_ProcessSubscriptionStatus", 0, 0, 0);
+    ICM_SetSubscriptionStatus(pMe->m_pCM, AEECM_SYS_MODE_CDMA, bSubAvail);
 }
 
 /*=============================================================================

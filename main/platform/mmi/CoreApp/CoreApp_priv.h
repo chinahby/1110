@@ -76,6 +76,7 @@
 #include "MusicPlayer.h"
 #endif 
 #include "core_ui.h"
+#include "AEECard.h"
 
 /*==============================================================================
                                  
@@ -149,132 +150,6 @@ typedef struct _ServiceProviderList
     byte   mnc;
     char  ids_name[OPERATOR_NAME_MAX_SIZE];
 } ServiceProviderList;
-
-static ServiceProviderList List_SP[] = 
-{
-#ifdef FEATURE_CARRIER_ISRAEL_PELEPHONE       
-       {000,0,"Pelephone"},  
-#endif       
-#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET       
-       {000,0,"Movilnet"},  
-#endif 
-
-#ifdef FEATURE_CARRIER_MEXICO_IUSACELL       
-       {000,0,"Iusacell"},  
-#endif 
-
-       //{834,1,"China Unicom"}, 
-       {809,0,"TRICOM"},
-       {671,15,"Guamcell"},             // 关岛
-       {310,37,"Guamcell"},             // 关岛
-       {454,5,"Hutchison"},             // 香港
-       {460,3,"China Unicom"},          // Chinese Unicom
-       {466,5,"APBW"},                  // 台湾
-       {520,0,"Hutch"},                 // 泰国??  CAT
-       {520,2,"CAT"},                   // 泰国
-       {425,3,"Pelephone"},             // 以色列
-       {604,5,"WANA"},                  // Morocco WANA
-       
-       {421,3,"Yemen Mobile"},
-       {470,6,"CITYCELL"},
-       {470,4,"CITYCELL"},
-       {470,3,"CITYCELL"},
-       {470,2,"CITYCELL"},
-       {428,0,"Skytel"},
-       
-       {302,64,"Bell Mobility"},        // 加拿大
-       
-       {244,0,"Movicel"},               // Angola Movicel
-       {58,0,"Telefonica"},             // Venezuela Movistar
-       {51,6,"Telefonica"},             // Peru Movistar
-       
-       {450,0,"SKT"},                   // 韩国
-       {450,3,"SKT"},                   // 韩国
-       {450,5,"SKT"},                   // 韩国
-       {450,22,"SKT"},                  // 韩国
-       
-       {505,11,"Telstra"},              // 澳大利亚
-       
-       {302,0,"Telus"},                 // 加拿大
-       {302,11,"Telus"},                // 加拿大
-       {302,86,"Telus"},                // 加拿大
-       
-       {530,02,"TML NZ"},               // 新西兰
-       
-       {434,06,"Perfectum"},            // Perfectum // 俄语国家
-       
-       {510,0, "Flexi"},                // Indonesia flexi
-       {510,3, "starone"},              // Indonesia starone
-       {510,28,"Fren"},                 // Indonesia fren
-       {510,99,"esia"},                 // Indonesia esia
-       {510,9,"SMART"},                 // Indonesia SMART
-       
-#ifdef FEATURE_CARRIER_ANGOLA_MOVICEL
-       {310,0,"Movicel"},               
-#else 
-       {310,0,"Verizon"},               // 美国
-#endif       
-       {724,6,"VIVO"},                  //巴西
-       {724,8,"VIVO"},                  //巴西
-       {724,9,"VIVO"},                  //巴西
-       {724,10,"VIVO"},                 //巴西
-       {724,11,"VIVO"},                 //巴西
-       {724,12,"VIVO"},                 //巴西
-       {724,13,"VIVO"},                 //巴西
-       {724,14,"VIVO"},                 //巴西
-       {724,17,"VIVO"},                 //巴西
-       {724,18,"VIVO"},                 //巴西
-       {724,19,"VIVO"},                 //巴西
-       {724,20,"VIVO"},                 //巴西
-       {724,21,"VIVO"},                 //巴西
-       {724,22,"VIVO"},                 //巴西
-       
-       {440,53,"KDDI"},                 //日本
-       {440,54,"KDDI"},                 //日本
-       {440,70,"KDDI"},                 //日本
-       {440,71,"KDDI"},                 //日本
-       {440,72,"KDDI"},                 //日本
-       {440,73,"KDDI"},                 //日本
-       {440,74,"KDDI"},                 //日本
-       {440,75,"KDDI"},                 //日本
-       {440,76,"KDDI"},                 //日本
-       {440,78,"KDDI"},                 //日本
-       
-       {310,12,"Sprint"},               //美国
-       {310,0,"Sprint"},                //美国
-       
-       {334,0,"Iusacell"},              //墨西哥
-       
-       {450,6,"LGT"},                   //韩国
-       
-       {452,3,"Stel"},                  //越南
-       
-       {455,2,"MacauUnicom"},           //澳门
-       
-       {111,1,"Syniverse"},             //信令转接商
-       
-       {404,0,"Reliance"},              //印度   
-       {404,1,"Aircell Digilink"},   
-       {404,2,"Bharti Mobile"},   
-       {404,3,"Bharti Telenet"},   
-       {404,4,"Idea Cellular"},   
-       {404,5,"Fascel"},   
-       {404,6,"Bharti Mobile"},   
-       {404,7,"Idea Cellular"},   
-       {404,9,"Reliance Telecom"},   
-       {404,10,"Bharti Cellular"},   
-       {404,11,"Sterling Cellular"},   
-       {404,12,"Escotel Mobile"},   
-       {404,13,"Hutchinson Essar South"},   
-       {404,14,"Spice"},   
-       {404,15,"Aircell Digilink"},
-       {404,16,"Hexcom"},
-       {404,18,"Reliance Telecom"},
-       {404,19,"Escotel Mobile"},
-       {255,04,"Inter"}, //intertelecom
-       {255,23,"CDMA Ukraine"} //CDMA Ukraine       
-       
-};
 #endif //FEATURE_SPN_FROM_BSMCCMNC
 
 #define CORE_ERR  DBGPRINTF
@@ -416,11 +291,6 @@ typedef enum _CoreAppState
    //UTK refresh
    COREST_UTKREFRESH,
 #endif //FEATURE_UTK2   
-
-    //锁卡密码
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-   COREST_IMSIMCCPWD,/*17*/
-#endif
 } CoreAppState;
 
 typedef enum
@@ -434,6 +304,7 @@ typedef enum
 
 typedef enum
 {
+    UIMERR_UNKNOW,       // 未知状态
     UIMERR_NONE,         // UIM 卡正常无误
     UIMERR_NOUIM,        // 没插入 UIM 卡
     UIMERR_BLOCKED,      // UIM 卡无效(原因输PUK码超过规定次数导致卡失效)
@@ -619,6 +490,12 @@ typedef struct _CCoreApp
 	boolean TorchOn;
 #endif
 
+#ifdef FEATURE_NEW_ICARD
+    ICard *   m_pICard;               /* pointer to icard interface */
+#else
+    ICARD *   m_pICard;               /* pointer to icard interface */
+#endif /*FEATURE_NEW_ICARD */
+    uint8     m_nCardStatus;
 } CCoreApp;
 
 /*==============================================================================
@@ -843,4 +720,5 @@ void CoreApp_SendSeamlessSMSTimer(void *pme);
 int  CoreApp_SendSeamlessSMS(CCoreApp *pMe);
 #endif //#ifdef FEATURE_SEAMLESS_SMS
 void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode);
+void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe);
 #endif

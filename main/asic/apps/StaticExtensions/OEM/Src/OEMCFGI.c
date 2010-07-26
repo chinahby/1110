@@ -253,7 +253,7 @@ when       who     what, where, why
 // in OEMConfigListType.  It does not need to be incremented when a new
 // field is added to the end of OEMConfigListType.
 //
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x0009 )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000A )
 
 ////
 // The EFS file that stores the OEM configuration.
@@ -553,10 +553,6 @@ typedef struct
    char     WAIT_ENABLE[FEATURE_CODE_MAX_LENTH];      //CFGI_CALLFORWARD_WAIT_ENABLE
    char     WAIT_DISABLE[FEATURE_CODE_MAX_LENTH];     //CFGI_CALLFORWARD_WAIT_DISABLE
    char     VOICEMAIL_ENABLE[FEATURE_CODE_MAX_LENTH]; //CFGI_CALLFORWARD_VOICEMAIL_ENABLE
-   ServiceProvider List_SP[OEMNV_MAX_SERVICEPROVIDER_NUMBER]; //CFGI_SERVICE_PROVIDER
-   #ifdef FATRUE_LOCK_IMSI_MCCMNC
-   SetImsi List[OEMNV_MAX_SERVICEPROVIDER_NUMBER];//CFGI_IMSI_SETMCC
-   #endif
    //输入法设置   
    byte     input_mode;                                //CFGI_INPUTMODE   
    boolean m_fm_background;                            /*CFGI_FM_BACKGROUND*/
@@ -1113,14 +1109,8 @@ static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_ENABLE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff);
 #endif
-static int OEMPriv_GetItem_CFGI_SERVICE_PROVIDER(void *pBuff);
-static int OEMPriv_SetItem_CFGI_SERVICE_PROVIDER(void *pBuff);
 static int OEMPriv_SetItem_CFGI_INPUTMODE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_INPUTMODE(void *pBuff);
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-static int OEMPriv_GetItem_CFGI_IMSI_SETMCC(void *pBuff);
-static int OEMPriv_SetItem_CFGI_IMSI_SETMCC(void *pBuff);
-#endif
 static int OEMPriv_GetItem_CFGI_TTY(void *pBuff);
 static int OEMPriv_SetItem_CFGI_TTY(void *pBuff);
 #ifdef FEATURE_TIME_DATA_SETTING
@@ -1626,10 +1616,6 @@ static OEMConfigListType oemi_cache = {
    ,{OEMNV_CALLFORWARD_WAIT_ENABLE}                                         //CFGI_CALLFORWARD_WAIT_ENABLE
    ,{OEMNV_CALLFORWARD_WAIT_DISABLE}                                        //CFGI_CALLFORWARD_WAIT_DISABLE
    ,{OEMNV_CALLFORWARD_VOICEMAIL_ENABLE}                                    //CFGI_CALLFORWARD_VOICEMAIL_ENABLE
-   ,OEMNV_SERVICE_PROVIDER                                                  //CFGI_SERVICE_PROVIDER   
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-    ,{0}                                           //CFGI_IMSI_SETMCC
-#endif
    ,OEMNV_INPUTMODE_DEFAULT                        //CFGI_INPUTMODE     
    ,FALSE                                          //CFGI_FM_BACKGROUND
 #ifdef FEATURE_RANDOM_MENU_COLOR
@@ -2136,9 +2122,6 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_WMS_CALLBACKNUMSWITCH, sizeof(boolean)),
    CFGTABLEITEM(CFGI_CALLBACKNUM, sizeof(AECHAR)*WMS_ADDRESS_MAX),
    CFGTABLEITEM(CFGI_WMS_MO_CHANNEL_SELECT, sizeof(byte)),
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-   CFGTABLEITEM(CFGI_IMSI_SETMCC,sizeof(SetImsi) * OEMNV_MAX_SERVICEPROVIDER_NUMBER),
-#endif
    CFGTABLEITEM(CFGI_PHONE_PASSWORD, sizeof(uint16)) ,       //type = uint16
    CFGTABLEITEM(CFGI_PHONE_PASSWORD_CHECK,  sizeof(byte)),//type = boolean
    CFGTABLEITEM(CFGI_RESTRICT_OUTGOING, sizeof(byte)) ,      //type = byte
@@ -2185,7 +2168,6 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_CALLFORWARD_CNIR_ENABLE,FEATURE_CODE_MAX_LENTH),
    CFGTABLEITEM(CFGI_CALLFORWARD_CNIR_DISABLE,FEATURE_CODE_MAX_LENTH),
 #endif
-   CFGTABLEITEM(CFGI_SERVICE_PROVIDER,sizeof(ServiceProvider)*OEMNV_MAX_SERVICEPROVIDER_NUMBER),
    CFGTABLEITEM(CFGI_INPUTMODE, sizeof(byte))
 #ifdef FEATRUE_SET_IP_NUMBER
    ,CFGTABLEITEM(CFGI_IP_POUND, sizeof(boolean))
@@ -9242,19 +9224,6 @@ static int OEMPriv_GetItem_CFGI_GSENSOR(void *pBuff)
    return SUCCESS;
 }
 
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-static int OEMPriv_GetItem_CFGI_IMSI_SETMCC(void *pBuff)
-{
-   memcpy((void *)pBuff,(void *)oemi_cache.List, sizeof(SetImsi) * OEMNV_MAX_SERVICEPROVIDER_NUMBER);
-   return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_IMSI_SETMCC(void *pBuff)
-{
-    memcpy((void *)oemi_cache.List,(void *)pBuff,sizeof(SetImsi) * OEMNV_MAX_SERVICEPROVIDER_NUMBER);
-   OEMPriv_WriteOEMConfigList();  
-   return SUCCESS;
-}
-#endif
 static int OEMPriv_GetItem_CFGI_PHONE_PASSWORD(void *pBuff)
 {
    *(uint16 *) pBuff = oemi_cache.phone_password;
@@ -10391,19 +10360,6 @@ static int OEMPriv_SetItem_CFGI_CALLFORWARD_VOICEMAIL_ENABLE(void *pBuff)
     return SUCCESS;
 }
 
-static int OEMPriv_GetItem_CFGI_SERVICE_PROVIDER(void *pBuff)
-{
-
-   memcpy((void *)pBuff,(void *)oemi_cache.List_SP,sizeof(ServiceProvider)*OEMNV_MAX_SERVICEPROVIDER_NUMBER);
-   return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_SERVICE_PROVIDER(void *pBuff)
-{
-   memcpy((void *)oemi_cache.List_SP,(void *)pBuff,sizeof(ServiceProvider)*OEMNV_MAX_SERVICEPROVIDER_NUMBER);
-   OEMPriv_WriteOEMConfigList();  
-   return SUCCESS;
-}
-
 //输入法设置
 static int OEMPriv_GetItem_CFGI_INPUTMODE(void *pBuff)
 {
@@ -11241,8 +11197,5 @@ void OEM_SetBAM_ADSAccount(void)
 } /* OEM_SetBAM_ADSAccount */
 
 #endif
-
-
-
-
 #endif // CUST_EDITION
+

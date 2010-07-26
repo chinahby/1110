@@ -66,10 +66,7 @@ static NextFSMAction COREST_ALARM_Handler(CCoreApp *pMe);
 static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe);
 // 状态 COREST_SERVICEREQ 处理函数
 //static NextFSMAction COREST_SERVICEREQ_Handler(CCoreApp *pMe);
-//状态COREST_IMSIMCCPWD处理函数
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-static NextFSMAction COREST_IMSIMCCPWD_Handler(CCoreApp *pMe);
-#endif
+
 // 状态 COREST_VERIFYPHONEPWD 处理函数
 static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe);
 
@@ -265,12 +262,6 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
             retVal = COREST_UTKREFRESH_Handler(pMe);
             break;            
 #endif //FEATURE_UTK2
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-	    case COREST_IMSIMCCPWD:
-            MSG_FATAL("CoreApp_ProcessState Start COREST_IMSIMCCPWD",0,0,0);
-            retVal = COREST_IMSIMCCPWD_Handler(pMe);
-	        break;
-#endif
         default:
             break;
     }
@@ -345,15 +336,6 @@ static NextFSMAction COREST_INIT_Handler(CCoreApp *pMe)
                     tepState = COREST_SERVICEREQ;
                 }*/
                 
-            }
-            {
-                AEECMPhInfo phInfo;
-                /* If phone info is available, do not wait for PH_INFO_AVAIL event for
-                   * starting provisioning */
-                if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
-                {
-                    InitAfterPhInfo(pMe, phInfo.oprt_mode);
-                }
             }
             MOVE_TO_STATE(tepState)
             
@@ -485,11 +467,7 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                 else
                 {
                     // 到手机密码验证状态
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-                    tepState = COREST_IMSIMCCPWD;
-#else 
                     tepState = COREST_VERIFYPHONEPWD;
-#endif
                 }
                 MSG_FATAL("LPM test:new state is %d",tepState,0,0);
                 if (tepState != COREST_NONE)
@@ -505,23 +483,16 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
             }
             else /*esn ==0*/
             {
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-                tepState = COREST_IMSIMCCPWD;
-#else 
                 tepState = COREST_VERIFYPHONEPWD;
-#endif
                 MOVE_TO_STATE(tepState)
                 return NFSMACTION_CONTINUE;            
             }
             //修正校准综测重启不能进待机问题          
             
         case DLGRET_OK:
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-            MOVE_TO_STATE(COREST_IMSIMCCPWD)
-#else
             MOVE_TO_STATE(COREST_VERIFYPHONEPWD)
-#endif
             return NFSMACTION_CONTINUE;
+            
         case DLGRET_RTC:
         {
 
@@ -589,134 +560,7 @@ static NextFSMAction COREST_SERVICEREQ_Handler(CCoreApp *pMe)
     return NFSMACTION_WAIT;
 } // COREST_SERVICEREQ_Handler
 #endif
- #ifdef FATRUE_LOCK_IMSI_MCCMNC
-/*==============================================================================
-函数:
-    COREST_IMSIMCCPWD_Handler
-       
-说明:
-    COREST_IMSIMCCPWD_Handler 状态处理函数
-       
-参数:
-    pMe [in]:指向 Core Applet对象结构的指针。该结构包含小程序的特定信息。
-       
-返回值:
-    NFSMACTION_CONTINUE:指示后有子状态，状态机不能停止。
-    NFSMACTION_WAIT:指示因要显示对话框界面给用户，应挂起状态机。
-       
-备注:
-       
-==============================================================================*/
-static NextFSMAction COREST_IMSIMCCPWD_Handler(CCoreApp *pMe)
-{
-    if (NULL == pMe)
-    {
-        return NFSMACTION_WAIT;
-    }
-    MSG_FATAL("COREST_IMSIMCCPWD_Handler Start",0,0,0);
-    switch (pMe->m_eDlgRet)
-    {
-        case DLGRET_CREATE:
-        case DLGRET_MSGOK: // 从消息对话框返回
-        {
-            uint16 MccValue;
-            uint16   MncValue;	
-            uint16 mcc;
-            uint16 mnc;	
 
-            ServiceProvider List_SP[OEMNV_MAX_SERVICEPROVIDER_NUMBER]={0};
-            SetImsi List[OEMNV_MAX_SERVICEPROVIDER_NUMBER] = {0};
-            // 检查是否为有卡状态
-            if (IsRunAsUIMVersion())
-            {
-                //取卡的MCC和MNC
-                (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                CFGI_IMSI_MCC,
-                                &MccValue,
-                                sizeof(MccValue));
-
-                (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                CFGI_IMSI_11_12,
-                                &MncValue,
-                                sizeof(MncValue));;
-                //取加锁的MCC和MNC从设置值
-                (void) ICONFIG_GetItem(pMe->m_pConfig, 
-                                CFGI_IMSI_SETMCC,
-                                (void*)List,
-                                sizeof(SetImsi) * OEMNV_MAX_SERVICEPROVIDER_NUMBER);	
-                //取MCC和MNC从INI文件
-                (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                CFGI_SERVICE_PROVIDER,
-                                (void*) List_SP,
-                                sizeof(ServiceProvider) * OEMNV_MAX_SERVICEPROVIDER_NUMBER);
-
-                mcc = (uint16)ATOI(List_SP[0].mcc);
-                mnc = (uint16)ATOI(List_SP[0].mnc);
-
-                //MSG_ERROR("99999999999999999%d,%d,%d", List[0].mcc, List[0].bsetimsi,List[0].mnc);
-                //MSG_ERROR("2222222222222222%d,%d", MccValue,MncValue,0);	 
-                if(List[0].bsetimsi)
-                {
-                    if (( MccValue !=  List[0].mcc)||(MncValue !=  List[0].mnc))
-                    {
-                        CoreApp_ShowDialog(pMe, IDD_PWDIMSIMCC);
-                        return NFSMACTION_WAIT;                      
-                    }
-                    else
-                    {
-                        MOVE_TO_STATE(COREST_VERIFYPHONEPWD);
-                    }
-                }
-                else
-                {
-                MOVE_TO_STATE(COREST_VERIFYPHONEPWD);
-                }
-            }
-            else
-            {
-                MOVE_TO_STATE(COREST_VERIFYPHONEPWD);
-            }
-                return NFSMACTION_CONTINUE;
-        }
-        case DLGRET_ENTEROK:
-        {
-            uint16 wPWD=0;
-
-            (void) ICONFIG_GetItem(pMe->m_pConfig, 
-                            CFGI_PHONE_PASSWORD,
-                            &wPWD,
-                            sizeof(uint16));
-
-            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
-            {// 密码符合
-                MOVE_TO_STATE(COREST_VERIFYPHONEPWD);
-                return NFSMACTION_CONTINUE;
-            }
-            else
-            {// 密码错误
-                // 输入错误
-                CoreApp_ShowMsgDialog(pMe, IDS_INVALID_PASSWORD);
-                return NFSMACTION_WAIT;
-            }
-        }
-
-        case DLGRET_EMGCALL:
-            MOVE_TO_STATE(COREST_EMERGENCYCALL)
-            return NFSMACTION_CONTINUE;
-
-        // add for Process batty notify,
-        case DLGRET_BATT_INFO:
-            CoreApp_ShowDialog(pMe,IDD_MSGBOX);
-            return NFSMACTION_WAIT;
-            // add for Process batty notify
-
-        default:
-            break;
-    }
-    MSG_FATAL("COREST_IMSIMCCPWD_Handler End",0,0,0);
-    return NFSMACTION_CONTINUE;
-} // COREST_VERIFYPHONEPWD_Handler
-#endif
 /*==============================================================================
 函数:
     COREST_VERIFYPHONEPWD_Handler
@@ -891,6 +735,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 else
                 {
                     // UIM OK
+                    pMe->m_eUIMErrCode = UIMERR_NONE;
                     //MOVE_TO_STATE(COREST_POWERONSYSINIT)
                     MOVE_TO_STATE(COREST_STARTUPANI);
                 }
@@ -906,6 +751,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 }
                 else
                 {
+                    CoreApp_ProcessSubscriptionStatus(pMe);
                     MOVE_TO_STATE(COREST_UIMERR)
                 }
             }
@@ -1250,8 +1096,13 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
+            if(pMe->bunlockuim)                   //如果输入锁卡密码正确，此参数为真                     
+            {                     
+                 pMe->m_eUIMErrCode = UIMERR_NONE;                     
+            }
+            
  #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
-            if (IsRunAsUIMVersion() && IRUIM_IsCardConnected(pMe->m_pIRUIM))
+            if (!pMe->bunlockuim && IsRunAsUIMVersion() && IRUIM_IsCardConnected(pMe->m_pIRUIM))
             {
                 boolean lockFlg = TRUE;     //not find right MCC and MNC value lable should lock current RUIM 
                 isAllowIMSI(pMe,&lockFlg);
@@ -1262,16 +1113,12 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
                      MOVE_TO_STATE(COREST_UIMERR)
                      return NFSMACTION_CONTINUE;
                 }
-                if(pMe->bunlockuim)                   //如果输入锁卡密码正确，此参数为真                     
-                {                     
-                     pMe->m_eUIMErrCode = UIMERR_NONE;                     
-                }
             }
 #endif //defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
 #ifdef FEATURE_NET_LOCK
 {
             extern boolean OEM_IsNetLock(void);
-            if(IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
+            if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
             {
                 pMe->m_eUIMErrCode = UIMERR_LOCKED;
                 MOVE_TO_STATE(COREST_UIMERR)
@@ -1279,7 +1126,16 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             }
 }
 #endif
-
+            CoreApp_ProcessSubscriptionStatus(pMe);
+            {
+                AEECMPhInfo phInfo;
+                /* If phone info is available, do not wait for PH_INFO_AVAIL event for
+                   * starting provisioning */
+                if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
+                {
+                    InitAfterPhInfo(pMe, phInfo.oprt_mode);
+                }
+            }
             CoreApp_ShowDialog(pMe, IDD_STARTUPANI);
             return NFSMACTION_WAIT;
             
@@ -1780,7 +1636,7 @@ void static isAllowIMSI(CCoreApp *pMe,boolean *lockFlg)
     }SProvider;
     AEEMobileInfo mi;
     //Build the list of service provider
-    static SProvider List_SP[] = 
+    static const SProvider List_SP[] = 
     {
         {"000","00"},//fault value
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH

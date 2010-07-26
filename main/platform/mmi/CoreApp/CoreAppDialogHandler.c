@@ -222,14 +222,7 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
                                    uint16     wParam,
                                    uint32     dwParam);
 #endif //FEATURE_UTK2
-// 对话框 IDD_PWDIMSIMCC 事件处理函数
-#ifdef FATRUE_LOCK_IMSI_MCCMNC
-static boolean  IDD_PWDIMSIMCC_Handler(void       *pUser,
-                                     AEEEvent   eCode,
-                                     uint16     wParam,
-                                     uint32     dwParam);
-#endif
-                                       
+
 // 更新待机界面的定时器函数。程序运行稳定后，每分钟执行一次
 static void CoreApp_UpdateIdleTimer(void *pUser);                                       
 
@@ -383,12 +376,7 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
             MSG_FATAL("CoreApp_SetDialogHandler IDD_PWDINPUT",0,0,0);
             pMe->m_pDialogHandler = IDD_PWDINPUT_Handler;
             break;
-        #ifdef FATRUE_LOCK_IMSI_MCCMNC
-	  case IDD_PWDIMSIMCC:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_PWDIMSIMCC",0,0,0);
-            pMe->m_pDialogHandler = IDD_PWDIMSIMCC_Handler;
-            break;
-        #endif     	
+            
         case IDD_UIMSECCODE:
             MSG_FATAL("CoreApp_SetDialogHandler IDD_UIMSECCODE",0,0,0);
             pMe->m_pDialogHandler = IDD_UIMSECCODE_Handler;
@@ -1344,248 +1332,6 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
 
     return FALSE;
 } // IDD_EMERGENCYNUMLIST_Handler
-
-   #ifdef FATRUE_LOCK_IMSI_MCCMNC
-/*==============================================================================
-函数:
-    IDD_PWDINPUT_Handler
-    
-说明:
-    IDD_PWDINPUT 对话框事件处理函数
-       
-参数:
-    pUser [in]: 这里必须是指向 Core Applet 对象结构的指针。
-    eCode [in]: 事件代码。
-    wParam: 事件相关数据。
-    dwParam: 事件相关数据。
-       
-返回值:
-    TRUE:  传入事件被处理。
-    FALSE: 传入事件被忽略。
-       
-备注:
-    函数作卡的 PIN 码、 PUK 码的输入界面处理。
-       
-==============================================================================*/
-static boolean  IDD_PWDIMSIMCC_Handler(void       *pUser,
-                                     AEEEvent   eCode,
-                                     uint16     wParam,
-                                     uint32     dwParam)
-{
-    //IMenuCtl *pMenu = NULL;
-    CCoreApp *pMe = (CCoreApp *)pUser;
-    
-    if (NULL == pMe)
-    {
-        return FALSE;
-    }
-    MSG_FATAL("%x %x %x IDD_PWDINPUT_Handler",eCode,wParam,dwParam);
-    //pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PHONEPWD_MENU);
-    //if (NULL == pMenu)
-    //{
-    //    return FALSE;
-    //}
-    
-    switch (eCode)
-    {
-        case EVT_DIALOG_INIT:
-            MEMSET(pMe->m_strPhonePWD, 0, sizeof(pMe->m_strPhonePWD));
-            return TRUE;
-            
-        case EVT_DIALOG_START:
-            (void) ISHELL_PostEvent(pMe->a.m_pIShell,
-                                    AEECLSID_CORE_APP,
-                                    EVT_USER_REDRAW,
-                                    0,
-                                    0);
-            //if (NULL != pMenu)
-            //{
-            //     (void)IMENUCTL_SetTitle(pMenu, AEE_COREAPPRES_LANGFILE, IDS_ENTER_PHONELOCK, NULL);
-            //}
-
-            return TRUE;
-            
-        case EVT_USER_REDRAW:
-            // 绘制相关信息
-            {
-                AECHAR  wstrDisplay[PHONEPASSWORDLENTH+1] = {0};
-                char    strDisplay[PHONEPASSWORDLENTH+1] = {0};
-                int xOffset = 5, nLen = 0;
-                AECHAR  text[32] = {0};
-                RGBVAL nOldFontColor;
-                TitleBar_Param_type  TitleBar_Param = {0};
-                
-                // 先清屏
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-                {
-                    IImage *pImageBg = ISHELL_LoadResImage(pMe->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
-                    
-                    Appscommon_ResetBackground(pMe->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, &pMe->m_rc, 0, 0);
-                    if(pImageBg != NULL)
-                    {
-                        IImage_Release(pImageBg);
-                    }
-                }
-#else
-                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
-#endif
-                //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
-                
-                // 画标题条
-                (void)ISHELL_LoadResString(pMe->a.m_pIShell, 
-                                                            AEE_COREAPPRES_LANGFILE,
-                                                            IDS_MCC_LOCK, 
-                                                            text,
-                                                            sizeof(text));
-                TitleBar_Param.pwszTitle = text;
-                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-                DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-                
-                (void)ISHELL_LoadResString(pMe->a.m_pIShell, 
-                                                AEE_COREAPPRES_LANGFILE,
-                                                IDS_ENTER_PASSWORD, 
-                                                text,
-                                                sizeof(text));
-                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
-                IDISPLAY_DrawText(pMe->m_pDisplay, 
-                                    AEE_FONT_BOLD, 
-                                    text,
-                                    -1, 
-                                    xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2,
-                                    NULL, 
-                                    IDF_TEXT_TRANSPARENT);
-                
-                // 绘制输入
-                nLen = STRLEN(pMe->m_strPhonePWD);
-                MEMSET(strDisplay, '*', nLen);
-                strDisplay[nLen] = '|';
-                strDisplay[nLen + 1] = '\0';
-                (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
-                IDISPLAY_DrawText(pMe->m_pDisplay, 
-                                AEE_FONT_BOLD, 
-                                wstrDisplay,
-                                -1, 
-                                2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
-                                NULL, 
-                                IDF_TEXT_TRANSPARENT);
-                (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-                
-                // 绘制底条提示
-                if (nLen > 3)
-                {// 确定-----删除
-                    CoreDrawBottomBar(BTBAR_OK_DELETE)
-                }
-                else if(nLen > 0)
-                {// 删除
-                    CoreDrawBottomBar(BTBAR_DELETE)
-                }
-                else
-                {// SOS
-                    CoreDrawBottomBar(BTBAR_SOS)
-                }
-            }
-            // 更新显示
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
-            return TRUE;
-            
-        case EVT_DIALOG_END:
-            return TRUE;
-
-        case EVT_KEY:
-            {
-                char  chEnter = 0;
-                int   nLen = 0;
-                boolean bRedraw = FALSE;
-                
-                switch (wParam)
-                {
-                    case AVK_0:
-                    case AVK_1:
-                    case AVK_2:
-                    case AVK_3:
-                    case AVK_4:
-                    case AVK_5:
-                    case AVK_6:
-                    case AVK_7:
-                    case AVK_8:
-                    case AVK_9:
-                        chEnter = '0' + (wParam - AVK_0);
-                        break;
-
-                    case AVK_STAR:
-                        chEnter = '*';
-                        break;
- 
-                    case AVK_POUND:
-                        chEnter = '#';
-                        break;
-                        
-                    case AVK_SEND:
-                        CLOSE_DIALOG(DLGRET_EMGCALL)
-                        return TRUE;
-                        
-                    case AVK_CLR:
-                        chEnter = 0;
-                        if (STRLEN(pMe->m_strPhonePWD) == 0)
-                        {
-                            CLOSE_DIALOG(DLGRET_EMGCALL)
-                            return TRUE;
-                        }
-                        break;
-                        
-                    case AVK_SELECT:
-                        if (STRLEN(pMe->m_strPhonePWD) < 4)
-                        {
-                            return TRUE;
-                        }
-                        else
-                        {
-                            CLOSE_DIALOG(DLGRET_ENTEROK)
-                        }
-                        return TRUE;
-                        
-                    default:
-                        return TRUE;
-                }
-                
-                nLen = STRLEN(pMe->m_strPhonePWD);
-                if (chEnter == 0)
-                {// 删除字符
-                    if (nLen > 0)
-                    {
-                        bRedraw = TRUE;
-                        pMe->m_strPhonePWD[nLen-1] = chEnter;
-                    }
-                }
-                else if (nLen < PHONEPASSWORDLENTH)
-                {
-                    pMe->m_strPhonePWD[nLen] = chEnter;
-                    nLen++;
-                    pMe->m_strPhonePWD[nLen] = 0;
-                    bRedraw = TRUE;
-                }
-                
-                if (bRedraw)
-                {
-                    (void) ISHELL_PostEvent(pMe->a.m_pIShell,
-                                            AEECLSID_CORE_APP,
-                                            EVT_USER_REDRAW,
-                                            NULL,
-                                            NULL);
-                }
-            }
-            return TRUE;
-            
-        default:
-            break;
-    }
-    
-    return FALSE;
-} // IDD_PWDINPUT_Handler
-
-#endif
 
 /*==============================================================================
 函数:
@@ -5421,6 +5167,134 @@ static void Core_DrawNameResetScroll(CCoreApp *pMe)
     }
 }
 #endif
+#ifdef FEATURE_SPN_FROM_BSMCCMNC
+static const ServiceProviderList List_SP[] = 
+{
+#ifdef FEATURE_CARRIER_ISRAEL_PELEPHONE       
+       {000,0,"Pelephone"},  
+#endif       
+#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET       
+       {000,0,"Movilnet"},  
+#endif 
+
+#ifdef FEATURE_CARRIER_MEXICO_IUSACELL       
+       {000,0,"Iusacell"},  
+#endif 
+
+       //{834,1,"China Unicom"}, 
+       {809,0,"TRICOM"},
+       {671,15,"Guamcell"},             // 关岛
+       {310,37,"Guamcell"},             // 关岛
+       {454,5,"Hutchison"},             // 香港
+       {460,3,"China Unicom"},          // Chinese Unicom
+       {466,5,"APBW"},                  // 台湾
+       {520,0,"Hutch"},                 // 泰国??  CAT
+       {520,2,"CAT"},                   // 泰国
+       {425,3,"Pelephone"},             // 以色列
+       {604,5,"WANA"},                  // Morocco WANA
+       
+       {421,3,"Yemen Mobile"},
+       {470,6,"CITYCELL"},
+       {470,4,"CITYCELL"},
+       {470,3,"CITYCELL"},
+       {470,2,"CITYCELL"},
+       {428,0,"Skytel"},
+       
+       {302,64,"Bell Mobility"},        // 加拿大
+       
+       {244,0,"Movicel"},               // Angola Movicel
+       {58,0,"Telefonica"},             // Venezuela Movistar
+       {51,6,"Telefonica"},             // Peru Movistar
+       
+       {450,0,"SKT"},                   // 韩国
+       {450,3,"SKT"},                   // 韩国
+       {450,5,"SKT"},                   // 韩国
+       {450,22,"SKT"},                  // 韩国
+       
+       {505,11,"Telstra"},              // 澳大利亚
+       
+       {302,0,"Telus"},                 // 加拿大
+       {302,11,"Telus"},                // 加拿大
+       {302,86,"Telus"},                // 加拿大
+       
+       {530,02,"TML NZ"},               // 新西兰
+       
+       {434,06,"Perfectum"},            // Perfectum // 俄语国家
+       
+       {510,0, "Flexi"},                // Indonesia flexi
+       {510,3, "starone"},              // Indonesia starone
+       {510,28,"Fren"},                 // Indonesia fren
+       {510,99,"esia"},                 // Indonesia esia
+       {510,9,"SMART"},                 // Indonesia SMART
+       
+#ifdef FEATURE_CARRIER_ANGOLA_MOVICEL
+       {310,0,"Movicel"},               
+#else 
+       {310,0,"Verizon"},               // 美国
+#endif       
+       {724,6,"VIVO"},                  //巴西
+       {724,8,"VIVO"},                  //巴西
+       {724,9,"VIVO"},                  //巴西
+       {724,10,"VIVO"},                 //巴西
+       {724,11,"VIVO"},                 //巴西
+       {724,12,"VIVO"},                 //巴西
+       {724,13,"VIVO"},                 //巴西
+       {724,14,"VIVO"},                 //巴西
+       {724,17,"VIVO"},                 //巴西
+       {724,18,"VIVO"},                 //巴西
+       {724,19,"VIVO"},                 //巴西
+       {724,20,"VIVO"},                 //巴西
+       {724,21,"VIVO"},                 //巴西
+       {724,22,"VIVO"},                 //巴西
+       
+       {440,53,"KDDI"},                 //日本
+       {440,54,"KDDI"},                 //日本
+       {440,70,"KDDI"},                 //日本
+       {440,71,"KDDI"},                 //日本
+       {440,72,"KDDI"},                 //日本
+       {440,73,"KDDI"},                 //日本
+       {440,74,"KDDI"},                 //日本
+       {440,75,"KDDI"},                 //日本
+       {440,76,"KDDI"},                 //日本
+       {440,78,"KDDI"},                 //日本
+       
+       {310,12,"Sprint"},               //美国
+       {310,0,"Sprint"},                //美国
+       
+       {334,0,"Iusacell"},              //墨西哥
+       
+       {450,6,"LGT"},                   //韩国
+       
+       {452,3,"Stel"},                  //越南
+       
+       {455,2,"MacauUnicom"},           //澳门
+       
+       {111,1,"Syniverse"},             //信令转接商
+       
+       {404,0,"Reliance"},              //印度   
+       {404,1,"Aircell Digilink"},   
+       {404,2,"Bharti Mobile"},   
+       {404,3,"Bharti Telenet"},   
+       {404,4,"Idea Cellular"},   
+       {404,5,"Fascel"},   
+       {404,6,"Bharti Mobile"},   
+       {404,7,"Idea Cellular"},   
+       {404,9,"Reliance Telecom"},   
+       {404,10,"Bharti Cellular"},   
+       {404,11,"Sterling Cellular"},   
+       {404,12,"Escotel Mobile"},   
+       {404,13,"Hutchinson Essar South"},   
+       {404,14,"Spice"},   
+       {404,15,"Aircell Digilink"},
+       {404,16,"Hexcom"},
+       {404,18,"Reliance Telecom"},
+       {404,19,"Escotel Mobile"},
+       {255,04,"Inter"}, //intertelecom
+       {255,23,"CDMA Ukraine"} //CDMA Ukraine       
+       
+};
+#endif
+
 static void CoreApp_GetSPN(CCoreApp *pMe)
 {
 
