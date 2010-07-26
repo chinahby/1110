@@ -2,43 +2,43 @@
 <BREWRes Name="recorder_images" VERSION="1">
 <Objects MimeType="image/png">
 	<Object Id="5001" Name="IDI_RECORDER_CURSOR">
-		<File>..\..\Appscommon\images\160x128\recorder\cursor.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\cursor.png</File>
 	</Object>
 	<Object Id="5002" Name="IDI_RECORDER_CURSOR1">
-		<File>..\..\Appscommon\images\160x128\recorder\cursor1.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\cursor1.png</File>
 	</Object>
 	<Object Id="5004" Name="IDI_RECORDER_BG_PLAY">
-		<File>..\..\Appscommon\images\160x128\recorder\bg.play.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\bg.play.png</File>
 	</Object>
 	<Object Id="5005" Name="IDI_RECORDER_BG_RECORD">
-		<File>..\..\Appscommon\images\160x128\recorder\bg.record.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\bg.record.png</File>
 	</Object>
 	<Object Id="5006" Name="IDI_RECORDER_PROGRESSBAR1">
-		<File>..\..\Appscommon\images\160x128\recorder\processbar1.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\processbar1.png</File>
 	</Object>
 	<Object Id="5007" Name="IDI_RECORDER_PROGRESSBAR2">
-		<File>..\..\Appscommon\images\160x128\recorder\processbar2.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\processbar2.png</File>
 	</Object>
 	<Object Id="5008" Name="IDI_RECORDER_VOLUME0">
-		<File>..\..\Appscommon\images\160x128\recorder\volume0.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\volume0.png</File>
 	</Object>
 	<Object Id="5009" Name="IDI_RECORDER_VOLUME1">
-		<File>..\..\Appscommon\images\160x128\recorder\volume1.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\volume1.png</File>
 	</Object>
 	<Object Id="5010" Name="IDI_RECORDER_VOLUME2">
-		<File>..\..\Appscommon\images\160x128\recorder\volume2.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\volume2.png</File>
 	</Object>
 	<Object Id="5011" Name="IDI_RECORDER_VOLUME3">
-		<File>..\..\Appscommon\images\160x128\recorder\volume3.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\volume3.png</File>
 	</Object>
 	<Object Id="5012" Name="IDI_RECORDER_VOLUME4">
-		<File>..\..\Appscommon\images\160x128\recorder\volume4.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\volume4.png</File>
 	</Object>
 	<Object Id="5013" Name="IDI_RECORDER_VOLUME5">
-		<File>..\..\Appscommon\images\160x128\recorder\volume5.png</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\volume5.png</File>
 	</Object>
 	<Object Id="5014" Name="IDI_RECORDER_RECORDER_LIST_ICON" MimeType="image/bmp">
-		<File>..\..\Appscommon\images\160x128\recorder\record.bmp</File>
+		<File>..\..\Appscommon\images\160x128\common\recorder\record.bmp</File>
 	</Object>
 </Objects>
 <Dialogs>

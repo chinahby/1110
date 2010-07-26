@@ -118,7 +118,7 @@ endif
 
 ifeq ($(USES_MMI), yes)
 MODELNAME = $(BUILD)#  #Product Model english name.
-MODELVERSION = _FLEXI_FM_V0.2_20100719
+MODELVERSION = _$(DISPLAYNAME)_FM_V0.2_20100719
 CUSTOMER_NAME = common# Change "common" to the customer name you will sell to
 MODEL_RF_NV = rf_$(MODELNAME)_nv.h#
 CUST_SVC_NV = svc_$(CUSTOMER_NAME)_nv.h#
@@ -127,7 +127,6 @@ endif
 
 #应用的标签
 ifeq ($(USES_MMI),yes)
-#USES_CAMERA=yes#
 USES_REND=no
 USES_T9=yes
 USES_DISP_SIZE=176X220#
@@ -149,10 +148,6 @@ USE_STATIC_BREW_APP=no
 #语言添加
 EXTLANG1=id
 EXTLANG2=NO
-
-#不同运营商版本
-OPERATORS_VERSION_NAME = IVIO
-
 endif
 #-------------------------------------------------------------------------------
 # Core includes

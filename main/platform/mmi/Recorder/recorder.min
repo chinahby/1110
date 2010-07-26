@@ -14,26 +14,16 @@ vpath %.c             	$(RECORDER_SRC)
 vpath %.bar 			$(RECORDER_RES)
 vpath %.brx 			$(RECORDER_RES)
 
-ifeq ($(USES_128X128),yes)
 CONSTFILE_FILES+=\
 	recorder.mif|fs:/mif/recorder.mif \
     recorder.bar|fs:/mod/recorder/en/recorder.bar \
-    recorder_images.bar|fs:/mod/recorder/recorder_images.bar
-endif
+    recorder_images$(USES_LCD_SIZE).bar|fs:/mod/recorder/recorder_images.bar
 
-ifeq ($(USES_160X128),yes)
-CONSTFILE_FILES+=\
-	recorder.mif|fs:/mif/recorder.mif \
-    recorder.bar|fs:/mod/recorder/en/recorder.bar \
-    recorder_images160x128.bar|fs:/mod/recorder/recorder_images.bar
-endif
-
-# 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
     $(EXTLANG1)recorder.bar|fs:/mod/recorder/$(EXTLANG1)/recorder.bar
 endif
-# 加入另外一种语言资源文件
+
 ifneq ($(EXTLANG2),NO)
 CONSTFILE_FILES+=\
     $(EXTLANG2)recorder.bar|fs:/mod/recorder/$(EXTLANG2)/recorder.bar

@@ -21,23 +21,10 @@ vpath %.bar $(MEDIAGALLERY_RES)
 vpath %.brx $(MEDIAGALLERY_RES)
 
 CONSTFILE_FILES+=\
-		 mediagallery.mif|fs:/mif/mediagallery.mif \
-		 mediagallery.bar|fs:/mod/mediagallery/en/mediagallery.bar
-		 
-ifeq ($(OPERATORS_VERSION_NAME),IVIO)
-    CONSTFILE_FILES+=\
-    mediagallery_image_ivio.bar|fs:/mod/mediagallery/mediagallery_image.bar
-endif
-ifeq ($(OPERATORS_VERSION_NAME),SMART)
-    CONSTFILE_FILES+=\
-    mediagallery_image_smart.bar|fs:/mod/mediagallery/mediagallery_image.bar
-endif
-ifeq ($(OPERATORS_VERSION_NAME),M8)
-    CONSTFILE_FILES+=\
-    mediagallery_image_smart.bar|fs:/mod/mediagallery/mediagallery_image.bar
-endif
-		 
-		 
+	mediagallery.mif|fs:/mif/mediagallery.mif \
+	mediagallery.bar|fs:/mod/mediagallery/en/mediagallery.bar \
+	mediagallery_image$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/mod/mediagallery/mediagallery_image.bar
+    
 #加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

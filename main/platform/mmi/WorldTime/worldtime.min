@@ -16,26 +16,11 @@ vpath %.c $(WORLDTIME_SRC)
 vpath %.bar $(WORLDTIME_RES)
 vpath %.brx $(WORLDTIME_RES)
 
-ifeq ($(USES_160X128),yes)
-
 CONSTFILE_FILES+=\
     worldtime.mif|fs:/mif/worldtime.mif \
     worldtime.bar|fs:/mod/worldtime/en/worldtime.bar 
-    ifeq ($(OPERATORS_VERSION_NAME),IVIO)
-    CONSTFILE_FILES+=\
-    worldtime_images_ivio.bar|fs:/mod/worldtime/worldtime_images.bar
-    endif
-    ifeq ($(OPERATORS_VERSION_NAME),SMART)
-    CONSTFILE_FILES+=\
-    worldtime_images_smart.bar|fs:/mod/worldtime/worldtime_images.bar
-    endif
-    ifeq ($(OPERATORS_VERSION_NAME),M8)
-    CONSTFILE_FILES+=\
-    worldtime_images_smart.bar|fs:/mod/worldtime/worldtime_images.bar
-    endif
-endif
-
-
+    worldtime_images$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/mod/worldtime/worldtime_images.bar
+    
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

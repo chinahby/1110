@@ -17,52 +17,25 @@ $(DISPLAYMENU_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.c $(DISPLAYMENU_SRC)
 vpath %.bar $(DISPLAYMENU_RES)
 vpath %.brx $(DISPLAYMENU_RES)
-ifeq ($(USES_160X128),yes)
+vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Wallpaper
 
-ifeq ($(OPERATORS_VERSION_NAME),SMART)
-vpath %.jpg $(APPSCOMMON)/images/160x128/smart/Wallpaper
-vpath %.png $(APPSCOMMON)/images/160x128/smart/Wallpaper
-vpath %.bmp $(APPSCOMMON)/images/160x128/smart/Wallpaper
-endif
-
-ifeq ($(OPERATORS_VERSION_NAME),M8)
-vpath %.jpg $(APPSCOMMON)/images/160x128/m8/Wallpaper
-vpath %.png $(APPSCOMMON)/images/160x128/m8/Wallpaper
-vpath %.bmp $(APPSCOMMON)/images/160x128/m8/Wallpaper
-endif
-
-ifeq ($(OPERATORS_VERSION_NAME),IVIO)
-vpath %.jpg $(APPSCOMMON)/images/160x128/ivio/Wallpaper
-vpath %.png $(APPSCOMMON)/images/160x128/ivio/Wallpaper
-vpath %.bmp $(APPSCOMMON)/images/160x128/ivio/Wallpaper
-endif
-
-
-else
-
-vpath %.jpg $(APPSCOMMON)/images/color/Wallpaper
-vpath %.png $(APPSCOMMON)/images/color/Wallpaper
-vpath %.bmp $(APPSCOMMON)/images/color/Wallpaper
-
-endif
 ifeq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\
 	displaymenu.mif|fs:/mif/displaymenu.mif \
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-	wallpaper11.png|fs:/image/wallpaper/wallpaper01.png
+	wallpaper1.png|fs:/image/wallpaper/wallpaper1.png
 else
 CONSTFILE_FILES+=\
 	displaymenu.mif|fs:/mif/displaymenu.mif \
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
-    wallpaper1.jpg|fs:/image/wallpaper/wallpaper1.jpg \
+    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
     wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
     wallpaper3.png|fs:/image/wallpaper/wallpaper3.png \
     wallpaper4.png|fs:/image/wallpaper/wallpaper4.png \
     wallpaper5.png|fs:/image/wallpaper/wallpaper5.png \
     wallpaper6.png|fs:/image/wallpaper/wallpaper6.png \
     wallpaper7.png|fs:/image/wallpaper/wallpaper7.png \
-    wallpaper8.png|fs:/image/wallpaper/wallpaper8.png \
-    wallpaper9.png|fs:/image/wallpaper/wallpaper9.png
+    wallpaper8.png|fs:/image/wallpaper/wallpaper8.png
 endif #ifeq ($(USES_LOWMEM), yes)
 
 # 加入另外一种语言资源文件
@@ -79,3 +52,4 @@ INC  += $(DISPLAYMENU_INC) $(DISPLAYMENU_RES)
 #SRC  += $(DISPLAYMENU_SOURCES)
 OBJECTS+=$(DISPLAYMENU_OBJS)
 #LIBS += 
+

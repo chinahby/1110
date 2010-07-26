@@ -16,24 +16,10 @@ vpath %.c               $(BLACKJACK_SRC)
 vpath %.bar             $(BLACKJACK_RES)
 vpath %.brx             $(BLACKJACK_RES)
 
-
 CONSTFILE_FILES+=\
-blackjack.mif|fs:/mif/blackjack.mif \
-blackjack.bar|fs:/mod/blackjack/en/blackjack.bar 
-
-ifeq ($(OPERATORS_VERSION_NAME),IVIO)
-    	 CONSTFILE_FILES+=\
-    	 blackjack_image_ivio.bar|fs:/mod/blackjack/blackjack_image.bar
-endif
-ifeq ($(OPERATORS_VERSION_NAME),SMART)
-    	 CONSTFILE_FILES+=\
-    	 blackjack_image_smart.bar|fs:/mod/blackjack/blackjack_image.bar
-endif
-
-ifeq ($(OPERATORS_VERSION_NAME),M8)
-    	 CONSTFILE_FILES+=\
-    	 blackjack_image_smart.bar|fs:/mod/blackjack/blackjack_image.bar
-endif
+	blackjack.mif|fs:/mif/blackjack.mif \
+	blackjack.bar|fs:/mod/blackjack/en/blackjack.bar 
+    blackjack_image$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/mod/blackjack/blackjack_image.bar
     
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

@@ -13,35 +13,22 @@ $(MAINMENU_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.c $(MAINMENU_SRC)
 vpath %.bar $(MAINMENU_RES)
 vpath %.brx $(MAINMENU_RES)
-ifeq ($(USES_160X128),yes)
-
-ifeq ($(OPERATORS_VERSION_NAME),IVIO)
-   vpath %.png $(APPSCOMMON)/images/160x128/ivio/Mainmenu/focus
-endif
-ifeq ($(OPERATORS_VERSION_NAME),SMART)
-   vpath %.png $(APPSCOMMON)/images/160x128/smart/Mainmenu/focus
-endif
-ifeq ($(OPERATORS_VERSION_NAME),M8)
-   vpath %.png $(APPSCOMMON)/images/160x128/m8/Mainmenu/focus
-endif
-
-else
-vpath %.png $(APPSCOMMON)/images/color/Mainmenu/focus
-endif
+vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
 
 CONSTFILE_FILES+=\
-mainmenu.mif|fs:/mif/mainmenu.mif \
-mainmenu.bar|fs:/mod/mainmenu/en/mainmenu.bar
+	mainmenu.mif|fs:/mif/mainmenu.mif \
+	mainmenu.bar|fs:/mod/mainmenu/en/mainmenu.bar
 
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
-$(EXTLANG1)mainmenu.bar|fs:/mod/mainmenu/$(EXTLANG1)/mainmenu.bar
+	$(EXTLANG1)mainmenu.bar|fs:/mod/mainmenu/$(EXTLANG1)/mainmenu.bar
 endif
 ifneq ($(EXTLANG2),NO)
 CONSTFILE_FILES+=\
-$(EXTLANG2)mainmenu.bar|fs:/mod/mainmenu/$(EXTLANG2)/mainmenu.bar
+	$(EXTLANG2)mainmenu.bar|fs:/mod/mainmenu/$(EXTLANG2)/mainmenu.bar
 endif
-ifeq ($(USES_128X128),yes)
+
+ifeq ($(USES_LCD_SIZE),128x128)
 CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
 	Message.png|fs:/image/mainmenu/Message.png \
@@ -63,7 +50,7 @@ CONSTFILE_FILES+=\
 	application_focus.png|fs:/image/mainmenu/application_focus.png
 endif
 
-ifeq ($(USES_160X128),yes)
+ifeq ($(USES_LCD_SIZE),160x128)
 CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
 	Message.png|fs:/image/mainmenu/Message.png \
@@ -90,6 +77,7 @@ CONSTFILE_FILES+=\
 	Digit_focus.png|fs:/image/mainmenu/Digit_focus.png\
 	Document_focus.png|fs:/image/mainmenu/Document_focus.png
 endif
+
 INC  += $(MAINMENU_INC) $(MAINMENU_RES)
 #SRC  += $(MAINMENU_SOURCES)
 OBJECTS+=$(MAINMENU_OBJS)

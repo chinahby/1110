@@ -18,44 +18,18 @@ vpath %.c $(FMRADIOAPP_SRC)
 vpath %.bar $(FMRADIOAPP_RES)
 vpath %.brx $(FMRADIOAPP_RES)
 
-ifeq ($(EXTLANG1),huth)
 CONSTFILE_FILES+=\
-        fmradio.mif|fs:/mif/fmradio.mif \
-        enhufmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar \
-        fmradioln.bar|fs:/mod/fmradio/fmradioln.bar
-else
-ifeq ($(USES_160X128),yes)
-CONSTFILE_FILES+=\
-        fmradio.mif|fs:/mif/fmradio.mif \
-        fmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar
-
-ifeq ($(OPERATORS_VERSION_NAME),IVIO)
-    	 CONSTFILE_FILES+=\
-    	 fmradioln160x128_ivio.bar|fs:/mod/fmradio/fmradioln.bar
-endif
-ifeq ($(OPERATORS_VERSION_NAME),SMART)
-    	 CONSTFILE_FILES+=\
-    	 fmradioln160x128_smart.bar|fs:/mod/fmradio/fmradioln.bar
-endif
-ifeq ($(OPERATORS_VERSION_NAME),M8)
-    	 CONSTFILE_FILES+=\
-    	 fmradioln160x128_smart.bar|fs:/mod/fmradio/fmradioln.bar
-endif
-else
-CONSTFILE_FILES+=\
-        fmradio.mif|fs:/mif/fmradio.mif \
-        fmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar \
-        fmradioln.bar|fs:/mod/fmradio/fmradioln.bar
-endif
-endif
+	fmradio.mif|fs:/mif/fmradio.mif \
+	fmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar \
+	fmradioln$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/mod/fmradio/fmradioln.bar
 
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
-$(EXTLANG1)fmradiols.bar|fs:/mod/fmradio/$(EXTLANG1)/fmradiols.bar
+	$(EXTLANG1)fmradiols.bar|fs:/mod/fmradio/$(EXTLANG1)/fmradiols.bar
 endif
 ifneq ($(EXTLANG2),NO)
 CONSTFILE_FILES+=\
-$(EXTLANG2)fmradiols.bar|fs:/mod/fmradio/$(EXTLANG2)/fmradiols.bar
+	$(EXTLANG2)fmradiols.bar|fs:/mod/fmradio/$(EXTLANG2)/fmradiols.bar
 endif
 
 INC  += $(FMRADIOAPP_INC) $(FMRADIOAPP_RES)

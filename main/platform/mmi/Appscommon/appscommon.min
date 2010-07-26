@@ -29,35 +29,20 @@ ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
     $(EXTLANG1)appscommon.bar|fs:/sys/$(EXTLANG1)/appscommon.bar 
 endif
+
 ifneq ($(EXTLANG2),NO)
 CONSTFILE_FILES+=\
     $(EXTLANG2)appscommon.bar|fs:/sys/$(EXTLANG2)/appscommon.bar 
 endif
 
-ifeq ($(USES_DISP_SIZE), 176X220)
-vpath %.png $(APPSCOMMON)/images/color/GraphicNotice
+vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/GraphicNotice
 
 CONSTFILE_FILES+=\
-	appscommon_color.bar|fs:/sys/appscommonimages.bar 
-else
-    ifeq ($(USES_DISP_128X160), yes)
-    vpath %.png $(APPSCOMMON)/images/color/GraphicNotice
-    
-    CONSTFILE_FILES+=\
-    	appscommon_color.bar|fs:/sys/appscommonimages.bar 
-    else
-    vpath %.png $(APPSCOMMON)/images/mono
-    
-    CONSTFILE_FILES+=\
-    	appscommon_momo.bar|fs:/sys/appscommonimages.bar 
-    endif
-endif
+	appscommon_images$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/sys/appscommonimages.bar 
 
 CONSTFILE_FILES+=\
 	sendingsms.png|fs:/image/notice/sendingsms.png \
 	volume.png|fs:/image/notice/volume.png \
-#	callin.png|fs:/image/notice/callin.png \
-#	callout.png|fs:/image/notice/callout.png
 
 INC  += $(APPSCOMMON_INC) $(APPSCOMMON_RES)
 #SRC  += $(APPSCOMMON_SOURCES)

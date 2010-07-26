@@ -11,34 +11,14 @@ COREAPP_SOURCES=\
 	CoreAppStateHandler.c \
 	CoreAppDialogHandler.c 
 
-	
 COREAPP_OBJS :=  $(addprefix $(TARGETDIR)/, $(COREAPP_SOURCES:%.c=%.o))
 $(COREAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 
 vpath %.c $(COREAPP_SRC)
 vpath %.bar $(COREAPP_RES)
 vpath %.brx $(COREAPP_RES)
-ifeq ($(USES_160X128),yes)
-    ifeq ($(OPERATORS_VERSION_NAME),IVIO)
-        vpath %.png $(APPSCOMMON)/images/160x128/ivio/Pwronoffani
-    endif
-    ifeq ($(OPERATORS_VERSION_NAME),SMART)
-        vpath %.png $(APPSCOMMON)/images/160x128/smart/Pwronoffani
-    endif
-    ifeq ($(OPERATORS_VERSION_NAME),M8)
-        vpath %.png $(APPSCOMMON)/images/160x128/m8/Pwronoffani
-    endif
-else
-    ifeq ($(OPERATORS_VERSION_NAME),IVIO)
-	    vpath %.png $(APPSCOMMON)/images/color/ivio/Pwronoffani
-	endif
-	ifeq ($(OPERATORS_VERSION_NAME),SMART)
-	    vpath %.png $(APPSCOMMON)/images/color/smart/Pwronoffani
-	endif
-	ifeq ($(OPERATORS_VERSION_NAME),M8)
-	    vpath %.png $(APPSCOMMON)/images/color/m8/Pwronoffani
-	endif
-endif
+vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
+
 ifeq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\
 	coreapp.mif|fs:/mif/coreapp.mif \
@@ -47,8 +27,8 @@ else
 CONSTFILE_FILES+=\
 	coreapp.mif|fs:/mif/coreapp.mif \
 	coreapp.bar|fs:/mod/coreapp/en/coreapp.bar \
-    tianyion.png|fs:/image/pwronoffani/tianyion.png \
-	tianyioff.png|fs:/image/pwronoffani/tianyioff.png \
+    poweronani.png|fs:/image/pwronoffani/poweronani.png \
+	poweroffani.png|fs:/image/pwronoffani/poweroffani.png \
 	charge.png|fs:/image/charge/charge.png
 endif #ifeq ($(USES_LOWMEM), yes)
 
