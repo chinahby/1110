@@ -900,13 +900,13 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			#ifdef FEATURE_VERSION_IVIO
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
-                                    IDS_APPLICATION_LIST,
+                                    IDS_TOOLS_LIST,
                                     WTitle,
                                     sizeof(WTitle));
 			#else
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
-                                    IDS_TOOLS_LIST,
+                                    IDS_APPLICATION_LIST,
                                     WTitle,
                                     sizeof(WTitle));
 			#endif
