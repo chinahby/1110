@@ -2760,13 +2760,13 @@ void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe)
     
     /* the technology is in slot 1 */
     /* is the pin perm disabled? or blocked */
-    if (pMe->m_eUIMErrCode != UIMERR_NONE)
+    if (pMe->m_eUIMErrCode == UIMERR_NONE || pMe->m_eUIMErrCode == UIMERR_NOUIM)
     {
-        bSubAvail = FALSE;
+        bSubAvail = TRUE;
     }
     else
     {
-        bSubAvail = TRUE;
+        bSubAvail = FALSE;
     } /* pin is not permanently disabled */
     
     //CORE_ERR("CoreApp_ProcessSubscriptionStatus", 0, 0, 0);

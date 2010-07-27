@@ -1305,6 +1305,8 @@ None
 ===========================================================================*/
 static void camsensor_siv121a_power_down(void)
 {
+    siv121a_i2c_write_byte(0x00, 0x00);
+	siv121a_i2c_write_byte(0x03, 0x02);	//sensor sleep mode
 	ERR("camsensor_siv121a_power_down!",0,0,0);
 } /* camsensor_siv121a_power_down */
 

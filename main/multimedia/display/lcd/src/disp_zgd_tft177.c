@@ -571,6 +571,7 @@ static void zgd_tft177_disp_off(void)
 		/* Transfer command to display hardware */
 		HEXING_LCD_WRITE_CMD(ZGD_TFT177_DISPLAY_OFF_C); 
 		clk_busy_wait(1000);
+        HEXING_LCD_WRITE_CMD(0x10); //Sleep in
 		zgd_tft177_disp_set_backlight(ZGD_TFT177_DISP_MIN_BACKLIGHT);
 		/* Display put to SLEEP state */
 		zgd_tft177_state.display_on = FALSE;
@@ -602,11 +603,13 @@ static void zgd_tft177_disp_on(void)
 	rex_enter_crit_sect(&zgd_tft177_crit_sect);
 
 	if(zgd_tft177_state.disp_powered_up && !zgd_tft177_state.display_on)
-	{  
+	{
+        HEXING_LCD_WRITE_CMD(0x11); //Exit Sleep
+        clk_busy_wait(1000);
 		/* Transfer command to display hardware */
 		HEXING_LCD_WRITE_CMD(ZGD_TFT177_DISPLAY_ON_C); 
 		clk_busy_wait(1000);
-
+        
 		/* Display put to ACTIVE state */
 		zgd_tft177_state.display_on = TRUE;
 	}
@@ -772,7 +775,7 @@ static int zgd_tft177_disp_powerdown(void)
 		* Power-down the controller 
 		*/
 		/* Transfer command to display hardware */
-		zgd_tft177_reset();
+		//zgd_tft177_reset();
 		HEXING_LCD_WRITE_CMD(0x10); //Sleep in
 		/* Reset controller to ensure clean state */
 		/* Transfer command to display hardware*/
