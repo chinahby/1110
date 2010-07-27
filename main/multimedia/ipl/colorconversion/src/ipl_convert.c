@@ -9439,7 +9439,7 @@ extern ipl_status_type hsv_to_ycbcr_normalized
   MSG_LOW("hsv_to_ycbcr_normalized marker_100\n",0,0,0);
   return IPL_SUCCESS;
 } /* End hsv_to_ycbcr */
-
+#endif
 
 /* <EJECT> */
 /*===========================================================================
@@ -9900,7 +9900,7 @@ extern ipl_status_type ipl_convert_to_rgb888
   return IPL_SUCCESS;
 } /* End ipl_convert_to_rgb888 */
 
-
+#ifndef FEATURE_IPL_NO_CAMERA
 /* <EJECT> */
 /*===========================================================================
 

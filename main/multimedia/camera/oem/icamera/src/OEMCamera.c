@@ -797,8 +797,11 @@ int OEMCamera_New(AEECLSID cls, IBitmap * pFrame, uint16 wSize, OEMINSTANCE * ph
   pme->m_bRelease = FALSE;
   pme->m_nMode = CAM_MODE_READY;
   pme->m_nNextMode = CAM_MODE_READY;
+#ifdef FEATURE_JPEG_ENCODER
   pme->m_clsVideo = AEECLSID_JPEG;
-
+#else
+  pme->m_clsVideo = AEECLSID_PNG;
+#endif
   pme->m_pFrame = (FrameBitmap *)pFrame;
 
   /* Set Frame size default to 0. _set_dimension() is not called

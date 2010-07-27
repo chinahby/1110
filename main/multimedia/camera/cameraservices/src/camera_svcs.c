@@ -4441,6 +4441,9 @@ static camera_ret_code_type camera_encode_picture_common
        (frame->format != CAMERA_H2V2) &&
        (frame->format != CAMERA_BAYER_8BIT) &&
        (frame->format != CAMERA_BAYER_10BIT) &&
+#ifdef FEATURE_PNG_ENCODER
+       (camera_encode_properties.format != CAMERA_PNG)  &&
+#endif
        (frame->format != CAMERA_YCBCR_4_2_2)))
 
   {
@@ -8749,7 +8752,7 @@ static void camera_jpeg_encode (qcamrawHeaderType *main_image_header, uint8 *mai
     mobicat_deliver_config_to_jpege();
   }
   #endif /* FEATURE_CAMERA_MOBICAT */
-
+#ifdef FEATURE_JPEG_ENCODER_REV2
   if (encodeInfo.TargetEncodedSize)
   {
     jpeg_encoder_status = jpege_encode_file_size_exif ( &encodeInfo, &camera_exif_info);
@@ -8758,7 +8761,10 @@ static void camera_jpeg_encode (qcamrawHeaderType *main_image_header, uint8 *mai
   {
     jpeg_encoder_status = jpege_encode_exif ( &encodeInfo, &camera_exif_info);
   }
-
+#else
+  // TODO:
+  jpeg_encoder_status = JPEGENC_BAD_DATA;
+#endif
   if (jpeg_encoder_status == JPEGENC_SUCCESS)
   {
     /* set flag to let us know encoding is in progress */
@@ -10855,10 +10861,14 @@ static boolean camera_abort_takepicture_encoding_operation(void)
           break;
 #endif /* FEATURE_PNG_ENCODER */
         case CAMERA_JPEG:
+#ifdef FEATURE_JPEG_ENCODER_REV2
           MSG_CAMERADEBUG("CAMERA_SVCS: JPEG ENCODING IN PROGRESS SO ABORT", 0, 0, 0);
           /* Note that the JPEG process may have already completed at this point */
           jpeg_encoder_abort( (uint16) encodeInfo.ClientId );
           ret_val = TRUE;
+#else
+          ret_val = FALSE;
+#endif
           break;
         case CAMERA_RAW:
 #ifdef FEATURE_CAMERA_RAW_PREVIEW_CAPTURE
@@ -18211,13 +18221,14 @@ static void camera_svcs_fill_exif_attributes(exif_attributes_type *attributes)
 
     /* Get Sensor dependent attributes */
     attributes->sensor_info = camsensor_static_params[camera_asi].exif_info_from_sensor;
-
+#ifdef FEATURE_EXIF_PIM3
     /* Set original date & time */
     /* Get Date and time string flag by exif_get_date_time_string() and write date and time on the pointer
      using exif_set_date_time. User can write any date and time in the pointer if needed*/
     exif_set_date_time(exif_get_date_time_string());
     /*set set_date_time flag to FALSE as it is already done by camera services */
     exif_set_date_time_from_svcs(FALSE);
+#endif
     /* Get general attributes */
 }
 

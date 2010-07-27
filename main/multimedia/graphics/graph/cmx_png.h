@@ -42,7 +42,7 @@ when       who     what, where, why
 #include "comdef.h"             /* Customer specific definitions           */
 #include "cmx.h"                /* CMX specific definitions                */
 
-#ifdef FEATURE_PNG_DECODER
+#if defined(FEATURE_PNG_ENCODER) || defined(FEATURE_PNG_DECODER)
 typedef enum 
 {
   PNG_CMX_DATA,

@@ -90,7 +90,7 @@ when       who     what, where, why
 #include "comdef.h"     /* Definitions for byte, word, etc.                */
 #include "queue.h"      /* Definitions for queue services                  */
 #include "graph.h"
-#ifdef FEATURE_PNG_DECODER
+#if defined(FEATURE_PNG_ENCODER) || defined(FEATURE_PNG_DECODER)
 #include "cmx_png.h"    /* PNG prototypes                                  */
 #endif
 #ifdef FEATURE_SAF
@@ -263,13 +263,14 @@ typedef struct {
 } graph_pnge_packet_type;                    /* PNGE packet                */
 #endif /* FEATURE_PNG_ENCODER */
 
-#ifdef FEATURE_PNG_DECODER
+#if defined(FEATURE_PNG_ENCODER) || defined(FEATURE_PNG_DECODER)
 typedef struct {
   graph_hdr_type                  hdr;             /* Command Header       */
   void                            *handle;         /* PNG Handle           */
   png_cmx_decode_cb_func_type     cb_func;         /* PNG Call back func   */
 } graph_png_packet_type;                           /* PNG packet           */
-
+#endif
+#ifdef FEATURE_PNG_DECODER
 typedef struct {
   graph_hdr_type                  hdr;             /* Command Header       */
   uint8                           *client_buf;     /* Client data          */
@@ -541,8 +542,10 @@ typedef union {
 #ifdef FEATURE_PNG_ENCODER
   graph_pnge_packet_type          pnge_msg;
 #endif /* FEATURE_PNG_ENCODER */
-#ifdef FEATURE_PNG_DECODER
+#if defined(FEATURE_PNG_ENCODER) || defined(FEATURE_PNG_DECODER)
   graph_png_packet_type           png_cmd;            /* PNG decode        */
+#endif
+#ifdef FEATURE_PNG_DECODER
   graph_png_buf_packet_type       png_buf;            /* PNG buffer        */
   graph_png_cb_packet_type        png_cb;             /* PNG callback      */
 #endif /* FEATURE_PNG_DECODER */

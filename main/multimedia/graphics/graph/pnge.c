@@ -424,6 +424,7 @@ PNGE_returnCodeType   pnge_encode
   // per pixel depending on the input raw data format
   switch (pnge_spec.input_data)
   {
+#ifndef CAMERA_USES_SOFTDSP
     case YCrCb420LP:
     case YCrCb422LP:
       /* Alloacte temp memory to convert from yCbCr line packed to YCbCr IPL */
@@ -466,11 +467,11 @@ PNGE_returnCodeType   pnge_encode
           (void)ipl_convert_ycbcr422lp_to_ycbcr422(&pnge_inputTemp_ipl_image, &pnge_outputTemp_ipl_image);
       
       pnge_input_ipl_image.imgPtr = YCbYCr_ptr;
-     
+      
       pnge_bytes_per_pixel = 2;
       pnge_input_ipl_image.cFormat = IPL_YCbCr;
       break;     
-    
+#endif
     case YCbCr422:
       pnge_bytes_per_pixel = 2;
       pnge_input_ipl_image.cFormat = IPL_YCbCr;
@@ -700,7 +701,7 @@ void   pnge_image_encode()
                  pnge_input_ipl_image.imgPtr, 
                  3 * pnge_global_params.width * pnge_input_ipl_image.dy );
       }
-
+#ifndef CAMERA_USES_SOFTDSP
       /* A Bayer format resize is performed here ONLY if the input format is
          1) Bayer and 2) the input/output dimensions are NOT equal */
       else if( ((pnge_global_params.bayerWidth != pnge_global_params.width) ||
@@ -762,6 +763,7 @@ void   pnge_image_encode()
          }
 
       }
+#endif
       else
       {
          /* See if we are at the end of the image by testing the num rows processed
