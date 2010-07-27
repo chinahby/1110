@@ -4752,6 +4752,7 @@ void CoreApp_Draw_Charger_image(void *pp)
     {
         IIMAGE_DrawFrame(pMe->m_battery_Image, pMe->m_battery_count, 0, 0);
     }
+    IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 #else
     CoreApp_DrawChargeing(pMe, pMe->m_battery_count);
 #endif

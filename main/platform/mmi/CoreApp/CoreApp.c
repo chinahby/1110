@@ -1440,7 +1440,8 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 // in this time ,we need power down the phone
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
                 //CLOSE_DIALOG(DLGRET_OK)
-                CoreApp_Poweroff_Phone(pMe);
+                CoreApp_Process_Batty_Msg(pMe, IDS_POWEROFF_1);
+                AEE_SetSysTimer(POWER_DOWN_TIME , CoreApp_Poweroff_Phone, pMe);
                 return TRUE;
             }
             
