@@ -4874,7 +4874,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 #endif
     else if (headsetPresent)
     {
-         soundStuff.eDevice = AEE_SOUND_DEVICE_HEADSET;            
+         soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;            
     }
     else
     {
@@ -6359,7 +6359,7 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
 #endif
         else if(headsetPresent)
         {
-            si.eDevice = AEE_SOUND_DEVICE_HEADSET;
+            si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
         }
         else
         {

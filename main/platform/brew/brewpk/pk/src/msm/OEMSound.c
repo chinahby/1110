@@ -15,7 +15,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
 INITIALIZATION AND SEQUENCING REQUIREMENTS:
 No additional module-level initialization or sequencing requirements.
 
-        Copyright © 1999-2002 QUALCOMM Incorporated.
+        Copyright ?? 1999-2002 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =============================================================================*/
@@ -692,7 +692,7 @@ SIDE EFFECTS
   None.
 ===========================================================================*/
 void OEMSound_GetLevels(AEESoundInfo * psi, void * pUser)
-{
+{   
    uisnd_get_levels( OEMSound_GetSndDevice(psi->eDevice),
                      OEMSound_GetSndMethod(psi->eMethod),   
                      &OEMSound_LevelCB, 
@@ -1786,24 +1786,33 @@ static AEESoundStatus OEMSound_GetAEESoundStatus(snd_status_type e)
 static snd_device_type OEMSound_GetSndDevice(AEESoundDevice e)
 {
    snd_device_type dt = SND_DEVICE_HANDSET;
+  
    if (e < AEE_SOUND_DEVICE_LAST && e >= 0)
-      dt = (snd_device_type) gsSoundCaps.sndDevice[(int)e];
+   {
+   		dt = (snd_device_type) gsSoundCaps.sndDevice[(int)e];
+   }
   
 #if defined (FEATURE_SBC_CODEC) || defined (FEATURE_SBC_DSP_CODEC)
    if (e == AEE_SOUND_DEVICE_BT_STEREO_HEADSET)
    {
 #ifdef FEATURE_UIXSND_IMPLEMENTATION
       if (uisnd_is_device_attached(SND_DEVICE_BT_A2DP_SCO_HEADSET))
-         dt = SND_DEVICE_BT_A2DP_SCO_HEADSET;
+      {
+      	dt = SND_DEVICE_BT_A2DP_SCO_HEADSET;
+      }
       else if (uisnd_is_device_attached(SND_DEVICE_BT_A2DP_HEADSET))
-         dt = SND_DEVICE_BT_A2DP_HEADSET;
+      {
+      	dt = SND_DEVICE_BT_A2DP_HEADSET;
+      }
 #endif
    }	 
 #endif
 
-   if((dt != SND_DEVICE_CURRENT) && (dt >= SND_DEVICE_MAX))
-	   dt = SND_DEVICE_HANDSET;
-
+   if ((dt != SND_DEVICE_CURRENT) && (dt >= SND_DEVICE_MAX))
+   {
+   	  dt = SND_DEVICE_HANDSET;
+   }
+	
    return dt;
 }
 

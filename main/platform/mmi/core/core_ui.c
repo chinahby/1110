@@ -1829,7 +1829,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
             
             ISOUND_Get(gpSound, &soundStuff);
             soundStuff.eDevice = (wParam == AVK_HEADSET_CONNECT ? 
-                                            AEE_SOUND_DEVICE_HEADSET:AEE_SOUND_DEVICE_HANDSET);
+                                            AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_HANDSET);	//AEE_SOUND_DEVICE_HEADSET
             (void) ISOUND_Set(gpSound,  &soundStuff);
             ISOUND_SetDevice(gpSound);
             

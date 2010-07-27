@@ -1273,21 +1273,21 @@ const snd_gen_voc_cal_type snd_cal_headset_midi_gains = {
 
 /* Headset Device - voice */
 const snd_cal_control_type snd_cal_headset_voice_control = {
-  SND_DEVICE_HEADSET,
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET,
   SND_GEN_VOC,
   (snd_gen_cal_type *) &snd_cal_headset_voice_gains
 };
 
 /* Headset Device - beep */
 const snd_cal_control_type snd_cal_headset_key_beep_control = {
-  SND_DEVICE_HEADSET,
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET,
   SND_GEN_VOC,
   (snd_gen_cal_type *) &snd_cal_headset_beep_gains
 };
 
 #if defined(FEATURE_AUDIO_FORMAT) || defined(FEATURE_MIDI_OUT)
 const snd_cal_control_type snd_cal_headset_midi_control = {
-  SND_DEVICE_HEADSET,
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET,
   SND_GEN_MIDI,
   (snd_gen_cal_type *) &snd_cal_headset_midi_gains
 };
@@ -1452,21 +1452,21 @@ const snd_gen_voc_cal_type snd_cal_stereo_headset_midi_gains = {
 
 /* Headset Device - voice */
 const snd_cal_control_type snd_cal_stereo_headset_voice_control = {
-  SND_DEVICE_HEADSET, /* Tied to mono headset */
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET, /* Tied to mono headset */
   SND_GEN_VOC,
   (snd_gen_cal_type *) &snd_cal_stereo_headset_voice_gains
 };
 
 /* Headset Device - beep */
 const snd_cal_control_type snd_cal_stereo_headset_key_beep_control = {
-  SND_DEVICE_HEADSET, /* Tied to mono headset */
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET, /* Tied to mono headset */
   SND_GEN_VOC,
   (snd_gen_cal_type *) &snd_cal_stereo_headset_beep_gains
 };
 
 #if defined(FEATURE_AUDIO_FORMAT) || defined(FEATURE_MIDI_OUT)
 const snd_cal_control_type snd_cal_stereo_headset_midi_control = {
-  SND_DEVICE_HEADSET, /* Tied to mono headset */
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET, /* Tied to mono headset */
   SND_GEN_MIDI,
   (snd_gen_cal_type *) &snd_cal_stereo_headset_midi_gains
 };
@@ -3551,14 +3551,14 @@ const snd_gen_voc_cal_type snd_cal_headset_beep_gains_wb = {
 
 /* Headset Device - voice */
 const snd_cal_control_type snd_cal_headset_voice_control_wb = {
-  SND_DEVICE_HEADSET,
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET,
   SND_GEN_VOC,
   (snd_gen_cal_type *) &snd_cal_headset_voice_gains_wb
 };
 
 /* Headset Device - beep */
 const snd_cal_control_type snd_cal_headset_key_beep_control_wb = {
-  SND_DEVICE_HEADSET,
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET,
   SND_GEN_VOC,
   (snd_gen_cal_type *) &snd_cal_headset_beep_gains_wb
 };
@@ -3653,14 +3653,14 @@ const snd_gen_voc_cal_type snd_cal_stereo_headset_beep_gains_wb = {
 
 /* Headset Device - voice */
 const snd_cal_control_type snd_cal_stereo_headset_voice_control_wb = {
-  SND_DEVICE_HEADSET, /* Tied to mono headset */
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET, /* Tied to mono headset */
   SND_GEN_VOC,
   (snd_gen_cal_type *) &snd_cal_stereo_headset_voice_gains_wb
 };
 
 /* Headset Device - beep */
 const snd_cal_control_type snd_cal_stereo_headset_key_beep_control_wb = {
-  SND_DEVICE_HEADSET, /* Tied to mono headset */
+  SND_DEVICE_STEREO_HEADSET, //SND_DEVICE_HEADSET, /* Tied to mono headset */
   SND_GEN_VOC,
   (snd_gen_cal_type *) &snd_cal_stereo_headset_beep_gains_wb
 };

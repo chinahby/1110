@@ -2748,7 +2748,7 @@ static void quicktest_mic_receiver_Loopback(CQuickTest *pMe)
     if(headsetPresent)
     {
         STRTOWSTR("headset loop",string,sizeof(string));
-        soundStuff.eDevice = AEE_SOUND_DEVICE_HEADSET;
+        soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
     }
     else
     {

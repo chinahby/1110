@@ -13,7 +13,7 @@ PUBLIC CLASSES:  Not Applicable
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 
-        Copyright © 1999-2005 QUALCOMM Incorporated.
+        Copyright ?1999-2005 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -40,6 +40,8 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #include "AEEStdLib.h"
 #include "AEECriticalSection.h"
 #include "AEEResourceCtl.h"
+
+#include "Hs_mb6550.h"			//Add By zzg 2010_07_27
 
 /*-------------------------------------------------------------------
             Type Declarations
@@ -799,12 +801,20 @@ static void AEESound_SetVolume(ISound* po, uint16 wVolume)
    AEESound * pMe = (AEESound *) po;
    
    AEESOUND_CHECK_ACQUIRED(po);
-   
+      
    // First get the max volume level. Then in the AEESound_LevelCB, set the volume
    pMe->m_wVolume = wVolume;  // Save the volume
    pMe->m_bGetVolume = FALSE;
 
-   OEMSound_GetLevels(&pMe->m_SoundInfo, (void *)pMe->m_hObject);
+	//Add By zzg 2010_07_27
+	if (HS_HEADSET_ON())
+	{
+		(&pMe->m_SoundInfo)->eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET;
+	}
+	//Add End
+
+	
+     OEMSound_GetLevels(&pMe->m_SoundInfo, (void *)pMe->m_hObject);
 }
 
 /*==================================================================
@@ -920,7 +930,7 @@ void AEESound_LevelCB( const void * pClientData, AEESoundStatus eStatus, uint16 
    if (!pMe) {
       goto CBExit;
    }
-
+   
    // Now, set the volume, the resulting status callback is queued in AEESound_StatusCB
    switch ( eStatus )
    {
@@ -932,7 +942,7 @@ void AEESound_LevelCB( const void * pClientData, AEESoundStatus eStatus, uint16 
             OEMSound_GetVolume(&pMe->m_SoundInfo, (void *)pMe->m_hObject);
 	       }
          else
-	       {
+	       {	       	
             OEMSound_SetVolume(&pMe->m_SoundInfo, wSetLevel, (void *)pMe->m_hObject);
 	       }   
          break;

@@ -19,6 +19,11 @@
 ==============================================================================*/
 #include "MusicPlayer_priv.h"
 #include "MediaGallery.h"
+
+#ifndef WIN32
+#include "Snd.h"
+#endif
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -2454,7 +2459,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             pMe->m_MusicPlayerCfg.eMusicVolume++;
             pMe->m_nCurrentVolume= pMe->m_MusicPlayerCfg.eMusicVolume * AEE_MAX_VOLUME/5;
             if(pMe->m_pMedia) 
-            {
+            {    
                 (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
             } 
                 //重新刷新音量bar  
@@ -2474,7 +2479,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
            pMe->m_MusicPlayerCfg.eMusicVolume--;
            pMe->m_nCurrentVolume= pMe->m_MusicPlayerCfg.eMusicVolume * AEE_MAX_VOLUME/5;
             if(pMe->m_pMedia) 
-            {
+            {  
                 (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
             } 
                 //重新刷新音量bar  

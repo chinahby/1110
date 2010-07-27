@@ -3919,7 +3919,7 @@ static void OEMALERT_SetRingerVol(IALERT *pMe, boolean bEscalate)
     ISOUND_SetVolume(pMe->m_pSound,
                     GET_ISOUND_VOL_LEVEL((uint8) vol));
     
-    si.eDevice = AEE_SOUND_DEVICE_HEADSET;
+    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
     si.eMethod = AEE_SOUND_METHOD_MIDI;
     (void) ISOUND_Set(pMe->m_pSound, &si);
     ISOUND_SetVolume(pMe->m_pSound,
@@ -3937,13 +3937,13 @@ static void OEMALERT_SetRingerVol(IALERT *pMe, boolean bEscalate)
     ISOUND_SetVolume(pMe->m_pSound,
                     GET_ISOUND_VOL_LEVEL((uint8) vol));
     
-    si.eDevice = AEE_SOUND_DEVICE_HEADSET;
+    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
     si.eMethod = AEE_SOUND_METHOD_VOICE;
     (void) ISOUND_Set(pMe->m_pSound, &si);
     ISOUND_SetVolume(pMe->m_pSound,
                     GET_ISOUND_VOL_LEVEL((uint8) vol));
     
-    si.eDevice = AEE_SOUND_DEVICE_HEADSET;
+    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
     si.eMethod = AEE_SOUND_METHOD_RING;
     (void) ISOUND_Set(pMe->m_pSound, &si);
     ISOUND_SetVolume(pMe->m_pSound,

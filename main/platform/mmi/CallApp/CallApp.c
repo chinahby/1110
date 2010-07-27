@@ -1341,12 +1341,12 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                     {
                         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/); 
 						snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By zzg 2010_07_18
-						snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By zzg 2010_07_18
+						snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By zzg 2010_07_18
 					}
                     else
                     {
                         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
-						snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By zzg 2010_07_18
+						snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By zzg 2010_07_18
 						snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By zzg 2010_07_18
 					}
             }
