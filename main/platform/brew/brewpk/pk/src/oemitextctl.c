@@ -51,6 +51,7 @@ when       who     what, where, why
 #include "appscommonimages.brh"
 #include "appscommon.brh"
 #include "WMSApp.h" 
+#include "AEEAnnunciator.h"
 
 /*=====================================================================
 
@@ -907,7 +908,6 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 }
             }
 
-            // See if we have the symbols showing...
             if ( pme->m_bShowSyms )
             {
                 switch (wParam)
@@ -3217,6 +3217,18 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
                             szbottomText,
                             sizeof(szbottomText));
     TextCtl_ClearScreen(pme);
+    {
+        IAnnunciator *pIAnn;
+        if (AEE_SUCCESS == ISHELL_CreateInstance(pme->m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pIAnn))
+        {
+            IANNUNCIATOR_SetFieldIsActiveEx(pIAnn,FALSE);
+            IANNUNCIATOR_SetFieldText(pIAnn,szText);
+            IANNUNCIATOR_Redraw(pIAnn);
+            IANNUNCIATOR_Release(pIAnn);
+            pIAnn = NULL;            
+        }  	        
+    }
+#if 0    
     //Draw title  //这里将统一的titlebar画上去
     {
         MEMSET(&TitleBar, 0, sizeof(TitleBar_Param_type));
@@ -3224,6 +3236,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
         TitleBar.dwAlignFlags =IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
         DrawTitleBar(pme->m_pIDisplay, &TitleBar);
     }
+#endif
 #if 0 //去掉原来填充颜色的titlebar
     SETAEERECT(&titlerect, 0, 0, dm.cxScreen, pme->m_nFontHeight);   
 #ifdef FEATURE_FUNCS_THEME     
@@ -3283,8 +3296,10 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
    rc.dx += 1;
 
    //y = TITLEBAR_HEIGHT*3/2;//pme->m_nFontHeight + 1;
-   cyAdd = (dm.cyScreen - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT) / 3;
-   y = TITLEBAR_HEIGHT + (cyAdd - pme->m_nFontHeight)/2;
+  // cyAdd = (dm.cyScreen - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT) / 3;
+   cyAdd = (dm.cyScreen - BOTTOMBAR_HEIGHT) / 3;
+   y = (cyAdd - pme->m_nFontHeight)/2;
+   //y = TITLEBAR_HEIGHT + (cyAdd - pme->m_nFontHeight)/2;
    cxAdd = dm.cxScreen / 3;
 
    rc.dy = pme->m_nFontHeight;//y;
@@ -3363,7 +3378,18 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
                             szbottomText,
                             sizeof(szbottomText));
     TextCtl_ClearScreen(pme);
-
+    {
+        IAnnunciator *pIAnn;
+        if (AEE_SUCCESS == ISHELL_CreateInstance(pme->m_pIShell,AEECLSID_ANNUNCIATOR,(void **)&pIAnn))
+        {
+            IANNUNCIATOR_SetFieldIsActiveEx(pIAnn,FALSE);
+            IANNUNCIATOR_SetFieldText(pIAnn,szText);
+            IANNUNCIATOR_Redraw(pIAnn);
+            IANNUNCIATOR_Release(pIAnn);
+            pIAnn = NULL;            
+        }  	        
+    }    
+#if 0
     {
         TitleBar_Param_type TitleBar;
         
@@ -3372,6 +3398,7 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
         TitleBar.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
         DrawTitleBar(pme->m_pIDisplay, &TitleBar);
     }
+#endif
 #if 0  //去掉原来填充颜色的画titlebar的方式  
     SETAEERECT(&titlerect, 0, 0, dm.cxScreen, pme->m_nFontHeight);   
 #ifdef FEATURE_FUNCS_THEME     
@@ -3399,7 +3426,8 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
 //#endif
     IDISPLAY_DrawText(pd, AEE_FONT_BOLD, szbottomText, -1, 0, dm.cyScreen-pme->m_nFontHeight-1, &bottomrect,IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
 #endif   
-   pme->m_SymOnePageNum = (dm.cyScreen-TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT)/pme->m_nFontHeight -2;
+   //pme->m_SymOnePageNum = (dm.cyScreen-TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT)/pme->m_nFontHeight -2;
+   pme->m_SymOnePageNum = (dm.cyScreen- BOTTOMBAR_HEIGHT)/pme->m_nFontHeight -2;
    if(pme->m_SymOnePageNum > 9)
    {
         pme->m_SymOnePageNum = 9;
@@ -3430,11 +3458,13 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
 
 		if (pme->m_nSymbolPage%2 == 1)
         {
-        	y = TITLEBAR_HEIGHT + 3*(pme->m_nFontHeight)/2;
+        	//y = TITLEBAR_HEIGHT + 3*(pme->m_nFontHeight)/2;
+            y = 3*(pme->m_nFontHeight)/2;
 		}
 		else
 		{
-			y = TITLEBAR_HEIGHT - (pme->m_nFontHeight)/2;
+			//y = TITLEBAR_HEIGHT - (pme->m_nFontHeight)/2;
+			y = (pme->m_nFontHeight)/2;
 		}
 
        if (pme->m_dwProps & TP_GRAPHIC_BG)
