@@ -940,7 +940,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                                        CFGI_SMS_LOCK_CHECK,
                                        &bsmslock,
                                        sizeof(bsmslock));
-                bsmslock = FALSE;
+                //bsmslock = FALSE;
                 if(bsmslock)
                 {
                     pMe->m_currState = WMSST_CHKPWD;
