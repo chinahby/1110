@@ -7171,8 +7171,12 @@ static boolean CameraApp_GetDateForRecordFileName(CCameraApp *pMe, char * pszDes
    {
        default:
        case FILE_TYPE_JPG:
-           STRCAT(pszDest, FS_CARD_PICTURES_FOLDER);          
+           STRCAT(pszDest, FS_CARD_PICTURES_FOLDER);
+#ifdef FEATURE_JPEG_ENCODER
            SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.jpg", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
+#else
+           SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.png", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
+#endif
            break;
  
        case FILE_TYPE_AMR:
