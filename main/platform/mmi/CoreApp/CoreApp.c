@@ -424,10 +424,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
             }
-            CoreApp_PoweronStartApps(pMe);
-
+            
             // 开始 Core Applet 状态机, 当前状态已初始为 COREST_INIT
             CoreApp_RunFSM(pMe);
+
+            CoreApp_PoweronStartApps(pMe);
            // CoreApp_InitBattStatus(pMe);
 #ifndef WIN32
             EnableUIKeys(TRUE);
@@ -1368,6 +1369,14 @@ static boolean CoreApp_ProcessICardEvents(CCoreApp *pMe, uint16 wParam, uint32 d
         case AEECARD_ILLEGAL_CARD:
         case AEECARD_NO_CARD:      /* No card in the slot */
         case AEECARD_INVALID_CARD: /* card has been permanently blocked */
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+            /* Send RTRE config changed to CM - response from CM will */
+            /* generate subscription changed event */
+            SendRTREConfig(pMe);
+#endif
+            CoreApp_ProcessSubscriptionStatus(pMe);
+            return TRUE;
+            
         case AEECARD_NOT_INIT:
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
             /* Send RTRE config changed to CM - response from CM will */
@@ -1715,29 +1724,6 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
 {
     int nRet;
     uint32 dwMask;
-    boolean bNeedToProcessICardEvent = FALSE;
-    AEENotify sCardNotify;
-    
-    /* Register with ICARD to receive event */
-    dwMask = NMASK_CARD_STATUS|NMASK_PIN1_STATUS;
-
-    ISHELL_RegisterNotify(pMe->a.m_pIShell,  AEECLSID_CORE_APP, AEECLSID_CARD_NOTIFIER, dwMask);
-
-    /* Get card status after registering for the event, if the card status is not
-    * not ready, this implies that ICard has already sent out the event to client
-    * and we missed it.  So, resend it */
-    
-    ICARD_GetCardStatus(pMe->m_pICard, (uint8 *) &(pMe->m_nCardStatus));
-    if (pMe->m_nCardStatus != AEECARD_NOT_READY) 
-    {
-        bNeedToProcessICardEvent = TRUE;
-    }
-    
-    if (bNeedToProcessICardEvent )
-    {
-        sCardNotify.dwMask = NMASK_CARD_STATUS;
-        (void)CoreApp_ProcessICardEvents(pMe, 0, (uint32)&sCardNotify);
-    }
     
     // register with ICM
     dwMask = NMASK_CM_PHONE|NMASK_CM_SS|NMASK_CM_DATA_CALL;
@@ -1930,6 +1916,10 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
 static void CoreApp_PoweronStartApps(CCoreApp *pMe)
 {
     static boolean bRun = FALSE;
+    uint32 dwMask;
+    boolean bNeedToProcessICardEvent = FALSE;
+    AEENotify sCardNotify;
+    AEECMPhInfo phInfo;
     
     if (bRun)
     {
@@ -1937,13 +1927,40 @@ static void CoreApp_PoweronStartApps(CCoreApp *pMe)
     }
     
 #ifdef FEATURE_SUPPORT_WAP_APP
-   PushMod_StartPush(pMe->a.m_pIShell);
+    PushMod_StartPush(pMe->a.m_pIShell);
 #endif
 
 #ifdef FEATURE_KEYGUARD
     OEMKeyguard_Init(pMe->a.m_pIShell,pMe->m_pCM,pMe->m_pAlert,pMe->m_pIAnn);
 #endif
+    
+    /* Register with ICARD to receive event */
+    dwMask = NMASK_CARD_STATUS|NMASK_PIN1_STATUS;
+    
+    ISHELL_RegisterNotify(pMe->a.m_pIShell,  AEECLSID_CORE_APP, AEECLSID_CARD_NOTIFIER, dwMask);
 
+    /* Get card status after registering for the event, if the card status is not
+    * not ready, this implies that ICard has already sent out the event to client
+    * and we missed it.  So, resend it */
+    
+    ICARD_GetCardStatus(pMe->m_pICard, (uint8 *) &(pMe->m_nCardStatus));
+    if (pMe->m_nCardStatus != AEECARD_NOT_READY) 
+    {
+        bNeedToProcessICardEvent = TRUE;
+    }
+    
+    if (bNeedToProcessICardEvent )
+    {
+        sCardNotify.dwMask = NMASK_CARD_STATUS;
+        (void)CoreApp_ProcessICardEvents(pMe, 0, (uint32)&sCardNotify);
+    }
+    
+    /* If phone info is available, do not wait for PH_INFO_AVAIL event for
+       * starting provisioning */
+    if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
+    {
+        InitAfterPhInfo(pMe, phInfo.oprt_mode);
+    }
     bRun = TRUE;
 }
 

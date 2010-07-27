@@ -337,6 +337,7 @@ static NextFSMAction COREST_INIT_Handler(CCoreApp *pMe)
                 }*/
                 
             }
+            
             MOVE_TO_STATE(tepState)
             
             return NFSMACTION_CONTINUE;
@@ -751,11 +752,11 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 }
                 else
                 {
-                    CoreApp_ProcessSubscriptionStatus(pMe);
                     MOVE_TO_STATE(COREST_UIMERR)
                 }
             }
             
+            CoreApp_ProcessSubscriptionStatus(pMe);
             return eRet;
             
         case DLGRET_EMGCALL:
@@ -1126,16 +1127,6 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             }
 }
 #endif
-            CoreApp_ProcessSubscriptionStatus(pMe);
-            {
-                AEECMPhInfo phInfo;
-                /* If phone info is available, do not wait for PH_INFO_AVAIL event for
-                   * starting provisioning */
-                if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
-                {
-                    InitAfterPhInfo(pMe, phInfo.oprt_mode);
-                }
-            }
             CoreApp_ShowDialog(pMe, IDD_STARTUPANI);
             return NFSMACTION_WAIT;
             
