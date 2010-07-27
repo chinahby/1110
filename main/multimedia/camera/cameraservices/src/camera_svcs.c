@@ -2129,7 +2129,7 @@ static camera_format_type camera_preview_format = CAMERA_RGB565;
 /* VFE output1 and output2 format for snapshot. VFE doesn't
  * allow to specify different formats for output1 and output2.
  */
-static camera_format_type camera_snapshot_format = CAMERA_H2V2;
+static camera_format_type camera_snapshot_format = CAMERA_RGB565;
 #endif
 static JPEGENC_OrientType camera_jpeg_encode_rotation_format = JPEGENC_CCLK270;
 #ifndef CAMERA_USES_SOFTDSP
@@ -12250,7 +12250,7 @@ static void camera_process_encode_picture_standalone
     snapshot_luma_buf = NULL;
     return;
   }
-  
+#ifndef FEATURE_IPL_NO_CAMERA
 #ifdef FEATURE_PNG_ENCODER
   if(camera_encode_properties.format == CAMERA_PNG)
   {
@@ -12269,6 +12269,7 @@ static void camera_process_encode_picture_standalone
     }
   }
   else
+#endif
 #endif
   {
      camera_encode_picture_handler(main_image_header, main_image_buffer, thumbnail_image_header, thumbnail_image_buffer);

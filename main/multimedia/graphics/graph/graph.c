@@ -1450,56 +1450,6 @@ void graph_png_decode
   }
 } /* end graph_png_decode */
 
-#ifdef FEATURE_PNG_ENCODER
-/* <EJECT> */
-/*===========================================================================
-
-FUNCTION graph_queue_png_msg
-
-DESCRIPTION
-  This function issues a command in graphic task for png encode requests
-
-DEPENDENCIES
-  FEATURE_PNG_ENCODER.
-  FEATURE_GRAPH_TASK.
-
-RETURN VALUE
-  None.
-
-SIDE EFFECTS
-  None.
-
-===========================================================================*/
-void graph_png_encode(void )
-
-{
-  graph_packet_type *packet;
-
-  //graph_manage_cmd_q(GRAPH_PNG_CMD_ENCODE);
-
-  if ((packet = graph_cmd_get_pkt())!=NULL) {
-    packet->hdr.cmd          = GRAPH_PNGE_CMD;
-    packet->png_cmd.handle   = NULL;;
-    packet->png_cmd.cb_func  = NULL; //callback_ptr;
-    graph_cmd(packet);
-  }
-} /* end graph_png_encode */
-
-void graph_queue_pnge_msg( PNGE_status_enum_type cmd )
-
-{
-  graph_packet_type *packet;
-
-
-  if ((packet = graph_cmd_get_pkt())!=NULL) {
-    packet->hdr.cmd          = GRAPH_PNGE_MSG;
-    packet->png_cmd.handle   = (void *) cmd;
-    packet->png_cmd.cb_func  = NULL; //callback_ptr;
-    graph_cmd(packet);
-  }
-} /* end graph_queue_png_msg */
-
-#endif /* FEATURE_PNG_ENCODER */
 /* <EJECT> */
 /*===========================================================================
 
@@ -1608,6 +1558,56 @@ void graph_png_set_buf
 } /* end graph_png_set_buf */
 
 #endif /* FEATURE_PNG_DECODER */
+#ifdef FEATURE_PNG_ENCODER
+/* <EJECT> */
+/*===========================================================================
+
+FUNCTION graph_queue_png_msg
+
+DESCRIPTION
+  This function issues a command in graphic task for png encode requests
+
+DEPENDENCIES
+  FEATURE_PNG_ENCODER.
+  FEATURE_GRAPH_TASK.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+void graph_png_encode(void )
+
+{
+  graph_packet_type *packet;
+
+  //graph_manage_cmd_q(GRAPH_PNG_CMD_ENCODE);
+
+  if ((packet = graph_cmd_get_pkt())!=NULL) {
+    packet->hdr.cmd          = GRAPH_PNGE_CMD;
+    packet->png_cmd.handle   = NULL;;
+    packet->png_cmd.cb_func  = NULL; //callback_ptr;
+    graph_cmd(packet);
+  }
+} /* end graph_png_encode */
+
+void graph_queue_pnge_msg( PNGE_status_enum_type cmd )
+
+{
+  graph_packet_type *packet;
+
+
+  if ((packet = graph_cmd_get_pkt())!=NULL) {
+    packet->hdr.cmd          = GRAPH_PNGE_MSG;
+    packet->png_cmd.handle   = (void *) cmd;
+    packet->png_cmd.cb_func  = NULL; //callback_ptr;
+    graph_cmd(packet);
+  }
+} /* end graph_queue_png_msg */
+
+#endif /* FEATURE_PNG_ENCODER */
 
 /*===========================================================================
 

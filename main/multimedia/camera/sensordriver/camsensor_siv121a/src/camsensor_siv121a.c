@@ -268,7 +268,7 @@ static boolean initialize_siv121a_registers_preview(void)
 #ifdef SIV121A_OUTFORMAT_RGB565
     siv121a_i2c_write_byte(0x12,0x0B);
 #else
-    siv121a_i2c_write_byte(0x12,0x9D); // Y,Cb,Cr order sequence
+    siv121a_i2c_write_byte(0x12,0xAD); // Y,Cb,Cr order sequence
 #endif
     // DPCNR
     siv121a_i2c_write_byte(0x17,0x98);
@@ -559,7 +559,11 @@ static boolean initialize_siv121a_registers_snapshot(void)
     siv121a_i2c_write_byte(0x00,0x04);
     siv121a_i2c_write_byte(0x10,0xFF); // IDP function enable
     siv121a_i2c_write_byte(0x11,0x1D); //0x1D // PCLK polarity
+#ifdef SIV121A_OUTFORMAT_RGB565
+    siv121a_i2c_write_byte(0x12,0x0B);
+#else
     siv121a_i2c_write_byte(0x12,0xAD); // Y,Cb,Cr order sequence
+#endif
     
     // DPCNR
     siv121a_i2c_write_byte(0x17,0x98);
@@ -851,7 +855,11 @@ static boolean initialize_siv121a_registers_snapshot_qtr(void)
     siv121a_i2c_write_byte(0x00,0x04);
     siv121a_i2c_write_byte(0x10,0xFF); // IDP function enable
     siv121a_i2c_write_byte(0x11,0x1D); //0x1D // PCLK polarity
+#ifdef SIV121A_OUTFORMAT_RGB565
+    siv121a_i2c_write_byte(0x12,0x0B);
+#else
     siv121a_i2c_write_byte(0x12,0xAD); // Y,Cb,Cr order sequence
+#endif
     
     // DPCNR
     siv121a_i2c_write_byte(0x17,0x98);

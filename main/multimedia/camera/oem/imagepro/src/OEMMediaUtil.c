@@ -69,6 +69,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  N/A
 
 #ifdef FEATURE_PNG_ENCODER
 #include "pnge.h"
+#define FEATURE_MEDIA_PNG_ENCODER
 #endif
 
 #include "AEEEncodeSpec.h"
