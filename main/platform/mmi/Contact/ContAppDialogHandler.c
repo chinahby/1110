@@ -2538,7 +2538,10 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
     {
         return FALSE;
     }
-
+    if(ITEXTCTL_GetInputMode(pTextCtl,NULL) == AEE_TM_SYMBOLS)
+    {
+        return ITEXTCTL_HandleEvent( pTextCtl, eCode, wParam, 0);;
+    }        
 #ifdef FEATURE_LANG_TCHINESE
 //因为现在中文版本的快速查找没有中文输入了, 但是台湾版本的ZHU音还存在。
     if(KEYEVENT(eCode))
@@ -2911,7 +2914,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                                 (void)CContApp_BuildSmartMenu(pMe, pMenuCtl);
                                 IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID(pMenuCtl, MAX_NUM_MENUPOP -1));
                             }
-                        }
+                        }
                         (void)IMENUCTL_Redraw(pMenuCtl);                        
                     }                   
                     return TRUE;
@@ -3227,7 +3230,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                             (void) ISHELL_SetTimer( pMe->m_pShell,
                                                     200,
                                                     CContApp_SmartMenuSetFocus,
-                                                    (void *)pMe);                           
+                                                    (void *)pMe);     
                             IMENUCTL_Redraw(pMenuCtl);
                             pMe->m_bInsmartnofind = FALSE;
 
@@ -3582,7 +3585,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                     else
                     {
                         CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);            
-                    }   
+                    }  
                     IDISPLAY_Update(pMe->m_pDisplay);  
                 }                        
             }
@@ -3665,17 +3668,17 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             {
                 byte inputMode=0;
                 
-                ITEXTCTL_SetProperties(pTextCtl, TP_NOSYMBOL | TP_FIXOEM |TP_STARKEY_SWITCH|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
+                ITEXTCTL_SetProperties(pTextCtl, TP_FIXOEM |TP_STARKEY_SWITCH|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
                 CContApp_GetConfig(pMe, CONTTCFG_QUICKSEARCH_INPUT_MODE, &inputMode, sizeof(byte));
                 pMe->m_nCurrentInputMode = inputMode;
                 //ITEXTCTL_SetActive(pTextCtl, TRUE);
                 (void)ITEXTCTL_SetInputMode( pTextCtl, pMe->m_nInputModeTable[inputMode]);
                 //IMENUCTL_SetActive(pMenuCtl, TRUE);
                 CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
-                ITEXTCTL_SetProperties(pTextCtl, TP_NOSYMBOL | TP_FIXOEM|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
+                ITEXTCTL_SetProperties(pTextCtl, TP_FIXOEM|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
             }
 #else
-            ITEXTCTL_SetProperties(pTextCtl, TP_NOSYMBOL|TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
+            ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 
 
@@ -4832,8 +4835,12 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_MENU);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_TEXT);   
 
+    if(ITEXTCTL_GetInputMode(pTextCtl,NULL) == AEE_TM_SYMBOLS)
+    {
+        IMENUCTL_SetActive(pMenuCtl,FALSE);
+        return ITEXTCTL_HandleEvent( pTextCtl, eCode, wParam, dwParam);
+    }
     pMe->m_nSmartStateType = SMART_STATE_IDD_LIST;
-
     if(CContApp_SmartMenuHandle(pMe, pMenuCtl, pTextCtl, eCode,wParam))
     {
         return TRUE;
@@ -9674,7 +9681,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                 {
                     case AVK_UP:
                     case AVK_DOWN:
-                    {                        
+                    {                   
                         if(EDIT_GROUP == pMe->m_nInputMode)
                         {                    
                             CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
@@ -12455,7 +12462,7 @@ static boolean  CContApp_HandleCopyingDlgEvent( CContApp  *pMe,
             Msg_Param.ePMsgType = MESSAGE_WAITING;
             Msg_Param.pwszMsg = wstrText;
             Msg_Param.eBBarType = BTBAR_NONE;
-            DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);          
+            DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);   
             IDISPLAY_Update(pMe->m_pDisplay);  
             }           
             return TRUE;
@@ -14780,7 +14787,7 @@ static boolean  CContApp_HandleDeletingDlgEvent( CContApp  *pMe,
                 Msg_Param.ePMsgType = MESSAGE_WAITING;
                 Msg_Param.pwszMsg = wstrText;
                 Msg_Param.eBBarType = BTBAR_NONE;
-                DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);          
+                DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);   
                 IDISPLAY_Update(pMe->m_pDisplay);  
 
             }           

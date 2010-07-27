@@ -885,7 +885,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 
             return TRUE;
         
-        case EVT_USER_REDRAW:
+        case EVT_USER_REDRAW:
             (void) CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void)ISHELL_SetTimer( pMe->m_pShell,
                                    CONTAPP_APPREADY_MS,

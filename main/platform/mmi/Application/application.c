@@ -591,6 +591,18 @@ static boolean Application_HandleEvent( IApplication *pi,
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             }
+            {
+                AECHAR WTitle[20] = {0};
+    			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                        APPLICATION_RES_FILE_LANG,                                
+                                        IDS_APPLICATION_LIST,
+                                        WTitle,
+                                        sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+    			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }
             Application_RunFSM(pMe);
             return TRUE;
 
