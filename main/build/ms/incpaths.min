@@ -846,9 +846,8 @@ APPLICATION   =         $(MMIDIR)/Application
 GAME     =              $(MMIDIR)/Games/game
 FRENDUO  =         		$(MMIDIR)/FrenDuo
 MULTIMEDIA =            $(MMIDIR)/Multimedia
-ifeq ($(USE_STATIC_BREW_APP),yes)
-STATIC_BREW_APP= $(MMIDIR)/staticbrewapp
-endif
+STATIC_BREW_APP=        $(MMIDIR)/staticbrewapp
+
 #头文件的路径在这里加
 ALL_PATHS+=$(INC) $(BREW_OEM_SIM_INC) $(BREW_OEM_RESINC) $(BREW_AEE_SRC) $(BREW_STATIC_EXTENSIONS_RESINC)
 endif

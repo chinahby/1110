@@ -53,9 +53,7 @@
 #===============================================================================
 #			      LIBRARIES
 #===============================================================================
-ifeq ($(USE_STATIC_BREW_APP),yes)
-	QCTLIBS := $(QCTLIBS) $(STATIC_BREW_APP_LIB)
-endif
+QCTLIBS := $(QCTLIBS) $(STATIC_BREW_APP_LIB)
 
 ifeq ($(USES_VR), yes)
 	QCTLIBS := $(QCTLIBS) $(LIBDIR)/vrengine.lib
