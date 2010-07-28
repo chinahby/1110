@@ -217,6 +217,8 @@ static NextFSMAction WMSST_CONTINUESEND_QUERY_Handler(WmsApp *pMe);
 //WMSST_RESENDCONFIRM状态处理函数  add by yangdecai
 static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe);
 
+//WMSST_WMSNEW状态处理函数add by yangdecai
+static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe);
 
 /*==============================================================================
 
@@ -243,7 +245,7 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe);
 NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 {
     NextFSMAction retVal = NFSMACTION_WAIT;
-    
+    DBGPRINTF("WmsApp_ProcessState::::::::::::::START...111111111");
     if (NULL == pMe)
     {
         return retVal;
@@ -262,7 +264,7 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
     {
         pMe->m_isPopMenu = FALSE;
     }
-    
+    DBGPRINTF("WmsApp_ProcessState:pMe->m_currState::%d,pMe->m_eDlgReturn=%d",pMe->m_currState,pMe->m_eDlgReturn);
     // 根据WMS applet状态，调用相应的状态处理函数
     switch (pMe->m_currState)
     {
@@ -297,6 +299,7 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
             return WMSST_VOICEMAILOPTS_Handler(pMe);
             
         case WMSST_VIEWINBOXMSG:
+			DBGPRINTF("WMSST_VIEWINBOXMSG...........................................");
             return WMSST_VIEWINBOXMSG_Handler(pMe);
     
 #ifdef FEATURE_CONTACT_APP
@@ -447,6 +450,9 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 		case WMSST_RESENDCONFIRM:
 			return WMSST_RESENDCONFIRM_Handler(pMe);
 
+	    case WMSST_WMSNEW:
+			DBGPRINTF("WMSST_WMSNEW OVER........START................");
+			return WMSST_WMSNEW_Hander(pMe);
             
         case WMSST_EXIT:
             return WMSST_EXIT_Handler(pMe);
@@ -965,10 +971,11 @@ static NextFSMAction WMSST_VIEWINBOXMSG_Handler(WmsApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+	
     switch(pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
+			
             WmsApp_ShowDialog(pMe, IDD_VIEWMSG);
             return NFSMACTION_WAIT;
 
@@ -6028,6 +6035,41 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe)
 	
 }  //WMSST_RESENDCONFIRM_Handler
 
+//WMSST_WMSNEW状态处理函数add by yangdecai
+static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("COREST_SMSTIP_Handler Start",0,0,0);
+	switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+			DBGPRINTF("COREST_SMSTIP_Handler Start CREATE");
+            WmsApp_ShowDialog(pMe, IDD_WMSNEWMSG);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_SMSVIEWS:
+           
+           
+            {// 调用短信接口进行查看操作
+            	pMe->m_eDlgReturn = DLGRET_CREATE;
+                MOVE_TO_STATE(WMSST_INBOXES)
+            }
+            return NFSMACTION_CONTINUE;
+            
+        case DLGGET_SMSNEW_OK:
+			
+            //MOVE_TO_STATE(COREST_STANDBY)
+            return NFSMACTION_CONTINUE;
+        
+        default:
+            break;
+    }
+    MSG_FATAL("COREST_SMSTIP_Handler End",0,0,0);
+    return NFSMACTION_WAIT;
+}
 
 
 

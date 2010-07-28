@@ -890,6 +890,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             pMe->m_currState = WMSST_MAIN;
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_bNaturalStart = TRUE;
+			pMe->m_bActive = TRUE;
 
 #ifdef WIN32
 			pMe->m_bCdmaWmsReady = TRUE;
@@ -954,7 +955,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_APP_STOP:
             pMe->m_bNaturalStart = TRUE;
             pMe->m_eAppStatus = WMSAPP_STOP;
-    
+    		pMe->m_bActive = TRUE;
             if(pMe->m_pImage)
             {
                 IIMAGE_Release(pMe->m_pImage);
@@ -971,6 +972,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 
         case EVT_APP_SUSPEND:
             pMe->m_eAppStatus = WMSAPP_SUSPEND;
+            pMe->m_bActive = FALSE;
             return TRUE;
     
         case EVT_APP_RESUME:
@@ -990,7 +992,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 pMe->m_rc.dy = di.cyScreen;
             }
             pMe->m_bNaturalStart = TRUE;
-            
+            pMe->m_bActive = TRUE;
             if ((pMe->m_bCdmaWmsReady == FALSE) || pMe->m_refresh_in_progress)
             {
                 // 消息没初始化完毕,不允许进行相关操作.
@@ -1319,14 +1321,34 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 
                         // 语音提示用户有消息
                         WmsApp_PlaySMSAlert(pMe, TRUE);
-                        
+        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+        				{
+            					DBGPRINTF( ";-----to start alarm clock applet");
+            					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+								MOVE_TO_STATE(WMSST_WMSNEW)
+								pMe->m_eDlgReturn = DLGRET_CREATE;
+								
+        				}
+        				else
+        				{
+        				
+	            			if(ISHELL_GetActiveDialog(pMe->m_pShell)!= pMe->m_pActiveIDlg)
+	            			{
+	                			(void)ISHELL_EndDialog(pMe->m_pShell);
+	            			}
+				            pMe->m_eDlgReturn = DLGRET_CREATE;
+                			MOVE_TO_STATE(WMSST_INBOXES)
+        				}
+						CWmsApp_RunFSM(pMe);
                         // 通知 CoreApp 需要进行短信提示
+                        #if 0
                         (void)ISHELL_PostEventEx(pMe->m_pShell,
                                                  EVTFLG_ASYNC, 
                                                  AEECLSID_CORE_APP, 
                                                  EVT_WMS_MSG_RECEIVED_MESSAGE,
                                                  0, 
                                                  0);
+						#endif
                     }
                     
                     (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);

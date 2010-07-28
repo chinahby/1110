@@ -396,6 +396,12 @@ static boolean IDD_RESEND_CONFIRM_Handler(void   *pUser,
     uint32   dwParam
 );
 
+// 对话框 IDD_WMSNEWMSG 事件处理函数
+static boolean  IDD_WMSNEWMSG_Handler(void *pUser,
+                                		 AEEEvent   eCode,
+                                 		 uint16     wParam,
+                                         uint32     dwParam);
+
 /*==============================================================================
 
                                  函数定义
@@ -679,7 +685,10 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
 			INIT_STATIC
 			pMe->m_pDialogHandler = IDD_RESEND_CONFIRM_Handler;
             break;
-            
+		case IDD_WMSNEWMSG:
+            INIT_STATIC
+			pMe->m_pDialogHandler = IDD_WMSNEWMSG_Handler;
+			break;
         default:
             pMe->m_pDialogHandler = NULL;
             break;
@@ -13664,3 +13673,182 @@ static boolean IDD_RESEND_CONFIRM_Handler(void	 *pUser,
 
     return FALSE;
 }//IDD_RESEND_CONFIRM
+/*==============================================================================
+函数:
+    IDD_WMSNEWMSG_Handler
+
+说明:
+    CoreApp 对话框 IDD_WMSTIPS 事件处理函数。
+
+参数:
+    pMe [in]:       指向Core Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]:     事件代码。
+    wParam:         事件参数
+    dwParam [in]:   与wParam关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
+											 AEEEvent	eCode,
+											 uint16 	wParam,
+											 uint32 	dwParam)
+{
+	static IStatic * pStatic = NULL;
+    static IBitmap * pDevBmp = NULL;
+    WmsApp *pMe = (WmsApp *)pUser;
+    MSG_FATAL("%x %x %x IDD_WMSTIPS_Handler",eCode,wParam,dwParam);
+	if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    if (NULL == pStatic)
+    {
+        AEERect rc = {0};
+
+        if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_STATIC,
+                (void**)&pStatic) == SUCCESS)
+        {
+            ISTATIC_SetRect(pStatic, &rc);
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);
+            }
+            return TRUE;
+
+        case EVT_DIALOG_START:
+			DBGPRINTF("EVT_DIALOG_START.............................");
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            {
+				AECHAR  wstrText[64]={0};
+                AECHAR  wstrFMT[64]={0};
+                uint16  nNewsVmail=0, nNewsSMS=0;
+                PromptMsg_Param_type  Msg_Param={0};
+                db_items_value_type  need_capture;
+				int i = 0;
+				int temp = 0;
+                DBGPRINTF("EVT_USER_REDRAW.............................");
+                need_capture.b_capture = DB_CAPTURE_NONE;
+                db_put(DB_CAPTURE_WALLPER,&need_capture);
+                // 获取消息数
+                wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
+                wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
+				if (nNewsVmail > 0)
+                {
+                    // 从资源文件取消息内容
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                    AEE_WMSAPPRES_LANGFILE,                                
+                                    IDS_VMAILTIPS,
+                                    wstrFMT,
+                                    sizeof(wstrFMT));
+                                    
+                    WSPRINTF(wstrText, sizeof(wstrText), wstrFMT, nNewsVmail);
+                }
+                else
+                {
+                    // 从资源文件取消息内容
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                    AEE_WMSAPPRES_LANGFILE,                                
+                                    IDS_NEWWMSTIPS,
+                                    wstrFMT,
+                                    sizeof(wstrFMT));
+                                    
+                    WSPRINTF(wstrText, sizeof(wstrText), wstrFMT, nNewsSMS);
+                }
+  
+                Msg_Param.ePMsgType = MESSAGE_INFORMATION;
+                Msg_Param.pwszMsg = wstrText;
+                Msg_Param.eBBarType = BTBAR_READ_BACK;
+
+                if(pDevBmp != NULL)
+                {
+                    IDISPLAY_BitBlt(pMe->m_pDisplay, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy, 
+                            pDevBmp, 0, 0, AEE_RO_COPY);
+                }
+                DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
+				IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            	return TRUE;
+            }
+			break;
+		case EVT_DIALOG_END:
+			{
+				if(pMe->m_bActive)
+	            {
+	                if(pDevBmp != NULL)
+	                {
+	                    IBITMAP_Release(pDevBmp);
+	                    pDevBmp = NULL;
+	                }
+	            }
+	            else if(NULL == pDevBmp)
+	            {
+	                IBitmap *pTempBmp = NULL;
+
+	                IDISPLAY_GetDeviceBitmap(pMe->m_pDisplay, &pTempBmp);
+	                IBITMAP_CreateCompatibleBitmap(pTempBmp, &pDevBmp, pMe->m_rc.dx, pMe->m_rc.dy);
+	                if(NULL != pTempBmp && NULL != pDevBmp)
+	                {
+	                    IBITMAP_BltIn(pDevBmp, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy, pTempBmp, 0, 0, AEE_RO_COPY);
+	                }
+	            }
+	            ISTATIC_Release(pStatic);
+	            pStatic = NULL;
+	            if(pMe->m_pIAnn != NULL)
+	            {
+	                IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
+	            }
+	            return TRUE;
+			}
+			break;
+		case EVT_KEY:
+			{
+				switch(wParam)
+            	{
+					case AVK_CLR:
+		            case AVK_END:
+						{
+							CLOSE_DIALOG(DLGGET_SMSNEW_OK)
+                    		return TRUE;
+						}
+						break;
+					case AVK_SELECT:
+						{
+                    		 IWmsApp *pWmsApp=NULL;
+                			 DBGPRINTF("DLGRET_SMSVIEWS...............AVK_SELECT.........................");
+							pMe->m_currState = WMSST_WMSNEW;
+							CLOSE_DIALOG(DLGRET_SMSVIEWS)
+                    		return TRUE;
+						}
+  						break;
+                	default:
+                    	break;
+				}
+			}
+			break;
+		default:
+            break;
+		}
+}
+

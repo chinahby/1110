@@ -520,6 +520,12 @@
 	<String Id="179" Name="IDS_SENT">
 		<Text>The SMS has been sent</Text>
 	</String>
+	<String Id="180" Name="IDS_NEWWMSTIPS">
+		<Text>Received %d new msg</Text>
+	</String>
+	<String Id="181" Name="IDS_VMAILTIPS">
+		<Text>New voice mail:%d</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -834,6 +840,10 @@
 		</Controls>
 	</Dialog>
 	<Dialog Id="6044" Name="IDD_RESEND_CONFIRM" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6045" Name="IDD_WMSNEWMSG" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>

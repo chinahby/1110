@@ -489,6 +489,8 @@ typedef enum WMSAPPState
     
     //用于发送失败是否重发  add by yangdecai
     WMSST_RESENDCONFIRM,
+	//用于新短息提示消息框add by yangdecai
+	WMSST_WMSNEW,
     
     // 退出短信应用
     WMSST_EXIT
@@ -612,6 +614,9 @@ typedef enum DLGRetValue
    DLGRET_EXIT_EDITOR,
    DLGRET_SAVEDRAFT
    ,DLGRET_RESENDCONFIRM
+   ,DLGRET_SMSNEW      //add by yangdecai  2010-07-28
+   ,DLGRET_SMSVIEWS
+   ,DLGGET_SMSNEW_OK
 } DLGRetValue;
 
 
@@ -765,6 +770,7 @@ typedef struct WmsApp
     char                             *m_strPhonePWD;
     ISound                          *m_pSound;
 	boolean                         m_bisSendSecond;           //发送失败是否已经重发
+	boolean                         m_bActive;                 //add by yangdecai 2010-07-28
 } WmsApp;
 
 /*==============================================================================
