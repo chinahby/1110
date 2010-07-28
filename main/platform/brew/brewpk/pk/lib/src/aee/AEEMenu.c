@@ -287,6 +287,7 @@ OBJECT(CMenuCtl)
     uint16  nBgImgResID;
     char    strBgImgResFile[MAX_FILE_NAME];
 #endif
+    int     m_menuReallyDy;//add by xuhui
 };
 
 typedef struct 
@@ -812,6 +813,7 @@ static int Menu_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
     pme->SetPopMenu = FALSE;
 #endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+    pme->m_menuReallyDy = 0;//add by xuhui
    return(0);
 
 Error:
@@ -4345,23 +4347,27 @@ static boolean Menu_Draw(CMenuCtl * pme)
                                         Theme_Param.themeColor, 
                                         0, 
                                         IDF_RECT_FRAME);            
-//#else //if 0
-        SETAEERECT( &framerect,  
-            pme->m_rc.x-AEE_FRAME_SIZE,  
-            pme->m_rc.y- AEE_FRAME_SIZE*2,
-            pme->m_rc.dx +2*AEE_FRAME_SIZE, 
-            AEE_FRAME_SIZE*2);
-            
-        IDisplay_FillRect(pme->m_pIDisplay, &framerect, RGB_WHITE);
+#else //if 0
+        //滚动条和边框不能并存，否则在需要滚动条的时候，边框也出现了
+        //看起来像有个双边框。只有当不需要滚动条时，才来边框
+        if(pme->m_menuReallyDy <= (SCREEN_HEIGHT - GetBottomBarHeight(pme->m_pIDisplay)))//add by xuhui
+        {
+            SETAEERECT( &framerect,  
+                pme->m_rc.x-AEE_FRAME_SIZE,  
+                pme->m_rc.y- AEE_FRAME_SIZE*2,
+                pme->m_rc.dx +2*AEE_FRAME_SIZE, 
+                AEE_FRAME_SIZE*2);
+                
+            IDisplay_FillRect(pme->m_pIDisplay, &framerect, RGB_WHITE);
 
-        SETAEERECT( &framerect,  
-            pme->m_rc.dx +2*AEE_FRAME_SIZE,  
-            pme->m_rc.y- AEE_FRAME_SIZE*2,
-            2, 
-            pme->m_rc.dy + 2 - GetBottomBarHeight(pme->m_pIDisplay));
-            
-        IDisplay_FillRect(pme->m_pIDisplay, &framerect, RGB_WHITE);
-
+            SETAEERECT( &framerect,  
+                pme->m_rc.dx +AEE_FRAME_SIZE,  
+                pme->m_rc.y- AEE_FRAME_SIZE*2,
+                2, 
+                pme->m_rc.dy + 2 - GetBottomBarHeight(pme->m_pIDisplay));
+                
+            IDisplay_FillRect(pme->m_pIDisplay, &framerect, RGB_WHITE);
+        }
 #endif //if 0
     }
 #endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
@@ -4782,7 +4788,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
     if(pme->m_dwOemProps & OEMMP_GRAPHIC_UNDERLINE)
     {
         IImage*              underline;
-
+        
 		/*
         if(pme->SetPopMenu == TRUE)
 		{
@@ -8180,7 +8186,8 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     {
         cy  = cyMax;
     }
-
+    pme->m_menuReallyDy = cy;//add by xuhui
+    //Set pop menu rect
     pme->m_rc.dx = cxMax-nFrame;
     pme->m_rc.dy = (pme->m_cyFont+ cys)*6 + GetBottomBarHeight(pme->m_pIDisplay)+AEE_FRAME_SIZE*4;
     pme->m_rc.x = 0;
