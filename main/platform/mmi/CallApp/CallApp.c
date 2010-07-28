@@ -874,6 +874,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
 		return EFAILD;
 	}
 #endif
+	pMe->m_bShift = FALSE;   //add by yangdecai 2010-07-27
     return SUCCESS;
 
 }

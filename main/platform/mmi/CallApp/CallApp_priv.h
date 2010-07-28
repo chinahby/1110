@@ -682,6 +682,7 @@ typedef struct _CCallApp
 #ifdef WIN32//wlh for VKey_Number
 	IVkeyCtl * m_pIVkeyCtl;
 #endif
+    boolean  m_bShift;
 } CCallApp;
 
 /*==============================================================================

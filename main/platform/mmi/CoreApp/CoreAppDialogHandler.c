@@ -2885,6 +2885,20 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         return TRUE;                        
                     }
                     break;
+				case AVK_SHIFT:
+					{
+						
+						if(!pMe->m_isShift)
+						{
+							pMe->m_isShift = TRUE;
+						}
+						else
+						{
+							pMe->m_isShift = FALSE;
+						}
+						return TRUE;
+					}
+				break;
 
                 case AVK_0:
                 case AVK_1:
@@ -2898,6 +2912,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_9:
                 case AVK_STAR:
                 case AVK_POUND:
+				case AVK_P:
+				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
                         MSG_FATAL("IDD_IDLE_Handler 7",0,0,0);
@@ -2916,11 +2932,29 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         {
                             pMe->m_wstrEnterNum[0] = (AECHAR)'#';
                         }
+						else if((AVKType)wParam == AVK_O)
+						{
+						
+							pMe->m_wstrEnterNum[0] = (AECHAR)'+';
+						}
+						else if((AVKType)wParam == AVK_P)
+						{
+
+							pMe->m_wstrEnterNum[0] = (AECHAR)'p';
+						}
                         else
                         {
                             // 48 Îª'0'µÄ ASCII ÂëÖµ
-                            pMe->m_wstrEnterNum[0] = (AECHAR)
-                                (48 + ((AVKType)wParam - AVK_0));/*lint !e656*/
+                            if(pMe->m_isShift && (wParam == AVK_1))
+                            {
+                            	
+                            	pMe->m_wstrEnterNum[0] = (AECHAR)'w';
+                            }
+							else
+							{
+                            	pMe->m_wstrEnterNum[0] = (AECHAR)
+                                	(48 + ((AVKType)wParam - AVK_0));/*lint !e656*/
+							}
                         }
                         ICallApp_VoiceCallDial_F(pCallApp,pMe->m_wstrEnterNum);
                         if (pCallApp) 

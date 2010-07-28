@@ -1240,7 +1240,18 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 //case AVK_UP:
                 //case AVK_DOWN:
                 //    break;
-
+				case AVK_SHIFT:
+						{
+							if(pMe->m_bShift)
+							{
+								pMe->m_bShift = FALSE;
+							}
+							else
+							{
+								pMe->m_bShift = TRUE;
+							}
+						}
+					break;
                 case AVK_0:
                 case AVK_1:
                 case AVK_2:
@@ -1253,6 +1264,9 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 case AVK_9:
                 case AVK_STAR:
                 case AVK_POUND:
+				case AVK_O:
+				case AVK_P:
+				
                 {
                     char   szStr[2];
                     AECHAR wStr[2];
@@ -1263,6 +1277,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     }
 
                     szStr[0] = CallApp_AVKType2ASCII((AVKType)wParam);
+					if(pMe->m_bShift && (wParam == AVK_1))
+					{
+						szStr[0] = 'w';
+					}
                     szStr[1] = '\0';
                     STR_TO_WSTR(szStr, wStr, sizeof(wStr));
 
@@ -5890,6 +5908,16 @@ static char CallApp_AVKType2ASCII(AVKType key)
     if (AVK_POUND == key)
     {
         return '#';
+    }
+	//add by ydc 
+	if (AVK_O == key)
+    {
+        return '+';
+    }
+
+    if (AVK_P == key)
+    {
+        return 'p';
     }
 
     if (key < AVK_0 || key > AVK_9)

@@ -496,6 +496,7 @@ typedef struct _CCoreApp
     ICARD *   m_pICard;               /* pointer to icard interface */
 #endif /*FEATURE_NEW_ICARD */
     uint8     m_nCardStatus;
+	boolean   m_isShift;
 } CCoreApp;
 
 /*==============================================================================
