@@ -180,10 +180,12 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
             AEEDeviceInfo di = {0};
 			byte mute = OEMSOUND_MUTE_VOL;
 			AECHAR wszTitle[16] = {0};
-			OEM_GetConfig( CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
-			OEM_SetConfig( CFGI_BEEP_VOL, &mute, sizeof(byte));
+			
+			OEM_GetConfig( CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));			
 			OEM_GetConfig( CFGI_ALERT_TYPE, &alertTypeCall, sizeof( alertTypeCall));
 			OEM_GetConfig( CFGI_SMS_RINGER, &alertTypeSms, sizeof( alertTypeSms));
+			
+			OEM_SetConfig( CFGI_BEEP_VOL, &mute, sizeof(byte));
             OEM_SetConfig( CFGI_ALERT_TYPE, &alertTypeVibrate, sizeof( alertTypeVibrate));
             OEM_SetConfig( CFGI_SMS_RINGER, &alertTypeVibrate, sizeof( alertTypeVibrate));
 
@@ -209,7 +211,8 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 		case EVT_APP_STOP:
 		{
 			pme->m_bInactive = TRUE;
-			ISHELL_CancelTimer( pme->m_pShell, 0, pme);
+			ISHELL_CancelTimer( pme->m_pShell, 0, pme);	
+
 			OEM_SetConfig( CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
             OEM_SetConfig( CFGI_ALERT_TYPE, &alertTypeCall, sizeof( alertTypeCall));
             OEM_SetConfig( CFGI_SMS_RINGER, &alertTypeSms, sizeof( alertTypeSms));
@@ -426,7 +429,7 @@ boolean recorder_create_media_if( Media* pme)
 void recorder_release_media_if( Media* pme)
 {
 	if( pme->m_pMedia)
-	{
+	{		
 		debug( ";recorder_release_media_if, [%s] ok", pme->m_pszName);
 		g_m_recorder_is_on = FALSE;
 		IMEDIA_Release( pme->m_pMedia);

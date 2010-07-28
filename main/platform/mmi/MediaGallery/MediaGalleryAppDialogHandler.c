@@ -2991,6 +2991,13 @@ static int MGAppPopupMenu_OnMusicPlay(CMediaGalleryApp* pMe,
    }
    else
    {
+   	  //Add By zzg 2010_07_28
+   	  MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                          IDS_MG_FILEOPERR,
+                                          MESSAGE_ERR,
+                                          BTBAR_BACK);
+	  //Add End
+	  
 #ifndef AEE_SIMULATOR
       return EFAILED;
 #else

@@ -151,7 +151,7 @@ static NextFSMActionEnum state_handler_of_state_record_list( Recorder* pme)
 	switch (pme->m_eDlgRet)
 	{
 		case DLGRET_CREATE:
-		{
+		{			
 			pme->m_bNotOverwriteDlgRet = FALSE;
 			if( SUCCESS != Recorder_ShowDialog( pme, IDD_RECORD_LIST))
 			{
@@ -166,7 +166,7 @@ static NextFSMActionEnum state_handler_of_state_record_list( Recorder* pme)
 			MOVE_TO_STATE( STATE_MAIN);
 			return NFSMACTION_CONTINUE;
 
-		case DLGRET_PLAY:
+		case DLGRET_PLAY:			
 			pme->m_Media.m_bRecorder = FALSE;
 			MOVE_TO_STATE( STATE_RECORD);
 			return NFSMACTION_CONTINUE;

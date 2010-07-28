@@ -61,6 +61,8 @@ static void recorder_record2( Media* pme);
 static void recorder_replay( Media* pme);
 static int32 recorder_set_media_device_auto( Media* pme);
 
+static int32 recorder_set_media_device_auto_ex( Media* pme);	//Add By zzg 2010_07_28
+
 #if !defined( AEE_SIMULATOR)
 #if defined( FEATURE_RECORDER_SET_AS_RINGTONE) || defined( FEATURE_RECORDER_SET_AS)
 static boolean recorder_list_set_as_call_ringtone( Recorder* pme);
@@ -1382,10 +1384,8 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 
 	switch (evt)
 	{
-
 		case EVT_DIALOG_INIT:
 		{
-
 			pStatic = (IStatic*)IDIALOG_GetControl( pme->m_pActiveDialog, IDC_RECORDER_RECORD_STATIC);
 
 			if( !pme->m_bSuspended)
@@ -1406,8 +1406,7 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 		return TRUE;
 
 		case EVT_DIALOG_START:
-		{
-
+		{			
 #if defined( AEE_SIMULATOR)
 			if( pme->m_Media.m_eState != MEDIA_STATE_PAUSED)
 			{
@@ -1457,27 +1456,25 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 		return TRUE;
 
 		case EVT_DIALOG_END:
-		{
+		{		
 			ISHELL_CancelTimer( pme->m_pShell, 0, pme);
 #if !defined( AEE_SIMULATOR)
-			if( pme->m_bSuspended)
+			if (pme->m_bSuspended)
 			{
-                          if( pme->m_Media.m_eState == MEDIA_STATE_RECORDING )
+                if (pme->m_Media.m_eState == MEDIA_STATE_RECORDING)
 				{
-                            recorder_pause( &pme->m_Media);
-                            }
+                	recorder_pause( &pme->m_Media);
+                }
 
-					if( pme->m_Media.m_eState == MEDIA_STATE_PLAYING)
+				if( pme->m_Media.m_eState == MEDIA_STATE_PLAYING)
+				{
+					db_items_value_type dbItemValue      = {0};
+					db_get( DB_IN_USE, &dbItemValue);
+					if( dbItemValue.in_use)
 					{
-						db_items_value_type dbItemValue      = {0};
-						db_get( DB_IN_USE, &dbItemValue);
-						if( dbItemValue.in_use)
-						{
-							MOVE_TO_STATE( STATE_RECORD_LIST);
-						}
+						MOVE_TO_STATE( STATE_RECORD_LIST);
 					}
-                            
-				
+				}
 			}
 			else
 			{
@@ -1582,13 +1579,12 @@ __dialog_handler_of_state_record_stop__:
 
 		case EVT_KEY:
 		{
-
 			switch( wParam)
 			{
 #if defined( AEE_SIMULATOR)
 				case AVK_SOFT1:
 #else
-				case AVK_SELECT:
+				case AVK_SELECT:					
 #endif
 					if( pme->m_Media.m_bRecorder && ( subState == 1 || subState == 3))
 					{
@@ -1605,20 +1601,20 @@ __dialog_handler_of_state_record_stop__:
 					}
 				case AVK_CLR:
 				case AVK_SOFT2:
-				{
+				{					
 					if( pme->m_Media.m_bRecorder && ( subState == 1 || subState == 3))
-					{
+					{						
 						if( !pme->m_Media.m_bMediaError &&
 							pme->m_Media.m_eState == MEDIA_STATE_PAUSED
 						)
-						{
+						{							
 							if( subState == 1)
-							{
+							{								
 								pme->m_bLockkey = TRUE;
 								recorder_resume( &pme->m_Media);
 							}
 							else if( subState == 3)
-							{
+							{								
 								goto __dialog_handler_of_state_record_discard_back__;
 							}
 						}
@@ -1630,7 +1626,7 @@ __dialog_handler_of_state_record_discard_back__:
 						}
 					}
 					else if( pme->m_Media.m_bMediaError)
-					{
+					{						
 						recorder_stop_if( &pme->m_Media);
 						CLOSE_DIALOG( DLGRET_CANCELED);
 					}
@@ -1640,28 +1636,28 @@ __dialog_handler_of_state_record_discard_back__:
 #endif
 					{
 						if( wParam == AVK_CLR && pme->m_Media.m_bRecorder && subState == 0)
-						{
+						{							
 							if( !pme->m_Media.m_bMediaError &&
 								pme->m_Media.m_eState == MEDIA_STATE_RECORDING
 							)
-							{
+							{								
 								pme->m_bLockkey = TRUE;
 								recorder_pause( &pme->m_Media);
 								subState = 1;
 							}
 							else
-							{
-								subState = 3;
+							{								
+								subState = 3;								
 							}
 							
 							repaint( TRUE);
 							break;
 						}
 __dialog_handler_of_state_record_discard__:
-#if !defined( AEE_SIMULATOR)
+#if !defined( AEE_SIMULATOR)						
 						recorder_stop_if( &pme->m_Media);
 						if( wParam == AVK_CLR && pme->m_Media.m_bRecorder)
-						{
+						{							
 							recorder_cancel_record( &pme->m_Media);
 						}
 #endif
@@ -1777,7 +1773,6 @@ __dialog_handler_of_state_record_pause_resume__:
 
 		case EVT_HEADSET:
 		{
-
 			recorder_set_media_device_auto( &pme->m_Media);
 		}
 		return TRUE;
@@ -3380,10 +3375,11 @@ static void recorder_media_notify_handler( Media* pme, AEEMediaCmdNotify* pCmdNo
 
 		switch( pCmdNotify->nStatus)
 		{
-			case MM_STATUS_START:
+			case MM_STATUS_START:	
 				debug( ";started");
 				recorder_notify_media_event_listener( pme, pCmdNotify, MEDIA_EVENT_STARTED);
-				pme->m_nElapsedTime  = 0;
+				pme->m_nElapsedTime  = 0;	
+				
             case MM_STATUS_RESUME:
             	if( pCmdNotify->nCmd == MM_CMD_PLAY)
             	{
@@ -3407,6 +3403,9 @@ static void recorder_media_notify_handler( Media* pme, AEEMediaCmdNotify* pCmdNo
             	if( pCmdNotify->nCmd == MM_CMD_PLAY)
             	{
             		debug( ";-----to notify fmradio");
+
+					recorder_set_media_device_auto_ex( pme);		//Add By zzg 2010_07_28
+					
             		recorder_notify_fmradio( FALSE);
 					recorder_notify_media_event_listener( pme, pCmdNotify, MEDIA_EVENT_DONE);
             	}
@@ -3431,11 +3430,13 @@ static void recorder_media_notify_handler( Media* pme, AEEMediaCmdNotify* pCmdNo
 					recorder_notify_media_event_listener( pme, pCmdNotify, MEDIA_EVENT_TIME_LIMIT_REACHED);
             	}
             	break;
-            case MM_STATUS_DATA_IO_DELAY:
+            case MM_STATUS_DATA_IO_DELAY:				
+				
             	debug( ";io delay");
             	pme->m_eState = MEDIA_STATE_BUFFERING;
             	break;
             case MM_STATUS_PAUSE:
+				
             	debug( ";paused");
             	pme->m_eState = MEDIA_STATE_PAUSED;
             	if( pCmdNotify->nCmd == MM_CMD_PLAY)
@@ -3449,7 +3450,8 @@ static void recorder_media_notify_handler( Media* pme, AEEMediaCmdNotify* pCmdNo
 #if defined( FEATURE_RECORDER_REPORT_SPACE_LOW_WARNING)
             case MM_STATUS_SPACE_WARNING:
 #endif
-            case MM_STATUS_SPACE_ERROR:
+            case MM_STATUS_SPACE_ERROR:				
+				
             	debug( ";space warning or error");
             	recorder_stop_if( pme);
 				pme->m_nLastOperationError 	= recorder_get_error_2( pCmdNotify->nStatus);
@@ -3462,12 +3464,13 @@ static void recorder_media_notify_handler( Media* pme, AEEMediaCmdNotify* pCmdNo
             		recorder_notify_fmradio( FALSE);
             	}
 				break;
-            case MM_STATUS_ABORT:
+            case MM_STATUS_ABORT:				
 __recorder_media_notify_handler_abort__:
             	debug( ";abort");
             case MM_STATUS_SEEK_FAIL:
             case MM_STATUS_PAUSE_FAIL:
             case MM_STATUS_RESUME_FAIL:
+				
             	recorder_stop_if( pme);
             	if( pCmdNotify->nStatus == MM_STATUS_ABORT)
             	{
@@ -3482,7 +3485,7 @@ __recorder_media_notify_handler_abort__:
             	}
 				break;
 
-            case MM_STATUS_MEDIA_SPEC:
+            case MM_STATUS_MEDIA_SPEC:				
             	debug( ";QCP format: 0x%x, %d", pCmdNotify->pCmdData, pCmdNotify->dwSize);
             	break;
 		}
@@ -3504,6 +3507,7 @@ static int32 recorder_set_media_device_auto( Media* pme)
 	debug( ";recorder_set_media_device_auto");
 
 	OEM_GetConfig( CFGI_HEADSET_PRESENT, &headsetPresent, sizeof(boolean));
+	
 	if( headsetPresent)
 	{
 		device = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
@@ -3518,6 +3522,38 @@ static int32 recorder_set_media_device_auto( Media* pme)
 	}
 	return result;
 }
+
+
+//Add By zzg 2010_07_28
+static int32 recorder_set_media_device_auto_ex( Media* pme)
+{
+	int				result		 	= 0;
+	int				volumeResult	= 0;
+	int32			device		 	= AEE_SOUND_DEVICE_SPEAKER;
+	boolean         headsetPresent  = FALSE;
+	
+	OEM_GetConfig( CFGI_HEADSET_PRESENT, &headsetPresent, sizeof(boolean));
+	
+	if( headsetPresent)
+	{
+		device = AEE_SOUND_DEVICE_STEREO_HEADSET;
+	}
+	else
+	{
+		device = AEE_SOUND_DEVICE_HANDSET;
+	}
+
+	result = recorder_set_media_device( pme, device);
+	if( ( volumeResult = recorder_set_media_volume( pme, pme->m_nVolume)) != SUCCESS &&
+		 volumeResult != MM_PENDING
+	)
+	{
+		debug( ";setVolume failed, 0x%x", volumeResult);
+	}
+	return result;
+}
+//Add End
+
 
 static void recorder_play( Media* pme)
 {
@@ -3768,7 +3804,6 @@ int recorder_resume( Media* pme)
 
 void recorder_stop_if( Media* pme)
 {
-
 	if( pme->m_pMedia)
 	{
 		int result = 0;
@@ -3776,12 +3811,14 @@ void recorder_stop_if( Media* pme)
 		debug( ";--------------------------------------");
 		debug( ";recorder_stop_if, [%s]", pme->m_pszName);
 
+		recorder_set_media_device_auto_ex( pme);		//Add By zzg 2010_07_28,录音未播放结束时退出，recorder_media_notify_handler不能收到MM_STATUS_DONE,所以在这里加
+
 		if( ( result = IMEDIA_Stop( pme->m_pMedia)) != SUCCESS)
-		{
+		{		
 			debug( ";stop failed, 0x%x", result);
 		}
-		OEMOS_Sleep( 200);
-	}
+		OEMOS_Sleep( 200);		
+	}	
 	recorder_release_media_if( pme);
 	pme->m_eState = MEDIA_STATE_STOPPED;
 }
@@ -3803,7 +3840,7 @@ static void recorder_replay( Media* pme)
 {
 
 	int result = 0;
-
+		
 	recorder_set_media_device_auto( pme);
 	if( ( result = IMEDIA_Play( pme->m_pMedia)) != SUCCESS)
 	{
