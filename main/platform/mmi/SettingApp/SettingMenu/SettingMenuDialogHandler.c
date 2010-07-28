@@ -151,6 +151,7 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
     );
+void HandleSimChoiceTimer(ICM *m_pICM);
 
 #endif
 #ifdef FEATURE_KEYGUARD
@@ -3213,6 +3214,13 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
     return FALSE;
     
 }
+void HandleSimChoiceTimer(ICM *m_pICM)
+{
+	DBGPRINTF("HandleSimChoiceTimer......................HandleSimChoiceTimer");
+	ICM_SetOperatingMode(m_pICM, AEECM_OPRT_MODE_RESET);
+    ICM_Release(m_pICM);
+    m_pICM = NULL;
+}
 
 static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
     AEEEvent eCode,
@@ -3224,7 +3232,7 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
     nv_item_type nvi;
     int ret = 0;
 
-    MSG_FATAL("%x, %x ,%x,HandleSimChoiceEvent",eCode,wParam,dwParam);
+    DBGPRINTF("%d, %d ,%d,HandleSimChoiceEvent",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -3248,6 +3256,7 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
         case EVT_DIALOG_END:
             return TRUE;
         case EVT_KEY:
+		case EVT_KEY_PRESS:
             switch(wParam)
             {
                 case AVK_CLR:
@@ -3259,6 +3268,7 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
                 }
                 case AVK_SEND:
                 case AVK_INFO:
+				case AVK_SELECT:
                 {
                     nv_item_type nviNew;
                     ICM *pICM = NULL;
@@ -3275,22 +3285,14 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
                         MSG_FATAL("HandleSimDialogEvent:::::33333 ICM cerate Failed",0,0,0);
                         return FALSE;
                     }                    
-#ifdef FEATURE_ICM
                     ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_OFFLINE);
-#else
-                    ui_set_ph_oprt_mode (SYS_OPRT_MODE_OFFLINE);
-#endif
-#ifdef FEATURE_ICM
-                    ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_RESET);
-#else
-                    ui_set_ph_oprt_mode(SYS_OPRT_MODE_RESET);
-#endif                        
-#ifdef FEATURE_ICM
-                    ICM_Release(pICM);
-                    pICM = NULL;
+					(void)ISHELL_SetTimer(pMe->m_pShell,
+                                500,
+                                (PFNNOTIFY)HandleSimChoiceTimer,
+                                pICM);
+                    
                     MSG_FATAL("HandleSimChoiceEvent AVK_SEND2",0,0,0);
-                    return TRUE;
-#endif                    
+                    return TRUE;                  
                 }
 
                   default:
