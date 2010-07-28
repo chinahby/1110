@@ -1514,6 +1514,10 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
             }
             else
             {
+            	if (HS_HEADSET_ON())
+            	{
+            		fm_mute(TRUE);
+            	}	            
                 fm_radio_power_down();
             }
 #endif
@@ -2808,6 +2812,10 @@ static void quicktest_fm_power_up( void* pme)
     {
         fm_radio_power_up();
     }
+	if (HS_HEADSET_ON())
+	{
+		fm_mute(FALSE);
+	}		    
     fm_set_volume(7);
 #endif
     quicktest_fm_set_channel_to( pMe, convertChannelValueFromText( defaultChannel));
