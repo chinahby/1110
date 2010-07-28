@@ -5087,7 +5087,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
         IIMAGE_SetOffset( pWallPaper, 0,0);
         IIMAGE_SetDrawSize( pWallPaper, pMe->m_rc.dx,pMe->m_rc.dy);
     }
-    SETAEERECT(&rect, pMe->m_rc.dx/8, 60, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
+    SETAEERECT(&rect, pMe->m_rc.dx/8, 80, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
      IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,MAKE_RGB(60, 128, 196));
      // Display the string
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -5100,7 +5100,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);
    bracket[0]=(AECHAR)']';
-   SETAEERECT(&rect, pMe->m_rc.dx*7/8, 60, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
+   SETAEERECT(&rect, pMe->m_rc.dx*7/8, 80, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
     // Display the string
    (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
@@ -5111,7 +5111,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               IDF_ALIGN_LEFT
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);
-  SETAEERECT(&rect, (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), 60,(pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
+  SETAEERECT(&rect, (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), 80,(pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
   (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
