@@ -537,18 +537,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK0,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    
                      break;
 
                 case AVK_1:
@@ -557,18 +546,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK1,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    
                      break;
 
                 case AVK_2:
@@ -577,18 +555,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK2,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    
                      break;
 
                 case AVK_3:
@@ -597,18 +564,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK3,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                 
                      break;
 
                 case AVK_4:
@@ -617,18 +573,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK4,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    
                      break;
 
                 case AVK_5:
@@ -637,18 +582,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK5,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    
                      break;
 
                 case AVK_6:
@@ -657,18 +591,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK6,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    
                      break;
 
                 case AVK_7:
@@ -677,18 +600,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK7,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    
                      break;
 
                 case AVK_8:
@@ -697,18 +609,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK8,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                   
                      break;
 
                 case AVK_9:
@@ -717,18 +618,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVK9,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                  
                      break;
 
                 case AVK_STAR:
@@ -737,18 +627,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_STAR,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                   
                      break;
 
                 case AVK_POUND:
@@ -757,18 +636,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_POUND,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    
                      break;
 
                 case AVK_SELECT:
@@ -777,18 +645,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVKOK,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                 
                      break;
 
                 case AVK_SEND:
@@ -797,18 +654,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVKSEND,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    
                      break;
                case AVK_INFO:
 			(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -816,18 +662,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVKINFO,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                 
                      break;
 
                 case AVK_UP:
@@ -836,18 +671,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVKUP,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                   
                      break;
 
                 case AVK_DOWN:
@@ -856,18 +680,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVKDOWN,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                  
                      break;
 
                 case AVK_LEFT:
@@ -876,18 +689,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVKLEFT,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                  
                      break;
 
                 case AVK_RIGHT:
@@ -896,7 +698,171 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                                IDS_AVKRIGHT,
                                                string,
                                                MAX_STRING_LENGTH);
-                    IDISPLAY_FillRect(pMe->m_pDisplay,
+                    
+                     break;
+				
+				case AVK_T:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_T,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                    
+                     break;
+			    case AVK_Y:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_Y,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+			     case AVK_U:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_U,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				 case AVK_I:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_I,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+			      case AVK_O:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_O,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+			      case AVK_P:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_P,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				 case AVK_G:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_G,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				 case AVK_H:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_G,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				case AVK_J:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_J,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+			     case AVK_K:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_K,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				 case AVK_L:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_L,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+			     
+			      case AVK_V:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_V,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				 case AVK_B:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_B,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				 case AVK_N:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_N,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				case AVK_M:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_M,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+			     case AVK_RWD:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_DOLAER,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				 case AVK_ENTER:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_ENTER,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+			      case AVK_SHIFT:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_ALT,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+			      case AVK_SPACE:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_SPACE,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				 case AVK_SYMBOL:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_SYMBOL,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+				 case AVK_CAPLK:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_CAPLK,
+                                               string,
+                                               MAX_STRING_LENGTH);
+				 case AVK_LCTRL:
+                    (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_QUICKTEST_RES_FILE,
+                                               IDS_AVK_LCTRL,
+                                               string,
+                                               MAX_STRING_LENGTH);
+                     break;
+					 
+                default:
+                    break;
+            }
+			if(string != NULL)
+			{
+				    IDISPLAY_FillRect(pMe->m_pDisplay,
                                       &dlgrc,
                                       CLR_SYS_WIN);
                     (void)IDISPLAY_DrawText(pMe->m_pDisplay,
@@ -908,11 +874,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                             &dlgrc,
                                             IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
                      IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-                     break;
-
-                default:
-                    break;
-            }
+			}
             return TRUE;
 
         default:

@@ -166,6 +166,75 @@
 	<STRING Id="63" Name="IDS_FLIPTEST_TITLE">
 		<Text>Flip test</Text>
 	</STRING>
+	<String Id="1001" Name="IDS_AVK_T" Encoding="ISOLATIN1">
+		<Text>T key</Text>
+	</String>
+	<String Id="1002" Name="IDS_AVK_Y" Encoding="ISOLATIN1">
+		<Text>Y key</Text>
+	</String>
+	<String Id="1003" Name="IDS_AVK_U" Encoding="ISOLATIN1">
+		<Text>U key</Text>
+	</String>
+	<String Id="1004" Name="IDS_AVK_I" Encoding="ISOLATIN1">
+		<Text>I key</Text>
+	</String>
+	<String Id="1005" Name="IDS_AVK_O" Encoding="ISOLATIN1">
+		<Text>O key</Text>
+	</String>
+	<String Id="1006" Name="IDS_AVK_G" Encoding="ISOLATIN1">
+		<Text>G key</Text>
+	</String>
+	<String Id="1007" Name="IDS_AVK_H" Encoding="ISOLATIN1">
+		<Text>H key</Text>
+	</String>
+	<String Id="1008" Name="IDS_AVK_J" Encoding="ISOLATIN1">
+		<Text>J key</Text>
+	</String>
+	<String Id="1009" Name="IDS_AVK_K" Encoding="ISOLATIN1">
+		<Text>K key</Text>
+	</String>
+	<String Id="1010" Name="IDS_AVK_L" Encoding="ISOLATIN1">
+		<Text>L key</Text>
+	</String>
+	<String Id="1011" Name="IDS_AVK_DEL" Encoding="ISOLATIN1">
+		<Text>delete key</Text>
+	</String>
+	<String Id="1012" Name="IDS_AVK_V" Encoding="ISOLATIN1">
+		<Text>V key</Text>
+	</String>
+	<String Id="1013" Name="IDS_AVK_B" Encoding="ISOLATIN1">
+		<Text>B key</Text>
+	</String>
+	<String Id="1014" Name="IDS_AVK_N" Encoding="ISOLATIN1">
+		<Text>N key</Text>
+	</String>
+	<String Id="1015" Name="IDS_AVK_M" Encoding="ISOLATIN1">
+		<Text>M key</Text>
+	</String>
+	<String Id="1016" Name="IDS_AVK_DOLAER" Encoding="ISOLATIN1">
+		<Text>$ key</Text>
+	</String>
+	<String Id="1017" Name="IDS_AVK_ENTER" Encoding="ISOLATIN1">
+		<Text>enter key</Text>
+	</String>
+	<String Id="1018" Name="IDS_AVK_ALT" Encoding="ISOLATIN1">
+		<Text>shift key</Text>
+	</String>
+	<String Id="1019" Name="IDS_AVK_CAPLK" Encoding="ISOLATIN1">
+		<Text>caps key</Text>
+	</String>
+	<String Id="1020" Name="IDS_AVK_SPACE" Encoding="ISOLATIN1">
+		<Text>space key</Text>
+	</String>
+	<String Id="1021" Name="IDS_AVK_SYMBOL" Encoding="ISOLATIN1">
+		<Text>symbol key</Text>
+	</String>
+	<String Id="1022" Name="IDS_AVK_LCTRL" Encoding="ISOLATIN1">
+		<Text>lctrl key</Text>
+	</String>
+	<String Id="1023" Name="IDS_AVK_P" Encoding="ISOLATIN1">
+		<Text>P key</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_MAINMENU" Focus="7001">
