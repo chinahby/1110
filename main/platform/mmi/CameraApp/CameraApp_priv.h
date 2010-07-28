@@ -167,47 +167,21 @@ typedef enum
     SAVE_DEL       
 }BOTTOMBARTEX;
 
-typedef enum
-{
-    COLORNORMAL,
-    COLORBANDW,
-    COLORSEPIA,
-    COLORNEGATIVE,
-    COLORRED,
-    COLORGREEN  
-} COLOREFFECTSEL;
-
 // 照相机设置参数列表
 typedef enum 
 {
-#ifdef FEATURE_VIDEO_ENCODE
-    CAMERACFGCHOOSE,
-#endif
     CAMERACFGENVIRMENT,
-#ifdef FEATURE_CAMERAAPP_FUN_FRAME
-    CAMERACFGFUN,
-#endif
+    CAMERACFGFIRST = CAMERACFGENVIRMENT,
     CAMERACFGQUALITY,
     CAMERACFGSIZE,
     CAMERACFGTONE,
     CAMERACFGSELFTIME,
-    CAMERACFGCAPTURE,
     CAMERACFGBANDING,
-    CAMERACFGSTORAGE,
     CAMERACFGRESET,
-    CAMERACFGHOTKEY
+    CAMERACFGLAST = CAMERACFGRESET,
+    CAMERACFGMAX
 } CAMERACFG;
-#ifdef FEATURE_VIDEO_ENCODE
-// 摄像机设置参数列表
-typedef enum 
-{
-    VIDEOCFGCHOOSE,
-    VIDEOCFGENVIROMENT,
-    VIDEOCFGFUN,
-    VIDEOCFGRESET,
-    VIDEOCFGHOTKEY
-} VIDEOCFG;
-#endif
+
 typedef enum 
 {
 	FILE_TYPE_JPG,
@@ -236,11 +210,6 @@ typedef enum DLGRetValue
     DLGRET_PREVIEW,
     DLGRET_PICMENU,
     DLGRET_CAMERACFG,
-    DLGRET_VIDEO,
-    DLGRET_VIDEOCFG,
-    DLGRET_VIDEOREC,  
-    DLGRET_VIDEOSAVE,
-    DLGRET_FUN,
     DLGRET_POPMSG,
     DLGRET_CANCELED,
     DLGRET_EXIT 
@@ -255,10 +224,6 @@ typedef enum
     STATE_CPREVIEW,
     STATE_CCAMERACFG,
     STATE_CPIC,
-    STATE_CVIDEO,
-    STATE_CVIDEOCFG,
-    STATE_CVIDEOSAVE,  
-    STATE_CFUN,
     STATE_CPOPMSG,
     STATE_EXIT
 } FSMState;
@@ -310,62 +275,36 @@ typedef struct _CCameraApp
     
    // Applet是否准备好可以处理按键和命令事件。改变量主要用于快速按键引起的问题
     boolean              m_bAppIsReady;
-        
-    boolean              m_bVideoPause;          // 判断摄影是否停止
-    boolean              m_bfunFrameSelected;    // 趣味模式相框选择
-    boolean              m_bVideoRecStart;        // 判断录像是否开始
+    
     boolean              m_bSelNotChanged;       // 判断Sel是否变化
-    boolean              m_bCameraHideIcon;      // 判断Camera Icon是否显示
-    boolean              m_bVideoHideIcon;       // 判断Video Icon是否显示
     boolean              m_bIsPreview;           // 判断camera是否在preview状态
     boolean              m_bRePreview;           // 判断是否需要camera重新preview
     boolean              m_bCapturePic;          // 判断camera是否在拍照状态，用于禁止按键事件
-    boolean              m_bCleanScreen;         // 用于带相框拍照的清屏处理
-    boolean              m_bDecodeJpgDone;       // 判断采用qualcomm Jpg解码是否完成
-    //boolean              m_bCalculateLeftPicNum; // 计算拍照剩余张数
     boolean              m_bCanCapture;          // 检测存储容量后，判断是否可以拍照
     boolean              m_bMemoryCardExist;     // 检测是否存在存储卡
-    boolean              m_bDispHotKey;
     
     uint16               m_wMsgID;               // pop对话框，显示文本的资源ID号
     uint32               m_nMsgTimeout;           // pop对话框，自动关闭所需要的时间 
 
     uint32               m_nMainMenuItemSel;     // 主菜单项选择
     uint32               m_nSelfTimeItemSel;     // 拍照时间菜单项选择
-    uint32               m_nCaptureItemSel;      // 连拍菜单项选择
-    uint32               m_nCFGBarChoosedID;     // 设置菜单选中时候的位置序号
-    uint32               m_nCFGBarOffset;        // 绘制设置菜单栏选中位置，所需要的偏移量
-
+    
     uint32               m_nTicks;               // tick时间
     uint32               m_nNumDays;             // 跑表跑的天数
     uint32               m_dwDispTime;           // 显示时间
     uint32               m_dwMemTotal;           // 存储空间总容量
     uint32               m_dwMemFree;            // 存储空间剩余容量
 
-    int                  m_nSnapShotTimes;
-    int                  m_nSnapShotPicNum;
-    int                  m_nSnapShotPicNameIndex;
     int                  m_nLeftTime;
     int                  m_cxWidth; 
     int                  m_cyHeight;  
     int                  m_nItemH;               // 文本默认字体高度
-    
-    AECHAR               m_szHotKeyTextBuf[MIN_TEXT_HOTKEY_LEN];
-    AECHAR               m_szResTextBuf[MIN_TEXT_RES_LEN];
-    
-    char                 *m_pszArgs;             // 启动参数
+        
     char                 m_sCurrentFileName[MIN_FILE_NAME_LEN];
     char                 m_sCaptureFileName[MIN_PICS_NAME_LEN];
-    char                 m_sFileNameWithAllPath[MIN_FILE_NAME_LEN];
-    AECHAR               m_wFileName[MIN_PIC_WCHAR_NAME_LEN];
-    AECHAR               m_nNumOfSnapshot[MIN_PIC_NUMOFSUM_LEN];
     AEECallback          m_CallBack;
     
     CAMERACFG            m_nCameraCFG;           // camera设置
-#ifdef FEATURE_VIDEO_ENCODE
-    VIDEOCFG             m_nVideoCFG;            // video设置
-#endif
-    COLOREFFECTSEL       m_nColorSel;            // color设置菜单的选中的item
     CAMERASTATE          m_nCameraState;         // camera的运行状态
     
     OEMCAMERAQUALITY     m_nCameraQuality;       // camera拍照质量
@@ -374,19 +313,11 @@ typedef struct _CCameraApp
     OEMCAMERASIZE        m_nCameraSize;          // camera拍照尺寸
     OEMCAMERABANDING     m_nCameraBanding;       // camera bandig设置
     OEMCAMERASTORAGE     m_nCameraStorage;       // camera拍照存储位置
-    OEMCAMERABRIGHTNESS  m_nCameraBrightness;    // camera拍照亮度
-    OEMCAMERAZOOM        m_nCameraZoom;          // camera拍照变焦
-    OEMCAMERAFRAME       m_nCameraFrame;         // camera相框设置，仅176x220拍照有相框
-    OEMCAMERACOLOR       m_nCameraColor;         // camera拍照滤镜颜色设置    
     
     ICamera              *m_pCamera;
-    ITimeCtl             *m_pVideoRecTimeCtl;
     IFileMgr             *m_pFM; 
     IConfig              *m_pConfig;              // IConfig interface
-    IStatic              *m_pStatic;              // 快捷键屏幕显示文本  
-    AEERect               m_rcStatic;
     IMedia               *m_pMedia;
-    IImage               *m_pBusyStateImage;
     IFileMgr             *m_pFileMgr;
     IAnnunciator         *m_pIAnn;
 } CCameraApp;

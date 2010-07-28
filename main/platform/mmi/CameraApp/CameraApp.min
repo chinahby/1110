@@ -23,8 +23,7 @@ CONSTFILE_FILES+=\
         cameraapp.mif|fs:/mif/cameraapp.mif \
 		cameraapp.bar|fs:/mod/cameraapp/en/cameraapp.bar \
 		cameraapp_image$(USES_LCD_SIZE).bar|fs:/mod/cameraapp/cameraapp_image.bar \
-		shutter.mid|fs:/cameraapp/shutter.mid \
-		trend.mid|fs:/cameraapp/trend.mid
+		shutter.mid|fs:/cameraapp/shutter.mid
 		
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)

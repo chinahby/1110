@@ -12099,7 +12099,7 @@ void camera_encode_picture_handler
   /* the PNG encoder then it should release the thread for the encoder to process */
   if (camera_encode_properties.format == CAMERA_PNG)
   {
-
+#ifndef CUST_EDITION
     /* Later UI should make sure that png pictures are always H2V1 */
     if (camera_snapshot_format == CAMERA_H2V2)
     {
@@ -12119,7 +12119,9 @@ void camera_encode_picture_handler
         MSG_CAMERADEBUG("Encode snapshot: PNG H2V1", 0, 0, 0);
       }
     }
-
+#else
+   png_encode_spec.input_data = RGB565;
+#endif
     /* Set up essential parameters */
     png_encode_spec.input_ptr    = (uint8 *) main_image_buffer ;
     png_encode_spec.chroma_ptr   = main_image_header->chromaBuffer;

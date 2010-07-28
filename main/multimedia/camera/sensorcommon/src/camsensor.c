@@ -2851,7 +2851,7 @@ uint32 camsensor_config_camclk_po (uint32 freq)
   HWIO_PDM0_CTL_OUT((0  & HWIO_PDM0_CTL_PDM0_DAT_BMSK) << HWIO_PDM0_CTL_PDM0_DAT_SHFT);
     
   /* Set PDM signal to normal polarity (sense of PDM output not inverted)*/
-  HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(0 << HWIO_TCXO_PDM_CTL_PDM0_POLARITY_SHFT));
+  HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_POLARITY_BMSK,(0 << HWIO_TCXO_PDM_CTL_PDM0_POLARITY_SHFT));
 
   /* Drive backlight by enabling PDM output*/
   HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(1 << HWIO_TCXO_PDM_CTL_PDM0_EN_SHFT));
@@ -4007,13 +4007,10 @@ SIDE EFFECTS
 void camsensor_unconfig_camclk_po(void)
 {
     /* GPIO - 10 */
-    CAMERA_CONFIG_GPIO (GP_PDM);
+    CAMERA_CONFIG_GPIO (GPIO_INPUT_10); // GP_PDM
     
     /* Set new PDM0 value */
     HWIO_PDM0_CTL_OUT((0  & HWIO_PDM0_CTL_PDM0_DAT_BMSK) << HWIO_PDM0_CTL_PDM0_DAT_SHFT);
-      
-    /* Set PDM signal to normal polarity (sense of PDM output not inverted)*/
-    HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(0 << HWIO_TCXO_PDM_CTL_PDM0_POLARITY_SHFT));
     
     /* Drive backlight by enabling PDM output*/
     HWIO_TCXO_PDM_CTL_OUTM(HWIO_TCXO_PDM_CTL_PDM0_EN_BMSK,(0 << HWIO_TCXO_PDM_CTL_PDM0_EN_SHFT));

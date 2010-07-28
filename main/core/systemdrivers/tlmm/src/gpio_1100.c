@@ -502,7 +502,7 @@ GPIO_SignalType gpio_sleep_changes[] =
   /* GPIO 30 (WDOG disable usage), configure output high, its function unchange */
   /* GPIO 31 (BOOT from ROM usage), configure from pull down to pull up */
   GPIO_IN(30,GROUP_GPIO_0,GPIO_NO_PULL),
-  GPIO_IN(31,GROUP_GPIO_0,GPIO_PULL_UP),
+  //SIM_SEL No CHANGE Gemsea GPIO_IN(31,GROUP_GPIO_0,GPIO_PULL_UP),
   /* GPIO 32, not use on FFA but on SURF for FPGA, configure to input pull down
    * New FFA use it as SDCC card detection but has same configuration for sleep.
    */

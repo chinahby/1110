@@ -3386,9 +3386,15 @@ GETREGISTERMSG_EXIT:
     return pCltMsg;
 }
 #endif
+
 #ifdef FEATURE_SEAMLESS_SMS
 static char mintable[10] = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
-int GetSeamlessSMSInfo(char *szInfo, int nSize)
+extern nv_stat_enum_type ui_get_nv(
+  nv_items_enum_type item,        /* which item */
+  nv_item_type *data_ptr          /* pointer to space for item */
+);
+
+int GetSeamlessSMSInfo(char *szInfoEx, int nSize)
 {
     int len = 0;
     AEEMobileInfo     mi;
@@ -3397,14 +3403,15 @@ int GetSeamlessSMSInfo(char *szInfo, int nSize)
     char* txt;         // destination text
     word temp;         // working buffer
     dword value;       // to store value read from nv
-     int i=0;
-	 
+	int i=0;
+	char szInfo[150] = {0};
+	int count = 0;
 
-
-    if (NULL == szInfo  || nSize<140)
-    {
-        return -1;
-    }
+	MSG_FATAL("GetSeamlessSMSInfo!!!",0,0,0);
+    //if (NULL == szInfo)
+    //{
+    //    return -1;
+    //}
     
     GetMobileInfo(&mi);
     GETJULIANDATE(0, &julian);
@@ -3417,41 +3424,41 @@ int GetSeamlessSMSInfo(char *szInfo, int nSize)
     szInfo[len]=';';
     len++;
         	
-    // GetMDN
-    nvi.dir_number.nam = nvi.curr_nam;
-    if( ui_get_nv(NV_DIR_NUMBER_I, &nvi) != NV_DONE_S)
-	{
-        return EFAILED;
-    }
-	else
-	{
-        if (STRNCMP((char *)nvi.dir_number.dir_number,"0000000000",10))
-	 	{
-	 		STRLCPY(&szInfo[len], (char *)nvi.dir_number.dir_number,STRLEN( (char *)nvi.dir_number.dir_number) );/*sizeof(nvi.dir_number.dir_number)+1*/
-	 	}      
-    }
-    len += STRLEN(&szInfo[len]);
+    //MDN不需要
     szInfo[len]=';';
     len++;
+    
     // GetMIN
     // read MIN2
     txt = &szInfo[len];
     if( ui_get_nv(NV_MIN2_I, &nvi) != NV_DONE_S)
     {
-    	  return EFAILED;
+    	MSG_FATAL("Get NV_MIN2_I Failed!!!",0,0,0);
+		return EFAILED;
     }
-    value = nvi.min2.min2[1];
+    else
+    {
+    	MSG_FATAL("Get NV_MIN2_I : 0x%x",nvi.min2.min2[1],0,0);
+    	value = nvi.min2.min2[1];
+    }
+
     *txt++ = mintable[ (value/100) %10];
     value %= 100;
     *txt++ = mintable[ value/10 ];
     *txt++ = mintable[ value%10 ];
 
     // read MIN1
-     if( ui_get_nv(NV_MIN1_I, &nvi) != NV_DONE_S)
+	if( ui_get_nv(NV_MIN1_I, &nvi) != NV_DONE_S)
 	{
- 	  return EFAILED;
+		MSG_FATAL("Get NV_MIN1_I Failed!!!",0,0,0);
+		return EFAILED;
  	}
-    value = nvi.min1.min1[1];
+ 	else
+ 	{
+ 		MSG_FATAL("Get NV_MIN1_I : 0x%x",nvi.min1.min1[1],0,0);
+ 		value = nvi.min1.min1[1];
+    }
+
     temp = (word) (value>>14 );
     *txt++ = mintable[ (temp/100) %10];
     temp %= 100;
@@ -3467,22 +3474,22 @@ int GetSeamlessSMSInfo(char *szInfo, int nSize)
     *txt++ = mintable[ temp/10 ];
     *txt++ = mintable[ temp%10 ];
     *txt++ = (char)';';
-    *txt = (char)0;
+    *txt = '\0';
     len += STRLEN(&szInfo[len]);
 
     SPRINTF(&szInfo[len], "%s;", ver_modelversion);
     len += STRLEN(&szInfo[len]);
     SPRINTF(&szInfo[len], "%04d%02d%02d%02d%02d", julian.wYear,julian.wMonth,julian.wDay,julian.wHour,julian.wMinute);
     len += STRLEN(&szInfo[len]);
-	
-#define PRINT_SEAMLESS_INFO	
-#ifdef PRINT_SEAMLESS_INFO	
-    for (i=0;i<STRLEN(szInfo);i++)
-    {
-    	MSG_FATAL("~~~~~~~~~~~~~~~~~GetSeamlessSMSInfo: %x",szInfo[i],0,0);
-    }
-#endif
 
+	for(i=0; i<len; i++)
+	{
+		SPRINTF(szInfoEx+count,"%x",szInfo[i]);
+		count = STRLEN(szInfoEx);
+	}
+
+	len = 2*len;
+	MSG_FATAL("GetSeamlessSMSInfo End!!!",0,0,0);
     return len;
 }
 
@@ -3494,14 +3501,15 @@ wms_client_message_s_type *GetSeamlessSMS()
     wms_cdma_user_data_s_type    *pUserdata = NULL;
     wms_client_message_s_type    *pCltMsg = NULL;
 
-    
-    nSize = sizeof(char)*150;
+
+    MSG_FATAL("Send SeamLess SMS!",0,0,0);
+    nSize = sizeof(char)*300;
     pBuf = (char *)MALLOC(nSize);
     if (NULL == pBuf)
     {
         goto GETREGISTERMSG_EXIT;
     }
-    nMsgSize = GetSeamlessSMSInfo(pBuf, 150);
+    nMsgSize = GetSeamlessSMSInfo(pBuf, 300);
     if (nMsgSize<0)
     {
         goto GETREGISTERMSG_EXIT;
@@ -3528,8 +3536,8 @@ GETREGISTERMSG_EXIT:
     
     return pCltMsg;
 }
-
 #endif
+
 /*==============================================================================
 函数:
     GetMOClientMsg

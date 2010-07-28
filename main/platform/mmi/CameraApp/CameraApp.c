@@ -93,8 +93,6 @@ static void CameraApp_RunFSM(CCameraApp *pMe);
 
 static void CameraApp_APPIsReadyTimer(void *pme);
 
-static void CameraApp_ShowBusyStateImage(CCameraApp *pMe);
-
 /*==============================================================================
 全局数据
 ==============================================================================*/
@@ -382,9 +380,7 @@ static int CameraApp_New(IShell *ps, IModule *pIModule, ICameraApp **ppObj)
  
     if(0 == gCameraApp.m_nRefs)
     {
-        char *pszArgs = gCameraApp.m_pszArgs;
         MEMSET(&gCameraApp, 0, sizeof(gCameraApp));
-        gCameraApp.m_pszArgs = pszArgs;
         INIT_VTBL(&gCameraApp, ICameraApp, gCameraAppMethods);
   
         gCameraApp.m_nRefs = 0;
@@ -505,38 +501,20 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
  
     pMe->m_cxWidth    = di.cxScreen; 
     pMe->m_cyHeight   = di.cyScreen;
-    pMe->m_rcStatic.x = pMe->m_cxWidth/5;
-    pMe->m_rcStatic.y = pMe->m_cyHeight/5;
-    pMe->m_rcStatic.dx= pMe->m_cxWidth*3/5;
-    pMe->m_rcStatic.dy= pMe->m_cyHeight*3/5;
  
     pMe->m_bAppIsReady = FALSE;
-    pMe->m_bVideoPause = FALSE; 
     pMe->m_pActiveDlg = NULL;
     pMe->m_eDlgRet = DLGRET_CREATE;
     pMe->m_bNotOverwriteDlgRet = FALSE;
     pMe->m_bIsPreview = FALSE;
     
-    pMe->m_bfunFrameSelected = TRUE;
     pMe->m_bCapturePic = FALSE;
     pMe->m_ePreState = STATE_NULL;
     pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA;
     pMe->m_nSelfTimeItemSel = IDS_SELFTIME_OFF;
-    pMe->m_nCaptureItemSel = IDS_CAPTURE_OFF;
-#ifdef FEATURE_VIDEO_ENCODE
-    pMe->m_nCameraCFG = CAMERACFGCHOOSE;
-    pMe->m_nVideoCFG = VIDEOCFGCHOOSE;
-#else
-    pMe->m_nCameraCFG = CAMERACFGENVIRMENT;
-#endif
-    pMe->m_nCameraZoom = OEMNV_CAMERA_ZOOM_LEVEL1;
-    pMe->m_nSnapShotPicNum = 0;
+    pMe->m_nCameraCFG = CAMERACFGFIRST;
     pMe->m_sCurrentFileName[0] = '\0';
     pMe->m_sCaptureFileName[0] = '\0';
-    pMe->m_sFileNameWithAllPath[0] = '\0';
-    pMe->m_wFileName[0] = '\0';
-    pMe->m_nNumOfSnapshot[0] = '\0';
-    //pMe->m_bCalculateLeftPicNum = FALSE;
     pMe->m_bCanCapture = TRUE;
     pMe->m_dwMemTotal = 0;
     pMe->m_dwMemFree = 0;
@@ -546,13 +524,7 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
     pMe->m_dwDispTime = 0;
     pMe->m_nNumDays = 0;
     pMe->m_nTicks = 0;
-    pMe->m_bVideoRecStart = FALSE;
-    pMe->m_nCFGBarChoosedID = 0;
-    pMe->m_nCFGBarOffset = 0;
     pMe->m_bRePreview = FALSE;
-    pMe->m_nColorSel = 1;
-    pMe->m_nSnapShotTimes = 1;
-    pMe->m_nSnapShotPicNameIndex = 0;
     pMe->m_nCameraState = CAM_START;
 
     pMe->m_pCamera = NULL;  
@@ -575,23 +547,7 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
         CameraApp_FreeAppData(pMe);
         return EFAILED;
     } 
-
-    if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
-                                            AEECLSID_STATIC, 
-                                            (void **)&pMe->m_pStatic))
-    {
-        CameraApp_FreeAppData(pMe);
-        return EFAILED;
-    } 
-
-    if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
-                                            AEECLSID_STOPWATCHCTL, 
-                                            (void **)&pMe->m_pVideoRecTimeCtl))
-    {        
-        CameraApp_FreeAppData(pMe);
-        return EFAILED;
-    }
-
+    
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                             AEECLSID_FILEMGR, 
                                             (void **)&pMe->m_pFileMgr))
@@ -650,18 +606,6 @@ static void CameraApp_FreeAppData(CCameraApp *pMe)
     {
         ICAMERA_Release(pMe->m_pCamera);
         pMe->m_pCamera = NULL;
-    }
-        
-    if(pMe->m_pStatic)
-    {
-        ISTATIC_Release(pMe->m_pStatic);
-        pMe->m_pStatic = NULL;
-    }
-
-    if(pMe->m_pVideoRecTimeCtl)
-    {
-        ITIMECTL_Release(pMe->m_pVideoRecTimeCtl);
-        pMe->m_pVideoRecTimeCtl = NULL;
     }
 
     if(pMe->m_pFileMgr)
@@ -859,10 +803,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);// 取消所有定时器
             
             pMe->m_bSuspending = TRUE;
-
-            // 相片处理中断，恢复处理值
-            pMe->m_nSnapShotPicNum++;    
-            pMe->m_nSnapShotPicNameIndex--;           
             return TRUE;
 
         case EVT_ALARM:

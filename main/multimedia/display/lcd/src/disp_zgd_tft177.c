@@ -774,13 +774,6 @@ static int zgd_tft177_disp_powerdown(void)
 		/* 
 		* Power-down the controller 
 		*/
-		/* Transfer command to display hardware */
-		//zgd_tft177_reset();
-		HEXING_LCD_WRITE_CMD(0x10); //Sleep in
-		/* Reset controller to ensure clean state */
-		/* Transfer command to display hardware*/
-		//out_word(lcatDispCfg[0].cmd_addr, DISP_EPSON_CMD9(ZGD_TFT177_VDD_OFF_C));   miaoxiaoming
-		clk_busy_wait(100);
 		zgd_tft177_state.disp_powered_up = FALSE;
 	}
 
