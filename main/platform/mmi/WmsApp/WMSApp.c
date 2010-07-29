@@ -1327,28 +1327,36 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
 								MOVE_TO_STATE(WMSST_WMSNEW)
 								pMe->m_eDlgReturn = DLGRET_CREATE;
+								CWmsApp_RunFSM(pMe);
 								
         				}
         				else
         				{
         				
-	            			if(ISHELL_GetActiveDialog(pMe->m_pShell)!= pMe->m_pActiveIDlg)
-	            			{
-	                			(void)ISHELL_EndDialog(pMe->m_pShell);
-	            			}
-				            pMe->m_eDlgReturn = DLGRET_CREATE;
-                			MOVE_TO_STATE(WMSST_INBOXES)
-        				}
-						CWmsApp_RunFSM(pMe);
-                        // 通知 CoreApp 需要进行短信提示
-                        #if 0
-                        (void)ISHELL_PostEventEx(pMe->m_pShell,
+
+						    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
+							   && pMe->m_currState !=	WMSST_INBOXMSGOPTS)
+						    {
+						    	DBGPRINTF("ISHELL_GetActiveDialogSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+	            				if(ISHELL_GetActiveDialog(pMe->m_pShell)!= pMe->m_pActiveIDlg)
+	            				{
+	                				(void)ISHELL_EndDialog(pMe->m_pShell);
+	            				}
+				            	pMe->m_eDlgReturn = DLGRET_CREATE;
+                				MOVE_TO_STATE(WMSST_INBOXES)
+								CWmsApp_RunFSM(pMe);
+						    }
+							else
+							{
+                        			    // 通知 CoreApp 需要进行短信提示
+                        				(void)ISHELL_PostEventEx(pMe->m_pShell,
                                                  EVTFLG_ASYNC, 
                                                  AEECLSID_CORE_APP, 
                                                  EVT_WMS_MSG_RECEIVED_MESSAGE,
                                                  0, 
                                                  0);
-						#endif
+							}
+        				 }
                     }
                     
                     (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
