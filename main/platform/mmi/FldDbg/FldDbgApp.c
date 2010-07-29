@@ -7993,7 +7993,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
     OEM_ReadMEID(&meid);
-    STRTOWSTR("%X", fmt_str, sizeof(fmt_str));
+    STRTOWSTR("%014X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
