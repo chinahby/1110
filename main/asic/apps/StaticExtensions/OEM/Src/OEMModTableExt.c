@@ -1292,7 +1292,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
 #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 	   { AEEFS_MIF_DIR"nasrani.mif",NASRANI_Load},
-#elif	   
+#else
   	   { AEEFS_MIF_DIR"fmn2010.mif",Fmn2010_Load},
 #endif  	   
 #endif	   
