@@ -293,25 +293,17 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
 void CoreApp_ShowDialog(CCoreApp *pMe,uint16  dlgResId)
 {
     int nRet;
-    MSG_FATAL("CoreApp_ShowDialog Start",0,0,0);
     // 一次只允许打开一个对话框
     if (ISHELL_GetActiveDialog(pMe->a.m_pIShell) != NULL)
     {
         // Looks like there is one dialog already opened.
         // Flag an error an return without doing anything.
-        MSG_FATAL("Trying to create a dialog without closing the previous one",0,0,0);
         return;
     }
 
     nRet = ISHELL_CreateDialog(pMe->a.m_pIShell,
                                AEE_COREAPPRES_LANGFILE,
                                dlgResId,NULL);
-
-    if (nRet != SUCCESS)
-    {
-        MSG_FATAL("Failed to create the dialog in the Core applet",0,0,0);
-    }
-    MSG_FATAL("CoreApp_ShowDialog End",0,0,0);
 }
 
 /*==============================================================================
@@ -333,11 +325,9 @@ void CoreApp_ShowDialog(CCoreApp *pMe,uint16  dlgResId)
 ==============================================================================*/
 void CoreApp_ShowMsgDialog(CCoreApp *pMe,uint16  nResId)
 {
-    MSG_FATAL("CoreApp_ShowMsgDialog Start",0,0,0);
     pMe->m_nMsgID = nResId;
 
     (void)CoreApp_ShowDialog(pMe,IDD_MSGBOX);
-    MSG_FATAL("CoreApp_ShowMsgDialog End",0,0,0);
 }
 
 /*==============================================================================
@@ -358,85 +348,69 @@ void CoreApp_ShowMsgDialog(CCoreApp *pMe,uint16  nResId)
 ==============================================================================*/
 void CoreApp_SetDialogHandler(CCoreApp *pMe)
 {
-    MSG_FATAL("CoreApp_SetDialogHandler Start",0,0,0);
     switch (pMe->m_wActiveDlgID)
     {
 #if defined( FEATURE_POWERDOWN_ALARM)
         case IDD_ALARM:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_ALARM",0,0,0);
             pMe->m_pDialogHandler = IDD_ALARM_Handler;
             break;
 #endif //#if FEATURE_POWERDOWN_ALARM
         case IDD_LPM:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_LPM",0,0,0);
             pMe->m_pDialogHandler = IDD_LPM_Handler;
             break;
             
         case IDD_PWDINPUT:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_PWDINPUT",0,0,0);
             pMe->m_pDialogHandler = IDD_PWDINPUT_Handler;
             break;
             
         case IDD_UIMSECCODE:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_UIMSECCODE",0,0,0);
             pMe->m_pDialogHandler = IDD_UIMSECCODE_Handler;
             break;
             
         case IDD_UIMERR:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_UIMERR",0,0,0);
             pMe->m_pDialogHandler = IDD_UIMERR_Handler;
             break;
             
         case IDD_MSGBOX:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_MSGBOX",0,0,0);
             pMe->m_pDialogHandler = IDD_MSGBOX_Handler;
             break;
             
         case IDD_EMERGENCYNUMLIST:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_EMERGENCYNUMLIST",0,0,0);
             pMe->m_pDialogHandler = IDD_EMERGENCYNUMLIST_Handler;
             break;
             
         case IDD_STARTUPANI:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_STARTUPANI",0,0,0);
             pMe->m_pDialogHandler = IDD_STARTUPANI_Handler;
             break;
             
         case IDD_LOADING:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_LOADING",0,0,0);
             pMe->m_pDialogHandler = IDD_LOADING_Handler;
             break;
             
         case IDD_IDLE:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_IDLE",0,0,0);
             pMe->m_pDialogHandler = IDD_IDLE_Handler;
             break;
 
 #if defined(FEATURE_WMS_APP)
         case IDD_WMSTIPS:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_WMSTIPS",0,0,0);
             pMe->m_pDialogHandler = IDD_WMSTIPS_Handler;
             break;
 #endif            
         
         case IDD_POWERDOWN:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_POWERDOWN",0,0,0);
             pMe->m_pDialogHandler = IDD_POWERDOWN_Handler;
             break;
             
 #ifdef FEATURE_UTK2
         case IDD_UTKREFRESH:
-            MSG_FATAL("CoreApp_SetDialogHandler IDD_UTKREFRESH",0,0,0);
             pMe->m_pDialogHandler = IDD_UTKREFRESH_Handler;
             break;            
 #endif //FEATURE_UTK2
 
         default:
-            MSG_FATAL("CoreApp_SetDialogHandler default",0,0,0);
             pMe->m_pDialogHandler = NULL;
             break;
     }
-    MSG_FATAL("CoreApp_SetDialogHandler End",0,0,0);
 }
 
 /*==============================================================================
@@ -542,7 +516,6 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
     static IStatic * pStatic = NULL;
-    MSG_FATAL("%x %x %x IDD_MSGBOX_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -847,7 +820,6 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
     static PowerDown_Alarm_Cfg time = {0};
 
     CCoreApp *pMe = (CCoreApp *)pUser;
-    MSG_FATAL("%x %x %x IDD_ALARM_Handler",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -884,7 +856,6 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             dwAlarmTime = time.dwWATime;
             Appscommon_FormatTimeString(dwAlarmTime, wszTime, sizeof(wszTime));
 			pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, "fs:/mod/clockapps/clockapps_images.bar", IDI_ALARMCLOCK);
-            MSG_FATAL("ALARM %x %S",pResImg,wszTime,0);
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
             if( pResImg != NULL)
             {
@@ -1057,7 +1028,6 @@ static boolean  IDD_LPM_Handler(void       *pUser,
                                 uint32     dwParam)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
-    MSG_FATAL("%x %x %x IDD_LPM_Handler",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -1084,7 +1054,6 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             wszText =  (AECHAR *) MALLOC(nSize);
             wszText[0] = 0;
             status = IBATTERY_GetChargerStatus(pMe->m_pBatt);
-            MSG_FATAL("ChargerStatus %d ",status,0,0);
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
 
             if (AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE == status)
@@ -1199,7 +1168,6 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
     CCoreApp *pMe = (CCoreApp *)pUser;
     IMenuCtl *pMenu = NULL;
     
-    MSG_FATAL("%x %x %x IDD_EMERGENCYNUMLIST_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -1225,7 +1193,6 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                 //EmergencyNumber pTepItem ;
                 //EmergencyNumber pItem;
                 int   i = 0;
-                MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_DIALOG_START)",0,0,0);
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_EMERGENCYNUM_TABLE, (void*)&emerg_tab, sizeof(EmergencyNum_Table));
                 
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
@@ -1276,13 +1243,11 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
             // 绘制底条提示
             // Select       Back
             //CoreDrawBottomBar(BTBAR_SELECT_BACK)
-            MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_USER_REDRAW)",0,0,0);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
-            MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_DIALOG_END)",0,0,0);
             if (pMe->m_eDlgRet != DLGRET_CANCELED)
             {
                 pMe->m_eDlgRet = DLGRET_CANCELED;
@@ -1318,7 +1283,6 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
         case EVT_COMMAND:
             {
                 CtlAddItem ai;
-                MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_COMMAND)",0,0,0);
                 if (IMENUCTL_GetItem(pMenu, wParam, &ai))
                 {
                      (void)MakeVoiceCall(pMe->a.m_pIShell, FALSE, (AECHAR *)ai.pText);
@@ -1366,7 +1330,6 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
     {
         return FALSE;
     }
-    MSG_FATAL("%x %x %x IDD_PWDINPUT_Handler",eCode,wParam,dwParam);
     //pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PHONEPWD_MENU);
     //if (NULL == pMenu)
     //{
@@ -1608,7 +1571,6 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
     {
         return FALSE;
     }
-    MSG_FATAL("%x %x %x IDD_UIMSECCODE_Handler",eCode,wParam,dwParam);
     //pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_UIMSECCODE_MENU);
     //if (NULL == pMenu)
     //{
@@ -1934,7 +1896,6 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
     {
         return FALSE;
     }
-    MSG_FATAL("%x %x %x IDD_UIMERR_Handler",eCode,wParam,dwParam);
     pStatic = (IStatic*)IDIALOG_GetControl(pMe->m_pActiveDlg, 
                             IDC_UIMERR_STATIC);
 
@@ -2136,7 +2097,6 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
     
-    MSG_FATAL("%x %x %x IDD_STARTUPANI_Handler",eCode,wParam,dwParam);
     switch (eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -2270,7 +2230,6 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
     CCoreApp *pMe = (CCoreApp *)pUser;
     IStatic * pStatic = NULL;
     
-    MSG_FATAL("%x %x %x IDD_LOADING_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -2390,7 +2349,6 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
             AEERect rc;
             IBitmap *pDevBmp=NULL;
             IBitmap *pBmp =NULL;
-            MSG_FATAL("CoreApp_ImageNotify DB_CAPTURE_NEED",0,0,0);
             pMe->m_capture = DB_CAPTURE_NONE;
             ppDIB = OEMANNUNCIATOR_GetWallpaperBarDDB();
             if ((NULL != ppDIB) &&
@@ -2398,20 +2356,17 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
             {
                 if (IDISPLAY_GetDeviceBitmap(pMe->m_pDisplay, &pDevBmp) == SUCCESS) 
                 {
-                    MSG_FATAL("CoreApp_ImageNotify IDISPLAY_GetDeviceBitmap SUCCESS",0,0,0);
                     IBITMAP_CreateCompatibleBitmap(pDevBmp, &pBmp, rc.dx, rc.dy);
                     IBITMAP_Release(pDevBmp);
                     
                     IDISPLAY_SetDestination(pMe->m_pDisplay, pBmp);
                     if ( NULL != pWallPaper )
                     {
-                        MSG_FATAL("CoreApp_ImageNotify NULL != pWallPaper",0,0,0);
                         IIMAGE_SetDrawSize(pWallPaper, rc.dx, rc.dy);
                         IIMAGE_Draw(pWallPaper, 0, 0);
                     }
                     else
                     {
-                        MSG_FATAL("CoreApp_ImageNotify NULL != IDISPLAY_EraseRect",0,0,0);
                         IDISPLAY_EraseRect(pMe->m_pDisplay, &rc);
                     }
                    // IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE); // debug for update issue
@@ -2426,14 +2381,12 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
         if ( NULL != pWallPaper )
         {
             AEEImageInfo info;
-            MSG_FATAL("pMe->m_rc.dx:%d, pMe->m_rc.dy:%d", pMe->m_rc.dx, pMe->m_rc.dy, 0);
             IImage_GetInfo(pWallPaper, &info);
             IDisplay_ClearScreen(pMe->m_pDisplay);
             IIMAGE_Draw(pWallPaper, (pMe->m_rc.dx - info.cx)/2, (pMe->m_rc.dy - info.cy)/2);
         }
         else
         {
-            MSG_FATAL("CoreApp_ImageNotify NULL != pWallPaper",0,0,0);
             IDISPLAY_EraseRect(pMe->m_pDisplay, &pMe->m_rc);
         }
 
@@ -2448,7 +2401,6 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
 
         if (bHideText)
         {
-            MSG_FATAL("CoreApp_ImageNotify bHideText",0,0,0);
             CoreApp_UpdateAnnunciator(pMe);//解决背景播放换歌或按AVK_END键状态栏图表闪烁问题
                                          // 故把该句提到IDISPLAY_UpdateEx之前
 #ifdef FEATURE_APP_MUSICPLAYER                                         
@@ -2458,7 +2410,6 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
             bImageDecoded = TRUE;
             return;
         }  
-        MSG_FATAL("CoreApp_ImageNotify 2222",0,0,0);
 #ifdef FEATURE_APP_MUSICPLAYER
         //CoreApp_DrawMusicName(pMe);
         Core_DrawNameResetScroll(pMe);
@@ -2475,7 +2426,6 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     }   
     bImageDecoded = TRUE;
     IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
-    MSG_FATAL("CoreApp_ImageNotify End",0,0,0);
 }
 
 
@@ -2514,7 +2464,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_KEYGUARD	 
     boolean  bData;
 #endif
-    MSG_FATAL("%x %x %x IDD_IDLE_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -2526,7 +2475,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            MSG_FATAL("IDD_IDLE_Handler EVT_DIALOG_INIT",0,0,0);
             if(pMe->m_pIAnn != NULL)
             {
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
@@ -2549,7 +2497,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATRUE_SUPPORT_G_SENSOR
             dword shake;
 #endif
-            MSG_FATAL("IDD_IDLE_Handler EVT_DIALOG_START",0,0,0);
 #ifndef CUST_EDITION
             if(!((MMI_GSENSOR_SHAKE_OPEN == mmi_g_sensor_state) 
                 ||(MMI_GSENSOR_SHAKE_OPEN_IN_IDLE == mmi_g_sensor_state)))   //ignore if sensor has been open.
@@ -2580,7 +2527,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 {
                     if(EFAILED == IRUIM_Read_Svc_P_Name(pMe->m_pIRUIM,pMe->svc_p_name))
                     {
-                        MSG_FATAL("EFAILED == IRUIM_Read_Svc_P_Name",0,0,0);
                         MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
                         ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
                     }
@@ -2641,11 +2587,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             
         case EVT_UPDATEIDLE:
         {
-            MSG_FATAL("IDD_IDLE_Handler EVT_UPDATEIDLE",0,0,0);
             CoreApp_DrawWallPaper(pMe); // debug for wallpaper update issue
             if(pWallPaper)
             {
-                MSG_FATAL("IDD_IDLE_Handler pWallPaper != NULL",0,0,0);
                 bImageDecoded = FALSE;
                 IImage_Notify(pWallPaper, (PFNIMAGEINFO)CoreApp_ImageNotify, pMe);
             }
@@ -2654,7 +2598,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             if (pMe->m_bsmstipscheck)
             {
                 uint16  nNewsVmail=0, nNewsSMS=0;
-                MSG_FATAL("IDD_IDLE_Handler pMe->m_bsmstipscheck == TRUE",0,0,0);
                 // 获取消息数
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
@@ -2671,7 +2614,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
         case EVT_DIALOG_END:
             // 取消相关定时器
-            MSG_FATAL("IDD_IDLE_Handler EVT_DIALOG_END",0,0,0);
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_UpdateIdleTimer,
                                       pMe);
@@ -2697,7 +2639,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             return TRUE;
        
         case EVT_KEY_PRESS: 
-            MSG_FATAL("IDD_IDLE_Handler EVT_KEY_PRESS",0,0,0);
             if(pMe->m_bemergencymode)
             {
                 return TRUE;
@@ -2707,7 +2648,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             // will be overlapped with signal bar and other app's title.
             if(bImageDecoded == FALSE && pWallPaper)
             {
-                MSG_FATAL("IDD_IDLE_Handler bImageDecoded == FALSE && pWallPaper",0,0,0);
                 return TRUE;
             }
             switch (wParam)
@@ -2716,21 +2656,17 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_UP:
 
 #if defined(FEATURE_WMS_APP)
-                    MSG_FATAL("IDD_IDLE_Handler AVK_UP",0,0,0);
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
                 case AVK_DOWN:
-                    MSG_FATAL("IDD_IDLE_Handler AVK_DOWN",0,0,0);
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
                 case AVK_LEFT:
                 {
-                    MSG_FATAL("IDD_IDLE_Handler AVK_LEFT",0,0,0);
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
                 }
 				
                 case AVK_RIGHT:
 					{
-                        MSG_FATAL("IDD_IDLE_Handler AVK_RIGHT",0,0,0);
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 					}
                 case AVK_SELECT:
@@ -2754,11 +2690,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
                 case AVK_INFO:
 					{
-                        MSG_FATAL("AEECLSID_MAIN_MENU",0,0,0);
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 					}
                 case AVK_CLR:
-                    MSG_FATAL("IDD_IDLE_Handler AVK_CLR",0,0,0);
 #ifdef FEATURE_VERSION_M8			//Add By zzg 2010_07_20
 					if(!OEMKeyguard_IsEnabled())
                     {
@@ -2796,13 +2730,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 dword shake;
 #endif
 #ifndef CUST_EDITION
-                MSG_FATAL("IDD_IDLE_Handler EVT_GSENSOR_SHAKE",0,0,0);
                 if((wParam != AVK_END)&&(wParam != AVK_GSENSOR_FORWARD)&&(wParam != AVK_GSENSOR_BACKWARD))
                 {
                    if(!((MMI_GSENSOR_SHAKE_CLOSE == mmi_g_sensor_state) 
                     ||(MMI_GSENSOR_SHAKE_CLOSE_IN_IDLE == mmi_g_sensor_state)))  //ignore if sensor has been closed.
                     {
-                        MSG_FATAL("IDD_IDLE_Handler 1",0,0,0);
                         OEM_GetConfig(CFGI_GSENSOR,&shake,sizeof(shake));
                         OEM_GetConfig(CFGI_FM_BACKGROUND,&b_FMBackground, sizeof(b_FMBackground));
                 		//do close shake if FM or MP3 is playing.
@@ -2813,7 +2745,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                             {
 #ifdef FEATRUE_SUPPORT_G_SENSOR	
 #ifndef WIN32//wlh 临时修改
-                                MSG_FATAL("IDD_IDLE_Handler 2",0,0,0);
                                 mmi_g_sensor_process(G_SENSOR_SHAKE_DISABLE);
 #endif//WIN32
 #endif             
@@ -2831,14 +2762,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 {
                     case AVK_CLR:
                     case AVK_END:
-                        MSG_FATAL("IDD_IDLE_Handler 3",0,0,0);
                         CLOSE_DIALOG(DLGRET_MSG)
                         //CoreApp_ShowMsgDialog(pMe,IDS_EXIT_EMERGENCY_MODE);
                         return TRUE;
 
                     case AVK_SEND:
                     case AVK_LEFT:   
-                        MSG_FATAL("IDD_IDLE_Handler 4",0,0,0);
                         return TRUE;
                         
                     default:
@@ -2857,12 +2786,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             switch (wParam)
             {
                 case AVK_CLR:
-                    MSG_FATAL("IDD_IDLE_Handler AVK_CLR",0,0,0);
 #ifdef FEATURE_KEYGUARD
-                    MSG_FATAL("IDD_IDLE_Handler sbKeyguardEnabled=%d",OEMKeyguard_IsEnabled(),0,0);
                     if(OEMKeyguard_IsEnabled())
                     {
-                        MSG_FATAL("IDD_IDLE_Handler 5",0,0,0);
                         OEMKeyguard_SetState(FALSE);
                         pMe->m_b_set_lock = TRUE;
                         CLOSE_DIALOG(DLGRET_EMGCALL)
@@ -2882,7 +2808,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                                                  AEECLSID_APP_RECENTCALL,
                                                                  (void **)&pRecentCall))
                         {
-                            MSG_FATAL("IDD_IDLE_Handler 6",0,0,0);
                             IRecentCalls_SendList(pRecentCall);
                             IRecentCalls_Release(pRecentCall);
                         }
@@ -2920,7 +2845,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
-                        MSG_FATAL("IDD_IDLE_Handler 7",0,0,0);
                         if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
                                                         AEECLSID_DIALER,
                                                         (void **)&pCallApp))
@@ -2963,7 +2887,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         ICallApp_VoiceCallDial_F(pCallApp,pMe->m_wstrEnterNum);
                         if (pCallApp) 
                         {
-                            MSG_FATAL("IDD_IDLE_Handler 8",0,0,0);
                             ICallApp_Release(pCallApp);
                             pCallApp = NULL;
                         }
@@ -2982,7 +2905,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_GSENSOR_FORWARD: 
                  {
                    boolean isShake0n = FALSE; 
-                   MSG_FATAL("IDD_IDLE_Handler AVK_GSENSOR_FORWARD",0,0,0);
                    (void) ICONFIG_GetItem(pMe->m_pConfig,
                            CFGI_SHAKE_WALLPAPER_CHECK,
                            &isShake0n, 
@@ -2998,7 +2920,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                              {
                                  return FALSE;
                              }
-                             MSG_FATAL("IDD_IDLE_Handler 9",0,0,0);
                              IDisplayMenu_ChangePicture(pDisplayMenu, TRUE);
                          }
                          IDisplayMenu_Release(pDisplayMenu);
@@ -3015,7 +2936,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                  case AVK_GSENSOR_BACKWARD:
                  {
                     boolean isShake0n = FALSE; 
-                     MSG_FATAL("IDD_IDLE_Handler AVK_GSENSOR_BACKWARD",0,0,0);
                      (void) ICONFIG_GetItem(pMe->m_pConfig,
                             CFGI_SHAKE_WALLPAPER_CHECK,
                             &isShake0n, 
@@ -3031,7 +2951,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                              {
                                  return FALSE;
                              }
-                             MSG_FATAL("IDD_IDLE_Handler 10",0,0,0);
                              IDisplayMenu_ChangePicture(pDisplayMenu, FALSE);
                          }
                          IDisplayMenu_Release(pDisplayMenu);
@@ -3053,7 +2972,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         default:
             break;
     }
-    MSG_FATAL("IDD_IDLE_Handler return FALSE",0,0,0);
     return FALSE;
 } // IDD_IDLE_Handler
 
@@ -3086,7 +3004,6 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
     static IStatic * pStatic = NULL;
     static IBitmap * pDevBmp = NULL;
     CCoreApp *pMe = (CCoreApp *)pUser;
-    MSG_FATAL("%x %x %x IDD_WMSTIPS_Handler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -3268,7 +3185,6 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                                       uint32     dwParam)
 { 
     CCoreApp *pMe = (CCoreApp *)pUser;    
-    MSG_FATAL("%x %x %x IDD_POWERDOWN_Handler",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -3575,7 +3491,6 @@ static void CoreApp_UpdateIdleTimer(void *pUser)
 static void CoreApp_TimeKeyguard(void *pUser)
 {
     CCoreApp    *pMe = (CCoreApp *)pUser;
-    MSG_FATAL("CoreApp_TimeKeyguard Start",0,0,0);
     pMe->m_b_set_lock = TRUE;
     if(pMe->m_b_set_lock)
     {
@@ -3584,7 +3499,6 @@ static void CoreApp_TimeKeyguard(void *pUser)
         //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         pMe->m_b_set_lock = FALSE;
     }
-    MSG_FATAL("CoreApp_TimeKeyguard End",0,0,0);
 }
 #endif
 /*==============================================================================
@@ -4212,7 +4126,6 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
-    MSG_FATAL("%x %x  CoreApp_PlayPwrOnAni",pMe->m_pStartupAniImg,pMe->m_wStartupAniTime,0);
 #ifndef FEATURE_USES_LOWMEM
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  )
 #else
@@ -4383,7 +4296,6 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
     static char        szWallPaperName[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
     char                 szNewWallPaperName[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
     //int                    nX = 0,  nY = 0;
-    MSG_FATAL("CoreApp_DrawWallPaper Start",0,0,0);
     if ( (NULL == pMe) || (IDD_IDLE != pMe->m_wActiveDlgID) )
     {
         return;
@@ -4395,7 +4307,6 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
 #endif
     if ( NULL == pWallPaper )
     {  
-        MSG_FATAL("CoreApp_DrawWallPaper NULL == pWallPaper",0,0,0);
         // 初始化墙纸或上次取墙纸不成功
         MEMSET(szWallPaperName, 0x00, sizeof(szWallPaperName));
         
@@ -4414,7 +4325,6 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
                 if(IFILEMGR_Test(pFileMgr, szWallPaperName) == SUCCESS)
                 {
                     pWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, szWallPaperName);
-                    MSG_FATAL("CoreApp_DrawWallPaper szWallPaperName=%s",szWallPaperName,0,0);
                 }
                 else // if specified wallpaper not existed, load the default wallpaper
                 {
@@ -4431,7 +4341,6 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
     }
     else
     {   
-        MSG_FATAL("CoreApp_DrawWallPaper NULL != pWallPaper",0,0,0);
         // 已经成功加载墙纸图片，但须检查墙纸图片设置是否被变更
         MEMSET(szNewWallPaperName, 0x00, sizeof(szNewWallPaperName));
         
@@ -4443,7 +4352,6 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
                           
         if ( 0 != STRCMP(szNewWallPaperName, szWallPaperName) )
         {   
-            MSG_FATAL("CoreApp_DrawWallPaper pWallPaper was changed",0,0,0);
             // 墙纸设置已变
             MEMSET( szWallPaperName, 0x00, sizeof(szWallPaperName) );
             (void)STRCPY( szWallPaperName, szNewWallPaperName );
@@ -4459,12 +4367,10 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
                 {
                     if(IFILEMGR_Test(pFileMgr, szWallPaperName) == SUCCESS)
                     {
-                        MSG_FATAL("szWallPaperName=%s",szWallPaperName,0,0);
                         pWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, szWallPaperName);
                     }
                     else // if specified wallpaper not existed, load the default wallpaper
                     {
-                        MSG_FATAL("szWallPaperName=%s",OEMNV_WALLPAPER,0,0);
                         pWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, OEMNV_WALLPAPER);
                     }
                     IFILEMGR_Release(pFileMgr);
@@ -4495,7 +4401,6 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
         IDISPLAY_EraseRect(pMe->m_pDisplay, &pMe->m_rc);
     }
 #endif
-    MSG_FATAL("CoreApp_DrawWallPaper End",0,0,0);
 }
 
 
