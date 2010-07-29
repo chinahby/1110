@@ -1185,7 +1185,7 @@ static boolean camsensor_siv121a_snapshot_config( camsensor_static_params_type  
     	            camsensor_params->full_size_width*2;
 
     	camsensor_params->camif_frame_config.linesPerFrame = \
-    	            camsensor_params->full_size_width;
+    	            camsensor_params->full_size_height;
         
     	/* CAMIF Window */
     	camsensor_params->camif_window_width_config.firstPixel = 0;//camsensor_params->camsensor_width-camera_dx; //°´CLK
@@ -1208,7 +1208,7 @@ static boolean camsensor_siv121a_snapshot_config( camsensor_static_params_type  
     	            camsensor_params->qtr_size_width*2;
 
     	camsensor_params->camif_frame_config.linesPerFrame = \
-    	            camsensor_params->qtr_size_width;
+    	            camsensor_params->qtr_size_height;
         
     	/* CAMIF Window */
     	camsensor_params->camif_window_width_config.firstPixel = 0;//camsensor_params->camsensor_width-camera_dx; //°´CLK
