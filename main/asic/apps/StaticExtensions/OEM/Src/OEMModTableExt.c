@@ -328,7 +328,7 @@ extern int AEEPushMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
 #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 int NASRANI_Load(IShell *ps, void * pHelpers, IModule **pMod);
-#elif
+#else
 int Fmn2010_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #endif  /*STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM*/
 #endif
