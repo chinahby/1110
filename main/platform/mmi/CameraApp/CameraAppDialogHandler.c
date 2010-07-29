@@ -156,7 +156,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe);
 static void CameraApp_DrawMidPic(CCameraApp *pMe);
 
 // 画CFGBar的提示文本
-static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe);
+static void CameraApp_DrawCFGPromptText(CCameraApp *pMe);
 
 // Camera Preview的启动函数
 static void CameraApp_CPreviewStart(CCameraApp *pMe);
@@ -508,20 +508,6 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
-            // camera preview start....
-            if(pMe->m_pCamera && (!pMe->m_bIsPreview))
-            {   
-                CameraApp_CPreviewStart(pMe);                
-            }
-            
-            if(pMe->m_bRePreview && pMe->m_pCamera)
-            {
-                ICAMERA_Preview(pMe->m_pCamera);
-                pMe->m_nCameraState = CAM_PREVIEW;
-                CameraApp_SetParamAfterPreview(pMe);
-                pMe->m_bRePreview = FALSE;
-            }
-            
             pMe->m_bCapturePic = FALSE;
 
             IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
@@ -549,6 +535,20 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                                   sizeof(pMe->m_nCameraBanding));
             
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+
+            // camera preview start....
+            if(pMe->m_pCamera && (!pMe->m_bIsPreview))
+            {   
+                CameraApp_CPreviewStart(pMe);                
+            }
+            
+            if(pMe->m_bRePreview && pMe->m_pCamera)
+            {
+                ICAMERA_Preview(pMe->m_pCamera);
+                pMe->m_nCameraState = CAM_PREVIEW;
+                CameraApp_SetParamAfterPreview(pMe);
+                pMe->m_bRePreview = FALSE;
+            }
             return TRUE;
             
         case EVT_DIALOG_START:              
@@ -744,7 +744,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 
             CameraApp_DrawBottomBarText(pMe, BTBAR_SELECT_BACK);
             CameraApp_DrawTopBar(pMe);   
-            CamreaApp_DrawCFGPromptText(pMe);                        
+            CameraApp_DrawCFGPromptText(pMe);                        
             
             IMENUCTL_Redraw(popMenu);
             return TRUE;
@@ -862,7 +862,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             
         case EVT_USER_REDRAW:
             IDISPLAY_SetClipRect(pMe->m_pDisplay,0);
-            //IDISPLAY_ClearScreen(pMe->m_pDisplay);
+            IDISPLAY_ClearScreen(pMe->m_pDisplay);
             CameraApp_HandleSnapshotPic(pMe);
             return TRUE;
             
@@ -2456,7 +2456,7 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
     }
 }
 
-static void CamreaApp_DrawCFGPromptText(CCameraApp *pMe)
+static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
 {  
     AEERect prc;
     int16   nResID = 0;       
