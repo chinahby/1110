@@ -7894,6 +7894,11 @@ static boolean CFieldDebug_EsnMenuHandleEvent(CFieldDebug *pme,
       return FALSE;
 
    case EVT_DIALOG_START:
+      if(pme->m_pIAnn != NULL)
+      {
+        IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn, FALSE);
+        IANNUNCIATOR_Redraw(pme->m_pIAnn);
+      }
       (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
       CFieldDebug_DrawEsnScreen(pme);
       return TRUE;
@@ -7935,8 +7940,9 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     dword date = 0;
     AECHAR fmt_str[20];
     int i, j, count;
-    AECHAR  sTitle[20]; 
+    AECHAR  sTitle[45]; 
     int ret = 0;
+    uint64 meid = 0;
     
 	MSG_FATAL("CFieldDebug_DrawEsnScreen Start", 0, 0, 0);
     MEMSET (sTitle, 0, sizeof(sTitle));
@@ -7971,14 +7977,29 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 #endif
 
     //Display ESN with hexadecimal
-    STRTOWSTR("0x%08X", fmt_str, sizeof(fmt_str));
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
             esn);
-    
+   
     n = WSTRLEN(szBuf);
-    
+    szBuf[n++] = (AECHAR) '\n';
+    (void) ISHELL_LoadResString(pme->a.m_pIShell,
+                               AEE_FLDDBG_RES_FILE,
+                               IDS_STRING_MEID,
+                               (szBuf + n),
+                               sizeof(szBuf));
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+    OEM_ReadMEID(&meid);
+    STRTOWSTR("%X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            meid);
+
+  
    p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
    p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_ESN_STATIC);
 
@@ -7988,11 +8009,6 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    }
    // Set the values of the title and text strings for this control
     ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
-   (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                        AEE_FLDDBG_RES_FILE,
-                                        IDS_ESN,
-                                        sTitle,
-                                        sizeof(sTitle));
    (void) ISTATIC_SetText(p_stk,
                           NULL,
                           szBuf,

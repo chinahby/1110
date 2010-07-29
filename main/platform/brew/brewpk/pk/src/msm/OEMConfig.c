@@ -533,7 +533,7 @@ static int OEM_ReadIMEIS(byte *  imei_ptr)
 
 #if defined(FEATURE_MEID_SUPPORT)
 
-static int OEM_ReadMEID(uint64 *meid)
+int OEM_ReadMEID(uint64 *meid)
 {
    nv_stat_enum_type status;
 

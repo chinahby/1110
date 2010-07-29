@@ -397,6 +397,9 @@
 	<String Id="1015" Name="IDS_STRING_NET_LOCK_SID" Encoding="Unicode">
 		<Text>sid</Text>
 	</String>
+	<String Id="1016" Name="IDS_STRING_MEID" Encoding="Unicode">
+		<Text>MEID</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
