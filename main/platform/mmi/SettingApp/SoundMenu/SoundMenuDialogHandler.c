@@ -3650,9 +3650,9 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
 
                 SETAEERECT(&rect, 
                             0, 
-                            TITLEBAR_HEIGHT, 
+                            0, 
                             pMe->m_rc.dx,
-                            pMe->m_rc.dy - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT);
+                            pMe->m_rc.dy  - BOTTOMBAR_HEIGHT);
                 
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {

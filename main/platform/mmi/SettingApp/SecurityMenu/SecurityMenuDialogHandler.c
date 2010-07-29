@@ -989,7 +989,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 text,
                                 -1, 
                                 xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2,
+                                MENUITEM_HEIGHT*1/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 
@@ -1001,7 +1001,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
             
@@ -1015,7 +1015,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 text,
                                 -1, 
                                 xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*5/2,
+                                MENUITEM_HEIGHT*5/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 
@@ -1029,7 +1029,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*7/2,
+                                MENUITEM_HEIGHT*7/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
             
@@ -1043,7 +1043,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 text,
                                 -1, 
                                 xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*9/2,
+                                MENUITEM_HEIGHT*9/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -1705,7 +1705,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                 text,
                                 -1, 
                                 xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2, 
+                                MENUITEM_HEIGHT*1/2, 
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
             
@@ -1717,7 +1717,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
             
@@ -1731,7 +1731,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*5/2, 
+                                    MENUITEM_HEIGHT*5/2, 
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
             
@@ -1745,7 +1745,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*7/2,
+                                MENUITEM_HEIGHT*7/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 
@@ -1759,7 +1759,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*9/2,
+                                    MENUITEM_HEIGHT*9/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -2145,7 +2145,7 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2, 
+                                    MENUITEM_HEIGHT*1/2, 
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                    
@@ -2159,7 +2159,7 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -2459,7 +2459,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                             text,
                             -1, 
                             xOffset, 
-                            TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2,
+                            MENUITEM_HEIGHT*1/2,
                             NULL, 
                             IDF_TEXT_TRANSPARENT);
 
@@ -2473,7 +2473,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                if(!pMe->m_bIsConfirmPassword)
@@ -2488,7 +2488,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                         text,
                                         -1, 
                                         xOffset, 
-                                        TITLEBAR_HEIGHT + MENUITEM_HEIGHT*5/2,
+                                        MENUITEM_HEIGHT*5/2,
                                         NULL, 
                                         IDF_TEXT_TRANSPARENT);
 
@@ -2502,7 +2502,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                         text,
                                         -1, 
                                         xOffset, 
-                                        TITLEBAR_HEIGHT + MENUITEM_HEIGHT*9/2,
+                                        MENUITEM_HEIGHT*9/2,
                                         NULL, 
                                         IDF_TEXT_TRANSPARENT);
                }
@@ -2792,7 +2792,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2,
+                                    MENUITEM_HEIGHT*1/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
 
@@ -2806,7 +2806,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
 
@@ -2820,7 +2820,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*5/2,
+                                    MENUITEM_HEIGHT*5/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
 
@@ -2834,7 +2834,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*9/2,
+                                    MENUITEM_HEIGHT*9/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -3308,7 +3308,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2,
+                                    MENUITEM_HEIGHT*1/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
 
@@ -3320,7 +3320,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
 
@@ -3345,7 +3345,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*5/2, //modified by chengxiao 2008.11.20
+                                    MENUITEM_HEIGHT*5/2, //modified by chengxiao 2008.11.20
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
 
@@ -3357,7 +3357,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*7/2,
+                                MENUITEM_HEIGHT*7/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
 
@@ -3371,7 +3371,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*9/2,
+                                    MENUITEM_HEIGHT*9/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 
@@ -3385,7 +3385,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*11/2,
+                                MENUITEM_HEIGHT*11/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -3660,7 +3660,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2, 
+                                    MENUITEM_HEIGHT*1/2, 
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
 
@@ -3674,7 +3674,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                    MENUITEM_HEIGHT*3/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 }
@@ -3691,7 +3691,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                    MENUITEM_HEIGHT*3/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 }
@@ -3706,7 +3706,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*5/2,
+                                    MENUITEM_HEIGHT*5/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
 
@@ -3720,7 +3720,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*7/2,
+                                    MENUITEM_HEIGHT*7/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 }
@@ -3737,7 +3737,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*7/2,
+                                    MENUITEM_HEIGHT*7/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 }
@@ -3752,7 +3752,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*9/2,
+                                    MENUITEM_HEIGHT*9/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 
@@ -3768,7 +3768,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*11/2,
+                                    MENUITEM_HEIGHT*11/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 }

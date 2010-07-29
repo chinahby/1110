@@ -4203,7 +4203,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             AECHAR      wszTime[16];     //Ê±¼ä
             AECHAR      wszStatus[16];
             AEERect     rc;
-            int16       titleheight = GetTitleBarHeight(pMe->m_pDisplay);
+            int16       titleheight = 0;
             int16       bottomheight = GetBottomBarHeight(pMe->m_pDisplay);
             int16       itemheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
             int         lineSpace = ( pMe->m_rc.dy - titleheight  - bottomheight - itemheight*3) / 4;
