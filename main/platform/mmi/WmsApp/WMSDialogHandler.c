@@ -13769,6 +13769,10 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
                 else
                 {
                     // 从资源文件取消息内容
+                    if(nNewsSMS == 0)
+                    {
+                    	nNewsSMS = 1;
+                    }
                     (void)ISHELL_LoadResString(pMe->m_pShell,
                                     AEE_WMSAPPRES_LANGFILE,                                
                                     IDS_NEWWMSTIPS,
