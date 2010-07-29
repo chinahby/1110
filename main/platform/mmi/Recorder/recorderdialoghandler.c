@@ -3540,7 +3540,7 @@ static int32 recorder_set_media_device_auto_ex( Media* pme)
 	}
 	else
 	{
-		device = AEE_SOUND_DEVICE_HANDSET;
+		device = AEE_SOUND_DEVICE_HANDSET;		//此函数是退出时调用的，所以是HANDSET而不是SPEAKER
 	}
 
 	result = recorder_set_media_device( pme, device);

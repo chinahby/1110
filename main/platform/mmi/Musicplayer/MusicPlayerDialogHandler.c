@@ -504,15 +504,18 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
             return TRUE;
             
         case EVT_DIALOG_END:
+		{	
             return TRUE;
+        }
             
         case EVT_KEY:			
             switch (wParam)
             {
-                case AVK_CLR:					
+                case AVK_CLR:			
+				{
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
-
+                }
                 case AVK_BGPLAY:					
                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
                     return TRUE;
@@ -521,6 +524,7 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                     break;                    
             }
             break;
+
         case EVT_COMMAND:
             switch (wParam)
             {
@@ -2631,11 +2635,12 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:   
-        {   
+        {  
             CMusicPlayer_ReleaseMedia(pMe);
             //CMusicPlayer_InitMusic(pMe);
             //pMe->m_bStartApp = TRUE;
             MP3_InitMusicCB(pMe);
+			
             if(pMe->m_pMedia && !pMe->m_bSimPlayFailed)
             {
              pMe->m_bPlaying = TRUE;
@@ -2647,7 +2652,7 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
             return TRUE;
         }
         case EVT_DIALOG_START:
-        {
+        {			
            (void) ISHELL_PostEvent(pMe->m_pShell, 
                                     AEECLSID_APP_MUSICPLAYER,
                                     EVT_USER_REDRAW,
@@ -2675,21 +2680,33 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
             
         }
         case EVT_DIALOG_END:
-        {        
-            return TRUE;
-            
-        }
+        {    			
+            return TRUE;            
+        }		
+		
         case EVT_KEY:
              switch(wParam)
              {
                 case AVK_CLR:
-                    CMusicPlayer_ReleaseMedia(pMe);
+				{			
+					//Add By zzg 2010_07_29
+					if (HS_HEADSET_ON())
+					{						
+						IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_STEREO_HEADSET, 0);	
+					}
+					else
+					{						
+						IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_HANDSET, 0);	
+					}
+					//Add End
+				
+					CMusicPlayer_ReleaseMedia(pMe);
                     pMe->m_bPlaying = TRUE;
                     pMe->m_bPaused = FALSE;
                     ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)MP3_MusicNameAutoScroll,pMe);
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
-                        
+                }        
                case AVK_UP:
                case AVK_RIGHT:
                     if(pMe->m_MusicPlayerCfg.eMusicVolume < VOLUME_FIVE)
@@ -2769,9 +2786,22 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
                     
                case AVK_BGPLAY:
+			   	{
+					//Add By zzg 2010_07_29
+					if (HS_HEADSET_ON())
+					{						
+						IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_STEREO_HEADSET, 0);	
+					}
+					else
+					{						
+						IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_HANDSET, 0);	
+					}
+					//Add End
+					
                     CMusicPlayer_ReleaseMedia(pMe);
                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
                     return TRUE;
+               }
                default:
                   break;
              }
@@ -3835,8 +3865,20 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
    }
     pf++;
     if(0 == STRICMP(pf,QCP_TYPE))
-    {
-      IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_SPEAKER, 0);
+    {    	
+      //IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_SPEAKER, 0);	
+
+	  	//Add By zzg 2010_07_29
+	 	if (HS_HEADSET_ON())
+	 	{
+	 		IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_STEREO_HEADSET, 0);	
+	 	}
+	 	else
+	 	{
+	 		IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_SPEAKER, 0);	
+	 	}
+	 	//Add End
+				
     }
     //×¢²áµ×²ã»Øµ÷
    (void)IMEDIA_RegisterNotify(pMe->m_pMedia, CMusicPlayer_MediaNotify, pMe);
@@ -3920,7 +3962,7 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
                 }
              }
             case MM_STATUS_DONE:    // playback done
-            {    
+            {   
                if(TRUE == pMe->m_bUserStopped)
                {
                  pMe->m_bUserStopped = FALSE;
