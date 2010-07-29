@@ -37,6 +37,7 @@ ifeq ($(FMN2010),yes)
 #todo something here   应用的名字添加
 FMN2010_DIRS:=$(STATIC_BREW_APP)/fmn2010
 #todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
+vpath %.mif $(FMN2010_DIRS)
 vpath %.png $(FMN2010_DIRS)
 vpath %.mid $(FMN2010_DIRS)
 vpath %.htm $(FMN2010_DIRS)
