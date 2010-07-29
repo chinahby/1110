@@ -3631,11 +3631,19 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
     }
     else if (IsRunAsFactoryTestMode())
     {// 其次是厂测模式提示
+    	#if 0
         (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                                     AEE_COREAPPRES_LANGFILE,
                                     IDS_FACTORYTESTMODE,
                                     wszBuf,
                                     nSize);
+		#endif
+		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                    AEE_COREAPPRES_LANGFILE,
+                                    IDS_NORUIM,
+                                    wszBuf,
+                                    nSize);
+		
     }
     else
     {// 最后是正常情况下的提示
