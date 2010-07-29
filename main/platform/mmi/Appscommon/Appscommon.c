@@ -1496,8 +1496,7 @@ void DrawGreyBitTextWithProfile(IShell* pShell,
 		return;
 	}
 
-	// 设置文本描边时边的颜色，同时保存原来文本颜色值
-	oldTextClr = IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);
+	
 
 	#if 1
 	// 求绘制文本时的剪切矩形
@@ -1655,8 +1654,9 @@ void DrawGreyBitTextWithProfile(IShell* pShell,
 				&rc,//prcBackground, 
 				dwFlags);
 	#endif
-	// 恢复初始文本颜色
-	(void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, oldTextClr);
+	// 设置文本描边时边的颜色，同时保存原来文本颜色值
+	oldTextClr = IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);
+	
 	
 	// 绘制文本
 	(void) GreyBitBrewFont_DrawText(pDisplay, 
@@ -1667,6 +1667,8 @@ void DrawGreyBitTextWithProfile(IShell* pShell,
 				y, 
 				prcBackground, 
 				dwFlags);
+	// 恢复初始文本颜色
+	(void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, oldTextClr);
 }
 
 /*==============================================================================
@@ -1714,8 +1716,6 @@ void DrawTextWithProfile(IShell* pShell,
         return;
     }
 
-    // 设置文本描边时边的颜色，同时保存原来文本颜色值
-    oldTextClr = IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);
 
     // 求绘制文本时的剪切矩形
     ISHELL_GetDeviceInfo(pShell, &di);
@@ -1858,9 +1858,10 @@ void DrawTextWithProfile(IShell* pShell,
                     dwFlags);
     }
     
-    // 恢复初始文本颜色
-    (void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, oldTextClr);
     
+    
+    // 设置文本描边时边的颜色，同时保存原来文本颜色值
+    oldTextClr = IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);
     // 绘制文本
     (void) IDISPLAY_DrawText(pDisplay, 
                 Font, 
@@ -1870,6 +1871,8 @@ void DrawTextWithProfile(IShell* pShell,
                 y, 
                 prcBackground, 
                 dwFlags);
+	// 恢复初始文本颜色
+    (void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, oldTextClr);
 }
 
 /*==============================================================================

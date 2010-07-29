@@ -22,11 +22,14 @@
                                  本文件包含的外部文件
 ==============================================================================*/
 #include "iquicktest_priv.h"
+
 #ifndef WIN32
 #if defined( FEATURE_FM_RADIO)
     #include "fm_radio.h"
 #endif
 #endif
+#define RGBA_BLACK             MAKE_RGBA(0,0,0,255)
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -502,6 +505,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 
         case EVT_USER_REDRAW:
             //绘制测试提示语
+            /*
             (void)ISHELL_LoadResString(pMe->m_pShell,
                                        AEE_QUICKTEST_RES_FILE,
                                        IDS_KEYPRESS,
@@ -519,6 +523,23 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                                     0,
                                     &dlgrc,
                                     IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
+			*/
+			{
+
+					IImage* image	= NULL;
+					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST);
+				
+					if( image != NULL)
+					{
+						DBGPRINTF("IImage IS NOT NULL........................");
+						IIMAGE_Draw(image, 0, 0);
+						IIMAGE_Release( image);
+					}
+					DBGPRINTF("IImage IS NULL........................");
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+
+				
+            }
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -532,349 +553,571 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                      break;
 
                 case AVK_0:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK0,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+					{
+	                    IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 98);
+							IIMAGE_Release( image);
+						}
+						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                	}
+                    break;
 
                 case AVK_1:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK1,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_2:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK2,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_3:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK3,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                 
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_4:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK4,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 66);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_5:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK5,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 66);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_6:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK6,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 66);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_7:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK7,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_8:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK8,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                   
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_9:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK9,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                  
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_STAR:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_STAR,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                   
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 0, 66);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_POUND:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_POUND,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 0, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_SELECT:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVKOK,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                 
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 26, TITLEBAR_HEIGHT);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_SEND:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVKSEND,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 4, TITLEBAR_HEIGHT);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
                case AVK_INFO:
-			(void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVKINFO,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                 
-                     break;
+					{
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 66, TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 82, TITLEBAR_HEIGHT);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_UP:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVKUP,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                   
-                     break;
-
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 98);
+							IIMAGE_Draw(image, 66, 0);
+							IIMAGE_Draw(image, 82, 0);
+							IIMAGE_Release( image);
+						}
+                     }
+					
                 case AVK_DOWN:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVKDOWN,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                  
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 98);
+							IIMAGE_Draw(image, 66, 34);
+							IIMAGE_Draw(image, 82, 34);
+							IIMAGE_Release( image);
+						}
+                     }
+					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
 
                 case AVK_LEFT:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVKLEFT,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                  
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 44, TITLEBAR_HEIGHT);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 
                 case AVK_RIGHT:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVKRIGHT,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                    
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 94, TITLEBAR_HEIGHT);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				
 				case AVK_T:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_T,
-                                               string,
-                                               MAX_STRING_LENGTH);
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
                     
                      break;
 			    case AVK_Y:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_Y,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 			     case AVK_U:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_U,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				 case AVK_I:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_I,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 			      case AVK_O:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_O,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 			      case AVK_P:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_P,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, 50);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				 case AVK_G:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_G,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, 66);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				 case AVK_H:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_G,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, 66);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				case AVK_J:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_J,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 66);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 			     case AVK_K:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_K,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, 66);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				 case AVK_L:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_L,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, 66);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 			     
 			      case AVK_V:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_V,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				 case AVK_B:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_B,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				 case AVK_N:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_N,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				case AVK_M:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_M,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 			     case AVK_RWD:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_DOLAER,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				 case AVK_ENTER:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_ENTER,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 			      case AVK_SHIFT:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_ALT,
-                                               string,
-                                               MAX_STRING_LENGTH);
-                     break;
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 0, 82);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 			      case AVK_SPACE:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_SPACE,
-                                               string,
-                                               MAX_STRING_LENGTH);
+                     {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, 98);
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, 98);
+							IIMAGE_Release( image);
+						}
+                     }
+					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
 				 case AVK_SYMBOL:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_SYMBOL,
-                                               string,
-                                               MAX_STRING_LENGTH);
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, 98);
+							IIMAGE_Release( image);
+						}
+                     }
+					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
 				 case AVK_CAPLK:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_CAPLK,
-                                               string,
-                                               MAX_STRING_LENGTH);
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 0, 98);
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 98);
+							IIMAGE_Release( image);
+						}
+                    }
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;
 				 case AVK_LCTRL:
-                    (void)ISHELL_LoadResString(pMe->m_pShell,
-                                               AEE_QUICKTEST_RES_FILE,
-                                               IDS_AVK_LCTRL,
-                                               string,
-                                               MAX_STRING_LENGTH);
+                    {
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, 98);
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, 98);
+							IIMAGE_Release( image);
+						}
+                     }
+					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
 					 
                 default:
                     break;
             }
-			if(string != NULL)
-			{
-				    IDISPLAY_FillRect(pMe->m_pDisplay,
-                                      &dlgrc,
-                                      CLR_SYS_WIN);
-                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_BOLD,
-                                            string,
-                                            -1,
-                                            0,
-                                            0,
-                                            &dlgrc,
-                                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-			}
+			
+			
             return TRUE;
 
         default:

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="appscommon_160x128" VERSION="1">
+<BREWRes Name="appscommon_images160x128_Smart" VERSION="1">
 <Objects MimeType="image/png">
 	<Object Id="5001" Name="IDB_BGMASK">
 		<File>..\images\160x128\smart\Appscommon\Background\bgmask.png</File>
@@ -27,6 +27,12 @@
 	</Object>
 	<Object Id="5009" Name="IDB_SPORT_RACE" MimeType="image/bmp">
 		<File>..\images\160x128\smart\Sports\Icons\step_race.bmp</File>
+	</Object>
+	<Object Id="5010" Name="IDI_KEY_TEST">
+		<File>..\images\160x128\smart\QuickTest\keytest.png</File>
+	</Object>
+	<Object Id="5011" Name="IDI_TEST_DOWN">
+		<File>..\images\160x128\smart\QuickTest\down.png</File>
 	</Object>
 	<Object Id="5015" Name="IDI_TEXT_BACKGROUND">
 		<File>..\images\160x128\smart\Appscommon\Background\background_text.png</File>

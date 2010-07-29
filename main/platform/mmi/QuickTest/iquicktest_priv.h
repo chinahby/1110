@@ -59,10 +59,13 @@
 #include "Appscommon.h"
 //#include "AEECallList.h"
 #include "AEECallHistory.h"
+#include "appscommonimages.brh"
 
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
+#define  AEE_APPSCOMMONRES_IMAGESFILE "fs:/sys/appscommonimages.bar"
+
 #define  AEE_QUICKTEST_RES_FILE (AEE_RES_LANGDIR QUICKTEST_RES_FILE)
 typedef void (* qdsp_cmd_isr_func_type) (void);
 
