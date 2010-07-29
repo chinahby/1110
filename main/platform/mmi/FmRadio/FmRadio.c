@@ -791,6 +791,8 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         case EVT_APP_START:
         case EVT_APP_RESUME:
         {      
+			DBGPRINTF("***zzg FmRadio_HandleEvent eCode=%d***", eCode);
+			
             pMe->startFromBackground = FALSE;
             as = (AEEAppStart*)dwParam;
             pMe->m_pDisplay = as->pDisplay;
@@ -823,17 +825,20 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 			
             pMe->m_eCurState = FMRADIOST_INIT;  
             pMe->m_bAppIsReady  = FALSE;
+
+			//Add By zzg 2010_07_18
+			if (!pMe->runOnBackground )
+			{
+				if (HS_HEADSET_ON())
+				{
+					fm_mute(FALSE);
+				}
+			}			
+			//Add End
 			
 #if !defined( AEE_SIMULATOR)
             FmRadio_PowerUp( pMe);
 			//fm_mute(FALSE);		//Del By zzg 2010_07_18
-
-			//Add By zzg 2010_07_18
-			if (HS_HEADSET_ON())
-			{
-				fm_mute(FALSE);
-			}			
-			//Add End
 			
 #endif//#if !defined( AEE_SIMULATOR)
 
@@ -853,23 +858,24 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         return TRUE;
 
         case EVT_APP_STOP:
+			DBGPRINTF("***zzg FmRadio_HandleEvent EVT_APP_STOP***");
             if( pMe->startFromBackground) 
             {
-            	ISHELL_CancelTimer( pMe->m_pShell, 0,pMe);
+            	ISHELL_CancelTimer( pMe->m_pShell, 0, pMe);
             	return TRUE;
             }
+			
 #if !defined( AEE_SIMULATOR)
             if( !pMe->runOnBackground)
             {
-                FmRadio_PowerDown( pMe);
-				
-				//Add By zzg 2010_07_18
+            	//Add By zzg 2010_07_18
 				if (HS_HEADSET_ON())
 				{
 					fm_mute(TRUE);
 				}			
 				//Add End
 				
+                FmRadio_PowerDown( pMe);								
             #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 				FmRadio_SaveChannelList( pMe);
 			#endif
@@ -884,17 +890,21 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             return TRUE;
 
         case EVT_APP_SUSPEND:
+			DBGPRINTF("***zzg FmRadio_HandleEvent EVT_APP_SUSPEND***");
 #if !defined( AEE_SIMULATOR)
-            FmRadio_PowerDown( pMe);
+            FmRadio_PowerDown( pMe);			
+#endif//#if !defined( AEE_SIMULATOR)
 
 			//Add By zzg 2010_07_18
-			if (HS_HEADSET_ON())
+			if( !pMe->runOnBackground)
 			{
-				fm_mute(TRUE);
-			}			
+				if (HS_HEADSET_ON())
+				{
+					fm_mute(TRUE);
+				}			
+			}
 			//Add End
 			
-#endif//#if !defined( AEE_SIMULATOR)
             pMe->m_bSuspending = TRUE;
             (void)ISHELL_CancelTimer( pMe->m_pShell,FmRadio_AppIsReadyCB,pMe);
             return TRUE;
@@ -938,6 +948,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             return FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
+			DBGPRINTF("***zzg FmRadio_HandleEvent EVT_DIALOG_END***");
             if (wParam == 0)
             {
                 return TRUE;
@@ -956,6 +967,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 
         case EVT_NOTIFY:
         {
+			DBGPRINTF("***zzg FmRadio_HandleEvent EVT_NOTIFY***");
 #if !defined( AEE_SIMULATOR)
             if( pMe->runOnBackground)
             {
@@ -995,6 +1007,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 
         case EVT_CLOSEAPP:
         {
+			DBGPRINTF("***zzg FmRadio_HandleEvent EVT_CLOSEAPP***");
             pMe->runOnBackground = FALSE;
             ISHELL_CloseApplet( pMe->m_pShell, FALSE);
             return TRUE;
