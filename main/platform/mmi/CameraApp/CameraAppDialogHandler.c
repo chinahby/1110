@@ -721,6 +721,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             
             CameraApp_InitpopMenu(pMe, popMenu);
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            IMENUCTL_SetActive(popMenu, TRUE);
             return TRUE;
      
         case EVT_DIALOG_START:                   
