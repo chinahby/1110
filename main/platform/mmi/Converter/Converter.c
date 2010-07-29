@@ -186,6 +186,7 @@ int ConverterMod_New(int16  nSize, IShell *ps, void *pHelpers, IModule **ppMod, 
     INIT_VTBL(&gConverterMod,IModule,gModFuncs);
     gConverterMod.m_nRefs = 1;
     *ppMod = (IModule *)&gConverterMod;
+    MSG_FATAL("*ppMod address=%x",*ppMod,0,0);
     return AEE_SUCCESS;
 }
 
@@ -207,6 +208,7 @@ int ConverterMod_New(int16  nSize, IShell *ps, void *pHelpers, IModule **ppMod, 
 ==============================================================================*/
 static uint32 ConverterMod_AddRef(IModule *po)
 {
+    MSG_FATAL("*po address=%x",po,0,0);
     return(++((ConverterMod *)po)->m_nRefs);
 }
 
@@ -228,6 +230,7 @@ static uint32 ConverterMod_AddRef(IModule *po)
 ==============================================================================*/
 static uint32 ConverterMod_Release(IModule *po)
 {
+    MSG_FATAL("po address=%x",po,0,0);
     if (((ConverterMod *) po)->m_nRefs == 0)
     {
         return 0;
@@ -270,6 +273,7 @@ static int ConverterMod_CreateInstance(IModule *po, IShell *pIShell, AEECLSID Cl
     {
         return EFAILED;
     }
+    MSG_FATAL("ppObj address=%x",ppObj,0,0);
     return SUCCESS;
 }
 
@@ -333,7 +337,7 @@ static int  Converter_New(IShell* pIShell, IModule* po, IConverter** ppObj)
 
         (void) ISHELL_AddRef(pIShell);
         (void) IMODULE_AddRef(po);
-
+        MSG_FATAL("pIShell address=%x",pIShell,0,0);
         retVal = Converter_InitAppData(&gConverter);
     }
 
@@ -385,7 +389,7 @@ static uint32  Converter_AddRef(IConverter *pi)
 static uint32  Converter_Release (IConverter *pi)
 {
     register CConverter* pMe = (CConverter*)pi;
-   
+    MSG_FATAL("pMe address=%x",pMe,0,0);
     if (pMe->m_nRefs == 0)
     {
         return 0;
@@ -452,6 +456,7 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
 
 		        return EFAILED;
 		    }
+            MSG_FATAL("m_pIAnn address=%x",pMe->m_pIAnn,0,0);
 			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             pMe->m_bSuspending = FALSE;
             Converter_RunFSM(pMe);
@@ -600,7 +605,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-
+    MSG_FATAL("m_pConfig address=%x",pMe->m_pConfig,0,0);
     if( ISHELL_CreateInstance( pMe->m_pShell,
                              AEECLSID_STATIC,
                              (void **)&pMe->m_pStatic
@@ -610,7 +615,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }    
-
+    MSG_FATAL("m_pStatic address=%x",pMe->m_pStatic,0,0);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                  AEECLSID_LISTCTL,
                                  (void **) &pMe->pUnitMenu1))
@@ -618,7 +623,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-
+    MSG_FATAL("pUnitMenu1 address=%x",pMe->pUnitMenu1,0,0);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                  AEECLSID_LISTCTL,
                                  (void **) &pMe->pUnitMenu2))
@@ -626,7 +631,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-
+    MSG_FATAL("pUnitMenu2 address=%x",pMe->pUnitMenu2,0,0);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                  AEECLSID_TEXTCTL,
                                  (void **) &pMe->pNumber1))
@@ -634,7 +639,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-
+    MSG_FATAL("pNumber1 address=%x",pMe->pNumber1,0,0);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                  AEECLSID_TEXTCTL,
                                  (void **) &pMe->pNumber2))
@@ -642,7 +647,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-
+    MSG_FATAL("pNumber2 address=%x",pMe->pNumber2,0,0);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                 AEECLSID_LISTCTL, 
                                 (void **) &pMe->title))
@@ -650,7 +655,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-    
+    MSG_FATAL("title address=%x",pMe->title,0,0);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                 AEECLSID_MENUCTL, 
                                 (void **) &pMe->currency))
@@ -658,7 +663,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-    
+    MSG_FATAL("currency address=%x",pMe->currency,0,0);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                 AEECLSID_TEXTCTL, 
                                 (void **) &pMe->coeff1))
@@ -666,7 +671,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-    
+    MSG_FATAL("coeff1 address=%x",pMe->coeff1,0,0);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                 AEECLSID_TEXTCTL, 
                                 (void **) &pMe->coeff2)) 
@@ -674,7 +679,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-    
+    MSG_FATAL("coeff2 address=%x",pMe->coeff2,0,0);
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                 AEECLSID_TEXTCTL, 
                                 (void **) &pMe->coeff3))
@@ -682,7 +687,7 @@ static int Converter_InitAppData(CConverter *pMe)
         Converter_FreeAppData( pMe);
         return EFAILED;
     }
-    
+    MSG_FATAL("coeff3 address=%x",pMe->coeff3,0,0);
     Converter_SetMenuPosition(pMe);
 
     return SUCCESS;
@@ -710,77 +715,78 @@ static void Converter_FreeAppData(CConverter *pMe)
     {
         return ;
     }
-    
+    MSG_FATAL("pNumber1 address=%x",pMe->pNumber1,0,0);
     if(pMe->pNumber1)
     {
         ITEXTCTL_Release(pMe->pNumber1);
         pMe->pNumber1 = NULL;
     }
-
+    MSG_FATAL("pNumber2 address=%x",pMe->pNumber2,0,0);
     if(pMe->pNumber2)
     {
         ITEXTCTL_Release(pMe->pNumber2);
         pMe->pNumber2 = NULL;
     }
-    
+    MSG_FATAL("pUnitMenu1 address=%x",pMe->pUnitMenu1,0,0);
     if(pMe->pUnitMenu1)
     {
         IMENUCTL_Release(pMe->pUnitMenu1);
         pMe->pUnitMenu1 = NULL;
     }
-    
+    MSG_FATAL("pUnitMenu2 address=%x",pMe->pUnitMenu2,0,0);
     if(pMe->pUnitMenu2)
     {
         IMENUCTL_Release(pMe->pUnitMenu2);
         pMe->pUnitMenu2 = NULL;
     }
-
+    MSG_FATAL("title address=%x",pMe->title,0,0);
     if(pMe->title)
     {
         IMENUCTL_Release(pMe->title);
         pMe->title = NULL;
     }
-    
+    MSG_FATAL("currency address=%x",pMe->currency,0,0);
     if(pMe->currency)
     {
         IMENUCTL_Release(pMe->currency);
         pMe->currency = NULL;
     }
-    
+    MSG_FATAL("coeff1 address=%x",pMe->coeff1,0,0);
     if(pMe->coeff1)
     {
         ITEXTCTL_Release(pMe->coeff1);
         pMe->coeff1 = NULL;
     }
-    
+    MSG_FATAL("coeff2 address=%x",pMe->coeff2,0,0);
     if(pMe->coeff2)
     {
         ITEXTCTL_Release(pMe->coeff2);
         pMe->coeff2 = NULL;
     }
-    
+    MSG_FATAL("coeff3 address=%x",pMe->coeff3,0,0);
     if(pMe->coeff3)
     {
         ITEXTCTL_Release(pMe->coeff3);
         pMe->coeff3 = NULL;
     }
-    
+    MSG_FATAL("coefficient address=%x",coefficient,0,0);
     if(coefficient)
     {
-        FREE(coefficient);
+       // FREE(coefficient);数组不需要手动释放，否则会引起重复删除
     }
-    
+    MSG_FATAL("m_pConfig address=%x",pMe->m_pConfig,0,0);
     if(pMe->m_pConfig)
     {
         ICONFIG_Release(pMe->m_pConfig);
         pMe->m_pConfig = NULL;
     } 
-    
+    MSG_FATAL("m_pStatic address=%x",pMe->m_pStatic,0,0);
     if( pMe->m_pStatic != NULL)
     {
         ISTATIC_Release(pMe->m_pStatic);
         pMe->m_pStatic = NULL;        
     }
+    MSG_FATAL("m_pIAnn address=%x",pMe->m_pIAnn,0,0);
 	if(pMe->m_pIAnn)
     {
         IANNUNCIATOR_Release(pMe->m_pIAnn);
