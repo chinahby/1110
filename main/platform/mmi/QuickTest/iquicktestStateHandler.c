@@ -85,6 +85,9 @@ static NextFSMAction QUICKTESTSTRestoreFactoryHandler(CQuickTest *pMe);
 
 // 状态 QUICKTESTST_EXIT 处理函数
 static NextFSMAction QUICKTESTSTExitHandler(CQuickTest *pMe);
+// 状态 QUICKTESTST_CAMERATEST 处理函数
+static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe);
+
 
 /*==============================================================================
                                  全局数据
@@ -168,6 +171,10 @@ NextFSMAction QuickTest_ProcessState(CQuickTest *pMe)
 
         case QUICKTESTST_FMTEST:
             retVal = QUICKTESTSTFMTestHandler(pMe);
+            break;
+
+        case QUICKTESTST_CAMERATEST:
+            retVal = QUICKTESTSTCAMERATestHandler(pMe);
             break;
 
         case QUICKTESTST_SDTEST:
@@ -305,6 +312,10 @@ static NextFSMAction QUICKTESTSTMainHandler(CQuickTest *pMe)
         case DLGRET_FMTEST:
             MOVE_TO_STATE(QUICKTESTST_FMTEST)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_CAMERATEST:
+            MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
+            return NFSMACTION_CONTINUE;            
 
         case DLGRET_SDTEST:
             MOVE_TO_STATE(QUICKTESTST_SDTEST)
@@ -575,7 +586,8 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(QUICKTESTST_SDTEST)
+            //MOVE_TO_STATE(QUICKTESTST_SDTEST)
+            MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
             return NFSMACTION_CONTINUE;
 
         default:
@@ -584,6 +596,31 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe)
 
     return NFSMACTION_WAIT;
 }//
+
+static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_CAMERA, "Formquicktest");
+            pMe->m_isFormCamera = TRUE;
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(QUICKTESTST_SDTEST)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            break;
+    }
+    return NFSMACTION_WAIT;
+}//
+
 /*==============================================================================
 QUICKTESTSTSDTestHandler
 

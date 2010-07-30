@@ -315,7 +315,7 @@ static int CQuickTest_InitData(CQuickTest *pMe)
    pMe->m_eDlgRet = DLGRET_CREATE;
    pMe->m_bNotOverwriteDlgRet = FALSE;
    pMe->m_mainMenuSel = 0;
-
+   pMe->m_isFormCamera = FALSE;
    if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_RINGERMGR,
                                             (void **)&pMe->m_pRingerMgr)) 
@@ -517,7 +517,6 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
 {
     CQuickTest *pMe = (CQuickTest*)pi;
     AEEAppStart *as;
-
     switch (eCode)
     {
         case EVT_APP_START:
@@ -568,7 +567,11 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             pMe->m_pDisplay = as->pDisplay;
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc;
-
+            if(pMe->m_isFormCamera)
+            {
+                MOVE_TO_STATE(QUICKTESTST_SDTEST)
+                pMe->m_isFormCamera = FALSE;
+            }
             CQuickTest_RunFSM(pMe);
             return TRUE;
 
@@ -582,6 +585,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:
+            MSG_FATAL("CQuickTest_HandleEvent EVT_USER_REDRAW",0,0,0);
             (void) QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
@@ -599,6 +603,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             {
                 return TRUE;
             }
+            MSG_FATAL("CQuickTest_HandleEvent EVT_KEY_PRESS",0,0,0);
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_RELEASE:
@@ -606,6 +611,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             {
                 return TRUE;
             }
+            MSG_FATAL("CQuickTest_HandleEvent EVT_KEY_RELEASE",0,0,0);
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY:
@@ -613,6 +619,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             {
                 return TRUE;
             }
+            MSG_FATAL("CQuickTest_HandleEvent EVT_KEY",0,0,0);
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_COMMAND:
@@ -620,6 +627,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             {
                 return TRUE;
             }
+            MSG_FATAL("CQuickTest_HandleEvent EVT_COMMAND",0,0,0);
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
@@ -628,6 +636,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
                 return TRUE;
             }
             pMe->m_bAppIsReady = FALSE;
+            MSG_FATAL("CQuickTest_HandleEvent EVT_DIALOG_END",0,0,0);
             (void) QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveDlg = NULL;
 

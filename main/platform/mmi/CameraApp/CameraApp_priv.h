@@ -320,6 +320,7 @@ typedef struct _CCameraApp
     IMedia               *m_pMedia;
     IFileMgr             *m_pFileMgr;
     IAnnunciator         *m_pIAnn;
+    boolean              m_isFormQuicktest;
 } CCameraApp;
 
 /*==============================================================================                         

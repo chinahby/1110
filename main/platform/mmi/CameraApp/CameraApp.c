@@ -529,7 +529,7 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
 
     pMe->m_pCamera = NULL;  
     pMe->m_pMedia = NULL;
-
+    pMe->m_isFormQuicktest = FALSE;
     MEMSET(&pMe->m_CallBack, 0, sizeof(AEECallback));
 
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
@@ -727,6 +727,13 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
           
                 pMe->m_pDisplay = as->pDisplay;
                 (void)IDISPLAY_AddRef(pMe->m_pDisplay);
+            }
+            if(as->pszArgs != NULL)
+            {
+                if(STRCMP(as->pszArgs, "Formquicktest") == 0)
+                {
+                    pMe->m_isFormQuicktest = TRUE;
+                }
             }
             pMe->m_rc = as->rc;
             pMe->m_bSuspending = FALSE;

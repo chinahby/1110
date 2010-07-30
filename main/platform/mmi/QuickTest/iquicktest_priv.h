@@ -88,6 +88,7 @@ typedef enum DLGRetValue
    DLGRET_BACKLIGHTTEST,      //±≥π‚≤‚ ‘
    DLGRET_FLIPTEST,           //∑≠∏«≤‚ ‘
    DLGRET_FMTEST,             //FM≤‚ ‘
+   DLGRET_CAMERATEST,               //camera ≤‚ ‘
    DLGRET_SDTEST,             //SD≤‚ ‘
    DLGRET_VERTEST,            //VER≤‚ ‘
    DLGRET_LCDTEST,            //LCD≤‚ ‘
@@ -109,6 +110,7 @@ typedef enum _QuickTestState
    QUICKTESTST_BACKLIGHTTEST,
    QUICKTESTST_FLIPTEST,
    QUICKTESTST_FMTEST,
+   QUICKTESTST_CAMERATEST,
    QUICKTESTST_SDTEST,
    QUICKTESTST_VERTEST,
    QUICKTESTST_LCDTEST,
@@ -192,6 +194,7 @@ typedef struct _CQuickTest {
 #ifdef FEATURE_SUPPORT_BT_APP
     dilag_type m_dilag_type;
 #endif
+    boolean m_isFormCamera;
 } CQuickTest;
 /*==============================================================================
                                  ∫Í∂®“Â∫Õ≥£ ˝

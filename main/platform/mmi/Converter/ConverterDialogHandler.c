@@ -260,6 +260,7 @@ static boolean  Converter_MsgBoxEvent(CConverter *pMe,
                 {
                     return FALSE;
                 }        
+                MSG_FATAL("pStatic address=%x", pStatic,0,0);
                 ISTATIC_SetRect(pStatic, &rect);
            }
         }
@@ -498,7 +499,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             {
                 m_inputNumber = (char *)MALLOC((MAX_INPUT_NUMBER + 3)* sizeof(char));
             }
-            
+            MSG_FATAL("m_inputNumber address=%x", m_inputNumber,0,0);
             switch(pMe->m_converterMode)
             {
                 case CONVERTER_MODE_CURRENCY:
@@ -780,6 +781,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
 			#endif
             //»­¼ýÍ·
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
+            MSG_FATAL("Image address=%x",Image,0,0);
             if(Image)
             {
                 //IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2);
@@ -793,6 +795,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             }
             
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
+            MSG_FATAL("Image address=%x",Image,0,0);
             if(Image)
             {
                 //IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT + (pMe->dyMenu - ARROW_HEIGHT)/2);
@@ -822,7 +825,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 IIMAGE_Release(Image);
                 Image = NULL;
             }
-            #endif
+#endif
 
             //»­µ×Ìõ
             nLen = STRLEN(m_inputNumber);
@@ -1468,7 +1471,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             int i = 0;
             m_inputNumber = (char *)MALLOC((MAX_INPUT_NUMBER + 3)* sizeof(char));
             bChangable = FALSE;
-            
+            MSG_FATAL("m_inputNumber address=%x", m_inputNumber,0,0);
             for(i=0;i<CONVERTER_CURRENCY_NUMBER;i++)
             {
                 (void)IMENUCTL_AddItem(pMe->title,
@@ -1538,6 +1541,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
 
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
+            MSG_FATAL("Image address=%x", Image,0,0);
             IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
             if(Image)
             {
@@ -1633,6 +1637,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
         {
             if (NULL != m_inputNumber)
             {
+                MSG_FATAL("m_inputNumber address=%x", m_inputNumber,0,0);
                 FREE(m_inputNumber);
                 m_inputNumber = NULL;
             }

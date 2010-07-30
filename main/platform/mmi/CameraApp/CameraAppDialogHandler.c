@@ -631,6 +631,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 return FALSE;
 
             case AVK_CLR:   
+                if(pMe->m_isFormQuicktest)
+                {
+                    pMe->m_isFormQuicktest = FALSE;
+                    ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+                    return TRUE;
+                }                  
                 if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
                 {
                     pMe->m_bIsPreview = FALSE;
