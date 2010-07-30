@@ -910,10 +910,13 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             return TRUE;
 
         case EVT_DIALOG_INIT:
+			DBGPRINTF("***zzg FmRadio_HandleEvent EVT_DIALOG_INIT***");
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
         case EVT_DIALOG_START:
         case EVT_USER_REDRAW:
+			DBGPRINTF("***zzg FmRadio_HandleEvent EVT_DIALOG_START ecode=%x***", eCode);
+			
             if( eCode == EVT_USER_REDRAW)
             {
                 (void)ISHELL_SetTimer( pMe->m_pShell,                                       
@@ -934,7 +937,21 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                 )
             )
             {
-                pMe->runOnBackground = (wParam == AVK_END);
+                //pMe->runOnBackground = (wParam == AVK_END);
+
+				//Add By zzg 2010_07_30
+				if ((pMe->refuseReason != FM_RADIO_REFUSE_REASON_NO_HEADSET) 
+					&& (pMe->refuseReason != FM_RADIO_REFUSE_REASON_HEADSET_PLUG_OUT))
+				{
+					pMe->runOnBackground = (wParam == AVK_END);
+				}
+				else
+				{
+					pMe->runOnBackground = FALSE;
+				}
+				//Add End
+				
+				
                 pMe->opMode = FM_RADIO_OPMODE_PLAY;
                 ISHELL_CloseApplet( pMe->m_pShell, wParam == AVK_END ? TRUE : FALSE);
                 return TRUE;
