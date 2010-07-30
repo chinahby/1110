@@ -646,7 +646,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_pSendList = WmsApp_GetSendList();
     if (NULL == pMe->m_pSendList)
     {
-        MSG_ERROR ("m_pSendList could not be created", 0, 0, 0);
+        DBGPRINTF ("m_pSendList could not be created");
         return EFAILED;
     }
     if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_SOUND, (void**)&pMe->m_pSound) != SUCCESS)
@@ -657,7 +657,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_pUserDataMOList = WmsApp_GetUserDataMOList();
     if (NULL == pMe->m_pUserDataMOList)
     {
-        MSG_ERROR ("m_pUserDataMOList could not be created", 0, 0, 0);
+        DBGPRINTF ("m_pUserDataMOList could not be created");
         return EFAILED;
     }
     
@@ -665,7 +665,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG,
             (void **)&pMe->m_pConfig) != SUCCESS)
     {
-        ERR("Failed to create AEECLSID_CONFIG",0,0,0);
+        DBGPRINTF("Failed to create AEECLSID_CONFIG");
         CWmsApp_FreeAppData(pMe);
         return EFAILED;
     }
@@ -673,7 +673,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_VECTOR,
             (void**)&pMe->m_pSaveNumList) != SUCCESS )
     {
-        ERR("Failed to Create AEECLSID_IVECTOR",0,0,0);
+        DBGPRINTF("Failed to Create AEECLSID_IVECTOR");
         pMe->m_pSaveNumList = NULL;
         CWmsApp_FreeAppData(pMe);
         return EFAILED;
@@ -683,7 +683,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_WMS, 
             (void **) &pMe->m_pwms) != SUCCESS)
     {
-        MSG_ERROR ("pMe->m_pwms could not be created", 0, 0, 0);
+        DBGPRINTF ("pMe->m_pwms could not be created");
         return EFAILED;
     }
     
@@ -691,7 +691,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CALLMANAGER, 
             (void **) &pMe->m_pICM) != SUCCESS)
     {
-        MSG_ERROR ("pMe->m_pICM could not be created", 0, 0, 0);
+        DBGPRINTF ("pMe->m_pICM could not be created");
         return EFAILED;
     }
 #endif    
@@ -699,18 +699,17 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, 
             (void **) &pMe->m_pIAnn) != SUCCESS)
     {
-        MSG_ERROR ("pMe->m_pIAnn could not be created", 0, 0, 0);
+        DBGPRINTF ("pMe->m_pIAnn could not be created");
         return EFAILED;
     }
     IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 	DBGPRINTF("IANNUNCIATOR_SetFieldIsActiveEx::::wmsapp111:::");
-	MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::wmsapp111:::",0,0,0);
     //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     // Create IAlert instance
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ALERT, 
             (void **) &pMe->m_pAlert) != SUCCESS)
     {
-        MSG_ERROR ("pMe->m_pAlert could not be created", 0, 0, 0);
+        DBGPRINTF ("pMe->m_pAlert could not be created");
         return EFAILED;
     }
     
@@ -718,7 +717,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
             (void **) &pMe->m_pDisplay) != SUCCESS)
     {
-        MSG_ERROR ("pMe->m_pDisplay could not be created", 0, 0, 0);
+        DBGPRINTF ("pMe->m_pDisplay could not be created");
         return EFAILED;
     }
 
@@ -1283,7 +1282,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                                         EVT_UPDATEREGSTATUS,
                                         1,
                                         0);    
-                             ERR("ISHELL_PostEvent EVT_UPDATEREGSTATUS",0,0,0);
+                             DBGPRINTF("ISHELL_PostEvent EVT_UPDATEREGSTATUS");
                         }
                     }
                     
@@ -1395,7 +1394,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 {
                     wms_submit_report_info_s_type *pInfo = MALLOC(sizeof(wms_submit_report_info_s_type));
                     
-                    ERR("Command WMS_CMD_MSG_SEND Failed because of %d!", pStatus->cmd_err, 0, 0);
+                    DBGPRINTF("Command WMS_CMD_MSG_SEND Failed because of %d!", pStatus->cmd_err);
                     
                     if (NULL != pInfo)
                     {
@@ -1653,7 +1652,7 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
         return;
     }
     
-    ERR("wItemCount = %d",wItemCount,0,0);
+    DBGPRINTF("wItemCount = %d",wItemCount);
 
     // 计算需要的总页数
     wTotalPages = wItemCount / (MAXITEMS_ONEPAGE);
@@ -2451,7 +2450,7 @@ static IVector * WmsApp_GetSendList(void)
     nRet = ISHELL_CreateInstance(pShell,AEECLSID_VECTOR,(void**)&gMultiSendList);
     if (nRet != SUCCESS )
     {
-        ERR("Failed to Create gMultiSendList !",0,0,0);
+        DBGPRINTF("Failed to Create gMultiSendList !");
         gMultiSendList = NULL;
     }
     else
@@ -2572,7 +2571,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
 			
 #ifndef WIN32
 			DBGPRINTF("***zzg CWmsApp_GetspecmsgEx wms_msg_send***");
-	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)
+	        if (wms_msg_send(WMS_CLIENT_FLOATING1, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)
 	        {
 	        	DBGPRINTF("***zzg CWmsApp_GetspecmsgEx wms_msg_send SUCCESS***");
 	            nRet = SUCCESS;
@@ -2596,7 +2595,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
 	        }
 			
 #ifndef WIN32
-	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)
+	        if (wms_msg_send(WMS_CLIENT_FLOATING1, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)
 	        {
 	            nRet = SUCCESS;
 	        }
@@ -2921,20 +2920,20 @@ void WmsApp_CfgCb(wms_cfg_event_e_type event, wms_cfg_event_info_s_type *pInfo)
     
     if (pShell == NULL)
     {
-        MSG_ERROR("WMSAPP: pShell = NULL",0,0,0);
+        DBGPRINTF("WMSAPP: pShell = NULL");
         return;
     }
     
     pInfobuf = MALLOC(sizeof(wms_cfg_event_info_s_type));
     if (pInfobuf == NULL)
     {
-        MSG_ERROR("WMSAPP: pInfobuf = NULL",0,0,0);
+        DBGPRINTF("WMSAPP: pInfobuf = NULL");
         return;
     }
     
     (void)MEMCPY(pInfobuf, pInfo, sizeof(wms_cfg_event_info_s_type));
 
-    MSG_ERROR("WmsApp_CfgCb: %d", event, 0, 0);
+    DBGPRINTF("WmsApp_CfgCb: %d", event);
     switch (event)
     {
 //        case WMS_CFG_EVENT_GW_READY:
@@ -2983,7 +2982,7 @@ void WmsApp_CfgCb(wms_cfg_event_e_type event, wms_cfg_event_info_s_type *pInfo)
 //            break;
             
         default:
-            MSG_ERROR("Invalid cfg event %d", event, 0,0);
+            DBGPRINTF("Invalid cfg event %d", event);
             WMSAPPU_FREE(pInfobuf)
             break;
     }
@@ -2996,11 +2995,6 @@ void WmsApp_CfgCb(wms_cfg_event_e_type event, wms_cfg_event_info_s_type *pInfo)
                                    evt,
                                    0, 
                                    (uint32) pInfobuf);
-                        
-        if (btRet == FALSE)
-        {
-            MSG_HIGH("Event  %x could not be posted!", evt,0,0);
-        }
     }
 } // WmsApp_CfgCb
 
@@ -3034,19 +3028,19 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
     
     if (pShell == NULL)
     {
-        MSG_ERROR("WMSAPP: pShell = NULL",0,0,0);
+        DBGPRINTF("WMSAPP: pShell = NULL");
         return;
     }
     
     pInfobuf = MALLOC(sizeof(wms_msg_event_info_s_type));
     if (pInfobuf == NULL)
     {
-        MSG_ERROR("WMSAPP: msg_event_buf = NULL",0,0,0);
+        DBGPRINTF("WMSAPP: msg_event_buf = NULL");
         return;
     }
     
     (void)MEMCPY(pInfobuf, pInfo, sizeof(wms_msg_event_info_s_type));
-    MSG_ERROR("WmsApp_MsgCb: %d", event, 0, 0);
+    DBGPRINTF("WmsApp_MsgCb: %d", event);
     switch (event)
     {
         case WMS_MSG_EVENT_SEND:
@@ -3145,7 +3139,7 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
 //            break;
             
         default:
-            MSG_ERROR("Invalid msg event %d", event, 0,0);
+            DBGPRINTF("Invalid msg event %d", event);
             break;
     } // switch
     
@@ -3160,7 +3154,6 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
                         
         if (btRet == FALSE)
         {
-            MSG_HIGH("Event  %x could not be posted!", evt,0,0);
             WMSAPPU_FREE(pInfobuf)
         }
     }
@@ -3199,20 +3192,20 @@ void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo)
     
     if (pShell == NULL)
     {
-        MSG_ERROR("WMSAPP: pShell = NULL",0,0,0);
+        DBGPRINTF("WMSAPP: pShell = NULL");
         return;
     }
     
     pInfobuf = MALLOC(sizeof(wms_bc_event_info_s_type));
     if (pInfobuf == NULL)
     {
-        MSG_ERROR("WMSAPP: bc_event_buf = NULL",0,0,0);
+        DBGPRINTF("WMSAPP: bc_event_buf = NULL");
         return;
     }
     
     (void)MEMCPY(pInfobuf, pInfo, sizeof(wms_bc_event_info_s_type));
     
-    MSG_ERROR("WmsApp_BcCb: %d", event, 0, 0);
+    DBGPRINTF("WmsApp_BcCb: %d", event);
 
     switch (event)
     {
@@ -3236,7 +3229,6 @@ void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo)
             
         default:
             evt = 0;
-            MSG_HIGH("BC event not recognized!!!",0,0,0);
             WMSAPPU_FREE(pInfobuf)
             break;
     }
@@ -3249,10 +3241,9 @@ void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo)
                                    evt,
                                    (uint16)event, 
                                    (uint32)pInfobuf);
-                        
         if (btRet == FALSE)
         {
-            MSG_HIGH("Event  %x (%x) could not be posted!", evt,event,0);
+            WMSAPPU_FREE(pInfobuf)
         }
     }
 }
@@ -3286,19 +3277,19 @@ void WmsApp_DcCb(wms_dc_event_e_type  event,wms_dc_event_info_s_type  *info_ptr)
     
     if (pShell == NULL)
     {
-        MSG_ERROR("WMSAPP: pShell = NULL",0,0,0);
+        DBGPRINTF("WMSAPP: pShell = NULL");
         return;
     }
     
     pInfobuf = MALLOC(sizeof(wms_dc_event_info_s_type));
     if(pInfobuf == NULL)
     {
-        MSG_ERROR("WMSAPP: dc event info buf = NULL", 0, 0, 0);
+        DBGPRINTF("WMSAPP: dc event info buf = NULL");
         return;
     }
     
     (void) MEMCPY(pInfobuf, info_ptr, sizeof(wms_dc_event_info_s_type));
-    MSG_ERROR("WmsApp_DcCb: %d", event, 0, 0);
+    DBGPRINTF("WmsApp_DcCb: %d", event);
     switch(event)
     {
 //        case WMS_DC_EVENT_CONNECTED:
@@ -3447,7 +3438,7 @@ static void WmsApp_Init(WmsApp *pMe)
                                   WMS_MESSAGE_MODE_CDMA);
         if (nRet != SUCCESS)
         {
-            MSG_ERROR("wms_bc_mm_get_config(CDMA)", 0, 0, 0);
+            DBGPRINTF("wms_bc_mm_get_config(CDMA)");
         }
         
         nRet = IWMS_BcMmGetPref(pMe->m_pwms,
@@ -3457,7 +3448,7 @@ static void WmsApp_Init(WmsApp *pMe)
                                 WMS_MESSAGE_MODE_CDMA);
         if (nRet != SUCCESS)
         {
-            MSG_ERROR("wms_bc_mm_get_pref(CDMA)", 0, 0, 0);
+            DBGPRINTF("wms_bc_mm_get_pref(CDMA)");
         }
         
         nRet = IWMS_BcMmGetTable(pMe->m_pwms,
@@ -3467,7 +3458,7 @@ static void WmsApp_Init(WmsApp *pMe)
                                  WMS_MESSAGE_MODE_CDMA);
         if (nRet != SUCCESS)
         {
-            MSG_ERROR("wms_bc_mm_get_table(CDMA)", 0, 0, 0);
+            DBGPRINTF("wms_bc_mm_get_table(CDMA)");
         }
 #else // FEATURE_CDSMS_BROADCAST
         
@@ -3477,7 +3468,7 @@ static void WmsApp_Init(WmsApp *pMe)
                                 NULL);
         if (nRet != SUCCESS)
         {
-            MSG_ERROR("wms_bc_get_config", 0, 0, 0);
+            DBGPRINTF("wms_bc_get_config");
         }
         
         nRet = IWMS_BcGetPref(pMe->m_pwms,
@@ -3486,7 +3477,7 @@ static void WmsApp_Init(WmsApp *pMe)
                               NULL);
         if (nRet != SUCCESS)
         {
-            MSG_ERROR("wms_bc_get_pref", 0, 0, 0);
+            DBGPRINTF("wms_bc_get_pref");
         }
         
         nRet = IWMS_BcGetTable(pMe->m_pwms,
@@ -3495,7 +3486,7 @@ static void WmsApp_Init(WmsApp *pMe)
                                NULL);
         if (nRet != SUCCESS)
         {
-            MSG_ERROR("wms_bc_get_table", 0, 0, 0);
+            DBGPRINTF("wms_bc_get_table");
         }
 #endif // FEATURE_CDSMS_BROADCAST
 #endif // FEATURE_BROADCAST_SMS
@@ -3508,7 +3499,7 @@ static void WmsApp_Init(WmsApp *pMe)
         /* Set up DC auto disconnect */
         if (nRet != SUCCESS)
         {
-            MSG_ERROR("dc enable auto disconnect",0,0,0);
+            DBGPRINTF("dc enable auto disconnect");
         }
     }
     
@@ -3616,7 +3607,7 @@ static void WmsApp_UpdateMemoryStatus(WmsApp *pMe, wms_memory_status_s_type *ptr
             break;
         
         default:
-            MSG_ERROR("Not support this mem_store :%d",ptr->mem_store,0,0);
+            DBGPRINTF("Not support this mem_store :%d",ptr->mem_store);
             break;
     }
 }
@@ -4018,7 +4009,7 @@ static IVector * WmsApp_GetUserDataMOList(void)
     nRet = ISHELL_CreateInstance(pShell,AEECLSID_VECTOR,(void**)&gUserDataMOList);
     if (nRet != SUCCESS )
     {
-        ERR("Failed to Create gMultiSendList !",0,0,0);
+        DBGPRINTF("Failed to Create gMultiSendList !",0,0,0);
         gUserDataMOList = NULL;
     }
     
@@ -4077,7 +4068,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
             if (SUCCESS != IVector_AddElement(pMe->m_pUserDataMOList, pUserdata))
             {
                 FREE(pUserdata);
-                ERR("Add item Failed",0,0,0);
+                DBGPRINTF("Add item Failed",0,0,0);
             }
         }
         
@@ -4190,7 +4181,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         pUserdata = (wms_cdma_user_data_s_type *)MALLOC(nSize);
         if (NULL == pUserdata)
         {
-            ERR("Malloc Failed!",0,0,0);
+            DBGPRINTF("Malloc Failed!",0,0,0);
             break;
         }
         
@@ -4232,7 +4223,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
             if (NULL == szText)
             {
                 FREE(pUserdata);
-                ERR("Malloc Failed!",0,0,0);
+                DBGPRINTF("Malloc Failed!",0,0,0);
                 
                 return;
             }
@@ -4269,7 +4260,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
             if (SUCCESS != IVector_AddElement(pMe->m_pUserDataMOList, pUserdata))
             {
                 FREE(pUserdata);
-                ERR("Add item Failed",0,0,0);
+                DBGPRINTF("Add item Failed",0,0,0);
                 return;
             }
         }
@@ -4290,7 +4281,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
             if (SUCCESS != IVector_AddElement(pMe->m_pUserDataMOList, pUserdata))
             {
                 FREE(pUserdata);
-                ERR("Add item Failed",0,0,0);
+                DBGPRINTF("Add item Failed",0,0,0);
                 return;
             }
         }
@@ -4326,7 +4317,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
             if (SUCCESS != IVector_AddElement(pMe->m_pUserDataMOList, pUserdata))
             {
                 FREE(pUserdata);
-                ERR("Add item Failed",0,0,0);
+                DBGPRINTF("Add item Failed",0,0,0);
                 return;
             }
         }
@@ -4348,7 +4339,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
             if (SUCCESS != IVector_AddElement(pMe->m_pUserDataMOList, pUserdata))
             {
                 FREE(pUserdata);
-                ERR("Add item Failed",0,0,0);
+                DBGPRINTF("Add item Failed",0,0,0);
                 return;
             }
         }
@@ -4432,7 +4423,7 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     pCltTsData = (wms_client_ts_data_s_type *)MALLOC(nSize);
     if (NULL == pCltTsData)
     {
-        ERR("sys_malloc Failed!",0,0,0);
+        DBGPRINTF("sys_malloc Failed!",0,0,0);
         return NULL;
     }
     MEMSET(pCltTsData, 0, nSize);
@@ -4442,7 +4433,7 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     if (NULL == pCltMsg)
     {
         FREE(pCltTsData);
-        ERR("sys_malloc Failed!",0,0,0);
+        DBGPRINTF("sys_malloc Failed!",0,0,0);
         return NULL;
     }
     
@@ -4663,7 +4654,7 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
             break;
     }
     
-    ERR("pRptInfo->report_status = %d", pRptInfo->report_status, 0, 0);
+    DBGPRINTF("pRptInfo->report_status = %d", pRptInfo->report_status, 0, 0);
     
 	if (pRptInfo->report_status != WMS_RPT_OK)
 	{
@@ -4997,7 +4988,7 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
         pMe->m_routes.pp_routes[WMS_MESSAGE_CLASS_CDMA].route = rt.route;
         pMe->m_routes.pp_routes[WMS_MESSAGE_CLASS_CDMA].mem_store = rt.mem_store;
         
-        ERR("rt.mem_store=%d", rt.mem_store, 0, 0);
+        DBGPRINTF("rt.mem_store=%d", rt.mem_store, 0, 0);
         if (rt.route != WMS_ROUTE_TRANSFER_ONLY)
         {
             (void)IWMS_CfgSetRoutes(pMe->m_pwms,

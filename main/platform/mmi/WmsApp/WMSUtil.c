@@ -3434,7 +3434,7 @@ int GetSeamlessSMSInfo(char *szInfoEx, int nSize)
     if( ui_get_nv(NV_MIN2_I, &nvi) != NV_DONE_S)
     {
     	MSG_FATAL("Get NV_MIN2_I Failed!!!",0,0,0);
-		return EFAILED;
+		return 0;
     }
     else
     {
@@ -3451,7 +3451,7 @@ int GetSeamlessSMSInfo(char *szInfoEx, int nSize)
 	if( ui_get_nv(NV_MIN1_I, &nvi) != NV_DONE_S)
 	{
 		MSG_FATAL("Get NV_MIN1_I Failed!!!",0,0,0);
-		return EFAILED;
+		return 0;
  	}
  	else
  	{
