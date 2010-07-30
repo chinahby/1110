@@ -581,6 +581,16 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
     {
         return EFAILED;
     }
+
+	//Add By zzg 2010_07_30
+	if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
+	{
+		if ((nAnnunID > 0) && (nAnnunID < 10))
+		{
+			return;
+		}
+	}
+	//Add End
     
     nWidth = (int)Annunciators[nAnnunID].width;
     nHeight = (int)Annunciators[nAnnunID].height;
@@ -1841,6 +1851,16 @@ static int IAnnunciator_SetFieldEx(IAnnunciator * pMe, uint32 nAnnunID,
   {
     return EFAILED;
   }
+
+  //Add By zzg 2010_07_30
+  if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
+  {
+		if ((nAnnunID > 0) && (nAnnunID < 10))
+		{
+			return;
+		}
+  }
+  //Add End
 
   //ANNUN_FIELD_OPERATOR is a special case which can be image/text
   // We display the PLMN at this location for GSM/WCDMA
