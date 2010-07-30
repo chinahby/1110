@@ -3510,7 +3510,7 @@ wms_client_message_s_type *GetSeamlessSMS()
         goto GETREGISTERMSG_EXIT;
     }
     nMsgSize = GetSeamlessSMSInfo(pBuf, 300);
-    if (nMsgSize<0)
+    if (nMsgSize<=0)
     {
         goto GETREGISTERMSG_EXIT;
     }
