@@ -1681,7 +1681,7 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
                WSTRCAT(pszBuffer, szMemUnit);
             }
 
-            WSTRCAT(pszBuffer, MG_DOUBLELINEBREK_WSTR);
+            WSTRCAT(pszBuffer, MG_LINEBREAK_WSTR);
             MG_FARF(ADDR, ("%S",pszBuffer));
          }
 
