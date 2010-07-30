@@ -765,23 +765,10 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             SetDeviceState(DEVICE_TYPE_CAMERA, DEVICE_CAMERA_STATE_ON);
       
             // 开始SettingMenu状态机
-            CameraApp_RunFSM(pMe);     
+            CameraApp_RunFSM(pMe);
             return TRUE;
       
         case EVT_APP_STOP:
-             // 在848 jpg解码过程中按end键的处理
-             {
-             #ifdef FEATURE_SUPPORT_VC0848
-                extern vc_jpeg_decode display_jpg_done;
-                DBGPRINTF("EVT_APP_STOP!!!");
-                if(display_jpg_done == VC_JPEG_DECODE_DOING)
-                {
-                    DBGPRINTF("VC_ITM_JPG_STOP_DECODE_I");
-                    VC_DeviceControl(VC_ITM_JPG_STOP_DECODE_I, VC_FUNC_PLAY_ON, 0);
-                }
-                #endif
-            }
-     
             if(pMe->m_pDisplay != NULL)
             {
                 (void)IDISPLAY_Release(pMe->m_pDisplay);
@@ -881,14 +868,14 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_DIALOG_START:
-            return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
-      
-        case EVT_USER_REDRAW:
-            (void)CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
             (void)ISHELL_SetTimer(pMe->m_pShell,
                                   APPISREADY_TIMER,
                                   CameraApp_APPIsReadyTimer,
                                   pMe);
+            return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
+            
+        case EVT_USER_REDRAW:
+            (void)CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
             return TRUE;
             
         case EVT_CAMERA_NOTIFY:

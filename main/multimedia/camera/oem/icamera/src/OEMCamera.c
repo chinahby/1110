@@ -3899,9 +3899,9 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
    //If callback comes after ICamera_Release, ignore it.
    if (pme->m_bRelease)
      goto CBExit;
-
+   
    MEMSET(&rspCopy, (int)0, sizeof(rspCopy));
-
+   MSG_FATAL("OEMCamera_CameraLayerCB %d %d %d",cb,func,parm4);
    // Common status handling...
    switch (cb)
    {

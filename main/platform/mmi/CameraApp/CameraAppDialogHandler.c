@@ -205,8 +205,6 @@ static void CameraApp_SetParamAfterPreview(CCameraApp * pMe);
 void CameraApp_InitCameraCheck(void *po);
 
 static void CameraApp_CreateDirectory(CCameraApp *pMe);
-
-static uint16 CameraApp_NotFullScreen(CCameraApp *pMe);
 static void CameraApp_UpdateFrame(CCameraApp *pMe);
 static int CameraApp_SavePhoto(CCameraApp *pMe);
 /*==============================================================================
@@ -391,7 +389,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             pMe->m_wMsgID = IDS_MSG_WAITING;
             pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
 
-            IDISPLAY_SetClipRect(pMe->m_pDisplay, 0); 
+            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
 
             IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);
 
@@ -505,12 +503,13 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 {
     int   nCameraSelfTime = 0;
     
+    DBGPRINTF("CameraApp_PreviewHandleEvent %x %d %x",eCode, wParam, dwParam);
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
             pMe->m_bCapturePic = FALSE;
 
-            IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
+            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
 
 
             (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -535,11 +534,28 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                                   sizeof(pMe->m_nCameraBanding));
             
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
-
+            return TRUE;
+            
+        case EVT_DIALOG_START:              
+            pMe->m_bCanCapture = CameraApp_IsEnoughfMemorySpace(pMe);
+            // For redraw the dialog
+            (void)ISHELL_PostEvent(pMe->m_pShell,
+                                   AEECLSID_APP_CAMERA,
+                                   EVT_USER_REDRAW,
+                                   0,
+                                   0);  
+            return TRUE;
+            
+        case EVT_DIALOG_END:            
+            ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
             // camera preview start....
             if(pMe->m_pCamera && (!pMe->m_bIsPreview))
-            {   
-                CameraApp_CPreviewStart(pMe);                
+            {
+                CameraApp_CPreviewStart(pMe);
+                return TRUE;
             }
             
             if(pMe->m_bRePreview && pMe->m_pCamera)
@@ -548,18 +564,29 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 pMe->m_nCameraState = CAM_PREVIEW;
                 CameraApp_SetParamAfterPreview(pMe);
                 pMe->m_bRePreview = FALSE;
+                return TRUE;
             }
-            return TRUE;
             
-        case EVT_DIALOG_START:              
-            pMe->m_bCanCapture = CameraApp_IsEnoughfMemorySpace(pMe);
-            return TRUE;
+            if(pMe->m_nLeftTime)
+            {
+                IImage *pImage = NULL;
+                
+                pImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_COUNT_DOWN);
+                
+                if(pImage)
+                {
+                    IImage_SetDrawSize(pImage, 60, 60);
+                    
+                    IImage_SetOffset(pImage, (pMe->m_nLeftTime)*60, 0);
+
+                    IImage_Draw(pImage, (pMe->m_rc.dx-60)/2, (pMe->m_rc.dy-60)/2);
+
+                    IImage_Release(pImage);
+
+                    pImage = NULL;
+                }
+            }
             
-        case EVT_DIALOG_END:            
-            ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-            return TRUE;
-      
-        case EVT_USER_REDRAW:
             CameraApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK);
             
             CameraApp_DrawMidPic(pMe);
@@ -615,7 +642,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             case AVK_INFO:
                 // 防止快速按键，导致hotkey Text存在于LCD上 
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-
+                
                 if(!pMe->m_bCanCapture)
                 {
                     if(!pMe->m_bMemoryCardExist)
@@ -729,6 +756,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             return TRUE;
          
         case EVT_DIALOG_END:
+            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
             return TRUE;
       
         case EVT_USER_REDRAW:                         
@@ -740,7 +768,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 pMe->m_bRePreview = FALSE;
             }
                   
-            IDISPLAY_SetClipRect(pMe->m_pDisplay, 0);
+            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
 
             CameraApp_DrawBottomBarText(pMe, BTBAR_SELECT_BACK);
             CameraApp_DrawTopBar(pMe);   
@@ -861,7 +889,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             return TRUE;
             
         case EVT_USER_REDRAW:
-            IDISPLAY_SetClipRect(pMe->m_pDisplay,0);
+            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
             CameraApp_HandleSnapshotPic(pMe);
             return TRUE;
@@ -2551,24 +2579,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     
     captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
     captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
-    
-    if(!CameraApp_NotFullScreen(pMe))
-    {
-        displaySize.cx = g_CameraSizeCFG[0].dx;
-        displaySize.cy = g_CameraSizeCFG[0].dy;
-
-        ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 0);
-        ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 1, 0);
-
-    }
-    else
-    {
-        displaySize.cx = g_CameraSizeCFG[0].dx;
-        displaySize.cy = (g_CameraSizeCFG[0].dx*3)>>2;
-        
-        ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 28);
-        ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEWWITHFRAME, 0, 0);
-    }
+    displaySize.cx = g_CameraSizeCFG[0].dx;
+    displaySize.cy = g_CameraSizeCFG[0].dy;
     
     // set camera quality
     switch(pMe->m_nCameraQuality)
@@ -2593,14 +2605,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_MULTISHOT, 1, 0);
     ICAMERA_SetQuality(pMe->m_pCamera, quality);    
     ICAMERA_SetSize(pMe->m_pCamera, &captureSize);
-    ICAMERA_SetDisplaySize(pMe->m_pCamera, &displaySize);         
-
-    //ICAMERA_RegisterNotify(pMe->m_pCamera, (PFNCAMERANOTIFY)CameraApp_CNotify, pMe);
-                  
-    /*if(SUCCESS == ICAMERA_Preview(pMe->m_pCamera))
-    {
-        IImage_Stop(pMe->m_pImage);
-    }*/  
+    ICAMERA_SetDisplaySize(pMe->m_pCamera, &displaySize);
     
     ICAMERA_Preview(pMe->m_pCamera); 
 
@@ -2739,27 +2744,8 @@ static boolean CameraApp_SelfTimeRecordSnapShot(CCameraApp *pMe)
     }
     else
     {  
-        IImage *pImage = NULL;
-        
         pMe->m_nLeftTime--;
         
-        pImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_COUNT_DOWN);
-
-        if(pImage)
-        {
-            IImage_SetDrawSize(pImage, 60, 60);
-            
-            IImage_SetOffset(pImage, (pMe->m_nLeftTime)*60, 0);
-
-            IImage_Draw(pImage, (pMe->m_rc.dx-60)/2, (pMe->m_rc.dy-60)/2);
-
-            IImage_Release(pImage);
-
-            pImage = NULL;
-
-            IDisplay_UpdateEx(pMe->m_pDisplay, FALSE);
-        }
-
         (void)ISHELL_SetTimer(pMe->m_pShell,
                               1000,
                               (PFNNOTIFY)CameraApp_SelfTimeRecordSnapShot,
@@ -2931,21 +2917,8 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
     captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
     captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
     
-    if(!CameraApp_NotFullScreen(pMe))
-    {
-        displaySize.cx = g_CameraSizeCFG[0].dx;
-        displaySize.cy = g_CameraSizeCFG[0].dy;
-
-        ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 0);
-
-    }
-    else
-    {
-        displaySize.cx = g_CameraSizeCFG[0].dx;
-        displaySize.cy = (g_CameraSizeCFG[0].dx*3)>>2;
-        
-        ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_DISPLAY_OFFSET, 0, 28);
-    }
+    displaySize.cx = g_CameraSizeCFG[0].dx;
+    displaySize.cy = g_CameraSizeCFG[0].dy;
     
     (void)ICONFIG_SetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
@@ -3096,29 +3069,18 @@ static void CameraApp_EventNotify(CCameraApp *pMe, AEECameraNotify *pcn)
 {
     if (!pMe || !pcn || !pMe->m_pCamera)
         return;
-  
+    
     switch (pcn->nCmd){
     case CAM_CMD_START:
         switch (pcn->nStatus){
-        case CAM_STATUS_START:
-            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
-            break;
-            
         case CAM_STATUS_FRAME:
             //It is the image from the viewfinder.
             CameraApp_UpdateFrame(pMe);
             ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
             break;
             
-        case CAM_STATUS_DONE:
-            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_CAMERA_NOTIFY, pcn->nCmd, pcn->nStatus);
-            break;
-            
-        case CAM_STATUS_FAIL:
-            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_CAMERA_NOTIFY, pcn->nCmd, pcn->nStatus);
-            break;
-            
         default:
+            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_CAMERA_NOTIFY, pcn->nCmd, pcn->nStatus);
             break;
         }
         break;
@@ -3167,16 +3129,13 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 {
     if (!pMe || !pMe->m_pCamera)
         return;
-  
+    
     switch (nCmd){
     case CAM_CMD_START:
         switch (nStatus){
         case CAM_STATUS_START:
             break;
-      
-        case CAM_STATUS_FRAME:
-            break;
-    
+            
         case CAM_STATUS_DONE:
             if(pMe->m_nCameraState == CAM_CAPTURE)
             {
@@ -3188,7 +3147,8 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
                 //CLOSE_DIALOG(DLGRET_PICMENU);
             }
             break;
-            
+
+        case CAM_STATUS_ABORT:
         case CAM_STATUS_FAIL:
             if(pMe->m_nCameraState == CAM_CAPTURE)
             {
@@ -3216,6 +3176,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
         break;
     case CAM_CMD_ENCODESNAPSHOT:
         switch (nStatus){
+        case CAM_STATUS_ABORT:
         case CAM_STATUS_FAIL:
             if(pMe->m_nCameraState == CAM_SAVE)
             {
@@ -3277,26 +3238,5 @@ static void CameraApp_CreateDirectory(CCameraApp *pMe)
              IFILEMGR_MkDir(pMe->m_pFileMgr, MG_MASSCARDVIDEO_PATH);
          }   
     }           
-}
-
-// 判断当前的摄像头分辨率设置是否可以为全屏预览
-// 返回值为0表示全屏预览，否则返回y的偏移
-static uint16 CameraApp_NotFullScreen(CCameraApp *pMe)
-{
-    uint16 hCalc,wCalc;
-    if(pMe->m_nCameraSize == OEMNV_CAMERA_SIZE_INDEX_0)
-    {
-        return 0;
-    }
-    
-    // 判断屏幕本身是否为4:3横屏
-    wCalc = (pMe->m_cxWidth-(pMe->m_cxWidth%12))>>2;
-    hCalc = (pMe->m_cyHeight-(pMe->m_cyHeight%12))/3;
-    if(wCalc == hCalc)
-    {
-        return 0;
-    }
-    
-    return (pMe->m_cxWidth>>2)*3;
 }
 

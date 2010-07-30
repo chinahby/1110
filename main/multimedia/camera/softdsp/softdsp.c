@@ -332,6 +332,7 @@ void SoftDSP_Exit(void)
 
 int SoftDSP_Start(const camsensor_static_params_type *camsensor_params)
 {
+    MSG_CAMERADEBUG("SoftDSP_Start", 0, 0, 0);
     g_SoftDSPInfo.camsensor_params = camsensor_params;
     return 0;
 }
@@ -339,7 +340,8 @@ int SoftDSP_Start(const camsensor_static_params_type *camsensor_params)
 int SoftDSP_Stop(void)
 {
     int i;
-    
+
+    MSG_CAMERADEBUG("SoftDSP_Stop", 0, 0, 0);
     SoftDSP_DisableISR();
     g_SoftDSPInfo.msgcb = NULL;
     g_SoftDSPInfo.nPreviewWidth  = 0;
@@ -370,6 +372,7 @@ int SoftDSP_PushPreviewBuff(byte *pBuff)
         {
             g_SoftDSPInfo.ppPreviewBuff[i] = (uint16*)pBuff;
             g_SoftDSPInfo.currPreviewBuff = i;
+            MSG_CAMERADEBUG("SoftDSP_PushPreviewBuff %d 0x%x", g_SoftDSPInfo.currPreviewBuff, g_SoftDSPInfo.ppPreviewBuff[i], 0);
             return 0;
         }
     }
@@ -378,6 +381,7 @@ int SoftDSP_PushPreviewBuff(byte *pBuff)
 
 int SoftDSP_Preview(CAMSoftDSP_MsgCBType cb, int dx, int dy)
 {
+    MSG_CAMERADEBUG("SoftDSP_Preview %d %d", dx, dy, 0);
     g_SoftDSPInfo.msgcb = cb;
     g_SoftDSPInfo.nPreviewWidth  = dx;
     g_SoftDSPInfo.nPreviewHeight = dy;
@@ -395,6 +399,7 @@ int SoftDSP_SetCaptureBuff(byte *pBuff)
 
 int SoftDSP_Capture(CAMSoftDSP_MsgCBType cb, int dx, int dy)
 {
+    MSG_CAMERADEBUG("SoftDSP_Capture %d %d", dx, dy, 0);
     g_SoftDSPInfo.msgcb = cb;
     g_SoftDSPInfo.nCaptureWidth  = dx;
     g_SoftDSPInfo.nCaptureHeight = dy;

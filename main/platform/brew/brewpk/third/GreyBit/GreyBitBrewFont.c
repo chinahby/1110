@@ -53,7 +53,7 @@ struct IFont {
 };
 
 static IFont gFontNormal           = {&gOEMFontFuncs, 0, NORMAL_FONT_SIZE,   FALSE, FALSE, NULL};
-static IFont gFontNormalBold       = {&gOEMFontFuncs, 0, NORMAL_FONT_SIZE,   TRUE,  FALSE, NULL};
+static IFont gFontNormalBold       = {&gOEMFontFuncs, 0, NORMAL_FONT_SIZE,   FALSE, FALSE, NULL};
 static IFont gFontLarge            = {&gOEMFontFuncs, 0, LARGE_FONT_SIZE,    FALSE, FALSE, NULL};
 static IFont gFontBigNumber        = {&gOEMFontFuncs, 0, BIGNUMBER_FONT_SIZE,FALSE, FALSE, NULL};
 
@@ -150,7 +150,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     AECHAR ch;
     int bmp_offset;
     GB_Bitmap charBmp;
-    unsigned int foreR, foreG, foreB, backR, backG, backB;
+    int16 foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
     bmp_offset = sy * nPitch;
     
     cText = (word)(clrText & 0xFFFF);
@@ -161,7 +161,13 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     foreR = CGreyBit_COLORSCHEME565_GET_R(cText);
 	foreG = CGreyBit_COLORSCHEME565_GET_G(cText);
 	foreB = CGreyBit_COLORSCHEME565_GET_B(cText);
-	
+    backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
+    backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
+    backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
+    diffR = foreR-backR;
+    diffG = foreG-backG;
+    diffB = foreB-backB;
+    
     for (i=0; i<nChars && pcText[i]; i++)
     {
         if (x > xMax)
@@ -225,9 +231,9 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
                         backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
                         backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
                         backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
-                        backR = (((foreR - backR) * (*sp)) >> 8) + backR;
-                        backG = (((foreG - backG) * (*sp)) >> 8) + backG;
-                        backB = (((foreB - backB) * (*sp)) >> 8) + backB;
+                        backR = (((foreR - backR) * (*sp))/256) + backR;
+                        backG = (((foreG - backG) * (*sp))/256) + backG;
+                        backB = (((foreB - backB) * (*sp))/256) + backB;
                         *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
                         break;
                     }
@@ -253,13 +259,10 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
                         *dp = cText;
                         break;
                     default:
-                        backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
-                        backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
-                        backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
-                        backR = (((foreR - backR) * (*sp)) >> 8) + backR;
-                        backG = (((foreG - backG) * (*sp)) >> 8) + backG;
-                        backB = (((foreB - backB) * (*sp)) >> 8) + backB;
-                        *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
+                        foreR = ((diffR * (*sp))/256) + backR;
+                        foreG = ((diffG * (*sp))/256) + backG;
+                        foreB = ((diffB * (*sp))/256) + backB;
+                        *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
                         break;
                     }
                     dp++;
