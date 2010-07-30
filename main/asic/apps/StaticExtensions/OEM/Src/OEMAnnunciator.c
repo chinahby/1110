@@ -486,17 +486,7 @@ static void annun_disp_update(
   IAnnunciator *pMe,
   IDIB *dib_ptr,
   uint32 nAnnunID)
-{
-  //Add By zzg 2010_07_23
-  if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
-  {
-		if ((nAnnunID > 0) && (nAnnunID < 10))
-		{
-			return;
-		}
-  }
-  //Add End
-	
+{	
   if(NULL == pMe->m_coreObj)
   {
     return;
@@ -582,18 +572,6 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
         return EFAILED;
     }
 
-	/*
-	//Add By zzg 2010_07_30
-	if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
-	{
-		if ((nAnnunID > 0) && (nAnnunID < 10))
-		{
-			return;
-		}
-	}
-	//Add End
-	*/
-    
     nWidth = (int)Annunciators[nAnnunID].width;
     nHeight = (int)Annunciators[nAnnunID].height;
     SETAEERECT(&Rect, Annunciators[nAnnunID].x_pos,
@@ -650,6 +628,9 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
     pIBitmap = IDIB_TO_IBITMAP(pMe->m_coreObj->m_pDDB);
     IBITMAP_FillRect(pIBitmap, &Rect, pMe->m_coreObj->m_bg, AEE_RO_COPY);
 
+
+	IAnnunciator_Redraw(pMe);	//Add By zzg 2010_07_30
+	
     return SUCCESS;
 }
 
@@ -741,13 +722,13 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   //Add By zzg 2010_07_23
   if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
   {
-		if ((nAnnunID > 0) && (nAnnunID < 10))
+		if ((nAnnunID > ANNUN_FIELD_RSSI) && (nAnnunID < ANNUN_FIELD_BATT))
 		{
 			return;
 		}
   }
   //Add End
-
+  
   if ((pMe->m_coreObj->m_piDisplay == NULL) || (pMe->m_piShell == NULL) ||
       (pMe->m_coreObj->m_pDDB == NULL))
     return EFAILED;
@@ -788,21 +769,22 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   //pBmp = data_ptr[nState-1].pBmp;
   pBmp = data_ptr[nFirstState-1].pBmp;
 
-  if (pBmp == NULL) {
+  if (pBmp == NULL) 
+  {
     return EFAILED;
   }
   //DBGPRINTF("IAnnunCoreObj->m_bActive::::::%d",IAnnunCoreObj->m_bActive);
   
-  		// First update the primary display
-  		IDISPLAY_SetDestination (pMe->m_coreObj->m_piDisplay, IDIB_TO_IBITMAP(pMe->m_coreObj->m_pDDB));
-  		IDISPLAY_BitBlt (pMe->m_coreObj->m_piDisplay,
-                   (int)Annunciators[nAnnunID].x_pos,
-                   (int)Annunciators[nAnnunID].y_pos,
-                   nWidth, nHeight, pBmp, 0, 0, AEE_RO_COPY);
-  		IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); // restore the destination 
-		annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
-
-  return SUCCESS;
+	// First update the primary display
+	IDISPLAY_SetDestination (pMe->m_coreObj->m_piDisplay, IDIB_TO_IBITMAP(pMe->m_coreObj->m_pDDB));
+	IDISPLAY_BitBlt (pMe->m_coreObj->m_piDisplay,
+           (int)Annunciators[nAnnunID].x_pos,
+           (int)Annunciators[nAnnunID].y_pos,
+           nWidth, nHeight, pBmp, 0, 0, AEE_RO_COPY);
+	IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); // restore the destination 
+	
+	annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);	
+  	return SUCCESS;
 }
 
 /*===========================================================================
