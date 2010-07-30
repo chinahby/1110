@@ -638,15 +638,26 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
 					case AVK_SPACE:
 					{
+						
 						if ( pMe->TorchOn == FALSE )
 						{
 							pMe->TorchOn = TRUE;
 							if (pMe->m_pBacklight)
 							{
-				        		IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
-				        		IBACKLIGHT_Disable(pMe->m_pBacklight);
-				    		}
-						}					
+								IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+								//IBACKLIGHT_Disable(pMe->m_pBacklight);
+							}
+						}
+						else
+						{
+							pMe->TorchOn = FALSE;
+							if (pMe->m_pBacklight)
+							{
+								IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+								//IBACKLIGHT_Disable(pMe->m_pBacklight);
+							}
+						}
+											
 					}
 
 					return TRUE;
@@ -668,6 +679,12 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
 					return TRUE;
 				#endif
+				case AVK_INFO:
+					{
+						DBGPRINTF("Hello.....EVT_KEY_HELD......AVK_INFO............");
+					}
+					return TRUE;
+					break;
 			#endif
                 default:
                     break;
@@ -691,43 +708,16 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
 #endif
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
             
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
         {
-        #ifdef FEATURE_TORCH_SUPPORT
-        	#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
-        	if ( eCode == EVT_KEY_RELEASE && wParam == AVK_SPACE && pMe->TorchOn == TRUE)
-        	{
-				if (pMe->m_pBacklight)
-				{
-	        		IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
-	        		pMe->TorchOn = FALSE;
-	        		IBACKLIGHT_Enable(pMe->m_pBacklight);
-	    			return TRUE;
-	    		}
-        	}
-        	#endif
-
-        	#ifdef FEATURE_PROJECT_W021
-        	if ( eCode == EVT_KEY_RELEASE && wParam == AVK_CAMERA && pMe->TorchOn == TRUE)
-        	{
-				if (pMe->m_pBacklight)
-				{
-	        		IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
-	        		pMe->TorchOn = FALSE;
-	        		IBACKLIGHT_Enable(pMe->m_pBacklight);
-	        		return TRUE;
-	    		}
-        	}
-        	#endif
+        
 
         	return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-        	
-        #else
-			return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-		#endif
+      
         }
             
 
