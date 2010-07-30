@@ -646,12 +646,15 @@ variables and other items needed by this module.
 
 #define data_to_write_size 1500
 /* Maximum number of Buffers to be placed in the uim_free_q */
+#ifdef CUST_EDITION
+#define                        UIM_NUM_CMD_BUFS 20
+#else
 #ifdef FEATURE_UIM_MEMORY_REDUCTION
   #define                      UIM_NUM_CMD_BUFS 10
 #else
   #define                      UIM_NUM_CMD_BUFS 20
 #endif /* FEATURE_UIM_MEMORY_REDUCTION */
-
+#endif
 #define UIM_MAX_COMMAND_RETRIES       0x03
 
 /* Pool of buffers to be placed in the uim_free_q */
