@@ -8188,7 +8188,7 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     }
     pme->m_menuReallyDy = cy;//add by xuhui
     //Set pop menu rect
-    pme->m_rc.dx = cxMax-nFrame;
+    pme->m_rc.dx = cxMax;   //modi by yangdecai 2010-07-30
     pme->m_rc.dy = (pme->m_cyFont+ cys)*6 + GetBottomBarHeight(pme->m_pIDisplay)+AEE_FRAME_SIZE*4;
     pme->m_rc.x = 0;
     pme->m_rc.y = 0;//devinfo.cyScreen - pme->m_rc.dy;
