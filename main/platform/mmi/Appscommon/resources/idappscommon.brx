@@ -223,12 +223,6 @@
 	<STRING Id="1025" Name="IDS_NO">
 		<Text>Tidak</Text>
 	</STRING>
-	<String Id="1026" Name="IDS_FMUSLIM">
-		<Text>fmuslim</Text>
-	</String>
-	<String Id="1027" Name="IDS_FNASRANI">
-		<Text>fnasrani</Text>
-	</String>
 	<String Id="1028" Name="IDS_FRENDUO_LIST">
 		<Text>FrenDuo</Text>
 	</String>
@@ -249,6 +243,15 @@
 	</STRING>
 	<String Id="2005" Name="IDS_VIEW">
 		<Text>Lihat</Text>
+	</String>
+	<String Id="2006" Name="IDS_FMUSLIM">
+		<Text>FMuslim </Text>
+	</String>
+	<String Id="2007" Name="IDS_FNASRANI">
+		<Text>Fkristiani </Text>
+	</String>
+	<String Id="2008" Name="IDS_FPORTAL">
+		<Text>FPortal</Text>
 	</String>
 </Strings>
 </BREWRes>
