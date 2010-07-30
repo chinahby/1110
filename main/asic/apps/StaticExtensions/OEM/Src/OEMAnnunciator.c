@@ -582,6 +582,7 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
         return EFAILED;
     }
 
+	/*
 	//Add By zzg 2010_07_30
 	if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
 	{
@@ -591,6 +592,7 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
 		}
 	}
 	//Add End
+	*/
     
     nWidth = (int)Annunciators[nAnnunID].width;
     nHeight = (int)Annunciators[nAnnunID].height;
@@ -727,17 +729,6 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   IImage  *pBackBmp = NULL;
   int i,j;
   uint32 nFirstState = GetAnnunFirstState(nState);
-
-
-   //Add By zzg 2010_07_23
-  if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
-  {
-		if ((nAnnunID > 0) && (nAnnunID < 10))
-		{
-			return;
-		}
-  }
-  //Add End
   
   if ((pMe == NULL))
     return EFAILED;
@@ -746,6 +737,16 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   {
     return EFAILED;
   }
+
+  //Add By zzg 2010_07_23
+  if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
+  {
+		if ((nAnnunID > 0) && (nAnnunID < 10))
+		{
+			return;
+		}
+  }
+  //Add End
 
   if ((pMe->m_coreObj->m_piDisplay == NULL) || (pMe->m_piShell == NULL) ||
       (pMe->m_coreObj->m_pDDB == NULL))
@@ -762,6 +763,7 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   {//if state changed to another one, field needed to be cleared before drawing a new one
     ClearField(pMe, nAnnunID);
   }
+
   
   nWidth = (int)Annunciators[nAnnunID].width;
   nHeight = (int)Annunciators[nAnnunID].height;
@@ -1851,16 +1853,6 @@ static int IAnnunciator_SetFieldEx(IAnnunciator * pMe, uint32 nAnnunID,
   {
     return EFAILED;
   }
-
-  //Add By zzg 2010_07_30
-  if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
-  {
-		if ((nAnnunID > 0) && (nAnnunID < 10))
-		{
-			return;
-		}
-  }
-  //Add End
 
   //ANNUN_FIELD_OPERATOR is a special case which can be image/text
   // We display the PLMN at this location for GSM/WCDMA
