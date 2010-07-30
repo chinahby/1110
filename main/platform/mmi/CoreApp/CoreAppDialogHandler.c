@@ -4993,7 +4993,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
     }
     if(pWallPaper != NULL)
     {
-        SETAEERECT(&clip, 0, 58, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
+        SETAEERECT(&clip, 0, 78, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
         IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
         IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
 
