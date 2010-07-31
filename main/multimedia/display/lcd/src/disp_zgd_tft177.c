@@ -829,7 +829,7 @@ int zgd_tft177_disp_init(void)
 
 	zgd_tft177_disp_clear_whole_screen();
 	
-	zgd_tft177_disp_set_backlight(ZGD_TFT177_DISP_DEFAULT_BACKLIGHT);
+	//zgd_tft177_disp_set_backlight(ZGD_TFT177_DISP_DEFAULT_BACKLIGHT);
 
 	return 1;
 } /* zgd_tft177_disp_init() */

@@ -942,6 +942,9 @@ extern int FrenDuoAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #ifdef FEATURE_VERSION_IVIO
 extern int MultimedMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+extern int StaticappMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
 
 /* =====================================================
    Statically linked application list.
@@ -1290,6 +1293,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 	  { AEEFS_MIF_DIR"adjustpenapp.mif",AdjustPenMod_Load},
 #endif
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
+	   {AEEFS_MIF_DIR"staticapp.mif",StaticappMod_Load},
 #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 	   { AEEFS_MIF_DIR"nasrani.mif",NASRANI_Load},
 #else

@@ -114,4 +114,4 @@ include $(GAME)/game.min
 include $(MULTIMEDIA)/multimedia.min
 include $(FRENDUO)/frenduo.min
 include $(STATIC_BREW_APP)/staticbrewapp.min
-
+include $(STATIC_APP)/staticapp.min

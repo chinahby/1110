@@ -847,6 +847,7 @@ GAME     =              $(MMIDIR)/Games/game
 FRENDUO  =         		$(MMIDIR)/FrenDuo
 MULTIMEDIA =            $(MMIDIR)/Multimedia
 STATIC_BREW_APP=        $(MMIDIR)/staticbrewapp
+STATIC_APP=             $(MMIDIR)/staticapp
 
 #头文件的路径在这里加
 ALL_PATHS+=$(INC) $(BREW_OEM_SIM_INC) $(BREW_OEM_RESINC) $(BREW_AEE_SRC) $(BREW_STATIC_EXTENSIONS_RESINC)

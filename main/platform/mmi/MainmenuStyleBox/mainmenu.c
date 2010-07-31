@@ -2239,7 +2239,11 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST);
             break;
         case 7:
+			#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
+			#else
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+			#endif
             break;
         case 8:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
