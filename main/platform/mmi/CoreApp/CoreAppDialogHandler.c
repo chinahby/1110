@@ -2144,9 +2144,15 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                 ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_POWERONOFF_ALERT,poweronoff_alert,sizeof(poweronoff_alert));  
                 if(poweronoff_alert[Ring_Cur_Music]  == OEMNV_POWERONOFF_ENABLE)
                 {
+                    db_items_value_type db;
+                    db_get(DB_POWERUPTYPE,&db);//add by xuhui
+                    //如果是自动重启，则不播放开机铃声
+                    if(db.db_poweruptype != DB_POWERUP_BYRESET)
+                    {
                     ICONFIG_GetItem( pMe->m_pConfig, CFGI_PROFILE_STARTUP_MUSIC, aRing_type, sizeof(aRing_type) );
                     //DBGPRINTF("fj music_num = %d , Ring_Cur_Music = %d, IDD_STARTUPANI_Handler",(uint32)aRing_type[Ring_Cur_Music], Ring_Cur_Music);
                     IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
+                    }
                 }
 
                 // 播放开机动画

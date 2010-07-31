@@ -113,6 +113,8 @@ is not added to a header file
 #ifdef FEATURE_IG_UI_CLIENT_SELECT
 #include "hw.h"
 #endif
+
+#include "GlobalData.h"
 /*!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*/
 
 /*===========================================================================
@@ -1843,7 +1845,7 @@ LOCAL void hs_init( void )
     boolean status  = FALSE;
     pm_err_flag_type errFlag = PM_ERR_FLAG__SUCCESS;
 
-    errFlag = pm_get_rt_status(PM_RTC_ALRM_IRQ_HDL,&status);
+    errFlag = pm_get_rt_status(PM_RTC_ALRM_IRQ_HDL,&status);//判断是否是闹钟启动方式
     if ((errFlag == PM_ERR_FLAG__SUCCESS) && (status == TRUE))
     {
         db_item.db_poweruptype = DB_POWERUP_BYRTCTIMER;
@@ -1860,23 +1862,23 @@ LOCAL void hs_init( void )
             db_item.db_poweruptype = DB_POWERUP_BYEXTERNALPWR;
         }
         else
-        {
-            errFlag = pm_get_rt_status(PM_KPD_PWR_KEY_ON_IRQ_HDL,&status);
-            if ((errFlag == PM_ERR_FLAG__SUCCESS) && (status == TRUE))
+        {          
+            if (g_BootResetFlag == BOOT_RESET_MAGIC)
             {
-                db_item.db_poweruptype = DB_POWERUP_BYKEY;
+                db_item.db_poweruptype = DB_POWERUP_BYRESET;//重启方式   
             }
             else
             {
-                db_item.db_poweruptype = DB_POWERUP_BYRESET;
-            }
+                db_item.db_poweruptype = DB_POWERUP_BYKEY;//按键启动
+            }           
         }
     }
     
     db_put(DB_POWERUPTYPE, &db_item);
     if (db_item.db_poweruptype == DB_POWERUP_BYKEY)
     {
-        if (!keypad_is_power_key_pressed())
+        clk_busy_wait(3000*1000);//等3秒
+        if (!keypad_is_power_key_pressed())//如果没有按住开机键，那就关机，否则开机
         {
             hw_power_off();
         }
