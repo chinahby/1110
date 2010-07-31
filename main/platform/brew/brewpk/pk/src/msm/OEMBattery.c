@@ -364,7 +364,7 @@ static void OEMBattery_PeriodicBatteryCheck(void * pUser)
    uint32 dwBatteryLevel = 0;
    uint32 dwChargerStatus = AEEBATTERY_CHARGERSTATUS_UNKNOWN;
    uint32 dwExternalPower = 0;
-   uint32 nDelta =0;
+   int32 nDelta =0;
    
    if (NULL == gpBattery) {
       return;
