@@ -416,7 +416,6 @@ static int AEEBacklight_Disable(IBacklight *pme)
    switch (pme->uCls)
    {
       case AEECLSID_BACKLIGHT_DISPLAY1:
-         disp_off();
          gbBacklightDisplay1Enabled = FALSE;
          disp_set_backlight(0);
          nErr = SUCCESS;
@@ -424,6 +423,7 @@ static int AEEBacklight_Disable(IBacklight *pme)
          AEEBacklight_CancelNotifyTimer(pme);
          AEEBacklight_SetNotifyTimer(pme);
 #endif
+         disp_off();
          break;
 
 #ifdef FEATURE_BACKLIGHT_DISPLAY2
