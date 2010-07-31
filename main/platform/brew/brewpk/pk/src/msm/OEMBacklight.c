@@ -295,6 +295,7 @@ static int AEEBacklight_Enable(IBacklight *pme)
       AEEBacklightInfo backlightInfo;
 
       case AEECLSID_BACKLIGHT_DISPLAY1:
+         disp_on();
          if(TRUE == gbBacklightDisplay1Initialized)
          {
             disp_set_backlight((byte)gdwBacklightDisplay1Level);
@@ -415,6 +416,7 @@ static int AEEBacklight_Disable(IBacklight *pme)
    switch (pme->uCls)
    {
       case AEECLSID_BACKLIGHT_DISPLAY1:
+         disp_off();
          gbBacklightDisplay1Enabled = FALSE;
          disp_set_backlight(0);
          nErr = SUCCESS;

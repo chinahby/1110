@@ -447,26 +447,27 @@ static void zgd_tft177_disp_set_backlight(byte level)
 				level = ZGD_TFT177_DISP_MIN_BACKLIGHT;
 			}
             
-			pm_err_flag_type pefRet = (pm_err_flag_type)~PM_ERR_FLAG__SUCCESS;  // Assume failure
+            {
+    			pm_err_flag_type pefRet = (pm_err_flag_type)~PM_ERR_FLAG__SUCCESS;  // Assume failure
 
-			pefRet = pm_set_led_intensity(PM_KBD_LED, (uint8)level);
-			if (PM_ERR_FLAG__SUCCESS != pefRet)
-			{
-				MSG_FATAL("PMIC KBD backlight set failed: pefRet=%d, nLevel=%d",
-				pefRet,
-				level,
-				0);
-			}
+    			pefRet = pm_set_led_intensity(PM_KBD_LED, (uint8)level);
+    			if (PM_ERR_FLAG__SUCCESS != pefRet)
+    			{
+    				MSG_FATAL("PMIC KBD backlight set failed: pefRet=%d, nLevel=%d",
+    				pefRet,
+    				level,
+    				0);
+    			}
 
-			pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
-			if (PM_ERR_FLAG__SUCCESS != pefRet)
-			{
-				MSG_MED("PMIC LCD backlight set failed: pefRet=%d, nLevel=%d",
-				pefRet,
-				level,
-				0);
+    			pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
+    			if (PM_ERR_FLAG__SUCCESS != pefRet)
+    			{
+    				MSG_MED("PMIC LCD backlight set failed: pefRet=%d, nLevel=%d",
+    				pefRet,
+    				level,
+    				0);
+    			}
 			}
-        
 			current_level = level;   
 			rex_leave_crit_sect(&zgd_tft177_crit_sect);
 		}
