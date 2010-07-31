@@ -41,6 +41,7 @@ vpath %.mid $(FMN2010_DIRS)
 vpath %.htm $(FMN2010_DIRS)
 vpath %.bci $(FMN2010_DIRS)
 vpath %.bmp $(FMN2010_DIRS)
+vpath %.mgm $(FMN2010_DIRS)
 
 #获取所有资源文件名,MGM文件是读写格式所以不能静态编译
 CONSTFILE_STATIC_BREW_APP_TEMPS:=$(wildcard $(FMN2010_DIRS)/*.png) \
@@ -52,6 +53,9 @@ CONSTFILE_STATIC_BREW_APP_TEMPS:=$(wildcard $(FMN2010_DIRS)/*.png) \
 CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS:=$(notdir $(CONSTFILE_STATIC_BREW_APP_TEMPS))#                                  
 CONSTFILE_BIN_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS),\
 					 $(filename)|fs:/mod/fmn2010/$(filename))#
+
+
+EFSFILE_FILES+=$(foreach filename,$(notdir $(wildcard $(FMN2010_DIRS)/*.mgm)),fs:/mod/fmn2010/$(filename))
 
 CONSTFILE_FILES+=fmn2010.mif|fs:/mif/fmn2010.mif
 STATIC_BREW_APP_LIB+=$(STATIC_BREW_APP)/fmn2010/fmn2010.o

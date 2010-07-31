@@ -315,8 +315,19 @@ ifeq ($(USES_MMI),yes)
 # Rules for building EFS File System
 #
 #-------------------------------------------------------------------------------
-EFSFILE_FILENAMES = $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(EFSFILE_FILES))))
+EFSFILE_DIR = $(BINPATH)/$(TARGET)/efs
+EFSFILE_FILENAMES  = $(subst fs:,$(EFSFILE_DIR),$(EFSFILE_FILES))
+EFSFILE_SOURCES    = $(notdir $(EFSFILE_FILES))
 
+$(EFSFILE_FILENAMES) : $(EFSFILE_SOURCES)
+	@echo ------------------------------------------------------------------------
+	@echo Copy $< to $@
+	@if ! test -d $(EFSFILE_DIR); then mkdir $(EFSFILE_DIR); fi
+	@if ! test -d $(EFSFILE_DIR)/mod; then mkdir $(EFSFILE_DIR)/mod; fi
+	@if ! test -d $(dir $@); then mkdir $(dir $@); fi
+	@cp $< $@
+	@echo ------------------------------------------------------------------------
+	
 #-------------------------------------------------------------------------------
 #
 # Rules for building Const File System
@@ -375,7 +386,7 @@ $(CONSTFILE_OBJS) : $(TARGETDIR)/%.o : $(TARGETDIR)/%.c
 	$(c_compile)
 	
 .PHONY : mmires
-mmires: $(CONSTFILE_BIN_SRC) $(CONSTFILE_BAR_SRC) $(TARGETDIR)/OEMConstFiles_Dynamic.c
+mmires: $(CONSTFILE_BIN_SRC) $(CONSTFILE_BAR_SRC) $(TARGETDIR)/OEMConstFiles_Dynamic.c $(EFSFILE_FILENAMES)
 	@echo ------------------------------------------------------------------
 	@echo BREW RESOURCE BUILDER
 	@echo ------------------------------------------------------------------
