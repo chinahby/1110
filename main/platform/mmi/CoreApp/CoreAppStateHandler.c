@@ -1096,7 +1096,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
     MSG_FATAL("COREST_STARTUPANI_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
     {
-        case DLGRET_CREATE:
+        case DLGRET_CREATE:			
             if(pMe->bunlockuim)                   //如果输入锁卡密码正确，此参数为真                     
             {                     
                  pMe->m_eUIMErrCode = UIMERR_NONE;                     
@@ -1250,7 +1250,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
     {
         case DLGRET_CREATE:
         case DLGRET_MSGOK:
-            MSG_FATAL("COREST_STANDBY_Handler DLGRET_CREATE",0,0,0);
+            MSG_FATAL("COREST_STANDBY_Handler DLGRET_CREATE",0,0,0);			
 #ifdef FEATRUE_AUTO_POWER
             if(pMe->m_b_autopower_off)
             {
@@ -1266,7 +1266,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
             return NFSMACTION_WAIT;
             
         case DLGRET_MSG:
-            MSG_FATAL("COREST_STANDBY_Handler DLGRET_MSG",0,0,0);
+            MSG_FATAL("COREST_STANDBY_Handler DLGRET_MSG",0,0,0);			
 #ifdef FEATRUE_AUTO_POWER
             if(pMe->m_b_autopower_off)
             {

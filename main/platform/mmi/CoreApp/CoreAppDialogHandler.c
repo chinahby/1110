@@ -549,7 +549,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
 
 #ifdef FEATRUE_AUTO_POWER
                 case IDS_AUTO_POWER_OFF:
-                    //in this state,we need to disable the key guard. 
+                    //in this state,we need to disable the key guard.                     
 #ifdef FEATURE_KEYGUARD
                     if(OEMKeyguard_IsEnabled())
                     {
@@ -590,6 +590,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 PromptMsg_Param_type m_PromptMsg;
                 MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
                 m_PromptMsg.nMsgResID= pMe->m_nMsgID;
+				
                 if(pMe->m_nMsgID == IDS_AUTO_POWER_OFF)
                 {
                     m_PromptMsg.ePMsgType = MESSAGE_CONFIRM;
@@ -695,7 +696,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                     }
 #ifdef FEATRUE_AUTO_POWER
                     else if(pMe->m_nMsgID == IDS_AUTO_POWER_OFF)
-                    {
+                    {                    	
                         ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);                        
                         pMe->m_ePowerDownType = POWERDOWN_NORMAL;
                         if (pMe->m_eCurState != COREST_POWEROFF)
@@ -2114,7 +2115,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
 
-        case EVT_DIALOG_START: 
+        case EVT_DIALOG_START: 			
             if(pMe->m_wStartupAniTime == 0)
             {
 #ifndef FEATURE_USES_LOWMEM
@@ -3198,7 +3199,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
             CoreApp_EnableShellAlarms(pMe, FALSE);
 #endif
             
-#ifdef FEATRUE_AUTO_POWER
+#ifdef FEATRUE_AUTO_POWER		
         OEMRTC_Process_Auto_Power_On();
 #endif
 
@@ -4593,7 +4594,7 @@ static void CoreApp_Process_Rtc_Event(CCoreApp *pMe)
         
 #ifdef FEATRUE_AUTO_POWER
 #ifndef WIN32
-        OEMRTC_Process_Auto_Power_Down(pMe->a.m_pIShell);
+        OEMRTC_Process_Auto_Power_Down(pMe->a.m_pIShell);		
         OEMRTC_Process_Auto_Power_On();
 #endif//WIN32
 #endif //#ifdef FEATRUE_AUTO_POWER        
