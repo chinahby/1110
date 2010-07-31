@@ -312,12 +312,16 @@ endif
 ifeq ($(USES_MMI),yes)
 #-------------------------------------------------------------------------------
 #
+# Rules for building EFS File System
+#
+#-------------------------------------------------------------------------------
+EFSFILE_FILENAMES = $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(EFSFILE_FILES))))
+
+#-------------------------------------------------------------------------------
+#
 # Rules for building Const File System
 #
 #-------------------------------------------------------------------------------
-CONSTFILE_STATIC_BREW_APP_FILENAMES = $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(CONSTFILE_STATIC_BREW_APP_FILES))))
-CONSTFILE_STATIC_BREW_APP_SOURCES 	= $(addsuffix .c, $(CONSTFILE_STATIC_BREW_APP_FILENAMES))
-CONSTFILE_STATIC_BREW_APP_OBJS 		= $(addprefix $(TARGETDIR)/,$(CONSTFILE_STATIC_BREW_APP_SOURCES:%.c=%.o))
 CONSTFILE_BIN_FILENAMES = $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(CONSTFILE_BIN_FILES))))
 CONSTFILE_BIN_SOURCES 	= $(addsuffix .c, $(CONSTFILE_BIN_FILENAMES))
 CONSTFILE_BIN_OBJS 		= $(addprefix $(TARGETDIR)/,$(CONSTFILE_BIN_SOURCES:%.c=%.o))
@@ -330,21 +334,21 @@ CONSTFILE_FSLOC 		= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $<
 CONSTFILE_FLAGENT 		= $(firstword $(filter FLAGS:%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES) $(CONSTFILE_BIN_FILES)  $(CONSTFILE_STATIC_BREW_APP_FILES)))))
 CONSTFILE_FLAGS 		= $(subst FIXED,-f,$(subst ., ,$(subst FLAGS:, , $(CONSTFILE_FLAGENT))))
 
-CONSTFILE_OBJS 			= $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o)) $(CONSTFILE_BIN_OBJS) $(CONSTFILE_STATIC_BREW_APP_OBJS)
+CONSTFILE_OBJS 			= $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o)) $(CONSTFILE_BIN_OBJS)
 CONSTFILE_BAR_FSLOC 	= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $(<:%.brx=%.bar))|%, $(CONSTFILE_FILES)))))
 CONSTFILE_BAR_FSNAME    = $(notdir $(subst /$(EXTLANG2)/,/$(EXTLANG2),$(subst /$(EXTLANG1)/,/$(EXTLANG1),$(CONSTFILE_BAR_FSLOC))))
 CONSTFILE_BAR_BUILD     = $(dir $<)$(CONSTFILE_BAR_FSNAME)
 CONSTFILE_BAR  			= $(filter %.bar, $(CONSTFILE_FILENAMES))
 CONSTFILE_BAR_SRC 		= $(addprefix $(TARGETDIR)/, $(addsuffix .c, $(CONSTFILE_BAR)))
-CONSTFILE_BIN  			= $(filter-out %.bar, $(CONSTFILE_FILENAMES)) $(CONSTFILE_BIN_FILENAMES) $(CONSTFILE_STATIC_BREW_APP_FILENAMES)
+CONSTFILE_BIN  			= $(filter-out %.bar, $(CONSTFILE_FILENAMES)) $(CONSTFILE_BIN_FILENAMES)
 CONSTFILE_BIN_SRC 		= $(addprefix $(TARGETDIR)/, $(addsuffix .c, $(CONSTFILE_BIN)))
 
-$(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES) $(CONSTFILE_BIN_SOURCES) $(CONSTFILE_STATIC_BREW_APP_SOURCES)
+$(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES) $(CONSTFILE_BIN_SOURCES)
 	@echo ------------------------------------------------------------------------
 	@echo Generating $@
 	@cp $< $@
 	@chmod 666 $@
-	@perl $(BREWDIR)/pk/utils/OEMConstFileMod.pl $@ $(CONSTFILE_FILENAMES) $(CONSTFILE_BIN_FILENAMES) $(CONSTFILE_STATIC_BREW_APP_FILENAMES)
+	@perl $(BREWDIR)/pk/utils/OEMConstFileMod.pl $@ $(CONSTFILE_FILENAMES) $(CONSTFILE_BIN_FILENAMES)
 	@echo ------------------------------------------------------------------------
 	
 OBJECTS += $(CONSTFILE_OBJS)
