@@ -1320,20 +1320,15 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         				else
         				{
         				
-/*
+
 						    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
-							   && pMe->m_currState !=	WMSST_INBOXMSGOPTS)
+							   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG)
 						    {
-	            				if(ISHELL_GetActiveDialog(pMe->m_pShell)!= pMe->m_pActiveIDlg)
-	            						{
-	                						(void)ISHELL_EndDialog(pMe->m_pShell);
-	            						}
-				            	pMe->m_eDlgReturn = DLGRET_CREATE;
-                				MOVE_TO_STATE(WMSST_INBOXES)
-								CWmsApp_RunFSM(pMe);
+						    	CLOSE_DIALOG(DLGRET_INBOXES)
 						    }
+						
 							else
-							{*/
+							{
                         			    // 通知 CoreApp 需要进行短信提示
                         				(void)ISHELL_PostEventEx(pMe->m_pShell,
                                                  EVTFLG_ASYNC, 
@@ -1341,8 +1336,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                                                  EVT_WMS_MSG_RECEIVED_MESSAGE,
                                                  0, 
                                                  0);
-										CLOSE_DIALOG(DLGRET_INBOXES)
-							//}
+										
+							}
         				 }
                     }
                     
