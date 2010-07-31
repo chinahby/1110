@@ -446,8 +446,7 @@ static void zgd_tft177_disp_set_backlight(byte level)
 				/* Turn backlight off */
 				level = ZGD_TFT177_DISP_MIN_BACKLIGHT;
 			}
-
-		{
+            
 			pm_err_flag_type pefRet = (pm_err_flag_type)~PM_ERR_FLAG__SUCCESS;  // Assume failure
 
 			pefRet = pm_set_led_intensity(PM_KBD_LED, (uint8)level);
@@ -467,8 +466,7 @@ static void zgd_tft177_disp_set_backlight(byte level)
 				level,
 				0);
 			}
-		}
-
+        
 			current_level = level;   
 			rex_leave_crit_sect(&zgd_tft177_crit_sect);
 		}
@@ -567,11 +565,8 @@ static void zgd_tft177_disp_off(void)
 
 	if(zgd_tft177_state.disp_powered_up && zgd_tft177_state.display_on)
 	{
-		/* Add code here */
-		/* Transfer command to display hardware */
-		HEXING_LCD_WRITE_CMD(ZGD_TFT177_DISPLAY_OFF_C); 
-		clk_busy_wait(1000);
         HEXING_LCD_WRITE_CMD(0x10); //Sleep in
+        HEXING_LCD_DELAY(120);
 		zgd_tft177_disp_set_backlight(ZGD_TFT177_DISP_MIN_BACKLIGHT);
 		/* Display put to SLEEP state */
 		zgd_tft177_state.display_on = FALSE;
@@ -605,10 +600,7 @@ static void zgd_tft177_disp_on(void)
 	if(zgd_tft177_state.disp_powered_up && !zgd_tft177_state.display_on)
 	{
         HEXING_LCD_WRITE_CMD(0x11); //Exit Sleep
-        clk_busy_wait(1000);
-		/* Transfer command to display hardware */
-		HEXING_LCD_WRITE_CMD(ZGD_TFT177_DISPLAY_ON_C); 
-		clk_busy_wait(1000);
+        HEXING_LCD_DELAY(120);
         
 		/* Display put to ACTIVE state */
 		zgd_tft177_state.display_on = TRUE;

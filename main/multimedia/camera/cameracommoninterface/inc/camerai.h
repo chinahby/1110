@@ -409,7 +409,7 @@ extern camera_phone_state_type camera_phone_state;
 *                         MACRO DEFNITIONS
 ============================================================================*/
 
-#define MSG_CAMERADEBUG(x,a,b,c) MSG_MED(x,a,b,c)
+#define MSG_CAMERADEBUG(x,a,b,c) MSG_FATAL(x,a,b,c)
 
 #define CAM3A_MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define CAM3A_MAX(a, b) (((a) > (b)) ? (a) : (b))

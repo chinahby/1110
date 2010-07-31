@@ -810,6 +810,10 @@ void boot_default_exception_handler(
   uint32 orig_r14
   )
 {
+    
+#ifdef USES_RELEASE_VERSION
+  hw_reset ();
+#else
 #ifndef FEATURE_L4
 
 #if !defined( FEATURE_LOOPING_EXCEPTION_HANDLER) && !defined(FEATURE_L4)
@@ -877,6 +881,7 @@ void boot_default_exception_handler(
 #else
 #error code not present
 #endif /* FEATURE_L4 */
+#endif //#ifdef USES_RELEASE_VERSION
 }
 
 

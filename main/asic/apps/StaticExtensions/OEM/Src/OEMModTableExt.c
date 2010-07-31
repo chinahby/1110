@@ -566,9 +566,9 @@ extern int ClockAppsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int CalcMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int ApplicationMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 
-//#ifdef FEATURE_APP_WORLDTIME
+#ifdef FEATURE_APP_WORLDTIME
 extern int WorldTimeMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
-//#endif /*FEATURE_APP_WORLDTIME*/
+#endif /*FEATURE_APP_WORLDTIME*/
 
 extern int ScheduleApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 //#endif

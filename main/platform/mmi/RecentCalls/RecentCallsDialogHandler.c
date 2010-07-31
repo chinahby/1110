@@ -2907,7 +2907,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                        AEE_FONT_BOLD,
                        wszRawNum,
-                       ncharsInLine,
+                       nlen<ncharsInLine?nlen:ncharsInLine,
                        PIXELS_TO_EDGE,
                        PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((1 + nSinkingLines)*nLineHeight),
                        NULL,

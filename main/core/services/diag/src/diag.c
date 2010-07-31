@@ -3015,6 +3015,9 @@ SIDE EFFECTS
 static void
 diag_panic_end (void)
 {
+#ifdef USES_RELEASE_VERSION
+  hw_reset ();
+#endif
   if (err_get_auto_action() == ERR_RESET)
   {
     /* Need this option to allow automation */
@@ -3023,18 +3026,11 @@ diag_panic_end (void)
 #ifdef CUST_EDITION
   else if(err_get_auto_action() == ERR_NO_ACTION)
   {
-#ifdef USES_RELEASE_VERSION
-    hw_reset ();
-#else
     return;
-#endif
   }
 #endif
   else
   {
-#ifdef USES_RELEASE_VERSION
-    hw_reset ();
-#endif
 #ifdef FEATURE_ERR_EXTENDED_STORE
     /* Displays error message, and allows user to reset phone manually */
     /* No return from this function call */

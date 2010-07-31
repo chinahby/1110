@@ -426,6 +426,9 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+#ifdef CUST_EDITION
+#include "GlobalData.h"
+#endif
 #ifndef FEATURE_L4_KERNEL
 void hw_reset( void )
 {
@@ -441,7 +444,9 @@ void hw_reset( void )
 #if !defined(T_FFA) && ! defined(T_MSM6100B)
   outpw(0x20100080,0);
 #endif /*!defined(T_FFA) ! defined(T_MSM6100B)*/
-
+#ifdef CUST_EDITION
+  g_BootResetFlag = BOOT_RESET_MAGIC;
+#endif
   while(TRUE);
 #ifdef FEATURE_DLOAD_HW_RESET_DETECT   
   /* Clear magic number to prevent entering into the download mode */
