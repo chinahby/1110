@@ -12,8 +12,6 @@ CAH006=no
 #应用的o文件
 STATIC_BREW_APP_LIB:=#
 #应用的资源文件
-CONSTFILE_STATIC_BREW_APP_FILES:=#
-
 
 #####nasrani application##########
 ifeq ($(NASRANI),yes)
@@ -52,8 +50,8 @@ CONSTFILE_STATIC_BREW_APP_TEMPS:=$(wildcard $(FMN2010_DIRS)/*.png) \
 								 $(wildcard $(FMN2010_DIRS)/*.htm) 
                                      
 CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS:=$(notdir $(CONSTFILE_STATIC_BREW_APP_TEMPS))#                                  
-CONSTFILE_STATIC_BREW_APP_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS),\
-																		$(filename)|fs:/mod/fmn2010/$(filename))#
+CONSTFILE_BIN_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS),\
+					 $(filename)|fs:/mod/fmn2010/$(filename))#
 
 CONSTFILE_FILES+=fmn2010.mif|fs:/mif/fmn2010.mif
 STATIC_BREW_APP_LIB+=$(STATIC_BREW_APP)/fmn2010/fmn2010.o
@@ -81,13 +79,11 @@ CONSTFILE_STATIC_BREW_APP_TEMPS:=   $(wildcard $(CAH006_DIRS)/*.png) \
 									$(wildcard $(CAH006_DIRS)/*.fwm)
                                      
 CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS:=$(notdir $(CONSTFILE_STATIC_BREW_APP_TEMPS))#                                  
-CONSTFILE_STATIC_BREW_APP_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS),\
-																		$(filename)|fs:/mod/cah006/$(filename))#
+CONSTFILE_BIN_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS),\
+					 $(filename)|fs:/mod/cah006/$(filename))#
 
-$(warning CONSTFILE_STATIC_BREW_APP_FILES=$(CONSTFILE_STATIC_BREW_APP_FILES))
 CONSTFILE_FILES+=cah006.mif|fs:/mif/cah006.mif
-STATIC_BREW_APP_LIB+=$(wildcard $(CAH006_DIRS)/*.o)
-$(warning STATIC_BREW_APP_LIB=$(STATIC_BREW_APP_LIB))			
+STATIC_BREW_APP_LIB+=$(wildcard $(CAH006_DIRS)/*.o)		
 endif
 
 endif #ifeq ($(USES_FLEXI_STATICAPP),yes)

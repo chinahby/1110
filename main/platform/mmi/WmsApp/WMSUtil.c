@@ -3708,10 +3708,7 @@ wms_client_message_s_type *CWmsApp_GetspecmsgEx(void)
     int   nMsgSize = 0;
     int   nSize;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
-    wms_client_message_s_type    *pCltMsg = NULL;
-
-	DBGPRINTF("***zzg CWmsApp_GetspecmsgEx***");
-	
+    wms_client_message_s_type    *pCltMsg = NULL;	
     
     nSize = 7;
     nMsgSize = 7;

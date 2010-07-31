@@ -160,7 +160,11 @@ typedef enum
   #define   MEM_HEAP_THRESHOLD 64
   #ifdef FEATURE_RRC_SIB_HEAP
   	#ifdef FEATURE_LOWTIER_LOWMEM
-  	   #define 	 TMC_HEAP_MEM_BUFFER_SIZE    24576
+    #ifdef CUST_EDITION
+  	   #define 	 TMC_HEAP_MEM_BUFFER_SIZE    49152
+    #else
+       #define 	 TMC_HEAP_MEM_BUFFER_SIZE    24576
+    #endif
   	#else
       #define   TMC_HEAP_MEM_BUFFER_SIZE    102400
    #endif

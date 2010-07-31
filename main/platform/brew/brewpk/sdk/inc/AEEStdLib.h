@@ -663,7 +663,14 @@ static __inline int VSNPRINTF(char *buf, uint32 len, const char *fmt, va_list ar
 #define DBGPRINTF_LEVEL_HIGH   3
 #define DBGPRINTF_LEVEL_ERROR  4
 #define DBGPRINTF_LEVEL_FATAL  5
-
+#ifdef USES_RELEASE_VERSION
+#define DBGPRINTF
+#define DBGPRINTF_LOW
+#define DBGPRINTF_MED
+#define DBGPRINTF_HIGH
+#define DBGPRINTF_ERROR
+#define DBGPRINTF_FATAL
+#else
 #define DBGPRINTF_EX_FORMAT    "*dbgprintf-%d* %s:%d"
 #define DBGPRINTF              __DBGPRINTF(DBGPRINTF_EX_FORMAT,DBGPRINTF_LEVEL_ERROR ,__FILE__,__LINE__),__DBGPRINTF
 #define DBGPRINTF_LOW          __DBGPRINTF(DBGPRINTF_EX_FORMAT,DBGPRINTF_LEVEL_LOW  ,__FILE__,__LINE__),__DBGPRINTF
@@ -671,7 +678,7 @@ static __inline int VSNPRINTF(char *buf, uint32 len, const char *fmt, va_list ar
 #define DBGPRINTF_HIGH         __DBGPRINTF(DBGPRINTF_EX_FORMAT,DBGPRINTF_LEVEL_HIGH ,__FILE__,__LINE__),__DBGPRINTF
 #define DBGPRINTF_ERROR        __DBGPRINTF(DBGPRINTF_EX_FORMAT,DBGPRINTF_LEVEL_ERROR,__FILE__,__LINE__),__DBGPRINTF
 #define DBGPRINTF_FATAL        __DBGPRINTF(DBGPRINTF_EX_FORMAT,DBGPRINTF_LEVEL_FATAL,__FILE__,__LINE__),__DBGPRINTF
-
+#endif
 /*=====================================================================
   DATA STRUCTURE DOCUMENTATION
 ======================================================================= 

@@ -74,7 +74,20 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
                                             PM_MPP__DLOGIC_OUT__CTRL_LOW);
       }
 #else
+      gpio_tlmm_config(GPIO_SDCC_CLK);
+      gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
+      gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+      gpio_tlmm_config(GPIO_SDCC_DATOUT_1_OUT);
+      gpio_tlmm_config(GPIO_SDCC_DATOUT_2_OUT);
+      gpio_tlmm_config(GPIO_SDCC_DATOUT_3_OUT);
+      //gpio_tlmm_config(SD_PWR_EN_N);
       //gpio_out(SD_PWR_EN_N, 1);
+      gpio_out(GPIO_SDCC_CLK, 1);
+      gpio_out(GPIO_SDCC_CMD_OUT, 1);
+      gpio_out(GPIO_SDCC_DAT_0_OUT, 1);
+      gpio_out(GPIO_SDCC_DATOUT_1_OUT, 1);
+      gpio_out(GPIO_SDCC_DATOUT_2_OUT, 1);
+      gpio_out(GPIO_SDCC_DATOUT_3_OUT, 1);
 #endif
    }
    else if (SDCC_BSP_VDD_OFF == state)
@@ -90,9 +103,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
                                       PM_MPP__I_SINK__LEVEL_15mA,
                                       PM_MPP__I_SINK__SWITCH_DIS);
       }
-#else
-      //gpio_out(SD_PWR_EN_N, 0);
-#endif
+
       /*Configure all SDCC GPIOs as input to avoid current drain*/
       gpio_tlmm_config(GPIO_INPUT_24);
       gpio_tlmm_config(GPIO_INPUT_29);
@@ -100,6 +111,15 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
       gpio_tlmm_config(GPIO_INPUT_26);
       gpio_tlmm_config(GPIO_INPUT_27);
       gpio_tlmm_config(GPIO_INPUT_28);
+#else
+      //gpio_out(SD_PWR_EN_N, 0);
+      gpio_out(GPIO_SDCC_CLK, 1);
+      gpio_out(GPIO_SDCC_CMD_OUT, 1);
+      gpio_out(GPIO_SDCC_DAT_0_OUT, 1);
+      gpio_out(GPIO_SDCC_DATOUT_1_OUT, 1);
+      gpio_out(GPIO_SDCC_DATOUT_2_OUT, 1);
+      gpio_out(GPIO_SDCC_DATOUT_3_OUT, 1);
+#endif
    }
    else
    {

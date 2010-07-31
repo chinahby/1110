@@ -166,6 +166,9 @@ sdcc_open(int16 driveno)
 
    /*-------------------------------------------------------------------*/
    sdcc_enter_crit_sect();
+   
+   (void)sdcc_bsp_vdd_control(SDCC_BSP_VDD_ON);
+   
    do
    {
       if(SDCC_CARD_SDIO == sdcc_pdata.card_type)
@@ -811,14 +814,6 @@ sdcc_init(void)
       HWIO_OUT(MCI_CLEAR, HWIO_MCI_CLEAR_SDIO_INTR_CLR_BMSK);
       HWIO_OUTI(MCI_INT_MASKn, 0, 0);
       HWIO_OUTI(MCI_INT_MASKn, 1, 0);
-#else
-      gpio_tlmm_config(GPIO_SDCC_CLK);
-      gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
-      gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-      gpio_tlmm_config(GPIO_SDCC_DATOUT_1_OUT);
-      gpio_tlmm_config(GPIO_SDCC_DATOUT_2_OUT);
-      gpio_tlmm_config(GPIO_SDCC_DATOUT_3_OUT);
-      //gpio_tlmm_config(SD_PWR_EN_N);
 #endif
       /* Initializes the sdcc_pdata structure */
 #ifdef FEATURE_SDCC_WLAN_CONFIG_API
@@ -870,7 +865,7 @@ sdcc_init(void)
          sdcc_pdata.enable_dma  = 1;
       }
 #endif
-      (void)sdcc_bsp_vdd_control(SDCC_BSP_VDD_ON);
+      
 #ifndef T_QSC1100
       /* set the power mode to 'power on' */
       HWIO_OUTM(MCI_POWER,

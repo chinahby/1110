@@ -245,7 +245,6 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe);
 NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 {
     NextFSMAction retVal = NFSMACTION_WAIT;
-    DBGPRINTF("WmsApp_ProcessState::::::::::::::START...111111111");
     if (NULL == pMe)
     {
         return retVal;
@@ -299,7 +298,6 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
             return WMSST_VOICEMAILOPTS_Handler(pMe);
             
         case WMSST_VIEWINBOXMSG:
-			DBGPRINTF("WMSST_VIEWINBOXMSG...........................................");
             return WMSST_VIEWINBOXMSG_Handler(pMe);
     
 #ifdef FEATURE_CONTACT_APP
@@ -451,7 +449,6 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 			return WMSST_RESENDCONFIRM_Handler(pMe);
 
 	    case WMSST_WMSNEW:
-			DBGPRINTF("WMSST_WMSNEW OVER........START................");
 			return WMSST_WMSNEW_Hander(pMe);
             
         case WMSST_EXIT:
@@ -1947,8 +1944,6 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
                 WmsApp_FreeMultiSendList(pMe->m_pSendList);
                 
                 // ¿½±´µØÖ· 
-                DBGPRINTF("pMe->m_msCur.m_szNum::::::%d",pMe->m_msCur.m_szNum);
-				DBGPRINTF("pMe->m_msCur.msg_tag:::::::::%d",pMe->m_msCur.msg_tag);
 				pMe->m_msCur.msg_tag = WMS_TAG_MO_NOT_SENT;
                 if (WSTRLEN(pMe->m_msCur.m_szNum)>0)
                 {
@@ -1957,7 +1952,6 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
                 else
                 {
                     // ×´Ì¬²»·¢ÉúÇ¨ÒÆ
-                    DBGPRINTF("pMe->m_msCur.m_szNum::::::NFSMACTION_CONTINUE");
 					pMe->m_ePMsgType = MESSAGE_WARNNING;
                     WmsApp_ShowMsgBox(pMe, IDS_NO_PHONENUMBER);
                     return NFSMACTION_WAIT;
@@ -6000,7 +5994,6 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe)
 	switch (pMe->m_eDlgReturn)
     {
     	case DLGRET_CREATE:
-			DBGPRINTF("WMSST_RESENDCONFIRM_Handler::::::::::::",0,0,0);
             pMe->m_wMsgResID = IDS_FAILED_RESENDING;
             WmsApp_ShowDialog(pMe, IDD_RESEND_CONFIRM);
             return NFSMACTION_WAIT;
@@ -6046,7 +6039,6 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe)
 	switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
-			DBGPRINTF("COREST_SMSTIP_Handler Start CREATE");
             WmsApp_ShowDialog(pMe, IDD_WMSNEWMSG);
             return NFSMACTION_WAIT;
 

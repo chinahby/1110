@@ -3032,6 +3032,9 @@ diag_panic_end (void)
 #endif
   else
   {
+#ifdef USES_RELEASE_VERSION
+    hw_reset ();
+#endif
 #ifdef FEATURE_ERR_EXTENDED_STORE
     /* Displays error message, and allows user to reset phone manually */
     /* No return from this function call */

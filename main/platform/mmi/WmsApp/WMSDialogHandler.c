@@ -973,13 +973,6 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                     return TRUE;
                     
                 default:
-                    {
-                        extern char ver_modelname[];
-                        extern char ver_modelversion[];
-                        
-                        DBGPRINTF("%s",ver_modelname);
-                        DBGPRINTF("%s",ver_modelversion);
-                    }
                     break;
             }
             return TRUE;
@@ -13589,16 +13582,13 @@ static boolean IDD_RESEND_CONFIRM_Handler(void	 *pUser,
 )
 {
 	WmsApp *pMe = (WmsApp *)pUser;
-    DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::%h",eCode);
     if (NULL == pMe)
     {
-    	DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::pMe  IS NULL");
         return FALSE;
     }
     
     if (NULL == pMe->m_pStatic)
     {
-    	DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::m_pStatic  IS NULL");
         return FALSE;
     }
 	
@@ -13608,7 +13598,6 @@ static boolean IDD_RESEND_CONFIRM_Handler(void	 *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-			DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::00000000000000000000");
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_WMSAPP,
@@ -13621,7 +13610,6 @@ static boolean IDD_RESEND_CONFIRM_Handler(void	 *pUser,
             {
                 AECHAR  wstrText[62];
                 PromptMsg_Param_type  Msg_Param={0};
- 				DBGPRINTF("IDD_RESEND_CONFIRM_Handler:::::::::1111111111111111111111");
                 (void) ISHELL_LoadResString(pMe->m_pShell,
                                 AEE_WMSAPPRES_LANGFILE,
                                 pMe->m_wMsgResID,
@@ -13731,7 +13719,6 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-			DBGPRINTF("EVT_DIALOG_START.............................");
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_WMSAPP,
@@ -13749,7 +13736,6 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
                 db_items_value_type  need_capture;
 				int i = 0;
 				int temp = 0;
-                DBGPRINTF("EVT_USER_REDRAW.............................");
                 need_capture.b_capture = DB_CAPTURE_NONE;
                 db_put(DB_CAPTURE_WALLPER,&need_capture);
                 // 获取消息数
@@ -13839,8 +13825,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 						break;
 					case AVK_SELECT:
 						{
-                    		 IWmsApp *pWmsApp=NULL;
-                			 DBGPRINTF("DLGRET_SMSVIEWS...............AVK_SELECT.........................");
+                    	    IWmsApp *pWmsApp=NULL;
 							pMe->m_currState = WMSST_WMSNEW;
 							CLOSE_DIALOG(DLGRET_SMSVIEWS)
                     		return TRUE;

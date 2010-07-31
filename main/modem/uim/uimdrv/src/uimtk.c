@@ -2535,6 +2535,11 @@ void uim_tk_send_cmd_to_ui
 /* Send a msg status command to the UI task */
 #ifdef FEATURE_REX_DYNA_MEM_UI
   ui_buf_ptr = ui_get_cmd();
+  if(ui_buf_ptr == NULL)
+  {
+    MSG_FATAL("Out of UI cmd buffer", 0,0,0);
+    return;
+  }
 #else
   if( (ui_buf_ptr = (ui_cmd_type*) q_get( &ui_cmd_free_q )) == NULL )
   {
