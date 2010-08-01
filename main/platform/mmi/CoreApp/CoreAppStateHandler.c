@@ -1099,7 +1099,8 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
         case DLGRET_CREATE:			
             if(pMe->bunlockuim)                   //如果输入锁卡密码正确，此参数为真                     
             {                     
-                 pMe->m_eUIMErrCode = UIMERR_NONE;                     
+                 pMe->m_eUIMErrCode = UIMERR_NONE;
+                 CoreApp_ProcessSubscriptionStatus(pMe);
             }
             
  #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)

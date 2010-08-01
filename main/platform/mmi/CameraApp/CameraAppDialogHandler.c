@@ -649,7 +649,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     pMe->m_isFormQuicktest = FALSE;
                     ISHELL_CloseApplet(pMe->m_pShell, FALSE);
                     return TRUE;
-                }                  
+                }
                 if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
                 {
                     pMe->m_bIsPreview = FALSE;
@@ -756,7 +756,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
     {
         return FALSE;
     }
-    
+    DBGPRINTF("CameraApp_CameraCFGHandleEvent %x %d %x",eCode, wParam, dwParam);
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -898,6 +898,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 ==============================================================================*/
 static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {  
+    DBGPRINTF("CameraApp_PicHandleEvent %x %d %x",eCode, wParam, dwParam);
     switch(eCode)
     {
         case EVT_DIALOG_INIT:          
@@ -3043,11 +3044,13 @@ static void CameraApp_UpdateFrame(CCameraApp *pMe)
   if (!pMe)
     return;
   
+  MSG_FATAL("CameraApp_UpdateFrame",0,0,0);
   (void)ICAMERA_GetFrame(pMe->m_pCamera, &pFrame);
 
   if (!pFrame)
     return;
   
+  MSG_FATAL("CameraApp_UpdateFrame Bitblt",0,0,0);
   // Display the frame at center location of the screen
   IDISPLAY_BitBlt(pMe->m_pDisplay, pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dx, pMe->m_rc.dy, pFrame, 0, 0, AEE_RO_COPY);
 
