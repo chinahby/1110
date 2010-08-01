@@ -1814,6 +1814,9 @@ RETURNS
 SIDE EFFECTS
   None
 ===========================================================================*/
+#ifdef CUST_EDITION
+#include "gsdi.h"
+#endif
 void ui_init( void )
 {
 #if defined(FEATURE_UI_CORE_REMOVED) && !defined(FEATURE_UI_DUALPROC_MDM)
@@ -1862,7 +1865,11 @@ void ui_init( void )
   gsdi_init(TRUE);
   gsdi_reg_callback(simple_handle_subscription_fn);
 #endif
-
+#ifdef CUST_EDITION
+{
+  rex_sleep(10000);
+}
+#endif
 // init RTRE
 #if defined(FEATURE_UI_CORE_REMOVED) && !defined(FEATURE_UI_DUALPROC_MDM)
 #ifdef FEATURE_MMGSDI
