@@ -446,8 +446,8 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
         return EFAILED;
     }
 	#if defined (FEATURE_DISP_160X128)
-    pMe->m_nRow        = 0;
-    pMe->m_nColumn     = 2;
+    pMe->m_nRow        = 1;
+    pMe->m_nColumn     = 1;
 	#elif defined (FEATURE_DISP_128X128)
 	pMe->m_nRow        = 1;
     pMe->m_nColumn     = 1;
