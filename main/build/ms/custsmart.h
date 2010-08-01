@@ -260,8 +260,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 #ifdef USES_CAMERA
 #include "custcamera.h"
+#define FEATURE_PNG_ENCODER
 #endif
-#include "custjpeg.h"
 
 #ifdef FEATURE_DS_MOBILE_IP
    #undef FEATURE_DS_MOBILE_IP
@@ -287,9 +287,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_IS2000_R_SCH
    #undef FEATURE_IS2000_R_SCH
 #endif
-#ifdef FEATURE_PNG_ENCODER
-   #undef FEATURE_PNG_ENCODER
-#endif
+//Gemsea Remove #ifdef FEATURE_PNG_ENCODER
+//Gemsea Remove    #undef FEATURE_PNG_ENCODER
+//Gemsea Remove #endif
 #ifdef FEATURE_IS2000_SCH_STATS
    #undef FEATURE_IS2000_SCH_STATS
 #endif
