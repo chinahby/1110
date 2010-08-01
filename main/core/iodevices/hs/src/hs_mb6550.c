@@ -1877,7 +1877,7 @@ LOCAL void hs_init( void )
     db_put(DB_POWERUPTYPE, &db_item);
     if (db_item.db_poweruptype == DB_POWERUP_BYKEY)
     {
-        clk_busy_wait(3000*1000);//等3秒
+        clk_busy_wait(2000*1000);//等3秒
         if (!keypad_is_power_key_pressed())//如果没有按住开机键，那就关机，否则开机
         {
             hw_power_off();
