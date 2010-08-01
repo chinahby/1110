@@ -7,6 +7,9 @@
 	<STRING Id="1011" Name="IDS_STATICAPP_TITLE_1">
 		<Text>FMuslim </Text>
 	</STRING>
+	<String Id="1012" Name="IDS_STATICAPP_TITLE_2">
+		<Text>FPortal</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_STATICAPP" Focus="7001">
