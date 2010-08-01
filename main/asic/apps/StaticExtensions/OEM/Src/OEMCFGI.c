@@ -1570,7 +1570,7 @@ static OEMConfigListType oemi_cache = {
    WMS_PRIORITY_NORMAL,                             //CFGI_WMS_PRIORITY
    SENDOPT_SAVEANDSEND,                             //CFGI_WMS_SENDMODE
    WMS_MEMORY_STORE_NV_CDMA,                        //CFGI_WMS_STORETYPE
-   FALSE                                            //CFGI_WMS_DELIVERYREPORTS
+   TRUE                                            //CFGI_WMS_DELIVERYREPORTS
 #ifdef FEATURE_AUTOREPLACE
    ,FALSE                                           //CFGI_WMS_AUTOREPLACE
 #endif
