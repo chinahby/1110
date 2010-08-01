@@ -1867,7 +1867,7 @@ void ui_init( void )
 #endif
 #ifdef CUST_EDITION
 {
-  rex_sleep(10000);
+  rex_sleep(3000);
 }
 #endif
 // init RTRE
