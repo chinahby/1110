@@ -53,7 +53,7 @@ endif
 ifeq ($(USES_LCD_SIZE),160x128)
 CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
-	Message.png|fs:/image/mainmenu/Message.png \
+	Messagebox.png|fs:/image/mainmenu/Messagebox.png \
 	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
 	Setting.png|fs:/image/mainmenu/Setting.png \
 	Alarm.png|fs:/image/mainmenu/Alarm.png \
