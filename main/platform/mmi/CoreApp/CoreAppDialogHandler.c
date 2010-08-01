@@ -2715,7 +2715,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							// ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);
 							 return CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
 						#else
-							
+							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 						#endif
 						#else
                         	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
