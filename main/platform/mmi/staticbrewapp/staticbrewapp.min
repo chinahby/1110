@@ -6,8 +6,9 @@ else
 FMN2010=yes
 endif
 
-CAH006=no
+CAH006=yes
 
+FPT005=yes
 #俩个提供外部使用的全局量
 #应用的o文件
 STATIC_BREW_APP_LIB:=#
@@ -67,27 +68,28 @@ CAH006_DIRS:=$(STATIC_BREW_APP)/cah006
 
 #todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
 vpath %.png $(CAH006_DIRS)
-vpath %.mid $(CAH006_DIRS)
-vpath %.htm $(CAH006_DIRS)
 vpath %.bci $(CAH006_DIRS)
 vpath %.bmp $(CAH006_DIRS)
 vpath %.fwm $(CAH006_DIRS)
 
 
 #获取所有资源文件名,MGM文件是读写格式所以不能静态编译
-CONSTFILE_STATIC_BREW_APP_TEMPS:=   $(wildcard $(CAH006_DIRS)/*.png) \
-                                    $(wildcard $(CAH006_DIRS)/*.bci) \
-									$(wildcard $(CAH006_DIRS)/*.bmp) \
-                                    $(wildcard $(CAH006_DIRS)/*.mid) \
-									$(wildcard $(CAH006_DIRS)/*.htm) \
-									$(wildcard $(CAH006_DIRS)/*.fwm)
-                                     
-CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS:=$(notdir $(CONSTFILE_STATIC_BREW_APP_TEMPS))#                                  
-CONSTFILE_BIN_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS),\
-					 $(filename)|fs:/mod/cah006/$(filename))#
+#CONSTFILE_STATIC_BREW_APP_CAH006:=$(wildcard $(CAH006_DIRS)/*.png) \
+                                     $(wildcard $(CAH006_DIRS)/*.bci) \
+																			$(wildcard $(CAH006_DIRS)/*.bmp) \
+																			$(wildcard $(FMN2010_DIRS)/*.mid)
+
+#CONSTFILE_STATIC_BREW_APP_FILENAMES_CAH006:=$(notdir $(CONSTFILE_STATIC_BREW_APP_CAH006))#                                  
+#CONSTFILE_STATIC_BREW_APP_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_CAH006),\
+																		$(filename)|fs:/mod/cah006/$(filename))#
 
 CONSTFILE_FILES+=cah006.mif|fs:/mif/cah006.mif
-STATIC_BREW_APP_LIB+=$(wildcard $(CAH006_DIRS)/*.o)		
+STATIC_BREW_APP_LIB+=$(STATIC_BREW_APP)/cah006/cah006.o
 endif
+######fpt005 application##########
+ifeq ($(FPT005),yes)
+CONSTFILE_FILES+=fpt005.mif|fs:/mif/fpt005.mif
+STATIC_BREW_APP_LIB+=$(STATIC_BREW_APP)/fpt005/fpt005.o		
+endif											
 
 endif #ifeq ($(USES_FLEXI_STATICAPP),yes)

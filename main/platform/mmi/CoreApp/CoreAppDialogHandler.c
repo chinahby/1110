@@ -2710,13 +2710,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     {
                         //return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
                     	#ifdef FEATURE_FLEXI_STATIC_BREW_APP
-						#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
-							 OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-							// ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);
-							 return CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
-						#else
-							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
-						#endif
+						 	 OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
+							 return CoreApp_LaunchApplet(pMe, AEECLSID_FBROWSER);
 						#else
                         	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 						#endif

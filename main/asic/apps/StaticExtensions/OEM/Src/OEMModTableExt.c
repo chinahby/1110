@@ -331,6 +331,8 @@ int NASRANI_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #else
 int Fmn2010_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #endif  /*STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM*/
+int Fpt005_Load(IShell *ps, void * pHelpers, IModule **pMod);
+int Cah006_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #endif
 
 #if defined(FEATURE_STATIC_APP_J9)
@@ -1298,7 +1300,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 	   { AEEFS_MIF_DIR"nasrani.mif",NASRANI_Load},
 #else
   	   { AEEFS_MIF_DIR"fmn2010.mif",Fmn2010_Load},
-#endif  	   
+#endif  	
+	   { AEEFS_MIF_DIR"fpt005.mif",Fpt005_Load},
+	   { AEEFS_MIF_DIR"cah006.mif",Cah006_Load},
 #endif	   
 
    {NULL, NULL}
