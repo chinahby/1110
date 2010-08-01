@@ -603,7 +603,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2,
+                                    MENUITEM_HEIGHT*1/2,		//TITLEBAR_HEIGHT + 
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 
@@ -618,7 +618,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                MENUITEM_HEIGHT*3/2,	//TITLEBAR_HEIGHT + 
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -1355,7 +1355,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                                   wstrText, 
                                   -1, 
                                   PIXELS_TO_EDGE,
-                                  PIXELS_TO_EDGE + TITLEBAR_HEIGHT,
+                                  PIXELS_TO_EDGE, // + TITLEBAR_HEIGHT,
                                   NULL,
                                   IDF_TEXT_TRANSPARENT);
                     IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, fontColor);
@@ -2387,7 +2387,7 @@ static boolean RecentCalls_TimeEvent(CRecentCalls *pMe,
                               warn_msg, 
                               -1, 
                               PIXELS_TO_EDGE,
-                              PIXELS_TO_EDGE + TITLEBAR_HEIGHT,
+                              PIXELS_TO_EDGE, // + TITLEBAR_HEIGHT,
                               NULL,
                               IDF_TEXT_TRANSPARENT);
             IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
@@ -2886,7 +2886,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                    wszName, 
                    ncharsInLine, 
                    PIXELS_TO_EDGE,
-                   PIXELS_TO_EDGE+ TITLEBAR_HEIGHT,
+                   PIXELS_TO_EDGE,	//+ TITLEBAR_HEIGHT,
                    NULL,
                    IDF_TEXT_TRANSPARENT);
    if(nlen > ncharsInLine)
@@ -2896,7 +2896,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                       wszName + ncharsInLine, 
                       -1, 
                       PIXELS_TO_EDGE,
-                      PIXELS_TO_EDGE+ TITLEBAR_HEIGHT + (1*nLineHeight),
+                      PIXELS_TO_EDGE + (1*nLineHeight),	//+ TITLEBAR_HEIGHT
                       NULL,
                       IDF_TEXT_TRANSPARENT);
       nSinkingLines++;
@@ -2909,7 +2909,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                        wszRawNum,
                        nlen<ncharsInLine?nlen:ncharsInLine,
                        PIXELS_TO_EDGE,
-                       PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((1 + nSinkingLines)*nLineHeight),
+                       PIXELS_TO_EDGE  + ((1 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
                        NULL,
                        IDF_TEXT_TRANSPARENT);
    /*如果一行显示不下，再显示第二行*/
@@ -2920,7 +2920,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                        wszRawNum + ncharsInLine, 
                        -1, 
                        PIXELS_TO_EDGE,
-                       PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((2 + nSinkingLines)*nLineHeight),
+                       PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
                        NULL,
                        IDF_TEXT_TRANSPARENT);
       nSinkingLines++;
@@ -2938,7 +2938,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      wszText, 
                      -1, 
                      PIXELS_TO_EDGE,
-                     PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((5 + nSinkingLines)*nLineHeight),
+                     PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
                      NULL,
                      IDF_TEXT_TRANSPARENT);
    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
@@ -2946,7 +2946,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      wszCount, 
                      -1, 
                      nTextWidth + 3 * nNumberWidth,
-                     PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((5 + nSinkingLines)*nLineHeight),
+                     PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
                      NULL,
                      IDF_TEXT_TRANSPARENT);
    
@@ -2996,7 +2996,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                     buffer,
                     -1,
                     PIXELS_TO_EDGE,
-                    PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((2 + nSinkingLines)*nLineHeight),
+                    PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
                     NULL,
                     IDF_TEXT_TRANSPARENT
                 );  //画出"日期/时间"字符串
@@ -3014,7 +3014,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                     buffer,
                     -1,
                     PIXELS_TO_EDGE,
-                    PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((3 + nSinkingLines)*nLineHeight),
+                    PIXELS_TO_EDGE  + ((3 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 
                     NULL,
                     IDF_TEXT_TRANSPARENT
                 );  //画出"通话时间"字符串
@@ -3032,8 +3032,8 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                       AEE_FONT_BOLD,
                       buffer,
                       -1,
-                      PIXELS_TO_EDGE,
-                      PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((3 + nSinkingLines)*nLineHeight),
+                      nTextWidth + nNumberWidth, //ELS_TO_EDGE,
+                      PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	3
                       NULL,
                       IDF_TEXT_TRANSPARENT
                   );
@@ -3069,7 +3069,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                   buffer,
                   -1,
                   nTextWidth + nNumberWidth,
-                  PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((3 + nSinkingLines)*nLineHeight),
+                  PIXELS_TO_EDGE  + ((3 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );
@@ -3151,7 +3151,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                             buffer,
                             -1,
                             128 - 56 - (IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_BOLD, (const AECHAR * )buffer)),
-                            PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((3 + nSinkingLines)*nLineHeight),
+                            PIXELS_TO_EDGE  + ((3 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
                             NULL,
                             IDF_TEXT_TRANSPARENT
                         );  //画出"日期/时间"字符串
@@ -3165,7 +3165,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                   buffer,
                   -1,
                   nTextWidth + nNumberWidth,
-                  PIXELS_TO_EDGE + TITLEBAR_HEIGHT + ((3 + nSinkingLines)*nLineHeight),
+                  PIXELS_TO_EDGE  + ((3+ nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	 
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );
@@ -3395,7 +3395,7 @@ else
                          dest_str, 
                          -1,   
                          PIXELS_TO_EDGE,
-                         PIXELS_TO_EDGE+ TITLEBAR_HEIGHT +  (1*nLineHeight),
+                         PIXELS_TO_EDGE +  (1*nLineHeight),	//+ TITLEBAR_HEIGHT
                          NULL,
                          IDF_TEXT_TRANSPARENT);
         (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);

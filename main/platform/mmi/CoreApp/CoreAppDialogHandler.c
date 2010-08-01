@@ -4107,6 +4107,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     else
     {
 #ifdef FEATURE_VERSION_SMART			//Add By zzg 2010_07_20
+		eBBarType = BTBAR_MENU_CONTACTS;
+#elif defined FEATURE_VERSION_M8
 		eBBarType = BTBAR_MENU_FRENDUO;
 #else	
 	#ifndef FEATURE_FLEXI_STATIC_BREW_APP
