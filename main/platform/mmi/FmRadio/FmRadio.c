@@ -31,6 +31,7 @@
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
+#define EVT_UI_EXIT                 1150
 
 /*==============================================================================
                                  类型定义
@@ -1132,6 +1133,21 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         case EVT_OPENSHAKE:
             Fm_Shake_Open();
             return TRUE;
+            
+        case EVT_USER:
+        {
+            switch(wParam) 
+            {
+                case EVT_UI_EXIT:            
+                    /* AEE is about to exit, set the exit flag to TRUE */
+                    pMe->startFromBackground = FALSE;
+                    pMe->runOnBackground = FALSE;
+                    ISHELL_CloseApplet( pMe->m_pShell, FALSE);
+                    return TRUE;
+                default:
+                    break;
+            }
+        }
 
         default:
             // 将接收到的事件路由至当前活动的对话框事件处理函数。

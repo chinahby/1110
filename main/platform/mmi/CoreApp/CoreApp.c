@@ -450,7 +450,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 // 转为后台模式, 只有在关机时才能退出 Core Applet
                 *((boolean *)dwParam) = FALSE;
             }
-
             return TRUE;
 
         case EVT_APP_SUSPEND:

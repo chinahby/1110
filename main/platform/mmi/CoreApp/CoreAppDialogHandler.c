@@ -3304,7 +3304,8 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                             uint16    aRing_type[PROFILENUMBER]  = {0} ;                                          // CFGI_PROFILE_STARTUP_MUSIC
                             byte      Ring_Cur_Music                      =  OEMNV_PROFILE_NORMALMODE;
                             byte      poweronoff_alert[PROFILENUMBER] =  {0};			
-
+                            //在关机前关掉FM声音
+                            ISHELL_SendEvent(pMe->a.m_pIShell, AEECLSID_APP_FMRADIO,EVT_USER,EVT_UI_EXIT,0L);
                             ICONFIG_GetItem( pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER, &Ring_Cur_Music, sizeof(Ring_Cur_Music) ); 
                             ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_POWERONOFF_ALERT,poweronoff_alert,sizeof(poweronoff_alert));
                             if(poweronoff_alert[Ring_Cur_Music]  == OEMNV_POWERONOFF_ENABLE)
