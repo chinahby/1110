@@ -2607,7 +2607,7 @@ uint64 GetRTREConfig(CCoreApp *pMe)
 #ifdef FEATURE_RTRE_DEFAULT_IS_NV
     nvi.rtre_config = NV_RTRE_CONFIG_NV_ONLY;
 #else
-    nvi.rtre_config = NV_RTRE_CONFIG_RUIM_ONLY;
+    nvi.rtre_config = NV_RTRE_CONFIG_RUIM_OR_DROP_BACK;//NV_RTRE_CONFIG_RUIM_ONLY;
 #endif
     (void) ui_put_nv (NV_RTRE_CONFIG_I, &nvi);
   }

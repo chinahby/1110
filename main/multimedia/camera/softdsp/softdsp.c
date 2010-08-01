@@ -197,6 +197,9 @@ static void SoftDSP_CatchSensorData(void)
         xStart = g_SoftDSPInfo.camsensor_params->camif_window_width_config.firstPixel;
         xOutEnd = g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine - \
                   g_SoftDSPInfo.camsensor_params->camif_window_width_config.lastPixel;
+
+        MSG_FATAL("SoftDSP_CatchSensorData 0x%x %d %d",pBuff,xStart,xOutEnd);
+        MSG_FATAL("SoftDSP_CatchSensorData %d %d %d",g_SoftDSPInfo.bCaptureState,pixelSize,g_SoftDSPInfo.camsensor_params->camif_window_height_config.lastLine);
         
         // HSYNC
         while(1)

@@ -2096,6 +2096,10 @@ camera_ret_code_type camera_svcs_blt_ex
   }
   else
   {
+    if (header->frameType == QCAMRAW_PREVIEW_FRAME)
+    {
+       graph_queue_camera_func ((uint32)CAMERA_FUNC_RELEASE_FRAME,(void *)0, (void *)0, (uint32) header->buffer_index, 0, 0, 0);
+    }
     return CAMERA_INVALID_FORMAT;
   }
   
