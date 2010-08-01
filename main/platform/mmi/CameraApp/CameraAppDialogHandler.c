@@ -2788,7 +2788,7 @@ static void CameraApp_DrawBottomBarText(CCameraApp *pMe, BottomBar_e_Type eBarTy
     switch(eBarType)
     {
         case BTBAR_SELECT_BACK:
-            nResID_L = IDS_SELECT;
+            nResID_L = IDS_OK; //IDS_SELECT;
             nResID_R = IDS_BACK;
             break;
 

@@ -633,17 +633,17 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 
             // 选择-----返回
          case BTBAR_SELECT_BACK:
-            nResID_L = IDS_SELECT;
+            nResID_L = IDS_OK;	//SELECT;
             nResID_R = IDS_BACK;
             break;
             //选择--------删除
          case BTBAR_SELECT_DEL:
-            nResID_L = IDS_SELECT;
+            nResID_L = IDS_OK; //IDS_SELECT;
             nResID_R = IDS_DEL;
             break;
 
          case BTBAR_SELECT_STOP:
-            nResID_L = IDS_SELECT;
+            nResID_L = IDS_OK; //IDS_SELECT;
             nResID_R = IDS_STOP;
             break;
 
@@ -819,28 +819,28 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 
             // 选择---删除---返回
          case BTBAR_SELECT_DEL_BACK:
-            nResID_L = IDS_SELECT;
-            nResID_M = IDS_DEL;
+            nResID_L = IDS_OK; //IDS_SELECT;
+            nResID_M = IDS_SELECT; //IDS_DEL;
             nResID_R = IDS_BACK;
             break;
 
             // 选择---确定---返回
          case BTBAR_SELECT_OK_BACK:
-            nResID_L = IDS_SELECT;
-            nResID_M = IDS_OK;
+            nResID_L = IDS_OK; //IDS_SELECT;
+            nResID_M = IDS_SELECT; //IDS_OK;
             nResID_R = IDS_BACK;
             break;
 
             // 选择---确定---删除
          case BTBAR_SELECT_OK_DEL:
-            nResID_L = IDS_SELECT;
-            nResID_M = IDS_OK;
+            nResID_L = IDS_OK; //IDS_SELECT;
+            nResID_M = IDS_SELECT; //IDS_OK;
             nResID_R = IDS_DEL;
             break;      
 
             // 选择---设置---返回
          case BTBAR_SELECT_SET_BACK:
-            nResID_L = IDS_SELECT;
+            nResID_L = IDS_OK; //IDS_SELECT;
             nResID_M = IDS_SETTING;
             nResID_R = IDS_BACK;
             break;
