@@ -79,7 +79,7 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
                                             0x00, 0x29, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                         }},
 #endif
-    //Restore by OEM NV, {NV_RTRE_CONFIG_I,                  {0x02}}
+    {NV_RTRE_CONFIG_I,                  {0x02}}
 };
 
 const byte pr_list_data[] =
