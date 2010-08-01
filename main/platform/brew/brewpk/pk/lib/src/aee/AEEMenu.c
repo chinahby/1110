@@ -5154,11 +5154,11 @@ static void Menu_DrawScrollBar(CMenuCtl * pme)
         {
             AEERect ScrollbarDarkRect;
             //RGBVAL  ScrollbarDarkClr = MAKE_RGB(0xFF, 0x70, 0x00);//wlh mod
-			RGBVAL  ScrollbarDarkClr = MAKE_RGB(0x34, 0x4D, 0xD6);
+			RGBVAL  ScrollbarDarkClr = MAKE_RGB(0xFF, 0x70, 0x00); //modify by miaoxiaoming indonesian
              
             pme->m_c.cScrollbar     = MAKE_RGB(0xDE, 0xDE, 0xDE);
             //pme->m_c.cScrollbarFill = MAKE_RGB(0xFF, 0xC0, 0x60);//wlh mod
-			pme->m_c.cScrollbarFill = MAKE_RGB(0x00, 0x91, 0xFE);
+			pme->m_c.cScrollbarFill = MAKE_RGB(0xFF, 0x70, 0x00); //modify by miaoxiaoming indonesian
             SETAEERECT(&ScrollbarDarkRect, 
                                 rctThumb.x + AEE_FRAME_SIZE, 
                                 rctThumb.y - AEE_FRAME_SIZE, 

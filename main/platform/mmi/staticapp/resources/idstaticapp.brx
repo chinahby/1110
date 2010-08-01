@@ -10,6 +10,9 @@
 	<String Id="1012" Name="IDS_STATICAPP_TITLE_2">
 		<Text>FPortal</Text>
 	</String>
+	<String Id="1013" Name="IDS_FBROWSER_TITLE_3">
+		<Text>FBrowser</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_STATICAPP" Focus="7001">

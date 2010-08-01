@@ -3556,7 +3556,7 @@ void Appscommon_DrawScrollBar(IDisplay *pDisplay, int nCurrentIdx, int nTotalIte
     AEERect rctThumb, rectScrollBar = *ScrollRect;
     int   x, y, dx, dy, nRange;
     RGBVAL cScrollbar = MAKE_RGB(0xDE, 0xDE, 0xDE), 
-               cScrollbarFill = MAKE_RGB(0xFF, 0xC0, 0x60),
+    cScrollbarFill = /*MAKE_RGB(0xFF, 0xC0, 0x60)*/MAKE_RGB(0xFF, 0x70, 0x00), 
                cBackGround = APPSCOMMON_BG_COLOR;
 
     if(nTotalItem <= nPageItem || pDisplay == NULL)

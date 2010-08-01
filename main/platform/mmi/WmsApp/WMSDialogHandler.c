@@ -1777,8 +1777,8 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
             
                     rc.x = pMe->m_rc.dx - SCROLLBAR_WIDTH;
                     rc.dx = SCROLLBAR_WIDTH;
-                    rc.y = TITLEBAR_HEIGHT;
-                    rc.dy = pMe->m_rc.dy - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT;
+                    rc.y = 0;  //modify by miaoxiaoming indonesian
+                    rc.dy = pMe->m_rc.dy  - BOTTOMBAR_HEIGHT; //modify by miaoxiaoming indonesian
                 
                     Appscommon_DrawScrollBar(pMe->m_pDisplay, pMe->m_wCurPageStarxuhao + MAXITEMS_ONEPAGE - 1, nCount, MAXITEMS_ONEPAGE, &rc);
                     IDISPLAY_Update(pMe->m_pDisplay);
