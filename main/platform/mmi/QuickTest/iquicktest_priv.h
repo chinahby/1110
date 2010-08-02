@@ -195,6 +195,7 @@ typedef struct _CQuickTest {
     dilag_type m_dilag_type;
 #endif
     boolean m_isFormCamera;
+    uint32  m_testkeycount;
 } CQuickTest;
 /*==============================================================================
                                  宏定义和常数

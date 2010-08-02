@@ -316,6 +316,7 @@ static int CQuickTest_InitData(CQuickTest *pMe)
    pMe->m_bNotOverwriteDlgRet = FALSE;
    pMe->m_mainMenuSel = 0;
    pMe->m_isFormCamera = FALSE;
+   pMe->m_testkeycount = 0;
    if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_RINGERMGR,
                                             (void **)&pMe->m_pRingerMgr)) 

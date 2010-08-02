@@ -526,10 +526,35 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
             return TRUE;
 
         case EVT_KEY:
+			DBGPRINTF("wParam::::::::::::::::::::%d,dwParam:::::::::::::::::%d",wParam,dwParam);
             switch(wParam)
             {
                 case AVK_CLR:
-                     CLOSE_DIALOG(DLGRET_CANCELED)
+					{
+						IImage* image	= NULL;
+						DBGPRINTF("AVK_CLRwParam::::::::::::::::::::%d,dwParam:::::::::::::::::%d",wParam,dwParam);
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+						if((uint32)dwParam == 1)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, 66);
+						}
+						else
+						{
+							IIMAGE_Draw(image, 116, 0);
+							IIMAGE_Draw(image, 120, 0);
+							IIMAGE_Draw(image, 116, TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 120, TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 116, 50-TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 120, 50-TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 116, TITLEBAR_HEIGHT*2);
+							IIMAGE_Draw(image, 120, TITLEBAR_HEIGHT*2);
+						}
+						if(pMe->m_testkeycount >=45)
+						{
+	                     	CLOSE_DIALOG(DLGRET_CANCELED)
+						}
+						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                	}
                      break;
 
                 case AVK_0:
@@ -542,6 +567,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 98);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
 						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                 	}
                     break;
@@ -556,6 +582,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -570,6 +597,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -584,6 +612,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -598,6 +627,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 66);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -612,6 +642,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 66);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -626,6 +657,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 66);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -640,6 +672,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -654,6 +687,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -668,6 +702,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -682,6 +717,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 0, 66);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -696,6 +732,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 0, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -717,6 +754,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 26, TITLEBAR_HEIGHT*2);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -738,6 +776,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 4, TITLEBAR_HEIGHT*2);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -754,6 +793,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 82, TITLEBAR_HEIGHT+2);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -762,26 +802,44 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    DBGPRINTF("AVK_UPwParam::::::::::::::::::::%d,dwParam:::::::::::::::::%d",wParam,dwParam);
 						if( image != NULL)
 						{
-							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 98);
-							IIMAGE_Draw(image, 66, 0);
-							IIMAGE_Draw(image, 82, 0);
-							IIMAGE_Release( image);
+							if((uint32)dwParam == 1)
+							{
+								IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 98);
+								pMe->m_testkeycount ++;
+							}
+							else
+							{
+								IIMAGE_Draw(image, 66, 0);
+								IIMAGE_Draw(image, 82, 0);
+								pMe->m_testkeycount ++;
+							}
+							
 						}
+						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+						IIMAGE_Release( image);
                      }
-					
+					break;
                 case AVK_DOWN:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    DBGPRINTF("AVK_DOWNwParam::::::::::::::::::::%d,dwParam:::::::::::::::::%d",wParam,dwParam);
 						if( image != NULL)
 						{
-							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 98);
-							IIMAGE_Draw(image, 66, 34);
-							IIMAGE_Draw(image, 82, 34);
+							if((uint32)dwParam == 1)
+							{
+								IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 98);
+								pMe->m_testkeycount ++;
+							}
+							else
+							{
+								IIMAGE_Draw(image, 66, 34);
+								IIMAGE_Draw(image, 82, 34);
+								pMe->m_testkeycount ++;
+							}
 							IIMAGE_Release( image);
 						}
                      }
@@ -801,6 +859,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 66-TITLEBAR_HEIGHT, TITLEBAR_HEIGHT+2);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -818,6 +877,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 116-TITLEBAR_HEIGHT, TITLEBAR_HEIGHT+2);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -832,6 +892,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -847,6 +908,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -860,6 +922,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -873,6 +936,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -886,6 +950,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -899,6 +964,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, 50);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -912,6 +978,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, 66);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -925,6 +992,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, 66);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -938,6 +1006,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 66);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -951,6 +1020,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, 66);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -964,6 +1034,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, 66);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -978,6 +1049,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -991,6 +1063,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -1004,6 +1077,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -1017,6 +1091,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -1030,6 +1105,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -1043,6 +1119,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -1056,6 +1133,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 0, 82);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -1070,6 +1148,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, 98);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                      }
 					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
@@ -1083,6 +1162,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, 98);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                      }
 					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
@@ -1097,6 +1177,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 98);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
@@ -1111,6 +1192,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, 98);
 							IIMAGE_Release( image);
 						}
+						pMe->m_testkeycount ++;
                      }
 					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;

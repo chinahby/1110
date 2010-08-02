@@ -228,7 +228,7 @@ typedef struct _MainMenu
     #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
     #define ICON3_ANI      "fs:/image/mainmenu/UTK.png"
     #define ICON4_ANI      "fs:/image/mainmenu/FmRadio.png"
-    #define ICON5_ANI      "fs:/image/mainmenu/Messagebox.png"
+    #define ICON5_ANI      "fs:/image/mainmenu/Message.png"
     #define ICON6_ANI      "fs:/image/mainmenu/Recentcall.png"
     #define ICON7_ANI      "fs:/image/mainmenu/MusicPlayer.png"
     #define ICON8_ANI      "fs:/image/mainmenu/Setting.png"
