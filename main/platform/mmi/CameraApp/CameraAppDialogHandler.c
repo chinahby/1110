@@ -643,13 +643,21 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 }                   
                 return FALSE;
 
-            case AVK_CLR:   
+            case AVK_CLR:  
+                MSG_FATAL("AVK_CLR m_isFormQuicktest=%d",pMe->m_isFormQuicktest,0,0);
                 if(pMe->m_isFormQuicktest)
                 {
+                    ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+                    if(pMe->m_nCameraState == CAM_PREVIEW)
+                    {
+                        ICAMERA_Stop(pMe->m_pCamera);
+                        pMe->m_nCameraState = CAM_STOP;
+                    }                        
                     pMe->m_isFormQuicktest = FALSE;
                     ISHELL_CloseApplet(pMe->m_pShell, FALSE);
                     return TRUE;
                 }
+                MSG_FATAL("AVK_CLR 22222",0,0,0);
                 if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
                 {
                     pMe->m_bIsPreview = FALSE;
@@ -1077,6 +1085,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 
             if((pMe->m_wMsgID == IDS_MSG_WAITING) &&(!pMe->m_pCamera))
             {
+                MSG_FATAL("CameraApp_PopMSGHandleEvent EVT_USER_REDRAW",0,0,0);
                 CALLBACK_Init(&pMe->m_CallBack,
                               CameraApp_InitCameraCheck,
                               (void *)pMe);          
@@ -3053,8 +3062,9 @@ static void CameraApp_UpdateFrame(CCameraApp *pMe)
   MSG_FATAL("CameraApp_UpdateFrame Bitblt",0,0,0);
   // Display the frame at center location of the screen
   IDISPLAY_BitBlt(pMe->m_pDisplay, pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dx, pMe->m_rc.dy, pFrame, 0, 0, AEE_RO_COPY);
-
+  MSG_FATAL("CameraApp_UpdateFrame 1111",0,0,0);
   RELEASEIF(pFrame);
+  MSG_FATAL("CameraApp_UpdateFrame 22222",0,0,0);
 }
 
 /*===========================================================================
@@ -3089,6 +3099,7 @@ static int CameraApp_SavePhoto(CCameraApp *pMe)
 
 static void CameraApp_EventNotify(CCameraApp *pMe, AEECameraNotify *pcn)
 {
+    MSG_FATAL("CameraApp_EventNotify Start",0,0,0);
     if (!pMe || !pcn || !pMe->m_pCamera)
         return;
     
@@ -3126,12 +3137,13 @@ static void CameraApp_EventNotify(CCameraApp *pMe, AEECameraNotify *pcn)
     default:
         break;
     }
+    MSG_FATAL("CameraApp_EventNotify End",0,0,0);
 }
 
 void CameraApp_InitCameraCheck(void *po)
 {
     CCameraApp *pMe = (CCameraApp *)po; 
-
+    MSG_FATAL("CameraApp_InitCameraCheck Start",0,0,0);
     CameraApp_CreateDirectory(pMe);
  
     if(pMe->m_pCamera == NULL)
@@ -3145,6 +3157,7 @@ void CameraApp_InitCameraCheck(void *po)
     {
         ICAMERA_RegisterNotify(pMe->m_pCamera,(PFNCAMERANOTIFY)CameraApp_EventNotify,po);
     }
+    MSG_FATAL("CameraApp_InitCameraCheck End",0,0,0);
 }
 
 void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)

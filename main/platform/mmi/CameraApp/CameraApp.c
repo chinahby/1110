@@ -776,6 +776,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             return TRUE;
       
         case EVT_APP_STOP:
+            MSG_FATAL("CameraApp_HandleEvent EVT_APP_STOP",0,0,0);
             if(pMe->m_pDisplay != NULL)
             {
                 (void)IDISPLAY_Release(pMe->m_pDisplay);
@@ -783,14 +784,15 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             }
             
             pMe->m_bSuspending = TRUE; 
-
+            MSG_FATAL("CameraApp_HandleEvent EVT_APP_STOP 00000",0,0,0);
             SetDeviceState(DEVICE_TYPE_CAMERA, DEVICE_CAMERA_STATE_OFF);
-
+            
             if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
+                MSG_FATAL("CameraApp_HandleEvent EVT_APP_STOP 111111",0,0,0);
                 ICAMERA_Stop(pMe->m_pCamera);
             }
-   
+            MSG_FATAL("CameraApp_HandleEvent EVT_APP_STOP 22222",0,0,0);
             return TRUE;
       
         case EVT_APP_SUSPEND:
@@ -853,6 +855,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 
       
         case EVT_APP_RESUME: 
+            MSG_FATAL("CameraApp_HandleEvent EVT_APP_RESUME",0,0,0);
             CameraApp_InitCameraCheck(pMe); 
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
