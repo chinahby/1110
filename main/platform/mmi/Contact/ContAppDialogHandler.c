@@ -9161,8 +9161,8 @@ static boolean  CContApp_HandleCapacityDlgEvent( CContApp  *pMe,
                 ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
                 rc = pMe->m_rc;
                 rc.dy = devinfo.cyScreen;
-                rc.dy -= (GetBottomBarHeight(pMe->m_pDisplay) + GetTitleBarHeight(pMe->m_pDisplay) );
-                rc.y = GetTitleBarHeight(pMe->m_pDisplay);
+                rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);// + GetTitleBarHeight(pMe->m_pDisplay) );
+                rc.y = 0;//GetTitleBarHeight(pMe->m_pDisplay);
                 
                 ISTATIC_SetRect(pStatic, &rc);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
