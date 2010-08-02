@@ -45,10 +45,24 @@ vpath %.bmp $(FMN2010_DIRS)
 vpath %.mgm $(FMN2010_DIRS)
 
 #获取所有资源文件名,MGM文件是读写格式所以不能静态编译
-CONSTFILE_STATIC_BREW_APP_TEMPS:=$(wildcard $(FMN2010_DIRS)/*.png) \
-                                 $(wildcard $(FMN2010_DIRS)/*.bci) \
-								 $(wildcard $(FMN2010_DIRS)/*.bmp) \
-                                 $(wildcard $(FMN2010_DIRS)/*.mid)
+CONSTFILE_STATIC_BREW_APP_TEMPS:=$(wildcard $(FMN2010_DIRS)/1.png) \
+								 $(wildcard $(FMN2010_DIRS)/2.png) \
+								 $(wildcard $(FMN2010_DIRS)/3.png) \
+								 $(wildcard $(FMN2010_DIRS)/4.png) \
+								 $(wildcard $(FMN2010_DIRS)/5.png) \
+								 $(wildcard $(FMN2010_DIRS)/6.png) \
+								 $(wildcard $(FMN2010_DIRS)/7.png) \
+								 $(wildcard $(FMN2010_DIRS)/8.png) \
+								 $(wildcard $(FMN2010_DIRS)/background.bci) \
+								 $(wildcard $(FMN2010_DIRS)/connecting.bci) \
+                                 $(wildcard $(FMN2010_DIRS)/frame.bci) \
+                                 $(wildcard $(FMN2010_DIRS)/header.bci) \
+								 $(wildcard $(FMN2010_DIRS)/keluar.bci) \
+                                 $(wildcard $(FMN2010_DIRS)/splash.bci) \
+								 $(wildcard $(FMN2010_DIRS)/point.bmp.bmp) \
+                                 $(wildcard $(FMN2010_DIRS)/adzan.mid) \
+                                 $(wildcard $(FMN2010_DIRS)/almatsurat.mid) \
+                                 $(wildcard $(FMN2010_DIRS)/imsak.mid) 
                                      
 CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS:=$(notdir $(CONSTFILE_STATIC_BREW_APP_TEMPS))#                                  
 CONSTFILE_BIN_FILES+=$(foreach filename,$(CONSTFILE_STATIC_BREW_APP_FILENAMES_TEMPS),\
@@ -72,13 +86,50 @@ vpath %.bmp $(CAH006_DIRS)
 vpath %.fwm $(CAH006_DIRS)
 vpath %.mid $(CAH006_DIRS)
 vpath %.mgm $(CAH006_DIRS)
-vpath %.htm $(CAH006_DIRS)
+vpath %.html $(CAH006_DIRS)
+vpath %.xml $(CAH006_DIRS)
 
 #获取所有资源文件名,MGM文件是读写格式所以不能静态编译
-CONSTFILE_STATIC_BREW_APP_CAH006:=$(wildcard $(CAH006_DIRS)/*.png) \
-								  $(wildcard $(CAH006_DIRS)/*.bmp) \
-								  $(wildcard $(CAH006_DIRS)/*.mid) \
-								  $(wildcard $(CAH006_DIRS)/*.bci) 
+CONSTFILE_STATIC_BREW_APP_CAH006:=$(wildcard $(CAH006_DIRS)/00.png) \
+								  $(wildcard $(CAH006_DIRS)/01.png) \
+								  $(wildcard $(CAH006_DIRS)/02.png) \
+								  $(wildcard $(CAH006_DIRS)/03.png) \
+								  $(wildcard $(CAH006_DIRS)/04.png) \
+								  $(wildcard $(CAH006_DIRS)/05.png) \
+								  $(wildcard $(CAH006_DIRS)/06.png) \
+								  $(wildcard $(CAH006_DIRS)/07.png) \
+								  $(wildcard $(CAH006_DIRS)/08.png) \
+								  $(wildcard $(CAH006_DIRS)/09.png) \
+								  $(wildcard $(CAH006_DIRS)/10.png) \
+								  $(wildcard $(CAH006_DIRS)/11.png) \
+								  $(wildcard $(CAH006_DIRS)/aim.png) \
+								  $(wildcard $(CAH006_DIRS)/cah_header.png) \
+								  $(wildcard $(CAH006_DIRS)/cah_splash.png) \
+								  $(wildcard $(CAH006_DIRS)/flexi.png) \
+								  $(wildcard $(CAH006_DIRS)/gtalk.png) \
+								  $(wildcard $(CAH006_DIRS)/msn.png) \
+								  $(wildcard $(CAH006_DIRS)/signal.png) \
+								  $(wildcard $(CAH006_DIRS)/sound.png) \
+								  $(wildcard $(CAH006_DIRS)/tandatanya.png) \
+								  $(wildcard $(CAH006_DIRS)/yahoo.png) \
+								  $(wildcard $(CAH006_DIRS)/aim.bmp) \
+								  $(wildcard $(CAH006_DIRS)/bullet.bmp) \
+								  $(wildcard $(CAH006_DIRS)/cah_bullet.bmp) \
+								  $(wildcard $(CAH006_DIRS)/gtalk.bmp) \
+								  $(wildcard $(CAH006_DIRS)/msn.bmp) \
+								  $(wildcard $(CAH006_DIRS)/warning.bmp) \
+								  $(wildcard $(CAH006_DIRS)/yahoo.bmp) \
+								  $(wildcard $(CAH006_DIRS)/buzz_tone.mid) \
+								  $(wildcard $(CAH006_DIRS)/popup.mid) \
+								  $(wildcard $(CAH006_DIRS)/berhasil.bci) \
+								  $(wildcard $(CAH006_DIRS)/connecting1.bci) \
+								  $(wildcard $(CAH006_DIRS)/connecting2.bci) \
+								  $(wildcard $(CAH006_DIRS)/connecting3.bci) \
+								  $(wildcard $(CAH006_DIRS)/connecting4.bci) \
+								  $(wildcard $(CAH006_DIRS)/connecting5.bci) \
+								  $(wildcard $(CAH006_DIRS)/refresh.bci) \
+								  $(wildcard $(CAH006_DIRS)/tandatanya.bci) \
+								  $(wildcard $(CAH006_DIRS)/warning.bci)
 								  
 CCONSTFILE_STATIC_BREW_APP_FILENAMES_CAH006:=$(notdir $(CONSTFILE_STATIC_BREW_APP_CAH006))#                                  
 CONSTFILE_BIN_FILES+=$(foreach filename,$(CCONSTFILE_STATIC_BREW_APP_FILENAMES_CAH006),\
@@ -105,23 +156,39 @@ vpath %.htm $(FPT_FMENU_DIRS)
 vpath %.fml $(FPT_DIRS)
 
 
-CONSTFILE_STATIC_BREW_ICON_APP_FPT005 := #$(wildcard $(FPT_PNG_DIRS)/*.png)
+CONSTFILE_STATIC_BREW_IMAGE_APP_FPT005 := $(wildcard $(FPT_IMAGE_DIRS)/background.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/background_web.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/bar_atas.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/bar_bawah_kanan.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/bar_bawah_kiri.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/bar_menu_type2.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/header1.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/header2.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/header3.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/layout_opsi.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/message.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_1.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_2.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_3.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_4.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_5.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_6.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_7.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_8.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_9.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/notification_full.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/selection_type2.png) \
+										  $(wildcard $(FPT_IMAGE_DIRS)/splashscreen.png)
 
-CONSTFILE_STATIC_BREW_IMAGE_APP_FPT005 := $(wildcard $(FPT_IMAGE_DIRS)/*.png)
-								  
-CCONSTFILE_STATIC_BREW_ICON_APP_FILENAMES_FPT005:=$(notdir $(CONSTFILE_STATIC_BREW_ICON_APP_FPT005))#                                  
-CONSTFILE_BIN_FILES += $(foreach filename,$(CCONSTFILE_STATIC_BREW_ICON_APP_FILENAMES_FPT005),\
-					 $(filename)|fs:/mod/fpt005/icon/$(filename))#
-					 
 CCONSTFILE_STATIC_BREW_IMAGE_APP_FILENAMES_FPT005:=$(notdir $(CONSTFILE_STATIC_BREW_IMAGE_APP_FPT005))#   
                                
 CONSTFILE_BIN_FILES += $(foreach filename,$(CCONSTFILE_STATIC_BREW_IMAGE_APP_FILENAMES_FPT005),\
 					  $(filename)|fs:/mod/fpt005/image/$(filename))#
 																		
 
-EFSFILE_FILES+= $(foreach filename, $(notdir $(wildcard $(FPT_DIRS)/*.hml)), fs:/mod/$(FPT_DIRS)/$(filename))
-EFSFILE_FILES+= $(foreach filename, $(notdir $(wildcard $(FPT_FMENU_DIRS)/*.htm)), fs:/mod/$(FPT_FMENU_DIRS)/$(filename))
-EFSFILE_FILES+= $(foreach filename, $(notdir $(wildcard $(FPT_IMAGE_DIRS)/*.bci)), fs:/mod/$(FPT_IMAGE_DIRS)/$(filename))
+#EFSFILE_FILES+= $(foreach filename, $(notdir $(wildcard $(FPT_DIRS)/*.hml)), fs:/mod/$(FPT_DIRS)/$(filename))
+#EFSFILE_FILES+= $(foreach filename, $(notdir $(wildcard $(FPT_FMENU_DIRS)/*.htm)), fs:/mod/$(FPT_FMENU_DIRS)/$(filename))
+#EFSFILE_FILES+= $(foreach filename, $(notdir $(wildcard $(FPT_IMAGE_DIRS)/*.bci)), fs:/mod/$(FPT_IMAGE_DIRS)/$(filename))
 
 CONSTFILE_FILES += fpt005.mif|fs:/mif/fpt005.mif
 STATIC_BREW_APP_LIB += $(STATIC_BREW_APP)/fpt005/fpt005.o		
