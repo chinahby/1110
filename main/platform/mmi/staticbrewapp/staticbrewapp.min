@@ -85,7 +85,7 @@ CONSTFILE_BIN_FILES+=$(foreach filename,$(CCONSTFILE_STATIC_BREW_APP_FILENAMES_C
 					 $(filename)|fs:/mod/cah006/$(filename))#
 																		
 
-EFSFILE_FILES+=$(foreach filename,$(notdir $(wildcard $(CAH006_DIRS)/*.mgm)) $(notdir $(wildcard $(CAH006_DIRS)/*.htm)) $(notdir $(wildcard $(CAH006_DIRS)/*.fwm)),fs:/mod/$CAH006_DIRS/$(filename))
+#EFSFILE_FILES += $(foreach filename, $(notdir $(wildcard $(CAH006_DIRS)/*.mgm)) $(notdir $(wildcard $(CAH006_DIRS)/*.htm)) $(notdir $(wildcard $(CAH006_DIRS)/*.fwm)), fs:/mod/$(CAH006_DIRS)/$(filename))
 
 CONSTFILE_FILES+=cah006.mif|fs:/mif/cah006.mif
 STATIC_BREW_APP_LIB+=$(STATIC_BREW_APP)/cah006/cah006.o
@@ -105,25 +105,26 @@ vpath %.htm $(FPT_FMENU_DIRS)
 vpath %.fml $(FPT_DIRS)
 
 
-CONSTFILE_STATIC_BREW_ICON_APP_FPT005:=$(wildcard $(FPT_PNG_DIRS)/*.png)
+CONSTFILE_STATIC_BREW_ICON_APP_FPT005 := #$(wildcard $(FPT_PNG_DIRS)/*.png)
 
-CONSTFILE_STATIC_BREW_IMAGE_APP_FPT005:=$(wildcard $(FPT_IMAGE_DIRS)/*.png)
+CONSTFILE_STATIC_BREW_IMAGE_APP_FPT005 := $(wildcard $(FPT_IMAGE_DIRS)/*.png)
 								  
 CCONSTFILE_STATIC_BREW_ICON_APP_FILENAMES_FPT005:=$(notdir $(CONSTFILE_STATIC_BREW_ICON_APP_FPT005))#                                  
-CONSTFILE_BIN_FILES+=$(foreach filename,$(CCONSTFILE_STATIC_BREW_ICON_APP_FILENAMES_FPT005),\
+CONSTFILE_BIN_FILES += $(foreach filename,$(CCONSTFILE_STATIC_BREW_ICON_APP_FILENAMES_FPT005),\
 					 $(filename)|fs:/mod/fpt005/icon/$(filename))#
 					 
-CCONSTFILE_STATIC_BREW_IMAGE_APP_FILENAMES_FPT005:=$(notdir $(CONSTFILE_STATIC_BREW_IMAGE_APP_FPT005))#                                  
-CONSTFILE_BIN_FILES+=$(foreach filename,$(CCONSTFILE_STATIC_BREW_IMAGE_APP_FILENAMES_FPT005),\
-					 $(filename)|fs:/mod/fpt005/image/$(filename))#
+CCONSTFILE_STATIC_BREW_IMAGE_APP_FILENAMES_FPT005:=$(notdir $(CONSTFILE_STATIC_BREW_IMAGE_APP_FPT005))#   
+                               
+CONSTFILE_BIN_FILES += $(foreach filename,$(CCONSTFILE_STATIC_BREW_IMAGE_APP_FILENAMES_FPT005),\
+					  $(filename)|fs:/mod/fpt005/image/$(filename))#
 																		
 
-EFSFILE_FILES+=$(foreach filename,$(notdir $(wildcard $(FPT_DIRS)/*.hml)),fs:/mod/$FPT_DIRS/$(filename))
-EFSFILE_FILES+=$(foreach filename,$(notdir $(wildcard $(FPT_FMENU_DIRS)/*.htm)),fs:/mod/$FPT_FMENU_DIRS/$(filename))
-EFSFILE_FILES+=$(foreach filename,$(notdir $(wildcard $(FPT_IMAGE_DIRS)/*.bci)),fs:/mod/$FPT_IMAGE_DIRS/$(filename))
+EFSFILE_FILES+= $(foreach filename, $(notdir $(wildcard $(FPT_DIRS)/*.hml)), fs:/mod/$(FPT_DIRS)/$(filename))
+EFSFILE_FILES+= $(foreach filename, $(notdir $(wildcard $(FPT_FMENU_DIRS)/*.htm)), fs:/mod/$(FPT_FMENU_DIRS)/$(filename))
+EFSFILE_FILES+= $(foreach filename, $(notdir $(wildcard $(FPT_IMAGE_DIRS)/*.bci)), fs:/mod/$(FPT_IMAGE_DIRS)/$(filename))
 
-CONSTFILE_FILES+=fpt005.mif|fs:/mif/fpt005.mif
-STATIC_BREW_APP_LIB+=$(STATIC_BREW_APP)/fpt005/fpt005.o		
+CONSTFILE_FILES += fpt005.mif|fs:/mif/fpt005.mif
+STATIC_BREW_APP_LIB += $(STATIC_BREW_APP)/fpt005/fpt005.o		
 
 
 endif											

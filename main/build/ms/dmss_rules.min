@@ -386,7 +386,7 @@ $(CONSTFILE_OBJS) : $(TARGETDIR)/%.o : $(TARGETDIR)/%.c
 	$(c_compile)
 	
 .PHONY : mmires
-mmires: $(CONSTFILE_BIN_SRC) $(CONSTFILE_BAR_SRC) $(TARGETDIR)/OEMConstFiles_Dynamic.c $(EFSFILE_FILENAMES)
+mmires: $(CONSTFILE_BIN_SRC) $(CONSTFILE_BAR_SRC) $(TARGETDIR)/OEMConstFiles_Dynamic.c# $(EFSFILE_FILENAMES)
 	@echo ------------------------------------------------------------------
 	@echo BREW RESOURCE BUILDER
 	@echo ------------------------------------------------------------------
