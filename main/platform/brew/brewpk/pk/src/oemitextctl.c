@@ -3459,12 +3459,14 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
 		if (pme->m_nSymbolPage%2 == 1)
         {
         	//y = TITLEBAR_HEIGHT + 3*(pme->m_nFontHeight)/2;
-            y = 3*(pme->m_nFontHeight)/2;
+            //y = 3*(pme->m_nFontHeight)/2;
+            y = 5;
 		}
 		else
 		{
 			//y = TITLEBAR_HEIGHT - (pme->m_nFontHeight)/2;
-			y = (pme->m_nFontHeight)/2;
+			//y = (pme->m_nFontHeight)/2;
+			y = 5;
 		}
 
        if (pme->m_dwProps & TP_GRAPHIC_BG)
@@ -3494,7 +3496,7 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
             }
             else
             {
-                y += (2*pme->m_nFontHeight);
+                y += (pme->m_nFontHeight + pme->m_nFontHeight/2);
             }
 #endif            
 

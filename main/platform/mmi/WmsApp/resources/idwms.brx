@@ -302,7 +302,7 @@
 		<Text>Kirim dan simpan</Text>
 	</STRING>
 	<STRING Id="107" Name="IDS_CALLBACKNUM">
-		<Text>Nomor Panggilan kembali</Text>
+		<Text>nomor telepon kembali</Text>
 	</STRING>
 	<STRING Id="108" Name="IDS_SAVEEMAIL">
 		<Text>Ambil e_mail</Text>
