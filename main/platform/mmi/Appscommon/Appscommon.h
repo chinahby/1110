@@ -213,6 +213,7 @@ typedef enum BottomBar_e_Type
    //Add By zzg 2010_07_20
    BTBAR_MENU_FRENDUO,	 // 菜单------FRENDUO
    BTBAR_VIEWMORE_BACK,	 // 浏览更多-----返回
+   BTBAR_FACEBOOK_CHAT,	 // Facebook-----chat
    //Add End
    BTBAR_OK_BACK,         // 确定-----返回
    BTBAR_OK_CANCEL,       // 确定-----取消

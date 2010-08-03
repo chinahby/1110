@@ -1537,16 +1537,18 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
          ISHELL_GetDeviceInfo(pMe->m_pShell, &DevInfo);
          rc = pMe->m_rc;
          rc.dy =  GetTitleBarHeight(pMe->m_pDisplay);
+		 
 		 //add by yangdecai
-			{
-				AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        MGRES_LANGFILE,                                
-                        IDS_MG_MEMORYSTATUS,
-                        WTitle,
-                        sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-            }
+		{
+			AECHAR WTitle[40] = {0};
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                    MGRES_LANGFILE,                                
+                    IDS_MG_MEMORYSTATUS,
+                    WTitle,
+                    sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		}
+		 
          IMENUCTL_SetRect(pMenuCtl, &rc);
          IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE | MP_WRAPSCROLL);
 

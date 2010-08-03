@@ -485,6 +485,13 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 			break;
 		//Add End
 
+		//Add By zzg 2010_08_03
+		case BTBAR_FACEBOOK_CHAT:
+			nResID_L = IDS_FACEBOOK;
+			nResID_R = IDS_CHAT;
+			break;
+		//Add End
+
 		//Add By zzg 2010_07_23
 		case BTBAR_VIEWMORE_BACK:
 			nResID_L = IDS_VIEWMORE;
@@ -2631,6 +2638,13 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 		case BTBAR_MENU_FRENDUO:
 			nResID_L = IDS_MENU;
 			nResID_R = IDS_FRENDUO_LIST;
+			break;
+		//Add End
+
+		//Add By zzg 2010_08_03
+		case BTBAR_FACEBOOK_CHAT:
+			nResID_L = IDS_FACEBOOK;
+			nResID_R = IDS_CHAT;
 			break;
 		//Add End
 

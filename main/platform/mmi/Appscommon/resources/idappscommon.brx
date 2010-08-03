@@ -223,11 +223,17 @@
 	<STRING Id="1025" Name="IDS_NO">
 		<Text>Tidak</Text>
 	</STRING>
-        <String Id="1026" Name="IDS_VIEWMORE">
+	<String Id="1026" Name="IDS_VIEWMORE">
 		<Text>ViewMore</Text>
+	</String>
+	<String Id="1027" Name="IDS_FACEBOOK">
+		<Text>Facebook</Text>
 	</String>
 	<String Id="1028" Name="IDS_FRENDUO_LIST">
 		<Text>FrenDuo</Text>
+	</String>
+	<String Id="1029" Name="IDS_CHAT">
+		<Text>Chat</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Sebentar lagi</Text>

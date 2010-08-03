@@ -215,7 +215,7 @@ SEE ALSO:
 
 =============================================================================*/
 int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod)
-{
+{	
     return MainMenuMod_New( sizeof( MainMenuMod),
                     pIShell,
                     ph,
@@ -465,23 +465,22 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 #endif
     pMe->m_bNormalStart = TRUE;
 
-
     // 接口创建及相关初始化
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG,
             (void **)&pMe->m_pConfig) != SUCCESS)
-    {
+    {    	
         return EFAILED;
     }
     
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
             (void **) &pMe->m_pDisplay) != SUCCESS)
-    {
+    {    	
         return EFAILED;
     }
 	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_ANNUNCIATOR,
                                             (void **)&pMe->m_pIAnn))
-    {
+    {    	
         return EFAILED;
     }
 	pMe->m_pImageTurn[0] = ISHELL_LoadImage(pMe->m_pShell,ICON1_ANI_1);
@@ -493,17 +492,18 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	pMe->m_pImageTurn[6] = ISHELL_LoadImage(pMe->m_pShell,ICON7_ANI_1);
 	pMe->m_pImageTurn[7] = ISHELL_LoadImage(pMe->m_pShell,ICON8_ANI_1);
 	pMe->m_pImageTurn[8] = ISHELL_LoadImage(pMe->m_pShell,ICON9_ANI_1);
-    #if defined (FEATURE_DISP_160X128)
+	
+#if defined (FEATURE_DISP_160X128)
     pMe->m_pImageTurn[9] = ISHELL_LoadImage(pMe->m_pShell,ICON10_ANI_1);
 	pMe->m_pImageTurn[10] = ISHELL_LoadImage(pMe->m_pShell,ICON11_ANI_1);
 	pMe->m_pImageTurn[11] = ISHELL_LoadImage(pMe->m_pShell,ICON12_ANI_1);
-    #endif
+#endif
 
     
 	for (i = 0; i < MAX_TURN_NUM; i ++)
 	{
 		if(pMe->m_pImageTurn[i] == NULL)
-        {
+        {        	
 			iamgeflag = TRUE;
 			break;
 		}
@@ -1274,11 +1274,11 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 			return movepen_anddo(pMe,dwParam);
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
-        case EVT_DIALOG_INIT:
+        case EVT_DIALOG_INIT:			
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
 
-        case EVT_DIALOG_START:
+        case EVT_DIALOG_START:			
 #ifdef FEATURE_RANDOM_MENU_COLOR
             (void)OEM_GetConfig(CFGI_MENU_BGCOLOR, &pMe->m_nBgColor, sizeof(pMe->m_nBgColor));
 #endif
@@ -1308,7 +1308,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
         case EVT_USER_REDRAW:
             // 初始整个背景及全部初始图标
-            ERR("EVT_USER_REDRAW:::::::::::1111111111",0,0,0);
+            ERR("EVT_USER_REDRAW:::::::::::1111111111",0,0,0);			
             DrawMatrix(pMe);
 #ifdef FEATURE_ICON_MOVE_ANIMATION
             {
@@ -1732,15 +1732,21 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
             
         titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
         STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
-    #if defined (FEATURE_DISP_160X128)
-	#ifdef FEATURE_VERSION_IVIO
+#if defined (FEATURE_DISP_160X128)
+#ifdef FEATURE_VERSION_IVIO
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
-	#else
+#elif defined FEATURE_VERSION_SMART
+	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_61 + theFocus;
+#elif defined FEATURE_VERSION_M8
+	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_81 + theFocus;
+#else
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
-	#endif
-    #elif defined (FEATURE_DISP_128X128)
+#endif
+
+
+#elif defined (FEATURE_DISP_128X128)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
-    #endif
+#endif
         DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
     }
     
@@ -1788,15 +1794,22 @@ static void DrawFocusIcon(MainMenu *pMe)
         
     titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
-    #if defined (FEATURE_DISP_160X128)
-	#ifdef FEATURE_VERSION_IVIO
+	
+#if defined (FEATURE_DISP_160X128)
+#ifdef FEATURE_VERSION_IVIO
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
-	#else
+#elif defined FEATURE_VERSION_SMART
+	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_61 + theFocus;
+#elif defined FEATURE_VERSION_M8
+	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_81 + theFocus;
+#else
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
-	#endif
-    #elif defined (FEATURE_DISP_128X128)
+#endif
+
+
+#elif defined (FEATURE_DISP_128X128)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
-    #endif
+#endif
     DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
     
     if(pMe->m_pAnimate == NULL)
@@ -1855,15 +1868,23 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
             
     titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
-    #if defined (FEATURE_DISP_160X128)
-	#ifdef FEATURE_VERSION_IVIO
+	
+#if defined (FEATURE_DISP_160X128)
+
+#ifdef FEATURE_VERSION_IVIO
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
-	#else
+#elif defined FEATURE_VERSION_SMART
+	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_61 + theFocus;
+#elif defined FEATURE_VERSION_M8
+	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_81 + theFocus;
+#else
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
-	#endif
-    #elif defined (FEATURE_DISP_128X128)
+#endif
+
+#elif defined (FEATURE_DISP_128X128)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
-    #endif
+#endif
+
 #ifdef FEATURE_APP_NUMBERMANAGER
     if(theFocus == 9)
     {
@@ -2147,7 +2168,8 @@ static boolean StartApplet(MainMenu *pMe, int i)
 #endif//FEATURE_LCD_TOUCH_ENABLE
     switch(i)
     {
-    #if defined (FEATURE_DISP_128X128)
+    
+#if defined (FEATURE_DISP_128X128)
         case 0:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
             break;
@@ -2193,9 +2215,10 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
             break;
             
-    #endif
-    #if defined (FEATURE_DISP_160X128)
-	#ifdef FEATURE_VERSION_IVIO
+#endif
+
+#if defined (FEATURE_DISP_160X128)
+#ifdef FEATURE_VERSION_IVIO
         case 0:
         {
             
@@ -2258,7 +2281,132 @@ static boolean StartApplet(MainMenu *pMe, int i)
         case 11:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
             break;
-		#else
+			
+#elif defined FEATURE_VERSION_SMART
+		case 0:
+        { 
+            //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            //Smart World;
+            break;
+        }
+        case 1:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);	
+			break;
+        }        
+        case 2:			
+		{
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);	
+			break;
+        }
+        case 3:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+            break;
+        }
+        case 4:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            break;
+        }
+        case 5:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT);
+            break;    
+        }
+        case 6:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            break;
+        }
+        case 7:
+		{
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);			
+            break;
+        }
+        case 8:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+            break;
+        }
+        case 9:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            break;
+        }
+        case 10:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
+            break;
+        }
+        case 11:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            break;
+        }
+#elif defined FEATURE_VERSION_M8 
+		case 0:
+        { 
+            //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            //b-live;
+            break;
+        }
+        case 1:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);	
+			break;
+        }        
+        case 2:			
+		{
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);	
+			break;
+        }
+        case 3:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+            break;
+        }
+        case 4:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FRENDUO);
+            break;
+        }
+        case 5:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT);
+            break;    
+        }
+        case 6:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            break;
+        }
+        case 7:
+		{
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);			
+            break;
+        }
+        case 8:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+            break;
+        }
+        case 9:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            break;
+        }
+        case 10:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
+            break;
+        }
+        case 11:
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            break;
+        }
+#else
 			 case 0:
         	{
             
@@ -2310,7 +2458,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
         case 11:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
             break;
-		#endif
+#endif
 #endif
         default:
             break;
