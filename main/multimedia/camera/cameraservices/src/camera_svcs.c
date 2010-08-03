@@ -4421,10 +4421,7 @@ static void  camera_process_softdsp_output1_msg (Camera_EndOfFrameMessageType *m
   }
   if (camera_state == CAMERA_STATE_PREVIEW)
   {
-    if (camera_frame_callback_enabled && camera_app_cb &&
-           (camera_preview_buffers.num_buffers_with_display <
-            CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY)
-           )
+    if (camera_frame_callback_enabled && camera_app_cb)
     {
       /* Callback is enabled and callback present, do callback if
        * display has less than 2 buffers at the moment.
