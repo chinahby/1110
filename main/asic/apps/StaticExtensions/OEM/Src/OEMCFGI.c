@@ -2840,10 +2840,6 @@ void OEM_RestoreFactorySetting( void )
         (void) OEMNV_Put( NV_LANGUAGE_SELECTION_I, &nvi );
         (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
     }
-   //CFGI_RTRE_CONFIGURATION
-   nvi.rtre_config = OEMNV_RTRT_DEFULT_CONFIG;
-   (void) OEMNV_Put( NV_RTRE_CONFIG_I, &nvi );
-   
    nvi.set_time_format = NV_SET_TIME_FORMAT_24_HOUR;
    (void) OEMNV_Put( NV_SET_TIME_FORMAT_I, &nvi);
    nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_24_HOUR;

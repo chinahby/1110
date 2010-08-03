@@ -800,10 +800,6 @@ DESCRIPTION
    {
 	 memset(answer,0,size);
    }
-  else
-  {
-    answer = 0;
-  }
 
   return answer;
 } /* END mem_malloc */

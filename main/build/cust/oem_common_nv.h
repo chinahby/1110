@@ -23,6 +23,5 @@
 
 //Others
 #define OEMNV_PHONE_PASSWORD                        10670                       //CFGI_PHONE_PASSWORD       
-#define OEMNV_RTRT_DEFULT_CONFIG                    NV_RTRE_CONFIG_RUIM_ONLY    //NV_RTRE_CONFIG_RUIM_ONLY
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
 

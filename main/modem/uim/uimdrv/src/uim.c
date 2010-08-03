@@ -761,11 +761,6 @@ boolean uim_passive_clk_stop_allowed = FALSE;
    down. */
 boolean uim_powering_down_task = FALSE;
 
-//add by yangdecai
-#ifdef FEATURE_DUAL_UIMCARD
-#define BUFER_SIZE  1
-#endif
-//add by yangdecai
 /* This is set to UIM_MC in R-UIM targets so that the UIM is powered down
    only after MC indicates that is finished with power up */
 uim_voter_type uim_ctl = (uim_voter_type)
@@ -5416,6 +5411,46 @@ void          (*task_wait_handler)( rex_sigs_type )
   {
     ERR_FATAL("uim_nv_init task_wait_handler is NULL",0,0,0);
   }
+  
+#ifdef FEATURE_DUAL_UIMCARD
+  /* Prepare command buffer to NV. */
+  nv_cmd_buf.cmd        = NV_READ_F;                 /* Read request         */
+  nv_cmd_buf.tcb_ptr    = task_ptr;                  /* Notify back to me    */
+  nv_cmd_buf.sigs       = task_wait_sig;             /* With this signal     */
+  nv_cmd_buf.done_q_ptr = NULL;                      /* No buffer to return  */
+  nv_cmd_buf.item       = NV_SIM_SELECT_I;           /* Item to get        */
+  nv_cmd_buf.data_ptr   = &uim_nv_data_buf ;         /* Where to return it   */
+
+  /* Clear signal, issue the command, and wait for the response. */
+  /* Clear signal for NV  */
+  (void) rex_clr_sigs( task_ptr, task_wait_sig );
+
+  /* Issue the request    */
+  nv_cmd( &nv_cmd_buf );
+
+  /* Wait for completion  */
+  task_wait_handler( task_wait_sig );
+
+  /* clear the signal again */
+  (void) rex_clr_sigs( task_ptr, task_wait_sig );
+
+  /* Check NV read status */
+  if (nv_cmd_buf.status == NV_DONE_S)
+  {
+      if(uim_nv_data_buf.sim_select == 2 )
+      {
+          gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
+      }
+      else
+      {
+          gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
+      }
+  }
+  else
+  {
+      gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
+  }
+#endif
 
 #ifdef FEATURE_UIM_UICC
 
@@ -8474,10 +8509,6 @@ dword dummy
   uim_cmd_type *cmd_ptr;           /* Pointer to received command */
   uim_status_type uim_temp_status;
   uim_status_type notification_reason = UIM_ERR_S;
-  #ifdef FEATURE_DUAL_UIMCARD
-  nv_item_type nvi;
-  int ret = 0;
-  #endif
 
 #ifdef FEATURE_UIM_TOOLKIT
   uim_proactive_uim_data_type uim_temp_type;
@@ -8569,28 +8600,6 @@ dword dummy
 #error code not present
 #endif /* FEATURE_UIM_USB_UICC */
 
-#ifdef FEATURE_DUAL_UIMCARD
-{
-    if( NV_DONE_S == OEMNV_Get(NV_SIM_SELECT_I,&nvi))
-    {
-        if(nvi.sim_select == 2 )
-        {
-            gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
-        }
-        else
-        {
-            gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
-        }
-    }
-    else
-    {
-        nvi.sim_select = 1;
-        ret = OEMNV_Put(NV_SIM_SELECT_I,&nvi);
-        gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
-    }
-    uim_dev_init();
-}
-#endif
   for (;;)
   {
     /* Never exit this loop... */
