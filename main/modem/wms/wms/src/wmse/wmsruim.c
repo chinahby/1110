@@ -542,6 +542,7 @@ boolean wms_ruim_init_stepbystep(void)
     static boolean      bInitStart = FALSE;
     static boolean      bWaitRpt = FALSE;
     static boolean      bSvcInited = FALSE;
+    static uim_cmd_type initcmd; // 由于初始化在UIMTask里面完成，因此不能使用WMS的cmd命令，否则将可能引起重入错误
     uim_rpt_status      status = UIM_FAIL; /* status of ruim operation */
 
     cfg_s_ptr = wms_cfg_s_ptr();
@@ -584,15 +585,15 @@ boolean wms_ruim_init_stepbystep(void)
     {
         if (bWaitRpt == FALSE)
         {
-            cmd.access_uim.num_bytes = WMS_RUIM_SERVICE_TABLE_SIZE;
-            cmd.access_uim.data_ptr  = ruim_data;
-            cmd.access_uim.offset    = 0;
-            cmd.access_uim.item      = UIM_CDMA_CDMA_SVC_TABLE;
-            cmd.access_uim.access    = UIM_READ_F;
+            initcmd.access_uim.num_bytes = WMS_RUIM_SERVICE_TABLE_SIZE;
+            initcmd.access_uim.data_ptr  = ruim_data;
+            initcmd.access_uim.offset    = 0;
+            initcmd.access_uim.item      = UIM_CDMA_CDMA_SVC_TABLE;
+            initcmd.access_uim.access    = UIM_READ_F;
         
             bWaitRpt = TRUE;
             
-            wms_ruim_access_ext(&cmd);
+            wms_ruim_access_ext(&initcmd);
             return FALSE;
         }
         else 
@@ -630,18 +631,18 @@ boolean wms_ruim_init_stepbystep(void)
                 /* Determine the number of records and record length
                 */
                 /* Set up cmd item */
-                cmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE;
-                cmd.access_uim.data_ptr  = ruim_data;
-                cmd.access_uim.offset    = 1;
+                initcmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE;
+                initcmd.access_uim.data_ptr  = ruim_data;
+                initcmd.access_uim.offset    = 1;
                 
-                cmd.access_uim.item      = cfg_s_ptr->ruim_sms_file_name;
+                initcmd.access_uim.item      = cfg_s_ptr->ruim_sms_file_name;
                 
-                cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-                cmd.access_uim.access    = UIM_READ_F;
+                initcmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+                initcmd.access_uim.access    = UIM_READ_F;
                 
                 bWaitRpt = TRUE;
                 
-                wms_ruim_access_ext(&cmd);
+                wms_ruim_access_ext(&initcmd);
                 return FALSE;
             }
             else
@@ -649,8 +650,8 @@ boolean wms_ruim_init_stepbystep(void)
                 bWaitRpt = FALSE;
                 if (wms_ruim_status_report == UIM_PASS)
                 {
-                    cfg_s_ptr->ruim_max_slots   = cmd.access_uim.num_records_rsp;
-                    cfg_s_ptr->ruim_sms_rec_len = cmd.access_uim.num_bytes_rsp;
+                    cfg_s_ptr->ruim_max_slots   = initcmd.access_uim.num_records_rsp;
+                    cfg_s_ptr->ruim_sms_rec_len = initcmd.access_uim.num_bytes_rsp;
                     MSG_ERROR("cfg_s_ptr->ruim_max_slots=%d", cfg_s_ptr->ruim_max_slots, 0, 0);
                     if (cfg_s_ptr->ruim_max_slots == 0)
                     {
@@ -674,18 +675,18 @@ boolean wms_ruim_init_stepbystep(void)
             if (bWaitRpt == FALSE)
             {
                 /* Set up cmd item */
-                cmd.access_uim.num_bytes = (uint16)cfg_s_ptr->ruim_sms_rec_len;
-                cmd.access_uim.data_ptr  = ruim_data;
-                cmd.access_uim.offset    = (uint16)(i + 1);
+                initcmd.access_uim.num_bytes = (uint16)cfg_s_ptr->ruim_sms_rec_len;
+                initcmd.access_uim.data_ptr  = ruim_data;
+                initcmd.access_uim.offset    = (uint16)(i + 1);
                 
-                cmd.access_uim.item      = cfg_s_ptr->ruim_sms_file_name;
+                initcmd.access_uim.item      = cfg_s_ptr->ruim_sms_file_name;
                 
-                cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-                cmd.access_uim.access    = UIM_READ_F;
+                initcmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+                initcmd.access_uim.access    = UIM_READ_F;
                 
                 bWaitRpt = TRUE;
                 
-                wms_ruim_access_ext(&cmd);
+                wms_ruim_access_ext(&initcmd);
                 return FALSE;
             }
             else
@@ -743,18 +744,18 @@ boolean wms_ruim_init_stepbystep(void)
                 /* Determine the number of records and record length
                 */
                 /* Set up cmd item */
-                cmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE;
-                cmd.access_uim.data_ptr  = ruim_data;
-                cmd.access_uim.offset    = 1;
+                initcmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE;
+                initcmd.access_uim.data_ptr  = ruim_data;
+                initcmd.access_uim.offset    = 1;
                 
-                cmd.access_uim.item      = cfg_s_ptr->ruim_smsp_file_name;
+                initcmd.access_uim.item      = cfg_s_ptr->ruim_smsp_file_name;
                 
-                cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-                cmd.access_uim.access    = UIM_READ_F;
+                initcmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+                initcmd.access_uim.access    = UIM_READ_F;
                 
                 bWaitRpt = TRUE;
                 
-                wms_ruim_access_ext(&cmd);
+                wms_ruim_access_ext(&initcmd);
                 return FALSE;
             }
             else
@@ -767,8 +768,8 @@ boolean wms_ruim_init_stepbystep(void)
                 }
                 else
                 {
-                    cfg_s_ptr->ruim_max_templates   = cmd.access_uim.num_records_rsp;
-                    cfg_s_ptr->ruim_smsp_rec_len    = cmd.access_uim.num_bytes_rsp;
+                    cfg_s_ptr->ruim_max_templates   = initcmd.access_uim.num_records_rsp;
+                    cfg_s_ptr->ruim_smsp_rec_len    = initcmd.access_uim.num_bytes_rsp;
                     MSG_ERROR("cfg_s_ptr->ruim_max_templates=%d cfg_s_ptr->ruim_smsp_rec_len=%d", cfg_s_ptr->ruim_max_templates, cfg_s_ptr->ruim_smsp_rec_len, 0);
                     
                     if (cfg_s_ptr->ruim_max_templates == 0)
@@ -788,18 +789,18 @@ boolean wms_ruim_init_stepbystep(void)
             if (bWaitRpt == FALSE)
             {
                 /* Set up cmd item */
-                cmd.access_uim.num_bytes = (uint16)cfg_s_ptr->ruim_smsp_rec_len;
-                cmd.access_uim.data_ptr  = ruim_data;
-                cmd.access_uim.offset    = (uint16)(t + 1);
+                initcmd.access_uim.num_bytes = (uint16)cfg_s_ptr->ruim_smsp_rec_len;
+                initcmd.access_uim.data_ptr  = ruim_data;
+                initcmd.access_uim.offset    = (uint16)(t + 1);
                 
-                cmd.access_uim.item      = cfg_s_ptr->ruim_smsp_file_name;
+                initcmd.access_uim.item      = cfg_s_ptr->ruim_smsp_file_name;
                 
-                cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-                cmd.access_uim.access    = UIM_READ_F;
+                initcmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+                initcmd.access_uim.access    = UIM_READ_F;
                 
                 bWaitRpt = TRUE;
                 
-                wms_ruim_access_ext(&cmd);
+                wms_ruim_access_ext(&initcmd);
                 return FALSE;
             }
             else
@@ -865,18 +866,18 @@ boolean wms_ruim_init_stepbystep(void)
         cfg_s_ptr->ruim_smss_file_name = UIM_CDMA_SMS_STATUS;
         
         /* Set up cmd item */
-        cmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE;
-        cmd.access_uim.data_ptr  = ruim_data;
-        cmd.access_uim.offset    = 0;
+        initcmd.access_uim.num_bytes = WMS_RUIM_EF_BUF_SIZE;
+        initcmd.access_uim.data_ptr  = ruim_data;
+        initcmd.access_uim.offset    = 0;
         
-        cmd.access_uim.item      = cfg_s_ptr->ruim_smss_file_name;
+        initcmd.access_uim.item      = cfg_s_ptr->ruim_smss_file_name;
         
-        //cmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-        cmd.access_uim.access    = UIM_READ_F;
+        //initcmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+        initcmd.access_uim.access    = UIM_READ_F;
         
         bWaitRpt = TRUE;
         
-        wms_ruim_access_ext(&cmd);
+        wms_ruim_access_ext(&initcmd);
         return FALSE;
     }
     else
@@ -886,7 +887,7 @@ boolean wms_ruim_init_stepbystep(void)
         
         if (wms_ruim_status_report == UIM_PASS)
         {
-            cfg_s_ptr->ruim_smss_rec_len = cmd.access_uim.num_bytes_rsp;
+            cfg_s_ptr->ruim_smss_rec_len = initcmd.access_uim.num_bytes_rsp;
             
             cfg_s_ptr->ruim_last_message_number = (ruim_data[0] << 8) | ruim_data[1];
             cfg_s_ptr->ruim_last_wap_message_number = (ruim_data[2] << 8 ) | ruim_data[3];
