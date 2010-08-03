@@ -639,6 +639,7 @@ void camera_malloc_preview_buffers()
   {
     camera_preview_buffers.buffers[current_buffer].buf_ptr =
       CAM_Malloc (camera_preview_buffer_size | CAM_ALLOC_NO_ZMEM);
+    MSG_CAMERADEBUG("camera_malloc_preview_buffers 0x%x 0x%x", current_buffer, camera_preview_buffers.buffers[current_buffer].buf_ptr, 0);
   }
   camera_reset_preview_buffers();
 }
@@ -4353,6 +4354,7 @@ static void camera_svcs_ack_softdsp_output1 (void)
     {
       if (camera_preview_buffers.buffers[current_buffer].status == AVAILABLE)
       {
+        MSG_CAMERADEBUG("camera_svcs_ack_softdsp_output1 0x%x 0x%x", current_buffer, camera_preview_buffers.buffers[current_buffer].buf_ptr, 0);
         SoftDSP_PushPreviewBuff(camera_preview_buffers.buffers[current_buffer].buf_ptr+qcamraw_header_size);
         camera_preview_set_buffer_status(current_buffer, BUSY_WITH_VFE);
         break;
@@ -4389,7 +4391,7 @@ static void  camera_process_softdsp_output1_msg (Camera_EndOfFrameMessageType *m
   qcamrawHeaderType *header = (qcamrawHeaderType *)
     ((uint32)eof_msg->pBuff - qcamraw_header_size);
 
-  MSG_CAMERADEBUG("softdsp_output1_msg %d %d", camera_state, camera_camsensor_op_mode, 0);
+  MSG_CAMERADEBUG("softdsp_output1_msg %d 0x%x 0x%x", camera_state, eof_msg->pBuff, header);
   if ((camera_state == CAMERA_STATE_READY) ||
       (camera_state == CAMERA_STATE_INIT) ||
       (camera_stopping)) 

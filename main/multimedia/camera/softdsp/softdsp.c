@@ -354,10 +354,7 @@ int SoftDSP_Stop(void)
     
     for(i=0;i<SOFTDSP_PREVIEW_BUFF_MAX;i++)
     {
-        if(g_SoftDSPInfo.ppPreviewBuff[i] == NULL)
-        {
-            g_SoftDSPInfo.ppPreviewBuff[i] = NULL;
-        }
+        g_SoftDSPInfo.ppPreviewBuff[i] = NULL;
     }
     
     g_SoftDSPInfo.pCaptureBuff   = NULL;
