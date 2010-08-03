@@ -3427,7 +3427,8 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
     IDISPLAY_DrawText(pd, AEE_FONT_BOLD, szbottomText, -1, 0, dm.cyScreen-pme->m_nFontHeight-1, &bottomrect,IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
 #endif   
    //pme->m_SymOnePageNum = (dm.cyScreen-TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT)/pme->m_nFontHeight -2;
-   pme->m_SymOnePageNum = (dm.cyScreen- BOTTOMBAR_HEIGHT)/pme->m_nFontHeight -2;
+   pme->m_SymOnePageNum = ((dm.cyScreen- BOTTOMBAR_HEIGHT)/pme->m_nFontHeight -2); 
+   
    if(pme->m_SymOnePageNum > 9)
    {
         pme->m_SymOnePageNum = 9;
@@ -3436,17 +3437,26 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
    nPage = pme->m_nSymbolPage;
 
    nPages = (MAX_FACE_SYMBOL / pme->m_SymOnePageNum);
+   
    if(MAX_FACE_SYMBOL % pme->m_SymOnePageNum)
-      nPages++;
+   {
+   		nPages++;
+   }
 
    pme->m_SymPageNum = nPages;
    
    nPage += nDir;
-   if(nPage < 0)
-      nPage = nPages - 1;
-   else{
-      if(nPage > nPages - 1)
-         nPage = 0;
+   
+   if (nPage < 0)
+   {
+   		nPage = nPages - 1;
+   }
+   else
+   {
+      if (nPage > nPages - 1)
+      {
+      	nPage = 0;
+      }
    }
 
    pme->m_nSymbolPage = nPage;
@@ -3456,19 +3466,20 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
         RGBVAL nOldFontColor;
         x = 0;
 
+		/*
 		if (pme->m_nSymbolPage%2 == 1)
         {
         	//y = TITLEBAR_HEIGHT + 3*(pme->m_nFontHeight)/2;
-            //y = 3*(pme->m_nFontHeight)/2;
-            y = 5;
+            y = 3*(pme->m_nFontHeight)/2;
 		}
 		else
 		{
 			//y = TITLEBAR_HEIGHT - (pme->m_nFontHeight)/2;
-			//y = (pme->m_nFontHeight)/2;
-			y = 5;
+			y = (pme->m_nFontHeight)/2;
 		}
-
+		*/
+		y = (pme->m_nFontHeight)/2;		
+	
        if (pme->m_dwProps & TP_GRAPHIC_BG)
        {
             nOldFontColor = TEXT_GRAPHIC_FONT_COLOR;
@@ -3490,13 +3501,14 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
             y += pme->m_nFontHeight;
 #else
             x = dm.cxScreen/10;
+
             if(count%2 == 1)
             {
-                x += dm.cxScreen/2;
+                x += dm.cxScreen/2;				
             }
-            else
+            else if ((count != 0) && (count != 10))
             {
-                y += (pme->m_nFontHeight + pme->m_nFontHeight/2);
+                y += (2*pme->m_nFontHeight);				
             }
 #endif            
 
