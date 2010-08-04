@@ -918,7 +918,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 			
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_1, IDS_STATICAPP_TITLE_1, NULL, 0);
 		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
-
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1018,6 +1018,9 @@ static boolean StartApplet(Staticapp *pMe, int i)
             
         case 1:
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
+            break;
+  		case 2:
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);
             break;
   
 		
