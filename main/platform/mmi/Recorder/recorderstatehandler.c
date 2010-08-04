@@ -44,7 +44,6 @@ NextFSMActionEnum Recorder_ProcessState( Recorder* pme)
 {
 
 	int size = ARRAY_SIZE( gFSMStateHandler);
-
 	if( (int)pme->m_eCurState < size )
 	{
 		if( pme->m_eCurState < STATE_NONE || pme->m_eCurState > STATE_EXIT)
@@ -119,6 +118,12 @@ static NextFSMActionEnum state_handler_of_state_record( Recorder* pme)
 	{
 		case DLGRET_CREATE:
 		{
+            int hasCard = IFILEMGR_Test(pme->m_pFileManager, AEEFS_CARD0_DIR);
+            if((APP_MEDIA_ALLOW != app_media_scheduler()) || (hasCard != SUCCESS))
+            {
+                MOVE_TO_STATE(STATE_PLAY_MSG);
+                return NFSMACTION_CONTINUE;
+            }                    
 			pme->m_bNotOverwriteDlgRet = FALSE;
 			if( SUCCESS != Recorder_ShowDialog( pme, IDD_RECORD))
 			{

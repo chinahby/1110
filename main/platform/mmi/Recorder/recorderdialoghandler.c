@@ -102,7 +102,6 @@ int Recorder_ShowDialog( Recorder* pme, uint16 dlgResId)
 
 boolean Recorder_RouteDialogEvent( Recorder* pme, AEEEvent evt, uint16 wParam, uint32 dwParam)
 {
-
 	switch( pme->m_nActiveDialogId)
 	{
 		case IDD_MAIN:
@@ -511,7 +510,7 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 			    );
         	if( pme->m_prefs.storage < 0 || pme->m_prefs.storage > 1)
         	{
-        		pme->m_prefs.storage = 1;
+        		pme->m_prefs.storage = 0;//1;
         	}
         }
 		return TRUE;
@@ -1385,7 +1384,7 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 	switch (evt)
 	{
 		case EVT_DIALOG_INIT:
-		{
+		{    
 			pStatic = (IStatic*)IDIALOG_GetControl( pme->m_pActiveDialog, IDC_RECORDER_RECORD_STATIC);
 
 			if( !pme->m_bSuspended)
@@ -2099,13 +2098,13 @@ static int recorder_list_create_menu( Recorder* pme, IMenuCtl* pMenu, char* toSe
 		    	sizeof( RecorderPreference)
 		    );
 
-		if( prefs.storage == 1 && recorder_is_tf_card_exist())
+		if( prefs.storage == 0 && recorder_is_tf_card_exist())
 		{
 			pme->m_Media.m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_CARD0;
 		}
 		else
 		{
-			pme->m_Media.m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_INTERNAL;
+			//pme->m_Media.m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_INTERNAL;
 		}
 	}
 
@@ -3174,14 +3173,35 @@ int  Recorder_ShowMsgBoxDialog( Recorder *pMe,
 
      /*Set the static control text based on the user settings of the
       * m_nMsgBoxTextId parameter.*/
-     ISHELL_LoadResString(pMe->m_pShell,
-           AEE_APPSCOMMONRES_LANGFILE,
-           msgResId,
-           szText,
-           sizeof(szText));
+     if(msgResId == IDS_RECORD_OPEN_FILE_ERROR_12)
+     {
+         ISHELL_LoadResString(pMe->m_pShell,
+               AEE_RECORDER_RES_FILE,
+               msgResId,
+               szText,
+               sizeof(szText));     
+     }
+     else
+     {
+         ISHELL_LoadResString(pMe->m_pShell,
+               AEE_APPSCOMMONRES_LANGFILE,
+               msgResId,
+               szText,
+               sizeof(szText));
+     }
      MsgParam.ePMsgType = MESSAGE_CONFIRM;
      MsgParam.pwszMsg = szText;
-     MsgParam.eBBarType = BTBAR_OK_CANCEL;
+     if((msgResId == IDS_RECORD_OPEN_FILE_ERROR_12) ||
+        (msgResId == IDS_CONFIRM_OFF_MP) ||
+        (msgResId == IDS_CONFIRM_OFF_FM)
+        )
+     {
+        MsgParam.eBBarType = BTBAR_BACK;
+     }
+     else
+     {
+        MsgParam.eBBarType = BTBAR_OK_CANCEL;
+     }
      /*we do not special ISTATIC control, because of DIALOG will redraw
       * ISTATIC control, and the text color is the default, it may be the
       * same as background, but DrawPromptMessage function will change the
@@ -3210,6 +3230,7 @@ static boolean dialog_handler_of_state_play_msg( Recorder* pme, AEEEvent evt, ui
         
         case EVT_USER_REDRAW:
 		{
+            int hasCard = IFILEMGR_Test(pme->m_pFileManager, AEEFS_CARD0_DIR);
             if(APP_MEDIA_IMPACT_BY_MP3 == app_media_scheduler())
             {
                 Recorder_ShowMsgBoxDialog( pme, 
@@ -3226,9 +3247,17 @@ static boolean dialog_handler_of_state_play_msg( Recorder* pme, AEEEvent evt, ui
                                         NULL,
                                         -1);      
             }
+            else if(hasCard != SUCCESS)
+            {
+                Recorder_ShowMsgBoxDialog( pme, 
+                                        IDS_RECORD_OPEN_FILE_ERROR_12,
+                                        0,                                      
+                                        NULL,
+                                        -1);                  
+            }
             else
             {
-                MSG_ERROR("Recorder state is ERROR for play!", 0, 0, 0);
+                MSG_FATAL("Recorder state is ERROR for play!", 0, 0, 0);
             }
         }
         return TRUE;    
@@ -3273,7 +3302,8 @@ static boolean dialog_handler_of_state_play_msg( Recorder* pme, AEEEvent evt, ui
                 case AVK_SOFT2:
 			    case AVK_CLR:
 				{
-                    MOVE_TO_STATE(STATE_RECORD_LIST);
+                    //MOVE_TO_STATE(STATE_RECORD_LIST);
+                    MOVE_TO_STATE(STATE_MAIN);
                     CLOSE_DIALOG(DLGRET_CREATE);
                 }   
                 break;               
@@ -3690,13 +3720,13 @@ int recorder_recordEx( Media* pme, PFNMEDIANOTIFY pfnNotify)
 		    	sizeof( RecorderPreference)
 		    );
 
-		if( prefs.storage == 1 && recorder_is_tf_card_exist())
+		if( prefs.storage == 0 && recorder_is_tf_card_exist())
 		{
 			pme->m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_CARD0;
 		}
 		else
 		{
-			pme->m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_INTERNAL;
+		//	pme->m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_INTERNAL;
 		}
 	}
 	recorder_format_file_name( pme, pme->m_FileName, sizeof( pme->m_FileName));
@@ -4062,11 +4092,11 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
 			if( pme->m_ePreState == STATE_MAIN && !pme->m_bSuspended)
 			{
             	uint16 storage[] = {
-            			IDS_STORAGE_SETUP_PHONE,
+            			//IDS_STORAGE_SETUP_PHONE,
             			IDS_STORAGE_SETUP_CARD0
             	};
 
-				selected = storage[pme->m_prefs.storage];
+				//selected = storage[pme->m_prefs.storage];
 			}
 		}
 		return TRUE;
@@ -4091,7 +4121,7 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
     			#endif
             }
 
-			IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, IDS_STORAGE_SETUP_PHONE, IDS_STORAGE_SETUP_PHONE, 0, 0);
+			//IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, IDS_STORAGE_SETUP_PHONE, IDS_STORAGE_SETUP_PHONE, 0, 0);
 			IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, IDS_STORAGE_SETUP_CARD0, IDS_STORAGE_SETUP_CARD0, 0, 0);
 
 			IMENUCTL_SetBottomBarType( pMenu, BTBAR_SELECT_BACK);
@@ -4099,7 +4129,7 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
             InitMenuIcons( pMenu);
             {
             	uint16 storage[] = {
-            			IDS_STORAGE_SETUP_PHONE,
+            			//IDS_STORAGE_SETUP_PHONE,
             			IDS_STORAGE_SETUP_CARD0
             	};
 
@@ -4152,7 +4182,7 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
 			pme->m_prefs.storage = 0;
 			if( selected == IDS_STORAGE_SETUP_CARD0)
 			{
-				pme->m_prefs.storage = 1;
+				pme->m_prefs.storage = 0;//1;
 			}
 			ISHELL_SetPrefs( pme->m_pShell,
 					AEECLSID_RECORDER,

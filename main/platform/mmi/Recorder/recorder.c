@@ -180,7 +180,6 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
             AEEDeviceInfo di = {0};
 			byte mute = OEMSOUND_MUTE_VOL;
 			AECHAR wszTitle[16] = {0};
-			
 			OEM_GetConfig( CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));			
 			OEM_GetConfig( CFGI_ALERT_TYPE, &alertTypeCall, sizeof( alertTypeCall));
 			OEM_GetConfig( CFGI_SMS_RINGER, &alertTypeSms, sizeof( alertTypeSms));
@@ -257,7 +256,6 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 
 		case EVT_DIALOG_END:
 		{
-
 			if( wParam == OEM_IME_DIALOG)
 			{
 				repaint( TRUE);
@@ -298,7 +296,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 
 		case EVT_KEY:
 		case EVT_COMMAND:
-		{
+		{   
 			if( !pme->m_bAppIsReady || pme->m_bLockkey)
 			{
 				return TRUE;
