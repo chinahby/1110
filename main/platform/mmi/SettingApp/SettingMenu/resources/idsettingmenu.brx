@@ -338,7 +338,7 @@
 		<Text>Off</Text>
 	</STRING>
 	<STRING Id="1113" Name="IDS_RESTRICT_OUTGOING">
-		<Text>Membatasi panggilan keluar</Text>
+		<Text>Panggilan Terbatas</Text>
 	</STRING>
 	<STRING Id="1114" Name="IDS_RESTRICT_INCOMING">
 		<Text>Batasi diterima</Text>

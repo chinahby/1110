@@ -71,7 +71,7 @@
 		<Text>-</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_MISSEDCALL_ALERT">
-		<Text>Tanda panggilan tidak terjawab</Text>
+		<Text>Miss Call</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_WARNING_MESSEGE">
 		<Text>Selesai</Text>

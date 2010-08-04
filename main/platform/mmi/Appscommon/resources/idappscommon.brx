@@ -17,7 +17,7 @@
 		<Text>Cont.</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_BACK">
-		<Text>Sebelumnya</Text>
+		<Text>Kembali</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_FIND">
 		<Text>Cari</Text>
@@ -50,7 +50,7 @@
 		<Text>Tutup</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_RESET">
-		<Text>Pengaturan Ulang</Text>
+		<Text>Reset</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_END">
 		<Text>Akhir</Text>
@@ -86,7 +86,7 @@
 		<Text>Pengaturan</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_TOTODAY">
-		<Text>Hari Ini</Text>
+		<Text>Today</Text>
 	</STRING>
 	<STRING Id="30" Name="IDS_STRING_IP">
 		<Text>IP</Text>
@@ -146,7 +146,7 @@
 		<Text>Panggil</Text>
 	</STRING>
 	<STRING Id="114" Name="IDS_OPTION_FM">
-		<Text>Pilihan</Text>
+		<Text>Opsi</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_RECORD">
 		<Text>Rekam</Text>
@@ -173,7 +173,7 @@
 		<Text>Menambah</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_PAUSE">
-		<Text>Tahan</Text>
+		<Text>Diam</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_PLAY">
 		<Text>Main</Text>
