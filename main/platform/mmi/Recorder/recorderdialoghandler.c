@@ -3191,10 +3191,7 @@ int  Recorder_ShowMsgBoxDialog( Recorder *pMe,
      }
      MsgParam.ePMsgType = MESSAGE_CONFIRM;
      MsgParam.pwszMsg = szText;
-     if((msgResId == IDS_RECORD_OPEN_FILE_ERROR_12) ||
-        (msgResId == IDS_CONFIRM_OFF_MP) ||
-        (msgResId == IDS_CONFIRM_OFF_FM)
-        )
+     if((msgResId == IDS_RECORD_OPEN_FILE_ERROR_12))
      {
         MsgParam.eBBarType = BTBAR_BACK;
      }

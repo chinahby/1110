@@ -221,11 +221,15 @@ static NextFSMActionEnum state_handler_of_state_play_msg( Recorder* pme)
         Recorder_ShowDialog( pme, IDD_SET_PLAY_MSG);
     	MOVE_TO_STATE( STATE_PLAY_MSG);
         return NFSMACTION_WAIT;
-
+/*
         case DLGRET_OK:
         pme->m_Media.m_bRecorder = FALSE;
 		MOVE_TO_STATE( STATE_RECORD);
 		return NFSMACTION_CONTINUE;
+*/
+        case DLGRET_OK:
+        MOVE_TO_STATE( STATE_MAIN);
+        return NFSMACTION_CONTINUE;   
 
         case DLGRET_CANCELED:
         MOVE_TO_STATE( STATE_MAIN);
