@@ -664,12 +664,12 @@ static __inline int VSNPRINTF(char *buf, uint32 len, const char *fmt, va_list ar
 #define DBGPRINTF_LEVEL_ERROR  4
 #define DBGPRINTF_LEVEL_FATAL  5
 #ifdef USES_RELEASE_VERSION
-#define DBGPRINTF()
-#define DBGPRINTF_LOW()
-#define DBGPRINTF_MED()
-#define DBGPRINTF_HIGH()
-#define DBGPRINTF_ERROR()
-#define DBGPRINTF_FATAL()
+#define DBGPRINTF(...)
+#define DBGPRINTF_LOW(...)
+#define DBGPRINTF_MED(...)
+#define DBGPRINTF_HIGH(...)
+#define DBGPRINTF_ERROR(...)
+#define DBGPRINTF_FATAL(...)
 #else
 #define DBGPRINTF_EX_FORMAT    "*dbgprintf-%d* %s:%d"
 #define DBGPRINTF              __DBGPRINTF(DBGPRINTF_EX_FORMAT,DBGPRINTF_LEVEL_ERROR ,__FILE__,__LINE__),__DBGPRINTF
