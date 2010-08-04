@@ -1866,9 +1866,7 @@ void ui_init( void )
   gsdi_reg_callback(simple_handle_subscription_fn);
 #endif
 #ifdef CUST_EDITION
-{
-  rex_sleep(3000);
-}
+  gsdi_wait_initcompleted();
 #endif
 // init RTRE
 #if defined(FEATURE_UI_CORE_REMOVED) && !defined(FEATURE_UI_DUALPROC_MDM)

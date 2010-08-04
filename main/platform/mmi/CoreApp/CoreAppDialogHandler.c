@@ -1029,6 +1029,8 @@ static boolean  IDD_LPM_Handler(void       *pUser,
                                 uint32     dwParam)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
+    AEECMPhInfo phInfo;
+    
     switch (eCode)
     {
         case EVT_DIALOG_INIT:

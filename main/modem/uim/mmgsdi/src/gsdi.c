@@ -13196,4 +13196,19 @@ gsdi_returns_T gsdi_perso_get_key (
   return gsdi_status;
 }
 
-
+#ifdef CUST_EDITION
+void gsdi_wait_initcompleted(void)
+{
+    while(1)
+    {
+        if(gsdi_data.gsdi_state != GSDI_NOT_INIT_S)
+        {
+            break;
+        }
+        else
+        {
+            rex_sleep(100);
+        }
+    }
+}
+#endif

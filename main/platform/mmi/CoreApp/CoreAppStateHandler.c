@@ -325,21 +325,7 @@ static NextFSMAction COREST_INIT_Handler(CCoreApp *pMe)
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
-            if (!IsRunAsUIMVersion())
-            {// 软件运行为无卡版本,检查相关参数是否设置妥当
-              /*  // TODO
-                if ()
-                {
-                    // 程序进入 COREST_SERVICEREQ, 表明无卡版本,检查相关参数
-                    // 设置不完整，需设置参数后重启
-                    
-                    tepState = COREST_SERVICEREQ;
-                }*/
-                
-            }
-            
             MOVE_TO_STATE(tepState)
-            
             return NFSMACTION_CONTINUE;
             
         default:
@@ -522,45 +508,6 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
     MSG_FATAL("COREST_LPM_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_LPM_Handler
-#if 0 
-/*==============================================================================
-函数:
-    COREST_SERVICEREQ_Handler
-       
-说明:
-    COREST_SERVICEREQ 状态处理函数
-       
-参数:
-    pMe [in]:指向 Core Applet对象结构的指针。该结构包含小程序的特定信息。
-       
-返回值:
-    NFSMACTION_CONTINUE:指示后有子状态，状态机不能停止。
-    NFSMACTION_WAIT:指示因要显示对话框界面给用户，应挂起状态机。
-       
-备注:
-       
-==============================================================================*/
-static NextFSMAction COREST_SERVICEREQ_Handler(CCoreApp *pMe)
-{
-    if (NULL == pMe)
-    {
-        return NFSMACTION_WAIT;
-    }
-    
-    switch (pMe->m_eDlgRet)
-    {
-        case DLGRET_CREATE:
-        case DLGRET_MSGOK: // 从消息对话框返回
-            CoreApp_ShowMsgDialog(pMe, IDS_SERVICEREQ);
-            return NFSMACTION_WAIT;
-            
-        default:
-            break;
-    }
-    
-    return NFSMACTION_WAIT;
-} // COREST_SERVICEREQ_Handler
-#endif
 
 /*==============================================================================
 函数:
@@ -592,6 +539,16 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
         case DLGRET_MSGOK: // 从消息对话框返回
             {
                 boolean bValue = FALSE;
+                AEECMPhInfo phInfo;
+                
+                pMe->m_bLPMMode = FALSE;
+                /* If phone info is available, do not wait for PH_INFO_AVAIL event for
+                   * starting provisioning */
+                if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
+                {
+                    InitAfterPhInfo(pMe, phInfo.oprt_mode);
+                }
+                
                 MSG_FATAL("COREST_VERIFYPHONEPWD_Handler DLGRET_MSGOK",0,0,0);
                 // 检查是否开启了手机锁密码检测功能
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -603,14 +560,9 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
                     CoreApp_ShowDialog(pMe, IDD_PWDINPUT);
                     return NFSMACTION_WAIT;
                 }
-                else if (IsRunAsUIMVersion())
-                {// 程序运行为有卡版本, 进行卡的相关检查
-                    MOVE_TO_STATE(COREST_VERIFYUIM)
-                }
                 else
                 {
-                    //MOVE_TO_STATE(COREST_POWERONSYSINIT)
-                    MOVE_TO_STATE(COREST_STARTUPANI);
+                    MOVE_TO_STATE(COREST_VERIFYUIM)
                 }
             }
             return NFSMACTION_CONTINUE;
@@ -626,22 +578,13 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
                 
                 if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
                 {// 密码符合
-                    if (IsRunAsUIMVersion())
-                    {// 程序运行为有卡版本, 进行卡的相关检查
-                        MOVE_TO_STATE(COREST_VERIFYUIM)
-                    }
-                    else
-                    {
-                        //MOVE_TO_STATE(COREST_POWERONSYSINIT)
-                        MOVE_TO_STATE(COREST_STARTUPANI);
-                    }
+                    MOVE_TO_STATE(COREST_VERIFYUIM)
                     return NFSMACTION_CONTINUE;
                 }
                 else
                 {// 密码错误
                     // 输入错误
                     CoreApp_ShowMsgDialog(pMe, IDS_INVALID_PASSWORD);
-                    
                     return NFSMACTION_WAIT;
                 }
             }
@@ -683,6 +626,7 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
 static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
 {
     NextFSMAction  eRet = NFSMACTION_CONTINUE;
+    
     MSG_FATAL("COREST_VERIFYUIM_Handler Start",0,0,0);
     if (NULL == pMe)
     {
@@ -693,6 +637,18 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
     {
         case DLGRET_CREATE:
         case DLGRET_MSGOK:
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+            /* Send RTRE config changed to CM - response from CM will */
+            /* generate subscription changed event */
+            SendRTREConfig(pMe);
+#endif
+            if (!IsRunAsUIMVersion())
+            {
+                pMe->m_eUIMErrCode = UIMERR_NOUIM;
+                MOVE_TO_STATE(COREST_STARTUPANI);
+                return eRet;
+            }
+            
             // 检查卡是否插入
             if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
             {// 插入了卡
@@ -724,15 +680,6 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     CoreApp_ShowDialog(pMe, IDD_UIMSECCODE);
                     eRet = NFSMACTION_WAIT;
                 }
-                // 若运营商对卡有所要求，请在这里调用检查函数: TODO
-                /*
-                else if ()
-                {
-                    // 卡不符合运营商要求，卡无效
-                    pMe->m_eUIMErrCode = UIMERR_LOCKED;
-                    MOVE_TO_STATE(COREST_UIMERR)
-                }
-                */
                 else
                 {
                     // UIM OK
@@ -755,8 +702,6 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     MOVE_TO_STATE(COREST_UIMERR)
                 }
             }
-            
-            CoreApp_ProcessSubscriptionStatus(pMe);
             return eRet;
             
         case DLGRET_EMGCALL:
@@ -1047,19 +992,19 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                 }
             }
 
-        return NFSMACTION_CONTINUE;
+            return NFSMACTION_CONTINUE;
 
 #ifdef FEATURE_PLANEMODE
-            case DLGRET_NO:
-                MOVE_TO_STATE(COREST_STANDBY);
-                return NFSMACTION_CONTINUE;
+        case DLGRET_NO:
+            MOVE_TO_STATE(COREST_STANDBY);
+            return NFSMACTION_CONTINUE;
 
-            case DLGRET_YES:
-                pMe->bPlaneModeOn = TRUE;
-                IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_AIR_MODE_ON );
-                cm_ph_cmd_oprt_mode(NULL, NULL, CM_CLIENT_ID_ANONYMOUS, SYS_OPRT_MODE_LPM);
-                MOVE_TO_STATE(COREST_STANDBY);
-                return NFSMACTION_CONTINUE;
+        case DLGRET_YES:
+            pMe->bPlaneModeOn = TRUE;
+            IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_AIR_MODE_ON );
+            cm_ph_cmd_oprt_mode(NULL, NULL, CM_CLIENT_ID_ANONYMOUS, SYS_OPRT_MODE_LPM);
+            MOVE_TO_STATE(COREST_STANDBY);
+            return NFSMACTION_CONTINUE;
 
 #endif //FEATURE_PLANEMODE
 
@@ -1100,7 +1045,6 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             if(pMe->bunlockuim)                   //如果输入锁卡密码正确，此参数为真                     
             {                     
                  pMe->m_eUIMErrCode = UIMERR_NONE;
-                 CoreApp_ProcessSubscriptionStatus(pMe);
             }
             
  #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
@@ -1251,6 +1195,8 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
     {
         case DLGRET_CREATE:
         case DLGRET_MSGOK:
+            CoreApp_ProcessSubscriptionStatus(pMe);
+            
             MSG_FATAL("COREST_STANDBY_Handler DLGRET_CREATE",0,0,0);			
 #ifdef FEATRUE_AUTO_POWER
             if(pMe->m_b_autopower_off)

@@ -190,7 +190,6 @@ void CoreApp_FreeAppData(IApplet* po)
     /* ICard */
     if (pMe->m_pICard) 
     {
-        ISHELL_RegisterNotify(pMe->a.m_pIShell,  AEECLSID_CORE_APP, AEECLSID_CARD_NOTIFIER,0);
         ICARD_Release(pMe->m_pICard);
         pMe->m_pICard = NULL;
     }
@@ -282,7 +281,9 @@ boolean CoreApp_InitAppData(IApplet* po)
 #else
     pMe->m_nCardStatus = AEECARD_NO_CARD;
 #endif
-    pMe->m_bSuspended = FALSE;	
+    pMe->m_bSuspended = FALSE;
+    pMe->m_bLPMMode   = TRUE;
+    
 	if(SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                                         AEECLSID_CARD,
                                         (void **) &pMe->m_pICard))
@@ -345,6 +346,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bConfigSent  = FALSE;
     pMe->m_cdg_msgptr = NULL;
     pMe->m_bActive = TRUE;
+    
     //if phone power down abnormal, we need set CFGI_FM_BACKGROUND  false to avoid show FM in idle
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 
@@ -933,6 +935,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             break;
         case EVT_SET_OPERATING_MODE:
+            if(pMe->m_bLPMMode)
+            {
+                break;
+            }
+            
             //CORE_ERR("EVT_SET_OPERATING_MODE %d", wParam, 0, 0);
             ICM_SetOperatingMode(pMe->m_pCM, (AEECMOprtMode)wParam);
             break;
@@ -1223,9 +1230,6 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 
                 // Phone information is now available
                 case AEECM_EVENT_PH_INFO_AVAIL:
-                    /* If phone info is available, do not wait for PH_INFO_AVAIL event for
-                     * starting provisioning */
-                     DBGPRINTF("DAIL..................0000000000");
                     if (!pMe->m_bProvisioned) {
                        InitAfterPhInfo(pMe, pEvtInfo->event_data.ph.oprt_mode);
                     }
@@ -1245,8 +1249,6 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                       return CoreApp_ProcessOffLine(pMe);
                       
                     case AEECM_OPRT_MODE_ONLINE:
-                      /* if we just went online, check subscription */
-                      CoreApp_ProcessSubscriptionStatus(pMe);
                       return TRUE;
                       
                     case AEECM_OPRT_MODE_LPM:
@@ -1322,69 +1324,6 @@ static boolean CoreApp_GetCardStatus(CCoreApp *pMe,uint8 slot)
     
     return TRUE;
 }
-
-/*=============================================================================
-FUNCTION: CoreApp_ProcessICardEvents
-
-DESCRIPTION:
-  Process ICard Notifier events
-
-SIDE EFFECTS:
-  None.
-
-=============================================================================*/
-static boolean CoreApp_ProcessICardEvents(CCoreApp *pMe, uint16 wParam, uint32 dwParam)
-/*lint -esym(715,wParam)*/
-{
-  if (pMe == NULL) 
-  {
-        CORE_ERR("NULL pMe", 0, 0, 0);
-        return FALSE;
-  }
-  
-  switch (((AEENotify *) dwParam)->dwMask )
-  {
-    case NMASK_CARD_STATUS:
-        if (FALSE == CoreApp_GetCardStatus(pMe,AEECARD_SLOT1))
-        {
-            CORE_ERR("CoreApp_GetCardStatus Failed for Slot One",0, 0, 0);
-            return FALSE;
-        }
-
-        CORE_ERR("Got ICARD CARD_STATUS event.  Status %d",pMe->m_nCardStatus,0,0);
-
-        switch(pMe->m_nCardStatus) {
-        case AEECARD_VALID_CARD: /* received SIM_INIT_COMPLETED_EVENT */    
-        case AEECARD_AVAIL_CARD:
-        case AEECARD_ILLEGAL_CARD:
-        case AEECARD_NO_CARD:      /* No card in the slot */
-        case AEECARD_INVALID_CARD: /* card has been permanently blocked */
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-            /* Send RTRE config changed to CM - response from CM will */
-            /* generate subscription changed event */
-            SendRTREConfig(pMe);
-#endif
-            CoreApp_ProcessSubscriptionStatus(pMe);
-            return TRUE;
-            
-        case AEECARD_NOT_INIT:
-#ifdef FEATURE_UIM_RUN_TIME_ENABLE
-            /* Send RTRE config changed to CM - response from CM will */
-            /* generate subscription changed event */
-            SendRTREConfig(pMe);
-#endif
-            return TRUE;
-     
-        default:
-            return FALSE;
-      }
-      
-    default:
-      break;
-  }
-  return FALSE;
-}
-
 
 /*==============================================================================
 函数: 
@@ -1716,6 +1655,19 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
     int nRet;
     uint32 dwMask;
     
+    // 创建 ICM 接口
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_CALLMANAGER,
+                                 (void **) &pMe->m_pCM);
+    if (nRet != SUCCESS) 
+    {
+        return FALSE;
+    }
+    if (pMe->m_pCM == NULL) 
+    {
+        return FALSE;
+    }
+    
     // register with ICM
     dwMask = NMASK_CM_PHONE|NMASK_CM_SS|NMASK_CM_DATA_CALL;
     //dwMask = NMASK_CM_PHONE|NMASK_CM_SS;
@@ -1727,7 +1679,16 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
     {
         return FALSE;
     }
-
+    
+    // 创建 IBatt 接口
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_BATTERY,
+                                 (void **) &pMe->m_pBatt);
+    if (nRet != SUCCESS) 
+    {
+        return FALSE;
+    }
+    
     // 注册 IBatt 通知事件：仅注册外部电源和充电状态通知事件，其余
     // 通知事件一旦话机启动并运行将被注册
     dwMask = NMASK_BATTERY_STATUS_CHANGE 
@@ -1743,7 +1704,20 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
     {
         return FALSE;
     }     
-	
+
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_ALERT,
+                                 (void **)&pMe->m_pAlert);
+    if (nRet != SUCCESS) 
+    {
+        return FALSE;
+    }
+    
+    if (pMe->m_pAlert == NULL) 
+    {
+        return FALSE;
+    }
+    
     if(ISHELL_RegisterNotify(pMe->a.m_pIShell, AEECLSID_CORE_APP,
         AEECLSID_ALERT_NOTIFIER, NMASK_ALERT_ONOFF | NMASK_ALERT_MUTED) != SUCCESS)
     {
@@ -1773,6 +1747,7 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
 boolean CoreApp_InitExtInterface(CCoreApp *pMe)
 {
     int nRet;
+    
     nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
                                  AEECLSID_ANNUNCIATOR,
                                  (void **) &pMe->m_pIAnn);
@@ -1784,12 +1759,18 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
     {
         return FALSE;
     }
-	
+	else
+    {
+        uint32 nBattState = CoreApp_ConvertBattLvToAnnunState(CoreApp_GetBatteryLevel(pMe));
+        IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
+    }
+    
 #ifdef FEATURE_UIALARM
     // 创建 IAlarm 接口
     nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                             AEECLSID_UIALARM,
-                                             (void **)&pMe->m_pAlarm);
+                                 AEECLSID_UIALARM,
+                                 (void **)&pMe->m_pAlarm);
     if (nRet != SUCCESS) 
     {
         return FALSE;
@@ -1799,31 +1780,6 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
         return FALSE;
     }
 #endif 
-    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                            AEECLSID_ALERT,
-                                            (void **)&pMe->m_pAlert);
-    if (nRet != SUCCESS) 
-    {
-        return FALSE;
-    }                                        
-    if (pMe->m_pAlert == NULL) 
-    {
-        return FALSE;
-    }
-    // 创建 IBatt 接口
-    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                 AEECLSID_BATTERY,
-                                 (void **) &pMe->m_pBatt);
-    if (nRet != SUCCESS) 
-    {
-        return FALSE;
-    }
-    else
-    {
-        uint32 nBattState = CoreApp_ConvertBattLvToAnnunState(CoreApp_GetBatteryLevel(pMe));
-        IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
-    }
     
 #ifndef WIN32
     // 创建 IRUIM 接口
@@ -1838,24 +1794,12 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
     {
         return FALSE;
     }
-#endif//WIN32    
-    // 创建 ICM 接口
-    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                 AEECLSID_CALLMANAGER,
-                                 (void **) &pMe->m_pCM);
-    if (nRet != SUCCESS) 
-    {
-        return FALSE;
-    }
-    if (pMe->m_pCM == NULL) 
-    {
-        return FALSE;
-    }
-
+#endif//WIN32
+    
     // Create the IConfig Serivce object.
     nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                           AEECLSID_CONFIG,
-                           (void **) &pMe->m_pConfig);
+                                 AEECLSID_CONFIG,
+                                (void **) &pMe->m_pConfig);
     if (nRet != SUCCESS) 
     {
         return FALSE;
@@ -1864,15 +1808,7 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
     {
         return FALSE;
     }
-
-     // Create IAlert instance
-    if (ISHELL_CreateInstance( pMe->a.m_pIShell,
-                               AEECLSID_ALERT,
-                               (void **)&pMe->m_pAlert) != AEE_SUCCESS)
-    {
-        CoreApp_FreeAppData( (IApplet*)pMe );
-        return FALSE;
-    }
+    
     if (ISHELL_CreateInstance(pMe->a.m_pIShell,
                                             AEECLSID_DISPLAY,
                                             (void **)&pMe->m_pDisplay)!=AEE_SUCCESS)
@@ -1907,10 +1843,6 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
 static void CoreApp_PoweronStartApps(CCoreApp *pMe)
 {
     static boolean bRun = FALSE;
-    uint32 dwMask;
-    boolean bNeedToProcessICardEvent = FALSE;
-    AEENotify sCardNotify;
-    AEECMPhInfo phInfo;
     
     if (bRun)
     {
@@ -1925,33 +1857,6 @@ static void CoreApp_PoweronStartApps(CCoreApp *pMe)
     OEMKeyguard_Init(pMe->a.m_pIShell,pMe->m_pCM,pMe->m_pAlert,pMe->m_pIAnn);
 #endif
     
-    /* Register with ICARD to receive event */
-    dwMask = NMASK_CARD_STATUS|NMASK_PIN1_STATUS;
-    
-    ISHELL_RegisterNotify(pMe->a.m_pIShell,  AEECLSID_CORE_APP, AEECLSID_CARD_NOTIFIER, dwMask);
-
-    /* Get card status after registering for the event, if the card status is not
-    * not ready, this implies that ICard has already sent out the event to client
-    * and we missed it.  So, resend it */
-    
-    ICARD_GetCardStatus(pMe->m_pICard, (uint8 *) &(pMe->m_nCardStatus));
-    if (pMe->m_nCardStatus != AEECARD_NOT_READY) 
-    {
-        bNeedToProcessICardEvent = TRUE;
-    }
-    
-    if (bNeedToProcessICardEvent )
-    {
-        sCardNotify.dwMask = NMASK_CARD_STATUS;
-        (void)CoreApp_ProcessICardEvents(pMe, 0, (uint32)&sCardNotify);
-    }
-    
-    /* If phone info is available, do not wait for PH_INFO_AVAIL event for
-       * starting provisioning */
-    if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
-    {
-        InitAfterPhInfo(pMe, phInfo.oprt_mode);
-    }
     bRun = TRUE;
 }
 
