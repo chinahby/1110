@@ -1026,8 +1026,9 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         case EVT_CLOSEAPP:
         {
 			DBGPRINTF("***zzg FmRadio_HandleEvent EVT_CLOSEAPP***");
+            pMe->startFromBackground = FALSE;
             pMe->runOnBackground = FALSE;
-            ISHELL_CloseApplet( pMe->m_pShell, FALSE);
+            ISHELL_CloseApplet( pMe->m_pShell, FALSE);           
             return TRUE;
         }
         
