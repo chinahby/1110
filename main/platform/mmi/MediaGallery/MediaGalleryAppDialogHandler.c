@@ -2208,7 +2208,8 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
       MGMimeType     eMimeBase;
 
       eMimeBase = MediaGalleryApp_GetExplorerMime(pMe);
-
+	  MSG_FATAL("pCurNode->szName::::::::::::::::::::::%s:::::::::",pCurNode->szName,0,0);
+	  MSG_FATAL("eMimeBase::::::::::::::::::::::%d:::::::::",eMimeBase,0,0);
       if(eMimeBase == MG_MIME_MISCELL ||
          !MG_BETWEEN(eMimeBase,MG_MIME_MISMAX,MG_MIME_MAX))
       {
@@ -2228,7 +2229,6 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
          if(SUCCESS != nRet)
             return FALSE;
       }
-
       if(MG_BETWEEN(eMimeBase, MG_MIME_IMGBASE, MG_MIME_IMGMAX))
       {
          pMe->m_PopupOps = MG_OP_VIEWIMG;
@@ -2250,6 +2250,12 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
 #endif
       else
       {
+      	 //add by yangdecai 2010-08-04
+		 MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                          IDS_MG_FILEOPERR,
+                                          MESSAGE_ERR,
+                                          BTBAR_BACK);
+		 //add by yangdecai 2010-08-04 end
          bRet = FALSE;
       }
    }
@@ -2962,7 +2968,6 @@ static int MGAppPopupMenu_OnMusicPlay(CMediaGalleryApp* pMe,
 {
    IMusicPlayer *pMusicPlayer = NULL;
    MGFileInfo *pCurNode;
-
    if(!pMe || !pMenuCtl)
       return EBADPARM;
 
