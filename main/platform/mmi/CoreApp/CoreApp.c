@@ -104,6 +104,7 @@ static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe);
 boolean CoreApp_ProcessOffLine(CCoreApp *pMe);
 void SendRTREConfig (CCoreApp *pMe);
 static boolean CoreApp_ProcessFTMMode(CCoreApp *pMe);
+static void CoreApp_Process_Headset_Msg(CCoreApp *pMe, uint16 msgId);
 
 /*==============================================================================
 
@@ -476,12 +477,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             {
                 if((boolean)wParam)
                 {
+                    CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_ON);
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
 					snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By zzg 2010_07_18
 					snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By zzg 2010_07_18
 				}
                 else
                 {
+                    CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_OFF);
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
 					snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By zzg 2010_07_18
 					snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By zzg 2010_07_18
@@ -2135,6 +2138,19 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
     }
 }
 
+static void CoreApp_Process_Headset_Msg(CCoreApp *pMe, uint16 msgId)
+{
+    if((   pMe->m_wActiveDlgID == IDD_PWDIMSIMCC ||
+	        pMe->m_wActiveDlgID == IDD_PWDINPUT ||
+            pMe->m_wActiveDlgID == IDD_UIMSECCODE ||
+            pMe->m_wActiveDlgID == IDD_EMERGENCYNUMLIST ||
+            pMe->m_wActiveDlgID == IDD_IDLE
+            ) && (pMe->m_bSuspended == FALSE))
+    {
+          pMe->m_nMsgID = msgId;
+          CLOSE_DIALOG(DLGRET_BATT_INFO)
+    }
+}
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
 /*==============================================================================
 º¯Êý£º

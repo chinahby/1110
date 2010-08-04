@@ -133,6 +133,12 @@
 	<STRING Id="1044" Name="IDS_CHINA_TELECOM">
 		<Text>China Telecom</Text>
 	</STRING>
+	<String Id="1045" Name="IDS_HEADSET_ON">
+		<Text>headset plug in</Text>
+	</String>
+	<String Id="1046" Name="IDS_HEADSET_OFF">
+		<Text>headset plug out</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
