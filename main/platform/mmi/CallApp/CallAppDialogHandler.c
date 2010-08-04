@@ -2052,6 +2052,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                 case AVK_CLR:
                 case AVK_ENDCALL:
                     CALL_ERR("AVK_ENDCALL %d", pMe->m_lastCallState,0,0);
+					
                     ICM_EndAllCalls(pMe->m_pICM);
                     pMe->m_userCanceled = TRUE;
                     switch (pMe->m_lastCallState)
@@ -2075,7 +2076,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                             CLOSE_DIALOG(DLGRET_OK)
                             break;
                     }
-
+					
                     return TRUE;
 
                 default:
@@ -2861,9 +2862,11 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             {
                 case AVK_CLR:
                     //ICM_EndAllCalls(pMe->m_pICM);
+                  
                     pMe->m_bHandFree = !pMe->m_bHandFree;
                     CallApp_SetupCallAudio(pMe);
                     ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
+				
                     return TRUE;  //make the dialog can't closed by avk_clr.
 
                 case AVK_ENDCALL:
@@ -2872,7 +2875,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     //ASSERT(AEECM_CALL_STATE_CONV == pMe->m_lastCallState);
                     pMe->m_userCanceled = TRUE;
                     ICM_EndAllCalls(pMe->m_pICM);
-
+					
                     // Note:
                     // We are allowing the IPHONE notifier to move us to the
                     // next state...
@@ -3824,15 +3827,26 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 
         case EVT_DIALOG_START:
             //CallApp_Set_Db_In_Idle(TRUE);
-            CallApp_IncomingCall_Dlg_Init(pMe);
-            if(pMe->m_pBacklight)
             {
-                IBACKLIGHT_Enable(pMe->m_pBacklight);
-            }
-            (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW,  0,  0);
+            	//add by yangdecai 2010-08-04
+            	AECHAR StrBuf[20] = {0};
+				
+				(void) ISHELL_LoadResString(pMe->m_pShell,
+                                            AEE_APPSCALLAPP_RES_FILE,
+                                            IDS_INCOMINGCALL_TEXT,//incoming call
+                                            StrBuf,
+                                            sizeof(StrBuf));
+	            CallApp_IncomingCall_Dlg_Init(pMe);
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,StrBuf);
+	            if(pMe->m_pBacklight)
+	            {
+	                IBACKLIGHT_Enable(pMe->m_pBacklight);
+	            }
+	            (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW,  0,  0);
 #ifdef FEATURE_SUPPORT_BT_APP
-            bt_ui_process_cmcall_notify(pMe,AEECM_EVENT_CALL_CALLER_ID, FALSE);
+	            bt_ui_process_cmcall_notify(pMe,AEECM_EVENT_CALL_CALLER_ID, FALSE);
 #endif
+	            }
             return TRUE;
 
         case EVT_USER_REDRAW:
@@ -3841,7 +3855,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             AECHAR    wBuf[MAX_SIZE_BANNER_TEXT+1];
             AEERect   rect;//, rc;
             boolean b_cdg = FALSE;
-                
+            
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 
             //  BANNER
@@ -4271,6 +4285,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 }
                 case AVK_USER_HEADSET:
                 case AVK_SELECT:
+					
                     CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
                     break;
 #ifdef FEATURE_CARRIER_TAIWAN_APBW
@@ -6579,6 +6594,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
                  && (pMe->m_anykey_answer & 0x1))
         ) ||auto_answer ||wParam == AVK_SELECT)
     {
+    
         if(AEE_SUCCESS != ICM_GetCallInfo(pMe->m_pICM, pMe->m_CallsTable->call_id, &ci, sizeof(AEECMCallInfo)))
         {
             return FALSE;
@@ -6609,6 +6625,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 
        CallApp_Change_Call_Table_Call_Start_Time(pMe,pMe->m_CallsTable->call_number);
        CallApp_Change_Call_Table_Call_History_State(pMe,pMe->m_CallsTable->call_number,AEECALLHISTORY_CALL_TYPE_FROM/*CALLHISTORY_INCOMING*/);
+	   
        return TRUE;
     }
     return FALSE;

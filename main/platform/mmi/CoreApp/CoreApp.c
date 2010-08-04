@@ -2078,7 +2078,8 @@ SEE ALSO:
 boolean CoreApp_IsEmergencyMode(ICM* pICM)
 {
     AEECMPhInfo phoneInfo;
-    MSG_FATAL("CoreApp_IsEmergencyMode Start",0,0,0);    
+    MSG_FATAL("CoreApp_IsEmergencyMode Start",0,0,0);
+	
     //PRINT_FUNCTION_NAME();
 
     if (!pICM)
