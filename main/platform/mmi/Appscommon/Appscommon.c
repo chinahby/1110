@@ -495,6 +495,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 		//Add By zzg 2010_07_23
 		case BTBAR_VIEWMORE_BACK:
 			nResID_L = IDS_VIEWMORE;
+			nResID_M = IDS_OK;
 			nResID_R = IDS_BACK;
 			break;
 		//Add End
@@ -2602,7 +2603,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
     AEERect rc;
     uint16      nResID_L = 0;// ×ó
     uint16      nResID_R = 0;// ÓÒ
-    //uint16      nResID_M = 0;// ÖÐ
+    uint16      nResID_M = 0;// ÖÐ   ////modi by yangdecai 2010-08-04
     AECHAR      wszBuf[16]= {(AECHAR)'\0'};
     int nBarH = 0;
     int nFontH = 0;
@@ -2651,6 +2652,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 		//Add By zzg 2010_07_23
 		case BTBAR_VIEWMORE_BACK:
 			nResID_L = IDS_VIEWMORE;
+			nResID_M = IDS_OK;   ////add by yangdecai 2010-08-04
 			nResID_R = IDS_BACK;
 			break;
 		//Add End
@@ -2693,6 +2695,12 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
         ISHELL_LoadResString(m_pIShell,AEE_APPSCOMMONRES_LANGFILE,nResID_R,wszBuf, sizeof(wszBuf));
         DrawTextWithProfile(m_pIShell, pIDisplay,RGB_WHITE_NO_TRANS,AEE_FONT_NORMAL, wszBuf, -1,0, 0, &rc,  IDF_ALIGN_MIDDLE | IDF_ALIGN_RIGHT  | IDF_TEXT_TRANSPARENT);
     }
+	//add by yangdecai 2010-08-04
+	if(nResID_M)
+	{
+		ISHELL_LoadResString(m_pIShell,AEE_APPSCOMMONRES_LANGFILE,nResID_M,wszBuf, sizeof(wszBuf));
+        DrawTextWithProfile(m_pIShell, pIDisplay,RGB_WHITE_NO_TRANS,AEE_FONT_NORMAL, wszBuf, -1,0, 0, &rc,  IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
+	}
 }
 
 /*==============================================================================

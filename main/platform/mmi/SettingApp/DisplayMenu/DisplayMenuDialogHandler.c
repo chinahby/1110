@@ -772,6 +772,8 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
         {
             //no need for non-bottom bar,this may case the image do not display well
             //DISP_ERR("EVT_USER_REDRAW",0,0,0);
+            	{
+            
             if(pMe->m_CurPaper == NULL)
             {
                 DISP_ERR("no pMe->m_CurPaper, so cann't show picture",0,0,0);
@@ -786,7 +788,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
             //显示墙纸或动画
             DisplayMenu_DisplayImg(pMe, pMe->m_PICType);
 
-			DrawBottomBar_Ex(pMe->m_pShell, pMe->m_pDisplay, BTBAR_VIEWMORE_BACK);	//Add By zzg 2010_07_23	
+			DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_VIEWMORE_BACK);	//Add By zzg 2010_07_23	
 
             // 统一更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -795,6 +797,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                                             APPISREADY_TIMER,
                                             DisplayMenu_NextImgIsReadyTimer,
                                             pMe);
+            	}
             return TRUE;
         }
 
