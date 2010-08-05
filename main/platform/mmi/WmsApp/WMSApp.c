@@ -5019,8 +5019,9 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
                 
                 if (mem_store == WMS_MEMORY_STORE_RUIM)
                 {
-                    if (pMe->m_memruimStatuse.used_tag_slots >= pMe->m_memruimStatuse.max_slots)
+                    if ((pMe->m_memruimStatuse.max_slots>0) && (pMe->m_memruimStatuse.used_tag_slots >= pMe->m_memruimStatuse.max_slots))
                     {
+                    	
                         if (nInMsgs >= IN_MAX)
                         {
                             nMsgID = IDS_INBOXSFULL;
@@ -5030,7 +5031,7 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
                             nMsgID = IDS_RUIMFULL;
                         }
                     }
-                    else if (pMe->m_memruimStatuse.used_tag_slots + 5 >= pMe->m_memruimStatuse.max_slots)
+                    else if ((pMe->m_memruimStatuse.max_slots>0)&&(pMe->m_memruimStatuse.used_tag_slots + 5 >= pMe->m_memruimStatuse.max_slots))
                     {
                         nMsgID = IDS_RUIMWILLFULL;
                     }
@@ -5060,11 +5061,11 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
                     {
                         nMsgID = IDS_INBOXWILLFULL;
                     }
-                    else if (pMe->m_memruimStatuse.used_tag_slots >= pMe->m_memruimStatuse.max_slots)
+                    else if (pMe->m_memruimStatuse.max_slots>0&&(pMe->m_memruimStatuse.used_tag_slots >= pMe->m_memruimStatuse.max_slots))//modi by yangdecai 2010-08-05
                     {
                         nMsgID = IDS_RUIMFULL;
                     }
-                    else if (pMe->m_memruimStatuse.used_tag_slots + 5 >= pMe->m_memruimStatuse.max_slots)
+                    else if ((pMe->m_memruimStatuse.max_slots>0)&&(pMe->m_memruimStatuse.used_tag_slots + 5 >= pMe->m_memruimStatuse.max_slots))
                     {
                         nMsgID = IDS_RUIMWILLFULL;
                     }
