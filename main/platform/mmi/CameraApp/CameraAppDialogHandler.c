@@ -781,7 +781,10 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             return TRUE;
          
         case EVT_DIALOG_END:
-            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
+            if(pMe->m_pDisplay != NULL)
+            {
+                IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
+            }
             return TRUE;
       
         case EVT_USER_REDRAW:                         
@@ -841,6 +844,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     return TRUE;
 
                 case AVK_END:
+                    ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
                     ICAMERA_Stop(pMe->m_pCamera);
                     pMe->m_nCameraState = CAM_STOP;
                     return FALSE;
@@ -1099,7 +1103,10 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             return TRUE;
             
         case EVT_DIALOG_END:
-            ISTATIC_Release(pStatic); 
+            if(pStatic != NULL)
+            {
+                ISTATIC_Release(pStatic); 
+            }
             pStatic = NULL;                 
             (void)ISHELL_CancelTimer(pMe->m_pShell,
                                      CameraApp_DialogTimeout,
