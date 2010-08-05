@@ -2484,10 +2484,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			
             if(pMe->m_pIAnn != NULL)
             {
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
-            }
+			}
+			
             MEMSET(pMe->m_wstrEnterNum, 0, sizeof(pMe->m_wstrEnterNum));
             //CoreApp_GetRecordCount(pMe);
             CoreApp_DrawWallPaper(pMe);

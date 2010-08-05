@@ -2022,32 +2022,35 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 
 	  if(!IAnnunCoreObj->m_bActive)
 		{
-			  //DBGPRINTF("First update the primary display background..................");
 			pBackBmp = ISHELL_LoadResImage (pMe->m_piShell,
 											   AEEFS_SHARED_DIR"oemannunciator.bar",
 											   (uint16)(IDI_BACKGROUD));
-			IIMAGE_Draw(pBackBmp,20, 0);
-
+			
             if(IAnnunCoreObj->m_hasTitleText)
             {
-                dwFlags =  IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-                rc.x = 0;
-                rc.y = 0;
-                rc.dx = SCREEN_WIDTH;
-                rc.dy = STATEBAR_HEIGHT;
-                IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);
-                // 绘制标题文本
-                //DBGPRINTF("IAnnunCoreObj->m_Title:::::::::::::::::%s",IAnnunCoreObj->m_Title);
-                (void) IDISPLAY_DrawText(pMe->m_coreObj->m_piDisplay, 
-                AEE_FONT_NORMAL, 
-                (const AECHAR*)IAnnunCoreObj->m_Title, 
-                -1, 
-                0, 
-                0, 
-                &rc, 
-                dwFlags);
-                (void)IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
-                IDISPLAY_UpdateEx(pMe->m_coreObj->m_piDisplay, TRUE);
+            	if (need_capture.b_capture != DB_CAPTURE_INIDLE)	//Add By zzg 2010_08_05
+            	{
+	            	IIMAGE_Draw(pBackBmp,20, 0);
+					
+	                dwFlags =  IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+	                rc.x = 0;
+	                rc.y = 0;
+	                rc.dx = SCREEN_WIDTH;
+	                rc.dy = STATEBAR_HEIGHT;
+	                IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);
+	                // 绘制标题文本
+	                //DBGPRINTF("IAnnunCoreObj->m_Title:::::::::::::::::%s",IAnnunCoreObj->m_Title);
+	                (void) IDISPLAY_DrawText(pMe->m_coreObj->m_piDisplay, 
+	                AEE_FONT_NORMAL, 
+	                (const AECHAR*)IAnnunCoreObj->m_Title, 
+	                -1, 
+	                0, 
+	                0, 
+	                &rc, 
+	                dwFlags);
+	                (void)IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
+	                IDISPLAY_UpdateEx(pMe->m_coreObj->m_piDisplay, TRUE);
+            	}
             }
            
 		   IIMAGE_Release( pBackBmp);
