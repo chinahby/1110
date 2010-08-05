@@ -89,7 +89,9 @@ extern rex_tcb_type ui_tcb;
 
 // Local global variables.
 static uim_cmd_type   gUimCmd;
+static uim_cmd_type   gUimCmdExt;
 static uim_rpt_type   gCallBack;
+static uim_rpt_type   gCallBackExt;
 static int            gAdnRecSize;
 static int            gAdnMaxRec=0;
 
@@ -2857,34 +2859,34 @@ static void InsertCache_Ext(RUIMAddrBkCache *pItem)
 
 static void OEMRUIM_report_ext (uim_rpt_type *report)
 {
-   MEMCPY(&gCallBack, report, sizeof(uim_rpt_type));
+   MEMCPY(&gCallBackExt, report, sizeof(uim_rpt_type));
    rex_set_sigs(&uim_tcb, UIMDATA_INIT_RPT_SIG);
 }
 
 static void read_adn_rec_ext(byte *pBuf, uint16 wRecID, uint16 wRecSize,
                         AEE_DBRecInfo  *dbRecInfo)
 {
-   MEMSET(&gUimCmd, 0, sizeof(gUimCmd));
-   gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
-   gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
-   gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
-   gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
-   gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
-   gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
-   gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report_ext;
-
-   gUimCmd.access_uim.item      = UIM_TELECOM_ADN;
-   gUimCmd.access_uim.access    = UIM_READ_F;
-   gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-   gUimCmd.access_uim.num_bytes = wRecSize;
-   gUimCmd.access_uim.offset    = wRecID;
-   gUimCmd.access_uim.data_ptr  = pBuf;
-
+   MEMSET(&gUimCmdExt, 0, sizeof(gUimCmdExt));
+   gUimCmdExt.access_uim.hdr.command            = UIM_ACCESS_F;
+   gUimCmdExt.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+   gUimCmdExt.access_uim.hdr.cmd_hdr.sigs       = 0;
+   gUimCmdExt.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+   gUimCmdExt.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+   gUimCmdExt.access_uim.hdr.protocol           = UIM_CDMA;
+   gUimCmdExt.access_uim.hdr.rpt_function       = OEMRUIM_report_ext;
+   
+   gUimCmdExt.access_uim.item      = UIM_TELECOM_ADN;
+   gUimCmdExt.access_uim.access    = UIM_READ_F;
+   gUimCmdExt.access_uim.rec_mode  = UIM_ABSOLUTE;
+   gUimCmdExt.access_uim.num_bytes = wRecSize;
+   gUimCmdExt.access_uim.offset    = wRecID;
+   gUimCmdExt.access_uim.data_ptr  = pBuf;
+   
    // Read the entry.
    (void) rex_clr_sigs( &uim_tcb, UIMDATA_INIT_RPT_SIG);
-
+   
    // Send the command.
-   uim_cmd (&gUimCmd);
+   uim_cmd (&gUimCmdExt);
 }
 
 
@@ -2981,8 +2983,8 @@ boolean  InitRUIMAddrBkCacheCb(void)
     
     bWaitReport = FALSE;
     
-    if ((gCallBack.rpt_type == UIM_ACCESS_R) &&
-        (gCallBack.rpt_status == UIM_PASS)) 
+    if ((gCallBackExt.rpt_type == UIM_ACCESS_R) &&
+        (gCallBackExt.rpt_status == UIM_PASS)) 
     {
         dbRecInfo.wRecID = i;
         dbRecInfo.wRecSize = gUimCmd.access_uim.num_bytes_rsp;

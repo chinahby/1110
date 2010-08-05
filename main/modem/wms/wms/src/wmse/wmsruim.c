@@ -100,6 +100,8 @@ static uim_cmd_type    cmd;
 
 /* Status reported by R-UIM for each command */
 static uim_rpt_status wms_ruim_status_report = UIM_FAIL;
+static uim_rpt_status wms_ruim_status_report_ext = UIM_FAIL;
+
 #ifdef CUST_EDITION
 #if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
 extern void wms_cacheinfo_deleteruimtemplatecache(wms_message_index_type index);
@@ -484,7 +486,7 @@ void wms_ruim_init
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 void wms_ruim_report_ext(uim_rpt_type *report)
 {
-  wms_ruim_status_report = report->rpt_status;
+  wms_ruim_status_report_ext = report->rpt_status;
 
   (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_RPT_SIG);
 } 
@@ -600,7 +602,7 @@ boolean wms_ruim_init_stepbystep(void)
         {
             bWaitRpt = FALSE;
             bSvcInited = TRUE;
-            if (wms_ruim_status_report == UIM_PASS)
+            if (wms_ruim_status_report_ext == UIM_PASS)
             {
                 has_sms  = WMS_RUIM_SERVICE_TABLE_HAS_SMS(ruim_data[0]);
                 has_smsp = WMS_RUIM_SERVICE_TABLE_HAS_SMSP(ruim_data[2]);
@@ -648,7 +650,7 @@ boolean wms_ruim_init_stepbystep(void)
             else
             {
                 bWaitRpt = FALSE;
-                if (wms_ruim_status_report == UIM_PASS)
+                if (wms_ruim_status_report_ext == UIM_PASS)
                 {
                     cfg_s_ptr->ruim_max_slots   = initcmd.access_uim.num_records_rsp;
                     cfg_s_ptr->ruim_sms_rec_len = initcmd.access_uim.num_bytes_rsp;
@@ -692,7 +694,7 @@ boolean wms_ruim_init_stepbystep(void)
             else
             {
                 bWaitRpt = FALSE;
-                if (wms_ruim_status_report != UIM_PASS)
+                if (wms_ruim_status_report_ext != UIM_PASS)
                 {
                     i++;
                 }
@@ -761,7 +763,7 @@ boolean wms_ruim_init_stepbystep(void)
             else
             {
                 bWaitRpt = FALSE;
-                if (wms_ruim_status_report != UIM_PASS)
+                if (wms_ruim_status_report_ext != UIM_PASS)
                 {
                     t++;
                     return FALSE;
@@ -807,7 +809,7 @@ boolean wms_ruim_init_stepbystep(void)
             {
                 bWaitRpt = FALSE;
                 
-                if (wms_ruim_status_report != UIM_PASS)
+                if (wms_ruim_status_report_ext != UIM_PASS)
                 {
                     t++;
                     return FALSE;
@@ -885,7 +887,7 @@ boolean wms_ruim_init_stepbystep(void)
         MSG_ERROR("-------------2", 0, 0, 0);
         bWaitRpt = FALSE;
         
-        if (wms_ruim_status_report == UIM_PASS)
+        if (wms_ruim_status_report_ext == UIM_PASS)
         {
             cfg_s_ptr->ruim_smss_rec_len = initcmd.access_uim.num_bytes_rsp;
             
