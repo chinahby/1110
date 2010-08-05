@@ -4347,7 +4347,8 @@ static boolean Menu_Draw(CMenuCtl * pme)
                                         Theme_Param.themeColor, 
                                         0, 
                                         IDF_RECT_FRAME);            
-//#else //if 0
+#else //if 0
+
         //滚动条和边框不能并存，否则在需要滚动条的时候，边框也出现了
         //看起来像有个双边框。只有当不需要滚动条时，才来边框
         if(pme->m_menuReallyDy <= (SCREEN_HEIGHT - GetBottomBarHeight(pme->m_pIDisplay)))//add by xuhui
