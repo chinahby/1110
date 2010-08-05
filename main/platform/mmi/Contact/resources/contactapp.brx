@@ -600,6 +600,7 @@
 	<DIALOG Id="6011" Name="IDD_GROUP" Focus="7013">
 		<Controls>
 			<Menu Id="7013" Name="IDC_GROUP_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/>
 			</Menu>
 		</Controls>
