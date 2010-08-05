@@ -851,6 +851,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 
       
         case EVT_APP_RESUME: 
+			
             CameraApp_InitCameraCheck(pMe); 
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
@@ -862,6 +863,9 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             }
             pMe->m_pDisplay = as->pDisplay;
             (void)IDISPLAY_AddRef(pMe->m_pDisplay);
+			
+			pMe->m_nLeftTime = 0;
+			
             pMe->m_rc = as->rc;
             CameraApp_RunFSM(pMe);
             return TRUE;

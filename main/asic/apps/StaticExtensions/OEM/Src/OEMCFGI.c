@@ -2662,34 +2662,34 @@ void OEM_RestoreFactorySetting( void )
 
 #if defined(FEATURE_CARRIER_THAILAND_CAT)
    // CFGI_RINGER_VOL:
-   nvi.ringer_level = OEMNV_VOLUME_MID;
+   nvi.ringer_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_RINGER_LVL_I, &nvi );
    nvi_cache.ringer_level = OEMNV_VOLUME_ESCALATING;
 
    // CFGI_EAR_VOL:
-   nvi.ear_level = OEMNV_VOLUME_MID;
+   nvi.ear_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
    nvi_cache.handset_ear_level = OEMNV_VOLUME_ESCALATING;
 
    // CFGI_BEEP_VOL:
-   nvi.beep_level = OEMNV_VOLUME_LOW;
+   nvi.beep_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
-   nvi_cache.beep_level = OEMNV_VOLUME_LOW;
+   nvi_cache.beep_level = OEMNV_VOLUME_MAX;
 #else
    // CFGI_RINGER_VOL:
-   nvi.ringer_level = OEMNV_VOLUME_MID;
+   nvi.ringer_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_RINGER_LVL_I, &nvi );
-   nvi_cache.ringer_level = OEMNV_VOLUME_MID;
+   nvi_cache.ringer_level = OEMNV_VOLUME_MAX;
 
    // CFGI_EAR_VOL:
-   nvi.ear_level = OEMNV_VOLUME_MID;
+   nvi.ear_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
-   nvi_cache.handset_ear_level = OEMNV_VOLUME_MID;
+   nvi_cache.handset_ear_level = OEMNV_VOLUME_MAX;
 
    // CFGI_BEEP_VOL:
-   nvi.beep_level = OEMNV_VOLUME_MID;
+   nvi.beep_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
-   nvi_cache.beep_level = OEMNV_VOLUME_MID;
+   nvi_cache.beep_level = OEMNV_VOLUME_MAX;
 #endif //defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
 
 #ifdef FEATURE_SMART_SOUND

@@ -362,6 +362,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_VOLUME_LOW         1
 #define   OEMNV_VOLUME_MID         2
 #define   OEMNV_VOLUME_HIGH        3
+#define   OEMNV_VOLUME_MAX         5
 #define   OEMNV_VOLUME_ESCALATING  4  // only valid for CFGI_RINGER_VOL
 #define   OEMNV_SMS_OFF      0
 #define   OEMNV_SMS_RING     1
