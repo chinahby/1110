@@ -2593,7 +2593,8 @@ static int CWmsApp_MessageService(IWmsApp *p,
 #ifndef WIN32
 			DBGPRINTF("***zzg pMe->m_clientId=%d, pMe->m_clientExId=%d***", pMe->m_clientId, pMe->m_clientExId);
 
-	        if (wms_msg_send(pMe->m_clientExId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	//WMS_CLIENT_FLOATING1
+			//m_clientExId
+	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	//WMS_CLIENT_FLOATING1
 	        {
 	        	DBGPRINTF("***zzg wms_msg_send WMS_CLIENT_FLOATING1 Success***");
 	            nRet = SUCCESS;
@@ -2617,7 +2618,8 @@ static int CWmsApp_MessageService(IWmsApp *p,
 	        }
 			
 #ifndef WIN32
-	        if (wms_msg_send(pMe->m_clientExId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	//WMS_CLIENT_FLOATING1
+			//m_clientExId
+	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	//WMS_CLIENT_FLOATING1
 	        {
 	            nRet = SUCCESS;
 	        }
