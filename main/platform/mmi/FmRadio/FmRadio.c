@@ -515,6 +515,7 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
     pMe->m_eDlgRet              = DLGRET_CREATE;
     pMe->m_bNotOverwriteDlgRet  = FALSE;
     pMe->startFromBackground    = TRUE;
+    pMe->m_pVolumeImage = NULL;
     //初始化必要的数据
     FmRadio_InitFmRadioResource( pMe);
     return SUCCESS;
@@ -550,7 +551,7 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 						   sizeof(byte));
 	if( pMe->byVolumeLevel > MAX_FMRADIO_VOLUME || pMe->byVolumeLevel == 0)
 	{
-		pMe->byVolumeLevel = (MAX_FMRADIO_VOLUME + 1) / 2;
+		pMe->byVolumeLevel = 3;//(MAX_FMRADIO_VOLUME + 1) / 2;
 	}
 
 #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
@@ -674,6 +675,11 @@ static void FmRadio_FreeAppData(CFmRadio *pMe)
         IANNUNCIATOR_Release( pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
     }
+    if (pMe->m_pVolumeImage)
+    {
+       IIMAGE_Release(pMe->m_pVolumeImage);
+       pMe->m_pVolumeImage = NULL;
+    }    
 }
 
 /*==============================================================================

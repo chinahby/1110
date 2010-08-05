@@ -64,7 +64,8 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #define CHANGE_CHANNEL_CLOCKWISE            1
 #define BEGIN_TO_REFRESH_CHANNEL_LIST       TRUE
 #define CONTINUE_TO_REFRESH_CHANNEL_LIST    FALSE
-
+#define FM_VOLUME_X                         5
+#define FM_VOLUME_Y                         60
 static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier);
 static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId);
 static void moveOperationModeTo( CFmRadio *pMe, OpModeTypeEnum newMode);
@@ -149,6 +150,8 @@ extern boolean FmRadio_IsChannelValid( uint16 channel);
 void resume( CFmRadio* pMe);
 void FmRadio_ShowDialog(CFmRadio *pMe, uint16 dlgResId);
 
+static void FmRadio_DrawVolumeImage(CFmRadio *pMe, uint16 ResID, int x, int y);
+static void FmRadio_RefreshVolumeImage(CFmRadio *pMe);
 
 
 /*==============================================================================
@@ -1172,7 +1175,7 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 {
 
     static const int limitValue[] = { 15, 0};
-    static const int increment[]  = { 1, -1};
+    static const int increment[]  = { 3, -3};
                  int theKey       = keyCode - AVK_UP;
 #if 0
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT)
@@ -1188,24 +1191,43 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 	theKey = keyCode == AVK_STAR ? 1 : 0;
 #endif
 #endif
-    if( pMe->byVolumeLevel != limitValue[theKey])
+   // if( pMe->byVolumeLevel != limitValue[theKey])
+    if((pMe->byVolumeLevel == 0) && (theKey == 1))
     {
-
-        pMe->byVolumeLevel += increment[theKey];
-
-#if !defined( AEE_SIMULATOR)
-        //Call driver to set Volume
-        fm_set_volume( pMe->byVolumeLevel);
-#endif//#if !defined( AEE_SIMULATOR)
-
-        drawVolumeIndicator( pMe);
-//        IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
-        (void) ICONFIG_SetItem(pMe->m_pConfig,
-                       CFGI_FMRADIO_VOLUME,
-                       &pMe->byVolumeLevel,
-                       sizeof(byte)
-                   );
+        //当byVolumeLeve为0且按向下键时，不对byVolumeLevel操作
+        //把它当独提出来的原因是byVolumeLevel类型为unsigned char，
+        //当它为0后再减时，它会变为255
+        pMe->byVolumeLevel = 0;
     }
+    else
+    {
+        pMe->byVolumeLevel += increment[theKey];
+    }
+    if(pMe->byVolumeLevel > 15)
+    {
+        pMe->byVolumeLevel = 15;
+    }
+    else if(pMe->byVolumeLevel < 0)
+    {
+        pMe->byVolumeLevel = 0;
+    }
+    if(pMe->byVolumeLevel%3 != 0)
+    {
+        pMe->byVolumeLevel = 0;
+    }
+#if !defined( AEE_SIMULATOR)
+    //Call driver to set Volume
+    fm_set_volume( pMe->byVolumeLevel);
+#endif//#if !defined( AEE_SIMULATOR)
+   // FmRadio_RefreshVolumeImage(pMe);
+    repaint( pMe, FALSE);
+    //drawVolumeIndicator( pMe);
+    //IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
+    (void) ICONFIG_SetItem(pMe->m_pConfig,
+                   CFGI_FMRADIO_VOLUME,
+                   &pMe->byVolumeLevel,
+                   sizeof(byte)
+               );
 }
 
 static boolean hideMenu( CFmRadio *pMe)
@@ -1983,10 +2005,10 @@ static void paint( CFmRadio *pMe)
     }
 
     drawBg( pMe);
-    drawLedLight( pMe);
+    FmRadio_RefreshVolumeImage(pMe);
+    //drawLedLight( pMe);
     drawChannelIndicator( pMe);
-    drawVolumeIndicator( pMe);
-	
+    //drawVolumeIndicator( pMe);
 	if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_NOT_REFUSE)	//Add By zzg 2010_07_14
     {
     	drawSoftkey( pMe);
@@ -2745,3 +2767,65 @@ static void drawPrompt( CFmRadio* pMe, uint16 stringResId, BottomBar_e_Type bott
                 &parm
             );
 }
+
+static void FmRadio_DrawVolumeImage(CFmRadio *pMe, uint16 ResID, int x, int y)
+{
+    //如果原来内存未释放，释放之
+    if (pMe->m_pVolumeImage)
+    {
+       IIMAGE_Release(pMe->m_pVolumeImage);
+       pMe->m_pVolumeImage = NULL;
+    }
+    //load图片
+    pMe->m_pVolumeImage = ISHELL_LoadResImage(pMe->m_pShell, 
+                                      FMRADIOLN_RES_FILE, 
+                                      ResID);
+    if(pMe->m_pVolumeImage == NULL)
+    {
+        return;
+    }
+    
+    
+    //画图  
+    if(pMe->m_pVolumeImage)
+    {
+       IIMAGE_Draw(pMe->m_pVolumeImage,x,y);
+    } 
+     if (pMe->m_pVolumeImage)
+    {
+       IIMAGE_Release(pMe->m_pVolumeImage);
+       pMe->m_pVolumeImage = NULL;
+    }
+    //repaint( pMe, FALSE);
+}
+
+static void FmRadio_RefreshVolumeImage(CFmRadio *pMe)
+{
+    uint16 ResID;
+    switch (pMe->byVolumeLevel)
+    {
+        case 0:
+            ResID = IDI_FM_SIMPLEVOL_OFF;
+            break;
+        case 3:
+            ResID = IDI_FM_SIMPLEVOL_ONE;
+            break;
+        case 6:
+            ResID = IDI_FM_SIMPLEVOL_TWO;
+            break;
+        case 9:
+            ResID = IDI_FM_SIMPLEVOL_THREE;
+            break;
+        case 12:
+            ResID = IDI_FM_SIMPLEVOL_FOUR;
+            break;
+        case 15:
+            ResID = IDI_FM_SIMPLEVOL_FIVE;
+            break;
+        default :
+           //ResID = IDI_FM_SIMPLEVOL_THREE;    
+            break;
+    }
+    FmRadio_DrawVolumeImage( pMe, ResID, FM_VOLUME_X, FM_VOLUME_Y);
+}
+

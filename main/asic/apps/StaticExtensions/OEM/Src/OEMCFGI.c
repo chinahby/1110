@@ -1600,7 +1600,7 @@ static OEMConfigListType oemi_cache = {
 #endif
    
 
-   , (MAX_FMRADIO_VOLUME + 1) / 2                   //CFGI_FMRADIO_VOLUME
+   , MAX_FMRADIO_VOLUME/5 *3                   //CFGI_FMRADIO_VOLUME
    , {0}                                            //CFGI_FMRADIO_CHAN_INFO
    , 0                                              //CFGI_FMRADIO_CHAN_TOTAL
    ,OEMNV_EMERGENCYNUM_TABLE_NUM                                            //CFGI_EMERGENCYNUM_TABLE
@@ -2621,7 +2621,7 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.restrict_incoming = 0;
    oemi_cache.restrict_outgoing = 0;
 
-   oemi_cache.fmRadio_volume = (MAX_FMRADIO_VOLUME + 1)/2;                                  
+   oemi_cache.fmRadio_volume = MAX_FMRADIO_VOLUME/5*3;                                  
    MEMSET((void *)&oemi_cache.fmRadio_chan_info, 0, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
    oemi_cache.fmRadio_chan_total = 0;
    

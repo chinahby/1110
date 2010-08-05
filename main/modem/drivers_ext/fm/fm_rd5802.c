@@ -495,7 +495,15 @@ int fm_get_seek_status(boolean* pIsFinish, boolean* pIsBandLimit, word* pChannel
 int fm_set_volume(word wVolume)
 {
 	uint8 level = (uint8)wVolume;
-	
+	if((wVolume == 0) && (fm_playing_mute == FALSE))
+    {
+        fm_mute(TRUE);
+        return FM_RADIO_SUCCESSFUL;
+    }
+    else if((wVolume > 0) && (fm_playing_mute == TRUE))
+    {
+        fm_mute(FALSE);
+    }
 	if(fm_work_status != FM_IDLE_STATUS)
     {
         return FM_RADIO_FAILED;

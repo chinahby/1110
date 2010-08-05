@@ -311,6 +311,7 @@ typedef struct _CFmRadio
     AECHAR  EditChannel[8];
     uint16  CurrentItemId;
     boolean edit_chann_interrupt;
+    IImage     *m_pVolumeImage;
 } CFmRadio;
 
 /*==============================================================================
