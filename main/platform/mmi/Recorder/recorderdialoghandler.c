@@ -480,7 +480,7 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
             IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, IDS_RECORD_LIST, IDS_RECORD_LIST, 0, 0);
 
 			
-			IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, IDS_STORAGE_SETUP, IDS_STORAGE_SETUP, 0, 0);
+			//IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, IDS_STORAGE_SETUP, IDS_STORAGE_SETUP, 0, 0);
 			#if 0
             IMENUCTL_SetTitle( pMenu, AEE_RECORDER_RES_FILE, IDS_TITLE, 0);
 			#else
@@ -561,11 +561,13 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 					CLOSE_DIALOG( DLGRET_RECORD_LIST);
 				}
 				break;
+#if 0                
 				case IDS_STORAGE_SETUP:
 				{
 					CLOSE_DIALOG( DLGRET_STORAGE_SETUP);
 				}
 				break;
+#endif                
 			}
 		}
 		return TRUE;
