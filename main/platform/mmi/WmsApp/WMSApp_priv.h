@@ -813,7 +813,7 @@ typedef struct WmsApp
 #define MAXITEMS_ONEPAGE                    (7)
 
 // 限制群发时最多允许发往的地址数
-#define MAXNUM_MULTISEND                    (100)
+#define MAXNUM_MULTISEND                    (20)
 
 // 短信内部配置数据结构版本号
 #define WMS_CFG_VERSION                     (2)

@@ -218,7 +218,9 @@ static SheftKeyItem_Own  VLCharKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_RWD, '$', {'$'}},
     {AVK_ENTER,0x000A,{0x000A}},
     
-    {AVK_SPACE,' ',{' '}}   
+    {AVK_SPACE,' ',{' '}},
+	{AVK_0,'0',{'0'}}
+	
 };
 static SheftKeyItem_Own  VLCharLowKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 {
@@ -4704,6 +4706,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
     }     
     switch ( key) 
     {
+    	case AVK_0:
         case AVK_1:
         case AVK_2:
         case AVK_3:
@@ -5483,6 +5486,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
     }     
     switch ( key) 
     {
+    	case AVK_0:
         case AVK_1:
         case AVK_2:
         case AVK_3:
