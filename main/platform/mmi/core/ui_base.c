@@ -710,6 +710,13 @@ void ui_answer_call ()
 
 #ifdef CUST_EDITION
 #ifdef FEATURE_UTK2
+static boolean g_bCanProactiveHandle = FALSE;
+
+void ui_enable_proactive(boolean bEnable)
+{
+    g_bCanProactiveHandle = bEnable;
+}
+
 void ui_cmd(ui_cmd_type *cmd_ptr);
 
 void set_UTK_session_status(byte st)
@@ -847,15 +854,15 @@ static void oemui_handlecmd(ui_cmd_type *cmd_ptr)
             if (pShell != NULL)
             {
                 byte cmd_type;
-                static boolean first_set_menu = TRUE;
+                //static boolean first_set_menu = TRUE;
                 cmd_type = UTK_parse_proactive_command(cmd_ptr->proactive_cmd.cmd_data, cmd_ptr->proactive_cmd.num_bytes);
                               
 //                DBGPRINTF("UTK cmd_type = 0x%02x %d",cmd_type,first_set_menu,0);
-                if(first_set_menu == TRUE && cmd_type == UIM_TK_SETUP_MENU)
-                {
-                    first_set_menu = FALSE;
-                    return;
-                }  
+                //if(first_set_menu == TRUE && cmd_type == UIM_TK_SETUP_MENU)
+                //{
+                //    first_set_menu = FALSE;
+                //    return;
+                //}  
                 (void)ISHELL_PostEvent(pShell,
                                        AEECLSID_APP_UTK,
                                        (int)EVT_RUIM_PROACTIVE,
@@ -899,7 +906,10 @@ static void process_command_sig(void)
     while ((cmd_ptr = (ui_cmd_type *) q_get(&ui_cmd_q)) != NULL)
     {
         // 实际处理命令
-        oemui_handlecmd(cmd_ptr);
+        if(g_bCanProactiveHandle)
+        {
+            oemui_handlecmd(cmd_ptr);
+        }
         
         ctask_ptr = cmd_ptr->hdr.task_ptr;
         csigs = cmd_ptr->hdr.sigs;

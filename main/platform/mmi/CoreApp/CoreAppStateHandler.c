@@ -939,6 +939,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 #ifdef FEATURE_UTK2
             if (IsRunAsUIMVersion() && (pMe->m_eUIMErrCode == UIMERR_NONE))
             { // 系统运行于有卡版本且卡正确无误
+                ui_enable_proactive(TRUE);
                 // UTK Profile download
                 UTK_SendTerminalProfile();
             }
