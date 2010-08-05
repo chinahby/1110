@@ -2737,14 +2737,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_VERSION_SMART			
 					if(!OEMKeyguard_IsEnabled())
                     {
-                    	return 0; //Chat
-                        //return CoreApp_LaunchApplet(pMe, AEECLSID_FRENDUO);
+                    	return 0; //Chat                        
                     }
 #elif defined 	FEATURE_VERSION_M8		
 					if(!OEMKeyguard_IsEnabled())
                     {
-                    	return 0; //Chat
-                        //return CoreApp_LaunchApplet(pMe, AEECLSID_FRENDUO);
+                    	return 0; //Chat                        
                     }
 					
 #else		//Include IVIO

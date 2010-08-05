@@ -48,6 +48,11 @@
 #include "err.h"
 #define PARAM_NOT_REF(x)
 
+
+//Add By zzg 2010_08_03
+#define FRENDUO_NUM_ONE		L"*550"			
+#define FRENDUO_NUM_TWO		L"*55"
+//Add End
 /*==============================================================================
 
                               本地函数声明
@@ -69,9 +74,6 @@ static uint32  FrenDuoApp_AddRef(IFrenDuoApp *pi);
 static uint32  FrenDuoApp_Release (IFrenDuoApp *pi);
 
 static boolean FrenDuoApp_HandleEvent( IFrenDuoApp *pi, AEEEvent eCode, uint16  wParam, uint32 dwParam);
-
-static void FrenDuoApp_SendSmsTimer(void * pUser);
-
 
 static FrenDuoApp gFrenDuoApp={0};
 
@@ -363,13 +365,13 @@ static int CFrenDuoApp_InitAppData(FrenDuoApp *pMe)
     }
 
     pMe->m_MainSel  = 0;
-    
+
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, (void **) &pMe->m_pDisplay) != SUCCESS)
-    {
+    {    	
         return EFAILED;
     }
 	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
-    {
+    {    	
         return EFAILED;
     }
 
@@ -503,7 +505,7 @@ static boolean FrenDuoApp_HandleEvent( IFrenDuoApp *pi,
     {
 		case EVT_APP_START:
 		{
-			FrenDuoApp_ShowDialog(pMe, IDD_FRENDUO_LIST);
+			FrenDuoApp_ShowDialog(pMe, IDD_FRENDUO_LIST);					
 			return TRUE;
 		}
         case EVT_APP_STOP:
@@ -635,20 +637,10 @@ static boolean FrenDuoApp_ListMenuHandler(FrenDuoApp *pMe, AEEEvent eCode, uint1
 
     switch (eCode)
     {
-        case EVT_DIALOG_INIT:			
-		    {
-		  		AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        FRENDUO_RES_FILE_LANG,                                
-                        IDS_FRENDUO_LIST,
-                        WTitle,
-                        sizeof(WTitle));
-                if(pMe->m_pIAnn != NULL)
-                {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-                }
-		    }
-			
+        case EVT_DIALOG_INIT:	
+			//IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
+					
             IMENUCTL_AddItem(pMenu, FRENDUO_RES_FILE_LANG,IDS_FRENDUO_TITLE_1, IDS_FRENDUO_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, FRENDUO_RES_FILE_LANG,IDS_FRENDUO_TITLE_2, IDS_FRENDUO_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, FRENDUO_RES_FILE_LANG,IDS_FRENDUO_TITLE_3, IDS_FRENDUO_TITLE_3, NULL, 0);
@@ -687,16 +679,29 @@ static boolean FrenDuoApp_ListMenuHandler(FrenDuoApp *pMe, AEEEvent eCode, uint1
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MAIN_MENU, EVT_USER_REDRAW,0,0);
+                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_FRENDUO, EVT_USER_REDRAW,0,0);
             }
             return TRUE;
             
-        case EVT_USER_REDRAW:
+        case EVT_USER_REDRAW:			
+			{				
+		  		AECHAR WTitle[40] = {0};
+				
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        FRENDUO_RES_FILE_LANG,                                
+                        IDS_FRENDUO_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {                								
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+		    }
+		
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
-        case EVT_DIALOG_END:
-			DBGPRINTF("***zzg FrenDuoApp_ListMenuHandler EVT_DIALOG_END***");
+        case EVT_DIALOG_END:			
 			//ISHELL_CloseApplet(pMe->m_pShell, FALSE);
             return TRUE;
 		
@@ -771,14 +776,11 @@ static boolean StartApplet(FrenDuoApp *pMe, int i)
     {
         case 0:
         {
-			//Calling to *550, Then Send SMS To:551, Content SMS: "Status"
-			AECHAR StrCallNum[10];
-			char callNum[10] = "*550";;
-		                    
-			(void) STRTOWSTR(callNum, StrCallNum, 10);
-
-			 // Make a voice call
-            ICallApp_CallNumberEx(pMe->m_pCallApp, (AECHAR *)StrCallNum, (PFNNOTIFY)FrenDuoApp_SendSmsTimer, 10000);
+			//Calling to *550, Then Send SMS To:551, Content SMS: "Status"			
+			AECHAR StrCallNum[] = FRENDUO_NUM_ONE;
+			
+			 // Make a voice call            
+            ICallApp_CallNumber(pMe->m_pCallApp, StrCallNum);
 
             if (pMe->m_pCallApp != NULL) 
             {
@@ -790,15 +792,11 @@ static boolean StartApplet(FrenDuoApp *pMe, int i)
         }
         case 1:
         {
-			//Calling to *55, Then Send SMS To:551, Content SMS: "Status"		
-			AECHAR StrCallNum[10];
-			char callNum[10] = "*55";
-		        
-			(void) STRTOWSTR(callNum, StrCallNum, 10);		
+			//Calling to *55, Then Send SMS To:551, Content SMS: "Status"				
+			AECHAR StrCallNum[] = FRENDUO_NUM_TWO;
 
-
-            // Make a voice call
-            ICallApp_CallNumberEx(pMe->m_pCallApp, (AECHAR *)StrCallNum, (PFNNOTIFY)FrenDuoApp_SendSmsTimer, 10000);
+            // Make a voice call            
+            ICallApp_CallNumber(pMe->m_pCallApp, StrCallNum);
 
             if (pMe->m_pCallApp != NULL) 
             {
@@ -840,19 +838,3 @@ static boolean StartApplet(FrenDuoApp *pMe, int i)
     }
     return TRUE;
 }
-
-
-static void FrenDuoApp_SendSmsTimer(void * pUser)
-{
-    FrenDuoApp * pMe = (FrenDuoApp *)pUser;
-    
-    if (NULL == pMe)
-    {
-    	DBGPRINTF("***zzg FrenDuoApp_SendSmsTimer pMe==NULL!***");
-        return;
-    }
-			
-	DBGPRINTF("***zzg FrenDuoApp_SendSmsTimer***");
-	StartApplet(pMe, 2);	//Send sms:status to 551.....   
-}
-

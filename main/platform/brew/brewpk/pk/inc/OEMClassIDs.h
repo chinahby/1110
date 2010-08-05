@@ -101,7 +101,11 @@ GENERAL DESCRIPTION:
 #define AEECLSID_VKEY_CONTROL      (AEECLSID_OEM + 0x502)   //0x01006131
 #define AEECLSID_APPLICATION       (AEECLSID_OEM + 0x503)   //add by yangdecai
 #define AEECLSID_GAME              (AEECLSID_OEM + 0x504)   //add by yangdecai
+
+#ifdef FEATURE_VERSION_M8
 #define AEECLSID_FRENDUO           (AEECLSID_OEM + 0x505)   //add by yangdecai
+#endif
+
 #define AEECLSID_MULTIMEDIA_LIST   (AEECLSID_OEM + 0x600)   //add by yangdecai
 #define AEECLSID_STATIC_APP        (AEECLSID_OEM + 0x601)   //addj by yangdecai
 

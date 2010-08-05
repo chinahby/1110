@@ -112,6 +112,10 @@ include $(MMIDIR)/core/core.min
 include $(APPLICATION)/application.min
 include $(GAME)/game.min
 include $(MULTIMEDIA)/multimedia.min
+
+ifeq ($(USES_RESDIR),M8)
 include $(FRENDUO)/frenduo.min
+endif
+
 include $(STATIC_BREW_APP)/staticbrewapp.min
 include $(STATIC_APP)/staticapp.min

@@ -93,8 +93,6 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                                         uint32      dwParam);
 
 static int CallApp_CallNumber(ICallApp *p, AECHAR *number);
-static int CallApp_CallNumberEx(ICallApp *p, AECHAR *number, PFNNOTIFY pfn,  uint32 TimeOut);	//Add By zzg 2010_07_21
-
 
 #ifdef FEATURE_EDITABLE_RECORD
 static int CallApp_EditRecNumber(ICallApp *p, AECHAR *number, uint16 call_type);
@@ -255,8 +253,7 @@ static const VTBL(ICallApp) gCallAppMethods =
     CallApp_AddRef,
     CallApp_Release,
     CallApp_HandleEvent,
-    CallApp_CallNumber,
-    CallApp_CallNumberEx,		//Add By zzg 2010_07_21
+    CallApp_CallNumber,    
     CallApp_BtCallNumber,
     //CallApp_IsRestictCallNumber,
     //CallApp_SetStartCallType,
@@ -1608,49 +1605,6 @@ static int CallApp_CallNumber(ICallApp *p, AECHAR *number)
 
     return SUCCESS;
 }
-
-
-//Add By zzg 2010_07_21
-static int CallApp_CallNumberEx(ICallApp *p, AECHAR *number, PFNNOTIFY pfn,  uint32 TimeOut)
-{
-    register CCallApp *pMe = (CCallApp *)p;
-
-    DBGPRINTF("***zzg CallApp_CallNumberEx Start!***");
-
-    if (NULL == pMe || NULL == number)
-    {
-        return EFAILED;
-    }
-
-    if (0 == *number)
-    {
-        return EFAILED;
-    }
-
-	DBGPRINTF("***zzg CallApp_CallNumberEx ActiveApplet=%x***", ISHELL_ActiveApplet(pMe->m_pShell));
-
-	ISHELL_SetTimer(pMe->m_pShell, TimeOut, pfn, pMe);
-	
-	ISHELL_CancelTimer(pMe->m_pShell, pfn, pMe);	
-
-    call_start_info_call.b_closeAll = CALL_INFO_NO;
-    call_start_info_call.catgory = CALL_INFO_SEND;
-    WSTRTOSTR(number,call_start_info_call.dial_str, sizeof(call_start_info_call.dial_str));
-
-    STRTOWSTR(call_start_info_call.dial_str, pMe->m_DialString, sizeof(pMe->m_DialString));
-    MOVE_TO_STATE(STATE_CALLING_FROM_ANOTHERAPP)
-		
-    if (ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_DIALER, (const char *)&call_start_info_call) != SUCCESS)
-    {
-        DBGPRINTF("***zzg Start AEECLSID_DIALER fail!***");
-        return EFAILED;
-    }
-
-    return SUCCESS;
-}
-//Add End
-
-
 
 #ifdef FEATURE_EDITABLE_RECORD
 static int CallApp_EditRecNumber(ICallApp *p, AECHAR *number, uint16 call_type)

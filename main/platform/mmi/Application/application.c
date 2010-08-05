@@ -936,16 +936,14 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_5, IDS_TOOLS_TITLE_5, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_6, IDS_TOOLS_TITLE_6, NULL, 0);
 #elif defined FEATURE_VERSION_SMART
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);
-#elif defined FEATURE_VERSION_M8
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
+#elif defined FEATURE_VERSION_M8			
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
@@ -1030,9 +1028,6 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 case AVK_5:
                 case AVK_6:
 				case AVK_7:	
-				case AVK_8:		
-                case AVK_STAR:
-                case AVK_POUND:
 #elif defined  FEATURE_VERSION_M8
 				case AVK_1:
                 case AVK_2:
@@ -1041,10 +1036,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 case AVK_5:
                 case AVK_6:
 				case AVK_7:	
-				case AVK_8:
-				case AVK_9:	
-                case AVK_STAR:
-                case AVK_POUND:
+				case AVK_8:	
 #else
 				case AVK_1:
                 case AVK_2:
@@ -1087,12 +1079,12 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			{
 				case IDS_APPLICATION_TITLE_10:
 				{
-					StartApplet(pMe, 7);
+					StartApplet(pMe, 6);
 					break;
 				}				
 				default:
 				{
-					StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_1);
+					StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_2);
 					break;
 				}
 			}
@@ -1102,17 +1094,17 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			{
 				case IDS_APPLICATION_TITLE_13:
 				{
-					StartApplet(pMe, 7);
+					StartApplet(pMe, 6);
 					break;
 				}
 				case IDS_APPLICATION_TITLE_10:
 				{
-					StartApplet(pMe, 8);
+					StartApplet(pMe, 7);
 					break;
 				}
 				default:
 				{
-					StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_1);
+					StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_2);
 					break;
 				}
 			}			
@@ -1170,89 +1162,79 @@ static boolean StartApplet(Application *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
             break;
 
-#elif defined FEATURE_VERSION_SMART
+#elif defined FEATURE_VERSION_SMART                  
         case 0:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
-            break;
-        }            
-        case 1:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
             break;
 		}    
-        case 2:
+        case 1:
         {
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
 			break;
         }
-        case 3:
+        case 2:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
         }
-        case 4:
+        case 3:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
             break;
         }
-        case 5:
+        case 4:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
             break;
         }
-		case 6:
+		case 5:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
             break;
 		}   
-        case 7:
+        case 6:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
             break;
         }			
-#elif defined FEATURE_VERSION_M8
+#elif defined FEATURE_VERSION_M8              
         case 0:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
-            break;
-        }            
-        case 1:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
             break;
 		}    
-        case 2:
+        case 1:
         {
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
 			break;
         }
-        case 3:
+        case 2:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
         }
-        case 4:
+        case 3:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
             break;
         }
-        case 5:
+        case 4:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
             break;
         }
-		case 6:
+		case 5:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
             break;
 		}   
-		case 7:
+		case 6:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
             break;
 		}
-        case 8:
+        case 7:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
             break;

@@ -29,6 +29,15 @@
 #include "Bcmapp_ag.h"
 #endif
 
+//Add By zzg 2010_08_03  for Frenduo Send sms
+#ifndef AEE_SIMULATOR
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+#include "WMSApp.h"
+#endif
+#endif
+//Add End
+
+
 //#define FEATURE_TEST_ANNUN_ICONS 
 #ifdef FEATURE_TEST_ANNUN_ICONS
     #include "oemannunciator.brh" 
@@ -203,6 +212,14 @@ static void CallApp_RefreshVolBar(CCallApp *pMe);
 #ifdef FEATURE_APP_PAUSE_TIMER
 static void  CallApp_SetTimerControl(void *pUser);
 #endif //FEATURE_APP_PAUSE_TIMER
+
+
+//Add By zzg 2010_08_03
+#ifdef FEATURE_APP_FRENDUO_TIMER
+static void  CallApp_SetFrenduoTimer(void *pUser);
+static boolean  CallApp_SendFrenduoSMS(void *pUser);
+#endif 
+//Add End
 
 static void  CallApp_SetPauseControl(void *pUser);
 
@@ -2636,11 +2653,19 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-          /*  if (pMe->m_PauseString[0] != 0)
-            {
-                (void)ISHELL_SetTimer(pMe->m_pShell, CALL_TIMER_SET + 8000,
-                                                        CallApp_SetPauseControl, pMe);
-            }*/  
+        {
+//Add By zzg 2010_08_03		  
+#ifdef FEATURE_APP_FRENDUO_TIMER
+			Dialer_call_table *str = NULL;
+			str = CallApp_Get_First_Entry_In_Call_Table(pMe);
+
+			if((WSTRNCMP(str->call_number, L"*55", 3) == 0) || (WSTRNCMP(str->call_number, L"*550", 4) == 0))
+			{ 
+			  (void)ISHELL_SetTimer(pMe->m_pShell, CALL_TIMER_FRENDUO,  CallApp_SetFrenduoTimer, pMe);
+			}		 
+#endif 
+//Add End
+		  
 #ifdef FEATURE_APP_PAUSE_TIMER
             if (pMe->m_TimerString[0] != 0)
             {
@@ -2666,6 +2691,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 #endif
 
             return TRUE;
+        }
 
         case EVT_USER_REDRAW:
         {
@@ -2739,6 +2765,24 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
         case EVT_DIALOG_END:
           //  (void)ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetPauseControl, pMe);
+
+//Add By zzg 2010_08_03		
+#ifdef FEATURE_APP_FRENDUO_TIMER
+			{
+				Dialer_call_table *str = NULL;
+				str = CallApp_Get_First_Entry_In_Call_Table(pMe);
+
+				DBGPRINTF("***zzg CallAppDialogHandler EVT_DIALOG_END***");
+				
+				if((WSTRNCMP(str->call_number, L"*55",3) == 0) || (WSTRNCMP(str->call_number, L"*550",4) == 0))
+				{					
+				  	(void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetFrenduoTimer, pMe);
+					CallApp_SendFrenduoSMS(pMe);
+				}
+			}		   
+#endif 
+//Add End
+		  
 #ifdef FEATURE_APP_PAUSE_TIMER
             (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetTimerControl, pMe);
 #endif //FEATURE_APP_PAUSE_TIMER
@@ -2870,6 +2914,8 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     return TRUE;  //make the dialog can't closed by avk_clr.
 
                 case AVK_ENDCALL:
+					DBGPRINTF("***zzg AVK_ENDCALL***");
+					
                     //CALL_ERR("AVK_ENDCALL", 0,0,0);
                     // End call
                     //ASSERT(AEECM_CALL_STATE_CONV == pMe->m_lastCallState);
@@ -8073,6 +8119,53 @@ static void  CallApp_SetTimerControl(void *pUser)
     CallApp_Draw_Connect_Softkey(pMe);
 }
 #endif
+
+//Add By zzg 2010_08_03
+#ifdef FEATURE_APP_FRENDUO_TIMER
+static void  CallApp_SetFrenduoTimer(void *pUser)
+{
+	CCallApp *pMe = (CCallApp *)pUser;
+
+	DBGPRINTF("***zzg CallApp_SetFrenduoTimer***");	
+    
+	pMe->m_userCanceled = TRUE;
+    ICM_EndAllCalls(pMe->m_pICM);
+}
+
+static boolean  CallApp_SendFrenduoSMS(void *pUser)
+{		
+    IWmsApp *pIWmsApp = NULL;	
+	CCallApp *pMe = (CCallApp *)pUser;
+	
+	DBGPRINTF("***zzg CallApp_SendFrenduoSMS***");	
+	
+	if (SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_WMSAPP, (void**)&pIWmsApp))
+	{
+		return EFAILED;
+	}
+	
+	if (SUCCESS == IWmsApp_SendSpecMessageEx(pIWmsApp))
+	{
+		DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  SUCCESS!");
+	}
+	else
+	{
+		DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  FAILED!");
+		(void)IWmsApp_Release(pIWmsApp);
+		pIWmsApp = NULL;
+		return EFAILED;
+	}
+    
+    (void)IWmsApp_Release(pIWmsApp);
+    pIWmsApp = NULL;
+    return SUCCESS;
+
+	
+}
+
+
+#endif
+//Add End
 
 static void  CallApp_SetPauseControl(void *pUser)
 {

@@ -259,6 +259,9 @@ typedef PACKED struct {
 #define MISSED_CALL_Y                         (CALL_ANNU_HEIGHT + pMe->m_LineHeight+2)
 /*Temp add */
 #define FEATURE_APP_PAUSE_TIMER
+
+#define FEATURE_APP_FRENDUO_TIMER		//Add By zzg 2010_08_03
+
 #if 0
 #define FEATURE_IMAGE_DIALING_DIGITS
 #endif
@@ -765,7 +768,9 @@ typedef struct _CCallApp
 //#define WARNING_IMAGE "image\\warning.bmp"
 
 //#ifdef FEATURE_APP_PAUSE_TIMER
-#define CALL_TIMER_SET                       3000    //Set Timer of T key
+#define CALL_TIMER_SET                       3000    //Set Timer of T key	Add By zzg 2010_08_03
+
+#define CALL_TIMER_FRENDUO					 10000	//Set Timer of Frenduo
 //#endif
 //#define DIALER_DUBEG
 #ifdef FEATURE_OEM_DEBUG

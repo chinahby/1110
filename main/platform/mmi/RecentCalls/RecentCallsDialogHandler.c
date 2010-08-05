@@ -1017,8 +1017,6 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                     {
                         nCount = pMe->list_record[i].counter;
 
-						DBGPRINTF("***zzg RecentCallsDialogHandler i=%d, nCount=%d number=%s***", i, nCount, pMe->list_record[i].number);
-						
                         WSTRCPY(wszRawNum, pMe->list_record[i].number); 
                         // get Name for contact
                         // 从电话本中取人名,此处不用pMe->list_record[i].name字段是为了避免

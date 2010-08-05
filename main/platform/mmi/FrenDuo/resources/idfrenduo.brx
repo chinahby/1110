@@ -10,6 +10,9 @@
 	<String Id="1004" Name="IDS_FRENDUO_TITLE_3">
 		<Text>Cek Status</Text>
 	</String>
+	<String Id="1010" Name="IDS_FRENDUO_TITLE">
+		<Text>Frenduo</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FRENDUO_LIST" Focus="7001">

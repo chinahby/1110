@@ -51,6 +51,11 @@ static WmsApp * gpWMSApp = NULL;
 ==============================================================================*/
 #define BCD2INT(x)  (((((x) & 0xf0) >> 4) * 10) + ((x) & 0x0f))
 
+
+//Add By zzg 2010_08_03
+#define FRENDUO_SMS_DESTNUM	 "15323435013"		//"551"
+#define FRENDUO_SMS_BUFF     "status"
+//Add End
 /*==============================================================================
 
                                     º¯ÊýÉùÃ÷
@@ -3702,17 +3707,21 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
 //Add By zzg 2010_07_21
 wms_client_message_s_type *CWmsApp_GetspecmsgEx(void)
 {
-	//return GetSeamlessSMS();
-	char  DestNum[12] = "551";	//"13316515580"
-	char  pBuf[7] = "status";
     int   nMsgSize = 0;
     int   nSize;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
-    wms_client_message_s_type    *pCltMsg = NULL;	
+    wms_client_message_s_type    *pCltMsg = NULL;
+   
+	nSize = sizeof(FRENDUO_SMS_BUFF);    
+	nMsgSize = sizeof(FRENDUO_SMS_BUFF);
+
+	DBGPRINTF("***zzg CWmsApp_GetspecmsgEx***");
+	
+    if (nMsgSize<=0)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
     
-    nSize = 7;
-    nMsgSize = 7;
-	    
     nSize = sizeof(wms_cdma_user_data_s_type);
     pUserdata = (wms_cdma_user_data_s_type *)MALLOC(nSize);
 	
@@ -3720,18 +3729,19 @@ wms_client_message_s_type *CWmsApp_GetspecmsgEx(void)
     {
         goto GETREGISTERMSG_EXIT;
     }
+	
     MEMSET(pUserdata, 0, nSize);
     pUserdata->encoding = WMS_ENCODING_OCTET;
     pUserdata->number_of_digits = nMsgSize;
     pUserdata->data_len = nMsgSize;
     pUserdata->padding_bits = 0;
-    MEMCPY(pUserdata->data, pBuf, nMsgSize);
+    MEMCPY(pUserdata->data, FRENDUO_SMS_BUFF, nMsgSize);
     
-    pCltMsg = GetMOClientMsg(DestNum, pUserdata, TRUE);	
+    pCltMsg = GetMOClientMsg(FRENDUO_SMS_DESTNUM, pUserdata, FALSE);
     
 GETREGISTERMSG_EXIT:    
     FREEIF(pUserdata);
     
-    return pCltMsg;	
+    return pCltMsg;    
 }
 //Add End

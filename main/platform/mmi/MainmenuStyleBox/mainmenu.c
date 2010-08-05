@@ -2284,9 +2284,9 @@ static boolean StartApplet(MainMenu *pMe, int i)
 			
 #elif defined FEATURE_VERSION_SMART
 		case 0:
-        { 
-            //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+        {             
             //Smart World;
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
             break;
         }
         case 1:
@@ -2346,9 +2346,9 @@ static boolean StartApplet(MainMenu *pMe, int i)
         }
 #elif defined FEATURE_VERSION_M8 
 		case 0:
-        { 
-            //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+        {             
             //b-live;
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
             break;
         }
         case 1:
