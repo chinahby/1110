@@ -1822,6 +1822,11 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
             wParam = AVK_WITHDRAW;
             bHandle = TRUE;
         }
+		if(cls == AEECLSID_QUICKTEST)
+		{
+			wParam = AVK_ENDCALL;
+            bHandle = TRUE;
+		}
         break;
         
     case AVK_HEADSET_CONNECT:

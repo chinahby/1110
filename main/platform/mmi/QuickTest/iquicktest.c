@@ -618,6 +618,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
         case EVT_KEY:
             if (!pMe->m_bAppIsReady)
             {
+            	MSG_FATAL("CQuickTest_HandleEvent EVT_KEY",0,0,0);
                 return TRUE;
             }
             MSG_FATAL("CQuickTest_HandleEvent EVT_KEY",0,0,0);
@@ -632,6 +633,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
+			
             if (wParam == 0)
             {
                 return TRUE;

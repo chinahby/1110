@@ -140,6 +140,7 @@ typedef struct _CQuickTest {
    IModule        *m_pModule;
    IDisplay       *m_pDisplay;     // Display interface
    IShell         *m_pShell;       // Shell interface
+   
 
    ISound         *m_pISound;
    IRUIM          *m_pIRUIM;

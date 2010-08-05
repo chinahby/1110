@@ -524,15 +524,67 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 
         case EVT_DIALOG_END:
             return TRUE;
-
+		case EVT_KEY_PRESS:
+		case EVT_KEY_RELEASE:
+			{
+				switch(wParam)
+            	{
+            		case AVK_ENDCALL:
+					//case AVK_END:
+					{
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					 
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 136, 0);
+							IIMAGE_Draw(image, 140, 0);
+							IIMAGE_Draw(image, 136, TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 140, TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 136, 50-TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 140, 50-TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 136, TITLEBAR_HEIGHT*2);
+							IIMAGE_Draw(image, 140, TITLEBAR_HEIGHT*2);
+							IIMAGE_Release( image);
+						}
+						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+						return TRUE;
+            		}
+					default:
+						break;
+				}
+			}
+			break;
         case EVT_KEY:
-			DBGPRINTF("wParam::::::::::::::::::::%d,dwParam:::::::::::::::::%d",wParam,dwParam);
+			
             switch(wParam)
             {
+            	case AVK_ENDCALL:
+				//case AVK_END:
+					{
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+					    
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, 136, 0);
+							IIMAGE_Draw(image, 140, 0);
+							IIMAGE_Draw(image, 136, TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 140, TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 136, 50-TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 140, 50-TITLEBAR_HEIGHT);
+							IIMAGE_Draw(image, 136, TITLEBAR_HEIGHT*2);
+							IIMAGE_Draw(image, 140, TITLEBAR_HEIGHT*2);
+							IIMAGE_Release( image);
+						}
+						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+						return TRUE;
+					}
+					break;
                 case AVK_CLR:
 					{
 						IImage* image	= NULL;
-						DBGPRINTF("AVK_CLRwParam::::::::::::::::::::%d,dwParam:::::::::::::::::%d",wParam,dwParam);
+						
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
 						if((uint32)dwParam == 1)
 						{
@@ -548,11 +600,13 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 120, 50-TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 116, TITLEBAR_HEIGHT*2);
 							IIMAGE_Draw(image, 120, TITLEBAR_HEIGHT*2);
+							
 						}
 						if(pMe->m_testkeycount >=45)
 						{
 	                     	CLOSE_DIALOG(DLGRET_CANCELED)
 						}
+						IIMAGE_Release( image);
 						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                 	}
                      break;
