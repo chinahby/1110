@@ -2361,7 +2361,7 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
 #endif
     
     FARF(STATE, ("STATE_GROUPVIEW %d",pMe->m_eDlgRet));
-    
+  
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -2375,15 +2375,20 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
         }
         //Proccess yourself dialog retrn value here
         case DLGRET_CANCELED:
+			
+			
             if(STARTMETHOD_GROUPLIST == pMe->m_eStartMethod)
             {
-                MOVE_TO_STATE(STATE_SELECT_RETURN);
+                //MOVE_TO_STATE(STATE_SELECT_RETURN);
+				MOVE_TO_STATE(STATE_EXIT);
             }
             else
             {
                 //MOVE_TO_STATE(STATE_SEARCH);            
                 MOVE_TO_STATE(STATE_MAINMENU);
             }
+			
+            return NFSMACTION_CONTINUE;
             break;
 
         case DLGRET_VIEW:
@@ -2415,7 +2420,8 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
             break;
             
         case DLGRET_OK:
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH               
+//#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
+			
             if(pMe->m_nGroupCat != AEE_ADDR_CAT_NONE
                 && pMe->m_nGroupCat != AEE_ADDR_CAT_OTHER
                 && pMe->m_nGroupCat != AEE_ADDR_CAT_UIM
@@ -2429,6 +2435,7 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
 //#else //FEATURE_CARRIER_THAILAND_HUTCH 
 
             // Load record
+           
             if(SUCCESS != CContApp_LoadByCat(pMe, pMe->m_nGroupCat))
             {
                 pMe->m_wErrStrID = IDS_ERR_LOAD;
@@ -2437,6 +2444,7 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
             }
             
             // ¼ÇÂ¼ÊÇ·ñÎª¿Õ
+           
             if(IS_ZERO_REC())
             {
                 // Show dialog message
@@ -2452,6 +2460,7 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
             pMe->m_nCurrIdx    = 0;
             
             // Go to list the menu
+            
             MOVE_TO_STATE(STATE_GROUPVIEW_LIST);
 //#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
     /**/
@@ -2469,7 +2478,7 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
             
             MOVE_TO_STATE(STATE_GROUPVIEW);
             return NFSMACTION_CONTINUE;
-            
+        
         default:
 #if defined(AEE_STATIC)
             ASSERT_NOT_REACHABLE
@@ -6190,7 +6199,7 @@ static NextFSMAction Handler_STATE_SELECT(CContApp *pMe)
 #endif
     
     FARF(STATE, ("STATE_SELECTFLD %d",pMe->m_eDlgRet));
-    
+    MSG_FATAL("pMe->Handler_STATE_SELECT::::::::::::::::::%d",pMe->m_eDlgRet,0,0);
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -6222,6 +6231,7 @@ static NextFSMAction Handler_STATE_SELECT(CContApp *pMe)
         //Proccess yourself dialog retrn value here
         case DLGRET_OK:
         {   
+			MSG_FATAL("pMe->Handler_STATE_SELECT:::::::DLGRET_OK::::::::",0,0,0);
 #if defined(FEATURE_WMS_APP)
             if(pMe->m_wSelFldType != MULTI_SELECT_CONTENT)
             {
@@ -6271,6 +6281,7 @@ static NextFSMAction Handler_STATE_SELECT(CContApp *pMe)
             break;
         
         case DLGRET_CANCELED:
+			MSG_FATAL("pMe->Handler_STATE_SELECT:::::::DLGRET_CANCELED::::::::",0,0,0);
             MOVE_TO_STATE(STATE_EXIT);
             return NFSMACTION_CONTINUE;
 
