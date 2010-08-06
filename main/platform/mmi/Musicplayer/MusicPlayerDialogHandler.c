@@ -4772,7 +4772,9 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
 	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
     MP3_RefreshVolBar(pMe);//画音量
     //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
+    
     #ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY
+	
     MP3_DispListIndex(pMe);//画 当前第几首/一共几首
     #endif
     //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
@@ -4818,10 +4820,9 @@ static void MP3_DispListIndex(CMusicPlayer *pMe)
     
     /*Draw list index Rect */
     //SETAEERECT( &clip, 126,142,48,18);//wlh 20090415 mod
-	SETAEERECT( &clip, LISTINDEX_X,LISTINDEX_Y,48,18);
+	//SETAEERECT( &clip, LISTINDEX_X,LISTINDEX_Y,48,18);
     
     MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);
-    
     if((pMe->m_nPlayinglistMusicNum == 0)
         ||(pMe->m_MusicPlayerCfg.lastPlayMusicID >= pMe->m_nPlayinglistMusicNum))
     {  
@@ -4829,13 +4830,28 @@ static void MP3_DispListIndex(CMusicPlayer *pMe)
     }
     else
     {
+        int minutetime =     pMe->m_nTotalTime/60;
+		int secondtime =     pMe->m_nTotalTime%60;
+		AECHAR  wtotaltimestr[MAX_STR_LEN];
+		MEMSET(wtotaltimestr,0,sizeof(wtotaltimestr));
         MEMSET(list_n_str,0,sizeof(list_n_str));
         SNPRINTF(list_n_str,sizeof(list_n_str),"%d/%d",pMe->m_MusicPlayerCfg.lastPlayMusicID+1
             ,pMe->m_nPlayinglistMusicNum);
         STRTOWSTR(list_n_str,wliststr,sizeof(wliststr));
+		MEMSET(list_n_str,0,sizeof(list_n_str));
+		SNPRINTF(list_n_str,sizeof(list_n_str),"               %02d:%02d",minutetime,secondtime);
+		STRTOWSTR(list_n_str,wtotaltimestr,sizeof(wtotaltimestr));
+		WSTRCAT(wliststr,wtotaltimestr);
+		
     }
     /*Draw Text With Profile */
     /*need changed skin and global var def 090118*/
+	
+	IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,TRUE);
+	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wliststr);
+	IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE);
+	//IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+	/*
     DrawTextWithProfile(pMe->m_pShell, 
                pMe->m_pDisplay, 
                RGB_WHITE_NO_TRANS, 
@@ -4846,7 +4862,7 @@ static void MP3_DispListIndex(CMusicPlayer *pMe)
                LISTINDEX_Y,
                &clip, 
                IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT
-               );
+               );*/
 }
 #endif
 /*画进度条*/
