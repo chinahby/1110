@@ -28,6 +28,7 @@
 #include "appscommon.brh"
 #include "appscommonimages.brh"
 #include "fmradiols.brh"
+#include "Hs_mb6550.h"
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -1217,7 +1218,10 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
     }
 #if !defined( AEE_SIMULATOR)
     //Call driver to set Volume
-    fm_set_volume( pMe->byVolumeLevel);
+    if (HS_HEADSET_ON())
+    {
+        fm_set_volume( pMe->byVolumeLevel);
+    }
 #endif//#if !defined( AEE_SIMULATOR)
    // FmRadio_RefreshVolumeImage(pMe);
     repaint( pMe, FALSE);
@@ -1443,7 +1447,10 @@ static void popChannelListOptionMenu( CFmRadio *pMe)
 
 static void refreshChannelList( CFmRadio *pMe, boolean begin)
 {
-    fm_mute(TRUE);//add by xuhui
+    if (HS_HEADSET_ON())
+    {
+        fm_mute(TRUE);//add by xuhui
+    }
     pMe->ledLightType = FM_RADIO_LED_LIGHT_SEARCHING;
     if( begin == BEGIN_TO_REFRESH_CHANNEL_LIST)
     {
@@ -1505,7 +1512,6 @@ static void refreshChannelListCB( void *pme)
     boolean  reachBandLimit         = FALSE;
     static   int numberOfloop       = 0;
     static   int countSearchChanne  = 0;
-    MSG_FATAL("refreshChannelListCB Start",0,0,0);
     fm_get_seek_status( &ready, &reachBandLimit, NULL);
     pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_MANUAL;
     if(((pMe->cfg.channel * CHANNEL_SPACE + LOWEST_BAND_FREQ) >= LOWEST_BAND_FREQ) && 
@@ -1551,7 +1557,10 @@ static void refreshChannelListCB( void *pme)
     }
     else
     {
-        fm_mute(FALSE);//add by xuhui
+        if (HS_HEADSET_ON())
+        {
+            fm_mute(FALSE);//add by xuhui
+        }
         //OK, Search Band Completed, tune back to pCurChanNode
         if( pMe->globalSearching)
         {
@@ -1583,7 +1592,6 @@ __refreshChannelListCB_no_channel_found:
         setChannelTo( pMe, pMe->cfg.channel);
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
     }
-    MSG_FATAL("refreshChannelListCB End",0,0,0);
 #endif//#if !defined( AEE_SIMULATOR)
 }
 

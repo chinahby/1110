@@ -1316,7 +1316,10 @@ static void FmRadio_PowerUp(void *pme)
         {
             pMe->ledLightType = FM_RADIO_LED_LIGHT_IDLE;
         }
-        fm_set_volume( pMe->byVolumeLevel);
+        if (HS_HEADSET_ON())
+        {
+            fm_set_volume( pMe->byVolumeLevel);
+        }
     }
 #endif//#if !defined( AEE_SIMULATOR)
 }

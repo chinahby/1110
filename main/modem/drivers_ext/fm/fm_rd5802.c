@@ -250,6 +250,10 @@ int fm_radio_power_down(void)
     {
         return FM_RADIO_FAILED;
     }
+    if(fm_playing_mute == FALSE)
+    {
+        fm_mute(TRUE);
+    }
     
 	ERR("fm_radio_power_down!!!",0,0,0);
 	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_poweroff[0]), 2);
@@ -520,9 +524,7 @@ int fm_set_volume(word wVolume)
 }
 
 void fm_mute(boolean on)
-{
-	ERR("fm_mute %d !!!",on,0,0);
-	
+{	
 	if ( on == TRUE )
 	{
 		fm_playing_mute = TRUE;
@@ -545,6 +547,5 @@ void fm_mute(boolean on)
 		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);		
 		//Add End	
 	}
-	
 	return;
 }
