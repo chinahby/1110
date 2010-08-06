@@ -4,6 +4,12 @@
 @set QUALCOMMNAME=SBNAALZ
 @set QUALCOMMNAME_BUILD=SXNAALZ
 
+rem delete some files for compile muslim or nasrani
+del %PROJECTNAME%\CoreAppDialogHandler.o
+del %PROJECTNAME%\OEMConstFiles_Dynamic.c
+del %PROJECTNAME%\OEMConstFiles_Dynamic.o
+del %PROJECTNAME%\OEMModTableExt.o
+
 IF "%*"=="" goto DO_COPY
 goto DO_WORK
 :DO_COPY
