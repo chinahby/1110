@@ -1015,10 +1015,10 @@ static boolean StartApplet(Staticapp *pMe, int i)
         case 0:
         	#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-               Result = CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
+               Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);
 			#else
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
-               Result = CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
+               Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);
 			#endif
             break;
             
