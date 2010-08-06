@@ -2906,11 +2906,15 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             {
                 case AVK_CLR:
                     //ICM_EndAllCalls(pMe->m_pICM);
-                  
+                    
                     pMe->m_bHandFree = !pMe->m_bHandFree;
                     CallApp_SetupCallAudio(pMe);
                     ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
-				
+					if (HS_HEADSET_ON())
+					{
+						snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
+						snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
+					}
                     return TRUE;  //make the dialog can't closed by avk_clr.
 
                 case AVK_ENDCALL:
@@ -2919,9 +2923,14 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     //CALL_ERR("AVK_ENDCALL", 0,0,0);
                     // End call
                     //ASSERT(AEECM_CALL_STATE_CONV == pMe->m_lastCallState);
+                    
                     pMe->m_userCanceled = TRUE;
                     ICM_EndAllCalls(pMe->m_pICM);
-					
+					if (HS_HEADSET_ON())
+					{
+						snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add yangdecai 2010_08_06
+						snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add yangdecai 2010_08_06
+					}
                     // Note:
                     // We are allowing the IPHONE notifier to move us to the
                     // next state...
@@ -2929,6 +2938,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
                 case AVK_SEND:
                     // Make sure aren't waiting for a hard pause to be released...
+                    
                     if (pMe->m_PauseString[0] != 0)
                     {
                       CallApp_SetPauseControl(pMe);
@@ -3549,6 +3559,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 
         case EVT_DIALOG_END:
             //CallApp_Set_Db_In_Idle(FALSE);
+            
             IALERT_StopAlerting(pMe->m_pAlert);
             CallAppNotifyMP3PlayerAlertEvent(pMe,FALSE);
             //CallApp_Free_All_Call_Table(pMe);//Free all call table
@@ -3569,6 +3580,11 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 IIMAGE_Release(pMe->m_pCallingImage);
                 pMe->m_pCallingImage = NULL;
             }
+			if (HS_HEADSET_ON()) //add by yangdecai
+			{
+					snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
+					snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
+			}
             pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
             return TRUE;
         //case EVT_INCOMISREADY:
@@ -3585,6 +3601,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_DISPLAYDIALOGTIMEOUT:
+			
             CLOSE_DIALOG(DLGRET_OK)
             return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
