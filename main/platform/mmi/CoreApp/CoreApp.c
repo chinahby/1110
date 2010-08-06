@@ -283,7 +283,6 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_nCardStatus = AEECARD_NO_CARD;
 #endif
     pMe->m_bSuspended = FALSE;
-    pMe->m_bLPMMode   = TRUE;
     
 	if(SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                                         AEECLSID_CARD,
@@ -938,12 +937,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             break;
         case EVT_SET_OPERATING_MODE:
-            if(pMe->m_bLPMMode)
-            {
-                break;
-            }
-            
-            //CORE_ERR("EVT_SET_OPERATING_MODE %d", wParam, 0, 0);
             ICM_SetOperatingMode(pMe->m_pCM, (AEECMOprtMode)wParam);
             break;
             
@@ -1252,6 +1245,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                       return CoreApp_ProcessOffLine(pMe);
                       
                     case AEECM_OPRT_MODE_ONLINE:
+                      CoreApp_ProcessSubscriptionStatus(pMe);
                       return TRUE;
                       
                     case AEECM_OPRT_MODE_LPM:
@@ -1600,42 +1594,6 @@ static void CoreApp_RunFSM(CCoreApp *pMe)
         }
     }
 } // CoreApp_RunFSM
-
-
-/*==============================================================================
-函数:
-    CoreApp_SetOperatingModeOnline
-
-说明:
-    用于将话机置于在线操作模式。
-
-参数:
-    pMe [in]:指向 Core Applet对象结构的指针。该结构包含小程序的特定信息。
-
-返回值:
-    none
-
-备注:
-       
-==============================================================================*/
-void CoreApp_SetOperatingModeOnline(CCoreApp *pMe)
-{
-    static boolean  bRun = FALSE;
-    
-    if (bRun)
-    {
-        return;
-    }
-    
-    if (AEE_SUCCESS == ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_ONLINE))
-    {
-    	 bRun = TRUE;
-    }
-    else
-    {
-    	 bRun = FALSE;
-    }
-}
 
 /*==============================================================================
 函数:

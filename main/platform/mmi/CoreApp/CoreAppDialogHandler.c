@@ -1029,7 +1029,6 @@ static boolean  IDD_LPM_Handler(void       *pUser,
                                 uint32     dwParam)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
-    AEECMPhInfo phInfo;
     
     switch (eCode)
     {
@@ -2103,17 +2102,6 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
     switch (eCode) 
     {
         case EVT_DIALOG_INIT:
-            if(pMe->m_bemergencymode)
-            {
-                //exit the emergency mode
-                ICM_SetSystemPreference(pMe->m_pCM,
-                                                AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
-                                                AEECM_GW_ACQ_ORDER_PREF_NO_CHANGE, AEECM_BAND_PREF_NO_CHANGE,
-                                                AEECM_ROAM_PREF_NO_CHANGE, AEECM_HYBR_PREF_NO_CHANGE,
-                                                AEECM_SRV_DOMAIN_PREF_NO_CHANGE, AEECM_NETWORK_SEL_MODE_PREF_NO_CHANGE,
-                                                NULL, NULL, NULL);
-                pMe->m_bemergencymode = FALSE;
-            }
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
 

@@ -512,7 +512,6 @@ typedef struct _CCoreApp
     ICARD *   m_pICard;               /* pointer to icard interface */
 #endif /*FEATURE_NEW_ICARD */
     uint8     m_nCardStatus;
-    boolean   m_bLPMMode;
 	boolean   m_isShift;
 } CCoreApp;
 
@@ -627,23 +626,6 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe);
 ==============================================================================*/
 NextFSMAction CoreApp_ProcessState(CCoreApp *pMe);
 
-/*==============================================================================
-函数:
-    CoreApp_SetOperatingModeOnline
-
-说明:
-    用于将话机置于在线操作模式。
-
-参数:
-    pMe [in]:指向 Core Applet对象结构的指针。该结构包含小程序的特定信息。
-
-返回值:
-    none
-
-备注:
-       
-==============================================================================*/
-void CoreApp_SetOperatingModeOnline(CCoreApp *pMe);
 /*==============================================================================
 函数:
     CoreApp_RegisterNotify

@@ -540,8 +540,6 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
             {
                 boolean bValue = FALSE;
                 AEECMPhInfo phInfo;
-                
-                pMe->m_bLPMMode = FALSE;
                 /* If phone info is available, do not wait for PH_INFO_AVAIL event for
                    * starting provisioning */
                 if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
@@ -882,7 +880,6 @@ static NextFSMAction COREST_EMERGENCYCALL_Handler(CCoreApp *pMe)
     }
     MSG_FATAL("COREST_EMERGENCYCALL_Handler Start",0,0,0);
     // 为进行紧急呼叫，将话机置于在线状态
-    //CoreApp_SetOperatingModeOnline(pMe);
     
     switch (pMe->m_eDlgRet)
     {
@@ -1073,6 +1070,18 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             }
 }
 #endif
+            CoreApp_ProcessSubscriptionStatus(pMe);
+            if(pMe->m_bemergencymode)
+            {
+                //exit the emergency mode
+                ICM_SetSystemPreference(pMe->m_pCM,
+                                        AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
+                                        AEECM_GW_ACQ_ORDER_PREF_NO_CHANGE, AEECM_BAND_PREF_NO_CHANGE,
+                                        AEECM_ROAM_PREF_NO_CHANGE, AEECM_HYBR_PREF_NO_CHANGE,
+                                        AEECM_SRV_DOMAIN_PREF_NO_CHANGE, AEECM_NETWORK_SEL_MODE_PREF_NO_CHANGE,
+                                        NULL, NULL, NULL);
+                pMe->m_bemergencymode = FALSE;
+            }
             CoreApp_ShowDialog(pMe, IDD_STARTUPANI);
             return NFSMACTION_WAIT;
             
