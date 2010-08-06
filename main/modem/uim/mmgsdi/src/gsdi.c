@@ -13210,5 +13210,7 @@ void gsdi_wait_initcompleted(void)
             rex_sleep(100);
         }
     }
+    // 这里Sleep UI 3S可以保证UI初始化过程的流畅
+    rex_sleep(3000);
 }
 #endif

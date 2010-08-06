@@ -539,13 +539,6 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
         case DLGRET_MSGOK: // 从消息对话框返回
             {
                 boolean bValue = FALSE;
-                AEECMPhInfo phInfo;
-                /* If phone info is available, do not wait for PH_INFO_AVAIL event for
-                   * starting provisioning */
-                if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
-                {
-                    InitAfterPhInfo(pMe, phInfo.oprt_mode);
-                }
                 
                 MSG_FATAL("COREST_VERIFYPHONEPWD_Handler DLGRET_MSGOK",0,0,0);
                 // 检查是否开启了手机锁密码检测功能

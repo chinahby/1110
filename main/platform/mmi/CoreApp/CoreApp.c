@@ -1615,6 +1615,7 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
 {
     int nRet;
     uint32 dwMask;
+    AEECMPhInfo phInfo;
     
     // 创建 ICM 接口
     nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
@@ -1627,6 +1628,13 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
     if (pMe->m_pCM == NULL) 
     {
         return FALSE;
+    }
+    
+    /* If phone info is available, do not wait for PH_INFO_AVAIL event for
+       * starting provisioning */
+    if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
+    {
+        InitAfterPhInfo(pMe, phInfo.oprt_mode);
     }
     
     // register with ICM
