@@ -523,7 +523,8 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
 #elif defined(MSMAUD_QSC60X5_AUDIO_CAL) || \
       defined(MSMAUD_QSC1110_AUDIO_CAL)
 VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
-  /* Internal CODEC - no pad values    */
+#if 0
+	/* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {           -1800 , VOC_VOL_SILENCE ,  0 },
@@ -533,6 +534,18 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
   {            -600 , VOC_VOL_SILENCE ,  0 },
   {            -300 , VOC_VOL_SILENCE ,  0 },
   {               0 , VOC_VOL_SILENCE ,  0 }
+#else
+  /* Internal CODEC - no pad values    */
+  /*  rx                dtmf            pad        */
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {           -1200 , VOC_VOL_SILENCE ,  0 },
+  {           -900 , VOC_VOL_SILENCE ,  0 },
+  {           -400 , VOC_VOL_SILENCE ,  0 },
+  {            0 , VOC_VOL_SILENCE ,  0 },
+  {            100 , VOC_VOL_SILENCE ,  0 },
+  {           200 , VOC_VOL_SILENCE ,  0 },
+  {              400 , VOC_VOL_SILENCE ,  0 }
+#endif
 };
 #elif defined(FEATURE_FFA) || defined(T_FFA)
 #if defined(MSMAUD_QSC60X0_AUDIO_CAL)
@@ -553,6 +566,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
 #endif
 #else
 VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
+#if 0
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
@@ -563,6 +577,18 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
   {            -600 , VOC_VOL_SILENCE ,  0 },
   {            -300 , VOC_VOL_SILENCE ,  0 },
   {               0 , VOC_VOL_SILENCE ,  0 }
+#else
+  /* Internal CODEC - no pad values    */
+  /*  rx                dtmf            pad        */
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {           -1200 , VOC_VOL_SILENCE ,  0 },
+  {           -900 , VOC_VOL_SILENCE ,  0 },
+  {           -400 , VOC_VOL_SILENCE ,  0 },
+  {            0 , VOC_VOL_SILENCE ,  0 },
+  {            100 , VOC_VOL_SILENCE ,  0 },
+  {           200 , VOC_VOL_SILENCE ,  0 },
+  {              400 , VOC_VOL_SILENCE ,  0 }
+#endif
 };
 #endif /* MSMAUD_6280_FFA_AUDIO_CAL */
 #endif /* FEATURE_AUDIO_FORMAT || FEATURE_MIDI_OUT */
