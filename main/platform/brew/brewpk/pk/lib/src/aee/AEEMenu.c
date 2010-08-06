@@ -1001,6 +1001,29 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
 
             // AVK_LEFT and AVK_RIGHT needs to be handled only by softkey control. For others,
             // we generate EVT_CTL_TAB
+            //add by yangdecai 2010 - 08-06
+            case AVK_INFO:
+				{
+				  if(IS_MULTI_SEL(pme))
+				  {
+	                  CMenuItem   * pItem;
+	                  if((pItem = GetItemByIdx(pme->m_pItemList, pme->m_nSelect)) != NULL)
+					  {
+	                     pItem->bIsSel = !pItem->bIsSel;
+	                     IMenuCtl_SetSelEx((IMenuCtl *)pme, pItem->nItemID, pItem->bIsSel);
+	                     if(!NO_REDRAW(pme))
+	                     {
+	                        IMenuCtl_Redraw((IMenuCtl *)pme);
+	                     }
+	                     return TRUE;
+	                  }
+					  else
+					  {
+	                     return FALSE;
+	                  }
+                  }
+				}
+				break;
 
             case AVK_LEFT:
                if (IS_SOFTKEY_MENU(pme))
@@ -6418,7 +6441,7 @@ static boolean Icon_HandleKey(CMenuCtl * pme, uint16 wKey)
 
       case AVK_RIGHT:
       case AVK_LEFT:
-
+		MSG_FATAL("AVK_RIGHT::::::333333333333333333333333333333333",0,0,0);
          // Only allow right/left if the displayed columns is > 1 OR there is only 1 row...
          if(pme->m_nCols <= 1 && pme->m_nRows > 1)
             return(TRUE);

@@ -5173,7 +5173,7 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
             case AVK_CLR:
                return MGAppUtil_OnMediaMenuClrKeyEvt(pMe, pMenuCtl);
 
-            case AVK_INFO:
+            //dele by yangdecai 2010-08-06
             case AVK_SELECT:
                if(eDlgStat == MG_DLGSTAT_NORMAL)
                {
@@ -5182,8 +5182,9 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
                   MGAppUtil_ExplorerBuildSelItems(pMe, pMenuCtl);
                }
                return TRUE;
-
-            case AVK_RIGHT:
+			//modi by yangdecai 2010-08-06  
+			//case AVK_RIGHT:
+			case AVK_INFO: 
                {
                   if(eDlgStat == MG_DLGSTAT_NORMAL)
                   {
@@ -7543,7 +7544,9 @@ static boolean MGAppUtil_OnMediaMenuDefaultKeyEvt(CMediaGalleryApp* pMe,
          IMENUCTL_SetActive(pMenuCtl ,TRUE);
       }
       else
+      {
          IMENUCTL_HandleEvent(pMenuCtl, eCode, wParam, dwParam);
+      }
    }
    else if(eDlgStat == MG_DLGSTAT_POPUP)
    {
