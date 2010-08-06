@@ -1013,13 +1013,21 @@ static boolean StartApplet(Staticapp *pMe, int i)
     {
        
         case 0:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);
+        	#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+               Result = CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
+			#else
+			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+               Result = CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
+			#endif
             break;
             
         case 1:
+        	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
             break;
   		case 2:
+  			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);			
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);
             break;
   
@@ -1029,5 +1037,3 @@ static boolean StartApplet(Staticapp *pMe, int i)
     }
     return TRUE;
 }
-
-
