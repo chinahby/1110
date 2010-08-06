@@ -37,7 +37,7 @@ ifeq ($(MMI_ADD_MEDIAGALLERY),yes)
 include $(MEDIAGALLERY)/mediagallery.min
 endif
 
-ifeq ($(MMI_ADD_CAMERA),yes)
+ifeq ($(USES_CAMERA),yes)
 include $(CAMERAAPP)/CameraApp.min
 endif
 
