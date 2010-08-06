@@ -2954,8 +2954,8 @@ boolean  InitRUIMAddrBkCacheCb(void)
     
     if ((i == 0) && bWaitReport)
     {
-        gAdnMaxRec  = gUimCmd.access_uim.num_records_rsp;
-        gAdnRecSize = gUimCmd.access_uim.num_bytes;
+        gAdnMaxRec  = gUimCmdExt.access_uim.num_records_rsp;
+        gAdnRecSize = gUimCmdExt.access_uim.num_bytes;
         
         if (0==gAdnMaxRec || gAdnRecSize==0)
         {
@@ -2987,7 +2987,7 @@ boolean  InitRUIMAddrBkCacheCb(void)
         (gCallBackExt.rpt_status == UIM_PASS)) 
     {
         dbRecInfo.wRecID = i;
-        dbRecInfo.wRecSize = gUimCmd.access_uim.num_bytes_rsp;
+        dbRecInfo.wRecSize = gUimCmdExt.access_uim.num_bytes_rsp;
         dbRecInfo.dwLastModified = 0;
     } 
     else 
