@@ -316,16 +316,16 @@ ifeq ($(USES_MMI),yes)
 #
 #-------------------------------------------------------------------------------
 EFSFILE_DIR = $(BINPATH)/$(TARGET)/efs
-EFSFILE_FILENAMES  = $(subst fs:,$(EFSFILE_DIR),$(EFSFILE_FILES))
-EFSFILE_SOURCES    = $(notdir $(EFSFILE_FILES))
+EFSFILE_FILENAMES  = $(filter-out fs:/%, $(subst |, ,$(EFSFILE_FILES)))
+EFSFILE_FSLOC      = $(subst fs:/,$(EFSFILE_DIR)/,$(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $<)|%, $(EFSFILE_FILES))))))
+EFSFILE_TARGETS    = $(addprefix $(TARGETDIR)/,$(EFSFILE_FILENAMES))
 
-$(EFSFILE_FILENAMES) : $(EFSFILE_SOURCES)
+$(EFSFILE_TARGETS) : $(TARGETDIR)/% : %
 	@echo ------------------------------------------------------------------------
-	@echo Copy $< to $@
-	@if ! test -d $(EFSFILE_DIR); then mkdir $(EFSFILE_DIR); fi
-	@if ! test -d $(EFSFILE_DIR)/mod; then mkdir $(EFSFILE_DIR)/mod; fi
-	@if ! test -d $(dir $@); then mkdir $(dir $@); fi
+	@echo Copy $< to $(EFSFILE_FSLOC)
+	@if ! test -d $(dir $(EFSFILE_FSLOC)); then mkdir -p $(dir $(EFSFILE_FSLOC)); fi
 	@cp $< $@
+	@cp $< $(EFSFILE_FSLOC)
 	@echo ------------------------------------------------------------------------
 	
 #-------------------------------------------------------------------------------
@@ -340,9 +340,9 @@ CONSTFILE_BIN_OBJS 		= $(addprefix $(TARGETDIR)/,$(CONSTFILE_BIN_SOURCES:%.c=%.o
 CONSTFILE_FILENAMES 	= $(filter-out FLAGS:%, $(filter-out fs:/%, $(subst |, ,$(CONSTFILE_FILES))))
 CONSTFILE_SOURCES 		= $(addsuffix .c, $(CONSTFILE_FILENAMES))
 
-CONSTFILE_FSLOC 		= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES) $(CONSTFILE_BIN_FILES) $(CONSTFILE_STATIC_BREW_APP_FILES))))) 
+CONSTFILE_FSLOC 		= $(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES) $(CONSTFILE_BIN_FILES))))) 
 
-CONSTFILE_FLAGENT 		= $(firstword $(filter FLAGS:%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES) $(CONSTFILE_BIN_FILES)  $(CONSTFILE_STATIC_BREW_APP_FILES)))))
+CONSTFILE_FLAGENT 		= $(firstword $(filter FLAGS:%, $(subst |, ,$(filter $(notdir $<)|%, $(CONSTFILE_FILES) $(CONSTFILE_BIN_FILES)))))
 CONSTFILE_FLAGS 		= $(subst FIXED,-f,$(subst ., ,$(subst FLAGS:, , $(CONSTFILE_FLAGENT))))
 
 CONSTFILE_OBJS 			= $(addprefix $(TARGETDIR)/,$(CONSTFILE_SOURCES:%.c=%.o)) $(CONSTFILE_BIN_OBJS)
@@ -367,7 +367,6 @@ OBJECTS += $(CONSTFILE_OBJS)
 $(CONSTFILE_BIN_SRC) : $(TARGETDIR)/%.c: %
 	@echo ------------------------------------------------------------------------
 	@echo Creating C File $@
-	echo "$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$<) -d$(CONSTFILE_FSLOC) $(CONSTFILE_FLAGS) -o$(subst /,\\,$@)"
 	@$(BREWDIR)/pk/utils/bin2src.exe -s$(subst /,\\,$<) -d$(CONSTFILE_FSLOC) $(CONSTFILE_FLAGS) -o$(subst /,\\,$@)
 	@echo ------------------------------------------------------------------------
 
@@ -386,7 +385,7 @@ $(CONSTFILE_OBJS) : $(TARGETDIR)/%.o : $(TARGETDIR)/%.c
 	$(c_compile)
 	
 .PHONY : mmires
-mmires: $(CONSTFILE_BIN_SRC) $(CONSTFILE_BAR_SRC) $(TARGETDIR)/OEMConstFiles_Dynamic.c# $(EFSFILE_FILENAMES)
+mmires: $(CONSTFILE_BIN_SRC) $(CONSTFILE_BAR_SRC) $(TARGETDIR)/OEMConstFiles_Dynamic.c $(EFSFILE_TARGETS)
 	@echo ------------------------------------------------------------------
 	@echo BREW RESOURCE BUILDER
 	@echo ------------------------------------------------------------------
