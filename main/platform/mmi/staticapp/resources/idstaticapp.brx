@@ -8,10 +8,10 @@
 		<Text>FMuslim </Text>
 	</STRING>
 	<String Id="1012" Name="IDS_STATICAPP_TITLE_2">
-		<Text>cah006</Text>
+		<Text>FChat</Text>
 	</String>
 	<String Id="1013" Name="IDS_STATICAPP_TITLE_3">
-		<Text>fpt005</Text>
+		<Text>FPortal</Text>
 	</String>
 </Strings>
 <Dialogs>

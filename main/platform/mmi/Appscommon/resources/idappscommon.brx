@@ -257,7 +257,7 @@
 		<Text>Fkristiani </Text>
 	</String>
 	<String Id="2008" Name="IDS_FPORTAL">
-		<Text>Fpt005</Text>
+		<Text>FPortal</Text>
 	</String>
 </Strings>
 </BREWRes>
