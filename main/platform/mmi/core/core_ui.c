@@ -1670,6 +1670,7 @@ static IBacklight   *gpKeyBacklight = NULL;
 static IALERT       *gpAlert = NULL;
 static ISound       *gpSound= NULL;
 static ICM          *gpICM = NULL;
+static boolean      m_isBacklight = FALSE;
 
 /*==============================================================================
 º¯Êý: 
@@ -1945,12 +1946,23 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
         }
 #endif
         if (gpBacklight){
-            IBACKLIGHT_Enable(gpBacklight);
+			if(!IBACKLIGHT_IsEnabled(gpBacklight))
+			{
+				
+				m_isBacklight = FALSE;
+            	IBACKLIGHT_Enable(gpBacklight);
+				return TRUE;
+			}
+			else
+			{
+				m_isBacklight = TRUE;
+			}
         }
         
         if (gpAlert){
             IALERT_KeyBeep(gpAlert, (AVKType) wParam, TRUE);
         }
+		
         break;
         
     case EVT_KEY_RELEASE:
@@ -1959,17 +1971,27 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
             IBACKLIGHT_Enable(gpKeyBacklight);
         }   
 #endif
+		if(!m_isBacklight)
+		{
+			return TRUE;
+		}
         if (gpBacklight){
             if(FALSE == IBACKLIGHT_IsEnabled(gpBacklight))
             {
                 if(oemui_is_lcd_test_state(-1) == 1){
-                    if(AVK_1 == wParam){
+                    if(AVK_1 == wParam)
+					{
                         oemui_is_lcd_test_state(0);
                     }
-                }else{
+                }
+				else
+                {
                     IBACKLIGHT_Enable(gpBacklight);
                 }
-            }else{
+				return TRUE;
+            }
+			else
+            {
                 IBACKLIGHT_Enable(gpBacklight);
             }
         }
@@ -1977,6 +1999,12 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
             IALERT_KeyBeep(gpAlert, (AVKType) wParam, FALSE);
         }
         break;
+	case EVT_KEY:
+		if(!m_isBacklight)
+		{
+			return TRUE;
+		}
+		break;
         
     default:
         break;
