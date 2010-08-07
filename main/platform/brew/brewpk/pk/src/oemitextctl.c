@@ -827,7 +827,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             
             if((wParam == AVK_STAR) ||(wParam == AVK_POUND) )
             {
-                //return FALSE;                
+                return FALSE;                
             }  
             
 #endif //AEE_SIMULATOR                
