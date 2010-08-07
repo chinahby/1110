@@ -889,6 +889,8 @@ __handleKeyEvent_input_channel_done__:
     #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 		case AVK_UP:
 		case AVK_DOWN:
+		case AVK_I:
+		case AVK_O:
 	#endif
 		{
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
@@ -914,7 +916,7 @@ __handleKeyEvent_input_channel_done__:
 						changeChannelClockwise( pMe);
 					}
 #endif
-                    if(( key == AVK_DOWN) || ( key == AVK_UP))
+                    if(( key == AVK_DOWN) || ( key == AVK_UP)|| ( key == AVK_I)|| ( key == AVK_O))
                     {
                         if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
                         {
@@ -928,6 +930,8 @@ __handleKeyEvent_input_channel_done__:
 #else
         case AVK_UP:
         case AVK_DOWN:
+		case AVK_I:
+		case AVK_O:
         {
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
@@ -1177,7 +1181,22 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 
     static const int limitValue[] = { 15, 0};
     static const int increment[]  = { 3, -3};
-                 int theKey       = keyCode - AVK_UP;
+	int theKey;
+	if(keyCode == AVK_I || keyCode == AVK_O)
+	{
+		if(keyCode == AVK_O)
+		{
+			theKey = 0;
+		}
+		else
+		{
+			theKey = 1;
+		}
+	}
+	else
+	{
+    	theKey       = keyCode - AVK_UP;
+	}
 #if 0
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT)
 	if( pMe->tuneVolumeByLeftRightArrowKey)

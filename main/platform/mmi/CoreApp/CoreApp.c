@@ -613,6 +613,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             {
                 case AVK_POWER:
                 case AVK_END:
+				
 #ifdef FEATURE_KEYGUARD
 		            if(OEMKeyguard_IsEnabled())
                     {
@@ -682,11 +683,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
 					return TRUE;
 				#endif
-				case AVK_INFO:
-					{
-						DBGPRINTF("Hello.....EVT_KEY_HELD......AVK_INFO............");
-					}
-					return TRUE;
+				
 					break;
 			#endif
                 default:

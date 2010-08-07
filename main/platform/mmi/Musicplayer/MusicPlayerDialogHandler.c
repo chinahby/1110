@@ -2454,6 +2454,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
        return TRUE;
        
     case AVK_UP:
+	case AVK_O:   //add by yangdecai
          MP3_DrawImage( pMe,IDI_ADDVOLUME_PRESS, ADDVOLUMEPRESS_X, ADDVOLUMEPRESS_Y);
          IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 		 pMe->m_rtype = TYPE_ADDVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
@@ -2474,6 +2475,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
          return TRUE;
          
     case AVK_DOWN:
+	case AVK_I:   //add by yangdecai
           MP3_DrawImage( pMe,IDI_DECREASEVOLUME_PRESS, DECREASEVOLUMEPRESS_X, DECREASEVOLUMEPRESS_Y);
           IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 		  pMe->m_rtype = TYPE_DECVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数

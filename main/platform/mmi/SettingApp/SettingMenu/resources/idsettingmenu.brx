@@ -368,13 +368,13 @@
 		<Text>Kalibrasi layar</Text>
 	</String>
 	<String Id="1123" Name="IDS_SIM_SET">
-		<Text>SIM Pengaturan</Text>
+		<Text>UIM Pengaturan</Text>
 	</String>
 	<String Id="1124" Name="IDS_SIM_ONE">
-		<Text>SIM Slot Satu</Text>
+		<Text>UIM Slot Satu</Text>
 	</String>
 	<String Id="1125" Name="IDS_SIM_TWO">
-		<Text>SIM Slot Dua</Text>
+		<Text>UIM Slot Dua</Text>
 	</String>
 	<String Id="1126" Name="IDS_SIMSETTING_CHOICE_STRING" Encoding="Unicode">
 		<Text>Are you sure?</Text>
