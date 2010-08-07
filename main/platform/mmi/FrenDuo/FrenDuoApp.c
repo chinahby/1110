@@ -537,7 +537,7 @@ static boolean FrenDuoApp_HandleEvent( IFrenDuoApp *pi,
         case EVT_DIALOG_START:
 
             return FrenDuoApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
-
+       
         case EVT_USER_REDRAW:
             return FrenDuoApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
 			

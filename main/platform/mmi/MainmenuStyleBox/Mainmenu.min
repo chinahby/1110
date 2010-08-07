@@ -54,10 +54,10 @@ ifeq ($(USES_LCD_SIZE),160x128)
 
 ifeq ($(USES_RESDIR),Smart)
 CONSTFILE_FILES+=\
-  Access.png|fs:/image/mainmenu/Access.png\
-  World.png|fs:/image/mainmenu/World.png\
-  Access_focus.png|fs:/image/mainmenu/Access_focus.png\
-  World_focus.png|fs:/image/mainmenu/World_focus.png\
+	Access.png|fs:/image/mainmenu/Access.png\
+	World.png|fs:/image/mainmenu/World.png\
+	Access_focus.png|fs:/image/mainmenu/Access_focus.png\
+	World_focus.png|fs:/image/mainmenu/World_focus.png\
 	Contact.png|fs:/image/mainmenu/Contact.png\
 	Messagebox.png|fs:/image/mainmenu/Messagebox.png \
 	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
@@ -84,12 +84,12 @@ CONSTFILE_FILES+=\
 	Document_focus.png|fs:/image/mainmenu/Document_focus.png
 else ifeq ($(USES_RESDIR),M8)
 CONSTFILE_FILES+=\
-  Access.png|fs:/image/mainmenu/Access.png\
-  B_live.png|fs:/image/mainmenu/B_live.png\
-  Frenduo.png|fs:/image/mainmenu/Frenduo.png\
-  Access_focus.png|fs:/image/mainmenu/Access_focus.png\
-  B_live_focus.png|fs:/image/mainmenu/B_live_focus.png\
-  Frenduo_focus.png|fs:/image/mainmenu/Frenduo_focus.png\
+	Access.png|fs:/image/mainmenu/Access.png\
+	B_live.png|fs:/image/mainmenu/B_live.png\
+	Frenduo.png|fs:/image/mainmenu/Frenduo.png\
+	Access_focus.png|fs:/image/mainmenu/Access_focus.png\
+	B_live_focus.png|fs:/image/mainmenu/B_live_focus.png\
+	Frenduo_focus.png|fs:/image/mainmenu/Frenduo_focus.png\
 	Contact.png|fs:/image/mainmenu/Contact.png\
 	Messagebox.png|fs:/image/mainmenu/Messagebox.png \
 	Recentcall.png|fs:/image/mainmenu/Recentcall.png \

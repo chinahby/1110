@@ -217,7 +217,7 @@ static void  CallApp_SetTimerControl(void *pUser);
 //Add By zzg 2010_08_03
 #ifdef FEATURE_APP_FRENDUO_TIMER
 static void  CallApp_SetFrenduoTimer(void *pUser);
-static boolean  CallApp_SendFrenduoSMS(void *pUser);
+static boolean  CallApp_SendFrenduoSMS(void);
 #endif 
 //Add End
 
@@ -2764,25 +2764,25 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         }
 
         case EVT_DIALOG_END:
-          //  (void)ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetPauseControl, pMe);
-
-//Add By zzg 2010_08_03		
+          //  (void)ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetPauseControl, pMe);   
+          
+          //Add By zzg 2010_08_03		
 #ifdef FEATURE_APP_FRENDUO_TIMER
 			{
-				Dialer_call_table *str = NULL;
-				str = CallApp_Get_First_Entry_In_Call_Table(pMe);
-
-				DBGPRINTF("***zzg CallAppDialogHandler EVT_DIALOG_END***");
+			    Dialer_call_table* p_temp = NULL;
+                p_temp = CallApp_Get_First_Entry_In_Call_Table(pMe);
+            
+				DBGPRINTF("***zzg CallApp_Dialer_Callend EVT_DIALOG_INIT***");
 				
-				if((WSTRNCMP(str->call_number, L"*55",3) == 0) || (WSTRNCMP(str->call_number, L"*550",4) == 0))
+				if((WSTRNCMP(p_temp->call_number, L"*55",3) == 0) || (WSTRNCMP(p_temp->call_number, L"*550",4) == 0))
 				{					
-				  	(void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetFrenduoTimer, pMe);
-					CallApp_SendFrenduoSMS(pMe);
+				  	(void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetFrenduoTimer, pMe);                    
+                    CallApp_SendFrenduoSMS();
 				}
 			}		   
 #endif 
-//Add End
-		  
+        //Add End
+	  
 #ifdef FEATURE_APP_PAUSE_TIMER
             (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetTimerControl, pMe);
 #endif //FEATURE_APP_PAUSE_TIMER
@@ -2926,11 +2926,8 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     
                     pMe->m_userCanceled = TRUE;
                     ICM_EndAllCalls(pMe->m_pICM);
-					if (HS_HEADSET_ON())
-					{
-						snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add yangdecai 2010_08_06
-						snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add yangdecai 2010_08_06
-					}
+
+					
                     // Note:
                     // We are allowing the IPHONE notifier to move us to the
                     // next state...
@@ -3198,6 +3195,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
         {
             Dialer_call_table* p_temp = NULL;
             p_temp = CallApp_Get_First_Entry_In_Call_Table(pMe);
+
             if(p_temp)
             {
                 MEMCPY(&pMe->m_call_info,p_temp,sizeof(Dialer_call_table));
@@ -3582,8 +3580,8 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             }
 			if (HS_HEADSET_ON()) //add by yangdecai
 			{
-					snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
-					snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
+				snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
+				snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
 			}
             pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
             return TRUE;
@@ -3597,7 +3595,9 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             //    return TRUE;
             //}
 
-            CLOSE_DIALOG(DLGRET_OK)
+            ISHELL_SetTimer(pMe->m_pShell, 2*TIMEOUT_MS_ENDCALLTIMER/3, CallApp_HandleDialogTimer, pMe);
+            //CLOSE_DIALOG(DLGRET_OK)
+            
             return TRUE;
 
         case EVT_DISPLAYDIALOGTIMEOUT:
@@ -8147,16 +8147,17 @@ static void  CallApp_SetFrenduoTimer(void *pUser)
     
 	pMe->m_userCanceled = TRUE;
     ICM_EndAllCalls(pMe->m_pICM);
+
+    (void)ISHELL_SetTimer(pMe->m_pShell, CALL_TIMER_FRENDUO,  CallApp_SetFrenduoTimer, pMe);
 }
 
-static boolean  CallApp_SendFrenduoSMS(void *pUser)
+static boolean  CallApp_SendFrenduoSMS(void)
 {		
-    IWmsApp *pIWmsApp = NULL;	
-	CCallApp *pMe = (CCallApp *)pUser;
+    IWmsApp *pIWmsApp = NULL;		
 	
 	DBGPRINTF("***zzg CallApp_SendFrenduoSMS***");	
 	
-	if (SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_WMSAPP, (void**)&pIWmsApp))
+	if (SUCCESS != ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_WMSAPP, (void**)&pIWmsApp))
 	{
 		return EFAILED;
 	}

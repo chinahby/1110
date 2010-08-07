@@ -190,10 +190,10 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
                   wms_msg_event_info_s_type  *pInfo,
                   boolean                    *shared);
 
-//Add By zzg 2010_08_04
+//Add By zzg 2010_08_07
 void WmsApp_MsgExCb(wms_msg_event_e_type       event,
-                  wms_msg_event_info_s_type  *pInfo,
-                  boolean                    *shared);
+                            wms_msg_event_info_s_type  *pInfo,
+                            boolean                    *shared); 
 
 //Add End
 
@@ -728,15 +728,15 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
                   (void*)pMe);
     
     // Register Callbacks
+    
     (void)IWMS_Init(pMe->m_pwms, WMS_CLIENT_TYPE_WMS_APP, &pMe->m_clientId);
     (void)IWMS_RegisterCfgCb(pMe->m_pwms, pMe->m_clientId, WmsApp_CfgCb );
     (void)IWMS_RegisterMsgCb(pMe->m_pwms, pMe->m_clientId, WmsApp_MsgCb );
 
-	//Add By zzg 2010_08_04
-	(void)IWMS_Init(pMe->m_pwms, WMS_CLIENT_FLOATING1, &pMe->m_clientExId);
-	(void)IWMS_RegisterMsgCb(pMe->m_pwms, pMe->m_clientExId, WmsApp_MsgExCb );
-	(void)IWMS_Activate(pMe->m_pwms,pMe->m_clientExId);
-	//Add End
+    //Add By zzg 2010_08_07
+    (void)IWMS_Init(pMe->m_pwms, WMS_CLIENT_FLOATING1, &pMe->m_clientExId);    
+    (void)IWMS_RegisterMsgCb(pMe->m_pwms, pMe->m_clientExId, WmsApp_MsgExCb);    
+    //Add End
 
 #ifdef FEATURE_BROADCAST_SMS
     (void)IWMS_RegisterBcCb(pMe->m_pwms, pMe->m_clientId, WmsApp_BcCb);
@@ -1174,7 +1174,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_WMS_MSG_SEND:
 
 			//Add By zzg 2010_08_04
-			//DBGPRINTF("***zzg CWMSHandleEvent client_id=%d***", ((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id);
+			DBGPRINTF("***zzg CWMSHandleEvent client_id=%d***", ((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id);
 			
 			if (eCode == EVT_WMS_MSG_SUBMIT_REPORT)
 			{
@@ -1186,24 +1186,22 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 				DBGPRINTF("***zzg CWMSHandleEvent EVT_WMS_MSG_SEND!***");
 			}
 			//Add End
-			
+
+            //Add By  zzg 2010_08_07
+            if (((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id == WMS_CLIENT_FLOATING1)
+            {
+                DBGPRINTF("***zzg IWMS_Deactivate WMS_CLIENT_FLOATING1***");
+                (void)IWMS_Deactivate(pMe->m_pwms,pMe->m_clientExId);     
+            }
+            //Add End
 			
             if (((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)            
             {
                 WmsApp_ProcessStatus(pMe, &((wms_msg_event_info_s_type *)dwParam)->submit_report_info);
             }
+			
             FREE((wms_msg_event_info_s_type*)dwParam);
 
-
-			//Add By zzg 2010_08_04
-			if (((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id == WMS_CLIENT_FLOATING1)        
-			{
-				//(void)IWMS_Activate(pMe->m_pwms,pMe->m_clientId);	
-				//(void)IWMS_Deactivate(pMe->m_pwms,pMe->m_clientExId);	
-			}
-			//Add End
-			
-			
             return TRUE;
             
         case EVT_WMS_MSG_RECEIVED_MESSAGE:
@@ -2568,20 +2566,14 @@ static int CWmsApp_MessageService(IWmsApp *p,
         int   nRet;
         wms_client_message_s_type   *pMsg = NULL;
 
-		//(void)IWMS_Deactivate(pMe->m_pwms,pMe->m_clientId);	//Add By zzg 2010_08_04
-		//(void)IWMS_Activate(pMe->m_pwms,pMe->m_clientExId);	//Add By zzg 2010_08_04
-
-		/*
-        if ((pwstrText == NULL) || 
-            (pMe->m_bCdmaWmsReady == FALSE) || 
-            pMe->m_refresh_in_progress)
         {
-            return EFAILED;
+            DBGPRINTF("***zzg IWMS_Activate WMS_CLIENT_FLOATING1***");
+            (void)IWMS_Activate(pMe->m_pwms,pMe->m_clientExId);     //Add By  zzg 2010_08_07
         }
-        */
+        
 
-		//Add By zzg 2010_07_20
-		if (NULL == pwstrText)
+        //Add By zzg 2010_07_20
+		if (NULL == pwstrText)      
 		{
 			pMsg = CWmsApp_GetspecmsgEx();
 
@@ -2592,9 +2584,8 @@ static int CWmsApp_MessageService(IWmsApp *p,
 			
 #ifndef WIN32
 			DBGPRINTF("***zzg pMe->m_clientId=%d, pMe->m_clientExId=%d***", pMe->m_clientId, pMe->m_clientExId);
-
-			//m_clientExId
-	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	//WMS_CLIENT_FLOATING1
+			
+	        if (wms_msg_send(pMe->m_clientExId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	
 	        {
 	        	DBGPRINTF("***zzg wms_msg_send WMS_CLIENT_FLOATING1 Success***");
 	            nRet = SUCCESS;
@@ -2617,9 +2608,8 @@ static int CWmsApp_MessageService(IWmsApp *p,
 	            return EFAILED;
 	        }
 			
-#ifndef WIN32
-			//m_clientExId
-	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	//WMS_CLIENT_FLOATING1
+#ifndef WIN32			
+	        if (wms_msg_send(pMe->m_clientExId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	
 	        {
 	            nRet = SUCCESS;
 	        }
@@ -2632,30 +2622,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
 #endif
 		}
 		//Add End
-
-		/*
-        pMsg = CWmsApp_Getspecmsg(pwstrText);
-        if (NULL == pMsg)
-        {
-            return EFAILED;
-        }
-        
-        // 这里没用 IWMS_MsgSend 接口发送消息是因为该接口第三个参数是不能为 NULL
-        // 的。这里仅借短信发送特殊消息，不希望其干扰短信应用的正常秩序。直接调用
-        // wms API 发送。
-#ifndef WIN32
-        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)
-        {
-            nRet = SUCCESS;
-        }
-        else
-        {
-            nRet = EFAILED;
-        }
-#else
-		nRet = SUCCESS;
-#endif
-		*/
+		
         FREEIF(pMsg);
         return nRet;
     }
@@ -3058,12 +3025,14 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
     }
 
 	DBGPRINTF("***zzg WmsApp_MsgCb event=%d***", event);
-    
+        
     (void)MEMCPY(pInfobuf, pInfo, sizeof(wms_msg_event_info_s_type));
     switch (event)
     {
         case WMS_MSG_EVENT_SEND:			
 			DBGPRINTF("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SEND***");
+            DBGPRINTF("***zzg WmsApp_MsgCb report_status=%d***", pInfobuf->submit_report_info.report_status);
+            
             if ((pInfobuf->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)            
 				&& (pInfobuf->submit_report_info.report_status != WMS_RPT_OK))
             {
@@ -3116,7 +3085,10 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
             break;
             
         case WMS_MSG_EVENT_SUBMIT_REPORT:
-			DBGPRINTF("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SUBMIT_REPORT***");			
+            
+			DBGPRINTF("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SUBMIT_REPORT***");
+            DBGPRINTF("***zzg WmsApp_MsgCb len=%d***", pInfo->submit_report_info.alpha_id.len);
+            
             pInfobuf->submit_report_info.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
             pInfobuf->submit_report_info.alpha_id.len = pInfo->submit_report_info.alpha_id.len;
             
@@ -3127,8 +3099,17 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
                             pInfo->submit_report_info.alpha_id.data,
                             pInfo->submit_report_info.alpha_id.len);
             }
+
+            //Add By zzg 2010_08_07
             
-            evt = EVT_WMS_MSG_SUBMIT_REPORT;
+            if (pInfobuf->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)
+            {
+                evt = EVT_WMS_MSG_SUBMIT_REPORT;
+            }           
+            //Add End
+
+            //evt = EVT_WMS_MSG_SUBMIT_REPORT;
+            
             break;
             
         case WMS_MSG_EVENT_STATUS_REPORT:
@@ -3184,33 +3165,13 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
 } // WmsApp_MsgCb() 
 
 
-//Add By zzg 2010_08_04
+//Add By zzg 2010_08_07
 void WmsApp_MsgExCb(wms_msg_event_e_type       event,
                   wms_msg_event_info_s_type  *pInfo,
                   boolean                    *shared)
-{
-	DBGPRINTF("***zzg WmsApp_MsgExCb event=%d***", event);
+{   
 
-	switch (event)
-	{
-		case WMS_MSG_EVENT_SEND:
-		{
-			DBGPRINTF("***zzg WmsApp_MsgExCb WMS_MSG_EVENT_SEND***");
-			break;
-		}
-		case WMS_MSG_EVENT_SUBMIT_REPORT:
-		{
-			DBGPRINTF("***zzg WmsApp_MsgExCb WMS_MSG_EVENT_SUBMIT_REPORT***");
-			break;
-		}
-		default:
-		{
-			break;
-		}
-
-	}
-	/*
-	wms_msg_event_info_s_type   *pInfobuf=NULL;
+    wms_msg_event_info_s_type   *pInfobuf=NULL;
     IShell                      *pShell = AEE_GetShell();
     uint8                       btRet; 
     AEEEvent                    evt=0;
@@ -3226,14 +3187,21 @@ void WmsApp_MsgExCb(wms_msg_event_e_type       event,
         return;
     }
 
-	
+	DBGPRINTF("***zzg WmsApp_MsgExCb event=%d***", event);
+    
     (void)MEMCPY(pInfobuf, pInfo, sizeof(wms_msg_event_info_s_type));
     switch (event)
     {
-        case WMS_MSG_EVENT_SEND:
+        case WMS_MSG_EVENT_SEND:			
 			DBGPRINTF("***zzg WmsApp_MsgExCb WMS_MSG_EVENT_SEND***");
-			break;
+            DBGPRINTF("***zzg WmsApp_MsgExCb report_status=%d***", pInfobuf->submit_report_info.report_status);
             
+            if ((pInfobuf->submit_report_info.client_id == WMS_CLIENT_FLOATING1)            
+				&& (pInfobuf->submit_report_info.report_status != WMS_RPT_OK))
+            {
+                evt = EVT_WMS_MSG_SEND;
+            }
+            break;
             
         case WMS_MSG_EVENT_READ:
             evt = EVT_WMS_MSG_READ;
@@ -3272,8 +3240,9 @@ void WmsApp_MsgExCb(wms_msg_event_e_type       event,
             break;
             
         case WMS_MSG_EVENT_SUBMIT_REPORT:
-			DBGPRINTF("***zzg WmsApp_MsgExCb WMS_MSG_EVENT_SUBMIT_REPORT***");
-			
+			DBGPRINTF("***zzg WmsApp_MsgExCb WMS_MSG_EVENT_SUBMIT_REPORT***");	
+            DBGPRINTF("***zzg WmsApp_MsgExCb len=%d***", pInfo->submit_report_info.alpha_id.len);	
+            
             pInfobuf->submit_report_info.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
             pInfobuf->submit_report_info.alpha_id.len = pInfo->submit_report_info.alpha_id.len;
             
@@ -3284,14 +3253,19 @@ void WmsApp_MsgExCb(wms_msg_event_e_type       event,
                             pInfo->submit_report_info.alpha_id.data,
                             pInfo->submit_report_info.alpha_id.len);
             }
+
+            if (pInfobuf->submit_report_info.client_id == WMS_CLIENT_FLOATING1)    
+            {
+                evt = EVT_WMS_MSG_SUBMIT_REPORT;
+            }
             
-            evt = EVT_WMS_MSG_SUBMIT_REPORT;
             break;
             
         case WMS_MSG_EVENT_STATUS_REPORT:
             evt = EVT_WMS_MSG_STATUS_REPORT;
             break;
             
+
         default:
             break;
     } // switch
@@ -3313,8 +3287,7 @@ void WmsApp_MsgExCb(wms_msg_event_e_type       event,
     else
     {
         WMSAPPU_FREE(pInfobuf)
-    }
-    */
+    }	
 }
 //Add End
 
@@ -3522,7 +3495,15 @@ static void WmsApp_Init(WmsApp *pMe)
                         WMS_CLIENT_TYPE_WMS_APP, 
                         &pMe->m_callback, 
                         (void*)pMe, 
-                        TRUE, FALSE);                       
+                        TRUE, FALSE);           
+
+    /*
+    (void)IWMS_SetPrimaryClient(pMe->m_pwms, 
+                        WMS_CLIENT_FLOATING1, 
+                        &pMe->m_callback, 
+                        (void*)pMe, 
+                        TRUE, FALSE); 
+                        */
                       
 
 #ifdef FEATURE_CDSMS
@@ -4762,7 +4743,17 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
         default:
             break;
     }
-        
+
+    //Add By zzg 2010_08_06
+    {
+        //wms_cdma_user_data_s_type    *pUserdata = (wms_cdma_user_data_s_type  *)pRptInfo->user_data;
+
+       // DBGPRINTF("***zzg data_len=%d***", pUserdata->number_of_digits);    	    
+       
+       DBGPRINTF("***zzg pMe->m_idxCurSend=%d***", pMe->m_idxCurSend);    	    
+    }
+    //Add End
+    
 	if (pRptInfo->report_status != WMS_RPT_OK)
 	{
 		int nRet;
