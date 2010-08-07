@@ -158,3 +158,8 @@ STATIC_BREW_APP_LIB += \
 endif											
 
 endif #ifeq ($(USES_FLEXI_STATICAPP),yes)
+
+#wangliang add for M8 and SMART
+ifeq ($(USES_SMARTFREN_STATICAPP),yes)
+
+endif
