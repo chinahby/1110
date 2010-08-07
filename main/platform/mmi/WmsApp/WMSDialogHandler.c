@@ -8689,7 +8689,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         
                         // 动态添加菜单项
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SEND);
+						#ifdef  EMOTIONSYMBOL
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTEMOTIONSYMBOL);
+						#endif
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTCONTACT);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SAVEASPRESET);
