@@ -25,6 +25,25 @@ CONSTFILE_FILES+=\
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
 	wallpaper1.png|fs:/image/wallpaper/wallpaper1.png
 else
+ifeq ($(USES_RESDIR), Smart)
+CONSTFILE_FILES+=\
+	displaymenu.mif|fs:/mif/displaymenu.mif \
+	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
+    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
+    wallpaper5.png|fs:/image/wallpaper/wallpaper5.png \
+    wallpaper6.png|fs:/image/wallpaper/wallpaper6.png
+endif
+
+ifeq ($(USES_RESDIR), M8)
+CONSTFILE_FILES+=\
+	displaymenu.mif|fs:/mif/displaymenu.mif \
+	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
+    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
+    wallpaper5.png|fs:/image/wallpaper/wallpaper5.png \
+    wallpaper6.png|fs:/image/wallpaper/wallpaper6.png
+endif
+
+ifeq ($(USES_RESDIR), IVIO)
 CONSTFILE_FILES+=\
 	displaymenu.mif|fs:/mif/displaymenu.mif \
 	displaymenu.bar|fs:/mod/displaymenu/en/displaymenu.bar\
@@ -36,6 +55,8 @@ CONSTFILE_FILES+=\
     wallpaper6.png|fs:/image/wallpaper/wallpaper6.png \
     wallpaper7.png|fs:/image/wallpaper/wallpaper7.png \
     wallpaper8.png|fs:/image/wallpaper/wallpaper8.png
+endif
+
 endif #ifeq ($(USES_LOWMEM), yes)
 
 # 加入另外一种语言资源文件
