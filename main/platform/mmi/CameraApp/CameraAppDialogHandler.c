@@ -389,19 +389,17 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             
             pMe->m_wMsgID = IDS_MSG_WAITING;
             pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
-			#ifdef FEATURE_VERSION_IVIO
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSCAMERAAPP_RES_FILE,                                
-                                    IDS_ITEM_CAMERA,
-                                    WTitle,
-                                    sizeof(WTitle));
-				if(pMe->m_pIAnn != NULL)
-            	{
-			    	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-				}
-		
-			#endif
             
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                AEE_APPSCAMERAAPP_RES_FILE,                                
+                                IDS_ITEM_CAMERA,
+                                WTitle,
+                                sizeof(WTitle));
+			if(pMe->m_pIAnn != NULL)
+        	{
+		    	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+                
             IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
 
             IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);

@@ -1035,7 +1035,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
         case EVT_DIALOG_INIT:
             pMe->m_battery_count = 0;
 #ifndef FEATURE_USES_LOWMEM
-            pMe->m_battery_Image = ISHELL_LoadImage(pMe->a.m_pIShell, CHARGING_ANIFILE "charge.png");
+            pMe->m_battery_Image = ISHELL_LoadImage(pMe->a.m_pIShell, CHARGING_ANIFILE "charge.jpg");
             IIMAGE_SetParm(pMe->m_battery_Image, IPARM_NFRAMES, CHARGING_FRAME_COUNT, 0);
 #endif
             return TRUE;

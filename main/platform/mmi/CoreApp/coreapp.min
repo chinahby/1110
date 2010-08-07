@@ -18,18 +18,24 @@ vpath %.c $(COREAPP_SRC)
 vpath %.bar $(COREAPP_RES)
 vpath %.brx $(COREAPP_RES)
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
+vpath %.jpg $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 
-ifeq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\
 	coreapp.mif|fs:/mif/coreapp.mif \
 	coreapp.bar|fs:/mod/coreapp/en/coreapp.bar
+	
+ifneq ($(USES_LOWMEM), yes)
+CONSTFILE_FILES+=\
+	charge.jpg|fs:/image/charge/charge.jpg
+
+ifeq ($(USES_RESDIR), IVIO)
+CONSTFILE_FILES+=\
+    poweronani.png|fs:/image/pwronoffani/poweronani.png
 else
 CONSTFILE_FILES+=\
-	coreapp.mif|fs:/mif/coreapp.mif \
-	coreapp.bar|fs:/mod/coreapp/en/coreapp.bar \
-    poweronani.png|fs:/image/pwronoffani/poweronani.png \
-	poweroffani.png|fs:/image/pwronoffani/poweroffani.png \
-	charge.png|fs:/image/charge/charge.png
+    poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
+	poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg
+endif
 endif #ifeq ($(USES_LOWMEM), yes)
 
 # 加入另外一种语言资源文件
