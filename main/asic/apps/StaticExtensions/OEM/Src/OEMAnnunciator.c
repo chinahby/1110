@@ -1917,7 +1917,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
    db_items_value_type  need_capture;
 #endif
-   IImage * pBackBmp = NULL;
+   //IImage * pBackBmp = NULL;
    AEERect rc = {0};
    uint32      dwFlags;
 
@@ -2022,16 +2022,32 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 
 	  if(!IAnnunCoreObj->m_bActive)
 		{
-			pBackBmp = ISHELL_LoadResImage (pMe->m_piShell,
-											   AEEFS_SHARED_DIR"oemannunciator.bar",
-											   (uint16)(IDI_BACKGROUD));
+		//	pBackBmp = ISHELL_LoadResImage (pMe->m_piShell,
+		//									   AEEFS_SHARED_DIR"oemannunciator.bar",
+		//									   (uint16)(IDI_BACKGROUD));
 			
             if(IAnnunCoreObj->m_hasTitleText)
             {
             	if (need_capture.b_capture != DB_CAPTURE_INIDLE)	//Add By zzg 2010_08_05
             	{
-	            	IIMAGE_Draw(pBackBmp,20, 0);
-					
+            	    //IIMAGE_Draw(pBackBmp,20, 0);
+            	    AEERect bgRect;
+	            	bgRect.x = 20;
+                    bgRect.y = 0;
+                    bgRect.dy = 14;
+#if defined(FEATURE_DISP_128X128)
+                    bgRect.dx = 88;
+#elif defined(FEATURE_DISP_160X128)
+                    bgRect.dx = 120;
+#else
+                    bgRect.dx = 120;
+#endif
+                    IDISPLAY_DrawRect(pMe->m_coreObj->m_piDisplay,
+                                      &bgRect,
+                                      RGB_NONE,
+                                      MAKE_RGB(0,0,0),
+                                      IDF_RECT_FILL);
+
 	                dwFlags =  IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
 	                rc.x = 0;
 	                rc.y = 0;
@@ -2053,7 +2069,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
             	}
             }
            
-		   IIMAGE_Release( pBackBmp);
+		  // IIMAGE_Release( pBackBmp);
 		}
 
       // 待机界面下不必跟新显示，待机界面绘制完显示信息后再统一更新显示，如此可避免进入待机界面的闪屏
