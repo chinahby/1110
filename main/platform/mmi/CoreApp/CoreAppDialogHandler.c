@@ -69,9 +69,13 @@ extern boolean   IsRunAsFactoryTestMode(void);
 }
 
 // 开关机动画播放时间
+#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8)
+#define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))
+#define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))
+#else
 #define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
 #define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
-
+#endif
 
 #if defined(FEATURE_DISP_128X128)
 #define IDLE_D_CLOCK_X 		15
@@ -2335,7 +2339,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     db_items_value_type  need_capture;
 #endif
 
-    MSG_ERROR("CoreApp_ImageNotify, nErr:%d",nErr, 0, 0);
+    //MSG_ERROR("CoreApp_ImageNotify, nErr:%d",nErr, 0, 0);
     if(SUCCESS == nErr) 
     {
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
