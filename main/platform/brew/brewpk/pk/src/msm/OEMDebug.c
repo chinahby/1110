@@ -123,6 +123,24 @@ void OEMDebug_MsgPut(int nLevel, const char *cpszFile, int nLine, const char *cp
    }
 
    switch (nLevel) {
+#ifdef USES_RELEASE_VERSION
+	  case DBGPRINTF_LEVEL_LOW:
+         pms->desc.ss_mask = MSG_LVL_NONE;
+         break;
+      case DBGPRINTF_LEVEL_MED:
+         pms->desc.ss_mask = MSG_LVL_NONE;
+         break;
+      case DBGPRINTF_LEVEL_FATAL:
+         pms->desc.ss_mask = MSG_LVL_NONE;
+         break;
+      case DBGPRINTF_LEVEL_HIGH:
+         pms->desc.ss_mask = MSG_LVL_NONE;
+         break;
+      case DBGPRINTF_LEVEL_ERROR:
+      default:
+         pms->desc.ss_mask = MSG_LVL_NONE;
+         break;
+#else
 #if defined(MSG_LEGACY_ERROR)
       case DBGPRINTF_LEVEL_LOW:
          pms->desc.ss_mask = MSG_LEGACY_LOW;
@@ -158,6 +176,7 @@ void OEMDebug_MsgPut(int nLevel, const char *cpszFile, int nLine, const char *cp
          pms->level = MSG_LVL_ERROR;
          break;
 #endif  /* if !defined(MSG_LEGACY_ERROR) */
+#endif
    } 
 
 #if !defined(MSG_LEGACY_ERROR)

@@ -854,7 +854,26 @@ SIDE EFFECTS
    invalid.  The above will cause the compiler to reference those args, even
    though they are optimized away.  Therefore, we must do the following until
    all such cases are fixed. */
-        
+
+#ifdef USES_RELEASE_VERSION
+
+	#undef MSG_FATAL
+	#define MSG_FATAL(x, a, b, c)
+
+	#undef MSG_ERROR
+	#define MSG_ERROR(x, a, b, c)
+
+	#undef MSG_HIGH
+	#define MSG_HIGH(x, a, b, c)
+
+	#undef MSG_MED
+  	#define MSG_MED(x, a, b, c)
+
+	#undef MSG_LOW
+	#define MSG_LOW(x, a, b, c)
+
+#else
+
 #if !(MSG_BUILD_MASK_MSG_SSID_DFLT & MSG_LEGACY_FATAL)
 
   #undef MSG_FATAL
@@ -889,7 +908,7 @@ SIDE EFFECTS
   #define MSG_LOW(x, a, b, c)
 
 #endif
-
+#endif
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /* -------------------------------------------------------------------------
