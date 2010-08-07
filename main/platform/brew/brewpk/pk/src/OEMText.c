@@ -1666,8 +1666,8 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     // Press and hold the number key to get the number
 
     if ((eCode != EVT_KEY) 
-        &&(!(key == AVK_STAR) && (eCode == EVT_KEY_RELEASE))
-        &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE))
+        /*&&(!(key == AVK_STAR) && (eCode == EVT_KEY_RELEASE))
+        &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE))*/ //modi by yangdecai 2010-08-07
         &&(!((key == AVK_CLR) && (eCode == EVT_KEY_HELD))))
     {
         return FALSE; // We only want key events or CLR held events
@@ -5484,6 +5484,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
             return FALSE;          
         }
     }     
+	
     switch ( key) 
     {
     	case AVK_0:

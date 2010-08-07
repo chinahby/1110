@@ -796,6 +796,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             //return FALSE;
        
         case EVT_KEY:
+			
 #if 0 
             if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
@@ -825,10 +826,10 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             }
 #endif                
             
-            if((wParam == AVK_STAR) ||(wParam == AVK_POUND) )
-            {
-                return FALSE;                
-            }  
+            //if((wParam == AVK_STAR) ||(wParam == AVK_POUND) )
+            //{
+             //   return FALSE;                
+            //}  
             
 #endif //AEE_SIMULATOR                
             {
@@ -1258,6 +1259,7 @@ NormalKeyEvent:
                     }
 		  }
 #endif
+				MSG_FATAL("OEM_TextKeyPress::::%x",wParam,0,0);
                 if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
                 {
                     if (!(pme->m_dwProps & TP_NODRAW))
@@ -1301,13 +1303,14 @@ NormalKeyEvent:
                 }
                 return(TRUE);
             }
-            
+          
             // Checks for Tabbing events, or CR
             if(eCode == EVT_KEY && pme->m_bActive && wParam == AVK_UP)
             {
                 return ISHELL_HandleEvent(pme->m_pIShell, EVT_CTL_TAB, (uint16)0, (uint32)pme);
             }
             // If no Softkey and the Down was not handled this will generate a tabbing event.
+        
             if(eCode == EVT_KEY && pme->m_bActive && wParam == AVK_DOWN)
             {
                 return ISHELL_HandleEvent(pme->m_pIShell, EVT_CTL_TAB, (uint16)1, (uint32)pme);
@@ -1316,6 +1319,7 @@ NormalKeyEvent:
             break;
 
         case EVT_KEY_RELEASE:  
+			
             #if defined(FEATURE_DISP_160X128)
             if ((wParam == AVK_SYMBOL)/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/) //modi by yangdecai
             #else

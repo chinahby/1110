@@ -3898,7 +3898,7 @@ static void Menu_DrawNewSelectItem(CMenuCtl * pme, int nIdx,int nIdxSel)
 
 // add these @08.01.16
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
-      pme->theDrawnItem = ( nIdx + 1) % 10;
+      pme->theDrawnItem = ( nIdx + 1);
 #endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
       
       if (IS_ITEM_OD(pItem))
@@ -3934,7 +3934,7 @@ static void Menu_DrawNewSelectItem(CMenuCtl * pme, int nIdx,int nIdxSel)
 //          pme->m_seltextrc.x  += 13;
 //          pme->m_seltextrc.dx -= 13;
             
-          pme->theDrawnItem = ( nIdxSel + 1) % 10;
+          pme->theDrawnItem = ( nIdxSel + 1);
       }
 #endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
       
@@ -4285,7 +4285,7 @@ static boolean Menu_Draw(CMenuCtl * pme)
              pme->m_nItems <= 10
          )
          {
-             pme->theDrawnItem   = ( i + 1) % 10;
+             pme->theDrawnItem   = ( i + 1);
          }
 #endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) 
          
@@ -4587,6 +4587,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
        /*  这个if用来检测MP_BIND_ITEM_TO_NUMBER_KEY属性是否被设置，有，在菜单前面画一个内嵌序号的正方形 */
        //下面的20 和12可能要改成公式计算
        SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset + AEE_FRAME_SIZE, 16, prc->dy);
+	   
        STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
        WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
 
@@ -4946,7 +4947,7 @@ static void Menu_AutoScroll(CMenuCtl * pme)
 
 // add these @08.01.17
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
-         pme->theDrawnItem = ( pme->m_nSelect + 1) % 10;
+         pme->theDrawnItem = ( pme->m_nSelect + 1);
 #endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
          // Draw Menu Item
