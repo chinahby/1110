@@ -368,11 +368,19 @@ static int CFrenDuoApp_InitAppData(FrenDuoApp *pMe)
 
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, (void **) &pMe->m_pDisplay) != SUCCESS)
     {    	
+        CFrenDuoApp_FreeAppData(pMe);
         return EFAILED;
     }
 	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
     {    	
+        CFrenDuoApp_FreeAppData(pMe);
         return EFAILED;
+    }
+
+    if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_RUIM, (void **)&pMe->m_pIRUIM))
+    {
+       CFrenDuoApp_FreeAppData(pMe);
+       return EFAILED;
     }
 
     return SUCCESS;
@@ -410,6 +418,12 @@ static void CFrenDuoApp_FreeAppData(FrenDuoApp *pMe)
     {
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
+    }
+
+    if (pMe->m_pIRUIM != NULL)
+    {
+        IRUIM_Release(pMe->m_pIRUIM);
+        pMe->m_pIRUIM = NULL;
     }
 
 }
@@ -534,6 +548,7 @@ static boolean FrenDuoApp_HandleEvent( IFrenDuoApp *pi,
             
             return FrenDuoApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
 
+        case EVT_USER:
         case EVT_DIALOG_START:
 
             return FrenDuoApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
@@ -745,6 +760,16 @@ static boolean FrenDuoApp_ListMenuHandler(FrenDuoApp *pMe, AEEEvent eCode, uint1
 				}
             }
             return TRUE;
+        case EVT_USER:
+        {
+            DBGPRINTF("***zzg Frenduo EVT_USER***");
+            if ((wParam == 1) && (dwParam == 1))
+            {
+                DBGPRINTF("***zzg Frenduo StartApplet***");
+                StartApplet(pMe, 2);
+            }
+            break;
+        }
             
         default:
             break;
@@ -809,27 +834,39 @@ static boolean StartApplet(FrenDuoApp *pMe, int i)
         {
 			//Send SMS To:551, Content SMS: "Status"			
             IWmsApp *pIWmsApp = NULL;
+
+            if (IsRunAsUIMVersion())
+            {
+                if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
+                {
+                    if (SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_WMSAPP, (void**)&pIWmsApp))
+                    {
+                    	return EFAILED;
+                    }
+
+                    if (SUCCESS == IWmsApp_SendSpecMessageEx(pIWmsApp))
+                    {
+                    	DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  SUCCESS!");
+                    }
+                    else
+                    {
+                    	DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  FAILED!");
+                    	(void)IWmsApp_Release(pIWmsApp);
+                    	pIWmsApp = NULL;
+                    	return EFAILED;
+                    }
+
+                    (void)IWmsApp_Release(pIWmsApp);
+                    pIWmsApp = NULL;
+                    return SUCCESS;  
+                }
+                else
+                {
+                    break;
+                }
+            }    
 			
-			if (SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_WMSAPP, (void**)&pIWmsApp))
-			{
-				return EFAILED;
-			}
-			
-			if (SUCCESS == IWmsApp_SendSpecMessageEx(pIWmsApp))
-			{
-				DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  SUCCESS!");
-			}
-			else
-			{
-				DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  FAILED!");
-				(void)IWmsApp_Release(pIWmsApp);
-    			pIWmsApp = NULL;
-    			return EFAILED;
-			}
-		    
-		    (void)IWmsApp_Release(pIWmsApp);
-		    pIWmsApp = NULL;
-		    return SUCCESS;            	
+			          	
         }
         default:
         {

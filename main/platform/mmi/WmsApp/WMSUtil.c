@@ -53,7 +53,7 @@ static WmsApp * gpWMSApp = NULL;
 
 
 //Add By zzg 2010_08_03
-#define FRENDUO_SMS_DESTNUM	 "551" 			//"15323435013"		
+#define FRENDUO_SMS_DESTNUM	 "551"				// "15323435013"
 #define FRENDUO_SMS_BUFF     "status"
 //Add End
 /*==============================================================================

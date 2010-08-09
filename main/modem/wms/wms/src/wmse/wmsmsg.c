@@ -2859,8 +2859,7 @@ wms_cmd_err_e_type wms_msg_cdma_send_client_message
     */
     if( cdma_tl.cl_bd.message_id.type == WMS_BD_TYPE_SUBMIT &&
 #ifdef CUST_EDITION		
-        cmd_ptr->hdr.client_id != WMS_CLIENT_TYPE_WMS_APP &&    
-        cmd_ptr->hdr.client_id != WMS_CLIENT_FLOATING1 &&		//Add By zzg 2010_08_04
+        cmd_ptr->hdr.client_id != WMS_CLIENT_TYPE_WMS_APP &&  
 #if defined(FEATURE_QMA)
         cdma_tl.teleservice != WMS_TELESERVICE_QMA_WPUSH &&
 #elif defined(FEATURE_CARRIER_CHINA_TELCOM)

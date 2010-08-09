@@ -636,9 +636,7 @@ typedef struct WmsApp
 
     // ----------------------------------------------------
     IWMS                            *m_pwms;
-    wms_client_id_type              m_clientId;
-	
-	wms_client_id_type              m_clientExId;		//Add By zzg 2010_08_04  for  WMS_CLIENT_FLOATING1
+    wms_client_id_type              m_clientId;	
 
 #ifdef FEATURE_ICM
     ICM                             *m_pICM;

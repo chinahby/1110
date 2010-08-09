@@ -190,13 +190,6 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
                   wms_msg_event_info_s_type  *pInfo,
                   boolean                    *shared);
 
-//Add By zzg 2010_08_07
-void WmsApp_MsgExCb(wms_msg_event_e_type       event,
-                            wms_msg_event_info_s_type  *pInfo,
-                            boolean                    *shared); 
-
-//Add End
-
 #ifdef FEATURE_BROADCAST_SMS
 void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo);
 #endif
@@ -733,11 +726,6 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     (void)IWMS_RegisterCfgCb(pMe->m_pwms, pMe->m_clientId, WmsApp_CfgCb );
     (void)IWMS_RegisterMsgCb(pMe->m_pwms, pMe->m_clientId, WmsApp_MsgCb );
 
-    //Add By zzg 2010_08_07
-    (void)IWMS_Init(pMe->m_pwms, WMS_CLIENT_FLOATING1, &pMe->m_clientExId);    
-    (void)IWMS_RegisterMsgCb(pMe->m_pwms, pMe->m_clientExId, WmsApp_MsgExCb);    
-    //Add End
-
 #ifdef FEATURE_BROADCAST_SMS
     (void)IWMS_RegisterBcCb(pMe->m_pwms, pMe->m_clientId, WmsApp_BcCb);
 #endif
@@ -787,8 +775,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     //------------------------------------------------------------------------------------------------------
     if (NULL != pMe->m_pwms)
     {
-        IWMS_Deactivate(pMe->m_pwms,pMe->m_clientId);
-		IWMS_Deactivate(pMe->m_pwms,pMe->m_clientExId);		//Add By zzg 2010_08_04
+        IWMS_Deactivate(pMe->m_pwms,pMe->m_clientId);		
         IWMS_Release(pMe->m_pwms);
         pMe->m_pwms = NULL;
     }
@@ -1186,16 +1173,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 				DBGPRINTF("***zzg CWMSHandleEvent EVT_WMS_MSG_SEND!***");
 			}
 			//Add End
-
-            //Add By  zzg 2010_08_07
-            if (((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id == WMS_CLIENT_FLOATING1)
-            {
-                DBGPRINTF("***zzg IWMS_Deactivate WMS_CLIENT_FLOATING1***");
-                (void)IWMS_Deactivate(pMe->m_pwms,pMe->m_clientExId);     
-            }
-            //Add End
-			
-            if (((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)            
+           
+			if (((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)            
             {
                 WmsApp_ProcessStatus(pMe, &((wms_msg_event_info_s_type *)dwParam)->submit_report_info);
             }
@@ -2566,12 +2545,10 @@ static int CWmsApp_MessageService(IWmsApp *p,
         int   nRet = SUCCESS;
         wms_client_message_s_type   *pMsg = NULL;
 
-        {
-            DBGPRINTF("***zzg IWMS_Activate WMS_CLIENT_FLOATING1***");
-            (void)IWMS_Activate(pMe->m_pwms,pMe->m_clientExId);     //Add By  zzg 2010_08_07
-        }
-        
+        pMe->m_nSendItems = 0;
 
+        DBGPRINTF("***zzg STARTMETHOD_SENDSPECMESSAGE***");
+            
         //Add By zzg 2010_07_20
 		if (NULL == pwstrText)      
 		{
@@ -2579,20 +2556,20 @@ static int CWmsApp_MessageService(IWmsApp *p,
 
 	        if (NULL == pMsg)
 	        {
+	            DBGPRINTF("***zzg STARTMETHOD_SENDSPECMESSAGE NULL == pMsg***");
 	            return EFAILED;
 	        }
 			
 #ifndef WIN32
-			DBGPRINTF("***zzg pMe->m_clientId=%d, pMe->m_clientExId=%d***", pMe->m_clientId, pMe->m_clientExId);
 			
-	        if (wms_msg_send(pMe->m_clientExId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	
-	        {
-	        	DBGPRINTF("***zzg wms_msg_send WMS_CLIENT_FLOATING1 Success***");
+	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	
+	        {	        	
+	            DBGPRINTF("***zzg wms_msg_send STARTMETHOD_SENDSPECMESSAGE WMS_OK_S***");
 	            nRet = SUCCESS;
 	        }
 	        else
-	        {	        
-	        	DBGPRINTF("***zzg wms_msg_send WMS_CLIENT_FLOATING1 Failed***");
+	        {	
+	            DBGPRINTF("***zzg wms_msg_send STARTMETHOD_SENDSPECMESSAGE EFAILED***");
 	            nRet = EFAILED;
 	        }
 #else
@@ -2609,7 +2586,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
 	        }
 			
 #ifndef WIN32			
-	        if (wms_msg_send(pMe->m_clientExId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	
+	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	
 	        {
 	            nRet = SUCCESS;
 	        }
@@ -3164,133 +3141,6 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
     }
 } // WmsApp_MsgCb() 
 
-
-//Add By zzg 2010_08_07
-void WmsApp_MsgExCb(wms_msg_event_e_type       event,
-                  wms_msg_event_info_s_type  *pInfo,
-                  boolean                    *shared)
-{   
-
-    wms_msg_event_info_s_type   *pInfobuf=NULL;
-    IShell                      *pShell = AEE_GetShell();
-    uint8                       btRet; 
-    AEEEvent                    evt=0;
-    
-    if (pShell == NULL)
-    {
-        return;
-    }
-    
-    pInfobuf = MALLOC(sizeof(wms_msg_event_info_s_type));
-    if (pInfobuf == NULL)
-    {
-        return;
-    }
-
-	DBGPRINTF("***zzg WmsApp_MsgExCb event=%d***", event);
-    
-    (void)MEMCPY(pInfobuf, pInfo, sizeof(wms_msg_event_info_s_type));
-    switch (event)
-    {
-        case WMS_MSG_EVENT_SEND:			
-			DBGPRINTF("***zzg WmsApp_MsgExCb WMS_MSG_EVENT_SEND***");
-            DBGPRINTF("***zzg WmsApp_MsgExCb report_status=%d***", pInfobuf->submit_report_info.report_status);
-            
-            if ((pInfobuf->submit_report_info.client_id == WMS_CLIENT_FLOATING1)            
-				&& (pInfobuf->submit_report_info.report_status != WMS_RPT_OK))
-            {
-                evt = EVT_WMS_MSG_SEND;
-            }
-            break;
-            
-        case WMS_MSG_EVENT_READ:
-            evt = EVT_WMS_MSG_READ;
-            break;
-            
-        case WMS_MSG_EVENT_WRITE:
-            evt = EVT_WMS_MSG_WRITE;
-            break;
-            
-        case WMS_MSG_EVENT_DELETE:
-            evt = EVT_WMS_MSG_DELETE;
-            break;
-            
-        case WMS_CMD_MSG_DELETE_BOX:
-            evt = EVT_WMS_MSG_DELETE_BOX;
-            break;
-                        
-        case WMS_MSG_EVENT_MODIFY_TAG:
-            evt = EVT_WMS_MSG_MODIFY_TAG;
-            break;
-            
-        case WMS_MSG_EVENT_READ_TEMPLATE:
-            evt = EVT_WMS_MSG_READ_TEMPLATE;
-            break;
-            
-        case WMS_MSG_EVENT_WRITE_TEMPLATE:
-            evt = EVT_WMS_MSG_WRITE_TEMPLATE;
-            break;
-            
-        case WMS_MSG_EVENT_DELETE_TEMPLATE:
-            evt = EVT_WMS_MSG_DELETE_TEMPLATE;
-            break;
-        
-        case WMS_MSG_EVENT_RECEIVED_MESSAGE:
-            evt = EVT_WMS_MSG_RECEIVED_MESSAGE;
-            break;
-            
-        case WMS_MSG_EVENT_SUBMIT_REPORT:
-			DBGPRINTF("***zzg WmsApp_MsgExCb WMS_MSG_EVENT_SUBMIT_REPORT***");	
-            DBGPRINTF("***zzg WmsApp_MsgExCb len=%d***", pInfo->submit_report_info.alpha_id.len);	
-            
-            pInfobuf->submit_report_info.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
-            pInfobuf->submit_report_info.alpha_id.len = pInfo->submit_report_info.alpha_id.len;
-            
-            if ((pInfo->submit_report_info.alpha_id.data != NULL) &&
-                (pInfo->submit_report_info.alpha_id.len > 0))
-            {
-                (void)MEMCPY(pInfobuf->submit_report_info.alpha_id.data,
-                            pInfo->submit_report_info.alpha_id.data,
-                            pInfo->submit_report_info.alpha_id.len);
-            }
-
-            if (pInfobuf->submit_report_info.client_id == WMS_CLIENT_FLOATING1)    
-            {
-                evt = EVT_WMS_MSG_SUBMIT_REPORT;
-            }
-            
-            break;
-            
-        case WMS_MSG_EVENT_STATUS_REPORT:
-            evt = EVT_WMS_MSG_STATUS_REPORT;
-            break;
-            
-
-        default:
-            break;
-    } // switch
-    
-    if (evt != 0)
-    {
-        btRet = ISHELL_PostEventEx(pShell,
-                                   EVTFLG_ASYNC, 
-                                   AEECLSID_WMSAPP, 
-                                   evt,
-                                   0, 
-                                   (uint32) pInfobuf);
-                        
-        if (btRet == FALSE)
-        {
-            WMSAPPU_FREE(pInfobuf)
-        }
-    }
-    else
-    {
-        WMSAPPU_FREE(pInfobuf)
-    }	
-}
-//Add End
-
 #ifdef FEATURE_BROADCAST_SMS
 /*==============================================================================
 函数: 
@@ -3495,17 +3345,9 @@ static void WmsApp_Init(WmsApp *pMe)
                         WMS_CLIENT_TYPE_WMS_APP, 
                         &pMe->m_callback, 
                         (void*)pMe, 
-                        TRUE, FALSE);           
+                        TRUE, FALSE);          
 
-    /*
-    (void)IWMS_SetPrimaryClient(pMe->m_pwms, 
-                        WMS_CLIENT_FLOATING1, 
-                        &pMe->m_callback, 
-                        (void*)pMe, 
-                        TRUE, FALSE); 
-                        */
-                      
-
+   
 #ifdef FEATURE_CDSMS
     if (pMe->m_mode == WMS_MESSAGE_MODE_CDMA)
     {
@@ -4743,16 +4585,8 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
         default:
             break;
     }
-
-    //Add By zzg 2010_08_06
-    {
-        //wms_cdma_user_data_s_type    *pUserdata = (wms_cdma_user_data_s_type  *)pRptInfo->user_data;
-
-       // DBGPRINTF("***zzg data_len=%d***", pUserdata->number_of_digits);    	    
-       
-       DBGPRINTF("***zzg pMe->m_idxCurSend=%d***", pMe->m_idxCurSend);    	    
-    }
-    //Add End
+   
+    DBGPRINTF("***zzg m_idxCurSend=%d, m_nSendItems=%d***", pMe->m_idxCurSend, pMe->m_nSendItems); 	 
     
 	if (pRptInfo->report_status != WMS_RPT_OK)
 	{
@@ -4763,11 +4597,12 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
 			MSG_FATAL("SECOND SENDING AGGIEN................................",0,0,0);
 			pMe->m_bisSendSecond = TRUE;
 			 // 此情况下将消息重发一次
+			 
 			if((int)WMS_TAG_MO_NOT_SENT == pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag)
-			{
+			{               
 		        if ((NULL != pMe->m_pCurSendCltMsg) &&
 		            (pMe->m_idxCurSend < pMe->m_nSendItems))
-		        {
+		        {		           
 		            nRet = IWMS_MsgSend(pMe->m_pwms, 
 		                                pMe->m_clientId, 
 		                                &pMe->m_callback,
@@ -4793,7 +4628,8 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
 	        {
 	        		boolean is_savetodarft = FALSE;
 					int i = 0;
-					for(i=0;i<pMe->m_idxCurSend;i++)
+                    
+					for (i=0;i<pMe->m_idxCurSend;i++)
 					{
 						if(pMe->m_pCurSendCltMsg[i]->msg_hdr.tag == WMS_TAG_MO_SENT)
 						{
@@ -4801,7 +4637,8 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
 							break;
 						}
 					}
-	        		if(pMe->m_nSendItems>1 && is_savetodarft)
+                    
+	        		if (pMe->m_nSendItems>1 && is_savetodarft)
 	        		{
 	        			IWMS_MsgDelete(pMe->m_pwms, 
                                   pMe->m_clientId, 

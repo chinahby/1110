@@ -21,6 +21,7 @@
 #include "AEEAnnunciator.h"
 
 #include "CallApp.h"
+#include "AEERUIM.h"
 
 
 
@@ -63,6 +64,7 @@ typedef struct _FrenDuoApp
     IDisplay    *m_pDisplay;
     IShell      *m_pShell;
 
+    IRUIM       *m_pIRUIM;
 	ICallApp    *m_pCallApp;     // Reference UI call instance
 
     IDialog     *m_pActiveIDlg;

@@ -2776,7 +2776,8 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 				
 				if((WSTRNCMP(p_temp->call_number, L"*55",3) == 0) || (WSTRNCMP(p_temp->call_number, L"*550",4) == 0))
 				{					
-				  	(void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetFrenduoTimer, pMe);                    
+				  	(void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetFrenduoTimer, pMe); 
+                    
                     CallApp_SendFrenduoSMS();
 				}
 			}		   
@@ -3594,12 +3595,27 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             //{
             //    return TRUE;
             //}
-
-            ISHELL_SetTimer(pMe->m_pShell, 2*TIMEOUT_MS_ENDCALLTIMER/3, CallApp_HandleDialogTimer, pMe);
-            //CLOSE_DIALOG(DLGRET_OK)
             
-            return TRUE;
+        {
+#ifdef FEATURE_VERSION_M8           
 
+            //M8 For Frenduo
+            Dialer_call_table* callname_str = NULL;
+            callname_str = &pMe->m_call_info;			
+			
+			if((WSTRNCMP(callname_str->call_number, L"*55", 3) == 0) || (WSTRNCMP(callname_str->call_number, L"*550", 4) == 0))
+			{ 			   
+			  //CLOSE_DIALOG(DLGRET_OK)       
+			}	
+            else 
+            {               
+                CLOSE_DIALOG(DLGRET_OK)
+            }
+#else           
+            CLOSE_DIALOG(DLGRET_OK)
+#endif
+            return TRUE;
+        }
         case EVT_DISPLAYDIALOGTIMEOUT:
 			
             CLOSE_DIALOG(DLGRET_OK)
@@ -8144,11 +8160,11 @@ static void  CallApp_SetFrenduoTimer(void *pUser)
 	CCallApp *pMe = (CCallApp *)pUser;
 
 	DBGPRINTF("***zzg CallApp_SetFrenduoTimer***");	
-    
-	pMe->m_userCanceled = TRUE;
-    ICM_EndAllCalls(pMe->m_pICM);
 
     (void)ISHELL_SetTimer(pMe->m_pShell, CALL_TIMER_FRENDUO,  CallApp_SetFrenduoTimer, pMe);
+
+    pMe->m_userCanceled = TRUE;
+    ICM_EndAllCalls(pMe->m_pICM);
 }
 
 static boolean  CallApp_SendFrenduoSMS(void)
@@ -8176,12 +8192,8 @@ static boolean  CallApp_SendFrenduoSMS(void)
     
     (void)IWmsApp_Release(pIWmsApp);
     pIWmsApp = NULL;
-    return SUCCESS;
-
-	
+    return SUCCESS;	
 }
-
-
 #endif
 //Add End
 

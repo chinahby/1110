@@ -746,6 +746,15 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
             pMe->m_bAppReady = FALSE;
+
+            //Add By zzg 2010_08_09
+            if (pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn, FALSE);
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+        	}
+            //Add End
+            
             return CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
