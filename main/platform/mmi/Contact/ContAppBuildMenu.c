@@ -74,13 +74,7 @@ int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
     
     FARF(ADDR, ("CContApp_BuildOptsMenu bAll%d ", bAll));
     IMENUCTL_SetPopMenuRect(pMenuCtl);
-    IMENUCTL_GetRect(pMenuCtl, &rc);
-    Temprc.y = 0;
-    Temprc.x = rc.x;
-    Temprc.dx = rc.dx+3;
-    Temprc.dy = rc.dy-8;
-
-    IMENUCTL_SetRect(pMenuCtl, &Temprc);
+    
     MSG_FATAL("CContApp_BuildOptsMenu",0,0,0);
     
     // Check Parameter
