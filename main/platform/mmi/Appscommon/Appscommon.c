@@ -359,6 +359,10 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
          case BTBAR_STOP:
             nResID_R = IDS_STOP;
             break;
+			
+		case BTBAR_OPTION:
+			nResID_L = IDS_OPTION;
+            break;
 
          default:
             break;
@@ -558,6 +562,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_OPTION;
             nResID_R = IDS_HANDSFREE_ON;  
             break;
+		
 
          case BTBAR_OPTION_NORMAL:
             nResID_L = IDS_OPTION;
@@ -2668,6 +2673,10 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 
         case BTBAR_OK:
             nResID_L = IDS_OK;
+            break;
+			
+		case BTBAR_OPTION:
+			nResID_L = IDS_OPTION;
             break;
             
         case BTBAR_SAVE_BACK:

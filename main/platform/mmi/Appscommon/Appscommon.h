@@ -285,6 +285,7 @@ typedef enum BottomBar_e_Type
    BTBAR_FNASRANI_FPORTAL,   //fnasrani--fportal
    BTBAR_FMUSLIM_FPORTAL,   //fmuslim  ---fnasrani
    #endif
+   BTBAR_OPTION,
 
    BTBAR_MAX = 0xFFFF, /*For ADS compiler allocate one byte to enumerate type
                      variable by default if the max value not exceed 256*/
