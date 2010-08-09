@@ -3266,14 +3266,20 @@ static void SetImsiFromSim (
 
 
   // read MIN2
+#ifdef CUST_EDITION	
+  nvi.min2.nam = curr_nam;
+#endif
   ui_get_nv(NV_MIN2_I, &nvi);
   value = nvi.min2.min2[1];
   *txt++ = mintable[ (value/100) %10];
   value %= 100;
   *txt++ = mintable[ value/10 ];
   *txt++ = mintable[ value%10 ];
-
+  
   // read MIN1
+#ifdef CUST_EDITION	
+  nvi.min1.nam = curr_nam;
+#endif
   ui_get_nv(NV_MIN1_I, &nvi);
   value = nvi.min1.min1[1];
   temp = (word) (value>>14 );
