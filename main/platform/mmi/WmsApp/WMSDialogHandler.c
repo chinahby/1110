@@ -8350,6 +8350,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     ITextCtl *pIText = NULL;   
     AEETextInputMode nInputMode;
     static AEETextInputMode nMode;
+	AECHAR Annstr[20] = {0};
     WmsApp *pMe = (WmsApp *)pUser;
     
     if (NULL == pMe)
@@ -8382,7 +8383,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 #endif
             SetControlRect(pMe, pIText);
-
+			
             if (NULL != pMe->m_msSend.m_szMessage)
             {
                 ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
@@ -8413,6 +8414,12 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             return TRUE;
 
         case EVT_USER_REDRAW:
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_EDIT,
+                        Annstr,
+                        sizeof(Annstr));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
             if (pMe->m_dwInsertPos == 0)
             {
                 ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
