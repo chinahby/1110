@@ -8776,11 +8776,25 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
         //drawBottomBar(pMe->m_pDisplay,AEE_FONT_NORMAL,BTBAR_OPTION_BACK/*BTBAR_OPTION_END*/);
         if(pMe->m_bHandFree)
         {
-            REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_NORMAL)
+        	if(HS_HEADSET_ON())
+        	{
+        		DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION);
+        	}
+			else
+        	{
+            	REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_NORMAL)
+        	}
         }
         else
         {
-            REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDSFREEON)
+            if(HS_HEADSET_ON())
+			{
+				DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION);
+			}
+			else
+			{
+            	REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDSFREEON)
+			}
         }
     }
     IDISPLAY_Update(pMe->m_pDisplay);
