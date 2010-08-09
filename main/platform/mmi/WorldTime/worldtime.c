@@ -456,7 +456,7 @@ boolean Calendar_FormatDate2( uint16 year, uint16 month, uint16 day, AECHAR* res
 
         MEMSET( resultString, 0, resultStringLength);
         MEMSET( formatString, 0, sizeof(formatString));
-        year %= 100; //BUGFIX_V0.1_PR43234, ( 60, 61)
+        //year %= 100; //BUGFIX_V0.1_PR43234, ( 60, 61)
 
 #ifdef FEATURE_TIME_DATA_SETTING
 
@@ -466,7 +466,7 @@ boolean Calendar_FormatDate2( uint16 year, uint16 month, uint16 day, AECHAR* res
         {
             case OEMNV_DATEFORM_MDY:
             {
-                STRTOWSTR( "%02d/%02d/%02d", formatString, sizeof( formatString));
+                STRTOWSTR( "%02d/%02d/%04d", formatString, sizeof( formatString));
                 WSPRINTF( resultString,
                           resultStringLength,
                           formatString,
@@ -479,7 +479,7 @@ boolean Calendar_FormatDate2( uint16 year, uint16 month, uint16 day, AECHAR* res
 
             case OEMNV_DATEFORM_DMY:
             {
-                STRTOWSTR( "%02d/%02d/%02d", formatString, sizeof( formatString));
+                STRTOWSTR( "%02d/%02d/%04d", formatString, sizeof( formatString));
                 WSPRINTF( resultString,
                           resultStringLength,
                           formatString,
@@ -493,7 +493,7 @@ boolean Calendar_FormatDate2( uint16 year, uint16 month, uint16 day, AECHAR* res
             case OEMNV_DATEFORM_YMD:
             default:
             {
-                STRTOWSTR( "%02d/%02d/%02d", formatString, sizeof( formatString));
+                STRTOWSTR( "%04d/%02d/%02d", formatString, sizeof( formatString));
                 WSPRINTF( resultString,
                           resultStringLength,
                           formatString,
@@ -508,7 +508,7 @@ boolean Calendar_FormatDate2( uint16 year, uint16 month, uint16 day, AECHAR* res
 
 #else
 
-        STRTOWSTR( "%02d/%02d/%02d", formatString, sizeof(formatString));
+        STRTOWSTR( "%04d/%02d/%02d", formatString, sizeof(formatString));
         WSPRINTF( resultString,
                   resultStringLength,
                   formatString,
@@ -612,16 +612,18 @@ boolean Calendar_FormatTime( uint32 seconds, AECHAR* resultString, int resultStr
         timeFormatType = OEMNV_TIMEFORM_AMPM;
 #endif
 
+		//wangliang close!  2010-08-09   没有足够的空间显示这种模式
+#if 0
         if (timeFormatType == OEMNV_TIMEFORM_AMPM)
         {
 
             if( julianInfo.wHour >= 12)
             {
-                STRTOWSTR( "%02d:%02d PM    ", formatString, sizeof( formatString));
+                STRTOWSTR( "%02d:%02dPM ", formatString, sizeof( formatString));
             }
             else
             {
-                STRTOWSTR( "%02d:%02d AM    ", formatString, sizeof( formatString));
+                STRTOWSTR( "%02d:%02dAM ", formatString, sizeof( formatString));
             }
 
             julianInfo.wHour = ( julianInfo.wHour + 12) % 12;
@@ -631,8 +633,9 @@ boolean Calendar_FormatTime( uint32 seconds, AECHAR* resultString, int resultStr
             }
         }
         else
+#endif
         {
-            STRTOWSTR( "%02d:%02d         ", formatString, sizeof( formatString));
+            STRTOWSTR( "%02d:%02d ", formatString, sizeof( formatString));
         }
 
         // 格式化时间字符串
