@@ -451,6 +451,9 @@
 	<STRING Id="1085" Name="IDS_NO_SELECTION" Encoding="Unicode">
 		<Text>No selection</Text>
 	</STRING>
+	<String Id="1086" Name="IDS_NO_UIM_CARD">
+		<Text>No UIM card,save to phone</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">

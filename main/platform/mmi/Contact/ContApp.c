@@ -523,6 +523,12 @@ static int CContApp_InitAppData(CContApp *pMe)
     {
         return EFAILED;
     }
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                            AEECLSID_RUIM,
+                                            (void **)&pMe->m_pIRUIM))
+	{
+		return EFAILED;
+	}
 
     return SUCCESS;
 } // CContApp_InitAppData
@@ -644,6 +650,12 @@ static void CContApp_FreeAppData(CContApp *pMe)
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
     }
+	if (pMe->m_pIRUIM != NULL)
+	{
+	    IRUIM_Release(pMe->m_pIRUIM);
+	    pMe->m_pIRUIM = NULL;
+	}
+	
 } // CContApp_FreeAppData
 
 /*==============================================================================

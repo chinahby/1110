@@ -78,7 +78,7 @@
 #include "AEEAnnunciator.h"
 
 #include "AEEControls.brh"
-
+#include "AEERUIM.h"
 extern sSelectFieldInfo  curSelectFieldInfo;
 extern sSelectFieldListNode* pSelectFieldListRoot;
 extern sSelectFieldListNode* pCurSelectFieldNode;
@@ -902,6 +902,7 @@ typedef struct _CContApp
 #endif
     char  *m_strPhonePWD;
     IAnnunciator *m_pIAnn;
+	IRUIM        *m_pIRUIM;
 } CContApp;
 
 /*==============================================================================

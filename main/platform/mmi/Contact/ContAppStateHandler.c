@@ -3218,14 +3218,29 @@ static NextFSMAction Handler_STATE_ADDNEW(CContApp *pMe)
                     if(IS_MAX_REC(pMe->m_pAddrRUIM) && !IS_MAX_REC(pMe->m_pAddrPhone))
                     {
 
-                        if(SUCCESS != CContApp_ShowYesNoDialog( pMe, 
+						// ¼ì²é¿¨ÊÇ·ñ²åÈë
+        				if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+        				{
+        					if(SUCCESS != CContApp_ShowYesNoDialog( pMe, 
                                                                 IDS_UIMFULL_SAVETOPHONE,
                                                                 NULL,
                                                                 -1))
-                        {
-                            MOVE_TO_STATE(STATE_EXIT);
-                            return NFSMACTION_CONTINUE;
-                        }
+	                        {
+	                            MOVE_TO_STATE(STATE_EXIT);
+	                            return NFSMACTION_CONTINUE;
+	                        }
+        				}
+						else
+						{
+							if(SUCCESS != CContApp_ShowYesNoDialog( pMe, 
+                                                                IDS_NO_UIM_CARD,
+                                                                NULL,
+                                                                -1))
+	                        {
+	                            MOVE_TO_STATE(STATE_EXIT);
+	                            return NFSMACTION_CONTINUE;
+	                        }
+						}
                         type = 2;
                         return NFSMACTION_WAIT;
                     }
