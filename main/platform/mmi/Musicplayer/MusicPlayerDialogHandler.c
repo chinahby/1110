@@ -382,9 +382,9 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
             	int nIdx;
             	nIdx  = pMe->m_nAutoScrollIdx;
                 MSG_FATAL("IANNUNCIATOR_SetHasTitleText",0,0,0);
-                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+                //IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
 				//IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+nIdx);
-                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+                //IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
            (void) ISHELL_PostEvent(pMe->m_pShell, 
                                     AEECLSID_APP_MUSICPLAYER,
