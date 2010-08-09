@@ -3436,6 +3436,7 @@ int GetSeamlessSMSInfo(char *szInfoEx, int nSize)
     // GetMIN
     // read MIN2
     txt = &szInfo[len];
+    nvi.min2.nam = mi.nCurrNAM;
     if( ui_get_nv(NV_MIN2_I, &nvi) != NV_DONE_S)
     {
     	MSG_FATAL("Get NV_MIN2_I Failed!!!",0,0,0);
@@ -3453,6 +3454,7 @@ int GetSeamlessSMSInfo(char *szInfoEx, int nSize)
     *txt++ = mintable[ value%10 ];
 
     // read MIN1
+    nvi.min1.nam = mi.nCurrNAM;
 	if( ui_get_nv(NV_MIN1_I, &nvi) != NV_DONE_S)
 	{
 		MSG_FATAL("Get NV_MIN1_I Failed!!!",0,0,0);
