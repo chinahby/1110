@@ -131,7 +131,6 @@ FPT005_IMAGE_FILES = \
     
 FPT005_BCI_FILES = \
     connecting_rename.bci|fs:/mod/fpt005/image/connecting.bci \
-    loading.bci|fs:/mod/fpt005/image/loading.bci \
     refresh_rename.bci|fs:/mod/fpt005/image/refresh.bci \
     update.bci|fs:/mod/fpt005/image/update.bci
     

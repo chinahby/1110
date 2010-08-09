@@ -2749,7 +2749,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						#endif
                     }
 #endif
-                    
+                case AVK_END:
+					{
+						ISHELL_PostEventEx(pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_UPDATEIDLE,0,0L);
+						return TRUE;
+                	}
+				    break;
 
                 default:
                     break;

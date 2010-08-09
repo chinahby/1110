@@ -453,6 +453,7 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
 #endif
 	{HS_NONE_K,                     AVK_UNDEFINED,                  AVK_METHED_NONE, FALSE, 0},
 };
+AVKType    last_vcode = AEE_INVALID_CODE;
 
 LOCAL struct {
   byte rd_idx;                  /* read index                */
@@ -851,9 +852,9 @@ void handle_keys(void)
     /* static locals are used to remember the last pressed key for
      * handling events when the keypad doesn't support pressing multiple keys
     */
-    AVKType    last_vcode = AEE_INVALID_CODE;
-    static int hs2vcodeidx = ARR_SIZE(hs_to_aee_tbl)-1;
     
+    static int hs2vcodeidx = ARR_SIZE(hs_to_aee_tbl)-1;
+    last_vcode = AEE_INVALID_CODE;
 #ifdef FEATURE_KEYPAD_MULTI_KEY
     while ( (key.key_code = GetKey(&key)) != HS_NONE_K) {
         MSG_HIGH("Received Key code = %#x and key parm = %#x from HS", key.key_code, key.key_parm, 0);
@@ -886,7 +887,7 @@ void handle_keys(void)
                 if (CoreTask_HandleAEEEvt(EVT_KEY, last_vcode)){
                     continue;
                 }
-                
+
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = TRUE;
                 (void) AEE_Event(EVT_KEY_PRESS, last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
                 (void) AEE_Event(EVT_KEY,       last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
@@ -1672,6 +1673,7 @@ static ISound       *gpSound= NULL;
 static ICM          *gpICM = NULL;
 static boolean      m_isBacklight = FALSE;
 
+
 /*==============================================================================
 º¯Êý: 
     brewui_isincall
@@ -1951,7 +1953,14 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
 				
 				m_isBacklight = FALSE;
             	IBACKLIGHT_Enable(gpBacklight);
-				return TRUE;
+				if(ISHELL_ActiveApplet(AEE_GetShell()) == AEECLSID_CORE_APP)
+				{
+					last_vcode = AVK_END;
+				}
+				else
+				{
+					return TRUE;
+				}
 			}
 			else
 			{
@@ -1973,7 +1982,14 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
 #endif
 		if(!m_isBacklight)
 		{
-			return TRUE;
+			if(ISHELL_ActiveApplet(AEE_GetShell()) == AEECLSID_CORE_APP)
+			{
+				last_vcode = AVK_END;
+			}
+			else
+			{
+				return TRUE;
+			}
 		}
         if (gpBacklight){
             if(FALSE == IBACKLIGHT_IsEnabled(gpBacklight))
@@ -2002,7 +2018,14 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
 	case EVT_KEY:
 		if(!m_isBacklight)
 		{
-			return TRUE;
+			if(ISHELL_ActiveApplet(AEE_GetShell()) == AEECLSID_CORE_APP)
+			{
+				last_vcode = AVK_END;
+			}
+			else
+			{
+				return TRUE;
+			}
 		}
 		break;
         
