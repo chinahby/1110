@@ -810,7 +810,9 @@ static boolean BlackJack_HandleEvent(BlackJackApp *pMe,
 #if defined( FEATURE_CARRIER_THAILAND_HUTCH) || defined( FEATURE_CARRIER_ISRAEL_PELEPHONE)
       BlackJack_SetState(pMe, state_showingOpeningScreen);
 #else
-      (void) ISHELL_ShowCopyright(pMe->a.m_pIShell);
+	  //modi by yangdecai 2010-08-09
+	  BlackJack_SetState(pMe, state_showingOpeningScreen);
+      //(void) ISHELL_ShowCopyright(pMe->a.m_pIShell);
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
       break;
 
