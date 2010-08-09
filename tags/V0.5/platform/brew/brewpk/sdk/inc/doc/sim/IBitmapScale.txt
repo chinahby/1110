@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IBitmapScale simulation
+
+IBitmapScale is simulated.
+==========================
+*/ 
