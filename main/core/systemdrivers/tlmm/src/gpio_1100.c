@@ -188,12 +188,12 @@ void gpio_init(void)
   for (gpio_number=0; gpio_number < GPIO_NUM_GPIOS; gpio_number++ )
   {
     gpio_signal       = TLMM_GPIO_CONFIG[gpio_number];
-    
+#ifndef CUST_EDITION
     // Configure GPIO # 30 for PA_R1 in Pedro 2.0
     if ( gpio_number == 30 && VERSION_GET_VERSION_ID() == 1 ) {
       gpio_signal = MSM2_PA_R1;
     }
-
+#endif
     gpio_polarity     = GPIO_POLARITY(gpio_signal);
     gpio_oe_register  = GPIO_GROUP(gpio_signal);
 
