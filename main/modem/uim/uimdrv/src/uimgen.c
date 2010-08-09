@@ -10669,4 +10669,38 @@ boolean uim_is_test_iccid(
   }
 }/* uim_is_test_iccid */
 
+
+/*========================================================================
+
+FUNCTION UIM_PROCESSING_STREAM_APDU
+
+DESCRIPTION
+  This function returns whether UIM is processing a stream apdu command.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  TRUE : UIM processing STREAM APDU COMMAND
+  FALSE: UIM not processing STREAM APDU COMMAND
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+boolean uim_processing_stream_apdu
+(
+  void
+)
+{ 
+  /* Check if we are processing ENVELOPE command */
+  if( UIM_STREAM_APDU_ST == *uim_generic_state_ptr )
+  {
+    return TRUE;
+  }
+  
+  return FALSE;
+} /* uim_processing_stream_apdu */
+
+
 #endif /* FEATURE_UIM */
