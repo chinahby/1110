@@ -6128,13 +6128,6 @@ wms_cache_info_list * wms_get_cacheinfolist(wms_box_e_type ebox)
     static wms_cache_info_list  *pwms_reserve_list = NULL;
     
     wms_cache_info_list **pteplist = NULL;
-    static  boolean bfirstrun = TRUE;
-    
-    if (bfirstrun)
-    {
-        rex_init_crit_sect(&wms_cache_info_crit_sect);
-        bfirstrun = FALSE;
-    }
     
     switch (ebox)
     {
@@ -7066,6 +7059,13 @@ void OEMWMS_MsgInfoCacheCbExt(const wms_client_message_s_type  *pMsg,
     wms_box_e_type              ebox = WMS_MB_NONE;
     int                         nVMNew = 0;
     int                         nVMAll = 0;
+    static  boolean bfirstrun = TRUE;
+    
+    if (bfirstrun)
+    {
+        rex_init_crit_sect(&wms_cache_info_crit_sect);
+        bfirstrun = FALSE;
+    }
 
     if (pMsg == NULL)
     {
@@ -7078,6 +7078,7 @@ void OEMWMS_MsgInfoCacheCbExt(const wms_client_message_s_type  *pMsg,
         return;
     }
     
+    rex_enter_crit_sect(&wms_cache_info_crit_sect);
     // 确定消息箱，再根据消息箱确定使用的 cache 链表
     switch (pMsg->msg_hdr.mem_store)
     {
@@ -7094,6 +7095,7 @@ void OEMWMS_MsgInfoCacheCbExt(const wms_client_message_s_type  *pMsg,
             if (ebox == WMS_MB_NONE)
             {
                 MSG_ERROR("Not supported inde %d !",pMsg->msg_hdr.index,0,0);
+                rex_leave_crit_sect(&wms_cache_info_crit_sect);
                 return;
             }
             else if ((ebox == WMS_MB_INBOX) &&
@@ -7106,12 +7108,14 @@ void OEMWMS_MsgInfoCacheCbExt(const wms_client_message_s_type  *pMsg,
             
         default:
             MSG_ERROR("Not supported mem_store !",0,0,0);
+            rex_leave_crit_sect(&wms_cache_info_crit_sect);
             return;
     }
     plist = wms_get_cacheinfolist(ebox);
     if (NULL == plist)
     {
         MSG_ERROR("Get cache list failed !",0,0,0);
+        rex_leave_crit_sect(&wms_cache_info_crit_sect);
         return;
     }
     
@@ -7121,6 +7125,7 @@ void OEMWMS_MsgInfoCacheCbExt(const wms_client_message_s_type  *pMsg,
                                         pMsg->msg_hdr.mem_store, 
                                         pMsg->msg_hdr.index, 
                                         wms_free_listnodedata);
+        rex_leave_crit_sect(&wms_cache_info_crit_sect);
         return;
     }
     
@@ -7627,7 +7632,7 @@ void OEMWMS_MsgInfoCacheCbExt(const wms_client_message_s_type  *pMsg,
                 plist->nNews = nVMNew;
             }
         }
-        
+        rex_leave_crit_sect(&wms_cache_info_crit_sect);
         return;
     }
 
@@ -7660,6 +7665,7 @@ OEMWMS_MsgInfoCacheCbErr:
         wms_free_listnodedata(pnode);
         sys_free(pnode);
     }
+    rex_leave_crit_sect(&wms_cache_info_crit_sect);
 }
 
 /*==============================================================================

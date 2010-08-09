@@ -1917,11 +1917,7 @@ byte  srch_get_cdma_rssi ( void )
 
   srch_agc_rssi = power;
     /* Make AGC in dBm power units available regionally. */
-#ifdef CUST_EDITION
-  // for ec/io
-  db_value.cdma_ecio = (srch_get_cdma_raw_ecio())/2;
-  db_put(DB_CDMA_ECIO, &db_value); 
-#endif
+
 /*-------------------------------------------------------------------------
   Check for a reasonable Ec/Io (above -18dB) and calculate cdma_rssi.
   If Ec/Io is too low, we will peg cdma_rssi to a low value (125), else

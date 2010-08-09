@@ -925,10 +925,19 @@ boolean PhoneBookCache_IsIninited(void)
     }
 }
 #endif /* FEATURE_RUIM_PHONEBOOK */
+#include "uim.h"
+#include "task.h"
 
 void db_setuiminitmask(byte mask)
 {
+    // 如果已经在初始化状态，则不发送SIGNAL
+    if(db_uiminitmask)
+    {
+        db_uiminitmask = (db_uiminitmask | mask);
+        return;
+    }
     db_uiminitmask = (db_uiminitmask | mask);
+    (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
 }
 
 byte db_getuiminitmask(void)

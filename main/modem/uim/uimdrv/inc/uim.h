@@ -507,8 +507,7 @@ be and how many blocks of data the card can accept */
   /* This signal is set when the Local EFS Log buffer has reached 1/2 full */
 
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
-#define  UIMDATA_INIT_SIG         0x0800
-#define  UIMDATA_INIT_RPT_SIG     0x1000
+#define  UIMDATA_INIT_SIG                                 0x0800
 #endif
 /*Following is a list of reserved signals that should not be used*/
 /*******Reserved Signals**************/

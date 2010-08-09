@@ -2563,7 +2563,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
     // ∑¢ÀÕÃÿ ‚∂Ã–≈
     if (STARTMETHOD_SENDSPECMESSAGE == eStype)
     {
-        int   nRet;
+        int   nRet = SUCCESS;
         wms_client_message_s_type   *pMsg = NULL;
 
         {
@@ -2914,7 +2914,7 @@ void WmsApp_CfgCb(wms_cfg_event_e_type event, wms_cfg_event_info_s_type *pInfo)
         return;
     }
     
-    pInfobuf = MALLOC(sizeof(wms_cfg_event_info_s_type));
+    pInfobuf = sys_malloc(sizeof(wms_cfg_event_info_s_type));
     if (pInfobuf == NULL)
     {
         return;

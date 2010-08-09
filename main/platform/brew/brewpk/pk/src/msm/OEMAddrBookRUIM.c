@@ -2860,7 +2860,7 @@ static void InsertCache_Ext(RUIMAddrBkCache *pItem)
 static void OEMRUIM_report_ext (uim_rpt_type *report)
 {
    MEMCPY(&gCallBackExt, report, sizeof(uim_rpt_type));
-   rex_set_sigs(&uim_tcb, UIMDATA_INIT_RPT_SIG);
+   rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
 }
 
 static void read_adn_rec_ext(byte *pBuf, uint16 wRecID, uint16 wRecSize,
@@ -2883,7 +2883,7 @@ static void read_adn_rec_ext(byte *pBuf, uint16 wRecID, uint16 wRecSize,
    gUimCmdExt.access_uim.data_ptr  = pBuf;
    
    // Read the entry.
-   (void) rex_clr_sigs( &uim_tcb, UIMDATA_INIT_RPT_SIG);
+   (void) rex_clr_sigs( &uim_tcb, UIMDATA_INIT_SIG);
    
    // Send the command.
    uim_cmd (&gUimCmdExt);
@@ -2970,6 +2970,8 @@ boolean  InitRUIMAddrBkCacheCb(void)
         i++;
         
         bWaitReport = FALSE;
+        // 继续下一步
+        (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
         return FALSE;
     }
     
@@ -3091,6 +3093,8 @@ InitRUIMAddrBkCacheCb_Exit:
     }
     else
     {
+        // 继续下一步
+        (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
         return FALSE;
     }
 }

@@ -488,8 +488,8 @@ void wms_ruim_report_ext(uim_rpt_type *report)
 {
   wms_ruim_status_report_ext = report->rpt_status;
 
-  (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_RPT_SIG);
-} 
+  (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
+}
 
 void wms_ruim_access_ext(uim_cmd_type *cmd_ptr)
 {
@@ -510,6 +510,9 @@ void wms_ruim_access_ext(uim_cmd_type *cmd_ptr)
     cmd_ptr->hdr.protocol = UIM_CDMA;
     cmd_ptr->hdr.slot     = UIM_SLOT_AUTOMATIC;
     cmd_ptr->access_uim.hdr.options = UIM_OPTION_ALWAYS_RPT;
+
+    // Read the entry.
+   (void) rex_clr_sigs( &uim_tcb, UIMDATA_INIT_SIG);
     
     /* Send the command to the R-UIM:
     */
@@ -609,7 +612,9 @@ boolean wms_ruim_init_stepbystep(void)
                 
                 MSG_ERROR("has_sms =%d   has_smsp =%d", has_sms, has_smsp, 0);
             }
-            
+
+            // 继续下一步
+            (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
             return FALSE;
         }
     }
@@ -658,6 +663,8 @@ boolean wms_ruim_init_stepbystep(void)
                     if (cfg_s_ptr->ruim_max_slots == 0)
                     {
                         i++;
+                        // 继续下一步
+                        (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
                         return FALSE;
                     }
                     else
@@ -668,6 +675,8 @@ boolean wms_ruim_init_stepbystep(void)
                 else
                 {
                     i++;
+                    // 继续下一步
+                    (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
                     return FALSE;
                 }
             }
@@ -718,12 +727,15 @@ boolean wms_ruim_init_stepbystep(void)
             cfg_s_ptr->ruim_tags[i] = (wms_message_tag_e_type)ruim_data[0];
             
             i++;
-            
+            // 继续下一步
+            (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
             return FALSE;
         }
         
         if (i < cfg_s_ptr->ruim_max_slots)
         {
+            // 继续下一步
+            (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
             return FALSE;
         }
         has_sms = FALSE;
@@ -766,6 +778,8 @@ boolean wms_ruim_init_stepbystep(void)
                 if (wms_ruim_status_report_ext != UIM_PASS)
                 {
                     t++;
+                    // 继续下一步
+                    (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
                     return FALSE;
                 }
                 else
@@ -777,6 +791,8 @@ boolean wms_ruim_init_stepbystep(void)
                     if (cfg_s_ptr->ruim_max_templates == 0)
                     {
                         t++;
+                        // 继续下一步
+                        (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
                         return FALSE;
                     }
                     else
@@ -812,6 +828,8 @@ boolean wms_ruim_init_stepbystep(void)
                 if (wms_ruim_status_report_ext != UIM_PASS)
                 {
                     t++;
+                    // 继续下一步
+                    (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
                     return FALSE;
                 }
                 else
@@ -849,12 +867,15 @@ boolean wms_ruim_init_stepbystep(void)
             }
                              
             t++;
-            
+            // 继续下一步
+            (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
             return FALSE;
         }
         
         if (t < cfg_s_ptr->ruim_max_templates)
         {
+            // 继续下一步
+            (void)rex_set_sigs(&uim_tcb, UIMDATA_INIT_SIG);
             return FALSE;
         }
         has_smsp = FALSE;
