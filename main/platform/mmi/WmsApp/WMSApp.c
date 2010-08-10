@@ -1161,16 +1161,16 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_WMS_MSG_SEND:
 
 			//Add By zzg 2010_08_04
-			DBGPRINTF("***zzg CWMSHandleEvent client_id=%d***", ((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id);
+			MSG_FATAL("***zzg CWMSHandleEvent client_id=%d***", ((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id,0,0);
 			
 			if (eCode == EVT_WMS_MSG_SUBMIT_REPORT)
 			{
-				DBGPRINTF("***zzg CWMSHandleEvent EVT_WMS_MSG_SUBMIT_REPORT!***");
+				MSG_FATAL("***zzg CWMSHandleEvent EVT_WMS_MSG_SUBMIT_REPORT!***",0,0,0);
 			}
 
 			if (eCode == EVT_WMS_MSG_SEND)
 			{
-				DBGPRINTF("***zzg CWMSHandleEvent EVT_WMS_MSG_SEND!***");
+				MSG_FATAL("***zzg CWMSHandleEvent EVT_WMS_MSG_SEND!***",0,0,0);
 			}
 			//Add End
            
@@ -2547,7 +2547,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
 
         pMe->m_nSendItems = 0;
 
-        DBGPRINTF("***zzg STARTMETHOD_SENDSPECMESSAGE***");
+        MSG_FATAL("***zzg STARTMETHOD_SENDSPECMESSAGE***",0,0,0);
             
         //Add By zzg 2010_07_20
 		if (NULL == pwstrText)      
@@ -2556,7 +2556,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
 
 	        if (NULL == pMsg)
 	        {
-	            DBGPRINTF("***zzg STARTMETHOD_SENDSPECMESSAGE NULL == pMsg***");
+	            MSG_FATAL("***zzg STARTMETHOD_SENDSPECMESSAGE NULL == pMsg***",0,0,0);
 	            return EFAILED;
 	        }
 			
@@ -2564,12 +2564,12 @@ static int CWmsApp_MessageService(IWmsApp *p,
 			
 	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	
 	        {	        	
-	            DBGPRINTF("***zzg wms_msg_send STARTMETHOD_SENDSPECMESSAGE WMS_OK_S***");
+	            MSG_FATAL("***zzg wms_msg_send STARTMETHOD_SENDSPECMESSAGE WMS_OK_S***",0,0,0);
 	            nRet = SUCCESS;
 	        }
 	        else
 	        {	
-	            DBGPRINTF("***zzg wms_msg_send STARTMETHOD_SENDSPECMESSAGE EFAILED***");
+	            MSG_FATAL("***zzg wms_msg_send STARTMETHOD_SENDSPECMESSAGE EFAILED***",0,0,0);
 	            nRet = EFAILED;
 	        }
 #else
@@ -3001,14 +3001,14 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
         return;
     }
 
-	DBGPRINTF("***zzg WmsApp_MsgCb event=%d***", event);
+	MSG_FATAL("***zzg WmsApp_MsgCb event=%d***", event,0,0);
         
     (void)MEMCPY(pInfobuf, pInfo, sizeof(wms_msg_event_info_s_type));
     switch (event)
     {
         case WMS_MSG_EVENT_SEND:			
-			DBGPRINTF("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SEND***");
-            DBGPRINTF("***zzg WmsApp_MsgCb report_status=%d***", pInfobuf->submit_report_info.report_status);
+			MSG_FATAL("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SEND***",0,0,0);
+            MSG_FATAL("***zzg WmsApp_MsgCb report_status=%d***", pInfobuf->submit_report_info.report_status,0,0);
             
             if ((pInfobuf->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)            
 				&& (pInfobuf->submit_report_info.report_status != WMS_RPT_OK))
@@ -3063,8 +3063,8 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
             
         case WMS_MSG_EVENT_SUBMIT_REPORT:
             
-			DBGPRINTF("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SUBMIT_REPORT***");
-            DBGPRINTF("***zzg WmsApp_MsgCb len=%d***", pInfo->submit_report_info.alpha_id.len);
+			MSG_FATAL("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SUBMIT_REPORT***",0,0,0);
+            MSG_FATAL("***zzg WmsApp_MsgCb len=%d***", pInfo->submit_report_info.alpha_id.len,0);
             
             pInfobuf->submit_report_info.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
             pInfobuf->submit_report_info.alpha_id.len = pInfo->submit_report_info.alpha_id.len;
@@ -4586,7 +4586,7 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
             break;
     }
    
-    DBGPRINTF("***zzg m_idxCurSend=%d, m_nSendItems=%d***", pMe->m_idxCurSend, pMe->m_nSendItems); 	 
+    MSG_FATAL("***zzg m_idxCurSend=%d, m_nSendItems=%d***", pMe->m_idxCurSend, pMe->m_nSendItems,0); 	 
     
 	if (pRptInfo->report_status != WMS_RPT_OK)
 	{
