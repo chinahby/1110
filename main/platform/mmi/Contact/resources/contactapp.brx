@@ -308,7 +308,7 @@
 		<Text>Move multiple</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_CONTACTS_MANAGEMENT">
-		<Text>Contacts management</Text>
+		<Text>Management</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_MOVE_CONTACTS">
 		<Text>Move contacts</Text>

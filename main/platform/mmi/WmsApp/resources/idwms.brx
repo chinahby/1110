@@ -437,7 +437,7 @@
 		<Text>Cara Kirim</Text>
 	</STRING>
 	<STRING Id="152" Name="IDS_MSGMANAGEMENT">
-		<Text>Pesan manajemen</Text>
+		<Text>Manajemen</Text>
 	</STRING>
 	<STRING Id="153" Name="IDS_COPYINBOX">
 		<Text>Salin kotak masuk</Text>

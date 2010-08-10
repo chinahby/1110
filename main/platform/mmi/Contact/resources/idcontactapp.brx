@@ -308,7 +308,7 @@
 		<Text>Pindah beberapa</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_CONTACTS_MANAGEMENT">
-		<Text>Kontak manajemen</Text>
+		<Text>Manajemen</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_MOVE_CONTACTS">
 		<Text>Pindahkan kontak</Text>

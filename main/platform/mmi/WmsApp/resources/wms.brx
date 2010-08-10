@@ -437,7 +437,7 @@
 		<Text>Send mode</Text>
 	</STRING>
 	<STRING Id="152" Name="IDS_MSGMANAGEMENT">
-		<Text>Messages management</Text>
+		<Text>Management</Text>
 	</STRING>
 	<STRING Id="153" Name="IDS_COPYINBOX">
 		<Text>Copy inbox</Text>
