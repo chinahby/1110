@@ -840,18 +840,13 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #if FEATURE_FMRADIO_SUPPORT_BACKGROUND 			
 			if (!pMe->runOnBackground )
 #endif                
-			//(fm_get_mute_flag())//如果是静音，则恢复声音
-			{
-				if (HS_HEADSET_ON())
-				{
-					fm_mute(FALSE);
-				}
-			}			
-			//Add End
 			
 #if !defined( AEE_SIMULATOR)
             FmRadio_PowerUp( pMe);
-			//fm_mute(FALSE);		//Del By zzg 2010_07_18
+			if (HS_HEADSET_ON())
+			{
+				fm_mute(FALSE);
+			}		//Del By zzg 2010_07_18
 			
 #endif//#if !defined( AEE_SIMULATOR)
 #if FEATURE_FMRADIO_SUPPORT_BACKGROUND 
