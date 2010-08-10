@@ -716,6 +716,13 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
         CWmsApp_FreeAppData(pMe);
         return EFAILED;
     }
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                            AEECLSID_RUIM,
+                                            (void **)&pMe->m_pIRUIM))
+	{
+		CWmsApp_FreeAppData(pMe);
+		return EFAILED;
+	}
     CALLBACK_Init(&pMe->m_callback, 
                   (PFNNOTIFY) WmsApp_wmscommandreport,
                   (void*)pMe);
@@ -824,6 +831,11 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
         IBACKLIGHT_Release(pMe->m_pBacklight);
         pMe->m_pBacklight=NULL;
     }
+	if (pMe->m_pIRUIM != NULL)
+	{
+	    IRUIM_Release(pMe->m_pIRUIM);
+	    pMe->m_pIRUIM = NULL;
+	}
     FREEIF(pMe->m_msSend.m_szMessage);
 }
 

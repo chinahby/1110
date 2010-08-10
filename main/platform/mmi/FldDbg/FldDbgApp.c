@@ -8117,6 +8117,7 @@ static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
                         }
                     }     
 		            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
+					ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
 					ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  	
 	   	  }
@@ -8242,6 +8243,7 @@ static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
                             }
                         }     
 			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
+						ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
 						ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  
 				DBGPRINTF("CFieldDebug_UserNameMenuHandleEvent FORM");
@@ -8369,6 +8371,7 @@ static boolean CFieldDebug_UserPasswordMenuHandleEvent(CFieldDebug *pme,
                             }
                         }     
 			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
+						ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
 						ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  
 				
@@ -8481,6 +8484,7 @@ static boolean CFieldDebug_PrimaryServerMenuHandleEvent(CFieldDebug *pme,
                             }
                         }     
 			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
+						ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
 						ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  
 	   	  }
@@ -8592,6 +8596,7 @@ static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
                             }
                         }     
 			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
+						ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
 						ITEXTCTL_SetCursorPos(pIText, n+1);
 			    }  
 	   	  }
@@ -8796,6 +8801,7 @@ static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
                     }
                 }     
                 ITEXTCTL_SetMaxSize ( pIText, 1);
+				ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
                 (void)ITEXTCTL_SetText(pIText,string,-1);
                 ITEXTCTL_SetCursorPos(pIText, n+1);
             }  
@@ -8958,6 +8964,7 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
             n = WSTRLEN(string);
             ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
             ITEXTCTL_SetMaxSize ( pIText, 30);
+			ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
             (void)ITEXTCTL_SetText(pIText,string,-1);
             ITEXTCTL_SetCursorPos(pIText, n+1);
             {
@@ -9130,6 +9137,7 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
             n = WSTRLEN(string);
             ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
             ITEXTCTL_SetMaxSize ( pIText, 30);
+			ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
             (void)ITEXTCTL_SetText(pIText,string,-1);
             ITEXTCTL_SetCursorPos(pIText, n+1);
             {
@@ -9301,6 +9309,7 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
             n = WSTRLEN(string);
             ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
             ITEXTCTL_SetMaxSize ( pIText, 30);
+			ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
             (void)ITEXTCTL_SetText(pIText,string,-1);
             ITEXTCTL_SetCursorPos(pIText, n+1);
             {

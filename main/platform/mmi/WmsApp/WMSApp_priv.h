@@ -70,6 +70,7 @@
 #include "oemcfgi.h"
 #include "AEESound.h"
 #include "AEE_OEM.h"
+#include "AEERUIM.h"
 
 #ifdef CUST_EDITION  /*add by miaoxiaoming*/
 #include "OEMSVC.h"
@@ -491,6 +492,8 @@ typedef enum WMSAPPState
     WMSST_RESENDCONFIRM,
 	//用于新短息提示消息框add by yangdecai
 	WMSST_WMSNEW,
+	//用于弹出消息add by yangdecai
+	WMSST_POPMSG,
     
     // 退出短信应用
     WMSST_EXIT
@@ -771,6 +774,7 @@ typedef struct WmsApp
     ISound                          *m_pSound;
 	boolean                         m_bisSendSecond;           //发送失败是否已经重发
 	boolean                         m_bActive;                 //add by yangdecai 2010-07-28
+	IRUIM                           *m_pIRUIM;  
 } WmsApp;
 
 /*==============================================================================

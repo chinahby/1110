@@ -124,6 +124,7 @@ static void WmsApp_PlaySendingAni(void *pUser);
 static AECHAR * FormatMessageForDisplay(WmsApp  *pMe, WMSMessageStruct *pMessage);
 
 static void DialogTimeoutCallback(void *pUser);
+static void WMSApp_DialogTimeout(void *pme);
 
 static boolean IDD_MAIN_Handler(void        *pUser, 
                                 AEEEvent    eCode, 
@@ -401,6 +402,13 @@ static boolean  IDD_WMSNEWMSG_Handler(void *pUser,
                                 		 AEEEvent   eCode,
                                  		 uint16     wParam,
                                          uint32     dwParam);
+
+//对话框IDD_POPMESAGE事件处理函数
+static boolean IDD_POPMSG_Handler(void *pUser,
+									 AEEEvent eCode,
+									 uint16 wParam,
+									 uint32 dwParam);  
+
 
 /*==============================================================================
 
@@ -688,6 +696,10 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
 		case IDD_WMSNEWMSG:
             INIT_STATIC
 			pMe->m_pDialogHandler = IDD_WMSNEWMSG_Handler;
+			break;
+		case IDD_NOPOPMSG:
+			INIT_STATIC
+			pMe->m_pDialogHandler = IDD_POPMSG_Handler;
 			break;
         default:
             pMe->m_pDialogHandler = NULL;
@@ -13848,5 +13860,152 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 		default:
             break;
 		}
+}
+
+/*==============================================================================
+函数:
+    IDD_POPMSG_Handler
+
+说明:
+    CoreApp 对话框 IDD_POPMSG 事件处理函数。
+
+参数:
+    pMe [in]:       指向Core Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]:     事件代码。
+    wParam:         事件参数
+    dwParam [in]:   与wParam关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+
+static boolean IDD_POPMSG_Handler(void *pUser,AEEEvent eCode,uint16 wParam,uint32 dwParam)
+{
+	static IStatic * pStatic = NULL;       
+    WmsApp *pMe = (WmsApp *)pUser;
+#if defined(AEE_STATIC)
+    ASSERT(pMe != NULL);
+#endif
+    MSG_FATAL("IDD_POPMSG_Handler Start",0,0,0); 
+    if (NULL == pStatic)
+    {
+         AEERect rect = {0};
+         if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                                  AEECLSID_STATIC,
+                                                  (void **)&pStatic))
+         
+         {
+             return FALSE;
+             MSG_FATAL("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
+         }        
+         ISTATIC_SetRect(pStatic, &rect);  
+    }
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT: 
+            return TRUE;
+        
+        case EVT_DIALOG_START:     
+			
+																										
+            // For redraw the dialog
+            (void)ISHELL_PostEvent( pMe->m_pShell,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0); 
+            return TRUE;                                                                       
+            
+        case EVT_USER_REDRAW:
+            {
+                PromptMsg_Param_type PromptMsg={0};  
+                AECHAR  wstrText[128];  
+                
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                                        AEE_WMSAPPRES_LANGFILE,
+                                        IDS_NO_CARD,
+                                        wstrText,
+                                        sizeof(wstrText)); 
+                PromptMsg.ePMsgType = MESSAGE_INFORMATIVE;
+                PromptMsg.pwszMsg = wstrText;
+                DrawPromptMessage(pMe->m_pDisplay, pStatic, &PromptMsg);                         
+            }   
+			(void) ISHELL_SetTimer( pMe->m_pShell,
+                            1000,
+                            WMSApp_DialogTimeout,
+                            pMe );  
+            IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+            return TRUE;
+            
+        case EVT_DIALOG_END:
+             ISTATIC_Release(pStatic); 
+             pStatic = NULL;                 
+            
+            return TRUE;
+            
+        case EVT_KEY:
+            switch (wParam)
+            {
+                case AVK_INFO:
+                case AVK_CLR:
+                case AVK_SELECT:
+                    CLOSE_DIALOG(DLGRET_MSGBOX_OK);
+                    return TRUE;
+                    
+                default:
+                    break;                    
+            }
+            return TRUE;
+			
+		case EVT_USER:
+			MSG_FATAL("EVT_USER::::::::::::::::1111111111111111111111111111111111111111111",0,0,0);
+			CLOSE_DIALOG(DLGRET_MSGBOX_OK);
+			break;
+        
+        case EVT_COMMAND:
+            break;
+                     
+            
+        default:
+            break;            
+    }
+    
+    return FALSE;
+}
+
+/*==============================================================================
+函数: 
+       WMSApp_DialogTimeout
+       
+说明: 
+       定时器回调函数。主要用于自动关闭消息对话框。
+       
+参数: 
+       pme [in]：void *类型指针，暗指CWMS结构指针。
+       
+返回值:
+       无。
+       
+备注:
+       
+==============================================================================*/
+static void WMSApp_DialogTimeout(void *pme)
+{
+    WmsApp *pMe = (WmsApp *)pme;
+    if (NULL == pMe)
+    {
+        return;
+    }
+
+    (void) ISHELL_PostEvent( pMe->m_pShell,
+                            AEECLSID_WMSAPP,
+                            EVT_USER,
+                            0,
+                            0);
 }
 

@@ -219,6 +219,7 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe);
 
 //WMSST_WMSNEW状态处理函数add by yangdecai
 static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe);
+static NextFSMAction WMSST_WMSPOP_Hander(WmsApp *pMe);
 
 /*==============================================================================
 
@@ -450,6 +451,9 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 
 	    case WMSST_WMSNEW:
 			return WMSST_WMSNEW_Hander(pMe);
+
+		case WMSST_POPMSG:
+			return WMSST_WMSPOP_Hander(pMe);
             
         case WMSST_EXIT:
             return WMSST_EXIT_Handler(pMe);
@@ -1980,7 +1984,15 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
             }
             
             pMe->m_eCreateWMSType = SEND_MSG_RESEND;
-            MOVE_TO_STATE(WMSST_SENDING)
+			// 检查卡是否插入modi by yangdecai 2010-08-10
+		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+		    {
+            	MOVE_TO_STATE(WMSST_SENDING)
+		    }
+			else
+			{
+				MOVE_TO_STATE(WMSST_POPMSG)
+			}
             return NFSMACTION_CONTINUE;
 #endif
         case DLGRET_EDIT:          // DLGRET_FORWARD
@@ -2558,7 +2570,15 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                     }
                 }
                 
-                MOVE_TO_STATE(WMSST_SENDING)
+                // 检查卡是否插入modi by yangdecai 2010-08-10
+			    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+			    {
+	            	MOVE_TO_STATE(WMSST_SENDING)
+			    }
+				else
+				{
+					MOVE_TO_STATE(WMSST_POPMSG)
+				}
             }
 #else
 //以下为原来sendopt的操作，全部移动到此处，由于sendopt放在了写短信的option菜单中 
@@ -2711,7 +2731,15 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                 }
                 else
                 {
-                    MOVE_TO_STATE(WMSST_SENDING)
+                    // 检查卡是否插入modi by yangdecai 2010-08-10
+				    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+				    {
+		            	MOVE_TO_STATE(WMSST_SENDING)
+				    }
+					else
+					{
+						MOVE_TO_STATE(WMSST_POPMSG)
+					}
                 }
             }
             else
@@ -3544,7 +3572,15 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
             }
             
             pMe->m_eCreateWMSType = SEND_MSG_RESEND;
-            MOVE_TO_STATE(WMSST_SENDING)
+            // 检查卡是否插入modi by yangdecai 2010-08-10
+		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+		    {
+            	MOVE_TO_STATE(WMSST_SENDING)
+		    }
+			else
+			{
+				MOVE_TO_STATE(WMSST_POPMSG)
+			}
             return NFSMACTION_CONTINUE;
 
             
@@ -4580,7 +4616,15 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
             }
             
             pMe->m_eCreateWMSType = SEND_MSG_RESERVE;
-            MOVE_TO_STATE(WMSST_SENDING)
+            // 检查卡是否插入modi by yangdecai 2010-08-10
+		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+		    {
+            	MOVE_TO_STATE(WMSST_SENDING)
+		    }
+			else
+			{
+				MOVE_TO_STATE(WMSST_POPMSG)
+			}
             return NFSMACTION_CONTINUE;  
             
         case DLGRET_DELETE:
@@ -4724,7 +4768,15 @@ static NextFSMAction WMSST_RESERVEDMSGALERT_Handler(WmsApp *pMe)
             pMe->m_eCreateWMSType = SEND_MSG_RESERVE;
             
             // 状态迁至发送界面
-            MOVE_TO_STATE(WMSST_SENDING)
+            // 检查卡是否插入modi by yangdecai 2010-08-10
+		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+		    {
+            	MOVE_TO_STATE(WMSST_SENDING)
+		    }
+			else
+			{
+				MOVE_TO_STATE(WMSST_POPMSG)
+			}
             return NFSMACTION_CONTINUE;
             
         default:
@@ -5614,7 +5666,15 @@ static NextFSMAction WMSST_CONTINUESEND_QUERY_Handler(WmsApp *pMe)
 
         case DLGRET_OK:
             pMe->m_bNeedContinueSend = FALSE;
-            MOVE_TO_STATE(WMSST_SENDING)
+            // 检查卡是否插入modi by yangdecai 2010-08-10
+		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+		    {
+            	MOVE_TO_STATE(WMSST_SENDING)
+		    }
+			else
+			{
+				MOVE_TO_STATE(WMSST_POPMSG)
+			}
             return NFSMACTION_CONTINUE;
             
         default:
@@ -6006,7 +6066,15 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe)
 				pMe->m_eCreateWMSType = SEND_MSG_RESEND;
 				pMe->m_eDlgReturn = DLGRET_CREATE;
 				
-				MOVE_TO_STATE(WMSST_SENDING)//WMSST_WRITEMSG
+				// 检查卡是否插入modi by yangdecai 2010-08-10
+			    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+			    {
+	            	MOVE_TO_STATE(WMSST_SENDING)
+			    }
+				else
+				{
+					MOVE_TO_STATE(WMSST_POPMSG)
+				}
 			}
 			else
 			{
@@ -6063,6 +6131,31 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe)
     return NFSMACTION_WAIT;
 }
 
+static NextFSMAction WMSST_WMSPOP_Hander(WmsApp * pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("COREST_SMSTIP_Handler Start",0,0,0);
+	switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+            WmsApp_ShowDialog(pMe, IDD_NOPOPMSG);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_MSGBOX_OK:
+			MSG_FATAL("COREST_SMSTIP_Handler s",0,0,0);
+            MOVE_TO_STATE(pMe->m_prevState);
+           
+            return NFSMACTION_CONTINUE;
+        
+        default:
+            break;
+    }
+    MSG_FATAL("COREST_SMSTIP_Handler End",0,0,0);
+    return NFSMACTION_WAIT;
+}
 
 
 //add by yangdecai end 

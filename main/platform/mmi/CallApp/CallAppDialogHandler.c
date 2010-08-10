@@ -2907,9 +2907,9 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             {
                 case AVK_CLR:
                     //ICM_EndAllCalls(pMe->m_pICM);
-                    
-                    pMe->m_bHandFree = !pMe->m_bHandFree;
-                    CallApp_SetupCallAudio(pMe);
+                    //modi by yangdecai
+                    // pMe->m_bHandFree = !pMe->m_bHandFree;
+                    //CallApp_SetupCallAudio(pMe);
                     ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
 					if (HS_HEADSET_ON())
 					{

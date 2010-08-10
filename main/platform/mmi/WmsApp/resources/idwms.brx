@@ -526,6 +526,9 @@
 	<String Id="181" Name="IDS_VMAILTIPS">
 		<Text>Pesan Nada baru:%d</Text>
 	</String>
+	<String Id="182" Name="IDS_NO_CARD">
+		<Text>Tidak ada Kartu</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -844,6 +847,10 @@
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6045" Name="IDD_WMSNEWMSG" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6046" Name="IDD_NOPOPMSG" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
