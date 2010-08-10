@@ -3064,7 +3064,7 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
         case WMS_MSG_EVENT_SUBMIT_REPORT:
             
 			MSG_FATAL("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SUBMIT_REPORT***",0,0,0);
-            MSG_FATAL("***zzg WmsApp_MsgCb len=%d***", pInfo->submit_report_info.alpha_id.len,0);
+            MSG_FATAL("***zzg WmsApp_MsgCb len=%d***", pInfo->submit_report_info.alpha_id.len,0,0);
             
             pInfobuf->submit_report_info.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
             pInfobuf->submit_report_info.alpha_id.len = pInfo->submit_report_info.alpha_id.len;
