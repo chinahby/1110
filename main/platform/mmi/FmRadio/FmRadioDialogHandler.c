@@ -980,8 +980,10 @@ static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId)
 		pMe->cfg.tuningMode = IMENUCTL_GetSel( pMe->m_pMenu);
         hideTuningModeSelectMenu( pMe);
     }
-    else if( itemId == IDS_FMRADIO_OPTION_MENU_QUIT ||
-             itemId == IDS_FMRADIO_OPTION_MENU_PLAY_ON_BACKGROUND
+    else if( itemId == IDS_FMRADIO_OPTION_MENU_QUIT
+    #if FEATURE_FMRADIO_SUPPORT_BACKGROUND
+    		|| itemId == IDS_FMRADIO_OPTION_MENU_PLAY_ON_BACKGROUND
+    #endif
     )
     {
         hideMenu( pMe);
@@ -1388,11 +1390,17 @@ static void popOptionMenu( CFmRadio *pMe)
 						IDS_FMRADIO_OPTION_MENU_LIST,
 						IDS_SAVE,
 	#endif
+	#if FEATURE_FMRADIO_SUPPORT_BACKGROUND
 						IDS_FMRADIO_OPTION_MENU_PLAY_ON_BACKGROUND
-					};
+	#endif
+						};
 
 #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND
 	for( i = 0; i < 4; i ++)
+#else
+	for( i = 0; i < 3; i ++)
+#endif
 	{
 
 #if defined( FEATURE_CARRIER_THAILAND_HUTCH)
