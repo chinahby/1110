@@ -758,6 +758,7 @@ static void FmRadio_CheckRefuse( CFmRadio* pMe)
 	DBGPRINTF("***zzg FmRadio headsetPresent=%d***", headsetPresent);
 	
 #endif
+#if 0 //当有来电时，会自动挂起，不需要做其他处理
     db_get( DB_IN_USE, &dbItemValue);
 
     pMe->refuseReason = FM_RADIO_REFUSE_REASON_NOT_REFUSE;
@@ -765,8 +766,9 @@ static void FmRadio_CheckRefuse( CFmRadio* pMe)
     {
         pMe->refuseReason = FM_RADIO_REFUSE_REASON_VOICE_CALL_CONNECTED;
     }
+#endif    
 #if !FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY
-    else if( !headsetPresent)
+    if( !headsetPresent)
     {
         pMe->refuseReason = FM_RADIO_REFUSE_REASON_NO_HEADSET;
     }
