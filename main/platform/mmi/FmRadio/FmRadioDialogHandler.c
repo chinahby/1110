@@ -1625,7 +1625,18 @@ __refreshChannelListCB_complete:
 __refreshChannelListCB_no_channel_found:
         pMe->globalSearching = FALSE;
         stopDrawRefreshListPrompt( pMe);
-        setChannelTo( pMe, pMe->cfg.channel);
+        {
+            sChanInfo *sChannelNode = NULL;
+            sChannelNode = FmRadio_ChanList_GetByIndex(pMe, FmRadio_GetChannelTotal()-1);
+            if(sChannelNode != NULL)
+            {
+                setChannelTo( pMe, sChannelNode->wChannel);
+            }
+            else
+            {
+                setChannelTo( pMe, 0);
+            }
+        }
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
     }
 #endif//#if !defined( AEE_SIMULATOR)
