@@ -1313,11 +1313,23 @@ static NextFSMAction Handler_STATE_OPTS(CContApp *pMe)
                 if(IS_MAX_REC(pMe->m_pAddrRUIM))
                 {
                     pMe->m_eMsgType = MESSAGE_WARNNING;
-                    if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_FULL_UIM))
-                    {
-                        MOVE_TO_STATE(STATE_EXIT);
-                        return NFSMACTION_CONTINUE;
-                    }
+                    // 检查卡是否插入
+	        		if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+	        		{
+		                if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_FULL_UIM))
+		                {
+		                    MOVE_TO_STATE(STATE_EXIT);
+		                    return NFSMACTION_CONTINUE;
+		                }
+	        		}
+					else
+					{
+						if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_NO_CARD))
+		                {
+		                    MOVE_TO_STATE(STATE_EXIT);
+		                    return NFSMACTION_CONTINUE;
+		                }
+					}
                     return NFSMACTION_WAIT;
                 }
                 
@@ -2171,11 +2183,23 @@ static NextFSMAction Handler_STATE_FIND_OPTS(CContApp *pMe)
                 if(IS_MAX_REC(pMe->m_pAddrRUIM))
                 {
                     pMe->m_eMsgType = MESSAGE_WARNNING;
-                    if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_FULL_UIM))
-                    {
-                        MOVE_TO_STATE(STATE_EXIT);
-                        return NFSMACTION_CONTINUE;
-                    }
+                    // 检查卡是否插入
+	        		if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+	        		{
+		                if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_FULL_UIM))
+		                {
+		                    MOVE_TO_STATE(STATE_EXIT);
+		                    return NFSMACTION_CONTINUE;
+		                }
+	        		}
+					else
+					{
+						if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_NO_CARD))
+		                {
+		                    MOVE_TO_STATE(STATE_EXIT);
+		                    return NFSMACTION_CONTINUE;
+		                }
+					}
                     return NFSMACTION_WAIT;
                 }
                 
@@ -2852,11 +2876,23 @@ static NextFSMAction Handler_STATE_GROUPVIEW_OPTS(CContApp *pMe)
                 if(IS_MAX_REC(pMe->m_pAddrRUIM))
                 {
                     pMe->m_eMsgType = MESSAGE_WARNNING;
-                    if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_FULL_UIM))
-                    {
-                        MOVE_TO_STATE(STATE_EXIT);
-                        return NFSMACTION_CONTINUE;
-                    }
+                    // 检查卡是否插入
+		    		if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+		    		{
+		                if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_FULL_UIM))
+		                {
+		                    MOVE_TO_STATE(STATE_EXIT);
+		                    return NFSMACTION_CONTINUE;
+		                }
+		    		}
+					else
+					{
+						if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_NO_CARD))
+		                {
+		                    MOVE_TO_STATE(STATE_EXIT);
+		                    return NFSMACTION_CONTINUE;
+		                }
+					}
                     return NFSMACTION_WAIT;
                 }
                 
@@ -4496,11 +4532,23 @@ static NextFSMAction Handler_STATE_COPYMOVE(CContApp *pMe)
                 && IS_MAX_REC(pMe->m_pAddrRUIM))
             {
                 pMe->m_eMsgType = MESSAGE_WARNNING;
-                if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_FULL_UIM))
-                {
-                    MOVE_TO_STATE(STATE_EXIT);
-                    return NFSMACTION_CONTINUE;
-                }
+				// 检查卡是否插入
+        		if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+        		{
+	                if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_FULL_UIM))
+	                {
+	                    MOVE_TO_STATE(STATE_EXIT);
+	                    return NFSMACTION_CONTINUE;
+	                }
+        		}
+				else
+				{
+					if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_NO_CARD))
+	                {
+	                    MOVE_TO_STATE(STATE_EXIT);
+	                    return NFSMACTION_CONTINUE;
+	                }
+				}
                 return NFSMACTION_WAIT;
             }
             

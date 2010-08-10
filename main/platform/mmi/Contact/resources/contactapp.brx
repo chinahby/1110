@@ -454,6 +454,9 @@
 	<String Id="1086" Name="IDS_NO_UIM_CARD">
 		<Text>No UIM card,save to phone</Text>
 	</String>
+	<String Id="1087" Name="IDS_NO_CARD">
+		<Text>No UIM card</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
