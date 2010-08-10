@@ -498,7 +498,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 
 		//Add By zzg 2010_07_23
 		case BTBAR_VIEWMORE_BACK:
+#if defined(FEATURE_DISP_128X128)
+            nResID_L = IDS_MORE;
+#else    
 			nResID_L = IDS_VIEWMORE;
+#endif
 			nResID_M = IDS_OK;
 			nResID_R = IDS_BACK;
 			break;
@@ -2656,7 +2660,11 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 
 		//Add By zzg 2010_07_23
 		case BTBAR_VIEWMORE_BACK:
+#if defined(FEATURE_DISP_128X128)
+            nResID_L = IDS_MORE;
+#else               
 			nResID_L = IDS_VIEWMORE;
+#endif
 			nResID_M = IDS_OK;   ////add by yangdecai 2010-08-04
 			nResID_R = IDS_BACK;
 			break;
