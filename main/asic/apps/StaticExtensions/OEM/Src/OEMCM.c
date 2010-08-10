@@ -6886,7 +6886,7 @@ static void OEMCM_HandleCallAlphaUpdate(cm_mm_call_info_s_type *call_info, AEECM
   OEMCM_CallNotifyInitDefault(notify_info, call_info->call_id, event);
 
   (void) WSTRLCPY(notify_info->event_data.call.alpha, core_call_info->alpha,
-           sizeof(notify_info->event_data.call.alpha));
+           sizeof(notify_info->event_data.call.alpha)/sizeof(AECHAR));// Gemsea sizeof IN AECHAR
 
   notify_info->event_data.call.call_info.is_last_cdma_info_rec = 
                              call_info->mode_info.info.cdma_call.is_last_cdma_info_rec; // Gemsea Add
@@ -6977,7 +6977,7 @@ static void OEMCM_HandleCallExtDisplay(cm_mm_call_info_s_type *call_info, AEECME
   else
   {
     (void) WSTRLCPY(notify_info->event_data.call.alpha, core_call_info->alpha,
-                    sizeof(notify_info->event_data.call.alpha));
+                    sizeof(notify_info->event_data.call.alpha)/sizeof(AECHAR));// Gemsea sizeof IN AECHAR
   }
   
   notify_info->event_data.call.call_info.is_last_cdma_info_rec = 
@@ -7107,7 +7107,7 @@ static void OEMCM_HandleCallOrig(cm_mm_call_info_s_type *call_info,
   OEMCM_CallNotifyInitDefault(notify_info, call_info->call_id, event);
 
   (void) WSTRLCPY(notify_info->event_data.call.alpha, core_call_info->alpha,
-           sizeof(notify_info->event_data.call.alpha));
+           sizeof(notify_info->event_data.call.alpha)/sizeof(AECHAR));// Gemsea sizeof IN AECHAR
 
   OEMCM_CopyNumToAEECMNum(&call_info->num,
                           &notify_info->event_data.call.number);
@@ -7230,6 +7230,26 @@ static void OEMCM_HandleCallEnd(cm_mm_call_info_s_type *call_info, AEECMEvent ev
 
   call_id = call_info->call_id;
   core_call_info = &(ICMCoreObj->m_call_info[call_id]);
+  
+#ifdef CUST_EDITION
+  if (call_info->call_type == CM_CALL_TYPE_OTAPA)
+  {
+    MSG_MED("CM_CALL_TYPE_OTAPA release and return", 0, 0, 0);
+    core_call_info->call_state = AEECM_CALL_STATE_ENDED;
+    OEMCM_FREE(notify_info);
+    ICMCoreObj->m_call_owners[call_id] = NULL;
+    return;
+  }
+  
+  if (call_info->call_type == CM_CALL_TYPE_SMS)
+  {
+    MSG_MED("CM_CALL_TYPE_SMS release and return", 0, 0, 0);
+    core_call_info->call_state = AEECM_CALL_STATE_ENDED;
+    OEMCM_FREE(notify_info);
+    ICMCoreObj->m_call_owners[call_id] = NULL;
+    return;
+  }
+#endif
 
   if (core_call_info->call_state == AEECM_CALL_STATE_ENDED) {
     OEMCM_FREE(notify_info);

@@ -603,7 +603,7 @@ static int OEMRUIMAddr_RecordGetByID(uint16 wrecID, AEEAddrCat *pcat,
          return(EFAILED);
       }
        
-      WSTRLCPY(pFields->pBuffer, pCur->szName, pFields->wDataLen);
+      WSTRLCPY(pFields->pBuffer, pCur->szName, pFields->wDataLen/sizeof(AECHAR)); // Gemsea:Size IN AECHAR
       
       *pnItemCount +=1;
       pFields++;
@@ -623,7 +623,7 @@ static int OEMRUIMAddr_RecordGetByID(uint16 wrecID, AEEAddrCat *pcat,
          return(EFAILED);
       }
        
-      WSTRLCPY(pFields->pBuffer, pCur->szNumber, pFields->wDataLen);
+      WSTRLCPY(pFields->pBuffer, pCur->szNumber, pFields->wDataLen/sizeof(AECHAR));// Gemsea:Size IN AECHAR
       
       *pnItemCount += 1;
       pFields++;
@@ -3315,7 +3315,7 @@ byte*  AT_RUIMRecordGetOneNumber(word wpbID)
          return(NULL);
       }
        
-      WSTRLCPY(pBuf, pCur->szNumber, len);
+      WSTRLCPY(pBuf, pCur->szNumber, len/sizeof(AECHAR)); // Gemsea sizeof IN AECHAR
    }
 
    return((byte*)pBuf); 
@@ -3414,7 +3414,7 @@ uint16 AT_OEMRUIMAddr_RecordAdd(const AECHAR *szName,const AECHAR *szNumber)
       return(AEE_ADDR_RECID_NULL);
    } 
    pBufName = pAddrField->pBuffer;
-   WSTRLCPY(pAddrField->pBuffer, szName, pAddrField->wDataLen);
+   WSTRLCPY(pAddrField->pBuffer, szName, pAddrField->wDataLen/sizeof(AECHAR));// Gemsea sizeof IN AECHAR
    pAddrField++;
    
 
@@ -3428,7 +3428,7 @@ uint16 AT_OEMRUIMAddr_RecordAdd(const AECHAR *szName,const AECHAR *szNumber)
       return(AEE_ADDR_RECID_NULL);
    } 
    pBufNumber= pAddrField->pBuffer;
-   WSTRLCPY(pAddrField->pBuffer, szNumber, pAddrField->wDataLen);
+   WSTRLCPY(pAddrField->pBuffer, szNumber, pAddrField->wDataLen/sizeof(AECHAR));// Gemsea sizeof IN AECHAR
 
    pBuf = AddressToRawData(cat, pAddrField0, nItemCount, &Err, &wRecSize);
    if(!pBuf)

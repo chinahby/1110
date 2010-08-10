@@ -9480,7 +9480,7 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
     AECHAR wbf[MAX_SIZE_DIALER_TEXT] = {0}; 
     AECHAR *p_str = NULL;
 
-    WSTRLCPY(wbf,dialStr,sizeof(wbf));
+    WSTRLCPY(wbf,dialStr,sizeof(wbf)/sizeof(AECHAR)); //Gemsea:Size In AECHAR
     p_str = wbf;
 
     SETAEERECT(&rect,

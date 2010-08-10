@@ -3918,7 +3918,7 @@ static void OEMCM_HandleCallAlphaUpdate(cm_mm_call_info_s_type *call_info, AEECM
   OEMCM_CallNotifyInitDefault(notify_info, call_id, call_info->sys_mode, event);
 
   (void) WSTRLCPY(notify_info->event_data.call.alpha, core_call_info->alpha,
-           sizeof(notify_info->event_data.call.alpha));
+           sizeof(notify_info->event_data.call.alpha)/sizeof(AECHAR));// Gemsea sizeof IN AECHAR
 
   notify_info->event_data.call.disp_type = AEECM_DISP_NORMAL;
 
@@ -4002,7 +4002,7 @@ static void OEMCM_HandleCallExtDisplay(cm_mm_call_info_s_type *call_info, AEECME
 #else
 
   (void) WSTRLCPY(notify_info->event_data.call.alpha, core_call_info->alpha,
-           sizeof(notify_info->event_data.call.alpha));
+           sizeof(notify_info->event_data.call.alpha)/sizeof(AECHAR));// Gemsea sizeof IN AECHAR
 
   notify_info->event_data.call.disp_type = (AEECMDispType) 
                              call_info->mode_info.info.cdma_call.ext_disp_type;
@@ -4078,7 +4078,7 @@ static void OEMCM_HandleCallOrig(cm_mm_call_info_s_type *call_info,
   OEMCM_CallNotifyInitDefault(notify_info, call_info->call_id, call_info->sys_mode, event);
 
   (void) WSTRLCPY(notify_info->event_data.call.alpha, core_call_info->alpha,
-           sizeof(notify_info->event_data.call.alpha));
+           sizeof(notify_info->event_data.call.alpha)/sizeof(AECHAR));// Gemsea sizeof IN AECHAR
 
   OEMCM_CopyNumToAEECMNum(&call_info->num, 
                           &notify_info->event_data.call.number);

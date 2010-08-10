@@ -5933,7 +5933,7 @@ static boolean UnpackSMSBCSrvOpts(ISMSBCSrvOpts *pISMSBCSrvOpts, OEMSMSBCSrvInfo
    }
    else if (ISMSBCSRVOPTS_GetOpt(pISMSBCSrvOpts, SMSBCSRVOPT_LABEL_WSZ, &sso) == SUCCESS)
    {
-      WSTRLCPY((AECHAR*)pSrvInfo->szLabel, (AECHAR*)sso.pVal, sizeof(pSrvInfo->szLabel));
+      WSTRLCPY((AECHAR*)pSrvInfo->szLabel, (AECHAR*)sso.pVal, sizeof(pSrvInfo->szLabel)/sizeof(AECHAR));//Gemsea:Size IN AECHAR
    }
    else
    {
