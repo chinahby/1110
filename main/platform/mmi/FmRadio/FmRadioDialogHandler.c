@@ -1601,7 +1601,7 @@ static void refreshChannelListCB( void *pme)
         if( pMe->globalSearching)
         {
 __refreshChannelListCB_complete:
-            pMe->cfg.channel = 0;
+            //pMe->cfg.channel = 0;
             FmRadio_ChanList_EnumInit( pMe);
             if( FmRadio_ChanList_EnumNext( pMe))
             {
