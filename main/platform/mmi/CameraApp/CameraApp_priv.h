@@ -276,7 +276,6 @@ typedef struct _CCameraApp
    // Applet是否准备好可以处理按键和命令事件。改变量主要用于快速按键引起的问题
     boolean              m_bAppIsReady;
     
-    boolean              m_bSelNotChanged;       // 判断Sel是否变化
     boolean              m_bIsPreview;           // 判断camera是否在preview状态
     boolean              m_bRePreview;           // 判断是否需要camera重新preview
     boolean              m_bCapturePic;          // 判断camera是否在拍照状态，用于禁止按键事件

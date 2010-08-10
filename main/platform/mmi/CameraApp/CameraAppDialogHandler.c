@@ -755,7 +755,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     IMenuCtl *popMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CAMERA_CFGMENU);    
-           
+    
     if(popMenu == NULL)
     {
         return FALSE;
@@ -764,8 +764,6 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
-            pMe->m_bSelNotChanged = TRUE;
-
             IMENUCTL_SetProperties(popMenu, MP_WRAPSCROLL|MP_TRANSPARENT_UNSEL|MP_NO_REDRAW);
             IMENUCTL_SetOemProperties(popMenu, OEMMP_GRAPHIC_UNDERLINE);
             
@@ -838,7 +836,6 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 
                 case AVK_UP:
                 case AVK_DOWN:                 
-                    pMe->m_bSelNotChanged = FALSE;
                     return TRUE;
 
                 case AVK_END:
@@ -855,26 +852,6 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             CameraApp_InitpopMenu(pMe, popMenu);
 
             return TRUE;//ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
-
-        case EVT_CTL_SEL_CHANGED:
-            //第一次启动Dlg，如果发现Sel有改变，会触发EVT_CTL_SEL_CHANGED事件
-            if(pMe->m_bSelNotChanged)
-            {
-                return TRUE;
-            }
-            else
-            {      
-                AEERect popMenuRec;
-        
-                IMENUCTL_GetRect(popMenu, &popMenuRec);
-    
-                IDISPLAY_SetClipRect(pMe->m_pDisplay, &popMenuRec);
-                
-                //CameraApp_DrawpopMenuBg(pMe, popMenu);
-        
-                IMENUCTL_Redraw(popMenu);
-                return TRUE;
-            }
             
         case EVT_COMMAND:
             return CameraApp_RoutePopMenuCommandEvent(pMe, wParam);
