@@ -1834,7 +1834,8 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
         
     case AVK_HEADSET_CONNECT:
     case AVK_HEADSET_DISCONNECT:
-        if (EVT_KEY_PRESS == evt){
+        if (EVT_KEY_PRESS == evt)
+        {
             AEESoundInfo soundStuff;     
             boolean b_FMBackground = FALSE;
             int8 classitems = 0;
@@ -1852,39 +1853,29 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
                 nt.wParam = (wParam == AVK_HEADSET_CONNECT ? TRUE:FALSE);
                 AEE_SEND_HEADSET_EVT(&nt);    
             }
-            
-            OEM_GetConfig(CFGI_FM_BACKGROUND,&b_FMBackground, sizeof(b_FMBackground));
-            if(TRUE == b_FMBackground)
+
+            if ( (cls == AEECLSID_APP_FMRADIO) && ( wParam == AVK_HEADSET_DISCONNECT ))
             {
-                classitems = 2;
+				ISHELL_PostEvent( AEE_GetShell(),
+                                          AEECLSID_APP_FMRADIO,
+                                          EVT_HEADSET,
+                                          FALSE,
+                                          0
+                                         );
             }
-            else
+            else if ( cls != AEECLSID_APP_FMRADIO )
             {
-                classitems = 1;                                
-            }
-            
-            {
-                static AEECLSID classIDs[] = {
-                        AEECLSID_CORE_APP,
-                        AEECLSID_APP_FMRADIO
-                };
-                int     i               = 0;
-                boolean headsetPresent  = wParam == AVK_HEADSET_CONNECT ? TRUE : FALSE;
+				boolean headsetPresent  = wParam == AVK_HEADSET_CONNECT ? TRUE : FALSE;
 
                 OEM_SetConfig( CFGI_HEADSET_PRESENT, &headsetPresent, sizeof( headsetPresent));
-                for( i = 0; i < classitems; i ++)
-                {
-                    if( cls != classIDs[i])
-                    {
-                        ISHELL_PostEvent( AEE_GetShell(),
-                                          classIDs[i],
+                ISHELL_PostEvent( AEE_GetShell(),
+                                          AEECLSID_CORE_APP,
                                           EVT_HEADSET,
                                           headsetPresent,
                                           0
                                          );
-                    }
-                }
             }
+            
 #if defined(FEATURE_BACKLIGHT_KEYPAD)
             if (gpKeyBacklight) {
                 IBACKLIGHT_Enable(gpKeyBacklight);

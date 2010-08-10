@@ -250,10 +250,6 @@ int fm_radio_power_down(void)
     {
         return FM_RADIO_FAILED;
     }
-    if(fm_playing_mute == FALSE)
-    {
-        fm_mute(TRUE);
-    }
     
 	ERR("fm_radio_power_down!!!",0,0,0);
 	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_poweroff[0]), 2);
@@ -410,10 +406,6 @@ int fm_tune_channel(word wChannel)
 		return FM_RADIO_FAILED;
 	}
 
-	if ( fm_playing_mute )
-	{
-		//fm_mute(FALSE);		//Add By zzg 2010_07_18
-	}
 	
     fm_work_status = FM_IN_PROGRESS;
 

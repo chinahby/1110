@@ -514,7 +514,7 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
     pMe->m_pActiveDlg           = NULL;
     pMe->m_eDlgRet              = DLGRET_CREATE;
     pMe->m_bNotOverwriteDlgRet  = FALSE;
-    pMe->startFromBackground    = TRUE;
+    pMe->startFromBackground    = FALSE;
     pMe->m_pVolumeImage = NULL;
     //初始化必要的数据
     FmRadio_InitFmRadioResource( pMe);
@@ -1275,6 +1275,10 @@ static void FmRadio_PowerDown( CFmRadio *pMe)
     IANNUNCIATOR_SetField( pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
     g_m_fm_is_on = FALSE;
 #ifndef WIN32
+	if (HS_HEADSET_ON())
+	{
+		fm_mute(FALSE);
+	}
     fm_radio_power_down();
 #endif//WIN32
     Fm_Shake_Close(); 
