@@ -222,9 +222,14 @@ boolean FmRadio_RouteDialogEvent(CFmRadio   *pMe,
                                  uint32     dwParam
                                 )
 {
-    if ((NULL == pMe || NULL == pMe->m_pActiveDlg) && (FALSE == pMe->runOnBackground))
+    if ((NULL == pMe || NULL == pMe->m_pActiveDlg))
     {
-        return FALSE;
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND    
+        if((FALSE == pMe->runOnBackground))
+        {
+            return FALSE;
+        }
+#endif        
     }
 
     return HandleFmRadioMainDialogEvent( pMe,eCode,wParam,dwParam);
@@ -813,7 +818,9 @@ __handleKeyEvent_input_channel_done__:
         {			
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND             
                 pMe->runOnBackground = FALSE;
+#endif
                 ISHELL_CloseApplet( pMe->m_pShell, FALSE);
             }
             else if( pMe->opMode == FM_RADIO_OPMODE_MODE_SELECTION)
@@ -979,7 +986,9 @@ static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId)
     {
         hideMenu( pMe);
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND          
         pMe->runOnBackground = (itemId == IDS_FMRADIO_OPTION_MENU_QUIT) ? FALSE : TRUE;
+#endif
         ISHELL_CloseApplet( pMe->m_pShell, (itemId == IDS_FMRADIO_OPTION_MENU_QUIT) ? FALSE : TRUE);
     }
 #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
@@ -2026,11 +2035,12 @@ static void hideChannelEditingScreen( CFmRadio *pMe)
 
 static void paint( CFmRadio *pMe)
 {
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND  
     if( pMe->runOnBackground)
     {
         return;
     }
-
+#endif
     drawBg( pMe);
     FmRadio_RefreshVolumeImage(pMe);
     //drawLedLight( pMe);

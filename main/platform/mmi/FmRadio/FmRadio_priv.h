@@ -78,7 +78,9 @@
 #define FEATURE_FMRADIO_NO_MODE_SELECT
 #define FEATURE_FMRADIO_KEY_OK_TO_MUTE
 #define FEATURE_FMRADIO_PROMPT_HEADSET_PLUG_OUT
-#endif
+#endif 
+
+#define FEATURE_FMRADIO_SUPPORT_BACKGROUND  0
 
 #define FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT 1
 #define COREAPP_PATH "fs:/mod/coreapp/"
@@ -272,7 +274,9 @@ typedef struct _CFmRadio
     boolean             drawRefreshListPrompt;
     boolean             seekChannelClockwise;
     boolean             globalSearching;
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND 
     boolean             runOnBackground;
+#endif
     boolean             startFromBackground;
     boolean             channelListIsEmptyHasPrompted;
     boolean             channelListIsEmpty;
