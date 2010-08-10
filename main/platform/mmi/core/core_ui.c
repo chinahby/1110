@@ -1854,16 +1854,18 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
                 AEE_SEND_HEADSET_EVT(&nt);    
             }
 
-            if ( (cls == AEECLSID_APP_FMRADIO) && ( wParam == AVK_HEADSET_DISCONNECT ))
+            if ( cls == AEECLSID_APP_FMRADIO)
             {
+            	boolean headsetPresent  = wParam == AVK_HEADSET_CONNECT ? TRUE : FALSE;
+            	
 				ISHELL_PostEvent( AEE_GetShell(),
                                           AEECLSID_APP_FMRADIO,
                                           EVT_HEADSET,
-                                          FALSE,
+                                          wParam,
                                           0
                                          );
             }
-            else if ( cls != AEECLSID_APP_FMRADIO )
+            else
             {
 				boolean headsetPresent  = wParam == AVK_HEADSET_CONNECT ? TRUE : FALSE;
 

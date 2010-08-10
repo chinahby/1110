@@ -1061,42 +1061,52 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         
         case EVT_HEADSET:
         {
-            if( pMe->startFromBackground)
-            {
-                ISHELL_CloseApplet( pMe->m_pShell, FALSE);
-            }
-            else
-            {
-                FmRadio_PowerUp( pMe);
-				if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_NOT_REFUSE)
+        	if ( wParam == AVK_HEADSET_CONNECT )
+        	{
+				if (HS_HEADSET_ON())
 				{
-					extern void resume( CFmRadio* pMe);
-					resume( pMe);
+					fm_mute(FALSE);
 				}
-				else
-				{
-					if( IMENUCTL_IsActive( pMe->m_pMenu))
+        	}
+        	else
+        	{
+	            if( pMe->startFromBackground)
+	            {
+	                ISHELL_CloseApplet( pMe->m_pShell, FALSE);
+	            }
+	            else
+	            {
+	                FmRadio_PowerUp( pMe);
+					if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_NOT_REFUSE)
 					{
-						IMENUCTL_SetActive( pMe->m_pMenu, FALSE);
+						extern void resume( CFmRadio* pMe);
+						resume( pMe);
 					}
-					if( ITEXTCTL_IsActive( pMe->pText))
+					else
 					{
-						ITEXTCTL_SetActive( pMe->pText, FALSE);
-					}
+						if( IMENUCTL_IsActive( pMe->m_pMenu))
+						{
+							IMENUCTL_SetActive( pMe->m_pMenu, FALSE);
+						}
+						if( ITEXTCTL_IsActive( pMe->pText))
+						{
+							ITEXTCTL_SetActive( pMe->pText, FALSE);
+						}
 
 #if defined( FEATURE_FMRADIO_PROMPT_HEADSET_PLUG_OUT)
-					if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_NO_HEADSET)
-					{
-						pMe->refuseReason = FM_RADIO_REFUSE_REASON_HEADSET_PLUG_OUT;
-					}
+						if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_NO_HEADSET)
+						{
+							pMe->refuseReason = FM_RADIO_REFUSE_REASON_HEADSET_PLUG_OUT;
+						}
 #endif
-				}
-				ISHELL_PostEvent( pMe->m_pShell,
-                             AEECLSID_APP_FMRADIO,
-                             EVT_USER_REDRAW,
-                             0,
-                             0
-                         );
+					}
+					ISHELL_PostEvent( pMe->m_pShell,
+	                             AEECLSID_APP_FMRADIO,
+	                             EVT_USER_REDRAW,
+	                             0,
+	                             0
+	                         );
+	            }
             }
             
         }
@@ -1283,7 +1293,7 @@ static void FmRadio_PowerDown( CFmRadio *pMe)
 #ifndef WIN32
 	if (HS_HEADSET_ON())
 	{
-		fm_mute(FALSE);
+		fm_mute(TRUE);
 	}
     fm_radio_power_down();
 #endif//WIN32
