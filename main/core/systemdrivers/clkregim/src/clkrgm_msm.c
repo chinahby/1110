@@ -165,6 +165,11 @@ when       who     what, where, why
 #include "adie.h"
 #include "adie_cdcdefs.h"
 
+#ifdef CUST_EDITION
+//关闭睡眠时系统对GPIO配置的控制，否则会引起很多由于睡眠引起的不稳定问题
+#undef FEATURE_MANAGE_GPIOS_FOR_SLEEP
+#endif
+
 #ifdef BUILD_BOOT_CHAIN_OEMSBL
 #undef MSG_ERROR
 #define MSG_ERROR(a,b,c,d)
