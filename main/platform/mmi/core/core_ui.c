@@ -1804,6 +1804,14 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
     
     cls = AEE_Active();
     switch(wParam){
+#ifdef FEATURE_VERSION_IVIO
+    case AVK_CAPLK:
+        if(cls == AEECLSID_FCHAT)
+        {
+            return TRUE;
+        }
+        break;
+#endif
     case AVK_END:
         if (cls == AEECLSID_DIALER) {
             // AVK_END 会关掉全部程序，回到待机界面，这里做转换，避免此问题
