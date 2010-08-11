@@ -135,16 +135,16 @@ boolean MGExplorer_Init(CFSExplorer *pFSExplorer,
  */
 int MGExplorer_InitBuildMediaMenu(CMediaGalleryApp *pMe, PFNNOTIFY pfnNotify)
 {
-   const char *pszPath;
+   const char *pszPath = NULL;
 
    if(!pMe || !pMe->m_pMediaMenu || !pMe->m_pFileMgr)
    {
       MG_FARF(ADDR, ("InitMediaMenu bad parameter!"));
       return EFAILED;
    }
-
+   
    pszPath = MGExplorer_GetCurrentFolderPath(&pMe->m_Explorer);
-
+   
    if(!pszPath || !STRLEN(pszPath))
    {
       MG_FARF(ADDR, ("BuildMediaMenu bad path name!!!"));
@@ -216,13 +216,13 @@ static void MGExplorer_BuildMediaMenu(void *po)
    uint16 uMimeBase;
    MGMimeType eExploreMime;
    IMenuCtl *pMenuCtl = NULL;
-
+   
    if(!pMe || !pMe->m_pFileMgr || !pMe->m_pMediaMenu)
    {
       MG_FARF(ADDR, ("BuildMediaMenu bad parameter!!!"));
       return;
    }
-
+   nIndex = 0;
    pMenuCtl = pMe->m_pMediaMenu;
    eExploreMime = MediaGalleryApp_GetExplorerMime(pMe);
    nIndex = IMENUCTL_GetItemCount(pMenuCtl);
@@ -263,7 +263,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
       {
          if( pMe->m_Explorer.m_eType == MG_DOCTYPE_DIR)
          {
-            const char *pszPath;
+            const char *pszPath = NULL;
 
             pMe->m_Explorer.m_eType = MG_DOCTYPE_FILE;
             pszPath = MGExplorer_GetCurrentFolderPath(&pMe->m_Explorer);
@@ -331,7 +331,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
          {
             eFileMime = MG_MIME_FOLDER;
             bGetMime = SUCCESS;
-
+			
             if(pMe->m_StoreMedium == MG_STMED_MASSCARD)
             {
                /*848 will enumerate "." , "..", that is current directory and
@@ -372,6 +372,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
          MenuItem.pText = FileName;
          MenuItem.pImage = pImage;
          MenuItem.dwData = (uint32)pInfo;/*do not FREE pNode when use data*/
+		 MG_FARF(ADDR, ("Enum directory name legth=%d",WSTRLEN(FileName)));
          MG_FARF(ADDR, ("Enum directory tree,%s", pInfo->szName));
          IMENUCTL_AddItemEx(pMenuCtl, &MenuItem);
          pInfo = NULL;
@@ -1836,6 +1837,7 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
    uint8  nMedium;
    MGStartMode     eStartMode;
    MGMimeType     eMimeBase;
+   AECHAR m_Annstr[40] = {0};
 
 
    if(!pMe || !pMenuCtl){
@@ -1942,7 +1944,8 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
       WSTRCAT(wpszTitle, wszBuffer);
 
    }
-   IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wpszTitle);
+   WSTRNCOPY(m_Annstr,20,wpszTitle);
+   IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,m_Annstr);
    //IMENUCTL_SetTitle(pMenuCtl, NULL, 0, wpszTitle);
 
 UPDATETITLEEXIT:

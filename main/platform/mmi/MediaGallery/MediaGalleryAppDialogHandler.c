@@ -3078,7 +3078,7 @@ static int MGAppPopupMenu_OnVideoPlay(CMediaGalleryApp* pMe, IMenuCtl* pMenuCtl)
 static boolean MGAppPopupMenu_OnOpenSubFolder(CMediaGalleryApp *pMe,
                                           MGFileInfo *pCurNode)
 {
-   MGFileInfo *pItemData;
+   MGFileInfo *pItemData = NULL;
    int nResult;
    if(!pMe)
       return FALSE;
@@ -3087,7 +3087,7 @@ static boolean MGAppPopupMenu_OnOpenSubFolder(CMediaGalleryApp *pMe,
 
    if(!pItemData)
       return FALSE;
-
+   
    if(SUCCESS == (nResult = MGExplorer_ChangeCurDir( &pMe->m_Explorer,
                                                     MG_DIR_GODOWN,
                                                     pItemData->szName)))
@@ -4364,6 +4364,7 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
             }
             else
             {
+            	
                if (TRUE == MGExplorer_CheckMediaMenuEmpty(pMenuCtl))
                {
                   return TRUE;
@@ -4447,6 +4448,7 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
                }
                else
                {
+               	  
                   cpszSrcPath = MediaGalleryApp_GetCurrentNodeName(pMe);
 
                   if ( NULL == cpszSrcPath)
@@ -6892,7 +6894,7 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
       return FALSE;
    }
 
-
+   MG_FARF(ADDR, ("MGAppUtil_StartMediaMenu start!!!111111111"));
    if(pMe->m_StartMode == MGSM_NORMAL_EXPLORER ||
       pMe->m_StartMode == MGSM_FILE_SELECT)
    {
