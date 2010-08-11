@@ -400,6 +400,9 @@
 	<String Id="1016" Name="IDS_STRING_MEID" Encoding="Unicode">
 		<Text>MEID</Text>
 	</String>
+	<String Id="1017" Name="IDS_BLANK">
+		<Text>   </Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
@@ -652,27 +655,21 @@
 	<Dialog Id="31" Name="IDD_CARRIERID_DIALOG" Focus="7036">
 		<Controls>
 			<Text Id="7036" Name="IDC_CARRIERID_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7042" Name="IDC_CARRIERID_SOFTKEY">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="32" Name="IDD_PLATFORMID_DIALOG" Focus="7046">
 		<Controls>
 			<Text Id="7046" Name="IDC_PLATFORMID_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7063" Name="IDC_PLATFORMID_SOFTKEY">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="33" Name="IDD_DLFLAGS_DIALOG" Focus="7048">
 		<Controls>
-			<SoftKey Id="7044" Name="IDC_DLFLAGS_SOFTKEY">
-				<Items/>
-			</SoftKey>
 			<Text Id="7048" Name="IDC_DLFLAGS_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
@@ -692,56 +689,44 @@
 	</Dialog>
 	<Dialog Id="36" Name="IDD_PRIMARYDNS_DIALOG" Focus="7057">
 		<Controls>
-			<SoftKey Id="7056" Name="IDC_PRIMARYDNS_SOFTKEY">
-				<Items/>
-			</SoftKey>
 			<Text Id="7057" Name="IDC_PRIMARYDNS_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
 	<Dialog Id="37" Name="IDD_SECONDARY_DNS_DIALOG" Focus="0">
 		<Controls>
 			<Text Id="7045" Name="IDC_SECONDARY_DNS_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7058" Name="IDC_SECONDARY_DNS_SOFTKEY">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="38" Name="IDD_USER_NAME_DIALOG" Focus="0">
 		<Controls>
 			<Text Id="7047" Name="IDC_USER_NAME_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7059" Name="IDC_USER_NAME_SOFTKEY">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="39" Name="IDD_USER_PASSWORD_DIALOG" Focus="0">
 		<Controls>
 			<Text Id="7049" Name="IDC_USER_PASSWORD_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7060" Name="IDC_USER_PASSWORD_SOFTKEY">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="40" Name="IDD_PRIMARY_SERVER_DIALOG" Focus="0">
 		<Controls>
 			<Text Id="7050" Name="IDC_PRIMARY_SERVER_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7061" Name="IDC_PRIMARY_SERVER_SOFTKEY">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="41" Name="IDD_SECONDARY_SERVER_DIALOG" Focus="0">
 		<Controls>
 			<Text Id="7052" Name="IDC_SECONDARY_SERVER_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7062" Name="IDC_SECONDARY_SERVER_SOFTKEY">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="42" Name="IDD_NET_LOCK_DIALOG" Focus="7053">
@@ -754,37 +739,29 @@
 	<Dialog Id="43" Name="IDD_LOCK_DIALOG" Focus="7054">
 		<Controls>
 			<Text Id="7054" Name="IDC_TEXT_LOCK_FLAG">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7055" Name="IDC_SOFTKEY_LOCK_FLAG">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="44" Name="IDD_MNC_DIALOG" Focus="7064">
 		<Controls>
 			<Text Id="7064" Name="IDC_TEXT_MNC">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7065" Name="IDC_SOFTKEY_MNC">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="45" Name="IDD_MCC_DIALOG" Focus="7066">
 		<Controls>
 			<Text Id="7066" Name="IDC_TEXT_MCC">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7067" Name="IDC_SOFTKEY_MCC">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 	<Dialog Id="46" Name="IDD_SID_DIALOG" Focus="7068">
 		<Controls>
 			<Text Id="7068" Name="IDC_TEXT_SID">
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<SoftKey Id="7069" Name="IDC_SOFTKEY_SID">
-				<Items/>
-			</SoftKey>
 		</Controls>
 	</Dialog>
 </Dialogs>
