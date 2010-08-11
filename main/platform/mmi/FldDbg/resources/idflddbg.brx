@@ -757,7 +757,7 @@
 	<Dialog Id="42" Name="IDD_NET_LOCK_DIALOG" Focus="7053">
 		<Controls>
 			<Menu Id="7053" Name="IDC_NET_LOCK_MENU">
-				<TitleID>IDS_STRING_NET_LOCK</TitleID>
+				<TitleID>IDS_BLANK</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
