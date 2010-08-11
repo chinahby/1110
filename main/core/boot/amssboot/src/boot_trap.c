@@ -139,7 +139,7 @@ void boot_looping_exception_handler(
     exception_cause_type cause
     );
 
-static char disp_stack_format[]  =  "%s0x%8x [%2d] 0x%08x";
+static char disp_stack_format[]  =  "%s0x%8x stack[%04d] = 0x%08x";
 static char disp_reg_format[]  =  "%s0x%8x  reg[%2d]   = 0x%08x";
 static char disp_misc_format[] =  "%s0x%8x  %-11.11s=0x%08x";
 static char disp_err_fatal_format[] =  "%12.12s%12.12s%5d";
@@ -1328,6 +1328,21 @@ void boot_looping_exception_handler(
       lcd_message(text);
       boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
 
+#ifdef CUST_EDITION
+      memset (text, ' ', (sizeof(text)-1));
+      (void)std_strlprintf(text, sizeof(text), disp_reg_format,
+                exception_cause_label[boot_error_cause],
+                frame->l.r[15],13,frame->l.r[13]);
+      lcd_message(text);
+      boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+      
+      memset (text, ' ', (sizeof(text)-1));
+      (void)std_strlprintf(text, sizeof(text), disp_reg_format,
+                exception_cause_label[boot_error_cause],
+                frame->l.r[15],14,frame->l.r[14]);
+      lcd_message(text);
+      boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+#else
       /* display registers r0-r15
        * r[15] contains the instruction of the address that caused
        * the data abort*/
@@ -1340,6 +1355,7 @@ void boot_looping_exception_handler(
         lcd_message(text);
         boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
       }
+#endif
       /*Output the CPSR also */
       /*CPSR = SPSR in data aborts*/
       memset (text, ' ', (sizeof(text)-1));

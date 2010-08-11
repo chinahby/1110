@@ -235,8 +235,12 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #define GPIO_29_SIGNAL GPIO_INPUT_29
 #endif
 
+#ifdef CUST_EDITION
+#define GPIO_30_SIGNAL GPIO_INPUT_30
+#else
 /* GPIO 30 */
 #define GPIO_30_SIGNAL XO_EN_N
+#endif
 
 /* GPIO 31 */
 #if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022)

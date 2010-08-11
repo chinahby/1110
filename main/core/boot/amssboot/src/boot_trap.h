@@ -548,11 +548,7 @@ typedef union {
 /* -----------------------------------------------------------------------
 ** MISC defines
 ** ----------------------------------------------------------------------- */
-#ifdef CUST_EDITION
-#define EXCEPTION_DISPLAY_HOLD_SEC 2
-#else
 #define EXCEPTION_DISPLAY_HOLD_SEC 4
-#endif
 extern void dload_entry( void );
 void boot_record_err_fatal_info(
   word       line,
