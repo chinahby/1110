@@ -99,7 +99,6 @@ static int  convertChannelValueFromText( AECHAR *textBuffer);
 static boolean channelNumberIsvalid( AECHAR *text);
 
 static void paint( CFmRadio *pMe);
-static void ShowNewSmsIncoming( CFmRadio *pMe);
 static void repaint( CFmRadio *pMe, boolean immediately);
 
 static void drawBg( CFmRadio *pMe);
@@ -450,21 +449,6 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
             }
         }
 		break;
-
-        case EVT_WMS_PROCESS_NEW_MSG:
-        {
-		    pMe->newSmsIncomingWparam = wParam;
-            ShowNewSmsIncoming( pMe);
-		#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
-            if(FM_RADIO_OPMODE_EDIT_CHANNEL == pMe->opMode)
-            {
-                pMe->edit_chann_interrupt = 1;
-                ITEXTCTL_GetText( pMe->pText, pMe->EditChannel, sizeof( pMe->EditChannel));
-            }
-		#endif
-			ISHELL_SetTimer( pMe->m_pShell, pMe->wmsEventTimer * 2000, closeIncomingSmsPrompt, (void*)pMe);
-			return TRUE;
-        }
     }
 
     return FALSE;
@@ -2259,42 +2243,6 @@ static void paint( CFmRadio *pMe)
     #endif
 
     IDISPLAY_UpdateEx( pMe->m_pDisplay, FALSE);
-}
-static void ShowNewSmsIncoming(CFmRadio *pMe)
-{
-    if( pMe->newSmsIncoming)
-    {
-        AECHAR format[64] = {0};
-        AECHAR text[64]   = {0};
-		char*  resFile[]  = {
-		        (COREAPP_PATH AEE_RES_LANGDIR COREAPP_RES_FILE),
-		        WMSAPP_RES_FILE,
-		        WMSAPP_RES_FILE
-		};
-		uint16 resId[]    = {
-		        IDS_NEWWMSTIPS_FMT,
-		        86,
-		        131
-		};
-		ISHELL_LoadResString( pMe->m_pShell,
-							  resFile[pMe->newSmsIncomingWparam - 1],
-							  resId[pMe->newSmsIncomingWparam - 1],
-							  format,
-							  sizeof( format)
-						  );
-        WSPRINTF( text, sizeof(text), format, 1);
-
-        drawImage( pMe, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BGMASK, 0, 0);
-        drawText2( pMe->m_pDisplay,
-                text,
-                &pMe->m_rc,
-                0xff00,
-                AEE_FONT_BOLD,
-                IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
-            );
-        IDISPLAY_UpdateEx( pMe->m_pDisplay, FALSE);
-    }
-
 }
 
 static void repaint( CFmRadio *pMe, boolean immediately)

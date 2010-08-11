@@ -1312,16 +1312,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                         }
                     }
                     if (bSendEvt)
-                    {
-#ifdef FEATURE_FM_RADIO
-                        // 通知收音机关闭声音
-                        (void) ISHELL_PostEvent( pMe->m_pShell,
-                                                 AEECLSID_APP_FMRADIO,
-                                                 EVT_WMS_PROCESS_NEW_MSG,
-                                                 1,
-                                                 0);
-#endif                                             
-
+                    {                                        
                         // 语音提示用户有消息
                         WmsApp_PlaySMSAlert(pMe, TRUE);
         				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
@@ -1411,16 +1402,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             
         case EVT_WMS_CFG_MEMORY_FULL:
             if (pMe->m_pwms)
-            {
-#ifdef FEATURE_FM_RADIO
-                // 通知收音机关闭声音
-                (void) ISHELL_PostEvent(pMe->m_pShell,
-                                        AEECLSID_APP_FMRADIO,
-                                        EVT_WMS_PROCESS_NEW_MSG,
-                                        2,
-                                        0);
-#endif                                        
- 
+            {                                      
                 // 语音提示用户有消息
                 WmsApp_PlaySMSAlert(pMe, TRUE);
             }
@@ -1483,16 +1465,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                     CLOSE_DIALOG(DLGRET_CREATE)
                 }
                 
-                IBACKLIGHT_Enable(pMe->m_pBacklight);
-                
-#ifdef FEATURE_FM_RADIO
-                // 通知收音机关闭声音
-                (void) ISHELL_PostEvent(pMe->m_pShell,
-                                        AEECLSID_APP_FMRADIO,
-                                        EVT_WMS_PROCESS_NEW_MSG,
-                                        3,
-                                        0);
-#endif                                        
+                IBACKLIGHT_Enable(pMe->m_pBacklight);                                                    
             }
             return TRUE;
         

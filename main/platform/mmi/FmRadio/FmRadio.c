@@ -1095,34 +1095,6 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         }
         return TRUE;
 
-        case EVT_WMS_PROCESS_NEW_MSG:
-        {
-            if( pMe->startFromBackground)
-            {
-                ISHELL_CloseApplet( pMe->m_pShell, FALSE);
-            }
-            else
-            {
-
-#if !defined( FEATURE_NO_SMS_VOICE_PROMPT)
-                FmRadio_PowerDown( pMe);
-#endif
-                pMe->wmsEventTimestamp = GETTIMESECONDS();
-                pMe->wmsEventTimer     = 2;
-#if !defined( FEATURE_NO_SMS_VOICE_PROMPT)
-                ISHELL_SetTimer( pMe->m_pShell, 2000, FmRadio_PowerUp, (void*)pMe);
-#endif
-                pMe->newSmsIncoming = TRUE;
-#if FEATURE_FMRADIO_SUPPORT_BACKGROUND 
-                if( !pMe->runOnBackground)
-#endif                    
-                {
-                    FmRadio_RouteDialogEvent( pMe,eCode,wParam,dwParam);
-                }
-            }
-        }
-        return TRUE;
-
         case EVT_ALARM:
         {
 
