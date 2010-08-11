@@ -785,11 +785,13 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         boolean bKeyPress = FALSE;
         AEECLSID cls = AEE_Active();        
         KEYGUARD_ERR("OEMKeyguard_HandleEvent %d %x %x",sbMessageActive,evt,wParam);
+
         //{
         //    db_items_value_type  db_value;
         //    db_value.db_backlight_level = TRUE;
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
+        
         if(wParam == AVK_CLR)
         {
             OEMPriv_ResumeBREW();

@@ -1246,10 +1246,16 @@ static void FmRadio_PowerDown( CFmRadio *pMe)
     IANNUNCIATOR_SetField( pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
     g_m_fm_is_on = FALSE;
 #ifndef WIN32
+
+    //Del By zzg 2010_08_11
+    /*
 	if (HS_HEADSET_ON())
 	{
 		fm_mute(TRUE);
 	}
+	*/
+	//Del End
+	
     fm_radio_power_down();
 #endif//WIN32
     Fm_Shake_Close(); 
