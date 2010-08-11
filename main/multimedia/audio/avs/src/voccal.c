@@ -10449,7 +10449,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
-#if CUST_EDITION
+#ifdef CUST_EDITION
   0x956F,                        /* Tx Voice Volume         */
   0x2000,                        /* Tx DTMF gain            */
   0x956F,                        /* CODEC Tx gain           */
