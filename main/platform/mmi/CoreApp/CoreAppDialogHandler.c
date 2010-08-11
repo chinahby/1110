@@ -1060,6 +1060,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             wszText =  (AECHAR *) MALLOC(nSize);
             wszText[0] = 0;
             status = IBATTERY_GetChargerStatus(pMe->m_pBatt);
+            
             IDISPLAY_ClearScreen(pMe->m_pDisplay);            
 
             MSG_FATAL("***zzg IDD_LPM_Handler status=0x%x***", status, 0, 0);
@@ -1067,12 +1068,20 @@ static boolean  IDD_LPM_Handler(void       *pUser,
 
             if (AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE == status)
             {
+                MSG_FATAL("***zzg AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE***", 0, 0, 0);
+                
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
 #ifndef FEATURE_USES_LOWMEM
                 if (NULL != pMe->m_battery_Image)
                 {
                     MSG_FATAL("***zzg NULL != pMe->m_battery_Image***", 0, 0, 0);
+                    
+                    IDISPLAY_ClearScreen(pMe->m_pDisplay);      //Add By zzg  2010_08_11
+                    
                     IIMAGE_DrawFrame(pMe->m_battery_Image, CHARGING_FRAME_COUNT - 1, 0, 0);
+
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);   //Add By zzg  2010_08_11
+                    return TRUE;                                //Add By zzg  2010_08_11
                 }
                 else
                 {
@@ -1135,8 +1144,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             {
                 case AVK_END:
                     CLOSE_DIALOG(DLGRET_OK)                  
-                    return TRUE;
-                    
+                    return TRUE;               
                 default:
                     break;
             }

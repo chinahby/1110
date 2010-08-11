@@ -432,7 +432,17 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             CoreApp_RunFSM(pMe);
 
             CoreApp_PoweronStartApps(pMe);
-           // CoreApp_InitBattStatus(pMe);
+            //CoreApp_InitBattStatus(pMe);        
+
+//Add By zzg 2010_08_11之前是注释着的
+#ifdef CUST_EDITION    
+            {
+				CoreApp_InitBattStatus(pMe); 
+            	ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
+            }
+#endif
+//Add
+
 #ifndef WIN32
             EnableUIKeys(TRUE);
 #endif//WIN32
