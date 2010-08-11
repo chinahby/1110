@@ -517,7 +517,7 @@ int fm_set_volume(word wVolume)
 
 void fm_mute(boolean on)
 {	
-	if ( on == TRUE )
+	if ( ( on == TRUE) && (fm_playing_mute == FALSE) )
 	{
 		fm_playing_mute = TRUE;
 		//fm_set_volume(0);
@@ -528,7 +528,7 @@ void fm_mute(boolean on)
 		snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
 		//Add End
 	}
-	else
+	else if ( ( on == FALSE) && (fm_playing_mute == TRUE) )
 	{
 		fm_playing_mute = FALSE;
 		//fm_set_volume(8);
