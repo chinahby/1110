@@ -577,8 +577,11 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                     CLOSE_DIALOG(DLGRET_SETTINGS);
                     return TRUE;
                     
-                case IDS_MINIMIZE:					 
-                     SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                case IDS_MINIMIZE:		
+                     if(pMe->m_bPlaying)//只有正在播放才可以进入后台运行模式
+                     {
+                        SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                     }
                      ISHELL_CloseApplet(pMe->m_pShell, TRUE);
                     return TRUE;
 
