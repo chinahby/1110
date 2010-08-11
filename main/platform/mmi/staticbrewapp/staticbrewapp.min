@@ -141,12 +141,12 @@ FPT005_ROOT_FILES = \
     $(notdir $(wildcard $(FPT_DIRS)/*.fml))
     
 CONSTFILE_BIN_FILES += \
-    $(foreach filename, $(FPT005_ICON_FILES), $(filename)|fs:/mod/fpt005/icon/$(filename)) \
-    $(foreach filename,$(FPT005_IMAGE_FILES),$(filename)|fs:/mod/fpt005/image/$(filename)) \
     $(FPT005_BCI_FILES)
     
 EFSFILE_FILES += \
     $(foreach filename, $(FPT005_FMENU_FILES), $(filename)|fs:/mod/fpt005/fmenu/$(filename)) \
+    $(foreach filename, $(FPT005_ICON_FILES), $(filename)|fs:/mod/fpt005/icon/$(filename)) \
+    $(foreach filename,$(FPT005_IMAGE_FILES),$(filename)|fs:/mod/fpt005/image/$(filename)) \
     $(foreach filename, $(FPT005_ROOT_FILES), $(filename)|fs:/mod/fpt005/$(filename))
     
 CONSTFILE_FILES += \
