@@ -65,7 +65,9 @@ when       who     what, where, why
 
 #include "rex.h"
 #include "rexlog.h"
-
+#ifdef CUST_EDITION
+#include "miheader.h"
+#endif
 #ifdef FEATURE_ERR_EXTENDED_STORE
     extern int err_reset_check( void );
 #endif
@@ -137,7 +139,7 @@ void boot_looping_exception_handler(
     exception_cause_type cause
     );
 
-static char disp_stack_format[]  =  "%s0x%8x  stack[%2d]   = 0x%08x";
+static char disp_stack_format[]  =  "%s0x%8x [%2d] 0x%08x";
 static char disp_reg_format[]  =  "%s0x%8x  reg[%2d]   = 0x%08x";
 static char disp_misc_format[] =  "%s0x%8x  %-11.11s=0x%08x";
 static char disp_err_fatal_format[] =  "%12.12s%12.12s%5d";
@@ -1347,27 +1349,30 @@ void boot_looping_exception_handler(
       lcd_message(text);
       boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
 #ifdef CUST_EDITION
-{
-      uint32 *pStack = (uint32 *)frame->l.r[13];
-      // LOOP Stack
-      for( i = 0; i < 16; i++ )
+      if(rex_curr_task)
       {
-        while(1)
+        volatile uint32 *pStackEnd = (uint32 *)rex_curr_task->stack_limit+rex_curr_task->stack_size;
+        volatile uint32 *pStack = (uint32 *)frame->l.r[13];
+        
+        // LOOP Stack
+        for( i = 0; pStack < pStackEnd; pStack++)
         {
-            if(((*pStack)%1) && (*pStack) < FLASH_NOR_EFS2_START_BYTE_OFFSET)
-            {
-                break;
-            }
-            pStack++;
+          if(((*pStack)&0x1) == 0 
+            ||(*pStack) > FLASH_NOR_EFS2_START_BYTE_OFFSET 
+            ||(*pStack) < MI_NOR_AMSS_BOOT_ELF_HEADER_SRC_ADDR)
+          {
+            continue;
+          }
+          
+          memset (text, ' ', (sizeof(text)-1));
+          (void)std_strlprintf(text, sizeof(text), disp_stack_format,
+                  exception_cause_label[boot_error_cause],
+                  frame->l.r[15],i,(*pStack)-1);
+          lcd_message(text);
+          boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+          i++;
         }
-        memset (text, ' ', (sizeof(text)-1));
-        (void)std_strlprintf(text, sizeof(text), disp_stack_format,
-                exception_cause_label[boot_error_cause],
-                frame->l.r[15],i,(*pStack));
-        lcd_message(text);
-        boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
       }
-}
 #endif
     }
   }

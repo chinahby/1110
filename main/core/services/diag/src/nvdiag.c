@@ -298,6 +298,9 @@ static boolean sp_nv_write_item (
   nv_items_enum_type item
 )
 {
+#ifdef CUST_EDITION
+  return (FALSE);
+#else
   switch (item) {
     case NV_SLOT_CYCLE_INDEX_I:
     case NV_CDMA_SID_LOCK_I:
@@ -357,6 +360,7 @@ static boolean sp_nv_write_item (
     default:
       return (FALSE);
   }
+#endif
 } /* sp_nv_write_item */
 
 
