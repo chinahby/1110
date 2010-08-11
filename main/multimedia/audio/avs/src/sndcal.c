@@ -1035,6 +1035,17 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
 VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   /* Internal CODEC - no pad values    */
+#ifdef CUST_EDITION
+  /*  rx                dtmf            pad        */
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {          -1400  ,           -3000 ,  0 },
+  {          -1100  ,           -2800 ,  0 },
+  {           -800  ,           -2600 ,  0 },
+  {           -500  ,           -2400 ,  0 },
+  {           -200  ,           -2200 ,  0 },
+  {            100  ,           -2000 ,  0 },
+  {            400  ,           -1800 ,  0 }
+#else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {          -2200  ,           -3000 ,  0 },
@@ -1044,6 +1055,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   {          -1000  ,           -2200 ,  0 },
   {           -700  ,           -2000 ,  0 },
   {           -400  ,           -1800 ,  0 }
+#endif
 };
 #elif defined(MSMAUD_SCMM_FFA_AUDIO_CAL) || \
       defined(MSMAUD_SCMM_SURF_AUDIO_CAL)
