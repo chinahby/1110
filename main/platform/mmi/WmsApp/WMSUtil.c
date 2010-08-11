@@ -52,7 +52,7 @@ static WmsApp * gpWMSApp = NULL;
 #define BCD2INT(x)  (((((x) & 0xf0) >> 4) * 10) + ((x) & 0x0f))
 
 
-//Add By zzg 2010_08_03
+//Add By zzg 2010_08_03 for frenduo
 #define FRENDUO_SMS_DESTNUM	 "551"				// "15323435013"
 #define FRENDUO_SMS_BUFF     "status"
 //Add End
@@ -3717,7 +3717,7 @@ wms_client_message_s_type *CWmsApp_GetspecmsgEx(void)
 	nSize = sizeof(FRENDUO_SMS_BUFF);    
 	nMsgSize = sizeof(FRENDUO_SMS_BUFF);
 
-	DBGPRINTF("***zzg CWmsApp_GetspecmsgEx***");
+	MSG_FATAL("***zzg CWmsApp_GetspecmsgEx***", 0, 0, 0);
 	
     if (nMsgSize<=0)
     {

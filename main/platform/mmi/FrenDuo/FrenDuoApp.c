@@ -48,11 +48,8 @@
 #include "err.h"
 #define PARAM_NOT_REF(x)
 
-
-//Add By zzg 2010_08_03
 #define FRENDUO_NUM_ONE		L"*550"			
 #define FRENDUO_NUM_TWO		L"*55"
-//Add End
 /*==============================================================================
 
                               本地函数声明
@@ -762,10 +759,9 @@ static boolean FrenDuoApp_ListMenuHandler(FrenDuoApp *pMe, AEEEvent eCode, uint1
             return TRUE;
         case EVT_USER:
         {
-            DBGPRINTF("***zzg Frenduo EVT_USER***");
+            MSG_FATAL("***zzg Frenduo EVT_USER wParam=%d, dwParam=%d***", wParam, dwParam, 0);
             if ((wParam == 1) && (dwParam == 1))
             {
-                DBGPRINTF("***zzg Frenduo StartApplet***");
                 StartApplet(pMe, 2);
             }
             break;

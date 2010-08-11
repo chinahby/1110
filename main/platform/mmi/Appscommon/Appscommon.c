@@ -481,22 +481,17 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_MENU;
             nResID_R = IDS_STRING_CONTACTS;
             break;
-			
-		//Add By zzg 2010_07_20
+					
 		case BTBAR_MENU_FRENDUO:
 			nResID_L = IDS_MENU;
 			nResID_R = IDS_FRENDUO_LIST;
 			break;
-		//Add End
-
-		//Add By zzg 2010_08_03
+		
 		case BTBAR_FACEBOOK_CHAT:
 			nResID_L = IDS_FACEBOOK;
 			nResID_R = IDS_CHAT;
 			break;
-		//Add End
-
-		//Add By zzg 2010_07_23
+		
 		case BTBAR_VIEWMORE_BACK:
 #if defined(FEATURE_DISP_128X128)
             nResID_L = IDS_MORE;
@@ -505,9 +500,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 #endif
 			nResID_M = IDS_OK;
 			nResID_R = IDS_BACK;
-			break;
-		//Add End
-		
+			break;		
 
             // ²Ëµ¥-----·µ»Ø
          case BTBAR_MENU_BACK:
@@ -2644,21 +2637,16 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_R = IDS_STRING_CONTACTS;
             break;
 
-		//Add By zzg 2010_07_20
 		case BTBAR_MENU_FRENDUO:
 			nResID_L = IDS_MENU;
 			nResID_R = IDS_FRENDUO_LIST;
 			break;
-		//Add End
-
-		//Add By zzg 2010_08_03
+		
 		case BTBAR_FACEBOOK_CHAT:
 			nResID_L = IDS_FACEBOOK;
 			nResID_R = IDS_CHAT;
 			break;
-		//Add End
-
-		//Add By zzg 2010_07_23
+            
 		case BTBAR_VIEWMORE_BACK:
 #if defined(FEATURE_DISP_128X128)
             nResID_L = IDS_MORE;
@@ -2668,8 +2656,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			nResID_M = IDS_OK;   ////add by yangdecai 2010-08-04
 			nResID_R = IDS_BACK;
 			break;
-		//Add End
-
+            
         case BTBAR_UNLOCK_SOS:
             nResID_L = IDS_STRING_UNLOCK;
             nResID_R = IDS_SOS;

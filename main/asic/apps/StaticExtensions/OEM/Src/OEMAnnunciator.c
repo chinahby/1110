@@ -39,7 +39,7 @@
 #include "BREWVersion.h"
 #include "AEE_OEMDispatch.h"
 
-#include "OEMClassIDs.h"		//Add By zzg 2010_07_23
+#include "OEMClassIDs.h"		
 
 //#include "db.h"
 #ifdef FEATURE_RANDOM_MENU_COLOR
@@ -828,7 +828,7 @@ void BlinkTimerCB (void *data)
       }
       else 
 	  {
-	  	DBGPRINTF("***zzg BlinkTimerCB DrawImageField i=%d***", i);
+	  	MSG_FATAL("***zzg BlinkTimerCB DrawImageField i=%d***", i, 0, 0);
 		
         if (DrawImageField (pMe, Annunciators[i].nFieldID,
                            (Annunciators[i].pcontent->nCurrState &

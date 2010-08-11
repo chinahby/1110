@@ -798,23 +798,22 @@ See Also:
 ==================================================================*/
 static void AEESound_SetVolume(ISound* po, uint16 wVolume)
 {
-   AEESound * pMe = (AEESound *) po;
-   
-   AEESOUND_CHECK_ACQUIRED(po);
+    AEESound * pMe = (AEESound *) po;
+
+    AEESOUND_CHECK_ACQUIRED(po);
       
-   // First get the max volume level. Then in the AEESound_LevelCB, set the volume
-   pMe->m_wVolume = wVolume;  // Save the volume
-   pMe->m_bGetVolume = FALSE;
+    // First get the max volume level. Then in the AEESound_LevelCB, set the volume
+    pMe->m_wVolume = wVolume;  // Save the volume
+    pMe->m_bGetVolume = FALSE;
 
-	//Add By zzg 2010_07_27
-	if (HS_HEADSET_ON())
-	{
-		(&pMe->m_SoundInfo)->eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET;
-	}
-	//Add End
-
-	
-     OEMSound_GetLevels(&pMe->m_SoundInfo, (void *)pMe->m_hObject);
+    //Add By zzg 2010_07_27  播放音乐里调音量没反应
+    if (HS_HEADSET_ON())
+    {
+    	(&pMe->m_SoundInfo)->eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET;
+    }
+    //Add End
+    
+    OEMSound_GetLevels(&pMe->m_SoundInfo, (void *)pMe->m_hObject);
 }
 
 /*==================================================================

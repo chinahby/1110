@@ -3565,7 +3565,7 @@ static int32 recorder_set_media_device_auto_ex( Media* pme)
 	
 	if( headsetPresent)
 	{
-		device = AEE_SOUND_DEVICE_STEREO_HEADSET;
+		device = AEE_SOUND_DEVICE_STEREO_HEADSET;   //´ÓSPEACKERµ½HEADSET
 	}
 	else
 	{

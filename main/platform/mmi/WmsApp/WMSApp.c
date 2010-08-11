@@ -1171,21 +1171,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             
         case EVT_WMS_MSG_SUBMIT_REPORT:
         case EVT_WMS_MSG_SEND:
-
-			//Add By zzg 2010_08_04
-			MSG_FATAL("***zzg CWMSHandleEvent client_id=%d***", ((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id,0,0);
-			
-			if (eCode == EVT_WMS_MSG_SUBMIT_REPORT)
-			{
-				MSG_FATAL("***zzg CWMSHandleEvent EVT_WMS_MSG_SUBMIT_REPORT!***",0,0,0);
-			}
-
-			if (eCode == EVT_WMS_MSG_SEND)
-			{
-				MSG_FATAL("***zzg CWMSHandleEvent EVT_WMS_MSG_SEND!***",0,0,0);
-			}
-			//Add End
-           
 			if (((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)            
             {
                 WmsApp_ProcessStatus(pMe, &((wms_msg_event_info_s_type *)dwParam)->submit_report_info);
