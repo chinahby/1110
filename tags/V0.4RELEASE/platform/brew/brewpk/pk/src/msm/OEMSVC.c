@@ -4264,12 +4264,13 @@ boolean OEM_IsNetLock(void)
     nvi.imsi_mcc.nam = curr_nam;
     ui_get_nv( NV_IMSI_MCC_I, &nvi );
     original_mcc = nvi.imsi_mcc.imsi_mcc;
-
+    
     // read Mobile Network Code
     nvi.imsi_11_12.nam = curr_nam;
     ui_get_nv( NV_IMSI_11_12_I, &nvi );
     original_mnc = nvi.imsi_11_12.imsi_11_12;
-
+    
+    nvi.sid_nid.nam = curr_nam;
     ui_get_nv( NV_SID_NID_I, &nvi );
     sid = nvi.sid_nid.pair[NV_CDMA_MIN_INDEX][0].sid;
 
@@ -4305,7 +4306,7 @@ boolean OEM_IsNetLock(void)
     {
         if( (final_mcc == nvilock.enabled_net_lock.mcc[i] || nvilock.enabled_net_lock.mcc[i] == -1)
           &&(final_mnc == nvilock.enabled_net_lock.mnc[i] || nvilock.enabled_net_lock.mnc[i] == -1)
-          &&(sid == nvilock.enabled_net_lock.sid[i] || nvilock.enabled_net_lock.sid[i] == -1)
+          &&(sid ==0 || sid == nvilock.enabled_net_lock.sid[i] || nvilock.enabled_net_lock.sid[i] == -1)
           )
         {
             return FALSE;

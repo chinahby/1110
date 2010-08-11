@@ -3141,18 +3141,22 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                 {
                     switch (pMe->nviOldSimChoice.sim_select)
                     {
-                        case OEMNV_SIMFORM_ONE:
-                            wItemID = IDS_SIM_ONE;
-                            break;
-
                         case OEMNV_SIMFORM_TWO:
                             wItemID = IDS_SIM_TWO;
                             break;
+                            
                          default:
+                         case OEMNV_SIMFORM_ONE:
+                            wItemID = IDS_SIM_ONE;
                             break;
                     }
                 }
-                ERR("HandleSimDialogEvent:::::%d::::ret:::%d",pMe->nviOldSimChoice.sim_select,ret,0);
+                else
+                {
+                    pMe->nviOldSimChoice.sim_select = OEMNV_SIMFORM_ONE;
+                    wItemID = IDS_SIM_ONE;
+                }
+                
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, wItemID, TRUE);
                 IMENUCTL_SetSel(pMenu, wItemID);

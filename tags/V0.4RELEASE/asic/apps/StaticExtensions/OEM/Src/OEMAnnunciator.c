@@ -65,6 +65,8 @@
 #error code not present
 #endif
 
+#define ANN_TEXT_MAX_LEN    64
+
 typedef struct IANNUNCore
 {
    unsigned short  m_uRefs;
@@ -85,7 +87,7 @@ typedef struct IANNUNCore
    boolean         cached;
    boolean         m_bActive;
    boolean         m_hasTitleText;
-   uint16          m_Title[40];
+   uint16          m_Title[ANN_TEXT_MAX_LEN+1];
 }IANNUNCore;
 
 struct IAnnunciator
@@ -1674,19 +1676,13 @@ FUNCTION:IAnnunciator_SetFieldText
 =============================================================================*/
 static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText)
 {
-    
 	if (pMe == NULL) 
 	{
       return EFAILED;
     }
-	MEMSET(IAnnunCoreObj->m_Title,0,sizeof(IAnnunCoreObj->m_Title));
-	WSTRCPY(IAnnunCoreObj->m_Title,cText);
+    
+	WSTRLCPY(IAnnunCoreObj->m_Title, cText, ANN_TEXT_MAX_LEN);
     IAnnunciator_Redraw(pMe);
-	
-    if (NULL == cText)
-    {
-        FREE(cText);
-    }
 	return SUCCESS;
 }
 
