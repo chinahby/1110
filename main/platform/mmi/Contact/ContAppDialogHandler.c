@@ -5047,6 +5047,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 #endif
                             )
                         {
+                        	
                             CLOSE_DIALOG(DLGRET_NUMBER_TOOLONG);
                             return TRUE;
                         }
@@ -5143,10 +5144,11 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 #endif
                 )
             {
+            	
                 CLOSE_DIALOG(DLGRET_NUMBER_TOOLONG);
                 return TRUE;
             }
-
+            
             if ((pMe->m_wSelFldType == SINGLE_SELECT_NUMBER && STARTMETHOD_SELECTFIELD == pMe->m_eStartMethod)
                 || (pMe->m_wSelFldType == SINGLE_SELECT_GROUPLIST && STARTMETHOD_GROUPLIST == pMe->m_eStartMethod))
             {
@@ -7917,19 +7919,16 @@ static boolean  CContApp_HandlePositionDlgEvent( CContApp  *pMe,
             
         case EVT_COMMAND:
             pMe->m_wPosCmd = wParam;
-            if(IDS_UIMCARD == wParam
+            if((IDS_UIMCARD == wParam 
                 && STARTMETHOD_SAVEFIELD == pMe->m_eStartMethod
-#ifndef WIN32
-                && WSTRLEN(pMe->m_pAddNewMobile) > OEMRUIMAddr_GetRUIMMaxNumberSize()
-#else
-                && WSTRLEN(pMe->m_pFldInputBuf) > MAX_INPUT_NUM
-#endif
+                && WSTRLEN(pMe->m_pAddNewMobile) > OEMRUIMAddr_GetRUIMMaxNumberSize())
+                ||((IDS_POSITION_PHONE == wParam) && (WSTRLEN(pMe->m_pAddNewMobile)> MAX_INPUT_NUM))
                 )
             {
                 CLOSE_DIALOG(DLGRET_NUMBER_TOOLONG);
                 return TRUE;
             }
-
+            
             if(STATE_SELECTPOS != pMe->m_eCurState)
             {
                 InitMenuIcons(pMenuCtl);
