@@ -1380,6 +1380,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             nChargerStatus = IBATTERY_GetChargerStatus(pMe->m_pBatt);
             if(pMe->m_wActiveDlgID == IDD_LPM)
             {
+                MSG_FATAL("***zzg CoreApp ActiveDlg==IDD_LPM nChargerStatus=%x***", nChargerStatus, 0, 0);
                 CoreApp_RouteDialogEvent(pMe,(AEEEvent)EVT_UPDATEIDLE,0,0);
             }
             switch(nChargerStatus)
