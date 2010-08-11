@@ -1047,6 +1047,14 @@ static boolean  IDD_LPM_Handler(void       *pUser,
         case EVT_DIALOG_START:
             //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
             ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
+            //Add By zzg 2010_08_11之前是注释着的
+#ifdef CUST_EDITION    
+            {
+                extern void CoreApp_InitBattStatus(CCoreApp * pMe);
+                ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
+            }
+#endif
+            //Add
             return TRUE;
             
         case EVT_USER_REDRAW:

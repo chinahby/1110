@@ -432,16 +432,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             CoreApp_RunFSM(pMe);
 
             CoreApp_PoweronStartApps(pMe);
-            //CoreApp_InitBattStatus(pMe);        
-
-//Add By zzg 2010_08_11之前是注释着的
-#ifdef CUST_EDITION    
-            {
-				CoreApp_InitBattStatus(pMe); 
-            	ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
-            }
-#endif
-//Add
+            //CoreApp_InitBattStatus(pMe);
 
 #ifndef WIN32
             EnableUIKeys(TRUE);
@@ -750,6 +741,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return CoreApp_HandleNotify(pMe, (AEENotify *)dwParam);
             
         case EVT_UPDATEIDLE:
+            if(pMe->m_wActiveDlgID == IDD_LPM)
+            {
+                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            }
+            
             if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) != AEECLSID_CORE_APP) ||
                 (pMe->m_wActiveDlgID != IDD_IDLE))
             {
@@ -761,7 +757,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 
                 if (bNotInitedAlarm)
                 {
-
 #ifdef FEATURE_UIALARM
                     // 直道取得有效时间才开始启动警报器
                     CoreApp_EnableShellAlarms(pMe, TRUE);
@@ -1390,8 +1385,11 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             nChargerStatus = IBATTERY_GetChargerStatus(pMe->m_pBatt);
             if(pMe->m_wActiveDlgID == IDD_LPM)
             {
-                MSG_FATAL("***zzg CoreApp ActiveDlg==IDD_LPM nChargerStatus=%x***", nChargerStatus, 0, 0);
-                CoreApp_RouteDialogEvent(pMe,(AEEEvent)EVT_UPDATEIDLE,0,0);
+                ISHELL_PostEventEx(pMe->a.m_pIShell, 
+                                   EVTFLG_ASYNC, 
+                                   AEECLSID_CORE_APP,
+                                   EVT_UPDATEIDLE,
+                                   0,0L);
             }
             switch(nChargerStatus)
             {
