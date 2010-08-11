@@ -8191,7 +8191,7 @@ static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
 				STRTOWSTR((void*)secondarydns,szBuf,64);
 			    n = WSTRLEN(szBuf);
 			    szBuf[n++] = (AECHAR) '\0';
-				ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 				SetTextControlRect(pme,pIText);
 				if (NULL != szBuf)
 			    {
@@ -8357,7 +8357,7 @@ static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
 				STRTOWSTR((void*)fig_username,szBuf,64);
 			    n = WSTRLEN(szBuf);
 			    szBuf[n++] = (AECHAR) '\0';
-				ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 				SetTextControlRect(pme,pIText);
 				if (NULL != szBuf)
 			    {
@@ -8501,7 +8501,7 @@ static boolean CFieldDebug_UserPasswordMenuHandleEvent(CFieldDebug *pme,
 				STRTOWSTR((void*)Fig_Password,szBuf,64);
 			    n = WSTRLEN(szBuf);
 			    szBuf[n++] = (AECHAR) '\0';
-				ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 				SetTextControlRect(pme,pIText);
 				if (NULL != szBuf)
 			    {
@@ -8647,7 +8647,7 @@ static boolean CFieldDebug_PrimaryServerMenuHandleEvent(CFieldDebug *pme,
 			    n = WSTRLEN(szBuf);
 			    szBuf[n++] = (AECHAR) '\0';
 				
-				ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 				SetTextControlRect(pme,pIText);
 				if (NULL != szBuf)
 			    {
@@ -8794,7 +8794,7 @@ static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
 				STRTOWSTR((void*)secondaryserver,szBuf,64);
 			    n = WSTRLEN(szBuf);
 			    szBuf[n++] = (AECHAR) '\0';
-				ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 				SetTextControlRect(pme,pIText);
 				if (NULL != szBuf)
 			    {
@@ -9041,7 +9041,7 @@ static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
             SPRINTF(szBuf,"%d\0", enabledFlag);
             STRTOWSTR(szBuf, string, NV_MAX_SID_LOCK); 
             n = WSTRLEN(string);
-            ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 			SetTextControlRect(pme,pIText);
             if (NULL != szBuf)
             {
@@ -9313,7 +9313,7 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
                 }
             }
             n = WSTRLEN(string);
-            ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 			SetTextControlRect(pme,pIText);
             ITEXTCTL_SetMaxSize ( pIText, 30);
 			ITEXTCTL_SetInputMode(pIText,AEE_TM_NUMBERS);
@@ -9580,7 +9580,7 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
                 }
             }
             n = WSTRLEN(string);
-            ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 			SetTextControlRect(pme,pIText);
             ITEXTCTL_SetMaxSize ( pIText, 30);
 			ITEXTCTL_SetInputMode(pIText,AEE_TM_NUMBERS);
