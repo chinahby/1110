@@ -2907,15 +2907,23 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             {
                 case AVK_CLR:
                     //ICM_EndAllCalls(pMe->m_pICM);
-                    //modi by yangdecai
-                    // pMe->m_bHandFree = !pMe->m_bHandFree;
-                    //CallApp_SetupCallAudio(pMe);
+                    
                     ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
-					if (HS_HEADSET_ON())
+
+                    if (HS_HEADSET_ON())
 					{
-						snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
-						snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
+					    pMe->m_userCanceled = TRUE;
+                        ICM_EndAllCalls(pMe->m_pICM);
+                        
+						//snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
+						//snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
 					}
+                    else
+                    {
+                        //modi by yangdecai
+                        pMe->m_bHandFree = !pMe->m_bHandFree;
+                        CallApp_SetupCallAudio(pMe);
+                    }
                     return TRUE;  //make the dialog can't closed by avk_clr.
 
                 case AVK_ENDCALL:
@@ -8790,7 +8798,7 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
         {
         	if(HS_HEADSET_ON())
         	{
-        		DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION);
+        		DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION_ENDCALL);
         	}
 			else
         	{
@@ -8801,7 +8809,7 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
         {
             if(HS_HEADSET_ON())
 			{
-				DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION);
+				DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION_ENDCALL);
 			}
 			else
 			{
