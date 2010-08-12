@@ -501,6 +501,14 @@ typedef enum
 	STATIC_BREW_APP_DEFAULT	
 }STATIC_BREW_APP_e;
 #endif
+
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
+typedef enum 
+{
+	STATIC_BREW_APP_SMARTFREN_FACEBOOK,
+	STATIC_BREW_APP_DEFAULT	
+}STATIC_BREW_APP_e;
+#endif
 /*===========================================================================
 
                      FUNCTION PROTOTYPES

@@ -21,7 +21,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "AEEConfig.h"
 #include "AEEDeviceNotifier.h"
 #include "AEECLSID_FLIP.bid"
-#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+#if defined(FEATURE_FLEXI_STATIC_BREW_APP) || defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
 #include "OEMCFGI.H"
 #endif
 #ifdef USE_IDL2
@@ -1336,10 +1336,14 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
          pme->m_bHasStarted = TRUE;
          
          {
-#ifdef FEATURE_FLEXI_STATIC_BREW_APP	
+#if defined(FEATURE_FLEXI_STATIC_BREW_APP)
             extern void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp);
             
             OEM_SetBAM_ADSAccount(STATIC_BREW_APP_DEFAULT);
+#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
+			extern void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp);
+            
+            OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 #else	 
             extern void OEM_SetBAM_ADSAccount(void);
             
