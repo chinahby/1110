@@ -1050,15 +1050,14 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             //Add By zzg 2010_08_11之前是注释着的
 #ifdef CUST_EDITION    
             {
-                extern void CoreApp_InitBattStatus(CCoreApp * pMe);
-                ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
+                //extern void CoreApp_InitBattStatus(CCoreApp * pMe);
+                //ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
             }
 #endif
             //Add
             return TRUE;
             
         case EVT_USER_REDRAW:
-        case EVT_UPDATEIDLE:
         {
             AEEBatteryChargerStatus status;
             AECHAR  *wszText=NULL;
@@ -1068,7 +1067,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             wszText =  (AECHAR *) MALLOC(nSize);
             wszText[0] = 0;
             status = IBATTERY_GetChargerStatus(pMe->m_pBatt);
-            
+			
             IDISPLAY_ClearScreen(pMe->m_pDisplay);            
 
             MSG_FATAL("***zzg IDD_LPM_Handler status=0x%x***", status, 0, 0);
@@ -2605,7 +2604,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif			
         return TRUE;
         }
-            
+		case EVT_USER_REDRAW:     
         case EVT_UPDATEIDLE:
         {
             CoreApp_DrawWallPaper(pMe); // debug for wallpaper update issue
@@ -2614,7 +2613,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 bImageDecoded = FALSE;
                 IImage_Notify(pWallPaper, (PFNIMAGEINFO)CoreApp_ImageNotify, pMe);
             }
-
+#if 0
 #if defined(FEATURE_WMS_APP)
             if (pMe->m_bsmstipscheck)
             {
@@ -2628,7 +2627,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     CLOSE_DIALOG(DLGRET_SMSTIPS)
                 }
             }
-#endif            
+#endif    
+#endif
             
             return TRUE;            
         }
@@ -2767,11 +2767,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						#endif
                     }
 #endif
-                case AVK_END:
-					{
-						ISHELL_PostEventEx(pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_UPDATEIDLE,0,0L);
-						return TRUE;
-                	}
 				    break;
 
                 default:
@@ -3487,7 +3482,7 @@ static void CoreApp_UpdateIdleTimer(void *pUser)
     ISHELL_PostEventEx(pMe->a.m_pIShell, 
                        EVTFLG_ASYNC, 
                        AEECLSID_CORE_APP,
-                       EVT_UPDATEIDLE,
+                       EVT_USER_REDRAW,
                        0,0L);
     
     // 计算下次定时器定时时间，时间尽可能靠近下一分钟，做到显示时间精确
@@ -3587,7 +3582,7 @@ static void CoreApp_SearchingTimer(void *pUser)
     ISHELL_PostEventEx(pMe->a.m_pIShell, 
                        EVTFLG_ASYNC, 
                        AEECLSID_CORE_APP,
-                       EVT_UPDATEIDLE,
+                       EVT_USER_REDRAW,
                        0,0L);
 
     (void)ISHELL_SetTimer(pMe->a.m_pIShell,

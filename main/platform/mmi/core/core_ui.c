@@ -1951,17 +1951,11 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
         if (gpBacklight){
 			if(!IBACKLIGHT_IsEnabled(gpBacklight))
 			{
-				
+				ISHELL_PostEvent(AEE_GetShell(),AEE_Active(),EVT_USER_REDRAW,0,0L);
 				m_isBacklight = FALSE;
             	IBACKLIGHT_Enable(gpBacklight);
-				if(ISHELL_ActiveApplet(AEE_GetShell()) == AEECLSID_CORE_APP)
-				{
-					last_vcode = AVK_END;
-				}
-				else
-				{
-					return TRUE;
-				}
+				return TRUE;
+
 			}
 			else
 			{
@@ -1983,14 +1977,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
 #endif
 		if(!m_isBacklight)
 		{
-			if(ISHELL_ActiveApplet(AEE_GetShell()) == AEECLSID_CORE_APP)
-			{
-				last_vcode = AVK_END;
-			}
-			else
-			{
-				return TRUE;
-			}
+			return TRUE;
 		}
         if (gpBacklight){
             if(FALSE == IBACKLIGHT_IsEnabled(gpBacklight))
@@ -2019,14 +2006,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
 	case EVT_KEY:
 		if(!m_isBacklight)
 		{
-			if(ISHELL_ActiveApplet(AEE_GetShell()) == AEECLSID_CORE_APP)
-			{
-				last_vcode = AVK_END;
-			}
-			else
-			{
-				return TRUE;
-			}
+			return TRUE;
 		}
 		break;
         
