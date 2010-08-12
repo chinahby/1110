@@ -1048,6 +1048,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
             ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
             //Add By zzg 2010_08_11之前是注释着的
+            CoreApp_EnableShellAlarms(pMe, TRUE);  //add by yangdecai 2010-08-12
 #ifdef CUST_EDITION    
             {
                 //extern void CoreApp_InitBattStatus(CCoreApp * pMe);
@@ -1058,6 +1059,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             return TRUE;
             
         case EVT_USER_REDRAW:
+        case EVT_UPDATEIDLE:
         {
             AEEBatteryChargerStatus status;
             AECHAR  *wszText=NULL;
@@ -3482,7 +3484,7 @@ static void CoreApp_UpdateIdleTimer(void *pUser)
     ISHELL_PostEventEx(pMe->a.m_pIShell, 
                        EVTFLG_ASYNC, 
                        AEECLSID_CORE_APP,
-                       EVT_USER_REDRAW,
+                       EVT_UPDATEIDLE,
                        0,0L);
     
     // 计算下次定时器定时时间，时间尽可能靠近下一分钟，做到显示时间精确
@@ -3582,7 +3584,7 @@ static void CoreApp_SearchingTimer(void *pUser)
     ISHELL_PostEventEx(pMe->a.m_pIShell, 
                        EVTFLG_ASYNC, 
                        AEECLSID_CORE_APP,
-                       EVT_USER_REDRAW,
+                        EVT_USER_REDRAW,
                        0,0L);
 
     (void)ISHELL_SetTimer(pMe->a.m_pIShell,

@@ -741,6 +741,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return CoreApp_HandleNotify(pMe, (AEENotify *)dwParam);
             
         case EVT_UPDATEIDLE:
+           
             if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) != AEECLSID_CORE_APP) ||
                 (pMe->m_wActiveDlgID != IDD_IDLE))
             {
