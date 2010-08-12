@@ -319,7 +319,6 @@ SEE ALSO:
 static int Multimed_New( IShell *ps, IModule *pIModule, IMultimed **ppObj)
 {
     int retVal = SUCCESS;
-	DBGPRINTF("Multimed_NewMultimed_NewMultimed_NewMultimed_NewMultimed_New");
     if( 0 == gMultimed.referenceCounter)
     {
 

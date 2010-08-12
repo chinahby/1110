@@ -228,7 +228,6 @@ static int MusicPlayer_New(IShell *ps, IModule *pIModule, void **ppObj)
 #else
     pMe = (CMusicPlayer *)MALLOC(sizeof(CMusicPlayer) + sizeof(VTBL(IMusicPlayer)));
 #endif
-    DBGPRINTF("new");
     if (NULL == pMe)
     {
         return EFAILED;
@@ -1225,7 +1224,6 @@ static void MP3_InterruptHandle(CMusicPlayer *pMe)
         return;
     }
     g_nInterruptRef ++;
-    DBGPRINTF("MP3_InterruptHandle_g_nInterruptRef is %d",g_nInterruptRef);
     if(g_nInterruptRef > 1)
     {
         return;
@@ -1265,7 +1263,6 @@ static void MP3_ResumeHandle(CMusicPlayer *pMe)
         return;
     }
     g_nInterruptRef --;
-    DBGPRINTF("MP3_ResumeHandle_g_nInterruptRef is %d",g_nInterruptRef);
     if(g_nInterruptRef > 0)
     {
         return;
@@ -1432,10 +1429,8 @@ static void MP3_DecodeStartArgs(CMusicPlayer *pMe, char *args)
 {
     if(NULL == pMe || NULL == args)
     {
-        DBGPRINTF("args is NULL");
         return;
     }
-    DBGPRINTF("args is %s",args);
     switch(args[0])
     {
         case STARTARGS_SIMPLEPLAYER:

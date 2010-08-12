@@ -2365,9 +2365,7 @@ int32 OEM_ExitIputMethod(OEMCONTEXT hTextField)
 	{
 		 ISHELL_CancelTimer((IShell *) pContext->pIShell,
                              TextCtl_MultitapTimer, pContext);
-		 DBGPRINTF("OEM_ExitIputMethod CANCLE TIMER");
 	}
-	//DBGPRINTF("OEM_ExitIputMethod EXIT");
 	return SUCCESS;
 }
 /*add the code end*/
@@ -4391,11 +4389,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
     uint16   nBufLen   = pContext->sT9awFieldInfo.G.nBufLen;
     sFocusType sFocus = pContext->sFocus;     
     boolean bFlag = GetArrowFlagonIM();
-    ERR("T9TextCtl_Latin_Rapid_Key Start",0,0,0);
+    MSG_FATAL("T9TextCtl_Latin_Rapid_Key Start",0,0,0);
 #if defined (FEATURE_DISP_128X128)
     //handle key
     t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext, key );
-    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 1 t9Key=%d", t9Key,0,0);
+    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 1 t9Key=%d", t9Key,0,0);
     if(key == AVK_SELECT|| key == AVK_INFO)
     {
         if(FOCUS_SELECTION == pContext->sFocus)
@@ -4419,7 +4417,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
         return FALSE;       
     }
     
-    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 2", 0,0,0);
+    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 2", 0,0,0);
     switch ( t9Key) 
     {
         case T9KEYAMBIG1:
@@ -4434,7 +4432,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
         case T9KEYAMBIGA:
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
-            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 3", 0,0,0);
+            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 3", 0,0,0);
              if (TEXT_MODE_T9_RAPID_ENGLISH== OEM_TextGetCurrentMode(pContext)
                  && MULTITAP_FIRST_CAP == pContext->nMultitapCaps
                  && !OEM_isFirstCap(pContext)
@@ -4458,7 +4456,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;        
 
         case T9KEYLEFT:
-            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 4", 0,0,0);
+            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 4", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {   
                 pContext->sFocus = FOCUS_TEXT;               
@@ -4504,7 +4502,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;
 
         case T9KEYRIGHT:
-            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 5", 0,0,0);
+            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 5", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {   
                 pContext->sFocus = FOCUS_TEXT;             
@@ -4549,7 +4547,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;
 
          case T9KEYPREV:
-            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 6", 0,0,0);
+            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 6", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {            
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key);   
@@ -4583,7 +4581,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;
 
         case T9KEYNEXT:
-            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 7", 0,0,0);
+            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 7", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {            
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key);  
@@ -4641,7 +4639,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break; 
             
         case T9KEYCLEAR:
-            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 8", 0,0,0);
+            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 8", 0,0,0);
             if ((0 == pContext->wSelStart) && (pContext->wSelStart == pContext->wSelEnd))
             {
                 return FALSE;
@@ -4653,7 +4651,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             break;
             
         case T9KEYSPACE:  
-            DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 9", 0,0,0);
+            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 9", 0,0,0);
             if((FOCUS_SELECTION == pContext->sFocus)&&
                 (pContext->wMaxChars == nBufLen))
             {
@@ -4670,7 +4668,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
             break;  
     }  
-    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 10", 0,0,0);    
+    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 10", 0,0,0);    
     if( pContext->sT9awFieldInfo.G.nCurSelObj == 0)
     {
        bFlag =  FALSE;
@@ -4685,7 +4683,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
         }else{
             bFlag = FALSE; }
     }
-    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 11", 0,0,0);  
+    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 11", 0,0,0);  
     if(bFlag != GetArrowFlagonIM() )
     {
         SetArrowFlagonIM( bFlag);
@@ -4697,7 +4695,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
     {          
         bRet = T9_AW_DisplayText ( pContext, key);  
     }
-    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: 12", 0,0,0);
+    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 12", 0,0,0);
 #elif defined(FEATURE_DISP_160X128)
     if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
     {
@@ -4997,7 +4995,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
     }   
         
 #endif
-    DBGPRINTF("T9TextCtl_Latin_Rapid_Key:: END bRet=%d", bRet,0,0);
+    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: END bRet=%d", bRet,0,0);
     return bRet;
 }
 
@@ -5785,7 +5783,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
     
    
 #endif
-    DBGPRINTF("T9TextCtl_MultitapKey::END bRet=%d", bRet,0,0);
+    MSG_FATAL("T9TextCtl_MultitapKey::END bRet=%d", bRet,0,0);
     return bRet;
 }
 
@@ -5844,7 +5842,7 @@ static void T9_AW_Init(TextCtlContext *pContext)
 
     if ( T9STATNONE != sT9Status )
     {
-        DBGPRINTF("...Failed T9 Init. Status code = %d", sT9Status,0,0);
+        MSG_FATAL("...Failed T9 Init. Status code = %d", sT9Status,0,0);
     }
 }
 
@@ -9328,7 +9326,6 @@ static boolean TSIM_DlgHandleEvent(void * pUser, AEEEvent evt, uint16 wparam, ui
 			AECHAR *pcontents;
 			int     selstart;
 			IDialog   *pdlg;
-			DBGPRINTF("IDD_WRITEMSG_Handler  TSIM_DlgHandleEvent");
 			if(pContext->pIDialog == NULL)
 			{
 				return FALSE;

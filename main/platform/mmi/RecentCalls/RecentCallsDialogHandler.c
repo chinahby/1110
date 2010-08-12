@@ -311,46 +311,36 @@ boolean recentcalls_RouteDialogEvent(CRecentCalls *pMe,
     {
         return FALSE;
     }
-    //DBGPRINTF("curstate %d prestate %d dlgret %d recentcalls_RouteDialogEvent",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
     switch (pMe->m_pActiveDlgID)
     {
         case IDD_MSGBOX:
             return RecentCalls_HandleMsgBoxDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_VERIFY_PASSWORD:
-             //DBGPRINTF("IDD_VERIFY_PASSWORD",0,0,0);
             return RecentCalls_VerifyPasswordEvent( pMe, eCode, wParam, dwParam);
 
         case IDD_RMAINMENU:
-            //DBGPRINTF("IDD_RMAINMENU",0,0,0);
             return RecentCalls_MainMenuEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RLISTRECORD:
-            //DBGPRINTF("IDD_RLISTRECORD",0,0,0);
             return RecentCalls_ListRecordEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RTIME_MENU:
-            //DBGPRINTF("IDD_RTIME_MENU",0,0,0);
             return RecentCalls_TimeMenuEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RDEL_MENU:
-            //DBGPRINTF("IDD_RDEL_MENU",0,0,0);
             return RecentCalls_DelMenuEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RDEAL_RECORD:
-            //DBGPRINTF("IDD_RDEAL_RECORD",0,0,0);
             return RecentCalls_DealMenuEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RWARN:
-             //DBGPRINTF("IDD_RWARN",0,0,0);
             return RecentCalls_WarnEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RTIME:
-             //DBGPRINTF("IDD_RTIME",0,0,0);
             return RecentCalls_TimeEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_DETAIL:
-            //DBGPRINTF("IDD_DETAIL",0,0,0);
             return RecentCalls_DetailEvent(pMe, eCode, wParam, dwParam);
 
         default:
