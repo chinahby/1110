@@ -7,6 +7,7 @@
 #include "AEEStdErr.h"
 #include "AEEFile.h"
 #include "GreyBitType.h"
+#include "OEMHeap.h"
 
 #ifndef RELEASEIF
 #define RELEASEIF(p) do { if (p) { IBASE_Release((IBase*)(p)); p = 0; } } while (0)
@@ -619,7 +620,7 @@ int GreyBitBrewFont_Create(int nSize, void **ppif)
         return EBADPARM;
     }
     
-    pMe = MALLOC(sizeof(IFont));
+    pMe = sys_malloc(sizeof(IFont));
     if(pMe == NULL){
         return ENOMEMORY;
     }
@@ -634,13 +635,22 @@ int GreyBitBrewFont_Create(int nSize, void **ppif)
     return AEE_SUCCESS;
 }
 
+int GreyBitBrewFont_Destory(IFont *pMe)
+{
+    if(pMe)
+    {
+        OEMFont_Destroy(pMe);
+        sys_free(pMe);
+    }
+}
+
 #include "AEEDisp.h"
 int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags)
 {
     int nErr;
     IFont *pOldFont;
     IFont *pNewFont = NULL;
-
+    
     nErr = GreyBitBrewFont_Create(nSize, (void **)&pNewFont);
     if(SUCCESS != nErr)
     {
@@ -650,7 +660,7 @@ int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, 
     pOldFont = IDISPLAY_SetFont(p, AEE_FONT_USER_1, pNewFont);
     nErr = IDISPLAY_DrawText(p, AEE_FONT_USER_1, psz, nl, x, y, prcb, flags);
     IDISPLAY_SetFont(p, AEE_FONT_USER_1, pOldFont);
-    RELEASEIF(pNewFont);
+    GreyBitBrewFont_Destory(pNewFont);
     return nErr;
 }
 
