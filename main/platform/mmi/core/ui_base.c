@@ -734,6 +734,13 @@ void set_UTK_session_status(byte st)
 	ui_buf_ptr->proactive_cmd.hdr.done_q_ptr = &ui_cmd_free_q;;
 #endif /* FEATURE_REX_DYNA_MEM_UI */
 
+	//wangliang add! 2010-08-13
+	if ( ui_buf_ptr == NULL )
+	{
+		MSG_FATAL("Out of UI cmd buffer", 0,0,0);
+		return;
+	}
+	
 	ui_buf_ptr->proactive_cmd.hdr.cmd        = UI_PROACTIVE_UIM_F;
 	ui_buf_ptr->proactive_cmd.hdr.task_ptr   = NULL;
 	ui_buf_ptr->proactive_cmd.hdr.sigs       = 0;
