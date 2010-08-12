@@ -716,9 +716,17 @@ void AutoChargingManager::EventFired(ChargingEvent* event)
 
                         /* Disable automatic charging */
                         err |= pm_chg_auto_disable(TRUE);
-
+                        
+#ifdef CUST_EDITION
+#if defined(CHG_BATT_TEMP_MONITOR_ENABLE)
                         /* Enable battery temperature monitoring */
                         err |= pm_chg_batt_temp_disable(FALSE);
+#else
+                        err |= pm_chg_batt_temp_disable(TRUE);
+#endif
+#else
+                        err |= pm_chg_batt_temp_disable(FALSE);
+#endif
                     } /* if(false == mBatteryRemoved) */
                  }
                  else /* the battery is attached */
