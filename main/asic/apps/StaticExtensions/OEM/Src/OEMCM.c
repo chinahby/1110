@@ -7231,7 +7231,7 @@ static void OEMCM_HandleCallEnd(cm_mm_call_info_s_type *call_info, AEECMEvent ev
   call_id = call_info->call_id;
   core_call_info = &(ICMCoreObj->m_call_info[call_id]);
   
-#ifdef CUST_EDITION
+#if 0//def CUST_EDITION
   if (call_info->call_type == CM_CALL_TYPE_OTAPA)
   {
     MSG_MED("CM_CALL_TYPE_OTAPA release and return", 0, 0, 0);
