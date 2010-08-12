@@ -1082,14 +1082,8 @@ static boolean  IDD_LPM_Handler(void       *pUser,
 #ifndef FEATURE_USES_LOWMEM
                 if (NULL != pMe->m_battery_Image)
                 {
-                    MSG_FATAL("***zzg NULL != pMe->m_battery_Image***", 0, 0, 0);
-                    
-                    IDISPLAY_ClearScreen(pMe->m_pDisplay);      //Add By zzg  2010_08_11
-                    
+                    MSG_FATAL("***zzg NULL != pMe->m_battery_Image***", 0, 0, 0);  
                     IIMAGE_DrawFrame(pMe->m_battery_Image, CHARGING_FRAME_COUNT - 1, 0, 0);
-
-                    IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);   //Add By zzg  2010_08_11
-                    return TRUE;                                //Add By zzg  2010_08_11
                 }
                 else
                 {
