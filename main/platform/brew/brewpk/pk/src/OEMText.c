@@ -2127,13 +2127,39 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     AEERect oldrc;
                     TitleBar_Param_type TitleBar;
                     int  nBarH = GetTitleBarHeight((IDisplay *)pContext->pIDisplay);
-                    
+                    int cchFits, nPixels = 0;
+                    IFont                *tempFont = NULL;
+                    if ( SUCCESS != ISHELL_CreateInstance(pContext->pIShell,
+                                      AEECLSID_FONTSYSNORMAL,//AEECLSID_FONT,
+                                      (void **)&tempFont))
+                    {
+                        tempFont = NULL;
+                        nPixels = 50;
+                    }
+                    else
+                    {
+                        IFONT_MeasureText(tempFont, szRemainingCount, WSTRLEN(szRemainingCount), IFONT_MAXWIDTH, &cchFits, &nPixels);
+                    }
                     IDISPLAY_GetClipRect(pContext->pIDisplay, &oldrc);
+#if 1//defined(FEATURE_DISP_128X128)    
+                    SETAEERECT(&rc,
+                                rect.x,
+                                rect.y-nBarH,
+                                nPixels,//在128*128的小屏上固定宽度不行，因为宽度不够，所以字符是多宽，就只能给多宽
+                                nBarH);  
+#else
                     SETAEERECT(&rc,
                                 rect.x,
                                 rect.y-nBarH,
                                 50,
-                                nBarH);                    
+                                nBarH);  
+#endif
+                    if(tempFont)
+                    {
+                       IFONT_Release(tempFont);
+                       tempFont = NULL;
+                    }
+
                     IDISPLAY_SetClipRect(pContext->pIDisplay, &rc);
                     MEMSET(&TitleBar, 0, sizeof(TitleBar_Param_type));
                     TitleBar.prc = &rc;
