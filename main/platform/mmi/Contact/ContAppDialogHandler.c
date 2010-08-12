@@ -1494,7 +1494,6 @@ void *CContApp_GetBufbyFldID(CContApp *pMe, AEEAddrFieldID wFldID)
         if(pFld->fID == AEE_ADDRFIELD_RINGTONE)
         {
             //ringID* ringer = (ringID*)pFld->pBuffer;
-            DBGPRINTF("tangwq in getbufbyId: %s, %d",pFld->pBuffer, i);
         }
         if ( pFld == NULL ) 
         {
@@ -4028,7 +4027,6 @@ SEE ALSO:
     ASSERT(pMe != NULL);
 
     ring = (AECHAR*)CContApp_GetBufbyFldID(pMe, AEE_ADDRFIELD_RINGTONE);
-    DBGPRINTF("in saveRingField: %S",ringName,0,0);
     if(NULL == ring)
     {
         // Add a new field
@@ -5834,7 +5832,6 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                         
                         IMENUCTL_SetItemText(pMenuCtl, IDI_ADDNEW_MENU_SELECTRINGTONE, NULL, 0, name);
                         
-                        DBGPRINTF("tangwq after strrchr: %s", pMe->m_nRingToneID,0,0);
                     } 
                     else
                     {
@@ -12467,7 +12464,6 @@ static boolean  CContApp_HandleCopyingDlgEvent( CContApp  *pMe,
             return TRUE;
             
         case EVT_FLIP:
-            DBGPRINTF("AVK_FLIP_CLOSE:0x%x\n",eCode);
             FORCE_COMPLETE_COPY();
             CContApp_FreeSelectFieldListNode();
             ISTATIC_Release(pStatic);
@@ -14793,7 +14789,6 @@ static boolean  CContApp_HandleDeletingDlgEvent( CContApp  *pMe,
             return TRUE;
             
         case EVT_FLIP:
-            DBGPRINTF("AVK_FLIP_CLOSE:0x%x\n",eCode);
             FORCE_COMPLETE_DELETE();
             CContApp_FreeSelectFieldListNode();
             ISTATIC_Release(pStatic);

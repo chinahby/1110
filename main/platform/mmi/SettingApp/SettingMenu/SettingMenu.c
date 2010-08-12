@@ -907,7 +907,6 @@ static void SettingMenu_Get_Ip_Number(CSettingMenu *pMe)
                 STRTOWSTR(c_buf, num_tab->number, (OEM_IP_NUMBER_MAX+1)*sizeof(AECHAR));
                 pMe->ip_number_tab.count ++;
             }
-            //DBGPRINTF("IP1 %S c_buf= %s",num_tab->number,c_buf);
             if(pMe->ip_number_tab.head == NULL) //the first node
             {
                 pMe->ip_number_tab.head = num_tab;
@@ -958,7 +957,6 @@ static void SettingMenu_Free_And_Save_Ip_Number(CSettingMenu *pMe)
 
         STRLCAT(c_buf,":",OEM_IP_NUMBER_MAX+2);
         STRLCAT(ip_cfg.Number,c_buf,OEM_IP_NUMBER_COUNT * (OEM_IP_NUMBER_MAX+1));
-        //DBGPRINTF("IP2 %s c_buf= %s",ip_cfg.Number,c_buf);
         ip_cfg.ip_count ++;
         pMe->ip_number_tab.head = temp->next;
         FREE(temp);
@@ -976,12 +974,10 @@ void SettingMenu_Print_IP_Number(CSettingMenu *pMe)
     number_table *temp = pMe->ip_number_tab.head;
     if(pMe->ip_number_tab.default_ip[0] != 0)
     {
-        DBGPRINTF("default_ip= %S",pMe->ip_number_tab.default_ip);
     }
     
     while(temp)
     {
-        DBGPRINTF("IP_Number= %S",temp->number);
         temp = temp->next;
     }
 #endif

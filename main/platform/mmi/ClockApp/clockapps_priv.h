@@ -119,7 +119,7 @@ void registerPowerdownAlarmclock( void);
 #define IDC_REP_MOD_LIST    (3)
 #define IDC_CLOCK_SNOOZE    (4)
 
-#define debug DBGPRINTF
+#define debug
 
 // 状态移动宏：先将前一状态用当前状态更新，再将当前状态设为nextState
 #define MOVE_TO_STATE(nextState) {            \

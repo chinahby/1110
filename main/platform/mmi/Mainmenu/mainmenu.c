@@ -825,7 +825,6 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
         // 如果当前已经有对话框被打开，直接返回
-        DBGPRINTF("Trying to create dialog %d without closing previous one",dlgResId,0,0);
         return;
     }
     
@@ -843,9 +842,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
     nRet = ISHELL_CreateDialog(pMe->m_pShell,MAINMENU_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)
     {
-        DBGPRINTF("Failed to create the dialog %d in the MAINMENU applet.",dlgResId,0,0);
     }
-    ERR("MainMenu_ShowDialog End",0,0,0);
 }
 
 
@@ -929,7 +926,6 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_7, IDS_MAIN_MENU_TITLE_7, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_8, IDS_MAIN_MENU_TITLE_8, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_9, IDS_MAIN_MENU_TITLE_9, NULL, 0);
-            DBGPRINTF("EVT_DIALOG_INIT:::::::1");
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
@@ -958,7 +954,6 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     {
                         IMENUCTL_SetItemText(pMenu, IDS_MAIN_MENU_TITLE_1 + i - 1, NULL, NULL, pwsz);
                     }
-                    DBGPRINTF("I::::::::::%d    pstr::::::%s",i,pstr);
                     i++;
                 }
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);

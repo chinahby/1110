@@ -51,7 +51,7 @@
 #if !defined( max)
 #define max( a, b)  ( (a) > (b)) ? (a) : (b)
 #endif
-#define debug DBGPRINTF
+#define debug
 
 
 typedef enum

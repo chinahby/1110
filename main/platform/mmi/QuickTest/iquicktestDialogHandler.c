@@ -511,11 +511,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 				
 					if( image != NULL)
 					{
-						DBGPRINTF("IImage IS NOT NULL........................");
 						IIMAGE_Draw(image, 0, 0);
 						IIMAGE_Release( image);
 					}
-					DBGPRINTF("IImage IS NULL........................");
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
 				
@@ -856,7 +854,6 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					    DBGPRINTF("AVK_UPwParam::::::::::::::::::::%d,dwParam:::::::::::::::::%d",wParam,dwParam);
 						if( image != NULL)
 						{
 							if((uint32)dwParam == 1)
@@ -880,7 +877,6 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					    DBGPRINTF("AVK_DOWNwParam::::::::::::::::::::%d,dwParam:::::::::::::::::%d",wParam,dwParam);
 						if( image != NULL)
 						{
 							if((uint32)dwParam == 1)

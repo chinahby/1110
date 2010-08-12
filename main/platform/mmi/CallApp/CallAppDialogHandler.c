@@ -586,7 +586,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 byte mute = OEMSOUND_MUTE_VOL;
                 ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
                 ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
-                DBGPRINTF( ";---numedit init, beep, %d", keyBeepVolumeSetting);
             }
             
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
@@ -705,7 +704,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             if( pMe->m_b_incall)
             {
                 ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
-                DBGPRINTF( ";---numedit edn, beep, %d", keyBeepVolumeSetting);
             }
             if (!pMe->m_b_incall)
             {// 此时可能有来电，但未接通，需进一步判断是否有来电以确认是否备份用户拨号
@@ -841,7 +839,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             #ifdef FEATURE_MORSE
             if(((AVKType)wParam == AVK_5)&&(gMorseSendingFlag == TRUE))
             {
-                DBGPRINTF("EVT_KEY_HELD Dialer NumEdit");
                 (void) ISHELL_SetTimer(pMe->m_pShell,
                                 1000,
                                 Morse_DialogTimeout,
@@ -1781,7 +1778,6 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                 byte mute = OEMSOUND_MUTE_VOL;
                 ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
                 ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
-                DBGPRINTF( ";---calling init, beep, %d", keyBeepVolumeSetting);
             }
             return TRUE;
 
@@ -1821,7 +1817,6 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
 
             if(pMe->m_CallsTable == NULL)
             {
-                DBGPRINTF("calling Call_Table == NULL",0,0,0);
                 pMe->m_CallsTable = (Dialer_call_table*) CALLAPP_MALLOC(sizeof(Dialer_call_table));
                 if(pMe->m_CallsTable)
                 {
@@ -5080,7 +5075,6 @@ static void CallApp_MakeSpeedDialCall(CCallApp  *pMe)
     {
         //If it valid speed dial number but it is empty
         //then show the message
-        //DBGPRINTF("CallApp_MakeSpeedDialCall %S",pMe->m_DialString,0,0);
  #ifdef FEATURE_CARRIER_THAILAND_HUTCH
         if(WSTRLEN(pMe->m_DialString) >= 2)
   #else
@@ -5236,7 +5230,6 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         return CALL_FAIL_ANOTHER;
     }
 
-    //DBGPRINTF("%S CallApp_MakeCall",pMe->m_DialString,0,0);
     // Can only make emergency calls while emgcall is TRUE
     //if (CallApp_IsEmergencyMode(pMe->m_pICM)/*pMe->idle_info.IsEmgCall*/ &&
     //                                        !CallApp_IsEmergency_Number(pMe->m_DialString))
@@ -5408,8 +5401,6 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
                                                 pause+1,  /*skip the pause character*/  -1);
         b_have_p = TRUE;
     }
-    //DBGPRINTF("%S wbuf2",wbuf,0,0);
-    //DBGPRINTF("%S pMe->m_PauseString2",pMe->m_PauseString,0,0);
     //in this time,the wbuf not include p/w
 #endif //FEATURE_APP_PAUSE_TIMER
     b_energency = CallApp_IsEmergency_Number(wbuf);
@@ -5925,7 +5916,6 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         {
             break;
         }
-        DBGPRINTF("1111111111111111111pixelLen=%d", pixelLen);
         ASSERT(pixelLen <= dialerRect.dx);
         pixelLen = dialerRect.dx - pixelLen;
 #if defined(FEATURE_DISP_128X128)        
@@ -8188,11 +8178,10 @@ static boolean  CallApp_SendFrenduoSMS(void)
 	
 	if (SUCCESS == IWmsApp_SendSpecMessageEx(pIWmsApp))
 	{
-		DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  SUCCESS!");
+		MSG_FATAL("FrenDuoApp: IWmsApp_SendSpecMessageEx  SUCCESS!",0,0,0);
 	}
 	else
 	{
-		DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  FAILED!");
 		(void)IWmsApp_Release(pIWmsApp);
 		pIWmsApp = NULL;
 		return EFAILED;
@@ -9871,7 +9860,6 @@ static void notifyFMRadioAlertEvent( CCallApp *pMe, boolean toStartAlert)
 static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 {
     int xPos = 0, yPos = 0, xNum = 0, yNum = 0, dy = pMe->m_rc.dy, Line_Pixel = 2;
-    DBGPRINTF("CallApp_Calc_Cursor_Rect Start");
 #if defined( FEATURE_CALL_RECORDER)
     if(pMe->m_bRecorderOn)
     {
@@ -9940,11 +9928,8 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             yPos += (25 + Line_Pixel);
         }
     }
-    DBGPRINTF("sssssssssssssssss m_DialString Length=%d", WSTRLEN(pMe->m_DialString));
-    DBGPRINTF("dx=%d, xNum=%d, m_nCursorPos=%d, xPos=%d", pMe->m_rc.dx, xNum, pMe->m_nCursorPos, xPos);
 	SETAEERECT(pRect, xPos, yPos, 4, 25);
 #endif
-    DBGPRINTF("CallApp_Calc_Cursor_Rect End");
 }
 
 
@@ -9967,14 +9952,12 @@ static void CallApp_Draw_Cursor(CCallApp* pMe, AEERect *pRect)
 {
     AEERect rect = {0};
     RGBVAL  nCursorColor = MAKE_RGB(0xE6, 0xE6, 0xE6);
-    DBGPRINTF("CallApp_Draw_Cursor Start");
     SETAEERECT(&rect, pRect->x, pRect->y, pRect->dx, 1);
     IDISPLAY_FillRect(pMe->m_pDisplay, &rect, nCursorColor);
     SETAEERECT(&rect, pRect->x+1, pRect->y+1, 2, pRect->dy-2);
     IDISPLAY_FillRect(pMe->m_pDisplay, &rect, nCursorColor);
     SETAEERECT(&rect, pRect->x, pRect->y+pRect->dy-1, pRect->dx, 1);
     IDISPLAY_FillRect(pMe->m_pDisplay, &rect, nCursorColor);
-    DBGPRINTF("CallApp_Draw_Cursor End");
 }
 
 
@@ -9996,7 +9979,6 @@ static void CallApp_Set_Cursor_Blink(void* pUser)
 {
     CCallApp* pMe = (CCallApp*) pUser;
     AEERect rect = {0};
-    DBGPRINTF("CallApp_Set_Cursor_Blink Start");
     ISHELL_CancelTimer(pMe->m_pShell, CallApp_Set_Cursor_Blink, pMe);
 
     CallApp_Calc_Cursor_Rect(pMe, &rect);
@@ -10013,7 +9995,6 @@ static void CallApp_Set_Cursor_Blink(void* pUser)
     IDISPLAY_Update(pMe->m_pDisplay);
     
     ISHELL_SetTimer(pMe->m_pShell, 600, CallApp_Set_Cursor_Blink, (void*)pMe);
-    DBGPRINTF("CallApp_Set_Cursor_Blink End");
 }
 #endif
 

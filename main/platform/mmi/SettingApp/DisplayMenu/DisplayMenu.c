@@ -1079,7 +1079,6 @@ static void Display_EnumFile(CDisplayMenu *pMe)
     {
         while(IFILEMGR_EnumNext(pMe->m_pIFileMgr, &Photopos))
         {                	    
-		    DBGPRINTF("PhotoName %s",PhotoName,0,0);
 		    //判断是桌面墙纸、开机动画还是关机动画，分别以w、k、g字母开头
 		    if(Photopos.attrib & AEE_FA_CONST)
 		    {

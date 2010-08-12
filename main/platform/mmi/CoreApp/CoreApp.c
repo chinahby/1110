@@ -391,7 +391,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                                    uint32 dwParam)
 {
     CCoreApp * pMe = (CCoreApp *)pi;
-    //DBGPRINTF("%x %x %x CoreApp_HandleEvent",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -877,11 +876,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             
         case EVT_RTC:
         {
-            DBGPRINTF( ";-------------------------------");
-            DBGPRINTF( ";EVT_RTC");
             if( pMe->m_eCurState == COREST_LPM)
             {
-                DBGPRINTF( ";LPM, to restart coreapp");
 
 #if defined( FEATURE_POWERDOWN_ALARM)
 				ICONFIG_GetItem(pMe->m_pConfig, CFGI_ALARM_FLAG,(void*)&pMe->powerupByAlarm, sizeof(boolean));
@@ -1069,11 +1065,9 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
     switch (pNotify->dwMask)
     {
 	case NMASK_CM_DATA_CALL:
-            DBGPRINTF("NMASK_CM_DATA_CALL %d",pEvtInfo->event);
             switch (pEvtInfo->event)
             {
                 case AEECM_EVENT_CALL_CONNECT:
-                    DBGPRINTF("AEECM_EVENT_CALL_CONNECT");
                     if(pMe->m_pIAnn != NULL)
                     {
                         IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_ON);
@@ -1081,16 +1075,13 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                     break;
 #if 0
                 case AEECM_EVENT_CALL_ENTER_DORMANT:
-                    DBGPRINTF("AEECM_EVENT_CALL_ENTER_DORMANT");
                     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_OFF);                   
                     break;
                 case AEECM_EVENT_CALL_EXIT_DORMANT:
-                    DBGPRINTF("AEECM_EVENT_CALL_EXIT_DORMANT");
                     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_ON);                   
                     break;
 #endif
                 case AEECM_EVENT_CALL_END: 
-                    DBGPRINTF("AEECM_EVENT_CALL_END");
                     if(pMe->m_pIAnn != NULL)
                     {
                         IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_OFF);   
@@ -1099,7 +1090,6 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
             }
             break;
        case NMASK_CM_SS:
-            DBGPRINTF("NMASK_CM_SS %d %d",pEvtInfo->event,SysMode);
             switch (pEvtInfo->event)
             {
                 case AEECM_EVENT_SS_SRV_CHANGED:
@@ -1162,7 +1152,6 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
             break;
             
         case NMASK_CM_PHONE:
-            DBGPRINTF("NMASK_CM_PHONE %d",pEvtInfo->event);
             switch(pEvtInfo->event)
             {
                 // System preference changed
@@ -1989,7 +1978,6 @@ static void CoreApp_Process_AutoPower_Event(void *pUser)
     db_items_value_type db;
     db_get(DB_IN_USE, &db);
     if(db.in_use)
-    //DBGPRINTF("EVT_AUTO_POWERDOWN");
     //if(AEECM_IS_VOICECALL_CONNECTED(pMe->m_pCM))
     {
         ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_DIALER,EVT_AUTO_POWERDOWN,0,0);
@@ -2470,9 +2458,7 @@ static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe)
     
     
     cur_btkeyVol = p_beep_level[cur_active];
-    
-    DBGPRINTF("coreapp btKeyVol = %d,cur_btkeyVol = %d",btKeyVol,cur_btkeyVol);
-    
+        
     if(btKeyVol != cur_btkeyVol)
     {
          btKeyVol = cur_btkeyVol; //changed NV data  
@@ -2603,7 +2589,6 @@ void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode)
     //CORE_ERR("Null pMe",0,0,0);
     return;
   }
-  DBGPRINTF("InitAfterPhInfo %d",mode,0,0);
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
   /* Send RTRE config changed to CM - response from CM will */
   /* generate subscription changed event */

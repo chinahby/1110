@@ -589,7 +589,6 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
     CClockApps *pMe = (CClockApps*)pi;
     AEEAppStart *as;
 
-    DBGPRINTF("eCode = %x,wParam = %d",eCode, wParam);
 
     switch (eCode)
     {
@@ -624,7 +623,6 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
             uint16 i;
 #endif
 
-            DBGPRINTF( ";------evt_alarm, %d", pMe->m_bAlarmOff);
 
 #if 0
             if (!ClockApps_CanAlert(pMe))
@@ -1310,7 +1308,6 @@ static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType, boolean 
         // 当前 Applet 尚未处于活动状态，启动 Applet
         if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_ALARMCLOCK)
         {
-            DBGPRINTF( ";-----to start alarm clock applet");
             (void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
         }
         else
@@ -1493,16 +1490,12 @@ static int registerPowerdownAlarmclockIf( uint32 now)
 #ifdef FEATURE_APP_WORLDTIME
     extern boolean Calendar_FormatDateTime( uint32 seconds, AECHAR* resultString, int resultStringLength);
 #endif /*FEATURE_APP_WORLDTIME*/
-    DBGPRINTF( ";---------------------");
-    DBGPRINTF( ";try to register powerdown alarmclock");
 
     GETJULIANDATE( now, &jdate);
-    DBGPRINTF( ";now is %d%02d%02d %02d:%02d, weekday %d", jdate.wYear, jdate.wMonth, jdate.wDay, jdate.wHour, jdate.wMinute, jdate.wWeekDay + 1);
     jdate.wHour = jdate.wMinute = jdate.wSecond = 0;
     today = JULIANTOSECONDS( &jdate);
     if( now == 0 || today == 0)
     {
-        DBGPRINTF( ";now = %d, today = %d, do NOT register", now, today);
         return -1;
     }
     result = ISHELL_GetPrefs( AEE_GetShell(),
@@ -1514,7 +1507,6 @@ static int registerPowerdownAlarmclockIf( uint32 now)
 
     if( result !=SUCCESS)
     {
-        DBGPRINTF( ";ISHELL_GetPrefs failed!");
         i = NUM_OF_ALARMCLOCK;
     }
 
@@ -1528,14 +1520,12 @@ static int registerPowerdownAlarmclockIf( uint32 now)
 
         if( !clockCfg.bStateOn[i])
         {
-            DBGPRINTF( ";clock[%d] is off", i);
             continue;
         }
 
         switch ( clockCfg.RepMode[i])
         {
             case WEEK_ALARM_REP1:   // 每天
-                DBGPRINTF( ";clock[%d] repeat everyday", i);
                 wWeekAlarmMask = TRUE;
                 break;
 
@@ -1676,19 +1666,16 @@ static int registerPowerdownAlarmclockIf( uint32 now)
 #endif
                 
             case WEEK_ALARM_REP11: // 一次
-                DBGPRINTF( ";clock[%d] repeat once", i);
                 wWeekAlarmMask = TRUE;
                 break;  
 
             default:
-                DBGPRINTF( ";clock[%d] repeat is invalid", i);
                 wWeekAlarmMask = FALSE;
                 break;
         }
 
         if( !wWeekAlarmMask)
         {
-            DBGPRINTF( ";clock[%d] today is off, %d", i, jdate.wWeekDay + 1);
             continue;
         }
 
@@ -1704,7 +1691,6 @@ static int registerPowerdownAlarmclockIf( uint32 now)
 #else
 		time = clockCfg.dwWATime[i] / 1000 + today;
 #endif
-        DBGPRINTF( ";clock[%d].time = %d, now = %d, last>time:%d", i, time, now, last > time);
         if( time > now && last > time)
         {
             PowerDown_Alarm_Cfg alarmCfg    = {0};
@@ -1718,8 +1704,6 @@ static int registerPowerdownAlarmclockIf( uint32 now)
 #ifdef FEATURE_APP_WORLDTIME
             Calendar_FormatDateTime( time, text, sizeof( text));
 #endif /*FEATURE_APP_WORLDTIME*/
-
-            DBGPRINTF( ";set CFGI_POWERDOWN_ALARM, id=%d, time=%S", alarmCfg.alarm_id, text);
 
             registered ++;
         }
@@ -1742,18 +1726,13 @@ void registerPowerdownAlarmclock( void)
     JulianType  jdate           = {0};
     int         result          = 0;
 
-    DBGPRINTF( ";-------------------------------------------");
-    DBGPRINTF( ";to register powerdown alarmclock");
 #ifndef WIN32
     if( !OEMRTC_Get_Current_Time( &now))
     {
-        DBGPRINTF( ";now is invalid: %d", now);
         return;
     }
 #endif//WIN32
 	result = registerPowerdownAlarmclockIf( now);
-    DBGPRINTF( ";today register result is %d", result);
-    DBGPRINTF( ";---------------------");
     if( result == 0)
     {
         GETJULIANDATE( now, &jdate);
@@ -1761,10 +1740,7 @@ void registerPowerdownAlarmclock( void)
         tommorrow = JULIANTOSECONDS( &jdate) + 24*60*60;
 
         result = registerPowerdownAlarmclockIf( tommorrow);
-        DBGPRINTF( ";tommorrow register result is %d", result);
-        DBGPRINTF( ";---------------------");
     }
-    DBGPRINTF( ";-------------------------------------------");
 }
 
 void snoozePowerdownAlarmclock( void)
@@ -1777,9 +1753,6 @@ void snoozePowerdownAlarmclock( void)
 #ifdef FEATURE_APP_WORLDTIME    
     extern boolean Calendar_FormatDateTime( uint32 seconds, AECHAR* resultString, int resultStringLength);
 #endif /*FEATURE_APP_WORLDTIME*/
-
-    DBGPRINTF( ";-----------------------------------------------------------");
-    DBGPRINTF( ";snoozePowerdownAlarmClock");
 
     result = ISHELL_GetPrefs( AEE_GetShell(),
                     AEECLSID_ALARMCLOCK,
@@ -1831,7 +1804,6 @@ void snoozePowerdownAlarmclock( void)
         Calendar_FormatDateTime( newtime, text, sizeof( text));
 #endif /*FEATURE_APP_WORLDTIME*/
 
-        DBGPRINTF( ";alarm time: %S", text);
         while( newtime < now)
         {
             newtime += snooze;
@@ -1839,8 +1811,6 @@ void snoozePowerdownAlarmclock( void)
 #ifdef FEATURE_APP_WORLDTIME        
         Calendar_FormatDateTime( newtime, text, sizeof( text));
 #endif /*FEATURE_APP_WORLDTIME*/
-
-        DBGPRINTF( ";snooze time: %S", text);
 
 #if defined( FEATURE_ONCE_ALARM)
 		if( clockCfg.RepMode[alarmCfg.alarm_id] == WEEK_ALARM_REP11)
@@ -1863,9 +1833,7 @@ void snoozePowerdownAlarmclock( void)
     }
     else
     {
-        DBGPRINTF( ";get alarm data failed");
     }
-    DBGPRINTF( ";-----------------------------------------------------------");
 }
 
 void registerAgainPowerdownAlarmclock( void)

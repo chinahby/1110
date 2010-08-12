@@ -264,7 +264,6 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 
 			if( wParam == 0)
 			{
-				DBGPRINTF( ";dialong end, wParam = 0");
 				return TRUE;
 			}
 
@@ -414,7 +413,6 @@ boolean recorder_create_media_if( Media* pme)
 
 	if( ISHELL_CreateInstance( AEE_GetShell(), AEECLSID_MEDIAQCP, (void**)&pme->m_pMedia) != SUCCESS)
 	{
-		DBGPRINTF( ";create media object failed, [%s]", pme->m_pszName);
 		return FALSE;
 	}
 
@@ -444,7 +442,6 @@ boolean recorder_create_filemgr( Media* pme)
 
 	if( !pme->m_pFileManager && ISHELL_CreateInstance( AEE_GetShell(), AEECLSID_FILEMGR, (void**)&pme->m_pFileManager) != SUCCESS)
 	{
-		DBGPRINTF( ";recorder_create_filemgr failed");
 		return FALSE;
 	}
 

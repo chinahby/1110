@@ -1017,7 +1017,6 @@ else
   if ( sigs & UI_RTC_SIG )
   {
     (void) rex_clr_sigs( rex_self(), UI_RTC_SIG );
-    //DBGPRINTF("UI_RTC_SIG");
     ISHELL_SendEvent( AEE_GetShell(), AEECLSID_CORE_APP, EVT_RTC, 0, 0);
     OEMRTC_Run_Call_Back_Function(); 
     //OEMRTC_Process_Timer_List();

@@ -95,7 +95,6 @@ NextFSMAction Converter_ProcessState(CConverter *pMe)
     {
         return retVal;
     }
-    DBGPRINTF("curstate %d prestate %d dlgret %d Converter_ProcessState",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
     // 根据当前状态调用相应的状态处理函数
     switch (pMe->m_eCurState)
     {

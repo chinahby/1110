@@ -2444,17 +2444,14 @@ static boolean CFieldDebug_TestCallHandleEvent(CFieldDebug * pme,
       if (ISHELL_CreateInstance(pme->a.m_pIShell, AEECLSID_CALLMANAGER,
                                 (void **) &pICM) != SUCCESS) {
 //lint +e527
-        DBGPRINTF("Could not get instance of ICM");
         return FALSE;
       }
 
       if (pICM == NULL) {
-        DBGPRINTF("Could not get instance of ICM");
         return FALSE;
       }
 
       if (ISHELL_CreateInstance (pme->a.m_pIShell, AEECLSID_CALLOPTS,(void **) &pICallOpts) != SUCCESS) {
-        DBGPRINTF("Could not get instance of ICallOpts");
         return FALSE;
       }
 
@@ -2462,7 +2459,6 @@ static boolean CFieldDebug_TestCallHandleEvent(CFieldDebug * pme,
       call_option.pVal = &so;
 
       if (ICallOpts_AddOpt (pICallOpts, &call_option) != SUCCESS) {
-        DBGPRINTF("Could not set call options");
         ICallOpts_Release (pICallOpts);
         ICM_Release (pICM);
         return FALSE;
@@ -2472,14 +2468,12 @@ static boolean CFieldDebug_TestCallHandleEvent(CFieldDebug * pme,
       call_option.pVal = &service_type;
 
       if (ICallOpts_AddOpt (pICallOpts, &call_option) != SUCCESS) {
-        DBGPRINTF("Could not set call options");
         ICallOpts_Release (pICallOpts);
         ICM_Release (pICM);
         return FALSE;
       }
 
       if (ICM_OriginateCall (pICM, AEECM_CALL_TYPE_TEST, number, NULL, pICallOpts, &call_id) != SUCCESS) {
-        DBGPRINTF("Could not originate call");
         ICallOpts_Release (pICallOpts);
         ICM_Release (pICM);
         return FALSE;
@@ -3880,13 +3874,11 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
                           CFGI_BREW_CARRIER_ID,
                           &carrID,
                           sizeof(uint32));
-				DBGPRINTF("DownLoadInfo::::::111111111::::::::::%d",DownLoadInfo.dwCID);
 				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_CARRIERID_TEXT);
 				ITEXTCTL_SetActive(pIText,TRUE);
 		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,99);
 				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
                 carrID= ATOI(string);
-				DBGPRINTF("DownLoadInfo:::::::2222222222:::::::::%d",DownLoadInfo.dwCID);
 				(void) ICONFIG_SetItem(pme->m_pIConfig,
                           CFGI_BREW_CARRIER_ID,
                           &carrID,
@@ -3924,13 +3916,11 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
                           CFGI_BREW_CARRIER_ID,
                           &carrID,
                           sizeof(uint32));
-				DBGPRINTF("DownLoadInfo::::::111111111::::::::::%d",DownLoadInfo.dwCID);
 				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_CARRIERID_TEXT);
 				ITEXTCTL_SetActive(pIText,TRUE);
 		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,99);
 				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
                 carrID= ATOI(string);
-				DBGPRINTF("DownLoadInfo:::::::2222222222:::::::::%d",DownLoadInfo.dwCID);
 				(void) ICONFIG_SetItem(pme->m_pIConfig,
                           CFGI_BREW_CARRIER_ID,
                           &carrID,
@@ -3968,7 +3958,6 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
 			                          CFGI_BREW_CARRIER_ID,
 			                          &carrID,
 			                          sizeof(uint32));
-                DBGPRINTF("DownLoadInfo::::::00000000::::::::::%d",DownLoadInfo.dwCID);
                 SPRINTF(szBuf,"%d\0", carrID);
                 STRTOWSTR(szBuf, string, 64); 
                 n = WSTRLEN(string);
@@ -4666,7 +4655,6 @@ static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
 			p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 
 			pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_PRIMARYDNS_TEXT);
-			DBGPRINTF("000000000000000000000000000001111111111");
 			ITEXTCTL_SetActive(pIText,TRUE);
 	  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
 			(void) WSTRTOSTR(pwstrText, string, sizeof(string));
@@ -4702,7 +4690,6 @@ static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
 			p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 
 			pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_PRIMARYDNS_TEXT);
-			DBGPRINTF("000000000000000000000000000001111111111");
 			ITEXTCTL_SetActive(pIText,TRUE);
 	  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
 			(void) WSTRTOSTR(pwstrText, string, sizeof(string));
@@ -8270,7 +8257,6 @@ static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
 				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 
 				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_USER_NAME_TEXT);
-				DBGPRINTF("000000000000000000000000000001111111111");
 				ITEXTCTL_SetActive(pIText,TRUE);
 		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
 				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
@@ -8312,7 +8298,6 @@ static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
 				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 
 				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_USER_NAME_TEXT);
-				DBGPRINTF("000000000000000000000000000001111111111");
 				ITEXTCTL_SetActive(pIText,TRUE);
 		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
 				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
@@ -8959,13 +8944,11 @@ static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
              //   CFGI_NET_LOCK_ENABLED,
               //  &enabledFlag,
              //   sizeof(uint8));
-                DBGPRINTF("enabledFlag::::::111111111::::::::::%d",enabledFlag);
                 pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_TEXT_LOCK_FLAG);
                 ITEXTCTL_SetActive(pIText,TRUE);
                 (void)ITEXTCTL_GetText(pIText,pwstrText,2);
                 (void) WSTRTOSTR(pwstrText, string, sizeof(string));
                 enabledFlag= (word)ATOI(string);
-                DBGPRINTF("enabledFlag:::::::2222222222:::::::::%d",enabledFlag);
                 (void) ICONFIG_SetItem(pme->m_pIConfig,
                 CFGI_NET_LOCK_ENABLED,
                 &enabledFlag,
@@ -9003,13 +8986,11 @@ static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
 		         //   CFGI_NET_LOCK_ENABLED,
 		          //  &enabledFlag,
 		         //   sizeof(uint8));
-		            DBGPRINTF("enabledFlag::::::111111111::::::::::%d",enabledFlag);
 		            pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_TEXT_LOCK_FLAG);
 		            ITEXTCTL_SetActive(pIText,TRUE);
 		            (void)ITEXTCTL_GetText(pIText,pwstrText,2);
 		            (void) WSTRTOSTR(pwstrText, string, sizeof(string));
 		            enabledFlag= (word)ATOI(string);
-		            DBGPRINTF("enabledFlag:::::::2222222222:::::::::%d",enabledFlag);
 		            (void) ICONFIG_SetItem(pme->m_pIConfig,
 		            CFGI_NET_LOCK_ENABLED,
 		            &enabledFlag,
@@ -9037,7 +9018,6 @@ static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
             CFGI_NET_LOCK_ENABLED,
             &enabledFlag,
             sizeof(word));
-            DBGPRINTF("enabledFlag::::::00000000::::::::::%d",enabledFlag);
             SPRINTF(szBuf,"%d\0", enabledFlag);
             STRTOWSTR(szBuf, string, NV_MAX_SID_LOCK); 
             n = WSTRLEN(string);
@@ -9833,7 +9813,6 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
             //(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
             pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_TEXT_SID);
             (void) ICONFIG_GetItem(pme->m_pIConfig,CFGI_NET_LOCK_SID,&sid,sizeof(word));
-            DBGPRINTF("enabledFlag::::::00000000::::::::::%d",sid[0]);
             for(i = 0; i < NV_MAX_SID_LOCK; i++)
             {
                 MSG_FATAL("enabledFlag::::::00000000::::::::::sid[%d]=%d",i,sid[i],0);  

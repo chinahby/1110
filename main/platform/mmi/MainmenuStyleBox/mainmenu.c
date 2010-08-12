@@ -1559,7 +1559,6 @@ static void calculateScreenParameters(MainMenu *pMe)
         iconSpaceVertical = 0;
     }
     //chengxiao modify end 2009.04.02
-    DBGPRINTF("pMe->m_rc.dy:: %d,,,,iconSpaceHorizontal::::%d,,iconSpaceVertical:::::%d",pMe->m_rc.dy,iconSpaceHorizontal,iconSpaceVertical);
     for( i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
         pMe->m_Icondefault_Pt[i].x = iconSpaceHorizontal +
@@ -1572,8 +1571,6 @@ static void calculateScreenParameters(MainMenu *pMe)
         pMe->m_IconFocus_Pt[i].x = pMe->m_Icondefault_Pt[i].x - (ICON_ANIMATED_WIDTH - imageInfoIcon.cx)/2;
 
         pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
-        DBGPRINTF("pMe->m_IconFocus_Pt[%d].x:: %d",i,pMe->m_IconFocus_Pt[i].x);
-        DBGPRINTF("pMe->m_IconFocus_Pt[%d].y:: %d",i,pMe->m_IconFocus_Pt[i].y);
         //end added
     }
 }

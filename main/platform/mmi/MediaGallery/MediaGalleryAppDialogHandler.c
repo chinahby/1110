@@ -2598,7 +2598,6 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
             (eMimeBase == MG_MIME_JPEG || eMimeBase == MG_MIME_JPG))
          {
             MSG_FATAL("m_bV0848DecodeImg == TRUE",0,0,0);
-            DBGPRINTF("pCurNode->szName=%s", pCurNode->szName);
             pMe->m_bV0848DecodeImg = TRUE;
             if(pMe->m_ImgViewOps == MG_OP_NULL)
             {
@@ -2674,7 +2673,6 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 #ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE
          if(display_jpg_done == VC_JPEG_DECODE_DOING)
          {
-            DBGPRINTF("VC_ITM_JPG_STOP_DECODE_I");
 #ifndef AEE_SIMULATOR
             VC_DeviceControl(VC_ITM_JPG_STOP_DECODE_I,VC_FUNC_PLAY_ON,0);
 #endif
@@ -8397,7 +8395,6 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
               sizeof(char) * (STRLEN(pszFileName) + 1),
               wszTitle,
               sizeof(wszTitle));
-   DBGPRINTF("wszTitle = %S", wszTitle);
    IDISPLAY_GetFontMetrics(pDisp,
                            AEE_FONT_BOLD,
                            &nAscent,
@@ -8448,7 +8445,6 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
       //VC_DeviceControl(VC_ITM_JPG_DISPCLR_I, VC_FUNC_PLAY_ON, &vc_data);
       pplayfile = SPLITPATH((const char*)pszPath, MG_MASSCARD_ROOTDIR);
       STRCPY((char *)&vc_data.play_info.szFileName,pplayfile);
-      DBGPRINTF("VC JPEG Decode:%s", (char *)&vc_data.play_info.szFileName);
       vc_data.play_info.entry = VC_JPEG_ENTRY_FS;
 
       //if we use VIM848 decode jpeg photo, now call it

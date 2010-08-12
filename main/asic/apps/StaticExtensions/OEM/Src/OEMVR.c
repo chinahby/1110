@@ -416,7 +416,6 @@ static void SetCurrentInstance(IVR *pIVR)
             if (vdb_set_current_client_db(pIVR->szVSClientDBPath) != VDB_NOERR)
             {
                // Should never happen, since path is prevalidated
-               DBGPRINTF("VR: Error setting db (%s)", pIVR->szVSClientDBPath);
             }
             STRLCPY(szVSClientDBPath, pIVR->szVSClientDBPath, STRLEN(pIVR->szVSClientDBPath) +1 );
          }
@@ -428,7 +427,6 @@ static void SetCurrentInstance(IVR *pIVR)
             if (vdb_set_current_language(pIVR->szVSLanguage) != VDB_NOERR)
             {
                // Should never happen, since language is prevalidated
-               DBGPRINTF("VR: Error setting language (%s)", pIVR->szVSLanguage);
             }
             STRLCPY(szVSLanguage, pIVR->szVSLanguage, STRLEN(pIVR->szVSLanguage) + 1);
          }
@@ -903,12 +901,10 @@ static void ProcessVSCallback(void *pNotifyData)
    // callback that was already scheduled, but handle it just in case.)
    if (pIVR != pCurrentInstance)
    {
-      DBGPRINTF("VR:  ProcessVSCallback with non-current pIVR");
       return;
    }
    else if (pIVR->wStatus != AEEVRSTATUS_RUNNING)
    {
-      DBGPRINTF("VR:  ProcessVSCallback with wStatus = %d", pIVR->wStatus);
       return;
    }
 
@@ -1176,9 +1172,6 @@ static void ProcessVSCallback(void *pNotifyData)
    // (Should never happen - indicates a missing case above.)
    if (wStatus == AEEVRSTATUS_NONE)
    {
-      DBGPRINTF("VR: Case not handled in VS callback (%d, %d)",
-                pIVR->wAsyncOp, pIVR->wVSStatus);
-
       // Treat as a failure with no failure code
       wStatus = AEEVRSTATUS_FAILED;
       wFailure = AEEVRFAILURE_NONE;
@@ -1504,7 +1497,6 @@ int OEMVR_New(IShell *pIShell, AEECLSID cls, void **ppo)
 #endif
    {
       // Couldn't get Brew-app-specific path
-      DBGPRINTF("VR: Couldn't build Brew db path");
 
       // Just make path go from root instead
       STRLCPY(szPath, szVtagDBPrefix, STRLEN(szVtagDBPrefix) + 1);
@@ -1512,7 +1504,6 @@ int OEMVR_New(IShell *pIShell, AEECLSID cls, void **ppo)
    else if ((STRLEN(szPath) + 8) > VDB_CLIENT_NAME_MAX_LENGTH)
    {
       // Brew-app-specific path (plus 8-char class ID to be appended) too long
-      DBGPRINTF("VR: Brew db path too long (%s)", szPath);
 
       // Just make path go from root instead
       STRLCPY(szPath, szVtagDBPrefix, STRLEN(szVtagDBPrefix) + 1);

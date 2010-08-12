@@ -1227,7 +1227,6 @@ static void      VkeyCtl_SetNumberPad(VkeyCtl * pme,AEERect * prc)
     rc_y = prc->y;
     rc_dx = prc->dx/5;
     rc_dy = prc->dy/2;
-      	//DBGPRINTF("VkeyCtl_SetNumberPad rc_dx=%d rc_dy=%d",rc_dx,rc_dy);
     if ((rc_dx < FontWidth) || (rc_dy < FontHeight))
     {
         return ;  //没有达到最小空间的要求
@@ -1302,7 +1301,6 @@ static void      VkeyCtl_SetLittleCharPad(VkeyCtl * pme,AEERect * prc)
     =======================================================================*/
     pme->m_rc = *prc;
     
-	//DBGPRINTF("VkeyCtl_SetLittleCharPad dx=%d dy=%d",pme->m_rc.dx,pme->m_rc.dy);
     if ((pme->m_rc.dx < PY_KEYPAD_MINWIDTH)
        || (pme->m_rc.dy < PY_KEYPAD_MINHEIGHT))
     {
@@ -1322,11 +1320,9 @@ static void      VkeyCtl_SetLittleCharPad(VkeyCtl * pme,AEERect * prc)
     pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
                                          AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PINYINKEYPADDOWN);
     
-	DBGPRINTF("VkeyCtl_SetLittleCharPad %s",AEE_APPSCOMMONRES_IMAGESFILE);
 	if ((pme->m_KeyPadNormal == NULL)
        || (pme->m_KeyPadDown == NULL))
     {
-		DBGPRINTF("VkeyCtl_SetLittleCharPad Load Failed");
         return;
     }
     
@@ -1380,7 +1376,6 @@ static void  VkeyCtl_SetBigCharPad(VkeyCtl * pme,AEERect * prc)
     rc_y = prc->y;
     rc_dx = prc->dx/10;
     rc_dy = prc->dy/3;
-   	//DBGPRINTF("VkeyCtl_SetbigCharPad rc_dx=%d rc_dy=%d",rc_dx,rc_dy);
     if ((rc_dx < FontWidth) || (rc_dy < FontHeight))
     {
         return ;  //没有达到最小空间的要求
@@ -1449,7 +1444,6 @@ static void      VkeyCtl_SetSymbolPad(VkeyCtl * pme,AEERect * prc)
     检查最小空间
     =======================================================================*/
     pme->m_rc = *prc;
-    //DBGPRINTF("VkeyCtl_SetSymbolPad dx=%d dy=%d",pme->m_rc.dx,pme->m_rc.dy);
     if ((pme->m_rc.dx < OTHER_KEYPAD_MINWIDTH)
        || (pme->m_rc.dy < OTHER_KEYPAD_MINHEIGHT))
     {
@@ -1525,7 +1519,6 @@ static void      VkeyCtl_SetNumberLittleCharPad(VkeyCtl * pme,AEERect * prc)
     检查最小空间
     =======================================================================*/
     pme->m_rc = *prc;
-    //DBGPRINTF("VkeyCtl_SetNumberLittleCharPad dx=%d dy=%d",pme->m_rc.dx,pme->m_rc.dy);
     if ((pme->m_rc.dx < OTHER_KEYPAD_MINWIDTH)
        || (pme->m_rc.dy < OTHER_KEYPAD_MINHEIGHT))
     {
@@ -1601,7 +1594,6 @@ static void      VkeyCtl_SetNumberBigCharPad(VkeyCtl * pme,AEERect * prc)
     检查最小空间
     =======================================================================*/
     pme->m_rc = *prc;
-    //DBGPRINTF("VkeyCtl_SetNumberBigCharPad dx=%d dy=%d",pme->m_rc.dx,pme->m_rc.dy);
     if ((pme->m_rc.dx < OTHER_KEYPAD_MINWIDTH)
        || (pme->m_rc.dy < OTHER_KEYPAD_MINHEIGHT))
     {

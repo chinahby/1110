@@ -3909,9 +3909,7 @@ int SoundMenu_SetMp3ring(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
     {
         return EBADPARM;
     }
-    
-    DBGPRINTF("%s is the music file ",pBuf);
-    
+        
     if(pMe->m_RingerType == SET_RINGER)               // À´µçÁåÉù
     {
         ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)nNewConfigRinger,sizeof(nNewConfigRinger));

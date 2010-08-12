@@ -5887,7 +5887,6 @@ static NextFSMAction Handler_STATE_ONEDIAL_SET_NUMFLDSEL(CContApp *pMe)
             
             // Save config
             //(void)WSTRCPY(pMe->m_pFldInputBuf, pMe->m_pOneDialBuf);
-            DBGPRINTF("pMe->m_pOneDial = %s",pMe->m_pOneDial,0,0);
             (void)CContApp_SetConfig( pMe,
                                       (ContAppCFG)pMe->m_wSelectOneDial,
                                       pMe->m_pOneDial,

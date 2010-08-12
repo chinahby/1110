@@ -68,7 +68,7 @@
 #endif //#if !defined( AEE_SIMULATOR)
 
 
-#define debug DBGPRINTF
+#define debug
 
 #define FEATURE_DIRECT_INPUT_CHANNEL_NUMBER                     1
 #define FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY    0

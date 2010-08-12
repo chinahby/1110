@@ -2163,7 +2163,6 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                     if(db.db_poweruptype != DB_POWERUP_BYRESET)
                     {
                     ICONFIG_GetItem( pMe->m_pConfig, CFGI_PROFILE_STARTUP_MUSIC, aRing_type, sizeof(aRing_type) );
-                    //DBGPRINTF("fj music_num = %d , Ring_Cur_Music = %d, IDD_STARTUPANI_Handler",(uint32)aRing_type[Ring_Cur_Music], Ring_Cur_Music);
                     IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
                     }
                 }
@@ -2544,7 +2543,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             if(pMe->svc_p_name[0] == 0)
 #endif
             {
-                //DBGPRINTF("IRUIM_Read_Svc_P_Name");
                 if(IsRunAsUIMVersion())
                 {
                     if(EFAILED == IRUIM_Read_Svc_P_Name(pMe->m_pIRUIM,pMe->svc_p_name))
@@ -3358,7 +3356,6 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                             if(poweronoff_alert[Ring_Cur_Music]  == OEMNV_POWERONOFF_ENABLE)
                             {
                                 ICONFIG_GetItem( pMe->m_pConfig, CFGI_PROFILE_SHUTDOWN_MUSIC, aRing_type, sizeof(aRing_type) );
-                                //DBGPRINTF("fj music_num = %d , Ring_Cur_Music = %d, IDD_POWERDOWN_Handler",(uint32)aRing_type[Ring_Cur_Music], Ring_Cur_Music);
                                 IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
                             }
                             
@@ -4634,8 +4631,6 @@ static void CoreApp_Process_Rtc_Event(CCoreApp *pMe)
         JulianType current_time_ex;
         current_time = GETTIMESECONDS();
         GETJULIANDATE(current_time, &current_time_ex);
-        //DBGPRINTF("%d %d:%d current_time_ex",current_time_ex.wYear,current_time_ex.wMonth,current_time_ex.wDay);
-        //DBGPRINTF("%d %d:%d current_time_ex",current_time_ex.wHour,current_time_ex.wMinute,current_time_ex.wSecond);
         if(current_time_ex.wYear < 2008)
         {
             JulianType *get_rtc_time = NULL;
@@ -5402,7 +5397,6 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
     if(pMe->svc_p_name[0] == 0)
 #endif
     {
-        //DBGPRINTF("IRUIM_Read_Svc_P_Name");
         if(IsRunAsUIMVersion())
         {
        

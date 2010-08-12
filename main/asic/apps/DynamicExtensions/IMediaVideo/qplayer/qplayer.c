@@ -1769,12 +1769,10 @@ static boolean CPlayerWin_HandleEvent(IWindow * po, AEEEvent eCode, uint16 wPara
         DBGPRINTF_MED("QP: IDM_PM_PLAY received.");
         if (CPlayerWin_IsPause(pme))
         {
-           DBGPRINTF("QP: it is in pause, resume now.");
            (void)IMEDIA_Resume((IMedia*)pme->m_pMedia);
         }
         else if (SUCCESS == IMEDIA_GetTotalTime((IMedia*)pme->m_pMedia))
         {
-          DBGPRINTF("QP: has total time, replay now.");
           if (AEE_SUCCESS == IMEDIA_Play((IMedia*)pme->m_pMedia))
             pme->m_bPlayRec = TRUE;
           pme->m_bPlaypending = FALSE;

@@ -59,7 +59,6 @@ static boolean Rendering_IsPlaying(DisplayDev eDev);
 
 int Rendering_Initlize(DisplayDev eDev, void *pSrcBuf)
 {
-    DBGPRINTF("Rendering_Initlize");
     g_RendDev[eDev].m_pSrcBuf      = (byte *)pSrcBuf;
     g_RendDev[eDev].m_eType        = REND_RANDOM;
     g_RendDev[eDev].m_fps          = FPS_DEFAULT;
@@ -97,7 +96,6 @@ int Rendering_Update(DisplayDev eDev, int16 x, int16 y, int16 dx, int16 dy)
 		{
 			if(Rendering_IsEnable(eDev))
 			{
-			    DBGPRINTF("Rendering_Update 1");
 				return Rendering_Start(eDev);
 			}
 		}
@@ -126,7 +124,6 @@ int Rendering_UpdateEx(void)
 	{
 		if(Rendering_IsEnable(DISPLAYDEV_MAIN))
 		{
-		    DBGPRINTF("Rendering_UpdateEx 1");
 			return Rendering_Start(DISPLAYDEV_MAIN);
 		}
 	}
@@ -175,7 +172,6 @@ int Rendering_Start(DisplayDev eDev)
     static uint32 nOldCFGRendType;
 	(void)OEM_GetConfig(CFGI_DEFAULT_REND, (void*)&nOldCFGRendType, sizeof(nOldCFGRendType));
     (void)OEM_GetConfig(CFGI_REND_STATE, (void*)&nOldRendState, sizeof(nOldRendState));
-    DBGPRINTF("Rendering_Start %d %d",nOldRendState,nOldCFGRendType);
 	if(nOldRendState == 0)
 	{
 		return 0;
@@ -210,7 +206,6 @@ int Rendering_Start(DisplayDev eDev)
 		RendDraw myRendDraw;
 
 	    g_RendDev[eDev].m_isDrawing = TRUE;
-	    DBGPRINTF("Rendering_StartTimer %d %d",MSPF(g_RendDev[eDev].m_fps),eDev);
 		Rendering_StartTimer(MSPF(g_RendDev[eDev].m_fps), &g_RendDev[eDev]);
 		myRendDraw.pDest      = g_RendDev[eDev].m_pDestBuf;
 		myRendDraw.pSrc1      = g_RendDev[eDev].m_pSrcBuf;
@@ -243,7 +238,6 @@ static boolean Rendering_IsEnable(DisplayDev eDev)
 void Rendering_TimerCB(void *pUser)
 {
     RendDev *pMe = (RendDev *)pUser;
-    DBGPRINTF("Rendering_TimerCB %d %d 0x%x",pMe->m_iCurrStep,pMe->m_iMaxStep,pMe->m_pfnRendDraw);
     pMe->m_iCurrStep++;
     if(pMe->m_iCurrStep >= pMe->m_iMaxStep)
     {

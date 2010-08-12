@@ -857,7 +857,6 @@ static void oemui_handlecmd(ui_cmd_type *cmd_ptr)
                 //static boolean first_set_menu = TRUE;
                 cmd_type = UTK_parse_proactive_command(cmd_ptr->proactive_cmd.cmd_data, cmd_ptr->proactive_cmd.num_bytes);
                               
-//                DBGPRINTF("UTK cmd_type = 0x%02x %d",cmd_type,first_set_menu,0);
                 //if(first_set_menu == TRUE && cmd_type == UIM_TK_SETUP_MENU)
                 //{
                 //    first_set_menu = FALSE;

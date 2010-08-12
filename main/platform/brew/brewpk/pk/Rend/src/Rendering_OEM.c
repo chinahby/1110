@@ -68,7 +68,6 @@ void Rendering_UpdateDev(void *pBmpBuf)
 {
 	void *pBack = ((IDIB *)gpDevBitmap)->pBmp;
 	AEERect rc={0, 0, REND_SCREEN_WIDTH, REND_SCREEN_HEIGHT};
-	DBGPRINTF("Rendering_UpdateDev");
 	((IDIB *)gpDevBitmap)->pBmp = (byte *)pBmpBuf;
 	OEMDisplayDev_Update(gpDevDisp,gpDevBitmap,&rc);
 	((IDIB *)gpDevBitmap)->pBmp = (byte *)pBack;

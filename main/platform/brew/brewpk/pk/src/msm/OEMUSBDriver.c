@@ -567,8 +567,6 @@ int OEMUSBDriver_New(IShell *piShell, AEECLSID cls, void **ppif)
    // the interface from instantiating.
    if (!gbSigGood)
    {
-      DBGPRINTF("Implementor Error: Not receiving AEE_USBDRIVER_SIG signals");
-      DBGPRINTF("(cont)in OEMUSBDriver_TaskHandler");
       return EFAILED;
    }
 

@@ -7185,7 +7185,6 @@ boolean ContApp_ReadVcfFile(CContApp *pMe, char* fileName, int * cnt)
                     IFILEMGR_Remove(pIFileMgr, fileName);
                     IFILEMGR_Release(pIFileMgr);
                     pIFileMgr = NULL;
-                    DBGPRINTF("tanwq in ContApp_ReadVcfFile comcent: %s", pdatabuf,0,0);
 
                     if(ParseVcfFile(pMe, pdatabuf, cnt) == VCARD_SUCCESS)
                     {
@@ -7423,13 +7422,11 @@ int CContApp_GetRingtone( IAddrBook   *pAddr,
         if(pFld->fID == AEE_ADDRFIELD_RINGTONE)
         {
             WSTRCPY(ringName, (AECHAR*)pFld->pBuffer);
-            DBGPRINTF("tangwq in getringtone: %S", ringName);
             return SUCCESS;
         }
 
     }
 
-    DBGPRINTF("tangwq in getringtone2: %S", ringName);
     ringName[0] = (AECHAR)'\0';
     return EFAILED;
 }// CContApp_GetRingtone

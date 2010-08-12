@@ -149,7 +149,6 @@ SEE ALSO:
 =============================================================================*/
 int MultimedMod_Load( IShell *pIShell, void *ph, IModule **ppMod)
 {
-	DBGPRINTF("MultimedMod_Load::::::::::STARTING...................");
     return MultimedMod_New( sizeof(MultimediaMod),
                     pIShell,
                     ph,
@@ -838,7 +837,6 @@ void Multimed_ShowDialog(Multimed  *pMe,  uint16 dlgResId)
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
         // 如果当前已经有对话框被打开，直接返回
-        DBGPRINTF("Trying to create dialog %d without closing previous one",dlgResId,0,0);
         return;
     }
     
@@ -855,7 +853,6 @@ void Multimed_ShowDialog(Multimed  *pMe,  uint16 dlgResId)
     nRet = ISHELL_CreateDialog(pMe->m_pShell,MULTIMEDIA_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)
     {
-        DBGPRINTF("Failed to create the dialog %d in the MAINMENU applet:nRet=%d",dlgResId,nRet,0);
     }
     
 }
@@ -877,7 +874,6 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
         
     if (pMenu == NULL)
     {
-    	DBGPRINTF("Multimed_ListMenuHandler   pMuenu  is null");
         return FALSE;
     }
 
@@ -934,7 +930,6 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                     {
                         IMENUCTL_SetItemText(pMenu, IDS_MULTIMEDIA_TITLE_1 + i - 1, NULL, NULL, pwsz);
                     }
-                    DBGPRINTF("I::::::::::%d    pstr::::::%s",i,pstr);
                     i++;
                 }
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
@@ -946,7 +941,6 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             return TRUE;
             
         case EVT_USER_REDRAW:
-			DBGPRINTF("IMENUCTL_Redraw:::::::::::::::::::");
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
             
@@ -954,7 +948,6 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             return TRUE;
 
         case EVT_KEY:
-			DBGPRINTF("EVT_KEY:::::::1");
             switch(wParam)
             {
                 case AVK_1:

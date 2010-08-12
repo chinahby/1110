@@ -168,7 +168,7 @@ typedef struct _ServiceProviderList
 } ServiceProviderList;
 #endif //FEATURE_SPN_FROM_BSMCCMNC
 
-#define CORE_ERR  DBGPRINTF
+#define CORE_ERR
 
 // ¹Ø±Õ¶Ô»°¿òºê
 #define CLOSE_DIALOG(DlgRet)                    \

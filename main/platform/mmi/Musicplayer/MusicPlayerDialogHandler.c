@@ -807,7 +807,6 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
                     
                 case AVK_SELECT:
-                    DBGPRINTF("AVK_SELECT");
                     if(pMe->m_nPlaylistNum == 0)
                     {
                         CLOSE_DIALOG(DLGRET_CREATEORRENAMELIST);
@@ -2422,7 +2421,6 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             
             if(pMe->m_pMedia)
             {  
-                DBGPRINTF("pMe->m_pMedia is not null imediaresume");
                 (void)IMEDIA_Resume(pMe->m_pMedia);
                 pMe->m_bPaused=FALSE;
                 pMe->m_bPlaying = TRUE;
@@ -3821,7 +3819,6 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
       pMe->m_bUse848 = bUse848;
       if(pMe->m_bUseBT)
       {
-        DBGPRINTF("open sco");
         (void)bcmapp_ag_audio_open(pMe->m_nBTID, 
                                     (PFN_AG_NOTIFY)MP3_PlayMusicByBTCallBack,
                                     pMe, 
@@ -4075,7 +4072,6 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
             case MM_STATUS_TICK_UPDATE:
                 pMe->m_nSimPlayCurTime++;
                 //pMe->m_nSimPlayCurTime = ((uint32)pCmdNotify->pCmdData) / 1000;
-                DBGPRINTF("pMe->m_nSimPlayCurTime %d",pMe->m_nSimPlayCurTime);
                 (void) ISHELL_PostEvent(pMe->m_pShell, 
                                         AEECLSID_APP_MUSICPLAYER,
                                         EVT_USER_REDRAW,
@@ -4963,7 +4959,6 @@ static void MP3_RefreshSimpleSchBar(CMusicPlayer *pMe)
                                          IDI_SCHEDULEBAR_FULL);
         if( image != NULL)
         {
-			DBGPRINTF("pMe->m_nSimPlayCurTime is %dpMe->m_nTotalTime is %d",pMe->m_nSimPlayCurTime,pMe->m_nTotalTime);
             //SETAEERECT( &clip, x,y, 72*pMe->m_nSimPlayCurTime/pMe->m_nTotalTime,1);//wlh mod 
 			SETAEERECT( &clip, x,y, SIMSCHEDULEBAR_W*pMe->m_nSimPlayCurTime/pMe->m_nTotalTime,SIMSCHEDULEBAR_H);
             IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);

@@ -432,9 +432,6 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                     // 若接入了外部电源，进入关机充电状态
                     MSG_FATAL("LPM test: have extern power!",0,0,0);
 
-                    //DBGPRINTF( ";-----------------------------------------");
-                    //DBGPRINTF( ";now is charging");
-
                     if( !lpm)
                     {
                         lpm = 1;
@@ -482,20 +479,14 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
             
         case DLGRET_RTC:
         {
-
-            DBGPRINTF( ";----------------------------------------");
-            DBGPRINTF( ";response to EVT_RTC");
-
 #if defined( FEATURE_POWERDOWN_ALARM)
             if( pMe->powerupByAlarm)
             {
-                DBGPRINTF( ";start by alarm, to show alarm");
                 tepState = COREST_ALARM;
             }
             else
 #endif				
             {
-                DBGPRINTF( ";start by auto poweron, to verify password");
                 tepState = COREST_VERIFYPHONEPWD;
             }
             MOVE_TO_STATE( tepState)
@@ -1192,7 +1183,6 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
         return NFSMACTION_WAIT;
     }
     //#ifdef FEATRUE_AUTO_POWER
-    //DBGPRINTF("EVT_AUTO_POWERDOWN %d %d",pMe->m_b_autopower_off,pMe->m_eDlgRet);
     //#endif
     MSG_FATAL("COREST_STANDBY_Handler Start",0,0,0);
     switch (pMe->m_eDlgRet)
@@ -1598,8 +1588,6 @@ void static isAllowIMSI(CCoreApp *pMe,boolean *lockFlg)
            return;
     }
 	
-    DBGPRINTF("szMCC %c",szMCC);
-    DBGPRINTF("szMNC %c",szMNC);	 
     //OEM_GetConfig(CFGI_MOBILEINFO, &mi,	sizeof(AEEMobileInfo));
     GetMobileInfo(&mi);
     STRNCPY(szMCC,mi.szMobileID,3);

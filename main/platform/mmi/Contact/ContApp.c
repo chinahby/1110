@@ -802,7 +802,6 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
                 char name[128];
                 int cnt=0;
                 STRCPY(name,(char*)dwParam);
-                DBGPRINTF("EVT_NEWMSGIN %s",name);
                 ContApp_ReadVcfFile(pMe, name, &cnt);
             }
             return TRUE;
@@ -1571,7 +1570,6 @@ int CContApp_SetConfig(CContApp        *pMe,
     }
 
     ERR("eCFG = %d",eCFG,0,0);
-    DBGPRINTF("data = %s",(AECHAR *)data,0,0);
     // ≤È’“≈‰÷√œÓ
     switch(eCFG)
     {

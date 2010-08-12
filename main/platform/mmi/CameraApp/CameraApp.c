@@ -709,7 +709,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
     AEEAppStart *as;    
     int  nAscent,nDescent;
 
-    DBGPRINTF("eCode = %x, wParam = %d", eCode, wParam);
 
     switch(eCode)
     {
@@ -809,8 +808,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             {
                 AEECLSID clsId;          
                 clsId = ISHELL_ActiveApplet(pMe->m_pShell);
-                DBGPRINTF("clsId = %d,pMe->m_nCameraState = %d",clsId,pMe->m_nCameraState);
-                DBGPRINTF("clsId = %x",clsId);
           
                 switch(clsId)
                 {
