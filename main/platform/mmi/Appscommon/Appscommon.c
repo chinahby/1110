@@ -50,6 +50,7 @@
 #include "oemhelperfunctype.h"
 #endif//WIN32
 #include "OEMClassIDs.h"
+#include "msg.h"
 /*==============================================================================
                                  
                                  宏定义和常数
