@@ -1449,7 +1449,7 @@ static boolean AStatic_AddText(AStatic * pme, byte * pbText)
       if(bsb)
          (void)STRLCPY((char *)(pTemp + nOrig),(char *)pbText, (size_t)(nSize - nOrig));
       else
-         (void)WSTRLCPY((AECHAR *)(pTemp + nOrig), (AECHAR *)pbText, (size_t)(nSize - nOrig)/sizeof(AECHAR));// Gemsea AECHAR Lens
+         (void)WSTRLCPY((AECHAR *)(pTemp + nOrig), (AECHAR *)pbText, (size_t)(nSize - nOrig));
    }
    else{
       if(pme->m_dwProps & ST_TEXTALLOC)

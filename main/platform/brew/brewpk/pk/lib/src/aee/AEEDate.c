@@ -2284,10 +2284,11 @@ static void drawImage( DateCtl *pMe, char *resFile, int16 resId, int x, int y)
 
 static void DateCtl_DrawDayEx(DateCtl * pme, int nDay, AEERect * prc)
 {
-    AECHAR sz[3];
+    AECHAR sz[10];
     AEEFont lsave;
     RGBVAL preclr;
-
+    
+    MEMSET(sz, 0, sizeof(sz));
     lsave = pme->m_fntText;
     if (nDay >= 1 && nDay <= 31)
     {

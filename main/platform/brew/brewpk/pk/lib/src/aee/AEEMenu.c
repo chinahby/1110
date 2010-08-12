@@ -4042,24 +4042,27 @@ static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft)
             pme->imageSelectBar = ISHELL_LoadResImage( pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_SELECT_BAR);
         }
     }
+    
+    if( pme->imageSelectBar)
+    {
+        IDISPLAY_GetClipRect( pme->m_pIDisplay, &oldClip);
 
-    IDISPLAY_GetClipRect( pme->m_pIDisplay, &oldClip);
-
-    IDISPLAY_SetClipRect( pme->m_pIDisplay, prc);
+        IDISPLAY_SetClipRect( pme->m_pIDisplay, prc);
     
 #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
-    if( IS_MENU( pme)&& (!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL)))
-    {
-       IDISPLAY_DrawFrame( pme->m_pIDisplay, prc, ft, pme->m_c.cBack);
-    }
+        if( IS_MENU( pme)&& (!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL)))
+        {
+           IDISPLAY_DrawFrame( pme->m_pIDisplay, prc, ft, pme->m_c.cBack);
+        }
 
 #endif //#if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
 
-    IIMAGE_Draw( pme->imageSelectBar, prc->x, prc->y);
-    IIMAGE_Release(pme->imageSelectBar);
-    pme->imageSelectBar = NULL;
+        IIMAGE_Draw( pme->imageSelectBar, prc->x, prc->y);
+        IIMAGE_Release(pme->imageSelectBar);
+        pme->imageSelectBar = NULL;
     
-    IDISPLAY_SetClipRect( pme->m_pIDisplay, &oldClip);
+        IDISPLAY_SetClipRect( pme->m_pIDisplay, &oldClip);
+    }
 }
 
 #endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
@@ -6442,7 +6445,7 @@ static boolean Icon_HandleKey(CMenuCtl * pme, uint16 wKey)
 
       case AVK_RIGHT:
       case AVK_LEFT:
-		MSG_FATAL("AVK_RIGHT::::::333333333333333333333333333333333",0,0,0);
+
          // Only allow right/left if the displayed columns is > 1 OR there is only 1 row...
          if(pme->m_nCols <= 1 && pme->m_nRows > 1)
             return(TRUE);
@@ -6644,10 +6647,10 @@ Local Method - Returns the height of text for the icon menu.
 ======================================================================*/
 static uint16 Icon_GetTextHeight(CMenuCtl * pme)
 {
-    uint16 cy = pme->m_cyFont;
-    if(SINGLE_FRAME(pme))
-        cy += (pme->m_style[0].yOffset * 2);
-    return(cy);
+	uint16 cy = pme->m_cyFont;
+	if(SINGLE_FRAME(pme))
+		cy += (pme->m_style[0].yOffset * 2);
+	return(cy);
 }
 
 /*=====================================================================
@@ -6674,7 +6677,7 @@ static uint16 Icon_GetMaxTextHeight(CMenuCtl * pme)
    else
       cyTextMax = Icon_GetTextHeight(pme);
 
-    return(cyTextMax);
+	return(cyTextMax);
 }
 
 /*=====================================================================
@@ -6889,7 +6892,7 @@ static void Icon_CalcItemRect(CMenuCtl * pme, uint16 nIdx, AEERect* prc)
    }
    else{
       yOffset = 0;
-   }            
+   }			
 
    xPad = pme->m_xImagePad;
    yPad = pme->m_yImagePad;
@@ -6899,7 +6902,7 @@ static void Icon_CalcItemRect(CMenuCtl * pme, uint16 nIdx, AEERect* prc)
 
    // Adjust for space taken by text
    if(nFrame && ALIGN_TEXT_TOP(pme))
-      rc.y += (yOffset);// + AEE_FRAME_SIZE);
+      rc.y += yOffset;
 
    if(pme->m_bIconHScroll){
       int nEnd, nCount;
@@ -8438,7 +8441,12 @@ static void Menu_TitleAutoScroll(CMenuCtl * pme)
 {
     int         n,nIdxNew,nIdx;
     RGBVAL      clrBack,clrText,clrFrame;
-   
+
+    if(!pme->m_pTitle)
+    {
+        return;
+    }
+    
     if(!pme->m_bTitleAutoScroll)
     {
         return;
@@ -8485,6 +8493,11 @@ Local Method - Resets the auto-scroll timer for a menu title.
 ======================================================================*/
 static void Menu_ResetTitleAutoScroll(CMenuCtl * pme)
 {
+    if(!pme->m_pTitle)
+    {
+        return;
+    }
+    
     pme->m_nTitleAutoScrollIdx = 0;
     
     if( pme->m_bActive && Menu_TitleScrolls(pme, 0))
