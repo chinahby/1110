@@ -492,7 +492,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
 								
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
-            ISHELL_PostEventEx(pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_UPDATEIDLE,0,0L);//need to redraw IDLE
+            ISHELL_PostEventEx(pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_USER_REDRAW,0,0L);//need to redraw IDLE
 #endif
             return TRUE;
         }
@@ -741,11 +741,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return CoreApp_HandleNotify(pMe, (AEENotify *)dwParam);
             
         case EVT_UPDATEIDLE:
-            if(pMe->m_wActiveDlgID == IDD_LPM)
-            {
-                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-            }
-            
+           
             if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) != AEECLSID_CORE_APP) ||
                 (pMe->m_wActiveDlgID != IDD_IDLE))
             {
@@ -915,7 +911,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
 
             //change EVT_DRAWMUSICNAME to EVT_UPDATEIDLE
-            CoreApp_RouteDialogEvent(pMe,(AEEEvent)EVT_UPDATEIDLE,wParam,dwParam);
+            CoreApp_RouteDialogEvent(pMe,(AEEEvent)EVT_USER_REDRAW,wParam,dwParam);
             return TRUE;
         }
 
@@ -1353,7 +1349,9 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
     {
         return FALSE;
     }
-    //CORE_ERR("CoreApp_HandleBattNotify %x",pNotify->dwMask);
+    
+    MSG_FATAL("***zzg CoreApp_HandleBattNotify %x***",pNotify->dwMask, 0, 0);
+    
     switch (pNotify->dwMask) 
     {
         // 外部电源接入或拔除
@@ -1382,13 +1380,19 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 		
         // 充电状态改变
         case NMASK_BATTERY_CHARGERSTATUS_CHANGE:
+            
+            MSG_FATAL("***zzg NMASK_BATTERY_CHARGERSTATUS_CHANGE***", 0, 0, 0);
+            
             nChargerStatus = IBATTERY_GetChargerStatus(pMe->m_pBatt);
+
+            MSG_FATAL("***zzg nChargerStatus=%d***", nChargerStatus, 0, 0);
+            
             if(pMe->m_wActiveDlgID == IDD_LPM)
             {
                 ISHELL_PostEventEx(pMe->a.m_pIShell, 
                                    EVTFLG_ASYNC, 
                                    AEECLSID_CORE_APP,
-                                   EVT_UPDATEIDLE,
+                                   EVT_USER_REDRAW,
                                    0,0L);
             }
             switch(nChargerStatus)

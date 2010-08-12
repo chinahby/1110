@@ -1048,10 +1048,11 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
             ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
             //Add By zzg 2010_08_11之前是注释着的
+            CoreApp_EnableShellAlarms(pMe, TRUE);  //add by yangdecai 2010-08-12
 #ifdef CUST_EDITION    
             {
-                extern void CoreApp_InitBattStatus(CCoreApp * pMe);
-                ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
+                //extern void CoreApp_InitBattStatus(CCoreApp * pMe);
+                //ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
             }
 #endif
             //Add
@@ -1068,7 +1069,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             wszText =  (AECHAR *) MALLOC(nSize);
             wszText[0] = 0;
             status = IBATTERY_GetChargerStatus(pMe->m_pBatt);
-            
+			
             IDISPLAY_ClearScreen(pMe->m_pDisplay);            
 
             MSG_FATAL("***zzg IDD_LPM_Handler status=0x%x***", status, 0, 0);
@@ -1082,14 +1083,8 @@ static boolean  IDD_LPM_Handler(void       *pUser,
 #ifndef FEATURE_USES_LOWMEM
                 if (NULL != pMe->m_battery_Image)
                 {
-                    MSG_FATAL("***zzg NULL != pMe->m_battery_Image***", 0, 0, 0);
-                    
-                    IDISPLAY_ClearScreen(pMe->m_pDisplay);      //Add By zzg  2010_08_11
-                    
+                    MSG_FATAL("***zzg NULL != pMe->m_battery_Image***", 0, 0, 0);  
                     IIMAGE_DrawFrame(pMe->m_battery_Image, CHARGING_FRAME_COUNT - 1, 0, 0);
-
-                    IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);   //Add By zzg  2010_08_11
-                    return TRUE;                                //Add By zzg  2010_08_11
                 }
                 else
                 {
@@ -2611,7 +2606,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif			
         return TRUE;
         }
-            
+		case EVT_USER_REDRAW:     
         case EVT_UPDATEIDLE:
         {
             CoreApp_DrawWallPaper(pMe); // debug for wallpaper update issue
@@ -2620,7 +2615,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 bImageDecoded = FALSE;
                 IImage_Notify(pWallPaper, (PFNIMAGEINFO)CoreApp_ImageNotify, pMe);
             }
-
+#if 0
 #if defined(FEATURE_WMS_APP)
             if (pMe->m_bsmstipscheck)
             {
@@ -2634,7 +2629,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     CLOSE_DIALOG(DLGRET_SMSTIPS)
                 }
             }
-#endif            
+#endif    
+#endif
             
             return TRUE;            
         }
@@ -2773,11 +2769,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						#endif
                     }
 #endif
-                case AVK_END:
-					{
-						ISHELL_PostEventEx(pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_UPDATEIDLE,0,0L);
-						return TRUE;
-                	}
 				    break;
 
                 default:
@@ -3593,7 +3584,7 @@ static void CoreApp_SearchingTimer(void *pUser)
     ISHELL_PostEventEx(pMe->a.m_pIShell, 
                        EVTFLG_ASYNC, 
                        AEECLSID_CORE_APP,
-                       EVT_UPDATEIDLE,
+                        EVT_USER_REDRAW,
                        0,0L);
 
     (void)ISHELL_SetTimer(pMe->a.m_pIShell,
