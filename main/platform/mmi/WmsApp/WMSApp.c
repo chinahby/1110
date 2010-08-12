@@ -4567,26 +4567,25 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
 			MSG_FATAL("SECOND SENDING AGGIEN................................",0,0,0);
 			pMe->m_bisSendSecond = TRUE;
 			 // 此情况下将消息重发一次
-			 
-			if((int)WMS_TAG_MO_NOT_SENT == pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag)
-			{               
-		        if ((NULL != pMe->m_pCurSendCltMsg) &&
-		            (pMe->m_idxCurSend < pMe->m_nSendItems))
-		        {		           
-		            nRet = IWMS_MsgSend(pMe->m_pwms, 
-		                                pMe->m_clientId, 
-		                                &pMe->m_callback,
-		                                (void*)pMe,
-		                                WMS_SEND_MODE_CLIENT_MESSAGE,
-		                                pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
-		                                
-		            if (nRet == SUCCESS)
-		            {
-		                pMe->m_bSending = TRUE;
-		                return;
-		            }
-		        }
-			}
+
+            if ((NULL != pMe->m_pCurSendCltMsg) && (pMe->m_idxCurSend < pMe->m_nSendItems))
+            {                
+    			if((int)WMS_TAG_MO_NOT_SENT == pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag)
+    			{  
+    	            nRet = IWMS_MsgSend(pMe->m_pwms, 
+    	                                pMe->m_clientId, 
+    	                                &pMe->m_callback,
+    	                                (void*)pMe,
+    	                                WMS_SEND_MODE_CLIENT_MESSAGE,
+    	                                pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
+    	                                
+    	            if (nRet == SUCCESS)
+    	            {
+    	                pMe->m_bSending = TRUE;
+    	                return;
+    		        }		        
+    			}
+            }
 		}
 		else
 		{
