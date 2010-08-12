@@ -693,6 +693,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     MOVE_TO_STATE(COREST_UIMERR)
                 }
             }
+            CoreApp_ProcessSubscriptionStatus(pMe);
             return eRet;
             
         case DLGRET_EMGCALL:
