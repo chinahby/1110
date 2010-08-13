@@ -101,7 +101,7 @@ RETURN VALUE
 SIDE EFFECTS
   None
 ===========================================================================*/
-#ifdef USES_RELEASE_VERSION
+#ifdef USES_NO_ASSERT
 	#ifndef ASSERT
 		#define ASSERT(x)
 	#endif
