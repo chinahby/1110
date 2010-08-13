@@ -3096,7 +3096,7 @@ static void quicktest_mic_receiver_Loopback(CQuickTest *pMe)
     else
     {
         STRTOWSTR("HANDSET LOOP",string,sizeof(string));
-        soundStuff.eDevice = AEE_SOUND_DEVICE_HANDSET;
+        soundStuff.eDevice = AEE_SOUND_DEVICE_SPEAKER;
     }
     (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                             AEE_FONT_BOLD,
@@ -3113,7 +3113,7 @@ static void quicktest_mic_receiver_Loopback(CQuickTest *pMe)
     soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_UNMUTED;
     (void) ISOUND_Set(pMe->m_pISound, &soundStuff);
     ISOUND_SetDevice(pMe->m_pISound);
-    ISOUND_SetVolume(pMe->m_pISound,GET_ISOUND_VOL_LEVEL(OEMSOUND_4TH_VOL));
+    ISOUND_SetVolume(pMe->m_pISound,GET_ISOUND_VOL_LEVEL(OEMSOUND_ESCALATING_VOL));
 #ifndef WIN32
     //Config the vocoder
     voc_acquire(VOC_ACQ_TEST, NULL);
