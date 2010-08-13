@@ -102,14 +102,6 @@ RETURN VALUE
 SIDE EFFECTS
   None
 ===========================================================================*/
-#ifdef USES_NO_ASSERT
-	#ifdef ASSERT
-	#undef ASSERT
-	#define ASSERT(x) 
-	#else
-	#define ASSERT(x)
-	#endif
-#else
 
 #ifdef FEATURE_IGUANA
   #define ASSERT assert
@@ -161,7 +153,6 @@ SIDE EFFECTS
  
 #endif
 #endif /* FEATURE_IGUANA */
-#endif
 
 #endif /* ASSERT.H */
 

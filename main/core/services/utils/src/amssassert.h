@@ -101,14 +101,7 @@ RETURN VALUE
 SIDE EFFECTS
   None
 ===========================================================================*/
-#ifdef USES_NO_ASSERT
-	#ifdef ASSERT
-	#undef ASSERT
-	#define ASSERT(x)
-	#else
-	#define ASSERT(x)
-	#endif
-#else
+
 #if   (ASSERT==ASSERT_FATAL)
 
   #undef ASSERT 
@@ -142,6 +135,6 @@ SIDE EFFECTS
   #define ASSERT( xx_exp ) ((void)0)
   
 #endif
-#endif
+
 #endif /* ASSERT.H */
 
