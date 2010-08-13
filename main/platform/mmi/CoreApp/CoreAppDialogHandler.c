@@ -3251,7 +3251,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
 #endif
             
 #ifdef FEATRUE_AUTO_POWER		
-        OEMRTC_Process_Auto_Power_On();
+            OEMRTC_Process_Auto_Power_On();
 #endif
 
 #if defined( FEATURE_POWERDOWN_ALARM)
@@ -3261,11 +3261,14 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
             }
 #endif
 #ifdef FEATURE_APP_MUSICPLAYER
-          ISHELL_PostEvent(pMe->a.m_pIShell,
-                            AEECLSID_APP_MUSICPLAYER,
-                            EVT_CLOSEAPP,
-                            0,
-                            0);
+            if(!IsMp3PlayerStatusNone())
+            {
+                ISHELL_PostEvent(pMe->a.m_pIShell,
+                                AEECLSID_APP_MUSICPLAYER,
+                                EVT_CLOSEAPP,
+                                0,
+                                0);
+            }
 #endif
             // 不再关心 IBatt 通知消息
             //(void) ISHELL_RegisterNotify(pMe->a.m_pIShell,
