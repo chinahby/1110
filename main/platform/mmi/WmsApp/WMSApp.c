@@ -4557,15 +4557,18 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
             break;
     }
    
-    MSG_FATAL("***zzg m_idxCurSend=%d, m_nSendItems=%d***", pMe->m_idxCurSend, pMe->m_nSendItems,0); 	 
-    
+    MSG_FATAL("***zzg m_idxCurSend=%d, m_nSendItems=%d***", pMe->m_idxCurSend, pMe->m_nSendItems,0); 	
+
 	if (pRptInfo->report_status != WMS_RPT_OK)
 	{
 		int nRet;
+
+		MSG_FATAL("***zzg report_status == %d!!!", pRptInfo->report_status, 0, 0);
 		
 		if(!pMe->m_bisSendSecond)
 		{
-			MSG_FATAL("SECOND SENDING AGGIEN................................",0,0,0);
+			MSG_FATAL("***zzg WMS send Again!", 0, 0, 0);
+
 			pMe->m_bisSendSecond = TRUE;
 			 // 此情况下将消息重发一次
 
