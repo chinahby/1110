@@ -2201,11 +2201,7 @@ static NextFSMAction WMSST_TEMPLATESOPTS_Handler(WmsApp *pMe)
                     return NFSMACTION_WAIT;
                 }
             }
-            if (NULL != pMe->m_msSend.m_szMessage)
-            {
-                FREE(pMe->m_msSend.m_szMessage);
-                pMe->m_msSend.m_szMessage = NULL;
-            }
+            WMSAPPU_SYSFREE(pMe->m_msSend.m_szMessage);
             pMe->m_dwInsertPos = 0;
             pMe->m_bAddTemplate = TRUE;
             MOVE_TO_STATE(WMSST_EDITTEMPLATE)
@@ -4521,7 +4517,8 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
             MEMCPY(&pMe->m_msSend, &pMe->m_msCur, sizeof(pMe->m_msSend));
             if (NULL != pMe->m_msCur.m_szMessage)
             {
-                pMe->m_msSend.m_szMessage = WSTRDUP(pMe->m_msCur.m_szMessage);
+                pMe->m_msSend.m_szMessage = sys_malloc((WSTRLEN(pMe->m_msCur.m_szMessage)+1)*sizeof(AECHAR));
+                WSTRCPY(pMe->m_msSend.m_szMessage, pMe->m_msCur.m_szMessage);
             }
             
             // 准备当前号码
