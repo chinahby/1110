@@ -8008,6 +8008,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     AECHAR  sTitle[45]; 
     int ret = 0;
     uint64 meid = 0;
+    uint32 H32,L32;
     
 	MSG_FATAL("CFieldDebug_DrawEsnScreen Start", 0, 0, 0);
     MEMSET (sTitle, 0, sizeof(sTitle));
@@ -8062,12 +8063,23 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     {
     	extern int OEM_ReadMEID(uint64 *meid);
     	OEM_ReadMEID(&meid);
+        L32 = (uint32)meid;
+        H32 = (uint32)(meid>>32);
     }
-    STRTOWSTR("%014X", fmt_str, sizeof(fmt_str));
+    MSG_FATAL("CFieldDebug_DrawEsnScreen L32=%d, H32=%d", L32, H32, 0);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
-            meid);
+            H32
+            );
+    n = WSTRLEN(szBuf);
+    STRTOWSTR("%X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            L32
+            );
 
   
    p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
