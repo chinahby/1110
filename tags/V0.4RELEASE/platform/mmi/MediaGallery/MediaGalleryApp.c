@@ -895,6 +895,7 @@ boolean CMediaGallery_GetTflashStatus(void)
       bExist = TRUE;
    else
       bExist = FALSE;
+   IFILEMGR_Release(pFileMgr);
 #endif
 
    return bExist;

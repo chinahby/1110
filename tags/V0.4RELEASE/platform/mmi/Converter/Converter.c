@@ -444,6 +444,7 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
                 pMe->m_pDisplay = NULL;
             }
             pMe->m_pDisplay = as->pDisplay;
+            MSG_FATAL("m_pDisplay address=%x",pMe->m_pDisplay,0,0);
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc;
             {
@@ -487,6 +488,7 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
                 pMe->m_pDisplay = NULL;
             }
             pMe->m_pDisplay = as->pDisplay;
+            MSG_FATAL("m_pDisplay address=%x",pMe->m_pDisplay,0,0);
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc;
             {
@@ -792,7 +794,11 @@ static void Converter_FreeAppData(CConverter *pMe)
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
     }
-    
+    if (pMe->m_pDisplay != NULL)
+    {
+        (void) IDISPLAY_Release(pMe->m_pDisplay);
+        pMe->m_pDisplay = NULL;
+    }    
 }
 
 /*==============================================================================

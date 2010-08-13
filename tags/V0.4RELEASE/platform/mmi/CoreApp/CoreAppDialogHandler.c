@@ -1049,10 +1049,11 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
             //Add By zzg 2010_08_11之前是注释着的
             CoreApp_EnableShellAlarms(pMe, TRUE);  //add by yangdecai 2010-08-12
+            
 #ifdef CUST_EDITION    
             {
-                //extern void CoreApp_InitBattStatus(CCoreApp * pMe);
-                //ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
+                extern void CoreApp_InitBattStatus(CCoreApp * pMe);
+                ISHELL_SetTimer(pMe->a.m_pIShell, 3*1000,(PFNNOTIFY)CoreApp_InitBattStatus,  pMe);                                                                                                         
             }
 #endif
             //Add
@@ -1070,10 +1071,9 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             wszText[0] = 0;
             status = IBATTERY_GetChargerStatus(pMe->m_pBatt);
 			
-            IDISPLAY_ClearScreen(pMe->m_pDisplay);            
+            IDISPLAY_ClearScreen(pMe->m_pDisplay);      
 
-            MSG_FATAL("***zzg IDD_LPM_Handler status=0x%x***", status, 0, 0);
-            MSG_FATAL("***zzg IDD_LPM_Handler eCode=0x%x***", eCode, 0, 0);
+            MSG_FATAL("***zzg IDD_LPM_Handler status=0x%x***", status, 0, 0);            
 
             if (AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE == status)
             {
@@ -3251,7 +3251,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
 #endif
             
 #ifdef FEATRUE_AUTO_POWER		
-        OEMRTC_Process_Auto_Power_On();
+            OEMRTC_Process_Auto_Power_On();
 #endif
 
 #if defined( FEATURE_POWERDOWN_ALARM)
@@ -3261,11 +3261,14 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
             }
 #endif
 #ifdef FEATURE_APP_MUSICPLAYER
-          ISHELL_PostEvent(pMe->a.m_pIShell,
-                            AEECLSID_APP_MUSICPLAYER,
-                            EVT_CLOSEAPP,
-                            0,
-                            0);
+            if(!IsMp3PlayerStatusNone())
+            {
+                ISHELL_PostEvent(pMe->a.m_pIShell,
+                                AEECLSID_APP_MUSICPLAYER,
+                                EVT_CLOSEAPP,
+                                0,
+                                0);
+            }
 #endif
             // 不再关心 IBatt 通知消息
             //(void) ISHELL_RegisterNotify(pMe->a.m_pIShell,
