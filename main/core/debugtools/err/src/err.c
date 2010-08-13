@@ -1361,6 +1361,10 @@ void err_fatal_put_internal (
           !TASKS_ARE_LOCKED() && !rex_is_in_irq_mode())
         (void) err_log_store(line, file_ptr, TRUE);
 
+#ifdef USES_RELEASE_VERSION
+	hw_reset();
+#endif
+
 #ifdef FEATURE_AUTO_RESET
       /* No looping exception handler if auto-reset is enabled.
         Reset immediately */
