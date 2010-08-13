@@ -913,10 +913,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
         {
             IMENUCTL_DeleteAll(pMe->pUnitMenu1);
             IMENUCTL_DeleteAll(pMe->pUnitMenu2);
-            if(!pMe->m_bSuspending)
-            {
-                FREEIF(m_inputNumber);
-            }
+            FREEIF(m_inputNumber);
             return TRUE;
         }
 
@@ -1463,7 +1460,10 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
         case EVT_DIALOG_INIT:
         {
             int i = 0;
-            m_inputNumber = (char *)MALLOC((MAX_INPUT_NUMBER + 3)* sizeof(char));
+            if(m_inputNumber == NULL)
+            {
+                m_inputNumber = (char *)MALLOC((MAX_INPUT_NUMBER + 3)* sizeof(char));
+            }
             bChangable = FALSE;
             MSG_FATAL("m_inputNumber address=%x", m_inputNumber,0,0);
             for(i=0;i<CONVERTER_CURRENCY_NUMBER;i++)
