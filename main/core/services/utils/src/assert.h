@@ -103,7 +103,10 @@ SIDE EFFECTS
   None
 ===========================================================================*/
 #ifdef USES_NO_ASSERT
+	#ifdef ASSERT
+	#undef ASSERT
 	#define ASSERT(x) 
+	#endif
 #else
 
 #ifdef FEATURE_IGUANA
