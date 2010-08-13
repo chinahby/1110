@@ -25,6 +25,8 @@
 #include "ContAppCommon.h"
 #include "ContApp_vCard.h"
 
+#define RELEASEIF(x) if (x) { IBASE_Release((IBase *)(x)); (x) = 0; }
+
 #ifdef FEATURE_SUPPORT_VCARD
 
 const property_id_map VCARD_PROPERTY_ID[]=
@@ -1602,8 +1604,8 @@ OnUpdateVcfFile_exit:
     CContApp_FreeBuffer(pMe);
     VCardDeleteAllEntry();
     FREEIF(vcard_record);
-    IFILE_Release( pIFile );
-    IFILEMGR_Release(pIFileMgr);
+    RELEASEIF( pIFile );
+    RELEASEIF(pIFileMgr);
 
     return rnt;
 }

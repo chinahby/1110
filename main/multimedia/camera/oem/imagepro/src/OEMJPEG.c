@@ -1019,13 +1019,15 @@ static void COEMJPEGViewer_SetParm(IImage *po, int nParm, int n1, int n2)
       }
        result = IFILEMGR_ResolvePath(m_pIFileMgr,temp_gpsInfo->m_sCurrentFileName,NULL,&size);
        if (result != SUCCESS) 
-	{
-	  MSG_HIGH("Resolving filepath failed", 0, 0, 0);
-         break;
+	   {
+	       MSG_HIGH("Resolving filepath failed", 0, 0, 0);
+           IFILEMGR_Release(m_pIFileMgr);
+           break;
        }
        pszFullPath = MALLOC((uint32)size);
        if (NULL == pszFullPath) 
-	{
+	   {
+         IFILEMGR_Release(m_pIFileMgr);
          result = ENOMEMORY;
          break;
        }

@@ -7700,13 +7700,14 @@ static void InitJPEGFileList(CFieldDebug * pme)
          IFILEMGR_EnumInit(pIFileMgr, MEDIA_DIR, FALSE);
          pai.wItemID = wItemID;
          while (IFILEMGR_EnumNext(pIFileMgr, &fi))
-          {
+         {
             szBuf = CFieldDebug_GetFileName(fi.szName);
             STRTOWSTR(szBuf, fileNameBuf, sizeof(fileNameBuf));
 
             IMENUCTL_AddItem(pIJPEGFileListMenuCtl, AEE_FLDDBG_RES_FILE, 0, wItemID, fileNameBuf, 0);
             wItemID++;
-          } //while
+         } //while
+         RELEASEIF(pIFileMgr);
      } //if
    } //if wDlgId
 }

@@ -1004,6 +1004,7 @@ int32 CMediaGallery_SetAs(SettingsType eSType,
    if(nRet)
    {
       MG_FARF(ADDR, ("File or Directory is not exist!"));
+      RELEASEIF(pfm);
       return nRet;
    }
 
