@@ -10869,7 +10869,7 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            //IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -10881,9 +10881,9 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
             rc = pMe->m_rc;
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
-            ITEXTCTL_SetRect(pTextCtl, &rc);
             
             ITEXTCTL_SetProperties(pTextCtl, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetRect(pTextCtl, &rc);
                      
             (void)ITEXTCTL_SetInputMode(pTextCtl,
                      CContApp_GetFldInputMode(AEE_ADDRFIELD_NAME));
@@ -10941,6 +10941,7 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
                 {
                     return TRUE;
                 }
+				ITEXTCTL_SetActive(pTextCtl,TRUE);
                 ITEXTCTL_Redraw(pTextCtl);
                 //bw:>>
                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
