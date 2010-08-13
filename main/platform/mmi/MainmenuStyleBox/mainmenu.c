@@ -2308,7 +2308,16 @@ static boolean StartApplet(MainMenu *pMe, int i)
         }
         case 5:
         {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT);
+			IContactApp *ca = NULL;
+            if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
+            {
+                return FALSE;
+            }
+            else
+            {
+                ICONTAPP_MainMenu(ca);
+                IContactApp_Release(ca);
+            }			
             break;    
         }
         case 6:
@@ -2370,7 +2379,16 @@ static boolean StartApplet(MainMenu *pMe, int i)
         }
         case 5:
         {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT);
+			IContactApp *ca = NULL;
+            if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
+            {
+                return FALSE;
+            }
+            else
+            {
+                ICONTAPP_MainMenu(ca);
+                IContactApp_Release(ca);
+            }
             break;    
         }
         case 6:
