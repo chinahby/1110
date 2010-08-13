@@ -8388,6 +8388,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             //modified by chengxiao 2009.03.25
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
             ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
@@ -8441,6 +8442,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 ITEXTCTL_SetCursorPos(pIText, pMe->m_dwInsertPos);
             }
             ITEXTCTL_SetActive(pIText, TRUE);  
+            ITEXTCTL_Redraw(pIText);
             // 中断退出时保存的输入法
             {
                 if(nMode == AEE_TM_SYMBOLS || nMode == AEE_TM_FACE_SYMBOL)

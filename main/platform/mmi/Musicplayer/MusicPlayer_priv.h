@@ -142,7 +142,7 @@
 
 
 #ifndef ERR
-#define ERR
+#define ERR(...)
 #endif
 
 #ifndef ASSERT
