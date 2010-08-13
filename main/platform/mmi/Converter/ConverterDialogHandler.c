@@ -1533,7 +1533,12 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             //»­¼ýÍ·
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
             IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
-
+            if(Image)
+            {
+                IIMAGE_Release(Image);
+                Image = NULL;
+            }
+            
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
             MSG_FATAL("Image address=%x", Image,0,0);
             IIMAGE_Draw(Image, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2);

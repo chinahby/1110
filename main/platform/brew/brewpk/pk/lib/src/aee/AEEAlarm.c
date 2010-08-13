@@ -332,9 +332,9 @@ static uint32  CAlarm_Release(IAlarm *p)
    if (pMe->m_alarmsActive) {
       CAlarm_SuspendAlarms(p);
    }
-
+   
    CAlarm_FreeAlarmDataVector(pMe);
-
+   IFILEMGR_Release(pMe->m_fileMgr);
    IVector_Release(pMe->m_alarms);
    IANNUNCIATOR_Release(pMe->m_pIAnn);
    ISHELL_Release(pMe->m_pShell);
