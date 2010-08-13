@@ -106,6 +106,8 @@ SIDE EFFECTS
 	#ifdef ASSERT
 	#undef ASSERT
 	#define ASSERT(x) 
+	#else
+	#define ASSERT(x)
 	#endif
 #else
 

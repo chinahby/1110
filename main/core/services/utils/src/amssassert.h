@@ -104,7 +104,9 @@ SIDE EFFECTS
 #ifdef USES_NO_ASSERT
 	#ifdef ASSERT
 	#undef ASSERT
-	#define ASSERT(x) 
+	#define ASSERT(x)
+	#else
+	#define ASSERT(x)
 	#endif
 #else
 #if   (ASSERT==ASSERT_FATAL)
