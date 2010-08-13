@@ -940,7 +940,12 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
                             // mid
                             pMe->m_lastRingerPlayed = ringerId;
                         }
-                    
+
+                    	if ( RingerMgr )
+                    	{
+							IRINGERMGR_Release(RingerMgr);
+							RingerMgr = NULL;
+                    	}
                     }
 
                 }
