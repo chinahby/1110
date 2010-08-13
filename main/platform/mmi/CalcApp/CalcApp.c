@@ -529,6 +529,7 @@ static void drawImage( CCalcApp *pMe, char *resFile, int16 resId, int x, int y)
     {
         IIMAGE_Draw( image, x, y);
         IIMAGE_Release( image);
+		image = NULL;
     }
 }
 
@@ -568,6 +569,7 @@ static void drawImageWithOffset( CCalcApp *pMe, char *resFile, int16 resId, int 
         IIMAGE_SetDrawSize( image, pRectOffset->dx, pRectOffset->dy);
         IIMAGE_Draw( image, x, y);
         IIMAGE_Release( image);
+		image = NULL;
 
         IDISPLAY_SetClipRect( pMe->a.m_pIDisplay, &oldClip);
     }
@@ -677,6 +679,11 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 
             Calc_ClearVals(pme);
 			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,TRUE);
+			if(NULL != pme->m_pIAnn)
+			{
+				IANNUNCIATOR_Release(pme->m_pIAnn);
+        		pme->m_pIAnn = NULL;
+			}
             return TRUE;
 
         case EVT_APP_SUSPEND:
