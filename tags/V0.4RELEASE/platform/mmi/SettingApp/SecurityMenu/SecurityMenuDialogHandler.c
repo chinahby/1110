@@ -229,7 +229,7 @@ void SecurityMenu_ShowDialog(CSecurityMenu *pMe,uint16  dlgResId)
     {
         // Looks like there is one dialog already opened.
         // Flag an error an return without doing anything.
-        DBGPRINTF("Trying to create a dialog without closing the previous one",0,0,0);
+        MSG_FATAL("Trying to create a dialog without closing the previous one",0,0,0);
         return;
     }
 
@@ -237,7 +237,7 @@ void SecurityMenu_ShowDialog(CSecurityMenu *pMe,uint16  dlgResId)
 
     if (nRet != SUCCESS)
     {
-        DBGPRINTF("Failed to create the dialog in the SecurityMenu applet",0,0,0);
+        MSG_FATAL("Failed to create the dialog in the SecurityMenu applet",0,0,0);
     }
 }
 
@@ -4026,7 +4026,6 @@ static boolean  SecurityUIMErrHandler(CSecurityMenu *pMe,
     {
         return FALSE;
     }
-    DBGPRINTF("%x %x %x IDD_UIMERR_Handler",eCode,wParam,dwParam);
     pStatic = (IStatic*)IDIALOG_GetControl(pMe->m_pActiveDlg, 
                             IDC_UIMERR_STATIC);
 
@@ -4155,7 +4154,6 @@ static boolean  SecurityEmergencyCallHandler(CSecurityMenu *pMe,
     IMenuCtl *pMenu = NULL;
   
     PARAM_NOT_REF(dwParam)
-    DBGPRINTF("%x %x %x SecurityEmergencyCallHandler",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;

@@ -3224,7 +3224,6 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
 }
 void HandleSimChoiceTimer(ICM *m_pICM)
 {
-	DBGPRINTF("HandleSimChoiceTimer......................HandleSimChoiceTimer");
 	ICM_SetOperatingMode(m_pICM, AEECM_OPRT_MODE_RESET);
     ICM_Release(m_pICM);
     m_pICM = NULL;
@@ -3240,7 +3239,6 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
     nv_item_type nvi;
     int ret = 0;
 
-    DBGPRINTF("%d, %d ,%d,HandleSimChoiceEvent",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -3735,7 +3733,6 @@ static void SettingMenu_MakeForwardCall(CSettingMenu *pMe,char *Number)
             return ;
         }
         STRTOWSTR(Number, w_buf, sizeof(w_buf));
-        DBGPRINTF("%s MakeVoiceCall",Number,0,0);
         //(void)MakeVoiceCall(pMe->m_pShell, FALSE, w_buf);
         ICallApp_CallNumber(pCallApp,w_buf);
         if (pCallApp)

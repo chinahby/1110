@@ -264,7 +264,6 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
     {
         pMe->m_isPopMenu = FALSE;
     }
-    DBGPRINTF("WmsApp_ProcessState:pMe->m_currState::%d,pMe->m_eDlgReturn=%d",pMe->m_currState,pMe->m_eDlgReturn);
     // 根据WMS applet状态，调用相应的状态处理函数
     switch (pMe->m_currState)
     {

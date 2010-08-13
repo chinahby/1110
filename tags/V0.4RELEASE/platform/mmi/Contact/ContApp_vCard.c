@@ -1593,7 +1593,6 @@ boolean Vcard_CreateVcfFile(CContApp *pMe, int contId, char* filename)
             if(filename != NULL)
             {
                 STRCPY(filename, fileName);
-                DBGPRINTF("tangwq after write file: %s  %s", filename, vcard_record);
             }
             //IFILE_Write( pIFile, vcard_record, STRLEN( vcard_record ) );
             rnt=TRUE;

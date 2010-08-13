@@ -775,9 +775,9 @@ typedef struct _CCallApp
 //#define DIALER_DUBEG
 #ifdef FEATURE_OEM_DEBUG
     //#define CALL_PRINT(str,str1,str2)        CallApp_Printf(str,str1,str2)
-    #define CALL_ERR( str, a, b, c )         ERR( str,a,b,c )
-    #define CALL_FUN_START( str, a, b, c )   ERR( str,a,b,c )
-    #define CALL_PRINTF  DBGPRINTF
+    #define CALL_ERR( str, a, b, c )         MSG_FATAL( str,a,b,c )
+    #define CALL_FUN_START( str, a, b, c )   MSG_FATAL( str,a,b,c )
+    #define CALL_PRINTF  (...)
 #else
     //#define CALL_PRINT(str,str1,str2)
     #define CALL_ERR( str, a, b, c )

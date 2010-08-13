@@ -1929,7 +1929,6 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
 
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER, &profilenum, sizeof(profilenum));
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER, (void*)ringid, sizeof(ringid));
-                    DBGPRINTF("%s is the music file ",ringid[profilenum].szMusicname);
                     if(ringid[profilenum].ringType == OEMNV_MID_RINGER)
                     {
                         IALERT_StartRingerAlert(pMe->m_pAlert, ring_id);

@@ -445,7 +445,7 @@ struct  _CMediaGalleryApp{
 #undef MG_FARF
 #endif
 
-#define MG_FARF(x, p) if(TRUE == FARF_##x)  DBGPRINTF p
+#define MG_FARF(x, p)
 
 
 /*-----------------------------------------------------------------------------

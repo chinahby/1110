@@ -311,46 +311,36 @@ boolean recentcalls_RouteDialogEvent(CRecentCalls *pMe,
     {
         return FALSE;
     }
-    //DBGPRINTF("curstate %d prestate %d dlgret %d recentcalls_RouteDialogEvent",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
     switch (pMe->m_pActiveDlgID)
     {
         case IDD_MSGBOX:
             return RecentCalls_HandleMsgBoxDlgEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_VERIFY_PASSWORD:
-             //DBGPRINTF("IDD_VERIFY_PASSWORD",0,0,0);
             return RecentCalls_VerifyPasswordEvent( pMe, eCode, wParam, dwParam);
 
         case IDD_RMAINMENU:
-            //DBGPRINTF("IDD_RMAINMENU",0,0,0);
             return RecentCalls_MainMenuEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RLISTRECORD:
-            //DBGPRINTF("IDD_RLISTRECORD",0,0,0);
             return RecentCalls_ListRecordEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RTIME_MENU:
-            //DBGPRINTF("IDD_RTIME_MENU",0,0,0);
             return RecentCalls_TimeMenuEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RDEL_MENU:
-            //DBGPRINTF("IDD_RDEL_MENU",0,0,0);
             return RecentCalls_DelMenuEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RDEAL_RECORD:
-            //DBGPRINTF("IDD_RDEAL_RECORD",0,0,0);
             return RecentCalls_DealMenuEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RWARN:
-             //DBGPRINTF("IDD_RWARN",0,0,0);
             return RecentCalls_WarnEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_RTIME:
-             //DBGPRINTF("IDD_RTIME",0,0,0);
             return RecentCalls_TimeEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_DETAIL:
-            //DBGPRINTF("IDD_DETAIL",0,0,0);
             return RecentCalls_DetailEvent(pMe, eCode, wParam, dwParam);
 
         default:
@@ -2931,6 +2921,25 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                                    wszText,
                                    sizeof(wszText));  
    nTextWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_BOLD, wszText);
+#if defined(FEATURE_DISP_128X128)  
+(void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                  AEE_FONT_BOLD,
+                  wszText, 
+                  -1, 
+                  PIXELS_TO_EDGE,
+                  ((5 + nSinkingLines)*nLineHeight)-2,   //+ TITLEBAR_HEIGHT     5
+                  NULL,
+                  IDF_TEXT_TRANSPARENT);
+(void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                  AEE_FONT_BOLD,
+                  wszCount, 
+                  -1, 
+                  nTextWidth + 3 * nNumberWidth,
+                  ((5 + nSinkingLines)*nLineHeight)-2,   //+ TITLEBAR_HEIGHT     5
+                  NULL,
+                  IDF_TEXT_TRANSPARENT);
+
+#else
    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                      AEE_FONT_BOLD,
                      wszText, 
@@ -2947,7 +2956,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
                      NULL,
                      IDF_TEXT_TRANSPARENT);
-   
+#endif   
    IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
    RecentCalls_TimeRecord(pMe, nSinkingLines); //画通话时间
 }
@@ -3007,6 +3016,17 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                     sizeof( buffer)
                 );
     nTextWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, buffer);
+#if defined(FEATURE_DISP_128X128)    
+    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                    AEE_FONT_NORMAL,
+                    buffer,
+                    -1,
+                    PIXELS_TO_EDGE,
+                    ((4 + nSinkingLines)*nLineHeight),    //+ TITLEBAR_HEIGHT  
+                    NULL,
+                    IDF_TEXT_TRANSPARENT
+                );  //画出"通话时间"字符串
+#else
     (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                     AEE_FONT_NORMAL,
                     buffer,
@@ -3016,7 +3036,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                     NULL,
                     IDF_TEXT_TRANSPARENT
                 );  //画出"通话时间"字符串
-
+#endif
     //如果读出的时间是0值的话(换卡情况)，那么不再画时间
     if(pMe->list_record[pMe->record_selected].time_stamp == 0)
     {
@@ -3026,6 +3046,17 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
     // draw start time
     if( Calendar_FormatDateTime(pMe->list_record[pMe->record_selected].time_stamp, buffer, sizeof( buffer)))
     {
+#if defined(FEATURE_DISP_128X128) 
+        (void)IDISPLAY_DrawText( pMe->m_pDisplay,
+                      AEE_FONT_BOLD,
+                      buffer,
+                      -1,
+                      PIXELS_TO_EDGE,//nTextWidth + nNumberWidth, //ELS_TO_EDGE,
+                      2  + ((3 + nSinkingLines)*nLineHeight),  //+ TITLEBAR_HEIGHT     3
+                      NULL,
+                      IDF_TEXT_TRANSPARENT
+                  );
+#else
         (void)IDISPLAY_DrawText( pMe->m_pDisplay,
                       AEE_FONT_BOLD,
                       buffer,
@@ -3035,6 +3066,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                       NULL,
                       IDF_TEXT_TRANSPARENT
                   );
+#endif
     }
 #endif /*FEATURE_APP_WORLDTIME*/
 
@@ -3062,6 +3094,17 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
         WSPRINTF( buffer + len, sizeof( buffer) - len, format, duration % 60);
 
         //画出具体的通话时间
+#if defined(FEATURE_DISP_128X128) 
+        (void)IDISPLAY_DrawText( pMe->m_pDisplay, 
+                  AEE_FONT_BOLD,
+                  buffer,
+                  -1,
+                  nTextWidth + nNumberWidth,
+                  PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),  //+ TITLEBAR_HEIGHT
+                  NULL,
+                  IDF_TEXT_TRANSPARENT
+              );
+#else
         (void)IDISPLAY_DrawText( pMe->m_pDisplay, 
                   AEE_FONT_BOLD,
                   buffer,
@@ -3071,6 +3114,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );
+#endif
     }
 #else
     // draw duration
@@ -3157,6 +3201,18 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
     else
 #endif
     {
+#if defined(FEATURE_DISP_128X128)
+        //画出具体的通话时间
+        (void)IDISPLAY_DrawText( pMe->m_pDisplay,
+                  AEE_FONT_BOLD,
+                  buffer,
+                  -1,
+                  nTextWidth + nNumberWidth,
+                  2  + ((4+ nSinkingLines)*nLineHeight),   //+ TITLEBAR_HEIGHT      
+                  NULL,
+                  IDF_TEXT_TRANSPARENT
+              );
+#else
         //画出具体的通话时间
         (void)IDISPLAY_DrawText( pMe->m_pDisplay,
                   AEE_FONT_BOLD,
@@ -3167,6 +3223,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );
+#endif
      }
     }
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH		

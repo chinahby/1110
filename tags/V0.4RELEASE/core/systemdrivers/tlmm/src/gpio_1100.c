@@ -81,6 +81,7 @@ void gpio_tlmm_config(GPIO_SignalType gpio_signal)
     #ifndef BUILD_BOOT_CHAIN
       ERR_FATAL("Invalid GPIO number 0x%x",gpio_number, 0, 0);
 	  #endif
+	  return;
   }
 
   gpio_polarity    = GPIO_POLARITY(gpio_signal);
@@ -357,6 +358,7 @@ void gpio_out( GPIO_SignalType gpio_signal, GPIO_ValueType  gpio_value )
     #ifndef BUILD_BOOT_CHAIN
       ERR_FATAL("Invalid GPIO number 0x%x",gpio_number, 0, 0);
 	  #endif
+	  return;
   }
 
   gpio_out_register = GPIO_GROUP(gpio_signal);
@@ -397,9 +399,10 @@ GPIO_ValueType gpio_in( GPIO_SignalType gpio_signal )
 
   if (gpio_number >= GPIO_NUM_GPIOS)
   {
-    #ifndef BUILD_BOOT_CHAIN
+	  #ifndef BUILD_BOOT_CHAIN
       ERR_FATAL("Invalid GPIO number 0x%x",gpio_number, 0, 0);
 	  #endif
+	  return;
   }
   gpio_in_register = GPIO_GROUP(gpio_signal);
 
@@ -440,9 +443,10 @@ void gpio_tristate( GPIO_SignalType gpio_signal, GPIO_TristateType gpio_tristate
   gpio_number = GPIO_NUMBER(gpio_signal);
   if (gpio_number >= GPIO_NUM_GPIOS)
   {
-    #ifndef BUILD_BOOT_CHAIN
+      #ifndef BUILD_BOOT_CHAIN
       ERR_FATAL("Invalid GPIO number 0x%x",gpio_number, 0, 0);
 	  #endif
+	  return;
   }
 
   gpio_oe_register = GPIO_GROUP(gpio_signal);

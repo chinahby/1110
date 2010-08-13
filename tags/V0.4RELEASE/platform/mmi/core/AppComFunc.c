@@ -1480,7 +1480,7 @@ void TabController_Init(DlgTabCtl **pDlgTabCtl, uint16 numControls)//, IShell *p
 {
     if(*pDlgTabCtl != NULL)
     {
-        DBGPRINTF("Possibility of TabController overwritten..Initialize to NULL/ Use new control for multilevel dialog tab control");
+
     }
     *pDlgTabCtl = (DlgTabCtl*) MALLOC(sizeof(DlgTabCtl));
     (*pDlgTabCtl)->numCtls = 0;

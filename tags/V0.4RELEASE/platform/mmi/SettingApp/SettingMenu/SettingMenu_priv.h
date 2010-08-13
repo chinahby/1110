@@ -71,7 +71,7 @@
                                  类型定义
 ==============================================================================*/
 #define  AEE_APPSSETTINGMENU_RES_FILE AEE_RES_LANGDIR SETTINGMENU_RES_FILE
-#define SETTING_ERR(format, code1, code2, code3) DBGPRINTF(format, code1, code2, code3)
+#define SETTING_ERR(format, code1, code2, code3) MSG_FATAL(format, code1, code2, code3)
 
 // 画界面底部提示条宏定义
 #define SETTING_MENU_DRAW_BOTTOMBAR(x)                           \

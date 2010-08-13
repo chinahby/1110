@@ -51,7 +51,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 
 
 #define FARF_UTILS     1
-#define FARF(x, p)   if (1 == FARF_##x) DBGPRINTF p
+#define FARF(x, p)
 
 //===========================================================================
 // To compile aeemenuctl statically into project

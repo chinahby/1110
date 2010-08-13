@@ -20,10 +20,13 @@
 #include "MusicPlayer_priv.h"
 #include "AEE_OEMEvent.h"
 #include "MediaGallery.h"
+#include "OEMHeap.h"
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
-
+#ifndef SYSFREEIF
+#define SYSFREEIF(p) if (p) { sys_free((void*)p); (p) = 0; }
+#endif
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
@@ -225,7 +228,6 @@ static int MusicPlayer_New(IShell *ps, IModule *pIModule, void **ppObj)
 #else
     pMe = (CMusicPlayer *)MALLOC(sizeof(CMusicPlayer) + sizeof(VTBL(IMusicPlayer)));
 #endif
-    DBGPRINTF("new");
     if (NULL == pMe)
     {
         return EFAILED;
@@ -478,7 +480,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
     }
    }
    MP3_ResetRandonIdentifier(pMe);
-   pMe->m_pMp3FileToPlay = (AECHAR *)MALLOC(MP3NAME_MAX_LEN * sizeof(AECHAR));
+   pMe->m_pMp3FileToPlay = (AECHAR *)sys_malloc(MP3NAME_MAX_LEN * sizeof(AECHAR));
    return SUCCESS;
   
 }
@@ -541,7 +543,7 @@ static void CMusicPlayer_FreeAppData(CMusicPlayer *pMe)
     FREEIF(pMe->m_pMsgBox_Msg);
     FREEIF(pMe->m_pInputListName);
     FREEIF(pMe->m_pBuffer);
-    FREEIF(pMe->m_pMp3FileToPlay);
+    SYSFREEIF(pMe->m_pMp3FileToPlay);
     FREEIF(pMe->m_pSimplePlayMusicName);
    if(pMe->m_pImage)
    {
@@ -851,7 +853,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             SetMp3PlayerStatus(pMe,MP3STATUS_NONE);
             if(AEECLSID_CORE_APP == AEE_Active())
             {
-                FREEIF(pMe->m_pMp3FileToPlay);
+                SYSFREEIF(pMe->m_pMp3FileToPlay);
                 (void)ISHELL_PostEvent( pMe->m_pShell,
                                         AEECLSID_CORE_APP,
                                         EVT_DRAWMUSICNAME,
@@ -1222,7 +1224,6 @@ static void MP3_InterruptHandle(CMusicPlayer *pMe)
         return;
     }
     g_nInterruptRef ++;
-    DBGPRINTF("MP3_InterruptHandle_g_nInterruptRef is %d",g_nInterruptRef);
     if(g_nInterruptRef > 1)
     {
         return;
@@ -1262,7 +1263,6 @@ static void MP3_ResumeHandle(CMusicPlayer *pMe)
         return;
     }
     g_nInterruptRef --;
-    DBGPRINTF("MP3_ResumeHandle_g_nInterruptRef is %d",g_nInterruptRef);
     if(g_nInterruptRef > 0)
     {
         return;
@@ -1429,10 +1429,8 @@ static void MP3_DecodeStartArgs(CMusicPlayer *pMe, char *args)
 {
     if(NULL == pMe || NULL == args)
     {
-        DBGPRINTF("args is NULL");
         return;
     }
-    DBGPRINTF("args is %s",args);
     switch(args[0])
     {
         case STARTARGS_SIMPLEPLAYER:

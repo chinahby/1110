@@ -50,6 +50,7 @@
 #include "oemhelperfunctype.h"
 #endif//WIN32
 #include "OEMClassIDs.h"
+#include "msg.h"
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -1450,7 +1451,7 @@ void DrawBackground( IDisplay *pDisplay, AEERect *pRect)
                            );
     if( image == NULL)
     {
-        DBGPRINTF( ";DrawBackground, load wall paper failed");
+        MSG_FATAL( ";DrawBackground, load wall paper failed",0,0,0);
     }
     else
     {

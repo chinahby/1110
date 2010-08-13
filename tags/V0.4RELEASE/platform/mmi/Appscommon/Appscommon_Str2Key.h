@@ -461,7 +461,6 @@ AECHAR Uni2Alpha(AECHAR wStr)
 
     //返回泰文字母对应的按键alpha
 #ifdef FEATURE_T9_THAI_MULTITAP
-    //DBGPRINTF("th letter %x",wStr);
     THLetter2Alpha(wStr);
 #endif /* FEATURE_T9_THAI_MULTITAP */
 

@@ -1680,8 +1680,15 @@ static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText)
 	{
       return EFAILED;
     }
-    
-	WSTRLCPY(IAnnunCoreObj->m_Title, cText, ANN_TEXT_MAX_LEN);
+
+    if(cText)
+    {
+	    WSTRLCPY(IAnnunCoreObj->m_Title, cText, ANN_TEXT_MAX_LEN);
+    }
+    else
+    {
+        IAnnunCoreObj->m_Title[0] = 0;
+    }
     IAnnunciator_Redraw(pMe);
 	return SUCCESS;
 }

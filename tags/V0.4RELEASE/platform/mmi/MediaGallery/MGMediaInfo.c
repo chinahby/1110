@@ -396,7 +396,6 @@ int MGMediaInfo_GetMimeType(IShell* pShell,
    if (pszExt && *pszExt)
    {
       MSG_FATAL("pszExt && *pszExt" ,0,0,0);
-      DBGPRINTF("pszExt=%s", pszExt);
       nLen = STRLEN(pszExt)*sizeof(char);
 
       if(MimeBase & MGMIME_BASE_IMAGE)

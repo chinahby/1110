@@ -1231,7 +1231,6 @@ static void Calc_AddChar(CCalcApp *pme, AECHAR chAdd, boolean bUnique)
 
     bMenuSel = FALSE;
 
-	DBGPRINTF("chAdd = 0x%x, bUnique = %d, m_wLastOperator = %d",chAdd,bUnique,pme->m_wLastOperator);
     if (pme->m_wLastOperator != OP_UNDEFINED)
     {
         if (pme->m_wLastOperator != OP_EQUAL)

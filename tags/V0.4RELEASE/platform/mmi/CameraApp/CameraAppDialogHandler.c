@@ -514,7 +514,6 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 {
     int   nCameraSelfTime = 0;
     
-    DBGPRINTF("CameraApp_PreviewHandleEvent %x %d %x",eCode, wParam, dwParam);
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -760,7 +759,6 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
     {
         return FALSE;
     }
-    DBGPRINTF("CameraApp_CameraCFGHandleEvent %x %d %x",eCode, wParam, dwParam);
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -883,7 +881,6 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 ==============================================================================*/
 static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {  
-    DBGPRINTF("CameraApp_PicHandleEvent %x %d %x",eCode, wParam, dwParam);
     switch(eCode)
     {
         case EVT_DIALOG_INIT:          

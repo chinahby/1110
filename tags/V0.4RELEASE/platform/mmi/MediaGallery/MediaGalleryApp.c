@@ -831,7 +831,6 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
    char pszArg[100];
    ExplorerPara *pExpPara = NULL;
    int nRet = EFAILED;
-   DBGPRINTF("CMediaGallery_FileExplorer Start"); 
    if (NULL != pPara)
    {
       pExpPara = (ExplorerPara *)MALLOC(sizeof(ExplorerPara));
@@ -858,7 +857,6 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
    /*If failed to start applet, free the memory*/
    if(SUCCESS != nRet)
       FREEIF(pExpPara);
-   DBGPRINTF("CMediaGallery_FileExplorer End"); 
    return SUCCESS;
 }//CMediaGallery_FileExplorer
 
@@ -1137,7 +1135,6 @@ int32 CMediaGallery_CreateFileInfoRecord(IDatabase *cpFilesDB,
 
 #if 0
    STRTOWSTR(cpInfo->szName, wszName, sizeof(wszName));
-   DBGPRINTF("Name %S", wszName);
    fiField[FDF_NAME].pBuffer = wszName;//L"Hello world";
 #else
    fiField[FDF_NAME].pBuffer = (void *)cpInfo->szName;

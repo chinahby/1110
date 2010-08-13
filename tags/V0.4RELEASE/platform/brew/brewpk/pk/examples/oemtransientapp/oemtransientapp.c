@@ -92,7 +92,6 @@ int AEEClsCreateInstance(AEECLSID ClsId, IShell *pIShell, IModule * po, void ** 
          pme = (CTransApp *)*ppObj;
          pme->clsMe = ClsId;
          if( (nRet = TransApp_InitAppData((IApplet *)*ppObj)) != SUCCESS ){
-            DBGPRINTF("*SHIM* Init Fails: %d 0x%x", nRet, ClsId);
             TransApp_FreeAppletData((IApplet *)*ppObj);
          }
       }

@@ -609,7 +609,7 @@ void FrenDuoApp_ShowDialog(FrenDuoApp  *pMe,  uint16 dlgResId)
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
         // 如果当前已经有对话框被打开，直接返回
-        DBGPRINTF("Trying to create dialog %d without closing previous one",dlgResId,0,0);
+        MSG_FATAL("Trying to create dialog %d without closing previous one",dlgResId,0,0);
         return;
     }
     if (NULL != pMe->m_pDisplay)
@@ -625,7 +625,7 @@ void FrenDuoApp_ShowDialog(FrenDuoApp  *pMe,  uint16 dlgResId)
     nRet = ISHELL_CreateDialog(pMe->m_pShell,FRENDUO_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)
     {
-        DBGPRINTF("Failed to create the dialog %d in the MAINMENU applet.",dlgResId,0,0);
+        MSG_FATAL("Failed to create the dialog %d in the MAINMENU applet.",dlgResId,0,0);
     }
 }
 /*=============================================================================
@@ -842,11 +842,11 @@ static boolean StartApplet(FrenDuoApp *pMe, int i)
 
                     if (SUCCESS == IWmsApp_SendSpecMessageEx(pIWmsApp))
                     {
-                    	DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  SUCCESS!");
+                    	MSG_FATAL("FrenDuoApp: IWmsApp_SendSpecMessageEx  SUCCESS!",0,0,0);
                     }
                     else
                     {
-                    	DBGPRINTF("FrenDuoApp: IWmsApp_SendSpecMessageEx  FAILED!");
+                    	MSG_FATAL("FrenDuoApp: IWmsApp_SendSpecMessageEx  FAILED!",0,0,0);
                     	(void)IWmsApp_Release(pIWmsApp);
                     	pIWmsApp = NULL;
                     	return EFAILED;

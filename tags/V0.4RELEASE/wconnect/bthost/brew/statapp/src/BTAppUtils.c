@@ -1306,7 +1306,6 @@ uint16 BTApp_FormatUUID(
         }
       } // switch ( i )
 
-      DBGPRINTF( "%s", pszTemp, 0, 0 );
 
       // get the label
       ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, uMsgID[ i ], 

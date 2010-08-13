@@ -796,7 +796,6 @@ void Game_ShowDialog(Game  *pMe,  uint16 dlgResId)
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
         // 如果当前已经有对话框被打开，直接返回
-        DBGPRINTF("Trying to create dialog %d without closing previous one",dlgResId,0,0);
         return;
     }
     if (NULL != pMe->m_pDisplay)
@@ -812,7 +811,6 @@ void Game_ShowDialog(Game  *pMe,  uint16 dlgResId)
     nRet = ISHELL_CreateDialog(pMe->m_pShell,GAME_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)
     {
-        DBGPRINTF("Failed to create the dialog %d in the MAINMENU applet.",dlgResId,0,0);
     }
 }
 

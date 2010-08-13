@@ -1824,7 +1824,6 @@ static void  CallApp_ProcessBattNotify(CCallApp  *pMe, AEENotify   *msg)
             switch(*pBattStatus)
             {
                 case AEEBATTSTATUS_POWERDOWN:  // Phone must be powered down
-                    DBGPRINTF("Warring:Battery low ,Need power down");
                     CallApp_Change_Call_Table_All_Call_End_Time(pMe);
                     CallApp_Add_All_Call_History(pMe);
                     CallApp_Free_All_Call_Table(pMe);
@@ -1872,7 +1871,6 @@ static void  CallApp_ProcessBattNotify(CCallApp  *pMe, AEENotify   *msg)
             AEEBattLevel *battlevel = (AEEBattLevel*)msg->pData;
             if(battlevel->level == 0)
             {
-                DBGPRINTF("Warring:Battery low %d", battlevel->level);
                 CallApp_Change_Call_Table_All_Call_End_Time(pMe);
                 CallApp_Add_All_Call_History(pMe);
                 CallApp_Free_All_Call_Table(pMe);
@@ -2755,7 +2753,6 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
         return;
     }
     CALL_ERR("number.pi =%d number.si =%d",call_table->number.pi,call_table->number.si,0);
-    //DBGPRINTF("incoming call number = %S",call_table->call_info.other_party_no,0,0);
     (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_RESTRICT_INCOMING, &data, sizeof(byte));
     //不知道为什么要(data != OEMNV_RESTRICT_INCOMING_OUTCONTACT)这个条件
     if (b_restict  &&(data != OEMNV_RESTRICT_INCOMING_OUTCONTACT))
@@ -2819,7 +2816,6 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
     {
         b_restict  = CallApp_IsRestictCallNumber_Ex(pMe, call_table->call_info.other_party_no, FALSE);
     }
-    //DBGPRINTF("incoming call_id number = %S",call_table->call_info.other_party_no,0,0);
 #ifdef  FEATURE_PERU_VERSION
     //to save another incoming call in conversation;
     if(pMe->in_convert)
@@ -3087,7 +3083,6 @@ static void CallApp_ProcessCallStateVoiceDisplay(CCallApp *pMe,
             }
             
             MEMCPY(tmpBuf, pCallInfo->event_data.call.call_info.alpha, len*sizeof(AECHAR));
-            //DBGPRINTF("pMe->m_cdg_dsp_info.alpha %S",pMe->m_cdg_dsp_info.alpha);
         }
     }
     else if(pCallInfo->event == AEECM_EVENT_CALL_CALLED_PARTY)
@@ -3099,7 +3094,6 @@ static void CallApp_ProcessCallStateVoiceDisplay(CCallApp *pMe,
         len = WSTRLEN(pCallInfo->event_data.call.call_info.other_party_no);
         if(len > 0)
         {
-            //DBGPRINTF("subaddr.addr %S",pCallInfo->event_data.call.call_info.other_party_no);
             if(len > AEECM_MAX_SUBADDRESS_DIGITS_LENGTH)
             {
                 len = AEECM_MAX_SUBADDRESS_DIGITS_LENGTH;
@@ -4258,7 +4252,6 @@ Dialer_call_table * CallApp_Search_Number_In_Call_Table(CCallApp *pMe,AECHAR *nu
         return FALSE;
     }
 
-    //DBGPRINTF("%S CallApp_Search_Number_In_Call_Table",number,0,0);
     if(temp == NULL)
     {
         return NULL;
@@ -4267,7 +4260,6 @@ Dialer_call_table * CallApp_Search_Number_In_Call_Table(CCallApp *pMe,AECHAR *nu
     while(temp != NULL)
     {
         //CALL_ERR("Search_Number len = %d",len,0,0);
-        //DBGPRINTF("%S temp->call_number",temp->call_number,0,0);
         //if inset the P/T in call_table,we can not find the match number,
         if(0 == CallApp_Compare_Number(number,temp->call_number))
         {
@@ -4303,7 +4295,6 @@ boolean CallApp_Add_Number_To_Call_Table(CCallApp *pMe,AECHAR *number,
         return FALSE;
     }
 
-    //DBGPRINTF("%S CallApp_Add_Number_To_Call_Table",number,0,0);
     //CALL_PRINT("Add Number To Table",number,0);
     len = WSTRLEN(number);
     if(len == 0)
@@ -4576,7 +4567,6 @@ boolean CallApp_Modify_Number_To_Call_Table(CCallApp *pMe,AECHAR *number,
             pMe->m_CallsTable->type        = type;
             WSTRCPY(pMe->m_CallsTable->ringer, ringer);
             pMe->m_CallsTable->next        = NULL;
-            //DBGPRINTF("num %S name %S",pMe->m_CallsTable->call_number,pMe->m_CallsTable->call_name);
             return TRUE;
         }
         return FALSE;
@@ -5196,30 +5186,25 @@ void CallApp_DrawTextWithProfile(IShell* pShell,
 #if 1
 static int CallApp_Start(CCallApp *pMe)
 {
-    DBGPRINTF("CallApp_Start");
     
     if ( SUCCESS != GreyBitBrewFont_Create(26, (void **)&pMe->m_pBigNumFont))
     {
-        DBGPRINTF("GreyBitBrewFont_Create Failed");
         return EFAILED;
     }
   //  if(pMe->m_pBigNumFont)
   //  {
   //      IDISPLAY_SetFont(pMe->m_pDisplay, AEE_FONT_USER_1, pMe->m_pBigNumFont);
   //  }
-    DBGPRINTF("CallApp_Start END");
     return SUCCESS;
 }
 
 static void CallApp_Stop(CCallApp *pMe)
 {
-    DBGPRINTF("CallApp_Stop Start");
     if( pMe->m_pBigNumFont )
     {
         IFONT_Release(pMe->m_pBigNumFont);
         pMe->m_pBigNumFont = NULL;
     }
-    DBGPRINTF("CallApp_Stop End");
 }
 #endif
 #ifdef DIALER_MEM_CHECK

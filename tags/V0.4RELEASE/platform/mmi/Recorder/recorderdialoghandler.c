@@ -87,7 +87,6 @@ int Recorder_ShowDialog( Recorder* pme, uint16 dlgResId)
 	// At most one dialog open at once
 	if( ISHELL_GetActiveDialog( pme->m_pShell) != NULL)
 	{
-		DBGPRINTF(";------------Recorder_ShowDialog, another dialog is avtived");
 		return EFAILED;
 	}
 
@@ -95,7 +94,6 @@ int Recorder_ShowDialog( Recorder* pme, uint16 dlgResId)
 
 	if( returnValue != SUCCESS)
 	{
-		DBGPRINTF(";------------Recorder_ShowDialog, failed to create dialog %d", dlgResId);
 	}
 	return returnValue;
 }

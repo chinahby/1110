@@ -836,7 +836,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
 	    IRUIM_Release(pMe->m_pIRUIM);
 	    pMe->m_pIRUIM = NULL;
 	}
-    FREEIF(pMe->m_msSend.m_szMessage);
+    WMSAPPU_SYSFREE(pMe->m_msSend.m_szMessage);
 }
 
 /*==============================================================================
@@ -1127,7 +1127,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
        
         case EVT_WMS_CFG_MEMORY_STATUS:
             WmsApp_UpdateMemoryStatus(pMe,&((wms_cfg_event_info_s_type *)dwParam)->memory_status);
-            WMSAPPU_FREE(dwParam);
+            WMSAPPU_SYSFREE(dwParam);
             WmsApp_UpdateAnnunciators(pMe);
             return TRUE;
         
@@ -1135,12 +1135,12 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_WMS_CFG_CDMA_READY:
             pMe->m_mode = WMS_MESSAGE_MODE_CDMA;
             WmsApp_Init(pMe);
-            WMSAPPU_FREE(dwParam)
+            WMSAPPU_SYSFREE(dwParam)
             return TRUE;
             
         case EVT_WMS_CFG_REFRESH_DONE:
             pMe->m_refresh_in_progress = FALSE;
-            WMSAPPU_FREE(dwParam)
+            WMSAPPU_SYSFREE(dwParam)
             return TRUE;
             
         case EVT_WMS_CFG_ROUTES:
@@ -1149,7 +1149,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 
                 (void)MEMCPY(&pMe->m_routes, &Info->routes, sizeof(pMe->m_routes));
             }
-            WMSAPPU_FREE(dwParam)
+            WMSAPPU_SYSFREE(dwParam)
             return TRUE;
             
         case EVT_WMS_MSG_WRITE:
@@ -1157,12 +1157,12 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_WMS_MSG_WRITE_TEMPLATE:
         case EVT_WMS_MSG_READ_TEMPLATE:
             (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
-            WMSAPPU_FREE(dwParam)
+            WMSAPPU_SYSFREE(dwParam)
 
             return TRUE;
             
         case EVT_WMS_MSG_MODIFY_TAG:
-            WMSAPPU_FREE(dwParam)
+            WMSAPPU_SYSFREE(dwParam)
 
             // 更新图标
             WmsApp_UpdateAnnunciators(pMe);
@@ -1176,7 +1176,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 WmsApp_ProcessStatus(pMe, &((wms_msg_event_info_s_type *)dwParam)->submit_report_info);
             }
 			
-            FREE((wms_msg_event_info_s_type*)dwParam);
+            WMSAPPU_SYSFREE((wms_msg_event_info_s_type*)dwParam);
 
             return TRUE;
             
@@ -1194,7 +1194,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 // 非 CDMA 模式消息不予受理
                 if (info->mt_message_info.message.msg_hdr.message_mode != WMS_MESSAGE_MODE_CDMA)
                 {
-                    WMSAPPU_FREE(dwParam);
+                    WMSAPPU_SYSFREE(dwParam);
                     return TRUE;
                 }
                 
@@ -1204,7 +1204,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 {
                     // Wms Applet 不处理此消息
                     MSG_HIGH("WAP PUsh Message Recieved and Dropped", 0, 0, 0);
-                    WMSAPPU_FREE(dwParam);
+                    WMSAPPU_SYSFREE(dwParam);
                     return TRUE;
                 }
                 
@@ -1238,7 +1238,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 {
                     // 丢弃不属于受理范围内的消息
                     MSG_HIGH("Message with UDH Port Header Recieved and Dropped", 0, 0, 0);
-                    WMSAPPU_FREE(dwParam);
+                    WMSAPPU_SYSFREE(dwParam);
                     return TRUE;
                 }
 #endif // FEATURE_SMS_UDH
@@ -1290,7 +1290,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                         }
                     }
                     
-                    FREE(info);
+                    WMSAPPU_SYSFREE(info);
                     return TRUE;
                 }
 #endif
@@ -1349,7 +1349,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                     
                     (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
                 }
-                FREE(info);
+                WMSAPPU_SYSFREE(info);
             }
             
             // 更新图标
@@ -1361,7 +1361,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_WMS_MSG_DELETE_TEMPLATE:
         case EVT_WMS_MSG_DELETE_BOX:
             (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
-            WMSAPPU_FREE(dwParam)
+            WMSAPPU_SYSFREE(dwParam)
 
             // 更新图标
             WmsApp_UpdateAnnunciators(pMe);
@@ -1396,7 +1396,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             }
             
             (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
-            WMSAPPU_FREE(dwParam)
+            WMSAPPU_SYSFREE(dwParam)
 
             return TRUE;
             
@@ -1406,7 +1406,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 // 语音提示用户有消息
                 WmsApp_PlaySMSAlert(pMe, TRUE);
             }
-            WMSAPPU_FREE(dwParam)
+            WMSAPPU_SYSFREE(dwParam)
             return TRUE;
             
         case EVT_WMS_DC_DISCONNECTED:
@@ -1418,7 +1418,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 pMe->m_bDCDisconnectedInSending = FALSE;
             }
-            WMSAPPU_FREE(dwParam)
+            WMSAPPU_SYSFREE(dwParam)
             return TRUE;
 
         // 预约短信时间到通知事件
@@ -2570,7 +2570,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
 		}
 		//Add End
 		
-        FREEIF(pMsg);
+        WMSAPPU_SYSFREE(pMsg);
         return nRet;
     }
     
@@ -2592,7 +2592,8 @@ static int CWmsApp_MessageService(IWmsApp *p,
     if ((NULL != pwstrText) &&
         (WSTRLEN(pwstrText)>0))
     {
-        pMe->m_msSend.m_szMessage = WSTRDUP(pwstrText);
+        pMe->m_msSend.m_szMessage = sys_malloc((WSTRLEN(pwstrText)+1)*sizeof(AECHAR));//WSTRDUP(pwstrText);
+        WSTRCPY(pMe->m_msSend.m_szMessage,pwstrText);
     }
     
     nRet = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
@@ -2917,7 +2918,7 @@ void WmsApp_CfgCb(wms_cfg_event_e_type event, wms_cfg_event_info_s_type *pInfo)
 //            break;
             
         default:
-            WMSAPPU_FREE(pInfobuf)
+            WMSAPPU_SYSFREE(pInfobuf)
             break;
     }
     
@@ -2965,7 +2966,7 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
         return;
     }
     
-    pInfobuf = MALLOC(sizeof(wms_msg_event_info_s_type));
+    pInfobuf = sys_malloc(sizeof(wms_msg_event_info_s_type));
     if (pInfobuf == NULL)
     {
         return;
@@ -3036,7 +3037,7 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
 			MSG_FATAL("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SUBMIT_REPORT***",0,0,0);
             MSG_FATAL("***zzg WmsApp_MsgCb len=%d***", pInfo->submit_report_info.alpha_id.len,0,0);
             
-            pInfobuf->submit_report_info.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
+            pInfobuf->submit_report_info.alpha_id.data = (uint8 *)sys_malloc(WMS_ALPHA_ID_MAX);
             pInfobuf->submit_report_info.alpha_id.len = pInfo->submit_report_info.alpha_id.len;
             
             if ((pInfo->submit_report_info.alpha_id.data != NULL) &&
@@ -3102,12 +3103,12 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
                         
         if (btRet == FALSE)
         {
-            WMSAPPU_FREE(pInfobuf)
+            WMSAPPU_SYSFREE(pInfobuf)
         }
     }
     else
     {
-        WMSAPPU_FREE(pInfobuf)
+        WMSAPPU_SYSFREE(pInfobuf)
     }
 } // WmsApp_MsgCb() 
 
@@ -3143,7 +3144,7 @@ void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo)
         return;
     }
     
-    pInfobuf = MALLOC(sizeof(wms_bc_event_info_s_type));
+    pInfobuf = sys_malloc(sizeof(wms_bc_event_info_s_type));
     if (pInfobuf == NULL)
     {
         return;
@@ -3173,7 +3174,7 @@ void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo)
             
         default:
             evt = 0;
-            WMSAPPU_FREE(pInfobuf)
+            WMSAPPU_SYSFREE(pInfobuf)
             break;
     }
     
@@ -3187,7 +3188,7 @@ void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo)
                                    (uint32)pInfobuf);
         if (btRet == FALSE)
         {
-            WMSAPPU_FREE(pInfobuf)
+            WMSAPPU_SYSFREE(pInfobuf)
         }
     }
 }
@@ -3224,7 +3225,7 @@ void WmsApp_DcCb(wms_dc_event_e_type  event,wms_dc_event_info_s_type  *info_ptr)
         return;
     }
     
-    pInfobuf = MALLOC(sizeof(wms_dc_event_info_s_type));
+    pInfobuf = sys_malloc(sizeof(wms_dc_event_info_s_type));
     if(pInfobuf == NULL)
     {
         return;
@@ -3268,7 +3269,7 @@ void WmsApp_DcCb(wms_dc_event_e_type  event,wms_dc_event_info_s_type  *info_ptr)
         case WMS_DC_EVENT_INCOMING:
         case WMS_DC_EVENT_CONNECTING:
         default:
-            WMSAPPU_FREE(pInfobuf)
+            WMSAPPU_SYSFREE(pInfobuf)
             break;
     }
     
@@ -3471,7 +3472,7 @@ void WmsApp_wmscommandreport(wms_cmd_id_e_type   cmd,
   
     if (pMe != NULL)
     {
-        wmsapp_cmd_status_type *cmd_status = MALLOC(sizeof(wmsapp_cmd_status_type));
+        wmsapp_cmd_status_type *cmd_status = sys_malloc(sizeof(wmsapp_cmd_status_type));
         
         if (cmd_status == NULL)
         {
@@ -3740,7 +3741,7 @@ void WmsApp_CombinateMsg(WmsApp *pMe)
     }
     
     nSize = (STRLEN(DATA_NOT_RECEIVED)+1)*sizeof(AECHAR);
-    pNotRecieved = (AECHAR *)MALLOC(nSize);
+    pNotRecieved = (AECHAR *)sys_malloc(nSize);
     if (NULL == pNotRecieved)
     {
         return;
@@ -3748,10 +3749,10 @@ void WmsApp_CombinateMsg(WmsApp *pMe)
     (void)STRTOWSTR(DATA_NOT_RECEIVED, pNotRecieved, nSize);
     
     nSize = (nlen+1)*sizeof(AECHAR);
-    pMsgText = (AECHAR *)MALLOC(nSize);
+    pMsgText = (AECHAR *)sys_malloc(nSize);
     if (NULL == pMsgText)
     {
-        FREE(pNotRecieved);
+        WMSAPPU_SYSFREE(pNotRecieved);
         return;
     }
     
@@ -3785,7 +3786,7 @@ void WmsApp_CombinateMsg(WmsApp *pMe)
         }
     }
     
-    FREE(pNotRecieved);
+    WMSAPPU_SYSFREE(pNotRecieved);
 }
 
 /*==============================================================================
@@ -3824,7 +3825,7 @@ void WmsApp_CopyCurMsgForSend(WmsApp *pMe)
     }
     
     nSize = (nlen+1)*sizeof(AECHAR);
-    pMsgText = (AECHAR *)MALLOC(nSize);
+    pMsgText = (AECHAR *)sys_malloc(nSize);
     if (NULL == pMsgText)
     {
         return;
@@ -4324,7 +4325,7 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     pMe->m_idxUserdata++;
     
     nSize = sizeof(wms_client_ts_data_s_type);
-    pCltTsData = (wms_client_ts_data_s_type *)MALLOC(nSize);
+    pCltTsData = (wms_client_ts_data_s_type *)sys_malloc(nSize);
     if (NULL == pCltTsData)
     {
         return NULL;
@@ -4332,10 +4333,10 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     MEMSET(pCltTsData, 0, nSize);
     
     nSize = sizeof(wms_client_message_s_type);
-    pCltMsg = (wms_client_message_s_type *)MALLOC(nSize);
+    pCltMsg = (wms_client_message_s_type *)sys_malloc(nSize);
     if (NULL == pCltMsg)
     {
-        FREE(pCltTsData);
+        WMSAPPU_SYSFREE(pCltTsData);
         return NULL;
     }
     
@@ -4481,7 +4482,7 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     
     // 消息编码结束
     
-    FREE(pCltTsData);
+    WMSAPPU_SYSFREE(pCltTsData);
     
     return pCltMsg;
 }
@@ -5210,14 +5211,14 @@ void WmsApp_FreeSendClentMsgList(WmsApp * pMe)
         if (NULL != pItem)
         {
             // 释放动态分配的空间
-            FREE(pItem);
+            WMSAPPU_SYSFREE(pItem);
         }
     }
     
     pMe->m_idxCurSend = 0;
     pMe->m_nSendItems = 0;
     
-    FREE(pMe->m_pCurSendCltMsg);
+    WMSAPPU_SYSFREE(pMe->m_pCurSendCltMsg);
     pMe->m_pCurSendCltMsg = NULL;
 }
 
@@ -5270,7 +5271,7 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
     (void)WSTRCPY(pMe->m_msSend.m_szNum, pItem->m_szTo);
     
     nSize = nItems*sizeof(wms_client_message_s_type *);
-    pMe->m_pCurSendCltMsg = (wms_client_message_s_type **)MALLOC(nSize);
+    pMe->m_pCurSendCltMsg = (wms_client_message_s_type **)sys_malloc(nSize);
     if (NULL == pMe->m_pCurSendCltMsg)
     {
         goto BuildList_ERR;

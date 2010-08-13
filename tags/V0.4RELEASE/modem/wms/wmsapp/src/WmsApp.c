@@ -411,7 +411,7 @@ wms_cfg_event_info_s_type    *pInfo
      return;
   }
 
-  sms_cfg_event_info_buf = MALLOC(sizeof(wms_cfg_event_info_s_type));
+  sms_cfg_event_info_buf = sys_malloc(sizeof(wms_cfg_event_info_s_type));
   if(sms_cfg_event_info_buf == NULL)
   {
     MSG_ERROR("WMSAPP: cfg_event_buf = NULL",0,0,0);
@@ -554,7 +554,7 @@ boolean                      *shared
     return;
   }
 
-  sms_msg_event_info_buf = MALLOC(sizeof(wms_msg_event_info_s_type));
+  sms_msg_event_info_buf = sys_malloc(sizeof(wms_msg_event_info_s_type));
   if(sms_msg_event_info_buf == NULL)
   {
     MSG_ERROR("WMSAPP: msg_event_buf = NULL",0,0,0);
@@ -567,7 +567,7 @@ boolean                      *shared
   {
     case WMS_MSG_EVENT_SEND:
       MSG_HIGH("WMSAPP_MsgCb: Posting WMS_MSG_EVENT_SEND !", 0,0,0);
-      sms_msg_event_info_buf->status_info.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
+      sms_msg_event_info_buf->status_info.alpha_id.data = (uint8 *)sys_malloc(WMS_ALPHA_ID_MAX);
       sms_msg_event_info_buf->status_info.alpha_id.len =
                pInfo->status_info.alpha_id.len;
      if ( (sms_msg_event_info_buf->status_info.alpha_id.data != NULL) 
@@ -632,7 +632,7 @@ boolean                      *shared
       MSG_HIGH("WMSAPP_MsgCb: Posting WMS_MSG_EVENT_READ_TEMPLATE !", 0,0,0);
       if( pInfo->status_info.message.msg_hdr.message_mode==WMS_MESSAGE_MODE_GW)
       {
-        sms_msg_event_info_buf->status_info.message.u.gw_template.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
+        sms_msg_event_info_buf->status_info.message.u.gw_template.alpha_id.data = (uint8 *)sys_malloc(WMS_ALPHA_ID_MAX);
         sms_msg_event_info_buf->status_info.message.u.gw_template.alpha_id.len =
                pInfo->status_info.message.u.gw_template.alpha_id.len;
         if ( (sms_msg_event_info_buf->status_info.message.u.gw_template.alpha_id.data != NULL) 
@@ -655,7 +655,7 @@ boolean                      *shared
       MSG_HIGH("WMSAPP_MsgCb: Posting WMS_MSG_EVENT_WRITE_TEMPLATE !", 0,0,0);
       if( pInfo->status_info.message.msg_hdr.message_mode==WMS_MESSAGE_MODE_GW)
       {
-        sms_msg_event_info_buf->status_info.message.u.gw_template.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
+        sms_msg_event_info_buf->status_info.message.u.gw_template.alpha_id.data = (uint8 *)sys_malloc(WMS_ALPHA_ID_MAX);
         sms_msg_event_info_buf->status_info.message.u.gw_template.alpha_id.len =
                pInfo->status_info.message.u.gw_template.alpha_id.len;
         if ( (sms_msg_event_info_buf->status_info.message.u.gw_template.alpha_id.data != NULL) 
@@ -696,7 +696,7 @@ boolean                      *shared
 
     case WMS_MSG_EVENT_SUBMIT_REPORT:
       MSG_HIGH("WMSAPP_MsgCb: Posting WMS_MSG_EVENT_SUBMIT_REPORT !", 0,0,0);
-      sms_msg_event_info_buf->submit_report_info.alpha_id.data = (uint8 *)MALLOC(WMS_ALPHA_ID_MAX);
+      sms_msg_event_info_buf->submit_report_info.alpha_id.data = (uint8 *)sys_malloc(WMS_ALPHA_ID_MAX);
       sms_msg_event_info_buf->submit_report_info.alpha_id.len =
                pInfo->submit_report_info.alpha_id.len;
       if ( (sms_msg_event_info_buf->submit_report_info.alpha_id.data != NULL) 
@@ -805,7 +805,7 @@ void WMSAPP_DcCb
     return;
   }
 
-  pDcEventInfoBuf = MALLOC(sizeof(wms_dc_event_info_s_type));
+  pDcEventInfoBuf = sys_malloc(sizeof(wms_dc_event_info_s_type));
   if(pDcEventInfoBuf == NULL)
   {
     MSG_ERROR("WMSAPP: dc event info buf = NULL", 0, 0, 0);
@@ -993,9 +993,9 @@ void WMSAPP_UpdateSecondaryDisp(CWMSAPP *pMe)
     return;
   }
 
-  pszSecText = (AECHAR *)MALLOC((NOTIFY_STRING_SEC_DISPLAY) *
+  pszSecText = (AECHAR *)sys_malloc((NOTIFY_STRING_SEC_DISPLAY) *
                                 sizeof(AECHAR));
-  pszScratch = (AECHAR *)MALLOC((NOTIFY_STRING_SEC_DISPLAY) *
+  pszScratch = (AECHAR *)sys_malloc((NOTIFY_STRING_SEC_DISPLAY) *
                                   sizeof(AECHAR));
 
   if ((NULL == pszSecText) || (NULL == pszScratch))
@@ -1442,7 +1442,7 @@ boolean WMSAPP_ProcessStatus
   if ( ( (pRptInfo->message_mode == WMS_MESSAGE_MODE_CDMA) && (pRptInfo->report_status == WMS_RPT_CDMA_TL_ERROR) ) ||
        ( (pRptInfo->message_mode == WMS_MESSAGE_MODE_GW) && (pRptInfo->report_status == WMS_RPT_CP_ERROR || pRptInfo->report_status == WMS_RPT_RP_ERROR) ) )
   {
-    if (NULL != (text = MALLOC(NOTIFY_STRING_LEN)))
+    if (NULL != (text = sys_malloc(NOTIFY_STRING_LEN)))
     {
       if (pRptInfo->message_mode == WMS_MESSAGE_MODE_CDMA)
       {
@@ -1506,7 +1506,7 @@ void WMSAPP_BcMmCb( wms_bc_mm_event_e_type       event,
     return;
   }
 
-  sms_bc_mm_event_info_buf = MALLOC(sizeof(wms_bc_mm_event_info_s_type));
+  sms_bc_mm_event_info_buf = sys_malloc(sizeof(wms_bc_mm_event_info_s_type));
   if(sms_bc_mm_event_info_buf == NULL)
   {
     MSG_ERROR("WMSAPP: bc_mm_event_buf = NULL",0,0,0);
@@ -1548,7 +1548,7 @@ void WMSAPP_BcMmCb( wms_bc_mm_event_e_type       event,
       {
         /* Copy over the Entries */
         sms_bc_mm_event_info_buf->u.bc_mm_table.entries =
-          MALLOC(pInfo->u.bc_mm_table.size * sizeof(wms_bc_mm_service_info_s_type));
+          sys_malloc(pInfo->u.bc_mm_table.size * sizeof(wms_bc_mm_service_info_s_type));
         if (NULL != sms_bc_mm_event_info_buf->u.bc_mm_table.entries)
         {
           (void) MEMCPY (sms_bc_mm_event_info_buf->u.bc_mm_table.entries,
@@ -1610,7 +1610,7 @@ void WMSAPP_BcMmCb( wms_bc_mm_event_e_type       event,
       {
         /* Copy over the Entries */
         sms_bc_mm_event_info_buf->u.bc_mm_table.entries =
-          MALLOC(pInfo->u.bc_mm_table.size * sizeof(wms_bc_mm_service_info_s_type));
+          sys_malloc(pInfo->u.bc_mm_table.size * sizeof(wms_bc_mm_service_info_s_type));
         if (NULL != sms_bc_mm_event_info_buf->u.bc_mm_table.entries)
         {
           (void) MEMCPY (sms_bc_mm_event_info_buf->u.bc_mm_table.entries,

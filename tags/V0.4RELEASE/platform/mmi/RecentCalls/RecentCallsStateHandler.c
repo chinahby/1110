@@ -112,7 +112,6 @@ NextFSMAction recentcalls_ProcessState(CRecentCalls *pMe)
     {
         return retVal;
     }
-DBGPRINTF("curstate %d prestate %d dlgret %d recentcalls_ProcessState",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
     // 根据当前状态调用相应的状态处理函数
     switch (pMe->m_eCurState)
     {

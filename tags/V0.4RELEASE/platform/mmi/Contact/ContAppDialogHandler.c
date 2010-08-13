@@ -1494,7 +1494,6 @@ void *CContApp_GetBufbyFldID(CContApp *pMe, AEEAddrFieldID wFldID)
         if(pFld->fID == AEE_ADDRFIELD_RINGTONE)
         {
             //ringID* ringer = (ringID*)pFld->pBuffer;
-            DBGPRINTF("tangwq in getbufbyId: %s, %d",pFld->pBuffer, i);
         }
         if ( pFld == NULL ) 
         {
@@ -3663,7 +3662,6 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             SETAEERECT(&textrc,  
                        SEARCH_IMEICON_WIDTH,   menurc.y + menurc.dy, // - 2,    
                        pMe->m_rc.dx - SEARCH_IMEICON_WIDTH, nBarHeight);
-            ITEXTCTL_SetRect(pTextCtl, &textrc);
 #ifdef FEATURE_LANG_CHINESE
             {
                 byte inputMode=0;
@@ -3673,12 +3671,14 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 pMe->m_nCurrentInputMode = inputMode;
                 //ITEXTCTL_SetActive(pTextCtl, TRUE);
                 (void)ITEXTCTL_SetInputMode( pTextCtl, pMe->m_nInputModeTable[inputMode]);
+                ITEXTCTL_SetRect(pTextCtl, &textrc);
                 //IMENUCTL_SetActive(pMenuCtl, TRUE);
                 CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
                 ITEXTCTL_SetProperties(pTextCtl, TP_FIXOEM|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
             }
 #else
             ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
+            ITEXTCTL_SetRect(pTextCtl, &textrc);
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 
 
@@ -4028,7 +4028,6 @@ SEE ALSO:
     ASSERT(pMe != NULL);
 
     ring = (AECHAR*)CContApp_GetBufbyFldID(pMe, AEE_ADDRFIELD_RINGTONE);
-    DBGPRINTF("in saveRingField: %S",ringName,0,0);
     if(NULL == ring)
     {
         // Add a new field
@@ -4851,6 +4850,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -4903,7 +4903,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             //MP_NO_REDRAW
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
             IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
-
+            
             if(IS_ZERO_REC())
             {
                 CContApp_DrawNorecord(pMe, pMenuCtl);
@@ -4948,7 +4948,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             }
             /*必须在textctl初始化完毕后,才能获得icon id,而且要在dialog更新完之后再更新图标*/
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
-
+            ITEXTCTL_Redraw(pTextCtl);
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay); 
         }
@@ -5834,7 +5834,6 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                         
                         IMENUCTL_SetItemText(pMenuCtl, IDI_ADDNEW_MENU_SELECTRINGTONE, NULL, 0, name);
                         
-                        DBGPRINTF("tangwq after strrchr: %s", pMe->m_nRingToneID,0,0);
                     } 
                     else
                     {
@@ -10516,7 +10515,6 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
                 // Set menu select
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectFldOpts);
             }
-            
             // Draw prompt bar here
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
             IDISPLAY_Update(pMe->m_pDisplay);  
@@ -10871,6 +10869,7 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -10942,6 +10941,7 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
                 {
                     return TRUE;
                 }
+                ITEXTCTL_Redraw(pTextCtl);
                 //bw:>>
                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                 {
@@ -12467,7 +12467,6 @@ static boolean  CContApp_HandleCopyingDlgEvent( CContApp  *pMe,
             return TRUE;
             
         case EVT_FLIP:
-            DBGPRINTF("AVK_FLIP_CLOSE:0x%x\n",eCode);
             FORCE_COMPLETE_COPY();
             CContApp_FreeSelectFieldListNode();
             ISTATIC_Release(pStatic);
@@ -14793,7 +14792,6 @@ static boolean  CContApp_HandleDeletingDlgEvent( CContApp  *pMe,
             return TRUE;
             
         case EVT_FLIP:
-            DBGPRINTF("AVK_FLIP_CLOSE:0x%x\n",eCode);
             FORCE_COMPLETE_DELETE();
             CContApp_FreeSelectFieldListNode();
             ISTATIC_Release(pStatic);

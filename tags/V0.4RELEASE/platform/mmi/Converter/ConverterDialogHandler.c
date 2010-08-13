@@ -189,25 +189,19 @@ boolean Converter_RouteDialogEvent(CConverter *pMe, AEEEvent eCode, uint16 wPara
     {
         return FALSE;
     }
-    
-    DBGPRINTF("curstate %d prestate %d dlgret %d Converter_RouteDialogEvent",pMe->m_eCurState,pMe->m_ePreState,pMe->m_eDlgRet);
-    
+        
     switch (pMe->m_pActiveDlgID)
     {
         case IDD_MSGBOX:
-            DBGPRINTF("IDD_MSGBOX",0,0,0);
             return Converter_MsgBoxEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_CONVERTERMAIN:
-            DBGPRINTF("IDD_CONVERTERMAIN",0,0,0);
             return Converter_MainEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_CONVERTERCONVERT:
-            DBGPRINTF("IDD_CONVERTERCONVERT",0,0,0);
             return Converter_ConvertEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_CHANGECURRENCY:
-            DBGPRINTF("IDD_CHANGECURRENCY",0,0,0);
             return Converter_ChangeCurrencyEvent(pMe,eCode,wParam,dwParam);
 
         default:

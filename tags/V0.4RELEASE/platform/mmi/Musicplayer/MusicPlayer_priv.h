@@ -142,7 +142,7 @@
 
 
 #ifndef ERR
-#define ERR DBGPRINTF
+#define ERR(...)
 #endif
 
 #ifndef ASSERT
@@ -157,7 +157,7 @@ if(!(x))         \
 #define FARF_EVENT   TRUE
 #define FARF_ADDR    TRUE
 
-#define MP3_FARF(x, p) if(TRUE == FARF_##x)  DBGPRINTF p
+#define MP3_FARF(x, p)
 
 #if defined (FEATURE_DISP_160X128)
 //wlh 20090415 add ÉèÖÃICON ×ø±ê 

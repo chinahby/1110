@@ -116,7 +116,7 @@ when       who     what, where, why
 #define MAX_AKEY_DIGITS 26
 #endif
 #define FEATURE_LOCK
-#define debug DBGPRINTF
+#define debug
 #define MENU_SETBOTTOMBAR(p, t)                     \
 {                                                   \
     IMENUCTL_SetBottomBarType((p), (t));            \

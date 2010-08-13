@@ -944,7 +944,7 @@ typedef struct _CContApp
 #undef FARF
 #endif
 
-#define FARF(x, p)  if (1 == FARF_##x) DBGPRINTF p
+#define FARF(x, p)
 
 /*==============================================================================
                                  全局数据

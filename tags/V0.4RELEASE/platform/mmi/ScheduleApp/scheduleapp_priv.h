@@ -55,7 +55,7 @@
 #endif
 
 
-#define debug DBGPRINTF
+#define debug(...)
 
 #ifdef FEATURE_LANG_CHINESE
 #define     FEATURE_DRAW_LUNAR_CALENDAR     1

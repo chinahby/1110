@@ -681,7 +681,6 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                                            wallnvtmp,
                                            sizeof(wallnvtmp));
                     //DISP_ERR("%s wallnvtmp1",wallnvtmp,0,0);
-                    DBGPRINTF("WALLPAPER_MAIN %s",wallnvtmp,0,0);
                     /*是从DISPLAYMENUST_IMGDELMSG返回或挂起后返回则不取nv*/
                     //if(FALSE == pMe->m_DelImageBack)
                     {
@@ -710,7 +709,6 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                                             wallnvtmp,
                                             sizeof(wallnvtmp));
                     //DISP_ERR("%s wallnvtmp2",wallnvtmp,0,0);
-                    DBGPRINTF("ANIMATION_POWERUP %s",wallnvtmp,0,0);
                     pMe->m_CurPaper =
                             DisplayMenu_Search_Name_In_Double_list(p_powerup_image,wallnvtmp,&pMe->m_count);
 
@@ -727,7 +725,6 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                                                wallnvtmp,
                                                sizeof(wallnvtmp));
                     //DISP_ERR("%s wallnvtmp3",wallnvtmp,0,0);
-                    DBGPRINTF("ANIMATION_POWERDOWN %s",wallnvtmp,0,0);
                     pMe->m_CurPaper =
                             DisplayMenu_Search_Name_In_Double_list(p_poweroff_image,wallnvtmp,&pMe->m_count);
 
@@ -745,7 +742,6 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                                                wallnvtmp,
                                                sizeof(wallnvtmp));
                     //DISP_ERR("%s wallnvtmp4",wallnvtmp,0,0);
-                    DBGPRINTF("SCREENSAVE_TYPE %s",wallnvtmp,0,0);
                     pMe->m_CurPaper =
                             DisplayMenu_Search_Name_In_Double_list(p_screensave_image,wallnvtmp,&pMe->m_count);
 
@@ -2172,7 +2168,6 @@ static void DisplayMenu_EnumFile(CDisplayMenu *pMe,PICTURE_TYPE PICType)
             Start_bit = STRLEN("fs:/image/wallpaper/");
             STRCPY(PhotoName,Photopos.szName);   /*将列举出的文件名存入PhotoName中*/
             //DISP_ERR(" wallpaper name",0,0,0);
-            DBGPRINTF("PhotoName %s",PhotoName,0,0);
             //判断是桌面墙纸、开机动画还是关机动画，分别以w、k、g字母开头
             if( ('w' == PhotoName[Start_bit]) || ('W' == PhotoName[Start_bit]) )
             {
@@ -2319,7 +2314,6 @@ static void DisplayMenu_DisplayImg(CDisplayMenu *pMe, PICTURE_TYPE PICType)
                 IIMAGE_Release(pMe->m_pWallPaper);
                 pMe->m_pWallPaper = NULL;
             }
-            DBGPRINTF("imange_name %s",pMe->m_CurPaper->imange_name,0,0);
             if(PICType == WALLPAPER_MAIN)
             {
                 pMe->m_pWallPaper = ISHELL_LoadImage( pMe->m_pShell,
