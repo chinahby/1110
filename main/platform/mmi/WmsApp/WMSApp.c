@@ -3035,6 +3035,7 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
         case WMS_MSG_EVENT_SUBMIT_REPORT:
             
 			MSG_FATAL("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SUBMIT_REPORT***",0,0,0);
+			MSG_FATAL("***zzg WmsApp_MsgCb report_status=%d***", pInfobuf->submit_report_info.report_status,0,0);
             MSG_FATAL("***zzg WmsApp_MsgCb len=%d***", pInfo->submit_report_info.alpha_id.len,0,0);
             
             pInfobuf->submit_report_info.alpha_id.data = (uint8 *)sys_malloc(WMS_ALPHA_ID_MAX);
@@ -4559,12 +4560,12 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
    
     MSG_FATAL("***zzg m_idxCurSend=%d, m_nSendItems=%d***", pMe->m_idxCurSend, pMe->m_nSendItems,0); 	
 
+	MSG_FATAL("***zzg report_status == %d!!!", pRptInfo->report_status, 0, 0);
+	
 	if (pRptInfo->report_status != WMS_RPT_OK)
 	{
 		int nRet;
 
-		MSG_FATAL("***zzg report_status == %d!!!", pRptInfo->report_status, 0, 0);
-		
 		if(!pMe->m_bisSendSecond)
 		{
 			MSG_FATAL("***zzg WMS send Again!", 0, 0, 0);
