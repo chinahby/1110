@@ -1803,7 +1803,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
     
     cls = AEE_Active();
     switch(wParam){
-#ifdef FEATURE_VERSION_IVIO
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP
     case AVK_CAPLK:
         if(cls == AEECLSID_FCHAT)
         {
