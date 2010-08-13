@@ -2079,7 +2079,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 				#endif
                 ISTATIC_SetRect(pStatic, &rc);
             }
-            
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             // 设置静态文本控件属性
             ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG);
             return TRUE;
