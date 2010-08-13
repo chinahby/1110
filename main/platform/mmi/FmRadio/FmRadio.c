@@ -1097,7 +1097,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 
         case EVT_ALARM:
         {
-
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND
             if( pMe->startFromBackground)
             {
                 ISHELL_CloseApplet( pMe->m_pShell, FALSE);
@@ -1114,6 +1114,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                     FmRadio_PowerUp( pMe);
                 }
             }
+#endif            
         }
         return TRUE;
 
