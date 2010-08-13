@@ -920,7 +920,14 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                     case AVK_DOWN:
                         TextCtl_ShowSymbolPage(pme, 1);
                         break;
-    
+
+					//Add By zzg 2010_08_13
+					case AVK_LEFT:
+					case AVK_RIGHT:						
+						//TextCtl_ShowSymbolPage(pme, 0);
+                        break;
+					//Add End
+	
                     case AVK_CLR:
                        TextCtl_CloseSymbolDialog(pme, 0);
                         return(TRUE);
@@ -932,7 +939,8 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                     default:
                         if (wParam < AVK_1 || wParam > AVK_9)
                         {
-                            return(FALSE);
+                        	break;
+                            //return(FALSE);
                         }
                         TextCtl_CloseSymbolDialog(pme, TextCtl_GetSymChar(pme,(wParam - AVK_1)));
 
@@ -3231,7 +3239,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
             IANNUNCIATOR_Release(pIAnn);
             pIAnn = NULL;            
         }  	        
-    }
+    }   
 #if 0    
     //Draw title  //这里将统一的titlebar画上去
     {
@@ -3393,6 +3401,7 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
             pIAnn = NULL;            
         }  	        
     }    
+    
 #if 0
     {
         TitleBar_Param_type TitleBar;
@@ -3877,6 +3886,14 @@ static void TextCtl_CloseSymbolDialog(CTextCtl * pme, AECHAR ch)
 
    CTextCtl_Redraw((ITextCtl *)pme);
 
+   //Add By zzg 2010_08_13
+   (void)ISHELL_PostEvent(pme->m_pIShell,
+                          ISHELL_ActiveApplet(pme->m_pIShell),
+                          EVT_USER_REDRAW,
+                          0,
+                          0);  
+   //Add End
+
    ISHELL_HandleEvent(pme->m_pIShell, EVT_CTL_TEXT_MODECHANGED, (uint16)CTextCtl_GetInputMode((ITextCtl *)pme, NULL), (uint32)pme);
 }
 
@@ -3918,6 +3935,14 @@ static void TextCtl_CloseNetSymbolDialog(CTextCtl * pme, AECHAR* string)
       IMENUCTL_Redraw(pme->m_pSoftKey);
    CTextCtl_Redraw((ITextCtl *)pme);
 
+   //Add By zzg 2010_08_13
+   (void)ISHELL_PostEvent(pme->m_pIShell,
+                          ISHELL_ActiveApplet(pme->m_pIShell),
+                          EVT_USER_REDRAW,
+                          0,
+                          0);  
+   //Add End
+
    ISHELL_HandleEvent(pme->m_pIShell, EVT_CTL_TEXT_MODECHANGED, (uint16)CTextCtl_GetInputMode((ITextCtl *)pme, NULL), (uint32)pme);
 }
 
@@ -3935,6 +3960,14 @@ static void TextCtl_CloseFaceSymbolDialog(CTextCtl * pme, AECHAR* string)
    if(pme->m_pSoftKey)
       IMENUCTL_Redraw(pme->m_pSoftKey);
    CTextCtl_Redraw((ITextCtl *)pme);
+
+   //Add By zzg 2010_08_13
+   (void)ISHELL_PostEvent(pme->m_pIShell,
+                          ISHELL_ActiveApplet(pme->m_pIShell),
+                          EVT_USER_REDRAW,
+                          0,
+                          0);  
+   //Add End
 
    ISHELL_HandleEvent(pme->m_pIShell, EVT_CTL_TEXT_MODECHANGED, (uint16)CTextCtl_GetInputMode((ITextCtl *)pme, NULL), (uint32)pme);
 }

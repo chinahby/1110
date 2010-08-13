@@ -4850,7 +4850,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            //IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -4870,20 +4870,6 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 pMe->m_bDelOk = FALSE;
                 pMe->m_wSelectCont = pMe->m_wDelReturnSelId;
             }
-            {
-                //add by xuhui
-                AECHAR WTitle[40] = {0};
-                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
-                (void)ISHELL_LoadResString(pMe->m_pShell,
-                        CONTAPP_RES_FILE_LANG,                                
-                        IDS_APPLET,
-                        WTitle,
-                        sizeof(WTitle));
-                if(pMe->m_pIAnn != NULL)
-                {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-                }
-            }
             
             //IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);   
             // For redraw the dialog
@@ -4901,8 +4887,25 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
         case EVT_USER_REDRAW:
         {
             //MP_NO_REDRAW
-            uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
-            IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
+            //uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
+            //IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
+            
+			{
+                //add by xuhui
+                AECHAR WTitle[40] = {0};
+                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                        CONTAPP_RES_FILE_LANG,                                
+                        IDS_APPLET,
+                        WTitle,
+                        sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+            }
+
+			MSG_FATAL("***zzg CContApp EVT_USER_REDRAW***", 0, 0, 0);
             
             if(IS_ZERO_REC())
             {
