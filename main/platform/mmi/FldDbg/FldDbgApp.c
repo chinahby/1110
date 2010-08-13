@@ -1030,7 +1030,6 @@ void CFieldDebug_SetImage(IMenuCtl *pm, uint16 id, int status)
 static void SetControlRect(CFieldDebug *pme, void  *Ctl)
 {
     AEERect ctlRect;
-    AEERect deveRect;
 	
     if (pme == NULL)
     {
@@ -1930,8 +1929,9 @@ static AECHAR* CFieldDebug_DebugScreenReadItem(CFieldDebug *pme)
                                   CFGI_DEBUG_RX_AGC_IN_DBM,
                                   &dw,
                                   sizeof(dw))) {
-     int32 rx_agc = (int32)dw;
+     
 #ifndef T_MSM6500
+	 int32 rx_agc = (int32)dw;
      SPRINTF(temp+i,"Rx AGC dBm: %d.%d\n", (rx_agc/10), abs(rx_agc%10));
 #else
 //#error code not present
@@ -3851,7 +3851,7 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
 {
 	   ITextCtl *pIText = NULL; 
 	   IDialog * p_diag = NULL;
-	   IMenuCtl *psk = NULL;
+	   //IMenuCtl *psk = NULL;
 	   BottomBar_Param_type BarParam={0};//yangdecai
 	   PARAM_NOT_REF(dwParam)
 	   
@@ -3868,7 +3868,7 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
 		  		AECHAR pwstrText[100] = {0};
 				char string[100+1];
 				uint32 carrID = 0;
-				OEMConfigDownloadInfo DownLoadInfo = {0};
+				//OEMConfigDownloadInfo DownLoadInfo = {0};
 				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 				(void) ICONFIG_GetItem(pme->m_pIConfig,
                           CFGI_BREW_CARRIER_ID,
@@ -3910,7 +3910,7 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
                 AECHAR pwstrText[100] = {0};
 				char string[100+1];
 				uint32 carrID = 0;
-				OEMConfigDownloadInfo DownLoadInfo = {0};
+				//OEMConfigDownloadInfo DownLoadInfo = {0};
 				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 				(void) ICONFIG_GetItem(pme->m_pIConfig,
                           CFGI_BREW_CARRIER_ID,
@@ -3937,15 +3937,15 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
 	   case EVT_DIALOG_START:
 	   		{
 			  	char szBuf[64] = {0};
-			  	AEERect temp = {0};
+			  	//AEERect temp = {0};
 			    int n = 0;
 			    uint32 carrID = 0;
-			    dword date = 0;
-			    int i, j, count;
-			    AECHAR  sTitle[64] = {0}; 
-			    int ret = 0;
+			    //dword date = 0;
+			    //int i, j, count;
+			    //AECHAR  sTitle[64] = {0}; 
+			    //int ret = 0;
                 AECHAR string[64]={0};
-				OEMConfigDownloadInfo DownLoadInfo = {0};
+				//OEMConfigDownloadInfo DownLoadInfo = {0};
 				pme->m_CurrId =(uint32)CARRIERID;
 				pme->m_pActiveIDlg = (IDialog*)dwParam;
 			  	(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
@@ -4038,7 +4038,7 @@ static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
 {
 	   ITextCtl *pIText = NULL; 
 	   IDialog * p_diag = NULL;
-	   IMenuCtl *psk = NULL;
+	   //IMenuCtl *psk = NULL;
 	   BottomBar_Param_type BarParam={0};//yangdecai
 	   PARAM_NOT_REF(dwParam)
 	   MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
@@ -4054,7 +4054,7 @@ static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
 		  		AECHAR pwstrText[100] = {0};
 				char string[100+1];
 				uint32 platformID = 0;
-				OEMConfigDownloadInfo DownLoadInfo = {0};
+				//OEMConfigDownloadInfo DownLoadInfo = {0};
 				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 				/*
 				(void) ICONFIG_GetItem(pme->m_pIConfig,
@@ -4097,7 +4097,7 @@ static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
 				AECHAR pwstrText[100] = {0};
 				char string[100+1];
 				uint32 platformID = 0;
-				OEMConfigDownloadInfo DownLoadInfo = {0};
+				//OEMConfigDownloadInfo DownLoadInfo = {0};
 				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 				/*
 				(void) ICONFIG_GetItem(pme->m_pIConfig,
@@ -4126,15 +4126,15 @@ static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
 	   	{
 		   	 
 		   	char szBuf[64] = {0};
-		  	AEERect temp = {0};
+		  	//AEERect temp = {0};
 		    int n = 0;
 		    uint32 PlatformID = 0;
-		    dword date = 0;
-		    int i, j, count;
-		    AECHAR  sTitle[64] = {0}; 
-		    int ret = 0;
+		    //dword date = 0;
+		    //int i, j, count;
+		    //AECHAR  sTitle[64] = {0}; 
+		    //int ret = 0;
             AECHAR string[64]={0};
-			OEMConfigDownloadInfo DownLoadInfo = {0};
+			//OEMConfigDownloadInfo DownLoadInfo = {0};
 			pme->m_CurrId =(uint32)PLATFORMID;
 			pme->m_pActiveIDlg = (IDialog*)dwParam;
 		  	//(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
@@ -4221,7 +4221,7 @@ SIDE EFFECTS
 {
 		   ITextCtl *pIText = NULL; 
 	       IDialog * p_diag = NULL;
-	       IMenuCtl *psk = NULL;
+	       //IMenuCtl *psk = NULL;
 		   BottomBar_Param_type BarParam={0};//yangdecai
 	 	   PARAM_NOT_REF(dwParam)
 		   
@@ -4238,7 +4238,7 @@ SIDE EFFECTS
 			  		AECHAR pwstrText[100] = {0};
 					char string[100+1];
 					uint32 DLFlags = 0;
-					OEMConfigDownloadInfo DownLoadInfo = {0};
+					//OEMConfigDownloadInfo DownLoadInfo = {0};
 					p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 					
 					//(void) ICONFIG_GetItem(pme->m_pIConfig,
@@ -4284,7 +4284,7 @@ SIDE EFFECTS
 					AECHAR pwstrText[100] = {0};
 					char string[100+1];
 					uint32 DLFlags = 0;
-					OEMConfigDownloadInfo DownLoadInfo = {0};
+					//OEMConfigDownloadInfo DownLoadInfo = {0};
 					p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 					
 					//(void) ICONFIG_GetItem(pme->m_pIConfig,
@@ -4317,13 +4317,13 @@ SIDE EFFECTS
 			   char szBuf[64] = {0};
 			   int n = 0;
 			   uint32 DLFlags = 0;
-			   dword date = 0;
-			   AECHAR fmt_str[64] = {0};
-			   int i, j, count;
+			   //dword date = 0;
+			   //AECHAR fmt_str[64] = {0};
+			   //int i, j, count;
 			   AECHAR  string[64] = {0}; 
-			   int ret = 0;
+			   //int ret = 0;
 			   
-			   OEMConfigDownloadInfo DownLoadInfo = {0};
+			  // OEMConfigDownloadInfo DownLoadInfo = {0};
 			   pme->m_CurrId =(uint32)DLFLAGS;
 			   pme->m_pActiveIDlg = (IDialog*)dwParam;
 			  //(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
@@ -4414,9 +4414,9 @@ static boolean CFieldDebug_AUTHPOLICYHandleEvent(CFieldDebug *pme,
 											   uint32	 dwParam)
 
 {
-			   ITextCtl *pIText = NULL; 
-	   		   IDialog * p_diag = NULL;
-	   		   IMenuCtl *psk = NULL;
+			   //ITextCtl *pIText = NULL; 
+	   		   //IDialog * p_diag = NULL;
+	   		   //IMenuCtl *psk = NULL;
     PARAM_NOT_REF(wParam)
     uint16 auth_policy = 0;
     MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent Start", 0, 0, 0);
@@ -4524,9 +4524,9 @@ static boolean CFieldDebug_PRIVACYPOLICYHandleEvent(CFieldDebug *pme,
 											   uint16	 wParam,
 											   uint32	 dwParam)
 {
-	   ITextCtl *pIText = NULL; 
-	   IDialog * p_diag = NULL;
-	   IMenuCtl *psk = NULL;
+	   //ITextCtl *pIText = NULL; 
+	   //IDialog * p_diag = NULL;
+	   //IMenuCtl *psk = NULL;
      PARAM_NOT_REF(wParam)
      uint16 auth_policy = 0;
      MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent Start", 0, 0, 0);
@@ -4634,10 +4634,10 @@ static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
 											   uint16	 wParam,
 											   uint32	 dwParam)
 {
-     IShell *shell_ptr = AEE_GetShell();
+     //IShell *shell_ptr = AEE_GetShell();
 	 ITextCtl *pIText = NULL; 
 	 IDialog * p_diag = NULL;
-	 IMenuCtl *psk = NULL;
+	 //IMenuCtl *psk = NULL;
 	 BottomBar_Param_type BarParam={0};//yangdecai
 	 PARAM_NOT_REF(dwParam)  
      MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
@@ -6436,6 +6436,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     STRTOWSTR("ME ESN : \n0x%08X\n", fmt_str, sizeof(fmt_str));
    if(IsRunAsUIMVersion())
     {
+    	extern dword OEM_GetMEESN(void);
        WSPRINTF((szBuf + n),
              sizeof(szBuf),
              fmt_str,
@@ -8000,9 +8001,9 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     IStatic *p_stk;
     int n = 0;
     uint32 esn;
-    dword date = 0;
+    //dword date = 0;
     AECHAR fmt_str[20];
-    int i, j, count;
+    //int i, j, count;
     AECHAR  sTitle[45]; 
     int ret = 0;
     uint64 meid = 0;
@@ -8024,8 +8025,10 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     //                      CFGI_ESN,
     //                      &esn,
     //                      sizeof(esn));//插了卡时，从卡中读取
-    OEM_ReadESN(&esn);//永远从NV中读取
-
+	{
+		extern int OEM_ReadESN(uint32 *pESN);
+    	OEM_ReadESN(&esn);//永远从NV中读取
+	}
     STRTOWSTR("%u %u", fmt_str, sizeof(fmt_str));
     
  #if 0
@@ -8055,7 +8058,10 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
                                sizeof(szBuf));
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
-    OEM_ReadMEID(&meid);
+    {
+    	extern int OEM_ReadMEID(uint64 *meid);
+    	OEM_ReadMEID(&meid);
+    }
     STRTOWSTR("%014X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
@@ -8090,7 +8096,7 @@ static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
 {
 	   ITextCtl *pIText = NULL; 
 	   IDialog * p_diag = NULL;
-	   IMenuCtl *psk = NULL;
+	   //IMenuCtl *psk = NULL;
 	   BottomBar_Param_type BarParam={0};//yangdecai
 	   PARAM_NOT_REF(dwParam)
 	   
@@ -8106,7 +8112,7 @@ static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
 		  {
 		  		AECHAR pwstrText[64] = {0};
 				char string[64] = {0};
-				OEMConfigDownloadInfo DownLoadInfo = {0};
+				//OEMConfigDownloadInfo DownLoadInfo = {0};
 				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 				
 				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_SECONDARY_DNS_TEXT);
@@ -8142,7 +8148,7 @@ static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
 		     {
                 AECHAR pwstrText[64] = {0};
 				char string[64] = {0};
-				OEMConfigDownloadInfo DownLoadInfo = {0};
+				//OEMConfigDownloadInfo DownLoadInfo = {0};
 				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 				
 				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_SECONDARY_DNS_TEXT);
@@ -8238,7 +8244,7 @@ static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
 {
 	   ITextCtl *pIText = NULL; 
 	   IDialog * p_diag = NULL;
-	   IMenuCtl *psk = NULL;
+	   //IMenuCtl *psk = NULL;
 	   BottomBar_Param_type BarParam={0};//yangdecai
 	   PARAM_NOT_REF(dwParam)
 	   
@@ -8394,7 +8400,7 @@ static boolean CFieldDebug_UserPasswordMenuHandleEvent(CFieldDebug *pme,
 {
 	   ITextCtl *pIText = NULL; 
 	   IDialog * p_diag = NULL;
-	   IMenuCtl *psk = NULL;
+	   //IMenuCtl *psk = NULL;
 	   BottomBar_Param_type BarParam={0};//yangdecai
 	   PARAM_NOT_REF(dwParam)
 	   
@@ -8548,7 +8554,7 @@ static boolean CFieldDebug_PrimaryServerMenuHandleEvent(CFieldDebug *pme,
 {
 	   ITextCtl *pIText = NULL; 
 	   IDialog * p_diag = NULL;
-	   IMenuCtl *psk = NULL;
+	   //IMenuCtl *psk = NULL;
 	   BottomBar_Param_type BarParam={0};//yangdecai
 	   PARAM_NOT_REF(dwParam)
 	   
@@ -8692,7 +8698,7 @@ static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
 {
 	   ITextCtl *pIText = NULL; 
 	   IDialog * p_diag = NULL;
-	   IMenuCtl *psk = NULL;
+	   //IMenuCtl *psk = NULL;
 	   BottomBar_Param_type BarParam={0};//yangdecai
 	   PARAM_NOT_REF(dwParam)
 	   
@@ -8925,7 +8931,7 @@ static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
 {
     ITextCtl *pIText = NULL; 
     IDialog * p_diag = NULL;
-    IMenuCtl *psk = NULL;
+    //IMenuCtl *psk = NULL;
 	BottomBar_Param_type BarParam={0};//yangdecai
     PARAM_NOT_REF(dwParam)
 
@@ -9078,7 +9084,7 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
 {
     ITextCtl *pIText = NULL; 
     IDialog * p_diag = NULL;
-    IMenuCtl *psk = NULL;
+    //IMenuCtl *psk = NULL;
 	BottomBar_Param_type BarParam={0};//yangdecai
     PARAM_NOT_REF(dwParam)
 
@@ -9272,11 +9278,11 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
         }
         case EVT_DIALOG_START:
         {
-            char szBuf[30] = {0};
+            //char szBuf[30] = {0};
             int n = 0;
             word mnc[NV_MAX_SID_LOCK] = {0};
             AECHAR string[30]={0};
-            int i, j;
+            int i;
 			pme->m_CurrId =(uint32)MNC;
             pme->m_pActiveIDlg = (IDialog*)dwParam;
             //(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
@@ -9347,7 +9353,7 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
 {
     ITextCtl *pIText = NULL; 
     IDialog * p_diag = NULL;
-    IMenuCtl *psk = NULL;
+    //IMenuCtl *psk = NULL;
 	BottomBar_Param_type BarParam={0};//yangdecai
     PARAM_NOT_REF(dwParam)
 
@@ -9538,11 +9544,11 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
         }
         case EVT_DIALOG_START:
         {
-            char szBuf[30] = {0};
+            //char szBuf[30] = {0};
             int n = 0;
             word mcc[NV_MAX_SID_LOCK] = {0};
             AECHAR string[30]={0};
-            int i, j;
+            int i;
 			pme->m_CurrId =(uint32)MCC;
             pme->m_pActiveIDlg = (IDialog*)dwParam;
             //(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
@@ -9614,7 +9620,7 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
 {
     ITextCtl *pIText = NULL; 
     IDialog * p_diag = NULL;
-    IMenuCtl *psk = NULL;
+    //IMenuCtl *psk = NULL;
 	BottomBar_Param_type BarParam={0};//yangdecai
     PARAM_NOT_REF(dwParam)
 
@@ -9803,11 +9809,11 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
         }
         case EVT_DIALOG_START:
         {
-            char szBuf[30] = {0};
+            //char szBuf[30] = {0};
             int n = 0;
             word sid[NV_MAX_SID_LOCK] = {0};
             AECHAR string[30]={0};
-            int i, j;
+            int i;
 			pme->m_CurrId =(uint32)SID;
             pme->m_pActiveIDlg = (IDialog*)dwParam;
             //(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
@@ -9940,4 +9946,3 @@ static void SetTextControlRect(CFieldDebug *pme, void  *Ctl)
                 pme->m_screen_rc.dy - GetBottomBarHeight(pme->m_pDisplay));
     ICONTROL_SetRect((IControl*)Ctl, &ctlRect);
 }
-
