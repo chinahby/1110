@@ -702,7 +702,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     {
                         // 通过验证
                         //MOVE_TO_STATE(COREST_POWERONSYSINIT)
-                        MOVE_TO_STATE(COREST_STARTUPANI);
+                        MOVE_TO_STATE(COREST_STARTUPANI)
                         pMe->m_eUIMErrCode == UIMERR_NONE;
                         CoreApp_ProcessSubscriptionStatus(pMe);
                     }
@@ -753,7 +753,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     {
                         // 成功解锁
                         //MOVE_TO_STATE(COREST_POWERONSYSINIT)
-                        MOVE_TO_STATE(COREST_STARTUPANI);
+                        MOVE_TO_STATE(COREST_STARTUPANI)
                         pMe->m_eUIMErrCode == UIMERR_NONE;
                         CoreApp_ProcessSubscriptionStatus(pMe);
                     }
