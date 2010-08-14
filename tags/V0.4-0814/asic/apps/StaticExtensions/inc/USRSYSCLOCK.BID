@@ -1,0 +1,7 @@
+#ifndef USRSYSCLOCK_BID
+#define USRSYSCLOCK_BID
+
+#define AEECLSID_USRSYSCLOCK    	0x0103be97
+
+#endif //USRSYSCLOCK_BID
+
