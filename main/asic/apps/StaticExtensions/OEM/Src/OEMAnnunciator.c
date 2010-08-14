@@ -1525,6 +1525,7 @@ SIDE EFFECTS
 static void IAnnunciator_Delete(IAnnunciator *pMe)
 {
   if (pMe) {
+    ISHELL_CancelTimer(pMe->m_piShell, NULL, pMe);
     if(pMe->m_coreObj)
     {
       (void)OEMAnnunCore_Release();
