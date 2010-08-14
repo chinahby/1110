@@ -11881,12 +11881,6 @@ static AECHAR  * FormatMessageForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage
         
         nLen = WSTRLEN(wstrRet);
     }
-	FREEIF(wstrPriFld);
-    FREEIF(wstrContentFld);
-    FREEIF(wstrAddFld);
-    FREEIF(wstrDtFld);
-    FREEIF(wstrOptCall);
-    FREEIF(wstrOptDel);
     
 FMTMSG_ERR:
     FREEIF(wstrPriFld);
