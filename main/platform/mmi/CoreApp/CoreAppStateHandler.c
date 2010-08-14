@@ -121,8 +121,9 @@ void static isAllowIMSI(CCoreApp *pMe,boolean *lockFlg);
 #ifdef USES_MMI
 extern boolean   IsRunAsUIMVersion(void);
 extern boolean   IsRunAsFactoryTestMode(void);
-extern void InitProvisioning(void);
 #endif
+static int CoreSecurity_VerifyPIN(CCoreApp * pMe, uint8 byPinID);
+static int CoreSecurity_VerifyPUK(CCoreApp * pMe, uint8 byPinID);
 
 /*==============================================================================
 
@@ -634,6 +635,50 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
             // 检查卡是否插入
             if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
             {// 插入了卡
+#if 1
+                AEECardPinStatus sPinStatus;
+                MSLEEP(500);// 等待GSDI更新PIN Status，否则验证PIN之后的状态获取有问题
+                if (ICARD_GetPinStatus(pMe->m_pICard, AEECARD_PIN1, &sPinStatus) != SUCCESS)
+                {// 获取状态失败
+                    pMe->m_eUIMErrCode = UIMERR_BLOCKED;
+                    MOVE_TO_STATE(COREST_UIMERR)
+                }
+                else
+                {
+                    switch(sPinStatus.lock_state){
+                    case AEECARD_PIN_BLOCKED:
+                        // PUK码剩余输入次数大于0，PIN码剩余输入次数为0，
+                        // 要求用户输入PUK码
+                        pMe->m_eRUIMSCode = ENTERPUK_STEP0;
+                        CoreApp_ShowDialog(pMe, IDD_UIMSECCODE);
+                        eRet = NFSMACTION_WAIT;
+                        break;
+                        
+                    case AEECARD_PIN_ENABLED:
+                        // PIN 码检测功能打开，要求用户输入PIN码
+                        pMe->m_eRUIMSCode = ENTERPIN_ONLY;
+                        CoreApp_ShowDialog(pMe, IDD_UIMSECCODE);
+                        eRet = NFSMACTION_WAIT;
+                        break;
+                        
+                    case AEECARD_PIN_VERIFIED:
+                    case AEECARD_PIN_DISABLED:
+                        pMe->m_eUIMErrCode = UIMERR_NONE;
+                        //MOVE_TO_STATE(COREST_POWERONSYSINIT)
+                        MOVE_TO_STATE(COREST_STARTUPANI);
+                        break;
+
+                    case AEECARD_PIN_PERM_DISABLED:
+                    case AEECARD_PIN_NOT_VALID:
+                    case AEECARD_PIN_UNKNOWN:
+                    case AEECARD_PIN_NOT_INIT:
+                    default:
+                        pMe->m_eUIMErrCode = UIMERR_BLOCKED;
+                        MOVE_TO_STATE(COREST_UIMERR)
+                        break;
+                    }
+                }
+#else
                 AEECHVStatus  chvst;
                 
                 if (IRUIM_GetCHVStatus(pMe->m_pIRUIM, &chvst) != SUCCESS)
@@ -669,6 +714,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     //MOVE_TO_STATE(COREST_POWERONSYSINIT)
                     MOVE_TO_STATE(COREST_STARTUPANI);
                 }
+#endif
             }
             else
             {// 没插入卡
@@ -698,15 +744,9 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
             {
                 case ENTERPIN_ONLY:
                     // 验证输入 PIN 码
-                    if (IRUIM_PINCheck(pMe->m_pIRUIM, IRUIM_CHV1, pMe->m_strPIN1))
-                    {
-                        // 通过验证
-                        //MOVE_TO_STATE(COREST_POWERONSYSINIT)
-                        MOVE_TO_STATE(COREST_STARTUPANI)
-                        pMe->m_eUIMErrCode = UIMERR_NONE;
-                        CoreApp_ProcessSubscriptionStatus(pMe);
-                    }
-                    else
+                    pMe->m_sPIN.code = pMe->m_wPIN;
+                    pMe->m_sPIN.code_len = WSTRLEN(pMe->m_wPIN);
+                    if(SUCCESS != CoreSecurity_VerifyPIN(pMe, AEECARD_PIN1))
                     {
                         AEECHVStatus  chvst;
                         
@@ -721,6 +761,12 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                             // 输入错误,卡被锁
                             CoreApp_ShowMsgDialog(pMe, IDS_UIMBLOCKED);
                         }
+                        return NFSMACTION_WAIT;
+                    }
+                    else
+                    {
+                        pMe->m_bVerifying = TRUE;
+                        CoreApp_ShowMsgDialog(pMe, IDS_WAITING);
                         return NFSMACTION_WAIT;
                     }
                     break;
@@ -746,21 +792,20 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     }
                     
                     // 现在用户已输入了 PUK 码和新的 PIN 码, 开始尝试 UIM 卡解锁
-                    if (IRUIM_UnblockCHV(pMe->m_pIRUIM,
-                                        IRUIM_CHV1,
-                                        pMe->m_strPUK,
-                                        pMe->m_strPIN1) == AEE_SUCCESS)
-                    {
-                        // 成功解锁
-                        //MOVE_TO_STATE(COREST_POWERONSYSINIT)
-                        MOVE_TO_STATE(COREST_STARTUPANI)
-                        pMe->m_eUIMErrCode = UIMERR_NONE;
-                        CoreApp_ProcessSubscriptionStatus(pMe);
-                    }
-                    else
+                    pMe->m_sPIN.code = pMe->m_wPIN;
+                    pMe->m_sPIN.code_len = WSTRLEN(pMe->m_wPIN);
+                    pMe->m_sPUK.code = pMe->m_wPUK;
+                    pMe->m_sPUK.code_len = WSTRLEN(pMe->m_wPUK);
+                    if(SUCCESS != CoreSecurity_VerifyPUK(pMe, AEECARD_PIN1))
                     {
                         // 输入错误,验证失败
                         CoreApp_ShowMsgDialog(pMe, IDS_INVALIDPUK);
+                        return NFSMACTION_WAIT;
+                    }
+                    else
+                    {
+                        pMe->m_bVerifying = TRUE;
+                        CoreApp_ShowMsgDialog(pMe, IDS_WAITING);
                         return NFSMACTION_WAIT;
                     }
                     break;
@@ -1612,4 +1657,107 @@ void static isAllowIMSI(CCoreApp *pMe,boolean *lockFlg)
 }
 #endif //defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
 
+
+/*===========================================================================
+FUNCTION PINVerify_cb
+
+DESCRIPTION
+
+  PINVerify_cb is called in response to ICARD_VerifyPin completing, and
+  will check the status of pin status(either success or fail).
+
+  Fail:    post EVT_PIN_VERIFY_FAIL event to coreapp
+  Success: post EVT_PIN_VERIFY_SUCCESS event to coreapp
+
+  return TRUE;
+
+
+DEPENDENCIES
+  None.
+
+
+RETURN VALUE
+  TRUE/FALSE
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+static void  PINVerify_cb(void *pNotifyData)
+{  
+  CCoreApp * pMe = (CCoreApp *) pNotifyData;
+  AEECardPinStatus sPinStatus;
+  
+  if (pMe == NULL) {
+    CORE_ERR ("Null pointer", 0,0,0);
+    return;
+  }
+  ICARD_GetPinStatus(pMe->m_pICard, pMe->m_sPinActionStatus.nPinID, &sPinStatus);
+  
+  ISHELL_PostEventEx(pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_CARD_STATUS, sPinStatus.lock_state, sPinStatus.tries_remaining);
+  pMe->m_bVerifying = FALSE;
+}
+
+/*===========================================================================
+FUNCTION CoreSecurity_VerifyPIN
+
+DESCRIPTION
+
+  This function sets the callback function pointer for verify pin and
+  call the corresponding ICARD_VerifyPin function
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  SUCCESS/EFAILED/EUNSUPPORT
+
+SIDE EFFECTS
+  None.
+===========================================================================*/
+static int CoreSecurity_VerifyPIN(CCoreApp * pMe, uint8 byPinID)
+{
+  int nReturnStatus = SUCCESS;
+  
+  /* Populate the m_sCallback structure */
+  pMe->m_sCallback.pfnCancel = NULL;
+  pMe->m_sCallback.pfnNotify = PINVerify_cb;
+  pMe->m_sCallback.pNotifyData = pMe;
+
+  nReturnStatus = ICARD_VerifyPin(pMe->m_pICard, byPinID, &pMe->m_sPIN,
+                                  &pMe->m_sPinActionStatus, &pMe->m_sCallback);
+  return nReturnStatus;
+}
+
+
+/*===========================================================================
+FUNCTION CoreSecurity_VerifyPUK
+
+DESCRIPTION
+
+  This function sets the callback function pointer for verify puk and
+  call the corresponding ICARD_UnblockPin function
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  SUCCESS/EFAILED/EUNSUPPORT
+
+SIDE EFFECTS
+  None.
+===========================================================================*/
+static int CoreSecurity_VerifyPUK(CCoreApp * pMe, uint8 byPinID)
+{
+  int nReturnStatus = SUCCESS;
+
+  /* Populate the m_sCallback structure */
+  pMe->m_sCallback.pfnCancel = NULL;
+  pMe->m_sCallback.pfnNotify = PINVerify_cb;
+  pMe->m_sCallback.pNotifyData = pMe;
+  nReturnStatus = ICARD_UnblockPin(pMe->m_pICard, byPinID, &pMe->m_sPUK, &pMe->m_sPIN,
+                &pMe->m_sPinActionStatus, &pMe->m_sCallback);
+
+  return nReturnStatus;
+}
 

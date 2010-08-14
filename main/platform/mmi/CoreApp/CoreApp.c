@@ -105,6 +105,7 @@ boolean CoreApp_ProcessOffLine(CCoreApp *pMe);
 void SendRTREConfig (CCoreApp *pMe);
 static boolean CoreApp_ProcessFTMMode(CCoreApp *pMe);
 static void CoreApp_Process_Headset_Msg(CCoreApp *pMe, uint16 msgId);
+static boolean CoreApp_GetCardStatus(CCoreApp *pMe,uint8 slot);
 
 /*==============================================================================
 
@@ -291,6 +292,8 @@ boolean CoreApp_InitAppData(IApplet* po)
         return FALSE;
 	}
     
+    CoreApp_GetCardStatus(pMe, AEECARD_SLOT1);
+    
     if (TRUE != CoreApp_RegisterNotify(pMe))
     {
         return FALSE;
@@ -332,6 +335,9 @@ boolean CoreApp_InitAppData(IApplet* po)
     MEMSET(pMe->m_strPIN1, 0, PINCODE_LENGTH + 1);
     MEMSET(pMe->m_strPIN2, 0, PINCODE_LENGTH + 1);
     MEMSET(pMe->m_strPUK, 0, PUKCODE_LENGTH + 1);   
+    MEMSET(pMe->m_wPIN, 0, sizeof(pMe->m_wPIN));
+    MEMSET(pMe->m_wPUK, 0, sizeof(pMe->m_wPUK));
+    
     pMe->m_SYS_MODE_NO_SRV = TRUE;
     MEMSET(pMe->svc_p_name, 0, UIM_CDMA_HOME_SERVICE_SIZE + 1); 
 #ifndef FEATURE_USES_LOWMEM
@@ -346,7 +352,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bConfigSent  = FALSE;
     pMe->m_cdg_msgptr = NULL;
     pMe->m_bActive = TRUE;
-    
+    pMe->m_bVerifying = FALSE;
     //if phone power down abnormal, we need set CFGI_FM_BACKGROUND  false to avoid show FM in idle
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 
@@ -357,7 +363,6 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifdef FEATURE_TORCH_SUPPORT
 	pMe->TorchOn = FALSE;
 #endif
-
     CoreAppReadNVKeyBeepValue(pMe);
     g_pCoreApp = pMe;
     return TRUE;
@@ -533,7 +538,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         case EVT_USER_REDRAW:
             (void) CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             return TRUE;
-
+            
+        case EVT_CARD_STATUS:
         case EVT_DISPLAYDIALOGTIMEOUT:
             (void) CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             return TRUE;

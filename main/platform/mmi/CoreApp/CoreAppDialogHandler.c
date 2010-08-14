@@ -573,6 +573,10 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 case 0xFFFF:
                     set_time = 3000;
                     break;
+
+                case IDS_WAITING:
+                    set_time = 0;
+                    break;
                     
                 default:
                     break;
@@ -613,7 +617,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 if(pMe->m_nMsgID != 0xFFFF)
                 {
                     STRLCPY(m_PromptMsg.strMsgResFile, AEE_COREAPPRES_LANGFILE,MAX_FILE_NAME);
-                    if((pMe->m_nMsgID == IDS_FULLY_CHARGED) || (pMe->m_nMsgID == IDS_CHARGER_ON))
+                    if((pMe->m_nMsgID == IDS_FULLY_CHARGED) || (pMe->m_nMsgID == IDS_CHARGER_ON) || (pMe->m_nMsgID == IDS_WAITING))
                     {
                         m_PromptMsg.eBBarType = BTBAR_NONE;
                     }
@@ -649,6 +653,11 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
             ISHELL_CancelTimer(pMe->a.m_pIShell, DialogTimeoutCallback,pMe);
             ISTATIC_Release(pStatic);
             pStatic = NULL;
+            if(IDS_WAITING == pMe->m_nMsgID)
+            {
+                FREEIF(pMe->m_cdg_msgptr);
+                return TRUE;
+            }
 #ifdef FEATURE_PLANEMODE
             if(IDS_PLANEMODE_QUERY == pMe->m_nMsgID)
             {
@@ -680,9 +689,20 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
             FREEIF(pMe->m_cdg_msgptr);
             return TRUE;
         }
-
+        case EVT_KEY_PRESS:
+        case EVT_KEY_RELEASE:
+            if(pMe->m_bVerifying && pMe->m_nMsgID == IDS_WAITING)
+            {
+                return TRUE;
+            }
+            break;
         case EVT_KEY:
         {
+            if(pMe->m_bVerifying && pMe->m_nMsgID == IDS_WAITING)
+            {
+                return TRUE;
+            }
+            
             switch (wParam)
             {
                 case AVK_SELECT:
@@ -772,7 +792,11 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
             CLOSE_DIALOG(DLGRET_MSGOK);
             return TRUE;
         }
-
+        
+        case EVT_CARD_STATUS:
+            CLOSE_DIALOG(DLGRET_MSGOK);
+            return TRUE;
+            
         default:
             break;
     }
@@ -1587,6 +1611,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                                        uint32     dwParam)
 {
     static char *szCode = NULL;
+    static AECHAR *wszCode = NULL;
     static int nMaxLen = 0;
     static uint16 nResID = 0;
     //IMenuCtl *pMenu = NULL;
@@ -1618,6 +1643,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                 case ENTERPIN_ONLY:
                     MEMSET(pMe->m_strPIN1, 0, sizeof(pMe->m_strPIN1));
                     szCode = pMe->m_strPIN1;
+                    wszCode = pMe->m_wPIN;
                     nMaxLen = PINCODE_LENGTH;
                     nResID = IDS_ENTER_PIN;
                     break;
@@ -1625,6 +1651,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                 case ENTERPUK_STEP1:
                     MEMSET(pMe->m_strPIN1, 0, sizeof(pMe->m_strPIN1));
                     szCode = pMe->m_strPIN1;
+                    wszCode = pMe->m_wPIN;
                     nMaxLen = PINCODE_LENGTH;
                     nResID = IDS_NEWPIN;
                     break;
@@ -1632,6 +1659,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                 case ENTERPUK_STEP2:
                     MEMSET(pMe->m_strPIN2, 0, sizeof(pMe->m_strPIN2));
                     szCode = pMe->m_strPIN2;
+                    wszCode = pMe->m_wPIN;
                     nMaxLen = PINCODE_LENGTH;
                     nResID = IDS_NEWPIN_AGAIN;
                     break;
@@ -1639,6 +1667,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                 case ENTERPUK_STEP0:
                     MEMSET(pMe->m_strPUK, 0, sizeof(pMe->m_strPUK));
                     szCode = pMe->m_strPUK;
+                    wszCode = pMe->m_wPUK;
                     nMaxLen = PUKCODE_LENGTH;
                     nResID = IDS_ENTER_PUK;
                     break;
@@ -1860,13 +1889,16 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                     {
                         bRedraw = TRUE;
                         szCode[nLen-1] = chEnter;
+                        wszCode[nLen-1] = chEnter;
                     }
                 }
                 else if (nLen < nMaxLen)
                 {
                     szCode[nLen] = chEnter;
+                    wszCode[nLen] = chEnter;
                     nLen++;
                     szCode[nLen] = 0;
+                    wszCode[nLen] = 0;
                     bRedraw = TRUE;
                 }
                 
@@ -1881,6 +1913,9 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
             }
             return TRUE;
             
+        case EVT_CARD_STATUS:
+            CLOSE_DIALOG(DLGRET_MSGOK);
+            return TRUE;
         default:
             break;
     }

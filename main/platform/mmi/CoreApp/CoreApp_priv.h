@@ -414,6 +414,8 @@ typedef struct _CCoreApp
     char                m_strPIN1[PINCODE_LENGTH + 1];
     char                m_strPIN2[PINCODE_LENGTH + 1];
     char                m_strPUK[PUKCODE_LENGTH + 1];
+    AECHAR              m_wPIN[PINCODE_LENGTH + 1];
+    AECHAR              m_wPUK[PUKCODE_LENGTH + 1];
     
     // 消息文本字符串在资源文件中的 ID
     uint16              m_nMsgID;
@@ -506,13 +508,17 @@ typedef struct _CCoreApp
 	boolean TorchOn;
 #endif
 
-#ifdef FEATURE_NEW_ICARD
-    ICard *   m_pICard;               /* pointer to icard interface */
-#else
-    ICARD *   m_pICard;               /* pointer to icard interface */
-#endif /*FEATURE_NEW_ICARD */
-    uint8     m_nCardStatus;
-	boolean   m_isShift;
+    ICard *             m_pICard;               /* pointer to icard interface */
+    uint8               m_nCardStatus;
+    /***********************************
+          For Security Module
+    **********************************/
+    AEECallback         m_sCallback;
+    AEECardPinCode      m_sPIN;
+    AEECardPinCode      m_sPUK;
+    AEECardPinCmdStatus m_sPinActionStatus;
+    boolean             m_bVerifying;
+	boolean             m_isShift;
 } CCoreApp;
 
 /*==============================================================================
