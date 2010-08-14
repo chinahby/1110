@@ -118,6 +118,30 @@
 	<STRING Id="1039" Name="IDS_ISRAEL_BANNER">
 		<Text>פלאפון</Text>
 	</STRING>
+	<STRING Id="1040" Name="IDS_PLANEMODE" Encoding="Unicode">
+		<Text>Airplane mode</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_PLANEMODE_QUERY" Encoding="Unicode">
+		<Text>Airplane mode on</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_ENTER_PASSWORD">
+		<Text>Enter password</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_UNKNOWN_NETWORK">
+		<Text>Unknown network</Text>
+	</STRING>
+	<STRING Id="1044" Name="IDS_CHINA_TELECOM">
+		<Text>China Telecom</Text>
+	</STRING>
+	<String Id="1045" Name="IDS_HEADSET_ON">
+		<Text>headset plug in</Text>
+	</String>
+	<String Id="1046" Name="IDS_HEADSET_OFF">
+		<Text>headset plug out</Text>
+	</String>
+	<String Id="1047" Name="IDS_WAITING" Encoding="Unicode">
+		<Text>Waiting</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

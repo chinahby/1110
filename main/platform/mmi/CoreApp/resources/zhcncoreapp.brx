@@ -133,6 +133,15 @@
 	<STRING Id="1044" Name="IDS_CHINA_TELECOM">
 		<Text>中国电信</Text>
 	</STRING>
+	<String Id="1045" Name="IDS_HEADSET_ON">
+		<Text>headset plug in</Text>
+	</String>
+	<String Id="1046" Name="IDS_HEADSET_OFF">
+		<Text>headset plug out</Text>
+	</String>
+	<String Id="1047" Name="IDS_WAITING" Encoding="Unicode">
+		<Text>Waiting</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
@@ -161,7 +170,6 @@
 	<DIALOG Id="6007" Name="IDD_EMERGENCYNUMLIST" Focus="7005">
 		<Controls>
 			<Menu Id="7005" Name="IDC_EMERGENCYNUM">
-				<TitleID>IDS_EMERGENCY_NUMBER</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
