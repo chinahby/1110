@@ -5252,7 +5252,7 @@ LOCAL   void                       tmc_define_tasks( void )
 #ifdef CUST_EDITION
     {
       int c;
-      for (c = 0; c < UI_STACK_SIZ; i++) {
+      for (c = 0; c < UI_STACK_SIZ; c++) {
         ui_stack[c] = 0;
       }
     }
