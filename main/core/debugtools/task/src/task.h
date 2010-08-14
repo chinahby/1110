@@ -1651,7 +1651,11 @@ extern rex_tcb_type           dbgr_tcb;
 /* Increasing the size of the UI stack from 8K to 64K */
  #define  UI_STACK_SIZ   ((1024 * 64)/sizeof(rex_stack_word_type))
 #else
+#ifdef CUST_EDITION
+ #define  UI_STACK_SIZ   (8192*8*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
  #define  UI_STACK_SIZ   (8192*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #endif
 
 extern rex_stack_word_type    ui_stack[ ];

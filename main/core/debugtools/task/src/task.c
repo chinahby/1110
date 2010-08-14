@@ -247,7 +247,7 @@ rex_tcb_type        sbcenc_tcb;                     /* TCB for   SBCENC task. */
 rex_stack_word_type sbcenc_stack [SBCENC_STACK_SIZ];/* Stack for SBCENC task. */
 
 #endif
-#ifndef CUST_EDITION
+
 /*---------------------------------------------------------------------------
 
                 NON-VOLATILE DATABASE TASK DECLARATIONS
@@ -460,6 +460,7 @@ rex_tcb_type        dbgr_tcb;                    /* TCB for DBGR task.     */
 rex_stack_word_type dbgr_stack [DBGR_STACK_SIZ]; /* Stack for DBGR Task.   */
 #endif /*FEATURE_DBGR*/
 
+#ifndef CUST_EDITION
 /*---------------------------------------------------------------------------
 
                      USER INTERFACE TASK DECLARATIONS
