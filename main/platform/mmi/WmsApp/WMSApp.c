@@ -3228,7 +3228,8 @@ void WmsApp_DcCb(wms_dc_event_e_type  event,wms_dc_event_info_s_type  *info_ptr)
     {
         return;
     }
-    
+//wangliang close!  2010-08-14
+#if 0    
     pInfobuf = sys_malloc(sizeof(wms_dc_event_info_s_type));
     if(pInfobuf == NULL)
     {
@@ -3291,6 +3292,7 @@ void WmsApp_DcCb(wms_dc_event_e_type  event,wms_dc_event_info_s_type  *info_ptr)
             MSG_HIGH("Event  %x could not be posted!", evt,0,0);
         }
     }
+#endif
 } /* WmsApp_DcCb */
 #endif
 
