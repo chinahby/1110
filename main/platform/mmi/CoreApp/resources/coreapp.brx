@@ -22,10 +22,10 @@
 	<STRING Id="1007" Name="IDS_INVALIDPUK">
 		<Text>Wrong PUK code</Text>
 	</STRING>
-	<STRING Id="1008" Name="IDS_UTKREFRESH" Encoding="Unicode">
+	<STRING Id="1008" Name="IDS_UTKREFRESH">
 		<Text>UIM card refresh...</Text>
 	</STRING>
-	<STRING Id="1009" Name="IDS_FULLY_CHARGED" Encoding="Unicode">
+	<STRING Id="1009" Name="IDS_FULLY_CHARGED">
 		<Text>Full charged</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_OVERVOLTAGE">
@@ -118,10 +118,10 @@
 	<STRING Id="1039" Name="IDS_ISRAEL_BANNER" Encoding="Unicode">
 		<Text>פלאפון</Text>
 	</STRING>
-	<STRING Id="1040" Name="IDS_PLANEMODE" Encoding="Unicode">
+	<STRING Id="1040" Name="IDS_PLANEMODE">
 		<Text>Airplane mode</Text>
 	</STRING>
-	<STRING Id="1041" Name="IDS_PLANEMODE_QUERY" Encoding="Unicode">
+	<STRING Id="1041" Name="IDS_PLANEMODE_QUERY">
 		<Text>Airplane mode on</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_ENTER_PASSWORD">
@@ -139,7 +139,7 @@
 	<String Id="1046" Name="IDS_HEADSET_OFF">
 		<Text>headset plug out</Text>
 	</String>
-	<String Id="1047" Name="IDS_WAITING" Encoding="Unicode">
+	<String Id="1047" Name="IDS_WAITING">
 		<Text>Waiting</Text>
 	</String>
 </Strings>
