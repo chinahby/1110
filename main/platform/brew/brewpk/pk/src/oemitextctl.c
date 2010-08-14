@@ -923,9 +923,13 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 
 					//Add By zzg 2010_08_13
 					case AVK_LEFT:
-					case AVK_RIGHT:						
-						//TextCtl_ShowSymbolPage(pme, 0);
+					case AVK_RIGHT:			
+						//MSG_FATAL("***zzg AVK_LEFT Or AVK_RIGHT***", 0, 0, 0);	
+						//return(FALSE);
+						
+						TextCtl_ShowSymbolPage(pme, 0);
                         break;
+                        
 					//Add End
 	
                     case AVK_CLR:
@@ -939,8 +943,11 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                     default:
                         if (wParam < AVK_1 || wParam > AVK_9)
                         {
-                        	break;
+                        	//MSG_FATAL("***zzg < AVK_1 Or > AVK_9***", 0, 0, 0);                          	
                             //return(FALSE);
+
+							TextCtl_ShowSymbolPage(pme, 0);
+							break;
                         }
                         TextCtl_CloseSymbolDialog(pme, TextCtl_GetSymChar(pme,(wParam - AVK_1)));
 
@@ -1328,15 +1335,25 @@ NormalKeyEvent:
 
         case EVT_KEY_RELEASE:  
 			
-            #if defined(FEATURE_DISP_160X128)
+#if defined(FEATURE_DISP_160X128)
             if ((wParam == AVK_SYMBOL)/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/) //modi by yangdecai
-            #else
+#else
             if ((wParam == AVK_STAR))
-            #endif
+#endif
             {
-                (void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
-                return TRUE;
+            	//(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
+            	//return TRUE;
+								
+            	//Add By zzg 2010_08_14	防止重复载入SYMBOL输入法            	
+            	if (AEE_TM_SYMBOLS != CTextCtl_GetInputMode((ITextCtl *)pme, NULL))
+            	{	            		
+					(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
+					return TRUE;
+				}
+            	//Add End                
+                
             }
+
 #ifndef FEATURE_DISP_160X128
             if ((!pme->m_pSoftKey) &&       // press the * key switch the Ab(ab,AB) and the En(en,EN) inputmethod 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
@@ -1598,7 +1615,7 @@ NormalKeyEvent:
             break;
             
         case EVT_CHAR:
-        case EVT_UPDATECHAR:
+        case EVT_UPDATECHAR:			
             if ( pme->m_bActive )
             {
                 if ( wParam == (uint16)0x08 )
