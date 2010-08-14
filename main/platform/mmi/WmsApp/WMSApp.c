@@ -3139,7 +3139,9 @@ void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo)
     IShell                      *pShell = AEE_GetShell();
     uint8                       btRet; 
     AEEEvent                    evt = EVT_WMS_BC_EVENT;
-    
+
+//wangliang close!  2010-08-14
+#if 0    
     if (pShell == NULL)
     {
         return;
@@ -3192,6 +3194,7 @@ void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo)
             WMSAPPU_SYSFREE(pInfobuf)
         }
     }
+#endif
 }
 #endif /* FEATURE_BROADCAST_SMS */
 
