@@ -387,13 +387,13 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
     {HS_STAR_K,                     AVK_STAR,                       AVK_METHED_HOLD, FALSE, 0},
     {HS_POUND_K,                    AVK_POUND,                      AVK_METHED_HOLD, FALSE, 0},
 
-    {HS_INFO_K,                     AVK_INFO,                       AVK_METHED_REPT, FALSE, 0},
+    {HS_INFO_K,                     AVK_INFO,                       AVK_METHED_HOLD, FALSE, 0},
     {HS_CAMERA_K,                   AVK_CAMERA,                     AVK_METHED_HOLD, FALSE, 0},
     {HS_PWR_K,                      AVK_POWER,                      AVK_METHED_HOLD, FALSE, 0},
     {HS_END_K,                      AVK_END,                        AVK_METHED_HOLD, FALSE, 0},
     {HS_SEND_K,                     AVK_SEND,                       AVK_METHED_HOLD, FALSE, 0},
     {HS_CLR_K,                      AVK_CLR,                        AVK_METHED_HOLD, FALSE, 0},
-    {HS_SEL_K,                      AVK_SELECT,                     AVK_METHED_REPT, FALSE, 0},
+    {HS_SEL_K,                      AVK_SELECT,                     AVK_METHED_HOLD, FALSE, 0},
 
     {HS_UP_K,                       AVK_UP,                         AVK_METHED_REPT, FALSE, 0},
     {HS_DOWN_K,                     AVK_DOWN,                       AVK_METHED_REPT, FALSE, 0},
