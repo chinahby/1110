@@ -277,6 +277,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_nCardStatus = AEECARD_NO_CARD;
 #endif
     pMe->m_bSuspended = FALSE;
+    pMe->m_bChargFull = FALSE;
     
 	if(SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                                         AEECLSID_CARD,
@@ -1364,6 +1365,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             pMe->m_battery_state = TRUE ;
             AEE_CancelTimer( CoreApp_Process_Batty_Msg_CB, (void*)pMe);
             IBACKLIGHT_Enable(pMe->m_pBacklight);
+            pMe->m_bChargFull = FALSE;
             break;
 		
         // ³äµç×´Ì¬¸Ä±ä
@@ -1387,6 +1389,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             {
                 case AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE:
                 {
+                    pMe->m_bChargFull = TRUE;
                     pMe->m_bExtPwrState = TRUE;
                     CoreApp_Process_Batty_Msg(pMe, IDS_FULLY_CHARGED);
                     (void) ISHELL_CancelTimer(pMe->a.m_pIShell, CCharger_EnableICONCB, (void *) pMe);
@@ -1405,7 +1408,11 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     pMe->m_bExtPwrState = TRUE;
 #ifdef FEATURE_APP_MEDIAGALLERY
                     MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
-#endif
+#endif              
+                    if(pMe->m_bChargFull)
+                    {
+                        break;
+                    }
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH                        
                     (void) ISHELL_SetTimer(pMe->a.m_pIShell,500, CCharger_EnableICONCB, (void *) pMe);
 #else

@@ -440,6 +440,7 @@ typedef struct _CCoreApp
    // 是否外接电源
     boolean             m_bExtPwrState;
     boolean             m_bemergencymode;
+    boolean             m_bChargFull;
 
     IALERT              *m_pAlert;           //IALERT指针
 #ifndef FEATURE_USES_LOWMEM
