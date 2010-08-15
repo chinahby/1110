@@ -1335,13 +1335,12 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 						
 							else
 							{
-                        			    // 通知 CoreApp 需要进行短信提示
-                        				(void)ISHELL_PostEventEx(pMe->m_pShell,
-                                                 EVTFLG_ASYNC, 
-                                                 AEECLSID_CORE_APP, 
-                                                 EVT_WMS_MSG_RECEIVED_MESSAGE,
-                                                 0, 
-                                                 0);
+                			    // 通知 CoreApp 需要进行短信提示
+                				(void)ISHELL_PostEvent(pMe->m_pShell,
+                                         AEECLSID_CORE_APP, 
+                                         EVT_WMS_MSG_RECEIVED_MESSAGE,
+                                         0, 
+                                         0);
 										
 							}
         				 }

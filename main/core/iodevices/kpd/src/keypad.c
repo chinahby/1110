@@ -430,7 +430,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
 
 /* Nav-Down Key */
 #define DOWN_KEY_ROW       0
-#define DOWN_KEY_COLUMN    3
+#define DOWN_KEY_COLUMN    4
 
 /* Nav-Left Key */
 #define LEFT_KEY_ROW       0
@@ -1965,7 +1965,12 @@ boolean keypad_is_key_pressed(hs_key_type key)
      case HS_POUND_K:
         key_pressed = keys_pressed[POUND_KEY_ROW][POUND_KEY_COLUMN];
         break;
-
+        
+#ifdef CUST_EDITION
+     case HS_DOWN_K:
+        key_pressed = keys_pressed[DOWN_KEY_ROW][DOWN_KEY_COLUMN];
+        break;
+#endif
      default:
         key_pressed = FALSE;
         break;

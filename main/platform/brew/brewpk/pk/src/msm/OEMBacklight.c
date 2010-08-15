@@ -17,6 +17,7 @@
 #include "ui.h"
 #include "OEMSVC.h"
 #include "AEE_OEMDispatch.h"
+#include "AEEIDisplay.h"
 
 #ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
 #define MSAFTER_DISABLEBACKLIGHT_TIMER    60000
@@ -267,6 +268,33 @@ static int AEEBacklight_QueryInterface(IBacklight *pme, AEECLSID id, void **ppo)
    }
 }
 
+static void AEEBacklight_FlushDisplay(IBacklight *pme, AEECLSID clsDisplay)
+{
+    IDisplay *pDisplay;
+    if(SUCCESS == ISHELL_CreateInstance(pme->pIShell,clsDisplay,(void **)&pDisplay))
+    {
+        IBitmap *pDevBmp;
+        if(SUCCESS == IDisplay_GetDeviceBitmap(pDisplay,&pDevBmp))
+        {
+            AEEBitmapInfo info;
+
+            if(SUCCESS == IBitmap_GetInfo(pDevBmp,&info,sizeof(info)))
+            {
+                AEERect rc;
+                
+                rc.x  = 0;
+                rc.y  = 0;
+                rc.dx = info.cx;
+                rc.dy = info.cy;
+                IBitmap_Invalidate(pDevBmp, &rc);
+            }
+            
+            IBitmap_Release(pDevBmp);
+        }
+        IDisplay_UpdateEx(pDisplay, FALSE);
+        IDisplay_Release(pDisplay);
+    }
+}
 /*===========================================================================
 
 Function: AEEBacklight_Enable
@@ -296,6 +324,10 @@ static int AEEBacklight_Enable(IBacklight *pme)
 
       case AEECLSID_BACKLIGHT_DISPLAY1:
          disp_on();
+         
+         // Update Screen
+         AEEBacklight_FlushDisplay(pme, AEECLSID_DISPLAY1);
+         
          if(TRUE == gbBacklightDisplay1Initialized)
          {
             disp_set_backlight((byte)gdwBacklightDisplay1Level);

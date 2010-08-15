@@ -1390,8 +1390,6 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 			if( !pme->m_bSuspended)
 			{
 				pme->m_Media.m_bMediaError = FALSE;
-				
-			    ISHELL_RegisterNotify( pme->m_pShell,AEECLSID_RECORDER, AEECLSID_BATT_NOTIFIER, 0);
 			}
 			reserve = 0;
 			if( pme->m_ePreState == STATE_MAIN && !pme->m_bSuspended)
@@ -1493,7 +1491,6 @@ __dialog_handler_of_state_record_stop__:
 			if( !pme->m_bSuspended)
 			{
 				recorder_init_media( &pme->m_Media);
-			    ISHELL_RegisterNotify( pme->m_pShell,AEECLSID_RECORDER, AEECLSID_BATT_NOTIFIER, 0); 
 			}
 #if !defined( FEATURE_RECORDER_PLAY_PAUSE) && !defined( FEATURE_RECORDER_RECORD_PAUSE)
 			else

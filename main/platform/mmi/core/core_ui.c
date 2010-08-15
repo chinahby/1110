@@ -1950,7 +1950,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
         if (gpBacklight){
 			if(!IBACKLIGHT_IsEnabled(gpBacklight))
 			{
-				ISHELL_PostEvent(AEE_GetShell(),AEE_Active(),EVT_USER_REDRAW,0,0L);
+				//ISHELL_PostEvent(AEE_GetShell(),AEE_Active(),EVT_USER_REDRAW,0,0L);
 				m_isBacklight = FALSE;
             	IBACKLIGHT_Enable(gpBacklight);
 				return TRUE;

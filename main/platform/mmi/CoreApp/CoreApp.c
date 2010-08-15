@@ -490,7 +490,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
 								
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
-            ISHELL_PostEventEx(pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_USER_REDRAW,0,0L);//need to redraw IDLE
+            ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW,0,0L);//need to redraw IDLE
 #endif
             return TRUE;
         }
@@ -1259,11 +1259,10 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
     
     if (bUpdate)
     {
-        ISHELL_PostEventEx(pMe->a.m_pIShell, 
-                           EVTFLG_ASYNC, 
-                           AEECLSID_CORE_APP,
-                           EVT_UPDATEIDLE,
-                           0,0L);
+        ISHELL_PostEvent(pMe->a.m_pIShell, 
+                         AEECLSID_CORE_APP,
+                         EVT_UPDATEIDLE,
+                         0,0L);
     }
     return TRUE;
 }
@@ -1379,11 +1378,10 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             
             if(pMe->m_wActiveDlgID == IDD_LPM)
             {
-                ISHELL_PostEventEx(pMe->a.m_pIShell, 
-                                   EVTFLG_ASYNC, 
-                                   AEECLSID_CORE_APP,
-                                   EVT_USER_REDRAW,
-                                   0,0L);
+                ISHELL_PostEvent(pMe->a.m_pIShell, 
+                                 AEECLSID_CORE_APP,
+                                 EVT_USER_REDRAW,
+                                 0,0L);
             }
             switch(nChargerStatus)
             {

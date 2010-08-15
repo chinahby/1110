@@ -514,6 +514,7 @@ static void OEMBattery_CheckChargerStatus(uint32 * pdwChargerStatus)
       }
 
 #if defined(FEATURE_BATTERY_CHARGER) || defined(FEATURE_CHG_TASK) || defined (FEATURE_PM_CHARGING)
+      MSG_FATAL("***chg_ui_event_read=%d***", chg_ui_event_read(), 0, 0);
       switch(chg_ui_event_read())
       {
          // No Charger
@@ -645,25 +646,21 @@ void OEMBattery_Refresh(void)
 #endif // FEATURE_BREW_BATTERY
 
 #ifdef CUST_EDITION
+#define OEMBATTERY_NOTIFY_NUM   3
+static AEECallback gBattNotify[OEMBATTERY_NOTIFY_NUM];
+static int gBattNotifyIdx = 0;
+
 static void OEMBatt_OnBatteryChange(void *unused)
 {
     OEMBattery_Refresh();
+    gBattNotifyIdx--;
 }
 
 void oembatt_notify_chg_event(void)
 {
-    static AEECallback cbChgEvent;
-    AEECallback* pCb = NULL;
-    if(AEE_IsInitialized())
+    if(AEE_IsInitialized() && gBattNotifyIdx < OEMBATTERY_NOTIFY_NUM)
     {
-        if(pCb)
-        {
-            CALLBACK_Cancel(pCb);
-        }
-        else
-        {
-            pCb = &cbChgEvent;
-        }
+        AEECallback* pCb = &gBattNotify[gBattNotifyIdx++];
         CALLBACK_Init(pCb,OEMBatt_OnBatteryChange,NULL);
         AEE_SYS_RESUME(pCb);
     }

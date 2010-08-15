@@ -102,7 +102,9 @@ extern void *  memset(void * s, int c, size_t n);
 
 #define BOOT_RESET_KEYVAL    (HS_STAR_K)
 #define BOOT_DLOAD_KEYVAL    (HS_POUND_K)
-
+#ifdef CUST_EDITION
+#define BOOT_NEXT_KEYVAL     (HS_DOWN_K)
+#endif
 #endif /*FEATURE_LOOPING_EXCEPTION_HANDLER*/
 
 static uint32 boot_error_count = 0;
@@ -1211,7 +1213,54 @@ void boot_looping_delay(uint16 delay_sec)
 }
 
 
+#ifdef CUST_EDITION
+boolean boot_nextkey_check()
+{
+   hs_key_type keyval = HS_NONE_K;
+   static hs_key_type keyval_prev = HS_NONE_K;
+    
+   if(keypad_is_key_pressed(BOOT_NEXT_KEYVAL))
+   {
+      keyval = BOOT_NEXT_KEYVAL;
+   }
+   
+   if ((HS_NONE_K != keyval) && (keyval == keyval_prev))
+   {
+      return TRUE;
+   }
+   
+   /* Retain current keyval to determine if the same key has been held
+    * through at least two keypad poll operations */
+   keyval_prev = keyval;
+   return FALSE;
+}
 
+void boot_looping_wait_next(void)
+{
+  uint32 i;
+  i = 1;
+  while(1)
+  {
+    /* scan keypad every one second */
+    if(i%10 == 0)
+    {
+        boot_keypress_check();
+    }
+    
+    if(boot_nextkey_check())
+    {
+        break;
+    }
+    
+    /* Need to kick the watchdog every 213ms so we kick it every 100ms
+     * to be safe*/
+    BOOTHW_KICK_WATCHDOG();
+    clk_busy_wait(100000);
+    i++;
+  }
+}
+
+#endif
 /*===========================================================================
 
 FUNCTION boot_looping_exception_handler
@@ -1367,7 +1416,7 @@ void boot_looping_exception_handler(
 #ifdef CUST_EDITION
       if(rex_curr_task)
       {
-        volatile uint32 *pStackEnd = (uint32 *)rex_curr_task->stack_limit+rex_curr_task->stack_size;
+        volatile uint32 *pStackEnd = (uint32 *)rex_curr_task->stack_limit+(rex_curr_task->stack_size/sizeof(uint32));
         volatile uint32 *pStack = (uint32 *)frame->l.r[13];
         
         // LOOP Stack
@@ -1385,7 +1434,8 @@ void boot_looping_exception_handler(
                   exception_cause_label[boot_error_cause],
                   frame->l.r[15],i,(*pStack)-1);
           lcd_message(text);
-          boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+          boot_looping_wait_next();
+          boot_looping_delay(1);
           i++;
         }
       }

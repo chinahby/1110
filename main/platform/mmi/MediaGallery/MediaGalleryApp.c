@@ -1635,8 +1635,8 @@ static int MediaGalleryApp_RegisterMMCNotify(CMediaGalleryApp* pMe)
    }
 
    nRet = ISHELL_RegisterNotify(pMe->m_pShell,
-         AEECLSID_DEVICENOTIFIER,
          AEECLSID_MEDIAGALLERY,
+         AEECLSID_DEVICENOTIFIER,
          NMASK_DEVICENOTIFIER_MMC);
 
    if(SUCCESS != nRet)
@@ -1664,8 +1664,8 @@ static int MediaGalleryApp_DeRegisterMMCNotify(CMediaGalleryApp* pMe)
    }
 
    ISHELL_RegisterNotify(pMe->m_pShell,
-         AEECLSID_DEVICENOTIFIER,
          AEECLSID_MEDIAGALLERY,
+         AEECLSID_DEVICENOTIFIER,
          0);
 
    return SUCCESS;

@@ -3121,8 +3121,7 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
+            (void) ISHELL_PostEvent(pMe->a.m_pIShell, 
                                     AEECLSID_CORE_APP,
                                     EVT_USER_REDRAW,
                                     0, 
@@ -3516,11 +3515,10 @@ static void CoreApp_UpdateIdleTimer(void *pUser)
     }
     
     // 更新日期和时间显示
-    ISHELL_PostEventEx(pMe->a.m_pIShell, 
-                       EVTFLG_ASYNC, 
-                       AEECLSID_CORE_APP,
-                       EVT_UPDATEIDLE,
-                       0,0L);
+    ISHELL_PostEvent(pMe->a.m_pIShell, 
+                     AEECLSID_CORE_APP,
+                     EVT_UPDATEIDLE,
+                     0,0L);
     
     // 计算下次定时器定时时间，时间尽可能靠近下一分钟，做到显示时间精确
     dwSeconds = GETTIMESECONDS();
@@ -3616,11 +3614,10 @@ static void CoreApp_SearchingTimer(void *pUser)
         return;
     }
 
-    ISHELL_PostEventEx(pMe->a.m_pIShell, 
-                       EVTFLG_ASYNC, 
-                       AEECLSID_CORE_APP,
-                        EVT_USER_REDRAW,
-                       0,0L);
+    ISHELL_PostEvent(pMe->a.m_pIShell, 
+                     AEECLSID_CORE_APP,
+                     EVT_USER_REDRAW,
+                     0,0L);
 
     (void)ISHELL_SetTimer(pMe->a.m_pIShell,
                           IDLESEARCHINTIME,
