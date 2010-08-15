@@ -1339,7 +1339,7 @@ static IANNUNCore* OEMAnnunCore_New(IShell* piShell)
     SETAEERECT(&Rect, 0,0, IAnnunCoreObj->m_annun_prim_lcd_width, IAnnunCoreObj->m_annun_prim_lcd_height);
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
     // 这里的背景色对各种情况下通用，与填充色是不同概念。如待机下是图片一部分，其它应用下为单色。
-    // 在重画?急昀甘保奖凑鐾急晡煌记虻较允厩蚴峭该鞅尘吧换岣哺且延邢允厩颉?
+    // 在重画图标栏时，拷贝整个图标位图区域到显示区域是透明背景色不会覆盖已有显示区域。
     IAnnunCoreObj->m_bg = IBITMAP_RGBToNative (pConvertedBmp, RGB_MASK_COLOR);
     IBITMAP_FillRect (pConvertedBmp, &Rect, IAnnunCoreObj->m_bg, AEE_RO_COPY);
 #else    

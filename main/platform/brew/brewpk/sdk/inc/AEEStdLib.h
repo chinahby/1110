@@ -26,7 +26,11 @@ Qualcomm Confidential and Proprietary
 # if defined(AEE_SIMULATOR)
 #define AEE_DBG_HEAP    1
 # else /* if defined(AEE_SIMULATOR) */
+#ifdef USES_RELEASE_VERSION
 #define AEE_DBG_HEAP    0
+#else
+#define AEE_DBG_HEAP    1
+#endif
 # endif /* if defined(AEE_SIMULATOR) */
 #endif /* if !defined(AEE_DBG_HEAP) */
 

@@ -305,6 +305,7 @@ enum
     EVT_SEND_SEAMLESSSMS,
 #endif
     EVT_CAMERA_NOTIFY,
+    EVT_CARD_STATUS,
     EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/
