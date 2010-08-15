@@ -4850,7 +4850,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            //IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -4887,8 +4887,10 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
         case EVT_USER_REDRAW:
         {
             //MP_NO_REDRAW
-            //uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
-            //IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
+            uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
+            IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));			
+
+			MSG_FATAL("***zzg ListDlg EVT_USER_REDRAW***", 0, 0, 0);
             
 			{
                 //add by xuhui
@@ -4905,8 +4907,6 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 }
             }
 
-			MSG_FATAL("***zzg CContApp EVT_USER_REDRAW***", 0, 0, 0);
-            
             if(IS_ZERO_REC())
             {
                 CContApp_DrawNorecord(pMe, pMenuCtl);
@@ -4949,13 +4949,99 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     }
                 }
             }
+
+
+			//Add By zzg  2010_08_14..
+			// 在调用了其他界面(如Symbol)返回后要重新加载CONTACT
+			{
+				boolean b_TextctlActive = ITEXTCTL_IsActive(pTextCtl);
+	            int           n_KeywordsLen =0;
+	            boolean isSearchTextChg = FALSE;
+	                   
+	            isSearchTextChg = TRUE; 
+	            FREEIF(pMe->m_szAlpha);
+	            pMe->m_szAlpha = WSTRDUP(ITEXTCTL_GetTextPtr(pTextCtl));
+	            
+	                    
+	            if(NULL != pMe->m_szAlpha && WSTRLEN(pMe->m_szAlpha) > 0)
+	            {
+	                n_KeywordsLen = WSTRLEN(pMe->m_szAlpha);
+	                MSG_FATAL("***zzg Search text : %S***", pMe->m_szAlpha, 0, 0);
+	            }
+	            else
+	            {
+	                FREEIF(pMe->m_szAlpha);
+	            }  
+	                                            
+	            // research the record
+	            if(n_KeywordsLen > 0 && isSearchTextChg == TRUE)
+	            {
+	                pMe->m_bInSmartFind = TRUE;
+					
+	                if(SUCCESS != CContApp_FilterSmartItems( pMe,  pMe->m_szAlpha))
+	                {   
+	                    uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
+	                    MSG_FATAL("***zzg SUCCESS != CContApp_FilterSmartItems***", 0, 0, 0);
+	                    IMENUCTL_SetProperties(pMenuCtl, dwMask |MP_NO_REDRAW);
+	                    
+	                    pMe->m_bInsmartnofind = TRUE;
+	                    IMENUCTL_SetActive(pMenuCtl, FALSE);							
+	                    
+	                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
+	                    CContApp_RestoreMenuRect(pMe, pMenuCtl);
+	                    CContApp_DisplayRightTopStr(pMe,pMenuCtl,wParam);               
+	                }
+	                else
+	                {
+	                    uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
+	                    IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
+	                    
+	                    (void)CContApp_BuildSmartMenu(pMe, pMenuCtl);
+	                    
+	                    (void) ISHELL_SetTimer( pMe->m_pShell,
+	                                            200,
+	                                            CContApp_SmartMenuSetFocus,
+	                                            (void *)pMe);     
+	                    IMENUCTL_Redraw(pMenuCtl);
+	                    pMe->m_bInsmartnofind = FALSE;
+
+	                    if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType)
+	                    {
+	                        if(STATE_ONEDIAL_SET == pMe->m_eCurState
+	                            || (pMe->m_wSelFldType == SINGLE_SELECT_NUMBER && STARTMETHOD_SELECTFIELD == pMe->m_eStartMethod)
+	                            || (pMe->m_wSelFldType == SINGLE_SELECT_GROUPLIST && STARTMETHOD_GROUPLIST == pMe->m_eStartMethod))
+	                        {                                    
+	                            CONTAPP_DRAW_BOTTOMBAR(BTBAR_SELECT_DEL);
+	                        }
+	                        else
+	                        {                                    
+	                            CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_DEL);
+	                        }
+	                    }
+	                    else if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType)
+	                    {                               
+	                        {
+	                            CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_DEL);
+	                        }
+	                    }
+	                    else
+	                    {
+	                        CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_DEL);
+	                    }
+	                    
+	                }                      
+	            }
+			}
+			//Add End
+			
             /*必须在textctl初始化完毕后,才能获得icon id,而且要在dialog更新完之后再更新图标*/
-            CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
-            ITEXTCTL_Redraw(pTextCtl);
+			CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);			
+			ITEXTCTL_Redraw(pTextCtl);			
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay); 
-        }
-            return TRUE;
+
+			return TRUE;			
+        }            
 
         case EVT_DISPLAYDIALOGTIMEOUT:
             if(IS_ZERO_REC())
