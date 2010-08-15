@@ -920,7 +920,12 @@ static void OEMALERT_NOTIFIER_SetMask(IALERT_NOTIFIER *po,
 
    CALLBACK_Cancel(&pMe->m_acbDelayedRingCallback);
    CALLBACK_Cancel(&pMe->m_cbSysObj);
-
+   
+   if (pMe->m_ringerFile) {
+     FREE(pMe->m_ringerFile);
+     pMe->m_ringerFile = NULL;
+   }
+   
    if (pMe->m_pMedia) 
    {
      (void) IMEDIA_Release(pMe->m_pMedia);
@@ -1139,14 +1144,16 @@ static uint32 OEMALERT_Release(IALERT *pMe)
   if (!pMe) {
     return (0);
   }
-
-  if (pMe->m_uRefs == 0) {
-    OEM_FreeAlert(pMe);
-    return 0;
+  
+  if(pMe->m_uRefs)
+  {
+      if (--pMe->m_uRefs != 0) {
+        return pMe->m_uRefs;
+      }
   }
-
-  if (--pMe->m_uRefs != 0) {
-    return pMe->m_uRefs;
+  else
+  {
+    return (0);
   }
 
   // 释放与 pMe 相关的全部定时器

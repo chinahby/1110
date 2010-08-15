@@ -34,8 +34,10 @@ typedef struct _GB_SysFileRec{
     IFileMgr	*pIFileMgr;
 }GB_SysFileRec,*GB_SysFile;
 
+//#define ENABLE_BREWFILE
 GB_IOHandler GreyBit_Open_Sys(const GB_CHAR *p, GB_BOOL bcreate)
 {
+#ifdef ENABLE_BREWFILE
     ACONTEXT *pAConText = AEE_EnterAppContext(NULL);
     int result;
     GB_SysFile handle = (GB_SysFile)GreyBit_Malloc_Sys(sizeof(GB_SysFileRec));
@@ -63,6 +65,7 @@ GB_IOHandler GreyBit_Open_Sys(const GB_CHAR *p, GB_BOOL bcreate)
     
 	if (handle->fp == NULL)
 	{
+        IFILEMGR_Release(handle->pIFileMgr);
 		GreyBit_Free_Sys(handle);
 		handle = 0;
 		goto CLEAN_UP;
@@ -71,40 +74,56 @@ GB_IOHandler GreyBit_Open_Sys(const GB_CHAR *p, GB_BOOL bcreate)
 CLEAN_UP:
     AEE_LeaveAppContext(pAConText);
     return handle;
+#else
+    return 0;
+#endif
 } 
 
 GB_INT32 GreyBit_Read_Sys(GB_IOHandler f, GB_BYTE *p, GB_INT32 size)
 {
+#ifdef ENABLE_BREWFILE
     ACONTEXT *pAConText = AEE_EnterAppContext(NULL);
     GB_INT32 result = 0;
     GB_SysFile handle = (GB_SysFile)f;
     result = (GB_INT32)IFILE_Read(handle->fp, (void*)p, (uint32)size);
     AEE_LeaveAppContext(pAConText);
     return result;
+#else
+    return 0;
+#endif
 }
 
 GB_INT32 GreyBit_Write_Sys(GB_IOHandler f, GB_BYTE *p, GB_INT32 size)
 {
+#ifdef ENABLE_BREWFILE
     ACONTEXT *pAConText = AEE_EnterAppContext(NULL);
     GB_INT32 result = 0;
     GB_SysFile handle = (GB_SysFile)f;
     result = (GB_INT32)IFILE_Write( handle->fp, (PACKED const void *)p, (uint32)size );
     AEE_LeaveAppContext(pAConText);
     return result;
+#else
+    return 0;
+#endif
 }
 
 GB_INT32 GreyBit_Seek_Sys(GB_IOHandler f, GB_INT32 pos)
 {
+#ifdef ENABLE_BREWFILE
     ACONTEXT *pAConText = AEE_EnterAppContext(NULL);
     GB_INT32 result = 0;
     GB_SysFile handle = (GB_SysFile)f;
     result = (GB_INT32)IFILE_Seek(handle->fp, _SEEK_START,(uint32)pos);
     AEE_LeaveAppContext(pAConText);
     return result;
+#else
+    return 0;
+#endif
 }
 
 GB_INT32 GreyBit_GetSize_Sys(GB_IOHandler f)
 {
+#ifdef ENABLE_BREWFILE
     ACONTEXT *pAConText = AEE_EnterAppContext(NULL);
     GB_SysFile handle = (GB_SysFile)f;
     GB_INT32 length;
@@ -113,16 +132,21 @@ GB_INT32 GreyBit_GetSize_Sys(GB_IOHandler f)
     length = (GB_INT32)fi.dwSize;
     AEE_LeaveAppContext(pAConText);
     return length;
+#else
+    return 0;
+#endif
 }
 
 void GreyBit_Close_Sys(GB_IOHandler f)
 {
+#ifdef ENABLE_BREWFILE
     ACONTEXT *pAConText = AEE_EnterAppContext(NULL);
     GB_SysFile handle = (GB_SysFile)f;
    	IFILE_Release(handle->fp);
 	IFILEMGR_Release(handle->pIFileMgr);
     GreyBit_Free_Sys(handle);
     AEE_LeaveAppContext(pAConText);
+#endif
 }
 
 //-----------------------------------------------------------------------------

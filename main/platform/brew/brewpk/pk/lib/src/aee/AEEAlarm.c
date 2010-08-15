@@ -124,11 +124,7 @@ typedef struct _CAlarm
 
    uint32    m_nRefs;
    IShell   *m_pShell;
-   //IDisplay *m_pDisplay;
-   IAnnunciator        *m_pIAnn;
    IVector  *m_alarms;  // vector of AlarmInfo pointers
-   IFileMgr *m_fileMgr;
-
    boolean   m_alarmsActive;
 } CAlarm;
 
@@ -233,24 +229,8 @@ int AEEAlarm_New(IShell *ps, AEECLSID cls, void **ppif)
                 gAlarmMethods);
 
       if (SUCCESS != ISHELL_CreateInstance(ps,
-                                           AEECLSID_ANNUNCIATOR,
-                                           (void**)&gAlarm.m_pIAnn)) {
-         return EFAILED;
-      }
-
-      if (SUCCESS != ISHELL_CreateInstance(ps,
                                            AEECLSID_VECTOR,
                                            (void**)&gAlarm.m_alarms)) {
-         IANNUNCIATOR_Release(gAlarm.m_pIAnn);
-         return EFAILED;
-      }
-
-      if (SUCCESS != ISHELL_CreateInstance(ps,
-                                           AEECLSID_FILEMGR,
-                                           (void**)&gAlarm.m_fileMgr)) {
-
-         IANNUNCIATOR_Release(gAlarm.m_pIAnn);
-         IVector_Release(gAlarm.m_alarms);
          return EFAILED;
       }
       
@@ -265,8 +245,10 @@ int AEEAlarm_New(IShell *ps, AEECLSID cls, void **ppif)
       //
       gAlarm.m_nRefs = 1;
    }
-
-   ++gAlarm.m_nRefs;
+   else
+   {
+      ++gAlarm.m_nRefs;
+   }
 
    *ppif = (void *) &gAlarm;
    return AEE_SUCCESS;
@@ -334,9 +316,7 @@ static uint32  CAlarm_Release(IAlarm *p)
    }
    
    CAlarm_FreeAlarmDataVector(pMe);
-   IFILEMGR_Release(pMe->m_fileMgr);
    IVector_Release(pMe->m_alarms);
-   IANNUNCIATOR_Release(pMe->m_pIAnn);
    ISHELL_Release(pMe->m_pShell);
    return 0;
 }
@@ -602,10 +582,15 @@ static void CAlarm_LoadAlarmData(CAlarm *pMe)
     AlarmInfo  ai,
              *pai;
     int32      bytesRead;
-
+    IFileMgr *pFileMgr;
+    if (SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR, (void**)&pFileMgr)) 
+    {
+         return;
+    }
+    
     CAlarm_FreeAlarmDataVector(pMe);
 
-    f = IFILEMGR_OpenFile(pMe->m_fileMgr, ALARM_EFS_FILE, _OFM_READ);
+    f = IFILEMGR_OpenFile(pFileMgr, ALARM_EFS_FILE, _OFM_READ);
 
     if (f != NULL)
     {
@@ -641,6 +626,7 @@ static void CAlarm_LoadAlarmData(CAlarm *pMe)
 
       IFILE_Release(f);
    }
+   IFILEMGR_Release(pFileMgr);
 }
 
 
@@ -667,13 +653,18 @@ static void CAlarm_SaveAlarmData(CAlarm *pMe)
    IFile  *f;
    uint32  i;
    uint32  bytesWritten;
-
-   f = IFILEMGR_OpenFile(pMe->m_fileMgr, 
+   IFileMgr *pFileMgr;
+   if (SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR, (void**)&pFileMgr)) 
+   {
+      return;
+   }
+   
+   f = IFILEMGR_OpenFile(pFileMgr, 
                          ALARM_EFS_FILE, 
                          _OFM_READWRITE);
 
    if (NULL == f) {
-      f = IFILEMGR_OpenFile(pMe->m_fileMgr,
+      f = IFILEMGR_OpenFile(pFileMgr,
                             ALARM_EFS_FILE,
                             _OFM_CREATE);
 
@@ -681,10 +672,11 @@ static void CAlarm_SaveAlarmData(CAlarm *pMe)
           DBGPRINTF( ";************************");
           DBGPRINTF("Unable to open/create: %s" ALARM_EFS_FILE);
           DBGPRINTF( ";************************");
+          IFILEMGR_Release(pFileMgr);
          return;
       }
    }
-
+   
    (void) IFILE_Truncate(f, 0);
    (void) IFILE_Seek(f, _SEEK_START, 0);
    
@@ -701,6 +693,7 @@ static void CAlarm_SaveAlarmData(CAlarm *pMe)
    }
 
    IFILE_Release(f);
+   IFILEMGR_Release(pFileMgr);
 }
 
 
@@ -782,7 +775,12 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe)
 
     if (FALSE == pMe->m_alarmsActive) 
     {
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+        IAnnunciator *pIAnn;
+        if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
+        {
+            IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+            IANNUNCIATOR_Release(pIAnn);
+        }
         return;
     }  
 
@@ -822,7 +820,12 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe)
 
     if (0xFFFFFFFF == nNextMin) 
     {  // no alarms
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+        IAnnunciator *pIAnn;
+        if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
+        {
+            IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+            IANNUNCIATOR_Release(pIAnn);
+        }
     }
     else 
     {
@@ -849,8 +852,14 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe)
         pOldContext = AEE_EnterAppContext(NULL);
         (void) ISHELL_SetTimer(pMe->m_pShell, (int32) nNextTimerMS, CAlarm_TimerCB, pMe);
         AEE_LeaveAppContext(pOldContext);
-
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON/*ANNUN_STATE_ON*/);
+        {
+            IAnnunciator *pIAnn;
+            if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
+            {
+                IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON/*ANNUN_STATE_OFF*/);
+                IANNUNCIATOR_Release(pIAnn);
+            }
+        }
     }
 
     if (bAlarmsChanged) 

@@ -206,14 +206,7 @@ void CoreApp_FreeAppData(IApplet* po)
         ICM_Release(pMe->m_pCM);
         pMe->m_pCM = NULL;
     }
-
-    if (pMe->m_pAlert)
-    {
-        IALERT_Release(pMe->m_pAlert);
-        pMe->m_pAlert = NULL;
-    }
-
-
+    
     if (pMe->m_pConfig) 
     {
         (void)ICONFIG_Release(pMe->m_pConfig);

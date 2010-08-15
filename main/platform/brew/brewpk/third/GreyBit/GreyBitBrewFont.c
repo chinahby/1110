@@ -8,6 +8,7 @@
 #include "AEEFile.h"
 #include "GreyBitType.h"
 #include "OEMHeap.h"
+#include "AEE_OEMFile.h"
 
 #ifndef RELEASEIF
 #define RELEASEIF(p) do { if (p) { IBASE_Release((IBase*)(p)); p = 0; } } while (0)
@@ -60,6 +61,7 @@ static IFont gFontBigNumber        = {&gOEMFontFuncs, 0, BIGNUMBER_FONT_SIZE,FAL
 
 static GBHANDLE g_pLibrary = NULL;
 static GBHANDLE g_pLoader  = NULL;
+extern const AEEConstFile gSYSTEMEN_GVF;
 
 void GreyBitBrewFont_Init(void)
 {
@@ -69,7 +71,8 @@ void GreyBitBrewFont_Init(void)
     
     if(g_pLibrary){
         if(g_pLoader == NULL){
-            g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
+            //g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
+            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMEN_GVF.pFileData, gSYSTEMEN_GVF.dwDataSize);
         }
     }
 }

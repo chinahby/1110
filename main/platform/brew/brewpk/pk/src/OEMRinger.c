@@ -12,7 +12,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 
 	See Exported Routines
 
-        Copyright © 1999-2005 QUALCOMM Incorporated.
+        Copyright ? 1999-2005 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -33,7 +33,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "AEEMimeTypes.h"
 #ifdef CUST_EDITION
 #include "OEMCFGI.h"
-#include "OEMRinger.h"
+
 #endif
 /*===========================================================================
 
@@ -75,7 +75,9 @@ RingerFormat   gFormats[] =
    {AEE_SOUNDPLAYER_FILE_MIDI,      AEECLSID_MEDIAMIDI,     AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "mid"},
    {AEE_SOUNDPLAYER_FILE_MP3,       AEECLSID_MEDIAMP3,      AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "mp3"},
 
-// {AEE_SOUNDPLAYER_FILE_QCP,       AEECLSID_MEDIAQCP,      AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "qcp"},
+#if defined( FEATURE_RECORDER) && !defined( FEATURE_PEKTEST)
+   {AEE_SOUNDPLAYER_FILE_QCP,       AEECLSID_MEDIAQCP,      AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "qcp"},
+#endif
 #ifdef FEATURE_AUDFMT_SMAF
    {AEE_SOUNDPLAYER_FILE_MMF,       AEECLSID_MEDIAMMF,      AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "mmf"},
    {AEE_SOUNDPLAYER_FILE_PHR,       AEECLSID_MEDIAPHR,      AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "spf"},
@@ -168,7 +170,13 @@ OBJECT(CRingerMgr)
    boolean              m_bPlaying;
    boolean				m_bInRelease;
    IFile               *m_pROMFile;
- 
+
+#if defined( FEATURE_RECORDER)
+   ISound* 				m_pSound;
+   AEESoundInfo			m_soundInfo;
+   boolean				m_bQcp;
+#endif
+
 };
 
 struct RingerMgrAppInfo {
@@ -219,7 +227,10 @@ static void          FormatRingerName(char * pszIn, AECHAR * pszDest, int nSize)
 static boolean       FormatFileName(AECHAR * pszIn, char * pszDest, int nSize,AEESoundPlayerFile t);
 static void          RingerMgr_FreeAppInfo(RingerMgrAppInfo *thisInfo);
 static IFileMgr     *RingerMgr_GetFileMgr(void);
-
+#ifdef OEM_RINGER_SUPPORT
+static int OEM_SetActiveRinger(AEERingerCatID idCategory, AEERingerID idRinger, char * szFilename);
+static AEERingerID OEM_GetActiveRinger(AEERingerCatID idRingerCat, AECHAR * szwName);
+#endif
 static const VTBL(IRingerMgr) gCRingerMgrFuncs = {CRingerMgr_AddRef,
                                                    CRingerMgr_Release,
                                                    CRingerMgr_RegisterNotify,
@@ -244,7 +255,9 @@ static const VTBL(IRingerMgr) gCRingerMgrFuncs = {CRingerMgr_AddRef,
 #define AEE_RINGER_CATEGORY_NONE ((AEERingerCatID)0xffffffff)
 
 static const char *     gpszCategories[] = {"All","Personal","Business",NULL};
+#ifndef OEM_RINGER_SUPPORT
 static AEERingerID      gCategoryRings[] = {0,    0,         0};
+#endif
 static CRingerMgr       gMgr = {0};
 
 /*===========================================================================
@@ -524,19 +537,25 @@ static int CRingerMgr_GetFormats(IRingerMgr * po, AEESoundPlayerFile * pwFormat,
 ===========================================================================*/
 static int CRingerMgr_SetRinger(IRingerMgr * po, AEERingerCatID idCat, AEERingerID id)
 {
-   AEERingerInfo  ri;
-
-   if(!CRingerMgr_GetRingerInfo(po, id, &ri)){
+    AEERingerInfo  ri;
+    
+    if (!CRingerMgr_GetRingerInfo(po, id, &ri))
+    {
+        if (idCat <= CAT_MAX)
+        {
 #if defined(OEM_RINGER_SUPPORT)
-      return(OEM_SetActiveRinger(idCat,id,ri.szFile));
+            if (OEM_SetActiveRinger(idCat,id,ri.szFile) == SUCCESS)
+            {
+                return(SUCCESS);
+            }
 #else
-      if( idCat <= CAT_MAX ){
-         gCategoryRings[idCat] = id;
-         return(SUCCESS);
-      }
+            gCategoryRings[idCat] = id;
+            return(SUCCESS);
 #endif
-   }
-   return(EFAILED);
+        }
+    }
+    
+    return(EFAILED);
 }
 
 /*===========================================================================
@@ -545,10 +564,10 @@ static int CRingerMgr_SetRinger(IRingerMgr * po, AEERingerCatID idCat, AEERinger
 ===========================================================================*/
 static int CRingerMgr_EnumCategoryInit(IRingerMgr * po)
 {
-   CRingerMgr * pme = (CRingerMgr *)po;
-
-   pme->m_enumCat = AEE_RINGER_CATEGORY_ALL;
-   return(0);
+    CRingerMgr * pme = (CRingerMgr *)po;
+    
+    pme->m_enumCat = AEE_RINGER_CATEGORY_ALL;
+    return(SUCCESS);
 }
 
 /*===========================================================================
@@ -557,27 +576,27 @@ static int CRingerMgr_EnumCategoryInit(IRingerMgr * po)
 ===========================================================================*/
 static boolean CRingerMgr_EnumNextCategory(IRingerMgr * po, AEERingerCat * pc)
 {
-   CRingerMgr *   pme = (CRingerMgr *)po;
-   char *         pszName;
-
-   if(!pc)
-      return(FALSE);
-
-   MEMSET(pc,0,sizeof(AEERingerCat));
-
-   if(pme->m_enumCat > CAT_MAX)
-      return(FALSE);
-
-   pszName = (char *)gpszCategories[pme->m_enumCat];
-   pc->id = pme->m_enumCat;
-   STR_TO_WSTR(pszName,pc->szName,sizeof(pc->szName));
+    CRingerMgr *   pme = (CRingerMgr *)po;
+    char *         pszName;
+    
+    if ((NULL == pc) || (pme->m_enumCat > CAT_MAX))
+    {
+        return(FALSE);
+    }
+    
+    MEMSET(pc,0,sizeof(AEERingerCat));
+    
+    pszName = (char *)gpszCategories[pme->m_enumCat];
+    pc->id = pme->m_enumCat;
+    STR_TO_WSTR(pszName,pc->szName,sizeof(pc->szName));
 #if defined(OEM_RINGER_SUPPORT)
-   pc->idRinger = OEM_GetActiveRinger(pc->id, pc->szName);
+    pc->idRinger = OEM_GetActiveRinger(pc->id, pc->szName);
 #else
-   pc->idRinger = gCategoryRings[pme->m_enumCat];
+    pc->idRinger = gCategoryRings[pme->m_enumCat];
 #endif
-   pme->m_enumCat++;
-   return(TRUE);
+
+    pme->m_enumCat++;
+    return(TRUE);
 }
 
 /*===========================================================================
@@ -870,6 +889,171 @@ static int CRingerMgr_Remove(IRingerMgr * po, AEERingerID id)
 
 
 ===========================================================================*/
+#if defined( FEATURE_RECORDER)
+#include "appcomfunc.h"
+boolean oemringer_playing_qcp_ringtone;
+boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo);
+
+static void OEMRinger_SetupQcpVolume( ISound* pSound)
+{
+	byte volume	= AEE_MAX_VOLUME;
+	
+#if 0//defined( FEATURE_SOUND_DEVICE_HEADSET_SPEAKER)
+	{
+		byte activedProfile					= 0;
+		byte headsetVolume[PROFILENUMBER]	= {0};							
+		
+		OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &activedProfile, sizeof( activedProfile));     
+		OEM_GetConfig( CFGI_PROFILE_EAR_VOL, headsetVolume, sizeof( headsetVolume));
+		volume = headsetVolume[activedProfile];  			
+	}
+#else
+	{
+		OEM_GetConfig( CFGI_RINGER_VOL, &volume, sizeof( volume));
+	}
+#endif
+	
+	volume = GET_ISOUND_VOL_LEVEL( volume);
+	if( volume > 100)
+	{
+		volume = 100;
+	}	
+	ISOUND_SetVolume( pSound, volume);
+}
+static void OEMRinger_SetupQcpSoundInfoCB( void * pUser,
+						   AEESoundCmd eCBType,
+						   AEESoundStatus eSPStatus,
+						   uint32 dwParam
+)
+{
+	ISound* pSound = gMgr.m_pSound;
+
+	//DBGPRINTF( ";--------------------------------------------");
+	//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB");
+
+	if( !oemringer_playing_qcp_ringtone)
+	{
+		//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB, not qcp ringtone now");
+		return;
+	}
+
+	if( !pSound)
+	{
+		//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB, NULL pSound");
+		return;
+	}
+
+	//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB, status = %d", eSPStatus);
+	if( eSPStatus != AEE_SOUND_SUCCESS)
+	{
+		//DBGPRINTF( ";OEMRinger_SetupQcpSoundInfoCB, setup failed, continue");
+		OEMRinger_SetupQcpSoundInfo( pSound, 0);
+		return;
+	}
+
+	if( pSound && oemringer_playing_qcp_ringtone)
+	{
+#if defined( FEATURE_SOUND_DEVICE_HEADSET_SPEAKER)
+		AEESoundDevice  device = AEE_SOUND_DEVICE_HEADSET_SPEAKER;
+#else
+#ifdef FEATURE_SPEAKER_PHONE
+		AEESoundDevice 	device = AEE_SOUND_DEVICE_SPEAKER;
+#else
+		AEESoundDevice 	device = AEE_SOUND_DEVICE_HFK;
+#endif
+#endif
+		AEESoundInfo	info	= {0};
+
+
+		ISOUND_Get( pSound, &info);
+/*		DBGPRINTF( ";now, sound info:");
+		DBGPRINTF( ";eDevice = %d", info.eDevice);
+		DBGPRINTF( ";eMethod = %d", info.eMethod);
+		DBGPRINTF( ";eAPath = %d", info.eAPath);
+		DBGPRINTF( ";eEarMuteCtl = %d", info.eEarMuteCtl);
+		DBGPRINTF( ";eMicMuteCtl = %d", info.eMicMuteCtl);
+*/
+		if( info.eDevice != device)
+		{
+			//DBGPRINTF( ";the device is not expected, %d, %d, continue", device, info.eDevice);
+			OEMRinger_SetupQcpSoundInfo( pSound, 0);
+			return;
+		}
+
+	}
+}
+
+boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo) 
+{
+
+	boolean releaseSound = FALSE;
+	boolean result       = FALSE;
+
+	if( !oemringer_playing_qcp_ringtone)
+	{
+		return FALSE;
+	}
+	
+	if( !pSound)
+	{
+		if( ISHELL_CreateInstance( AEE_GetShell(), AEECLSID_SOUND, (void**)&pSound)  == SUCCESS)
+		{
+			releaseSound = TRUE;
+		}
+		else
+		{
+			pSound = NULL;
+		}
+	}
+
+	
+	if( pSound && oemringer_playing_qcp_ringtone)
+	{
+#if defined( FEATURE_SOUND_DEVICE_HEADSET_SPEAKER)
+		AEESoundDevice  device = AEE_SOUND_DEVICE_HEADSET_SPEAKER;
+#else
+#ifdef FEATURE_SPEAKER_PHONE
+		AEESoundDevice 	device = AEE_SOUND_DEVICE_SPEAKER;
+#else
+		AEESoundDevice 	device = AEE_SOUND_DEVICE_HFK;
+#endif
+#endif	
+		AEESoundInfo	info	= {0};
+	
+		ISOUND_Get( pSound, &info);		
+		if( info.eDevice == device)
+		{
+			return TRUE;
+		}
+		if( pOldSoundInfo)
+		{
+			*pOldSoundInfo = info;
+		}
+		
+		
+		info.eDevice  = device;
+		info.eMethod = AEE_SOUND_METHOD_VOICE;
+		ISOUND_Set( pSound, &info);
+		ISOUND_RegisterNotify( pSound,
+						OEMRinger_SetupQcpSoundInfoCB,
+						pSound
+					);
+		ISOUND_SetDevice( pSound);
+		OEMRinger_SetupQcpVolume( pSound);		
+		result = TRUE;
+	}	
+//	else
+//	{
+//		DBGPRINTF( ";OEMRinger_SetupQcpSoundInfo, not set");
+//	}
+	if( releaseSound)
+	{
+		ISOUND_Release( pSound);
+	}
+	return result;
+}				
+#endif
+
 static int CRingerMgr_Play(IRingerMgr * po,AEERingerID id,const char * pszFile,IAStream * pStream,uint32 dwPause)
 {
    CRingerMgr *   pme = (CRingerMgr *)po;
@@ -940,7 +1124,26 @@ static int CRingerMgr_Play(IRingerMgr * po,AEERingerID id,const char * pszFile,I
                // Normal EFS file...
             ISOUNDPLAYER_Set(pme->m_pPlayer, SDT_FILE, (void *)pszFile);
             }
-         } else {
+#if defined( FEATURE_RECORDER)
+		    if( STRENDS( ".qcp", STRLOWER( ri.szFile)))
+		    {
+		    	pme->m_pSound 	= NULL;
+				oemringer_playing_qcp_ringtone = TRUE;
+
+		    	if( ISHELL_CreateInstance( pme->m_pShell, AEECLSID_SOUND, (void**)&pme->m_pSound) == SUCCESS)
+		    	{					
+					OEMRinger_SetupQcpSoundInfo( pme->m_pSound, &pme->m_soundInfo);
+					pme->m_bQcp = TRUE;
+		    	}
+		    }
+	        else
+	        {
+	        	pme->m_bQcp = FALSE;
+	        }
+#endif
+            } 
+            else 
+            {
             ISOUNDPLAYER_SetStream(pme->m_pPlayer, pStream);
          }
 
@@ -971,6 +1174,25 @@ static int CRingerMgr_Stop(IRingerMgr * po)
 
    psp = pme->m_pPlayer;
    if(psp){
+#if defined( FEATURE_RECORDER)
+    if( pme->m_bQcp)
+	{
+		oemringer_playing_qcp_ringtone = FALSE;
+
+		if( pme->m_pSound)
+		{
+    		AEESoundInfo info = {0};
+
+			ISOUND_Get( pme->m_pSound, &info);
+
+			ISOUND_Set( pme->m_pSound, &pme->m_soundInfo);
+			ISOUND_SetDevice( pme->m_pSound);
+
+			ISOUND_Release( pme->m_pSound);
+			pme->m_pSound = NULL;
+		}
+	}
+#endif
       pme->m_pPlayer = NULL;
       ISOUNDPLAYER_Release(psp);
       CRingerMgr_Notify(pme, ARE_PLAY,0,(int)(pme->m_bPlaying ? EINCOMPLETEITEM : 0));
@@ -1349,7 +1571,7 @@ static IFileMgr *RingerMgr_GetFileMgr(void)
 
 
 ===========================================================================*/
- int OEM_SetActiveRinger(AEERingerCatID idCategory, AEERingerID idRinger, char * szFilename)
+static int OEM_SetActiveRinger(AEERingerCatID idCategory, AEERingerID idRinger, char * szFilename)
 {
     byte data;
     // 1st ringer has idRinger value 1 and menu item value should be 0 for this
@@ -1362,7 +1584,7 @@ static IFileMgr *RingerMgr_GetFileMgr(void)
 
 
 ===========================================================================*/
-AEERingerID OEM_GetActiveRinger(AEERingerCatID idRingerCat, AECHAR * szwName)
+static AEERingerID OEM_GetActiveRinger(AEERingerCatID idRingerCat, AECHAR * szwName)
 {
     byte data;
 
