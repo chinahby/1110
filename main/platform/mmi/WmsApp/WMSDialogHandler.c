@@ -6457,7 +6457,6 @@ static boolean IDD_SENDING_Handler(void *pUser,
                         CLOSE_DIALOG(DLGRET_END)
                     }
                 }
-				WMSAPPU_FREE(dwParam);
             }
             
             return TRUE;
@@ -6504,7 +6503,6 @@ static boolean IDD_SENDING_Handler(void *pUser,
                     default:
                         break;
                 }
-				WMSAPPU_SYSFREE(dwParam);
             }
             
             return TRUE;
@@ -9911,7 +9909,6 @@ static boolean IDD_MSGCOPY_Handler(void *pUser,
                                         EVT_USER_REDRAW,
                                         0, 
                                         0);
-				WMSAPPU_SYSFREE(dwParam);
             }
             
             return TRUE;
@@ -10078,7 +10075,6 @@ static boolean IDD_MSGCOPY_HandlerExt(void *pUser,
                     default:
                         break;
                 }
-				WMSAPPU_SYSFREE(dwParam);
             }
             return TRUE;
             
@@ -10123,7 +10119,6 @@ static boolean IDD_MSGCOPY_HandlerExt(void *pUser,
                                         EVT_MSGCOPY,
                                         0, 
                                         0);
-				WMSAPPU_FREE(dwParam);
             }
             return TRUE;
             
@@ -10235,7 +10230,6 @@ static boolean IDD_MSGCOPY_HandlerExt(void *pUser,
                                             0, 
                                             0);
                 }
-				WMSAPPU_FREE(dwParam);
             }
             
             return TRUE;
@@ -12139,7 +12133,6 @@ static boolean IDD_VOICEMAIL_Handler(void   *pUser,
                     
                     CLOSE_DIALOG(DLGRET_VIEWVOICEMSG)
                 }
-				WMSAPPU_FREE(dwParam);
             }
             return TRUE;
             
@@ -12581,7 +12574,6 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     
                     WMSMessageStruct_Reset(pMsg);
                     FREE(pMsg);
-					WMSAPPU_FREE(dwParam);
                 }
                 else
                 {// 内置常用语直接读取资源文件
@@ -12886,7 +12878,6 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                         CLOSE_DIALOG(DLGRET_LOADOK)
                     }
                 }
-                WMSAPPU_SYSFREE(dwParam);
                 ERR("Cmd:%d---Err:%d", pStatus->cmd, pStatus->cmd_err, 0);
             }
             
