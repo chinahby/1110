@@ -8,7 +8,7 @@
 
 uint32 g_BootResetFlag;
 
-#ifdef CUST_EDITION
+#if 0//def CUST_EDITION
 /*---------------------------------------------------------------------------
 
                      USER INTERFACE TASK DECLARATIONS

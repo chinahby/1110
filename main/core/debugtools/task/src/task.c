@@ -460,7 +460,7 @@ rex_tcb_type        dbgr_tcb;                    /* TCB for DBGR task.     */
 rex_stack_word_type dbgr_stack [DBGR_STACK_SIZ]; /* Stack for DBGR Task.   */
 #endif /*FEATURE_DBGR*/
 
-#ifndef CUST_EDITION
+#if 1//ndef CUST_EDITION
 /*---------------------------------------------------------------------------
 
                      USER INTERFACE TASK DECLARATIONS

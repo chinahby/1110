@@ -39,13 +39,9 @@ MSM_NOTPAGED +0
     boot_target.o (+RO)
   }
 
-  AMSS_IMEM_VEC_TBL  0x58000000  0x1FFFC
+  AMSS_IMEM_VEC_TBL  0x58000000  0x7FFC
   {
     boot_vectors.o (Int_Vect)
-    sdcc_util.o (+RO)
-    GreyBit*.o(+RO)
-    OEMBitmap*.o(+RO)
-    softdsp.o(*)
     GlobalData.o(*)
   }
 }

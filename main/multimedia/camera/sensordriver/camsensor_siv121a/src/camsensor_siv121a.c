@@ -14,7 +14,7 @@
 /*============================================================================
 	TYPE DEFINITIONS 
 ============================================================================*/
-#define CAMSENSOR_HIGHQUALITY_PREVIEW
+//#define CAMSENSOR_HIGHQUALITY_PREVIEW
 #define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_62
 #define SIV121A_OUTFORMAT_RGB565
 
