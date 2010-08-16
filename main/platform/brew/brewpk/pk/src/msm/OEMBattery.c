@@ -658,14 +658,12 @@ static void OEMBatt_OnBatteryChange(void *unused)
 
 void oembatt_notify_chg_event(void)
 {
-#if 0
     if(AEE_IsInitialized() && gBattNotifyIdx < OEMBATTERY_NOTIFY_NUM)
     {
         AEECallback* pCb = &gBattNotify[gBattNotifyIdx++];
         CALLBACK_Init(pCb,OEMBatt_OnBatteryChange,NULL);
         AEE_SYS_RESUME(pCb);
     }
-#endif
 }
 #endif
 
