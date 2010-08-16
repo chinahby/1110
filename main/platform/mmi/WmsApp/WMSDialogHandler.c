@@ -2223,7 +2223,9 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                         {
 							wms_cache_info_node  *pnode = NULL;
 				            uint16 wIndex=pMe->m_wCurindex;
-				            
+				            //释放查看的消息内存
+							WMSMessageStruct_Free(pMe);
+							//ADD BY YANGDECAI 2010-08-16
 				            // 取消息 cache info 节点
 				            if (wIndex>=RUIM_MSGINDEX_BASE)
 				            {
@@ -2304,6 +2306,68 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
             switch(wParam)
             {
                 case AVK_CLR:
+					{
+						WMSMessageStruct *pTep;
+						int i;
+						int max  = 1;
+						int nlen = 0;
+						int         nBranches=0;
+    					int         nCurBranchNum=0;
+						#ifdef FEATURE_SMS_UDH
+						uint8       total_sm;   // 消息数据包总数
+						uint8       seq_num;    // 消息序号
+						#endif
+						 for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+    					{
+					        pTep = pMe->m_CurMsgNodesMS[i];
+					        if (pTep != NULL)
+					        {
+					            break;
+					        }
+					    }
+						if (NULL == pTep)
+    					{// 任一非空节点没找到
+        					return;
+    					}
+    
+#ifdef FEATURE_SMS_UDH
+					    total_sm = pTep->total_sm;
+					    seq_num = pTep->seq_num;
+					    if (total_sm > 1)
+					    {
+					        // 计算长短信分支总数(每个分支最大含 LONGSMS_MAX_PACKAGES 个数据包)
+					        nBranches = total_sm / (LONGSMS_MAX_PACKAGES);
+					        if ((total_sm % (LONGSMS_MAX_PACKAGES)) != 0)
+					        {
+					            nBranches++;
+					        }
+					        
+					        // 确定当前处理的分支号(0,...,nBranches-1)
+					        nCurBranchNum = (seq_num - 1) / (LONGSMS_MAX_PACKAGES);
+					        if (nBranches>1)
+					        {
+					            nlen += 20;
+					            
+					            if (nCurBranchNum < (nBranches-1))
+					            {
+					                max = LONGSMS_MAX_PACKAGES;
+					            }
+					            else
+					            {
+					                max = total_sm - nCurBranchNum*LONGSMS_MAX_PACKAGES;
+					            }
+					        }
+					        else
+					        {
+					            max = total_sm;
+					        }
+					    }
+#endif   
+						for(i = 0;i<max;i++)
+						{
+							WMSMessageStruct_Reset(pMe->m_CurMsgNodesMS[i]);
+						}
+					}  //ADD BY YANGDECAI 2010-08-16
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
   

@@ -1106,7 +1106,9 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
             {// 对于回复操作不再进入地址列表输入界面
                 AECHAR  *pwstrNum = NULL;
                 CMultiSendItemInfo *pItem = NULL;
-                
+                //释放查看的消息内存
+				WMSMessageStruct_Free(pMe);
+				//ADD BY YANGDECAI 2010-08-16
                 // 先清空群发地址链表
                 WmsApp_FreeMultiSendList(pMe->m_pSendList);
                 
@@ -1188,11 +1190,17 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_DELETE:
+			//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
             pMe->m_eEraseWMSType = ERASE_INBOXES_ONE;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_CLEARALL:
+			//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
             pMe->m_eEraseWMSType = CLEAR_INBOXES;
             pMe->m_STSwitchToEditMsg = WMSST_MAIN;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
@@ -1201,7 +1209,11 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
         case DLGRET_SAVENUM:
             pMe->m_ExtractType = EXTRACT_NUM;
             WmsApp_FreeSaveNumList(pMe);
-            
+			
+            //释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
+			
             // 分析消息建立号码链表
             WmsApp_BuildNumList(pMe, &pMe->m_msCur);
             
@@ -1215,6 +1227,9 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_SAVEEMAIL:
+			//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
             pMe->m_ExtractType = EXTRACT_EMAILADD;
             WmsApp_FreeSaveNumList(pMe);
             
@@ -1231,6 +1246,9 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_SAVEURL:
+			//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
             pMe->m_ExtractType = EXTRACT_URL;
             WmsApp_FreeSaveNumList(pMe);
             
@@ -1246,6 +1264,9 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_EXTARCTEDITEMLIST)
             return NFSMACTION_CONTINUE;
         case DLGRET_EXTACTDETAILS:
+			//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
             MOVE_TO_STATE(WMSST_EXTARCTDETAILS)
             return NFSMACTION_CONTINUE;
 #endif            
@@ -1256,7 +1277,9 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
             {
                 int nCopys = 0;
                 int i;
-                
+                //释放查看的消息内存
+				WMSMessageStruct_Free(pMe);
+				//ADD BY YANGDECAI 2010-08-16
                 for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
                 {
                     if ((pMe->m_CurMsgNodes[i] != NULL) &&
@@ -1291,7 +1314,11 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
                 uint16 nCopys = 0;
                 uint16 nMsgs = 0;
                 uint16  nOnUIMs = 0;
-                
+				
+                //释放查看的消息内存
+				WMSMessageStruct_Free(pMe);
+				//ADD BY YANGDECAI 2010-08-16
+				
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, NULL, &nOnUIMs, &nMsgs);
                 nMsgs -= nOnUIMs;
                 
@@ -1942,7 +1969,11 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
             {// 对于重发操作不进入消息编辑界面，也不进入地址列表输入界面
                 AECHAR  *pwstrNum = NULL;
                 CMultiSendItemInfo *pItem = NULL;
-                
+				
+                //释放查看的消息内存
+				WMSMessageStruct_Free(pMe);
+				//ADD BY YANGDECAI 2010-08-16
+				
                 // 先清空群发地址链表
                 WmsApp_FreeMultiSendList(pMe->m_pSendList);
                 
@@ -3506,11 +3537,21 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_DELETE:
+			
+			//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
+			
             pMe->m_eEraseWMSType = ERASE_OUTBOX_ONE;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_CLEARALL:
+			
+			//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
+			
             pMe->m_eEraseWMSType = CLEAR_OUTBOX;
             pMe->m_STSwitchToEditMsg = WMSST_MAIN;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
@@ -3518,7 +3559,11 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
 
         case DLGRET_RESEND:
             pMe->m_idxCur = 0;
-            
+			
+            //释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
+			
             {// 对于重发操作不进入消息编辑界面，也不进入地址列表输入界面
                 AECHAR  *pwstrNum = NULL;
                 CMultiSendItemInfo *pItem = NULL;

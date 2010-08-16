@@ -574,6 +574,31 @@ void WMSMessageStruct_Reset(WMSMessageStruct * pMsg)
     // 全部数据清零
     MEMSET(pMsg, 0, sizeof(WMSMessageStruct));
 }
+//add by yangdecai 2010-08-16
+/*==============================================================================
+函数:
+    WMSMessageStruct_Free
+
+说明:
+    函数重新设置消息结构各成员变量为缺省值。
+
+参数:
+    pMsg [in/out]: WMSMessageStruct_Free 数据结构指针。
+
+返回值:
+    none
+
+备注:
+        
+==============================================================================*/
+void WMSMessageStruct_Free(WmsApp * pMe)
+{
+	int i;
+	for(i = 0;i<LONGSMS_MAX_PACKAGES;i++)
+	{
+		WMSMessageStruct_Reset(pMe->m_CurMsgNodesMS[i]);
+	}
+}
 
 static void OEMWMS_ConvertFromUnicode(wms_client_bd_s_type *bd_data)
 {

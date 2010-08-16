@@ -954,7 +954,10 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             CWmsApp_RunFSM(pMe);
             return TRUE;
 
-        case EVT_APP_STOP:
+        case EVT_APP_STOP: 
+			//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
             pMe->m_bNaturalStart = TRUE;
             pMe->m_eAppStatus = WMSAPP_STOP;
     		pMe->m_bActive = TRUE;
@@ -3843,6 +3846,7 @@ void WmsApp_CopyCurMsgForSend(WmsApp *pMe)
             (NULL != (pMe->m_CurMsgNodesMS[i])->m_szMessage))
         {
             (void)WSTRCAT(pMsgText, (pMe->m_CurMsgNodesMS[i])->m_szMessage);
+			WMSMessageStruct_Reset(pMe->m_CurMsgNodesMS[i]);
         }
     }
     
