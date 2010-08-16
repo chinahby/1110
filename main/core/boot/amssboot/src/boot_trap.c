@@ -1434,8 +1434,8 @@ void boot_looping_exception_handler(
                   exception_cause_label[boot_error_cause],
                   frame->l.r[15],i,(*pStack)-1);
           lcd_message(text);
-          boot_looping_wait_next();
           boot_looping_delay(1);
+          boot_looping_wait_next();
           i++;
         }
       }
