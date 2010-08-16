@@ -3365,7 +3365,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 
             //  Position CALL TIMER  in thrid line
             SETAEERECT(&rect,
-                                                        CALL_TEXT_X,
+                                                        CALL_TEXT_X,		
                                                         CALL_SECOND_LINE_Y,
                                                         CALL_TEXT_DX,
                                                         CALL_LINE_HIGHT);
@@ -3462,8 +3462,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
 
-                    CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
-                            p_temp->call_name, &rect, IDF_TEXT_TRANSPARENT);
+                    CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, p_temp->call_name, &rect, IDF_TEXT_TRANSPARENT);
 
                 }
                 //  Position NUMBER
@@ -7115,7 +7114,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     //bOffset = bWidth;// + 16;
 
     SETAEERECT(&rect,
-                                            CALL_TEXT_X +bWidth +4 ,
+                                            CALL_NAME_X, //CALL_TEXT_X +bWidth +4 ,
                                             CALL_FIRST_LINE_Y,
                                             CALL_TEXT_DX - bWidth -4,
                                             CALL_LINE_HIGHT);
