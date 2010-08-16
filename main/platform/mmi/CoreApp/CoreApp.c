@@ -1633,7 +1633,7 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
         return FALSE;
     }
     
-    ICM_SetRSSIDeltaThreshold(pMe->m_pICM, 5);
+    ICM_SetRSSIDeltaThreshold(pMe->m_pCM, 5);
     /* If phone info is available, do not wait for PH_INFO_AVAIL event for
        * starting provisioning */
     if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
