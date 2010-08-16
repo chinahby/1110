@@ -570,9 +570,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             
             if(pMe->m_bRePreview && pMe->m_pCamera)
             {
-                ICAMERA_Preview(pMe->m_pCamera);
-                pMe->m_nCameraState = CAM_PREVIEW;
-                CameraApp_SetParamAfterPreview(pMe);
+                CameraApp_CPreviewStart(pMe);
                 pMe->m_bRePreview = FALSE;
                 return TRUE;
             }
@@ -784,9 +782,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
         case EVT_USER_REDRAW:                         
 			if(pMe->m_bRePreview)
             {
-                ICAMERA_Preview(pMe->m_pCamera);
-                pMe->m_nCameraState = CAM_PREVIEW;
-                CameraApp_SetParamAfterPreview(pMe);
+                CameraApp_CPreviewStart(pMe);
                 pMe->m_bRePreview = FALSE;
             }
                   
