@@ -1841,6 +1841,7 @@ void CMediaReal_CallbackNotify(AEEMediaCallback * pcb)
       /* Do not send this callback to the app as they are not registered for it */
       return;
    }
+ 
    AEEMedia_CallbackNotify((AEEMedia *)pme, pcb);
 }
 
@@ -1880,6 +1881,7 @@ static void CMediaReal_SoundCB(void * pUser, AEESoundCmd eCBType, AEESoundStatus
 #else
    paLast = AEE_SetAppContext(pme->m_pReal->m_pAppContext);
 #endif
+
    AEEMedia_CallbackNotify((AEEMedia *)pme, &mcb);
 #if MIN_BREW_VERSION(3,0)
    AEE_LeaveAppContext(paLast);

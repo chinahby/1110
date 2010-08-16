@@ -2172,6 +2172,7 @@ void CMediaCMX_CallbackNotify(void * pUser)
    }
    else
 #endif // defined(FEATURE_SVGDOM)
+
    AEEMedia_CallbackNotify((AEEMedia *)pme, &mcb);
 }
 

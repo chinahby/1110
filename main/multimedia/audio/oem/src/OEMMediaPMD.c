@@ -1656,7 +1656,7 @@ void CMediaCMX_CallbackNotify(void * pUser)
    pme = (CMediaCMX *)mcb.cmdNotify.pIMedia;
    if (!pme)
       return;
-
+	
    AEEMedia_CallbackNotify((AEEMedia *)pme, &mcb);
 }
 
@@ -5779,7 +5779,7 @@ static void CMediaPMDMMLayer_SoundCB(void * pUser, AEESoundCmd eCBType, AEESound
       mcb.cmdNotify.pCmdData = (void *)(uint32)pData->wVolume;
       mcb.cmdNotify.dwSize = sizeof(pData->wVolume);
    }
-
+   
    AEEMedia_CallbackNotify((AEEMedia *)pme, &mcb);
 }
 

@@ -959,7 +959,7 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
             {
 #if defined (FEATURE_BMP_ACM)
 #error code not present
-#endif 
+#endif 			
               pme->m_nState = MM_STATE_READY;
             }
             else
@@ -1030,7 +1030,7 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
       case MM_MP4_AUDIO_VIDEO_MEDIA_DATA:
          nRet = OEMMediaMPEG42PV_OpenURN((char *)p1, (char *)p2, NULL, pOEM );
          if (nRet == SUCCESS)
-         {
+         {         	
             pme->m_nState = MM_STATE_READY;
          }
          break;

@@ -155,6 +155,7 @@ int AEEMedia_New(IMedia * po, IShell * ps, AEECLSID cls)
    pme->m_clsSelf = cls;
 
    pme->m_pac = AEE_GetAppContext();
+   
    pme->m_nState = MM_STATE_IDLE;
 
    CALLBACK_Init(&pme->m_cbSysObj, AEEMedia_Delete, pme);
@@ -312,10 +313,14 @@ int AEEMedia_SetMediaParm(IMedia * po, int nParamID, int32 p1, int32 p2)
       switch (nParamID)
       {
          case MM_PARM_MEDIA_DATA:
-            nRet = AEEMedia_SetMediaData(pme, (AEEMediaDataEx *)p1, (boolean)(0 != p2));
+         {
+		 	nRet = AEEMedia_SetMediaData(pme, (AEEMediaDataEx *)p1, (boolean)(0 != p2));
             if (nRet == SUCCESS)
-               pme->m_nState = MM_STATE_READY;
+            {
+				pme->m_nState = MM_STATE_READY;
+            }
             break;
+         }
 
          default:
             break;
@@ -371,6 +376,10 @@ int AEEMedia_Play(IMedia * po)
    AEEMedia *           pme = (AEEMedia *)po;
    int                  nRet = SUCCESS;
 
+	DBGPRINTF("***zzg AEEMedia_Play***");
+	
+	DBGPRINTF("***zzg Play m_nState=%d, m_bStateChanging=%d***", (pme)->m_nState, (pme)->m_bStateChanging);
+	
    if (!AEEMedia_IsPlayOK(pme))
       return EBADSTATE;
 
@@ -491,8 +500,14 @@ int AEEMedia_Pause(IMedia * po)
 {
    AEEMedia * pme = (AEEMedia *)po;
 
+	DBGPRINTF("***zzg AEEMedia_Pause***");
+	
+	DBGPRINTF("***zzg Pause m_nState=%d, m_bStateChanging=%d***", (pme)->m_nState, (pme)->m_bStateChanging);
+	
    if (!AEEMedia_IsPauseOK(pme))
-      return EBADSTATE;
+   {   
+		return EBADSTATE;
+   }
 
    return SUCCESS;
 }
@@ -503,6 +518,10 @@ int AEEMedia_Pause(IMedia * po)
 int AEEMedia_Resume(IMedia * po)
 {
    AEEMedia * pme = (AEEMedia *)po;
+
+   DBGPRINTF("***zzg AEEMedia_Resume***");
+	
+	DBGPRINTF("***zzg Resume m_nState=%d, m_bStateChanging=%d***", (pme)->m_nState, (pme)->m_bStateChanging);
 
    if (!AEEMedia_IsResumeOK(pme))
       return EBADSTATE;
@@ -532,7 +551,7 @@ int AEEMedia_GetState(IMedia * po, boolean * pbStateChanging)
 
    if (pbStateChanging)
       *pbStateChanging = pme->m_bStateChanging;
-
+	
    return pme->m_nState;
 }
 
@@ -562,6 +581,7 @@ void AEEMedia_CallbackNotify(AEEMedia * pme, AEEMediaCallback * pmcb)
       }
       else
       {
+      	DBGPRINTF("***zzg OEMMEDIA 444 state=%d***", pme->m_nState);
          // Perform state change...
          switch (pme->m_nState)
          {

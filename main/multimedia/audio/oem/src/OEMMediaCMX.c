@@ -7662,7 +7662,9 @@ static int CMediaMain_GetState(IMedia * po, boolean * pbStateChanging)
    CMediaMain *   pme = (CMediaMain *)po;
 
    if (pme->m_pMedia)
-      pme->m_nState = IMEDIA_GetState(pme->m_pMedia, &pme->m_bStateChanging);
+   {
+   		pme->m_nState = IMEDIA_GetState(pme->m_pMedia, &pme->m_bStateChanging);
+   }
 
    if (pbStateChanging)
       *pbStateChanging = pme->m_bStateChanging;
