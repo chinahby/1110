@@ -5,7 +5,7 @@
 
   This file contains a reference implementation of Battery support.
 
-        Copyright © 1999-2005 QUALCOMM Incorporated.
+        Copyright ? 1999-2005 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ============================================================================*/
@@ -265,7 +265,7 @@ static void OEMBattery_Init(void)
          }
       }
    }
-   
+
    // Check Battery Status
    OEMBattery_CheckBatteryStatus(&gpBattery->dwBatteryStatus);
 
@@ -277,7 +277,7 @@ static void OEMBattery_Init(void)
 
    // Check External Power
    OEMBattery_CheckExternalPower(&gpBattery->dwExternalPower);
-   
+
    // Check the in-use state of the phone
    OEMBattery_CheckInUse(&gpBattery->phoneInUse);
 
@@ -354,10 +354,10 @@ static void OEMBattery_TelephoneModelListener(void *unused, ModelEvent *pEvent)
    }
 }
 
+
 /*===========================================================================
 Makes battery check and calls status update callbacks
 ===========================================================================*/
-#include "err.h"
 static void OEMBattery_PeriodicBatteryCheck(void * pUser)
 {
    uint32 dwBatteryStatus = AEEBATTERY_STATUS_UNKNOWN;
@@ -658,12 +658,14 @@ static void OEMBatt_OnBatteryChange(void *unused)
 
 void oembatt_notify_chg_event(void)
 {
+#if 0
     if(AEE_IsInitialized() && gBattNotifyIdx < OEMBATTERY_NOTIFY_NUM)
     {
         AEECallback* pCb = &gBattNotify[gBattNotifyIdx++];
         CALLBACK_Init(pCb,OEMBatt_OnBatteryChange,NULL);
         AEE_SYS_RESUME(pCb);
     }
+#endif
 }
 #endif
 
