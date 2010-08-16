@@ -375,7 +375,8 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
         
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CAMERA_MAINMENU);
 	AECHAR WTitle[40] = {0};
-   
+    byte nBackLight;
+    
     if(pMenu == NULL)
     {
         return FALSE;
@@ -465,6 +466,12 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
 #else
                     pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
 #endif
+                    nBackLight = OEMNV_BL_ALWAYS_ON;
+                    (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                          CFGI_BACK_LIGHT,
+                                          &nBackLight,
+                                          sizeof(nBackLight));
+                    IBACKLIGHT_Enable(pMe->m_pBacklight);
                     CLOSE_DIALOG(DLGRET_POPMSG);
                     break;
 
@@ -542,7 +549,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                                   CFGI_CAMERA_BANDING,
                                   &pMe->m_nCameraBanding,
                                   sizeof(pMe->m_nCameraBanding));
-            
+                                  
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
@@ -558,6 +565,13 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             
         case EVT_DIALOG_END:            
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+            if(pMe->m_bSuspending)
+            {
+                (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                      CFGI_BACK_LIGHT,
+                                      &pMe->m_nBacklightVal,
+                                      sizeof(pMe->m_nBacklightVal));
+            }
             return TRUE;
             
         case EVT_USER_REDRAW:
@@ -635,10 +649,15 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 {
                     ICAMERA_Stop(pMe->m_pCamera);
                     pMe->m_nCameraState = CAM_STOP;
-                }                   
+                }
                 return FALSE;
 
-            case AVK_CLR:  
+            case AVK_CLR:
+                (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                      CFGI_BACK_LIGHT,
+                                      &pMe->m_nBacklightVal,
+                                      sizeof(pMe->m_nBacklightVal));
+                IBACKLIGHT_Enable(pMe->m_pBacklight);
                 if(pMe->m_isFormQuicktest)
                 {
                     ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
@@ -2943,12 +2962,12 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
         if(pImage)
         {
             AEEImageInfo myInfo;
-            int dx,dy;
+            int x,y;
             IImage_GetInfo(pImage,&myInfo);
             
-            dx = pMe->m_rc.dx;
-            dy = myInfo.cy*dx/myInfo.cx;
-            IImage_SetParm(pImage, IPARM_SCALE, dx, dy);
+            x = (myInfo.cx-pMe->m_rc.dx)/2;
+            y = (myInfo.cy-pMe->m_rc.dy)/2;
+            IImage_SetOffset(pImage,x,y);
             IImage_Draw(pImage,0,0);
             IImage_Release(pImage);
         }

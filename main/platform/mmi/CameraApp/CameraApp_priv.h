@@ -81,7 +81,7 @@
 #endif
 #include "Appscommon.brh"
 #include "OEMSVC.h"
-
+#include "AEEBacklight.h"
 
 /*==============================================================================
                                  类型定义
@@ -320,6 +320,8 @@ typedef struct _CCameraApp
     IFileMgr             *m_pFileMgr;
     IAnnunciator         *m_pIAnn;
     boolean              m_isFormQuicktest;
+    IBacklight           *m_pBacklight;
+    byte                 m_nBacklightVal;
 } CCameraApp;
 
 /*==============================================================================                         

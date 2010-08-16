@@ -14,6 +14,7 @@
 /*============================================================================
 	TYPE DEFINITIONS 
 ============================================================================*/
+#define CAMSENSOR_HIGHQUALITY_PREVIEW
 #define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_62
 #define SIV121A_OUTFORMAT_RGB565
 
@@ -150,7 +151,11 @@ static boolean initialize_siv121a_registers_preview(void)
 
     siv121a_i2c_write_byte(0x00,0x01);
     siv121a_i2c_write_byte(0x04,0x00);
+#ifdef CAMSENSOR_HIGHQUALITY_PREVIEW
+    siv121a_i2c_write_byte(0x05,0x01);
+#else
     siv121a_i2c_write_byte(0x05,0x06);
+#endif
     siv121a_i2c_write_byte(0x11,0x25);
     siv121a_i2c_write_byte(0x12,0x21); 
     siv121a_i2c_write_byte(0x13,0x15);
@@ -169,9 +174,9 @@ static boolean initialize_siv121a_registers_preview(void)
     siv121a_i2c_write_byte(0x00,0x02);
     siv121a_i2c_write_byte(0x34,0x42);
     siv121a_i2c_write_byte(0x11,0x08); 
-    siv121a_i2c_write_byte(0x12,0x6D); 
-    siv121a_i2c_write_byte(0x13,0x6D);
-    siv121a_i2c_write_byte(0x14,0x6D);
+    siv121a_i2c_write_byte(0x12,0x66); 
+    siv121a_i2c_write_byte(0x13,0x66);
+    siv121a_i2c_write_byte(0x14,0x66);
     siv121a_i2c_write_byte(0x1e,0x00);
     
     siv121a_i2c_write_byte(0x40,0x30);
@@ -218,7 +223,7 @@ static boolean initialize_siv121a_registers_preview(void)
     siv121a_i2c_write_byte(0x21,0x30);
     siv121a_i2c_write_byte(0x22,0xA4);
     siv121a_i2c_write_byte(0x23,0x20);
-    siv121a_i2c_write_byte(0x25,0x20);
+    siv121a_i2c_write_byte(0x25,0x10);
     siv121a_i2c_write_byte(0x26,0x0F);
     siv121a_i2c_write_byte(0x27,0x10);
     siv121a_i2c_write_byte(0x28,0x20);
@@ -302,24 +307,24 @@ static boolean initialize_siv121a_registers_preview(void)
     siv121a_i2c_write_byte(0x3F,0xFF);
 
     // Shading
-    siv121a_i2c_write_byte(0x40,0x0a);
-    siv121a_i2c_write_byte(0x41,0xba);
+    siv121a_i2c_write_byte(0x40,0x11);
+    siv121a_i2c_write_byte(0x41,0x21);
     siv121a_i2c_write_byte(0x42,0x32);
-    siv121a_i2c_write_byte(0x43,0x32);
-    siv121a_i2c_write_byte(0x44,0x21);
-    siv121a_i2c_write_byte(0x45,0x00);                                                  
-    siv121a_i2c_write_byte(0x46,0x24);   // left R gain[7:4], right R gain[3:0] 0x22        
-    siv121a_i2c_write_byte(0x47,0x22);   // top R gain[7:4], bottom R gain[3:0]             
-    siv121a_i2c_write_byte(0x48,0x23);   // left Gr gain[7:4], right Gr gain[3:0]           
-    siv121a_i2c_write_byte(0x49,0x50);   // top Gr gain[7:4], bottom Gr gain[3:0]           
-    siv121a_i2c_write_byte(0x4a,0x14);   // left Gb gain[7:4], right Gb gain[3:0]           
+    siv121a_i2c_write_byte(0x43,0x43);
+    siv121a_i2c_write_byte(0x44,0x55);
+    siv121a_i2c_write_byte(0x45,0x55);                                                  
+    siv121a_i2c_write_byte(0x46,0x22);   // left R gain[7:4], right R gain[3:0] 0x22        
+    siv121a_i2c_write_byte(0x47,0x23);   // top R gain[7:4], bottom R gain[3:0]             
+    siv121a_i2c_write_byte(0x48,0x11);   // left Gr gain[7:4], right Gr gain[3:0]           
+    siv121a_i2c_write_byte(0x49,0x12);   // top Gr gain[7:4], bottom Gr gain[3:0]           
+    siv121a_i2c_write_byte(0x4a,0x01);   // left Gb gain[7:4], right Gb gain[3:0]           
     siv121a_i2c_write_byte(0x4b,0x12);   // top Gb gain[7:4], bottom Gb gain[3:0]           
-    siv121a_i2c_write_byte(0x4c,0x03);   // left B gain[7:4], right B gain[3:0]             
-    siv121a_i2c_write_byte(0x4d,0x21);   // top B gain[7:4], bottom B gain[3:0]             
-    siv121a_i2c_write_byte(0x4e,0x04);   // X-axis center high[3:2], Y-axis center high[1:0]
-    siv121a_i2c_write_byte(0x4f,0x46);   // X-axis center low[7:0]                          
-    siv121a_i2c_write_byte(0x50,0xf6);   // Y-axis center low[7:0]                          
-    siv121a_i2c_write_byte(0x51,0x84);   // Shading Center Gain                             
+    siv121a_i2c_write_byte(0x4c,0x01);   // left B gain[7:4], right B gain[3:0]             
+    siv121a_i2c_write_byte(0x4d,0x11);   // top B gain[7:4], bottom B gain[3:0]             
+    siv121a_i2c_write_byte(0x4e,0x00);   // X-axis center high[3:2], Y-axis center high[1:0]
+    siv121a_i2c_write_byte(0x4f,0xa0);   // X-axis center low[7:0]                          
+    siv121a_i2c_write_byte(0x50,0x80);   // Y-axis center low[7:0]                          
+    siv121a_i2c_write_byte(0x51,0x80);   // Shading Center Gain                             
     siv121a_i2c_write_byte(0x52,0x00);   // Shading R Offset                                
     siv121a_i2c_write_byte(0x53,0x00);   // Shading Gr Offset                               
     siv121a_i2c_write_byte(0x54,0x00);   // Shading Gb Offset                               
@@ -463,9 +468,9 @@ static boolean initialize_siv121a_registers_snapshot(void)
     siv121a_i2c_write_byte(0x00,0x02);
     siv121a_i2c_write_byte(0x34,0x42);
     siv121a_i2c_write_byte(0x11,0x08); 
-    siv121a_i2c_write_byte(0x12,0x80); 
-    siv121a_i2c_write_byte(0x13,0x80);
-    siv121a_i2c_write_byte(0x14,0x80);
+    siv121a_i2c_write_byte(0x12,0x66); 
+    siv121a_i2c_write_byte(0x13,0x66);
+    siv121a_i2c_write_byte(0x14,0x66);
     siv121a_i2c_write_byte(0x1e,0x00);
     
     siv121a_i2c_write_byte(0x40,0x30);
@@ -512,7 +517,7 @@ static boolean initialize_siv121a_registers_snapshot(void)
     siv121a_i2c_write_byte(0x21,0x30);
     siv121a_i2c_write_byte(0x22,0xA4);
     siv121a_i2c_write_byte(0x23,0x20);
-    siv121a_i2c_write_byte(0x25,0x20);
+    siv121a_i2c_write_byte(0x25,0x10);
     siv121a_i2c_write_byte(0x26,0x0F);
     siv121a_i2c_write_byte(0x27,0x10);
     siv121a_i2c_write_byte(0x28,0x20);
@@ -597,24 +602,24 @@ static boolean initialize_siv121a_registers_snapshot(void)
     siv121a_i2c_write_byte(0x3F,0xFF);
 
     // Shading
-    siv121a_i2c_write_byte(0x40,0x0a);
-    siv121a_i2c_write_byte(0x41,0xba);
+    siv121a_i2c_write_byte(0x40,0x11);
+    siv121a_i2c_write_byte(0x41,0x21);
     siv121a_i2c_write_byte(0x42,0x32);
-    siv121a_i2c_write_byte(0x43,0x32);
-    siv121a_i2c_write_byte(0x44,0x21);
-    siv121a_i2c_write_byte(0x45,0x00);                                                  
-    siv121a_i2c_write_byte(0x46,0x24);   // left R gain[7:4], right R gain[3:0] 0x22        
-    siv121a_i2c_write_byte(0x47,0x22);   // top R gain[7:4], bottom R gain[3:0]             
-    siv121a_i2c_write_byte(0x48,0x23);   // left Gr gain[7:4], right Gr gain[3:0]           
-    siv121a_i2c_write_byte(0x49,0x50);   // top Gr gain[7:4], bottom Gr gain[3:0]           
-    siv121a_i2c_write_byte(0x4a,0x14);   // left Gb gain[7:4], right Gb gain[3:0]           
+    siv121a_i2c_write_byte(0x43,0x43);
+    siv121a_i2c_write_byte(0x44,0x55);
+    siv121a_i2c_write_byte(0x45,0x55);                                                  
+    siv121a_i2c_write_byte(0x46,0x22);   // left R gain[7:4], right R gain[3:0] 0x22        
+    siv121a_i2c_write_byte(0x47,0x23);   // top R gain[7:4], bottom R gain[3:0]             
+    siv121a_i2c_write_byte(0x48,0x11);   // left Gr gain[7:4], right Gr gain[3:0]           
+    siv121a_i2c_write_byte(0x49,0x12);   // top Gr gain[7:4], bottom Gr gain[3:0]           
+    siv121a_i2c_write_byte(0x4a,0x01);   // left Gb gain[7:4], right Gb gain[3:0]           
     siv121a_i2c_write_byte(0x4b,0x12);   // top Gb gain[7:4], bottom Gb gain[3:0]           
-    siv121a_i2c_write_byte(0x4c,0x03);   // left B gain[7:4], right B gain[3:0]             
-    siv121a_i2c_write_byte(0x4d,0x21);   // top B gain[7:4], bottom B gain[3:0]             
-    siv121a_i2c_write_byte(0x4e,0x04);   // X-axis center high[3:2], Y-axis center high[1:0]
-    siv121a_i2c_write_byte(0x4f,0x46);   // X-axis center low[7:0]                          
-    siv121a_i2c_write_byte(0x50,0xf6);   // Y-axis center low[7:0]                          
-    siv121a_i2c_write_byte(0x51,0x84);   // Shading Center Gain                             
+    siv121a_i2c_write_byte(0x4c,0x01);   // left B gain[7:4], right B gain[3:0]             
+    siv121a_i2c_write_byte(0x4d,0x11);   // top B gain[7:4], bottom B gain[3:0]             
+    siv121a_i2c_write_byte(0x4e,0x00);   // X-axis center high[3:2], Y-axis center high[1:0]
+    siv121a_i2c_write_byte(0x4f,0xa0);   // X-axis center low[7:0]                          
+    siv121a_i2c_write_byte(0x50,0x80);   // Y-axis center low[7:0]                          
+    siv121a_i2c_write_byte(0x51,0x80);   // Shading Center Gain                                
     siv121a_i2c_write_byte(0x52,0x00);   // Shading R Offset                                
     siv121a_i2c_write_byte(0x53,0x00);   // Shading Gr Offset                               
     siv121a_i2c_write_byte(0x54,0x00);   // Shading Gb Offset                               
@@ -740,7 +745,7 @@ static boolean initialize_siv121a_registers_snapshot_qtr(void)
 
     siv121a_i2c_write_byte(0x00,0x01);
     siv121a_i2c_write_byte(0x04,0x10);
-    siv121a_i2c_write_byte(0x05,0x06);
+    siv121a_i2c_write_byte(0x05,0x01);
     siv121a_i2c_write_byte(0x11,0x25);
     siv121a_i2c_write_byte(0x12,0x21); 
     siv121a_i2c_write_byte(0x13,0x15);
@@ -759,9 +764,9 @@ static boolean initialize_siv121a_registers_snapshot_qtr(void)
     siv121a_i2c_write_byte(0x00,0x02);
     siv121a_i2c_write_byte(0x34,0x42);
     siv121a_i2c_write_byte(0x11,0x08); 
-    siv121a_i2c_write_byte(0x12,0x80); 
-    siv121a_i2c_write_byte(0x13,0x80);
-    siv121a_i2c_write_byte(0x14,0x80);
+    siv121a_i2c_write_byte(0x12,0x66); 
+    siv121a_i2c_write_byte(0x13,0x66);
+    siv121a_i2c_write_byte(0x14,0x66);
     siv121a_i2c_write_byte(0x1e,0x00);
     
     siv121a_i2c_write_byte(0x40,0x30);
@@ -808,7 +813,7 @@ static boolean initialize_siv121a_registers_snapshot_qtr(void)
     siv121a_i2c_write_byte(0x21,0x30);
     siv121a_i2c_write_byte(0x22,0xA4);
     siv121a_i2c_write_byte(0x23,0x20);
-    siv121a_i2c_write_byte(0x25,0x20);
+    siv121a_i2c_write_byte(0x25,0x10);
     siv121a_i2c_write_byte(0x26,0x0F);
     siv121a_i2c_write_byte(0x27,0x10);
     siv121a_i2c_write_byte(0x28,0x20);
@@ -893,24 +898,24 @@ static boolean initialize_siv121a_registers_snapshot_qtr(void)
     siv121a_i2c_write_byte(0x3F,0xFF);
 
     // Shading
-    siv121a_i2c_write_byte(0x40,0x0a);
-    siv121a_i2c_write_byte(0x41,0xba);
+    siv121a_i2c_write_byte(0x40,0x11);
+    siv121a_i2c_write_byte(0x41,0x21);
     siv121a_i2c_write_byte(0x42,0x32);
-    siv121a_i2c_write_byte(0x43,0x32);
-    siv121a_i2c_write_byte(0x44,0x21);
-    siv121a_i2c_write_byte(0x45,0x00);                                                  
-    siv121a_i2c_write_byte(0x46,0x24);   // left R gain[7:4], right R gain[3:0] 0x22        
-    siv121a_i2c_write_byte(0x47,0x22);   // top R gain[7:4], bottom R gain[3:0]             
-    siv121a_i2c_write_byte(0x48,0x23);   // left Gr gain[7:4], right Gr gain[3:0]           
-    siv121a_i2c_write_byte(0x49,0x50);   // top Gr gain[7:4], bottom Gr gain[3:0]           
-    siv121a_i2c_write_byte(0x4a,0x14);   // left Gb gain[7:4], right Gb gain[3:0]           
+    siv121a_i2c_write_byte(0x43,0x43);
+    siv121a_i2c_write_byte(0x44,0x55);
+    siv121a_i2c_write_byte(0x45,0x55);                                                  
+    siv121a_i2c_write_byte(0x46,0x22);   // left R gain[7:4], right R gain[3:0] 0x22        
+    siv121a_i2c_write_byte(0x47,0x23);   // top R gain[7:4], bottom R gain[3:0]             
+    siv121a_i2c_write_byte(0x48,0x11);   // left Gr gain[7:4], right Gr gain[3:0]           
+    siv121a_i2c_write_byte(0x49,0x12);   // top Gr gain[7:4], bottom Gr gain[3:0]           
+    siv121a_i2c_write_byte(0x4a,0x01);   // left Gb gain[7:4], right Gb gain[3:0]           
     siv121a_i2c_write_byte(0x4b,0x12);   // top Gb gain[7:4], bottom Gb gain[3:0]           
-    siv121a_i2c_write_byte(0x4c,0x03);   // left B gain[7:4], right B gain[3:0]             
-    siv121a_i2c_write_byte(0x4d,0x21);   // top B gain[7:4], bottom B gain[3:0]             
-    siv121a_i2c_write_byte(0x4e,0x04);   // X-axis center high[3:2], Y-axis center high[1:0]
-    siv121a_i2c_write_byte(0x4f,0x46);   // X-axis center low[7:0]                          
-    siv121a_i2c_write_byte(0x50,0xf6);   // Y-axis center low[7:0]                          
-    siv121a_i2c_write_byte(0x51,0x84);   // Shading Center Gain                             
+    siv121a_i2c_write_byte(0x4c,0x01);   // left B gain[7:4], right B gain[3:0]             
+    siv121a_i2c_write_byte(0x4d,0x11);   // top B gain[7:4], bottom B gain[3:0]             
+    siv121a_i2c_write_byte(0x4e,0x00);   // X-axis center high[3:2], Y-axis center high[1:0]
+    siv121a_i2c_write_byte(0x4f,0xa0);   // X-axis center low[7:0]                          
+    siv121a_i2c_write_byte(0x50,0x80);   // Y-axis center low[7:0]                          
+    siv121a_i2c_write_byte(0x51,0x80);   // Shading Center Gain                                
     siv121a_i2c_write_byte(0x52,0x00);   // Shading R Offset                                
     siv121a_i2c_write_byte(0x53,0x00);   // Shading Gr Offset                               
     siv121a_i2c_write_byte(0x54,0x00);   // Shading Gb Offset                               
@@ -1188,11 +1193,12 @@ static boolean camsensor_siv121a_snapshot_config( camsensor_static_params_type  
     	            camsensor_params->full_size_height;
         
     	/* CAMIF Window */
-    	camsensor_params->camif_window_width_config.firstPixel = 0;//camsensor_params->camsensor_width-camera_dx; //按CLK
+    	camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_dx; //按CLK
     	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_dx*2);
 
-    	camsensor_params->camif_window_height_config.firstLine = 0;//(camsensor_params->camsensor_height-camera_dy)/2;
+    	camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_dy)/2;
     	camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
+        camsensor_params->pixel_clock = 1;
         initialize_siv121a_registers_snapshot();
     }
     else
@@ -1211,11 +1217,12 @@ static boolean camsensor_siv121a_snapshot_config( camsensor_static_params_type  
     	            camsensor_params->qtr_size_height;
         
     	/* CAMIF Window */
-    	camsensor_params->camif_window_width_config.firstPixel = 0;//camsensor_params->camsensor_width-camera_dx; //按CLK
+    	camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_dx; //按CLK
     	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_dx*2);
 
-    	camsensor_params->camif_window_height_config.firstLine = 0;//(camsensor_params->camsensor_height-camera_dy)/2;
+    	camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_dy)/2;
     	camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
+        camsensor_params->pixel_clock = 2;
         initialize_siv121a_registers_snapshot_qtr();
     }
 	return TRUE;
@@ -1278,12 +1285,16 @@ static boolean camsensor_siv121a_video_config(camsensor_static_params_type *cams
                 camsensor_params->qtr_size_height;
     
     /* CAMIF Window */
-    camsensor_params->camif_window_width_config.firstPixel = 0;//camsensor_params->camsensor_width-camera_preview_dx; //按CLK
+    camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_preview_dx; //按CLK
     camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_preview_dx*2);
 
-    camsensor_params->camif_window_height_config.firstLine = 0;//(camsensor_params->camsensor_height-camera_preview_dy)/2;
+    camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_preview_dy)/2;
     camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_preview_dy;
-    
+#ifdef CAMSENSOR_HIGHQUALITY_PREVIEW
+    camsensor_params->pixel_clock = 2; 
+#else
+    camsensor_params->pixel_clock = 1;
+#endif
     initialize_siv121a_registers_preview();
 	return TRUE;
 }
