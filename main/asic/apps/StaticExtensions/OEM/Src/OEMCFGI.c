@@ -253,7 +253,7 @@ when       who     what, where, why
 // in OEMConfigListType.  It does not need to be incremented when a new
 // field is added to the end of OEMConfigListType.
 //
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000A )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000B )
 
 ////
 // The EFS file that stores the OEM configuration.
