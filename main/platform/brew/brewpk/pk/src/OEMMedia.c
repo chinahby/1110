@@ -375,11 +375,7 @@ int AEEMedia_Play(IMedia * po)
 {
    AEEMedia *           pme = (AEEMedia *)po;
    int                  nRet = SUCCESS;
-
-	DBGPRINTF("***zzg AEEMedia_Play***");
-	
-	DBGPRINTF("***zzg Play m_nState=%d, m_bStateChanging=%d***", (pme)->m_nState, (pme)->m_bStateChanging);
-	
+   
    if (!AEEMedia_IsPlayOK(pme))
       return EBADSTATE;
 
@@ -499,10 +495,6 @@ int AEEMedia_Seek(IMedia * po, AEEMediaSeek eSeek, int32 lTimeMS)
 int AEEMedia_Pause(IMedia * po)
 {
    AEEMedia * pme = (AEEMedia *)po;
-
-	DBGPRINTF("***zzg AEEMedia_Pause***");
-	
-	DBGPRINTF("***zzg Pause m_nState=%d, m_bStateChanging=%d***", (pme)->m_nState, (pme)->m_bStateChanging);
 	
    if (!AEEMedia_IsPauseOK(pme))
    {   
@@ -518,11 +510,7 @@ int AEEMedia_Pause(IMedia * po)
 int AEEMedia_Resume(IMedia * po)
 {
    AEEMedia * pme = (AEEMedia *)po;
-
-   DBGPRINTF("***zzg AEEMedia_Resume***");
-	
-	DBGPRINTF("***zzg Resume m_nState=%d, m_bStateChanging=%d***", (pme)->m_nState, (pme)->m_bStateChanging);
-
+   
    if (!AEEMedia_IsResumeOK(pme))
       return EBADSTATE;
 
@@ -580,8 +568,7 @@ void AEEMedia_CallbackNotify(AEEMedia * pme, AEEMediaCallback * pmcb)
          AEEMedia_AppCallback(pme, pmcb);
       }
       else
-      {
-      	DBGPRINTF("***zzg OEMMEDIA 444 state=%d***", pme->m_nState);
+      {      	
          // Perform state change...
          switch (pme->m_nState)
          {

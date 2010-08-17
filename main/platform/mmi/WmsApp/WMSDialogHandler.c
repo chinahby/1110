@@ -2300,8 +2300,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                     break;
             }
             return TRUE;
-                
-            
+
         case EVT_KEY:
             switch(wParam)
             {

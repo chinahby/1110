@@ -371,8 +371,20 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_SMS_VIBANDRINGER  4
 #define   OEMNV_DEFAULTRINGER        4
 #define   OEMNV_ALARM_RINGER  1 
+
+#ifdef FEATURE_VERSION_IVIO
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
+#elif defined FEATURE_VERSION_SMART
+#define   OEMNV_STARTUP_MUSIC 5 
+#define   OEMNV_SHUTDOWN_MUSIC 6 
+#elif defined FEATURE_VERSION_M8
+#define   OEMNV_STARTUP_MUSIC 5 
+#define   OEMNV_SHUTDOWN_MUSIC 6 
+#else
+#define   OEMNV_STARTUP_MUSIC 11
+#define   OEMNV_SHUTDOWN_MUSIC 12
+#endif
 
 //开关机铃声提示
 #define   OEMNV_POWERONOFF_ENABLE   1
