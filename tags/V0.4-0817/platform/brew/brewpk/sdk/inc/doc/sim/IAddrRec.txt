@@ -1,0 +1,12 @@
+/* 
+===========================
+Simulator Support DOCUMENTATION
+============================
+IAddrRec simulation
+
+IAddrRec is simulated.
+
+See Also: IAddrbook
+
+==========================  
+*/

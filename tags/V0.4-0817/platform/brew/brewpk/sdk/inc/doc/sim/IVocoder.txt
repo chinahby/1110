@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IVocoder simulation
+
+IVocoder is not simulated.
+==========================
+*/ 
