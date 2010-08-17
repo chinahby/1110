@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="blackjack_image_ivio" VERSION="1">
-<Objects MimeType="image/png">
-	<Object Id="5001" Name="IDI_CARDS">
-		<File>..\..\..\Appscommon\images\160x128\ivio\blackjack\Cards.png</File>
-	</Object>
-</Objects>
-</BREWRes>

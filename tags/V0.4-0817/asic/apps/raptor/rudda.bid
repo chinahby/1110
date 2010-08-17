@@ -1,6 +1,0 @@
-#ifndef RUDDA_BID
-#define RUDDA_BID
-
-#define AEECLSID_RUDDA    	0x0102a123
-
-#endif //RUVPA_BID

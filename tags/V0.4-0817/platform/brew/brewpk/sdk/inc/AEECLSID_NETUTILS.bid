@@ -1,8 +1,0 @@
-#ifndef NETUTILS_BID
-#define NETUTILS_BID
-   
-#include "../../inc/AEENetUtils.bid"
-   
-#define AEECLSID_NETUTILS AEECLSID_NetUtils
-  
-#endif //NETUTILS_BID

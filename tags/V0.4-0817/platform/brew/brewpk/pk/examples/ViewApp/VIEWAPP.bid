@@ -1,6 +1,0 @@
-#ifndef VIEWAPP_BID
-#define VIEWAPP_BID
-
-#define AEECLSID_VIEWAPP        0x0100103F
-
-#endif //VIEWAPP_BID

@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-Multimedia_Content_File simulation
-
-Multimedia_Content_File is simulated.
-==========================
-*/ 
