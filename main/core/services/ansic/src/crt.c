@@ -58,6 +58,9 @@ when       who     what, where, why
 #include "comdef.h"
 #include "msg.h"
 #include "err.h"
+#ifdef CUST_EDITION
+   #include "tmc.h"
+#else
 #if defined(FEATURE_BREW_LITE) || defined(FEATURE_BREW)
    #include "OEMHeap.h"
    #include "OEMFeatures.h"
@@ -69,6 +72,7 @@ when       who     what, where, why
 #if defined (FEATURE_UI_CORE_REMOVED) || defined (FEATURE_L4)
    #include "tmc.h"
 #endif
+#endif //CUST_EDITION
 
 #include "AEEstd.h"
 #include "AEEVaList.h"
@@ -215,6 +219,9 @@ void *malloc(
    unsigned int size
 )
 {
+#ifdef CUST_EDITION
+   return tmc_malloc( size );
+#else
 #if defined (FEATURE_L4)
 #error code not present
 #else
@@ -229,6 +236,7 @@ void *malloc(
 #endif /* defined(FEATURE_BREW_LITE) || defined(FEATURE_BREW) */
 #endif /* defined FEATURE_UI_CORE_REMOVED */
 #endif /* defined FEATURE_L4 */
+#endif // CUST_EDITION
 } /* END malloc */
 
 /* ==================================================================
@@ -243,7 +251,10 @@ void *calloc(
 {
    unsigned int num_bytes = num * size;
    void *mem_ptr = NULL;
-
+   
+#ifdef CUST_EDITION
+   mem_ptr = tmc_malloc( num_bytes );
+#else
 #if defined (FEATURE_L4)
 #error code not present
 #else
@@ -257,6 +268,7 @@ void *calloc(
 #endif /* defined(FEATURE_BREW_LITE) || defined(FEATURE_BREW) */
 #endif /* defined FEATURE_UI_CORE_REMOVED */
 #endif /* defined FEATURE_L4 */
+#endif // CUST_EDITION
 
    if (mem_ptr)
       memset( mem_ptr, 0x00, num_bytes );
@@ -272,6 +284,9 @@ void free(
    void *ptr
 )
 {
+#ifdef CUST_EDITION
+   tmc_free( ptr );
+#else
 #if defined (FEATURE_L4)
 #error code not present
 #else
@@ -285,6 +300,7 @@ void free(
 #endif /* defined(FEATURE_BREW_LITE) || defined(FEATURE_BREW) */
 #endif /* defined FEATURE_UI_CORE_REMOVED */
 #endif /* defined FEATURE_L4 */
+#endif // CUST_EDITION
 } /* END free */
 
 /* ==================================================================
@@ -297,6 +313,9 @@ void *realloc(
    unsigned int size
 )
 {
+#ifdef CUST_EDITION
+   return tmc_realloc( ptr, size );
+#else
 #ifdef FEATURE_UI_CORE_REMOVED
    #ifdef FEATURE_L4
 #error code not present
@@ -315,6 +334,7 @@ void *realloc(
    return NULL;
 #endif /* defined(FEATURE_BREW_LITE) || defined(FEATURE_BREW) */
 #endif /* defined FEATURE_UI_CORE_REMOVED */
+#endif // CUST_EDITION
 } /* END realloc */
 
 /* ==================================================================
