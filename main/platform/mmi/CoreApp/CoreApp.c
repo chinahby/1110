@@ -318,11 +318,6 @@ boolean CoreApp_InitAppData(IApplet* po)
         }
     }
     
-    if (TRUE != CoreApp_RegisterNotify(pMe))
-    {
-        return FALSE;
-    }
-    
     if (TRUE != CoreApp_InitExtInterface(pMe))
     {
         return FALSE;
@@ -423,6 +418,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
     switch (eCode)
     {
         case EVT_APP_START:
+            if(!CoreApp_RegisterNotify(pMe))
+            {
+                return FALSE;
+            }
+            else
             {
                 AEEAppStart *as;
 
@@ -451,6 +451,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 pMe->m_bSuspended = FALSE;
                 pMe->m_bActive = TRUE;
             }
+        
             if(pMe->m_pIAnn != NULL)
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
@@ -1648,29 +1649,6 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
 {
     int nRet;
     uint32 dwMask;
-    AEECMPhInfo phInfo;
-
-    pMe->m_bProvisioned = FALSE;
-    // 创建 ICM 接口
-    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                 AEECLSID_CALLMANAGER,
-                                 (void **) &pMe->m_pCM);
-    if (nRet != SUCCESS) 
-    {
-        return FALSE;
-    }
-    if (pMe->m_pCM == NULL) 
-    {
-        return FALSE;
-    }
-    
-    ICM_SetRSSIDeltaThreshold(pMe->m_pCM, 5);
-    /* If phone info is available, do not wait for PH_INFO_AVAIL event for
-       * starting provisioning */
-    if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
-    {
-        InitAfterPhInfo(pMe, phInfo.oprt_mode);
-    }
     
     // register with ICM
     dwMask = NMASK_CM_PHONE|NMASK_CM_SS|NMASK_CM_DATA_CALL;
@@ -1679,15 +1657,6 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
                                  AEECLSID_CORE_APP, 
                                  AEECLSID_CM_NOTIFIER, 
                                  dwMask);
-    if (nRet != SUCCESS) 
-    {
-        return FALSE;
-    }
-    
-    // 创建 IBatt 接口
-    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                 AEECLSID_BATTERY,
-                                 (void **) &pMe->m_pBatt);
     if (nRet != SUCCESS) 
     {
         return FALSE;
@@ -1708,19 +1677,6 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
     {
         return FALSE;
     }     
-
-    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                 AEECLSID_ALERT,
-                                 (void **)&pMe->m_pAlert);
-    if (nRet != SUCCESS) 
-    {
-        return FALSE;
-    }
-    
-    if (pMe->m_pAlert == NULL) 
-    {
-        return FALSE;
-    }
     
     if(ISHELL_RegisterNotify(pMe->a.m_pIShell, AEECLSID_CORE_APP,
         AEECLSID_ALERT_NOTIFIER, NMASK_ALERT_ONOFF | NMASK_ALERT_MUTED) != SUCCESS)
@@ -1751,6 +1707,51 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
 boolean CoreApp_InitExtInterface(CCoreApp *pMe)
 {
     int nRet;
+    AEECMPhInfo phInfo;
+    
+    pMe->m_bProvisioned = FALSE;
+    // 创建 ICM 接口
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_CALLMANAGER,
+                                 (void **) &pMe->m_pCM);
+    if (nRet != SUCCESS) 
+    {
+        return FALSE;
+    }
+    if (pMe->m_pCM == NULL) 
+    {
+        return FALSE;
+    }
+    
+    ICM_SetRSSIDeltaThreshold(pMe->m_pCM, 5);
+    /* If phone info is available, do not wait for PH_INFO_AVAIL event for
+       * starting provisioning */
+    if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
+    {
+        InitAfterPhInfo(pMe, phInfo.oprt_mode);
+    }
+
+    // 创建 IBatt 接口
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_BATTERY,
+                                 (void **) &pMe->m_pBatt);
+    if (nRet != SUCCESS) 
+    {
+        return FALSE;
+    }
+    
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_ALERT,
+                                 (void **)&pMe->m_pAlert);
+    if (nRet != SUCCESS) 
+    {
+        return FALSE;
+    }
+    
+    if (pMe->m_pAlert == NULL) 
+    {
+        return FALSE;
+    }
     
     nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
                                  AEECLSID_ANNUNCIATOR,

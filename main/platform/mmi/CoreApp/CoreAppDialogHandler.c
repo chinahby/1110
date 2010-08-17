@@ -4756,10 +4756,13 @@ void CoreApp_Poweroff_Phone(void *pp)
     }
     // 不再关心 IBatt 通知消息
     (void) ISHELL_RegisterNotify(pMe->a.m_pIShell,
-                AEECLSID_CORE_APP,
-                AEECLSID_BATTERYNOTIFIER,
-                0);
-    
+                                 AEECLSID_CORE_APP,
+                                 AEECLSID_BATTERYNOTIFIER,
+                                 0);
+    (void) ISHELL_RegisterNotify(pMe->a.m_pIShell, 
+                                 AEECLSID_CORE_APP, 
+                                 AEECLSID_CM_NOTIFIER, 
+                                 0);
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 
     // Turn off RSSI indicator
