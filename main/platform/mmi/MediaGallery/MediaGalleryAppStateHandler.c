@@ -570,14 +570,30 @@ static NextFSMAction MGStateMainMenuHandler(CMediaGalleryApp* pMe)
             MGMOVE_TO_STATE(pMe,STATE_MEDIAMENU);
             break;
 
-         case MGSM_MUSIC_ADD:
+         case MGSM_MUSIC_ADD:		
+		 {
+		 	//Add By zzg 2010_08_17
+			IImage * pIImage = ISHELL_LoadBusyImage(pMe->m_pShell);		
+
+			if (pIImage)
+			{			
+				AEEImageInfo ii;
+				IIMAGE_GetInfo(pIImage, &ii);
+				IIMAGE_SetParm(pIImage, IPARM_ROP, AEE_RO_TRANSPARENT, 0);
+				IIMAGE_Draw(pIImage, (pMe->m_rc.dx - ii.cx)/2, (pMe->m_rc.dy - TITLEBAR_HEIGHT - BOTTOMBAR_HEIGHT - ii.cy)/2);
+				IIMAGE_Release(pIImage);
+				IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+			}
+			//Add End
+	  
             MGState_StartFileExplorer(pMe,
                                       MG_STMED_MASSCARD,
-                                      /*MG_MASSCARD_ROOTDIR,*/
-                                      MG_MASSCARDMUSIC_PATH,
+                                      MG_MASSCARD_ROOTDIR,
+                                      //MG_MASSCARDMUSIC_PATH,
                                       MG_MIME_SNDBASE);
             MGMOVE_TO_STATE(pMe,STATE_MUSIC_ADD);
             break;
+         }
 
          case MGSM_VIDEO_ADD:
             MGState_StartFileExplorer(pMe,
@@ -1439,6 +1455,7 @@ static boolean MGState_StartFileExplorer(CMediaGalleryApp* pMe,
    pMe->m_StoreMedium = nStoreMedium;
 
    MGExplorer_Init(&pMe->m_Explorer, pMe->m_pFileMgr, cpszPath, eMimeType);
+
    if(SUCCESS != MGExplorer_EnumFoldersList(pMe->m_pFileMgr,
                                             cpszPath,
                                             pMe->m_pFolderList,

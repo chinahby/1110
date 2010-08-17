@@ -87,6 +87,7 @@ static void MP3_SetStartCurState(CMusicPlayer *pMe);
 static void MP3_SetStartStatus(CMusicPlayer *pMe);
 
 static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe);
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -1599,7 +1600,12 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
     FileName szFileName;
     IFile *pFile;
     AEEFileInfoEx  fi;
-    char destFileName[PLAYLISTNAME_MAX_LEN];
+    char destFileName[PLAYLISTNAME_MAX_LEN];	
+	
+	//Add By zzg 2010_08_17
+	uint16 count = 0;		//遍历T卡文件夹的数量
+	char  Folder[50][MUSIC_MAX_FILESNUM];		//最多允许50个T卡文件夹
+	//Add End
     
     ASSERT(pMe != NULL); 
     if(pMe == NULL||pMe->m_pFileMgr==NULL)
@@ -1678,11 +1684,11 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
 		 continue;
 	   }
    }
-   
-    //枚举playlist文件夹 
+
+   //Add By zzg 2010_08_17
     if(CMediaGallery_GetTflashStatus())		//有T 卡时
     {
-       (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MP3_SD_MUSIC_DIR, FALSE);
+       (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, FALSE); //T卡根目录的文件
 
 	     while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
 	     {
@@ -1725,7 +1731,139 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
 	          }
 	     }
     }
+   //Add End
    
+    //枚举playlist文件夹 
+    /*
+    if(CMediaGallery_GetTflashStatus())		//有T 卡时
+    {
+       (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MP3_SD_MUSIC_DIR, FALSE);  
+
+	     while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
+	     {
+	          char *            psz = NULL;
+	          char *            pf = NULL;
+	          
+	          if(pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
+	          {
+	            break;
+	          }
+	          psz = STRRCHR(fi.pszFile, '.');
+	          if (NULL == psz)
+	          {
+	            continue; 
+	          }
+	          psz++;
+	          
+	          pf = STRRCHR(fi.pszFile, '/');
+	          if (NULL == pf)
+	          {
+	            continue;
+	          }  
+	          pf++;
+	          // 如果是musicplayer 支持的文件则加进来(有支持更多需要在此添加)
+	          if ((*psz) && (*pf) && (0 == STRICMP(psz,MP3_TYPE) || 0 == STRICMP(psz,MIDI_TYPE)) 
+	              && pMe->m_nPlaylistMusicNum < MUSIC_MAX_FILESNUM)
+	          {
+	            //为了保存添加播放列表中歌曲的顺序，这里用第一位来存储该歌曲的添加顺序，这里用'0'开始的50个字符表示
+	            // PS:选择的该段字符最好不能含有'/''.'这两个字符
+	            pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName[0]=(pMe->m_nPlaylistMusicNum+48);
+	            STRLCPY(pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName+1,
+	                    fi.pszFile,MP3_MAX_FILE_NAME * sizeof(char));
+	            pMe->m_nPlaylistMusicNum++;
+	             continue; 
+	          }
+	          else
+	          {
+	            // 如果我们不支持的文件则继续枚举下一个文件
+	            continue;
+	          }
+	     }
+    }
+    */
+
+	 //枚举playlist文件夹     
+    if (CMediaGallery_GetTflashStatus())		//有T 卡时
+    {
+       (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, TRUE); 	   
+		
+	     while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
+	     {
+	          if (pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
+	          {
+	            break;
+	          }
+
+			  if (NULL != fi.pszFile)
+			  {
+				STRLCPY(Folder[count], fi.pszFile, MP3_MAX_FILE_NAME * sizeof(char));
+				
+				count ++;
+	          	continue; 
+	          }
+	     }
+
+		 
+		 //依次遍历T卡里的所有文件夹
+		 {
+			int16 temp = 0;
+			for (temp = 0; temp < count; temp ++)
+			{	
+			     STRLCPY(fi.pszFile, Folder[temp], MP3_MAX_FILE_NAME * sizeof(char));				
+				
+				(void)IFILEMGR_EnumInit(pMe->m_pFileMgr, fi.pszFile, FALSE); 
+						  
+				while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
+				{
+				  char *            psz = NULL;
+				  char *            pf = NULL;
+
+				  if (pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
+				  {
+				    break;
+				  }
+				  
+				  psz = STRRCHR(fi.pszFile, '.');
+				  
+				  if (NULL == psz)
+				  {	
+					  continue; 
+				  }
+				  
+				  psz++;
+				  
+				  pf = STRRCHR(fi.pszFile, '/');
+				  
+				  if (NULL == pf)
+				  {				  
+				    continue;
+				  }  
+				  
+				  pf++;
+				  
+				  // 如果是musicplayer 支持的文件则加进来(有支持更多需要在此添加)
+				  if ((*psz) && (*pf) && (0 == STRICMP(psz,MP3_TYPE) || 0 == STRICMP(psz,MIDI_TYPE)) 
+				      && pMe->m_nPlaylistMusicNum < MUSIC_MAX_FILESNUM)
+				  {				  	
+				    //为了保存添加播放列表中歌曲的顺序，这里用第一位来存储该歌曲的添加顺序，这里用'0'开始的50个字符表示
+				    // PS:选择的该段字符最好不能含有'/''.'这两个字符
+				    pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName[0]=(pMe->m_nPlaylistMusicNum+48);
+				    STRLCPY(pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName+1,
+				            fi.pszFile,MP3_MAX_FILE_NAME * sizeof(char));
+				    pMe->m_nPlaylistMusicNum++;
+				     continue; 
+				  }
+				  else
+				  {				  	
+				    // 如果我们不支持的文件则继续枚举下一个文件
+				    continue;
+				  }
+				}
+			}	
+		 }
+		 
+	     
+    }
      CMusicPlayer_WriteMusiclist(pMe,DEFAULT_PLAYLIST);
      (void)CMediaGallery_GetTflashStatus();
 }

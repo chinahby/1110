@@ -48,6 +48,8 @@ typedef enum Mp3Player_Status
     MP3STATUS_RUNONBACKGROUND   // =2,mp3Player run on background
 }Mp3Player_Status;
 #define MUSICNAME_AUTO_SCROLL_TIME  500
+
+#define MUSIC_KEY_DISABLE_TIME	500		//Add By zzg 2010_08_16
 /*==============================================================================
                                  类接口函数定义
 ==============================================================================*/
