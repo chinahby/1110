@@ -2594,8 +2594,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
     if ((NULL != pwstrText) &&
         (WSTRLEN(pwstrText)>0))
     {
-        pMe->m_msSend.m_szMessage = sys_malloc((WSTRLEN(pwstrText)+1)*sizeof(AECHAR));//WSTRDUP(pwstrText);
-        WSTRCPY(pMe->m_msSend.m_szMessage,pwstrText);
+        pMe->m_msSend.m_szMessage = WSTRDUP(pwstrText);
     }
     
     nRet = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
@@ -5283,7 +5282,7 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
     (void)WSTRCPY(pMe->m_msSend.m_szNum, pItem->m_szTo);
     
     nSize = nItems*sizeof(wms_client_message_s_type *);
-    pMe->m_pCurSendCltMsg = (wms_client_message_s_type **)sys_malloc(nSize);
+    pMe->m_pCurSendCltMsg = (wms_client_message_s_type **)MALLOC(nSize);
     if (NULL == pMe->m_pCurSendCltMsg)
     {
         goto BuildList_ERR;

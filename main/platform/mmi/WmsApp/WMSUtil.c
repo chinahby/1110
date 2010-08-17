@@ -3604,7 +3604,7 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
     }
     
     nSize = sizeof(wms_client_ts_data_s_type);
-    pCltTsData = (wms_client_ts_data_s_type *)sys_malloc(nSize);
+    pCltTsData = (wms_client_ts_data_s_type *)MALLOC(nSize);
     if (NULL == pCltTsData)
     {
         ERR("sys_malloc Failed!",0,0,0);
@@ -3613,10 +3613,10 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
     MEMSET(pCltTsData, 0, nSize);
     
     nSize = sizeof(wms_client_message_s_type);
-    pCltMsg = (wms_client_message_s_type *)sys_malloc(nSize);
+    pCltMsg = (wms_client_message_s_type *)MALLOC(nSize);
     if (NULL == pCltMsg)
     {
-        WMSAPPU_SYSFREE(pCltTsData);
+        FREE(pCltTsData);
         ERR("sys_malloc Failed!",0,0,0);
         return NULL;
     }
@@ -3684,7 +3684,7 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
 #endif   
     // ÏûÏ¢±àÂë½áÊø
     
-    WMSAPPU_SYSFREE(pCltTsData);
+    FREEIF(pCltTsData);
     
     return pCltMsg;
 }

@@ -6473,15 +6473,21 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 if ((mem_store == pnode->mem_store) && (pnode->index == wIdx))
                 {
                     WmsApp_FreeSendClentMsgList(pMe);
-                    pClientMsg = (wms_client_message_s_type *)sys_malloc(sizeof(wms_client_message_s_type));
-                    pMe->m_pCurSendCltMsg = (wms_client_message_s_type **)sys_malloc(sizeof(wms_client_message_s_type *));
+                    pClientMsg = (wms_client_message_s_type *)MALLOC(sizeof(wms_client_message_s_type));
+                    pMe->m_pCurSendCltMsg = (wms_client_message_s_type **)MALLOC(sizeof(wms_client_message_s_type *));
                     
                     if ((NULL == pnode) || 
                         (pMe->m_pCurSendCltMsg == NULL) ||
                         (NULL == pClientMsg))
                     {
-                        WMSAPPU_SYSFREE(pClientMsg);
-                        WMSAPPU_SYSFREE(pMe->m_pCurSendCltMsg);
+                        if (NULL != pClientMsg)
+                        {
+                            FREE(pClientMsg);
+                        }
+                        if (NULL != pMe->m_pCurSendCltMsg)
+                        {
+                            FREE(pMe->m_pCurSendCltMsg);
+                        }
                         
                         CLOSE_DIALOG(DLGRET_END)
                         
@@ -8626,8 +8632,12 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 IMENUCTL_Release(pMe->m_pMenu);
                 pMe->m_pMenu = NULL;
             }
-            
-            WMSAPPU_SYSFREE(pMe->m_msSend.m_szMessage);
+
+            if (NULL != pMe->m_msSend.m_szMessage)
+            {
+                FREE(pMe->m_msSend.m_szMessage);
+                pMe->m_msSend.m_szMessage = NULL;
+            }
 			
             {
                 AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
@@ -8642,8 +8652,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 
                 if (nLen>0)
                 {
-                    pMe->m_msSend.m_szMessage = sys_malloc((WSTRLEN(ITEXTCTL_GetTextPtr(pIText))+1)*sizeof(AECHAR));
-                    WSTRCPY(pMe->m_msSend.m_szMessage, ITEXTCTL_GetTextPtr(pIText));
+                    pMe->m_msSend.m_szMessage = WSTRDUP(ITEXTCTL_GetTextPtr(pIText));
                     
                     if (pMe->m_eAppStatus == WMSAPP_STOP && pMe->m_eDlgReturn != DLGRET_EXIT_EDITOR)
                     {// 程序被中断退出，保存输入到草稿箱
@@ -9240,12 +9249,15 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
         case EVT_DIALOG_END:
             {
                 AECHAR *pWstr = ITEXTCTL_GetTextPtr(pIText);
-
-                WMSAPPU_SYSFREE(pMe->m_msSend.m_szMessage);
+                
+                if (NULL != pMe->m_msSend.m_szMessage)
+                {
+                    FREE(pMe->m_msSend.m_szMessage);
+                    pMe->m_msSend.m_szMessage = NULL;
+                }
                 if ((NULL != pWstr) && (WSTRLEN(pWstr)>0))
                 {
-                    pMe->m_msSend.m_szMessage = sys_malloc((WSTRLEN(pWstr)+1)*sizeof(AECHAR));
-                    WSTRCPY(pMe->m_msSend.m_szMessage, pWstr);
+                    pMe->m_msSend.m_szMessage = WSTRDUP(pWstr);
                 }
             }
             pMe->m_dwInsertPos = ITEXTCTL_GetCursorPos(pIText);
@@ -12610,7 +12622,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                 int32       dwSize;
                 
                 dwSize = (MAX_TEMPLATECHARS + 1) * sizeof(AECHAR);
-                wstrTemplate = (AECHAR*)sys_malloc(dwSize);
+                wstrTemplate = (AECHAR*)MALLOC(dwSize);
                 if (NULL == wstrTemplate)
                 {
                     CLOSE_DIALOG(DLGRET_LOADCANCELED)
@@ -12776,13 +12788,13 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     
                     if (nCanInsert <= 0)
                     {
-                        WMSAPPU_SYSFREE(wstrTemplate);
+                        FREE(wstrTemplate);
                         CLOSE_DIALOG(DLGRET_LOADOK)
                         return TRUE;
                     }
                     
                     nSize = (nLen + nCanInsert + 1) * sizeof(AECHAR);
-                    wszTep = (AECHAR *)sys_malloc(nSize);
+                    wszTep = (AECHAR *)MALLOC(nSize);
                     
                     if (wszTep != NULL)
                     {
@@ -12793,15 +12805,18 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                         
                         wszTep[nLen+nCanInsert] = 0;
                         pMe->m_dwInsertPos = startPos + nCanInsert;
-                        WMSAPPU_SYSFREE(szMessage);
+                        FREE(szMessage);
                         pMe->m_msSend.m_szMessage = wszTep;
                     }
                     
-                    WMSAPPU_SYSFREE(wstrTemplate);
+                    FREE(wstrTemplate);
                 }
                 else
                 {
-                    WMSAPPU_SYSFREE(pMe->m_msSend.m_szMessage);
+                    if (NULL != pMe->m_msSend.m_szMessage)
+                    {
+                        FREE(pMe->m_msSend.m_szMessage);
+                    }
                     pMe->m_msSend.m_szMessage = wstrTemplate;
                 }
                 CLOSE_DIALOG(DLGRET_LOADOK)
