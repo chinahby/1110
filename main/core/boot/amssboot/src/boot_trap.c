@@ -1342,7 +1342,12 @@ void boot_looping_exception_handler(
               exception_cause_label[boot_error_cause], boot_err_fatal_file,
               boot_err_fatal_line);
       lcd_message(text);
+#ifdef CUST_EDITION
+      boot_looping_delay(1);
+      boot_looping_wait_next();
+#else
       boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+#endif
     }
 
 #ifdef FEATURE_ERR_EXTENDED_STORE
@@ -1351,7 +1356,12 @@ void boot_looping_exception_handler(
     (void)std_strlprintf(text, sizeof(text), disp_reset_format,
             exception_cause_label[boot_error_cause]);
     lcd_message(text);
+#ifdef CUST_EDITION
+    boot_looping_delay(1);
+    boot_looping_wait_next();
+#else
     boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+#endif
 #endif /* FEATURE_ERR_EXTENDED_STORE */
 
     /*Output dload message */
@@ -1359,7 +1369,12 @@ void boot_looping_exception_handler(
     (void)std_strlprintf(text, sizeof(text), disp_dload_format,
             exception_cause_label[boot_error_cause]);
     lcd_message(text);
+#ifdef CUST_EDITION
+    boot_looping_delay(1);
+    boot_looping_wait_next();
+#else
     boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+#endif
 
     /* Check frame pointer, just to make sure we don't cause another abort. */
     /* Also, some errors may choose not to pass in a valid frame structure. */
@@ -1375,23 +1390,12 @@ void boot_looping_exception_handler(
               frame->l.r[15],"tcb",rex_curr_task);
 #endif
       lcd_message(text);
-      boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
-
 #ifdef CUST_EDITION
-      memset (text, ' ', (sizeof(text)-1));
-      (void)std_strlprintf(text, sizeof(text), disp_reg_format,
-                exception_cause_label[boot_error_cause],
-                frame->l.r[15],13,frame->l.r[13]);
-      lcd_message(text);
-      boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
-      
-      memset (text, ' ', (sizeof(text)-1));
-      (void)std_strlprintf(text, sizeof(text), disp_reg_format,
-                exception_cause_label[boot_error_cause],
-                frame->l.r[15],14,frame->l.r[14]);
-      lcd_message(text);
-      boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+      boot_looping_delay(1);
+      boot_looping_wait_next();
 #else
+      boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+#endif
       /* display registers r0-r15
        * r[15] contains the instruction of the address that caused
        * the data abort*/
@@ -1402,9 +1406,13 @@ void boot_looping_exception_handler(
                 exception_cause_label[boot_error_cause],
                 frame->l.r[15],i,frame->l.r[i]);
         lcd_message(text);
+#ifdef CUST_EDITION
+        boot_looping_delay(1);
+        boot_looping_wait_next();
+#else
         boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
-      }
 #endif
+      }
       /*Output the CPSR also */
       /*CPSR = SPSR in data aborts*/
       memset (text, ' ', (sizeof(text)-1));
@@ -1412,7 +1420,12 @@ void boot_looping_exception_handler(
               exception_cause_label[boot_error_cause],
               frame->l.r[15],"CPSR", frame->l.Spsr);
       lcd_message(text);
+#ifdef CUST_EDITION
+      boot_looping_delay(1);
+      boot_looping_wait_next();
+#else
       boot_looping_delay(EXCEPTION_DISPLAY_HOLD_SEC);
+#endif
 #ifdef CUST_EDITION
       if(rex_curr_task)
       {

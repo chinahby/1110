@@ -430,6 +430,14 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                 else if (IBATTERY_GetExternalPower(pMe->m_pBatt))
                 {
                     static boolean lpm   = 0;
+                    db_items_value_type db;
+                    db_get(DB_POWERUPTYPE,&db);//add by xuhui
+                    //如果是自动重启，则跳过LPM界面
+                    if(db.db_poweruptype == DB_POWERUP_BYRESET)
+                    {
+                        tepState = COREST_VERIFYPHONEPWD;
+                    }
+                    
                     // 若接入了外部电源，进入关机充电状态
                     MSG_FATAL("LPM test: have extern power!",0,0,0);
 
@@ -531,6 +539,8 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
         case DLGRET_MSGOK: // 从消息对话框返回
             {
                 boolean bValue = FALSE;
+                db_items_value_type db;
+                db_get(DB_POWERUPTYPE,&db);
                 
                 MSG_FATAL("COREST_VERIFYPHONEPWD_Handler DLGRET_MSGOK",0,0,0);
                 // 检查是否开启了手机锁密码检测功能
@@ -538,7 +548,7 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
                             CFGI_PHONE_PASSWORD_CHECK,
                             &bValue,
                             sizeof(bValue));
-                if (bValue)
+                if (bValue && db.db_poweruptype != DB_POWERUP_BYRESET)
                 {
                     CoreApp_ShowDialog(pMe, IDD_PWDINPUT);
                     return NFSMACTION_WAIT;
