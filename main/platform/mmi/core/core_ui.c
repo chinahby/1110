@@ -1514,12 +1514,10 @@ void CoreTask_init( void )
     // Register this callback to WMS.  This callback is for the purpose of
     // sharing cache that is stored in WMS.  WMS does NOT have to be
     // initialized for this callback to be registered.
-    #if 0
 #ifdef   FEATURE_CDSMS_CACHE
     wms_reg_msg_info_cache_cb(OEMWMS_MsgInfoCacheCb);
 #else
     wms_reg_msg_info_cache_cb(OEMWMS_MsgInfoCacheCbExt);
-#endif    
 #endif    
 #endif
 

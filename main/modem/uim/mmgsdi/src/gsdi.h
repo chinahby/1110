@@ -4588,8 +4588,6 @@ RETURN VALUE
 ===========================================================================*/
 boolean gsdi_is_ens_enabled_in_nv(void);
 
-#ifdef CUST_EDITION
-void gsdi_wait_initcompleted(void);
-#endif
+
 #endif  /* GSDI_H */
 

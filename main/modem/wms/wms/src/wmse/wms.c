@@ -370,7 +370,13 @@ void wms_init
   (void) rex_set_sigs( &wms_tcb, WMS_RPT_TIMER_SIG );
 
   rex_init_crit_sect(&sms_card_refresh_crit_sect);
-
+  
+#ifdef CUST_EDITION
+{
+  extern void wms_init_ui_cmd();
+  wms_init_ui_cmd();
+}
+#endif
   /* Initialize the objects
   */
   wms_nv_init();

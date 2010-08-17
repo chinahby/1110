@@ -175,9 +175,6 @@ when       who     what, where, why
 
 #include "ui.h"
 #include "cm.h"
-#include "wms.h"
-#include "OEMWMS.h"
-#include "OEMWMS_CacheInfo.h"
 
 #include "ipc.h"
 #include "ipcsvc.h"
@@ -304,8 +301,6 @@ static cm_call_id_type ui_origCall_id;
 static cm_call_id_type ui_incomCall_id;
 static cm_call_type_e_type ui_incomCall_type;
 cm_mm_call_info_s_type ui_calls[CM_CALL_ID_MAX];
-
-
 #endif /* defined(FEATURE_UI_CORE_REMOVED) && !defined(FEATURE_UI_DUALPROC_MDM) */
 
 #ifdef FEATURE_NEW_SLEEP_API
@@ -709,6 +704,8 @@ void ui_answer_call ()
 #endif
 
 #ifdef CUST_EDITION
+void ui_cmd(ui_cmd_type *cmd_ptr);
+
 #ifdef FEATURE_UTK2
 static boolean g_bCanProactiveHandle = FALSE;
 
@@ -716,8 +713,6 @@ void ui_enable_proactive(boolean bEnable)
 {
     g_bCanProactiveHandle = bEnable;
 }
-
-void ui_cmd(ui_cmd_type *cmd_ptr);
 
 void set_UTK_session_status(byte st)
 {
@@ -759,6 +754,40 @@ void set_UTK_session_status(byte st)
 	    /* Make sure task can process this control */
 	    (void) rex_set_sigs( &uim_tcb, UIM_STATE_TOGGLE_SIG);
 	}
+}
+#endif /*FEATURE_UTK2*/
+
+// 这个函数用来让WMS等到AEE初始化完成之后再调用wms_reg_msg_info_cache_cb锁注册的函数
+// 否则将导致WMS初始化非法使用BREW Heap导致一系列的问题
+void wms_init_ui_cmd(void)
+{
+	ui_cmd_type  *ui_buf_ptr;
+
+#ifdef FEATURE_REX_DYNA_MEM_UI
+	ui_buf_ptr = ui_get_cmd();
+#else
+	if( (ui_buf_ptr = (ui_cmd_type*) q_get( &ui_cmd_free_q)) == NULL )
+	{
+		ERR("Out of UI cmd buffer", 0,0,0);
+		return;
+	}
+	ui_buf_ptr->proactive_cmd.hdr.done_q_ptr = &ui_cmd_free_q;;
+#endif /* FEATURE_REX_DYNA_MEM_UI */
+
+	//wangliang add! 2010-08-13
+	if ( ui_buf_ptr == NULL )
+	{
+		MSG_FATAL("Out of UI cmd buffer", 0,0,0);
+		return;
+	}
+	
+	ui_buf_ptr->hdr.cmd        = UI_WMS_INIT;
+	ui_buf_ptr->hdr.task_ptr   = rex_self();
+	ui_buf_ptr->hdr.sigs       = UI_OEM_SIG;
+    
+	/* send command to ui */
+	ui_cmd( ui_buf_ptr );
+    rex_wait(UI_OEM_SIG);
 }
 
 /*==============================================================================
@@ -879,7 +908,9 @@ static void oemui_handlecmd(ui_cmd_type *cmd_ptr)
 #endif
             break;
 #endif
-
+        case UI_WMS_INIT:
+            // Nothing Todo
+            break;
         default:
             ERR( "ui command 0X%x is ignored!", cmd_ptr->hdr.cmd, 0, 0 );
             break;
@@ -935,7 +966,6 @@ static void process_command_sig(void)
         }
     }
 }
-#endif /*FEATURE_UTK2*/
 #endif
 
   /*===========================================================================
@@ -1830,9 +1860,6 @@ RETURNS
 SIDE EFFECTS
   None
 ===========================================================================*/
-#ifdef CUST_EDITION
-#include "gsdi.h"
-#endif
 void ui_init( void )
 {
 #if defined(FEATURE_UI_CORE_REMOVED) && !defined(FEATURE_UI_DUALPROC_MDM)
@@ -1852,14 +1879,6 @@ void ui_init( void )
 #if !defined(FEATURE_UI_CORE_REMOVED) && defined (FEATURE_NEW_SLEEP_API)
   gNewSleepHandle = sleep_register("UI_TASK", FALSE);
 #endif /* FEATURE_NEW_SLEEP_API */
-#if !defined(FEATURE_UI_CORE_REMOVED)  //add by yangdecai 
-	
-#ifdef   FEATURE_CDSMS_CACHE
-	  wms_reg_msg_info_cache_cb(OEMWMS_MsgInfoCacheCb);
-#else
-	  wms_reg_msg_info_cache_cb(OEMWMS_MsgInfoCacheCbExt);
-#endif  
-#endif
 
   /* Wait for start signal from task controller */
   (void) task_start( UI_RPT_TIMER_SIG, DOG_UI_RPT, &ui_rpt_timer );
@@ -1881,9 +1900,7 @@ void ui_init( void )
   gsdi_init(TRUE);
   gsdi_reg_callback(simple_handle_subscription_fn);
 #endif
-#ifdef CUST_EDITION
-  gsdi_wait_initcompleted();
-#endif
+
 // init RTRE
 #if defined(FEATURE_UI_CORE_REMOVED) && !defined(FEATURE_UI_DUALPROC_MDM)
 #ifdef FEATURE_MMGSDI

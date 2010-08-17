@@ -13196,21 +13196,4 @@ gsdi_returns_T gsdi_perso_get_key (
   return gsdi_status;
 }
 
-#ifdef CUST_EDITION
-void gsdi_wait_initcompleted(void)
-{
-    // 这里Sleep UI 3S可以保证UI初始化过程的流畅
-    rex_sleep(3000);
-    while(1)
-    {
-        if(gsdi_data.gsdi_state != GSDI_NOT_INIT_S)
-        {
-            break;
-        }
-        else
-        {
-            rex_sleep(100);
-        }
-    }
-}
-#endif
+

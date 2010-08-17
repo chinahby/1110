@@ -61,7 +61,7 @@ when       who     what, where, why
 typedef enum 
 {
     UI_PROACTIVE_UIM_F,
-    
+    UI_WMS_INIT,
     UI_NUM_UI_COMMANDS,              /* End of command list (note no comma!)    */
     UI_ITEMS_ENUM_PAD = 0x7FFF
 } ui_name_type;

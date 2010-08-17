@@ -261,6 +261,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 {
     CCoreApp *pMe = (CCoreApp*)po;
     boolean b_FMBackground = FALSE;
+    
     if (NULL == pMe)
     {
         return FALSE;
@@ -279,14 +280,43 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bSuspended = FALSE;
     pMe->m_bChargFull = FALSE;
     
-	if(SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
+    if(SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                                         AEECLSID_CARD,
                                         (void **) &pMe->m_pICard))
-	{
+    {
         return FALSE;
-	}
+    }
     
-    CoreApp_GetCardStatus(pMe, AEECARD_SLOT1);
+    
+    // 在这里等ICARD的PIN状态初始化完成，以保证剩余初始化流程能够按顺序完成
+    while(1)
+    {
+        AEECardPinStatus sPinStatus;
+        
+        CoreApp_GetCardStatus(pMe, AEECARD_SLOT1);
+        if (ICARD_GetPinStatus(pMe->m_pICard, AEECARD_PIN1, &sPinStatus) != SUCCESS)
+        {
+            MSLEEP(100);
+        }
+        else
+        {
+            if(sPinStatus.lock_state == AEECARD_PIN_NOT_INIT || sPinStatus.lock_state == AEECARD_PIN_UNKNOWN)
+            {
+                if(AEECARD_NO_CARD != pMe->m_nCardStatus)
+                {
+                    MSLEEP(100);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
     
     if (TRUE != CoreApp_RegisterNotify(pMe))
     {
@@ -297,9 +327,9 @@ boolean CoreApp_InitAppData(IApplet* po)
     {
         return FALSE;
     }
-	MSG_FATAL("CoreApp_InitAppData            ::::croeapp111:::",0,0,0);
+    MSG_FATAL("CoreApp_InitAppData            ::::croeapp111:::",0,0,0);
     MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::croeapp111:::",0,0,0);
-	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
+    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
     CoreTask_SetPwrDnComplete(FALSE);
     
     if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
@@ -315,7 +345,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_eUIMErrCode = UIMERR_UNKNOW;
     pMe->m_bAcquiredTime = FALSE;
     pMe->m_bExit = FALSE;
-	pMe->m_isShift  = FALSE;   //add by yangdecai  2010-07-27
+    pMe->m_isShift  = FALSE;   //add by yangdecai  2010-07-27
     
 #if defined(FEATURE_WMS_APP)
     pMe->m_bsmstipscheck = FALSE;
@@ -355,7 +385,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 #endif
 
 #ifdef FEATURE_TORCH_SUPPORT
-	pMe->TorchOn = FALSE;
+    pMe->TorchOn = FALSE;
 #endif
     CoreAppReadNVKeyBeepValue(pMe);
     g_pCoreApp = pMe;
@@ -477,18 +507,18 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 {
                     CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_ON);
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
-					snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By zzg 2010_07_18
-					snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By zzg 2010_07_18
-				}
+                    snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL); //Add By zzg 2010_07_18
+                    snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);  //Add By zzg 2010_07_18
+                }
                 else
                 {
                     CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_OFF);
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
-					snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By zzg 2010_07_18
-					snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By zzg 2010_07_18
-				}				
+                    snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);  //Add By zzg 2010_07_18
+                    snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL); //Add By zzg 2010_07_18
+                }               
             }
-								
+                                
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
             ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW,0,0L);//need to redraw IDLE
 #endif
@@ -613,9 +643,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             {
                 case AVK_POWER:
                 case AVK_END:
-				
+                
 #ifdef FEATURE_KEYGUARD
-		            if(OEMKeyguard_IsEnabled())
+                    if(OEMKeyguard_IsEnabled())
                     {
                         OEMKeyguard_SetState(TRUE);  //(FALSE);                      
                         return TRUE;
@@ -639,53 +669,53 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
                     return TRUE;
            #ifdef FEATURE_TORCH_SUPPORT
-				#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
-					case AVK_SPACE:
-					{
-						
-						if ( pMe->TorchOn == FALSE )
-						{
-							pMe->TorchOn = TRUE;
-							if (pMe->m_pBacklight)
-							{
-								IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
-								//IBACKLIGHT_Disable(pMe->m_pBacklight);
-							}
-						}
-						else
-						{
-							pMe->TorchOn = FALSE;
-							if (pMe->m_pBacklight)
-							{
-								IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
-								//IBACKLIGHT_Disable(pMe->m_pBacklight);
-							}
-						}
-											
-					}
+                #if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
+                    case AVK_SPACE:
+                    {
+                        
+                        if ( pMe->TorchOn == FALSE )
+                        {
+                            pMe->TorchOn = TRUE;
+                            if (pMe->m_pBacklight)
+                            {
+                                IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                                //IBACKLIGHT_Disable(pMe->m_pBacklight);
+                            }
+                        }
+                        else
+                        {
+                            pMe->TorchOn = FALSE;
+                            if (pMe->m_pBacklight)
+                            {
+                                IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                                //IBACKLIGHT_Disable(pMe->m_pBacklight);
+                            }
+                        }
+                                            
+                    }
 
-					return TRUE;
-				#endif
+                    return TRUE;
+                #endif
 
-				#if defined(FEATURE_PROJECT_W021)
-					case AVK_CAMERA:
-					{
-						if ( pMe->TorchOn == FALSE )
-						{
-							pMe->TorchOn = TRUE;
-							if (pMe->m_pBacklight)
-							{
-				        		IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
-				        		IBACKLIGHT_Disable(pMe->m_pBacklight);
-				    		}
-						}
-					}
+                #if defined(FEATURE_PROJECT_W021)
+                    case AVK_CAMERA:
+                    {
+                        if ( pMe->TorchOn == FALSE )
+                        {
+                            pMe->TorchOn = TRUE;
+                            if (pMe->m_pBacklight)
+                            {
+                                IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                                IBACKLIGHT_Disable(pMe->m_pBacklight);
+                            }
+                        }
+                    }
 
-					return TRUE;
-				#endif
-				
-					break;
-			#endif
+                    return TRUE;
+                #endif
+                
+                    break;
+            #endif
                 default:
                     break;
             }
@@ -716,7 +746,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         {
         
 
-        	return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
       
         }
             
@@ -880,8 +910,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             {
 
 #if defined( FEATURE_POWERDOWN_ALARM)
-				ICONFIG_GetItem(pMe->m_pConfig, CFGI_ALARM_FLAG,(void*)&pMe->powerupByAlarm, sizeof(boolean));
-#endif				
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_ALARM_FLAG,(void*)&pMe->powerupByAlarm, sizeof(boolean));
+#endif              
                 CLOSE_DIALOG( DLGRET_RTC)
             }
         }
@@ -900,7 +930,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             pMe->m_pMusicName = (AECHAR *)dwParam;  // yeuzhen.li add @090118
 #endif            
 #endif//WIN32
-			if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) != AEECLSID_CORE_APP) ||
+            if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) != AEECLSID_CORE_APP) ||
                 (pMe->m_wActiveDlgID != IDD_IDLE))
             {
                 return TRUE; 
@@ -973,7 +1003,7 @@ static boolean CoreApp_HandleNotify(CCoreApp * pMe, AEENotify *pNotify)
             return CoreApp_HandleCMNotify(pMe, pNotify);
 
         case AEECLSID_BATTERYNOTIFIER:
-            return CoreApp_HandleBattNotify(pMe, pNotify);			
+            return CoreApp_HandleBattNotify(pMe, pNotify);          
      
         default:
             break;
@@ -1064,7 +1094,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
     
     switch (pNotify->dwMask)
     {
-	case NMASK_CM_DATA_CALL:
+    case NMASK_CM_DATA_CALL:
             switch (pEvtInfo->event)
             {
                 case AEECM_EVENT_CALL_CONNECT:
@@ -1273,13 +1303,13 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
     AEENotify pNotify;
 
     MEMSET(&pNotify,0x00,sizeof(AEENotify));
-	if(pMe->m_pBatt != NULL)
-	{        
-		pNotify.dwMask = NMASK_BATTERY_CHARGERSTATUS_CHANGE;
-		CoreApp_HandleBattNotify(pMe,&pNotify);
-		pNotify.dwMask = NMASK_BATTERY_STATUS_CHANGE;
-		CoreApp_HandleBattNotify(pMe,&pNotify);	
-	}		
+    if(pMe->m_pBatt != NULL)
+    {        
+        pNotify.dwMask = NMASK_BATTERY_CHARGERSTATUS_CHANGE;
+        CoreApp_HandleBattNotify(pMe,&pNotify);
+        pNotify.dwMask = NMASK_BATTERY_STATUS_CHANGE;
+        CoreApp_HandleBattNotify(pMe,&pNotify); 
+    }       
 }
 #endif
 
@@ -1331,7 +1361,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 {
     //AEEBattLevel *pBattLevel;
     AEEBatteryChargerStatus nChargerStatus;
-    AEEBatteryStatus nBattStatus;	
+    AEEBatteryStatus nBattStatus;   
     
     if ((NULL == pMe) || (pNotify == NULL))
     {
@@ -1366,7 +1396,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             IBACKLIGHT_Enable(pMe->m_pBacklight);
             pMe->m_bChargFull = FALSE;
             break;
-		
+        
         // 充电状态改变
         case NMASK_BATTERY_CHARGERSTATUS_CHANGE:
             
@@ -1420,7 +1450,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 }
 
                 default:
-            	    break;
+                    break;
             }
             break;
             
@@ -1665,9 +1695,9 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
     // 注册 IBatt 通知事件：仅注册外部电源和充电状态通知事件，其余
     // 通知事件一旦话机启动并运行将被注册
     dwMask = NMASK_BATTERY_STATUS_CHANGE 
-    	    |NMASK_BATTERY_LEVEL_CHANGE
-    		|NMASK_BATTERY_CHARGERSTATUS_CHANGE
-    		|NMASK_BATTERY_EXTPWR_CHANGE;
+            |NMASK_BATTERY_LEVEL_CHANGE
+            |NMASK_BATTERY_CHARGERSTATUS_CHANGE
+            |NMASK_BATTERY_EXTPWR_CHANGE;
                                            
     nRet = ISHELL_RegisterNotify(pMe->a.m_pIShell,
                         AEECLSID_CORE_APP, 
@@ -1697,7 +1727,7 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
         return FALSE;
     }
 
-    return TRUE;	
+    return TRUE;    
    
 }
 
@@ -1732,7 +1762,7 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
     {
         return FALSE;
     }
-	else
+    else
     {
         uint32 nBattState = CoreApp_ConvertBattLvToAnnunState(CoreApp_GetBatteryLevel(pMe));
         IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
@@ -1957,7 +1987,7 @@ boolean CoreApp_IsEmergencyMode(ICM* pICM)
 {
     AEECMPhInfo phoneInfo;
     MSG_FATAL("CoreApp_IsEmergencyMode Start",0,0,0);
-	
+    
     //PRINT_FUNCTION_NAME();
 
     if (!pICM)
@@ -2055,11 +2085,11 @@ static void CoreApp_Process_Batty_Msg(CCoreApp   *pMe, uint16  msg_id)
         CoreNotifyMP3PlayerAlertEvent(pMe, TRUE);
         if(msg_id == IDS_LOWBATTMSG_TEXT)
             IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
-	    else
+        else
             IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_ROAMING);
         ISHELL_SetTimer(pMe->a.m_pIShell, 1500,(PFNNOTIFY)CoreNotifyMP3PlayerAlertEventCB, pMe);
         if((pMe->m_wActiveDlgID == IDD_PWDIMSIMCC ||
-	        pMe->m_wActiveDlgID == IDD_PWDINPUT ||
+            pMe->m_wActiveDlgID == IDD_PWDINPUT ||
             pMe->m_wActiveDlgID == IDD_UIMSECCODE ||
             pMe->m_wActiveDlgID == IDD_EMERGENCYNUMLIST ||
             pMe->m_wActiveDlgID == IDD_IDLE
@@ -2085,7 +2115,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
 {
     //CORE_ERR("Charger_Msg %d %d",pMe->m_wActiveDlgID,pMe->m_bExtPwrState);
     if((   pMe->m_wActiveDlgID == IDD_PWDIMSIMCC ||
-	        pMe->m_wActiveDlgID == IDD_PWDINPUT ||
+            pMe->m_wActiveDlgID == IDD_PWDINPUT ||
             pMe->m_wActiveDlgID == IDD_UIMSECCODE ||
             pMe->m_wActiveDlgID == IDD_EMERGENCYNUMLIST ||
             pMe->m_wActiveDlgID == IDD_IDLE
@@ -2095,7 +2125,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         if(pMe->m_bExtPwrState)
         {
             pMe->m_nMsgID = IDS_CHARGER_ON;
-	     CLOSE_DIALOG(DLGRET_BATT_INFO)
+         CLOSE_DIALOG(DLGRET_BATT_INFO)
 
         }
        else
@@ -2110,7 +2140,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
 static void CoreApp_Process_Headset_Msg(CCoreApp *pMe, uint16 msgId)
 {
     if((   pMe->m_wActiveDlgID == IDD_PWDIMSIMCC ||
-	        pMe->m_wActiveDlgID == IDD_PWDINPUT ||
+            pMe->m_wActiveDlgID == IDD_PWDINPUT ||
             pMe->m_wActiveDlgID == IDD_UIMSECCODE ||
             pMe->m_wActiveDlgID == IDD_EMERGENCYNUMLIST ||
             pMe->m_wActiveDlgID == IDD_IDLE
