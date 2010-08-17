@@ -60,7 +60,7 @@ when       who     what, where, why
 #include "err.h"
 #ifdef CUST_EDITION
    #include "tmc.h"
-#else
+#endif //CUST_EDITION
 #if defined(FEATURE_BREW_LITE) || defined(FEATURE_BREW)
    #include "OEMHeap.h"
    #include "OEMFeatures.h"
@@ -72,7 +72,6 @@ when       who     what, where, why
 #if defined (FEATURE_UI_CORE_REMOVED) || defined (FEATURE_L4)
    #include "tmc.h"
 #endif
-#endif //CUST_EDITION
 
 #include "AEEstd.h"
 #include "AEEVaList.h"
@@ -220,7 +219,14 @@ void *malloc(
 )
 {
 #ifdef CUST_EDITION
-   return tmc_malloc( size );
+   if(AEE_IsInitialized())
+   {
+      return OEM_Malloc( size );
+   }
+   else
+   {
+      return tmc_malloc( size );
+   }
 #else
 #if defined (FEATURE_L4)
 #error code not present
@@ -252,9 +258,6 @@ void *calloc(
    unsigned int num_bytes = num * size;
    void *mem_ptr = NULL;
    
-#ifdef CUST_EDITION
-   mem_ptr = tmc_malloc( num_bytes );
-#else
 #if defined (FEATURE_L4)
 #error code not present
 #else
@@ -268,7 +271,6 @@ void *calloc(
 #endif /* defined(FEATURE_BREW_LITE) || defined(FEATURE_BREW) */
 #endif /* defined FEATURE_UI_CORE_REMOVED */
 #endif /* defined FEATURE_L4 */
-#endif // CUST_EDITION
 
    if (mem_ptr)
       memset( mem_ptr, 0x00, num_bytes );
@@ -285,7 +287,14 @@ void free(
 )
 {
 #ifdef CUST_EDITION
-   tmc_free( ptr );
+   if((uint32)ptr < (uint32)(tmc_heap_mem_buffer+TMC_HEAP_MEM_BUFFER_SIZE))
+   {
+      tmc_free( ptr );
+   }
+   else
+   {
+      OEM_Free( ptr );
+   }
 #else
 #if defined (FEATURE_L4)
 #error code not present
@@ -314,7 +323,14 @@ void *realloc(
 )
 {
 #ifdef CUST_EDITION
-   return tmc_realloc( ptr, size );
+   if((uint32)ptr > (uint32)(tmc_heap_mem_buffer+TMC_HEAP_MEM_BUFFER_SIZE))
+   {
+      return OEM_Realloc( ptr, size );
+   }
+   else
+   {
+      return tmc_realloc( ptr, size );
+   }
 #else
 #ifdef FEATURE_UI_CORE_REMOVED
    #ifdef FEATURE_L4
