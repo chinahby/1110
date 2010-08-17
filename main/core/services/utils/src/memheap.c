@@ -798,6 +798,7 @@ DESCRIPTION
   
   if( answer )
    {
+	 
 	 memset(answer,0,size);
    }
 

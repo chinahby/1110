@@ -1800,7 +1800,7 @@ void ui_init_rtre(void)
 #ifdef FEATURE_RTRE_DEFAULT_IS_NV
     nvi.rtre_config = NV_RTRE_CONFIG_NV_ONLY;
 #else
-    nvi.rtre_config = NV_RTRE_CONFIG_RUIM_OR_DROP_BACK;//NV_RTRE_CONFIG_RUIM_ONLY;
+    nvi.rtre_config = NV_RTRE_CONFIG_RUIM_ONLY;
 #endif
     (void) ui_put_nv (NV_RTRE_CONFIG_I, &nvi);
   }
@@ -1898,7 +1898,6 @@ void ui_init( void )
 
 #if !defined(FEATURE_UI_DUALPROC_APPS)
 #ifndef FEATURE_MANGO_UI
-
   //init provisioning here
   ui_init_provisioning(cm_client_id);
 

@@ -1986,11 +1986,7 @@ void rex_def_task_internal(
    #ifdef FEATURE_ZREX
 #error code not present
    #endif
-#ifdef CUST_EDITION
-#ifdef FEATURE_REX_IPC
-   memset(&p_tcb->ipc_info,0,sizeof(rex_ipc_info_type));
-#endif
-#endif
+
    /*-------------------------------------------------------
    ** Task stack pointer points to the bottom of allocated
    ** stack memory. p_stksiz is the number of 8-bit bytes.

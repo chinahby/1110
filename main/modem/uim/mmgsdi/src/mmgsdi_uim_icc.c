@@ -412,12 +412,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_write_transparent (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   int32                              index            = 0;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_MED("MMGSDI_UIM_ICC_WRITE_TRANSPARENT", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -482,25 +477,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_write_transparent (
     7) user data: the req_ptr
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_WRITE_BIN_CMD_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr->write_data.data.data_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   uim_cmd_ptr->hdr.channel         = UIM_CHANNEL0;
   uim_cmd_ptr->write_bin.item      = uim_file_items;
@@ -625,12 +602,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_write_record (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   int32                              index            = 0;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif  
   MSG_MED("MMGSDI_UIM_ICC_WRITE_RECORD", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -697,25 +669,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_write_record (
     7) user data: the req_ptr
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_WRITE_REC_CMD_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr->write_data.data.data_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   uim_cmd_ptr->hdr.channel         = UIM_CHANNEL0;
   uim_cmd_ptr->write_rec.item      = uim_file_items;
@@ -852,12 +806,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_read_transparent (
   mmgsdi_return_enum_type               mmgsdi_status    = MMGSDI_SUCCESS;
   int32                                 index            = 0;
   mmgsdi_client_req_extra_info_type    *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_MED("MMGSDI_UIM_ICC_READ_TRANSPARENT", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -921,24 +870,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_read_transparent (
     6) user data: the req_ptr
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_READ_BIN_CMD_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   uim_cmd_ptr->hdr.channel         = UIM_CHANNEL0;
   uim_cmd_ptr->read_bin.item       = uim_file_items;
@@ -1092,12 +1024,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_read_record (
   mmgsdi_return_enum_type               mmgsdi_status    = MMGSDI_SUCCESS;
   int32                                 index            = 0;
   mmgsdi_client_req_extra_info_type    *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_MED("MMGSDI_UIM_ICC_READ_RECORD", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -1165,24 +1092,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_read_record (
     6) user data: the req_ptr
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_READ_REC_CMD_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   uim_cmd_ptr->hdr.channel         = UIM_CHANNEL0;
   uim_cmd_ptr->read_rec.item       = uim_file_items;
@@ -1468,12 +1378,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_status(
   uim_cmd_type *             uim_cmd_ptr      = NULL;
   uim_slot_type              uim_slot         = UIM_SLOT_NONE;
   int32                      index            = 0;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_HIGH("MMGSDI UIM UICC STATUS",0,0,0);
 
   /*---------------------------------------------------------------------------
@@ -1523,23 +1428,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_status(
      Set the uim_cmd_ptr paramaters accordingly
      --------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command        = UIM_STATUS_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
-  uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
+  uim_cmd_ptr->hdr.protocol       = UIM_GSM;
   uim_cmd_ptr->hdr.slot           = uim_slot;
 
   /* ----------------------------------------------------------------------------
@@ -1642,12 +1531,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_rehabilitate (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   int32                              index            = 0;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_HIGH("MMGSDI_UIM_ICC_REHABILITATE, sync_process: %d", sync_process, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -1693,7 +1577,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_rehabilitate (
     uim_cmd_ptr, sizeof(uim_cmd_type),mmgsdi_status);
   if (mmgsdi_status != MMGSDI_SUCCESS)
   {
-    //Gemsea Remove MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr->write_data.data.data_ptr);
+    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr->write_data.data.data_ptr);
     MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
     return mmgsdi_status;
   }
@@ -1706,24 +1590,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_rehabilitate (
     4) user data: the req_ptr
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_REHABILITATE_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   uim_cmd_ptr->hdr.channel         = UIM_CHANNEL0;
   uim_cmd_ptr->rehab.item          = uim_file_items;
@@ -1865,12 +1732,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_invalidate (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   int32                              index            = 0;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_MED("MMGSDI_UIM_ICC_INVALIDATE", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -1916,7 +1778,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_invalidate (
     uim_cmd_ptr, sizeof(uim_cmd_type),mmgsdi_status);
   if ((mmgsdi_status != MMGSDI_SUCCESS) || (uim_cmd_ptr == NULL))
   {
-    // Gemsea Remove MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr->write_data.data.data_ptr);
+    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr->write_data.data.data_ptr);
     MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
     return mmgsdi_status;
   }
@@ -1929,24 +1791,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_invalidate (
     4) user data: the req_ptr
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_INVALIDATE_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   uim_cmd_ptr->hdr.channel         = UIM_CHANNEL0;
   uim_cmd_ptr->invalidate.item     = uim_file_items;
@@ -2049,12 +1894,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_verify_pin (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   int32                              index            = 0;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_MED("MMGSDI_UIM_ICC_VERIFY_PIN", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -2118,24 +1958,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_verify_pin (
     6) user data: the req_ptr
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_VERIFY_CHV_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
     
   mmgsdi_status = mmgsdi_util_get_key_ref(req_ptr->request_header.client_id,
@@ -2244,12 +2067,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_enable_pin (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   int32                              index            = 0;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_MED("MMGSDI_UIM_ICC_ENABLE_PIN", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -2304,24 +2122,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_enable_pin (
     6) aid
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_ENABLE_CHV_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   
   mmgsdi_status = mmgsdi_util_get_key_ref(req_ptr->request_header.client_id,
@@ -2438,12 +2239,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_disable_pin (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   int32                              index            = 0;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_MED("MMGSDI_UIM_ICC_DISABLE_PIN", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -2498,24 +2294,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_disable_pin (
     6) aid
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_DISABLE_CHV_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   
   mmgsdi_status = mmgsdi_util_get_key_ref(req_ptr->request_header.client_id,
@@ -2631,12 +2410,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_change_pin (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   int32                              index            = 0;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_MED("MMGSDI_UIM_ICC_CHANGE_PIN", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -2692,24 +2466,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_change_pin (
     6) aid
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_CHANGE_CHV_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   
   mmgsdi_status = mmgsdi_util_get_key_ref(req_ptr->request_header.client_id,
@@ -2832,12 +2589,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_unblock_pin (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   int32                              index            = 0;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
 
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
   MSG_MED("MMGSDI_UIM_ICC_UNBLOCK_PIN", 0, 0, 0);
 
   /*---------------------------------------------------------------------------
@@ -2893,24 +2645,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_unblock_pin (
     6) aid
   ---------------------------------------------------------------------------*/
   uim_cmd_ptr->hdr.command         = UIM_UNBLOCK_CHV_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
   uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
   uim_cmd_ptr->hdr.slot            = uim_slot;
   
   mmgsdi_status = mmgsdi_util_get_key_ref(req_ptr->request_header.client_id,
@@ -3454,12 +3189,6 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_search_record (
   mmgsdi_return_enum_type            mmgsdi_status    = MMGSDI_SUCCESS;
   mmgsdi_client_req_extra_info_type *extra_param_ptr  = NULL;
   int32                              index            = 0;
-#ifdef CUST_EDITION
-  mmgsdi_int_app_info_type          *sel_app_ptr      = NULL;
-
-  sel_app_ptr = mmgsdi_util_get_sel_app();
-  MMGSDIUTIL_RETURN_STATUS_IF_NULL(sel_app_ptr, MMGSDI_ERROR);
-#endif
 
   MSG_HIGH("MMGSDI_UIM_ICC_SEARCH_RECORD", 0, 0, 0);
 
@@ -3544,24 +3273,7 @@ mmgsdi_return_enum_type mmgsdi_uim_icc_search_record (
   srch_rec_mode_type             : Search Direction for UICC Search 
  ----------------------------------------------------*/
   uim_cmd_ptr->hdr.command             = UIM_SEEK_F;
-#ifdef CUST_EDITION
-  if(sel_app_ptr->app_data.app_type == MMGSDI_APP_SIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_GSM;
-  }
-  else if(sel_app_ptr->app_data.app_type == MMGSDI_APP_RUIM)
-  {
-    uim_cmd_ptr->hdr.protocol     = UIM_CDMA;
-  }
-  else 
-  {
-    MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(extra_param_ptr);
-    MMGSDIUTIL_TMC_MEM_FREE(uim_cmd_ptr);
-    return MMGSDI_INCORRECT_PARAMS;
-  }
-#else
-  uim_cmd_ptr->hdr.protocol        = UIM_GSM;
-#endif
+  uim_cmd_ptr->hdr.protocol            = UIM_GSM;
   uim_cmd_ptr->hdr.slot                = uim_slot;
   uim_cmd_ptr->hdr.channel             = UIM_CHANNEL0;
 

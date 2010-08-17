@@ -5249,14 +5249,7 @@ LOCAL   void                       tmc_define_tasks( void )
     #ifdef TIMETEST
       ui_tcb.leds         = TIMETEST_UI_TASK_ID;
     #endif /* TIMETEST */
-#ifdef CUST_EDITION
-    {
-      int c;
-      for (c = 0; c < UI_STACK_SIZ; c++) {
-        ui_stack[c] = 0;
-      }
-    }
-#endif
+
     #ifdef FEATURE_TMC_STACK_PROFILING
       for (i = 0; i < UI_STACK_SIZ; i++) {
         ui_stack[i] = TMC_STACK_PROFILING_DWORD;
