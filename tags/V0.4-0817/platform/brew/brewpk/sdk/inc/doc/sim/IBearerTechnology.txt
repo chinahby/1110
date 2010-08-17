@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IBearerTechnology simulation
+
+IBearerTechnology is simulated.
+==========================
+*/ 

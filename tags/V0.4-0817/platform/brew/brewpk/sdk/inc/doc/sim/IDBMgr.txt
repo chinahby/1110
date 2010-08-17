@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IDBMgr simulation
+
+IDBMgr is simulated.
+==========================
+*/ 
