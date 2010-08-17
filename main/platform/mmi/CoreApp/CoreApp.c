@@ -372,7 +372,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifdef FEATURE_KEYGUARD
     pMe->m_b_set_lock = FALSE ;
 #endif
-    pMe->m_bProvisioned = FALSE;
+    
     pMe->m_bConfigSent  = FALSE;
     pMe->m_cdg_msgptr = NULL;
     pMe->m_bActive = TRUE;
@@ -1649,7 +1649,8 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
     int nRet;
     uint32 dwMask;
     AEECMPhInfo phInfo;
-    
+
+    pMe->m_bProvisioned = FALSE;
     // 创建 ICM 接口
     nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
                                  AEECLSID_CALLMANAGER,
