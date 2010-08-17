@@ -1493,7 +1493,7 @@ static void refreshChannelList( CFmRadio *pMe, boolean begin)
         drawLedLight( pMe);
         drawRefreshListPrompt( pMe);
     }
-
+	 pMe->cfg.channel=0;
 #if !defined( AEE_SIMULATOR)
     fm_seek_start( pMe->seekChannelClockwise, FALSE);
 #endif//#if !defined( AEE_SIMULATOR)
