@@ -210,9 +210,14 @@ static void MP3_RefreshSimpleSchBar(CMusicPlayer *pMe);
 static void CMusicPlayer_PlayPlaylistCB(CMusicPlayer *pMe);
 static void MP3_DrawNoRecord(CMusicPlayer *pMe);
 
+//Add By zzg 2010_08_18
+static void MP3_EnableKey( void);
+//Add End
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
+boolean m_bKeyEnable = TRUE;		//Add By zzg  2010_08_18防止快速按Pause/Resume时造成卡住
 
 
 /*==============================================================================
@@ -2395,64 +2400,84 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
+		ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
         CLOSE_DIALOG(DLGRET_OK);
         return TRUE;
      case AVK_INFO://播放 
-        if((!pMe->m_bPlaying)&&(!pMe->m_bPaused))
-        {
-            if(pMe->m_MusicPlayerCfg.eMusicPlayMode == PLAYMODE_RANDOM)
-            {
-              MP3_ResetRandonIdentifier(pMe);
-            }
-            if(pMe->m_pMedia)
-            {
-                IMEDIA_Play(pMe->m_pMedia);
-                pMe->m_bPlaying=TRUE;
-                pMe->m_bPaused = FALSE;
-                (void) ISHELL_PostEvent(pMe->m_pShell, 
-                                        AEECLSID_APP_MUSICPLAYER,
-                                        EVT_USER_REDRAW,
-                                        0,
-                                        0);       
-            }   
-        }
-        else if(pMe->m_bPaused)
-        {
-            
-            if(pMe->m_pMedia)
-            {  
-                (void)IMEDIA_Resume(pMe->m_pMedia);
-                pMe->m_bPaused=FALSE;
-                pMe->m_bPlaying = TRUE;
-                (void) ISHELL_PostEvent(pMe->m_pShell, 
-                                    AEECLSID_APP_MUSICPLAYER,
-                                    EVT_USER_REDRAW,
-                                    0,
-                                    0);       
-            }
-        }
-       else if(pMe->m_bPlaying)
-        {
-          //当开始播放和临近结束时暂停会有问题，在这里进行出错处理
-          if(pMe->m_nCurrentTime == pMe->m_nTotalTime || pMe->m_nCurrentTime == 0)
-          {
-            return TRUE;
-          }
-          if(pMe->m_pMedia)
-          { 
-            if(SUCCESS == IMEDIA_Pause(pMe->m_pMedia))
-            {  
-               pMe->m_bPaused= TRUE;
-               pMe->m_bPlaying = FALSE;                  
-              (void) ISHELL_PostEvent(pMe->m_pShell, 
-                                    AEECLSID_APP_MUSICPLAYER,
-                                    EVT_USER_REDRAW,
-                                    0,
-                                    0);       
-            }
-         }     
-      }
-       return TRUE;
+     {
+		if (TRUE == m_bKeyEnable)
+		{		
+			m_bKeyEnable = FALSE;
+			ISHELL_SetTimer(pMe->m_pShell, MUSIC_KEY_ENABLE_TIME, (PFNNOTIFY)MP3_EnableKey, pMe);
+			
+			if ((!pMe->m_bPlaying)&&(!pMe->m_bPaused))
+	        {
+	            if (pMe->m_MusicPlayerCfg.eMusicPlayMode == PLAYMODE_RANDOM)
+	            {            
+	            	MP3_ResetRandonIdentifier(pMe);
+	            }
+				
+	            if (pMe->m_pMedia)
+	            {            	
+	                IMEDIA_Play(pMe->m_pMedia);
+	                pMe->m_bPlaying=TRUE;
+	                pMe->m_bPaused = FALSE;
+					
+	                //(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);     	                                        
+
+					//Add By zzg 2010_08_18
+					MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);	
+					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+	            	IDISPLAY_Update(pMe->m_pDisplay);
+					//Add End                
+	            }   
+	        }
+	        else if (pMe->m_bPaused)
+	        {            
+	            if (pMe->m_pMedia)
+	            {              	
+	                (void)IMEDIA_Resume(pMe->m_pMedia);
+	                pMe->m_bPaused=FALSE;
+	                pMe->m_bPlaying = TRUE;
+
+					//(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);       
+
+					//Add By zzg 2010_08_18
+					MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);	
+					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+	            	IDISPLAY_Update(pMe->m_pDisplay);
+					//Add End
+	            }
+	        }
+       		else if(pMe->m_bPlaying)
+	        {
+
+				//当开始播放和临近结束时暂停会有问题，在这里进行出错处理
+				if (pMe->m_nCurrentTime == pMe->m_nTotalTime || pMe->m_nCurrentTime == 0)
+				{          
+					return TRUE;
+				}
+				if (pMe->m_pMedia)
+				{    
+					if (SUCCESS == IMEDIA_Pause(pMe->m_pMedia))
+					{  
+					   pMe->m_bPaused= TRUE;
+					   pMe->m_bPlaying = FALSE;  
+
+					   //(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);       
+					  
+						//Add By zzg 2010_08_18
+						MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
+						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+						IDISPLAY_Update(pMe->m_pDisplay);
+						//Add End
+					}
+				}     
+	        }        
+		}
+
+		return TRUE;
+	 }        
        
     case AVK_UP:
 	case AVK_O:   //add by yangdecai
@@ -2524,6 +2549,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
+			ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
             //停止
             if(pMe->m_pMedia)
             {  
@@ -4021,11 +4047,21 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
                     //pMe->m_nCurrentTime = ((uint32)pCmdNotify->pCmdData) / 1000;
                     if(pMe->m_eCurState == STATE_PLAYMUSIC_WINDOWS)
                     {
+                       /*                       
                        (void) ISHELL_PostEvent(pMe->m_pShell, 
                                         AEECLSID_APP_MUSICPLAYER,
                                         EVT_USER_REDRAW,
                                         0,
                                         0);       
+                                        */		
+							
+						MP3_RefreshscheduleBar(pMe);//画进度点	
+#ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY						
+						MP3_DispListIndex(pMe);//画 当前第几首/一共几首
+#endif
+						MP3_RefreshPlayingTick(pMe);//画当前歌曲执行时间
+						MP3_ResetScroll(pMe);
+						IDISPLAY_Update(pMe->m_pDisplay);
                     }
                     break; 
                 } 
@@ -4766,7 +4802,7 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
     {
         return;
     }
-	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
+	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test	
     MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);//画背景
 	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
     MP3_RefreshscheduleBar(pMe);//画进度点
@@ -4869,25 +4905,6 @@ static void MP3_DispListIndex(CMusicPlayer *pMe)
 /*画进度条*/
 static void MP3_RefreshscheduleBar(CMusicPlayer *pMe)
 {
-	/*
-    AEERect clip;
-    
-    SETAEERECT( &clip, 2, 129,58,10);
-    MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);
-    if(pMe->m_nCurrentTime >= pMe->m_nTotalTime)
-    {
-      pMe->m_nCurrentTime = pMe->m_nTotalTime;
-    }
-     if(pMe->m_nTotalTime!=0)
-    {
-      MP3_DrawImage(pMe,IDI_GLIDE, 46*pMe->m_nCurrentTime/pMe->m_nTotalTime+4, 134);
-    }
-    else
-    {
-        MP3_DrawImage(pMe,IDI_GLIDE, 4, 134);
-    }
-	*/
-
 	//wlh 20090415 mod new ui start
 	AEERect clip;
 	AEERect clip1;
@@ -4895,7 +4912,8 @@ static void MP3_RefreshscheduleBar(CMusicPlayer *pMe)
     
     SETAEERECT( &clip, SCHEDULEBAR_X, SCHEDULEBAR_Y,SCHEDULEBAR_W,SCHEDULEBAR_H);
 	
-    MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);
+    MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);		
+    
     if(pMe->m_nCurrentTime >= pMe->m_nTotalTime)
     {
       pMe->m_nCurrentTime = pMe->m_nTotalTime;
@@ -5043,7 +5061,8 @@ static void MP3_ResetScroll(CMusicPlayer *pMe)
     if(pMe==NULL)
     {
         return;
-    }
+    }	
+	
     //pMe->m_nAutoScrollIdx = 0;
 
     if(IsRequiredScroll(pMe,0))
@@ -5506,3 +5525,11 @@ void MP3_PlayMusicByBTCallBack(void *pCxt, int nErr)
 #endif
 }
 #endif
+
+//Add By zzg 2010_08_18
+static void MP3_EnableKey(void)
+{
+	m_bKeyEnable = TRUE;
+}
+//Add End
+
