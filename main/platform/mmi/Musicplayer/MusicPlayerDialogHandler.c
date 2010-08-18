@@ -4047,14 +4047,10 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
                     //pMe->m_nCurrentTime = ((uint32)pCmdNotify->pCmdData) / 1000;
                     if(pMe->m_eCurState == STATE_PLAYMUSIC_WINDOWS)
                     {
-                       /*                       
-                       (void) ISHELL_PostEvent(pMe->m_pShell, 
-                                        AEECLSID_APP_MUSICPLAYER,
-                                        EVT_USER_REDRAW,
-                                        0,
-                                        0);       
-                                        */		
-							
+                                              
+                       (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);     
+                                        	
+						/*	
 						MP3_RefreshscheduleBar(pMe);//画进度点	
 #ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY						
 						MP3_DispListIndex(pMe);//画 当前第几首/一共几首
@@ -4062,6 +4058,7 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
 						MP3_RefreshPlayingTick(pMe);//画当前歌曲执行时间
 						MP3_ResetScroll(pMe);
 						IDISPLAY_Update(pMe->m_pDisplay);
+						*/
                     }
                     break; 
                 } 
