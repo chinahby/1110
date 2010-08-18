@@ -2518,8 +2518,6 @@ static int CWmsApp_MessageService(IWmsApp *p,
         wms_client_message_s_type   *pMsg = NULL;
 
         pMe->m_nSendItems = 0;
-
-        MSG_FATAL("***zzg STARTMETHOD_SENDSPECMESSAGE***",0,0,0);
             
         //Add By zzg 2010_07_20
 		if (NULL == pwstrText)      
@@ -2527,21 +2525,18 @@ static int CWmsApp_MessageService(IWmsApp *p,
 			pMsg = CWmsApp_GetspecmsgEx();
 
 	        if (NULL == pMsg)
-	        {
-	            MSG_FATAL("***zzg STARTMETHOD_SENDSPECMESSAGE NULL == pMsg***",0,0,0);
+	        {	           
 	            return EFAILED;
 	        }
 			
 #ifndef WIN32
 			
 	        if (wms_msg_send(pMe->m_clientId, NULL, NULL, WMS_SEND_MODE_CLIENT_MESSAGE, pMsg)==WMS_OK_S)	
-	        {	        	
-	            MSG_FATAL("***zzg wms_msg_send STARTMETHOD_SENDSPECMESSAGE WMS_OK_S***",0,0,0);
+	        { 
 	            nRet = SUCCESS;
 	        }
 	        else
 	        {	
-	            MSG_FATAL("***zzg wms_msg_send STARTMETHOD_SENDSPECMESSAGE EFAILED***",0,0,0);
 	            nRet = EFAILED;
 	        }
 #else
@@ -2972,16 +2967,11 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
     {
         return;
     }
-
-	MSG_FATAL("***zzg WmsApp_MsgCb event=%d***", event,0,0);
         
     (void)MEMCPY(pInfobuf, pInfo, sizeof(wms_msg_event_info_s_type));
     switch (event)
     {
-        case WMS_MSG_EVENT_SEND:			
-			MSG_FATAL("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SEND***",0,0,0);
-            MSG_FATAL("***zzg WmsApp_MsgCb report_status=%d***", pInfobuf->submit_report_info.report_status,0,0);
-            
+        case WMS_MSG_EVENT_SEND:	
             if ((pInfobuf->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)            
 				&& (pInfobuf->submit_report_info.report_status != WMS_RPT_OK))
             {
@@ -3033,12 +3023,7 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
             evt = EVT_WMS_MSG_RECEIVED_MESSAGE;
             break;
             
-        case WMS_MSG_EVENT_SUBMIT_REPORT:
-            
-			MSG_FATAL("***zzg WmsApp_MsgCb WMS_MSG_EVENT_SUBMIT_REPORT***",0,0,0);
-			MSG_FATAL("***zzg WmsApp_MsgCb report_status=%d***", pInfobuf->submit_report_info.report_status,0,0);
-            MSG_FATAL("***zzg WmsApp_MsgCb len=%d***", pInfo->submit_report_info.alpha_id.len,0,0);
-            
+        case WMS_MSG_EVENT_SUBMIT_REPORT:            
             pInfobuf->submit_report_info.alpha_id.data = (uint8 *)sys_malloc(WMS_ALPHA_ID_MAX);
             pInfobuf->submit_report_info.alpha_id.len = pInfo->submit_report_info.alpha_id.len;
             
@@ -4563,20 +4548,13 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
         // Any other error
         default:
             break;
-    }
-   
-    MSG_FATAL("***zzg m_idxCurSend=%d, m_nSendItems=%d***", pMe->m_idxCurSend, pMe->m_nSendItems,0); 	
-
-	MSG_FATAL("***zzg report_status == %d!!!", pRptInfo->report_status, 0, 0);
-	
+    }      
 	if (pRptInfo->report_status != WMS_RPT_OK)
 	{
 		int nRet;
 
 		if(!pMe->m_bisSendSecond)
 		{
-			MSG_FATAL("***zzg WMS send Again!", 0, 0, 0);
-
 			pMe->m_bisSendSecond = TRUE;
 			 // 此情况下将消息重发一次
 

@@ -4888,9 +4888,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
         {
             //MP_NO_REDRAW
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
-            IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));			
-
-			MSG_FATAL("***zzg ListDlg EVT_USER_REDRAW***", 0, 0, 0);
+            IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));		
             
 			{
                 //add by xuhui
@@ -4965,8 +4963,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 	                    
 	            if(NULL != pMe->m_szAlpha && WSTRLEN(pMe->m_szAlpha) > 0)
 	            {
-	                n_KeywordsLen = WSTRLEN(pMe->m_szAlpha);
-	                MSG_FATAL("***zzg Search text : %S***", pMe->m_szAlpha, 0, 0);
+	                n_KeywordsLen = WSTRLEN(pMe->m_szAlpha);	                
 	            }
 	            else
 	            {
@@ -4980,8 +4977,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 					
 	                if(SUCCESS != CContApp_FilterSmartItems( pMe,  pMe->m_szAlpha))
 	                {   
-	                    uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
-	                    MSG_FATAL("***zzg SUCCESS != CContApp_FilterSmartItems***", 0, 0, 0);
+	                    uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);	                    
 	                    IMENUCTL_SetProperties(pMenuCtl, dwMask |MP_NO_REDRAW);
 	                    
 	                    pMe->m_bInsmartnofind = TRUE;

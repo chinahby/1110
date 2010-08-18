@@ -1097,23 +1097,14 @@ static boolean  IDD_LPM_Handler(void       *pUser,
 			
             IDISPLAY_ClearScreen(pMe->m_pDisplay);      
 
-            MSG_FATAL("***zzg IDD_LPM_Handler status=0x%x***", status, 0, 0);            
-
             if (AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE == status)
-            {
-                MSG_FATAL("***zzg AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE***", 0, 0, 0);
-                
+            {                
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
 #ifndef FEATURE_USES_LOWMEM
                 if (NULL != pMe->m_battery_Image)
                 {
-                    MSG_FATAL("***zzg NULL != pMe->m_battery_Image***", 0, 0, 0);  
                     IIMAGE_DrawFrame(pMe->m_battery_Image, CHARGING_FRAME_COUNT - 1, 0, 0);
-                }
-                else
-                {
-                    MSG_FATAL("***zzg NULL == pMe->m_battery_Image***", 0, 0, 0);
-                }
+                }                
 #else
                 CoreApp_DrawChargeing(pMe, CHARGING_FRAME_COUNT - 1);
 #endif

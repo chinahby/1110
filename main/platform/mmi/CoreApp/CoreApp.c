@@ -1368,9 +1368,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
     {
         return FALSE;
     }
-    
-    MSG_FATAL("***zzg CoreApp_HandleBattNotify %x***",pNotify->dwMask, 0, 0);
-    
+        
     switch (pNotify->dwMask) 
     {
         // 外部电源接入或拔除
@@ -1399,13 +1397,8 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             break;
         
         // 充电状态改变
-        case NMASK_BATTERY_CHARGERSTATUS_CHANGE:
-            
-            MSG_FATAL("***zzg NMASK_BATTERY_CHARGERSTATUS_CHANGE***", 0, 0, 0);
-            
+        case NMASK_BATTERY_CHARGERSTATUS_CHANGE:  
             nChargerStatus = IBATTERY_GetChargerStatus(pMe->m_pBatt);
-
-            MSG_FATAL("***zzg nChargerStatus=%d***", nChargerStatus, 0, 0);
             
             if(pMe->m_wActiveDlgID == IDD_LPM)
             {

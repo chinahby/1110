@@ -830,8 +830,6 @@ void BlinkTimerCB (void *data)
       }
       else 
 	  {
-	  	MSG_FATAL("***zzg BlinkTimerCB DrawImageField i=%d***", i, 0, 0);
-		
         if (DrawImageField (pMe, Annunciators[i].nFieldID,
                            (Annunciators[i].pcontent->nCurrState &
                             ANNUN_STATE_BLINK_UNMASK))

@@ -1279,8 +1279,6 @@ static void FmRadio_PowerUp(void *pme)
     pMe->newSmsIncoming = FALSE;
 
     FmRadio_CheckRefuse( pMe);
-
-	MSG_FATAL("***zzg FmRadio_PowerUp pMe->refuseReason=%d***", pMe->refuseReason, 0, 0);
 	
     if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_VOICE_CALL_CONNECTED)
     {

@@ -759,7 +759,6 @@ static boolean FrenDuoApp_ListMenuHandler(FrenDuoApp *pMe, AEEEvent eCode, uint1
             return TRUE;
         case EVT_USER:
         {
-            MSG_FATAL("***zzg Frenduo EVT_USER wParam=%d, dwParam=%d***", wParam, dwParam, 0);
             if ((wParam == 1) && (dwParam == 1))
             {
                 StartApplet(pMe, 2);

@@ -923,10 +923,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 
 					//Add By zzg 2010_08_13
 					case AVK_LEFT:
-					case AVK_RIGHT:			
-						//MSG_FATAL("***zzg AVK_LEFT Or AVK_RIGHT***", 0, 0, 0);	
-						//return(FALSE);
-						
+					case AVK_RIGHT:		
 						TextCtl_ShowSymbolPage(pme, 0);
                         break;
                         
@@ -943,9 +940,6 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                     default:
                         if (wParam < AVK_1 || wParam > AVK_9)
                         {
-                        	//MSG_FATAL("***zzg < AVK_1 Or > AVK_9***", 0, 0, 0);                          	
-                            //return(FALSE);
-
 							TextCtl_ShowSymbolPage(pme, 0);
 							break;
                         }

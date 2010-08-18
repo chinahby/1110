@@ -3741,8 +3741,6 @@ wms_client_message_s_type *CWmsApp_GetspecmsgEx(void)
    
 	nSize = sizeof(FRENDUO_SMS_BUFF);    
 	nMsgSize = sizeof(FRENDUO_SMS_BUFF);
-
-	MSG_FATAL("***zzg CWmsApp_GetspecmsgEx***", 0, 0, 0);
 	
     if (nMsgSize<=0)
     {

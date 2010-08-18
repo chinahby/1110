@@ -2766,8 +2766,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 			{
 			    Dialer_call_table* p_temp = NULL;
                 p_temp = CallApp_Get_First_Entry_In_Call_Table(pMe);
-            
-				MSG_FATAL("***zzg CallApp_Dialer_Connect EVT_DIALOG_END***", 0, 0, 0);
 				
 				if((WSTRNCMP(p_temp->call_number, L"*55",3) == 0) || (WSTRNCMP(p_temp->call_number, L"*550",4) == 0))
 				{					
@@ -2921,8 +2919,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     }
                     return TRUE;  //make the dialog can't closed by avk_clr.
 
-                case AVK_ENDCALL:
-					MSG_FATAL("***zzg AVK_ENDCALL***", 0, 0, 0);
+                case AVK_ENDCALL:				
 					
                     //CALL_ERR("AVK_ENDCALL", 0,0,0);
                     // End call
@@ -8157,8 +8154,6 @@ static void  CallApp_SetFrenduoTimer(void *pUser)
 {
 	CCallApp *pMe = (CCallApp *)pUser;
 
-	MSG_FATAL("***zzg CallApp_SetFrenduoTimer***", 0, 0, 0);	
-
     (void)ISHELL_SetTimer(pMe->m_pShell, CALL_TIMER_FRENDUO,  CallApp_SetFrenduoTimer, pMe);
 
     pMe->m_userCanceled = TRUE;
@@ -8168,8 +8163,6 @@ static void  CallApp_SetFrenduoTimer(void *pUser)
 static boolean  CallApp_SendFrenduoSMS(void)
 {		
     IWmsApp *pIWmsApp = NULL;		
-	
-	MSG_FATAL("***zzg CallApp_SendFrenduoSMS***", 0, 0, 0);	
 	
 	if (SUCCESS != ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_WMSAPP, (void**)&pIWmsApp))
 	{
