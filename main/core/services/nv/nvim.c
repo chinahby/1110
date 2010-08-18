@@ -3104,8 +3104,7 @@ LOCAL nv_stat_enum_type nv_auto_set_need_value(void)
     
     if(NV_DONE_S == local_cmd.status)
     {
-        //if(AUTO_NV_ITME_VERSION <= auto_nv_item_version)
-        if(AUTO_NV_ITME_VERSION == auto_nv_item_version)
+        if(AUTO_NV_ITME_VERSION <= auto_nv_item_version)
         {
             //OK, it not a fresh start phone and version is same as this bin file
             //skip the follow operations.
