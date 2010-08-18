@@ -2426,7 +2426,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 	                //(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);     	                                        
 
 					//Add By zzg 2010_08_18
-					MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);	
+					MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
 					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
 	            	IDISPLAY_Update(pMe->m_pDisplay);
 					//Add End                
@@ -2443,7 +2443,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 					//(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);       
 
 					//Add By zzg 2010_08_18
-					MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);	
+					MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
 					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
 	            	IDISPLAY_Update(pMe->m_pDisplay);
 					//Add End
@@ -2467,7 +2467,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 					   //(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);       
 					  
 						//Add By zzg 2010_08_18
-						MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
+						MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);	
 						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
 						IDISPLAY_Update(pMe->m_pDisplay);
 						//Add End
@@ -4816,10 +4816,16 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
 	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
     MP3_ResetScroll(pMe);
 	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
-     if(pMe->m_bPlaying)
+
+	
+    if(pMe->m_bPlaying)
     {
         MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);
     }
+	else if (pMe->m_bPaused)
+	{
+		MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);
+	}
 	// IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
 }
 
