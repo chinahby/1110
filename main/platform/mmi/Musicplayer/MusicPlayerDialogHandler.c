@@ -377,11 +377,13 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:   
-        {   
+        {   			
             return TRUE;
         }
         case EVT_DIALOG_START:
         {
+			MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);	//Add By zzg 2010_08_19
+			
             if(pMe->m_pIAnn != NULL)
             {
             	int nIdx;
@@ -399,32 +401,40 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
             return TRUE;
         }
         case EVT_USER_REDRAW:
-        {          
-           MP3_DrawPlayerWindows(pMe);
-            /*if(pMe->m_bPlaying)
-            {
-              MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_PAUSE_STOP);
-            }
-            else if(pMe->m_bPaused)
-            {
-              MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_STOP);
-            }
-            else
-            {
-                MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK)
-            }*/
-            if(pMe->m_bPaused || pMe->m_bPlaying)
-            {
-                MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);
-            }
-            else
-            {
-                MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
-            }
-            IDISPLAY_Update(pMe->m_pDisplay); //刷屏
-            return TRUE;
+        {   
+			MP3_DrawPlayerWindows(pMe);
+
+			if(pMe->m_bPaused || pMe->m_bPlaying)
+			{
+			    MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);
+			}
+			else
+			{
+			    MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+			}
+			IDISPLAY_Update(pMe->m_pDisplay); //刷屏
+			return TRUE;
             
         }
+		//Add By zzg 2010_08_19
+		case EVT_USER:
+		{
+			if (wParam == AVK_SHIFT)
+			{
+				MSG_FATAL("***zzg MP3_PlayMusic EVT_USER AVK_SHIFT***", 0, 0, 0);
+				
+			    MP3_RefreshscheduleBar(pMe);//画进度点	
+			    
+#ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY	
+			    //MP3_DispListIndex(pMe);//画 当前第几首/一共几首
+#endif    
+			    MP3_RefreshPlayingTick(pMe);//画当前歌曲执行时间			    
+			    //MP3_ResetScroll(pMe);	
+			    IDISPLAY_Update(pMe->m_pDisplay); //刷屏			    
+			}
+			return;
+		}
+		//Add End
         case EVT_DIALOG_END:
         {        
             return TRUE;
@@ -4046,19 +4056,8 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
                     pMe->m_nCurrentTime++;//当前播放的时间加1
                     //pMe->m_nCurrentTime = ((uint32)pCmdNotify->pCmdData) / 1000;
                     if(pMe->m_eCurState == STATE_PLAYMUSIC_WINDOWS)
-                    {
-                                              
-                       (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);     
-                                        	
-						/*	
-						MP3_RefreshscheduleBar(pMe);//画进度点	
-#ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY						
-						MP3_DispListIndex(pMe);//画 当前第几首/一共几首
-#endif
-						MP3_RefreshPlayingTick(pMe);//画当前歌曲执行时间
-						MP3_ResetScroll(pMe);
-						IDISPLAY_Update(pMe->m_pDisplay);
-						*/
+                    {                                              
+                       (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SHIFT,0);  
                     }
                     break; 
                 } 
@@ -4071,6 +4070,10 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
         //&&pMe->m_eStartMethod==STARTMETHOD_NORMAL) //return from IMEDIA_GetTotalTime
     {
         pMe->m_nTotalTime = ((uint32)pCmdNotify->pCmdData) / 1000;
+
+		//Add By zzg 2010_08_19
+		(void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER, EVT_USER_REDRAW, 0, 0);
+		//Add End
     }
     else if (pCmdNotify->nCmd == MM_CMD_PLAY
         &&pMe->m_eStartMethod==STARTMETHOD_SIMPLEPLAYER)
@@ -4799,25 +4802,16 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
     {
         return;
     }
-	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test	
-    MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);//画背景
-	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
-    MP3_RefreshscheduleBar(pMe);//画进度点
-	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
-    MP3_RefreshVolBar(pMe);//画音量
-    //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
-    
-    #ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY
 	
+    MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);//画背景	
+    MP3_RefreshscheduleBar(pMe);//画进度点	
+    MP3_RefreshVolBar(pMe);//画音量 
+#ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY	
     MP3_DispListIndex(pMe);//画 当前第几首/一共几首
-    #endif
-    //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
-    MP3_RefreshPlayingTick(pMe);//画当前歌曲执行时间
-	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
+#endif    
+    MP3_RefreshPlayingTick(pMe);//画当前歌曲执行时间	
     MP3_ResetScroll(pMe);
-	//IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
-
-	
+		
     if(pMe->m_bPlaying)
     {
         MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);
@@ -4863,6 +4857,7 @@ static void MP3_DispListIndex(CMusicPlayer *pMe)
 	//SETAEERECT( &clip, LISTINDEX_X,LISTINDEX_Y,48,18);
     
     MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);
+	
     if((pMe->m_nPlayinglistMusicNum == 0)
         ||(pMe->m_MusicPlayerCfg.lastPlayMusicID >= pMe->m_nPlayinglistMusicNum))
     {  
