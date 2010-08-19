@@ -1192,7 +1192,7 @@ void *HeapReallocInternal(MemHeap *heap, void * pIn, uint32 size)
       bZero = FALSE;
    }
 
-   if(size > heap->dwTotalBytes)
+   if(size > heap->dwTotalBytes || size == 0)
    {
       return(NULL);
    }

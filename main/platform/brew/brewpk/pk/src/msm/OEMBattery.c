@@ -646,23 +646,20 @@ void OEMBattery_Refresh(void)
 #endif // FEATURE_BREW_BATTERY
 
 #ifdef CUST_EDITION
-#define OEMBATTERY_NOTIFY_NUM   3
-static AEECallback gBattNotify[OEMBATTERY_NOTIFY_NUM];
-static int gBattNotifyIdx = 0;
-
 static void OEMBatt_OnBatteryChange(void *unused)
 {
     OEMBattery_Refresh();
-    gBattNotifyIdx--;
 }
 
 void oembatt_notify_chg_event(void)
 {
-    if(AEE_IsInitialized() && gBattNotifyIdx < OEMBATTERY_NOTIFY_NUM)
+    static AEECallback cbChgEvent;
+    if(AEE_IsInitialized())
     {
-        AEECallback* pCb = &gBattNotify[gBattNotifyIdx++];
-        CALLBACK_Init(pCb,OEMBatt_OnBatteryChange,NULL);
-        AEE_SYS_RESUME(pCb);
+
+        CALLBACK_Cancel(&cbChgEvent);
+        CALLBACK_Init(&cbChgEvent,OEMBatt_OnBatteryChange,NULL);
+        AEE_SYS_RESUME(&cbChgEvent);
     }
 }
 #endif

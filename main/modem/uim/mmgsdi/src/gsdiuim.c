@@ -3713,6 +3713,12 @@ uim_protocol_type gsdi_get_uim_protocol()
     {
         return UIM_GSM;
     }
+#ifdef CUST_EDITION
+    else if (capability_of_card == GSDI_CARD_RUIM)
+    {
+        return UIM_CDMA;
+    }
+#endif
     else
     {
         return UIM_NO_SUCH_MODE;

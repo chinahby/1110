@@ -253,7 +253,7 @@ when       who     what, where, why
 // in OEMConfigListType.  It does not need to be incremented when a new
 // field is added to the end of OEMConfigListType.
 //
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000B )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000C )
 
 ////
 // The EFS file that stores the OEM configuration.
@@ -662,7 +662,7 @@ typedef struct
   byte contrast;          /* CFGI_CONTRAST_LVL */
   byte backlight;         /* CFGI_BACK_LIGHT */
   byte language;        /* CFGI_LANGUAGE_SELECTION */
-  AECHAR banner[NV_MAX_LTRS/2+1]; /* CFGI_BANNER */
+  AECHAR banner[NV_MAX_LTRS+1]; /* CFGI_BANNER */
   byte menu_format;       /* CFGI_MENU_TYPE */
 
   ////////////////////////////////////////////////////////////////
