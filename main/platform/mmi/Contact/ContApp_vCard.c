@@ -1299,25 +1299,12 @@ boolean Vcard_CreateVcfFile(CContApp *pMe, int contId, char* filename)
 {
     IFile* pIFile = NULL;
     IFileMgr *pIFileMgr = NULL;
-    char* vcardEncode = NULL;
     char* temp=NULL;
     boolean rnt = FALSE;
     int err = 0;
     char* utf8=NULL;
     int len=0;
     char fileName[MAX_FILE_NAME]={0};// UTF8 max name len is 16
-    
-    vcardEncode = (char*)MALLOC(VCARD_MAX_FILE_SZIE);
-    if(NULL == vcardEncode)
-    {
-        err = 1;
-        return FALSE;
-    }
-
-    STRCAT(vcardEncode, VCARD_BEGIN);
-    STRCAT(vcardEncode, VCARD_DELIMTER);
-    STRCAT(vcardEncode, VCARD_VERSION21);
-    STRCAT(vcardEncode, VCARD_DELIMTER);
     
     VCardDeleteAllEntry();
     //name
