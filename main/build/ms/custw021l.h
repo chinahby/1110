@@ -186,7 +186,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define BSP_RF_H "bsp_rf_ezrf6500.h"
 #define FEATURE_RF_ZIF 
 #define FEATURE_AUX_SBI 
-//#define FEATURE_OSBL_USB_BATT_CHG 
+#define FEATURE_OSBL_USB_BATT_CHG 
 //#define FEATURE_OSBL_CHG_SCREEN 
 #define FEATURE_BOOT_SPLASH_SCREEN 
 #define FEATURE_HS_USB_ON_MODEM_PROC 

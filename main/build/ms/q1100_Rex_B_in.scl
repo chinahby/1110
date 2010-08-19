@@ -39,10 +39,9 @@ MSM_NOTPAGED +0
     boot_target.o (+RO)
   }
 
-  AMSS_IMEM_VEC_TBL  0x58000000  0x7FFC
+  AMSS_IMEM_VEC_TBL  0x58000000  0x20
   {
     boot_vectors.o (Int_Vect)
-    GlobalData.o(*)
   }
 }
 
@@ -180,6 +179,7 @@ DATA_NOTUSED_NOTPAGED +0x0
   UNINIT_RAM +0x0
   {
     *_nzi.o (+ZI)
+    GlobalData.o(+ZI)
   }
 }
 
