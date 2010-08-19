@@ -203,6 +203,11 @@ static void MP3_drawClipRectWithOffset(CMusicPlayer *pMe,uint32 imageId,AEERect 
 /*display list index in main screen*/
 static void MP3_DispListIndex(CMusicPlayer *pMe);
 #endif
+
+//Add  By zzg 2010_08_19
+static void MP3_DrawIndexAndTotalTime(CMusicPlayer *pMe);
+//Add End
+
 /*画简单播放器界面*/
 static void MP3_DrawSimplePlayerFace(CMusicPlayer *pMe);
 
@@ -376,12 +381,26 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
     MSG_FATAL("MP3_PlayMusic_Windows_HandleEvent Start",0,0,0);
     switch (eCode)
     {
+	
         case EVT_DIALOG_INIT:   
         {   			
             return TRUE;
         }
         case EVT_DIALOG_START:
-        {
+        {  			
+			//Add By zzg 2010_08_19
+			AECHAR Title[40] = {0}; 
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+				                        MUSICPLAYER_RES_FILE_LANG,                                
+				                        IDS_MUSIC_PLAYER,
+				                        Title,
+				                        sizeof(Title));	
+			
+			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,TRUE);
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Title);
+			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE);
+			//Add End
+			
 			MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);	//Add By zzg 2010_08_19
 			
             if(pMe->m_pIAnn != NULL)
@@ -4739,7 +4758,7 @@ static void MP3_RefreshPlayingTick(CMusicPlayer *pMe)
 	if(pMe->m_eStartMethod != STARTMETHOD_SIMPLEPLAYER)
 	{
         //SETAEERECT( &clip, 6,165,50,18);//wlh 20090415 mod
-		SETAEERECT( &clip, x,y,50,18);
+		SETAEERECT( &clip, x,y,35,18); //50
         MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);
         //SPRINTF(tick_time, "%02d:%02d", (pMe->m_nTotalTime - pMe->m_nCurrentTime)/60, (pMe->m_nTotalTime - pMe->m_nCurrentTime)% 60);
         SPRINTF(tick_time,"%02d:%02d",pMe->m_nCurrentTime/60,pMe->m_nCurrentTime%60);
@@ -4747,7 +4766,7 @@ static void MP3_RefreshPlayingTick(CMusicPlayer *pMe)
 	else
 	{
         //SETAEERECT( &clip, 6,165,50,18);//wlh 20090415 mod
-		SETAEERECT( &clip, x,y,50,18);
+		SETAEERECT( &clip, x,y,35,18); //50
         MP3_drawClipRectWithOffset(pMe,IDI_SIMPLEPLAYER,&clip);
         //SPRINTF(tick_time, "%02d:%02d", (pMe->m_nTotalTime - pMe->m_nSimPlayCurTime )/60, (pMe->m_nTotalTime - pMe->m_nSimPlayCurTime)% 60);
         SPRINTF(tick_time,"%02d:%02d",pMe->m_nSimPlayCurTime /60,pMe->m_nSimPlayCurTime %60);
@@ -4807,8 +4826,13 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
     MP3_RefreshscheduleBar(pMe);//画进度点	
     MP3_RefreshVolBar(pMe);//画音量 
 #ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY	
-    MP3_DispListIndex(pMe);//画 当前第几首/一共几首
+    //MP3_DispListIndex(pMe);//画 当前第几首/一共几首
 #endif    
+
+	//Add By zzg 2010_08_19
+	MP3_DrawIndexAndTotalTime(pMe);
+	//Add End
+	
     MP3_RefreshPlayingTick(pMe);//画当前歌曲执行时间	
     MP3_ResetScroll(pMe);
 		
@@ -4900,6 +4924,80 @@ static void MP3_DispListIndex(CMusicPlayer *pMe)
                );*/
 }
 #endif
+
+//Add By zzg 2010_08_19
+static void MP3_DrawIndexAndTotalTime(CMusicPlayer *pMe)
+{
+    AEEMenuColors color;
+    char liststr[] = "0/0";//special mode
+    char list_n_str[MAX_STR_LEN];//normal mode 
+    AECHAR  wliststr[MAX_STR_LEN];
+	AECHAR  wtotaltimestr[MAX_STR_LEN];
+    AEERect clip;
+
+    //Draw list index Rect 
+    
+	SETAEERECT( &clip, LISTINDEX_X,LISTINDEX_Y,35,18);
+	MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);
+	
+    if((pMe->m_nPlayinglistMusicNum == 0)
+        ||(pMe->m_MusicPlayerCfg.lastPlayMusicID >= pMe->m_nPlayinglistMusicNum))
+    {  
+        STRTOWSTR(liststr,wliststr,sizeof(wliststr));   
+    }
+    else
+    {
+        MEMSET(list_n_str,0,sizeof(list_n_str));
+		
+        SNPRINTF(list_n_str,sizeof(list_n_str),"%d/%d",pMe->m_MusicPlayerCfg.lastPlayMusicID+1
+                 ,pMe->m_nPlayinglistMusicNum);		
+        STRTOWSTR(list_n_str,wliststr,sizeof(wliststr));	
+    }
+
+    DrawTextWithProfile(pMe->m_pShell, 
+ 		                pMe->m_pDisplay, 
+ 		                RGB_WHITE_NO_TRANS, 
+ 		                AEE_FONT_BOLD,
+ 		                wliststr, 
+ 		                -1, 
+ 					    LISTINDEX_X, 
+ 		                LISTINDEX_Y,
+ 		                &clip, 
+ 		                IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT
+               			);
+	
+
+	//Draw TotalTime Rect 
+	SETAEERECT( &clip, TOTALTIME_X,TOTALTIME_Y,35,18);    
+    MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);	
+   
+    {
+        int minutetime =     pMe->m_nTotalTime/60;
+		int secondtime =     pMe->m_nTotalTime%60;
+		
+		MEMSET(wtotaltimestr,0,sizeof(wtotaltimestr));
+        MEMSET(list_n_str,0,sizeof(list_n_str));        
+		SNPRINTF(list_n_str,sizeof(list_n_str),"%02d:%02d",minutetime,secondtime);
+		STRTOWSTR(list_n_str,wtotaltimestr,sizeof(wtotaltimestr));	
+		
+    }
+
+    DrawTextWithProfile(pMe->m_pShell, 
+ 		                pMe->m_pDisplay, 
+ 		                RGB_WHITE_NO_TRANS, 
+ 		                AEE_FONT_BOLD,
+ 		                wtotaltimestr, 
+ 		                -1, 
+ 					    TOTALTIME_X, 
+ 		                TOTALTIME_Y,
+ 		                &clip, 
+ 		                IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT
+               			);
+}
+//Add End
+
+
+
 /*画进度条*/
 static void MP3_RefreshscheduleBar(CMusicPlayer *pMe)
 {

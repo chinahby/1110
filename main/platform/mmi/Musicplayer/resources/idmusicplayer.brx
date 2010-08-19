@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="musicplayer" VERSION="1">
+<BREWRes Name="idmusicplayer" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_PLAY">
 		<Text>Bermain</Text>
@@ -192,6 +192,9 @@
 	</String>
 	<String Id="1064" Name="IDS_RENAME_FAILED" Encoding="Unicode">
 		<Text>Tidak dapat mengubah nama</Text>
+	</String>
+	<String Id="1065" Name="IDS_MUSIC_PLAYER">
+		<Text>Pemutar Musik</Text>
 	</String>
 </Strings>
 <Dialogs>

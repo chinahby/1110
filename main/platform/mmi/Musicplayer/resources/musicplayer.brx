@@ -193,6 +193,9 @@
 	<String Id="1064" Name="IDS_RENAME_FAILED" Encoding="Unicode">
 		<Text>Can't rename</Text>
 	</String>
+	<String Id="1065" Name="IDS_MUSIC_PLAYER">
+		<Text>MusicPlayer</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_WINDOWS" Focus="0">

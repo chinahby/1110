@@ -1875,6 +1875,7 @@ LOCAL void hs_init( void )
     }
     
     db_put(DB_POWERUPTYPE, &db_item);
+	
     if (db_item.db_poweruptype == DB_POWERUP_BYKEY)
     {
         clk_busy_wait(2000*1000);//µ»3√Î
@@ -1882,7 +1883,7 @@ LOCAL void hs_init( void )
         {
             hw_power_off();
         }
-    }
+    }    
   }
 
 #endif
