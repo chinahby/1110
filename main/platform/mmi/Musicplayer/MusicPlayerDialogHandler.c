@@ -395,10 +395,14 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 				                        IDS_MUSIC_PLAYER,
 				                        Title,
 				                        sizeof(Title));	
+
+			if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+            }
 			
 			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,TRUE);
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Title);
-			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE);
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Title);			
 			//Add End
 			
 			MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);	//Add By zzg 2010_08_19
@@ -456,6 +460,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 		//Add End
         case EVT_DIALOG_END:
         {        
+			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE);	//Add By zzg  2010_08_20
             return TRUE;
         }
         //case EVT_GSENSOR_SHAKE:
