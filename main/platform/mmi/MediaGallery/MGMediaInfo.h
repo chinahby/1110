@@ -90,6 +90,9 @@ typedef enum _MGMimeType{
    //MG_MIME_PHR,
    //MG_MIME_QCF,
    MG_MIME_QCP,
+#ifdef FEATURE_AAC
+   MG_MIME_AAC,
+#endif
    //MG_MIME_SAF,
    //MG_MIME_XMF,
    //MG_MIME_XMF0,

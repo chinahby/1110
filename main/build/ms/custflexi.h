@@ -229,6 +229,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
+//#define FEATURE_AAC
+//#define FEATURE_AAC_PLUS
+//#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
 #include "custuim.h"
@@ -319,9 +322,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_IS2000_SCH
    #undef FEATURE_IS2000_SCH
 #endif
-#ifdef FEATURE_AAC
-   #undef FEATURE_AAC
-#endif
+//#ifdef FEATURE_AAC
+//   #undef FEATURE_AAC
+//#endif
 #ifdef CLKRGM_FREQ_STEP
    #undef CLKRGM_FREQ_STEP
 #endif

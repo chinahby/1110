@@ -35,7 +35,6 @@ static int MGMediaInfo_DetectSndVideoType(IShell* pShell,
 
 /*MT_MIDI, MT_MP3 seem to be deprecate,*/
 const static MGMimeMap  SoundMimeMap[]={
-        // {MT_AUDIO_AAC, MG_MIME_AAC},     {MT_AUDIO_ADPCM, MG_MIME_WAV},
         // {MT_AUDIO_AMR, MG_MIME_AMR},     {MT_AUDIO_DLS, MG_MIME_DLS},
         // {MT_AUDIO_HVS, MG_MIME_HVS},     {MT_AUDIO_IMELODY, MG_MIME_IMELODY},
          {MT_AUDIO_MIDI, MG_MIME_MIDI},  // {MT_AUDIO_MMF, MG_MIME_MMF},
@@ -44,6 +43,9 @@ const static MGMimeMap  SoundMimeMap[]={
          {MT_AUDIO_QCP, MG_MIME_QCP},     //{MT_AUDIO_SAF, MG_MIME_SAF},
        //  {MT_AUDIO_WMA, MG_MIME_WMA},     {MT_AUDIO_XMF, MG_MIME_XMF},
        //  {MT_AUDIO_XMF0, MG_MIME_XMF0},   {MT_AUDIO_XMF1, MG_MIME_XMF1},
+#ifdef FEATURE_AAC
+         {MT_AUDIO_AAC, MG_MIME_AAC},
+#endif
 };
 
 const static MGMimeMap ImageMimeMap[] = {
@@ -67,10 +69,17 @@ const static MGExt2Mime ImageFileExt[] = {
 };
 
 const static MGExt2Mime SoundFileExt[] = {
+        {MG_MP3_EXTENSION, MG_MIME_MP3},
+        {MG_MIDI_EXTENSION, MG_MIME_MIDI},
+        {MG_QCP_EXTENSION, MG_MIME_QCP},
+#ifdef FEATURE_AAC
+        {MG_AAC_EXTENSION, MG_MIME_AAC},
+#endif
          /*sound file extension*/
-        /* {MG_AAC_EXTENSION, MG_MIME_AAC}, */{MG_MP3_EXTENSION, MG_MIME_MP3},
-        /* {MG_WAV_EXTENSION, MG_MIME_WAV}, */{MG_MIDI_EXTENSION, MG_MIME_MIDI},
-        /* {MG_WMA_EXTENSION, MG_MIME_WMA},*/{MG_QCP_EXTENSION, MG_MIME_QCP},
+        /* {MG_AAC_EXTENSION, MG_MIME_AAC}, */
+        /* {MG_WAV_EXTENSION, MG_MIME_WAV}, */
+        /* {MG_WMA_EXTENSION, MG_MIME_WMA},*/
+        
 };
 
 const static MGExt2Mime VideoFileExt[] = {
