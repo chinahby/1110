@@ -5095,7 +5095,7 @@ boolean CContApp_FormatSelectFieldContentListNode(CContApp *pMe, sSelectFieldLis
     
     if (NULL != pSelectFieldListRoot->SelectFieldInfo.m_pAddNewFormatContent)
     {
-        FREE(pSelectFieldListRoot->SelectFieldInfo.m_pAddNewFormatContent);
+        FREEIF(pSelectFieldListRoot->SelectFieldInfo.m_pAddNewFormatContent);
     }
     pSelectFieldListRoot->SelectFieldInfo.m_pAddNewFormatContent = (AECHAR *)MALLOC(MAX_LEN * sizeof(AECHAR));
     
@@ -5564,7 +5564,7 @@ boolean CContApp_FreeSelectFieldListNode()
         
         if(NULL != pNode)
         {
-            FREE(pNode);  
+            FREEIF(pNode);  
         }
         
         pNode=pSelectFieldListRoot;

@@ -2268,7 +2268,7 @@ static int IContApp_SaveNumber( IContApp            *pi,
     
     if (args) 
     {
-        FREE(args);
+        FREEIF(args);
     }
     
     return nRet;
@@ -2323,7 +2323,7 @@ static int IContApp_FindNumber(IContApp *pi, AECHAR *searchStr)
     
     if (args) 
     {
-        FREE(args);
+        FREEIF(args);
     }
     
     return nRet;
@@ -2373,7 +2373,7 @@ static int IContApp_MainMenu(IContApp *pi)
     
     if (args) 
     {
-        FREE(args);
+        FREEIF(args);
     }
     
     return nRet;
@@ -2426,7 +2426,7 @@ static int IContApp_SelectField( IContApp            *pi,
             
     if (args) 
     {
-        FREE(args);
+        FREEIF(args);
     }
     
     return nRet;
@@ -3045,7 +3045,7 @@ static int IContApp_SpeedDialCall(IContApp *pi, AECHAR *pSpeedDial)
     
     if (args) 
     {
-        FREE(args);
+        FREEIF(args);
     }
     
     return nRet;

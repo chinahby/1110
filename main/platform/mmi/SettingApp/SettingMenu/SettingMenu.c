@@ -959,7 +959,7 @@ static void SettingMenu_Free_And_Save_Ip_Number(CSettingMenu *pMe)
         STRLCAT(ip_cfg.Number,c_buf,OEM_IP_NUMBER_COUNT * (OEM_IP_NUMBER_MAX+1));
         ip_cfg.ip_count ++;
         pMe->ip_number_tab.head = temp->next;
-        FREE(temp);
+        FREEIF(temp);
     }
     pMe->ip_number_tab.head = NULL;
     pMe->ip_number_tab.tial =NULL;

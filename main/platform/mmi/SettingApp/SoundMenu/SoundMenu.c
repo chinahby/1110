@@ -550,7 +550,7 @@ static void  SoundMenu_SoundList (ISoundMenu *pi)
    //                        0);
    if(args)
    {
-      FREE(args);
+      FREEIF(args);
    }
 }
 
@@ -1254,13 +1254,13 @@ void SoundMenu_InitRingerList(CSoundMenu *pMe)
                    }
                    else
                    {
-					   FREE( pItemInfo);
+					   FREEIF( pItemInfo);
                        continue;
                    }
                }
 			   else
 			   {
-					FREE( pItemInfo);
+					FREEIF( pItemInfo);
                     continue;
 			   }
 			   }
@@ -1270,7 +1270,7 @@ void SoundMenu_InitRingerList(CSoundMenu *pMe)
                 (void)WSTRCPY(pItemInfo->szName,  ri.szName);
                 if ( IVector_AddElement(pMe->m_pRingerList, pItemInfo) != SUCCESS)
                 {
-                    FREE(pItemInfo);
+                    FREEIF(pItemInfo);
                     return;
                 }
             }

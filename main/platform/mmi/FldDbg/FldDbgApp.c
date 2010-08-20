@@ -4939,7 +4939,10 @@ static boolean CFieldDebug_TopMenuHandleEvent(CFieldDebug * pme,
             (void) IMENUCTL_DeleteItem(ctl, IDS_PROGRAM_TITLE);
          }
          if (ci != NULL)
+         {
            FREE(ci);
+		   ci = NULL;
+         }
 #endif
          // delete jpegd menu
          (void) IMENUCTL_DeleteItem(ctl, IDS_JPEG_DECODE);
@@ -5919,13 +5922,13 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
          //First check that App is not suspended, otherwise nothing to do!
          if(pIDialog == NULL)
          {
-           FREE(pGSDIConf);
+           FREEIF(pGSDIConf);
            return TRUE;
          }
          wDlgID = IDIALOG_GetID(pIDialog);
          if(wDlgID == 0)
          {
-           FREE(pGSDIConf);
+           FREEIF(pGSDIConf);
            return TRUE;
          }
          //Clear the "wait" dialog
@@ -5939,14 +5942,14 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
          if((pGSDIConf->write_cnf.message_header.resp_type == GSDI_SIM_WRITE_RSP) &&
            (pGSDIConf->write_cnf.message_header.gsdi_status == GSDI_SUCCESS) )
          {
-           FREE(pGSDIConf);
+           FREEIF(pGSDIConf);
            return TRUE;
          }
          else
          {
           //Wrong response..display error message
            MSG_FATAL("Failed in EVT_SIM_WRITTEN_FINAL", 0, 0, 0);
-           FREE(pGSDIConf);
+           FREEIF(pGSDIConf);
            return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
              IDD_ERROR_DIALOG, NULL));
          }
@@ -5965,13 +5968,13 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
          //First check that App is not suspended, otherwise nothing to do!
          if(pIDialog == NULL)
          {
-          FREE(pGSDIConf);
+          FREEIF(pGSDIConf);
            return TRUE;
          }
          wDlgID = IDIALOG_GetID(pIDialog);
          if(wDlgID == 0)
          {
-           FREE(pGSDIConf);
+           FREEIF(pGSDIConf);
            return TRUE;
          }
          // Check the return status, if FALSE, display error message
@@ -5999,12 +6002,12 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
            {
              ISHELL_EndDialog(pme->a.m_pIShell);
            }
-           FREE(pGSDIConf);
+           FREEIF(pGSDIConf);
            return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
              IDD_ERROR_DIALOG, NULL));
          }
        }
-       FREE(pGSDIConf);
+       FREEIF(pGSDIConf);
        return TRUE;
 
      case EVT_GET_FILE_ATTR:
@@ -6019,13 +6022,13 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
          }
          if(pIDialog == NULL)
          {
-           FREE(pGSDIConf);
+           FREEIF(pGSDIConf);
            return TRUE;
          }
          wDlgID = IDIALOG_GetID(pIDialog);
          if(wDlgID == 0)
          {
-           FREE(pGSDIConf);
+           FREEIF(pGSDIConf);
            return TRUE;
          }
          // Check the return status, if FALSE, display error message
@@ -6072,7 +6075,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
 
            default:
              MSG_FATAL("Invalid card mode", 0, 0, 0);
-             FREE(pGSDIConf);
+             FREEIF(pGSDIConf);
              return FALSE;
            }
          }
@@ -6085,13 +6088,13 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
            {
              ISHELL_EndDialog(pme->a.m_pIShell);
            }
-           FREE(pGSDIConf);
+           FREEIF(pGSDIConf);
            return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
              IDD_ERROR_DIALOG, NULL));
 
          }
        }
-       FREE(pGSDIConf);
+       FREEIF(pGSDIConf);
        return TRUE;
 #endif
      case EVT_RDM_STATUS:
@@ -7774,7 +7777,7 @@ void CFieldDebug_JPEGDecodeCB ( cmx_status_type status, const void *client_data,
    case CMX_GET_BUFFER:
      jpegd_buf_ptr = (uint8 **) server_data;
      if (m_bufJPEG)
-       FREE(m_bufJPEG);
+       FREEIF(m_bufJPEG);
      m_bufJPEG = MALLOC(num_bytes);
      *jpegd_buf_ptr = (uint8 *) &(m_bufJPEG[0]);
      break;

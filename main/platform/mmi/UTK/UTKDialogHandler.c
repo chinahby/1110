@@ -624,7 +624,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                 utk_ptr = UTK_GetCmddata(pMe->cmd_type);   
                 if (NULL == utk_ptr)
                 {
-                    FREE(pgetinput);
+                    FREEIF(pgetinput);
                     return FALSE;
                 }
                                                 
@@ -707,7 +707,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                 //set text code
                 pMe->m_TextQS = pgetinput->cmd_describe.command_restricttag;
             
-                FREE(pgetinput);  
+                FREEIF(pgetinput);  
                           
                 (void) ISHELL_PostEvent( pMe->m_pShell,
                             AEECLSID_APP_UTK,
@@ -890,7 +890,7 @@ static boolean  IDD_DISPLAY_Handler(CUTK *pMe,
                             pMe->m_dwTimeOut = 1000;
                         }
                         // 释放临时分配空间
-                        FREE(ptext);
+                        FREEIF(ptext);
                     }
                 }
                 
@@ -1262,7 +1262,7 @@ static boolean  IDD_PLAYTONE_Handler(CUTK *pMe,
                 utk_ptr = UTK_GetCmddata(pMe->cmd_type);
                 if(NULL == utk_ptr)
                 {
-                    FREE(pPlayTone);
+                    FREEIF(pPlayTone);
                     return FALSE;
                 }      
                 DecodePlayToneData(utk_ptr, pPlayTone);     
@@ -1330,7 +1330,7 @@ static boolean  IDD_PLAYTONE_Handler(CUTK *pMe,
                                 UTKApp_DialogTimeout,
                                 pMe);  
                 
-                FREE(pPlayTone);  
+                FREEIF(pPlayTone);  
                                                
                (void) ISHELL_PostEvent( pMe->m_pShell,
                                            AEECLSID_APP_UTK,

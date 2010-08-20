@@ -1462,7 +1462,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                                 MEMSET(pMe->ip_number_tab.default_ip, 0 ,sizeof(pMe->ip_number_tab.default_ip));
                             }
                             pMe->ip_number_tab.head = pMe->ip_number_tab.head->next;
-                            FREE(phead);
+                            FREEIF(phead);
                         }
                     }
                     else
@@ -1485,7 +1485,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                                     {
                                         MEMSET(pMe->ip_number_tab.default_ip, 0 ,sizeof(pMe->ip_number_tab.default_ip));
                                     }
-                                    FREE(temp);
+                                    FREEIF(temp);
                                     break;
                                 }
                             }

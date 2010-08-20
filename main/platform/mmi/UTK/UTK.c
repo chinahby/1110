@@ -802,7 +802,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
                                 
                         }
                         
-                        FREE(pCmd);
+                        FREEIF(pCmd);
                         UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, eResult);
                         if (wMask != 0)
                         {// 更新工作放在 Ilde 去进行
@@ -943,7 +943,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
             {
                 UTK_ProcessStatus(pMe, &((wms_msg_event_info_s_type *)dwParam)->submit_report_info);
             }
-            FREE((wms_msg_event_info_s_type*)dwParam);
+            FREEIF((wms_msg_event_info_s_type*)dwParam);
             return TRUE;
             
         default:
@@ -1380,13 +1380,13 @@ void UTK_MsgCb(wms_msg_event_e_type       event,
                         
         if (btRet == FALSE)
         {
-            FREE(pInfobuf);
+            FREEIF(pInfobuf);
             MSG_HIGH("Event  %x could not be posted!", evt,0,0);
         }
     }
     else
     {
-        FREE(pInfobuf);
+        FREEIF(pInfobuf);
     }
 } // UTK_MsgCb() 
 

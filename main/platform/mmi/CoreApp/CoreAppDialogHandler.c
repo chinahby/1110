@@ -639,7 +639,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                     ISHELL_LoadResString(pMe->a.m_pIShell, AEE_COREAPPRES_LANGFILE,  pMe->m_nMsgID,wstrText,nSize);
                     ISTATIC_SetProperties(pStatic, ST_CENTERTEXT | ST_MIDDLETEXT);
                     ISTATIC_SetText(pStatic,NULL,wstrText,AEE_FONT_NORMAL,AEE_FONT_NORMAL);
-                    FREE(wstrText);
+                    FREEIF(wstrText);
                 }                
                 ISTATIC_Redraw(pStatic);
                 COREAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
@@ -2324,7 +2324,7 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
                                     AEE_FONT_NORMAL,
                                     AEE_FONT_NORMAL);
                                     
-                    FREE(wstrText);
+                    FREEIF(wstrText);
                 }
             }
             
@@ -3761,7 +3761,7 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
     }
     
     // 释放动态分配的内存
-    FREE(wszBuf);
+    FREEIF(wszBuf);
     //FREE(pssinfo);
 }
 

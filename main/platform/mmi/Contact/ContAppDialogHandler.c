@@ -1314,7 +1314,7 @@ int CContApp_LoadAddrFlds( CContApp      *pMe,
     {
         if (pfld->pBuffer != NULL)
         {
-            FREE(pfld->pBuffer);
+            FREEIF(pfld->pBuffer);
         }
         FREE(pfld);
         pfld = NULL;
@@ -1713,7 +1713,7 @@ int CContApp_AddField( CContApp       *pMe,
         if (NULL == pFld->pBuffer)
         {
             FARF(ADDR, ("Failed to malloc the pBuffer in add field"));
-            FREE(pFld);
+            FREEIF(pFld);
             return ENOMEMORY;
         }
         
@@ -1726,7 +1726,7 @@ int CContApp_AddField( CContApp       *pMe,
     {
         FARF(ADDR, ("Failed to Add the element"));
         FREE_AEEAddrField(*pFld);
-        FREE(pFld);
+        FREEIF(pFld);
         return EFAILED;
     }
     
