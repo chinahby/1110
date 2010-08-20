@@ -228,8 +228,7 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
 #endif //FEATURE_UTK2
 
 // 更新待机界面的定时器函数。程序运行稳定后，每分钟执行一次
-static void CoreApp_UpdateIdleTimer(void *pUser);                                       
-
+static void CoreApp_UpdateIdleTimer(void *pUser);                          
 static void CoreApp_DrawBannerMessage(CCoreApp    *pMe);
 
 #ifdef FEATURE_APP_MUSICPLAYER
@@ -2596,7 +2595,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     }
                 }
             }
-            CoreApp_UpdateIdleTimer(pMe);
+            CoreApp_UpdateIdleTimer(pMe);			
 			
 #ifdef FEATURE_KEYGUARD
             if(!OEMKeyguard_IsEnabled())
@@ -2660,7 +2659,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         }
 
         case EVT_DIALOG_END:
-            // 取消相关定时器
+            // 取消相关定时器			
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_UpdateIdleTimer,
                                       pMe);
@@ -3550,6 +3549,7 @@ static void CoreApp_UpdateIdleTimer(void *pUser)
                            CoreApp_UpdateIdleTimer,
                            pMe);
 }
+
  /*==============================================================================
 函数:
     CoreApp_TimeKeyguard
