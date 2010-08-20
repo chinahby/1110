@@ -460,7 +460,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 		//Add End
         case EVT_DIALOG_END:
         {        
-			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE);	//Add By zzg  2010_08_20
+			//IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE);	//Add By zzg  2010_08_20
             return TRUE;
         }
         //case EVT_GSENSOR_SHAKE:
