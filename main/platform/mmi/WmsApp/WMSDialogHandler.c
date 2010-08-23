@@ -6254,7 +6254,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
 #endif            
             {// 消息发送结果提示界面
                 AECHAR wszText[32] = {0};
-                uint16 nResID = IDS_FAILED_RESENDING;
+                uint16 nResID = IDS_FAILED;
                 AEERect rc;
                 int x, y;
                 RGBVAL oldColor = 0;
@@ -6300,9 +6300,8 @@ static boolean IDD_SENDING_Handler(void *pUser,
                             break;
                     }
                     pMe->m_FailNum += 1;
-					CLOSE_DIALOG(DLGRET_RESENDCONFIRM)
                 }
-                #if 0
+                
                 (void) ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,
                         nResID,
@@ -6332,7 +6331,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-                #endif
+                
                 // 设置定时器函数启动下一次发送
                 {
                     PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
@@ -9574,9 +9573,6 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                         {
                             MENU_ADDITEM(pMenu, IDS_VIEW);
                         }
-						#ifdef FEATURE_VERSION_IVIO
-						MENU_ADDITEM(pMenu, IDS_RESEND);
-						#endif
                         MENU_ADDITEM(pMenu, IDS_EDIT);
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                         MENU_ADDITEM(pMenu, IDS_DELETEALL);

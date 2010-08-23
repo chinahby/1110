@@ -225,8 +225,8 @@ uint8 wms_ts_decode_cdma_bd_id_ex(wms_client_bd_s_type * cl_bd_ptr,uint8 *m_data
 	int bit_pos = 0;
 	int         msg_ref = 53;
 	uint8         TempBuff[10] = {0};
-	uint8 nTolNum = cl_bd_ptr->user_data.data[5]-(uint8)0x30;
-	uint8 nSeqNum = cl_bd_ptr->user_data.data[2]-(uint8)0x30;
+	uint8 nTolNum = (cl_bd_ptr->user_data.data[5]-(uint8)0x30)+(cl_bd_ptr->user_data.data[4]-(uint8)0x30)*10;
+	uint8 nSeqNum = (cl_bd_ptr->user_data.data[2]-(uint8)0x30)+( cl_bd_ptr->user_data.data[1]-(uint8)0x30)*10;
 	uint8 Result = 0;
 	
 	if((cl_bd_ptr->user_data.data[0] != (uint8)'(')&&(cl_bd_ptr->user_data.data[6] != (uint8)')'))
@@ -242,13 +242,13 @@ uint8 wms_ts_decode_cdma_bd_id_ex(wms_client_bd_s_type * cl_bd_ptr,uint8 *m_data
 		Result = 3;
 		return Result;
 	}
-    MSG_FATAL("TempBuff[0]::::%d",TempBuff[0],0,0);
-    MSG_FATAL("TempBuff[1]::::%d",TempBuff[1],0,0);
-    MSG_FATAL("TempBuff[2]::::%d",TempBuff[2],0,0);
-    MSG_FATAL("TempBuff[3]::::%d",TempBuff[3],0,0);
-    MSG_FATAL("TempBuff[4]::::%d",TempBuff[4],0,0);
-    MSG_FATAL("TempBuff[5]::::%d",TempBuff[5],0,0);
-    MSG_FATAL("TempBuff[6]::::%d",TempBuff[6],0,0);
+    MSG_FATAL("------>   LMS header[0] = %c",TempBuff[0],0,0);
+    MSG_FATAL("------>   LMS header[1] = %c",TempBuff[1],0,0);
+    MSG_FATAL("------>   LMS header[2] = %c",TempBuff[2],0,0);
+    MSG_FATAL("------>   LMS header[3] = %c",TempBuff[3],0,0);
+    MSG_FATAL("------>   LMS header[4] = %c",TempBuff[4],0,0);
+    MSG_FATAL("------>   LMS header[5] = %c",TempBuff[5],0,0);
+    MSG_FATAL("------>   LMS header[6] = %c",TempBuff[6],0,0);
 	if(((TempBuff[0] == (uint8)'(') && (TempBuff[6] == (uint8)')'))||
 		(cl_bd_ptr->user_data.data[0] == (uint8)'(')&&(cl_bd_ptr->user_data.data[6] == (uint8)')'))
 	{
@@ -1778,12 +1778,18 @@ wms_status_e_type wms_ts_encode_CDMA_bd
 							uint8 nTolNum = raw_ts.data[4];
 							uint8 nSeqNum = raw_ts.data[5];
 							uint8 switch_ref = 0;
+							uint8 nseqNumTen = 0;
+							uint8 nseqNumDig = 0;
+							uint8 nTolNumTen = 0;
+							uint8 nTolNumDig = 0;
 							switch_ref = msg_ref%10;
 							raw_ts.data[0] = (uint8) '(';
-							raw_ts.data[1] = (uint8) '0';
-						    raw_ts.data[2] = nSeqNum+(uint8)0x30;
+							nseqNumTen = nSeqNum/10;
+							nseqNumDig = nSeqNum%10;
+							raw_ts.data[1] = nseqNumTen+(uint8)0x30;
+						    raw_ts.data[2] = nseqNumDig+(uint8)0x30;
 							switch(switch_ref)
-								{
+							{
 									case 0:
 										raw_ts.data[3] = (uint8) '*';
 										break;
@@ -1816,9 +1822,11 @@ wms_status_e_type wms_ts_encode_CDMA_bd
 										break;
 									default:
 										break;
-								}
-							raw_ts.data[4] = (uint8) '0';
-							raw_ts.data[5] = nTolNum+(uint8)0x30;
+							}
+							nTolNumTen = nTolNum / 10;
+							nTolNumDig = nTolNum % 10;;
+							raw_ts.data[4] = nTolNumTen+(uint8)0x30;
+							raw_ts.data[5] = nTolNumDig+(uint8)0x30;
 							raw_ts.data[6] = (uint8) ')';
 							//data_length = data_length+1;
 						}

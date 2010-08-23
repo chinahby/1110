@@ -1331,7 +1331,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         				
 
 						    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
-							   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG)
+							   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
+							   && pMe->m_currState != WMSST_SENDING)
 						    {
 						    	CLOSE_DIALOG(DLGRET_INBOXES)
 						    }
@@ -4548,76 +4549,9 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
         default:
             break;
     }      
-	if (pRptInfo->report_status != WMS_RPT_OK)
-	{
-		int nRet;
-
-		if(!pMe->m_bisSendSecond)
-		{
-			pMe->m_bisSendSecond = TRUE;
-			 // 此情况下将消息重发一次
-
-            if ((NULL != pMe->m_pCurSendCltMsg) && (pMe->m_idxCurSend < pMe->m_nSendItems))
-            {                
-    			if((int)WMS_TAG_MO_NOT_SENT == pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag)
-    			{  
-    	            nRet = IWMS_MsgSend(pMe->m_pwms, 
-    	                                pMe->m_clientId, 
-    	                                &pMe->m_callback,
-    	                                (void*)pMe,
-    	                                WMS_SEND_MODE_CLIENT_MESSAGE,
-    	                                pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
-    	                                
-    	            if (nRet == SUCCESS)
-    	            {
-    	                pMe->m_bSending = TRUE;
-    	                return;
-    		        }		        
-    			}
-            }
-		}
-		else
-		{
-			uint16 nMsgs = 0;
-			// 当消息自动发送还没发出去 则保存在草稿箱中
-	        if ((NULL != pMe->m_pCurSendCltMsg) &&
-	            (pMe->m_idxCurSend < pMe->m_nSendItems)&&
-	            pMe->m_eCreateWMSType != SEND_MSG_RESEND)
-	        {
-	        		boolean is_savetodarft = FALSE;
-					int i = 0;
-                    
-					for (i=0;i<pMe->m_idxCurSend;i++)
-					{
-						if(pMe->m_pCurSendCltMsg[i]->msg_hdr.tag == WMS_TAG_MO_SENT)
-						{
-							is_savetodarft = TRUE;
-							break;
-						}
-					}
-                    
-	        		if (pMe->m_nSendItems>1 && is_savetodarft)
-	        		{
-	        			IWMS_MsgDelete(pMe->m_pwms, 
-                                  pMe->m_clientId, 
-                                  &pMe->m_callback,
-                                  (void*)pMe,
-                                  WMS_MEMORY_STORE_NV_CDMA,
-                                  pMe->m_idxCurSend);
-
-                    	pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag = WMS_TAG_MO_DRAFT;
-						
-						IWMS_MsgWrite(pMe->m_pwms, 
-                                  pMe->m_clientId, 
-                                  &pMe->m_callback,
-                                  (void*)pMe,
-                                  WMS_WRITE_MODE_INSERT,
-                                  pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
-	        		}
-				
-	        }
-		}
-	}
+    
+    ERR("pRptInfo->report_status = %d", pRptInfo->report_status, 0, 0);
+    
     if (pRptInfo->report_status != WMS_RPT_OK && 
         pMe->m_nDisconnectedInSendingRetryTimes==0 &&
         pMe->m_bDCDisconnectedInSending)
@@ -4653,22 +4587,10 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
             (pMe->m_idxCurSend < pMe->m_nSendItems))
         {
             wms_client_message_s_type *pItem = pMe->m_pCurSendCltMsg[pMe->m_idxCurSend];
-			pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]->msg_hdr.tag = WMS_TAG_MO_SENT;
-			/*
-			if ((NULL != pMe->m_pCurSendCltMsg) &&
-	            (pMe->m_idxCurSend < pMe->m_nSendItems) &&
-	            pMe->m_eCreateWMSType != SEND_MSG_RESEND)
-	        {
-
-					IWMS_MsgWrite(pMe->m_pwms, 
-                                  pMe->m_clientId, 
-                                  &pMe->m_callback,
-                                  (void*)pMe,
-                                  WMS_WRITE_MODE_INSERT,
-                                  pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
-				   
-				
-	        }*/
+             
+            if ((NULL != pItem) &&
+                (pItem->msg_hdr.index != WMS_DUMMY_MESSAGE_INDEX))
+            {
                 (void)IWMS_MsgModifyTag(pMe->m_pwms,
                                         pMe->m_clientId,
                                         &pMe->m_callback,
@@ -4676,7 +4598,7 @@ void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo)
                                         pItem->msg_hdr.mem_store,
                                         pItem->msg_hdr.index,
                                         WMS_TAG_MO_SENT);
-		
+            }
         }
     }
     

@@ -1962,69 +1962,7 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_DRAFT)
             }
             return NFSMACTION_CONTINUE;
-	#ifdef FEATURE_VERSION_IVIO
-        case DLGRET_RESEND:
-            pMe->m_idxCur = 0;
             
-            {// 对于重发操作不进入消息编辑界面，也不进入地址列表输入界面
-                AECHAR  *pwstrNum = NULL;
-                CMultiSendItemInfo *pItem = NULL;
-				
-                //释放查看的消息内存
-				WMSMessageStruct_Free(pMe);
-				//ADD BY YANGDECAI 2010-08-16
-				
-                // 先清空群发地址链表
-                WmsApp_FreeMultiSendList(pMe->m_pSendList);
-                
-                // 拷贝地址 
-				pMe->m_msCur.msg_tag = WMS_TAG_MO_NOT_SENT;
-                if (WSTRLEN(pMe->m_msCur.m_szNum)>0)
-                {
-                    pwstrNum = pMe->m_msCur.m_szNum;
-                }
-                else
-                {
-                    // 状态不发生迁移
-					pMe->m_ePMsgType = MESSAGE_WARNNING;
-                    WmsApp_ShowMsgBox(pMe, IDS_NO_PHONENUMBER);
-                    return NFSMACTION_WAIT;
-                    
-                }
-                
-                pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
-                    
-                // 将回复号码保存入链表
-                if ((pItem == NULL) || 
-                    (SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem)))
-                {// 空号码无法回复
-                    if (NULL != pItem)
-                    {
-                        sys_free(pItem);
-                    }
-                    
-                    // 状态不发生迁移
-                    return NFSMACTION_CONTINUE;
-                }
-                (void)WSTRCPY(pItem->m_szTo, pwstrNum);
-                pMe->m_CurAddID = MSG_CMD_BASE;
-                
-                // 从电话本中取人名, 用于提示
-                WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
-            }
-            
-            pMe->m_eCreateWMSType = SEND_MSG_RESEND;
-			// 检查卡是否插入modi by yangdecai 2010-08-10
-		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
-		    {
-            	MOVE_TO_STATE(WMSST_SENDING)
-		    }
-			else
-			{
-				MOVE_TO_STATE(WMSST_POPMSG)
-			}
-            return NFSMACTION_CONTINUE;
-#endif
         case DLGRET_EDIT:          // DLGRET_FORWARD
             // 清空群发地址链表
             WmsApp_FreeMultiSendList(pMe->m_pSendList);
@@ -3353,10 +3291,7 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
             }
 
             return NFSMACTION_CONTINUE;
-		//add by yangdecai
-        case DLGRET_RESENDCONFIRM:
-			MOVE_TO_STATE(WMSST_RESENDCONFIRM);
-			return NFSMACTION_CONTINUE;
+
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)

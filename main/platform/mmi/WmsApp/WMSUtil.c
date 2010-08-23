@@ -155,7 +155,7 @@ void WMSUtil_SecsToDateString(WmsApp* pMe,uint32 dwTime, AECHAR *pBuf, int nSize
         return;
     }
     
-    wstrBuf = (AECHAR *) MALLOC(128);
+    wstrBuf = (AECHAR *) sys_malloc(128);
     if (NULL == wstrBuf)
     {
         MSG_ERROR("memory allocation failed !",0,0,0);
@@ -245,7 +245,7 @@ void WMSUtil_SecsToDateString(WmsApp* pMe,uint32 dwTime, AECHAR *pBuf, int nSize
         (void) WSTRCPY(pBuf, wstrBuf);
     }
     
-    FREE(wstrBuf);
+    SYS_FREEIF(wstrBuf);
 }
 
 /*==============================================================================
@@ -567,7 +567,7 @@ void WMSMessageStruct_Reset(WMSMessageStruct * pMsg)
     // 先释放动态分配的 buffer
     if (NULL != pMsg->m_szMessage)
     {
-        FREE(pMsg->m_szMessage);
+        sys_free(pMsg->m_szMessage);
         pMsg->m_szMessage = NULL;
     }
     
@@ -657,7 +657,7 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
     WMSMessageStruct_Reset(pOutMs);
     
     // 先分配函数要用到的 buffer
-    cl_data = MALLOC(sizeof(wms_client_ts_data_s_type));
+    cl_data = sys_malloc(sizeof(wms_client_ts_data_s_type));
     if (cl_data == NULL)
     {
         MSG_ERROR("memory allocation failed !",0,0,0);
@@ -665,14 +665,14 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
     }
     (void)MEMSET(cl_data, 0, sizeof(wms_client_ts_data_s_type));
     
-    buf = MALLOC(64);
+    buf = sys_malloc(64);
     if (buf == NULL)
     {
         MSG_ERROR("memory allocation failed !",0,0,0);
         goto WmsApp_ConvertClientMsgToMSErr;
     }
     
-    info_data = MALLOC(sizeof(wms_client_bd_s_type));
+    info_data = sys_malloc(sizeof(wms_client_bd_s_type));
     if (info_data == NULL)
     {
         MSG_ERROR("memory allocation failed !",0,0,0);
@@ -703,7 +703,7 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                     
                     nSize = sizeof(AECHAR)*(nlen + 1);
                     info_data->user_data.data[nlen] = 0;
-                    pOutMs->m_szMessage = MALLOC(nSize);
+                    pOutMs->m_szMessage = sys_malloc(nSize);
                     if (NULL == pOutMs->m_szMessage)
                     {
                         MSG_ERROR("memory allocation failed !",0,0,0);
@@ -736,7 +736,7 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                     
                     nlen = info_data->user_data.data_len;
                     nSize = sizeof(AECHAR)*(nlen + 1);
-                    pOutMs->m_szMessage = MALLOC(nSize);
+                    pOutMs->m_szMessage = sys_malloc(nSize);
                     if (NULL == pOutMs->m_szMessage)
                     {
                         MSG_ERROR("memory allocation failed !",0,0,0);
@@ -977,7 +977,7 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                     nlen = info_data->user_data.data_len;
                     nSize = sizeof(AECHAR)*(nlen + 1);
                     info_data->user_data.data[nlen] = 0;
-                    pOutMs->m_szMessage = MALLOC(nSize);
+                    pOutMs->m_szMessage = sys_malloc(nSize);
                     if (NULL == pOutMs->m_szMessage)
                     {
                         MSG_ERROR("memory allocation failed !",0,0,0);
@@ -1006,7 +1006,7 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                     nlen = cl_data->u.cdma.user_data.data_len;
                     
                     nSize = sizeof(AECHAR)*(nlen + 1);
-                    pOutMs->m_szMessage = MALLOC(nSize);
+                    pOutMs->m_szMessage = sys_malloc(nSize);
                     if (NULL == pOutMs->m_szMessage)
                     {
                         MSG_ERROR("memory allocation failed !",0,0,0);
@@ -1024,7 +1024,7 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                     nlen = cl_data->u.cdma.user_data.number_of_digits;//xg 2008 08 08modify msg
                     
                     nSize = sizeof(AECHAR)*(nlen + 1);
-                    pOutMs->m_szMessage = MALLOC(nSize);
+                    pOutMs->m_szMessage = sys_malloc(nSize);
                     if (NULL == pOutMs->m_szMessage)
                     {
                         MSG_ERROR("memory allocation failed !",0,0,0);
@@ -1518,7 +1518,7 @@ static boolean GetNumCallback(sSelectFieldListNode* pNode)
 GetNumCallback_Exit:
     if (wstrName != NULL)
     {
-        FREE(wstrName);
+        SYS_FREEIF(wstrName);
     }
     
     return TRUE;
@@ -1701,7 +1701,7 @@ static boolean InsertNumCallback(sSelectFieldListNode* pNode)
         
         wszTep[nLen+nCanInsert] = 0;
         gpWMSApp->m_dwInsertPos = startPos + nCanInsert;
-        FREE(szMessage);
+        SYS_FREEIF(szMessage);
         gpWMSApp->m_msSend.m_szMessage = wszTep;
     }
     
@@ -1976,7 +1976,7 @@ wms_client_message_s_type *WmsApp_PackPhrase(WmsApp *pMe,
     
     // 先分配需要的 buffer
     nSize = sizeof(wms_cdma_user_data_s_type);
-    pUserdata = (wms_cdma_user_data_s_type *)MALLOC(nSize);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
     if (NULL == pUserdata)
     {
         ERR("Malloc Failed!",0,0,0);
@@ -1985,21 +1985,21 @@ wms_client_message_s_type *WmsApp_PackPhrase(WmsApp *pMe,
     MEMSET(pUserdata, 0, nSize);
     
     nSize = sizeof(wms_client_ts_data_s_type);
-    pCltTsData = (wms_client_ts_data_s_type *)MALLOC(nSize);
+    pCltTsData = (wms_client_ts_data_s_type *)sys_malloc(nSize);
     if (NULL == pCltTsData)
     {
         ERR("sys_malloc Failed!",0,0,0);
-        FREE(pCltTsData);
+        SYS_FREEIF(pCltTsData);
         return NULL;
     }
     MEMSET(pCltTsData, 0, nSize);
     
     nSize = sizeof(wms_client_message_s_type);
-    pCltMsg = (wms_client_message_s_type *)MALLOC(nSize);
+    pCltMsg = (wms_client_message_s_type *)sys_malloc(nSize);
     if (NULL == pCltMsg)
     {
-        FREE(pUserdata);
-        FREE(pCltTsData);
+        SYS_FREEIF(pUserdata);
+        SYS_FREEIF(pCltTsData);
         ERR("sys_malloc Failed!",0,0,0);
         return NULL;
     }
@@ -2083,8 +2083,8 @@ wms_client_message_s_type *WmsApp_PackPhrase(WmsApp *pMe,
     
     // 消息编码结束
     
-    FREE(pCltTsData);
-    FREE(pUserdata);
+    SYS_FREEIF(pCltTsData);
+    SYS_FREEIF(pUserdata);
     
     return pCltMsg;
 }
@@ -2126,7 +2126,7 @@ void WmsApp_BuildNumList(WmsApp *pMe, WMSMessageStruct *pmsMsg)
         {
             if (IVector_AddElement(pMe->m_pSaveNumList, pItem) != SUCCESS)
             {
-                FREE(pItem);
+                SYS_FREEIF(pItem);
                 return;
             }
             
@@ -2145,7 +2145,7 @@ void WmsApp_BuildNumList(WmsApp *pMe, WMSMessageStruct *pmsMsg)
         {
             if (IVector_AddElement(pMe->m_pSaveNumList, pItem) != SUCCESS)
             {
-                FREE(pItem);
+                SYS_FREEIF(pItem);
                 return;
             }
             
@@ -2197,7 +2197,7 @@ void WmsApp_BuildNumList(WmsApp *pMe, WMSMessageStruct *pmsMsg)
         }
         
         // 抽取有效号码
-        pItem = (AECHAR *)MALLOC((nChars+1)*sizeof(AECHAR));
+        pItem = (AECHAR *)sys_malloc((nChars+1)*sizeof(AECHAR));
         if ((nStartPos > 0) && (pmsMsg->m_szMessage[nStartPos-1]==(AECHAR)'+'))
         {
             nStartPos -= 1;
@@ -2209,7 +2209,7 @@ void WmsApp_BuildNumList(WmsApp *pMe, WMSMessageStruct *pmsMsg)
             
             if (IVector_AddElement(pMe->m_pSaveNumList, pItem) != SUCCESS)
             {
-                FREE(pItem);
+                SYS_FREEIF(pItem);
                 return;
             }
             
@@ -2314,14 +2314,14 @@ void WmsApp_BuildMailAddList(WmsApp *pMe, AECHAR *wstrText)
         {// 获取到有效电子邮件地址
             nChars = (wstrEndPos - wstrStartPos) + 1;
             
-            pItem = (AECHAR *)MALLOC(((nChars+1)*sizeof(AECHAR)));
+            pItem = (AECHAR *)sys_malloc(((nChars+1)*sizeof(AECHAR)));
             if (NULL != pItem)
             {
                 (void)WSTRNCOPYN(pItem, (nChars+1), wstrStartPos, nChars);
                 
                 if (IVector_AddElement(pMe->m_pSaveNumList, pItem) != SUCCESS)
                 {
-                    FREE(pItem);
+                    SYS_FREEIF(pItem);
                     return;
                 }
                 
@@ -2434,14 +2434,14 @@ void WmsApp_BuildUrlList(WmsApp *pMe, AECHAR *wstrText)
         nCopys = nEndPos - nStartPos + 1;
         nCopys = (nCopys > MAX_URL_LEN) ? MAX_URL_LEN : nCopys;
             
-        pItem = (AECHAR *)MALLOC(((nCopys+1)*sizeof(AECHAR)));
+        pItem = (AECHAR *)sys_malloc(((nCopys+1)*sizeof(AECHAR)));
         if (NULL != pItem)
         {
             (void)WSTRNCOPYN(pItem, (nCopys+1), &wstrText[nStartPos], nCopys);
             
             if (IVector_AddElement(pMe->m_pSaveNumList, pItem) != SUCCESS)
             {
-                FREE(pItem);
+                SYS_FREEIF(pItem);
             }
             else
             {
@@ -2456,7 +2456,7 @@ void WmsApp_BuildUrlList(WmsApp *pMe, AECHAR *wstrText)
         i = nStartPos;
     }
     
-    FREE(wstrIn);
+    SYS_FREEIF(wstrIn);
 }
 
 /*==============================================================================
@@ -2533,27 +2533,27 @@ boolean ChkUpdate(uint8 *ruimdata)
         return bRet;
     }
     
-    ruim_sms = (wms_msg_ruim_sms_s_type *)MALLOC(sizeof(wms_msg_ruim_sms_s_type));
+    ruim_sms = (wms_msg_ruim_sms_s_type *)sys_malloc(sizeof(wms_msg_ruim_sms_s_type));
     if (ruim_sms == NULL)
     {
         goto ChkUpdate_Exit;
     }
-    cdma_tl = (wms_tl_message_type *)MALLOC(sizeof(wms_tl_message_type));
+    cdma_tl = (wms_tl_message_type *)sys_malloc(sizeof(wms_tl_message_type));
     if (cdma_tl == NULL)
     {
         goto ChkUpdate_Exit;
     }
-    cdma_cl = (wms_cdma_message_s_type *)MALLOC(sizeof(wms_cdma_message_s_type));
+    cdma_cl = (wms_cdma_message_s_type *)sys_malloc(sizeof(wms_cdma_message_s_type));
     if (cdma_cl == NULL)
     {
         goto ChkUpdate_Exit;
     }
-    info_data = (wms_client_bd_s_type *)MALLOC(sizeof(wms_client_bd_s_type));
+    info_data = (wms_client_bd_s_type *)sys_malloc(sizeof(wms_client_bd_s_type));
     if (info_data == NULL)
     {
         goto ChkUpdate_Exit;
     }
-    cl_data = (wms_client_ts_data_s_type *)MALLOC(sizeof(wms_client_ts_data_s_type));
+    cl_data = (wms_client_ts_data_s_type *)sys_malloc(sizeof(wms_client_ts_data_s_type));
     if (cl_data == NULL)
     {
         goto ChkUpdate_Exit;
@@ -2664,11 +2664,11 @@ boolean ChkUpdate(uint8 *ruimdata)
     }
     
 ChkUpdate_Exit:    
-    FREEIF(ruim_sms);
-    FREEIF(cdma_tl);
-    FREEIF(cdma_cl);
-    FREEIF(info_data);
-    FREEIF(cl_data);
+    SYS_FREEIF(ruim_sms);
+    SYS_FREEIF(cdma_tl);
+    SYS_FREEIF(cdma_cl);
+    SYS_FREEIF(info_data);
+    SYS_FREEIF(cl_data);
     
     return bRet;
 }
@@ -2809,7 +2809,7 @@ void wmsutil_formatmessage(wms_client_message_s_type *pclt_msg)
         return;
     }
     
-    pMs = (WMSMessageStruct *)MALLOC(sizeof(WMSMessageStruct));
+    pMs = (WMSMessageStruct *)sys_malloc(sizeof(WMSMessageStruct));
     if (NULL == pMs)
     {
         return;
@@ -2818,7 +2818,7 @@ void wmsutil_formatmessage(wms_client_message_s_type *pclt_msg)
     WmsApp_ConvertClientMsgToMS(pclt_msg, pMs);
     if (NULL == pMs->m_szMessage)
     {
-        FREE(pMs);
+        SYS_FREEIF(pMs);
         return;
     }
     
@@ -2830,7 +2830,7 @@ void wmsutil_formatmessage(wms_client_message_s_type *pclt_msg)
     nBufLen = 3*(nLen+1)+3;
     nBufMax = nBufLen;
     nSize = nBufLen*sizeof(AECHAR);
-    wtrBuf = (AECHAR *)MALLOC(nSize);
+    wtrBuf = (AECHAR *)sys_malloc(nSize);
     
     if (NULL == wtrBuf)
     {
@@ -2838,7 +2838,7 @@ void wmsutil_formatmessage(wms_client_message_s_type *pclt_msg)
     }
     MEMSET(wtrBuf, 0, nSize);
     
-    pclt_ts = (wms_client_ts_data_s_type *)MALLOC(sizeof(wms_client_ts_data_s_type));
+    pclt_ts = (wms_client_ts_data_s_type *)sys_malloc(sizeof(wms_client_ts_data_s_type));
     if (NULL == pclt_ts)
     {
         goto FORMATMESSAGE_EXIT;
@@ -2951,11 +2951,11 @@ void wmsutil_formatmessage(wms_client_message_s_type *pclt_msg)
 FORMATMESSAGE_EXIT:
     if (NULL != pMs)
     {
-        FREEIF(pMs->m_szMessage);
-        FREE(pMs);
+        SYS_FREEIF(pMs->m_szMessage);
+        SYS_FREEIF(pMs);
     }
-    FREEIF(pclt_ts);
-    FREEIF(wtrBuf);
+    SYS_FREEIF(pclt_ts);
+    SYS_FREEIF(wtrBuf);
 }
 
 /*==============================================================================
@@ -2991,7 +2991,7 @@ void wmsutil_decodemessagefromview2logic(wms_client_message_s_type *pclt_msg)
         return;
     }
     
-    pMs = (WMSMessageStruct *)MALLOC(sizeof(WMSMessageStruct));
+    pMs = (WMSMessageStruct *)sys_malloc(sizeof(WMSMessageStruct));
     if (NULL == pMs)
     {
         return;
@@ -3000,7 +3000,7 @@ void wmsutil_decodemessagefromview2logic(wms_client_message_s_type *pclt_msg)
     WmsApp_ConvertClientMsgToMS(pclt_msg, pMs);
     if (NULL == pMs->m_szMessage)
     {
-        FREE(pMs);
+        SYS_FREEIF(pMs);
         return;
     }
     
@@ -3008,14 +3008,14 @@ void wmsutil_decodemessagefromview2logic(wms_client_message_s_type *pclt_msg)
     nBufLen = 3*(nLen+1)+3;
     nBufMax = nBufLen;
     nSize = nBufLen*sizeof(AECHAR);
-    wtrBuf = (AECHAR *)MALLOC(nSize);
+    wtrBuf = (AECHAR *)sys_malloc(nSize);
     if (NULL == wtrBuf)
     {
         goto DECODEMESSAGEFROMVIEW2LOGIC_EXIT;
     }
     MEMSET(wtrBuf, 0, nSize);
     
-    pclt_ts = (wms_client_ts_data_s_type *)MALLOC(sizeof(wms_client_ts_data_s_type));
+    pclt_ts = (wms_client_ts_data_s_type *)sys_malloc(sizeof(wms_client_ts_data_s_type));
     if (NULL == pclt_ts)
     {
         goto DECODEMESSAGEFROMVIEW2LOGIC_EXIT;
@@ -3097,11 +3097,11 @@ void wmsutil_decodemessagefromview2logic(wms_client_message_s_type *pclt_msg)
 DECODEMESSAGEFROMVIEW2LOGIC_EXIT:
     if (NULL != pMs)
     {
-        FREEIF(pMs->m_szMessage);
-        FREE(pMs);
+        SYS_FREEIF(pMs->m_szMessage);
+        SYS_FREEIF(pMs);
     }
-    FREEIF(pclt_ts);
-    FREEIF(wtrBuf);
+    SYS_FREEIF(pclt_ts);
+    SYS_FREEIF(wtrBuf);
 }
 #endif
 /*==============================================================================
@@ -3270,7 +3270,7 @@ uint32 ISO_13818_CRC32(char *pdata, int nlen)
     }
     
     
-    CRCTable = (uint32 *)MALLOC(256*sizeof(uint32));
+    CRCTable = (uint32 *)sys_malloc(256*sizeof(uint32));
     if (NULL == CRCTable)
     {
         return 0;
@@ -3309,7 +3309,7 @@ uint32 ISO_13818_CRC32(char *pdata, int nlen)
         i--;
     }
     
-    FREE(CRCTable);
+    SYS_FREEIF(CRCTable);
     
     return crc^0xFFFFFFFFL;
 }
@@ -3383,7 +3383,7 @@ wms_client_message_s_type *GetRegisterMsg()
 
     
     nSize = sizeof(char)*150;
-    pBuf = (char *)MALLOC(nSize);
+    pBuf = (char *)sys_malloc(nSize);
     if (NULL == pBuf)
     {
         goto GETREGISTERMSG_EXIT;
@@ -3395,7 +3395,7 @@ wms_client_message_s_type *GetRegisterMsg()
     }
     
     nSize = sizeof(wms_cdma_user_data_s_type);
-    pUserdata = (wms_cdma_user_data_s_type *)MALLOC(nSize);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
     if (NULL == pUserdata)
     {
         goto GETREGISTERMSG_EXIT;
@@ -3410,8 +3410,8 @@ wms_client_message_s_type *GetRegisterMsg()
     pCltMsg = GetMOClientMsg(REG_SERVERNUM, pUserdata, TRUE);
     
 GETREGISTERMSG_EXIT:
-    FREEIF(pBuf);
-    FREEIF(pUserdata);
+    SYS_FREEIF(pBuf);
+    SYS_FREEIF(pUserdata);
     
     return pCltMsg;
 }
@@ -3536,7 +3536,7 @@ wms_client_message_s_type *GetSeamlessSMS()
 
     MSG_FATAL("Send SeamLess SMS!",0,0,0);
     nSize = sizeof(char)*300;
-    pBuf = (char *)MALLOC(nSize);
+    pBuf = (char *)sys_malloc(nSize);
     if (NULL == pBuf)
     {
         goto GETREGISTERMSG_EXIT;
@@ -3548,7 +3548,7 @@ wms_client_message_s_type *GetSeamlessSMS()
     }
     
     nSize = sizeof(wms_cdma_user_data_s_type);
-    pUserdata = (wms_cdma_user_data_s_type *)MALLOC(nSize);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
     if (NULL == pUserdata)
     {
         goto GETREGISTERMSG_EXIT;
@@ -3563,8 +3563,8 @@ wms_client_message_s_type *GetSeamlessSMS()
     pCltMsg = GetMOClientMsg(SEAMLESSSMS_SERVERNUM, pUserdata, FALSE);
     
 GETREGISTERMSG_EXIT:
-    FREEIF(pBuf);
-    FREEIF(pUserdata);
+    SYS_FREEIF(pBuf);
+    SYS_FREEIF(pUserdata);
     
     return pCltMsg;
 }
@@ -3604,7 +3604,7 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
     }
     
     nSize = sizeof(wms_client_ts_data_s_type);
-    pCltTsData = (wms_client_ts_data_s_type *)MALLOC(nSize);
+    pCltTsData = (wms_client_ts_data_s_type *)sys_malloc(nSize);
     if (NULL == pCltTsData)
     {
         ERR("sys_malloc Failed!",0,0,0);
@@ -3613,10 +3613,10 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
     MEMSET(pCltTsData, 0, nSize);
     
     nSize = sizeof(wms_client_message_s_type);
-    pCltMsg = (wms_client_message_s_type *)MALLOC(nSize);
+    pCltMsg = (wms_client_message_s_type *)sys_malloc(nSize);
     if (NULL == pCltMsg)
     {
-        FREE(pCltTsData);
+        SYS_FREEIF(pCltTsData);
         ERR("sys_malloc Failed!",0,0,0);
         return NULL;
     }
@@ -3684,7 +3684,7 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
 #endif   
     // 消息编码结束
     
-    FREEIF(pCltTsData);
+    SYS_FREEIF(pCltTsData);
     
     return pCltMsg;
 }
@@ -3748,7 +3748,7 @@ wms_client_message_s_type *CWmsApp_GetspecmsgEx(void)
     }
     
     nSize = sizeof(wms_cdma_user_data_s_type);
-    pUserdata = (wms_cdma_user_data_s_type *)MALLOC(nSize);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
 	
     if (NULL == pUserdata)
     {
@@ -3765,7 +3765,7 @@ wms_client_message_s_type *CWmsApp_GetspecmsgEx(void)
     pCltMsg = GetMOClientMsg(FRENDUO_SMS_DESTNUM, pUserdata, FALSE);
     
 GETREGISTERMSG_EXIT:    
-    FREEIF(pUserdata);
+    SYS_FREEIF(pUserdata);
     
     return pCltMsg;    
 }
