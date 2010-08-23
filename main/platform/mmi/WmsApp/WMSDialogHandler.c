@@ -7924,7 +7924,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                 }
                                 else
                                 {
-                                    eBBarType = BTBAR_FIND_BACK;
+                                    eBBarType = BTBAR_BACK;
                                 }
                                             
                                 (void)ITEXTCTL_SetText((ITextCtl *)pControl, wszText, -1);
@@ -8123,7 +8123,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     else if (nLen <= 0)
                     {
                         // Search      Back
-                        DRAW_BOTTOMBAR(BTBAR_FIND_BACK)
+                        DRAW_BOTTOMBAR(BTBAR_BACK)
                         IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     }
                 }
@@ -8186,7 +8186,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         if ((NULL == txtPtr) || (WSTRLEN(txtPtr) == 0))
                         {// 用户意欲查询电话本输入号码
                             // 调用通信簿群发取号码接口，本Applet 会被挂起，返回时回到当前状态
-                            WMSExtApp_GetAddresseeFromContactsApp(pMe, GETADDR_ONEADD);
+                            //WMSExtApp_GetAddresseeFromContactsApp(pMe, GETADDR_ONEADD);
+                            return TRUE;
                         }
                         else
                         {
@@ -8350,7 +8351,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                 
                                 // 绘制底条提示
                                 // Search       Back
-                                eBBarType = BTBAR_FIND_BACK;
+                                eBBarType = BTBAR_BACK;
                             }
                             else
                             {
