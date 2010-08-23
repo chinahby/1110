@@ -1034,6 +1034,8 @@ boolean wms_msg_cdma_check_dups
   boolean                           dup_found = TRUE;
   uint32                            i;
 
+ if (new_tl_msg->cl_bd.message_id.udh_present == 1)
+ 	return FALSE;
   MSG_HIGH("Checking for duplicate messages!",0,0,0);
 
 
@@ -1252,8 +1254,6 @@ boolean wms_msg_cdma_check_dups
 
   /* If we got this far, a duplicate was not found. */
   return dup_found;
-#else /* FEATURE_CDSMS_DUP_DETECTION */
-  return FALSE;
 #endif 
 } /* wms_msg_cdma_check_dups() */
 
