@@ -2683,7 +2683,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             MENU_ADDITEM(pMenu, IDS_SENDMODE);
 #ifdef FEATURE_RESERVEDMSG  
 #endif                   
-#ifndef FEATURE_CARRIER_TAIWAN_APBW       
+#ifdef FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif 
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
@@ -2752,12 +2752,12 @@ static boolean IDD_SETTING_Handler(void   *pUser,
                     CLOSE_DIALOG(DLGRET_AUTOREPLACE)
                     return TRUE;
 #endif                    
-                    
+#ifdef FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
-                
+#endif
                 //发送模式
                 case IDS_SENDMODE:
                     CLOSE_DIALOG(DLGRET_SENDMODE)
