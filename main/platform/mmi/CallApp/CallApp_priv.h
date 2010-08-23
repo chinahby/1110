@@ -260,7 +260,6 @@ typedef PACKED struct {
 /*Temp add */
 #define FEATURE_APP_PAUSE_TIMER
 
-#define FEATURE_APP_FRENDUO_TIMER		//Add By zzg 2010_08_03
 
 #if 0
 #define FEATURE_IMAGE_DIALING_DIGITS
