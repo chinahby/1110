@@ -661,6 +661,12 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                     {
                         return FALSE;
                     }
+                    
+                    if(pMe->m_eCurState == COREST_LPM)
+                    {
+                        return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+                    }
+                    
                     pMe->m_ePowerDownType = POWERDOWN_NORMAL;
                     if (pMe->m_eCurState != COREST_POWEROFF
                       &&pMe->m_eCurState != COREST_STARTUPANI

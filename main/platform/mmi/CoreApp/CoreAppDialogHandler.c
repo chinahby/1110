@@ -1156,7 +1156,8 @@ static boolean  IDD_LPM_Handler(void       *pUser,
 #endif
             return TRUE;
         }
-        case EVT_KEY:
+        
+        case EVT_KEY_HELD:
             switch (wParam)
             {
                 case AVK_END:
@@ -1167,7 +1168,8 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             }
             
             return TRUE;
-            
+
+        case EVT_KEY:
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
             return TRUE;
