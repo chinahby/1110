@@ -2458,6 +2458,11 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.b_phonebook_lock         = FALSE;
    oemi_cache.b_recentcall_lock        = FALSE;
    oemi_cache.b_sms_lock               = FALSE;
+
+   //Add By zzg 2010_08_21
+   oemi_cache.b_calendar_lock          = FALSE;
+   //Add End
+   
 #if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
     nvi_cache.key_tone_length = OEMNV_KEYTONE_LONG;
     nvi.cont_key_dtmf = TRUE;
