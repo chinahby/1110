@@ -145,6 +145,10 @@ MMI_ADD_TOUCHPAD=no
 EXTLANG1=id
 EXTLANG2=NO
 endif
+
+ifeq ($(USES_CONSTEFS),yes)
+CONSTEFS_DIR = fs:/_rebuildefs_
+endif
 #-------------------------------------------------------------------------------
 # Core includes
 #-------------------------------------------------------------------------------

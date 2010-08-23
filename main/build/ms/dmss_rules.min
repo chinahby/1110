@@ -315,6 +315,9 @@ ifeq ($(USES_MMI),yes)
 # Rules for building EFS File System
 #
 #-------------------------------------------------------------------------------
+ifeq ($(USES_CONSTEFS),yes)
+CONSTFILE_BIN_FILES += $(subst fs:/,$(CONSTEFS_DIR)/,$(EFSFILE_FILES))
+else
 EFSFILE_DIR = $(BINPATH)/$(TARGET)/efs
 EFSFILE_FILENAMES  = $(filter-out fs:/%, $(subst |, ,$(EFSFILE_FILES)))
 EFSFILE_FSLOC      = $(subst fs:/,$(EFSFILE_DIR)/,$(firstword $(filter fs:/%, $(subst |, ,$(filter $(notdir $<)|%, $(EFSFILE_FILES))))))
@@ -327,7 +330,8 @@ $(EFSFILE_TARGETS) : $(TARGETDIR)/% : %
 	@cp $< $@
 	@cp $< $(EFSFILE_FSLOC)
 	@echo ------------------------------------------------------------------------
-	
+endif
+
 #-------------------------------------------------------------------------------
 #
 # Rules for building Const File System

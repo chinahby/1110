@@ -106,7 +106,9 @@ void SendRTREConfig (CCoreApp *pMe);
 static boolean CoreApp_ProcessFTMMode(CCoreApp *pMe);
 static void CoreApp_Process_Headset_Msg(CCoreApp *pMe, uint16 msgId);
 static boolean CoreApp_GetCardStatus(CCoreApp *pMe,uint8 slot);
-
+#ifdef USES_CONSTEFS
+static void CoreApp_RebuildEFS(CCoreApp *pMe);
+#endif
 /*==============================================================================
 
                                  函数定义
@@ -271,6 +273,9 @@ boolean CoreApp_InitAppData(IApplet* po)
     extern void GreyBitBrewFont_Init(void);
     GreyBitBrewFont_Init();
 }
+#endif
+#ifdef USES_CONSTEFS
+    CoreApp_RebuildEFS(pMe);
 #endif
 #ifdef FEATURE_MMGSDI
     pMe->m_nCardStatus = AEECARD_NOT_READY;
@@ -1520,11 +1525,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
     里，模块必须校验 ClsId ，然后调用文件 AEEAppGen.c 提供的函数 AEEApplet_New()
     。调用 AEEApplet_New() 成功后，函数可以做应用特定初始化。
 ==============================================================================*/
-#if defined(AEE_STATIC)
 int CoreApp_CreateInstance(AEECLSID ClsId,IShell * pIShell,IModule * pMod,void ** ppObj)
-#else
-int AEEClsCreateInstance(AEECLSID ClsId,IShell * pIShell,IModule * pMod,void ** ppObj)
-#endif
 {
     *ppObj = NULL;
     
@@ -2719,4 +2720,114 @@ static boolean CoreApp_ProcessFTMMode(CCoreApp *pMe)
     //CORE_ERR("CoreApp_ProcessFTMMode", 0, 0, 0);
     return TRUE;
 }
+
+#ifdef USES_CONSTEFS
+#define COREAPP_REBUILDEFS_BUFSIZE  1024
+#define COREAPP_REBUILDEFS_VER      USES_CONSTEFS "/1.ver"
+
+static void CoreApp_RebuildDirFiles(IFileMgr *pFileMgr, const char * pszDir, byte *pBuff)
+{
+    // 枚举当前的文件
+    if(SUCCESS == IFILEMGR_EnumInit(pFileMgr,pszDir,FALSE))
+    {
+        AEEFileInfo myInfo;
+        char        szName[AEE_MAX_FILE_NAME+1];
+        IFile      *pFileSrc;
+        IFile      *pFileDst;
+        int         nCount;
+        
+        while(TRUE == IFILEMGR_EnumNext(pFileMgr, &myInfo))
+        {
+            STRCPY(szName,AEEFS_ROOT_DIR);
+            STRCAT(szName,&(myInfo.szName[sizeof(USES_CONSTEFS)]));
+            //if(SUCCESS != IFILEMGR_Test(pFileMgr, szName))
+            {
+                pFileSrc = IFILEMGR_OpenFile(pFileMgr,myInfo.szName,_OFM_READ);
+                pFileDst = IFILEMGR_OpenFile(pFileMgr,szName,_OFM_CREATE);
+                if(NULL != pFileSrc && NULL != pFileDst)
+                {
+                    while(1)
+                    {
+                        nCount = IFILE_Read(pFileSrc,pBuff,COREAPP_REBUILDEFS_BUFSIZE);
+                        if(nCount> 0)
+                        {
+                            IFILE_Write(pFileDst,pBuff,nCount);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                RELEASEIF(pFileSrc);
+                RELEASEIF(pFileDst);
+            }
+        }
+    }
+}
+
+static void CoreApp_RebuildDir(CCoreApp *pMe, const char * pszDir, byte *pBuff)
+{
+    int       nRet;
+    IFileMgr *pFileMgr  = NULL;
+
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **) &pFileMgr);
+    if (nRet != SUCCESS) 
+    {
+        goto EXIT_FUN;
+    }
+    
+    CoreApp_RebuildDirFiles(pFileMgr, pszDir, pBuff);
+    
+    // 枚举当前的文件夹
+    if(SUCCESS == IFILEMGR_EnumInit(pFileMgr,pszDir,TRUE))
+    {
+        AEEFileInfo myInfo;
+        
+        while(TRUE == IFILEMGR_EnumNext(pFileMgr, &myInfo))
+        {
+            CoreApp_RebuildDir(pMe, myInfo.szName, pBuff);
+        }
+    }
+    
+EXIT_FUN:
+    RELEASEIF(pFileMgr);
+}
+
+static void CoreApp_RebuildEFS(CCoreApp *pMe)
+{
+    int       nRet;
+    IFileMgr *pFileMgr  = NULL;
+    IFile    *pFile     = NULL;
+    byte     *pBuff     = NULL;
+    
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **) &pFileMgr);
+    if (nRet != SUCCESS) 
+    {
+        goto EXIT_FUN;
+    }
+    
+    // 已经存在对应版本号的文件，则无需重建EFS
+    if(SUCCESS == IFILEMGR_Test(pFileMgr,COREAPP_REBUILDEFS_VER))
+    {
+        goto EXIT_FUN;
+    }
+    
+    pBuff = (byte *)MALLOC(COREAPP_REBUILDEFS_BUFSIZE);
+    if(!pBuff)
+    {
+        goto EXIT_FUN;
+    }
+    
+    // 递归枚举 USES_CONSTEFS 文件夹下面的文件,并将其复制到 USES_CONSTEFS 替换为 AEEFS_ROOT_DIR 的文件夹下面
+    CoreApp_RebuildDir(pMe, USES_CONSTEFS, pBuff);
+    
+    // EFS重建完成，创建 COREAPP_REBUILDEFS_VER 文件
+    pFile = IFILEMGR_OpenFile(pFileMgr, COREAPP_REBUILDEFS_VER,_OFM_CREATE);
+EXIT_FUN:
+    FREEIF(pBuff);
+    RELEASEIF(pFile);
+    RELEASEIF(pFileMgr);
+}
+#endif
 

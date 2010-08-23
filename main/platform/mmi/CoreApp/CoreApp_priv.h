@@ -83,6 +83,10 @@
                                  宏定义和常数
                                  
 ==============================================================================*/
+#ifndef RELEASEIF
+#define RELEASEIF(x) if (x) { IBASE_Release((IBase *)(x)); (x) = 0; }
+#endif
+
 // 根据 BREW 3 的需要，重定义资源文件宏
 #define  AEE_COREAPPRES_LANGFILE (AEE_RES_LANGDIR COREAPP_RES_FILE)
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
