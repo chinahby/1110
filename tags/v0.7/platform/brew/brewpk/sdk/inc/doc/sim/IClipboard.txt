@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IClipboard simulation
+
+IClipboard is simulated.
+==========================
+*/ 

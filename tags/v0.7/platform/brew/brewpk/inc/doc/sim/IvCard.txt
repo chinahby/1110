@@ -1,0 +1,12 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IvCard simulation
+
+IvCard is simulated.
+==========================
+*/ 
+
+
+

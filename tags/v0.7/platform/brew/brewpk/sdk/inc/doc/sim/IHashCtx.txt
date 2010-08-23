@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IHashCtx simulation
+
+IHashCtx is simulated.
+==========================
+*/ 
