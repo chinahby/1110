@@ -215,7 +215,7 @@ static void  CallApp_SetTimerControl(void *pUser);
 
 
 //Add By zzg 2010_08_03
-#ifdef FEATURE_APP_FRENDUO_TIMER
+#ifdef FEATURE_FRENDUO
 static void  CallApp_SetFrenduoTimer(void *pUser);
 static boolean  CallApp_SendFrenduoSMS(void);
 #endif 
@@ -2650,7 +2650,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         case EVT_DIALOG_START:
         {
 //Add By zzg 2010_08_03		  
-#ifdef FEATURE_APP_FRENDUO_TIMER
+#ifdef FEATURE_FRENDUO
 			Dialer_call_table *str = NULL;
 			str = CallApp_Get_First_Entry_In_Call_Table(pMe);
 
@@ -2762,7 +2762,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
           //  (void)ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetPauseControl, pMe);   
           
           //Add By zzg 2010_08_03		
-#ifdef FEATURE_APP_FRENDUO_TIMER
+#ifdef FEATURE_FRENDUO
 			{
 			    Dialer_call_table* p_temp = NULL;
                 p_temp = CallApp_Get_First_Entry_In_Call_Table(pMe);
@@ -8149,7 +8149,7 @@ static void  CallApp_SetTimerControl(void *pUser)
 #endif
 
 //Add By zzg 2010_08_03
-#ifdef FEATURE_APP_FRENDUO_TIMER
+#ifdef FEATURE_FRENDUO
 static void  CallApp_SetFrenduoTimer(void *pUser)
 {
 	CCallApp *pMe = (CCallApp *)pUser;
