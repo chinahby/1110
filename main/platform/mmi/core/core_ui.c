@@ -1782,7 +1782,14 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
     boolean  bHandle = FALSE;
     
 #ifdef FEATURE_KEYGUARD
-    if (OEMKeyguard_HandleEvent(evt, wParam)){
+    //Add By zzg 2010_08_23
+    if (evt == EVT_HEADSET)
+    {
+        return FALSE;
+    }
+    //Add End
+    if (OEMKeyguard_HandleEvent(evt, wParam))
+    {
         return TRUE;
     }
 #endif
