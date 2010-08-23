@@ -777,7 +777,7 @@ typedef struct _CCallApp
     //#define CALL_PRINT(str,str1,str2)        CallApp_Printf(str,str1,str2)
     #define CALL_ERR( str, a, b, c )         MSG_FATAL( str,a,b,c )
     #define CALL_FUN_START( str, a, b, c )   MSG_FATAL( str,a,b,c )
-    #define CALL_PRINTF  (...)
+    #define CALL_PRINTF( str,... )
 #else
     //#define CALL_PRINT(str,str1,str2)
     #define CALL_ERR( str, a, b, c )
