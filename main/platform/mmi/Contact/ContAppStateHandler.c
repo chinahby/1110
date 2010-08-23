@@ -6295,10 +6295,10 @@ static NextFSMAction Handler_STATE_SELECT(CContApp *pMe)
         {   
 			MSG_FATAL("pMe->Handler_STATE_SELECT:::::::DLGRET_OK::::::::",0,0,0);
 #if defined(FEATURE_WMS_APP)
-            if(pMe->m_wSelFldType != MULTI_SELECT_CONTENT)
+            //if(pMe->m_wSelFldType != MULTI_SELECT_CONTENT)
             {
                 CContApp_GetSendListLeftNodeNum(pMe, &pMe->m_nleftNum);
-
+				MSG_FATAL("pMe->Handler_STATE_SELECT:::::::DLGRET_OK 1111111111::::::::",0,0,0);
                 if(pMe->m_eTotalSelectNum > pMe->m_nleftNum)
                 {
                     pMe->m_eMsgType = MESSAGE_WARNNING; 
@@ -6351,7 +6351,8 @@ static NextFSMAction Handler_STATE_SELECT(CContApp *pMe)
             break;
 
         case DLGRET_SENDLISTFULL:
-            pMe->m_eMsgType = MESSAGE_WARNNING; 
+            pMe->m_eMsgType = MESSAGE_WARNNING;
+			MSG_FATAL("pMe->Handler_STATE_SELECT:::::::DLGRET_OK 00000000::::::::",0,0,0);
             if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_SENTLIST_FULL))
             {
                 MOVE_TO_STATE(STATE_EXIT);
@@ -7848,6 +7849,7 @@ static NextFSMAction Handler_STATE_POPNUMFLD(CContApp *pMe)
             
         case DLGRET_SENDLISTFULL:
             pMe->m_eMsgType = MESSAGE_WARNNING; 
+			MSG_FATAL("pMe->Handler_STATE_SELECT:::::::DLGRET_OK 222222222222::::::::",0,0,0);
             if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_SENTLIST_FULL))
             {
                 MOVE_TO_STATE(STATE_EXIT);
@@ -8027,6 +8029,7 @@ static NextFSMAction Handler_STATE_SELECTOPT(CContApp *pMe)
                         if(pMe->m_eTotalSelectNum > pMe->m_nleftNum)
                         {
                             pMe->m_eMsgType = MESSAGE_WARNNING; 
+							MSG_FATAL("pMe->Handler_STATE_SELECT:::::::DLGRET_OK 33333333333::::::::",0,0,0);
                             if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_SENTLIST_FULL))
                             {
                                 MOVE_TO_STATE(STATE_EXIT);
