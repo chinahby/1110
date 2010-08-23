@@ -3762,6 +3762,11 @@ wms_cmd_err_e_type wms_msg_do_write
 	            msg_ptr->msg_hdr.index  = i;
 
 	            /* Update the duplicate detection info cache if this is a MT msg. */
+		  if( wms_ts_decode_CDMA_bd( & msg_ptr->u.cdma_message.raw_ts, FALSE, FALSE,
+                             & cdma_tl.cl_bd) != WMS_OK_S )
+			{
+			return FALSE;
+			}
 	            if(WMS_IS_MT(cfg_s_ptr->ruim_tags[i]))
 	            {
 	              if(wms_ts_decode_bearer_data(&msg_ptr->u.cdma_message.raw_ts,
@@ -3943,7 +3948,11 @@ wms_cmd_err_e_type wms_msg_do_write
 	              */
 	              cfg_s_ptr->nv_cdma_tags[i]  = msg_ptr->msg_hdr.tag;
 	              msg_ptr->msg_hdr.index      = i;
-
+  if( wms_ts_decode_CDMA_bd( & msg_ptr->u.cdma_message.raw_ts, FALSE, FALSE,
+                             & cdma_tl.cl_bd) != WMS_OK_S )
+  {
+    return FALSE;
+  }
 	              /* Update the duplicate detection info cache if this is a MT msg. */
 	              if(WMS_IS_MT(cfg_s_ptr->nv_cdma_tags[i]))
 	              {
@@ -6924,6 +6933,11 @@ wms_status_e_type wms_msg_cdma_deliver
       ** message.  Do not notify clients if this is a duplicate, simply return
       ** WMS_OK_S and change the routing to DISCARD so the msg will be acked.
       */
+        if( wms_ts_decode_CDMA_bd( & msg_ptr->u.cdma_message.raw_ts, FALSE, FALSE,
+                             & cdma_tl.cl_bd) != WMS_OK_S )
+	{
+		return FALSE;
+	}
       if( wms_msg_cdma_check_dups( & cdma_tl ) == TRUE )
       {
         MSG_HIGH("Dup msg not stored", 0,0,0);
