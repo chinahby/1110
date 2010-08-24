@@ -1038,12 +1038,9 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         
         case EVT_HEADSET:
         {
-        	if ( wParam == AVK_HEADSET_CONNECT )
+        	if ( wParam )
         	{
-				if (HS_HEADSET_ON())
-				{
-					fm_mute(FALSE);
-				}
+                //Nothing TODO
         	}
         	else
         	{
