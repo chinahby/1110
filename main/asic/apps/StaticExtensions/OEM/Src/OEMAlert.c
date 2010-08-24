@@ -3300,7 +3300,7 @@ SEE ALSO:
 static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
 {
    snd_method_type        method;
-   byte               method_ex = 0;
+   byte                   method_ex = 0;
    keyToneLength          len;
    AEESoundToneData       td;
    byte                   btKeyVol = 0;
@@ -3348,9 +3348,10 @@ static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
                                    CFGI_HEADSET_PRESENT,
                                    &headsetPresent,
                                    sizeof(headsetPresent)))
-    {
-        headsetPresent = FALSE;
-    }
+   {
+       headsetPresent = FALSE;
+   }
+   
    if (!bPressed) 
    {
       // Make sure the tone is stopped if the user just 

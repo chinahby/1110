@@ -2908,10 +2908,10 @@ static void HeadsetOff(CCoreApp *pMe)
       MSG_ERROR("NULL pointer, pMe=0x%x", pMe, 0, 0);
       return;
    }
-
+   
    if(pMe->m_pIAnn)
    {
-      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
+      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_ON*/);
    }
    
    ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headSetOn, 1);

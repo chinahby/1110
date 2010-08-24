@@ -1670,7 +1670,6 @@ static IBacklight   *gpBacklight = NULL;
 static IBacklight   *gpKeyBacklight = NULL;
 #endif
 static IALERT       *gpAlert = NULL;
-static ISound       *gpSound= NULL;
 static ICM          *gpICM = NULL;
 static boolean      m_isBacklight = FALSE;
 
@@ -1735,7 +1734,6 @@ static void CoreTask_CreateAEEInstance(void)
     (void) ISHELL_CreateInstance(pShell, AEECLSID_BACKLIGHT_KEYPAD, (void**)&gpKeyBacklight);
 #endif
     (void) ISHELL_CreateInstance(pShell, AEECLSID_ALERT, (void**)&gpAlert);
-    (void) ISHELL_CreateInstance(pShell, AEECLSID_SOUND, (void**)&gpSound);
     (void) ISHELL_CreateInstance(pShell, AEECLSID_CM,    (void**)&gpICM);
     
     // ±≥π‚¥¶¿Ì
@@ -1767,11 +1765,6 @@ static void CoreTask_FreeAEEInstance(void)
     if (gpAlert){
         IALERT_Release(gpAlert);
         gpAlert = NULL;
-    }
-
-    if (gpSound){
-        ISOUND_Release(gpSound);
-        gpSound = NULL;
     }
     
     if (gpICM) {
