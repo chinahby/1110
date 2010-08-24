@@ -667,3 +667,21 @@ int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, 
     return nErr;
 }
 
+int GreyBitBrewFont_MeasureText(IDisplay *p, int nSize, const AECHAR *psz)
+{
+    int nErr;
+    IFont *pOldFont;
+    IFont *pNewFont = NULL;
+    
+    nErr = GreyBitBrewFont_Create(nSize, (void **)&pNewFont);
+    if(SUCCESS != nErr)
+    {
+        return nErr;
+    }
+    
+    pOldFont = IDISPLAY_SetFont(p, AEE_FONT_USER_1, pNewFont);        
+    nErr = IDISPLAY_MeasureText(p, AEE_FONT_USER_1, psz);
+    IDISPLAY_SetFont(p, AEE_FONT_USER_1, pOldFont);
+    GreyBitBrewFont_Destory(pNewFont);
+    return nErr;
+}

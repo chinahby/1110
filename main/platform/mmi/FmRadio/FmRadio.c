@@ -876,7 +876,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #endif                
             {
             	//Add By zzg 2010_07_18
-				if (HS_HEADSET_ON())
+				//if (HS_HEADSET_ON())	//Del by zzg 2010_08_24
 				{
 					fm_mute(TRUE);
 				}
@@ -1070,7 +1070,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #if defined( FEATURE_FMRADIO_PROMPT_HEADSET_PLUG_OUT)
 						if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_NO_HEADSET)
 						{
-							pMe->refuseReason = FM_RADIO_REFUSE_REASON_HEADSET_PLUG_OUT;
+							pMe->refuseReason = FM_RADIO_REFUSE_REASON_HEADSET_PLUG_OUT;							
 						}
 #endif
 					}
