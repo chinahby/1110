@@ -1333,6 +1333,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             return CallApp_Notify(pMe, eCode, wParam, dwParam);
             
         case EVT_HEADSET:
+            ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
             CallApp_SetupCallAudio(pMe);
             return TRUE;
             

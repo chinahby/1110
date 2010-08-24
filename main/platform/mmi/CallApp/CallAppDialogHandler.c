@@ -2907,9 +2907,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 					{
 					    pMe->m_userCanceled = TRUE;
                         ICM_EndAllCalls(pMe->m_pICM);
-                        
-						//snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
-						//snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
 					}
                     else
                     {
@@ -3578,11 +3575,6 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 IIMAGE_Release(pMe->m_pCallingImage);
                 pMe->m_pCallingImage = NULL;
             }
-			if (HS_HEADSET_ON()) //add by yangdecai
-			{
-				snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
-				snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By yangdecai 2010_08_06
-			}
             pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
             return TRUE;
         //case EVT_INCOMISREADY:

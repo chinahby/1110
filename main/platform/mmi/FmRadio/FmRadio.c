@@ -879,13 +879,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 				if (HS_HEADSET_ON())
 				{
 					fm_mute(TRUE);
-				}	
-				else
-				{
-					//wl add!  2010-08-09
-					snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
 				}
-				//Add End
 				
                 FmRadio_PowerDown( pMe);								
             #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT

@@ -511,23 +511,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
         case EVT_HEADSET:
         {
-            if(pMe->m_pIAnn != NULL)
+            if((boolean)wParam)
             {
-                if((boolean)wParam)
-                {
-                    CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_ON);
-                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
-                }
-                else
-                {
-                    CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_OFF);
-                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
-                }               
+                CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_ON);
             }
-                                
-#ifdef FEATRUE_SET_ANN_FULL_SCREEN
-            ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW,0,0L);//need to redraw IDLE
-#endif
+            else
+            {
+                CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_OFF);
+            }
             return TRUE;
         }
 
@@ -2867,6 +2858,10 @@ static void StereoHeadsetOn(CCoreApp * pMe)
     MSG_ERROR("NULL pointer, pMe=0x%x", pMe, 0, 0);
     return;
   }
+  if(pMe->m_pIAnn)
+  {
+     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
+  }
   
   ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &stereoHeadSetOn, 1);
   
@@ -2880,10 +2875,10 @@ static void StereoHeadsetOn(CCoreApp * pMe)
     MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
   }
 
+  uisnd_set_device_auto(NULL,NULL);
+  
   devnotify.wParam = TRUE;
   AEE_SEND_HEADSET_EVT(&devnotify);
-
-  uisnd_set_device_auto(NULL,NULL);
 } /* End HeadsetOn */
 
 
@@ -2912,6 +2907,11 @@ static void HeadsetOff(CCoreApp *pMe)
    {
       MSG_ERROR("NULL pointer, pMe=0x%x", pMe, 0, 0);
       return;
+   }
+
+   if(pMe->m_pIAnn)
+   {
+      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
    }
    
    ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headSetOn, 1);
