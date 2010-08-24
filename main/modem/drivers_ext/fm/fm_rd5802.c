@@ -526,7 +526,11 @@ void fm_mute(boolean on)
 		
 		//Add By zzg 2010_07_18
 		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-		snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+
+		if (HS_HEADSET_ON())
+		{
+			snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+		}
 		//Add End
 	}
 	else if ( ( on == FALSE) && (fm_playing_mute == TRUE) )
