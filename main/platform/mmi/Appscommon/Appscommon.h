@@ -184,6 +184,7 @@ typedef enum BottomBar_e_Type
    BTBAR_PROMPT_OK,
    BTBAR_SOS,                // -----½ô¼±ºô½Ð
    BTBAR_STOP,
+   BTBAR_SNOOZE,             //add by yangdecai
                              //display stop when alarming
    
    /*******************start BTBAR_DOUBLE_MASK*****************************/

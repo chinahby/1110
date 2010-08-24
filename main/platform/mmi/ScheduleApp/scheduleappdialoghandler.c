@@ -5910,14 +5910,28 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     }
                     else
                     {
-                        if(pme->m_CalMgr.m_cfg.nSnooze == 0)
-                        {                 
-                            BottomBar.eBBarType = BTBAR_VIEW_STOP;
-                        }
-                        else
-                        {
-                            BottomBar.eBBarType = BTBAR_VIEW_SNOOZE;                        
-                        }
+                    	if(g_nCurEvtStyle == 0)
+                    	{
+	                        if(pme->m_CalMgr.m_cfg.nSnooze == 0)
+	                        {                 
+	                            BottomBar.eBBarType = BTBAR_STOP;
+	                        }
+	                        else
+	                        {
+	                            BottomBar.eBBarType = BTBAR_SNOOZE;                        
+	                        }
+                    	}
+						else
+						{
+							if(pme->m_CalMgr.m_cfg.nSnooze == 0)
+	                        {                 
+	                            BottomBar.eBBarType = BTBAR_VIEW_STOP;
+	                        }
+	                        else
+	                        {
+	                            BottomBar.eBBarType = BTBAR_VIEW_SNOOZE;                        
+	                        }
+						}
                     }
                     DrawBottomBar(pme->m_pDisplay, &BottomBar);
                 }
@@ -6012,6 +6026,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                        }
                         clearAllDoneAppointment( &pme->m_CalMgr);
                     }
+					CLOSE_DIALOG( DLGRET_OK)
                 }
 #endif
                 if((g_nCurEvtStyle == 1)&&(wParam == AVK_SELECT))
@@ -6028,9 +6043,10 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                         CLOSE_DIALOG( DLGRET_SHOWALERT_TO_VIEWEVENT)
                         return TRUE;
                     }
+					CLOSE_DIALOG( DLGRET_OK)
                     //}
                 }
-                CLOSE_DIALOG( DLGRET_OK)
+                
             }
         }
         return TRUE;
