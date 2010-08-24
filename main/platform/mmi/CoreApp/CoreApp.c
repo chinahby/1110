@@ -2874,9 +2874,11 @@ static void StereoHeadsetOn(CCoreApp * pMe)
   {
     MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
   }
-
-  uisnd_set_device_auto(NULL,NULL);
   
+  uisnd_set_mute(UISND_MUTE_UNMUTED, UISND_MUTE_UNMUTED, NULL, NULL);
+  
+  uisnd_set_device_auto(NULL,NULL);
+
   devnotify.wParam = TRUE;
   AEE_SEND_HEADSET_EVT(&devnotify);
 } /* End HeadsetOn */
@@ -2935,7 +2937,9 @@ static void HeadsetOff(CCoreApp *pMe)
    {
       MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
    }
-
+   
+   uisnd_set_mute(UISND_MUTE_MUTED, UISND_MUTE_MUTED, NULL, NULL);
+   
    uisnd_set_device_auto(NULL,NULL);
 } /*End HeadsetOff */
 
