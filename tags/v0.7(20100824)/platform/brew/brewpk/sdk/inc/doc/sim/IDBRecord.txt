@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IDBRecord simulation
+
+IDBRecord is simulated.
+==========================
+*/ 
