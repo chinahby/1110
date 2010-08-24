@@ -651,14 +651,17 @@ static void tm_cstn128x128_disp_powerup(void)
 		//////////////////////////////////////////////////////
     	/////VOP set///////////
     	TM_SCTN_WRITE_CMD(0xc0);  //vo voltage set   
-    	TM_SCTN_WRITE_DATA(0x1f);//////////ff
-    	TM_SCTN_WRITE_DATA(0x01);//00//01
+    	//TM_SCTN_WRITE_DATA(0x1f);//////////ff
+    	//TM_SCTN_WRITE_DATA(0x01);//00//01
+        TM_SCTN_WRITE_DATA(0xff);   
+        TM_SCTN_WRITE_DATA(0x00);//00//01    	
 
         TM_SCTN_WRITE_CMD(0x25);   //write contrast for mobile
     	TM_SCTN_WRITE_DATA(0x3f);
     	//-----------OTPB SET----------------------//
     	TM_SCTN_WRITE_CMD(0xc3);// bias set
-    	TM_SCTN_WRITE_DATA(0x01);    //1/12
+    	//TM_SCTN_WRITE_DATA(0x01);    //1/12
+    	TM_SCTN_WRITE_DATA(0x00);
     	TM_SCTN_WRITE_CMD(0xc4);   //booster set
     	TM_SCTN_WRITE_DATA(0x06);//  //06   7±¶Ñ¹
     	TM_SCTN_WRITE_CMD(0xc5);   //booster efficiency set
@@ -671,7 +674,8 @@ static void tm_cstn128x128_disp_powerup(void)
     	
     //------------MTP SET-------------------------//		
     	TM_SCTN_WRITE_CMD(0xb5);   //n-line set
-    	TM_SCTN_WRITE_DATA(0x89);//00
+    	//TM_SCTN_WRITE_DATA(0x89);//00
+    	TM_SCTN_WRITE_DATA(0x00);
     	
     	TM_SCTN_WRITE_CMD(0xbd);  //x-talk compensation
     	TM_SCTN_WRITE_DATA(0x02); //step2=level3
