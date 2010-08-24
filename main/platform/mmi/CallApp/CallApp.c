@@ -1331,46 +1331,11 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
         case EVT_NOTIFY:
             //CALL_ERR("EVT_NOTIFY: %d", wParam, 0, 0);
             return CallApp_Notify(pMe, eCode, wParam, dwParam);
-
+            
         case EVT_HEADSET:
-            //CALL_ERR("EVT_HEADSET: %d", wParam, 0, 0);
-            {
-                    if((boolean)wParam)
-                    {
-                        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/); 
-						snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By zzg 2010_07_18
-						snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By zzg 2010_07_18
-					}
-                    else
-                    {
-                        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
-						snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Add By zzg 2010_07_18
-						snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Add By zzg 2010_07_18
-					}
-					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
-            }
-            //if((boolean)wParam)
-            //{
-            //    if ( pMe->m_bHandFree )
-            //    {
-            //        pMe->m_bHandFree = FALSE;
-            //    }
-            //}
-#if defined( FEATURE_RECORDER)
-			#if 0
-			extern boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo);
-	        if( !OEMRinger_SetupQcpSoundInfo( pMe->m_pSound, 0))
-		   #endif
-#endif
-                CallApp_SetupCallAudio(pMe);
+            CallApp_SetupCallAudio(pMe);
             return TRUE;
-
-            //case OEMEVT_KEY:
-            // BREW 1.2 kludge.  See the definition of OEMEVT_KEY in
-            // OEMEvents.h for details
-            //CALL_ERR("OEMEVT_KEY",0,0,0);
-            //return CallApp_RouteDialogEvent(pMe,EVT_KEY,wParam,dwParam);
-
+            
         case EVT_APP_NO_SLEEP://保证不会进入睡眠模式
             return TRUE;
 

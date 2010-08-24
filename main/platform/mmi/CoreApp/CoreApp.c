@@ -45,6 +45,7 @@
 #endif
 #include "OEMRTC.h"
 #include "AEEDownload.h"
+#include "OEMDeviceNotifier.h"
 
 /*==============================================================================
                                  
@@ -109,6 +110,9 @@ static boolean CoreApp_GetCardStatus(CCoreApp *pMe,uint8 slot);
 #ifdef USES_CONSTEFS
 static void CoreApp_RebuildEFS(CCoreApp *pMe);
 #endif
+static void StereoHeadsetOn(CCoreApp * pMe);
+static void HeadsetOff(CCoreApp *pMe);
+
 /*==============================================================================
 
                                  º¯Êý¶¨Òå
@@ -513,15 +517,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 {
                     CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_ON);
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
-                    snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL); //Add By zzg 2010_07_18
-                    snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);  //Add By zzg 2010_07_18
                 }
                 else
                 {
                     CoreApp_Process_Headset_Msg(pMe, IDS_HEADSET_OFF);
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
-                    snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);  //Add By zzg 2010_07_18
-                    snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL); //Add By zzg 2010_07_18
                 }               
             }
                                 
@@ -756,13 +756,17 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
         {
-        
-
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-      
         }
             
-
+        case EVT_HEADSET_CONNECT:
+            StereoHeadsetOn(pMe);
+            return TRUE;
+            
+        case EVT_HEADSET_DISCONNECT:
+            HeadsetOff(pMe);
+            return TRUE;
+            
         case EVT_NOTIFY:
             if(((AEENotify *)dwParam)->cls == AEECLSID_ALERT_NOTIFIER)
             {
@@ -2836,4 +2840,102 @@ EXIT_FUN:
     RELEASEIF(pFileMgr);
 }
 #endif
+
+/*===========================================================================
+FUNCTION StereoHeadsetOn
+
+DESCRIPTION
+  Upon receiving stereo headset on event, this function updates the
+  corresponding info.
+
+DEPENDENCIES
+
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+static void StereoHeadsetOn(CCoreApp * pMe)
+{
+  boolean stereoHeadSetOn = TRUE;
+  int     nRetVal;
+  AEEDeviceNotify devnotify;
+
+  MSG_HIGH("PHONE in Stereo Headset",0,0,0);
+
+  if ((pMe == NULL) || (pMe->m_pConfig == NULL))
+  {
+    MSG_ERROR("NULL pointer, pMe=0x%x", pMe, 0, 0);
+    return;
+  }
+  
+  ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &stereoHeadSetOn, 1);
+  
+  /* Change the audio path */
+  uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_ENABLED);
+
+  /*Also set the headset in ICONFIG because OEMCall will use it if WCDMA is defined*/
+  nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_STEREO_HEADSET, &stereoHeadSetOn, 1);
+  if (nRetVal != SUCCESS)
+  {
+    MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
+  }
+
+  devnotify.wParam = TRUE;
+  AEE_SEND_HEADSET_EVT(&devnotify);
+
+  uisnd_set_device_auto(NULL,NULL);
+} /* End HeadsetOn */
+
+
+/*===========================================================================
+FUNCTION HeadsetOff
+
+DESCRIPTION
+  Upon receiving headset off event, this function updates the
+  corresponding info.
+
+DEPENDENCIES
+
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+static void HeadsetOff(CCoreApp *pMe)
+{
+   boolean headSetOn = FALSE;
+   int     nRetVal;
+   AEEDeviceNotify devnotify;
+
+   MSG_HIGH("PHONE not in Headset",0,0,0);
+
+   if ((pMe == NULL) || (pMe->m_pConfig == NULL))
+   {
+      MSG_ERROR("NULL pointer, pMe=0x%x", pMe, 0, 0);
+      return;
+   }
+   
+   ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headSetOn, 1);
+   
+   devnotify.wParam = FALSE;
+   AEE_SEND_HEADSET_EVT(&devnotify);
+   
+   /* Change the audio path */
+   uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_UNATTACHED);
+   uisnd_set_device_status(SND_DEVICE_HEADSET, UISND_DEV_UNATTACHED);
+
+   /*Also set the headset in ICONFIG because OEMCall will use it if WCDMA is defined*/
+   nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET, &headSetOn, 1);
+   if (nRetVal != SUCCESS)
+   {
+      MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
+   }
+
+   nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_STEREO_HEADSET, &headSetOn, 1);
+   if (nRetVal != SUCCESS)
+   {
+      MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
+   }
+
+   uisnd_set_device_auto(NULL,NULL);
+} /*End HeadsetOff */
 

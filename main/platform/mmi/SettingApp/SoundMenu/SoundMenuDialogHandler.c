@@ -1873,19 +1873,6 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             CLOSE_DIALOG(DLGRET_MESSAGE)
             return TRUE;
         }
-#if defined( FEATURE_RECORDER)
-    case EVT_HEADSET:
-        {
-            if( pMe->m_RingerType == SET_RINGER || pMe->m_RingerType == SET_ALARMRING)
-            {
-            #if 0
-                extern boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo);
-                OEMRinger_SetupQcpSoundInfo( pMe->m_pISound, 0);
-		    #endif
-            }
-        }
-        break;      
-#endif
 
         default:
             break;
@@ -3845,19 +3832,7 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                 ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SOUNDMENU,EVT_USER_REDRAW,0,0);
                 return TRUE;
             }
-
-#if defined( FEATURE_RECORDER)
-            case EVT_HEADSET:
-            {
-                if( pMe->m_VolType == SET_RINGER_VOL)
-                {
-                	#if 0
-                    extern boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo);
-                    OEMRinger_SetupQcpSoundInfo( pMe->m_pISound, 0);
-					#endif
-                }
-            }
-#endif
+        
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 		case EVT_PEN_UP:
 			{

@@ -1886,6 +1886,10 @@ static AEESoundDevice OEMSound_GetAEESndDevice(snd_device_type  e)
    else if ( (e == SND_DEVICE_BT_A2DP_HEADSET) || (e == SND_DEVICE_BT_A2DP_SCO_HEADSET) )
       return AEE_SOUND_DEVICE_BT_STEREO_HEADSET;
 #endif
+#ifdef FEATURE_FM_OEM
+   else if (e == (uint16) SND_DEVICE_HEADSET_FM)
+      return AEE_SOUND_DEVICE_HEADSE_FM;
+#endif
    else
       return AEE_SOUND_DEVICE_UNKNOWN;
 }

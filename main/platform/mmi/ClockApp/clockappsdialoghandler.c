@@ -2056,16 +2056,6 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
         case EVT_COMMAND:
             return TRUE;
 
-#if defined( FEATURE_RECORDER)
-		case EVT_HEADSET:
-		{
-			#if 0
-			extern boolean OEMRinger_SetupQcpSoundInfo( ISound* pSound, AEESoundInfo* pOldSoundInfo);
-			OEMRinger_SetupQcpSoundInfo( pMe->m_pSound, 0);
-			#endif
-		}
-		break;
-#endif
         default:
             break;
     }

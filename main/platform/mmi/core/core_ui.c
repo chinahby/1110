@@ -1782,12 +1782,6 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
     boolean  bHandle = FALSE;
     
 #ifdef FEATURE_KEYGUARD
-    //Add By zzg 2010_08_23
-    if (evt == EVT_HEADSET)
-    {
-        return FALSE;
-    }
-    //Add End
     if (OEMKeyguard_HandleEvent(evt, wParam))
     {
         return TRUE;
@@ -1848,47 +1842,13 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
     case AVK_HEADSET_DISCONNECT:
         if (EVT_KEY_PRESS == evt)
         {
-            AEESoundInfo soundStuff;     
-            boolean b_FMBackground = FALSE;
-            int8 classitems = 0;
-            
-            ISOUND_Get(gpSound, &soundStuff);
-            soundStuff.eDevice = (wParam == AVK_HEADSET_CONNECT ? 
-                                            AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_HANDSET);	//AEE_SOUND_DEVICE_HEADSET
-            (void) ISOUND_Set(gpSound,  &soundStuff);
-            ISOUND_SetDevice(gpSound);
-            
-            // Send Event
-            {
-                AEEDeviceNotify nt={0,0};
-                
-                nt.wParam = (wParam == AVK_HEADSET_CONNECT ? TRUE:FALSE);
-                AEE_SEND_HEADSET_EVT(&nt);    
-            }
-
-            if ( cls == AEECLSID_APP_FMRADIO)
-            {
-            	boolean headsetPresent  = wParam == AVK_HEADSET_CONNECT ? TRUE : FALSE;
-            	
-				ISHELL_PostEvent( AEE_GetShell(),
-                                          AEECLSID_APP_FMRADIO,
-                                          EVT_HEADSET,
-                                          wParam,
-                                          0
-                                         );
-            }
-            else
-            {
-				boolean headsetPresent  = wParam == AVK_HEADSET_CONNECT ? TRUE : FALSE;
-
-                OEM_SetConfig( CFGI_HEADSET_PRESENT, &headsetPresent, sizeof( headsetPresent));
-                ISHELL_PostEvent( AEE_GetShell(),
-                                          AEECLSID_CORE_APP,
-                                          EVT_HEADSET,
-                                          headsetPresent,
-                                          0
-                                         );
-            }
+            ISHELL_PostEventEx( AEE_GetShell(),
+                                EVTFLG_ASYNC,
+                                AEECLSID_CORE_APP,
+                                wParam == AVK_HEADSET_CONNECT?EVT_HEADSET_CONNECT:EVT_HEADSET_DISCONNECT,
+                                0,
+                                0
+                               );
             
 #if defined(FEATURE_BACKLIGHT_KEYPAD)
             if (gpKeyBacklight) {

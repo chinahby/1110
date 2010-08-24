@@ -515,6 +515,7 @@ int fm_set_volume(word wVolume)
 	return FM_RADIO_SUCCESSFUL;
 }
 
+#include "uixsnd.h"
 void fm_mute(boolean on)
 {	
 	if ( ( on == TRUE) && (fm_playing_mute == FALSE) )
@@ -524,9 +525,13 @@ void fm_mute(boolean on)
 		//snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	//Del By zzg 2010_07_18
 		
 		//Add By zzg 2010_07_18
-		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-		snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+		//snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+		//snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
 		//Add End
+		/* Change the audio path */
+        uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_ENABLED);
+        uisnd_set_device_status(SND_DEVICE_HEADSET_FM, UISND_DEV_UNATTACHED);
+        uisnd_set_device_auto(NULL,NULL);
 	}
 	else if ( ( on == FALSE) && (fm_playing_mute == TRUE) )
 	{
@@ -535,9 +540,13 @@ void fm_mute(boolean on)
 		//snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	//Del By zzg 2010_07_18
 
 		//Add By zzg 2010_07_18
-		snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);		
+		//snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+		//snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);		
 		//Add End	
+		/* Change the audio path */
+        uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_DISABLED);
+        uisnd_set_device_status(SND_DEVICE_HEADSET_FM, UISND_DEV_ENABLED);
+        uisnd_set_device_auto(NULL,NULL);
 	}
 	return;
 }

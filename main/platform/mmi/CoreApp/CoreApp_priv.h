@@ -77,6 +77,7 @@
 #endif 
 #include "core_ui.h"
 #include "AEECard.h"
+#include "AEEDeviceNotifier.h"
 
 /*==============================================================================
                                  

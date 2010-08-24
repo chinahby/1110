@@ -92,6 +92,9 @@ enum {
 #endif
 #endif /*CUST_EDITION*/
    AEE_SOUND_DEVICE_RESERVED3_START    = 89, // Reserved range #3
+#ifdef FEATURE_FM_OEM
+   AEE_SOUND_DEVICE_HEADSE_FM,
+#endif
    AEE_SOUND_DEVICE_RESERVED3_END      = 104,
    AEE_SOUND_DEVICE_RESERVED2_START    = 105, // Reserved range #2
    AEE_SOUND_DEVICE_RESERVED2_END      = 112,

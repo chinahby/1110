@@ -805,8 +805,9 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
                 OEMPriv_ResumeBREW();
                 return FALSE;            
             }            
-        }        
-        if(wParam== AVK_CLR ||wParam == AVK_END || wParam == AVK_POWER)
+        }
+        
+        if(wParam== AVK_CLR ||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
         {
             return FALSE;
         }
