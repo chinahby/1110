@@ -11159,9 +11159,20 @@ void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
     switch(eApp)
 	{
 		case STATIC_BREW_APP_SMARTFREN_FACEBOOK:
+		case STATIC_BREW_APP_SMARTFREN_MNEWS:
+		case STATIC_BREW_APP_SMARTFREN_MKARAOKE:
+		case STATIC_BREW_APP_SMARTFREN_SATU:
+		case STATIC_BREW_APP_SMARTFREN_TWITTER:
+		case STATIC_BREW_APP_SMARTFREN_SFM:
+		case STATIC_BREW_APP_SMARTFREN_MSHOP:
+#if defined(FEATURE_PROJECT_M8)
 			MEMCPY(username,"m8",2);	
-			MEMCPY(password,"m8",2);		
-		break;
+			MEMCPY(password,"m8",2);	
+#elif defined(FEATURE_PROJECT_SMART)
+			MEMCPY(username,"smart",5);	
+			MEMCPY(password,"smart",5);
+#endif
+			break;
 		default:
 			OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
 			OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);

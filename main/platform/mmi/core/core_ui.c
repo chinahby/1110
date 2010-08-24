@@ -392,7 +392,11 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
     {HS_PWR_K,                      AVK_POWER,                      AVK_METHED_HOLD, FALSE, 0},
     {HS_END_K,                      AVK_END,                        AVK_METHED_HOLD, FALSE, 0},
     {HS_SEND_K,                     AVK_SEND,                       AVK_METHED_HOLD, FALSE, 0},
-    {HS_CLR_K,                      AVK_CLR,                        AVK_METHED_HOLD, FALSE, 0},
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
+    {HS_CLR_K,                      AVK_SOFT2,                        AVK_METHED_HOLD, FALSE, 0},
+#else
+	{HS_CLR_K,                      AVK_CLR,                        AVK_METHED_HOLD, FALSE, 0},
+#endif
     {HS_SEL_K,                      AVK_SELECT,                     AVK_METHED_HOLD, FALSE, 0},
 
     {HS_UP_K,                       AVK_UP,                         AVK_METHED_REPT, FALSE, 0},
@@ -1810,6 +1814,24 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
         }
         break;
 #endif
+/*
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP 
+	case AVK_SOFT2:
+		if(((cls == AEECLSID_SMARTFREN_MNEWS) 
+		   || (cls == AEECLSID_SMARTFREN_MSHOP)
+		   || (cls == AEECLSID_SMARTFREN_MKARAOKE) 
+		   || (cls == AEECLSID_SMARTFREN_TWITTER)
+		   || (cls == AEECLSID_SMARTFREN_FACEBOOK)
+		   || (cls == AEECLSID_SMARTFREN_SATU)
+		   || (cls == AEECLSID_SMARTFREN_SFM)
+		   || (cls == AEECLSID_SMARTFREN_TEST)) == FALSE)
+		{
+			wParam = AVK_CLR;
+			bHandle = TRUE;
+		}
+		break;
+#endif
+*/
     case AVK_END:
         if (cls == AEECLSID_DIALER) {
             // AVK_END 会关掉全部程序，回到待机界面，这里做转换，避免此问题
