@@ -2326,7 +2326,8 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 					    }
 						if (NULL == pTep)
     					{// 任一非空节点没找到
-        					return;
+    					    CLOSE_DIALOG(DLGRET_CANCELED)
+        					return TRUE;
     					}
     
 #ifdef FEATURE_SMS_UDH
@@ -12594,8 +12595,9 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
             
         case EVT_KEY:
             switch(wParam)
-            {
+            { 
                 case AVK_CLR:
+                    MSG_FATAL (" AVK_CLR  ", 0, 0, 0);
                     CLOSE_DIALOG(DLGRET_LOADCANCELED)
                     return TRUE;
                     
