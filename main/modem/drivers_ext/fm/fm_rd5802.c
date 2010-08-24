@@ -516,6 +516,8 @@ int fm_set_volume(word wVolume)
 }
 
 #include "uixsnd.h"
+#include "Hs_mb6550.h"
+
 void fm_mute(boolean on)
 {	
 	if ( ( on == TRUE) && (fm_playing_mute == FALSE) )
