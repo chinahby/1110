@@ -8023,7 +8023,7 @@ static NextFSMAction Handler_STATE_SELECTOPT(CContApp *pMe)
                 else if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType)
                 {
 #if defined(FEATURE_WMS_APP)
-                    if(pMe->m_wSelFldType != MULTI_SELECT_CONTENT)
+                    //if(pMe->m_wSelFldType != MULTI_SELECT_CONTENT)
                     {
                         CContApp_GetSendListLeftNodeNum(pMe, &pMe->m_nleftNum);
                         if(pMe->m_eTotalSelectNum > pMe->m_nleftNum)

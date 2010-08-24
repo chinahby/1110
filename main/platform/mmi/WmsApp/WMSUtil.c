@@ -1688,7 +1688,7 @@ static boolean InsertNumCallback(sSelectFieldListNode* pNode)
     {
         return TRUE;
     }
-    
+    MSG_FATAL("nCanInsert::::::::::::::%d",nCanInsert,0,0);
     nSize = (nLen + nCanInsert + 1) * sizeof(AECHAR);
     wszTep = (AECHAR *)sys_malloc(nSize);
     
