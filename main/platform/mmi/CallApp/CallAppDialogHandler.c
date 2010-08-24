@@ -533,12 +533,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                                           uint16      wParam,
                                           uint32      dwParam)//This is dialerapp numedit dialog
 {
-    //PARAM_NOT_REF(dwParam)
-    //keyToneLength dtmflen;
     boolean vol_add =FALSE;
-    static byte keyBeepVolumeSetting = OEMSOUND_MUTE_VOL;
     CALL_ERR("eCode= %x,w=%x,dw=%x CallApp_Dialer_NumEdit_DlgHandler ",eCode,wParam,dwParam);
-
 
     if ( pMe->m_bShowPopMenu && IMENUCTL_IsActive(pMe->m_pMenu) )
     {
@@ -580,12 +576,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 /*#ifdef FEATURE_IMAGE_DIALING_DIGITS
                 CallApp_Load_Numer_Img(pMe);
 #endif*//*FEATURE_IMAGE_DIALING_DIGITS*/
-            }
-            else
-            {
-                byte mute = OEMSOUND_MUTE_VOL;
-                ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
-                ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
             }
             
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
@@ -701,10 +691,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 CallApp_Release_Numer_Img(pMe);
             }
 #endif//#ifdef FEATURE_IMAGE_DIALING_DIGITS
-            if( pMe->m_b_incall)
-            {
-                ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
-            }
             if (!pMe->m_b_incall)
             {// 此时可能有来电，但未接通，需进一步判断是否有来电以确认是否备份用户拨号
                 db_items_value_type  db_item;
@@ -2608,7 +2594,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                                         uint16      wParam,
                                         uint32      dwParam)
 {
-    static byte keyBeepVolumeSetting = OEMSOUND_MUTE_VOL;
     PARAM_NOT_REF(dwParam)
     CALL_ERR("eCode= %x,w=%x,dw=%x CallApp_Dialer_Connect_DlgHandler ",eCode,wParam,dwParam);
 
@@ -2637,13 +2622,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             if(pMe->m_pActiveDlg)
             {
                 IDIALOG_SetProperties(pMe->m_pActiveDlg,DLG_NOT_SET_FOCUS_AUTO);
-            }
-
-
-            {
-                byte mute = OEMSOUND_MUTE_VOL;
-                ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
-                ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
             }
             return TRUE;
 
@@ -2807,7 +2785,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 IIMAGE_Release(pMe->m_pCallingImage);
                 pMe->m_pCallingImage = NULL;
             }
-            ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
             return TRUE;
 
         case EVT_FLIP:// wParam = TRUE if open, FALSE if closed.
