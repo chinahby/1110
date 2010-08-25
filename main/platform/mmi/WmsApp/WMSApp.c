@@ -824,7 +824,9 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
         IVector_Release(pMe->m_pSaveNumList);
         pMe->m_pSaveNumList = NULL;
     }
-    WmsApp_FreeSendClentMsgList(pMe);
+    WmsApp_FreeSendClentMsgList(pMe);  //add by yangdecai 2010-08-25
+    // 释放用户数据列表
+    WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
     WmsApp_FreeMultiSendList(pMe->m_pSendList);
     if(pMe->m_pBacklight)
     {
