@@ -824,7 +824,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
         IVector_Release(pMe->m_pSaveNumList);
         pMe->m_pSaveNumList = NULL;
     }
-    
+    WmsApp_FreeSendClentMsgList(pMe);
     WmsApp_FreeMultiSendList(pMe->m_pSendList);
     if(pMe->m_pBacklight)
     {
@@ -1070,6 +1070,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             return TRUE;
             
         case EVT_DIALOG_END:
+			
 			if(OEM_IME_DIALOG == wParam)
 			{
 				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER_REDRAW,0,0);
