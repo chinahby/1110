@@ -9822,27 +9822,30 @@ static void notifyFMRadioAlertEvent( CCallApp *pMe, boolean toStartAlert)
 static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 {
     int xPos = 0, yPos = 0, xNum = 0, yNum = 0, dy = pMe->m_rc.dy, Line_Pixel = 2;
+    
 #if defined( FEATURE_CALL_RECORDER)
     if(pMe->m_bRecorderOn)
     {
         dy -= NUM_IMAGE_HIGHT;
     }
 #endif
+
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
     xNum = pMe->m_rc.dx /NUM_IMAGE_WIDTH;
     yNum = (dy - BOTTOMBAR_HEIGHT)/(NUM_IMAGE_HIGHT + BETWEEN_LINE_PIXEL);
     xPos = (pMe->m_rc.dx + NUM_IMAGE_WIDTH *xNum) /2 - (pMe->m_nCursorPos%xNum)*NUM_IMAGE_WIDTH - 2;
     yPos = dy - BOTTOMBAR_HEIGHT - (1 + pMe->m_nCursorPos/xNum)*(NUM_IMAGE_HIGHT + BETWEEN_LINE_PIXEL);
-    if(pMe->m_nCursorPos >= xNum*yNum)
+    
+    if (pMe->m_nCursorPos >= xNum*yNum)
     {
         yPos = dy - BOTTOMBAR_HEIGHT - yNum*(NUM_IMAGE_HIGHT + BETWEEN_LINE_PIXEL);
     }
-    if(pMe->m_nCursorPos != 0 &&
+    if (pMe->m_nCursorPos != 0 &&
         pMe->m_nCursorPos == WSTRLEN(pMe->m_DialString) &&
         pMe->m_nCursorPos%xNum == 0)
     {
         xPos = (pMe->m_rc.dx - NUM_IMAGE_WIDTH *xNum) /2 - 2;
-        if(pMe->m_nCursorPos < xNum*yNum)
+        if (pMe->m_nCursorPos < xNum*yNum)
         {
             yPos += (NUM_IMAGE_HIGHT + BETWEEN_LINE_PIXEL);
         }
@@ -9865,7 +9868,156 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
     
     extern int GreyBitBrewFont_MeasureText(IDisplay *p, int nSize, const AECHAR *psz);  
 
-    /*
+    totalstrlen  = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString);  
+    totalstrlen += WSTRLEN(pMe->m_DialString);    	//字符1像素间隔
+    
+    dialstrlen  = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
+    dialstrlen += pMe->m_nCursorPos;   				//字符1像素间隔
+    
+    MSG_FATAL("***zzg Calc_Cursor pMe->m_rc.dx=%d***", pMe->m_rc.dx, 0, 0);
+    MSG_FATAL("***zzg Calc_Cursor Totalstrlen=%d***", totalstrlen, 0, 0);        
+    MSG_FATAL("***zzg Calc_Cursor WSTRLEN=%d, pMe->m_nCursorPos=%d***", WSTRLEN(pMe->m_DialString), pMe->m_nCursorPos, 0);
+    
+    if (totalstrlen < pMe->m_rc.dx)    //一行
+    {
+        xPos = pMe->m_rc.dx - dialstrlen - 1;
+        yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
+        
+        MSG_FATAL("***zzg Calc_Cursor 1_1 xPos=%d***", xPos, 0, 0);
+    }
+    else if ((totalstrlen >= pMe->m_rc.dx) && (totalstrlen < 2*pMe->m_rc.dx))    //两行
+    {
+        for (temp = (WSTRLEN(pMe->m_DialString) - 2); temp >= 0 ; temp --)
+        {
+            tempstrlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp);  
+            tempstrlen += (WSTRLEN(pMe->m_DialString) - temp);
+            
+            tempstrlen_ex = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp + 1); 
+            tempstrlen_ex += (WSTRLEN(pMe->m_DialString) - (temp + 1));
+            
+            if ((tempstrlen >= pMe->m_rc.dx) && (tempstrlen_ex < pMe->m_rc.dx))	//确定第一、二行的分界点的INDEX
+            {
+            	MSG_FATAL("***zzg Calc_Cursor 2_1 tempstrlen=%d, tempstrlen_ex=%d***", tempstrlen, tempstrlen_ex, 0);
+            	
+                m_index_one = WSTRLEN(pMe->m_DialString) - (temp + 1);       
+                
+                MSG_FATAL("***zzg Calc_Cursor 2_1 m_index_one=%d***", m_index_one, 0, 0);
+                break;
+            }
+        }
+        
+        if (pMe->m_nCursorPos < m_index_one)	//第一行
+        {
+            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
+            m_index_one_strlen += m_index_one;
+            
+            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
+            m_index_two_strlen += pMe->m_nCursorPos;
+
+            MSG_FATAL("***zzg Calc_Cursor 2_2 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
+          
+            xPos = m_index_one_strlen - m_index_two_strlen + 3;
+            MSG_FATAL("***zzg Calc_Cursor 2_2 xPos=%d***", xPos, 0, 0);
+
+            yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
+        }
+        else	//第二行
+        {
+            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));
+            m_index_one_strlen += pMe->m_nCursorPos;
+            
+            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
+            m_index_two_strlen += m_index_one;
+
+			MSG_FATAL("***zzg Calc_Cursor 2_3 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
+            
+            xPos = pMe->m_rc.dx - (m_index_one_strlen - m_index_two_strlen) - 1;
+            MSG_FATAL("***zzg Calc_Cursor 2_3 xPos=%d***", xPos, 0, 0);
+
+            yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);
+        }
+    }
+    else if ((totalstrlen >= 2*pMe->m_rc.dx) && (totalstrlen < 3*pMe->m_rc.dx))    //三行   
+    {
+        for (temp = (WSTRLEN(pMe->m_DialString) - 2); temp > 0 ; temp --)
+        {
+            tempstrlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp);  
+            tempstrlen += (WSTRLEN(pMe->m_DialString) - temp);
+            
+            tempstrlen_ex = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp + 1); 
+            tempstrlen_ex += (WSTRLEN(pMe->m_DialString) - (temp + 1));
+            
+            if ((tempstrlen >= pMe->m_rc.dx) && (tempstrlen_ex < pMe->m_rc.dx))		//确定第一、二行的分界点的INDEX
+            {                
+            	MSG_FATAL("***zzg Calc_Cursor 3_1 tempstrlen=%d, tempstrlen_ex=%d***", tempstrlen, tempstrlen_ex, 0);
+            	
+                m_index_one = WSTRLEN(pMe->m_DialString) - (temp + 1);                  
+                MSG_FATAL("***zzg Calc_Cursor 3_1 m_index_one=%d***", m_index_one, 0, 0);
+            }
+            else if ((tempstrlen >= 2*pMe->m_rc.dx) && (tempstrlen_ex < 2*pMe->m_rc.dx))	//确定第二、三行的分界点的INDEX
+            {                
+            	MSG_FATAL("***zzg Calc_Cursor 3_1 tempstrlen=%d, tempstrlen_ex=%d***", tempstrlen, tempstrlen_ex, 0);
+            	
+                m_index_two = WSTRLEN(pMe->m_DialString) - (temp + 1);  
+                MSG_FATAL("***zzg Calc_Cursor 3_1 m_index_two=%d***", m_index_two, 0, 0);
+            }
+        }
+        if (pMe->m_nCursorPos < m_index_one)
+        {
+            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
+            m_index_one_strlen += m_index_one;
+            
+            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
+            m_index_two_strlen += pMe->m_nCursorPos;
+
+            MSG_FATAL("***zzg Calc_Cursor 3_2 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
+          
+            xPos = m_index_one_strlen - m_index_two_strlen + 3;            
+            MSG_FATAL("***zzg Calc_Cursor 3_2 xPos=%d***", xPos, 0, 0);
+
+            yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
+        }
+        else if ((pMe->m_nCursorPos >= m_index_one) && (pMe->m_nCursorPos < m_index_two))
+        {
+            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_two));
+            m_index_one_strlen += m_index_two;
+            
+            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
+            m_index_two_strlen += pMe->m_nCursorPos;
+
+            MSG_FATAL("***zzg Calc_Cursor 3_3 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
+          
+            xPos = m_index_one_strlen - m_index_two_strlen + 3;           
+            MSG_FATAL("***zzg Calc_Cursor 3_3 xPos=%d***", xPos, 0, 0);
+
+            yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);
+        }
+        else
+        {
+            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));
+            m_index_one_strlen += pMe->m_nCursorPos;
+            
+            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_two));
+            m_index_two_strlen += m_index_two;     
+
+            MSG_FATAL("***zzg Calc_Cursor 3_4 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
+            
+            xPos = pMe->m_rc.dx - (m_index_one_strlen - m_index_two_strlen) - 1;
+            MSG_FATAL("***zzg Calc_Cursor 3_4 xPos=%d***", xPos, 0, 0);
+
+            yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
+        }
+    }
+    else 	//DialString总长度大于三行
+    {
+		xPos = 1;
+		yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
+    }
+
+    SETAEERECT(pRect, xPos, yPos, 4, 25);
+
+    /*	
+    //xPos
 	xNum = pMe->m_rc.dx /13;
     yNum = (dy - BOTTOMBAR_HEIGHT)/(25 + Line_Pixel);
     
@@ -9879,151 +10031,8 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
     }
     
     MSG_FATAL("***zzg Calc_Cursor xPos=%d***", xPos, 0, 0);
-    */
     
-    totalstrlen  = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString );  
-    totalstrlen += WSTRLEN(pMe->m_DialString);    //字符1像素间隔
-    
-    dialstrlen  = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-    dialstrlen += pMe->m_nCursorPos;   //字符1像素间隔
-    
-    MSG_FATAL("***zzg Calc_Cursor pMe->m_rc.dx=%d***", pMe->m_rc.dx, 0, 0);
-    MSG_FATAL("***zzg Calc_Cursor Totalstrlen=%d***", GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString), 0, 0);        
-    MSG_FATAL("***zzg Calc_Cursor WSTRLEN=%d, pMe->m_nCursorPos=%d***", WSTRLEN(pMe->m_DialString), pMe->m_nCursorPos, 0);
-    
-    if (totalstrlen <= pMe->m_rc.dx)    //只有一行
-    {
-        xPos = pMe->m_rc.dx - dialstrlen - 1;
-        MSG_FATAL("***zzg Calc_Cursor 111 xPos=%d***", xPos, 0, 0);
-
-        yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
-    }
-    else if ((totalstrlen > pMe->m_rc.dx) && (totalstrlen <= 2*pMe->m_rc.dx))    //两行
-    {
-        for (temp = (WSTRLEN(pMe->m_DialString) - 2); temp >= 0 ; temp --)
-        {
-            tempstrlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp);  
-            tempstrlen += (WSTRLEN(pMe->m_DialString) - temp);
-            
-            tempstrlen_ex = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp + 1); 
-            tempstrlen_ex += (WSTRLEN(pMe->m_DialString) - temp - 1);
-            
-            if ((tempstrlen >= pMe->m_rc.dx) && (tempstrlen_ex < pMe->m_rc.dx))
-            {
-            	MSG_FATAL("***zzg Calc_Cursor 111 tempstrlen=%d, tempstrlen_ex=%d***", tempstrlen, tempstrlen_ex, 0);
-            	
-                m_index_one = WSTRLEN(pMe->m_DialString) - (temp + 1);                
-                MSG_FATAL("***zzg Calc_Cursor 111 m_index_one=%d***", m_index_one, 0, 0);
-                break;
-            }
-        }
-        
-        if (pMe->m_nCursorPos < m_index_one)
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
-            m_index_one_strlen += m_index_one;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-            m_index_two_strlen += pMe->m_nCursorPos;
-
-            MSG_FATAL("***zzg Calc_Cursor 111 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-          
-            xPos = m_index_one_strlen - m_index_two_strlen + 2;
-            MSG_FATAL("***zzg Calc_Cursor 222 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
-        }
-        else
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));
-            m_index_one_strlen += pMe->m_nCursorPos;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
-            m_index_two_strlen += m_index_one;
-
-			MSG_FATAL("***zzg Calc_Cursor 222 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-            
-            xPos = pMe->m_rc.dx - (m_index_one_strlen - m_index_two_strlen) - 1;
-            MSG_FATAL("***zzg Calc_Cursor 333 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);
-        }
-    }
-    else if (totalstrlen > 2*pMe->m_rc.dx)  //三行
-    {
-        for (temp = (WSTRLEN(pMe->m_DialString) - 2); temp > 0 ; temp --)
-        {
-            tempstrlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp);  
-            tempstrlen += (WSTRLEN(pMe->m_DialString) - temp);
-            
-            tempstrlen_ex = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp + 1); 
-            tempstrlen_ex += (WSTRLEN(pMe->m_DialString) - temp - 1);
-            
-            if ((tempstrlen >= pMe->m_rc.dx) && (tempstrlen_ex < pMe->m_rc.dx))
-            {                
-            	MSG_FATAL("***zzg Calc_Cursor 222 tempstrlen=%d, tempstrlen_ex=%d***", tempstrlen, tempstrlen_ex, 0);
-            	
-                m_index_one = WSTRLEN(pMe->m_DialString) - (temp + 1);                  
-                MSG_FATAL("***zzg Calc_Cursor 222 m_index_one=%d***", m_index_one, 0, 0);
-            }
-            else if ((tempstrlen >= 2*pMe->m_rc.dx) && (tempstrlen_ex < 2*pMe->m_rc.dx))
-            {                
-            	MSG_FATAL("***zzg Calc_Cursor 333 tempstrlen=%d, tempstrlen_ex=%d***", tempstrlen, tempstrlen_ex, 0);
-            	
-                m_index_two = WSTRLEN(pMe->m_DialString) - (temp + 1);  
-                MSG_FATAL("***zzg Calc_Cursor 333 m_index_two=%d***", m_index_two, 0, 0);
-            }
-        }
-        if (pMe->m_nCursorPos < m_index_one)
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
-            m_index_one_strlen += m_index_one;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-            m_index_two_strlen += pMe->m_nCursorPos;
-
-            MSG_FATAL("***zzg Calc_Cursor 333 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-          
-            xPos = m_index_one_strlen - m_index_two_strlen + 2;            
-            MSG_FATAL("***zzg Calc_Cursor 444 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
-        }
-        else if ((pMe->m_nCursorPos >= m_index_one) && (pMe->m_nCursorPos < m_index_two))
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_two));
-            m_index_one_strlen += m_index_two;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-            m_index_two_strlen += pMe->m_nCursorPos;
-
-            MSG_FATAL("***zzg Calc_Cursor 444 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-          
-            xPos = m_index_one_strlen - m_index_two_strlen + 2;           
-            MSG_FATAL("***zzg Calc_Cursor 555 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);
-        }
-        else
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));
-            m_index_one_strlen += pMe->m_nCursorPos;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_two));
-            m_index_two_strlen += m_index_two;     
-
-            MSG_FATAL("***zzg Calc_Cursor 555 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-            
-            xPos = pMe->m_rc.dx - (m_index_one_strlen - m_index_two_strlen) - 1;
-            MSG_FATAL("***zzg Calc_Cursor 666 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
-        }
-    }
-
-
-    //yPos    
-    /*
+    //yPos  
     if((pMe->m_nCursorPos%xNum == 0) && (pMe->m_nCursorPos/xNum != 0))
     {
         yPos = dy - BOTTOMBAR_HEIGHT - (pMe->m_nCursorPos/xNum)*(25 + Line_Pixel);
@@ -10052,7 +10061,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
     }
     */
     
-	SETAEERECT(pRect, xPos, yPos, 4, 25);
+	//SETAEERECT(pRect, xPos, yPos, 4, 25);
 #endif
 }
 

@@ -444,8 +444,6 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 		{
 			if (wParam == AVK_SHIFT)
 			{
-				MSG_FATAL("***zzg MP3_PlayMusic EVT_USER AVK_SHIFT***", 0, 0, 0);
-				
 			    MP3_RefreshscheduleBar(pMe);//»­½ø¶Èµã	
 			    
 #ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY	
