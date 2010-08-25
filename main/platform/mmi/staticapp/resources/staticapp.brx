@@ -4,6 +4,9 @@
 	<String Id="1001" Name="IDS_STATICAPP_LIST">
 		<Text>Application</Text>
 	</String>
+	<String Id="1010" Name="IDS_NASRANI_TITLE_1">
+		<Text>Fkristiani </Text>
+	</String>
 	<STRING Id="1011" Name="IDS_STATICAPP_TITLE_1">
 		<Text>FMuslim </Text>
 	</STRING>
