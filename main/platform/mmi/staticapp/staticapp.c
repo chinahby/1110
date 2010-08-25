@@ -271,7 +271,7 @@ static int  StaticappMod_CreateInstance( IModule *po,
     *ppObj = NULL;
 
     if( ClsId != AEECLSID_STATIC_APP|| Staticapp_New( pIShell, po, ( IStaticapp**)ppObj) != SUCCESS)
-    {
+    {    	
         return EFAILED;
     }
 
@@ -317,9 +317,9 @@ SEE ALSO:
 static int Staticapp_New( IShell *ps, IModule *pIModule, IStaticapp **ppObj)
 {
     int retVal = SUCCESS;
-    if( 0 == gStaticapp.referenceCounter)
-    {
 
+    if( 0 == gStaticapp.referenceCounter)
+    {	
         if( pIModule == NULL || ps == NULL)
         {
             return EFAILED;
@@ -346,7 +346,7 @@ static int Staticapp_New( IShell *ps, IModule *pIModule, IStaticapp **ppObj)
 
     ++ gStaticapp.referenceCounter;
     *ppObj = ( IStaticapp*)&gStaticapp;
-    
+   
     return retVal;
 }
 
@@ -371,6 +371,7 @@ static int CStaticapp_InitAppData(Staticapp *pMe)
 {
 	int i;
 	boolean iamgeflag = FALSE;
+
     if (NULL == pMe)
     {
         return EFAILED;
@@ -919,11 +920,10 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_1, IDS_STATICAPP_TITLE_1, NULL, 0);
 		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
-        #elif defined(FEATURE_FLEXI_STATIC_BREW_APP)
-        	//need to change
-        	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_1, IDS_STATICAPP_TITLE_1, NULL, 0);
-		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
+        #elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)	//Add For Smart And M8        	
+        	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_21, IDS_STATICAPP_TITLE_21, NULL, 0);
+		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_22, IDS_STATICAPP_TITLE_22, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_23, IDS_STATICAPP_TITLE_23, NULL, 0);
 		#endif
         return TRUE;
             
@@ -969,8 +969,10 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
             switch(wParam)
             {
                 case AVK_1:
-                case AVK_STAR:
-                case AVK_POUND:
+                case AVK_2:
+                case AVK_3:
+                //case AVK_STAR:
+                //case AVK_POUND:
                     {
                         int Focus = (wParam - AVK_1);
                         if(Focus<IMENUCTL_GetItemCount(pMenu))
@@ -996,7 +998,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_1);
 		#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
 			//Need to change
-			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_1);
+			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_21);
 		#endif
         default:
             break;
@@ -1043,23 +1045,14 @@ static boolean StartApplet(Staticapp *pMe, int i)
             break;
   	#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
   		//need to change
-  		case 0:
-        	#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
-			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-               Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);
-			#else
-			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
-               Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);
-			#endif
-            break;
-            
+  		case 0: 
+			//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);			
+            break;            
         case 1:
-        	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
+			//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
             break;
   		case 2:
-  			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);			
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);
+			//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);
             break;
 	#endif	
         default:

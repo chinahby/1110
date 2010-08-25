@@ -13,6 +13,15 @@
 	<String Id="1013" Name="IDS_STATICAPP_TITLE_3">
 		<Text>FPortal</Text>
 	</String>
+	<String Id="1021" Name="IDS_STATICAPP_TITLE_21">
+		<Text>Smartfren Messenger</Text>
+	</String>
+	<String Id="1022" Name="IDS_STATICAPP_TITLE_22">
+		<Text>Facebook</Text>
+	</String>
+	<String Id="1023" Name="IDS_STATICAPP_TITLE_23">
+		<Text>Twitter</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_STATICAPP" Focus="7001">

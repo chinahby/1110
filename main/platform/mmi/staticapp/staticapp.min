@@ -1,7 +1,7 @@
 ################################################################################
 # main menu gnumake variable definition
 ################################################################################
-ifeq ($(USES_FLEXI_STATICAPP),yes)
+#####ifeq ($(USES_FLEXI_STATICAPP),yes)
 STATIC_APP_INC = $(STATIC_APP)
 STATIC_APP_RES = $(STATIC_APP)/resources
 STATIC_APP_SRC = $(STATIC_APP)
@@ -34,4 +34,4 @@ INC  += $(STATIC_APP_INC) $(STATIC_APP_RES)
 #SRC  += $(STATIC_APP_SOURCES)
 OBJECTS+=$(STATIC_APP_OBJS)
 #LIBS += 
-endif
+######endif

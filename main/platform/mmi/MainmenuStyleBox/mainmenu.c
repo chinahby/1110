@@ -2283,7 +2283,11 @@ static boolean StartApplet(MainMenu *pMe, int i)
 		case 0:
         {             
             //Smart World;
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
+#else
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+#endif            
             break;
         }
         case 1:
@@ -2352,9 +2356,14 @@ static boolean StartApplet(MainMenu *pMe, int i)
         }
 #elif defined FEATURE_VERSION_M8 
 		case 0:
-        {             
+        {   
             //b-live;
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP			
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
+			MSG_FATAL("***zzg Result=%d***", Result, 0, 0);
+#else
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+#endif             
             break;
         }
         case 1:
