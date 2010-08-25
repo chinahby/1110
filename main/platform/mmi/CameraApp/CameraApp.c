@@ -815,59 +815,24 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);// 取消所有定时器
             
             pMe->m_bSuspending = TRUE;
+            
+            if(pMe->m_nCameraState == CAM_START && pMe->m_pCamera)
+            {
+                ICAMERA_Release(pMe->m_pCamera);
+                pMe->m_pCamera = NULL;
+            }
+            pMe->m_bIsPreview = FALSE;
             return TRUE;
-
+            
         case EVT_ALARM:
             if(pMe->m_nCameraState == CAM_START && pMe->m_pCamera)
             {
                 ICAMERA_Release(pMe->m_pCamera);
                 pMe->m_pCamera = NULL;
             }
+            pMe->m_bIsPreview = FALSE;
             return TRUE;
-
-        case EVT_APP_INTERRUPT:
-            {
-                AEECLSID clsId;          
-                clsId = ISHELL_ActiveApplet(pMe->m_pShell);
-          
-                switch(clsId)
-                {
-                    case AEECLSID_DIALER:
-                    case AEECLSID_CORE_APP:
-                        if(pMe->m_pCamera)
-                        {
-                            if((pMe->m_nCameraState == CAM_PREVIEW) || (pMe->m_nCameraState == CAM_RECORD))
-                            {
-                                ICAMERA_Stop(pMe->m_pCamera);                            
-                            }
-                            
-                            if(SUCCESS == ICAMERA_Release(pMe->m_pCamera))
-                            {
-                                pMe->m_pCamera = NULL;
-                            }
-                        }
-                        
-                        pMe->m_bIsPreview = FALSE;
-                        
-                        break;
-
-                    case AEECLSID_APPTIMER:
-                    case AEECLSID_BTUIAPP:
-                        if(pMe->m_nCameraState == CAM_START && pMe->m_pCamera)
-                        {
-                            ICAMERA_Release(pMe->m_pCamera);
-                            pMe->m_pCamera = NULL;
-                        }                        
-                        break;                   
-                        
-                    default:
-                        break;                        
-                }            
-            }
             
-            return TRUE;
-
-      
         case EVT_APP_RESUME: 
 			
             CameraApp_InitCameraCheck(pMe); 
