@@ -2866,18 +2866,21 @@ static void StereoHeadsetOn(CCoreApp * pMe)
   ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &stereoHeadSetOn, 1);
   
   /* Change the audio path */
-  uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_ENABLED);
+  //uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_ENABLED);
 
   /*Also set the headset in ICONFIG because OEMCall will use it if WCDMA is defined*/
   nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_STEREO_HEADSET, &stereoHeadSetOn, 1);
+  
   if (nRetVal != SUCCESS)
   {
     MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
   }
-  
-  uisnd_set_mute(UISND_MUTE_UNMUTED, UISND_MUTE_UNMUTED, NULL, NULL);
-  
-  uisnd_set_device_auto(NULL,NULL);
+
+  snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+  snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+    
+  //uisnd_set_device_auto(NULL,NULL);
+  //uisnd_set_mute(UISND_MUTE_UNMUTED, UISND_MUTE_UNMUTED, NULL, NULL);
 
   devnotify.wParam = TRUE;
   AEE_SEND_HEADSET_EVT(&devnotify);
@@ -2922,8 +2925,8 @@ static void HeadsetOff(CCoreApp *pMe)
    AEE_SEND_HEADSET_EVT(&devnotify);
    
    /* Change the audio path */
-   uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_UNATTACHED);
-   uisnd_set_device_status(SND_DEVICE_HEADSET, UISND_DEV_UNATTACHED);
+   //uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_UNATTACHED);
+   //uisnd_set_device_status(SND_DEVICE_HEADSET, UISND_DEV_UNATTACHED);
 
    /*Also set the headset in ICONFIG because OEMCall will use it if WCDMA is defined*/
    nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET, &headSetOn, 1);
@@ -2937,9 +2940,11 @@ static void HeadsetOff(CCoreApp *pMe)
    {
       MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
    }
-   
-   uisnd_set_mute(UISND_MUTE_MUTED, UISND_MUTE_MUTED, NULL, NULL);
-   
-   uisnd_set_device_auto(NULL,NULL);
+
+   snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+   snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+      
+   //uisnd_set_device_auto(NULL,NULL);   
+   //uisnd_set_mute(UISND_MUTE_MUTED, UISND_MUTE_MUTED, NULL, NULL);
 } /*End HeadsetOff */
 
