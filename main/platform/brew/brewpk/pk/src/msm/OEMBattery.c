@@ -514,7 +514,7 @@ static void OEMBattery_CheckChargerStatus(uint32 * pdwChargerStatus)
       }
 
 #if defined(FEATURE_BATTERY_CHARGER) || defined(FEATURE_CHG_TASK) || defined (FEATURE_PM_CHARGING)
-      MSG_FATAL("***chg_ui_event_read=%d***", chg_ui_event_read(), 0, 0);
+//      MSG_FATAL("***chg_ui_event_read=%d***", chg_ui_event_read(), 0, 0);
       switch(chg_ui_event_read())
       {
          // No Charger
