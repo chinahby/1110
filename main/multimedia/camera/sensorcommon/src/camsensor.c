@@ -384,6 +384,10 @@
 #include "camsensor_siv121a.h"
 #endif
 
+#ifdef USE_CAMSENSOR_SIC110A
+#include "camsensor_sic110a.h"
+#endif
+
 #ifdef USE_CAMSENSOR_OV7675
 #include "camsensor_ov7675.h"
 #endif
@@ -460,7 +464,16 @@
 #define PMIC_VOTE_INVALID -1
 #endif /* CAMERA_USE_PMIC_TO_POWER_SENSOR */
 
+#if defined(USE_CAMSENSOR_SIV121A) || defined(USE_CAMSENSOR_SIC110A)
+#define CAM_ENABLE_PULLUP
+#endif
 
+#ifdef CAM_ENABLE_PULLUP
+#undef  GPIO_CAMIF_EN_ON_V
+#undef  GPIO_CAMIF_EN_OFF_V
+#define GPIO_CAMIF_EN_ON_V  1
+#define GPIO_CAMIF_EN_OFF_V 0
+#endif
 /*============================================================================
                         INTERNAL ABSTRACT DATA TYPES
 ============================================================================*/
@@ -747,7 +760,11 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
 #endif
   
 #ifdef USE_CAMSENSOR_SIV121A
-  camsensor_siv121a_init
+  camsensor_siv121a_init,
+#endif
+
+#ifdef USE_CAMSENSOR_SIC110A
+  camsensor_sic110a_init,
 #endif
 
 #ifdef USE_CAMSENSOR_OV7675

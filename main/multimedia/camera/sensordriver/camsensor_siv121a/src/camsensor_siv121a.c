@@ -22,8 +22,8 @@
 #define SIV121A_SENSOR_ID       		    (0x92)
 #define SIV121A_SENSOR_VERSION  			(0x11)
 
-#define SIV121A_I2C_WRITE_ID   	            (0x68)
-#define SIV121A_I2C_READ_ID		            (0x69)
+#define SIV121A_I2C_WRITE_ID   	            (0x66)
+#define SIV121A_I2C_READ_ID		            (0x67)
 
 /* SENSOR REGISTER DEFINE */
 #define SIV121A_ID_REG           	        (0x01)

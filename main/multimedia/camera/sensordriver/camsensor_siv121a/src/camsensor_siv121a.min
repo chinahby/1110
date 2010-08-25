@@ -6,7 +6,8 @@
 # possible.
 #-------------------------------------------------------------------------------
 CAMSENSOR_SIV121A_SOURCES = \
- camsensor_siv121a.c
+ camsensor_siv121a.c \
+ camsensor_sic110a.c
 
 vpath %.c $(CAMSENSOR_SIV121A)  
 
