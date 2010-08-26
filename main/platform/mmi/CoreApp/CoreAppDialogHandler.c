@@ -2708,6 +2708,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
                 case AVK_DOWN:
 				{
+#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021)                      
 #ifdef FEATURE_VERSION_IVIO
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 #elif defined FEATURE_VERSION_SMART
@@ -2716,6 +2717,29 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 #else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
+#endif
+#else
+                    MSG_FATAL("in turnOnTorch",0,0,0);
+                    if ( pMe->TorchOn == FALSE )
+                    {
+                        pMe->TorchOn = TRUE;
+                        if (pMe->m_pBacklight)
+                        {
+                            IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                            //IBACKLIGHT_Disable(pMe->m_pBacklight);
+                        }
+                    }
+                    else
+                    {
+                        pMe->TorchOn = FALSE;
+                        if (pMe->m_pBacklight)
+                        {
+                            IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                            //IBACKLIGHT_Disable(pMe->m_pBacklight);
+                        }
+                    }
+
+                    return TRUE;
 #endif
                 }
                 case AVK_LEFT:
