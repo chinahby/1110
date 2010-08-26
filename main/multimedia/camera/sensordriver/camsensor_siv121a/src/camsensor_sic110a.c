@@ -156,17 +156,17 @@ static boolean initialize_sic110a_registers_preview(void)
     sic110a_i2c_write_byte(0X43, 0X80); 
     
     //SIC110A 50Hz Setting MCLK : 12MHz
-    sic110a_i2c_write_byte(0x20, 0x00); 
-    sic110a_i2c_write_byte(0x21, 0x00);
-    sic110a_i2c_write_byte(0x22, 0x00);
+    sic110a_i2c_write_byte(0x20, 0x00); //00
+    sic110a_i2c_write_byte(0x21, 0x0a);//00
+    sic110a_i2c_write_byte(0x22, 0x02);//00
     sic110a_i2c_write_byte(0x23, 0x00);
     
     sic110a_i2c_write_byte(0x00, 0x01); 
-    sic110a_i2c_write_byte(0x34, 0x4B);
+    sic110a_i2c_write_byte(0x34, 0x18);//4B);
     
     //AE Control
     sic110a_i2c_write_byte(0x10, 0x80); 
-    sic110a_i2c_write_byte(0x11, 0x0C); 
+    sic110a_i2c_write_byte(0x11, 0x03); 
     sic110a_i2c_write_byte(0x12, 0x80); 
     sic110a_i2c_write_byte(0x13, 0x80); 
     sic110a_i2c_write_byte(0x14, 0x75); 
@@ -234,7 +234,7 @@ static boolean initialize_sic110a_registers_preview(void)
     sic110a_i2c_write_byte(0x10, 0xEF); 
     sic110a_i2c_write_byte(0x11, 0x1D);  // PCLK, HSync, VSync (L,H,L)
 #ifdef SIC110A_OUTFORMAT_RGB565
-    sic110a_i2c_write_byte(0x12, 0x0C);
+    sic110a_i2c_write_byte(0x12, 0x3C);
 #else
     sic110a_i2c_write_byte(0x12, 0x9D);  // YCbCr 
 #endif
