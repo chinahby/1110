@@ -341,6 +341,7 @@ static void   OEMALERT_StartSMSAlert(IALERT *po, int ring_id);
 
 #if !defined(FEATURE_SMSTONETYPE_MID)
 static void   OEMALERT_HandleSMSTimer(void *pUser);
+static void   OEMALERT_HandleMP3Timer(void *pUser);
 #endif
 
 static void   OEMALERT_StopSMSAlert(IALERT *po);
@@ -2473,6 +2474,7 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                 break;
 
             case OEMNV_ALERTTYPE_VIBRINGER:
+				#if 0
                 if(type == ALERT_SMS_SND)
                 {
                     pMe->m_ringVibCount = 2;
@@ -2481,6 +2483,19 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                 {
                     pMe->m_ringVibCount = COUNT_VIBRATE_ALERTS_THEN_RING;
                 }
+				#else
+				ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);
+        	 	if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
+        	 	{	  
+            		// 为确保定时器未设置，先取消该定时器
+            		AEE_CancelTimer(OEMALERT_HandleMP3Timer, pMe);
+            
+            		// 设置闪烁图标定时器
+            		(void)AEE_SetSysTimer(TIME_MS_SMSVIBRATE_DURATION, 
+                                    OEMALERT_HandleMP3Timer,
+                                    pMe);
+        		}
+				#endif
                 break;
 
             case OEMNV_ALERTTYPE_VIBANDRINGER:  
@@ -2718,6 +2733,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
             break;
         
         case OEMNV_ALERTTYPE_VIBRINGER:
+			#if 0
             if (pMe->m_ringVibCount > 0) 
             {
                 --pMe->m_ringVibCount;            
@@ -2774,6 +2790,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                     OEMALERT_SetRingerVol(pMe, TRUE);
                 }
             }  
+			#endif
             break;               
 
             case OEMNV_ALERTTYPE_VIBANDRINGER:
@@ -3147,6 +3164,41 @@ static void OEMALERT_HandleSMSTimer(void *pUser)
                          SND_PRIO_MED,
                          SND_APATH_LOCAL,
                          NULL);
+}
+/*=============================================================================
+FUNCTION: OEMALERT_HandleMP3Timer
+
+DESCRIPTION:
+MP3
+
+PARAMETERS:
+   *pUser: CAlert object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void   OEMALERT_HandleMP3Timer(void *pUser)
+{
+	register IALERT *pMe = (IALERT *)pUser;
+	
+	   ASSERT(pMe != NULL);
+
+#ifdef FEATURE_APP_MUSICPLAYER
+		if(pMe->m_snd_type == ALERT_SMS_SND)
+		{
+			 OEMALERT_NotifyMP3Player(pMe,TRUE);
+		}
+#endif
+		(void) IMEDIA_Play(pMe->m_pMedia);
+		(void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
+
 }
 #endif
 
