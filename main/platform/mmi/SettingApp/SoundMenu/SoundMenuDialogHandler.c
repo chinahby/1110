@@ -1578,7 +1578,6 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             SoundMenu_UpdateRingerListMenu(pMe, pMenu);
             InitMenuIcons(pMenu);
             SetMenuIcon(pMenu, pMe->m_lastRingerPlayed, TRUE);
-
             ProfileNotifyMP3PlayerAlertEvent(pMe, TRUE);
             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SOUNDMENU,EVT_USER_REDRAW,0,0);
             return TRUE;
@@ -1623,14 +1622,13 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
-            if(!pMe->m_bSuspending)
+            if((!pMe->m_bSuspending) || (APP_MEDIA_IMPACT_BY_MP3 == app_media_scheduler()))
             {
                 IALERT_StopRingerAlert(pMe->m_pAlert);
                 notifyFMRadioAlertEvent( pMe, FALSE);
-
                 ProfileNotifyMP3PlayerAlertEvent(pMe, FALSE);
                 ISHELL_CancelTimer(pMe->m_pShell, RingerPreview, pMe);
-            }
+            }          
             if(pMe->m_eDlgRet != DLGRET_CANCELED)
             {
                 pMe->m_fSubDlgId = IMENUCTL_GetSel(pMenu);//记录挂起前的选项
@@ -2028,7 +2026,6 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
             //IALERT_StopSMSAlert(pMe->m_pAlert);
             IALERT_StopAlerting(pMe->m_pAlert);
             notifyFMRadioAlertEvent( pMe, FALSE);
-            
             ProfileNotifyMP3PlayerAlertEvent(pMe, FALSE);
             return TRUE;
 
@@ -3493,6 +3490,17 @@ static void ProfileNotifyMP3PlayerAlertEvent(CSoundMenu *pMe, boolean toStartAle
  #ifdef FEATURE_APP_MUSICPLAYER
     if(pMe->m_bSuspending)
     {
+        //当为挂起状态时，只有MP3在后台播放，且toStartAlert为FALSE时
+        //才可以发送EVT_ALARM，这是为了避免来电话挂起且toStartAlert为TRUE时
+        //，在接电话的同时播放MP3
+        if((GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND) && !toStartAlert)
+        {
+            ISHELL_SendEvent(pMe->m_pShell,
+                             AEECLSID_APP_MUSICPLAYER,
+                             EVT_ALARM,
+                             toStartAlert,
+                             TRUE);
+        }            
         return;
     }
     if(GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)
@@ -3570,7 +3578,6 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                     default:
                         return FALSE;
                 }
-
                 ProfileNotifyMP3PlayerAlertEvent(pMe, TRUE);
                 ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SOUNDMENU,EVT_USER_REDRAW,0,0);
                 return TRUE;
