@@ -1343,7 +1343,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
 #elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
 			extern void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp);
             
-            OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+            OEM_SetBAM_ADSAccount(STATIC_BREW_APP_DEFAULT);
 #else	 
             extern void OEM_SetBAM_ADSAccount(void);
             

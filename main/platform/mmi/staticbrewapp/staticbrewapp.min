@@ -159,6 +159,30 @@ endif
 endif #ifeq ($(USES_FLEXI_STATICAPP),yes)
 
 #wangliang add for M8 and SMART
+
 ifeq ($(USES_SMARTFREN_STATICAPP),yes)
 
+#俩个提供外部使用的全局量
+#应用的o文件
+STATIC_BREW_APP_LIB:=#
+#应用的资源文件
+
+CONSTFILE_FILES += \
+    twitter.mif|fs:/mif/twitter.mif \
+    bshop.mif|fs:/mif/bshop.mif \
+    facebook.mif|fs:/mif/facebook.mif \
+    msf.mif|fs:/mif/msf.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/twitter/twitter.o \
+    $(STATIC_BREW_APP)/bshop/bshop.o \
+    $(STATIC_BREW_APP)/facebook/facebook.o \
+    $(STATIC_BREW_APP)/msf/msf.o \
+    $(STATIC_BREW_APP)/msf/chatwin.o \
+    $(STATIC_BREW_APP)/msf/connection.o \
+    $(STATIC_BREW_APP)/msf/friendlist.o \
+    $(STATIC_BREW_APP)/msf/parser_msf.o \
+    $(STATIC_BREW_APP)/msf/progress.o \
+    $(STATIC_BREW_APP)/msf/util_msf.o
+    
 endif

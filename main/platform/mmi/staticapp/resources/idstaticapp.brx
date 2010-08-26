@@ -25,6 +25,9 @@
 	<String Id="1023" Name="IDS_STATICAPP_TITLE_23">
 		<Text>Twitter</Text>
 	</String>
+	<String Id="1024" Name="IDS_STATICAPP_TITLE_24">
+		<Text>M-Shop</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_STATICAPP" Focus="7001">

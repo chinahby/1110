@@ -2753,11 +2753,19 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
 #elif defined FEATURE_VERSION_SMART
-				ret = 0; //Facebook
-				//ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#endif
 #elif defined FEATURE_VERSION_M8
-				ret = 0; //Facebook
-				//ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#endif				
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
@@ -2774,12 +2782,22 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_VERSION_SMART			
 					if(!OEMKeyguard_IsEnabled())
                     {
-                    	return 0; //Chat                        
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP                   
+                    	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM); 
+#else                   
+						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);		
+#endif					
                     }
 #elif defined 	FEATURE_VERSION_M8		
 					if(!OEMKeyguard_IsEnabled())
                     {
-                    	return 0; //Chat                        
+ #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP                      
+                    	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM);   
+#else                   
+						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);		
+#endif							
                     }
 					
 #else		//Include IVIO
@@ -3127,8 +3145,8 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
                 uint16  nNewsVmail=0, nNewsSMS=0;
                 PromptMsg_Param_type  Msg_Param={0};
                 db_items_value_type  need_capture;
-				int i = 0;
-				int temp = 0;
+				//int i = 0;
+				//int temp = 0;
                 
                 need_capture.b_capture = DB_CAPTURE_NONE;
                 db_put(DB_CAPTURE_WALLPER,&need_capture);

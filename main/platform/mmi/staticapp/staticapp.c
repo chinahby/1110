@@ -931,6 +931,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
         	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_21, IDS_STATICAPP_TITLE_21, NULL, 0);
 		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_22, IDS_STATICAPP_TITLE_22, NULL, 0);
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_23, IDS_STATICAPP_TITLE_23, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_24, IDS_STATICAPP_TITLE_24, NULL, 0);
 		#endif
         return TRUE;
             
@@ -978,6 +979,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
                 case AVK_1:
                 case AVK_2:
                 case AVK_3:
+                case AVK_4:
                 //case AVK_STAR:
                 //case AVK_POUND:
                     {
@@ -1032,8 +1034,7 @@ static boolean StartApplet(Staticapp *pMe, int i)
 {
     int Result = FALSE;
 
-   	//MSG_ERROR("StartApplet:::::%d",i,0,0);
-    switch(i)
+   	switch(i)
     {
   	#if defined(FEATURE_FLEXI_STATIC_BREW_APP)     
         case 0:
@@ -1065,17 +1066,26 @@ static boolean StartApplet(Staticapp *pMe, int i)
   	#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
   		//need to change
   		case 0: 
-			//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);			
+  			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_SFM);			
             break;            
         case 1:
-			//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
+        	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_FACEBOOK);
             break;
   		case 2:
-			//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);
+  			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_TWITTER);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_TWITTER);
+			break;
+		case 3:
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MSHOP);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MSHOP);
             break;
 	#endif	
         default:
             break;
     }
+
+    MSG_FATAL("Result = %d",Result,0,0);
     return TRUE;
 }
