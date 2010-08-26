@@ -2878,6 +2878,72 @@ static void StereoHeadsetOn(CCoreApp * pMe)
 
   snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
   snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+
+	//Add By zzg 2010_08_26
+	{         
+	
+		nv_item_type nvi;
+		nv_stat_enum_type result;
+
+  		// beep volume
+		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
+		if ( result == NV_NOTACTIVE_S )
+		{
+		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
+		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
+		}
+		
+		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_KEY_BEEP, 
+						nvi.beep_lvl_shadow, NULL, NULL );
+
+		// voice volume
+		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
+		if ( result == NV_NOTACTIVE_S )
+		{
+		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
+		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
+		}
+		
+		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_VOICE, 
+						nvi.beep_lvl_shadow, NULL, NULL );		
+
+		// message volume
+		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
+		if ( result == NV_NOTACTIVE_S )
+		{
+		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
+		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
+		}
+		
+		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MESSAGE, 
+						nvi.beep_lvl_shadow, NULL, NULL );	
+
+		// ring volume
+		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
+		if ( result == NV_NOTACTIVE_S )
+		{
+		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
+		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
+		}
+		
+		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_RING, 
+						nvi.beep_lvl_shadow, NULL, NULL );	
+
+		  // midi volume
+#ifdef FEATURE_MULTIMEDIA
+		result = OEMNV_Get( NV_MM_LVL_SHADOW_I, &nvi );
+		if ( result == NV_NOTACTIVE_S )
+		{
+			nvi.mm_lvl_shadow = UISND_2ND_VOL;
+			(void) OEMNV_Put (NV_MM_LVL_SHADOW_I, &nvi);
+		}
+		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MIDI, 
+		              nvi.mm_lvl_shadow, NULL, NULL );
+  
+#endif				
+
+	} 
+	//Add End
     
   //uisnd_set_device_auto(NULL,NULL);
   //uisnd_set_mute(UISND_MUTE_UNMUTED, UISND_MUTE_UNMUTED, NULL, NULL);
@@ -2943,6 +3009,72 @@ static void HeadsetOff(CCoreApp *pMe)
 
    snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
    snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+
+   //Add By zzg 2010_08_26
+	{         
+	
+		nv_item_type nvi;
+		nv_stat_enum_type result;
+
+  		// beep volume
+		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
+		if ( result == NV_NOTACTIVE_S )
+		{
+		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
+		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
+		}
+		
+		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_KEY_BEEP, 
+						nvi.beep_lvl_shadow, NULL, NULL );
+
+		// voice volume
+		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
+		if ( result == NV_NOTACTIVE_S )
+		{
+		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
+		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
+		}
+		
+		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_VOICE, 
+						nvi.beep_lvl_shadow, NULL, NULL );		
+
+		// message volume
+		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
+		if ( result == NV_NOTACTIVE_S )
+		{
+		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
+		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
+		}
+		
+		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MESSAGE, 
+						nvi.beep_lvl_shadow, NULL, NULL );	
+
+		// ring volume
+		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
+		if ( result == NV_NOTACTIVE_S )
+		{
+		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
+		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
+		}
+		
+		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_RING, 
+						nvi.beep_lvl_shadow, NULL, NULL );	
+
+		  // midi volume
+#ifdef FEATURE_MULTIMEDIA
+		result = OEMNV_Get( NV_MM_LVL_SHADOW_I, &nvi );
+		if ( result == NV_NOTACTIVE_S )
+		{
+			nvi.mm_lvl_shadow = UISND_2ND_VOL;
+			(void) OEMNV_Put (NV_MM_LVL_SHADOW_I, &nvi);
+		}
+		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MIDI, 
+		              nvi.mm_lvl_shadow, NULL, NULL );
+  
+#endif				
+
+	} 
+	//Add End
       
    //uisnd_set_device_auto(NULL,NULL);   
    //uisnd_set_mute(UISND_MUTE_MUTED, UISND_MUTE_MUTED, NULL, NULL);
