@@ -651,7 +651,6 @@ static void CameraApp_FreeAppData(CCameraApp *pMe)
         VC_DeviceControl(VC_ITM_DEV_STOP_I, VC_FUNC_CONTROL, &vc_data);
     #endif
     }
-
 }
 
 /*==============================================================================
@@ -795,15 +794,13 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 (void)IDISPLAY_Release(pMe->m_pDisplay);
                 pMe->m_pDisplay = NULL;
             }
-            
             pMe->m_bSuspending = TRUE; 
             SetDeviceState(DEVICE_TYPE_CAMERA, DEVICE_CAMERA_STATE_OFF);
-            
             if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
+                ICAMERA_RegisterNotify(pMe->m_pCamera,NULL, NULL);
                 ICAMERA_Stop(pMe->m_pCamera);
             }
-            
             (void)ICONFIG_SetItem(pMe->m_pConfig,
                                   CFGI_BACK_LIGHT,
                                   &pMe->m_nBacklightVal,
@@ -815,6 +812,11 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);// 取消所有定时器
             
             pMe->m_bSuspending = TRUE;
+            if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
+            {
+                ICAMERA_RegisterNotify(pMe->m_pCamera,NULL, NULL);
+                ICAMERA_Stop(pMe->m_pCamera);
+            }
             
             if(pMe->m_nCameraState == CAM_START && pMe->m_pCamera)
             {
@@ -834,7 +836,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             return TRUE;
             
         case EVT_APP_RESUME: 
-			
             CameraApp_InitCameraCheck(pMe); 
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
@@ -856,7 +857,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
         case EVT_DIALOG_INIT:
             pMe->m_bAppIsReady = FALSE;
             pMe->m_pActiveDlg = (IDialog*)dwParam;
-            pMe->m_pActiveDlgID = wParam;      
+            pMe->m_pActiveDlgID = wParam;   
             return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_DIALOG_START:
@@ -908,7 +909,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 
 			  case EVT_USER:
-			  
 				  if(wParam == AVK_CLR)
 				  {
 					  eCode = EVT_KEY;
