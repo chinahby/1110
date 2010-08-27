@@ -458,16 +458,16 @@ static boolean initialize_siv121a_registers_snapshot(void)
     //50HZ 12MHZ 12.5FPS
     siv121a_i2c_write_byte(0x20,0x00); 
     siv121a_i2c_write_byte(0x21,0x00);
-    siv121a_i2c_write_byte(0x22,0x00);
-    siv121a_i2c_write_byte(0x23,0x00);
+    siv121a_i2c_write_byte(0x22,0x03);
+    siv121a_i2c_write_byte(0x23,0x01);
     siv121a_i2c_write_byte(0x24,0x00); 
     siv121a_i2c_write_byte(0x25,0x00);
     siv121a_i2c_write_byte(0x26,0x00);
     siv121a_i2c_write_byte(0x27,0x00);
     
     siv121a_i2c_write_byte(0x00,0x02);
-    siv121a_i2c_write_byte(0x34,0x42);
-    siv121a_i2c_write_byte(0x11,0x08); 
+    siv121a_i2c_write_byte(0x34,0x0f);//42);
+    siv121a_i2c_write_byte(0x11,0x04); 
     siv121a_i2c_write_byte(0x12,0x66); 
     siv121a_i2c_write_byte(0x13,0x66);
     siv121a_i2c_write_byte(0x14,0x66);
@@ -754,16 +754,16 @@ static boolean initialize_siv121a_registers_snapshot_qtr(void)
     //50HZ 12MHZ 12.5FPS
     siv121a_i2c_write_byte(0x20,0x00); 
     siv121a_i2c_write_byte(0x21,0x00);
-    siv121a_i2c_write_byte(0x22,0x00);
-    siv121a_i2c_write_byte(0x23,0x00);
+    siv121a_i2c_write_byte(0x22,0x03);
+    siv121a_i2c_write_byte(0x23,0x01);
     siv121a_i2c_write_byte(0x24,0x00); 
     siv121a_i2c_write_byte(0x25,0x00);
     siv121a_i2c_write_byte(0x26,0x00);
     siv121a_i2c_write_byte(0x27,0x00);
     
     siv121a_i2c_write_byte(0x00,0x02);
-    siv121a_i2c_write_byte(0x34,0x42);
-    siv121a_i2c_write_byte(0x11,0x08); 
+    siv121a_i2c_write_byte(0x34,0x0f);//42);
+    siv121a_i2c_write_byte(0x11,0x04); 
     siv121a_i2c_write_byte(0x12,0x66); 
     siv121a_i2c_write_byte(0x13,0x66);
     siv121a_i2c_write_byte(0x14,0x66);
