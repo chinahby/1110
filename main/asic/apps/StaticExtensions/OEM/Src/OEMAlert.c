@@ -2572,6 +2572,13 @@ static void OEMALERT_StopMp3Alert(IALERT *pMe)
        IMEDIA_Release(pMe->m_pMedia);
        pMe->m_pMedia = NULL;
     }
+#ifdef FEATURE_APP_MUSICPLAYER
+    else if(GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)
+    {
+        OEMALERT_NotifyMP3Player(pMe,TRUE);
+        (void)ISHELL_SetTimer(pMe->m_pIShell, 2000, (PFNNOTIFY)OEMALERT_NotifyMP3PlayerCB, pMe);
+    }
+#endif     
     ISOUND_StopVibrate(pMe->m_pSound);
 
 }
