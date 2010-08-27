@@ -796,25 +796,97 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             //return FALSE;
        
         case EVT_KEY:
+			//add by yangdecai  for allkeypad
+			if((pme->m_pSoftKey) && (wParam == AVK_LCTRL) && (shortkey == TRUE) &&
+				(!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms))
+			{
+				// 显示输入法列表
+                    TextCtl_ShowModeMenu(pme);
+                    return(TRUE);
+			}
+			//add by yangdecai 2010-08-27
 			
-#if 0 
+#if 1   //modi by yangdecai    //  SWITCH  INPUTMOD  EVT_RELEASE MOVE TO EVT_KEY 
+#if defined (FEATURE_DISP_160X128)
             if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
-                (wParam == AVK_STAR) &&
+                (wParam == AVK_LCTRL) &&
+                (shortkey == TRUE) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+#else
+            if ((!pme->m_pSoftKey) && 
+                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
+                (wParam == AVK_POUND) &&
+                (shortkey == TRUE) &&
+                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+#endif
             {
                 if (!pme->m_bActive)
                 {
                     return FALSE;
                 }
-             
+
+#if defined FEATURE_T9_MT_THAI  || defined FEATURE_T9_RAPID_THAI
+                 goto NormalKeyEvent;   
+#endif //#if defined FEATURE_T9_MT_THAI  || defined FEATURE_T9_RAPID_THAI
+
+                switch (pme->m_nCurrInputMode)
+                {
+#ifdef FEATURE_T9_ZHUYIN                   
+                    case OEM_MODE_T9_ZHUYIN:                       
+                        goto NormalKeyEvent;                              
+                        break; 
+#endif //FEATURE_T9_MT_THAI     
+
+#ifdef FEATURE_T9_MT_THAI                   
+                    case OEM_MODE_T9_MT_THAI:                       
+                        goto NormalKeyEvent;                              
+                        break; 
+#endif //FEATURE_T9_MT_THAI  
+
+#ifdef FEATURE_T9_RAPID_THAI                   
+                    case OEM_MODE_T9_RAPID_THAI:                       
+                        goto NormalKeyEvent;                              
+                        break; 
+  #endif //FEATURE_T9_MT_THAI    
+  
+                    default:
+                        break;                    
+                }               
                 if ( !TextCtl_SetNextInputMode(pme) )
                 {
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[2];
                 }
+                SetArrowFlagonIM(FALSE);
+                ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
                 OEM_SetInputMode((CTextCtl *)pme);
                 return TRUE;
             }  
+#if defined (FEATURE_DISP_160X128)
+            if ((!pme->m_pSoftKey) && (pme->m_dwProps & TP_STARKEY_SWITCH) &&
+                (wParam == AVK_CAPLK) && (shortkey == TRUE) &&
+                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+                {
+                    if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH)
+                    {
+                        pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
+                    }
+                    else if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_ENGLISH)
+                    {
+                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
+                    }
+					else if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_INDONESIAN)
+					{
+						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_INDONESIAN;
+					}
+					else if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_INDONESIAN)
+					{
+						pme->m_nCurrInputMode = OEM_MODE_T9_MT_INDONESIAN;
+					}
+                    OEM_SetInputMode((CTextCtl *)pme);
+                    return TRUE;
+                }
+#endif
 #else //AEE_SIMULATOR       
 #if MIN_BREW_VERSION(3,0)
             // do not want to handle au
@@ -1511,86 +1583,7 @@ NormalKeyEvent:
 #endif
             }   
 #endif
-#if defined (FEATURE_DISP_160X128)
-            if ((!pme->m_pSoftKey) && 
-                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
-                (wParam == AVK_LCTRL) &&
-                (shortkey == TRUE) &&
-                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
-#else
-            if ((!pme->m_pSoftKey) && 
-                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
-                (wParam == AVK_POUND) &&
-                (shortkey == TRUE) &&
-                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
-#endif
-            {
-                if (!pme->m_bActive)
-                {
-                    return FALSE;
-                }
 
-#if defined FEATURE_T9_MT_THAI  || defined FEATURE_T9_RAPID_THAI
-                 goto NormalKeyEvent;   
-#endif //#if defined FEATURE_T9_MT_THAI  || defined FEATURE_T9_RAPID_THAI
-
-                switch (pme->m_nCurrInputMode)
-                {
-#ifdef FEATURE_T9_ZHUYIN                   
-                    case OEM_MODE_T9_ZHUYIN:                       
-                        goto NormalKeyEvent;                              
-                        break; 
-#endif //FEATURE_T9_MT_THAI     
-
-#ifdef FEATURE_T9_MT_THAI                   
-                    case OEM_MODE_T9_MT_THAI:                       
-                        goto NormalKeyEvent;                              
-                        break; 
-#endif //FEATURE_T9_MT_THAI  
-
-#ifdef FEATURE_T9_RAPID_THAI                   
-                    case OEM_MODE_T9_RAPID_THAI:                       
-                        goto NormalKeyEvent;                              
-                        break; 
-  #endif //FEATURE_T9_MT_THAI    
-  
-                    default:
-                        break;                    
-                }               
-                if ( !TextCtl_SetNextInputMode(pme) )
-                {
-                    pme->m_nCurrInputMode = pme->m_nCurrInputModeList[2];
-                }
-                SetArrowFlagonIM(FALSE);
-                ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
-                OEM_SetInputMode((CTextCtl *)pme);
-                return TRUE;
-            }  
-#if defined (FEATURE_DISP_160X128)
-            if ((!pme->m_pSoftKey) && (pme->m_dwProps & TP_STARKEY_SWITCH) &&
-                (wParam == AVK_CAPLK) && (shortkey == TRUE) &&
-                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
-                {
-                    if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH)
-                    {
-                        pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
-                    }
-                    else if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_ENGLISH)
-                    {
-                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
-                    }
-					else if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_INDONESIAN)
-					{
-						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_INDONESIAN;
-					}
-					else if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_INDONESIAN)
-					{
-						pme->m_nCurrInputMode = OEM_MODE_T9_MT_INDONESIAN;
-					}
-                    OEM_SetInputMode((CTextCtl *)pme);
-                    return TRUE;
-                }
-#endif
             if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_POUND) &&
