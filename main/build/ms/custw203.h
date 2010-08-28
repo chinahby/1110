@@ -216,6 +216,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO
+#define FEATURE_CAMERA_SUPPORT //add by xuhui
 #define FEATURE_FM_OEM
 #define FEATURE_PROJECT_W203
 #define FEATURE_ALL_KEY_PAD
