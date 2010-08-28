@@ -315,7 +315,9 @@ static int CQuickTest_InitData(CQuickTest *pMe)
    pMe->m_eDlgRet = DLGRET_CREATE;
    pMe->m_bNotOverwriteDlgRet = FALSE;
    pMe->m_mainMenuSel = 0;
+#ifdef FEATURE_CAMERA_SUPPORT    
    pMe->m_isFormCamera = FALSE;
+#endif
    pMe->m_testkeycount = 0;
    if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_RINGERMGR,
@@ -568,11 +570,13 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             pMe->m_pDisplay = as->pDisplay;
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc;
+#ifdef FEATURE_CAMERA_SUPPORT             
             if(pMe->m_isFormCamera)
             {
                 MOVE_TO_STATE(QUICKTESTST_SDTEST)
                 pMe->m_isFormCamera = FALSE;
             }
+#endif            
             CQuickTest_RunFSM(pMe);
             return TRUE;
 

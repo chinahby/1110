@@ -2589,6 +2589,13 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
         case EVT_DIALOG_START:
 #ifndef WIN32
             pMe->m_qdspisr = qdsp_cmd_isr_table[QDSP_ISR_INT0];
+
+            //Config the vocoder
+            voc_acquire(VOC_ACQ_TEST, NULL);
+            voc_config(VOC_ACQ_TEST, VOC_CAP_IS127);
+            //Reset the qdsp interrupt handle function
+            qdsp_cmd_set_isr( iquicktest_mic_receiver_loopback_isr );
+
 #endif
             quicktest_mic_receiver_Loopback(pMe);
             (void)ISHELL_PostEvent( pMe->m_pShell,

@@ -85,8 +85,11 @@ static NextFSMAction QUICKTESTSTRestoreFactoryHandler(CQuickTest *pMe);
 
 // 状态 QUICKTESTST_EXIT 处理函数
 static NextFSMAction QUICKTESTSTExitHandler(CQuickTest *pMe);
+
+#ifdef FEATURE_CAMERA_SUPPORT
 // 状态 QUICKTESTST_CAMERATEST 处理函数
 static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe);
+#endif
 
 
 /*==============================================================================
@@ -172,11 +175,11 @@ NextFSMAction QuickTest_ProcessState(CQuickTest *pMe)
         case QUICKTESTST_FMTEST:
             retVal = QUICKTESTSTFMTestHandler(pMe);
             break;
-
+#ifdef FEATURE_CAMERA_SUPPORT
         case QUICKTESTST_CAMERATEST:
             retVal = QUICKTESTSTCAMERATestHandler(pMe);
             break;
-
+#endif
         case QUICKTESTST_SDTEST:
             retVal = QUICKTESTSTSDTestHandler(pMe);
             break;
@@ -312,11 +315,11 @@ static NextFSMAction QUICKTESTSTMainHandler(CQuickTest *pMe)
         case DLGRET_FMTEST:
             MOVE_TO_STATE(QUICKTESTST_FMTEST)
             return NFSMACTION_CONTINUE;
-
+#ifdef FEATURE_CAMERA_SUPPORT
         case DLGRET_CAMERATEST:
             MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
             return NFSMACTION_CONTINUE;            
-
+#endif
         case DLGRET_SDTEST:
             MOVE_TO_STATE(QUICKTESTST_SDTEST)
             return NFSMACTION_CONTINUE;
@@ -587,7 +590,11 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe)
 
         case DLGRET_CANCELED:
             //MOVE_TO_STATE(QUICKTESTST_SDTEST)
+#ifdef FEATURE_CAMERA_SUPPORT            
             MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
+#else       
+            MOVE_TO_STATE(QUICKTESTST_SDTEST)
+#endif            
             return NFSMACTION_CONTINUE;
 
         default:
@@ -597,6 +604,7 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe)
     return NFSMACTION_WAIT;
 }//
 
+#ifdef FEATURE_CAMERA_SUPPORT 
 static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe)
 {
     if (NULL == pMe)
@@ -620,7 +628,7 @@ static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe)
     }
     return NFSMACTION_WAIT;
 }//
-
+#endif
 /*==============================================================================
 QUICKTESTSTSDTestHandler
 

@@ -195,7 +195,9 @@ typedef struct _CQuickTest {
 #ifdef FEATURE_SUPPORT_BT_APP
     dilag_type m_dilag_type;
 #endif
+#ifdef FEATURE_CAMERA_SUPPORT 
     boolean m_isFormCamera;
+#endif
     uint32  m_testkeycount;
 } CQuickTest;
 /*==============================================================================
