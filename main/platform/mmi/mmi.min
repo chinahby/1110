@@ -30,7 +30,7 @@ include $(RECORDER)/recorder.min
 endif
 
 ifeq ($(USES_3PART_BT),BCM2048)
-    include $(BLUETOOTH)/BTApp.min
+include $(BLUETOOTH)/BTApp.min
 endif
 
 ifeq ($(MMI_ADD_MEDIAGALLERY),yes)
