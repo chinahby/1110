@@ -835,7 +835,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             pMe->m_bIsPreview = FALSE;
             return TRUE;
             
-        case EVT_APP_RESUME: 
+        case EVT_APP_RESUME:
             CameraApp_InitCameraCheck(pMe); 
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
@@ -851,6 +851,15 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 			pMe->m_nLeftTime = 0;
 			
             pMe->m_rc = as->rc;
+            {
+                byte nBackLight;
+                nBackLight = OEMNV_BL_ALWAYS_ON;
+                (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                      CFGI_BACK_LIGHT,
+                                      &nBackLight,
+                                      sizeof(nBackLight));
+                IBACKLIGHT_Enable(pMe->m_pBacklight);     
+            }
             CameraApp_RunFSM(pMe);
             return TRUE;
       
