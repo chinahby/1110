@@ -2572,13 +2572,6 @@ static void OEMALERT_StopMp3Alert(IALERT *pMe)
        IMEDIA_Release(pMe->m_pMedia);
        pMe->m_pMedia = NULL;
     }
-#ifdef FEATURE_APP_MUSICPLAYER
-    else if(GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)
-    {
-        OEMALERT_NotifyMP3Player(pMe,TRUE);
-        (void)ISHELL_SetTimer(pMe->m_pIShell, 2000, (PFNNOTIFY)OEMALERT_NotifyMP3PlayerCB, pMe);
-    }
-#endif     
     ISOUND_StopVibrate(pMe->m_pSound);
 
 }
@@ -2988,7 +2981,7 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
 #if !defined(FEATURE_SMSTONETYPE_MID)
     byte sms_size = 1;
 #endif
-
+    MSG_FATAL("OEMALERT_StartSMSAlert Start",0,0,0);
     num = ICM_GetActiveCallIDs(pMe->m_pICM, 
                                (AEECM_CALL_TYPE_VOICE | AEECM_CALL_TYPE_EMERGENCY), 
                                (AEECM_CALL_STATE_ORIG | AEECM_CALL_STATE_INCOM | 
@@ -3045,7 +3038,7 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
                             CFGI_SMS_RINGER,
                             &sms_size,
                             sizeof(sms_size));
-    
+    MSG_FATAL("sms_size=%d, m_ringCurVol=%d",sms_size, pMe->m_ringCurVol,0);
     if(OEMNV_SMS_RING == sms_size)  
     {
         if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
@@ -3067,12 +3060,19 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
     {
         ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
     }
-    else if(OEMNV_SMS_RINGVIB == sms_size)
+    else if(OEMNV_SMS_RINGVIB == sms_size)//响铃振动
     {
         pMe->smsID = ring_id;
-        ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);
+#ifdef FEATURE_APP_MUSICPLAYER
+        if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
+        {
+            OEMALERT_NotifyMP3Player(pMe,TRUE);
+            (void)ISHELL_SetTimer(pMe->m_pIShell, 2000, (PFNNOTIFY)OEMALERT_NotifyMP3PlayerCB, pMe);
+        }
+#endif         
+        ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);        
         if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
-        {	  
+        {	         
             // 为确保定时器未设置，先取消该定时器
             AEE_CancelTimer(OEMALERT_HandleSMSTimer, pMe);
             
@@ -3084,13 +3084,16 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
     }
     else if(OEMNV_SMS_VIBANDRINGER == sms_size)
     {
+#ifdef FEATURE_APP_MUSICPLAYER
+        if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
+        {
+            OEMALERT_NotifyMP3Player(pMe,TRUE);
+            (void)ISHELL_SetTimer(pMe->m_pIShell, 2000, (PFNNOTIFY)OEMALERT_NotifyMP3PlayerCB, pMe);
+        }
+#endif    
         ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);
         if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
         {
-#ifdef FEATURE_APP_MUSICPLAYER
-            OEMALERT_NotifyMP3Player(pMe,TRUE);
-            (void)ISHELL_SetTimer(pMe->m_pIShell, 2000, (PFNNOTIFY)OEMALERT_NotifyMP3PlayerCB, pMe);
-#endif
             OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
                                     (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
                                     SND_METHOD_VOICE : SND_METHOD_RING,
@@ -3101,6 +3104,7 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
         }
     }  
 #endif //#ifdef FEATURE_SMSTONETYPE_MID  
+    MSG_FATAL("OEMALERT_StartSMSAlert End",0,0,0);
 }    
 /*=============================================================================
 FUNCTION: OEMALERT_StopSMSAlert
@@ -3929,6 +3933,8 @@ static void OEMALERT_NotifyMP3Player(IALERT *pMe,boolean bStartAlert)
 }
 static void OEMALERT_NotifyMP3PlayerCB(IALERT * pMe)
 {
+    MSG_FATAL("OEMALERT_NotifyMP3PlayerCB Start",0,0,0);
     OEMALERT_NotifyMP3Player(pMe,FALSE);
+    MSG_FATAL("OEMALERT_NotifyMP3PlayerCB End",0,0,0);
 }
 #endif
