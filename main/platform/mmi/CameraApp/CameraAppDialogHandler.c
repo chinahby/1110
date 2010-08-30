@@ -240,6 +240,22 @@ static const CCameraSize g_CameraSizeCFG[] =
     {0,0,NULL}
 };
 
+//10万像素的选项
+static const CCameraSize g_CameraSizeCFG_10[] = 
+{
+#if defined(FEATURE_DISP_160X128)
+    {160,128,L"160*128"}, // FULL Screen
+    {220,176,L"220*176"}, // QCIF
+    {320,240,L"320*240"}, // QVGA
+#else
+    {128,128,L"128*128"}, // FULL Screen
+    {160,120,L"160*120"}, // QQVGA
+    {220,176,L"220*176"}, // QCIF
+    {320,240,L"320*240"}, // QVGA
+#endif
+    {0,0,NULL}
+};
+
 /*==============================================================================
                                  函数定义
 ==============================================================================*/
@@ -1948,29 +1964,58 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
 
         while(1)
         {
-            if(g_CameraSizeCFG[i].dx == 0)
+            if(pMe->m_sensor_model == 30)
             {
-                break;
+                if(g_CameraSizeCFG[i].dx == 0)
+                {
+                    break;
+                }
+                IMENUCTL_AddItem(popMenu, 
+                                 NULL, 
+                                 0,
+                                 i, 
+                                 g_CameraSizeCFG[i].pStr, 
+                                 NULL);
+                i++;
             }
-            IMENUCTL_AddItem(popMenu, 
-                             NULL, 
-                             0,
-                             i, 
-                             g_CameraSizeCFG[i].pStr, 
-                             NULL);
-            i++;
+            else if(pMe->m_sensor_model == 10)
+            {
+                if(g_CameraSizeCFG_10[i].dx == 0)
+                {
+                    break;
+                }
+                IMENUCTL_AddItem(popMenu, 
+                                 NULL, 
+                                 0,
+                                 i, 
+                                 g_CameraSizeCFG_10[i].pStr, 
+                                 NULL);
+                i++;            
+            }
         }
         
         CameraApp_SetPopMenuRect(pMe, popMenu, i);
     }
     else
     {
-        IMENUCTL_AddItem(popMenu, 
-                         NULL, 
-                         0,
-                         0, 
-                         g_CameraSizeCFG[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
-                         NULL);
+        if(pMe->m_sensor_model == 30)
+        {
+            IMENUCTL_AddItem(popMenu, 
+                             NULL, 
+                             0,
+                             0, 
+                             g_CameraSizeCFG[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
+                             NULL);
+        }
+        else if(pMe->m_sensor_model == 10)
+        {
+            IMENUCTL_AddItem(popMenu, 
+                             NULL, 
+                             0,
+                             0, 
+                             g_CameraSizeCFG_10[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
+                             NULL);        
+        }
         CameraApp_SetPopMenuRect(pMe, popMenu, 1);
     }
     
@@ -2596,11 +2641,20 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 {
     AEESize displaySize, captureSize; 
     int16 quality = 0;
-    
-    captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
-    captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
-    displaySize.cx = g_CameraSizeCFG[0].dx;
-    displaySize.cy = g_CameraSizeCFG[0].dy;
+    if(pMe->m_sensor_model == 30)
+    {
+        captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
+        captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
+        displaySize.cx = g_CameraSizeCFG[0].dx;
+        displaySize.cy = g_CameraSizeCFG[0].dy;
+    }
+    else if(pMe->m_sensor_model == 10)
+    {
+        captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
+        captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
+        displaySize.cx = g_CameraSizeCFG_10[0].dx;
+        displaySize.cy = g_CameraSizeCFG_10[0].dy;    
+    }
     
     // set camera quality
     switch(pMe->m_nCameraQuality)
@@ -2933,13 +2987,23 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
     AEESize displaySize, captureSize;
      
     pMe->m_nCameraSize = wParam;
-    
-    captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
-    captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
-    
-    displaySize.cx = g_CameraSizeCFG[0].dx;
-    displaySize.cy = g_CameraSizeCFG[0].dy;
-    
+    if(pMe->m_sensor_model == 30)
+    {
+        captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
+        captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
+        
+        displaySize.cx = g_CameraSizeCFG[0].dx;
+        displaySize.cy = g_CameraSizeCFG[0].dy;
+    }
+    else if(pMe->m_sensor_model == 10)
+    {
+        captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
+        captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
+        
+        displaySize.cx = g_CameraSizeCFG_10[0].dx;
+        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+    }
+
     (void)ICONFIG_SetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
                           &pMe->m_nCameraSize,
@@ -3136,7 +3200,16 @@ void CameraApp_InitCameraCheck(void *po)
                               AEECLSID_CAMERA, 
                               (void **)&pMe->m_pCamera);
     }
-
+    if(pMe->m_pCamera != NULL)
+    {
+        MSG_FATAL("pMe->m_pCamera != NULL",0,0,0);
+        ICAMERA_GetParm(pMe->m_pCamera, CAM_PARM_SENSOR_MODEL, &(pMe->m_sensor_model), NULL);
+        MSG_FATAL("m_sensor_model=%d",pMe->m_sensor_model,0,0);            
+    }
+    else
+    {
+        MSG_FATAL("pMe->m_pCamera == NULL",0,0,0);
+    }
     if(pMe->m_pCamera)
     {
         ICAMERA_RegisterNotify(pMe->m_pCamera,(PFNCAMERANOTIFY)CameraApp_EventNotify,po);

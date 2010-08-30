@@ -33,5 +33,7 @@ when       who     what, where, why
 //#define USE_CAMSENSOR_GC0309
 #define USE_CAMSENSOR_SIV121A
 #define USE_CAMSENSOR_SIC110A
+//bool use_camsensor_siv121a = FALSE;
+//bool use_camsensor_sic110a = FALSE;
 //#define USE_CAMSENSOR_OV7675
 #endif /* CUSTCAMSENSOR_H */

@@ -139,6 +139,7 @@ Qualcomm Confidential and Proprietary
 #define CAM_PARM_PREVIEW_FPS        (CAM_PARM_BASE + 22)    // [Set/Get] FPS control in preview mode
 #define CAM_PARM_FRAME_TIMESTAMP   (CAM_PARM_BASE + 23)     // [Set/Get] Enable encoding of time stamp in movie frames
 #define  CAM_PARM_DISPLAY_OFFSET    (CAM_PARM_BASE + 24)
+#define  CAM_PARM_SENSOR_MODEL     (CAM_PARM_BASE + 25)   //add by xuhui
 
 
 #define CAM_PARM_CTL_BASE           (CAM_PARM_BASE + 0x100)

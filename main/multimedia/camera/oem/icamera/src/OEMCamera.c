@@ -155,6 +155,11 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #ifdef CUST_EDITION
 #include "custcamsensor.h"
 #endif
+
+#include "Camsensor.h"
+#define NUM_OF_SENSORS_ON_PHONE  2
+extern camsensor_static_params_type camsensor_static_params[NUM_OF_SENSORS_ON_PHONE];
+
 /*===========================================================================
 Feature condition - FEATURE_CAMERA_LCD_DIRECT_MODE is under condition of FEATURE_MDP
 They are defined in different cust files and condition could not be set there.
@@ -2072,7 +2077,19 @@ int OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2)
           MEMCPY(pP1,&csi,sizeof(CameraSensorInfo));
         }
         break;
-
+      case CAM_PARM_SENSOR_MODEL:
+      {
+          if(camsensor_static_params[0].sensor_model == CAMSENSOR_SIV121A_ID)
+          {
+                *pP1 = 30;
+          }
+          else if(camsensor_static_params[0].sensor_model == CAMSENSOR_SIC110A_ID)
+          {
+               *pP1 = 10;
+          }
+          break;
+      }
+        
       case CAM_PARM_FOCUS_RECT:
 #ifndef FEATURE_CAMERA_V2
 #ifdef FEATURE_CAMERA7500

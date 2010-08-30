@@ -530,6 +530,7 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
     pMe->m_pCamera = NULL;  
     pMe->m_pMedia = NULL;
     pMe->m_isFormQuicktest = FALSE;
+    pMe->m_sensor_model = -1;
     MEMSET(&pMe->m_CallBack, 0, sizeof(AEECallback));
 
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
@@ -891,11 +892,12 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_KEY:
-        case EVT_COMMAND:
+        case EVT_COMMAND:         
             if(!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+
             return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_DIALOG_END:
