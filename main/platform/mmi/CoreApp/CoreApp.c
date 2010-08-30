@@ -243,6 +243,13 @@ void CoreApp_FreeAppData(IApplet* po)
     GreyBitBrewFont_Done();
 }
 #endif
+#ifdef FEATURE_RANDOM_MENU_REND
+// Destroy Rend
+{
+    extern void DisplayRend_Done(void);
+    DisplayRend_Done();
+}
+#endif
 } /* End CoreApp_FreeAppData */
 
 
@@ -274,6 +281,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     }
 #ifdef FEATURE_GREYBIT
 {
+    
     extern void GreyBitBrewFont_Init(void);
     GreyBitBrewFont_Init();
 }

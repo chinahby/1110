@@ -21,12 +21,9 @@
 #include "AEE_OEMDispatch.h"
 #include "Rendering_Config.h"
 #include "Rendering_OEM.h"
-#include "AEEDisplayDev.bid"
-#include "AEEDIBDisplayDev.bid"
-#include "AEEIDIBDisplayDev.h"
-#include "AEEIDisplayDevRend.h"
 #include "AEEIDIB.h"
 #include "OEMHeap.h"
+#include "disp.h"
 
 #define RELEASEIF(p) do { if (p) { IQI_Release((IQueryInterface*)(p)); p = 0; } } while (0)
 
@@ -58,24 +55,11 @@ boolean Rendering_DevAvaild(void)
 
 void Rendering_UpdateDev(void *pBmpBuf, int nSize, int dx, int dy, int nPitch, int nDepth, int nScheme)
 {
-    IDIBDisplayDev *  piDIBDisplayDev = 0;
-    AEERect rc;
-    int nErr;
-    
-    nErr = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_DIBDisplayDev1,(void **)&piDIBDisplayDev);
-    if(nErr != SUCCESS)
-    {
-        goto bail;
-    }
-    
-    SETAEERECT(&rc, 0, 0, dx, dy);
-    IDIBDisplayDev_Update(piDIBDisplayDev,
-                          pBmpBuf, nSize,
-                          dx, dy,
-                          nPitch, nDepth, nScheme,
-                          &rc);
-bail:
-    RELEASEIF(piDIBDisplayDev);
+    disp_update(pBmpBuf,
+                dx,
+                0, 0,
+                dy, dx,
+                0, 0);
 }
 
 void *Rendering_Malloc(int nSize)

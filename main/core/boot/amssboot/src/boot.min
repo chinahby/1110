@@ -20,7 +20,8 @@ BOOT_C_SOURCES=\
         boot_shared_seg_tail.c \
         boot_shared_seg.c \
         boot_crash_debug.c \
-        GlobalData.c
+        GlobalData.c \
+        GlobalIMEM.c
 
 # Progressive boot is not used for this target at this time.
 #       boot_shared_progressive_boot_block.c \

@@ -2,10 +2,11 @@
 #include "AEEShell.h"
 #include "AEEStdLib.h"
 #include "AEE_OEM.h"
-#include "AEEDisplayDev.bid"
 #include "AEEIDisplayDevRend.h"
 #include "Rendering.h"
-#include "MMIConfig.h"
+#include "OEMConfig.h"
+#include "DisplayRendUtils.h"
+#include "OEMCFGI.h"
 
 #ifndef RELEASEIF
 #define RELEASEIF(p) do { if (p) { IQI_Release((IQueryInterface*)(p)); p = 0; } } while (0)
@@ -20,7 +21,7 @@ void DisplayRend_Enable(boolean bEnable)
     IDisplayDevRend *pDispDevRend = NULL;
     int nErr;
     
-    nErr = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_DisplayDev1,(void **)&pDispDevRend);
+    nErr = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_DISPLAYDEV1,(void **)&pDispDevRend);
     if(nErr != SUCCESS)
     {
         return;
@@ -34,7 +35,7 @@ void DisplayRend_Push(void)
     IDisplayDevRend *pDispDevRend = NULL;
     int nErr;
     
-    nErr = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_DisplayDev1,(void **)&pDispDevRend);
+    nErr = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_DISPLAYDEV1,(void **)&pDispDevRend);
     if(nErr != SUCCESS)
     {
         return;
@@ -55,7 +56,7 @@ void DisplayRend_StartEx(DisplayRendType eType, boolean bIn, int nDelay)
         return;
     }
     
-    nErr = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_DisplayDev1,(void **)&pDispDevRend);
+    nErr = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_DISPLAYDEV1,(void **)&pDispDevRend);
     if(nErr != SUCCESS)
     {
         return;
@@ -80,9 +81,8 @@ void DisplayRend_Start(boolean bIn)
 
 void DisplayRend_SetConfig(DisplayRendType eType)
 {
-    CFG_DisplayRend *pDisplayRend = IMMIConfigEx_GetItem(DisplayRend);
-    pDisplayRend->eType = eType;
-    IMMIConfigEx_SetItem(DisplayRend);
+    byte RendType = (byte)eType; 
+    (void)OEM_SetConfig(CFGI_REND_STATE, (void*)&RendType, sizeof(RendType)); 
 }
 
 static int DisplayRend_GetRand(unsigned char Max)
@@ -116,10 +116,12 @@ static RendType DisplayRend_GetRendType(DisplayRendType idx, boolean bIn)
 static DisplayRendType DisplayRend_GetTypeByCfg(boolean bIn)
 {
     DisplayRendType         eType;
-    CFG_DisplayRend        *pDisplayRend = IMMIConfigEx_GetItem(DisplayRend);
 	static DisplayRendType  eOneByOne = DISPLAYREND_TYPE_FADE;
+    byte                    RendType; 
     
-    switch(pDisplayRend->eType){
+    (void)OEM_GetConfig(CFGI_REND_STATE, (void*)&RendType, sizeof(RendType)); 
+    
+    switch(RendType){
     case DISPLAYREND_TYPE_RAND:
         eType = eOneByOne;
         if(bIn)
@@ -141,13 +143,13 @@ static DisplayRendType DisplayRend_GetTypeByCfg(boolean bIn)
         break;
     case DISPLAYREND_TYPE_MAX:
     {
-        eType = pDisplayRend->eType;
+        eType = (DisplayRendType)RendType;
         break;
     }
     default:
-        if(pDisplayRend->eType < DISPLAYREND_TYPE_GROUP)
+        if(RendType < DISPLAYREND_TYPE_GROUP)
         {
-            eType = pDisplayRend->eType;
+            eType = (DisplayRendType)RendType;
         }
         else
         {
@@ -164,7 +166,7 @@ void DisplayRend_Done(void)
     IDisplayDevRend *pDispDevRend = NULL;
     int nErr;
     
-    nErr = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_DisplayDev1,(void **)&pDispDevRend);
+    nErr = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_DISPLAYDEV1,(void **)&pDispDevRend);
     if(nErr != SUCCESS)
     {
         return;

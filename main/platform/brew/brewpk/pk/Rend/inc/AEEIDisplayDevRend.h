@@ -20,10 +20,8 @@ INITIALIAZTION AND SEQUENCEING REQUIREMENTS:
 #include "AEEIQI.h"
 #include "AEEIBitmap.h"
 #include "AEERect.h"
-#include "AEEIDisplayDev.h"
+#include "OEMDisplayDev.h"
 #include "Rendering.h"
-
-#define AEEIID_IDisplayDevRend AEEIID_IDisplayDev
 
 #define INHERIT_IDisplayDevRend(iname) \
     INHERIT_IDisplayDev(iname); \

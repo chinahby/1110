@@ -15,12 +15,8 @@ GENERAL DESCRIPTION:
 #include "AEEShell.h"
 #include "AEEStdLib.h"
 #include "AEEIDisplayDevRend.h"
-#include "AEEIDIBDisplayDev.h"
 #include "AEEIDIB.h"
 #include "AEEStdErr.h"
-#include "AEEDevBitmap.bid"
-#include "AEEDIBDisplayDev.bid"
-#include "AEEDisplayDev.bid"
 
 //=============================================================================
 //   Macro definitions
@@ -32,7 +28,7 @@ struct IDisplayDevRend {
    const AEEVTBL(IDisplayDevRend) *pvt;
    IShell           *piShell;
    uint32            nRefs;
-   IDIBDisplayDev   *piDIBDisplayDev;
+   IDisplayDev      *piDIBDisplayDev;
    AEECLSID          clsDIBDisplayDev;
    RENDHANDLE        hRendDev;
 };
@@ -65,8 +61,10 @@ static const VTBL(IDisplayDevRend) gOEMDisplayDevRendFuncs = {
    OEMDisplayDevRend_IsRendPlaying
 };
 
+extern int OEMDisplayDev_New(IShell *piShell, AEECLSID cls, void **ppif);
+
 extern int OEMDisplayDevRend_NewEx(IShell         *piShell,
-                                   IDIBDisplayDev *piDIBDisplayDev,
+                                   IDisplayDev    *piDIBDisplayDev,
                                    AEECLSID        clsDIBDisplayDev,
                                    void           **ppif)
 {
@@ -84,7 +82,7 @@ extern int OEMDisplayDevRend_NewEx(IShell         *piShell,
    ISHELL_AddRef(me->piShell);
    me->nRefs = 1;
    me->piDIBDisplayDev = piDIBDisplayDev;
-   IDIBDisplayDev_AddRef(piDIBDisplayDev);
+   IDISPLAYDEV_AddRef(piDIBDisplayDev);
    me->clsDIBDisplayDev = clsDIBDisplayDev;
    OEMDisplayDevRend_Init(me);
    *ppif = (void *)me;
@@ -93,33 +91,15 @@ extern int OEMDisplayDevRend_NewEx(IShell         *piShell,
 
 extern int OEMDisplayDevRend_New(IShell *piShell, AEECLSID cls, void **ppif)
 {
-    IDIBDisplayDev *  piDIBDisplayDev = 0;
-    AEECLSID          clsDIBDisplayDev;
+    IDisplayDev *  piDIBDisplayDev = 0;
     int nErr;
     
-    switch (cls) {
-    case AEECLSID_DisplayDev1:
-        clsDIBDisplayDev = AEECLSID_DIBDisplayDev1;
-        break;
-    case AEECLSID_DisplayDev2:
-        clsDIBDisplayDev = AEECLSID_DIBDisplayDev2;
-        break;
-    case AEECLSID_DisplayDev3:
-        clsDIBDisplayDev = AEECLSID_DIBDisplayDev3;
-        break;
-    case AEECLSID_DisplayDev4:
-        clsDIBDisplayDev = AEECLSID_DIBDisplayDev4;
-        break;
-    default:
-        return AEE_ECLASSNOTSUPPORT;
-    }
-    
-    nErr = ISHELL_CreateInstance(piShell, clsDIBDisplayDev, (void **)&piDIBDisplayDev);
+    nErr = OEMDisplayDev_New(piShell, cls, (void**)&piDIBDisplayDev);
     if(nErr != SUCCESS)
     {
         return nErr;
     }
-    nErr = OEMDisplayDevRend_NewEx(piShell, piDIBDisplayDev, clsDIBDisplayDev, ppif);
+    nErr = OEMDisplayDevRend_NewEx(piShell, piDIBDisplayDev, cls, ppif);
     RELEASEIF(piDIBDisplayDev);
     return nErr;
 }
@@ -144,7 +124,7 @@ static uint32 OEMDisplayDevRend_Release(IDisplayDevRend *me)
 
 static int OEMDisplayDevRend_QueryInterface(IDisplayDevRend *me, AEECLSID clsid, void **ppNew)
 {
-   if (clsid == AEEIID_IDisplayDevRend || clsid == AEEIID_QUERYINTERFACE) {
+   if (clsid == AEEIID_DISPLAYDEV || clsid == AEEIID_QUERYINTERFACE) {
       *ppNew = (void*)me;
       OEMDisplayDevRend_AddRef(me);
       return SUCCESS;
@@ -158,7 +138,7 @@ static int OEMDisplayDevRend_Update(IDisplayDevRend *me, IBitmap *pbmSrc, AEERec
 {
    IDIB *piDIB = 0;
    int nErr;
-
+   
    nErr = IBitmap_QueryInterface(pbmSrc, AEEIID_IDIB, (void**)&piDIB);
    if (SUCCESS != nErr) {
       goto bail;
@@ -169,12 +149,7 @@ static int OEMDisplayDevRend_Update(IDisplayDevRend *me, IBitmap *pbmSrc, AEERec
       goto bail;
    }
    
-   nErr = IDIBDisplayDev_Update(me->piDIBDisplayDev,
-                                piDIB->pBmp, piDIB->nPitch * piDIB->cy,
-                                piDIB->cx, piDIB->cy,
-                                piDIB->nPitch, piDIB->nDepth,
-                                piDIB->nColorScheme,
-                                prc);
+   nErr = IDISPLAYDEV_Update(me->piDIBDisplayDev, pbmSrc, prc);
 bail:
    RELEASEIF(piDIB);
    return nErr;
@@ -198,7 +173,7 @@ static int OEMDisplayDevRend_PushScreenEx(IDisplayDevRend *me, IBitmap *pbmSrc)
         }
         
     }else{
-        nErr = ISHELL_CreateInstance(me->piShell, AEECLSID_DevBitmap1Child, (void **)&pbmSrc);
+        nErr = ISHELL_CreateInstance(me->piShell, AEECLSID_DEVBITMAP1_CHILD, (void **)&pbmSrc);
         if (SUCCESS != nErr) {
            goto bail;
         }
@@ -227,7 +202,7 @@ static int OEMDisplayDevRend_StartRend(IDisplayDevRend *me, RendType eType, int 
     int nErr;
     IBitmap *pbmSrc = 0;
     
-    nErr = ISHELL_CreateInstance(me->piShell, AEECLSID_DevBitmap1Child, (void **)&pbmSrc);
+    nErr = ISHELL_CreateInstance(me->piShell, AEECLSID_DEVBITMAP1_CHILD, (void **)&pbmSrc);
     if (SUCCESS != nErr) {
        goto bail;
     }

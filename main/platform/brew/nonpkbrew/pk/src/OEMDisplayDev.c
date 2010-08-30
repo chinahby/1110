@@ -203,8 +203,9 @@ void OEM_InitDispInfo(void)
 
 static void OEMBitmapDev_Init(IShell *ps);
 static void OEMBitmapDev_Cleanup(void *pData);
-
+#ifndef FEATURE_RANDOM_MENU_REND
 static int OEMDisplayDev_New(IShell * piShell, AEECLSID cls, void **ppif);
+#endif
 static int OEMBitmapDev_New(IShell * piShell, AEECLSID cls, void **ppif);
 static int OEMBitmapDevChild_New(IShell * piShell, AEECLSID cls, void **ppif);
 static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif);
@@ -274,7 +275,9 @@ int SVC_disp_update(IDIB *pDib, const AEERect *prc)
 #ifdef FEATURE_GREYBIT
 extern int GreyBitBrewFont_New(IShell *piShell, AEECLSID cls, void **ppif);
 #endif
-
+#ifdef FEATURE_RANDOM_MENU_REND
+extern int OEMDisplayDevRend_New(IShell *piShell, AEECLSID cls, void **ppif);
+#endif
 extern const AEEStaticClass gOEMDisplayDevClasses[] = {
    {AEECLSID_DEVBITMAP1,      ASCF_UPGRADE, PL_SYSTEM,  Display_Init, OEMBitmapDev_New},
    {AEECLSID_DEVBITMAP2,      ASCF_UPGRADE, PL_SYSTEM,  0, OEMBitmapDev_New},
@@ -287,10 +290,17 @@ extern const AEEStaticClass gOEMDisplayDevClasses[] = {
    {AEECLSID_DEVBITMAP2_CHILD,ASCF_UPGRADE, PL_SYSTEM,  0, OEMBitmapDevChild_New},
    {AEECLSID_DEVBITMAP3_CHILD,ASCF_UPGRADE, PL_SYSTEM,  0, OEMBitmapDevChild_New},
    {AEECLSID_DEVBITMAP4_CHILD,ASCF_UPGRADE, PL_SYSTEM,  0, OEMBitmapDevChild_New},
+#ifdef FEATURE_RANDOM_MENU_REND
+   {AEECLSID_DISPLAYDEV1,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDevRend_New},
+   {AEECLSID_DISPLAYDEV2,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDevRend_New},
+   {AEECLSID_DISPLAYDEV3,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDevRend_New},
+   {AEECLSID_DISPLAYDEV4,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDevRend_New},
+#else
    {AEECLSID_DISPLAYDEV1,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDev_New},
    {AEECLSID_DISPLAYDEV2,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDev_New},
    {AEECLSID_DISPLAYDEV3,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDev_New},
    {AEECLSID_DISPLAYDEV4,     ASCF_UPGRADE, PL_SYSTEM,  0, OEMDisplayDev_New},
+#endif
 #ifdef FEATURE_GREYBIT
    {AEECLSID_FONTSYSNORMAL,   ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
    {AEECLSID_FONTSYSLARGE,    ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},

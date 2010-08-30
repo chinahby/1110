@@ -8,15 +8,3 @@
 
 uint32 g_BootResetFlag;
 
-#if 0//def CUST_EDITION
-/*---------------------------------------------------------------------------
-
-                     USER INTERFACE TASK DECLARATIONS
-
----------------------------------------------------------------------------*/
-
-rex_tcb_type        ui_tcb;                      /* TCB for UI task.       */
-rex_stack_word_type ui_stack [UI_STACK_SIZ];     /* Stack for UI Task.     */
-
-#endif
-

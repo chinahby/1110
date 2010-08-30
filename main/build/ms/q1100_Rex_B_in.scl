@@ -39,9 +39,12 @@ MSM_NOTPAGED +0
     boot_target.o (+RO)
   }
 
-  AMSS_IMEM_VEC_TBL  0x58000000  0x20
+  AMSS_IMEM_VEC_TBL  0x58000000  0x1FFFF
   {
     boot_vectors.o (Int_Vect)
+    GreyBit*.o(+RO)
+    tmc_nzi.o(+ZI)
+    GlobalIMEM.o(+ZI)
   }
 }
 

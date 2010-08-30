@@ -467,8 +467,9 @@ rex_stack_word_type dbgr_stack [DBGR_STACK_SIZ]; /* Stack for DBGR Task.   */
 ---------------------------------------------------------------------------*/
 
 rex_tcb_type        ui_tcb;                      /* TCB for UI task.       */
+#ifndef CUST_EDITION
 rex_stack_word_type ui_stack [UI_STACK_SIZ];     /* Stack for UI Task.     */
-
+#endif
 /*---------------------------------------------------------------------------
 
                      WMS TASK DECLARATIONS

@@ -36,7 +36,9 @@
 #include "Appscommon.h"
 #include "appscommon.brh"
 #include "appscommonimages.brh"
-
+#ifdef FEATURE_RANDOM_MENU_REND
+#include "DisplayRendUtils.h"
+#endif
 #include "err.h"
 #if !defined( AEE_SIMULATOR)
 #include "AEERUIM.h" 
@@ -388,7 +390,7 @@ static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
     int retVal = SUCCESS;
     if( 0 == gMainMenu.referenceCounter)
     {
-        ERR("hELLO......",0,0,0);
+
         if( pIModule == NULL || ps == NULL)
         {
             return EFAILED;
@@ -403,7 +405,6 @@ static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
         retVal = CMainMenu_InitAppData(&gMainMenu);
         if(retVal != SUCCESS)
         {
-            ERR("SUCESSS...............FAUKE",0,0,0);
             CMainMenu_FreeAppData((MainMenu*)&gMainMenu);
             return retVal;
         }
@@ -745,6 +746,9 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
     switch ( eCode)
     {
         case EVT_APP_START:
+#ifdef FEATURE_RANDOM_MENU_REND
+            DisplayRend_Enable(TRUE);
+#endif
             // 此事件dwParam为指针，不应为0
             if (dwParam == 0) 
             {
@@ -770,14 +774,19 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
                 pMe->m_MenuSel  = 0;                  
                 (void)ISHELL_CancelTimer( pMe->m_pShell, NULL, pMe);
                 pMe->m_eAppStatus = MAINMENU_STOP;
-                
+#ifdef FEATURE_RANDOM_MENU_REND
+                DisplayRend_Enable(FALSE);
+#endif
                 return TRUE;
             }
 
         case EVT_APP_SUSPEND:
             (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
             pMe->m_eAppStatus = MAINMENU_SUSPEND;
-            
+#ifdef FEATURE_RANDOM_MENU_REND
+            DisplayRend_Push();
+            DisplayRend_Start(FALSE);
+#endif
             return TRUE;
         
 
@@ -786,7 +795,10 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
                 AEEAppStart* as = ( AEEAppStart*)dwParam;
                 pMe->m_rc    = as->rc;
                 pMe->m_eAppStatus = MAINMENU_RUNNING;
-
+#ifdef FEATURE_RANDOM_MENU_REND
+                DisplayRend_Push();
+                DisplayRend_Start(TRUE);
+#endif
                 // 开始跑WMS状态机
                 MainMenu_RunFSM(pMe); 
                 return TRUE;
@@ -795,7 +807,6 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
         case EVT_DIALOG_INIT:
             pMe->m_pActiveIDlg = (IDialog*)dwParam;
             pMe->m_pActivedlgID = wParam;
-            
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
