@@ -181,6 +181,45 @@
 	<STRING Id="1065" Name="IDS_RGB_BLUE">
 		<Text>Biru</Text>
 	</STRING>
+	<String Id="1070" Name="IDS_REND_MENU_TITLE">
+		<Text>Effect Setting</Text>
+	</String>
+	<String Id="1071" Name="IDS_REND_EFFECT_FADE">
+		<Text>Fade</Text>
+	</String>
+	<String Id="1072" Name="IDS_REND_EFFECT_SHOW_HORZ">
+		<Text>Horizontal Show</Text>
+	</String>
+	<String Id="1073" Name="IDS_REND_EFFECT_SHOW_VERT">
+		<Text>Vertical Show</Text>
+	</String>
+	<String Id="1074" Name="IDS_REND_EFFECT_MOVE_HORZ">
+		<Text>Horizontal Move</Text>
+	</String>
+	<String Id="1075" Name="IDS_REND_EFFECT_MOVE_VERT">
+		<Text>Vertical Show</Text>
+	</String>
+	<String Id="1076" Name="IDS_REND_EFFECT_FLY_HORZ">
+		<Text>Horizontal Fly</Text>
+	</String>
+	<String Id="1077" Name="IDS_REND_EFFECT_FLY_VERT">
+		<Text>Vertical Fly</Text>
+	</String>
+	<String Id="1078" Name="IDS_REND_EFFECT_ROTAT_HORZ">
+		<Text>Horizontal Rotation</Text>
+	</String>
+	<String Id="1079" Name="IDS_REND_EFFECT_ROTAT_VERT">
+		<Text>Vertical Rotation</Text>
+	</String>
+	<String Id="1080" Name="IDS_REND_EFFECT_BLINDS_VERT">
+		<Text>Horizontal Blind</Text>
+	</String>
+	<String Id="1081" Name="IDS_REND_EFFECT_BLINDS_INTER">
+		<Text>Intersect Blind</Text>
+	</String>
+	<String Id="1083" Name="IDS_REND_EFFECT_ONEBYONE">
+		<Text>OneByOne</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_DISPLAYMENU_MENU" Focus="7004">
@@ -260,6 +299,13 @@
 	<Dialog Id="6012" Name="IDD_COLOR_SETTING" Focus="0">
 		<Controls>
 			<Menu Id="7012" Name="IDC_COLOR_SETTING">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6013" Name="IDD_REND_MENU" Focus="7013">
+		<Controls>
+			<Menu Id="7013" Name="IDC_REND_MENU">
 				<Items/>
 			</Menu>
 		</Controls>

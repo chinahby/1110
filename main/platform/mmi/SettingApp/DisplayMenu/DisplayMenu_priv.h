@@ -64,10 +64,9 @@
 #include "oemhelperfunctype.h"
 #endif//WIN32
 #include "OEMCFGI.h"
-
-#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
-#include "Rendering.h"
-#endif//FEATURE_RANDOM_MENU_REND
+#ifdef FEATURE_RANDOM_MENU_REND
+#include "DisplayRendUtils.h"
+#endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define DISPLAYMENU_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 #endif//FEATURE_LCD_TOUCH_ENABLE
@@ -101,12 +100,10 @@ typedef enum DLGRetValue
     DLGRET_DESKTOP_THEME,//IDD_DESKTOP_THEME
     DLGRET_LED_CONTROL  , 
     DLGRET_KEY_PAD_CTL ,
-    DLGRET_MENU_STYLE_CTL,
-#if 0    
+    DLGRET_MENU_STYLE_CTL,  
 #ifdef FEATURE_RANDOM_MENU_COLOR
     DLGRET_COLORFUL_MENU_CTL,
     DLGRET_COLOR_SETTING,
-#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
     DLGRET_REND_MENU_CTL,
@@ -129,14 +126,11 @@ typedef enum _DisplayMenuState
     DISPLAYMENUST_DESKTOP_THEME,
     DISPLAYMENUST_LED_CONTROL,
     DISPLAYMENUST_KEY_PAD_CONTROL,
-    DISPLAYMENUST_MENU_STYLE_CONTROL,
-#if 0    
+    DISPLAYMENUST_MENU_STYLE_CONTROL,  
 #ifdef FEATURE_RANDOM_MENU_COLOR
     DISPLAYMENUST_COLORFUL_MENU,
     DISPLAYMENUST_COLOR_SETTING,
 #endif
-#endif
-
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
     DISPLAYMENUST_REND_MENU,
 #endif
@@ -259,9 +253,6 @@ typedef struct _CDisplayMenu
     //byte            m_newLevel;        // New contrast level
     //IOEM_TSGBridge  *m_pOEM_TSGBridge; // IOEMTSG_Bridge interface
     //int16           m_controlId;
-    AEEApplet         a;
-    SET_CONTRAST_BACKLIGHT_TYPE  m_contrast_backlight;
-    byte m_BiasV;
     uint16            m_count;
     boolean           m_b_local;
 #ifdef FEATURE_LED_CONTROL
@@ -277,21 +268,13 @@ typedef struct _CDisplayMenu
     IMenuCtl*         m_pState;
     uint16            m_nCtlID;           //控件ID
     ClockCtlFocus     m_focus;    
-    uint16           m_nTimeCtlCount;    //0代表焦点在小时上,1代表在分钟上
-    uint16           m_nNumKeyCount;     //记录在设置时间时的按键次数.0:小时十位    
+    uint16            m_nTimeCtlCount;    //0代表焦点在小时上,1代表在分钟上
+    uint16            m_nNumKeyCount;     //记录在设置时间时的按键次数.0:小时十位    
 #endif
     uint16            m_msg_id;
-
-#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
-    RGBVAL         m_nCFGColor; 
-    boolean         m_bCustomColor;
-#endif
-#endif
-
-#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
-    uint32          m_nCFGRend;//当前效果 
-    boolean         m_bRandomRend;//是否启用随机效果
+    RGBVAL            m_nCFGColor; 
+    boolean           m_bCustomColor;
 #endif
 } CDisplayMenu;
 

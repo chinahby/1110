@@ -73,12 +73,10 @@ static NextFSMAction Display_StateKeyPad_Control_Handler(CDisplayMenu *pMe);
 static NextFSMAction  Display_StateMenuStyle_Control_Handler(CDisplayMenu *pMe);
 #endif
 
-#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
 static NextFSMAction  Display_StateColorfulMenu_Control_Handler(CDisplayMenu *pMe); //added by chengxiao 2009.02.20
 
 static NextFSMAction  Display_StateColorSetting_Handler(CDisplayMenu *pMe);
-#endif
 #endif
 
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
@@ -179,7 +177,6 @@ NextFSMAction DisplayMenu_ProcessState(CDisplayMenu *pMe)
             retVal = Display_StateMenuStyle_Control_Handler(pMe);
             break;
 #endif
-#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
         case DISPLAYMENUST_COLORFUL_MENU:
             retVal = Display_StateColorfulMenu_Control_Handler(pMe);
@@ -188,7 +185,6 @@ NextFSMAction DisplayMenu_ProcessState(CDisplayMenu *pMe)
         case DISPLAYMENUST_COLOR_SETTING:
             retVal = Display_StateColorSetting_Handler(pMe);
             break;
-#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
         case DISPLAYMENUST_REND_MENU:
@@ -337,12 +333,10 @@ static NextFSMAction Display_StateMainHandler(CDisplayMenu *pMe)
             return NFSMACTION_CONTINUE;           
 #endif
 
-#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
         case DLGRET_COLORFUL_MENU_CTL:
             MOVE_TO_STATE(DISPLAYMENUST_COLORFUL_MENU)
             return NFSMACTION_CONTINUE;
-#endif
 #endif
 
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
@@ -763,7 +757,6 @@ static NextFSMAction  Display_StateMenuStyle_Control_Handler(CDisplayMenu *pMe)
 } 
 #endif
 
-#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
 /*==============================================================================
 º¯Êý£º
@@ -857,7 +850,7 @@ static NextFSMAction  Display_StateColorSetting_Handler(CDisplayMenu *pMe)
     return NFSMACTION_WAIT;
 }
 #endif
-#endif
+
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
 /*==============================================================================
 º¯Êý£º
@@ -892,12 +885,12 @@ static NextFSMAction  Display_StateRendMenu_Control_Handler(CDisplayMenu *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(DISPLAYMENUST_MAIN)
             return NFSMACTION_CONTINUE;
-
+            
 		case DLGRET_MSG_POP:
             pMe->m_bNotOverwriteDlgRet = FALSE;
             DisplayMenu_ShowDialog(pMe, IDD_IMGDELMSG_DLG);
             return NFSMACTION_WAIT;
-
+            
         default:
             ASSERT_NOT_REACHABLE;
     }

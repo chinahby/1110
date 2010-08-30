@@ -108,7 +108,6 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
     uint32 dwParam
 );
 #endif
-#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
 static boolean  HandleColorfulMenuDialogEvent(CDisplayMenu *pMe,
     AEEEvent eCode,
@@ -121,7 +120,6 @@ static boolean  HandleColorSettingDialogEvent(CDisplayMenu *pMe,
     uint16 wParam,
     uint32 dwParam
 );
-#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
 static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
@@ -352,7 +350,6 @@ boolean DisplayMenu_RouteDialogEvent(CDisplayMenu *pMe,
             return HandleMenuStyleDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
 
-#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
         case IDD_COLORFUL_MENU:
             return HandleColorfulMenuDialogEvent(pMe,eCode,wParam,dwParam);
@@ -360,8 +357,6 @@ boolean DisplayMenu_RouteDialogEvent(CDisplayMenu *pMe,
         case IDD_COLOR_SETTING:
             return HandleColorSettingDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
-#endif
-
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
         case IDD_REND_MENU:
             return HandleRENDMenuDialogEvent(pMe,eCode,wParam,dwParam);
@@ -459,11 +454,9 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
 #ifdef FEATRUE_KEY_PAD_CTL
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CLOSE_KEY_PAD, IDS_CLOSE_KEY_PAD, NULL, 0);
 #endif
-        }
-#if 0        
+        }  
 #ifdef FEATURE_RANDOM_MENU_COLOR
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_COLORFUL_MENU_TITLE, IDS_COLORFUL_MENU_TITLE, NULL, 0);
-#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_MENU_TITLE, IDS_REND_MENU_TITLE, NULL, 0);
@@ -528,14 +521,9 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
                     break;
 
                 case IDS_BACKLIGHT_TITLE:       /*背光强度设置*/
-                    pMe->m_contrast_backlight = SET_BACKLIGHT;
                     CLOSE_DIALOG(DLGRET_BRIGHTNESS)
                     break;
 
-                case IDS_CONTRAST_TITLE:          /*对比度*/
-                    pMe->m_contrast_backlight = SET_CONTRAST;
-                    CLOSE_DIALOG(DLGRET_CONTRAST)
-                    break;
 #ifdef FEATURE_SCREEN_SAVE
                 case IDS_SCREENSAVETIMEOUT:/*屏保时间*/
                     CLOSE_DIALOG(DLGRET_SCREENTIMEOUT)
@@ -604,12 +592,10 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
                     CLOSE_DIALOG(DLGRET_MENU_STYLE_CTL)
                     break;
 #endif
-#if 0
 #ifdef FEATURE_RANDOM_MENU_COLOR
                 case IDS_COLORFUL_MENU_TITLE:
                     CLOSE_DIALOG(DLGRET_COLORFUL_MENU_CTL)
                     break;
-#endif
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
                 case IDS_REND_MENU_TITLE:
@@ -1477,101 +1463,47 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
         {
             uint16    ui16_return = OEMNV_BACKLIGHT_LEVEL_NORMAL;
 
-            if( pMe->m_contrast_backlight == SET_CONTRAST)
+        	#if 0
+            (void)IMENUCTL_SetTitle(pMenu,
+                                    AEE_APPSDISPLAYMENU_RES_FILE,
+                                    IDS_BACKLIGHT_TITLE,
+                                    NULL);
+			#else
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+			            AEE_APPSDISPLAYMENU_RES_FILE,                                
+			            IDS_BACKLIGHT_TITLE,
+			            WTitle,
+			            sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+			#endif
+            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                    CFGI_BACKLIGHT_LEVEL,
+                                    &pMe->m_lightlevel,
+                                    sizeof(pMe->m_lightlevel));
+
+            switch(pMe->m_lightlevel)
             {
-                #if 0
-                (void)IMENUCTL_SetTitle(pMenu,
-                                        AEE_APPSDISPLAYMENU_RES_FILE,
-                                        IDS_CONTRAST_TITLE,
-                                        NULL);
-				#else
-				{
-					AECHAR WTitle[40] = {0};
-					(void)ISHELL_LoadResString(pMe->m_pShell,
-				            AEE_APPSDISPLAYMENU_RES_FILE,                                
-				            IDS_CONTRAST_TITLE,
-				            WTitle,
-				            sizeof(WTitle));
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-				}
-				#endif
-                (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                        CFGI_CONTRAST_LVL,
-                                        &pMe->m_BiasV,
-                                        sizeof(pMe->m_BiasV));
-                  switch(pMe->m_BiasV)
-                 {
-#if 0                   
-                    case OEMNV_CONTRAST_LEVEL_1:
-                        ui16_return = IDS_CONTRAST_LEVEL1;
-                        break;
-                    case OEMNV_CONTRAST_LEVEL_2:
-                        ui16_return = IDS_CONTRAST_LEVEL2;
-                        break;
+                case OEMNV_BACKLIGHT_LEVEL_DARK:
+                    ui16_return = IDS_CONTRAST_LEVEL_DARK;
+                    break;
 
-                    case OEMNV_CONTRAST_LEVEL_3:
-                        ui16_return = IDS_CONTRAST_LEVEL3;
-                        break;
-                    case OEMNV_CONTRAST_LEVEL_4:
-                    default:
-                        ui16_return = IDS_CONTRAST_LEVEL4;
-                        break;
-                    case OEMNV_CONTRAST_LEVEL_5:
-                        ui16_return = IDS_CONTRAST_LEVEL5;
-                        break;
-                    case OEMNV_CONTRAST_LEVEL_6:
-                        ui16_return = IDS_CONTRAST_LEVEL6;
-                        break;
-                    case OEMNV_CONTRAST_LEVEL_7:
-                        ui16_return = IDS_CONTRAST_LEVEL7;
-                        break;
-#endif                        
-                }
-            }
-            else
-            {
-            	#if 0
-                (void)IMENUCTL_SetTitle(pMenu,
-                                        AEE_APPSDISPLAYMENU_RES_FILE,
-                                        IDS_BACKLIGHT_TITLE,
-                                        NULL);
-				#else
-				{
-						AECHAR WTitle[40] = {0};
-					(void)ISHELL_LoadResString(pMe->m_pShell,
-				            AEE_APPSDISPLAYMENU_RES_FILE,                                
-				            IDS_BACKLIGHT_TITLE,
-				            WTitle,
-				            sizeof(WTitle));
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-				}
-				#endif
-                (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                        CFGI_BACKLIGHT_LEVEL,
-                                        &pMe->m_lightlevel,
-                                        sizeof(pMe->m_lightlevel));
+                case OEMNV_BACKLIGHT_LEVEL_NORMAL:
+                    ui16_return = IDS_CONTRAST_LEVEL_NORMAL;
+                    break;
+                    
 
-                switch(pMe->m_lightlevel)
-                {
-                    case OEMNV_BACKLIGHT_LEVEL_DARK:
-                        ui16_return = IDS_CONTRAST_LEVEL_DARK;
-                        break;
-
-                    case OEMNV_BACKLIGHT_LEVEL_NORMAL:
-                        ui16_return = IDS_CONTRAST_LEVEL_NORMAL;
-                        break;
-                        
-
-                    case OEMNV_BACKLIGHT_LEVEL_BRIGHT:
-                        ui16_return = IDS_CONTRAST_LEVEL_BRIGHT;
-                        break;
+                case OEMNV_BACKLIGHT_LEVEL_BRIGHT:
+                    ui16_return = IDS_CONTRAST_LEVEL_BRIGHT;
+                    break;
 
 
-                    default:
-                        ui16_return = IDS_CONTRAST_LEVEL_NORMAL;
-                        break;
+                default:
+                    ui16_return = IDS_CONTRAST_LEVEL_NORMAL;
+                    break;
 
-                }
             }
 
             // 设定菜单控件的矩形位置及尺寸
@@ -1608,85 +1540,36 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
-            if( pMe->m_contrast_backlight == SET_CONTRAST)
-            {
-                (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                   CFGI_CONTRAST_LVL,
-                                   &pMe->m_BiasV,
-                                   sizeof(pMe->m_BiasV));
-                 //lcd_setBiasV( pMe->m_BiasV);
-                 disp_set_contrast( pMe->m_BiasV);
-            }
-            else
-            {
-                (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                   CFGI_BACKLIGHT_LEVEL,
-                                   &pMe->m_lightlevel,
-                                   sizeof(pMe->m_lightlevel));
+            (void) ICONFIG_SetItem(pMe->m_pConfig,
+                               CFGI_BACKLIGHT_LEVEL,
+                               &pMe->m_lightlevel,
+                               sizeof(pMe->m_lightlevel));
 
-                IBACKLIGHT_Enable( pMe->m_pIBacklight);
-                IBACKLIGHT_SetBrightnessLevel( pMe->m_pIBacklight, pMe->m_lightlevel);
-            }
+            IBACKLIGHT_Enable( pMe->m_pIBacklight);
+            IBACKLIGHT_SetBrightnessLevel( pMe->m_pIBacklight, pMe->m_lightlevel);
             return TRUE;
 
         //当menu选项更改后,自动调整背光亮度
         case EVT_CTL_SEL_CHANGED:
         {
-             if( pMe->m_contrast_backlight == SET_CONTRAST)
-             {
-                byte      BiasV;
-                switch (wParam)
-                {
-#if 0                  
-                    case IDS_CONTRAST_LEVEL1:
-                        BiasV = OEMNV_CONTRAST_LEVEL_1;
-                        break;
-                    case IDS_CONTRAST_LEVEL2:
-                        BiasV = OEMNV_CONTRAST_LEVEL_2;
-                        break;
+            byte      lightlevel;
 
-                    case IDS_CONTRAST_LEVEL3:
-                        BiasV = OEMNV_CONTRAST_LEVEL_3;
-                        break;
-                    case IDS_CONTRAST_LEVEL4:
-                    default:
-                        BiasV = OEMNV_CONTRAST_LEVEL_4;
-                        break;
-                    case IDS_CONTRAST_LEVEL5:
-                        BiasV = OEMNV_CONTRAST_LEVEL_5;
-                        break;
-                    case IDS_CONTRAST_LEVEL6:
-                        BiasV = OEMNV_CONTRAST_LEVEL_6;
-                        break;
-                    case IDS_CONTRAST_LEVEL7:
-                        BiasV = OEMNV_CONTRAST_LEVEL_7;
-                        break;
-#endif                        
-               }
-                //lcd_setBiasV( BiasV);
-                disp_set_contrast( BiasV);
-            }
-            else
+            switch (wParam)
             {
-                byte      lightlevel;
-
-                switch (wParam)
-                {
-                    case IDS_CONTRAST_LEVEL_DARK:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_DARK;
-                     break;
-                    case IDS_CONTRAST_LEVEL_NORMAL:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_NORMAL;
-                     break;
-
-                    case IDS_CONTRAST_LEVEL_BRIGHT:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_BRIGHT;
-                     break;
-                }
-
-                IBACKLIGHT_Enable(pMe->m_pIBacklight);
-                IBACKLIGHT_SetBrightnessLevel(pMe->m_pIBacklight,lightlevel);
+                case IDS_CONTRAST_LEVEL_DARK:
+                 lightlevel = OEMNV_BACKLIGHT_LEVEL_DARK;
+                 break;
+                case IDS_CONTRAST_LEVEL_NORMAL:
+                 lightlevel = OEMNV_BACKLIGHT_LEVEL_NORMAL;
+                 break;
+                default:
+                case IDS_CONTRAST_LEVEL_BRIGHT:
+                 lightlevel = OEMNV_BACKLIGHT_LEVEL_BRIGHT;
+                 break;
             }
+
+            IBACKLIGHT_Enable(pMe->m_pIBacklight);
+            IBACKLIGHT_SetBrightnessLevel(pMe->m_pIBacklight,lightlevel);
             return TRUE;
         }
 
@@ -1704,56 +1587,22 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
 
         case EVT_COMMAND:
         {
-            if( pMe->m_contrast_backlight == SET_CONTRAST)
+            byte      lightlevel;
+
+            switch (wParam)
             {
-                switch (wParam)
-                {
-#if 0                
-                    case IDS_CONTRAST_LEVEL1:
-                        pMe->m_BiasV = OEMNV_CONTRAST_LEVEL_1;
-                        break;
-                    case IDS_CONTRAST_LEVEL2:
-                        pMe->m_BiasV = OEMNV_CONTRAST_LEVEL_2;
-                        break;
-                    case IDS_CONTRAST_LEVEL3:
-                        pMe->m_BiasV = OEMNV_CONTRAST_LEVEL_3;
-                        break;
-                    case IDS_CONTRAST_LEVEL4:
-                    default:
-                        pMe->m_BiasV = OEMNV_CONTRAST_LEVEL_4;
-                        break;
-                    case IDS_CONTRAST_LEVEL5:
-                        pMe->m_BiasV = OEMNV_CONTRAST_LEVEL_5;
-                        break;
-                    case IDS_CONTRAST_LEVEL6:
-                        pMe->m_BiasV = OEMNV_CONTRAST_LEVEL_6;
-                        break;
-                    case IDS_CONTRAST_LEVEL7:
-                        pMe->m_BiasV = OEMNV_CONTRAST_LEVEL_7;
-                        break;
-#endif                        
-
-                }
+                case IDS_CONTRAST_LEVEL_DARK:
+                 lightlevel = OEMNV_BACKLIGHT_LEVEL_DARK;
+                 break;
+                case IDS_CONTRAST_LEVEL_NORMAL:
+                 lightlevel = OEMNV_BACKLIGHT_LEVEL_NORMAL;
+                 break;
+                default:
+                case IDS_CONTRAST_LEVEL_BRIGHT:
+                 lightlevel = OEMNV_BACKLIGHT_LEVEL_BRIGHT;
+                 break;
             }
-            else
-            {
-                byte      lightlevel;
-
-                switch (wParam)
-                {
-                    case IDS_CONTRAST_LEVEL_DARK:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_DARK;
-                     break;
-                    case IDS_CONTRAST_LEVEL_NORMAL:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_NORMAL;
-                     break;
-
-                    case IDS_CONTRAST_LEVEL_BRIGHT:
-                     lightlevel = OEMNV_BACKLIGHT_LEVEL_BRIGHT;
-                     break;
-                }
-                pMe->m_lightlevel = lightlevel;
-            }
+            pMe->m_lightlevel = lightlevel;
             InitMenuIcons(pMenu);
             SetMenuIcon(pMenu, wParam, TRUE);
             pMe->m_msg_id = IDS_DONE;
@@ -4109,7 +3958,6 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
 #endif
 
 #ifdef FEATURE_RANDOM_MENU_COLOR
-#if 0
 //added by chengxiao 2009.02.20
 /*==============================================================================
 函数：
@@ -4697,7 +4545,6 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
 
     static int nSelectVal;
     static byte nOldRendState;
-    static uint32 nOldCFGRendType;
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_REND_MENU);
 
@@ -4716,128 +4563,73 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
 
         case EVT_DIALOG_START:
         {
-            (void)OEM_GetConfig(CFGI_DEFAULT_REND, (void*)&nOldCFGRendType, sizeof(nOldCFGRendType));
             (void)OEM_GetConfig(CFGI_REND_STATE, (void*)&nOldRendState, sizeof(nOldRendState));
-            //if(pMe->m_bCustomColor)
-            //{
-            //    IMENUCTL_SetProperties(pMenu, MP_NO_REDRAW);
-            //    IMENUCTL_SetActive(pMenu, FALSE);
-            //}
-            //else
-            {
-                //IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_SHOW_LEFTRIGHT_OUT, IDS_REND_SHOW_LEFTRIGHT_OUT, NULL, 0);//显示
-                //IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_SHOW_LEFTRIGHT_IN, IDS_REND_SHOW_LEFTRIGHT_IN, NULL, 0);
-                IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_MOVE_LEFT, IDS_REND_MOVE_LEFT, NULL, 0);//移入
-                IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_MOVE_RIGHT, IDS_REND_MOVE_RIGHT, NULL, 0);
-                //IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FLY_LEFT, IDS_REND_FLY_LEFT, NULL, 0);//滑入
-                //IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FLY_RIGHT, IDS_REND_FLY_RIGHT, NULL, 0);
-                IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FLY_TOP, IDS_REND_FLY_TOP, NULL, 0);//滑入
-                IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FLY_BOTTOM, IDS_REND_FLY_BOTTOM, NULL, 0);
-				//IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FLY_LEFT_FLEX, IDS_REND_FLY_LEFT_FLEX, NULL, 0);//带弹性滑入
-				//IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FLY_RIGHT_FLEX, IDS_REND_FLY_RIGHT_FLEX, NULL, 0);
-				IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FLY_TOP_FLEX, IDS_REND_FLY_TOP_FLEX, NULL, 0);//带弹性滑入
-				//IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FLY_BOTTOM_FLEX, IDS_REND_FLY_BOTTOM_FLEX, NULL, 0);
-				//IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_ROTAT_LEFT, IDS_REND_ROTAT_LEFT, NULL, 0);//旋入
-				//IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_ROTAT_RIGHT, IDS_REND_ROTAT_RIGHT, NULL, 0);
-				IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_BLINDS_LEFT, IDS_REND_BLINDS_LEFT, NULL, 0);//百叶窗入
-				IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_BLINDS_RIGHT, IDS_REND_BLINDS_RIGHT, NULL, 0);
-				//IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FADE_IN, IDS_REND_FADE_IN, NULL, 0); //渐变:
-				//IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_FADE_OUT, IDS_REND_FADE_OUT, NULL, 0);
-                IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_BLINDS_IN, IDS_REND_BLINDS_IN, NULL, 0);//交叉
-				IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_BLINDS_OUT, IDS_REND_BLINDS_OUT, NULL, 0);
-                IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_STRING_RANDOM, IDS_STRING_RANDOM, NULL, 0);
-				IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_ALWAYS_OFF, IDS_ALWAYS_OFF, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_FADE, IDS_REND_EFFECT_FADE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_SHOW_HORZ, IDS_REND_EFFECT_SHOW_HORZ, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_SHOW_VERT, IDS_REND_EFFECT_SHOW_VERT, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_MOVE_HORZ, IDS_REND_EFFECT_MOVE_HORZ, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_MOVE_VERT, IDS_REND_EFFECT_MOVE_VERT, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_FLY_HORZ, IDS_REND_EFFECT_FLY_HORZ, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_FLY_VERT, IDS_REND_EFFECT_FLY_VERT, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_ROTAT_HORZ, IDS_REND_EFFECT_ROTAT_HORZ, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_ROTAT_VERT, IDS_REND_EFFECT_ROTAT_VERT, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_BLINDS_VERT, IDS_REND_EFFECT_BLINDS_VERT, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_BLINDS_INTER, IDS_REND_EFFECT_BLINDS_INTER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_STRING_RANDOM, IDS_STRING_RANDOM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_ONEBYONE, IDS_REND_EFFECT_ONEBYONE, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_ALWAYS_OFF, IDS_ALWAYS_OFF, NULL, 0);
 
-                InitMenuIcons(pMenu);
-                if(nOldRendState == 2)
-                {
-                    SetMenuIcon(pMenu, IDS_STRING_RANDOM, TRUE);
-                }
-                else if(nOldRendState == 1)
-                {
-                    uint16 nSelectID = 0;
-
-                    switch(nOldCFGRendType)
-                    {
-                      //  case REND_SHOW_LEFTRIGHT_OUT://显示
-                      //      nSelectID = IDS_REND_SHOW_LEFTRIGHT_OUT;
-                     //       break;
-                     //   case REND_SHOW_LEFTRIGHT_IN:
-                     //       nSelectID = IDS_REND_SHOW_LEFTRIGHT_IN;
-                     //       break;
-						case REND_MOVE_LEFT://移入
-                            nSelectID = IDS_REND_MOVE_LEFT;
-                            break;
-						case REND_MOVE_RIGHT:
-                            nSelectID = IDS_REND_MOVE_RIGHT;
-                            break;
-						//case REND_FLY_LEFT://滑入
-                    //        nSelectID = IDS_REND_FLY_LEFT;
-                    //        break;
-						//case REND_FLY_RIGHT:
-                    //        nSelectID = IDS_REND_FLY_RIGHT;
-                    //        break;
-						case REND_FLY_TOP://滑入
-                            nSelectID = IDS_REND_FLY_TOP;
-                            break;
-						case REND_FLY_BOTTOM:
-                            nSelectID = IDS_REND_FLY_BOTTOM;
-                            break;
-						//case REND_ROTAT_LEFT://旋入
-                    //        nSelectID = IDS_REND_ROTAT_LEFT;
-                    //        break;
-						//case REND_ROTAT_RIGHT:
-                    //        nSelectID = IDS_REND_ROTAT_RIGHT;
-                    //        break;
-						case REND_BLINDS_LEFT://百叶窗入
-                            nSelectID = IDS_REND_BLINDS_LEFT;
-                            break;
-						case REND_BLINDS_RIGHT:
-                            nSelectID = IDS_REND_BLINDS_RIGHT;
-                            break;
-						case REND_BLINDS_IN://百叶窗入
-                            nSelectID = IDS_REND_BLINDS_IN;
-                            break;
-						case REND_BLINDS_OUT:
-                            nSelectID = IDS_REND_BLINDS_OUT;
-                            break;
-						//case REND_FLY_LEFT_FLEX:       //弹性
-                    //        nSelectID = IDS_REND_FLY_LEFT_FLEX;
-                    //        break;
-						//case REND_FLY_RIGHT_FLEX:
-                    //        nSelectID = IDS_REND_FLY_RIGHT_FLEX;
-                    //        break;
-						case REND_FLY_TOP_FLEX:       
-                            nSelectID = IDS_REND_FLY_TOP_FLEX;
-                            break;
-						//case REND_FLY_BOTTOM_FLEX:
-                    //        nSelectID = IDS_REND_FLY_BOTTOM_FLEX;
-                    //        break;
-						/*case REND_FADE_IN:           //渐变
-                            nSelectID = IDS_REND_FADE_IN;
-                            break;
-						case REND_FADE_OUT:           
-                            nSelectID = IDS_REND_FADE_OUT;
-                            break;
-*/
-                        default:
-                            break;
-                    }
-                    if(nSelectID != 0)
-                    {
-                        SetMenuIcon(pMenu, nSelectID, TRUE);
-                    }
-                }
-                else
-                {
-                    SetMenuIcon(pMenu, IDS_ALWAYS_OFF, TRUE);
-                }
-
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
-                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
-                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-                IMENUCTL_SetSel(pMenu, pMe->m_nExSubDlgId);
+            InitMenuIcons(pMenu);
+            switch(nOldRendState){
+            case DISPLAYREND_TYPE_FADE:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_FADE, TRUE);
+                break;
+            case DISPLAYREND_TYPE_SHOW_HORZ:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_SHOW_HORZ, TRUE);
+                break;
+            case DISPLAYREND_TYPE_SHOW_VERT:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_SHOW_VERT, TRUE);
+                break;
+            case DISPLAYREND_TYPE_MOVE_HORZ:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_MOVE_HORZ, TRUE);
+                break;
+            case DISPLAYREND_TYPE_MOVE_VERT:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_MOVE_VERT, TRUE);
+                break;
+            case DISPLAYREND_TYPE_FLY_HORZ:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_FLY_HORZ, TRUE);
+                break;
+            case DISPLAYREND_TYPE_FLY_VERT:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_FLY_VERT, TRUE);
+                break;
+            case DISPLAYREND_TYPE_ROTAT_HORZ:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_ROTAT_HORZ, TRUE);
+                break;
+            case DISPLAYREND_TYPE_ROTAT_VERT:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_ROTAT_VERT, TRUE);
+                break;
+            case DISPLAYREND_TYPE_BLINDS_VERT:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_BLINDS_VERT, TRUE);
+                break;
+            case DISPLAYREND_TYPE_BLINDS_INTER:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_BLINDS_INTER, TRUE);
+                break;
+            case DISPLAYREND_TYPE_RAND:
+                SetMenuIcon(pMenu, IDS_STRING_RANDOM, TRUE);
+                break;
+            case DISPLAYREND_TYPE_ONEBYONE:
+                SetMenuIcon(pMenu, IDS_REND_EFFECT_ONEBYONE, TRUE);
+                break;
+            case DISPLAYREND_TYPE_MAX:
+            default:
+                SetMenuIcon(pMenu, IDS_ALWAYS_OFF, TRUE);
+                break;
             }
+
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            IMENUCTL_SetSel(pMenu, pMe->m_nExSubDlgId);
 
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                              AEECLSID_APP_DISPLAYMENU,
@@ -4852,121 +4644,73 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
-            if(pMe->m_bSuspending)
-            {
-                pMe->m_nExSubDlgId= IMENUCTL_GetSel(pMenu);
-            }
-            else
-            {
-                pMe->m_nExSubDlgId = 0;
-            }
-            (void)OEM_SetConfig(CFGI_DEFAULT_REND, (void*)&nOldCFGRendType, sizeof(nOldCFGRendType));
-            (void)OEM_SetConfig(CFGI_REND_STATE, (void*)&nOldRendState, sizeof(nOldRendState));
-            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             return TRUE;
 
         case EVT_KEY:
+            switch(wParam)
             {
-                switch(wParam)
-                {
-                    case AVK_CLR:
-                        CLOSE_DIALOG(DLGRET_CANCELED)
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-            return TRUE;
-
-        case EVT_COMMAND:
-        {
-            nOldRendState = 1;
-            InitMenuIcons(pMenu);
-            SetMenuIcon(pMenu, wParam, TRUE);
-
-            switch (wParam)
-            {
-			case IDS_ALWAYS_OFF:
-                    nOldRendState = 0;
-                    nOldCFGRendType = REND_RANDOM;
-                    break;
-
-               // case IDS_REND_SHOW_LEFTRIGHT_OUT:
-               //     nOldCFGRendType = REND_SHOW_LEFTRIGHT_OUT;//显示
-               //     break;
-               // case IDS_REND_SHOW_LEFTRIGHT_IN:
-               //     nOldCFGRendType = REND_SHOW_LEFTRIGHT_IN;
-               //     break;
-                case IDS_REND_MOVE_LEFT:
-                    nOldCFGRendType = REND_MOVE_LEFT;//移入
-                    break;
-                case IDS_REND_MOVE_RIGHT:
-                   nOldCFGRendType = REND_MOVE_RIGHT;
-                    break;
-               // case IDS_REND_FLY_LEFT:
-               //     nOldCFGRendType = REND_FLY_LEFT;//滑入
-               //     break;
-				//case IDS_REND_FLY_RIGHT:
-               //     nOldCFGRendType = REND_FLY_RIGHT;
-               //     break;
-				case IDS_REND_FLY_TOP:
-                    nOldCFGRendType = REND_FLY_TOP;//滑入
-                    break;
-				case IDS_REND_FLY_BOTTOM:
-                    nOldCFGRendType = REND_FLY_BOTTOM;
-                    break;
-				//case IDS_REND_ROTAT_LEFT:
-             //       nOldCFGRendType = REND_ROTAT_LEFT;//旋入
-             //       break;
-				//case IDS_REND_ROTAT_RIGHT:
-              //      nOldCFGRendType = REND_ROTAT_RIGHT;
-              //      break;
-				case IDS_REND_BLINDS_LEFT:
-                    nOldCFGRendType = REND_BLINDS_LEFT;//百叶窗入
-                    break;
-				case IDS_REND_BLINDS_RIGHT:
-                    nOldCFGRendType = REND_BLINDS_RIGHT;
-                    break;
-				case IDS_REND_BLINDS_IN:
-                    nOldCFGRendType = REND_BLINDS_IN;//百叶窗入
-                    break;
-				case IDS_REND_BLINDS_OUT:
-                    nOldCFGRendType = REND_BLINDS_OUT;
-                    break;
-				//case IDS_REND_FLY_LEFT_FLEX:
-             //       nOldCFGRendType = REND_FLY_LEFT_FLEX;       //卷入:
-              //      break;
-				//case IDS_REND_FLY_RIGHT_FLEX:
-              //      nOldCFGRendType = REND_FLY_RIGHT_FLEX;      
-              //      break;
-				case IDS_REND_FLY_TOP_FLEX:
-                    nOldCFGRendType = REND_FLY_TOP_FLEX;       //卷入:
-                    break;
-				//case IDS_REND_FLY_BOTTOM_FLEX:
-             //       nOldCFGRendType = REND_FLY_BOTTOM_FLEX;      
-             //       break;
-			/*	case IDS_REND_FADE_IN:
-                    nOldCFGRendType = REND_FADE_IN;           //渐变:
-                    break;
-				case IDS_REND_FADE_OUT:
-                    nOldCFGRendType = REND_FADE_OUT;     
-                    break;
-*/
-                case IDS_STRING_RANDOM:
-                    nOldRendState = 2;
-					nOldCFGRendType = REND_RANDOM;
-                    //(void)OEM_GetConfig(CFGI_DEFAULT_REND, (void*)&nOldCFGRendType, sizeof(nOldCFGRendType));
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
                     break;
 
                 default:
-                    ASSERT_NOT_REACHABLE;
+                    break;
             }
-
+            return TRUE;
+        
+        case EVT_COMMAND:
+            InitMenuIcons(pMenu);
+            SetMenuIcon(pMenu, wParam, TRUE);
+            
+            switch(wParam){
+            case IDS_REND_EFFECT_FADE:
+                nOldRendState = DISPLAYREND_TYPE_FADE;
+                break;
+            case IDS_REND_EFFECT_SHOW_HORZ:
+                nOldRendState = DISPLAYREND_TYPE_SHOW_HORZ;
+                break;
+            case IDS_REND_EFFECT_SHOW_VERT:
+                nOldRendState = DISPLAYREND_TYPE_SHOW_VERT;
+                break;
+            case IDS_REND_EFFECT_MOVE_HORZ:
+                nOldRendState = DISPLAYREND_TYPE_MOVE_HORZ;
+                break;
+            case IDS_REND_EFFECT_MOVE_VERT:
+                nOldRendState = DISPLAYREND_TYPE_MOVE_VERT;
+                break;
+            case IDS_REND_EFFECT_FLY_HORZ:
+                nOldRendState = DISPLAYREND_TYPE_FLY_HORZ;
+                break;
+            case IDS_REND_EFFECT_FLY_VERT:
+                nOldRendState = DISPLAYREND_TYPE_FLY_VERT;
+                break;
+            case IDS_REND_EFFECT_ROTAT_HORZ:
+                nOldRendState = DISPLAYREND_TYPE_ROTAT_HORZ;
+                break;
+            case IDS_REND_EFFECT_ROTAT_VERT:
+                nOldRendState = DISPLAYREND_TYPE_ROTAT_VERT;
+                break;
+            case IDS_REND_EFFECT_BLINDS_VERT:
+                nOldRendState = DISPLAYREND_TYPE_BLINDS_VERT;
+                break;
+            case IDS_REND_EFFECT_BLINDS_INTER:
+                nOldRendState = DISPLAYREND_TYPE_BLINDS_INTER;
+                break;
+            case IDS_STRING_RANDOM:
+                nOldRendState = DISPLAYREND_TYPE_RAND;
+                break;
+            case IDS_REND_EFFECT_ONEBYONE:
+                nOldRendState = DISPLAYREND_TYPE_ONEBYONE;
+                break;
+            case IDS_ALWAYS_OFF:
+            default:
+                nOldRendState = DISPLAYREND_TYPE_MAX;
+                break;
+            }
+            (void)OEM_SetConfig(CFGI_REND_STATE, (void*)&nOldRendState, sizeof(nOldRendState));
             pMe->m_msg_id = IDS_DONE;
             CLOSE_DIALOG(DLGRET_MSG_POP);
-        }
-        return TRUE;
+            return TRUE;
 
         default:
             break;
@@ -4974,4 +4718,4 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
     return FALSE;
 } 
 #endif//FEATURE_RANDOM_MENU_REND
-#endif
+
