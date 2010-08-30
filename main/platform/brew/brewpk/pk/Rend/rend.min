@@ -7,7 +7,9 @@ REND_LIB = $(REND_PATH)/lib
 
 REND_SOURCES = Rendering.c \
                Rendering_OEM.c \
-               Rendering_Type16.c
+               Rendering_Type16.c \
+	       OEMDisplayDevRend.c \
+	       DisplayRendUtils.c \
 
 REND_OBJS :=  $(addprefix $(TARGETDIR)/, $(REND_SOURCES:%.c=%.o))
 $(REND_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC

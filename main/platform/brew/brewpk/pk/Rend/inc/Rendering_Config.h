@@ -16,26 +16,25 @@
 //<author>      <time>      <version >  <desc>
 // AnyLook    2009/01/09       1.0       build this moudle  
 //**************************************************************
-
-#define REND_SCREEN_WIDTH  176//wlh ÆÁÄ»¿í¶È
-#define REND_SCREEN_HEIGHT 220//wlh ÆÁÄ»¸ß¶È
-#define REND_BPP           2
-#define REND_BUF_SIZE      (REND_SCREEN_WIDTH*REND_SCREEN_HEIGHT*REND_BPP)
 #define REND_PLATFORMID    0
 #define REND_DEFAULT_CLR   0
+#define REND_FPS_DEFAULT   25
+#define REND_STEP_MAX      10
 
 // squrt(w*w+h*h)
 #define REND_Z_MAX         400
 
-#define REND_MEMSET        Rendering_Memset
+#define REND_ROUND2EVEN(n) (n&(~0x1))
+#define REND_MEMCPY16      Rendering_Memcpy16
+#define REND_MEMCPY32      Rendering_Memcpy32
+#define REND_MEMSET16      Rendering_Memset16
 #define REND_MEMSET32      Rendering_Memset32
-#define REND_MEMCPY        Rendering_Memcpy
-#define REND_MALLOC        Rendering_Malloc//wlh 20090413
-#define REND_FREE          Rendering_Free//wlh 20090413
-extern void *Rendering_Memset(void *buffer, int c, int count);
-extern void *Rendering_Memset32(void *buffer, int c, int count);
-extern void *Rendering_Memcpy(void *dest, void *src, int count);
-extern void *Rendering_Malloc(int count);//wlh 20090413
-extern void  Rendering_Free(void *buffer);//wlh 20090413
+
+extern void *Rendering_Memcpy16(void *dest, void *src, int size);
+extern void *Rendering_Memcpy32(void *dest, void *src, int size);
+extern void *Rendering_Memset16(void *buffer, int c, int size);
+extern void *Rendering_Memset32(void *buffer, int c, int size);
+
+
 #endif // RENDERING_CONFIG_H 
 

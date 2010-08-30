@@ -17,9 +17,11 @@
 // AnyLook    2009/01/09       1.0       build this moudle  
 //**************************************************************
 
-extern int Rendering_StartTimer(int ms, void *pUser);
-extern int Rendering_CancelTemer(void *pUser);
-extern int Rendering_GetRand(unsigned char Max);
-extern void Rendering_UpdateDev(void *pBmpBuf);
-extern boolean Rendering_DevAvaild(void);
+extern int      Rendering_StartTimer(int ms, void *pUser);
+extern int      Rendering_CancelTemer(void *pUser);
+extern void     Rendering_UpdateDev(void *pBmpBuf, int nSize, int dx, int dy, int nPitch, int nDepth, int nScheme);
+extern boolean  Rendering_DevAvaild(void);
+extern void    *Rendering_Malloc(int nSize);
+extern void     Rendering_Free(void *pBuf);
 #endif // _RENDERING_OEM_H 
+

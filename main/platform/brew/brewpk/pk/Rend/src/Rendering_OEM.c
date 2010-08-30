@@ -19,12 +19,18 @@
 #include "AEEStdLib.h"
 #include "AEE_OEM.h"
 #include "AEE_OEMDispatch.h"
-#include "OEMDisplayDev.h"
 #include "Rendering_Config.h"
 #include "Rendering_OEM.h"
+#include "AEEDisplayDev.bid"
+#include "AEEDIBDisplayDev.bid"
+#include "AEEIDIBDisplayDev.h"
+#include "AEEIDisplayDevRend.h"
+#include "AEEIDIB.h"
+#include "OEMHeap.h"
+
+#define RELEASEIF(p) do { if (p) { IQI_Release((IQueryInterface*)(p)); p = 0; } } while (0)
 
 extern void Rendering_TimerCB(void *pUser);
-
 int Rendering_StartTimer(int ms, void *pUser)
 {
     return AEE_SetSysTimer(ms, Rendering_TimerCB, pUser);;
@@ -35,84 +41,50 @@ int Rendering_CancelTemer(void *pUser)
     return AEE_CancelTimer(Rendering_TimerCB, pUser);
 }
 
-int Rendering_GetRand(unsigned char Max)
-{
-    unsigned char Rand;
-    GETRAND(&Rand, 1);
-    return Rand%Max;
-}
-
 boolean Rendering_DevAvaild(void)
 {
-	AEEDeviceInfo Info;	
+    AEEDeviceInfo Info;
+    
 	AEE_GetDeviceInfo(&Info);
+    
 #if (REND_PLATFORMID != 0)
 	if(Info.dwPlatformID != REND_PLATFORMID)
 	{
 		return FALSE;
 	}
 #endif
-//wlh mod for 3D test
-//	if(Info.cxScreen != REND_SCREEN_WIDTH || Info.cyScreen != REND_SCREEN_HEIGHT)
-//	{
-//		return FALSE;
-//	}
 	return TRUE;
 }
 
-extern IBitmap *gpDevBitmap;
-extern IDisplayDev *gpDevDisp;
-extern int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc);
-
-void Rendering_UpdateDev(void *pBmpBuf)
+void Rendering_UpdateDev(void *pBmpBuf, int nSize, int dx, int dy, int nPitch, int nDepth, int nScheme)
 {
-	void *pBack = ((IDIB *)gpDevBitmap)->pBmp;
-	AEERect rc={0, 0, REND_SCREEN_WIDTH, REND_SCREEN_HEIGHT};
-	((IDIB *)gpDevBitmap)->pBmp = (byte *)pBmpBuf;
-	OEMDisplayDev_Update(gpDevDisp,gpDevBitmap,&rc);
-	((IDIB *)gpDevBitmap)->pBmp = (byte *)pBack;
-}
-
-void *Rendering_Memset(void *buffer, int c, int count)
-{
-	return MEMSET(buffer,c,count);
-}
-void *Rendering_Memcpy(void *dest, void *src, int count)
-{
-	return MEMCPY(dest, src, count);
-}
-
-void *Rendering_Memset32(void *buffer, int c, int count)
-{
-    uint32 *p = (uint32 *)buffer;
-    int countmod;
-    count = count>>2;
-    countmod = count&0x7;
-    count = count>>3;
-    while(count--)
+    IDIBDisplayDev *  piDIBDisplayDev = 0;
+    AEERect rc;
+    int nErr;
+    
+    nErr = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_DIBDisplayDev1,(void **)&piDIBDisplayDev);
+    if(nErr != SUCCESS)
     {
-        *p++ = c;
-        *p++ = c;
-        *p++ = c;
-        *p++ = c;
-        *p++ = c;
-        *p++ = c;
-        *p++ = c;
-        *p++ = c;
+        goto bail;
     }
     
-    while(countmod--)
-    {
-        *p++ = c;
-    }
-	return buffer;
+    SETAEERECT(&rc, 0, 0, dx, dy);
+    IDIBDisplayDev_Update(piDIBDisplayDev,
+                          pBmpBuf, nSize,
+                          dx, dy,
+                          nPitch, nDepth, nScheme,
+                          &rc);
+bail:
+    RELEASEIF(piDIBDisplayDev);
 }
 
-void *Rendering_Malloc(int count)//wlh 20090413
+void *Rendering_Malloc(int nSize)
 {
-	return MALLOC(count);
+    return sys_malloc(nSize);
 }
-void Rendering_Free(void *buffer)//wlh 20090413
+
+void Rendering_Free(void *pBuf)
 {
-	FREE(buffer);
+    sys_free(pBuf);
 }
+

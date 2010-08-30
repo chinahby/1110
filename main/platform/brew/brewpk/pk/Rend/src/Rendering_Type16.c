@@ -16,179 +16,347 @@
 //**************************************************************
 #include "Rendering.h"
 #include "Rendering_Type.h"
+#include "Rendering_Config.h"
 
-#define BYTE_PERPIXEL   2
-#define MATH_FACTOR     10000
-#define MATH_FACTOR2    20000
-static uint16 g_LightBuf[] = {0xFFFF,0xF7DE,0xEFDB,0xE79C,0};
+#define MATH_FACTOR_BIT         10
+#define MATH_ALPHA_MAX_OUT      26
+#define MATH_ALPHA_MAX          32
+#define MATH_ALPHA_MIN_IN       10
+#define MATH_ALPHA_MAX_BIT      5
+#define MATH_STEPPER(v,s)       ((v*g_StepPer[s])>>MATH_FACTOR_BIT)
+#define MATH_STEPPER_AVG(v,s)   ((v*g_StepPer_avg[s])>>MATH_FACTOR_BIT)
+#define MATH_STEPPER_SHAKE(v,s) ((v*g_StepPer_shake[s])>>MATH_FACTOR_BIT)
 
-static int16  g_SinCos_Tab[360] = {
-0,174,348,523,697,871,1045,1218,1391,1564,1736,1908,2079,2249,2419,2588,2756,2923,3090,3255,3420,3583,3746,3907,4067,4226,4383,4539,4694,4848,
-5000,5150,5299,5446,5591,5735,5877,6018,6156,6293,6427,6560,6691,6819,6946,7071,7193,7313,7431,7547,7660,7771,7880,7986,8090,8191,8290,8386,8480,8571,8660,8746,8829,8910,8987,9063,9135,9205,9271,9335,9396,9455,9510,9563,9612,9659,9702,9743,9781,9816,9848,9876,9902,9925,9945,9961,9975,9986,9993,9998,
-10000,9998,9993,9986,9975,9961,9945,9925,9902,9876,9848,9816,9781,9743,9702,9659,9612,9563,9510,9455,9396,9335,9271,9205,9135,9063,8987,8910,8829,8746,8660,8571,8480,8386,8290,8191,8090,7986,7880,7771,7660,7547,7431,7313,7193,7071,6946,6819,6691,6560,6427,6293,6156,6018,5877,5735,5591,5446,5299,5150,
-5000,4848,4694,4539,4383,4226,4067,3907,3746,3583,3420,3255,3090,2923,2756,2588,2419,2249,2079,1908,1736,1564,1391,1218,1045,871,697,523,348,174,
-0,-174,-348,-523,-697,-871,-1045,-1218,-1391,-1564,-1736,-1908,-2079,-2249,-2419,-2588,-2756,-2923,-3090,-3255,-3420,-3583,-3746,-3907,-4067,-4226,-4383,-4539,-4694,-4848,
--5000,-5150,-5299,-5446,-5591,-5735,-5877,-6018,-6156,-6293,-6427,-6560,-6691,-6819,-6946,-7071,-7193,-7313,-7431,-7547,-7660,-7771,-7880,-7986,-8090,-8191,-8290,-8386,-8480,-8571,-8660,-8746,-8829,-8910,-8987,-9063,-9135,-9205,-9271,-9335,-9396,-9455,-9510,-9563,-9612,-9659,-9702,-9743,-9781,-9816,-9848,-9876,-9902,-9925,-9945,-9961,-9975,-9986,-9993,-9998,
--10000,-9998,-9993,-9986,-9975,-9961,-9945,-9925,-9902,-9876,-9848,-9816,-9781,-9743,-9702,-9659,-9612,-9563,-9510,-9455,-9396,-9335,-9271,-9205,-9135,-9063,-8987,-8910,-8829,-8746,-8660,-8571,-8480,-8386,-8290,-8191,-8090,-7986,-7880,-7771,-7660,-7547,-7431,-7313,-7193,-7071,-6946,-6819,-6691,-6560,-6427,-6293,-6156,-6018,-5877,-5735,-5591,-5446,-5299,-5150,
--5000,-4848,-4694,-4539,-4383,-4226,-4067,-3907,-3746,-3583,-3420,-3255,-3090,-2923,-2756,-2588,-2419,-2249,-2079,-1908,-1736,-1564,-1391,-1218,-1045,-871,-697,-523,-348,-174
+static const int    g_StepPer[REND_STEP_MAX+1]       = {0, 160, 316, 465, 602, 724, 828, 912, 974,1011,1024};
+static const int    g_StepPer_avg[REND_STEP_MAX+1]   = {0, 102, 204, 306, 408, 510, 612, 714, 816, 918,1024};
+static const int    g_StepPer_shake[REND_STEP_MAX+1] = {0, 160, 316, 465, 602, 724,1024, 912,1024,1011,1024};
+
+static const int16  g_SinCos_Tab[360] = {
+    0,   18,   36,   54,   71,   89,  107,  125,  143,  160,  178,  195,  213,  230,  248,
+  265,  282,  299,  316,  333,  350,  367,  384,  400,  416,  433,  449,  465,  481,  496,
+  512,  527,  543,  558,  573,  587,  602,  616,  630,  644,  658,  672,  685,  698,  711,
+  724,  737,  749,  761,  773,  784,  796,  807,  818,  828,  839,  849,  859,  868,  878,
+  887,  896,  904,  912,  920,  928,  935,  943,  949,  956,  962,  968,  974,  979,  984,
+  989,  994,  998, 1002, 1005, 1008, 1011, 1014, 1016, 1018, 1020, 1022, 1023, 1023, 1024,
+ 1024, 1024, 1023, 1023, 1022, 1020, 1018, 1016, 1014, 1011, 1008, 1005, 1002,  998,  994,
+  989,  984,  979,  974,  968,  962,  956,  949,  943,  935,  928,  920,  912,  904,  896,
+  887,  878,  868,  859,  849,  839,  828,  818,  807,  796,  784,  773,  761,  749,  737,
+  724,  711,  698,  685,  672,  658,  644,  630,  616,  602,  587,  573,  558,  543,  527,
+  512,  496,  481,  465,  449,  433,  416,  400,  384,  367,  350,  333,  316,  299,  282,
+  265,  248,  230,  213,  195,  178,  160,  143,  125,  107,   89,   71,   54,   36,   18,
+    0,  -18,  -36,  -54,  -71,  -89, -107, -125, -143, -160, -178, -195, -213, -230, -248,
+ -265, -282, -299, -316, -333, -350, -367, -384, -400, -416, -433, -449, -465, -481, -496,
+ -512, -527, -543, -558, -573, -587, -602, -616, -630, -644, -658, -672, -685, -698, -711,
+ -724, -737, -749, -761, -773, -784, -796, -807, -818, -828, -839, -849, -859, -868, -878,
+ -887, -896, -904, -912, -920, -928, -935, -943, -949, -956, -962, -968, -974, -979, -984,
+ -989, -994, -998,-1002,-1005,-1008,-1011,-1014,-1016,-1018,-1020,-1022,-1023,-1023,-1024,
+-1024,-1024,-1023,-1023,-1022,-1020,-1018,-1016,-1014,-1011,-1008,-1005,-1002, -998, -994,
+ -989, -984, -979, -974, -968, -962, -956, -949, -943, -935, -928, -920, -912, -904, -896,
+ -887, -878, -868, -859, -849, -839, -828, -818, -807, -796, -784, -773, -761, -749, -737,
+ -724, -711, -698, -685, -672, -658, -644, -630, -616, -602, -587, -573, -558, -543, -527,
+ -512, -496, -481, -465, -449, -433, -416, -400, -384, -367, -350, -333, -316, -299, -282,
+ -265, -248, -230, -213, -195, -178, -160, -143, -125, -107,  -89,  -71,  -54,  -36,  -18,
 };
+
+void *Rendering_Memcpy16(void *dest, void *src, int size)
+{
+    uint16 *pDest = (uint16*)dest;
+    uint16 *pSrc  = (uint16*)src;
+    int     sizemod;
+    
+    size = size>>1;
+    sizemod = size&0x7;
+    size = size>>3;
+    while(size--)
+    {
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+    }
+    
+    while(sizemod--)
+    {
+        *pDest++ = *pSrc++;
+    }
+	return dest;
+}
+
+void *Rendering_Memcpy32(void *dest, void *src, int size)
+{
+    uint32 *pDest = (uint32*)dest;
+    uint32 *pSrc  = (uint32*)src;
+    int     sizemod;
+    
+    size = size>>2;
+    sizemod = size&0x7;
+    size = size>>3;
+    while(size--)
+    {
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+        *pDest++ = *pSrc++;
+    }
+    
+    while(sizemod--)
+    {
+        *pDest++ = *pSrc++;
+    }
+	return dest;
+
+}
+
+void *Rendering_Memset16(void *buffer, int c, int size)
+{
+    uint16 *p = (uint16 *)buffer;
+    int sizemod;
+    size = size>>1;
+    sizemod = size&0x7;
+    size = size>>3;
+    while(size--)
+    {
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+    }
+    
+    while(sizemod--)
+    {
+        *p++ = c;
+    }
+	return buffer;
+}
+
+void *Rendering_Memset32(void *buffer, int c, int size)
+{
+    uint32 *p = (uint32 *)buffer;
+    int sizemod;
+    size = size>>2;
+    sizemod = size&0x7;
+    size = size>>3;
+    while(size--)
+    {
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+    }
+    
+    while(sizemod--)
+    {
+        *p++ = c;
+    }
+	return buffer;
+}
+
+static INLINE int Fun_GetSizeByBPP(RendDraw *pMe, int nWidth)
+{
+    return (((nWidth<<3)*pMe->nDepth)+63)>>6;
+}
 
 static INLINE int16 Fun_MathSIN(int16 Angle)
 {
-	if(Angle>=0)
-	{
-		return g_SinCos_Tab[Angle%360];
-	}
-	else
-	{
-		Angle = -Angle;
-		return (-g_SinCos_Tab[Angle%360]);
-	}
+    if(Angle>=0)
+    {
+        return g_SinCos_Tab[Angle%360];
+    }
+    else
+    {
+        Angle = -Angle;
+        return (-g_SinCos_Tab[Angle%360]);
+    }
 }
 
 static INLINE int16 Fun_MathCOS(int16 Angle)
 {
-	if(Angle>=0)
-	{
-		return g_SinCos_Tab[(90+Angle)%360];
-	}
-	else
-	{
-		Angle = -Angle;
-		return g_SinCos_Tab[(90+Angle)%360];
-	}
+    if(Angle>=0)
+    {
+        return g_SinCos_Tab[(90+Angle)%360];
+    }
+    else
+    {
+        Angle = -Angle;
+        return g_SinCos_Tab[(90+Angle)%360];
+    }
 }
 #define SIN(A) Fun_MathSIN(A)
 #define COS(A) Fun_MathCOS(A)
 
 static INLINE int16 Fun_GetxyOffAngle(int16 Angle, int16 zxAngle)
 {
-	Angle = Angle%360;
-	
-	if(Angle <0) 
-	{
-		Angle = 360+Angle;
-	}
-
-	if(Angle <= 90)
-	{
-		Angle = Angle*zxAngle/90;
-	}
-	else if(Angle <= 180)
-	{
-		Angle = (Angle-180)*zxAngle/90;
-	}
-	else if(Angle <= 270)
-	{
-		Angle = (Angle-180)*zxAngle/90;
-	}
-	else
-	{
-		Angle = (Angle-360)*zxAngle/90;
-	}
-	return Angle;
-}
-
-static INLINE uint16 Fun_BMPInterpolate(uint16* lpbySrcXY, int16 x, int16 y,int16 nScanWidth, int16 nScanHeight, int16 nPitch)
-{
-	uint16 rgb16;
-	//行字节数, 可以将dwWidthBytes作为参数传递过来
-	uint16 PixelValue;
-	//相邻的四个像素最右下角点的x, y坐标偏移量
-	int nx = 1;
-	int ny = 1;
-	
-	uint16 abyRed[2][2], abyGreen[2][2],abyBlue[2][2];
-	
-	//像素点(x, y)的数据位置
-	uint16* pbySrc = lpbySrcXY;
-	uint16* pbySrcTemp;
-	
-	if((x + 1) > (nScanWidth - 1)) nx = 0;
-	if((y + 1) > (nScanHeight - 1)) ny = 0;
-	
-	//相邻四个像素的像素值
-	//获取像素数值.
-	
-	//(x, y) = (x, y) + (0, 0)
-	PixelValue = 0;
-	PixelValue = *pbySrc++;
-	abyRed[0][0] = (PixelValue & 0xF800);
-	abyGreen[0][0] =(PixelValue & 0x07E0);
-	abyBlue[0][0] = (PixelValue & 0x001F);
-	
-	//(x + 1, y) = (x, y) + (1, 0)
-	pbySrc = (lpbySrcXY + nx);
-	PixelValue = 0;
-	PixelValue = *pbySrc++;
-	abyRed[1][0] = (PixelValue & 0xF800);
-	abyGreen[1][0] =(PixelValue & 0x07E0);
-	abyBlue[1][0] = (PixelValue & 0x001F);
-
-
-	
-	//指向下一行数据
-	pbySrcTemp = (lpbySrcXY + ny * nPitch);
-
-	//(x , y + 1) = (x, y) + (0, 1)
-	pbySrc = pbySrcTemp;
-	PixelValue = 0;
-	PixelValue = *pbySrc++;
-	abyRed[0][1] = (PixelValue & 0xF800);
-	abyGreen[0][1] =(PixelValue & 0x07E0);
-	abyBlue[0][1] = (PixelValue & 0x001F);
-	
-	//(x + 1, y + 1) = (x, y) + (1, 1)
-	pbySrc = pbySrcTemp + (nx);
-	PixelValue = 0;
-	PixelValue = *pbySrc++;
-	abyRed[1][1] = (PixelValue & 0xF800);
-	abyGreen[1][1] =(PixelValue & 0x07E0);
-	abyBlue[1][1] = (PixelValue & 0x001F);
-	
-	rgb16 = 0;
-	rgb16 = (uint16)(((((abyRed[0][0]+abyRed[0][1]+abyRed[1][0]+abyRed[1][1])/4)) )& 0xF800);
-	rgb16 |= (uint16)(((((abyGreen[0][0]+abyGreen[0][1]+abyGreen[1][0]+abyGreen[1][1])/4)) )& 0x07E0);
-	rgb16 |= (uint16)(((((abyBlue[0][0]+abyBlue[0][1]+abyBlue[1][0]+abyBlue[1][1])/4)) )& 0x001F);
-
-	return rgb16;
-}
-
-static void Fun_BMPScale(uint16 *pBitsDst16, int16 wWidthDst, int16 wHeightDst, int16 nPitchDst,
-						 uint16* pBitsSrc16, int16 wWidthSrc, int16 wHeightSrc, int16 nPitchSrc)
-{
-	//第一步, 进行参数合法性检测
-	//宽度缩放比
-	uint32 fScalex = MATH_FACTOR*wWidthSrc / wWidthDst;
-	uint32 fScaley = MATH_FACTOR*wHeightSrc / wHeightDst;
+    Angle = Angle%360;
     
-	//指向目标数据
-	uint16* pbyDst = pBitsDst16;
-	uint16* pbySrc;
-	uint16* pbyCurrent;
-	int i,j;
-    
-	//完成变换
-	for( i = 0; i < wHeightDst;i++)
-	{
-		//取整
-		uint32 yy = (i * fScaley)/MATH_FACTOR;
-        
-		pbySrc = pBitsSrc16 + yy * nPitchSrc;
-        
-		for( j = 0;j < wWidthDst;j++)
-		{
-			//取整
-			uint32 xx = (j * fScalex)/MATH_FACTOR;
+    if(Angle <0) 
+    {
+        Angle = 360+Angle;
+    }
 
-			//获取数据
-			pbyCurrent =  pbySrc + xx;
-			*(pbyDst+j) = Fun_BMPInterpolate(pbyCurrent, (int16)xx, (int16)yy, wWidthSrc,  wHeightSrc, nPitchSrc);
-		}
-		pbyDst += nPitchDst;
-	}
+    if(Angle <= 90)
+    {
+        Angle = Angle*zxAngle/90;
+    }
+    else if(Angle <= 180)
+    {
+        Angle = (Angle-180)*zxAngle/90;
+    }
+    else if(Angle <= 270)
+    {
+        Angle = (Angle-180)*zxAngle/90;
+    }
+    else
+    {
+        Angle = (Angle-360)*zxAngle/90;
+    }
+    return Angle;
 }
 
+static INLINE void Fun_BMPScale(uint16 *pBitsDst16, int16 wWidthDst, int16 wHeightDst, int16 nPitchDst,
+                                uint16* pBitsSrc16, int16 wWidthSrc, int16 wHeightSrc, int16 nPitchSrc)
+{
+    //第一步, 进行参数合法性检测
+    //宽度缩放比
+    uint32 fScalex =(wWidthSrc<<MATH_FACTOR_BIT) / wWidthDst;
+    uint32 fScaley =(wHeightSrc<<MATH_FACTOR_BIT) / wHeightDst;
+    
+    //指向目标数据
+    uint16* pbyDst = pBitsDst16;
+    uint16* pbySrc;
+    int i,j;
+    uint32 xx,yy;
+    
+    //完成变换
+    for( i = 0; i < wHeightDst;i++)
+    {
+        //取整
+        yy = (i * fScaley)>>MATH_FACTOR_BIT;
+        pbySrc = pBitsSrc16 + yy * nPitchSrc;
+        
+        for( j = 0;j < wWidthDst;j++)
+        {
+            //取整
+            xx = (j * fScalex)>>MATH_FACTOR_BIT;
+            
+            //获取数据
+            *(pbyDst+j) = *(pbySrc + xx);
+        }
+        pbyDst += nPitchDst;
+    }
+}
+
+static INLINE void Fun_BMPCopy(uint16 *pBitsDst16, uint16* pBitsSrc16, int16 wCpyWidth, int16 wCpyHeight, int16 nPitch)
+{
+    if(wCpyWidth == nPitch)
+    {
+        REND_MEMCPY16(pBitsDst16, pBitsSrc16, wCpyHeight*nPitch*sizeof(uint16));
+    }
+    else
+    {
+        int i;
+        int nSize;
+        int nSizeMod;
+        uint16 *pDest,*pSrc;
+        
+        for(i=0; i<wCpyHeight; i++)
+        {
+            pDest    = pBitsDst16;
+            pSrc     = pBitsSrc16;
+            nSize    = wCpyWidth>>3;
+            nSizeMod = wCpyWidth&0x7;
+            
+            while(nSize--)
+            {
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+                *pDest++ = *pSrc++;
+            }
+            
+            while(nSizeMod--)
+            {
+                *pDest++ = *pSrc++;
+            }
+            
+            pBitsDst16 += nPitch;
+            pBitsSrc16 += nPitch;
+        }
+    }
+}
+
+//wAlpha: 透明程度，分为32等级，0是100%透明,pBitsBg16是pBitsDst16的背景色
+static void Fun_BMPScaleAlpha(uint16 *pBitsDst16, int16 wWidthDst, int16 wHeightDst, int16 nPitchDst, 
+                              uint16* pBitsSrc16, int16 wWidthSrc, int16 wHeightSrc, int16 nPitchSrc, uint16 *pBitsBg16, uint16 wAlpha)
+{
+    //第一步, 进行参数合法性检测
+    //宽度缩放比
+    uint32 fScalex =(wWidthSrc<<MATH_FACTOR_BIT) / wWidthDst;
+    uint32 fScaley =(wHeightSrc<<MATH_FACTOR_BIT) / wHeightDst;
+    
+    //指向目标数据
+    uint16* pbyDst    = pBitsDst16;
+    uint16* pbyBg     = pBitsBg16;
+    uint16* pbySrc;
+    int i,j;
+    uint32 xx,yy;
+    uint16 R1, G1, B1;
+    uint16 R2, G2, B2;
+    uint16 rgb16;
+    
+    //完成变换
+    for( i = 0; i < wHeightDst;i++)
+    {
+        //取整
+        yy = (i * fScaley)>>MATH_FACTOR_BIT;
+        
+        pbySrc = pBitsSrc16 + yy * nPitchSrc;
+        
+        for( j = 0;j < wWidthDst;j++)
+        {
+            //取整
+            xx = (j * fScalex)>>MATH_FACTOR_BIT;
+
+            //获取数据
+            rgb16      = *(pbySrc + xx);
+            R1 = (rgb16 & 0xF800);
+            G1 = (rgb16 & 0x07E0);
+            B1 = (rgb16 & 0x001F);
+            
+            rgb16 = *(pbyBg+j);
+            R2 = (rgb16 & 0xF800);
+            G2 = (rgb16 & 0x07E0);
+            B2 = (rgb16 & 0x001F);
+            
+            *(pbyDst+j) = (uint16)(((((R1-R2)*wAlpha)>>MATH_ALPHA_MAX_BIT)+R2)& 0xF800)
+                         |(uint16)(((((G1-G2)*wAlpha)>>MATH_ALPHA_MAX_BIT)+G2)& 0x07E0)
+                         |(uint16)(((((B1-B2)*wAlpha)>>MATH_ALPHA_MAX_BIT)+B2)& 0x001F);
+        }
+        pbyDst += nPitchDst;
+        pbyBg  += nPitchDst;
+    }
+}
+
+#if 0
 // 带xyz旋转角度轴的变换
 // xAngle:绕x轴旋转角度
 // yAngle:绕y轴旋转角度
@@ -198,1695 +366,1079 @@ static void Fun_BMPScale(uint16 *pBitsDst16, int16 wWidthDst, int16 wHeightDst, 
 // z:z轴深度
 // zxAngle:z轴与x轴之间的夹角，旋转时的最大角度
 static void Fun_BMPxyzScale(uint16 *pBitsDst16, int16 wWidthDst, int16 wHeightDst, int16 nPitchDst,
-						    uint16* pBitsSrc16, int16 wWidthSrc, int16 wHeightSrc, int16 nPitchSrc,
-						    int16 xAngle, int16 yAngle, int16 zAngle, int16 xCenter, int16 yCenter, int16 z, int16 zxAngle)
+                            uint16* pBitsSrc16, int16 wWidthSrc, int16 wHeightSrc, int16 nPitchSrc,
+                            int16 xAngle, int16 yAngle, int16 zAngle, int16 xCenter, int16 yCenter, int16 z, int16 zxAngle)
 {
-	//宽度缩放比
-	int32 fScaleX,newfScaleX;
-	int32 fScaleY,newfScaleY;
+    //宽度缩放比
+    int32 fScaleX,newfScaleX;
+    int32 fScaleY,newfScaleY;
 
-	//指向目标数据
-	uint16* pbyDst = pBitsDst16;
-	uint16* pbySrc;
-	uint16* pbyCurrent;
-	int16 newDstWidth, newDstHeight,xOff,yOff,newxOff,newyOff;
-	int32 x,y,xx,yx,xy,yy,xz,yz;
-	int i,j;
-	int16 newxAngle,newyAngle,COSNewX,COSNewY,SINNewX,SINNewY;
-	int16 COSX,COSY,COSZ,SINX,SINY,SINZ;
-	
-	if(wWidthDst<= 0 || wHeightDst<=0 || wWidthSrc<= 0 || wHeightSrc<=0)
-	{
-		return;
-	}
+    //指向目标数据
+    uint16* pbyDst = pBitsDst16;
+    int16 newDstWidth, newDstHeight,xOff,yOff,newxOff,newyOff;
+    int32 x,y,xx,yx,xy,yy,xz,yz;
+    int i,j;
+    int16 newxAngle,newyAngle,COSNewX,COSNewY,SINNewX,SINNewY;
+    int16 COSX,COSY,COSZ,SINZ;
+    
+    if(wWidthDst<= 0 || wHeightDst<=0 || wWidthSrc<= 0 || wHeightSrc<=0)
+    {
+        return;
+    }
 
-	newxAngle = Fun_GetxyOffAngle(xAngle, zxAngle);
-	newyAngle = Fun_GetxyOffAngle(yAngle, zxAngle);
-	COSNewX   = COS(newxAngle);
-	COSNewY   = COS(newyAngle);
-	SINNewX   = SIN(newxAngle);
-	SINNewY   = SIN(newyAngle);
-	COSX      = COS(xAngle);
-	COSY      = COS(yAngle);
-	COSZ      = COS(zAngle);
-	SINX      = SIN(xAngle);
-	SINY      = SIN(yAngle);
-	SINZ      = SIN(zAngle);
+    newxAngle = Fun_GetxyOffAngle(xAngle, zxAngle);
+    newyAngle = Fun_GetxyOffAngle(yAngle, zxAngle);
+    COSNewX   = COS(newxAngle);
+    COSNewY   = COS(newyAngle);
+    SINNewX   = SIN(newxAngle);
+    SINNewY   = SIN(newyAngle);
+    COSX      = COS(xAngle);
+    COSY      = COS(yAngle);
+    COSZ      = COS(zAngle);
+    SINZ      = SIN(zAngle);
 
-	if(COSY == 0) COSY = 1;
-	if(COSX == 0) COSX = 1;
+    if(COSY == 0) COSY = 1;
+    if(COSX == 0) COSX = 1;
 
-	newDstWidth  = wWidthDst - z*wWidthDst/REND_Z_MAX;
-	newDstHeight = wHeightDst - z*wHeightDst/REND_Z_MAX;
-	xOff = (newDstWidth - wWidthDst)*xCenter/wWidthSrc;
-	yOff = (newDstHeight - wHeightDst)*yCenter/wHeightSrc;
-	
-	if(newDstWidth<= 0 || newDstHeight<=0)
-	{
-		return;
-	}
+    newDstWidth  = wWidthDst - z*wWidthDst/REND_Z_MAX;
+    newDstHeight = wHeightDst - z*wHeightDst/REND_Z_MAX;
+    xOff = (newDstWidth - wWidthDst)*xCenter/wWidthSrc;
+    yOff = (newDstHeight - wHeightDst)*yCenter/wHeightSrc;
+    
+    if(newDstWidth<= 0 || newDstHeight<=0)
+    {
+        return;
+    }
 
-	fScaleX = MATH_FACTOR*wWidthSrc /newDstWidth;
-	fScaleY = MATH_FACTOR*wHeightSrc / newDstHeight;
+    fScaleX = (wWidthSrc<<MATH_FACTOR_BIT) /newDstWidth;
+    fScaleY = (wHeightSrc<<MATH_FACTOR_BIT) / newDstHeight;
 
-	//完成变换
-	for( i = 0; i < wHeightDst;i++)
-	{
-		// 缩放
-		y = ((i+yOff) * fScaleY)/MATH_FACTOR;
+    //完成变换
+    for( i = 0; i < wHeightDst;i++)
+    {
+        // 缩放
+        y = ((i+yOff) * fScaleY)>>MATH_FACTOR_BIT;
 
-		for( j = 0;j < wWidthDst;j++)
-		{
-			// 缩放
-			x = ((j+xOff) * fScaleX)/MATH_FACTOR;
-			// z轴旋转
-			// 如果是逆时针旋转：   
+        for( j = 0;j < wWidthDst;j++)
+        {
+            // 缩放
+            x = ((j+xOff) * fScaleX)>>MATH_FACTOR_BIT;
+            // z轴旋转
+            // 如果是逆时针旋转：   
             // x2   =   (x1   -   x0)   *   cosa   -   (y1   -   y0)   *   sina   +   x0   
             // y2   =   (y1   -   y0)   *   cosa   +   (x1   -   x0)   *   sina   +   y0   
             // 如果是顺时针旋转：   
             // x2   =   (x1   -   x0)   *   cosa   +   (y1   -   y0)   *   sina   +   x0   
             // y2   =   (y1   -   y0)   *   cosa   -   (x1   -   x0)   *   sina   +   y0
-			xz = ((x-xCenter)*COSZ -(y-yCenter)*SINZ)/MATH_FACTOR + xCenter;
-			yz = ((y-yCenter)*COSZ +(x-xCenter)*SINZ)/MATH_FACTOR + yCenter;
-			
-			// y轴旋转
-			newDstHeight = wHeightSrc - ((int16)xz-xCenter)*SINNewY/COSNewY;
-			newyOff = (newDstHeight - wHeightSrc)*yCenter/wHeightSrc;
-			newfScaleY = MATH_FACTOR*wHeightSrc / newDstHeight;
-			xy = (xz-xCenter)*MATH_FACTOR/COSY+xCenter;
-			//yy = yz + (xz-xCenter)*SINNewY/COSNewY;
-			yy = (yz+newyOff)*newfScaleY/MATH_FACTOR;
-			
-			// x轴旋转
-			newDstWidth = wWidthSrc - ((int16)yy-yCenter)*SINNewX/COSNewX;
-			newxOff = (newDstWidth - wWidthSrc)*xCenter/wWidthSrc;
-			newfScaleX = MATH_FACTOR*wWidthSrc / newDstWidth;
-			//xx = xy + (yy-yCenter)*SINNewX/COSNewX;
-			xx = (xy+newxOff)*newfScaleX/MATH_FACTOR;
-			yx = (yy-yCenter)*MATH_FACTOR/(COSX)+yCenter;
-			
-			//获取数据
-			if(xx >= wWidthSrc || yx >= wHeightSrc || xx<0 || yx<0)
-			{
-				// Nothing todo
-				//*(pbyDst+j) = REND_DEFAULT_CLR;
-			}
-			else
-			{
-				pbySrc = pBitsSrc16 + yx * nPitchSrc;
-				pbyCurrent =  pbySrc + xx;
-				*(pbyDst+j) = *pbyCurrent;
-				//*(pbyDst+j) = Fun_BMPInterpolate(pbyCurrent, (int16)xx, (int16)yx, wWidthSrc, wHeightSrc, nPitchSrc);
-			}
-		}
-		pbyDst += nPitchDst;
-	}
-}
-
-// 带xyz旋转角度轴的变换和平移
-static void Fun_BMPxyzScale3D(BmpType *pDst, BmpType *pSrc, BmpPos *pPos)
-{
-	//宽度缩放比
-	int32 fScaleX,newfScaleX;
-	int32 fScaleY,newfScaleY;
-
-	//指向目标数据
-	uint16* pbyDst = pDst->m_pBmp;
-	uint16* pbySrc;
-	uint16* pbyCurrent;
-	int16 newDstWidth, newDstHeight,xOff,yOff,newxOff,newyOff;
-	int32 x,y,xx,yx,xy,yy,xz,yz;
-	int i,j;
-	int16 newxAngle,newyAngle,COSNewX,COSNewY,SINNewX,SINNewY;
-	int16 COSX,COSY,COSZ,SINX,SINY,SINZ;
-	
-	if(pDst->m_wWidth<= 0 || pDst->m_wHeight<=0 || pSrc->m_wWidth<= 0 || pSrc->m_wHeight<=0)
-	{
-		return;
-	}
-
-	newxAngle = Fun_GetxyOffAngle(pPos->m_xAngle, pPos->m_zxAngle);
-	newyAngle = Fun_GetxyOffAngle(pPos->m_yAngle, pPos->m_zxAngle);
-	COSNewX   = COS(newxAngle);
-	COSNewY   = COS(newyAngle);
-	SINNewX   = SIN(newxAngle);
-	SINNewY   = SIN(newyAngle);
-	COSX      = COS(pPos->m_xAngle);
-	COSY      = COS(pPos->m_yAngle);
-	COSZ      = COS(pPos->m_zAngle);
-	SINX      = SIN(pPos->m_xAngle);
-	SINY      = SIN(pPos->m_yAngle);
-	SINZ      = SIN(pPos->m_zAngle);
-
-	if(COSY == 0) COSY = 1;
-	if(COSX == 0) COSX = 1;
-
-	newDstWidth  = pDst->m_wWidth - pPos->m_z*pDst->m_wWidth/REND_Z_MAX;
-	newDstHeight = pDst->m_wHeight - pPos->m_z*pDst->m_wHeight/REND_Z_MAX;
-	xOff = (newDstWidth - pDst->m_wWidth)*pPos->m_xCenter/pSrc->m_wWidth-pPos->m_xMove;
-	yOff = (newDstHeight - pDst->m_wHeight)*pPos->m_yCenter/pSrc->m_wHeight-pPos->m_yMove;
-	
-	if(newDstWidth<= 0 || newDstHeight<=0)
-	{
-		return;
-	}
-
-	fScaleX = MATH_FACTOR*pSrc->m_wWidth /newDstWidth;
-	fScaleY = MATH_FACTOR*pSrc->m_wHeight / newDstHeight;
-
-	//完成变换
-	for( i = 0; i < pDst->m_wHeight; i++)
-	{
-		// 缩放
-		y = ((i+yOff) * fScaleY)/MATH_FACTOR;
-
-		for( j = 0;j < pDst->m_wWidth; j++)
-		{
-			// 缩放
-			x = ((j+xOff) * fScaleX)/MATH_FACTOR;
-			// z轴旋转
-			// 如果是逆时针旋转：   
-            // x2   =   (x1   -   x0)   *   cosa   -   (y1   -   y0)   *   sina   +   x0   
-            // y2   =   (y1   -   y0)   *   cosa   +   (x1   -   x0)   *   sina   +   y0   
-            // 如果是顺时针旋转：   
-            // x2   =   (x1   -   x0)   *   cosa   +   (y1   -   y0)   *   sina   +   x0   
-            // y2   =   (y1   -   y0)   *   cosa   -   (x1   -   x0)   *   sina   +   y0
-			xz = ((x-pPos->m_xCenter)*COSZ -(y-pPos->m_yCenter)*SINZ)/MATH_FACTOR + pPos->m_xCenter;
-			yz = ((y-pPos->m_yCenter)*COSZ +(x-pPos->m_xCenter)*SINZ)/MATH_FACTOR + pPos->m_yCenter;
-			
-			// y轴旋转
-			newDstHeight = pSrc->m_wHeight - ((int16)xz-pPos->m_xCenter)*SINNewY/COSNewY;
-			newyOff = (newDstHeight - pSrc->m_wHeight)*pPos->m_yCenter/pSrc->m_wHeight;
-			newfScaleY = MATH_FACTOR*pSrc->m_wHeight / newDstHeight;
-			xy = (xz-pPos->m_xCenter)*MATH_FACTOR/COSY+pPos->m_xCenter;
-			//yy = yz + (xz-xCenter)*SINNewY/COSNewY;
-			yy = (yz+newyOff)*newfScaleY/MATH_FACTOR;
-			
-			// x轴旋转
-			newDstWidth = pSrc->m_wWidth - ((int16)yy-pPos->m_yCenter)*SINNewX/COSNewX;
-			newxOff = (newDstWidth - pSrc->m_wWidth)*pPos->m_xCenter/pSrc->m_wWidth;
-			newfScaleX = MATH_FACTOR*pSrc->m_wWidth / newDstWidth;
-			//xx = xy + (yy-yCenter)*SINNewX/COSNewX;
-			xx = (xy+newxOff)*newfScaleX/MATH_FACTOR;
-			yx = (yy-pPos->m_yCenter)*MATH_FACTOR/(COSX)+pPos->m_yCenter;
-			
-			//获取数据
-			if(xx >= pSrc->m_wWidth || yx >= pSrc->m_wHeight || xx<0 || yx<0)
-			{
-				// Nothing todo
-				//*(pbyDst+j) = REND_DEFAULT_CLR;
-			}
-			else
-			{
-				pbySrc = (uint16 *)pSrc->m_pBmp + yx * pSrc->m_nPitch;
-				pbyCurrent =  pbySrc + xx;
-				*(pbyDst+j) = *pbyCurrent;
-				//*(pbyDst+j) = Fun_BMPInterpolate(pbyCurrent, (int16)xx, (int16)yx, pSrc->m_wWidth, pSrc->m_wHeight, pSrc->m_nPitch);
-			}
-		}
-		pbyDst += pDst->m_nPitch;
-	}
-}
-
-static void Chousi(RendDraw *pMe,int Step, int MaxStep)
-{
-	int i,j;
-	int x = 0;	
-	int y = 0;
-	int h = 0;
-	int l = 0;
-	int startx,starty;
-	uint16 * temp = NULL;
-	uint16 *pDestBuf = NULL;
-	uint16 *pSrcBuf = NULL;
-	int Width_X = pMe->wWidthSrc/MaxStep;//x轴每次要抽走的间隔
-	int Width_X_Left = (pMe->wWidthSrc - Width_X*MaxStep)/2;//每次的x轴的起始地址
-	int Width_Y = pMe->wHeightSrc/MaxStep;//y轴每次要抽走的间隔
-	int Width_Y_Top = (pMe->wHeightSrc - Width_Y*MaxStep)/2;//每次的y轴的起始地址
-
-	int nowx = Width_X_Left*2 + Step*Width_X;//当前缩小后的宽
-	int nowy = Width_Y_Top*2 + Step*Width_Y;//当前缩小后的高
-
-	temp = (uint16 *)REND_MALLOC( nowx * nowy * BYTE_PERPIXEL);
-
-	if(!temp)
-		return;
-    REND_MEMSET(temp, REND_DEFAULT_CLR, nowx * nowy * BYTE_PERPIXEL);
-	startx = (pMe->wWidthSrc - nowx)/2;
-	starty = (pMe->wHeightSrc - nowy)/2;
-
-	pDestBuf = (uint16 *)pMe->pDest + ((starty - 1)*pMe->wWidthSrc + startx);
-	pSrcBuf  = (uint16 *)pMe->pSrc1;
-    
-	y = 0;
-	//x轴
-	for(i = 0; i < pMe->wHeightSrc; i++)
-	{
-		//if(i == (Width_Y_Top + y))//确定列中选中的行
-		if((i >= (Width_Y_Top + y)) && (i < (Width_Y_Top + y + Step)))//确定列中选中的行
-		{
-			x = 0;
-            h++;
-			l = 0;
-			l = l + Width_X_Left;
-			REND_MEMCPY(temp, pSrcBuf, Width_X_Left*BYTE_PERPIXEL);//取左边多出的一段
-			temp = (uint16 *)temp + Width_X_Left;
-			pSrcBuf = (uint16 *)pSrcBuf + Width_X_Left;
-
-		//y轴
-			for(j = 0; j < pMe->wWidthSrc; j++)
-			{
-				if(j == (Width_X_Left + x))//确定行中选中的列点
-				{
-					if(j< pMe->wWidthSrc - MaxStep)
-					{
-						l = l + Step;
-						REND_MEMCPY(temp, pSrcBuf, Step*BYTE_PERPIXEL);
-						x += MaxStep;
-						temp = (uint16 *)temp + Step;
-						pSrcBuf = (uint16 *)pSrcBuf + MaxStep;
-					}
-					else
-					{
-						l = l + Width_X_Left;
-						REND_MEMCPY(temp, pSrcBuf, Width_X_Left*BYTE_PERPIXEL);//取右边多出的一段
-						temp = (uint16 *)temp + Width_X_Left;
-						pSrcBuf = (uint16 *)pSrcBuf + Width_X_Left;
-					}
-				}
-			}
-			//y += MaxStep;
-		}
-		else
-		{
-			if(i >= Width_Y_Top + y + MaxStep - 1)
-				y += MaxStep;
-		}
-		pSrcBuf  += pMe->wWidthSrc;
-	}
-
-	temp = (uint16 *)(temp - nowx * nowy);
-
-	
-	for(i = starty; i < starty + nowy + 1; i++)
-	{
-		REND_MEMCPY(pDestBuf, temp, nowx*BYTE_PERPIXEL);
-		temp = (uint16 *)(temp + nowx);
-		pDestBuf += pMe->wWidthSrc;
-	}
-	
-	REND_FREE(temp);
-}
-static void Fun_REND_SHOW_LEFTRIGHT_OUT(RendDraw *pMe, int Step, int MaxStep)
-{
-	/*
-	if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		REND_MEMSET32(pMe->pDest, REND_DEFAULT_CLR, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-
-		w = pMe->wWidthSrc*Step/MaxStep;
-		h = pMe->wHeightSrc*Step/MaxStep;
-		xStart = (pMe->wWidthSrc-w)>>1;
-		yStart = (pMe->wHeightSrc-h)>>1;
-
-		pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc+xStart;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		Fun_BMPScale(pDestBuf,w,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
-		
-		// 复制左边
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-		Fun_BMPScale(pDestBuf,(pMe->wWidthSrc-w)>>1,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc>>1,pMe->wHeightSrc,pMe->wWidthSrc);
-		
-		// 复制右边
-		pDestBuf = (uint16 *)pMe->pDest+xStart+w;
-		pSrcBuf  = (uint16 *)pMe->pSrc2+(pMe->wWidthSrc>>1);
-		Fun_BMPScale(pDestBuf,(pMe->wWidthSrc-w)>>1,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc>>1,pMe->wHeightSrc,pMe->wWidthSrc);
-	}
-	*/
-	if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-        Chousi(pMe,Step,MaxStep);
-	}
-}
-
-static void Fun_REND_SHOW_LEFTRIGHT_IN(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		REND_MEMSET32(pMe->pDest, REND_DEFAULT_CLR, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-		
-		w = pMe->wWidthSrc-(pMe->wWidthSrc*Step/MaxStep);
-		h = pMe->wHeightSrc-(pMe->wHeightSrc*Step/MaxStep);
-		xStart = (pMe->wWidthSrc-w)>>1;
-		yStart = (pMe->wHeightSrc-h)>>1;
-		
-		pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc+xStart;
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    
-		Fun_BMPScale(pDestBuf,w,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
-		
-		// 复制左边
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-		Fun_BMPScale(pDestBuf,(pMe->wWidthSrc-w)>>1,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc>>1,pMe->wHeightSrc,pMe->wWidthSrc);
-		
-		// 复制右边
-		pDestBuf = (uint16 *)pMe->pDest+xStart+w;
-		pSrcBuf  = (uint16 *)pMe->pSrc1+(pMe->wWidthSrc>>1);
-		Fun_BMPScale(pDestBuf,(pMe->wWidthSrc-w)>>1,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc>>1,pMe->wHeightSrc,pMe->wWidthSrc);
-	}
-}
-
-static void Fun_REND_SHOW_TOPBOTTOM_OUT(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		REND_MEMSET32(pMe->pDest, REND_DEFAULT_CLR, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-
-		w = pMe->wWidthSrc*Step/MaxStep;
-		h = pMe->wHeightSrc*Step/MaxStep;
-		xStart = (pMe->wWidthSrc-w)>>1;
-		yStart = (pMe->wHeightSrc-h)>>1;
-
-		pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc+xStart;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		Fun_BMPScale(pDestBuf,w,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
-
-		// 复制上边
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-		Fun_BMPScale(pDestBuf,pMe->wWidthSrc,(pMe->wHeightSrc-h)>>1,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc>>1,pMe->wWidthSrc);
-
-		// 复制下边
-		pDestBuf = (uint16 *)pMe->pDest+(yStart+h)*pMe->wWidthSrc;
-		pSrcBuf  = (uint16 *)pMe->pSrc2+pMe->wWidthSrc*(pMe->wHeightSrc>>1);
-		Fun_BMPScale(pDestBuf,pMe->wWidthSrc,(pMe->wHeightSrc-h)>>1,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc>>1,pMe->wWidthSrc);
-	}
-}
-
-static void Fun_REND_SHOW_TOPBOTTOM_IN(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		REND_MEMSET32(pMe->pDest, REND_DEFAULT_CLR, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-
-		w = pMe->wWidthSrc-(pMe->wWidthSrc*Step/MaxStep);
-		h = pMe->wHeightSrc-(pMe->wHeightSrc*Step/MaxStep);
-		xStart = (pMe->wWidthSrc-w)>>1;
-		yStart = (pMe->wHeightSrc-h)>>1;
-
-		pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc+xStart;
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    
-		Fun_BMPScale(pDestBuf,w,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
-
-		// 复制上边
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-		Fun_BMPScale(pDestBuf,pMe->wWidthSrc,(pMe->wHeightSrc-h)>>1,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc>>1,pMe->wWidthSrc);
-
-		// 复制下边
-		pDestBuf = (uint16 *)pMe->pDest+(yStart+h)*pMe->wWidthSrc;
-		pSrcBuf  = (uint16 *)pMe->pSrc1+pMe->wWidthSrc*(pMe->wHeightSrc>>1);
-		Fun_BMPScale(pDestBuf,pMe->wWidthSrc,(pMe->wHeightSrc-h)>>1,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc>>1,pMe->wWidthSrc);
-	}
-}
-
-static void Fun_REND_SHOW_CENTER_OUT(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		//REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		w = pMe->wWidthSrc - (pMe->wWidthSrc>>1)*(Step)/MaxStep;
-		h = pMe->wHeightSrc - (pMe->wHeightSrc>>1)*(Step)/MaxStep;
-		xStart = (pMe->wWidthSrc-w)>>1;
-		yStart = (pMe->wHeightSrc-h)>>1;
-		
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc2+yStart*pMe->wWidthSrc+xStart;
-		Fun_BMPScale(pDestBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,w,h,pMe->wWidthSrc);
-
-		w = pMe->wWidthSrc*Step/MaxStep;
-		h = pMe->wHeightSrc*Step/MaxStep;
-		xStart = (pMe->wWidthSrc-w)>>1;
-		yStart = (pMe->wHeightSrc-h)>>1;
-		
-		pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc+xStart;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		Fun_BMPScale(pDestBuf,w,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
-	}
-}
-
-static void Fun_REND_SHOW_CENTER_IN(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		//REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		w = (pMe->wWidthSrc>>1)+(pMe->wWidthSrc>>1)*(Step)/MaxStep;
-		h = (pMe->wHeightSrc>>1)+(pMe->wHeightSrc>>1)*(Step)/MaxStep;
-		xStart = (pMe->wWidthSrc-w)>>1;
-		yStart = (pMe->wHeightSrc-h)>>1;
-		
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc1+yStart*pMe->wWidthSrc+xStart;
-		Fun_BMPScale(pDestBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,w,h,pMe->wWidthSrc);
-
-		w = pMe->wWidthSrc-(pMe->wWidthSrc*Step/MaxStep);
-		h = pMe->wHeightSrc-(pMe->wHeightSrc*Step/MaxStep);
-		xStart = (pMe->wWidthSrc-w)>>1;
-		yStart = (pMe->wHeightSrc-h)>>1;
-
-		pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc+xStart;
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    
-		Fun_BMPScale(pDestBuf,w,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
-	}
-}
-
-static void Fun_REND_MOVE_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-	// 翻书效果
-    /*if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i,j;
-		int Max = pMe->wWidthSrc-(pMe->wWidthSrc*g_CosI[(Step*10)/MaxStep])/10000;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest;
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    
-		Fun_BMPScale(pDestBuf,pMe->wWidthSrc-Max,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
-		pDestBuf = (uint16 *)pMe->pDest+pMe->wWidthSrc-Max;
-		pSrcBuf  = (uint16 *)pMe->pSrc1+pMe->wWidthSrc-Max;
-	    
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, Max*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}*/
-	if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		int i;
-
-		w = pMe->wWidthSrc*Step/MaxStep;
-		h = pMe->wHeightSrc;
-		xStart = pMe->wWidthSrc-w;
-		yStart = 0;
-
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc1+xStart;
-	    
-		for(i=0;i<h;i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, w*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-		
-
-		pDestBuf = (uint16 *)pMe->pDest+w;
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    w = pMe->wWidthSrc - w;
-		for(i = 0; i < h; i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, w*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-}
-
-static void Fun_REND_MOVE_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		int i;
-
-		w = pMe->wWidthSrc*Step/MaxStep;
-		h = pMe->wHeightSrc;
-		xStart = pMe->wWidthSrc-w;
-		yStart = 0;
-
-		pDestBuf = (uint16 *)pMe->pDest+xStart;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		for(i=0;i<h;i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, w*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-		
-
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc2+w;
-	    w = pMe->wWidthSrc - w;
-		for(i = 0; i < h; i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, w*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-}
-
-static void Fun_REND_MOVE_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		int i;
-
-		w = pMe->wWidthSrc;
-		h = pMe->wHeightSrc*Step/MaxStep;
-		xStart = 0;
-		yStart = pMe->wHeightSrc-h;
-
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc1+yStart*pMe->wWidthSrc;
-	    
-		for(i=0;i<h;i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, w*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-		
-
-		pDestBuf = (uint16 *)pMe->pDest+h*pMe->wWidthSrc;
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    h = pMe->wHeightSrc - h;
-		for(i = 0; i < h; i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, w*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-}
-
-static void Fun_REND_MOVE_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int16 xStart, yStart;
-		int16 w, h;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		int i;
-
-		w = pMe->wWidthSrc;
-		h = pMe->wHeightSrc*Step/MaxStep;
-		xStart = 0;
-		yStart = pMe->wHeightSrc-h;
-
-		pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		for(i=0;i<h;i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, w*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-		
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc2+h*pMe->wWidthSrc;
-	    h = pMe->wHeightSrc - h;
-		for(i = 0; i < h; i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, w*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-}
-
-static void Fun_REND_FLY_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i;
-		int Max = pMe->wWidthSrc*Step/MaxStep;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest;
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1+(pMe->wWidthSrc-Max);
-	    
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, Max*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-}
-
-static void Fun_REND_FLY_LEFT_FLEX(RendDraw *pMe, int Step, int MaxStep)//wlh 20090406 add 
-{
-    if(Step == 0)
-	{
-		//REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i;
-		int Max = pMe->wWidthSrc*Step/MaxStep;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest;
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1+(pMe->wWidthSrc-Max);
-	    
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, Max*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-}
-static void Fun_REND_FLY_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i;
-		int Max = pMe->wWidthSrc*Step/MaxStep;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest+(pMe->wWidthSrc-Max);
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, Max*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-}
-static void Fun_REND_FLY_RIGHT_FLEX(RendDraw *pMe, int Step, int MaxStep)//wlh 20090406 add 
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i;
-		int Max = pMe->wWidthSrc*Step/MaxStep;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest+(pMe->wWidthSrc-Max);
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			REND_MEMCPY(pDestBuf, pSrcBuf, Max*BYTE_PERPIXEL);
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-}
-static void Fun_REND_FLY_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int Max = pMe->wHeightSrc*Step/MaxStep;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest;
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1+ (pMe->wWidthSrc*(pMe->wHeightSrc - Max));
-	    
-		REND_MEMCPY(pDestBuf, pSrcBuf, pMe->wWidthSrc*Max*BYTE_PERPIXEL);
-	}
-}
-static void Fun_REND_FLY_TOP_FLEX(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int Max = pMe->wHeightSrc*Step/MaxStep;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest;
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1+(pMe->wWidthSrc*(pMe->wHeightSrc - Max));
-	    
-		REND_MEMCPY(pDestBuf, pSrcBuf, pMe->wWidthSrc*Max*BYTE_PERPIXEL);
-	}
-}
-static void Fun_REND_FLY_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int Max = pMe->wHeightSrc*Step/MaxStep;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest+(pMe->wWidthSrc*(pMe->wHeightSrc - Max));
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		REND_MEMCPY(pDestBuf, pSrcBuf, pMe->wWidthSrc*Max*BYTE_PERPIXEL);
-	}
-}
-static void Fun_REND_FLY_BOTTOM_FLEX(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int Max = pMe->wHeightSrc*Step/MaxStep;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest+(pMe->wWidthSrc*(pMe->wHeightSrc - Max));
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		REND_MEMCPY(pDestBuf, pSrcBuf, pMe->wWidthSrc*Max*BYTE_PERPIXEL);
-	}
-}
-static void Fun_REND_FLY_LEFTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLY_LEFTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLY_RIGHTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLY_RIGHTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLYOUT_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLYOUT_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLYOUT_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLYOUT_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLYOUT_LEFTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLYOUT_LEFTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLYOUT_RIGHTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FLYOUT_RIGHTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTAT_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-    //if(Step == 0)
-	//{
-	//	REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	//}
-	//else
-	
-	//REND_MEMSET32(pMe->pDest, REND_DEFAULT_CLR, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	{
-		int16 Angle1 = 90*Step/MaxStep-90;
-		int16 Angle2 = 90*Step/MaxStep;
-		int16 w     = pMe->wWidthSrc*Step/MaxStep;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		Fun_BMPxyzScale(pDestBuf,w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,0,Angle1,0,240,160,0,30);
-		
-		pDestBuf = (uint16 *)pMe->pDest+(w);
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    
-		Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc-w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,0,Angle2,0,0,160,0,30);
-	}
-	/*
-	 if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i,j;
-		int Max = pMe->wWidthSrc*Step/MaxStep;
-		uint16 *pDestBuf = (uint16 *)pMe->pDest + Max;
-		uint16 *pSrcBuf  = (uint16 *)pMe->pDest;
-	    
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			for(j = 0; j < pMe->wWidthSrc; j++)
-			{
-				if(j%10 != Step)
-				REND_MEMCPY(pDestBuf, pSrcBuf, BYTE_PERPIXEL);
-				pDestBuf += 1;
-				pSrcBuf  += 1;
-			}
-			pDestBuf += Max;
-		}
-	}*/
-}
-
-static void Fun_REND_ROTAT_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-    //REND_MEMSET32(pMe->pDest, REND_DEFAULT_CLR, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	{
-		int16 Angle1 = 90-90*Step/MaxStep;
-		int16 Angle2 = -90*Step/MaxStep;
-		int16 w     = pMe->wWidthSrc*Step/MaxStep;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		pDestBuf = (uint16 *)pMe->pDest+(pMe->wWidthSrc-w);
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		Fun_BMPxyzScale(pDestBuf,w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,0,Angle1,0,0,160,0,30);
-		
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    
-		Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc-w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,0,Angle2,0,240,160,0,30);
-	}
-}
-
-static void Fun_REND_ROTAT_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    REND_MEMSET32(pMe->pDest, REND_DEFAULT_CLR, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	{
-		int16 Angle1 = 90*Step/MaxStep-90;
-		int16 Angle2 = 90*Step/MaxStep;
-		int16 h     = pMe->wHeightSrc*Step/MaxStep;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,Angle1,0,0,120,320,0,30);
-		
-		pDestBuf = (uint16 *)pMe->pDest+(h*pMe->wWidthSrc);
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    
-		Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc,pMe->wHeightSrc-h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,Angle2,0,0,120,0,0,30);
-	}
-}
-
-static void Fun_REND_ROTAT_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    REND_MEMSET32(pMe->pDest, REND_DEFAULT_CLR, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	{
-		int16 Angle1 = 90-90*Step/MaxStep;
-		int16 Angle2 = -90*Step/MaxStep;
-		int16 h     = pMe->wHeightSrc*Step/MaxStep;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
-		
-		pDestBuf = (uint16 *)pMe->pDest+(pMe->wHeightSrc-h)*pMe->wWidthSrc;
-		pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-		Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,Angle1,0,0,120,0,0,30);
-		
-		pDestBuf = (uint16 *)pMe->pDest;
-		pSrcBuf  = (uint16 *)pMe->pSrc2;
-	    
-		Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc,pMe->wHeightSrc-h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,Angle2,0,0,120,320,0,30);
-	}
-}
-
-static void Fun_REND_ROTAT_LEFTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    REND_MEMSET32(pMe->pDest, REND_DEFAULT_CLR, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	{
-		int16 Angle1 = 90*Step/MaxStep-90;
-		int16 Angle2 = 90*Step/MaxStep;
-		int16 h     = pMe->wHeightSrc*Step/MaxStep;
-		BmpType myDst;
-		BmpType mySrc;
-		BmpPos  myPos;
-
-		myDst.m_pBmp    = pMe->pDest;
-		myDst.m_nPitch	= pMe->wWidthSrc;
-		myDst.m_wWidth  = pMe->wWidthSrc;
-		myDst.m_wHeight = pMe->wHeightSrc;
-
-		mySrc.m_pBmp    = pMe->pSrc1;
-		mySrc.m_nPitch	= pMe->wWidthSrc;
-		mySrc.m_wWidth  = pMe->wWidthSrc;
-		mySrc.m_wHeight = pMe->wHeightSrc;
-
-		myPos.m_xAngle  = 0;
-		myPos.m_yAngle  = -60;
-		myPos.m_zAngle  = -45;
-		myPos.m_xCenter = 120;
-		myPos.m_yCenter = 0;
-		myPos.m_z       = 200;
-		myPos.m_zxAngle = 30;
-		myPos.m_xMove   = 20;
-		myPos.m_yMove   = 20;
-	    
-		Fun_BMPxyzScale3D(&myDst, &mySrc, &myPos);
-		
-		mySrc.m_pBmp    = pMe->pSrc2;
-		mySrc.m_nPitch	= pMe->wWidthSrc;
-		mySrc.m_wWidth  = pMe->wWidthSrc;
-		mySrc.m_wHeight = pMe->wHeightSrc;
-
-		myPos.m_xAngle  = 0;
-		myPos.m_yAngle  = 30;
-		myPos.m_zAngle  = -45;
-		myPos.m_xCenter = 120;
-		myPos.m_yCenter = 0;
-		myPos.m_z       = 200;
-		myPos.m_zxAngle = 30;
-		myPos.m_xMove   = 79;
-		myPos.m_yMove   = 79;
-		Fun_BMPxyzScale3D(&myDst, &mySrc, &myPos);
-	}
-}
-
-static void Fun_REND_ROTAT_LEFTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTAT_RIGHTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTAT_RIGHTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTATOUT_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTATOUT_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTATOUT_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTATOUT_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTATOUT_LEFTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTATOUT_LEFTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTATOUT_RIGHTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROTATOUT_RIGHTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDS_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-//wlh 20090406 add start
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i,j;
-	
-		uint16 *pDestBuf = (uint16 *)pMe->pDest;
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    	
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			for(j = 0;j < 8;j++)
-			{
-				if(Step != 9)
-					REND_MEMCPY(pDestBuf + (j*22), pSrcBuf + (j*22), Step*2*BYTE_PERPIXEL);
-				else
-					REND_MEMCPY(pDestBuf + (j*22), pSrcBuf + (j*22), 22*BYTE_PERPIXEL);
-			}
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-//wlh 20090406 add
-}
-
-static void Fun_REND_BLINDS_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-//wlh 20090406 add start
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i,j;
-	
-		uint16 *pDestBuf = (uint16 *)pMe->pDest;
-		uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    	
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			for(j = 0;j < 8;j++)
-			{
-				if(Step != 9)
-					REND_MEMCPY(pDestBuf + (j*22) + (22 - Step*2), pSrcBuf + (j*22) + (22 - Step*2), Step*2*BYTE_PERPIXEL);
-				else
-					REND_MEMCPY(pDestBuf + (j*22), pSrcBuf + (j*22), 22*BYTE_PERPIXEL);
-			}
-			pDestBuf += pMe->wWidthSrc;
-			pSrcBuf  += pMe->wWidthSrc;
-		}
-	}
-//wlh 20090406 add    
-}
-//wlh 20090422 add 左右交叉百叶进
-static void Fun_REND_BLINDS_IN(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i;
-		int Max = pMe->wWidthSrc*Step/MaxStep;
-		uint16 *pDestBufLeft = (uint16 *)pMe->pDest;
-		uint16 *pSrcBufLeft  = (uint16 *)pMe->pSrc1+(pMe->wWidthSrc-Max);
-	    uint16 *pDestBufRight = (uint16 *)pMe->pDest+(pMe->wWidthSrc-Max);
-		uint16 *pSrcBufRight  = (uint16 *)pMe->pSrc1;
-
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			if((i/20)%2 == 0)
-			{
-				REND_MEMCPY(pDestBufLeft, pSrcBufLeft, Max*BYTE_PERPIXEL);
-			}
-			else
-			{
-				REND_MEMCPY(pDestBufRight, pSrcBufRight, Max*BYTE_PERPIXEL);
-			}
-			pDestBufLeft += pMe->wWidthSrc;
-			pSrcBufLeft  += pMe->wWidthSrc;
-			pDestBufRight += pMe->wWidthSrc;
-			pSrcBufRight  += pMe->wWidthSrc;
-		}
-	} 
-}
-//wlh 20090422 add 左右交叉百叶出
-static void Fun_REND_BLINDS_OUT(RendDraw *pMe, int Step, int MaxStep)
-{
-    if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc1, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i;
-		int Max = pMe->wWidthSrc*Step/MaxStep;
-		uint16 *pDestBufLeft = (uint16 *)pMe->pDest;
-		uint16 *pSrcBufLeft  = (uint16 *)pMe->pSrc2 + Max;
-	    uint16 *pDestBufRight = (uint16 *)pMe->pDest + Max;
-		uint16 *pSrcBufRight  = (uint16 *)pMe->pSrc2;
-
-		REND_MEMCPY(pMe->pDest, pMe->pSrc1, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-
-		for(i = 0; i < pMe->wHeightSrc; i++)
-		{
-			if((i/20)%2 == 0)
-			{
-				REND_MEMCPY(pDestBufLeft, pSrcBufLeft, (pMe->wWidthSrc - Max)*BYTE_PERPIXEL);
-			}
-			else
-			{
-				REND_MEMCPY(pDestBufRight, pSrcBufRight, (pMe->wWidthSrc - Max)*BYTE_PERPIXEL);
-			}
-			pDestBufLeft += pMe->wWidthSrc;
-			pSrcBufLeft  += pMe->wWidthSrc;
-			pDestBufRight += pMe->wWidthSrc;
-			pSrcBufRight  += pMe->wWidthSrc;
-		}
-	} 
-}
-static void Fun_REND_BLINDS_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDS_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDS_LEFTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDS_LEFTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDS_RIGHTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDS_RIGHTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDSOUT_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDSOUT_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDSOUT_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDSOUT_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDSOUT_LEFTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDSOUT_LEFTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDSOUT_RIGHTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_BLINDSOUT_RIGHTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLL_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-
-}
-
-static void Fun_REND_SCROLL_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLL_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLL_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLL_LEFTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLL_LEFTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLL_RIGHTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLL_RIGHTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLLOUT_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLLOUT_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLLOUT_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLLOUT_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLLOUT_LEFTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLLOUT_LEFTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLLOUT_RIGHTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_SCROLLOUT_RIGHTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROLL_LEFT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROLL_RIGHT(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROLL_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROLL_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROLL_LEFTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROLL_LEFTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROLL_RIGHTTOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_ROLL_RIGHTBOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FIRE_TOP(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FIRE_BOTTOM(RendDraw *pMe, int Step, int MaxStep)
-{
-    
-}
-
-static void Fun_REND_FADE_IN(RendDraw *pMe, int Step, int MaxStep)
-{
-    
+            xz = (((x-xCenter)*COSZ -(y-yCenter)*SINZ)>>MATH_FACTOR_BIT) + xCenter;
+            yz = (((y-yCenter)*COSZ +(x-xCenter)*SINZ)>>MATH_FACTOR_BIT) + yCenter;
+            
+            // y轴旋转
+            newDstHeight = wHeightSrc - ((int16)xz-xCenter)*SINNewY/COSNewY;
+            newyOff = (newDstHeight - wHeightSrc)*yCenter/wHeightSrc;
+            newfScaleY = (wHeightSrc<<MATH_FACTOR_BIT) / newDstHeight;
+            xy = ((xz-xCenter)<<MATH_FACTOR_BIT)/COSY+xCenter;
+            //yy = yz + (xz-xCenter)*SINNewY/COSNewY;
+            yy = ((yz+newyOff)*newfScaleY)>>MATH_FACTOR_BIT;
+            
+            // x轴旋转
+            newDstWidth = wWidthSrc - ((int16)yy-yCenter)*SINNewX/COSNewX;
+            newxOff = (newDstWidth - wWidthSrc)*xCenter/wWidthSrc;
+            newfScaleX = (wWidthSrc<<MATH_FACTOR_BIT) / newDstWidth;
+            //xx = xy + (yy-yCenter)*SINNewX/COSNewX;
+            xx = ((xy+newxOff)*newfScaleX)>>MATH_FACTOR_BIT;
+            yx = ((yy-yCenter)<<MATH_FACTOR_BIT)/(COSX)+yCenter;
+            
+            //获取数据
+            if(xx >= wWidthSrc || yx >= wHeightSrc || xx<0 || yx<0)
+            {
+                *(pbyDst+j) = REND_DEFAULT_CLR;
+            }
+            else
+            {
+                *(pbyDst+j) = *(pBitsSrc16 + (yx*nPitchSrc) + xx);
+            }
+        }
+        pbyDst += nPitchDst;
+    }
+}
+#endif
+
+// 带xyz旋转角度轴的变换
+// xAngle:绕x轴旋转角度
+// xCenter:绕轴旋转的x中心点
+// yCenter:绕轴旋转的y中心点
+// z:z轴深度
+// zxAngle:z轴与x轴之间的夹角，旋转时的最大角度
+static void Fun_BMPxScaleZ(uint16 *pBitsDst16, int16 wWidthDst, int16 wHeightDst, int16 nPitchDst,
+                           uint16* pBitsSrc16, int16 wWidthSrc, int16 wHeightSrc, int16 nPitchSrc,
+                           int16 xAngle, int16 xCenter, int16 yCenter, int16 z, int16 zxAngle)
+{
+    //宽度缩放比
+    int32 fScaleX;
+    int32 fScaleY;
+
+    //指向目标数据
+    uint16* pbyDst = pBitsDst16;
+    uint16* pbySrc;
+    int16 newDstWidth, newDstHeight,xOff,yOff;
+    int32 x,y,xx,yx;
+    int i,j,iMax,jMax,jj;
+    int16 newxAngle,COSNewX,SINNewX;
+    int16 COSX;
+
+    newxAngle = Fun_GetxyOffAngle(xAngle, zxAngle);
+    COSNewX   = COS(newxAngle);
+    SINNewX   = SIN(newxAngle);
+    COSX      = COS(xAngle);
+    
+    if(COSX == 0) COSX = 1;
+    
+    newDstWidth  = wWidthDst - z*wWidthDst/REND_Z_MAX;
+    newDstHeight = wHeightDst - z*wHeightDst/REND_Z_MAX;
+    xOff = (newDstWidth - wWidthDst)*xCenter/wWidthSrc;
+    yOff = (newDstHeight - wHeightDst)*yCenter/wHeightSrc;
+    
+    if(newDstWidth<= 0 || newDstHeight<=0)
+    {
+        return;
+    }
+
+    fScaleX = (wWidthSrc<<MATH_FACTOR_BIT) /newDstWidth;
+    fScaleY = (wHeightSrc<<MATH_FACTOR_BIT) / newDstHeight;
+    iMax = wHeightDst+yOff;
+    jMax = wWidthDst +xOff;
+
+    if(wWidthSrc == newDstWidth)
+    {
+        //完成变换
+        for(i=yOff; i<iMax; i++)
+        {
+            // 缩放
+            y = (i*fScaleY)>>MATH_FACTOR_BIT;
+            yx = ((y-yCenter)<<MATH_FACTOR_BIT)/(COSX)+yCenter;
+            
+            if(yx >= wHeightSrc || yx<0)
+            {
+                for(j=0; j<wWidthDst; j++)
+                {
+                    *(pbyDst+j) = REND_DEFAULT_CLR;
+                }
+            }
+            else
+            {
+                newDstWidth = wWidthSrc - ((int16)y-yCenter)*SINNewX/COSNewX;
+                pbySrc = pBitsSrc16 + (yx * nPitchSrc);
+                
+                for(j=0 ; j<wWidthDst; j++)
+                {
+                    // x轴旋转
+                    xx = ((j - xCenter)*wWidthSrc)/newDstWidth + xCenter;
+                    
+                    //获取数据
+                    if(xx >= wWidthSrc || xx<0)
+                    {
+                        *(pbyDst+j) = REND_DEFAULT_CLR;
+                    }
+                    else
+                    {
+                        *(pbyDst+j) = *(pbySrc + xx);
+                    }
+                }
+            }
+            pbyDst += nPitchDst;
+        }
+    }
+    else
+    {
+        //完成变换
+        for(i=yOff; i<iMax; i++)
+        {
+            // 缩放
+            y = (i*fScaleY)>>MATH_FACTOR_BIT;
+            yx = ((y-yCenter)<<MATH_FACTOR_BIT)/(COSX)+yCenter;
+            
+            if(yx >= wHeightSrc || yx<0)
+            {
+                for(j=0; j<wWidthDst; j++)
+                {
+                    *(pbyDst+j) = REND_DEFAULT_CLR;
+                }
+            }
+            else
+            {
+                newDstWidth = wWidthSrc - ((int16)y-yCenter)*SINNewX/COSNewX;
+                pbySrc = pBitsSrc16 + (yx * nPitchSrc);
+                
+                for(j=xOff, jj=0; j<jMax; j++, jj++)
+                {
+                    // 缩放
+                    x = (j*fScaleX)>>MATH_FACTOR_BIT;
+                    
+                    // x轴旋转
+                    xx = ((x - xCenter)*wWidthSrc)/newDstWidth + xCenter;
+                    
+                    //获取数据
+                    if(xx >= wWidthSrc || xx<0)
+                    {
+                        *(pbyDst+jj) = REND_DEFAULT_CLR;
+                    }
+                    else
+                    {
+                        *(pbyDst+jj) = *(pbySrc + xx);
+                    }
+                }
+            }
+            pbyDst += nPitchDst;
+        }
+    }
+}
+
+// 带xyz旋转角度轴的变换
+// yAngle:绕y轴旋转角度
+// xCenter:绕轴旋转的x中心点
+// yCenter:绕轴旋转的y中心点
+// z:z轴深度
+// zxAngle:z轴与x轴之间的夹角，旋转时的最大角度
+static void Fun_BMPyScaleZ(uint16 *pBitsDst16, int16 wWidthDst, int16 wHeightDst, int16 nPitchDst,
+                           uint16* pBitsSrc16, int16 wWidthSrc, int16 wHeightSrc, int16 nPitchSrc,
+                           int16 yAngle, int16 xCenter, int16 yCenter, int16 z, int16 zxAngle)
+{
+    //宽度缩放比
+    int32 fScaleX;
+    int32 fScaleY;
+
+    //指向目标数据
+    uint16* pbyDst = pBitsDst16;
+    uint16* pbySrc;
+    int16 newDstWidth, newDstHeight,xOff,yOff;
+    int32 x,y,xy,yy;
+    int i,j,iMax,jMax,jj;
+    int16 newyAngle,COSNewY,SINNewY;
+    int16 COSY;
+    
+    newyAngle = Fun_GetxyOffAngle(yAngle, zxAngle);
+    COSNewY   = COS(newyAngle);
+    SINNewY   = SIN(newyAngle);
+    COSY      = COS(yAngle);
+
+    if(COSY == 0) COSY = 1;
+
+    newDstWidth  = wWidthDst - z*wWidthDst/REND_Z_MAX;
+    newDstHeight = wHeightDst - z*wHeightDst/REND_Z_MAX;
+    xOff = (newDstWidth - wWidthDst)*xCenter/wWidthSrc;
+    yOff = (newDstHeight - wHeightDst)*yCenter/wHeightSrc;
+    
+    if(newDstWidth<= 0 || newDstHeight<=0)
+    {
+        return;
+    }
+
+    fScaleX = (wWidthSrc<<MATH_FACTOR_BIT) /newDstWidth;
+    fScaleY = (wHeightSrc<<MATH_FACTOR_BIT) / newDstHeight;
+    iMax = wHeightDst+yOff;
+    jMax = wWidthDst +xOff;
+    
+    if(wHeightSrc == newDstHeight)
+    {
+        //完成变换
+        for(j=xOff, jj=0; j<jMax; j++, jj++)
+        {
+            pbyDst = pBitsDst16+jj;
+            // 缩放
+            x = (j*fScaleX)>>MATH_FACTOR_BIT;
+            xy = ((x-xCenter)<<MATH_FACTOR_BIT)/COSY+xCenter;
+
+            if(xy >= wWidthSrc || xy<0)
+            {
+                for( i = 0;i < wHeightDst;i++)
+                {
+                    *pbyDst = REND_DEFAULT_CLR;
+                    pbyDst += nPitchDst;
+                }
+            }
+            else
+            {
+                newDstHeight = wHeightSrc - ((((int16)x-xCenter)*SINNewY)/COSNewY);
+                pbySrc = pBitsSrc16 + xy;
+                
+                for(i=yOff; i<iMax; i++)
+                {                   
+                    // y轴旋转
+                    yy = ((i - yCenter)*wHeightSrc)/newDstHeight + yCenter; 
+                    
+                    //获取数据
+                    if(yy >= wHeightSrc || yy<0)
+                    {
+                        *pbyDst = REND_DEFAULT_CLR;
+                    }
+                    else
+                    {
+                        *pbyDst = *(pbySrc + (yy * nPitchSrc));
+                    }
+                    pbyDst += nPitchDst;
+                }
+            }
+        }
+    }
+    else
+    {
+        //完成变换
+        for(j=xOff, jj=0; j<jMax; j++, jj++)
+        {
+            pbyDst = pBitsDst16+jj;
+            // 缩放
+            x = (j*fScaleX)>>MATH_FACTOR_BIT;
+            xy = ((x-xCenter)<<MATH_FACTOR_BIT)/COSY+xCenter;
+
+            if(xy >= wWidthSrc || xy<0)
+            {
+                for( i = 0;i < wHeightDst;i++)
+                {
+                    *pbyDst = REND_DEFAULT_CLR;
+                    pbyDst += nPitchDst;
+                }
+            }
+            else
+            {
+                newDstHeight = wHeightSrc - ((((int16)x-xCenter)*SINNewY)/COSNewY);
+                pbySrc = pBitsSrc16 + xy;
+                
+                for(i=yOff; i<iMax; i++)
+                {
+                    // 缩放
+                    y = (i*fScaleY)>>MATH_FACTOR_BIT;
+                    
+                    // y轴旋转
+                    yy = ((y - yCenter)*wHeightSrc)/newDstHeight + yCenter; 
+                    
+                    //获取数据
+                    if(yy >= wHeightSrc || yy<0)
+                    {
+                        *pbyDst = REND_DEFAULT_CLR;
+                    }
+                    else
+                    {
+                        *pbyDst = *(pbySrc + (yy * nPitchSrc));
+                    }
+                    pbyDst += nPitchDst;
+                }
+            }
+        }
+    }
+}
+#include "AEEStdLib.h"
+static void Fun_REND_SHOW_HORZ_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    DBGPRINTF_FATAL("Fun_REND_SHOW_HORZ_OUT Enter %d",Step);
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 xStart;
+        int16 w,w1;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+
+        w = MATH_STEPPER(pMe->wWidthSrc,Step);
+        xStart = (pMe->wWidthSrc-w)>>1;
+
+        pDestBuf = (uint16 *)pMe->pDest+xStart;
+        pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        Fun_BMPScale(pDestBuf,w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
+
+        w1 = xStart;
+        // 复制左边
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc2+(pMe->wWidthSrc-w1);
+        Fun_BMPCopy(pDestBuf, pSrcBuf, w1, pMe->wHeightSrc, pMe->wWidthSrc);
+        
+        // 复制右边
+        pDestBuf = (uint16 *)pMe->pDest+pMe->wWidthSrc-w1;
+        pSrcBuf  = (uint16 *)pMe->pSrc2+(pMe->wWidthSrc>>1);
+        Fun_BMPCopy(pDestBuf, pSrcBuf, w1, pMe->wHeightSrc, pMe->wWidthSrc);
+    }
+    DBGPRINTF_FATAL("Fun_REND_SHOW_HORZ_OUT Leave");
+}
+
+static void Fun_REND_SHOW_HORZ_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    DBGPRINTF_FATAL("Fun_REND_SHOW_HORZ_IN Enter %d",Step);
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 xStart;
+        int16 w, w1;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        
+        w = pMe->wWidthSrc-MATH_STEPPER(pMe->wWidthSrc,Step);
+        xStart = (pMe->wWidthSrc-w)>>1;
+        
+        pDestBuf = (uint16 *)pMe->pDest+xStart;
+        pSrcBuf  = (uint16 *)pMe->pSrc2;
+        
+        Fun_BMPScale(pDestBuf,w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
+
+        w1 = xStart;
+        // 复制左边
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc1+((pMe->wWidthSrc>>1)-w1);
+        Fun_BMPCopy(pDestBuf, pSrcBuf, w1, pMe->wHeightSrc, pMe->wWidthSrc);
+        
+        // 复制右边
+        pDestBuf = (uint16 *)pMe->pDest+pMe->wWidthSrc-w1;
+        pSrcBuf  = (uint16 *)pMe->pSrc1+(pMe->wWidthSrc>>1);
+        Fun_BMPCopy(pDestBuf, pSrcBuf, w1, pMe->wHeightSrc, pMe->wWidthSrc);
+    }
+    DBGPRINTF_FATAL("Fun_REND_SHOW_HORZ_IN Leave");
+}
+
+static void Fun_REND_SHOW_VERT_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 yStart;
+        int16 h, h1;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        
+        h = MATH_STEPPER(pMe->wHeightSrc,Step);
+        yStart = (pMe->wHeightSrc-h)>>1;
+        
+        pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc;
+        pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        Fun_BMPScale(pDestBuf,pMe->wWidthSrc,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
+
+        h1 = yStart;
+        // 复制上边
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc2+(((pMe->wHeightSrc>>1)-h1)*pMe->wWidthSrc);
+        Fun_BMPCopy(pDestBuf, pSrcBuf, pMe->wWidthSrc, h1, pMe->wWidthSrc);
+
+        // 复制下边
+        pDestBuf = (uint16 *)pMe->pDest+(pMe->wHeightSrc-h1)*pMe->wWidthSrc;
+        pSrcBuf  = (uint16 *)pMe->pSrc2+pMe->wWidthSrc*(pMe->wHeightSrc>>1);
+        Fun_BMPCopy(pDestBuf, pSrcBuf, pMe->wWidthSrc, h1, pMe->wWidthSrc);
+    }
+}
+
+static void Fun_REND_SHOW_VERT_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 yStart;
+        int16 h,h1;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        
+        h = pMe->wHeightSrc-MATH_STEPPER(pMe->wHeightSrc,Step);
+        yStart = (pMe->wHeightSrc-h)>>1;
+
+        pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc;
+        pSrcBuf  = (uint16 *)pMe->pSrc2;
+        
+        Fun_BMPScale(pDestBuf,pMe->wWidthSrc,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc);
+
+        h1 = yStart;
+        // 复制上边
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc1+(((pMe->wHeightSrc>>1)-h1)*pMe->wWidthSrc);
+        Fun_BMPCopy(pDestBuf, pSrcBuf, pMe->wWidthSrc, h1, pMe->wWidthSrc);
+
+        // 复制下边
+        pDestBuf = (uint16 *)pMe->pDest+(pMe->wHeightSrc-h1)*pMe->wWidthSrc;
+        pSrcBuf  = (uint16 *)pMe->pSrc1+pMe->wWidthSrc*(pMe->wHeightSrc>>1);
+        Fun_BMPCopy(pDestBuf, pSrcBuf, pMe->wWidthSrc, h1, pMe->wWidthSrc);
+    }
 }
 
 static void Fun_REND_FADE_OUT(RendDraw *pMe, int Step, int MaxStep)
 {
-    
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 xStart, yStart;
+        int16 w, h;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        
+        w = pMe->wWidthSrc - MATH_STEPPER_AVG((pMe->wWidthSrc>>1),Step);
+        h = pMe->wHeightSrc - MATH_STEPPER_AVG((pMe->wHeightSrc>>1),Step);
+        xStart = (pMe->wWidthSrc-w)>>1;
+        yStart = (pMe->wHeightSrc-h)>>1;
+        
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc2+yStart*pMe->wWidthSrc+xStart;
+        Fun_BMPScaleAlpha(pDestBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,w,h,pMe->wWidthSrc,pMe->pSrc1,MATH_STEPPER_AVG(MATH_ALPHA_MAX_OUT,(MaxStep-Step)));
+    }
 }
 
+static void Fun_REND_FADE_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 xStart, yStart;
+        int16 w, h;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+
+        w = pMe->wWidthSrc - MATH_STEPPER_AVG((pMe->wWidthSrc>>1),(MaxStep-Step));
+        h = pMe->wHeightSrc - MATH_STEPPER_AVG((pMe->wHeightSrc>>1),(MaxStep-Step));
+        xStart = (pMe->wWidthSrc-w)>>1;
+        yStart = (pMe->wHeightSrc-h)>>1;
+        
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc1+yStart*pMe->wWidthSrc+xStart;
+        Fun_BMPScaleAlpha(pDestBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,w,h,pMe->wWidthSrc,pMe->pSrc2,MATH_ALPHA_MIN_IN+MATH_STEPPER_AVG((MATH_ALPHA_MAX-MATH_ALPHA_MIN_IN),Step));
+    }
+}
+
+static void Fun_REND_MOVE_HORZ_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 xStart, yStart;
+        int16 w, h;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        int i;
+
+        w = MATH_STEPPER(pMe->wWidthSrc,Step);
+        h = pMe->wHeightSrc;
+        xStart = pMe->wWidthSrc-w;
+        yStart = 0;
+
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc1+xStart;
+        
+        for(i=0;i<h;i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, w));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+        
+
+        pDestBuf = (uint16 *)pMe->pDest+w;
+        pSrcBuf  = (uint16 *)pMe->pSrc2;
+        w = pMe->wWidthSrc - w;
+        for(i = 0; i < h; i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, w));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+    }
+}
+
+static void Fun_REND_MOVE_HORZ_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 xStart, yStart;
+        int16 w, h;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        int i;
+
+        w = MATH_STEPPER(pMe->wWidthSrc,Step);
+        h = pMe->wHeightSrc;
+        xStart = pMe->wWidthSrc-w;
+        yStart = 0;
+
+        pDestBuf = (uint16 *)pMe->pDest+xStart;
+        pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        for(i=0;i<h;i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, w));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+        
+
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc2+w;
+        w = pMe->wWidthSrc - w;
+        for(i = 0; i < h; i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, w));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+    }
+}
+
+static void Fun_REND_MOVE_VERT_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 xStart, yStart;
+        int16 w, h;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        int i;
+
+        w = pMe->wWidthSrc;
+        h = MATH_STEPPER(pMe->wHeightSrc,Step);
+        xStart = 0;
+        yStart = pMe->wHeightSrc-h;
+
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc1+yStart*pMe->wWidthSrc;
+        
+        for(i=0;i<h;i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, w));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+        
+
+        pDestBuf = (uint16 *)pMe->pDest+h*pMe->wWidthSrc;
+        pSrcBuf  = (uint16 *)pMe->pSrc2;
+        h = pMe->wHeightSrc - h;
+        for(i = 0; i < h; i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, w));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+    }
+}
+
+static void Fun_REND_MOVE_VERT_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 xStart, yStart;
+        int16 w, h;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        int i;
+
+        w = pMe->wWidthSrc;
+        h = MATH_STEPPER(pMe->wHeightSrc,Step);
+        xStart = 0;
+        yStart = pMe->wHeightSrc-h;
+
+        pDestBuf = (uint16 *)pMe->pDest+yStart*pMe->wWidthSrc;
+        pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        for(i=0;i<h;i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, w));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+        
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc2+h*pMe->wWidthSrc;
+        h = pMe->wHeightSrc - h;
+        for(i = 0; i < h; i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, w));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+    }
+}
+
+static void Fun_REND_FLY_HORZ_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int i;
+        int Max = MATH_STEPPER_SHAKE(pMe->wWidthSrc,Step);
+        uint16 *pDestBuf = (uint16 *)pMe->pDest;
+        uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1+(pMe->wWidthSrc-Max);
+        
+        for(i = 0; i < pMe->wHeightSrc; i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, Max));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+    }
+}
+
+static void Fun_REND_FLY_HORZ_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int i;
+        int Max = MATH_STEPPER_SHAKE(pMe->wWidthSrc,Step);
+        uint16 *pDestBuf = (uint16 *)pMe->pDest+(pMe->wWidthSrc-Max);
+        uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        for(i = 0; i < pMe->wHeightSrc; i++)
+        {
+            REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, Max));
+            pDestBuf += pMe->wWidthSrc;
+            pSrcBuf  += pMe->wWidthSrc;
+        }
+    }
+}
+
+static void Fun_REND_FLY_VERT_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int Max = MATH_STEPPER_SHAKE(pMe->wHeightSrc,Step);
+        uint16 *pDestBuf = (uint16 *)pMe->pDest;
+        uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1+ (pMe->wWidthSrc*(pMe->wHeightSrc - Max));
+        
+        REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*Max));
+    }
+}
+
+static void Fun_REND_FLY_VERT_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int Max = MATH_STEPPER_SHAKE(pMe->wHeightSrc,Step);
+        uint16 *pDestBuf = (uint16 *)pMe->pDest+(pMe->wWidthSrc*(pMe->wHeightSrc - Max));
+        uint16 *pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        REND_MEMCPY16(pDestBuf, pSrcBuf, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*Max));
+    }
+}
+
+// 3D左侧旋入
+static void Fun_REND_ROTAT_HORZ_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 Angle1 = (90*Step/MaxStep)-90;
+        int16 Angle2 = (90*Step/MaxStep);
+        int16 w      = MATH_STEPPER(pMe->wWidthSrc,Step);
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        //Fun_BMPxyzScale(pDestBuf,w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,0,Angle1,0,240,160,0,30);
+        Fun_BMPyScaleZ(pDestBuf, w,              pMe->wHeightSrc, pMe->wWidthSrc,
+                       pSrcBuf,  pMe->wWidthSrc, pMe->wHeightSrc, pMe->wWidthSrc,
+                       Angle1,   pMe->wWidthSrc, pMe->wHeightSrc>>1, 0, 30);
+        
+        pDestBuf = (uint16 *)pMe->pDest+(w);
+        pSrcBuf  = (uint16 *)pMe->pSrc2;
+        
+        //Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc-w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,0,Angle2,0,0,160,0,30);
+        Fun_BMPyScaleZ(pDestBuf, pMe->wWidthSrc-w, pMe->wHeightSrc, pMe->wWidthSrc,
+                       pSrcBuf,  pMe->wWidthSrc,   pMe->wHeightSrc, pMe->wWidthSrc,
+                       Angle2,   0,                pMe->wHeightSrc>>1, 0, 30);
+    }
+}
+
+// 3D右侧旋入
+static void Fun_REND_ROTAT_HORZ_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 Angle1 = 90-(90*Step/MaxStep);
+        int16 Angle2 = -(90*Step/MaxStep);
+        int16 w      = MATH_STEPPER(pMe->wWidthSrc,Step);
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        
+        pDestBuf = (uint16 *)pMe->pDest+(pMe->wWidthSrc-w);
+        pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        //Fun_BMPxyzScale(pDestBuf,w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,0,Angle1,0,0,160,0,30);
+        Fun_BMPyScaleZ(pDestBuf, w,              pMe->wHeightSrc, pMe->wWidthSrc,
+                       pSrcBuf,  pMe->wWidthSrc, pMe->wHeightSrc, pMe->wWidthSrc,
+                       Angle1,   0,              pMe->wHeightSrc>>1,0,30);
+        
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc2;
+        
+        //Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc-w,pMe->wHeightSrc,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,0,Angle2,0,240,160,0,30);
+        Fun_BMPyScaleZ(pDestBuf, pMe->wWidthSrc-w, pMe->wHeightSrc, pMe->wWidthSrc,
+                       pSrcBuf,  pMe->wWidthSrc,   pMe->wHeightSrc, pMe->wWidthSrc,
+                       Angle2,   pMe->wWidthSrc,   pMe->wHeightSrc>>1, 0, 30);
+    }
+}
+
+// 3D顶部旋入
+static void Fun_REND_ROTAT_VERT_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 Angle1 = (90*Step/MaxStep)-90;
+        int16 Angle2 = (90*Step/MaxStep);
+        int16 h      = MATH_STEPPER(pMe->wHeightSrc,Step);
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        //Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,Angle1,0,0,120,320,0,30);
+        Fun_BMPxScaleZ(pDestBuf, pMe->wWidthSrc, h,               pMe->wWidthSrc,
+                       pSrcBuf,  pMe->wWidthSrc, pMe->wHeightSrc, pMe->wWidthSrc,
+                       Angle1,   pMe->wWidthSrc>>1, pMe->wHeightSrc, 0, 30);
+        
+        pDestBuf = (uint16 *)pMe->pDest+(h*pMe->wWidthSrc);
+        pSrcBuf  = (uint16 *)pMe->pSrc2;
+        
+        //Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc,pMe->wHeightSrc-h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,Angle2,0,0,120,0,0,30);
+        Fun_BMPxScaleZ(pDestBuf, pMe->wWidthSrc, pMe->wHeightSrc-h, pMe->wWidthSrc,
+                       pSrcBuf,  pMe->wWidthSrc, pMe->wHeightSrc,   pMe->wWidthSrc,
+                       Angle2,   pMe->wWidthSrc>>1, 0, 0, 30);
+    }
+}
+
+// 3D底部旋入
+static void Fun_REND_ROTAT_VERT_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int16 Angle1 = 90-(90*Step/MaxStep);
+        int16 Angle2 = -(90*Step/MaxStep);
+        int16 h      = MATH_STEPPER(pMe->wHeightSrc,Step);
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        
+        pDestBuf = (uint16 *)pMe->pDest+(pMe->wHeightSrc-h)*pMe->wWidthSrc;
+        pSrcBuf  = (uint16 *)pMe->pSrc1;
+        
+        //Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc,h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,Angle1,0,0,120,0,0,30);
+        Fun_BMPxScaleZ(pDestBuf, pMe->wWidthSrc, h,               pMe->wWidthSrc,
+                      pSrcBuf,   pMe->wWidthSrc, pMe->wHeightSrc, pMe->wWidthSrc,
+                      Angle1,    pMe->wWidthSrc>>1, 0, 0, 30);
+        
+        pDestBuf = (uint16 *)pMe->pDest;
+        pSrcBuf  = (uint16 *)pMe->pSrc2;
+        
+        //Fun_BMPxyzScale(pDestBuf,pMe->wWidthSrc,pMe->wHeightSrc-h,pMe->wWidthSrc,pSrcBuf,pMe->wWidthSrc,pMe->wHeightSrc,pMe->wWidthSrc,Angle2,0,0,120,320,0,30);
+        Fun_BMPxScaleZ(pDestBuf, pMe->wWidthSrc, pMe->wHeightSrc-h, pMe->wWidthSrc,
+                       pSrcBuf,  pMe->wWidthSrc, pMe->wHeightSrc,   pMe->wWidthSrc,
+                       Angle2,   pMe->wWidthSrc>>1, pMe->wHeightSrc, 0, 30);
+    }
+}
+
+#define REND_BLINDS_HORIZONTAL_NUM         8
+#define REND_BLINDS_VERTICAL_NUM           10
+// 百叶窗左侧
+static void Fun_REND_BLINDS_VERT_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int i;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        uint16 wBlindsWidth = pMe->wWidthSrc/REND_BLINDS_HORIZONTAL_NUM;
+        uint16 wBlindsOpenWidth = MATH_STEPPER(wBlindsWidth,Step);
+        
+        for(i = 0; i < REND_BLINDS_HORIZONTAL_NUM; i++)
+        {
+            pDestBuf = (uint16 *)pMe->pDest+wBlindsWidth*i;
+            pSrcBuf  = (uint16 *)pMe->pSrc1+wBlindsWidth*i;
+            Fun_BMPCopy(pDestBuf, pSrcBuf, wBlindsOpenWidth, pMe->wHeightSrc, pMe->wWidthSrc);
+        }
+    }
+}
+
+// 百叶窗右侧
+static void Fun_REND_BLINDS_VERT_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int i;
+        uint16 *pDestBuf;
+        uint16 *pSrcBuf;
+        uint16 wBlindsWidth = pMe->wWidthSrc/REND_BLINDS_HORIZONTAL_NUM;
+        uint16 wBlindsOpenWidth = MATH_STEPPER(wBlindsWidth,Step);
+        
+        for(i = 0; i < REND_BLINDS_HORIZONTAL_NUM; i++)
+        {
+            pDestBuf = (uint16 *)pMe->pDest+wBlindsWidth*i+wBlindsWidth-wBlindsOpenWidth;
+            pSrcBuf  = (uint16 *)pMe->pSrc1+wBlindsWidth*i+wBlindsWidth-wBlindsOpenWidth;
+            Fun_BMPCopy(pDestBuf, pSrcBuf, wBlindsOpenWidth, pMe->wHeightSrc, pMe->wWidthSrc);
+        }
+    }
+}
+
+// 左右交叉百叶出
+static void Fun_REND_BLINDS_INTER_OUT(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int i;
+        int Max = MATH_STEPPER(pMe->wWidthSrc,Step);
+        uint16 *pDestBufLeft  = (uint16 *)pMe->pDest;
+        uint16 *pSrcBufLeft   = (uint16 *)pMe->pSrc2 + Max;
+        uint16 *pDestBufRight = (uint16 *)pMe->pDest + Max;
+        uint16 *pSrcBufRight  = (uint16 *)pMe->pSrc2;
+
+        REND_MEMCPY16(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+
+        for(i = 0; i < pMe->wHeightSrc; i++)
+        {
+            if((i/20)%2 == 0)
+            {
+                REND_MEMCPY16(pDestBufLeft, pSrcBufLeft, Fun_GetSizeByBPP(pMe, (pMe->wWidthSrc - Max)));
+            }
+            else
+            {
+                REND_MEMCPY16(pDestBufRight, pSrcBufRight, Fun_GetSizeByBPP(pMe, (pMe->wWidthSrc - Max)));
+            }
+            pDestBufLeft  += pMe->wWidthSrc;
+            pSrcBufLeft   += pMe->wWidthSrc;
+            pDestBufRight += pMe->wWidthSrc;
+            pSrcBufRight  += pMe->wWidthSrc;
+        }
+    } 
+}
+
+// 左右交叉百叶进
+static void Fun_REND_BLINDS_INTER_IN(RendDraw *pMe, int Step, int MaxStep)
+{
+    if(Step == MaxStep)
+    {
+        REND_MEMCPY32(pMe->pDest, pMe->pSrc1, Fun_GetSizeByBPP(pMe, pMe->wWidthSrc*pMe->wHeightSrc));
+    }
+    else
+    {
+        int i;
+        int Max = MATH_STEPPER(pMe->wWidthSrc,Step);
+        uint16 *pDestBufLeft = (uint16 *)pMe->pDest;
+        uint16 *pSrcBufLeft  = (uint16 *)pMe->pSrc1+(pMe->wWidthSrc-Max);
+        uint16 *pDestBufRight = (uint16 *)pMe->pDest+(pMe->wWidthSrc-Max);
+        uint16 *pSrcBufRight  = (uint16 *)pMe->pSrc1;
+
+        for(i = 0; i < pMe->wHeightSrc; i++)
+        {
+            if((i/20)%2 == 0)
+            {
+                REND_MEMCPY16(pDestBufLeft, pSrcBufLeft, Fun_GetSizeByBPP(pMe, Max));
+            }
+            else
+            {
+                REND_MEMCPY16(pDestBufRight, pSrcBufRight, Fun_GetSizeByBPP(pMe, Max));
+            }
+            pDestBufLeft  += pMe->wWidthSrc;
+            pSrcBufLeft   += pMe->wWidthSrc;
+            pDestBufRight += pMe->wWidthSrc;
+            pSrcBufRight  += pMe->wWidthSrc;
+        }
+    }
+}
 
 static const PFNRENDDRAW g_PFNRendDraw[REND_MAX] =
 {
-    NULL,
-    /*Fun_REND_SHOW_LEFTRIGHT_OUT,         //显示
-	Fun_REND_SHOW_LEFTRIGHT_IN,
-    Fun_REND_SHOW_TOPBOTTOM_OUT,
-    Fun_REND_SHOW_TOPBOTTOM_IN,
-	Fun_REND_SHOW_CENTER_OUT,
-    Fun_REND_SHOW_CENTER_IN,*/
-    Fun_REND_MOVE_LEFT,
-    Fun_REND_MOVE_RIGHT,
-   // Fun_REND_MOVE_TOP,
-   // Fun_REND_MOVE_BOTTOM,
-    //Fun_REND_FLY_LEFT,          //滑入
-	//Fun_REND_FLY_LEFT_FLEX,     //带弹性左滑入//wlh 20090406 add
-    //Fun_REND_FLY_RIGHT,
-	//Fun_REND_FLY_RIGHT_FLEX,    //带弹性右滑入//wlh 20090406 add
-    Fun_REND_FLY_TOP,
-    Fun_REND_FLY_TOP_FLEX,     //带弹性上滑入//wlh 20090406 add
-    Fun_REND_FLY_BOTTOM,
-   // Fun_REND_FLY_BOTTOM_FLEX,     //带弹性下滑入//wlh 20090406 add
-  /*   Fun_REND_FLY_LEFTTOP,
-    Fun_REND_FLY_LEFTBOTTOM,
-    Fun_REND_FLY_RIGHTTOP,
-    Fun_REND_FLY_RIGHTBOTTOM,
-    Fun_REND_FLYOUT_LEFT,       //滑出
-    Fun_REND_FLYOUT_RIGHT,
-    Fun_REND_FLYOUT_TOP,
-    Fun_REND_FLYOUT_BOTTOM,
-    Fun_REND_FLYOUT_LEFTTOP,
-    Fun_REND_FLYOUT_LEFTBOTTOM,
-    Fun_REND_FLYOUT_RIGHTTOP,
-    Fun_REND_FLYOUT_RIGHTBOTTOM,*/
-    //Fun_REND_ROTAT_LEFT,        //旋入
-   // Fun_REND_ROTAT_RIGHT,
-   /* Fun_REND_ROTAT_TOP,
-    Fun_REND_ROTAT_BOTTOM,
-    Fun_REND_ROTAT_LEFTTOP,
-    Fun_REND_ROTAT_LEFTBOTTOM,
-    Fun_REND_ROTAT_RIGHTTOP,
-    Fun_REND_ROTAT_RIGHTBOTTOM,
-    Fun_REND_ROTATOUT_LEFT,     //旋出
-    Fun_REND_ROTATOUT_RIGHT,
-    Fun_REND_ROTATOUT_TOP,
-    Fun_REND_ROTATOUT_BOTTOM,
-    Fun_REND_ROTATOUT_LEFTTOP,
-    Fun_REND_ROTATOUT_LEFTBOTTOM,
-    Fun_REND_ROTATOUT_RIGHTTOP,
-    Fun_REND_ROTATOUT_RIGHTBOTTOM,*/
-    Fun_REND_BLINDS_LEFT,       //百叶窗入
-    Fun_REND_BLINDS_RIGHT,
-	Fun_REND_BLINDS_IN,
-	Fun_REND_BLINDS_OUT,/*
-    Fun_REND_BLINDS_TOP,
-    Fun_REND_BLINDS_BOTTOM,
-    Fun_REND_BLINDS_LEFTTOP,
-    Fun_REND_BLINDS_LEFTBOTTOM,
-    Fun_REND_BLINDS_RIGHTTOP,
-    Fun_REND_BLINDS_RIGHTBOTTOM,
-    Fun_REND_BLINDSOUT_LEFT,    //百叶窗出
-    Fun_REND_BLINDSOUT_RIGHT,
-    Fun_REND_BLINDSOUT_TOP,
-    Fun_REND_BLINDSOUT_BOTTOM,
-    Fun_REND_BLINDSOUT_LEFTTOP,
-    Fun_REND_BLINDSOUT_LEFTBOTTOM,
-    Fun_REND_BLINDSOUT_RIGHTTOP,
-    Fun_REND_BLINDSOUT_RIGHTBOTTOM,
-    Fun_REND_SCROLL_LEFT,       //卷入
-    Fun_REND_SCROLL_RIGHT,
-    Fun_REND_SCROLL_TOP,
-    Fun_REND_SCROLL_BOTTOM,
-    Fun_REND_SCROLL_LEFTTOP,
-    Fun_REND_SCROLL_LEFTBOTTOM,
-    Fun_REND_SCROLL_RIGHTTOP,
-    Fun_REND_SCROLL_RIGHTBOTTOM,
-    Fun_REND_SCROLLOUT_LEFT,    //卷出
-    Fun_REND_SCROLLOUT_RIGHT,
-    Fun_REND_SCROLLOUT_TOP,
-    Fun_REND_SCROLLOUT_BOTTOM,
-    Fun_REND_SCROLLOUT_LEFTTOP,
-    Fun_REND_SCROLLOUT_LEFTBOTTOM,
-    Fun_REND_SCROLLOUT_RIGHTTOP,
-    Fun_REND_SCROLLOUT_RIGHTBOTTOM,
-    Fun_REND_ROLL_LEFT,         //立体滚动
-    Fun_REND_ROLL_RIGHT,
-    Fun_REND_ROLL_TOP,
-    Fun_REND_ROLL_BOTTOM,
-    Fun_REND_ROLL_LEFTTOP,
-    Fun_REND_ROLL_LEFTBOTTOM,
-    Fun_REND_ROLL_RIGHTTOP,
-    Fun_REND_ROLL_RIGHTBOTTOM,
-    Fun_REND_FIRE_TOP,          //火焰
-    Fun_REND_FIRE_BOTTOM,
-    Fun_REND_FADE_IN,           //渐变
-    Fun_REND_FADE_OUT,*/
+    Fun_REND_SHOW_HORZ_OUT,         //显示
+    Fun_REND_SHOW_HORZ_IN,
+    Fun_REND_SHOW_VERT_OUT,
+    Fun_REND_SHOW_VERT_IN,
+    Fun_REND_FADE_OUT,
+    Fun_REND_FADE_IN,
+    Fun_REND_MOVE_HORZ_OUT,
+    Fun_REND_MOVE_HORZ_IN,
+    Fun_REND_MOVE_VERT_OUT,
+    Fun_REND_MOVE_VERT_IN,
+    Fun_REND_FLY_HORZ_OUT,          //滑入
+    Fun_REND_FLY_HORZ_IN,
+    Fun_REND_FLY_VERT_OUT,
+    Fun_REND_FLY_VERT_IN,
+    Fun_REND_ROTAT_HORZ_OUT,        //旋入
+    Fun_REND_ROTAT_HORZ_IN,
+    Fun_REND_ROTAT_VERT_OUT,
+    Fun_REND_ROTAT_VERT_IN,
+    Fun_REND_BLINDS_VERT_OUT,       //百叶窗入
+    Fun_REND_BLINDS_VERT_IN,
+    Fun_REND_BLINDS_INTER_OUT,
+    Fun_REND_BLINDS_INTER_IN
 };
 
 PFNRENDDRAW Rendering_GetRendDraw16(RendType eType)
 {
     return g_PFNRendDraw[eType];
 }
-//wlh 20090406 add start
-static void Fun_REND_Flex(RendDraw *pMe, int Step, int MaxStep)//弹性碰撞处理函数
-{
-     if(Step == 0)
-	{
-		REND_MEMCPY(pMe->pDest, pMe->pSrc2, pMe->wWidthSrc*pMe->wHeightSrc*BYTE_PERPIXEL);
-	}
-	else
-	{
-		int i;
-		int Max;
-		uint16 *pDestBuf;
-		uint16 *pSrcBuf;
 
-		switch(Step)
-		{
-			case 1:
-				Max = 9;
-				break;
-			case 2:
-				Max = 18;
-				break;
-			case 3:
-				Max = 9;
-				break;
-			case 4:
-				Max = 0;
-				break;
-			case 5:
-				Max = 12;
-				break;
-			case 6:
-				Max = 6;
-				break;
-			case 7:
-				Max = 0;
-				break;
-			case 8:
-				Max = 6;
-				break;
-			case 9:
-				Max = 0;
-				break;
-			default:
-				break;
-		}
-
-		if(pMe->iFlexDirection == DIRECTION_LEFT)
-		{
-			pDestBuf = (uint16 *)pMe->pDest;
-			pSrcBuf  = (uint16 *)pMe->pSrc1 + Max;
-	    
-			for(i = 0; i < pMe->wHeightSrc; i++)
-			{
-				REND_MEMCPY(pDestBuf, pSrcBuf, (pMe->wWidthSrc - Max)*BYTE_PERPIXEL);
-				pDestBuf += pMe->wWidthSrc;
-				pSrcBuf  += pMe->wWidthSrc;
-			}
-		}
-		else if(pMe->iFlexDirection == DIRECTION_RIGHT)
-		{
-			pDestBuf = (uint16 *)pMe->pDest  + Max ;
-			pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-			for(i = 0; i < pMe->wHeightSrc; i++)
-			{
-				REND_MEMCPY(pDestBuf, pSrcBuf, (pMe->wWidthSrc - Max)*BYTE_PERPIXEL);
-				pDestBuf += pMe->wWidthSrc;
-				pSrcBuf  += pMe->wWidthSrc;
-			}
-		}
-		else if(pMe->iFlexDirection == DIRECTION_TOP)
-		{
-			pDestBuf = (uint16 *)pMe->pDest ;
-			pSrcBuf  = (uint16 *)pMe->pSrc1 + pMe->wWidthSrc*Max;
-	    
-			REND_MEMCPY(pDestBuf, pSrcBuf, pMe->wWidthSrc*(pMe->wHeightSrc - Max)*BYTE_PERPIXEL);
-		}
-		else if(pMe->iFlexDirection == DIRECTION_BOTTOM)
-		{
-			pDestBuf = (uint16 *)pMe->pDest  + pMe->wWidthSrc*Max ;
-			pSrcBuf  = (uint16 *)pMe->pSrc1;
-	    
-			REND_MEMCPY(pDestBuf, pSrcBuf, pMe->wWidthSrc*(pMe->wHeightSrc - Max)*BYTE_PERPIXEL);
-		}
-	}
-}
-PFNRENDDRAW Rendering_GetRendDraw16Flex(void)//wlh 20090406 add for Flexibility
-{
-    return Fun_REND_Flex;
-}
-
-int Rendering_GetRend16FlexDirect(RendType eType)//弹性碰撞方向
-{
-    switch(eType)
-	{
-		//case REND_FLY_LEFT_FLEX:
-		//	return DIRECTION_LEFT;
-		//case REND_FLY_RIGHT_FLEX:
-		//	return DIRECTION_RIGHT;
-		case REND_FLY_TOP_FLEX:
-			return DIRECTION_TOP;
-		//case REND_FLY_BOTTOM_FLEX:
-		//	return DIRECTION_BOTTOM;
-		default:
-			return DIRECTION_NONE;
-	}
-}
-//wlh 20090406 add end
