@@ -1423,6 +1423,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
     {
 
         case EVT_DIALOG_INIT:
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             pDatePick = (IDateCtl*)IDIALOG_GetControl( pme->m_pActiveDlg,IDC_DATE_MONTHVIEW);
             subState = 0;
             return TRUE;
@@ -1430,6 +1431,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
         case EVT_DIALOG_END:
             pDatePick = 0;
             bRedrawDone = FALSE;
+            ISHELL_CancelTimer( pme->m_pShell, loadDataTimerCB, pme);
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -1554,6 +1556,10 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
         return TRUE;
 
         case EVT_LOAD_DATA:
+            if(pDatePick == NULL)
+            {
+                return TRUE;
+            }
 #ifndef WIN32//wlh ÁÙÊ±
             retrieveMonthEventsFromDB( &pme->m_CalMgr);
             pme->m_CalMgr.m_pceCurrent = NULL;
@@ -1563,6 +1569,11 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             return TRUE;
 
         case EVT_USER_REDRAW:
+            if(pDatePick == NULL)
+            {
+                return TRUE;
+            }
+            
             IDATECTL_SetActiveDayMask( pDatePick, pme->m_CalMgr.m_dwMask);
             (void)IDATECTL_Redraw(pDatePick);
             drawBottomBar(BTBAR_OPTION_TODAY_BACK);
@@ -1683,7 +1694,12 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                     int pnChars;
                     AECHAR *pchar;
                     AEEDeviceInfo  dm;
-
+                    
+                    if(pDatePick == NULL)
+                    {
+                        return TRUE;
+                    }
+                    
                     pchar = pme->m_pVDTitle;
                     nLeft = sizeof(pme->m_pVDTitle);
                     MEMSET(pme->m_pVDTitle,0,sizeof(pme->m_pVDTitle));
@@ -1735,6 +1751,11 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 #if FEATURE_DRAW_LUNAR_CALENDAR
         case EVT_KEY_RELEASE:
         case EVT_CTL_CHANGING:
+            if(pDatePick == NULL)
+            {
+                return TRUE;
+            }
+            
             if(bRedrawDone && pme->m_subStateViewMonth == SUBSTATE_NONE)
             {
                 (void)IDATECTL_GetDate(pDatePick,&pnYear,&pnMonth,&pnDay);
@@ -1752,6 +1773,11 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 
         case EVT_COMMAND:
         {
+            if(pDatePick == NULL)
+            {
+                return TRUE;
+            }
+            
             switch( wParam)
             {
                 case AVK_INFO:
