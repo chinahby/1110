@@ -610,14 +610,7 @@ typedef struct
 #ifdef FEATURE_PLANEMODE
    byte planeMode;         /*CFGI_PLANEMODE*/
 #endif
-#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
-   byte brew_username[126];                          /* CFGI_BREW_USERNAME       */
-   byte brew_password[32];                           /* CFGI_BREW_PASSWORD       */
-#else
-   byte brew_username[NV_MAX_PAP_USER_ID_LENGTH];    /* CFGI_BREW_USERNAME       */
-   byte brew_password[NV_MAX_PAP_PASSWORD_LENGTH];   /* CFGI_BREW_PASSWORD       */
-#endif
-    boolean missed_call_icon;                            /* CFGI_MISSED_CALL_ICON    */
+   boolean missed_call_icon;                            /* CFGI_MISSED_CALL_ICON    */
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
    byte m_nrendstate;                      //CFGI_REND_STATE
 #endif
@@ -1675,6 +1668,7 @@ static OEMConfigListType oemi_cache = {
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
    ,DISPLAYREND_TYPE_ONEBYONE
+   ,2
 #endif
 #ifdef FEATURE_TOUCHPAD
    ,{-1,-1,-1,-1}
@@ -5216,14 +5210,14 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #else
 #endif
       return AEE_SUCCESS;
-case CFGI_BREW_USERNAME:
+   case CFGI_BREW_USERNAME:
       {
          if ((!pBuff) || WSTRLEN((AECHAR *)pBuff) > BREW_USERNAME_LEN)
          {
             return EFAILED;
          }
 
-         (void)WSTRTOSTR((AECHAR *)pBuff, (char*)oemi_cache.brew_username, sizeof(oemi_cache.brew_username));
+         (void)WSTRTOSTR((AECHAR *)pBuff, (char*)oemi_cache.brewsetings_usename, sizeof(oemi_cache.brewsetings_usename));
          OEMPriv_WriteOEMConfigList();
       }
       return AEE_SUCCESS;
@@ -5234,8 +5228,8 @@ case CFGI_BREW_USERNAME:
          {
             return EFAILED;
          }
-         oemi_cache.brew_password[0] = 0;
-         (void)WSTRTOSTR((AECHAR *)pBuff, (char*)oemi_cache.brew_password, sizeof(oemi_cache.brew_password));
+         oemi_cache.brewsetings_password[0] = 0;
+         (void)WSTRTOSTR((AECHAR *)pBuff, (char*)oemi_cache.brewsetings_password, sizeof(oemi_cache.brewsetings_password));
          OEMPriv_WriteOEMConfigList();
       }
       return AEE_SUCCESS;

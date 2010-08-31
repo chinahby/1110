@@ -73,7 +73,7 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
     {NV_BAND_PREF_I,                    {0x00, 0xff, 0xff}},
     {NV_ROAM_PREF_I,                    {0x00, 0xff, 0x00}},
     {NV_SMS_MO_ON_ACCESS_CHANNEL_I,     {0x01}}, 
-    {NV_SMS_MO_ON_TRAFFIC_CHANNEL_I,    {0x01}},      
+    {NV_SMS_MO_ON_TRAFFIC_CHANNEL_I,    {0x01}},
 #ifdef FEATURE_NET_LOCK
 	#if defined(FEATURE_VERSION_IVIO)
     {NV_NET_LOCK_I,                     {   0x01, 0x00,
