@@ -5826,18 +5826,6 @@ static void OEMPriv_ReadOEMConfigList(void)
       // use the defaults
       return;
    }
-   
-#ifdef CUST_EDITION
-{
-   struct fs_statvfs stat;
-   (void)efs_fstatvfs (fd, &stat);
-   if(stat.f_bsize != (sizeof(oemi_cache)+sizeof(version)))
-   {
-      (void) efs_close(fd);
-      return;
-   }
-}
-#endif
 
    (void) efs_lseek(fd, 0, SEEK_SET);
    (void) efs_read(fd, &version, sizeof(version));
