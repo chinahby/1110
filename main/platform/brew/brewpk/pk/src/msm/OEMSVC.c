@@ -3756,7 +3756,7 @@ int GetTraffic(boolean *pBool)
     }
   else if(retval == NV_NOTACTIVE_S)
     {
-      *pBool = FALSE;
+      *pBool = TRUE;
       return SetTraffic(pBool);
     }
   else
@@ -3767,7 +3767,7 @@ int GetTraffic(boolean *pBool)
   // If theres a bad value stored, default to true
   if(*pBool != 0 && *pBool != 1)
     {
-      *pBool = FALSE;
+      *pBool = TRUE;
       return SetTraffic(pBool);
     }
 
