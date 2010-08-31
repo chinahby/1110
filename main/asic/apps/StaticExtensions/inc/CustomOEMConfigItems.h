@@ -395,10 +395,7 @@ enum{
     CFGI_RANDOM_MENU,  // type=byte   
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
-    /*Menu default REND*/
-    CFGI_DEFAULT_REND,  // ??¨¨?????¡Áa??D¡ì1?
-    /*Menu default color REND, 0 for off, 1 for a specific REND, 2 for random REND*/
-    CFGI_REND_STATE,  // ????D¡ì1?¡Áa??¡Á¡ä¨¬?¡ê?0 2??¨®D¡ì1?,1 ???¡§D¡ì1?,2 ???¨²D¡ì1?   
+    CFGI_REND_STATE,
 #endif
 #ifdef FEATURE_TOUCHPAD
     CFGI_PEN_CAL,     // ¡À¨ºD¡ê¡Á?2?¨ºy

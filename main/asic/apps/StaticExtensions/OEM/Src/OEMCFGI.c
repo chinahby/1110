@@ -241,6 +241,9 @@ when       who     what, where, why
 #ifdef FEATURE_TOUCHPAD
 #include "touchpad.h"
 #endif
+#ifdef FEATURE_RANDOM_MENU_REND
+#include "DisplayRendUtils.h"
+#endif
 #endif // CUST_EDITION
 /*===========================================================================
 
@@ -616,7 +619,6 @@ typedef struct
 #endif
     boolean missed_call_icon;                            /* CFGI_MISSED_CALL_ICON    */
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
-   uint32 m_ndefaulerend;                       //CFGI_DEFAULT_REND
    byte m_nrendstate;                      //CFGI_REND_STATE
 #endif
 #ifdef FEATURE_TOUCHPAD
@@ -1324,8 +1326,6 @@ static int OEMPriv_SetItem_CFGI_RANDOM_MENU(void *pBuff);
 #endif
 
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add 
-static int OEMPriv_GetItem_CFGI_DEFAULT_REND(void *pBuff);
-static int OEMPriv_SetItem_CFGI_DEFAULT_REND(void *pBuff);
 static int OEMPriv_GetItem_CFGI_REND_STATE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_REND_STATE(void *pBuff);
 #endif//FEATURE_RANDOM_MENU_REND
@@ -1674,8 +1674,7 @@ static OEMConfigListType oemi_cache = {
 #endif
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
-   ,0  //APPSCOMMON_DEFAULT_REND  //CFGI_DEFAULT_REND
-   ,2  //CFGI_REND_STATE 界面效果转换状态，0 不加效果,1 选定效果,2 随机效果   
+   ,DISPLAYREND_TYPE_ONEBYONE
 #endif
 #ifdef FEATURE_TOUCHPAD
    ,{-1,-1,-1,-1}
@@ -2209,7 +2208,6 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_RANDOM_MENU,sizeof(byte)),
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add
-   CFGTABLEITEM(CFGI_DEFAULT_REND,sizeof(uint32)),
    CFGTABLEITEM(CFGI_REND_STATE,sizeof(byte)),
 #endif//FEATURE_RANDOM_MENU_REND
 
@@ -5831,9 +5829,9 @@ static void OEMPriv_ReadOEMConfigList(void)
    
 #ifdef CUST_EDITION
 {
-    struct fs_statvfs stat;
+   struct fs_statvfs stat;
    (void)efs_fstatvfs (fd, &stat);
-   if(stat.f_bsize != sizeof(oemi_cache))
+   if(stat.f_bsize != (sizeof(oemi_cache)+sizeof(version)))
    {
       (void) efs_close(fd);
       return;
@@ -10650,17 +10648,6 @@ static int OEMPriv_SetItem_CFGI_RANDOM_MENU(void *pBuff)
 }
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add
-static int OEMPriv_GetItem_CFGI_DEFAULT_REND(void *pBuff) 
-{
-	MEMCPY(pBuff, (void*) &oemi_cache.m_ndefaulerend, sizeof(uint32));
-   return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_DEFAULT_REND(void *pBuff) 
-{
-    MEMCPY((void*) &oemi_cache.m_ndefaulerend, pBuff, sizeof(uint32));
-    OEMPriv_WriteOEMConfigList();
-    return SUCCESS;
-}
 static int OEMPriv_GetItem_CFGI_REND_STATE(void *pBuff)
 {
 	MEMCPY(pBuff, (void*) &oemi_cache.m_nrendstate, sizeof(byte));

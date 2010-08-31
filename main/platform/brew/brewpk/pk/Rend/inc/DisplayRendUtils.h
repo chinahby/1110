@@ -19,11 +19,6 @@ typedef enum
     DISPLAYREND_TYPE_MAX,
 }DisplayRendType;
 
-typedef  struct 
-{
-    DisplayRendType eType;
-}CFG_DisplayRend;
-
 extern void DisplayRend_Enable(boolean bEnable);
 extern void DisplayRend_Push(void);
 extern void DisplayRend_Start(boolean bIn);

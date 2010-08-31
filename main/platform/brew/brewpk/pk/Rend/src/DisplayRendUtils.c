@@ -120,7 +120,7 @@ static DisplayRendType DisplayRend_GetTypeByCfg(boolean bIn)
     byte                    RendType; 
     
     (void)OEM_GetConfig(CFGI_REND_STATE, (void*)&RendType, sizeof(RendType)); 
-    
+    DBGPRINTF_FATAL("CFGI_REND_STATE %d",RendType);
     switch(RendType){
     case DISPLAYREND_TYPE_RAND:
         eType = eOneByOne;
