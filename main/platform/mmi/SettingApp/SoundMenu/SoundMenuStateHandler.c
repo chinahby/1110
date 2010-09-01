@@ -362,9 +362,16 @@ static NextFSMAction Sound_StateSceneModeSubHandler(CSoundMenu *pMe)
                     return NFSMACTION_WAIT;
 
                 case APP_MEDIA_IMPACT_BY_MP3:
+                	/*
                     pMe->m_sSubDlgId = IDS_CONFIRM_OFF_MP;
                     SoundMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
                     return NFSMACTION_WAIT;
+                    */
+
+                    //Add By zzg 2010_08_30                   
+                    MOVE_TO_STATE(SOUNDMENUST_SOUNDMENU)
+                    return NFSMACTION_CONTINUE;
+                    //Add End
 
                 default:
                     MOVE_TO_STATE(SOUNDMENUST_SOUNDMENU)

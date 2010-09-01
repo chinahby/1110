@@ -946,7 +946,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
-        case EVT_DIALOG_END:
+        case EVT_DIALOG_END:        	
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
@@ -976,7 +976,6 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
                             CFGI_PROFILE_RINGER_VOL,
                             pMe->m_RingCurVol,
                             sizeof(pMe->m_RingCurVol));
-
             switch (wParam)
             {
                 case IDS_CALLRING:                  //来电铃声
@@ -1059,6 +1058,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
                     break;
 
                 case IDS_CALLHINT:                  //来电提示方式
+                	
                     pMe->m_HintType = SET_CALLHINT;
 #if 0
                     if(pMe->m_RingCurVol[pMe->m_CurProfile] == OEMSOUND_MUTE_VOL)
@@ -1300,23 +1300,23 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             switch (wParam)
             {
                 case IDS_ITEM_OFF:      //关闭
-                    alerttype[pMe->m_CurProfile] = OEMNV_SMS_OFF;
+                    alerttype[pMe->m_CurProfile] = OEMNV_SMS_OFF;                    
                     break;
 
                 case IDS_ALERTTYPE_RINGER:   //铃声
-                    alerttype[pMe->m_CurProfile] = OEMNV_SMS_RING;
+                    alerttype[pMe->m_CurProfile] = OEMNV_SMS_RING;                   
                     break;
 
                 case IDS_ALERTTYPE_VIB:      //振动
-                    alerttype[pMe->m_CurProfile] = OEMNV_SMS_VIBONLY;
+                    alerttype[pMe->m_CurProfile] = OEMNV_SMS_VIBONLY;                   
                     break;
 
                 case IDS_ITEM_VIBRING:  //响铃震动
-                    alerttype[pMe->m_CurProfile] = OEMNV_SMS_RINGVIB;
+                    alerttype[pMe->m_CurProfile] = OEMNV_SMS_RINGVIB;                   
                     break;
                     
                 case IDS_ALERTTYPE_VIBANDRING:  //响铃震动
-                    alerttype[pMe->m_CurProfile] = OEMNV_ALERTTYPE_VIBANDRINGER;
+                    alerttype[pMe->m_CurProfile] = OEMNV_ALERTTYPE_VIBANDRINGER;                    
                     break;
 
                 default:
@@ -1327,7 +1327,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             SetMenuIcon(pMenu, wParam, TRUE);
             switch(pMe->m_HintType)
             {
-                case SET_CALLHINT: //来电提示方式
+                case SET_CALLHINT: //来电提示方式                	
                     (void) ICONFIG_GetItem(pMe->m_pConfig,
                                             CFGI_PROFILE_ALERT_TYPE,
                                             byte_set,
@@ -1359,7 +1359,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             //从ISoundMenu_SoundList接口进入声音设置菜单，
             //或在已启动的情景模式中编辑，直接激活用户设置
             if (pMe->m_bNaturalStart == SOUNDLIST_ENTRY || pMe->m_active == pMe->m_CurProfile)
-            {
+            {            	
                 pMe->m_ScenemodesubType = SET_ACTIVATE;
                 SoundMenu_SceneModeActivate(pMe);
             }
@@ -2924,7 +2924,6 @@ static void SoundMenu_SceneModeActivate(CSoundMenu *pMe)
 #endif
 
 //    byte    set_start_shutdown_music = 0x06;   //默认开机音乐，关机音乐为开
-
     if (NULL == pMe)
     {
         return;
@@ -3319,6 +3318,7 @@ static void SoundMenu_SceneModeActivate(CSoundMenu *pMe)
           }
       }
 #endif    
+		
       switch(pMe->m_active)
       {
           case OEMNV_PROFILE_NORMALMODE:          //正常模式
@@ -3344,6 +3344,54 @@ static void SoundMenu_SceneModeActivate(CSoundMenu *pMe)
           default:
               break;
       }
+
+	/*
+	//Add By zzg 2010_08_31
+	{		
+	    byte      byte_set[PROFILENUMBER];
+	    
+
+	    (void) ICONFIG_GetItem(pMe->m_pConfig,
+	                           CFGI_PROFILE_ALERT_TYPE,		//CFGI_PROFILE_SMS_RINGER
+	                           byte_set,
+	                           sizeof(byte_set));	
+        
+	    switch(byte_set[pMe->m_CurProfile])     
+	    {
+			case OEMNV_SMS_OFF:
+			{
+				IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
+				break;
+			}
+			case OEMNV_SMS_RING:
+			{
+				IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+				break;
+			}
+			case OEMNV_SMS_VIBONLY:
+			{
+				IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
+				break;
+			}
+			case OEMNV_SMS_RINGVIB:
+			{
+				IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+				break;
+			}
+			case OEMNV_ALERTTYPE_VIBANDRINGER:
+			{
+				IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+				break;
+			}
+			default:
+			{
+				break;
+			}
+	    }
+	}                                       
+	//Add End
+	*/
+      
  #ifdef FEATURE_APP_MUSICPLAYER
     ProfileNotifyMP3PlayerAlertEvent(pMe,FALSE);
  #endif

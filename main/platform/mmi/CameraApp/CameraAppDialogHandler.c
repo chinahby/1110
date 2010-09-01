@@ -569,7 +569,22 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
-        case EVT_DIALOG_START:              
+        case EVT_DIALOG_START:     
+        
+			//Add By zzg 2010_09_01  
+			MSG_FATAL("***zzg Preview Handle EVT_DIALOG_START***", 0, 0, 0);
+#ifdef FEATURE_APP_MUSICPLAYER	
+			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+			{
+				ISHELL_SendEvent(pMe->m_pShell,
+				     AEECLSID_APP_MUSICPLAYER,
+				     EVT_ALARM,
+				     TRUE,
+				     TRUE);
+			}
+#endif         
+			//Add End
+                	
             pMe->m_bCanCapture = CameraApp_IsEnoughfMemorySpace(pMe);
             // For redraw the dialog
             (void)ISHELL_PostEvent(pMe->m_pShell,
@@ -579,7 +594,22 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                                    0);  
             return TRUE;
             
-        case EVT_DIALOG_END:            
+        case EVT_DIALOG_END:       
+
+			//Add By zzg 2010_09_01  
+			MSG_FATAL("***zzg Preview Handle EVT_DIALOG_END***", 0, 0, 0);
+#ifdef FEATURE_APP_MUSICPLAYER
+		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+		    {
+		        ISHELL_SendEvent(pMe->m_pShell,
+		                         AEECLSID_APP_MUSICPLAYER,
+		                         EVT_ALARM,
+		                         FALSE,
+		                         TRUE);
+		    }
+ #endif
+ 			//Add End
+        
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
             if(pMe->m_bSuspending)
             {
@@ -803,11 +833,38 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             IMENUCTL_SetActive(popMenu, TRUE);
             return TRUE;
      
-        case EVT_DIALOG_START:                   
+        case EVT_DIALOG_START:      
+        	//Add By zzg 2010_09_01  
+        	MSG_FATAL("***zzg CameraCFG Handle EVT_DIALOG_START***", 0, 0, 0);
+#ifdef FEATURE_APP_MUSICPLAYER
+		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+		    {
+		        ISHELL_SendEvent(pMe->m_pShell,
+		                         AEECLSID_APP_MUSICPLAYER,
+		                         EVT_ALARM,
+		                         TRUE,
+		                         TRUE);
+		    }
+ #endif
+ 			//Add End
             //ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL); 
             return TRUE;
          
         case EVT_DIALOG_END:
+        
+        	//Add By zzg 2010_09_01  
+        	MSG_FATAL("***zzg CameraCFG Handle EVT_DIALOG_END***", 0, 0, 0);
+#ifdef FEATURE_APP_MUSICPLAYER
+		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+		    {
+		        ISHELL_SendEvent(pMe->m_pShell,
+		                         AEECLSID_APP_MUSICPLAYER,
+		                         EVT_ALARM,
+		                         FALSE,
+		                         TRUE);
+		    }
+ #endif
+ 			//Add End
             if(pMe->m_pDisplay != NULL)
             {
                 IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
@@ -917,9 +974,41 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
         case EVT_DIALOG_INIT:          
             return TRUE;
  
-        case EVT_DIALOG_START:           
+        case EVT_DIALOG_START:   
+        	//Add By zzg 2010_09_01  
+			MSG_FATAL("***zzg Pic Handle EVT_DIALOG_START***", 0, 0, 0);
+#ifdef FEATURE_APP_MUSICPLAYER	
+			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+			{
+				ISHELL_SendEvent(pMe->m_pShell,
+				     AEECLSID_APP_MUSICPLAYER,
+				     EVT_ALARM,
+				     TRUE,
+				     TRUE);
+			}
+#endif         
+			//Add End
+			
             ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
             return TRUE;
+            
+        //Add By zzg 2010_09_01      
+        case EVT_DIALOG_END:
+        {
+        	MSG_FATAL("***zzg Pic Handle EVT_DIALOG_END***", 0, 0, 0);
+#ifdef FEATURE_APP_MUSICPLAYER
+		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+		    {
+		        ISHELL_SendEvent(pMe->m_pShell,
+		                         AEECLSID_APP_MUSICPLAYER,
+		                         EVT_ALARM,
+		                         FALSE,
+		                         TRUE);
+		    } 
+#endif 			
+ 			return TRUE;
+ 		}
+ 		//Add End    
             
         case EVT_USER_REDRAW:
             IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
@@ -1009,6 +1098,20 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             return TRUE;
         
         case EVT_DIALOG_START:
+        	//Add By zzg 2010_09_01  
+			MSG_FATAL("***zzg PopMSG Handle EVT_DIALOG_START***", 0, 0, 0);
+#ifdef FEATURE_APP_MUSICPLAYER	
+			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+			{
+				ISHELL_SendEvent(pMe->m_pShell,
+				     AEECLSID_APP_MUSICPLAYER,
+				     EVT_ALARM,
+				     TRUE,
+				     TRUE);
+			}
+#endif         
+			//Add End
+			
             if((pMe->m_nMsgTimeout != 0) && (pMe->m_wMsgID != IDS_MSG_WAITING))
             {
                 (void)ISHELL_SetTimer(pMe->m_pShell,
@@ -1106,6 +1209,20 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             return TRUE;
             
         case EVT_DIALOG_END:
+        	//Add By zzg 2010_09_01  
+			MSG_FATAL("***zzg PopMSG Handle EVT_DIALOG_END***", 0, 0, 0);
+#ifdef FEATURE_APP_MUSICPLAYER	
+			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+			{
+				ISHELL_SendEvent(pMe->m_pShell,
+				     AEECLSID_APP_MUSICPLAYER,
+				     EVT_ALARM,
+				     FALSE,
+				     TRUE);
+			}
+#endif         
+			//Add End
+			
             if(pStatic != NULL)
             {
                 ISTATIC_Release(pStatic); 

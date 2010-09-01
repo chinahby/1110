@@ -4647,6 +4647,55 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
         default :
             break;            
     }
+
+	/*
+	//Add By zzg 2010_08_31
+	{		
+	    byte      byte_set[PROFILENUMBER];
+	    
+
+	    (void) ICONFIG_GetItem(pMe->m_pConfig,
+	                           CFGI_PROFILE_ALERT_TYPE,		//CFGI_PROFILE_SMS_RINGER
+	                           byte_set,
+	                           sizeof(byte_set));	
+        
+	    switch(byte_set[alertType])     
+	    {
+			case OEMNV_SMS_OFF:
+			{
+				iann = ANNUN_STATE_RINGTONE_SILENT;
+				break;
+			}
+			case OEMNV_SMS_RING:
+			{
+				iann = ANNUN_STATE_RINGTONE_ALERT;
+				break;
+			}
+			case OEMNV_SMS_VIBONLY:
+			{
+				iann = ANNUN_STATE_RINGTONE_VIBRATOR;
+				break;
+			}
+			case OEMNV_SMS_RINGVIB:
+			{
+				iann = ANNUN_STATE_RINGTONE_VIBRING;
+				break;
+			}
+			case OEMNV_ALERTTYPE_VIBANDRINGER:
+			{
+				iann = ANNUN_STATE_RINGTONE_VIBRING;
+				break;
+			}
+			default:
+			{
+				break;
+			}
+	    }
+	}                                       
+	//Add End
+	*/
+
+    
     if(pMe->m_pIAnn != NULL)
     {
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, iann);

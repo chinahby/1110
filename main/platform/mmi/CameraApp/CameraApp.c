@@ -767,10 +767,21 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                         break;
 
                     case APP_MEDIA_IMPACT_BY_MP3:                    
-                        pMe->m_eCurState = STATE_CPOPMSG;
+                    {          
+                    	//Del By zzg 2010_09_01
+                    	/*
+                    	pMe->m_eCurState = STATE_CPOPMSG;
                         pMe->m_nMsgTimeout = 0; 
                         pMe->m_wMsgID = IDS_CONFIRM_OFF_MP;
+                        */
+                        //Del End
+                        
+                        //Add By zzg 2010_09_01
+                        pMe->m_eCurState = STATE_CMAINMENU;    
                         break;
+                        //Add End                        
+                        
+                    }
 
                     case APP_MEDIA_IMPACT_BY_FM:
                         pMe->m_eCurState = STATE_CPOPMSG;
@@ -908,7 +919,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             pMe->m_bAppIsReady = FALSE;
             (void)CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
             pMe->m_pActiveDlg = NULL; 
-      
+            
             //Applet被挂起，不跑状态机，等待Applet返回。（注意：EVT_APP_SUSPEND
             //事件在EVT_DIALOG_END事件前发出。
             if(pMe->m_bSuspending == FALSE)
