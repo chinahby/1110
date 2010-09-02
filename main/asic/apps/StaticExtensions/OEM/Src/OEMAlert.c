@@ -2474,28 +2474,30 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                 break;
 
             case OEMNV_ALERTTYPE_VIBRINGER:
-				#if 0
+				//#if 0
                 if(type == ALERT_SMS_SND)
                 {
                     pMe->m_ringVibCount = 2;
+					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);
+	        	 	if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
+	        	 	{	  
+	            		// 为确保定时器未设置，先取消该定时器
+	            		AEE_CancelTimer(OEMALERT_HandleMP3Timer, pMe);
+	            
+	            		// 设置闪烁图标定时器
+	            		(void)AEE_SetSysTimer(TIME_MS_SMSVIBRATE_DURATION, 
+	                                    OEMALERT_HandleMP3Timer,
+	                                    pMe);
+	        		}
+					return nRet;
                 }    
                 else
                 {
                     pMe->m_ringVibCount = COUNT_VIBRATE_ALERTS_THEN_RING;
                 }
-				#else
-				ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);
-        	 	if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
-        	 	{	  
-            		// 为确保定时器未设置，先取消该定时器
-            		AEE_CancelTimer(OEMALERT_HandleMP3Timer, pMe);
-            
-            		// 设置闪烁图标定时器
-            		(void)AEE_SetSysTimer(TIME_MS_SMSVIBRATE_DURATION, 
-                                    OEMALERT_HandleMP3Timer,
-                                    pMe);
-        		}
-				#endif
+				//#else
+				
+				//#endif
                 break;
 
             case OEMNV_ALERTTYPE_VIBANDRINGER:  
@@ -2733,7 +2735,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
             break;
         
         case OEMNV_ALERTTYPE_VIBRINGER:
-			#if 0
+			
             if (pMe->m_ringVibCount > 0) 
             {
                 --pMe->m_ringVibCount;            
@@ -2790,7 +2792,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                     OEMALERT_SetRingerVol(pMe, TRUE);
                 }
             }  
-			#endif
+			
             break;               
 
             case OEMNV_ALERTTYPE_VIBANDRINGER:
