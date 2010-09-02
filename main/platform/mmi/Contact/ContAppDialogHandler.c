@@ -5749,6 +5749,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
+    MSG_FATAL("CContApp_HandleAddNewDlgEvent eCode=%X, wParam=%d",eCode,wParam,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
     
     pTextCtl = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_ADD_LOCAL_INPUT);
@@ -6110,6 +6111,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 case AVK_UP:
                 case AVK_DOWN:
                 {
+                    MSG_FATAL("m_nInputMode=%d",pMe->m_nInputMode,0,0);
                     if(EDIT_GROUP == pMe->m_nInputMode)
                     {                    
                         CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
@@ -6120,6 +6122,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                     {
                         if(TRUE == CContApp_SaveLocal_Input(pMe, pTextCtl))
                         {
+                            MSG_FATAL("CContApp_SaveLocal_Input=TRUE",0,0,0);
                            // itemTextBuf = pMe->m_pFldInputBuf;
                             if (AEE_ADDRFIELD_NONE != pMe->m_nFldInputID)
                             {
@@ -6130,6 +6133,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                         }
                         else
                         {   
+                            MSG_FATAL("CContApp_SaveLocal_Input=FALSE",0,0,0);
                             return TRUE;
                         }
                         
@@ -6137,6 +6141,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                         IMENUCTL_SetActive(pMenuCtl, TRUE);
                         IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
                     }
+                    ITEXTCTL_SetActive(pTextCtl, FALSE);
                 }
                 return TRUE;
                 
@@ -6259,6 +6264,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 case IDS_GROUP_PERSONAL:
                 case IDS_GROUP_BUSINESS:
                 {
+                    MSG_FATAL("CContApp_HandleAddNewDlgEvent wParam=%d",wParam,0,0);
                     if( EDIT_GROUP == pMe->m_nInputMode)
                     {
                         CContApp_SetEditGroup(pMe, pMenuCtl, TRUE, wParam);
@@ -9397,7 +9403,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-
+    MSG_FATAL("CContApp_HandleEditDlgEvent Start",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_EDIT_MENU);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_TEXT_LOCAL_INPUT);
     pGroupList = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_GROUP_LIST);
@@ -9932,6 +9938,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                 case IDS_GROUP_PERSONAL:
                 case IDS_GROUP_BUSINESS:
                 {
+                    MSG_FATAL("CContApp_HandleEditDlgEvent wParam=%d",wParam,0,0);
                     if( EDIT_GROUP == pMe->m_nInputMode)
                     {
                         // 不需要返回菜单，直接弹出DONE， 传第三个参数TRUE
@@ -12747,7 +12754,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
     ASSERT(pMe != NULL);
 #endif
 
-
+    MSG_FATAL("CContApp_HandleGroupOptEditDlgEvent Start",0,0,0);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_GROUPOPT_EDIT);
     
@@ -12806,6 +12813,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
             {
                 
                 uint16        ResID = 0;
+                MSG_FATAL("CContApp_HandleGroupOptEditDlgEvent m_wSelectGroup=%d",pMe->m_wSelectGroup,0,0);
                 switch(pMe->m_wSelectGroup)
                 {
                     case CONTCFG_GROUP1:
@@ -13664,7 +13672,7 @@ static void CContApp_ShowGroupSelect(CContApp  *pMe, IMenuCtl  *pMenuCtl, IMenuC
     AEEImageInfo    info = {0};
     int16           curGroup=0;
     AEEMenuColors color  = {0};
-    
+    MSG_FATAL("CContApp_ShowGroupSelect m_nGroupCat=%d",pMe->m_nGroupCat,0,0);
     switch(pMe->m_nGroupCat)
     {
         case AEE_ADDR_CAT_VIP:
@@ -14583,7 +14591,7 @@ static void CContApp_SetGroupItemText(CContApp *pMe, IMenuCtl *pMenuCtl)
     int ResID, len;
     AECHAR pGroup[MAX_INPUT_NAME_EN + 1];
     pGroup[0] = ONEDIAL_NULL;
-    MSG_FATAL("pGroup[0] = ONEDIAL_NULL",0,0,0);
+    MSG_FATAL("CContApp_SetGroupItemText m_nGroupCat=%d",pMe->m_nGroupCat,0,0);
     switch(pMe->m_nGroupCat)
     {
         case AEE_ADDR_CAT_VIP:
@@ -14654,6 +14662,7 @@ static void CContApp_SetGroupItemText(CContApp *pMe, IMenuCtl *pMenuCtl)
 //在edit界面，保存select group， selectGroup是当前选中的group
 static void CContApp_SetEditGroup(CContApp *pMe, IMenuCtl *pMenuCtl, boolean onlySaveValue, int selectGroup)
 {
+    MSG_FATAL("CContApp_SetEditGroup selectGroup=%d",selectGroup,0,0);
     switch(selectGroup)
     { 
         case IDS_GROUP_VIP:
