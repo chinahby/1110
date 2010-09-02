@@ -921,7 +921,6 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-    MSG_FATAL("MP3_SetRingtone_HandleEvent Start",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_SETASRINGTONE);
      if (pMenuCtl == NULL)
@@ -948,7 +947,7 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
 		    }
 			#endif
-            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
+            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -967,7 +966,6 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
             {
                 byte CurProfileNum;
                 ringID ConfigRinger[PROFILENUMBER];
-                
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
                                 CFGI_PROFILE_CUR_NUMBER,
                                 &CurProfileNum,
@@ -1024,7 +1022,7 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
                 {
                     alarmTone = FALSE;
                 }
-                IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
+                IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
                 MP3_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK);
                 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
                 IMENUCTL_Redraw(pMenuCtl);
@@ -1064,12 +1062,11 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
 
                 case AVK_SELECT:
-                case AVK_INFO:
+                //case AVK_INFO:
                     {
                         byte CurProfileNum;
                         ringID nNewConfigRinger[PROFILENUMBER];
                         int nSelect = 0;
-
                         (void) ICONFIG_GetItem(pMe->m_pConfig,
                                                 CFGI_PROFILE_CUR_NUMBER,
                                                 &CurProfileNum,
