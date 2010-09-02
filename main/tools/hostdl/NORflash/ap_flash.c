@@ -92,8 +92,9 @@ Qualcomm Confidential and Proprietary
 #include "flash_nor_device.h"
 #include "flash_nor_msm.h"
 #include "mibib.h"
-
-
+#ifdef CUST_EDITION
+#include "miheader.h"
+#endif
 
 //--------------------------------------------------------------------------
 // Defines
@@ -379,6 +380,24 @@ do_simple_write (byte * buf,
   {
     flash_device_probe();
   }
+  
+#ifdef CUST_EDITION
+  // 软件工具下载的时候只允许更新AMSS部分的代码，以保证BOOT正常
+  if(addr+len < MI_NOR_AMSS_HASH_START_ADDR)
+  {
+     return ACK;
+  }
+  else
+  {
+     if(addr < MI_NOR_AMSS_HASH_START_ADDR)
+     {
+        dword ilen = MI_NOR_AMSS_HASH_START_ADDR - addr;
+        len -= ilen;
+        buf += ilen;
+        addr = MI_NOR_AMSS_HASH_START_ADDR;
+     }
+  }
+#endif
 
   if (flash_dev_type != FLASH_DEVICE_FOUND)
   {
