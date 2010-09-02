@@ -182,6 +182,7 @@ extern DRMTestApp( IShell* pIShell );
 #endif /* FEATURE_SEC_IPSEC_VPN_CLNT */
 
 #include "AEERats.h"
+#include "Nv_items.h"
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS
@@ -343,7 +344,7 @@ typedef struct _CFieldDebug {
    IDialog                         *m_pActiveIDlg;
    IAnnunciator *m_pIAnn;
    uint32     m_CurrId;
-
+   uint8      m_TextId;
 } CFieldDebug;
 
 
@@ -539,6 +540,10 @@ static	boolean CFieldDebug_RouteDialogEvt(CFieldDebug *pMe,
     uint16  wParam,
     uint32 dwParam
 );
+static boolean CFieldDebug_NVSETTINGHandleEvent(CFieldDebug *pme,
+                                           AEEEvent  eCode,
+                                           uint16    wParam,
+                                           uint32    dwParam);
 
 
 #ifdef FEATURE_JPEG_DECODER
@@ -717,7 +722,8 @@ static const PFNAEEEVENT sDialogEventHandlers[] =
    (PFNAEEEVENT) CFieldDebug_Enabled_Lock_HandleEvent,
    (PFNAEEEVENT) CFieldDebug_MNC_HandleEvent,
    (PFNAEEEVENT) CFieldDebug_MCC_HandleEvent,
-   (PFNAEEEVENT) CFieldDebug_SID_HandleEvent
+   (PFNAEEEVENT) CFieldDebug_SID_HandleEvent,
+   (PFNAEEEVENT) CFieldDebug_NVSETTINGHandleEvent
 };
 
 
@@ -1277,6 +1283,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_USER_PASSWORD,     IDS_USER_PASSWORD, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PRIMARY_SERVER,    IDS_PRIMARY_SERVER, NULL, 0);
       		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SECONDARY_SERVER,  IDS_SECONDARY_SERVER, NULL, 0);
+            IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_NV_SETTING,        IDS_NV_SETTING, NULL, 0);
 			MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
 			MSG_FATAL ("EVT_DIALOG_START wParam == IDS_BREWSETTUBG_TITLE222222222", 0, 0, 0);
        }                                    
@@ -3799,6 +3806,18 @@ static boolean CFieldDebug_BREW_SETTINGSHandleEvent(CFieldDebug *pme,
               MSG_FATAL ("IDS_SECONDARY_SERVER wParam == IDS_CARRIER_ID111111111111", 0, 0, 0);
              (void) CFieldDebug_MoveToDialog(pme, IDD_SECONDARY_SERVER_DIALOG);
                      return TRUE;
+     case IDS_NV_SETTING:
+     {
+         IMenuCtl *ctl;
+         IDialog *dlg;
+     
+         dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+         ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
+         pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
+      }
+       MSG_FATAL ("IDS_NV_SETTING wParam == IDS_NV_SETTING", 0, 0, 0);
+      (void) CFieldDebug_MoveToDialog(pme, IDD_NVSETTING_DIALOG);
+              return TRUE;
 
 		default:
 			break;
@@ -4013,6 +4032,208 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
 	   return FALSE;
 
 }
+
+static boolean CFieldDebug_NVSETTINGHandleEvent(CFieldDebug *pme,
+                                               AEEEvent  eCode,
+                                               uint16    wParam,
+                                               uint32    dwParam)
+{
+       ITextCtl *pIText = NULL; 
+       ITextCtl *pIText2 = NULL; 
+       IStatic  *pStatic1 = NULL;
+       IStatic  *pStatic2 = NULL;
+       IDialog * p_diag = NULL;
+       BottomBar_Param_type BarParam={0};
+       PARAM_NOT_REF(dwParam)
+       
+       MSG_FATAL("CFieldDebug_NVSETTINGHandleEvent wParam=%x, eCode=%d",wParam, eCode, 0);
+       switch (eCode) {   
+       case EVT_KEY_RELEASE:
+       {
+          MSG_FATAL("EVT_CTL_TAB",0,0,0);
+          if((wParam == AVK_UP) || (wParam == AVK_DOWN))
+          {
+              p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);          
+              pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_NVID_TEXT);
+              pIText2 = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_NVVALUE_TEXT);          
+              if(pme->m_TextId == 1)
+              {
+                  MSG_FATAL("go to 21",0,0,0);
+                  pme->m_TextId = 2;
+                  MSG_FATAL("go to 22",0,0,0);
+                  if(pIText == NULL)
+                  {
+                    MSG_FATAL("pIText == NULL",0,0,0);
+                  }
+                  if(pIText2 == NULL)
+                  {
+                    MSG_FATAL("pIText2 == NULL",0,0,0);
+                  }
+                  ITEXTCTL_SetActive(pIText, FALSE);
+                  ITEXTCTL_SetActive(pIText2, TRUE); 
+                  MSG_FATAL("go to 23",0,0,0);
+              }
+              else if(pme->m_TextId == 2)
+              {
+                  MSG_FATAL("go to 11",0,0,0);
+                  pme->m_TextId = 1;
+                  ITEXTCTL_SetActive(pIText, TRUE);
+                  ITEXTCTL_SetActive(pIText2, FALSE); 
+                  MSG_FATAL("go to 11",0,0,0);
+              }
+              IDISPLAY_UpdateEx(pme->m_pDisplay, TRUE);       
+              return TRUE;   
+          }
+          return FALSE;
+       }
+       case EVT_KEY:
+          switch (wParam) {
+    
+          case AVK_CLR:
+             (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
+             return TRUE;       
+          case AVK_SELECT:
+          case AVK_INFO:
+            {
+                AECHAR pwstrTextID[5] = {0};
+                AECHAR pwstrTextValue[51] = {0};
+                char string[10];
+                uint32 ID = 0;
+                char value[100];
+                int valueLen = 0;
+                int i,j=0;
+                char temp[4];
+                byte NvValue[50]={0};
+                nv_stat_enum_type status;
+                p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+                pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_NVID_TEXT);
+                pIText2 = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_NVVALUE_TEXT);  
+                
+                ITEXTCTL_SetActive(pIText,TRUE);
+                ITEXTCTL_SetActive(pIText2,FALSE);
+                (void)ITEXTCTL_GetText(pIText,pwstrTextID,5);
+                (void) WSTRTOSTR(pwstrTextID, string, sizeof(string));
+                ID= ATOI(string);
+
+                ITEXTCTL_SetActive(pIText,FALSE);
+                ITEXTCTL_SetActive(pIText2,TRUE);
+                (void)ITEXTCTL_GetText(pIText2,pwstrTextValue,50);
+                (void) WSTRTOSTR(pwstrTextValue, value, sizeof(value));
+                MSG_FATAL("id=%d ",ID,0,0);
+                DBGPRINTF ("value=%s", value);
+                valueLen = STRLEN(value);
+                for(i = 0; i < valueLen; )
+                {
+                    STRLCPY(temp, value+i, 4);
+                    i += 3;
+                    DBGPRINTF ("temp=%s", temp);
+                    NvValue[j++] = ATOI(temp);
+                    MSG_FATAL("NvValue[%d]=%d",j-1,ATOI(temp),0);
+                }
+                status = nvio_write_item((nv_items_enum_type)ID,  /* Item name */
+                          0, /* index */
+                          (void*)NvValue, /* data ptr */
+                          nvim_op_get_size((nv_items_enum_type)ID));  // data count 这里可以通过nvim_op_get_size来测试NV项的大小                
+                MSG_FATAL("nvio_write_item status=%d",status,0,0);
+                (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
+                return TRUE;        
+             }
+             break;
+             
+          default:
+             break;
+          }
+          return FALSE;
+    
+       case EVT_DIALOG_START:
+            {
+                char szBuf[64] = {0};
+                int n = 0;
+                uint32 carrID = 0;
+                AECHAR string[64]={0};
+                pme->m_CurrId =(uint32)CARRIERID;
+                pme->m_pActiveIDlg = (IDialog*)dwParam;
+                (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+                pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_NVID_TEXT);
+                pIText2 = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_NVVALUE_TEXT);
+                pStatic1 = (IStatic *) IDIALOG_GetControl((IDialog *) dwParam, IDC_NVID_STATIC);
+                pStatic2 = (IStatic *) IDIALOG_GetControl((IDialog *) dwParam, IDC_NVVALUE_STATIC);
+                ITEXTCTL_SetProperties(pIText, TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT);
+                ITEXTCTL_SetProperties(pIText2, TP_STARKEY_SWITCH |TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT);
+                ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
+                ITEXTCTL_SetCursorPos(pIText2, TC_CURSOREND);     
+                (void) ITEXTCTL_SetInputMode(pIText, AEE_TM_NUMBERS);
+                {
+                    AEERect ctlRect;
+                    SETAEERECT(&ctlRect,  0, 0,
+                                pme->m_screen_rc.dx,
+                                20);   
+                    ICONTROL_SetRect((IControl*)pStatic1, &ctlRect);  
+                    
+                    SETAEERECT(&ctlRect,  0, 20,
+                                pme->m_screen_rc.dx,
+                                20);
+                    ICONTROL_SetRect((IControl*)pIText, &ctlRect);   
+                    
+                    SETAEERECT(&ctlRect,  0, 40,
+                                pme->m_screen_rc.dx,
+                                20);   
+                    ICONTROL_SetRect((IControl*)pStatic2, &ctlRect);                      
+                     
+                    SETAEERECT(&ctlRect,  0, 60,
+                                pme->m_screen_rc.dx,
+                                20);
+                    ICONTROL_SetRect((IControl*)pIText2, &ctlRect); 
+                    ITEXTCTL_SetMaxSize ( pIText, 4);
+                    ITEXTCTL_SetMaxSize ( pIText2, 50);
+                    ITEXTCTL_SetActive(pIText, TRUE);
+                    ITEXTCTL_SetActive(pIText2, FALSE);
+                    pme->m_TextId = 1;
+                }
+                if (NULL != szBuf)
+                {
+                    {
+                        AECHAR WTitle[20] = {0};
+                        (void)ISHELL_LoadResString(pme->a.m_pIShell,
+                        AEE_FLDDBG_RES_FILE,                                
+                        IDS_NV_SETTING,
+                        WTitle,
+                        sizeof(WTitle));
+                        if(pme->m_pIAnn != NULL)
+                        {
+                            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                        }
+                    }                           
+                }  
+                IDISPLAY_UpdateEx(pme->m_pDisplay, TRUE);
+                (void) ISHELL_PostEventEx(pme->a.m_pIShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_FIELDDEBUGAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+        }
+          
+          return TRUE;
+       case EVT_USER_REDRAW:
+            {              
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                DrawBottomBar(pme->m_pDisplay,&BarParam);
+                IDISPLAY_Update(pme->m_pDisplay);  
+            }
+            break;
+       case EVT_DIALOG_END:
+          return TRUE;
+    
+       default:
+          break;
+       }
+       MSG_FATAL("CFieldDebug_NVSETTINGHandleEvent End", 0, 0, 0);
+       return FALSE;
+
+}
+
 /*===========================================================================
 	
 FUNCTION CFieldDebug_PLATFORMIDHandleEvent

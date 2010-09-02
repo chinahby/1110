@@ -403,6 +403,15 @@
 	<String Id="1017" Name="IDS_BLANK">
 		<Text> </Text>
 	</String>
+	<String Id="1018" Name="IDS_NV_SETTING" Encoding="Unicode">
+		<Text>NV Setting</Text>
+	</String>
+	<String Id="1019" Name="IDS_NV_ID" Encoding="Unicode">
+		<Text>NV ID</Text>
+	</String>
+	<String Id="1020" Name="IDS_NV_VALUE" Encoding="Unicode">
+		<Text>NV Value</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
@@ -787,6 +796,20 @@
 		<Controls>
 			<Text Id="7068" Name="IDC_TEXT_SID">
 				<TitleID>IDS_BLANK</TitleID>
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="47" Name="IDD_NVSETTING_DIALOG" Focus="0">
+		<Controls>
+			<Static Id="7042" Name="IDC_NVID_STATIC">
+				<TitleID>IDS_NV_ID</TitleID>
+				<Items/></Static>
+			<Text Id="7044" Name="IDC_NVID_TEXT">
+				<Items/></Text>
+			<Static Id="7055" Name="IDC_NVVALUE_STATIC">
+				<TitleID>IDS_NV_VALUE</TitleID>
+				<Items/></Static>
+			<Text Id="7056" Name="IDC_NVVALUE_TEXT">
 				<Items/></Text>
 		</Controls>
 	</Dialog>
