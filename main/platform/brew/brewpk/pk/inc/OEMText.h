@@ -608,7 +608,120 @@ enum
                                 + _T9_KOREAN_MODE \
                                 + _T9_ITALIAN_MODE  \
                                 )
-                              
+
+//wangliang modify!  2010-09-01
+#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
+{
+   // Lint complains because all the fields aren't explicitly initialized
+   //lint -save -e785
+   {'1','2','3',0}
+   
+#ifdef FEATURE_T9_MT_ENGLISH   
+   ,{'A','B','C',0}
+#endif //FEATURE_T9_MT_ENGLISH
+   
+#ifdef FEATURE_T9_RAPID_ENGLISH
+   ,{'a', 'b','c',0}
+#endif //FEATURE_T9_RAPID_ENGLISH
+
+#ifdef FEATURE_T9_PINYIN
+   ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
+#endif //FEATURE_T9_PINYIN
+
+#ifdef FEATURE_T9_STROKE
+   ,{'T', '9','S', 'T', 'R', 'O', 'K', 'E', 0}
+#endif //FEATURE_T9_STROKE
+
+#ifdef FEATURE_T9_ZHUYIN
+   ,{'T', '9','Z', 'H', 'U', 'Y', 'I', 'N', 0}
+#endif //FEATURE_T9_ZHUYIN
+
+#ifdef FEATURE_T9_MT_ARABIC
+   ,{'T', '9', 'M', 'T', 'A', 'R', 'A', 'B','C',0}
+#endif //FEATURE_T9_MT_ARABIC
+
+#ifdef FEATURE_T9_RAPID_ARABIC
+   ,{'T', '9', 'E', 'Z', 'A', 'R', 'A', 'B', 'I', 'C',0}
+#endif //FEATURE_T9_RAPID_ARABIC
+
+#ifdef FEATURE_T9_MT_HEBREW
+   ,{'T', '9', 'M', 'T', 'H', 'E', 'B', 'R', 'E', 'W',0}
+#endif //FEATURE_T9_MT_HEBREW
+
+#ifdef FEATURE_T9_RAPID_HEBREW
+   ,{'T', '9','E', 'Z', 'H', 'E', 'B', 'R', 'E', 'W',0}
+#endif //FEATURE_T9_RAPID_HEBREW
+
+#ifdef FEATURE_T9_MT_HINDI
+   ,{'T', '9','M', 'T', 'H', 'I', 'N', 'D', 'I', 0}
+#endif //FEATURE_T9_MT_HINDI
+
+#ifdef FEATURE_T9_RAPID_HINDI
+   ,{'T', '9', 'E', 'Z', 'H', 'I', 'N', 'D', 'I', 0}
+#endif //FEATURE_T9_RAPID_HINDI
+
+#ifdef FEATURE_T9_MT_THAI
+   ,{'T', '9','M', 'T', 'T', 'H', 'A', 'I', 0}
+#endif //FEATURE_T9_MT_THAI
+
+#ifdef FEATURE_T9_RAPID_THAI
+   ,{'T', '9','E', 'Z', 'T', 'H', 'A', 'I', 0}
+#endif //FEATURE_T9_RAPID_THAI
+
+#ifdef FEATURE_T9_MT_SPANISH
+   ,{'T', '9','M', 'T', 'S', 'P', 'A', 'N', 'I', 'S', 'H',0}
+#endif //FEATURE_T9_MT_SPANISH
+
+#ifdef FEATURE_T9_RAPID_SPANISH
+   ,{'T', '9','E', 'Z', 'S', 'P', 'A', 'N', 'I', 'S', 'H',0}
+#endif //FEATURE_T9_RAPID_SPANISH
+
+#ifdef FEATURE_T9_MT_PORTUGUESE
+   ,{'T', '9','M', 'T', 'P', 'O', 'R', 'T', 'U', 'G', 'U','E', 'S', 'E',0}
+#endif //FEATURE_T9_MT_PORTUGUESE
+
+#ifdef FEATURE_T9_RAPID_PORTUGUESE
+   ,{'T', '9','E', 'Z', 'P', 'O', 'R', 'T', 'U', 'G', 'U','E', 'S', 'E',0}
+#endif //FEATURE_T9_RAPID_PORTUGUESE
+
+#ifdef FEATURE_T9_MT_INDONESIAN
+   ,{'T', '9','M', 'T', 'I', 'N', 'D', 'O', 'N', 'E', 'S','I', 'A', 'N',0}
+#endif //FEATURE_T9_MT_INDONESIAN
+
+#ifdef FEATURE_T9_RAPID_INDONESIAN
+   ,{'T', '9','E', 'Z', 'I', 'N', 'D', 'O', 'N', 'E', 'S','I', 'A', 'N',0}
+#endif //FEATURE_T9_RAPID_INDONESIAN
+
+#ifdef FEATURE_T9_MT_VIETNAMESE
+   ,{'T', '9','M', 'T', 'N', 'I', 'E', 'T', 'N', 'A', 'M','E', 'S', 'E',0}
+#endif //FEATURE_T9_MT_VIETNAMESE
+
+#ifdef FEATURE_T9_RAPID_VIETNAMESE
+   ,{'T', '9','E', 'Z', 'N', 'I', 'E', 'T', 'N', 'A', 'M','E', 'S', 'E',0}
+#endif //FEATURE_T9_RAPID_VIETNAMESE
+
+#ifdef FEATURE_T9_MT_FRENCH
+   ,{'T', '9','M', 'T', 'F', 'R', 'E', 'N', 'C', 'H',0}
+#endif //FEATURE_T9_MT_FRENCH
+
+#ifdef FEATURE_T9_RAPID_FRENCH
+   ,{'T', '9','E', 'Z', 'F', 'R', 'E', 'N', 'C', 'H',0}
+#endif //FEATURE_T9_RAPID_FRENCH
+
+#ifdef FEATURE_T9_JAPANESE
+   ,{'J', 'A', 'P', 'A', 'N', 'E', 'S', 'E',0}
+#endif //FEATURE_T9_JAPANESE
+
+#ifdef FEATURE_T9_KOREAN
+   ,{'K', 'O', 'R', 'E', 'A', 'N', 0}
+#endif //FEATURE_T9_KOREAN
+
+#ifdef FEATURE_T9_ITALIAN
+   ,{'I', 'T', 'A', 'L', 'I', 'A',  'N',0}
+#endif //FEATURE_T9_ITALIAN
+};
+#else
 static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 {
    // Lint complains because all the fields aren't explicitly initialized
@@ -719,7 +832,7 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
    ,{'T', '9','I', 'T', 'A', 'L', 'I', 'A',  'N',0}
 #endif //FEATURE_T9_ITALIAN
 };
-
+#endif
 
 //===============================================================================
 // Show symbol list

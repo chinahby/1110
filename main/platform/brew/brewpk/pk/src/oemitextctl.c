@@ -796,15 +796,6 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             //return FALSE;
        
         case EVT_KEY:
-			//add by yangdecai  for allkeypad
-			if((pme->m_pSoftKey) && (wParam == AVK_LCTRL) && (shortkey == TRUE) &&
-				(!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms))
-			{
-				// 显示输入法列表
-                    TextCtl_ShowModeMenu(pme);
-                    return(TRUE);
-			}
-			//add by yangdecai 2010-08-27
 			
 #if 1   //modi by yangdecai    //  SWITCH  INPUTMOD  EVT_RELEASE MOVE TO EVT_KEY 
 #if defined (FEATURE_DISP_160X128)
@@ -875,6 +866,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                     {
                         pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
                     }
+				#ifdef FEATURE_LANG_INDONESIAN
 					else if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_INDONESIAN)
 					{
 						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_INDONESIAN;
@@ -883,6 +875,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 					{
 						pme->m_nCurrInputMode = OEM_MODE_T9_MT_INDONESIAN;
 					}
+				#endif
                     OEM_SetInputMode((CTextCtl *)pme);
                     return TRUE;
                 }

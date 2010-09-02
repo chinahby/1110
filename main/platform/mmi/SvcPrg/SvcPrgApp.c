@@ -521,7 +521,7 @@ static boolean CSvcPrg_HandleEvent(CSvcPrgApp *pMe,
 
    case EVT_DIALOG_START:
       return CSvcPrg_OnDialogStart(pMe, wParam, dwParam);
-
+      
    case EVT_DIALOG_END:
       return TRUE;
    
@@ -663,7 +663,8 @@ static boolean CSvcPrg_OnDialogStart(CSvcPrgApp  *pMe,
                                      uint16       wParam, 
                                      uint32       dwParam)
 {
-   if (IDD_GENERICTEXTSK == wParam) {
+   if (IDD_GENERICTEXTSK == wParam) 
+   {
       // Get rid of the annoying Multi-tap softkey and the automatic
       // association between the softkey and text controls.  
       IMenuCtl *pm;
@@ -677,16 +678,23 @@ static boolean CSvcPrg_OnDialogStart(CSvcPrgApp  *pMe,
          return FALSE;
       }
 
+      //Add By zzg 2010_09_02
+      ITEXTCTL_SetProperties(pt, TP_MULTILINE | ITEXTCTL_GetProperties(pt)|TP_FOCUS_NOSEL);   
+      //Add End
+
       (void) IMENUCTL_DeleteAll(pm);
       ITEXTCTL_SetSoftKeyMenu(pt, NULL);
 
 
-   } else if (IDD_GENERICMENU == wParam) {
+   }
+   else if (IDD_GENERICMENU == wParam) 
+   {
       IMenuCtl *pm;
       
       pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, 
                                            IDC_GENERICMENU_MENU);
-      if (!pm) {
+      if (!pm) 
+      {
          return FALSE;
       }
       
@@ -997,7 +1005,7 @@ static boolean CSvcPrg_OnCommand_Edit(IDialog      *pd,
                            IDS_CMD_CANCEL,
                            NULL,
                            (uint32) pItem);
-
+	
    // Set the focus to the text control object
    (void) IDIALOG_SetFocus(pd,
                            IDC_GENERICTEXTSK_TEXT);
@@ -1072,7 +1080,7 @@ static boolean CSvcPrg_OnCommand_Save(CSvcPrgApp      *pMe,
          temp[3] = 0;
          if (!((STRCMP(temp, "158") == 0) ||
                 (STRCMP(temp, "199") == 0)))
-          {
+          {          		
                    (void) ITEXTCTL_SetText(pt, NULL, -1);
                    (void) IDIALOG_SetFocus(pd, IDC_GENERICTEXTSK_TEXT);
                    return CSvcPrg_DisplayMessageDialog(pMe, IDS_INVALID_MIN);
@@ -1469,7 +1477,7 @@ static boolean CSvcPrg_OnCommand_SID_OK(CSvcPrgApp      *pMe,
                            IDS_CMD_NID_CANCEL,
                            NULL,
                            0);
-
+	
    (void) IDIALOG_SetFocus(pd,
                            IDC_GENERICTEXTSK_TEXT);
 
@@ -1693,6 +1701,7 @@ static boolean CSvcPrg_OnSidNidItemSelect(CSvcPrgApp   *pMe,
    if (NULL == pd) {
       return FALSE;
    }
+   
    pm = (IMenuCtl *) IDIALOG_GetControl(pd,IDC_GENERICTEXTSK_SK);
    pt = (ITextCtl *) IDIALOG_GetControl(pd,IDC_GENERICTEXTSK_TEXT);
    if (!pm || !pt) {
@@ -3531,7 +3540,7 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
    case IDD_GENERICMENU:
       pm = (IMenuCtl *) IDIALOG_GetControl(pd, IDC_GENERICMENU_MENU);
       break;
-   case IDD_GENERICTEXTSK:
+   case IDD_GENERICTEXTSK:  	
       pm = (IMenuCtl *) IDIALOG_GetControl(pd, IDC_GENERICTEXTSK_SK);
       pt = (ITextCtl *) IDIALOG_GetControl(pd, IDC_GENERICTEXTSK_TEXT);
       break;
@@ -3621,8 +3630,7 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
       {
          AEERect rcSK, rcText;
          
-         ITEXTCTL_SetProperties(pt, 
-                                TP_MULTILINE | ITEXTCTL_GetProperties(pt)|TP_FOCUS_NOSEL);
+         ITEXTCTL_SetProperties(pt, TP_MULTILINE | ITEXTCTL_GetProperties(pt)|TP_FOCUS_NOSEL);
 
          // BREW Bug:
          // 
