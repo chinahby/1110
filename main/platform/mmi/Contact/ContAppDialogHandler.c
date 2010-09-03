@@ -6117,6 +6117,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                         CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
                         IMENUCTL_SetActive(pGroupList, FALSE);
                         IMENUCTL_SetActive(pMenuCtl, TRUE);
+                        ITEXTCTL_SetActive(pTextCtl, FALSE);
                     }
                     if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
                     {
@@ -6141,7 +6142,6 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                         IMENUCTL_SetActive(pMenuCtl, TRUE);
                         IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
                     }
-                    ITEXTCTL_SetActive(pTextCtl, FALSE);
                 }
                 return TRUE;
                 
