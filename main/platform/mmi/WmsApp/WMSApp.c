@@ -4935,7 +4935,7 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
                             nMsgID = IDS_RUIMFULL;
                         }
                     }
-                    else if ((pMe->m_memruimStatuse.max_slots>0)&&(pMe->m_memruimStatuse.used_tag_slots + 5 >= pMe->m_memruimStatuse.max_slots))
+                    else if ((pMe->m_memruimStatuse.max_slots>0)&&(pMe->m_memruimStatuse.used_tag_slots >= (pMe->m_memruimStatuse.max_slots*8/10)))
                     {
                         nMsgID = IDS_RUIMWILLFULL;
                     }
@@ -4969,7 +4969,7 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
                     {
                         nMsgID = IDS_RUIMFULL;
                     }
-                    else if ((pMe->m_memruimStatuse.max_slots>0)&&(pMe->m_memruimStatuse.used_tag_slots + 5 >= pMe->m_memruimStatuse.max_slots))
+                    else if ((pMe->m_memruimStatuse.max_slots>0)&&(pMe->m_memruimStatuse.used_tag_slots >= (pMe->m_memruimStatuse.max_slots*8/10)))
                     {
                         nMsgID = IDS_RUIMWILLFULL;
                     }
@@ -5073,6 +5073,7 @@ void WmsApp_PlaySMSAlert(WmsApp * pMe, boolean bsmsin)
         {
 
             // 注册按键notify事件，当有按键时关闭MP3短信提示音
+            MSG_FATAL("IALERT_StartSMSAlert::::::::::::::::::::111111111111111111111111111",0,0,0);
             (void)ISHELL_RegisterNotify(pMe->m_pShell, 
                                         AEECLSID_WMSAPP,
                                         AEECLSID_SHELL,
@@ -5085,6 +5086,7 @@ void WmsApp_PlaySMSAlert(WmsApp * pMe, boolean bsmsin)
         }
         else
         {
+        	MSG_FATAL("IALERT_StartSMSAlert::::::::::::::::::::2222222222222222222",0,0,0);
             (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
         }
     }    
