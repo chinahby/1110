@@ -2709,11 +2709,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_DOWN:
 				{
 #if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021)                      
-#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
+
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
-#elif defined FEATURE_VERSION_SMART
+#elif defined (FEATURE_VERSION_SMART)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
-#elif defined FEATURE_VERSION_M8
+#elif defined (FEATURE_VERSION_M8)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 #else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
@@ -2744,11 +2745,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 }
                 case AVK_LEFT:
                 {
-#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)
+
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
-#elif defined FEATURE_VERSION_SMART
+#elif defined (FEATURE_VERSION_SMART)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
-#elif defined FEATURE_VERSION_M8
+#elif defined (FEATURE_VERSION_M8)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
@@ -2762,7 +2764,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_SELECT:
 		 		{
 				int ret = 0;
-#ifdef FEATURE_VERSION_IVIO		
+#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)	
 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP				
 #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
@@ -2776,14 +2778,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
                ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
-#elif defined FEATURE_VERSION_SMART
+#elif defined (FEATURE_VERSION_SMART)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
-#elif defined FEATURE_VERSION_M8
+#elif defined (FEATURE_VERSION_M8)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);

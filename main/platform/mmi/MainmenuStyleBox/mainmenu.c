@@ -1741,11 +1741,11 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
         titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
         STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
 #if defined (FEATURE_DISP_160X128)
-#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
-#elif defined FEATURE_VERSION_SMART
+#elif defined (FEATURE_VERSION_SMART)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_61 + theFocus;
-#elif defined FEATURE_VERSION_M8
+#elif defined (FEATURE_VERSION_M8)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_81 + theFocus;
 #else
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
@@ -1804,11 +1804,11 @@ static void DrawFocusIcon(MainMenu *pMe)
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
 	
 #if defined (FEATURE_DISP_160X128)
-#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
-#elif defined FEATURE_VERSION_SMART
+#elif defined (FEATURE_VERSION_SMART)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_61 + theFocus;
-#elif defined FEATURE_VERSION_M8
+#elif defined (FEATURE_VERSION_M8)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_81 + theFocus;
 #else
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
@@ -1879,11 +1879,11 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 	
 #if defined (FEATURE_DISP_160X128)
 
-#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
-#elif defined FEATURE_VERSION_SMART
+#elif defined (FEATURE_VERSION_SMART)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_61 + theFocus;
-#elif defined FEATURE_VERSION_M8
+#elif defined (FEATURE_VERSION_M8)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_81 + theFocus;
 #else
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
@@ -2226,7 +2226,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
 #endif
 
 #if defined (FEATURE_DISP_160X128)
-#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
         case 0:
         {
             
@@ -2290,7 +2290,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
             break;
 			
-#elif defined FEATURE_VERSION_SMART
+#elif defined (FEATURE_VERSION_SMART)
 		case 0:
         {             
             //Smart World;
@@ -2365,7 +2365,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;
         }
-#elif defined FEATURE_VERSION_M8 
+#elif defined (FEATURE_VERSION_M8) 
 		case 0:
         {   
             //b-live;

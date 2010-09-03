@@ -140,6 +140,14 @@
 #define    PWROFF_ANI_FRAME_COUNT                (10)
 #define    PWROFF_ANI_RATE                       (350)
 #define    ANI_RATE                              (180)
+#elif defined FEATURE_VERSION_IVIOCOMMON
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
+#define    PWRON_ANI_FRAME_COUNT                 (15)
+#define    PWRON_ANI_RATE                        (220)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronani.png"
+#define    PWROFF_ANI_FRAME_COUNT                (15)
+#define    PWROFF_ANI_RATE                       (220)
+#define    ANI_RATE                              (150)
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (12)

@@ -909,7 +909,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			#if 0
             IMENUCTL_SetTitle(pMenu, APPLICATION_RES_FILE_LANG, IDS_APPLICATION_LIST, NULL);
 			#else
-			#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TOOLS_LIST,
@@ -928,14 +928,14 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             }
 			#endif
 			
-#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_1, IDS_TOOLS_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_2, IDS_TOOLS_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_3, IDS_TOOLS_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_4, IDS_TOOLS_TITLE_4, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_5, IDS_TOOLS_TITLE_5, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_6, IDS_TOOLS_TITLE_6, NULL, 0);
-#elif defined FEATURE_VERSION_SMART
+#elif defined (FEATURE_VERSION_SMART)
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
@@ -943,7 +943,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);
-#elif defined FEATURE_VERSION_M8			
+#elif defined (FEATURE_VERSION_M8)			
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
@@ -952,7 +952,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_13, IDS_APPLICATION_TITLE_13, NULL, 0);	
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);	
-#elif defined FEATURE_VERSION_FLEXI021      
+#elif defined (FEATURE_VERSION_FLEXI021 )     
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
@@ -1024,7 +1024,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
         case EVT_KEY:
             switch(wParam)
             {
-#ifdef FEATURE_VERSION_IVIO            
+#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)
                 case AVK_1:
                 case AVK_2:
                 case AVK_3:
@@ -1033,7 +1033,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 case AVK_6:
                 case AVK_STAR:
                 case AVK_POUND:
-#elif defined  FEATURE_VERSION_SMART
+#elif defined  (FEATURE_VERSION_SMART)
 				case AVK_1:
                 case AVK_2:
                 case AVK_3:
@@ -1041,7 +1041,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 case AVK_5:
                 case AVK_6:
 				case AVK_7:	
-#elif defined  FEATURE_VERSION_M8
+#elif defined  (FEATURE_VERSION_M8)
 				case AVK_1:
                 case AVK_2:
                 case AVK_3:
@@ -1085,9 +1085,9 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             
         case EVT_COMMAND:
             pMe->m_MainSel = wParam;
-#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)
 			StartApplet(pMe, wParam - IDS_TOOLS_TITLE_1);
-#elif defined FEATURE_VERSION_SMART
+#elif defined (FEATURE_VERSION_SMART)
 			switch (wParam)
 			{
 				case IDS_APPLICATION_TITLE_10:
@@ -1102,7 +1102,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 				}
 			}
 			
-#elif defined FEATURE_VERSION_M8
+#elif defined (FEATURE_VERSION_M8)
 			switch (wParam)
 			{
 				case IDS_APPLICATION_TITLE_13:
@@ -1150,7 +1150,7 @@ static boolean StartApplet(Application *pMe, int i)
    	//MSG_ERROR("StartApplet:::::%d",i,0,0);
     switch(i)
     {
-#ifdef FEATURE_VERSION_IVIO
+#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)
         case 0:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
@@ -1175,7 +1175,7 @@ static boolean StartApplet(Application *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
             break;
 
-#elif defined FEATURE_VERSION_SMART                  
+#elif defined (FEATURE_VERSION_SMART)                  
         case 0:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
@@ -1211,7 +1211,7 @@ static boolean StartApplet(Application *pMe, int i)
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
             break;
         }			
-#elif defined FEATURE_VERSION_M8              
+#elif defined (FEATURE_VERSION_M8)              
         case 0:
         {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
@@ -1252,7 +1252,7 @@ static boolean StartApplet(Application *pMe, int i)
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
             break;
         }		
-#elif defined FEATURE_VERSION_FLEXI021  
+#elif defined (FEATURE_VERSION_FLEXI021)  
         case 0:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
             break;
