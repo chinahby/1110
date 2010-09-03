@@ -1939,6 +1939,10 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
     //      return;
     //   }
 
+	//Add By zzg 2010_09_02
+	nProperties |= TP_FOCUS_NOSEL;
+	//Add End
+	
     pme->m_dwProps = nProperties;
     if (nProperties & TP_LARGE_FONT) 
     {
