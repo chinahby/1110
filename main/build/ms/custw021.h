@@ -32,6 +32,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_VERSION_IVIO
 //#define FEATURE_VERSION_SMART
+#define FEATURE_VERSION_FLEXI021
 #endif
 
 #ifndef TARGSB2_H

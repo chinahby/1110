@@ -41,8 +41,8 @@ CONSTFILE_FILES+=\
 	poweroffani.png|fs:/image/pwronoffani/poweroffani.png
 else
 CONSTFILE_FILES+=\
-    poweronani.png|fs:/image/pwronoffani/poweronani.png \
-	poweroffani.png|fs:/image/pwronoffani/poweroffani.png
+    poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
+	poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg
 endif
 endif #ifeq ($(USES_LOWMEM), yes)
 

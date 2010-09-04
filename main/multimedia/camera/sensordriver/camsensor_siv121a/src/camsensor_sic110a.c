@@ -900,7 +900,8 @@ static boolean camsensor_sic110a_start( camsensor_static_params_type *camsensor_
 	/* ------------------  Sensor-specific Config -------------- */
 	/* Make/model of sensor */
 	camsensor_params->sensor_model  = CAMSENSOR_SIC110A_ID;
-
+    //use_camsensor_sic110a = TRUE;
+    //use_camsensor_siv121a = FALSE;
 	/* CCD or CMOS */
 	camsensor_params->sensor_type   = CAMSENSOR_CMOS;
 

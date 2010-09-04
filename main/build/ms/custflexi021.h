@@ -35,6 +35,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_VERSION_M8
 #define FEATURE_VERSION_FLEXI021
 
+
 #endif
 
 #ifndef TARGSB2_H
@@ -225,11 +226,20 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 #define FEATURE_COMBINED_PWR_END_KEYS
-#define FEATURE_FLEXI_STATIC_BREW_APP
+//#define FEATURE_FLEXI_STATIC_BREW_APP
 #define FEATURE_DRV_SDCC
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
+//#ifndef FEATURE_AAC
+//#define FEATURE_AAC
+//#endif
+//#define FEATURE_AAC_PLUS
+//#define FEATURE_ENHANCED_AAC_PLUS
+
+//#ifndef FEATURE_QTUNES_COMMON
+//#define FEATURE_QTUNES_COMMON
+//#endif
 #endif
 
 #include "custuim.h"
@@ -320,9 +330,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_IS2000_SCH
    #undef FEATURE_IS2000_SCH
 #endif
-#ifdef FEATURE_AAC
-   #undef FEATURE_AAC
-#endif
+//#ifdef FEATURE_AAC
+  // #undef FEATURE_AAC
+//#endif
 #ifdef CLKRGM_FREQ_STEP
    #undef CLKRGM_FREQ_STEP
 #endif

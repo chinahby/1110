@@ -140,6 +140,22 @@
 #define    PWROFF_ANI_FRAME_COUNT                (10)
 #define    PWROFF_ANI_RATE                       (350)
 #define    ANI_RATE                              (180)
+#elif defined FEATURE_VERSION_FLEXI021
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
+#define    PWRON_ANI_FRAME_COUNT                 (12)
+#define    PWRON_ANI_RATE                        (380)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
+#define    PWROFF_ANI_FRAME_COUNT                (12)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
+#elif defined FEATURE_VERSION_ESIA021
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
+#define    PWRON_ANI_FRAME_COUNT                 (12)
+#define    PWRON_ANI_RATE                        (380)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
+#define    PWROFF_ANI_FRAME_COUNT                (12)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
 #elif defined FEATURE_VERSION_IVIOCOMMON
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (15)
@@ -149,14 +165,15 @@
 #define    PWROFF_ANI_RATE                       (220)
 #define    ANI_RATE                              (150)
 #else
-#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)
 #define    PWRON_ANI_RATE                        (380)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (380)
 #define    ANI_RATE                              (150)
 #endif
+
 
 // 下列变量为临时定义
 #define PHONEPASSWORDLENTH      OEMNV_LOCKCODE_MAXLEN
