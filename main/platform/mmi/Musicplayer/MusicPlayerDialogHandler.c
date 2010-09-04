@@ -822,7 +822,17 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
 
                 case AVK_BGPLAY:
-                    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    //ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    if(pMe->m_bPlaying)
+                    {
+                        //处理背景播放
+                        SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }
+                    else
+                    {
+                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }                       
                     return TRUE;
 
                 case AVK_INFO:
@@ -1069,7 +1079,17 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
 
                 case AVK_BGPLAY:
-                    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    //ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    if(pMe->m_bPlaying)
+                    {
+                        //处理背景播放
+                        SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }
+                    else
+                    {
+                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }                       
                     return TRUE;
 
                 case AVK_SELECT:
@@ -1315,7 +1335,17 @@ static boolean MP3_Settings_HandleEvent(CMusicPlayer *pMe,
                     return  TRUE;
 
                case AVK_BGPLAY:
-                    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    //ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    if(pMe->m_bPlaying)
+                    {
+                        //处理背景播放
+                        SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }
+                    else
+                    {
+                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }                       
                     return TRUE;
                     
             }
@@ -1606,7 +1636,17 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
 
                 case AVK_BGPLAY:
-                    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    //ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    if(pMe->m_bPlaying)
+                    {
+                        //处理背景播放
+                        SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }
+                    else
+                    {
+                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }                       
                     return TRUE;
                     
                 default:
@@ -1853,7 +1893,17 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
 
                 case AVK_BGPLAY:
-                    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    //ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    if(pMe->m_bPlaying)
+                    {
+                        //处理背景播放
+                        SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }
+                    else
+                    {
+                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }                       
                     return TRUE;
 
                 case AVK_INFO:
@@ -1988,7 +2038,17 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
 
                 case AVK_BGPLAY:
-                    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    //ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    if(pMe->m_bPlaying)
+                    {
+                        //处理背景播放
+                        SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }
+                    else
+                    {
+                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }                       
                     return TRUE;
                     
                 default:
@@ -2312,7 +2372,17 @@ static boolean MP3_CreatOrRenamelist_HandleEvent(CMusicPlayer *pMe,
             switch(wParam)
             {
                  case AVK_BGPLAY:
-                    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    //ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    if(pMe->m_bPlaying)
+                    {
+                        //处理背景播放
+                        SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }
+                    else
+                    {
+                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }                       
                     return TRUE;
 
                 default:
