@@ -837,15 +837,24 @@ _f_writesector_is_udata (F_VOLUME * vi, void *data, unsigned long sector,
       }
       if (!ret)
         return F_NO_ERROR;
-
+#ifndef CUST_EDITION
       /* Check if card has been removed */
       if (ret == -1)
       {
         vi->state = F_STATE_NEEDMOUNT;  /* card has been removed; */
         return F_ERR_CARDREMOVED;
       }
+#endif
     }
-
+    
+#ifdef CUST_EDITION
+    /* Check if card has been removed */
+    if (ret == -1)
+    {
+      vi->state = F_STATE_NEEDMOUNT;  /* card has been removed; */
+      return F_ERR_CARDREMOVED;
+    }
+#endif
     if (ret)
     {
       return F_ERR_ONDRIVE;     /* error after retrying finished */

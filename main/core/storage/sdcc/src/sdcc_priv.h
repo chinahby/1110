@@ -673,6 +673,7 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len);
 static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *pdata, int len);
 SDCC_STATUS sdcc_read_data(byte *buff, uint16 length);
 SDCC_STATUS sdcc_write_data(byte *buff, uint16 length);
+uint16 sdcc_getblksize(uint16 units);
 #endif
 #endif /* ifdef __SDCC_PRIV_H */
 

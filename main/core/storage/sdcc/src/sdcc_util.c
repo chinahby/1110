@@ -3041,6 +3041,9 @@ boolean sdcc_silent_reinit()
 #ifdef T_QSC1100
 #include "crc.h"
 
+#define SDCC_MIN_WAIT   1024
+#define SDCC_MAX_WAIT   (1024*1024*8)
+
 static const unsigned char crc7_table[256] = 
 {
     0x00,0x09,0x12,0x1B,0x24,0x2D,0x36,0x3F,0x48,0x41,0x5A,0x53,0x6C,0x65,0x7E,0x77,
@@ -3252,7 +3255,7 @@ static INLINE byte sdcc_recv_cmd_byte_wait(void)
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data = 0;
     register byte mask;
-    int i = 64; //最大等待周期
+    int i = SDCC_MIN_WAIT; //最大等待周期
 
     mask = 0x80;
     while(i--) // Ncr
@@ -3377,7 +3380,7 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
     
     // START Bit
-    i = 8;
+    i = SDCC_MIN_WAIT;
     while(i)
     {
         outpdw(pDest, clkl);
@@ -3411,7 +3414,7 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     }
     
     // Busy Start bit
-    i = 8;
+    i = SDCC_MIN_WAIT;
     while(i)
     {
         outpdw(pDest, clkl);
@@ -3430,7 +3433,7 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     }
     dog_kick();
     // Wait until write finished
-    i = 1024*1024;
+    i = SDCC_MAX_WAIT;
     while(i)
     {
         outpdw(pDest, clkl);
@@ -3472,7 +3475,7 @@ static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
     outpdw(pDest, clkh);
     dog_kick();
     // START Bit
-    i = 2048;
+    i = SDCC_MIN_WAIT*4;
     while(i--)
     {
         outpdw(pDest, clkl);
@@ -3637,7 +3640,7 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
     
     // START Bit
-    i = 8;
+    i = SDCC_MIN_WAIT;
     while(i)
     {
         outpdw(pDest, clkl);
@@ -3671,7 +3674,7 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     }
     
     // Busy Start bit
-    i = 8;
+    i = SDCC_MIN_WAIT;
     while(i)
     {
         outpdw(pDest, clkl);
@@ -3690,7 +3693,7 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     }
     dog_kick();
     // Wait until write finished
-    i = 1024*1024;
+    i = SDCC_MAX_WAIT;
     while(i)
     {
         outpdw(pDest, clkl);
@@ -3726,7 +3729,7 @@ static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
 
     dog_kick();
     // START Bit
-    i = 2048;
+    i = SDCC_MIN_WAIT*4;
     while(i--)
     {
         outpdw(pDest, clkl);
@@ -3782,7 +3785,7 @@ static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
 SDCC_STATUS sdcc_write_data(byte *buff, uint16 length)
 {
     SDCC_STATUS rc = SDCC_NO_ERROR;
-    uint32 blksize = sdcc_pdata.mem.block_len;
+    uint32 blksize = sdcc_getblksize(length);
     
     if(NULL == buff)
     {
@@ -3828,7 +3831,7 @@ SDCC_STATUS sdcc_write_data(byte *buff, uint16 length)
 SDCC_STATUS sdcc_read_data(byte *buff, uint16 length)
 {
     SDCC_STATUS rc = SDCC_NO_ERROR;
-    uint32 blksize = sdcc_pdata.mem.block_len;
+    uint32 blksize = sdcc_getblksize(length);
     
     if(!buff)
     {
@@ -3881,5 +3884,38 @@ SDCC_STATUS sdcc_read_data(byte *buff, uint16 length)
     sdcc_clock_out(8);
     return rc;
 }
+
+uint16 sdcc_getblksize(uint16 units)
+{
+  uint16    blksz       = 0;
+  
+    /* Note:
+       1. data size in byte_mode should be the power of 2
+       2. DMA doesn't work for small data size
+       3. units: number of bytes in byte mode
+                 number of blocks in block mode
+    */
+  if(SDCC_SDIO_BYTE_MODE == sdcc_pdata.block_mode ||
+     SDCC_MEM_BYTE_MODE == sdcc_pdata.block_mode)
+  {
+    /* set data length */
+    blksz = units;
+  }
+  else
+  {
+    if(SDCC_CARD_SDIO == sdcc_pdata.card_type)
+    {
+        blksz = sdcc_pdata.io.fn_blksz;
+    }
+    else
+    {
+        blksz = sdcc_pdata.mem.block_len;
+    }
+  }
+  
+  return blksz;
+
+}/* sdcc_getblksize */ 
+
 #endif
 
