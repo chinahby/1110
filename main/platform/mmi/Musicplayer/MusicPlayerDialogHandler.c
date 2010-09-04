@@ -553,9 +553,20 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
                 }
-                case AVK_BGPLAY:					
-                    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                case AVK_BGPLAY:
+                    if(pMe->m_bPlaying)
+                    {
+                        //´¦Àí±³¾°²¥·Å
+                        SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }
+                    else
+                    {
+                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                    }   
                     return TRUE;
+                   // ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                   // return TRUE;
                     
                 default:
                     break;                    
