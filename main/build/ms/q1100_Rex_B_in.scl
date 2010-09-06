@@ -39,7 +39,7 @@ MSM_NOTPAGED +0
     boot_target.o (+RO)
   }
 
-  AMSS_IMEM_VEC_TBL  0x58000000  0x1FFFF
+  AMSS_IMEM_VEC_TBL  0x58000000  0x17FFF
   {
     boot_vectors.o (Int_Vect)
     GreyBit*.o(+RO)

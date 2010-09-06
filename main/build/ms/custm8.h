@@ -43,7 +43,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
    #include "targsbw2.h"
 #endif
 
-#define FEATURE_DATA_STRIP_ATCOP 
+//#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 
 #define CUST_MOB_MODEL 22
