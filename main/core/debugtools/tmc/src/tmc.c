@@ -3597,10 +3597,7 @@ LOCAL   void                       tmc_libraries_init_before_tasks_start(
 #error code not present
     #endif /* defined(SIRIUS_PLATFORM) && defined(WOLF_5) */
 
-    #ifdef FEATURE_USE_TIME_VU
-      /* The PMIC has been initialized, get time-of-day from the PMIC's RTC */
-      time_set_from_pmic();
-    #endif /* FEATURE_USE_TIME_VU */
+    
 
     #endif /* FEATURE_PMIC */
 
@@ -6126,6 +6123,7 @@ LOCAL   void                       tmc_define_tasks( void )
 
   #endif /* FEATURE_UIM */
   #endif /* FEATURE_BRINGUP_DIAG_ONLY */
+  
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -8215,6 +8213,7 @@ LOCAL   void                       tmc_define_tasks( void )
     (void) tmc_wait(TMC_ACK_SIG);
     (void) rex_clr_sigs(rex_self(), TMC_ACK_SIG);
   #endif /*FEATURE_QTV_STATIC_DLDSPSVC_TASK*/
+  
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 } /* tmc_define_tasks(void) */
 

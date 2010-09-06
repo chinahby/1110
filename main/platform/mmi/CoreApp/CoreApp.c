@@ -558,6 +558,10 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         case EVT_DIALOG_INIT:
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_wActiveDlgID = wParam;
+			#ifdef FEATURE_USE_TIME_VU
+			/* The PMIC has been initialized, get time-of-day from the PMIC's RTC */
+			time_set_from_pmic();
+			#endif /* FEATURE_USE_TIME_VU */
             CoreApp_SetDialogHandler(pMe);
             return CoreApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
 

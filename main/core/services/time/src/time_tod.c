@@ -156,6 +156,37 @@ when       who     what, where, why
 /* One second (800 x 1.25ms) expressed as a timestamp format value */
 #define TOD_1_SEC                 (800uL << 16)
 
+//add by yangdecai 2010-09-06
+#include "AEEStdLib.h"
+#include "nv.h"
+
+#define TOD_JU_MONTH                1
+#define TOD_FE_MONTH                2
+#define TOD_MO_MONTH                3
+#define TOD_FR_MONTH                4
+#define TOD_MA_MONTH                5
+#define TOD_JN_MONTH                6
+#define TOD_JL_MONTH                7
+#define TOD_AN_MONTH                8
+#define TOD_ST_MONTH                9
+#define TOD_OT_MONTH                10
+#define TOD_NE_MONTH                11
+#define TOD_DE_MONTH                12
+
+#define TOD_TIME_ZONE               8
+#define TOD_TIME_24H                24
+
+#define TOD_LEAP_YEAR               29
+#define TOD_COMMON_YEAR             28
+
+#define TOD_BIG_MONTH               31
+#define TOD_SAM_MONTH               30
+
+
+
+
+//add by yangdecai 2010-09-06
+
 
 /*-----------------------------------------------------------------------------
   Time of day static information
@@ -299,7 +330,7 @@ void time_tod_set_from_pmic_rtc( void )
 
   /* PMIC's RTC time, expressed as in time_type timestamp format */
   time_type                       pmic_time;
-
+  MSG_FATAL("time_tod_set_from_pmic_rtc:::::::::::::1111111111111111111",0,0,0);
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
   /* If time-of-day has already been read from the PMIC's RTC ... */
@@ -324,7 +355,140 @@ void time_tod_set_from_pmic_rtc( void )
 
   /* Retrieve the real time clock's Julian time/date from the PMIC */
   pm_rtc_rw_cmd(PM_RTC_GET_CMD, (pm_rtc_julian_type*)(&julian));
+  //add by yangdecai 2010-09-04
+  {
+	  	boolean daylight = 0;
+	    int32   local    = 0;//LOCALTIMEOFFSET( &daylight);
+	    int     timezone = 0;//local / 3600;
+   
+		nv_item_type nvi;
+    	int32 tzoffset = 0;                 
+    	nv_stat_enum_type     nv_read_status;                
+   	
+    
+    	nv_read_status = OEMNV_Get(NV_DB_LTM_OFF_I, &nvi);
 
+    	if (nv_read_status == NV_DONE_S)
+    	{
+    		int32 ltm_off = 0;
+		     
+		      ltm_off = (int32)(nvi.db_ltm_off & 0xFF);
+		      if(ltm_off >= 128){
+		        ltm_off -= 256;
+		      }
+
+		      tzoffset = ltm_off * 15 * 60;
+			  timezone = tzoffset/3600;
+    	}
+		if(OEMNV_Get(NV_DB_DAYLT_I, &nvi) ==  NV_DONE_S)
+		{
+        	daylight = (boolean)nvi.db_daylt;
+		}
+		
+	    if( daylight)
+	    {
+	        timezone --;
+	    }
+		//timezone = TOD_TIME_ZONE;
+		if(timezone>0)
+		{
+			if(julian.hour>timezone)
+			{
+				julian.hour = julian.hour-timezone;  
+			}
+			else
+			{
+				if(julian.day>1)
+				{
+					julian.day = julian.day -1;
+				}
+				else
+				{
+					if((julian.month == TOD_MA_MONTH) ||(julian.month == TOD_JL_MONTH)||
+					   (julian.month == TOD_OT_MONTH) ||(julian.month == TOD_DE_MONTH))
+					{
+						julian.month = julian.month-1;
+						julian.day = TOD_SAM_MONTH;
+					}
+					else if((julian.month == TOD_FE_MONTH) ||(julian.month == TOD_FR_MONTH) ||(julian.month == TOD_JN_MONTH) ||
+						    (julian.month == TOD_AN_MONTH) ||(julian.month == TOD_ST_MONTH) ||(julian.month == TOD_NE_MONTH))
+					{
+						julian.month = julian.month-1;
+						julian.day = TOD_BIG_MONTH;
+					}
+					else if(julian.month == TOD_JU_MONTH)
+					{
+						julian.year = julian.year-1;
+						julian.month = TOD_DE_MONTH;
+						julian.day = TOD_BIG_MONTH;
+					}
+					else if(julian.month == TOD_MO_MONTH)
+					{
+						julian.month = TOD_FE_MONTH;
+						if(((julian.year%4 ==0) &&(julian.year%100!=0))||((julian.year%100 ==0) &&(julian.year%400!=0)))
+						{
+							julian.day = TOD_LEAP_YEAR;
+						}
+						else
+						{
+							julian.day = TOD_COMMON_YEAR;
+						}
+						
+					}
+				}
+				julian.hour = julian.hour+(TOD_TIME_24H-timezone);
+			}
+		}
+		else
+		{
+			int temp = TOD_TIME_24H + timezone;
+			if(julian.hour<temp)
+			{
+				julian.hour = julian.hour-timezone;   //add by yangdecai 2010-09-04
+			}
+			else
+			{
+				
+				if(((julian.month == TOD_JU_MONTH) ||(julian.month == TOD_MA_MONTH) ||(julian.month == TOD_JL_MONTH)||
+				    (julian.month == TOD_OT_MONTH) ||(julian.month == TOD_MO_MONTH)|| 
+				    (julian.month == TOD_AN_MONTH))&&(julian.day == TOD_BIG_MONTH))
+				{
+					julian.month = julian.month + 1;
+					julian.day = 1;
+				}
+				else if(((julian.month == TOD_FR_MONTH) ||(julian.month == TOD_JN_MONTH) ||
+					     (julian.month == TOD_ST_MONTH) ||(julian.month == TOD_NE_MONTH))&&
+					     (julian.day == TOD_SAM_MONTH))
+				{
+					julian.month = julian.month + 1;
+					julian.day = 1;
+				}
+				else if(julian.month == TOD_DE_MONTH)
+				{
+					julian.year = julian.year+1;
+					julian.month = TOD_JU_MONTH;
+					julian.day = 1;
+				}
+				else if(julian.month == TOD_FE_MONTH)
+				{
+					
+					if(((julian.year%4 ==0) &&(julian.year%100!=0))||((julian.year%100 ==0) &&(julian.year%400!=0))&&
+						(julian.day == TOD_LEAP_YEAR))
+					{
+						julian.month = julian.month +1;
+						julian.day = 1;
+					}
+					else if(julian.day == TOD_COMMON_YEAR)
+					{
+						julian.month = julian.month +1;
+						julian.day = 1;
+					}
+				}
+			    julian.hour = julian.hour-(TOD_TIME_24H+timezone);
+			}
+		}
+  }
+   //add by yangdecai 2010-09-04 end
   /* Be sure that the time/date is valid */
   valid = pm_is_rtc_valid( PM_RTC_24HR_MODE, (pm_rtc_julian_type*)(&julian) );
 
