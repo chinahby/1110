@@ -3445,11 +3445,11 @@ boolean IsDoubleBytesIME(AEETextInputMode imnputmode)
 //-------------------------------------------------------------------
 //             Single bytes
 //-------------------------------------------------------------------
-#if defined(FEATURE_LANG_INDONESIAN)
+#if defined(FEATURE_INPUTMODE_INDONESIAN)
     case AEE_TM_INDONESIAN:
     case AEE_TM_INDONESIAN_R:
         return FALSE;
-#endif// defined(FEATURE_LANG_INDONESIAN)
+#endif // defined(FEATURE_INPUTMODE_INDONESIAN)
 
     case AEE_TM_NUMBERS:
     case AEE_TM_LETTERS:

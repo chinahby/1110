@@ -59,13 +59,13 @@ extern const T9U8 T9FARDATA l0110b02[];
 extern const T9U8 T9FARDATA l0110b03[];
 #endif //FEATURE_LANG_SPANISH
 
-#ifdef FEATURE_LANG_INDONESIAN
+#ifdef FEATURE_INPUTMODE_INDONESIAN
 extern const T9U8 T9FARDATA l0133b00[];/* Indonesian */
 extern const T9U8 T9FARDATA l0133b01[];
 extern const T9U8 T9FARDATA l0133b02[];
 extern const T9U8 T9FARDATA l0133b03[];
 extern const T9U8 T9FARDATA l0133b04[];
-#endif //FEATURE_LANG_INDONESIAN
+#endif //FEATURE_INPUTMODE_INDONESIAN
 
 // Gemsea add the code on 080621
 #ifdef FEATURE_LANG_PORTUGUESE
@@ -174,7 +174,7 @@ T9U32 T9FARCALL T9ReadLdbData(T9FieldInfo *pFieldInfo, T9U32 dwOffset, T9FARPOIN
         break;
 #endif //FEATURE_LANG_SPANISH  
 
-#ifdef FEATURE_LANG_INDONESIAN
+#ifdef FEATURE_INPUTMODE_INDONESIAN
     case ( 1 * 256) + 33 : /* Indonesian */
              if (dwOffset <  15360) *ppbDst = (T9FARPOINTER) l0133b00;
         else if (dwOffset <  30720) *ppbDst = (T9FARPOINTER) l0133b01;
@@ -183,7 +183,7 @@ T9U32 T9FARCALL T9ReadLdbData(T9FieldInfo *pFieldInfo, T9U32 dwOffset, T9FARPOIN
         else if (dwOffset <  64179) {*ppbDst = (T9FARPOINTER) l0133b04; nSize =   2739;}
         else                        nSize = 0; /* Invalid offset into database! */
         break;      
-#endif //FEATURE_LANG_INDONESIAN
+#endif //FEATURE_INPUTMODE_INDONESIAN
 
 // Gemsea add the code on 080621
 #ifdef FEATURE_LANG_PORTUGUESE

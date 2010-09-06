@@ -3392,12 +3392,14 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #if defined(FEATURE_LANG_PORTUGUESE)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PORTUGUESE, IDS_PORTUGUESE, NULL, 0);
 #endif
+
 #if defined(FEATURE_LANG_INDONESIAN)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_INDONESIAN, IDS_INDONESIAN, NULL, 0);
 #if defined(FEATURE_CARRIER_INDONESIA)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CHINESE, IDS_CHINESE, NULL, 0);
 #endif
 #endif
+
 #if defined(FEATURE_LANG_HINDI)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_HINDI, IDS_HINDI, NULL, 0);
 #endif
@@ -3610,7 +3612,7 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LANG_INDONESIAN
                 case IDS_INDONESIAN:    //Ó¡¶ÈÄáÎ÷ÑÇ
                     language = NV_LANGUAGE_INDONESIAN;
-                    inputmode = OEM_MODE_T9_MT_INDONESIAN;                           
+                    inputmode = OEM_MODE_T9_MT_ENGLISH; //OEM_MODE_T9_MT_INDONESIAN;                           
                     break;
                     
 #if defined(FEATURE_CARRIER_INDONESIA)

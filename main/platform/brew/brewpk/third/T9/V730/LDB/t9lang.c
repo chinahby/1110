@@ -57,13 +57,13 @@
 #include "l0110b03.c"
 #endif //FEATURE_LANG_SPANISH
 
-#ifdef FEATURE_LANG_INDONESIAN
+#ifdef FEATURE_INPUTMODE_INDONESIAN
 #include "l0133b00.c"     /* Indonesian */
 #include "l0133b01.c"
 #include "l0133b02.c"
 #include "l0133b03.c"
 #include "l0133b04.c"
-#endif //FEATURE_LANG_INDONESIAN
+#endif //FEATURE_INPUTMODE_INDONESIAN
 
 // Gemsea add the code on 080621
 #ifdef FEATURE_LANG_PORTUGUESE
