@@ -348,7 +348,11 @@ PNGE_returnCodeType   pnge_encode
               &open_parms, NULL, &fs_rsp_tmp);
 
         /* Check if invalid file name and null file handler */
+#ifdef CUST_EDITION
+        if ((fs_rsp_tmp.open.status != FS_OKAY_S) || (fs_rsp_tmp.open.handle == NULL))
+#else
         if ((fs_rsp_tmp.open.status != FS_OKAY_S) && (pnge_handle->fs_rsp.open.handle == NULL))
+#endif
         {
             pnge_encode_abort();
             MSG_ERROR("PNGENC: EFS failed. ", 0, 0, 0);
