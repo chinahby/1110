@@ -44,7 +44,7 @@ ifeq ($(USES_LOWMEM), yes)
 					        street_tale.mid|fs:/ringers/street_tale.mid \
 					        lucky.mid|fs:/ringers/lucky.mid \
 					        street_tale.mid|fs:/ringers/street_tale.mid 
-		else ifef ($(USES_RESDIR), common)
+		else ifeq ($(USES_RESDIR), common)
 					CONSTFILE_FILES+=\
 					        soundmenu.mif|fs:/mif/soundmenu.mif \
 					        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
@@ -164,7 +164,7 @@ else
 								        techno_meto.mid|fs:/ringers/techno_meto.mid \
 								        lucky.mid|fs:/ringers/lucky.mid \
 					        			street_tale.mid|fs:/ringers/street_tale.mid 
-			    else ifef ($(USES_RESDIR), common)
+			    else ifeq ($(USES_RESDIR), common)
 			    			CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
 								        enhusoundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
@@ -244,7 +244,7 @@ else
 								        techno_meto.mid|fs:/ringers/techno_meto.mid \
 								        feeling_on.mid|fs:/ringers/feeling_on.mid \
 								        feeling_off.mid|fs:/ringers/feeling_off.mid										        
-			 esle
+			     esle
 				 					CONSTFILE_FILES+=\
 									      soundmenu.mif|fs:/mif/soundmenu.mif \
 								        enhusoundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
@@ -263,7 +263,7 @@ else
     			endif
 
     else
-    		ifeq ($(USES_RESDIR), IVIO)
+    		    ifeq ($(USES_RESDIR), IVIO)
     						CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
 								        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
@@ -295,7 +295,7 @@ else
 								        techno_meto.mid|fs:/ringers/techno_meto.mid \
 								        lucky.mid|fs:/ringers/lucky.mid \
 					        			street_tale.mid|fs:/ringers/street_tale.mid 
-			    else ifef ($(USES_RESDIR), common)
+			    else ifeq ($(USES_RESDIR), common)
 			    			CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
 								        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
@@ -375,7 +375,7 @@ else
 								        techno_meto.mid|fs:/ringers/techno_meto.mid \
 								        feeling_on.mid|fs:/ringers/feeling_on.mid \
 								        feeling_off.mid|fs:/ringers/feeling_off.mid										        
-			else								        	
+			    else								        	
 			    						CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
 								        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
