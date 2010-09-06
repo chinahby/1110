@@ -866,7 +866,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                     {
                         pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
                     }
-				#ifdef FEATURE_LANG_INDONESIAN
+				#ifdef FEATURE_INPUTMODE_INDONESIAN
 					else if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_INDONESIAN)
 					{
 						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_INDONESIAN;

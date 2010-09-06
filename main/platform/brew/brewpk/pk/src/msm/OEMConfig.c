@@ -1762,7 +1762,7 @@ uint32 GetLngCode(void)
             LngCode = LNG_SCHINESE;             
             break; 
 #endif
-#endif //FEATURE_LANG_INDONESIAN
+#endif 	//FEATURE_LANG_INDONESIAN           
 
 #ifdef FEATURE_LANG_HINDI
          case NV_LANGUAGE_HINDI:
