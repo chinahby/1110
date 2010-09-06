@@ -403,84 +403,67 @@ static NextFSMAction COREST_ALARM_Handler(CCoreApp *pMe)
 static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
 {
     CoreAppState    tepState;
-    uint32 esn=0;
     MSG_FATAL("COREST_LPM_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
     }
-    //修正校准综测重启不能进待机问题	
-#ifndef FEATURE_CDG2_TEST
-    ICONFIG_GetItem(pMe->m_pConfig,
-                          CFGI_ESN,
-                          &esn,
-                          sizeof(esn));
-#endif
     
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
-            if(esn)
+            tepState = COREST_NONE;
+            if(CoreApp_Start_Alarm(pMe))
             {
-                tepState = COREST_NONE;
-                if(CoreApp_Start_Alarm(pMe))
+                tepState = COREST_ALARM;
+            }
+            else if (IBATTERY_GetExternalPower(pMe->m_pBatt))
+            {
+                static boolean lpm   = 0;
+                db_items_value_type db;
+                db_get(DB_POWERUPTYPE,&db);//add by xuhui
+                //如果是自动重启，则跳过LPM界面
+                if(db.db_poweruptype == DB_POWERUP_BYRESET)
                 {
-                    tepState = COREST_ALARM;
-                }
-                else if (IBATTERY_GetExternalPower(pMe->m_pBatt))
-                {
-                    static boolean lpm   = 0;
-                    db_items_value_type db;
-                    db_get(DB_POWERUPTYPE,&db);//add by xuhui
-                    //如果是自动重启，则跳过LPM界面
-                    if(db.db_poweruptype == DB_POWERUP_BYRESET)
-                    {
-                        tepState = COREST_VERIFYPHONEPWD;
-                    }
-                    
-                    // 若接入了外部电源，进入关机充电状态
-                    MSG_FATAL("LPM test: have extern power!",0,0,0);
-
-                    if( !lpm)
-                    {
-                        lpm = 1;
-                    }
-                    else
-                    {
-                        OEMRTC_Process_Auto_Power_On();
-
-#if defined( FEATURE_POWERDOWN_ALARM)
-                        {
-                            extern void registerAgainPowerdownAlarmclock( void);
-                            registerAgainPowerdownAlarmclock();
-                        }
-#endif
-                    }
-                }
-                else
-                {
-                    // 到手机密码验证状态
                     tepState = COREST_VERIFYPHONEPWD;
                 }
-                MSG_FATAL("LPM test:new state is %d",tepState,0,0);
-                if (tepState != COREST_NONE)
+                
+                // 若接入了外部电源，进入关机充电状态
+                MSG_FATAL("LPM test: have extern power!",0,0,0);
+
+                if( !lpm)
                 {
-                    MOVE_TO_STATE(tepState)
-                    return NFSMACTION_CONTINUE;
+                    lpm = 1;
                 }
                 else
                 {
-                    CoreApp_ShowDialog(pMe, IDD_LPM);
-                    return NFSMACTION_WAIT;
+                    OEMRTC_Process_Auto_Power_On();
+
+#if defined( FEATURE_POWERDOWN_ALARM)
+                    {
+                        extern void registerAgainPowerdownAlarmclock( void);
+                        registerAgainPowerdownAlarmclock();
+                    }
+#endif
                 }
             }
-            else /*esn ==0*/
+            else
             {
+                // 到手机密码验证状态
                 tepState = COREST_VERIFYPHONEPWD;
-                MOVE_TO_STATE(tepState)
-                return NFSMACTION_CONTINUE;            
             }
-            //修正校准综测重启不能进待机问题          
+            MSG_FATAL("LPM test:new state is %d",tepState,0,0);
+            if (tepState != COREST_NONE)
+            {
+                MOVE_TO_STATE(tepState)
+                return NFSMACTION_CONTINUE;
+            }
+            else
+            {
+                CoreApp_ShowDialog(pMe, IDD_LPM);
+                return NFSMACTION_WAIT;
+            }
+            break;
             
         case DLGRET_OK:
             MOVE_TO_STATE(COREST_VERIFYPHONEPWD)

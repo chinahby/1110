@@ -2189,8 +2189,8 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                     //如果是自动重启，则不播放开机铃声
                     if(db.db_poweruptype != DB_POWERUP_BYRESET)
                     {
-                    ICONFIG_GetItem( pMe->m_pConfig, CFGI_PROFILE_STARTUP_MUSIC, aRing_type, sizeof(aRing_type) );
-                    IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
+                        ICONFIG_GetItem( pMe->m_pConfig, CFGI_PROFILE_STARTUP_MUSIC, aRing_type, sizeof(aRing_type) );
+                        IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
                     }
                 }
 
