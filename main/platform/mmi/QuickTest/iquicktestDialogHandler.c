@@ -535,6 +535,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					 
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 85, 32);
+#else
 							IIMAGE_Draw(image, 136, 0);
 							IIMAGE_Draw(image, 140, 0);
 							IIMAGE_Draw(image, 136, TITLEBAR_HEIGHT);
@@ -543,8 +546,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 140, 50-TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 136, TITLEBAR_HEIGHT*2);
 							IIMAGE_Draw(image, 140, TITLEBAR_HEIGHT*2);
+#endif                            
 							IIMAGE_Release( image);
 						}
+                        pMe->m_testkeycount ++;
 						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 						return TRUE;
             		}
@@ -565,6 +570,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					    
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 85, 16);
+                            IIMAGE_Draw(image, 85, 32);
+#else						
 							IIMAGE_Draw(image, 136, 0);
 							IIMAGE_Draw(image, 140, 0);
 							IIMAGE_Draw(image, 136, TITLEBAR_HEIGHT);
@@ -573,8 +582,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 140, 50-TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 136, TITLEBAR_HEIGHT*2);
 							IIMAGE_Draw(image, 140, TITLEBAR_HEIGHT*2);
-							IIMAGE_Release( image);
+#endif                              
+							IIMAGE_Release( image);                          
 						}
+                        pMe->m_testkeycount ++;
 						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 						return TRUE;
 					}
@@ -584,6 +595,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						IImage* image	= NULL;
 						
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                        IIMAGE_Draw(image, 86, 0);
+#else                        
 						if((uint32)dwParam == 1)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, 66);
@@ -600,7 +614,14 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 120, TITLEBAR_HEIGHT*2);
 							
 						}
+#endif
+                        pMe->m_testkeycount ++;
+                        MSG_FATAL("pMe->m_testkeycount = %d", pMe->m_testkeycount,0,0);
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                        if(pMe->m_testkeycount >=22)
+#else
 						if(pMe->m_testkeycount >=45)
+#endif                            
 						{
 	                     	CLOSE_DIALOG(DLGRET_CANCELED)
 						}
@@ -616,7 +637,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 43, 98);
+#else
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 98);
+#endif							
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -631,7 +656,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 0, 49);
+#else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 50);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -646,7 +675,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 43, 49);
+#else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 50);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -661,7 +694,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 86, 49);
+#else								
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 50);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -676,7 +713,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 0, 66);
+#else								
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 66);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -691,7 +732,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 43, 66);
+#else							
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 66);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -706,7 +751,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 86, 66);
+#else							
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 66);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -721,7 +770,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 0, 82);
+#else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, 82);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -736,7 +789,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 43, 82);
+#else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 82);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -751,7 +808,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 86, 82);
+#else							
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 82);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -766,7 +827,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 0, 98);
+#else							
 							IIMAGE_Draw(image, 0, 66);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -781,7 +846,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 86, 98);
+#else						
 							IIMAGE_Draw(image, 0, 50);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -796,6 +865,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 0, 0);
+#else						
 							IIMAGE_Draw(image, 22, 0);
 							IIMAGE_Draw(image, 26, 0);
 							IIMAGE_Draw(image, 22, TITLEBAR_HEIGHT);
@@ -804,6 +876,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 26, 50-TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 22, TITLEBAR_HEIGHT*2);
 							IIMAGE_Draw(image, 26, TITLEBAR_HEIGHT*2);
+#endif                            
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -818,6 +891,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_Draw(image, 0, 33);
+#else
 							IIMAGE_Draw(image, 0, 0);
 							IIMAGE_Draw(image, 4, 0);
 							IIMAGE_Draw(image, 0, TITLEBAR_HEIGHT);
@@ -826,6 +902,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 4, 50-TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 0, TITLEBAR_HEIGHT*2);
 							IIMAGE_Draw(image, 4, TITLEBAR_HEIGHT*2);
+#endif                            
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -839,10 +916,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_SetDrawSize(image,14, 16);
+                            IIMAGE_Draw(image, 57, 17);
+#else						
 							IIMAGE_Draw(image, 66, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 82, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 66, TITLEBAR_HEIGHT+2);
 							IIMAGE_Draw(image, 82, TITLEBAR_HEIGHT+2);
+#endif                            
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -856,18 +938,21 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_SetDrawSize(image,14, 16);
+                            IIMAGE_Draw(image, 57, 0);
+#else
 							if((uint32)dwParam == 1)
 							{
 								IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 98);
-								pMe->m_testkeycount ++;
 							}
 							else
 							{
 								IIMAGE_Draw(image, 66, 0);
 								IIMAGE_Draw(image, 82, 0);
-								pMe->m_testkeycount ++;
 							}
-							
+#endif						
+                            pMe->m_testkeycount ++;
 						}
 						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 						IIMAGE_Release( image);
@@ -879,17 +964,21 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_SetDrawSize(image,14, 16);
+                            IIMAGE_Draw(image, 57, 33);
+#else						
 							if((uint32)dwParam == 1)
 							{
 								IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 98);
-								pMe->m_testkeycount ++;
 							}
 							else
 							{
 								IIMAGE_Draw(image, 66, 34);
 								IIMAGE_Draw(image, 82, 34);
-								pMe->m_testkeycount ++;
 							}
+#endif                            
+                            pMe->m_testkeycount ++;
 							IIMAGE_Release( image);
 						}
                      }
@@ -903,10 +992,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_SetDrawSize(image,14, 16);
+                            IIMAGE_Draw(image, 43, 17);
+#else						
 							IIMAGE_Draw(image, 44, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 44, TITLEBAR_HEIGHT+2);
 							IIMAGE_Draw(image, 66-TITLEBAR_HEIGHT, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 66-TITLEBAR_HEIGHT, TITLEBAR_HEIGHT+2);
+#endif                            
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -921,17 +1015,37 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					
 						if( image != NULL)
 						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_SetDrawSize(image,14, 16);
+                            IIMAGE_Draw(image, 71, 17);
+#else							
 							IIMAGE_Draw(image, 94, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 94, TITLEBAR_HEIGHT+2);
 							IIMAGE_Draw(image, 116-TITLEBAR_HEIGHT, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, 116-TITLEBAR_HEIGHT, TITLEBAR_HEIGHT+2);
+#endif                            
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-				
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                case AVK_CAMERA:
+                    {
+                        IImage* image   = NULL;
+                        image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+                    
+                        if( image != NULL)
+                        {
+                            IIMAGE_Draw(image, 0, 17);
+                            IIMAGE_Release( image);
+                        }
+                        pMe->m_testkeycount ++;
+                    }
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;                 
+#endif
 				case AVK_T:
                     {
 						IImage* image	= NULL;
@@ -946,8 +1060,6 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-                    
-                     break;
 			    case AVK_Y:
                     {
 						IImage* image	= NULL;
