@@ -859,8 +859,16 @@ static NextFSMAction COREST_UIMERR_Handler(CCoreApp *pMe)
 
             if (STRCMP(wPWD,pMe->m_strLockuimPWD) == 0)
             {// ÃÜÂë·ûºÏ
+            #ifdef FEATURE_LONG_NETLOCK
+            	boolean Is_NetLockclose = TRUE;
+			#endif
                 pMe->bunlockuim = TRUE;
                 MOVE_TO_STATE( COREST_STARTUPANI)
+				#ifdef FEATURE_LONG_NETLOCK
+				(void)OEM_SetConfig( CFGI_NET_LOCK_FLAGS,
+									 &Is_NetLockclose,
+									 sizeof(boolean));
+				#endif
                 return NFSMACTION_CONTINUE;
             }
             //     else
@@ -1089,12 +1097,41 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
 #ifdef FEATURE_NET_LOCK
 {
             extern boolean OEM_IsNetLock(void);
+			#ifdef FEATURE_LONG_NETLOCK
+			boolean Is_NetLockclose = FALSE;
+			(void)OEM_GetConfig( CFGI_NET_LOCK_FLAGS,
+									 &Is_NetLockclose,
+									 sizeof(boolean));
+			MSG_FATAL("Is_NetLockclose:::::::::::::::::::::%d",Is_NetLockclose,0,0);
+			if(!Is_NetLockclose)
+			{
+				if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
+	            {
+	            	
+	                pMe->m_eUIMErrCode = UIMERR_LOCKED;
+	                MOVE_TO_STATE(COREST_UIMERR)
+	                return NFSMACTION_CONTINUE;
+	            }
+			}
+			else
+			{
+					/*
+						if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM))
+			            {
+			            	
+			                pMe->m_eUIMErrCode = UIMERR_LOCKED;
+			                MOVE_TO_STATE(COREST_UIMERR)
+			                return NFSMACTION_CONTINUE;
+			            }*/
+			}
+			#else
             if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
             {
                 pMe->m_eUIMErrCode = UIMERR_LOCKED;
                 MOVE_TO_STATE(COREST_UIMERR)
                 return NFSMACTION_CONTINUE;
             }
+			#endif
 }
 #endif
             CoreApp_ProcessSubscriptionStatus(pMe);

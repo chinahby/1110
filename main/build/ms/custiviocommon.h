@@ -33,6 +33,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_IVIOCOMMON
 //#define FEATURE_VERSION_SMART
 //#define FEATURE_VERSION_M8
+//#define FEATURE_LONG_NETLOCK   //add by yangdecai
+
 
 #endif
 

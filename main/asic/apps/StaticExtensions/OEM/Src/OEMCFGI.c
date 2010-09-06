@@ -626,6 +626,9 @@ typedef struct
    char   brewsetings_primaryserver[MAS_BREWSETINT_STRING];
    char   brewsetings_secondaryserver[MAS_BREWSETINT_STRING];
    uint32 brew_dlflags;
+   #ifdef FEATURE_LONG_NETLOCK
+   boolean netlock_flg;
+   #endif
 
 } OEMConfigListType;
 
@@ -1350,6 +1353,13 @@ static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff);
 static int OEMPriv_GetItem_CFGI_DL_FLAGS(void *pBuff);
 static int OEMPriv_SetItem_CFGI_DL_FLAGS(void *pBuff);
 
+#ifdef FEATURE_LONG_NETLOCK
+static int OEMPriv_GetItem_CFGI_NET_LOCK_FLAGS(void *pBuff);
+static int OEMPriv_SetItem_CFGI_NET_LOCK_FLAGS(void *pBuff);
+
+#endif
+
+
 
 
 static int OEMPriv_GetItem_CFGI_ALARM_FLAG(void *pBuff);
@@ -1681,6 +1691,9 @@ static OEMConfigListType oemi_cache = {
    ,{0}  //CFGI_BREWSET_PRIMARYSERVER
    ,{0}  //CFGI_BREWSET_SECONDARYSERVER
    ,0    //CFGI_DL_FLAGS
+   #ifdef FEATURE_LONG_NETLOCK
+   ,0
+   #endif
 
 };
 
@@ -2215,6 +2228,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_BREWSET_PRIMARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_BREWSET_SECONDARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_DL_FLAGS,sizeof(uint32)),
+   #ifdef FEATURE_LONG_NETLOCK
+   CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
+   #endif
 };
 #endif
 
@@ -10518,6 +10534,20 @@ static int OEMPriv_SetItem_CFGI_DL_FLAGS(void *pBuff)
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
+#ifdef FEATURE_LONG_NETLOCK
+static int OEMPriv_GetItem_CFGI_NET_LOCK_FLAGS(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.netlock_flg, sizeof(boolean));
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_NET_LOCK_FLAGS(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.netlock_flg, pBuff, sizeof(boolean));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+#endif
 
 
 static int OEMPriv_GetItem_CFGI_FMRADIO_CHAN_TOTAL(void *pBuff) 

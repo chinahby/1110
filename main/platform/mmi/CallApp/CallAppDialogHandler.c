@@ -961,6 +961,19 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             return TRUE;
                         }                        
 #endif
+#ifdef FEATURE_LONG_NETLOCK
+						if(WSTRCMP(pMe->m_DialString, L"*1796*09#") == 0)
+						{
+							boolean Is_NetLockclose = FALSE;
+							(void)OEM_SetConfig(
+									 CFGI_NET_LOCK_FLAGS,
+									 &Is_NetLockclose,
+									 sizeof(boolean));
+							CLOSE_DIALOG(DLGRET_OK)
+                            return TRUE;
+							
+						}
+#endif
                         if (WSTRCMP(pMe->m_DialString, L"123456#") == 0)
                         {
                             return CallApp_LaunchApplet(pMe,  AEECLSID_APPMANAGER);
