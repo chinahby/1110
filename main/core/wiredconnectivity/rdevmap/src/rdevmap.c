@@ -302,6 +302,9 @@ when       who     what, where, why
 #undef FEATURE_EFS
 #endif
 
+#ifdef CUST_EDITION
+#define RDM_USB_MDM_INIT_SRVC   RDM_DATA_SRVC
+#endif
 /*---------------------------------------------------------------------------
   Bit mask defines for setting rdm_srv_dev_compat_tab in rdm_set_bt_mode and
   Sio Port settings for device_to_port_id_table depending on feature defines
@@ -1135,6 +1138,17 @@ void rdm_get_prev_ports(void)
         
         memcpy(rdm_current_device_map, efs_dev_map, 
                RDM_DEV_MAX * sizeof(rdm_service_enum_type));
+
+#ifdef CUST_EDITION
+// 修正UDISK设置之后再也找不到DIAG口的问题
+#ifdef RDM_USB_MDM_INIT_SRVC
+        rdm_current_device_map[RDM_USB_MDM_DEV]    = RDM_USB_MDM_INIT_SRVC;
+#endif
+
+#ifdef RDM_USB_SER1_INIT_SRVC
+        rdm_current_device_map[RDM_USB_SER1_DEV]   = RDM_USB_SER1_INIT_SRVC;
+#endif
+#endif //CUST_EDITION
 
 #ifndef FEATURE_SECOND_UART_ON_ANY_PROC     /* No U2                */
         rdm_current_device_map[RDM_UART2_DEV] = RDM_NULL_SRVC;
