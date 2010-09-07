@@ -164,6 +164,15 @@
 #define    PWROFF_ANI_FRAME_COUNT                (15)
 #define    PWROFF_ANI_RATE                       (220)
 #define    ANI_RATE                              (150)
+#elif defined FEATURE_VERSION_FLEXI021COMMON
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
+#define    PWRON_ANI_FRAME_COUNT                 (12)
+#define    PWRON_ANI_RATE                        (380)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
+#define    PWROFF_ANI_FRAME_COUNT                (12)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
+
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)

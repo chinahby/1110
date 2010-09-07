@@ -26,7 +26,7 @@
 		<File>..\images\128x128\common\QuickTest\keytest.png</File>
 	</Object>
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
-		<File>..\images\160x128\common\QuickTest\down.png</File>
+		<File>..\images\128x128\common\QuickTest\down.png</File>
 	</Object>
 	<Object Id="5015" Name="IDI_TEXT_BACKGROUND" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Background\background_text.png</File>

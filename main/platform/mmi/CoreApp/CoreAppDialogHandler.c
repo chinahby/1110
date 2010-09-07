@@ -2807,6 +2807,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
 
+#elif defined (FEATURE_VERSION_FLEXI021COMMON)
+
+                ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
@@ -2856,6 +2859,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
                         #endif
                     }
+#elif defined (FEATURE_VERSION_FLEXI021COMMON)
+                    if(!OEMKeyguard_IsEnabled())
+                    {
+                        return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+                    }
+                    
 #else		//Include IVIO
 					if(!OEMKeyguard_IsEnabled())
                     {
