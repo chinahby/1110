@@ -918,14 +918,20 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
             }
 		#if defined(FEATURE_FLEXI_STATIC_BREW_APP) 
 		#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+			
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_NASRANI_TITLE_1,   IDS_NASRANI_TITLE_1, NULL, 0);
 		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
+			
 		#else
-		
+			#ifdef FEATURE_FMN2010
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_1, IDS_STATICAPP_TITLE_1, NULL, 0);
 		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
+			#else
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
+			#endif
 		#endif
         #elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)	//Add For Smart And M8        	
         	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_21, IDS_STATICAPP_TITLE_21, NULL, 0);
@@ -1007,7 +1013,11 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 		#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 			StartApplet(pMe, wParam - IDS_NASRANI_TITLE_1);
 		#else
+		#ifdef FEATURE_FMN2010
 			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_1);
+		#else
+			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_2);
+		#endif
 		#endif
 		#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
 			//Need to change
@@ -1040,21 +1050,42 @@ static boolean StartApplet(Staticapp *pMe, int i)
         case 0:
 			
         	#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+			
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);
+			
 			#else
+			 #ifdef FEATURE_FMN2010
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);
+			  #else
+			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
+			   Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
+               break;
+			#endif
 			#endif
             break;
   #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM        
         case 2:
-  #else
-  		case 1:
-  #endif
-        	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
+			
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
             break;
+			
+  #else
+  		case 1:
+			#ifdef FEATURE_FMN2010
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
+            break;
+			#else
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);			
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);
+            break;
+			#endif
+  #endif
+  			
+        	
   #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM        
         case 3:
   #else

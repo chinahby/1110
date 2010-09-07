@@ -245,6 +245,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_FPT005 //add by xuhui
 #define FEATURE_CAH006 //add by xuhui
 //#define FEATURE_FMN2010//add by xuhui
+//#define FEATURE_MUSLIM //add by yangdecai
+
 #endif
 
 #include "custuim.h"

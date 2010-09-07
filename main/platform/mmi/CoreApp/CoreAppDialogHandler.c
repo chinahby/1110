@@ -1068,10 +1068,21 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             return TRUE;
             
         case EVT_DIALOG_START:
+			{
+				// 在此完成闹钟的开机初始化。初始化过程只需执行一次
+          		static boolean bNotInitedAlarmLPM = TRUE;
             //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
             ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
             //Add By zzg 2010_08_11之前是注释着的
-            CoreApp_EnableShellAlarms(pMe, TRUE);  //add by yangdecai 2010-08-12
+				if (bNotInitedAlarmLPM)
+          		{
+#ifdef FEATURE_UIALARM
+              		// 直道取得有效时间才开始启动警报器
+            		CoreApp_EnableShellAlarms(pMe, TRUE);  //add by yangdecai 2010-08-12
+#endif
+             		bNotInitedAlarmLPM = FALSE;
+           		}
+        	}
             
 #ifdef CUST_EDITION    
             {
@@ -2771,9 +2782,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
                         ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
 #else
+#ifdef FEATURE_FMN2010
 
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
                         ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+#endif
 #endif
 #else
                ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
@@ -4273,7 +4288,11 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	#elif defined STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 		eBBarType = BTBAR_FNASRANI_FPORTAL;
 	#else
+	#ifdef FEATURE_FMN2010
 		eBBarType = BTBAR_FMUSLIM_FPORTAL;
+	#else
+		eBBarType = BTBAR_CONTACTS_FPORTAL; //add by yangdecai
+	#endif
 	#endif
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef CUSTSFLEXI_H
-#define CUSTSFLEXI_H
+#ifndef CUSTSBNAALZ_H
+#define CUSTSBNAALZ_H
 /* ========================================================================
 FILE: CUSTSBNAALZ
 
@@ -34,6 +34,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_LONG_NETLOCK
 //#define FEATURE_VERSION_SMART
 //#define FEATURE_VERSION_M8
+
+
 
 #endif
 
@@ -230,15 +232,14 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-
-#define FEATURE_FPT005 //add by xuhui
-#define FEATURE_CAH006 //add by xuhui
-#define FEATURE_FMN2010 //add by xuhui
-#define FEATURE_MUSLIM //add by yangdecai
-
 //#define FEATURE_AAC
 //#define FEATURE_AAC_PLUS
 //#define FEATURE_ENHANCED_AAC_PLUS
+#define FEATURE_FPT005 //add by yangdecai
+#define FEATURE_CAH006 //add by yangdecai
+//#define FEATURE_MUSLIM //add by yangdecai
+//#define FEATURE_FMN2010//add by yangdecai
+
 #endif
 
 #include "custuim.h"

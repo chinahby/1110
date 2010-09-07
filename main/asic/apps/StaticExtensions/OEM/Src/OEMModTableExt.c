@@ -327,7 +327,10 @@ extern int AEEPushMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
 #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+
+#ifdef FEATURE_MUSLIM
 extern int NASRANI_Load(IShell *ps, void * pHelpers, IModule **pMod);
+#endif
 
 #else 
 #ifdef FEATURE_FMN2010 
@@ -1323,7 +1326,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
 	   {AEEFS_MIF_DIR"staticapp.mif",StaticappMod_Load},
 #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+#ifdef FEATURE_MUSLIM
 	   { AEEFS_MIF_DIR"nasrani.mif",NASRANI_Load},
+#endif
 #else
 #ifdef FEATURE_FMN2010
   	   { AEEFS_MIF_DIR"fmn2010.mif",Fmn2010_Load},
