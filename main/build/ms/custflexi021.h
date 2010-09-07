@@ -227,7 +227,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 #define FEATURE_COMBINED_PWR_END_KEYS
-//#define FEATURE_FLEXI_STATIC_BREW_APP
+#define FEATURE_FLEXI_STATIC_BREW_APP
 #define FEATURE_DRV_SDCC
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
@@ -241,6 +241,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#ifndef FEATURE_QTUNES_COMMON
 //#define FEATURE_QTUNES_COMMON
 //#endif
+
+#define FEATURE_FPT005 //add by xuhui
+#define FEATURE_CAH006 //add by xuhui
+//#define FEATURE_FMN2010//add by xuhui
 #endif
 
 #include "custuim.h"
