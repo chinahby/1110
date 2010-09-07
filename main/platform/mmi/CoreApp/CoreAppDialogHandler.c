@@ -2792,6 +2792,21 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif				
+#elif defined (FEATURE_VERSION_FLEXI021)
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP				
+#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+    			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+                            ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
+#elif defined (FEATURE_FPT005) || defined (FEATURE_CAH006)
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);       
+#else
+    			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+                            ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
+#endif
+#else
+                   ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#endif
+
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
@@ -2825,7 +2840,22 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);		
 #endif							
                     }
-					
+#elif defined (FEATURE_VERSION_FLEXI021)
+                    if(!OEMKeyguard_IsEnabled())
+                    {
+                        //return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+                        #ifdef FEATURE_FLEXI_STATIC_BREW_APP
+                            #if defined (FEATURE_FPT005) || defined (FEATURE_CAH006)
+                             OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
+                             return CoreApp_LaunchApplet(pMe, AEECLSID_FBROWSER);    
+                            #else 
+                             OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
+                             return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);                               
+                            #endif
+                        #else
+                            return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+                        #endif
+                    }
 #else		//Include IVIO
 					if(!OEMKeyguard_IsEnabled())
                     {
@@ -4229,6 +4259,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #else										//Include IVIO
 	#ifndef FEATURE_FLEXI_STATIC_BREW_APP
 			eBBarType = BTBAR_MENU_CONTACTS;
+    #elif defined FEATURE_VERSION_FLEXI021
+        eBBarType = BTBAR_CONTACTS_FPORTAL; //add by xuhui    
 	#elif defined STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 		eBBarType = BTBAR_FNASRANI_FPORTAL;
 	#else

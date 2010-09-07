@@ -286,6 +286,9 @@ typedef enum BottomBar_e_Type
    BTBAR_FNASRANI_FPORTAL,   //fnasrani--fportal
    BTBAR_FMUSLIM_FPORTAL,   //fmuslim  ---fnasrani
    #endif
+   #if defined (FEATURE_FPT005) || defined (FEATURE_CAH006)
+   BTBAR_CONTACTS_FPORTAL, //add by xuhui
+   #endif
    BTBAR_OPTION,
 
    BTBAR_MAX = 0xFFFF, /*For ADS compiler allocate one byte to enumerate type

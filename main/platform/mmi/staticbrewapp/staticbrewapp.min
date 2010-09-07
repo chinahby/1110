@@ -1,9 +1,21 @@
 ####appµÄ¿ª¹Ø
 ifeq ($(USES_FLEXI_STATICAPP),yes)
 ifeq ($(FOR_NASRANI_NOT_MUSLIM),yes)
+
+ifeq ($(USES_NASRANI),yes)
 NASRANI=yes
 else
+NASRANI=no
+endif  
+
+else
+
+ifeq ($(USES_FMN2010),yes)
 FMN2010=yes
+else
+FMN2010=no
+endif
+
 endif
 
 CAH006=yes

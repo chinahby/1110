@@ -328,11 +328,22 @@ extern int AEEPushMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
 #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 extern int NASRANI_Load(IShell *ps, void * pHelpers, IModule **pMod);
-#else
-extern int Fmn2010_Load(IShell *ps, void * pHelpers, IModule **pMod);
+
+#else 
+#ifdef FEATURE_FMN2010 
+    extern int Fmn2010_Load(IShell *ps, void * pHelpers, IModule **pMod);
+#endif
 #endif  /*STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM*/
+
+
+#ifdef FEATURE_FPT005
 extern int Fpt005_Load(IShell *ps, void * pHelpers, IModule **pMod);
+#endif
+
+#ifdef FEATURE_CAH006
 extern int Cah006_Load(IShell *ps, void * pHelpers, IModule **pMod);
+#endif
+
 #endif
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
@@ -1314,10 +1325,18 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 	   { AEEFS_MIF_DIR"nasrani.mif",NASRANI_Load},
 #else
+#ifdef FEATURE_FMN2010
   	   { AEEFS_MIF_DIR"fmn2010.mif",Fmn2010_Load},
+#endif  	   
 #endif  	
+
+#ifdef FEATURE_FPT005
 	   { AEEFS_MIF_DIR"fpt005.mif",Fpt005_Load},
+#endif	   
+#ifdef FEATURE_CAH006	   
 	   { AEEFS_MIF_DIR"cah006.mif",Cah006_Load},
+#endif
+
 #endif	   
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
