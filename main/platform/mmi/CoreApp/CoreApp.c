@@ -2573,9 +2573,11 @@ boolean SetRTREConfig(CCoreApp *pMe, uint64 nNewSetting)
     case NV_RTRE_CONFIG_RUIM_ONLY:
       retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_RUIM_ONLY);
       break;
+      
     case NV_RTRE_CONFIG_NV_ONLY:
       retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_NV_ONLY);
       break;
+      
     case NV_RTRE_CONFIG_RUIM_OR_DROP_BACK:
     default:
       retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_RUIM_OR_DROP_BACK);
