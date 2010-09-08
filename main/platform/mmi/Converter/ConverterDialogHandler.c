@@ -1023,7 +1023,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                     {
                         if(pMe->m_converterMode == CONVERTER_MODE_CURRENCY)
                         {
-                            pMe->basiccoefficient = IDS_CURRENCY_EUR;
+                            pMe->basiccoefficient = IDS_CURRENCY_IDR;
                         }
                         ITEXTCTL_Reset(pMe->pNumber1);
                         ITEXTCTL_Reset(pMe->pNumber2);
@@ -1155,7 +1155,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                         {
                             case CONVERTER_MODE_CURRENCY:
                                 {
-                                    if(ctlID < IDS_CURRENCY_ILS)
+                                    if(ctlID < IDS_CURRENCY_IDR)
                                     {
                                         ctlID++;
                                     }
@@ -1270,7 +1270,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                                     }
                                     else
                                     {
-                                        ctlID = IDS_CURRENCY_ILS;
+                                        ctlID = IDS_CURRENCY_IDR;
                                     }
                                 }
                                 break;
