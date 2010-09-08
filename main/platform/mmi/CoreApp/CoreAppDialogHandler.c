@@ -744,6 +744,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
 #endif
 
                 }
+                case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:    
                     (void) ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);
 #ifdef FEATURE_PLANEMODE
@@ -978,7 +979,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             {
                 defaultProcessAlarm( pMe);
             }
-            else if( wParam == AVK_CLR)
+            else if( (wParam == AVK_CLR) || (wParam == AVK_SOFT2))	//Add By zzg 2010_09_08 for smart/m8
             {
                 powerdown( pMe);
             }
@@ -1310,6 +1311,8 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
             switch (wParam)
             {
                 case AVK_END:
+
+                case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
@@ -1527,7 +1530,8 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                     case AVK_SEND:
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
-                        
+
+                    case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8    
                     case AVK_CLR:
                         chEnter = 0;
                         if (STRLEN(pMe->m_strPhonePWD) == 0)
@@ -1843,7 +1847,8 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                     case AVK_SEND:
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
-                        
+
+                    case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8    
                     case AVK_CLR:
                         chEnter = 0;
                         if (szCode == NULL)
@@ -2943,6 +2948,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             {
                 switch (wParam)
                 {
+                	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                     case AVK_CLR:
                     case AVK_END:
                         CLOSE_DIALOG(DLGRET_MSG)
@@ -2968,6 +2974,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             
             switch (wParam)
             {
+            	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
 #ifdef FEATURE_KEYGUARD
                     if(OEMKeyguard_IsEnabled())
@@ -3309,6 +3316,7 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
         case EVT_KEY:
             switch(wParam)
             {
+            	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
                 case AVK_END:
 #ifdef FEATURE_SMSTONETYPE_MID 
