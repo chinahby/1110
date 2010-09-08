@@ -2482,10 +2482,10 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
 	        	 	if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
 	        	 	{	  
 	            		// 为确保定时器未设置，先取消该定时器
-	            		AEE_CancelTimer(OEMALERT_HandleMP3Timer, pMe);
+	            		(void) ISHELL_CancelTimer(pMe->m_pIShell,OEMALERT_HandleMP3Timer, pMe);
 	            
 	            		// 设置闪烁图标定时器
-	            		(void)AEE_SetSysTimer(TIME_MS_SMSVIBRATE_DURATION, 
+	            		(void)ISHELL_SetTimer(pMe->m_pIShell,TIME_MS_SMSVIBRATE_DURATION, 
 	                                    OEMALERT_HandleMP3Timer,
 	                                    pMe);
 	        		}
@@ -2560,6 +2560,7 @@ static void OEMALERT_StopMp3Alert(IALERT *pMe)
     (void) ISHELL_CancelTimer(pMe->m_pIShell,
                              OEMALERT_HandleRingerAlertTimer,
                              pMe);
+	(void) ISHELL_CancelTimer(pMe->m_pIShell,OEMALERT_HandleMP3Timer, pMe);
 
     if(pMe->m_pMedia)
     {
