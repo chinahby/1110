@@ -119,7 +119,7 @@
 		<Text>Recent Calls</Text>
 	</String>
 	<String Id="1070" Name="IDS_MAIN_MENU_TITLE_70">
-		<Text>Galery</Text>
+		<Text>Gallery</Text>
 	</String>
 	<String Id="1071" Name="IDS_MAIN_MENU_TITLE_71">
 		<Text>Application</Text>
@@ -155,7 +155,7 @@
 		<Text>Recent Calls</Text>
 	</String>
 	<String Id="1090" Name="IDS_MAIN_MENU_TITLE_90">
-		<Text>Galery</Text>
+		<Text>Gallery</Text>
 	</String>
 	<String Id="1091" Name="IDS_MAIN_MENU_TITLE_91">
 		<Text>Application</Text>

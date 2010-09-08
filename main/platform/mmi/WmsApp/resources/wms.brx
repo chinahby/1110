@@ -2,22 +2,22 @@
 <BREWRes Name="wms" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_INBOX">
-		<Text>Inbox</Text>
+		<Text>Inbox </Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_WRITEMESSAGE">
 		<Text>Create</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_OUTBOX">
-		<Text>Outbox</Text>
+		<Text>Outbox </Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_VOICEMAIL">
 		<Text>Voice mail</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_DRAFT">
-		<Text>Draft</Text>
+		<Text>Draft </Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_TEMPLATES">
-		<Text>Preset messages</Text>
+		<Text>Templates</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_MENSTATUS">
 		<Text>Memory status</Text>
@@ -131,7 +131,7 @@
 		<Text>Delivery reports</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_STORAGE">
-		<Text>Prefer save</Text>
+		<Text>Storage</Text>
 	</STRING>
 	<STRING Id="45" Name="IDS_NOTSAVE">
 		<Text>Do not save</Text>

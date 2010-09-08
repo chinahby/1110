@@ -1817,7 +1817,8 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
 		   || (cls == AEECLSID_SMARTFREN_FACEBOOK)
 		   || (cls == AEECLSID_SMARTFREN_SATU)
 		   || (cls == AEECLSID_SMARTFREN_SFM)
-		   || (cls == AEECLSID_SMARTFREN_TEST)) == FALSE)
+		   || (cls == AEECLSID_SMARTFREN_TEST)
+		   || (cls == AEECLSID_CORE_APP)) == FALSE)
 		{
 			wParam = AVK_CLR;
 			bHandle = TRUE;

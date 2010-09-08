@@ -2837,7 +2837,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					{
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 					}
+			#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8)
+				case AVK_SOFT2:
+			#else
                 case AVK_CLR:
+            #endif
 #ifdef FEATURE_VERSION_SMART			
 					if(!OEMKeyguard_IsEnabled())
                     {

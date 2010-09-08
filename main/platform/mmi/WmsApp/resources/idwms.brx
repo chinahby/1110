@@ -2,19 +2,19 @@
 <BREWRes Name="idwms" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_INBOX">
-		<Text>Kotak masuk</Text>
+		<Text>Kotak masuk </Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_WRITEMESSAGE">
 		<Text>Membuat</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_OUTBOX">
-		<Text>Kotak keluar</Text>
+		<Text>Kotak keluar </Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_VOICEMAIL">
 		<Text>Mail suara</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_DRAFT">
-		<Text>Konsep</Text>
+		<Text>Konsep </Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_TEMPLATES">
 		<Text>Preset pesan</Text>

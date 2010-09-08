@@ -152,7 +152,7 @@
 		<Text>Tambahkan video</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_MG_UDISK">
-		<Text>Udisk</Text>
+		<Text>Mode USB</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_MG_STARTUDISK">
 		<Text>Mulai Udisk</Text>
