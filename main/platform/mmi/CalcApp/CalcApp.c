@@ -586,7 +586,6 @@ static void Calc_Reset( CCalcApp* pme)
 
 static void Calc_Backspace( CCalcApp *pme)
 {
-
     if( pme->m_szText == 0 || WSTRLEN( pme->m_szText) == 0)
     {
         if( pme->m_nValNum > 0)
@@ -620,7 +619,6 @@ static void Calc_Backspace( CCalcApp *pme)
           Calc_AddChar( pme, 'B', FALSE);
         }
     }
-
 }
 
 static void Calc_Overflow( CCalcApp *pme)
@@ -656,7 +654,6 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
     {
         return FALSE;
     }
-
     switch (eCode)
     {
         case EVT_APP_START:
@@ -712,6 +709,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 
         case EVT_KEY_RELEASE:
         {
+#if 0            
             switch (wParam)
             {
                 case AVK_SOFT2:
@@ -729,6 +727,11 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                 default:
                     pme->m_bIdle = FALSE;
                     break;
+            }
+#endif
+            if((wParam != AVK_SOFT2) && (wParam != AVK_CLR))
+            {
+                pme->m_bIdle = FALSE;
             }
             return TRUE;
         }
@@ -815,12 +818,14 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 					//wlh 20090417 add end
                     Calc_ToggleSign(pme);
                     break;
-#if 0 //move to EVT_KEY_PRESS
                 case AVK_SOFT2:
                 case AVK_CLR:
+                    IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+                    pme->m_rtype = TYPE_RETURN;
+                    ISHELL_SetTimer(pme->a.m_pIShell,50,(PFNNOTIFY)CALC_DrawImageWithOffset, pme);
                     Calc_Backspace(pme);
                     break;
-#endif
+
                 case AVK_STAR:
                     Calc_AddChar(pme, (AECHAR)'.', TRUE);
                     break;
