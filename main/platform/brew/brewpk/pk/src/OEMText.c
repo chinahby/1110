@@ -2071,7 +2071,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     szsmscount = WMSUtil_CalculateMessagesCount(pszText, NULL, NULL);
 
                     // Draw the number of remaining characters.
-                    STR_TO_WSTR("%d/%d  ", szFormat, sizeof(szFormat));
+                    STR_TO_WSTR("%d/%d ", szFormat, sizeof(szFormat));
                     WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars, szsmscount);                    
 
                     /*
@@ -2126,9 +2126,16 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     AEERect rc;
                     AEERect oldrc;
                     TitleBar_Param_type TitleBar;
+                    static int m_nPixels = 0;
                     int  nBarH = GetTitleBarHeight((IDisplay *)pContext->pIDisplay);
                     int nPixels = IDISPLAY_MeasureText(pContext->pIDisplay,pContext->font,szRemainingCount);
                     IDISPLAY_GetClipRect(pContext->pIDisplay, &oldrc);
+
+                    if ( nPixels > m_nPixels)
+                    {
+						m_nPixels = nPixels;
+                    }
+                    
                     if(nPixels != 0)
                     {
                         SETAEERECT(&rc,
