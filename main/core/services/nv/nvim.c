@@ -2936,10 +2936,15 @@ boolean
 nv_rtre_use_ruim_for_nam (
   byte nam
 )
-{
+{	
   #ifdef FEATURE_UIM_RUN_TIME_ENABLE
     /* Determine if the current RTRE control is for the R-UIM */
-    return ((NV_RTRE_CONTROL_USE_RUIM == nv_rtre_control()) &&
+   // return ((NV_RTRE_CONTROL_USE_RUIM == nv_rtre_control()) &&
+
+   //Add By zzg 2010_09_08
+   return (((NV_RTRE_CONTROL_USE_RUIM == nv_rtre_control()) || (NV_RTRE_CONTROL_NO_RUIM == nv_rtre_control())) &&
+   //Add End
+   
     /* and the NAM matches the R-UIM NAM */
             (NV_RUIM_NAM == nam));
   #else
