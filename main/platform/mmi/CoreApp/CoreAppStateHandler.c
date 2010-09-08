@@ -879,7 +879,7 @@ static NextFSMAction COREST_UIMERR_Handler(CCoreApp *pMe)
             //      }
         }
 
-        case DLGRET_EMGCALL:
+        case DLGRET_EMGCALL:        	
             MOVE_TO_STATE(COREST_EMERGENCYCALL)
             return NFSMACTION_CONTINUE;
             

@@ -2071,6 +2071,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
 		{
 		char  chEnter = 0; 
 		static int   nLen = 0; 
+
             switch (wParam)
             {
                     case AVK_0:
@@ -2097,8 +2098,9 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                     case AVK_SEND:
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
-                        
-                    case AVK_CLR:
+
+                    case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
+                    case AVK_CLR:                    	
                         chEnter = 0;
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
