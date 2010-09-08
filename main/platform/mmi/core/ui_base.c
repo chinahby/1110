@@ -1830,7 +1830,7 @@ void ui_init_rtre(void)
 #ifdef FEATURE_RTRE_DEFAULT_IS_NV
     nvi.rtre_config = NV_RTRE_CONFIG_NV_ONLY;
 #else
-    nvi.rtre_config = NV_RTRE_CONFIG_RUIM_ONLY;
+    nvi.rtre_config = NV_RTRE_CONFIG_RUIM_OR_DROP_BACK; //NV_RTRE_CONFIG_RUIM_ONLY;//Add By zzg 2010_09_08
 #endif
     (void) ui_put_nv (NV_RTRE_CONFIG_I, &nvi);
   }
