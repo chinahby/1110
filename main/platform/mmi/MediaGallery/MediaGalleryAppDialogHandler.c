@@ -1156,7 +1156,7 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_VIDEOS);
 #endif
 #endif
-         MGMENU_ADDITEM(pMenuCtl, IDS_MG_CALLMEMO);
+         //MGMENU_ADDITEM(pMenuCtl, IDS_MG_CALLMEMO);
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_DOWNLOAD);
 #endif
@@ -1244,12 +1244,12 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
             pDirs = MG_PHONEVIDEOS_PATH;
             eFolderType=MG_MIME_VIDEOBASE;
             break;
-
+#if 0
          case IDS_MG_CALLMEMO:
             pDirs = MG_PHONECALLMEMO_PATH;
             eFolderType= MG_MIME_CALLREC;
             break;
-
+#endif
 #ifdef  FEATURE_MG_WAPMMS_SUPPORT
          case IDS_MG_DOWNLOAD:
            pDirs = MG_PHONEDOWNLOAD_PATH;

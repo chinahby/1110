@@ -1533,7 +1533,7 @@ static boolean MediaGalleryApp_CheckHsmmDir(CMediaGalleryApp* pMe)
                         MG_PHONEPICTURE_PATH,
                         MG_PHONEMUSIC_PATH,
                         MG_PHONEVIDEOS_PATH,
-                        MG_PHONECALLMEMO_PATH,
+                        //MG_PHONECALLMEMO_PATH,
 #ifdef  FEATURE_MG_WAPMMS_SUPPORT
                         MG_PHONEDOWNLOAD_PATH,
 #endif
