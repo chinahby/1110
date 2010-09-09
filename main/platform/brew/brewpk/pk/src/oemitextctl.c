@@ -671,6 +671,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             
         case EVT_KEY_HELD:     
             // Press and hold of keys 0 through 9 should be passed to the OEM
+            
             if (!pme->m_bActive ||
                 (wParam != AVK_CLR &&
                  wParam != AVK_STAR &&
@@ -794,6 +795,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             }             
              break;
             //return FALSE;
+      
        
         case EVT_KEY:
 			
@@ -1716,7 +1718,8 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                 if(pme->m_wResID != 0)
                 {
                     IImage *RightTopImg; 
-                    RightTopImg = NULL;                    
+                    RightTopImg = NULL;   
+					MSG_FATAL("pme->m_wResID:::::::::::::::::::%d",pme->m_wResID,0,0);
                     RightTopImg = ISHELL_LoadResImage(pme->m_pIShell,
                                         AEE_APPSCOMMONRES_IMAGESFILE,
                                         pme->m_wResID);
@@ -2643,6 +2646,13 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #endif
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW            
                 break;
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai 2010-0909
+			case TEXT_MODE_T9_CAP_LOWER_ENGLISH:
+				{
+					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+				}
+				break;
+#endif
 
             case TEXT_MODE_T9_RAPID_ENGLISH:
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW
@@ -4542,7 +4552,15 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
             OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);            
             break;
-            
+
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai 2010-0909
+		case OEM_MODE_T9_CAP_LOWER_ENGLISH:
+			MSG_FATAL("OEM_MODE_T9_CAP_LOWER_ENGLISH:::::::::::::::::::::::::::::",0,0,0);
+			wMode = AEE_TM_CAPLOWER;//大小写字母输入模式
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			//OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);  
+			break;
+#endif
         case OEM_MODE_T9_MT_ENGLISH_UP:
             wMode = AEE_TM_LETTERS;//大写字母输入模式
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
@@ -4890,6 +4908,9 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #ifdef FEATURE_T9_RAPID_ENGLISH
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_RAPID_ENGLISH;
 #endif //FEATURE_MODE_T9_RAPID_ENGLISH
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
+	pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+#endif
 
     pme->m_nCurrInputModeList[i++] = OEM_MODE_NUMBERS;  
 
@@ -5002,7 +5023,8 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
 {
     boolean ret = FALSE;
     int i;
-
+    MSG_FATAL("pme->m_nCurrInputMode:::::::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
+	MSG_FATAL("pme->m_nCurrInputModeCount:::::::::::::::::::::%d",pme->m_nCurrInputModeCount,0,0);
     if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP))
     {
         pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
@@ -5012,6 +5034,10 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     {
         pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
     }    
+	if(pme->m_nCurrInputMode == OEM_MODE_T9_CAP_LOWER_ENGLISH)
+	{
+		pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+	}
 #ifdef FEATURE_T9_MT_SPANISH
     if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_SPANISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_T9_MT_SPANISH_UP))
     {
@@ -5101,6 +5127,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             else
             {
                 // if meet the end , then return the first one
+                MSG_FATAL("pme->m_nCurrInputMode::::end1:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
                 if (  i == pme->m_nCurrInputModeCount-1 )
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[0];
                 else
@@ -5110,7 +5137,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             break;
         }
     }
-    
+    MSG_FATAL("pme->m_nCurrInputMode::::end:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
     return ret;
 }
 
@@ -5403,6 +5430,12 @@ static int TextCtl_Oemmode_Textmode(byte oeminputmode)
             wMode = AEE_TM_LETTERS;//大写字母输入模式          
             break;            
 #endif //FEATURE_T9_MT_ENGLISH
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
+		case TEXT_MODE_T9_CAP_LOWER_ENGLISH:
+			wMode = AEE_TM_CAPLOWER;
+			break;
+#endif
+
 
 #ifdef FEATURE_T9_RAPID_ENGLISH
         case OEM_MODE_T9_RAPID_ENGLISH:

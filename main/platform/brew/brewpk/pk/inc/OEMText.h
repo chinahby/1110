@@ -89,6 +89,7 @@ when       who     what, where, why
 #ifdef FEATURE_LANG_ENGLISH
 #define FEATURE_T9_MT_ENGLISH
 #define FEATURE_T9_RAPID_ENGLISH
+#define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif //FEATURE_LANG_ENGLISH
 
 #ifdef FEATURE_LANG_ARABIC
@@ -181,6 +182,9 @@ when       who     what, where, why
 #ifdef FEATURE_T9_RAPID_ENGLISH
 #define TEXT_MODE_T9_RAPID_ENGLISH AEE_TM_RAPID 
 #endif //FEATURE_T9_RAPID_ENGLISH
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
+#define TEXT_MODE_T9_CAP_LOWER_ENGLISH  AEE_TM_CAPLOWER
+#endif
 #if 0
 #ifdef FEATURE_T9_PINYIN
 #define TEXT_MODE_T9_PINYIN        AEE_TM_PINYIN 
@@ -311,6 +315,10 @@ enum
     ,OEM_MODE_T9_RAPID_ENGLISH_UP    
 #endif //FEATURE_T9_RAPID_ENGLISH
 
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+	,OEM_MODE_T9_CAP_LOWER_ENGLISH
+#endif
+
 #ifdef FEATURE_T9_PINYIN
     ,OEM_MODE_T9_PINYIN
 #endif //FEATURE_T9_PINYIN
@@ -429,6 +437,12 @@ enum
 #else // #ifdef FEATURE_T9_MT_ENGLISH
 #define _T9_MULTITAP_MODES             (0)
 #endif //#ifdef FEATURE_T9_MT_ENGLISH
+
+#ifdef	FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
+#define _T9_CAPLOWER_MODES             (1)
+#else
+#define _T9_CAPLOWER_MODES             (0)
+#endif
 
 #ifdef FEATURE_T9_RAPID_ENGLISH
 #define _T9_RAPID_ENGLISH_MODE             (1)
@@ -607,6 +621,7 @@ enum
                                 + _T9_JAPANESE_MODE \
                                 + _T9_KOREAN_MODE \
                                 + _T9_ITALIAN_MODE  \
+                                + _T9_CAPLOWER_MODES  \
                                 )
 
 //wangliang modify!  2010-09-01
@@ -624,6 +639,10 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #ifdef FEATURE_T9_RAPID_ENGLISH
    ,{'a', 'b','c',0}
 #endif //FEATURE_T9_RAPID_ENGLISH
+
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+   ,{'A','b','c',0}
+#endif
 
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
@@ -731,6 +750,10 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #ifdef FEATURE_T9_MT_ENGLISH   
    ,{'M','u','l','t','i','t','a','p',0}
 #endif //FEATURE_T9_MT_ENGLISH
+
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+   ,{'A','b','c',0}
+#endif
    
 #ifdef FEATURE_T9_RAPID_ENGLISH
    ,{'T', '9','E', 'Z', 'E', 'N', 'G', 'L','I', 'S', 'H', 0}
