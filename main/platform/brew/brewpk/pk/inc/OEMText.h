@@ -635,14 +635,16 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #ifdef FEATURE_T9_MT_ENGLISH   
    ,{'A','B','C',0}
 #endif //FEATURE_T9_MT_ENGLISH
-   
-#ifdef FEATURE_T9_RAPID_ENGLISH
-   ,{'a', 'b','c',0}
-#endif //FEATURE_T9_RAPID_ENGLISH
 
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
    ,{'A','b','c',0}
 #endif
+
+#ifdef FEATURE_T9_RAPID_ENGLISH
+   ,{'a', 'b','c',0}
+#endif //FEATURE_T9_RAPID_ENGLISH
+
+
 
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
@@ -745,10 +747,10 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 {
    // Lint complains because all the fields aren't explicitly initialized
    //lint -save -e785
-   {'N','u','m','b','e','r','s',0}
+   {'1','2','3',0}
    
 #ifdef FEATURE_T9_MT_ENGLISH   
-   ,{'M','u','l','t','i','t','a','p',0}
+   ,{'A','B','C',0}
 #endif //FEATURE_T9_MT_ENGLISH
 
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
@@ -756,7 +758,7 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #endif
    
 #ifdef FEATURE_T9_RAPID_ENGLISH
-   ,{'T', '9','E', 'Z', 'E', 'N', 'G', 'L','I', 'S', 'H', 0}
+   ,{'a', 'b','c', 0}
 #endif //FEATURE_T9_RAPID_ENGLISH
 
 #ifdef FEATURE_T9_PINYIN
