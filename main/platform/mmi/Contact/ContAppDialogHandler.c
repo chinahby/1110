@@ -2643,6 +2643,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 case AVK_SPACE:
                 case AVK_RWD:                    
                 case AVK_POUND:
+                case AVK_STAR:
                 if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType && IS_ZERO_REC())
                 {
                     return TRUE;
@@ -2972,6 +2973,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 case AVK_UP:
                 case AVK_DOWN:
                 case AVK_LEFT:
+               // case AVK_STAR:
                 /*case AVK_RIGHT:*/
                 {
                     boolean b_TextctlActive = ITEXTCTL_IsActive(pTextCtl);
