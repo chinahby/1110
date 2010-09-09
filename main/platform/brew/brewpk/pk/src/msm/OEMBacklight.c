@@ -320,6 +320,32 @@ static int AEEBacklight_Enable(IBacklight *pme)
    if (AEEBacklight_IsEnabled(pme))
    {
       AEEBacklight_SetDisableTimer(pme);
+      switch (pme->uCls)
+	  {
+	   	  AEEBacklightInfo backlightInfo;
+	      case AEECLSID_BACKLIGHT_DISPLAY1:
+	      	 if(TRUE == gbBacklightDisplay1Initialized)
+	         {
+	            disp_set_backlight((byte)gdwBacklightDisplay1Level);
+	            nErr = SUCCESS;
+	         }
+	         else if(SUCCESS == (nErr = IBACKLIGHT_GetBacklightInfo(pme, &backlightInfo)))
+	         {
+	            disp_set_backlight((byte)backlightInfo.dwDefaultBrightnessLevel);
+	         }
+
+	         break;
+
+	      case AEECLSID_BACKLIGHT_KEYPAD:
+	         {
+	            byte val = KEYPAD_BACKLIGHT_LVL_4;
+	            keypad_set_backlight(val);
+	         }
+	         break;
+
+	      default:
+	         break;
+	   }
       return SUCCESS;
    }
    
@@ -432,6 +458,7 @@ static int AEEBacklight_Enable(IBacklight *pme)
          nErr = EUNSUPPORTED;
          break;
    }
+
    AEEBacklight_SetDisableTimer(pme);
    return nErr;
 }
@@ -773,7 +800,7 @@ static void AEEBacklight_SetDisableTimer(IBacklight *pme)
     if ((nVal > 0) && (nVal <100))
     {
         nMSecs = nVal*1000;
-        AEE_SetSysTimer(nMSecs+3000, AEEBacklight_DisableTimer, pme);
+        AEE_SetSysTimer(nMSecs+5000, AEEBacklight_DisableTimer, pme);
         AEE_SetSysTimer(nMSecs, AEEBacklight_PreDisableTimer, pme);
     }
 }
