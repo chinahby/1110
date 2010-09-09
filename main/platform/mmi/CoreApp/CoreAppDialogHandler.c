@@ -3006,7 +3006,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     break;
 				case AVK_SHIFT:
 					{
-						
+					#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+						pMe->m_isShift = FALSE;
+						return TRUE;
+					#else
 						if(!pMe->m_isShift)
 						{
 							pMe->m_isShift = TRUE;
@@ -3016,6 +3019,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							pMe->m_isShift = FALSE;
 						}
 						return TRUE;
+					#endif
 					}
 				break;
 
