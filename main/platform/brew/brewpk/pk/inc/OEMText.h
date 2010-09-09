@@ -636,15 +636,13 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
    ,{'A','B','C',0}
 #endif //FEATURE_T9_MT_ENGLISH
 
-#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
-   ,{'A','b','c',0}
-#endif
-
 #ifdef FEATURE_T9_RAPID_ENGLISH
    ,{'a', 'b','c',0}
 #endif //FEATURE_T9_RAPID_ENGLISH
 
-
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+   ,{'A','b','c',0}
+#endif
 
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
@@ -752,14 +750,14 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #ifdef FEATURE_T9_MT_ENGLISH   
    ,{'A','B','C',0}
 #endif //FEATURE_T9_MT_ENGLISH
-
-#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
-   ,{'A','b','c',0}
-#endif
    
 #ifdef FEATURE_T9_RAPID_ENGLISH
    ,{'a', 'b','c', 0}
 #endif //FEATURE_T9_RAPID_ENGLISH
+
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+   ,{'A','b','c',0}
+#endif
 
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
