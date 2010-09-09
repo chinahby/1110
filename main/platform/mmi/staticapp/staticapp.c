@@ -917,22 +917,22 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
 		#if defined(FEATURE_FLEXI_STATIC_BREW_APP) 
-		#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
-			
+		#if defined (FEATURE_NASRANI) 			
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_NASRANI_TITLE_1,   IDS_NASRANI_TITLE_1, NULL, 0);
-		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
-			
-		#else
-			#ifdef FEATURE_FMN2010
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_1, IDS_STATICAPP_TITLE_1, NULL, 0);
-		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
-			#else
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
-			#endif
 		#endif
+			
+		#if defined (FEATURE_FMN2010)
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_1, IDS_STATICAPP_TITLE_1, NULL, 0);
+		#endif
+
+        #if defined (FEATURE_CAH006) 
+		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
+		#endif
+		
+        #if defined (FEATURE_FPT005)
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
+        #endif
+				
         #elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)	//Add For Smart And M8        	
         	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_21, IDS_STATICAPP_TITLE_21, NULL, 0);
 		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_22, IDS_STATICAPP_TITLE_22, NULL, 0);
@@ -1010,15 +1010,14 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
         case EVT_COMMAND:
             pMe->m_MainSel = wParam;
         #if defined(FEATURE_FLEXI_STATIC_BREW_APP)
-		#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
+		#if defined (FEATURE_NASRANI)
 			StartApplet(pMe, wParam - IDS_NASRANI_TITLE_1);
-		#else
-		#ifdef FEATURE_FMN2010
+		#elif defined (FEATURE_FMN2010)
 			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_1);
 		#else
 			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_2);
-		#endif
-		#endif
+		#endif  /*FEATURE_NASRANI*/
+		
 		#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
 			//Need to change
 			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_21);
@@ -1049,23 +1048,19 @@ static boolean StartApplet(Staticapp *pMe, int i)
   	#if defined(FEATURE_FLEXI_STATIC_BREW_APP)     
         case 0:
 			
-        	#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
-			
+        	#if defined (FEATURE_NASRANI)			
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-               Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);
-			
-			#else
-			 #ifdef FEATURE_FMN2010
+               Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);			
+			#elif defined (FEATURE_FMN2010)
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);
-			  #else
+		    #else
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
-			   Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
-               break;
+			   Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);            
 			#endif
-			#endif
+			
             break;
-  #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM        
+  #ifdef FEATURE_NASRANI        
         case 2:
 			
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
@@ -1086,7 +1081,7 @@ static boolean StartApplet(Staticapp *pMe, int i)
   #endif
   			
         	
-  #ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM        
+  #ifdef FEATURE_NASRANI        
         case 3:
   #else
   		case 2:

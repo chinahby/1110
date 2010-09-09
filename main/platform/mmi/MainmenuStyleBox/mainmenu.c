@@ -1746,7 +1746,7 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
         titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
         STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
 #if defined (FEATURE_DISP_160X128)
-#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203) || defined	(FEATURE_VERSION_IVIO203)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
 #elif defined (FEATURE_VERSION_SMART)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_61 + theFocus;
@@ -1809,7 +1809,7 @@ static void DrawFocusIcon(MainMenu *pMe)
     STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
 	
 #if defined (FEATURE_DISP_160X128)
-#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203) || defined	(FEATURE_VERSION_IVIO203)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
 #elif defined (FEATURE_VERSION_SMART)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_61 + theFocus;
@@ -1884,7 +1884,7 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 	
 #if defined (FEATURE_DISP_160X128)
 
-#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203) || defined	(FEATURE_VERSION_IVIO203)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_1 + theFocus;
 #elif defined (FEATURE_VERSION_SMART)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_61 + theFocus;
@@ -2231,7 +2231,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
 #endif
 
 #if defined (FEATURE_DISP_160X128)
-#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203) || defined	(FEATURE_VERSION_IVIO203)
         case 0:
         {
             

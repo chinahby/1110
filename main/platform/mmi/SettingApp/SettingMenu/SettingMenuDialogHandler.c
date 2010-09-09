@@ -39,7 +39,7 @@
 #endif 
 #include "nv.h"
 boolean start_security_setting_by_user;
-#ifdef FEATURE_VERSION_IVIO
+#ifdef FEATURE_VERSION_FLEXI203
 #elif defined FEATURE_VERSION_SMART
 #define FEATURE_SET_SCENEMODE
 #elif defined FEATURE_VERSION_M8

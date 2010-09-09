@@ -22,10 +22,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
-
 #define FEATURE_LANG_INDONESIAN //add by yangdecai 2010/06/22
-//#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
-
 #undef FEATURE_LANG_CHINESE
 #define FEATURE_NET_LOCK
 #define FEATURE_SEAMLESS_SMS
@@ -33,10 +30,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
 //#define FEATURE_SPN_FROM_BSMCCMNC
-#define FEATURE_VERSION_IVIO
-//#define FEATURE_LONG_NETLOCK
-//#define FEATURE_VERSION_SMART
-//#define FEATURE_VERSION_M8
+#define FEATURE_VERSION_FLEXI203
+
 
 #endif
 
@@ -228,17 +223,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 #define FEATURE_COMBINED_PWR_END_KEYS
-#define FEATURE_FLEXI_STATIC_BREW_APP
 #define FEATURE_DRV_SDCC
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-
-#define FEATURE_FPT005 //add by xuhui
-#define FEATURE_CAH006 //add by xuhui
-#define FEATURE_FMN2010 //add by xuhui
-#define FEATURE_MUSLIM //add by yangdecai
-
 //#define FEATURE_AAC
 //#define FEATURE_AAC_PLUS
 //#define FEATURE_ENHANCED_AAC_PLUS

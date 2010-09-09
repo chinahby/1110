@@ -720,7 +720,6 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_STOP;
             break;
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
-
 	case BTBAR_FNASRANI_FPORTAL:
 		nResID_L = IDS_FNASRANI;
 		nResID_R = IDS_FPORTAL;
@@ -729,14 +728,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 	case BTBAR_FMUSLIM_FPORTAL:
 		nResID_L = IDS_FMUSLIM;
 		nResID_R = IDS_FPORTAL;
-			break;
-#if defined (FEATURE_FPT005) || defined (FEATURE_CAH006) //add by xuhui
-    case BTBAR_CONTACTS_FPORTAL:
-        nResID_L = IDS_STRING_CONTACTS;
-        nResID_R = IDS_FPORTAL;
-            break;
-#endif
-            
+		break;
+	case BTBAR_CONTACTS_FPORTAL:
+		nResID_L = IDS_STRING_CONTACTS;
+		nResID_R = IDS_FPORTAL;
+		break;            
 #endif
          default:
             break;
@@ -2694,7 +2690,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_L = IDS_SAVE;
             nResID_R = IDS_BACK;
             break;
-		#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP
 		case BTBAR_FNASRANI_FPORTAL:
 	     nResID_L = IDS_FNASRANI;
             nResID_R = IDS_FPORTAL;
@@ -2702,14 +2698,12 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 		case BTBAR_FMUSLIM_FPORTAL:
 	     nResID_L = IDS_FMUSLIM;
             nResID_R = IDS_FPORTAL;
-            break;			
-#if defined (FEATURE_FPT005) || defined (FEATURE_CAH006) //add by xuhui
-        case BTBAR_CONTACTS_FPORTAL:
-            nResID_L = IDS_STRING_CONTACTS;
-            nResID_R = IDS_FPORTAL;
-                break;
-#endif           
-		#endif
+            break;	
+		case BTBAR_CONTACTS_FPORTAL:
+		nResID_L = IDS_STRING_CONTACTS;
+		nResID_R = IDS_FPORTAL;
+		break;	         
+#endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
     }
     if(nResID_L)
     {

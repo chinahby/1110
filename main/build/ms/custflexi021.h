@@ -33,11 +33,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
 //#define FEATURE_SPN_FROM_BSMCCMNC
-//#define FEATURE_VERSION_IVIO
-//#define FEATURE_VERSION_SMART
-//#define FEATURE_VERSION_M8
+
 #define FEATURE_VERSION_FLEXI021
-//#define FEATURE_LONG_NETLOCK   //add by yangdecai
+
 
 
 #endif
@@ -230,7 +228,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 #define FEATURE_COMBINED_PWR_END_KEYS
-#define FEATURE_FLEXI_STATIC_BREW_APP
+
 #define FEATURE_DRV_SDCC
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
@@ -241,14 +239,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_AAC_PLUS
 //#define FEATURE_ENHANCED_AAC_PLUS
 
-//#ifndef FEATURE_QTUNES_COMMON
-//#define FEATURE_QTUNES_COMMON
-//#endif
 
-#define FEATURE_FPT005 //add by xuhui
-#define FEATURE_CAH006 //add by xuhui
-//#define FEATURE_FMN2010//add by xuhui
-//#define FEATURE_MUSLIM //add by yangdecai
 
 #endif
 

@@ -326,18 +326,14 @@ extern int AEEPushMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 #endif
 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
-#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
 
-#ifdef FEATURE_MUSLIM
+#ifdef FEATURE_NASRANI
 extern int NASRANI_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #endif
 
-#else 
 #ifdef FEATURE_FMN2010 
     extern int Fmn2010_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #endif
-#endif  /*STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM*/
-
 
 #ifdef FEATURE_FPT005
 extern int Fpt005_Load(IShell *ps, void * pHelpers, IModule **pMod);
@@ -347,7 +343,7 @@ extern int Fpt005_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int Cah006_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #endif
 
-#endif
+#endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
 extern int BSHOP_Load(IShell *ps, void * pHelpers, IModule **pMod);
@@ -966,7 +962,7 @@ extern int GameMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int FrenDuoAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
-#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203) || defined	(FEATURE_VERSION_IVIO203)
 extern int MultimedMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 #if defined(FEATURE_FLEXI_STATIC_BREW_APP) || defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
@@ -1016,7 +1012,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 	{AEEFS_MIF_DIR"frenduo.mif",FrenDuoAppMod_Load},
 #endif
 
-#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203) || defined	(FEATURE_VERSION_IVIO203)
 	{AEEFS_MIF_DIR"multimedia.mif",MultimedMod_Load},
 #endif
 //#endif
@@ -1325,15 +1321,12 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
 	   {AEEFS_MIF_DIR"staticapp.mif",StaticappMod_Load},
-#ifdef STATIC_BREW_APP_FOR_NASRANI_NOR_MUSLIM
-#ifdef FEATURE_MUSLIM
+#ifdef FEATURE_NASRANI
 	   { AEEFS_MIF_DIR"nasrani.mif",NASRANI_Load},
 #endif
-#else
 #ifdef FEATURE_FMN2010
   	   { AEEFS_MIF_DIR"fmn2010.mif",Fmn2010_Load},
 #endif  	   
-#endif  	
 
 #ifdef FEATURE_FPT005
 	   { AEEFS_MIF_DIR"fpt005.mif",Fpt005_Load},
@@ -1342,7 +1335,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 	   { AEEFS_MIF_DIR"cah006.mif",Cah006_Load},
 #endif
 
-#endif	   
+#endif	   /*FEATURE_FLEXI_STATIC_BREW_APP*/
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
 	   { AEEFS_MIF_DIR"staticapp.mif",StaticappMod_Load},

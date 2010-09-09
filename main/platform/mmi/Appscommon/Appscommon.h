@@ -282,13 +282,11 @@ typedef enum BottomBar_e_Type
    BTBAR_CONTINUE_RESET_BACK,
    BTBAR_CALL_MODIFY_BACK,
    BTBAR_YES_NO_CANCEL,
-   #ifdef FEATURE_FLEXI_STATIC_BREW_APP
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP
    BTBAR_FNASRANI_FPORTAL,   //fnasrani--fportal
    BTBAR_FMUSLIM_FPORTAL,   //fmuslim  ---fnasrani
-   #endif
-   #if defined (FEATURE_FPT005) || defined (FEATURE_CAH006)
-   BTBAR_CONTACTS_FPORTAL, //add by xuhui
-   #endif
+   BTBAR_CONTACTS_FPORTAL,   //fmuslim  ---fnasrani   
+#endif /*FEATURE_FLEXI_STATIC_BREW_APP*/
    BTBAR_OPTION,
 
    BTBAR_MAX = 0xFFFF, /*For ADS compiler allocate one byte to enumerate type

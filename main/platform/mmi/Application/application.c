@@ -909,26 +909,26 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			#if 0
             IMENUCTL_SetTitle(pMenu, APPLICATION_RES_FILE_LANG, IDS_APPLICATION_LIST, NULL);
 			#else
-#if defined	(FEATURE_VERSION_IVIO) || defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TOOLS_LIST,
                                     WTitle,
                                     sizeof(WTitle));
-			#else
+#else
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_APPLICATION_LIST,
                                     WTitle,
                                     sizeof(WTitle));
-			#endif
+#endif
             if(pMe->m_pIAnn != NULL)
             {
 			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
 			#endif
 			
-#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203) ||defined(FEATURE_VERSION_IVIO203) 
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_1, IDS_TOOLS_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_2, IDS_TOOLS_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_3, IDS_TOOLS_TITLE_3, NULL, 0);
@@ -1045,7 +1045,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
         case EVT_KEY:
             switch(wParam)
             {
-#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
                 case AVK_1:
                 case AVK_2:
                 case AVK_3:
@@ -1106,7 +1106,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             
         case EVT_COMMAND:
             pMe->m_MainSel = wParam;
-#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
 			StartApplet(pMe, wParam - IDS_TOOLS_TITLE_1);
 #elif defined (FEATURE_VERSION_SMART)
 			switch (wParam)
@@ -1171,7 +1171,7 @@ static boolean StartApplet(Application *pMe, int i)
    	//MSG_ERROR("StartApplet:::::%d",i,0,0);
     switch(i)
     {
-#if defined	(FEATURE_VERSION_IVIO) ||  defined	(FEATURE_VERSION_IVIOCOMMON)
+#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203)  
         case 0:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;

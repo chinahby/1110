@@ -358,7 +358,7 @@ CONSTFILE_BAR_SRC 		= $(addprefix $(TARGETDIR)/, $(addsuffix .c, $(CONSTFILE_BAR
 CONSTFILE_BIN  			= $(filter-out %.bar, $(CONSTFILE_FILENAMES)) $(CONSTFILE_BIN_FILENAMES)
 CONSTFILE_BIN_SRC 		= $(addprefix $(TARGETDIR)/, $(addsuffix .c, $(CONSTFILE_BIN)))
 
-$(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES) $(CONSTFILE_BIN_SOURCES)
+ $(TARGETDIR)/OEMConstFiles_Dynamic.c : OEMConstFiles.c $(CONSTFILE_SOURCES) $(CONSTFILE_BIN_SOURCES)
 	@echo ------------------------------------------------------------------------
 	@echo Generating $@
 	@cp $< $@

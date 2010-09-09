@@ -850,7 +850,7 @@ FRENDUO  =         		$(MMIDIR)/FrenDuo
 endif
 
 MULTIMEDIA =            $(MMIDIR)/Multimedia
-STATIC_BREW_APP=        $(MMIDIR)/staticbrewapp
+STATIC_BREW_APP=        $(MMIDIR)/staticbrewapp/$(USES_LCD_SIZE)
 STATIC_APP=             $(MMIDIR)/staticapp
 
 #头文件的路径在这里加

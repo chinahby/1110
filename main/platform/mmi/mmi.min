@@ -119,3 +119,4 @@ endif
 
 include $(STATIC_BREW_APP)/staticbrewapp.min
 include $(STATIC_APP)/staticapp.min
+

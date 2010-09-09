@@ -116,7 +116,7 @@
 #endif
 
 // 关机动画文件播放
-#ifdef FEATURE_VERSION_IVIO
+#ifdef FEATURE_VERSION_FLEXI203
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (19)
 #define    PWRON_ANI_RATE                        (200)
@@ -156,7 +156,7 @@
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (380)
 #define    ANI_RATE                              (150)
-#elif defined FEATURE_VERSION_IVIOCOMMON
+#elif defined FEATURE_VERSION_IVIO203
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (15)
 #define    PWRON_ANI_RATE                        (220)
