@@ -2506,9 +2506,12 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                 RGBVAL  clrFill = RGB_WHITE;
                 RGBVAL  clrNosel = BK_COLOR;
 
-                SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
-                SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
-                SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);
+                //SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
+                //SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
+                //SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);
+                SETAEERECT(&rc_day, x, y, FontHeight, FontHeight);
+                SETAEERECT(&rc_month, x + FontHeight * 2, y, FontHeight, FontHeight);
+                SETAEERECT(&rc_year, x + FontHeight * 4, y, FontHeight*2, FontHeight);                
 
                 //year
                 if (pme->curSel == DATE_SEL_YEAR)
@@ -2667,15 +2670,15 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                     
                     if(pme->curSel == DATE_SEL_YEAR)
                     {
-                        pme->curSel = DATE_SEL_DAY;
+                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_DAY;
                     }
                     else if(pme->curSel == DATE_SEL_DAY)
                     {
-                        pme->curSel = DATE_SEL_MONTH;
+                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_MONTH;
                     }
                     else if(pme->curSel == DATE_SEL_MONTH)
                     {
-                        pme->curSel = DATE_SEL_YEAR;
+                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_YEAR;
                     }
                     (void) ISHELL_PostEvent(pme->m_pShell,
                                             AEECLSID_SCHEDULEAPP,
@@ -2689,15 +2692,15 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                     
                     if(pme->curSel == DATE_SEL_DAY)
                     {
-                        pme->curSel = DATE_SEL_YEAR;
+                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_YEAR;
                     }
                     else if(pme->curSel == DATE_SEL_YEAR)
                     {
-                        pme->curSel = DATE_SEL_MONTH;
+                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_MONTH;
                     }
                     else if(pme->curSel == DATE_SEL_MONTH)
                     {
-                        pme->curSel = DATE_SEL_DAY;
+                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_DAY;
                     }
                     (void) ISHELL_PostEvent(pme->m_pShell,
                                             AEECLSID_SCHEDULEAPP,
