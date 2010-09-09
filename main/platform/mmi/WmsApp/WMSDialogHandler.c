@@ -2370,6 +2370,30 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 					}  //ADD BY YANGDECAI 2010-08-16
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+
+				//Add By zzg 2010_09_09
+				case AVK_SEND:	
+				{
+					if (pMe->m_currState == WMSST_VIEWINBOXMSG)
+                	{                	
+#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
+	                    // 该运营商要求 CBN 优先
+	                    if (WSTRLEN(pMe->m_msCur.m_szCallBkNum) > 0)
+	                    {
+	                        // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
+	                        WMSExtApp_CallPhoneNumber(pMe, pMe->m_msCur.m_szCallBkNum, FALSE);
+	                    }
+	                    else 
+#endif                    
+	                    if (WSTRLEN(pMe->m_msCur.m_szNum) > 0)
+	                    {
+	                        // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
+	                        WMSExtApp_CallPhoneNumber(pMe, pMe->m_msCur.m_szNum, FALSE);
+	                    }
+					}
+					return TRUE;
+				}
+				//Add End
   
                 case AVK_SELECT:
                     CLOSE_DIALOG(DLGRET_OK)
