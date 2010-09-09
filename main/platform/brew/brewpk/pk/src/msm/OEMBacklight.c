@@ -76,6 +76,10 @@ static void AEEBacklight_TurnOnTorch(IBacklight *pme);
 static void AEEBacklight_TurnOffTorch(IBacklight *pme);
 #endif
 
+static int AEEBacklight_PreDisable(IBacklight *pme);
+static void AEEBacklight_PreDisableTimer(void *pUser);
+static void AEEBacklight_CancelPreDisableTimer(IBacklight *pme);
+
 #ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
 static void AEEBacklight_NotifyAutoExitApp(IBacklight *pme);
 static void AEEBacklight_SetNotifyTimer(IBacklight *pme);
@@ -309,6 +313,7 @@ static int AEEBacklight_Enable(IBacklight *pme)
    FARF(BACKLIGHT, ("==>  AEEBacklight_Enable"));
    
    AEEBacklight_CancelDisableTimer(pme);
+   AEEBacklight_CancelPreDisableTimer(pme);
 #ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
    AEEBacklight_CancelNotifyTimer(pme);
 #endif
@@ -478,6 +483,61 @@ static int AEEBacklight_Disable(IBacklight *pme)
    }
    return nErr;
 }
+
+/*===========================================================================
+
+Function: AEEBacklight_Disable
+
+Description:
+   Turns backlight OFF
+
+===========================================================================*/
+static int AEEBacklight_PreDisable(IBacklight *pme)
+{
+   int nErr = SUCCESS;
+   AEEBacklightInfo backlightInfo;
+   
+   FARF(BACKLIGHT, ("==>  AEEBacklight_PreDisable"));
+
+   AEE_CancelTimer(AEEBacklight_PreDisableTimer, pme);
+   switch (pme->uCls)
+   {
+      case AEECLSID_BACKLIGHT_DISPLAY1:
+      	 if(TRUE == gbBacklightDisplay1Initialized)
+         {
+            disp_set_backlight((byte)1);
+            nErr = SUCCESS;
+         }
+         else if(SUCCESS == (nErr = IBACKLIGHT_GetBacklightInfo(pme, &backlightInfo)))
+         {
+            disp_set_backlight((byte)1);
+         }
+         nErr = SUCCESS;
+
+         break;
+
+#ifdef FEATURE_BACKLIGHT_DISPLAY2
+      case AEECLSID_BACKLIGHT_DISPLAY2:
+         nErr = SUCCESS;
+         break;
+#endif
+
+      case AEECLSID_BACKLIGHT_KEYPAD:
+         {
+            byte val = 1;
+            keypad_set_backlight(val);
+         }
+
+         nErr = SUCCESS;
+         break;
+
+      default:
+         nErr = EUNSUPPORTED;
+         break;
+   }
+   return nErr;
+}
+
 
 /*===========================================================================
 
@@ -682,6 +742,11 @@ static void AEEBacklight_CancelDisableTimer(IBacklight *pme)
     AEE_CancelTimer(AEEBacklight_DisableTimer, pme);
 }
 
+static void AEEBacklight_CancelPreDisableTimer(IBacklight *pme)
+{
+    AEE_CancelTimer(AEEBacklight_PreDisableTimer, pme);
+}
+
 /*==============================================================================
 Function:
     AEEBacklight_SetDisableTimer
@@ -708,7 +773,8 @@ static void AEEBacklight_SetDisableTimer(IBacklight *pme)
     if ((nVal > 0) && (nVal <100))
     {
         nMSecs = nVal*1000;
-        AEE_SetSysTimer(nMSecs, AEEBacklight_DisableTimer, pme);
+        AEE_SetSysTimer(nMSecs+3000, AEEBacklight_DisableTimer, pme);
+        AEE_SetSysTimer(nMSecs, AEEBacklight_PreDisableTimer, pme);
     }
 }
 
@@ -742,6 +808,38 @@ static void AEEBacklight_DisableTimer(void *pUser)
         AEEBacklight_Disable(pMe);
     }
 }
+
+/*==============================================================================
+Function:
+    AEEBacklight_DisableTimer
+
+Description:
+    Disable display1 back light callback funtion.
+
+Parameter:
+    pUser [in]: IBacklight *
+
+Return value:
+    none
+
+Remark:
+
+==============================================================================*/
+static void AEEBacklight_PreDisableTimer(void *pUser)
+{
+    IBacklight *pMe = (IBacklight*)pUser;
+
+    if (NULL == pMe)
+    {
+        return;
+    }
+    
+    if (AEEBacklight_IsEnabled(pMe) || pMe->uCls == AEECLSID_BACKLIGHT_KEYPAD)
+    {
+        AEEBacklight_PreDisable(pMe);
+    }
+}
+
 
 //wangliang add!  2010-06-10
 #ifdef FEATURE_TORCH_SUPPORT
