@@ -2094,6 +2094,21 @@ static boolean RecentCalls_WarnEvent(CRecentCalls *pMe,
                           {
                               pMe->m_PromptMsg.nMsgResID = IDS_ERR_UNKNOWN;
                           }
+                          {
+                             uint32 value = 0;
+                             (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_ALL_CALL_TIMER,
+                                                    &value,
+                                                    sizeof(uint32));
+                             (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_RECENT_MO_CALL_TIMER,
+                                                    &value,
+                                                    sizeof(uint32));
+                             (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_RECENT_MT_CALL_TIMER,
+                                                    &value,
+                                                     sizeof(uint32));
+                          }
                           break;
                        
                        case IDS_DELETE:
