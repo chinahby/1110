@@ -854,6 +854,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 return TRUE;
             }  
 #if defined (FEATURE_DISP_160X128)
+#if 0
             if ((!pme->m_pSoftKey) && (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_CAPLK) && (shortkey == TRUE) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
@@ -879,6 +880,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                     OEM_SetInputMode((CTextCtl *)pme);
                     return TRUE;
                 }
+			#endif
 #endif
 #else //AEE_SIMULATOR       
 #if MIN_BREW_VERSION(3,0)

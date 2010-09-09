@@ -381,6 +381,7 @@ typedef struct _TextCtlContext {
 #endif
    IImage               *m_pImageBg;
    boolean              is_isShift;
+   boolean              m_bCaplk;
 } TextCtlContext;
 
 typedef boolean         (*PFN_ModeCharHandler)(TextCtlContext *, AVKType);
@@ -885,6 +886,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    }
    pNewContext->is_isShift = FALSE;
    pNewContext->nMultitapCaps = MULTITAP_FIRST_CAP;
+   pNewContext->m_bCaplk = FALSE;
 
    pNewContext->nLineHeight =
                      IDISPLAY_GetFontMetrics((IDisplay*)pNewContext->pIDisplay,
@@ -4777,7 +4779,15 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
                         else
                         {
                             TextCtl_NoSelection(pContext);
-                            TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+							if(pContext->m_bCaplk)
+							{
+								TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+								pContext->m_bCaplk = FALSE;
+							}
+							else
+							{
+                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+							}
                         }
                      }
                   }
@@ -4796,6 +4806,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
                  }
               }
               break;
+		case AVK_CAPLK:
+			{
+				pContext->m_bCaplk = !pContext->m_bCaplk;
+			}
+			break;
         case AVK_LEFT:
             {
             if(FOCUS_SELECTION == pContext->sFocus)
@@ -5020,6 +5035,7 @@ static void T9TextCtl_Latin_Rapid_Exit(TextCtlContext *pContext)
 {
     T9_AW_Destroy ( pContext );
     TextCtl_NoSelection(pContext);
+	pContext->m_bCaplk = FALSE;
 }
 
 /*------------------------------------------------------------------------
@@ -5558,7 +5574,15 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
                         else
                         {
                             TextCtl_NoSelection(pContext);
-                            TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+							if(pContext->m_bCaplk)
+							{
+								TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+								pContext->m_bCaplk = FALSE;
+							}
+							else
+							{
+                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+							}
                         }
                      }
                   }
@@ -5579,7 +5603,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
               break;
         case AVK_CAPLK:
              {
-                
+			 	
+                pContext->m_bCaplk = !pContext->m_bCaplk;
              }
              return TRUE;
              break;
@@ -5810,6 +5835,7 @@ static void T9TextCtl_MultitapExit(TextCtlContext *pContext)
     (void) ISHELL_CancelTimer((IShell *) pContext->pIShell,
                             TextCtl_MultitapTimer, pContext);    
     TextCtl_NoSelection(pContext);
+	pContext->m_bCaplk = FALSE;
 
 }
 
