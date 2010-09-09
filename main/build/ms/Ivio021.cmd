@@ -1,9 +1,9 @@
 @echo off
-@set PROJECTNAME=Esia021
-@set DISPLAYNAME=Esia021
+@set PROJECTNAME=Ivio021
+@set DISPLAYNAME=Ivio021
 @set QUALCOMMNAME=SBNAALZ
 @set QUALCOMMNAME_BUILD=SXNAALZ
-@set RESOURCEDIR=Esia021
+@set RESOURCEDIR=Ivio021
 
 rem delete some files for compile muslim or nasrani
 del %PROJECTNAME%\CoreAppDialogHandler.o
