@@ -1096,6 +1096,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
 #endif //defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
 #ifdef FEATURE_NET_LOCK
 {
+	#if 0
             extern boolean OEM_IsNetLock(void);
 			#ifdef FEATURE_LONG_NETLOCK
 			boolean Is_NetLockclose = FALSE;
@@ -1131,6 +1132,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
                 MOVE_TO_STATE(COREST_UIMERR)
                 return NFSMACTION_CONTINUE;
             }
+			#endif
 			#endif
 }
 #endif
