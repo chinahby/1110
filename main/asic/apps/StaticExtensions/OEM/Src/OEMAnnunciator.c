@@ -558,7 +558,6 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
     int nWidth, nHeight;
     IBitmap *pIBitmap = NULL;
     db_items_value_type  need_capture;
-
     if (pMe == NULL) 
     {
         return EFAILED;
@@ -573,7 +572,6 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
     {
         return EFAILED;
     }
-
     nWidth = (int)Annunciators[nAnnunID].width;
     nHeight = (int)Annunciators[nAnnunID].height;
     SETAEERECT(&Rect, Annunciators[nAnnunID].x_pos,
@@ -583,7 +581,6 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
         /* nothing to do */
         return SUCCESS;
     }
-
     db_get(DB_CAPTURE_WALLPER,&need_capture);
     if (pMe->m_coreObj->m_bAnnunciatorOn)
     {// 清除显示色备上的图标--此时需判断显示设备图标状态
@@ -632,7 +629,6 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
 
 
 	IAnnunciator_Redraw(pMe);	//Add By zzg 2010_07_30
-	
     return SUCCESS;
 }
 
@@ -712,7 +708,6 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   IImage  *pBackBmp = NULL;
   int i,j;
   uint32 nFirstState = GetAnnunFirstState(nState);
-  
   if ((pMe == NULL))
     return EFAILED;
 
@@ -746,7 +741,6 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   {//if state changed to another one, field needed to be cleared before drawing a new one
     ClearField(pMe, nAnnunID);
   }
-
   
   nWidth = (int)Annunciators[nAnnunID].width;
   nHeight = (int)Annunciators[nAnnunID].height;
@@ -1715,7 +1709,6 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
 {
   PACONTEXT pac;
   uint32 nStateRank = GetAnnunStateRank(nState);
-
   if (nAnnunID >= ARR_SIZE(Annunciators))
     return EFAILED;
   if (Annunciators[nAnnunID].pcontent->nFieldType != ANNUN_TYPE_IMAGE)
@@ -1746,7 +1739,7 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
   if (pMe == NULL) {
     return EFAILED;
   }
-
+  ClearField(pMe, nAnnunID);//只会清除对应ID的那一块区域rect，不会影响其他的状态栏图标
   /* Run in the system context */
 #if MIN_BREW_VERSION(3, 0)
   pac = AEE_EnterAppContext(NULL);
@@ -1785,8 +1778,8 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
         SUCCESS)
     {
 #ifndef WIN32
-      MSG_LOW("Unable to draw field %d for annunciator set, state %d.", i,
-              Annunciators[i].pcontent->nCurrState, 0);
+ //     MSG_FATAL("Unable to draw field %d for annunciator set, state %d.", i,
+ //             Annunciators[i].pcontent->nCurrState, 0);
 #endif
     }
 
@@ -1922,7 +1915,6 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
    //IImage * pBackBmp = NULL;
    AEERect rc = {0};
    uint32      dwFlags;
-
    if (NULL == pMe)
    {
       MSG_LOW("Null object ptr in annunciator redraw.", 0, 0, 0);
@@ -2093,7 +2085,6 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #else
    AEE_SetAppContext(pac);
 #endif // MIN_BREW_VERSION(3, 0)
-
    return nRetVal;
 }
 
