@@ -486,11 +486,15 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE;
 
         case EVT_APP_STOP:
+			{
             //if (pMe->m_pDisplay != NULL)
             //{
             //    (void) IDISPLAY_Release(pMe->m_pDisplay);
             //    pMe->m_pDisplay = NULL;
             //}
+	            JulianType  julian;
+	        	GetJulianDate(GETTIMESECONDS(), &julian);
+	            pm_rtc_rw_cmd (PM_RTC_SET_CMD, (pm_rtc_julian_type*)(&julian));
             pMe->m_bSuspended = TRUE;
             pMe->m_bActive = TRUE;
 
@@ -500,6 +504,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 *((boolean *)dwParam) = FALSE;
             }
             return TRUE;
+    	  }
 
         case EVT_APP_SUSPEND:
         {

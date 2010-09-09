@@ -3612,7 +3612,8 @@ static void CoreApp_UpdateIdleTimer(void *pUser)
 {
     CCoreApp    *pMe = (CCoreApp *)pUser;
     uint32         dwSeconds;
-
+	JulianType  julian;
+	
     if (pMe == NULL) 
     {
         return;
@@ -3626,7 +3627,8 @@ static void CoreApp_UpdateIdleTimer(void *pUser)
     
     // 计算下次定时器定时时间，时间尽可能靠近下一分钟，做到显示时间精确
     dwSeconds = GETTIMESECONDS();
-    
+    GetJulianDate(GETTIMESECONDS(), &julian);
+    pm_rtc_rw_cmd (PM_RTC_SET_CMD, (pm_rtc_julian_type*)(&julian));
     if (FALSE == pMe->m_bAcquiredTime) 
     {
         // 20x365x24x60x60 = 630720000
