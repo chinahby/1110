@@ -392,11 +392,7 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
     {HS_PWR_K,                      AVK_POWER,                      AVK_METHED_HOLD, FALSE, 0},
     {HS_END_K,                      AVK_END,                        AVK_METHED_HOLD, FALSE, 0},
     {HS_SEND_K,                     AVK_SEND,                       AVK_METHED_HOLD, FALSE, 0},
-#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
-    {HS_CLR_K,                      AVK_SOFT2,                        AVK_METHED_HOLD, FALSE, 0},
-#else
 	{HS_CLR_K,                      AVK_CLR,                        AVK_METHED_HOLD, FALSE, 0},
-#endif
     {HS_SEL_K,                      AVK_SELECT,                     AVK_METHED_HOLD, FALSE, 0},
 
     {HS_UP_K,                       AVK_UP,                         AVK_METHED_REPT, FALSE, 0},
@@ -458,6 +454,7 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
 	{HS_NONE_K,                     AVK_UNDEFINED,                  AVK_METHED_NONE, FALSE, 0},
 };
 AVKType    last_vcode = AEE_INVALID_CODE;
+uint32	   dwParam_code = 0;		//Add By zzg 2010_09_09
 
 LOCAL struct {
   byte rd_idx;                  /* read index                */
@@ -482,7 +479,7 @@ static void StopKeyRepeat(hs_to_aee_key_type *ptbl);
 static void StopKeyHold(hs_to_aee_key_type *ptbl);
 
 extern void keypad_set_backlight( byte level );
-static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam);
+static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam);
 static void CoreTask_CreateAEEInstance(void);
 static void CoreTask_FreeAEEInstance(void);
 void VoteForSleep (boolean flag);
@@ -871,9 +868,11 @@ void handle_keys(void)
             hs2vcodeidx = GetHsToVcodeIdx(key.key_parm);
 #endif
             last_vcode = hs_to_aee_tbl[hs2vcodeidx].aee_vcode;
+            dwParam_code = hs_to_aee_tbl[hs2vcodeidx].dwparam;	//Add By zzg 2010_09_09
+            
             if (last_vcode != AVK_UNDEFINED && hs_to_aee_tbl[hs2vcodeidx].bpressed){
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = FALSE;
-                if (CoreTask_HandleAEEEvt(EVT_KEY_RELEASE, last_vcode)){
+                if (CoreTask_HandleAEEEvt(EVT_KEY_RELEASE, last_vcode, dwParam_code)){
                     continue;
                 }
                 if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_REPT){
@@ -886,9 +885,10 @@ void handle_keys(void)
         }else{
             hs2vcodeidx = GetHsToVcodeIdx(key.key_code);
             last_vcode = hs_to_aee_tbl[hs2vcodeidx].aee_vcode;
+            dwParam_code = hs_to_aee_tbl[hs2vcodeidx].dwparam;	//Add By zzg 2010_09_09
             if(last_vcode != AVK_UNDEFINED){
-                CoreTask_HandleAEEEvt(EVT_KEY_PRESS, last_vcode);
-                if (CoreTask_HandleAEEEvt(EVT_KEY, last_vcode)){
+                CoreTask_HandleAEEEvt(EVT_KEY_PRESS, last_vcode, dwParam_code);
+                if (CoreTask_HandleAEEEvt(EVT_KEY, last_vcode, dwParam_code)){
                     continue;
                 }
 
@@ -1773,7 +1773,7 @@ static void CoreTask_FreeAEEInstance(void)
     }
 }
 
-static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
+static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam)
 {
     AEECLSID cls;
     boolean  bHandle = FALSE;
@@ -1808,21 +1808,25 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam)
         break;
 #endif
 
+
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP 
-	case AVK_SOFT2:
-		if(((cls == AEECLSID_SMARTFREN_MNEWS) 
-		   || (cls == AEECLSID_SMARTFREN_MSHOP)
-		   || (cls == AEECLSID_SMARTFREN_MKARAOKE) 
-		   || (cls == AEECLSID_SMARTFREN_TWITTER)
-		   || (cls == AEECLSID_SMARTFREN_FACEBOOK)
-		   || (cls == AEECLSID_SMARTFREN_SATU)
-		   || (cls == AEECLSID_SMARTFREN_SFM)
-		   || (cls == AEECLSID_SMARTFREN_TEST)
-		   || (cls == AEECLSID_CORE_APP)) == FALSE)
+	case AVK_CLR:			
+		if ((cls == AEECLSID_SMARTFREN_MNEWS)
+			|| (cls == AEECLSID_SMARTFREN_MSHOP)
+			|| (cls == AEECLSID_SMARTFREN_MKARAOKE)
+			|| (cls == AEECLSID_SMARTFREN_TWITTER)
+			|| (cls == AEECLSID_SMARTFREN_FACEBOOK)
+			|| (cls == AEECLSID_SMARTFREN_SATU)
+			|| (cls == AEECLSID_SMARTFREN_SFM)
+			|| (cls == AEECLSID_SMARTFREN_TEST)
+			|| (cls == AEECLSID_CORE_APP))		
 		{
-			wParam = AVK_CLR;
-			bHandle = TRUE;
-		}
+			if (dwParam == 0)
+			{
+				wParam = AVK_SOFT2;
+				bHandle = TRUE;
+			}
+		}	
 		break;
 #endif
     case AVK_END:
