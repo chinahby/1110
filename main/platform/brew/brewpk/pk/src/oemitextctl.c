@@ -671,7 +671,23 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             
         case EVT_KEY_HELD:     
             // Press and hold of keys 0 through 9 should be passed to the OEM
-            
+            MSG_FATAL("EVT_KEY_HELD::::%x",eCode,0,0);
+            if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
+            {
+                    if (!(pme->m_dwProps & TP_NODRAW))
+                    {
+                        OEM_TextUpdate(pme->m_pText);
+                    }
+                    
+                    TextCtl_CheckEntryMode(pme);
+                    
+                    if (!(pme->m_dwProps & TP_NODRAW))
+                    {
+                        IDISPLAY_Update(pme->m_pIDisplay);
+                    }
+                    
+                    return(TRUE);
+            }
             if (!pme->m_bActive ||
                 (wParam != AVK_CLR &&
                  wParam != AVK_STAR &&
@@ -1337,7 +1353,7 @@ NormalKeyEvent:
                     }
 		  }
 #endif
-				MSG_FATAL("OEM_TextKeyPress::::%x",wParam,0,0);
+				MSG_FATAL("OEM_TextKeyPress::::%x",eCode,0,0);
                 if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
                 {
                     if (!(pme->m_dwProps & TP_NODRAW))

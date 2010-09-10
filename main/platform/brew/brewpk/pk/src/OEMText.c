@@ -384,7 +384,7 @@ typedef struct _TextCtlContext {
    boolean              m_bCaplk;
 } TextCtlContext;
 
-typedef boolean         (*PFN_ModeCharHandler)(TextCtlContext *, AVKType);
+typedef boolean         (*PFN_ModeCharHandler)(TextCtlContext *,AEEEvent, AVKType);
 typedef const AECHAR *  (*PFN_ModeGetString)(TextCtlContext *);
 typedef void            (*PFN_ModeChange)(TextCtlContext *);
 
@@ -409,7 +409,7 @@ typedef struct _ModeInfo {
 ===========================================================================*/
 // Normal Number
 static void TextCtl_NumbersRestart(TextCtlContext *);
-static boolean TextCtl_NumbersKey(TextCtlContext *, AVKType);
+static boolean TextCtl_NumbersKey(TextCtlContext *,AEEEvent, AVKType);
 static void TextCtl_NumbersExit(TextCtlContext *);
 static void TextCtl_MultitapTimer(void *pUser);
 
@@ -417,17 +417,17 @@ static void TextCtl_MultitapTimer(void *pUser);
 #ifdef FEATURE_T9_ALPHABETIC
 // T9 Latin Rapid
 static void T9TextCtl_Latin_Rapid_Restart(TextCtlContext *pContext);
-static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *,AVKType);
+static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *,AEEEvent,AVKType);
 static void T9TextCtl_Latin_Rapid_Exit(TextCtlContext *pContext);
 
 // T9 Latin Multitap
 static void T9TextCtl_MultitapRestart(TextCtlContext *pContext);
-static boolean T9TextCtl_MultitapKey(TextCtlContext *,AVKType);
+static boolean T9TextCtl_MultitapKey(TextCtlContext *,AEEEvent,AVKType);
 static void T9TextCtl_MultitapExit(TextCtlContext *pContext);
 
 //T9 Cap Lower   yangdecai 2010-09-09
 static void T9TextCtl_Cap_Lower_Restart(TextCtlContext *pContext);
-static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *,AVKType);
+static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *,AEEEvent,AVKType);
 static void T9TextCtl_Cap_Lower_Rapid_Exit(TextCtlContext *pContext);
 
 
@@ -435,7 +435,7 @@ static void T9TextCtl_Cap_Lower_Rapid_Exit(TextCtlContext *pContext);
 static void T9_AW_Init(TextCtlContext *pContext);
 static void T9_AW_Destroy(TextCtlContext *pContext);
 static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key);
-static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext, AVKType cKey);
+static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent, AVKType cKey);
 
 /* This is static because the only use of it is in setting a pointer.
    It is T9FARCALL because it might be called from anywhere. */
@@ -447,7 +447,7 @@ extern T9U32 T9FARCALL T9ReadLdbData(T9FieldInfo *pFieldInfo, T9U32 dwOffset, T9
 #ifdef FEATURE_T9_CHINESE
 // CJK CHINESE
 static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext);
-static boolean T9TextCtl_CJK_CHINESE_Key(TextCtlContext *,AVKType);
+static boolean T9TextCtl_CJK_CHINESE_Key(TextCtlContext *,AEEEvent,AVKType);
 static void T9TextCtl_CJK_CHINESE_Exit(TextCtlContext *pContext);
 
 static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext);
@@ -459,7 +459,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext );
 static T9STATUS T9_CJK_CHINESE_Init(TextCtlContext *pContext);
 static void T9_CJK_CHINESE_Destroy(TextCtlContext *pContext);
 static boolean T9_CJK_CHINESE_DisplayText(TextCtlContext *pContext);
-static T9KEY T9_CJK_CHINESE_BrewKeyToT9Key(TextCtlContext *pContext, AVKType cKey);
+static T9KEY T9_CJK_CHINESE_BrewKeyToT9Key(TextCtlContext *pContext,AEEEvent, AVKType cKey);
 T9STATUS T9FARCALL T9_CJK_CHINESE_HandleRequest(T9FieldInfo *pFieldInfo, T9Request *pRequest);
 #endif // #ifdef FEATURE_T9_CHINESE
 #endif //FEATURE_T9_INPUT
@@ -1681,7 +1681,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     AVKType key = (AVKType) dwKeyCode;
     
     // Press and hold the number key to get the number
-
+	#if 0
     if ((eCode != EVT_KEY) 
         /*&&(!(key == AVK_STAR) && (eCode == EVT_KEY_RELEASE))
         &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE))*/ //modi by yangdecai 2010-08-07
@@ -1689,7 +1689,15 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     {
         return FALSE; // We only want key events or CLR held events
     }
-
+	#else
+	if ((eCode == EVT_KEY_RELEASE)|| 
+        /*&&(!(key == AVK_STAR) && (eCode == EVT_KEY_RELEASE))
+        &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE))*/ //modi by yangdecai 2010-08-07
+         (eCode == EVT_KEY_PRESS))
+    {
+        return FALSE; // We only want key events or CLR held events
+    }
+	#endif
     if (pContext) 
     {
         // Ignore Up/Down if we're not multiline
@@ -1865,7 +1873,9 @@ OEM_TextKeyPress_COMM:
                 default:
                     if (sTextModes[pContext->byMode].pfn_char) 
                     {
-                        boolean ans = (*sTextModes[pContext->byMode].pfn_char)(pContext, key);
+                    	
+                        boolean ans = (*sTextModes[pContext->byMode].pfn_char)(pContext,eCode, key);
+						MSG_FATAL("OEM_TextKeyPress_COMM:.....................",0,0,0);
                         if (ans)
                         {
                             OEM_TextUpdate(pContext);
@@ -4405,7 +4415,7 @@ static void T9TextCtl_Latin_Rapid_Restart(TextCtlContext *pContext)
  *  Return          : boolean
  *
  *-----------------------------------------------------------------------*/
-static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
+static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCode,AVKType key)
 {
     boolean  bRet       = FALSE;
     T9STATUS sT9Status = T9STATERROR;     
@@ -4721,315 +4731,365 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AVKType key)
     }
     MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 12", 0,0,0);
 #elif defined(FEATURE_DISP_160X128)
-    if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
-    {
-        pContext->sFocus = FOCUS_TEXT;            
-    }
-
-    if(AVK_SELECT == key || AVK_INFO == key)
-    {
-        if(FOCUS_SELECTION == pContext->sFocus)
-        {       
-            t9Key = T9KEYRIGHT;
-        }
-        else
-        {
-            sT9Status = T9STATERROR;         
-            return FALSE;          
-        }
-    }     
-    switch ( key) 
-    {
-    	case AVK_0:
-        case AVK_1:
-        case AVK_2:
-        case AVK_3:
-        case AVK_4:
-        case AVK_5:
-        case AVK_6:
-        case AVK_7:
-        case AVK_8:
-        case AVK_9:
-        case AVK_POUND:
-        case AVK_STAR: 
-        case AVK_T: 
-        case AVK_Y:
-        case AVK_U:
-        case AVK_I:
-        case AVK_O:
-        case AVK_P:
-        case AVK_G:
-        case AVK_H:
-        case AVK_J:
-        case AVK_K:
-        case AVK_L:
-        case AVK_V: 
-        case AVK_B: 
-        case AVK_N:
-        case AVK_M:
-        case AVK_ENTER:
-		case AVK_SPACE:
-        case AVK_RWD:
-            {
-                int i = 0;
-                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
-                {
-                    // meet the max count of the text.
-                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
-                    {
-                        sT9Status = T9STATERROR; 
-                        return FALSE;
-                    }
-                }
-                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
-    			{           
-            		if (key == VLCharKeyItem[i].wParam)
-            		{
-        			    if(pContext->is_isShift)
-                        { 
-                            TextCtl_NoSelection(pContext);
-                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-                            pContext->is_isShift = FALSE;
-                        }
-                        else
-                        {
-                            TextCtl_NoSelection(pContext);
-							if(pContext->m_bCaplk)
-							{
-								TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
-								pContext->m_bCaplk = FALSE;
-							}
-							else
-							{
-                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
-							}
-                        }
-                     }
-                  }
-            }
-            return TRUE;
-            break;
-         case AVK_SHIFT:
-              {
-                 if(pContext->is_isShift)
-                 {
-                    pContext->is_isShift = FALSE;
-                 }
-                 else
-                 {
-                    pContext->is_isShift = TRUE;
-                 }
-              }
-              break;
-		case AVK_CAPLK:
+	if(eCode == EVT_KEY_HELD)
+		{
+			switch(key)
 			{
-				pContext->m_bCaplk = !pContext->m_bCaplk;
-			}
-			break;
-        case AVK_LEFT:
-            {
-            if(FOCUS_SELECTION == pContext->sFocus)
-            {
-                pContext->sFocus = FOCUS_TEXT;             
-                sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYLEFT );  
-            }
+				case AVK_0:
+				case AVK_1:
+				case AVK_2:
+				case AVK_3:
+				case AVK_4:
+				case AVK_5:
+				case AVK_6:
+				case AVK_7:
+				case AVK_8:
+				case AVK_9:
+					{
+						int i = 0;
+						if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+						{
+							/* Set selection to the character before the insertion point */
+							--pContext->wSelStart;
+						}
+						else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+						{
+							 return FALSE;
+						}
+				
+						/* Insert a "NUL" to just delete and insert nothing */
+						TextCtl_AddChar(pContext, 0);
+						if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+						{
+							// meet the max count of the text.
+							if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+							{
+								sT9Status = T9STATERROR; 
+								return FALSE;
+							}
+						}
+						TextCtl_NoSelection(pContext);
+						TextCtl_AddChar(pContext,(AECHAR) ( ( (int)key - (int)AVK_0 ) + '0'));
+	
+						}
+					return TRUE;
+					default:
+					break;
+				}
+			
+		}
+		else
+		{
+		    if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
+		    {
+		        pContext->sFocus = FOCUS_TEXT;            
+		    }
+
+		    if(AVK_SELECT == key || AVK_INFO == key)
+		    {
+		        if(FOCUS_SELECTION == pContext->sFocus)
+		        {       
+		            t9Key = T9KEYRIGHT;
+		        }
+		        else
+		        {
+		            sT9Status = T9STATERROR;         
+		            return FALSE;          
+		        }
+		    }     
+		    switch ( key) 
+		    {
+		    	case AVK_0:
+		        case AVK_1:
+		        case AVK_2:
+		        case AVK_3:
+		        case AVK_4:
+		        case AVK_5:
+		        case AVK_6:
+		        case AVK_7:
+		        case AVK_8:
+		        case AVK_9:
+		        case AVK_POUND:
+		        case AVK_STAR: 
+		        case AVK_T: 
+		        case AVK_Y:
+		        case AVK_U:
+		        case AVK_I:
+		        case AVK_O:
+		        case AVK_P:
+		        case AVK_G:
+		        case AVK_H:
+		        case AVK_J:
+		        case AVK_K:
+		        case AVK_L:
+		        case AVK_V: 
+		        case AVK_B: 
+		        case AVK_N:
+		        case AVK_M:
+		        case AVK_ENTER:
+				case AVK_SPACE:
+		        case AVK_RWD:
+		            {
+		                int i = 0;
+		                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+		                {
+		                    // meet the max count of the text.
+		                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+		                    {
+		                        sT9Status = T9STATERROR; 
+		                        return FALSE;
+		                    }
+		                }
+		                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
+		    			{           
+		            		if (key == VLCharKeyItem[i].wParam)
+		            		{
+		        			    if(pContext->is_isShift)
+		                        { 
+		                            TextCtl_NoSelection(pContext);
+		                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+		                            pContext->is_isShift = FALSE;
+		                        }
+		                        else
+		                        {
+		                            TextCtl_NoSelection(pContext);
+									if(pContext->m_bCaplk)
+									{
+										TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+										pContext->m_bCaplk = FALSE;
+									}
+									else
+									{
+		                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+									}
+		                        }
+		                     }
+		                  }
+		            }
+		            return TRUE;
+		            break;
+		         case AVK_SHIFT:
+		              {
+		                 if(pContext->is_isShift)
+		                 {
+		                    pContext->is_isShift = FALSE;
+		                 }
+		                 else
+		                 {
+		                    pContext->is_isShift = TRUE;
+		                 }
+		              }
+		              break;
+				case AVK_CAPLK:
+					{
+						pContext->m_bCaplk = !pContext->m_bCaplk;
+					}
+					break;
+		        case AVK_LEFT:
+		            {
+		            if(FOCUS_SELECTION == pContext->sFocus)
+		            {
+		                pContext->sFocus = FOCUS_TEXT;             
+		                sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYLEFT );  
+		            }
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
-            {
-                   uint16 wNewSel;
-                   wNewSel = pContext->wSelEnd + 1;
-                   if(OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
-                   {
-                       OEM_TextSetCursorPos(pContext, 0);
-                   }
-                   else 
-                   {  
-               
-                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
-                   }
-            }
+		            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+		            {
+		                   uint16 wNewSel;
+		                   wNewSel = pContext->wSelEnd + 1;
+		                   if(OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+		                   {
+		                       OEM_TextSetCursorPos(pContext, 0);
+		                   }
+		                   else 
+		                   {  
+		               
+		                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+		                   }
+		            }
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-            if (OEM_TextGetCursorPos(pContext) == 0)
-                {
-                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
-                }
-                else
-                {
-                    uint16 wNewSel;
-                    wNewSel = pContext->wSelStart;
-                    if (wNewSel)
-                    {
-                        --wNewSel;
-                    }               
+		            if (OEM_TextGetCursorPos(pContext) == 0)
+		                {
+		                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+		                }
+		                else
+		                {
+		                    uint16 wNewSel;
+		                    wNewSel = pContext->wSelStart;
+		                    if (wNewSel)
+		                    {
+		                        --wNewSel;
+		                    }               
 #ifdef FEATURE_LANG_THAI
-                    {
-                        int count=0;
-                        count = moveleftselThaiChar(pContext->pszContents[pContext->wSelStart-2],
-                                                    pContext->pszContents[pContext->wSelStart-1]);
-                        if(count!= 0)
-                        {
-                            wNewSel = wNewSel - count;
-                        }
-                    }
+		                    {
+		                        int count=0;
+		                        count = moveleftselThaiChar(pContext->pszContents[pContext->wSelStart-2],
+		                                                    pContext->pszContents[pContext->wSelStart-1]);
+		                        if(count!= 0)
+		                        {
+		                            wNewSel = wNewSel - count;
+		                        }
+		                    }
 #endif //FEATURE_LANG_THAI                   
-                OEM_TextSetSel(pContext, wNewSel, wNewSel);
-                    (void) TextCtl_AutoScroll(pContext);
-                }
-                return TRUE;
-            }            
-            break;     
+		                OEM_TextSetSel(pContext, wNewSel, wNewSel);
+		                    (void) TextCtl_AutoScroll(pContext);
+		                }
+		                return TRUE;
+		            }            
+		            break;     
 
-        case AVK_RIGHT:
-             {
+		        case AVK_RIGHT:
+		             {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
-                {
-                   uint16 wNewSel;
-                   wNewSel = pContext->wSelStart ;
-                   if ( OEM_TextGetCursorPos(pContext) == 0 )
-                   {
-                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
-                       //OEM_TextSetSel(pContext, 0, 0);
-                       OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
-                   }
-                   else 
-                   {  
-                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-                       wNewSel --;            
-                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
-                   }
-                }
+		            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+		                {
+		                   uint16 wNewSel;
+		                   wNewSel = pContext->wSelStart ;
+		                   if ( OEM_TextGetCursorPos(pContext) == 0 )
+		                   {
+		                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
+		                       //OEM_TextSetSel(pContext, 0, 0);
+		                       OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+		                   }
+		                   else 
+		                   {  
+		                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
+		                       wNewSel --;            
+		                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+		                   }
+		                }
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
-                {
-                    OEM_TextSetCursorPos(pContext, -1);
-                }                
-                else
-                {
-                    uint16 wNewSel;
-                    wNewSel = pContext->wSelEnd + 1;                  
+		             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+		                {
+		                    OEM_TextSetCursorPos(pContext, -1);
+		                }                
+		                else
+		                {
+		                    uint16 wNewSel;
+		                    wNewSel = pContext->wSelEnd + 1;                  
 #ifdef FEATURE_LANG_THAI  
-                    {
-                        int count=0;
-                        count = moverightselThaiChar(pContext->pszContents[pContext->wSelStart+2],
-                                                     pContext->pszContents[pContext->wSelStart+1]);
-                        if(count!= 0)
-                        {
-                            wNewSel = wNewSel + count;
-                        }
-                    }
+		                    {
+		                        int count=0;
+		                        count = moverightselThaiChar(pContext->pszContents[pContext->wSelStart+2],
+		                                                     pContext->pszContents[pContext->wSelStart+1]);
+		                        if(count!= 0)
+		                        {
+		                            wNewSel = wNewSel + count;
+		                        }
+		                    }
 #endif //FEATURE_LANG_THAI                                               
-                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
-                    (void) TextCtl_AutoScroll(pContext);
-                }
-                return TRUE;  
-            }
-            break;   
+		                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
+		                    (void) TextCtl_AutoScroll(pContext);
+		                }
+		                return TRUE;  
+		            }
+		            break;   
 
-         case AVK_UP:
-              {
-                uint16 nLine, nCharsIn,nSel;
-                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+		         case AVK_UP:
+		              {
+		                uint16 nLine, nCharsIn,nSel;
+		                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
 
-                // If it is on the first line, return false
-                if(nLine == 0 || !pContext->pwLineStarts)
-                    return FALSE;
+		                // If it is on the first line, return false
+		                if(nLine == 0 || !pContext->pwLineStarts)
+		                    return FALSE;
 
-                // Otherwise figure out how many characters from the start
-                // of the line the cursor is and try to put the cursor in a
-                // similar position on previous line. Or, if not enough
-                // chars, at the end of the line
-                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
-                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
-                                               pContext->pwLineStarts[nLine]) 
-                {
-                    nSel = pContext->pwLineStarts[nLine]-1;
-                } 
-                else 
-                {
-                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
-                }
-                OEM_TextSetSel(pContext, nSel,nSel);
-                (void) TextCtl_AutoScroll(pContext);
-                return TRUE;
-            }            
-            break;   
+		                // Otherwise figure out how many characters from the start
+		                // of the line the cursor is and try to put the cursor in a
+		                // similar position on previous line. Or, if not enough
+		                // chars, at the end of the line
+		                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+		                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
+		                                               pContext->pwLineStarts[nLine]) 
+		                {
+		                    nSel = pContext->pwLineStarts[nLine]-1;
+		                } 
+		                else 
+		                {
+		                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
+		                }
+		                OEM_TextSetSel(pContext, nSel,nSel);
+		                (void) TextCtl_AutoScroll(pContext);
+		                return TRUE;
+		            }            
+		            break;   
 
-        case AVK_DOWN:
-             {
-                uint16 nLine, nCharsIn,nSel;
+		        case AVK_DOWN:
+		             {
+		                uint16 nLine, nCharsIn,nSel;
 
-                if((!pContext->pwLineStarts)||(!pContext->wLines))
-                    return FALSE;
-                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+		                if((!pContext->pwLineStarts)||(!pContext->wLines))
+		                    return FALSE;
+		                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
 
-                // If the cursor is on the last line and the line's last
-                // character is not a LF, then FALSE is returned as nothing
-                // can be done. A LF on the end of a line does not tell the
-                // wLines member that there is another line, hence this
-                // extra check.
-                if ( nLine == (pContext->wLines-1) &&
-                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
-                {
-                    return FALSE;
-                }
+		                // If the cursor is on the last line and the line's last
+		                // character is not a LF, then FALSE is returned as nothing
+		                // can be done. A LF on the end of a line does not tell the
+		                // wLines member that there is another line, hence this
+		                // extra check.
+		                if ( nLine == (pContext->wLines-1) &&
+		                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
+		                {
+		                    return FALSE;
+		                }
 
-                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
-                // If the cursor is more characters in than the next line...
-                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
-                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
-                {
-                    // If it is the last line, don't subtract the LINEBREAK from selection spot
-                    if( nLine+2 == pContext->wLines )
-                    {
-                        nSel = pContext->pwLineStarts[nLine+2];
-                    }
-                    else
-                    {
-                        nSel = pContext->pwLineStarts[nLine+2]-1;
-                    }
-                }
-                else
-                {
-                    // Selection spot is number of chars into the next line
-                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
-                    // If this is not the beginning of a line 
-                    // and the selection point is a LINEBREAK, subtract one
-                    // Otherwise the selection overshoots to the first character
-                    // of the following line.
-                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
-                    {
-                        nSel--;
-                    }
-                }
-                OEM_TextSetSel(pContext, nSel,nSel);
-                (void) TextCtl_AutoScroll(pContext);
+		                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+		                // If the cursor is more characters in than the next line...
+		                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
+		                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
+		                {
+		                    // If it is the last line, don't subtract the LINEBREAK from selection spot
+		                    if( nLine+2 == pContext->wLines )
+		                    {
+		                        nSel = pContext->pwLineStarts[nLine+2];
+		                    }
+		                    else
+		                    {
+		                        nSel = pContext->pwLineStarts[nLine+2]-1;
+		                    }
+		                }
+		                else
+		                {
+		                    // Selection spot is number of chars into the next line
+		                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
+		                    // If this is not the beginning of a line 
+		                    // and the selection point is a LINEBREAK, subtract one
+		                    // Otherwise the selection overshoots to the first character
+		                    // of the following line.
+		                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
+		                    {
+		                        nSel--;
+		                    }
+		                }
+		                OEM_TextSetSel(pContext, nSel,nSel);
+		                (void) TextCtl_AutoScroll(pContext);
 
-                return TRUE;
-            }            
-            break;    
+		                return TRUE;
+		            }            
+		            break;    
 
-            
-        case AVK_CLR:
-            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-            {
-                 /* Set selection to the character before the insertion point */
-                 --pContext->wSelStart;
-            }
-            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
-            {
-                  return FALSE;
-            }
-            
-            /* Insert a "NUL" to just delete and insert nothing */
-            TextCtl_AddChar(pContext, 0);
-            return TRUE;                
+		            
+		        case AVK_CLR:
+		            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+		            {
+		                 /* Set selection to the character before the insertion point */
+		                 --pContext->wSelStart;
+		            }
+		            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+		            {
+		                  return FALSE;
+		            }
+		            
+		            /* Insert a "NUL" to just delete and insert nothing */
+		            TextCtl_AddChar(pContext, 0);
+		            return TRUE;                
 
-        default:
-            pContext->sFocus = FOCUS_TEXT;   
-            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
-            break;  
-    }   
+		        default:
+		            pContext->sFocus = FOCUS_TEXT;   
+		            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
+		            break;  
+		    }   
+		}
         
 #endif
     MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: END bRet=%d", bRet,0,0);
@@ -5186,7 +5246,7 @@ static void T9TextCtl_MultitapRestart(TextCtlContext *pContext)
  *  Return          : boolean
  *
  *-----------------------------------------------------------------------*/
-static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
+static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AVKType key)
 {
     boolean  bRet       = FALSE;
     T9STATUS sT9Status = T9STATERROR;  
@@ -5514,320 +5574,368 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext, AVKType key)
     }
     ERR("T9TextCtl_MultitapKey::13",0,0,0);
 #elif defined (FEATURE_DISP_160X128)
-    
-    if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
+    if(eCode == EVT_KEY_HELD)
     {
-        pContext->sFocus = FOCUS_TEXT;            
-    }
-
-    if(AVK_SELECT == key || AVK_INFO == key)
-    {
-        if(FOCUS_SELECTION == pContext->sFocus)
-        {       
-            t9Key = T9KEYRIGHT;
-        }
-        else
-        {
-            sT9Status = T9STATERROR;         
-            return FALSE;          
-        }
-    }     
-	
-    switch ( key) 
-    {
-    	case AVK_0:
-        case AVK_1:
-        case AVK_2:
-        case AVK_3:
-        case AVK_4:
-        case AVK_5:
-        case AVK_6:
-        case AVK_7:
-        case AVK_8:
-        case AVK_9:
-        case AVK_POUND:
-        case AVK_STAR: 
-        case AVK_T: 
-        case AVK_Y:
-        case AVK_U:
-        case AVK_I:
-        case AVK_O:
-        case AVK_P:
-        case AVK_G:
-        case AVK_H:
-        case AVK_J:
-        case AVK_K:
-        case AVK_L:
-        case AVK_V: 
-        case AVK_B: 
-        case AVK_N:
-        case AVK_M:
-        case AVK_ENTER:
-		case AVK_SPACE:
-        case AVK_RWD:
-            {
-                int i = 0;
-                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
-                {
-                    // meet the max count of the text.
-                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
-                    {
-                        sT9Status = T9STATERROR; 
-                        return FALSE;
-                    }
-                }
-                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
-    			{       
-            		if (key == VLCharKeyItem[i].wParam)
+    	switch(key)
+    	{
+    		case AVK_0:
+	        case AVK_1:
+	        case AVK_2:
+	        case AVK_3:
+	        case AVK_4:
+	        case AVK_5:
+	        case AVK_6:
+	        case AVK_7:
+	        case AVK_8:
+	        case AVK_9:
+				{
+					int i = 0;
+					if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
             		{
-        			    if(pContext->is_isShift)
-                        { 
-                            TextCtl_NoSelection(pContext);
-                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-                            pContext->is_isShift = FALSE;
-                        }
-                        else
-                        {
-                            TextCtl_NoSelection(pContext);
-							if(pContext->m_bCaplk)
-							{
-								TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
-								pContext->m_bCaplk = FALSE;
-							}
-							else
-							{
-                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
-							}
-                        }
-                     }
-                  }
-            }
-            return TRUE;
-            break;
-         case AVK_SHIFT:
-              {
-                 if(pContext->is_isShift)
-                 {
-                    pContext->is_isShift = FALSE;
-                 }
-                 else
-                 {
-                    pContext->is_isShift = TRUE;
-                 }
-              }
-              break;
-        case AVK_CAPLK:
-             {
-			 	
-                pContext->m_bCaplk = !pContext->m_bCaplk;
-             }
-             return TRUE;
-             break;
-        case AVK_LEFT:
-            {
-            if(FOCUS_SELECTION == pContext->sFocus)
-            {
-                pContext->sFocus = FOCUS_TEXT;             
-                sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYLEFT );  
-            }
+                 		/* Set selection to the character before the insertion point */
+                 		--pContext->wSelStart;
+            		}
+            		else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+            		{
+                 		 return FALSE;
+            		}
+            
+            		/* Insert a "NUL" to just delete and insert nothing */
+            		TextCtl_AddChar(pContext, 0);
+	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+	                {
+	                    // meet the max count of the text.
+	                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+	                    {
+	                        sT9Status = T9STATERROR; 
+	                        return FALSE;
+	                    }
+	                }
+	                TextCtl_NoSelection(pContext);
+            		TextCtl_AddChar(pContext,(AECHAR) ( ( (int)key - (int)AVK_0 ) + '0'));
+
+		            }
+	            return TRUE;
+				default:
+				break;
+			}
+		
+    }
+	else
+	{
+	    if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
+	    {
+	        pContext->sFocus = FOCUS_TEXT;            
+	    }
+
+	    if(AVK_SELECT == key || AVK_INFO == key)
+	    {
+	        if(FOCUS_SELECTION == pContext->sFocus)
+	        {       
+	            t9Key = T9KEYRIGHT;
+	        }
+	        else
+	        {
+	            sT9Status = T9STATERROR;         
+	            return FALSE;          
+	        }
+	    }     
+		
+	    switch ( key) 
+	    {
+	    	case AVK_0:
+	        case AVK_1:
+	        case AVK_2:
+	        case AVK_3:
+	        case AVK_4:
+	        case AVK_5:
+	        case AVK_6:
+	        case AVK_7:
+	        case AVK_8:
+	        case AVK_9:
+	        case AVK_POUND:
+	        case AVK_STAR: 
+	        case AVK_T: 
+	        case AVK_Y:
+	        case AVK_U:
+	        case AVK_I:
+	        case AVK_O:
+	        case AVK_P:
+	        case AVK_G:
+	        case AVK_H:
+	        case AVK_J:
+	        case AVK_K:
+	        case AVK_L:
+	        case AVK_V: 
+	        case AVK_B: 
+	        case AVK_N:
+	        case AVK_M:
+	        case AVK_ENTER:
+			case AVK_SPACE:
+	        case AVK_RWD:
+	            {
+	                int i = 0;
+	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+	                {
+	                    // meet the max count of the text.
+	                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+	                    {
+	                        sT9Status = T9STATERROR; 
+	                        return FALSE;
+	                    }
+	                }
+	                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
+	    			{       
+	            		if (key == VLCharKeyItem[i].wParam)
+	            		{
+	        			    if(pContext->is_isShift)
+	                        { 
+	                            TextCtl_NoSelection(pContext);
+	                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+	                            pContext->is_isShift = FALSE;
+	                        }
+	                        else
+	                        {
+	                            TextCtl_NoSelection(pContext);
+								if(pContext->m_bCaplk)
+								{
+									TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+									pContext->m_bCaplk = FALSE;
+								}
+								else
+								{
+	                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+								}
+	                        }
+	                     }
+	                  }
+	            }
+	            return TRUE;
+	            break;
+	         case AVK_SHIFT:
+	              {
+	                 if(pContext->is_isShift)
+	                 {
+	                    pContext->is_isShift = FALSE;
+	                 }
+	                 else
+	                 {
+	                    pContext->is_isShift = TRUE;
+	                 }
+	              }
+	              break;
+	        case AVK_CAPLK:
+	             {
+				 	
+	                pContext->m_bCaplk = !pContext->m_bCaplk;
+	             }
+	             return TRUE;
+	             break;
+	        case AVK_LEFT:
+	            {
+	            if(FOCUS_SELECTION == pContext->sFocus)
+	            {
+	                pContext->sFocus = FOCUS_TEXT;             
+	                sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYLEFT );  
+	            }
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
-            {
-                   uint16 wNewSel;
-                   wNewSel = pContext->wSelEnd + 1;
-                   if(OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
-                   {
-                       OEM_TextSetCursorPos(pContext, 0);
-                   }
-                   else 
-                   {  
-               
-                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
-                   }
-            }
+	            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+	            {
+	                   uint16 wNewSel;
+	                   wNewSel = pContext->wSelEnd + 1;
+	                   if(OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+	                   {
+	                       OEM_TextSetCursorPos(pContext, 0);
+	                   }
+	                   else 
+	                   {  
+	               
+	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+	                   }
+	            }
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-            if (OEM_TextGetCursorPos(pContext) == 0)
-                {
-                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
-                }
-                else
-                {
-                    uint16 wNewSel;
-                    wNewSel = pContext->wSelStart;
-                    if (wNewSel)
-                    {
-                        --wNewSel;
-                    }               
+	            if (OEM_TextGetCursorPos(pContext) == 0)
+	                {
+	                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+	                }
+	                else
+	                {
+	                    uint16 wNewSel;
+	                    wNewSel = pContext->wSelStart;
+	                    if (wNewSel)
+	                    {
+	                        --wNewSel;
+	                    }               
 #ifdef FEATURE_LANG_THAI
-                    {
-                        int count=0;
-                        count = moveleftselThaiChar(pContext->pszContents[pContext->wSelStart-2],
-                                                    pContext->pszContents[pContext->wSelStart-1]);
-                        if(count!= 0)
-                        {
-                            wNewSel = wNewSel - count;
-                        }
-                    }
+	                    {
+	                        int count=0;
+	                        count = moveleftselThaiChar(pContext->pszContents[pContext->wSelStart-2],
+	                                                    pContext->pszContents[pContext->wSelStart-1]);
+	                        if(count!= 0)
+	                        {
+	                            wNewSel = wNewSel - count;
+	                        }
+	                    }
 #endif //FEATURE_LANG_THAI                   
-                OEM_TextSetSel(pContext, wNewSel, wNewSel);
-                    (void) TextCtl_AutoScroll(pContext);
-                }
-                return TRUE;
-            }            
-            break;     
+	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
+	                    (void) TextCtl_AutoScroll(pContext);
+	                }
+	                return TRUE;
+	            }            
+	            break;     
 
-        case AVK_RIGHT:
-             {
+	        case AVK_RIGHT:
+	             {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
-                {
-                   uint16 wNewSel;
-                   wNewSel = pContext->wSelStart ;
-                   if ( OEM_TextGetCursorPos(pContext) == 0 )
-                   {
-                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
-                       //OEM_TextSetSel(pContext, 0, 0);
-                       OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
-                   }
-                   else 
-                   {  
-                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-                       wNewSel --;            
-                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
-                   }
-                }
+	            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+	                {
+	                   uint16 wNewSel;
+	                   wNewSel = pContext->wSelStart ;
+	                   if ( OEM_TextGetCursorPos(pContext) == 0 )
+	                   {
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
+	                       //OEM_TextSetSel(pContext, 0, 0);
+	                       OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+	                   }
+	                   else 
+	                   {  
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
+	                       wNewSel --;            
+	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+	                   }
+	                }
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
-                {
-                    OEM_TextSetCursorPos(pContext, -1);
-                }                
-                else
-                {
-                    uint16 wNewSel;
-                    wNewSel = pContext->wSelEnd + 1;                  
+	             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+	                {
+	                    OEM_TextSetCursorPos(pContext, -1);
+	                }                
+	                else
+	                {
+	                    uint16 wNewSel;
+	                    wNewSel = pContext->wSelEnd + 1;                  
 #ifdef FEATURE_LANG_THAI  
-                    {
-                        int count=0;
-                        count = moverightselThaiChar(pContext->pszContents[pContext->wSelStart+2],
-                                                     pContext->pszContents[pContext->wSelStart+1]);
-                        if(count!= 0)
-                        {
-                            wNewSel = wNewSel + count;
-                        }
-                    }
+	                    {
+	                        int count=0;
+	                        count = moverightselThaiChar(pContext->pszContents[pContext->wSelStart+2],
+	                                                     pContext->pszContents[pContext->wSelStart+1]);
+	                        if(count!= 0)
+	                        {
+	                            wNewSel = wNewSel + count;
+	                        }
+	                    }
 #endif //FEATURE_LANG_THAI                                               
-                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
-                    (void) TextCtl_AutoScroll(pContext);
-                }
-                return TRUE;  
-            }
-            break;   
+	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
+	                    (void) TextCtl_AutoScroll(pContext);
+	                }
+	                return TRUE;  
+	            }
+	            break;   
 
-         case AVK_UP:
-              {
-                uint16 nLine, nCharsIn,nSel;
-                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+	         case AVK_UP:
+	              {
+	                uint16 nLine, nCharsIn,nSel;
+	                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
 
-                // If it is on the first line, return false
-                if(nLine == 0 || !pContext->pwLineStarts)
-                    return FALSE;
+	                // If it is on the first line, return false
+	                if(nLine == 0 || !pContext->pwLineStarts)
+	                    return FALSE;
 
-                // Otherwise figure out how many characters from the start
-                // of the line the cursor is and try to put the cursor in a
-                // similar position on previous line. Or, if not enough
-                // chars, at the end of the line
-                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
-                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
-                                               pContext->pwLineStarts[nLine]) 
-                {
-                    nSel = pContext->pwLineStarts[nLine]-1;
-                } 
-                else 
-                {
-                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
-                }
-                OEM_TextSetSel(pContext, nSel,nSel);
-                (void) TextCtl_AutoScroll(pContext);
-                return TRUE;
-            }            
-            break;   
+	                // Otherwise figure out how many characters from the start
+	                // of the line the cursor is and try to put the cursor in a
+	                // similar position on previous line. Or, if not enough
+	                // chars, at the end of the line
+	                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+	                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
+	                                               pContext->pwLineStarts[nLine]) 
+	                {
+	                    nSel = pContext->pwLineStarts[nLine]-1;
+	                } 
+	                else 
+	                {
+	                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
+	                }
+	                OEM_TextSetSel(pContext, nSel,nSel);
+	                (void) TextCtl_AutoScroll(pContext);
+	                return TRUE;
+	            }            
+	            break;   
 
-        case AVK_DOWN:
-             {
-                uint16 nLine, nCharsIn,nSel;
+	        case AVK_DOWN:
+	             {
+	                uint16 nLine, nCharsIn,nSel;
 
-                if((!pContext->pwLineStarts)||(!pContext->wLines))
-                    return FALSE;
-                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+	                if((!pContext->pwLineStarts)||(!pContext->wLines))
+	                    return FALSE;
+	                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
 
-                // If the cursor is on the last line and the line's last
-                // character is not a LF, then FALSE is returned as nothing
-                // can be done. A LF on the end of a line does not tell the
-                // wLines member that there is another line, hence this
-                // extra check.
-                if ( nLine == (pContext->wLines-1) &&
-                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
-                {
-                    return FALSE;
-                }
+	                // If the cursor is on the last line and the line's last
+	                // character is not a LF, then FALSE is returned as nothing
+	                // can be done. A LF on the end of a line does not tell the
+	                // wLines member that there is another line, hence this
+	                // extra check.
+	                if ( nLine == (pContext->wLines-1) &&
+	                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
+	                {
+	                    return FALSE;
+	                }
 
-                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
-                // If the cursor is more characters in than the next line...
-                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
-                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
-                {
-                    // If it is the last line, don't subtract the LINEBREAK from selection spot
-                    if( nLine+2 == pContext->wLines )
-                    {
-                        nSel = pContext->pwLineStarts[nLine+2];
-                    }
-                    else
-                    {
-                        nSel = pContext->pwLineStarts[nLine+2]-1;
-                    }
-                }
-                else
-                {
-                    // Selection spot is number of chars into the next line
-                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
-                    // If this is not the beginning of a line 
-                    // and the selection point is a LINEBREAK, subtract one
-                    // Otherwise the selection overshoots to the first character
-                    // of the following line.
-                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
-                    {
-                        nSel--;
-                    }
-                }
-                OEM_TextSetSel(pContext, nSel,nSel);
-                (void) TextCtl_AutoScroll(pContext);
+	                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+	                // If the cursor is more characters in than the next line...
+	                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
+	                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
+	                {
+	                    // If it is the last line, don't subtract the LINEBREAK from selection spot
+	                    if( nLine+2 == pContext->wLines )
+	                    {
+	                        nSel = pContext->pwLineStarts[nLine+2];
+	                    }
+	                    else
+	                    {
+	                        nSel = pContext->pwLineStarts[nLine+2]-1;
+	                    }
+	                }
+	                else
+	                {
+	                    // Selection spot is number of chars into the next line
+	                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
+	                    // If this is not the beginning of a line 
+	                    // and the selection point is a LINEBREAK, subtract one
+	                    // Otherwise the selection overshoots to the first character
+	                    // of the following line.
+	                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
+	                    {
+	                        nSel--;
+	                    }
+	                }
+	                OEM_TextSetSel(pContext, nSel,nSel);
+	                (void) TextCtl_AutoScroll(pContext);
 
-                return TRUE;
-            }            
-            break;    
+	                return TRUE;
+	            }            
+	            break;    
 
-            
-        case AVK_CLR:
-            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-            {
-                 /* Set selection to the character before the insertion point */
-                 --pContext->wSelStart;
-            }
-            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
-            {
-                  return FALSE;
-            }
-            
-            /* Insert a "NUL" to just delete and insert nothing */
-            TextCtl_AddChar(pContext, 0);
-            return TRUE;                
+	            
+	        case AVK_CLR:
+	            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+	            {
+	                 /* Set selection to the character before the insertion point */
+	                 --pContext->wSelStart;
+	            }
+	            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+	            {
+	                  return FALSE;
+	            }
+	            
+	            /* Insert a "NUL" to just delete and insert nothing */
+	            TextCtl_AddChar(pContext, 0);
+	            return TRUE;                
 
-        default:
-            pContext->sFocus = FOCUS_TEXT;   
-            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
-            break;  
-    }   
-    
+	        default:
+	            pContext->sFocus = FOCUS_TEXT;   
+	            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
+	            break;  
+	    }   
+	}
    
 #endif
     MSG_FATAL("T9TextCtl_MultitapKey::END bRet=%d", bRet,0,0);
@@ -5904,7 +6012,7 @@ static void T9TextCtl_Cap_Lower_Restart(TextCtlContext *pContext)
     TextCtl_TextChanged(pContext);
     pContext->sFocus = FOCUS_TEXT;
 }
-static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AVKType key)
+static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent eCode,AVKType key)
 {
 	boolean  bRet       = FALSE;
     T9STATUS sT9Status = T9STATERROR;  
@@ -5914,335 +6022,382 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AVKType ke
     //handle key
 
 #ifdef FEATURE_DISP_160X128
-    
-    if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
+    if(eCode == EVT_KEY_HELD)
     {
-        pContext->sFocus = FOCUS_TEXT;            
-    }
-
-    if(AVK_SELECT == key || AVK_INFO == key)
-    {
-        if(FOCUS_SELECTION == pContext->sFocus)
-        {       
-            t9Key = T9KEYRIGHT;
-        }
-        else
-        {
-            sT9Status = T9STATERROR;         
-            return FALSE;          
-        }
-    }     
-	
-    switch ( key) 
-    {
-    	case AVK_0:
-        case AVK_1:
-        case AVK_2:
-        case AVK_3:
-        case AVK_4:
-        case AVK_5:
-        case AVK_6:
-        case AVK_7:
-        case AVK_8:
-        case AVK_9:
-        case AVK_POUND:
-        case AVK_STAR: 
-        case AVK_T: 
-        case AVK_Y:
-        case AVK_U:
-        case AVK_I:
-        case AVK_O:
-        case AVK_P:
-        case AVK_G:
-        case AVK_H:
-        case AVK_J:
-        case AVK_K:
-        case AVK_L:
-        case AVK_V: 
-        case AVK_B: 
-        case AVK_N:
-        case AVK_M:
-        case AVK_ENTER:
-		case AVK_SPACE:
-        case AVK_RWD:
-            {
-                int i = 0;
-                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
-                {
-                    // meet the max count of the text.
-                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
-                    {
-                        sT9Status = T9STATERROR; 
-                        return FALSE;
-                    }
-                }
-                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
-    			{       
-            		if (key == VLCharKeyItem[i].wParam)
+    	switch(key)
+    	{
+    		case AVK_0:
+	        case AVK_1:
+	        case AVK_2:
+	        case AVK_3:
+	        case AVK_4:
+	        case AVK_5:
+	        case AVK_6:
+	        case AVK_7:
+	        case AVK_8:
+	        case AVK_9:
+				{
+					int i = 0;
+					if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
             		{
-        			    if(pContext->is_isShift)
-                        { 
-                            TextCtl_NoSelection(pContext);
-                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-                            pContext->is_isShift = FALSE;
-                        }
-                        else
-                        {
-                        	AECHAR Tempstr[5] = {L". "};
-							AECHAR Tempstrp[5] = {L"."};
-                            TextCtl_NoSelection(pContext);
-							nBufLen = WSTRLEN(pContext->pszContents);
-							MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
-							if(nBufLen == 0)
-							{
-								
-                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
-								
-							}
-							else
-							{
-								if((pContext->m_bCaplk) || (!WSTRCMP(pContext->pszContents+(nBufLen-2),Tempstr))||
-									(!WSTRCMP(pContext->pszContents+(nBufLen-1),Tempstrp)))
+                 		/* Set selection to the character before the insertion point */
+                 		--pContext->wSelStart;
+            		}
+            		else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+            		{
+                 		 return FALSE;
+            		}
+            
+            		/* Insert a "NUL" to just delete and insert nothing */
+            		TextCtl_AddChar(pContext, 0);
+	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+	                {
+	                    // meet the max count of the text.
+	                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+	                    {
+	                        sT9Status = T9STATERROR; 
+	                        return FALSE;
+	                    }
+	                }
+	                TextCtl_NoSelection(pContext);
+            		TextCtl_AddChar(pContext,(AECHAR) ( ( (int)key - (int)AVK_0 ) + '0'));
+
+		            }
+	            return TRUE;
+				default:
+				break;
+			}
+		
+    }
+	else
+	{
+	    if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
+	    {
+	        pContext->sFocus = FOCUS_TEXT;            
+	    }
+
+	    if(AVK_SELECT == key || AVK_INFO == key)
+	    {
+	        if(FOCUS_SELECTION == pContext->sFocus)
+	        {       
+	            t9Key = T9KEYRIGHT;
+	        }
+	        else
+	        {
+	            sT9Status = T9STATERROR;         
+	            return FALSE;          
+	        }
+	    }     
+		
+	    switch ( key) 
+	    {
+	    	case AVK_0:
+	        case AVK_1:
+	        case AVK_2:
+	        case AVK_3:
+	        case AVK_4:
+	        case AVK_5:
+	        case AVK_6:
+	        case AVK_7:
+	        case AVK_8:
+	        case AVK_9:
+	        case AVK_POUND:
+	        case AVK_STAR: 
+	        case AVK_T: 
+	        case AVK_Y:
+	        case AVK_U:
+	        case AVK_I:
+	        case AVK_O:
+	        case AVK_P:
+	        case AVK_G:
+	        case AVK_H:
+	        case AVK_J:
+	        case AVK_K:
+	        case AVK_L:
+	        case AVK_V: 
+	        case AVK_B: 
+	        case AVK_N:
+	        case AVK_M:
+	        case AVK_ENTER:
+			case AVK_SPACE:
+	        case AVK_RWD:
+	            {
+	                int i = 0;
+	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+	                {
+	                    // meet the max count of the text.
+	                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+	                    {
+	                        sT9Status = T9STATERROR; 
+	                        return FALSE;
+	                    }
+	                }
+	                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
+	    			{       
+	            		if (key == VLCharKeyItem[i].wParam)
+	            		{
+	        			    if(pContext->is_isShift)
+	                        { 
+	                            TextCtl_NoSelection(pContext);
+	                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+	                            pContext->is_isShift = FALSE;
+	                        }
+	                        else
+	                        {
+	                        	AECHAR Tempstr[5] = {L". "};
+								AECHAR Tempstrp[5] = {L"."};
+	                            TextCtl_NoSelection(pContext);
+								nBufLen = WSTRLEN(pContext->pszContents);
+								MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
+								if(nBufLen == 0)
 								{
-									TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
-									pContext->m_bCaplk = FALSE;
+									
+	                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+									
 								}
 								else
 								{
-                            		TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+									if((pContext->m_bCaplk) || (!WSTRCMP(pContext->pszContents+(nBufLen-2),Tempstr))||
+										(!WSTRCMP(pContext->pszContents+(nBufLen-1),Tempstrp)))
+									{
+										TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+										pContext->m_bCaplk = FALSE;
+									}
+									else
+									{
+	                            		TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+									}
 								}
-							}
-                        }
-                     }
-                  }
-            }
-            return TRUE;
-            break;
-         case AVK_SHIFT:
-              {
-                 if(pContext->is_isShift)
-                 {
-                    pContext->is_isShift = FALSE;
-                 }
-                 else
-                 {
-                    pContext->is_isShift = TRUE;
-                 }
-              }
-              break;
-        case AVK_CAPLK:
-             {
-			 	
-                pContext->m_bCaplk = !pContext->m_bCaplk;
-             }
-             return TRUE;
-             break;
-        case AVK_LEFT:
-            {
-            if(FOCUS_SELECTION == pContext->sFocus)
-            {
-                pContext->sFocus = FOCUS_TEXT;             
-                sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYLEFT );  
-            }
+	                        }
+	                     }
+	                  }
+	            }
+	            return TRUE;
+	            break;
+	         case AVK_SHIFT:
+	              {
+	                 if(pContext->is_isShift)
+	                 {
+	                    pContext->is_isShift = FALSE;
+	                 }
+	                 else
+	                 {
+	                    pContext->is_isShift = TRUE;
+	                 }
+	              }
+	              break;
+	        case AVK_CAPLK:
+	             {
+				 	
+	                pContext->m_bCaplk = !pContext->m_bCaplk;
+	             }
+	             return TRUE;
+	             break;
+	        case AVK_LEFT:
+	            {
+	            if(FOCUS_SELECTION == pContext->sFocus)
+	            {
+	                pContext->sFocus = FOCUS_TEXT;             
+	                sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYLEFT );  
+	            }
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
-            {
-                   uint16 wNewSel;
-                   wNewSel = pContext->wSelEnd + 1;
-                   if(OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
-                   {
-                       OEM_TextSetCursorPos(pContext, 0);
-                   }
-                   else 
-                   {  
-               
-                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
-                   }
-            }
+	            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+	            {
+	                   uint16 wNewSel;
+	                   wNewSel = pContext->wSelEnd + 1;
+	                   if(OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+	                   {
+	                       OEM_TextSetCursorPos(pContext, 0);
+	                   }
+	                   else 
+	                   {  
+	               
+	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+	                   }
+	            }
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-            if (OEM_TextGetCursorPos(pContext) == 0)
-                {
-                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
-                }
-                else
-                {
-                    uint16 wNewSel;
-                    wNewSel = pContext->wSelStart;
-                    if (wNewSel)
-                    {
-                        --wNewSel;
-                    }               
+	            if (OEM_TextGetCursorPos(pContext) == 0)
+	                {
+	                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+	                }
+	                else
+	                {
+	                    uint16 wNewSel;
+	                    wNewSel = pContext->wSelStart;
+	                    if (wNewSel)
+	                    {
+	                        --wNewSel;
+	                    }               
 #ifdef FEATURE_LANG_THAI
-                    {
-                        int count=0;
-                        count = moveleftselThaiChar(pContext->pszContents[pContext->wSelStart-2],
-                                                    pContext->pszContents[pContext->wSelStart-1]);
-                        if(count!= 0)
-                        {
-                            wNewSel = wNewSel - count;
-                        }
-                    }
+	                    {
+	                        int count=0;
+	                        count = moveleftselThaiChar(pContext->pszContents[pContext->wSelStart-2],
+	                                                    pContext->pszContents[pContext->wSelStart-1]);
+	                        if(count!= 0)
+	                        {
+	                            wNewSel = wNewSel - count;
+	                        }
+	                    }
 #endif //FEATURE_LANG_THAI                   
-                OEM_TextSetSel(pContext, wNewSel, wNewSel);
-                    (void) TextCtl_AutoScroll(pContext);
-                }
-                return TRUE;
-            }            
-            break;     
+	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
+	                    (void) TextCtl_AutoScroll(pContext);
+	                }
+	                return TRUE;
+	            }            
+	            break;     
 
-        case AVK_RIGHT:
-             {
+	        case AVK_RIGHT:
+	             {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
-                {
-                   uint16 wNewSel;
-                   wNewSel = pContext->wSelStart ;
-                   if ( OEM_TextGetCursorPos(pContext) == 0 )
-                   {
-                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
-                       //OEM_TextSetSel(pContext, 0, 0);
-                       OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
-                   }
-                   else 
-                   {  
-                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-                       wNewSel --;            
-                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
-                   }
-                }
+	            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+	                {
+	                   uint16 wNewSel;
+	                   wNewSel = pContext->wSelStart ;
+	                   if ( OEM_TextGetCursorPos(pContext) == 0 )
+	                   {
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
+	                       //OEM_TextSetSel(pContext, 0, 0);
+	                       OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+	                   }
+	                   else 
+	                   {  
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
+	                       wNewSel --;            
+	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+	                   }
+	                }
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
-                {
-                    OEM_TextSetCursorPos(pContext, -1);
-                }                
-                else
-                {
-                    uint16 wNewSel;
-                    wNewSel = pContext->wSelEnd + 1;                  
+	             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+	                {
+	                    OEM_TextSetCursorPos(pContext, -1);
+	                }                
+	                else
+	                {
+	                    uint16 wNewSel;
+	                    wNewSel = pContext->wSelEnd + 1;                  
 #ifdef FEATURE_LANG_THAI  
-                    {
-                        int count=0;
-                        count = moverightselThaiChar(pContext->pszContents[pContext->wSelStart+2],
-                                                     pContext->pszContents[pContext->wSelStart+1]);
-                        if(count!= 0)
-                        {
-                            wNewSel = wNewSel + count;
-                        }
-                    }
+	                    {
+	                        int count=0;
+	                        count = moverightselThaiChar(pContext->pszContents[pContext->wSelStart+2],
+	                                                     pContext->pszContents[pContext->wSelStart+1]);
+	                        if(count!= 0)
+	                        {
+	                            wNewSel = wNewSel + count;
+	                        }
+	                    }
 #endif //FEATURE_LANG_THAI                                               
-                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
-                    (void) TextCtl_AutoScroll(pContext);
-                }
-                return TRUE;  
-            }
-            break;   
+	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
+	                    (void) TextCtl_AutoScroll(pContext);
+	                }
+	                return TRUE;  
+	            }
+	            break;   
 
-         case AVK_UP:
-              {
-                uint16 nLine, nCharsIn,nSel;
-                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+	         case AVK_UP:
+	              {
+	                uint16 nLine, nCharsIn,nSel;
+	                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
 
-                // If it is on the first line, return false
-                if(nLine == 0 || !pContext->pwLineStarts)
-                    return FALSE;
+	                // If it is on the first line, return false
+	                if(nLine == 0 || !pContext->pwLineStarts)
+	                    return FALSE;
 
-                // Otherwise figure out how many characters from the start
-                // of the line the cursor is and try to put the cursor in a
-                // similar position on previous line. Or, if not enough
-                // chars, at the end of the line
-                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
-                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
-                                               pContext->pwLineStarts[nLine]) 
-                {
-                    nSel = pContext->pwLineStarts[nLine]-1;
-                } 
-                else 
-                {
-                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
-                }
-                OEM_TextSetSel(pContext, nSel,nSel);
-                (void) TextCtl_AutoScroll(pContext);
-                return TRUE;
-            }            
-            break;   
+	                // Otherwise figure out how many characters from the start
+	                // of the line the cursor is and try to put the cursor in a
+	                // similar position on previous line. Or, if not enough
+	                // chars, at the end of the line
+	                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+	                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
+	                                               pContext->pwLineStarts[nLine]) 
+	                {
+	                    nSel = pContext->pwLineStarts[nLine]-1;
+	                } 
+	                else 
+	                {
+	                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
+	                }
+	                OEM_TextSetSel(pContext, nSel,nSel);
+	                (void) TextCtl_AutoScroll(pContext);
+	                return TRUE;
+	            }            
+	            break;   
 
-        case AVK_DOWN:
-             {
-                uint16 nLine, nCharsIn,nSel;
+	        case AVK_DOWN:
+	             {
+	                uint16 nLine, nCharsIn,nSel;
 
-                if((!pContext->pwLineStarts)||(!pContext->wLines))
-                    return FALSE;
-                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+	                if((!pContext->pwLineStarts)||(!pContext->wLines))
+	                    return FALSE;
+	                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
 
-                // If the cursor is on the last line and the line's last
-                // character is not a LF, then FALSE is returned as nothing
-                // can be done. A LF on the end of a line does not tell the
-                // wLines member that there is another line, hence this
-                // extra check.
-                if ( nLine == (pContext->wLines-1) &&
-                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
-                {
-                    return FALSE;
-                }
+	                // If the cursor is on the last line and the line's last
+	                // character is not a LF, then FALSE is returned as nothing
+	                // can be done. A LF on the end of a line does not tell the
+	                // wLines member that there is another line, hence this
+	                // extra check.
+	                if ( nLine == (pContext->wLines-1) &&
+	                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
+	                {
+	                    return FALSE;
+	                }
 
-                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
-                // If the cursor is more characters in than the next line...
-                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
-                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
-                {
-                    // If it is the last line, don't subtract the LINEBREAK from selection spot
-                    if( nLine+2 == pContext->wLines )
-                    {
-                        nSel = pContext->pwLineStarts[nLine+2];
-                    }
-                    else
-                    {
-                        nSel = pContext->pwLineStarts[nLine+2]-1;
-                    }
-                }
-                else
-                {
-                    // Selection spot is number of chars into the next line
-                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
-                    // If this is not the beginning of a line 
-                    // and the selection point is a LINEBREAK, subtract one
-                    // Otherwise the selection overshoots to the first character
-                    // of the following line.
-                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
-                    {
-                        nSel--;
-                    }
-                }
-                OEM_TextSetSel(pContext, nSel,nSel);
-                (void) TextCtl_AutoScroll(pContext);
+	                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+	                // If the cursor is more characters in than the next line...
+	                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
+	                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
+	                {
+	                    // If it is the last line, don't subtract the LINEBREAK from selection spot
+	                    if( nLine+2 == pContext->wLines )
+	                    {
+	                        nSel = pContext->pwLineStarts[nLine+2];
+	                    }
+	                    else
+	                    {
+	                        nSel = pContext->pwLineStarts[nLine+2]-1;
+	                    }
+	                }
+	                else
+	                {
+	                    // Selection spot is number of chars into the next line
+	                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
+	                    // If this is not the beginning of a line 
+	                    // and the selection point is a LINEBREAK, subtract one
+	                    // Otherwise the selection overshoots to the first character
+	                    // of the following line.
+	                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
+	                    {
+	                        nSel--;
+	                    }
+	                }
+	                OEM_TextSetSel(pContext, nSel,nSel);
+	                (void) TextCtl_AutoScroll(pContext);
 
-                return TRUE;
-            }            
-            break;    
+	                return TRUE;
+	            }            
+	            break;    
 
-            
-        case AVK_CLR:
-            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-            {
-                 /* Set selection to the character before the insertion point */
-                 --pContext->wSelStart;
-            }
-            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
-            {
-                  return FALSE;
-            }
-            
-            /* Insert a "NUL" to just delete and insert nothing */
-            TextCtl_AddChar(pContext, 0);
-            return TRUE;                
+	            
+	        case AVK_CLR:
+	            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+	            {
+	                 /* Set selection to the character before the insertion point */
+	                 --pContext->wSelStart;
+	            }
+	            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+	            {
+	                  return FALSE;
+	            }
+	            
+	            /* Insert a "NUL" to just delete and insert nothing */
+	            TextCtl_AddChar(pContext, 0);
+	            return TRUE;                
 
-        default:
-            pContext->sFocus = FOCUS_TEXT;   
-            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
-            break;  
-    }   
-    
-   
+	        default:
+	            pContext->sFocus = FOCUS_TEXT;   
+	            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
+	            break;  
+	    }   
+	}
 #endif
     MSG_FATAL("T9TextCtl_MultitapKey::END bRet=%d", bRet,0,0);
     return bRet;
@@ -6673,7 +6828,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
  *  Return          : T9KEY
  *
  *-----------------------------------------------------------------------*/
-static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext, AVKType cKey)
+static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode, AVKType cKey)
 {
     uint16 i;
     switch ( OEM_TextGetCurrentMode((OEMCONTEXT)pContext) )
@@ -6803,7 +6958,7 @@ static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
  *  Return          : 
  *
  *-----------------------------------------------------------------------*/
-static boolean T9TextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AVKType key)
+static boolean T9TextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCode,AVKType key)
 {
     T9U16  wT9KeyType = T9KEYTYPE_UNKNOWN;
     T9KEY  mKey = T9KEYNONE;
@@ -8253,7 +8408,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AVKType key)
+static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKType key)
 {
    uint16   nBufLen = pContext->sT9awFieldInfo.G.nBufLen;
    boolean  bRet       = FALSE;
