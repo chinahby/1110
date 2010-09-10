@@ -321,9 +321,11 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_IS2000_SCH
    #undef FEATURE_IS2000_SCH
 #endif
+
 #ifdef FEATURE_AAC
    #undef FEATURE_AAC
 #endif
+
 #ifdef CLKRGM_FREQ_STEP
    #undef CLKRGM_FREQ_STEP
 #endif
