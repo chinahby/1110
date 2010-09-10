@@ -5988,6 +5988,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AVKType ke
                         }
                         else
                         {
+                        	AECHAR Tempstr[5] = {L". "};
+							AECHAR Tempstrp[5] = {L"."};
                             TextCtl_NoSelection(pContext);
 							nBufLen = WSTRLEN(pContext->pszContents);
 							MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
@@ -5999,7 +6001,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AVKType ke
 							}
 							else
 							{
-								if(pContext->m_bCaplk)
+								if((pContext->m_bCaplk) || (!WSTRCMP(pContext->pszContents+(nBufLen-2),Tempstr))||
+									(!WSTRCMP(pContext->pszContents+(nBufLen-1),Tempstrp)))
 								{
 									TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
 									pContext->m_bCaplk = FALSE;
