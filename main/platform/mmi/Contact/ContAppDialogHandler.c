@@ -8424,7 +8424,7 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
             
             if(NULL == pMe->m_szAlpha)
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_OK_BACK);
             }
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
@@ -11273,7 +11273,7 @@ static boolean  CContApp_HandleDeleteDlgEvent( CContApp  *pMe,
             
             if(NULL == pMe->m_szAlpha)
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_OK_BACK);
             }
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
@@ -11496,7 +11496,7 @@ static boolean  CContApp_HandleSelectRecordDlgEvent( CContApp  *pMe,
             
             if(NULL == pMe->m_szAlpha)
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_OK_BACK);
             }
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
@@ -11737,7 +11737,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
                 }
                 else
                 {
-                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_OK_BACK);
                 }
             }
             //(void)IMENUCTL_Redraw(pMenuCtl);
