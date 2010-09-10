@@ -8503,6 +8503,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
             }
 #endif
+			(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
             return TRUE;
             
         case EVT_DIALOG_START:

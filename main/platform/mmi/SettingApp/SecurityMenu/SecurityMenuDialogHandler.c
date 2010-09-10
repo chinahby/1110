@@ -568,7 +568,7 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
         case EVT_DIALOG_START:
             //设定标题格式
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL);
-            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
@@ -630,7 +630,7 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
             switch(wParam)
             {
                 case AVK_SELECT:
-                case AVK_INFO:
+                //case AVK_INFO:
                     // 保存短信锁的状态
                     bData = GetCheckBoxVal(pMenu, IDS_SMS_LOCK);
                     (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SMS_LOCK_CHECK,&bData,sizeof(bData));

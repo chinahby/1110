@@ -833,7 +833,7 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
         case AEE_ADDRFIELD_URL:
         case AEE_ADDRFIELD_NOTES:
         case AEE_ADDRFIELD_ADDRESS:
-            return AEE_TM_CURRENT;
+            return AEE_TM_LETTERS;
             
         default:
             return AEE_TM_NUMBERS;
