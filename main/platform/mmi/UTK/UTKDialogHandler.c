@@ -614,7 +614,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                 byte   *utk_ptr;
                 AECHAR temptitle[2]={' ', '\0'};
                 Get_input *pgetinput = (Get_input *)MALLOC(sizeof(Get_input));
-                uint32  dwPro = TP_FRAME | TP_MULTILINE | TP_FIXSETRECT | TP_DISPLAY_COUNT;    
+                uint32  dwPro = TP_FRAME | TP_MULTILINE | TP_FIXSETRECT | TP_DISPLAY_COUNT | TP_STARKEY_SWITCH;    
                 
                 if (NULL == pgetinput)
                 {
@@ -763,6 +763,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+            	case AVK_INFO:
                 case AVK_SELECT:
                     {
                         byte txtLen; 
