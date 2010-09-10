@@ -696,11 +696,11 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             {
                 return(FALSE);
             } 
-            
+
              if ( (!pme->m_pSoftKey) 
                  && (wParam == AVK_CLR) 
                  && (!pme->m_bShowSyms || !pme->m_bShowFaceSyms || !pme->m_bShowNetSyms))                  
-            {  
+            {              	
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE            
                 if(TEXT_LENGTH(pme) >200 )
                 {
@@ -735,7 +735,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
              && (!pme->m_bShowSyms || !pme->m_bShowFaceSyms || !pme->m_bShowNetSyms))                  
             // 按*键切换到符号输入法
             #endif
-            {  
+            {              	
                 (void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
                 return TRUE;
             }  
@@ -750,7 +750,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 (wParam == AVK_POUND) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
 #endif
-            {
+            {            	
                 if (!pme->m_bActive)
                 {
                     return FALSE;
