@@ -2202,7 +2202,8 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 
             // ASSUME we don't have to re-cal text here and that font hasn't changed
             //lint -save -e620
-#ifdef FEATURE_COLOR_DISPLAY            
+#ifdef FEATURE_COLOR_DISPLAY    
+#if 0
             IDISPLAY_DrawRect(pContext->pIDisplay,
                     &rect,
                     pContext->bEditable ? RGB_BLACK: RGB_WHITE,
@@ -2210,6 +2211,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     //pTextCtl->bEditable ? RGB_BLACK : RGB_WHITE,
                     //RGB_NONE,
                     IDF_RECT_FRAME);
+#endif
 #else
             IDISPLAY_DrawRect(pContext->pIDisplay,
                     &rect,
@@ -2224,13 +2226,13 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
             rect.y += 1;
             rect.dx -= 2;
             rect.dy -= 2;
-
+#if 0
             IDISPLAY_DrawRect(pContext->pIDisplay,
                     &rect,
                     RGB_WHITE,
                     RGB_NONE,//RGB_WHITE,
                     IDF_RECT_NONE);
-
+#endif
             //lint -restore
             bFrame = TRUE;
         }
