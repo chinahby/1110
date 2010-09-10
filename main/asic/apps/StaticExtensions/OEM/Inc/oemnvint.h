@@ -217,7 +217,7 @@ when       who     what, where, why
 #define OEMNV_BACKLIGHT_LEVEL_7      (OEMNV_BACKLIGHT_BASE + 7 * OEMNV_BACKLIGHT_OFFSET + OEMNV_BACKLIGHT_OFFSET) //增加差别，否则不明显。
 #else
 #define OEMNV_BACKLIGHT_LEVEL_DARK        1
-#define OEMNV_BACKLIGHT_LEVEL_NORMAL      3
+#define OEMNV_BACKLIGHT_LEVEL_NORMAL      5
 #define OEMNV_BACKLIGHT_LEVEL_BRIGHT      10
 #endif
 
@@ -796,7 +796,13 @@ typedef PACKED struct _ringID
 #if defined (FEATURE_CARRIER_THAILAND_HUTCH)
 #define OEM_INTERNATION_NUMBER "001"
 #else
+#if defined(FEATURE_PROJECT_SMART)
+#define OEM_INTERNATION_NUMBER "01033"
+#elif defined(FEATURE_PROJECT_M8)
+#define OEM_INTERNATION_NUMBER "01068"
+#else
 #define OEM_INTERNATION_NUMBER "00"
+#endif
 #endif
 #define   OEMNV_MENU_STYLE_ICON    0
 #define   OEMNV_MENU_STYLE_LIST     1
