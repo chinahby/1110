@@ -236,9 +236,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
 #define FEATURE_FRENDUO //Add By zzg 2010_08_23 for Frenduo
 
-#define FEATURE_FPT005 //add by xuhui
-#define FEATURE_CAH006 //add by xuhui
-#define FEATURE_FMN2010//add by xuhui
 #endif
 
 #include "custuim.h"
