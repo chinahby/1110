@@ -4428,7 +4428,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
     MSG_FATAL("T9TextCtl_Latin_Rapid_Key Start",0,0,0);
 #if defined (FEATURE_DISP_128X128)
     //handle key
-    t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext, key );
+    t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext,eCode, key );
     MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 1 t9Key=%d", t9Key,0,0);
     if(key == AVK_SELECT|| key == AVK_INFO)
     {
@@ -5258,7 +5258,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
     //handle key
 #if defined (FEATURE_DISP_128X128)
     ERR("T9TextCtl_MultitapKey::1",0,0,0);
-    t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext, key );
+    t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext, eCode,key );
     
     if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
     {
