@@ -2864,7 +2864,7 @@ static void CameraApp_DialogTimeout(void *pme)
 
 static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe)
 {   
-    return IFILEMGR_Test(pMe->m_pFileMgr, AEEFS_CARD0_DIR);
+    return (IFILEMGR_Test(pMe->m_pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)?TRUE:FALSE;	
 }
 
 // 检测拍照，摄像是否有足够剩余空间容量
@@ -3418,7 +3418,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
         
         break;
         
-  default:
+   default:
     break;
   }
 }
@@ -3431,7 +3431,9 @@ static void CameraApp_CreateDirectory(CCameraApp *pMe)
     {
         IFILEMGR_MkDir(pMe->m_pFileMgr, MG_PHONEPICTURE_PATH);
     }
-   
+	
+    pMe->m_bMemoryCardExist = CameraApp_FindMemoryCardExist(pMe);	
+
     if(pMe->m_bMemoryCardExist)
     {
          // T卡上的相片保存目录
