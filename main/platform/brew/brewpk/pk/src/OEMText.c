@@ -2098,7 +2098,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     szsmscount = WMSUtil_CalculateMessagesCount(pszText, NULL, NULL);
 
                     // Draw the number of remaining characters.
-                    STR_TO_WSTR("%d/%d ", szFormat, sizeof(szFormat));
+                    STR_TO_WSTR("%d/%d   ", szFormat, sizeof(szFormat));
                     WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars, szsmscount);                    
 
                     /*
