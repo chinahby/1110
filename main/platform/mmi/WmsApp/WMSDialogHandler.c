@@ -8677,7 +8677,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
                 
                 if (nLen>0)
-                {
+                {					
                     pMe->m_msSend.m_szMessage = WSTRDUP(ITEXTCTL_GetTextPtr(pIText));
                     
                     if (pMe->m_eAppStatus == WMSAPP_STOP && pMe->m_eDlgReturn != DLGRET_EXIT_EDITOR)
@@ -8701,7 +8701,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         {// 存储空间足够，保存中断的输入到草稿箱
                             wms_client_message_s_type *pClientMsg = NULL;
                             int nRet;
-                            
+
                             WmsApp_FreeMultiSendList(pMe->m_pSendList);
                             
                             pClientMsg = WmsApp_GetClientMsgMO(pMe, FALSE);
@@ -8746,8 +8746,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
                         }
                     }
+					
                 }
-            }
+            }			
+				
             if(pMe->m_eAppStatus == WMSAPP_SUSPEND)
             {
                 nMode = ITEXTCTL_GetInputMode(pIText,NULL);
@@ -8804,6 +8806,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 						#endif
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTCONTACT);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
+						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SAVEASPRESET);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_EXIT_EDITOR);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SETTING);
@@ -8890,6 +8893,103 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_FACE_SYMBOL);
                     } 
                     return TRUE;
+
+				//Add By zzg 2010_09_11
+				case IDS_SAVETODRAFT:
+				{
+	                AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+	                int nLen = 0;
+	                
+	                pMe->m_CurInputMode = ITEXTCTL_GetInputMode(pIText, NULL);
+	                
+	                if (NULL != pwstrText)
+	                {
+	                    nLen = WSTRLEN(pwstrText);
+	                }
+	                
+	                if (nLen > 0)
+	                {	
+                    	// 程序被中断退出，保存输入到草稿箱
+                        int32  nItems = 0;
+                        uint16 nMsgs = 0;
+
+						pMe->m_msSend.m_szMessage = WSTRDUP(ITEXTCTL_GetTextPtr(pIText));
+                        
+                        // 释放用户数据列表
+                        WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+                        
+                        // 打包消息
+                        WmsApp_PrepareUserDataMOList(pMe);
+                        pMe->m_idxUserdata = 0;
+                        
+                        nItems = IVector_Size(pMe->m_pUserDataMOList);
+
+                        // 获取草稿箱消息数
+                        wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
+                        
+                        if ((nMsgs+nItems) <= DRAFT_MAX)
+                        {// 存储空间足够，保存中断的输入到草稿箱
+                            wms_client_message_s_type *pClientMsg = NULL;
+                            int nRet;
+
+                            WmsApp_FreeMultiSendList(pMe->m_pSendList);
+                            
+                            pClientMsg = WmsApp_GetClientMsgMO(pMe, FALSE);
+                            while (pClientMsg != NULL)
+                            {
+                                // Must modify message tag!
+                                pClientMsg->msg_hdr.tag = WMS_TAG_MO_DRAFT;
+                                
+                                // 保存消息
+                                nRet = ENOMEMORY;
+                                do 
+                                {
+                                    nRet = IWMS_MsgWrite(pMe->m_pwms, 
+                                                         pMe->m_clientId, 
+                                                         &pMe->m_callback,
+                                                         (void*)pMe,
+                                                         WMS_WRITE_MODE_INSERT,
+                                                         pClientMsg);
+                                                         
+#ifndef WIN32
+                                    if (nRet == SUCCESS)
+                                    {// 休眠10毫秒以确保有时间执行保存消息的操作
+                                        MSLEEP(10);
+                                    }
+#endif
+                                } while(nRet != SUCCESS);
+                                                    
+                                FREE(pClientMsg);
+                                pClientMsg = WmsApp_GetClientMsgMO(pMe, FALSE);
+                            }
+
+                            WmsApp_FreeMultiSendList(pMe->m_pSendList);
+                            
+                            // 释放用户数据列表
+                            WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+                            
+                            pMe->m_idxUserdata = 0;
+                        }
+                        else
+                        {
+                            // 释放用户数据列表
+                            WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+                        }
+	                
+	            	}
+
+
+					if(pMe->m_eAppStatus == WMSAPP_SUSPEND)
+		            {
+		                nMode = ITEXTCTL_GetInputMode(pIText,NULL);
+		            }
+
+					CLOSE_DIALOG(DLGRET_CANCELED)
+
+					return TRUE;
+					
+				}
+				//Add End
 
                 //保存为模板短信
                 case IDS_SAVEASPRESET:
