@@ -55,6 +55,7 @@ extern void OEMPriv_DrawMessageCB(void *pUnused);
 extern boolean   IsRunAsUIMVersion(void);
 extern boolean   IsRunAsFactoryTestMode(void);
 #endif
+#define MASSCARD_ROOTDIR   "fs:/card0/" //add by yangdecai 2010-09-10
 /*==============================================================================
 
                                宏定义和常数
@@ -270,6 +271,13 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe);
 static void CoreApp_GetSPN(CCoreApp *pMe);
 
 static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, int nErr);
+
+//add by yangdecai  2010-09-10
+static boolean CoreApp_TestCard(CCoreApp *pMe);
+static void    CoreApp_ResetRing(CCoreApp *pMe);
+//add by yangdecai end
+
+
 /*==============================================================================
 
                                  函数定义
@@ -2545,6 +2553,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			}
 			
             MEMSET(pMe->m_wstrEnterNum, 0, sizeof(pMe->m_wstrEnterNum));
+
+			if(!CoreApp_TestCard(pMe))
+			{
+				CoreApp_ResetRing(pMe);
+			}
+			
             //CoreApp_GetRecordCount(pMe);
             CoreApp_DrawWallPaper(pMe);
 #ifdef FEATURE_KEYGUARD
@@ -5581,3 +5595,123 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
 #endif //FEATURE_SPN_FROM_BSMCCMNC   
 #endif//WIN32
 }
+//add by yangdecai  2010-09-10
+static boolean CoreApp_TestCard(CCoreApp *pMe)
+{
+	boolean Result = FALSE;
+	IFileMgr          *m_pFileMgr;
+	if( SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
+            AEECLSID_FILEMGR,
+            (void**)&m_pFileMgr))
+	{
+		return EFAILED;
+	}
+	
+	if(SUCCESS == IFILEMGR_Test(m_pFileMgr, MASSCARD_ROOTDIR))
+	{
+		Result = TRUE;
+	}
+	else
+	{
+		Result = FALSE;
+	}
+	RELEASEIF(m_pFileMgr);
+	return Result;
+}
+static void    CoreApp_ResetRing(CCoreApp *pMe)
+{
+	ringID nNewSmsConfigRinger[PROFILENUMBER];
+	ringID nNewCallConfigRinger[PROFILENUMBER];
+	ringID nNewAlarmConfigRinger[PROFILENUMBER];
+	boolean Relsut = FALSE;
+	
+	ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+	ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+	ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+
+	//sms
+
+	if(nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
+	{
+		nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
+		nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].midID =OEMNV_SMS_RINGER_ID;
+		Relsut = ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+	}
+	if(nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
+   	{
+   		nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
+		nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].midID =OEMNV_SMS_RINGER_ID;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+   	}
+	   
+    if(nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
+   	{
+   		nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].ringType = OEMNV_MID_RINGER;
+		nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].midID =OEMNV_SMS_RINGER_ID;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+   	}
+	if(  nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType == OEMNV_MP3_RINGER)
+	{
+		nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType = OEMNV_MID_RINGER;
+		nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].midID =OEMNV_SMS_RINGER_ID;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+	}
+	
+	//CALL
+	if(nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
+	{
+		nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
+		nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].midID =OEMNV_DEFAULTRINGER;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+	}
+	if(nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
+   	{
+   		nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
+		nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].midID =OEMNV_DEFAULTRINGER;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+   	}
+	   
+    if(nNewCallConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
+   	{
+   		nNewCallConfigRinger[OEMNV_PROFILE_MEETING].ringType = OEMNV_MID_RINGER;
+		nNewCallConfigRinger[OEMNV_PROFILE_MEETING].midID =OEMNV_DEFAULTRINGER;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+   	}
+	if(  nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType == OEMNV_MP3_RINGER)
+	{
+		nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType = OEMNV_MID_RINGER;
+		nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].midID =OEMNV_DEFAULTRINGER;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+	}
+
+
+	//ALASRM
+	if(nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
+	{
+		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
+		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].midID = OEMNV_ALARM_RINGER;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+	}
+	if(nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
+   	{
+   		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
+		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].midID = OEMNV_ALARM_RINGER;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+   	}
+	   
+    if(nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
+   	{
+   		nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].ringType = OEMNV_MID_RINGER;
+		nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].midID = OEMNV_ALARM_RINGER;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+   	}
+	if(  nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType == OEMNV_MP3_RINGER)
+	{
+		nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType = OEMNV_MID_RINGER;
+		nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].midID = OEMNV_ALARM_RINGER;
+		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+	}
+
+	
+}
+//add by yangdecai end
