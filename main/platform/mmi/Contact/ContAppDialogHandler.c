@@ -2973,7 +2973,8 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 case AVK_UP:
                 case AVK_DOWN:
                 case AVK_LEFT:
-               // case AVK_STAR:
+                case AVK_STAR:
+                case AVK_POUND:
                 /*case AVK_RIGHT:*/
                 {
                     boolean b_TextctlActive = ITEXTCTL_IsActive(pTextCtl);
@@ -3540,6 +3541,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 
                 return TRUE;
 
+#if 0
                 case AVK_STAR:
                     if(ITEXTCTL_IsActive(pTextCtl))
                     {
@@ -3547,7 +3549,8 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                         IMENUCTL_SetActive(pMenuCtl, TRUE);
                     }
                     return TRUE;
-                //一个dialog里面有两个控件，AVK_RIGHT事件menu不处理，dialog自动转给text处理，同时自动在key_presss时把text激活
+#endif          
+				//一个dialog里面有两个控件，AVK_RIGHT事件menu不处理，dialog自动转给text处理，同时自动在key_presss时把text激活
                 //这里不需要激活text，只有按数字键和#时text才被激活
                 /*case AVK_RIGHT:
                 case AVK_LEFT:
