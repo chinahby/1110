@@ -2064,10 +2064,40 @@ static boolean RecentCalls_WarnEvent(CRecentCalls *pMe,
                     switch(pMe->selectState)
                     {
                        case IDS_MISSED_CALLS:
+                       	  if(TRUE == RecentCalls_DeleteRecordByType(pMe, pMe->m_callsCategory))
+                          {
+                              pMe->m_PromptMsg.nMsgResID = IDS_DELETE_OK;
+                          }
+                          else
+                          {
+                              pMe->m_PromptMsg.nMsgResID = IDS_ERR_UNKNOWN;
+                          }
+                          break;
+                          
                        case IDS_RECEIVED_CALLS:
-                       case IDS_OUTGOING_CALLS:
                           if(TRUE == RecentCalls_DeleteRecordByType(pMe, pMe->m_callsCategory))
                           {
+                              uint32 value = 0;
+                          	  (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_RECENT_MT_CALL_TIMER,
+                                                    &value,
+                                                     sizeof(uint32));
+                              pMe->m_PromptMsg.nMsgResID = IDS_DELETE_OK;
+                          }
+                          else
+                          {
+                              pMe->m_PromptMsg.nMsgResID = IDS_ERR_UNKNOWN;
+                          }
+                          break;
+                       case IDS_OUTGOING_CALLS:
+                       
+                          if(TRUE == RecentCalls_DeleteRecordByType(pMe, pMe->m_callsCategory))
+                          {
+                              uint32 value = 0;
+                          	  (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_RECENT_MO_CALL_TIMER,
+                                                    &value,
+                                                    sizeof(uint32));
                               pMe->m_PromptMsg.nMsgResID = IDS_DELETE_OK;
                           }
                           else
@@ -2079,6 +2109,7 @@ static boolean RecentCalls_WarnEvent(CRecentCalls *pMe,
                        case IDS_ALL_CALLS:
                           if(SUCCESS == ICALLHISTORY_Clear(pMe->m_pCallHistory))
                           {
+							  uint32 value = 0;	
                               pMe->m_PromptMsg.nMsgResID = IDS_DELETE_OK;
                               IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL,ANNUN_STATE_CALL_MISSEDCALL_OFF);
                               {
@@ -2089,26 +2120,25 @@ static boolean RecentCalls_WarnEvent(CRecentCalls *pMe,
                                                      &missed_call_icon,
                                                      sizeof(missed_call_icon));  
                               }
+
+                              (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_ALL_CALL_TIMER,
+                                                    &value,
+                                                    sizeof(uint32));
+                              (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_RECENT_MO_CALL_TIMER,
+                                                    &value,
+                                                    sizeof(uint32));
+                              (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_RECENT_MT_CALL_TIMER,
+                                                    &value,
+                                                     sizeof(uint32));
                           }
                           else
                           {
                               pMe->m_PromptMsg.nMsgResID = IDS_ERR_UNKNOWN;
                           }
-                          {
-                             uint32 value = 0;
-                             (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                                    CFGI_ALL_CALL_TIMER,
-                                                    &value,
-                                                    sizeof(uint32));
-                             (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                                    CFGI_RECENT_MO_CALL_TIMER,
-                                                    &value,
-                                                    sizeof(uint32));
-                             (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                                    CFGI_RECENT_MT_CALL_TIMER,
-                                                    &value,
-                                                     sizeof(uint32));
-                          }
+                          
                           break;
                        
                        case IDS_DELETE:
