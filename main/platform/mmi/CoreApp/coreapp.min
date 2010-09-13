@@ -43,6 +43,10 @@ else ifeq ($(USES_RESDIR), Flexi021common)
 CONSTFILE_FILES+=\
 	poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
 	poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg	
+else ifeq ($(USES_RESDIR), Ivio021)
+CONSTFILE_FILES+=\
+	poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
+	poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg		
 else ifeq ($(USES_RESDIR), Ivio203)
 CONSTFILE_FILES+=\
 	poweronani.png|fs:/image/pwronoffani/poweronani.png

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="appscommon_images160x128_Ivio203" VERSION="1">
+<BREWRes Name="appscommon_images160x128_ivio203" VERSION="1">
 <Objects MimeType="image/png">
 	<Object Id="5001" Name="IDB_BGMASK">
 		<File>..\images\160x128\Ivio203\Appscommon\Background\bgmask.png</File>

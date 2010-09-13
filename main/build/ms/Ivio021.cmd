@@ -3,7 +3,7 @@
 @set DISPLAYNAME=Ivio021
 @set QUALCOMMNAME=SBNAALZ
 @set QUALCOMMNAME_BUILD=SXNAALZ
-@set RESOURCEDIR=Ivio021
+@set RESOURCEDIR=ivio021
 
 rem delete some files for compile muslim or nasrani
 del %PROJECTNAME%\CoreAppDialogHandler.o

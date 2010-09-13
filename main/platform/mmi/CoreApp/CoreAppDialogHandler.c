@@ -2408,7 +2408,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
     db_items_value_type  need_capture;
 #endif
-
+    MSG_FATAL("CoreApp_ImageNotify start",0,0,0);
     //MSG_ERROR("CoreApp_ImageNotify, nErr:%d",nErr, 0, 0);
     if(SUCCESS == nErr) 
     {
@@ -2433,11 +2433,13 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
                     IDISPLAY_SetDestination(pMe->m_pDisplay, pBmp);
                     if ( NULL != pWallPaper )
                     {
+                        MSG_FATAL("rc.dx=%d,rc.dy=%d",rc.dx,rc.dy,0);
                         IIMAGE_SetDrawSize(pWallPaper, rc.dx, rc.dy);
                         IIMAGE_Draw(pWallPaper, 0, 0);
                     }
                     else
                     {
+                        MSG_FATAL("NULL == pWallPaper",0,0,0);
                         IDISPLAY_EraseRect(pMe->m_pDisplay, &rc);
                     }
                    // IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE); // debug for update issue
@@ -2454,10 +2456,12 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
             AEEImageInfo info;
             IImage_GetInfo(pWallPaper, &info);
             IDisplay_ClearScreen(pMe->m_pDisplay);
+            MSG_FATAL("x=%d, y=%d", (pMe->m_rc.dx - info.cx)/2, (pMe->m_rc.dy - info.cy)/2,0);
             IIMAGE_Draw(pWallPaper, (pMe->m_rc.dx - info.cx)/2, (pMe->m_rc.dy - info.cy)/2);
         }
         else
         {
+            MSG_FATAL("NULL == pWallPaper",0,0,0);
             IDISPLAY_EraseRect(pMe->m_pDisplay, &pMe->m_rc);
         }
 
@@ -4667,6 +4671,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
     }
     }
+    MSG_FATAL("alertType=%d",alertType,0,0);
     switch(alertType)
     {
         case OEMNV_PROFILE_QUIETMODE:           //OEMNV_ALERTTYPE_OFF :
@@ -5210,19 +5215,22 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
     {
         return ;
     }
+    
     if(pWallPaper != NULL)
     {
         SETAEERECT(&clip, 0, 78, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
         IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
         IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
-
+        MSG_FATAL("clip.x=%d, clip.y=%d,pMe->m_rc.dx=%d", clip.x, clip.y, pMe->m_rc.dx);
         IIMAGE_SetOffset( pWallPaper, clip.x,clip.y);
+        MSG_FATAL("clip.dx=%d, clip.dy=%d", clip.dx, clip.dy, 0);
         IIMAGE_SetDrawSize( pWallPaper, clip.dx,clip.dy);
         IIMAGE_Draw( pWallPaper, clip.x,clip.y);
         IDISPLAY_SetClipRect( pMe->m_pDisplay,&oldClip);
         IIMAGE_SetOffset( pWallPaper, 0,0);
         IIMAGE_SetDrawSize( pWallPaper, pMe->m_rc.dx,pMe->m_rc.dy);
     }
+    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/8, pMe->m_nLargeFontHeight, 0);
     SETAEERECT(&rect, pMe->m_rc.dx/8, 80, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
      IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,MAKE_RGB(60, 128, 196));
      // Display the string
@@ -5236,6 +5244,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);
    bracket[0]=(AECHAR)']';
+   MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*7/8, pMe->m_nLargeFontHeight, 0);
    SETAEERECT(&rect, pMe->m_rc.dx*7/8, 80, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
     // Display the string
    (void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -5248,6 +5257,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);
   SETAEERECT(&rect, (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), 80,(pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
+  MSG_FATAL("rect.x=%d,w=%d", (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), 0);
   (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
