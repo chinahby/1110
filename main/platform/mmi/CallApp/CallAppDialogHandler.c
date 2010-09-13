@@ -10122,8 +10122,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
             m_index_two_strlen += pMe->m_nCursorPos;
           
-            xPos = m_index_one_strlen - m_index_two_strlen + 3;   
-
+            xPos = m_index_one_strlen - m_index_two_strlen + 3;
             yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
         }
         else if ((pMe->m_nCursorPos >= m_index_one) && (pMe->m_nCursorPos < m_index_two))
@@ -10134,8 +10133,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
             m_index_two_strlen += pMe->m_nCursorPos;
 
-            xPos = m_index_one_strlen - m_index_two_strlen + 3;           
-            
+            xPos = m_index_one_strlen - m_index_two_strlen + 3; 
             yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);
         }
         else if ((pMe->m_nCursorPos >= m_index_two) && (pMe->m_nCursorPos < m_index_thr))
