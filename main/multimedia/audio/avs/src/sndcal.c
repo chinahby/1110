@@ -438,13 +438,13 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_beep_vol[] = {
  VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_beep_vol[] = {
   /*  rx                dtmf               pad        */
   { VOC_VOL_SILENCE, VOC_VOL_SILENCE, (byte)(~(0x00<<5)) },
-  {           -1000,           -1300, (byte)(~(0x07<<5)) },
-  {            -700,           -1100, (byte)(~(0x07<<5)) },
-  {            -400,            -900, (byte)(~(0x07<<5)) },
-  {            -100,            -700, (byte)(~(0x07<<5)) },
-  {             200,            -500, (byte)(~(0x07<<5)) },
-  {             500,            -300, (byte)(~(0x07<<5)) },
-  {             800,            -100, (byte)(~(0x07<<5)) }
+  {           -1800,           -1800, (byte)(~(0x07<<5)) },
+  {            -1600,           -1600, (byte)(~(0x07<<5)) },
+  {            -1200,            -1200, (byte)(~(0x07<<5)) },
+  {            -1000,            -1000, (byte)(~(0x07<<5)) },
+  {             -800,            -800, (byte)(~(0x07<<5)) },
+  {             -400,            -400, (byte)(~(0x07<<5)) },
+  {                0,             -200, (byte)(~(0x07<<5)) }
 };
 #elif defined(MSMAUD_SCMM_FFA_AUDIO_CAL)
 #error code not present
