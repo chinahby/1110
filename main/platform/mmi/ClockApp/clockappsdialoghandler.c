@@ -2580,10 +2580,15 @@ void CClockApps_Snooze(CClockApps *pMe)
     }
 #endif
     dwnow = GETTIMESECONDS();
-    snoozetime = dwnow%60;
+    
+#if defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
+	snoozetime = dwnow%60;
+	snoozetime = pMe->m_ClockCfg.Snooze[pMe->m_eCurAlarmType] - snoozetime;
+#else
+	snoozetime = dwnow%60;
     snoozetime = 60 - snoozetime;
     snoozetime = snoozetime +  pMe->m_ClockCfg.Snooze[pMe->m_eCurAlarmType];
-    
+#endif    
 
 #ifdef FEATURE_UIALARM
     //设置闹钟时间及类型
