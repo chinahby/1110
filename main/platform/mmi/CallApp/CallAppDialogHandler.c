@@ -5198,6 +5198,9 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
     AEECLSID cls        = AEE_Active();
     boolean b_energency =FALSE;
     boolean b_restict   =FALSE;
+
+	MSG_FATAL("***zzg redial test 3 cls=%x***", cls, 0, 0);
+	
     ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_MakeCall, pMe);
     if(cls == AEECLSID_DIALER ||cls == AEECLSID_CORE_APP)
     {
@@ -5232,10 +5235,16 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
     //    return CALL_FAIL_EMERGENCY_MODE;
     //}
 
+	MSG_FATAL("***zzg redial test 4***", 0, 0, 0);
+
     if(pMe->m_CallsTable)
     {
+    	MSG_FATAL("***zzg redial test 5***", 0, 0, 0);
+		
         if(AEE_SUCCESS != ICM_GetCallInfo(pMe->m_pICM, pMe->m_CallsTable->call_id, &ci, sizeof(AEECMCallInfo)))
         {
+        	MSG_FATAL("***zzg redial test 6***", 0, 0, 0);
+			
             return CALL_FAIL_ANOTHER;
         }
         //ASSERT(ci != NULL);
@@ -5244,6 +5253,8 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         if ((ci.call_type == AEECM_CALL_TYPE_OTAPA || ci.call_type == AEECM_CALL_TYPE_CS_DATA)
             && ci.call_state != AEECM_CALL_STATE_IDLE && ci.call_state != AEECM_CALL_STATE_NONE)
         {
+        	MSG_FATAL("***zzg redial test 7 call_state=%d***", ci.call_state, 0, 0);
+			
             CALL_ERR(" currently in an OTAPA call? call",0,0,0);
             // End the OTAPA call, make the call afterwards
             // (see CallApp_HandleCallStateChange)
@@ -5261,6 +5272,8 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
     // entering the 3-way call.
     // Remove the last trailing pause characters from the number
     //如果最后一位是P的话，直接删除
+
+	MSG_FATAL("***zzg redial test 8***", 0, 0, 0);
 
     {
         int len;
@@ -5291,6 +5304,8 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
             return CALL_FAIL_INVIDE_NUMBER;
         }
     }
+
+	MSG_FATAL("***zzg redial test 9***", 0, 0, 0);
 
     pause = WSTRCHR(pMe->m_DialString, DIALER_PAUSE_AECHAR);//search the first P
     CALL_ERR("pause = %x",pause,0,0);
@@ -5528,6 +5543,10 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         WSTRCAT(wbuf, L"T");
     }
 */
+
+
+	MSG_FATAL("***zzg redial test 10 energency=%d, restict=%d***", b_energency, b_restict, 0);
+
     CallApp_Add_Number_To_Call_Table(pMe,wbuf,nCallID,AEECALLHISTORY_CALL_TYPE_TO/*CALLHISTORY_OUTGOING*/,PI_ALLOWED,FALSE,b_energency,b_restict);
     return CALL_SUCESS;
 }
@@ -9918,9 +9937,11 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
     
     int m_index_one = 0;
     int m_index_two = 0;    
+	int m_index_thr = 0;
     
     int m_index_one_strlen = 0;
-    int m_index_two_strlen = 0;    
+    int m_index_two_strlen = 0; 
+	int m_index_thr_strlen = 0;
     
     int totalstrlen = 0;
     int dialstrlen  = 0;   
@@ -10069,9 +10090,77 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
     }
     else 	//DialString总长度大于三行
     {
-		xPos = 1;
-		yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
+		//xPos = 1;
+		//yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
+
+		for (temp = (WSTRLEN(pMe->m_DialString) - 2); temp > 0 ; temp --)
+        {
+            tempstrlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp);  
+            tempstrlen += (WSTRLEN(pMe->m_DialString) - temp);
+            
+            tempstrlen_ex = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp + 1); 
+            tempstrlen_ex += (WSTRLEN(pMe->m_DialString) - (temp + 1));
+            
+            if ((tempstrlen >= pMe->m_rc.dx) && (tempstrlen_ex < pMe->m_rc.dx))		//确定第一、二行的分界点的INDEX
+            {              	
+                m_index_one = WSTRLEN(pMe->m_DialString) - (temp + 1); 
+            }
+            else if ((tempstrlen >= 2*pMe->m_rc.dx) && (tempstrlen_ex < 2*pMe->m_rc.dx))	//确定第二、三行的分界点的INDEX
+            {               	
+                m_index_two = WSTRLEN(pMe->m_DialString) - (temp + 1);  
+            }
+			else if ((tempstrlen >= 3*pMe->m_rc.dx) && (tempstrlen_ex < 3*pMe->m_rc.dx))
+			{
+				m_index_thr = WSTRLEN(pMe->m_DialString) - (temp + 1);
+			}
+        }
+        if (pMe->m_nCursorPos < m_index_one)
+        {
+            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
+            m_index_one_strlen += m_index_one;
+            
+            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
+            m_index_two_strlen += pMe->m_nCursorPos;
+          
+            xPos = m_index_one_strlen - m_index_two_strlen + 3;   
+
+            yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
+        }
+        else if ((pMe->m_nCursorPos >= m_index_one) && (pMe->m_nCursorPos < m_index_two))
+        {
+            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_two));
+            m_index_one_strlen += m_index_two;
+            
+            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
+            m_index_two_strlen += pMe->m_nCursorPos;
+
+            xPos = m_index_one_strlen - m_index_two_strlen + 3;           
+            
+            yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);
+        }
+        else if ((pMe->m_nCursorPos >= m_index_two) && (pMe->m_nCursorPos < m_index_thr))
+        {
+            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_thr));
+            m_index_one_strlen += m_index_thr;
+            
+            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));
+            m_index_two_strlen += pMe->m_nCursorPos;     
+
+			xPos = m_index_one_strlen - m_index_two_strlen + 3;             
+            yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
+        }
+		else 
+        {            
+            xPos = 1;  			
+            yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
+        }		
     }
+
+	//光标位于最右边时显示不全，向左微调2像素
+	if (xPos > (pMe->m_rc.dx - 5))
+	{
+		xPos -= 2;
+	}
 
     SETAEERECT(pRect, xPos, yPos, 4, 25);
 
