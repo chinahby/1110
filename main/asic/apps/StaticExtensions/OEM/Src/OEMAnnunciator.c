@@ -2026,13 +2026,31 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
             	{
             	    //IIMAGE_Draw(pBackBmp,20, 0);
             	    AEERect bgRect;
+                    int titleLen = IDISPLAY_MeasureText(pMe->m_coreObj->m_piDisplay,AEE_FONT_NORMAL, (const AECHAR*)IAnnunCoreObj->m_Title);
+                    
 	            	bgRect.x = 20;
                     bgRect.y = 0;
                     bgRect.dy = 14;
 #if defined(FEATURE_DISP_128X128)
-                    bgRect.dx = 88;
+                    if(titleLen > 88)
+                    {
+                        bgRect.x = 0;
+                        bgRect.dx = 128;
+                    }
+                    else
+                    {
+                        bgRect.dx = 88;
+                    }
 #elif defined(FEATURE_DISP_160X128)
-                    bgRect.dx = 120;
+                    if(titleLen > 120)
+                    {
+                        bgRect.x = 0;
+                        bgRect.dx = 160;
+                    }
+                    else
+                    {
+                        bgRect.dx = 120;
+                    }
 #else
                     bgRect.dx = 120;
 #endif
