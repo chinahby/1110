@@ -6545,6 +6545,7 @@ INSERTSORT_EXIT:
         }
         else
         {
+       #ifdef FEATURE_SMS_UDH
             if(pnode->total_sm>0)
 			{
 				if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
@@ -6553,6 +6554,7 @@ INSERTSORT_EXIT:
 				}
 			}
 			else
+	  #endif
 			{
 				plist->nNews++;
 			}
@@ -6561,6 +6563,7 @@ INSERTSORT_EXIT:
     else if ((pnode->msg_tag == WMS_TAG_PHRASE) &&
              (pnode->index >= PHRASE_START+MAX_OEMTEMPLATES))
     {// 常用语用 nNews 表示用户新添加的常语数，不含内置修改而得的常语
+    	#ifdef FEATURE_SMS_UDH
 		 if(pnode->total_sm>0)
 		{
 			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
@@ -6569,12 +6572,14 @@ INSERTSORT_EXIT:
 			}
 		}
 		else
+		#endif
 		{
 			plist->nNews++;
 		}
     }
     else if (pnode->msg_tag == WMS_TAG_RESERVE)
     {
+    	#ifdef FEATURE_SMS_UDH
          if(pnode->total_sm>0)
 		{
 			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
@@ -6583,6 +6588,7 @@ INSERTSORT_EXIT:
 			}
 		}
 		else
+		#endif
 		{
 			plist->nNews++;
 		}
@@ -6881,6 +6887,7 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
     }
     else if (pnode->msg_tag == WMS_TAG_MT_NOT_READ)
     {
+    	#ifdef FEATURE_SMS_UDH
         if(pnode->total_sm>0)
 		{
 			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
@@ -6892,6 +6899,7 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
 			}
     	}
 		else
+		#endif
 		{
 			if(plist->nNews>0)
 			{
@@ -6901,6 +6909,7 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
     }
     else if (pnode->msg_tag == WMS_TAG_RESERVE)
     {
+    	#ifdef FEATURE_SMS_UDH
         if(pnode->total_sm>0)
 		{
 			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
@@ -6912,6 +6921,7 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
 			}
     	}
 		else
+		#endif
 		{
 			if(plist->nNews>0)
 			{
@@ -6922,7 +6932,8 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
     else if ((pnode->msg_tag == WMS_TAG_PHRASE) &&
              (pnode->index >= PHRASE_START+MAX_OEMTEMPLATES))
     {// 常用语用 nNews 表示用户新添加的常语数，不含内置修改而得的常语
-        if(pnode->total_sm>0)
+		#ifdef FEATURE_SMS_UDH
+		if(pnode->total_sm>0)
 		{
 			if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
 			{
@@ -6933,6 +6944,7 @@ static int wms_cacheinfolist_delete(wms_cache_info_list *plist,
 			}
     	}
 		else
+		#endif
 		{
 			if(plist->nNews>0)
 			{
@@ -8206,6 +8218,7 @@ boolean wms_cacheinfolist_updatenodetag(wms_memory_store_e_type mem_store,
                 }
                 else
                 {
+                #ifdef FEATURE_SMS_UDH
                     if(pnode->total_sm>0)
 					{
 						if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
@@ -8217,6 +8230,7 @@ boolean wms_cacheinfolist_updatenodetag(wms_memory_store_e_type mem_store,
 						}
                 	}
 					else
+						#endif
 					{
 						if(pList->nNews>0)
 						{
@@ -8228,6 +8242,7 @@ boolean wms_cacheinfolist_updatenodetag(wms_memory_store_e_type mem_store,
             else if ((pnode->msg_tag == WMS_TAG_RESERVE) &&
                      (pnode->msg_tag != newtag))
             {
+            	#ifdef FEATURE_SMS_UDH
                 if(pnode->total_sm>0)
 				{
 					if(pnode->seq_num%LONGSMS_MAX_PACKAGES == 1)
@@ -8239,6 +8254,7 @@ boolean wms_cacheinfolist_updatenodetag(wms_memory_store_e_type mem_store,
 					}
             	}
 				else
+					#endif
 				{
 					if(pList->nNews>0)
 					{

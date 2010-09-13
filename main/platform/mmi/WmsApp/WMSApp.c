@@ -5509,6 +5509,7 @@ boolean WmsApp_CurmessageIsFullSendout(WmsApp * pMe)
                 {
                     wms_cacheinfolist_enumbegin(WMS_MB_RSVFAILED);
                     pFailnode = wms_cacheinfolist_enumnext(WMS_MB_RSVFAILED);
+					#ifdef FEATURE_SMS_UDH
                     for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
                     {
                         ptepnode = pFailnode->pItems[i];
@@ -5529,11 +5530,13 @@ boolean WmsApp_CurmessageIsFullSendout(WmsApp * pMe)
                             ptepnode = NULL;
                         }     
                     }
+					#endif
                 }
 
             }
         }
         pMe->m_idxCur++;
+		#ifdef FEATURE_SMS_UDH
         // 确定当前发送消息节点是否发送完毕
         for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
         {
@@ -5546,6 +5549,7 @@ boolean WmsApp_CurmessageIsFullSendout(WmsApp * pMe)
         {
             bRet = FALSE;
         }
+		#endif
     }
 	else if(pMe->m_eCreateWMSType == SEND_MSG_NEW)
 	{
@@ -5641,6 +5645,7 @@ static void WmsApp_ReservedMsgStatusUpdate(WmsApp * pMe)
             
             if(nMsgs - nNews > MAX_RSVFAILD)
             {
+            #ifdef  FEATURE_SMS_UDH
                 wms_cacheinfolist_enumbegin(WMS_MB_RSVFAILED);
                 pFailnode = wms_cacheinfolist_enumnext(WMS_MB_RSVFAILED);
                 for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
@@ -5663,6 +5668,7 @@ static void WmsApp_ReservedMsgStatusUpdate(WmsApp * pMe)
                         ptepnode = NULL;
                     }     
                 }
+				#endif
             }
 
         }

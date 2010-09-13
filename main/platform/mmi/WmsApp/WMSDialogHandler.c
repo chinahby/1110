@@ -2261,8 +2261,20 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 				                        }
 				                    }
 				                }
- #endif
-				            }
+#else
+							 if ((NULL != pnode) &&
+                            (pnode->msg_tag == WMS_TAG_MT_READ))
+				             {
+		                            (void)IWMS_MsgModifyTag(pMe->m_pwms,
+		                                                    pMe->m_clientId,
+		                                                    &pMe->m_callback,
+		                                                    (void *)pMe,
+		                                                    pnode->mem_store,
+		                                                    pnode->index,
+		                                                    WMS_TAG_MT_NOT_READ);
+	                        }
+#endif
+				           }
 		
 						CLOSE_DIALOG(DLGRET_CANCELED)
 						}
