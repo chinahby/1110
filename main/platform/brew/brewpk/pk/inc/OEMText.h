@@ -89,7 +89,9 @@ when       who     what, where, why
 #ifdef FEATURE_LANG_ENGLISH
 #define FEATURE_T9_MT_ENGLISH
 #define FEATURE_T9_RAPID_ENGLISH
+#ifdef FEATURE_DISP_160X128
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
+#endif
 #endif //FEATURE_LANG_ENGLISH
 
 #ifdef FEATURE_LANG_ARABIC

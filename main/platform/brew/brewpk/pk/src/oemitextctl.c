@@ -5050,10 +5050,12 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     {
         pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
     }    
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH
 	if(pme->m_nCurrInputMode == OEM_MODE_T9_CAP_LOWER_ENGLISH)
 	{
 		pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
 	}
+#endif
 #ifdef FEATURE_T9_MT_SPANISH
     if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_SPANISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_T9_MT_SPANISH_UP))
     {
