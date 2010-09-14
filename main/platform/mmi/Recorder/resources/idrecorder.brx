@@ -2,7 +2,7 @@
 <BREWRes Name="recorder" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_TITLE">
-		<Text>Voice memo</Text>
+		<Text>Perekam suara</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_RECORDER_MEMO_RINGER_NAME">
 		<Text>Memo suara</Text>
@@ -11,10 +11,10 @@
 		<Text>Rekaman Baru</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RECORD_LIST">
-		<Text>Dartar rekaman</Text>
+		<Text>Daftar rekaman</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_RECORD_LIST_TITLE">
-		<Text>Dartar rekaman</Text>
+		<Text>Daftar rekaman</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_RECORD_LIST_OPTION_PLAY">
 		<Text>Main</Text>

@@ -5,7 +5,7 @@
 		<Text>Pengaturan</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_CALLFORWARD_START">
-		<Text>Mengaktifkan</Text>
+		<Text>Aktifkan</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_AUTOKEYGUARD_TITLE">
 		<Text>Kunci tombol</Text>
@@ -20,7 +20,7 @@
 		<Text>Jaringan</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_OFF">
-		<Text>Lepas</Text>
+		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_AKG_30SEC">
 		<Text>30 Sec</Text>
@@ -53,52 +53,52 @@
 		<Text>Tampilan</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_YMD">
-		<Text>yy/mm/dd</Text>
+		<Text>tt/bb/hh</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_SECURITY_TITLE">
 		<Text>Keamanan</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_DMY">
-		<Text>dd/mm/yy</Text>
+		<Text>hh/bb/tt</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MDY">
-		<Text>mm/dd/yy</Text>
+		<Text>bb/hh/tt</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_TIMESETTING">
 		<Text>Format waktu</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_AMPM">
-		<Text>12hr</Text>
+		<Text>12 jam</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_DAY">
-		<Text>24hr</Text>
+		<Text>24 jam</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_VOICE_PRIVACY">
 		<Text>Privasi suara</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_AUTO_POWER_ON_TIME">
-		<Text>daya</Text>
+		<Text>Hidupkan daya</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_AUTO_POWER_OFF_TIME">
-		<Text>Mematikan daya</Text>
+		<Text>Matikan daya</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_AUTO_POWER_TIME">
 		<Text>Waktu</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_AUTO_POWER_STATE">
-		<Text>On/Off</Text>
+		<Text>Hidup/Mati</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_IP_NUMBER_SET">
 		<Text>nomor IP mengatur</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_ENABLE">
-		<Text>On</Text>
+		<Text>Hidup</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_DISABLE">
-		<Text>Off</Text>
+		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_ANSWER_MODE">
-		<Text>Jawaban modus</Text>
+		<Text>Mode jawab</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_SHORT_AKG_TITLE">
 		<Text>Kunci penjaga</Text>
@@ -107,13 +107,13 @@
 		<Text>Penerjunan</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_SEND_ANSWER">
-		<Text>Tombol Kirim</Text>
+		<Text>Tombol kirim</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_HEADSET_ANSWER">
 		<Text>Headset</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_MINUTE_ALERT">
-		<Text>Menit bip</Text>
+		<Text>Pengingat menit</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_AUTOANSWER_TITLE">
 		<Text>Headset otomatis</Text>
@@ -125,7 +125,7 @@
 		<Text>Sibuk</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_CALLFORWARD_ANYWAY">
-		<Text>Unreachable</Text>
+		<Text>Tak terjangkau</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_CALLFORWARD_NOANSWER">
 		<Text>Tidak ada jawaban</Text>
@@ -134,7 +134,7 @@
 		<Text>Tak bersyarat</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_CALLFORWARD_CANCELALL">
-		<Text>Membatalkan</Text>
+		<Text>Batalkan</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_LANGUAGE">
 		<Text>Bahasa</Text>
@@ -146,19 +146,19 @@
 		<Text>English</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_AUTO_REDIAL">
-		<Text>Auto coba lagi...</Text>
+		<Text>Pgl ulang otomatis</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_CALLFORWARD_INPUT">
 		<Text>Jumlah masukan</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_CALLFORWARD_CANCEL">
-		<Text>Membatalkan</Text>
+		<Text>Batalkan</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_CALLFORWARD_WAIT">
 		<Text>Panggilan tunggu</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_CALLSETTING_TITLE">
-		<Text>Pengaturan panggilan</Text>
+		<Text>Pengaturan pgln</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_PHONESETTING_TITLE">
 		<Text>Pengaturan telepon</Text>
@@ -167,7 +167,7 @@
 		<Text>Penyediaan layanan</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_CALLFORWARD_DIVERT">
-		<Text>Panggil ke depan</Text>
+		<Text>Teruskan panggilan</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_WARNING_MESSEGE">
 		<Text>Tidak cukup kata</Text>
@@ -278,7 +278,7 @@
 		<Text>Set Default</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_AUTOPOWER_WARNING">
-		<Text>Auto power on / off waktu kesamaan</Text>
+		<Text>Daya hidup/mati auto waktu kesamaan</Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_CALL_RESTRICT">
 		<Text>Membatasi panggilan</Text>
@@ -290,7 +290,7 @@
 		<Text>Status</Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_AUTO_POWER_TITLE">
-		<Text>Auto power on/off</Text>
+		<Text>Daya hidup/mati auto</Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_SHAKE_TITLE">
 		<Text>Shake-goyang</Text>
@@ -311,7 +311,7 @@
 		<Text>Video</Text>
 	</STRING>
 	<STRING Id="1104" Name="IDS_ON">
-		<Text>On</Text>
+		<Text>Hidup</Text>
 	</STRING>
 	<STRING Id="1105" Name="IDS_INVALID">
 		<Text>Password tidak valid</Text>
@@ -326,7 +326,7 @@
 		<Text>Out kontak</Text>
 	</STRING>
 	<STRING Id="1109" Name="IDS_RESTRICT_OUTGOING_OFF">
-		<Text>Off</Text>
+		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1110" Name="IDS_RESTRICT_INCOMING_ALL">
 		<Text>All</Text>
@@ -335,13 +335,13 @@
 		<Text>Out contacts</Text>
 	</STRING>
 	<STRING Id="1112" Name="IDS_RESTRICT_INCOMING_OFF">
-		<Text>Off</Text>
+		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1113" Name="IDS_RESTRICT_OUTGOING">
-		<Text>Panggilan Terbatas</Text>
+		<Text>Batasi pgl keluar</Text>
 	</STRING>
 	<STRING Id="1114" Name="IDS_RESTRICT_INCOMING">
-		<Text>Batasi diterima</Text>
+		<Text>Batasi pgl masuk</Text>
 	</STRING>
 	<STRING Id="1115" Name="IDS_PASSWORD">
 		<Text>Masukkan sandi</Text>
@@ -359,16 +359,16 @@
 		<Text>Query saat mulai</Text>
 	</STRING>
 	<STRING Id="1120" Name="IDS_DIAG_AND_DATA">
-		<Text>On</Text>
+		<Text>Hidup</Text>
 	</STRING>
 	<STRING Id="1121" Name="IDS_MASS_STORAGE">
-		<Text>Off</Text>
+		<Text>Mati</Text>
 	</STRING>
 	<String Id="1122" Name="IDS_ADJUSTSETTING">
 		<Text>Kalibrasi layar</Text>
 	</String>
 	<String Id="1123" Name="IDS_SIM_SET">
-		<Text>UIM Pengaturan</Text>
+		<Text>Pengaturan UIM</Text>
 	</String>
 	<String Id="1124" Name="IDS_SIM_ONE">
 		<Text>UIM Slot Satu</Text>
@@ -380,7 +380,7 @@
 		<Text>Are you sure?</Text>
 	</String>
 	<String Id="1127" Name="IDS_CANCEL" Encoding="Unicode">
-		<Text>cancel</Text>
+		<Text>Batalkan</Text>
 	</String>
 	<String Id="1128" Name="IDS_YES" Encoding="Unicode">
 		<Text>yes</Text>

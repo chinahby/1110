@@ -11,7 +11,7 @@
 		<Text>Tidak cocok</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RESTORE">
-		<Text>Reset</Text>
+		<Text>Atur ulang</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_SECURITY_TITLE">
 		<Text>Keamanan</Text>
@@ -32,7 +32,7 @@
 		<Text>Batasi diterima</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_OFF">
-		<Text>Lepas</Text>
+		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_RESTRICT_OUTCONTACT">
 		<Text>Out kontak</Text>
@@ -71,13 +71,13 @@
 		<Text>Kunci telepon</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_PIN_SET">
-		<Text>Kunci telepon...</Text>
+		<Text>Pengaturan PIN</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_PHONE_PASSWORD_CHANGE">
 		<Text>Ubah sandi</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_ON">
-		<Text>Pada</Text>
+		<Text>Hidup</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_PIN_CHECK">
 		<Text>Mengaktifkan PIN</Text>
@@ -104,7 +104,7 @@
 		<Text>Kontak</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_RECENT_CALL_LOCK">
-		<Text>Panggilan terakhir</Text>
+		<Text>Daftar panggilan</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_SMS_LOCK">
 		<Text>Pesan</Text>
@@ -128,7 +128,7 @@
 		<Text>Kode telepon</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_APPLICATION_LOCK">
-		<Text>Aplikasi kunci</Text>
+		<Text>Kunci aplikasi</Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_PIN_CODE">
 		<Text>PIN</Text>

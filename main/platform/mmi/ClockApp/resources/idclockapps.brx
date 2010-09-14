@@ -23,10 +23,10 @@
 		<Text>Alarm 6</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_STATE_OFF">
-		<Text>Matikan</Text>
+		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_STATE_ON">
-		<Text>Nyala</Text>
+		<Text>Hidup</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_REP_MODE_0">
 		<Text>Setiap Hari</Text>
@@ -56,10 +56,10 @@
 		<Text>Sabtu</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_REP_MODE_9">
-		<Text>MInggu</Text>
+		<Text>Minggu</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_CLOCK_STATE">
-		<Text>Negara</Text>
+		<Text>Status</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_CLOCK_TIME">
 		<Text>Waktu</Text>
@@ -74,7 +74,7 @@
 		<Text>Tekan apa saya untuk tutup.</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_CLOCK_SNOOZE">
-		<Text>Sebentar lagi</Text>
+		<Text>Tunda</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_CLEAR">
 		<Text>Hapus</Text>

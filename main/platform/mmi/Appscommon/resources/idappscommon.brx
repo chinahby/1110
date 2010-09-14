@@ -86,7 +86,7 @@
 		<Text>Pengaturan</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_TOTODAY">
-		<Text>Today</Text>
+		<Text>Hari ini</Text>
 	</STRING>
 	<STRING Id="30" Name="IDS_STRING_IP">
 		<Text>IP</Text>
@@ -170,7 +170,7 @@
 		<Text>Buat</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_ADD">
-		<Text>Menambah</Text>
+		<Text>Tambah</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_PAUSE">
 		<Text>Diam</Text>
@@ -224,7 +224,7 @@
 		<Text>Tidak</Text>
 	</STRING>
 	<String Id="1026" Name="IDS_VIEWMORE">
-		<Text>ViewMore</Text>
+		<Text>Lanjut</Text>
 	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
 		<Text>Facebook</Text>

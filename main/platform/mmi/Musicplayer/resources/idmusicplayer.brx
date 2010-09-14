@@ -26,16 +26,16 @@
 		<Text>Daftar Putar</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_PLAYLIST_CREATELIST">
-		<Text>Buat daftar</Text>
+		<Text>Buat daftar putar</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_PLAYLIST_PLAY">
 		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_PLAYLIST_VIEW">
-		<Text>Melihat</Text>
+		<Text>Lihat</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_PLAYLIST_ADDMUSIC">
-		<Text>Menambahkan</Text>
+		<Text>Tambah</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_PLAYLIST_RENAME">
 		<Text>Ubah nama</Text>
@@ -185,7 +185,7 @@
 		<Text>Ulangi satu</Text>
 	</String>
 	<String Id="1062" Name="IDS_DEFAULTPLAYLISTNAME" Encoding="Unicode">
-		<Text>Default playlist</Text>
+		<Text>Daftar putar awal</Text>
 	</String>
 	<String Id="1063" Name="IDS_MSG_WAITING" Encoding="Unicode">
 		<Text>Loading musik, silakan tunggu</Text>

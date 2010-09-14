@@ -20,7 +20,7 @@
 		<Text>Timer</Text>
 	</String>
 	<String Id="1037" Name="IDS_TOOLS_TITLE_6">
-		<Text>WorldTime</Text>
+		<Text>Waktu dunia</Text>
 	</String>
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
 		<Text>Aplikasi</Text>
@@ -41,10 +41,10 @@
 		<Text>Konverter</Text>
 	</String>
 	<String Id="1016" Name="IDS_APPLICATION_TITLE_6">
-		<Text>WorldTime</Text>
+		<Text>Waktu dunia</Text>
 	</String>
 	<String Id="1017" Name="IDS_APPLICATION_TITLE_7">
-		<Text>Perekam</Text>
+		<Text>Perekam suara</Text>
 	</String>
 	<String Id="1018" Name="IDS_APPLICATION_TITLE_8">
 		<Text>Kalender</Text>

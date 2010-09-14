@@ -8,7 +8,7 @@
 		<Text>Mata uang</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_LENGTH_TITLE">
-		<Text>Panjangnya</Text>
+		<Text>Panjang</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_WEIGHT_TITLE">
 		<Text>Berat</Text>
@@ -77,13 +77,13 @@
 		<Text>in</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_LENGTH_FT">
-		<Text>ft</Text>
+		<Text>kaki</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_LENGTH_YARD">
 		<Text>yard</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_LENGTH_MILE">
-		<Text>mile</Text>
+		<Text>mil</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_LENGTH_MM">
 		<Text>mm</Text>
@@ -101,7 +101,7 @@
 		<Text>g</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_WEIGHT_POUND">
-		<Text>pound</Text>
+		<Text>pon</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_WEIGHT_KG">
 		<Text>kg</Text>
@@ -110,7 +110,7 @@
 		<Text>ton</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_WEIGHT_GRAIN">
-		<Text>grain</Text>
+		<Text>butir</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_VOLUME_CM3">
 		<Text>cm³</Text>
@@ -125,7 +125,7 @@
 		<Text>in³</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_VOLUME_FT3">
-		<Text>ft³</Text>
+		<Text>kaki³</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_VOLUME_YD3">
 		<Text>yd³</Text>
@@ -146,7 +146,7 @@
 		<Text>in²</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_AREA_FT2">
-		<Text>ft²</Text>
+		<Text>kaki²</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_AREA_ACRE">
 		<Text>acre</Text>

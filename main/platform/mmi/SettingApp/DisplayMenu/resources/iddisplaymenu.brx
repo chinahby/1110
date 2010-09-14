@@ -2,13 +2,13 @@
 <BREWRes Name="iddisplaymenu" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_DISPLAY_TITLE">
-		<Text>Tampilkan</Text>
+		<Text>Tampilan</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_BACKLIGHTING_TITLE">
 		<Text>Waktu lampu latar</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_ALWAYS_ON">
-		<Text>Selalu Aktif</Text>
+		<Text>Selalu hidup</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_LED_CONTROL">
 		<Text>Kontrol LED</Text>
@@ -83,7 +83,7 @@
 		<Text>5 menit</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_WALLPAPER_TITLE">
-		<Text>Kertas dinding</Text>
+		<Text>Gambar latar</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL_DARK">
 		<Text>Gelap</Text>
