@@ -952,7 +952,9 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
 
                 case AVK_SELECT:		//Add By zzg 2010_07_23
 				{
+#ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer(GALLERY_IMAGE_SETTING, NULL);
+#endif
 					break;
 				}						//Add End
 				
