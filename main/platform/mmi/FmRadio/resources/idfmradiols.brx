@@ -59,7 +59,7 @@
 		<Text>Panggilan masuk</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_FMRADIO_REFUSE_NO_HEADSET">
-		<Text>Silahkan input \ nheadset</Text>
+		<Text>Silahkan input \nheadset</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_FMRADIO_CHANNEL_LIST_IS_EMPTY">
 		<Text>catatan No </Text>
