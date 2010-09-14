@@ -1324,7 +1324,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
         case EVT_USER_REDRAW:
             // 初始整个背景及全部初始图标
-            ERR("EVT_USER_REDRAW:::::::::::1111111111",0,0,0);			
+           // ERR("EVT_USER_REDRAW:::::::::::1111111111",0,0,0);			
             DrawMatrix(pMe);
 #ifdef FEATURE_ICON_MOVE_ANIMATION
             {
@@ -1389,7 +1389,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             switch( wParam)
             {
                 case AVK_CLR:
-                    ERR("AVK_CLR:::::::::::::::::::!111111111111",0,0,0);
+                   // ERR("AVK_CLR:::::::::::::::::::!111111111111",0,0,0);
                      CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
                     
