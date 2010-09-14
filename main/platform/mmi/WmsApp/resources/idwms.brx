@@ -5,19 +5,19 @@
 		<Text>Kotak masuk </Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_WRITEMESSAGE">
-		<Text>Membuat</Text>
+		<Text>Pesan baru</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_OUTBOX">
 		<Text>Kotak keluar </Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_VOICEMAIL">
-		<Text>Mail suara</Text>
+		<Text>Pesan suara</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_DRAFT">
 		<Text>Konsep </Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_TEMPLATES">
-		<Text>Preset pesan</Text>
+		<Text>Templet</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_MENSTATUS">
 		<Text>Status memori</Text>
@@ -44,13 +44,13 @@
 		<Text>Dari:</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_REPLY">
-		<Text>Balasan</Text>
+		<Text>Balas</Text>
 	</STRING>
 	<STRING Id="16" Name="IDS_FORWARD">
-		<Text>Meneruskan</Text>
+		<Text>Teruskan</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_LISTENVM">
-		<Text>Mendengarkan mail suara</Text>
+		<Text>Mendengarkan pesan suara</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_SEND">
 		<Text>Mengirim</Text>
@@ -71,7 +71,7 @@
 		<Text>Salin ke telepon</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_CALL">
-		<Text>Panggilan</Text>
+		<Text>Buat panggilan</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_TO">
 		<Text>Untuk:</Text>
@@ -95,16 +95,16 @@
 		<Text>Menghapus...</Text>
 	</STRING>
 	<STRING Id="32" Name="IDS_TEMPLATE1">
-		<Text>Aku sedang sibuk. Panggil aku nanti.</Text>
+		<Text>Aku sedang sibuk. Telepon lagi nanti</Text>
 	</STRING>
 	<STRING Id="33" Name="IDS_TEMPLATE2">
 		<Text>Selamat Ulangtahun!</Text>
 	</STRING>
 	<STRING Id="34" Name="IDS_TEMPLATE3">
-		<Text>Tunggu sebentar,silahkan.</Text>
+		<Text>Mohon tunggu sebentar</Text>
 	</STRING>
 	<STRING Id="35" Name="IDS_TEMPLATE4">
-		<Text>Dimana Anda?</Text>
+		<Text>Kamu dimana?</Text>
 	</STRING>
 	<STRING Id="36" Name="IDS_TEMPLATE5">
 		<Text>Bagaimana harimu?</Text>
@@ -119,7 +119,7 @@
 		<Text>Saya akan menghubungi Anda segera!</Text>
 	</STRING>
 	<STRING Id="40" Name="IDS_TEMPLATE9">
-		<Text>Saya minta maaf!</Text>
+		<Text>Saya minta maaf</Text>
 	</STRING>
 	<STRING Id="41" Name="IDS_AUTOSAVE">
 		<Text>Otomatis disimpan</Text>
@@ -131,7 +131,7 @@
 		<Text>Laporan pengiriman</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_STORAGE">
-		<Text>Lebih suka menyimpan</Text>
+		<Text>Penyimpanan</Text>
 	</STRING>
 	<STRING Id="45" Name="IDS_NOTSAVE">
 		<Text>Jangan di simpan</Text>
@@ -143,7 +143,7 @@
 		<Text>Normal</Text>
 	</STRING>
 	<STRING Id="48" Name="IDS_URGENT">
-		<Text>Mendesak</Text>
+		<Text>Penting</Text>
 	</STRING>
 	<STRING Id="49" Name="IDS_ENABLE">
 		<Text>On</Text>
@@ -176,7 +176,7 @@
 		<Text>Gagal</Text>
 	</STRING>
 	<STRING Id="59" Name="IDS_INSERTTEMPLATES">
-		<Text>Preset pesan</Text>
+		<Text>Templet</Text>
 	</STRING>
 	<STRING Id="60" Name="IDS_SAVETODRAFT">
 		<Text>Simpan ke draft</Text>
@@ -272,7 +272,7 @@
 		<Text>Masukkan Emotion</Text>
 	</STRING>
 	<STRING Id="97" Name="IDS_MSGVALIDITY">
-		<Text>Pesan validitas</Text>
+		<Text>Validitas pesan</Text>
 	</STRING>
 	<STRING Id="98" Name="IDS_MSGVALIDITY_MAX">
 		<Text>Maksimum waktu</Text>
@@ -293,10 +293,10 @@
 		<Text>1 minggu</Text>
 	</STRING>
 	<STRING Id="104" Name="IDS_SENDONLY">
-		<Text>Kirim hanya</Text>
+		<Text>Hanya kirim</Text>
 	</STRING>
 	<STRING Id="105" Name="IDS_SAVEONLY">
-		<Text>Simpan hanya</Text>
+		<Text>Hanya simpan</Text>
 	</STRING>
 	<STRING Id="106" Name="IDS_SENDANDSAVE">
 		<Text>Kirim dan simpan</Text>
@@ -305,7 +305,7 @@
 		<Text>nomor telepon kembali</Text>
 	</STRING>
 	<STRING Id="108" Name="IDS_SAVEEMAIL">
-		<Text>Ambil e_mail</Text>
+		<Text>Ambil email</Text>
 	</STRING>
 	<STRING Id="109" Name="IDS_MOVETORUIM">
 		<Text>Pindah ke kartu UIM</Text>
@@ -329,7 +329,7 @@
 		<Text>Target ruangan toko insufisiensi</Text>
 	</STRING>
 	<STRING Id="116" Name="IDS_SURECOPY">
-		<Text>Salinan</Text>
+		<Text>Salin</Text>
 	</STRING>
 	<STRING Id="117" Name="IDS_SUREMOVE">
 		<Text>Pindah</Text>
@@ -383,7 +383,7 @@
 		<Text>Gagal terkirim</Text>
 	</STRING>
 	<STRING Id="134" Name="IDS_NEWRESERVEDMSG">
-		<Text>Membuat</Text>
+		<Text>Pesan baru</Text>
 	</STRING>
 	<STRING Id="135" Name="IDS_AM">
 		<Text>AM</Text>
@@ -404,7 +404,7 @@
 		<Text>Loading pesan...</Text>
 	</STRING>
 	<STRING Id="141" Name="IDS_TEMPLATE10">
-		<Text>Terima kasih!</Text>
+		<Text>Terima kasih</Text>
 	</STRING>
 	<STRING Id="142" Name="IDS_PWDTIPS">
 		<Text>Masukkan kata sandi</Text>
@@ -434,7 +434,7 @@
 		<Text>Tetapkan nomor telepon kembali</Text>
 	</STRING>
 	<STRING Id="151" Name="IDS_SENDMODE">
-		<Text>Cara Kirim</Text>
+		<Text>Mode Kirim</Text>
 	</STRING>
 	<STRING Id="152" Name="IDS_MSGMANAGEMENT">
 		<Text>Manajemen</Text>

@@ -11,10 +11,10 @@
 		<Text>s</Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_MISSED_CALLS">
-		<Text>Panggilan tak terjawab</Text>
+		<Text>Pgln tak terjawab</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_RECEIVED_CALLS">
-		<Text>Menerima panggilan</Text>
+		<Text>Panggilan masuk</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_OUTGOING_CALLS">
 		<Text>Panggilan keluar</Text>
@@ -41,10 +41,10 @@
 		<Text>Hapus</Text>
 	</STRING>
 	<STRING Id="14" Name="IDS_RESET_TIME_Q">
-		<Text>Reset</Text>
+		<Text>Atur ulang</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_NO_CALLS">
-		<Text>Tidak ada catatan</Text>
+		<Text>Tak ada catatan</Text>
 	</STRING>
 	<STRING Id="16" Name="IDS_DURATION">
 		<Text>Jangka waktu:</Text>
@@ -74,7 +74,7 @@
 		<Text>Kirim kontak</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_RECENT_CALLS">
-		<Text>Panggilan terakhir</Text>
+		<Text>Daftar panggilan</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_PASSWORD">
 		<Text>Masukkan sandi</Text>
@@ -86,7 +86,7 @@
 		<Text>Waktu panggilan:</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_LAST_CALL">
-		<Text>Terakhir panggilan</Text>
+		<Text>Panggilan terakhir</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_SAVE_AS">
 		<Text>Simpan sebagai</Text>

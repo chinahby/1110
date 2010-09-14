@@ -8,7 +8,7 @@
 			<Text>Baru</Text>
 		</STRING>
 		<STRING Id="3" Name="IDC_EXIT">
-			<Text>TUtup</Text>
+			<Text>Keluar</Text>
 		</STRING>
 		<STRING Id="5" Name="IDS_NEXT_SCREEN">
 			<Text>Kerja yang bagus!</Text>
@@ -29,7 +29,7 @@
 			<Text>  Dayung kanan</Text>
 		</STRING>
 		<STRING Id="11" Name="IDS_WELCOME_P">
-			<Text>  OK/Jedah Jelas</Text>
+			<Text>OK/HPS Tahan</Text>
 		</STRING>
 		<STRING Id="12" Name="IDS_SCORE">
 			<Text>Nilai = %d</Text>

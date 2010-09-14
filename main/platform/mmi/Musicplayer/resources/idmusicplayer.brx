@@ -2,10 +2,10 @@
 <BREWRes Name="idmusicplayer" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_PLAY">
-		<Text>Bermain</Text>
+		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_PLAYLIST">
-		<Text>Playlist</Text>
+		<Text>Daftar Putar</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_SET_AS_RINGTONE">
 		<Text>Atur sbg</Text>
@@ -20,16 +20,16 @@
 		<Text>Galeri</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_MINIMIZE">
-		<Text>Memperkecil</Text>
+		<Text>Minimalkan</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_PLAYLISTS">
-		<Text>Playlist</Text>
+		<Text>Daftar Putar</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_PLAYLIST_CREATELIST">
 		<Text>Buat daftar</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_PLAYLIST_PLAY">
-		<Text>Bermain</Text>
+		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_PLAYLIST_VIEW">
 		<Text>Melihat</Text>
@@ -59,7 +59,7 @@
 		<Text>Tunggal</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_PLAYMODE_ORDER">
-		<Text>Pesanan</Text>
+		<Text>Berurutan</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MSG_ERR_FORMAT" Encoding="Unicode">
 		<Text>Kesalahan format</Text>
@@ -113,13 +113,13 @@
 		<Text>Ukuran</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_SET_CALL_RINGTONE">
-		<Text>Ringtone</Text>
+		<Text>Nada Dering Panggilan</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_SET_SMS_RINGTONE">
-		<Text>SMS nada</Text>
+		<Text>Nada SMS</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_SET_ALARM_RINGTONE">
-		<Text>Nada alarm</Text>
+		<Text>Nada Alarm</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_MSG_DONE">
 		<Text>Selesai</Text>
@@ -131,7 +131,7 @@
 		<Text>NULL</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_MUSICLIST_PLAY">
-		<Text>Bermain</Text>
+		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_MUSICLIST_ADD">
 		<Text>Menambahkan</Text>
@@ -155,7 +155,7 @@
 		<Text>Simpan?</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_PLAYMODE_CYCLE">
-		<Text>Sepeda</Text>
+		<Text>Satu putaran</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_MSG_ADD_FAILED">
 		<Text>Playlist penuh</Text>

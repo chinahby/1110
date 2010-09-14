@@ -5,7 +5,7 @@
 		<Text>Mode</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_FMRADIO_PROMPT_PLAYING">
-		<Text>Bermain</Text>
+		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_FMRADIO_PROMPT_TUNING">
 		<Text>Tuning</Text>
@@ -26,7 +26,7 @@
 		<Text>Memperkecil</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH">
-		<Text>Global pencarian</Text>
+		<Text>Pencarian auto</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_FMRADIO_OPTION_MENU_LIST">
 		<Text>Daftar saluran</Text>
@@ -47,10 +47,10 @@
 		<Text>Auto mode</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_FMRADIO_CHANNEL_LIST_OPTION_MENU_PLAY">
-		<Text>Bermain</Text>
+		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_FMRADIO_CHANNEL_LIST_OPTION_MENU_NEW">
-		<Text>Menambahkan</Text>
+		<Text>Tambah</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_FMRADIO_CHANNEL_LIST_OPTION_MENU_DELETE">
 		<Text>Hapus</Text>
@@ -59,7 +59,7 @@
 		<Text>Panggilan masuk</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_FMRADIO_REFUSE_NO_HEADSET">
-		<Text>Silahkan input \nheadset</Text>
+		<Text>Silakan masukkan headset</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_FMRADIO_CHANNEL_LIST_IS_EMPTY">
 		<Text>catatan No </Text>

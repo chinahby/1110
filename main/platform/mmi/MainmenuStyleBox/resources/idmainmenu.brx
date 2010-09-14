@@ -95,7 +95,7 @@
 		<Text>Smart World</Text>
 	</String>
 	<String Id="1062" Name="IDS_MAIN_MENU_TITLE_62">
-		<Text>Smartfren Access</Text>
+		<Text>SmartFren Access</Text>
 	</String>
 	<String Id="1063" Name="IDS_MAIN_MENU_TITLE_63">
 		<Text>Pemutar Musik</Text>
@@ -131,7 +131,7 @@
 		<Text>b-live</Text>
 	</String>
 	<String Id="1082" Name="IDS_MAIN_MENU_TITLE_82">
-		<Text>Smartfren Access</Text>
+		<Text>SmartFren Access</Text>
 	</String>
 	<String Id="1083" Name="IDS_MAIN_MENU_TITLE_83">
 		<Text>Pemutar Musik</Text>

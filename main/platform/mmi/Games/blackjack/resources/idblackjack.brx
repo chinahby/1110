@@ -14,7 +14,7 @@
 		<Text>Terus</Text>
 	</STRING>
 	<STRING Id="20" Name="IDC_DEAL">
-		<Text>Berurusan</Text>
+		<Text>Mulai</Text>
 	</STRING>
 	<STRING Id="21" Name="IDC_CHANGE_BET">
 		<Text>Bertaruh</Text>
@@ -41,7 +41,7 @@
 		<Text>BlackJack</Text>
 	</STRING>
 	<STRING Id="101" Name="IDS_INSTRUCTIONS">
-		<Text>Dapatkan lebih dekat ke 21 dibandingkan dengan dealer tanpa akan lebih dari 21. Nilai dari kartu adalah: Ace, 1 atau 11; raja, ratu, jack, sepuluh, 10 masing-masing; semua kartu lain, nomor tersebut.</Text>
+		<Text>Jadi lebih dekat ke 21 melawan dealer tanpa melebihi angka 21 tersebut. Nilai dari kartu adalah: As, 1 atau 11; Raja, Ratu, Jack, Sepuluh, masing-masing 10; dan kartu-kartu lain sesuai nomornya</Text>
 	</STRING>
 	<STRING Id="102" Name="IDS_CONTINUE_OR_NEW_TEXT">
 		<Text>Lanjutkan paling baru permainan atau memulai permainan baru?</Text>
