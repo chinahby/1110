@@ -13,8 +13,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SUPPORT_ID
 #define FEATURE_SEAMLESS_SMS
 //#define FEATURE_NET_LOCK
+#define FEATURE_AAC
+#define FEATURE_AAC_PLUS
+#define FEATURE_ENHANCED_AAC_PLUS
+
 #include "custw021.h"
-
-
 
 #endif /* CUSTSB2_H */

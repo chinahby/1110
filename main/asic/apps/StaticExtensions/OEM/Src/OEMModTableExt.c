@@ -576,7 +576,9 @@ extern int CoreStartApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 #endif
 
+#ifdef FEATURE_APP_QUICKTEST
 extern int QuickTest_Load(IShell *pIShell,void *ph,IModule **ppMod);
+#endif
 extern int CWMSMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
@@ -984,9 +986,10 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif // FEATURE_UIONE_HDK
 
     {AEEFS_MIF_DIR"wms.mif", CWMSMod_Load},
-    
+#ifdef FEATURE_APP_QUICKTEST    
     //{AEEFS_MIF_DIR"extramenu.mif", ExtraMenuMod_Load},
     {AEEFS_MIF_DIR"quicktest.mif", QuickTest_Load},
+#endif    
 
     {AEEFS_MIF_DIR"clockapps.mif", ClockAppsMod_Load},
     {AEEFS_MIF_DIR"calcapp.mif", CalcMod_Load},
@@ -1006,7 +1009,9 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"application.mif", ApplicationMod_Load},
 //#if defined( FEATURE_GAME_TETRIS)
 //    {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
+#ifdef FEATURE_APP_GAME
 	{AEEFS_MIF_DIR"game.mif",GameMod_Load},
+#endif
 	
 #ifdef	FEATURE_VERSION_M8
 	{AEEFS_MIF_DIR"frenduo.mif",FrenDuoAppMod_Load},
@@ -1183,9 +1188,10 @@ static const AEEStaticMod gOEMStaticModList[] =
       {AEEFS_MIF_DIR"svcprg.mif", CSvcPrgMod_Load},
 #endif
 
-//#if defined (FEATURE_APP_FLDDBG)
+#if defined (FEATURE_APP_FLDDBG)
       {AEEFS_MIF_DIR"flddbg.mif", CFieldDebugMod_Load},
-//#endif
+#endif
+
 #if defined (FEATURE_APP_DIALER)
     {AEEFS_MIF_DIR"callapp.mif", CallAppMod_Load},
 #endif

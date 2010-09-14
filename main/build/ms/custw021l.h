@@ -10,6 +10,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+#define FEATURE_W021_LOW_MEMORY
 #define FEATURE_OEMUI_TASK
 #define FEATURE_COLOR_DISPLAY
 #define FEATURE_ONEMSG_USE_ONEFILE
@@ -27,8 +28,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 
 #undef FEATURE_LANG_CHINESE
-#define FEATURE_NET_LOCK
-#define FEATURE_SEAMLESS_SMS
+//#define FEATURE_NET_LOCK
+//#define FEATURE_SEAMLESS_SMS
 #define FEATURE_OMH_SMS
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
@@ -58,7 +59,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_HS_USB_USER_EVENT_POST 
 #define FEATURE_RRC_SIB_HEAP 
 #define FEATURE_LOW_MEMORY_USAGE 
-//#define FEATURE_FS_LOW_MEMORY_USAGE 
+#define FEATURE_FS_LOW_MEMORY_USAGE 
 #define FEATURE_DSM_MINIMIZE 
 #define FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
@@ -216,9 +217,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DISP_128X128
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
+#ifndef FEATURE_W021_LOW_MEMORY
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
+#endif
 #define FEATURE_PROJECT_W021
+
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 
 //#define FEATURE_WMS_APP

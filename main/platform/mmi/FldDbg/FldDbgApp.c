@@ -5089,7 +5089,7 @@ static boolean CFieldDebug_TopMenuHandleEvent(CFieldDebug * pme,
 #if defined(FEATURE_APP_QUICKTEST)
       case AVK_STAR:
          (void) ISHELL_StartApplet(pme->a.m_pIShell,
-                                   AEECLSID_APP_QUICKTEST);
+                                   AEECLSID_QUICKTEST);
          return TRUE;
 
 

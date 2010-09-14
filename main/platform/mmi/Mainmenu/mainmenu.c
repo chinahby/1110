@@ -630,7 +630,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
         case EVT_APP_RESUME:
             {
                 AEEAppStart* as = ( AEEAppStart*)dwParam;
-                ERR("MainMenu_HandleEvent EVT_APP_RESUME",0,0,0);
+       //         ERR("MainMenu_HandleEvent EVT_APP_RESUME",0,0,0);
                 pMe->m_rc    = as->rc;
                 pMe->m_eAppStatus = MAINMENU_RUNNING;
 #ifdef FEATURE_RANDOM_MENU_REND
@@ -788,9 +788,9 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
 ==============================================================================*/
 static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe)
 {
-    ERR("MAINST_EXIT_Handler Start",0,0,0);
+ //   ERR("MAINST_EXIT_Handler Start",0,0,0);
     (void) ISHELL_CloseApplet(pMe->m_pShell, FALSE);
-    ERR("MAINST_EXIT_Handler End",0,0,0);
+ //   ERR("MAINST_EXIT_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } 
 
@@ -815,7 +815,7 @@ static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe)
 void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
 {
     int nRet;
-    ERR("MainMenu_ShowDialog Start",0,0,0);
+ //   ERR("MainMenu_ShowDialog Start",0,0,0);
     // 每次最多打开一个对话框
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
@@ -910,7 +910,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            ERR("MainMenu_ListMenuHandler EVT_DIALOG_INIT",0,0,0);
+     //       ERR("MainMenu_ListMenuHandler EVT_DIALOG_INIT",0,0,0);
             IMENUCTL_SetTitle(pMenu, MAINMENU_RES_FILE_LANG, IDS_MENU_LIST, NULL);                
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_1, IDS_MAIN_MENU_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_2, IDS_MAIN_MENU_TITLE_2, NULL, 0);
@@ -927,7 +927,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
         case EVT_DIALOG_START:
             {  
                 int i;
-                ERR("MainMenu_ListMenuHandler EVT_DIALOG_START",0,0,0);
+         //       ERR("MainMenu_ListMenuHandler EVT_DIALOG_START",0,0,0);
                 for (i=1;i<=MAX_MATRIX_ITEMS;)
                 {
                     AECHAR pwsz[67] = {0};

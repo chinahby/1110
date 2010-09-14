@@ -14,9 +14,9 @@ include $(MAINMENU)/mainmenu.min
 include $(CALLAPP)/CallApp.min
 include $(CONTAPP)/contact.min
 include $(WMSAPP)/wmsapp.min
-#ifeq ($(USES_LOW),yes)
+ifneq ($(USES_LOWMEM),yes)
 include $(UTK)/utk.min
-#endif
+endif
 include $(RECENTCALLS)/recentcalls.min
 
 #MultiMedia
@@ -73,8 +73,10 @@ endif
 #include $(NOTEBOOK)/notebook.min
 
 #Games
+ifeq ($(MMI_ADD_GAME),yes)
 include $(BRICKATTACK)/brickattack.min
 include $(BLACKJACK)/blackjack.min
+endif
 
 #Apps
 #include $(EXTRAMENU)/extramenu.min
@@ -86,9 +88,11 @@ endif
 ifeq ($(MMI_ADD_WAPBROWSER),yes)
 include $(WAPBROWSER)/WapBrowser.min
 endif
-#ifneq ($(USES_LOW),yes)
+
+ifneq ($(USES_LOWMEM),yes)
 include $(BREW_APPMGR)/BREWAppMgr.min
-#endif
+endif
+
 ifeq ($(MMI_ADD_ESURFING),yes)
 include $(ESURFING)/Esurfing.min
 include $(CUSTSERVICE)/custservice.min
@@ -99,8 +103,10 @@ ifeq ($(MMI_ADD_FLDDBG),yes)
 include $(FLDDBG)/flddbg.min
 endif
 
+ifneq ($(USES_LOWMEM),yes)
 include $(QUICKTEST)/quicktest.min
 include $(SVCPRG)/svcprg.min
+endif
 
 ifeq ($(MMI_ADD_NUMBER_MANAGER),yes)
 include $(NUMBERMANAGER)/numbermanager.min
@@ -110,13 +116,18 @@ endif
 
 include $(MMIDIR)/core/core.min
 include $(APPLICATION)/application.min
+
+ifneq ($(USES_LOWMEM),yes)
 include $(GAME)/game.min
 include $(MULTIMEDIA)/multimedia.min
+endif
 
 ifeq ($(USES_RESDIR),M8)
 include $(FRENDUO)/frenduo.min
 endif
 
+ifneq ($(USES_LOWMEM),yes)
 include $(STATIC_BREW_APP)/staticbrewapp.min
 include $(STATIC_APP)/staticapp.min
+endif
 
