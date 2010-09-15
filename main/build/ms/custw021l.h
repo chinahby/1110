@@ -214,6 +214,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
+#ifdef USES_DS_1536
+#define CLKRGM_INCLUDE_TD
+#endif
 #define FEATURE_DISP_128X128
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
@@ -253,11 +256,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custbmp.h"
 #include "custsurf.h"
 
+#ifndef USES_DS_1536
 #ifdef FEATURE_DS_MOBILE_IP
    #undef FEATURE_DS_MOBILE_IP
 #endif
 #ifdef FEATURE_DS_MOBILE_IP_PERF
    #undef FEATURE_DS_MOBILE_IP_PERF
+#endif
 #endif
 #ifdef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
    #undef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
@@ -271,11 +276,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_OVERLAY2
    #undef FEATURE_OVERLAY2
 #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_SCH_TRIAGE
    #undef FEATURE_SCH_TRIAGE
 #endif
 #ifdef FEATURE_IS2000_R_SCH
    #undef FEATURE_IS2000_R_SCH
+#endif
 #endif
 #ifdef FEATURE_PNG_ENCODER
    #undef FEATURE_PNG_ENCODER
@@ -294,9 +301,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 #ifdef FEATURE_QTUNES
    #undef FEATURE_QTUNES
-#endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_IS2000_F_SCH
    #undef FEATURE_IS2000_F_SCH
+#endif
 #endif
 #ifdef FEATURE_DISP_TASK
    #undef FEATURE_DISP_TASK
@@ -307,8 +315,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_PNG_DECODER
    #undef FEATURE_PNG_DECODER
 #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_IS2000_SCH
    #undef FEATURE_IS2000_SCH
+#endif
 #endif
 #ifdef FEATURE_AAC
    #undef FEATURE_AAC
@@ -361,8 +371,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_SECOND_UART
    #undef FEATURE_SECOND_UART
 #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
    #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
+#endif
 #endif
 #ifdef FEATURE_SC2X_HAS_UART1
    #undef FEATURE_SC2X_HAS_UART1
@@ -370,8 +382,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FLASH_USES_DM
    #undef FLASH_USES_DM
 #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_UNIFORM_SCAN_OOS
    #undef FEATURE_UNIFORM_SCAN_OOS
+#endif
 #endif
 
 

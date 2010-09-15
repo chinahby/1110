@@ -33,13 +33,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
 //#define FEATURE_SPN_FROM_BSMCCMNC
-
 //#define FEATURE_VERSION_IVIO
 #define FEATURE_VERSION_SMART
 //#define FEATURE_VERSION_M8
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
-
-
 #endif
 
 #ifndef TARGSB2_H
@@ -220,6 +217,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
+#ifdef USES_DS_1536
+#define CLKRGM_INCLUDE_TD
+#endif
 #define FEATURE_DISP_160X128
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
@@ -235,6 +235,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
+//#define FEATURE_AAC
+//#define FEATURE_AAC_PLUS
+//#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
 #include "custuim.h"
@@ -267,12 +270,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custcamera.h"
 #define FEATURE_PNG_ENCODER
 #endif
-
+#ifndef USES_DS_1536
 #ifdef FEATURE_DS_MOBILE_IP
    #undef FEATURE_DS_MOBILE_IP
 #endif
 #ifdef FEATURE_DS_MOBILE_IP_PERF
    #undef FEATURE_DS_MOBILE_IP_PERF
+#endif
 #endif
 #ifdef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
    #undef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
@@ -286,17 +290,21 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_OVERLAY2
    #undef FEATURE_OVERLAY2
 #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_SCH_TRIAGE
    #undef FEATURE_SCH_TRIAGE
 #endif
 #ifdef FEATURE_IS2000_R_SCH
    #undef FEATURE_IS2000_R_SCH
 #endif
+#endif
 //Gemsea Remove #ifdef FEATURE_PNG_ENCODER
 //Gemsea Remove    #undef FEATURE_PNG_ENCODER
 //Gemsea Remove #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_IS2000_SCH_STATS
    #undef FEATURE_IS2000_SCH_STATS
+#endif
 #endif
 #ifdef FEATURE_AUDFMT_EVB
    #undef FEATURE_AUDFMT_EVB
@@ -310,8 +318,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //Gemsea Remove #ifdef FEATURE_QTUNES
 //Gemsea Remove   #undef FEATURE_QTUNES
 //Gemsea Remove #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_IS2000_F_SCH
    #undef FEATURE_IS2000_F_SCH
+#endif
 #endif
 #ifdef FEATURE_DISP_TASK
    #undef FEATURE_DISP_TASK
@@ -322,12 +332,14 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_PNG_DECODER
    #undef FEATURE_PNG_DECODER
 #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_IS2000_SCH
    #undef FEATURE_IS2000_SCH
 #endif
-#ifdef FEATURE_AAC
-   #undef FEATURE_AAC
 #endif
+//Gemsea Remove #ifdef FEATURE_AAC
+//Gemsea Remove    #undef FEATURE_AAC
+//Gemsea Remove #endif
 #ifdef CLKRGM_FREQ_STEP
    #undef CLKRGM_FREQ_STEP
 #endif
@@ -376,8 +388,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_SECOND_UART
    #undef FEATURE_SECOND_UART
 #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
    #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
+#endif
 #endif
 #ifdef FEATURE_SC2X_HAS_UART1
    #undef FEATURE_SC2X_HAS_UART1
@@ -385,8 +399,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FLASH_USES_DM
    #undef FLASH_USES_DM
 #endif
+#ifndef USES_DS_1536
 #ifdef FEATURE_UNIFORM_SCAN_OOS
    #undef FEATURE_UNIFORM_SCAN_OOS
+#endif
 #endif
 
 
