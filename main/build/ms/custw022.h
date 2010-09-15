@@ -217,9 +217,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
-#ifdef USES_DS_1536
-#define CLKRGM_INCLUDE_TD
-#endif
 #define FEATURE_DISP_128X128
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
