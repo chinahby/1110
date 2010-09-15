@@ -1256,6 +1256,9 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 //    break;
 				case AVK_SHIFT:
 						{
+						#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+							pMe->m_bShift = FALSE;
+						#else
 							if(pMe->m_bShift)
 							{
 								pMe->m_bShift = FALSE;
@@ -1264,6 +1267,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							{
 								pMe->m_bShift = TRUE;
 							}
+						#endif
 						}
 					break;
                 case AVK_0:
