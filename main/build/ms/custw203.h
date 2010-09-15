@@ -29,7 +29,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_VERSION_IVIO
 //#define FEATURE_VERSION_SMART
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
-
 #endif
 
 #ifndef TARGSB2_H
