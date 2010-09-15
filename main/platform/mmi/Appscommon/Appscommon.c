@@ -30,10 +30,7 @@
 #include "appscommon.brh"
 
 // 图片资源文件
-#if !defined( FEATURE_COLOR_DISPLAY) || !defined( AEESIMULATOR)
 #include "appscommonimages.brh"
-#endif
-
 #include "CallApp.h"
 
 #define APPSCOMMON_STR2KEY_INCLUDE

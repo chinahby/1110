@@ -3022,40 +3022,15 @@ static boolean  DisplayMenu_Handle_Key_Pad_Ctl_DialogEvent(CDisplayMenu *pMe,
                 IMENUCTL_SetSel(pMe->m_pState, IDS_STRING_OFF);
             }
 
-#ifdef FEATURE_COLOR_DISPLAY
             //初始化List Menu的颜色
             color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
             color.cBack = RGB_WHITE;
             color.cText =  RGB_BLACK;
             color.cSelBack = RGB_BLACK;
             color.cSelText = RGB_WHITE;
-#else
-            //初始化List Menu的颜色//the same
-            color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
-            color.cBack = RGB_WHITE;
-            color.cText =  RGB_BLACK;
-            color.cSelBack = RGB_BLACK;
-            color.cSelText = RGB_WHITE;
-#endif//FEATURE_COLOR_DISPLAY
 
             //填充背景颜色
             IDISPLAY_FillRect(pMe->m_pDisplay,  &pMe->m_rc,  MAKE_RGB(111, 183, 255));
-#if 0
-            //TITLE
-            //SETAEERECT(&rc,  0, 0,pMe->m_rc.dx ,LINEHEIGHTEX);
-            ISHELL_LoadResString(pMe->m_pShell,AEE_APPSDISPLAYMENU_RES_FILE,IDS_CLOSE_KEY_PAD,w_string,sizeof(w_string));
-
-            //IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_BOLD,
-            //                                    w_string,-1,rc.x,rc.y,&rc,
-            //                                    IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
-            //画一条线分隔标题提示信息
-            //IDISPLAY_DrawHLine( pMe->m_pDisplay, 0,  LINEHEIGHTEX-1, pMe->m_rc.dx);
-            //IDISPLAY_DrawHLine( pMe->m_pDisplay, 0,  LINEHEIGHTEX, pMe->m_rc.dx);
-            MEMSET(&title,0,sizeof(TitleBar_Param_type));
-            title.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_BOTTOM;
-            title.pwszTitle = w_string;
-            DrawTitleBar(pMe->m_pDisplay,&title);
-#endif
 
             pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_KEYPAD_MENU);
             if(pMenuCtl)

@@ -7695,19 +7695,13 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 }
 			
                 //初始化List Menu的颜色及清屏
-#ifdef FEATURE_COLOR_DISPLAY
+                
                 color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
                 color.cBack = RGB_WHITE;
                 color.cText =  0x84848400;	//RGB_BLACK;				//Add By zzg 2010_07_10	
                 color.cSelBack = RGB_WHITE; //MAKE_RGB(255,128,64);      //Add By zzg 2010_07_10  	        			
                 color.cSelText = RGB_BLACK; //RGB_WHITE;				//Add By zzg 2010_07_10
-#else
-                color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
-                color.cBack = RGB_WHITE;
-                color.cText =  RGB_BLACK;
-                color.cSelBack = RGB_BLACK;
-                color.cSelText = RGB_WHITE;
-#endif
+                
                 //IDISPLAY_ClearScreen(pMe->m_pDisplay);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {

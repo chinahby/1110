@@ -169,9 +169,6 @@ when       who     what, where, why
 #include "OEMFS.h"
 #endif //MIN_BREW_VERSION(4,0)
 #include "snd.h"
-#ifndef FEATURE_OEMUI_TASK
-#include "ui.h"
-#endif
 #include "hs.h"
 #include "mobile.h"
 #include "adc.h"

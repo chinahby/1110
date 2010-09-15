@@ -2199,41 +2199,6 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 #endif //FEATURE_FUNCS_THEME
 
             }
-
-            // ASSUME we don't have to re-cal text here and that font hasn't changed
-            //lint -save -e620
-#ifdef FEATURE_COLOR_DISPLAY    
-#if 0
-            IDISPLAY_DrawRect(pContext->pIDisplay,
-                    &rect,
-                    pContext->bEditable ? RGB_BLACK: RGB_WHITE,
-                    RGB_WHITE,
-                    //pTextCtl->bEditable ? RGB_BLACK : RGB_WHITE,
-                    //RGB_NONE,
-                    IDF_RECT_FRAME);
-#endif
-#else
-            IDISPLAY_DrawRect(pContext->pIDisplay,
-                    &rect,
-                    pContext->bEditable ? MAKE_RGB(00,00,00) : RGB_WHITE,
-                    RGB_WHITE,
-                    //pTextCtl->bEditable ? RGB_BLACK : RGB_WHITE,
-                    //RGB_NONE,
-                    IDF_RECT_FRAME);
-#endif            
-
-            rect.x += 1;
-            rect.y += 1;
-            rect.dx -= 2;
-            rect.dy -= 2;
-#if 0
-            IDISPLAY_DrawRect(pContext->pIDisplay,
-                    &rect,
-                    RGB_WHITE,
-                    RGB_NONE,//RGB_WHITE,
-                    IDF_RECT_NONE);
-#endif
-            //lint -restore
             bFrame = TRUE;
         }
 

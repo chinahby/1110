@@ -4310,22 +4310,12 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 
             }
 #endif
-
-#ifdef FEATURE_COLOR_DISPLAY
             //初始化List Menu的颜色
             color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
             color.cBack = RGB_WHITE;
             color.cText =  RGB_GRAY;
             color.cSelBack = RGB_WHITE;
             color.cSelText = RGB_BLACK;
-#else
-            //初始化List Menu的颜色//the same
-            color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
-            color.cBack = RGB_WHITE;
-            color.cText =  RGB_BLACK;
-            color.cSelBack = RGB_BLACK;
-            color.cSelText = RGB_WHITE;
-#endif//FEATURE_COLOR_DISPLAY
 
             //填充背景颜色
 #ifdef FEATURE_CARRIER_CHINA_VERTU

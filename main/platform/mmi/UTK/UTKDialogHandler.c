@@ -31,11 +31,6 @@
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
-#ifndef FEATURE_COLOR_DISPLAY
-#define         SPLASH_FILE     "\\image\\utksplash.bmp"
-#endif
-#endif //FEATURE_CARRIER_CHINA_TELCOM
 
 /*==============================================================================
                                  类型定义
@@ -284,16 +279,10 @@ static boolean  IDD_SPLASH_Handler(CUTK *pMe,
         case EVT_USER_REDRAW: 
             {
                 IImage *pImg = NULL;
-#ifdef FEATURE_COLOR_DISPLAY
+                
                 pImg = ISHELL_LoadResImage(pMe->m_pShell,
                                         AEE_APPSCOMMONRES_IMAGESFILE,
-                                        IDB_COLOR_UTK_SPLASH);                
-
-#else
-                pImg = ISHELL_LoadResImage(pMe->m_pShell,
-                                        AEE_APPSCOMMONRES_IMAGESFILE,
-                                        IDB_BLACK_WHITE_UTK_SPLASH);    
-#endif                 
+                                        IDB_COLOR_UTK_SPLASH);                 
                 
                 if (NULL != pImg)
                 {

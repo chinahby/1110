@@ -16,7 +16,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AAC
 #define FEATURE_AAC_PLUS
 #define FEATURE_ENHANCED_AAC_PLUS
-
+#define FEATURE_LANG_INDONESIAN
 #include "custw021.h"
 
 #endif /* CUSTSB2_H */

@@ -132,7 +132,6 @@ USES_KEYGUARD=yes
 USES_BREW_AEE_SRC=yes
 USES_HANWANG=no
 
-
 ifneq ($(USES_LOWMEM),yes)
 MMI_ADD_MUSICPLAYER=yes
 MMI_ADD_MEDIAGALLERY=yes
@@ -145,11 +144,6 @@ endif
 MMI_ADD_WORLDTIME=yes
 MMI_ADD_SPORT=no
 MMI_ADD_TOUCHPAD=no
-#”Ô—‘ÃÌº”
-ifneq ($(USES_LOWMEM),yes)
-EXTLANG1=id
-endif
-EXTLANG2=NO
 endif
 
 ifeq ($(USES_CONSTEFS),yes)

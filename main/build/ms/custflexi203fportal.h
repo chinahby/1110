@@ -3,6 +3,4 @@
 
 #include "custflexi203.h"
 
-
-
 #endif /* CUSTSFLEXI203NASRANI_H*/

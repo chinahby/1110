@@ -85,10 +85,8 @@ when       who     what, where, why
 //lint -save -e754  // temporary since it is still in development
 
 #include "comdef.h"     // Get DMSS type declarations.
-#ifndef WIN32
 #include "err.h"        // Error functions
 #include "uixsnd.h"
-#endif
 #include "AEE.h"         // BREW headers.
 #include "AEE_OEM.h"     // Brew OEM Headers
 #include "AEEAlert.h"
@@ -96,45 +94,23 @@ when       who     what, where, why
 #include "AEEStdLib.h"
 #include "OEMHeap.h"
 #include "AEE_OEMDispatch.h"
-
-
-#ifndef FEATURE_OEMUI_TASK
-#ifndef WIN32
-#include "uiuint.h"
-#endif
-#else
 #include "sndid.h"
 #include "OEMNV.h"
-#endif
 #include "OEMCriticalSection.h"
 #include "AEEMediaUtil.h"
-#ifndef WIN32
 #include "nv.h"
-#endif
 #include "AEEVR.h"
 #include "AEEConfig.h"
 #include "OEMCFGI.h"
 #include "AEEAddrBookExt.h"
 #include "OEMVR_priv.h"
 #include "AppComFunc.h"
-
-#ifndef FEATURE_OEMUI_TASK
-#ifndef WIN32
-#include "uiutils.h"
-#endif
-#endif
-#ifndef WIN32
 #include "tmc.h"
-#endif
 #include "BREWVersion.h"
-
 #include "AEERinger.h"
-#ifndef WIN32
 #include "db.h"
 #include "voc.h"
-#endif
 #include "AEEShell.h"
-
 #include "AEEBacklight.h"
 #include "OEMSound.h"
 #include "AEECM.h"
@@ -1330,7 +1306,7 @@ static int  OEMALERT_GetRingerType
     return EBADPARM;
   }
 
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef USES_MMI  
   result = ui_get_nv(NV_RINGER_TYPE_I, &nvi);
 #else
   result = OEMNV_Get(NV_RINGER_TYPE_I, &nvi);
@@ -1340,7 +1316,7 @@ static int  OEMALERT_GetRingerType
     /* range checking */
     if (nvi.ringer_type >=(uint8) OEMALERT_RINGER_MAX) {
         nvi.ringer_type = (uint8) OEMALERT_RINGER_NORMAL;
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef USES_MMI  
       (void)ui_put_nv (NV_RINGER_TYPE_I, &nvi);
 #else      
       (void)OEMNV_Put(NV_RINGER_TYPE_I, &nvi);
@@ -1349,7 +1325,7 @@ static int  OEMALERT_GetRingerType
 
     *ringerType = (OEMALERTRingerType)nvi.ringer_type;
 
-#ifndef FEATURE_OEMUI_TASK  
+#ifndef USES_MMI  
     result = ui_get_nv (NV_MM_RINGER_FILE_I, &nvi);
 #else      
     result = OEMNV_Get(NV_MM_RINGER_FILE_I, &nvi);

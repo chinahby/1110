@@ -571,7 +571,7 @@ extern int AniCtl_New (IShell * pIShell, AEECLSID clsid, void ** ppif);
 // UI App
 #if defined(FEATURE_APP_UI) && !defined(FEATURE_MANGO_UI)
 extern int CoreApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
-#ifndef FEATURE_OEMUI_TASK
+#ifndef USES_MMI
 extern int CoreStartApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 #endif
@@ -979,7 +979,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifndef FEATURE_UIONE_HDK
 #if defined(FEATURE_APP_UI) && !defined(FEATURE_MANGO_UI)
       {AEEFS_MIF_DIR"coreapp.mif", CoreApp_Load},
-#ifndef FEATURE_OEMUI_TASK
+#ifndef USES_MMI
     {AEEFS_MIF_DIR"corestartapp.mif", CoreStartApp_Load},
 #endif
 #endif
