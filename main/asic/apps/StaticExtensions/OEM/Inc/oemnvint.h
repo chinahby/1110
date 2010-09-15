@@ -177,7 +177,7 @@ when       who     what, where, why
 // ∂˙ª˙“Ù¡ø    
 #define OEMNV_EAR_VOL_INIT {3,3,3,4,4}  
 // º¸≈Ã“Ù¡ø     
-#define OEMNV_BEEP_VOL_INIT {3,0,0,4,4}     
+#define OEMNV_BEEP_VOL_INIT {1,0,0,1,1}     
 
 // Phone Disposition -- CFGI_SCREENSAVER_TIME
 /////////////////////////////////////////////////////////////////////////

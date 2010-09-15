@@ -2704,9 +2704,9 @@ void OEM_RestoreFactorySetting( void )
    nvi_cache.handset_ear_level = OEMNV_VOLUME_MAX;
 
    // CFGI_BEEP_VOL:
-   nvi.beep_level = OEMNV_VOLUME_MAX;
+   nvi.beep_level = OEMNV_VOLUME_LOW;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
-   nvi_cache.beep_level = OEMNV_VOLUME_MAX;
+   nvi_cache.beep_level = OEMNV_VOLUME_LOW;
 #endif //defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
 
 #ifdef FEATURE_SMART_SOUND
