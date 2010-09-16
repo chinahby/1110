@@ -721,6 +721,32 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             {
                 hideChannelEditingScreen( pMe);
             }
+			//Add By zzg 2010_9_16
+			else if (pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST)
+			{
+				if (HS_HEADSET_ON())
+			    {
+			        fm_mute(FALSE);
+			    }
+				ISHELL_CancelTimer( pMe->m_pShell, refreshChannelListCB, (void*)pMe);
+				pMe->globalSearching = FALSE;
+		        stopDrawRefreshListPrompt( pMe);
+		        {
+		            sChanInfo *sChannelNode = NULL;
+		            sChannelNode = FmRadio_ChanList_GetByIndex(pMe, FmRadio_GetChannelTotal()-1);
+		            if(sChannelNode != NULL)
+		            {
+		                setChannelTo( pMe, sChannelNode->wChannel);
+		            }
+		            else
+		            {
+		                setChannelTo( pMe, 0);
+		            }
+		        }
+		        moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);								
+				popOptionMenu( pMe);
+			}
+			//Add End
        #endif
 #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 			else if( pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL)
@@ -817,6 +843,33 @@ __handleKeyEvent_input_channel_done__:
 			{
 				moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
 			}			
+			//Add End
+			
+			//Add By zzg 2010_9_16
+			else if (pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST)
+			{
+				if (HS_HEADSET_ON())
+			    {
+			        fm_mute(FALSE);
+			    }
+				ISHELL_CancelTimer( pMe->m_pShell, refreshChannelListCB, (void*)pMe);
+				pMe->globalSearching = FALSE;
+		        stopDrawRefreshListPrompt( pMe);
+		        {
+		            sChanInfo *sChannelNode = NULL;
+		            sChannelNode = FmRadio_ChanList_GetByIndex(pMe, FmRadio_GetChannelTotal()-1);
+		            if(sChannelNode != NULL)
+		            {
+		                setChannelTo( pMe, sChannelNode->wChannel);
+		            }
+		            else
+		            {
+		                setChannelTo( pMe, 0);
+		            }
+		        }
+		        moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+				
+			}
 			//Add End
 #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
             else if( pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM    ||

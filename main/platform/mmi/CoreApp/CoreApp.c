@@ -137,8 +137,10 @@ static void HeadsetOff(CCoreApp *pMe);
 ==============================================================================*/
 boolean CoreApp_IsIdle(void)
 {
-    if(g_pCoreApp)        
-        return (!g_pCoreApp->m_bSuspended && IDD_IDLE==g_pCoreApp->m_wActiveDlgID);
+    if (g_pCoreApp)        
+    {
+    	return (!g_pCoreApp->m_bSuspended && IDD_IDLE == g_pCoreApp->m_wActiveDlgID);
+    }
 
     return FALSE;
 }
@@ -168,6 +170,7 @@ void CoreApp_FreeAppData(IApplet* po)
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn= NULL;
     }
+	
 #ifdef FEATURE_UIALARM    
     // 释放 IAlarm 接口
     if (pMe->m_pAlarm != NULL)
@@ -175,7 +178,8 @@ void CoreApp_FreeAppData(IApplet* po)
         IAlarm_Release(pMe->m_pAlarm);
         pMe->m_pAlarm = NULL;
     }
-#endif  
+#endif 
+
     if (pMe->m_pAlert != NULL)
     {
         IALERT_Release(pMe->m_pAlert);
@@ -230,25 +234,29 @@ void CoreApp_FreeAppData(IApplet* po)
         IDISPLAY_Release(pMe->m_pDisplay);
         pMe->m_pDisplay = NULL;
     }
+	
 #ifndef WIN32
     OEMRTC_Free_All_Node();
 #endif//WIN32
+
     ISHELL_RegisterNotify(pMe->a.m_pIShell,AEECLSID_CORE_APP,  AEECLSID_ALERT_NOTIFIER,0);
+
     FREEIF(pMe->m_cdg_msgptr);
     g_pCoreApp = NULL;
 
 #ifdef FEATURE_GREYBIT
-{
-    extern void GreyBitBrewFont_Done(void);
-    GreyBitBrewFont_Done();
-}
+	{
+	    extern void GreyBitBrewFont_Done(void);
+	    GreyBitBrewFont_Done();
+	}
 #endif
+
 #ifdef FEATURE_RANDOM_MENU_REND
-// Destroy Rend
-{
-    extern void DisplayRend_Done(void);
-    DisplayRend_Done();
-}
+	// Destroy Rend
+	{
+	    extern void DisplayRend_Done(void);
+	    DisplayRend_Done();
+	}
 #endif
 } /* End CoreApp_FreeAppData */
 
@@ -279,34 +287,37 @@ boolean CoreApp_InitAppData(IApplet* po)
     {
         return FALSE;
     }
+	
 #ifdef FEATURE_GREYBIT
-{
-    
-    extern void GreyBitBrewFont_Init(void);
-    GreyBitBrewFont_Init();
-}
+	{
+	    extern void GreyBitBrewFont_Init(void);
+	    GreyBitBrewFont_Init();
+	}
 #endif
+
 #ifdef USES_CONSTEFS
     CoreApp_RebuildEFS(pMe);
 #endif
+
 #ifdef FEATURE_MMGSDI
     pMe->m_nCardStatus = AEECARD_NOT_READY;
 #else
     pMe->m_nCardStatus = AEECARD_NO_CARD;
 #endif
+
     pMe->m_bSuspended = FALSE;
     pMe->m_bChargFull = FALSE;
     
-    if(SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
-                                        AEECLSID_CARD,
-                                        (void **) &pMe->m_pICard))
+    if (SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                         AEECLSID_CARD,
+                                         (void **) &pMe->m_pICard))
     {
         return FALSE;
     }
     
     
     // 在这里等ICARD的PIN状态初始化完成，以保证剩余初始化流程能够按顺序完成
-    while(1)
+    while (1)
     {
         AEECardPinStatus sPinStatus;
         
