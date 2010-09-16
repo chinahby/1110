@@ -406,7 +406,11 @@ typedef enum {            /* KEYS                                        */
   HS_HSED_K = 0xAC,
 							/* Headset Send End Key              0xAC    */
 #endif
+#ifdef CUST_EDITION
   HS_TV_K          = 0xB2,
+  HS_FM_K          = 0xB3,
+  HS_MUSIC_K	   = 0xb4,
+#endif  
                           /* TV Key on JAFFA FFA for 6280+UBM    0xB2    */
 #ifdef FEATURE_ALL_KEY_PAD
 	  HS_Q_K = 0xD0,
