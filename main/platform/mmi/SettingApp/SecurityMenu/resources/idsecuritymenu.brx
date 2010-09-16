@@ -8,7 +8,7 @@
 		<Text>Tidak cocok</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_PHONE_PASSWORD_INPUT_TITLE">
-		<Text>Tidak cocok</Text>
+		<Text>Ubah kode</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RESTORE">
 		<Text>Atur ulang</Text>
@@ -23,7 +23,7 @@
 		<Text>Ubah PIN gagal</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_RESTORING">
-		<Text>Reseting...</Text>
+		<Text>Mengatur ulang…</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_RESTRICT">
 		<Text>Pembatasan panggilan</Text>
@@ -35,7 +35,7 @@
 		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_RESTRICT_OUTCONTACT">
-		<Text>Out kontak</Text>
+		<Text>Kontak keluar</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_NEWPIN">
 		<Text>Masukkan kode PIN baru:</Text>
@@ -44,10 +44,10 @@
 		<Text>Masukkan PIN:</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_INVALIDPIN">
-		<Text>Kode valid. % D upaya (s) kiri</Text>
+		<Text>Kode valid. % D upaya (s) tersisa</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_PINBLOCKED">
-		<Text>Invalid PIN entered. Resetting phone...</Text>
+		<Text>PIN yang dimasukkan salah. Atur ulang telepon…</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_PIN_CHANGED">
 		<Text>Selesai</Text>
@@ -59,7 +59,7 @@
 		<Text>Semua</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_RESTRICT_OUTGOING_INTERNAL">
-		<Text>Intern</Text>
+		<Text>Internal</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_RESTRICT_OUTGOING_INTERNATIONAL">
 		<Text>Internasional</Text>
@@ -80,25 +80,25 @@
 		<Text>Hidup</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_PIN_CHECK">
-		<Text>Mengaktifkan PIN</Text>
+		<Text>Aktifkan PIN</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_RESTORE_OK">
-		<Text>Oke</Text>
+		<Text>OK</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_RESTORE_CANCEL">
-		<Text>Membatalkan</Text>
+		<Text>Batalkan</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_PHONE_PASSWORD_CHECK_TITLE">
-		<Text>Kunci daya sampai</Text>
+		<Text>Kunci tombol hidupkan</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_PHONE_PW_NEW">
-		<Text>Masukan password baru</Text>
+		<Text>Masukkan sandi baru</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_PHONE_PASSWORD">
-		<Text>Input telepon sandi:</Text>
+		<Text>Masukkan sandi telepon:</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_INVALID_PASSWORD">
-		<Text>Salah password</Text>
+		<Text>Sandi salah</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_PHONEBOOK_LOCK">
 		<Text>Kontak</Text>
@@ -110,10 +110,10 @@
 		<Text>Pesan</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_RESET_DONE">
-		<Text>Reset dilakukan</Text>
+		<Text>Atur ulang dilakukan</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_MSG_INPUTINVALID" Encoding="Unicode">
-		<Text>Password tidak valid</Text>
+		<Text>Sandi tidak valid</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_NEW_PIN" Encoding="Unicode">
 		<Text>PIN baru:</Text>
@@ -122,7 +122,7 @@
 		<Text>Masukkan sandi</Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_KEY_LOCK" Encoding="Unicode">
-		<Text>Key Lock</Text>
+		<Text>Kunci tombol</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_PHONE_CODE">
 		<Text>Kode telepon</Text>
@@ -134,16 +134,16 @@
 		<Text>PIN</Text>
 	</STRING>
 	<STRING Id="1059" Name="IDS_OLD_CODE">
-		<Text>Lama kode:</Text>
+		<Text>Kode lama:</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_NEW_CODE">
-		<Text>Baru Kode:</Text>
+		<Text>Kode baru:</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_CONFIRM">
 		<Text>Konfirmasi:</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_MEDIALOCK">
-		<Text>Media galeri</Text>
+		<Text>Galeri media</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_CALENDARLOCK">
 		<Text>Kalender</Text>
@@ -152,7 +152,7 @@
 		<Text>Selesai</Text>
 	</STRING>
 	<STRING Id="1065" Name="IDS_RESTORE_CONFIRM">
-		<Text>Reset</Text>
+		<Text>Atur ulang</Text>
 	</STRING>
 	<STRING Id="1066" Name="IDS_DELETE">
 		<Text>Hapus semua entri</Text>
@@ -176,16 +176,16 @@
 		<Text>Nomor darurat</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_INVALIDPUK">
-		<Text>PUK kode kesalahan. % D upaya (s) kiri</Text>
+		<Text>Kode PUK salah. % D upaya (s) tersisa</Text>
 	</STRING>
 	<STRING Id="1074" Name="IDS_PUK_CORRECT">
-		<Text>kode PUK benar</Text>
+		<Text>Kode PUK benar</Text>
 	</STRING>
 	<STRING Id="1075" Name="IDS_DIF_PIN">
-		<Text>Tidak valid kode PIN, masukkan lagi</Text>
+		<Text>Kode PIN tidak valid, masukkan lagi</Text>
 	</STRING>
 	<STRING Id="1076" Name="IDS_PIN_FAILED">
-		<Text>kode tidak valid, masukkan kode PUK</Text>
+		<Text>Kode tidak valid, masukkan kode PUK</Text>
 	</STRING>
 </Strings>
 <Dialogs>

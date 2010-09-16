@@ -44,7 +44,7 @@
 		<Text>Jeruk nipis</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_STRING_STATE">
-		<Text>Keadaan</Text>
+		<Text>Status</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_STRING_TO">
 		<Text>Kepada</Text>
@@ -56,10 +56,10 @@
 		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_STRING_ON">
-		<Text>Nyala</Text>
+		<Text>Hidup</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_CLOSE_KEY_PAD">
-		<Text>Tombol lampu Set</Text>
+		<Text>Atur lampu tombol keypad</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_ALWAYS_OFF">
 		<Text>Selalu Tidak Aktif</Text>
@@ -83,7 +83,7 @@
 		<Text>5 menit</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_WALLPAPER_TITLE">
-		<Text>Gambar latar</Text>
+		<Text>Wallpaper</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL_DARK">
 		<Text>Gelap</Text>
@@ -101,10 +101,10 @@
 		<Text>50 detik</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_WALLPAPER">
-		<Text>Kertas dinding %d</Text>
+		<Text>Wallpaper %d</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_DOWNWALL">
-		<Text>Unduh Kertas dinding %d</Text>
+		<Text>Unduh Wallpaper %d</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_BACKLIGHT_TITLE">
 		<Text>Kecerahan</Text>
@@ -137,7 +137,7 @@
 		<Text>Kuning</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_KEYPAD_TIME_ERR">
-		<Text>Kesalahan Memasukkan Informasi</Text>
+		<Text>Masukkan salah</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_MENU_STYLE">
 		<Text>Menu gaya</Text>
@@ -155,7 +155,7 @@
 		<Text>Normal</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_CUSTOM_STYLE">
-		<Text>Sesuai pengaturan</Text>
+		<Text>Disesuaikan</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_STRING_PURPLE">
 		<Text>Ungu</Text>
@@ -167,10 +167,10 @@
 		<Text>Menu berwarna cerah</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_PREVIEW">
-		<Text>Peninjauan</Text>
+		<Text>Pratinjau</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_PRESET_STYLE">
-		<Text>Preset Gaya</Text>
+		<Text>Atur gaya</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_RGB_RED">
 		<Text>Merah</Text>
@@ -182,43 +182,43 @@
 		<Text>Biru</Text>
 	</STRING>
 	<String Id="1070" Name="IDS_REND_MENU_TITLE">
-		<Text>Effect Setting</Text>
+		<Text>Pengaturan efek</Text>
 	</String>
 	<String Id="1071" Name="IDS_REND_EFFECT_FADE">
-		<Text>Fade</Text>
+		<Text>Memudar</Text>
 	</String>
 	<String Id="1072" Name="IDS_REND_EFFECT_SHOW_HORZ">
-		<Text>Horizontal Show</Text>
+		<Text>Tampilan horizontal</Text>
 	</String>
 	<String Id="1073" Name="IDS_REND_EFFECT_SHOW_VERT">
-		<Text>Vertical Show</Text>
+		<Text>Tampilan vertikal</Text>
 	</String>
 	<String Id="1074" Name="IDS_REND_EFFECT_MOVE_HORZ">
-		<Text>Horizontal Move</Text>
+		<Text>Bergerak horizontal</Text>
 	</String>
 	<String Id="1075" Name="IDS_REND_EFFECT_MOVE_VERT">
-		<Text>Vertical Show</Text>
+		<Text>Tampilkan vertikal</Text>
 	</String>
 	<String Id="1076" Name="IDS_REND_EFFECT_FLY_HORZ">
-		<Text>Horizontal Fly</Text>
+		<Text>Terbang horizontal</Text>
 	</String>
 	<String Id="1077" Name="IDS_REND_EFFECT_FLY_VERT">
-		<Text>Vertical Fly</Text>
+		<Text>Terbang vertikal</Text>
 	</String>
 	<String Id="1078" Name="IDS_REND_EFFECT_ROTAT_HORZ">
-		<Text>Horizontal Rotation</Text>
+		<Text>Rotasi horizontal</Text>
 	</String>
 	<String Id="1079" Name="IDS_REND_EFFECT_ROTAT_VERT">
-		<Text>Vertical Rotation</Text>
+		<Text>Rotasi vertikal</Text>
 	</String>
 	<String Id="1080" Name="IDS_REND_EFFECT_BLINDS_VERT">
-		<Text>Horizontal Blind</Text>
+		<Text>Tirai horizontal</Text>
 	</String>
 	<String Id="1081" Name="IDS_REND_EFFECT_BLINDS_INTER">
-		<Text>Intersect Blind</Text>
+		<Text>Tirai menyilang</Text>
 	</String>
 	<String Id="1083" Name="IDS_REND_EFFECT_ONEBYONE">
-		<Text>OneByOne</Text>
+		<Text>Satu demi satu</Text>
 	</String>
 </Strings>
 <Dialogs>
