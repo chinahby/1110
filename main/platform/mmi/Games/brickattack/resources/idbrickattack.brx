@@ -2,7 +2,7 @@
 <BREWRes Name="brickattack" VERSION="1">
 	<Strings Encoding="ISOLATIN1">
 		<STRING Id="1" Name="IDC_RESUME">
-			<Text>Resume</Text>
+			<Text>Lanjutkan</Text>
 		</STRING>
 		<STRING Id="2" Name="IDC_NEW_GAME">
 			<Text>Baru</Text>
@@ -11,10 +11,10 @@
 			<Text>Keluar</Text>
 		</STRING>
 		<STRING Id="5" Name="IDS_NEXT_SCREEN">
-			<Text>Kerja yang bagus!</Text>
+			<Text>Kerja bagus!</Text>
 		</STRING>
 		<STRING Id="6" Name="IDS_PAUSED">
-			<Text>- Berhenti sebentar -</Text>
+			<Text>TAHAN</Text>
 		</STRING>
 		<STRING Id="7" Name="IDS_NEXT_BALL">
 			<Text>Coba lagi</Text>
