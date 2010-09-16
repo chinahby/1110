@@ -3108,5 +3108,8 @@ static void HeadsetOff(CCoreApp *pMe)
       
    //uisnd_set_device_auto(NULL,NULL);   
    //uisnd_set_mute(UISND_MUTE_MUTED, UISND_MUTE_MUTED, NULL, NULL);
+   
+   devnotify.wParam = FALSE;
+  AEE_SEND_HEADSET_EVT(&devnotify);
 } /*End HeadsetOff */
 

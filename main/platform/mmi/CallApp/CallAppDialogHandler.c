@@ -2898,12 +2898,13 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     
                     ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
 
+					
                     if (HS_HEADSET_ON())
 					{
 					    pMe->m_userCanceled = TRUE;
                         ICM_EndAllCalls(pMe->m_pICM);
 					}
-                    else
+                    else                    
                     {
                         //modi by yangdecai
                         pMe->m_bHandFree = !pMe->m_bHandFree;
@@ -4958,7 +4959,13 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     CALL_FUN_START("CallApp_SetupCallAudio %d %d", pMe->m_bHandFree, pMe->m_CallMuted, 0 );
 #endif
 
-    if(pMe->m_bHandFree)
+	//Add By zzg 2010_09_16 : headset > anyother
+	if (headsetPresent)
+    {
+         soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;            
+    }
+	//Add End
+    else if(pMe->m_bHandFree)
     {
 #ifdef FEATURE_SPEAKER_PHONE
         soundStuff.eDevice = AEE_SOUND_DEVICE_SPEAKER;
@@ -4973,10 +4980,12 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
         bt_ui_process_vol_change(pMe->m_CallVolume);
     }
 #endif
+	/*
     else if (headsetPresent)
     {
          soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;            
     }
+    */
     else
     {
         soundStuff.eDevice = AEE_SOUND_DEVICE_HANDSET;
@@ -6463,11 +6472,12 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
 
         ISOUND_Get(pMe->m_pSound, &si);
         /*HandFree > bt_ag > headset > handset*/
-        /*if(headsetPresent)
+        
+        if(headsetPresent)
         {
-            si.eDevice = AEE_SOUND_DEVICE_HEADSET;
+            si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
         }
-        else */if (pMe->m_bHandFree)
+        else if (pMe->m_bHandFree)
         {
 #ifdef FEATURE_SPEAKER_PHONE
             si.eDevice = AEE_SOUND_DEVICE_SPEAKER;
@@ -6482,10 +6492,12 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
            si.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;
         }
 #endif
+		/*
         else if(headsetPresent)
         {
             si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
         }
+        */
         else
         {
            si.eDevice = AEE_SOUND_DEVICE_HANDSET;
@@ -8782,28 +8794,49 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
     else
     {
         //drawBottomBar(pMe->m_pDisplay,AEE_FONT_NORMAL,BTBAR_OPTION_BACK/*BTBAR_OPTION_END*/);
-        if(pMe->m_bHandFree)
+
+		//Add By zzg 2010_09_16: Headset > anyother
+		if (HS_HEADSET_ON())
+		{
+			DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION_ENDCALL);
+		}
+		else if (pMe->m_bHandFree)
+		{
+			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_NORMAL)
+		}
+		else
+		{
+			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDSFREEON)
+		}
+		//Add End
+	
+
+		/*
+		if(pMe->m_bHandFree)
         {
+        	
         	if(HS_HEADSET_ON())
         	{
         		DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION_ENDCALL);
         	}
-			else
+			else			
         	{
             	REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_NORMAL)
         	}
         }
         else
-        {
+        {	
+        	
             if(HS_HEADSET_ON())
 			{
 				DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION_ENDCALL);
 			}
-			else
+			else			
 			{
             	REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDSFREEON)
 			}
         }
+		*/
     }
     IDISPLAY_Update(pMe->m_pDisplay);
 }
