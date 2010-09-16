@@ -786,7 +786,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
         case DLGRET_YES:
             // check speed dial
             MSG_FATAL("Handler_STATE_MAINLIST DLGRET_YES",0,0,0);
-            for(oneDialIndex=CONTCFG_ONEDIAL1; oneDialIndex<=CONTCFG_ONEDIAL8; oneDialIndex++)
+            for(oneDialIndex=CONTCFG_ONEDIAL2; oneDialIndex<=CONTCFG_ONEDIAL8; oneDialIndex++)//CONTCFG_ONEDIAL1
             {
                 if(SUCCESS != CContApp_GetConfig( pMe,
                                           (ContAppCFG)oneDialIndex,
@@ -1638,7 +1638,7 @@ static NextFSMAction Handler_STATE_MAINMENU(CContApp *pMe)
         case DLGRET_ONEDIAL:
             // Save the menu select
             PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel);
-            pMe->m_wSelectOneDial = CONTCFG_ONEDIAL1;
+            pMe->m_wSelectOneDial = CONTCFG_ONEDIAL2;	//CONTCFG_ONEDIAL1
             MOVE_TO_STATE(STATE_ONEDIAL);
             break;
 
@@ -8294,7 +8294,7 @@ static NextFSMAction Handler_STATE_NUMFLDVIEW(CContApp *pMe)
                     break;
             }
 
-            for(oneDialIndex=CONTCFG_ONEDIAL1; oneDialIndex<=CONTCFG_ONEDIAL8; oneDialIndex++)
+            for(oneDialIndex=CONTCFG_ONEDIAL2; oneDialIndex<=CONTCFG_ONEDIAL8; oneDialIndex++)//CONTCFG_ONEDIAL1
             {
                 if(SUCCESS != CContApp_GetConfig( pMe,
                                           (ContAppCFG)oneDialIndex,

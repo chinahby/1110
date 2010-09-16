@@ -1584,7 +1584,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 
     ISHELL_LoadResString(pMe->m_pShell, CONTAPP_RES_FILE_LANG, IDS_ONEDIAL_NULL, wszNull, sizeof(wszNull));
 
-    for( i = CONTCFG_ONEDIAL1; i <= CONTCFG_ONEDIAL9; i++)
+    for( i = CONTCFG_ONEDIAL2; i <= CONTCFG_ONEDIAL9; i++)	//CONTCFG_ONEDIAL1
     {
         if(SUCCESS != CContApp_GetConfig( pMe,
                                           (ContAppCFG)i,
@@ -1603,7 +1603,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             //ERR("pMe->m_szBuf == NULL", 0, 0, 0);
             ISHELL_LoadResString(pMe->m_pShell, CONTAPP_RES_FILE_LANG, IDS_ONEDIAL_NULL, wszNull, sizeof(wszNull));
             STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
-            WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL1+1));
+            WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL2+2)); //CONTCFG_ONEDIAL1
 //#if defined FEATURE_CARRIER_THAILAND_HUTCH
             WSTRCAT(wszNumName, space);
 //#endif
@@ -1622,7 +1622,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
                 MSG_FATAL("SUCCESS != CContApp_GetNameByNum",0,0,0);
                 //当已经被设置的号码字段被删除后会获取不到姓名，直接添加"未设置"
                 STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
-                WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL1+1));
+                WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL2+2));//CONTCFG_ONEDIAL1
 //#if defined FEATURE_CARRIER_THAILAND_HUTCH
                 WSTRCAT(wszNumName, space);
 //#endif
@@ -1642,7 +1642,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             {
                 MSG_FATAL("pContInfo.pName == NULL", 0, 0, 0);
                 STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
-                WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL1+1));
+                WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL2+2));//CONTCFG_ONEDIAL1
 //#if defined FEATURE_CARRIER_THAILAND_HUTCH
                 WSTRCAT(wszNumName, space);
 //#endif
@@ -1655,7 +1655,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             {
                 MSG_FATAL("pContInfo.pName != NULL", 0, 0, 0);
                 STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
-                WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL1+1));
+                WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL2+2));//CONTCFG_ONEDIAL1
 //#if defined FEATURE_CARRIER_THAILAND_HUTCH
                 WSTRCAT(wszNumName, space);
 //#endif

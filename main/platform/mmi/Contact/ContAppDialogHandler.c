@@ -1995,7 +1995,7 @@ int CContApp_DeletePhoneFld(CContApp *pMe, uint16 wContID, uint16 idx)
     if(IS_NUM_FIELD(wFldID))
     {
         // 检查当前单键拨号中是否存在当前被编辑的记录
-        for(i=CONTCFG_ONEDIAL1; i<=CONTCFG_ONEDIAL8; i++)
+        for(i=CONTCFG_ONEDIAL2; i<=CONTCFG_ONEDIAL8; i++)	////CONTCFG_ONEDIAL1
         {
             if(SUCCESS != CContApp_GetConfig( pMe,
                                       (ContAppCFG)i,
@@ -2094,7 +2094,7 @@ int CContApp_DeleteCont(CContApp *pMe, uint16 wContID)
     CContApp_BuildContInfo(pMe->m_pCurrRec, &pDelContInfo);
 
     // 检查当前单键拨号中是否存在当前被删除的记录
-    for(i=CONTCFG_ONEDIAL1; i<=CONTCFG_ONEDIAL8; i++)
+    for(i=CONTCFG_ONEDIAL2; i<=CONTCFG_ONEDIAL8; i++)	////CONTCFG_ONEDIAL1
     {
         if(SUCCESS != CContApp_GetConfig( pMe,
                                       (ContAppCFG)i,
@@ -5627,7 +5627,7 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                             if(pMe->m_tmpBuf[0] != NULL)
                             {
                                 // 检查当前单键拨号中是否存在当前被编辑的记录
-                                for(i=CONTCFG_ONEDIAL1; i<=CONTCFG_ONEDIAL8; i++)
+                                for(i=CONTCFG_ONEDIAL2; i<=CONTCFG_ONEDIAL8; i++)//CONTCFG_ONEDIAL1
                                 {
                                     if(SUCCESS != CContApp_GetConfig( pMe,
                                                               (ContAppCFG)i,
@@ -8827,7 +8827,7 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
             switch (wParam)
             {
                 case AVK_CLR:
-                    pMe->m_wSelectOneDial = CONTCFG_ONEDIAL1;
+                    pMe->m_wSelectOneDial = CONTCFG_ONEDIAL2;//CONTCFG_ONEDIAL1
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
                 case AVK_INFO:
@@ -13629,7 +13629,7 @@ static boolean CContApp_SaveLocal_Input(CContApp  *pMe, ITextCtl *pTextCtl)
             {
                 int i = 0;
                 // 检查当前单键拨号中是否存在当前被编辑的记录
-                for(i=CONTCFG_ONEDIAL1; i<=CONTCFG_ONEDIAL8; i++)
+                for(i=CONTCFG_ONEDIAL2; i<=CONTCFG_ONEDIAL8; i++)//CONTCFG_ONEDIAL1
                 {
                     if(SUCCESS != CContApp_GetConfig( pMe,
                                                     (ContAppCFG)i,

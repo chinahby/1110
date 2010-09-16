@@ -3153,7 +3153,7 @@ static int CContApp_GetOneDial( CContApp   *pMe,
         // Get config
         wIndex = wIndex-2;
         (void)CContApp_GetConfig( pMe, 
-                                 (ContAppCFG)(CONTCFG_ONEDIAL1 + wIndex),
+                                 (ContAppCFG)(CONTCFG_ONEDIAL2 + wIndex),	//CONTCFG_ONEDIAL1
                                  pMe->m_pOneDialBuf,
                                   sizeof(pMe->m_pOneDialBuf));
         
