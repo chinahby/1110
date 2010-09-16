@@ -290,6 +290,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 #ifdef FEATURE_QTUNES
    #undef FEATURE_QTUNES
+#endif
 #ifndef USES_DS_1536
 #ifdef FEATURE_IS2000_F_SCH
    #undef FEATURE_IS2000_F_SCH
