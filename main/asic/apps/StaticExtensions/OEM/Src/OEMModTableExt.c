@@ -66,7 +66,6 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #ifdef CUST_EDITION
     #undef FEATURE_WMS_APP
     #undef FEATURE_IWMSDIAG
-    #undef FEATURE_APP_FLDDBG
 #endif
 #ifdef FEATURE_NO_WMS_APP
 	#undef FEATURE_WMS_APP
@@ -798,9 +797,9 @@ extern int CSvcPrgMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
 // Field Debug
-//#if defined (FEATURE_APP_FLDDBG)
+#if defined (FEATURE_APP_FLDDBG)
 extern int CFieldDebugMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
-//#endif
+#endif
 
 #if defined (FEATURE_SECSERVICES_TESTAPP)
 extern int SecurityServices_Load (IShell *pIShell, void *pHelpers, IModule **ppIMod);
