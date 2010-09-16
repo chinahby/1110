@@ -14,9 +14,9 @@ include $(MAINMENU)/mainmenu.min
 include $(CALLAPP)/CallApp.min
 include $(CONTAPP)/contact.min
 include $(WMSAPP)/wmsapp.min
-ifneq ($(USES_LOWMEM),yes)
+#ifneq ($(USES_LOWMEM),yes)
 include $(UTK)/utk.min
-endif
+#endif
 include $(RECENTCALLS)/recentcalls.min
 
 #MultiMedia
