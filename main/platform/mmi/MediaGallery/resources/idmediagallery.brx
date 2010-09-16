@@ -2,7 +2,7 @@
 <BREWRes Name="idmediagallery" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
-		<Text>Media galeri</Text>
+		<Text>Galeri media</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_MG_PHONEMEMORY">
 		<Text>Telepon</Text>
@@ -20,13 +20,13 @@
 		<Text>Musik</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_MG_VIDEOS">
-		<Text>Musik</Text>
+		<Text>Video</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_MG_VOICEMEMO">
 		<Text>Memo suara</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_MG_PLAY">
-		<Text>Bermain</Text>
+		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_MG_SETAS">
 		<Text>Atur sbg</Text>
@@ -41,37 +41,37 @@
 		<Text>Hapus semua</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MG_DETAIL">
-		<Text>Detail</Text>
+		<Text>Detil</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MG_BLUETOOTH">
 		<Text>Kirim via bluetooth</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MG_COPY">
-		<Text>Salinan</Text>
+		<Text>Salin</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_MG_MOVE">
-		<Text>Bergerak</Text>
+		<Text>Pindahkan</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MG_SETWALLPAPER">
-		<Text>Set sebagai wallpaper</Text>
+		<Text>Atur sbg wallpaper</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MG_VIEW">
-		<Text>Melihat</Text>
+		<Text>Lihat</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MG_MYREC">
-		<Text>Saya perekam</Text>
+		<Text>Rekaman saya</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_MG_CALLREC">
-		<Text>Call perekam</Text>
+		<Text>Rekaman panggilan</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MG_PHONEMEMSTAT">
 		<Text>Status memori telepon</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_MG_CARDMEMSTAT">
-		<Text>Kartu memori status</Text>
+		<Text>Status kartu memori</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_MG_TOTALMEMSTAT">
-		<Text>Total memori status</Text>
+		<Text>Status total memori</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_MG_SPACEUSED">
 		<Text>Digunakan:</Text>
@@ -86,19 +86,19 @@
 		<Text>Masukkan kartu memori</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_MG_BUILDPL">
-		<Text>Membangun playlist</Text>
+		<Text>Buat daftar putar</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_MG_CALLRINGTONE">
-		<Text>Ringtone</Text>
+		<Text>Nada dering</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_MG_SMSRINGTONE">
-		<Text>SMS nada</Text>
+		<Text>Nada SMS nada</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_MG_ALARMRINGTONE">
 		<Text>Nada alarm</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_MG_ADDMUSIC">
-		<Text>Menambahkan musik</Text>
+		<Text>Tambahkan musik</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_MG_BYTE">
 		<Text>byte</Text>
@@ -113,7 +113,7 @@
 		<Text>GB</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_MG_ARTIST">
-		<Text>Artist:</Text>
+		<Text>Artis:</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_MG_TITLE">
 		<Text>Judul:</Text>
@@ -125,16 +125,16 @@
 		<Text>Tahun:</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_MG_GENRE">
-		<Text>Genre:</Text>
+		<Text>Tipe:</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_MG_TOTALTIME">
 		<Text>Total waktu</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_MG_BITRATE">
-		<Text>Laju bit</Text>
+		<Text>Kecepatan bit</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_MG_SAMPLERATE">
-		<Text>Contoh tingkat</Text>
+		<Text>Contoh kecepatan</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_MG_CHANNEL">
 		<Text>Saluran</Text>
@@ -143,7 +143,7 @@
 		<Text>Ukuran:</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_MG_CREATIONDATE">
-		<Text>Tanggal Penciptaan: 4U% 2d%.. 2d%</Text>
+		<Text>Tanggal dibuat: 4U% 2d%.. 2d%</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_MG_ATTRIB">
 		<Text>Atribut:</Text>
@@ -161,7 +161,7 @@
 		<Text>Format</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_MG_READONLY">
-		<Text>Read-only</Text>
+		<Text>Hanya baca</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_MG_ARCHIVE">
 		<Text>Arsip</Text>
@@ -176,7 +176,7 @@
 		<Text>Tidak ada catatan</Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_MG_FILEOPENED">
-		<Text>Membuka file</Text>
+		<Text>Buka file</Text>
 	</STRING>
 	<STRING Id="1059" Name="IDS_MG_LISTFULL">
 		<Text>Daftar lengkap</Text>
@@ -185,10 +185,10 @@
 		<Text>Pengulangan nama</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_MG_NULLNAME">
-		<Text>Null nama</Text>
+		<Text>Nama kosong</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_MG_PROTECT">
-		<Text>File yang dilindungi</Text>
+		<Text>File dilindungi</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_MG_FOLDERNOTEMPTY">
 		<Text>Folder tidak kosong</Text>
@@ -200,10 +200,10 @@
 		<Text>Folder tidak ada</Text>
 	</STRING>
 	<STRING Id="1066" Name="IDS_MG_CALLMEMO">
-		<Text>Call memo</Text>
+		<Text>Memo panggilan</Text>
 	</STRING>
 	<STRING Id="1067" Name="IDS_MG_INSUFFICIENT">
-		<Text>Ruang penyimpanan cukup</Text>
+		<Text>Ruang penyimpanan tak cukup</Text>
 	</STRING>
 	<STRING Id="1068" Name="IDS_MG_PROGBARHINT">
 		<Text>Menghapus ...</Text>
@@ -212,22 +212,22 @@
 		<Text>Kesalahan</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MG_OVERWRITE">
-		<Text>Cover yang ada catatan</Text>
+		<Text>Tutup rekaman yang ada</Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_MG_RUNUDISK">
-		<Text>U-dsik berjalan ...</Text>
+		<Text>U-disk berjalan ...</Text>
 	</STRING>
 	<STRING Id="1072" Name="IDS_MG_STOPUDISK">
 		<Text>U-disk berhenti</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_MG_UNKNOWN">
-		<Text>Unknown</Text>
+		<Text>Tak dikenal</Text>
 	</STRING>
 	<STRING Id="1074" Name="IDS_MG_NOUSBCABLE">
 		<Text>Hubungkan ke PC dengan kabel USB</Text>
 	</STRING>
 	<STRING Id="1075" Name="IDS_MG_SORT">
-		<Text>Jenis</Text>
+		<Text>Urutkan</Text>
 	</STRING>
 	<STRING Id="1076" Name="IDS_MG_BYNAME">
 		<Text>Urutkan menurut nama</Text>
@@ -248,22 +248,22 @@
 		<Text>Urutkan menurut jenis</Text>
 	</STRING>
 	<STRING Id="1082" Name="IDS_MG_BYNULL">
-		<Text>Tidak seperti</Text>
+		<Text>Tak diurutkan</Text>
 	</STRING>
 	<STRING Id="1083" Name="IDS_MG_OPEN">
 		<Text>Buka</Text>
 	</STRING>
 	<STRING Id="1084" Name="IDS_MG_WALLPAPERNOSET">
-		<Text>Gambar tidak dapat ditetapkan sebagai wallpaper</Text>
+		<Text>Gambar tak bisa diatur sebagai wallpaper</Text>
 	</STRING>
 	<STRING Id="1085" Name="IDS_MG_SELECTNONE">
-		<Text>memilih Kosong</Text>
+		<Text>Tak ada yg dipilih</Text>
 	</STRING>
 	<STRING Id="1086" Name="IDS_MG_MANYFILES">
-		<Text>Terlalu banyak file, beberapa tidak daftar</Text>
+		<Text>Terlalu banyak file, bbrp tak dpt didata</Text>
 	</STRING>
 	<STRING Id="1087" Name="IDS_MG_DEEPPATH">
-		<Text>terlalu dalam Folder</Text>
+		<Text>Folder terlalu dalam</Text>
 	</STRING>
 	<STRING Id="1088" Name="IDS_MG_FOLDERS">
 		<Text>Folder</Text>
@@ -272,7 +272,7 @@
 		<Text>File</Text>
 	</STRING>
 	<STRING Id="1090" Name="IDS_MG_LOCATION">
-		<Text>Tempat</Text>
+		<Text>Lokasi</Text>
 	</STRING>
 	<STRING Id="1091" Name="IDS_MG_CONST">
 		<Text>Tetap</Text>
@@ -281,7 +281,7 @@
 		<Text>Sistem</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_MG_SELECT">
-		<Text>Memilih</Text>
+		<Text>Pilih</Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_MG_DOWNLOAD">
 		<Text>Download</Text>
@@ -296,10 +296,10 @@
 		<Text>Galeri foto</Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_MG_VIDEOGALLERY">
-		<Text>Video galeri</Text>
+		<Text>Galeri video</Text>
 	</STRING>
 	<STRING Id="1099" Name="IDS_MG_FILENOTDEL">
-		<Text>Beberapa file tidak dapat menghapus</Text>
+		<Text>Beberapa file tak dapat dihapus</Text>
 	</STRING>
 	<STRING Id="1100" Name="IDS_MG_MARKALL">
 		<Text>Tandai semua</Text>
@@ -308,16 +308,16 @@
 		<Text>Hapus semua</Text>
 	</STRING>
 	<STRING Id="1102" Name="IDS_MG_MARK">
-		<Text>Tanda</Text>
+		<Text>Tandai</Text>
 	</STRING>
 	<STRING Id="1103" Name="IDS_MG_UNMARK">
 		<Text>Hapus</Text>
 	</STRING>
 	<STRING Id="1104" Name="IDS_MG_EXECUTE">
-		<Text>Melaksanakan</Text>
+		<Text>Laksanakan</Text>
 	</STRING>
 	<STRING Id="1105" Name="IDS_MG_LOADFAILED">
-		<Text>Load gambar gagal</Text>
+		<Text>Gagal memuat gambar</Text>
 	</STRING>
 </Strings>
 <Dialogs>

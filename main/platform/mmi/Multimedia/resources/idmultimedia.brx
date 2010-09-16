@@ -14,7 +14,7 @@
 		<Text>Pemutar Musik</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MULTIMEDIA_TITLE_4">
-		<Text>Dartar</Text>
+		<Text>Rekaman</Text>
 	</STRING>
 </Strings>
 <Dialogs>

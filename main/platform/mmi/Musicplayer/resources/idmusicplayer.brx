@@ -128,13 +128,13 @@
 		<Text>Tidak ada catatan</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_MSG_INPUTNULL">
-		<Text>NULL</Text>
+		<Text>KOSONG</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_MUSICLIST_PLAY">
 		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_MUSICLIST_ADD">
-		<Text>Menambahkan</Text>
+		<Text>Tambahkan</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_MUSICLIST_DEL">
 		<Text>Hapus</Text>
@@ -158,7 +158,7 @@
 		<Text>Satu putaran</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_MSG_ADD_FAILED">
-		<Text>Playlist penuh</Text>
+		<Text>Daftar putar penuh</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_MSG_REPEAT_PLAYLISTNAME">
 		<Text>Pengulangan</Text>
@@ -167,13 +167,13 @@
 		<Text>Tidak dapat menghapus</Text>
 	</STRING>
 	<String Id="1056" Name="IDS_MSG_OPENNING_BT_SCO" Encoding="Unicode">
-		<Text>Openning BT SCO, Pls menunggu</Text>
+		<Text>Buka BT SCO, harap tunggu</Text>
 	</String>
 	<String Id="1057" Name="IDS_MSG_FILE_NOEXIT" Encoding="Unicode">
 		<Text>File tidak ada</Text>
 	</String>
 	<STRING Id="1058" Name="IDS_PLAYFAILED">
-		<Text>Play gagal</Text>
+		<Text>Mainkan gagal</Text>
 	</STRING>
 	<STRING Id="1059" Name="IDS_INVALIDNAME">
 		<Text>Nama tidak valid</Text>
@@ -185,13 +185,13 @@
 		<Text>Ulangi satu</Text>
 	</String>
 	<String Id="1062" Name="IDS_DEFAULTPLAYLISTNAME" Encoding="Unicode">
-		<Text>Daftar putar awal</Text>
+		<Text>Daftar putar standar</Text>
 	</String>
 	<String Id="1063" Name="IDS_MSG_WAITING" Encoding="Unicode">
-		<Text>Loading musik, silakan tunggu</Text>
+		<Text>Memuat musik, silakan tunggu</Text>
 	</String>
 	<String Id="1064" Name="IDS_RENAME_FAILED" Encoding="Unicode">
-		<Text>Tidak dapat mengubah nama</Text>
+		<Text>Tak dapat ubah nama</Text>
 	</String>
 	<String Id="1065" Name="IDS_MUSIC_PLAYER">
 		<Text>Pemutar Musik</Text>
