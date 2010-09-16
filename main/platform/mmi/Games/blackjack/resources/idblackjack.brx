@@ -152,13 +152,13 @@
 		<Text>Dealer Ace!</Text>
 	</STRING>
 	<STRING Id="181" Name="IDS_INSURANCE_OFFER_MSG">
-		<Text>Ingin asuransi? % $ D sisi bertaruh bahwa membayar $% d jika agen telah BlackJack.</Text>
+		<Text>Ingin asuransi? % $ D bertaruh akan membayar $% d jika dealer dapat BlackJack.</Text>
 	</STRING>
 	<STRING Id="182" Name="IDS_INSURANCE_RESULT_TITLE">
 		<Text>Tidak BlackJack</Text>
 	</STRING>
 	<STRING Id="183" Name="IDS_INSURANCE_RESULT_MSG">
-		<Text>NO BlackJack! Anda kehilangan% Anda bertaruh $ d asuransi.</Text>
+		<Text>Tak ada BlackJack! Anda kehilangan $%d taruhan asuransi.</Text>
 	</STRING>
 </Strings>
 </BREWRes>
