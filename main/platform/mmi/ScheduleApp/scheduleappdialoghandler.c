@@ -1631,7 +1631,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 
             if( !inited)
             {
-                drawLoading( pme);
+                //drawLoading( pme);
             }
             else
             {
@@ -1790,7 +1790,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 
                 case 0xffff:
                 {
-                    drawLoading( pme);
+                    //drawLoading( pme);
                     IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
                     OEMOS_Sleep( 100);
 
@@ -4825,7 +4825,7 @@ static boolean dialog_handler_of_state_viewday(CScheduleApp *pme, AEEEvent eCode
 
             if( !inited)
             {
-                drawLoading( pme);
+                //drawLoading( pme);
             }
 
             IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
