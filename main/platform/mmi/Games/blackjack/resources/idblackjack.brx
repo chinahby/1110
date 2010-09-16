@@ -11,25 +11,25 @@
 		<Text>Baru</Text>
 	</STRING>
 	<STRING Id="13" Name="IDC_CONTINUE_GAME">
-		<Text>Terus</Text>
+		<Text>Lanjut</Text>
 	</STRING>
 	<STRING Id="20" Name="IDC_DEAL">
-		<Text>Mulai</Text>
+		<Text>Deal</Text>
 	</STRING>
 	<STRING Id="21" Name="IDC_CHANGE_BET">
-		<Text>Bertaruh</Text>
+		<Text>Bet</Text>
 	</STRING>
 	<STRING Id="30" Name="IDC_HIT">
-		<Text>Memukul</Text>
+		<Text>Hit</Text>
 	</STRING>
 	<STRING Id="31" Name="IDC_STAND">
-		<Text>Berdiri</Text>
+		<Text>Stand</Text>
 	</STRING>
 	<STRING Id="32" Name="IDC_DOUBLE_DOWN">
 		<Text>Double Down</Text>
 	</STRING>
 	<STRING Id="33" Name="IDC_SPLIT">
-		<Text>Berpisah</Text>
+		<Text>Split</Text>
 	</STRING>
 	<STRING Id="40" Name="IDC_WANT_INSURANCE">
 		<Text>Ya</Text>
@@ -41,16 +41,16 @@
 		<Text>BlackJack</Text>
 	</STRING>
 	<STRING Id="101" Name="IDS_INSTRUCTIONS">
-		<Text>Jadi lebih dekat ke 21 melawan dealer tanpa melebihi angka 21 tersebut. Nilai dari kartu adalah: As, 1 atau 11; Raja, Ratu, Jack, Sepuluh, masing-masing 10; dan kartu-kartu lain sesuai nomornya</Text>
+		<Text>Jadi lebih dekat ke 21 melawan dealer tanpa melebihi angka 21 tersebut. Nilai dari kartu adalah: As, 1 atau 11; Raja, Ratu, </Text>
 	</STRING>
 	<STRING Id="102" Name="IDS_CONTINUE_OR_NEW_TEXT">
-		<Text>Lanjutkan paling baru permainan atau memulai permainan baru?</Text>
+		<Text>Lanjutkan permainan atau mulai permainan baru?</Text>
 	</STRING>
 	<STRING Id="110" Name="IDS_CASH_STATUS_FORMAT">
-		<Text>Tunai: $% d</Text>
+		<Text>Cash: $% d</Text>
 	</STRING>
 	<STRING Id="111" Name="IDS_BET_STATUS_FORMAT">
-		<Text>Taruh: $%d</Text>
+		<Text>Bet: $%d</Text>
 	</STRING>
 	<STRING Id="120" Name="IDS_HAND_VALUE_FORMAT">
 		<Text>%d</Text>
@@ -65,7 +65,7 @@
 		<Text>Anda Tertangkap Basah</Text>
 	</STRING>
 	<STRING Id="132" Name="IDS_DEALER_BUSTED_TITLE">
-		<Text>Dealer Busted!  </Text>
+		<Text>Dealer Tertangkap Basah!</Text>
 	</STRING>
 	<STRING Id="133" Name="IDS_PLAYER_WON_TITLE">
 		<Text>Anda Menang!  </Text>
@@ -74,7 +74,7 @@
 		<Text>Anda Kalah  </Text>
 	</STRING>
 	<STRING Id="135" Name="IDS_PUSH_TITLE">
-		<Text>Tolak</Text>
+		<Text>Push</Text>
 	</STRING>
 	<STRING Id="136" Name="IDS_PLAYER_BLACKJACK_TITLE">
 		<Text>BlackJack!  </Text>
@@ -89,28 +89,28 @@
 		<Text>Dealer Mengumpulkan $% d.</Text>
 	</STRING>
 	<STRING Id="142" Name="IDS_PUSH_NO_WINNINGS">
-		<Text>Tidak ada yang kalah, tidak ada menang.</Text>
+		<Text>Anda dapat BlackJack, tapi begitu pula dealer :-( Push.. Tak ada yang kalah, tak ada yang menang.</Text>
 	</STRING>
 	<STRING Id="143" Name="IDS_BJ_PUSH_NO_WINNINGS">
-		<Text>Anda telah BlackJack, tapi begitu pula :-( dealer Push.. Tidak ada yang kalah, tidak ada menang.</Text>
+		<Text>Anda dapat BlackJack, tapi begitu pula dealer :-( Push.. Tak ada yang kalah, tak ada yang menang.</Text>
 	</STRING>
 	<STRING Id="144" Name="IDS_BJ_BUT_INSURANCE_NO_WINNINGS">
-		<Text>The dealer had BlackJack, but you chose insurance. You break even.</Text>
+		<Text>Dealer dapat BlackJack, tapi anda pilih asuransi. Anda impas.</Text>
 	</STRING>
 	<STRING Id="145" Name="IDS_BJ_PUSH_BUT_INSURANCE_WINNINGS">
-		<Text>Anda telah BlackJack, tapi begitu juga dealer. dealer membayar Anda $% d untuk bertaruh asuransi Anda.</Text>
+		<Text>Anda dapat BlackJack, tapi begitu juga dealer. Dealer membayar Anda $% d untuk taruhan asuransi anda.</Text>
 	</STRING>
 	<STRING Id="150" Name="IDS_BET_LOW_CASH_TITLE">
 		<Text>Kas Rendah</Text>
 	</STRING>
 	<STRING Id="151" Name="IDS_BET_INSUFFICIENT_CASH_TITLE">
-		<Text>Kas tidak memadai</Text>
+		<Text>Kas Tidak Cukup</Text>
 	</STRING>
 	<STRING Id="152" Name="IDS_BET_TOO_HIGH_TITLE">
-		<Text>Lebih Max Tabel</Text>
+		<Text>Melebihi Tabel Maks</Text>
 	</STRING>
 	<STRING Id="153" Name="IDS_BET_TOO_LOW_TITLE">
-		<Text>Berdasarkan Tabel Min</Text>
+		<Text>Dibawah Tabel Min</Text>
 	</STRING>
 	<STRING Id="154" Name="IDS_BET_LOW_CASH_MSG">
 		<Text>Anda tidak punya cukup uang untuk% $ d bertaruh. Anda memiliki $% d yang tersisa.</Text>
@@ -119,16 +119,16 @@
 		<Text>Anda tidak punya cukup uang untuk tabel minimum $% d. Anda memiliki $% d yang tersisa.</Text>
 	</STRING>
 	<STRING Id="156" Name="IDS_BET_TOO_HIGH_MSG">
-		<Text>taruhan Anda sebesar $% d atas tabel maksimum $% d.</Text>
+		<Text>Taruhan Anda sebesar $% d melebihi tabel maksimum $% d.</Text>
 	</STRING>
 	<STRING Id="157" Name="IDS_BET_TOO_LOW_MSG">
-		<Text>taruhan Anda sebesar $% d bawah tabel minimum $% d.</Text>
+		<Text>Taruhan Anda sebesar $% d dibawah tabel minimum $% d.</Text>
 	</STRING>
 	<STRING Id="160" Name="IDS_SHUFFLING_TITLE">
-		<Text>Shuffling</Text>
+		<Text>Mengocok</Text>
 	</STRING>
 	<STRING Id="161" Name="IDS_SHUFFLING_MSG">
-		<Text>Menjelang akhir kartu dalam% d dealer deck. Waktu untuk shuffle.</Text>
+		<Text>Mendekati akhir kartu dalam% d dek dealer. Waktu untuk mengocok.</Text>
 	</STRING>
 	<STRING Id="170" Name="IDC_BET_AMOUNT_10">
 		<Text>10</Text>
