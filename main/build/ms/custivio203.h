@@ -11,6 +11,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_IVIO203
 #define FEATURE_PROJECT_IVIO203
 #define FEATURE_LANG_INDONESIAN
+#define FEATURE_DISP_160X128
+
 
 #include "custw203.h"
 
