@@ -411,7 +411,9 @@ GENERAL DESCRIPTION:
 #define FEATURE_BREW_RESCTL
 
 // Disabled image scaling support for now
-//#define FEATURE_BREW_SCALE       // turn on image scaling in BREW viewers
+#ifndef FEATURE_W021_LOW_MEMORY
+#define FEATURE_BREW_SCALE       // turn on image scaling in BREW viewers
+#endif
 
 #define FEATURE_DEV_NOTIFIER
 #ifndef FEATURE_MANGO_BREW
