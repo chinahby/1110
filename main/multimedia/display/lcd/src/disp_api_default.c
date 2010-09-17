@@ -127,10 +127,12 @@ void disp_init(void)
   if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
     return;
 #else
-#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022)
+#if defined(LCD_TM_128X128) 
   if(tm_cstn128x128_install(PRIMARY_LCD_NAME) == -1)
-#elif defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
+#elif defined(LCD_ZGD_177)
    if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
+#elif defined(LCD_ST_7735R)
+	if(st7735r_128x128_install(PRIMARY_LCD_NAME) == -1)
 #else
 #error code not present
 #endif   

@@ -3505,6 +3505,17 @@ void wms_nv_read_cdma_channel_setting(void)
 
    if(NV_DONE_S == wms_nv_read_wait(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi))
    {
+   	  if (nvi.sms_mo_on_access_channel!=1)
+	  {
+		/* Set to Default Value & Write to NV items */
+		dc_s_ptr->is_access_channel_enabled = 1;      
+		nvi.sms_mo_on_access_channel = 1;
+
+		(void) wms_nv_write_wait(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi );
+
+		MSG_HIGH("Access Channel = %d ",dc_s_ptr->is_access_channel_enabled,0,0);
+	  }
+	  
       dc_s_ptr->is_access_channel_enabled = nvi.sms_mo_on_access_channel;
    }
    else
@@ -3520,6 +3531,16 @@ void wms_nv_read_cdma_channel_setting(void)
 
    if(NV_DONE_S == wms_nv_read_wait(NV_SMS_MO_ON_TRAFFIC_CHANNEL_I, &nvi))
    {
+   	  if (nvi.sms_mo_on_traffic_channel!=1)
+	  {
+		  dc_s_ptr->is_traffic_channel_enabled = 1;
+		  nvi.sms_mo_on_traffic_channel = 1;
+		  
+		  (void) wms_nv_write_wait(NV_SMS_MO_ON_TRAFFIC_CHANNEL_I, &nvi );
+		  
+		  MSG_HIGH("Traffic Channel = %d ",dc_s_ptr->is_traffic_channel_enabled,0,0);
+
+	  }
       dc_s_ptr->is_traffic_channel_enabled = nvi.sms_mo_on_traffic_channel;
    }
    else

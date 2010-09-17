@@ -153,9 +153,11 @@ static void st7735r_128x128_disp_update
 );
 
 
-#define TM_SCTN_WRITE_CMD(v)  out_byte(lcatDispCfg[0].cmd_addr,(v))
-#define TM_SCTN_WRITE_DATA(v)  out_byte(lcatDispCfg[0].param_addr,(v))
-#define TM_SCTN_DELAY(v) clk_busy_wait(v*1000)
+#define HEXING_LCD_WRITE_CMD(v)  out_byte(lcatDispCfg[0].cmd_addr,(v))
+#define HEXING_LCD_WRITE_DATA(v)  out_byte(lcatDispCfg[0].param_addr,(v))
+#define HEXING_LCD_READ_DATA  in_byte(lcatDispCfg[0].param_addr)
+
+#define HEXING_LCD_DELAY(v) clk_busy_wait(v*1000)
 
 
 /*=====================================================================
@@ -170,8 +172,8 @@ static lcd_properties_type lptDispInfo[LCD_MAX_DISPLAYS] =
     * Display 0 (Primary - QVGA)
     */
    {
-      ST7735R_128x128_DISP_WIDTH, //240
-      ST7735R_128x128_DISP_HEIGHT, //320
+      ST7735R_128x128_DISP_WIDTH, //128
+      ST7735R_128x128_DISP_HEIGHT, //128
       8,             // Bits per pixel    
       PEGS_EPSON_MFR_CODE, //0
       PEGS_EPSON_PRODUCT_CODE, //0
@@ -193,8 +195,8 @@ static lcd_config_attribs_type lcatDispCfg[LCD_MAX_DISPLAYS] =
     */   
    {
       pixel_format_rgb666_unpacked32,
-      0,              // Column offset to viewable window
-      0,              // Row offset to viewable window
+      2,              // Column offset to viewable window
+      3,              // Row offset to viewable window
       TRUE,           // Interface is parallel via EBI2 bus
 
       // Parallel bus interface attributes
@@ -284,7 +286,7 @@ static void st7735r_128x128_reset(void)
 {
      /* Reset controller to ensure clean state */
      /* Transfer command to display hardware*/  
-     TM_SCTN_WRITE_CMD(ST7735R_128x128_SOFT_RESET_C);
+     HEXING_LCD_WRITE_CMD(ST7735R_128x128_SOFT_RESET_C);
      clk_busy_wait(1000);	 
 } /*st7735r_128x128_reset */
 
@@ -371,11 +373,7 @@ static void st7735r_128x128_set_screen_area(uint32 start_row, uint32 start_col,
 	{
 		nDisp = LCD_PRIMARY;
 	}
-	/* Compensate for any offset */
-	start_col += lcatDispCfg[nDisp].col_offset;
-	start_row += lcatDispCfg[nDisp].row_offset;
-	end_col   += lcatDispCfg[nDisp].col_offset;
-	end_row   += lcatDispCfg[nDisp].row_offset;
+
 
 	/* 
 	* Should put clipping in here
@@ -387,18 +385,27 @@ static void st7735r_128x128_set_screen_area(uint32 start_row, uint32 start_col,
 	    (end_col   < lptDispInfo[nDisp].width)   && 
 	    (end_row   < lptDispInfo[nDisp].height) )
 	{
+		/* Compensate for any offset */
+		start_col += lcatDispCfg[nDisp].col_offset;
+		start_row += lcatDispCfg[nDisp].row_offset;
+		end_col   += lcatDispCfg[nDisp].col_offset;
+		end_row   += lcatDispCfg[nDisp].row_offset;
 		/* Set LCD hardware to new drawing rectangle */
 		/* Set LCD hardware to set start address */
 		/* Transfer command to display hardware*/
-		TM_SCTN_WRITE_CMD(ST7735R_128x128_SET_START_ADDRESS_C);
-		TM_SCTN_WRITE_DATA((uint8)start_col);
-		TM_SCTN_WRITE_DATA((uint8)end_col);
+		HEXING_LCD_WRITE_CMD(ST7735R_128x128_SET_START_ADDRESS_C);
+		HEXING_LCD_WRITE_DATA((uint8)0);
+		HEXING_LCD_WRITE_DATA((uint8)start_col);
+		HEXING_LCD_WRITE_DATA((uint8)0);
+		HEXING_LCD_WRITE_DATA((uint8)end_col);
 
 		/* Set LCD hardware to set start address */
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(ST7735R_128x128_SET_END_ADDRESS_C);
-		TM_SCTN_WRITE_DATA((uint8)start_row);
-		TM_SCTN_WRITE_DATA((uint8)end_row);
+		HEXING_LCD_WRITE_CMD(ST7735R_128x128_SET_END_ADDRESS_C);		
+		HEXING_LCD_WRITE_DATA((uint8)0);
+		HEXING_LCD_WRITE_DATA((uint8)start_row);		
+		HEXING_LCD_WRITE_DATA((uint8)0);
+		HEXING_LCD_WRITE_DATA((uint8)end_row);
 	}
 } /* st7735r_128x128_set_screen_area() */
 
@@ -477,7 +484,7 @@ static void st7735r_128x128_disp_clear_screen_area(word start_row, word start_co
                                                   word end_row, word end_col)
 {
   	uint32 i = (end_row - start_row + 1) * (end_col - start_col + 1);
-  	static uint32 whitebpp = 0x00;
+  	static uint8 whitebpp = 0x00;
 
 	if (st7735r_128x128_state.disp_initialized &&
 		st7735r_128x128_state.disp_powered_up  &&
@@ -485,20 +492,30 @@ static void st7735r_128x128_disp_clear_screen_area(word start_row, word start_co
 	{
 		rex_enter_crit_sect(&st7735r_128x128_crit_sect);
 
-		//st7735r_128x128_set_screen_area(start_row, start_col, end_row, end_col);
-		TM_SCTN_WRITE_CMD(0x2a);     //col
-		TM_SCTN_WRITE_DATA(start_col);   //0~127
-		TM_SCTN_WRITE_DATA(end_col);
+		st7735r_128x128_set_screen_area(start_row, start_col, end_row, end_col);
+#if 0
+		HEXING_LCD_WRITE_CMD(0x2a);     //col
+		
+		HEXING_LCD_WRITE_DATA((uint8)0);
+		HEXING_LCD_WRITE_DATA(start_col+2);   //0~127
+		
+		HEXING_LCD_WRITE_DATA((uint8)0);
+		HEXING_LCD_WRITE_DATA(end_col+2);
 
-		TM_SCTN_WRITE_CMD(0x2b);     //page
-		TM_SCTN_WRITE_DATA(start_row);   //0~127
-		TM_SCTN_WRITE_DATA(end_col);
+		HEXING_LCD_WRITE_CMD(0x2b);     //page
+		
+		HEXING_LCD_WRITE_DATA((uint8)0);
+		HEXING_LCD_WRITE_DATA(start_row+3);   //0~127
+		
+		HEXING_LCD_WRITE_DATA((uint8)0);
+		HEXING_LCD_WRITE_DATA(end_col+3);
+#endif
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(ST7735R_128x128_RAM_WRITE_C);  
+		HEXING_LCD_WRITE_CMD(ST7735R_128x128_RAM_WRITE_C);  
 		while(i--)
 		{
-			TM_SCTN_WRITE_DATA((uint8)(whitebpp));
-			TM_SCTN_WRITE_DATA((uint8)(whitebpp));
+			HEXING_LCD_WRITE_DATA((uint8)(whitebpp));
+			HEXING_LCD_WRITE_DATA((uint8)(whitebpp));
 		}
 
 		rex_leave_crit_sect(&st7735r_128x128_crit_sect);
@@ -557,11 +574,14 @@ static void st7735r_128x128_disp_off(void)
 	{
 		/* Add code here */
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(ST7735R_128x128_DISPLAY_OFF_C); 
+		HEXING_LCD_WRITE_CMD(ST7735R_128x128_DISPLAY_OFF_C); 
 		clk_busy_wait(1000);
 		st7735r_128x128_disp_set_backlight(ST7735R_128x128_DISP_MIN_BACKLIGHT);
 		/* Display put to SLEEP state */
+		HEXING_LCD_WRITE_CMD(0x10); //Sleep in
+		HEXING_LCD_DELAY (120); //Delay 120ms
 		st7735r_128x128_state.display_on = FALSE;
+		
 	}
 
 	rex_leave_crit_sect(&st7735r_128x128_crit_sect);
@@ -592,7 +612,9 @@ static void st7735r_128x128_disp_on(void)
 	if(st7735r_128x128_state.disp_powered_up && !st7735r_128x128_state.display_on)
 	{  
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(ST7735R_128x128_DISPLAY_ON_C); 
+		HEXING_LCD_WRITE_CMD(0x11); //Sleep out
+		HEXING_LCD_DELAY (120); //Delay 120ms
+		HEXING_LCD_WRITE_CMD(ST7735R_128x128_DISPLAY_ON_C); 
 		clk_busy_wait(1000);
 
 		/* Display put to ACTIVE state */
@@ -625,105 +647,131 @@ SIDE EFFECTS
 
 static void st7735r_128x128_disp_powerup(void)
 {
-    rex_enter_crit_sect(&st7735r_128x128_crit_sect);
+	unsigned char id1=0,id2=0,id3=0;
 
+    rex_enter_crit_sect(&st7735r_128x128_crit_sect);
+	
     if (!st7735r_128x128_state.disp_powered_up && !st7735r_128x128_state.display_on)
     {
-     	TM_SCTN_WRITE_CMD(0x01);  //software reset
-    	TM_SCTN_DELAY(150);       //delay 150ms
-    	TM_SCTN_WRITE_CMD(0xD7); // Auto load set
-    	TM_SCTN_WRITE_DATA(0x9f);//auto load disable//0x9f
-    	TM_SCTN_WRITE_CMD(0xe0);  //EE read/write mode
-    	TM_SCTN_WRITE_DATA(0x00); //set read  mode
-    	TM_SCTN_DELAY(50);          //delay 50 ms
-    	//TM_SCTN_WRITE_CMD(0xfa);  //EE read/write control
-    	//TM_SCTN_WRITE_DATA(0x01); //set read  enble
-    	TM_SCTN_DELAY(50);          //delay 50 ms
-    	TM_SCTN_WRITE_CMD(0xe3);   //read active
-    	TM_SCTN_DELAY(20);       //delay 20 ms
-    	TM_SCTN_WRITE_CMD(0xe1);   //cancel control close read mode
+     //	LCD_RESET=1;
+	//	HEXING_LCD_DELAY (1); //Delay 1ms
+	//	LCD_RESET=0;
+	//	HEXING_LCD_DELAY (1); //Delay 1ms
+	//	LCD_RESET=1;
+	//	HEXING_LCD_DELAY (120); //Delay 120ms
+#if 1	
+		HEXING_LCD_WRITE_CMD(0x04);
+		HEXING_LCD_READ_DATA;
+		id1=HEXING_LCD_READ_DATA;
+		id2=HEXING_LCD_READ_DATA;
+		id3=HEXING_LCD_READ_DATA;
+		if (id1==1||id2==1||id3==1)
+		{
+			HEXING_LCD_DELAY(1);
+		}
+#endif		
+		//--------------------------------End ST7715R Reset Sequence ------------------------------//
+		//--------------------------------End ST7715R Reset Sequence --------------------------------------//
+		HEXING_LCD_WRITE_CMD(0x11); //Sleep out
+		HEXING_LCD_DELAY (120); //Delay 120ms
+		//------------------------------------ST7715R Frame rate-----------------------------------------//
+		HEXING_LCD_WRITE_CMD(0xB1); //Frame rate 80Hz
+		HEXING_LCD_WRITE_DATA(0x02);  //0x02
+		HEXING_LCD_WRITE_DATA(0x35);
+		HEXING_LCD_WRITE_DATA(0x36);
+		HEXING_LCD_WRITE_CMD(0xB2); //Frame rate 80Hz
+		HEXING_LCD_WRITE_DATA(0x02);   //0x02
+		HEXING_LCD_WRITE_DATA(0x35);
+		HEXING_LCD_WRITE_DATA(0x36);
+		HEXING_LCD_WRITE_CMD(0xB3); //Frame rate 80Hz
+		HEXING_LCD_WRITE_DATA(0x02);   //0x02
+		HEXING_LCD_WRITE_DATA(0x35);
+		HEXING_LCD_WRITE_DATA(0x36);
+		HEXING_LCD_WRITE_DATA(0x02);
+		HEXING_LCD_WRITE_DATA(0x35);
+		HEXING_LCD_WRITE_DATA(0x36);
+		//------------------------------------End ST7715R Frame rate-----------------------------------------//
+		HEXING_LCD_WRITE_CMD(0xB4); //Column inversion
+		HEXING_LCD_WRITE_DATA(0x07);
+		//------------------------------------ST7715R Power Sequence-----------------------------------------//
+		HEXING_LCD_WRITE_CMD(0xC0);
+		HEXING_LCD_WRITE_DATA(0xA2);
+		HEXING_LCD_WRITE_DATA(0x02);
+		HEXING_LCD_WRITE_DATA(0x84);
+		HEXING_LCD_WRITE_CMD(0xC1);
+		HEXING_LCD_WRITE_DATA(0xC5);
+		HEXING_LCD_WRITE_CMD(0xC2);
+		HEXING_LCD_WRITE_DATA(0x0A);
+		HEXING_LCD_WRITE_DATA(0x00);
+		HEXING_LCD_WRITE_CMD(0xC3);
+		HEXING_LCD_WRITE_DATA(0x8A);
+		HEXING_LCD_WRITE_DATA(0x2A);
+		HEXING_LCD_WRITE_CMD(0xC4);
+		HEXING_LCD_WRITE_DATA(0x8A);
+		HEXING_LCD_WRITE_DATA(0xEE);
+		//---------------------------------End ST7715R Power Sequence-------------------------------------//
+		HEXING_LCD_WRITE_CMD(0xC5); //VCOM    
+		HEXING_LCD_WRITE_DATA(0x07);   //0x03
+		HEXING_LCD_WRITE_CMD(0x36); //MX, MY, RGB mode
+		HEXING_LCD_WRITE_DATA(0xC8);
+		//------------------------------------ST7715R Gamma Sequence-----------------------------------------//
+		HEXING_LCD_WRITE_CMD(0xe0);
+		HEXING_LCD_WRITE_DATA(0x12);
+		HEXING_LCD_WRITE_DATA(0x1c);
+		HEXING_LCD_WRITE_DATA(0x10);
+		HEXING_LCD_WRITE_DATA(0x18);
+		HEXING_LCD_WRITE_DATA(0x33);
+		HEXING_LCD_WRITE_DATA(0x2c);
+		HEXING_LCD_WRITE_DATA(0x25);
+		HEXING_LCD_WRITE_DATA(0x28);
+		HEXING_LCD_WRITE_DATA(0x28);
+		HEXING_LCD_WRITE_DATA(0x27);
+		HEXING_LCD_WRITE_DATA(0x2f);
+		HEXING_LCD_WRITE_DATA(0x3c);
+		HEXING_LCD_WRITE_DATA(0x00);
+		HEXING_LCD_WRITE_DATA(0x03);
+		HEXING_LCD_WRITE_DATA(0x03);
+		HEXING_LCD_WRITE_DATA(0x10);
 
-    	/////sleep out ///////
-    	TM_SCTN_WRITE_CMD(0x28);  //display off
-    	TM_SCTN_WRITE_CMD(0x11);  //sleep out
-    	TM_SCTN_DELAY(10);
-    	
-		//////////////////////////////////////////////////////
-    	/////VOP set///////////
-    	TM_SCTN_WRITE_CMD(0xc0);  //vo voltage set   
-    	//TM_SCTN_WRITE_DATA(0x1f);//////////ff
-    	//TM_SCTN_WRITE_DATA(0x01);//00//01
-        TM_SCTN_WRITE_DATA(0xff);   
-        TM_SCTN_WRITE_DATA(0x00);//00//01    	
+		HEXING_LCD_WRITE_CMD(0xe1);
+		HEXING_LCD_WRITE_DATA(0x12);
+		HEXING_LCD_WRITE_DATA(0x1c);
+		HEXING_LCD_WRITE_DATA(0x10);
+		HEXING_LCD_WRITE_DATA(0x18);
+		HEXING_LCD_WRITE_DATA(0x2d);
+		HEXING_LCD_WRITE_DATA(0x28);
+		HEXING_LCD_WRITE_DATA(0x23);
+		HEXING_LCD_WRITE_DATA(0x28);
+		HEXING_LCD_WRITE_DATA(0x28);
+		HEXING_LCD_WRITE_DATA(0x26);
+		HEXING_LCD_WRITE_DATA(0x2f);
+		HEXING_LCD_WRITE_DATA(0x3b);
+		HEXING_LCD_WRITE_DATA(0x00);
+		HEXING_LCD_WRITE_DATA(0x03);
+		HEXING_LCD_WRITE_DATA(0x03);
+		HEXING_LCD_WRITE_DATA(0x10);
 
-        TM_SCTN_WRITE_CMD(0x25);   //write contrast for mobile
-    	TM_SCTN_WRITE_DATA(0x3f);
-    	//-----------OTPB SET----------------------//
-    	TM_SCTN_WRITE_CMD(0xc3);// bias set
-    	//TM_SCTN_WRITE_DATA(0x01);    //1/12
-    	TM_SCTN_WRITE_DATA(0x00);
-    	TM_SCTN_WRITE_CMD(0xc4);   //booster set
-    	TM_SCTN_WRITE_DATA(0x06);//  //06   7±¶Ñ¹
-    	TM_SCTN_WRITE_CMD(0xc5);   //booster efficiency set
-    	TM_SCTN_WRITE_DATA(0x01);    //11
-    	TM_SCTN_WRITE_CMD(0xcb);   //vg  booster set
-    	TM_SCTN_WRITE_DATA(0x01);
-    	
-    	TM_SCTN_WRITE_CMD(0xd0);   //set vg source
-    	TM_SCTN_WRITE_DATA(0x1d);
-    	
-    //------------MTP SET-------------------------//		
-    	TM_SCTN_WRITE_CMD(0xb5);   //n-line set
-    	//TM_SCTN_WRITE_DATA(0x89);//00
-    	TM_SCTN_WRITE_DATA(0x00);
-    	
-    	TM_SCTN_WRITE_CMD(0xbd);  //x-talk compensation
-    	TM_SCTN_WRITE_DATA(0x02); //step2=level3
 
-        TM_SCTN_WRITE_CMD(0xf0);  
-        TM_SCTN_WRITE_DATA(0x06); 
-        TM_SCTN_WRITE_DATA(0x0b); 
-        TM_SCTN_WRITE_DATA(0x0d);
-        TM_SCTN_WRITE_DATA(0x15);
-    	
-    	TM_SCTN_WRITE_CMD(0x36); //MEMORY ACCESS CONTROL
-    	TM_SCTN_WRITE_DATA(0x88);//c8
-    	
-    	TM_SCTN_WRITE_CMD(0x3a);   //interface pixer format
-    	TM_SCTN_WRITE_DATA(0x05);   //16bits pixel
-    	
-    	TM_SCTN_WRITE_CMD(0xb0);   //duty setting
-    	TM_SCTN_WRITE_DATA(0x7f); //duty=128
-    	//=====================new		    	     
-    	TM_SCTN_WRITE_CMD(0x2a);     //col
-    	TM_SCTN_WRITE_DATA(0x00);   //0~127
-    	TM_SCTN_WRITE_DATA(0x7f);
+		//HEXING_LCD_WRITE_CMD(0x2a);
+		//HEXING_LCD_WRITE_DATA(0x00);
+		//HEXING_LCD_WRITE_DATA(0x02);
+		//HEXING_LCD_WRITE_DATA(0x00);
+		//HEXING_LCD_WRITE_DATA(0x81);
+		  
+		//HEXING_LCD_WRITE_CMD(0x2B);
+		//HEXING_LCD_WRITE_DATA(0x00);
+		//HEXING_LCD_WRITE_DATA(0x03);
+		//HEXING_LCD_WRITE_DATA(0x00);
+		//HEXING_LCD_WRITE_DATA(0x82);
 
-    	TM_SCTN_WRITE_CMD(0x2b);     //page
-    	TM_SCTN_WRITE_DATA(0x00);   //0~127
-    	TM_SCTN_WRITE_DATA(0x7f);
-    	
-    //-------------------gamma table set------------------//
-    	TM_SCTN_WRITE_CMD(0xf9);   //gamma
-    	TM_SCTN_WRITE_DATA(0x00);
-    	TM_SCTN_WRITE_DATA(0x03);
-    	TM_SCTN_WRITE_DATA(0x05);
-    	TM_SCTN_WRITE_DATA(0x07);
-    	TM_SCTN_WRITE_DATA(0x09);
-    	TM_SCTN_WRITE_DATA(0x0b);
-    	TM_SCTN_WRITE_DATA(0x0d);
-    	TM_SCTN_WRITE_DATA(0x0f);
-    	TM_SCTN_WRITE_DATA(0x11);
-    	TM_SCTN_WRITE_DATA(0x13);
-    	TM_SCTN_WRITE_DATA(0x15);
-    	TM_SCTN_WRITE_DATA(0x17);
-    	TM_SCTN_WRITE_DATA(0x19);
-    	TM_SCTN_WRITE_DATA(0x1b);
-    	TM_SCTN_WRITE_DATA(0x1d);
-    	TM_SCTN_WRITE_DATA(0x1f);
-
-        TM_SCTN_WRITE_CMD(0x29);
-    	TM_SCTN_WRITE_CMD(0x2c);
+		//------------------------------------End ST7715R Gamma Sequence-----------------------------------------//
+		HEXING_LCD_WRITE_CMD(0xF0); //Enable test command
+		HEXING_LCD_WRITE_DATA(0x01);
+		HEXING_LCD_WRITE_CMD(0xF6); //Disable ram power save mode
+		HEXING_LCD_WRITE_DATA(0x00);
+		HEXING_LCD_WRITE_CMD(0x3A); //65k mode
+		HEXING_LCD_WRITE_DATA(0x05);
+		HEXING_LCD_WRITE_CMD(0x29); //Display on
         st7735r_128x128_state.disp_powered_up = TRUE;
    }
    
@@ -796,7 +844,6 @@ int st7735r_128x128_disp_init(void)
 		/* Do not re-initialize the display */
 		return 1;
 	}
-
 	st7735r_128x128_disp_info.disp_width         = ST7735R_128x128_DISP_WIDTH;
 	st7735r_128x128_disp_info.disp_height        = ST7735R_128x128_DISP_HEIGHT;
 	st7735r_128x128_disp_info.bpp                = DISP_8BPP;
@@ -892,8 +939,8 @@ static void st7735r_128x128_disp_copy(void *src_ptr, dword copy_count)
         for ( i = 0; i < copy_count; i++ )
         {
             data = (uint16)(*pdata);
-			TM_SCTN_WRITE_DATA((uint8)(data>>8));
-			TM_SCTN_WRITE_DATA((uint8)(data&(0x00ff)));
+			HEXING_LCD_WRITE_DATA((uint8)(data>>8));
+			HEXING_LCD_WRITE_DATA((uint8)(data&(0x00ff)));
             pdata++;
         }        
     }
@@ -971,7 +1018,7 @@ static void st7735r_128x128_disp_update
 		src_ptr += src_starting_row * src_width + src_starting_column;
 
 		/* Transfer command to display hardware */
-		TM_SCTN_WRITE_CMD(ST7735R_128x128_RAM_WRITE_C); 
+		HEXING_LCD_WRITE_CMD(ST7735R_128x128_RAM_WRITE_C); 
 
 		if((src_starting_column == 0) && (num_of_columns == src_width)) 
 		{
