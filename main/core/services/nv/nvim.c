@@ -258,14 +258,6 @@ typedef struct _nv_auto_set_table_type
 #define AUTO_NV_CUST_CODE_INVALID           0x00
 #define AUTO_NV_MODIFY_TIME_FOR_CUSTOMER    0x10
 
-
-#define AUTO_NV_CUST_CODE_COMMON            0x02260000                                                      //For common using, internal test.
-#define AUTO_NV_CUST_CODE_HTTH              (AUTO_NV_CUST_CODE_COMMON + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //Hutch In Thailand
-#define AUTO_NV_CUST_CODE_CTTH              (AUTO_NV_CUST_CODE_HTTH   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //CAT In Thailand
-#define AUTO_NV_CUST_CODE_ALTW              (AUTO_NV_CUST_CODE_CTTH   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //APTG In Taiwan, China
-#define AUTO_NV_CUST_CODE_ALCN              (AUTO_NV_CUST_CODE_ALTW   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //China Telecom
-#define AUTO_NV_CUST_CODE_TLFJ              (AUTO_NV_CUST_CODE_ALCN   + AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)   //China Telecom
-
 #ifdef MODEL_RF_NV_H
 #include MODEL_RF_NV_H
 #else
@@ -3109,7 +3101,7 @@ LOCAL nv_stat_enum_type nv_auto_set_need_value(void)
     
     if(NV_DONE_S == local_cmd.status)
     {
-        if(AUTO_NV_ITME_VERSION <= auto_nv_item_version)
+        if(AUTO_NV_ITME_VERSION == auto_nv_item_version)
         {
             //OK, it not a fresh start phone and version is same as this bin file
             //skip the follow operations.

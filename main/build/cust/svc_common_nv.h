@@ -13,13 +13,21 @@
 
 //If any change in this file, please increase the MACRO AUTO_NV_MIN_VERSION
 //It must be less than AUTO_NV_MODIFY_TIME_FOR_CUSTOMER
+#if defined(FEATURE_PROJECT_SMART)
+#define AUTO_NV_MIN_VERSION                 0x4
+#elif defined(FEATURE_VERSION_FLEXI203)
 #define AUTO_NV_MIN_VERSION                 0x3
+#elif defined(FEATURE_PROJECT_M8)
+#define AUTO_NV_MIN_VERSION                 0x2
+#else
+#define AUTO_NV_MIN_VERSION                 0x1
+#endif
 
 #if (AUTO_NV_MIN_VERSION >= AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)
 #error AUTO_NV_MIN_VERSION msut be less than AUTO_NV_MODIFY_TIME_FOR_CUSTOMER
 #endif
 
-#define AUTO_NV_ITME_VERSION                (AUTO_NV_CUST_CODE_ALCN + AUTO_NV_MIN_VERSION + AUTO_NV_RF_VERSION)
+#define AUTO_NV_ITME_VERSION                (AUTO_NV_MIN_VERSION + AUTO_NV_RF_VERSION)
 
 //NOTICE: we only auto set NAM-0's value 
 //you can change those nv value for different operator.
@@ -27,8 +35,13 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
 {
     {NV_SLOT_CYCLE_INDEX_I,             {0x02}},
     {NV_PREF_MODE_I,                    {0x00, 0x04}},
+#ifdef FEATURE_PROJECT_SMART
+    {NV_PCDMACH_I,                      {0x00, 0x97, 0x04, 0x7e, 0x04}},
+    {NV_SCDMACH_I,                      {0x00, 0xb3, 0x02, 0x09, 0x03}},
+#else
     {NV_PCDMACH_I,                      {0x00, 0x1b, 0x01, 0x80, 0x01}},
     {NV_SCDMACH_I,                      {0x00, 0xb3, 0x02, 0x09, 0x03}},
+#endif
     //IMSI_S is store as MIN1 and MIN2
     {NV_MIN1_I,                         {0x00, 0xe7, 0xeb, 0xf9, 0x00, 0xe7, 0xeb, 0xf9, 0x00}},
     {NV_MIN2_I,                         {0x00, 0xe7, 0x03, 0xe7, 0x03}},

@@ -125,12 +125,18 @@ when       who     what, where, why
 /* Macro to check whether a CDMA band-class 0 channel is in the A side.
 */
 //#if defined( FEATURE_NO_CELL_GUARD_BANDS )
-
+#ifdef CUST_EDITION
+  #define PRL_IS_CHAN_IN_CELLULAR_SYS_A( chan ) \
+      ( ((chan) >= 1      &&  (chan) <= 333)  || \
+        ((chan) >= 667    &&  (chan) <= 716)  || \
+        ((chan) >= 991    &&  (chan) <= 1023) || \
+        ((chan) >= 1024))
+#else
   #define PRL_IS_CHAN_IN_CELLULAR_SYS_A( chan ) \
       ( ((chan) >= 1      &&  (chan) <= 333)  || \
         ((chan) >= 667    &&  (chan) <= 716)  || \
         ((chan) >= 991    &&  (chan) <= 1023) )
-
+#endif
 
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -139,11 +145,16 @@ when       who     what, where, why
 /* Macro to check whether a CDMA band-class 0 channel is in the B side.
 */
 //#if defined( FEATURE_NO_CELL_GUARD_BANDS )
-
+#ifdef CUST_EDITION
+  #define PRL_IS_CHAN_IN_CELLULAR_SYS_B( chan ) \
+      ( ((chan) >= 334    && (chan) <= 666) || \
+        ((chan) >= 717    && (chan) <= 799) || \
+        ((chan) >= 1024))
+#else
   #define PRL_IS_CHAN_IN_CELLULAR_SYS_B( chan ) \
       ( ((chan) >= 334    && (chan) <= 666) || \
         ((chan) >= 717    && (chan) <= 799) )
-
+#endif
 
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
