@@ -1037,7 +1037,7 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
                if (IS_SOFTKEY_MENU(pme))
                   return SK_MoveSelect(pme, 1);
 
-#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+#if 0 //defined( FEATURE_CUSTOMIZED_MENU_STYLE)   change by xuhui
                if(IS_MULTI_SEL(pme)){
                   CMenuItem   * pItem;
                   if((pItem = GetItemByIdx(pme->m_pItemList, pme->m_nSelect)) != NULL){
