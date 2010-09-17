@@ -52,25 +52,7 @@ typedef boolean (*MG_PFN_DIALOG_HANDLEEVENT)(CMediaGalleryApp* pMe,
                                           AEEEvent eCode,
                                           uint16   wParam,
                                           uint32   dwParam);
-#ifndef AEE_SIMULATOR
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE
-extern vc_jpeg_decode display_jpg_done; //zhangxiang add for state of jpg decode 20090207
-#endif
-#else
-typedef enum {
-  VC_JPEG_DECODE_INIT,
-  VC_JPEG_DECODE_DOING,
-  VC_JPEG_DECODE_DONE
-} vc_jpeg_decode;
 
-int display_jpg_done = 0;
-#if !defined(app_media_scheduler)
-#define APP_MEDIA_ALLOW         0
-#define APP_MEDIA_IMPACT_BY_FM  1
-#define APP_MEDIA_IMPACT_BY_MP3 2
-int app_media_scheduler(void){int stat = 0;return stat;}
-#endif
-#endif
 /*===========================================================================
  *
  *                      FUNCTION DECLARATIONS
@@ -2324,8 +2306,7 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
 
    if(pMe->m_PopupOps == MG_OP_VIEWIMG)
    {
-      //if(pMe->m_bV0848DecodeImg == FALSE)
-         MGAppUtil_RedrawImage(pMe, NULL, TRUE);
+      MGAppUtil_RedrawImage(pMe, NULL, TRUE);
    }
    else
    {
@@ -2522,7 +2503,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
    IImageCtl* pImageCtl = NULL;
    MediaDlgStat eDlgStat;
    static int8 nsScale = 0;
-   static AEEImageInfo ImgInfo;
+   
    MSG_FATAL("MGAppPopupMenu_OnImageViewer Start",0,0,0);
    if(!pMe)
    {
@@ -2574,7 +2555,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
             return FALSE;
          }
 
-         if((pCurNode->dwSize >= MG_848IMGDECODE_MAX && pMe->m_StoreMedium == MG_STMED_MASSCARD) ||
+         if((pCurNode->dwSize >= MG_QUALIMGDECODE_MAX && pMe->m_StoreMedium == MG_STMED_MASSCARD) ||
             (pCurNode->dwSize >= MG_QUALIMGDECODE_MAX && pMe->m_StoreMedium == MG_STMED_HANDSET))
          {
             MSG_FATAL("Image's Size is too big",0,0,0);
@@ -2591,70 +2572,41 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                                         MGMIME_BASE_IMAGE,
                                         &eMimeBase);
 
-         pMe->m_bV0848DecodeImg = FALSE;
          pMe->m_bImgLoadDone = FALSE;
-#ifndef AEE_SIMULATOR
-         if(pMe->m_StoreMedium == MG_STMED_MASSCARD &&
-            (eMimeBase == MG_MIME_JPEG || eMimeBase == MG_MIME_JPG))
+         if(pMe->m_ImgViewOps == MG_OP_NULL)
          {
-            MSG_FATAL("m_bV0848DecodeImg == TRUE",0,0,0);
-            pMe->m_bV0848DecodeImg = TRUE;
-            if(pMe->m_ImgViewOps == MG_OP_NULL)
-            {
-               RELEASEIF(pMe->m_pImage);
-            }
-            if(pMe->m_pImage == NULL)
-            {
-               pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell,
-                                                pCurNode->szName);
-            }      
-            pMe->m_bImgLoadDone = TRUE;
-            MGAppUtil_RedrawImage(pMe, NULL, FALSE);
+            RELEASEIF(pMe->m_pImage);
+         }
+         
+         if(pMe->m_pImage == NULL)
+         {
+            pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell,
+                                             pCurNode->szName);
+         }
+         
+         if(pMe->m_pImage != NULL)
+         {
+            IIMAGE_GetInfo(pMe->m_pImage, &pMe->m_ImgInfo);
+            IIMAGE_Notify(pMe->m_pImage,
+                          MGAppUtil_LoadImageNotify,
+                          pMe);
          }
          else
-#endif
          {
-            MSG_FATAL("m_bV0848DecodeImg == FALSE",0,0,0);
-            if(pMe->m_ImgViewOps == MG_OP_NULL)
-            {
-               RELEASEIF(pMe->m_pImage);
-            }
-            if(pMe->m_pImage == NULL)
-            {
-               pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell,
-                                                pCurNode->szName);
-            }
-
-            if(pMe->m_pImage != NULL)
-            {
-               IIMAGE_Notify(pMe->m_pImage,
-                             MGAppUtil_LoadImageNotify,
-                             pMe);
-            }
-            else
-            {
-               pMe->m_bImgLoadDone = TRUE;
-               MediaGalleryApp_ShowPromptMsgBox(pMe,
-                                                IDS_MG_LOADFAILED,
-                                                MESSAGE_ERR,
-                                                BTBAR_BACK);
-               MG_FARF(ADDR, ("ISHELL_LoadImage failed, may be file too long!"));
-            }
+            pMe->m_bImgLoadDone = TRUE;
+            MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                             IDS_MG_LOADFAILED,
+                                             MESSAGE_ERR,
+                                             BTBAR_BACK);
+            MG_FARF(ADDR, ("ISHELL_LoadImage failed, may be file too long!"));
          }
          return TRUE;
       }
 
    case EVT_USER_REDRAW:
-      {
-         MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_USER_REDRAW",0,0,0);
-         if(pMe->m_bV0848DecodeImg != TRUE)
-         {
-            MGAppUtil_UpdateImgViewerSoftkey(pMe);
-         }
-
-         return TRUE;
-      }
-
+       MGAppUtil_UpdateImgViewerSoftkey(pMe);
+       return TRUE;
+       
    case EVT_DIALOG_END:
       {
          //if we are suspending (EVT_APP_SUSPEND is sent before
@@ -2668,39 +2620,19 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 
          MediaGallery_HideAnnunciatorBar(pMe->m_pDisplay,
                                          &pMe->m_ClipRect,
-                                         FALSE);
-
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE
-         if(display_jpg_done == VC_JPEG_DECODE_DOING)
-         {
-#ifndef AEE_SIMULATOR
-            VC_DeviceControl(VC_ITM_JPG_STOP_DECODE_I,VC_FUNC_PLAY_ON,0);
-#endif
-         }
-#endif		 
+                                         FALSE);	 
          return TRUE;
       }
 
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
-	  case EVT_USER:
+   case EVT_USER:
 #endif
    case EVT_KEY:
       {
-        MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_KEY",0,0,0);
          switch(wParam)
          {
          case AVK_CLR:
-            MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_CLR",0,0,0);
-            if( (pMe->m_bImgLoadDone == FALSE 
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE				
-				||display_jpg_done == VC_JPEG_DECODE_DOING
-#endif			
-				))
-            {
-               //return TRUE;
-            }
-
             if (eDlgStat == MG_DLGSTAT_NORMAL)
             {
                pMe->m_PopupOps = MG_OP_NULL;
@@ -2720,10 +2652,9 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                {
                   IIMAGE_SetParm(pImage,
                                  IPARM_SCALE,
-                                 ImgInfo.cx,
-                                 ImgInfo.cy);
+                                 pMe->m_ImgInfo.cx,
+                                 pMe->m_ImgInfo.cy);
                   nsScale = 0;
-                  MEMSET(&ImgInfo, 0, sizeof(AEEImageInfo));
                }
 
                /*Immediately release, other wise it will popup if the
@@ -2743,11 +2674,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
             {
                MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_SELECT 1",0,0,0);
                if(eDlgStat == MG_DLGSTAT_NORMAL &&
-                  (pMe->m_bImgLoadDone == TRUE 				   
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE                   
-                   ||display_jpg_done == VC_JPEG_DECODE_DONE
-#endif                   
-                   ))
+                  (pMe->m_bImgLoadDone == TRUE))
                {
                   MenuInsItem ImgViewOptions[]={
                      {IDS_MG_ZOOM, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
@@ -2755,10 +2682,6 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                   };
                   AEEImageInfo ImgInfo;
                   IImage *pi = pMe->m_pImage;
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE
-                  MG_FARF(ADDR, ("V0848 JPG DONE %d, BREW DECODE %d",
-                                 display_jpg_done, pMe->m_bImgLoadDone));
-#endif 
 
                   MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_SELECT 2",0,0,0);
                   if(pi)
@@ -2809,27 +2732,28 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          case AVK_INFO:
             MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_INFO",0,0,0);
             if( eDlgStat == MG_DLGSTAT_IMGZOOM &&
-               ( pMe->m_bImgLoadDone == TRUE 
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE               
-                ||display_jpg_done == VC_JPEG_DECODE_DONE 
-#endif                
-                ))
+               ( pMe->m_bImgLoadDone == TRUE ))
             {
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE                
-               MG_FARF(ADDR, ("V0848 JPG DONE %d, BREW DECODE %d",
-                              display_jpg_done,
-                              pMe->m_bImgLoadDone));
-#endif
                //do zoom
                if(pMe->m_pImage)
                {
                   IImage *pImage = pMe->m_pImage;
 
                   nsScale = (nsScale + 1) % 4;
-                  IIMAGE_SetParm(pImage,
-                                 IPARM_SCALE,
-                                 44 * (nsScale+1),
-                                 55 * (nsScale+1));
+                  if(nsScale == 0)
+                  {
+                      IIMAGE_SetParm(pImage,
+                                     IPARM_SCALE,
+                                     pMe->m_ImgInfo.cx,
+                                     pMe->m_ImgInfo.cy);
+                  }
+                  else
+                  {
+                      IIMAGE_SetParm(pImage,
+                                     IPARM_SCALE,
+                                     pMe->m_ImgInfo.cx/(2*nsScale),
+                                     pMe->m_ImgInfo.cy/(2*nsScale));
+                  }
                   MGAppUtil_RedrawImage(pMe, NULL, FALSE);
                }
             }
@@ -2846,11 +2770,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          case AVK_LEFT:
             MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_LEFT, eDlgStat=%d",eDlgStat,0,0);
             if(eDlgStat == MG_DLGSTAT_NORMAL &&
-               (pMe->m_bImgLoadDone == TRUE 
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE                   
-               ||display_jpg_done == VC_JPEG_DECODE_DONE
-#endif               
-               ))
+               (pMe->m_bImgLoadDone == TRUE ))
             {
                AEEImageInfo ImgInfo;
                IImage *pi = pMe->m_pImage;
@@ -2861,11 +2781,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                   if(ImgInfo.bAnimated)
                      IIMAGE_Stop(pi);
                }
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE 			   
-               MG_FARF(ADDR, ("V0848 JPG DONE %d, BREW DECODE %d",
-                              display_jpg_done,
-                              pMe->m_bImgLoadDone));
-#endif
+               
                MGAppUtil_ChangeMediaMenuItemByType(pMe,
                                                    pMe->m_pMediaMenu,
                                                    (boolean)(wParam == AVK_RIGHT),
@@ -2899,11 +2815,6 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                                                pMe->m_pMediaMenu,
                                                wParam,
                                                dwParam);
-
-            if(IDS_MG_ZOOM == wParam && NULL != pMe->m_pImage)
-            {
-               IIMAGE_GetInfo(pMe->m_pImage, &ImgInfo);
-            }
          }
       }
       return TRUE;
@@ -3120,9 +3031,7 @@ static boolean MGAppPopupMenu_OnSetWallpaper(CMediaGalleryApp *pMe,
                                              MGFileInfo *pItemData)
 {
    MGFileInfo *pSelData = pItemData;
-   //MGMimeType eMimeBase;
-   boolean bUse848 = FALSE;
-
+   
    if(!pMe)
       return FALSE;
 
@@ -3145,77 +3054,49 @@ static boolean MGAppPopupMenu_OnSetWallpaper(CMediaGalleryApp *pMe,
 
       if(!pSelData || !pSelData->szName)
       {
-         MG_FARF(ADDR, ("Date is validate"));
+         MG_FARF(ADDR, ("Data is invalidate"));
          return FALSE;
       }
-#if 0
-      MGMediaInfo_GetMimeType(pMe->m_pShell,
-                              pMe->m_pFileMgr,
-                              pSelData->szName,
-                              MGMIME_BASE_IMAGE,
-                              &eMimeBase);
-
-      if(pMe->m_StoreMedium == MG_STMED_MASSCARD &&
-         (eMimeBase == MG_MIME_JPEG || eMimeBase == MG_MIME_JPG))
+      
+      // Check the image size, too small or to large are not permit. And the
+      //animate image also do not permit
+      RELEASEIF(pMe->m_pImage);
+      pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell, pSelData->szName);
+      if(pMe->m_pImage)
       {
-         //bUse848 = TRUE;
-      }
-      else
-#endif
-      {
-         // Check the image size, too small or to large are not permit. And the
-         //animate image also do not permit
-         RELEASEIF(pMe->m_pImage);
-         pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell, pSelData->szName);
-         //bUse848 = FALSE;
+          IIMAGE_GetInfo(pMe->m_pImage, &pMe->m_ImgInfo);
       }
    }
    else if(pMe->m_ImgViewOps == MG_OP_WALLPAPER)
    {
-      //bUse848 = pMe->m_bV0848DecodeImg;
-      if(TRUE == pMe->m_bV0848DecodeImg)
-      {
-         RELEASEIF(pMe->m_pImage);
-         pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell, pSelData->szName);
-      }
+      // Nothing TODO
    }
    else
    {
       return FALSE;
    }
 
-   MG_FARF(ADDR, ("PopupOps is %d, ImgViewOps is %d",
-                  pMe->m_PopupOps, pMe->m_ImgViewOps));
-
-   if(FALSE == bUse848)
+   MG_FARF(ADDR, ("PopupOps is %d, ImgViewOps is %d", pMe->m_PopupOps, pMe->m_ImgViewOps));
+   if(pMe->m_pImage)
    {
-      if(pMe->m_pImage)
-      {
-         /*
-          * if call IIMAGE_Notify for png, bmp, it will be async, if for it
-          * is sync. So we must set status before call IIMAGE_Notify */
-         pMe->m_bImgLoadDone = FALSE;
-         IIMAGE_Notify(pMe->m_pImage, MGAppUtil_LoadImageNotify, pMe);
-      }
-      else
-      {
-         /* 由于ISHELL_LoadImage只用文件名的扩展名来判断是否是图片，如果不是，
-          * 就不LoadImage。例如：对于长文件名，把扩展名截掉了，我们用
-          * ISHELL_LoadImage就不成功。*/
-         MediaGalleryApp_ShowPromptMsgBox(pMe,
-                                          IDS_MG_LOADFAILED,
-                                          MESSAGE_ERR,
-                                          BTBAR_BACK);
-
-         MG_FARF(ADDR, ("IImage interface is 0x%x", pMe->m_pImage));
-      }
+      /*
+       * if call IIMAGE_Notify for png, bmp, it will be async, if for it
+       * is sync. So we must set status before call IIMAGE_Notify */
+      pMe->m_bImgLoadDone = FALSE;
+      IIMAGE_Notify(pMe->m_pImage, MGAppUtil_LoadImageNotify, pMe);
    }
    else
    {
-      AEEImageInfo ImgInfo;
-      MGAppUtil_SetWallpaper(pMe, &ImgInfo);
-   }
+      /* 由于ISHELL_LoadImage只用文件名的扩展名来判断是否是图片，如果不是，
+       * 就不LoadImage。例如：对于长文件名，把扩展名截掉了，我们用
+       * ISHELL_LoadImage就不成功。*/
+      MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                       IDS_MG_LOADFAILED,
+                                       MESSAGE_ERR,
+                                       BTBAR_BACK);
 
+      MG_FARF(ADDR, ("IImage interface is 0x%x", pMe->m_pImage));
+   }
    return TRUE;
 }//MGAppPopupMenu_OnSetWallpaper
 
@@ -6471,14 +6352,6 @@ static void MGAppUtil_DrawSoftkeyOverImage(CMediaGalleryApp* pMe,
                           0, 0, &rc,
                           IDF_ALIGN_MIDDLE | IDF_ALIGN_RIGHT | IDF_TEXT_TRANSPARENT);
    }
-
-   if(pMe->m_bV0848DecodeImg == TRUE)
-   {
-      IDisplay_GetClipRect(pMe->m_pDisplay, &OldRc);
-      IDisplay_SetClipRect(pMe->m_pDisplay, &rc);
-      IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-      IDisplay_SetClipRect(pMe->m_pDisplay, &OldRc);
-   }
 }//MGAppUtil_DrawSoftkeyOverImage
 
 /*===========================================================================
@@ -6586,14 +6459,8 @@ static boolean MGAppUtil_UpdateImgViewerSoftkey(CMediaGalleryApp* pMe)
    else
    {
       if( eDlgStat == MG_DLGSTAT_NORMAL &&
-         (pMe->m_bImgLoadDone == TRUE ||
-          pMe->m_bV0848DecodeImg == TRUE
-          /*display_jpg_done == VC_JPEG_DECODE_DONE*/ ))
+         (pMe->m_bImgLoadDone == TRUE))
       {
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE       
-         MG_FARF(ADDR, ("V0848 JPG DONE %d, BREW DECODE %d",
-                        display_jpg_done,  pMe->m_bImgLoadDone));
-#endif
          nLeftResID = IDS_OPTION;
       }
 
@@ -8210,10 +8077,12 @@ static boolean MGAppUtil_ImageZoomCheck(CMediaGalleryApp *pMe,
          pItemInfo->szName,
          MGMIME_BASE_IMAGE ,
          &eMimeBase);
-
+   
    if(SUCCESS == nRet &&
       (eMimeBase == MG_MIME_PNG ||
-       eMimeBase == MG_MIME_BMP)){
+       eMimeBase == MG_MIME_BMP ||
+       eMimeBase == MG_MIME_JPEG ||
+       eMimeBase == MG_MIME_JPG)){
       return TRUE;
    }
 
@@ -8255,7 +8124,7 @@ static boolean MGAppUtil_WallpaperSettingCheck(IImage *po,
    MG_FARF(ADDR, ("DEVINFO CX:%d, CY:%d", DevInfo.cxScreen, DevInfo.cyScreen));
    MG_FARF(ADDR, ("IMGINFO CX:%d, CY:%d", pi->cx,pi->cy));
 
-   if(MG_BETWEEN( pi->cx, 96, 176) && MG_BETWEEN(pi->cy, 96, 220))
+   if(MG_BETWEEN( pi->cx, MG_WALLPAPER_PIXEL_MIN, MG_WALLPAPER_PIXEL_MAX) && MG_BETWEEN(pi->cy, MG_WALLPAPER_PIXEL_MIN, MG_WALLPAPER_PIXEL_MAX))
       return TRUE;
   else
 	  return FALSE;
@@ -8297,7 +8166,7 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
                                        BTBAR_BACK);
       return FALSE;
    }
-
+   
    if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                        AEECLSID_CONFIG,
                                        (void **)&pConfig))
@@ -8305,16 +8174,14 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
       MG_FARF(ADDR, ("Create config interface failed"));
       return FALSE;
    }
-
+   
    ICONFIG_SetItem(pConfig, CFGI_WALLPAPER,
                    pSelData->szName, sizeof(pSelData->szName));
 
    MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
 
    RELEASEIF(pConfig);
-   if(pMe->m_PopupOps == MG_OP_WALLPAPER ||
-      (pMe->m_ImgViewOps == MG_OP_WALLPAPER
-       && pMe->m_bV0848DecodeImg))
+   if(pMe->m_PopupOps == MG_OP_WALLPAPER)
    {
       RELEASEIF(pMe->m_pImage);
    }
@@ -8399,85 +8266,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
                            AEE_FONT_BOLD,
                            &nAscent,
                            &nDescent);
-
-
-#ifndef AEE_SIMULATOR
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE    
-
-   /*如果是使用中星微848解码*/
-   if(pMe->m_bV0848DecodeImg == TRUE)
-   {
-      vc_union_type vc_data;
-      char *pplayfile = NULL;
-      AEERect OldRc;
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE    	  
-      if(display_jpg_done == VC_JPEG_DECODE_DONE)
-      {
-         MSG_FATAL("848 already decode!",0,0,0);
-         //return EFAILED;
-      }
-#endif
-      //MGAppUtil_DrawImageViewerBG(pMe);
-      //  IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-      IDISPLAY_DrawRect(pMe->m_pDisplay,
-                        NULL,
-                        RGB_BLACK,
-                        RGB_BLACK,
-                        IDF_RECT_FILL);
-      IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-
-      rc.x = MGAppUtil_DrawTitleArrow(pMe, NULL) + 1;
-      rc.dx = pMe->m_rc.dx - rc.x * 2;
-      rc.y = 1;
-      rc.dy = nAscent + nDescent;
-
-      bRet = MGAppUtil_ShrinkString(pDisp,
-                                    rc.dx,
-                                    wszTitle,
-                                    (AECHAR **)&pszTitle);
-      if(NULL == pszTitle)
-         bRet = FALSE;
-
-      /*update display buffer immediately, otherwise the data may stay in
-       * memory buffer, and can not send to 848*/
-
-
-      //VC_DeviceControl(VC_ITM_JPG_DISPCLR_I, VC_FUNC_PLAY_ON, &vc_data);
-      pplayfile = SPLITPATH((const char*)pszPath, MG_MASSCARD_ROOTDIR);
-      STRCPY((char *)&vc_data.play_info.szFileName,pplayfile);
-      vc_data.play_info.entry = VC_JPEG_ENTRY_FS;
-
-      //if we use VIM848 decode jpeg photo, now call it
-#ifdef FEATURE_MEDIAPLAYER_DECODER_INTERFACE       
-      VC_DeviceControl(VC_ITM_JPG_DECODE_I, VC_FUNC_PLAY_ON, &vc_data);
-      while(  display_jpg_done != VC_JPEG_DECODE_DONE)
-      {
-         AEEOS_Sleep(20);
-      }
-#endif	  
-      DrawTextWithProfile(pMe->m_pShell,
-                          pDisp,
-                          RGB_WHITE,//_NO_TRANS,
-                          AEE_FONT_BOLD,
-                          (AECHAR *)(bRet == TRUE ? pszTitle : wszTitle),
-                          -1,
-                          0,
-                          0,
-                          &rc,
-                          IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
-      IDisplay_GetClipRect(pMe->m_pDisplay, &OldRc);
-      IDisplay_SetClipRect(pMe->m_pDisplay, &rc);
-      IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-      IDisplay_SetClipRect(pMe->m_pDisplay, &OldRc);
-
-      MGAppUtil_UpdateImgViewerSoftkey(pMe);
-
-      FREEIF(pszTitle);
-      return SUCCESS;
-   }
-#endif /*FEATURE_MEDIAPLAYER_DECODER_INTERFACE*/   
-#endif
-
+   
    po = pMe->m_pImage;
    if(NULL == po)
    {
@@ -8713,9 +8502,7 @@ static void MGAppUtil_LoadImageNotify(void *pUser,
 
    if(SUCCESS != nErr)
    {
-      if(pMe->m_PopupOps == MG_OP_WALLPAPER ||
-         (pMe->m_ImgViewOps == MG_OP_WALLPAPER
-          && pMe->m_bV0848DecodeImg))
+      if(pMe->m_PopupOps == MG_OP_WALLPAPER)
       {
          RELEASEIF(pMe->m_pImage);
          nTextResId = IDS_MG_WALLPAPERNOSET;

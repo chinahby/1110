@@ -131,11 +131,11 @@
 #define MG_SELECT_MAX               50
 
 /*照片解码最大的文件大小。4M。中星微在解19-20M图片直接死机。*/
-#define MG_848IMGDECODE_MAX            4 * 1024 *1024
 #define MG_QUALIMGDECODE_MAX           4 * 128 * 1024
 
 #define MG_WALLPAPER_MAX               2 * 128 * 1024
-
+#define MG_WALLPAPER_PIXEL_MIN         1
+#define MG_WALLPAPER_PIXEL_MAX         640
 
 /*默认日期 */
 #define MG_DEFAULT_JYEAR               2009

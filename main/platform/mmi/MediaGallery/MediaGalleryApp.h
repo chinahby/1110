@@ -420,11 +420,12 @@ struct  _CMediaGalleryApp{
                                      under music setting, prohit key beep,
                                      then recover when approprite*/
    IImage            *m_pImage;
+   AEEImageInfo      m_ImgInfo;
+   
 #ifdef FEATURE_ANICTL
    IAniCtl           *m_pAniCtl;
 #endif
    boolean           m_bImgLoadDone;
-   boolean           m_bV0848DecodeImg;
    IAnnunciator        *m_pIAnn;
 } ;
 
