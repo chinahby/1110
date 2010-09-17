@@ -3146,6 +3146,26 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
             int x,y;
             IImage_GetInfo(pImage,&myInfo);
             
+#ifdef FEATURE_BREW_SCALE
+            if(myInfo.cy > 0 && pMe->m_rc.dy > 0)
+            {
+                if((myInfo.cx*1000)/myInfo.cy > (pMe->m_rc.dx*1000)/pMe->m_rc.dy)
+                {
+                    myInfo.cx = (myInfo.cx*pMe->m_rc.dy)/myInfo.cy;
+                    myInfo.cy = pMe->m_rc.dy;
+                }
+                else
+                {
+                    myInfo.cy = (myInfo.cy*pMe->m_rc.dx)/myInfo.cx;
+                    myInfo.cx = pMe->m_rc.dx;
+                }
+                
+                IImage_SetParm(pImage,
+                               IPARM_SCALE,
+                               myInfo.cx,
+                               myInfo.cy);
+            }
+#endif
             x = (myInfo.cx-pMe->m_rc.dx)/2;
             y = (myInfo.cy-pMe->m_rc.dy)/2;
             IImage_SetOffset(pImage,x,y);
