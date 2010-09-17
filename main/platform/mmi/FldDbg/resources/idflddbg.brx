@@ -191,7 +191,7 @@
 		<Text>SSL Panjang</Text>
 	</STRING>
 	<STRING Id="64" Name="IDS_CLEARING_TXT">
-		<Text>Bersihkan…</Text>
+		<Text>Bersihkan</Text>
 	</STRING>
 	<STRING Id="65" Name="IDS_CLR_EFS">
 		<Text>Hapus EFS</Text>
@@ -417,7 +417,6 @@
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
 		<Controls>
 			<Menu Id="1" Name="IDC_SYS_MENU" Flags="4000000">
-				<TitleID>IDS_OPTION_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -425,7 +424,6 @@
 	<DIALOG Id="2" Name="IDD_DEBUG_DIALOG" Focus="2">
 		<Controls>
 			<Menu Id="2" Name="IDC_DEBUG_MENU" Flags="4000000">
-				<TitleID>IDS_DEBUG_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -433,7 +431,6 @@
 	<DIALOG Id="3" Name="IDD_VERSION_DIALOG" Focus="7005">
 		<Controls>
 			<Static Id="7005" Name="IDC_VER_STAT" Flags="40000">
-				<TitleID>IDS_VERSION_TITLE</TitleID>
 				<Items/></Static>
 			<SoftKey Id="7025" Name="IDC_VER_SOFTKEY">
 				<Items/>
@@ -452,7 +449,6 @@
 	<DIALOG Id="5" Name="IDD_CALL_LIST_DIALOG" Focus="201">
 		<Controls>
 			<Menu Id="201" Name="IDC_CALL_LIST_MENU" Flags="4000000">
-				<TitleID>IDS_VPN3_START</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -463,7 +459,6 @@
 				<Items/>
 			</SoftKey>
 			<Static Id="7011" Name="IDC_ERROR_STATIC" Flags="40000">
-				<TitleID>IDS_ERRORS</TitleID>
 				<Items/></Static>
 		</Controls>
 	</DIALOG>
@@ -483,14 +478,12 @@
 				<Items/>
 			</SoftKey>
 			<Text Id="7009" Name="IDC_CLREFS_TEXT" Flags="00010000">
-				<TitleID>IDS_CLEAR_EFS</TitleID>
 				<Items/></Text>
 		</Controls>
 	</DIALOG>
 	<DIALOG Id="9" Name="IDD_DM_DIALOG" Focus="7008">
 		<Controls>
 			<Menu Id="7008" Name="IDC_DATADM_MENU" Flags="04000000">
-				<TitleID>IDS_DATA_DM</TitleID>
 				<Items/>
 			</Menu>
 			<SoftKey Id="7037" Name="IDC_SOFTKEY_DM">
@@ -501,7 +494,6 @@
 	<DIALOG Id="10" Name="IDD_SMS_MO_SO_DIALOG" Focus="7007">
 		<Controls>
 			<Menu Id="7007" Name="IDC_SMSMOSO_MENU" Flags="04000000">
-				<TitleID>IDS_SMS_MO_SO</TitleID>
 				<Items/>
 			</Menu>
 			<SoftKey Id="7038" Name="IDC_SOFTKEY_SMS_MO_SO">
@@ -512,7 +504,6 @@
 	<DIALOG Id="11" Name="IDD_VOICE_PRIVACY_DIALOG" Focus="7012">
 		<Controls>
 			<Menu Id="7012" Name="IDC_VOICE_PRIVACY_MENU" Flags="04000000">
-				<TitleID>IDS_VOICE_PRIVACY</TitleID>
 				<Items/>
 			</Menu>
 			<SoftKey Id="7039" Name="IDC_SOFTKEY_VOICE_PRIVACY">
@@ -523,7 +514,6 @@
 	<DIALOG Id="12" Name="IDD_MMC_DIALOG" Focus="7013">
 		<Controls>
 			<Menu Id="7013" Name="IDC_MMC_MENU">
-				<TitleID>IDS_MMC</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -531,7 +521,6 @@
 	<DIALOG Id="13" Name="IDD_MMC_FORMAT_DIALOG" Focus="7015">
 		<Controls>
 			<Static Id="7015" Name="IDC_STATIC_MMC_FORMAT">
-				<TitleID>IDS_MMC_FORMAT</TitleID>
 				<Items/></Static>
 			<SoftKey Id="7035" Name="IDC_SOFTKEY_FORMAT">
 				<Items/>
@@ -541,7 +530,6 @@
 	<DIALOG Id="14" Name="IDD_MMC_DOWNLOAD_DIALOG" Focus="7014">
 		<Controls>
 			<Static Id="7014" Name="IDC_STATIC_MMC_DOWNLOAD">
-				<TitleID>IDS_MMC_DOWNLOAD</TitleID>
 				<Items/></Static>
 			<SoftKey Id="7018" Name="IDC_SK_MMC_DOWNLOAD">
 				<Items/>
@@ -565,7 +553,6 @@
 	<DIALOG Id="17" Name="IDD_AMR_PREF" Focus="7019">
 		<Controls>
 			<Menu Id="7019" Name="IDC_AMR_PREF">
-				<TitleID>IDS_AMR_PREF</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -573,7 +560,6 @@
 	<DIALOG Id="18" Name="IDD_SECURITY_SERVICES" Focus="7020">
 		<Controls>
 			<Menu Id="7020" Name="IDC_SECURITY_TEST">
-				<TitleID>IDS_SECURITY_TESTS</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -581,7 +567,6 @@
 	<DIALOG Id="19" Name="IDD_SSL_TEST" Focus="7021">
 		<Controls>
 			<Menu Id="7021" Name="IDC_SSL_TEST">
-				<TitleID>IDS_SSL_TEST</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -589,7 +574,6 @@
 	<DIALOG Id="20" Name="IDD_SEC_TEST" Focus="7022">
 		<Controls>
 			<Menu Id="7022" Name="IDC_SEC_TEST">
-				<TitleID>IDS_SEC_TESTS</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -597,7 +581,6 @@
 	<DIALOG Id="21" Name="IDD_DRM_TEST" Focus="7023">
 		<Controls>
 			<Menu Id="7023" Name="IDC_DRM_TEST">
-				<TitleID>IDS_DRM_TESTS</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -615,7 +598,6 @@
 	<DIALOG Id="24" Name="IDD_RATS_DIALOG" Focus="7026">
 		<Controls>
 			<Menu Id="7026" Name="IDC_RATS_MENU">
-				<TitleID>IDS_RATS_TITLE</TitleID>
 				<Items>
 					<Item Id="8049" Name="IDC_RATS_CLIENT">
 						<TextID>IDS_CLIENT_UP</TextID>
@@ -633,7 +615,6 @@
 	<DIALOG Id="25" Name="IDD_RATS_IP_DIALOG" Focus="7028">
 		<Controls>
 			<Text Id="7028" Name="IDC_RATS_IP_TEXT">
-				<TitleID>IDS_SET_IP</TitleID>
 				<Items/></Text>
 			<SoftKey Id="7029" Name="IDC_RATS_IP_SOFTKEY">
 				<Items/>
@@ -645,7 +626,6 @@
 			<Static Id="7030" Name="IDC_RATS_TEST_STATIC">
 				<Items/></Static>
 			<Text Id="7031" Name="IDC_RATS_TEST_TEXT">
-				<TitleID>IDS_ENTER_TEST</TitleID>
 				<Items/></Text>
 		</Controls>
 	</DIALOG>
@@ -661,7 +641,6 @@
 	<DIALOG Id="28" Name="IDD_VOICE_DEBUG" Focus="7034">
 		<Controls>
 			<Menu Id="7034" Name="IDC_VOICE_DEBUG">
-				<TitleID>IDS_VOICE_DEBUG</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -669,7 +648,6 @@
 	<Dialog Id="29" Name="IDD_ESN_DIALOG" Focus="7040">
 		<Controls>
 			<Static Id="7040" Name="IDC_ESN_STATIC" Flags="40001">
-				<TitleID>IDS_ESN</TitleID>
 				<Items/></Static>
 			<SoftKey Id="7041" Name="IDC_ESN_SOFTKEY">
 				<Items/>
@@ -679,7 +657,6 @@
 	<Dialog Id="30" Name="IDD_BREWSET_DIALOG" Focus="30">
 		<Controls>
 			<Menu Id="30" Name="IDC_BREWSET_MENU" Flags="4000001">
-				<TitleID>IDS_BREWSETTUBG_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -708,7 +685,6 @@
 	<Dialog Id="34" Name="IDD_AUTHPOLICY_DIALOG" Focus="7051">
 		<Controls>
 			<Menu Id="7051" Name="IDC_MENU_AUTH_POLICY">
-				<TitleID>IDS_AUTH_POLICY</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -716,7 +692,6 @@
 	<Dialog Id="35" Name="IDD_PRIVACYPOLICY_DIALOG" Focus="7043">
 		<Controls>
 			<Menu Id="7043" Name="IDC_MENU_PRIVACY_POLICY">
-				<TitleID>IDS_STRING_PRIVACY_POLICY</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -766,7 +741,6 @@
 	<Dialog Id="42" Name="IDD_NET_LOCK_DIALOG" Focus="7053">
 		<Controls>
 			<Menu Id="7053" Name="IDC_NET_LOCK_MENU">
-				<TitleID>IDS_BLANK</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
