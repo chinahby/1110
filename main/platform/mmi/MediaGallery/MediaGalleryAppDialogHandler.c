@@ -8126,7 +8126,7 @@ static boolean MGAppUtil_WallpaperSettingCheck(IImage *po,
 
    if(MG_BETWEEN( pi->cx, MG_WALLPAPER_PIXEL_MIN, MG_WALLPAPER_PIXEL_MAX) && MG_BETWEEN(pi->cy, MG_WALLPAPER_PIXEL_MIN, MG_WALLPAPER_PIXEL_MAX))
       return TRUE;
-  else
+   else
 	  return FALSE;
 }//MGAppUtil_WallpaperSettingCheck
 
