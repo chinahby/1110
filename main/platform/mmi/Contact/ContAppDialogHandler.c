@@ -2570,17 +2570,22 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
             {
                 return TRUE;
             }
+			
             //if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType)
             //{
                 //return TRUE;                
             //}
-            if(wParam == AVK_SEND && ITEXTCTL_IsActive(pTextCtl) || wParam == AVK_INFO)
+            
+            //if(wParam == AVK_SEND && ITEXTCTL_IsActive(pTextCtl) || wParam == AVK_INFO)
+            if(wParam == AVK_SEND && ITEXTCTL_IsActive(pTextCtl)) //Add By zzg 2010_09_16
             {
                 ITEXTCTL_SetActive(pTextCtl, FALSE);
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
             }
 
-            if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType &&  wParam== AVK_RIGHT)
+		
+            //if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType &&  wParam== AVK_RIGHT)
+			if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType &&  wParam== AVK_INFO)//Add By zzg 2010_09_16
             {
                 ITEXTCTL_SetActive(pTextCtl, FALSE);
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
@@ -2643,7 +2648,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 case AVK_SPACE:
                 case AVK_RWD:                    
                 case AVK_POUND:
-                case AVK_STAR:
+                case AVK_STAR:				
                 if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType && IS_ZERO_REC())
                 {
                     return TRUE;
@@ -2665,7 +2670,6 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                         }
                     }
                     return TRUE;
-
                 case AVK_LEFT:
                 {    
                     if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType && IS_ZERO_REC())
@@ -2678,7 +2682,20 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 //break; 
                 return TRUE;
 
-                 case AVK_RIGHT:
+				//Add By zzg 2010_09_16
+				case AVK_RIGHT:
+                {    
+                    if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType && IS_ZERO_REC())
+                    {
+                        CContApp_DrawNorecord(pMe, pMenuCtl);
+                        return TRUE;
+                    }
+                    return TRUE;
+                }          
+				//Add End
+
+				case AVK_INFO:	//Add By zzg 2010_09_16
+                 //case AVK_RIGHT:
                  {    
                      //IMENUCTL_SetActive(pMenuCtl, FALSE);
                      if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType)
@@ -2711,7 +2728,9 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                      
                  }              
                  return TRUE;
-                 
+
+
+				 /*
                  case AVK_INFO:
                     if(pMe->m_bInsmartnofind == TRUE)
                     {
@@ -2723,20 +2742,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                         case SMART_STATE_IDD_LIST:
                             return TRUE;
 
-                        case SMART_STATE_IDD_SELECT:
-                            /*if (pMe->m_wSelFldType == SINGLE_SELECT_NUMBER)
-                            {
-                                curSelectFieldInfo.wIndex = pMe->m_wSelectSmart;//m_wSelectCont;   shenlong.xu revise @2008.10.07
-                                curSelectFieldInfo.wFieldCount = pMe->m_wFieldCount;
-                                curSelectFieldInfo.wFieldMask = pMe->m_wFieldIndex;
-                                
-                                rtn = CContApp_FindSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
-                                if (rtn == TYPE_NO_MATCH)
-                                {
-                                    CContApp_AddSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
-                                }
-                            }
-                            else*/
+                        case SMART_STATE_IDD_SELECT:                            
                             {
                                 if((pSelectFieldListRoot == pCurSelectFieldNode)&&(pCurSelectFieldNode == NULL))
                                 {
@@ -2787,6 +2793,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                             return TRUE;
                     }                     
                     return TRUE;
+                    */
                             
                 default:
                     return TRUE;                    
@@ -2975,7 +2982,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 case AVK_LEFT:
                 case AVK_STAR:
                 case AVK_POUND:
-                /*case AVK_RIGHT:*/
+                case AVK_RIGHT:
                 {
                     boolean b_TextctlActive = ITEXTCTL_IsActive(pTextCtl);
                     int           n_KeywordsLen =0;
@@ -3091,6 +3098,10 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                             return FALSE;                            
                     }
                     else if( wParam == AVK_LEFT || wParam == AVK_RIGHT)
+                    {
+						return TRUE;
+					}
+                    else if( wParam == AVK_INFO)
                     {
                          //if(b_TextctlActive)
                          //{
@@ -3274,7 +3285,8 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 }
                 return TRUE;
 
-                case AVK_RIGHT :
+                //case AVK_RIGHT :
+                case AVK_INFO:	//Add By zzg 2010_09_16
                     /*
                     if(SMART_STATE_IDD_SELECT != pMe->m_nSmartStateType)
                     {
@@ -8334,7 +8346,8 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
             dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE | MP_MULTI_SEL;
             IMENUCTL_SetProperties(pMenuCtl, dwMask);
             //IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
-            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+           // IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+           IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
@@ -8494,9 +8507,9 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
                    
                     break;
                     
-                case AVK_INFO:                    
-                    CLOSE_DIALOG(DLGRET_OK);
-                    return TRUE;
+              //  case AVK_INFO:                    
+              //      CLOSE_DIALOG(DLGRET_OK);
+              //      return TRUE;
 
                 default:
                     break;
@@ -12392,7 +12405,7 @@ static boolean  CContApp_HandleDetailMultiDlgEvent( CContApp  *pMe,
 
         case EVT_KEY_RELEASE:
             
-            if(AVK_RIGHT == wParam)
+            if(AVK_INFO == wParam)	//AVK_RIGHT
             {
                 uint16 selItem = IMENUCTL_GetSel(pMenuCtl);
 
@@ -14134,7 +14147,7 @@ static boolean  CContApp_HandleSelectOptDlgEvent( CContApp  *pMe,
             }
             switch(wParam)
             {
-                case IDS_EXECUTE:
+                case IDS_EXECUTE:		
                     
                     if (SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType)
                     {
@@ -14194,7 +14207,7 @@ static boolean  CContApp_HandleSelectOptDlgEvent( CContApp  *pMe,
                     }
                     
                     CLOSE_DIALOG(DLGRET_OK);
-                    break;
+                    break;					
 
                 case IDS_MARK:
                 case IDS_UNMARK:
