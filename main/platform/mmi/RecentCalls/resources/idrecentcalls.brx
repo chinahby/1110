@@ -26,7 +26,7 @@
 		<Text>Kirim pesan</Text>
 	</STRING>
 	<STRING Id="9" Name="IDS_CALL_TIME">
-		<Text>Waktu panggilan</Text>
+		<Text>Waktu</Text>
 	</STRING>
 	<STRING Id="10" Name="IDS_ALL_CALLS">
 		<Text>Semua panggilan </Text>
@@ -83,7 +83,7 @@
 		<Text>Password tidak valid</Text>
 	</STRING>
 	<STRING Id="28" Name="IDS_CALLTIME">
-		<Text>Waktu panggilan:</Text>
+		<Text>Waktu:</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_LAST_CALL">
 		<Text>Panggilan terakhir</Text>

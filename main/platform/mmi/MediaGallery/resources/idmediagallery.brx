@@ -254,7 +254,7 @@
 		<Text>Buka</Text>
 	</STRING>
 	<STRING Id="1084" Name="IDS_MG_WALLPAPERNOSET">
-		<Text>Gambar tak bisa diatur sebagai wallpaper</Text>
+		<Text>Ukuran terlalu besar. Gambar tak bisa diatur sbg wallpaper.</Text>
 	</STRING>
 	<STRING Id="1085" Name="IDS_MG_SELECTNONE">
 		<Text>Tak ada yg dipilih</Text>
