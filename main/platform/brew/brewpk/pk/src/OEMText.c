@@ -4698,52 +4698,79 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
     }
     MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 12", 0,0,0);
 #elif defined(FEATURE_DISP_160X128)
-	if(eCode == EVT_KEY_HELD)
+	    if(eCode == EVT_KEY_HELD)
 		{
-			switch(key)
-			{
-				case AVK_0:
-				case AVK_1:
-				case AVK_2:
-				case AVK_3:
-				case AVK_4:
-				case AVK_5:
-				case AVK_6:
-				case AVK_7:
-				case AVK_8:
-				case AVK_9:
-					{
-						int i = 0;
-						if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-						{
-							/* Set selection to the character before the insertion point */
-							--pContext->wSelStart;
-						}
-						else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
-						{
-							 return FALSE;
-						}
-				
-						/* Insert a "NUL" to just delete and insert nothing */
-						TextCtl_AddChar(pContext, 0);
-						if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
-						{
-							// meet the max count of the text.
-							if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
-							{
-								sT9Status = T9STATERROR; 
-								return FALSE;
-							}
-						}
-						TextCtl_NoSelection(pContext);
-						TextCtl_AddChar(pContext,(AECHAR) ( ( (int)key - (int)AVK_0 ) + '0'));
-	
-						}
-					return TRUE;
-					default:
-					break;
+            int i;
+            AECHAR ch = 0;
+			switch(key){
+			case AVK_0:
+			case AVK_1:
+			case AVK_2:
+			case AVK_3:
+			case AVK_4:
+			case AVK_5:
+			case AVK_6:
+			case AVK_7:
+			case AVK_8:
+			case AVK_9:
+            case AVK_POUND:
+	        case AVK_STAR:
+	        case AVK_T:
+	        case AVK_Y:
+	        case AVK_U:
+	        case AVK_I:
+	        case AVK_O:
+	        case AVK_P:
+	        case AVK_G:
+	        case AVK_H:
+	        case AVK_J:
+	        case AVK_K:
+	        case AVK_L:
+	        case AVK_V:
+	        case AVK_B:
+	        case AVK_N:
+	        case AVK_M:
+                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
+    			{           
+            		if (key == VLCharKeyItem[i].wParam)
+            		{
+                        ch = VLCharKeyItem[i].wp;
+                        break;
+            		}
+                }
+                break;
+                
+			default:
+			    break;
+			}
+            
+            if(ch != 0)
+            {
+                if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+				{
+					/* Set selection to the character before the insertion point */
+					--pContext->wSelStart;
 				}
-			
+				else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+				{
+					 return FALSE;
+				}
+		
+				/* Insert a "NUL" to just delete and insert nothing */
+				TextCtl_AddChar(pContext, 0);
+				if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+				{
+					// meet the max count of the text.
+					if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+					{
+						sT9Status = T9STATERROR; 
+						return FALSE;
+					}
+				}
+				TextCtl_NoSelection(pContext);
+				TextCtl_AddChar(pContext,ch);
+                return TRUE;
+            }
 		}
 		else
 		{
@@ -5543,50 +5570,77 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 #elif defined (FEATURE_DISP_160X128)
     if(eCode == EVT_KEY_HELD)
     {
-    	switch(key)
-    	{
-    		case AVK_0:
-	        case AVK_1:
-	        case AVK_2:
-	        case AVK_3:
-	        case AVK_4:
-	        case AVK_5:
-	        case AVK_6:
-	        case AVK_7:
-	        case AVK_8:
-	        case AVK_9:
-				{
-					int i = 0;
-					if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-            		{
-                 		/* Set selection to the character before the insertion point */
-                 		--pContext->wSelStart;
-            		}
-            		else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
-            		{
-                 		 return FALSE;
-            		}
+        int i;
+        AECHAR ch = 0;
+        switch(key){
+        case AVK_0:
+        case AVK_1:
+        case AVK_2:
+        case AVK_3:
+        case AVK_4:
+        case AVK_5:
+        case AVK_6:
+        case AVK_7:
+        case AVK_8:
+        case AVK_9:
+        case AVK_POUND:
+        case AVK_STAR:
+        case AVK_T:
+        case AVK_Y:
+        case AVK_U:
+        case AVK_I:
+        case AVK_O:
+        case AVK_P:
+        case AVK_G:
+        case AVK_H:
+        case AVK_J:
+        case AVK_K:
+        case AVK_L:
+        case AVK_V:
+        case AVK_B:
+        case AVK_N:
+        case AVK_M:
+            for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
+            {           
+                if (key == VLCharKeyItem[i].wParam)
+                {
+                    ch = VLCharKeyItem[i].wp;
+                    break;
+                }
+            }
+            break;
             
-            		/* Insert a "NUL" to just delete and insert nothing */
-            		TextCtl_AddChar(pContext, 0);
-	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
-	                {
-	                    // meet the max count of the text.
-	                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
-	                    {
-	                        sT9Status = T9STATERROR; 
-	                        return FALSE;
-	                    }
-	                }
-	                TextCtl_NoSelection(pContext);
-            		TextCtl_AddChar(pContext,(AECHAR) ( ( (int)key - (int)AVK_0 ) + '0'));
-
-		            }
-	            return TRUE;
-				default:
-				break;
-			}
-		
+        default:
+            break;
+        }
+        
+        if(ch != 0)
+        {
+            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+            {
+                /* Set selection to the character before the insertion point */
+                --pContext->wSelStart;
+            }
+            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+            {
+                 return FALSE;
+            }
+    
+            /* Insert a "NUL" to just delete and insert nothing */
+            TextCtl_AddChar(pContext, 0);
+            if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+            {
+                // meet the max count of the text.
+                if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+                {
+                    sT9Status = T9STATERROR; 
+                    return FALSE;
+                }
+            }
+            TextCtl_NoSelection(pContext);
+            TextCtl_AddChar(pContext,ch);
+            return TRUE;
+        }
     }
 	else
 	{
@@ -5991,50 +6045,77 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 #ifdef FEATURE_DISP_160X128
     if(eCode == EVT_KEY_HELD)
     {
-    	switch(key)
-    	{
-    		case AVK_0:
-	        case AVK_1:
-	        case AVK_2:
-	        case AVK_3:
-	        case AVK_4:
-	        case AVK_5:
-	        case AVK_6:
-	        case AVK_7:
-	        case AVK_8:
-	        case AVK_9:
-				{
-					int i = 0;
-					if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-            		{
-                 		/* Set selection to the character before the insertion point */
-                 		--pContext->wSelStart;
-            		}
-            		else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
-            		{
-                 		 return FALSE;
-            		}
+        int i;
+        AECHAR ch = 0;
+		switch(key){
+		case AVK_0:
+		case AVK_1:
+		case AVK_2:
+		case AVK_3:
+		case AVK_4:
+		case AVK_5:
+		case AVK_6:
+		case AVK_7:
+		case AVK_8:
+		case AVK_9:
+        case AVK_POUND:
+        case AVK_STAR:
+        case AVK_T:
+        case AVK_Y:
+        case AVK_U:
+        case AVK_I:
+        case AVK_O:
+        case AVK_P:
+        case AVK_G:
+        case AVK_H:
+        case AVK_J:
+        case AVK_K:
+        case AVK_L:
+        case AVK_V:
+        case AVK_B:
+        case AVK_N:
+        case AVK_M:
+            for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
+			{           
+        		if (key == VLCharKeyItem[i].wParam)
+        		{
+                    ch = VLCharKeyItem[i].wp;
+                    break;
+        		}
+            }
+            break;
             
-            		/* Insert a "NUL" to just delete and insert nothing */
-            		TextCtl_AddChar(pContext, 0);
-	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
-	                {
-	                    // meet the max count of the text.
-	                    if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
-	                    {
-	                        sT9Status = T9STATERROR; 
-	                        return FALSE;
-	                    }
-	                }
-	                TextCtl_NoSelection(pContext);
-            		TextCtl_AddChar(pContext,(AECHAR) ( ( (int)key - (int)AVK_0 ) + '0'));
-
-		            }
-	            return TRUE;
-				default:
-				break;
+		default:
+		    break;
+		}
+        
+        if(ch != 0)
+        {
+            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+			{
+				/* Set selection to the character before the insertion point */
+				--pContext->wSelStart;
 			}
-		
+			else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+			{
+				 return FALSE;
+			}
+	
+			/* Insert a "NUL" to just delete and insert nothing */
+			TextCtl_AddChar(pContext, 0);
+			if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+			{
+				// meet the max count of the text.
+				if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+				{
+					sT9Status = T9STATERROR; 
+					return FALSE;
+				}
+			}
+			TextCtl_NoSelection(pContext);
+			TextCtl_AddChar(pContext,ch);
+            return TRUE;
+        }
     }
 	else
 	{

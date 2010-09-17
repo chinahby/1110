@@ -339,7 +339,7 @@ variables and other items needed by this module.
 */
 #define UI_KEY_BUF_SIZE 128      /* Max keycodes to buffer    */
 #define UI_KEY_BUF_MASK 0x7f    /* Mask for modulus in ring  */
-#define UI_KEY_HOLD_TMS         2500
+#define UI_KEY_HOLD_TMS         1800
 #define UI_KEY_REPEAT_START_TMS 1500
 #define UI_KEY_REPEAT_TMS       150
 
