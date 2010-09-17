@@ -561,11 +561,13 @@ extern int  AEETopVisibleCtl_New(IShell * pShell, AEECLSID cls, void ** ppObj);
 #endif
 
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
 extern int CServingNetworks_New(IShell *pIShell, AEECLSID cls, void ** ppo);
 
 #if defined(FEATURE_EXTENDED_KEYS)
 extern int AEEKeysMapping_New(IShell *ps, AEECLSID cls, void **ppif);
 #endif
+#endif /*FEATURE_W021_LOW_MEMORY*/
 #endif
 
 extern int AEEMannerModeStore_New(IShell* ps, AEECLSID cls, void** ppif);
@@ -991,9 +993,11 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
          {AEECLSID_PRIMARYQOSSESSION  ,0 ,PL_NETWORK, NULL, IPrimaryQoSSession_New},
 #endif // defined(FEATURE_BREW_QOS)
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
          {AEECLSID_NETWORK  ,0 ,PL_NETWORK, NULL, INetwork_New},
          {AEECLSID_NETUTILS ,0 ,PL_NETWORK, NULL, INetUtils_New},
          {AEECLSID_NETUTILS2 ,0 ,0, NULL, INetUtils2_New},
+#endif         
 #endif
 #if defined(FEATURE_BACKLIGHT) // {
          {AEECLSID_BACKLIGHT, ASCF_UPGRADE, 0, NULL, AEEBacklight_New},
@@ -1036,7 +1040,9 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
 #endif
 #if defined(FEATURE_EXTENDED_KEYS)
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
          {AEECLSID_KEYSMAPPING, ASCF_UPGRADE, 0, NULL, AEEKeysMapping_New},
+#endif         
 #endif
 #endif
 #if defined(FEATURE_FM)
@@ -1044,9 +1050,11 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
          {AEECLSID_FMRDS,0,0,NULL,OEMFMRDS_New},
 #endif
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
          {AEECLSID_ServingNetworks, (ASCF_UPGRADE), 0, NULL, CServingNetworks_New},
          {AEECLSID_GPSOneLock, ASCF_PRIV, 0, NULL, AEEGPSOneConfig_New},
          {AEECLSID_MannerMode, ASCF_PRIV, 0, NULL, AEEMannerModeStore_New},
+#endif         
 #endif
          {0,0,0,NULL,NULL}
       };
@@ -1110,7 +1118,9 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
       gascICipherFactory,
 #endif
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
       gascIWebUtil,
+#endif      
 #endif
       gascIWebOpts,
 #if defined(FEATURE_BREW_SECURITY)

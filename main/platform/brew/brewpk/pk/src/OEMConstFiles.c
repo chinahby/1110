@@ -61,15 +61,18 @@ extern AEEConstFile gVIEWAPP_MIF;
 //entries for pdiparsers & vCalStore
 #if !defined(AEE_SIMULATOR)
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
 extern AEEConstFile gAEEVCALSTORE_MIF;
 extern AEEConstFile gAEEVCALSTORE_MOD;
 extern AEEConstFile gAEEPDIPARSERS_MIF;
 extern AEEConstFile gAEEPDIPARSERS_MOD;
+#endif /*FEATURE_W021_LOW_MEMORY*/
 #endif
 #endif
 
 // Const MIF files for MCF
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
 extern AEEConstFile g10888_MIF;
 extern AEEConstFile g10889_MIF;
 extern AEEConstFile g10890_MIF;
@@ -85,6 +88,7 @@ extern AEEConstFile g19920_MIF;
 extern AEEConstFile g19922_MIF;
 extern AEEConstFile g19923_MIF;
 extern AEEConstFile g19924_MIF;
+#endif /*FEATURE_W021_LOW_MEMORY*/
 #endif
 
 #if defined(FEATURE_APP_QTCAM)
@@ -93,9 +97,12 @@ extern AEEConstFile gQTCAM_MIF;
 
 // const MIF files for USB Host Mass Storage
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
 extern AEEConstFile g26108_MIF;
 extern AEEConstFile g26109_MIF;
+#endif /*FEATURE_W021_LOW_MEMORY*/
 #endif
+
 #if defined(FEATURE_SECMSM_APPS) || defined(FEATURE_ODM_BROWSER) || defined(FEATURE_ODM_UI)
 extern const AEEConstFile *  gpODMAppsConstFiles[];
 #endif
@@ -124,6 +131,8 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
 #ifndef CUST_EDITION
                                                             // Const MIF files for MCF
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
+
                                                             &g10888_MIF,
                                                             &g10889_MIF,
                                                             &g10890_MIF,
@@ -140,6 +149,8 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
                                                             &g19923_MIF,
                                                             &g19924_MIF,
 #endif
+
+#endif
 #endif
 #if defined(FEATURE_DEFAULT_VIEW_APP)
                                                             &gVIEWAPP_MIF,
@@ -150,14 +161,17 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
 
 #ifndef CUST_EDITION
 #ifndef FEATURE_MANGO_BREW                                                            // Const MIF files for USB Host Mass Storage
+#ifndef FEATURE_W021_LOW_MEMORY															
                                                             &g26108_MIF,
                                                             &g26109_MIF,
 #if !defined(AEE_SIMULATOR)
                                                             &gAEEVCALSTORE_MIF,
                                                             &gAEEVCALSTORE_MOD,
                                                             &gAEEPDIPARSERS_MIF,
-                                                            &gAEEPDIPARSERS_MOD,                                                            
-#endif
+                                                            &gAEEPDIPARSERS_MOD,     
+#endif                                                             
+#endif/*FEATURE_W021_LOW_MEMORY*/
+
 #endif      
 #endif //#ifndef CUST_EDITION
 #endif

@@ -109,7 +109,9 @@ when       who     what, where, why
       //#define FEATURE_APP_DATASTATS
 #endif
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
       #define FEATURE_ICM
+#endif	  
 #endif
     #endif
   #endif  /* FEATURE_BREW_LITE || FEATURE_BREW */

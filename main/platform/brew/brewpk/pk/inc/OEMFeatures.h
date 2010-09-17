@@ -77,8 +77,10 @@ GENERAL DESCRIPTION:
 #endif /* !FEATURE_WCDMA && !FEATURE_GSM && !FEATURE_CDSMS */
 
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
 #if !defined(OEMPRIVACY)
    #define OEMPRIVACY            // Use OEMPrivacy.c
+#endif /*FEATURE_W021_LOW_MEMORY*/
 #endif
 
 #if !defined(OEMRINGERS)
@@ -151,7 +153,10 @@ GENERAL DESCRIPTION:
 #define FEATURE_APP_MANAGER
 #endif
 #endif
+
+#ifndef FEATURE_W021_LOW_MEMORY
 #define FEATURE_USES_ADVANCEAPI
+#endif
 
 #ifdef FEATURE_UI_CORE
 
@@ -162,9 +167,12 @@ GENERAL DESCRIPTION:
 
 #define FEATURE_ANNUNCIATOR
 
+#ifndef FEATURE_W021_LOW_MEMORY
 #ifndef FEATURE_BREW_DOWNLOAD
 #define FEATURE_BREW_DOWNLOAD
 #endif
+#endif
+
 #endif
 
 #ifndef WIN32
@@ -191,7 +199,10 @@ GENERAL DESCRIPTION:
 //#define FEATURE_DEFAULT_VIEW_APP  // Use ViewApp.c as default view applet.
 #ifndef FEATURE_MANGO_BREW
 //#define FEATURE_GIF_DECODE
+#ifndef FEATURE_W021_LOW_MEMORY
+
 #define FEATURE_BCI_DECODE
+#endif
 #define FEATURE_BREW_PNG_DECODE
 #endif
 
@@ -238,9 +249,12 @@ GENERAL DESCRIPTION:
 // Linked AEE Libraries...
 //
 #ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_W021_LOW_MEMORY
 #define AEEMENU_LIB     1
 #define AEECONTROLS_LIB 1
 #define AEEDB_LIB       1
+#endif
+
 #ifdef FEATURE_USES_ADVANCEAPI
 #define FEATURE_BREW_AEENET
 #define FEATURE_BREW_AEETHREAD
@@ -500,7 +514,9 @@ GENERAL DESCRIPTION:
 
 #if !defined( AEE_SIMULATOR)
     #define FEATURE_APP_DIALER
+#ifndef FEATURE_W021_LOW_MEMORY	
     #define FEATURE_ICM
+#endif	
     #undef FEATURE_APP_RECENTCALLS
     #define FEATURE_CALLLIST
 #endif

@@ -1,6 +1,8 @@
 #ifndef CUSTSFLEXI203NASRANI_H
 #define CUSTSFLEXI203NASRANI_H
 
+#define SOFTWARE_VER04
+
 #include "custflexi203.h"
 
 #endif /* CUSTSFLEXI203NASRANI_H*/

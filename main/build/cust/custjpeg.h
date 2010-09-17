@@ -41,8 +41,11 @@ when       who     what, where, why
 #ifdef FEATURE_CAMERA
 #define FEATURE_JPEG_ENCODER
 #endif
+
+#ifndef FEATURE_W021_LOW_MEMORY
 #define FEATURE_JPEG_DECODER
 #define FEATURE_QCT_JPEG_DECODER // Use the QCT provided JPEG decoder.
+#endif
 
 #ifdef FEATURE_JPEG_ENCODER
 
@@ -50,11 +53,11 @@ when       who     what, where, why
 #define FEATURE_JPEG_ENCODER_REV2
 #endif
 
-
+#ifndef 
 #ifdef FEATURE_JPEG_DECODER
-
 /* MSM6550/6275/6800 use decoder rev2 */
 #define FEATURE_JPEG_DECODER_REV2
+
 #endif
 
 

@@ -145,15 +145,13 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #endif
 
 #if defined(FEATURE_ICM)
-	#include "AEECM.h"
-	#include "AEEAlert.h"
+#include "AEECM.h"
+#ifdef FEATURE_ANNUNCIATOR
+	#include "AEEAnnunciator.h"
+#endif /* FEATURE_ANNUNCIATOR */
 
-	#ifdef FEATURE_ANNUNCIATOR
-		#include "AEEAnnunciator.h"
-	#endif /* FEATURE_ANNUNCIATOR */
-
-#include "AEEAlert.h"
 #endif /* FEATURE_ICM */
+#include "AEEAlert.h"
 
 #if defined(FEATURE_GSM) || defined(FEATURE_WCDMA)
 #error code not present
@@ -404,33 +402,26 @@ extern const AEEStaticClass gOEMOverlayClasses[];
 
 // ICM
 #if defined(FEATURE_ICM)
-#if !defined(FEATURE_MANGO_UI)
-	extern int OEMALERT_New (IShell *pIShell, AEECLSID cls, void **ppif);
-	extern int OEMALERT_NOTIFIER_New (IShell *pIShell, AEECLSID cls, void **ppif);
-#endif
-	extern int OEMCM_New (IShell *pIShell, AEECLSID cls, void **ppif);
-	extern int OEMCMNotifier_New (IShell *pIShell, AEECLSID cls, void **ppif);
-	extern int OEMCallOpts_New (IShell *pIShell, AEECLSID cls, void **ppif);
-	extern int OEMCMModel_New (IShell *pIShell, AEECLSID cls, void **ppif);
-
-	#if defined(FEATURE_WLAN)
-#error code not present
-	#endif /*FEATURE_WLAN */
-
-	//PDP	
-	#if defined (FEATURE_WCDMA) || defined (FEATURE_GSM_GPRS)
-#error code not present
-	#endif
-
-	//IBatt
-	#if (!defined(FEATURE_UIONE_HDK) )
-		extern int AEEBatt_New(IShell *pIShell, AEECLSID cls, void **ppif);
-	#endif /* FEATURE_UIONE_HDK */
+extern int OEMCM_New (IShell *pIShell, AEECLSID cls, void **ppif);
+extern int OEMCMNotifier_New (IShell *pIShell, AEECLSID cls, void **ppif);
+extern int OEMCallOpts_New (IShell *pIShell, AEECLSID cls, void **ppif);
+extern int OEMCMModel_New (IShell *pIShell, AEECLSID cls, void **ppif);
+//IBatt
+#if (!defined(FEATURE_UIONE_HDK) )
+	extern int AEEBatt_New(IShell *pIShell, AEECLSID cls, void **ppif);
+#endif /* FEATURE_UIONE_HDK */
 #else /* !FEATURE_ICM */
 #if defined(FEATURE_MANGO_UI)
    extern int AEEBatt_New(IShell *pIShell, AEECLSID cls, void **ppif);
 #endif
 #endif /* FEATURE_ICM */
+
+#if !defined(FEATURE_MANGO_UI)
+	extern int OEMALERT_New (IShell *pIShell, AEECLSID cls, void **ppif);
+	extern int OEMALERT_NOTIFIER_New (IShell *pIShell, AEECLSID cls, void **ppif);
+#endif
+
+
 #if defined(FEATURE_UIALARM) // {
 extern int AEEAlarm_New(IShell *ps, AEECLSID cls, void **ppif);
 #endif // } FEATURE_UIALARM
@@ -1413,11 +1404,13 @@ static const AEEStaticClass gOEMStaticClassList[] = {
    {AEECLSID_CM_NOTIFIER,          ASCF_PRIV,0,NULL,OEMCMNotifier_New},
    //{AEECLSID_CALLOPTS,             ASCF_PRIV,0,NULL,OEMCallOpts_New},
    //{AEECLSID_CM_MODEL,                   ASCF_PRIV,0,NULL,OEMCMModel_New},
+#endif /* FEATURE_ICM */
+   
 #if !defined(FEATURE_MANGO_UI)
    {AEECLSID_ALERT,                   ASCF_PRIV,0,NULL,OEMALERT_New},
    {AEECLSID_ALERT_NOTIFIER,          ASCF_PRIV,0,NULL,OEMALERT_NOTIFIER_New},
 #endif
-#endif /* FEATURE_ICM */
+
 #if defined(FEATURE_UIALARM)
     {AEECLSID_UIALARM,      ASCF_PRIV,0,NULL,AEEAlarm_New},
 #endif

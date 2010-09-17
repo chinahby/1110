@@ -155,6 +155,7 @@ static void zgd_tft177_disp_update
 
 #define HEXING_LCD_WRITE_CMD(v)  out_byte(lcatDispCfg[0].cmd_addr,(v))
 #define HEXING_LCD_WRITE_DATA(v)  out_byte(lcatDispCfg[0].param_addr,(v))
+#define HEXING_LCD_READ_DATA in_byte(lcatDispCfg[0].param_addr)
 #define HEXING_LCD_DELAY(v) clk_busy_wait(v*1000)
 
 
@@ -633,8 +634,9 @@ SIDE EFFECTS
 
 static void zgd_tft177_disp_powerup(void)
 {
-    rex_enter_crit_sect(&zgd_tft177_crit_sect);
+	//unsigned char id1=0,id2=0,id3=0;
 
+    rex_enter_crit_sect(&zgd_tft177_crit_sect);
     if (!zgd_tft177_state.disp_powered_up && !zgd_tft177_state.display_on)
     {
      //   RSB = 1;
@@ -650,8 +652,20 @@ static void zgd_tft177_disp_powerup(void)
         HEXING_LCD_WRITE_CMD(0x11); //Exit Sleep
         HEXING_LCD_DELAY(120);
 
-
-
+	//	HEXING_LCD_WRITE_CMD(0xDa);
+	//	id1=HEXING_LCD_READ_DATA;
+	//	id1=HEXING_LCD_READ_DATA;
+	//	HEXING_LCD_WRITE_CMD(0xDb);
+	//	id2=HEXING_LCD_READ_DATA;
+	//	id2=HEXING_LCD_READ_DATA;
+	//	HEXING_LCD_WRITE_CMD(0xDc);
+	//	id3=HEXING_LCD_READ_DATA;
+	//	id3=HEXING_LCD_READ_DATA;
+	//	if (id1==0x54&&id2==0x80&&id3==0x66)
+	//	{
+	//		HEXING_LCD_DELAY(1); 
+//		}
+		
         HEXING_LCD_WRITE_CMD(0x26); //Set Default Gamma
         HEXING_LCD_WRITE_DATA(0x04);
 
