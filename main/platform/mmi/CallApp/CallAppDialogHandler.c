@@ -4168,9 +4168,63 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             //                                        INCOMINGCALLISREADY_TIMER,
             //                                        CallApp_IncomingCall_IsReady_Timer,
             //                                        pMe);
+
+			//(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER,  0,  0);//Add By zzg 2010_09_17
             return TRUE;
 
         }
+
+		/*
+		//Add By zzg 2010_09_17
+		case EVT_USER:
+		{
+
+		    AEECMCallInfo ci;
+		    boolean bKeyguardEnabled = FALSE;		    
+
+		    if(pMe->m_CallsTable == NULL)
+		    {
+		        return FALSE;
+		    }
+   
+		    if(pMe->m_anykey_answer & 0x2)        
+		    {
+		    
+		        if(AEE_SUCCESS != ICM_GetCallInfo(pMe->m_pICM, pMe->m_CallsTable->call_id, &ci, sizeof(AEECMCallInfo)))
+		        {
+		            return FALSE;
+		        }
+
+		        IALERT_StopAlerting(pMe->m_pAlert);
+		        switch (ci.call_state)
+		        {
+		            case AEECM_CALL_STATE_INCOM:
+#ifdef FEATURE_IS2000_SCC_CODES
+		                pMe->m_bAnswerHold = bAnswerHold;
+#endif //FEATURE_IS2000_SCC_CODES 
+		                ICM_AnswerCall(pMe->m_pICM, pMe->m_CallsTable->call_id);
+		                CLOSE_DIALOG(DLGRET_CONNECT)
+		                break;
+
+		            case AEECM_CALL_STATE_CONV:
+#ifdef FEATURE_IS2000_SCC_CODES
+		                pMe->m_bAnswerHold = bAnswerHold;
+#endif //FEATURE_IS2000_SCC_CODES
+		                CallApp_AnswerInbandCall(pMe);
+		                CLOSE_DIALOG(DLGRET_CONNECT)
+		                break;
+
+		            default:
+		                return FALSE;
+		       }
+		       CallApp_Change_Call_Table_Call_Start_Time(pMe,pMe->m_CallsTable->call_number);
+		       CallApp_Change_Call_Table_Call_History_State(pMe,pMe->m_CallsTable->call_number,AEECALLHISTORY_CALL_TYPE_FROM/*CALLHISTORY_INCOMING*/);
+			}
+
+			return TRUE;
+		}
+		//Add End	
+		*/
 
         case EVT_DIALOG_END:
             pMe->m_b_incoming = FALSE;
@@ -4623,10 +4677,11 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
             }
 
             SETAEERECT(&rc,
-                                                    CALL_NUM_X, //CALL_TEXT_X,
-                                                    CALL_SECOND_LINE_Y,
-                                                    CALL_NUM_DX, //CALL_TEXT_DX,
+                                                    10, //CALL_TEXT_X,
+                                                    CALL_THIRD_LINE_Y, //CALL_SECOND_LINE_Y,
+                                                    (pMe->m_rc.dx-10), //CALL_NUM_DX, //CALL_TEXT_DX,
                                                     CALL_LINE_HIGHT);
+			
             IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH                     
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
@@ -4642,8 +4697,8 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                                     AEE_FONT_NORMAL,
                                                     szText,
                                                     -1,
-                                                    CALL_NUM_X, //CALL_TEXT_X, //modfied by chengxiao 2009.01.20                                                
-                                                    CALL_SECOND_LINE_Y,
+                                                    10, //CALL_NUM_X, //CALL_TEXT_X, //modfied by chengxiao 2009.01.20                                                
+                                                    CALL_THIRD_LINE_Y, //CALL_SECOND_LINE_Y,
                                                     &rc,
                                                     IDF_TEXT_TRANSPARENT);
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH		
