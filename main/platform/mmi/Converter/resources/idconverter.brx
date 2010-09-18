@@ -158,13 +158,13 @@
 		<Text>°F</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_CHANGE_TITLE">
-		<Text>Mata Uang referensi</Text>
+		<Text>Referensi mata uang</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_DONE">
 		<Text>Selesai</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_OVERFLOW">
-		<Text>Melimpah</Text>
+		<Text>Berlebih</Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_SAVE_ZERO">
 		<Text>Tidak dapat menyimpan nol</Text>

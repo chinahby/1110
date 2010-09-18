@@ -17,31 +17,31 @@
 		<Text>Pengaturan SMS</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_SLOTCYCLEINDEX">
-		<Text>Siklus Slot Indeks</Text>
+		<Text>Indeks Putaran Slot</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_SPCCODE">
 		<Text>Kode Keamanan</Text>
 	</STRING>
 	<STRING Id="8" Name="IDS_SMS_TIMESTAMP">
-		<Text>Time Stamp</Text>
+		<Text>Stempel waktu</Text>
 	</STRING>
 	<STRING Id="9" Name="IDS_MAX_MSG_PAYLOAD">
-		<Text>Max Msg Ukuran</Text>
+		<Text>Ukuran pesan maks</Text>
 	</STRING>
 	<STRING Id="10" Name="IDS_SMS_MO_ENCODING">
-		<Text>MO Encoding</Text>
+		<Text>Enkoding MO</Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_SMS_MO_CHANNEL_SELECTION">
 		<Text>Izinkan Transportasi</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_SMS_TIMESTAMP_ADJUST">
-		<Text>Mengatur Waktu</Text>
+		<Text>Sesuaikan waktu</Text>
 	</STRING>
 	<STRING Id="13" Name="IDS_SMS_TIMESTAMP_ASRECEIVED">
-		<Text>Sebagai Diterima</Text>
+		<Text>Seperti diterima</Text>
 	</STRING>
 	<STRING Id="14" Name="IDS_SMS_MO_ENCODING_7BIT">
-		<Text>7-bit ASCII</Text>
+		<Text>ASCII 7-bit</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_SMS_MO_ENCODING_UNICODE">
 		<Text>Unicode</Text>
@@ -53,31 +53,31 @@
 		<Text>Edit</Text>
 	</STRING>
 	<STRING Id="22" Name="IDS_CMD_SAVE">
-		<Text>Menyimpan</Text>
+		<Text>Simpan</Text>
 	</STRING>
 	<STRING Id="23" Name="IDS_CMD_CANCEL">
-		<Text>Del</Text>
+		<Text>Hps</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_CMD_YES">
-		<Text>Yes</Text>
+		<Text>Ya</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_CMD_NO">
-		<Text>No</Text>
+		<Text>Tidak</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_PHONE_NUMBER">
 		<Text>Nomor telepon</Text>
 	</STRING>
 	<STRING Id="27" Name="IDS_HOME_SIDNID">
-		<Text>Home SID / PIN</Text>
+		<Text>SID / PIN Rumah</Text>
 	</STRING>
 	<STRING Id="28" Name="IDS_LOCK_SIDNID">
-		<Text>SID Lock / PIN</Text>
+		<Text>Kunci SID / PIN</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_COUNTRY_CODE">
 		<Text>PKS</Text>
 	</STRING>
 	<STRING Id="30" Name="IDS_NOTHING_ENTERED">
-		<Text>Harap masukkan sebuah nilai.</Text>
+		<Text>Harap masukkan nilai.</Text>
 	</STRING>
 	<STRING Id="31" Name="IDS_PRL_ENABLED">
 		<Text>PRL Diaktifkan</Text>
@@ -101,13 +101,13 @@
 		<Text>Kelas Overload</Text>
 	</STRING>
 	<STRING Id="38" Name="IDS_HOME_SID_REG">
-		<Text>Home SID Reg</Text>
+		<Text>Daftar SID Rumah</Text>
 	</STRING>
 	<STRING Id="39" Name="IDS_FORN_SID_REG">
-		<Text>Asing SID Reg</Text>
+		<Text>Daftar SID Asing</Text>
 	</STRING>
 	<STRING Id="40" Name="IDS_FORN_NID_REG">
-		<Text>PIN Asing Reg</Text>
+		<Text>Daftar PIN Asing</Text>
 	</STRING>
 	<STRING Id="41" Name="IDS_EDIT_SID">
 		<Text>Masukkan SID</Text>
@@ -116,28 +116,28 @@
 		<Text>Masukkan PIN</Text>
 	</STRING>
 	<STRING Id="43" Name="IDS_CMD_SID_OK">
-		<Text>Terus</Text>
+		<Text>Lanjut</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_CMD_NID_OK">
-		<Text>Menyimpan</Text>
+		<Text>Simpan</Text>
 	</STRING>
 	<STRING Id="45" Name="IDS_CMD_NID_CANCEL">
-		<Text>Membatalkan</Text>
+		<Text>Batalkan</Text>
 	</STRING>
 	<STRING Id="46" Name="IDS_ENTER_SECCODE">
-		<Text>Masukkan Sec. Kode</Text>
+		<Text>Masukkan kode keamanan</Text>
 	</STRING>
 	<STRING Id="47" Name="IDS_CMD_SECCODE_OK">
 		<Text>OK</Text>
 	</STRING>
 	<STRING Id="48" Name="IDS_INVALID_SECCODE">
-		<Text>Valid Kode Keamanan</Text>
+		<Text>Kode keamanan salah</Text>
 	</STRING>
 	<STRING Id="49" Name="IDS_PHONE_RESETTING">
-		<Text>Layanan Pemrograman keluar. Telepon akan disetel ulang ...</Text>
+		<Text>Keluar dari layanan pemrograman. Telepon akan diatur ulang ...</Text>
 	</STRING>
 	<STRING Id="50" Name="IDS_TOO_SHORT">
-		<Text>Nilai baru tidak cukup lama.</Text>
+		<Text>Nilai baru tidak cukup panjang.</Text>
 	</STRING>
 	<STRING Id="51" Name="IDS_SAVING">
 		<Text>Menyimpan ...</Text>
@@ -158,7 +158,7 @@
 		<Text>Diaktifkan</Text>
 	</STRING>
 	<STRING Id="57" Name="IDS_SMS_IS41_WORKAROUND_OFF">
-		<Text>Cacat</Text>
+		<Text>Nonaktifkan</Text>
 	</STRING>
 	<STRING Id="58" Name="IDS_NETWORK_CODE">
 		<Text>MNC</Text>
@@ -185,7 +185,7 @@
 		<Text>Pengaturan Analog</Text>
 	</STRING>
 	<STRING Id="67" Name="IDS_AMPS_HOME_SID">
-		<Text>Home SID</Text>
+		<Text>SID Rumah</Text>
 	</STRING>
 	<STRING Id="68" Name="IDS_AMPS_FIRSTCHP">
 		<Text>1 Pager Channel</Text>
@@ -194,58 +194,58 @@
 		<Text>Pendaftaran</Text>
 	</STRING>
 	<STRING Id="70" Name="IDS_AMPSREG_WHEREABOUTS_UNKNOWN">
-		<Text>Menyembunyikan</Text>
+		<Text>Sembunyikan</Text>
 	</STRING>
 	<STRING Id="71" Name="IDS_AMPSREG_WHEREABOUTS_KNOWN">
 		<Text>Ya</Text>
 	</STRING>
 	<STRING Id="72" Name="IDS_AMPSREG_DISABLED">
-		<Text>Cacat</Text>
+		<Text>Nonaktifkan</Text>
 	</STRING>
 	<STRING Id="73" Name="IDS_CMD_AKEY">
-		<Text>AKEY Entry</Text>
+		<Text>Masukan AKEY</Text>
 	</STRING>
 	<STRING Id="74" Name="IDS_AKEY">
 		<Text>AKEY</Text>
 	</STRING>
 	<STRING Id="75" Name="IDS_AKEY_FAILED">
-		<Text>Entry AKEY gagal</Text>
+		<Text>Masukan AKEY gagal</Text>
 	</STRING>
 	<STRING Id="76" Name="IDS_AKEY_SUCCESS">
-		<Text>Catatan AKEY sukses</Text>
+		<Text>Masukan AKEY sukses</Text>
 	</STRING>
 	<STRING Id="77" Name="IDS_HDR_RX_DIVERSITY_ENABLED">
 		<Text>Keanekaragaman Rx Diaktifkan HDR?</Text>
 	</STRING>
 	<STRING Id="78" Name="IDS_SMS_MO_ACCESS_ON">
-		<Text>Gunakan Akses Channel</Text>
+		<Text>Gunakan akses kanal</Text>
 	</STRING>
 	<STRING Id="79" Name="IDS_SMS_MO_ACCESS_OFF">
-		<Text>Jangan gunakan Akses Channel</Text>
+		<Text>Jangan gunakan akses kanal</Text>
 	</STRING>
 	<STRING Id="80" Name="IDS_SMS_MO_TRAFFIC_ON">
-		<Text>Gunakan Traffic Channel</Text>
+		<Text>Gunakan lalu lintas kanal</Text>
 	</STRING>
 	<STRING Id="81" Name="IDS_SMS_MO_TRAFFIC_OFF">
-		<Text>Jangan gunakan Lalu Lintas Channel</Text>
+		<Text>Jangan gunakan lalu lintas kanal</Text>
 	</STRING>
 	<STRING Id="82" Name="IDS_SMS_MO_ACCESS">
-		<Text>Gunakan Akses Channel</Text>
+		<Text>Gunakan akses kanal</Text>
 	</STRING>
 	<STRING Id="83" Name="IDS_SMS_MO_TRAFFIC">
-		<Text>Gunakan Traffic Channel</Text>
+		<Text>Gunakan lalu lintas kanal</Text>
 	</STRING>
 	<STRING Id="84" Name="IDS_RTRE_SELECT">
 		<Text>Pengaturan RTRE</Text>
 	</STRING>
 	<STRING Id="85" Name="IDS_RTRE_SELECT_NVONLY">
-		<Text>USE NV </Text>
+		<Text>Gunakan NV </Text>
 	</STRING>
 	<STRING Id="86" Name="IDS_RTRE_SELECT_RUIMONLY">
-		<Text>USE RUIM</Text>
+		<Text>Gunakan RUIM</Text>
 	</STRING>
 	<STRING Id="87" Name="IDS_RTRE_SELECT_BOTH">
-		<Text>Otomatisme</Text>
+		<Text>Otomatis</Text>
 	</STRING>
 	<STRING Id="88" Name="IDS_MCC_LIMIT">
 		<Text>PKS batas tiga hitungan</Text>
@@ -263,7 +263,7 @@
 		<Text>953047</Text>
 	</STRING>
 	<STRING Id="93" Name="IDS_OPERATOR_OPTIONS">
-		<Text>Kunci Setting</Text>
+		<Text>Pengaturan kunci</Text>
 	</STRING>
 	<STRING Id="94" Name="IDS_LOCK_RUIM">
 		<Text>Kunci RUIM</Text>
@@ -281,7 +281,7 @@
 		<Text>Latin</Text>
 	</STRING>
 	<STRING Id="99" Name="IDS_VOCCAL">
-		<Text>Voccal</Text>
+		<Text>Vokal</Text>
 	</STRING>
 	<STRING Id="100" Name="IDS_VOCCAL_HANDSET">
 		<Text>Handset</Text>
@@ -293,7 +293,7 @@
 		<Text>Speaker</Text>
 	</STRING>
 	<STRING Id="103" Name="IDS_VOCCAL_USE_NVMODE">
-		<Text>Aktifkan modus nv </Text>
+		<Text>Aktifkan mode nv </Text>
 	</STRING>
 	<STRING Id="104" Name="IDS_VOCCAL_EC_MODE">
 		<Text>ec_mode</Text>
@@ -335,22 +335,22 @@
 		<Text>EC_Speaker</Text>
 	</STRING>
 	<STRING Id="117" Name="IDS_ECHO_CANCEL_FAREND">
-		<Text>Farend mabuk</Text>
+		<Text>Farend hangover</Text>
 	</STRING>
 	<STRING Id="118" Name="IDS_ECHO_CANCEL_DOUBLETALK">
-		<Text>Bercakap berarti dua mabuk</Text>
+		<Text>Doubletalk hangover</Text>
 	</STRING>
 	<STRING Id="119" Name="IDS_ECHO_CANCEL_STARTUP_MUTE_HEANGOVER">
-		<Text>Startup bisu mabuk</Text>
+		<Text>Startup mute hangover</Text>
 	</STRING>
 	<STRING Id="120" Name="IDS_ECHO_CANCEL_STARTUP_MUTE_MODE">
-		<Text>Startup modus bisu</Text>
+		<Text>Startup mute mode</Text>
 	</STRING>
 	<STRING Id="121" Name="IDS_ECHO_CANCEL_STARTUP_ERLE">
 		<Text>Startup ERLE</Text>
 	</STRING>
 	<STRING Id="122" Name="IDS_VOCCAL_USE_NVMODE_ENABLE">
-		<Text>Memungkinkan</Text>
+		<Text>Aktifkan</Text>
 	</STRING>
 	<STRING Id="123" Name="IDS_VOCCAL_USE_NVMODE_DISABLE">
 		<Text>Dis@Reset</Text>
@@ -359,7 +359,7 @@
 		<Text>Konfigurasi BREW</Text>
 	</STRING>
 	<STRING Id="125" Name="IDS_BREWUSERNAME">
-		<Text>User name</Text>
+		<Text>Nama pengguna</Text>
 	</STRING>
 	<STRING Id="126" Name="IDS_BREWPASSWORD">
 		<Text>Kata sandi</Text>
@@ -380,34 +380,34 @@
 		<Text>Bkey</Text>
 	</STRING>
 	<STRING Id="132" Name="IDS_KEY_SPEC">
-		<Text>Akey / Bkey specifier</Text>
+		<Text>Akey / Bkey khusus</Text>
 	</STRING>
 	<STRING Id="133" Name="IDS_AUTHFLAG">
-		<Text>Otorisasi Pengguna Bendera</Text>
+		<Text>Bendera otorisasi pengguna</Text>
 	</STRING>
 	<STRING Id="134" Name="IDS_APP_POLICY">
-		<Text>Aplikasi Pelaksanaan Kebijakan</Text>
+		<Text>Kebijakan eksekusi aplikasi</Text>
 	</STRING>
 	<STRING Id="135" Name="IDS_BREWTESTOPT">
-		<Text>Uji BREW pilihan</Text>
+		<Text>Pilihan Tes BREW</Text>
 	</STRING>
 	<STRING Id="136" Name="IDS_BREWTESTON">
-		<Text>Aktifkan BREW Test</Text>
+		<Text>Aktifkan Tes BREW</Text>
 	</STRING>
 	<STRING Id="137" Name="IDS_BREWTESTOFF">
-		<Text>Nonaktifkan BREW Test</Text>
+		<Text>Nonaktifkan TES BREW</Text>
 	</STRING>
 	<STRING Id="138" Name="IDS_PPOLICY_BREW">
-		<Text>TRUE-BREW-applet hanya menandatangani </Text>
+		<Text>Hanya TRUE-BREW-signed applet </Text>
 	</STRING>
 	<STRING Id="139" Name="IDS_PPOLICY_CARRIER">
-		<Text>Carrier-applet hanya menandatangani</Text>
+		<Text>Hanya Carrier-signed-applet </Text>
 	</STRING>
 	<STRING Id="140" Name="IDS_PPOLICY_BREW_AND_CARRIER">
-		<Text>Rue-BREW-dan carrier-applet hanya menandatangani</Text>
+		<Text>Hanya True-BREW-dan carrier-signed-applet</Text>
 	</STRING>
 	<STRING Id="141" Name="IDS_PPOLICY_BREW_OR_CARRIER">
-		<Text>TRUE-BREW-applet atau carrier-masuk</Text>
+		<Text>TRUE-BREW atau Carrier-signed-applet</Text>
 	</STRING>
 	<STRING Id="142" Name="IDS_AUTHPOLICY">
 		<Text>Kebijakan Otentikasi Pengguna</Text>
@@ -425,7 +425,7 @@
 		<Text>APOLICY_NUM</Text>
 	</STRING>
 	<STRING Id="147" Name="IDS_AUTOUPGRADE">
-		<Text>Auto Upgrade</Text>
+		<Text>Upgrade otomatis</Text>
 	</STRING>
 	<STRING Id="148" Name="IDS_USE_MIN_FOR_SID">
 		<Text>Gunakan MIN untuk SID</Text>
@@ -434,22 +434,22 @@
 		<Text>Prabayar</Text>
 	</STRING>
 	<STRING Id="150" Name="IDS_NOAUTOACK">
-		<Text>No Auto ACK</Text>
+		<Text>Tak ada ACK otomatis</Text>
 	</STRING>
 	<STRING Id="151" Name="IDS_SIDENCODE">
-		<Text>SID Encode</Text>
+		<Text>Enkode SID</Text>
 	</STRING>
 	<STRING Id="152" Name="IDS_SIDVALIDATAALL">
 		<Text>SID Validasi Semua</Text>
 	</STRING>
 	<STRING Id="153" Name="IDS_RUIMDELETE">
-		<Text>Hapus RUIM Override</Text>
+		<Text>Hapus RUIM Ditolak</Text>
 	</STRING>
 	<STRING Id="154" Name="IDS_BREW_SID">
-		<Text>Id Pelanggan</Text>
+		<Text>ID Pelanggan</Text>
 	</STRING>
 	<STRING Id="155" Name="IDS_PLATFORMID">
-		<Text>Platform ID</Text>
+		<Text>ID Platform </Text>
 	</STRING>
 	<STRING Id="156" Name="IDS_USEAKEY">
 		<Text>Gunakan AKey</Text>

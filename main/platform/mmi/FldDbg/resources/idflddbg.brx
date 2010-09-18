@@ -191,7 +191,7 @@
 		<Text>SSL Panjang</Text>
 	</STRING>
 	<STRING Id="64" Name="IDS_CLEARING_TXT">
-		<Text>Bersihkan</Text>
+		<Text>Bersihkan…</Text>
 	</STRING>
 	<STRING Id="65" Name="IDS_CLR_EFS">
 		<Text>Hapus EFS</Text>

@@ -5,7 +5,7 @@
 		<Text>Kotak masuk </Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_WRITEMESSAGE">
-		<Text>Pesan baru</Text>
+		<Text>Buat</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_OUTBOX">
 		<Text>Kotak keluar </Text>
@@ -17,7 +17,7 @@
 		<Text>Konsep </Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_TEMPLATES">
-		<Text>Templet</Text>
+		<Text>Pola pesan</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_MENSTATUS">
 		<Text>Status memori</Text>
@@ -50,10 +50,10 @@
 		<Text>Teruskan</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_LISTENVM">
-		<Text>Mendengarkan pesan suara</Text>
+		<Text>Dengarkan pesan suara</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_SEND">
-		<Text>Mengirim</Text>
+		<Text>Kirim</Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_EDIT">
 		<Text>Edit</Text>
@@ -71,13 +71,13 @@
 		<Text>Salin ke telepon</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_CALL">
-		<Text>Buat panggilan</Text>
+		<Text>Panggil</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_TO">
 		<Text>Untuk:</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_COPIED">
-		<Text>%d Disalin</Text>
+		<Text>%d disalin</Text>
 	</STRING>
 	<STRING Id="27" Name="IDS_RUIMFULL">
 		<Text>Pesan UIM penuh</Text>
@@ -98,7 +98,7 @@
 		<Text>Aku sedang sibuk. Telepon lagi nanti</Text>
 	</STRING>
 	<STRING Id="33" Name="IDS_TEMPLATE2">
-		<Text>Selamat Ulangtahun!</Text>
+		<Text>Selamat Ulang Tahun!</Text>
 	</STRING>
 	<STRING Id="34" Name="IDS_TEMPLATE3">
 		<Text>Mohon tunggu sebentar</Text>
@@ -122,13 +122,13 @@
 		<Text>Saya minta maaf</Text>
 	</STRING>
 	<STRING Id="41" Name="IDS_AUTOSAVE">
-		<Text>Otomatis disimpan</Text>
+		<Text>Simpan otomatis</Text>
 	</STRING>
 	<STRING Id="42" Name="IDS_PRIORITY">
 		<Text>Prioritas</Text>
 	</STRING>
 	<STRING Id="43" Name="IDS_DELIVERYREPORTS">
-		<Text>Terkirim ke</Text>
+		<Text>Laporan pengiriman</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_STORAGE">
 		<Text>Penyimpanan</Text>
@@ -158,7 +158,7 @@
 		<Text>Tambah</Text>
 	</STRING>
 	<STRING Id="53" Name="IDS_FULL">
-		<Text>Preset pesan penuh</Text>
+		<Text>Pola pesan penuh</Text>
 	</STRING>
 	<STRING Id="54" Name="IDS_SAVED">
 		<Text>Selesai</Text>
@@ -167,7 +167,7 @@
 		<Text>Teks penuh</Text>
 	</STRING>
 	<STRING Id="56" Name="IDS_SENDINGTO">
-		<Text>Mengirim ke</Text>
+		<Text>Kirim ke</Text>
 	</STRING>
 	<STRING Id="57" Name="IDS_MSGSENT">
 		<Text>Pesan terkirim</Text>
@@ -176,7 +176,7 @@
 		<Text>Gagal</Text>
 	</STRING>
 	<STRING Id="59" Name="IDS_INSERTTEMPLATES">
-		<Text>Templet</Text>
+		<Text>Pola pesan</Text>
 	</STRING>
 	<STRING Id="60" Name="IDS_SAVETODRAFT">
 		<Text>Simpan ke draft</Text>
@@ -188,7 +188,7 @@
 		<Text>Alamat tujuan tidak diketahui</Text>
 	</STRING>
 	<STRING Id="63" Name="IDS_CDG2_FAIL97">
-		<Text>Organisasi ditolak</Text>
+		<Text>Asal ditolak</Text>
 	</STRING>
 	<STRING Id="64" Name="IDS_CDG2_FAIL100">
 		<Text>SMS tidak didukung</Text>
@@ -203,7 +203,7 @@
 		<Text> </Text>
 	</STRING>
 	<STRING Id="68" Name="IDS_EMERGENCY">
-		<Text>Keadaan darurat</Text>
+		<Text>Darurat</Text>
 	</STRING>
 	<STRING Id="69" Name="IDS_NOVALIDNUM">
 		<Text>Tidak ada angka yang valid</Text>
@@ -221,7 +221,7 @@
 		<Text>Inisialisasi tidak diselesaikan, silakan coba nanti</Text>
 	</STRING>
 	<STRING Id="74" Name="IDS_DELETE_READMSG">
-		<Text>Hapus membaca pesan</Text>
+		<Text>Hapus pesan terbaca</Text>
 	</STRING>
 	<STRING Id="75" Name="IDS_SENDMSG">
 		<Text>Kirim pesan</Text>
@@ -233,7 +233,7 @@
 		<Text>Menolak panggilan SMS</Text>
 	</STRING>
 	<STRING Id="79" Name="IDS_EDITCALLREJECTSMS">
-		<Text>Edit menolak panggilan SMS</Text>
+		<Text>Edit SMS tolak panggilan</Text>
 	</STRING>
 	<STRING Id="80" Name="IDS_SAVEMSG">
 		<Text>Simpan pesan</Text>
@@ -245,16 +245,16 @@
 		<Text>Hapus Otomatis</Text>
 	</STRING>
 	<STRING Id="86" Name="IDS_INBOXSFULL">
-		<Text>SMS Pesan penuh</Text>
+		<Text>Pesan SMS penuh</Text>
 	</STRING>
 	<STRING Id="88" Name="IDS_RUIMALMOSTFULL">
-		<Text>UIM Pesan hampir penuh</Text>
+		<Text>Pesan UIM hampir penuh</Text>
 	</STRING>
 	<STRING Id="89" Name="IDS_PHONEALMOSTFULL">
-		<Text>Telepon Pesan hampir penuh</Text>
+		<Text>Pesan telepon hampir penuh</Text>
 	</STRING>
 	<STRING Id="90" Name="IDS_INBOXSALMOSTFULL">
-		<Text>SMS Pesan hampir penuh</Text>
+		<Text>Pesan SMS hampir penuh</Text>
 	</STRING>
 	<STRING Id="92" Name="IDS_VIEW">
 		<Text>Tampilkan</Text>
@@ -275,7 +275,7 @@
 		<Text>Validitas pesan</Text>
 	</STRING>
 	<STRING Id="98" Name="IDS_MSGVALIDITY_MAX">
-		<Text>Maksimum waktu</Text>
+		<Text>Waktu maksimal</Text>
 	</STRING>
 	<STRING Id="99" Name="IDS_MSGVALIDITY_1HOUR">
 		<Text>1 jam</Text>
@@ -302,7 +302,7 @@
 		<Text>Kirim dan simpan</Text>
 	</STRING>
 	<STRING Id="107" Name="IDS_CALLBACKNUM">
-		<Text>nomor telepon kembali</Text>
+		<Text>Nomor panggil balik</Text>
 	</STRING>
 	<STRING Id="108" Name="IDS_SAVEEMAIL">
 		<Text>Ambil email</Text>
@@ -311,10 +311,10 @@
 		<Text>Pindah ke kartu UIM</Text>
 	</STRING>
 	<STRING Id="110" Name="IDS_MOVETOPHONE">
-		<Text>Pindah ke Telepon</Text>
+		<Text>Pindah ke telepon</Text>
 	</STRING>
 	<STRING Id="111" Name="IDS_IPCALL">
-		<Text>IP panggilan</Text>
+		<Text>Panggilan IP</Text>
 	</STRING>
 	<STRING Id="112" Name="IDS_VMNUM">
 		<Text>Nomor pesan suara</Text>
@@ -326,7 +326,7 @@
 		<Text>Kirim ulang</Text>
 	</STRING>
 	<STRING Id="115" Name="IDS_INSUFFICIENCY">
-		<Text>Target ruangan toko insufisiensi</Text>
+		<Text>Target ruang penyimpanan tak cukup</Text>
 	</STRING>
 	<STRING Id="116" Name="IDS_SURECOPY">
 		<Text>Salin</Text>
@@ -338,7 +338,7 @@
 		<Text>Menyalin pesan...</Text>
 	</STRING>
 	<STRING Id="119" Name="IDS_MSGMOVING">
-		<Text>Memindah pesan...</Text>
+		<Text>Pindahkan pesan...</Text>
 	</STRING>
 	<STRING Id="120" Name="IDS_NOVALIDMAILADD">
 		<Text>Alamat e_mail tidak valid</Text>
@@ -362,13 +362,13 @@
 		<Text>Kartu UIM akan penuh</Text>
 	</STRING>
 	<STRING Id="127" Name="IDS_ENABLEREPORT">
-		<Text>On</Text>
+		<Text>Hidup</Text>
 	</STRING>
 	<STRING Id="128" Name="IDS_DISABLEREPORT">
-		<Text>Off</Text>
+		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="129" Name="IDS_STOREINSUFFICIENCY">
-		<Text>Ruang penyimpanan insufisiensi</Text>
+		<Text>Ruang penyimpanan tak cukup</Text>
 	</STRING>
 	<STRING Id="130" Name="IDS_SENDDONE">
 		<Text>Mengirim pesan selesai ! %d berhasil %d gagal </Text>
@@ -383,7 +383,7 @@
 		<Text>Gagal terkirim</Text>
 	</STRING>
 	<STRING Id="134" Name="IDS_NEWRESERVEDMSG">
-		<Text>Pesan baru</Text>
+		<Text>Buat</Text>
 	</STRING>
 	<STRING Id="135" Name="IDS_AM">
 		<Text>AM</Text>
@@ -401,7 +401,7 @@
 		<Text>Simpan</Text>
 	</STRING>
 	<STRING Id="140" Name="IDS_LOADMSG">
-		<Text>Loading pesan...</Text>
+		<Text>Memuat pesan...</Text>
 	</STRING>
 	<STRING Id="141" Name="IDS_TEMPLATE10">
 		<Text>Terima kasih</Text>
@@ -413,28 +413,28 @@
 		<Text>Kata sandi salah</Text>
 	</STRING>
 	<STRING Id="144" Name="IDS_CONTINUESENDQUERY">
-		<Text>Tidak selesai untuk mengirim pesan, terus</Text>
+		<Text>Mengirim pesan tak selesai, lanjut</Text>
 	</STRING>
 	<STRING Id="145" Name="IDS_YEARERR">
-		<Text>Masukkan nomor tahun %d hingga 2099</Text>
+		<Text>Masukkan tahun %d hingga 2099</Text>
 	</STRING>
 	<STRING Id="146" Name="IDS_TIMEERR">
 		<Text>Waktu tidak valid</Text>
 	</STRING>
 	<STRING Id="147" Name="IDS_ALERTTIMEOUT">
-		<Text>Default untuk mengirim sementara peringatan waktu habis</Text>
+		<Text>Pengiriman standar selama peringatan mencapai batas waktu</Text>
 	</STRING>
 	<STRING Id="148" Name="IDS_DELETEALL">
 		<Text>Hapus semua</Text>
 	</STRING>
 	<STRING Id="149" Name="IDS_INPUTNULL">
-		<Text>Content tidak boleh kosong</Text>
+		<Text>Konten tidak boleh kosong</Text>
 	</STRING>
 	<STRING Id="150" Name="IDS_SETCALLBACKNUM">
 		<Text>Tetapkan nomor telepon kembali</Text>
 	</STRING>
 	<STRING Id="151" Name="IDS_SENDMODE">
-		<Text>Mode Kirim</Text>
+		<Text>Mode kirim</Text>
 	</STRING>
 	<STRING Id="152" Name="IDS_MSGMANAGEMENT">
 		<Text>Manajemen</Text>
@@ -452,7 +452,7 @@
 		<Text>Telepon ke kartu UIM</Text>
 	</STRING>
 	<STRING Id="157" Name="IDS_SAVEASPRESET">
-		<Text>Simpan sebagai preset</Text>
+		<Text>Simpan sebagai pola</Text>
 	</STRING>
 	<STRING Id="158" Name="IDS_SETTING">
 		<Text>Pengaturan</Text>
@@ -461,7 +461,7 @@
 		<Text>Kontak</Text>
 	</STRING>
 	<STRING Id="160" Name="IDS_GROUPLIST">
-		<Text>Daftar Group</Text>
+		<Text>Daftar Grup</Text>
 	</STRING>
 	<STRING Id="161" Name="IDS_RECENT_CALLS">
 		<Text>Panggilan terakhir</Text>
@@ -470,7 +470,7 @@
 		<Text>Bahasa</Text>
 	</STRING>
 	<STRING Id="163" Name="IDS_LANGUAGE_NOSPEC">
-		<Text>Unspecified</Text>
+		<Text>Tak dijelaskan</Text>
 	</STRING>
 	<STRING Id="164" Name="IDS_LANGUAGE_ENGLISH">
 		<Text>English</Text>
@@ -494,7 +494,7 @@
 		<Text>Hebrew</Text>
 	</STRING>
 	<STRING Id="171" Name="IDS_AUTOREPLACE">
-		<Text>Auto menggantikan</Text>
+		<Text>Ganti otomatis</Text>
 	</STRING>
 	<STRING Id="172" Name="IDS_VOICEMAIL_NOTI">
 		<Text>Pemberitahuan pesan suara</Text>
@@ -512,19 +512,19 @@
 		<Text>Browse</Text>
 	</String>
 	<String Id="177" Name="IDS_FAILED_RESENDING">
-		<Text>Failed,Whether to re-send?</Text>
+		<Text>Gagal. Kirim ulang?</Text>
 	</String>
 	<String Id="178" Name="IDS_NO_PHONENUMBER">
-		<Text>Nomor telepon adalah NULL, tidak bisa mengirim ulang!</Text>
+		<Text>Nomor telepon kosong, tidak bisa mengirim ulang!</Text>
 	</String>
 	<String Id="179" Name="IDS_SENT">
-		<Text>Ini SMS telah dikirim</Text>
+		<Text>SMS telah dikirim</Text>
 	</String>
 	<String Id="180" Name="IDS_NEWWMSTIPS">
 		<Text>Terima %d pesan baru</Text>
 	</String>
 	<String Id="181" Name="IDS_VMAILTIPS">
-		<Text>Pesan Nada baru:%d</Text>
+		<Text>Pesan suara baru:%d</Text>
 	</String>
 	<String Id="182" Name="IDS_NO_CARD">
 		<Text>Tidak ada Kartu</Text>

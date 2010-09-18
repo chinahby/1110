@@ -23,10 +23,10 @@
 		<Text>Alarm 6</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_STATE_OFF">
-		<Text>Mati</Text>
+		<Text>Matikan</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_STATE_ON">
-		<Text>Hidup</Text>
+		<Text>Hidupkan</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_REP_MODE_0">
 		<Text>Setiap Hari</Text>
@@ -71,10 +71,10 @@
 		<Text>Simpan Alarm</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_ANYKEY_CLOSE">
-		<Text>Tekan apa saya untuk tutup.</Text>
+		<Text>Tekan tombol apa saja untuk tutup.</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_CLOCK_SNOOZE">
-		<Text>Tunda</Text>
+		<Text>Tahan</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_CLEAR">
 		<Text>Hapus</Text>
@@ -92,13 +92,13 @@
 		<Text>Sekali</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_SNOOZE_1">
-		<Text>5 min</Text>
+		<Text>5 mnt</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_SNOOZE_2">
-		<Text>10 min</Text>
+		<Text>10 mnt</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_SNOOZE_3">
-		<Text>15 min</Text>
+		<Text>15 mnt</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_SNOOZE_OFF">
 		<Text>Matikan</Text>

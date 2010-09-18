@@ -2,7 +2,7 @@
 <BREWRes Name="recorder" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_TITLE">
-		<Text>Perekam suara</Text>
+		<Text>Memo suara</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_RECORDER_MEMO_RINGER_NAME">
 		<Text>Memo suara</Text>
@@ -20,7 +20,7 @@
 		<Text>Main</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_RECORD_LIST_OPTION_SET_AS">
-		<Text>Set sebagai</Text>
+		<Text>Atur sebagai</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RECORD_LIST_OPTION_DELETE">
 		<Text>Hapus</Text>
@@ -29,7 +29,7 @@
 		<Text>Hapus semua</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_RECORD_PAUSE">
-		<Text>Berhenti sebentar</Text>
+		<Text>Tahan</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_SET_AS_RINGER">
 		<Text>Nada Dering</Text>
@@ -47,13 +47,13 @@
 		<Text>Hapus Semua</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_RECORD_OPEN_FILE_ERROR_1">
-		<Text>Ada file</Text>
+		<Text>File tersedia</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_RECORD_OPEN_FILE_ERROR_2">
-		<Text>Gagal main</Text>
+		<Text>Gagal mainkan</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_RECORD_OPEN_FILE_ERROR_3">
-		<Text>Directori tidak kosong</Text>
+		<Text>Direktori tidak kosong</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_RECORD_OPEN_FILE_ERROR_4">
 		<Text>Nama tidak valid</Text>
@@ -62,25 +62,25 @@
 		<Text>Pilihan tidak valid</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_RECORD_OPEN_FILE_ERROR_6">
-		<Text>Error</Text>
+		<Text>Salah</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_RECORD_OPEN_FILE_ERROR_7">
 		<Text>Penuh</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_RECORD_OPEN_FILE_ERROR_8">
-		<Text>Error</Text>
+		<Text>Salah</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_RECORD_OPEN_FILE_ERROR_9">
 		<Text>Penuh</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_RECORD_OPEN_FILE_ERROR_10">
-		<Text>Directori tidak ada</Text>
+		<Text>Direktori tidak ada</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_RECORD_OPEN_FILE_ERROR_11">
 		<Text>Operasi tidak valid</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_RECORD_OPEN_FILE_ERROR_12">
-		<Text>Masukan Kartu Memory</Text>
+		<Text>Masukkan Kartu Memori</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_RECORD_OPEN_FILE_ERROR_13">
 		<Text>Gagal</Text>
@@ -98,13 +98,13 @@
 		<Text>Perekam FM</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_CALL_RECORD">
-		<Text>Perekam Telepon</Text>
+		<Text>Perekam Panggilan</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_FORWARD_RECORD">
-		<Text>Lanjutkan rekaman</Text>
+		<Text>Teruskan rekaman</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_RECORD_LIST_OPTION_SET_AS_RINGTONE">
-		<Text>Set sebagai nada dering</Text>
+		<Text>Atur sebagai nada dering</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_RECORD_SET_AS_RINGER_ING">
 		<Text>Pengaturan...</Text>
@@ -122,7 +122,7 @@
 		<Text>Selesai</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_RECORD_LIST_OPTION_RENAME">
-		<Text>Ubah teks</Text>
+		<Text>Ubah nama</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_RECORD_LIST_RENAME_INVALID_FILE_NAME">
 		<Text>Surat tidak valid: /\:*?"&lt;&gt;|</Text>
@@ -137,7 +137,7 @@
 		<Text>Telepon</Text>
 	</String>
 	<String Id="1044" Name="IDS_STORAGE_SETUP_CARD0" Encoding="Unicode">
-		<Text>Kartu Memory</Text>
+		<Text>Kartu Memori</Text>
 	</String>
 	<STRING Id="1100" Name="IDS_RECORD_MEDIA_ERROR">
 		<Text>Gagal</Text>
@@ -155,13 +155,13 @@
 		<Text>Sistem sibuk, silahkan coba lagi</Text>
 	</STRING>
 	<STRING Id="1105" Name="IDS_RECORD_MEDIA_ERROR_MM_EBADMEDIADATA">
-		<Text>Gagal main</Text>
+		<Text>Gagal mainkan</Text>
 	</STRING>
 	<STRING Id="1106" Name="IDS_RECORD_REACH_TIME_LIMIT">
-		<Text>Batas waktu tercapai, disimpan</Text>
+		<Text>Batas waktu terlampaui, disimpan</Text>
 	</STRING>
 	<STRING Id="1107" Name="IDS_RECORD_REACH_FILE_NUMBER_LIMIT">
-		<Text>%d memo file diperbolehkand</Text>
+		<Text>%d file memo diijinkan</Text>
 	</STRING>
 	<STRING Id="1199" Name="IDS_MM_STATUS_INIT">
 		<Text>Init...</Text>
@@ -179,22 +179,22 @@
 		<Text>Batalkan</Text>
 	</STRING>
 	<STRING Id="1204" Name="IDS_MM_STATUS_DATA_IO_DELAY">
-		<Text>Buffering...</Text>
+		<Text>Menyangga...</Text>
 	</STRING>
 	<STRING Id="1205" Name="IDS_MM_STATUS_SEEK_FAIL">
 		<Text>Pencarian gagal</Text>
 	</STRING>
 	<STRING Id="1206" Name="IDS_MM_STATUS_PAUSE">
-		<Text>Berhenti sebentar</Text>
+		<Text>Tahan</Text>
 	</STRING>
 	<STRING Id="1207" Name="IDS_MM_STATUS_PAUSE_FAIL">
-		<Text>Berhenti sebentar gagal</Text>
+		<Text>Gagal tahan</Text>
 	</STRING>
 	<STRING Id="1208" Name="IDS_MM_STATUS_RESUME">
-		<Text>melanjutkan</Text>
+		<Text>Lanjutkan</Text>
 	</STRING>
 	<STRING Id="1209" Name="IDS_MM_STATUS_RESUME_FAIL">
-		<Text>melanjutkan gagal</Text>
+		<Text>Gagal lanjutkan</Text>
 	</STRING>
 	<STRING Id="1210" Name="IDS_MM_STATUS_REPEAT">
 		<Text>Ulangi</Text>
@@ -206,7 +206,7 @@
 		<Text>Penuh</Text>
 	</STRING>
 	<STRING Id="1213" Name="IDS_MM_STATUS_UNKNOWN">
-		<Text>Kesalahan tidak diketahui</Text>
+		<Text>Kesalahan tak dikenal</Text>
 	</STRING>
 	<STRING Id="1214" Name="IDS_MM_STATUS_PLAYING">
 		<Text>Mainkan...</Text>

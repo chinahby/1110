@@ -3032,6 +3032,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
 #endif /*FEATURE_APP_WORLDTIME*/
 
     int                 nTextWidth = 0;
+    int					nCallTimeTextWidth = 0;
     int                 nLineHeight = BETWEEN_LINE_PIXELS + IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
     int                 nNumberWidth  = GetSingleNumberWidth(pMe->m_pDisplay, AEE_FONT_BOLD);
     
@@ -3053,7 +3054,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                     IDF_TEXT_TRANSPARENT
                 );  //画出"日期/时间"字符串
 
-
+	nCallTimeTextWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, buffer);
     (void) ISHELL_LoadResString(pMe->m_pShell,
                     AEE_RECENTCALLSRES_LANGFILE,
                     IDS_DURATION,
@@ -3106,7 +3107,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                       AEE_FONT_BOLD,
                       buffer,
                       -1,
-                      nTextWidth + nNumberWidth, //ELS_TO_EDGE,
+                      nCallTimeTextWidth + nNumberWidth, //ELS_TO_EDGE,
                       PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	3
                       NULL,
                       IDF_TEXT_TRANSPARENT
@@ -3170,6 +3171,21 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
         AECHAR  sec_str[8]  = { 0};
         AECHAR  format[]    = { '%', '0', '2', 'd', 0};
         int     len         = 0;
+    #if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+    	(void) ISHELL_LoadResString(pMe->m_pShell,
+                                  AEE_RECENTCALLSRES_LANGFILE,
+                                  IDS_COLON,
+                                  hour_str,
+                                  sizeof(hour_str)
+                              );
+
+        (void) ISHELL_LoadResString(pMe->m_pShell,
+                                  AEE_RECENTCALLSRES_LANGFILE,
+                                  IDS_COLON,
+                                  min_str,
+                                  sizeof(min_str)
+                              );
+    #else
         (void) ISHELL_LoadResString(pMe->m_pShell,
                                   AEE_RECENTCALLSRES_LANGFILE,
                                   IDS_HOUR,
@@ -3189,6 +3205,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                                   sec_str,
                                   sizeof(sec_str)
                               );
+    #endif
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
         if((LNG_ARABIC == DeviceInfo.dwLang) && (IDF_ALIGN_LEFT == ParagraphAlignment(min_str, WSTRLEN((AECHAR *)min_str))))
         {
@@ -3208,10 +3225,18 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
         else
 #endif //FEATURE_ARPHIC_LAYOUT_ENGINE
         {
-            //hours
+        #if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+        	//hours
             if(duration >= 3600)
             {
                 WSPRINTF( buffer, sizeof( buffer), format, duration / 3600);
+                len = WSTRLEN( buffer);
+                WSTRCPY( buffer + len, hour_str); 
+                len = WSTRLEN( buffer);
+            }
+            else
+            {
+				WSPRINTF( buffer, sizeof( buffer), format, 0);
                 len = WSTRLEN( buffer);
                 WSTRCPY( buffer + len, hour_str); 
                 len = WSTRLEN( buffer);
@@ -3224,12 +3249,41 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
                 WSTRCPY( buffer + len, min_str);
                 len = WSTRLEN( buffer);
             }
+            else
+            {
+				WSPRINTF( buffer + len, sizeof( buffer)-len*(sizeof(AECHAR)), format, 0);
+                len = WSTRLEN( buffer);
+                WSTRCPY( buffer + len, min_str);
+                len = WSTRLEN( buffer);
+            }
+            //seconds
+            WSPRINTF( buffer + len, sizeof( buffer) - len*(sizeof(AECHAR)), format, duration % 60);
+            len = WSTRLEN( buffer);
+        #else
+            //hours
+            if(duration >= 3600)
+            {
+                WSPRINTF( buffer, sizeof( buffer), format, duration / 3600);
+                len = WSTRLEN( buffer);
+                WSTRCPY( buffer + len, hour_str); 
+                len = WSTRLEN( buffer);
+            }
+            
+            //minutes
+            if(duration >= 60)
+            {
+                WSPRINTF( buffer + len, sizeof( buffer)-len*(sizeof(AECHAR)), format, (duration / 60 - (duration / 3600)*60));
+                len = WSTRLEN( buffer);
+                WSTRCPY( buffer + len, min_str);
+                len = WSTRLEN( buffer);
+            }
             //seconds
             WSPRINTF( buffer + len, sizeof( buffer) - len*(sizeof(AECHAR)), format, duration % 60);
             len = WSTRLEN( buffer);
             WSTRCPY( buffer + len, sec_str);
+        #endif
         }
-
+	
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
     if((LNG_HEBREW == DeviceInfo.dwLang) || (LNG_ARABIC== DeviceInfo.dwLang))
     {

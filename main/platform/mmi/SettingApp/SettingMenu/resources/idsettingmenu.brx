@@ -23,7 +23,7 @@
 		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_AKG_30SEC">
-		<Text>30 dtk</Text>
+		<Text>30 Dtk</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_AKG_2MIN">
 		<Text>2 Mnt</Text>
@@ -338,7 +338,7 @@
 		<Text>Mati</Text>
 	</STRING>
 	<STRING Id="1113" Name="IDS_RESTRICT_OUTGOING">
-		<Text>tasi panggil keluar</Text>
+		<Text>Batasi pgl keluar</Text>
 	</STRING>
 	<STRING Id="1114" Name="IDS_RESTRICT_INCOMING">
 		<Text>Batasi panggil masuk</Text>

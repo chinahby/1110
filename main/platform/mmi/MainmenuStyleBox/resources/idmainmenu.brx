@@ -5,10 +5,10 @@
 		<Text>Esurfing</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_MAIN_MENU_TITLE_CUSTSERVICE" Encoding="Unicode">
-		<Text>Pelayanan pelanggan</Text>
+		<Text>Layanan pelanggan</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_TITLE_1">
-		<Text>Galeri</Text>
+		<Text>Galeri Media</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MAIN_MENU_TITLE_2">
 		<Text>Kontak</Text>
@@ -17,7 +17,7 @@
 		<Text>UTK</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MAIN_MENU_TITLE_4">
-		<Text>alat</Text>
+		<Text>Peralatan</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_5">
 		<Text>Panggilan terakhir</Text>

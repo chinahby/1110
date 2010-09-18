@@ -8,7 +8,7 @@
 		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_FMRADIO_PROMPT_TUNING">
-		<Text>Tuning</Text>
+		<Text>Atur</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_FMRADIO_PROMPT_SEARCHING">
 		<Text>Pencarian</Text>
@@ -23,7 +23,7 @@
 		<Text>Berhenti</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_FMRADIO_OPTION_MENU_PLAY_ON_BACKGROUND">
-		<Text>Memperkecil</Text>
+		<Text>Minimalkan</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH">
 		<Text>Pencarian auto</Text>
@@ -32,19 +32,19 @@
 		<Text>Daftar saluran</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_FMRADIO_REFRESH_CHANNEL_LIST_CONFIRM">
-		<Text>Tutup daftar sekarang</Text>
+		<Text>Tutup daftar terbaru</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_FMRADIO_REFRESH_CHANNEL_LIST_SAVE_CONFIRM">
 		<Text>Pencarian selesai, simpan</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_FMRADIO_TUNING_MODE_PROMPT_LIST">
-		<Text>Cara Daftar </Text>
+		<Text>Mode daftar </Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_FMRADIO_TUNING_MODE_PROMPT_MANUAL">
-		<Text>Modus Manual</Text>
+		<Text>Mode Manual</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_FMRADIO_TUNING_MODE_PROMPT_AUTO">
-		<Text>Auto mode</Text>
+		<Text>Mode otomatis</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_FMRADIO_CHANNEL_LIST_OPTION_MENU_PLAY">
 		<Text>Mainkan</Text>
@@ -59,19 +59,19 @@
 		<Text>Panggilan masuk</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_FMRADIO_REFUSE_NO_HEADSET">
-		<Text>Silakan masukkan headset</Text>
+		<Text>Silahkan masukkan headset</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_FMRADIO_CHANNEL_LIST_IS_EMPTY">
-		<Text>catatan No </Text>
+		<Text>Tak ada catatan</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_FMRADIO_CHANNEL_NODE_IS_INVALID">
-		<Text>Invalid number</Text>
+		<Text>Nomor salah</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_FMRADIO_CHANNEL_NODE_HAS_EXISTED">
-		<Text>Ada saluran</Text>
+		<Text>Saluran tersedia</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_FMRADIO_REFUSE_HEADSET_PLUG_OUT">
-		<Text>Plug headset keluar</Text>
+		<Text>Headset dicabut</Text>
 	</STRING>
 	<String Id="1025" Name="IDS_FMRADIO_FREQ_INPUT">
 		<Text>87.5-108MHz</Text>

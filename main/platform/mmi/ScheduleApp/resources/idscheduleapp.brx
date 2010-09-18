@@ -17,13 +17,13 @@
 		<Text>Kata sandi salah</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_SPORTS">
-		<Text>Sports! Go Go Go!</Text>
+		<Text>Olahraga! Ayo Ayo Ayo!</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_DATE">
-		<Text>YYYY : MM : DD</Text>
+		<Text>TTTT : BB : HH</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-		<Text>Masukkan tahun 1900 hingga 2051</Text>
+		<Text>Masukkan tahun dari 1900 hingga 2051</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
 		<Text>Selesai</Text>
@@ -68,13 +68,13 @@
 		<Text>Waktu mulai</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_EVENT_EDIT_TITLE_DURATION">
-		<Text>Lamanya</Text>
+		<Text>Durasi</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_EVENT_EDIT_TITLE_ALARM">
 		<Text>Alarm</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_EVENT_EDIT_TITLE_RINGTONE">
-		<Text>Ringtone</Text>
+		<Text>Nada dering</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_EVENT_EDIT_ALARM_OPTION_NO_ALARM">
 		<Text>Tanpa alarm</Text>
@@ -110,19 +110,19 @@
 		<Text>1 hari sebelum</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_EVENT_EDIT_RINGTONE_OPTION_ALARM_CLOCK">
-		<Text>Weker</Text>
+		<Text>Jam Alarm</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_EVENT_EDIT_RINGTONE_OPTION_SILENCE">
 		<Text>Diam</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_SETUP_TITLE">
-		<Text>Setup</Text>
+		<Text>Pengaturan</Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_SETUP_TITLE_AUTO_DELETE">
 		<Text>Hapus otomatis</Text>
 	</STRING>
 	<STRING Id="1072" Name="IDS_SETUP_TITLE_DAILY_START_TIME">
-		<Text>Harian waktu mulai</Text>
+		<Text>Waktu mulai harian</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_SETUP_TITLE_REMINDER_SNOOZE">
 		<Text>Pengingat tunda</Text>
@@ -161,13 +161,13 @@
 		<Text>30 menit</Text>
 	</STRING>
 	<STRING Id="1100" Name="IDS_VIEW_PLAN_DETAIL_TITLE">
-		<Text>Rencana detail</Text>
+		<Text>Detil rencana</Text>
 	</STRING>
 	<STRING Id="2200" Name="IDS_APP">
 		<Text>Jadwal</Text>
 	</STRING>
 	<STRING Id="2300" Name="IDS_INITING">
-		<Text>Pemuatan...</Text>
+		<Text>Memuat...</Text>
 	</STRING>
 	<STRING Id="2301" Name="IDS_SAVING">
 		<Text>Simpan...</Text>
@@ -176,7 +176,7 @@
 		<Text>Hapus...</Text>
 	</STRING>
 	<STRING Id="2303" Name="IDS_DB_ERROR">
-		<Text>Simpan data gagal</Text>
+		<Text>Gagal simpan data</Text>
 	</STRING>
 	<STRING Id="2304" Name="IDS_DB_ERROR_NOMEMORY">
 		<Text>Diluar jangkauan memori, silakan hapus beberapa janji</Text>
@@ -185,13 +185,13 @@
 		<Text>Lihat rencana hari ini</Text>
 	</STRING>
 	<STRING Id="2306" Name="IDS_SPORTS_LIST">
-		<Text>Daftar semua rencana</Text>
+		<Text>Daftarkan semua rencana</Text>
 	</STRING>
 	<STRING Id="2307" Name="IDS_SPORTS_JUMP">
-		<Text>Langsung ke tanggal</Text>
+		<Text>Lompat ke tanggal</Text>
 	</STRING>
 	<STRING Id="2308" Name="IDS_SPORTS_CREATE">
-		<Text>Membuat</Text>
+		<Text>Buat</Text>
 	</STRING>
 	<STRING Id="2309" Name="IDS_SPORTS_RUN">
 		<Text>Lari</Text>
@@ -203,13 +203,13 @@
 		<Text>Jarak(m)</Text>
 	</STRING>
 	<STRING Id="2312" Name="IDS_SPORTS_TIME">
-		<Text>Waktu(min)</Text>
+		<Text>Waktu(mnt)</Text>
 	</STRING>
 	<STRING Id="2313" Name="IDS_SPORTS_MODE">
 		<Text>Mode</Text>
 	</STRING>
 	<STRING Id="2314" Name="IDS_SPORTS_TITLE">
-		<Text>Rencana sports</Text>
+		<Text>Rencana olahraga</Text>
 	</STRING>
 </Strings>
 <Dialogs>

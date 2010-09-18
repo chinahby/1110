@@ -5,10 +5,10 @@
 		<Text>UTK</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_SENDING">
-		<Text>Mengirim pesam...</Text>
+		<Text>Mengirim pesan...</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_GETINPUT_WRONG_LEN">
-		<Text>Salah,silahkan ketik lagi!</Text>
+		<Text>Salah, silahkan ketik lagi!</Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_DIAL_TONE_STRING">
 		<Text>Nada panggil</Text>
@@ -20,7 +20,7 @@
 		<Text>Macet</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_RADIO_PATH_ACKNOWLEDGE_STRING">
-		<Text>Terdapat jaringan Radio</Text>
+		<Text>Info jaringan radio</Text>
 	</STRING>
 	<STRING Id="8" Name="IDS_RADIO_PATH_NOT_AVAILABLE_OR_CALL_DROPPED_STRING">
 		<Text>Tidak terdapat jaringan radio atau telepon terputus</Text>
@@ -35,7 +35,7 @@
 		<Text>Nada dering</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_GENERAL_BEEP_STRING">
-		<Text>Beep Umum</Text>
+		<Text>Bip umum</Text>
 	</STRING>
 	<STRING Id="13" Name="IDS_POSITIVE_ACKNOWLEDGEMENT_STRING">
 		<Text>Balasan positif</Text>
@@ -44,16 +44,16 @@
 		<Text>Balasan negatif atau kesalahan string</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_RINGING_TONE_SEL_BY_USER_FOR_IC_V_CALL_STRING">
-		<Text>Pangilan masuk nada dering</Text>
+		<Text>Nada dering panggilan masuk</Text>
 	</STRING>
 	<STRING Id="16" Name="IDS_ALERT_TONE_SEL_BY_USER_FOR_IC_SMS_STRING">
-		<Text>Tanda SMS</Text>
+		<Text>Peringatan SMS</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_CALLINFO">
 		<Text>Telepon Anda sedang dalam percakapan, tidak dapat membuat panggilan sekarang.</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_NONEUTK">
-		<Text>No UTK!</Text>
+		<Text>Tak ada UTK!</Text>
 	</STRING>
 	<STRING Id="100" Name="IDM_OK">
 		<Text>Selesai</Text>

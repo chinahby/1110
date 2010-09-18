@@ -127,7 +127,7 @@
 #elif defined FEATURE_VERSION_SMART
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (10)
-#define    PWRON_ANI_RATE                        (350)
+#define    PWRON_ANI_RATE                        (400)
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (10)
 #define    PWROFF_ANI_RATE                       (350)
@@ -135,7 +135,7 @@
 #elif defined FEATURE_VERSION_M8
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (10)
-#define    PWRON_ANI_RATE                        (350)
+#define    PWRON_ANI_RATE                        (400)
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (10)
 #define    PWROFF_ANI_RATE                       (350)

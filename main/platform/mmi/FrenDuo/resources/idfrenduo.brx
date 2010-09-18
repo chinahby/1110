@@ -5,7 +5,7 @@
 		<Text>Layanan Selular</Text>
 	</String>
 	<String Id="1003" Name="IDS_FRENDUO_TITLE_2">
-		<Text>Layanan Telepon Rumah</Text>
+		<Text>Layanan Selular Tetap</Text>
 	</String>
 	<String Id="1004" Name="IDS_FRENDUO_TITLE_3">
 		<Text>Cek Status</Text>

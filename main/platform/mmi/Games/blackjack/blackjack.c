@@ -573,7 +573,7 @@ static boolean BlackJack_InitAppData(BlackJackApp *pMe)
    SETAEERECT(&pMe->m_rectScreen, 0, 0, di.cxScreen, di.cyScreen);
 
    // Allocate a large buffer for string formatting
-   pMe->m_szBuffer = MALLOC_AECHARS(256);
+   pMe->m_szBuffer = MALLOC_AECHARS(512);
    if (pMe->m_szBuffer == NULL) {
       initGood = FALSE;
    }
@@ -1886,7 +1886,7 @@ static void BlackJack_ShowOpeningScreen(BlackJackApp *pMe)
                                BLACKJACK_RES_FILE_LANGUAGE,
                                IDS_INSTRUCTIONS,
                                szIntroText,
-                               SIZEOF_AECHARS(256));
+                               SIZEOF_AECHARS(512));
 /*
    ISTATIC_GetRect(pMe->m_pIStatic, &rc);
    IMENUCTL_GetRect(pMe->m_pCurrentMenu, &rc);*/

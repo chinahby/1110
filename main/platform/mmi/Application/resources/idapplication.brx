@@ -2,13 +2,13 @@
 <BREWRes Name="idapplication" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<String Id="1031" Name="IDS_TOOLS_LIST">
-		<Text>alat</Text>
+		<Text>Alat</Text>
 	</String>
 	<String Id="1032" Name="IDS_TOOLS_TITLE_1">
 		<Text>Alarm</Text>
 	</String>
 	<String Id="1033" Name="IDS_TOOLS_TITLE_2">
-		<Text>Caculator</Text>
+		<Text>Kalkulator</Text>
 	</String>
 	<String Id="1034" Name="IDS_TOOLS_TITLE_3">
 		<Text>Konverter</Text>
@@ -20,7 +20,7 @@
 		<Text>Timer</Text>
 	</String>
 	<String Id="1037" Name="IDS_TOOLS_TITLE_6">
-		<Text>Waktu dunia</Text>
+		<Text>Waktu Dunia</Text>
 	</String>
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
 		<Text>Aplikasi</Text>
@@ -41,7 +41,7 @@
 		<Text>Konverter</Text>
 	</String>
 	<String Id="1016" Name="IDS_APPLICATION_TITLE_6">
-		<Text>Waktu dunia</Text>
+		<Text>Waktu Dunia</Text>
 	</String>
 	<String Id="1017" Name="IDS_APPLICATION_TITLE_7">
 		<Text>Perekam suara</Text>
@@ -56,13 +56,13 @@
 		<Text>Kalkulator</Text>
 	</String>
 	<String Id="1021" Name="IDS_APPLICATION_TITLE_11">
-		<Text>Camera</Text>
+		<Text>Kamera</Text>
 	</String>
 	<String Id="1022" Name="IDS_APPLICATION_TITLE_12">
 		<Text>FM</Text>
 	</String>
 	<String Id="1023" Name="IDS_APPLICATION_TITLE_13">
-		<Text>Calendar</Text>
+		<Text>Kalender</Text>
 	</String>
 </Strings>
 <Dialogs>

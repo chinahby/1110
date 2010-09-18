@@ -29,7 +29,7 @@
 			<Text>  Dayung kanan</Text>
 		</STRING>
 		<STRING Id="11" Name="IDS_WELCOME_P">
-			<Text>OK/HPS Tahan</Text>
+			<Text>  OK/HPS Tahan</Text>
 		</STRING>
 		<STRING Id="12" Name="IDS_SCORE">
 			<Text>Nilai = %d</Text>

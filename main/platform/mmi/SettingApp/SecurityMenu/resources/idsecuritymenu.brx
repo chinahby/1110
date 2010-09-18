@@ -110,7 +110,7 @@
 		<Text>Pesan</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_RESET_DONE">
-		<Text>Atur ulang dilakukan</Text>
+		<Text>Reset selesai</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_MSG_INPUTINVALID" Encoding="Unicode">
 		<Text>Sandi tidak valid</Text>

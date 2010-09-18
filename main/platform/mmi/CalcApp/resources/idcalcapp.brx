@@ -2,7 +2,7 @@
 <BREWRes Name="calcapp" VERSION="1">
 	<Strings Encoding="ISOLATIN1">
 		<STRING Id="1" Name="IDS_OVERFLOW">
-			<Text>Melimpah</Text>
+			<Text>Berlebih</Text>
 		</STRING>
 		<STRING Id="3" Name="IDC_ADD">
 			<Text>+</Text>
@@ -44,16 +44,16 @@
 			<Text>C</Text>
 		</STRING>
 		<STRING Id="16" Name="IDS_AMOUNT">
-			<Text>Bill jumlah</Text>
+			<Text>Jumlah tagihan</Text>
 		</STRING>
 		<STRING Id="17" Name="IDS_TIP">
-			<Text>Tip jumlah</Text>
+			<Text>Jumlah tip</Text>
 		</STRING>
 		<STRING Id="18" Name="IDS_PERCENT">
 			<Text>%</Text>
 		</STRING>
 		<STRING Id="19" Name="IDS_RATE">
-			<Text>Pilih rate:</Text>
+			<Text>Pilih suku bunga:</Text>
 		</STRING>
 		<STRING Id="20" Name="IDC_RATE15">
 			<Text>0.15</Text>
@@ -74,7 +74,7 @@
 			<Text>&lt;Other&gt;</Text>
 		</STRING>
 		<STRING Id="26" Name="IDS_BILL">
-			<Text>Bill:</Text>
+			<Text>Tagihan:</Text>
 		</STRING>
 		<STRING Id="27" Name="IDS_TIPDESC">
 			<Text>Tip:</Text>
@@ -113,7 +113,7 @@
 			<Text>Kalkulator</Text>
 		</STRING>
 		<STRING Id="200" Name="IDS_TIPTITLE">
-			<Text>Tip kalkulator</Text>
+			<Text>Kalkulator tip</Text>
 		</STRING>
 	</Strings>
 </BREWRes>

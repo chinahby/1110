@@ -14,7 +14,7 @@
 		<Text>Kirim</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_CONTINU">
-		<Text>Cont.</Text>
+		<Text>Lanjut</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_BACK">
 		<Text>Kembali</Text>
@@ -53,13 +53,13 @@
 		<Text>Reset</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_END">
-		<Text>Akhir</Text>
+		<Text>Akhiri</Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_STRING_CONTACTS">
 		<Text>Kontak</Text>
 	</STRING>
 	<STRING Id="20" Name="IDS_STRING_END_CALL">
-		<Text>Mengakhiri Pembicaraan</Text>
+		<Text>Akhiri Panggilan</Text>
 	</STRING>
 	<STRING Id="21" Name="IDS_STRING_CANCEL">
 		<Text>Batal</Text>
@@ -68,10 +68,10 @@
 		<Text>Hapus</Text>
 	</STRING>
 	<STRING Id="23" Name="IDS_MSG_INFORMATIVE_DELETE">
-		<Text>Terhapus</Text>
+		<Text>Dihapus</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_MSG_CONFIRM_DELETEALL">
-		<Text>Hapus Semua</Text>
+		<Text>Dihapus Semua</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_MSG_INFORMATIVE_DELETEALL">
 		<Text>Terhapus Semua</Text>
@@ -83,7 +83,7 @@
 		<Text>Berhasil</Text>
 	</STRING>
 	<STRING Id="28" Name="IDS_SETTING">
-		<Text>Pengaturan</Text>
+		<Text>Atur</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_TOTODAY">
 		<Text>Hari ini</Text>
@@ -104,10 +104,10 @@
 		<Text>RapidEN</Text>
 	</STRING>
 	<STRING Id="35" Name="IDS_INPUT_NUMBERS">
-		<Text>Numbers</Text>
+		<Text>Nomor</Text>
 	</STRING>
 	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
-		<Text>Tekan "Membuka" Lalu * </Text>
+		<Text>Tekan "Buka" Lalu * </Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
 		<Text>RapidTH</Text>
@@ -131,10 +131,10 @@
 		<Text>Tolak</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_MUTE">
-		<Text>Bisu</Text>
+		<Text>Sunyi</Text>
 	</STRING>
 	<STRING Id="45" Name="IDS_UNMUTE">
-		<Text>Non Aktifkan Bisu</Text>
+		<Text>Bunyi</Text>
 	</STRING>
 	<STRING Id="46" Name="IDS_STRING_UNLOCK">
 		<Text>Aktifkan</Text>
@@ -176,7 +176,7 @@
 		<Text>Diam</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_PLAY">
-		<Text>Main</Text>
+		<Text>Mainkan</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_POP_DONE">
 		<Text>Selesai</Text>
@@ -215,7 +215,7 @@
 		<Text>Layar penuh</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_GALLERY">
-		<Text>Koleksi</Text>
+		<Text>Galeri</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_YES">
 		<Text>Ya</Text>
@@ -224,7 +224,7 @@
 		<Text>Tidak</Text>
 	</STRING>
 	<String Id="1026" Name="IDS_VIEWMORE">
-		<Text>Lanjut</Text>
+		<Text>Lihat lagi</Text>
 	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
 		<Text>Facebook</Text>
@@ -236,19 +236,19 @@
 		<Text>Chat</Text>
 	</String>
 	<String Id="1030" Name="IDS_MORE">
-		<Text>More</Text>
+		<Text>Lainnya</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
-		<Text>Sebentar lagi</Text>
+		<Text>Tahan</Text>
 	</STRING>
 	<STRING Id="2002" Name="IDS_FM_BACK">
 		<Text>Kembali</Text>
 	</STRING>
 	<STRING Id="2003" Name="IDS_MSG_KEYGUARD_UNLOCKKEY">
-		<Text>Tekan * untuk aktikafkan</Text>
+		<Text>Tekan * untuk buka kunci</Text>
 	</STRING>
 	<STRING Id="2004" Name="IDS_MODIFY">
-		<Text>Merubah</Text>
+		<Text>Ubah</Text>
 	</STRING>
 	<String Id="2005" Name="IDS_VIEW">
 		<Text>Lihat</Text>

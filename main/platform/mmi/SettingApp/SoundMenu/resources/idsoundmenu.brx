@@ -44,7 +44,7 @@
 		<Text>Bunyi</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_SHUTDOWN_RINGER">
-		<Text>Nada dering hidupkan</Text>
+		<Text>Nada matikan daya</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_ALARMRING">
 		<Text>Nada alarm</Text>

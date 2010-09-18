@@ -254,7 +254,7 @@
 		<Text>Open</Text>
 	</STRING>
 	<STRING Id="1084" Name="IDS_MG_WALLPAPERNOSET">
-		<Text>Size is too big. Image can't be set as wallpaper</Text>
+		<Text>Image size is too big!</Text>
 	</STRING>
 	<STRING Id="1085" Name="IDS_MG_SELECTNONE">
 		<Text>None select</Text>

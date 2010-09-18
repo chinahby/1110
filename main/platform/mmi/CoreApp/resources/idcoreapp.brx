@@ -2,19 +2,19 @@
 <BREWRes Name="idcoreapp" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_CORE_TITLE">
-		<Text>Core Applet</Text>
+		<Text>Applet Inti</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_NORUIM">
 		<Text>Tidak ada Kartu</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_INVALID_PASSWORD">
-		<Text>Password Salah</Text>
+		<Text>Kata kunci salah</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_INVALIDPIN">
-		<Text>Kode Pin Salah</Text>
+		<Text>Kode PIN salah</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_UIMBLOCKED">
-		<Text>UIM kartu diblokir</Text>
+		<Text>Kartu UIM diblokir</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_PINDIFFERENT">
 		<Text>Masukan Salah</Text>
@@ -23,7 +23,7 @@
 		<Text>Kode PUK Salah</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_UTKREFRESH">
-		<Text>Deteksi kartu UIM...</Text>
+		<Text>Segarkan kartu UIM...</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_FULLY_CHARGED">
 		<Text>Baterai Penuh</Text>
@@ -32,19 +32,19 @@
 		<Text>Voltase terlalu tinggi</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_ENTER_PIN">
-		<Text>Masukan PIN</Text>
+		<Text>Masukkan PIN</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_NEWPIN">
-		<Text>Masukan PIN baru</Text>
+		<Text>Masukkan PIN baru</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_NEWPIN_AGAIN">
-		<Text>Masukan PIN kembali</Text>
+		<Text>Masukkan PIN lagi</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_ENTER_PUK">
-		<Text>Masukan PUK</Text>
+		<Text>Masukkan PUK</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_AVAILCNT">
-		<Text>Kesempatan Mencoba: %d</Text>
+		<Text>Kesempatan mencoba: %d</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_LOCKEDRUIM">
 		<Text>Kartu UIM tak terdeteksi</Text>
@@ -53,7 +53,7 @@
 		<Text>Uji Pabrik</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_SEARCHING">
-		<Text>mencari...</Text>
+		<Text>Mencari...</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MONTH_DATE">
 		<Text>%04d/%02d/%02d</Text>
@@ -62,13 +62,13 @@
 		<Text>%02d:%02d</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_SERVICEREQ">
-		<Text>Perlu jasa program</Text>
+		<Text>Perlu program layanan</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_LOADING">
 		<Text>Memuat...</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_ENTER_PHONELOCK">
-		<Text>Mobile password</Text>
+		<Text>Kata kunci telepon</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_RESET_1">
 		<Text>Status Telepon</Text>
@@ -77,55 +77,55 @@
 		<Text>Matikan Telepon</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_RESET_2">
-		<Text>Pengaturan ulang...</Text>
+		<Text>Atur ulang...</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_LOWBATTMSG_TEXT">
 		<Text>Baterai rendah</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_RUIM_DOOR_REMOVED">
-		<Text>Kartu UIM dikeluarkan</Text>
+		<Text>Kartu UIM dipindahkan</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_EXIT_EMERGENCY_MODE">
-		<Text>Peringatan: jika Anda kembali ke layanan normal, operator darurat mungkin tidak dapat mencapai Anda.</Text>
+		<Text>Peringatan: jika Anda kembali ke layanan normal, operator darurat mungkin tidak dapat menjangkau Anda.</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_EMERGENCY_MODE">
-		<Text>Darurat</Text>
+		<Text>Mode darurat</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_POWERALARM">
 		<Text>Alarm</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_AUTO_POWER_OFF">
-		<Text>Maukah telepon Anda otomatis mati</Text>
+		<Text>Maukah Anda matikan otomatis telepon?</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_VMAILTIPS_FMT">
-		<Text>Pesan Nada baru:%d</Text>
+		<Text>Pesan suara baru:%d</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_NEWWMSTIPS_FMT">
 		<Text>Terima %d pesan baru</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_CHARGER_ON">
-		<Text>Mengisi-ulang</Text>
+		<Text>Isi ulang</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_CHARGER_OFF">
-		<Text>Berhenti Mengisi-ulang</Text>
+		<Text>Berhenti isi ulang</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_EMERGENCY_NUMBER">
-		<Text>No Darurat</Text>
+		<Text>Nomor darurat</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_MCC_LOCK">
-		<Text>Password kata kunci</Text>
+		<Text>Kata kunci kartu</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_ISRAEL_BANNER" Encoding="Unicode">
 		<Text>פלאפון</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_PLANEMODE">
-		<Text>Mode Pesawat</Text>
+		<Text>Mode Penerbangan</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_PLANEMODE_QUERY">
-		<Text>Aktifkan cara penerbangan</Text>
+		<Text>Aktifkan mode penerbangan</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_ENTER_PASSWORD">
-		<Text>Masukan password</Text>
+		<Text>Masukkan kata kunci</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_UNKNOWN_NETWORK">
 		<Text>Jaringan tidak dikenali</Text>
@@ -140,7 +140,7 @@
 		<Text>Headset Dilepaskan</Text>
 	</String>
 	<String Id="1047" Name="IDS_WAITING">
-		<Text>Waiting</Text>
+		<Text>Menunggu</Text>
 	</String>
 </Strings>
 <Dialogs>

@@ -3569,6 +3569,10 @@ SEE ALSO:
 =============================================================================*/
 static AEESoundTone OEMALERT_MapKeyToTone(AVKType key)
 {
+#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+	return AEE_TONE_3;
+#endif
+
    switch (key) 
    {
        case AVK_1:
