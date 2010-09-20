@@ -1,9 +1,10 @@
 @echo off
 @set PROJECTNAME=Flexi203fportal
-@set DISPLAYNAME=IVIO
+@set DISPLAYNAME=Flexi203fportal
 @set QUALCOMMNAME=SBNAALZ
 @set QUALCOMMNAME_BUILD=SXNAALZ
 @set RESOURCEDIR=Flexi203
+@set MODELVERSION=Flexi_IVIO_FM_V0.4_20100801
 
 rem LCD-TYPE CHOOSE
 rem @set LCD_TYPE=tm_128x128
@@ -17,6 +18,7 @@ del %PROJECTNAME%\OEMConstFiles_Dynamic.c
 del %PROJECTNAME%\OEMConstFiles_Dynamic.o
 del %PROJECTNAME%\OEMModTableExt.o
 del %PROJECTNAME%\Staticapp.o
+del %PROJECTNAME%\CoreApp.o
 
 IF "%*"=="" goto DO_COPY
 goto DO_WORK
