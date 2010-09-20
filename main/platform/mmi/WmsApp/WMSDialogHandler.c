@@ -2779,7 +2779,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
                     return TRUE;
                 
                 // 发出短信是否需要递交报告
-                case IDS_DELIVERYREPORTS:
+                case IDS_REPORTTITLE: //IDS_DELIVERYREPORTS:
                     CLOSE_DIALOG(DLGRET_REPORTS)
                     return TRUE;
                     
@@ -4651,7 +4651,7 @@ static boolean IDD_REPORTS_Handler(void *pUser,
 				AECHAR WTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,                                
-                        IDS_DELIVERYREPORTS,
+                        IDS_REPORTTITLE, //IDS_DELIVERYREPORTS,
                         WTitle,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);

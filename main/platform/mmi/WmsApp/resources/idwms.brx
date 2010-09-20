@@ -209,7 +209,7 @@
 		<Text>Tidak ada angka yang valid</Text>
 	</STRING>
 	<STRING Id="70" Name="IDS_OPTION">
-		<Text>Pilihan</Text>
+		<Text>Pengaturan</Text>
 	</STRING>
 	<STRING Id="71" Name="IDS_RECEIVER">
 		<Text>Penerima</Text>
