@@ -377,7 +377,7 @@
 		<Text>UIM Slot Dua</Text>
 	</String>
 	<String Id="1126" Name="IDS_SIMSETTING_CHOICE_STRING" Encoding="Unicode">
-		<Text>Are you sure?</Text>
+		<Text>Anda yakin?</Text>
 	</String>
 	<String Id="1127" Name="IDS_CANCEL" Encoding="Unicode">
 		<Text>Batalkan</Text>
