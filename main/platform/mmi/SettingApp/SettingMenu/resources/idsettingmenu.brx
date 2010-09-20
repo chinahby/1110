@@ -77,16 +77,16 @@
 		<Text>Privasi suara</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_AUTO_POWER_ON_TIME">
-		<Text>Daya hidup</Text>
+		<Text>Hidup daya</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_AUTO_POWER_OFF_TIME">
-		<Text>Daya mati</Text>
+		<Text>Mati daya</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_AUTO_POWER_TIME">
 		<Text>Waktu</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_AUTO_POWER_STATE">
-		<Text>Hidup/Mati</Text>
+		<Text>Status</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_IP_NUMBER_SET">
 		<Text>Atur Nomor IP</Text>
@@ -167,7 +167,7 @@
 		<Text>Layanan persediaan</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_CALLFORWARD_DIVERT">
-		<Text>Terukan panggilan</Text>
+		<Text>Teruskan panggilan</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_WARNING_MESSEGE">
 		<Text>Kata-kata tak cukup</Text>
@@ -287,7 +287,7 @@
 		<Text>Mode penerbangan</Text>
 	</STRING>
 	<STRING Id="1096" Name="IDS_AUTOPOWER_STATUS">
-		<Text>Status</Text>
+		<Text>Daya</Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_AUTO_POWER_TITLE">
 		<Text>Daya Hidup/Mati otomatis</Text>
@@ -341,7 +341,7 @@
 		<Text>Batasi pgl keluar</Text>
 	</STRING>
 	<STRING Id="1114" Name="IDS_RESTRICT_INCOMING">
-		<Text>Batasi panggil masuk</Text>
+		<Text>Batasi pgl masuk</Text>
 	</STRING>
 	<STRING Id="1115" Name="IDS_PASSWORD">
 		<Text>Masukkan sandi</Text>

@@ -2712,7 +2712,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_MSGVALIDITY);
 #if (!defined FEATURE_CARRIER_TAIWAN_APBW) && (!defined FEATURE_CARRIER_THAILAND_HUTCH)
-            MENU_ADDITEM(pMenu, IDS_DELIVERYREPORTS);
+            MENU_ADDITEM(pMenu, IDS_REPORTTITLE); //IDS_DELIVERYREPORTS);
 #endif            
 #ifndef FEATURE_CARRIER_THAILAND_HUTCH              
             MENU_ADDITEM(pMenu, IDS_PRIORITY);
@@ -7834,10 +7834,10 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDONLY);
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SAVEONLY);
-                            MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDANDSAVE);
+                            MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDOPT_SAVEANDSEND_SHORT);
                             
                             {// 需根据具体配置选择相应菜单项
-                                uint16 nSelID = IDS_SENDANDSAVE;
+                                uint16 nSelID = IDS_SENDOPT_SAVEANDSEND_SHORT;
                                 
                                 switch (sendmode)
                                 {
@@ -7850,7 +7850,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                         break;
                                         
                                     default://发送并保存
-                                        sendmode = SENDOPT_SAVEANDSEND;
+                                        sendmode = IDS_SENDOPT_SAVEANDSEND_SHORT;
                                         break;
                                 }
                                 IMENUCTL_SetSel((IMenuCtl *)pControl, nSelID);
@@ -7895,13 +7895,13 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                                                 
                                 MENU_SETBOTTOMBAR((IMenuCtl *)pControl, BTBAR_NONE);
                                 
-                                MENU_ADDITEM((IMenuCtl *)pControl, IDS_ENABLEREPORT);
+                                MENU_ADDITEM((IMenuCtl *)pControl, IDS_ENABLEREPORT_SHORT);
                                 MENU_ADDITEM((IMenuCtl *)pControl, IDS_DISABLEREPORT);
                                 
                                 // 需根据具体配置选择相应菜单项
                                 if (report)
                                 {
-                                    nSelID = IDS_ENABLEREPORT;
+                                    nSelID = IDS_ENABLEREPORT_SHORT;
                                 }
                                 else
                                 {
@@ -7917,16 +7917,16 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             IMENUCTL_SetColors((IMenuCtl *)pControl, &color);
 
                             {
-                                uint16 nSelID = IDS_ENABLE;
+                                uint16 nSelID = IDS_ENABLE_SHORT;
 
                                 MENU_SETBOTTOMBAR((IMenuCtl *)pControl, BTBAR_NONE);
 
-                                MENU_ADDITEM((IMenuCtl *)pControl, IDS_ENABLE);
+                                MENU_ADDITEM((IMenuCtl *)pControl, IDS_ENABLE_SHORT);
                                 MENU_ADDITEM((IMenuCtl *)pControl, IDS_DISABLE);
 
                                 if(cbval)
                                 {
-                                    nSelID = IDS_ENABLE;
+                                    nSelID = IDS_ENABLE_SHORT;
                                 }
                                 else
                                 {
@@ -8242,9 +8242,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 case IDS_SAVEONLY:
                     sendmode = SENDOPT_SAVE;
                     break;
-                    
-                case IDS_SENDANDSAVE:
-                    sendmode = SENDOPT_SAVEANDSEND;
+
+                case IDS_SENDOPT_SAVEANDSEND_SHORT:
+                	sendmode = SENDOPT_SAVEANDSEND;
                     break;
                     
                 case IDS_NORMAL:
@@ -8259,7 +8259,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     priority = WMS_PRIORITY_EMERGENCY;
                     break;
                     
-                case IDS_ENABLEREPORT:
+                case IDS_ENABLEREPORT_SHORT:
                     report = TRUE;
                     break;
                     
@@ -8267,7 +8267,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     report = FALSE;
                     break;
 
-                case IDS_ENABLE:
+                case IDS_ENABLE_SHORT:
                     cbval = TRUE;
                     (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                             EVTFLG_ASYNC,

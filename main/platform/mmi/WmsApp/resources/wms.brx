@@ -529,6 +529,15 @@
 	<String Id="182" Name="IDS_NO_CARD">
 		<Text>No UIM card</Text>
 	</String>
+	<String Id="183" Name="IDS_ENABLE_SHORT">
+		<Text>On</Text>
+	</String>
+	<String Id="184" Name="IDS_SENDOPT_SAVEANDSEND_SHORT">
+		<Text>Send and Save</Text>
+	</String>
+	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
+		<Text>Hdp</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

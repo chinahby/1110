@@ -23,7 +23,7 @@
 		<Text>Ubah PIN gagal</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_RESTORING">
-		<Text>Mengatur ulang…</Text>
+		<Text>Mengatur ulang...</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_RESTRICT">
 		<Text>Pembatasan panggilan</Text>

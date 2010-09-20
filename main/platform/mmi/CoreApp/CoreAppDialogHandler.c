@@ -4309,6 +4309,30 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     MSG_FATAL("Strlen=%d, rc_week.x=%d", strlen, rc_week.x, 0);
 }   
 #else
+	
+
+	if ( nWeekResID == AEE_IDS_SUNDAY )
+	{
+		nv_language_enum_type language;
+		(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_LANGUAGE_SELECTION,
+                                       &language,
+                                       sizeof(language));
+
+        if ( language == NV_LANGUAGE_INDONESIAN )
+        {
+			wszDate[4] = (AECHAR)'\0';
+		}
+		else
+		{
+			wszDate[3] = (AECHAR)'\0';
+		}
+	}
+	else    
+    {
+		wszDate[3] = (AECHAR)'\0';
+    }
+	
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,

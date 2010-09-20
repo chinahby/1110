@@ -41,7 +41,7 @@
 		<Text>BlackJack</Text>
 	</STRING>
 	<STRING Id="101" Name="IDS_INSTRUCTIONS">
-		<Text>Jadi lebih dekat ke 21 melawan dealer tanpa melebihi angka 21 tersebut. Nilai dari kartu adalah: As, 1 atau 11; Raja, Ratu, </Text>
+		<Text>Jadi lebih dekat ke 21 melawan dealer tanpa melebihi angka 21 tersebut. Nilai dari kartu adalah: As, 1 atau 11; Raja, Ratu, Jack, Sepuluh, masing-masing 10; dan kartu-kartu lain sesuai nomornya</Text>
 	</STRING>
 	<STRING Id="102" Name="IDS_CONTINUE_OR_NEW_TEXT">
 		<Text>Lanjutkan permainan atau mulai permainan baru?</Text>

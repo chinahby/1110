@@ -2,7 +2,7 @@
 <BREWRes Name="idsoundmenu" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_STARTUP_RINGER">
-		<Text>Nada dering hidupkan</Text>
+		<Text>Nada hidupkan daya</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RINGER_VOLUME_TITLE">
 		<Text>Nada dering</Text>
@@ -122,16 +122,16 @@
 		<Text>Ubah</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_ACTIVATING">
-		<Text>Aktifkan…</Text>
+		<Text>Aktifkan...</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_RESTORED">
-		<Text>Kembalikan…</Text>
+		<Text>Kembalikan...</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_KEYSND_SILENT">
 		<Text>Diam</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_POWERONOFF_ALERT">
-		<Text>Peringatan daya hidup/mati</Text>
+		<Text>Nada hidupkan/matikan</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ALERTTYPE_VIBANDRING">
 		<Text>Getar dan dering</Text>
