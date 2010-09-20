@@ -104,10 +104,10 @@
 		<Text>Terima %d pesan baru</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_CHARGER_ON">
-		<Text>Isi ulang</Text>
+		<Text>Mengisi</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_CHARGER_OFF">
-		<Text>Berhenti isi ulang</Text>
+		<Text>Berhenti Mengisi</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_EMERGENCY_NUMBER">
 		<Text>Nomor darurat</Text>
