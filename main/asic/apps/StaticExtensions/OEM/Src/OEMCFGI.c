@@ -253,11 +253,7 @@ when       who     what, where, why
 // in OEMConfigListType.  It does not need to be incremented when a new
 // field is added to the end of OEMConfigListType.
 //
-#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000D )
-#else
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000C )
-#endif
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000E )
 
 ////
 // The EFS file that stores the OEM configuration.

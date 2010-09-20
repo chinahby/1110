@@ -10,6 +10,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #define FEATURE_NET_LOCK
+#define FEATURE_LONG_NETLOCK
 #define FEATURE_SEAMLESS_SMS
 #define FEATURE_VERSION_FLEXI203
 #define FEATURE_PROJECT_FLEXI203
