@@ -699,56 +699,78 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                     }
 
                     return TRUE;
-           #ifdef FEATURE_TORCH_SUPPORT
-                #if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
-                    case AVK_SPACE:
+
+                case AVK_RWD:
+                {
+                    // 长按切换情景模式
+                    byte alertType;
+                    
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));//CFGI_ALERT_TYPE
+                    
+                    if(alertType != OEMNV_PROFILE_QUIETMODE)
                     {
-                        
-                        if ( pMe->TorchOn == FALSE )
-                        {
-                            pMe->TorchOn = TRUE;
-                            if (pMe->m_pBacklight)
-                            {
-                                IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
-                                //IBACKLIGHT_Disable(pMe->m_pBacklight);
-                            }
-                        }
-                        else
-                        {
-                            pMe->TorchOn = FALSE;
-                            if (pMe->m_pBacklight)
-                            {
-                                IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
-                                //IBACKLIGHT_Disable(pMe->m_pBacklight);
-                            }
-                        }
-                                            
+                        alertType = OEMNV_PROFILE_QUIETMODE;
                     }
-
-                    return TRUE;
-                #endif
-
-                #if defined(FEATURE_PROJECT_W021)
-                    case AVK_CAMERA:
+                    else
                     {
-                        if ( pMe->TorchOn == FALSE )
+                        alertType = OEMNV_PROFILE_NORMALMODE;
+                    }
+                    
+                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));
+                    CoreApp_UpdateAnnunciator(pMe);
+                    return TRUE;
+                }
+                    
+       #ifdef FEATURE_TORCH_SUPPORT
+            #if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
+                case AVK_SPACE:
+                {
+                    
+                    if ( pMe->TorchOn == FALSE )
+                    {
+                        pMe->TorchOn = TRUE;
+                        if (pMe->m_pBacklight)
                         {
-                            pMe->TorchOn = TRUE;
-                            if (pMe->m_pBacklight)
-                            {
-                                IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
-                                IBACKLIGHT_Disable(pMe->m_pBacklight);
-                            }
+                            IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                            //IBACKLIGHT_Disable(pMe->m_pBacklight);
                         }
                     }
+                    else
+                    {
+                        pMe->TorchOn = FALSE;
+                        if (pMe->m_pBacklight)
+                        {
+                            IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                            //IBACKLIGHT_Disable(pMe->m_pBacklight);
+                        }
+                    }
+                                        
+                }
 
-                    return TRUE;
-                #endif
-                
-                    break;
+                return TRUE;
             #endif
-                default:
-                    break;
+
+            #if defined(FEATURE_PROJECT_W021)
+                case AVK_CAMERA:
+                {
+                    if ( pMe->TorchOn == FALSE )
+                    {
+                        pMe->TorchOn = TRUE;
+                        if (pMe->m_pBacklight)
+                        {
+                            IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                            IBACKLIGHT_Disable(pMe->m_pBacklight);
+                        }
+                    }
+                }
+
+                return TRUE;
+            #endif
+            
+                break;
+        #endif
+            default:
+                break;
             }
             break;
             
