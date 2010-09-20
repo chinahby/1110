@@ -1096,6 +1096,8 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
 #endif //defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
 #ifdef FEATURE_NET_LOCK
 {
+			nv_item_type    nviOldSimChoice;
+			int ret = 0;
             extern boolean OEM_IsNetLock(void);
 			#ifdef FEATURE_LONG_NETLOCK
 			boolean Is_NetLockclose = FALSE;
@@ -1125,12 +1127,28 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
 			            }*/
 			}
 			#else
+		#ifdef FEATURE_PROJECT_M8
+			ret =OEMNV_Get(NV_SIM_SELECT_I,&nviOldSimChoice);
+            if( NV_NOTACTIVE_S != ret)
+            {
+            	if ( nviOldSimChoice.sim_select != OEMNV_SIMFORM_TWO )
+                {
+					if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
+		            {
+		                pMe->m_eUIMErrCode = UIMERR_LOCKED;
+		                MOVE_TO_STATE(COREST_UIMERR)
+		                return NFSMACTION_CONTINUE;
+		            }
+                }
+            }			
+		#else
             if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
             {
                 pMe->m_eUIMErrCode = UIMERR_LOCKED;
                 MOVE_TO_STATE(COREST_UIMERR)
                 return NFSMACTION_CONTINUE;
             }
+        #endif
 			#endif
 }
 #endif
