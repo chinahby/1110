@@ -8139,11 +8139,275 @@ static boolean MGAppUtil_WallpaperSettingCheck(IImage *po,
  * RETURN VALUE :
  * ==========================================================================
  */
+ #ifndef BI_BITFIELDS
+#define BI_BITFIELDS    3
+#endif
+#define HEXING_OEM_WALLPAPER1 MG_PHONEMUSIC_PATH"miaoxiaoming1.bmp"
+#define HEXING_OEM_WALLPAPER2 MG_PHONEMUSIC_PATH"miaoxiaoming2.bmp"
+
+// BMP转换用
+typedef PACKED struct _DIBFileHeader           // DIB文件头
+{
+  uint16        bfType ;          // 标记为"BM"或0x4D42
+  uint32        bfSize ;          // 整个文件的尺寸
+  uint16        bfReserved1 ;     // 保留，为0
+  uint16        bfReserved2 ;     // 保留，为0
+  uint32        bfOffsetBits ;    // DIB像素在文件中的偏移
+} DIBFileHeader;
+
+typedef PACKED struct _DIBInfoHeader 
+{
+  uint32 biSize ;              // 结构体的大小 = 40
+  uint32 biWidth ;             // 图片的宽度（像素）
+  int32  biHeight ;            // 图片的高度（像素）
+  uint16 biPlanes ;            // = 1
+  uint16 biBitCount ;          // 色深(1, 4, 8, 16, 24, or 32)
+  uint32 biCompression ;       // 压缩码
+  uint32 biSizeImage ;         // 图像的字节数
+  uint32 biXPelsPerMeter ;     // horizontal resolution
+  uint32 biYPelsPerMeter ;     // vertical resolution
+  uint32 biClrUsed ;           // 使用的颜色数量
+  uint32 biClrImportant ;      // 重要的颜色数量
+}DIBInfoHeader;
+
+
+// 将指定的IBitmap写成pFileName命名的文件
+int ImageExplorer_WriteDIBFile(IShell *pIShell, char *pFileName, IBitmap *pBmp)
+{
+  IFileMgr *pFileMgr = NULL;
+  int       ret= AEE_SUCCESS;
+  IFile    *pDIBFile = NULL;
+  IDIB     *pDIB = NULL;
+  uint32    dwDIBSize = 0;
+  boolean   bWirteScheme = FALSE;
+  uint32    dwScheme[3] = {0};
+  
+  DIBFileHeader myDIBFileHeader = {0};
+  DIBInfoHeader myDIBInfoHeader = {0};
+  
+  if(!pIShell || !pFileName || !pBmp)
+  {
+    MSG_FATAL("invalid param",0,0,0);
+    return EBADPARM;
+  }
+  
+  if(AEE_SUCCESS != IBITMAP_QueryInterface(pBmp, AEECLSID_DIB, (void **)&pDIB))
+  {
+	MSG_FATAL("IBITMAP_QueryInterface failed",0,0,0);
+    return EFAILED;
+  }
+  
+  ret = ISHELL_CreateInstance(pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
+//  MSG_FATAL("filename =%",0,0,0);
+
+//  LOG("filename=%s", pFileName);
+
+  //如果存在同名的文件，就删除原有文件
+  if (AEE_SUCCESS == IFILEMGR_Test(pFileMgr, HEXING_OEM_WALLPAPER1))
+  {    
+    MSG_FATAL("IFILEMGR_Test failed",0,0,0);
+    ret = IFILEMGR_Remove(pFileMgr, HEXING_OEM_WALLPAPER1);//
+  }
+  
+  if (AEE_SUCCESS == IFILEMGR_Test(pFileMgr, HEXING_OEM_WALLPAPER2))
+  {    
+    MSG_FATAL("IFILEMGR_Test failed",0,0,0);
+    ret = IFILEMGR_Remove(pFileMgr, HEXING_OEM_WALLPAPER2);//
+  }
+  pDIBFile = IFILEMGR_OpenFile(pFileMgr, pFileName, _OFM_CREATE);
+  if(!pDIBFile)
+  {  
+    MSG_FATAL("IFILEMGR_OpenFile failed",0,0,0);
+    ret = EFAILED;
+  }
+  
+  dwDIBSize = pDIB->cx*pDIB->cy*((pDIB->nDepth+7)/8); 
+  
+  // 设置BMP文件头信息
+  myDIBFileHeader.bfType          = 0x4D42;
+  myDIBFileHeader.bfSize          = (uint32)(sizeof(myDIBFileHeader)+sizeof(myDIBInfoHeader)+dwDIBSize);
+  myDIBFileHeader.bfReserved1     = 0;
+  myDIBFileHeader.bfReserved2     = 0;
+  myDIBFileHeader.bfOffsetBits    = sizeof(myDIBFileHeader)+sizeof(myDIBInfoHeader);
+  
+  // 设置BMP信息头
+  myDIBInfoHeader.biSize          = sizeof(myDIBInfoHeader);
+  myDIBInfoHeader.biWidth         = pDIB->cx;
+  myDIBInfoHeader.biHeight        = pDIB->cy;
+  myDIBInfoHeader.biPlanes        = 1;
+  myDIBInfoHeader.biBitCount      = pDIB->nDepth;
+  myDIBInfoHeader.biCompression   = 0;
+  myDIBInfoHeader.biSizeImage     = dwDIBSize;
+  myDIBInfoHeader.biXPelsPerMeter = 0;
+  myDIBInfoHeader.biYPelsPerMeter = 0;
+  myDIBInfoHeader.biClrUsed       = 0;
+  myDIBInfoHeader.biClrImportant  = 0;
+  
+  if(pDIB->nPitch>0)
+  {
+    // TOP-DOWN Image
+    myDIBInfoHeader.biHeight = -myDIBInfoHeader.biHeight;
+  }
+  else
+  {
+    // DOWN-TOP-DOWN
+    // Nothing Todo
+  }
+  
+  if(pDIB->nColorScheme == IDIB_COLORSCHEME_555)
+  {
+    // Nothing todo
+  }
+  else if(pDIB->nColorScheme == IDIB_COLORSCHEME_565)
+  {
+    myDIBInfoHeader.biCompression   = BI_BITFIELDS;
+    dwScheme[0] = 0xF800;
+    dwScheme[1] = 0x07E0;
+    dwScheme[2] = 0x001F;
+    bWirteScheme = TRUE;
+    myDIBFileHeader.bfSize += sizeof(dwScheme);
+    myDIBFileHeader.bfOffsetBits += sizeof(dwScheme);
+  }
+  // 写入文件
+#ifdef WIN32
+  {
+    byte buf[14];
+    myDIBFileHeader.bfSize       -= 2;
+    myDIBFileHeader.bfOffsetBits -= 2;
+    *((uint16*)(&buf[0]))  = myDIBFileHeader.bfType;
+    *((uint32*)(&buf[2]))  = myDIBFileHeader.bfSize;
+    *((uint16*)(&buf[6]))  = myDIBFileHeader.bfReserved1;
+    *((uint16*)(&buf[8]))  = myDIBFileHeader.bfReserved2;
+    *((uint32*)(&buf[10])) = myDIBFileHeader.bfOffsetBits;
+    
+    if (0 == IFILE_Write(pDIBFile, buf, 14))
+    {
+      ret = EFAILED;
+	  MSG_FATAL("IFILE_Write failed",0,0,0);
+    }
+  }
+#else
+  if (0 == IFILE_Write(pDIBFile, &myDIBFileHeader, sizeof(myDIBFileHeader)) )
+  {
+    ret = EFAILED;
+    MSG_FATAL("IFILE_Write failed",0,0,0);
+  }
+    
+#endif
+  if (0 == IFILE_Write(pDIBFile, &myDIBInfoHeader, sizeof(myDIBInfoHeader)))
+  {
+    ret = EFAILED;
+    MSG_FATAL("IFILE_Write failed",0,0,0);
+  }
+    
+  if(bWirteScheme)
+  {
+    if (0 == IFILE_Write(pDIBFile, dwScheme, sizeof(dwScheme)) )
+    {
+      ret = EFAILED;
+	  MSG_FATAL("IFILE_Write failed",0,0,0);
+    }
+  }
+  
+  if (0 == IFILE_Write(pDIBFile, pDIB->pBmp, dwDIBSize))
+  {
+    ret = EFAILED;
+    MSG_FATAL("IFILE_Write failed",0,0,0);
+  }
+    
+  //  MSG_FATAL("ImageExplorer_WriteDIBFile Leave",0,0,0);
+
+error:  
+  RELEASEIF(pDIB);
+  RELEASEIF(pDIBFile);
+  RELEASEIF(pFileMgr);
+  return ret;
+}
+
+
+// 将指定的IImage转换成指定的IBitmap接口
+int ImageExplorer_ImageToBmp(IDisplay *pIDisplay, 
+                             IImage  *pImage, 
+                             IBitmap **ppBmp, 
+                             uint16  wExpectWidth, 
+                             uint16  wExpectHeight)
+{
+  int         nRet = AEE_SUCCESS;
+  IBitmap     *pSysBmp = NULL;
+  IBitmap     *pNewBmp = NULL;
+  AEEImageInfo ImageInfo;
+  
+  if(!pIDisplay || !pImage || !ppBmp)
+  {
+    MSG_FATAL("invalid param",0,0,0);
+    return EBADPARM;
+  }
+
+  if (wExpectWidth == 0  || wExpectHeight == 0)
+  {
+    MSG_FATAL("invalid param, width or height is zero",0,0,0);
+    return EBADPARM;
+  }
+
+  MSG_FATAL("Enter ImageExplorer_ImageToBmp",0,0,0);
+  
+  IIMAGE_GetInfo(pImage, &ImageInfo);
+ // MSG_FATAL("cx=%d, cy=%d", ImageInfo.cx, ImageInfo.cy,0);
+  wExpectWidth  = wExpectWidth <ImageInfo.cx ? wExpectWidth : ImageInfo.cx;
+  wExpectHeight = wExpectHeight<ImageInfo.cy ? wExpectHeight : ImageInfo.cy;
+  
+  //MSG_FATAL("wExpectWidth=%d, wExpectHeight=%d", wExpectWidth, wExpectHeight,0);
+
+  if (wExpectWidth == 0  || wExpectHeight == 0)
+  {
+    MSG_FATAL("invalid param, width or height is zero",0,0,0);
+    return EBADPARM;
+  }
+
+  // 复制一个系统Display
+  pSysBmp = IDISPLAY_GetDestination(pIDisplay);
+  if(!pSysBmp)
+  {
+    return EFAILED;
+  }
+  
+  // 创建一个新的Bitmap接口
+  nRet = IBITMAP_CreateCompatibleBitmap(pSysBmp, &pNewBmp, wExpectWidth, wExpectHeight);
+  if(nRet != AEE_SUCCESS)
+  {
+    RELEASEIF(pSysBmp);
+    return nRet;
+  }
+  
+  nRet = IDISPLAY_SetDestination(pIDisplay, pNewBmp);
+  if(nRet != AEE_SUCCESS)
+  {
+    RELEASEIF(pSysBmp);
+    RELEASEIF(pNewBmp);
+    return nRet;
+  }
+  // 缩小图像尺寸并刷新到pNewBmp中去
+  IIMAGE_SetParm(pImage, IPARM_SCALE, wExpectWidth, wExpectHeight);
+  IIMAGE_Draw(pImage, 0, 0);
+  
+  RELEASEIF(pSysBmp);
+  //IBITMAP_Release(pNewBmp);//此指针需要传出，因此不再释放了
+  IDISPLAY_SetDestination(pIDisplay, NULL);
+  *ppBmp = pNewBmp;
+  return AEE_SUCCESS;
+}
+
 static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
                                       AEEImageInfo *pImgInfo)
 {
    IConfig *pConfig = NULL;
-   MGFileInfo *pSelData;
+   MGFileInfo *pSelData;   
+   
+   //add by miaoxiaoming
+   AEEImageInfo myInfo;
+   IImage *pImage;	   
+   IBitmap *pIBitmap;
+   char BmpFileName[MG_MAX_FILE_NAME];
 
    if(NULL == pMe)
    {
@@ -8174,9 +8438,79 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
       MG_FARF(ADDR, ("Create config interface failed"));
       return FALSE;
    }
+	   	
+   pImage= ISHELL_LoadImage(pMe->m_pShell,pSelData->szName);
+   if (NULL == pImage)
+   {
+   	  MSG_FATAL("MGAppUtil_SetWallpaper ISHELL_LoadImage failed",0,0,0);
+      return FALSE;
+   }
+	
+   IImage_GetInfo(pImage,&myInfo);
+#ifdef FEATURE_BREW_SCALE
+	//MSG_FATAL("pMe->m_rc.dx=%d pMe->m_rc.dy=%d",pMe->m_rc.dx,pMe->m_rc.dy,0);
+	//MSG_FATAL("myInfo.cx=%d myInfo.cy=%d",myInfo.cx,myInfo.cy,0);
+
+
+    if(myInfo.cy > 0 && pMe->m_rc.dy > 0)
+    {
+#if 0    
+        if((myInfo.cx*1000)/myInfo.cy > (pMe->m_rc.dx*1000)/pMe->m_rc.dy)
+        {
+            myInfo.cx = (myInfo.cx*pMe->m_rc.dy)/myInfo.cy;
+            myInfo.cy = pMe->m_rc.dy;
+        }
+        else
+        {
+            myInfo.cy = (myInfo.cy*pMe->m_rc.dx)/myInfo.cx;
+            myInfo.cx = pMe->m_rc.dx;
+        }
+
+        IImage_SetParm(pImage,
+               IPARM_SCALE,
+               myInfo.cx,
+               myInfo.cy);
+#endif  
+
+        IImage_SetParm(pImage,
+                       IPARM_SCALE,
+                       pMe->m_rc.dx,
+                       pMe->m_rc.dy);
+    }
+		
+	//MSG_FATAL("myInfo.cx=%d myInfo.cy=%d",myInfo.cx,myInfo.cy,0);
+#endif
+
+    ImageExplorer_ImageToBmp(pMe->m_pDisplay,pImage,&pIBitmap,myInfo.cx,myInfo.cy);
+
+	ICONFIG_GetItem(pConfig, CFGI_WALLPAPER,
+					BmpFileName, sizeof(BmpFileName));
+	if(STRNCMP(BmpFileName,HEXING_OEM_WALLPAPER1,STRLEN(HEXING_OEM_WALLPAPER1))!=0)
+	{		
+		MSG_FATAL("HEXING_OEM_WALLPAPER2",0,0,0);
+		STRCPY(BmpFileName,HEXING_OEM_WALLPAPER1);	
+	}
+	else
+	{
+		MSG_FATAL("HEXING_OEM_WALLPAPER2",0,0,0);
+        STRCPY(BmpFileName,HEXING_OEM_WALLPAPER2);	
+	}
+		
+	ImageExplorer_WriteDIBFile(pMe->m_pShell,BmpFileName,pIBitmap);
+
+	if (pImage!=NULL)
+	{
+		IImage_Release(pImage);
+	}
+	if (NULL != pIBitmap)
+	{
+		IBase_Release((IBase *)pIBitmap);
+	}
+	
+	//MSG_FATAL("MGAppUtil_SetWallpaper Leave",0,0,0);
    
    ICONFIG_SetItem(pConfig, CFGI_WALLPAPER,
-                   pSelData->szName, sizeof(pSelData->szName));
+                   BmpFileName, sizeof(BmpFileName));
 
    MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
 
