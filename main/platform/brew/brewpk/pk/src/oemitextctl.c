@@ -3241,7 +3241,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
    TitleBar_Param_type TitleBar;
    BottomBar_Param_type BottomBar;
    RGBVAL    nOldFontColor;
-
+   MSG_FATAL("TextCtl_ShowSymbolPage Start",0,0,0);
    ISHELL_GetDeviceInfo(pme->m_pIShell, &dm); 
 
     szBuff[0] = (AECHAR)0x2195; 
@@ -3376,10 +3376,16 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
          
          if (*pszSym == '\n')
          {
-            AECHAR szbuf[2];
-            szbuf[0] = (AECHAR)0x3130;
-            szbuf[1] = (AECHAR)'\0';
-            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, 1, rc.x, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
+           // AECHAR szbuf[2];
+           // szbuf[0] = (AECHAR)0x3130;
+           // szbuf[1] = (AECHAR)'\0';
+            AECHAR szbuf[] = {'E', 'n', 't', 'e', 'r', '\0'};
+            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
+         }
+         else if(*pszSym == ' ')
+         {
+            AECHAR szbuf[] = {'S', 'p', 'a' '\0'};
+            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);         
          }
          else
          {
@@ -3390,7 +3396,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
    (void)IDISPLAY_SetColor(pd, CLR_USER_TEXT, nOldFontColor);
    if (!(pme->m_dwProps & TP_NODRAW))
       IDISPLAY_Update(pd);
-
+   MSG_FATAL("TextCtl_ShowSymbolPage End",0,0,0);
 }
 
 static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
@@ -3402,7 +3408,7 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
    int            nPages;
 //   AEERect        titlerect;  
 //   AEERect        bottomrect;
-
+   MSG_FATAL("TextCtl_ShowFaceSymbolPage Start",0,0,0);
    ISHELL_GetDeviceInfo(pme->m_pIShell, &dm);
 
     szBuff[0] = (AECHAR)0x2195; 
@@ -3579,7 +3585,7 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
 
    if (!(pme->m_dwProps & TP_NODRAW))
       IDISPLAY_Update(pd);
-
+    MSG_FATAL("TextCtl_ShowFaceSymbolPage End",0,0,0);
 }
 
 static void TextCtl_ShowNetSymbolPage(CTextCtl * pme, int nDir)
@@ -3593,7 +3599,7 @@ static void TextCtl_ShowNetSymbolPage(CTextCtl * pme, int nDir)
 //   AEERect        bottomrect; 
    TitleBar_Param_type TitleBar;
    BottomBar_Param_type BottomBar;
-
+   MSG_FATAL("TextCtl_ShowNetSymbolPage Start",0,0,0);
    ISHELL_GetDeviceInfo(pme->m_pIShell, &dm); 
    
    szBuff[0] = (AECHAR)0x2195; 
@@ -3724,7 +3730,7 @@ static void TextCtl_ShowNetSymbolPage(CTextCtl * pme, int nDir)
 
    if (!(pme->m_dwProps & TP_NODRAW))
       IDISPLAY_Update(pd);
-
+    MSG_FATAL("TextCtl_ShowNetSymbolPage End",0,0,0);
 }
 
 /*===========================================================================
@@ -5373,7 +5379,7 @@ SEE ALSO:
 #ifndef FEATURE_CARRIER_CHINA_TELCOM
 uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size)
 {
-
+    MSG_FATAL("OEM_TextQuerySymbols Start",0,0,0);
    if (!pszOut || size < (sizeof(sszSymbolList)/sizeof(sszSymbolList[0])))
       return(0);
 
@@ -5384,6 +5390,7 @@ uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size)
 #else
 static uint16 TextCtl_QuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size) 
 {
+    MSG_FATAL("TextCtl_QuerySymbols Start",0,0,0);
 #if 0   //modi by yangdecai  2010/06/24
    if ((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))
    {
