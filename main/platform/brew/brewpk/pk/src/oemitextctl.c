@@ -3384,7 +3384,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
          }
          else if(*pszSym == ' ')
          {
-            AECHAR szbuf[] = {'S', 'p', 'a' '\0'};
+            AECHAR szbuf[] = {'S', 'p', 'a','\0'};
             IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);         
          }
          else
