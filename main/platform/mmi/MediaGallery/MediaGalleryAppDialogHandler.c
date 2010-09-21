@@ -8139,11 +8139,11 @@ static boolean MGAppUtil_WallpaperSettingCheck(IImage *po,
  * RETURN VALUE :
  * ==========================================================================
  */
- #ifndef BI_BITFIELDS
+#ifndef BI_BITFIELDS
 #define BI_BITFIELDS    3
 #endif
-#define HEXING_OEM_WALLPAPER1 MG_PHONEMUSIC_PATH"miaoxiaoming1.bmp"
-#define HEXING_OEM_WALLPAPER2 MG_PHONEMUSIC_PATH"miaoxiaoming2.bmp"
+#define HEXING_OEM_WALLPAPER1 MG_PHONEMUSIC_PATH"oemwallpaper1.bmp"
+#define HEXING_OEM_WALLPAPER2 MG_PHONEMUSIC_PATH"oemwallpaper2.bmp"
 
 // BMP转换用
 typedef PACKED struct _DIBFileHeader           // DIB文件头
