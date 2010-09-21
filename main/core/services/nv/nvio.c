@@ -2405,6 +2405,9 @@ nvio_write (
        * return the status else use "regular" NVM.
        */
       if ( nvruim_write(cmd_ptr, &status) == NV_RUIM_SUPPORTS_ITEM )
+#ifdef CUST_EDITION
+       if(status == NV_DONE_S)
+#endif
         return status;
 
 #endif
