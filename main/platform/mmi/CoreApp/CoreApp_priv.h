@@ -558,6 +558,10 @@ typedef struct _CCoreApp
     AEECardPinCmdStatus m_sPinActionStatus;
     boolean             m_bVerifying;
 	boolean             m_isShift;
+
+	//wangliang add!
+	byte                m_active;
+	byte                m_CurProfile;      //当前情景模式
 } CCoreApp;
 
 /*==============================================================================

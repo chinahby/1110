@@ -112,7 +112,7 @@ static void CoreApp_RebuildEFS(CCoreApp *pMe);
 #endif
 static void StereoHeadsetOn(CCoreApp * pMe);
 static void HeadsetOff(CCoreApp *pMe);
-
+static void CoreApp_SceneMode(CCoreApp *pMe);
 /*==============================================================================
 
                                  函数定义
@@ -410,6 +410,9 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifdef FEATURE_TORCH_SUPPORT
     pMe->TorchOn = FALSE;
 #endif
+
+	pMe->m_CurProfile = 0;
+	pMe->m_active = 0;
     CoreAppReadNVKeyBeepValue(pMe);
     g_pCoreApp = pMe;
     return TRUE;
@@ -703,21 +706,20 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 case AVK_RWD:
                 {
                     // 长按切换情景模式
-                    byte alertType;
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&pMe->m_CurProfile, sizeof(pMe->m_CurProfile));//CFGI_ALERT_TYPE
                     
-                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));//CFGI_ALERT_TYPE
-                    
-                    if(alertType != OEMNV_PROFILE_QUIETMODE)
+                    if(pMe->m_CurProfile != OEMNV_PROFILE_QUIETMODE)
                     {
-                        alertType = OEMNV_PROFILE_QUIETMODE;
+                        pMe->m_CurProfile = OEMNV_PROFILE_QUIETMODE;
                     }
                     else
                     {
-                        alertType = OEMNV_PROFILE_NORMALMODE;
+                        pMe->m_CurProfile = OEMNV_PROFILE_NORMALMODE;
                     }
-                    
-                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));
-                    CoreApp_UpdateAnnunciator(pMe);
+
+                    CoreApp_SceneMode(pMe);
+                    //ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));
+                    //CoreApp_UpdateAnnunciator(pMe);
                     return TRUE;
                 }
                     
@@ -3134,4 +3136,253 @@ static void HeadsetOff(CCoreApp *pMe)
    devnotify.wParam = FALSE;
   AEE_SEND_HEADSET_EVT(&devnotify);
 } /*End HeadsetOff */
+
+
+static void CoreApp_SceneMode(CCoreApp *pMe)
+{
+	byte	return_alert_type[PROFILENUMBER],
+		    return_missed_call_alert[PROFILENUMBER],
+		    //return_headset_autoanswer[PROFILENUMBER],
+		    return_keysnd_type[PROFILENUMBER],
+		    /*return_keytone_length[PROFILENUMBER],*/
+		    return_ringer_level[PROFILENUMBER],
+		    return_handset_ear_level[PROFILENUMBER],
+		    return_beep_level[PROFILENUMBER], //;
+		    return_power_onoff[PROFILENUMBER];
+	uint16 	return_start_music[PROFILENUMBER];
+	uint16 	return_shutdown_music[PROFILENUMBER];
+
+	ringID  return_call_ringer[PROFILENUMBER],
+	    	return_alarm_ringer[PROFILENUMBER];
+
+	byte	set_alert_type,
+			set_missed_call_alert,
+			//set_headset_autoanswer,
+			set_keysnd_type,
+			/*set_keytone_length,*/
+			set_ringer_level,
+			set_handset_ear_level,
+			set_beep_level, //;
+			set_power_onoff;
+
+	ringID  set_call_ringer;
+	ringID  set_alarm_ringer; 
+	uint16  set_start_music,
+	    	set_shutdown_music;
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+	byte    set_bt_sms_ringer, return_bt_sms_ringer[PROFILENUMBER];
+	ringID  set_sms_ringer_id, return_sms_ringer_id[PROFILENUMBER];
+#endif
+
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                           CFGI_PROFILE_ALERT_TYPE,
+                           return_alert_type,
+                           sizeof(return_alert_type));
+
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                           CFGI_PROFILE_SMS_RINGER,
+                           return_bt_sms_ringer,
+                           sizeof(return_bt_sms_ringer));
+#endif
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                   CFGI_PROFILE_CALL_RINGER,
+	                   (void*)return_call_ringer,
+	                   sizeof(return_call_ringer));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_ALARM_RINGER,
+	                    (void*)return_alarm_ringer,
+	                    sizeof(return_alarm_ringer));
+
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_SMS_RINGER_ID,
+	                    (void*)return_sms_ringer_id,
+	                    sizeof(return_sms_ringer_id));
+#endif
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_MISSED_CALL_ALERT,
+	                    return_missed_call_alert,
+	                    sizeof(return_missed_call_alert));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_STARTUP_MUSIC,
+	                    return_start_music,
+	                    sizeof(return_start_music));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_SHUTDOWN_MUSIC,
+	                    return_shutdown_music,
+	                    sizeof(return_shutdown_music));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_POWERONOFF_ALERT,
+	                    return_power_onoff,
+	                    sizeof(return_power_onoff));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_KEYSND_TYPE,
+	                    return_keysnd_type,
+	                    sizeof(return_keysnd_type));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_RINGER_VOL,
+	                    return_ringer_level,
+	                    sizeof(return_ringer_level));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_EAR_VOL,
+	                    return_handset_ear_level,
+	                    sizeof(return_handset_ear_level));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_BEEP_VOL,
+	                    return_beep_level,
+	                    sizeof(return_beep_level));
+
+	set_alert_type              =   return_alert_type[pMe->m_CurProfile];
+	set_call_ringer             =   return_call_ringer[pMe->m_CurProfile];
+	set_alarm_ringer            =   return_alarm_ringer[pMe->m_CurProfile];
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+	set_bt_sms_ringer           =   return_bt_sms_ringer[pMe->m_CurProfile];
+	set_sms_ringer_id           =   return_sms_ringer_id[pMe->m_CurProfile];
+#endif          
+	set_missed_call_alert       =   return_missed_call_alert[pMe->m_CurProfile];
+	set_power_onoff             =   return_power_onoff[pMe->m_CurProfile];
+	set_start_music             =   return_start_music[pMe->m_CurProfile];
+	set_shutdown_music          =   return_shutdown_music[pMe->m_CurProfile];
+	//set_headset_autoanswer      =   return_headset_autoanswer[pMe->m_CurProfile];
+	set_keysnd_type             =   return_keysnd_type[pMe->m_CurProfile];
+	//set_keytone_length          =   return_keytone_length[pMe->m_CurProfile];
+	set_ringer_level            =   return_ringer_level[pMe->m_CurProfile];
+	set_handset_ear_level       =   return_handset_ear_level[pMe->m_CurProfile];
+	set_beep_level              =   return_beep_level[pMe->m_CurProfile];
+
+
+	(void) ICONFIG_SetItem(pMe->m_pConfig,
+	                  CFGI_PROFILE_CUR_NUMBER,
+	                  &pMe->m_CurProfile,
+	                  sizeof(byte));
+
+	(void)ICONFIG_SetItem(pMe->m_pConfig,
+	                  CFGI_ALERT_TYPE,
+	                  &set_alert_type,
+	                  sizeof(set_alert_type));
+	                  
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+	(void)ICONFIG_SetItem(pMe->m_pConfig,
+	                  CFGI_SMS_RINGER,
+	                  &set_bt_sms_ringer,
+	                  sizeof(set_bt_sms_ringer));
+#endif
+
+	{
+		byte ring_id = 0;
+		ring_id = set_call_ringer.midID;
+		ICONFIG_SetItem(pMe->m_pConfig,CFGI_RINGER_TYPE,&ring_id,sizeof(byte));
+	}
+	{
+		uint16 alarm_id = 0;
+		alarm_id = set_alarm_ringer.midID;
+
+		(void)ICONFIG_SetItem(pMe->m_pConfig,
+		                      CFGI_ALARM_RINGER,
+		                      &alarm_id,
+		                      sizeof(alarm_id));
+	}
+
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+	{
+		uint16 sms_id = 0;
+		sms_id = set_sms_ringer_id.midID;
+
+		(void)ICONFIG_SetItem(pMe->m_pConfig,
+		                      CFGI_SMS_RINGER_ID,
+		                      &sms_id,
+		                      sizeof(sms_id));
+	}
+#endif
+
+	(void)ICONFIG_SetItem(pMe->m_pConfig,
+	                  CFGI_MISSED_CALL_ALERT,
+	                  &set_missed_call_alert,
+	                  sizeof(set_missed_call_alert));
+
+	(void) ICONFIG_SetItem(pMe->m_pConfig,
+	                   CFGI_PROFILE_POWERONOFF_ALERT,
+	                   &set_power_onoff,
+	                   sizeof(set_power_onoff));
+
+	(void) ICONFIG_SetItem(pMe->m_pConfig,
+	                   CFGI_PROFILE_POWERONOFF_ALERT,
+	                   &set_start_music,
+	                   sizeof(set_start_music));
+
+	(void) ICONFIG_SetItem(pMe->m_pConfig,
+	                   CFGI_PROFILE_POWERONOFF_ALERT,
+	                   &set_shutdown_music,
+	                   sizeof(set_shutdown_music));
+
+	(void)ICONFIG_SetItem(pMe->m_pConfig,
+	                  CFGI_KEYBEEP_SOUND,
+	                  &set_keysnd_type,
+	                  sizeof(set_keysnd_type));
+
+
+	(void)ICONFIG_SetItem(pMe->m_pConfig,
+	                  CFGI_RINGER_VOL,
+	                  &set_ringer_level,
+	                  sizeof(set_ringer_level));
+
+	(void)ICONFIG_SetItem(pMe->m_pConfig,
+	                  CFGI_BEEP_VOL,
+	                  &set_beep_level,
+	                  sizeof(set_beep_level));
+
+	(void)ICONFIG_GetItem(pMe->m_pConfig,
+	                  CFGI_PROFILE_CUR_NUMBER,
+	                  &pMe->m_active,
+	                  sizeof(pMe->m_active));
+
+		
+	switch(pMe->m_active)
+	{
+		case OEMNV_PROFILE_NORMALMODE:          //正常模式
+		  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+		  break;
+
+		case OEMNV_PROFILE_QUIETMODE:           //安静模式
+		  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
+		  break;
+
+		case OEMNV_PROFILE_MEETING:             //会议模式
+		  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
+		  break;
+
+		case OEMNV_PROFILE_NOISEMODE:           //户外模式
+		  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+		  break;
+
+		case OEMNV_PROFILE_CARMODE:             //车载模式
+		  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+		  break;
+
+		default:
+		  break;
+	}
+      
+#ifdef FEATURE_APP_MUSICPLAYER
+	if(GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)
+    {
+        ISHELL_SendEvent(pMe->a.m_pIShell,
+                         AEECLSID_APP_MUSICPLAYER,
+                         EVT_ALARM,
+                         FALSE,
+                         TRUE);
+    }
+#endif
+}
 

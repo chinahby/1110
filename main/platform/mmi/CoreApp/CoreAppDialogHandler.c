@@ -5511,7 +5511,7 @@ static const ServiceProviderList List_SP[] =
        
        {510,0, "Flexi"},                // Indonesia flexi
        {510,3, "starone"},              // Indonesia starone
-       {510,28,"Fren"},                 // Indonesia fren
+       {510,28,"Mobile-8"},             // Indonesia fren
        {510,99,"esia"},                 // Indonesia esia
        {510,9,"SMART"},                 // Indonesia SMART
        
