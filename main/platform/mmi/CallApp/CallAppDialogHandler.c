@@ -4696,7 +4696,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                 notifyFMRadioAlertEvent( pMe, FALSE);
                 pMe->m_b_miss_notify = FALSE;
             }
-            //CallAppNotifyMP3PlayerAlertEvent(pMe,FALSE);
+            CallAppNotifyMP3PlayerAlertEvent(pMe,FALSE);
             return TRUE;
 
         case EVT_KEY:
