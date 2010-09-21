@@ -4277,7 +4277,7 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
 #ifdef FEATURE_SMS_UDH
     boolean udh_present = FALSE;
 #endif
-    char  strNum[MAX_PH_DIGITS+1];
+    char  strNum[MAX_PH_DIGITS+20];
     
     if ((IVector_Size(pMe->m_pSendList) == 0) && bSend)
     {// 消息已发送完毕
@@ -4457,6 +4457,14 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     
     // 接收地址
     MEMSET(strNum, 0, sizeof(strNum));
+#if defined(FEATURE_PROJECT_SMART) ||defined(FEATURE_PROJECT_M8)
+    if(pMe->m_msSend.m_szNum[0] == '+')
+    {
+        STRCPY(strNum,OEM_INTERNATION_NUMBER);
+        (void)WSTRTOSTR(&pMe->m_msSend.m_szNum[1], (strNum+STRLEN(OEM_INTERNATION_NUMBER)), (sizeof(strNum)-STRLEN(OEM_INTERNATION_NUMBER)));
+    }
+    else
+#endif
     (void)WSTRTOSTR(pMe->m_msSend.m_szNum, strNum, sizeof(strNum));
     if (strNum[0] == '+')
     {
