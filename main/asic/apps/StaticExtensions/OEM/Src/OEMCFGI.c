@@ -1465,9 +1465,19 @@ static OEMConfigListType oemi_cache = {
    OEMNV_SMS_RETRY_PERIOD,                         // CFGI_SMS_RETRY_PERIOD
    OEMNV_SMS_RETRY_INTERVAL,                       // CFGI_SMS_RETRY_INTERVAL
    FALSE,                                          // CFGI_SMS_GCF_FLAG
+#if defined(FEATURE_PROJECT_SMART)
+   {L"388"},                                           // CFGI_VOICEMAIL_NUMBER
+   {L"388"},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
+   {L"388"},                                           // CFGI_VOICEMAIL_NUMBER_GW
+#elif defined(FEATURE_PROJECT_M8)
+   {L"*88"},                                           // CFGI_VOICEMAIL_NUMBER
+   {L"*88"},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
+   {L"*88"},                                           // CFGI_VOICEMAIL_NUMBER_GW
+#else
    {0,},                                           // CFGI_VOICEMAIL_NUMBER
    {0,},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
    {0,},                                           // CFGI_VOICEMAIL_NUMBER_GW
+#endif
    0,                                              // CFGI_RECENT_MT_CALL_TIMER
    0,                                              // CFGI_RECENT_MO_TIMER
    OEMNV_ALERT_DISABLE,                            // CFGI_MINUTE_ALERT
@@ -3756,13 +3766,20 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    case CFGI_VOICEMAIL_NUMBER:
    {
 #ifdef CUST_EDITION
-#ifndef WIN32     
+#ifndef WIN32  
+//wangliang modify 
+     WSTRNCOPYN(pBuff,
+                nSize / (int) sizeof(AECHAR),
+                (void *) oemi_cache.voicemail_number,
+                (int) (sizeof(oemi_cache.voicemail_number) / sizeof(AECHAR)));
+#if 0   
      if (OEMNV_Get(NV_SMS_VM_NUMBER_I, &nvi) != NV_DONE_S) 
      {
        return EFAILED;
      }
      nvi.sms_vm_number.digits[nvi.sms_vm_number.num_digits] = 0;
      STRTOWSTR((char *)nvi.sms_vm_number.digits, pBuff, (nvi.sms_vm_number.num_digits+1) * sizeof(AECHAR));
+#endif	 
 #endif
      if (WSTRLEN(pBuff) == 0)
      {

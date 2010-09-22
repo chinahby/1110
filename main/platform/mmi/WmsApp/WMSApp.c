@@ -4460,8 +4460,16 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
 #if defined(FEATURE_PROJECT_SMART) ||defined(FEATURE_PROJECT_M8)
     if(pMe->m_msSend.m_szNum[0] == '+')
     {
-        STRCPY(strNum,OEM_INTERNATION_NUMBER);
-        (void)WSTRTOSTR(&pMe->m_msSend.m_szNum[1], (strNum+STRLEN(OEM_INTERNATION_NUMBER)), (sizeof(strNum)-STRLEN(OEM_INTERNATION_NUMBER)));
+    	if ( pMe->m_msSend.m_szNum[1] == '6' && pMe->m_msSend.m_szNum[2] == '2' )
+    	{
+			STRCPY(strNum,"0");
+        	(void)WSTRTOSTR(&pMe->m_msSend.m_szNum[3], (strNum+1), (sizeof(strNum)-1));
+    	}
+        else
+        {
+        	STRCPY(strNum,OEM_INTERNATION_NUMBER);
+        	(void)WSTRTOSTR(&pMe->m_msSend.m_szNum[1], (strNum+STRLEN(OEM_INTERNATION_NUMBER)), (sizeof(strNum)-STRLEN(OEM_INTERNATION_NUMBER)));
+    	}
     }
     else
 #endif

@@ -5529,12 +5529,24 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
     {
         if(WSTRNCMP(wbuf,L"+",1) == 0)
         {
-            AECHAR internation[MAX_SIZE_DIAL_STR] = {0};
-            //ICONFIG_GetItem(pMe->m_pConfig, CFGI_FDN_ENABLED, &internation,sizeof(internation));
-            STRTOWSTR(OEM_INTERNATION_NUMBER,internation,sizeof(internation));
-            //WSTRLCPY(internation,(AECHAR)OEM_INTERNATION_NUMBER ,MAX_SIZE_DIAL_STR);
-            WSTRLCAT(internation, &wbuf[1] ,MAX_SIZE_DIAL_STR);
-            WSTRLCPY(wbuf,internation,MAX_SIZE_DIAL_STR);
+        	if ( WSTRNCMP(wbuf,L"+62",3) == 0)
+        	{
+				AECHAR internation[MAX_SIZE_DIAL_STR] = {0};
+	            //ICONFIG_GetItem(pMe->m_pConfig, CFGI_FDN_ENABLED, &internation,sizeof(internation));
+	            STRTOWSTR("0",internation,sizeof(internation));
+	            //WSTRLCPY(internation,(AECHAR)OEM_INTERNATION_NUMBER ,MAX_SIZE_DIAL_STR);
+	            WSTRLCAT(internation, &wbuf[3] ,MAX_SIZE_DIAL_STR);
+	            WSTRLCPY(wbuf,internation,MAX_SIZE_DIAL_STR);
+        	}
+        	else
+        	{
+	            AECHAR internation[MAX_SIZE_DIAL_STR] = {0};
+	            //ICONFIG_GetItem(pMe->m_pConfig, CFGI_FDN_ENABLED, &internation,sizeof(internation));
+	            STRTOWSTR(OEM_INTERNATION_NUMBER,internation,sizeof(internation));
+	            //WSTRLCPY(internation,(AECHAR)OEM_INTERNATION_NUMBER ,MAX_SIZE_DIAL_STR);
+	            WSTRLCAT(internation, &wbuf[1] ,MAX_SIZE_DIAL_STR);
+	            WSTRLCPY(wbuf,internation,MAX_SIZE_DIAL_STR);
+            }
         }
         //we need save Originate call number
         if(CheckAEEReturnStatus(ICM_OriginateVoiceCall(pMe->m_pICM, wbuf, &nCallID)) == FALSE)

@@ -8505,7 +8505,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 
                 if (AEE_TM_THAI == nInputMode || AEE_TM_THAI_R == nInputMode)
                 {
-                    (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
+                    (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
                 }
             }
 #endif
