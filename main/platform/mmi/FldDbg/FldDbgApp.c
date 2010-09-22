@@ -6557,7 +6557,9 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     AECHAR fmt_str[20];
     int i, j, count;
     AECHAR  sTitle[20]; 
-    
+    byte b=0;
+    int temp_cont=0;
+    char temp_str[160]={0};
 	
     MEMSET (sTitle, 0, sizeof(sTitle));
 
@@ -6579,7 +6581,26 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
 
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
+    
+#ifndef HWVERSION
+    #define HWVERSION "V1.0"
+#endif
+    n = WSTRLEN(szBuf);// update current Info. len
 
+    (void) ISHELL_LoadResString(pme->a.m_pIShell,
+                                AEE_FLDDBG_RES_FILE,
+                                IDS_HW_VERSION,
+                                (szBuf + n),
+                                sizeof(szBuf));
+
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n'; 
+
+    STRTOWSTR(HWVERSION, (szBuf + n), sizeof(szBuf)); 
+    
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+    
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
                                AEE_FLDDBG_RES_FILE,
                                IDS_MODEL,
@@ -6587,11 +6608,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
                                sizeof(szBuf));
 
    n = WSTRLEN(szBuf);
-
-   STRTOWSTR("\n", fmt_str, sizeof(fmt_str));
-   WSTRCPY((szBuf + n), fmt_str);
-
-   n = WSTRLEN(szBuf);
+   szBuf[n++] = (AECHAR) '\n';
 
    STRTOWSTR(OEMNV_DEFAULT_BANNER, (szBuf + n), sizeof(szBuf)); 
 
@@ -6658,24 +6675,22 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
 
     STRTOWSTR("ME ESN : \n0x%08X\n", fmt_str, sizeof(fmt_str));
-   if(IsRunAsUIMVersion())
+    if(IsRunAsUIMVersion())
     {
-    	extern dword OEM_GetMEESN(void);
+       extern dword OEM_GetMEESN(void);
        WSPRINTF((szBuf + n),
              sizeof(szBuf),
              fmt_str,
              OEM_GetMEESN());
     }  
- else
-   {
-    WSPRINTF((szBuf + n),
+    else
+    {
+       WSPRINTF((szBuf + n),
              sizeof(szBuf),
              fmt_str,
              esn);
-   }
+    }
     n = WSTRLEN(szBuf);
-
-     
 
 #ifdef FEATURE_RF_ZIF
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
@@ -6685,11 +6700,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
                                sizeof(szBuf));
 
    n = WSTRLEN(szBuf);
-
-   STRTOWSTR("\n", fmt_str, sizeof(fmt_str));
-   WSTRCPY((szBuf + n), fmt_str);
-
-   n = WSTRLEN(szBuf);
+   szBuf[n++] = (AECHAR) '\n';
 
    (void) ICONFIG_GetItem(pme->m_pIConfig,
                           CFGI_RFCAL_VERSION,
@@ -6706,12 +6717,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
                                sizeof(szBuf));
 
    n = WSTRLEN(szBuf);
-
-   STRTOWSTR("\n", fmt_str, sizeof(fmt_str));
-   WSTRCPY((szBuf + n), fmt_str);
-
-   n = WSTRLEN(szBuf);
-
+   szBuf[n++] = (AECHAR) '\n';
 
    (void) ICONFIG_GetItem(pme->m_pIConfig,
                           CFGI_RFCAL_DATE,
@@ -6740,38 +6746,13 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
    }
 
    szBuf[j] = (AECHAR) '-';
+   
+   n = WSTRLEN(szBuf);
+   szBuf[n++] = (AECHAR) '\n';
 #endif   
 
-{
-//HW     
-    byte b=0;
-    int temp_cont=0;
-    char temp_str[160]={0};
-    
-    //Insert a line space
-    STR_TO_WSTR("\n", fmt_str, sizeof(fmt_str));
-    WSTRCPY((szBuf + n), fmt_str);
-    n = WSTRLEN(szBuf);// update current Info. len
-
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
-       (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                   AEE_FLDDBG_RES_FILE,
-                                   IDS_HW_VERSION,
-                                   (szBuf + n),
-                                   sizeof(szBuf));
-    
-       n = WSTRLEN(szBuf);
-    
-       STRTOWSTR("\n", fmt_str, sizeof(fmt_str));
-       WSTRCPY((szBuf + n), fmt_str);
-    
-       n = WSTRLEN(szBuf);
-    
-       STRTOWSTR("V1.2", (szBuf + n), sizeof(szBuf)); 
-    
-       n = WSTRLEN(szBuf);
-       szBuf[n++] = (AECHAR) '\n';
-#endif       
+//HW
+#ifndef CUST_EDITION
     // Get HDET HW info
     if (SUCCESS == ICONFIG_GetItem(pme->m_pIConfig,
                                   CFGI_DEBUG_HDET,
@@ -6802,9 +6783,25 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     //Insert temp info to buffer
     STR_TO_WSTR(temp_str, (szBuf + n), (sizeof(szBuf)-n*2));
     n = WSTRLEN(szBuf);// update current Info. len
+    szBuf[n++] = (AECHAR) '\n';
+#endif //CUST_EDITION
 //HW 
 
 //SW ver 
+#ifndef INTERVERSION
+    #define INTERVERSION "COMMONV1.0"
+#endif
+    
+    STRTOWSTR("IVERSION:", (szBuf + n), sizeof(szBuf)); 
+
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+    
+    STRTOWSTR(INTERVERSION, (szBuf + n), sizeof(szBuf)); 
+
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+    
     //insert the SW ver. date
     for(i=0; ver_date[i]!=0; i++)
     {
@@ -6826,8 +6823,8 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     //insert a line space
     szBuf[n++] = (AECHAR) '\n';
     n = WSTRLEN(szBuf);
-//SW ver               
-}
+//SW ver
+
    p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
    p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_VER_STAT);
 

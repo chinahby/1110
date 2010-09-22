@@ -2310,7 +2310,20 @@ static boolean  QuickTest_VERTestHandler(CQuickTest *pMe,
 
                         n = WSTRLEN(szBuf);
                         szBuf[n++] = (AECHAR) '\n';
-
+                        
+                        #ifndef INTERVERSION
+                            #define INTERVERSION "COMMONV1.0"
+                        #endif
+                            
+                        STRTOWSTR("IVERSION:", (szBuf + n), sizeof(szBuf)); 
+                        n = WSTRLEN(szBuf);
+                        szBuf[n++] = (AECHAR) '\n';
+                        
+                        STRTOWSTR(INTERVERSION, (szBuf + n), sizeof(szBuf)); 
+                    
+                        n = WSTRLEN(szBuf);
+                        szBuf[n++] = (AECHAR) '\n';
+                            
                         {
                             (void) ISHELL_LoadResString(pMe->m_pShell,
                                                        AEE_QUICKTEST_RES_FILE,
