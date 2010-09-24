@@ -4474,12 +4474,14 @@ static void CallApp_IncomingCall_Dlg_Init(CCallApp *pMe)
 static void CallApp_HandleStopMissedAlertTimer(void *pUser)
 {
     CCallApp *pMe = (CCallApp *)pUser;
-    //IALERT_StopAlerting(pMe->m_pAlert);
+    IALERT_StopAlerting(pMe->m_pAlert);
+    //IALERT_StopRingerAlert(pMe->m_pAlert);
+    //IALERT_StopMp3Alert(pMe->m_pAlert);
     IALERT_StopMissedCallAlert(pMe->m_pAlert);
     notifyFMRadioAlertEvent( pMe, FALSE);
     pMe->m_b_miss_notify = FALSE;
-	
-    CallAppNotifyMP3PlayerAlertEvent(pMe,FALSE);		//Add By zzg  2010_08_13..之前是注释的
+	//modi by yangdecai  09-24
+    //CallAppNotifyMP3PlayerAlertEvent(pMe,FALSE);		//Add By zzg  2010_08_13..之前是注释的
 }
 
 /*==============================================================================
@@ -4536,6 +4538,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
+			
             CallApp_Free_All_Call_Table(pMe);//free all call table
             (void) ISHELL_PostEvent(pMe->m_pShell,
                                                     AEECLSID_DIALER/*AEECLSID_CALL*/,
