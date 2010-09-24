@@ -1681,7 +1681,6 @@ static OEMConfigListType oemi_cache = {
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
    ,DISPLAYREND_TYPE_ONEBYONE
-   ,2
 #endif
 #ifdef FEATURE_TOUCHPAD
    ,{-1,-1,-1,-1}
@@ -11232,41 +11231,19 @@ void OEM_SetBAM_ADSAccount(void)
     OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
     OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
     // ’À∫≈
-#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
-    nvi.ds_sip_nai_info.index = 0;
-    (void)OEMNV_Put(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi);
-
-    //(void)STRCPY((char *)nvi.ds_sip_nai_info.nai, (char *)DEFAULT_BREW_USERNAME);
-    //nvi.ds_sip_nai_info.nai_length = STRLEN((char *)DEFAULT_BREW_USERNAME);
-    (void)STRCPY((char *)nvi.ds_sip_nai_info.nai, username);
-    nvi.ds_sip_nai_info.nai_length = STRLEN((char *)username);
-    (void)OEMNV_Put(NV_DS_SIP_NAI_INFO_I, &nvi);
-#else /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
-    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
-    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
     (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
     nvi.pap_user_id.user_id_len = STRLEN((char *)username);
     (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
-#endif /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
+
 
     // ’À∫≈√‹¬Î
-#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
-    nvi.ds_sip_nai_info.index = 0;
-    
-    //(void)STRCPY((char *)nvi.ds_sip_ppp_ss_info.ss, (char *)DEFAULT_BREW_PASSWORD);
-    //nvi.ds_sip_ppp_ss_info.ss_length = STRLEN((char *)DEFAULT_BREW_PASSWORD);
-    (void)STRCPY((char *)nvi.ds_sip_ppp_ss_info.ss, (char *)password);
-    nvi.ds_sip_ppp_ss_info.ss_length = STRLEN((char *)password);
-
-    (void)OEMNV_Put(NV_DS_SIP_PPP_SS_INFO_I, &nvi);
-#else /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
-    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
-    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
     (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
     nvi.pap_password.password_len = STRLEN((char *)password);
     (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
-#endif /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
-#endif
+
+	MSG_FATAL("username: %c%c",username[0],username[1],0);
+	MSG_FATAL("password: %c%c",password[0],password[1],0);
+#endif	
 } /* OEM_SetBAM_ADSAccount */
 
 #endif
