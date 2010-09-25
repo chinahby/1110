@@ -411,8 +411,8 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->TorchOn = FALSE;
 #endif
 
-	pMe->m_CurProfile = 0;
-	pMe->m_active = 0;
+	(void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&pMe->m_CurProfile, sizeof(pMe->m_CurProfile));//CFGI_ALERT_TYPE
+	(void)ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CUR_NUMBER,&pMe->m_active,sizeof(pMe->m_active));
     CoreAppReadNVKeyBeepValue(pMe);
     g_pCoreApp = pMe;
     return TRUE;
@@ -2901,109 +2901,70 @@ SIDE EFFECTS
 ===========================================================================*/
 static void StereoHeadsetOn(CCoreApp * pMe)
 {
-  boolean stereoHeadSetOn = TRUE;
-  int     nRetVal;
-  AEEDeviceNotify devnotify;
+	boolean stereoHeadSetOn = TRUE;
+	int     nRetVal;
+	AEEDeviceNotify devnotify;
 
-  MSG_HIGH("PHONE in Stereo Headset",0,0,0);
-
-  if ((pMe == NULL) || (pMe->m_pConfig == NULL))
-  {
-    MSG_ERROR("NULL pointer, pMe=0x%x", pMe, 0, 0);
-    return;
-  }
-  if(pMe->m_pIAnn)
-  {
-     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
-  }
-  
-  ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &stereoHeadSetOn, 1);
-  
-  /* Change the audio path */
-  //uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_ENABLED);
-
-  /*Also set the headset in ICONFIG because OEMCall will use it if WCDMA is defined*/
-  nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_STEREO_HEADSET, &stereoHeadSetOn, 1);
-  
-  if (nRetVal != SUCCESS)
-  {
-    MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
-  }
-
-  snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-  snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
-
-	//Add By zzg 2010_08_26
-	{         
+	byte			return_ringer_level[PROFILENUMBER];
+	byte			return_beep_level[PROFILENUMBER];
+	byte			set_ringer_level;
+	byte			set_beep_level;
+	byte			m_CallVolume;
 	
-		nv_item_type nvi;
-		nv_stat_enum_type result;
+	if ((pMe == NULL) || (pMe->m_pConfig == NULL))
+	{
+		MSG_ERROR("NULL pointer, pMe=0x%x", pMe, 0, 0);
+		return;
+	}
+	if(pMe->m_pIAnn)
+	{
+		IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
+	}
 
-  		// beep volume
-		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
-		if ( result == NV_NOTACTIVE_S )
-		{
-		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
-		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
-		}
-		
-		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_KEY_BEEP, 
-						nvi.beep_lvl_shadow, NULL, NULL );
+	ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &stereoHeadSetOn, 1);
 
-		// voice volume
-		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
-		if ( result == NV_NOTACTIVE_S )
-		{
-		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
-		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
-		}
-		
-		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_VOICE, 
-						nvi.beep_lvl_shadow, NULL, NULL );		
+	/*Also set the headset in ICONFIG because OEMCall will use it if WCDMA is defined*/
+	nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_STEREO_HEADSET, &stereoHeadSetOn, 1);
 
-		// message volume
-		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
-		if ( result == NV_NOTACTIVE_S )
-		{
-		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
-		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
-		}
-		
-		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MESSAGE, 
-						nvi.beep_lvl_shadow, NULL, NULL );	
+	if (nRetVal != SUCCESS)
+	{
+		MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
+	}
 
-		// ring volume
-		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
-		if ( result == NV_NOTACTIVE_S )
-		{
-		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
-		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
-		}
-		
-		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_RING, 
-						nvi.beep_lvl_shadow, NULL, NULL );	
+	snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+	snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
 
-		  // midi volume
+//wangliang modify!  2010-09-25
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_RINGER_VOL,
+	                    return_ringer_level,
+	                    sizeof(return_ringer_level));
+
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_BEEP_VOL,
+	                    return_beep_level,
+	                    sizeof(return_beep_level));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_EAR_VOL,&m_CallVolume,sizeof(byte));
+	
+	set_ringer_level            =   return_ringer_level[pMe->m_CurProfile];
+	set_beep_level              =   return_beep_level[pMe->m_CurProfile];
+
+	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_KEY_BEEP,set_beep_level, NULL, NULL );
+	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_VOICE,m_CallVolume, NULL, NULL );		
+
+	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
+	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
+
+	// midi volume
 #ifdef FEATURE_MULTIMEDIA
-		result = OEMNV_Get( NV_MM_LVL_SHADOW_I, &nvi );
-		if ( result == NV_NOTACTIVE_S )
-		{
-			nvi.mm_lvl_shadow = UISND_2ND_VOL;
-			(void) OEMNV_Put (NV_MM_LVL_SHADOW_I, &nvi);
-		}
-		snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MIDI, 
-		              nvi.mm_lvl_shadow, NULL, NULL );
+	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MIDI,m_CallVolume, NULL, NULL );
   
-#endif				
-
-	} 
-	//Add End
-    
-  //uisnd_set_device_auto(NULL,NULL);
-  //uisnd_set_mute(UISND_MUTE_UNMUTED, UISND_MUTE_UNMUTED, NULL, NULL);
-
-  devnotify.wParam = TRUE;
-  AEE_SEND_HEADSET_EVT(&devnotify);
+#endif
+   
+	devnotify.wParam = TRUE;
+	AEE_SEND_HEADSET_EVT(&devnotify);
 } /* End HeadsetOn */
 
 
@@ -3022,119 +2983,80 @@ SIDE EFFECTS
 ===========================================================================*/
 static void HeadsetOff(CCoreApp *pMe)
 {
-   boolean headSetOn = FALSE;
-   int     nRetVal;
-   AEEDeviceNotify devnotify;
-
-   MSG_HIGH("PHONE not in Headset",0,0,0);
-
-   if ((pMe == NULL) || (pMe->m_pConfig == NULL))
-   {
-      MSG_ERROR("NULL pointer, pMe=0x%x", pMe, 0, 0);
-      return;
-   }
-   
-   if(pMe->m_pIAnn)
-   {
-      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_ON*/);
-   }
-   
-   ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headSetOn, 1);
-   
-   devnotify.wParam = FALSE;
-   AEE_SEND_HEADSET_EVT(&devnotify);
-   
-   /* Change the audio path */
-   //uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_UNATTACHED);
-   //uisnd_set_device_status(SND_DEVICE_HEADSET, UISND_DEV_UNATTACHED);
-
-   /*Also set the headset in ICONFIG because OEMCall will use it if WCDMA is defined*/
-   nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET, &headSetOn, 1);
-   if (nRetVal != SUCCESS)
-   {
-      MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
-   }
-
-   nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_STEREO_HEADSET, &headSetOn, 1);
-   if (nRetVal != SUCCESS)
-   {
-      MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
-   }
-
-   snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-   snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
-
-   //Add By zzg 2010_08_26
-	{         
+	boolean headSetOn = FALSE;
+	int     nRetVal;
+	AEEDeviceNotify devnotify;
+	byte		return_ringer_level[PROFILENUMBER];
+	byte	    return_beep_level[PROFILENUMBER];
+	byte		set_ringer_level;
+	byte		set_beep_level;
+	byte        m_CallVolume;
 	
-		nv_item_type nvi;
-		nv_stat_enum_type result;
+	if ((pMe == NULL) || (pMe->m_pConfig == NULL))
+	{
+		MSG_ERROR("NULL pointer, pMe=0x%x", pMe, 0, 0);
+		return;
+	}
 
-  		// beep volume
-		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
-		if ( result == NV_NOTACTIVE_S )
-		{
-		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
-		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
-		}
-		
-		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_KEY_BEEP, 
-						nvi.beep_lvl_shadow, NULL, NULL );
+	if(pMe->m_pIAnn)
+	{
+		IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_ON*/);
+	}
 
-		// voice volume
-		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
-		if ( result == NV_NOTACTIVE_S )
-		{
-		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
-		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
-		}
-		
-		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_VOICE, 
-						nvi.beep_lvl_shadow, NULL, NULL );		
+	ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headSetOn, 1);
 
-		// message volume
-		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
-		if ( result == NV_NOTACTIVE_S )
-		{
-		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
-		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
-		}
-		
-		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MESSAGE, 
-						nvi.beep_lvl_shadow, NULL, NULL );	
-
-		// ring volume
-		result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );		
-		if ( result == NV_NOTACTIVE_S )
-		{
-		  nvi.beep_lvl_shadow = UISND_2ND_VOL;
-		  (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
-		}
-		
-		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_RING, 
-						nvi.beep_lvl_shadow, NULL, NULL );	
-
-		  // midi volume
-#ifdef FEATURE_MULTIMEDIA
-		result = OEMNV_Get( NV_MM_LVL_SHADOW_I, &nvi );
-		if ( result == NV_NOTACTIVE_S )
-		{
-			nvi.mm_lvl_shadow = UISND_2ND_VOL;
-			(void) OEMNV_Put (NV_MM_LVL_SHADOW_I, &nvi);
-		}
-		snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MIDI, 
-		              nvi.mm_lvl_shadow, NULL, NULL );
-  
-#endif				
-
-	} 
-	//Add End
-      
-   //uisnd_set_device_auto(NULL,NULL);   
-   //uisnd_set_mute(UISND_MUTE_MUTED, UISND_MUTE_MUTED, NULL, NULL);
+	devnotify.wParam = FALSE;
+	AEE_SEND_HEADSET_EVT(&devnotify);
    
-   devnotify.wParam = FALSE;
-  AEE_SEND_HEADSET_EVT(&devnotify);
+	/* Change the audio path */
+	//uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_UNATTACHED);
+	//uisnd_set_device_status(SND_DEVICE_HEADSET, UISND_DEV_UNATTACHED);
+
+	/*Also set the headset in ICONFIG because OEMCall will use it if WCDMA is defined*/
+	nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET, &headSetOn, 1);
+	if (nRetVal != SUCCESS)
+	{
+		MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
+	}
+
+	nRetVal = ICONFIG_SetItem(pMe->m_pConfig, CFGI_STEREO_HEADSET, &headSetOn, 1);
+	if (nRetVal != SUCCESS)
+	{
+		MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
+	}
+
+	snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+	snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+
+//wangliang modify!  2010-09-25
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_RINGER_VOL,
+	                    return_ringer_level,
+	                    sizeof(return_ringer_level));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                    CFGI_PROFILE_BEEP_VOL,
+	                    return_beep_level,
+	                    sizeof(return_beep_level));
+
+	(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_EAR_VOL,&m_CallVolume,sizeof(byte));
+                                                
+	set_ringer_level            =   return_ringer_level[pMe->m_CurProfile];
+	set_beep_level              =   return_beep_level[pMe->m_CurProfile];
+
+	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_KEY_BEEP,set_beep_level, NULL, NULL );
+	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_VOICE,m_CallVolume, NULL, NULL );		
+
+	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
+	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
+
+	// midi volume
+#ifdef FEATURE_MULTIMEDIA
+	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MIDI,m_CallVolume, NULL, NULL );
+  
+#endif	
+	devnotify.wParam = FALSE;
+	AEE_SEND_HEADSET_EVT(&devnotify);
 } /*End HeadsetOff */
 
 
