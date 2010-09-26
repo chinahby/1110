@@ -170,6 +170,7 @@ endif
   #include $(CAMERA_MOBICAT)/camera_mobicat.min#remove by miaoxiaoming 
 endif
 
+
 # include $(CHG)/chg.min
 include $(CLK)/clk.min
 include $(CLKREGIM)/clkregim.min
@@ -585,6 +586,13 @@ ifeq ($(USES_MMI),yes)
 ifeq ($(USES_REND),yes)
 	include $(REND_PATH)/Rend.min
 endif	
+
+ifeq ($(USES_DSP),yes)
+  include $(AIT_SENSOR)/ait_sensor.min
+  include $(TV_TLG1120)/ait_TV_TLG1120.min
+  include $(A8_CAMERA_SRC)/A8_camera.min
+  include $(AIT_API_SRC)/ait_api.min
+endif
 
 ifeq ($(USES_HANWANG),yes)
 	include $(HW_PATH)/Hanwang.min

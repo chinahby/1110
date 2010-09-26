@@ -257,10 +257,22 @@ typedef  unsigned char      boolean;     /* Boolean value type. */
 #ifdef __linux__
 typedef  uint32_t           uint32;      /* Unsigned 32 bit value */
 #else
-typedef  unsigned long int  uint32;      /* Unsigned 32 bit value */
+//typedef  unsigned long int  uint32;      /* Unsigned 32 bit value */
 #endif
-typedef  unsigned short     uint16;      /* Unsigned 16 bit value */
 typedef  unsigned char      uint8;       /* Unsigned 8  bit value */
+
+#ifdef FEATURE_DSP   //add by yangdecai 09-25
+#ifndef   uint32
+#define   uint32        unsigned long int
+#endif /* uint16 */
+#ifndef   uint16
+#define   uint16        unsigned short
+#endif /* uint16 */
+#else
+typedef unsigned short   uint16 ;
+typedef unsigned long int	uint32	;	  
+#endif
+
 
 #ifdef __linux__
 typedef  int32_t            int32;       /* Signed 32 bit value */

@@ -402,6 +402,13 @@ ifeq ($(USES_CAMERA),yes)
 		OBJECTS2 += $(CAMSENSOR_OV7675_OBJS)
 		OBJECTS2 += $(SOFTDSP_OBJS)
 endif
+
+ifeq ($(USES_DSP),yes)
+		OBJECTS2 += $(AIT_SENSOR_OBJS)
+		OBJECTS2 += $(AIT_TV_TLG1120_OBJS)
+		OBJECTS2 += $(A8_CAMERA_OBJS)
+		OBJECTS2 += $(AIT_API_OBJS)
+endif
 #-------------------------------------------------------------------------------
 # Object List Modifiers
 #    Alter the object list based on the requested features

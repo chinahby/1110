@@ -785,7 +785,11 @@ typedef PACKED struct _ringID
 #elif defined FEATURE_CARRIER_MAROC_WANA
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_FRENCH
 #else
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_CAP_LOWER_ENGLISH
+#else
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_ENGLISH
+#endif
 #endif  
 
 #ifdef FEATURE_SHORT_CODE_NAM_COUNT

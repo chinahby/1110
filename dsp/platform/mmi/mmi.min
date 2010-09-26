@@ -131,3 +131,6 @@ include $(STATIC_BREW_APP)/staticbrewapp.min
 include $(STATIC_APP)/staticapp.min
 endif
 
+ifeq ($(USES_WAPBROWSER),yes)
+include $(WAPBROWSER)/WapBrowser.min
+endif
