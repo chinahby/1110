@@ -1253,6 +1253,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_WMS_MSG_STATUS_REPORT:
             {
                 wms_msg_event_info_s_type *info = ((wms_msg_event_info_s_type*)dwParam);
+				uint16 num = 0;
                 
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM                
                 if (info->mt_message_info.message.u.cdma_message.teleservice == 
@@ -1317,43 +1318,54 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                             bSendEvt = FALSE;
                         }
                     }
-                    if (bSendEvt)
-                    {                                        
-                        // 语音提示用户有消息
-                        WmsApp_PlaySMSAlert(pMe, TRUE);
-        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
-        				{
-            					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-								MOVE_TO_STATE(WMSST_WMSNEW)
-								pMe->m_eDlgReturn = DLGRET_CREATE;
-								CWmsApp_RunFSM(pMe);
-								
-        				}
-        				else
-        				{
-        				
+					//add by yangdecai   09-26
+					num = ICM_GetActiveCallIDs(pMe->m_pICM, 
+                               (AEECM_CALL_TYPE_VOICE | AEECM_CALL_TYPE_EMERGENCY), 
+                               (AEECM_CALL_STATE_ORIG | AEECM_CALL_STATE_INCOM | 
+                                AEECM_CALL_STATE_CONV | AEECM_CALL_STATE_ONHOLD | 
+                                AEECM_CALL_STATE_DORMANT),
+                               NULL, 
+                               0);
+					if(num<=0)
+					{
+	                    if (bSendEvt)
+	                    {                                        
+	                        // 语音提示用户有消息
+	                        WmsApp_PlaySMSAlert(pMe, TRUE);
+	        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+	        				{
+	            					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+									MOVE_TO_STATE(WMSST_WMSNEW)
+									pMe->m_eDlgReturn = DLGRET_CREATE;
+									CWmsApp_RunFSM(pMe);
+									
+	        				}
+	        				else
+	        				{
+	        				
 
-						    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
-							   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
-							   && pMe->m_currState != WMSST_SENDING)
-						    {
-						    	CLOSE_DIALOG(DLGRET_INBOXES)
-						    }
-						
-							else
-							{
-                			    // 通知 CoreApp 需要进行短信提示
-                				(void)ISHELL_PostEvent(pMe->m_pShell,
-                                         AEECLSID_CORE_APP, 
-                                         EVT_WMS_MSG_RECEIVED_MESSAGE,
-                                         0, 
-                                         0);
-										
-							}
-        				 }
-                    }
-                    
-                    (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
+							    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
+								   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
+								   && pMe->m_currState != WMSST_SENDING)
+							    {
+							    	CLOSE_DIALOG(DLGRET_INBOXES)
+							    }
+							
+								else
+								{
+	                			    // 通知 CoreApp 需要进行短信提示
+	                				(void)ISHELL_PostEvent(pMe->m_pShell,
+	                                         AEECLSID_CORE_APP, 
+	                                         EVT_WMS_MSG_RECEIVED_MESSAGE,
+	                                         0, 
+	                                         0);
+											
+								}
+	        				 }
+	                    }
+	                    
+	                    (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
+					}
                 }
                 WMSAPPU_SYSFREE(info);
             }
@@ -2039,6 +2051,7 @@ static boolean WmsApp_HandleNotifyEvent(WmsApp *pMe, AEENotify *pN)
             if (pN->dwMask & NMASK_SHELL_KEY)
             {
                 IALERT_StopMp3Alert(pMe->m_pAlert);
+				
                 (void)ISHELL_RegisterNotify(pMe->m_pShell, 
                                             AEECLSID_WMSAPP,
                                             AEECLSID_SHELL,
@@ -2655,6 +2668,7 @@ static char * CWmsApp_BuildStartArgs (WMSServiceType eStype)
 
         //Show sms received list called from idle
         case STARTMETHOD_SHOWINBOXLIST: 
+			
             str = (char *)sys_malloc(2);
             if(str)
             {
@@ -2774,6 +2788,7 @@ static void WmsApp_ArgsStartInit(WmsApp *pMe, const char *pszArgs)
                 break;
             
             case STARTARGPREFIX_SHOWINBOXLIST:
+				
                 if (bsmslock)
                 {
                     pMe->m_currState = WMSST_CHKPWD;
@@ -5084,6 +5099,7 @@ void WmsApp_PlaySMSAlert(WmsApp * pMe, boolean bsmsin)
     
     if (btActiveProfile<PROFILENUMBER)
     {
+    	
          IALERT_StopMp3Alert(pMe->m_pAlert);
         if(SmsRingerID[btActiveProfile].ringType == OEMNV_MP3_RINGER)
         {
@@ -5097,6 +5113,7 @@ void WmsApp_PlaySMSAlert(WmsApp * pMe, boolean bsmsin)
                 
             if ((IALERT_StartMp3Alert(pMe->m_pAlert, SmsRingerID[btActiveProfile].szMusicname,ALERT_SMS_SND) != SUCCESS))
             {
+            	
                 (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
             }            
         }
