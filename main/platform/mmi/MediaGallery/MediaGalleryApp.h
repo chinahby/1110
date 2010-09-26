@@ -281,7 +281,7 @@ typedef enum _MediaDialogStat
 /*Handle type for finish operation*/
 #define MG_FNSHOP_NULL   0X00000000 /*Do default handle*/
 #define MG_FNSHOP_DONE   0X00000001 /*Show Done message*/
-
+#define MG_FNSHOP_ERROR  0X00000010
 /*message box ID*/
 typedef enum _MediaDialogMsgID
 {
