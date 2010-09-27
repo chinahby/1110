@@ -2778,7 +2778,7 @@ static boolean CoreApp_ProcessFTMMode(CCoreApp *pMe)
 
 #ifdef USES_CONSTEFS
 #define COREAPP_REBUILDEFS_BUFSIZE  1024
-#define COREAPP_REBUILDEFS_VER      USES_CONSTEFS "/" DISPLAYNAME ".ver"
+#define COREAPP_REBUILDEFS_VER      USES_CONSTEFS "/" PROJECTNAME ".ver"
 
 static void CoreApp_RebuildDirFiles(IFileMgr *pFileMgr, const char * pszDir, byte *pBuff)
 {
