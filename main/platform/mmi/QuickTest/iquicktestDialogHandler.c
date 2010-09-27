@@ -3228,7 +3228,7 @@ static void quicktest_mic_receiver_Loopback(CQuickTest *pMe)
     else
     {
         STRTOWSTR("HANDSET LOOP",string,sizeof(string));
-        soundStuff.eDevice = AEE_SOUND_DEVICE_SPEAKER;
+        soundStuff.eDevice = AEE_SOUND_DEVICE_HEADSET;
     }
     (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                             AEE_FONT_BOLD,
