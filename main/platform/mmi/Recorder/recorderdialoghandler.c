@@ -2866,19 +2866,21 @@ static void recorder_set_as_cb( Recorder* pme)
 	// 16 set as sms ringtone faile
 	int*		subState	= (int*)pme->m_ptr[1];
 
-	debug( ";-----------------------------------------------");
-	debug( ";recorder_set_as_cb");
+	MSG_FATAL(";-----------------------------------------------",0,0,0);
+	MSG_FATAL( ";recorder_set_as_cb",0,0,0);
 
-	if( IMENUCTL_EnumSelInit( pMenu))
+	//if( IMENUCTL_EnumSelInit( pMenu))
 	{
-
+		
 		uint16 	id 		= 0;
 		int		result 	= 0;
-
-		while( ( id = IMENUCTL_EnumNextSel( pMenu)) != 0xffff)
+		MSG_FATAL("IMENUCTL_EnumSelInit..........................",0,0,0);
+		//if(( id = IMENUCTL_GetSel( pMenu)) != (uint16)-1)
 		{
-			if( id == IDS_SET_AS_RINGER)
+			MSG_FATAL("IMENUCTL_EnumSelInit......................:%d",id,0,0);
+			if(GetCheckBoxVal(pMenu, IDS_SET_AS_RINGER)/*id == IDS_SET_AS_RINGER*/)
 			{
+				MSG_FATAL("IDS_SET_AS_RINGER..........................",0,0,0);
 				if( recorder_list_set_as_call_ringtone( pme))
 				{
 					result |= 2;
@@ -2887,9 +2889,38 @@ static void recorder_set_as_cb( Recorder* pme)
 				{
 					result |= 4;
 				}
+				//IMENUCTL_SetFocus(pMenu, IDS_SET_AS_RINGER);
 			}
-			else if( id == IDS_SET_AS_ALARM_ALERT)
+			else
 			{
+				ringID config[PROFILENUMBER] 	= { 0};
+			    byte profile					= 0;
+			    MSG_FATAL( ";recorder_list_set_as_ringer %s",pme->m_FileName,0,0);
+			    if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
+			    {
+			        MSG_FATAL( ";get profile setting failed",0,0,0);
+			        return ;
+			    }
+
+			    if( OEM_GetConfig( CFGI_PROFILE_CALL_RINGER, (void*)config,sizeof( config)) != SUCCESS)
+			    {
+			        MSG_FATAL( ";get config failed",0,0,0);
+			        return ;
+			    }
+			    //STRCPY(config[profile].szMusicname,pme->m_FileName);
+			    config[profile].ringType = OEMNV_MID_RINGER;
+
+			    //config[profile].midID = id;
+
+			    if( OEM_SetConfig( CFGI_PROFILE_CALL_RINGER, (void*)config,sizeof( config)) != SUCCESS)
+			    {
+			        MSG_FATAL( ";set config failed",0,0,0);
+			        return ;
+			    }
+			}
+			 if( GetCheckBoxVal(pMenu, IDS_SET_AS_ALARM_ALERT)/*id == IDS_SET_AS_ALARM_ALERT*/)
+			{
+				MSG_FATAL("IDS_SET_AS_ALARM_ALERT..........................",0,0,0);
 				if( recorder_list_set_as_alarm_ringtone( pme))
 				{
 					result |= 2;
@@ -2898,10 +2929,38 @@ static void recorder_set_as_cb( Recorder* pme)
 				{
 					result |= 8;
 				}
+				//IMENUCTL_SetFocus(pMenu, IDS_SET_AS_ALARM_ALERT);
 			}
+			 else
+			 {
+			 	ringID config[PROFILENUMBER] 	= { 0};
+			    byte profile					= 0;
+			    MSG_FATAL( ";recorder_list_set_as_ringer %s",pme->m_FileName,0,0);
+			    if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
+			    {
+			        MSG_FATAL( ";get profile setting failed",0,0,0);
+			        return ;
+			    }
+
+			    if( OEM_GetConfig( CFGI_PROFILE_ALARM_RINGER, (void*)config,sizeof( config)) != SUCCESS)
+			    {
+			        MSG_FATAL( ";get config failed",0,0,0);
+			        return ;
+			    }
+			    //STRCPY(config[profile].szMusicname,pme->m_FileName);
+			    config[profile].ringType = OEMNV_MID_RINGER;
+
+			    //config[profile].midID = id;
+
+			    if( OEM_SetConfig( CFGI_PROFILE_ALARM_RINGER, (void*)config,sizeof( config)) != SUCCESS)
+			    {
+			        MSG_FATAL( ";set config failed",0,0,0);
+			        return ;
+			    }
+			 }
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
 #ifdef FEATURE_SMSTONETYPE_MID
-			else if( id == IDS_SET_AS_SMS_ALERT)
+			if( GetCheckBoxVal(pMenu, IDS_SET_AS_SMS_ALERT)/*id == IDS_SET_AS_SMS_ALERT*/)
 			{
 				if( recorder_list_set_as_sms_ringtone( pme))
 				{
@@ -2912,11 +2971,38 @@ static void recorder_set_as_cb( Recorder* pme)
 					result |= 16;
 				}
 			}
+			else
+			{
+				ringID config[PROFILENUMBER] 	= { 0};
+			    byte profile					= 0;
+			    MSG_FATAL( ";recorder_list_set_as_ringer %s",pme->m_FileName,0,0);
+			    if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
+			    {
+			        MSG_FATAL( ";get profile setting failed",0,0,0);
+			        return ;
+			    }
+
+			    if( OEM_GetConfig( CFGI_PROFILE_SMS_RINGER_ID, (void*)config,sizeof( config)) != SUCCESS)
+			    {
+			        MSG_FATAL( ";get config failed",0,0,0);
+			        return ;
+			    }
+			    //STRCPY(config[profile].szMusicname,pme->m_FileName);
+			    config[profile].ringType = OEMNV_MID_RINGER;
+
+			    //config[profile].midID = id;
+
+			    if( OEM_SetConfig( CFGI_PROFILE_SMS_RINGER_ID, (void*)config,sizeof( config)) != SUCCESS)
+			    {
+			        MSG_FATAL( ";set config failed",0,0,0);
+			        return ;
+			    }
+			}
 #endif
 #endif
 		}
 
-		debug( ";-----result = %d", result);
+		MSG_FATAL( ";-----result = %d", result,0,0);
 		*subState = result;
 
 		if( result > 0)
@@ -3022,7 +3108,39 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 
 		case EVT_USER_REDRAW:
 		{
-
+			byte CurProfileNum;
+            ringID ConfigRinger[PROFILENUMBER];
+			ringID ConfigArmRinger[PROFILENUMBER];
+			ringID ConfigSmsRinger[PROFILENUMBER];
+            (void) OEM_GetConfig(
+                            CFGI_PROFILE_CUR_NUMBER,
+                            &CurProfileNum,
+                            sizeof(CurProfileNum));
+            // 检查是否为来电铃声
+            OEM_GetConfig(
+                                CFGI_PROFILE_CALL_RINGER,
+                                (void*)ConfigRinger,
+                                sizeof(ConfigRinger));
+            
+            if(((STRCMP(pme->m_FileName,ConfigRinger[CurProfileNum].szMusicname) == 0) && 
+                    (ConfigRinger[CurProfileNum].ringType == OEMNV_MP3_RINGER)))
+            {
+                SetCheckBoxItem(pMenu, IDS_SET_AS_RINGER, TRUE);
+    
+            }
+            // 检查是否为来闹钟铃声
+            OEM_GetConfig(
+                                CFGI_PROFILE_ALARM_RINGER,
+                                (void*)ConfigArmRinger,
+                                sizeof(ConfigArmRinger));
+            
+            if(((STRCMP(pme->m_FileName,ConfigArmRinger[CurProfileNum].szMusicname) == 0) && 
+                    (ConfigArmRinger[CurProfileNum].ringType == OEMNV_MP3_RINGER)))
+            {
+                SetCheckBoxItem(pMenu, IDS_SET_AS_ALARM_ALERT, TRUE);
+    
+            }
+            
 			IMENUCTL_SetSel( pMenu, selected);
 			IMENUCTL_SetActive( pMenu, subState == 0);
 			IMENUCTL_Redraw( pMenu);
@@ -3110,7 +3228,7 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 #if defined( AEE_SIMULATOR)
 				case AVK_SOFT1:
 #else
-				case AVK_INFO:
+				//case AVK_INFO:
 				case AVK_SELECT:
 #endif
 				{
@@ -3127,6 +3245,7 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 					CLOSE_DIALOG(DLGRET_CANCELED);
 #else
 					{
+						MSG_FATAL("dialog_handler_of_state_set_as..........................",0,0,0);
 						CALLBACK_Init( &pme->m_cb, (PFNNOTIFY)recorder_set_as_cb, pme);
 						ISHELL_Resume( pme->m_pShell, &pme->m_cb);
 					}
@@ -3913,16 +4032,16 @@ static boolean recorder_list_set_as_ringtone( Recorder* pme, AEEConfigItem confi
 #if 1
     ringID config[PROFILENUMBER] 	= { 0};
     byte profile					= 0;
-    debug( ";recorder_list_set_as_ringer %s",pme->m_FileName);
+    MSG_FATAL( ";recorder_list_set_as_ringer %s",pme->m_FileName,0,0);
     if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
     {
-        //debug( ";get profile setting failed");
+        MSG_FATAL( ";get profile setting failed",0,0,0);
         return FALSE;
     }
 
     if( OEM_GetConfig( configItem, (void*)config,sizeof( config)) != SUCCESS)
     {
-        //debug( ";get config failed");
+        MSG_FATAL( ";get config failed",0,0,0);
         return FALSE;
     }
     STRCPY(config[profile].szMusicname,pme->m_FileName);
@@ -3932,11 +4051,11 @@ static boolean recorder_list_set_as_ringtone( Recorder* pme, AEEConfigItem confi
 
     if( OEM_SetConfig( configItem, (void*)config,sizeof( config)) != SUCCESS)
     {
-        //debug( ";set config failed");
+        MSG_FATAL( ";set config failed",0,0,0);
         return FALSE;
     }
 
-    debug( ";set memo as ringtone successful %d %d",config[profile].ringType,profile);
+    MSG_FATAL( ";set memo as ringtone successful %d %d",config[profile].ringType,profile,0);
     return TRUE;
 
 #else
