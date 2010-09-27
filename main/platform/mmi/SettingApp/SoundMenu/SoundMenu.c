@@ -653,7 +653,8 @@ static int SoundMenu_InitAppData(CSoundMenu *pMe)
     pMe->m_bIsSuspend = FALSE;
     pMe->m_CurProfile = OEMNV_PROFILE_NORMALMODE;
     pMe->m_bNaturalStart = NORMAL_ENTRY;
-
+	//MODI BY YANGDECAI 09-27
+	pMe->m_slecet_id     = 0;
     if (ISHELL_CreateInstance(pMe->m_pShell,
                                  AEECLSID_ANNUNCIATOR,
                                  (void **) &pMe->m_pIAnn))
