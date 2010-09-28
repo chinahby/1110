@@ -340,6 +340,10 @@ extern int Fpt005_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int Cah006_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #endif
 
+#ifdef FEATURE_GURU
+extern int GURU_Load(IShell *ps, void * pHelpers,  IModule **pMod);
+#endif
+
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
@@ -1330,6 +1334,11 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef FEATURE_CAH006	   
 	   { AEEFS_MIF_DIR"cah006.mif",Cah006_Load},
 #endif
+
+#ifdef FEATURE_GURU
+	  { AEEFS_MIF_DIR"guru.mif",GURU_Load},
+#endif
+
 
 #endif	   /*FEATURE_FLEXI_STATIC_BREW_APP*/
 

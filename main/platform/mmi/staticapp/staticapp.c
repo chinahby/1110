@@ -932,6 +932,10 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
         #if defined (FEATURE_FPT005)
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
         #endif
+		
+		#if defined (FEATURE_GURU)
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_4, IDS_STATICAPP_TITLE_4, NULL, 0);
+        #endif
 				
         #elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)	//Add For Smart And M8        	
         	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_21, IDS_STATICAPP_TITLE_21, NULL, 0);
@@ -1042,7 +1046,7 @@ PARAMETERS:  如果APPLET 有变动，只需改动次函数
 static boolean StartApplet(Staticapp *pMe, int i)
 {
     int Result = FALSE;
-
+	MSG_FATAL("AEECLSID_FLEXIGURU........................%d",i,0,0);
    	switch(i)
     {
   	#if defined(FEATURE_FLEXI_STATIC_BREW_APP)     
@@ -1089,6 +1093,16 @@ static boolean StartApplet(Staticapp *pMe, int i)
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);			
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);
             break;
+
+  #ifdef FEATURE_GURU
+		case 3:
+			MSG_FATAL("AEECLSID_FLEXIGURU........................",0,0,0);
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);			
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FLEXIGURU);
+			MSG_FATAL("AEECLSID_FLEXIGURU....................Result:%d",Result,0,0);
+			break;
+  #endif
+
   	#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
   		//need to change
   		case 0: 

@@ -15,7 +15,10 @@
 	</String>
 	<String Id="1013" Name="IDS_STATICAPP_TITLE_3">
 		<Text>FPortal</Text>
-	</String>	
+	</String>
+	<String Id="1014" Name="IDS_STATICAPP_TITLE_4">
+		<Text>FGuru</Text>
+	</String>
 	<STRING Id="1021" Name="IDS_STATICAPP_TITLE_21">
 		<Text>SmartFren Messenger</Text>
 	</STRING>

@@ -2804,7 +2804,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
 #elif defined (FEATURE_FMN2010)
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
-               ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
+               ret=  CoreApp_LaunchApplet(pMe, AEECLSID_FLEXIGURU);
 #elif defined (FEATURE_FPT005)
 			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 #else

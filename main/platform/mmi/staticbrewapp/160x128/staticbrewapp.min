@@ -26,6 +26,11 @@ else
 CAH006=no
 endif
 
+ifeq ($(USES_GURU),yes)
+GURU=yes
+else
+GURU=no
+endif
 
 
 #俩个提供外部使用的全局量
@@ -172,7 +177,25 @@ CONSTFILE_FILES += \
     
 STATIC_BREW_APP_LIB += \
     $(STATIC_BREW_APP)/fpt005/fpt005.o
-endif											
+endif	
+
+#######guru application##########
+ifeq ($(GURU),yes)
+#todo something here   应用的名字添加
+GURU_DIRS:=$(STATIC_BREW_APP)/guru
+vpath %.bar $(GURU_DIRS)
+vpath %.cfg $(GURU_DIRS)
+vpath %.dat $(GURU_DIRS)
+CONSTFILE_BIN_FILES += \
+    guru.bar|fs:/mod/guru/guru.bar \
+	guruconfig.cfg|fs:/mod/guru/guruconfig.cfg \
+	guruhomedefault.dat|fs:/mod/guru/guruhomedefault.dat
+
+CONSTFILE_FILES += \
+    guru.mif|fs:/mif/guru.mif
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/guru/guru.o  
+endif										
 
 endif#ifeq ($(USES_FLEXI_STATICAPP),yes)
 
@@ -304,3 +327,5 @@ endif ##twitter application#
 
    
 endif
+
+
