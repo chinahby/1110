@@ -5327,12 +5327,14 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
     {
     	AEEImageInfo m_ImageInfo;
 		IImage_GetInfo(pWallPaper,&m_ImageInfo);
+		
 		MSG_FATAL("m_ImageInfo.cx=%d, m_ImageInfo.cy=%d", m_ImageInfo.cx, m_ImageInfo.cy, 0);
         SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
         IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
         IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
         MSG_FATAL("clip.x=%d, clip.y=%d,pMe->m_rc.dx=%d", clip.x, clip.y, pMe->m_rc.dx);
-        IIMAGE_SetOffset( pWallPaper, 0,MUSIC_WIDTH);
+        IIMAGE_SetOffset( pWallPaper, 0,(MUSIC_WIDTH*m_ImageInfo.cy)/pMe->m_rc.dy);
+        //IIMAGE_SetOffset( pWallPaper, 0,MUSIC_WIDTH);
         MSG_FATAL("clip.dx=%d, clip.dy=%d", clip.dx, clip.dy, 0);
 		MSG_FATAL("pMe->m_rc.dy=%d", pMe->m_rc.dy,0,0);
         IIMAGE_SetDrawSize( pWallPaper, clip.dx,clip.dy);
