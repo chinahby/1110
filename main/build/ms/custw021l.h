@@ -206,7 +206,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
-#define FEATURE_DISP_128X128
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #ifndef FEATURE_W021_LOW_MEMORY
@@ -216,10 +215,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_PROJECT_W021
 
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
+#define FEATURE_USES_LOWMEM
 
 //#define FEATURE_WMS_APP
 #endif
-#define FEATURE_USES_LOWMEM
 
 #include "custuim.h"
 #include "custcmx.h"

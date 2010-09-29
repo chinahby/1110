@@ -11,7 +11,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_IVIO021
 #define FEATURE_PROJECT_IVIO021
 #define FEATURE_LANG_INDONESIAN
-#define FEATURE_DISP_128X128
 #include "custw021.h"
 
 #endif /* CUSTSB2_H */

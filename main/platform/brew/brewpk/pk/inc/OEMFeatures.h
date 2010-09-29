@@ -25,6 +25,7 @@ GENERAL DESCRIPTION:
 #endif
 #endif
 #include "BREWVersion.h"
+#include "mmidispsize.h"
 #define FEATURE_GREYBIT
 #define FEATURE_BREW_3_0
 //

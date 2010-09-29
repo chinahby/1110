@@ -11,14 +11,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_ESIA203
 #define FEATURE_PROJECT_ESIA203
 
-#define FEATURE_DISP_160X128
+#define FEATURE_AAC
+#define FEATURE_AAC_PLUS
+#define FEATURE_ENHANCED_AAC_PLUS
 
 #include "custw203.h"
-/*w203 base version not support acc*/
-#ifndef FEATURE_AAC
-   #define FEATURE_AAC
-#endif
-
-
 
 #endif /* CUSTSB2_H */
