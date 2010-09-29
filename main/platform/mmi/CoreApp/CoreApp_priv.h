@@ -194,6 +194,9 @@
 #define MAX_STRING_LENGTH      64
 #define MAX_BATTERY_POP_COUNT  3
 
+#define MUSIC_WIDTH            78
+#define MUSIC_START_WIDTH      80
+
 
 #ifdef FEATURE_SPN_FROM_BSMCCMNC
 #define OPERATOR_NAME_MAX_SIZE   32
