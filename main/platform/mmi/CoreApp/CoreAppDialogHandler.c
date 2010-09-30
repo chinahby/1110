@@ -5333,7 +5333,8 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
         IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
         IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
         MSG_FATAL("clip.x=%d, clip.y=%d,pMe->m_rc.dx=%d", clip.x, clip.y, pMe->m_rc.dx);
-        IIMAGE_SetOffset( pWallPaper, 0,(MUSIC_WIDTH*m_ImageInfo.cy)/pMe->m_rc.dy);
+		
+        IIMAGE_SetOffset( pWallPaper, (m_ImageInfo.cx - pMe->m_rc.dx)/2,(MUSIC_WIDTH*m_ImageInfo.cy)/pMe->m_rc.dy);
         //IIMAGE_SetOffset( pWallPaper, 0,MUSIC_WIDTH);
         MSG_FATAL("clip.dx=%d, clip.dy=%d", clip.dx, clip.dy, 0);
 		MSG_FATAL("pMe->m_rc.dy=%d", pMe->m_rc.dy,0,0);
