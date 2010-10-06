@@ -2253,14 +2253,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
         }
         break;
         case 2:
-			//OEM_SetNasraniAccount();
-			/*
-			#ifdef FEATURE_FLEXI_STATIC_BREW_APP
-	     		OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-            		Result = ISHELL_StartApplet(pMe->m_pShell, 0x0109d6ca);
-			#else*/
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
-			//#endif
             break;
         case 3:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
