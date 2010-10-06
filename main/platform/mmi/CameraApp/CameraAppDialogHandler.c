@@ -571,8 +571,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             
         case EVT_DIALOG_START:     
         
-			//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg Preview Handle EVT_DIALOG_START***", 0, 0, 0);
+			//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
 			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 			{
@@ -596,8 +595,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             
         case EVT_DIALOG_END:       
 
-			//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg Preview Handle EVT_DIALOG_END***", 0, 0, 0);
+			//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER
 		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 		    {
@@ -834,8 +832,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             return TRUE;
      
         case EVT_DIALOG_START:      
-        	//Add By zzg 2010_09_01  
-        	MSG_FATAL("***zzg CameraCFG Handle EVT_DIALOG_START***", 0, 0, 0);
+        	//Add By zzg 2010_09_01          	
 #ifdef FEATURE_APP_MUSICPLAYER
 		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 		    {
@@ -852,8 +849,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
          
         case EVT_DIALOG_END:
         
-        	//Add By zzg 2010_09_01  
-        	MSG_FATAL("***zzg CameraCFG Handle EVT_DIALOG_END***", 0, 0, 0);
+        	//Add By zzg 2010_09_01          	
 #ifdef FEATURE_APP_MUSICPLAYER
 		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 		    {
@@ -975,8 +971,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             return TRUE;
  
         case EVT_DIALOG_START:   
-        	//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg Pic Handle EVT_DIALOG_START***", 0, 0, 0);
+        	//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
 			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 			{
@@ -994,8 +989,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             
         //Add By zzg 2010_09_01      
         case EVT_DIALOG_END:
-        {
-        	MSG_FATAL("***zzg Pic Handle EVT_DIALOG_END***", 0, 0, 0);
+        {        	
 #ifdef FEATURE_APP_MUSICPLAYER
 		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 		    {
@@ -1098,8 +1092,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             return TRUE;
         
         case EVT_DIALOG_START:
-        	//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg PopMSG Handle EVT_DIALOG_START***", 0, 0, 0);
+        	//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
 			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 			{
@@ -1209,8 +1202,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             return TRUE;
             
         case EVT_DIALOG_END:
-        	//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg PopMSG Handle EVT_DIALOG_END***", 0, 0, 0);
+        	//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
 			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 			{
