@@ -1013,7 +1013,9 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                         break;
                         
 					//Add End
-	
+
+					//wangliang add! 2010-10-06
+					case AVK_SOFT2:
                     case AVK_CLR:
                        TextCtl_CloseSymbolDialog(pme, 0);
                         return(TRUE);
@@ -1046,7 +1048,9 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                     case AVK_DOWN:
                         TextCtl_ShowFaceSymbolPage(pme, 1);
                         break;
-    
+
+					//wangliang add! 2010-10-06
+    				case AVK_SOFT2:
                     case AVK_CLR:
                        TextCtl_CloseFaceSymbolDialog(pme, NULL);
                         return(TRUE);
@@ -1085,7 +1089,9 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                     case AVK_DOWN:
                         TextCtl_ShowNetSymbolPage(pme, 1);
                         break;
-    
+                        
+    				//wangliang add! 2010-10-06
+					case AVK_SOFT2:
                     case AVK_CLR:
                     case AVK_SELECT: 
 
