@@ -66,12 +66,17 @@ const flashi_nor_device *(samsung_parts[]) = {
   &K5N5629ABM,  /* 256 Mbit Samsung NOR */
   &K5N6433ABM,  /* 64 Mbit Samsung NOR  */
   &K5N6433ATM,  /* 64 Mbit Samsung NOR  */
+  &K5N2833ATB,  /* 128 Mbit Samsung NOR  */
+  &K5N2833ABB,  /* 128 Mbit Samsung NOR  */
   NULL
 };
 
 /* List of all Intel parts that are probed similarly. */
 const flashi_nor_device *(intel_parts[]) = {
+  &Intel_128M18_ADMux,
+  &Intel_256M18_ADMux,
   &Intel_512M18_ADMux,
+  &Intel_1024M18_ADMux,
   &Intel_64W18_ADMux,
   &M36W0R5040U6ZS,
   NULL

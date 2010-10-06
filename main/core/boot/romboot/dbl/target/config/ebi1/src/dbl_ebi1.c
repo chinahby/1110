@@ -93,11 +93,18 @@ dbl_nor_device S29WS512P =
   {1,  0x227e, 0x223D, 0x2200 },                  /* Manufacture codes. */
 };
 
-dbl_nor_device Intel_1024M18_ADMux =
+dbl_nor_device Intel_128M18_ADMux =
 {
-  "INTEL 1024 M18 ADMux",
+  "INTEL 128 M18 ADMux",
   2,                             /* # of codes to match */    
-  { 0x89, 0x88B1 },              /* Manufacture codes. */
+  { 0x89, 0x8903 },              /* Manufacture codes. */
+};
+
+dbl_nor_device Intel_256M18_ADMux =
+{
+  "INTEL 256 M18 ADMux",
+  2,                             /* # of codes to match */    
+  { 0x89, 8904 },              /* Manufacture codes. */
 };
 
 dbl_nor_device Intel_512M18_ADMux =
@@ -105,6 +112,13 @@ dbl_nor_device Intel_512M18_ADMux =
   "INTEL 512 M18 ADMux",
   2,                             /* # of codes to match */    
   { 0x89, 0x8881 },              /* Manufacture codes. */
+};
+
+dbl_nor_device Intel_1024M18_ADMux =
+{
+  "INTEL 1024 M18 ADMux",
+  2,                             /* # of codes to match */    
+  { 0x89, 0x88B1 },              /* Manufacture codes. */
 };
 
 dbl_nor_device K5N5629ABM = 
@@ -141,8 +155,22 @@ dbl_nor_device K5N6433ATM =
   {0x00EC, 0x2254}                   /* Manufacture codes. */
 };
 
- /* List only flash parts tested by this target */
- const dbl_nor_device *(spansion_parts[]) = {
+dbl_nor_device K5N2833ATB = 
+{
+  "SAMSUNG K5N2833-66ATB",
+  2,                                 /* # of codes to match */
+  {0x00EC, 0x2404}                   /* Manufacture codes. */
+};
+
+dbl_nor_device K5N2833ABB = 
+{
+  "SAMSUNG K5N2833-66ABB",
+  2,                                 /* # of codes to match */
+  {0x00EC, 0x2405}                   /* Manufacture codes. */
+};
+
+/* List only flash parts tested by this target */
+const dbl_nor_device *(spansion_parts[]) = {
   &S29WS256N0SB,
   &S29WS512P,
   NULL
@@ -153,6 +181,8 @@ dbl_nor_device K5N6433ATM =
 const dbl_nor_device *(intel_parts[]) = {
   &Intel_1024M18_ADMux,
   &Intel_512M18_ADMux,
+  &Intel_256M18_ADMux,
+  &Intel_128M18_ADMux,
   &Intel_64W18_ADMux,
   &M36W0R5040U6ZS,
   NULL
@@ -164,6 +194,8 @@ const dbl_nor_device *(samsung_parts[]) = {
   &K5N5629ABM,
   &K5N6433ABM,
   &K5N6433ATM,
+  &K5N2833ATB,
+  &K5N2833ABB,
   NULL
 };
 
@@ -1288,7 +1320,7 @@ dbl_nor_device *dev = dbl_nor_device_probe();
 	
 	  DBL_VERIFY(dev != NULL, DBL_ERR_NOR_DETECTION_FAILED );
 
-	  if ((dev == &K5N5629ABM)|| (dev == &K5N6433ABM) || (dev == &K5N6433ATM))
+	  if ((dev == &K5N5629ABM)|| (dev == &K5N6433ABM) || (dev == &K5N6433ATM) || (dev == &K5N2833ATB) || (dev == &K5N2833ABB))
 	  	{
 			dbl_parse_cfg_data(ebi1_cfg_data_ebi1_default);
 		if( configured_clk_speed->ebi1 == 48 )
@@ -1392,7 +1424,7 @@ void dbl_ebi1_nor_configure
       DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
     }
   }
-  else if ( (dev == &Intel_1024M18_ADMux) || (dev == &Intel_512M18_ADMux))
+  else if ( (dev == &Intel_1024M18_ADMux) || (dev == &Intel_512M18_ADMux) || (dev == &Intel_256M18_ADMux) || (dev == &Intel_128M18_ADMux))
   {
     if( configured_clk_speed->ebi1 == 48 )
     {
@@ -1437,6 +1469,10 @@ else if (dev == &Intel_64W18_ADMux || dev == &M36W0R5040U6ZS)
 	 	
   }  
   else if (dev == &K5N6433ABM || dev == &K5N6433ATM)
+  {
+    dbl_parse_cfg_data(ebi1_cfg_data_K5N6433ABM_48MHZ);
+  }
+  else if(dev == &K5N2833ATB || dev == &K5N2833ABB)
   {
     dbl_parse_cfg_data(ebi1_cfg_data_K5N6433ABM_48MHZ);
   }

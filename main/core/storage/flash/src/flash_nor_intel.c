@@ -541,7 +541,33 @@ flashi_nor_device Intel_512M18_ADMux =
   &flash_intel_op_functions_M18
 };
 
+flashi_nor_device Intel_128M18_ADMux =
+{
+  "INTEL 128 M18 ADMux",
+  2,                             /* # of codes to match */    
+  { 0x89, 0x8903 },              /* Manufacture codes. */
+  ( 0 | FLASHI_DEV_CTRL_OPTS_HD_MODE ),
+  FS_DEVICE_WRITES_PAIRED_BITS,
+  0x0,
+  1024,
+  INIT_USING_CFI_AT_RUNTIME,
+  &Intel_128M18_geometry,
+  &flash_intel_op_functions_M18
+};
 
+flashi_nor_device Intel_256M18_ADMux =
+{
+  "INTEL 256 M18 ADMux",
+  2,                             /* # of codes to match */    
+  { 0x89, 0x8904 },              /* Manufacture codes. */
+  ( 0 | FLASHI_DEV_CTRL_OPTS_HD_MODE ),
+  FS_DEVICE_WRITES_PAIRED_BITS,
+  0x0,
+  1024,
+  INIT_USING_CFI_AT_RUNTIME,
+  &Intel_256M18_geometry,
+  &flash_intel_op_functions_M18
+};
 
 /*===========================================================================
 

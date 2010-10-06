@@ -243,6 +243,41 @@ flash_geometry_info K5N6433ATM_geometry =
   135,
   16,
   {
+    { 0,    16,  15,  0},
+    { 16,   16,  31,  0},
+    { 32,   16,  47,  0},
+    { 48,   16,  63,  0},
+    { 64,   16,  79,  0},
+    { 80,   16,  95,  0},
+    { 96,   16,  111,  0},
+    { 112,  16,  127,  0},
+    { 128,  16,  143,  0},
+    { 144,  16,  159,  0},
+    { 160,  16,  175,  0},
+    { 176,  16,  191,  0},
+    { 192,  16,  207,  0},
+    { 208,  16,  223,  0},
+    { 224,  16,  239,  0},
+    { 240,  19,  258,  0},
+  }
+};  /*lint !e785*/
+
+flash_geometry_info K5N2833ATB_geometry =
+{
+  FLASH_SAMSUNG_FAMILY,
+  FLASH_SIZE_16MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_NOT_PRESENT,  
+  2,
+  {
+    {255, 65536},
+    {8, 8192},
+    {0,      0},
+    {0,      0},
+  },  /*lint !e785*/
+  263,
+  16,
+  {
     { 0,    8,   7,  0},
     { 8,    8,  15,  0},
     { 16,   8,  23,  0},
@@ -259,6 +294,41 @@ flash_geometry_info K5N6433ATM_geometry =
     { 104,  8,  111, 0},
     { 112,  8,  119, 0},
     { 120,  15, 134, 0},
+  }
+};  /*lint !e785*/
+
+flash_geometry_info K5N2833ABB_geometry =
+{
+  FLASH_SAMSUNG_FAMILY,
+  FLASH_SIZE_16MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_NOT_PRESENT,  
+  2,
+  {
+    {8, 8192},
+    {255, 65536},
+    {0,      0},
+    {0,      0},
+  },  /*lint !e785*/
+  263,
+  16,
+  {
+    { 0,    19,  18,  0},
+    { 19,   16,  34,  0},
+    { 35,   16,  50,  0},
+    { 51,   16,  66,  0},
+    { 67,   16,  82,  0},
+    { 83,   16,  98,  0},
+    { 99,   16,  114,  0},
+    { 115,  16,  130,  0},
+    { 131,  16,  146,  0},
+    { 147,  16,  162,  0},
+    { 163,  16,  178,  0},
+    { 179,  16,  194,  0},
+    { 195,  16,  210,  0},
+    { 211,  16,  226,  0},
+    { 227,  16,  242,  0},
+    { 243,  16,  258,  0},
   }
 };  /*lint !e785*/
 
@@ -325,6 +395,39 @@ flashi_nor_device K5N6433ATM =
   &K5N6433ATM_geometry,
   &flash_samsung_op_word_write_functions
 };
+
+flashi_nor_device K5N2833ATB =
+{
+  "SAMSUNG K5N2833-66ATB",
+  2,                            /* # of codes to match */
+  {0x00EC, 0x2404, 0, 0},       /* Manufacture codes. */
+                                /* 2254H(Top Boot), 2255H(Bottom Boot)*/
+  0,                         
+  FS_DEVICE_WRITES_SIMPLE,      /* for SLC device */
+  0x0,                          /* Device base address */
+  0,                            /* Page Size */
+  /* Use CFI to initialize flash geometry */
+  INIT_USING_CFI_AT_RUNTIME,
+  &K5N2833ATB_geometry,
+  &flash_samsung_op_word_write_functions
+};
+
+flashi_nor_device K5N2833ABB =
+{
+  "SAMSUNG K5N2833-66ABB",
+  2,                            /* # of codes to match */
+  {0x00EC, 0x2405, 0, 0},       /* Manufacture codes. */
+                                /* 2254H(Top Boot), 2255H(Bottom Boot)*/
+  0,                         
+  FS_DEVICE_WRITES_SIMPLE,      /* for SLC device */
+  0x0,                          /* Device base address */
+  0,                            /* Page Size */
+  /* Use CFI to initialize flash geometry */
+  INIT_USING_CFI_AT_RUNTIME,
+  &K5N2833ABB_geometry,
+  &flash_samsung_op_word_write_functions
+};
+
 
 #if defined(BUILD_JFLASH) || defined(BUILD_ARMPRG)
   /* Buffer initialized to value of erased data to use with memcmp() */
