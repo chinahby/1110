@@ -121,6 +121,12 @@ dbl_nor_device Intel_64W18_ADMux =
   { 0x20, 0x88C0 },              /* Manufacture codes. */
 };
 
+dbl_nor_device M36W0R5040U6ZS = 
+{
+  "NUMONYX M36W0R5040U6ZS",
+  2,                                 /* # of codes to match */
+  { 0x20, 0x8828 },                  /* Manufacture codes. */
+};
 dbl_nor_device K5N6433ABM = 
 {
   "SAMSUNG K5N6433ABM",
@@ -148,6 +154,7 @@ const dbl_nor_device *(intel_parts[]) = {
   &Intel_1024M18_ADMux,
   &Intel_512M18_ADMux,
   &Intel_64W18_ADMux,
+  &M36W0R5040U6ZS,
   NULL
 };
 
@@ -1424,8 +1431,7 @@ else if (dev == &K5N5629ABM)
       DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
     }
   }
-
-else if (dev == &Intel_64W18_ADMux)
+else if (dev == &Intel_64W18_ADMux || dev == &M36W0R5040U6ZS)
   {
      dbl_parse_cfg_data(ebi1_cfg_data_Intel_W18_48MHZ);
 	 	

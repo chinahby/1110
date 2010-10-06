@@ -158,6 +158,7 @@ extern flashi_nor_device K5N6433ATM;
 /* Intel Parts */
 extern flashi_nor_device Intel_PH28F256L18B85;
 extern flashi_nor_device Intel_64W18_ADMux;
+extern flashi_nor_device M36W0R5040U6ZS;
 extern flashi_nor_device Intel_512M18_ADMux;
 extern flashi_nor_device Intel_1024M18_ADMux;
 

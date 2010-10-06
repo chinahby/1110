@@ -307,6 +307,34 @@ flash_geometry_info Intel_64W18_geometry =
   } 
 };
 
+flash_geometry_info M36W0R5040U6ZS_geometry =
+{
+  FLASH_INTEL_FAMILY,
+  FLASH_SIZE_4MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_NOT_PRESENT,
+  2,
+  {
+    { 63,  65536},
+    {  8,   8192},
+    {  0,      0},
+    {  0,      0},
+    {  0,      0},
+  },  /*lint !e785*/
+  71,
+  8,
+  {
+    {0,  8, 7,  0}, 
+    {8,  8, 15, 0}, 
+    {16, 8, 23, 0}, 
+    {24, 8, 31, 0}, 
+    {32, 8, 39, 0}, 
+    {40, 8, 47, 0}, 
+    {48, 8, 55, 0}, 
+    {56,15, 70, 0}
+  } 
+};
+
 flash_geometry_info L18_geometry =
 {
   FLASH_INTEL_FAMILY,
@@ -471,6 +499,19 @@ flashi_nor_device Intel_64W18_ADMux = {
   &flash_intel_op_functions_W18
 };
 
+flashi_nor_device M36W0R5040U6ZS = 
+{
+  "NUMONYX M36W0R5040U6ZS",
+  2,                             /* # of codes to match */    
+  { 0x20, 0x8828 },              /* Manufacture codes. */
+  0,
+  FS_DEVICE_WRITES_SIMPLE,       /* W18 uses SLC array */
+  0x0,
+  0,
+  INIT_USING_CFI_AT_RUNTIME,
+  &M36W0R5040U6ZS_geometry,
+  &flash_intel_op_functions_W18
+};
 
 flashi_nor_device Intel_1024M18_ADMux =
 {
