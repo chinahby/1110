@@ -3158,7 +3158,7 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
             MGAppUtil_SetMenuCtlRectProp(pMe,
                                          MP_UNDERLINE_TITLE | MP_WRAPSCROLL | MP_MULTI_SEL,
                                          pMenuCtl);
-            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
+            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
 #endif
@@ -3273,7 +3273,7 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
             return TRUE;
 
          case AVK_SELECT:
-         case AVK_INFO:
+         //case AVK_INFO:
             {
                uint16 uSel;
                int nResult;
