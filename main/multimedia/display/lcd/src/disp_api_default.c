@@ -98,6 +98,9 @@ extern int epson_S1D19120_install(char *);
 extern int tm_cstn128x128_install(char * str);
 #endif
 
+#if defined(FEATURE_PROJECT_W021_128x160)
+extern int zgd_tft128x160_install(char *);
+#endif
 #if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
 extern int zgd_tft177_install(char *);
 #endif
@@ -124,19 +127,25 @@ static void mdp_init(void);
 void disp_init(void)
 {
 #ifndef CUST_EDITION
-  if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
-    return;
+	if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
+		return;
 #else
 #if defined(LCD_TM_128X128) 
-  if(tm_cstn128x128_install(PRIMARY_LCD_NAME) == -1)
+	if(tm_cstn128x128_install(PRIMARY_LCD_NAME) == -1)
+		return;
 #elif defined(LCD_ZGD_177)
-   if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
+	if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
+		return;
+#elif defined(LCD_ZGD_128x160)
+	if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
+		return;
 #elif defined(LCD_ST_7735R)
 	if(st7735r_128x128_install(PRIMARY_LCD_NAME) == -1)
+		return;
 #else
 #error code not present
 #endif   
-    return;  
+	return;  
 #endif
 
   fd = drv_open(PRIMARY_LCD_NAME);
