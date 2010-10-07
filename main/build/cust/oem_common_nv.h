@@ -22,7 +22,7 @@
 #define OEMNV_CALLFORWARD_WAIT_ENABLE               "*40"                       //CFGI_CALLFORWARD_WAIT_ENABLE
 #define OEMNV_CALLFORWARD_WAIT_DISABLE              "*400"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "*738"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
-#define OEMNV_VOICEMAIL_NUMBER                      "388"                         //NV_SMS_VM_NUMBER_I 
+#define OEMNV_VOICEMAIL_NUMBER                      L"388"                         //NV_SMS_VM_NUMBER_I 
 #elif defined(FEATURE_PROJECT_M8)
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"110",3},{"112",3},{"911",3},{"999",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
@@ -38,7 +38,7 @@
 #define OEMNV_CALLFORWARD_WAIT_ENABLE               "*40"                       //CFGI_CALLFORWARD_WAIT_ENABLE
 #define OEMNV_CALLFORWARD_WAIT_DISABLE              "*400"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
-#define OEMNV_VOICEMAIL_NUMBER                      "*88"                         //NV_SMS_VM_NUMBER_I 
+#define OEMNV_VOICEMAIL_NUMBER                      L"*88"                         //NV_SMS_VM_NUMBER_I 
 
 #elif defined(FEATURE_VERSION_CITYCELL)  //add by yangdecai 2010-10-06
 //Operator parameters
@@ -55,7 +55,7 @@
 #define OEMNV_CALLFORWARD_WAIT_ENABLE               "*40"                       //CFGI_CALLFORWARD_WAIT_ENABLE
 #define OEMNV_CALLFORWARD_WAIT_DISABLE              "*400"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
-#define OEMNV_VOICEMAIL_NUMBER                      "*88"                         //NV_SMS_VM_NUMBER_I 
+#define OEMNV_VOICEMAIL_NUMBER                      L"*88"                         //NV_SMS_VM_NUMBER_I 
 #else
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"110",3},{"112",3},{"911",3},{"999",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
@@ -71,7 +71,7 @@
 #define OEMNV_CALLFORWARD_WAIT_ENABLE               "*74"                       //CFGI_CALLFORWARD_WAIT_ENABLE
 #define OEMNV_CALLFORWARD_WAIT_DISABLE              "*740"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
-#define OEMNV_VOICEMAIL_NUMBER                      "0"                         //NV_SMS_VM_NUMBER_I  
+#define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I  
 #endif
 //Others
 #define OEMNV_PHONE_PASSWORD                        10670                       //CFGI_PHONE_PASSWORD       

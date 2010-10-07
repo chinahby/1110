@@ -1465,19 +1465,9 @@ static OEMConfigListType oemi_cache = {
    OEMNV_SMS_RETRY_PERIOD,                         // CFGI_SMS_RETRY_PERIOD
    OEMNV_SMS_RETRY_INTERVAL,                       // CFGI_SMS_RETRY_INTERVAL
    FALSE,                                          // CFGI_SMS_GCF_FLAG
-#if defined(FEATURE_PROJECT_SMART)
-   {L"388"},                                           // CFGI_VOICEMAIL_NUMBER
-   {L"388"},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
-   {L"388"},                                           // CFGI_VOICEMAIL_NUMBER_GW
-#elif defined(FEATURE_PROJECT_M8)
-   {L"*88"},                                           // CFGI_VOICEMAIL_NUMBER
-   {L"*88"},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
-   {L"*88"},                                           // CFGI_VOICEMAIL_NUMBER_GW
-#else
-   {0,},                                           // CFGI_VOICEMAIL_NUMBER
-   {0,},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
-   {0,},                                           // CFGI_VOICEMAIL_NUMBER_GW
-#endif
+   {OEMNV_VOICEMAIL_NUMBER},                                           // CFGI_VOICEMAIL_NUMBER
+   {OEMNV_VOICEMAIL_NUMBER},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
+   {OEMNV_VOICEMAIL_NUMBER},                                           // CFGI_VOICEMAIL_NUMBER_GW
    0,                                              // CFGI_RECENT_MT_CALL_TIMER
    0,                                              // CFGI_RECENT_MO_TIMER
    OEMNV_ALERT_DISABLE,                            // CFGI_MINUTE_ALERT
@@ -2381,31 +2371,12 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.sms_retry_interval        = OEMNV_SMS_RETRY_INTERVAL;
    oemi_cache.sms_gcf_flag              = FALSE;
 #ifdef CUST_EDITION
-   {
-   
-   	AECHAR pBuff[OEMNV_VOICEMAIL_MAXLEN]={0};
-    //MSG_FATAL("CUST_EDITION SET....................",0,0,0);
-  // #if defined(FEATURE_PROJECT_SMART)
-   //		(void)STRTOWSTR("388", pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
-   //#elif defined(FEATURE_PROJECT_M8)
-    //	(void)STRTOWSTR("*88", pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
-   //#else
-   		(void)STRTOWSTR(OEMNV_VOICEMAIL_NUMBER, pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
-   //#endif
-#ifndef WIN32
-    nvi.sms_vm_number.num_digits = WSTRLEN(pBuff);
-    WSTRTOSTR(pBuff, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
-	//MSG_FATAL("CUST_EDITION SET....................%d",nvi.sms_vm_number.digits,0,0);
-#endif
-    OEMNV_Put(NV_SMS_VM_NUMBER_I, &nvi);
-    WSTRNCOPYN((void *) oemi_cache.voicemail_number,
-                sizeof(oemi_cache.voicemail_number)/sizeof(AECHAR),
-                (AECHAR*) pBuff,
-                -1);
-   }
+   WSTRCPY(oemi_cache.voicemail_number,OEMNV_VOICEMAIL_NUMBER);
+   nvi.sms_vm_number.num_digits = WSTRLEN(oemi_cache.voicemail_number);
+   WSTRTOSTR(oemi_cache.voicemail_number, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
+   OEMNV_Put(NV_SMS_VM_NUMBER_I, &nvi);
 #else
-
-	  MEMSET((void *) oemi_cache.voicemail_number,
+   MEMSET((void *) oemi_cache.voicemail_number,
           0,
           sizeof(oemi_cache.voicemail_number));
 #endif
