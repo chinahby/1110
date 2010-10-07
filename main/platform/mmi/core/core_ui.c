@@ -388,7 +388,6 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
     {HS_POUND_K,                    AVK_POUND,                      AVK_METHED_HOLD, FALSE, 0},
 
     {HS_INFO_K,                     AVK_INFO,                       AVK_METHED_HOLD, FALSE, 0},
-    {HS_CAMERA_K,                   AVK_CAMERA,                     AVK_METHED_HOLD, FALSE, 0},
     {HS_PWR_K,                      AVK_POWER,                      AVK_METHED_HOLD, FALSE, 0},
     {HS_END_K,                      AVK_END,                        AVK_METHED_HOLD, FALSE, 0},
     {HS_SEND_K,                     AVK_SEND,                       AVK_METHED_HOLD, FALSE, 0},
@@ -401,7 +400,12 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
     {HS_RIGHT_K,                    AVK_RIGHT,                      AVK_METHED_REPT, FALSE, 0},
     {HS_VOL_DOWN_K,                 AVK_VOLUME_DOWN,                AVK_METHED_REPT, FALSE, 0},
     {HS_VOL_UP_K,                   AVK_VOLUME_UP,                  AVK_METHED_REPT, FALSE, 0},
-
+    
+    {HS_CAMERA_K,                   AVK_CAMERA,                     AVK_METHED_HOLD, FALSE, 0},
+    {HS_TV_K,                       AVK_TV,                         AVK_METHED_HOLD, FALSE, 0},
+    {HS_FM_K,                       AVK_FM,                         AVK_METHED_HOLD, FALSE, 0},
+    {HS_MUSIC_K,                    AVK_MUSIC,                      AVK_METHED_HOLD, FALSE, 0},
+    
     {HS_FLIP_OPEN_K,                AVK_FLIP_OPEN,                  AVK_METHED_NONE, FALSE, 0},
     {HS_FLIP_CLOSE_K,               AVK_FLIP_CLOSE,                 AVK_METHED_NONE, FALSE, 0},
     

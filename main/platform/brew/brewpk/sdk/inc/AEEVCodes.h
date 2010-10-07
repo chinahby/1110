@@ -232,6 +232,9 @@ enum _AVKType {
    // ¶Ï¿ª¶ú»ú
    AVK_BT_HEADSET_DISCONNECT,
    AVK_CONTACTS_GIVEUP_EDIT,
+   AVK_FM,
+   AVK_TV,
+   AVK_MUSIC,
 #endif /*CUST_EDITION*/   
    AVK_LAST
 };
