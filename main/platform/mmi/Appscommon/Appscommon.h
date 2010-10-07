@@ -69,12 +69,30 @@
 #elif defined(FEATURE_DISP_160X128)
     #define SCREEN_WIDTH            160
     #define SCREEN_HEIGHT           128
-    #define STATEBAR_HEIGHT            14
+    #define STATEBAR_HEIGHT         14
+    #define BOTTOMBAR_HEIGHT        16
+    #define TITLEBAR_HEIGHT         16
+    #define MENUITEM_HEIGHT         16
+    #define SCROLLBAR_WIDTH         5
+    #define STATUSBAR_HEIGHT        16
+#elif defined(FEATURE_DISP_128X160)
+	#define SCREEN_WIDTH            128
+    #define SCREEN_HEIGHT           160
+    #define STATEBAR_HEIGHT         14
     #define BOTTOMBAR_HEIGHT        16
     #define TITLEBAR_HEIGHT         16
     #define MENUITEM_HEIGHT          16
     #define SCROLLBAR_WIDTH          5
     #define STATUSBAR_HEIGHT         16
+#elif defined(FEATURE_DISP_240X320)	
+	#define SCREEN_WIDTH            240
+    #define SCREEN_HEIGHT           320
+    #define STATEBAR_HEIGHT         14
+    #define BOTTOMBAR_HEIGHT        16
+    #define TITLEBAR_HEIGHT         16
+    #define MENUITEM_HEIGHT          16
+    #define SCROLLBAR_WIDTH          5
+    #define STATUSBAR_HEIGHT         16	
 #else
     #define SCREEN_WIDTH            160
     #define SCREEN_HEIGHT           128

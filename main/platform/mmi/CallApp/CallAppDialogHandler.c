@@ -5937,7 +5937,22 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         if(pixelLen == 0)
         {
             pixelLen = 5;
-        }        
+        }  
+#elif defined(FEATURE_DISP_128X160)       
+        if(pixelLen == 0)
+        {
+            pixelLen = 12;
+        } 	
+#elif defined(FEATURE_DISP_176X220)       
+        if(pixelLen == 0)
+        {
+            pixelLen = 12;
+        } 	
+#elif defined(FEATURE_DISP_240X320)       
+        if(pixelLen == 0)
+        {
+            pixelLen = 12;
+        } 			
 #endif      
 
         // Move dstStr past the characters about to be drawn

@@ -99,8 +99,22 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define DATA_X				5
 #define DATA_Y				36
 
-#define WEEK_X                        5
-#define WEEK_Y                        52
+#define WEEK_X              5
+#define WEEK_Y              52
+
+#elif defined(FEATURE_DISP_128X160)
+
+#define IDLE_D_CLOCK_X 		5
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				5
+#define RPLMN_Y				20
+
+#define DATA_X				5
+#define DATA_Y				36
+
+#define WEEK_X              5
+#define WEEK_Y              52
 
 #elif defined(FEATURE_DISP_176X220)
 
@@ -113,6 +127,22 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define DATA_X				IDLE_D_CLOCK_X
 #define DATA_Y				(RPLMN_Y + 30) 
 
+#define WEEK_X               5
+#define WEEK_Y               52
+
+#elif defined(FEATURE_DISP_240X320)
+
+#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y + 30) 
+
+#define WEEK_X              5
+#define WEEK_Y              52
 #else
 
 #define IDLE_D_CLOCK_X 		15
@@ -3999,7 +4029,26 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		   WEEK_Y,
 		   (pMe->m_rc.dx-2*WEEK_X), 
 		   pMe->m_nNormalFontHeight);
+#elif defined (FEATURE_DISP_128X160)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
+#elif defined (FEATURE_DISP_176X220)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
+#elif defined (FEATURE_DISP_240X320)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
 #endif
+
 #else
     SETAEERECT(&rc, 
                1,
@@ -4120,6 +4169,10 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_160X128)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_128X160)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_240X320)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
 #endif //FEATURE_DISP_176X220
@@ -4132,6 +4185,10 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_160X128)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_128X160)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_240X320)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -4146,6 +4203,10 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #elif defined(FEATURE_DISP_160X128)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_128X160)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_240X320)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -4199,7 +4260,26 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   IDF_ALIGN_MIDDLE
                                   | IDF_ALIGN_RIGHT
                                   | IDF_TEXT_TRANSPARENT); 
-
+#elif defined(FEATURE_DISP_128X160)
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  12,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
+#elif defined(FEATURE_DISP_240X320)
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  12,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
 #else
         DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
@@ -4249,6 +4329,26 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     MSG_FATAL("Strlen=%d, rc_date.x=%d", strlen, rc_date.x, 0);
 }
 #elif defined(FEATURE_DISP_160X128)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_date, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_128X160)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_date, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_240X320)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -4346,6 +4446,10 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               | IDF_ALIGN_RIGHT
 #elif defined(FEATURE_DISP_160X128)
 							  | IDF_ALIGN_RIGHT
+#elif defined(FEATURE_DISP_128X160)
+							  | IDF_ALIGN_RIGHT		
+#elif defined(FEATURE_DISP_240X320)
+							  | IDF_ALIGN_RIGHT								  
 #else
                               | IDF_ALIGN_LEFT
 #endif //FEATURE_DISP_176X220
