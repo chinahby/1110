@@ -1589,6 +1589,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
             //³õÊ¼»¯ÒôÁ¿
+            pMe->m_slecet_id = IMENUCTL_GetSel(pMenu);
             ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_RINGER_VOL,pMe->m_RingCurVol,sizeof(pMe->m_RingCurVol));
 
             if(pMe->m_fSubDlgId != DOWNLOAD_MENU &&
@@ -3473,6 +3474,7 @@ static void RingerPreview(void *pUser)
                                             &pMe->m_RingCurVol[pMe->m_CurProfile],
                                             sizeof(pMe->m_RingCurVol[pMe->m_CurProfile]));
 	//MODI BY YANGDECAI 09-27
+	MSG_FATAL("pMe->m_slecet_id ::::::::::%d",pMe->m_slecet_id ,0,0);
 	if(pMe->m_slecet_id == POWERONRINGID || pMe->m_slecet_id == POWEROFFRINGID)
 	{
 		IALERT_StartRingerAlert_Ex(pMe->m_pAlert,pMe->m_lastRingerPlayed);
