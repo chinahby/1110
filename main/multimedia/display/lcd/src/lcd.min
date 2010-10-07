@@ -7,7 +7,8 @@ LCD_SURF_C_SOURCES=\
 	disp_zgd_tft177.c \
 	disp_tm_cstn128x128.c \
 	disp_st7735r_128x128.c \
-	disp_api_default.c
+	disp_api_default.c \
+	disp_zgd_tft128x160.c
 
 LCD_SURF_C_SOURCES += disp_epson_S1D19120_bootscreen.c
 
