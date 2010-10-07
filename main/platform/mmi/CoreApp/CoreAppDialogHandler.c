@@ -143,6 +143,7 @@ extern boolean   IsRunAsFactoryTestMode(void);
 
 #define WEEK_X              5
 #define WEEK_Y              52
+
 #else
 
 #define IDLE_D_CLOCK_X 		15
@@ -4032,6 +4033,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		   WEEK_Y,
 		   (pMe->m_rc.dx-2*WEEK_X), 
 		   pMe->m_nNormalFontHeight);
+
 #elif defined (FEATURE_DISP_128X160)
 	SETAEERECT(&rc_week, 
 		   WEEK_X,
@@ -4050,6 +4052,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		   WEEK_Y,
 		   (pMe->m_rc.dx-2*WEEK_X), 
 		   pMe->m_nNormalFontHeight);
+	   
 #endif
 
 #else
@@ -4172,10 +4175,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_160X128)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
-				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);			
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
 #endif //FEATURE_DISP_176X220
