@@ -98,6 +98,7 @@
 #ifdef FEATURE_SEAMLESS_SMS
 #define     SENDSEAMLESSSMS_TIME   (2*60*1000)
 #endif
+#define     RESETPROFILE_TIME      (1*60*1000)
 // 更新 Searching... 提示的定时器时间 (毫秒)
 #define    IDLESEARCHINTIME       (20000)
 

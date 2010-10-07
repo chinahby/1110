@@ -113,6 +113,11 @@ static void CoreApp_RebuildEFS(CCoreApp *pMe);
 static void StereoHeadsetOn(CCoreApp * pMe);
 static void HeadsetOff(CCoreApp *pMe);
 static void CoreApp_SceneMode(CCoreApp *pMe);
+//add by yangdecai  2010-09-10
+static void CoreApp_ResetProfileTimer(void *pUser);
+static boolean CoreApp_TestCard(CCoreApp *pMe);
+static void    CoreApp_ResetRing(CCoreApp *pMe);
+//add by yangdecai end
 /*==============================================================================
 
                                  函数定义
@@ -494,9 +499,12 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             CoreApp_PoweronStartApps(pMe);
             //CoreApp_InitBattStatus(pMe);
 
-#ifndef WIN32
             EnableUIKeys(TRUE);
-#endif//WIN32
+            
+            (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                                  RESETPROFILE_TIME,
+                                  CoreApp_ResetProfileTimer, 
+                                  pMe);
             return TRUE;
 
         case EVT_APP_STOP:
@@ -3307,4 +3315,169 @@ static void CoreApp_SceneMode(CCoreApp *pMe)
     }
 #endif
 }
+
+// 开机检查一次即可
+static void CoreApp_ResetProfileTimer(void *pUser)
+{
+    CCoreApp *pMe = (CCoreApp *)pUser;
+    if(!CoreApp_TestCard(pMe))
+	{
+		CoreApp_ResetRing(pMe);
+	}
+}
+
+//add by yangdecai  2010-09-10
+static boolean CoreApp_TestCard(CCoreApp *pMe)
+{
+	boolean Result = FALSE;
+	IFileMgr          *m_pFileMgr;
+	if( SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
+            AEECLSID_FILEMGR,
+            (void**)&m_pFileMgr))
+	{
+		return EFAILED;
+	}
+	
+	if(SUCCESS == IFILEMGR_Test(m_pFileMgr, AEEFS_CARD0_DIR))
+	{
+		Result = TRUE;
+	}
+	else
+	{
+		Result = FALSE;
+	}
+	RELEASEIF(m_pFileMgr);
+	return Result;
+}
+static void    CoreApp_ResetRing(CCoreApp *pMe)
+{
+	ringID nNewSmsConfigRinger[PROFILENUMBER];
+	ringID nNewCallConfigRinger[PROFILENUMBER];
+	ringID nNewAlarmConfigRinger[PROFILENUMBER];
+	boolean Relsut = FALSE;
+	
+	ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+	ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+	ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+
+	//sms
+
+	if(nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
+	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+    		nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
+    		nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].midID =OEMNV_SMS_RINGER_ID;
+    		Relsut = ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+        }
+	}
+	if(nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
+   	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+       		nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
+    		nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].midID =OEMNV_SMS_RINGER_ID;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+        }
+   	}
+	   
+    if(nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
+   	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+       		nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].ringType = OEMNV_MID_RINGER;
+    		nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].midID =OEMNV_SMS_RINGER_ID;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+        }
+   	}
+	if(  nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType == OEMNV_MP3_RINGER)
+	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+    		nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType = OEMNV_MID_RINGER;
+    		nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].midID =OEMNV_SMS_RINGER_ID;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+        }
+	}
+	
+	//CALL
+	if(nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
+	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+    		nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
+    		nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].midID =OEMNV_DEFAULTRINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+        }
+	}
+	if(nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
+   	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+       		nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
+    		nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].midID =OEMNV_DEFAULTRINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+        }
+   	}
+	   
+    if(nNewCallConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
+   	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewCallConfigRinger[OEMNV_PROFILE_MEETING].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+       		nNewCallConfigRinger[OEMNV_PROFILE_MEETING].ringType = OEMNV_MID_RINGER;
+    		nNewCallConfigRinger[OEMNV_PROFILE_MEETING].midID =OEMNV_DEFAULTRINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+        }
+   	}
+	if(  nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType == OEMNV_MP3_RINGER)
+	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+    		nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType = OEMNV_MID_RINGER;
+    		nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].midID =OEMNV_DEFAULTRINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+        }
+	}
+
+
+	//ALASRM
+	if(nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
+	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+    		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
+    		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].midID = OEMNV_ALARM_RINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+        }
+	}
+	if(nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
+   	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+       		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
+    		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].midID = OEMNV_ALARM_RINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+        }
+   	}
+	   
+    if(nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
+   	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+       		nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].ringType = OEMNV_MID_RINGER;
+    		nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].midID = OEMNV_ALARM_RINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+        }
+   	}
+	if(  nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType == OEMNV_MP3_RINGER)
+	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+    		nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType = OEMNV_MID_RINGER;
+    		nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].midID = OEMNV_ALARM_RINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+        }
+	}
+}
+//add by yangdecai end
 
