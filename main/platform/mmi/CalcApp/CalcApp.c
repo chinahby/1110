@@ -241,7 +241,7 @@ when         who            what, where, why
 #define CALC_RETURN_Ws 47
 #define CALC_RETURN_Hs 54
 
-#elif defined(FEATURE_DISP_128X160)
+#elif defined(FEATURE_DISP_128X160)			//_Xs类坐标均未使用
 /*显示数字线条宽度*/
 #define CALC_NUMBER_LINE_WIDTH     2
 /*显示数字宽度*/
