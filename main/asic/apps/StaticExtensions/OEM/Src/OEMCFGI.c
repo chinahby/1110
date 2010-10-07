@@ -2624,6 +2624,18 @@ void OEM_RestoreFactorySetting( void )
    MEMSET((void *)&oemi_cache.fmRadio_chan_info, 0, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
    oemi_cache.fmRadio_chan_total = 0;
    
+   oemi_cache.emerg_table.emert_size = OEMNV_EMERT_SEZE;
+   oemi_cache.emerg_table.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
+   STRCPY(oemi_cache.emerg_table.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
+   oemi_cache.emerg_table.emerg_num[1].num_len = OEMNV_EMERG_NUM_LEN;
+   STRCPY(oemi_cache.emerg_table.emerg_num[1].num_buf,OEMNV_EMERG_NUM_TWO);
+   oemi_cache.emerg_table.emerg_num[2].num_len = OEMNV_EMERG_NUM_LEN;
+   STRCPY(oemi_cache.emerg_table.emerg_num[2].num_buf,OEMNV_EMERG_NUM_TRE);
+   #ifndef FEATURE_VERSION_CITYCELL
+   oemi_cache.emerg_table.emerg_num[3].num_len = OEMNV_EMERG_NUM_LEN;
+   STRCPY(oemi_cache.emerg_table.emerg_num[3].num_buf,OEMNV_EMERG_NUM_FOR);
+   #endif
+   
    oemi_cache.input_mode=OEMNV_INPUTMODE_DEFAULT;
 #ifdef FEATURE_MENU_STYLE
    oemi_cache.menu_style= OEMNV_MENU_STYLE_ICON;
