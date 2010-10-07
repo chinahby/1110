@@ -7,8 +7,9 @@
 @set HWVERSION=W203_MB_V0.6
 
 rem LCD-TYPE CHOOSE
-@set LCD_TYPE=tm_128x128
+rem @set LCD_TYPE=tm_128x128
 rem @set LCD_TYPE=zgd_177
+set LCD_TYPE=zgd_128x160
 rem @set LCD_TYPE=st7735r
 
 IF "%*"=="" goto DO_COPY
