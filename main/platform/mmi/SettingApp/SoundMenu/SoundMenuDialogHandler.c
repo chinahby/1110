@@ -1420,6 +1420,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             notifyFMRadioAlertEvent( pMe, TRUE);
             SoundMenu_InitRingerList(pMe);
             pMe->m_RingerID[pMe->m_CurProfile].midID = 0;
+			pMe->m_slecet_id = IMENUCTL_GetSel(pMenu);
             if (pMe->m_RingerType == SET_RINGER)
             {
                 ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)pMe->m_RingerID,sizeof(pMe->m_RingerID));
