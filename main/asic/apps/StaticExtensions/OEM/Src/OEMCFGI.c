@@ -2382,9 +2382,16 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.sms_gcf_flag              = FALSE;
 #ifdef CUST_EDITION
    {
-    AECHAR pBuff[OEMNV_VOICEMAIL_MAXLEN]={0};
-    
-    (void)STRTOWSTR(OEMNV_VOICEMAIL_NUMBER, pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
+   
+   	AECHAR pBuff[OEMNV_VOICEMAIL_MAXLEN]={0};
+    MSG_FATAL("CUST_EDITION SET....................",0,0,0);
+   #if defined(FEATURE_PROJECT_SMART)
+   		(void)STRTOWSTR("388", pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
+   #elif defined(FEATURE_PROJECT_M8)
+    	(void)STRTOWSTR("*88", pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
+   #else
+   		(void)STRTOWSTR(OEMNV_VOICEMAIL_NUMBER, pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
+   #endif
 #ifndef WIN32
     nvi.sms_vm_number.num_digits = WSTRLEN(pBuff);
     WSTRTOSTR(pBuff, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
@@ -2396,7 +2403,8 @@ void OEM_RestoreFactorySetting( void )
                 -1);
    }
 #else
-   MEMSET((void *) oemi_cache.voicemail_number,
+
+	  MEMSET((void *) oemi_cache.voicemail_number,
           0,
           sizeof(oemi_cache.voicemail_number));
 #endif
@@ -3767,18 +3775,18 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #ifdef CUST_EDITION
 #ifndef WIN32  
 //wangliang modify 
-     WSTRNCOPYN(pBuff,
+    /* WSTRNCOPYN(pBuff,
                 nSize / (int) sizeof(AECHAR),
                 (void *) oemi_cache.voicemail_number,
-                (int) (sizeof(oemi_cache.voicemail_number) / sizeof(AECHAR)));
-#if 0   
+                (int) (sizeof(oemi_cache.voicemail_number) / sizeof(AECHAR)));*/
+//#if 0   
      if (OEMNV_Get(NV_SMS_VM_NUMBER_I, &nvi) != NV_DONE_S) 
      {
        return EFAILED;
      }
      nvi.sms_vm_number.digits[nvi.sms_vm_number.num_digits] = 0;
      STRTOWSTR((char *)nvi.sms_vm_number.digits, pBuff, (nvi.sms_vm_number.num_digits+1) * sizeof(AECHAR));
-#endif	 
+//#endif	 
 #endif
      if (WSTRLEN(pBuff) == 0)
      {
@@ -4718,6 +4726,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
        return EFAILED;
 #ifdef CUST_EDITION
 #ifndef WIN32    
+	MSG_FATAL("SET.............................................",0,0,0);
     nvi.sms_vm_number.num_digits = WSTRLEN(pBuff);
     WSTRTOSTR(pBuff, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
 
