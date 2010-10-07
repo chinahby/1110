@@ -137,15 +137,14 @@ void disp_init(void)
 	if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
 		return;
 #elif defined(LCD_ZGD_128x160)
-	if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
+	if(zgd_tft128x160_install(PRIMARY_LCD_NAME) == -1)
 		return;
 #elif defined(LCD_ST_7735R)
 	if(st7735r_128x128_install(PRIMARY_LCD_NAME) == -1)
 		return;
 #else
 #error code not present
-#endif   
-	return;  
+#endif
 #endif
 
   fd = drv_open(PRIMARY_LCD_NAME);
