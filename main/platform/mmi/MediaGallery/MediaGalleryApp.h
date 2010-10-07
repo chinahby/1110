@@ -410,7 +410,6 @@ struct  _CMediaGalleryApp{
    IDatabase         *m_pFilesDB; /*Database pointer*/
    IStatic		      *m_pDetailText;
 
-   IMedia            *m_pMediaPending;
    IMedia            *m_pMedia;    // IMedia-based object
    void              *m_pMediaSpec;
    uint32            m_dwDuration;

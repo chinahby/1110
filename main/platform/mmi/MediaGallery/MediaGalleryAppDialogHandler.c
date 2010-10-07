@@ -9024,7 +9024,8 @@ static void MGAppUtil_LoadMediaNotify(void * pUser,
                if(nRet == SUCCESS && ClsID == AEECLSID_MEDIAMP3)
                {
                   AEEMediaMP3Spec* pSpec;
-
+                  
+                  FREEIF(pMe->m_pMediaSpec);
                   pMe->m_pMediaSpec = (void *)MALLOC(sizeof(AEEMediaMP3Spec));
 
                   if(!pMe->m_pMediaSpec)

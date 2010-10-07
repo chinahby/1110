@@ -1339,7 +1339,6 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
    pMe->m_pFilesDB = NULL;
    pMe->m_pDetailText = NULL;
 
-   pMe->m_pMediaPending = NULL;
    pMe->m_pMedia = NULL;
    pMe->m_pMediaSpec = NULL;
 
@@ -1461,7 +1460,6 @@ static void MediaGalleryApp_FreeAppData(CMediaGalleryApp* pMe)
    FREEIF(pMe->m_pInputFileName);
 
    RELEASEIF(pMe->m_pMedia);
-   RELEASEIF(pMe->m_pMediaPending);
 
    FREEIF(pMe->m_pMediaSpec);
 
