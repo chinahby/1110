@@ -1284,6 +1284,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                 //EmergencyNumber pTepItem ;
                 //EmergencyNumber pItem;
                 int   i = 0;
+				MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler....................................",0,0,0);
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_EMERGENCYNUM_TABLE, (void*)&emerg_tab, sizeof(EmergencyNum_Table));
                 
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
@@ -1291,10 +1292,12 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+				MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler............................SIZE:%d",emerg_tab.emert_size,0,0);
                 for(i=0; i<emerg_tab.emert_size; i++)
                 {
                     wstrNum[0] = 0;
                     STRTOWSTR(emerg_tab.emerg_num[i].num_buf, wstrNum, sizeof(wstrNum));
+					MSG_FATAL("emerg_tab.emerg_num[i].num_buf::::%s",emerg_tab.emerg_num[i].num_buf,0,0);
                     IMENUCTL_AddItem(pMenu, NULL, NULL, 500+i, wstrNum, NULL);
                 }
                 //SETAEERECT(&rc,  0, 0, pMe->m_rc.dx, pMe->m_rc.dy - (BOTTOMBAR_HEIGHT + IDLE_ICON_HEIGHT));
@@ -5431,14 +5434,12 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
     {
     	AEEImageInfo m_ImageInfo;
 		IImage_GetInfo(pWallPaper,&m_ImageInfo);
-		
 		MSG_FATAL("m_ImageInfo.cx=%d, m_ImageInfo.cy=%d", m_ImageInfo.cx, m_ImageInfo.cy, 0);
         SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
         IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
         IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
         MSG_FATAL("clip.x=%d, clip.y=%d,pMe->m_rc.dx=%d", clip.x, clip.y, pMe->m_rc.dx);
-		
-        IIMAGE_SetOffset( pWallPaper, (m_ImageInfo.cx - pMe->m_rc.dx)/2,(MUSIC_WIDTH*m_ImageInfo.cy)/pMe->m_rc.dy);
+        IIMAGE_SetOffset( pWallPaper, ( m_ImageInfo.cx -  pMe->m_rc.dx)/2,MUSIC_WIDTH-( pMe->m_rc.dy - m_ImageInfo.cy)/2);
         //IIMAGE_SetOffset( pWallPaper, 0,MUSIC_WIDTH);
         MSG_FATAL("clip.dx=%d, clip.dy=%d", clip.dx, clip.dy, 0);
 		MSG_FATAL("pMe->m_rc.dy=%d", pMe->m_rc.dy,0,0);
