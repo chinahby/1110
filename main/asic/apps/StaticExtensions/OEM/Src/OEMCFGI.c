@@ -2384,17 +2384,18 @@ void OEM_RestoreFactorySetting( void )
    {
    
    	AECHAR pBuff[OEMNV_VOICEMAIL_MAXLEN]={0};
-    MSG_FATAL("CUST_EDITION SET....................",0,0,0);
-   #if defined(FEATURE_PROJECT_SMART)
-   		(void)STRTOWSTR("388", pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
-   #elif defined(FEATURE_PROJECT_M8)
-    	(void)STRTOWSTR("*88", pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
-   #else
+    //MSG_FATAL("CUST_EDITION SET....................",0,0,0);
+  // #if defined(FEATURE_PROJECT_SMART)
+   //		(void)STRTOWSTR("388", pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
+   //#elif defined(FEATURE_PROJECT_M8)
+    //	(void)STRTOWSTR("*88", pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
+   //#else
    		(void)STRTOWSTR(OEMNV_VOICEMAIL_NUMBER, pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
-   #endif
+   //#endif
 #ifndef WIN32
     nvi.sms_vm_number.num_digits = WSTRLEN(pBuff);
     WSTRTOSTR(pBuff, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
+	//MSG_FATAL("CUST_EDITION SET....................%d",nvi.sms_vm_number.digits,0,0);
 #endif
     OEMNV_Put(NV_SMS_VM_NUMBER_I, &nvi);
     WSTRNCOPYN((void *) oemi_cache.voicemail_number,
