@@ -82,9 +82,13 @@ NOTICE_TYPE ver_date[] = __DATE__;
 NOTICE_TYPE ver_time[] = __TIME__;
 NOTICE_TYPE ver_dir[]  = BUILD_TARGET BUILD_VER;
 
-#ifdef CUST_EDITION  
+#ifdef CUST_EDITION
+#ifndef INTERVERSION
+#define INTERVERSION "COMMONV1.0"
+#endif
 NOTICE_TYPE ver_modelname[]  = MODELNAME;
 NOTICE_TYPE ver_modelversion[]  = MODELVERSION;
+NOTICE_TYPE ver_interversion[]  = INTERVERSION;
 #endif /*CUST_EDITION*/
 NOTICE_TYPE rel_date[] = "Apr 24 2010";
 NOTICE_TYPE rel_time[] = "23:00:00";

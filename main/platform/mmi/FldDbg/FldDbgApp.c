@@ -123,6 +123,7 @@ when         who     what, where, why
 #include "msg.h"
 #include "err.h"
 #include "oemnvint.h"
+#include "mobile.h"
 
 #if MIN_BREW_VERSION(3, 1)
 #include "AEEAppletCtl.h"
@@ -6786,18 +6787,13 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     szBuf[n++] = (AECHAR) '\n';
 #endif //CUST_EDITION
 //HW 
-
-//SW ver 
-#ifndef INTERVERSION
-    #define INTERVERSION "COMMONV1.0"
-#endif
     
     STRTOWSTR("IVERSION:", (szBuf + n), sizeof(szBuf)); 
 
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
     
-    STRTOWSTR(INTERVERSION, (szBuf + n), sizeof(szBuf)); 
+    STRTOWSTR(ver_interversion, (szBuf + n), sizeof(szBuf)); 
 
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
