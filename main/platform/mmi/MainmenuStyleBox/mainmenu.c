@@ -2343,18 +2343,16 @@ static boolean StartApplet(MainMenu *pMe, int i)
             break;
 
         case 9:
-        {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
             break;
-        }
+
         case 10:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            
             break;
         case 11:
-        {
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
             break;
-        }
             
 #endif
 
