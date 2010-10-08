@@ -199,7 +199,7 @@ GENERAL DESCRIPTION:
 
 //#define FEATURE_DEFAULT_VIEW_APP  // Use ViewApp.c as default view applet.
 #ifndef FEATURE_MANGO_BREW
-//#define FEATURE_GIF_DECODE
+#define FEATURE_GIF_DECODE
 #ifndef FEATURE_W021_LOW_MEMORY
 
 #define FEATURE_BCI_DECODE
