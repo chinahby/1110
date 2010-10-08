@@ -330,7 +330,6 @@ void time_tod_set_from_pmic_rtc( void )
 
   /* PMIC's RTC time, expressed as in time_type timestamp format */
   time_type                       pmic_time;
-  MSG_FATAL("time_tod_set_from_pmic_rtc:::::::::::::1111111111111111111",0,0,0);
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
   /* If time-of-day has already been read from the PMIC's RTC ... */

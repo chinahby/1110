@@ -2568,12 +2568,10 @@ void MGExplorer_InitFileIcon(CFileIcons **ppFileIcons, boolean bAllocate)
          if(pFileIcons == NULL)
             return;
          *ppFileIcons = pFileIcons;
+         MEMSET(pFileIcons, NULL, sizeof(CFileIcons));
       }
    }
-
-   MEMSET(pFileIcons, NULL, sizeof(CFileIcons));
 }//MGExplorer_InitFileIcon
-
 
 /*
  * ==========================================================================
