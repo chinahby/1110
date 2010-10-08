@@ -557,7 +557,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	for (i = 0; i < MAX_TURN_NUM; i ++)
 	{
 		if(pMe->m_pImageTurn[i] == NULL)
-        {        	
+        {    
 			iamgeflag = TRUE;
 			break;
 		}
