@@ -11,7 +11,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
-//#define FEATURE_SMS_UDH
+#define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
@@ -19,7 +19,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
-#define FEATURE_LANG_INDONESIAN
 
 #define FEATURE_LANG_INDONESIAN //add by yangdecai 2010/06/22
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
@@ -30,7 +29,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_OMH_SMS
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
-//#define FEATURE_SPN_FROM_BSMCCMNC
+#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_VERSION_IVIO
 //#define FEATURE_VERSION_SMART
 #define FEATURE_VERSION_W021
