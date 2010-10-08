@@ -190,6 +190,10 @@ endif
 ifeq ($(USES_LCD_SIZE),128x160)
 	CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
+	MediaGallery.png|fs:/image/mainmenu/MediaGallery.png\
+	UTK.png|fs:/image/mainmenu/UTK.png\
+	application.png|fs:/image/mainmenu/application.png\
+	MusicPlayer.png|fs:/image/mainmenu/MusicPlayer.png\
 	Message.png|fs:/image/mainmenu/Message.png \
 	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
 	Setting.png|fs:/image/mainmenu/Setting.png \
@@ -199,6 +203,10 @@ ifeq ($(USES_LCD_SIZE),128x160)
 	Timer.png|fs:/image/mainmenu/Timer.png \
 	Stopwatch.png|fs:/image/mainmenu/Stopwatch.png\
 	Contact_focus.png|fs:/image/mainmenu/Contact_focus.png \
+	MediaGallery_focus.png|fs:/image/mainmenu/MediaGallery_focus.png\
+	UTK_focus.png|fs:/image/mainmenu/UTK_focus.png\
+	application_focus.png|fs:/image/mainmenu/application_focus.png\
+	MusicPlayer_focus.png|fs:/image/mainmenu/MusicPlayer_focus.png\
 	Message_focus.png|fs:/image/mainmenu/Message_focus.png \
 	Recentcall_focus.png|fs:/image/mainmenu/Recentcall_focus.png \
 	Setting_focus.png|fs:/image/mainmenu/Setting_focus.png \
@@ -218,6 +226,10 @@ endif
 ifeq ($(USES_LCD_SIZE),176x220)
 	CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
+	MediaGallery.png|fs:/image/mainmenu/MediaGallery.png\
+	UTK.png|fs:/image/mainmenu/UTK.png\
+	application.png|fs:/image/mainmenu/application.png\
+	MusicPlayer.png|fs:/image/mainmenu/MusicPlayer.png\
 	Message.png|fs:/image/mainmenu/Message.png \
 	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
 	Setting.png|fs:/image/mainmenu/Setting.png \
@@ -227,6 +239,10 @@ ifeq ($(USES_LCD_SIZE),176x220)
 	Timer.png|fs:/image/mainmenu/Timer.png \
 	Stopwatch.png|fs:/image/mainmenu/Stopwatch.png\
 	Contact_focus.png|fs:/image/mainmenu/Contact_focus.png \
+	MediaGallery_focus.png|fs:/image/mainmenu/MediaGallery_focus.png\
+	UTK_focus.png|fs:/image/mainmenu/UTK_focus.png\
+	application_focus.png|fs:/image/mainmenu/application_focus.png\
+	MusicPlayer_focus.png|fs:/image/mainmenu/MusicPlayer_focus.png\
 	Message_focus.png|fs:/image/mainmenu/Message_focus.png \
 	Recentcall_focus.png|fs:/image/mainmenu/Recentcall_focus.png \
 	Setting_focus.png|fs:/image/mainmenu/Setting_focus.png \
@@ -246,6 +262,10 @@ endif
 ifeq ($(USES_LCD_SIZE),240x320)
 	CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
+	MediaGallery.png|fs:/image/mainmenu/MediaGallery.png\
+	UTK.png|fs:/image/mainmenu/UTK.png\
+	application.png|fs:/image/mainmenu/application.png\
+	MusicPlayer.png|fs:/image/mainmenu/MusicPlayer.png\
 	Message.png|fs:/image/mainmenu/Message.png \
 	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
 	Setting.png|fs:/image/mainmenu/Setting.png \
@@ -255,6 +275,10 @@ ifeq ($(USES_LCD_SIZE),240x320)
 	Timer.png|fs:/image/mainmenu/Timer.png \
 	Stopwatch.png|fs:/image/mainmenu/Stopwatch.png\
 	Contact_focus.png|fs:/image/mainmenu/Contact_focus.png \
+	MediaGallery_focus.png|fs:/image/mainmenu/MediaGallery_focus.png\
+	UTK_focus.png|fs:/image/mainmenu/UTK_focus.png\
+	application_focus.png|fs:/image/mainmenu/application_focus.png\
+	MusicPlayer_focus.png|fs:/image/mainmenu/MusicPlayer_focus.png\
 	Message_focus.png|fs:/image/mainmenu/Message_focus.png \
 	Recentcall_focus.png|fs:/image/mainmenu/Recentcall_focus.png \
 	Setting_focus.png|fs:/image/mainmenu/Setting_focus.png \
