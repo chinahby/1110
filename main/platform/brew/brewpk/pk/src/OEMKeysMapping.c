@@ -295,7 +295,6 @@ static int IKeysMapping_CreateInstance(AEECLSID clsid, IShell *pIShell, void **p
 		AEE_LeaveAppContext(pacRestore);
 		goto error;
 	}
-
 	pf = IFILEMGR_OpenFile(pfm, pszFilePath, _OFM_READ);
 	if( !pf )
     {

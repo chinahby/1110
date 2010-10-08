@@ -169,7 +169,7 @@ OEMDisp_Backlight(IOEMDisp *po, boolean bOn)
       // Create the IBacklight instance in system context to support IDISPLAY_Backlight()
       // which doesn't require any privilege
       pac = AEE_EnterAppContext(0);
-      nErr = ISHELL_CreateInstance(piShell, *pClsID, (void**)&pi);          
+      nErr = ISHELL_CreateInstance(piShell, *pClsID, (void**)&pi);   
       AEE_LeaveAppContext(pac);
 
       if (SUCCESS != nErr) {

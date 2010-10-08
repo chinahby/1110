@@ -215,7 +215,6 @@ static IConfig *CustomOEMConfig_GetConfigExtender(void)
             (void)ISHELL_CreateInstance(pIShell, AEECLSID_SIM_CONFIGEXTENDER, 
                                        (void **) &spIConfigExtender);
             sbConfigExtenderCI = TRUE;
-
             CALLBACK_Init(&sBREWShutDownCallback, CustomOEMConfig_ReleaseConfigExtender, NULL); 
             AEE_RegisterSystemCallback(&sBREWShutDownCallback, AEE_SCB_AEE_EXIT, 0);
 

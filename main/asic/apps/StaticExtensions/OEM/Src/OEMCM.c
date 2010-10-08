@@ -324,6 +324,7 @@ when         who     what, where, why
 #include "OEMAppResCtl.h"
 #endif // FEATURE_ODM_UI
 #endif // FEATURE_ACM
+
 /*===========================================================================
 
                     LOCAL/STATIC DATA
@@ -13428,7 +13429,6 @@ static int OEMCM_ACMCreateInstance(ICM_ACMInfo * pAcmInfo)
 
   /* Create AppResCtl object */
   ret=ISHELL_CreateInstance(pIShell,AEECLSID_APPRESCTL,(void**)(&pAcmInfo->m_pAppResCtl));
-
 #ifdef FEATURE_BREW_3_0
    AEE_LeaveAppContext(pac);
 #else

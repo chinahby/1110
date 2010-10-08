@@ -18,7 +18,7 @@ GENERAL DESCRIPTION:  Provides support for ISoundPlayer interface in BREW. These
 
 PUBLIC CLASSES AND STATIC FUNCTIONS: ISoundPlayer
 
-Copyright © 1999-2005 QUALCOMM Incorporated.
+Copyright ?1999-2005 QUALCOMM Incorporated.
          All Rights Reserved.
        QUALCOMM Proprietary/GTDR
 

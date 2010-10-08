@@ -9760,7 +9760,6 @@ static int ACMInfo_CreateInstance(ACMInfo * pAcmInfo)
 
   /* Create AppResCtl object */
   ret=ISHELL_CreateInstance(pIShell,AEECLSID_APPRESCTL,(void**)(&pAcmInfo->m_pAppResCtl));
-
 #ifdef FEATURE_BREW_3_0
    AEE_LeaveAppContext(pac);
 #else

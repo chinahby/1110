@@ -1764,7 +1764,6 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
 #else
   pac = AEE_SetAppContext(NULL);
 #endif // MIN_BREW_VERSION(3, 0)
-
   if (nState == ANNUN_STATE_OFF) {
     /* clear the field */
     if (ClearField (pMe, nAnnunID) != SUCCESS)
@@ -1860,7 +1859,6 @@ static int IAnnunciator_SetFieldEx(IAnnunciator * pMe, uint32 nAnnunID,
 #else
   pac = AEE_SetAppContext(NULL);
 #endif // MIN_BREW_VERSION(3, 0)
-
   nWidth = (int)Annunciators[nAnnunID].width;
   nHeight = (int)Annunciators[nAnnunID].height;
 
@@ -1950,7 +1948,6 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #else
    pac = AEE_SetAppContext(NULL);
 #endif // MIN_BREW_VERSION(3, 0)
-
    if(pMe->m_coreObj->m_bAnnunciatorOn)
    {
 #ifdef FEATURE_MDP

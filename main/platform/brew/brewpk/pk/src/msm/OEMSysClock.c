@@ -9,7 +9,7 @@ SERVICES: System Clock class implementation. This forms the basis for BREW's
 GENERAL DESCRIPTION:
     Inherited from ISysClock interface 
 
-        Copyright © 2006-2007 QUALCOMM Incorporated.
+        Copyright ?2006-2007 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =============================================================================*/
@@ -648,7 +648,7 @@ int SysClock_New(IShell *piShell, AEECLSID cls, void **ppif)
          int nErr;
 
          pacLast = AEE_EnterAppContext(NULL);
-         nErr = ISHELL_CreateInstance(piShell, AEECLSID_SECSYSCLOCK, (void **)&meCommon->pSecSysClock);         
+         nErr = ISHELL_CreateInstance(piShell, AEECLSID_SECSYSCLOCK, (void **)&meCommon->pSecSysClock);     
          AEE_LeaveAppContext(pacLast);
          
          if (SUCCESS == nErr) {

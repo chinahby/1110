@@ -75,7 +75,6 @@ static uint32 OEMAnnunciatorControl_Release(IAnnunciatorControl *pme)
         PACONTEXT pac = AEE_EnterAppContext(NULL);
         if(pme->pAnnun != NULL)
         {
-            MSG_FATAL("pAnnun=%X", pme->pAnnun,0,0);
             IANNUNCIATOR_Release(pme->pAnnun);
             pme->pAnnun = NULL;
         }
@@ -360,7 +359,6 @@ int OEMAnnunciatorControl_New(IShell *pIShell, AEECLSID uCls, void **ppif)
       /* Create in the system context */
       pac = AEE_EnterAppContext(NULL);
       nErr = AEE_CreateInstance(AEECLSID_ANNUNCIATOR, (void **)&pme->pAnnun);
-      MSG_FATAL("pAnnun=%X", pme->pAnnun,0,0);
       AEE_LeaveAppContext(pac);
 
       if(SUCCESS != nErr) {

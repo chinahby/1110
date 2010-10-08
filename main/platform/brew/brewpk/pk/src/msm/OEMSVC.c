@@ -1377,7 +1377,6 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
          nErr = ISHELL_CreateInstance(pShell,
                                AEECLSID_FILEMGR,
                                      (void**)&pFileMgr);
-
          if(SUCCESS == nErr)
          {
             IFile* pFile;
@@ -2215,7 +2214,6 @@ int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
          nErr = ISHELL_CreateInstance(pShell,
                                      AEECLSID_FILEMGR,
                                      (void**)&pFileMgr);
-
          if(SUCCESS == nErr)
          {
             IFile* pFile;
@@ -2568,7 +2566,6 @@ int OEM_SVCSetConfig(AEEConfigItem i, void * pBuff, int nSize)
          nErr = ISHELL_CreateInstance(pShell,
                                      AEECLSID_FILEMGR,
                                      (void**)&pFileMgr);
-
          if(SUCCESS == nErr)
          {
             IFile* pFile;
@@ -2713,7 +2710,6 @@ int OEM_SVCSetConfig(AEEConfigItem i, void * pBuff, int nSize)
          nErr = ISHELL_CreateInstance(pShell,
                                          AEECLSID_FILEMGR,
                                          (void**)&pFileMgr);
-
          if(SUCCESS == nErr)
          {
             IFile* pFile;

@@ -1840,23 +1840,23 @@ static uint16  AEEAddrBook_GetCapacity(IAddrBook  *po)
 }// AEEAddrBook_ExtractCache
 
 /*==============================================================================
-函数：
+函数�?
     AEEAddrBook_GetCacheinfoByNumber
 
-说明：
-    根据号码找出相关 Cache 信息。
+说明�?
+    根据号码找出相关 Cache 信息�?
 
-参数：
+参数�?
     po [in]: IAddrBook 接口指针
-    pwstrNum [in]: 用来查询 Cache 信息的号码
+    pwstrNum [in]: 用来查询 Cache 信息的号�?
     pCache [in/out]: 用来返回 Cache 信息的缓冲区
     pfnMactch [in]: 号码匹配规则函数指针
        
 返回值：
     查到相关 Cache 信息: SUCCESS
-    查询失败: SUCCESS 以外其它值
+    查询失败: SUCCESS 以外其它�?
 
-备注：
+备注�?
        
 ==============================================================================*/
 static int AEEAddrBook_GetCacheinfoByNumber(IAddrBook  *po,
@@ -1870,21 +1870,21 @@ static int AEEAddrBook_GetCacheinfoByNumber(IAddrBook  *po,
 }// AEEAddrBook_GetCacheinfoByNumber
 
 /*==============================================================================
-函数：
+函数�?
     AEEAddrBook_CheckSameRecord
 
-说明：
-    重名检查
+说明�?
+    重名检�?
 
-参数：
-    name [in]: 用来查询 Cache 信息的名字
+参数�?
+    name [in]: 用来查询 Cache 信息的名�?
     exist [out]: 用来返回 查询结果
        
 返回值：
-    检查成功: SUCCESS
-    查询失败: SUCCESS 以外其它值
+    检查成�? SUCCESS
+    查询失败: SUCCESS 以外其它�?
 
-备注：
+备注�?
        
 ==============================================================================*/
 
