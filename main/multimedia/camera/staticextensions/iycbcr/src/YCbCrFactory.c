@@ -105,7 +105,7 @@ int IYCbCrFactory_New(IShell* pIShell, AEECLSID cls, void **ppif)
   if (!ppif)
     return EFAILED;
 
-  IYCBCRFactoryObj = (IYCBCRFactory *)(void*)AEE_NewClassEx((IBaseVtbl*)
+  IYCBCRFactoryObj = (IYCBCRFactory *)(void*)AEE_OEM_NEWCLASSEX((IBaseVtbl*)
                       (void*)&gIYCbCrFactoryFuncs, sizeof(IYCBCRFactory), TRUE);
 
   if (!IYCBCRFactoryObj)

@@ -189,7 +189,7 @@ static IBase *OEMMediaSDP_New(IShell *ps, AEECLSID cls)
    OEMMediaSDP *pme;
 
    // Alloc memory for the object
-   po = (IMedia *)AEE_NewClass((IBaseVtbl *)&gMediaSDPFuncs, sizeof(OEMMediaSDP));
+   po = (IMedia *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gMediaSDPFuncs, sizeof(OEMMediaSDP));
    if (!po)
       return NULL;
 

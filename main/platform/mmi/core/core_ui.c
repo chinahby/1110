@@ -649,6 +649,9 @@ void CoreAppHandleStopSig(void)
 #endif
         CoreTask_FreeAEEInstance();
         AEE_Exit();
+#ifndef USES_RELEASE_VERSION
+        OEMOS_DbgDump();
+#endif
         ui_pwrdown_complete = FALSE ;    /* clear flag */
         (void) rex_clr_sigs( rex_self(), TASK_STOP_SIG );
       }
@@ -687,6 +690,9 @@ void CoreAppHandleStopSig(void)
 #endif
     CoreTask_FreeAEEInstance();
     AEE_Exit();
+#ifndef USES_RELEASE_VERSION
+    OEMOS_DbgDump();
+#endif
     ui_complete_pwrdown();
 #endif /* FEATURE_OTASP */
 } /* CoreAppHandleStopSig */

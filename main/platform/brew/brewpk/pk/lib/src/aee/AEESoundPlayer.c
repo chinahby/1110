@@ -234,7 +234,7 @@ int AEESoundPlayer_New(IShell * pShell, AEECLSID clsid, void **ppobj)
    
    if (SUCCESS == nErr) {
 
-      pme = (AEESoundPlayer *)AEE_NewClass( (IBaseVtbl *)&gSoundPlayerFuncs, sizeof(AEESoundPlayer));
+      pme = (AEESoundPlayer *)AEE_OEM_NEWCLASS( (IBaseVtbl *)&gSoundPlayerFuncs, sizeof(AEESoundPlayer));
       
       if ((AEESoundPlayer *)0 != pme) {
 

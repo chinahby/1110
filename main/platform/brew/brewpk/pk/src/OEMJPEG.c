@@ -459,7 +459,7 @@ IBase *COEMJPEGViewer_New(IShell *po, AEECLSID cls)
   if(!pmeSys)
     return NULL;
 
-  pme = (COEMJPEGViewer *)(void *) AEE_NewClass((IBaseVtbl *)&gCOEMJPEGViewerMethods,
+  pme = (COEMJPEGViewer *)(void *) AEE_OEM_NEWCLASS((IBaseVtbl *)&gCOEMJPEGViewerMethods,
                                                 sizeof(COEMJPEGViewer));
   if(pme)
   {

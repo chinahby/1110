@@ -1080,7 +1080,7 @@ static IBase * CMediaCMX_New(IShell * ps, AEECLSID cls, const void * pVtbl, uint
    CMediaCMX *    pme;
 
    // Alloc memory for the object
-   po = (IMedia *)AEE_NewClass((IBaseVtbl *)pVtbl, dwSize);
+   po = (IMedia *)AEE_OEM_NEWCLASS((IBaseVtbl *)pVtbl, dwSize);
    if (!po)
       return NULL;
 

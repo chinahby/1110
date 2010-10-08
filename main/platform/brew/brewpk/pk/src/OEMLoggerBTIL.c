@@ -93,7 +93,7 @@ int OEMLoggerBTIL_New( IShell * pShell, AEECLSID cls, void **ppif )
    }
 
    // Get our structure
-   if((pMe = (IOEMLoggerBTIL*)AEE_NewClass((IBaseVtbl*)&gsOEMLoggerBTILFunc,
+   if((pMe = (IOEMLoggerBTIL*)AEE_OEM_NEWCLASS((IBaseVtbl*)&gsOEMLoggerBTILFunc,
                                            sizeof(IOEMLoggerBTIL))) == NULL)
    {
       return(ENOMEMORY);

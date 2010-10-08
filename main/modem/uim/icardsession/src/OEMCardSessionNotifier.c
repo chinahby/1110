@@ -159,7 +159,7 @@ int OEMCardSessionNotifier_New(
   if (NULL == *pNotifierObj) {
     /* Allocate the object. */
 
-    pNew = (ICardSessionNotifier*)(void*)(AEE_NewClassEx(
+    pNew = (ICardSessionNotifier*)(void*)(AEE_OEM_NEWCLASSEX(
             (IBaseVtbl*)&gOEMCardSessionNotifierFuncs,
             sizeof(ICardSessionNotifier), TRUE));
 

@@ -2133,7 +2133,7 @@ static IBase * CMediaCMX_New(IShell * ps, AEECLSID cls, const void * pVtbl, uint
    CMediaCMX *    pme;
 
    // Alloc memory for the object
-   po = (IMedia *)AEE_NewClass((IBaseVtbl *)pVtbl, dwSize);
+   po = (IMedia *)AEE_OEM_NEWCLASS((IBaseVtbl *)pVtbl, dwSize);
    if (!po)
       return NULL;
 
@@ -7354,7 +7354,7 @@ int IMediaMain_New(IShell * ps, AEECLSID cls, void **ppif)
    if (!ppif)
       return EFAILED;
 
-   pme = (CMediaMain *)AEE_NewClass((IBaseVtbl *)&gMediaMainFuncs, sizeof(CMediaMain));
+   pme = (CMediaMain *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gMediaMainFuncs, sizeof(CMediaMain));
    if (!pme)
       return ENOMEMORY;
 

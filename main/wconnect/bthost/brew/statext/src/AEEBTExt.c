@@ -114,7 +114,7 @@ int AEEBTExtNotifier_New( IShell *pIShell, AEECLSID cls, void **ppif )
 
   if ( pAEEBTExtNotifier == NULL )
   {
-    pNew = (IBTExtNotifier*) AEE_NewClassEx( (IBaseVtbl*)&gpvtIBTExtNotifier,
+    pNew = (IBTExtNotifier*) AEE_OEM_NEWCLASSEX( (IBaseVtbl*)&gpvtIBTExtNotifier,
                                              sizeof(IBTExtNotifier), TRUE ); 
     
     if (pNew == NULL)

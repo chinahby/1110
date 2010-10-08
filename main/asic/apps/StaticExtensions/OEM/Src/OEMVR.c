@@ -1448,7 +1448,7 @@ int OEMVR_New(IShell *pIShell, AEECLSID cls, void **ppo)
  #endif
 
    // Allocate new IVR class
-   pIVR = (IVR *)AEE_NewClass((AEEVTBL(IBase) *)&gOEMVRFuncs, sizeof(IVR));
+   pIVR = (IVR *)AEE_OEM_NEWCLASS((AEEVTBL(IBase) *)&gOEMVRFuncs, sizeof(IVR));
 
    if (pIVR == NULL)
    {

@@ -1493,7 +1493,7 @@ int OEMAnnunciator_New(IShell *piShell, AEECLSID clsid, void **pp)
     return EUNSUPPORTED;
   }
 
-  pMe = (IAnnunciator *) AEE_NewClass((IBaseVtbl*)&gvtIAnnunciator, sizeof(IAnnunciator));
+  pMe = (IAnnunciator *) AEE_OEM_NEWCLASS((IBaseVtbl*)&gvtIAnnunciator, sizeof(IAnnunciator));
   if (pMe == NULL) {
      return ENOMEMORY;
   }

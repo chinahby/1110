@@ -583,7 +583,7 @@ static IBase * CMediaReal_New(IShell * ps, AEECLSID cls)
 #endif
 
    // Alloc memory for the object
-   po = (IMedia *)AEE_NewClass((IBaseVtbl *)&gMediaRealFuncs, sizeof(CMediaReal));
+   po = (IMedia *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gMediaRealFuncs, sizeof(CMediaReal));
    if (!po)
       return NULL;
 

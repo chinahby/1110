@@ -2491,7 +2491,7 @@ static IBase * OEMMediaMPEG4_New(IShell * ps, AEECLSID cls)
   OEMMediaMPEG4 * pme;
 
   // Alloc memory for the object
-  po = (IMedia *)AEE_NewClass((IBaseVtbl *)&gMediaMPEG4Funcs, sizeof(OEMMediaMPEG4));
+  po = (IMedia *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gMediaMPEG4Funcs, sizeof(OEMMediaMPEG4));
   if (!po)
     return NULL;
 
