@@ -1865,7 +1865,8 @@ LOCAL void hs_init( void )
         {          
             if (g_BootResetFlag == BOOT_RESET_MAGIC)
             {
-                db_item.db_poweruptype = DB_POWERUP_BYRESET;//重启方式   
+                db_item.db_poweruptype = DB_POWERUP_BYRESET;//重启方式
+                g_BootResetFlag = 0;
             }
             else
             {
