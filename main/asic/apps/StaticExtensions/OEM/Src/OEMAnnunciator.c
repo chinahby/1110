@@ -2083,21 +2083,21 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     if(titleLen > 100)
                     {
                         bgRect.x = 0;
-                        bgRect.dx = 128;
+                        bgRect.dx = 176;
                     }
                     else
                     {
-                        bgRect.dx = 100;
+                        bgRect.dx = 150;
                     }	
 #elif defined(FEATURE_DISP_240X320)
                     if(titleLen > 100)
                     {
                         bgRect.x = 0;
-                        bgRect.dx = 128;
+                        bgRect.dx = 240;
                     }
                     else
                     {
-                        bgRect.dx = 100;
+                        bgRect.dx = 220;
                     }						
 #else
                     bgRect.dx = 120;

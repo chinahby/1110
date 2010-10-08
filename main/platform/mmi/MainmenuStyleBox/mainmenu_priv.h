@@ -54,7 +54,6 @@
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
 #define MAX_TURN_NUM   12
-
 #endif
 #define FEATURE_ICON_MOVE_ANIMATION //added by chengxiao 2009.04.10
 
@@ -414,9 +413,9 @@ typedef struct _MainMenu
     #define ICON7_ANI_1    "fs:/image/mainmenu/MusicPlayer_focus.png"
     #define ICON8_ANI_1    "fs:/image/mainmenu/Setting_focus.png"
     #define ICON9_ANI_1    "fs:/image/mainmenu/application_focus.png"
-	#define ICON10_ANI_1     "fs:/image/mainmenu/Setting_focus.png"
-    #define ICON11_ANI_1     "fs:/image/mainmenu/Timer_focus.png"
-    #define ICON12_ANI_1     "fs:/image/mainmenu/Display_focus.png"
+	#define ICON10_ANI_1   "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON11_ANI_1   "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON12_ANI_1   "fs:/image/mainmenu/Display_focus.png"
 #endif
 
 #if defined (FEATURE_DISP_176X220)
@@ -429,9 +428,9 @@ typedef struct _MainMenu
     #define ICON7_ANI_1    "fs:/image/mainmenu/MusicPlayer_focus.png"
     #define ICON8_ANI_1    "fs:/image/mainmenu/Setting_focus.png"
     #define ICON9_ANI_1    "fs:/image/mainmenu/application_focus.png"
-	#define ICON10_ANI_1     "fs:/image/mainmenu/Setting_focus.png"
-    #define ICON11_ANI_1     "fs:/image/mainmenu/Timer_focus.png"
-    #define ICON12_ANI_1     "fs:/image/mainmenu/Display_focus.png"
+	#define ICON10_ANI_1   "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON11_ANI_1   "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON12_ANI_1   "fs:/image/mainmenu/Display_focus.png"
 #endif
 
 #if defined (FEATURE_DISP_240X320)
@@ -444,9 +443,9 @@ typedef struct _MainMenu
     #define ICON7_ANI_1    "fs:/image/mainmenu/MusicPlayer_focus.png"
     #define ICON8_ANI_1    "fs:/image/mainmenu/Setting_focus.png"
     #define ICON9_ANI_1    "fs:/image/mainmenu/application_focus.png"
-	#define ICON10_ANI_1     "fs:/image/mainmenu/Setting_focus.png"
-    #define ICON11_ANI_1     "fs:/image/mainmenu/Timer_focus.png"
-    #define ICON12_ANI_1     "fs:/image/mainmenu/Display_focus.png"
+	#define ICON10_ANI_1   "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON11_ANI_1   "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON12_ANI_1   "fs:/image/mainmenu/Display_focus.png"
 #endif
 
 
