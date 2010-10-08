@@ -54,6 +54,10 @@ CONSTFILE_FILES+=\
 else ifeq ($(USES_RESDIR), Ivio203)
 CONSTFILE_FILES+=\
 	poweronani.png|fs:/image/pwronoffani/poweronani.png
+else ifeq ($(USES_RESDIR), Karbonn)
+CONSTFILE_FILES+=\
+    poweron.gif|fs:/image/pwronoffani/poweron.gif \
+    poweroff.gif|fs:/image/pwronoffani/poweroff.gif
 else
 CONSTFILE_FILES+=\
     poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \

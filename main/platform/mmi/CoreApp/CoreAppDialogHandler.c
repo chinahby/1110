@@ -4517,6 +4517,35 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 ==============================================================================*/
 static void CoreApp_PlayPwrOnAni(CCoreApp *pMe) 
 {
+#ifdef FEATURE_VERSION_KARBONN
+	// 开始播放开机动画
+	if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT )
+	{
+    	IIMAGE_Start( pMe->m_pStartupAniImg,
+                            0,
+                            0);
+		pMe->m_wStartupAniTime = PWRON_ANI_FRAME_COUNT;
+		(void) ISHELL_SetTimer(pMe->a.m_pIShell,
+                             ANI_RATE,
+                             (PFNNOTIFY)CoreApp_PlayPwrOnAni,
+                             (void*)pMe);
+	}
+	else
+    {
+        IBACKLIGHT_Enable(pMe->m_pBacklight);
+        IALERT_StopRingerAlert(pMe->m_pAlert);
+#ifndef FEATURE_USES_LOWMEM
+        if ( NULL != pMe->m_pStartupAniImg )
+        {     
+            IIMAGE_Stop(pMe->m_pStartupAniImg);
+            IIMAGE_Release(pMe->m_pStartupAniImg);
+            pMe->m_pStartupAniImg = NULL;
+        }
+#endif
+        CLOSE_DIALOG(DLGRET_OK)
+    }
+
+#else
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
@@ -4602,7 +4631,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 #endif
         CLOSE_DIALOG(DLGRET_OK)
     }
-    MSG_FATAL("CoreApp_PlayPwrOnAni End",0,0,0);
+#endif
 }
 
 /*==============================================================================
@@ -4620,6 +4649,35 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 ==============================================================================*/
 static void CoreApp_PlayPwrOffAni(CCoreApp *pMe) 
 {
+#ifdef FEATURE_VERSION_KARBONN
+		// 开始播放开机动画
+		if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT )
+		{
+			IIMAGE_Start( pMe->m_pStartupAniImg,
+								0,
+								0);
+			pMe->m_wStartupAniTime = PWROFF_ANI_FRAME_COUNT;
+			(void) ISHELL_SetTimer(pMe->a.m_pIShell,
+								 ANI_RATE-500,
+								 (PFNNOTIFY)CoreApp_PlayPwrOffAni,
+								 (void*)pMe);
+		}
+		else
+		{
+#ifndef FEATURE_USES_LOWMEM
+        	if ( NULL != pMe->m_pStartupAniImg )
+        	{     
+           	 	IIMAGE_Stop(pMe->m_pStartupAniImg);
+            	IIMAGE_Release(pMe->m_pStartupAniImg);
+            	pMe->m_pStartupAniImg = NULL;
+        	}
+#endif
+        	// 发送事件关闭开机动画播放对话
+        	(void)ISHELL_SendEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP, 
+                                EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
+		}
+	
+#else
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
@@ -4693,6 +4751,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         (void)ISHELL_SendEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP, 
                                 EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
     }
+#endif
 
 }
 

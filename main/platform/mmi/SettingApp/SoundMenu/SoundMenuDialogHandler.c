@@ -3481,7 +3481,7 @@ static void RingerPreview(void *pUser)
 	}
 	else
 	{
-    	IALERT_StartRingerPreview(pMe->m_pAlert,pMe->m_lastRingerPlayed);
+    	IALERT_StartRingerAlert_Ex(pMe->m_pAlert,pMe->m_lastRingerPlayed);
 	}
 }
 

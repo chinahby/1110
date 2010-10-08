@@ -369,7 +369,11 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_SMS_VIBONLY  2
 #define   OEMNV_SMS_RINGVIB  3
 #define   OEMNV_SMS_VIBANDRINGER  4
+#ifdef FEATURE_VERSION_KARBONN
+#define   OEMNV_DEFAULTRINGER     12
+#else
 #define   OEMNV_DEFAULTRINGER        4
+#endif
 #define   OEMNV_ALARM_RINGER  1 
 
 #ifdef FEATURE_VERSION_FLEXI203
@@ -384,6 +388,10 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined FEATURE_VERSION_H19C
 #define   OEMNV_STARTUP_MUSIC 13 
 #define   OEMNV_SHUTDOWN_MUSIC 13 
+#elif defined FEATURE_VERSION_KARBONN
+#define   OEMNV_STARTUP_MUSIC 13 
+#define   OEMNV_SHUTDOWN_MUSIC 14 
+
 #else
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
