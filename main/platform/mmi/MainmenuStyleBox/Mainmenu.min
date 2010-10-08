@@ -190,7 +190,7 @@ endif
 ifeq ($(USES_LCD_SIZE),128x160)
 	CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
-	Messagebox.png|fs:/image/mainmenu/Messagebox.png \
+	Message.png|fs:/image/mainmenu/Message.png \
 	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
 	Setting.png|fs:/image/mainmenu/Setting.png \
 	Alarm.png|fs:/image/mainmenu/Alarm.png \
@@ -218,7 +218,7 @@ endif
 ifeq ($(USES_LCD_SIZE),176x220)
 	CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
-	Messagebox.png|fs:/image/mainmenu/Messagebox.png \
+	Message.png|fs:/image/mainmenu/Message.png \
 	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
 	Setting.png|fs:/image/mainmenu/Setting.png \
 	Alarm.png|fs:/image/mainmenu/Alarm.png \
@@ -246,7 +246,7 @@ endif
 ifeq ($(USES_LCD_SIZE),240x320)
 	CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
-	Messagebox.png|fs:/image/mainmenu/Messagebox.png \
+	Message.png|fs:/image/mainmenu/Message.png \
 	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
 	Setting.png|fs:/image/mainmenu/Setting.png \
 	Alarm.png|fs:/image/mainmenu/Alarm.png \
