@@ -41,8 +41,8 @@
 #define MAX_TURN_NUM   9
 #elif defined (FEATURE_DISP_128X160)
 #define  MAX_MATRIX_ITEMS 12
-#define  MAX_MATRIX_ROWS 3
-#define  MAX_MATRIX_COLS 4
+#define  MAX_MATRIX_ROWS 4
+#define  MAX_MATRIX_COLS 3
 #define MAX_TURN_NUM   12
 #elif defined (FEATURE_DISP_176X220)
 #define  MAX_MATRIX_ITEMS 12
