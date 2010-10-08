@@ -495,7 +495,7 @@ static void zgd_tft128x160_disp_clear_screen_area(word start_row, word start_col
                                                   word end_row, word end_col)
 {
   	uint32 i = (end_row - start_row + 1) * (end_col - start_col + 1);
-  	static uint32 whitebpp = 0x00;
+  	static uint32 whitebpp = 0xf800;
 
 	if (zgd_tft128x160_state.disp_initialized &&
 		zgd_tft128x160_state.disp_powered_up  &&
@@ -508,8 +508,8 @@ static void zgd_tft128x160_disp_clear_screen_area(word start_row, word start_col
 		HEXING_LCD_WRITE_CMD(ZGD_TFT128x160_RAM_WRITE_C);  
 		while(i--)
 		{
-			HEXING_LCD_WRITE_DATA((uint8)(whitebpp));
-			HEXING_LCD_WRITE_DATA((uint8)(whitebpp));
+			HEXING_LCD_WRITE_DATA((uint8)(whitebpp>>8));
+			HEXING_LCD_WRITE_DATA((uint8)(whitebpp&(0x00ff)));
 		}
 
 		rex_leave_crit_sect(&zgd_tft128x160_crit_sect);
@@ -704,7 +704,7 @@ static void zgd_tft128x160_disp_powerup(void)
         HEXING_LCD_WRITE_DATA(0x9F);
 
         HEXING_LCD_WRITE_CMD(0x36); //Set Scanning Direction
-		HEXING_LCD_WRITE_DATA(0xe8);  //..0x60 //..0x40 //..0x20 //..0x00 //..0x80 //0xa0 //..0xc0 //0xe0
+		HEXING_LCD_WRITE_DATA(0xc8);  //..0x60 //..0x40 //..0x20 //..0x00 //..0x80 //0xa0 //..0xc0 //0xe0
 
         HEXING_LCD_WRITE_CMD(0xB7); //Set Source Output Direction
         HEXING_LCD_WRITE_DATA(0x00);
@@ -814,8 +814,8 @@ int zgd_tft128x160_disp_init(void)
 		return 1;
 	}
 
-	zgd_tft128x160_disp_info.disp_width         = ZGD_TFT128x160_DISP_HEIGHT;
-	zgd_tft128x160_disp_info.disp_height        = ZGD_TFT128x160_DISP_WIDTH;
+	zgd_tft128x160_disp_info.disp_width         = ZGD_TFT128x160_DISP_WIDTH;
+	zgd_tft128x160_disp_info.disp_height        = ZGD_TFT128x160_DISP_HEIGHT;
 	zgd_tft128x160_disp_info.bpp                = DISP_16BPP;
 	zgd_tft128x160_disp_info.palette_support    = FALSE;
 	zgd_tft128x160_disp_info.contrast_support   = FALSE;
@@ -841,7 +841,7 @@ int zgd_tft128x160_disp_init(void)
 	zgd_tft128x160_state.disp_initialized = TRUE;
 
 	zgd_tft128x160_disp_clear_whole_screen();
-    
+	
 	HEXING_LCD_DELAY(100);
 	zgd_tft128x160_disp_set_backlight(ZGD_TFT128x160_DISP_DEFAULT_BACKLIGHT);
 	
