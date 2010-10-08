@@ -495,7 +495,7 @@ static void zgd_tft128x160_disp_clear_screen_area(word start_row, word start_col
                                                   word end_row, word end_col)
 {
   	uint32 i = (end_row - start_row + 1) * (end_col - start_col + 1);
-  	static uint32 whitebpp = 0xf800;
+  	static uint32 whitebpp = 0x0000;
 
 	if (zgd_tft128x160_state.disp_initialized &&
 		zgd_tft128x160_state.disp_powered_up  &&
