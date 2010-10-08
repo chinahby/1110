@@ -43,19 +43,37 @@
 #elif defined(FEATURE_VERSION_CITYCELL)  //add by yangdecai 2010-10-06
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"100",3},{"101",3},{"102",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},3} //CFGI_EMERGENCYNUM_TABLE
-#define OEMNV_CALLFORWARD_BUSY_ENABLE               "*73"                       //CFGI_CALLFORWARD_BUSY_ENABLE
-#define OEMNV_CALLFORWARD_BUSY_DISABLE              "*730"                      //CFGI_CALLFORWARD_BUSY_DISABLE
-#define OEMNV_CALLFORWARD_NOANSWER_ENABLE           "*74"                       //CFGI_CALLFORWARD_NOANSWER_ENABLE
-#define OEMNV_CALLFORWARD_NOANSWER_DISABLE          "*740"                      //CFGI_CALLFORWARD_NOANSWER_DISABLE
-#define OEMNV_CALLFORWARD_NOCONNECT_ENABLE          "*71"                       //CFGI_CALLFORWARD_NOCONNECT_ENABLE
-#define OEMNV_CALLFORWARD_NOCONNECT_DISABLE         "*710"                      //CFGI_CALLFORWARD_NOCONNECT_DISABLE
-#define OEMNV_CALLFORWARD_ANYWAY_ENABLE             "0"                       //CFGI_CALLFORWARD_ANYWAY_ENABLE
-#define OEMNV_CALLFORWARD_ANYWAY_DISABLE            "0"                      //CFGI_CALLFORWARD_ANYWAY_DISABLE
-#define OEMNV_CALLFORWARD_DISABLE_ALL               "0"                      //CFGI_CALLFORWARD_DISABLE_ALL
-#define OEMNV_CALLFORWARD_WAIT_ENABLE               "*40"                       //CFGI_CALLFORWARD_WAIT_ENABLE
-#define OEMNV_CALLFORWARD_WAIT_DISABLE              "*400"                      //CFGI_CALLFORWARD_WAIT_DISABLE
+#define OEMNV_CALLFORWARD_BUSY_ENABLE               "*74"                       //CFGI_CALLFORWARD_BUSY_ENABLE
+#define OEMNV_CALLFORWARD_BUSY_DISABLE              "*740"                      //CFGI_CALLFORWARD_BUSY_DISABLE
+#define OEMNV_CALLFORWARD_NOANSWER_ENABLE           "*71"                       //CFGI_CALLFORWARD_NOANSWER_ENABLE
+#define OEMNV_CALLFORWARD_NOANSWER_DISABLE          "*710"                      //CFGI_CALLFORWARD_NOANSWER_DISABLE
+#define OEMNV_CALLFORWARD_NOCONNECT_ENABLE          "0"                       //CFGI_CALLFORWARD_NOCONNECT_ENABLE
+#define OEMNV_CALLFORWARD_NOCONNECT_DISABLE         "0"                      //CFGI_CALLFORWARD_NOCONNECT_DISABLE
+#define OEMNV_CALLFORWARD_ANYWAY_ENABLE             "*72"                       //CFGI_CALLFORWARD_ANYWAY_ENABLE
+#define OEMNV_CALLFORWARD_ANYWAY_DISABLE            "*720"                      //CFGI_CALLFORWARD_ANYWAY_DISABLE
+#define OEMNV_CALLFORWARD_DISABLE_ALL               "*730"                      //CFGI_CALLFORWARD_DISABLE_ALL
+#define OEMNV_CALLFORWARD_WAIT_ENABLE               "*76"                       //CFGI_CALLFORWARD_WAIT_ENABLE
+#define OEMNV_CALLFORWARD_WAIT_DISABLE              "*760"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
-#define OEMNV_VOICEMAIL_NUMBER                      L"*88"                         //NV_SMS_VM_NUMBER_I 
+#define OEMNV_VOICEMAIL_NUMBER                      L"112"                         //NV_SMS_VM_NUMBER_I 
+
+#elif defined(FEATURE_VERSION_KARBONN)  //add by yangdecai 2010-10-08
+//Operator parameters
+#define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"110",3},{"112",3},{"911",3},{"999",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
+#define OEMNV_CALLFORWARD_BUSY_ENABLE               "*305"                       //CFGI_CALLFORWARD_BUSY_ENABLE
+#define OEMNV_CALLFORWARD_BUSY_DISABLE              "*306"                      //CFGI_CALLFORWARD_BUSY_DISABLE
+#define OEMNV_CALLFORWARD_NOANSWER_ENABLE           "0"                       //CFGI_CALLFORWARD_NOANSWER_ENABLE
+#define OEMNV_CALLFORWARD_NOANSWER_DISABLE          "0"                      //CFGI_CALLFORWARD_NOANSWER_DISABLE
+#define OEMNV_CALLFORWARD_NOCONNECT_ENABLE          "0"                       //CFGI_CALLFORWARD_NOCONNECT_ENABLE
+#define OEMNV_CALLFORWARD_NOCONNECT_DISABLE         "0"                      //CFGI_CALLFORWARD_NOCONNECT_DISABLE
+#define OEMNV_CALLFORWARD_ANYWAY_ENABLE             "0"                         //CFGI_CALLFORWARD_ANYWAY_ENABLE
+#define OEMNV_CALLFORWARD_ANYWAY_DISABLE            "0"                         //CFGI_CALLFORWARD_ANYWAY_DISABLE
+#define OEMNV_CALLFORWARD_DISABLE_ALL               "0"                          //CFGI_CALLFORWARD_DISABLE_ALL
+#define OEMNV_CALLFORWARD_WAIT_ENABLE               "*311"                       //CFGI_CALLFORWARD_WAIT_ENABLE
+#define OEMNV_CALLFORWARD_WAIT_DISABLE              "*312"                      //CFGI_CALLFORWARD_WAIT_DISABLE
+#define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
+#define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I 
+
 #else
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"110",3},{"112",3},{"911",3},{"999",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
