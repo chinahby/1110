@@ -1957,11 +1957,11 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 #elif defined (FEATURE_DISP_128X128)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 #elif defined (FEATURE_DISP_128X160)
-    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 #elif defined (FEATURE_DISP_176X220)
-    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 #elif defined (FEATURE_DISP_240X320)
-    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 #endif
 
 #ifdef FEATURE_APP_NUMBERMANAGER
@@ -2320,42 +2320,48 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
             break;
         case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
-            break;
-        case 4:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
-            break;
-        case 5:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-            break;    
-        case 6:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
             break;
-        case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
+        case 4:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
             break;
+            
+        case 5:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+            break;
+            
+        case 6:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
+            break;
+            
+        case 7:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            break;
+            
         case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
             break;
 
         case 9:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
             break;
+        }
         case 10:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
             break;
         case 11:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
-            break;        
+        {
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+            break;
+        }
             
 #endif
 
 #if defined (FEATURE_DISP_176X220)
         case 0:
-        	{            
-            	Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
-            	break;
-        	}
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            break;
         case 1:
             {
                 IContactApp *ca = NULL;

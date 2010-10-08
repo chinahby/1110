@@ -190,6 +190,15 @@
 	<String Id="1109" Name="IDS_MAIN_MENU_TITLE_29">
 		<Text>Application</Text>
 	</String>
+	<String Id="1110" Name="IDS_MAIN_MENU_TITLE_30">
+		<Text>Timer</Text>
+	</String>
+	<String Id="1111" Name="IDS_MAIN_MENU_TITLE_31">
+		<Text>Calendar</Text>
+	</String>
+	<String Id="1112" Name="IDS_MAIN_MENU_TITLE_32">
+		<Text>Digit</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
