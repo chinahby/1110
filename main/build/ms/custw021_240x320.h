@@ -13,29 +13,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef CUST_EDITION
 
 //Add for w021_240X320
-#define FEATURE_VERSION_W021_240X320
 #define FEATURE_PROJECT_W021_240X320
-#define FEATURE_SUPPORT_ID
-#define FEATURE_SEAMLESS_SMS
-//#define FEATURE_NET_LOCK
-#define FEATURE_AAC
-#define FEATURE_AAC_PLUS
-#define FEATURE_ENHANCED_AAC_PLUS
-//Add End
-
-/*********************down is version_common*****************************/
-
-
-
-#define FEATURE_OEMUI_TASK
-#define FEATURE_COLOR_DISPLAY
-#define FEATURE_ONEMSG_USE_ONEFILE
-#define FEATURE_SMS_UDH
+//#define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #undef  FEATRUE_SUPPORT_G_SENSOR
-#define FEATURE_CDSMS_CACHE_USELIST
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
