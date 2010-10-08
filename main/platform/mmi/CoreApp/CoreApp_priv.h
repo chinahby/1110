@@ -173,6 +173,15 @@
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (380)
 #define    ANI_RATE                              (150)
+#elif defined FEATURE_VERSION_H19C
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poon.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (21)
+#define    PWRON_ANI_RATE                        (150)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poon.gif"
+#define    PWROFF_ANI_FRAME_COUNT                (21)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
+
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)

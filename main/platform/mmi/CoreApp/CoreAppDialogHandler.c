@@ -69,9 +69,9 @@ extern boolean   IsRunAsFactoryTestMode(void);
 }
 
 // 开关机动画播放时间
-#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8)
-#define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))
-#define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))
+#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_H19C)
+#define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT) + 1000)
+#define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT) + 1000)
 #else
 #define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
 #define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
@@ -2200,7 +2200,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                                        uint32     dwParam)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
-    
+    MSG_FATAL("IDD_STARTUPANI_Handler Start",0,0,0);
     switch (eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -2214,6 +2214,10 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                 if ( NULL == pMe->m_pStartupAniImg )
                 {
                     pMe->m_pStartupAniImg = ISHELL_LoadImage( pMe->a.m_pIShell, PWRON_ANI_FILE);
+                    if(pMe->m_pStartupAniImg == NULL)
+                    {
+                        MSG_FATAL("pMe->m_pStartupAniImg == NULL",0,0,0);
+                    }
                 }
 #endif
                 (void) ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW, 0, 0);
@@ -2265,12 +2269,14 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             return TRUE; 
 
         case EVT_DIALOG_END:
+            MSG_FATAL("IDD_STARTUPANI_Handler EVT_DIALOG_END",0,0,0);
             //IALERT_StopRingerAlert(pMe->m_pAlert);
             if (pMe->m_eDlgRet != DLGRET_OK)
             {// 开机动画播放过程中被其他应用启动时中断
 #ifndef FEATURE_USES_LOWMEM
                 if (NULL != pMe->m_pStartupAniImg)
                 {     
+                    MSG_FATAL("IDD_STARTUPANI_Handler EVT_DIALOG_END 1",0,0,0);
                     (void)ISHELL_CancelTimer(pMe->a.m_pIShell, (PFNNOTIFY)CoreApp_PlayPwrOnAni, pMe);
                     IIMAGE_Stop(pMe->m_pStartupAniImg);
                     IIMAGE_Release(pMe->m_pStartupAniImg);
@@ -2282,6 +2288,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                 (void)ISHELL_CancelTimer(pMe->a.m_pIShell, (PFNNOTIFY)CoreApp_PlayPwrOnAni, pMe);
                 pMe->m_eDlgRet = DLGRET_OK;
 #endif
+                MSG_FATAL("IDD_STARTUPANI_Handler EVT_DIALOG_END 2",0,0,0);
                 IALERT_StopRingerAlert(pMe->m_pAlert);
             }
             return TRUE;
@@ -4513,6 +4520,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
+    MSG_FATAL("CoreApp_PlayPwrOnAni Start",0,0,0);
 #ifndef FEATURE_USES_LOWMEM
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  )
 #else
@@ -4520,6 +4528,9 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 #endif
     {
 #ifndef FEATURE_USES_LOWMEM
+
+#ifndef FEATURE_VERSION_H19C
+        MSG_FATAL("CoreApp_PlayPwrOnAni 10",0,0,0);
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
         // 设置动画速度(毫秒)
@@ -4530,20 +4541,31 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, ImgInfo.cx/PWRON_ANI_FRAME_COUNT, ImgInfo.cy );
-
+#else
+        MSG_FATAL("CoreApp_PlayPwrOnAni 20",0,0,0); 
+        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定开机动画的帧数
+#endif
         // 开始播放开机动画
+#ifndef FEATURE_VERSION_H19C        
+        MSG_FATAL("CoreApp_PlayPwrOnAni 11",0,0,0);
         IIMAGE_Start( pMe->m_pStartupAniImg,
                             (pMe->m_rc.dx - ImgInfo.cx/PWRON_ANI_FRAME_COUNT)/2,
                             (pMe->m_rc.dy - ImgInfo.cy)/2 );
+#else
+        MSG_FATAL("CoreApp_PlayPwrOnAni 21",0,0,0);
+        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
+        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
+#endif
 
         pMe->m_wStartupAniTime++; // 滚动播放次数
-        //AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOnAni,  (void*)pMe);
+        //AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOnAni,  (void*)pMe);       
        (void) ISHELL_SetTimer(pMe->a.m_pIShell,
                              PWRON_ANI_TIME,
                              (PFNNOTIFY)CoreApp_PlayPwrOnAni,
                              (void*)pMe);
 #else
         {
+            MSG_FATAL("CoreApp_PlayPwrOnAni 3",0,0,0);
             #define PWRON_STR L"Welcome"
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
@@ -4566,11 +4588,13 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     }
     else
     {
+        MSG_FATAL("CoreApp_PlayPwrOnAni 4",0,0,0);
         IBACKLIGHT_Enable(pMe->m_pBacklight);
         IALERT_StopRingerAlert(pMe->m_pAlert);
 #ifndef FEATURE_USES_LOWMEM
         if ( NULL != pMe->m_pStartupAniImg )
         {     
+            MSG_FATAL("CoreApp_PlayPwrOnAni 5",0,0,0);
             IIMAGE_Stop(pMe->m_pStartupAniImg);
             IIMAGE_Release(pMe->m_pStartupAniImg);
             pMe->m_pStartupAniImg = NULL;
@@ -4578,7 +4602,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 #endif
         CLOSE_DIALOG(DLGRET_OK)
     }
-    
+    MSG_FATAL("CoreApp_PlayPwrOnAni End",0,0,0);
 }
 
 /*==============================================================================
@@ -4606,6 +4630,8 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
 #endif
     {
 #ifndef FEATURE_USES_LOWMEM
+
+#ifndef FEATURE_VERSION_H19C
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
         // 设置动画速度(毫秒)
@@ -4617,12 +4643,18 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, 
                                 ImgInfo.cx/PWROFF_ANI_FRAME_COUNT, ImgInfo.cy );
-
-        // 开始播放开机动画
+#else
+        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
+#endif
+#ifndef FEATURE_VERSION_H19C
+        // 开始播放关机动画
         IIMAGE_Start( pMe->m_pStartupAniImg, 
                                 (pMe->m_rc.dx - ImgInfo.cx/PWROFF_ANI_FRAME_COUNT)/2, 
                                 (pMe->m_rc.dy - ImgInfo.cy)/2 );
-        
+#else
+        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
+        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
+#endif
         pMe->m_wStartupAniTime++; // 滚动播放次数
         AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
         //(void) ISHELL_SetTimer(pMe->a.m_pIShell,

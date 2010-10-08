@@ -270,13 +270,14 @@ static int  MultimedMod_CreateInstance( IModule *po,
     void **ppObj
 )
 {
+    MSG_FATAL("MultimedMod_CreateInstance Start",0,0,0);
     *ppObj = NULL;
 
     if( ClsId != AEECLSID_MULTIMEDIA_LIST || Multimed_New( pIShell, po, ( IMultimed**)ppObj) != SUCCESS)
     {
         return EFAILED;
     }
-
+    MSG_FATAL("MultimedMod_CreateInstance End",0,0,0);
     return SUCCESS;
 }
 
@@ -319,6 +320,7 @@ SEE ALSO:
 static int Multimed_New( IShell *ps, IModule *pIModule, IMultimed **ppObj)
 {
     int retVal = SUCCESS;
+    MSG_FATAL("Multimed_New Start",0,0,0);
     if( 0 == gMultimed.referenceCounter)
     {
 
@@ -334,6 +336,7 @@ static int Multimed_New( IShell *ps, IModule *pIModule, IMultimed **ppObj)
         gMultimed.m_pShell     = ps;
         gMultimed.m_pModule    = pIModule;
         retVal = CMultimed_InitAppData(&gMultimed);
+        MSG_FATAL("Multimed_New retVal=%d",retVal,0,0);
         if(retVal != SUCCESS)
         {
             CMultimed_FreeAppData((Multimed*)&gMultimed);
@@ -348,6 +351,7 @@ static int Multimed_New( IShell *ps, IModule *pIModule, IMultimed **ppObj)
 
     ++ gMultimed.referenceCounter;
     *ppObj = ( IMultimed*)&gMultimed;
+    MSG_FATAL("Multimed_New retVal=%d",retVal,0,0);
     return retVal;
 }
 
@@ -372,6 +376,7 @@ static int CMultimed_InitAppData(Multimed *pMe)
 {
 	int i;
 	boolean iamgeflag = FALSE;
+    MSG_FATAL("CMultimed_InitAppData Start",0,0,0);
     if (NULL == pMe)
     {
         return EFAILED;
@@ -382,13 +387,15 @@ static int CMultimed_InitAppData(Multimed *pMe)
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
             (void **) &pMe->m_pDisplay) != SUCCESS)
     {
+        MSG_FATAL("CMultimed_InitAppData EFAILED",0,0,0);
         return EFAILED;
     }
 	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
     {
+        MSG_FATAL("CMultimed_InitAppData EFAILED",0,0,0);
         return EFAILED;
     }
-   
+    MSG_FATAL("CMultimed_InitAppData SUCCESS",0,0,0);
     return SUCCESS;
 }
 

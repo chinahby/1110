@@ -206,10 +206,17 @@ typedef struct _MainMenu
 #define ICON_ANIMATED_WIDTH     40
 #define ICON_ANIMATED_HEIGHT    32
 #elif defined (FEATURE_DISP_128X128)
+#if defined FEATURE_VERSION_H19C  
+#define ICON_WIDTH              26
+#define ICON_HEIGHT             26
+#define ICON_ANIMATED_WIDTH     26
+#define ICON_ANIMATED_HEIGHT    26
+#else
 #define ICON_WIDTH              42
 #define ICON_HEIGHT             32
 #define ICON_ANIMATED_WIDTH     42
 #define ICON_ANIMATED_HEIGHT    32
+#endif
 #elif defined (FEATURE_DISP_128X160)
 #define ICON_WIDTH              40
 #define ICON_HEIGHT             32
@@ -284,6 +291,9 @@ typedef struct _MainMenu
     
 #endif
 #if defined (FEATURE_DISP_128X128)
+#if defined FEATURE_VERSION_H19C    
+    #define ICON_ANI_BG    "fs:/image/mainmenu/Backgroud.png"
+#else
     #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"
     #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
     #define ICON3_ANI      "fs:/image/mainmenu/UTK.png"
@@ -295,7 +305,7 @@ typedef struct _MainMenu
     #define ICON8_ANI      "fs:/image/mainmenu/Setting.png"
     #define ICON9_ANI      "fs:/image/mainmenu/application.png"
 #endif
-
+#endif
 #if defined (FEATURE_DISP_128X160)
     #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"
     #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
@@ -392,6 +402,17 @@ typedef struct _MainMenu
     
 #endif
 #if defined (FEATURE_DISP_128X128)
+#if defined FEATURE_VERSION_H19C
+    #define ICON1_ANI_1    "fs:/image/mainmenu/Recent_calls.gif"
+    #define ICON2_ANI_1    "fs:/image/mainmenu/Multimedia.gif"
+    #define ICON3_ANI_1    "fs:/image/mainmenu/contacts.gif"
+    #define ICON4_ANI_1    "fs:/image/mainmenu/User_Profile.gif"
+    #define ICON5_ANI_1    "fs:/image/mainmenu/Messages.gif"
+    #define ICON6_ANI_1    "fs:/image/mainmenu/Tools.gif"
+    #define ICON7_ANI_1    "fs:/image/mainmenu/Setting.gif"
+    #define ICON8_ANI_1    "fs:/image/mainmenu/Game.gif"
+    #define ICON9_ANI_1    "fs:/image/mainmenu/Net_Serve.gif"
+#else
     #define ICON1_ANI_1    "fs:/image/mainmenu/MediaGallery_focus.png"
     #define ICON2_ANI_1    "fs:/image/mainmenu/Contact_focus.png"
     #define ICON3_ANI_1    "fs:/image/mainmenu/UTK_focus.png"
@@ -402,7 +423,7 @@ typedef struct _MainMenu
     #define ICON8_ANI_1    "fs:/image/mainmenu/Setting_focus.png"
     #define ICON9_ANI_1    "fs:/image/mainmenu/application_focus.png"
 #endif
-
+#endif
 #if defined (FEATURE_DISP_128X160)
     #define ICON1_ANI_1    "fs:/image/mainmenu/MediaGallery_focus.png"
     #define ICON2_ANI_1    "fs:/image/mainmenu/Contact_focus.png"

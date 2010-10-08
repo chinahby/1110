@@ -14,7 +14,7 @@ vpath %.c $(MAINMENU_SRC)
 vpath %.bar $(MAINMENU_RES)
 vpath %.brx $(MAINMENU_RES)
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
-
+vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
 CONSTFILE_FILES+=\
 	mainmenu.mif|fs:/mif/mainmenu.mif \
 	mainmenu.bar|fs:/mod/mainmenu/en/mainmenu.bar
@@ -29,6 +29,20 @@ CONSTFILE_FILES+=\
 endif
 
 ifeq ($(USES_LCD_SIZE),128x128)
+ifeq ($(USES_RESDIR),H19C)
+CONSTFILE_FILES+=\
+	contacts.gif|fs:/image/mainmenu/contacts.gif\
+	Game.gif|fs:/image/mainmenu/Game.gif \
+	Messages.gif|fs:/image/mainmenu/Messages.gif \
+	Multimedia.gif|fs:/image/mainmenu/Multimedia.gif \
+	Net_Serve.gif|fs:/image/mainmenu/Net_Serve.gif \
+	Recent_calls.gif|fs:/image/mainmenu/Recent_calls.gif \
+	Setting.gif|fs:/image/mainmenu/Setting.gif \
+	Tools.gif|fs:/image/mainmenu/Tools.gif \
+	User_Profile.gif|fs:/image/mainmenu/User_Profile.gif\
+	Backgroud.png|fs:/image/mainmenu/Backgroud.png
+else
+	
 CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
 	Message_Mainmenu.png|fs:/image/mainmenu/Message_Mainmenu.png \
@@ -48,6 +62,7 @@ CONSTFILE_FILES+=\
 	MusicPlayer_focus.png|fs:/image/mainmenu/MusicPlayer_focus.png \
 	MediaGallery_focus.png|fs:/image/mainmenu/MediaGallery_focus.png\
 	application_focus.png|fs:/image/mainmenu/application_focus.png
+endif
 endif
 
 ifeq ($(USES_LCD_SIZE),160x128)
@@ -114,7 +129,7 @@ CONSTFILE_FILES+=\
 	Calendar_focus.png|fs:/image/mainmenu/Calendar_focus.png \
 	Digit_focus.png|fs:/image/mainmenu/Digit_focus.png\
 	Document_focus.png|fs:/image/mainmenu/Document_focus.png 
-else ifeq ($(USES_RESDIR),IVIO)
+else ifeq ($(USES_RESDIR),Flexi203)
 CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
 	Messagebox.png|fs:/image/mainmenu/Messagebox.png \
@@ -140,58 +155,7 @@ CONSTFILE_FILES+=\
 	Calendar_focus.png|fs:/image/mainmenu/Calendar_focus.png \
 	Digit_focus.png|fs:/image/mainmenu/Digit_focus.png\
 	Document_focus.png|fs:/image/mainmenu/Document_focus.png
-else ifeq ($(USES_RESDIR),Flexi021)
-CONSTFILE_FILES+=\
-	Contact.png|fs:/image/mainmenu/Contact.png\
-	Messagebox.png|fs:/image/mainmenu/Messagebox.png \
-	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
-	Setting.png|fs:/image/mainmenu/Setting.png \
-	Alarm.png|fs:/image/mainmenu/Alarm.png \
-	FmRadio.png|fs:/image/mainmenu/FmRadio.png \
-	Display.png|fs:/image/mainmenu/Display.png \
-	Timer.png|fs:/image/mainmenu/Timer.png \
-	Stopwatch.png|fs:/image/mainmenu/Stopwatch.png\
-	Contact_focus.png|fs:/image/mainmenu/Contact_focus.png \
-	Message_focus.png|fs:/image/mainmenu/Message_focus.png \
-	Recentcall_focus.png|fs:/image/mainmenu/Recentcall_focus.png \
-	Setting_focus.png|fs:/image/mainmenu/Setting_focus.png \
-	Alarm_focus.png|fs:/image/mainmenu/Alarm_focus.png \
-	FmRadio_focus.png|fs:/image/mainmenu/FmRadio_focus.png \
-	Display_focus.png|fs:/image/mainmenu/Display_focus.png \
-	Timer_focus.png|fs:/image/mainmenu/Timer_focus.png \
-	Stopwatch_focus.png|fs:/image/mainmenu/Stopwatch_focus.png\
-	Calendar.png|fs:/image/mainmenu/Calendar.png \
-	Digit.png|fs:/image/mainmenu/Digit.png\
-	Document.png|fs:/image/mainmenu/Document.png\
-	Calendar_focus.png|fs:/image/mainmenu/Calendar_focus.png \
-	Digit_focus.png|fs:/image/mainmenu/Digit_focus.png\
-	Document_focus.png|fs:/image/mainmenu/Document_focus.png	
-else ifeq ($(USES_RESDIR),Esia021)
-CONSTFILE_FILES+=\
-	Contact.png|fs:/image/mainmenu/Contact.png\
-	Messagebox.png|fs:/image/mainmenu/Messagebox.png \
-	Recentcall.png|fs:/image/mainmenu/Recentcall.png \
-	Setting.png|fs:/image/mainmenu/Setting.png \
-	Alarm.png|fs:/image/mainmenu/Alarm.png \
-	FmRadio.png|fs:/image/mainmenu/FmRadio.png \
-	Display.png|fs:/image/mainmenu/Display.png \
-	Timer.png|fs:/image/mainmenu/Timer.png \
-	Stopwatch.png|fs:/image/mainmenu/Stopwatch.png\
-	Contact_focus.png|fs:/image/mainmenu/Contact_focus.png \
-	Message_focus.png|fs:/image/mainmenu/Message_focus.png \
-	Recentcall_focus.png|fs:/image/mainmenu/Recentcall_focus.png \
-	Setting_focus.png|fs:/image/mainmenu/Setting_focus.png \
-	Alarm_focus.png|fs:/image/mainmenu/Alarm_focus.png \
-	FmRadio_focus.png|fs:/image/mainmenu/FmRadio_focus.png \
-	Display_focus.png|fs:/image/mainmenu/Display_focus.png \
-	Timer_focus.png|fs:/image/mainmenu/Timer_focus.png \
-	Stopwatch_focus.png|fs:/image/mainmenu/Stopwatch_focus.png\
-	Calendar.png|fs:/image/mainmenu/Calendar.png \
-	Digit.png|fs:/image/mainmenu/Digit.png\
-	Document.png|fs:/image/mainmenu/Document.png\
-	Calendar_focus.png|fs:/image/mainmenu/Calendar_focus.png \
-	Digit_focus.png|fs:/image/mainmenu/Digit_focus.png\
-	Document_focus.png|fs:/image/mainmenu/Document_focus.png		
+
 else 
 CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\

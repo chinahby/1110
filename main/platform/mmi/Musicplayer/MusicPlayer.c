@@ -790,10 +790,12 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             { 
                 if(wParam)    
                 {  
+                   MSG_FATAL("EVT_ALARM wParam == TRUE",0,0,0);
                    MP3_InterruptHandle(pMe);
                 }
                 else
                 {    
+                   MSG_FATAL("EVT_ALARM wParam == FALSE",0,0,0);
                    MP3_ResumeHandle(pMe);
                 }
      

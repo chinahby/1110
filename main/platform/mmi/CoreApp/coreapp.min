@@ -19,6 +19,7 @@ vpath %.bar $(COREAPP_RES)
 vpath %.brx $(COREAPP_RES)
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 vpath %.jpg $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
+vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 
 CONSTFILE_FILES+=\
 	coreapp.mif|fs:/mif/coreapp.mif \
@@ -43,6 +44,9 @@ else ifeq ($(USES_RESDIR), Flexi021)
 CONSTFILE_FILES+=\
 	poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
 	poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg	
+else ifeq ($(USES_RESDIR), H19C)
+CONSTFILE_FILES+=\
+	poon.gif|fs:/image/pwronoffani/poon.gif 
 else ifeq ($(USES_RESDIR), Ivio021)
 CONSTFILE_FILES+=\
 	poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \

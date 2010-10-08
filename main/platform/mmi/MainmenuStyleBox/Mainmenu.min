@@ -14,6 +14,7 @@ vpath %.c $(MAINMENU_SRC)
 vpath %.bar $(MAINMENU_RES)
 vpath %.brx $(MAINMENU_RES)
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
+vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
 
 CONSTFILE_FILES+=\
 	mainmenu.mif|fs:/mif/mainmenu.mif \
@@ -29,6 +30,20 @@ CONSTFILE_FILES+=\
 endif
 
 ifeq ($(USES_LCD_SIZE),128x128)
+ifeq ($(USES_RESDIR),H19C)
+CONSTFILE_FILES+=\
+	contacts.gif|fs:/image/mainmenu/contacts.gif\
+	Game.gif|fs:/image/mainmenu/Game.gif \
+	Messages.gif|fs:/image/mainmenu/Messages.gif \
+	Multimedia.gif|fs:/image/mainmenu/Multimedia.gif \
+	Net_Serve.gif|fs:/image/mainmenu/Net_Serve.gif \
+	Recent_calls.gif|fs:/image/mainmenu/Recent_calls.gif \
+	Setting.gif|fs:/image/mainmenu/Setting.gif \
+	Tools.gif|fs:/image/mainmenu/Tools.gif \
+	User_Profile.gif|fs:/image/mainmenu/User_Profile.gif\
+	Backgroud.png|fs:/image/mainmenu/Backgroud.png
+else
+	
 CONSTFILE_FILES+=\
 	Contact.png|fs:/image/mainmenu/Contact.png\
 	Message_Mainmenu.png|fs:/image/mainmenu/Message_Mainmenu.png \
@@ -49,7 +64,7 @@ CONSTFILE_FILES+=\
 	MediaGallery_focus.png|fs:/image/mainmenu/MediaGallery_focus.png\
 	application_focus.png|fs:/image/mainmenu/application_focus.png
 endif
-
+endif
 
 ifeq ($(USES_LCD_SIZE),160x128)
 
