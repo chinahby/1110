@@ -85,6 +85,18 @@ static int IMAGE_WIDTH           = 5;                           // Frame Width f
 #define MENU_SBWIDTH_XPAD     (0)
 #endif //FEATURE_MENUTITLE_AUTOSCROLL
 
+#if defined(FEATURE_DISP_160X128)
+#define MAX_NUM_MENUPOP                 (6) //(6)
+#elif defined(FEATURE_DISP_128X160)
+#define MAX_NUM_MENUPOP                 (8) //(6)
+#elif defined(FEATURE_DISP_128X128)
+#define MAX_NUM_MENUPOP                 (6) //(6)
+#elif defined(FEATURE_DISP_220X176)
+#define MAX_NUM_MENUPOP                 (8) //(6)
+#else
+#define MAX_NUM_MENUPOP                 (6) //(6)
+#endif
+
 #define PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 
 /*===========================================================================
@@ -8207,7 +8219,7 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     nFrame = (uint16)(AEE_FRAME_SIZE * 2);   
     cxMax = devinfo.cxScreen;     // Max pop menu width
     //cyMax = devinfo.cyScreen*3/4 - cys - nFrame;     // Max pop menu  height
-    cyMax = (pme->m_cyFont+ cys)*6 + GetBottomBarHeight(pme->m_pIDisplay) + AEE_FRAME_SIZE*10;
+    cyMax = (pme->m_cyFont+ cys)*MAX_NUM_MENUPOP + GetBottomBarHeight(pme->m_pIDisplay) + AEE_FRAME_SIZE*10;
 
     cy = (pme->m_cyFont + cys)* (pme->m_nItems) + GetBottomBarHeight( pme->m_pIDisplay) + AEE_FRAME_SIZE*(pme->m_nItems + 4); 
     if(cy > cyMax)
@@ -8217,7 +8229,7 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     pme->m_menuReallyDy = cy;//add by xuhui
     //Set pop menu rect
     pme->m_rc.dx = cxMax;   //modi by yangdecai 2010-07-30
-    pme->m_rc.dy = (pme->m_cyFont+ cys)*6 + GetBottomBarHeight(pme->m_pIDisplay)+AEE_FRAME_SIZE*4;
+    pme->m_rc.dy = (pme->m_cyFont+ cys)*MAX_NUM_MENUPOP + GetBottomBarHeight(pme->m_pIDisplay)+AEE_FRAME_SIZE*4;
     pme->m_rc.x = 0;
     pme->m_rc.y = 0;//devinfo.cyScreen - pme->m_rc.dy;
     
