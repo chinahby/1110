@@ -496,13 +496,13 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_nColumn     = 1;
 #elif defined (FEATURE_DISP_128X160)
 	pMe->m_nRow        = 1;
-    pMe->m_nColumn     = 2;	
+    pMe->m_nColumn     = 1;	
 #elif defined (FEATURE_DISP_176X220)
 	pMe->m_nRow        = 1;
-    pMe->m_nColumn     = 2;	
+    pMe->m_nColumn     = 1;	
 #elif defined (FEATURE_DISP_240X320)
 	pMe->m_nRow        = 1;
-    pMe->m_nColumn     = 2;		
+    pMe->m_nColumn     = 1;		
 #endif
 
 #ifdef FEATURE_ICON_MOVE_ANIMATION
@@ -835,16 +835,8 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             return TRUE;
 
         case EVT_APP_STOP:
-            {                
-#if defined (FEATURE_DISP_128X160)
-				int theFocus = 5;	//Modify by zzg 2010_10_08
-#elif defined (FEATURE_DISP_176X220)
-				int theFocus = 5;	//Modify by zzg 2010_10_08
-#elif defined (FEATURE_DISP_240X320)
-				int theFocus = 5;	//Modify by zzg 2010_10_08
-#else
-				int theFocus = 4;
-#endif				
+            {     
+				int theFocus = 4;		
                 setCursor( pMe, theFocus / 3, theFocus % 3);
                 pMe->m_MainSel  = 0;
                 pMe->m_MenuSel  = 0;                  
