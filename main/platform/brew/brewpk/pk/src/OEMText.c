@@ -13897,6 +13897,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
                 return TRUE;
             }            
             break;
+#endif
 #endif			
 #endif			
 #endif			
