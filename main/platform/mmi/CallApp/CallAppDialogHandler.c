@@ -5938,6 +5938,11 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         {
             pixelLen = 5;
         } 	
+#elif defined(FEATURE_DISP_220X176)       
+        if(pixelLen == 0)
+        {
+            pixelLen = 5;
+        } 			
 #elif defined(FEATURE_DISP_128X160)       
         if(pixelLen == 0)
         {

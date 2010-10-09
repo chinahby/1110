@@ -91,6 +91,8 @@ when       who     what, where, why
 #define FEATURE_T9_RAPID_ENGLISH
 #ifdef FEATURE_DISP_160X128
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
+#elif defined (FEATURE_DISP_220X176)
+#define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #elif defined (FEATURE_DISP_128X160)
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #elif defined (FEATURE_DISP_176X220)

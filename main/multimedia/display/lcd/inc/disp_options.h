@@ -68,6 +68,9 @@
 #elif defined (FEATURE_DISP_160X128)
 #define DISP_WIDTH		 160
 #define DISP_HEIGHT 	  128
+#elif defined (FEATURE_DISP_220X176)
+#define DISP_WIDTH		 220
+#define DISP_HEIGHT 	  176
 #elif defined (FEATURE_DISP_128X160)
 #define DISP_WIDTH		  128
 #define DISP_HEIGHT 	  160

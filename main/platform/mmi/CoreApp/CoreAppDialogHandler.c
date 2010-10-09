@@ -103,6 +103,20 @@ extern boolean   IsRunAsFactoryTestMode(void);
 
 #define WEEK_X              5
 #define WEEK_Y              52
+#elif defined(FEATURE_DISP_220X176)
+
+#define IDLE_D_CLOCK_X 		5
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				5
+#define RPLMN_Y				20
+
+#define DATA_X				5
+#define DATA_Y				36
+
+#define WEEK_X              5
+#define WEEK_Y              52
+
 
 #elif defined(FEATURE_DISP_128X160)
 
@@ -4031,6 +4045,12 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		   WEEK_Y,
 		   (pMe->m_rc.dx-2*WEEK_X), 
 		   pMe->m_nNormalFontHeight);
+#elif defined(FEATURE_DISP_220X176)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
 
 #elif defined (FEATURE_DISP_128X160)
 	SETAEERECT(&rc_week, 
@@ -4173,7 +4193,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_160X128)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
-
+#elif defined(FEATURE_DISP_220X176)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
@@ -4190,6 +4211,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_160X128)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_220X176)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
@@ -4208,6 +4231,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #elif defined(FEATURE_DISP_160X128)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_220X176)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
@@ -4256,6 +4281,16 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_ALIGN_LEFT
                                   | IDF_TEXT_TRANSPARENT); 		*/
 #elif defined(FEATURE_DISP_160X128)
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  12,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
+#elif defined(FEATURE_DISP_220X176)
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -4334,6 +4369,16 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     MSG_FATAL("Strlen=%d, rc_date.x=%d", strlen, rc_date.x, 0);
 }
 #elif defined(FEATURE_DISP_160X128)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_date, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_220X176)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -4451,6 +4496,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               | IDF_ALIGN_RIGHT
 #elif defined(FEATURE_DISP_160X128)
 							  | IDF_ALIGN_RIGHT
+#elif defined(FEATURE_DISP_220X176)
+							  | IDF_ALIGN_RIGHT							  
 #elif defined(FEATURE_DISP_128X160)
 							  | IDF_ALIGN_RIGHT		
 #elif defined(FEATURE_DISP_240X320)
