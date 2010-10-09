@@ -6475,7 +6475,7 @@ static boolean  CContApp_HandleOptsDlgEvent( CContApp  *pMe,
             rc = pMe->m_rc;
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
-            MSG_FATAL("rc.x=%d, rc.dx=%d, rc.y=%d", rc.x, rc.dx, rc.y);
+            MSG_FATAL("rc.y=%d, rc.dx=%d, rc.dy=%d", rc.y, rc.dx, rc.dy);
             IMENUCTL_SetRect(pMenuCtl, &rc);
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
             IMENUCTL_SetPopMenuRect(pMenuCtl); 
