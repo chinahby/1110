@@ -760,7 +760,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 return TRUE;
             #endif
 
-            #if defined(FEATURE_PROJECT_W021)
+            #if defined(FEATURE_PROJECT_W021) || defined (FEATURE_PROJECT_W021_128x160)
                 case AVK_CAMERA:
                 {
                     if ( pMe->TorchOn == FALSE )
