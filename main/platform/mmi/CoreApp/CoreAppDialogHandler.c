@@ -124,13 +124,13 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define IDLE_D_CLOCK_Y 		25
 
 #define RPLMN_X				5
-#define RPLMN_Y				20
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+18)
 
 #define DATA_X				5
-#define DATA_Y				36
+#define DATA_Y				(RPLMN_Y + 16) 
 
 #define WEEK_X              5
-#define WEEK_Y              52
+#define WEEK_Y              (DATA_Y+16)
 
 #elif defined(FEATURE_DISP_176X220)
 

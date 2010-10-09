@@ -219,8 +219,8 @@
 #define MAX_STRING_LENGTH      64
 #define MAX_BATTERY_POP_COUNT  3
 
-#define MUSIC_WIDTH            78
-#define MUSIC_START_WIDTH      80
+#define MUSIC_WIDTH            (SCREEN_HEIGHT-52) //78
+#define MUSIC_START_WIDTH      (SCREEN_HEIGHT-50) //80
 
 
 #ifdef FEATURE_SPN_FROM_BSMCCMNC
