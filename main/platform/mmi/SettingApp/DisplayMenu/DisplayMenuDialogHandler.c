@@ -466,11 +466,7 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
             //IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
             // 设定菜单控件的矩形位置及尺寸
             IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
-#ifdef FEATURE_MENU_STYLE
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
-#else
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-#endif
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
