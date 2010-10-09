@@ -387,7 +387,7 @@ OEMAnnun_content batt_content =
 #elif defined(FEATURE_DISP_128X160)
 #define ANNUN_ICON_POSITION_10     (128 - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
 #elif defined(FEATURE_DISP_220X176)
-#define ANNUN_ICON_POSITION_10     (128 - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_10     (220 - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
 #else
 #define ANNUN_ICON_POSITION_10    (LG_IMG_WIDTH + 8*IMG_WIDTH + 9*BETWEEN_ICON_PIXEL)
 #endif
@@ -2078,17 +2078,17 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 120;
                     }
 #elif defined(FEATURE_DISP_220X176)
-                    if(titleLen > 120)
+                    if(titleLen > 180)
                     {
                         bgRect.x = 0;
-                        bgRect.dx = 160;
+                        bgRect.dx = 220;
                     }
                     else
                     {
                         bgRect.dx = 120;
                     }					
 #elif defined(FEATURE_DISP_128X160)
-                    if(titleLen > 100)
+                    if(titleLen > 88)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 128;
@@ -2098,7 +2098,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 100;
                     }
 #elif defined(FEATURE_DISP_176X220)
-                    if(titleLen > 100)
+                    if(titleLen > 136)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 176;
@@ -2108,7 +2108,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 150;
                     }	
 #elif defined(FEATURE_DISP_240X320)
-                    if(titleLen > 100)
+                    if(titleLen > 200)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 240;
