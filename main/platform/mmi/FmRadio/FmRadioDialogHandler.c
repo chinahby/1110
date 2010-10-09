@@ -2497,8 +2497,7 @@ static void repaint( CFmRadio *pMe, boolean immediately)
 }
 
 static void drawBg( CFmRadio *pMe)
-{
-
+{	
     drawImage( pMe, FMRADIOLN_RES_FILE, IDI_BG, 0, 0);
 }
 

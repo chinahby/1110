@@ -1306,10 +1306,10 @@ static IANNUNCore* OEMAnnunCore_New(IShell* piShell)
 #ifndef WIN32
     dinfo = disp_get_info();
     IAnnunCoreObj->m_annun_prim_lcd_width = dinfo.disp_width;
-    IAnnunCoreObj->m_annun_prim_lcd_height = ANNUN_PRIMARY_HEIGHT;
+    IAnnunCoreObj->m_annun_prim_lcd_height = STATEBAR_HEIGHT; //ANNUN_PRIMARY_HEIGHT;
 #else
 	IAnnunCoreObj->m_annun_prim_lcd_width = DISP_WIDTH;
-    IAnnunCoreObj->m_annun_prim_lcd_height = ANNUN_PRIMARY_HEIGHT;
+    IAnnunCoreObj->m_annun_prim_lcd_height = STATEBAR_HEIGHT; //ANNUN_PRIMARY_HEIGHT;
 #endif
 //
 // configuring secondary LCD width
@@ -2056,7 +2056,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     
 	            	bgRect.x = 20;
                     bgRect.y = 0;
-                    bgRect.dy = 14;
+                    bgRect.dy = STATEBAR_HEIGHT;
 #if defined(FEATURE_DISP_128X128)
                     if(titleLen > 88)
                     {
