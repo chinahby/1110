@@ -42,6 +42,7 @@ Copyright (c) 2005, 2006 by QUALCOMM Incorporated. All Rights Reserved.
 
 #include "customer.h"
 #include "disp.h"
+#include "mmidispsize.h"
 /*===========================================================================
 
                 DEFINITIONS AND DECLARATIONS FOR MODULE
@@ -1502,10 +1503,6 @@ void disp_epson_S1D19120_boot_chg_splash_screen (void)
 	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 80, 130);
 #elif defined(FEATURE_DISP_240X320)
 	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 130, 80);
-#else
-	disp_update(phone_charging_data, 134, 0, 0, 34, 134, 130, 56);
-#endif
 #endif  
+#endif
 }
-
-

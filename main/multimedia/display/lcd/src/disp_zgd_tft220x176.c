@@ -208,7 +208,7 @@ static lcd_config_attribs_type lcatDispCfg[LCD_MAX_DISPLAYS] =
       PEGS_TM_EBI2_ID,
       EBI2_WIDTH_8,
       HWIO_ADDR(LCD_CFG0),      // HWIO_LCD_CFG0_PHYS 
-      0x00680608,
+      0x00480408,
       /*(// lcd_cfg0 value   = 0x04120105, 
         (   LCD_CFG0_LCD_CS_SETUP = 0x0 )|
         (   LCD_CFG0_LCD_RECOVERY = 0x4)|
