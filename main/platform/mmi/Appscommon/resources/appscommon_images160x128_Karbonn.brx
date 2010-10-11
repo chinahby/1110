@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="Appscommon_images160x128_Karbonn" VERSION="1">
+<BREWRes Name="appscommon_images160x128_Karbonn" VERSION="1">
 <Objects MimeType="image/png">
 	<Object Id="5001" Name="IDB_BGMASK">
 		<File>..\images\160x128\Karbonn\Appscommon\Background\bgmask.png</File>
@@ -168,6 +168,18 @@
 	</Object>
 	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP">
 		<File>..\images\160x128\Karbonn\IME\upezenglish.png</File>
+	</Object>
+	<Object Id="5413" Name="IDB_MODE_T9_MT_HINDI">
+		<File>..\images\160x128\Karbonn\IME\T9in.png</File>
+	</Object>
+	<Object Id="5414" Name="IDB_MODE_T9_RAPID_HINDI">
+		<File>..\images\160x128\Karbonn\IME\Indo.png</File>
+	</Object>
+	<Object Id="5415" Name="IDB_MODE_T9_MT_ARABIC">
+		<File>..\images\160x128\Karbonn\IME\T9in.png</File>
+	</Object>
+	<Object Id="5416" Name="IDB_MODE_T9_RAPID_ARABIC">
+		<File>..\images\160x128\Karbonn\IME\Indo.png</File>
 	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE" MimeType="image/bmp">
 		<File>..\images\160x128\Karbonn\Message\Icon\Template.bmp</File>
