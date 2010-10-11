@@ -1488,10 +1488,20 @@ DEPENDENCY
 void disp_epson_S1D19120_boot_chg_splash_screen (void)
 {
 #ifdef FEATURE_BOOT_SPLASH_SCREEN
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
+#if defined(FEATURE_DISP_160X128)
 	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 24, 40);
-#elif defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022) || defined(FEATURE_PROJECT_W021_128x160)
+#elif defined(FEATURE_DISP_128X160)
+	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 40, 24);
+#elif defined(FEATURE_DISP_128X128)
 	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 24, 24);
+#elif defined(FEATURE_DISP_220X176)
+	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 58, 70);
+#elif defined(FEATURE_DISP_176X220)
+	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 70, 58);
+#elif defined(FEATURE_DISP_320X240)
+	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 80, 130);
+#elif defined(FEATURE_DISP_240X320)
+	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 130, 80);
 #else
 	disp_update(phone_charging_data, 134, 0, 0, 34, 134, 130, 56);
 #endif
