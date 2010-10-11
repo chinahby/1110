@@ -1494,9 +1494,9 @@ NormalKeyEvent:
         case EVT_KEY_RELEASE:  
 			
 #if defined(FEATURE_DISP_160X128)
-            if ((wParam == AVK_SYMBOL)/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/) //modi by yangdecai
+            if ((wParam == AVK_SYMBOL))/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/) //modi by yangdecai
 #elif defined(FEATURE_DISP_220X176)
-			if ((wParam == AVK_SYMBOL)
+			if ((wParam == AVK_SYMBOL))
 #elif	defined(FEATURE_DISP_128X160)
 			if ((wParam == AVK_STAR))
 #elif	defined(FEATURE_DISP_176X220)
