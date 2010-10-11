@@ -2412,6 +2412,7 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
                                   1000,
                                   DialogTimeoutCallback, 
                                   pMe);
+#ifdef FEATURE_RUIM_PHONEBOOK
             if(IsRunAsUIMVersion())
             {
                 if(IRUIM_IsCardConnected(pMe->m_pIRUIM))
@@ -2424,7 +2425,7 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
                     }
                 }
             }
-            
+#endif
             if (NULL == pMe->m_pAddrPhone)
             {            
                 (void) ISHELL_CreateInstance( pMe->a.m_pIShell,

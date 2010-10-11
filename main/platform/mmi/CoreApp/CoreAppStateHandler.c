@@ -1226,7 +1226,7 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
                 //MOVE_TO_STATE(COREST_STANDBY)
                 MOVE_TO_STATE(COREST_POWERONSYSINIT)
             }
-
+#ifdef FEATURE_RUIM_PHONEBOOK
             if(IsRunAsUIMVersion())
             {
                 if(IRUIM_IsCardConnected(pMe->m_pIRUIM))
@@ -1239,7 +1239,7 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
                     }
                 }
             }
-            
+#endif
             if (NULL == pMe->m_pAddrPhone)
             {            
                 (void) ISHELL_CreateInstance( pMe->a.m_pIShell,

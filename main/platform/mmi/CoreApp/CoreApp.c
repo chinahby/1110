@@ -247,6 +247,18 @@ void CoreApp_FreeAppData(IApplet* po)
     ISHELL_RegisterNotify(pMe->a.m_pIShell,AEECLSID_CORE_APP,  AEECLSID_ALERT_NOTIFIER,0);
 
     FREEIF(pMe->m_cdg_msgptr);
+    if(pMe->m_pAddrPhone)
+    {
+        IADDRBOOK_Release(pMe->m_pAddrPhone);
+        pMe->m_pAddrPhone = NULL;
+    }
+#ifdef FEATURE_RUIM_PHONEBOOK
+    if(pMe->m_pAddrRUIM)
+    {
+        IADDRBOOK_Release(pMe->m_pAddrRUIM);
+        pMe->m_pAddrRUIM = NULL;
+    }
+#endif
     g_pCoreApp = NULL;
 
 #ifdef FEATURE_GREYBIT
