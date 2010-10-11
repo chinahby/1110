@@ -75,6 +75,7 @@ when       who     what, where, why
 #include "Appscommon.h"
 #include "appscommonimages.brh"
 #include "err.h"
+#include "OEMQuertkey.h"
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS
@@ -176,125 +177,6 @@ OBJECT(T9ChineseCxt){
                     TYPE DEFINITIONS
 
 ===========================================================================*/
-#define MAX_SHEFTKEYPAD_NUMBER 30
-typedef struct _SheftKeyItem_Own  SheftKeyItem_Own;
-struct _SheftKeyItem_Own
-{
-	uint16          wParam;
-	uint16          wp;
-	AECHAR          name[1];
-};
-static SheftKeyItem_Own  VLCharKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
-{
-	{AVK_POUND, '#', {'#'}},
-	{AVK_1, '1', {'1'}},
-	{AVK_2, '2', {'2'}},
-	{AVK_3, '3', {'3'}},
-	{AVK_T, '(', {'('}},
-	{AVK_Y, ')', {')'}},
-	{AVK_U, '_', {'_'}},
-
-	{AVK_I, '-', {'-'}},
-	{AVK_O, '+', {'+'}},
-	{AVK_P, '@', {'@'}},
-	{AVK_STAR, '*', {'*'}},
-	{AVK_4, '4', {'4'}},
-	{AVK_5, '5', {'5'}},
-	{AVK_6, '6', {'6'}},
-
-	{AVK_G, '/', {'/'}},
-	{AVK_H, ':', {':'}},
-	{AVK_J, ';', {';'}},
-	{AVK_K, 0x0027, {0x0027}},
-	{AVK_L, 0x0022, {0x0022}},
-	{AVK_7, '7', {'7'}},
-	{AVK_8, '8', {'8'}},
-	
-	{AVK_9, '9', {'9'}},
-	{AVK_V, '?', {'?'}},
-	{AVK_B, '!', {'!'}},
-	{AVK_N, ',', {','}},
-	{AVK_M, '.', {'.'}},
-	{AVK_RWD, '$', {'$'}},
-    {AVK_ENTER,0x000A,{0x000A}},
-    
-    {AVK_SPACE,' ',{' '}},
-	{AVK_0,'0',{'0'}}
-	
-};
-static SheftKeyItem_Own  VLCharLowKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
-{
-    {AVK_POUND, 'q', {'q'}},
-	{AVK_1, 'w', {'w'}},
-	{AVK_2, 'e', {'e'}},
-	{AVK_3, 'r', {'r'}},
-	{AVK_T, 't', {'t'}},
-	{AVK_Y, 'y', {'y'}},
-	{AVK_U, 'u', {'u'}},
-
-	{AVK_I, 'i', {'i'}},
-	{AVK_O, 'o', {'o'}},
-	{AVK_P, 'p', {'p'}},
-	{AVK_STAR, 'a', {'a'}},
-	{AVK_4, 's', {'s'}},
-	{AVK_5, 'd', {'d'}},
-	{AVK_6, 'f', {'f'}},
-
-	{AVK_G, 'g', {'g'}},
-	{AVK_H, 'h', {'h'}},
-	{AVK_J, 'j', {'j'}},
-	{AVK_K, 'k', {'k'}},
-	{AVK_L, 'l', {'k'}},
-	{AVK_7, 'z', {'z'}},
-	{AVK_8, 'x', {'x'}},
-	
-	{AVK_9, 'c', {'c'}},
-	{AVK_V, 'v', {'v'}},
-	{AVK_B, 'b', {'b'}},
-	{AVK_N, 'n', {'n'}},
-	{AVK_M, 'm', {'m'}},
-	{AVK_RWD, '$', {'$'}},
-    {AVK_ENTER,0x000A,{0x000A}},
-    
-    {AVK_SPACE,' ',{' '}}   
-};
-
-static SheftKeyItem_Own  VLCharCapKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
-{
-    {AVK_POUND, 'Q', {'Q'}},
-	{AVK_1, 'W', {'W'}},
-	{AVK_2, 'E', {'E'}},
-	{AVK_3, 'R', {'R'}},
-	{AVK_T, 'T', {'T'}},
-	{AVK_Y, 'Y', {'Y'}},
-	{AVK_U, 'U', {'U'}},
-
-	{AVK_I, 'I', {'I'}},
-	{AVK_O, 'O', {'O'}},
-	{AVK_P, 'P', {'P'}},
-	{AVK_STAR, 'A', {'A'}},
-	{AVK_4, 'S', {'S'}},
-	{AVK_5, 'D', {'D'}},
-	{AVK_6, 'F', {'F'}},
-
-	{AVK_G, 'G', {'G'}},
-	{AVK_H, 'H', {'H'}},
-	{AVK_J, 'J', {'J'}},
-	{AVK_K, 'K', {'K'}},
-	{AVK_L, 'L', {'L'}},
-	{AVK_7, 'Z', {'Z'}},
-	{AVK_8, 'X', {'X'}},
-	
-	{AVK_9, 'C', {'C'}},
-	{AVK_V, 'V', {'V'}},
-	{AVK_B, 'B', {'B'}},
-	{AVK_N, 'N', {'N'}},
-	{AVK_M, 'M', {'M'}},
-	{AVK_RWD, '$', {'$'}},
-    {AVK_ENTER,0x000A,{0x000A}},
-    
-    {AVK_SPACE,' ',{' '}}  
-};
 
 typedef struct _MultitapStateInfo {
    AVKType kLast;    // Last key pressed
@@ -4698,6 +4580,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
     }
     MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 12", 0,0,0);
 #elif defined(FEATURE_DISP_160X128)
+
 	    if(eCode == EVT_KEY_HELD)
 		{
             int i;
@@ -4835,30 +4718,46 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                    }
 		                }
 		                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
-		    			{           
-		            		if (key == VLCharKeyItem[i].wParam)
-		            		{
-		        			    if(pContext->is_isShift)
-		                        { 
-		                            TextCtl_NoSelection(pContext);
-		                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-		                            pContext->is_isShift = FALSE;
-		                        }
-		                        else
-		                        {
-		                            TextCtl_NoSelection(pContext);
-									if(pContext->m_bCaplk)
+		    			{    
+		    				switch(OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
+		    				{
+		    					case TEXT_MODE_T9_RAPID_ARABIC:
 									{
-										TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
-										pContext->m_bCaplk = FALSE;
+										if (key == VLCharArabicKeyItem[i].wParam)
+					            		{
+					            			TextCtl_NoSelection(pContext);
+											TextCtl_AddChar(pContext,(AECHAR)(VLCharArabicKeyItem[i].wp));
+										}
 									}
-									else
+									break;
+								default:
 									{
-		                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+					            		if (key == VLCharKeyItem[i].wParam)
+					            		{
+					        			    if(pContext->is_isShift)
+					                        { 
+					                            TextCtl_NoSelection(pContext);
+					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+					                            pContext->is_isShift = FALSE;
+					                        }
+					                        else
+					                        {
+					                            TextCtl_NoSelection(pContext);
+												if(pContext->m_bCaplk)
+												{
+													TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+													pContext->m_bCaplk = FALSE;
+												}
+												else
+												{
+					                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+												}
+					                        }
+					                     }
+										break;
 									}
-		                        }
-		                     }
-		                  }
+		    				}
+		                 }
 		            }
 		            return TRUE;
 		            break;

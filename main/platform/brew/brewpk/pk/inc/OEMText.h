@@ -85,7 +85,8 @@ when       who     what, where, why
 #ifdef FEATURE_T9_ALPHABETIC
 
 #define FEATURE_T9_MULTITAP
-
+//#define FEATURE_LANG_HINDI     //add  by yangdecai
+//#define FEATURE_LANG_ARABIC
 #ifdef FEATURE_LANG_ENGLISH
 #define FEATURE_T9_MT_ENGLISH
 #define FEATURE_T9_RAPID_ENGLISH
