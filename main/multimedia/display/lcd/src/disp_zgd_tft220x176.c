@@ -60,8 +60,8 @@ when       who     what, where, why
 
 ============================================================================*/
 
-#define ZGD_TFT220X176_DISP_WIDTH             128//176
-#define ZGD_TFT220X176_DISP_HEIGHT            160//220
+#define ZGD_TFT220X176_DISP_WIDTH             176
+#define ZGD_TFT220X176_DISP_HEIGHT            220
 
 #define ZGD_TFT220X176_DISP_MIN_CONTRAST      0
 #define ZGD_TFT220X176_DISP_MAX_CONTRAST      255
@@ -627,9 +627,9 @@ static void zgd_tft220x176_disp_powerup(void)
     {
     	HEXING_LCD_WRITE_CMD(0x28); HEXING_LCD_WRITE_DATA(0x00ce);
     	HEXING_LCD_DELAY(200); // Delay 150ms
-    	HEXING_LCD_WRITE_CMD(0x01); HEXING_LCD_WRITE_DATA(0x021C); // set SS and NL bit
+    	HEXING_LCD_WRITE_CMD(0x01); HEXING_LCD_WRITE_DATA(0x031C); // set SS and NL bit
 		HEXING_LCD_WRITE_CMD(0x02); HEXING_LCD_WRITE_DATA(0x0100); // set 1 line inversion
-		HEXING_LCD_WRITE_CMD(0x03); HEXING_LCD_WRITE_DATA(0x1028); // set GRAM write direction and BGR=1.
+		HEXING_LCD_WRITE_CMD(0x03); HEXING_LCD_WRITE_DATA(0x1038); // set GRAM write direction and BGR=1.
 		HEXING_LCD_WRITE_CMD(0x08); HEXING_LCD_WRITE_DATA(0x0808); // set BP and FP
 		HEXING_LCD_WRITE_CMD(0x0C); HEXING_LCD_WRITE_DATA(0x0000); // RGB interface setting R0Ch=0x0110 for RGB 18Bit and R0Ch=0111 for RGB16Bit
 		HEXING_LCD_WRITE_CMD(0x0F); HEXING_LCD_WRITE_DATA(0x0B01); // Set frame rate
