@@ -60,8 +60,8 @@ when       who     what, where, why
 
 ============================================================================*/
 
-#define ZGD_TFT220X176_DISP_WIDTH             176
-#define ZGD_TFT220X176_DISP_HEIGHT            220
+#define ZGD_TFT220X176_DISP_WIDTH             128//176
+#define ZGD_TFT220X176_DISP_HEIGHT            160//220
 
 #define ZGD_TFT220X176_DISP_MIN_CONTRAST      0
 #define ZGD_TFT220X176_DISP_MAX_CONTRAST      255
@@ -371,21 +371,21 @@ static void zgd_tft220x176_set_screen_area(uint32 start_row, uint32 start_col,
 		/* Set LCD hardware to set start address */
 		/* Transfer command to display hardware*/
 		HEXING_LCD_WRITE_CMD(0x36);
-		HEXING_LCD_WRITE_DATA((uint16)end_row);  //end_col
+		HEXING_LCD_WRITE_DATA((uint16)end_row);
 		HEXING_LCD_WRITE_CMD(0x37);
-		HEXING_LCD_WRITE_DATA((uint16)start_row); //start_col
+		HEXING_LCD_WRITE_DATA((uint16)start_row);
 
 		/* Set LCD hardware to set start address */
 		/* Transfer command to display hardware */
 		HEXING_LCD_WRITE_CMD(0x38); 
-		HEXING_LCD_WRITE_DATA((uint16)end_col);  //end_row
+		HEXING_LCD_WRITE_DATA((uint16)end_col);
 		HEXING_LCD_WRITE_CMD(0x39);
-		HEXING_LCD_WRITE_DATA((uint16)start_col);  //start_row
+		HEXING_LCD_WRITE_DATA((uint16)start_col);
 
 		HEXING_LCD_WRITE_CMD(0x20);
-		HEXING_LCD_WRITE_DATA((uint16)start_row); // start_col
+		HEXING_LCD_WRITE_DATA((uint16)start_row);
 		HEXING_LCD_WRITE_CMD(0x21);
-		HEXING_LCD_WRITE_DATA((uint16)start_col); //  start_row
+		HEXING_LCD_WRITE_DATA((uint16)start_col);
 	}
 } /* zgd_tft220x176_set_screen_area() */
 
