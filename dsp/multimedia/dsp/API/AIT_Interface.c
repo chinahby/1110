@@ -11,6 +11,7 @@
 const unsigned char DCAM_EINT_NO = 0;
 
 #elif defined(__QSC_TARGET__)
+#include "gpio_1100.h"
 #endif
 
 //add by yangdecai 09-25
@@ -761,13 +762,14 @@ void AIT_ext_Give_Semaphore(void)
 //AIT Related PIN control
 void AIT_ext_ResetPinCtl(void)
 {
-    (void)gpio_out(GPIO_OUTPUT_33, GPIO_HIGH_VALUE);
+	gpio_tlmm_config(AIT701_RESET);
+    (void)gpio_out(AIT701_RESET, GPIO_HIGH_VALUE);
 	Delayms(5);
-	//GPIO_WriteIO(0, AIT701_RESET);
-	(void)gpio_out(GPIO_OUTPUT_33, GPIO_LOW_VALUE);
+
+	(void)gpio_out(AIT701_RESET, GPIO_LOW_VALUE);
 	Delayms(10);
-	//GPIO_WriteIO(1, AIT701_RESET);
-	(void)gpio_out(GPIO_OUTPUT_33, GPIO_HIGH_VALUE);
+
+	(void)gpio_out(AIT701_RESET, GPIO_HIGH_VALUE);
 	Delayms(5);
 }
 
@@ -775,19 +777,20 @@ void AIT_ext_BypassPinCtl(unsigned char bEnable)
 {
 	if(bEnable>1)
 	{
-		assert(0)
+		//assert(0);
 	}
-    //GPIO_WriteIO_FAST(bEnable, AIT701_BYPASS);
+
+	gpio_tlmm_config(AIT701_BYPASS);
     if(bEnable)
     {
-        (void)gpio_out(GPIO_OUTPUT_52, GPIO_HIGH_VALUE);
+        (void)gpio_out(AIT701_BYPASS, GPIO_HIGH_VALUE);
         //out_dword(HWIO_ADDR(LCD_CFG0), 0x04120105);
         //out_dword(HWIO_ADDR(LCD_CFG1), 0xc9000000);
 
     }
     else
     {
-        (void)gpio_out(GPIO_OUTPUT_52, GPIO_LOW_VALUE);
+        (void)gpio_out(AIT701_BYPASS, GPIO_LOW_VALUE);
         //out_dword(HWIO_ADDR(LCD_CFG0), 0x068AFFFF);
         //out_dword(HWIO_ADDR(LCD_CFG1), 0xc9000000);
 

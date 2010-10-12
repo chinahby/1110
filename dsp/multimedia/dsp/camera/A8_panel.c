@@ -194,21 +194,21 @@ u_char A800_UsingLCD1()
 	
 	temp = GetA8RegB(0x500A);
 	if ( (temp & 0x01) )
-		{
+	{
 		SetA8RegB(0x5013, 1);
 		SetA8RegB(0x500A,(temp & 0xFE));
 		timeout = 0;
 		while ((GetA8RegB(0x5013)&0x01) && timeout < 0x10000 )
 			timeout++;
-		}
+	}
 	else if ( (temp & 0x02) )
-		{
+	{
 		timeout = 0;
 		while ((GetA8RegB(0x500A)&0x02) && timeout < 0x10000 )
 			timeout++;
 		if (timeout>= 0x10000)
 			SetA8RegB(0x500A, 0x00);
-		}
+	}
 	SetA8RegB(0x5042,NO_DUAL_PANEL_PREVIEW|LCD1ACTIVE|PANEL1_RGB);
 	//SendA8Cmd(A8_HOST_CMD_SET_ACTIVE_LCD + (0<<8) );
 
@@ -223,9 +223,7 @@ u_char A800_HostInitLCD_P2(void)
 
 	SetA8RegB(0x5002,(unsigned char)gMainPanelControlAttrib.PIXEL_CLOCK_DIV);		// grobal
 
-	SetA8RegB(0x5042,NO_DUAL_PANEL_PREVIEW|
-	      LCD2ACTIVE |
-	      PANEL1_RGB);
+	SetA8RegB(0x5042,NO_DUAL_PANEL_PREVIEW|LCD2ACTIVE | PANEL1_RGB);
 
 	SetA8RegW(0x5044,gMainPanelControlAttrib.LCD_BusCtl.Width);
 	SetA8RegW(0x5046,gMainPanelControlAttrib.LCD_BusCtl.Height);
@@ -275,7 +273,7 @@ u_char A800_SubPreviewSetting()
   	SetA8RegB(0x5141, 0x01);
   	SetA8RegB(0x5143, 0x04);
 
-   return A8_NO_ERROR;
+	return A8_NO_ERROR;
 
 }
 
@@ -385,21 +383,21 @@ u_char A800_UsingLCD2()
 	
 	temp = GetA8RegB(0x500A);
 	if ( (temp & 0x01) )
-		{
+	{
 		SetA8RegB(0x5013, 1);
 		SetA8RegB(0x500A,(temp & 0xFE));
 		timeout = 0;
 		while ((GetA8RegB(0x5013)&0x01) && timeout < 0x10000 )
 			timeout++;
-		}
+	}
 	else if ( (temp & 0x02) )
-		{
+	{
 		timeout = 0;
 		while ((GetA8RegB(0x500A)&0x02) && timeout < 0x10000 )
 			timeout++;
 		if (timeout>= 0x10000)
 			SetA8RegB(0x500A, 0x00);
-		}
+	}
 	
 	SetA8RegB(0x5042,NO_DUAL_PANEL_PREVIEW|LCD2ACTIVE|PANEL1_RGB);
 

@@ -21,18 +21,6 @@
 #define	V_REDUCE_RANGE		16
 
 #define	WYSIWYG				1	// What You See Is What You Get
-#if 0   //modi by yangdecai 09-25
-extern const char ATV_power_pin;
-extern const char ATV_reset_pin;
-#else
-#define ATV_power_pin 23
-#define ATV_reset_pin 23
-#endif
-#define	ATV_POWER_PIN			MT23_GPIO_ATV_POWER
-#define	ATV_RESET_PIN			MT23_GPIO_ATV_RESET
-#define	ATV_I2C_SDA			46
-#define	ATV_I2C_SCL			45
-
 //#define ATV_POWER_USE_VMC //added by jiajin 2009-10-20 tv 2.8v use vmc
 
 #define CHANNEL_SWITCH_EFFECT	1

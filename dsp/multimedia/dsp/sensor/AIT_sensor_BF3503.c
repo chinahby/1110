@@ -564,7 +564,7 @@ extern	u_char	g_ATV_Flag;
 		if (g_ATV_Flag == 0)
 #endif
 		{
-			AIT_Message_P0("===BF3503===ATV turn Off, BF3503 turn on\r\n");
+			//AIT_Message_P0("===BF3503===ATV turn Off, BF3503 turn on\r\n");
 #ifdef AIT_ATV_SUPPORT
 			//ATV off
 			PowerOffFM();
@@ -591,7 +591,7 @@ extern	u_char	g_ATV_Flag;
 #ifdef AIT_ATV_SUPPORT
 
 		else{
-			AIT_Message_P0("===BF3503===ATV turn ON, BF3503 Semi-active \n\r");
+			//AIT_Message_P0("===BF3503===ATV turn ON, BF3503 Semi-active \n\r");
 			//SetA8RegB(0x69D4,(GetA8RegB(0x69D4)|8)& (~7));
 			//SetA8RegB(0x69CD,(GetA8RegB(0x69CD)|4)&(~2));
 			//SetA8RegB(0x69CE,(GetA8RegB(0x69CE)|4)&(~2));
@@ -606,7 +606,7 @@ extern	u_char	g_ATV_Flag;
 #endif
 	        		
 	} else {
-	AIT_Message_P0("===BF3503===ATV / BF3503 all turn off \n\r");
+	//AIT_Message_P0("===BF3503===ATV / BF3503 all turn off \n\r");
 #if AIT_ATV_SUPPORT==1
 
 	//ATV off

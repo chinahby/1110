@@ -59,7 +59,7 @@ typedef enum
 // Baseband platform
 //===========================
 #ifndef __QSC_TARGET__
-//#define __QSC_TARGET__
+#define __QSC_TARGET__
 #endif
 
 #if defined(__MTK_TARGET__)

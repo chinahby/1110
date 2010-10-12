@@ -43,15 +43,45 @@
 //#define EXTCLK_19M2
 
 // MTK GPIO PIN
+#if defined(__MTK_TARGET__)
 #define AIT701_RESET		(2)
 #define AIT701_BYPASS		(1)
 #define AIT701_DSP_CLK		(49)
 #define AIT701_CLKNUM		(5)
 #define AIT701_DSPCLK_CNGDATA	(2)
 #define AIT_SLEEP_CHECKTIME (300)
-#define MT23_GPIO_ATV_RESET (ATV_reset_pin)
-#define MT23_GPIO_ATV_POWER (ATV_power_pin)
 
+#define	ATV_POWER_PIN			23
+#define	ATV_RESET_PIN			23
+#define	ATV_I2C_SDA			46
+#define	ATV_I2C_SCL			45
+
+#elif defined(__QSC_TARGET__)
+#define AIT701_RESET			(GPIO_OUTPUT_53)
+#define AIT701_BYPASS			(GPIO_OUTPUT_51)
+#define AIT701_DSP_CLK			(0)			//only use in MTK
+#define AIT701_CLKNUM			(0)			//only use in MTK
+#define AIT701_DSPCLK_CNGDATA	(0)			//only use in MTK
+#define AIT_SLEEP_CHECKTIME 	(300)
+
+#define	ATV_POWER_PIN			(GPIO_OUTPUT_25)
+#define	ATV_RESET_PIN			(GPIO_OUTPUT_24)
+#define	ATV_I2C_SDA				(GPIO_OUTPUT_39)
+#define	ATV_I2C_SCL				(GPIO_OUTPUT_40)
+
+#else
+#define AIT701_RESET		(2)
+#define AIT701_BYPASS		(1)
+#define AIT701_DSP_CLK		(49)
+#define AIT701_CLKNUM		(5)
+#define AIT701_DSPCLK_CNGDATA	(2)
+#define AIT_SLEEP_CHECKTIME (300)
+
+#define	ATV_POWER_PIN			23
+#define	ATV_RESET_PIN			23
+#define	ATV_I2C_SDA			46
+#define	ATV_I2C_SCL			45
+#endif
 // USB EN control 
 //#define AIT701_DP_PULLUP_ENABLE		{A800_GetGPIO(AIT_GPIO_USB_DP_CTL,AIT_GPIO_PULL_FLOATING);}
 //#define AIT701_DP_PULLUP_DISABLE	{A800_ClearGPIO(AIT_GPIO_USB_DP_CTL);}
