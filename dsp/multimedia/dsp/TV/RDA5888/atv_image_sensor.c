@@ -1,5 +1,9 @@
 #ifndef WIN32
 
+#include "TlgInclude.h"
+
+#include "Platform.h"
+
 
 static void ATV_InitHostI2C()
 {

@@ -57,9 +57,9 @@ void AIT_ext_SetLCDWindow(unsigned short x,unsigned short y,unsigned short w,uns
 	MainLCD->LCD_SetWindow(x,y,w-1,h-1);
 #elif defined(__QSC_TARGET__)
 //Customer define
-    extern void st7735_set_camera_area(uint32 start_row, uint32 start_col,uint32 end_row, uint32 end_col);
+    //extern void st7735_set_camera_area(uint32 start_row, uint32 start_col,uint32 end_row, uint32 end_col);
 
-    st7735_set_camera_area(x, y, w-1, h-1);
+    //st7735_set_camera_area(x, y, w-1, h-1);
 #else
 //	LCD_INIT();   //modi by yangdecai 09-25
 //	ScreenTest();

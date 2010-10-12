@@ -6,7 +6,8 @@
 #include "Ext_camera.h"
 #include "med_api.h"
 #elif defined(__QSC_TARGET__)
-extern clk_cb_type ait_hw_clk_cb;
+#include "clk.h"
+clk_cb_type ait_hw_clk_cb;
 #endif
 
 #ifndef _FW_FROM_PC_
@@ -797,7 +798,7 @@ static mmp_ret_code_type mmpfunc_process(mmp_func_type func, void* client_data, 
 	mmp_ret_code_type status = MMP_INVALID_STATE;
 
 	AIT_ext_Take_Semaphore(0);
-	lcd_busy_waiting();
+	//lcd_busy_waiting();
 	mmpfunc_sleep_disable();
 
 

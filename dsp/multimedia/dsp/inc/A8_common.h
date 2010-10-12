@@ -233,16 +233,17 @@ extern char  SysMsg[128];
 #endif
 
 #elif defined(__QSC_TARGET__)
-#define AIT_Message_P0(s) DBGPRINTF("%s",s)
-#define AIT_Message_P1(s, a1) DBGPRINTF("%s",s, a1)
-#define AIT_Message_P2(s, a1, a2) DBGPRINTF("%s",s, a1, a2)
-#define AIT_Message_P3(s, a1, a2, a3) DBGPRINTF("%s",s, a1, a2, a3)
-#define AIT_Message_P4(s, a1, a2, a3, a4) DBGPRINTF("%s",s, a1, a2, a3, a4)
-#define AIT_Message_P5(s, a1, a2, a3, a4, a5) DBGPRINTF("%s",s, a1, a2, a3, a4, a5)
-#define AIT_Message_P6(s, a1, a2, a3, a4, a5, a6) DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6)
-#define AIT_Message_P7(s, a1, a2, a3, a4, a5, a6, a7) DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7)
-#define AIT_Message_P8(s, a1, a2, a3, a4, a5, a6, a7, a8) DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7, a8)
-#define AIT_Message_Error(s, a1) DBGPRINTF("%s",s, a1)
+#include "AEEStdLib.h"
+#define AIT_Message_P0(s) 	//DBGPRINTF("%s",s)
+#define AIT_Message_P1(s, a1) 	//DBGPRINTF("%s",s, a1)
+#define AIT_Message_P2(s, a1, a2) 	//DBGPRINTF("%s",s, a1, a2)
+#define AIT_Message_P3(s, a1, a2, a3) 	//DBGPRINTF("%s",s, a1, a2, a3)
+#define AIT_Message_P4(s, a1, a2, a3, a4) 	//DBGPRINTF("%s",s, a1, a2, a3, a4)
+#define AIT_Message_P5(s, a1, a2, a3, a4, a5) 	//DBGPRINTF("%s",s, a1, a2, a3, a4, a5)
+#define AIT_Message_P6(s, a1, a2, a3, a4, a5, a6) 	//DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6)
+#define AIT_Message_P7(s, a1, a2, a3, a4, a5, a6, a7)	//DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7)
+#define AIT_Message_P8(s, a1, a2, a3, a4, a5, a6, a7, a8)	//DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7, a8)
+#define AIT_Message_Error(s, a1)	//DBGPRINTF("%s",s, a1)
 #else
 #define AIT_Message_P0(s)  printf(s)
 #define AIT_Message_P1(s, a1) printf(s, a1)

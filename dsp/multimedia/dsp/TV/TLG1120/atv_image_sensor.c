@@ -99,7 +99,7 @@ static void ATV_VerifyI2C()
 		}
 	}
 
-		AIT_Message_P1("ATV_VerifyI2C Test- #Error = %d",ErrCnt);
+	AIT_Message_P1("ATV_VerifyI2C Test- #Error = %d",ErrCnt);
 	
 }
 
@@ -310,10 +310,6 @@ void ATV_preview(image_sensor_exposure_window_struct *image_window, image_sensor
 	sensor_config_data->sensor_frame_rate = 50;//added by macro lei 2009/08/25
 	ATV_Timer_CallBack();
 	//kal_sleep_task(80);
-#ifdef WIN32
-	printf("ISP window: w=%d, h=%d\n",	image_window->exposure_window_width, image_window->exposure_window_height);
-#else
-#endif
 }
 
 void ATV_capture(image_sensor_exposure_window_struct *image_window, image_sensor_config_struct *sensor_config_data)
