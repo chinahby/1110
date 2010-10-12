@@ -99,8 +99,9 @@ when       who   what, where, why
   ** in custusurf.h of respective targets
   */
   #ifdef FEATURE_CDMA1X
-  #define FEATURE_UNIFORM_SCAN_OOS
-  #define FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
+  //注释掉是为了解决1900M搜不到网的问题
+ // #define FEATURE_UNIFORM_SCAN_OOS
+ // #define FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
   #endif
 
   #if defined(FEATURE_MVS_MIGRATE) || defined(FEATURE_8K_STUFF_TO_BE_PURGED)

@@ -374,22 +374,22 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_SECOND_UART
    #undef FEATURE_SECOND_UART
 #endif
-#ifndef USES_DS_1536
+//#ifndef USES_DS_1536 //注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
    #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
 #endif
-#endif
+//#endif
 #ifdef FEATURE_SC2X_HAS_UART1
    #undef FEATURE_SC2X_HAS_UART1
 #endif
 #ifdef FLASH_USES_DM
    #undef FLASH_USES_DM
 #endif
-#ifndef USES_DS_1536
+//#ifndef USES_DS_1536//注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS
    #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
-#endif
+//#endif
 
 
 
