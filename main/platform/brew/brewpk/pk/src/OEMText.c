@@ -4721,6 +4721,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		    			{    
 		    				switch(OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
 		    				{
+		    				#ifdef FEATURE_T9_RAPID_ARABIC
 		    					case TEXT_MODE_T9_RAPID_ARABIC:
 									{
 										if (key == VLCharArabicKeyItem[i].wParam)
@@ -4730,6 +4731,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 										}
 									}
 									break;
+							#endif
 								default:
 									{
 					            		if (key == VLCharKeyItem[i].wParam)
