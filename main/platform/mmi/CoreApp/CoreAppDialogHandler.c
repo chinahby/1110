@@ -160,6 +160,21 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define WEEK_X              5
 #define WEEK_Y              52
 
+#elif defined(FEATURE_DISP_320X240)
+
+#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y + 30) 
+
+#define WEEK_X              5
+#define WEEK_Y              52
+
+
 #else
 
 #define IDLE_D_CLOCK_X 		15
@@ -2790,7 +2805,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
                 case AVK_DOWN:
 				{
-#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021) && !defined(FEATURE_PROJECT_W021_128x160)                      
+#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021) && !defined(FEATURE_PROJECT_W021_128x160) && !defined (FEATURE_PROJECT_W021_176X220) && !defined (FEATURE_PROJECT_W021_240X320)&& !defined (FEATURE_PROJECT_W021_220X176) && !defined (FEATURE_PROJECT_W021_320X240)
+	
 #if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 #elif defined (FEATURE_VERSION_SMART)
@@ -4071,6 +4087,12 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		   WEEK_Y,
 		   (pMe->m_rc.dx-2*WEEK_X), 
 		   pMe->m_nNormalFontHeight);
+#elif defined (FEATURE_DISP_320X240)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
 	   
 #endif
 
@@ -4199,7 +4221,9 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
-				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);			
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);	
+#elif defined(FEATURE_DISP_320X240)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);	
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
 #endif //FEATURE_DISP_176X220
@@ -4218,6 +4242,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_320X240)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -4238,6 +4264,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #elif defined(FEATURE_DISP_240X320)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_320X240)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -4312,6 +4340,16 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_ALIGN_RIGHT
                                   | IDF_TEXT_TRANSPARENT); 
 #elif defined(FEATURE_DISP_240X320)
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  12,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
+#elif defined(FEATURE_DISP_320X240)
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -4400,6 +4438,16 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);
 #elif defined(FEATURE_DISP_240X320)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_date, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_320X240)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -4502,6 +4550,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 							  | IDF_ALIGN_RIGHT		
 #elif defined(FEATURE_DISP_240X320)
+							  | IDF_ALIGN_RIGHT		
+#elif defined(FEATURE_DISP_320X240)
 							  | IDF_ALIGN_RIGHT								  
 #else
                               | IDF_ALIGN_LEFT
@@ -4998,6 +5048,21 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     boolean missed_call_icon;
     //static boolean b_flag = TRUE;
 
+	/*
+	//Add for test
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_WAP_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_LOCKSTATUS, ANNUN_STATE_LOCKSTATUS_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_HEADSET_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_MMS, ANNUN_MMS_FULL_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+	return;
+	//Add End
+	*/
+
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &b_headset, sizeof(b_headset));
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));//CFGI_ALERT_TYPE
@@ -5005,19 +5070,19 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 
     if(pMe->m_pIAnn != NULL)
     {
-    if (b_headset)
-    {
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
-    if (b_FMBackground)
-    {
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_ON/*ANNUN_STATE_ON*/);
-    }
-    }
-    else
-    {
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
-    }
+	    if (b_headset)
+	    {
+	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
+		    if (b_FMBackground)
+		    {
+		        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_ON/*ANNUN_STATE_ON*/);
+		    }
+	    }
+	    else
+	    {
+	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
+	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
+	    }
     }
     MSG_FATAL("alertType=%d",alertType,0,0);
     switch(alertType)

@@ -338,6 +338,8 @@ static AEESize gCameraDisplaySizeList[] = {
   { 176, 220 },
 #elif defined(FEATURE_DISP_240X320)
   { 240, 320 }, 
+#elif defined(FEATURE_DISP_320X240)
+  { 320, 240 },   
 #elif defined(FEATURE_DISP_128X128)
   { 128, 128 },
   { 128, 96  },
@@ -362,6 +364,8 @@ static AEESize gCameraSnapshotSizeList [] = {
   { 176, 220 }, 
 #elif defined(FEATURE_DISP_240X320)
   { 240, 320 },   
+#elif defined(FEATURE_DISP_320X240)
+  { 320, 240 },  
 #elif defined(FEATURE_DISP_128X128)
   { 128, 128 },
   { 160, 120 },
@@ -379,7 +383,9 @@ static AEESize gCameraSnapshotSizeList [] = {
 #elif defined(FEATURE_DISP_176X220)
   { 176, 220 }, 
 #elif defined(FEATURE_DISP_240X320)
-  { 240, 320 },   
+  { 240, 320 },  
+#elif defined(FEATURE_DISP_320X240)
+  { 320, 240 },  
 #elif defined(FEATURE_DISP_128X128)
   { 128, 128 },
   { 160, 120 },

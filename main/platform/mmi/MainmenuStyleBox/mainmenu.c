@@ -197,6 +197,10 @@ static char* ICON_ANI[] =
     ICON10_ANI,
     ICON11_ANI,
     ICON12_ANI,    
+#elif defined (FEATURE_DISP_320X240)
+    ICON10_ANI,
+    ICON11_ANI,
+    ICON12_ANI,        
     #endif
 #endif
 };
@@ -231,7 +235,11 @@ static char* ICON_ANI_1[] =
 #elif defined (FEATURE_DISP_240X320)
     ICON10_ANI_1,
     ICON11_ANI_1,
-    ICON12_ANI_1,
+    ICON12_ANI_1,     
+#elif defined (FEATURE_DISP_320X240)
+    ICON10_ANI_1,
+    ICON11_ANI_1,
+    ICON12_ANI_1,      
     #endif
 };
 
@@ -506,6 +514,9 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 #elif defined (FEATURE_DISP_240X320)
 	pMe->m_nRow        = 1;
     pMe->m_nColumn     = 1;		
+#elif defined (FEATURE_DISP_320X240)
+	pMe->m_nRow        = 1;
+    pMe->m_nColumn     = 1;			
 	#endif
 
 #ifdef FEATURE_ICON_MOVE_ANIMATION
@@ -569,6 +580,10 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_pImageTurn[9] = ISHELL_LoadImage(pMe->m_pShell,ICON10_ANI_1);
 	pMe->m_pImageTurn[10] = ISHELL_LoadImage(pMe->m_pShell,ICON11_ANI_1);
 	pMe->m_pImageTurn[11] = ISHELL_LoadImage(pMe->m_pShell,ICON12_ANI_1);	
+#elif defined (FEATURE_DISP_320X240)
+    pMe->m_pImageTurn[9] = ISHELL_LoadImage(pMe->m_pShell,ICON10_ANI_1);
+	pMe->m_pImageTurn[10] = ISHELL_LoadImage(pMe->m_pShell,ICON11_ANI_1);
+	pMe->m_pImageTurn[11] = ISHELL_LoadImage(pMe->m_pShell,ICON12_ANI_1);		
 #endif
 
     
@@ -1913,6 +1928,8 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 #elif defined (FEATURE_DISP_240X320)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
+#elif defined (FEATURE_DISP_320X240)
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 
 #endif
         DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
@@ -2040,6 +2057,8 @@ static void DrawFocusIcon(MainMenu *pMe)
 #elif defined (FEATURE_DISP_176X220)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 #elif defined (FEATURE_DISP_240X320)
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
+#elif defined (FEATURE_DISP_320X240)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 
 #endif
@@ -2187,6 +2206,8 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 #elif defined (FEATURE_DISP_176X220)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 #elif defined (FEATURE_DISP_240X320)
+    titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
+#elif defined (FEATURE_DISP_320X240)
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
 
 #endif
@@ -2752,6 +2773,59 @@ static boolean StartApplet(MainMenu *pMe, int i)
 #endif
 
 #if defined (FEATURE_DISP_240X320)
+        case 0:
+        	{            
+            	Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            	break;
+        	}
+        case 1:
+            {
+                IContactApp *ca = NULL;
+                if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
+                {
+                    return FALSE;
+                }
+                else
+                {
+                    ICONTAPP_MainMenu(ca);
+                    IContactApp_Release(ca);
+                }
+            }
+            break;
+        case 2:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
+            break;
+        case 3:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+            break;
+        case 4:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+            break;
+        case 5:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            break;    
+        case 6:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+            break;
+        case 7:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
+            break;
+        case 8:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            break;
+
+        case 9:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            break;
+        case 10:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
+            break;
+        case 11:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
+            break; 
+            
+#endif
+#if defined (FEATURE_DISP_320X240)
         case 0:
         	{            
             	Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);

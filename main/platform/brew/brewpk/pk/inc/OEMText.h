@@ -100,6 +100,8 @@ when       who     what, where, why
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #elif defined (FEATURE_DISP_240X320)
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
+#elif defined (FEATURE_DISP_320X240)
+#define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif
 #endif //FEATURE_LANG_ENGLISH
 

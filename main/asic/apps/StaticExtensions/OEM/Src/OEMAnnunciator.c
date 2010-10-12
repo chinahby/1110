@@ -25,7 +25,10 @@
 #include "AEEFile.h"
 #include "OEMObjectMgr.h"
 #include "AEEAnnunciator.h"
-#include "oemannunciator.brh"
+
+//#include "oemannunciator.brh"
+#include "appscommonimages.brh"
+
 #include "OEMDisp.h"
 #include "Appscommon.h"
 #ifndef WIN32
@@ -363,6 +366,13 @@ OEMAnnun_content batt_content =
     #define TEXT_HEIGHT    10
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1 	
+#elif defined(FEATURE_DISP_320X240)
+    #define IMG_WIDTH      12
+    #define IMG_HEIGHT     13
+    #define LG_IMG_WIDTH 20
+    #define TEXT_HEIGHT    10
+    #define ROW1_Y           0
+    #define BETWEEN_ICON_PIXEL 1 		
 #else
 /* Standard image fields are 10 x 10 (pixels)    */
 /* while large image fields are 20 x 10 (pixels) */
@@ -387,6 +397,12 @@ OEMAnnun_content batt_content =
 #elif defined(FEATURE_DISP_128X160)
 #define ANNUN_ICON_POSITION_10     (DISP_WIDTH - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
 #elif defined(FEATURE_DISP_220X176)
+#define ANNUN_ICON_POSITION_10     (DISP_WIDTH - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
+#elif defined(FEATURE_DISP_176X220)
+#define ANNUN_ICON_POSITION_10     (DISP_WIDTH - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
+#elif defined(FEATURE_DISP_240X320)
+#define ANNUN_ICON_POSITION_10     (DISP_WIDTH - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
+#elif defined(FEATURE_DISP_320X240)
 #define ANNUN_ICON_POSITION_10     (DISP_WIDTH - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
 #else
 #define ANNUN_ICON_POSITION_10    (LG_IMG_WIDTH + 8*IMG_WIDTH + 9*BETWEEN_ICON_PIXEL)
@@ -773,15 +789,22 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   
   nWidth = (int)Annunciators[nAnnunID].width;
   nHeight = (int)Annunciators[nAnnunID].height;
-
-  if (!pMe->m_coreObj->cached) {
+ 
+  if (!pMe->m_coreObj->cached) 
+  {
     // Cache all the bitmaps 
-    for (i=0; i < (int)ARR_SIZE(Annunciators); i++) {
-      if (Annunciators[i].pcontent->nFieldType == ANNUN_TYPE_IMAGE) {
+    for (i=0; i < (int)ARR_SIZE(Annunciators); i++) 
+	{
+      if (Annunciators[i].pcontent->nFieldType == ANNUN_TYPE_IMAGE) 
+	  {	  	
         data_ptr = (OEMState_data *) Annunciators[i].pcontent->data;
-        for (j=0; j < (int)Annunciators[i].pcontent->nMaxStates; j++) {
-          data_ptr->pBmp = ISHELL_LoadResBitmap (pMe->m_piShell,
-                                         AEEFS_SHARED_DIR"oemannunciator.bar",
+        for (j=0; j < (int)Annunciators[i].pcontent->nMaxStates; j++) 
+		{
+			//Modify by zzg 2010_10_12
+			//AEEFS_SHARED_DIR"oemannunciator.bar", 
+			// AEEFS_SYS_DIR"appscommonimages.bar",
+          data_ptr->pBmp = ISHELL_LoadResBitmap (pMe->m_piShell,                                         
+                                         AEE_APPSCOMMONRES_IMAGESFILE,
                                          (uint16)(data_ptr->nImageResID));
           data_ptr++;
         }
@@ -791,9 +814,10 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   }
 
   data_ptr = (OEMState_data *) Annunciators[nAnnunID].pcontent->data;
+  
   //pBmp = data_ptr[nState-1].pBmp;
   pBmp = data_ptr[nFirstState-1].pBmp;
-
+  
   if (pBmp == NULL) 
   {
     return EFAILED;
@@ -2108,6 +2132,16 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 136;
                     }	
 #elif defined(FEATURE_DISP_240X320)
+                    if(titleLen > 200)
+                    {
+                        bgRect.x = 0;
+                        bgRect.dx = 240;
+                    }
+                    else
+                    {
+                        bgRect.dx = 200;
+                    }		
+#elif defined(FEATURE_DISP_320X240)
                     if(titleLen > 200)
                     {
                         bgRect.x = 0;

@@ -250,6 +250,11 @@ static const CCameraSize g_CameraSizeCFG[] =
     //{176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
     {480,640,L"480*640"}, // VGA   
+#elif defined(FEATURE_DISP_320X240)
+    //{128,160,L"128*160"}, // FULL Screen
+    //{176,220,L"176*220"}, // QCIF
+    {240,320,L"320*240"}, // QVGA
+    {480,640,L"640*480"}, // VGA       
 #else
     {128,128,L"128*128"}, // FULL Screen
     {160,120,L"160*120"}, // QQVGA
@@ -283,6 +288,10 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA    
+#elif defined(FEATURE_DISP_320X240)
+    //{128,160,L"128*160"}, // FULL Screen
+    //{176,220,L"176*220"}, // QCIF
+    {240,320,L"320*240"}, // QVGA        
 #else
     {128,128,L"128*128"}, // FULL Screen
     {160,120,L"160*120"}, // QQVGA

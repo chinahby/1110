@@ -40,7 +40,8 @@
 
 //#define FEATURE_TEST_ANNUN_ICONS 
 #ifdef FEATURE_TEST_ANNUN_ICONS
-    #include "oemannunciator.brh" 
+    //#include "oemannunciator.brh" 
+    #include "appscommonimages.brh" 
 #endif
 
 /*==============================================================================
@@ -1040,7 +1041,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             IDISPLAY_SetDestination (pMe->m_pDisplay, pBmp);
                             
                             i = 0;
-                            pIBitmap = ISHELL_LoadResBitmap(pMe->m_pShell, "fs:/shared/oemannunciator.bar", IDB_BATT_LOW);
+
+							//Modify by zzg 2010_10_12
+                            //pIBitmap = ISHELL_LoadResBitmap(pMe->m_pShell, "fs:/shared/oemannunciator.bar", IDB_BATT_LOW);
+							pIBitmap = ISHELL_LoadResBitmap(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BATT_LOW);
+
                             while(pIBitmap != NULL)
                             {
                                 IBITMAP_SetTransparencyColor(pIBitmap, IBITMAP_RGBToNative(pIBitmap, RGB_MASK_COLOR));
@@ -1061,7 +1066,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                                 }
                                 IBITMAP_Release(pIBitmap);
                                 i++;
-                                pIBitmap = ISHELL_LoadResBitmap(pMe->m_pShell, "fs:/shared/oemannunciator.bar", IDB_BATT_LOW + i);
+
+								//Modify by zzg 2010_10_12
+                                //pIBitmap = ISHELL_LoadResBitmap(pMe->m_pShell, "fs:/shared/oemannunciator.bar", IDB_BATT_LOW + i);
+								pIBitmap = ISHELL_LoadResBitmap(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BATT_LOW + i);
+																							
                             }
                             IDISPLAY_SetDestination(pMe->m_pDisplay, NULL);
                             IDISPLAY_BitBlt(pMe->m_pDisplay,
@@ -5958,6 +5967,11 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         {
             pixelLen = 12;
         }    
+#elif defined(FEATURE_DISP_320X240)       
+        if(pixelLen == 0)
+        {
+            pixelLen = 12;
+        }   		
 #endif      
 
         // Move dstStr past the characters about to be drawn

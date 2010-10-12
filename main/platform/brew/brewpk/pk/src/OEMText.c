@@ -6149,7 +6149,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 			}	
 		}
 				
-#elif defined(FEATURE_DISP_240X320)
+#elif defined(FEATURE_DISP_240X320) || defined(FEATURE_DISP_320X240)
 		if(eCode == EVT_KEY_HELD)
 		{
 			int i;
@@ -8584,7 +8584,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	    }   
 	}
 
-#elif defined (FEATURE_DISP_240X320)
+#elif defined (FEATURE_DISP_240X320) || defined (FEATURE_DISP_320X240)
     if(eCode == EVT_KEY_HELD)
     {
         int i;
@@ -10675,7 +10675,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	            break;  
 	    }   
 	}	
-#elif defined (FEATURE_DISP_240X320)
+#elif defined (FEATURE_DISP_240X320) || defined (FEATURE_DISP_320X240)
     if(eCode == EVT_KEY_HELD)
     {
         int i;
@@ -13429,7 +13429,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
                  }
               }
               break;	
-	  #elif defined (FEATURE_DISP_240X320)
+	  #elif defined (FEATURE_DISP_240X320) || defined (FEATURE_DISP_320X240)
         case AVK_POUND:
         case AVK_STAR: 
         case AVK_T: 
@@ -13782,6 +13782,8 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 #ifndef FEATURE_DISP_128X160
 #ifndef FEATURE_DISP_176X220
 #ifndef FEATURE_DISP_240X320
+#ifndef FEATURE_DISP_320X240
+
         case AVK_STAR:
           TextCtl_AddChar(pContext, (AECHAR) '*');
           return TRUE;            
@@ -13798,6 +13800,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
                 return TRUE;
             }            
             break;
+#endif			
 #endif
 #endif			
 #endif			

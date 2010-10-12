@@ -6232,6 +6232,19 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
                 IMENUCTL_SetRect(pMe->m_pMenuPopup, &rc);
             }
         }
+#elif defined(FEATURE_DISP_320X240)          
+        {
+            AEERect rc = {0};
+            IMENUCTL_SetPopMenuRect(pMe->m_pMenuPopup); 
+            IMENUCTL_GetRect(pMe->m_pMenuPopup, &rc);
+            if(rc.y < 0)
+            {
+                int temp = -(rc.y);
+                rc.y += temp;
+                rc.dy -= temp;
+                IMENUCTL_SetRect(pMe->m_pMenuPopup, &rc);
+            }
+        }
 
 
 #endif   

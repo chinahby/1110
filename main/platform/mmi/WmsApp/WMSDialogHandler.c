@@ -7674,7 +7674,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 #elif defined(FEATURE_DISP_176X220)
                 int  i,y = 0,dy=0,ygap = 1;	//Add By zzg 2010_07_10       
 #elif defined(FEATURE_DISP_240X320)
-                int  i,y = 0,dy=0,ygap = 1;	//Add By zzg 2010_07_10                       
+                int  i,y = 0,dy=0,ygap = 1;	//Add By zzg 2010_07_10                 
+#elif defined(FEATURE_DISP_320X240)
+                int  i,y = 0,dy=0,ygap = 1;	//Add By zzg 2010_07_10                                
 #else
 				int  i,y = 0,dy=0,ygap = 10;
 #endif
@@ -7760,7 +7762,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 #elif defined(FEATURE_DISP_176X220)
                 dy = nLineHeight; // + 2;    
 #elif defined(FEATURE_DISP_240X320)
-                dy = nLineHeight; // + 2;                    
+                dy = nLineHeight; // + 2;          
+#elif defined(FEATURE_DISP_320X240)
+                dy = nLineHeight; // + 2;                   
 #else
 				dy = nLineHeight + 2; 
 #endif
@@ -7843,7 +7847,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 #elif defined(FEATURE_DISP_176X220)						
 						rc.dy += 2;	//Add By zzg 2010_07_13	
 #elif defined(FEATURE_DISP_240X320)						
-						rc.dy += 2;	//Add By zzg 2010_07_13							
+						rc.dy += 2;	//Add By zzg 2010_07_13			
+#elif defined(FEATURE_DISP_320X240)						
+						rc.dy += 2;	//Add By zzg 2010_07_13								
 #endif
                         IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
                     }

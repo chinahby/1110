@@ -16,5 +16,5 @@ vpath %.c $(BREW_STATIC_EXTENSIONS_OEM_SRC)
 vpath %.bar $(BREW_STATIC_EXTENSIONS)/../bin/en/256color
 
 CONSTFILE_FILES +=\
-	oemannunciator.bar|fs:/shared/oemannunciator.bar
+	#oemannunciator.bar|fs:/shared/oemannunciator.bar
 
