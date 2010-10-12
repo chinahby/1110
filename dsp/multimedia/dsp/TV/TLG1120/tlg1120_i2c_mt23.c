@@ -12,45 +12,21 @@
 *
 *         Last modification : 2006. 05. 22
 *************************************************************************************************/
-#if 0  //add by yangdecai 09-24
-#include "kal_release.h"
-#include "stack_common.h"
-#include "stack_msgs.h"
-#include "app_ltlcom.h"       /* Task message communiction */
-#include "syscomp_config.h"
-#include "task_config.h"
-#include "stacklib.h"
-#include "stack_timer.h"      /*stack_timer_struct....definitions*/
-#include "drv_comm.h"
-#include "IntrCtrl.h"
-#include "reg_base.h"
-#include "gpio_sw.h"
-#include "isp_if.h"
-#include "sccb.h"
-#else
-//add by yangdecai 09-25
-#define	GPIO_ModeSetup(a, b)   
-#define	GPIO_InitIO(a, b)      
-#define	GPIO_WriteIO(a, b)
-
-#endif
 /******************************************************************************************
 *              Macros
 *******************************************************************************************/
 #include "tlgInclude.h"
-#ifndef gpio_sccb_serial_data_pin
-#define gpio_sccb_serial_data_pin 46
-#endif
-#ifndef gpio_sccb_serial_clk_pin
-#define gpio_sccb_serial_clk_pin  45
-#endif
+#include "gpio_1100.h"
+#include "i2c.h"
+
+#define TLG_I2C_USE_BUS		//real I2C
 
 #define	 I2C_DELAY_UNIT		50//100
 
-
+#define TLG_PRINT_0(x)
 /* define I2C interface	*/
-#define	SDA					46			/* I2C serial interface	data I/O */
-#define	SCL					45			/* I2C serial interface	clock input	*/
+#define	SDA					I2C_SDA			/* I2C serial interface	data I/O */
+#define	SCL					I2C_SCL			/* I2C serial interface	clock input	*/
                     		
                     		
 #define	IIC_TRUE			1
@@ -71,11 +47,14 @@
 *              Prototypes
 *******************************************************************************************/
 //void i2c_init(BOOL on);
-static void set_i2c_pin_dir(unsigned char Dir);
+
 static void i2c_delay(unsigned int time);
-static void set_i2c_pin(unsigned int pin);
-static void clr_i2c_pin(unsigned int pin);
-static unsigned char get_i2c_pin(unsigned int pin);
+
+
+#define set_i2c_pin(pin)             gpio_out(pin, GPIO_HIGH_VALUE)
+#define clr_i2c_pin(pin)             gpio_out(pin, GPIO_LOW_VALUE)
+#define set_i2c_pin_dir(dir)         //gpio_set_direction(pin, dir)           
+#define get_i2c_pin(pin)            (unsigned char)gpio_in(pin)
 
 static void i2c_begin(void);
 static void i2c_end(void);
@@ -84,63 +63,14 @@ static unsigned char i2c_read_ack(void);
 static unsigned char  i2c_read_byte(void);
 static unsigned char i2c_write_byte(unsigned char data);
 
+/* Used to send I2C command */
+static i2c_rw_cmd_type dsp_i2c_command = {0};
+
 #ifndef WIN32
 
 /******************************************************************************************
 *              Functions
 *******************************************************************************************/
-#if 0 //delete by macro lei 2008/08/14
-void i2c_init(BOOL on)
-{
-	if(on)
-	{
-		GPIO_ModeSetup(SDA, 0);
-		GPIO_InitIO(1, SDA);
-		GPIO_ModeSetup(SCL, 0);
-		GPIO_InitIO(1, SCL);
-	
-		GPIO_WriteIO(1, SDA);
-		GPIO_WriteIO(1, SCL);
-	}
-	else
-	{		
-		GPIO_ModeSetup(SDA, 0);
-		GPIO_InitIO(1, SDA);
-		GPIO_ModeSetup(SCL, 0);
-		GPIO_InitIO(1, SCL);
-	
-		GPIO_WriteIO(0, SDA);
-		GPIO_WriteIO(0, SCL);
-	}
-}
-#endif
-
-static void set_i2c_pin_dir(unsigned char Dir)
-{
-	//*(volatile unsigned int *)(BASE_GPIO_TIMER+GPIO_DIR) = Dir;
-
-	
-	if(Dir == 0)//INPUT
-	{
-	#if 0   //modi by yangdecai  09-24
-		GPIO_InitIO(INPUT,SDA);//SET_SCCB_DATA_INPUT;//SET_SCCB_DATA_INPUT_EX;
-	#else
-		GPIO_InitIO(1,SDA);//SET_SCCB_DATA_INPUT;//SET_SCCB_DATA_INPUT_EX;
-	#endif
-	}
-	else if (Dir == 1)//OUTPUT 
-	{
-		#if 0 //modi by yangdecai  09-24
-		GPIO_InitIO_FAST(OUTPUT,SCL);//SET_SCCB_DATA_OUTPUT;//SET_SCCB_DATA_OUTPUT_EX;
-		#else
-		GPIO_InitIO(1,SCL);//SET_SCCB_DATA_INPUT;//SET_SCCB_DATA_INPUT_EX;
-		#endif
-	}
-}
-
-
-
-
 static unsigned char i2c_read_byte(void)
 {
 	unsigned char i;
@@ -162,12 +92,13 @@ static unsigned char i2c_read_byte(void)
 			ret |= 1;
 		i2c_delay(I2C_DELAY_UNIT << 0);
 		clr_i2c_pin(SCL);
-			i2c_delay(I2C_DELAY_UNIT <<	0);
+		i2c_delay(I2C_DELAY_UNIT <<	0);
 
-			if (i==7){
-	set_i2c_pin_dir(1);//set gpio for output
-				}
-			i2c_delay(I2C_DELAY_UNIT <<	0);
+		if (i==7)
+		{
+			set_i2c_pin_dir(1);//set gpio for output
+		}
+		i2c_delay(I2C_DELAY_UNIT <<	0);
 	}		
 
 	EXIT(i2c_read_byte);
@@ -208,44 +139,141 @@ static unsigned char i2c_write_byte(unsigned char data)
 *                                    data: dump into register
 *
 ****************************************************************************/
-DECLSPEC TLGI2C_WriteReg(unsigned char dadd, unsigned short radd, unsigned short data)
+
+#ifdef TLG_I2C_USE_BUS
+int TLGI2C_WriteReg(unsigned char dadd, unsigned short	radd, unsigned short data)
 {
-	unsigned char tmpData = 0;
+    static byte buf[4];
+    int i = 0;
+
+    buf[0] = ((radd & 0x7f00)>>8);
+    buf[1] =  (radd&0x00ff);
+    buf[2] = (((data)&0xff00)>>8);
+    buf[3] = ((data)&0x00ff);
+    
+    dsp_i2c_command.addr.offset = 0;
+    dsp_i2c_command.buf_ptr  = buf;
+    dsp_i2c_command.len      = 4;
+
+    for (i = 0; i < 3; ++i) 
+    {
+        if (i2c_write(&dsp_i2c_command) == I2C_SUCCESS)
+        {
+            return TRUE;
+        }
+    }
+    
+    TLG_PRINT_0("Tlg_i2c_write_data failed\n");
+    return FALSE;    
+}
+
+
+int TLGI2C_ReadReg(unsigned char dadd,	unsigned short radd, unsigned short	*data)
+{
+    static byte   buf[4];
+    int i = 0;
+   
+    buf[0] = (((radd |0x8000)&0xff00)>>8);
+    buf[1] = (radd&0x00ff);
+    buf[2] = 0xff;
+    buf[3] = 0xff;
+    dsp_i2c_command.addr.offset = 0;
+    dsp_i2c_command.buf_ptr  = buf;
+    dsp_i2c_command.len      = 4;
+    for (i = 0; i < 3; ++i) 
+    {
+        if (i2c_write(&dsp_i2c_command) == I2C_SUCCESS)
+        {            
+            break;
+        }
+    }
+    if (i>=3)
+    {
+        TLG_PRINT_0("Tlg_i2c_read_data failed 1\n");
+        return FALSE;
+    }
+    memset(buf,0x00,sizeof(buf));
+    dsp_i2c_command.addr.offset = 0;
+    dsp_i2c_command.buf_ptr  = buf;
+    dsp_i2c_command.len      = 4;
+    for (i = 0; i < 3; ++i) 
+    {
+        if (i2c_read(&dsp_i2c_command) == I2C_SUCCESS)
+        {
+            break;
+        }
+    }
+    
+    if (i>=3)
+    {
+        TLG_PRINT_0("Tlg_i2c_read_data failed 2");
+        return FALSE;
+    }
+    
+    *data = ((buf[2]<<8)|buf[3]);
+    return TRUE;
+   
+}
+
+#else
+
+/***************************************************************************
+*
+*
+*	 IIC Write data	for	TLG1100
+*	 Parameter:
+*			   dadd:device address (must be	0x58)
+*			   radd:register address
+*
+****************************************************************************/
+int TLGI2C_WriteReg(unsigned char dadd, unsigned short	radd, unsigned short data)
+{
+	unsigned char tmpData =	0;
+
 
 	ENTRY(TLGI2C_WriteReg);
+
+
+
 	i2c_begin();
 	if (!i2c_write_byte(dadd<<1))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
-	/* write 16bits register */
-      tmpData = ((radd & 0x7f00) >> 8);
+	/* write 16bits	register */
+	  tmpData =	((radd & 0x7f00) >>	8);
 
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
 
-	tmpData = (radd & 0x00ff);
+	tmpData	= (radd	& 0x00ff);
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
-    /* write 16bits data */
-	tmpData	= (((data)	& 0xff00) >> 8);
+
+	 /*	write 16bits data */
+	tmpData	= (((*data)	& 0xff00) >> 8);
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
-	
-	tmpData = ((data) & 0x00ff);
+
+	tmpData	= ((*data) & 0x00ff);
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
 
@@ -261,15 +289,15 @@ DECLSPEC TLGI2C_WriteReg(unsigned char dadd, unsigned short radd, unsigned short
 /***************************************************************************
 *
 *
-*    IIC Read data for Tlg1100
-*                                    dab:device Id =0x2c
-*                                    rab: register address
-*                                    data: dump into register
+*	 IIC Read data for TLG1100
+*	 Parameter:
+*			   dadd:device add (must be	0x58)
+*			   radd:register add
 *
 ****************************************************************************/
-DECLSPEC TLGI2C_ReadReg(unsigned char dadd, unsigned short radd, unsigned short *data)
+int TLGI2C_ReadReg(unsigned char dadd,	unsigned short radd, unsigned short	*data)
 {
-	unsigned short tmpData = 0;
+	unsigned char tmpData =	0;
 
 
 	ENTRY(TLGI2C_ReadReg);
@@ -279,66 +307,76 @@ DECLSPEC TLGI2C_ReadReg(unsigned char dadd, unsigned short radd, unsigned short 
 	if (!i2c_write_byte(dadd<<1))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 	/* set MSB 1 */
-	tmpData = (((radd | 0x8000) & 0xff00) >> 8); 
+	tmpData	= (((radd |	0x8000)	& 0xff00) >> 8);
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
-	tmpData = ((radd & 0x00ff)); 
+	tmpData	= ((radd & 0x00ff));
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////
 //  ???????????????????????
 //////////////////////////////////////////////////////////////////////////////////////////
-       /* write any data into this register */
+	   /* write	any	data into this register	*/
+#if 1
 	if (!i2c_write_byte(0xff))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 	if (!i2c_write_byte(0xff))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
-	i2c_end();  /* stop bit */
+#endif    
+	i2c_end();	/* stop	bit	*/
 /////////////////////////////////////////////////////////////////////////////////////////
-    
+
 	/* start again */
 	i2c_begin();
 
 	if (!i2c_write_byte((unsigned char)((dadd<<1) |	1)))
 	{
 		i2c_end();
+        TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 
 //////////////////////////////////////////////////////////
 //			???????????????????
 /////////////////////////////////////////////////////////
-	*data = i2c_read_byte();
+#if 1
+	*data =	i2c_read_byte();
 	i2c_write_ack(0);
-	
-	*data = i2c_read_byte();
+
+	*data =	i2c_read_byte();
 	i2c_write_ack(0);
+#endif
 //////////////////////////////////////////////////////////
-    
-      tmpData = i2c_read_byte();
+
+	  tmpData =	i2c_read_byte();
 	  i2c_write_ack(0);
-    
-      *data = (tmpData << 8) & 0xff00;
-    	
-      tmpData = i2c_read_byte();
+
+	  *data	= (tmpData << 8) & 0xff00;
+
+	  tmpData =	i2c_read_byte();
 	  i2c_write_ack(1);					 /*	can	not	send ACK,must send NAck	*/
-     
-      *data |= tmpData;
+
+	  *data	|= tmpData;
 
 	i2c_end();
 
@@ -349,23 +387,9 @@ DECLSPEC TLGI2C_ReadReg(unsigned char dadd, unsigned short radd, unsigned short 
 	return IIC_DONE;
 }
 
-static void set_i2c_pin(unsigned int pin)
-{
-	if(pin == SDA)
-	{
-		#if 0   //modi by yangdecai 09-25
-		GPIO_WriteIO_FAST(1,SDA);//SET_SCCB_DATA_HIGH// SET_SCCB_DATA_HIGH_EX;
-		#endif
-	}
-	else if (pin == SCL)
-	{
-		#if 0   //modi by yangdecai 09-25
-		GPIO_WriteIO_FAST(1,SCL);//SET_SCCB_DATA_HIGH// SET_SCCB_DATA_HIGH_EX;      SET_SCCB_CLK_HIGH //SET_SCCB_CLK_HIGH_EX;
-		#endif
-	}
-	//*(volatile unsigned int *)(BASE_GPIO_TIMER+GPIO_OUT) |= pin;
-}
-/************************************************************************
+#endif
+
+/*****************************************************
 *
 *			   TLGI2C_Initcheck()
 *
@@ -384,49 +408,11 @@ int TLGI2C_Initcheck(unsigned i2c_addr, unsigned short on)
 *			   PULL	LOW	SDA/SCK	PIN
 *
 *************************************************************************/
-static void clr_i2c_pin(unsigned int pin)
-{
-	//*(volatile unsigned int  *)(BASE_GPIO_TIMER+GPIO_OUT) &= (~pin);
-	 ENTRY(clr_i2c_pin);
-	#if 0 //dele by yangdecai  09-24
-	    if(pin == SDA)
-        {
-   SET_SCCB_DATA_LOW//     SET_SCCB_DATA_LOW_EX;
-        }
-    else if (pin == SCL)
-        {
-     SET_SCCB_CLK_LOW//   SET_SCCB_CLK_LOW_EX;
-        }
-	#endif
-	 EXIT(clr_i2c_pin);
-
-} 
-
 /************************************************************************
 *
 *			   READ	DATA FROM SDA PIN
 *
 *************************************************************************/
-static unsigned char get_i2c_pin(unsigned int pin)
-{
-	unsigned char ret;
-	unsigned int value;
-	ENTRY(get_i2c_pin);
-#if 0 //dele by yangdecai  09-24
-
-	value = GET_SCCB_DATA_BIT;//	value =	GET_SCCB_DATA_BIT_EX;
-#else
-	value = 1;//	value =	GET_SCCB_DATA_BIT_EX;
-#endif
-	if (value  == 0)
-		ret	= 0;
-	else
-		ret	= 1;
-	EXIT(get_i2c_pin);
-
-	return ret;
-}
-
 /**************************************************************************
 *
 *		   IIC START BIT
@@ -512,12 +498,12 @@ static unsigned char i2c_read_ack(void)
 
 	i2c_delay(I2C_DELAY_UNIT << 0);
 	clr_i2c_pin(SCL);
-       i2c_delay(I2C_DELAY_UNIT << 0);	
+    i2c_delay(I2C_DELAY_UNIT << 0);	
 
 	   /* set SDA as output	status here	*/
 	set_i2c_pin_dir(1);//set gpio for input
 	i2c_delay(I2C_DELAY_UNIT <<	0);
-	  EXIT(i2c_read_ack);
+	EXIT(i2c_read_ack);
 	return ret;
 }
 DECLSPEC TLGI2C_WriteBurst(unsigned char i2c_addr, unsigned short start_addr, int length, unsigned	short *	data)
