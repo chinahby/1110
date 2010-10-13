@@ -1,5 +1,5 @@
-#ifndef CUSTSBNAALZ_H
-#define CUSTSBNAALZ_H
+#ifndef CUSTSW022_128X160_H
+#define CUSTSW022_128X160_H
 /* ========================================================================
 FILE: CUSTSBNAALZ
 
@@ -12,4 +12,4 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custw022.h"
 
 
-#endif /* CUSTSB2_H */
+#endif /* CUSTSW022_128X160_H */
