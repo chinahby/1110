@@ -128,7 +128,8 @@ and other items needed by this module.
  * Pandora FFA. */
 #define KEYPAD_POLLING_DELAY_USEC 10
 
-#if !(defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) || defined(FEATURE_PROJECT_W021_220X176))
+//#if !(defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) || defined(FEATURE_PROJECT_W021_220X176))
+#if !defined (FEATURE_KEYPAD_5_BY_5_MATRIX)
 #define KEYPAD_5_BY_5_MATRIX
 #endif
 

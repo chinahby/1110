@@ -1127,7 +1127,8 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
 			            }*/
 			}
 			#else
-		#ifdef FEATURE_PROJECT_M8
+		//#ifdef FEATURE_PROJECT_M8
+		#ifdef FTATURE_LOCK_SIM1_ONLY	
 			ret =OEMNV_Get(NV_SIM_SELECT_I,&nviOldSimChoice);
             if( NV_NOTACTIVE_S != ret)
             {

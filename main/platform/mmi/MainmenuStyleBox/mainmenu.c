@@ -491,7 +491,8 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     }
 	#if defined (FEATURE_DISP_160X128)
 
-#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+//#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+#if defined(FEATURE_MENU_FOCUS_INDEX)	
 	pMe->m_nRow        = 1;
     pMe->m_nColumn     = 2;
 #else

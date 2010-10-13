@@ -2581,7 +2581,8 @@ void CClockApps_Snooze(CClockApps *pMe)
 #endif
     dwnow = GETTIMESECONDS();
     
-#if defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
+//#if defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
+#if defined(FEATURE_SNOOZETIME)
 	snoozetime = dwnow%60;
 	snoozetime = pMe->m_ClockCfg.Snooze[pMe->m_eCurAlarmType] - snoozetime;
 #else

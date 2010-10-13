@@ -1265,7 +1265,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 //    break;
 				case AVK_SHIFT:
 						{
-						#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+						//#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+						#if defined(FEATURE_DOUBLE_SHIFT_NOTEQUAL_W)
 							pMe->m_bShift = FALSE;
 						#else
 							if(pMe->m_bShift)
@@ -10064,8 +10065,13 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             m_index_two_strlen += pMe->m_nCursorPos;
 
             //MSG_FATAL("***zzg Calc_Cursor 2_2 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-          
-            xPos = m_index_one_strlen - m_index_two_strlen + 3;
+
+#if defined(FEATURE_DISP_128X160)  
+			xPos = m_index_one_strlen - m_index_two_strlen + 1;  
+#else
+			xPos = m_index_one_strlen - m_index_two_strlen + 3;     
+#endif			
+            
             //MSG_FATAL("***zzg Calc_Cursor 2_2 xPos=%d***", xPos, 0, 0);
 
             yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
@@ -10120,8 +10126,13 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             m_index_two_strlen += pMe->m_nCursorPos;
 
             //MSG_FATAL("***zzg Calc_Cursor 3_2 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-          
-            xPos = m_index_one_strlen - m_index_two_strlen + 3;            
+
+#if defined(FEATURE_DISP_128X160)  
+			xPos = m_index_one_strlen - m_index_two_strlen + 1;        
+#else
+			xPos = m_index_one_strlen - m_index_two_strlen + 3;        
+#endif
+                
             //MSG_FATAL("***zzg Calc_Cursor 3_2 xPos=%d***", xPos, 0, 0);
 
             yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
@@ -10135,8 +10146,13 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             m_index_two_strlen += pMe->m_nCursorPos;
 
             //MSG_FATAL("***zzg Calc_Cursor 3_3 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-          
-            xPos = m_index_one_strlen - m_index_two_strlen + 3;           
+
+#if defined(FEATURE_DISP_128X160)  
+			xPos = m_index_one_strlen - m_index_two_strlen + 1;           
+#else
+			xPos = m_index_one_strlen - m_index_two_strlen + 3;   
+#endif			
+                    
             //MSG_FATAL("***zzg Calc_Cursor 3_3 xPos=%d***", xPos, 0, 0);
 
             yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);

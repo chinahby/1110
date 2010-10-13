@@ -2805,17 +2805,18 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
                 case AVK_DOWN:
 				{
-#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021) && !defined(FEATURE_PROJECT_W021_128x160) && !defined (FEATURE_PROJECT_W021_176X220) && !defined (FEATURE_PROJECT_W021_240X320)&& !defined (FEATURE_PROJECT_W021_220X176) && !defined (FEATURE_PROJECT_W021_320X240)
-	
-#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
+//#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021) && !defined(FEATURE_PROJECT_W021_128x160) && !defined (FEATURE_PROJECT_W021_176X220) && !defined (FEATURE_PROJECT_W021_240X320)&& !defined (FEATURE_PROJECT_W021_220X176) && !defined (FEATURE_PROJECT_W021_320X240)
+#if !defined(FEATURE_IDLE_TORCH_DOWNKEY)	
+
+	#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
-#elif defined (FEATURE_VERSION_SMART)
+	#elif defined (FEATURE_VERSION_SMART)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
-#elif defined (FEATURE_VERSION_M8)
+	#elif defined (FEATURE_VERSION_M8)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
-#else
+	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
-#endif
+	#endif
 #else
                     MSG_FATAL("in turnOnTorch",0,0,0);
                     if ( pMe->TorchOn == FALSE )
@@ -3039,7 +3040,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     break;
 				case AVK_SHIFT:
 					{
-					#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+					//#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+					#if defined (FEATURE_DOUBLE_SHIFT_NOTEQUAL_W)
 						pMe->m_isShift = FALSE;
 						return TRUE;
 					#else

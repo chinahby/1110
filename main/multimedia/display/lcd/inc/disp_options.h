@@ -88,20 +88,6 @@
 #define DISP_HEIGHT 	  320
 #endif
 
-
-/*
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
-	#define DISP_WIDTH       160
-   	#define DISP_HEIGHT       128
-#elif defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022)
-	#define DISP_WIDTH       128
-	#define DISP_HEIGHT       128
-#else
-	#define DISP_WIDTH        240
-	#define DISP_HEIGHT       320
-#endif
-*/
-
 #else
 #ifdef FEATURE_TMD_20_QVGA
    #define DISP_WIDTH        240

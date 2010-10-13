@@ -9,7 +9,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CUST_EDITION
 #endif
 #define FEATURE_VERSION_ESIA203
-#define FEATURE_PROJECT_ESIA203
 
 #define FEATURE_AAC
 #define FEATURE_AAC_PLUS

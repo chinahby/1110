@@ -13,11 +13,11 @@
 
 //If any change in this file, please increase the MACRO AUTO_NV_MIN_VERSION
 //It must be less than AUTO_NV_MODIFY_TIME_FOR_CUSTOMER
-#if defined(FEATURE_PROJECT_SMART)
+#if defined(FEATURE_VERSION_SMART)
 #define AUTO_NV_MIN_VERSION                 0x4
 #elif defined(FEATURE_VERSION_FLEXI203)
 #define AUTO_NV_MIN_VERSION                 0x3
-#elif defined(FEATURE_PROJECT_M8)
+#elif defined(FEATURE_VERSION_M8)
 #define AUTO_NV_MIN_VERSION                 0x2
 #else
 #define AUTO_NV_MIN_VERSION                 0x1

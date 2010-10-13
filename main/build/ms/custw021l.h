@@ -10,6 +10,15 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+
+//Add by zzg 2010_10_13
+#define FEATURE_TORCH_KEY_CAMERA		//手电筒功能按键
+#define FEATURE_IDLE_TORCH_DOWNKEY		//idle界面的向下键对应手电筒功能
+#define FEATURE_GPIO_LAMP_EN_OUTPUT_31	//GPIO_OUTPUT_31
+#define FEATURE_SIM_SEL_GPIO_34_PULL_DOWN	//SIM_SEL== GPIO_OUP(34,GROUP_GPIO_1,GPIO_PULL_DOWN)
+#define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
+//Add End
+
 #define FEATURE_W021_LOW_MEMORY
 #define FEATURE_SMS_UDH
 #define FEATURE_WMS_APP
@@ -212,7 +221,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
 #endif
-#define FEATURE_PROJECT_W021
 
 #define FEATURE_TORCH_SUPPORT		//手电筒
 #define FEATURE_USES_LOWMEM

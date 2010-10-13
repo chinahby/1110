@@ -10,6 +10,36 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+
+#define FEATURE_VERSION_M8
+
+
+//Add By zzg 2010_10_13
+#define FEATURE_DOUBLE_SHIFT_NOTEQUAL_W			//屏蔽连续两次按SHIFT键输入W
+#define FEATURE_SNOOZETIME						//闹钟隔时再响的时间
+#define FEATURE_TORCH_KEY_SPACE					//手电筒功能按键
+#define FTATURE_LOCK_SIM1_ONLY					//只锁卡1
+#define FEATURE_KEYPAD_5_BY_5_MATRIX			//KEYPAD_5X5
+#define FEATURE_MENU_FOCUS_INDEX				//MENU默认FOCUS_INDEX
+#define FEATURE_DEFAULT_RINGALERT_SOUND_LEVEL	//铃声的默认音量
+#define FEATURE_DEFAULT_KEYTONE_SOUND_LEVEL		//按键音的默认音量
+#define FEATURE_ADS_M8_ACCOUNT					//M8用户名、密码
+#define FEATURE_M8_INTEL_NUM					//M8 International Number
+#define FEATURE_T9_TEXT							//M8的输入法显示文本
+#define FEATURE_CALL_DURATION_TEXT				//M8的通话时间显示文本
+#define FEATURE_WMS_PLUS_HANDLE					//WMS 带+号的号码的处理
+
+#define FEATURE_GPIO_LAMP_EN_OUTPUT_32			//GPIO_OUTPUT_32
+#define FEATURE_GPIO_33_AND_34_KYPD_EX			//GPIO_33_SIGNAL == KYPD_EX1
+#define FEATURE_GPIO_47_SIGNAL_EQUAL_OUTPUT_47	// GPIO_47_SIGNAL== GPIO_OUTPUT_47
+#define FEATURE_GPIO_32_SIGNAL_OUPUT_32			//GPIO_32_SIGNAL== GPIO_OUTPUT_32
+#define FEATURE_SIM_SEL_GPIO_31_PULL_DOWN		//SIM_SEL == GPIO_OUP(31,GROUP_GPIO2_0,GPIO_PULL_DOWN)
+
+//Add End
+
+
+
+
 //#define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
@@ -27,9 +57,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
 //#define FEATURE_SPN_FROM_BSMCCMNC
-//#define FEATURE_VERSION_IVIO
-//#define FEATURE_VERSION_SMART
-#define FEATURE_VERSION_M8
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif
 
@@ -215,8 +242,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
-#define FEATURE_PROJECT_M8
-#define FEATURE_PROJECT_W203
 #define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		//手电筒
 #define FEATURE_COMBINED_PWR_END_KEYS

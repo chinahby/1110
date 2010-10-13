@@ -638,7 +638,8 @@ enum
                                 )
 
 //wangliang modify!  2010-09-01
-#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+//#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+#if defined (FEATURE_T9_TEXT)
 static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 {
    // Lint complains because all the fields aren't explicitly initialized

@@ -4472,7 +4472,8 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     
     // ½ÓÊÕµØÖ·
     MEMSET(strNum, 0, sizeof(strNum));
-#if defined(FEATURE_PROJECT_SMART) ||defined(FEATURE_PROJECT_M8)
+//#if defined(FEATURE_PROJECT_SMART) ||defined(FEATURE_PROJECT_M8)
+#if defined (FEATURE_WMS_PLUS_HANDLE)
     if(pMe->m_msSend.m_szNum[0] == '+')
     {
     	if ( pMe->m_msSend.m_szNum[1] == '6' && pMe->m_msSend.m_szNum[2] == '2' )

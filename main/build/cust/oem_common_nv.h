@@ -7,7 +7,7 @@
 *--------------------------------------------------------------------------*/
 
 
-#if defined(FEATURE_PROJECT_SMART)
+#if defined(FEATURE_VERSION_SMART)
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"110",3},{"112",3},{"911",3},{"999",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
 #define OEMNV_CALLFORWARD_BUSY_ENABLE               "*73"                       //CFGI_CALLFORWARD_BUSY_ENABLE
@@ -23,7 +23,7 @@
 #define OEMNV_CALLFORWARD_WAIT_DISABLE              "*400"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "*738"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
 #define OEMNV_VOICEMAIL_NUMBER                      L"388"                         //NV_SMS_VM_NUMBER_I 
-#elif defined(FEATURE_PROJECT_M8)
+#elif defined(FEATURE_VERSION_M8)
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"110",3},{"112",3},{"911",3},{"999",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
 #define OEMNV_CALLFORWARD_BUSY_ENABLE               "*73"                       //CFGI_CALLFORWARD_BUSY_ENABLE

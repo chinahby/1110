@@ -3171,7 +3171,8 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
         AECHAR  sec_str[8]  = { 0};
         AECHAR  format[]    = { '%', '0', '2', 'd', 0};
         int     len         = 0;
-    #if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+    //#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+	#if defined(FEATURE_CALL_DURATION_TEXT)
     	(void) ISHELL_LoadResString(pMe->m_pShell,
                                   AEE_RECENTCALLSRES_LANGFILE,
                                   IDS_COLON,
@@ -3225,7 +3226,8 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modif
         else
 #endif //FEATURE_ARPHIC_LAYOUT_ENGINE
         {
-        #if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+        //#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+		#if defined (FEATURE_CALL_DURATION_TEXT)
         	//hours
             if(duration >= 3600)
             {
