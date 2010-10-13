@@ -181,6 +181,14 @@
 #define    PWROFF_ANI_FRAME_COUNT                (21)
 #define    PWROFF_ANI_RATE                       (380)
 #define    ANI_RATE                              (150)
+#elif defined FEATURE_VERSION_ITEL
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/onoff.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (10)
+#define    PWRON_ANI_RATE                        (150)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/onoff.gif"
+#define    PWROFF_ANI_FRAME_COUNT                (10)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
 #elif defined FEATURE_VERSION_KARBONN     //add by yangdecai
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (12)

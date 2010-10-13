@@ -100,8 +100,8 @@ when       who   what, where, why
   */
   #ifdef FEATURE_CDMA1X
   //注释掉是为了解决1900M搜不到网的问题
- // #define FEATURE_UNIFORM_SCAN_OOS
- // #define FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
+ #define FEATURE_UNIFORM_SCAN_OOS
+ #define FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
   #endif
 
   #if defined(FEATURE_MVS_MIGRATE) || defined(FEATURE_8K_STUFF_TO_BE_PURGED)

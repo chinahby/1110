@@ -1172,16 +1172,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
     if (NULL != pMe->m_pDisplay)
     {
         AEEDeviceInfo di={0,};
-#ifndef FEATURE_VERSION_H19C          
-        if (dlgResId == IDD_MAIN_MENU)
-        {
-            (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:0", STRLEN("a:0"));
-        }
-        else
-        {
-            (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
-        }
-#else
+#ifdef FEATURE_VERSION_H19C      
         if(pMe->m_pIAnn != NULL)
         {
             if (dlgResId == IDD_MAIN_MENU)
@@ -1195,6 +1186,15 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
             IANNUNCIATOR_Redraw(pMe->m_pIAnn);
         }
         (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
+#else
+        if (dlgResId == IDD_MAIN_MENU)
+        {
+            (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:0", STRLEN("a:0"));
+        }
+        else
+        {
+            (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
+        }
 #endif
         ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
         pMe->m_rc.dx = di.cxScreen;
@@ -1658,7 +1658,10 @@ static void calculateScreenParameters(MainMenu *pMe)
 
     //modified by chengxiao 2009.04.02
     /* icon size in all might be larger than screen*/
-#ifndef FEATURE_VERSION_H19C       
+#ifdef FEATURE_VERSION_H19C   
+    iconSpaceHorizontal = 12;
+    iconSpaceVertical = 2;
+#else
     if(pMe->m_rc.dx > imageInfoIcon.cx * MAX_MATRIX_COLS)
     {
         iconSpaceHorizontal = (pMe->m_rc.dx - imageInfoIcon.cx * MAX_MATRIX_COLS) / (MAX_MATRIX_COLS+1);
@@ -1667,7 +1670,7 @@ static void calculateScreenParameters(MainMenu *pMe)
     {
         iconSpaceHorizontal = 0;
     }
-    
+
     if(pMe->m_rc.dy > TITLEBAR_HEIGHT + imageInfoIcon.cy * MAX_MATRIX_ROWS)
     {
         iconSpaceVertical   = (pMe->m_rc.dy - TITLEBAR_HEIGHT*2 - imageInfoIcon.cy * MAX_MATRIX_ROWS) / (MAX_MATRIX_ROWS+1);
@@ -1676,9 +1679,6 @@ static void calculateScreenParameters(MainMenu *pMe)
     {
         iconSpaceVertical = 0;
     }
-#else
-    iconSpaceHorizontal = 12;
-    iconSpaceVertical = 2;
 #endif
     //chengxiao modify end 2009.04.02
     for( i = 0; i < MAX_MATRIX_ITEMS; i ++)

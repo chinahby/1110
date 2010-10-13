@@ -75,6 +75,9 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #elif defined(FEATURE_VERSION_H19C)
 #define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT) + 1000)
 #define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT) + 1000)
+#elif defined(FEATURE_VERSION_ITEL)
+#define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))*3
+#define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))*3
 #else
 #define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
 #define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
@@ -4661,7 +4664,10 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     {
 #ifndef FEATURE_USES_LOWMEM
 
-#ifndef FEATURE_VERSION_H19C
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)
+        MSG_FATAL("CoreApp_PlayPwrOnAni 20",0,0,0); 
+        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定开机动画的帧数
+#else
         MSG_FATAL("CoreApp_PlayPwrOnAni 10",0,0,0);
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
@@ -4673,20 +4679,20 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, ImgInfo.cx/PWRON_ANI_FRAME_COUNT, ImgInfo.cy );
-#else
-        MSG_FATAL("CoreApp_PlayPwrOnAni 20",0,0,0); 
-        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定开机动画的帧数
 #endif
+
+
+
         // 开始播放开机动画
-#ifndef FEATURE_VERSION_H19C        
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)      
+        MSG_FATAL("CoreApp_PlayPwrOnAni 21",0,0,0);
+        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
+        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
+#else
         MSG_FATAL("CoreApp_PlayPwrOnAni 11",0,0,0);
         IIMAGE_Start( pMe->m_pStartupAniImg,
                             (pMe->m_rc.dx - ImgInfo.cx/PWRON_ANI_FRAME_COUNT)/2,
                             (pMe->m_rc.dy - ImgInfo.cy)/2 );
-#else
-        MSG_FATAL("CoreApp_PlayPwrOnAni 21",0,0,0);
-        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
-        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
 #endif
 
         pMe->m_wStartupAniTime++; // 滚动播放次数
@@ -4792,7 +4798,9 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
     {
 #ifndef FEATURE_USES_LOWMEM
 
-#ifndef FEATURE_VERSION_H19C
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)
+        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
+#else
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
         // 设置动画速度(毫秒)
@@ -4804,17 +4812,15 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, 
                                 ImgInfo.cx/PWROFF_ANI_FRAME_COUNT, ImgInfo.cy );
-#else
-        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
 #endif
-#ifndef FEATURE_VERSION_H19C
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)
+        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
+        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
+#else
         // 开始播放关机动画
         IIMAGE_Start( pMe->m_pStartupAniImg, 
                                 (pMe->m_rc.dx - ImgInfo.cx/PWROFF_ANI_FRAME_COUNT)/2, 
                                 (pMe->m_rc.dy - ImgInfo.cy)/2 );
-#else
-        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
-        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
 #endif
         pMe->m_wStartupAniTime++; // 滚动播放次数
         AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
