@@ -129,7 +129,7 @@ and other items needed by this module.
 #define KEYPAD_POLLING_DELAY_USEC 10
 
 //#if !(defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) || defined(FEATURE_PROJECT_W021_220X176))
-#if !defined (FEATURE_KEYPAD_5_BY_5_MATRIX)
+#if !defined (FEATURE_ALL_KEY_PAD)
 #define KEYPAD_5_BY_5_MATRIX
 #endif
 
@@ -2067,17 +2067,26 @@ void keypad_clear_headset_key(void)
 
 
 #ifdef CUST_EDITION
+
+#ifdef FEATURE_ALL_KEY_PAD
+#define DLOAD_KEY_ROW  0
+#define DLOAD_KEY_COL  0
+#else
+#define DLOAD_KEY_ROW  3
+#define DLOAD_KEY_COL  0
+#endif
+
 boolean keypad_is_dload_key_pressed(void)
 {
     boolean bPressed = FALSE;
-    keypad_drive_one_scan_col_low(0);
+    keypad_drive_one_scan_col_low(DLOAD_KEY_COL);
     
     /* The following delays the polling of sense signals to make sure the
      * signals are stable. You may tweak the delay if you wish.
      */
     clk_busy_wait(KEYPAD_POLLING_DELAY_USEC);
  
-    if (GPIO_LOW_VALUE == gpio_in(keytbl_row_to_keysense_gpio_map[0]))
+    if (GPIO_LOW_VALUE == gpio_in(keytbl_row_to_keysense_gpio_map[DLOAD_KEY_ROW]))
     {
          /* A low keysense reading indicates a closed switch (pressed) */
         bPressed = TRUE;
