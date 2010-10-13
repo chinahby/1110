@@ -1,0 +1,6 @@
+#ifndef SAMPLEFONT_BID
+#define SAMPLEFONT_BID
+
+#define AEECLSID_SAMPLEFONT    	0x010110db
+
+#endif //SAMPLEFONT_BID

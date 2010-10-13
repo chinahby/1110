@@ -1,0 +1,11 @@
+
+/* 
+===========================
+Simulator Support DOCUMENTATION
+============================
+IAddrInfoCache simulation
+
+IAddrInfoCache is simulated.
+
+==========================  
+*/
