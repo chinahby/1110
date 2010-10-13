@@ -11,10 +11,17 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_FLEXI021
 #define FEATURE_SUPPORT_ID
 #define FEATURE_SEAMLESS_SMS
-//#define FEATURE_NET_LOCK
+
+#ifndef SOFTWARE_VER04
 #define FEATURE_AAC
 #define FEATURE_AAC_PLUS
 #define FEATURE_ENHANCED_AAC_PLUS
+#endif
+
+//#define FEATURE_NET_LOCK
+//#define FEATURE_SEAMLESS_SMS
+//#define FEATURE_SUPPORT_ID
+
 #define FEATURE_LANG_INDONESIAN
 #include "custw021.h"
 

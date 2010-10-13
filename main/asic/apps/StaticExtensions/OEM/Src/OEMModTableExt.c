@@ -958,7 +958,9 @@ extern int GameMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int FrenDuoAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
+#ifdef FEATURE_APP_MULTIMEDIA
 extern int MultimedMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
 #if defined(FEATURE_FLEXI_STATIC_BREW_APP) || defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
 extern int StaticappMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
@@ -1009,7 +1011,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 	{AEEFS_MIF_DIR"frenduo.mif",FrenDuoAppMod_Load},
 #endif
 
-	{AEEFS_MIF_DIR"multimedia.mif",MultimedMod_Load},
+#ifdef FEATURE_APP_MULTIMEDIA
+		{AEEFS_MIF_DIR"multimedia.mif",MultimedMod_Load},
+#endif
 //#endif
 
 

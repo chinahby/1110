@@ -20,7 +20,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 
 #define FEATURE_SMS_UDH
-#define FEATURE_SUPPORT_ID
+//#define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #undef  FEATRUE_SUPPORT_G_SENSOR
@@ -29,8 +29,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_LANG_ENGLISH
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
 #undef FEATURE_LANG_CHINESE
-#define FEATURE_NET_LOCK
-#define FEATURE_SEAMLESS_SMS
+//#define FEATURE_NET_LOCK
+//#define FEATURE_SEAMLESS_SMS
 #define FEATURE_OMH_SMS
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
@@ -221,6 +221,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
+#define FEATURE_COMBINED_PWR_END_KEYS
 #define FEATURE_DRV_SDCC
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
