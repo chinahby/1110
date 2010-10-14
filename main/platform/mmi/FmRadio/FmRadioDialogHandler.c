@@ -66,7 +66,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #define BEGIN_TO_REFRESH_CHANNEL_LIST       TRUE
 #define CONTINUE_TO_REFRESH_CHANNEL_LIST    FALSE
 #define FM_VOLUME_X                         5
-#define FM_VOLUME_Y                         60
+#define FM_VOLUME_Y                         (SCREEN_HEIGHT - 68)
 static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier);
 static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId);
 static void moveOperationModeTo( CFmRadio *pMe, OpModeTypeEnum newMode);

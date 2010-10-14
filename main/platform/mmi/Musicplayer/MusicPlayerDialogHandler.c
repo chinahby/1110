@@ -4839,7 +4839,7 @@ static void MP3_RefreshPlayingTick(CMusicPlayer *pMe)
 	if(pMe->m_eStartMethod != STARTMETHOD_SIMPLEPLAYER)
 	{
         //SETAEERECT( &clip, 6,165,50,18);//wlh 20090415 mod
-		SETAEERECT( &clip, x,y,35,18); //50
+		SETAEERECT( &clip, x, y, TIME_WIDTH, TIME_HEIGHT); //50
         MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);
         //SPRINTF(tick_time, "%02d:%02d", (pMe->m_nTotalTime - pMe->m_nCurrentTime)/60, (pMe->m_nTotalTime - pMe->m_nCurrentTime)% 60);
         SPRINTF(tick_time,"%02d:%02d",pMe->m_nCurrentTime/60,pMe->m_nCurrentTime%60);
@@ -4847,7 +4847,7 @@ static void MP3_RefreshPlayingTick(CMusicPlayer *pMe)
 	else
 	{
         //SETAEERECT( &clip, 6,165,50,18);//wlh 20090415 mod
-		SETAEERECT( &clip, x,y,35,18); //50
+		SETAEERECT( &clip, x, y, TIME_WIDTH, TIME_HEIGHT); //50
         MP3_drawClipRectWithOffset(pMe,IDI_SIMPLEPLAYER,&clip);
         //SPRINTF(tick_time, "%02d:%02d", (pMe->m_nTotalTime - pMe->m_nSimPlayCurTime )/60, (pMe->m_nTotalTime - pMe->m_nSimPlayCurTime)% 60);
         SPRINTF(tick_time,"%02d:%02d",pMe->m_nSimPlayCurTime /60,pMe->m_nSimPlayCurTime %60);
@@ -5018,7 +5018,7 @@ static void MP3_DrawIndexAndTotalTime(CMusicPlayer *pMe)
 
     //Draw list index Rect 
     
-	SETAEERECT( &clip, LISTINDEX_X,LISTINDEX_Y,35,18);
+	SETAEERECT( &clip, LISTINDEX_X, LISTINDEX_Y, TIME_WIDTH, TIME_HEIGHT);
 	MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);
 	
     if((pMe->m_nPlayinglistMusicNum == 0)
@@ -5049,7 +5049,7 @@ static void MP3_DrawIndexAndTotalTime(CMusicPlayer *pMe)
 	
 
 	//Draw TotalTime Rect 
-	SETAEERECT( &clip, TOTALTIME_X,TOTALTIME_Y,35,18);    
+	SETAEERECT( &clip, TOTALTIME_X, TOTALTIME_Y, TIME_WIDTH, TIME_HEIGHT);
     MP3_drawClipRectWithOffset(pMe,IDI_MUSICPLAYER,&clip);	
    
     {
