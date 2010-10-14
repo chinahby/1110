@@ -2404,7 +2404,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     }       
     if (NULL != pwszMsg)
     {
-        IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
+        IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);
         if (TRUE== drawbgimage)
         {
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
