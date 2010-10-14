@@ -197,7 +197,7 @@
 		<Text>Calendar</Text>
 	</String>
 	<String Id="1112" Name="IDS_MAIN_MENU_TITLE_32">
-		<Text>Digit</Text>
+		<Text>Calculator</Text>
 	</String>
 </Strings>
 <Dialogs>

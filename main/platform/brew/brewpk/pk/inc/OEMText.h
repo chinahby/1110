@@ -90,19 +90,11 @@ when       who     what, where, why
 #ifdef FEATURE_LANG_ENGLISH
 #define FEATURE_T9_MT_ENGLISH
 #define FEATURE_T9_RAPID_ENGLISH
-#ifdef FEATURE_DISP_160X128
-#define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
-#elif defined (FEATURE_DISP_220X176)
-#define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
-#elif defined (FEATURE_DISP_128X160)
-#define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
-#elif defined (FEATURE_DISP_176X220)
-#define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
-#elif defined (FEATURE_DISP_240X320)
-#define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
-#elif defined (FEATURE_DISP_320X240)
+
+#if defined (FEATURE_ALL_KEY_PAD)
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif
+
 #endif //FEATURE_LANG_ENGLISH
 
 #ifdef FEATURE_LANG_ARABIC

@@ -2800,6 +2800,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             switch (wParam)
             {
+            	//Add By zzg 2010_10_14
+            	case AVK_MUSIC:		//现在外壳上位置相反，所以和FM区分
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+				case AVK_FM:
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+            	//Add End
 				
                 case AVK_UP:
 

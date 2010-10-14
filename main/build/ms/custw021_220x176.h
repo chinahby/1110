@@ -22,7 +22,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //Add End
 
 #define FEATURE_LANG_INDONESIAN //add by yangdecai 2010/06/22
-#define FEATURE_ALL_KEY_PAD
+//#define FEATURE_ALL_KEY_PAD
 #endif
 
 #include "custw021.h"
