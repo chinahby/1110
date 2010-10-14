@@ -128,16 +128,8 @@ void disp_init(void)
 	gpio_tlmm_config(GPIO_OUTPUT_53);
 	gpio_tlmm_config(GPIO_OUTPUT_51);
 
-	(void)gpio_out(GPIO_OUTPUT_53, GPIO_HIGH_VALUE);
-	clk_busy_wait(5*1000);
-
-	(void)gpio_out(GPIO_OUTPUT_53, GPIO_LOW_VALUE);
-	clk_busy_wait(20*1000);
-
-	(void)gpio_out(GPIO_OUTPUT_53, GPIO_HIGH_VALUE);
-	clk_busy_wait(10*1000);
-
 	(void)gpio_out(GPIO_OUTPUT_51, GPIO_HIGH_VALUE);
+	(void)gpio_out(GPIO_OUTPUT_53, GPIO_HIGH_VALUE);
 	clk_busy_wait(10*1000);
 
 #if 0
