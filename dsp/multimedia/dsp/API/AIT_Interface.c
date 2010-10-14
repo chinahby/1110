@@ -51,11 +51,7 @@ unsigned short gLCDWidth = A8_MAIN_LCD_WIDTH;
 // Panel Related
 void AIT_ext_SetLCDWindow(unsigned short x,unsigned short y,unsigned short w,unsigned short h)
 {
-#if defined(__MTK_TARGET__)
-	extern LCD_Funcs  *MainLCD;
-	AIT_ASSERT_CHECK(MainLCD!=NULL&&MainLCD->LCD_SetWindow!=0);
-	MainLCD->LCD_SetWindow(x,y,w-1,h-1);
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
 //Customer define
     //extern void st7735_set_camera_area(uint32 start_row, uint32 start_col,uint32 end_row, uint32 end_col);
 
@@ -73,24 +69,7 @@ void AIT_ext_SetLCDRotate(unsigned char bRotate)
 	return;//need to implement in the lcd.c for full screen rotate play function
 #else
 
-#if defined(__MTK_TARGET__)
-	extern LCD_Funcs  *MainLCD;
-	AIT_ASSERT_CHECK(MainLCD!=NULL&&MainLCD->LCD_SetRotation!=0);
-	sys_IF_ait_set_bypass_mode(A8_ON);				
-	MainLCD->LCD_SetRotation(bRotate);
-	sys_IF_ait_set_bypass_mode(A8_OFF);
-
-	if(bRotate)
-	{
-		gA8MainLCDWidth = LCD_HEIGHT;
-		gA8MainLCDHeight = LCD_WIDTH;
-	}
-	else
-	{
-		gA8MainLCDWidth = LCD_WIDTH;
-		gA8MainLCDHeight = LCD_HEIGHT;
-	}
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
 
 #endif	
 	
@@ -507,215 +486,13 @@ t_sensor_manager* ait_tv_manager[] =
 
 void AIT_ext_cam_cmd_mapping(void)
 {
-#if defined(__MTK_TARGET__)
-	cam_command_map[CAM_PARAM_NONE] = 0;
-	cam_command_map[CAM_PARAM_ZOOM_FACTOR] = CAM_CTRL_ZOOM;
-	cam_command_map[CAM_PARAM_CONTRAST] = 0;
-	cam_command_map[CAM_PARAM_BRIGHTNESS] = 0;
-	cam_command_map[CAM_PARAM_HUE] = 0x00;
-	cam_command_map[CAM_PARAM_GAMMA] = 0;
-	cam_command_map[CAM_PARAM_WB] = CAM_CTRL_WB;
-	cam_command_map[CAM_PARAM_EXPOSURE] = CAM_CTRL_BRIGHTNESS;       /* EV compensation command */
-	cam_command_map[CAM_PARAM_EFFECT] = CAM_CTRL_EFFECT;   		/* effect selection command */
-	cam_command_map[CAM_PARAM_BANDING] = CAM_CTRL_DEBAND_MODE;
-	cam_command_map[CAM_PARAM_SATURATION]= 0;
-	cam_command_map[CAM_PARAM_NIGHT_MODE]=CAM_CTRL_NIGHT_MODE;
-	cam_command_map[CAM_PARAM_SHARPNESS]=0;
-	cam_command_map[CAM_PARAM_EV_VALUE]=0;
-	cam_command_map[CAM_PARAM_FLASH]=0;
-	cam_command_map[CAM_PARAM_FLASH_MODE ]=0;
-	cam_command_map[CAM_PARAM_AE_METERING]=0;
-	cam_command_map[CAM_PARAM_AF_KEY]=0;
-	cam_command_map[CAM_PARAM_AF_METERING]=0;
-	cam_command_map[CAM_PARAM_AF_MODE]=0;
-	cam_command_map[CAM_PARAM_MANUAL_FOCUS_DIR]=0;
-	cam_command_map[CAM_PARAM_SHUTTER_PRIORITY]=0;
-	cam_command_map[CAM_PARAM_APERTURE_PRIORITY]=0;
-	cam_command_map[CAM_PARAM_ISO]=0;
-	cam_command_map[CAM_PARAM_DSC_MODE]=0;
-	cam_command_map[CAM_PARAM_YUV_AF_STATUS]=0;
-	cam_command_map[CAM_PARAM_AF_OPERATION]=0;
-	cam_command_map[CAM_PARAM_AF_RANGE]=0;
-		
-	cam_ev_param_map[CAM_EV_POS_4_3] = DSC_EV_VALUE_POS_4;
-	cam_ev_param_map[CAM_EV_POS_3_3] = DSC_EV_VALUE_POS_3;
-	cam_ev_param_map[CAM_EV_POS_2_3] = DSC_EV_VALUE_POS_2;
-	cam_ev_param_map[CAM_EV_POS_1_3] = DSC_EV_VALUE_POS_1;
-	cam_ev_param_map[CAM_EV_ZERO] =	   DSC_EV_VALUE_ZERO;
-	cam_ev_param_map[CAM_EV_NEG_1_3] = DSC_EV_VALUE_NEG_1;
-	cam_ev_param_map[CAM_EV_NEG_2_3] = DSC_EV_VALUE_NEG_2;
-	cam_ev_param_map[CAM_EV_NEG_3_3] = DSC_EV_VALUE_NEG_3;
-	cam_ev_param_map[CAM_EV_NEG_4_3] = DSC_EV_VALUE_NEG_4;
-	cam_ev_param_map[CAM_EV_NIGHT_SHOT] = CAM_NO_OF_EV; /* Shouldn't work */
-
-	cam_effect_param_map[CAM_EFFECT_ENC_NORMAL] = DSC_NORMAL;
-	cam_effect_param_map[CAM_EFFECT_ENC_GRAYSCALE] = DSC_GRAYSCALE;
-	cam_effect_param_map[CAM_EFFECT_ENC_SEPIA] = DSC_SEPIA;
-	cam_effect_param_map[CAM_EFFECT_ENC_SEPIAGREEN] = DSC_SEPIA_GREEN;
-	cam_effect_param_map[CAM_EFFECT_ENC_SEPIABLUE] = DSC_SEPIA_BLUE;
-	cam_effect_param_map[CAM_EFFECT_ENC_COLORINV] = DSC_COLOR_INV;
-	cam_effect_param_map[CAM_EFFECT_ENC_GRAYINV] = DSC_GRAY_INV;
-	cam_effect_param_map[CAM_EFFECT_ENC_BLACKBOARD] = DSC_BLACKBOARD;
-	cam_effect_param_map[CAM_EFFECT_ENC_WHITEBOARD] = DSC_WHITEBOARD;
-	cam_effect_param_map[CAM_EFFECT_ENC_COPPERCARVING] = DSC_COPPER_CARVING;
-	cam_effect_param_map[CAM_EFFECT_ENC_EMBOSSMENT] = DSC_EMBOSSMENT;
-	cam_effect_param_map[CAM_EFFECT_ENC_BLUECARVING] = DSC_BLUE_CARVING;
-	cam_effect_param_map[CAM_EFFECT_ENC_CONTRAST] = 0;
-	cam_effect_param_map[CAM_EFFECT_ENC_JEAN] = 0;
-	cam_effect_param_map[CAM_EFFECT_ENC_SKETCH] = DSC_SKETCH;
-	cam_effect_param_map[CAM_EFFECT_ENC_OIL] = 0;
-
-	cam_jpg_qty_param_map[CAM_JPG_QTY_LOW]= DSC_JPEG_QUALITY_LOW;
-	cam_jpg_qty_param_map[CAM_JPG_QTY_NORMAL]= DSC_JPEG_QUALITY_NORMAL;
-	cam_jpg_qty_param_map[CAM_JPG_QTY_HIGH]= DSC_JPEG_QUALITY_HIGH;
-	cam_jpg_qty_param_map[CAM_JPG_QTY_FINE]= DSC_JPEG_QUALITY_FINE;
-	
-
-	cam_wb_param_map[CAM_WB_AUTO] = DSC_WB_AUTO;
-	cam_wb_param_map[CAM_WB_DAYLIGHT] = DSC_WB_DAYLIGHT;
-	cam_wb_param_map[CAM_WB_TUNGSTEN] = DSC_WB_TUNGSTEN;
-	cam_wb_param_map[CAM_WB_FLUORESCENT] = DSC_WB_FLUORESCENT;
-
-	cam_banding_param_map[CAM_BANDING_50HZ] = DSC_MODE_50HZ;
-	cam_banding_param_map[CAM_BANDING_60HZ] = DSC_MODE_60HZ;
-
-
-	cam_zoom_param_map[CAM_ZOOM_1X] = 0;
-	cam_zoom_param_map[CAM_ZOOM_2X] = 16;
-	cam_zoom_param_map[CAM_ZOOM_4X] = 16;
-	cam_zoom_param_map[CAM_ZOOM_6X] = 24;
-	cam_zoom_param_map[CAM_ZOOM_8X] = 24;
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
 
 #endif	
 	return;
 }
 //OS Related Function
-#if defined(__MTK_TARGET__)  
-AIT_MTD_LOCK dsp_lock;
-
-void AIT_ext_Create_Mutex(void)
-{
-	 if(dsp_lock.dsp_sem==NULL)
-	 	dsp_lock.dsp_sem= kal_create_sem( "dsp_sema", 1 );
-	 dsp_lock.lock_count = 0;
-   	 dsp_lock.owner_id = NULL;
-}
-
-unsigned char AIT_ext_Take_Semaphore(kal_wait_mode mode)
-{
-
-   	if( kal_query_systemInit() || INT_QueryExceptionStatus() ||kal_if_hisr())
-        	return 1;
-	{
-		kal_status status;
-		if(dsp_lock.dsp_sem == NULL)
-		{
-		      AIT_ext_Create_Mutex();
-		}	
-		status=kal_take_sem(dsp_lock.dsp_sem,KAL_INFINITE_WAIT);
-		return status==KAL_SUCCESS ? 1 : 0;
-	}
-}
-
-void AIT_ext_Give_Semaphore(void)
-{
-	if( kal_query_systemInit() || INT_QueryExceptionStatus() ||kal_if_hisr())
-	    	return;
-	{
-		if(dsp_lock.dsp_sem != NULL)
-		         	kal_give_sem(dsp_lock.dsp_sem);
-	}
-}
-
-//AIT Related PIN control
-void AIT_ext_ResetPinCtl(void)
-{
-
-	GPIO_ModeSetup(AIT701_RESET, 0);
-	GPIO_InitIO(1, AIT701_RESET);
-	
-	GPIO_WriteIO(1, AIT701_RESET);
-	Delayms(5);
-	GPIO_WriteIO(0, AIT701_RESET);
-	Delayms(10);
-	GPIO_WriteIO(1, AIT701_RESET);
-	Delayms(5);
-}
-
-void AIT_ext_BypassPinCtl(unsigned char bEnable)
-{
-	if(bEnable>1)
-	{
-		ASSERT(0)
-	}
-	GPIO_WriteIO_FAST(bEnable, AIT701_BYPASS);
-}
-
-void AIT_ext_ClockPinCtl(unsigned char bEnable)
-{
-	if(bEnable>2)
-	{
-		ASSERT(0)
-	}
-
-	if(bEnable==1)
-	{
-		GPIO_ModeSetup(AIT701_DSP_CLK, 2);
-		GPIO_SetClkOut(AIT701_CLKNUM, mode_f26m_ck);
-		Delayms(10);
-	}
-	else if(bEnable==0)
-	{	
-		GPIO_ModeSetup(AIT701_DSP_CLK, 0);	
-
-	}else if(bEnable==2)
-	{
-		GPIO_ModeSetup(AIT701_DSP_CLK, 0);
-		GPIO_InitIO(1, AIT701_DSP_CLK);
-		GPIO_WriteIO(1, AIT701_DSP_CLK);
-
-	}
-}
-
-void AIT_ext_Set_EMIMode(eEMI_MODE mode)
-{
-	extern kal_uint32 CS_AitBypass;
-	extern kal_uint32 CS_AitActiveWithoutPll;
-	extern kal_uint32 CS_AitActiveWithPll;
-	switch(mode)
-	{
-		case EMIMODE_BYPASS:
-			*EMI_CONC  = CS_AitBypass;
-			break;
-		
-		case EMIMODE_ACTIVE_PLL:
-		
-			*EMI_CONC  = CS_AitActiveWithPll;	
-		
-			break;
-			
-		case EMIMODE_ACTIVE_NO_PLL:
-			*EMI_CONC  = CS_AitActiveWithoutPll;	
-		
-			break;
-	
-	}
-}
-
-
-void sys_IF_ait_delay1us(u_int time)
-{
-	volatile u_int i;
-	volatile u_int j;
-
-	for ( j = 0; j < time; j++ )
-	{
-		for ( i = 0; i < /*4 **/ 16; i++ )
-		 ;
-	}
-}
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
 const unsigned char DCAM_EINT_NO = 0;
 static rex_crit_sect_type dsp_crit_sect = {0};
 #define Delayms(t) clk_busy_wait(1000*t)
@@ -767,7 +544,7 @@ void AIT_ext_ResetPinCtl(void)
 	Delayms(5);
 
 	(void)gpio_out(AIT701_RESET, GPIO_LOW_VALUE);
-	Delayms(10);
+	Delayms(20);
 
 	(void)gpio_out(AIT701_RESET, GPIO_HIGH_VALUE);
 	Delayms(5);
@@ -974,15 +751,13 @@ void AIT_ext_Give_Semaphore(void)
 //AIT Related PIN control
 void AIT_ext_ResetPinCtl(void)
 {
+	gpio_tlmm_config(AIT701_RESET);
 
-	GPIO_ModeSetup(AIT701_RESET, 0);
-	GPIO_InitIO(1, AIT701_RESET);
-	
-	GPIO_WriteIO(1, AIT701_RESET);
+	gpio_out(AIT701_RESET,GPIO_HIGH_VALUE);
 	Delayms(5);
-	GPIO_WriteIO(0, AIT701_RESET);
+	gpio_out(AIT701_RESET,GPIO_LOW_VALUE);
 	Delayms(10);
-	GPIO_WriteIO(1, AIT701_RESET);
+	gpio_out(AIT701_RESET,GPIO_HIGH_VALUE);
 	Delayms(5);
 }
 
@@ -992,9 +767,8 @@ void AIT_ext_BypassPinCtl(unsigned char bEnable)
 	{
 		ASSERT(0)
 	}
-	#if 0   //modi by yangdecai 09-25
-	GPIO_WriteIO_FAST(bEnable, AIT701_BYPASS);
-	#endif
+
+	gpio_out(AIT701_BYPASS,bEnable);
 }
 
 

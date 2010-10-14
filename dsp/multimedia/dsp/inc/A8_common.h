@@ -10,10 +10,6 @@
 #if !defined (AIT_COMMON_H)
 #define AIT_COMMON_H
 
-#ifdef WIN32
-#define MTK_PLATFORM
-#define __align(x)
-#endif
 
 #include <stdio.h>
 #include "assert.h"
@@ -62,27 +58,7 @@ typedef enum
 #define __QSC_TARGET__
 #endif
 
-#if defined(__MTK_TARGET__)
-#include "emi_hw.h"
-#include "math.h"
-#include "Reg_base.h"
-#include "kal_release.h"
-#include "stack_types.h"
-#include "syscomp_config.h"
-#include "custom_config.h"
-#include "drv_comm.h"
-#include "reg_base.h" 
-#include "emi_hw.h"
-#include "msdc_def.h"
-#include "sd_def.h"
-#include "fat_fs.h"
-#include "ext_camera.h"
-#include "med_api.h"
-#include "gpio_sw.h"
-
-#define MTK_PLATFORM
-#define EXTCLK_26M
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
 #include "msmhwioreg.h"
 #include "clk.h"
 #include "assert.h"

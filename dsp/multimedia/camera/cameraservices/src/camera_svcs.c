@@ -692,7 +692,7 @@ void camera_svcs_init(void)
 #endif
 
   /* Don't need gpios and clk regimes yet */
-  camsensor_unconfig_sensor_gpios_clks ();
+  //camsensor_unconfig_sensor_gpios_clks ();
 
   clk_def (&camera_wait_clk);
   rex_init_crit_sect(&camera_wait_clk_cs);

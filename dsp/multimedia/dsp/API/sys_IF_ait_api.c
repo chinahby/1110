@@ -97,14 +97,6 @@ void sys_IF_ait_set_input_clock(u_char ait_mode, u_char on)
 				case	A8_CAM:
 				case	A8_SD:
 				case	A8_USB:	
-#if defined(MTK_PLATFORM)
-					extern unsigned char ait_sleep_flg;
-					ait_sleep_flg = 1;
-
-					GPIO_ModeSetup(AIT701_DSP_CLK, AIT701_DSPCLK_CNGDATA);
-					GPIO_SetClkOut(AIT701_CLKNUM, mode_f26m_ck/*mode_f26m_ck*/);
-					sys_IF_ait_delay1ms(5);//sys_IF_ait_delay1ms(10);
-#endif
 					break;
 				}
 		}
@@ -139,11 +131,6 @@ void sys_IF_ait_set_input_clock(u_char ait_mode, u_char on)
 				break;
 		}	
 		if((FALSE == gbCamEn) && (FALSE==gbUsbEn) && (FALSE==gbSdEn)){	
-#if defined(MTK_PLATFORM)	
-			extern static unsigned char ait_sleep_flg;
-			ait_sleep_flg = 1;
-			GPIO_ModeSetup(AIT701_DSP_CLK, 0);			
-#endif
 		}		
 	}
 

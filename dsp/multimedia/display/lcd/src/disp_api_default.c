@@ -66,9 +66,9 @@ INCLUDE FILES FOR MODULE
 #endif 
 #include "pm.h"
 
-#ifdef FEATURE_TORCH_SUPPORT
+#include "clk.h"
 #include "gpio_1100.h"
-#endif
+
 
 int lcd_mddi_cur_panel = MDDI_MC4_PRIM;
 int fd = -1;
@@ -102,6 +102,8 @@ extern int tm_cstn128x128_install(char * str);
 extern int zgd_tft177_install(char *);
 #endif
 
+extern int zgd_tft220x176_install(char * str);
+
 #ifdef FEATURE_BOOT_SPLASH_SCREEN
 extern void disp_epson_S1D19120_boot_chg_splash_screen (void);
 #endif
@@ -123,6 +125,22 @@ static void mdp_init(void);
 
 void disp_init(void)
 {
+	gpio_tlmm_config(GPIO_OUTPUT_53);
+	gpio_tlmm_config(GPIO_OUTPUT_51);
+
+	(void)gpio_out(GPIO_OUTPUT_53, GPIO_HIGH_VALUE);
+	clk_busy_wait(5*1000);
+
+	(void)gpio_out(GPIO_OUTPUT_53, GPIO_LOW_VALUE);
+	clk_busy_wait(20*1000);
+
+	(void)gpio_out(GPIO_OUTPUT_53, GPIO_HIGH_VALUE);
+	clk_busy_wait(10*1000);
+
+	(void)gpio_out(GPIO_OUTPUT_51, GPIO_HIGH_VALUE);
+	clk_busy_wait(10*1000);
+
+#if 0
 #ifndef CUST_EDITION
   if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
     return;
@@ -138,10 +156,15 @@ void disp_init(void)
 #endif   
     return;  
 #endif
-
-  fd = drv_open(PRIMARY_LCD_NAME);
-  drv_init(fd);
-  disp_powerup();    
+#endif
+	if(zgd_tft220x176_install(PRIMARY_LCD_NAME) == -1)
+	{
+		return;
+	}
+	
+	fd = drv_open(PRIMARY_LCD_NAME);
+	drv_init(fd);
+	disp_powerup();    
   
 #ifndef FEATURE_MDDI
   lcd_info_1 = disp_get_info();
