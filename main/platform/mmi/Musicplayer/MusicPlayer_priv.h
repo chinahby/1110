@@ -463,8 +463,8 @@ if(!(x))         \
 #define ADDVOLUMEPRESS_H 18
 
 //音量
-#define VOLUME_X 5
-#define VOLUME_Y 91
+#define VOLUME_X 6
+#define VOLUME_Y 92
 #define VOLUME_W 12
 #define VOLUME_H 18
 
@@ -474,7 +474,7 @@ if(!(x))         \
 
 //当前歌曲的总时间
 #define TOTALTIME_X (SCREEN_WIDTH - PLAYINGTICK_X - TIME_WIDTH)
-#define TOTALTIME_Y (SCREEN_HEIGHT/2 - TIME_HEIGHT) 
+#define TOTALTIME_Y (SCREEN_HEIGHT/2 - 2*TIME_HEIGHT) 
 
 //当前播放时间
 #define PLAYINGTICK_X 9

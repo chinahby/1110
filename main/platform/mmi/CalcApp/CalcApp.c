@@ -337,13 +337,13 @@ when         who            what, where, why
 //显示数字宽度
 #define CALC_NUMBER_WIDTH             9
 //显示数字高度
-#define CALC_NUMBER_HEIGHT            19
+#define CALC_NUMBER_HEIGHT            18
 //显示计算区域X坐标原点
-#define CALC_VAL_RECT_X                  10
+#define CALC_VAL_RECT_X                  7
 //显示计算区域最底行Y坐标原点
 #define CALC_VAL_RECT_Y                  22
 //显示计算区域宽度
-#define CALC_VAL_RECT_WIDTH          90
+#define CALC_VAL_RECT_WIDTH          112
 //显示单行计算区域高度
 #define CALC_VAL_RECT_HEIGHT         26
 //显示数字间间隔
