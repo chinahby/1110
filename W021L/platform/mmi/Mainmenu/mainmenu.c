@@ -948,6 +948,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_4, IDS_MAIN_MENU_TITLE_4, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_5, IDS_MAIN_MENU_TITLE_5, NULL, 0);			
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_6, IDS_MAIN_MENU_TITLE_6, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_7, IDS_MAIN_MENU_TITLE_7, NULL, 0);
 
            // IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
@@ -1042,6 +1043,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 case IDS_MAIN_MENU_TITLE_4:
                 case IDS_MAIN_MENU_TITLE_5:
 				case IDS_MAIN_MENU_TITLE_6:
+				case IDS_MAIN_MENU_TITLE_7:
                     StartApplet(pMe, wParam - IDS_MAIN_MENU_TITLE_1);
                     return TRUE;
             }
@@ -1092,10 +1094,15 @@ static boolean StartApplet(MainMenu *pMe, int i)
         case 3:
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
             break;   
+
         case 4:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
-        case 5:			
+		case 5:
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+			break;
+
+        case 6:			
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;			
 

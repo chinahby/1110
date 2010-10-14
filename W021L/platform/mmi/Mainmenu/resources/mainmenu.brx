@@ -35,6 +35,9 @@
 		<Text>Alarm</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_6">
+		<Text>Calculator</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_7">
 		<Text>Settings</Text>
 	</STRING>
 
