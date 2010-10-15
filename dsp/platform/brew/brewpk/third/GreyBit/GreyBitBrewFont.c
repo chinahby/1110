@@ -14,7 +14,11 @@
 #define RELEASEIF(p) do { if (p) { IBASE_Release((IBase*)(p)); p = 0; } } while (0)
 #endif
 
+#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
+#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"/systemar.gvf"
+#else
 #define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"/systemen.gvf"
+#endif
 
 #define BIGNUMBER_FONT_SIZE 24
 #define NORMAL_FONT_SIZE    14
@@ -61,7 +65,11 @@ static IFont gFontBigNumber        = {&gOEMFontFuncs, 0, BIGNUMBER_FONT_SIZE,FAL
 
 static GBHANDLE g_pLibrary = NULL;
 static GBHANDLE g_pLoader  = NULL;
+#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
+extern const AEEConstFile gSYSTEMAR_GVF;
+#else
 extern const AEEConstFile gSYSTEMEN_GVF;
+#endif
 
 void GreyBitBrewFont_Init(void)
 {
@@ -72,7 +80,11 @@ void GreyBitBrewFont_Init(void)
     if(g_pLibrary){
         if(g_pLoader == NULL){
             //g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
-            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMEN_GVF.pFileData, gSYSTEMEN_GVF.dwDataSize);
+            #if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
+            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMAR_GVF.pFileData, gSYSTEMAR_GVF.dwDataSize);
+			#else
+			g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMEN_GVF.pFileData, gSYSTEMEN_GVF.dwDataSize);
+			#endif
         }
     }
 }
