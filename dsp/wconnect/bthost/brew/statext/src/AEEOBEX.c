@@ -166,7 +166,7 @@ int AEEOBEXServer_New(IShell* ps, AEECLSID cls, void** ppif)
     // allocate pMe  -- dont need this to be in system memory
     //Note that the corresponding OEM object however will need to be allocated
     //in system memory
-    pMe = (IOBEX*) AEE_NewClassEx( (IBaseVtbl*)&gpvtIOBEXServer,
+    pMe = (IOBEX*) AEE_OEM_NEWCLASSEX( (IBaseVtbl*)&gpvtIOBEXServer,
                                  sizeof(IOBEX), FALSE);
     if ( pMe == NULL )
     {
@@ -241,7 +241,7 @@ int AEEOBEXClient_New(IShell* ps, AEECLSID cls, void** ppif)
 
 
     // allocate pMe -- in application memory
-    pMe = (IOBEX*) AEE_NewClass( (IBaseVtbl*)&gpvtIOBEXClient,
+    pMe = (IOBEX*) AEE_OEM_NEWCLASS( (IBaseVtbl*)&gpvtIOBEXClient,
                                  sizeof(IOBEX));
     if ( pMe == NULL )
     {

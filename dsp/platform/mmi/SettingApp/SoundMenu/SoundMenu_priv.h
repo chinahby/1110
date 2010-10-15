@@ -288,6 +288,8 @@ typedef struct _CSoundMenu
     IAnnunciator         *m_pIAnn;
     AECHAR              *m_enter_address;
     boolean            m_ringer_be;
+	//MODI BY YANGDECAI 09-27
+	uint16             m_slecet_id;
 } CSoundMenu;
 
 /*==============================================================================
@@ -337,6 +339,9 @@ typedef struct _CSoundMenu
 #define AUTOANSWER_ENTRY    2                   //从自动关机菜单调用ISoundMenu_Autoanswer接口启动SoundMenu Applet
 #define ENTER_RINGER_LIST    3 
 #define SOUNDMENU_VOLUME_LEVELS    6
+#define POWERONRINGID         13   //ADD BY YANGDECAI 09-27
+#define POWEROFFRINGID        14
+
 #define SOUNDMENU_VOLUME_IMAGE     "fs:/image/notice/volume.png"
 /*==============================================================================
                                  全局数据

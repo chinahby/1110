@@ -367,6 +367,119 @@ typedef struct _CFmRadio
 #define FMRADIO_VOLUME_BLOCK_SIZE   	4//5
 //状态指示灯大小
 #define FMRADIO_LED_LIGHT_SIZE          12
+
+#elif defined(FEATURE_DISP_220X176)
+//当前操作字符串显示y偏移
+#define FMRADIO_OPERATION_YOFFSET   	14
+//频率图像显示区域x偏移
+#define FMRADIO_CHANNEL_XOFFSET      	12//30//12
+//频率图像显示区域y偏移
+#define FMRADIO_CHANNEL_YOFFSET      	46//52
+//频率字符显示y偏移
+#define FMRADIO_CHANNEL_FREQ_YOFFSET 	10//97
+//频率指针高度
+#define FMRADIO_CURSOR_DY           	4
+//音量显示区域x偏移
+#define FMRADIO_VOLUME_XOFFSET        	30//49
+//音量显示区域长度
+#define FMRADIO_VOLUME_LENGTH         	60//93
+//音量显示区域y偏移
+#define FMRADIO_VOLUME_YOFFSET        	40//94//113
+//音量滑块大小
+#define FMRADIO_VOLUME_BLOCK_SIZE   	4//5
+//状态指示灯大小
+#define FMRADIO_LED_LIGHT_SIZE          12
+
+
+#elif defined(FEATURE_DISP_128X160)
+//当前操作字符串显示y偏移
+#define FMRADIO_OPERATION_YOFFSET   	14
+//频率图像显示区域x偏移
+#define FMRADIO_CHANNEL_XOFFSET      	12//30//12
+//频率图像显示区域y偏移
+#define FMRADIO_CHANNEL_YOFFSET      	46//52
+//频率字符显示y偏移
+#define FMRADIO_CHANNEL_FREQ_YOFFSET 	10//97
+//频率指针高度
+#define FMRADIO_CURSOR_DY           	4
+//音量显示区域x偏移
+#define FMRADIO_VOLUME_XOFFSET        	30//49
+//音量显示区域长度
+#define FMRADIO_VOLUME_LENGTH         	60//93
+//音量显示区域y偏移
+#define FMRADIO_VOLUME_YOFFSET        	40//94//113
+//音量滑块大小
+#define FMRADIO_VOLUME_BLOCK_SIZE   	4//5
+//状态指示灯大小
+#define FMRADIO_LED_LIGHT_SIZE          12
+
+#elif defined(FEATURE_DISP_176X220)
+//当前操作字符串显示y偏移
+#define FMRADIO_OPERATION_YOFFSET   	14
+//频率图像显示区域x偏移
+#define FMRADIO_CHANNEL_XOFFSET      	12//30//12
+//频率图像显示区域y偏移
+#define FMRADIO_CHANNEL_YOFFSET      	46//52
+//频率字符显示y偏移
+#define FMRADIO_CHANNEL_FREQ_YOFFSET 	10//97
+//频率指针高度
+#define FMRADIO_CURSOR_DY           	4
+//音量显示区域x偏移
+#define FMRADIO_VOLUME_XOFFSET        	30//49
+//音量显示区域长度
+#define FMRADIO_VOLUME_LENGTH         	60//93
+//音量显示区域y偏移
+#define FMRADIO_VOLUME_YOFFSET        	40//94//113
+//音量滑块大小
+#define FMRADIO_VOLUME_BLOCK_SIZE   	4//5
+//状态指示灯大小
+#define FMRADIO_LED_LIGHT_SIZE          12
+
+#elif defined(FEATURE_DISP_240X320)
+//当前操作字符串显示y偏移
+#define FMRADIO_OPERATION_YOFFSET   	14
+//频率图像显示区域x偏移
+#define FMRADIO_CHANNEL_XOFFSET      	12//30//12
+//频率图像显示区域y偏移
+#define FMRADIO_CHANNEL_YOFFSET      	46//52
+//频率字符显示y偏移
+#define FMRADIO_CHANNEL_FREQ_YOFFSET 	10//97
+//频率指针高度
+#define FMRADIO_CURSOR_DY           	4
+//音量显示区域x偏移
+#define FMRADIO_VOLUME_XOFFSET        	30//49
+//音量显示区域长度
+#define FMRADIO_VOLUME_LENGTH         	60//93
+//音量显示区域y偏移
+#define FMRADIO_VOLUME_YOFFSET        	40//94//113
+//音量滑块大小
+#define FMRADIO_VOLUME_BLOCK_SIZE   	4//5
+//状态指示灯大小
+#define FMRADIO_LED_LIGHT_SIZE          12
+
+#elif defined(FEATURE_DISP_320X240)
+//当前操作字符串显示y偏移
+#define FMRADIO_OPERATION_YOFFSET   	14
+//频率图像显示区域x偏移
+#define FMRADIO_CHANNEL_XOFFSET      	12//30//12
+//频率图像显示区域y偏移
+#define FMRADIO_CHANNEL_YOFFSET      	46//52
+//频率字符显示y偏移
+#define FMRADIO_CHANNEL_FREQ_YOFFSET 	10//97
+//频率指针高度
+#define FMRADIO_CURSOR_DY           	4
+//音量显示区域x偏移
+#define FMRADIO_VOLUME_XOFFSET        	30//49
+//音量显示区域长度
+#define FMRADIO_VOLUME_LENGTH         	60//93
+//音量显示区域y偏移
+#define FMRADIO_VOLUME_YOFFSET        	40//94//113
+//音量滑块大小
+#define FMRADIO_VOLUME_BLOCK_SIZE   	4//5
+//状态指示灯大小
+#define FMRADIO_LED_LIGHT_SIZE          12
+
+
 #else
 //当前操作字符串显示y偏移
 #define FMRADIO_OPERATION_YOFFSET   	14

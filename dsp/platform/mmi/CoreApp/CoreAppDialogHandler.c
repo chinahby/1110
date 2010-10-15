@@ -55,7 +55,6 @@ extern void OEMPriv_DrawMessageCB(void *pUnused);
 extern boolean   IsRunAsUIMVersion(void);
 extern boolean   IsRunAsFactoryTestMode(void);
 #endif
-#define MASSCARD_ROOTDIR   "fs:/card0/" //add by yangdecai 2010-09-10
 /*==============================================================================
 
                                宏定义和常数
@@ -73,6 +72,12 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8)
 #define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))
 #define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))
+#elif defined(FEATURE_VERSION_H19C)
+#define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT) + 1000)
+#define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT) + 1000)
+#elif defined(FEATURE_VERSION_ITEL)
+#define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))*3
+#define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))*3
 #else
 #define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
 #define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
@@ -99,8 +104,36 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define DATA_X				5
 #define DATA_Y				36
 
-#define WEEK_X                        5
-#define WEEK_Y                        52
+#define WEEK_X              5
+#define WEEK_Y              52
+#elif defined(FEATURE_DISP_220X176)
+
+#define IDLE_D_CLOCK_X 		5
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				5
+#define RPLMN_Y				20
+
+#define DATA_X				5
+#define DATA_Y				36
+
+#define WEEK_X              5
+#define WEEK_Y              52
+
+
+#elif defined(FEATURE_DISP_128X160)
+
+#define IDLE_D_CLOCK_X 		5
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				5
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+18)
+
+#define DATA_X				5
+#define DATA_Y				(RPLMN_Y + 16) 
+
+#define WEEK_X              5
+#define WEEK_Y              (DATA_Y+16)
 
 #elif defined(FEATURE_DISP_176X220)
 
@@ -112,6 +145,38 @@ extern boolean   IsRunAsFactoryTestMode(void);
 
 #define DATA_X				IDLE_D_CLOCK_X
 #define DATA_Y				(RPLMN_Y + 30) 
+
+#define WEEK_X               5
+#define WEEK_Y               52
+
+#elif defined(FEATURE_DISP_240X320)
+
+#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y + 30) 
+
+#define WEEK_X              5
+#define WEEK_Y              52
+
+#elif defined(FEATURE_DISP_320X240)
+
+#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_Y 		25
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y + 30) 
+
+#define WEEK_X              5
+#define WEEK_Y              52
+
 
 #else
 
@@ -271,12 +336,6 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe);
 static void CoreApp_GetSPN(CCoreApp *pMe);
 
 static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, int nErr);
-
-//add by yangdecai  2010-09-10
-static boolean CoreApp_TestCard(CCoreApp *pMe);
-static void    CoreApp_ResetRing(CCoreApp *pMe);
-//add by yangdecai end
-
 
 /*==============================================================================
 
@@ -1254,6 +1313,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                 //EmergencyNumber pTepItem ;
                 //EmergencyNumber pItem;
                 int   i = 0;
+				MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler....................................",0,0,0);
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_EMERGENCYNUM_TABLE, (void*)&emerg_tab, sizeof(EmergencyNum_Table));
                 
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
@@ -1261,10 +1321,12 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
+				MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler............................SIZE:%d",emerg_tab.emert_size,0,0);
                 for(i=0; i<emerg_tab.emert_size; i++)
                 {
                     wstrNum[0] = 0;
                     STRTOWSTR(emerg_tab.emerg_num[i].num_buf, wstrNum, sizeof(wstrNum));
+					MSG_FATAL("emerg_tab.emerg_num[i].num_buf::::%s",emerg_tab.emerg_num[i].num_buf,0,0);
                     IMENUCTL_AddItem(pMenu, NULL, NULL, 500+i, wstrNum, NULL);
                 }
                 //SETAEERECT(&rc,  0, 0, pMe->m_rc.dx, pMe->m_rc.dy - (BOTTOMBAR_HEIGHT + IDLE_ICON_HEIGHT));
@@ -2173,7 +2235,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                                        uint32     dwParam)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
-    
+    MSG_FATAL("IDD_STARTUPANI_Handler Start",0,0,0);
     switch (eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -2187,6 +2249,10 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                 if ( NULL == pMe->m_pStartupAniImg )
                 {
                     pMe->m_pStartupAniImg = ISHELL_LoadImage( pMe->a.m_pIShell, PWRON_ANI_FILE);
+                    if(pMe->m_pStartupAniImg == NULL)
+                    {
+                        MSG_FATAL("pMe->m_pStartupAniImg == NULL",0,0,0);
+                    }
                 }
 #endif
                 (void) ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW, 0, 0);
@@ -2238,12 +2304,14 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             return TRUE; 
 
         case EVT_DIALOG_END:
+            MSG_FATAL("IDD_STARTUPANI_Handler EVT_DIALOG_END",0,0,0);
             //IALERT_StopRingerAlert(pMe->m_pAlert);
             if (pMe->m_eDlgRet != DLGRET_OK)
             {// 开机动画播放过程中被其他应用启动时中断
 #ifndef FEATURE_USES_LOWMEM
                 if (NULL != pMe->m_pStartupAniImg)
                 {     
+                    MSG_FATAL("IDD_STARTUPANI_Handler EVT_DIALOG_END 1",0,0,0);
                     (void)ISHELL_CancelTimer(pMe->a.m_pIShell, (PFNNOTIFY)CoreApp_PlayPwrOnAni, pMe);
                     IIMAGE_Stop(pMe->m_pStartupAniImg);
                     IIMAGE_Release(pMe->m_pStartupAniImg);
@@ -2255,6 +2323,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                 (void)ISHELL_CancelTimer(pMe->a.m_pIShell, (PFNNOTIFY)CoreApp_PlayPwrOnAni, pMe);
                 pMe->m_eDlgRet = DLGRET_OK;
 #endif
+                MSG_FATAL("IDD_STARTUPANI_Handler EVT_DIALOG_END 2",0,0,0);
                 IALERT_StopRingerAlert(pMe->m_pAlert);
             }
             return TRUE;
@@ -2361,6 +2430,7 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
                                   1000,
                                   DialogTimeoutCallback, 
                                   pMe);
+#ifdef FEATURE_RUIM_PHONEBOOK
             if(IsRunAsUIMVersion())
             {
                 if(IRUIM_IsCardConnected(pMe->m_pIRUIM))
@@ -2373,7 +2443,7 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
                     }
                 }
             }
-            
+#endif
             if (NULL == pMe->m_pAddrPhone)
             {            
                 (void) ISHELL_CreateInstance( pMe->a.m_pIShell,
@@ -2557,11 +2627,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			}
 			
             MEMSET(pMe->m_wstrEnterNum, 0, sizeof(pMe->m_wstrEnterNum));
-
-			if(!CoreApp_TestCard(pMe))
-			{
-				CoreApp_ResetRing(pMe);
-			}
 			
             //CoreApp_GetRecordCount(pMe);
             CoreApp_DrawWallPaper(pMe);
@@ -2735,6 +2800,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             switch (wParam)
             {
+            	//Add By zzg 2010_10_14
+            	case AVK_MUSIC:		//现在外壳上位置相反，所以和FM区分
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+				case AVK_FM:
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+            	//Add End
 				
                 case AVK_UP:
 
@@ -2743,16 +2814,18 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
                 case AVK_DOWN:
 				{
-#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021)                      
-#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
+//#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021) && !defined(FEATURE_PROJECT_W021_128x160) && !defined (FEATURE_PROJECT_W021_176X220) && !defined (FEATURE_PROJECT_W021_240X320)&& !defined (FEATURE_PROJECT_W021_220X176) && !defined (FEATURE_PROJECT_W021_320X240)
+#if !defined(FEATURE_IDLE_TORCH_DOWNKEY)	
+
+	#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
-#elif defined (FEATURE_VERSION_SMART)
+	#elif defined (FEATURE_VERSION_SMART)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
-#elif defined (FEATURE_VERSION_M8)
+	#elif defined (FEATURE_VERSION_M8)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
-#else
+	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
-#endif
+	#endif
 #else
                     MSG_FATAL("in turnOnTorch",0,0,0);
                     if ( pMe->TorchOn == FALSE )
@@ -2804,7 +2877,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
 #elif defined (FEATURE_FMN2010)
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
-               ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
+               ret=  CoreApp_LaunchApplet(pMe, AEECLSID_FLEXIGURU);
 #elif defined (FEATURE_FPT005)
 			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 #else
@@ -2976,7 +3049,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     break;
 				case AVK_SHIFT:
 					{
-					#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+					//#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+					#if defined (FEATURE_DOUBLE_SHIFT_NOTEQUAL_W)
 						pMe->m_isShift = FALSE;
 						return TRUE;
 					#else
@@ -3999,7 +4073,40 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		   WEEK_Y,
 		   (pMe->m_rc.dx-2*WEEK_X), 
 		   pMe->m_nNormalFontHeight);
+#elif defined(FEATURE_DISP_220X176)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
+
+#elif defined (FEATURE_DISP_128X160)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
+#elif defined (FEATURE_DISP_176X220)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
+#elif defined (FEATURE_DISP_240X320)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
+#elif defined (FEATURE_DISP_320X240)
+	SETAEERECT(&rc_week, 
+		   WEEK_X,
+		   WEEK_Y,
+		   (pMe->m_rc.dx-2*WEEK_X), 
+		   pMe->m_nNormalFontHeight);
+	   
 #endif
+
 #else
     SETAEERECT(&rc, 
                1,
@@ -4120,6 +4227,14 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_160X128)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_220X176)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_128X160)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_240X320)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);	
+#elif defined(FEATURE_DISP_320X240)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);	
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
 #endif //FEATURE_DISP_176X220
@@ -4132,6 +4247,14 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_160X128)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_220X176)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_128X160)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_240X320)
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#elif defined(FEATURE_DISP_320X240)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -4146,6 +4269,14 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X128)
                 WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #elif defined(FEATURE_DISP_160X128)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_220X176)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_128X160)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_240X320)
+				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#elif defined(FEATURE_DISP_320X240)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #else
                 WSTRLCPY(wFormat,L"%02d/%02d",63);
@@ -4199,7 +4330,46 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   IDF_ALIGN_MIDDLE
                                   | IDF_ALIGN_RIGHT
                                   | IDF_TEXT_TRANSPARENT); 
-
+#elif defined(FEATURE_DISP_220X176)
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  12,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
+#elif defined(FEATURE_DISP_128X160)
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  12,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
+#elif defined(FEATURE_DISP_240X320)
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  12,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
+#elif defined(FEATURE_DISP_320X240)
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  12,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
 #else
         DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
@@ -4249,6 +4419,46 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     MSG_FATAL("Strlen=%d, rc_date.x=%d", strlen, rc_date.x, 0);
 }
 #elif defined(FEATURE_DISP_160X128)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_date, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_220X176)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_date, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_128X160)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_date, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_240X320)
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              &wszDate[5], -1,
+                              0, 0, &rc_date, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+#elif defined(FEATURE_DISP_320X240)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -4346,6 +4556,14 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               | IDF_ALIGN_RIGHT
 #elif defined(FEATURE_DISP_160X128)
 							  | IDF_ALIGN_RIGHT
+#elif defined(FEATURE_DISP_220X176)
+							  | IDF_ALIGN_RIGHT							  
+#elif defined(FEATURE_DISP_128X160)
+							  | IDF_ALIGN_RIGHT		
+#elif defined(FEATURE_DISP_240X320)
+							  | IDF_ALIGN_RIGHT		
+#elif defined(FEATURE_DISP_320X240)
+							  | IDF_ALIGN_RIGHT								  
 #else
                               | IDF_ALIGN_LEFT
 #endif //FEATURE_DISP_176X220
@@ -4411,9 +4629,39 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 ==============================================================================*/
 static void CoreApp_PlayPwrOnAni(CCoreApp *pMe) 
 {
+#ifdef FEATURE_VERSION_KARBONN
+	// 开始播放开机动画
+	if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT )
+	{
+    	IIMAGE_Start( pMe->m_pStartupAniImg,
+                            0,
+                            0);
+		pMe->m_wStartupAniTime = PWRON_ANI_FRAME_COUNT;
+		(void) ISHELL_SetTimer(pMe->a.m_pIShell,
+                             ANI_RATE,
+                             (PFNNOTIFY)CoreApp_PlayPwrOnAni,
+                             (void*)pMe);
+	}
+	else
+    {
+        IBACKLIGHT_Enable(pMe->m_pBacklight);
+        IALERT_StopRingerAlert(pMe->m_pAlert);
+#ifndef FEATURE_USES_LOWMEM
+        if ( NULL != pMe->m_pStartupAniImg )
+        {     
+            IIMAGE_Stop(pMe->m_pStartupAniImg);
+            IIMAGE_Release(pMe->m_pStartupAniImg);
+            pMe->m_pStartupAniImg = NULL;
+        }
+#endif
+        CLOSE_DIALOG(DLGRET_OK)
+    }
+
+#else
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
+    MSG_FATAL("CoreApp_PlayPwrOnAni Start",0,0,0);
 #ifndef FEATURE_USES_LOWMEM
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  )
 #else
@@ -4421,6 +4669,12 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 #endif
     {
 #ifndef FEATURE_USES_LOWMEM
+
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)
+        MSG_FATAL("CoreApp_PlayPwrOnAni 20",0,0,0); 
+        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定开机动画的帧数
+#else
+        MSG_FATAL("CoreApp_PlayPwrOnAni 10",0,0,0);
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
         // 设置动画速度(毫秒)
@@ -4431,20 +4685,31 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, ImgInfo.cx/PWRON_ANI_FRAME_COUNT, ImgInfo.cy );
+#endif
+
+
 
         // 开始播放开机动画
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)      
+        MSG_FATAL("CoreApp_PlayPwrOnAni 21",0,0,0);
+        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
+        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
+#else
+        MSG_FATAL("CoreApp_PlayPwrOnAni 11",0,0,0);
         IIMAGE_Start( pMe->m_pStartupAniImg,
                             (pMe->m_rc.dx - ImgInfo.cx/PWRON_ANI_FRAME_COUNT)/2,
                             (pMe->m_rc.dy - ImgInfo.cy)/2 );
+#endif
 
         pMe->m_wStartupAniTime++; // 滚动播放次数
-        //AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOnAni,  (void*)pMe);
+        //AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOnAni,  (void*)pMe);       
        (void) ISHELL_SetTimer(pMe->a.m_pIShell,
                              PWRON_ANI_TIME,
                              (PFNNOTIFY)CoreApp_PlayPwrOnAni,
                              (void*)pMe);
 #else
         {
+            MSG_FATAL("CoreApp_PlayPwrOnAni 3",0,0,0);
             #define PWRON_STR L"Welcome"
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
@@ -4467,11 +4732,13 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     }
     else
     {
+        MSG_FATAL("CoreApp_PlayPwrOnAni 4",0,0,0);
         IBACKLIGHT_Enable(pMe->m_pBacklight);
         IALERT_StopRingerAlert(pMe->m_pAlert);
 #ifndef FEATURE_USES_LOWMEM
         if ( NULL != pMe->m_pStartupAniImg )
         {     
+            MSG_FATAL("CoreApp_PlayPwrOnAni 5",0,0,0);
             IIMAGE_Stop(pMe->m_pStartupAniImg);
             IIMAGE_Release(pMe->m_pStartupAniImg);
             pMe->m_pStartupAniImg = NULL;
@@ -4479,7 +4746,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 #endif
         CLOSE_DIALOG(DLGRET_OK)
     }
-    
+#endif
 }
 
 /*==============================================================================
@@ -4497,6 +4764,35 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 ==============================================================================*/
 static void CoreApp_PlayPwrOffAni(CCoreApp *pMe) 
 {
+#ifdef FEATURE_VERSION_KARBONN
+		// 开始播放开机动画
+		if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT )
+		{
+			IIMAGE_Start( pMe->m_pStartupAniImg,
+								0,
+								0);
+			pMe->m_wStartupAniTime = PWROFF_ANI_FRAME_COUNT;
+			(void) ISHELL_SetTimer(pMe->a.m_pIShell,
+								 ANI_RATE-500,
+								 (PFNNOTIFY)CoreApp_PlayPwrOffAni,
+								 (void*)pMe);
+		}
+		else
+		{
+#ifndef FEATURE_USES_LOWMEM
+        	if ( NULL != pMe->m_pStartupAniImg )
+        	{     
+           	 	IIMAGE_Stop(pMe->m_pStartupAniImg);
+            	IIMAGE_Release(pMe->m_pStartupAniImg);
+            	pMe->m_pStartupAniImg = NULL;
+        	}
+#endif
+        	// 发送事件关闭开机动画播放对话
+        	(void)ISHELL_SendEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP, 
+                                EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
+		}
+	
+#else
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
@@ -4507,6 +4803,10 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
 #endif
     {
 #ifndef FEATURE_USES_LOWMEM
+
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)
+        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
+#else
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
         // 设置动画速度(毫秒)
@@ -4518,12 +4818,16 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, 
                                 ImgInfo.cx/PWROFF_ANI_FRAME_COUNT, ImgInfo.cy );
-
-        // 开始播放开机动画
+#endif
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)
+        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
+        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
+#else
+        // 开始播放关机动画
         IIMAGE_Start( pMe->m_pStartupAniImg, 
                                 (pMe->m_rc.dx - ImgInfo.cx/PWROFF_ANI_FRAME_COUNT)/2, 
                                 (pMe->m_rc.dy - ImgInfo.cy)/2 );
-        
+#endif
         pMe->m_wStartupAniTime++; // 滚动播放次数
         AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
         //(void) ISHELL_SetTimer(pMe->a.m_pIShell,
@@ -4562,6 +4866,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         (void)ISHELL_SendEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP, 
                                 EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
     }
+#endif
 
 }
 
@@ -4757,6 +5062,21 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     boolean missed_call_icon;
     //static boolean b_flag = TRUE;
 
+	/*
+	//Add for test
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_WAP_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_LOCKSTATUS, ANNUN_STATE_LOCKSTATUS_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_HEADSET_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_MMS, ANNUN_MMS_FULL_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+	return;
+	//Add End
+	*/
+
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &b_headset, sizeof(b_headset));
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));//CFGI_ALERT_TYPE
@@ -4764,19 +5084,19 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 
     if(pMe->m_pIAnn != NULL)
     {
-    if (b_headset)
-    {
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
-    if (b_FMBackground)
-    {
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_ON/*ANNUN_STATE_ON*/);
-    }
-    }
-    else
-    {
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
-    }
+	    if (b_headset)
+	    {
+	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
+		    if (b_FMBackground)
+		    {
+		        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_ON/*ANNUN_STATE_ON*/);
+		    }
+	    }
+	    else
+	    {
+	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
+	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
+	    }
     }
     MSG_FATAL("alertType=%d",alertType,0,0);
     switch(alertType)
@@ -5325,21 +5645,29 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
     
     if(pWallPaper != NULL)
     {
-        SETAEERECT(&clip, 0, 78, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
+    	AEEImageInfo m_ImageInfo;
+		IImage_GetInfo(pWallPaper,&m_ImageInfo);
+		MSG_FATAL("m_ImageInfo.cx=%d, m_ImageInfo.cy=%d", m_ImageInfo.cx, m_ImageInfo.cy, 0);
+        SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
         IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
         IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
         MSG_FATAL("clip.x=%d, clip.y=%d,pMe->m_rc.dx=%d", clip.x, clip.y, pMe->m_rc.dx);
-        IIMAGE_SetOffset( pWallPaper, clip.x,clip.y);
+        IIMAGE_SetOffset( pWallPaper, ( m_ImageInfo.cx -  pMe->m_rc.dx)/2,MUSIC_WIDTH-( pMe->m_rc.dy - m_ImageInfo.cy)/2);
+        //IIMAGE_SetOffset( pWallPaper, 0,MUSIC_WIDTH);
         MSG_FATAL("clip.dx=%d, clip.dy=%d", clip.dx, clip.dy, 0);
+		MSG_FATAL("pMe->m_rc.dy=%d", pMe->m_rc.dy,0,0);
         IIMAGE_SetDrawSize( pWallPaper, clip.dx,clip.dy);
-        IIMAGE_Draw( pWallPaper, clip.x,clip.y);
+        IIMAGE_Draw( pWallPaper, 0,MUSIC_WIDTH);
         IDISPLAY_SetClipRect( pMe->m_pDisplay,&oldClip);
         IIMAGE_SetOffset( pWallPaper, 0,0);
-        IIMAGE_SetDrawSize( pWallPaper, pMe->m_rc.dx,pMe->m_rc.dy);
+        //IIMAGE_SetDrawSize( pWallPaper, pMe->m_rc.dx,pMe->m_rc.dy);
+        IIMAGE_SetDrawSize( pWallPaper, m_ImageInfo.cx,m_ImageInfo.cy);
+        
+		
     }
     MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/8, pMe->m_nLargeFontHeight, 0);
-    SETAEERECT(&rect, pMe->m_rc.dx/8, 80, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
-     IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,MAKE_RGB(60, 128, 196));
+    SETAEERECT(&rect, pMe->m_rc.dx/8, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
+    IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,MAKE_RGB(60, 128, 196));
      // Display the string
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
@@ -5352,7 +5680,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               | IDF_TEXT_TRANSPARENT);
    bracket[0]=(AECHAR)']';
    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*7/8, pMe->m_nLargeFontHeight, 0);
-   SETAEERECT(&rect, pMe->m_rc.dx*7/8, 80, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
+   SETAEERECT(&rect, pMe->m_rc.dx*7/8, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
     // Display the string
    (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
@@ -5363,7 +5691,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               IDF_ALIGN_LEFT
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);
-  SETAEERECT(&rect, (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), 80,(pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
+  SETAEERECT(&rect, (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), MUSIC_START_WIDTH,(pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
   MSG_FATAL("rect.x=%d,w=%d", (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), 0);
   (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
@@ -5712,123 +6040,4 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
 #endif //FEATURE_SPN_FROM_BSMCCMNC   
 #endif//WIN32
 }
-//add by yangdecai  2010-09-10
-static boolean CoreApp_TestCard(CCoreApp *pMe)
-{
-	boolean Result = FALSE;
-	IFileMgr          *m_pFileMgr;
-	if( SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
-            AEECLSID_FILEMGR,
-            (void**)&m_pFileMgr))
-	{
-		return EFAILED;
-	}
-	
-	if(SUCCESS == IFILEMGR_Test(m_pFileMgr, MASSCARD_ROOTDIR))
-	{
-		Result = TRUE;
-	}
-	else
-	{
-		Result = FALSE;
-	}
-	RELEASEIF(m_pFileMgr);
-	return Result;
-}
-static void    CoreApp_ResetRing(CCoreApp *pMe)
-{
-	ringID nNewSmsConfigRinger[PROFILENUMBER];
-	ringID nNewCallConfigRinger[PROFILENUMBER];
-	ringID nNewAlarmConfigRinger[PROFILENUMBER];
-	boolean Relsut = FALSE;
-	
-	ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
-	ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
-	ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
 
-	//sms
-
-	if(nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
-	{
-		nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
-		nNewSmsConfigRinger[OEMNV_PROFILE_NORMALMODE].midID =OEMNV_SMS_RINGER_ID;
-		Relsut = ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
-	}
-	if(nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
-   	{
-   		nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
-		nNewSmsConfigRinger[OEMNV_PROFILE_QUIETMODE].midID =OEMNV_SMS_RINGER_ID;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
-   	}
-	   
-    if(nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
-   	{
-   		nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].ringType = OEMNV_MID_RINGER;
-		nNewSmsConfigRinger[OEMNV_PROFILE_MEETING].midID =OEMNV_SMS_RINGER_ID;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
-   	}
-	if(  nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType == OEMNV_MP3_RINGER)
-	{
-		nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType = OEMNV_MID_RINGER;
-		nNewSmsConfigRinger[OEMNV_PROFILE_NOISEMODE].midID =OEMNV_SMS_RINGER_ID;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
-	}
-	
-	//CALL
-	if(nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
-	{
-		nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
-		nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].midID =OEMNV_DEFAULTRINGER;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
-	}
-	if(nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
-   	{
-   		nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
-		nNewCallConfigRinger[OEMNV_PROFILE_QUIETMODE].midID =OEMNV_DEFAULTRINGER;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
-   	}
-	   
-    if(nNewCallConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
-   	{
-   		nNewCallConfigRinger[OEMNV_PROFILE_MEETING].ringType = OEMNV_MID_RINGER;
-		nNewCallConfigRinger[OEMNV_PROFILE_MEETING].midID =OEMNV_DEFAULTRINGER;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
-   	}
-	if(  nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType == OEMNV_MP3_RINGER)
-	{
-		nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType = OEMNV_MID_RINGER;
-		nNewCallConfigRinger[OEMNV_PROFILE_NOISEMODE].midID =OEMNV_DEFAULTRINGER;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
-	}
-
-
-	//ALASRM
-	if(nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
-	{
-		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
-		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].midID = OEMNV_ALARM_RINGER;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
-	}
-	if(nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
-   	{
-   		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
-		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].midID = OEMNV_ALARM_RINGER;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
-   	}
-	   
-    if(nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
-   	{
-   		nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].ringType = OEMNV_MID_RINGER;
-		nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].midID = OEMNV_ALARM_RINGER;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
-   	}
-	if(  nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType == OEMNV_MP3_RINGER)
-	{
-		nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].ringType = OEMNV_MID_RINGER;
-		nNewAlarmConfigRinger[OEMNV_PROFILE_NOISEMODE].midID = OEMNV_ALARM_RINGER;
-		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
-	}
-
-	
-}
-//add by yangdecai end

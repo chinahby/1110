@@ -236,7 +236,7 @@ int Sound_New( IShell * pShell,AEECLSID cls, void **ppif )
    AEESound *  pMe;
    int         nErr;
 
-   pMe = (AEESound *)AEE_NewClass((IBaseVtbl *)&gsSoundMethods, sizeof(AEESound));
+   pMe = (AEESound *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gsSoundMethods, sizeof(AEESound));
    if (!pMe)
       return ENOMEMORY;
 

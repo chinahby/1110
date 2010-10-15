@@ -113,7 +113,7 @@ int AEEBTExtNA_New( IShell* ps, AEECLSID cls, void** ppif )
   if ( pIBTExtNAobj == NULL )
   {
     // allocate the object
-    pNew = (IBTExtNA*) AEE_NewClass( (IBaseVtbl*)&gpvtIBTExtNA, 
+    pNew = (IBTExtNA*) AEE_OEM_NEWCLASS( (IBaseVtbl*)&gpvtIBTExtNA, 
                                      sizeof(IBTExtNA) );
     if ( pNew == NULL )
     {

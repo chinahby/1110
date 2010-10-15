@@ -555,6 +555,22 @@ static __inline void MediaGalleryApp_ShowDoneMsgBox(CMediaGalleryApp *pMe)
                               BTBAR_BACK);//Prompt success!
 }//MediaGalleryApp_ShowDoneMsgBox
 
+static __inline void MediaGalleryApp_ShowErrorMsgBox(CMediaGalleryApp *pMe)
+{
+   if(!pMe)
+      return;
+
+   MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_MESSAGEBOX);
+   MediaGalleryApp_SetMsgBoxID(pMe, MG_MSGID_DONE);
+   MediaGalleryApp_ShowMsgBox(pMe,
+                              NULL,
+                              MGRES_LANGFILE,
+                              IDS_MG_FILEOPERR,
+                              MESSAGE_INFORMATION,
+                              BTBAR_BACK);//Prompt success!
+}//MediaGalleryApp_ShowDoneMsgBox
+
+
 static __inline void MediaGalleryApp_ShowProgressBox(CMediaGalleryApp *pMe,
                                                       uint16 nMsgBoxID)
 {
@@ -3142,7 +3158,7 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
             MGAppUtil_SetMenuCtlRectProp(pMe,
                                          MP_UNDERLINE_TITLE | MP_WRAPSCROLL | MP_MULTI_SEL,
                                          pMenuCtl);
-            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
+            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
 #endif
@@ -3257,7 +3273,7 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
             return TRUE;
 
          case AVK_SELECT:
-         case AVK_INFO:
+         //case AVK_INFO:
             {
                uint16 uSel;
                int nResult;
@@ -4968,6 +4984,10 @@ static __inline int MGAppPopupMenu_OperationDone(CMediaGalleryApp *pMe,
    {
       MediaGalleryApp_ShowDoneMsgBox(pMe);
    }
+   else if(nType == MG_FNSHOP_ERROR)
+	{
+		MediaGalleryApp_ShowErrorMsgBox(pMe);
+	}
    else
    {
       MediaGalleryApp_SetOps(pMe, MG_OPS_DEFAULT, MG_OP_NULL);
@@ -6160,6 +6180,73 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
                 IMENUCTL_SetRect(pMe->m_pMenuPopup, &rc);
             }
         }
+#elif defined(FEATURE_DISP_220X176)          
+        {
+            AEERect rc = {0};
+            IMENUCTL_SetPopMenuRect(pMe->m_pMenuPopup); 
+            IMENUCTL_GetRect(pMe->m_pMenuPopup, &rc);
+            if(rc.y < 0)
+            {
+                int temp = -(rc.y);
+                rc.y += temp;
+                rc.dy -= temp;
+                IMENUCTL_SetRect(pMe->m_pMenuPopup, &rc);
+            }
+        }
+#elif defined(FEATURE_DISP_128X160)          
+        {
+            AEERect rc = {0};
+            IMENUCTL_SetPopMenuRect(pMe->m_pMenuPopup); 
+            IMENUCTL_GetRect(pMe->m_pMenuPopup, &rc);
+            if(rc.y < 0)
+            {
+                int temp = -(rc.y);
+                rc.y += temp;
+                rc.dy -= temp;
+                IMENUCTL_SetRect(pMe->m_pMenuPopup, &rc);
+            }
+        }
+#elif defined(FEATURE_DISP_176X220)          
+        {
+            AEERect rc = {0};
+            IMENUCTL_SetPopMenuRect(pMe->m_pMenuPopup); 
+            IMENUCTL_GetRect(pMe->m_pMenuPopup, &rc);
+            if(rc.y < 0)
+            {
+                int temp = -(rc.y);
+                rc.y += temp;
+                rc.dy -= temp;
+                IMENUCTL_SetRect(pMe->m_pMenuPopup, &rc);
+            }
+        }
+#elif defined(FEATURE_DISP_240X320)          
+        {
+            AEERect rc = {0};
+            IMENUCTL_SetPopMenuRect(pMe->m_pMenuPopup); 
+            IMENUCTL_GetRect(pMe->m_pMenuPopup, &rc);
+            if(rc.y < 0)
+            {
+                int temp = -(rc.y);
+                rc.y += temp;
+                rc.dy -= temp;
+                IMENUCTL_SetRect(pMe->m_pMenuPopup, &rc);
+            }
+        }
+#elif defined(FEATURE_DISP_320X240)          
+        {
+            AEERect rc = {0};
+            IMENUCTL_SetPopMenuRect(pMe->m_pMenuPopup); 
+            IMENUCTL_GetRect(pMe->m_pMenuPopup, &rc);
+            if(rc.y < 0)
+            {
+                int temp = -(rc.y);
+                rc.y += temp;
+                rc.dy -= temp;
+                IMENUCTL_SetRect(pMe->m_pMenuPopup, &rc);
+            }
+        }
+
+
 #endif   
       MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_POPUP);
       IMENUCTL_SetActive(pMenuCtl, FALSE);
@@ -8404,12 +8491,12 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
    MGFileInfo *pSelData;   
    
    //add by miaoxiaoming
-   AEEImageInfo myInfo;
-   IImage *pImage;	   
-   IBitmap *pIBitmap;
+   AEEImageInfo myInfo;	   
+   IBitmap *pIBitmap = NULL;
    char BmpFileName[MG_MAX_FILE_NAME];
-
-   if(NULL == pMe)
+   int ret = EFAILED;
+   
+   if(NULL == pMe||pMe->m_pImage==NULL)
    {
       return FALSE;
    }
@@ -8438,23 +8525,22 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
       MG_FARF(ADDR, ("Create config interface failed"));
       return FALSE;
    }
-	   	
+	/*   	
    pImage= ISHELL_LoadImage(pMe->m_pShell,pSelData->szName);
    if (NULL == pImage)
    {
    	  MSG_FATAL("MGAppUtil_SetWallpaper ISHELL_LoadImage failed",0,0,0);
       return FALSE;
    }
-	
-   IImage_GetInfo(pImage,&myInfo);
+   */
+
+	IImage_GetInfo(pMe->m_pImage,&myInfo);
 #ifdef FEATURE_BREW_SCALE
 	//MSG_FATAL("pMe->m_rc.dx=%d pMe->m_rc.dy=%d",pMe->m_rc.dx,pMe->m_rc.dy,0);
 	//MSG_FATAL("myInfo.cx=%d myInfo.cy=%d",myInfo.cx,myInfo.cy,0);
-
-
-    if(myInfo.cy > 0 && pMe->m_rc.dy > 0)
+    if(myInfo.cy > 0 && myInfo.cx > 0)
     {
-#if 0    
+#if 1    
         if((myInfo.cx*1000)/myInfo.cy > (pMe->m_rc.dx*1000)/pMe->m_rc.dy)
         {
             myInfo.cx = (myInfo.cx*pMe->m_rc.dy)/myInfo.cy;
@@ -8466,22 +8552,39 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
             myInfo.cx = pMe->m_rc.dx;
         }
 
-        IImage_SetParm(pImage,
+        IImage_SetParm(pMe->m_pImage,
                IPARM_SCALE,
                myInfo.cx,
                myInfo.cy);
-#endif  
+#else
 
-        IImage_SetParm(pImage,
+        IImage_SetParm(pMe->m_pImage,
                        IPARM_SCALE,
                        pMe->m_rc.dx,
                        pMe->m_rc.dy);
+#endif
     }
 		
 	//MSG_FATAL("myInfo.cx=%d myInfo.cy=%d",myInfo.cx,myInfo.cy,0);
 #endif
 
-    ImageExplorer_ImageToBmp(pMe->m_pDisplay,pImage,&pIBitmap,myInfo.cx,myInfo.cy);
+    ret = ImageExplorer_ImageToBmp(pMe->m_pDisplay,pMe->m_pImage,&pIBitmap,myInfo.cx,myInfo.cy);
+    if (ret != SUCCESS)
+	{
+		
+		RELEASEIF(pConfig);
+		if (pMe->m_pImage!=NULL)
+		{
+			IImage_Release(pMe->m_pImage);
+		}
+		if (NULL != pIBitmap)
+		{
+			IBase_Release((IBase *)pIBitmap);
+		}
+		
+		MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_ERROR);
+		return FALSE;
+	}
 
 	ICONFIG_GetItem(pConfig, CFGI_WALLPAPER,
 					BmpFileName, sizeof(BmpFileName));
@@ -8495,13 +8598,25 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
 		MSG_FATAL("HEXING_OEM_WALLPAPER2",0,0,0);
         STRCPY(BmpFileName,HEXING_OEM_WALLPAPER2);	
 	}
-		
-	ImageExplorer_WriteDIBFile(pMe->m_pShell,BmpFileName,pIBitmap);
 
-	if (pImage!=NULL)
-	{
-		IImage_Release(pImage);
+		
+	ret = ImageExplorer_WriteDIBFile(pMe->m_pShell,BmpFileName,pIBitmap);
+    if (ret != SUCCESS)
+	{		
+		RELEASEIF(pConfig);
+		if (pMe->m_pImage!=NULL)
+		{
+			IImage_Release(pMe->m_pImage);
+		}
+		if (NULL != pIBitmap)
+		{
+			IBase_Release((IBase *)pIBitmap);
+		}
+		
+		MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_ERROR);
+		return FALSE;
 	}
+	
 	if (NULL != pIBitmap)
 	{
 		IBase_Release((IBase *)pIBitmap);
@@ -8935,7 +9050,8 @@ static void MGAppUtil_LoadMediaNotify(void * pUser,
                if(nRet == SUCCESS && ClsID == AEECLSID_MEDIAMP3)
                {
                   AEEMediaMP3Spec* pSpec;
-
+                  
+                  FREEIF(pMe->m_pMediaSpec);
                   pMe->m_pMediaSpec = (void *)MALLOC(sizeof(AEEMediaMP3Spec));
 
                   if(!pMe->m_pMediaSpec)

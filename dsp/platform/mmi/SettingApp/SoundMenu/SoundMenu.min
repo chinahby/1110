@@ -2,6 +2,9 @@
 # SOUNDMENU - Setting Application
 #-------------------------------------------------------------------------------
 SOUNDMENU_INC = $(SOUNDMENU)
+ifeq ($(USES_RESDIR), Karbonn)
+SOUNDMENU_RES_RING = $(SOUNDMENU)/resources/Karbonn
+endif
 SOUNDMENU_RES = $(SOUNDMENU)/resources
 SOUNDMENU_SRC = $(SOUNDMENU)
 SOUNDMENU_LIB = $(SOUNDMENU)
@@ -13,13 +16,17 @@ SOUNDMENU_SOURCES=\
   
 SOUNDMENU_OBJS :=  $(addprefix $(TARGETDIR)/, $(SOUNDMENU_SOURCES:%.c=%.o))
 $(SOUNDMENU_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
-
+ 
 vpath %.c $(SOUNDMENU_SRC)
-vpath %.mp3 $(SOUNDMENU_RES)
 vpath %.bar $(SOUNDMENU_RES)
 vpath %.brx $(SOUNDMENU_RES)
+ifeq ($(USES_RESDIR), Karbonn)
+vpath %.mp3 $(SOUNDMENU_RES_RING)
+vpath %.mid $(SOUNDMENU_RES_RING)
+else
+vpath %.mp3 $(SOUNDMENU_RES)
 vpath %.mid $(SOUNDMENU_RES)
-
+endif
 ifeq ($(USES_LOWMEM), yes)
 		ifeq ($(USES_RESDIR), Flexi203)
 					CONSTFILE_FILES+=\
@@ -42,9 +49,7 @@ ifeq ($(USES_LOWMEM), yes)
 					        clock.mid|fs:/ringers/clock.mid \
 					        green_line.mid|fs:/ringers/green_line.mid \
 					        lucky.mid|fs:/ringers/lucky.mid \
-					        street_tale.mid|fs:/ringers/street_tale.mid \
-					        lucky.mid|fs:/ringers/lucky.mid \
-					        street_tale.mid|fs:/ringers/street_tale.mid 
+					        street_tale.mid|fs:/ringers/street_tale.mid
 		else ifeq ($(USES_RESDIR), common)
 					CONSTFILE_FILES+=\
 					        soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -54,9 +59,7 @@ ifeq ($(USES_LOWMEM), yes)
 					        clock.mid|fs:/ringers/clock.mid \
 					        green_line.mid|fs:/ringers/green_line.mid \
 					        lucky.mid|fs:/ringers/lucky.mid \
-					        street_tale.mid|fs:/ringers/street_tale.mid \
-					        lucky.mid|fs:/ringers/lucky.mid \
-					        street_tale.mid|fs:/ringers/street_tale.mid 
+					        street_tale.mid|fs:/ringers/street_tale.mid
 		else ifeq  ($(USES_RESDIR), Smart)
 					CONSTFILE_FILES+=\
 					        soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -81,6 +84,18 @@ ifeq ($(USES_LOWMEM), yes)
 					        jumping.mid|fs:/ringers/jumping.mid \
 					        lucky.mid|fs:/ringers/lucky.mid \
 					        street_tale.mid|fs:/ringers/street_tale.mid 
+		else ifeq ($(USES_RESDIR), Karbonn)
+    				CONSTFILE_FILES+=\
+						    soundmenu.mif|fs:/mif/soundmenu.mif \
+					        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+					        blueice.mid|fs:/ringers/blueice.mid \
+					        boogie.mid|fs:/ringers/boogie.mid \
+					        brook.mid|fs:/ringers/brook.mid\
+					        jazz.mp3|fs:/ringers/jazz.mp3\
+					        crescendo.mid|fs:/ringers/crescendo.mid \
+					        electro.mid|fs:/ringers/electro.mid \
+					        elves.mid|fs:/ringers/elves.mid \
+					        piano.mid|fs:/ringers/piano.mid 
 		else ifeq ($(USES_RESDIR), Flexi021)
 					CONSTFILE_FILES+=\
 					        soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -117,7 +132,7 @@ ifeq ($(USES_LOWMEM), yes)
 					        street_tale.mid|fs:/ringers/street_tale.mid \
 					        feeling_on.mid|fs:/ringers/feeling_on.mid \
 					        feeling_off.mid|fs:/ringers/feeling_off.mid		
-		else ifeq ($(USES_RESDIR), Flexi021)
+		else ifeq ($(USES_RESDIR), H19C)
 					CONSTFILE_FILES+=\
 					        soundmenu.mif|fs:/mif/soundmenu.mif \
 					        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
@@ -128,7 +143,19 @@ ifeq ($(USES_LOWMEM), yes)
 					        lucky.mid|fs:/ringers/lucky.mid \
 					        street_tale.mid|fs:/ringers/street_tale.mid \
 					        feeling_on.mid|fs:/ringers/feeling_on.mid \
-					        feeling_off.mid|fs:/ringers/feeling_off.mid								        						                
+					        feeling_off.mid|fs:/ringers/feeling_off.mid							
+		else ifeq ($(USES_RESDIR), ITEL)
+					CONSTFILE_FILES+=\
+					        soundmenu.mif|fs:/mif/soundmenu.mif \
+					        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+					        blue_load.mid|fs:/ringers/blue_load.mid \
+					        champagne.mid|fs:/ringers/champagne.mid \
+					        clock.mid|fs:/ringers/clock.mid \
+					        green_line.mid|fs:/ringers/green_line.mid \
+					        lucky.mid|fs:/ringers/lucky.mid \
+					        street_tale.mid|fs:/ringers/street_tale.mid \
+					        feeling_on.mid|fs:/ringers/feeling_on.mid \
+					        feeling_off.mid|fs:/ringers/feeling_off.mid								        	        						                
 		endif
       
 else
@@ -186,9 +213,7 @@ else
 								        jumping.mid|fs:/ringers/jumping.mid \
 								        lucky.mid|fs:/ringers/lucky.mid \
 								        street_tale.mid|fs:/ringers/street_tale.mid \
-								        techno_meto.mid|fs:/ringers/techno_meto.mid \
-								        lucky.mid|fs:/ringers/lucky.mid \
-					        			street_tale.mid|fs:/ringers/street_tale.mid 
+								        techno_meto.mid|fs:/ringers/techno_meto.mid
 			    else ifeq ($(USES_RESDIR), common)
 			    			CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -202,9 +227,7 @@ else
 								        jumping.mid|fs:/ringers/jumping.mid \
 								        lucky.mid|fs:/ringers/lucky.mid \
 								        street_tale.mid|fs:/ringers/street_tale.mid \
-								        techno_meto.mid|fs:/ringers/techno_meto.mid \
-								        lucky.mid|fs:/ringers/lucky.mid \
-					        			street_tale.mid|fs:/ringers/street_tale.mid 
+								        techno_meto.mid|fs:/ringers/techno_meto.mid
     			else ifeq ($(USES_RESDIR), Smart)
     										CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -239,8 +262,26 @@ else
 								        techno_meto.mid|fs:/ringers/techno_meto.mid \
 								        egaa_elgabal.mid|fs:/ringers/egaa_elgabal.mid \
 								        sudani.mid|fs:/ringers/sudani.mid    \
-									poweron.mp3|fs:/ringers/poweron.mp3 \
+										poweron.mp3|fs:/ringers/poweron.mp3 \
 								        poweroff.mp3|fs:/ringers/poweroff.mp3
+				else ifeq ($(USES_RESDIR), Karbonn)
+    						CONSTFILE_FILES+=\
+								        soundmenu.mif|fs:/mif/soundmenu.mif \
+								        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+								        blueice.mid|fs:/ringers/blueice.mid \
+								        boogie.mid|fs:/ringers/boogie.mid \
+								        brook.mid|fs:/ringers/brook.mid\
+								        cjazz.mp3|fs:/ringers/jazz.mp3 \
+								        crescendo.mid|fs:/ringers/crescendo.mid \
+								        electro.mid|fs:/ringers/electro.mid \
+								        elves.mid|fs:/ringers/elves.mid \
+								        piano.mid|fs:/ringers/piano.mid \
+								        quadratic.mid|fs:/ringers/quadratic.mid \
+								        raindrop.mid|fs:/ringers/raindrop.mid \
+								        salsa.mid|fs:/ringers/salsa.mid\
+								        wakeup.mid|fs:/ringers/wakeup.mid \
+										power_on.mp3|fs:/ringers/power_on.mp3 \
+								        power_off.mp3|fs:/ringers/power_off.mp3
 				 else ifeq ($(USES_RESDIR), Flexi021)
 				 					CONSTFILE_FILES+=\
 									      soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -304,7 +345,41 @@ else
 								        street_tale.mid|fs:/ringers/street_tale.mid \
 								        techno_meto.mid|fs:/ringers/techno_meto.mid \
 								        feeling_on.mid|fs:/ringers/feeling_on.mid \
-								        feeling_off.mid|fs:/ringers/feeling_off.mid										        								        
+								        feeling_off.mid|fs:/ringers/feeling_off.mid			
+    			else ifeq ($(USES_RESDIR), H19C)
+    										CONSTFILE_FILES+=\
+								        soundmenu.mif|fs:/mif/soundmenu.mif \
+								        enhusoundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+								        blues.mid|fs:/ringers/blues.mid \
+								        blue_load.mid|fs:/ringers/blue_load.mid \
+								        champagne.mid|fs:/ringers/champagne.mid \
+								        clock.mid|fs:/ringers/clock.mid \
+								        dance_craze.mid|fs:/ringers/dance_craze.mid \
+								        green_line.mid|fs:/ringers/green_line.mid \
+								        jumping.mid|fs:/ringers/jumping.mid \
+								        lucky.mid|fs:/ringers/lucky.mid \
+								        street_tale.mid|fs:/ringers/street_tale.mid \
+								        techno_meto.mid|fs:/ringers/techno_meto.mid \
+								        egaa_elgabal.mid|fs:/ringers/egaa_elgabal.mid \
+								        sudani.mid|fs:/ringers/sudani.mid \
+								        onoff.mp3|fs:/ringers/onoff.mp3					  
+    			else ifeq ($(USES_RESDIR), ITEL)
+    										CONSTFILE_FILES+=\
+								        soundmenu.mif|fs:/mif/soundmenu.mif \
+								        enhusoundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+								        blues.mid|fs:/ringers/blues.mid \
+								        blue_load.mid|fs:/ringers/blue_load.mid \
+								        champagne.mid|fs:/ringers/champagne.mid \
+								        clock.mid|fs:/ringers/clock.mid \
+								        dance_craze.mid|fs:/ringers/dance_craze.mid \
+								        green_line.mid|fs:/ringers/green_line.mid \
+								        jumping.mid|fs:/ringers/jumping.mid \
+								        lucky.mid|fs:/ringers/lucky.mid \
+								        street_tale.mid|fs:/ringers/street_tale.mid \
+								        techno_meto.mid|fs:/ringers/techno_meto.mid \
+								        egaa_elgabal.mid|fs:/ringers/egaa_elgabal.mid \
+								        sudani.mid|fs:/ringers/sudani.mid \
+								        itelonoff.mp3|fs:/ringers/itelonoff.mp3											              							        								        
 			     esle
 				 					CONSTFILE_FILES+=\
 									      soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -354,8 +429,6 @@ else
 								        lucky.mid|fs:/ringers/lucky.mid \
 								        street_tale.mid|fs:/ringers/street_tale.mid \
 								        techno_meto.mid|fs:/ringers/techno_meto.mid \
-								        lucky.mid|fs:/ringers/lucky.mid \
-					        			street_tale.mid|fs:/ringers/street_tale.mid 
 			    else ifeq ($(USES_RESDIR), common)
 			    			CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -369,9 +442,7 @@ else
 								        jumping.mid|fs:/ringers/jumping.mid \
 								        lucky.mid|fs:/ringers/lucky.mid \
 								        street_tale.mid|fs:/ringers/street_tale.mid \
-								        techno_meto.mid|fs:/ringers/techno_meto.mid \
-								        lucky.mid|fs:/ringers/lucky.mid \
-					        			street_tale.mid|fs:/ringers/street_tale.mid 
+								        techno_meto.mid|fs:/ringers/techno_meto.mid
     			else ifeq ($(USES_RESDIR), Smart)
     						CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -408,6 +479,24 @@ else
 								        sudani.mid|fs:/ringers/sudani.mid    \
 									poweron.mp3|fs:/ringers/poweron.mp3 \
 								        poweroff.mp3|fs:/ringers/poweroff.mp3
+				else ifeq ($(USES_RESDIR), Karbonn)
+    						CONSTFILE_FILES+=\
+								        soundmenu.mif|fs:/mif/soundmenu.mif \
+								        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+								        blueice.mid|fs:/ringers/blueice.mid \
+								        boogie.mid|fs:/ringers/boogie.mid \
+								        brook.mid|fs:/ringers/brook.mid\
+								        jazz.mp3|fs:/ringers/jazz.mp3 \
+								        crescendo.mid|fs:/ringers/crescendo.mid \
+								        electro.mid|fs:/ringers/electro.mid \
+								        elves.mid|fs:/ringers/elves.mid \
+								        piano.mid|fs:/ringers/piano.mid \
+								        quadratic.mid|fs:/ringers/quadratic.mid \
+								        raindrop.mid|fs:/ringers/raindrop.mid \
+								        salsa.mid|fs:/ringers/salsa.mid\
+								        wakeup.mid|fs:/ringers/wakeup.mid \
+										power_on.mp3|fs:/ringers/power_on.mp3 \
+								        power_off.mp3|fs:/ringers/power_off.mp3
 				else ifeq ($(USES_RESDIR), Flexi021)
     						CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -471,7 +560,41 @@ else
 								        street_tale.mid|fs:/ringers/street_tale.mid \
 								        techno_meto.mid|fs:/ringers/techno_meto.mid \
 								        feeling_on.mid|fs:/ringers/feeling_on.mid \
-								        feeling_off.mid|fs:/ringers/feeling_off.mid										        						        
+								        feeling_off.mid|fs:/ringers/feeling_off.mid				
+    			else ifeq ($(USES_RESDIR), H19C)
+    						CONSTFILE_FILES+=\
+								        soundmenu.mif|fs:/mif/soundmenu.mif \
+								        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+								        blues.mid|fs:/ringers/blues.mid \
+								        blue_load.mid|fs:/ringers/blue_load.mid \
+								        champagne.mid|fs:/ringers/champagne.mid \
+								        clock.mid|fs:/ringers/clock.mid \
+								        dance_craze.mid|fs:/ringers/dance_craze.mid \
+								        green_line.mid|fs:/ringers/green_line.mid \
+								        jumping.mid|fs:/ringers/jumping.mid \
+								        lucky.mid|fs:/ringers/lucky.mid \
+								        street_tale.mid|fs:/ringers/street_tale.mid \
+								        techno_meto.mid|fs:/ringers/techno_meto.mid \
+								        egaa_elgabal.mid|fs:/ringers/egaa_elgabal.mid \
+								        sudani.mid|fs:/ringers/sudani.mid \
+								        onoff.mp3|fs:/ringers/onoff.mp3					     
+    			else ifeq ($(USES_RESDIR), ITEL)
+    						CONSTFILE_FILES+=\
+								        soundmenu.mif|fs:/mif/soundmenu.mif \
+								        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+								        blues.mid|fs:/ringers/blues.mid \
+								        blue_load.mid|fs:/ringers/blue_load.mid \
+								        champagne.mid|fs:/ringers/champagne.mid \
+								        clock.mid|fs:/ringers/clock.mid \
+								        dance_craze.mid|fs:/ringers/dance_craze.mid \
+								        green_line.mid|fs:/ringers/green_line.mid \
+								        jumping.mid|fs:/ringers/jumping.mid \
+								        lucky.mid|fs:/ringers/lucky.mid \
+								        street_tale.mid|fs:/ringers/street_tale.mid \
+								        techno_meto.mid|fs:/ringers/techno_meto.mid \
+								        egaa_elgabal.mid|fs:/ringers/egaa_elgabal.mid \
+								        sudani.mid|fs:/ringers/sudani.mid \
+								        itelonoff.mp3|fs:/ringers/itelonoff.mp3											           						        						        
 			    else								        	
 			    						CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \

@@ -1465,19 +1465,9 @@ static OEMConfigListType oemi_cache = {
    OEMNV_SMS_RETRY_PERIOD,                         // CFGI_SMS_RETRY_PERIOD
    OEMNV_SMS_RETRY_INTERVAL,                       // CFGI_SMS_RETRY_INTERVAL
    FALSE,                                          // CFGI_SMS_GCF_FLAG
-#if defined(FEATURE_PROJECT_SMART)
-   {L"388"},                                           // CFGI_VOICEMAIL_NUMBER
-   {L"388"},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
-   {L"388"},                                           // CFGI_VOICEMAIL_NUMBER_GW
-#elif defined(FEATURE_PROJECT_M8)
-   {L"*88"},                                           // CFGI_VOICEMAIL_NUMBER
-   {L"*88"},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
-   {L"*88"},                                           // CFGI_VOICEMAIL_NUMBER_GW
-#else
-   {0,},                                           // CFGI_VOICEMAIL_NUMBER
-   {0,},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
-   {0,},                                           // CFGI_VOICEMAIL_NUMBER_GW
-#endif
+   {OEMNV_VOICEMAIL_NUMBER},                                           // CFGI_VOICEMAIL_NUMBER
+   {OEMNV_VOICEMAIL_NUMBER},                                           // CFGI_VOICEMAIL_NUMBER_CDMA
+   {OEMNV_VOICEMAIL_NUMBER},                                           // CFGI_VOICEMAIL_NUMBER_GW
    0,                                              // CFGI_RECENT_MT_CALL_TIMER
    0,                                              // CFGI_RECENT_MO_TIMER
    OEMNV_ALERT_DISABLE,                            // CFGI_MINUTE_ALERT
@@ -1681,7 +1671,6 @@ static OEMConfigListType oemi_cache = {
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
    ,DISPLAYREND_TYPE_ONEBYONE
-   ,2
 #endif
 #ifdef FEATURE_TOUCHPAD
    ,{-1,-1,-1,-1}
@@ -2382,20 +2371,10 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.sms_retry_interval        = OEMNV_SMS_RETRY_INTERVAL;
    oemi_cache.sms_gcf_flag              = FALSE;
 #ifdef CUST_EDITION
-   {
-    AECHAR pBuff[OEMNV_VOICEMAIL_MAXLEN]={0};
-    
-    (void)STRTOWSTR(OEMNV_VOICEMAIL_NUMBER, pBuff, sizeof(AECHAR)*OEMNV_VOICEMAIL_MAXLEN);
-#ifndef WIN32
-    nvi.sms_vm_number.num_digits = WSTRLEN(pBuff);
-    WSTRTOSTR(pBuff, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
-#endif
-    OEMNV_Put(NV_SMS_VM_NUMBER_I, &nvi);
-    WSTRNCOPYN((void *) oemi_cache.voicemail_number,
-                sizeof(oemi_cache.voicemail_number)/sizeof(AECHAR),
-                (AECHAR*) pBuff,
-                -1);
-   }
+   WSTRCPY(oemi_cache.voicemail_number,OEMNV_VOICEMAIL_NUMBER);
+   nvi.sms_vm_number.num_digits = WSTRLEN(oemi_cache.voicemail_number);
+   WSTRTOSTR(oemi_cache.voicemail_number, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
+   OEMNV_Put(NV_SMS_VM_NUMBER_I, &nvi);
 #else
    MEMSET((void *) oemi_cache.voicemail_number,
           0,
@@ -2644,6 +2623,18 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.fmRadio_volume = MAX_FMRADIO_VOLUME/5*3;                                  
    MEMSET((void *)&oemi_cache.fmRadio_chan_info, 0, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
    oemi_cache.fmRadio_chan_total = 0;
+   
+   oemi_cache.emerg_table.emert_size = OEMNV_EMERT_SEZE;
+   oemi_cache.emerg_table.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
+   STRCPY(oemi_cache.emerg_table.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
+   oemi_cache.emerg_table.emerg_num[1].num_len = OEMNV_EMERG_NUM_LEN;
+   STRCPY(oemi_cache.emerg_table.emerg_num[1].num_buf,OEMNV_EMERG_NUM_TWO);
+   oemi_cache.emerg_table.emerg_num[2].num_len = OEMNV_EMERG_NUM_LEN;
+   STRCPY(oemi_cache.emerg_table.emerg_num[2].num_buf,OEMNV_EMERG_NUM_TRE);
+   #ifndef FEATURE_VERSION_CITYCELL
+   oemi_cache.emerg_table.emerg_num[3].num_len = OEMNV_EMERG_NUM_LEN;
+   STRCPY(oemi_cache.emerg_table.emerg_num[3].num_buf,OEMNV_EMERG_NUM_FOR);
+   #endif
    
    oemi_cache.input_mode=OEMNV_INPUTMODE_DEFAULT;
 #ifdef FEATURE_MENU_STYLE
@@ -3768,18 +3759,18 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #ifdef CUST_EDITION
 #ifndef WIN32  
 //wangliang modify 
-     WSTRNCOPYN(pBuff,
+    /* WSTRNCOPYN(pBuff,
                 nSize / (int) sizeof(AECHAR),
                 (void *) oemi_cache.voicemail_number,
-                (int) (sizeof(oemi_cache.voicemail_number) / sizeof(AECHAR)));
-#if 0   
+                (int) (sizeof(oemi_cache.voicemail_number) / sizeof(AECHAR)));*/
+//#if 0   
      if (OEMNV_Get(NV_SMS_VM_NUMBER_I, &nvi) != NV_DONE_S) 
      {
        return EFAILED;
      }
      nvi.sms_vm_number.digits[nvi.sms_vm_number.num_digits] = 0;
      STRTOWSTR((char *)nvi.sms_vm_number.digits, pBuff, (nvi.sms_vm_number.num_digits+1) * sizeof(AECHAR));
-#endif	 
+//#endif	 
 #endif
      if (WSTRLEN(pBuff) == 0)
      {
@@ -4719,6 +4710,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
        return EFAILED;
 #ifdef CUST_EDITION
 #ifndef WIN32    
+	MSG_FATAL("SET.............................................",0,0,0);
     nvi.sms_vm_number.num_digits = WSTRLEN(pBuff);
     WSTRTOSTR(pBuff, (char *)nvi.sms_vm_number.digits, nvi.sms_vm_number.num_digits+1);
 
@@ -11190,10 +11182,12 @@ void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
 		case STATIC_BREW_APP_SMARTFREN_TWITTER:
 		case STATIC_BREW_APP_SMARTFREN_SFM:
 		case STATIC_BREW_APP_SMARTFREN_MSHOP:
-#if defined(FEATURE_PROJECT_M8)
+//#if defined(FEATURE_PROJECT_M8)
+#if defined(FEATURE_ADS_M8_ACCOUNT)
 			MEMCPY(username,"m8",2);	
 			MEMCPY(password,"m8",2);	
-#elif defined(FEATURE_PROJECT_SMART)
+//#elif defined(FEATURE_PROJECT_SMART)
+#elif defined(FEATURE_ADS_SMART_ACCOUNT)
 			MEMCPY(username,"smart",5);	
 			MEMCPY(password,"smart",5);
 #endif
@@ -11232,41 +11226,19 @@ void OEM_SetBAM_ADSAccount(void)
     OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
     OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
     // ’À∫≈
-#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
-    nvi.ds_sip_nai_info.index = 0;
-    (void)OEMNV_Put(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi);
-
-    //(void)STRCPY((char *)nvi.ds_sip_nai_info.nai, (char *)DEFAULT_BREW_USERNAME);
-    //nvi.ds_sip_nai_info.nai_length = STRLEN((char *)DEFAULT_BREW_USERNAME);
-    (void)STRCPY((char *)nvi.ds_sip_nai_info.nai, username);
-    nvi.ds_sip_nai_info.nai_length = STRLEN((char *)username);
-    (void)OEMNV_Put(NV_DS_SIP_NAI_INFO_I, &nvi);
-#else /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
-    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
-    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
     (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
     nvi.pap_user_id.user_id_len = STRLEN((char *)username);
     (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
-#endif /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
+
 
     // ’À∫≈√‹¬Î
-#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
-    nvi.ds_sip_nai_info.index = 0;
-    
-    //(void)STRCPY((char *)nvi.ds_sip_ppp_ss_info.ss, (char *)DEFAULT_BREW_PASSWORD);
-    //nvi.ds_sip_ppp_ss_info.ss_length = STRLEN((char *)DEFAULT_BREW_PASSWORD);
-    (void)STRCPY((char *)nvi.ds_sip_ppp_ss_info.ss, (char *)password);
-    nvi.ds_sip_ppp_ss_info.ss_length = STRLEN((char *)password);
-
-    (void)OEMNV_Put(NV_DS_SIP_PPP_SS_INFO_I, &nvi);
-#else /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
-    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
-    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
     (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
     nvi.pap_password.password_len = STRLEN((char *)password);
     (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
-#endif /* FEATURE_DS_SIP_MULTIPLE_PROFILE */
-#endif
+
+	MSG_FATAL("username: %c%c",username[0],username[1],0);
+	MSG_FATAL("password: %c%c",password[0],password[1],0);
+#endif	
 } /* OEM_SetBAM_ADSAccount */
 
 #endif

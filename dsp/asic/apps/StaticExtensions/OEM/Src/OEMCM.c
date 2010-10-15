@@ -324,6 +324,7 @@ when         who     what, where, why
 #include "OEMAppResCtl.h"
 #endif // FEATURE_ODM_UI
 #endif // FEATURE_ACM
+
 /*===========================================================================
 
                     LOCAL/STATIC DATA
@@ -718,7 +719,7 @@ int OEMCMNotifier_New(IShell *pIShell, AEECLSID cls, void **ppif)
    if (ICMNotifierObj == NULL) {
      /* Allocate the object. */
 
-     pNew = (ICMNotifier*)AEE_NewClassEx((IBaseVtbl*)&gOEMCMNotifierFuncs,
+     pNew = (ICMNotifier*)AEE_OEM_NEWCLASSEX((IBaseVtbl*)&gOEMCMNotifierFuncs,
                                          sizeof(ICMNotifier), TRUE);
 
      if (pNew == NULL)
@@ -1008,7 +1009,7 @@ int OEMCM_New(IShell *pIShell, AEECLSID cls, void **ppif)
    }
 
    // Allocate the object.
-   pNew = (ICM *) AEE_NewClass((IBaseVtbl*)&gOEMCMFuncs, sizeof(ICM));
+   pNew = (ICM *) AEE_OEM_NEWCLASS((IBaseVtbl*)&gOEMCMFuncs, sizeof(ICM));
    if (pNew == NULL)
       return ENOMEMORY;
 
@@ -4899,7 +4900,7 @@ int OEMCallOpts_New (IShell *pIShell, AEECLSID cls, void **ppif)
    }
 
    // Allocate the object.
-   pNew = (ICallOpts *) AEE_NewClass((IBaseVtbl*)&gOEMCallOptsFuncs,
+   pNew = (ICallOpts *) AEE_OEM_NEWCLASS((IBaseVtbl*)&gOEMCallOptsFuncs,
                                sizeof(ICallOpts));
    if (pNew == NULL)
       return ENOMEMORY;
@@ -13428,7 +13429,6 @@ static int OEMCM_ACMCreateInstance(ICM_ACMInfo * pAcmInfo)
 
   /* Create AppResCtl object */
   ret=ISHELL_CreateInstance(pIShell,AEECLSID_APPRESCTL,(void**)(&pAcmInfo->m_pAppResCtl));
-
 #ifdef FEATURE_BREW_3_0
    AEE_LeaveAppContext(pac);
 #else

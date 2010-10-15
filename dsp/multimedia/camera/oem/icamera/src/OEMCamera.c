@@ -330,6 +330,16 @@ static AEESize gCameraMovieSizeList[] = {
 static AEESize gCameraDisplaySizeList[] = {
 #if defined(FEATURE_DISP_160X128)
   { 160, 128 },
+#elif defined(FEATURE_DISP_220X176)
+  { 220, 176 },  
+#elif defined(FEATURE_DISP_128X160)
+  { 128, 160 },
+#elif defined(FEATURE_DISP_176X220)
+  { 176, 220 },
+#elif defined(FEATURE_DISP_240X320)
+  { 240, 320 }, 
+#elif defined(FEATURE_DISP_320X240)
+  { 320, 240 },   
 #elif defined(FEATURE_DISP_128X128)
   { 128, 128 },
   { 128, 96  },
@@ -346,6 +356,16 @@ static AEESize gCameraSnapshotSizeList [] = {
 #if defined(USE_CAMSENSOR_SIV121A)
 #if defined(FEATURE_DISP_160X128)
   { 160, 128 },
+#elif defined(FEATURE_DISP_220X176)
+  { 220, 176 },  
+#elif defined(FEATURE_DISP_128X160)
+  { 128, 160 },  
+#elif defined(FEATURE_DISP_176X220)
+  { 176, 220 }, 
+#elif defined(FEATURE_DISP_240X320)
+  { 240, 320 },   
+#elif defined(FEATURE_DISP_320X240)
+  { 320, 240 },  
 #elif defined(FEATURE_DISP_128X128)
   { 128, 128 },
   { 160, 120 },
@@ -356,6 +376,16 @@ static AEESize gCameraSnapshotSizeList [] = {
 #elif defined(USE_CAMSENSOR_SIV120)
 #if defined(FEATURE_DISP_160X128)
   { 160, 128 },
+#elif defined(FEATURE_DISP_220X176)
+  { 220, 176 },  
+#elif defined(FEATURE_DISP_128X160)
+  { 128, 160 },
+#elif defined(FEATURE_DISP_176X220)
+  { 176, 220 }, 
+#elif defined(FEATURE_DISP_240X320)
+  { 240, 320 },  
+#elif defined(FEATURE_DISP_320X240)
+  { 320, 240 },  
 #elif defined(FEATURE_DISP_128X128)
   { 128, 128 },
   { 160, 120 },

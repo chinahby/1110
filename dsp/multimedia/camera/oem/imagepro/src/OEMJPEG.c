@@ -28,7 +28,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
                     COEMJPEGViewer_HandleEvent
 
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright ?1999-2007 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -526,7 +526,7 @@ IBase *COEMJPEGViewer_New(IShell *po, AEECLSID cls)
   if(!pmeSys)
     return NULL;
 
-  pme = (COEMJPEGViewer *)(void *) AEE_NewClass((IBaseVtbl *)&gCOEMJPEGViewerMethods,
+  pme = (COEMJPEGViewer *)(void *) AEE_OEM_NEWCLASS((IBaseVtbl *)&gCOEMJPEGViewerMethods,
                                                 sizeof(COEMJPEGViewer));
   if(pme)
   {

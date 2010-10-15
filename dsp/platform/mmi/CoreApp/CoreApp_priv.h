@@ -98,6 +98,7 @@
 #ifdef FEATURE_SEAMLESS_SMS
 #define     SENDSEAMLESSSMS_TIME   (2*60*1000)
 #endif
+#define     RESETPROFILE_TIME      (1*60*1000)
 // 更新 Searching... 提示的定时器时间 (毫秒)
 #define    IDLESEARCHINTIME       (20000)
 
@@ -172,6 +173,38 @@
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (380)
 #define    ANI_RATE                              (150)
+#elif defined FEATURE_VERSION_H19C
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poon.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (21)
+#define    PWRON_ANI_RATE                        (150)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poon.gif"
+#define    PWROFF_ANI_FRAME_COUNT                (21)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
+#elif defined FEATURE_VERSION_ITEL
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/onoff.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (10)
+#define    PWRON_ANI_RATE                        (150)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/onoff.gif"
+#define    PWROFF_ANI_FRAME_COUNT                (10)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
+#elif defined FEATURE_VERSION_KARBONN     //add by yangdecai
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (12)
+#define    PWRON_ANI_RATE                        (380)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
+#define    PWROFF_ANI_FRAME_COUNT                (12)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (3000)
+#elif defined(FEATURE_VERSION_W021_128x160)
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
+#define    PWRON_ANI_FRAME_COUNT                 (12)
+#define    PWRON_ANI_RATE                        (380)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
+#define    PWROFF_ANI_FRAME_COUNT                (12)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)
@@ -193,6 +226,9 @@
 
 #define MAX_STRING_LENGTH      64
 #define MAX_BATTERY_POP_COUNT  3
+
+#define MUSIC_WIDTH            (SCREEN_HEIGHT-52) //78
+#define MUSIC_START_WIDTH      (SCREEN_HEIGHT-50) //80
 
 
 #ifdef FEATURE_SPN_FROM_BSMCCMNC

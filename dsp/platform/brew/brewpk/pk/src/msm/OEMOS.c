@@ -644,6 +644,113 @@ void OEMOS_ResetDevice(char * pszMsg, uint32 nCause)
 extern boolean print_allocation(const char *fname, void *ptr);
 #endif//FEATURE_BREW_HEAP_TRACKER
 
+#ifndef USES_RELEASE_VERSION
+#define HEAPNODE_NUM_MAX    10240
+
+typedef struct
+{
+    void *ptr;
+    const char *pfile;
+    int   line;
+}OEMOSHeapNode;
+
+static OEMOSHeapNode g_OEMOSHEAPNODES[HEAPNODE_NUM_MAX];
+
+void *OEMOS_DbgMark(void *ptr,const char *cpszFile, int nLine)
+{
+    OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
+    int i;
+    
+    for(i=0;i<HEAPNODE_NUM_MAX;i++)
+    {
+        if(pNode->ptr == NULL)
+        {
+            pNode->ptr = ptr;
+            pNode->pfile = cpszFile;
+            pNode->line = nLine;
+            break;
+        }
+        pNode++;
+    }
+    return ptr;
+}
+
+void *OEMOS_DbgReallocMark(void *ptr, void *oldptr, const char *cpszFile, int nLine)
+{
+    OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
+    int i;
+    
+    for(i=0;i<HEAPNODE_NUM_MAX;i++)
+    {
+        if(pNode->ptr == oldptr)
+        {
+            pNode->ptr = ptr;
+            pNode->pfile = cpszFile;
+            pNode->line = nLine;
+            break;
+        }
+        pNode++;
+    }
+    return ptr;
+}
+
+void OEMOS_DbgUnMark(PFNNOTIFY pfn,void *ptr,const char *cpszFile, int nLine)
+{
+    OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
+    int i;
+    
+    pfn(ptr);
+    
+    for(i=0;i<HEAPNODE_NUM_MAX;i++)
+    {
+        if(pNode->ptr == ptr)
+        {
+            pNode->ptr = NULL;
+            pNode->pfile = NULL;
+            pNode->line = 0;
+            break;
+        }
+        pNode++;
+    }
+    
+    if(i >= HEAPNODE_NUM_MAX)
+    {
+        DBGPRINTF("***Free 0x%08X %s %d",ptr,cpszFile,nLine);
+    }
+}
+
+void OEMOS_DbgDump(void)
+{
+    OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
+    int i;
+    
+    for(i=0;i<HEAPNODE_NUM_MAX;i++)
+    {
+        if(pNode->ptr != NULL)
+        {
+            MSG_FATAL("***Dump 0x%08X %s %d",pNode->ptr,pNode->pfile,pNode->line);
+        }
+        pNode++;
+    }
+}
+
+static void OEMOS_PrintPtrInfo(void *ptr)
+{
+    OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
+    int i;
+    
+    for(i=0;i<HEAPNODE_NUM_MAX;i++)
+    {
+        if(pNode->ptr == ptr)
+        {
+            DBGPRINTF("***PTR 0x%08X %s %d",pNode->ptr,pNode->pfile,pNode->line);
+            break;
+        }
+        pNode++;
+    }
+}
+#endif
+
 void OEMOS_Breakpoint(uint32 dwType, void * pData, uint32 nSize)
 {
    // You can ASSERT here for debug builds if you wish...
@@ -681,6 +788,9 @@ void OEMOS_Breakpoint(uint32 dwType, void * pData, uint32 nSize)
             DBGPRINTF("BPOINT Type %d, %s 0x%p %s", dwType, 
                         (dwType == AEEBRK_MEMLEAK ? "Node" : "IFace"), 
                         pal->pBuffer, szBuff);
+#ifndef USES_RELEASE_VERSION
+            OEMOS_PrintPtrInfo(pal->pBuffer);
+#endif
          }
       }
       break;

@@ -47,7 +47,6 @@ GB_IOHandler GreyBit_Open_Sys(const GB_CHAR *p, GB_BOOL bcreate)
     }
     
     result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR, (void**)&(handle->pIFileMgr));
-    
 	if(SUCCESS != result|| handle->pIFileMgr == NULL)
 	{
         GreyBit_Free_Sys(handle);
@@ -62,7 +61,6 @@ GB_IOHandler GreyBit_Open_Sys(const GB_CHAR *p, GB_BOOL bcreate)
     {
         handle->fp = IFILEMGR_OpenFile(handle->pIFileMgr, (char*)p, _OFM_READ);
     }
-    
 	if (handle->fp == NULL)
 	{
         IFILEMGR_Release(handle->pIFileMgr);

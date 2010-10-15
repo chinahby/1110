@@ -802,6 +802,7 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
        FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
        return EFAILED;
     }    
+	
 
     //ai.wText       = IDS_MOBILE;
     ai.wItemID   = IDI_ADDNEW_MENU_MOBILE;
@@ -834,6 +835,8 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
         return EFAILED;
      }   
+	
+	
 
     //ai.wText       = IDS_FAX;
     ai.wItemID   = IDI_ADDNEW_MENU_FAX;
@@ -844,6 +847,15 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
         return EFAILED;
     } 
+	//ai.wText		 = IDS_INPUT_GROUP;
+	ai.wItemID	 = IDI_ADDNEW_MENU_SELECTGROUP;
+	ai.wImage	 = IDB_GROUP;
+				
+	if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+	{
+		FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+		return EFAILED;
+	}	
 
     //ai.wText       = IDS_EMAIL;
     ai.wItemID   = IDI_ADDNEW_MENU_EMAIL;
@@ -855,15 +867,15 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EFAILED;
      }  
 
-    //ai.wText       = IDS_ADDRESS;
-    ai.wItemID   = IDI_ADDNEW_MENU_ADDRESS;
-    ai.wImage    = IDB_ADDRESS;
-            
-    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-    {
-        FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-        return EFAILED;
-     }  
+     //ai.wText		 = IDS_ADDRESS;
+		ai.wItemID	 = IDI_ADDNEW_MENU_ADDRESS;
+		ai.wImage	 = IDB_ADDRESS;
+				
+		if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+		{
+			FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+			return EFAILED;
+		 } 
 
     //ai.wText       = IDS_URL;
     ai.wItemID   = IDI_ADDNEW_MENU_URL;
@@ -885,15 +897,7 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EFAILED;
      }  
 
-    //ai.wText       = IDS_INPUT_GROUP;
-    ai.wItemID   = IDI_ADDNEW_MENU_SELECTGROUP;
-    ai.wImage    = IDB_GROUP;
-            
-    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-    {
-        FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-        return EFAILED;
-     }  
+    
 
     //ai.wText       = IDS_RING;
     ai.wItemID   = IDI_ADDNEW_MENU_SELECTRINGTONE;
@@ -996,8 +1000,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
                return EFAILED;
             }   
-       
-           //ai.wText       = IDS_FAX;
+		    //ai.wText       = IDS_FAX;
            ai.wItemID   = IDI_EDIT_MENU_FAX;
            ai.wImage    = IDB_FAXNUM;
                    
@@ -1007,7 +1010,17 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                return EFAILED;
            } 
        
-           //ai.wText       = IDS_EMAIL;
+            //ai.wText       = IDS_INPUT_GROUP;
+           ai.wItemID   = IDI_EDIT_MENU_GROUP;
+           ai.wImage    = IDB_GROUP;
+                   
+           if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+           {
+               FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+               return EFAILED;
+            } 
+		   
+      	 //ai.wText       = IDS_EMAIL;
            ai.wItemID   = IDI_EDIT_MENU_EMAIL;
            ai.wImage    = IDB_EMAIL;
                    
@@ -1015,8 +1028,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
            {
                FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
                return EFAILED;
-            }  
-       
+            }
            //ai.wText       = IDS_ADDRESS;
            ai.wItemID   = IDI_EDIT_MENU_ADDRESS;
            ai.wImage    = IDB_ADDRESS;
@@ -1026,7 +1038,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
                return EFAILED;
             }  
-       
+
            //ai.wText       = IDS_URL;
            ai.wItemID   = IDI_EDIT_MENU_URL;
            ai.wImage    = IDB_URL;
@@ -1047,15 +1059,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                return EFAILED;
             }  
        
-           //ai.wText       = IDS_INPUT_GROUP;
-           ai.wItemID   = IDI_EDIT_MENU_GROUP;
-           ai.wImage    = IDB_GROUP;
-                   
-           if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-           {
-               FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-               return EFAILED;
-            }  
+           
        
            //ai.wText       = IDS_RING;
            ai.wItemID   = IDI_EDIT_MENU_RINGTONE;
@@ -1144,7 +1148,6 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
      
            IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_OFFICE, NULL, 0, pMe->m_pAddNewOffice);
             }
-           
 //fax     
            if(pMe->m_pAddNewFax)
              {
@@ -1160,71 +1163,8 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
      
                 IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_FAX, NULL, 0, pMe->m_pAddNewFax);
             }
-           
-//email
-           if(pMe->m_pAddNewEMAIL)
-             {
-               ai.wText       = IDS_EMAIL;
-               ai.wItemID   = IDI_EDIT_MENU_EMAIL;
-               ai.wImage    = IDB_EMAIL;
-               
-               if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-               {
-                  FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-                  return EFAILED;
-               }
-           IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_EMAIL, NULL, 0, pMe->m_pAddNewEMAIL);
-            }
 
-//address
-           if(pMe->m_pAddNewAddress)
-             {
-               ai.wText       = IDS_ADDRESS;
-               ai.wItemID   = IDI_EDIT_MENU_ADDRESS;
-               ai.wImage    = IDB_ADDRESS;
-               
-               if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-               {
-                  FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-                  return EFAILED;
-               }
-     
-           IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_ADDRESS, NULL, 0, pMe->m_pAddNewAddress);
-            }
-
-//url
-           if(pMe->m_pAddNewURL)
-             {
-               ai.wText       = IDS_URL;
-               ai.wItemID   = IDI_EDIT_MENU_URL;
-               ai.wImage    = IDB_URL;
-               
-               if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-               {
-                  FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-                  return EFAILED;
-               }
-     
-           IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_URL, NULL, 0, pMe->m_pAddNewURL);
-            }
-
-//notes     
-           if(pMe->m_pAddNewRemark)
-           {
-               ai.wText       = IDS_NOTES;
-               ai.wItemID   = IDI_EDIT_MENU_REMARK;
-               ai.wImage    = IDB_NOTES;
-               
-               if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-               {
-                  FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-                  return EFAILED;
-               }
-     
-                IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_REMARK, NULL, 0, pMe->m_pAddNewRemark);
-           }
-
-            // insert content into wms don't need group and ringtone
+ // insert content into wms don't need group and ringtone
             if(!(STARTMETHOD_SELECTFIELD == pMe->m_eStartMethod && pMe->m_wSelFldType == MULTI_SELECT_CONTENT))
             {
                 // group
@@ -1300,6 +1240,75 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                    }
                    IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_GROUP, NULL, 0, pGroup);
                 }
+//email
+			  if(pMe->m_pAddNewEMAIL)
+				{
+				  ai.wText		 = IDS_EMAIL;
+				  ai.wItemID   = IDI_EDIT_MENU_EMAIL;
+				  ai.wImage    = IDB_EMAIL;
+				  
+				  if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+				  {
+					 FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+					 return EFAILED;
+				  }
+			  IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_EMAIL, NULL, 0, pMe->m_pAddNewEMAIL);
+			   }
+
+
+//address
+           if(pMe->m_pAddNewAddress)
+             {
+               ai.wText       = IDS_ADDRESS;
+               ai.wItemID   = IDI_EDIT_MENU_ADDRESS;
+               ai.wImage    = IDB_ADDRESS;
+               
+               if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+               {
+                  FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+                  return EFAILED;
+               }
+     
+           IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_ADDRESS, NULL, 0, pMe->m_pAddNewAddress);
+            }
+
+		  
+
+
+
+//url
+           if(pMe->m_pAddNewURL)
+             {
+               ai.wText       = IDS_URL;
+               ai.wItemID   = IDI_EDIT_MENU_URL;
+               ai.wImage    = IDB_URL;
+               
+               if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+               {
+                  FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+                  return EFAILED;
+               }
+     
+           IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_URL, NULL, 0, pMe->m_pAddNewURL);
+            }
+
+//notes     
+           if(pMe->m_pAddNewRemark)
+           {
+               ai.wText       = IDS_NOTES;
+               ai.wItemID   = IDI_EDIT_MENU_REMARK;
+               ai.wImage    = IDB_NOTES;
+               
+               if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+               {
+                  FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+                  return EFAILED;
+               }
+     
+                IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_REMARK, NULL, 0, pMe->m_pAddNewRemark);
+           }
+
+            
 
                 // ringtone     
                 if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')

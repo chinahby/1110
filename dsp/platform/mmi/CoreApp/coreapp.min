@@ -19,6 +19,7 @@ vpath %.bar $(COREAPP_RES)
 vpath %.brx $(COREAPP_RES)
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 vpath %.jpg $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
+vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 
 CONSTFILE_FILES+=\
 	coreapp.mif|fs:/mif/coreapp.mif \
@@ -43,6 +44,12 @@ else ifeq ($(USES_RESDIR), Flexi021)
 CONSTFILE_FILES+=\
 	poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
 	poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg	
+else ifeq ($(USES_RESDIR), H19C)
+CONSTFILE_FILES+=\
+	poon.gif|fs:/image/pwronoffani/poon.gif 
+else ifeq ($(USES_RESDIR), ITEL)
+CONSTFILE_FILES+=\
+	onoff.gif|fs:/image/pwronoffani/onoff.gif 	
 else ifeq ($(USES_RESDIR), Ivio021)
 CONSTFILE_FILES+=\
 	poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
@@ -50,6 +57,10 @@ CONSTFILE_FILES+=\
 else ifeq ($(USES_RESDIR), Ivio203)
 CONSTFILE_FILES+=\
 	poweronani.png|fs:/image/pwronoffani/poweronani.png
+else ifeq ($(USES_RESDIR), Karbonn)
+CONSTFILE_FILES+=\
+    poweron.gif|fs:/image/pwronoffani/poweron.gif \
+    poweroff.gif|fs:/image/pwronoffani/poweroff.gif
 else
 CONSTFILE_FILES+=\
     poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \

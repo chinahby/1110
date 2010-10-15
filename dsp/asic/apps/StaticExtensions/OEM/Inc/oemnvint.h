@@ -329,7 +329,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_LOCKCODE_MAXLEN 5
 #define OEMNV_LOCKUIM_MAXLEN 10
 
-#define OEMNV_DEFAULT_BANNER  DISPLAYNAME
+#define OEMNV_DEFAULT_BANNER  PROJECTNAME
 
 #define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper1.png"
 #ifdef FEATURE_SCREEN_SAVE
@@ -369,7 +369,11 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_SMS_VIBONLY  2
 #define   OEMNV_SMS_RINGVIB  3
 #define   OEMNV_SMS_VIBANDRINGER  4
+#ifdef FEATURE_VERSION_KARBONN
+#define   OEMNV_DEFAULTRINGER     12
+#else
 #define   OEMNV_DEFAULTRINGER        4
+#endif
 #define   OEMNV_ALARM_RINGER  1 
 
 #ifdef FEATURE_VERSION_FLEXI203
@@ -381,6 +385,16 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined FEATURE_VERSION_M8
 #define   OEMNV_STARTUP_MUSIC 13 
 #define   OEMNV_SHUTDOWN_MUSIC 14 
+#elif defined FEATURE_VERSION_H19C
+#define   OEMNV_STARTUP_MUSIC 13 
+#define   OEMNV_SHUTDOWN_MUSIC 13 
+#elif defined FEATURE_VERSION_ITEL
+#define   OEMNV_STARTUP_MUSIC 13 
+#define   OEMNV_SHUTDOWN_MUSIC 13 
+#elif defined FEATURE_VERSION_KARBONN
+#define   OEMNV_STARTUP_MUSIC 13 
+#define   OEMNV_SHUTDOWN_MUSIC 14 
+
 #else
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
@@ -678,6 +692,20 @@ typedef struct _OEMErrLogType {
    boolean fatal;        // whether fatal
 } OEMErrLogType;
 
+#ifdef FEATURE_VERSION_CITYCELL
+#define OEMNV_EMERT_SEZE                       3
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "100"
+#define OEMNV_EMERG_NUM_TWO                    "101"
+#define OEMNV_EMERG_NUM_TRE                    "102"
+#else
+#define OEMNV_EMERT_SEZE                       4
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "110"
+#define OEMNV_EMERG_NUM_TWO                    "112"
+#define OEMNV_EMERG_NUM_TRE                    "911"
+#define OEMNV_EMERG_NUM_FOR                    "999"
+#endif
 
 #define OEMNV_STEREO_HEADSET_MASK              0x00000001
 #define OEMNV_HEADSET_MASK                     0x00000002
@@ -785,11 +813,11 @@ typedef PACKED struct _ringID
 #elif defined FEATURE_CARRIER_MAROC_WANA
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_FRENCH
 #else
-#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+#ifdef FEATURE_DISP_160X128
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_CAP_LOWER_ENGLISH
 #else
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_ENGLISH
-#endif
+#endif/*FEATURE_DISP_160X128*/
 #endif  
 
 #ifdef FEATURE_SHORT_CODE_NAM_COUNT
@@ -800,9 +828,11 @@ typedef PACKED struct _ringID
 #if defined (FEATURE_CARRIER_THAILAND_HUTCH)
 #define OEM_INTERNATION_NUMBER "001"
 #else
-#if defined(FEATURE_PROJECT_SMART)
+//#if defined(FEATURE_PROJECT_SMART)
+#if defined(FEATURE_SMART_INTEL_NUM)
 #define OEM_INTERNATION_NUMBER "01033"
-#elif defined(FEATURE_PROJECT_M8)
+//#elif defined(FEATURE_PROJECT_M8)
+#elif defined(FEATURE_M8_INTEL_NUM)
 #define OEM_INTERNATION_NUMBER "01068"
 #else
 #define OEM_INTERNATION_NUMBER "00"

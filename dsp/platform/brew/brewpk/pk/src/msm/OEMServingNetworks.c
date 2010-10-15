@@ -15,7 +15,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
 INITIALIZATION AND SEQUENCING REQUIREMENTS:
    None.
 
-        Copyright © 2007 QUALCOMM Incorporated.
+        Copyright ?2007 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =============================================================================*/

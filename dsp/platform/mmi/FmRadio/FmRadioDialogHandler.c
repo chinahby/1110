@@ -66,7 +66,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #define BEGIN_TO_REFRESH_CHANNEL_LIST       TRUE
 #define CONTINUE_TO_REFRESH_CHANNEL_LIST    FALSE
 #define FM_VOLUME_X                         5
-#define FM_VOLUME_Y                         60
+#define FM_VOLUME_Y                         (SCREEN_HEIGHT - 68)
 static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier);
 static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId);
 static void moveOperationModeTo( CFmRadio *pMe, OpModeTypeEnum newMode);
@@ -655,6 +655,21 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         #elif defined(FEATURE_DISP_160X128)
 			width = 40;
             SETAEERECT( &rect, ( 160 - width) / 2, ( 128 - fontHeight) / 2, width, fontHeight);
+		#elif defined(FEATURE_DISP_220X176)
+			width = 40;
+            SETAEERECT( &rect, ( 220 - width) / 2, ( 176 - fontHeight) / 2, width, fontHeight);	
+		#elif defined(FEATURE_DISP_128X160)
+			width = 40;
+            SETAEERECT( &rect, ( 128 - width) / 2, ( 160 - fontHeight) / 2, width, fontHeight);	
+		#elif defined(FEATURE_DISP_176X220)
+			width = 40;
+            SETAEERECT( &rect, ( 176 - width) / 2, ( 220 - fontHeight) / 2, width, fontHeight);	
+		#elif defined(FEATURE_DISP_240X320)
+			width = 40;
+            SETAEERECT( &rect, ( 240 - width) / 2, ( 320 - fontHeight) / 2, width, fontHeight);	
+		#elif defined(FEATURE_DISP_320X240)
+			width = 40;
+            SETAEERECT( &rect, ( 320 - width) / 2, ( 240 - fontHeight) / 2, width, fontHeight);			
         #else
         	SETAEERECT( &rect, ( 176 - width) / 2, ( 220 - fontHeight) / 2, width, fontHeight);
         #endif
@@ -1357,6 +1372,36 @@ static void popTuningModeSelectMenu( CFmRadio *pMe)
 	
 		SETAEERECT( &rect, 128 >> 3, 128 >> 3, 128 * 3 >> 2, 128 * 3 >> 2);
 		IMENUCTL_SetRect( pMe->m_pMenu, &rect);
+#elif defined(FEATURE_DISP_220X176)
+		SETAEERECT( &rect, (128 >> 3) + 6, (128 >> 3) + 6, 128 * 3 >> 2, 128 * 3 >> 2);
+		IDISPLAY_FillRect( pMe->m_pDisplay, &rect, 0);
+	
+		SETAEERECT( &rect, 128 >> 3, 128 >> 3, 128 * 3 >> 2, 128 * 3 >> 2);
+		IMENUCTL_SetRect( pMe->m_pMenu, &rect);		
+#elif defined(FEATURE_DISP_128X160)		//FmµÄ±³¾°Í¼×ø±ê(22,22,96,96)
+		SETAEERECT( &rect, (128 >> 3) + 6, (128 >> 3) + 6, 128 * 3 >> 2, 128 * 3 >> 2);
+		IDISPLAY_FillRect( pMe->m_pDisplay, &rect, 0);
+	
+		SETAEERECT( &rect, 128 >> 3, 128 >> 3, 128 * 3 >> 2, 128 * 3 >> 2);
+		IMENUCTL_SetRect( pMe->m_pMenu, &rect);		
+#elif defined(FEATURE_DISP_176X220)
+		SETAEERECT( &rect, (128 >> 3) + 6, (128 >> 3) + 6, 128 * 3 >> 2, 128 * 3 >> 2);
+		IDISPLAY_FillRect( pMe->m_pDisplay, &rect, 0);
+	
+		SETAEERECT( &rect, 128 >> 3, 128 >> 3, 128 * 3 >> 2, 128 * 3 >> 2);
+		IMENUCTL_SetRect( pMe->m_pMenu, &rect);	
+#elif defined(FEATURE_DISP_240X320)
+		SETAEERECT( &rect, (128 >> 3) + 6, (128 >> 3) + 6, 128 * 3 >> 2, 128 * 3 >> 2);
+		IDISPLAY_FillRect( pMe->m_pDisplay, &rect, 0);
+	
+		SETAEERECT( &rect, 128 >> 3, 128 >> 3, 128 * 3 >> 2, 128 * 3 >> 2);
+		IMENUCTL_SetRect( pMe->m_pMenu, &rect);		
+#elif defined(FEATURE_DISP_320X240)
+		SETAEERECT( &rect, (128 >> 3) + 6, (128 >> 3) + 6, 128 * 3 >> 2, 128 * 3 >> 2);
+		IDISPLAY_FillRect( pMe->m_pDisplay, &rect, 0);
+	
+		SETAEERECT( &rect, 128 >> 3, 128 >> 3, 128 * 3 >> 2, 128 * 3 >> 2);
+		IMENUCTL_SetRect( pMe->m_pMenu, &rect);				
 #else
     SETAEERECT( &rect, (128 >> 3) + 6, (128 >> 3) + 6, 128 * 3 >> 2, 128 * 3 >> 2);
     IDISPLAY_FillRect( pMe->m_pDisplay, &rect, 0);
@@ -2134,6 +2179,61 @@ static void paint( CFmRadio *pMe)
 			}
 			x++;
 		}
+	#elif defined(FEATURE_DISP_220X176)
+		if( pMe->tuneVolumeByLeftRightArrowKey)
+		{
+			static int x = 0;
+
+			if( (x % 2) == 0)
+			{
+				drawImage( pMe, FMRADIOLN_RES_FILE, IDI_VOLUME1, 49, 80);
+			}
+			x++;
+		}	
+	#elif defined(FEATURE_DISP_128X160)
+		if( pMe->tuneVolumeByLeftRightArrowKey)
+		{
+			static int x = 0;
+
+			if( (x % 2) == 0)
+			{
+				drawImage( pMe, FMRADIOLN_RES_FILE, IDI_VOLUME1, 49, 80);
+			}
+			x++;
+		}	
+	#elif defined(FEATURE_DISP_176X220)
+		if( pMe->tuneVolumeByLeftRightArrowKey)
+		{
+			static int x = 0;
+
+			if( (x % 2) == 0)
+			{
+				drawImage( pMe, FMRADIOLN_RES_FILE, IDI_VOLUME1, 49, 80);
+			}
+			x++;
+		}	
+	#elif defined(FEATURE_DISP_240X320)
+		if( pMe->tuneVolumeByLeftRightArrowKey)
+		{
+			static int x = 0;
+
+			if( (x % 2) == 0)
+			{
+				drawImage( pMe, FMRADIOLN_RES_FILE, IDI_VOLUME1, 49, 80);
+			}
+			x++;
+		}		
+	#elif defined(FEATURE_DISP_320X240)
+		if( pMe->tuneVolumeByLeftRightArrowKey)
+		{
+			static int x = 0;
+
+			if( (x % 2) == 0)
+			{
+				drawImage( pMe, FMRADIOLN_RES_FILE, IDI_VOLUME1, 49, 80);
+			}
+			x++;
+		}		
 	#else
 		if( pMe->tuneVolumeByLeftRightArrowKey)
 		{
@@ -2173,6 +2273,66 @@ static void paint( CFmRadio *pMe)
 			    drawImage( pMe, FMRADIOLN_RES_FILE, IDI_UNMUTE, 60, 80);     
 			} 
 		}
+	#elif defined(FEATURE_DISP_220X176)
+		if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+		{
+			if(pMe->key_to_mute)
+			{
+		    	drawImage( pMe, FMRADIOLN_RES_FILE, IDI_MUTE, 60, 80); 
+			}
+			else
+			{
+			    drawImage( pMe, FMRADIOLN_RES_FILE, IDI_UNMUTE, 60, 80);     
+			} 
+		}	
+	#elif defined(FEATURE_DISP_128X160)
+		if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+		{
+			if(pMe->key_to_mute)
+			{
+		    	drawImage( pMe, FMRADIOLN_RES_FILE, IDI_MUTE, 60, 80); 
+			}
+			else
+			{
+			    drawImage( pMe, FMRADIOLN_RES_FILE, IDI_UNMUTE, 60, 80);     
+			} 
+		}	
+	#elif defined(FEATURE_DISP_176X220)
+		if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+		{
+			if(pMe->key_to_mute)
+			{
+		    	drawImage( pMe, FMRADIOLN_RES_FILE, IDI_MUTE, 60, 80); 
+			}
+			else
+			{
+			    drawImage( pMe, FMRADIOLN_RES_FILE, IDI_UNMUTE, 60, 80);     
+			} 
+		}
+	#elif defined(FEATURE_DISP_240X320)
+		if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+		{
+			if(pMe->key_to_mute)
+			{
+		    	drawImage( pMe, FMRADIOLN_RES_FILE, IDI_MUTE, 60, 80); 
+			}
+			else
+			{
+			    drawImage( pMe, FMRADIOLN_RES_FILE, IDI_UNMUTE, 60, 80);     
+			} 
+		}	
+	#elif defined(FEATURE_DISP_320X240)
+		if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+		{
+			if(pMe->key_to_mute)
+			{
+		    	drawImage( pMe, FMRADIOLN_RES_FILE, IDI_MUTE, 60, 80); 
+			}
+			else
+			{
+			    drawImage( pMe, FMRADIOLN_RES_FILE, IDI_UNMUTE, 60, 80);     
+			} 
+		}		
 	#else
 		if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 		{
@@ -2277,6 +2437,66 @@ static void paint( CFmRadio *pMe)
                         AEE_FONT_NORMAL,
                         IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
                     );
+		#elif defined(FEATURE_DISP_220X176)
+            int         width       = 70;
+		
+            SETAEERECT( &rect, ( 220 - width) / 2, (( 176 - fontHeight) / 2) - fontHeight, width, fontHeight);
+            drawText( pMe,
+                        FMRADIOLS_RES_FILE_LANG,
+                        IDS_FMRADIO_FREQ_INPUT,
+                        &rect,
+                        MAKE_RGB(255,105,0),
+                        AEE_FONT_NORMAL,
+                        IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+                    );	
+		#elif defined(FEATURE_DISP_128X160)
+            int         width       = 70;
+		
+            SETAEERECT( &rect, ( 128 - width) / 2, (( 160 - fontHeight) / 2) - fontHeight, width, fontHeight);
+            drawText( pMe,
+                        FMRADIOLS_RES_FILE_LANG,
+                        IDS_FMRADIO_FREQ_INPUT,
+                        &rect,
+                        MAKE_RGB(255,105,0),
+                        AEE_FONT_NORMAL,
+                        IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+                    );	
+		#elif defined(FEATURE_DISP_176X220)
+            int         width       = 70;
+		
+            SETAEERECT( &rect, ( 176 - width) / 2, (( 220 - fontHeight) / 2) - fontHeight, width, fontHeight);
+            drawText( pMe,
+                        FMRADIOLS_RES_FILE_LANG,
+                        IDS_FMRADIO_FREQ_INPUT,
+                        &rect,
+                        MAKE_RGB(255,105,0),
+                        AEE_FONT_NORMAL,
+                        IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+                    );	
+		#elif defined(FEATURE_DISP_240X320)
+            int         width       = 70;
+		
+            SETAEERECT( &rect, ( 240 - width) / 2, (( 320 - fontHeight) / 2) - fontHeight, width, fontHeight);
+            drawText( pMe,
+                        FMRADIOLS_RES_FILE_LANG,
+                        IDS_FMRADIO_FREQ_INPUT,
+                        &rect,
+                        MAKE_RGB(255,105,0),
+                        AEE_FONT_NORMAL,
+                        IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+                    );		
+		#elif defined(FEATURE_DISP_320X240)
+            int         width       = 70;
+		
+            SETAEERECT( &rect, ( 240 - width) / 2, (( 320 - fontHeight) / 2) - fontHeight, width, fontHeight);
+            drawText( pMe,
+                        FMRADIOLS_RES_FILE_LANG,
+                        IDS_FMRADIO_FREQ_INPUT,
+                        &rect,
+                        MAKE_RGB(255,105,0),
+                        AEE_FONT_NORMAL,
+                        IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+                    );		
         #else
         	int         width       = 86;
 		
@@ -2321,8 +2541,7 @@ static void repaint( CFmRadio *pMe, boolean immediately)
 }
 
 static void drawBg( CFmRadio *pMe)
-{
-
+{	
     drawImage( pMe, FMRADIOLN_RES_FILE, IDI_BG, 0, 0);
 }
 

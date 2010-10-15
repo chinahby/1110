@@ -94,15 +94,26 @@ static disp_cls_type cls_arg;
 extern boolean mdp_disp_fatal_err_flag;
 
 extern int epson_S1D19120_install(char *);
-#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022)
+
+#if defined(LCD_TM_128X128)
 extern int tm_cstn128x128_install(char * str);
 #endif
 
-#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
+#if defined(LCD_ZGD_128x160)
+extern int zgd_tft128x160_install(char *);
+#endif
+
+#if defined(LCD_ZGD_220x176)
+extern int zgd_tft220x176_install(char *);
+#endif
+
+#if defined(LCD_ZGD_177) 
 extern int zgd_tft177_install(char *);
 #endif
 
-extern int zgd_tft220x176_install(char * str);
+#if defined(LCD_ST_7735R)
+	extern int st7735r_128x128_install(char *);
+#endif
 
 #ifdef FEATURE_BOOT_SPLASH_SCREEN
 extern void disp_epson_S1D19120_boot_chg_splash_screen (void);
@@ -134,32 +145,37 @@ void disp_init(void)
 
 #if 0
 #ifndef CUST_EDITION
-  if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
-    return;
+	if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
+		return;
 #else
+
 #if defined(LCD_TM_128X128) 
-  if(tm_cstn128x128_install(PRIMARY_LCD_NAME) == -1)
+	if(tm_cstn128x128_install(PRIMARY_LCD_NAME) == -1)
+		return;
 #elif defined(LCD_ZGD_177)
-   if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
+	if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
+		return;
+#elif defined(LCD_ZGD_128x160)
+	if(zgd_tft128x160_install(PRIMARY_LCD_NAME) == -1)
+		return;
 #elif defined(LCD_ST_7735R)
 	if(st7735r_128x128_install(PRIMARY_LCD_NAME) == -1)
+		return;
+#elif defined(LCD_ZGD_220x176)
+	if(zgd_tft220x176_install(PRIMARY_LCD_NAME) == -1)
+		return;
 #else
 #error code not present
-#endif   
-    return;  
+#endif	
+
 #endif
-#endif
-	if(zgd_tft220x176_install(PRIMARY_LCD_NAME) == -1)
-	{
-		return;
-	}
-	
+
 	fd = drv_open(PRIMARY_LCD_NAME);
 	drv_init(fd);
 	disp_powerup();    
   
 #ifndef FEATURE_MDDI
-  lcd_info_1 = disp_get_info();
+	lcd_info_1 = disp_get_info();
 #endif /* FEATURE_MDDI */
 
 #ifdef FEATURE_BOOT_SPLASH_SCREEN
@@ -167,7 +183,7 @@ void disp_init(void)
 #endif
 
 #ifdef FEATURE_MDP
-  mdp_init();
+	mdp_init();
 #endif
 }
 
@@ -490,9 +506,12 @@ dword disp_capture2
 
 #ifdef FEATURE_TORCH_SUPPORT
 
-#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022)
+//#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022) || defined(FEATURE_PROJECT_W021_128x160)|| defined (FEATURE_PROJECT_W021_176X220) || defined (FEATURE_PROJECT_W021_240X320)|| defined (FEATURE_PROJECT_W021_220X176) || defined (FEATURE_PROJECT_W021_320X240)
+//#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022) || defined(FEATURE_PROJECT_W021_128x160)
+#if defined (FEATURE_GPIO_LAMP_EN_OUTPUT_31)
 #define GPIO_LAMP_EN GPIO_OUTPUT_31
-#elif defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
+//#elif defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
+#elif defined(FEATURE_GPIO_LAMP_EN_OUTPUT_32)
 #define GPIO_LAMP_EN GPIO_OUTPUT_32
 #else
 #define GPIO_LAMP_EN GPIO_GENERIC_DEFAULT

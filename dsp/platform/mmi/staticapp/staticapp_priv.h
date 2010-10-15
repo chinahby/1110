@@ -124,6 +124,16 @@ typedef struct _Staticapp
 #define  MAX_MATRIX_ITEMS 10
 #elif defined(FEATURE_DISP_160X128)
 #define  MAX_MATRIX_ITEMS 7
+#elif defined(FEATURE_DISP_220X176)
+#define  MAX_MATRIX_ITEMS 7
+#elif defined(FEATURE_DISP_128X160)
+#define  MAX_MATRIX_ITEMS 7
+#elif defined(FEATURE_DISP_176X220)
+#define  MAX_MATRIX_ITEMS 7
+#elif defined(FEATURE_DISP_240X320)
+#define  MAX_MATRIX_ITEMS 7
+#elif defined(FEATURE_DISP_320X240)
+#define  MAX_MATRIX_ITEMS 7
 #endif
 #define ICON_ANIMATED_FRAME     1 //½¹µãÍ¼Æ¬µÄÖ¡Êý
 

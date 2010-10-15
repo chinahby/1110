@@ -286,5 +286,135 @@
 	<Object Id="6444" Name="IDI_DATE_BAR">
 		<File>..\images\160x128\Ivio203\Calendar\bar.png</File>
 	</Object>
+	
+	<Object Id="7001" Name="IDB_BATT_LOW" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\batt0.bmp</File>
+	</Object>
+	<Object Id="7002" Name="IDB_BATT1" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\batt1.bmp</File>
+	</Object>
+	<Object Id="7003" Name="IDB_BATT2" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\batt2.bmp</File>
+	</Object>
+	<Object Id="7004" Name="IDB_BATT3" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\batt3.bmp</File>
+	</Object>
+	<Object Id="7005" Name="IDB_BATT_FULL" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\batt4.bmp</File>
+	</Object>
+	<Object Id="7006" Name="IDB_RSSI0" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\rssi0.bmp</File>
+	</Object>
+	<Object Id="7007" Name="IDB_RSSI1" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\rssi1.bmp</File>
+	</Object>
+	<Object Id="7008" Name="IDB_RSSI2" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\rssi2.bmp</File>
+	</Object>
+	<Object Id="7009" Name="IDB_RSSI3" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\rssi3.bmp</File>
+	</Object>
+	<Object Id="7010" Name="IDB_RSSI4" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\rssi4.bmp</File>
+	</Object>
+	<Object Id="7011" Name="IDB_VMAIL" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\voice_mail.bmp</File>
+	</Object>
+	<Object Id="7012" Name="IDB_SMS" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\sms.bmp</File>
+	</Object>
+	<Object Id="7013" Name="IDB_ROAM" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\roam.bmp</File>
+	</Object>
+	<Object Id="7014" Name="IDB_SILENCE" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\silence.bmp</File>
+	</Object>
+	<Object Id="7015" Name="IDB_ALERT" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\alert.bmp</File>
+	</Object>
+	<Object Id="7016" Name="IDB_INUSE" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\in_use.bmp</File>
+	</Object>
+	<Object Id="7017" Name="IDB_1X" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\1x.bmp</File>
+	</Object>
+	<Object Id="7018" Name="IDB_VOICE_PRIV" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\voice_priv.bmp</File>
+	</Object>
+	<Object Id="7019" Name="IDB_ALARM" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\alarm.bmp</File>
+	</Object>
+	<Object Id="7020" Name="IDB_FM_RADIO" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\fm_radio.bmp</File>
+	</Object>
+	<Object Id="7021" Name="IDB_HEADSET" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\headset.bmp</File>
+	</Object>
+	<Object Id="7022" Name="IDB_MISSED_CALL" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\missed_call.bmp</File>
+	</Object>
+	<Object Id="7023" Name="IDB_VIBRING" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\vibring.bmp</File>
+	</Object>
+	<Object Id="7024" Name="IDB_SMS_FULL" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\sms_full.bmp</File>
+	</Object>
+	<Object Id="7025" Name="IDB_VIBRATOR" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\vibrator.bmp</File>
+	</Object>
+	<Object Id="7026" Name="IDB_MUTE" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\mute.bmp</File>
+	</Object>
+	<Object Id="7027" Name="IDB_LOCKSTATUS" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\lock_status.bmp</File>
+	</Object>
+	<Object Id="7028" Name="IDB_SCHEDULE" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\schedule.bmp</File>
+	</Object>
+	<Object Id="7029" Name="IDB_TIMER" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\timer.bmp</File>
+	</Object>
+	<Object Id="7030" Name="IDB_BLUETOOTH" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\bluetooth.bmp</File>
+	</Object>
+	<Object Id="7031" Name="IDB_BT_TRANS" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\bt_trans.bmp</File>
+	</Object>
+	<Object Id="7032" Name="IDB_BT_HEADSET" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\bt_headset.bmp</File>
+	</Object>
+	<Object Id="7033" Name="IDB_AIR_MODE" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\airplane_mode.bmp</File>
+	</Object>
+	<Object Id="7034" Name="IDB_WAP" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\wap.bmp</File>
+	</Object>
+	<Object Id="7035" Name="IDB_LOADSPEAKER" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\loadspeaker.bmp</File>
+	</Object>
+	<Object Id="7036" Name="IDB_EMERGENCY" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\emergency.bmp</File>
+	</Object>
+	<Object Id="7037" Name="IDB_PUSH_MSG" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\push_msg.bmp</File>
+	</Object>
+	<Object Id="7038" Name="IDB_SPORTS" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\sports.bmp</File>
+	</Object>
+	<Object Id="7039" Name="IDB_SD_CARD" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\sd_card.bmp</File>
+	</Object>
+	<Object Id="7040" Name="IDB_NO_SERVICE" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\no_service.bmp</File>
+	</Object>
+	<Object Id="7041" Name="IDB_MMS_UNREAD" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\mms_unread.bmp</File>
+	</Object>
+	<Object Id="7042" Name="IDB_MMS_UNRECEIVED" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\mms_unreceived.bmp</File>
+	</Object>
+	<Object Id="7043" Name="IDB_MMS_FULL" MimeType="image/bmp">
+		<File>..\images\160x128\Ivio203\Annunciator\mms_full.bmp</File>
+	</Object>
 </Objects>
 </BREWRes>

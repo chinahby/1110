@@ -128,7 +128,7 @@ int AEEBTExtAG_New(IShell* ps, AEECLSID cls, void** ppif)
   if ( pIBTExtAGobj == NULL )
   {
     // allocate the object
-    pNew = (IBTExtAG*) AEE_NewClassEx( (IBaseVtbl*)&gpvtIBTExtAG, 
+    pNew = (IBTExtAG*) AEE_OEM_NEWCLASSEX( (IBaseVtbl*)&gpvtIBTExtAG, 
                                        sizeof(IBTExtAG), TRUE );
     if ( pNew == NULL )
     {

@@ -266,7 +266,7 @@ int OEMCAT_New(IShell *pIShell, AEECLSID cls, void **ppif)
    if (ICATobj == NULL)
    {
      // Allocate the object.
-     if ((ICATobj = (ICAT*)(void*)AEE_NewClassEx((AEEVTBL(IBase) *)(void*)&gOEMCATFuncs,sizeof(ICAT),TRUE)) == NULL) {
+     if ((ICATobj = (ICAT*)(void*)AEE_OEM_NEWCLASSEX((AEEVTBL(IBase) *)(void*)&gOEMCATFuncs,sizeof(ICAT),TRUE)) == NULL) {
         return ENOMEMORY;
      }
 

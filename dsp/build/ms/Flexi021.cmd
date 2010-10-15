@@ -1,6 +1,6 @@
 @echo off
 @set PROJECTNAME=Flexi021
-@set DISPLAYNAME=Flexi021
+@set DISPLAYNAME=W021
 @set QUALCOMMNAME=SBNAALZ
 @set QUALCOMMNAME_BUILD=SXNAALZ
 @set RESOURCEDIR=Flexi021
@@ -8,9 +8,9 @@
 @set HWVERSION=W203_MB_V0.6
 
 rem LCD-TYPE CHOOSE
-@set LCD_TYPE=tm_128x128
+rem @set LCD_TYPE=tm_128x128
 rem @set LCD_TYPE=zgd_177
-rem @set LCD_TYPE=st7735r
+@set LCD_TYPE=st7735r
 
 
 rem delete some files for compile muslim or nasrani

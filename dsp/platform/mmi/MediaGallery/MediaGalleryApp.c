@@ -17,6 +17,7 @@
 #include "AEEAppletCtl.h"
 #include "AEEAnnunciator.h"
 #include "AEECM.h"
+#include "OEMHeap.h"
 #ifdef FEATURE_SUPPORT_VC0848
 #include "vc0848.h"
 #endif
@@ -670,7 +671,10 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
          if (NULL != pTemp)
          {
             pTemp++;
-
+            if(pMe->m_pExpPara)
+            {
+               sys_free(pMe->m_pExpPara);
+            }
             pMe->m_pExpPara = (ExplorerPara *)ATOI(pTemp);
          }
 
@@ -833,19 +837,15 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
    int nRet = EFAILED;
    if (NULL != pPara)
    {
-      pExpPara = (ExplorerPara *)MALLOC(sizeof(ExplorerPara));
+      pExpPara = (ExplorerPara *)sys_malloc(sizeof(ExplorerPara));
       if(NULL == pExpPara)
       {
          MG_FARF(ADDR, ("Allocate memory failed"));
-       return EFAILED;
+         return EFAILED;
       }
       MEMCPY(pExpPara, pPara, sizeof(ExplorerPara));
    }
-   //else
-   //{
-   //   return EFAILED;
-   //}
-
+   
    MG_FARF(ADDR, ("copy explorer data, later just take pointer"));
 
    SNPRINTF(pszArg, sizeof(pszArg),
@@ -856,7 +856,12 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
                                  pszArg);
    /*If failed to start applet, free the memory*/
    if(SUCCESS != nRet)
-      FREEIF(pExpPara);
+   {
+      if(pExpPara)
+      {
+          sys_free(pExpPara);
+      }
+   }
    return SUCCESS;
 }//CMediaGallery_FileExplorer
 
@@ -1334,7 +1339,6 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
    pMe->m_pFilesDB = NULL;
    pMe->m_pDetailText = NULL;
 
-   pMe->m_pMediaPending = NULL;
    pMe->m_pMedia = NULL;
    pMe->m_pMediaSpec = NULL;
 
@@ -1440,7 +1444,11 @@ static void MediaGalleryApp_FreeAppData(CMediaGalleryApp* pMe)
 
    MGExplorer_ReleaseFileIcon(pMe->m_pFileIcons);
    FREEIF(pMe->m_pFileIcons);
-   FREEIF(pMe->m_pExpPara);
+   if(pMe->m_pExpPara)
+   {
+       sys_free(pMe->m_pExpPara);
+       pMe->m_pExpPara = NULL;
+   }
 
    RELEASEIF(pMe->m_pFileMgr);
    MG_CLEAR_COPYDATA(pMe->m_Copy);
@@ -1452,7 +1460,6 @@ static void MediaGalleryApp_FreeAppData(CMediaGalleryApp* pMe)
    FREEIF(pMe->m_pInputFileName);
 
    RELEASEIF(pMe->m_pMedia);
-   RELEASEIF(pMe->m_pMediaPending);
 
    FREEIF(pMe->m_pMediaSpec);
 

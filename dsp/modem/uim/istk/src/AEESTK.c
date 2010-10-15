@@ -314,7 +314,7 @@ int AEESTKNotifier_New(IShell *pIShell, AEECLSID cls, void **ppif)
   if (ISTKNotifierObj == NULL) {
     /* Allocate the object. */
 
-    ISTKNotifierObj = (ISTKNotifier*)(void*)AEE_NewClassEx((IBaseVtbl*)(void*)&gISTKNotifierFuncs,
+    ISTKNotifierObj = (ISTKNotifier*)(void*)AEE_OEM_NEWCLASSEX((IBaseVtbl*)(void*)&gISTKNotifierFuncs,
                                                      sizeof(ISTKNotifier), TRUE); 
         
     if (ISTKNotifierObj == NULL) {

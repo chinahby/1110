@@ -85,13 +85,16 @@ when       who     what, where, why
 #ifdef FEATURE_T9_ALPHABETIC
 
 #define FEATURE_T9_MULTITAP
-
+//#define FEATURE_LANG_HINDI     //add  by yangdecai
+//#define FEATURE_LANG_ARABIC
 #ifdef FEATURE_LANG_ENGLISH
 #define FEATURE_T9_MT_ENGLISH
 #define FEATURE_T9_RAPID_ENGLISH
-#ifdef FEATURE_DISP_160X128
+
+#if defined (FEATURE_ALL_KEY_PAD)
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif
+
 #endif //FEATURE_LANG_ENGLISH
 
 #ifdef FEATURE_LANG_ARABIC
@@ -627,7 +630,8 @@ enum
                                 )
 
 //wangliang modify!  2010-09-01
-#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+//#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+#if defined (FEATURE_T9_TEXT)
 static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 {
    // Lint complains because all the fields aren't explicitly initialized

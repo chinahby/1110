@@ -310,7 +310,7 @@ int OEMAlarm_New(IShell * pIShell,AEECLSID ClsId,void ** ppObj)
       // virtual function table.
 //lint -save -e611 -e740  Suspicious/unusual ptr cast
 //lint -save -e826 Suspicious ptr to ptr conversion
-      OEMAlarm *po = (OEMAlarm *)AEE_NewClassEx
+      OEMAlarm *po = (OEMAlarm *)AEE_OEM_NEWCLASSEX
           ((AEEVTBL(IBase) *)&IAlarmFuncs, sizeof(OEMAlarm), FALSE);
 //lint -restore
 //lint -restore

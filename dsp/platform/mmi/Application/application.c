@@ -963,6 +963,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_8, IDS_APPLICATION_TITLE_8, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_11, IDS_APPLICATION_TITLE_11, NULL, 0);
 #elif defined (FEATURE_VERSION_IVIO021 )     
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
@@ -999,8 +1000,15 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_8, IDS_APPLICATION_TITLE_8, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);
-#endif			
-		    IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_11, IDS_APPLICATION_TITLE_11, NULL, 0);
+#endif
+
+#if defined(FEATURE_APP_CAMERA)
+		    IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_11, IDS_APPLICATION_TITLE_11, NULL, 0);	//Camera
+#else
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0); 
+#endif
+
+
 #endif
 
             return TRUE;
@@ -1310,6 +1318,8 @@ static boolean StartApplet(Application *pMe, int i)
         case 9:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
             break;
+		case 10:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
           
 #elif defined (FEATURE_VERSION_IVIO021)  
         case 0:
@@ -1414,7 +1424,11 @@ static boolean StartApplet(Application *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
             break;
         case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+#if defined(FEATURE_APP_CAMERA)
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+#else
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
+#endif			
             break;
         case 8:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);

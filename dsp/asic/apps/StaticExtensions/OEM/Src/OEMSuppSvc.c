@@ -908,7 +908,7 @@ int OEMSUPPSVC_New(IShell *pIShell, AEECLSID cls, void **ppif)
       return EUNSUPPORTED;
     }
 
-    pNew = (ISUPPSVC *) AEE_NewClass((IBaseVtbl*)&gOEMSUPPSVCFuncs, sizeof(ISUPPSVC));
+    pNew = (ISUPPSVC *) AEE_OEM_NEWCLASS((IBaseVtbl*)&gOEMSUPPSVCFuncs, sizeof(ISUPPSVC));
     if (pNew == NULL)
        return ENOMEMORY;
 
@@ -1505,7 +1505,7 @@ int OEMSUPPSVCOpts_New (IShell *pIShell, AEECLSID cls, void **ppif)
     }
 
     // Allocate the object.
-    pNew = (ISUPPSVCOpts *) AEE_NewClassEx((IBaseVtbl*)&gOEMSUPPSVCOptsFuncs,
+    pNew = (ISUPPSVCOpts *) AEE_OEM_NEWCLASSEX((IBaseVtbl*)&gOEMSUPPSVCOptsFuncs,
                                sizeof(ISUPPSVCOpts), FALSE);
     if (pNew == NULL)
       return ENOMEMORY;

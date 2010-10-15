@@ -319,7 +319,7 @@ int OEMRUIMAddrBook_New(IShell * pIShell,AEECLSID ClsId,void ** ppObj)
    if (ClsId == AEECLSID_OEMRUIMADDRBOOK)
    {
       // Allocate 
-      pNew = (COEMAddrBook*)AEE_NewClassEx((IBaseVtbl*)&gsOEMRUIMAddrBookFuncs,
+      pNew = (COEMAddrBook*)AEE_OEM_NEWCLASSEX((IBaseVtbl*)&gsOEMRUIMAddrBookFuncs,
                                           sizeof(COEMAddrBook), TRUE);
       if (!pNew)
       {

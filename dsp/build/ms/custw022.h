@@ -10,8 +10,17 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+
+//Add by zzg 2010_10_13
+#define FEATURE_IDLE_TORCH_DOWNKEY			//idle界面的向下键对应手电筒功能
+#define FEATURE_GPIO_LAMP_EN_OUTPUT_31		//GPIO_OUTPUT_31
+#define FEATURE_SIM_SEL_GPIO_34_PULL_DOWN	//SIM_SEL== GPIO_OUP(34,GROUP_GPIO_1,GPIO_PULL_DOWN)
+#define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
+//Add End
+
+
 #define FEATURE_SMS_UDH
-#define FEATURE_SUPPORT_ID
+//#define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #undef  FEATRUE_SUPPORT_G_SENSOR
@@ -20,14 +29,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_LANG_ENGLISH
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
 #undef FEATURE_LANG_CHINESE
-#define FEATURE_NET_LOCK
-#define FEATURE_SEAMLESS_SMS
+//#define FEATURE_NET_LOCK
+//#define FEATURE_SEAMLESS_SMS
 #define FEATURE_OMH_SMS
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
 //#define FEATURE_SPN_FROM_BSMCCMNC
-//#define FEATURE_VERSION_IVIO
-//#define FEATURE_VERSION_SMART
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif
 
@@ -209,13 +216,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
-#define FEATURE_DISP_128X128
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
-#define FEATURE_PROJECT_W022
 #define FEATURE_TORCH_SUPPORT		//手电筒
+#define FEATURE_COMBINED_PWR_END_KEYS
 #define FEATURE_DRV_SDCC
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
@@ -373,23 +379,22 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_SECOND_UART
    #undef FEATURE_SECOND_UART
 #endif
-#ifndef USES_DS_1536
+//#ifndef USES_DS_1536 //注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
    #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
 #endif
-#endif
+//#endif
 #ifdef FEATURE_SC2X_HAS_UART1
    #undef FEATURE_SC2X_HAS_UART1
 #endif
 #ifdef FLASH_USES_DM
    #undef FLASH_USES_DM
 #endif
-#ifndef USES_DS_1536
+//#ifndef USES_DS_1536 //注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS
    #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
-#endif
-
+//#endif
 
 
 #endif /* CUSTSB2_H */

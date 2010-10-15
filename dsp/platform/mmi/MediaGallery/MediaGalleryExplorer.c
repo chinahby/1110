@@ -278,6 +278,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
                pMe->m_nEnumeResult = MG_ENUM_FAILED;
                pMe->m_Explorer.m_eType = MG_DOCTYPE_MAX;
                bFinish = TRUE;
+               FREEIF(pInfo);
                goto EXITBUILDMEDIAMENU;
             }
          }
@@ -288,12 +289,14 @@ static void MGExplorer_BuildMediaMenu(void *po)
             pMe->m_nEnumeResult = MG_ENUM_SUCCESS;
             pMe->m_Explorer.m_eType = MG_DOCTYPE_MAX;
             bFinish = TRUE;
+            FREEIF(pInfo);
             goto EXITBUILDMEDIAMENU;
          }
          else
          {
             bFinish = TRUE;
             MG_FARF(ADDR, ("BuildMediaMenu m_eType error !"));
+            FREEIF(pInfo);
             goto EXITBUILDMEDIAMENU;
          }
       }
@@ -304,6 +307,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
             pMe->m_Explorer.m_eType = MG_DOCTYPE_MAX;
             pMe->m_nEnumeResult = MG_ENUM_OVERMAX;
             bFinish = TRUE;
+            FREEIF(pInfo);
             goto EXITBUILDMEDIAMENU;
          }
 
@@ -313,6 +317,7 @@ static void MGExplorer_BuildMediaMenu(void *po)
          if(0 == (nBasenameLen = STRLEN(pszBasename)))
          {
             MG_FARF(ADDR, ("Basename null, %s", pInfo->szName));
+            FREEIF(pInfo);
             continue;
          }
 
@@ -382,7 +387,6 @@ static void MGExplorer_BuildMediaMenu(void *po)
    }
 
 EXITBUILDMEDIAMENU:
-   FREEIF(pInfo);
    if(bFinish)
    {
      // if(pMe->m_bCallbackResumed)
@@ -553,6 +557,7 @@ int MGExplorer_BuildSubfolderMenu(CFSExplorer *pFSExplorer,
                if(0 == (nBasenameLen = STRLEN(pszBasename)))
                {
                   MG_FARF(ADDR, ("Basename null, %s", pInfo->szName));
+                  FREEIF(pInfo);
                   continue;
                }
 
@@ -849,6 +854,7 @@ static void MGExplorer_BuildFileList(void *po)
          {
             pMe->m_nEnumeResult = MG_ENUM_SUCCESS;
             bFinish = TRUE;
+            FREEIF(pInfo);
             goto EXITENUMFILESLIST;
          }
 
@@ -867,6 +873,7 @@ static void MGExplorer_BuildFileList(void *po)
             pMe->m_nEnumeResult = MG_ENUM_FAILED;
             bFinish = TRUE;
             MG_FARF(ADDR, ("Enum init failed!"));
+            FREEIF(pInfo);
             goto EXITENUMFILESLIST;
          }
 
@@ -879,6 +886,7 @@ static void MGExplorer_BuildFileList(void *po)
          {
             pMe->m_nEnumeResult = MG_ENUM_OVERMAX;
             bFinish = TRUE;
+            FREEIF(pInfo);
             goto EXITENUMFILESLIST;
          }
 
@@ -947,8 +955,6 @@ static void MGExplorer_BuildFileList(void *po)
    }
 
 EXITENUMFILESLIST:
-   FREEIF(pInfo);
-
    if(bFinish)
    {
    //   if(pMe->m_bCallbackResumed)
@@ -2562,12 +2568,10 @@ void MGExplorer_InitFileIcon(CFileIcons **ppFileIcons, boolean bAllocate)
          if(pFileIcons == NULL)
             return;
          *ppFileIcons = pFileIcons;
+         MEMSET(pFileIcons, NULL, sizeof(CFileIcons));
       }
    }
-
-   MEMSET(pFileIcons, NULL, sizeof(CFileIcons));
 }//MGExplorer_InitFileIcon
-
 
 /*
  * ==========================================================================

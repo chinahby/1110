@@ -1420,6 +1420,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             notifyFMRadioAlertEvent( pMe, TRUE);
             SoundMenu_InitRingerList(pMe);
             pMe->m_RingerID[pMe->m_CurProfile].midID = 0;
+			pMe->m_slecet_id = IMENUCTL_GetSel(pMenu);
             if (pMe->m_RingerType == SET_RINGER)
             {
                 ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)pMe->m_RingerID,sizeof(pMe->m_RingerID));
@@ -1588,12 +1589,14 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
             //³õÊ¼»¯ÒôÁ¿
+            pMe->m_slecet_id = IMENUCTL_GetSel(pMenu);
             ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_RINGER_VOL,pMe->m_RingCurVol,sizeof(pMe->m_RingCurVol));
 
             if(pMe->m_fSubDlgId != DOWNLOAD_MENU &&
                                             pMe->m_RingCurVol[pMe->m_CurProfile] != OEMSOUND_MUTE_VOL)
             {
                 //Ô¤ÌýÁåÉù
+                MSG_FATAL("RingerPreview....................................................",0,0,0);
                 ISHELL_SetTimer(pMe->m_pShell, 250, RingerPreview, pMe);
                 //SoundMenu_StartRingerPreview(pMe,
                 //                            pMe->m_lastRingerPlayed);
@@ -1615,6 +1618,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             if(pMe->m_fSubDlgId != DOWNLOAD_MENU &&pMe->m_RingCurVol[pMe->m_CurProfile] != OEMSOUND_MUTE_VOL)
             {
                 //Ô¤ÌýÁåÉù
+                MSG_FATAL("RingerPreviewEVT_UPDATAMENU....................................................",0,0,0);
                 ISHELL_SetTimer(pMe->m_pShell, 250, RingerPreview, pMe);
                 //SoundMenu_StartRingerPreview(pMe,
                 //                            pMe->m_lastRingerPlayed);
@@ -1657,6 +1661,9 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                 if(wParam != DOWNLOAD_MENU && pMe->m_RingCurVol[pMe->m_CurProfile] != OEMSOUND_MUTE_VOL)
                 {
                     SOUND_ERR("pMe->m_lastRingerPlayed = %d",pMe->m_lastRingerPlayed,0,0);
+					MSG_FATAL("EVT_CTL_SEL_CHANGED........................dwParam:%d,wParam:%d",dwParam,wParam,0);
+					//MODI BY YANGDECAI 09-27
+					pMe->m_slecet_id = wParam;
                     ISHELL_SetTimer(pMe->m_pShell, 250, RingerPreview, pMe);
                     //SoundMenu_StartRingerPreview(pMe,
                     //                           pMe->m_lastRingerPlayed);
@@ -3466,7 +3473,16 @@ static void RingerPreview(void *pUser)
                                             CFGI_RINGER_VOL,
                                             &pMe->m_RingCurVol[pMe->m_CurProfile],
                                             sizeof(pMe->m_RingCurVol[pMe->m_CurProfile]));
-    IALERT_StartRingerPreview(pMe->m_pAlert,pMe->m_lastRingerPlayed);
+	//MODI BY YANGDECAI 09-27
+	MSG_FATAL("pMe->m_slecet_id ::::::::::%d",pMe->m_slecet_id ,0,0);
+	if(pMe->m_slecet_id == POWERONRINGID || pMe->m_slecet_id == POWEROFFRINGID)
+	{
+		IALERT_StartRingerAlert_Ex(pMe->m_pAlert,pMe->m_lastRingerPlayed);
+	}
+	else
+	{
+    	IALERT_StartRingerAlert_Ex(pMe->m_pAlert,pMe->m_lastRingerPlayed);
+	}
 }
 
 /*==============================================================================

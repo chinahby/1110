@@ -29,7 +29,7 @@ extern void OEMDisplayDev_AnnunBar1_Deactivate(void);
 #include "AEEAnnunciator.h"
 #include "AEEDisp.h"
 #endif
-
+#include "Msg.h"
 struct IAnnunciatorControl {
    const AEEVTBL(IAnnunciatorControl)  *pvt;
    uint32                               uRef;
@@ -69,6 +69,18 @@ static uint32 OEMAnnunciatorControl_Release(IAnnunciatorControl *pme)
    if (--pme->uRef) {
       return pme->uRef;
    }
+#if !defined(FEATURE_UIONE_HDK) && defined(FEATURE_ANNUNCIATOR)
+    {
+        /* Create in the system context */
+        PACONTEXT pac = AEE_EnterAppContext(NULL);
+        if(pme->pAnnun != NULL)
+        {
+            IANNUNCIATOR_Release(pme->pAnnun);
+            pme->pAnnun = NULL;
+        }
+        AEE_LeaveAppContext(pac);
+    }
+#endif
 
    FREEIF(pme);
 

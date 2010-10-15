@@ -17,7 +17,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
       OEMSUPPS_Run               
       OEMSUPPS_GetResult         
 
-        Copyright © 2004-2008 QUALCOMM Incorporated.
+        Copyright ?2004-2008 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 
@@ -3676,7 +3676,6 @@ static int IsThereAVoiceCall(void)
    pac = AEE_EnterAppContext(0);
 
    nErr = AEE_CreateInstance(AEECLSID_CALLMGR, (void**)&pCallMgr);
-
    if (SUCCESS == nErr) {
       nErr = ICALLMGR_GetActiveVoiceCall(pCallMgr, &pCall);
 

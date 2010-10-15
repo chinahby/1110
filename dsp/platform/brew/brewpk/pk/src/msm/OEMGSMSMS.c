@@ -11,7 +11,7 @@ EXTERNALIZED FUNCTIONS
 INITIALIZATION AND SEQUENCING REQUIREMENTS
    BREW must be initialized.
 
-Copyright © 2002-2005 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright ?2002-2005 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 /*===========================================================================
@@ -3541,21 +3541,21 @@ STATIC void GSMSMS_InitGSMCharMap(void)
    FARF(UNITTEST, ("Called InitGSMCharMap"));
 
    gsmToUTF16[0] = 0x0040; // COMMERCIAL AT @ 
-   gsmToUTF16[1] = 0x00A3; // POUND SIGN £
+   gsmToUTF16[1] = 0x00A3; // POUND SIGN ?
    gsmToUTF16[2] = 0x0024; // DOLLAR SIGN $
-   gsmToUTF16[3] = 0x00A5; // YEN SIGN ¥
-   gsmToUTF16[4] = 0x00E8; // 0x04 4 LATIN SMALL LETTER E WITH GRAVE è
-   gsmToUTF16[5] = 0x00E9; // LATIN SMALL LETTER E WITH ACUTE é
+   gsmToUTF16[3] = 0x00A5; // YEN SIGN ?
+   gsmToUTF16[4] = 0x00E8; // 0x04 4 LATIN SMALL LETTER E WITH GRAVE ?
+   gsmToUTF16[5] = 0x00E9; // LATIN SMALL LETTER E WITH ACUTE ?
    gsmToUTF16[6] = 0x00F9; // LATIN SMALL LETTER U WITH GRAVE 
-   gsmToUTF16[7] = 0x00EC; // LATIN SMALL LETTER I WITH GRAVE ì
-   gsmToUTF16[8] = 0x00F2; // LATIN SMALL LETTER O WITH GRAVE ò
-   gsmToUTF16[9] = 0x00E7; // LATIN CAPITAL LETTER C WITH CEDILLA Ç
+   gsmToUTF16[7] = 0x00EC; // LATIN SMALL LETTER I WITH GRAVE ?
+   gsmToUTF16[8] = 0x00F2; // LATIN SMALL LETTER O WITH GRAVE ?
+   gsmToUTF16[9] = 0x00E7; // LATIN CAPITAL LETTER C WITH CEDILLA ?
    gsmToUTF16[10] = 0x000A; // LINE FEED 
-   gsmToUTF16[11] = 0x00D8; // LATIN CAPITAL LETTER O WITH STROKE Ø
-   gsmToUTF16[12] = 0x00F8; // LATIN SMALL LETTER O WITH STROKE ø
+   gsmToUTF16[11] = 0x00D8; // LATIN CAPITAL LETTER O WITH STROKE ?
+   gsmToUTF16[12] = 0x00F8; // LATIN SMALL LETTER O WITH STROKE ?
    gsmToUTF16[13] = 0x000D; // CARRIAGE RETURN 
-   gsmToUTF16[14] = 0x00C5; // LATIN CAPITAL LETTER A WITH RING ABOVE Å 
-   gsmToUTF16[15] = 0x00E5; // 0x0F 15 LATIN SMALL LETTER A WITH RING ABOVE å 229 
+   gsmToUTF16[14] = 0x00C5; // LATIN CAPITAL LETTER A WITH RING ABOVE ?
+   gsmToUTF16[15] = 0x00E5; // 0x0F 15 LATIN SMALL LETTER A WITH RING ABOVE ?229 
 
    // The UTF16 characters need ISO 8859-7 fonts to display
    gsmToUTF16[16] = 0x0394; // GREEK CAPITAL LETTER DELTA
@@ -3572,9 +3572,9 @@ STATIC void GSMSMS_InitGSMCharMap(void)
 
    gsmToUTF16[27] = 0x00A0; // ESCAPE TO EXTENSION TABLE (or NBSP)
 
-   gsmToUTF16[28] = 0x00C6; // LATIN CAPITAL LETTER AE Æ
-   gsmToUTF16[29] = 0x00E6; // LATIN SMALL LETTER AE æ 230 
-   gsmToUTF16[30] = 0x00DF; // LATIN SMALL LETTER SHARP S (German) ß
+   gsmToUTF16[28] = 0x00C6; // LATIN CAPITAL LETTER AE ?
+   gsmToUTF16[29] = 0x00E6; // LATIN SMALL LETTER AE ?230 
+   gsmToUTF16[30] = 0x00DF; // LATIN SMALL LETTER SHARP S (German) ?
    gsmToUTF16[31] = 0x00C9; // LATIN CAPITAL LETTER E WITH ACUTE 
 
    gsmToUTF16[32] = 0x0020; // SPACE
@@ -3582,7 +3582,7 @@ STATIC void GSMSMS_InitGSMCharMap(void)
    gsmToUTF16[34] = 0x0022; // QUOTATION MARK
    gsmToUTF16[35] = 0x0023; // NUMBER SIGN
 
-   gsmToUTF16[36] = 0x00A4; // CURRENCY SIGN ¤
+   gsmToUTF16[36] = 0x00A4; // CURRENCY SIGN ?
 
    gsmToUTF16[37] = 0x0025; // PERCENT SIGN %
    gsmToUTF16[38] = 0x0026; // AMPERSAND &
@@ -3612,7 +3612,7 @@ STATIC void GSMSMS_InitGSMCharMap(void)
    gsmToUTF16[62] = 0x003E; // GREATER-THAN SIGN >
    gsmToUTF16[63] = 0x003F; // QUESTION MARK ? 
 
-   gsmToUTF16[64] = 0x00A1; // INVERTED EXCLAMATION MARK ¡
+   gsmToUTF16[64] = 0x00A1; // INVERTED EXCLAMATION MARK ?
 
    gsmToUTF16[65] = 0x0041; // LATIN CAPITAL LETTER A 
    gsmToUTF16[66] = 0x0042; // LATIN CAPITAL LETTER B 
@@ -3641,12 +3641,12 @@ STATIC void GSMSMS_InitGSMCharMap(void)
    gsmToUTF16[89] = 0x0059; // LATIN CAPITAL LETTER Y 
    gsmToUTF16[90] = 0x005A; // LATIN CAPITAL LETTER Z
 
-   gsmToUTF16[91] = 0x00C0; // LATIN CAPITAL LETTER A WITH DIAERESIS Ä
-   gsmToUTF16[92] = 0x00D6; // LATIN CAPITAL LETTER O WITH DIAERESIS Ö
-   gsmToUTF16[93] = 0x00D1; // LATIN CAPITAL LETTER N WITH TILDE Ñ
-   gsmToUTF16[94] = 0x00DC; // LATIN CAPITAL LETTER U WITH DIAERESIS Ü
-   gsmToUTF16[95] = 0x00A7; // SECTION SIGN §
-   gsmToUTF16[96] = 0x00B0; // INVERTED QUESTION MARK ¿
+   gsmToUTF16[91] = 0x00C0; // LATIN CAPITAL LETTER A WITH DIAERESIS ?
+   gsmToUTF16[92] = 0x00D6; // LATIN CAPITAL LETTER O WITH DIAERESIS ?
+   gsmToUTF16[93] = 0x00D1; // LATIN CAPITAL LETTER N WITH TILDE ?
+   gsmToUTF16[94] = 0x00DC; // LATIN CAPITAL LETTER U WITH DIAERESIS ?
+   gsmToUTF16[95] = 0x00A7; // SECTION SIGN ?
+   gsmToUTF16[96] = 0x00B0; // INVERTED QUESTION MARK ?
 
    gsmToUTF16[97] = 0x0061; // LATIN SMALL LETTER A 
    gsmToUTF16[98] = 0x0062; // LATIN SMALL LETTER B 
@@ -3675,11 +3675,11 @@ STATIC void GSMSMS_InitGSMCharMap(void)
    gsmToUTF16[121] = 0x0079; // LATIN SMALL LETTER Y 
    gsmToUTF16[122] = 0x007A; // LATIN SMALL LETTER Z 
 
-   gsmToUTF16[123] = 0x00FA; // LATIN SMALL LETTER A WITH DIAERESIS ä
-   gsmToUTF16[124] = 0x00E4; // LATIN SMALL LETTER O WITH DIAERESIS ö 
-   gsmToUTF16[125] = 0x00F5; // LATIN SMALL LETTER N WITH TILDE ñ 
-   gsmToUTF16[126] = 0x00FC; // LATIN SMALL LETTER U WITH DIAERESIS ü
-   gsmToUTF16[127] = 0x00E0; // LATIN SMALL LETTER A WITH GRAVE à 
+   gsmToUTF16[123] = 0x00FA; // LATIN SMALL LETTER A WITH DIAERESIS ?
+   gsmToUTF16[124] = 0x00E4; // LATIN SMALL LETTER O WITH DIAERESIS ?
+   gsmToUTF16[125] = 0x00F5; // LATIN SMALL LETTER N WITH TILDE ?
+   gsmToUTF16[126] = 0x00FC; // LATIN SMALL LETTER U WITH DIAERESIS ?
+   gsmToUTF16[127] = 0x00E0; // LATIN SMALL LETTER A WITH GRAVE ?
 }
 
 /*=============================================================================
@@ -3710,49 +3710,49 @@ STATIC int GSMSMS_UnicodeToGSM(AECHAR uc, byte *gsm, boolean *isExtended)
   case 0x0040: // COMMERCIAL AT @
      *gsm=0;
      break;
-  case 0x00A3: // POUND SIGN £
+  case 0x00A3: // POUND SIGN ?
      *gsm=1;
      break;
   case 0x0024: // DOLLAR SIGN $
      *gsm=2;
      break;
-  case 0x00A5: // YEN SIGN ¥
+  case 0x00A5: // YEN SIGN ?
      *gsm=3;
      break;
-  case 0x00E8: // 0x04 4 LATIN SMALL LETTER E WITH GRAVE è
+  case 0x00E8: // 0x04 4 LATIN SMALL LETTER E WITH GRAVE ?
      *gsm=4;
      break;
-  case 0x00E9: // LATIN SMALL LETTER E WITH ACUTE é
+  case 0x00E9: // LATIN SMALL LETTER E WITH ACUTE ?
      *gsm=5;
      break;
   case 0x00F9: // LATIN SMALL LETTER U WITH GRAVE
      *gsm=6;
      break;
-  case 0x00EC: // LATIN SMALL LETTER I WITH GRAVE ì
+  case 0x00EC: // LATIN SMALL LETTER I WITH GRAVE ?
      *gsm=7;
      break;
-  case 0x00F2: // LATIN SMALL LETTER O WITH GRAVE ò
+  case 0x00F2: // LATIN SMALL LETTER O WITH GRAVE ?
      *gsm=8;
      break;
-  case 0x00E7: // LATIN CAPITAL LETTER C WITH CEDILLA Ç
+  case 0x00E7: // LATIN CAPITAL LETTER C WITH CEDILLA ?
      *gsm=9;
      break;
   case 0x000A: // LINE FEED
      *gsm=10;
      break;
-  case 0x00D8: // LATIN CAPITAL LETTER O WITH STROKE Ø
+  case 0x00D8: // LATIN CAPITAL LETTER O WITH STROKE ?
      *gsm=11;
      break;
-  case 0x00F8: // LATIN SMALL LETTER O WITH STROKE ø
+  case 0x00F8: // LATIN SMALL LETTER O WITH STROKE ?
      *gsm=12;
      break;
   case 0x000D: // CARRIAGE RETURN
      *gsm=13;
      break;
-  case 0x00C5: // LATIN CAPITAL LETTER A WITH RING ABOVE Å 
+  case 0x00C5: // LATIN CAPITAL LETTER A WITH RING ABOVE ?
      *gsm=14;
      break;
-  case 0x00E5: // 0x0F 15 LATIN SMALL LETTER A WITH RING ABOVE å 229
+  case 0x00E5: // 0x0F 15 LATIN SMALL LETTER A WITH RING ABOVE ?229
      *gsm=15;
      break;
 
@@ -3794,55 +3794,55 @@ STATIC int GSMSMS_UnicodeToGSM(AECHAR uc, byte *gsm, boolean *isExtended)
   case 0x00A0: // ESCAPE TO EXTENSION TABLE (or NBSP)
      *gsm=27; 
      break;
-  case 0x00C6: // LATIN CAPITAL LETTER AE Æ
+  case 0x00C6: // LATIN CAPITAL LETTER AE ?
      *gsm=28;
      break;
-  case 0x00E6: // LATIN SMALL LETTER AE æ 230
+  case 0x00E6: // LATIN SMALL LETTER AE ?230
      *gsm=29;
      break;
-  case 0x00DF: // LATIN SMALL LETTER SHARP S (German) ß
+  case 0x00DF: // LATIN SMALL LETTER SHARP S (German) ?
      *gsm=30;
      break;
   case 0x00C9: // LATIN CAPITAL LETTER E WITH ACUTE
      *gsm=31;
      break;
 
-  case 0x00A4: // CURRENCY SIGN ¤
+  case 0x00A4: // CURRENCY SIGN ?
      *gsm=36;
      break;
 
-  case 0x00C0: // LATIN CAPITAL LETTER A WITH DIAERESIS Ä
+  case 0x00C0: // LATIN CAPITAL LETTER A WITH DIAERESIS ?
      *gsm=91;
      break;
-  case 0x00D6: // LATIN CAPITAL LETTER O WITH DIAERESIS Ö
+  case 0x00D6: // LATIN CAPITAL LETTER O WITH DIAERESIS ?
      *gsm=92;
      break;
-  case 0x00D1: // LATIN CAPITAL LETTER N WITH TILDE Ñ
+  case 0x00D1: // LATIN CAPITAL LETTER N WITH TILDE ?
      *gsm=93;
      break;
-  case 0x00DC: // LATIN CAPITAL LETTER U WITH DIAERESIS Ü
+  case 0x00DC: // LATIN CAPITAL LETTER U WITH DIAERESIS ?
      *gsm=94;
      break;
-  case 0x00A7: // SECTION SIGN §
+  case 0x00A7: // SECTION SIGN ?
      *gsm=95;
      break;
-  case 0x00B0: // INVERTED QUESTION MARK ¿
+  case 0x00B0: // INVERTED QUESTION MARK ?
      *gsm=96;
      break;
 
-  case 0x00FA: // LATIN SMALL LETTER A WITH DIAERESIS ä
+  case 0x00FA: // LATIN SMALL LETTER A WITH DIAERESIS ?
      *gsm=123; 
      break;
-  case 0x00E4: // LATIN SMALL LETTER O WITH DIAERESIS ö
+  case 0x00E4: // LATIN SMALL LETTER O WITH DIAERESIS ?
      *gsm=124;
      break;
-  case 0x00F5: // LATIN SMALL LETTER N WITH TILDE ñ
+  case 0x00F5: // LATIN SMALL LETTER N WITH TILDE ?
      *gsm=125;
      break;
-  case 0x00FC: // LATIN SMALL LETTER U WITH DIAERESIS ü
+  case 0x00FC: // LATIN SMALL LETTER U WITH DIAERESIS ?
      *gsm=126;
      break;
-  case 0x00E0: // LATIN SMALL LETTER A WITH GRAVE à
+  case 0x00E0: // LATIN SMALL LETTER A WITH GRAVE ?
      *gsm=127;
      break;
 
@@ -3880,7 +3880,7 @@ STATIC int GSMSMS_UnicodeToGSM(AECHAR uc, byte *gsm, boolean *isExtended)
      *isExtended = TRUE;
      break;
 
-  case 0x00A1: // INVERTED EXCLAMATION MARK ¡
+  case 0x00A1: // INVERTED EXCLAMATION MARK ?
      *gsm=64;
      break;
 
@@ -3948,9 +3948,8 @@ static IFile * GSMSMS_OpenDB(struct _IGSMSMS *pMe, GSMSMSStorageType store)
 
          // Set App Context to System for this call
          prevContext = AEE_EnterAppContext(NULL);
-
+    
          pMe->m_pVMMbox = IFILEMGR_OpenFile(sGSMSMS.m_pIFileMgr, NVRAM_VM_DB_NAME, _OFM_READWRITE);
-
          AEE_LeaveAppContext(prevContext);
 
          // Set the timer

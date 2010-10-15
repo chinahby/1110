@@ -229,7 +229,32 @@ static const CCameraSize g_CameraSizeCFG[] =
     {160,128,L"160*128"}, // FULL Screen
     {220,176,L"220*176"}, // QCIF
     {320,240,L"320*240"}, // QVGA
-    {640,480,L"640*480"}, // VGA
+    {640,480,L"640*480"}, // VGA  
+#elif defined(FEATURE_DISP_220X176)
+    {160,128,L"160*128"}, // FULL Screen
+    {220,176,L"220*176"}, // QCIF
+    {320,240,L"320*240"}, // QVGA
+    {640,480,L"640*480"}, // VGA      
+#elif defined(FEATURE_DISP_128X160)
+    {128,160,L"128*160"}, // FULL Screen
+    {176,220,L"176*220"}, // QCIF
+    {240,320,L"240*320"}, // QVGA
+    {480,640,L"480*640"}, // VGA    
+#elif defined(FEATURE_DISP_176X220)
+    //{128,160,L"128*160"}, // FULL Screen
+    {176,220,L"176*220"}, // QCIF
+    {240,320,L"240*320"}, // QVGA
+    {480,640,L"480*640"}, // VGA    
+#elif defined(FEATURE_DISP_240X320)
+    //{128,160,L"128*160"}, // FULL Screen
+    //{176,220,L"176*220"}, // QCIF
+    {240,320,L"240*320"}, // QVGA
+    {480,640,L"480*640"}, // VGA   
+#elif defined(FEATURE_DISP_320X240)
+    //{128,160,L"128*160"}, // FULL Screen
+    //{176,220,L"176*220"}, // QCIF
+    {240,320,L"320*240"}, // QVGA
+    {480,640,L"640*480"}, // VGA       
 #else
     {128,128,L"128*128"}, // FULL Screen
     {160,120,L"160*120"}, // QQVGA
@@ -247,6 +272,26 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {160,128,L"160*128"}, // FULL Screen
     {220,176,L"220*176"}, // QCIF
     {320,240,L"320*240"}, // QVGA
+#elif defined(FEATURE_DISP_220X176)
+    {160,128,L"160*128"}, // FULL Screen
+    {220,176,L"220*176"}, // QCIF
+    {320,240,L"320*240"}, // QVGA    
+#elif defined(FEATURE_DISP_128X160)
+    {128,160,L"128*160"}, // FULL Screen
+    {176,220,L"176*220"}, // QCIF
+    {240,320,L"240*320"}, // QVGA    
+#elif defined(FEATURE_DISP_176X220)
+    //{128,160,L"128*160"}, // FULL Screen
+    {176,220,L"176*220"}, // QCIF
+    {240,320,L"240*320"}, // QVGA   
+#elif defined(FEATURE_DISP_240X320)
+    //{128,160,L"128*160"}, // FULL Screen
+    //{176,220,L"176*220"}, // QCIF
+    {240,320,L"240*320"}, // QVGA    
+#elif defined(FEATURE_DISP_320X240)
+    //{128,160,L"128*160"}, // FULL Screen
+    //{176,220,L"176*220"}, // QCIF
+    {240,320,L"320*240"}, // QVGA        
 #else
     {128,128,L"128*128"}, // FULL Screen
     {160,120,L"160*120"}, // QQVGA
@@ -571,8 +616,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             
         case EVT_DIALOG_START:     
         
-			//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg Preview Handle EVT_DIALOG_START***", 0, 0, 0);
+			//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
 			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 			{
@@ -596,8 +640,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             
         case EVT_DIALOG_END:       
 
-			//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg Preview Handle EVT_DIALOG_END***", 0, 0, 0);
+			//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER
 		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 		    {
@@ -834,8 +877,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             return TRUE;
      
         case EVT_DIALOG_START:      
-        	//Add By zzg 2010_09_01  
-        	MSG_FATAL("***zzg CameraCFG Handle EVT_DIALOG_START***", 0, 0, 0);
+        	//Add By zzg 2010_09_01          	
 #ifdef FEATURE_APP_MUSICPLAYER
 		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 		    {
@@ -852,8 +894,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
          
         case EVT_DIALOG_END:
         
-        	//Add By zzg 2010_09_01  
-        	MSG_FATAL("***zzg CameraCFG Handle EVT_DIALOG_END***", 0, 0, 0);
+        	//Add By zzg 2010_09_01          	
 #ifdef FEATURE_APP_MUSICPLAYER
 		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 		    {
@@ -975,8 +1016,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             return TRUE;
  
         case EVT_DIALOG_START:   
-        	//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg Pic Handle EVT_DIALOG_START***", 0, 0, 0);
+        	//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
 			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 			{
@@ -994,8 +1034,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             
         //Add By zzg 2010_09_01      
         case EVT_DIALOG_END:
-        {
-        	MSG_FATAL("***zzg Pic Handle EVT_DIALOG_END***", 0, 0, 0);
+        {        	
 #ifdef FEATURE_APP_MUSICPLAYER
 		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 		    {
@@ -1098,8 +1137,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             return TRUE;
         
         case EVT_DIALOG_START:
-        	//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg PopMSG Handle EVT_DIALOG_START***", 0, 0, 0);
+        	//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
 			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 			{
@@ -1209,8 +1247,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             return TRUE;
             
         case EVT_DIALOG_END:
-        	//Add By zzg 2010_09_01  
-			MSG_FATAL("***zzg PopMSG Handle EVT_DIALOG_END***", 0, 0, 0);
+        	//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
 			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
 			{

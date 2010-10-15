@@ -281,7 +281,7 @@ typedef enum _MediaDialogStat
 /*Handle type for finish operation*/
 #define MG_FNSHOP_NULL   0X00000000 /*Do default handle*/
 #define MG_FNSHOP_DONE   0X00000001 /*Show Done message*/
-
+#define MG_FNSHOP_ERROR  0X00000010
 /*message box ID*/
 typedef enum _MediaDialogMsgID
 {
@@ -410,7 +410,6 @@ struct  _CMediaGalleryApp{
    IDatabase         *m_pFilesDB; /*Database pointer*/
    IStatic		      *m_pDetailText;
 
-   IMedia            *m_pMediaPending;
    IMedia            *m_pMedia;    // IMedia-based object
    void              *m_pMediaSpec;
    uint32            m_dwDuration;

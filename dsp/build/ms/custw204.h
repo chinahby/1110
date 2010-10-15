@@ -10,6 +10,16 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+
+//Add by zzg 2010_10_13
+#define FEATURE_TORCH_KEY_SPACE		//手电筒功能按键
+#define FEATURE_GPIO_LAMP_EN_OUTPUT_32	//GPIO_OUTPUT_32
+#define FEATURE_SIM_SEL_GPIO_31_PULL_DOWN		//SIM_SEL == GPIO_OUP(31,GROUP_GPIO2_0,GPIO_PULL_DOWN)
+#define FEATURE_GPIO_33_AND_34_KYPD_EX	//GPIO_33_SIGNAL == KYPD_EX1
+#define FEATURE_GPIO_47_SIGNAL_EQUAL_OUTPUT_47	// GPIO_47_SIGNAL== GPIO_OUTPUT_47
+#define FEATURE_GPIO_32_SIGNAL_OUPUT_32			//GPIO_32_SIGNAL== GPIO_OUTPUT_32
+//Add End
+
 #define FEATURE_SMS_UDH
 #define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
@@ -26,8 +36,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
 //#define FEATURE_SPN_FROM_BSMCCMNC
-//#define FEATURE_VERSION_IVIO
-//#define FEATURE_VERSION_SMART
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif
 
@@ -209,12 +217,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
-#define FEATURE_DISP_160X128
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
-#define FEATURE_PROJECT_W204
 #define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		//手电筒
 #define FEATURE_COMBINED_PWR_END_KEYS
@@ -375,22 +381,22 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_SECOND_UART
    #undef FEATURE_SECOND_UART
 #endif
-#ifndef USES_DS_1536
+//#ifndef USES_DS_1536 //注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
    #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
 #endif
-#endif
+//#endif
 #ifdef FEATURE_SC2X_HAS_UART1
    #undef FEATURE_SC2X_HAS_UART1
 #endif
 #ifdef FLASH_USES_DM
    #undef FLASH_USES_DM
 #endif
-#ifndef USES_DS_1536
+//#ifndef USES_DS_1536 //注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS
    #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
-#endif
+//#endif
 
 
 

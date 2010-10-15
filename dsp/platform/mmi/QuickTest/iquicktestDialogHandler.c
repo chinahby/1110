@@ -22,6 +22,7 @@
                                  本文件包含的外部文件
 ==============================================================================*/
 #include "iquicktest_priv.h"
+#include "mobile.h"
 
 #ifndef WIN32
 #if defined( FEATURE_FM_RADIO)
@@ -2310,17 +2311,13 @@ static boolean  QuickTest_VERTestHandler(CQuickTest *pMe,
 
                         n = WSTRLEN(szBuf);
                         szBuf[n++] = (AECHAR) '\n';
-                        
-                        #ifndef INTERVERSION
-                            #define INTERVERSION "COMMONV1.0"
-                        #endif
-                            
+                         
                         STRTOWSTR("IVERSION:", (szBuf + n), sizeof(szBuf)); 
                         n = WSTRLEN(szBuf);
                         szBuf[n++] = (AECHAR) '\n';
                         
-                        STRTOWSTR(INTERVERSION, (szBuf + n), sizeof(szBuf)); 
-                    
+                        STRTOWSTR(ver_interversion, (szBuf + n), sizeof(szBuf)); 
+                        
                         n = WSTRLEN(szBuf);
                         szBuf[n++] = (AECHAR) '\n';
                             
@@ -3228,7 +3225,7 @@ static void quicktest_mic_receiver_Loopback(CQuickTest *pMe)
     else
     {
         STRTOWSTR("HANDSET LOOP",string,sizeof(string));
-        soundStuff.eDevice = AEE_SOUND_DEVICE_SPEAKER;
+        soundStuff.eDevice = AEE_SOUND_DEVICE_HEADSET;
     }
     (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                             AEE_FONT_BOLD,

@@ -259,8 +259,17 @@ endif
 ifeq ($(USE_HEXING_LCD),zgd_177)
 DMSS_CFLAGS += -DLCD_ZGD_177
 endif
+
+ifeq ($(USE_HEXING_LCD),zgd_128x160)
+DMSS_CFLAGS += -DLCD_ZGD_128x160
+endif
+
 ifeq ($(USE_HEXING_LCD),st7735r)
 DMSS_CFLAGS += -DLCD_ST_7735R
+endif
+
+ifeq ($(USE_HEXING_LCD),zgd_220x176)
+DMSS_CFLAGS += -DLCD_ZGD_220x176
 endif
 
 

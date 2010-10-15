@@ -563,7 +563,11 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SECURITY_TITLE, IDS_SECURITY_TITLE, NULL, 0);
 #ifdef FEATURE_SET_SCENEMODE
+
+#ifndef FEATURE_VERSION_H19C  
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
+#endif
+
 #endif
 #ifdef FEATURE_SET_SOUND_TITLE
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOUND_TITLE, IDS_SOUND_TITLE, NULL, 0);
@@ -632,10 +636,13 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #endif
 
 #ifdef FEATURE_SET_SCENEMODE
+
+#ifndef FEATURE_VERSION_H19C  
                 case IDS_SCENEMODE_TITLE:    //情景模式
                     (void) ISHELL_StartApplet(pMe->m_pShell,
                                               AEECLSID_APP_SOUNDMENU);
                     break;
+#endif                    
 #endif
 
                 case IDS_DISPLAY_TITLE:      //显示设置

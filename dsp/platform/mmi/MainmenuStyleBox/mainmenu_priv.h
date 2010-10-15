@@ -34,11 +34,36 @@
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
 #define MAX_TURN_NUM   12
+#elif defined (FEATURE_DISP_220X176)
+#define  MAX_MATRIX_ITEMS 12
+#define  MAX_MATRIX_ROWS 3
+#define  MAX_MATRIX_COLS 4
+#define MAX_TURN_NUM   12
 #elif defined (FEATURE_DISP_128X128)
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
 #define MAX_TURN_NUM   9
+#elif defined (FEATURE_DISP_128X160)
+#define  MAX_MATRIX_ITEMS 12
+#define  MAX_MATRIX_ROWS 4
+#define  MAX_MATRIX_COLS 3
+#define MAX_TURN_NUM   12
+#elif defined (FEATURE_DISP_176X220)
+#define  MAX_MATRIX_ITEMS 12
+#define  MAX_MATRIX_ROWS 4
+#define  MAX_MATRIX_COLS 3
+#define MAX_TURN_NUM   12
+#elif defined (FEATURE_DISP_240X320)
+#define  MAX_MATRIX_ITEMS 12
+#define  MAX_MATRIX_ROWS 4
+#define  MAX_MATRIX_COLS 3
+#define MAX_TURN_NUM   12
+#elif defined (FEATURE_DISP_320X240)
+#define  MAX_MATRIX_ITEMS 12
+#define  MAX_MATRIX_ROWS 4
+#define  MAX_MATRIX_COLS 3
+#define MAX_TURN_NUM   12
 #endif
 #define FEATURE_ICON_MOVE_ANIMATION //added by chengxiao 2009.04.10
 
@@ -191,11 +216,44 @@ typedef struct _MainMenu
 #define ICON_ANIMATED_WIDTH     40
 #define ICON_ANIMATED_HEIGHT    32
 #elif defined (FEATURE_DISP_128X128)
+#if defined FEATURE_VERSION_H19C  
+#define ICON_WIDTH              26
+#define ICON_HEIGHT             26
+#define ICON_ANIMATED_WIDTH     26
+#define ICON_ANIMATED_HEIGHT    26
+#else
 #define ICON_WIDTH              42
 #define ICON_HEIGHT             32
 #define ICON_ANIMATED_WIDTH     42
 #define ICON_ANIMATED_HEIGHT    32
 #endif
+#elif defined (FEATURE_DISP_220X176)
+#define ICON_WIDTH              40
+#define ICON_HEIGHT             32
+#define ICON_ANIMATED_WIDTH     40
+#define ICON_ANIMATED_HEIGHT    32
+#elif defined (FEATURE_DISP_128X160)
+#define ICON_WIDTH              40
+#define ICON_HEIGHT             32
+#define ICON_ANIMATED_WIDTH     40
+#define ICON_ANIMATED_HEIGHT    32
+#elif defined (FEATURE_DISP_176X220)
+#define ICON_WIDTH              40
+#define ICON_HEIGHT             32
+#define ICON_ANIMATED_WIDTH     40
+#define ICON_ANIMATED_HEIGHT    32
+#elif defined (FEATURE_DISP_240X320)
+#define ICON_WIDTH              40
+#define ICON_HEIGHT             32
+#define ICON_ANIMATED_WIDTH     40
+#define ICON_ANIMATED_HEIGHT    32
+#elif defined (FEATURE_DISP_320X240)
+#define ICON_WIDTH              40
+#define ICON_HEIGHT             32
+#define ICON_ANIMATED_WIDTH     40
+#define ICON_ANIMATED_HEIGHT    32
+#endif
+
 #define ICON_ANIMATED_FRAME     1 //½¹µãÍ¼Æ¬µÄÖ¡Êý
 #ifdef FEATURE_ICON_MOVE_ANIMATION
 #define ICON_ANIMATED_MOVE_FRAME  3
@@ -253,6 +311,9 @@ typedef struct _MainMenu
     
 #endif
 #if defined (FEATURE_DISP_128X128)
+#if defined FEATURE_VERSION_H19C    
+    #define ICON_ANI_BG    "fs:/image/mainmenu/Backgroud.png"
+#else
     #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"
     #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
     #define ICON3_ANI      "fs:/image/mainmenu/UTK.png"
@@ -264,6 +325,84 @@ typedef struct _MainMenu
     #define ICON8_ANI      "fs:/image/mainmenu/Setting.png"
     #define ICON9_ANI      "fs:/image/mainmenu/application.png"
 #endif
+#endif
+
+#if defined (FEATURE_DISP_220X176)	
+    #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/UTK.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/FmRadio.png"  
+    #define ICON5_ANI      "fs:/image/mainmenu/Message.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Recentcall.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/MusicPlayer.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/Setting.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/application.png"
+	#define ICON10_ANI     "fs:/image/mainmenu/Timer.png"
+    #define ICON11_ANI     "fs:/image/mainmenu/Calendar.png"
+    #define ICON12_ANI     "fs:/image/mainmenu/Digit.png"
+#endif
+
+#if defined (FEATURE_DISP_128X160)	
+    #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/UTK.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/FmRadio.png"  
+    #define ICON5_ANI      "fs:/image/mainmenu/Message.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Recentcall.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/MusicPlayer.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/Setting.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/application.png"
+	#define ICON10_ANI     "fs:/image/mainmenu/Timer.png"
+    #define ICON11_ANI     "fs:/image/mainmenu/Calendar.png"
+    #define ICON12_ANI     "fs:/image/mainmenu/Digit.png"
+#endif
+
+#if defined (FEATURE_DISP_176X220)
+    #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/UTK.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/Digit.png"  
+    #define ICON5_ANI      "fs:/image/mainmenu/Recentcall.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Message.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/FmRadio.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/application.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/Calendar.png"
+	#define ICON10_ANI     "fs:/image/mainmenu/Setting.png"
+    #define ICON11_ANI     "fs:/image/mainmenu/Timer.png"
+    #define ICON12_ANI     "fs:/image/mainmenu/MusicPlayer.png"
+#endif
+
+#if defined (FEATURE_DISP_240X320)
+    #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/UTK.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/Digit.png"  
+    #define ICON5_ANI      "fs:/image/mainmenu/Recentcall.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Message.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/FmRadio.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/application.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/Calendar.png"
+	#define ICON10_ANI     "fs:/image/mainmenu/Setting.png"
+    #define ICON11_ANI     "fs:/image/mainmenu/Timer.png"
+    #define ICON12_ANI     "fs:/image/mainmenu/MusicPlayer.png"
+#endif
+
+#if defined (FEATURE_DISP_320X240)
+    #define ICON1_ANI      "fs:/image/mainmenu/MediaGallery.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Contact.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/UTK.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/Digit.png"  
+    #define ICON5_ANI      "fs:/image/mainmenu/Recentcall.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Message.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/FmRadio.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/application.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/Calendar.png"
+	#define ICON10_ANI     "fs:/image/mainmenu/Setting.png"
+    #define ICON11_ANI     "fs:/image/mainmenu/Timer.png"
+    #define ICON12_ANI     "fs:/image/mainmenu/MusicPlayer.png"
+#endif
+
+
 
 #define ICON_ANI_BACKGROUND    "fs:/image/mainmenu/Backgroud.png"
 #if defined (FEATURE_DISP_160X128)
@@ -311,6 +450,17 @@ typedef struct _MainMenu
     
 #endif
 #if defined (FEATURE_DISP_128X128)
+#if defined FEATURE_VERSION_H19C
+    #define ICON1_ANI_1    "fs:/image/mainmenu/Recent_calls.gif"
+    #define ICON2_ANI_1    "fs:/image/mainmenu/Multimedia.gif"
+    #define ICON3_ANI_1    "fs:/image/mainmenu/contacts.gif"
+    #define ICON4_ANI_1    "fs:/image/mainmenu/User_Profile.gif"
+    #define ICON5_ANI_1    "fs:/image/mainmenu/Messages.gif"
+    #define ICON6_ANI_1    "fs:/image/mainmenu/Tools.gif"
+    #define ICON7_ANI_1    "fs:/image/mainmenu/Setting.gif"
+    #define ICON8_ANI_1    "fs:/image/mainmenu/Game.gif"
+    #define ICON9_ANI_1    "fs:/image/mainmenu/Net_Serve.gif"
+#else
     #define ICON1_ANI_1    "fs:/image/mainmenu/MediaGallery_focus.png"
     #define ICON2_ANI_1    "fs:/image/mainmenu/Contact_focus.png"
     #define ICON3_ANI_1    "fs:/image/mainmenu/UTK_focus.png"
@@ -321,6 +471,88 @@ typedef struct _MainMenu
     #define ICON8_ANI_1    "fs:/image/mainmenu/Setting_focus.png"
     #define ICON9_ANI_1    "fs:/image/mainmenu/application_focus.png"
 #endif
+#endif
+
+#if defined (FEATURE_DISP_220X176)
+	#define ICON1_ANI_1      "fs:/image/mainmenu/MediaGallery_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/Contact_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/UTK_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/FmRadio_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/Message_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/Recentcall_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/MusicPlayer_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/application_focus.png"
+    #define ICON10_ANI_1     "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON11_ANI_1     "fs:/image/mainmenu/Calendar_focus.png"
+    #define ICON12_ANI_1     "fs:/image/mainmenu/Digit_focus.png"    
+#endif
+
+
+#if defined (FEATURE_DISP_128X160)
+	#define ICON1_ANI_1      "fs:/image/mainmenu/MediaGallery_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/Contact_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/UTK_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/FmRadio_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/Message_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/Recentcall_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/MusicPlayer_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/application_focus.png"
+    #define ICON10_ANI_1     "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON11_ANI_1     "fs:/image/mainmenu/Calendar_focus.png"
+    #define ICON12_ANI_1     "fs:/image/mainmenu/Digit_focus.png"    
+#endif
+
+#if defined (FEATURE_DISP_176X220)
+    #define ICON1_ANI_1      "fs:/image/mainmenu/MediaGallery_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/Contact_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/UTK_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/Digit_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/Recentcall_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/Message_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/FmRadio_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/application_focus.png"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/Calendar_focus.png"
+    #define ICON10_ANI_1     "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON11_ANI_1     "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON12_ANI_1     "fs:/image/mainmenu/MusicPlayer_focus.png" 
+#endif
+
+#if defined (FEATURE_DISP_240X320)
+    #define ICON1_ANI_1      "fs:/image/mainmenu/MediaGallery_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/Contact_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/UTK_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/Digit_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/Recentcall_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/Message_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/FmRadio_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/application_focus.png"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/Calendar_focus.png"
+    #define ICON10_ANI_1     "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON11_ANI_1     "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON12_ANI_1     "fs:/image/mainmenu/MusicPlayer_focus.png" 
+#endif
+
+#if defined (FEATURE_DISP_320X240)
+    #define ICON1_ANI_1      "fs:/image/mainmenu/MediaGallery_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/Contact_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/UTK_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/Digit_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/Recentcall_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/Message_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/FmRadio_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/application_focus.png"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/Calendar_focus.png"
+    #define ICON10_ANI_1     "fs:/image/mainmenu/Setting_focus.png"
+    #define ICON11_ANI_1     "fs:/image/mainmenu/Timer_focus.png"
+    #define ICON12_ANI_1     "fs:/image/mainmenu/MusicPlayer_focus.png" 
+#endif
+
+
+
+
+
 #define ICON_ANI_FOCUSDEFAULT    "fs:/image/mainmenu/Focus_default.png"
 
 

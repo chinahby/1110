@@ -241,7 +241,7 @@ int OEMSoundCtl_New(IShell * ps, AEECLSID cls, void **ppif)
     return EBADPARM;
 
   // Alloc memory for the object
-  pme = *ppif = (AEESoundCtl *)AEE_NewClass((IBaseVtbl *)&gvtAEESoundCtl, sizeof(AEESoundCtl));
+  pme = *ppif = (AEESoundCtl *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gvtAEESoundCtl, sizeof(AEESoundCtl));
   if (!pme)
   {
     nRet = ENOMEMORY;

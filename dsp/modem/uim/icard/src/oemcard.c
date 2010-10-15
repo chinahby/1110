@@ -2722,7 +2722,7 @@ int OEMCard_New(IShell *pIShell, AEECLSID cls, void **ppif)
 #endif /*#ifdef FEATURE_MMGSDI*/
 
       // Allocate the object.
-      ICardobj = (ICard *)(void*)AEE_NewClassEx((AEEVTBL(IBase) *)(void*)&gOEMCardFuncs, sizeof(ICard), TRUE);
+      ICardobj = (ICard *)(void*)AEE_OEM_NEWCLASSEX((AEEVTBL(IBase) *)(void*)&gOEMCardFuncs, sizeof(ICard), TRUE);
 
       if (NULL == ICardobj) {
         MSG_ERROR("OEMCard_New: ICardobj Null", 0, 0, 0);
@@ -8090,7 +8090,7 @@ int OEMCardNotifier_New(IShell *pIShell, AEECLSID cls, void **ppif)
      int card_retval;
 
      // Allocate the object.
-     ICardNotifier_obj = (ICardNotifier *)(void*)AEE_NewClassEx((AEEVTBL(IBase) *)(void*)&gOEMCardNotifierFuncs,
+     ICardNotifier_obj = (ICardNotifier *)(void*)AEE_OEM_NEWCLASSEX((AEEVTBL(IBase) *)(void*)&gOEMCardNotifierFuncs,
                                                       sizeof(ICardNotifier), TRUE);
 
      if (NULL == ICardNotifier_obj) {
@@ -8444,7 +8444,7 @@ int OEMCardConnection_New(IShell *pIShell, AEECLSID cls, void **ppif)
    {
      if (NULL == sCardChannelMapTable[i].pICardConnection_obj) {
        // Allocate the object.
-       sCardChannelMapTable[i].pICardConnection_obj = (ICardConnection *)(void*)AEE_NewClassEx((AEEVTBL(IBase) *)(void*)&gOEMCardConnectionFuncs,
+       sCardChannelMapTable[i].pICardConnection_obj = (ICardConnection *)(void*)AEE_OEM_NEWCLASSEX((AEEVTBL(IBase) *)(void*)&gOEMCardConnectionFuncs,
                                                       sizeof(ICardConnection), TRUE);
 
        if (NULL == sCardChannelMapTable[i].pICardConnection_obj) {

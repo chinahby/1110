@@ -278,7 +278,7 @@ int OEMAddrBook_New(IShell * pIShell,AEECLSID ClsId,void ** ppObj)
    if (ClsId == AEECLSID_OEMADDRBOOK)
    {
       // Allocate 
-      pNew = (COEMAddrBook*)AEE_NewClassEx((IBaseVtbl*)&gsOEMAddrBookFuncs,
+      pNew = (COEMAddrBook*)AEE_OEM_NEWCLASSEX((IBaseVtbl*)&gsOEMAddrBookFuncs,
                                           sizeof(COEMAddrBook), TRUE);
       if (!pNew)
       {

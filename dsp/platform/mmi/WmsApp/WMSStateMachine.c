@@ -6090,11 +6090,27 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_SMSVIEWS:
-           
-           
+
             {// 调用短信接口进行查看操作
-            	pMe->m_eDlgReturn = DLGRET_CREATE;
-                MOVE_TO_STATE(WMSST_INBOXES)
+            	//modi by yangdecai 09-25
+				boolean  bsmslock = FALSE;
+    			MSG_FATAL("COREST_SMSTIP_Handler Start DLGRET_SMSVIEWS",0,0,0);
+    			(void) ICONFIG_GetItem(pMe->m_pConfig,
+                           CFGI_SMS_LOCK_CHECK,
+                           &bsmslock,
+                           sizeof(bsmslock));
+				if (bsmslock)
+                {
+                    pMe->m_currState = WMSST_CHKPWD;
+                    pMe->m_stchkpwdbk = WMSST_INBOXES;
+					pMe->m_eDlgReturn = DLGRET_CREATE;
+					MOVE_TO_STATE(WMSST_CHKPWD)
+            	}
+				else
+				{
+            		pMe->m_eDlgReturn = DLGRET_CREATE;
+                	MOVE_TO_STATE(WMSST_INBOXES)
+				}
             }
             return NFSMACTION_CONTINUE;
             

@@ -498,7 +498,7 @@ int OEMALERT_NOTIFIER_New(IShell *pIShell, AEECLSID cls, void **ppif)
    {
      // Allocate the object.
 //lint -save -e826 Suppress "Suspicious ptr-to-ptr conversion (area too small)
-     IALERT_NOTIFIERobj = (IALERT_NOTIFIER*)AEE_NewClassEx((IBaseVtbl*)&
+     IALERT_NOTIFIERobj = (IALERT_NOTIFIER*)AEE_OEM_NEWCLASSEX((IBaseVtbl*)&
 							   gOEMALERT_NOTIFIERFuncs,
 							   sizeof(IALERT_NOTIFIER),
 							   TRUE);
@@ -729,7 +729,7 @@ int OEMALERT_New(IShell *pIShell, AEECLSID cls, void **ppif)
 
   // Allocate the object.
 //lint -save -e826  Suppress "suspicious ptr-to-ptr conversion (area too small)"
-  pNew = (IALERT *) AEE_NewClass((IBaseVtbl*)&gOEMALERTFuncs, sizeof(IALERT));
+  pNew = (IALERT *) AEE_OEM_NEWCLASS((IBaseVtbl*)&gOEMALERTFuncs, sizeof(IALERT));
 //lint -restore
   if (pNew == NULL)
        return ENOMEMORY;
@@ -2244,6 +2244,12 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
     if(type == ALERT_POWER_SND)
     {
         alerttype = OEMNV_ALERTTYPE_RINGER;
+    //wangliang add! 2010-09-24
+    //#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+	#if defined (FEATURE_DEFAULT_RINGALERT_SOUND_LEVEL)
+        pMe->m_ringCurVol = OEMSOUND_2ND_VOL;
+        pMe->m_ringEndVol = OEMSOUND_2ND_VOL;
+    #endif
     }
 #ifdef FEATURE_SMSTONETYPE_MID      
     else if(type == ALERT_SMS_SND)
@@ -3569,7 +3575,8 @@ SEE ALSO:
 =============================================================================*/
 static AEESoundTone OEMALERT_MapKeyToTone(AVKType key)
 {
-#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+//#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
+#if defined (FEATURE_DEFAULT_KEYTONE_SOUND_LEVEL)
 	return AEE_TONE_3;
 #endif
 
