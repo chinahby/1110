@@ -169,6 +169,7 @@ void disp_init(void)
 #endif	
 
 #endif
+#endif
 
 	fd = drv_open(PRIMARY_LCD_NAME);
 	drv_init(fd);
