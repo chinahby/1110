@@ -1,7 +1,7 @@
 AIT_TV_TLG1120_SOURCES=\
-	ait_TV_TLG1120.c \
-	atv_image_sensor.c \
-	tlg1120_i2c_mt23.c \
+	analogtv_tlg1120.c \
+	ATV_MMI.c \
+	I2Csample_new.c \
 	tlg1120Api.c \
 	tlg1120App.c \
 	tlg1120Customize.c \
