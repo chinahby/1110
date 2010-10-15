@@ -1591,7 +1591,7 @@ const tlg_reg_pair_t *getTlgInitReg()
     
     if (TLG_GetChipVersion(tlg_i2c_addr, &version)!=TLG_ERR_SUCCESS)
     {
-        TLG_PRINT_0("TLG_GetChipVersion failed");
+        //TLG_PRINT_0("TLG_GetChipVersion failed");
         return NULL;
     }
 
@@ -1666,7 +1666,7 @@ TLGDLL_API int TLGAPP_Ini_Reg(int start)
     tlg_init_reg = getTlgInitReg();
     if (tlg_init_reg == NULL)
     {
-        TLG_PRINT_0("getTlgInitReg failed");
+        //TLG_PRINT_0("getTlgInitReg failed");
         return TLG_ERR_FAIL;
     }
     TLG_Ini_WritePair(tlg_i2c_addr, start, tlg_init_reg);
@@ -1687,7 +1687,7 @@ TLGDLL_API int TLGAPP_Init_Aux(uint32 base_addr, int start)
 
     if(TLGAPP_Ini_Reg(start)!=TLG_ERR_SUCCESS)
     {
-        TLG_PRINT_0("TLGAPP_Init_Aux failed");
+        //TLG_PRINT_0("TLGAPP_Init_Aux failed");
         return TLG_ERR_FAIL;
     }
 

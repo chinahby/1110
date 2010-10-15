@@ -1421,12 +1421,13 @@ TLGDLL_API int TLG_GetChipVersion(uint32 base_addr, uint32 *chip_vers)
 		if (versionFound == 0)
 		{
 			TLG_BurstRead(base_addr, REG_0143, 4, chip_id);
+			/*
             TLG_PRINT_2("TLG_GetChipVersion ID[0-1]: 0x%04x, 0x%04x\n", 
 						chip_id[0],
 						chip_id[1]);
 			TLG_PRINT_2("TLG_GetChipVersion ID[2-3]: 0x%04x, 0x%04x\n", 
 						chip_id[2],
-						chip_id[3]);
+						chip_id[3]);*/
 			/*TLG_REG_LOG((b, "TLG_GetChipVersion ID: 0x%04x, 0x%04x, 0x%04x, 0x%04x\n", 
 						chip_id[0],
 						chip_id[1],
@@ -1441,7 +1442,7 @@ TLGDLL_API int TLG_GetChipVersion(uint32 base_addr, uint32 *chip_vers)
 				uhf_tbl = uhf_tbl_1_1;
 				audio_mode_select = audio_mode_select_old;
 				*chip_vers = TLG1120_VERS_1_1;
-				TLG_PRINT_0(( "TLG_GetChipVersion Jupiter 1.1\n")); 
+				//TLG_PRINT_0(( "TLG_GetChipVersion Jupiter 1.1\n")); 
 			}
 			else if ((chip_id[0] == REG_0143_VALUE_2) &&
 					(chip_id[1] == REG_0144_VALUE_2) &&
@@ -1451,14 +1452,14 @@ TLGDLL_API int TLG_GetChipVersion(uint32 base_addr, uint32 *chip_vers)
 				*chip_vers = TLG1120_VERS_1_2;
 				uhf_tbl = uhf_tbl_1_2;
 				audio_mode_select = audio_mode_select_old;
-				TLG_PRINT_0(( "TLG_GetChipVersion Jupiter 1.2\n")); 
+				//TLG_PRINT_0(( "TLG_GetChipVersion Jupiter 1.2\n")); 
 			}
 			else if ((chip_id[0] == REG_0143_VALUE_3) &&
 					(chip_id[1] == REG_0144_VALUE_3) &&
 					(chip_id[2] == 0x0000) &&
 					(chip_id[3] == REG_0146_VALUE_1))
 			{
-				TLG_PRINT_0(( "TLG_GetChipVersion Jupiter 2.1\n")); 
+				//TLG_PRINT_0(( "TLG_GetChipVersion Jupiter 2.1\n")); 
 				TLG_REG_LOG((b,"UHF_TBL=%x\n", (uint32) uhf_tbl));
 				*chip_vers = TLG1120_VERS_2_1;
 				uhf_tbl = uhf_tbl_1_2;
@@ -1467,7 +1468,7 @@ TLGDLL_API int TLG_GetChipVersion(uint32 base_addr, uint32 *chip_vers)
 			}
 			else
 			{
-			    TLG_PRINT_0(( "TLG_GetChipVersion no version\n")); 
+			    //TLG_PRINT_0(( "TLG_GetChipVersion no version\n")); 
 				*chip_vers = TLG_NO_VERS;
                 return TLG_ERR_FAIL;
 			}

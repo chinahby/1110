@@ -1862,7 +1862,7 @@ void TLGAPP_InitHsyncAndVsync(void)
 #ifdef WIN32
 			;
 #else
-			TLG_PRINT_0("ATV ERROR: Unsupported scan lines!\n");
+			;//TLG_PRINT_0("ATV ERROR: Unsupported scan lines!\n");//modi by yangdecai
 #endif
 	}
 	
@@ -1916,7 +1916,7 @@ void TLGAPP_InitRegionChannelMap(void)
 #ifdef WIN32
 		;
 #else
-		TLG_ERR("ATV ERROR: Undefined region code!\n");
+		;//TLG_ERR("ATV ERROR: Undefined region code!\n");
 #endif
 	}
     if (gPreScanLines == TLG_TV_NONE)
