@@ -26,9 +26,6 @@ translations
 #define OEMFS_ODM_BREW_USER_DIR "brew/user"
 
 // FTL Storage Device
-#ifdef CUST_EDITION	 
-#include "AEEFTL.h"
-#endif /*CUST_EDITION*/
 #define OEMFS_FTL_DIR    "ftl1"
 
 // USB Host Mass Storage 1
