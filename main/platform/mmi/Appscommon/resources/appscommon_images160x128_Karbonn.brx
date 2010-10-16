@@ -181,6 +181,9 @@
 	<Object Id="5416" Name="IDB_MODE_T9_RAPID_ARABIC">
 		<File>..\images\160x128\Karbonn\IME\Indo.png</File>
 	</Object>
+	<Object Id="5417" Name="IDB_EDIT_UP_DOWN_BMP">
+		<File>..\images\160x128\Karbonn\IME\arrow.png</File>
+	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE" MimeType="image/bmp">
 		<File>..\images\160x128\Karbonn\Message\Icon\Template.bmp</File>
 	</Object>
