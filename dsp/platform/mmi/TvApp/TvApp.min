@@ -1,0 +1,39 @@
+#-------------------------------------------------------------------------------
+# TvApp - TvApp Application
+#-------------------------------------------------------------------------------
+TvApp_INC = $(TvApp)
+TvApp_RES = $(TvApp)/resources
+TvApp_SRC = $(TvApp)
+TvApp_LIB = $(TvApp)
+
+TvApp_SOURCES=TvApp.c
+
+TvApp_OBJS :=  $(addprefix $(TARGETDIR)/, $(TvApp_SOURCES:%.c=%.o))
+$(TvApp_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+
+vpath %.c $(TvApp_SRC)
+vpath %.bar $(TvApp_RES)
+vpath %.brx $(TvApp_RES)
+vpath %.mp3 $(TvApp_RES)
+
+CONSTFILE_FILES+=\
+	TvApp.mif|fs:/mif/TvApp.mif \
+	TvApp.bar|fs:/mod/TvApp/en/TvApp.bar \
+	TvAppimage$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/mod/TvApp/TvAppimage.bar \
+	Away.mp3|fs:/hsmm/music/Away.mp3  
+
+# 加入另外一种语言资源文件
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG1)TvApp.bar|fs:/mod/TvApp/$(EXTLANG1)/TvApp.bar 
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)TvApp.bar|fs:/mod/TvApp/$(EXTLANG2)/TvApp.bar 
+endif
+
+INC  += $(TvApp_INC) $(TvApp_RES)
+#SRC  += $(TvApp_SOURCES)
+OBJECTS+=$(TvApp_OBJS)
+#LIBS += 
