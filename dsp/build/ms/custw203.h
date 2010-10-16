@@ -39,6 +39,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #define FEATURE_DISP_160X128
 
+// Add by yy 2010_10_16
+#define FEATURE_VIDEOPLAYER
+// Add End
 #endif
 
 #ifndef TARGSB2_H
