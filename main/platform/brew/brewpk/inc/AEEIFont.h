@@ -44,9 +44,9 @@ typedef struct {
                                     const AEERect *prcClip, uint32 dwFlags);      \
    int   (*MeasureText)            (iname *po, const AECHAR *pcText, int nChars,  \
                                     int nMaxWidth, int *pnFits, int *pnPixels);   \
-   int   (*GetInfo)                (iname *po, AEEFontInfo *pinfo, int nSize)   \
+   int   (*GetInfo)                (iname *po, AEEFontInfo *pinfo, int nSize) ;  \
    int   (*MeasureTextCursorPos) (IFont *pMe,  int x, const AECHAR *pcText, int nChars,\
-                                            const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags);
+                                            const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags)
 #else
 #define INHERIT_IFont(iname) \
    INHERIT_IQI(iname); \

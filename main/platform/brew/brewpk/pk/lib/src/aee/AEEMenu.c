@@ -47,6 +47,41 @@ INCLUDE FILES FOR MODULE
 #include "appscommonimages.brh"
 #include "err.h"
 #endif //defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+
+//add by yangdecai 
+
+typedef  word  nv_language_enum_type;
+/* Use English language */
+#define  NV_LANGUAGE_ENGLISH                           ((nv_language_enum_type)0)
+/* Use Spanish language */
+#define  NV_LANGUAGE_SPANISH                           ((nv_language_enum_type)1)
+/* Use French language */
+#define  NV_LANGUAGE_FRENCH                            ((nv_language_enum_type)2)
+/* Use Portuguese language */
+#define  NV_LANGUAGE_PORTUGUESE                        ((nv_language_enum_type)3)
+/* Use TChinese language    */
+#define NV_LANGUAGE_TCHINESE                           ((nv_language_enum_type)4)  
+/* Use Chinese language    */
+#define NV_LANGUAGE_CHINESE                            ((nv_language_enum_type)5)
+/* Use Japanese  language    */
+#define NV_LANGUAGE_JAPANESE                           ((nv_language_enum_type)6)
+/* Use Korean language    */
+#define NV_LANGUAGE_KOREAN                             ((nv_language_enum_type)7)  
+/* Use Hebrew language    */
+#define NV_LANGUAGE_HEBREW                             ((nv_language_enum_type)8)
+/* Use Thai language    */
+#define NV_LANGUAGE_THAI                               ((nv_language_enum_type)9)
+/* Use Italian language    */
+#define NV_LANGUAGE_ITALIAN                            ((nv_language_enum_type)10)  
+/* Use Indonesian language    */
+#define NV_LANGUAGE_INDONESIAN                         ((nv_language_enum_type)11)
+/* Use Arabic language    */
+#define NV_LANGUAGE_ARABIC                             ((nv_language_enum_type)12)
+/* Use Hindi language    */
+#define NV_LANGUAGE_HINDI                              ((nv_language_enum_type)13)      
+/* Use Vietnamese language    */
+#define NV_LANGUAGE_VIETNAMESE                         ((nv_language_enum_type)14)
+
     
 /*===========================================================================
 
