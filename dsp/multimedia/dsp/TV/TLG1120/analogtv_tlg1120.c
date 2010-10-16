@@ -22,6 +22,7 @@
 
 void TLG1120_init_host_gpio(void)
 {
+#if 0   //modi by yangdecai for debug
     gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_HIGH_VALUE);
 	gpio_out(CAMIF_EN2_N, (GPIO_ValueType)GPIO_HIGH_VALUE);
 
@@ -40,6 +41,7 @@ void TLG1120_init_host_gpio(void)
     gpio_config(TLG_HSYNC);
     gpio_set_direction(TLG_HSYNC,I2C_PIN_OUTPUT);
     gpio_out(TLG_HSYNC, GPIO_LOW_VALUE);    
+#endif
 }
 
 
@@ -48,6 +50,7 @@ void TLG1120_init_host_gpio(void)
 void TLG1120_poweron_chip(void)
 {    
     /*RESET*/
+#if 0    ////modi by yangdecai for debug
     gpio_config(ATV_RESET_PIN);
     gpio_set_direction(ATV_RESET_PIN,I2C_PIN_OUTPUT);
     gpio_out(ATV_RESET_PIN, GPIO_LOW_VALUE);
@@ -62,6 +65,7 @@ void TLG1120_poweron_chip(void)
     gpio_set_direction(ATV_POWER_PIN,I2C_PIN_OUTPUT);
     gpio_out(ATV_POWER_PIN, GPIO_HIGH_VALUE);
 #endif    
+#endif
 
 }
 
@@ -1007,10 +1011,12 @@ void FMDrv_StopScan(void)
 void TLG1120_fm_init(void)
 {
     TLG_PRINT_0("TLG1120_fm_init Enter");
+	#if 0
     camsensor_preview_resolution  = CAMSENSOR_QTR_SIZE;
     camsensor_i2c_command.bus_id     = I2C_BUS_HW_CTRL;
 	camsensor_i2c_command.slave_addr = (TLGI2C_DEFAULT_BASE_ADDR<<1);
 	camsensor_i2c_command.options    = (i2c_options_type) (I2C_DFLT_ADDR_DEV| I2C_START_BEFORE_READ); 
+	#endif 
 
 #if 1	//For debug, we set some variable, after mmi is finish we disable it
     TLGMMI_RestoreTvOption();
@@ -1191,7 +1197,7 @@ static uint16 TLG1120_fm_scan_channel(uint8 direction)
     ATV_DEBUG("TLGAPP_SetChannel ret = %d",ret ,0,0);
     return SUCCESS;       
 }
-
+#if 0   //modi by yangdecai 
 #include "FM_Device.h"
 boolean TLGFM_Register(FM_Device *Fun_table)
 {
@@ -1207,7 +1213,7 @@ boolean TLGFM_Register(FM_Device *Fun_table)
 	Fun_table->FM_SetVolumeLevel	= TLG1120_fm_set_volume_level;
 	return TRUE;
 }
-
+#endif
 #endif
 
 #if 0

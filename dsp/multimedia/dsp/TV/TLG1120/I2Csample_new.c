@@ -134,7 +134,9 @@ static unsigned	char i2c_read_byte(void)
 
 	/* set SDA as intput status	here */
 	//GPIO_InitIO(0, SDA);
+	#if 0   //modi by yangdecai  2010-10-15
 	set_i2c_pin_dir(SDA,I2C_PIN_INPUT);
+	#endif 
 
 	for	(i=0; i<8; i++)
 	{
@@ -152,7 +154,10 @@ static unsigned	char i2c_read_byte(void)
             {
 				   /* set SDA as output	status here	*/
 			  // GPIO_InitIO(1, SDA);
-			  set_i2c_pin_dir(SDA,I2C_PIN_OUTPUT);
+			  #if 0   //modi by yangdecai  2010-10-15
+				set_i2c_pin_dir(SDA,I2C_PIN_OUTPUT);
+			  #endif 
+			  
 		    }
 
 			i2c_delay(I2C_DELAY_UNIT <<	0);
@@ -304,7 +309,7 @@ unsigned char Tlg_i2c_write_data(unsigned char dadd, unsigned short	radd, unsign
 	if (!i2c_write_byte(dadd<<1))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_write_data error");
+        //TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
 	/* write 16bits	register */
@@ -313,7 +318,7 @@ unsigned char Tlg_i2c_write_data(unsigned char dadd, unsigned short	radd, unsign
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_write_data error");
+        //TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
 
@@ -321,7 +326,7 @@ unsigned char Tlg_i2c_write_data(unsigned char dadd, unsigned short	radd, unsign
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_write_data error");
+        //TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
 
@@ -330,7 +335,7 @@ unsigned char Tlg_i2c_write_data(unsigned char dadd, unsigned short	radd, unsign
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_write_data error");
+        //TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
 
@@ -338,7 +343,7 @@ unsigned char Tlg_i2c_write_data(unsigned char dadd, unsigned short	radd, unsign
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_write_data error");
+        //TLG_PRINT_0("Tlg_i2c_write_data error");
 		return IIC_ERR;
 	}
 
@@ -372,7 +377,7 @@ unsigned char Tlg_i2c_read_data(unsigned char dadd,	unsigned short radd, unsigne
 	if (!i2c_write_byte(dadd<<1))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_read_data error");
+        //TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 	/* set MSB 1 */
@@ -380,14 +385,14 @@ unsigned char Tlg_i2c_read_data(unsigned char dadd,	unsigned short radd, unsigne
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_read_data error");
+        //TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 	tmpData	= ((radd & 0x00ff));
 	if (!i2c_write_byte(tmpData))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_read_data error");
+        //TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -398,13 +403,13 @@ unsigned char Tlg_i2c_read_data(unsigned char dadd,	unsigned short radd, unsigne
 	if (!i2c_write_byte(0xff))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_read_data error");
+        //TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 	if (!i2c_write_byte(0xff))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_read_data error");
+        //TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 #endif    
@@ -417,7 +422,7 @@ unsigned char Tlg_i2c_read_data(unsigned char dadd,	unsigned short radd, unsigne
 	if (!i2c_write_byte((unsigned char)((dadd<<1) |	1)))
 	{
 		i2c_end();
-        TLG_PRINT_0("Tlg_i2c_read_data error");
+        //TLG_PRINT_0("Tlg_i2c_read_data error");
 		return IIC_ERR;
 	}
 
@@ -596,7 +601,10 @@ static unsigned	char i2c_read_ack(void)
 
 	/* set SDA as input	status here	*/
 //	GPIO_InitIO(0, SDA);				   /* only apply on	MTK	platform */
-    set_i2c_pin_dir(SDA,I2C_PIN_INPUT);
+    //set_i2c_pin_dir(SDA,I2C_PIN_INPUT);
+    #if 0   //modi by yangdecai  2010-10-15
+		set_i2c_pin_dir(SDA,I2C_PIN_INPUT);
+    #endif 
 
 	i2c_delay(I2C_DELAY_UNIT <<	0);
 	set_i2c_pin(SCL);
@@ -616,7 +624,10 @@ static unsigned	char i2c_read_ack(void)
 
 	   /* set SDA as output	status here	*/
 //	   GPIO_InitIO(1, SDA);					   /* only apply on	MTK	platform */
-    set_i2c_pin_dir(SDA,I2C_PIN_OUTPUT);
+	 #if 0   //modi by yangdecai  2010-10-15
+		 set_i2c_pin_dir(SDA,I2C_PIN_OUTPUT);
+  	 #endif 
+
 
 	i2c_delay(I2C_DELAY_UNIT <<	0);
 

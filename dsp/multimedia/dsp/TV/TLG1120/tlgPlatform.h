@@ -6,6 +6,8 @@
 //#include "camctrl.h"
 #include "i2c.h"
 #include "AEEStdLib.h"
+#include "gpio_1100.h"
+
 
 #ifndef TLG_1120
 #define TLG_1120
@@ -43,11 +45,11 @@
 #define	TV_ACTIVE_IN_MENU		1
 
 
-/*GPIO MAP*/
-#define ATV_I2C_SDA      GPIO_OUTP_51
-#define ATV_I2C_SCL      GPIO_OUTP_50
-#define ATV_RESET_PIN    GPIO_OUTP_53
-#define ATV_POWER_PIN    GPIO_OUTP_44//GPIO_OUTP_44
+/*GPIO MAP*/  //modi by yangdecai
+#define ATV_I2C_SDA      51//GPIO_OUTP_51
+#define ATV_I2C_SCL      50//GPIO_OUTP_50
+#define ATV_RESET_PIN    53//GPIO_OUTP_53
+#define ATV_POWER_PIN    44//GPIO_OUTP_44//GPIO_OUTP_44
 
 #define TLG_CMPCLK      GPIO_GENERIC_DEFAULT//CAMIF_PCLK
 #define TLG_VSYNC       GPIO_GENERIC_DEFAULT//CAMIF_VSYNC
@@ -430,8 +432,10 @@ extern int TLG1120_tv_set_channel(uint16 chn);
 extern int TLG1120_tv_set_channel_ext(uint16 chn);
 extern int TLG1120_tv_set_fast_channel(uint16 chn);
 extern int TLG1120_tv_set_param(ATV_SET_PARAM_e type, int hparam, int lparam);
+#if 0   //modi by yangdecai
 extern boolean TLG1120_tlg1120_init(camsensor_function_table_type *camsensor_function_table_ptr,
 				                                camctrl_tbl_type              *camctrl_tbl_ptr);
+#endif
 
 #if 0
 extern void TLG1120_fm_power_on(void);
