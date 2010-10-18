@@ -14,6 +14,57 @@
 #define RELEASEIF(p) do { if (p) { IBASE_Release((IBase*)(p)); p = 0; } } while (0)
 #endif
 
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE   //add by yangdecai
+// For Arphic Layout Engine
+#include "userdef.h"   //it will include aleuser.h
+//for additonal lib
+#include "alelib.h"
+#include <stdio.h>
+#include "AEEShell.h"
+#include "AEE_OEM.h"
+
+#define __RBMP_PURE_MEMORY_VERSION__
+
+#define SCREENWIDTH (512)
+#define DEFAULT_BACKGROUND_COL   MAKE_RGB(255, 255, 255)
+/* WARNING: because Windows DIB need to be 32-bit aligned,
+   please keep this width 32's multiples. (The Layout Engine
+   does not have such limit).
+ */
+ 
+#define SCREENBYTEWIDTH ((SCREENWIDTH+7)/8)
+#define SCREENHEIGHT 48
+#define MAXLINESIZE 120
+char gFontDataBuffer [SCREENBYTEWIDTH*SCREENHEIGHT];  //font data of Line []
+
+char gRbmpWorkBuffer [2048]={0,};//3072
+char *gAleWorkBuffer;
+
+int gLineTotal;       // total number of characters in Line []
+int gLineCursor;     // cursor position, 0 means at first character
+
+ALE_UINT16 gLayoutEngineBiDiBuffer [(MAXLINESIZE+1)*3]={0,};  // buffer for layout engine
+ALE_UINT16 gLineCharPos [MAXLINESIZE+1];   //position of each char (used by layout engine)
+unsigned char gbFont_Arabic_Hebrew[] = {
+#include "FontDB//Arabic_Hebrew_14x14p.i"
+};
+ byte BigNumFontBuf[] = 
+{
+#include "FontDB//bignum.i"
+};
+
+#ifndef ABS
+#define ABS(VAL) (((VAL)>0)?(VAL):(-(VAL)))
+#endif
+int32 HebrewArabicLangInit(void);
+static void ArphicLineCursorMeasure (const AECHAR *pcText, int nChars,
+	                                                        int x, int xMax, uint32 dwFlags, int* curx,int LineCursor);
+static int ArphicMeasureNChars(const AECHAR *pcText, int nChars);
+static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText, int nChars, 
+                                                        const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags);
+#endif
+
+
 #if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
 #define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"/systemar.gvf"
 #else
@@ -697,3 +748,276 @@ int GreyBitBrewFont_MeasureText(IDisplay *p, int nSize, const AECHAR *psz)
     GreyBitBrewFont_Destory(pNewFont);
     return nErr;
 }
+
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+/*==============================================================================
+函数:
+    HebrewArabicLangInit
+
+说明:
+    初始化Ale
+
+参数:
+
+返回值:
+    none
+
+==============================================================================*/
+int32 HebrewArabicLangInit(void)
+{
+   static boolean staArabicInitFlag = FALSE;
+   ALE_INT16 AleTextDirType = ALE_TEXTDIR_ARABIC_SMART;
+   int32 kret = -1;
+
+   if ( !staArabicInitFlag )
+   {
+      if ( (kret = RbmpReset (gRbmpWorkBuffer, sizeof (gRbmpWorkBuffer), gbFont_Arabic_Hebrew, 0 )) < 0 )
+      {
+          DBGPRINTF("Insufficient memory for font data.Initializing Error");
+          return kret;
+      }
+      //get layout engine's working buffer from bitmap font engine
+      gAleWorkBuffer = RbmpGetAleWorkBuffer (gRbmpWorkBuffer);
+
+      //Enable Bi-Directional Text Support
+      /*
+       ALE_TEXTDIR_DEFAULT (0, default): Always Left-to-right, no right-to-left
+       ALE_TEXTDIR_ENGLISH_MAJOR (1): default left-to-right; right-to-left for Arabic
+       ALE_TEXTDIR_ARABIC_MAJOR (2): default right-to-left, left-to-right for English
+       ALE_TEXTDIR_ARABIC_SMART (3): default right-to-left, left-to-right for English;
+       If no right-to-left language in text, all line is left-to-right.
+       set type to 1-3 if you use right-to-left text
+      */
+      AleSetTextDirection (AleTextDirType, gAleWorkBuffer) ;      
+      //Set Bi-Directional Text Buffer buffer
+      AleSetBiDiReorderBuffer (gLayoutEngineBiDiBuffer, sizeof (gLayoutEngineBiDiBuffer), gAleWorkBuffer);
+   
+      // init gLineCharPos
+      memset (gLineCharPos, 0, sizeof (gLineCharPos));
+      
+      staArabicInitFlag = TRUE;
+   }
+
+   return 0;
+}
+
+/*===========================================================================
+Function: ArphicLineCursorMeasure
+
+Description:
+        Text Cursor Interface
+        int LineCursor /in/     // cursor position, 0 means at first character
+        int* cursorx   /out/     // return the pixel
+===========================================================================*/
+static void ArphicLineCursorMeasure (const AECHAR *pcText, int nChars,
+	int x, int xMax, uint32 dwFlags, int* curx,int LineCursor)
+{
+   AleFontMetrics       fm;   //metics of the entrie string
+   int                  cursorpos;           //cursor's position relatived to displayed text
+   int                  cursordirection;    //text direction at cursor
+   int                  xstart;               //start position in x to display string
+   AleGetStringFontInfo getfont_info;  //structure for retrieve font
+   AECHAR nCharsContent = 0;
+   AECHAR *tempText = (AECHAR *)pcText;
+   int16 nRealSize = WSTRLEN(pcText);
+
+    if(NULL == pcText)
+    {
+        return;
+    }
+    if(NULL == curx)
+    {
+        return;
+    }
+   
+   if(nRealSize > nChars)
+   {
+       nCharsContent = *(pcText + nChars - 1 + 1);
+       tempText[nChars] = 0;
+   }
+   /* current line being edited
+      ---------------------------------------- */
+   memset (&getfont_info, 0, sizeof (getfont_info));
+   memset((char *)gLineCharPos, 0, sizeof(gLineCharPos));
+   getfont_info. CodeType = 1;  /* use Unicode */
+   getfont_info. String = tempText;
+   getfont_info. FontBuffer = gFontDataBuffer;
+   getfont_info. FontMetrics = &fm;
+   
+   getfont_info. BufferRowByteTotal = SCREENBYTEWIDTH;
+   getfont_info. BufferColumnByteTotal = SCREENHEIGHT;
+   getfont_info. CharPosition = gLineCharPos;
+   
+   //all the remain fields are unchanged
+   AleGetStringFont (&getfont_info, gAleWorkBuffer);
+   if(nRealSize > nChars)
+   {
+        tempText[nChars] = nCharsContent;
+   }
+   
+   xstart = x;
+   /*
+   caculate cursor
+   */
+   if ( LineCursor >= 0 )
+   {
+      if ( LineCursor >= nChars )  //cursor at end of line
+      {
+         if ( nChars > 0 )
+         {
+             //get text direction at last character
+             cursordirection = AleGetDisplayDirection (nChars, gAleWorkBuffer);
+             if ( cursordirection % 2 == 0 )   //last char is left-to-right
+               cursorpos = AleGetDisplayRight (nChars, gLineCharPos, gAleWorkBuffer);
+             else  // right-to-left
+               cursorpos = AleGetDisplayLeft (nChars, gLineCharPos, gAleWorkBuffer);
+         }
+         else  //no character at all
+         {
+            if (dwFlags & IDF_ALIGN_RIGHT)
+              cursorpos = 0; //Arabic layout
+            else
+              cursorpos = 0; 
+         }
+      }
+      else  //cursor is inside string
+      {
+          /* New version: we put cursor at "previous character"(where cursor is after)'s side to next character
+             This will be more intuitive during editing. */
+          if ( LineCursor == 0 )  /* Cursor at line's beginning */
+          {
+             if (dwFlags & IDF_ALIGN_RIGHT)
+                cursorpos = fm.horiAdvance;//fm.outBufWidth; //Arabic layout
+             else
+                cursorpos = 0;  //normal layout
+          }
+          else
+          {
+             cursordirection = AleGetDisplayDirection (LineCursor, gAleWorkBuffer);
+             if ( cursordirection % 2 == 0 )   //last char is left-to-right
+                cursorpos = AleGetDisplayRight (LineCursor, gLineCharPos, gAleWorkBuffer);
+             else  //char on cursor is right-to-left
+                cursorpos = AleGetDisplayLeft (LineCursor, gLineCharPos, gAleWorkBuffer);
+          }
+      }
+
+      //decide cursor's real position
+      *curx = xstart + cursorpos;
+      if ( *curx < 0 )
+         *curx = 0;
+      else if ( *curx >= xMax )
+         *curx = xMax;
+   }
+   
+}
+
+/*===========================================================================
+Function: ArphicMeasureNChars
+
+===========================================================================*/
+static int
+ArphicMeasureNChars(const AECHAR *pcText, int nChars)
+{
+    AECHAR nCharsContent = 0;
+    AECHAR *pText = (AECHAR *)pcText;
+    AleFontMetrics fm;   //metics of the entrie string
+    AleGetStringFontInfo getfont_info;  //structure for retrieve font
+
+    if((NULL == pcText) || (WSTRLEN(pcText) < nChars) 
+                    || (nChars < 0))
+    {
+        return -1;
+    }
+    
+    if(0 == nChars)
+    {
+        return 0;
+    }
+    
+    nCharsContent = *(pcText + nChars);
+    pText[nChars] = 0;
+    
+    /*when outside call,need to Init Arphic Layout Engine*/
+    memset (&getfont_info, 0, sizeof (getfont_info));
+    getfont_info. CodeType = 1;  /* use Unicode */
+    getfont_info. String = (ALE_UINT16 *)pText;
+    getfont_info. FontBuffer = NULL;
+    getfont_info. FontMetrics = &fm;
+
+    AleGetStringFont (&getfont_info, gAleWorkBuffer);
+    pText[nChars] = nCharsContent;
+    
+    return ((fm.horiAdvance > 0)?(fm.horiAdvance):(0));
+}
+
+/*===========================================================================
+Function: OEMFont_MeasureTextCursorPos
+         just for measure text line cursor position in pixels
+Description:
+        int LineCursor     // cursor position, 0 means at first character
+===========================================================================*/
+static int OEMFont_MeasureTextCursorPos(IFont *pMe,  int x, const AECHAR *pcText, int nChars,
+                 const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags)
+{
+    int          nWidth;
+    int          xMax;
+    
+    if(!prcClip)
+    {
+        return EMEMPTR;
+    }
+    // If no text, return immediately
+    if (!pcText)
+    {
+        return EMEMPTR;
+    }
+    
+    if ( 0 != HebrewArabicLangInit() )
+    {
+       return EFAILED;
+    }
+    // Calculate the string length
+    if (nChars < 0) 
+    {
+        nChars = WSTRLEN(pcText);
+    }
+
+    // Get the text width and height
+    OEMFont_MeasureText(pMe, pcText, nChars, 0, NULL, &nWidth);
+    
+    // Text is horizontally aligned
+    if (dwFlags & IDF_ALIGNHORZ_MASK)
+    {
+        x = prcClip->x;
+
+        if (dwFlags & IDF_ALIGN_RIGHT)
+        {
+            x += (prcClip->dx - nWidth);
+        }
+        else if (dwFlags & IDF_ALIGN_CENTER)
+        {
+           x += ((prcClip->dx - nWidth) >> 1);
+        }
+    }
+	
+    // check the x,y and rcclip
+    if(x >(prcClip->x +prcClip->dx))
+    {
+        //Overflow the end x coordinate
+        return SUCCESS;
+    }
+
+    if(prcClip->x > (x+ nWidth))
+    {
+        //Overflow the start x coordinate
+        return SUCCESS;
+    }
+
+    xMax = prcClip->x + prcClip->dx - 1;
+    ArphicLineCursorMeasure (pcText, nChars, x, xMax, dwFlags, curx, LineCursor);
+
+    return SUCCESS;
+}
+
+#endif // FEATURE_ARPHIC_LAYOUT_ENGINE
+

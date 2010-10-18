@@ -936,8 +936,10 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_PLANEMODE
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PLANE_MODE, IDS_PLANE_MODE, NULL, 0);
 #endif
+#ifndef FEATURE_VERSION_H19C
 #ifdef FEATURE_LANGUAGE
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_LANGUAGE, IDS_LANGUAGE, NULL, 0);
+#endif
 #endif
 #ifdef FEATURE_SET_BANNER
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_BANNER_TITLE, IDS_BANNER_TITLE, NULL, 0);
@@ -1014,10 +1016,12 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                         CLOSE_DIALOG(DLGRET_PLANEMODE)
                     break;
 #endif //FEATURE_PLANEMODE
+#ifndef FEATURE_VERSION_H19C
 #ifdef FEATURE_LANGUAGE
                 case IDS_LANGUAGE:    //语言选择
                     CLOSE_DIALOG(DLGRET_LANGUAGE)
                     break;
+#endif
 #endif
 #ifdef FEATURE_KEYGUARD
                 case IDS_AUTOKEYGUARD_TITLE:         //自动锁键盘
@@ -3408,7 +3412,9 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #endif
 
 #if defined(FEATURE_LANG_INDONESIAN)
+#ifndef FEATURE_VERSION_H19C
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_INDONESIAN, IDS_INDONESIAN, NULL, 0);
+#endif
 #if defined(FEATURE_CARRIER_INDONESIA)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CHINESE, IDS_CHINESE, NULL, 0);
 #endif
@@ -3485,10 +3491,11 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #endif /* FEATURE_LANG_PORTUGUESE */
 
 #ifdef FEATURE_LANG_INDONESIAN
+#ifndef FEATURE_VERSION_H19C
                     case NV_LANGUAGE_INDONESIAN:    //印度尼西亚
                         nSelItem = IDS_INDONESIAN;
                         break;
-                        
+#endif                        
 #if defined(FEATURE_CARRIER_INDONESIA)
                     case NV_LANGUAGE_CHINESE:       //中文
                         nSelItem = IDS_CHINESE;
@@ -3624,11 +3631,12 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #endif /* FEATURE_LANG_PORTUGUESE */
 
 #ifdef FEATURE_LANG_INDONESIAN
+#ifndef FEATURE_VERSION_H19C
                 case IDS_INDONESIAN:    //印度尼西亚
                     language = NV_LANGUAGE_INDONESIAN;
                     inputmode = OEM_MODE_T9_MT_ENGLISH; //OEM_MODE_T9_MT_INDONESIAN;                           
                     break;
-                    
+#endif                    
 #if defined(FEATURE_CARRIER_INDONESIA)
                 case IDS_CHINESE:       //中文
                     language = NV_LANGUAGE_CHINESE;

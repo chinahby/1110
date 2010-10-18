@@ -748,7 +748,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 			#if defined(FEATURE_TORCH_KEY_SPACE)	
                 case AVK_SPACE:
                 {
-                    
                     if ( pMe->TorchOn == FALSE )
                     {
                         pMe->TorchOn = TRUE;
@@ -766,8 +765,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                             IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
                             //IBACKLIGHT_Disable(pMe->m_pBacklight);
                         }
-                    }
-                                        
+                    }             
                 }
 
                 return TRUE;

@@ -51,7 +51,6 @@ when       who     what, where, why
 #define EVT_UI_EXIT                 1150
 #define EVT_MC_PWR_DOWN             1155
 
-
 /*===========================================================================
 FUNCTION CoreAppHandleSignals
 

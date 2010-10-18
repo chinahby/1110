@@ -613,6 +613,7 @@ ifeq ($(USES_BREW_AEE_SRC), yes)
 endif
 
 include $(GREYBIT_PATH)/GreyBit.min
+include $(ALE_PATH)/ALE.min
 endif
 
 

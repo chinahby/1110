@@ -3,13 +3,14 @@
 # $Header: //source/qcom/qct/multimedia/display/mdp1/lcd_qsc1100/main/latest/src/lcd.min#3 $
 #-------------------------------------------------------------------------------
 
-LCD_SURF_C_SOURCES=\
-	disp_zgd_tft177.c \
-	disp_tm_cstn128x128.c \
-	disp_st7735r_128x128.c \
+LCD_SURF_C_SOURCES= \
 	disp_api_default.c \
-	disp_zgd_tft128x160.c \
-	disp_zgd_tft220x176.c
+	disp_drv_$(USES_LCD_SIZE).c \
+	disp_ili9163c_tft177_rot.c \
+	disp_ili9163c_tft177.c \
+	disp_st7735r_tft144.c \
+	disp_ili9225b_tft20.c \
+	disp_ili9225b_tft20_rot.c
 
 LCD_SURF_C_SOURCES += disp_epson_S1D19120_bootscreen.c
 

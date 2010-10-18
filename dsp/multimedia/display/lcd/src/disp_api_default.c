@@ -92,29 +92,11 @@ static disp_update_type dup_arg_capture;
 static disp_cls_type cls_arg;
 
 extern boolean mdp_disp_fatal_err_flag;
-
+#ifndef CUST_EDITION
 extern int epson_S1D19120_install(char *);
-
-#if defined(LCD_TM_128X128)
-extern int tm_cstn128x128_install(char * str);
+#else
+extern int disp_drv_install(char * str);
 #endif
-
-#if defined(LCD_ZGD_128x160)
-extern int zgd_tft128x160_install(char *);
-#endif
-
-#if defined(LCD_ZGD_220x176)
-extern int zgd_tft220x176_install(char *);
-#endif
-
-#if defined(LCD_ZGD_177) 
-extern int zgd_tft177_install(char *);
-#endif
-
-#if defined(LCD_ST_7735R)
-	extern int st7735r_128x128_install(char *);
-#endif
-
 #ifdef FEATURE_BOOT_SPLASH_SCREEN
 extern void disp_epson_S1D19120_boot_chg_splash_screen (void);
 #endif
@@ -148,26 +130,8 @@ void disp_init(void)
 	if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
 		return;
 #else
-
-#if defined(LCD_TM_128X128) 
-	if(tm_cstn128x128_install(PRIMARY_LCD_NAME) == -1)
-		return;
-#elif defined(LCD_ZGD_177)
-	if(zgd_tft177_install(PRIMARY_LCD_NAME) == -1)
-		return;
-#elif defined(LCD_ZGD_128x160)
-	if(zgd_tft128x160_install(PRIMARY_LCD_NAME) == -1)
-		return;
-#elif defined(LCD_ST_7735R)
-	if(st7735r_128x128_install(PRIMARY_LCD_NAME) == -1)
-		return;
-#elif defined(LCD_ZGD_220x176)
-	if(zgd_tft220x176_install(PRIMARY_LCD_NAME) == -1)
-		return;
-#else
-#error code not present
-#endif	
-
+    if(disp_drv_install(PRIMARY_LCD_NAME) == -1)
+        return;
 #endif
 #endif
 
@@ -185,6 +149,10 @@ void disp_init(void)
 
 #ifdef FEATURE_MDP
 	mdp_init();
+#endif
+
+#ifdef CUST_EDITION
+    disp_set_backlight(LCD_BACKLIGHT_LVL_2);
 #endif
 }
 

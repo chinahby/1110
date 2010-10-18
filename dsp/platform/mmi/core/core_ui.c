@@ -867,32 +867,45 @@ void handle_keys(void)
     static int hs2vcodeidx = ARR_SIZE(hs_to_aee_tbl)-1;
     last_vcode = AEE_INVALID_CODE;
 #ifdef FEATURE_KEYPAD_MULTI_KEY
-    while ( (key.key_code = GetKey(&key)) != HS_NONE_K) {
+    while ( (key.key_code = GetKey(&key)) != HS_NONE_K) 
+	{
         MSG_HIGH("Received Key code = %#x and key parm = %#x from HS", key.key_code, key.key_parm, 0);
+		
 #else /* FEATURE_KEYPAD_MULTI_KEY */
-    while ( ( key.key_code = (hs_key_type)GetKey()) != HS_NONE_K ) {
+    while ( ( key.key_code = (hs_key_type)GetKey()) != HS_NONE_K ) 
+	{
         MSG_HIGH("Received Key %d (%x) from HS", key.key_code, key.key_code, 0);
 #endif
-        if (key.key_code == HS_RELEASE_K) {
+        if (key.key_code == HS_RELEASE_K) 
+		{
 #ifdef FEATURE_KEYPAD_MULTI_KEY
             hs2vcodeidx = GetHsToVcodeIdx(key.key_parm);
 #endif
             last_vcode = hs_to_aee_tbl[hs2vcodeidx].aee_vcode;
             dwParam_code = hs_to_aee_tbl[hs2vcodeidx].dwparam;	//Add By zzg 2010_09_09
             
-            if (last_vcode != AVK_UNDEFINED && hs_to_aee_tbl[hs2vcodeidx].bpressed){
+            if (last_vcode != AVK_UNDEFINED && hs_to_aee_tbl[hs2vcodeidx].bpressed)
+			{
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = FALSE;
-                if (CoreTask_HandleAEEEvt(EVT_KEY_RELEASE, last_vcode, dwParam_code)){
+				
+                if (CoreTask_HandleAEEEvt(EVT_KEY_RELEASE, last_vcode, dwParam_code))
+				{
                     continue;
                 }
-                if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_REPT){
+				
+                if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_REPT)
+				{
                     StopKeyRepeat(&hs_to_aee_tbl[hs2vcodeidx]);
-                }else if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_HOLD){
+                }
+				else if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_HOLD)
+                {
                     StopKeyHold(&hs_to_aee_tbl[hs2vcodeidx]);
                 }
                 AEE_Event(EVT_KEY_RELEASE, last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
             }
-        }else{
+        }
+		else
+		{
             hs2vcodeidx = GetHsToVcodeIdx(key.key_code);
             last_vcode = hs_to_aee_tbl[hs2vcodeidx].aee_vcode;
             dwParam_code = hs_to_aee_tbl[hs2vcodeidx].dwparam;	//Add By zzg 2010_09_09
