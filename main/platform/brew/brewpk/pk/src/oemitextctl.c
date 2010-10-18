@@ -727,7 +727,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                  && (wParam == AVK_SYMBOL) 
                  && (!(pme->m_dwProps & TP_NOSYMBOL))
                  && (!pme->m_bShowSyms || !pme->m_bShowFaceSyms || !pme->m_bShowNetSyms))                  
-                // 按*键切换到符号输入法
+                // 按Symbol键切换到符号输入法
 #else
 			if ( (!pme->m_pSoftKey) 
              && (pme->m_dwProps & TP_STARKEY_SWITCH) 

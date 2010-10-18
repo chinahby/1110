@@ -537,6 +537,7 @@ typedef enum
 
 #ifndef BUILD_BOOT_CHAIN
 /* current key processing state */
+
 #ifdef FEATURE_ALL_KEY_PAD
 static keypad_state_type keypad_key_state[KEYPAD_ROWS][KEYPAD_COLUMNS+1];
 #else
@@ -1055,7 +1056,7 @@ static void keypad_scan_keypad_matrix(void)
    * the corresponding key is pressed.
    */
 
-#ifdef FEATURE_ALL_KEY_PAD    
+#ifdef FEATURE_ALL_KEY_PAD  
   keypad_drive_all_scan_cols_high();
 
   clk_busy_wait(KEYPAD_POLLING_DELAY_USEC);
@@ -1064,14 +1065,14 @@ static void keypad_scan_keypad_matrix(void)
   {
     if (GPIO_LOW_VALUE == gpio_in(keytbl_row_to_keysense_gpio_map[row]))
     {
-       /* A low keysense reading indicates a closed switch (pressed) */
+       // A low keysense reading indicates a closed switch (pressed) 
        keys_pressed[row][KEYPAD_COLUMNS] = TRUE;
        keypad_drive_all_scan_cols_low();
        return;
     }
     else
     {
-       /* A high keysense reading indicates an open switch (unpressed) */
+       //A high keysense reading indicates an open switch (unpressed) 
        keys_pressed[row][KEYPAD_COLUMNS] = FALSE;
     }
   }
@@ -1208,7 +1209,7 @@ static void keypad_scan_keypad
   */
   for (row=0; row < KEYPAD_ROWS; row++)
   {
-#ifdef FEATURE_ALL_KEY_PAD  
+#ifdef FEATURE_ALL_KEY_PAD 
     for (column=0; column < KEYPAD_COLUMNS+1; column++)
 #else
 	for (column=0; column < KEYPAD_COLUMNS; column++)
