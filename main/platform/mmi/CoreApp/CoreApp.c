@@ -746,6 +746,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
        #ifdef FEATURE_TORCH_SUPPORT
             //#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
 			#if defined(FEATURE_TORCH_KEY_SPACE)	
+			
                 case AVK_SPACE:
                 {
                     if ( pMe->TorchOn == FALSE )
@@ -761,14 +762,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                     {
                         pMe->TorchOn = FALSE;
                         if (pMe->m_pBacklight)
-                        {
+                        {                        	
                             IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
-                            //IBACKLIGHT_Disable(pMe->m_pBacklight);
+                            //IBACKLIGHT_Disable(pMe->m_pBacklight);						
                         }
+                    }                                                   
                     }             
-                }
 
-                return TRUE;
+                return TRUE;                
             #endif
 
             //#if defined(FEATURE_PROJECT_W021) || defined (FEATURE_PROJECT_W021_128x160) || defined (FEATURE_PROJECT_W021_176X220) || defined (FEATURE_PROJECT_W021_240X320) || defined (FEATURE_PROJECT_W021_220X176) || defined (FEATURE_PROJECT_W021_320X240)
