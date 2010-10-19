@@ -81,19 +81,8 @@ typedef  unsigned char      boolean;     /* Boolean value type. */
 #endif /* BOOT_IMEM_32BIT_ACCESS */
 
 typedef  unsigned long long uint64;      /* Unsigned 64 bit value */
-#ifndef FEATURE_DSP //add by yangdecai 09-25
 typedef  unsigned long int  uint32;      /* Unsigned 32 bit value */
 typedef  unsigned short     uint16;      /* Unsigned 16 bit value */
-#else
-#ifndef   uint32
-#define   uint32        unsigned long int
-#endif /* uint32 */
-
-#ifndef   uint16
-#define   uint16        unsigned short
-#endif /* uint16 */
-
-#endif
 typedef  unsigned char      uint8;       /* Unsigned 8  bit value */
 
 typedef  signed long int    int32;       /* Signed 32 bit value */

@@ -19,13 +19,13 @@
 
 #ifndef uint16
 
-#define uint16  unsigned short
+//#define uint16  unsigned short
 
 #endif /* uint16 */
 
 #ifndef uint32
 
-#define uint32  unsigned long
+//#define uint32  unsigned long
 
 #endif /* uint32 */
 

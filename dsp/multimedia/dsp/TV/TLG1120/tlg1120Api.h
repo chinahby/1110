@@ -16,7 +16,7 @@
  *
  * (c) 2008 Telegent Systems
  ****************************************************************************/
-
+#include "comdef.h"
 #ifdef TLG_USE_DLL
     #ifdef TLGDLL_EXPORTS
         #define TLGDLL_API __declspec(dllexport)
@@ -50,7 +50,8 @@ extern TLGDLL_API int TLG_RESTART_THRESH;
 #endif /* uint8 */
 
 #ifndef   uint16
-#define   uint16        unsigned short
+//typedef unsigned short   uint16 ;
+
 #endif /* uint16 */
 
 #ifndef   uint32
