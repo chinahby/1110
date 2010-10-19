@@ -478,10 +478,12 @@ boolean OEM_IsClsOKInSafeMode(uint32 clsid)
      case AEECLSID_CORE_STARTAPP:
 #endif        
    #endif
+#if 0
 
    #ifdef FEATURE_APP_BLUETOOTH
       case  AEECLSID_BLUETOOTH_APP:
    #endif
+#endif
 
    #ifdef FEATURE_APP_CATAPP
      case AEECLSID_CATAPP:

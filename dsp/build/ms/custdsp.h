@@ -15,10 +15,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SUPPORT_ID
 #define FEATURE_LANG_INDONESIAN
 #ifndef SOFTWARE_VER04
-#define FEATURE_AAC
-#define FEATURE_AAC_PLUS
-#define FEATURE_ENHANCED_AAC_PLUS
+//#define FEATURE_AAC
+//#define FEATURE_AAC_PLUS
+//#define FEATURE_ENHANCED_AAC_PLUS
 #endif
+//#define FEATURE_APP_BLUETOOTH   //А¶СА
+//#define FEATURE_BT_QSOC_ALL  
+#define FEATURE_DISP_160X128
 
 #include "custW212.h"
 #endif
