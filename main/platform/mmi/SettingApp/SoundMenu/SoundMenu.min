@@ -428,7 +428,7 @@ else
 								        jumping.mid|fs:/ringers/jumping.mid \
 								        lucky.mid|fs:/ringers/lucky.mid \
 								        street_tale.mid|fs:/ringers/street_tale.mid \
-								        techno_meto.mid|fs:/ringers/techno_meto.mid \
+								        techno_meto.mid|fs:/ringers/techno_meto.mid
 			    else ifeq ($(USES_RESDIR), common)
 			    			CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \
