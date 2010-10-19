@@ -25,8 +25,8 @@
 //#define		_QUANTA_PANEL_
 //#define		_SONY_PANEL_
 
-//#define		_8_BITS_
-#define		_16_BITS_
+#define		_8_BITS_
+//#define		_16_BITS_
 //#define		_24_BITS_
 //#define		_8_24_BITS_
 

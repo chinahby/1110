@@ -85,7 +85,6 @@ extern int A8L_SetVideoResolution(u_short width, u_short height, u_short colorFo
 extern int A8L_SetVideoCaptureMemConfig(u_int encodeAddrStart, u_int encodeAddrEnd, u_int lineBufAddr);
 extern int A8L_StartMJPEGCapture(void);
 extern int A8L_TransferMJPEGFrameToHost(u_char *frameBuf, u_int *frameSize);
-#pragma O0
 
 
 /**
@@ -98,7 +97,6 @@ extern int A8L_TransferMJPEGFrameToHost(u_char *frameBuf, u_int *frameSize);
 
 u_char A800_InitDefine(void)
 {
-	//Vin@20091219: Select Panel Size in same lib.
 	extern unsigned short gA8MainLCDWidth;
 	extern unsigned short gA8MainLCDHeight;
 	extern unsigned short gA8SubLCDWidth;
@@ -109,7 +107,7 @@ u_char A800_InitDefine(void)
 #endif
 	A800Data.LCDCount = 1;     /* Main LCD only */
 	A800Data.ActiveLCDNo = 0;  /* Main LCD active */
-	//Vin@20091219: Select Panel Size in same lib.
+	
 	A800Data.MainLCDInfo.Width = gA8MainLCDWidth;
 	A800Data.MainLCDInfo.Height = gA8MainLCDHeight;
 	A800Data.MainLCDInfo.BusWidth = gMainPanelControlAttrib.LCD_BusCtl.BusWidth;
@@ -133,13 +131,12 @@ u_char A800_InitDefine(void)
 
 	A800Data.Select = &(A800Data.AITPreviewOSDModeSetting);
 
-	AIT_Message_P5("MainLCDInfo = %d,%d %d, %d ,%d",
-
-	A800Data.MainLCDInfo.Width,
-	A800Data.MainLCDInfo.Height,
-	A800Data.MainLCDInfo.BusWidth,
-	A800Data.MainLCDInfo.BusType,
-	A800Data.MainLCDInfo.Burst);
+	DBGPRINTF("MainLCDInfo = %d,%d %d, %d ,%d",
+					A800Data.MainLCDInfo.Width,
+					A800Data.MainLCDInfo.Height,
+					A800Data.MainLCDInfo.BusWidth,
+					A800Data.MainLCDInfo.BusType,
+					A800Data.MainLCDInfo.Burst);
 
 	A800Data.Select->WinState =  A8_MAIN_WIN_ON | A8_PIP_WIN_ON | A8_OVERLAY_WIN_ON | A8_ICON_WIN_ON;
 
@@ -187,360 +184,360 @@ WinInfoDT *A800_ChangeCameraSetting(PREVIEW_MODE mode)
 	switch(mode)
 	{
 		default:
-	{
-		if(!gsSensorUsing)
 		{
-			AIT_Message_P0("gsSensorUsing = NULL\r\n");
-			return NULL;
-		}
-		AIT_Message_P1("gsSensorUsing ID= %x\r\n",gsSensorUsing->sensor_id);
+			if(!gsSensorUsing)
+			{
+				AIT_Message_P0("gsSensorUsing = NULL\r\n");
+				return NULL;
+			}
+			AIT_Message_P1("gsSensorUsing ID= %x\r\n",gsSensorUsing->sensor_id);
 
-		A800Data.SensorDes.MaxWidth = gsSensorUsing->preview_mode->image_width;
-		A800Data.SensorDes.MaxHeight = gsSensorUsing->preview_mode->image_height;
-		A800Data.SensorDes.PrevWidth = gsSensorUsing->preview_mode->image_width;
-		A800Data.SensorDes.PrevHeight = gsSensorUsing->preview_mode->image_height;
-	
-		}
-		break;
+			A800Data.SensorDes.MaxWidth = gsSensorUsing->preview_mode->image_width;
+			A800Data.SensorDes.MaxHeight = gsSensorUsing->preview_mode->image_height;
+			A800Data.SensorDes.PrevWidth = gsSensorUsing->preview_mode->image_width;
+			A800Data.SensorDes.PrevHeight = gsSensorUsing->preview_mode->image_height;
+		
+			}
+			break;
 
-		case AIT_VDO_PLAY_NOR_MODE:
-		case AIT_VDO_PLAY_FULL_MODE:
-		case AIT_JPG_PLAY_NOR_MODE:
-		case AIT_JPG_PLAY_FULL_MODE:
-		case AIT_VDO_PLAY_YUVBUF_NOR_MODE:
-		case AIT_VDO_PLAY_YUVBUF_FULL_MODE:
+			case AIT_VDO_PLAY_NOR_MODE:
+			case AIT_VDO_PLAY_FULL_MODE:
+			case AIT_JPG_PLAY_NOR_MODE:
+			case AIT_JPG_PLAY_FULL_MODE:
+			case AIT_VDO_PLAY_YUVBUF_NOR_MODE:
+			case AIT_VDO_PLAY_YUVBUF_FULL_MODE:
+			{
+				A800Data.SensorDes.MaxWidth = 640;
+				A800Data.SensorDes.MaxHeight = 480;
+				A800Data.SensorDes.PrevWidth = 640;
+				A800Data.SensorDes.PrevHeight = 480;
+			}
+			break;
+		}	
+		AIT_Message_P2("%d,%d",A800Data.LCDCount,A800Data.ActiveLCDNo);
+
+		Select->Rotate = gsPreviewAttrib[PreviewModeIndex].PanelRotate; 
+		switch(gsPreviewAttrib[PreviewModeIndex].PanelRotate)
 		{
-			A800Data.SensorDes.MaxWidth = 640;
-			A800Data.SensorDes.MaxHeight = 480;
-			A800Data.SensorDes.PrevWidth = 640;
-			A800Data.SensorDes.PrevHeight = 480;
+			default:
+			case A8_RT_NORMAL:
+			case A8_RT_RIGHT_180:			
+				Select->DispWidth = gsPreviewAttrib[PreviewModeIndex].PreviewRange.w;
+				Select->DispHeight = gsPreviewAttrib[PreviewModeIndex].PreviewRange.h;
+
+				break;
+			case A8_RT_RIGHT_270:
+			case A8_RT_RIGHT_90:
+				Select->DispWidth = gsPreviewAttrib[PreviewModeIndex].PreviewRange.h;
+				Select->DispHeight = gsPreviewAttrib[PreviewModeIndex].PreviewRange.w;
+				
+				break;
 		}
-		break;
-	}	
-	AIT_Message_P2("%d,%d",A800Data.LCDCount,A800Data.ActiveLCDNo);
-
-	Select->Rotate = gsPreviewAttrib[PreviewModeIndex].PanelRotate; 
-	switch(gsPreviewAttrib[PreviewModeIndex].PanelRotate)
-	{
-		default:
-		case A8_RT_NORMAL:
-		case A8_RT_RIGHT_180:			
-			Select->DispWidth = gsPreviewAttrib[PreviewModeIndex].PreviewRange.w;
-			Select->DispHeight = gsPreviewAttrib[PreviewModeIndex].PreviewRange.h;
-
-			break;
-		case A8_RT_RIGHT_270:
-		case A8_RT_RIGHT_90:
-			Select->DispWidth = gsPreviewAttrib[PreviewModeIndex].PreviewRange.h;
-			Select->DispHeight = gsPreviewAttrib[PreviewModeIndex].PreviewRange.w;
-			
-			break;
-	}
 	
-	Select->BufOriginX = 0;
-	Select->BufOriginY = 0;
-	Select->DispLcdX = gsPreviewAttrib[PreviewModeIndex].PreviewRange.x;
-	Select->DispLcdY = gsPreviewAttrib[PreviewModeIndex].PreviewRange.y;
+		Select->BufOriginX = 0;
+		Select->BufOriginY = 0;
+		Select->DispLcdX = gsPreviewAttrib[PreviewModeIndex].PreviewRange.x;
+		Select->DispLcdY = gsPreviewAttrib[PreviewModeIndex].PreviewRange.y;
 
-	AIT_Message_P2("Display W= %d,H = %d",Select->DispWidth,Select->DispHeight);
+		AIT_Message_P2("Display W= %d,H = %d",Select->DispWidth,Select->DispHeight);
 
 
 
-	Select->BufWidth = gsPreviewAttrib[PreviewModeIndex].PreviewRange.w;
-	Select->BufHeight = gsPreviewAttrib[PreviewModeIndex].PreviewRange.h;		
+		Select->BufWidth = gsPreviewAttrib[PreviewModeIndex].PreviewRange.w;
+		Select->BufHeight = gsPreviewAttrib[PreviewModeIndex].PreviewRange.h;		
 #if defined(__MMI_MAINLCD_240X320__)
 	
-	switch(mode)
-	{
-		case AIT_VDO_PREV_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE\r\n");		
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
-			Select->BufWidth = 176;
-			Select->BufHeight = 144;
-			OSDBufFormat = A8_DEPTH_8B;	
-			break;
-			
-		case AIT_VDO_PLAY_NOR_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE\r\n");
-			
-			Select->BufFormat = A8_DEPTH_16B;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
-			Select->BufWidth = 176;
-			Select->BufHeight = 144;
-			OSDBufFormat = A8_DEPTH_8B;			
-			
-			break;
+		switch(mode)
+		{
+			case AIT_VDO_PREV_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE\r\n");		
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
+				OSDBufFormat = A8_DEPTH_8B;	
+				break;
+				
+			case AIT_VDO_PLAY_NOR_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE\r\n");
+				
+				Select->BufFormat = A8_DEPTH_16B;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
+				OSDBufFormat = A8_DEPTH_8B;			
+				
+				break;
 
 
-		case AIT_VDO_PLAY_YUVBUF_NOR_MODE:
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
-			OSDBufFormat = A8_DEPTH_16B;
-			break;
-			
-		case AIT_VDO_PLAY_YUVBUF_FULL_MODE:
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
-			OSDBufFormat = A8_DEPTH_16B;
-			break;
-			
-		case AIT_JPG_PLAY_NOR_MODE:
-		case AIT_JPG_PLAY_FULL_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL\r\n");
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
-			OSDBufFormat = A8_DEPTH_16B;	
-			break;
+			case AIT_VDO_PLAY_YUVBUF_NOR_MODE:
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
+				OSDBufFormat = A8_DEPTH_16B;
+				break;
+				
+			case AIT_VDO_PLAY_YUVBUF_FULL_MODE:
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
+				OSDBufFormat = A8_DEPTH_16B;
+				break;
+				
+			case AIT_JPG_PLAY_NOR_MODE:
+			case AIT_JPG_PLAY_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL\r\n");
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
+				OSDBufFormat = A8_DEPTH_16B;	
+				break;
 
-		case AIT_ATV_PREV_NOR_MODE:
-		case AIT_ATV_PREV_FULL_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS\r\n");
+			case AIT_ATV_PREV_NOR_MODE:
+			case AIT_ATV_PREV_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS\r\n");
 #if 0
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
 
-			Select->BufWidth = 176;
-			Select->BufHeight = 144;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
 
-			OSDBufFormat = A8_DEPTH_8B;	
+				OSDBufFormat = A8_DEPTH_8B;	
 #else
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
-			OSDBufFormat = A8_DEPTH_8B;	
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
+				OSDBufFormat = A8_DEPTH_8B;	
 #endif
-			break;;
+				break;;
 
-		case AIT_ATV_REC_NOR_MODE:
-		case AIT_ATV_REC_FULL_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS\r\n");
-			Select->BufFormat = A8_DEPTH_16B;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
+			case AIT_ATV_REC_NOR_MODE:
+			case AIT_ATV_REC_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS\r\n");
+				Select->BufFormat = A8_DEPTH_16B;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
 
-			Select->BufWidth = 176;
-			Select->BufHeight = 144;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
 
-			OSDBufFormat = A8_DEPTH_8B;	
-			break;
+				OSDBufFormat = A8_DEPTH_8B;	
+				break;
 
-	
-		default:
-		case AIT_CAM_PREV_NOR_MODE:
-		case AIT_CAM_PREV_FULL_MODE:
+		
+			default:
+			case AIT_CAM_PREV_NOR_MODE:
+			case AIT_CAM_PREV_FULL_MODE:
 
 #if 0			
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL\r\n");
-			Select->BufFormat = A8_DEPTH_16B;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;					
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL\r\n");
+				Select->BufFormat = A8_DEPTH_16B;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;					
 #else	//Sometimes it cause preview fail.
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS\r\n");
-			
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;	
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS\r\n");
+				
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;	
 #endif
-			OSDBufFormat = A8_DEPTH_16B;
-							
-			break;
-	}
+				OSDBufFormat = A8_DEPTH_16B;
+								
+				break;
+		}
 #endif
 #if defined(__MMI_MAINLCD_176X220__)
-	switch(mode)
-	{
-		case AIT_VDO_PREV_MODE:
-			AIT_Message_P0(" AIT_VDO_PREV_MODE"); 	
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
-			Select->BufWidth = 176;
-			Select->BufHeight = 144;
-			OSDBufFormat = A8_DEPTH_16B; 
-			break;
+		switch(mode)
+		{
+			case AIT_VDO_PREV_MODE:
+				AIT_Message_P0(" AIT_VDO_PREV_MODE"); 	
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
+				OSDBufFormat = A8_DEPTH_16B; 
+				break;
 
-		case AIT_VDO_PLAY_FULL_MODE:	
-			AIT_Message_P0(" AIT_VDO_PLAY_FULL_MODE");
-			Select->BufFormat = A8_DEPTH_16B;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
-			Select->BufWidth = 220;
-			Select->BufHeight = 176;
-			OSDBufFormat = A8_DEPTH_16B;
-
-			break;
-		case AIT_VDO_PLAY_NOR_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE");
-			Select->BufFormat = A8_DEPTH_16B;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
-			Select->BufWidth = 176;
-			Select->BufHeight = 144;
-			OSDBufFormat = A8_DEPTH_16B;
-			
-			break;
-		case AIT_JPG_PLAY_NOR_MODE:
-		case AIT_JPG_PLAY_FULL_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL");
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
-			OSDBufFormat = A8_DEPTH_16B;	
-			break;
-		case AIT_VDO_PLAY_YUVBUF_NOR_MODE:
-		case AIT_VDO_PLAY_YUVBUF_FULL_MODE:
-			AIT_Message_P0(" Refresh Mode :AIT_VDO_PLAY_YUVBUF_FULL_MODE,CAM_LCD_REFRESH_NORMAL");		
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
-			Select->BufWidth = 224;//176;
-			Select->BufHeight = 176;//144;
-			
-			OSDBufFormat = A8_DEPTH_16B;
-			break;		
-		case AIT_ATV_PREV_NOR_MODE:
-		case AIT_ATV_PREV_FULL_MODE:
-			Select->BufFormat = A8_YUV_422;
-			if(Select->Rotate==A8_RT_RIGHT_90)
+			case AIT_VDO_PLAY_FULL_MODE:	
+				AIT_Message_P0(" AIT_VDO_PLAY_FULL_MODE");
+				Select->BufFormat = A8_DEPTH_16B;
 				Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
-			else
+				Select->BufWidth = 220;
+				Select->BufHeight = 176;
+				OSDBufFormat = A8_DEPTH_16B;
+
+				break;
+			case AIT_VDO_PLAY_NOR_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE");
+				Select->BufFormat = A8_DEPTH_16B;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
+				OSDBufFormat = A8_DEPTH_16B;
+				
+				break;
+			case AIT_JPG_PLAY_NOR_MODE:
+			case AIT_JPG_PLAY_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL");
+				Select->BufFormat = A8_YUV_422;
 				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
-			
-			OSDBufFormat = A8_DEPTH_16B;
+				OSDBufFormat = A8_DEPTH_16B;	
+				break;
+			case AIT_VDO_PLAY_YUVBUF_NOR_MODE:
+			case AIT_VDO_PLAY_YUVBUF_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :AIT_VDO_PLAY_YUVBUF_FULL_MODE,CAM_LCD_REFRESH_NORMAL");		
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
+				Select->BufWidth = 224;//176;
+				Select->BufHeight = 176;//144;
+				
+				OSDBufFormat = A8_DEPTH_16B;
+				break;		
+			case AIT_ATV_PREV_NOR_MODE:
+			case AIT_ATV_PREV_FULL_MODE:
+				Select->BufFormat = A8_YUV_422;
+				if(Select->Rotate==A8_RT_RIGHT_90)
+					Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
+				else
+					Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
+				
+				OSDBufFormat = A8_DEPTH_16B;
 
-			
-			break;
-			
-		default:
+				
+				break;
+				
+			default:
 
 
-		case AIT_CAM_PREV_NOR_MODE:
-		case AIT_CAM_PREV_FULL_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS");
-			
-			Select->BufFormat = A8_DEPTH_16B;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;//CAM_LCD_REFRESH_BYPASS;					
-			OSDBufFormat = A8_DEPTH_16B;
-							
-			break;
-	}
+			case AIT_CAM_PREV_NOR_MODE:
+			case AIT_CAM_PREV_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS");
+				
+				Select->BufFormat = A8_DEPTH_16B;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;//CAM_LCD_REFRESH_BYPASS;					
+				OSDBufFormat = A8_DEPTH_16B;
+								
+				break;
+		}
 
 #endif
 #if defined(__MMI_MAINLCD_220X176__)
-	switch(mode)
-	{
-		case AIT_VDO_PREV_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE"); 	
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
-			Select->BufWidth = 176;
-			Select->BufHeight = 144;
-			OSDBufFormat = A8_DEPTH_16B; 
-			break;
+		switch(mode)
+		{
+			case AIT_VDO_PREV_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE"); 	
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
+				OSDBufFormat = A8_DEPTH_16B; 
+				break;
 
-		case AIT_VDO_PLAY_FULL_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE");
-			Select->BufFormat = A8_DEPTH_16B;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
-			Select->BufWidth = 176;
-			Select->BufHeight = 144;
-			OSDBufFormat = A8_DEPTH_16B;
-			break;
-		case AIT_VDO_PLAY_NOR_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE");
-			Select->BufFormat = A8_DEPTH_16B;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
-			Select->BufWidth = 176;
-			Select->BufHeight = 144;
-			OSDBufFormat = A8_DEPTH_16B;
-			
-			break;
-		case AIT_JPG_PLAY_NOR_MODE:
-		case AIT_JPG_PLAY_FULL_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL");
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
-			OSDBufFormat = A8_DEPTH_16B;	
-			break;
-		case AIT_ATV_PREV_NOR_MODE:
-		case AIT_ATV_PREV_FULL_MODE:
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
-			OSDBufFormat = A8_DEPTH_16B;
+			case AIT_VDO_PLAY_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE");
+				Select->BufFormat = A8_DEPTH_16B;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
+				OSDBufFormat = A8_DEPTH_16B;
+				break;
+			case AIT_VDO_PLAY_NOR_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE");
+				Select->BufFormat = A8_DEPTH_16B;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
+				OSDBufFormat = A8_DEPTH_16B;
+				
+				break;
+			case AIT_JPG_PLAY_NOR_MODE:
+			case AIT_JPG_PLAY_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL");
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
+				OSDBufFormat = A8_DEPTH_16B;	
+				break;
+			case AIT_ATV_PREV_NOR_MODE:
+			case AIT_ATV_PREV_FULL_MODE:
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
+				OSDBufFormat = A8_DEPTH_16B;
 
-			
-			break;
-			
-		default:
+				
+				break;
+				
+			default:
 
 
-		case AIT_CAM_PREV_NOR_MODE:
-		case AIT_CAM_PREV_FULL_MODE:
-			AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS");
-			
-			Select->BufFormat = A8_YUV_422;
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;					
-			OSDBufFormat = A8_DEPTH_16B;
-							
-			break;
-}
+			case AIT_CAM_PREV_NOR_MODE:
+			case AIT_CAM_PREV_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS");
+				
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;					
+				OSDBufFormat = A8_DEPTH_16B;
+								
+				break;
+		}
 
 #endif
 #if defined(__MMI_MAINLCD_128X160__)
-switch(mode)
-{
-	case AIT_VDO_PREV_MODE:
-		AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE"); 	
-		Select->BufFormat = A8_YUV_422;
-		Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;//CAM_LCD_REFRESH_BYPASS;
-		Select->BufWidth = 176;
-		Select->BufHeight = 144;
-			OSDBufFormat = A8_DEPTH_8B;	
-		break;
+		switch(mode)
+		{
+			case AIT_VDO_PREV_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_SCALE"); 	
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;//CAM_LCD_REFRESH_BYPASS;
+				Select->BufWidth = 176;
+				Select->BufHeight = 144;
+					OSDBufFormat = A8_DEPTH_8B;	
+				break;
 
-	case AIT_VDO_PLAY_FULL_MODE:
-		AIT_Message_P0(" AIT_VDO_PLAY_FULL_MODE");
-		Select->BufFormat = A8_DEPTH_16B;
-		Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
-		Select->BufWidth = 160;
-		Select->BufHeight = 128;
-		OSDBufFormat = A8_DEPTH_16B;
-		break;
-	case AIT_VDO_PLAY_NOR_MODE:
-		AIT_Message_P0(" AIT_VDO_PLAY_NOR_MODE");
-		
-		Select->BufFormat = A8_DEPTH_16B;
-		Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
-		Select->BufWidth = 128;
-		Select->BufHeight = 96;
-		OSDBufFormat = A8_DEPTH_16B;
-		
-		break;
-	case AIT_JPG_PLAY_NOR_MODE:
-	case AIT_JPG_PLAY_FULL_MODE:
-		AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL");
-		Select->BufFormat = A8_YUV_422;
-		Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
-		OSDBufFormat = A8_DEPTH_16B;	
-		break;
-	case AIT_ATV_PREV_NOR_MODE:
-	case AIT_ATV_PREV_FULL_MODE:
-		Select->BufFormat = A8_YUV_422;
-		if(Select->Rotate==A8_RT_RIGHT_90)
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
-		else
-			Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
+			case AIT_VDO_PLAY_FULL_MODE:
+				AIT_Message_P0(" AIT_VDO_PLAY_FULL_MODE");
+				Select->BufFormat = A8_DEPTH_16B;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
+				Select->BufWidth = 160;
+				Select->BufHeight = 128;
+				OSDBufFormat = A8_DEPTH_16B;
+				break;
+			case AIT_VDO_PLAY_NOR_MODE:
+				AIT_Message_P0(" AIT_VDO_PLAY_NOR_MODE");
+				
+				Select->BufFormat = A8_DEPTH_16B;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
+				Select->BufWidth = 128;
+				Select->BufHeight = 96;
+				OSDBufFormat = A8_DEPTH_16B;
+				
+				break;
+			case AIT_JPG_PLAY_NOR_MODE:
+			case AIT_JPG_PLAY_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_NORMAL");
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
+				OSDBufFormat = A8_DEPTH_16B;	
+				break;
+			case AIT_ATV_PREV_NOR_MODE:
+			case AIT_ATV_PREV_FULL_MODE:
+				Select->BufFormat = A8_YUV_422;
+				if(Select->Rotate==A8_RT_RIGHT_90)
+					Select->LcdRefreshMode = CAM_LCD_REFRESH_NORMAL;
+				else
+					Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
 
-		OSDBufFormat = A8_DEPTH_16B;
+				OSDBufFormat = A8_DEPTH_16B;
 
-		
-		break;
-		
-	default:
+				
+				break;
+				
+			default:
 
 
-	case AIT_CAM_PREV_NOR_MODE:
-	case AIT_CAM_PREV_FULL_MODE:
-		AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS");
-		
-		Select->BufFormat = A8_YUV_422;
-		Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;					
-		OSDBufFormat = A8_DEPTH_16B;
-						
-		break;
-}
+			case AIT_CAM_PREV_NOR_MODE:
+			case AIT_CAM_PREV_FULL_MODE:
+				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS");
+				
+				Select->BufFormat = A8_YUV_422;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;					
+				OSDBufFormat = A8_DEPTH_16B;
+								
+				break;
+		}
 
 #endif
 	{
@@ -592,7 +589,7 @@ switch(mode)
 			if(mode==AIT_VDO_PLAY_YUVBUF_NOR_MODE||mode ==AIT_VDO_PLAY_YUVBUF_FULL_MODE)
 			{
 	
-			Select->BufAddr = 0;	
+				Select->BufAddr = 0;	
 
 				Select->MainOSD.OSDBufAddr = Select->BufAddr+224*Select->BufHeight*3/2+224*8;
 			}
@@ -617,7 +614,7 @@ switch(mode)
 
 	Select->ZoomStep = 1;
 
-//OSD Range Setting
+	//OSD Range Setting
 							
 	AIT_Message_P1("Main OSD Buf Addr =%x\r\n",Select->MainOSD.OSDBufAddr);
 	if(((gsPreviewAttrib[PreviewModeIndex].OSD_TOP.x+gsPreviewAttrib[PreviewModeIndex].OSD_TOP.w)>gA8MainLCDWidth)||
@@ -892,7 +889,7 @@ u_char A800_SetPllFreq(u_char ait_mode, u_char on)
 #if defined(EXTCLK_26M)					
 					retVal = A8L_SetPllFreq(2);
 #elif defined(EXTCLK_19M2)					
-					retVal = A8L_SetPllFreq(3);
+					retVal = A8L_SetPllFreq(2);
 #endif					
 					AIT_ext_Set_EMIMode(EMIMODE_ACTIVE_PLL);
 					break;
@@ -1122,7 +1119,6 @@ u_short	A800_SetPreviewMode(u_short mode)
 	extern void A800_InitLCDLookUpTable(void);
 	u_short RetVal;
 	
-//Vin@20091219: Select Panel Size in same lib.
 	A800Data.Select = A800_ChangeCameraSetting(mode);
 
 	if(!A800Data.Select)
@@ -1376,8 +1372,6 @@ ExitAITAPI;
 */
 u_char A800_SetPreviewParam(u_short mode, u_short Width, u_short Height, u_short OffsetX, u_short OffsetY, u_short ZoomRate, u_short SensorPrevRes)
 {
-//Vin@20091219: Select Panel Size in same lib.
-
 	A800Data.Select = A800_ChangeCameraSetting(mode);
 	if(!A800Data.Select )
 		return A8_SYSTEM_ERROR;
@@ -1404,7 +1398,6 @@ u_short A800_SetPreviewZoom(u_short mode, u_short ZoomRate)
 	u_short Width=0, Height=0 , Temp , W_Multiple;
 	u_short DownScale=0, UpScale;
 	u_int timeout;
-//Vin@20091219: Select Panel Size in same lib.
 
 	gA8PrevZoomFactor = ZoomRate;
 	A800Data.Select = A800_ChangeCameraSetting(mode);
@@ -2041,43 +2034,49 @@ u_char A800_TestRegisterAccess(void)
 	u_short i,Val;
 	u_short ErrorCount;
 
-   for (i=0; i<16; i++ )
-      SetA8RegB(i+0x6540, i );
-   ErrorCount = 0;
+	for (i=0; i<16; i++ )
+		SetA8RegB(i+0x6540, i );
+	ErrorCount = 0;
 
-   for (i=0; i<16; i++ )
-   {
-      Val =(u_short) GetA8RegB(i+0x6540);
-      if ( Val != i )
-      { 
-      	ErrorCount++;
-         AIT_Message_P2( "Reg[%04x]= %02x\n",(i+0x6540),Val ) ;
+	for (i=0; i<16; i++ )
+	{
+		Val =(u_short) GetA8RegB(i+0x6540);
+		if ( Val != i )
+		{ 
+			ErrorCount++;
+		 	MSG_FATAL( "Reg[%04x]= %02x\n",(i+0x6540),Val,0) ;
+		}
 	}
-   }
-   if ( ErrorCount > 0 ){
-      AIT_Message_P1( "AIT RegB R/W error ! Count %d\n", ErrorCount ) ;
-   }else{
-      AIT_Message_P1( "AIT RegB R/W ok ! Count %d\n", ErrorCount ) ;
-   }  
+	if ( ErrorCount > 0 )
+	{
+		MSG_FATAL( "AIT RegB R/W error ! Count %d\n", ErrorCount,0,0) ;
+	}
+	else
+	{
+		MSG_FATAL( "AIT RegB R/W ok ! Count %d\n",ErrorCount,0,0) ;
+	}  
       
-   for (i=0; i<16; i+=2 )
-      SetA8RegW(i+0x6540, i<<7 );
-   ErrorCount = 0;
+	for (i=0; i<16; i+=2 )
+		SetA8RegW(i+0x6540, i<<7 );
+	ErrorCount = 0;
 
-   for (i=0; i<16; i+=2 )
-   {
-      Val = GetA8RegW(i+0x6540);
-      if ( Val != (i<<7) )
-      {
-     	ErrorCount++;
-	AIT_Message_P2( "RegW[%04x]= %04x\n", (i+0x6540), Val ) ;
+	for (i=0; i<16; i+=2 )
+	{
+		Val = GetA8RegW(i+0x6540);
+		if ( Val != (i<<7) )
+		{
+			ErrorCount++;
+			MSG_FATAL( "RegW[%04x]= %04x\n", (i+0x6540), Val,0) ;
+		}
 	}
-   }
-   if ( ErrorCount > 0 ){
-      AIT_Message_P1( "AIT RegW R/W error ! Count %d\n",ErrorCount ) ;
-   }else{
-      AIT_Message_P1( "AIT RegW R/W ok ! Count %d\n", ErrorCount ) ;    
-   }   
+	if ( ErrorCount > 0 )
+	{
+		MSG_FATAL( "AIT RegW R/W error ! Count %d\n",ErrorCount,0,0) ;
+	}
+	else
+	{
+		MSG_FATAL( "AIT RegW R/W ok ! Count %d\n", ErrorCount,0,0) ;    
+	}   
 	return A8_NO_ERROR;
 }
 
@@ -2109,17 +2108,20 @@ u_char 	A800_TestMemoryAccess(void)
 
    for (i=0; i<nMemsize; i++ )
    {
-      cVal = GetA8MemB(i);
-      if ( cVal != cPattern )
-      {
-		//AIT_Message_P2("MemB [%d]=%d \n",i,Val);
-		ErrorCount++;
-   	}
+		cVal = GetA8MemB(i);
+		if ( cVal != cPattern )
+		{
+			AIT_Message_P2("MemB [%d]=%d \n",i,Val);
+			ErrorCount++;
+		}
    }
-   if ( ErrorCount > 0 ){
-      AIT_Message_P2( "AIT MemB 1 R/W error ! Count %d, pattern:%d \n", ErrorCount, cPattern ) ;
-   }else{ 
-      AIT_Message_P2( "AIT MemB 1 R/W ok ! Count %d, pattern:%d \n", ErrorCount, cPattern ) ;   
+   if ( ErrorCount > 0 )
+   {
+      MSG_FATAL("AIT MemB 1 R/W error ! Count %d, pattern:0x%x \n", ErrorCount, cPattern ,0) ;
+   }
+   else
+   { 
+      MSG_FATAL("AIT MemB 1 R/W ok ! Count %d, pattern:0x%x \n", ErrorCount, cPattern ,0) ;   
 	}
    //=====================================================
 
@@ -2137,14 +2139,14 @@ u_char 	A800_TestMemoryAccess(void)
       cVal = GetA8MemB(i);
       if ( cVal != cPattern )
       {
-		//AIT_Message_P2("MemB [%d]=%d \n",i,Val);
+		AIT_Message_P2("MemB [%d]=%d \n",i,Val);
 		ErrorCount++;
    	}
    }
    if ( ErrorCount > 0 ){
-      AIT_Message_P2( "AIT MemB 2 R/W error ! Count %d, pattern:%d \n", ErrorCount, cPattern ) ;
+      MSG_FATAL( "AIT MemB 2 R/W error ! Count %d, pattern:0x%x \n", ErrorCount, cPattern,0) ;
    }else{
-      AIT_Message_P2( "AIT MemB 2 R/W ok ! Count %d, pattern:%d \n", ErrorCount, cPattern ) ;   
+      MSG_FATAL( "AIT MemB 2 R/W ok ! Count %d, pattern:0x%x \n", ErrorCount, cPattern,0) ;   
    }   
    //=====================================================
 
@@ -2162,14 +2164,14 @@ u_char 	A800_TestMemoryAccess(void)
       cVal = GetA8MemB(i);
       if ( cVal != (u_char)(cPattern+i) )
       {
-		//AIT_Message_P2("MemB [%d]=%d \n",i,Val);
+		AIT_Message_P2("MemB [%d]=%d \n",i,Val);
 		ErrorCount++;
    	}
    }
    if ( ErrorCount > 0 ){
-      AIT_Message_P2( "AIT MemB 3 R/W error ! Count %d, pattern:%d \n", ErrorCount, cPattern ) ;
+      MSG_FATAL( "AIT MemB 3 R/W error ! Count %d, pattern:0x%x \n", ErrorCount, cPattern,0) ;
    }else{
-      AIT_Message_P2( "AIT MemB 3 R/W ok ! Count %d, pattern:%d \n", ErrorCount, cPattern ) ;   
+      MSG_FATAL( "AIT MemB 3 R/W ok ! Count %d, pattern:0x%x \n", ErrorCount, cPattern,0) ;   
    }   
    //=====================================================
 
@@ -2187,14 +2189,14 @@ u_char 	A800_TestMemoryAccess(void)
       cVal = GetA8MemB(i);
       if ( cVal != (u_char)(cPattern+i) )
       {
-		//AIT_Message_P2("MemB [%d]=%d \n",i,Val);
+		AIT_Message_P2("MemB [%d]=%d \n",i,Val);
 		ErrorCount++;
    	}
    }
    if ( ErrorCount > 0 ){
-      AIT_Message_P2( "AIT MemB 4 R/W error ! Count %d, pattern:%d \n", ErrorCount, cPattern ) ;
+      MSG_FATAL( "AIT MemB 4 R/W error ! Count %d, pattern:0x%x \n", ErrorCount, cPattern,0) ;
    }else{ 
-      AIT_Message_P2( "AIT MemB 4 R/W ok ! Count %d, pattern:%d \n", ErrorCount, cPattern ) ;   
+      MSG_FATAL( "AIT MemB 4 R/W ok ! Count %d, pattern:0x%x \n", ErrorCount, cPattern,0) ;   
    }   
    //=====================================================
 
@@ -2212,14 +2214,14 @@ u_char 	A800_TestMemoryAccess(void)
       Val = GetA8MemW(i);
       if ( Val != nPattern)
       {
-	  //AIT_Message_P2("MemW [%d]=%d \n",i,Val);
+	  AIT_Message_P2("MemW [%d]=%d \n",i,Val);
 	  ErrorCount++;
    	}
    }
    if ( ErrorCount > 0 ){
-      AIT_Message_P2( "AIT MemW  1 R/W error ! Count %d, pattern:%d\n",ErrorCount, nPattern ) ;
+      MSG_FATAL( "AIT MemW  1 R/W error ! Count %d, pattern:0x%x\n",ErrorCount, nPattern,0) ;
    }else{
-      AIT_Message_P2( "AIT MemW  1 R/W ok ! Count %d, pattern:%d\n",ErrorCount, nPattern ) ;
+      MSG_FATAL( "AIT MemW  1 R/W ok ! Count %d, pattern:0x%x\n",ErrorCount, nPattern,0) ;
    }   
    //=====================================================
 
@@ -2236,14 +2238,14 @@ u_char 	A800_TestMemoryAccess(void)
       Val = GetA8MemW(i);
       if ( Val != nPattern )
       {
-	  //AIT_Message_P2("MemW [%d]=%d \n",i,Val);
+	  AIT_Message_P2("MemW [%d]=%d \n",i,Val);
 	  ErrorCount++;
    	}
    }
    if ( ErrorCount > 0 ){
-      AIT_Message_P2( "AIT MemW 2 R/W error ! Count %d, pattern:%d\n",ErrorCount, nPattern  ) ;
+      MSG_FATAL( "AIT MemW 2 R/W error ! Count %d, pattern:0x%x\n",ErrorCount, nPattern,0) ;
    }else{
-      AIT_Message_P2( "AIT MemW 2 R/W ok ! Count %d, pattern:%d\n",ErrorCount, nPattern  ) ;
+      MSG_FATAL( "AIT MemW 2 R/W ok ! Count %d, pattern:0x%x\n",ErrorCount, nPattern,0) ;
    }   
    //=====================================================   
 
@@ -2260,14 +2262,14 @@ u_char 	A800_TestMemoryAccess(void)
       Val = GetA8MemW(i);
       if ( Val != (u_short)(nPattern + i))
       {
-	  //AIT_Message_P2("MemW [%d]=%d \n",i,Val);
+	  AIT_Message_P2("MemW [%d]=%d \n",i,Val);
 	  ErrorCount++;
    	}
    }
    if ( ErrorCount > 0 ){
-      AIT_Message_P2( "AIT MemW 3 R/W error ! Count %d, pattern:%d\n",ErrorCount, nPattern ) ;
+      MSG_FATAL( "AIT MemW 3 R/W error ! Count %d, pattern:0x%x\n",ErrorCount, nPattern,0) ;
    }else{
-      AIT_Message_P2( "AIT MemW 3 R/W ok ! Count %d, pattern:%d\n",ErrorCount, nPattern ) ;
+      MSG_FATAL( "AIT MemW 3 R/W ok ! Count %d, pattern:0x%x\n",ErrorCount, nPattern,0) ;
    }   
    //=====================================================
 
@@ -2284,14 +2286,14 @@ u_char 	A800_TestMemoryAccess(void)
       Val = GetA8MemW(i);
       if ( Val != (u_short)(nPattern+i) )
       {
-	  //AIT_Message_P2("MemW [%d]=%d \n",i,Val);
+	  AIT_Message_P2("MemW [%d]=%d \n",i,Val);
 	  ErrorCount++;
    	}
    }
    if ( ErrorCount > 0 ){
-      AIT_Message_P2( "AIT MemW 4 R/W error ! Count %d, pattern:%d\n",ErrorCount, nPattern  ) ;
+      MSG_FATAL("AIT MemW 4 R/W error ! Count %d, pattern:0x%x\n",ErrorCount, nPattern,0) ;
    }else{
-      AIT_Message_P2( "AIT MemW 4 R/W ok ! Count %d, pattern:%d\n",ErrorCount, nPattern  ) ;
+      MSG_FATAL("AIT MemW 4 R/W ok ! Count %d, pattern:0x%x\n",ErrorCount, nPattern,0) ;
    }   
    //=====================================================   
 	return A8_NO_ERROR;
@@ -2325,16 +2327,19 @@ u_char 	A800_DownloadFirmware(u_char *ptr, u_int fwSize)
 	s_int timeout = 0;  
 
 EntryAITAPI;
-	for (i = 0; i < 10; i++) {  
-	SetA8RegB(0x6901, 0x46);   
+	for (i = 0; i < 10; i++)
+	{  
+		SetA8RegB(0x6901, 0x46);   
 	}
 
 	retVal = A8L_DownloadA8Firmware(ptr, fwSize);
-	while(!(GetA8RegB(0x654e) & 0x10) && timeout < 1000)
-        {
+	while(!(GetA8RegB(0x654e) & 0x10) && timeout < 0x1000)
+    {
         sys_IF_ait_delay1ms(1);
-	timeout++;
+		timeout++;
 	}
+
+	MSG_FATAL("A800_DownloadFirmware timeout = %d",timeout,0,0);
 ExitAITAPI;
 	return retVal;
 }
@@ -2401,7 +2406,7 @@ s_short A800_UpdateOSDBuffer( u_short mode, u_short *MemPtr, u_short x, u_short 
 	u_int addr, base;
 	u_short *TempMemPtr=MemPtr;
 	extern void Trans565to332ToA8(u_int destAddr, u_short *srcAddr, u_int length);
-//Vin@20091219: Select Panel Size in same lib.
+
 
 	A800Data.Select = A800_ChangeCameraSetting(mode);
 	if(!A800Data.Select )
@@ -2454,9 +2459,12 @@ s_short A800_UpdateOSDBuffer( u_short mode, u_short *MemPtr, u_short x, u_short 
 			base = OSDInfoPtr->OSDBufAddr;
 
 			TempMemPtr = MemPtr;
+#if defined(EBI_BUS_8BIT_MODE)
+			addr=base+(Width*y+x)*2;
+#else /* EBI_BUS_8BIT_MODE */		
 			TempMemPtr += A800Data.MainLCDInfo.Width*y+
 										OSDInfoPtr->OSDDispLcdX;
-
+#endif /* EBI_BUS_8BIT_MODE */
 			if (base >= 0x18000)
 				return A8_OUT_OF_RANGE_ERROR;
 			if(A8_DEPTH_8B == OSDInfoPtr->OSDBufFormat){
@@ -2470,9 +2478,16 @@ s_short A800_UpdateOSDBuffer( u_short mode, u_short *MemPtr, u_short x, u_short 
 			}else{
 				SetA8RegB(0x5040,GetA8RegB(0x5040)|0x10);			
 				for ( i=0; i<h; i++ ){
+#if defined(EBI_BUS_8BIT_MODE)
+					CopyMemWordHostToA8( addr, (u_short *) TempMemPtr, w*2 );
+					addr += (Width*2);
+					TempMemPtr += w;//A800Data.MainLCDInfo.Width;
+
+#else /* EBI_BUS_8BIT_MODE */	 			
 					CopyMemWordHostToA8( base, (u_short *) TempMemPtr, Width*2 );
 					base += (Width*2);
 					TempMemPtr += A800Data.MainLCDInfo.Width;
+#endif /* EBI_BUS_8BIT_MODE */				
 				}
 			}
 
@@ -2617,9 +2632,6 @@ s_short A800_UpdateOSDBuffer( u_short mode, u_short *MemPtr, u_short x, u_short 
 */
 u_char A800_ClearOSDBuffer(u_short chromaKey, u_short mode)
 {
-
-	//gsCurViewMode = mode; 
-//Vin@20091219: Select Panel Size in same lib.
 	
 	A800Data.Select = A800_ChangeCameraSetting(mode);
 	if(!A800Data.Select )
@@ -3178,7 +3190,7 @@ u_char A800_DecodeJpegViaFIFO_SWSample(A8S_JPEG_INFO SrcJPEG, u_short* pRgbBuf, 
 	{
 		RetVal=A8_OUT_OF_RANGE_ERROR;
         
-       	AIT_Message_P2( "Error wrong parameter,%s,%d",__FILE__,__LINE__);
+       	//AIT_Message_P2( "Error wrong parameter,%s,%d",__FILE__,__LINE__);
 		return RetVal;
 	}
 
@@ -3208,8 +3220,7 @@ u_char A800_DecodeJpegViaFIFO_SWSample(A8S_JPEG_INFO SrcJPEG, u_short* pRgbBuf, 
     {
         SetA8RegW(0x6B0E, 0x0112);  // Enable Graphic FIFO ( RGB565 )
     }
-    else // output Yuv422  
-
+    else // output Yuv422
     { 
         SetA8RegW(0x6B0E, 0x0102);  // Enable Graphic FIFO ( Yuv )
     }
@@ -3321,9 +3332,8 @@ u_char A800_DecodeJpegViaFIFO_SWSample(A8S_JPEG_INFO SrcJPEG, u_short* pRgbBuf, 
             {      
                 ++nInputTimeoutCount;
                 if(nInputTimeoutCount>nInputMaxCount)
-                {
-                    
-			nInputMaxCount=nInputTimeoutCount;
+                {                    
+					nInputMaxCount=nInputTimeoutCount;
                 }
             }       
         }
@@ -3360,18 +3370,18 @@ u_char A800_DecodeJpegViaFIFO_SWSample(A8S_JPEG_INFO SrcJPEG, u_short* pRgbBuf, 
                             *pImgBuf++ = A8IndDataPW(i);
                             //*pImgBuf++ = GetA8RegW(0x6B28);
                             ++nDstLoopX;
-				if(0!=nSkipDecX)
-				{
-					if((nTmpRemainderX>0) && (0==(nDstLoopX%nSkipDecX)) )
-					{															
-						nNextX+=nSkipNumX;
-						--nTmpRemainderX;						
-					}
-					else
-					{														
-						nNextX+=(nSkipNumX+1);
-					}
-				}							
+							if(0!=nSkipDecX)
+							{
+								if((nTmpRemainderX>0) && (0==(nDstLoopX%nSkipDecX)) )
+								{															
+									nNextX+=nSkipNumX;
+									--nTmpRemainderX;						
+								}
+								else
+								{														
+									nNextX+=(nSkipNumX+1);
+								}
+							}							
                             else if((nTmpRemainderX>0) && (0==(nDstLoopX%nSkipIncX)) )
                             {
                                 nNextX+=(nSkipNumX+1);
@@ -3392,18 +3402,18 @@ u_char A800_DecodeJpegViaFIFO_SWSample(A8S_JPEG_INFO SrcJPEG, u_short* pRgbBuf, 
                     }
 
                     ++nDstLoopY;
-			if(0!=nSkipDecY)
-			{
-				if((nRemainderY>0) && (0==(nDstLoopY%nSkipDecY)) )
-				{
-					nNextY+=nSkipNumY;			
-					--nRemainderY;																							
-				}
-				else
-				{
-					nNextY+=(nSkipNumY+1);
-				}
-			}					
+					if(0!=nSkipDecY)
+					{
+						if((nRemainderY>0) && (0==(nDstLoopY%nSkipDecY)) )
+						{
+							nNextY+=nSkipNumY;			
+							--nRemainderY;																							
+						}
+						else
+						{
+							nNextY+=(nSkipNumY+1);
+						}
+					}					
                     else if((nRemainderY>0) && (0==(nDstLoopY%nSkipIncY)) )
                     {
                         nNextY+=(nSkipNumY+1);
@@ -3458,28 +3468,28 @@ u_char A800_DecodeJpegViaFIFO_SWSample(A8S_JPEG_INFO SrcJPEG, u_short* pRgbBuf, 
     				(nInputTimeoutCount<nInputTimeout) && (nOutputTimeoutCount<nOutputTimeout) );
 
 
-    AIT_Message_P1( "Max Input TimeOut nTimeoutCount=%d ", nInputMaxCount);
-    AIT_Message_P1( "Max Output TimeOut nTimeoutCount=%d", nOutputMaxCount);
+    MSG_FATAL("Max Input TimeOut nTimeoutCount=%d",nInputMaxCount,0,0);
+    MSG_FATAL("Max Output TimeOut nTimeoutCount=%d",nOutputMaxCount,0,0);
 
     if(nInputTimeoutCount>=nInputTimeout)
     {
         RetVal=1;	// RET_FAIL
-        AIT_Message_P2("Error Input TimeOut nTimeoutCount=%d nTimeout=%d", nInputTimeoutCount, nInputTimeout);
+        MSG_FATAL("Error Input TimeOut nTimeoutCount=%d nTimeout=%d", nInputTimeoutCount, nInputTimeout,0);
     }
 	
     if(nOutputTimeoutCount>=nOutputTimeout)
     {
         RetVal=1;	// RET_FAIL
-        AIT_Message_P2("Error Output TimeOut nTimeoutCount=%d nTimeout=%d", nOutputTimeoutCount, nOutputTimeout);
+        MSG_FATAL("Error Output TimeOut nTimeoutCount=%d nTimeout=%d", nOutputTimeoutCount, nOutputTimeout,0);
     }
 
     if(nTimeoutCount>=nTimeout)
     {
         RetVal=1;	// RET_FAIL
-        AIT_Message_P2("Error TimeOut nTimeoutCount=%d nTimeout=%d", nTimeoutCount, nTimeout);
+        MSG_FATAL("Error TimeOut nTimeoutCount=%d nTimeout=%d", nTimeoutCount, nTimeout,0);
     }
     
-    AIT_Message_P1("nDummyData =%d", nDummyData);
+    MSG_FATAL("nDummyData =%d",nDummyData,0,0);
     
     SetA8RegW(0x6222, 0x0000);
 

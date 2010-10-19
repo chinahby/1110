@@ -151,6 +151,8 @@ extern u_short A8L_SensorClockOutput(u_char Enable);
 
 extern u_short A8L_SetSenReg(u_short Reg ,u_short Value);
 extern u_short A8L_GetSenReg(u_short Reg ,u_short *Value);
+extern u_char A8L_GetSenRegB(u_char Reg ,u_char *Value);
+
 extern u_char A8L_Init_Sensor( void );
 extern u_char A8L_SensorEffect(u_char value);
 extern u_char A8L_SensorBrightness( u_char value );

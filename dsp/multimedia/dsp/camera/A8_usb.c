@@ -98,26 +98,11 @@ u_short	A8L_SetUSBPllFreq(u_char X)
 
 			sys_IF_ait_delay1ms(2);
 
-#ifdef EXTCLK_26M
 			SetA8RegB(0x6971,0x07);	//M=7
 
 			SetA8RegB(0x6972,0x4e);	//0xec42/d'262144 = 0.23076629638671875
 			SetA8RegB(0x6973,0xec);
 			SetA8RegB(0x6974,0x00);  //26*(7.230766+2) = 240
-#elif defined(EXTCLK_19M2)
-			SetA8RegB(0x6971,0x10);
-			SetA8RegB(0x6972,0xBC);
-			SetA8RegB(0x6973,0x86);
-			SetA8RegB(0x6974,0x02);		// 18+
-
-//60*4 = 240
-//240/19.2 = 12.5
-//
-			SetA8RegB(0x6971,0xA);
-			SetA8RegB(0x6972,0x00);
-			SetA8RegB(0x6973,0x00);
-			SetA8RegB(0x6974,0x02);		// 18+
-#endif
 
 			SetA8RegB(0x6913, GetA8RegB(0x6913) & (~0x04UL));		//Setting M/N to UPLL
 			SetA8RegB(0x6913, GetA8RegB(0x6913) | 0x04);

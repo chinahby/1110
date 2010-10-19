@@ -1,21 +1,13 @@
-#ifndef WIN32
 #include	"A8_common.h"
 #include	"AIT700_EBIbus.h"
 #include	"A8_sensor.h"
-#include "ait_interface.h"
+#include 	"ait_interface.h"
 
-#if defined(__MTK_TARGET__)
-#include "med_api.h"
-#else
-
-#endif
-
-#if 1//defined(SENSOR_GC0307)
-#define	SENSOR_ID					(0x99)
+#define	SENSOR_ID					(0xa0)
 #define	SENSOR_I2C_TYPE				(A8_I2C_1A1D)
 #define SENSOR_PREVIEW_VH_POLARITY  (A8_SENSOR_HOR_POS|A8_SENSOR_VER_POS)
 #define SENSOR_FULL_VH_POLARITY     (A8_SENSOR_HOR_POS|A8_SENSOR_VER_POS)
-#define SENSOR_PREVIEW_LATCH_COUNT  (A8_PHASE_COUNTER_NUM_2)
+#define SENSOR_PREVIEW_LATCH_COUNT  (A8_PHASE_COUNTER_NUM_3)
 #define SENSOR_FULL_LATCH_COUNT     (A8_PHASE_COUNTER_NUM_2)
 #define SENSOR_PREVIEW_YUV_FORMAT   (A8_SENSOR_YCBYCR) //(A8_SENSOR_CBYCRY) //
 #define SENSOR_FULL_YUV_FORMAT      (A8_SENSOR_YCRYCB) //(A8_SENSOR_CBYCRY) //
@@ -51,19 +43,20 @@ extern	u_char	gbSensorInited;
 unsigned char gc_effect_on;
 unsigned char gc_reinit = 1;
 
-kal_uint8  gc_0307_start_grab_x_offset=0, gc_0307_start_grab_y_offset=0;
-kal_bool  gc_0307_gVGAmode=KAL_TRUE,gc_0307_sensor_night_mode = KAL_FALSE;
-kal_bool gc_0307_MPEG4_encode_mode=KAL_FALSE;
+uint8  gc_0307_start_grab_x_offset=0, gc_0307_start_grab_y_offset=0;
+boolean  gc_0307_gVGAmode=KAL_TRUE,gc_0307_sensor_night_mode = KAL_FALSE;
+boolean gc_0307_MPEG4_encode_mode=KAL_FALSE;
 
 
+static u_short	Get_Sensor_ID(u_short*	SensorID);
 
-kal_uint8  gc_0307_normal_gain=0;//, gc_0307_night_gain=GC_0307_SENSOR_NIGHT_MODE_GAIN;
-kal_uint8  gc_0307_preview_pclk_division=0, gc_0307_capture_pclk_division=0;
-kal_uint16 gc_0307_dummy_pixels=0, gc_0307_dummy_lines=0, gc_0307_extra_exposure_lines=0;
-kal_uint16 gc_0307_exposure_lines=0,gc_0307_w_blank=0,gc_0307_h_blank=0;
+uint8  gc_0307_normal_gain=0;//, gc_0307_night_gain=GC_0307_SENSOR_NIGHT_MODE_GAIN;
+uint8  gc_0307_preview_pclk_division=0, gc_0307_capture_pclk_division=0;
+uint16 gc_0307_dummy_pixels=0, gc_0307_dummy_lines=0, gc_0307_extra_exposure_lines=0;
+uint16 gc_0307_exposure_lines=0,gc_0307_w_blank=0,gc_0307_h_blank=0;
 //kal_uint16 gc_0307_sensor_global_gain=BASEGAIN, 
-kal_uint16 	gc_0307_sensor_gain_base=0x0;
-kal_bool gc_0307_g_bMJPEG_mode;
+uint16 	gc_0307_sensor_gain_base=0x0;
+boolean gc_0307_g_bMJPEG_mode;
 
 
 
@@ -1202,14 +1195,13 @@ static u_short	Sensor_Effect(u_short EffectMode)
 	u_char  temp_reg;
 	u_short ret;
 	
-	
-		return 0;
+	return 0;
 
 	
 	temp_reg=gc_0307_read_cmos_sensor(0x47);
 	switch(EffectMode)
 	{
-//		case CAM_EFFECT_ENC_NORMAL:		
+		case 0://CAM_EFFECT_ENC_NORMAL:		
 			if(gc_0307_sensor_night_mode)
 				gc_0307_write_cmos_sensor(0x41,0x0f);
 			else
@@ -1237,7 +1229,7 @@ static u_short	Sensor_Effect(u_short EffectMode)
 
 			gc_effect_on = KAL_FALSE;
 			break;		
-		case CAM_EFFECT_ENC_GRAYSCALE:
+		case 1://CAM_EFFECT_ENC_GRAYSCALE:
 			if(gc_0307_sensor_night_mode)
 				gc_0307_write_cmos_sensor(0x41,0x0f);
 			else
@@ -1259,7 +1251,7 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			gc_0307_write_cmos_sensor(0x7c,0x00);					
 			gc_effect_on = KAL_TRUE;	
 			break;		
-		case CAM_EFFECT_ENC_SEPIA:
+		case 2://CAM_EFFECT_ENC_SEPIA:
 			if(gc_0307_sensor_night_mode)
 				gc_0307_write_cmos_sensor(0x41,0x0f);
 			else
@@ -1281,7 +1273,7 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			gc_0307_write_cmos_sensor(0x7c,0x00);					
 			gc_effect_on = KAL_TRUE;
 			break;		
-		case CAM_EFFECT_ENC_COLORINV:		
+		case 3://CAM_EFFECT_ENC_COLORINV:		
 			if(gc_0307_sensor_night_mode)
 				gc_0307_write_cmos_sensor(0x41,0x4f);
 			else
@@ -1306,7 +1298,7 @@ static u_short	Sensor_Effect(u_short EffectMode)
 		
 			gc_effect_on = KAL_TRUE;	
 			break;		
-		case CAM_EFFECT_ENC_SEPIAGREEN:
+		case 4://CAM_EFFECT_ENC_SEPIAGREEN:
 			if(gc_0307_sensor_night_mode)
 				gc_0307_write_cmos_sensor(0x41,0x0f);
 			else
@@ -1328,7 +1320,7 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			gc_0307_write_cmos_sensor(0x7c,0x00);				
 			gc_effect_on = KAL_TRUE;
 			break;					
-		case CAM_EFFECT_ENC_SEPIABLUE:
+		case 5://CAM_EFFECT_ENC_SEPIABLUE:
 			if(gc_0307_sensor_night_mode)
 				gc_0307_write_cmos_sensor(0x41,0x0f);
 			else
@@ -1350,7 +1342,7 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			gc_0307_write_cmos_sensor(0x7c,0xf5);					
 			gc_effect_on = KAL_TRUE;
 			break;								
-		case CAM_EFFECT_ENC_GRAYINV:
+		case 6://CAM_EFFECT_ENC_GRAYINV:
 			if(gc_0307_sensor_night_mode)
 				gc_0307_write_cmos_sensor(0x41,0x4f);
 			else
@@ -1372,10 +1364,10 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			gc_0307_write_cmos_sensor(0x7c,0x00);	
 			gc_effect_on = KAL_TRUE;
 			break;							
-		case CAM_EFFECT_ENC_COPPERCARVING:
+		case 7://CAM_EFFECT_ENC_COPPERCARVING:
 			if(gc_reinit)  // is re-enter camera,wait AEC stable
 			{
-				kal_sleep_task(100);
+				Delayms(100);
 				//Delayms_GC(300);
 				gc_reinit=KAL_FALSE;
 			}								
@@ -1400,10 +1392,10 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			gc_0307_write_cmos_sensor(0x7c,0x00);			
 			gc_effect_on = KAL_TRUE;
 			break;								
-		case CAM_EFFECT_ENC_BLUECARVING:
+		case 8://CAM_EFFECT_ENC_BLUECARVING:
 			if(gc_reinit)  // is re-enter camera,wait AEC stable
 			{
-				kal_sleep_task(100);
+				Delayms(100);
 				//Delayms_GC(300);
 				gc_reinit=KAL_FALSE;
 			}					
@@ -1428,10 +1420,10 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			gc_0307_write_cmos_sensor(0x7c,0x00);
 			gc_effect_on = KAL_TRUE;
 			break;								
-		case CAM_EFFECT_ENC_CONTRAST:
+		case 9://CAM_EFFECT_ENC_CONTRAST:
 			if(gc_reinit)  // is re-enter camera,wait AEC stable
 			{
-				kal_sleep_task(100);
+				Delayms(100);
 				//Delayms_GC(300);
 				gc_reinit=KAL_FALSE;
 			}								
@@ -1456,10 +1448,10 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			gc_0307_write_cmos_sensor(0x7c,0x00);			
 			gc_effect_on = KAL_TRUE;
 			break;						
-		case CAM_EFFECT_ENC_EMBOSSMENT:
+		case 10://CAM_EFFECT_ENC_EMBOSSMENT:
 			if(gc_reinit)  // is re-enter camera,wait AEC stable
 			{
-				kal_sleep_task(100);
+				Delayms(100);
 				//Delayms_GC(300);
 				gc_reinit=KAL_FALSE;
 			}								
@@ -1485,10 +1477,10 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			
 			gc_effect_on = KAL_TRUE;
 			break;			
-		case CAM_EFFECT_ENC_SKETCH:
+		case 11://CAM_EFFECT_ENC_SKETCH:
 			if(gc_reinit)  // is re-enter camera,wait AEC stable
 			{
-				kal_sleep_task(100);
+				Delayms(100);
 				//Delayms_GC(300);
 				gc_reinit=KAL_FALSE;
 			}								
@@ -1514,10 +1506,10 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			
 			gc_effect_on = KAL_TRUE;
 			break;				
-		case CAM_EFFECT_ENC_BLACKBOARD:
+		case 12://CAM_EFFECT_ENC_BLACKBOARD:
 			if(gc_reinit)  // is re-enter camera,wait AEC stable
 			{
-				kal_sleep_task(100);
+				Delayms(100);
 				//Delayms_GC(300);
 				gc_reinit=KAL_FALSE;
 			}								
@@ -1543,13 +1535,12 @@ static u_short	Sensor_Effect(u_short EffectMode)
 			
 			gc_effect_on = KAL_TRUE;
 			break;	
-		case CAM_EFFECT_ENC_JEAN:
-		case CAM_EFFECT_ENC_OIL:			
-		case CAM_EFFECT_ENC_WHITEBOARD:
+		case 13://CAM_EFFECT_ENC_JEAN:
+		case 14://CAM_EFFECT_ENC_OIL:			
+		case 15://CAM_EFFECT_ENC_WHITEBOARD:
 			if(gc_reinit)  // is re-enter camera,wait AEC stable
 			{
-				kal_sleep_task(100);
-				//Delayms_GC(300);
+				Delayms(300);
 				gc_reinit=KAL_FALSE;
 			}								
 			gc_0307_write_cmos_sensor(0x41,0x00);			
@@ -1591,7 +1582,7 @@ static u_short	Sensor_EV(u_short EvStep)
 
 	switch(EvStep)
 	{
-		case CAM_EV_NEG_4_3:    
+		case 0://CAM_EV_NEG_4_3:    
             		gc_0307_write_cmos_sensor(0x7a, 0xc0);
 			#if defined(C28_BAR)
 			gc_0307_write_cmos_sensor(0xd1, 0x28);//only for CSTN for c28
@@ -1599,7 +1590,7 @@ static u_short	Sensor_EV(u_short EvStep)
 			gc_0307_write_cmos_sensor(0xd1, 0x30);
 			#endif
 			break;		
-		case CAM_EV_NEG_3_3:
+		case 1://CAM_EV_NEG_3_3:
             		gc_0307_write_cmos_sensor(0x7a, 0xd0);
 			#if defined(C28_BAR)
 			gc_0307_write_cmos_sensor(0xd1, 0x30);//only for CSTN for c28
@@ -1607,7 +1598,7 @@ static u_short	Sensor_EV(u_short EvStep)
 			gc_0307_write_cmos_sensor(0xd1, 0x38);
 			#endif
 			break;		
-		case CAM_EV_NEG_2_3:
+		case 2://CAM_EV_NEG_2_3:
             		gc_0307_write_cmos_sensor(0x7a, 0xe0);
 			#if defined(C28_BAR)
 			gc_0307_write_cmos_sensor(0xd1, 0x38);//only for CSTN for c28
@@ -1615,7 +1606,7 @@ static u_short	Sensor_EV(u_short EvStep)
 			gc_0307_write_cmos_sensor(0xd1, 0x40);
 			#endif
 			break;				
-		case CAM_EV_NEG_1_3:
+		case 3://CAM_EV_NEG_1_3:
             		gc_0307_write_cmos_sensor(0x7a, 0xf0);
 			#if defined(C28_BAR)
        		gc_0307_write_cmos_sensor(0xd1, 0x40);//only for CSTN for c28
@@ -1623,7 +1614,7 @@ static u_short	Sensor_EV(u_short EvStep)
 			gc_0307_write_cmos_sensor(0xd1, 0x48);
 		#endif
 			break;				
-		case CAM_EV_ZERO:
+		case 4://CAM_EV_ZERO:
             		gc_0307_write_cmos_sensor(0x7a, 0x00);
 			#if defined(C28_BAR)
 			gc_0307_write_cmos_sensor(0xd1, 0x40);	//only for CSTN for c28
@@ -1631,19 +1622,19 @@ static u_short	Sensor_EV(u_short EvStep)
 			gc_0307_write_cmos_sensor(0xd1, 0x50);
 			#endif
 			break;				
-		case CAM_EV_POS_1_3:
+		case 5://CAM_EV_POS_1_3:
             gc_0307_write_cmos_sensor(0x7a, 0x20);
 			gc_0307_write_cmos_sensor(0xd1, 0x58);
 			break;				
-		case CAM_EV_POS_2_3:
+		case 6://CAM_EV_POS_2_3:
             gc_0307_write_cmos_sensor(0x7a, 0x30);
 			gc_0307_write_cmos_sensor(0xd1, 0x60);
 			break;				
-		case CAM_EV_POS_3_3:
+		case 7://CAM_EV_POS_3_3:
             gc_0307_write_cmos_sensor(0x7a, 0x40);
 			gc_0307_write_cmos_sensor(0xd1, 0x68);
 			break;				
-		case CAM_EV_POS_4_3:	
+		case 8://CAM_EV_POS_4_3:	
             gc_0307_write_cmos_sensor(0x7a, 0x50);
 			gc_0307_write_cmos_sensor(0xd1, 0x70);
 			break;
@@ -1660,15 +1651,14 @@ static u_short	Sensor_WhiteBalance(u_short WbMode)
 	u_short	*tab_addr,tab_len;
 	u_short fRet = 0;
 
-	kal_uint8  temp_reg;
+	uint8  temp_reg;
 	
 
 	temp_reg=gc_0307_read_cmos_sensor(0x41);
-	kal_prompt_trace(MOD_MMI,"Enter set_GC0307_param_wb - 0x41 = %x",temp_reg );
 
 	if(gc_effect_on)
 		return KAL_FALSE;
-
+#if 0
 	switch(WbMode)
 	{
 		case CAM_WB_AUTO:
@@ -1678,7 +1668,6 @@ static u_short	Sensor_WhiteBalance(u_short WbMode)
 			gc_0307_write_cmos_sensor(0x41,temp_reg|0x04);	 // Enable AWB
 
 			break;	
-	  
 		case CAM_WB_CLOUD:
 			gc_0307_write_cmos_sensor(0x41,temp_reg&~0x04);   // Enable AWB 
 			gc_0307_write_cmos_sensor(0xc7,0x5a); //WB_manual_gain
@@ -1686,7 +1675,6 @@ static u_short	Sensor_WhiteBalance(u_short WbMode)
 			gc_0307_write_cmos_sensor(0xc9,0x40);
 
 			break;		
-
 		case CAM_WB_DAYLIGHT:   // tai yang guang
 			gc_0307_write_cmos_sensor(0x41,temp_reg&~0x04);   // Enable AWB 
 			gc_0307_write_cmos_sensor(0xc7,0x50);
@@ -1701,7 +1689,6 @@ static u_short	Sensor_WhiteBalance(u_short WbMode)
 			gc_0307_write_cmos_sensor(0xc9,0x5c);
 
 			break;		
-
 		case CAM_WB_FLUORESCENT:   //ri guang deng
 			gc_0307_write_cmos_sensor(0x41,temp_reg&~0x04);   // Enable AWB 
 			gc_0307_write_cmos_sensor(0xc7,0x40);
@@ -1715,15 +1702,12 @@ static u_short	Sensor_WhiteBalance(u_short WbMode)
 			gc_0307_write_cmos_sensor(0xc8,0x54);
 			gc_0307_write_cmos_sensor(0xc9,0x70);
 			break;
-
-		case CAM_WB_MANUAL: 	
-			// TODO
-			break;		
+	
 
 		default:
 			return KAL_FALSE;			
 	}	
-	
+#endif	
 	sys_IF_ait_delay1ms(20);
 	return KAL_FALSE;		
 }
@@ -1733,11 +1717,8 @@ static u_short	Sensor_NightMode(mmp_sensor_night_mode NightMode)
 	u_short	*tab_addr,tab_len;
 	u_short temp=0;
 	
-	
-	
-		return 0;
+	return 0;
 
-	
 	A8L_GetSenReg(0x41,&temp);
 
 	switch(NightMode)
@@ -1765,9 +1746,9 @@ static u_short	Sensor_NightMode(mmp_sensor_night_mode NightMode)
 
 static u_short	Sensor_DeBand(mmp_sensor_deband DeBandMode)
 {
-	kal_uint8 banding;
+	uint8 banding;
 
-
+#if 0
 	switch(DeBandMode)
 	{
 		case CAM_BANDING_50HZ:
@@ -1803,7 +1784,7 @@ static u_short	Sensor_DeBand(mmp_sensor_deband DeBandMode)
 		default:
 			return KAL_FALSE;		
 	}	
-	
+#endif	
 	return KAL_FALSE;		
 }
 
@@ -1843,38 +1824,35 @@ static u_short 	Sensor_FrameRate(u_short FrameRate)
 
 static void	Sensor_Enable(u_short enable)
 {
+	u_char retVal = 0;
 	AIT_Message_P1("GC0307 enable=%d\r\n", enable);
-
-	if(enable) {
-		//		A810H_PresetSensor(0, SENSOR_I2C_ID, SENSOR_I2C_TYPE, 3);
-		//		A810H_SetPinPull(0x69D1, PIN_PULL_HIGH);	//PSEN pull up
-		//		A810H_SetPinPull(0x69D2, PIN_PULL_HIGH);	//PSDA pull up
-		//		A810H_SetPinPull(0x69D3, PIN_PULL_HIGH);	//PSCK pull up
-		A8L_VIF_Init(&preview_mode);
-		//		AITS_I2C_Init();
+	
+	if(enable)
+	{
 		A800_SetGPIO(AIT_GPIO_SENSOR_POWER_CTL);		    
 		A8L_SetSensorPowerPin(1);
 		A8L_SetSensorResetPin(1); 
+		A8L_SetSensorEnablePin(0);
+		sys_IF_ait_delay1ms(10);
+		
+		A8L_VIF_Init(&preview_mode);
+		//		AITS_I2C_Init();
 		
 		sys_IF_ait_delay1ms(10);
-		//sensor PWDN
-		A8L_SetSensorEnablePin(0);
-		sys_IF_ait_delay1ms(10);       
-
-//		A8L_SetSensorResetPin(1); 
-//		sys_IF_ait_delay1ms(10);
 		A8L_SetSensorResetPin(0);
-		sys_IF_ait_delay1ms(10); 
-		A8L_SetSensorResetPin(1); 
-//		sys_IF_ait_delay1ms(10);
 
+		sys_IF_ait_delay1ms(30); 
+		A8L_SetSensorResetPin(1); 
+		sys_IF_ait_delay1ms(10);
 		//Initial I2C I/F
 		A8L_SetSensorIF(A8_SENSOR_SCK_PIN, A8_ON);
 		A8L_SetSensorIF(A8_SENSOR_SDA_PIN, A8_ON);
-		sys_IF_ait_delay1ms(1);
+		sys_IF_ait_delay1ms(10);
 
-	        		
-	} else {
+	    gbSensorInited = 1;    		
+	}
+	else
+	{
 		A8L_SetSensorResetPin(0);
 		sys_IF_ait_delay1ms(1);
 
@@ -1907,17 +1885,23 @@ static void	Sensor_Enable(u_short enable)
 #endif	    
 		gbSensorInited = 0;	
 	}	
+	
 	return;
 }
 static u_short	Get_Sensor_ID(u_short*	SensorID)
 {
-	u_short	fRet,sensor_id;	
+	u_short	fRet,sensor_id=0;
+	
 	if(!gbSensorInited)
 		Sensor_Enable(1);
+		
 	fRet = A8L_GetSenReg(0x00,&sensor_id);
 	*SensorID = sensor_id;
+	MSG_FATAL("sensor_id = 0x%x",sensor_id,0,0);
+
 	if(!gbSensorInited)
 		Sensor_Enable(0);
+		
 	return	fRet;
 }
 
@@ -1988,6 +1972,7 @@ static t_sensor_mode_attr	preview_mode =
 	0,
 	SENSOR_PREVIEW_LATCH_COUNT
 };
+
 static t_sensor_mode_attr	full_mode =
 {
 	SENSOR_FULL_VH_POLARITY,
@@ -2001,6 +1986,7 @@ static t_sensor_mode_attr	full_mode =
 	0,
 	SENSOR_FULL_LATCH_COUNT 
 };
+
 t_sensor_manager sensor_gc0307 = 
 {
     SENSOR_ID,
@@ -2019,5 +2005,3 @@ t_sensor_manager sensor_gc0307 =
 	Sensor_Rotate,
 	Sensor_FrameRate
 };
-#endif
-#endif

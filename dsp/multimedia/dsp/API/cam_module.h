@@ -2,12 +2,9 @@
 #ifndef __CAM_MODULE_H_
 #define __CAM_MODULE_H_
 #include	"A8_common.h"
-#ifdef MTK_PLATFORM
-#include "ext_camera.h"
-#endif
+
 #include	"ait_interface.h"
  
-#ifndef MTK_PLATFORM
 typedef struct 
 { 
 //        ext_camera_burst_struct        *burst_capture_ptr; 
@@ -103,11 +100,8 @@ typedef struct
 	unsigned char* (*ait_sd_init)(void);
 	unsigned short (*ait_sd_read)( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int read_size );
 	unsigned short (*ait_sd_write)( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int write_size );
+	u_int (*ait_sd_get_size)(void);
 } ait_sd_func;
-
-
-
-#endif
 
 
 /*===========================================================================
@@ -343,4 +337,5 @@ typedef enum
 	DSC_JPEG_QUALITY_NORMAL,// = 0x20,
 	DSC_JPEG_QUALITY_LOW
 } DSCJpegQuality_e;
+
 #endif

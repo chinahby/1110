@@ -33,7 +33,7 @@ typedef struct
 //#define EXIFSUPPORT
 #endif
 
-#define	A8_JPEG_DECODE_MAX_WIDTH			(1280) //	(2048)
+#define	A8_JPEG_DECODE_MAX_WIDTH			(2048) //	(2048) 1280
 #define JpegDecodeWidthToDownSample			(640)  // (800)
 
 #define	FORMAT_YUV_420	0

@@ -15,11 +15,7 @@ u_short	A800_SetUSBPllFreq(u_char on)
 	u_short ret;
 	if(A8_ON == on)
 	{
-#if defined(EXTCLK_26M)
 		ret = A8L_SetUSBPllFreq(2);
-#elif defined(EXTCLK_19M2)
-		ret = A8L_SetUSBPllFreq(3);
-#endif
 	}
 	else
 	{

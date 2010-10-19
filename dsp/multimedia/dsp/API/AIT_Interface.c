@@ -1,23 +1,11 @@
-
 #include "cam_if_ait_api.h"
 #include "AIT_Interface.h"
 #include "a8_common.h"
 #include "Rex.h"
 #include "clk.h"
 #include "clkregim.h"
-
-#if defined(AIT701_DEMO_BOARD)
-#include	"parts/r40008/lib_r40008.h"
-const unsigned char DCAM_EINT_NO = 0;
-
-#elif defined(__QSC_TARGET__)
 #include "gpio_1100.h"
-#endif
 
-//add by yangdecai 09-25
-#define	GPIO_ModeSetup(a, b)   
-#define	GPIO_InitIO(a, b)      
-#define	GPIO_WriteIO(a, b)
 
 
 char  SysMsg[128];
@@ -440,10 +428,10 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 
 // DSC Related
 #ifndef WIN32
-extern	t_sensor_manager	sensor_ov7670;
+//extern	t_sensor_manager	sensor_ov7670;
 //extern	t_sensor_manager	sensor_ov7680;
-extern	t_sensor_manager	sensor_ov7690;
-//extern	t_sensor_manager	sensor_gc0307;
+//extern	t_sensor_manager	sensor_ov7690;
+extern	t_sensor_manager	sensor_gc0307;
 //extern	t_sensor_manager sensor_bf3503;
 #endif
 
@@ -461,11 +449,11 @@ t_sensor_manager* sensor_manager[] =
 {
 #ifndef WIN32
 
-	&sensor_ov7670,
+//	&sensor_ov7670,
 	//&sensor_ov7680,
 	//&sensor_bf3503,
 	//&sensor_ov7690,	
-	//&sensor_gc0307,
+	&sensor_gc0307,
 #endif
 	0
 };
@@ -499,40 +487,17 @@ static rex_crit_sect_type dsp_crit_sect = {0};
 
 void AIT_ext_Create_Mutex(void)
 {
-	 /*if(dsp_lock.dsp_sem==NULL)
-	 	dsp_lock.dsp_sem= kal_create_sem( "dsp_sema", 1 );
-	 dsp_lock.lock_count = 0;
-   	 dsp_lock.owner_id = NULL;*/
-   	 rex_init_crit_sect(&dsp_crit_sect);
-   	 
+   	 rex_init_crit_sect(&dsp_crit_sect);   	 
 }
 
 unsigned char AIT_ext_Take_Semaphore(unsigned short mode)
 {
-
-   	/*if( kal_query_systemInit() || INT_QueryExceptionStatus() ||kal_if_hisr())
-        	return 1;
-	{
-		kal_status status;
-		if(dsp_lock.dsp_sem == NULL)
-		{
-		      AIT_ext_Create_Mutex();
-		}	
-		status=kal_take_sem(dsp_lock.dsp_sem,mode);
-		return status==KAL_SUCCESS ? 1 : 0;
-	}*/
 	rex_enter_crit_sect(&dsp_crit_sect);
     return 1;
 }
 
 void AIT_ext_Give_Semaphore(void)
 {
-	/*if( kal_query_systemInit() || INT_QueryExceptionStatus() ||kal_if_hisr())
-	    	return;
-	{
-		if(dsp_lock.dsp_sem != NULL)
-		         	kal_give_sem(dsp_lock.dsp_sem);
-	}*/
 	rex_leave_crit_sect(&dsp_crit_sect);
 }
 
@@ -541,13 +506,13 @@ void AIT_ext_ResetPinCtl(void)
 {
 	gpio_tlmm_config(AIT701_RESET);
     (void)gpio_out(AIT701_RESET, GPIO_HIGH_VALUE);
-	Delayms(5);
+	Delayms(10);
 
 	(void)gpio_out(AIT701_RESET, GPIO_LOW_VALUE);
-	Delayms(20);
+	Delayms(30);
 
 	(void)gpio_out(AIT701_RESET, GPIO_HIGH_VALUE);
-	Delayms(5);
+	Delayms(10);
 }
 
 void AIT_ext_BypassPinCtl(unsigned char bEnable)
@@ -561,17 +526,12 @@ void AIT_ext_BypassPinCtl(unsigned char bEnable)
     if(bEnable)
     {
         (void)gpio_out(AIT701_BYPASS, GPIO_HIGH_VALUE);
-        //out_dword(HWIO_ADDR(LCD_CFG0), 0x04120105);
-        //out_dword(HWIO_ADDR(LCD_CFG1), 0xc9000000);
-
     }
     else
     {
         (void)gpio_out(AIT701_BYPASS, GPIO_LOW_VALUE);
-        //out_dword(HWIO_ADDR(LCD_CFG0), 0x068AFFFF);
-        //out_dword(HWIO_ADDR(LCD_CFG1), 0xc9000000);
-
     }
+    Delayms(10);
 }
 
 void AIT_ext_ClockPinCtl(unsigned char bEnable)
@@ -617,208 +577,62 @@ void AIT_ext_Set_EMIMode(eEMI_MODE mode)
 
 void EINT_Set_Polarity(kal_uint8 eintno, kal_bool ACT_Polarity)
 {
-//Set interrupt polarity
+	//Set interrupt polarity
 }
 
 void EINT_UnMask(kal_uint8 eintno)
 {
-//External interrupt enable
-
+	//External interrupt enable
+	gpio_tlmm_config(GPIO_INPUT_41);
 }
 
 void EINT_Mask(kal_uint8 eintno)
 {
-//External interrupt disable
+	//External interrupt disable
 }
 
 
 kal_bool ait_is_active_cam(void)
 {
-
-
+	return 0;
 }
 
 
 void sys_IF_ait_delay1us(u_int time)
 {
-	clk_busy_wait(time);
+	clk_busy_wait(time*10);
 }
 
 
 void AIT701_DP_PULLUP_ENABLE(void)
 {
-	A800_GetGPIO(AIT_GPIO_USB_DP_CTL,AIT_GPIO_PULL_FLOATING);
+	return;//A800_GetGPIO(AIT_GPIO_USB_DP_CTL,AIT_GPIO_PULL_FLOATING);
 }
 
 
 void AIT701_DP_PULLUP_DISABLE(void)	
 {
-	A800_ClearGPIO(AIT_GPIO_USB_DP_CTL);
+	return;//A800_ClearGPIO(AIT_GPIO_USB_DP_CTL);
 }
 
 
 void AIT701_DP_PULLUP_STANDBY(void)
 {
-	AIT701_DP_PULLUP_ENABLE();
+	return;//AIT701_DP_PULLUP_ENABLE();
 }
 void AIT701_DM_PULLUP_ENABLE(void)
 {
-	gpio_out(GPIO_OUTPUT_29, GPIO_HIGH_VALUE);
+	return;//gpio_out(GPIO_OUTPUT_29, GPIO_HIGH_VALUE);
 }
 	
 void AIT701_DM_PULLUP_DISABLE(void)
 {
-	gpio_out(GPIO_OUTPUT_29, GPIO_LOW_VALUE);
+	return;//gpio_out(GPIO_OUTPUT_29, GPIO_LOW_VALUE);
 }
 
 
 void AIT701_DM_PULLUP_STANDBY(void)
 {
-	AIT701_DM_PULLUP_DISABLE();
+	return;//AIT701_DM_PULLUP_DISABLE();
 }
-
-
-#elif defined(AIT701_DEMO_BOARD)
-void AIT_ext_Create_Mutex(void){}
-unsigned char AIT_ext_Take_Semaphore(unsigned short mode){return 0;}
-void AIT_ext_Give_Semaphore(void){}
-//AIT Related PIN control
-void AIT_ext_ResetPinCtl(void)
-{
-	/* Reset AIT Chip, High Low High */
-	at91_pio_open(&PIO_DESC, (1<<21),PIO_OUTPUT);
-	at91_pio_write(&PIO_DESC, (1<<21),PIO_SET_OUT);
-	sys_IF_ait_delay1ms(1);
-
-	at91_pio_write(&PIO_DESC, (1<<21),PIO_CLEAR_OUT);
-	sys_IF_ait_delay1ms(1);
-
-	at91_pio_write(&PIO_DESC, (1<<21),PIO_SET_OUT);
-	sys_IF_ait_delay1ms(1);
-}
-void AIT_ext_BypassPinCtl(unsigned char bEnable)
-{
-	at91_pio_open(&PIO_DESC, (1<<20),PIO_OUTPUT);
-	if(bEnable)
-		at91_pio_write(&PIO_DESC, (1<<20),PIO_SET_OUT);	// Bypass mode , Bypass pin is High
-	else
-		at91_pio_write(&PIO_DESC, (1<<20),PIO_CLEAR_OUT);	// Active mode , Bypass pin is low
-
-}
-void AIT_ext_ClockPinCtl(unsigned char bEnable){}
-void AIT_ext_Set_EMIMode(eEMI_MODE mode){}
-void lcd_busy_waiting(void){}
-void EINT_Set_Polarity(kal_uint8 eintno, kal_bool ACT_Polarity){}
-void EINT_UnMask(kal_uint8 eintno){}
-void EINT_Mask(kal_uint8 eintno){}
-kal_bool ait_is_active_cam(void){return 1;}
-void sys_IF_ait_delay1us(u_int time)
-{
-	volatile u_int i;
-	volatile u_int j;
-
-	for ( j = 0; j < time; j++ )
-	{
-		for ( i = 0; i < /*4 **/ 7; i++ )
-		 ;
-	}
-}
-void AIT701_DP_PULLUP_ENABLE(void){return;}
-void AIT701_DP_PULLUP_DISABLE(void)	{return;}
-void AIT701_DP_PULLUP_STANDBY(void){return;}
-void AIT701_DM_PULLUP_ENABLE(void){return;}
-void AIT701_DM_PULLUP_DISABLE(void){return;}
-void AIT701_DM_PULLUP_STANDBY(void){return;}
-#else    //add by yangdecai 09-25   
-
-#define Delayms(t) clk_busy_wait(1000*t)
-static rex_crit_sect_type dsp_crit_sect = {0};
-const unsigned char DCAM_EINT_NO = 0;
-
-unsigned char AIT_ext_Take_Semaphore(unsigned short mode){return 0;}
-
-void AIT_ext_Give_Semaphore(void)
-{
-	/*if( kal_query_systemInit() || INT_QueryExceptionStatus() ||kal_if_hisr())
-	    	return;
-	{
-		if(dsp_lock.dsp_sem != NULL)
-		         	kal_give_sem(dsp_lock.dsp_sem);
-	}*/
-	rex_leave_crit_sect(&dsp_crit_sect);
-}
-
-//AIT Related PIN control
-void AIT_ext_ResetPinCtl(void)
-{
-	gpio_tlmm_config(AIT701_RESET);
-
-	gpio_out(AIT701_RESET,GPIO_HIGH_VALUE);
-	Delayms(5);
-	gpio_out(AIT701_RESET,GPIO_LOW_VALUE);
-	Delayms(10);
-	gpio_out(AIT701_RESET,GPIO_HIGH_VALUE);
-	Delayms(5);
-}
-
-void AIT_ext_BypassPinCtl(unsigned char bEnable)
-{
-	if(bEnable>1)
-	{
-		ASSERT(0)
-	}
-
-	gpio_out(AIT701_BYPASS,bEnable);
-}
-
-
-
-
-
-void sys_IF_ait_delay1us(u_int time)
-{
-	volatile u_int i;
-	volatile u_int j;
-
-	for ( j = 0; j < time; j++ )
-	{
-		for ( i = 0; i < /*4 **/ 16; i++ )
-		 ;
-	}
-}
-void EINT_UnMask(kal_uint8 eintno){}
-void EINT_Mask(kal_uint8 eintno){}
-kal_bool ait_is_active_cam(void){return 1;}
-void AIT_ext_ClockPinCtl(unsigned char bEnable){}
-void lcd_busy_waiting(void){}
-void EINT_Set_Polarity(kal_uint8 eintno, kal_bool ACT_Polarity){}
-
-void AIT701_DP_PULLUP_ENABLE(void){return;}
-void AIT701_DP_PULLUP_DISABLE(void)	{return;}
-void AIT701_DP_PULLUP_STANDBY(void){return;}
-void AIT701_DM_PULLUP_ENABLE(void){return;}
-void AIT701_DM_PULLUP_DISABLE(void){return;}
-void AIT701_DM_PULLUP_STANDBY(void){return;}
-void AIT_ext_Set_EMIMode(eEMI_MODE mode)
-{
-
-	switch(mode)
-	{
-		case EMIMODE_BYPASS:
-		
-			break;
-		
-		case EMIMODE_ACTIVE_PLL:
-		
-		
-			break;
-			
-		case EMIMODE_ACTIVE_NO_PLL:
-		
-		
-			break;
-	
-	}
-}
-
 #endif

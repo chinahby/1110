@@ -65,12 +65,10 @@ typedef enum
 
 #define EXTCLK_19M2
 #define EBI_BUS_8BIT_MODE
-#else
-#define EXTCLK_26M
-//#define EBI_BUS_8BIT_MODE
-//#define _FW_FROM_PC_
+
 #endif
 
+#define Delayms(t) clk_busy_wait(1000*t)
 
 //===========================
 // Sensor I/F
@@ -80,7 +78,7 @@ typedef enum
 //===========================
 // Host I/F
 //===========================
-#define DEMO_BOARD_VER (1) 
+//#define DEMO_BOARD_VER (1) 
 
 
 
@@ -178,59 +176,33 @@ typedef struct
 //===========================
 // Debug Message
 //===========================
-#if defined(__MTK_TARGET__)
-#include "kal_release.h"
-
-#if 0
-#define AIT_Message_P0(s) kal_prompt_trace(MOD_NIL, s)
-#define AIT_Message_P1(s, a1) kal_prompt_trace(MOD_NIL, s, a1)
-#define AIT_Message_P2(s, a1, a2) kal_prompt_trace(MOD_NIL, s, a1, a2)
-#define AIT_Message_P3(s, a1, a2, a3) kal_prompt_trace(MOD_NIL, s, a1, a2, a3)
-#define AIT_Message_P4(s, a1, a2, a3, a4) kal_prompt_trace(MOD_NIL, s, a1, a2, a3, a4)
-#define AIT_Message_P5(s, a1, a2, a3, a4, a5) kal_prompt_trace(MOD_NIL, s, a1, a2, a3, a4, a5)
-#define AIT_Message_P6(s, a1, a2, a3, a4, a5, a6) kal_prompt_trace(MOD_NIL, s, a1, a2, a3, a4, a5, a6)
-#define AIT_Message_P7(s, a1, a2, a3, a4, a5, a6, a7) kal_prompt_trace(MOD_NIL, s, a1, a2, a3, a4, a5, a6, a7)
-#define AIT_Message_P8(s, a1, a2, a3, a4, a5, a6, a7, a8) kal_prompt_trace(MOD_NIL, s, a1, a2, a3, a4, a5, a6, a7, a8)
-#define AIT_Message_Error(s, a1) kal_prompt_trace(MOD_NIL, s, a1)
-
-#else
-extern char  SysMsg[128];
-#define    SYS_DBG(_X_) { sprintf _X_; PutUARTBytes(0, SysMsg, strlen(SysMsg));}
-#define AIT_Message_P0(s) SYS_DBG((SysMsg,s))
-#define AIT_Message_P1(s, a1) SYS_DBG((SysMsg,s,a1))
-#define AIT_Message_P2(s, a1, a2) SYS_DBG((SysMsg,s,a1,a2))
-#define AIT_Message_P3(s, a1, a2, a3) SYS_DBG((SysMsg,s,a1,a2,a3))
-#define AIT_Message_P4(s, a1, a2, a3, a4) SYS_DBG((SysMsg,s,a1,a2,a3,a4))
-#define AIT_Message_P5(s, a1, a2, a3, a4, a5) SYS_DBG((SysMsg,s,a1,a2,a3,a4,a5))
-#define AIT_Message_P6(s, a1, a2, a3, a4, a5, a6) SYS_DBG((SysMsg,s,a1,a2,a3,a4,a5,a6))
-#define AIT_Message_P7(s, a1, a2, a3, a4, a5, a6, a7) SYS_DBG((SysMsg,s,a1,a2,a3,a4,a5,a6,a7))
-#define AIT_Message_P8(s, a1, a2, a3, a4, a5, a6, a7, a8) SYS_DBG((SysMsg,s,a1,a2,a3,a4,a5,a6,a7,a8))
-#define AIT_Message_Error(s, a1) SYS_DBG((SysMsg,s,a1))
-#endif
-
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
 #include "AEEStdLib.h"
-#define AIT_Message_P0(s) 	//DBGPRINTF("%s",s)
-#define AIT_Message_P1(s, a1) 	//DBGPRINTF("%s",s, a1)
-#define AIT_Message_P2(s, a1, a2) 	//DBGPRINTF("%s",s, a1, a2)
-#define AIT_Message_P3(s, a1, a2, a3) 	//DBGPRINTF("%s",s, a1, a2, a3)
-#define AIT_Message_P4(s, a1, a2, a3, a4) 	//DBGPRINTF("%s",s, a1, a2, a3, a4)
-#define AIT_Message_P5(s, a1, a2, a3, a4, a5) 	//DBGPRINTF("%s",s, a1, a2, a3, a4, a5)
-#define AIT_Message_P6(s, a1, a2, a3, a4, a5, a6) 	//DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6)
-#define AIT_Message_P7(s, a1, a2, a3, a4, a5, a6, a7)	//DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7)
-#define AIT_Message_P8(s, a1, a2, a3, a4, a5, a6, a7, a8)	//DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7, a8)
-#define AIT_Message_Error(s, a1)	//DBGPRINTF("%s",s, a1)
+#include "msg.h"
+#if 0
+#define AIT_Message_P0(s) 	DBGPRINTF("%s",s)
+#define AIT_Message_P1(s, a1) 	DBGPRINTF("%s",s, a1)
+#define AIT_Message_P2(s, a1, a2) 	DBGPRINTF("%s",s, a1, a2)
+#define AIT_Message_P3(s, a1, a2, a3) 	DBGPRINTF("%s",s, a1, a2, a3)
+#define AIT_Message_P4(s, a1, a2, a3, a4) 	DBGPRINTF("%s",s, a1, a2, a3, a4)
+#define AIT_Message_P5(s, a1, a2, a3, a4, a5) 	DBGPRINTF("%s",s, a1, a2, a3, a4, a5)
+#define AIT_Message_P6(s, a1, a2, a3, a4, a5, a6) 	DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6)
+#define AIT_Message_P7(s, a1, a2, a3, a4, a5, a6, a7)	DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7)
+#define AIT_Message_P8(s, a1, a2, a3, a4, a5, a6, a7, a8)	DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7, a8)
+#define AIT_Message_Error(s, a1)	DBGPRINTF("%s",s, a1)
 #else
-#define AIT_Message_P0(s)  printf(s)
-#define AIT_Message_P1(s, a1) printf(s, a1)
-#define AIT_Message_P2(s, a1, a2) printf(s, a1, a2)
-#define AIT_Message_P3(s, a1, a2, a3) printf(s, a1, a2, a3)
-#define AIT_Message_P4(s, a1, a2, a3, a4) printf(s, a1, a2, a3, a4)
-#define AIT_Message_P5(s, a1, a2, a3, a4, a5) printf(s, a1, a2, a3, a4, a5)
-#define AIT_Message_P6(s, a1, a2, a3, a4, a5, a6) printf(s, a1, a2, a3, a4, a5, a6)
-#define AIT_Message_P7(s, a1, a2, a3, a4, a5, a6, a7) printf(s, a1, a2, a3, a4, a5, a6, a7)
-#define AIT_Message_P8(s, a1, a2, a3, a4, a5, a6, a7, a8) printf(s, a1, a2, a3, a4, a5, a6, a7, a8)
-#define AIT_Message_Error(s, a1)  printf( s, a1)
+#define AIT_Message_P0(s) MSG_FATAL(s,0,0,0)
+#define AIT_Message_P1(s, a1) MSG_FATAL(s,a1,0,0)
+#define AIT_Message_P2(s, a1, a2) MSG_FATAL(s,a1,a2,0)
+#define AIT_Message_P3(s, a1, a2, a3) MSG_FATAL(s,a1,a2,a3)
+#define AIT_Message_P4
+#define AIT_Message_P5
+#define AIT_Message_P6
+#define AIT_Message_P7
+#define AIT_Message_P8
+#define AIT_Message_Error(s,a1) MSG_FATAL(s,a1,0,0)
+
+#endif
 #endif
 
 //===========================
@@ -279,8 +251,8 @@ extern char  SysMsg[128];
 #define A8_ACTIVE_LOW	0
 #define A8_ACTIVE_HIGH	1
 
-#define A8_OFF	FALSE
-#define A8_ON		TRUE
+#define A8_OFF		0
+#define A8_ON		1
 
 #define	A8_ALL			0
 #define	A8_CAM			1

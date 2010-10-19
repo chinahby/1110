@@ -150,9 +150,9 @@ A8_ERROR_MSG cam_IF_ait_close_AIT(void)
 	
 	if(A800_IsResetStatus() || (sys_IF_ait_get_status() == AIT_STATUS_DUMMY))
 	{
-#if 1	//test by ming @20090414 
+
 		retVal = A800_Camera_Bypass_Mode();
-#endif
+
 		SetA8RegB(0x6903, 0xFF);
 		SetA8RegB(0x6904, 0x1C);
 		SetA8RegW(0x690A, 0xFFFF);
@@ -707,7 +707,7 @@ A8_ERROR_MSG	cam_IF_ait_preview_control (bool bPreviewOn)
 	
 	if (bPreviewOn)
 	{
-#if 1 //def SENSOR_VIF	
+
 		u_char tmp7111;						
 		if(CAM_LCD_REFRESH_BYPASS == A800Data.Select->LcdRefreshMode){		
 			tmp7111 = GetA8RegB(0x7111);
@@ -748,12 +748,7 @@ A8_ERROR_MSG	cam_IF_ait_preview_control (bool bPreviewOn)
 //			A8L_CheckSensorFrame(VIF_GRAB_END);	
 //			SetA8RegB(0x5041,tmp5041);
 		}
-#else
 
-		retVal = A800_StartPreview();	
-		if(CAM_LCD_REFRESH_BYPASS == A800Data.Select->LcdRefreshMode)
-			A800_PIPBypass(1);	
-#endif	
 
 		if (retVal != A8_NO_ERROR)
 		{
@@ -922,7 +917,7 @@ A8_ERROR_MSG	cam_IF_ait_capture (u_short *jpeg_buffer_ptr, u_int *JpegSize)
 	}
 	else
 	{
-#ifdef	SENSOR_VIF
+
 {	
 		extern u_short	gsJpegWidth,gsJpegHeight;
 		A800_TakeJpegSetting(gsJpegWidth,gsJpegHeight);
@@ -934,27 +929,8 @@ A8_ERROR_MSG	cam_IF_ait_capture (u_short *jpeg_buffer_ptr, u_int *JpegSize)
 			return A8_CAM_CAPTURE_ERROR;
 		}		
 }		
-#else	
-		retVal = A800_BeforeCapture(AIT_Capture_config.image_resolution, AIT_Camera_config.zoom_step);
-		if (retVal != A8_NO_ERROR)
-		{
-			AIT_Message_P0("A800_BeforeCapture is failed !!!\n");
-		}
 		
-		retVal = A800_JPEGCapture(AIT_Capture_config.image_resolution, AIT_Capture_config.maxEncodedSize, jpeg_buffer_ptr, JpegSize);
-		if (retVal != A8_NO_ERROR)
-		{
-			sys_IF_ait_set_status(AIT_STATUS_DUMMY);
-			AIT_Message_P0("A800_JPEGCapture is failed !!!\n");
-			return A8_CAM_CAPTURE_ERROR;
-		}
 
-		retVal = A800_AfterCapture(AIT_Capture_config.image_resolution, AIT_Camera_config.zoom_step);
-		if (retVal != A8_NO_ERROR)
-		{
-			AIT_Message_P0("A800_AfterCapture is failed !!!\n");
-		}
-#endif		
 	}
 
 	gAITIsPreview = FALSE;
@@ -1091,9 +1067,19 @@ A8_ERROR_MSG cam_IF_ait_JPEG_decode(u_short * jpegbuf, u_int jpegsize, u_short p
 
 	AIT_Message_P3("cam_IF_ait_JPEG_decode js=%d, pw=%d, ph=%d \r\n", jpegsize, panelwidth, panelheight);
 	jpegsize += 64;
-	if((panelwidth*panelheight*2)<=(240*180*2)){
+	if((panelwidth*panelheight*2)<=(240*180*2))
+	{
 		retVal=A800_DecodeJpeg( jpegbuf, jpegsize, &panelwidth, &panelheight, (u_short *)dataptr, 1);		
-	}else if((jpegWidth == panelwidth) && (jpegHeight == panelheight)){
+	}
+	else if((panelwidth == 640) && (panelheight == 480))
+	{
+		AIT_Message_P0("DecodeJpegToYuvViaFIFO\r\n");
+		SetA8RegB(0x620A, 0x01);		
+		SetA8RegB(0x4F1D, 0x00);	
+		retVal = A8L_DecodeJpegToYuvViaFIFO(jpegbuf, jpegsize, (u_short *)dataptr ) ;
+	}	
+	else if((jpegWidth == panelwidth) && (jpegHeight == panelheight))
+	{
 		SetA8RegB(0x620A, 0x01);		/* JPEG repeat ratio */
 		SetA8RegB(0x4F1D, 0x00);	
 		retVal = A8L_DecodeJpegToRGBViaFIFO(jpegbuf, jpegsize, (u_short *)dataptr );
@@ -1105,7 +1091,9 @@ A8_ERROR_MSG cam_IF_ait_JPEG_decode(u_short * jpegbuf, u_int jpegsize, u_short p
 		SetA8RegB(0x620A, 0x01);		/* JPEG repeat ratio */
 		SetA8RegB(0x4F1D, 0x00);			
 #endif		
-	}else{
+	}	
+	else
+	{
 		retVal = A8_UNSUPPORT_ERROR;
 	}
 	AIT_Message_P1("cam_IF_ait_JPEG_decode 1,ret = %d\r\n",retVal);
@@ -1180,12 +1168,12 @@ A8_ERROR_MSG cam_IF_ait_vdo_record_stop(void)
 */
 A8_ERROR_MSG cam_IF_ait_vdo_playback_handler(u_short *frameBuf, u_int frameSize)
 {
-	u_char retVal;
+	u_char retVal=0;
 //	u_short jpeg_qulity;
 //	s_short jpeg_width, jpeg_height, jpeg_format;
 	
-	u_short width;
-	u_short height;
+	u_short width=0;
+	u_short height=0;
 //Vin@20091219: Select Panel Size in same lib.
 
 	A800Data.Select = A800_ChangeCameraSetting(gsCurViewMode);
@@ -1539,7 +1527,7 @@ A8_ERROR_MSG cam_IF_ait_preview_start(PREVIEW_MODE preview_mode, ePREVIEW_SRC_MO
 	previewConfig.lcdMode = A8_MAIN_LCD;
 	
 	//Vin: Todo
-        previewConfig.transparencyColor = 0x1F;
+    //    previewConfig.transparencyColor = OSD_TRANSPARENCY_COLOR ;
 	// VIN: preview Screen is separate by some block
 
 	SetA8RegB(0x500A,0x0);
@@ -1602,17 +1590,7 @@ A8_ERROR_MSG cam_IF_ait_preview_start(PREVIEW_MODE preview_mode, ePREVIEW_SRC_MO
 	    }
 	}
 	
-#if 0	// VIN: preview Screen is separate by some block
-#if 0	
-	SetA8RegB(0x690a,GetA8RegB(0x690a)|0x1);
-	SetA8RegB(0x690a,GetA8RegB(0x690a)&0xfe);
-#else
-	SetA8RegB(0x6908,GetA8RegB(0x6908)|0x44);
-	SetA8RegB(0x6908,GetA8RegB(0x6908)&0xbb);
-	SetA8RegB(0x690a,GetA8RegB(0x690a)|0x11);
-	SetA8RegB(0x690a,GetA8RegB(0x690a)&0xee);
-#endif
-#endif
+
 	if(CAM_LCD_REFRESH_SCALE == A800Data.Select->LcdRefreshMode){
 			cam_IF_ait_preview_LcdScaler(A800Data.Select->BufWidth,
 										A800Data.Select->BufHeight,

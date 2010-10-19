@@ -6,29 +6,25 @@
  *      chip via direct/indirect parallel interface.
  * @note Data bus interface between Host and AIT chip. (Address, CS time, Control pin)
  * @bug N/A
- */
-#define  DEFINE_GSBINDDATAPORT  
+ */  
 #include "AIT700_ebibus.h"
-#undef  DEFINE_GSBINDDATAPORT  
 
 #include "sys_IF_ait_api.h"
-#if defined(__QSC_TARGET__)
 
-#endif
+
+volatile u_char * gsbIndCmdPort = (u_char *)INDIRECT_CMD_PORT;
+volatile u_char * gsbIndDataPortB = (u_char *)INDIRECT_DATA_PORT;
+volatile u_short * gsbIndDataPortW = (u_short *)INDIRECT_DATA_PORT;
 
 u_short gA8HostBusMode; 
 u_short gA8FIFOAddr;
 
-#pragma O0
 
 //=====================================================================//
 void SetHostBusMode()
 {
 }
 
-#if defined(MTK_PLATFORM)
-#pragma arm section code = "INTERNCODE"
-#endif
 #ifdef	EBI_BUS_8BIT_MODE
 
 #define HUGE
@@ -51,6 +47,12 @@ void	SetA8RegB(u_short addr, u_char data)
 	A8IndDataPB(0) = (u_char)(addr >> 8);
 
 	A8IndCmdP = HII_RW_REG_B;
+    __asm{
+               nop;
+               nop;
+               nop;
+               nop;
+               }     
 	A8IndDataPB(0) = (u_char)(data & 0xFF);
 }
 /*=====================================================================*/
@@ -59,10 +61,33 @@ u_short	GetA8RegW(u_short addr)
 	u_short temp1, temp2;
 
 	A8IndCmdP = HII_SET_ADDR_L;
+    __asm{
+               nop;
+               nop;
+               nop;
+               nop;
+               }     
 	A8IndDataPB(0) = (u_char)(addr & 0xFF);
+    __asm{
+               nop;
+               nop;
+               nop;
+               nop;
+               }
 	A8IndDataPB(0) = (u_char)(addr >> 8);
-	
+    __asm{
+               nop;
+               nop;
+               nop;
+               nop;
+               }
 	A8IndCmdP = HII_RW_REG_B_INC;
+    __asm{
+               nop;
+               nop;
+               nop;
+               nop;
+               }     
 	temp1 = A8IndDataPB(0);
 	temp2 = A8IndDataPB(0);
 	
@@ -78,6 +103,12 @@ u_char	GetA8RegB(u_short addr)
 	A8IndDataPB(0) = (u_char)(addr >> 8);
 	
 	A8IndCmdP = HII_RW_REG_B;
+        __asm{
+               nop;
+               nop;
+               nop;
+               nop;
+               } 
 	temp1 = A8IndDataPB(0);
 
 	return (temp1);
@@ -243,7 +274,7 @@ void	CopyMemWordHostToA8(u_int destAddr, u_short HUGE *srcAddr, u_int length)
 	register u_char HUGE *AITTmpAddr;
 
 	tmpSrcAddr = (u_char HUGE *) srcAddr;
-	AITTmpAddr = tmpSrcAddr + length * 2;
+	AITTmpAddr = tmpSrcAddr + length ;
 
 	A8IndCmdP = HII_SET_ADDR_H;
 	A8IndDataPB(0) = (u_char) ((destAddr >> 16) & 0xFF);
@@ -279,6 +310,7 @@ void	CopyMemWordA8ToHost(u_short HUGE *destAddr, u_int srcAddr, u_int length)
 	A8IndCmdP = HII_RW_MEM_B_INC;
 
 	do {
+		*(tmpDestAddr++) = *gsbIndDataPortB;
 		*(tmpDestAddr++) = *gsbIndDataPortB;
 	} while(tmpDestAddr < AITTmpAddr);
 }
@@ -349,15 +381,17 @@ u_short GetWordFIFO()
 /*=====================================================================*/
 short	SendA8Cmd(u_short cmd)
 {
-//	u_short	i;
+	u_short	ret;
 	u_int   timeout = 0;
 	
 	SetA8RegB(A8_HOST_CMD_RG + 1, (cmd >> 8));
 	SetA8RegB(A8_HOST_CMD_RG, (cmd & 0xFF));
 
-	GetA8RegW(A8_HOST_CMD_RG);       // Add dummy read for ESD
-	while(GetA8RegW((A8_HOST_CMD_RG)) && timeout < 0x2000)
+	ret = GetA8RegW(A8_HOST_CMD_RG);       // Add dummy read for ESD
+	MSG_FATAL("SendA8Cmd ret = 0x%x",ret,0,0);
+	while((ret = GetA8RegW((A8_HOST_CMD_RG))) && timeout < 0x2000)
 	{
+		MSG_FATAL("SendA8Cmd ret = 0x%x,timeout = %d",ret,timeout,0);
 	   	sys_IF_ait_delay1us(100);
 		timeout++;
 	}
@@ -395,8 +429,8 @@ void A8L_Get16WDataFromFIFO(u_short FIFO_Reg, u_short* DestAddr, u_int Length)
 	A8IndDataPB(0) = (u_char)(FIFO_Reg & 0xFF);
 	A8IndDataPB(0) = (u_char)(FIFO_Reg >> 8);
 	
-	A8IndCmdP = HII_RW_REG_B_INC;
-
+	//A8IndCmdP = HII_RW_REG_B_INC;
+	A8IndCmdP = HII_RW_REG_W;
 
 	while(Length--)
 	{
@@ -437,6 +471,7 @@ void A8L_Get16WDataFromFIFO(u_short FIFO_Reg, u_short* DestAddr, u_int Length)
 }
 
 #else /* EBI_BUS_8BIT_MODE */
+#if 0
 void	SetA8RegW(u_short addr, u_short data)
 {
 
@@ -476,9 +511,6 @@ u_char	GetA8RegB(u_short addr)
 		temp = temp & 0xFF;
 	return (u_char) temp;
 }
-#if defined(MTK_PLATFORM)
-#pragma arm section code
-#endif
 
 //=====================================================================//
 void	SetA8MemW(u_int addr, u_short data)
@@ -566,9 +598,7 @@ u_short	GetA8MemNextW()
 //	return A8IndDataPB(0);
 //}
 //=====================================================================//
-#if defined(MTK_PLATFORM)
-#pragma arm section code = "INTERNCODE"
-#endif
+
 #if 1
 void	CopyMemByteHostToA8(u_int destAddr, u_char *srcAddr, u_int length)
 {
@@ -682,9 +712,7 @@ void	CopyMemByteA8ToHost(u_char *destAddr, u_int srcAddr, u_int length)
     }
 #endif	
 }
-#if defined(MTK_PLATFORM)
-#pragma arm section code
-#endif
+
 //=====================================================================//
 void	CopyMemWordHostToA8(u_int destAddr, u_short *srcAddr, u_int length)
 {
@@ -762,12 +790,13 @@ void OpenFIFO(u_short fifoAddr)
     gA8FIFOAddr = fifoAddr;
     A8IndCmdP = HII_SET_ADDR_L;
     A8IndDataPW(0) = fifoAddr;
+    A8IndCmdP = HII_RW_REG_W;	
 }
 //=====================================================================//
 void PutWordFIFO(u_short data)
 {
-    A8IndCmdP = HII_RW_REG_W;
-    A8IndDataPW(gA8FIFOAddr & 0x00F0) = data;
+//    A8IndCmdP = HII_RW_REG_W;
+    A8IndDataPW(0) = data;
 }
 //=====================================================================//
 u_short GetWordFIFO()
@@ -865,6 +894,7 @@ void A8L_Get16WDataFromFIFO(u_short FIFO_Reg, u_short* DestAddr, u_int Length)//
 }
 
 //=====================================================================//
+#endif
 #endif /* EBI_BUS_8BIT_MODE */
 u_short	GetA8DSCStatus(void)
 {
@@ -936,9 +966,7 @@ void Trans565to332ToA8(u_int destAddr, u_short *srcAddr, u_int length)
 	
 }
 #else
-#if defined(MTK_PLATFORM)
-#pragma arm section code = "INTERNCODE"
-#endif
+
 void Trans565to332ToA8(u_int destAddr, u_short *srcAddr, u_int length)
 {
 	u_short RGB565,RGB332,RGB332tmp;
@@ -966,9 +994,6 @@ void Trans565to332ToA8(u_int destAddr, u_short *srcAddr, u_int length)
     }
 }
 
-#if defined(MTK_PLATFORM)
-#pragma arm section code
-#endif
 #endif
 #endif
 void A800_YUV422toYUV420(u_short width, u_short height, u_char *yuv422Buf, u_char* yuv420Buf)

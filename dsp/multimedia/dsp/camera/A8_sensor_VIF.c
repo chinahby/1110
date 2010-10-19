@@ -153,6 +153,31 @@ u_short A8L_GetSenReg(u_short Reg, u_short *Value)
 	return A8_NO_ERROR;
 }
 
+u_char A8L_GetSenRegB(u_char Reg ,u_char *Value)
+{
+	s_short	retVal;
+
+	SetA8RegB(0x6546, Reg);
+	SetA8RegB(0x6544, 0xFF);
+
+	retVal = SendA8Cmd(A8_HOST_CMD_GET_SENSOR_REG);
+	if ( retVal != 0 )
+	{
+		AIT_Message_P0("Send cmd timer count \n");
+		return A8_SYSTEM_ERROR;
+	}
+
+	if(A8L_CheckReadyForA8Command())
+	{
+		return A8_TIMEOUT_ERROR;
+	}
+
+	(*Value) =(GetA8RegB(0x6544));
+	AIT_Message_P1("0x6544=0x%x\n",*Value);
+	
+	return A8_NO_ERROR;
+}
+
 /**
  @fn		u_short	A8L_I2CInit(u_char I2Ctype, u_char I2Cid)
  @brief	Set sensor I2C Write ID & I2C format to FW.
@@ -209,7 +234,6 @@ void A8L_SetSensorIF(u_char gpio, u_char  enable)
 		SetA8RegB(0x7151,GetA8RegB(0x7151) & (~(0x01 << gpio)));
 
 	return;
-
 }
 
 u_char 	A8L_SensorRegTab(u_short *Init_Table,u_int TableLength)
@@ -580,7 +604,7 @@ u_short	A8L_SetSensorAttr(t_sensor_mode_attr* sensor_mode)
 #endif
 	}
 	else
-		SetA8RegW(VIF_LINE_INT_NUM,sensor_mode->image_height - 0x20);								
+		SetA8RegW(VIF_LINE_INT_NUM,sensor_mode->image_height);// - 0x20);	 					
 
 	//								
 	SetA8RegB(VIF_SEN_GEN_CTL,(sensor_mode->latch_edge<<7)|(sensor_mode->hv_polarity));

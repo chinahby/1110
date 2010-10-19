@@ -32,11 +32,7 @@ u_int	glsdDmaSize = 0x800;
 #endif
 #define	SD_TIMEOUT_COUNT 	(50000)
 
-#if defined(EXTCLK_26M)
 #define SD_CLOCK_DIV            SD_CLOCK_DIV_2
-#elif defined(EXTCLK_19M2)
-#define SD_CLOCK_DIV            SD_CLOCK_DIV_2
-#endif
 u_char gbSD_CSD[17];
 
 #ifdef	SUPPORT_PRAGMA	

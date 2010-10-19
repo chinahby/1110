@@ -14,36 +14,23 @@
 #include "A8_common.h"
 
 
+#define  DEFINE_GSBINDDATAPORTm
 
-#if defined (NXP_PLATFORM)
-#define AIT800_REG_BASE          (0x80000000)		//  4902 CS0
-#define CMD_SIGNAL_PIN				(0x00100000)		//4902 1st pin(A20)
-#elif defined (MTK_PLATFORM)
-#define AIT800_REG_BASE			(0x12000000)//(LCD_base+0x4000)
-#define CMD_SIGNAL_PIN				(0x01000000)
-#elif defined (__QSC_TARGET__)
 #define AIT800_REG_BASE			EBI2_LCD_BASE//(LCD_base+0x4000)
 #define CMD_SIGNAL_PIN			0x100000	//(0x01000000)
-#elif defined (AIT701_DEMO_BOARD)
-#define AIT800_REG_BASE          (0x02000000)
-#define CMD_SIGNAL_PIN           (0x00080000)
-#else   //add by yangdecai 09-24
-#define AIT800_REG_BASE			(0x12000000)//(LCD_base+0x4000)
-#define CMD_SIGNAL_PIN				(0x01000000)
-#endif
 
 #define INDIRECT_DATA_PORT       AIT800_REG_BASE 
 #define INDIRECT_CMD_PORT        (AIT800_REG_BASE+CMD_SIGNAL_PIN)
 
-#ifdef DEFINE_GSBINDDATAPORT
-volatile u_char * gsbIndCmdPort = (u_char *)INDIRECT_CMD_PORT;
-volatile u_char * gsbIndDataPortB = (u_char *)INDIRECT_DATA_PORT;
-volatile u_short * gsbIndDataPortW = (u_short *)INDIRECT_DATA_PORT;
-#else
+//#ifdef DEFINE_GSBINDDATAPORT
+//volatile u_char * gsbIndCmdPort = (u_char *)INDIRECT_CMD_PORT;
+//volatile u_char * gsbIndDataPortB = (u_char *)INDIRECT_DATA_PORT;
+//volatile u_short * gsbIndDataPortW = (u_short *)INDIRECT_DATA_PORT;
+//#else
 extern volatile u_char * gsbIndCmdPort;
 extern volatile u_char * gsbIndDataPortB;
 extern volatile u_short * gsbIndDataPortW;
-#endif
+//#endif
 
 #define A8IndCmdP                      (*gsbIndCmdPort)
 #define A8IndDataPW(Addr)              (*(gsbIndDataPortW))

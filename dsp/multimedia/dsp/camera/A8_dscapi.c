@@ -628,35 +628,11 @@ s_short A8L_GetJpegPictureWithLimit( u_short *JpegBufferAddr, s_int Limit, u_int
 			}
 			else
 			{
-#if 1
+
 				u_int 	tmp;
 				tmp = CurrentJpegPageSize-CurrentJpegReadCount;
 				A8L_Get16WDataFromFIFO(0x6220,JpegBufferPtr,tmp);
 				JpegBufferPtr+=(tmp<<4);
-#else			
-				A8IndCmdP = HII_SET_ADDR_L;
-				A8IndDataPW(0) = 0x6220;
-				A8IndCmdP = HII_RW_REG_W;
-				for (i=CurrentJpegReadCount; i<CurrentJpegPageSize; i++)
-				{
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-					*(JpegBufferPtr++) = A8IndDataPW( i );
-				}
-#endif				
 				CurrentJpegReadCount=CurrentJpegPageSize;		
 			}
 		}
@@ -702,16 +678,7 @@ s_short A8L_GetJpegPictureWithLimit( u_short *JpegBufferAddr, s_int Limit, u_int
 	else
 		TempSize = (Limit>>1);
 
-	//open FIFO
-	A8IndCmdP = HII_SET_ADDR_L;
-	A8IndDataPW(0) = 0x6220;
-	A8IndCmdP = HII_RW_REG_W;
-	for (i=CurrentJpegReadCount; i<TempSize; i++)			// count by Word.
-	{
-		//*(JpegBufferPtr++) = GetA8RegW(0x6220);
-		*(JpegBufferPtr++)  = A8IndDataPW(0);
-		CurrentJpegReadCount++;
-	}
+	A8L_Get16WDataFromFIFO(0x6220,JpegBufferPtr,(TempSize+31)/32);
 	
 	SetA8RegW( 0x6222, 0x0000 );
 
@@ -2061,28 +2028,26 @@ s_short A8L_DecodeJpegBase( u_short *JpegBufferPtr, s_int Length, s_int DestAddr
 			if ( Status == 0xA0 )
 			{
 				//open FIFO
-				A8IndCmdP = HII_SET_ADDR_L;
-				A8IndDataPW(0) = 0x6220;
-				A8IndCmdP = HII_RW_REG_W;
+
+				OpenFIFO(0x6220);
 				for (i=0; i<LengthForSend; i++ )
 				{
 					if ( JpegBufferPtr != JpegDHTEvenAddr )
-						//SetA8RegW(0x6220, *(JpegBufferPtr++));
-						A8IndDataPW(0) = *(JpegBufferPtr++);
+						PutWordFIFO(*(JpegBufferPtr++));
 					else
 					{
 						if ( HuffBufferIndex < (gJpegHuffBackupTail>>1) )
 						{
-							//SetA8RegW(0x6220, gJpegHuffBackup[HuffBufferIndex]);
-							A8IndDataPW(0) = gJpegHuffBackup[HuffBufferIndex];
-							HuffBufferIndex++;
+PutWordFIFO(gJpegHuffBackup[HuffBufferIndex++]);
+
 						}
 						else
 						{
 							if ( gJpegHuffBackupTail != gJpegHuffBackupLength )
 								JpegBufferPtr++;	// Skipping 1 word
-							//SetA8RegW(0x6220, *(JpegBufferPtr++));
-							A8IndDataPW(0) = *(JpegBufferPtr++);
+
+								PutWordFIFO(*(JpegBufferPtr++));
+
 						}
 					}
 				}
@@ -2115,23 +2080,17 @@ s_short A8L_DecodeJpegBase( u_short *JpegBufferPtr, s_int Length, s_int DestAddr
 			if ( Status == 0xA0 )
 			{
 				//open FIFO
-				A8IndCmdP = HII_SET_ADDR_L;
-				A8IndDataPW(0) = 0x6220;
-				A8IndCmdP = HII_RW_REG_W;
-//{Ming				
-#if 0				
-				for (i=0; i<LengthForSend; i++ )
-				{
-					//SetA8RegW(0x6220, *(JpegBufferPtr++));
-					A8IndDataPW(0) = *(JpegBufferPtr++);
-				}
-				ByteCount += (LengthForSend<<1);
-#else
+				OpenFIFO(0x6220);
+
+
+
+
 				ByteCount += (LengthForSend<<1);
 				while(LengthForSend--){
-					A8IndDataPW(0) = *(JpegBufferPtr++);
+							PutWordFIFO(*(JpegBufferPtr++));
+
 				}
-#endif
+
 //}
 			}
 			else
@@ -4392,7 +4351,7 @@ s_short A8L_SetPllFreq( s_short X )
 			do
 			{
 				SetA8RegB( 0x6981, Val );					//M = 6	,   
-				sys_IF_ait_delay1us(1);
+				sys_IF_ait_delay1us(5);
 				Tmp = GetA8RegB( 0x6981 );
 				
 				timeout++;
@@ -4457,7 +4416,7 @@ s_short A8L_SetPllFreq( s_short X )
 	
 	if ( retVal )
 	{
-				AIT_Message_Error("A8L_SetPllFreq: DLL Config Error: %d",retVal);
+		AIT_Message_Error("A8L_SetPllFreq: DLL Config Error: %d",retVal);
 		
 		return A8_SYSTEM_ERROR;
 	}
@@ -4779,7 +4738,8 @@ s_short A8L_CheckReadyForA8Command(void)
 		sys_IF_ait_delay1us(100);	// Sleep delay about 0.1ms or 1ms. Depends on BB System delay function.
 		timeout++;
 	}
-	
+
+	MSG_FATAL("A8L_CheckReadyForA8Command timeout = %d",timeout,0,0);
 	if ( timeout >= A8_CMD_READY_TIME_OUT )
 	{
 		AIT_Message_Error("A8L_CheckReadyForA8Command Error!",0);

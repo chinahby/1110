@@ -39,15 +39,12 @@
 // External Clock
 //===========================
 //#define EXTCLK_13M
-#define EXTCLK_26M
+//#define EXTCLK_26M
 //#define EXTCLK_19M2
 
 #if defined(__QSC_TARGET__)
 #define AIT701_RESET			(GPIO_OUTPUT_53)
 #define AIT701_BYPASS			(GPIO_OUTPUT_51)
-#define AIT701_DSP_CLK			(0)			//only use in MTK
-#define AIT701_CLKNUM			(0)			//only use in MTK
-#define AIT701_DSPCLK_CNGDATA	(0)			//only use in MTK
 #define AIT_SLEEP_CHECKTIME 	(300)
 
 #define	ATV_POWER_PIN			(GPIO_OUTPUT_25)

@@ -1,11 +1,5 @@
 #include "A8_common.h"
-#if defined(__MTK_TARGET__)
-
-#include "kal_non_specific_general_types.h"
-#include "cam_module.h"
-#include "Ext_camera.h"
-#include "med_api.h"
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
 #include "clk.h"
 clk_cb_type ait_hw_clk_cb;
 #endif
@@ -47,6 +41,7 @@ static AIT_PREVIEW_CONFIG playbackConfig = {A8_MAIN_LCD,AIT_CAM_PREV_NOR_MODE,0x
 extern unsigned short ait_sleep_checktime;
 extern const unsigned char DCAM_EINT_NO;
 static void AIT701_set_gpio(u_short pin, u_char level);
+static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para);
 
 extern unsigned char g_ATV_Flag;
 
@@ -92,10 +87,7 @@ static void mmpfunc_sleepevent_handler(void *parameter)
 {
 //	AIT_Message_P1("mmpfunc_sleepevent_handler %d\r\n",ait_sleep_enable);
 
-#if defined(__MTK_TARGET__)
-
-		GPTI_StopItem(AIT_HW_TimerHandler);
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
 //Stop timer Handler
     clk_dereg( &ait_hw_clk_cb );
 #endif
@@ -110,10 +102,7 @@ static void mmpfunc_sleep_enable()
 	{
 		if((gbCamEn == FALSE) &&(gbUsbEn == FALSE)&&AIT_STATUS_VDO_PLAY!= sys_IF_ait_get_status())
 		{		
-#if defined(__MTK_TARGET__)
-
-			GPTI_StartItem(AIT_HW_TimerHandler,  ait_sleep_checktime,mmpfunc_sleepevent_handler,NULL);
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
     clk_reg( &ait_hw_clk_cb, mmpfunc_sleepevent_handler, AIT_SLEEP_CHECKTIME, 0, FALSE );
 #endif
 		}			
@@ -125,20 +114,13 @@ static void mmpfunc_sleep_enable()
 static void mmpfunc_sleep_disable()
 {
 	gAitEnterSleep = FALSE;
-#if defined(__MTK_TARGET__)
-
-		GPTI_StopItem(AIT_HW_TimerHandler);
-#elif defined(__QSC_TARGET__)
+#if defined(__QSC_TARGET__)
 //Stop timer Handler
     clk_dereg( &ait_hw_clk_cb );
 #endif
 
 	if(ait_sleep_flg==1)
 	{
-#if defined(__MTK_TARGET__)
-
-		L1SM_SleepDisable(AIT_sleep_mode_handler);
-#endif
 		AIT_ext_ClockPinCtl(1);
 		sys_IF_ait_delay1ms(10);	
 		ait_sleep_flg=0;	
@@ -632,7 +614,7 @@ static mmp_ret_code_type mmpfunc_sd_process(mmp_func_type func, void* client_dat
 		case	MMPFUNC_SD_OPEN:
                     if(FALSE == gbSdEn)
         			status = sd_IF_ait_init_sd();
-                    if(A8_NO_ERROR == status){
+                    if(MMP_SUCCESS == status){
 			status = sd_IF_ait_open_sd();
                     }else{
                         AIT_Message_P0("MMPFUNC_SD_OPEN  failed\r\n");
@@ -646,8 +628,8 @@ static mmp_ret_code_type mmpfunc_sd_process(mmp_func_type func, void* client_dat
 			case	MMPFUNC_SD_READ:				
                     if(FALSE == gbSdEn)
         			status = sd_IF_ait_init_sd();
-			if(A8_NO_ERROR == status){
-				if(sd_IF_ait_open_sd()==A8_NO_ERROR){
+			if(MMP_SUCCESS == status){
+				if(sd_IF_ait_open_sd()==MMP_SUCCESS){
 					status = sd_IF_ait_read_sectors(p1, p2, (u_char*)client_data, p3);
 				}
 			}else{
@@ -658,8 +640,8 @@ static mmp_ret_code_type mmpfunc_sd_process(mmp_func_type func, void* client_dat
 		case	MMPFUNC_SD_WRITE:
                     if(FALSE == gbSdEn)
         			status = sd_IF_ait_init_sd();
-                    if(A8_NO_ERROR == status){
-			if(sd_IF_ait_open_sd()==A8_NO_ERROR)
+                    if(MMP_SUCCESS == status){
+			if(sd_IF_ait_open_sd()==MMP_SUCCESS)
 			{
 				status = sd_IF_ait_write_sectors(p1, p2, (u_char*)client_data, p3);
 			}
@@ -748,7 +730,7 @@ static mmp_ret_code_type mmpfunc_usb_process(mmp_func_type func, void* client_da
 static mmp_ret_code_type mmpfunc_sys_process(mmp_func_type func, void* client_data, u_int p1, u_int p2, u_int p3, u_int p4, void* pdata)
 {
 	mmp_ret_code_type status = MMP_SUCCESS;
-	A8_ERROR_MSG retVal = A8_NO_ERROR;
+	A8_ERROR_MSG retVal = MMP_SUCCESS;
 	switch(func)
 	{
 		case MMPFUNC_SYS_ENTERSLEEP:
@@ -758,13 +740,8 @@ static mmp_ret_code_type mmpfunc_sys_process(mmp_func_type func, void* client_da
 
 				ait_sleep_flg=1;
 				AIT_ext_ClockPinCtl(2);
-#if defined(__MTK_TARGET__)
-
-			GPTI_StopItem(AIT_HW_TimerHandler);
-			L1SM_SleepEnable(AIT_sleep_mode_handler);			
-
-#elif defined(__QSC_TARGET__)
-//Stop timer Handler
+#if defined(__QSC_TARGET__)
+	//Stop timer Handler
     clk_dereg( &ait_hw_clk_cb );
 #endif
 
@@ -800,8 +777,6 @@ static mmp_ret_code_type mmpfunc_process(mmp_func_type func, void* client_data, 
 	AIT_ext_Take_Semaphore(0);
 	//lcd_busy_waiting();
 	mmpfunc_sleep_disable();
-
-
 
 	switch(func)
 	{
@@ -969,7 +944,9 @@ static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 		#endif
 #endif		
 			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START, ext_cam_para,AIT_VDO_PREV_MODE , 0, 0, 0, 0);
-		}else{
+		}
+		else
+		{
 			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START, ext_cam_para, AIT_CAM_PREV_FULL_MODE , 0, 0, 0, 0);
 		}
 	}
@@ -1295,27 +1272,7 @@ static void AIT701_set_gpio(u_short pin, u_char level)
 	}
 	return;
 }
-#if 0
-u_char AIT701_sd_power_on(void)
-{
-	mmp_ret_code_type fRet;
-	fRet = mmpfunc_process(MMPFUNC_SD_INIT, 0, 0, 0, 0, 0, 0);
-	if(0==fRet)
-		fRet = mmpfunc_process(MMPFUNC_SD_OPEN, 0, 0, 0, 0, 0, 0);
-	return fRet;
 
-}
-
-u_char AIT701_sd_read_sectors(u_int startsect, u_int offset, u_char *buf, u_int read_size)
-{
-	return mmpfunc_process(MMPFUNC_SD_READ, buf, startsect, offset, read_size, 0, 0);
-}
-
-u_char AIT701_sd_write_sectors(u_int startsect, u_int offset, u_char *buf, u_int write_size)
-{
-	return mmpfunc_process(MMPFUNC_SD_WRITE, buf, startsect, offset, write_size, 0, 0);
-}
-#endif
 
 unsigned short AIT_SD_InitializeFlag=0;
 static unsigned char* AIT701_SD_Initialize(void)
@@ -1372,6 +1329,14 @@ u_char* AIT701_sd_get_CSD()
 	mmpfunc_process(MMPFUNC_SD_GET_CSD, 0, 0, 0, 0, 0, &pCSD_Addr);
 	AIT_Message_P1("CSD=0x%x", pCSD_Addr);
 	return (u_char*)pCSD_Addr;
+}
+
+u_int  AIT701_sd_get_Size()
+{
+	u_int	sd_size ;
+	sd_size = sd_IF_ait_ioctl() * 512 ;
+	AIT_Message_P1("T Card Capability =0x%x  Byte\r\n", sd_size);
+	return sd_size;
 }
 
 u_char	AIT701_cam_check_frame(u_char mode)
@@ -1559,7 +1524,8 @@ ait_sd_func AIT701_SD_Func =
 {
 	AIT701_SD_Initialize,
 	AIT701_SD_ReadSector,
-	AIT701_SD_WriteSector
+	AIT701_SD_WriteSector,
+	AIT701_sd_get_Size
 };
 
 ait_usb_func AIT701_USB_Func =

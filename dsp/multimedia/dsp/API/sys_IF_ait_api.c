@@ -12,9 +12,8 @@
 #include "a800_camera.h"
 #include "a800_usb.h"
 #include "cam_IF_ait_api.h"
-#include "AIT_Interface.h"
 //#include	"AIT701_FW.h"
-
+#include "AIT_Interface.h"
 #if defined(__AIT701_SUPPORT__)
 #include "kal_release.h"      	/* Basic data type */
 #include "kal_trace.h"
@@ -146,7 +145,8 @@ void sys_IF_ait_reset_chip (void)
 {
 	gbSdEn = FALSE;
 	A800_SetPllFreq(A8_ALL, A8_OFF);
-	
+
+	EINT_UnMask(0);
 
 	AIT_ext_ResetPinCtl();
 
@@ -285,7 +285,7 @@ u_char	sys_IF_ait_get_bypass_status(void )
 	return AITBypassMode;
 }
 
-u_char	sys_IF_ait_search_sensor(void )
+u_char	sys_IF_ait_search_sensor(void)
 {
 	u_char retVal = 0;
 	u_char i;
@@ -295,6 +295,7 @@ u_char	sys_IF_ait_search_sensor(void )
 	ait_tv_Sensor_Present.SlaveSensor = NULL;
 	ait_tv_Sensor_Present.TV = NULL;
 
+	MSG_FATAL("sys_IF_ait_search_sensor start!",0,0,0);
 	for(i=0;i<10;i++)
 	{
 		if(sensor_manager[i])
@@ -309,7 +310,7 @@ u_char	sys_IF_ait_search_sensor(void )
 			gsSensorUsing->sensor_get_id(&sensor_id);
 			gsSensorUsing->sensor_enable(0);
 
-			AIT_Message_P1("Found Sensor ID = %x \r\n",sensor_id);		
+			MSG_FATAL("Found Sensor ID = %x",sensor_id,0,0);		
 
 
 			if(sensor_id == gsSensorUsing->sensor_id)
@@ -327,7 +328,9 @@ u_char	sys_IF_ait_search_sensor(void )
 				else
 					break;
 			}
-		}else{
+		}
+		else
+		{
 			break;
 		}			
 	}
@@ -337,11 +340,11 @@ u_char	sys_IF_ait_search_sensor(void )
 #endif
 
 	gsSensorUsing = NULL;
-	AIT_Message_P1("sys_IF_ait_boot_init:Mastar sensor_id = %x\r\n",ait_tv_Sensor_Present.MasterSensor->sensor_id);
-	AIT_Message_P1("sys_IF_ait_boot_init:Slave sensor_id = %x\r\n",ait_tv_Sensor_Present.SlaveSensor->sensor_id);
-	AIT_Message_P1("sys_IF_ait_boot_init: TV_id = %x\r\n",ait_tv_Sensor_Present.TV->sensor_id);
+	//MSG_FATAL("sys_IF_ait_boot_init:Mastar sensor_id = %x\r\n",ait_tv_Sensor_Present.MasterSensor->sensor_id,0,0);
+	//MSG_FATAL("sys_IF_ait_boot_init:Slave sensor_id = %x\r\n",ait_tv_Sensor_Present.SlaveSensor->sensor_id,0,0);
+	//MSG_FATAL("sys_IF_ait_boot_init: TV_id = %x\r\n",ait_tv_Sensor_Present.TV->sensor_id,0,0);
 	
-	AIT_Message_P1("sys_IF_ait_boot_init:sensor_id = 0x%x\r\n",sensor_id);
+	MSG_FATAL("sys_IF_ait_boot_init:sensor_id = 0x%x\r\n",sensor_id,0,0);
 	return retVal;
 }
 
@@ -356,7 +359,9 @@ u_char	sys_IF_ait_search_sensor(void )
 A8_ERROR_MSG sys_IF_ait_boot_init(void)
 {
 	u_char retVal;
-	
+	uint16 firmware_version = 0;
+	uint16 chipversion = 0;
+	MSG_FATAL("sys_IF_ait_boot_init start!",0,0,0);
 	sys_IF_ait_set_input_clock(A8_CAM, A8_ON);
 
 	sys_IF_ait_reset_chip();
@@ -365,20 +370,25 @@ A8_ERROR_MSG sys_IF_ait_boot_init(void)
 
 	A800_SetPllFreq(A8_CAM, A8_ON);
 
-#if 0	//For CS Timing test
+#if 1	//For CS Timing test
 {
+	extern void AIT701_reg_mem_test(void);
+	extern void sys_IF_ait_set_bypass_mode (u_char on);
+#if 1
 	int i;
-	for (i = 0; i < 10; i++) {  
+	for (i = 0; i < 10; i++)
+	{  
 
 #if defined(__QSC_TARGET__)
 
-        unsigned long emisetting;
+        //unsigned long emisetting;
 //Fine Tune CS timing   
-        out_dword(HWIO_ADDR(LCD_CFG0), emisetting);
-        out_dword(HWIO_ADDR(LCD_CFG1), 0xc9000000);
+        //out_dword(HWIO_ADDR(LCD_CFG0), emisetting);
+        //out_dword(HWIO_ADDR(LCD_CFG1), 0xc9000000);
 #endif        
     	SetA8RegB(0x6901, 0x46);   
 	}
+#endif
 	AIT701_reg_mem_test();
    	sys_IF_ait_set_bypass_mode(A8_OFF);
 }	
@@ -400,19 +410,20 @@ A8_ERROR_MSG sys_IF_ait_boot_init(void)
 		return A8_DOWNLOAD_FW_ERROR;
 	}
 
+	firmware_version = A800_GetFirmwareMode();
+	chipversion = A8L_GetA8FirmwareVersion();
 
-
-	
-#ifndef AIT_READ_SENSOR_ID_FROM_NVRAM
-//Vin@20091210:Twin Sensor & TV
+	MSG_FATAL("firmware_version :0x%x,chipversion : 0x%x",firmware_version,chipversion,0);
+	//Vin@20091210:Twin Sensor & TV
 	sys_IF_ait_search_sensor();
-#endif
+
 	A800_PreInit_Sensor();
 
+	
 	retVal = A800_Camera_Bypass_Mode();
 
 	AIT701_DP_PULLUP_STANDBY();
-	AIT701_DM_PULLUP_DISABLE();
+	AIT701_DM_PULLUP_STANDBY();
 
 	A800_PowerSavingOn();
 	A800_SetPllFreq(A8_ALL, A8_OFF);
