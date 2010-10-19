@@ -34,6 +34,7 @@ when         who     what, where, why
 02/15/05     hwu     Added more SDIO related defines.
 06/15/04     hwu     Initial version.
 ==================================================================*/
+#include "sd_IF_ait_api.h"
 #include "customer.h"
 #include "comdef.h"
 

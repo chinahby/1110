@@ -161,6 +161,7 @@ extern unsigned int sdio_card;
 boolean
 sdcc_open(int16 driveno)
 {
+#ifndef FEATURE_DSP
    SDCC_STATUS  rc = SDCC_NO_ERROR;
    boolean      close_drive = FALSE;
 
@@ -273,6 +274,18 @@ sdcc_open(int16 driveno)
    }
    sdcc_leave_crit_sect();
    return(rc ? FALSE : TRUE);
+#else
+   A8_ERROR_MSG res;
+   //res = sd_IF_ait_open_sd();
+   if(A8_NO_ERROR == res)
+   {
+     return TRUE;
+   }
+   else
+   { 
+     return FALSE;
+   }
+#endif
 }/* sdcc_open */
 
 
@@ -308,6 +321,7 @@ byte      *buff,
 uint16     n_sectors
 )
 {
+#ifndef FEATURE_DSP
 #ifndef T_QSC1100
    uint8            data_ctrl   = 0;
 #endif
@@ -455,6 +469,27 @@ SDCC_READ_RETRY:
    while (0);
    sdcc_leave_crit_sect();
    return(ret_status);
+#else 
+   A8_ERROR_MSG res;
+   u_int m_startsect;
+   u_int m_offset;
+   u_char *p_buf;
+   u_int m_read_size;
+   m_startsect = (u_int)s_sector;
+   m_offset = 0;
+   p_buf = (u_char *)buff;
+   m_read_size = n_sectors * sdcc_blk_in_bits(sdcc_pdata.mem.block_len);
+   res = sd_IF_ait_read_sectors(m_startsect, m_offset, p_buf, m_read_size);
+   if(A8_NO_ERROR == res)
+   {
+     return TRUE;
+   }
+   else
+   {
+   	 DPRINTF(("ReadSD is failed !!!\n"));
+	 return FALSE;
+   }
+#endif 
 }/* sdcc_read */
 
 /******************************************************************************
@@ -488,6 +523,7 @@ sdcc_write
    uint16     n_sectors
 )
 {
+#ifndef FEATURE_DSP
 #ifndef T_QSC1100
    uint8            data_ctrl   = 0;
 #endif
@@ -711,6 +747,28 @@ SDCC_WRITE_RETRY:
    while (0);
    sdcc_leave_crit_sect();
    return(ret_status);
+ #else
+   A8_ERROR_MSG res;
+   u_int m_startsect;
+   u_int m_offset;
+   u_char *p_buf;
+   u_int m_write_size;
+   m_startsect = (u_int)s_sector;
+   m_offset = 0;
+   p_buf =(u_char *)buff;
+   m_write_size = n_sectors * sdcc_blk_in_bits(sdcc_pdata.mem.block_len);
+   res = sd_IF_ait_write_sectors(m_startsect, m_offset, p_buf, m_write_size);
+   if(A8_NO_ERROR == res)
+   {
+     return TRUE;
+   }
+   else
+   {
+     DPRINTF(("WriteSD is failed !!!\n"));
+     return FALSE;
+   }
+
+ #endif
 }/* sdcc_write */
 
 
@@ -737,6 +795,7 @@ int16    driveno,
 uint8    what
 )
 {
+#ifdef FEATURE_DSP
    uint32 value = (uint32)SDCC_NO_ERROR;
    (void)driveno;
 
@@ -770,7 +829,7 @@ uint8    what
          break;
 
       case SDCC_CARD_SIZE:
-         value = sdcc_pdata.mem.card_size;
+         value = (uint32)sd_IF_ait_ioctl();
          break;
 
       case SDCC_BLOCK_LEN:
@@ -784,6 +843,7 @@ uint8    what
    }
    sdcc_leave_crit_sect();
    return value;
+#endif
 }/* sdcc_ioctl */
 
 /******************************************************************************
@@ -845,6 +905,7 @@ sdcc_read_serial
 boolean
 sdcc_init(void)
 {
+#ifndef FEATURE_DSP
    /* Its OK to re-initialize the sdcc critical section */
    sdcc_init_crit_sect();
    sdcc_enter_crit_sect();
@@ -950,6 +1011,20 @@ sdcc_init(void)
    while (0);
    sdcc_leave_crit_sect();
    return(TRUE);
+#else
+   A8_ERROR_MSG res;
+   res = sd_IF_ait_init_sd();
+   if(A8_NO_ERROR == res)
+   {
+     return TRUE;
+   }
+   else
+   {
+	 DPRINTF(("A800_CheckSDDevice is failed !!!\n"));
+	 return FALSE;
+   }
+  
+#endif
 }/* sdcc_init */
 
 /******************************************************************************
@@ -970,6 +1045,7 @@ sdcc_init(void)
 boolean
 sdcc_close(int16 driveno)
 {
+#ifndef FEATURE_DSP
    (void)driveno;
    sdcc_enter_crit_sect();
    do
@@ -1037,6 +1113,19 @@ sdcc_close(int16 driveno)
    while (0);
    sdcc_leave_crit_sect();
    return TRUE;
+#else
+   A8_ERROR_MSG res;
+   res = sd_IF_ait_close_sd();
+   if(A8_NO_ERROR == res)
+   {
+     return TRUE;
+   }
+   else
+   {
+	 DPRINTF(("A800_SetPllFreq(A8_OFF) is failed !!!\n"));
+	 return FALSE;
+   }
+#endif
 }/* sdcc_close */
 
 /*=============================================================================

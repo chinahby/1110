@@ -1107,18 +1107,18 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
         case SD_CMD17_READ_BLOCK:
         case SD_CMD18_READ_MULTIPLE_BLOCK:
             // ºöÂÔRESPONSE
-            gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
+            //gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
             return;
 
         case SD_CMD24_WRITE_BLOCK:
         case SD_CMD25_WRITE_MULTIPLE_BLOCK:
             bSendNRC = FALSE;
-            gpio_tlmm_config(GPIO_SDCC_CMD_IN);
+            //gpio_tlmm_config(GPIO_SDCC_CMD_IN);
             cmd[0] = sdcc_recv_cmd_byte_wait();
             break;
             
         default:
-            gpio_tlmm_config(GPIO_SDCC_CMD_IN);
+            //gpio_tlmm_config(GPIO_SDCC_CMD_IN);
             cmd[0] = sdcc_recv_cmd_byte_wait();
             break;
         }
@@ -1171,7 +1171,7 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
                 sdcc_cmd->status = SDCC_ERR_CMD_CRC_FAIL;
             }
         }
-        gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
+        //gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
     }
     
     dog_kick();
@@ -3880,8 +3880,8 @@ SDCC_STATUS sdcc_read_data(byte *buff, uint16 length)
         }
         gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
     }
-    gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
-    sdcc_clock_out(8);
+    //gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
+    //sdcc_clock_out(8);
     return rc;
 }
 
