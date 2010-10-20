@@ -19,7 +19,13 @@
 	<Object Id="5006" Name="IDI_SPORTS" MimeType="image/png">
 		<File>..\images\176x220\common\Calendar\Schedule.png</File>
 	</Object>
-	<Object Id="5009" Name="IDB_SPORT_RACE">
+	<Object Id="5007" Name="IDI_CONV_POUND" MimeType="image/png">
+		<File>..\images\176x220\common\Converter\converter_pound.png</File>
+	</Object>
+	<Object Id="5008" Name="IDI_CONV_STAR" MimeType="image/png">
+		<File>..\images\176x220\common\Converter\converter_star.png</File>
+	</Object>
+	<Object Id="5009" Name="IDB_SPORT_RACE" MimeType="image/bmp">
 		<File>..\images\176x220\common\Sports\Icons\step_race.bmp</File>
 	</Object>
 	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
@@ -30,6 +36,9 @@
 	</Object>
 	<Object Id="5015" Name="IDI_TEXT_BACKGROUND" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Background\background_text.png</File>
+	</Object>
+	<Object Id="5016" Name="IDI_INPUT_BACKGROUND" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Background\background_input.png</File>
 	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\check_yes.png</File>
@@ -139,6 +148,9 @@
 	<Object Id="5402" Name="IDB_MODE_T9_MT_ENGLISH_LOW" MimeType="image/png">
 		<File>..\images\176x220\common\IME\lowabc.png</File>
 	</Object>
+	<Object Id="5403" Name="IDB_MODE_T9_MT_ENGLISH_UP" MimeType="image/png">
+		<File>..\images\176x220\common\IME\upabc.png</File>
+	</Object>
 	<Object Id="5404" Name="IDB_MODE_NUMBERS" MimeType="image/png">
 		<File>..\images\176x220\common\IME\123.png</File>
 	</Object>
@@ -150,6 +162,12 @@
 	</Object>
 	<Object Id="5414" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
 		<File>..\images\176x220\common\IME\T9In.png</File>
+	</Object>
+	<Object Id="5411" Name="IDB_MODE_T9_RAPID_ENGLISH_LOW" MimeType="image/png">
+		<File>..\images\176x220\common\IME\lowezenglish.png</File>
+	</Object>
+	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP" MimeType="image/png">
+		<File>..\images\176x220\common\IME\upezenglish.png</File>
 	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\176x220\common\Message\Icon\Template.bmp</File>
