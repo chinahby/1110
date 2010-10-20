@@ -125,14 +125,14 @@ void disp_init(void)
 	(void)gpio_out(GPIO_OUTPUT_53, GPIO_HIGH_VALUE);
 	clk_busy_wait(10*1000);
 
-#if 0
+
 #ifndef CUST_EDITION
 	if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
 		return;
 #else
     if(disp_drv_install(PRIMARY_LCD_NAME) == -1)
         return;
-#endif
+
 #endif
 
 	fd = drv_open(PRIMARY_LCD_NAME);
