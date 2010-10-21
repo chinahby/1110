@@ -19,6 +19,11 @@ static void disp_ic_init(void)
 	LCD_WRITE_CMD(0x3A);
 	LCD_WRITE_DATA(0x05);
 
+	LCD_WRITE_CMD(0xB6);
+	LCD_WRITE_DATA(0x0A);
+	LCD_WRITE_DATA(0x62);
+	LCD_WRITE_DATA(0x27);
+	LCD_WRITE_DATA(0x04);
 
 
 	LCD_WRITE_CMD(0xC0);
@@ -107,18 +112,18 @@ static void disp_ic_init(void)
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
 {
     LCD_WRITE_CMD(0x2A);
-    LCD_WRITE_DATA(0x0);
-	LCD_WRITE_DATA((uint8)start_col);
-    LCD_WRITE_DATA(0x0);
-	LCD_WRITE_DATA((uint8)end_col);
+    //LCD_WRITE_DATA(0x0);
+	LCD_WRITE_DATA16((uint16)start_col);
+    //LCD_WRITE_DATA(0x0);
+	LCD_WRITE_DATA16((uint16)end_col);
     
 	/* Set LCD hardware to set start address */
 	/* Transfer command to display hardware */
 	LCD_WRITE_CMD(0x2B);
-    LCD_WRITE_DATA(0x0);        
-	LCD_WRITE_DATA((uint8)start_row);
-    LCD_WRITE_DATA(0x0);        
-	LCD_WRITE_DATA((uint8)end_row);
+    //LCD_WRITE_DATA(0x0);        
+	LCD_WRITE_DATA16((uint16)start_row);
+    //LCD_WRITE_DATA(0x0);        
+	LCD_WRITE_DATA16((uint16)end_row);
 	
 	LCD_WRITE_CMD(0x2C);
 }
@@ -216,7 +221,7 @@ boolean disp_ili9342_tft23_rot(disp_drv_ic_type *pdispic)
     id2 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
     
-    if(id2 == 0x93 && id3 == 0x42)
+    //if(id2 == 0x93 && id3 == 0x42)
     {
         pdispic->disp_ic_init       = disp_ic_init;
         pdispic->disp_ic_setwindow  = disp_ic_setwindow;
