@@ -3,7 +3,7 @@
 #-------------------------------------------------------------------------------
 
 AIT_SENSOR_SOURCES=\
-	AIT_sensor_GC0307.c
+	AIT_sensor_siv121a.c
 
 AIT_SENSOR_OBJS :=  $(addprefix $(TARGETDIR)/, $(AIT_SENSOR_SOURCES:%.c=%.o))
 vpath %.h $(AIT_INC)
