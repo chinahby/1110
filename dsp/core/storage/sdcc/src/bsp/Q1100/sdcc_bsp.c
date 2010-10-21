@@ -74,7 +74,6 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
                                             PM_MPP__DLOGIC_OUT__CTRL_LOW);
       }
 #else
-#if 0
       gpio_tlmm_config(GPIO_SDCC_CLK);
       gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
       gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
@@ -89,7 +88,6 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
       gpio_out(GPIO_SDCC_DATOUT_1_OUT, 1);
       gpio_out(GPIO_SDCC_DATOUT_2_OUT, 1);
       gpio_out(GPIO_SDCC_DATOUT_3_OUT, 1);
-#endif
 #endif
    }
    else if (SDCC_BSP_VDD_OFF == state)
@@ -114,7 +112,6 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
       gpio_tlmm_config(GPIO_INPUT_27);
       gpio_tlmm_config(GPIO_INPUT_28);
 #else
-#if 0
       //gpio_out(SD_PWR_EN_N, 0);
       gpio_out(GPIO_SDCC_CLK, 1);
       gpio_out(GPIO_SDCC_CMD_OUT, 1);
@@ -122,7 +119,6 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
       gpio_out(GPIO_SDCC_DATOUT_1_OUT, 1);
       gpio_out(GPIO_SDCC_DATOUT_2_OUT, 1);
       gpio_out(GPIO_SDCC_DATOUT_3_OUT, 1);
-#endif
 #endif
    }
    else
@@ -146,7 +142,11 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
 boolean
 sdcc_bsp_slot_interrupt_exists()
 {
-   return (qsc11x0_hw_rev.pmic_hw_version >= 3) ? TRUE : FALSE;
+//#ifdef CUST_EDITION_EX
+	 //return FALSE;
+//#else
+	 return (qsc11x0_hw_rev.pmic_hw_version >= 3) ? TRUE : FALSE;
+//#endif  
 }
 
 /*=============================================================================
@@ -163,16 +163,21 @@ sdcc_bsp_slot_interrupt_exists()
  *===========================================================================*/
 void
 sdcc_bsp_enable_slot_int(void *isr)
-{
+{	
    if(FALSE == slot_int_enabled)
    {
       if( NULL == isr)
          return;
 
+		/*
       gpio_tlmm_config(GPIO_INPUT_32);
       gpio_int_set_detect(GPIO_INT_32, DETECT_EDGE);
+	  
+	  
       gpio_int_set_handler(GPIO_INT_32, ACTIVE_LOW,
                            (gpio_int_handler_type)isr);
+*/
+                           
       slot_int_enabled = TRUE;
    }   
 } /* sdcc_bsp_enable_slot_int */
