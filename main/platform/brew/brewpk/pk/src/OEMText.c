@@ -846,7 +846,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
                                           (void **)&pNewContext->m_pMyFont))
     {
         pNewContext->m_pMyFont = NULL;
-        //return NULL;
+        return NULL;
     }  
 
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
@@ -1133,7 +1133,6 @@ SEE ALSO:
 void OEM_TextUpdate(OEMCONTEXT hTextCtl)
 {
    register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
-
    if (pContext && pContext->bNeedsDraw) {
       OEM_TextDraw(pContext);
    }
@@ -1706,7 +1705,6 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
                     {
                         boolean bSel = (boolean)(pContext->wSelEnd == pContext->wSelStart ? FALSE : TRUE);
                         uint16 wNewSel = (pContext->bSwap ? pContext->wSelEnd : pContext->wSelStart);
-                        
                         if (wNewSel && bSel)
                         {
                             --wNewSel;
@@ -1725,11 +1723,9 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
                     {
                         boolean bSel = (boolean)(pContext->wSelEnd == pContext->wSelStart ? FALSE : TRUE);
                         uint16 wNewSel = ( pContext->bSwap ? pContext->wSelEnd : pContext->wSelStart);
-                        
                         if (bSel)
                         {
                             wNewSel++; // Checks bounds below.
-                            
                             OEM_TextSetSel(pContext, wNewSel, wNewSel);
                             TextCtl_AutoScroll(pContext);
                             OEM_TextUpdate(pContext);
@@ -1757,7 +1753,6 @@ OEM_TextKeyPress_COMM:
                     {
                     	
                         boolean ans = (*sTextModes[pContext->byMode].pfn_char)(pContext,eCode, key);
-						MSG_FATAL("OEM_TextKeyPress_COMM:.....................",0,0,0);
                         if (ans)
                         {
                             OEM_TextUpdate(pContext);
@@ -1844,7 +1839,6 @@ SEE ALSO:
 void OEM_TextAddChar(OEMCONTEXT hTextCtl, AECHAR ch, boolean bOverStrike)
 {
    register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
-
 #ifdef AEE_DEBUG
    MSG_MED("OEM_TextAddChar 0x%04lX", (unsigned long) ch, 0, 0);
 #endif
@@ -1950,7 +1944,6 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 #endif
 
     uint32 dwFlags = (IDF_ALIGN_LEFT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
-
     if (!pContext)
     {
         return;
@@ -1976,9 +1969,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     AECHAR   * pszText;
                     pszText = OEM_TextGet(pContext);
                     szsmscount = 1;
-                    
                     szsmscount = WMSUtil_CalculateMessagesCount(pszText, NULL, NULL);
-
                     // Draw the number of remaining characters.
                     STR_TO_WSTR("%d/%d   ", szFormat, sizeof(szFormat));
                     WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars, szsmscount);                    
@@ -2039,7 +2030,6 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     int  nBarH = GetTitleBarHeight((IDisplay *)pContext->pIDisplay);
                     int nPixels = IDISPLAY_MeasureText(pContext->pIDisplay,pContext->font,szRemainingCount);
                     IDISPLAY_GetClipRect(pContext->pIDisplay, &oldrc);
-
                     if ( nPixels > m_nPixels)
                     {
 						m_nPixels = nPixels;
@@ -2083,7 +2073,6 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
             }
             bFrame = TRUE;
         }
-
         if (pContext->wLines > pContext->nDisplayLines && (pContext->dwProperties & TP_MULTILINE)) 
         {
             // Draw the scroll bar
@@ -2173,7 +2162,6 @@ void OEM_TextSetCursorPos(OEMCONTEXT hTextField, int32 nOffset)
       nSel  = 0;
    else
       nSel  = (uint16) nOffset;
-
    OEM_TextSetSel(hTextField, nSel, nSel);
 #ifdef FEATURE_T9_INPUT  
 #ifdef FEATURE_T9_ALPHABETIC
@@ -2341,7 +2329,6 @@ static void TextCtl_TextChanged(TextCtlContext *pContext)
    // We must validate various aspects of the text control
    // and determine whether or not the display needs to
    // be re-calculated/re-drawn.
-
    // First normalize the selection if necessary
    if (pContext->wSelEnd < pContext->wSelStart) {
       // Swap start and end of selection
@@ -2637,7 +2624,6 @@ SEE ALSO:
 static void TextCtl_AddChar(TextCtlContext *pContext, AECHAR ch)
 {
    boolean bModified = FALSE;
-
    // Don't allow the null character to be inserted.
    if (pContext) {
       AECHAR *pNewContents;
@@ -2724,7 +2710,6 @@ SEE ALSO:
 static void TextCtl_AddString(TextCtlContext *pContext, AECHAR * sz)
 {
    boolean bModified = FALSE;
-
    if( pContext && sz && *sz ){
       AECHAR * pNewContents;
 
@@ -3435,7 +3420,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 
    /*因为当字符串超过一行或者在行尾时，向字符串插入空格
    会把很长的空间反显(multitap input mode)*/
-   
    if ( (wSelEndLine != wSelStartLine) &&
         ((pContext->sT9awFieldInfo.G.dwStateBits & T9STATEMULTITAPMASK) == T9STATEMULTITAPMASK))
    {
@@ -3482,7 +3466,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    }
    dwOldBkClr = IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,
                         dwOldBkClr);//MAKE_RGB(255,255,255)); 
-
    for (; cnt > 0; ++i, --cnt) 
    {
       if (cnt > 1 && pContext->nFontLeading) 
@@ -3622,7 +3605,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 {
                     LineCursor1 = pContext->wSelStart - pContext->pwLineStarts[i];
                     IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
-                                                        pContext->pwLineStarts[i] + pContext->pszContents, 
+                                                         pContext->pszContents+pContext->pwLineStarts[i], 
                                                         lineChars, &rectText, &cursorx1, LineCursor1, pContext->dwAlignFlags);
                 }
 #else //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
@@ -3683,7 +3666,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                int32 endX = (wSelEndLine == wSelStartLine)
                                     ?((IDF_ALIGN_LEFT == startAlign)?(rectText.x + (int16) rectText.dx):(rectText.x))
                                     :((IDF_ALIGN_LEFT == endAlign)?(rectText.x + (int16) rectText.dx):(rectText.x));
-
                if (wSelEndLine == i) 
                {
                   if (pContext->wSelEnd > pContext->pwLineStarts[i]) 
@@ -3700,7 +3682,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                   else
                         endX = startX;
                }
-
                if ((wSelStartLine == i) && (pContext->wSelStart > pContext->pwLineStarts[i])) 
                {
                     if ( NULL != pContext->m_pMyFont )
@@ -4016,7 +3997,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    }
    
    (void) IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,dwOldBkClr);
-
 }
 
 /*=============================================================================
@@ -4272,7 +4252,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
     uint16   nBufLen   = pContext->sT9awFieldInfo.G.nBufLen;
     sFocusType sFocus = pContext->sFocus;     
     boolean bFlag = GetArrowFlagonIM();
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key Start",0,0,0);
 
 #if defined (FEATURE_ALL_KEY_PAD)
 	if(eCode == EVT_KEY_HELD)
@@ -4492,11 +4471,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                   }
 		                   else 
 		                   {  
-		               
 		                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 		                   }
 		            }
-#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#else//change by xuhui
+//#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 		            if (OEM_TextGetCursorPos(pContext) == 0)
 		                {
 		                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
@@ -4519,10 +4498,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                            wNewSel = wNewSel - count;
 		                        }
 		                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI                 
 		                OEM_TextSetSel(pContext, wNewSel, wNewSel);
-		                    (void) TextCtl_AutoScroll(pContext);
+		                    (void) TextCtl_AutoScroll(pContext);                        
 		                }
+#endif                  //change by xuhui      
 		                return TRUE;
 		            }            
 		            break;     
@@ -4543,11 +4523,12 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                   else 
 		                   {  
 		                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-		                       wNewSel --;            
+		                       wNewSel --;          
 		                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 		                   }
 		                }
-#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#else//change by xuhui
+//#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 		             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
 		                {
 		                    OEM_TextSetCursorPos(pContext, -1);
@@ -4566,10 +4547,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                            wNewSel = wNewSel + count;
 		                        }
 		                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI                                
 		                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
-		                    (void) TextCtl_AutoScroll(pContext);
+		                    (void) TextCtl_AutoScroll(pContext);                          
 		                }
+#endif                        //change by xuhui
 		                return TRUE;  
 		            }
 		            break;   
@@ -4879,7 +4861,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 								   }
 								   else 
 								   {  
-							   
 									   OEM_TextSetSel(pContext, wNewSel, wNewSel);						 
 								   }
 							}
@@ -4930,7 +4911,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 								   else 
 								   {  
 									   //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );	
-									   wNewSel --;			  
+									   wNewSel --;			
 									   OEM_TextSetSel(pContext, wNewSel, wNewSel);						 
 								   }
 								}
@@ -4953,7 +4934,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 											wNewSel = wNewSel + count;
 										}
 									}
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI                                
 								 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 									(void) TextCtl_AutoScroll(pContext);
 								}
@@ -5069,7 +5050,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 #else
 	//handle key
     t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext,eCode, key );
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 1 t9Key=%d", t9Key,0,0);
     if(key == AVK_SELECT|| key == AVK_INFO)
     {
         if(FOCUS_SELECTION == pContext->sFocus)
@@ -5093,7 +5073,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
         return FALSE;       
     }
     
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 2", 0,0,0);
     switch ( t9Key) 
     {
         case T9KEYAMBIG1:
@@ -5108,7 +5087,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
         case T9KEYAMBIGA:
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 3", 0,0,0);
              if (TEXT_MODE_T9_RAPID_ENGLISH== OEM_TextGetCurrentMode(pContext)
                  && MULTITAP_FIRST_CAP == pContext->nMultitapCaps
                  && !OEM_isFirstCap(pContext)
@@ -5132,7 +5110,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;        
 
         case T9KEYLEFT:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 4", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {   
                 pContext->sFocus = FOCUS_TEXT;               
@@ -5178,7 +5155,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;
 
         case T9KEYRIGHT:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 5", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {   
                 pContext->sFocus = FOCUS_TEXT;             
@@ -5223,7 +5199,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;
 
          case T9KEYPREV:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 6", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {            
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key);   
@@ -5257,7 +5232,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;
 
         case T9KEYNEXT:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 7", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {            
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key);  
@@ -5315,7 +5289,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break; 
             
         case T9KEYCLEAR:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 8", 0,0,0);
             if ((0 == pContext->wSelStart) && (pContext->wSelStart == pContext->wSelEnd))
             {
                 return FALSE;
@@ -5327,7 +5300,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;
             
         case T9KEYSPACE:  
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 9", 0,0,0);
             if((FOCUS_SELECTION == pContext->sFocus)&&
                 (pContext->wMaxChars == nBufLen))
             {
@@ -5344,7 +5316,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
             break;  
     }  
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 10", 0,0,0);    
     if( pContext->sT9awFieldInfo.G.nCurSelObj == 0)
     {
        bFlag =  FALSE;
@@ -5359,7 +5330,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
         }else{
             bFlag = FALSE; }
     }
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 11", 0,0,0);  
     if(bFlag != GetArrowFlagonIM() )
     {
         SetArrowFlagonIM( bFlag);
@@ -5371,11 +5341,9 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
     {          
         bRet = T9_AW_DisplayText ( pContext, key);  
     }
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 12", 0,0,0);
 #endif
 
 
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: END bRet=%d", bRet,0,0);
     return bRet;
 }
 
@@ -5740,7 +5708,6 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -5767,7 +5734,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI     
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -5791,7 +5758,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;         
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -5814,7 +5781,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI         
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -6248,7 +6215,6 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
     ERR("T9TextCtl_MultitapKey::13",0,0,0);
 #endif	
     
-    MSG_FATAL("T9TextCtl_MultitapKey::END bRet=%d", bRet,0,0);
     return bRet;
 }
 
@@ -6485,7 +6451,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 								AECHAR Tempstrp[5] = {L"."};
 	                            TextCtl_NoSelection(pContext);
 								nBufLen = WSTRLEN(pContext->pszContents);
-								MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
 								if(nBufLen == 0)
 								{
 									
@@ -6548,7 +6513,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -6575,7 +6539,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI             
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -6599,7 +6563,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;           
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -6622,7 +6586,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI      
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -6889,7 +6853,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 								AECHAR Tempstrp[5] = {L"."};
 	                            TextCtl_NoSelection(pContext);
 								nBufLen = WSTRLEN(pContext->pszContents);
-								MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
 								if(nBufLen == 0)
 								{
 									
@@ -6952,7 +6915,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -6979,7 +6941,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI        
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7003,7 +6965,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;        
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -7026,7 +6988,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI                  
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7293,7 +7255,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 								AECHAR Tempstrp[5] = {L"."};
 	                            TextCtl_NoSelection(pContext);
 								nBufLen = WSTRLEN(pContext->pszContents);
-								MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
 								if(nBufLen == 0)
 								{
 									
@@ -7356,7 +7317,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -7383,7 +7343,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI           
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7407,7 +7367,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;     
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -7430,7 +7390,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI      
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7697,7 +7657,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 								AECHAR Tempstrp[5] = {L"."};
 	                            TextCtl_NoSelection(pContext);
 								nBufLen = WSTRLEN(pContext->pszContents);
-								MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
 								if(nBufLen == 0)
 								{
 									
@@ -7760,7 +7719,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -7787,7 +7745,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI            
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7811,7 +7769,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;   
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -7834,7 +7792,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI    
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7948,7 +7906,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	    }   
 	}	
 #endif
-    MSG_FATAL("T9TextCtl_MultitapKey::END bRet=%d", bRet,0,0);
     return bRet;
 }
 static void T9TextCtl_Cap_Lower_Rapid_Exit(TextCtlContext *pContext)
@@ -10174,7 +10131,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                   }
 	                   else 
 	                   {  
-	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );                   
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );          
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -10202,7 +10159,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                      
+#endif //FEATURE_LANG_THAI           
 	                    OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }

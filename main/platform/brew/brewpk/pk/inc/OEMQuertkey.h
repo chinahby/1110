@@ -173,6 +173,7 @@ static SheftKeyItem_Own  VLCharCapKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
     {AVK_SPACE,' ',{' '}}  
 };
 
+#if 0 //change by xuhui
 static SheftKeyItem_Own  VLCharArabicKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 {
 	{AVK_POUND, 0x0636, {0x0636}},
@@ -210,6 +211,46 @@ static SheftKeyItem_Own  VLCharArabicKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
     {AVK_SPACE,' ',{' '}},
 	{AVK_0,0x0637,{0x0637}}
 };
+#else
+//效准阿拉伯语键盘对应值
+static SheftKeyItem_Own  VLCharArabicKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
+{
+	{AVK_POUND, 0x0642, {0x0642}},
+  	{AVK_1, 0x0648, {0x0648}},
+  	{AVK_2, 0x064E, {0x064E}},
+  	{AVK_3, 0x0631, {0x0631}},
+  	{AVK_T, 0x062A, {0x062A}},
+  	{AVK_Y, 0x064A, {0x064A}},
+  	{AVK_U, 0x064F, {0x064F}},
+  
+  	{AVK_I, 0x0650, {0x0650}},
+  	{AVK_O, 0x0652, {0x0652}},
+  	{AVK_P, 0x0637, {0x0637}},
+  	{AVK_STAR, 0x0627, {0x0627}},
+  	{AVK_4, 0x0633, {0x0633}},
+  	{AVK_5, 0x062F, {0x062F}},
+  	{AVK_6, 0x0641, {0x0641}},
+  
+  	{AVK_G, 0x063A, {0x063A}},
+  	{AVK_H, 0x062D, {0x062D}},
+  	{AVK_J, 0x062C, {0x062C}},
+  	{AVK_K, 0x0643, {0x0643}},
+  	{AVK_L, 0x0644, {0x0644}},
+  	{AVK_7, 0x0632, {0x0632}},
+  	{AVK_8, 0x0621, {0x0621}},
+  	
+  	{AVK_9, 0x0635, {0x0635}},
+  	{AVK_V, 0x0651, {0x0651}},
+  	{AVK_B, 0x0628, {0x0628}},
+  	{AVK_N, 0x0646, {0x0646}},
+  	{AVK_M, 0x0645, {0x0645}},
+  	{AVK_RWD, 0x061F, {0x061F}},
+    {AVK_ENTER,0x000A,{0x000A}},
+      
+    {AVK_SPACE,' ',{' '}},
+	{AVK_0,0x0660,{0x0660}}
+};
+#endif
 
 /*-------------------------------------------------------------------
       Type Declarations
