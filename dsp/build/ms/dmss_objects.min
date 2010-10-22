@@ -127,7 +127,7 @@ ifeq ($(USES_QBT), yes)
   #
   ifeq ($(USES_IBT), yes)
    ifneq ($(USES_MANGO_UI),yes)
-    ifneq ($(USES_MMI), yes)
+    ifeq ($(USES_MMI), yes)
       include $(BTHOSTSTATAPP_SRC)/bthoststatapp.min
     endif  
    endif

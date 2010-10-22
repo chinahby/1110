@@ -43,6 +43,7 @@ MSM_NOTPAGED +0
   {
     boot_vectors.o (Int_Vect)
     GreyBit*.o(+RO)
+    disp_ili9342_tft23_rot.o(+RO)
     tmc_nzi.o(+ZI)
     GlobalIMEM.o(+ZI)
   }
