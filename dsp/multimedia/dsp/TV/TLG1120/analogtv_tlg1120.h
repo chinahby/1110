@@ -3,10 +3,12 @@
 
 
 
-
+#if 0
 extern boolean analogtv_tlg1120_init(camsensor_function_table_type *camsensor_function_table_ptr,
 				                                camctrl_tbl_type              *camctrl_tbl_ptr);
 
-
+#else
+extern void camsensor_tlg1120_init(void);
+#endif
 #endif
 

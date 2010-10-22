@@ -3,6 +3,17 @@
 #include	"A8_sensor.h"
 #include 	"ait_interface.h"
 
+// sensor's chip ID and version
+#define SIV121A_SENSOR_ID       		    (0x92)
+#define SIV121A_SENSOR_VERSION  			(0x11)
+
+#define SIV121A_I2C_WRITE_ID   	            (0x66)
+#define SIV121A_I2C_READ_ID		            (0x67)
+
+/* SENSOR REGISTER DEFINE */
+#define SIV121A_ID_REG           	        (0x01)
+#define SIV121A_INFO_REG                	(0x02)
+
 #define	SENSOR_ID					(0xa0)
 #define	SENSOR_I2C_TYPE				(A8_I2C_1A1D)
 #define SENSOR_PREVIEW_VH_POLARITY  (A8_SENSOR_HOR_POS|A8_SENSOR_VER_POS)
@@ -11,9 +22,9 @@
 #define SENSOR_FULL_LATCH_COUNT     (A8_PHASE_COUNTER_NUM_2)
 #define SENSOR_PREVIEW_YUV_FORMAT   (A8_SENSOR_YCBYCR) //(A8_SENSOR_CBYCRY) //
 #define SENSOR_FULL_YUV_FORMAT      (A8_SENSOR_YCRYCB) //(A8_SENSOR_CBYCRY) //
-#define SENSOR_LATCH_EDGE           (A8_SENSOR_POS_EDGE)
+#define SENSOR_LATCH_EDGE           (A8_SENSOR_POS_EDGE|A8_SENSOR_NEG_EDGE)
 
-#define	SENSOR_I2C_ID  			    (0x42)
+#define	SENSOR_I2C_ID  			    (0x66)
 #define	SENSOR_PREVIEW_WIDTH  	    (640)
 #define	SENSOR_PREVIEW_HEIGHT  	    (480)
 #define	SENSOR_FULL_WIDTH  		    (640)
@@ -1825,31 +1836,32 @@ static u_short 	Sensor_FrameRate(u_short FrameRate)
 static void	Sensor_Enable(u_short enable)
 {
 	u_char retVal = 0;
+	int i=50;
 	AIT_Message_P1("GC0307 enable=%d\r\n", enable);
 	
 	if(enable)
 	{
-		A800_SetGPIO(AIT_GPIO_SENSOR_POWER_CTL);		    
+		A8L_VIF_Init(&preview_mode);
+		
+		//A800_SetGPIO(AIT_GPIO_SENSOR_POWER_CTL);		    
 		A8L_SetSensorPowerPin(1);
-		A8L_SetSensorResetPin(1); 
-		A8L_SetSensorEnablePin(0);
+		sys_IF_ait_delay1ms(5);
+		A8L_SetSensorEnablePin(1);
+		
 		sys_IF_ait_delay1ms(10);
 		
-		A8L_VIF_Init(&preview_mode);
-		//		AITS_I2C_Init();
 		
+		A8L_SetSensorResetPin(1); 
 		sys_IF_ait_delay1ms(10);
 		A8L_SetSensorResetPin(0);
-
-		sys_IF_ait_delay1ms(30); 
+		sys_IF_ait_delay1ms(15); 
 		A8L_SetSensorResetPin(1); 
 		sys_IF_ait_delay1ms(10);
 		//Initial I2C I/F
+
 		A8L_SetSensorIF(A8_SENSOR_SCK_PIN, A8_ON);
 		A8L_SetSensorIF(A8_SENSOR_SDA_PIN, A8_ON);
-		sys_IF_ait_delay1ms(10);
-
-	    gbSensorInited = 1;    		
+	    //gbSensorInited = 1;    		
 	}
 	else
 	{
@@ -1859,11 +1871,11 @@ static void	Sensor_Enable(u_short enable)
 		//Turn off Sensor MCLK
 		A8L_SensorClockOutput(A8_OFF);
 
-		A8L_SetSensorEnablePin(1);	
+		A8L_SetSensorEnablePin(0);	
 		A8L_SetSensorIF(A8_SENSOR_SCK_PIN, A8_OFF);
 		A8L_SetSensorIF(A8_SENSOR_SDA_PIN, A8_OFF);	
 		A8L_SetSensorPowerPin(0);		    			        	
-		A800_ClearGPIO(AIT_GPIO_SENSOR_POWER_CTL);
+		//A800_ClearGPIO(AIT_GPIO_SENSOR_POWER_CTL);
 #if 0	
 		SetA8RegB(0x6050,GetA8RegB(0x6050)|0x07);
 		sys_IF_ait_delay1ms(100);	
@@ -1891,13 +1903,26 @@ static void	Sensor_Enable(u_short enable)
 static u_short	Get_Sensor_ID(u_short*	SensorID)
 {
 	u_short	fRet,sensor_id=0;
-	
+	u_short i= 40;
 	if(!gbSensorInited)
 		Sensor_Enable(1);
-		
+
+	A8L_SetSenReg(0x00,0x00);
+	
+   	A8L_GetSenReg(SIV121A_ID_REG,&sensor_id); 
+    
+    MSG_FATAL("SIV121A_ID_REG = %x",sensor_id,0,0);
+    
+
+	A8L_GetSenReg(SIV121A_INFO_REG,&sensor_id);
+    MSG_FATAL("SIV121A_INFO_REG = %x",sensor_id,0,0);
+
+#if 0	
+	sensor_id = 0x0000;
 	fRet = A8L_GetSenReg(0x00,&sensor_id);
 	*SensorID = sensor_id;
-	MSG_FATAL("sensor_id = 0x%x",sensor_id,0,0);
+	MSG_FATAL("sensor_id 0x00 = 0x%x,fRet : 0x%x",sensor_id,fRet,0);
+#endif
 
 	if(!gbSensorInited)
 		Sensor_Enable(0);

@@ -388,10 +388,9 @@ short	SendA8Cmd(u_short cmd)
 	SetA8RegB(A8_HOST_CMD_RG, (cmd & 0xFF));
 
 	ret = GetA8RegW(A8_HOST_CMD_RG);       // Add dummy read for ESD
-	MSG_FATAL("SendA8Cmd ret = 0x%x",ret,0,0);
+
 	while((ret = GetA8RegW((A8_HOST_CMD_RG))) && timeout < 0x2000)
 	{
-		MSG_FATAL("SendA8Cmd ret = 0x%x,timeout = %d",ret,timeout,0);
 	   	sys_IF_ait_delay1us(100);
 		timeout++;
 	}
@@ -401,8 +400,9 @@ short	SendA8Cmd(u_short cmd)
 	{
 		return  0;
 	}
-	
-    	return 1;
+
+	MSG_FATAL("timeout = %d, ret = 0x%x",timeout,ret,0);
+    return 1;
 }
 
 u_short SetA8GrpFIFODataW(u_short **pshorttmp)

@@ -4,7 +4,7 @@
 #include "cam_module.h"
 #include "sys_if_ait_api.h"
 //add by yangdecai 09-24
-#define __MMI_MAINLCD_160X128__
+#define __MMI_MAINLCD_220X176__
 //------------------------------------------------------------------------------------//
 // LCD customization definition
 //------------------------------------------------------------------------------------//
@@ -33,7 +33,7 @@
 #elif
 //#error __MMI_MAINLCD_xxxxxxx should be defined in global scope.
 #endif
-#define SET_LCD_WINDOW(x,y,w,h)	 LCD_SetWindow(x,y,w,h)
+//#define SET_LCD_WINDOW(x,y,w,h)	 LCD_SetWindow(x,y,w,h)
 
 //===========================
 // External Clock
@@ -45,6 +45,9 @@
 #if defined(__QSC_TARGET__)
 #define AIT701_RESET			(GPIO_OUTPUT_53)
 #define AIT701_BYPASS			(GPIO_OUTPUT_51)
+#define AIT701_DSP_CLK			(0)			//only use in MTK
+#define AIT701_CLKNUM			(0)			//only use in MTK
+#define AIT701_DSPCLK_CNGDATA	(0)			//only use in MTK
 #define AIT_SLEEP_CHECKTIME 	(300)
 
 #define	ATV_POWER_PIN			(GPIO_OUTPUT_25)
@@ -111,15 +114,6 @@ typedef enum eEMI_MODE{
 	EMIMODE_ACTIVE_NO_PLL
 }eEMI_MODE;
 
-#if defined(MTK_PLATFORM)
-typedef struct AIT_lock_tag 
-{
-   kal_uint32  lock_count;
-   kal_taskid  owner_id;
-   kal_mutexid dsp_mutex; 
-   kal_semid    dsp_sem;
-} AIT_MTD_LOCK;
-#endif /*MTK_PLATFROM*/
 
 //SD Interface
 //extern unsigned char* AIT701_SD_Initialize(void);

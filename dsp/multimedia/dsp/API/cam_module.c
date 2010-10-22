@@ -65,7 +65,7 @@ static char bIsVidPlayFullScreen = 0;
 
 static void AIT701_ResetLCDWindow(void)
 {
-int timeout;
+	int timeout;
 	extern unsigned short gA8MainLCDWidth;
 	extern unsigned short gA8MainLCDHeight;
 	
@@ -85,13 +85,13 @@ int timeout;
 
 static void mmpfunc_sleepevent_handler(void *parameter)
 {
-//	AIT_Message_P1("mmpfunc_sleepevent_handler %d\r\n",ait_sleep_enable);
+	MSG_FATAL("mmpfunc_sleepevent_handler!",0,0,0);
 
 #if defined(__QSC_TARGET__)
 //Stop timer Handler
     clk_dereg( &ait_hw_clk_cb );
 #endif
-		gAitEnterSleep = TRUE;
+	gAitEnterSleep = TRUE;
 
 }
 
@@ -175,15 +175,17 @@ static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_da
 						status = cam_IF_ait_VIF_Src_Selection((ePREVIEW_SRC_MODE)preview_src);
 						if(status)					
 						{
-								AIT_Message_Error("Sensor Selection Error",status);
+							AIT_Message_Error("Sensor Selection Error",status);
 						}
 
 
 						status = cam_IF_ait_open_camera();
 		
 						if(!status)					
+						{
 							status = cam_IF_ait_preview_start(p1,p2);//(ext_camera_para_struct *) client_data);
-
+							MSG_FATAL("cam_IF_ait_preview_start status : %d",status,0,0);
+						}
 					}
 				}
 				break;
@@ -251,7 +253,9 @@ static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_da
 					}
 					AIT_Message_P3("MMPFUNC_CAM_JPEG_DECODE, Size=%d, W=%d, H=%d\r\n",p1,p2,p3);
 					cam_IF_ait_close_AIT();					
-				}else{
+				}
+				else
+				{
 					status = MMP_INVALID_STATE;
 				}
 			}
@@ -776,7 +780,7 @@ static mmp_ret_code_type mmpfunc_process(mmp_func_type func, void* client_data, 
 
 	AIT_ext_Take_Semaphore(0);
 	//lcd_busy_waiting();
-	mmpfunc_sleep_disable();
+	//mmpfunc_sleep_disable();
 
 	switch(func)
 	{
@@ -835,15 +839,15 @@ static mmp_ret_code_type mmpfunc_process(mmp_func_type func, void* client_data, 
 			break;
 	}
 	if(status)
-		AIT_Message_P6("!!AIT Func Fail =%x ,P1=%d,P2=%d,P3=%d,P4=%d, status=%d\r\n",func,p1,p2,p3,p4,status);
+		MSG_FATAL("!!AIT Func Fail =%x ,P1=%d,P2=%d!!!!!",0,0,0);
 		
-	mmpfunc_sleep_enable();
+	//mmpfunc_sleep_enable();
 	AIT_ext_Give_Semaphore();
 	return status;
 }
 
 void AIT701_reg_mem_test(void)
-{
+{	
    	sys_IF_ait_set_bypass_mode(A8_OFF);
 	
 	A800_TestRegisterAccess();
@@ -914,7 +918,12 @@ static void AIT701_cam_cmd_mapping()
 	AIT_ext_cam_cmd_mapping();
 }
 
-		
+void cam_test(void)
+{
+	ext_camera_para_struct ext_cam_para = {0};
+	
+	AIT701_cam_preview(&ext_cam_para);
+}
 
 static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 {
@@ -933,7 +942,7 @@ static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 	else
 #endif	
 	{
-		if(ait_is_active_cam()==0){
+		if(ait_is_active_cam()==1){
 #ifdef __SXMOBI_VC_SUPPORT__		
 		#if AIT_VIDEO_PHONE_SUPPORT
             if(1 == bVideoChat)

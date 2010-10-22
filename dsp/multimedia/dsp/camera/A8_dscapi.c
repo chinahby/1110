@@ -1424,13 +1424,13 @@ u_short A8L_GetJfifTag( u_short *TagLength, u_char **ImgAddr, s_int Length )
 
 	TagID = (**ImgAddr << 8) + *(*ImgAddr+1);
 	if ( TagID >= 0xFFD0 && TagID <= 0xFFD9 )
-		{
+	{
 		*TagLength = 0;
-		}
+	}
 	else
-		{
+	{
 		*TagLength = (*(*ImgAddr+2) << 8) + *(*ImgAddr+3);
-		}
+	}
 	return TagID;
 }
 
@@ -1447,8 +1447,8 @@ s_short A8L_GetJpegInfo( u_short *ImgAddr, s_int Length, s_short *Width, s_short
 	
 	ImgLength = Length;
 	retVal = 0;
-	do
-		{
+	do{
+		dog_kick();
 		TagID = A8L_GetJfifTag( &TagLength, &JpegBufferPtr, ImgLength );
 		ImgLength = ImgLength - TagLength - 2;
 
@@ -1462,29 +1462,29 @@ s_short A8L_GetJpegInfo( u_short *ImgAddr, s_int Length, s_short *Width, s_short
                 *Quality = 2;
             else
                 *Quality = 0;
-	}
+		}
             
 		if ( TagID > 0xFFC0 && TagID < 0xFFC4 )
-			{
+		{
 			retVal = 1;		// Not Baseline JPEG
-			}
-		else if ( TagID > 0xFFC4 && TagID < 0xFFCC )
-			{
-			retVal = 1;		// Not Baseline JPEG
-			}
-		else if ( TagID > 0xFFCC && TagID < 0xFFD0 )
-			{
-			retVal = 1;		// Not Baseline JPEG
-			}
-		else if ( TagID == 0xFFC0 )
-			{
-			retVal = 2;		// Baseline JPEG
-			}
-		else 	//	if ( TagID != 0xFFC0 )
-			{
-			JpegBufferPtr += (TagLength+2);
-			}
 		}
+		else if ( TagID > 0xFFC4 && TagID < 0xFFCC )
+		{
+			retVal = 1;		// Not Baseline JPEG
+		}
+		else if ( TagID > 0xFFCC && TagID < 0xFFD0 )
+		{
+			retVal = 1;		// Not Baseline JPEG
+		}
+		else if ( TagID == 0xFFC0 )
+		{
+			retVal = 2;		// Baseline JPEG
+		}
+		else 	//	if ( TagID != 0xFFC0 )
+		{
+			JpegBufferPtr += (TagLength+2);
+		}
+	}
 	while ( TagID != 0xFFC0 && ImgLength > 0 && retVal == 0 );
 
 	//if ( ImgLength > 0 )
@@ -1494,7 +1494,7 @@ s_short A8L_GetJpegInfo( u_short *ImgAddr, s_int Length, s_short *Width, s_short
 		*Width =  (*(JpegBufferPtr+7) << 8) + *(JpegBufferPtr+8);
 		if ( *(JpegBufferPtr+9) == 3 )// grayscale image sw codec 
 		//if ( (*(JpegBufferPtr+9) == 1) || (*(JpegBufferPtr+9) == 3) ) //070403 for mono jpeg decode
-			{
+		{
 			CType = *(JpegBufferPtr+11);
 			if ( CType == 0x22 )			// Yuv420
 				*Format = A8_JPEG_FORMAT_YUV420;
@@ -1504,10 +1504,12 @@ s_short A8L_GetJpegInfo( u_short *ImgAddr, s_int Length, s_short *Width, s_short
 				*Format = A8_JPEG_FORMAT_YUV444;
 			else if ( CType == 0x41 )		// Yuv411
 				*Format = A8_JPEG_FORMAT_YUV411;
-			}
+		}
 		else
 			*Format = A8_JPEG_FORMAT_NOT_3_COLOR;
-                return A8_NO_ERROR;
+
+
+        return A8_NO_ERROR;
 	}
 	else if ( retVal == 1 )
 	{
@@ -2018,6 +2020,7 @@ s_short A8L_DecodeJpegBase( u_short *JpegBufferPtr, s_int Length, s_int DestAddr
 	{
 		do
 		{
+			dog_kick();
 			LengthForSend = Length + gJpegHuffBackupTail - ByteCount;
 			if ( LengthForSend >32 )
 				LengthForSend = 16;
@@ -2038,15 +2041,14 @@ s_short A8L_DecodeJpegBase( u_short *JpegBufferPtr, s_int Length, s_int DestAddr
 					{
 						if ( HuffBufferIndex < (gJpegHuffBackupTail>>1) )
 						{
-PutWordFIFO(gJpegHuffBackup[HuffBufferIndex++]);
-
+							PutWordFIFO(gJpegHuffBackup[HuffBufferIndex++]);
 						}
 						else
 						{
 							if ( gJpegHuffBackupTail != gJpegHuffBackupLength )
 								JpegBufferPtr++;	// Skipping 1 word
 
-								PutWordFIFO(*(JpegBufferPtr++));
+							PutWordFIFO(*(JpegBufferPtr++));
 
 						}
 					}
@@ -2070,6 +2072,7 @@ PutWordFIFO(gJpegHuffBackup[HuffBufferIndex++]);
 	{
 		do
 		{
+			dog_kick();
 			LengthForSend = Length - ByteCount;
 			if ( LengthForSend >32 )
 				LengthForSend = 16;
@@ -2081,17 +2084,11 @@ PutWordFIFO(gJpegHuffBackup[HuffBufferIndex++]);
 			{
 				//open FIFO
 				OpenFIFO(0x6220);
-
-
-
-
 				ByteCount += (LengthForSend<<1);
-				while(LengthForSend--){
-							PutWordFIFO(*(JpegBufferPtr++));
-
+				while(LengthForSend--)
+				{
+					PutWordFIFO(*(JpegBufferPtr++));
 				}
-
-//}
 			}
 			else
 			{
@@ -2103,7 +2100,7 @@ PutWordFIFO(gJpegHuffBackup[HuffBufferIndex++]);
 					return A8_TIMEOUT_ERROR;
 				}
 			}
-		Status = GetA8RegW(0x6204);
+			Status = GetA8RegW(0x6204);
 		}while ( (ByteCount < Length) && (( Status & 0x02 ) != 0) );
 	}
 	
@@ -2489,6 +2486,7 @@ s_short A8L_DecodeJpegViaFIFOBase( u_short *JpegBufferPtr, s_int JpegLength, u_s
 	s_int RawLength, RawWidth ;
 	s_short RetErr;
 
+	MSG_FATAL("A8L_DecodeJpegViaFIFOBase",0,0,0);
 	RetErr = A8L_GetJpegInfo( JpegBufferPtr, JpegLength, &Width, &Height, &Format ,&Quality);
 	if ( Format != A8_JPEG_FORMAT_YUV411 && Format != A8_JPEG_FORMAT_YUV422 && Format != A8_JPEG_FORMAT_YUV420 && Format != A8_JPEG_FORMAT_YUV444 )
 		return A8_UNSUPPORT_ERROR;
@@ -2519,7 +2517,7 @@ s_short A8L_DecodeJpegViaFIFOBase( u_short *JpegBufferPtr, s_int JpegLength, u_s
 
 	SetA8RegW( 0x6224, A8_JPEG_FIFO_DECODE_FIFO_BUF_SIZE & 0xFFFF );
 	SetA8RegB( 0x6226, A8_JPEG_FIFO_DECODE_FIFO_BUF_SIZE >> 16 );
-        SetA8RegB(0x6902, GetA8RegB(0x6902)|0x40); //enable fast jpeg decode clock
+    SetA8RegB(0x6902, GetA8RegB(0x6902)|0x40); //enable fast jpeg decode clock
         
 	//if(Width>=800)
 	//SetA8RegB(0x620A, GetA8RegB(0x620A)|0x80); //decode double buffer
@@ -2540,6 +2538,7 @@ s_short A8L_DecodeJpegViaFIFOBase( u_short *JpegBufferPtr, s_int JpegLength, u_s
 	RawByteCount = 0;
 	do	//Input jpeg source data from host
 	{
+		dog_kick();
 		LengthForSend = JpegLength - JpegByteCount;
 		if ( LengthForSend >32 )
 			LengthForSend = 16;
@@ -2586,6 +2585,7 @@ s_short A8L_DecodeJpegViaFIFOBase( u_short *JpegBufferPtr, s_int JpegLength, u_s
 			}
 			
 			LengthForRecv = GetA8RegB(0x6B27) & 0x1F;
+			dog_kick();
 		}
 		
 		Status = GetA8RegW(0x6204);
@@ -2595,6 +2595,7 @@ s_short A8L_DecodeJpegViaFIFOBase( u_short *JpegBufferPtr, s_int JpegLength, u_s
 	
 	do
 	{
+		dog_kick();
 		LengthForRecv = GetA8RegB(0x6B27) & 0x1F;
 		while ( LengthForRecv > 0 )
 		{
@@ -2617,6 +2618,7 @@ s_short A8L_DecodeJpegViaFIFOBase( u_short *JpegBufferPtr, s_int JpegLength, u_s
 			}
 			
 			LengthForRecv = GetA8RegB(0x6B27) & 0x1F;
+			dog_kick();
 		}
 			
 		Status = GetA8RegW(0x6204);
@@ -4732,14 +4734,14 @@ s_short A8L_CheckReadyForA8Resume()
 s_short A8L_CheckReadyForA8Command(void)
 {
 	s_int timeout = 0;
-	
-	while(((GetA8DSCStatus() & A8_DSC_READY_FOR_CMD) == 0) && (timeout < A8_CMD_READY_TIME_OUT) )
+	u_short ret= 0;
+	while((((ret = GetA8DSCStatus()) & A8_DSC_READY_FOR_CMD) == 0) && (timeout < A8_CMD_READY_TIME_OUT) )
 	{
 		sys_IF_ait_delay1us(100);	// Sleep delay about 0.1ms or 1ms. Depends on BB System delay function.
 		timeout++;
+		MSG_FATAL("A8L_CheckReadyForA8Command ret = 0x%x,timeout = %d",ret,timeout,0);
 	}
 
-	MSG_FATAL("A8L_CheckReadyForA8Command timeout = %d",timeout,0,0);
 	if ( timeout >= A8_CMD_READY_TIME_OUT )
 	{
 		AIT_Message_Error("A8L_CheckReadyForA8Command Error!",0);

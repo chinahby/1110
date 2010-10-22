@@ -8,7 +8,7 @@
 
 #define ANALOGTV_TLG1120_C_DEBUG
 #ifdef ANALOGTV_TLG1120_C_DEBUG
-#define ATV_DEBUG(fmt,x,y,z) ERR(fmt,x,y,z)
+#define ATV_DEBUG(fmt,x,y,z) MSG_FATAL(fmt,x,y,z)
 #else
 #define ATV_DEBUG(fmt,x,y,z) 
 #endif
@@ -22,26 +22,7 @@
 
 void TLG1120_init_host_gpio(void)
 {
-#if 0   //modi by yangdecai for debug
-    gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_HIGH_VALUE);
-	gpio_out(CAMIF_EN2_N, (GPIO_ValueType)GPIO_HIGH_VALUE);
-
-#ifndef TLG_I2C_USE_BUS  /*configure the i2c pin with gpio to i2c*/
-    gpio_set_direction(ATV_I2C_SDA,I2C_PIN_OUTPUT);
-    gpio_set_direction(ATV_I2C_SCL,I2C_PIN_OUTPUT);
-#endif
-    gpio_config(TLG_VSYNC);
-    gpio_set_direction(TLG_VSYNC,I2C_PIN_OUTPUT);
-    gpio_out(TLG_VSYNC, GPIO_HIGH_VALUE);
-
-    gpio_config(TLG_CMPCLK);
-    gpio_set_direction(TLG_CMPCLK,I2C_PIN_OUTPUT);
-    gpio_out(TLG_CMPCLK, GPIO_LOW_VALUE);
-
-    gpio_config(TLG_HSYNC);
-    gpio_set_direction(TLG_HSYNC,I2C_PIN_OUTPUT);
-    gpio_out(TLG_HSYNC, GPIO_LOW_VALUE);    
-#endif
+	return;
 }
 
 
@@ -49,24 +30,7 @@ void TLG1120_init_host_gpio(void)
 
 void TLG1120_poweron_chip(void)
 {    
-    /*RESET*/
-#if 0    ////modi by yangdecai for debug
-    gpio_config(ATV_RESET_PIN);
-    gpio_set_direction(ATV_RESET_PIN,I2C_PIN_OUTPUT);
-    gpio_out(ATV_RESET_PIN, GPIO_LOW_VALUE);
-    TLG_Delay(5);    
-#if defined(FEATURE_PROJECT_G001) && defined(FEATURE_ANALOG_TV)
-    pm_vote_vreg_switch( PM_ON_CMD, PM_VREG_GP1_ID, PM_VOTE_VREG_TV_APP__TV );
-	TLG_Delay(50);
-#endif
-
-#if defined(FEATURE_PROJECT_W100) || defined(FEATURE_PROJECT_W101)
-    gpio_config(ATV_POWER_PIN);
-    gpio_set_direction(ATV_POWER_PIN,I2C_PIN_OUTPUT);
-    gpio_out(ATV_POWER_PIN, GPIO_HIGH_VALUE);
-#endif    
-#endif
-
+	return;
 }
 
 void TLG1120_reset_chip(void)   
@@ -78,24 +42,10 @@ void TLG1120_reset_chip(void)
 #endif   
     gpio_out(ATV_RESET_PIN, GPIO_HIGH_VALUE);
     TLG_Delay(25);
-//	GPIO_WriteIO(0, ATV_RESET_PIN);
-	
-//	GPIO_WriteIO(1, ATV_RESET_PIN);
-//	TLG_Delay(250);
 }
 
 static void TLG1120_poweroff_chip(void)
 {
-#if defined(FEATURE_PROJECT_G001) && defined(FEATURE_ANALOG_TV)
-    pm_vote_vreg_switch( PM_OFF_CMD, PM_VREG_GP1_ID, PM_VOTE_VREG_TV_APP__TV );
-#endif
-
-#if defined(FEATURE_PROJECT_W100) || defined(FEATURE_PROJECT_W101)
-	// Turn off 1.2V & 2.8V LDO	
-	gpio_out(ATV_RESET_PIN, GPIO_LOW_VALUE);
-    gpio_set_direction(ATV_POWER_PIN,I2C_PIN_OUTPUT);
-    gpio_out(ATV_POWER_PIN, GPIO_LOW_VALUE);
-#endif	
 	/* here we power off */
 	gpio_out(ATV_RESET_PIN, GPIO_LOW_VALUE);	
 }
@@ -780,9 +730,12 @@ int TLG1120_tv_get_param(ATV_GET_PARAM_e type, void * hparam, void * lparam)
 
 
 
-
+#if 0
 boolean camsensor_tlg1120_init(camsensor_function_table_type *camsensor_function_table_ptr,
 				                                camctrl_tbl_type              *camctrl_tbl_ptr)
+#else
+void camsensor_tlg1120_init(void)
+#endif
 {
     uint16 y, u, v;
 	//unsigned long time;
@@ -836,11 +789,11 @@ boolean camsensor_tlg1120_init(camsensor_function_table_type *camsensor_function
 #endif
 
     //ÉùÒôºÍÍ¼ÏñµÄ²âÊÔ
-   // TLGAPP_TurnOnTestPattern();
-//    TLGAPP_TurnOnTestToneMode();
- //   TLG_SetAudioTestToneMode(tlg_i2c_addr, TLG_ON);
-//    TLG_SetAudioTestToneL(tlg_i2c_addr, TLG_1KHZ);
- //   TLG_SetAudioTestToneR(tlg_i2c_addr, TLG_1KHZ);
+	TLGAPP_TurnOnTestPattern();
+	TLGAPP_TurnOnTestToneMode();
+	TLG_SetAudioTestToneMode(tlg_i2c_addr, TLG_ON);
+	TLG_SetAudioTestToneL(tlg_i2c_addr, TLG_1KHZ);
+	TLG_SetAudioTestToneR(tlg_i2c_addr, TLG_1KHZ);
 
 
     //register function for sensor driver
@@ -851,7 +804,7 @@ boolean camsensor_tlg1120_init(camsensor_function_table_type *camsensor_function
     
  //   time_secure_get_local_time_ms(&time);
  //   TLG_PRINT_1("TLG1120_tlg1120_init Leave time=%u\n",time);
-  //  TLG1120_tv_scan_channel(NULL);
+	TLG1120_tv_scan_channel(NULL);
     TLG_PRINT_0("TLG1120_tlg1120_init Leave");
   
 

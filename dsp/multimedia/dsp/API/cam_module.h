@@ -338,4 +338,5 @@ typedef enum
 	DSC_JPEG_QUALITY_LOW
 } DSCJpegQuality_e;
 
+void cam_test(void);
 #endif

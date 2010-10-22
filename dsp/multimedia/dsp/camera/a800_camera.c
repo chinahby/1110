@@ -45,7 +45,7 @@ u_short gA8CurrentCaptureResolution = 0;       // It is used for getting the cap
 extern StructBUF	gsBuffer[MAX_BUFFER];
 
 
-u_short APIRun;
+u_short APIRun = 0;
 
 u_short EntryAPI(void)
 {
@@ -130,13 +130,6 @@ u_char A800_InitDefine(void)
 	A800Data.SensorDes.IspUsed = 1;
 
 	A800Data.Select = &(A800Data.AITPreviewOSDModeSetting);
-
-	DBGPRINTF("MainLCDInfo = %d,%d %d, %d ,%d",
-					A800Data.MainLCDInfo.Width,
-					A800Data.MainLCDInfo.Height,
-					A800Data.MainLCDInfo.BusWidth,
-					A800Data.MainLCDInfo.BusType,
-					A800Data.MainLCDInfo.Burst);
 
 	A800Data.Select->WinState =  A8_MAIN_WIN_ON | A8_PIP_WIN_ON | A8_OVERLAY_WIN_ON | A8_ICON_WIN_ON;
 
@@ -889,7 +882,7 @@ u_char A800_SetPllFreq(u_char ait_mode, u_char on)
 #if defined(EXTCLK_26M)					
 					retVal = A8L_SetPllFreq(2);
 #elif defined(EXTCLK_19M2)					
-					retVal = A8L_SetPllFreq(2);
+					retVal = A8L_SetPllFreq(3);
 #endif					
 					AIT_ext_Set_EMIMode(EMIMODE_ACTIVE_PLL);
 					break;
@@ -1100,7 +1093,7 @@ u_short A800_SetSECCameraMode(u_short	VideoMode)
 */
 u_short A800_SetSECViewResolution(u_short	ViewResol)
 {
-//	s_int timeout = 0;
+	//s_int timeout = 0;
 	
 	SendA8Cmd( A8_HOST_CMD_SELECT_SEC_VIEW_MODE + (ViewResol << 8) );
 	
@@ -2800,14 +2793,15 @@ u_short A800_DecodeJpeg( u_short *jpgData, u_int jpgLength, u_short *outW, u_sho
 	s_short x0, y0, x1, y1, retVal;
 	u_int BufAddr;
 	A8S_CameraParam A8S_Cameraparam;
-	
+
+	MSG_FATAL("A800_DecodeJpeg",0,0,0);
 	retVal = A8L_GetJpegInfo( jpgData, jpgLength, &jpegWidth, &jpegHeight, &jpegFormat ,&Quality);
 	if (retVal != 0)
 	{  
-		//AIT_Message_P2( "[A800_DecodeJpeg] ERROR jpgW:%d, jpgH:%d \n", jpegWidth, jpegHeight ) ;
+		AIT_Message_P2( "[A800_DecodeJpeg] ERROR jpgW:%d, jpgH:%d", jpegWidth, jpegHeight ) ;
 		return 1;
 	}
-	//AIT_Message_P3("[A800_DecodeJpeg] jpgW:%d, jpgH:%d, format=%d \n", jpegWidth, jpegHeight, jpegFormat );
+	AIT_Message_P3("[A800_DecodeJpeg] jpgW:%d, jpgH:%d, format=%d", jpegWidth, jpegHeight, jpegFormat );
 	if ( autoScale )
 	{
 		tempWidth = *outW & 0xFFFC;
@@ -2889,8 +2883,8 @@ u_short A800_DecodeJpeg( u_short *jpgData, u_int jpgLength, u_short *outW, u_sho
 	*outW = tempWidth;
 	*outH = tempHeight;
 		
-	//AIT_Message_P2("[A800_DecodeJpeg] tgtW:%d, tgtH:%d \n", tempWidth, tempHeight );
-	//AIT_Message_P2("[A800_DecodeJpeg] M(Base):%d, N(rateH):%d \n", Base, rateH );
+	AIT_Message_P2("[A800_DecodeJpeg] tgtW:%d, tgtH:%d \n", tempWidth, tempHeight );
+	AIT_Message_P2("[A800_DecodeJpeg] M(Base):%d, N(rateH):%d \n", Base, rateH );
 
 	if (tempHeight%2 ==1)
 		y1 +=1;
@@ -2928,13 +2922,15 @@ u_short A800_DecodeJpeg( u_short *jpgData, u_int jpgLength, u_short *outW, u_sho
 		if ( (tempWidth% 4) != 1 ) 
 		{
 			if ((tempWidth% 4) == 0)
-			{	// 20070621, update. Memory copy is more stable!!
-//added by ming @20091105 for test 
+			{	
+				// 20070621, update. Memory copy is more stable!!
+				//added by ming @20091105 for test 
 				extern unsigned short gA8MainLCDWidth;
 				u_int h;
 				u_short *tmprgbBuf;	
 				extern unsigned char JpegdecodeDummyPixel;
-				for(h=0;h<tempHeight;h++){	
+				for(h=0;h<tempHeight;h++)
+				{	
 						tmprgbBuf = rgbBuf;
 						CopyMemWordA8ToHost(tmprgbBuf, 0L+tempWidth*2*h, (tempWidth-JpegdecodeDummyPixel)*2);    						
 						rgbBuf += gA8MainLCDWidth;

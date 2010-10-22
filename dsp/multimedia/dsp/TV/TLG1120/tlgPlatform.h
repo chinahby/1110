@@ -13,13 +13,9 @@
 #define TLG_1120
 #endif
 
-#ifdef FEATURE_PROJECT_W101
-#undef TLG_I2C_USE_BUS   /*to choose the i2c communication with gpio or I2C bus*/
-#else
-#undef TLG_I2C_USE_BUS   /*to choose the i2c communication with gpio or I2C bus*/
-#endif
 
-#undef TLG_FOR_QSC6270
+#define TLG_I2C_USE_BUS   /*to choose the i2c communication with gpio or I2C bus*/
+
 #define TEST_TLG1120_I2C
 
 /*****************************************************************************/
@@ -46,10 +42,10 @@
 
 
 /*GPIO MAP*/  //modi by yangdecai
-#define ATV_I2C_SDA      51//GPIO_OUTP_51
-#define ATV_I2C_SCL      50//GPIO_OUTP_50
-#define ATV_RESET_PIN    53//GPIO_OUTP_53
-#define ATV_POWER_PIN    44//GPIO_OUTP_44//GPIO_OUTP_44
+#define ATV_I2C_SDA      GPIO_OUTPUT_39
+#define ATV_I2C_SCL      GPIO_OUTPUT_40
+#define ATV_RESET_PIN    GPIO_OUTPUT_24
+#define ATV_POWER_PIN    GPIO_OUTPUT_25
 
 #define TLG_CMPCLK      GPIO_GENERIC_DEFAULT//CAMIF_PCLK
 #define TLG_VSYNC       GPIO_GENERIC_DEFAULT//CAMIF_VSYNC
@@ -99,18 +95,11 @@ typedef enum
 #define INPUT_YUV422
 #define INPUT_ORDER_YCbY1Cr
 
-
-#define set_i2c_pin(pin)             gpio_out(pin, GPIO_HIGH_VALUE)
-#define clr_i2c_pin(pin)             gpio_out(pin, GPIO_LOW_VALUE)
-#define set_i2c_pin_dir(pin,dir)     gpio_set_direction(pin, dir)           
-#define get_i2c_pin(pin)            (unsigned char)gpio_in(pin)
-
-
-#define TLG_PRINT_0(fmt)                               ERR(fmt, 0, 0, 0) 
-#define TLG_PRINT_1(fmt,arg1)                          ERR(fmt, arg1, 0, 0) 
-#define TLG_PRINT_2(fmt,arg1, arg2)                    ERR(fmt, arg1, arg2, 0) 
-#define TLG_PRINT_3(fmt,arg1, arg2, arg3)              ERR(fmt, arg1, arg2,arg3) 
-#define TLG_ERR(fmt)                                   ERR(fmt, 0, 0, 0) 
+#define TLG_PRINT_0(fmt)                               MSG_FATAL(fmt, 0, 0, 0) 
+#define TLG_PRINT_1(fmt,arg1)                          MSG_FATAL(fmt, arg1, 0, 0) 
+#define TLG_PRINT_2(fmt,arg1, arg2)                    MSG_FATAL(fmt, arg1, arg2, 0) 
+#define TLG_PRINT_3(fmt,arg1, arg2, arg3)              MSG_FATAL(fmt, arg1, arg2,arg3) 
+#define TLG_ERR(fmt)                                   MSG_FATAL(fmt, 0, 0, 0) 
 
 /*****************************************************************************/
 

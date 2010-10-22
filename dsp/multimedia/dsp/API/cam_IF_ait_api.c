@@ -123,6 +123,7 @@ extern void	sys_A800_LCDInit(void);
 	SetA8RegB(0x6511, GetA8RegB(0x6511) & (~0x04));
 	sys_IF_ait_delay1ms(1);
 
+
 	sys_A800_LCDInit();
 	A800_InitDefine();
 	A800_LCDInit();
@@ -224,7 +225,7 @@ A8_ERROR_MSG	cam_IF_ait_open_camera (void)
 	{
 		A8L_I2CInit(gsSensorUsing->i2c_type,gsSensorUsing->i2c_id);
 	}	
-	A800_PreInit_Sensor();	
+	//A800_PreInit_Sensor();	
 #endif	
 
 	retVal = A800_Init_Sensor();
@@ -235,7 +236,12 @@ A8_ERROR_MSG	cam_IF_ait_open_camera (void)
 		return A8_SYSTEM_ERROR;
 	}
 
-	A8L_CheckFrameStart();
+	retVal = A8L_CheckFrameStart();
+	if (retVal != A8_NO_ERROR)
+	{
+		AIT_Message_P1 ("cam_IF_ait_open_camera A8L_CheckFrameStart ret= %d",retVal);
+		//return A8_SYSTEM_ERROR;
+	}
 	
 /*
 	AIT_Current_Camera_config.zoom_step = 0xff;
@@ -416,7 +422,9 @@ A8_ERROR_MSG	cam_IF_ait_camera_id_detect (unsigned camera_id, unsigned short *se
 				else
 					break;
 			}
-		}else{
+		}
+		else
+		{
 			break;
 		}			
 	}
@@ -1069,6 +1077,7 @@ A8_ERROR_MSG cam_IF_ait_JPEG_decode(u_short * jpegbuf, u_int jpegsize, u_short p
 	jpegsize += 64;
 	if((panelwidth*panelheight*2)<=(240*180*2))
 	{
+		MSG_FATAL("1111111111111",0,0,0);
 		retVal=A800_DecodeJpeg( jpegbuf, jpegsize, &panelwidth, &panelheight, (u_short *)dataptr, 1);		
 	}
 	else if((panelwidth == 640) && (panelheight == 480))
@@ -1080,6 +1089,7 @@ A8_ERROR_MSG cam_IF_ait_JPEG_decode(u_short * jpegbuf, u_int jpegsize, u_short p
 	}	
 	else if((jpegWidth == panelwidth) && (jpegHeight == panelheight))
 	{
+		MSG_FATAL("1111111111111",0,0,0);
 		SetA8RegB(0x620A, 0x01);		/* JPEG repeat ratio */
 		SetA8RegB(0x4F1D, 0x00);	
 		retVal = A8L_DecodeJpegToRGBViaFIFO(jpegbuf, jpegsize, (u_short *)dataptr );
@@ -1094,6 +1104,7 @@ A8_ERROR_MSG cam_IF_ait_JPEG_decode(u_short * jpegbuf, u_int jpegsize, u_short p
 	}	
 	else
 	{
+		MSG_FATAL("1111111111111",0,0,0);
 		retVal = A8_UNSUPPORT_ERROR;
 	}
 	AIT_Message_P1("cam_IF_ait_JPEG_decode 1,ret = %d\r\n",retVal);
@@ -1651,7 +1662,7 @@ A8_ERROR_MSG cam_IF_ait_VIF_Src_Selection(ePREVIEW_SRC_MODE preview_src)
 			#if AIT_VIDEO_PHONE_SUPPORT
 			A8L_SetTVPreviewMode(A8_OFF, 0x0000, 0x2800);
 			#else
-			A8L_SetTVPreviewMode(A8_ON);//			A8L_SetTVPreviewMode(A8_OFF);
+			A8L_SetTVPreviewMode(A8_OFF);//			A8L_SetTVPreviewMode(A8_OFF);
 			#endif
 			break;
 

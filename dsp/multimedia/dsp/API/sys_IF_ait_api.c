@@ -23,7 +23,29 @@
 //#include "custom_drv_settings.h"
 #endif
 
+//#include "motorola_E1_1.h"
+
 extern kal_uint32 LCD_GetCurrentTiming(void);
+extern void disp_update
+(
+  /* The buffer pointer point to the first byte of the whole buffer.
+  */
+  void *buf_ptr,
+  /* Source image width */
+  int16 src_width,
+  /* Source rectangle starting row */
+  int16 src_starting_row,
+  /* Source rectangle starting column */
+  int16 src_starting_column,
+  /* Number of rows to update */
+  int16 num_of_rows,
+  /* Number of columns to update */
+  int16 num_of_columns,
+  /* Device rectangle starting row */
+  int16 dst_starting_row,
+  /* Device rectangle starting column */
+  int16 dst_starting_column
+);
 
 extern u_char AIT701_camera_fw[0x3000];
 
@@ -40,6 +62,7 @@ extern	bool gbAitUsbEn,gbAitSdEn,gbAitCamEn;
 extern t_sensor_manager* gsSensorUsing;
 extern t_sensor_manager* sensor_manager[];
 
+u_short RGB_ptr[100*75];
 
 
 //Vin@20091210:Twin Sensor & TV
@@ -173,23 +196,31 @@ void sys_IF_ait_reset_chip (void)
 */ 
 void sys_IF_ait_set_bypass_mode (u_char on)
 {
-	if (A8_ON == on)	{
+	if (A8_ON == on)
+	{
 		AIT_ext_Set_EMIMode(EMIMODE_BYPASS);
-	}else{
+	}
+	else
+	{
 		if((FALSE == gbAitCamEn) && (FALSE==gbAitSdEn) && (FALSE==gbAitUsbEn)) 
 		{	
 			AIT_ext_Set_EMIMode(EMIMODE_ACTIVE_NO_PLL);
 				
-		}else{
+		}
+		else
+		{
 			AIT_ext_Set_EMIMode(EMIMODE_ACTIVE_PLL);
 		}
 	}
 
 	AIT_ext_BypassPinCtl(on);
 
-	if (A8_ON == on)	{
+	if (A8_ON == on)
+	{
 		AITBypassMode = TRUE;
-	}else{
+	}
+	else
+	{
 		AITBypassMode = FALSE;	
 	}
 }
@@ -290,7 +321,8 @@ u_char	sys_IF_ait_search_sensor(void)
 	u_char retVal = 0;
 	u_char i;
 	u_short	sensor_id;
-//Vin@20091210:Twin Sensor & TV
+
+	//Vin@20091210:Twin Sensor & TV
 	ait_tv_Sensor_Present.MasterSensor = NULL;
 	ait_tv_Sensor_Present.SlaveSensor = NULL;
 	ait_tv_Sensor_Present.TV = NULL;
@@ -343,7 +375,7 @@ u_char	sys_IF_ait_search_sensor(void)
 	//MSG_FATAL("sys_IF_ait_boot_init:Mastar sensor_id = %x\r\n",ait_tv_Sensor_Present.MasterSensor->sensor_id,0,0);
 	//MSG_FATAL("sys_IF_ait_boot_init:Slave sensor_id = %x\r\n",ait_tv_Sensor_Present.SlaveSensor->sensor_id,0,0);
 	//MSG_FATAL("sys_IF_ait_boot_init: TV_id = %x\r\n",ait_tv_Sensor_Present.TV->sensor_id,0,0);
-	
+
 	MSG_FATAL("sys_IF_ait_boot_init:sensor_id = 0x%x\r\n",sensor_id,0,0);
 	return retVal;
 }
@@ -361,6 +393,10 @@ A8_ERROR_MSG sys_IF_ait_boot_init(void)
 	u_char retVal;
 	uint16 firmware_version = 0;
 	uint16 chipversion = 0;
+	u_int i=0;
+	u_short Quality;
+	s_short ImgWidth, ImgHeight, Format;
+	
 	MSG_FATAL("sys_IF_ait_boot_init start!",0,0,0);
 	sys_IF_ait_set_input_clock(A8_CAM, A8_ON);
 
@@ -370,7 +406,7 @@ A8_ERROR_MSG sys_IF_ait_boot_init(void)
 
 	A800_SetPllFreq(A8_CAM, A8_ON);
 
-#if 1	//For CS Timing test
+#if 0	//For CS Timing test
 {
 	extern void AIT701_reg_mem_test(void);
 	extern void sys_IF_ait_set_bypass_mode (u_char on);
@@ -410,11 +446,34 @@ A8_ERROR_MSG sys_IF_ait_boot_init(void)
 		return A8_DOWNLOAD_FW_ERROR;
 	}
 
-	firmware_version = A800_GetFirmwareMode();
-	chipversion = A8L_GetA8FirmwareVersion();
-
-	MSG_FATAL("firmware_version :0x%x,chipversion : 0x%x",firmware_version,chipversion,0);
+	//firmware_version = A800_GetFirmwareMode();  //0x2db
+	//chipversion = A8L_GetA8ChipVersion();   //0x6DE8
+#if 0
+	//MSG_FATAL("firmware_version :0x%x,chipversion : 0x%x",firmware_version,chipversion,0);
 	//Vin@20091210:Twin Sensor & TV
+	MSG_FATAL("Decode start!",0,0,0);
+		
+	MSG_FATAL("A8L_GetJpegInfo!!!",0,0,0);
+	A8L_GetJpegInfo((unsigned short *)motorola, sizeof(motorola), &ImgWidth, &ImgHeight, &Format, &Quality);
+	AIT_Message_P1("JPEG filesize = %d", sizeof(motorola));
+	AIT_Message_P1("JPEG Width = %d", ImgWidth);
+	AIT_Message_P1("JPEG Height = %d", ImgHeight);					
+	
+	//Clear RGB buffer
+	for (i= 0; i < 100*75; i++)
+	{
+		RGB_ptr[i] = 0x0000;	
+    }
+
+
+    MSG_FATAL("AIT701_JpegDecode!!!",0,0,0);
+	AIT701_JpegDecode((unsigned short *)motorola,sizeof(motorola),100,75,(unsigned char*)RGB_ptr,0);
+	MSG_FATAL("AIT701_JpegDecode end!!!",0,0,0);
+
+	sys_IF_ait_set_bypass_mode(A8_ON);
+	MSG_FATAL("Disp play!!!",0,0,0);
+	disp_update(RGB_ptr,100,0,0,100,75,0,0);
+#endif	
 	sys_IF_ait_search_sensor();
 
 	A800_PreInit_Sensor();
@@ -466,7 +525,8 @@ A8_ERROR_MSG sys_IF_ait_enter_sleep(void)
 	sys_IF_ait_usb_power(A8_OFF);	
 	AIT_Message_P1("A800_ExitUSBMode=0x%d\r\n", retVal);
 	
-	if(A800_IsResetStatus() || (sys_IF_ait_get_status() == AIT_STATUS_DUMMY))	{
+	if(A800_IsResetStatus() || (sys_IF_ait_get_status() == AIT_STATUS_DUMMY))
+	{
 		AIT_Message_P2("is_reset=0x%x,ait_status=0x%x\r\n", A800_IsResetStatus(), sys_IF_ait_get_status());
 		SetA8RegB(0x6903, 0xFF);
 		SetA8RegB(0x6904, 0x1C);

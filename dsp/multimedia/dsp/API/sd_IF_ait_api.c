@@ -70,6 +70,8 @@ A8_ERROR_MSG sd_IF_ait_init_sd(void)
 {
 	u_char retVal;
 
+	sys_IF_ait_boot_init();
+
 	sys_IF_ait_set_input_clock(A8_SD, A8_ON);
 	retVal = A800_CheckSDDevice();
 	if (retVal){

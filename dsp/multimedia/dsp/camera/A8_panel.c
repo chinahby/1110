@@ -27,7 +27,7 @@ u_char A800_HostInitLCDCommon(void)
 {
 	if(gMainPanelControlAttrib.PIXEL_CLOCK_DIV>0x0f)
 	{
-//		AIT_Message_Error("[A800_HostInitLCDCommon] Pixel cleck setting error!!%s,%d",(__FILE__,__LINE__));
+		AIT_Message_Error("[A800_HostInitLCDCommon] Pixel cleck setting error!!%s,%d",(__FILE__,__LINE__));
 		return A8_SYSTEM_ERROR;
 	}
 
@@ -72,7 +72,7 @@ u_char A800_HostInitLCDCommon(void)
 
 	if(gMainPanelControlAttrib.PIXEL_CLOCK_DIV!=3)
 	{
-//		AIT_Message_Error("!!!Warring!!! Please set PIXEL_CLOCK_DIV to 3, or LCD refresh will abnormal:%s %d" ,(__FILE__,__LINE__));
+		//AIT_Message_Error("!!!Warring!!! Please set PIXEL_CLOCK_DIV to 3, or LCD refresh will abnormal:%s %d" ,(__FILE__,__LINE__));
 	}
 
 	  

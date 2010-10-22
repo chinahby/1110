@@ -4,24 +4,16 @@
 #include "Rex.h"
 #include "clk.h"
 #include "clkregim.h"
-#include "gpio_1100.h"
-
-
 
 char  SysMsg[128];
-
-
 
 //#define A8_MAIN_LCD_BUS_WIDTH	(8)
 
 #define A8_SUB_LCD_WIDTH			(96)
 #define A8_SUB_LCD_HEIGHT			(96)
 
-
-
+boolean g_ByPassOn = TRUE;
 unsigned char AIT_sleep_enable=1;
-
-
 
 const unsigned short ait_sleep_checktime = AIT_SLEEP_CHECKTIME;
 const kal_uint32 CS_AitBypass   = ((0x01<<30)|(0x01<<26)|(0x03<<8)|0x10);
@@ -41,28 +33,19 @@ void AIT_ext_SetLCDWindow(unsigned short x,unsigned short y,unsigned short w,uns
 {
 #if defined(__QSC_TARGET__)
 //Customer define
-    //extern void st7735_set_camera_area(uint32 start_row, uint32 start_col,uint32 end_row, uint32 end_col);
+    extern void disp_setwindows(unsigned short x,unsigned short y,unsigned short w,unsigned short h);
 
-    //st7735_set_camera_area(x, y, w-1, h-1);
-#else
-//	LCD_INIT();   //modi by yangdecai 09-25
-//	ScreenTest();
+	MSG_FATAL("AIT_ext_SetLCDWindow!!!",0,0,0);
+    disp_setwindows(x, y, w, h);
 #endif	
 }
 
 
 void AIT_ext_SetLCDRotate(unsigned char bRotate)
 {
-#if 1
-	return;//need to implement in the lcd.c for full screen rotate play function
-#else
-
 #if defined(__QSC_TARGET__)
 
 #endif	
-	
-#endif	
-
 }
 
 
@@ -253,9 +236,9 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 		AIT_CAM_PREV_FULL_MODE,
 		CAM_ROTATE_NORMAL,
 		{0,0,220,176},
-		{0,3,220,149/*30*/},
-		{180,30,40,146},
-		{0,152,180,24}
+		{0,3,220,0/*30*/},
+		{180,30,40,0},
+		{0,152,180,0}
 	},
 	{
 		AIT_VDO_PREV_MODE,
@@ -427,34 +410,21 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 
 
 // DSC Related
-#ifndef WIN32
-//extern	t_sensor_manager	sensor_ov7670;
-//extern	t_sensor_manager	sensor_ov7680;
-//extern	t_sensor_manager	sensor_ov7690;
-extern	t_sensor_manager	sensor_gc0307;
-//extern	t_sensor_manager sensor_bf3503;
-#endif
+extern	t_sensor_manager	sensor_siv121a;
 
 //TV
 #ifdef AIT_ATV_SUPPORT
 u_char g_ATV_Flag=0;
-#if defined(ATV_CHIP_TLG1120)
 extern	t_sensor_manager	sensor_tlg1120;
-#elif defined(ATV_CHIP_RDA5888)
-extern	t_sensor_manager	tv_rda5888;
-#endif
 #endif
 
 t_sensor_manager* sensor_manager[] =
 {
-#ifndef WIN32
-
-//	&sensor_ov7670,
+	//&sensor_ov7670,
 	//&sensor_ov7680,
 	//&sensor_bf3503,
 	//&sensor_ov7690,	
-	&sensor_gc0307,
-#endif
+	&sensor_siv121a,
 	0
 };
 
@@ -463,11 +433,7 @@ t_sensor_manager* sensor_manager[] =
 t_sensor_manager* ait_tv_manager[] =
 {
 #ifdef AIT_ATV_SUPPORT
-#if defined(ATV_CHIP_TLG1120)
 	&sensor_tlg1120,
-#elif defined(ATV_CHIP_RDA5888)
-	&tv_rda5888,
-#endif
 #endif
 0
 };
@@ -525,10 +491,12 @@ void AIT_ext_BypassPinCtl(unsigned char bEnable)
 	gpio_tlmm_config(AIT701_BYPASS);
     if(bEnable)
     {
+    	g_ByPassOn = TRUE;
         (void)gpio_out(AIT701_BYPASS, GPIO_HIGH_VALUE);
     }
     else
     {
+    	g_ByPassOn = FALSE;
         (void)gpio_out(AIT701_BYPASS, GPIO_LOW_VALUE);
     }
     Delayms(10);

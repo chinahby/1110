@@ -38,7 +38,9 @@ void A8L_CheckSensorFrame(u_char mode)
 	while(TimeOutWhile(!((GetA8RegB(VIF_INT_ST_HOST)&mode)==mode)));
 	if(CheckTimeOut()) {
 		AIT_Message_P2("A8L_CheckSensorFrame failed, mode=0x%x, data=0x%x \r\n", mode,GetA8RegB(VIF_INT_ST_HOST));
-	}	
+	}
+
+	AIT_Message_P2("A8L_CheckSensorFrame mode=0x%x, data=0x%x \r\n", mode,GetA8RegB(VIF_INT_ST_HOST));
 }
 
 
@@ -133,7 +135,7 @@ u_short A8L_GetSenReg(u_short Reg, u_short *Value)
 	s_short	retVal;
 
 	SetA8RegW(0x6546, Reg);
-	SetA8RegW(0x6544, 0xFF);
+	SetA8RegW(0x6544, 0x0000);
 
 	retVal = SendA8Cmd(A8_HOST_CMD_GET_SENSOR_REG);
 	if ( retVal != 0 )

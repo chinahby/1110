@@ -62,6 +62,7 @@ typedef enum
 #include "msmhwioreg.h"
 #include "clk.h"
 #include "assert.h"
+#include "gpio_1100.h"
 
 #define EXTCLK_19M2
 #define EBI_BUS_8BIT_MODE
@@ -69,6 +70,8 @@ typedef enum
 #endif
 
 #define Delayms(t) clk_busy_wait(1000*t)
+
+//#define AIT_ATV_SUPPORT
 
 //===========================
 // Sensor I/F
@@ -179,30 +182,18 @@ typedef struct
 #if defined(__QSC_TARGET__)
 #include "AEEStdLib.h"
 #include "msg.h"
-#if 0
-#define AIT_Message_P0(s) 	DBGPRINTF("%s",s)
-#define AIT_Message_P1(s, a1) 	DBGPRINTF("%s",s, a1)
-#define AIT_Message_P2(s, a1, a2) 	DBGPRINTF("%s",s, a1, a2)
-#define AIT_Message_P3(s, a1, a2, a3) 	DBGPRINTF("%s",s, a1, a2, a3)
-#define AIT_Message_P4(s, a1, a2, a3, a4) 	DBGPRINTF("%s",s, a1, a2, a3, a4)
-#define AIT_Message_P5(s, a1, a2, a3, a4, a5) 	DBGPRINTF("%s",s, a1, a2, a3, a4, a5)
-#define AIT_Message_P6(s, a1, a2, a3, a4, a5, a6) 	DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6)
-#define AIT_Message_P7(s, a1, a2, a3, a4, a5, a6, a7)	DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7)
-#define AIT_Message_P8(s, a1, a2, a3, a4, a5, a6, a7, a8)	DBGPRINTF("%s",s, a1, a2, a3, a4, a5, a6, a7, a8)
-#define AIT_Message_Error(s, a1)	DBGPRINTF("%s",s, a1)
-#else
+
 #define AIT_Message_P0(s) MSG_FATAL(s,0,0,0)
 #define AIT_Message_P1(s, a1) MSG_FATAL(s,a1,0,0)
 #define AIT_Message_P2(s, a1, a2) MSG_FATAL(s,a1,a2,0)
 #define AIT_Message_P3(s, a1, a2, a3) MSG_FATAL(s,a1,a2,a3)
-#define AIT_Message_P4
-#define AIT_Message_P5
-#define AIT_Message_P6
-#define AIT_Message_P7
-#define AIT_Message_P8
+#define AIT_Message_P4(s, a1, a2, a3, a4)
+#define AIT_Message_P5(s, a1, a2, a3, a4, a5)
+#define AIT_Message_P6(s, a1, a2, a3, a4, a5, a6)
+#define AIT_Message_P7(s, a1, a2, a3, a4, a5, a6, a7)
+#define AIT_Message_P8(s, a1, a2, a3, a4, a5, a6, a7, a8)
 #define AIT_Message_Error(s,a1) MSG_FATAL(s,a1,0,0)
 
-#endif
 #endif
 
 //===========================
