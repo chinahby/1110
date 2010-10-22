@@ -271,7 +271,8 @@ enum
   IOCTL_DISP_CAPTURE_SCREEN,
 #endif
   IOCTL_DISP_OFF,
-  IOCTL_DISP_ON
+  IOCTL_DISP_ON,
+  IOCTL_DISP_SET_WINDOWS,
 };
 
 typedef struct
@@ -762,6 +763,7 @@ void disp_capture32
   dword count
 );
 
+void disp_setwindows(unsigned short x,unsigned short y,unsigned short w,unsigned short h);
 
 #ifdef FEATURE_TORCH_SUPPORT
 void disp_set_torch(void);

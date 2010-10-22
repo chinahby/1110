@@ -23,6 +23,7 @@ static disp_info_type           disp_drv_info = {0};
 static disp_drv_state_type      disp_drv_state = {0};
 static disp_drv_ic_type         disp_drv_ic = {0};
 
+extern boolean g_ByPassOn;
 /*===========================================================================
 
                             FUNCTION PROTOTYPES
@@ -113,7 +114,8 @@ SIDE EFFECTS
 static void disp_drv_set_backlight(byte level)
 {
     static uint32 current_level =  DISP_DRV_MIN_BACKLIGHT;
-  
+
+  	level = 3;
     if(disp_drv_state.disp_initialized &&
         disp_drv_state.disp_powered_up  &&
         disp_drv_state.display_on)
@@ -181,7 +183,7 @@ static void disp_drv_clear_screen_area(word start_row, word start_col,
                                                   word end_row, word end_col)
 {
     uint32 count = (end_row - start_row + 1) * (end_col - start_col + 1);
-    static uint32 whitebpp = 0x00;
+    static uint32 whitebpp = 0xF800;
     
     if (disp_drv_state.disp_initialized &&
         disp_drv_state.disp_powered_up  &&
@@ -587,16 +589,18 @@ static int disp_drv_ioctl ( int cmd, void *arg )
     switch (cmd) {
     case IOCTL_DISP_UPDATE:
     case IOCTL_DISP_UPDATE_UNDER_ERR_FATAL:
+
+    	g_ByPassOn = TRUE;
         disp_update_cmd = (disp_update_type*)arg;
         /* bitwise OR all int16 together. If the result is
          * less than 0, then at least one of them is negative */
-        if((disp_update_cmd->src_width |
+        if( g_ByPassOn && ((disp_update_cmd->src_width |
             disp_update_cmd->src_starting_row |
             disp_update_cmd->src_starting_column |
             disp_update_cmd->num_of_rows |
             disp_update_cmd->num_of_columns |
             disp_update_cmd->dst_starting_row |
-            disp_update_cmd->dst_starting_column ) >= 0)
+            disp_update_cmd->dst_starting_column ) >= 0))
         {
             disp_drv_update(disp_update_cmd->buf_ptr,
                             (uint32)disp_update_cmd->src_width,
@@ -643,6 +647,16 @@ static int disp_drv_ioctl ( int cmd, void *arg )
                                    ((disp_cls_type *)arg)->end_row,                                          
                                    ((disp_cls_type *)arg)->end_column);
         break;
+
+    case IOCTL_DISP_SET_WINDOWS:
+    	#if 0
+    	disp_update_cmd = (disp_update_type*)arg;
+    	disp_drv_ic.disp_ic_setwindow(disp_update_cmd->dst_starting_row, disp_update_cmd->dst_starting_column, 
+                                      disp_update_cmd->dst_starting_row + disp_update_cmd->num_of_rows - 1,
+                                      disp_update_cmd->dst_starting_column + disp_update_cmd->num_of_columns -1);
+		#else
+		disp_drv_ic.disp_ic_setwindow(0,0,disp_drv_info.disp_height-1,disp_drv_info.disp_width-1);
+		#endif
     default: 
         return -1;
     }

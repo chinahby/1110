@@ -224,6 +224,18 @@ void disp_update
   return;
 }
 
+void disp_setwindows(unsigned short x,unsigned short y,unsigned short w,unsigned short h)
+{
+	dup_arg.num_of_rows = x;
+	dup_arg.num_of_columns = y;
+	dup_arg.dst_starting_row = w;
+	dup_arg.dst_starting_column = h;
+	dup_arg.dest = PRIMARY_LCD_TYPE;
+
+	drv_ioctl(fd, IOCTL_DISP_SET_WINDOWS, (void *)&dup_arg);
+
+	return;
+}
 
 void disp_set_contrast(
   word contrast /* Contrast value to set */
