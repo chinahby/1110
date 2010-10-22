@@ -34,7 +34,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
 ============================================================================*/
 
-extern boolean disp_ili9163c_tft177hsd(disp_drv_ic_type *pdispic);
+extern boolean disp_ili9163c_tft177(disp_drv_ic_type *pdispic);
 
 /*============================================================================
 
@@ -44,7 +44,7 @@ extern boolean disp_ili9163c_tft177hsd(disp_drv_ic_type *pdispic);
 
 static disp_ic_install_type     disp_ic_install[] = 
 {
-    disp_ili9163c_tft177hsd,
+    disp_ili9163c_tft177,
     NULL
 };
 
