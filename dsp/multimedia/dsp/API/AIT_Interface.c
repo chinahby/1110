@@ -52,7 +52,7 @@ void AIT_ext_SetLCDRotate(unsigned char bRotate)
 const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 {
 
-#if defined(__MMI_MAINLCD_240X320__)
+#if defined(__MMI_MAINLCD_240X320__) || defined(__MMI_MAINLCD_320X240__)
 	{
 		AIT_CAM_PREV_FULL_MODE,
 		CAM_ROTATE_NORMAL,
@@ -64,7 +64,7 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 	{
 		AIT_CAM_PREV_NOR_MODE,
 		CAM_ROTATE_NORMAL,
-		{0,30,240,196},	
+		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},	
 		{0,4,180,20},
 		{200,35,40,210},
 		{0,290,240,30}
@@ -98,7 +98,7 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 	{
 		AIT_ATV_PREV_NOR_MODE,
 		CAM_ROTATE_NORMAL,
-		{0,18,A8_MAIN_LCD_WIDTH,196},		
+		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},		
 		{0,0,176,18},
 		{0,0,176,58},
 		{0,0,0,0}
@@ -414,8 +414,8 @@ extern	t_sensor_manager	sensor_siv121a;
 
 //TV
 #ifdef AIT_ATV_SUPPORT
-u_char g_ATV_Flag=0;
-extern	t_sensor_manager	sensor_tlg1120;
+u_char g_ATV_Flag=1;
+extern t_sensor_manager	sensor_tlg1120;
 #endif
 
 t_sensor_manager* sensor_manager[] =
@@ -488,6 +488,7 @@ void AIT_ext_BypassPinCtl(unsigned char bEnable)
 		//assert(0);
 	}
 
+	MSG_FATAL("AIT_ext_BypassPinCtl bEnable : %d",bEnable,0,0);
 	gpio_tlmm_config(AIT701_BYPASS);
     if(bEnable)
     {

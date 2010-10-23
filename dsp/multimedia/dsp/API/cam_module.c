@@ -165,6 +165,8 @@ static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_da
 		case	MMPFUNC_CAM_PREVIEW_START:	
 				{
 					ePREVIEW_SRC_MODE preview_src = (ePREVIEW_SRC_MODE)p2;
+
+					MSG_FATAL("preview_src = %d",preview_src,0,0);
 					status = MMP_SUCCESS;
 					if(AIT_STATUS_CAM_READY != sys_IF_ait_get_status())
 						status = cam_IF_ait_open_AIT();
@@ -921,7 +923,8 @@ static void AIT701_cam_cmd_mapping()
 void cam_test(void)
 {
 	ext_camera_para_struct ext_cam_para = {0};
-	
+
+	ext_cam_para.preview_src = AIT_TV_SRC;
 	AIT701_cam_preview(&ext_cam_para);
 }
 
@@ -934,9 +937,9 @@ static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 	{
 		ext_cam_para->preview_src = (unsigned char)	AIT_TV_SRC;
 		#ifdef __MMI_MAINLCD_128X160__
-			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START, ext_cam_para,AIT_ATV_PREV_NOR_MODE , 0, 0, 0, 0);
+			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START,ext_cam_para,AIT_ATV_PREV_NOR_MODE,AIT_TV_SRC,0,0,0);
 		#else
-			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START, ext_cam_para,AIT_ATV_PREV_FULL_MODE , 0, 0, 0, 0);
+			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START,ext_cam_para,AIT_ATV_PREV_NOR_MODE,AIT_TV_SRC,0,0,0);
 		#endif
 	}
 	else

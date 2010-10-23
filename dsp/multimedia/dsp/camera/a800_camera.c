@@ -238,7 +238,7 @@ WinInfoDT *A800_ChangeCameraSetting(PREVIEW_MODE mode)
 
 		Select->BufWidth = gsPreviewAttrib[PreviewModeIndex].PreviewRange.w;
 		Select->BufHeight = gsPreviewAttrib[PreviewModeIndex].PreviewRange.h;		
-#if defined(__MMI_MAINLCD_240X320__)
+#if defined(__MMI_MAINLCD_240X320__) || defined(__MMI_MAINLCD_320X240__)
 	
 		switch(mode)
 		{
