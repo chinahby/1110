@@ -2449,7 +2449,7 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe)
     {
         ATBattLevel = (uBattLevel * 100) / uBattScale;
     }
-    ERR("miaoxiaoming: ATBattLevel =%d",ATBattLevel ,0,0);
+    
     /* convert to 0-4 levels */
     if ( ATBattLevel <= 40 )
     {
