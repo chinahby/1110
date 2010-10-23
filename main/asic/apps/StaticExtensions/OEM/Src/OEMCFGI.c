@@ -2883,6 +2883,12 @@ void OEM_RestoreFactorySetting( void )
 #endif
 #endif
    OEMFS_Remove( ALARM_EFS_FILE);
+
+#ifdef FEATURE_DUAL_UIMCARD
+   nvi.sim_select = 0;
+   (void) OEMNV_Put( NV_SIM_SELECT_I, &nvi);
+#endif
+
    {
        extern void ClockApps_ClearAll(void);
        DBGPRINTF( ";restorefactory, remove alarm file success");
