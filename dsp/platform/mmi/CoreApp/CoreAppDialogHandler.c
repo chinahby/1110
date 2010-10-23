@@ -111,15 +111,14 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define IDLE_D_CLOCK_X 		5
 #define IDLE_D_CLOCK_Y 		25
 
-#define RPLMN_X				5
-#define RPLMN_Y				20
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
 
-#define DATA_X				5
-#define DATA_Y				36
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y + 30) 
 
 #define WEEK_X              5
 #define WEEK_Y              52
-
 
 #elif defined(FEATURE_DISP_128X160)
 
@@ -4334,7 +4333,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
-                                  12,
+                                  20,
                                   &wszDate[0], -1,
                                   0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE

@@ -92,7 +92,6 @@ unsigned char Tlg_i2c_write_data(unsigned char dadd, unsigned short	radd, unsign
     return FALSE;    
 }
 
-
 unsigned char Tlg_i2c_read_data(unsigned char dadd,	unsigned short radd, unsigned short	*data)
 {
     static byte   buf[4];
