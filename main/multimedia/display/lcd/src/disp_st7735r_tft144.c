@@ -106,6 +106,14 @@ static void disp_ic_init(void)
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
 {
+	if ( (start_col < 128) && (start_row < 128) && (end_col   < 128)   && (end_row   < 128) )
+    {
+		start_col += 2;
+		start_row += 3;
+		end_col   += 2;
+		end_row   += 3;        
+    }
+
     LCD_WRITE_CMD(0x2A);
     LCD_WRITE_DATA(0x0);
     LCD_WRITE_DATA((uint8)start_col);
@@ -214,7 +222,7 @@ boolean disp_st7735r_tft144(disp_drv_ic_type *pdispic)
     id2=LCD_READ_DATA();
     id3=LCD_READ_DATA();
     
-    if(id1 == 0x1 && id2 == 0x1 && id3 == 0x1)
+    //if(id1 == 0x1 && id2 == 0x1 && id3 == 0x1)
     {
         pdispic->disp_ic_init       = disp_ic_init;
         pdispic->disp_ic_setwindow  = disp_ic_setwindow;
