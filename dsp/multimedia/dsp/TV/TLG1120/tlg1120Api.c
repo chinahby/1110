@@ -1074,9 +1074,7 @@ TLGDLL_API void TLG_Fix_LNA_AGC(uint32 base_addr, tlg_statep state, int *ms)
 				TLG_ForceLnaAgc_Gain(base_addr);
 				
 				TLG_ReadReg(base_addr,      REG_01B6, &reg1b6);
-				TLG_REG_LOG((b, "\n\nFIX_BUG_1657: Reg0x%0X = 0x%04X\n", 
-							REG_01B6,
-							reg1b6));
+				MSG_FATAL("\n\nFIX_BUG_1657: Reg0x%0X = 0x%04X\n",REG_01B6,reg1b6,0);
 				TLGHAL_SET(reg1b6, 1,
 						REG_01B6_BIT3_SHIFT,
 						REG_01B6_BIT3_MASK);
@@ -1102,12 +1100,10 @@ TLGDLL_API void TLG_Fix_LNA_AGC(uint32 base_addr, tlg_statep state, int *ms)
 					case TLG_LNA_VHF1:
 
 						TLG_ReadRegNS(base_addr,      REG_0115  , &reg115);
-						TLG_REG_LOG((b, "FIX_BUG_1657: Reg0x%0X = 0x%04X\n", 
-									REG_0115,
-									reg115));
+						MSG_FATAL("FIX_BUG_1657: Reg0x%0X = 0x%04X\n",REG_0115,reg115,0);
 						
 						reg115 += 10;
-						TLG_REG_LOG((b, "TLG_Fix_LNA_AGC VHF1\n"));
+						MSG_FATAL("TLG_Fix_LNA_AGC VHF1\n",0,0,0);
 						TLG_ReadReg (base_addr,      REG_0025, &data);
 						TLGHAL_SET(data, reg115,
 								REG_0025_BIT9_0_SHIFT,
@@ -1117,11 +1113,9 @@ TLGDLL_API void TLG_Fix_LNA_AGC(uint32 base_addr, tlg_statep state, int *ms)
 					case TLG_LNA_VHF3:
 					case TLG_LNA_UHF:
 					default:
-						TLG_REG_LOG((b, "TLG_Fix_LNA_AGC UHF/VHF3\n"));
+						MSG_FATAL("TLG_Fix_LNA_AGC UHF/VHF3\n",0,0,0);
 						TLG_ReadRegNS(base_addr,      REG_0115  , &reg115);
-						TLG_REG_LOG((b, "FIX_BUG_1657: Reg0x%0X = 0x%04X\n\n", 
-									REG_0115,
-									reg115));
+						MSG_FATAL("FIX_BUG_1657: Reg0x%0X = 0x%04X\n\n",REG_0115,reg115,0);
 						
 						reg115 += 10;
 						TLG_ReadReg (base_addr,      REG_002B, &data);
@@ -1147,7 +1141,7 @@ TLGDLL_API void TLG_Fix_LNA_AGC(uint32 base_addr, tlg_statep state, int *ms)
 				TLG_ReleaseLnaAgc_Gain(base_addr);   
 				break;
 			default: 
-				TLG_REG_LOG((b,"TLG_Fix_LNA_AGC: %d BADSTATE!\n", state));
+				MSG_FATAL("TLG_Fix_LNA_AGC: %d BADSTATE!\n", state,0,0);
 				break;
 		}
 	}
@@ -1459,11 +1453,11 @@ TLGDLL_API int TLG_GetChipVersion(uint32 base_addr, uint32 *chip_vers)
 					(chip_id[2] == 0x0000) &&
 					(chip_id[3] == REG_0146_VALUE_1))
 			{
-				//TLG_PRINT_0(( "TLG_GetChipVersion Jupiter 2.1\n")); 
-				TLG_REG_LOG((b,"UHF_TBL=%x\n", (uint32) uhf_tbl));
+				TLG_PRINT_0(( "TLG_GetChipVersion Jupiter 2.1\n")); 
+				MSG_FATAL("UHF_TBL=%x\n", (uint32) uhf_tbl,0,0);
 				*chip_vers = TLG1120_VERS_2_1;
 				uhf_tbl = uhf_tbl_1_2;
-				TLG_REG_LOG((b,"UHF_TBL=%x\n", (uint32) uhf_tbl));
+				MSG_FATAL("UHF_TBL=%x\n", (uint32) uhf_tbl,0,0);
 				audio_mode_select = audio_mode_select_new;
 			}
 			else
@@ -1475,7 +1469,7 @@ TLGDLL_API int TLG_GetChipVersion(uint32 base_addr, uint32 *chip_vers)
 		}
 #ifdef TLG_SUPPORT_RUNTIME_CHECK
 		g_tlg_chip_ver = *chip_vers;
-		TLG_REG_LOG((b,"chip version = 0x%x\n", g_tlg_chip_ver));
+		MSG_FATAL("chip version = 0x%x\n", g_tlg_chip_ver,0,0);
 	} else
 		*chip_vers = g_tlg_chip_ver;
 #endif 
@@ -1554,7 +1548,7 @@ TLGDLL_API int TLG_InitASYNC(uint32 base_addr, tlg_statep state, int *ms)
 				TLG_GetChipVersion(base_addr, &version);
 			}
 #endif 
-			TLG_REG_LOG((b, "TLG_InitASYNC start\n"));
+			MSG_FATAL("TLG_InitASYNC start\n",0,0,0);
 			
 			TLG_WriteReg(base_addr, REG_0000, REG_0000_VALUE_1);
 	if (isinitcheck == 0)
@@ -1631,37 +1625,24 @@ TLGDLL_API int TLG_InitASYNC(uint32 base_addr, tlg_statep state, int *ms)
 		case TLG_STATE2:
 			
 
-			TLG_REG_LOG((b, "TLG_VideoADC_Calibration start\n"));
-			TLG_VideoADC_Calibration(
-					base_addr               ,
-					0);
+			MSG_FATAL("TLG_VideoADC_Calibration start\n",0,0,0);
+			TLG_VideoADC_Calibration(base_addr,0);
 			state[0] = TLG_STATE3;
 			*ms    = 10;
 			break;
 
 		case TLG_STATE3:
-			TLG_VideoADC_Calibration(
-					base_addr               ,
-					1);
+			TLG_VideoADC_Calibration(base_addr,1);
 			state[0] = TLG_STATE4;
 			*ms    = 100;
 			break;
 
 		case TLG_STATE4:
-			TLG_VideoADC_Calibration(
-					base_addr               ,
-					2);
-			TLG_REG_LOG((b, "TLG_VideoADC_Calibration end\n"));
+			TLG_VideoADC_Calibration(base_addr,2);
+			MSG_FATAL("TLG_VideoADC_Calibration end\n",0,0,0);
 			
 
 			TLG_SetChnBandwidth(base_addr, TLG_BW_6);
-
-			
-			
-
-			
-
-			
 
 			
 			TLG_ReadReg(base_addr, REG_01A7, &data);
@@ -1818,7 +1799,7 @@ TLGDLL_API int TLG_Init(uint32 base_addr)
 	} while (state[0] != TLG_STATE_FINAL);
 	CHECK_POINT(TLG_INIT_TEST);
 
-	TLG_REG_LOG((b, "TLG_Init DONE"));
+	MSG_FATAL("TLG_Init DONE",0,0,0);
 	return(TLG_ERR_SUCCESS);
 #endif 
 }
@@ -1959,7 +1940,7 @@ TLGDLL_API int TLG_SetVideoTestPatternState(uint32 base_addr, uint16 val)
 
 	if (val == TLG_ON)
 	{
-		TLG_REG_LOG((b, "TLG_SetVideoTestPatternState: TLG_ON\n"));
+		MSG_FATAL("TLG_SetVideoTestPatternState: TLG_ON\n",0,0,0);
 		
 		TLG_ReadReg(base_addr, REG_006F,  &videoConfig2);
 		TLG_ReadReg(base_addr, REG_0073,  &videoConfig6);
@@ -2007,8 +1988,9 @@ TLGDLL_API int TLG_SetVideoTestPatternState(uint32 base_addr, uint16 val)
 		TLG_ReadReg(base_addr, REG_009B,  &tempReg1);
 		TLG_ReadReg(base_addr, REG_005A,  &tempReg2);
 		TLG_ReadReg(base_addr, REG_0065,  &tempReg3);
-		if (val == TLG_OFF) {
-			TLG_REG_LOG((b, "TLG_SetVideoTestPatternState: TLG_OFF\n"));
+		if (val == TLG_OFF)
+		{
+			MSG_FATAL("TLG_SetVideoTestPatternState: TLG_OFF\n",0,0,0);
 			
 			TLGHAL_SET(videoConfig10, TLG_ON, REG_0077_BIT12_SHIFT,
 					REG_0077_BIT12_MASK);
@@ -2033,8 +2015,10 @@ TLGDLL_API int TLG_SetVideoTestPatternState(uint32 base_addr, uint16 val)
 			TLGHAL_SET(videoConfig10, 0,
 					REG_0077_BIT10_8_SHIFT,
 					REG_0077_BIT10_8_MASK);
-		} else if (val == TLG_COLOR_BAR) {
-			TLG_REG_LOG((b, "TLG_SetVideoTestPatternState: TLG_COLOR_BAR\n"));
+		}
+		else if (val == TLG_COLOR_BAR)
+		{
+			MSG_FATAL("TLG_SetVideoTestPatternState: TLG_COLOR_BAR\n",0,0,0);
 			
 			TLGHAL_CLEAR(videoConfig10, REG_0077_BIT12_MASK);
 			
@@ -2241,7 +2225,7 @@ TLGDLL_API int TLG_GetAudioMode(uint32 base_addr, uint16 *val)
 			*val = TLG_DAC;
 		else
 			*val = TLG_SLAVE;
-	TLG_REG_LOG((b, "TLG_GetAudioMode: aud=%d, reg8b=0x%x, reg97=0x%x\n", *val, soundDemod1, soundDsmDac));
+	MSG_FATAL("TLG_GetAudioMode: aud=%d, reg8b=0x%x, reg97=0x%x\n", *val, soundDemod1, soundDsmDac);
 	if (*val == TLG_UNDEFINED)
 		return(TLG_ERR_FAIL);
 
@@ -2297,7 +2281,7 @@ TLGDLL_API int TLG_SetAudioMode(uint32 base_addr, uint16 val)
 		default:
 			return TLG_ERR_PARAM;
 	}
-	TLG_REG_LOG((b, "TLG_SetAudioMode: aud=%d, stereo=%d, idx=%d\n", val, stereo_mode, audio_mode_idx));
+	MSG_FATAL("TLG_SetAudioMode: aud=%d, stereo=%d, idx=%d\n", val, stereo_mode, audio_mode_idx);
 	return TLG_Set_FM_AudioStereoModeHelper(base_addr, &audio_mode_s);
 }
 
@@ -2343,7 +2327,7 @@ TLGDLL_API int TLG_GetAudioGain(uint32 base_addr, uint16 aud_mode, uint16 *gain)
                 *gain = TLG_MAX_DSM_VOLUME_2_1 - output_gain - input_gain;
             
 
-            TLG_REG_LOG((b, "NEW DSM mode: get gain: 0x%02X\n", *gain));
+            MSG_FATAL("NEW DSM mode: get gain: 0x%02X\n", *gain,0,0);
             return TLG_ERR_SUCCESS;
          }
      default:
@@ -2378,7 +2362,7 @@ TLGDLL_API int TLG_GetAudioGain(uint32 base_addr, uint16 aud_mode, uint16 *gain)
 			data,
 			REG_0093_BIT10_8_SHIFT,
 			REG_0093_BIT10_8_MASK);
-	TLG_REG_LOG((b, "Apollo mode: input_gain: 0x%02X\n", input_gain));
+	MSG_FATAL("Apollo mode: input_gain: 0x%02X\n", input_gain,0,0);
 
 #else 
 	
@@ -2395,7 +2379,7 @@ TLGDLL_API int TLG_GetAudioGain(uint32 base_addr, uint16 aud_mode, uint16 *gain)
 					data,
 					REG_0093_BIT10_8_SHIFT,
 					REG_0093_BIT10_8_MASK);
-			TLG_REG_LOG((b, "Apollo mode: input_gain: 0x%02X\n", input_gain));
+			MSG_FATAL("Apollo mode: input_gain: 0x%02X\n", input_gain,0,0);
 		}
 		else
 		{
@@ -2405,7 +2389,7 @@ TLGDLL_API int TLG_GetAudioGain(uint32 base_addr, uint16 aud_mode, uint16 *gain)
 					data,
 					REG_008D_BIT15_13_SHIFT,
 					REG_008D_BIT15_13_MASK);
-			TLG_REG_LOG((b, "Zeus mode: input_gain: 0x%02X\n", input_gain));
+			MSG_FATAL("Zeus mode: input_gain: 0x%02X\n", input_gain,0,0);
 		}
 	}
 
@@ -2419,7 +2403,7 @@ TLGDLL_API int TLG_GetAudioGain(uint32 base_addr, uint16 aud_mode, uint16 *gain)
 			TLGHAL_GET(output_gain, data,
 					REG_008C_BIT6_4_SHIFT,
 					REG_008C_BIT6_4_MASK);
-			TLG_REG_LOG((b, "I2S mode: output_gain: 0x%02X\n", output_gain));
+			MSG_FATAL("I2S mode: output_gain: 0x%02X\n", output_gain,0,0);
 			*gain = input_gain + output_gain;
 			break;
 		case TLG_DAC:
@@ -2427,7 +2411,7 @@ TLGDLL_API int TLG_GetAudioGain(uint32 base_addr, uint16 aud_mode, uint16 *gain)
 			TLGHAL_GET(output_gain, data,
 					REG_0097_BIT5_4_SHIFT,
 					REG_0097_BIT5_4_MASK);
-			TLG_REG_LOG((b, "DSM mode: output_gain: 0x%02X\n", output_gain));
+			MSG_FATAL("DSM mode: output_gain: 0x%02X\n", output_gain,0,0);
 			*gain = input_gain + (3 - output_gain);
 			break;
 		default:
@@ -9128,7 +9112,7 @@ TLGDLL_API int TLG_TestRegVal_Init(uint32 base_addr)
 		TLG_CHIP_VERS_1_1_ELSE
 #ifdef TLG_CMP_CHIP_1120_1_1
 
-			TLG_REG_LOG((b,"setting defreg to 1.2\n"));
+		MSG_FATAL("setting defreg to 1.2\n",0,0,0);
 		tlg_defreg_val = tlg_defreg1_2_val;
 #endif 
 		TLG_CHIP_VERS_END
@@ -9144,8 +9128,7 @@ TLGDLL_API int TLG_TestRegVal(uint32 base_addr, uint16 reg, uint16 val)
 
 	if (regval != val)
 	{
-		TLG_REG_LOG((b,"ERROR: Val for Register 0x%x: Expected 0x%x, Received 0x%x\n",
-					reg, val, regval));
+		MSG_FATAL("ERROR: Val for Register 0x%x: Expected 0x%x, Received 0x%x\n",reg, val, regval));
 		return 1;
 	}
 	return 0;
@@ -9158,12 +9141,12 @@ TLGDLL_API void TLG_TestDefRegs(uint32 base_addr)
 	int     test_errors = 0;
 
 	TLG_TestRegVal_Init(base_addr);
-	TLG_REG_LOG((b, "START TLG DEFAULT REGISTER TESTS\n"));
+	MSG_FATAL("START TLG DEFAULT REGISTER TESTS\n",0,0,0);
 	for (reg=0; reg <= 0x01b8; reg++)
 		if (TLG_VALID_DEF_REG((short)reg))
 			test_errors += TLG_TestRegVal(base_addr, reg, tlg_defreg_val[reg]);
-	TLG_REG_LOG((b, "TOTAL DEFAULT REG VAL TEST ERRORS: %d\n", test_errors));
-	TLG_REG_LOG((b, "END TLG DEFAULT REGISTER TESTS\n"));
+	MSG_FATAL("TOTAL DEFAULT REG VAL TEST ERRORS: %d\n", test_errors,0,0);
+	MSG_FATAL("END TLG DEFAULT REGISTER TESTS\n",0,0,0);
 }
 
 TLGDLL_API void TLG_TestWriteRegs(uint32 base_addr)
@@ -9173,7 +9156,7 @@ TLGDLL_API void TLG_TestWriteRegs(uint32 base_addr)
 	unsigned short regval = 0;
 
 	TLG_TestRegVal_Init(base_addr);
-	TLG_REG_LOG((b, "START TLG WRITE REGISTER TESTS\n"));
+	MSG_FATAL("START TLG WRITE REGISTER TESTS\n",0,0,0);
 	for (reg = 0x5; reg <= 0xe; reg++)
 	{
 		
@@ -9214,8 +9197,8 @@ TLGDLL_API void TLG_TestWriteRegs(uint32 base_addr)
 		
 		TLG_WriteReg(base_addr, reg, tlg_defreg_val[reg]);
 	}
-	TLG_REG_LOG((b, "TOTAL WRITE REG VAL TEST ERRORS: %d\n", test_errors));
-	TLG_REG_LOG((b, "END TLG WRITE REGISTER TESTS\n"));
+	MSG_FATAL("TOTAL WRITE REG VAL TEST ERRORS: %d\n", test_errors,0,0);
+	MSG_FATAL("END TLG WRITE REGISTER TESTS\n",0,0,0);
 }
 #endif 
 

@@ -8,7 +8,7 @@ extern boolean analogtv_tlg1120_init(camsensor_function_table_type *camsensor_fu
 				                                camctrl_tbl_type              *camctrl_tbl_ptr);
 
 #else
-extern void camsensor_tlg1120_init(void);
+extern boolean camsensor_tlg1120_init(void);
 #endif
 #endif
 

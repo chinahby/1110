@@ -31,7 +31,7 @@
 *******************************************************************************************/
 #define	 I2C_DELAY_UNIT		100 // 12
 
-static i2c_rw_cmd_type tv_i2c_command;
+i2c_rw_cmd_type tv_i2c_command;
 
 
 /* define I2C interface	*/
@@ -144,6 +144,18 @@ unsigned char Tlg_i2c_read_data(unsigned char dadd,	unsigned short radd, unsigne
 }
 
 #endif
+
+unsigned char Tlg_i2c_read_data_burst(unsigned char dadd, unsigned short radd, unsigned short len ,unsigned short *data)
+{
+	while(len--)
+	{
+		if(!Tlg_i2c_read_data(dadd,  radd++, data++))
+		{
+			return IIC_ERR;
+		}
+	}
+	return IIC_DONE;
+}
 
 /************************************************************************
 *

@@ -19,22 +19,24 @@
 
 #define TLG1120_FM
 
+extern i2c_rw_cmd_type tv_i2c_command;
 
 void TLG1120_init_host_gpio(void)
 {
 	return;
 }
 
-
-
-
 void TLG1120_poweron_chip(void)
 {    
+	gpio_tlmm_config(ATV_POWER_PIN);
+	gpio_out(ATV_POWER_PIN, GPIO_HIGH_VALUE);
+    TLG_Delay(25);
 	return;
 }
 
 void TLG1120_reset_chip(void)   
 {
+	gpio_tlmm_config(ATV_RESET_PIN);
     gpio_out(ATV_RESET_PIN, GPIO_LOW_VALUE);
 	TLG_Delay(25);
 #ifdef TLG_1120
@@ -79,295 +81,6 @@ static void TLG1120_VerifyI2C(void)
 
 #ifdef TLG1120_TV
 #define TLGI2C_DEFAULT_BASE_ADDR            (0x002c)
-#define CAMSENSOR_12p5_FPS                  (12.5*Q8)
-   
-static char TLG1120_tlg1120_name[45] = "TELEGENT TLG1120 1.3MP YUV\0\0\0\0\0\0\0";
-static const char TLG1120_tlg1120_suffix[]="tlg1120";
-static CAMIF_InputFormatType format_preview,format_snapshot;
-
-void TLG1120_tv_init_camsensor_info()
-{
-	camsensor_info.pclk_invert=FALSE;
-   	camsensor_info.preview_dummy_pixels = 0;
-   	format_preview= CAMIF_YCbCr_Y_Cb_Y_Cr;
-   	format_snapshot= CAMIF_YCbCr_Cb_Y_Cr_Y;
-   	//fmt_reg_val=0x0202;
-   //	camsensor_camclk_po_hz=24000000;
-}
-
-
-boolean TLG1120_tv_start
-(
-  /* A pointer to the services layer static camsensor info struct */
-  camsensor_static_params_type *camsensor_params
-)
-{
-
-	TLG_PRINT_0("TLG1120_tlg1120_start!");
-	TLG1120_tv_init_camsensor_info();
-
-	/* Initialize CAMIF operation mode */
-	camsensor_params->camif_config.SyncMode    = CAMIF_APS;
-	camsensor_params->camif_config.HSyncEdge   = CAMIF_High;          /*这里是要这样设置*/
-	camsensor_params->camif_config.VSyncEdge   = CAMIF_Low;
-	camsensor_params->camif_efs_config.EFS_EOL = 0x0000;
-	camsensor_params->camif_efs_config.EFS_SOL = 0x0000;
-	camsensor_params->camif_efs_config.EFS_EOF = 0x0000;
-	camsensor_params->camif_efs_config.EFS_SOF = 0x0000;
-
-
-	/* ------------------  Sensor-specific Config -------------- */
-	/* Make/model of sensor */
-	camsensor_params->sensor_model  = ANALOGTV_TLG1120;
-
-	/* CCD or CMOS */
-	camsensor_params->sensor_type   = CAMSENSOR_CMOS;
-
-	/* BAYER or YCbCr */
-	camsensor_params->output_format = CAMSENSOR_YCBCR;
-
-	/* A pointer to the sensor name for EXIF tags */
-	camsensor_params->sensor_name = TLG1120_tlg1120_name;
-
-	/* Pointer to sensor suffix */
-
-	camsensor_params->sensor_suffix=TLG1120_tlg1120_suffix;
-
-	/* What is the maximum FPS that can be supported by this sensor in video mode? */
-	camsensor_params->max_video_fps   = 12.5 * Q8;
-
-	/* Application assigned FPS in video mode */
-	camsensor_params->video_fps       = 12.5 * Q8;
-
-	/* Snapshot mode operation */
-	camsensor_params->max_preview_fps = 12.5 * Q8;
-
-
-	/* May be assigned with max_preview_fps or nightshot_fps. */
-	camsensor_params->preview_fps     = camsensor_params->max_preview_fps;
-
-	/* AEC is not required for YUV sensor from VFE side */
-	camsensor_params->aec_enable=FALSE;
-	/* AWB is not required for YUV sensor from VFE side */
-	camsensor_params->awb_enable=FALSE;
-	/* AF is not required for YUV sensor from VFE side */
-	camsensor_params->af_enable=FALSE;
-
-
-	camsensor_params->num_possible_frame_rates = 1;
-	/* Define these frame rates */
-	/* By convention, the highest frame rate will be first in the
-	array (zeroth index) and the lowest last (in order). */
-	camsensor_params->frame_rate_array[0].fps = (uint16) (15*256.0); /* Q8 */
-	camsensor_params->frame_rate_array[0].use_in_auto_frame_rate = TRUE;
-
-	camsensor_params->frame_rate_array[1].fps = (uint16) (12.5*256.0); /* Q8 */
-	camsensor_params->frame_rate_array[1].use_in_auto_frame_rate = FALSE;
-
-
-	camsensor_params->frame_rate_array[2].fps = (uint16) (7.5*256.0); /* Q8 */
-	camsensor_params->frame_rate_array[2].use_in_auto_frame_rate = FALSE;
-  
-	/* Sensor output capability */
-    ERR("TLG1120_tv_start gTvScanLines = %d",gTvScanLines,0,0);
-#if 1
-    if (gTvScanLines == TLG_TV_525_LINES)
-    {
-        camsensor_params->full_size_width  =  360-(H_REDUCE_625+H_OFFSET_RANGE+gTvOptions.mHReduce);
-    	camsensor_params->full_size_height =  244-(V_REDUCE_525+H_OFFSET_RANGE+gTvOptions.mVReduce);
-
-    	camsensor_params->qtr_size_width  =  360-(H_REDUCE_525+V_OFFSET_RANGE+gTvOptions.mHReduce);
-    	camsensor_params->qtr_size_height =  244-(V_REDUCE_525+H_OFFSET_RANGE+gTvOptions.mVReduce);
-    } 
-    else /* TvScanLines == TLG_TV_625_LINES */
-    {
-        camsensor_params->full_size_width  =  360-(H_REDUCE_525+V_OFFSET_RANGE+gTvOptions.mHReduce);
-        camsensor_params->full_size_height =  288-(V_REDUCE_625+V_OFFSET_RANGE+gTvOptions.mVReduce);
-
-        camsensor_params->qtr_size_width  =  360-(H_REDUCE_625+H_OFFSET_RANGE+gTvOptions.mHReduce);
-        camsensor_params->qtr_size_height =  288-(V_REDUCE_625+V_OFFSET_RANGE+gTvOptions.mVReduce);
-        
-    }
-#endif
-	
-
-
-	switch(camsensor_preview_resolution)
-	{
-		case CAMSENSOR_QTR_SIZE:
-
-			camsensor_params->preview_dx_decimation = \
-			            camsensor_params->full_size_width * Q12 / \
-			          camsensor_params->qtr_size_width;
-			camsensor_params->preview_dy_decimation = \
-			          camsensor_params->full_size_height * Q12 / \
-			          camsensor_params->qtr_size_height;
-
-			camsensor_params->camsensor_width  = \
-			          camsensor_params->qtr_size_width;
-			camsensor_params->camsensor_height = \
-			          camsensor_params->qtr_size_height;
-			camsensor_params->format = CAMIF_YCbCr_Y_Cb_Y_Cr;
-
-			break;
-
-		case CAMSENSOR_FULL_SIZE:
-
-			camsensor_params->preview_dx_decimation = Q12;
-			camsensor_params->preview_dy_decimation = Q12;
-			camsensor_params->camsensor_width  = \
-			          camsensor_params->full_size_width;
-			camsensor_params->camsensor_height = \
-			          camsensor_params->full_size_height;
-			camsensor_params->format = CAMIF_YCbCr_Y_Cb_Y_Cr;
-
-			break;
-
-		default:
-
-			MSG_ERROR("Unrecognized preview resolution, assuming full size",0,0,0);
-
-			camsensor_params->camsensor_width  = \
-			      camsensor_params->full_size_width;
-			camsensor_params->camsensor_height = \
-			      camsensor_params->full_size_height;
-
-			break;
-    }
-	/* Pixel Clock Should be inverted for this Sensor */
-
-	camsensor_params->pclk_invert = camsensor_info.pclk_invert;
-
-
-#if defined FEATURE_WHITE_LED_FLASH || defined FEATURE_STROBE_FLASH
-	camsensor_params->support_auto_flash = FALSE;
-#else
-	camsensor_params->support_auto_flash = FALSE;
-#endif
-
-	return TRUE;
-} /*camsensor_mt9m112_mu1m3yu_start*/
-
-
-
-boolean   TLG1120_tv_video_config (camsensor_static_params_type *camsensor_params)
-{
-    camsensor_params->format = format_preview;
- 	camsensor_params->discardFirstFrame =  TRUE;
-	
-    ERR("TLG1120_tv_video_config gTvScanLines = %d",gTvScanLines,0,0);
- 
-  	switch ( camsensor_preview_resolution )
-    {
-    	case CAMSENSOR_QTR_SIZE:
-
-			/* Set the current dimensions */
-			camsensor_params->camsensor_width  = \
-			            camsensor_params->qtr_size_width;
-			camsensor_params->camsensor_height = \
-			            camsensor_params->qtr_size_height;
-
-			/* CAMIF frame */
-			camsensor_params->camif_frame_config.pixelsPerLine = \
-			            camsensor_params->qtr_size_width*2;
-
-			camsensor_params->camif_frame_config.linesPerFrame = \
-			            camsensor_params->qtr_size_height;
-
-			/* CAMIF Window */
-			camsensor_params->camif_window_width_config.firstPixel = \
-			                 camsensor_info.preview_dummy_pixels*2;
-
-			camsensor_params->camif_window_width_config.lastPixel  = \
-			          (camsensor_info.preview_dummy_pixels) \
-			      +(camsensor_params->qtr_size_width*2)-1;
-
-			camsensor_params->camif_window_height_config.firstLine = 0;
-
-			camsensor_params->camif_window_height_config.lastLine  = \
-			            camsensor_params->qtr_size_height-1;
-            break;
-
-
-		case CAMSENSOR_FULL_SIZE:
-			/* Set the current dimensions */
-			camsensor_params->camsensor_width  = \
-			            camsensor_params->full_size_width;
-			camsensor_params->camsensor_height = \
-			            camsensor_params->full_size_height;
-
-			/* CAMIF frame */
-			camsensor_params->camif_frame_config.pixelsPerLine = \
-			            camsensor_params->full_size_width*2;
-
-			camsensor_params->camif_frame_config.linesPerFrame = \
-			            camsensor_params->full_size_width;
-
-			/* CAMIF window */
-			camsensor_params->camif_window_width_config.firstPixel = 0;
-
-			camsensor_params->camif_window_width_config.lastPixel  = \
-			           (camsensor_params->full_size_width*2)-1;
-
-			camsensor_params->camif_window_height_config.firstLine = 0;
-
-			camsensor_params->camif_window_height_config.lastLine  = \
-			           camsensor_params->full_size_height-1;
-
-			break;
-
-    	case CAMSENSOR_INVALID_SIZE:
-
-       		return FALSE;
-
-  	}
-    
-    return TRUE;
-        
-}
-
-
-boolean  TLG1120_tv_raw_snapshot_config (camsensor_static_params_type *camsensor_params)
-{
-    TLG_PRINT_0("TLG1120_tlg1120_raw_snapshot_config invoke");
-    return TRUE;
-    
-}
-
-boolean  TLG1120_tv_snapshot_config (camsensor_static_params_type *camsensor_params)
-{
-    TLG_PRINT_0("TLG1120_tlg1120_snapshot_config invoke");
-    camsensor_params->format = format_snapshot;
-    camsensor_params->camsensor_width  = \
-                camsensor_params->full_size_width;
-    camsensor_params->camsensor_height = \
-                camsensor_params->full_size_height;
-
-    /* CAMIF frame */
-    camsensor_params->camif_frame_config.pixelsPerLine = \
-                camsensor_params->full_size_width*2;
-    camsensor_params->camif_frame_config.linesPerFrame = \
-                camsensor_params->full_size_width;
-
-    /* CAMIF window */
-    camsensor_params->camif_window_width_config.firstPixel = 0;
-    camsensor_params->camif_window_width_config.lastPixel  = \
-                (camsensor_params->full_size_width*2)-1;
-
-    camsensor_params->camif_window_height_config.firstLine = 0;
-    camsensor_params->camif_window_height_config.lastLine  = \
-                camsensor_params->full_size_height-1;
-    return TRUE;
-}
-
-
-camera_ret_code_type   TLG1120_tv_set_effect (int8 effect)
-{
-    TLG_PRINT_0("TLG1120_tlg1120_set_effect invoke");
-    return (camera_ret_code_type)0;    
-}
-
-
 /**/
 void TLG1120_tv_power_up(void)
 {
@@ -387,101 +100,10 @@ void TLG1120_tv_power_down(void)
     TLG_PRINT_0("TLG1120_tlg1120_power_down invoke");
 }
 
-camera_ret_code_type TLG1120_tv_set_frame_me_rate(uint16 fps)
+
+
+static int TLG1120_tv_save_program(int32 chn)
 {
-    TLG_PRINT_0("TLG1120_tlg1120_set_frame_me_rate invoke");
-    return (camera_ret_code_type)0;
-}
-
-camera_ret_code_type    TLG1120_tv_set_antibanding(int8 antibanding)
-{
-    TLG_PRINT_0("TLG1120_tlg1120_set_antibanding invoke");    
-    return (camera_ret_code_type)0;        
-}
-
-camera_ret_code_type    TLG1120_tv_set_brightness (int8 brightness)
-{
-    TLG_PRINT_0("TLG1120_tlg1120_set_brightness invoke");
-    return (camera_ret_code_type)0;    
-}
-
-camera_ret_code_type   TLG1120_tv_set_contrast (int8 contrast)
-{
-    TLG_PRINT_0("TLG1120_tlg1120_set_contrast invoke");
-    return (camera_ret_code_type)0;    
-}
-
-
-camera_ret_code_type TLG1120_tv_set_exposure_mode(int8 mode)
-{
-    TLG_PRINT_0("TLG1120_tlg1120_set_exposure_mode invoke");
-    return (camera_ret_code_type)0;    
-}
-
-
-
-static camera_ret_code_type  TLG1120_tv_set_ev_compensation(signed long int icompensation)
-{
-    TLG_PRINT_0("TLG1120_tlg1120_set_ev_compensation invoke");
-    return (camera_ret_code_type)0;
-}
-
-
-
-camera_ret_code_type  TLG1120_tv_set_wb(int8 wb)
-{
-    TLG_PRINT_0("TLG1120_tlg1120_set_wb invoke");
-    return (camera_ret_code_type)0;
-}
-
-
-
-
-static void TLG1120_tv_register(camsensor_function_table_type * camsensor_function_table_ptr)
-{
-    if(camsensor_function_table_ptr != NULL)
-    {
-        camsensor_function_table_ptr->camsensor_start                 = TLG1120_tv_start;
-        camsensor_function_table_ptr->camsensor_video_config          = TLG1120_tv_video_config;
-        camsensor_function_table_ptr->camsensor_raw_snapshot_config   = TLG1120_tv_raw_snapshot_config;
-        camsensor_function_table_ptr->camsensor_snapshot_config       = TLG1120_tv_snapshot_config;
-        camsensor_function_table_ptr->camsensor_power_up              = TLG1120_tv_power_up;
-        camsensor_function_table_ptr->camsensor_power_down            = TLG1120_tv_power_down;
-        camsensor_function_table_ptr->camsensor_set_frame_rate        = TLG1120_tv_set_frame_me_rate;  
-        camsensor_function_table_ptr->camsensor_set_effect            = TLG1120_tv_set_effect;
-        camsensor_function_table_ptr->camsensor_set_antibanding       = TLG1120_tv_set_antibanding; 
-        camsensor_function_table_ptr->camsensor_set_brightness        = TLG1120_tv_set_brightness;
-        camsensor_function_table_ptr->camsensor_set_contrast          = TLG1120_tv_set_contrast;
-        camsensor_function_table_ptr->camsensor_set_exposure_mode     = TLG1120_tv_set_exposure_mode;
-        camsensor_function_table_ptr->camsensor_set_ev_compensation   = TLG1120_tv_set_ev_compensation;    
-        camsensor_function_table_ptr->camsensor_set_wb                = TLG1120_tv_set_wb;                                
-   }
-}
-
-
-unsigned short TLG1120_get_snapshot_frame_per_sec(unsigned short type)
-{
-    unsigned short fps = 12.5;
-    return fps*Q8;
-}
-
-
-static void TLG1120_tv_setup_camctrl_tbl(camctrl_tbl_type *camctrl_tbl_ptr)
-{
-    camctrl_tbl_ptr->asf_5x5_is_supported         = FALSE; 
-    camctrl_tbl_ptr->la_is_supported              = FALSE;
-    camctrl_tbl_ptr->cs_is_supported              = FALSE;
-    camctrl_tbl_ptr->iso_is_supported             = FALSE;
-    camctrl_tbl_ptr->enable_rolloff_correction    = FALSE;
-    camctrl_tbl_ptr->hjr_bayer_filtering_enable   = FALSE;
-    camctrl_tbl_ptr->nightshot_is_supported       = FALSE;
-
-    camctrl_tbl_ptr->get_snapshot_frame_per_sec = TLG1120_get_snapshot_frame_per_sec;
-}
-
-
- static int TLG1120_tv_save_program(int32 chn)
- {
      if (gTvStorage.mIdxListCnt > TLG_MAX_PROGRAM_NUM)
      {        
          return EFAILED;
@@ -490,11 +112,11 @@ static void TLG1120_tv_setup_camctrl_tbl(camctrl_tbl_type *camctrl_tbl_ptr)
      gTvStorage.mIdxListBuf[gTvStorage.mIdxListCnt++].ChnIdx = chn;
      
      return SUCCESS;
- }
+}
 
  
 
- int TLG1120_tv_scan_channel(TLG_TV_STORAGE *tv_storage)    
+int TLG1120_tv_scan_channel(TLG_TV_STORAGE *tv_storage)    
 {
     int ChnInx = 0, ret = 0;
 
@@ -734,7 +356,7 @@ int TLG1120_tv_get_param(ATV_GET_PARAM_e type, void * hparam, void * lparam)
 boolean camsensor_tlg1120_init(camsensor_function_table_type *camsensor_function_table_ptr,
 				                                camctrl_tbl_type              *camctrl_tbl_ptr)
 #else
-void camsensor_tlg1120_init(void)
+boolean camsensor_tlg1120_init(void)
 #endif
 {
     uint16 y, u, v;
@@ -743,10 +365,9 @@ void camsensor_tlg1120_init(void)
  	//time_secure_get_local_time_ms(&time);
 	//TLG_PRINT_1("TLG1120_tlg1120_init Enter time=%u\n",time);
     TLG_PRINT_0("TLG1120_tlg1120_init start");
-    camsensor_preview_resolution  = CAMSENSOR_QTR_SIZE;
-    camsensor_i2c_command.bus_id     = I2C_BUS_HW_CTRL;
-	camsensor_i2c_command.slave_addr = (TLGI2C_DEFAULT_BASE_ADDR<<1);
-	camsensor_i2c_command.options    = (i2c_options_type) (I2C_DFLT_ADDR_DEV| I2C_START_BEFORE_READ); 
+    tv_i2c_command.bus_id     = I2C_BUS_HW_CTRL;
+	tv_i2c_command.slave_addr = (TLGI2C_DEFAULT_BASE_ADDR<<1);
+	tv_i2c_command.options    = (i2c_options_type) (I2C_DFLT_ADDR_DEV| I2C_START_BEFORE_READ); 
 	
 #if 1	//For debug, we set some variable, after mmi is finish we disable it
     TLGMMI_RestoreTvOption();
@@ -767,7 +388,7 @@ void camsensor_tlg1120_init(void)
 
     TLGAPP_Restart();
     if (TLGAPP_Init(tlg_i2c_addr)!=TLG_ERR_SUCCESS)
-    {
+    {
         TLG1120_tv_power_down();
         return FALSE;
     }
@@ -790,24 +411,22 @@ void camsensor_tlg1120_init(void)
 
     //声音和图像的测试
 	TLGAPP_TurnOnTestPattern();
-	TLGAPP_TurnOnTestToneMode();
-	TLG_SetAudioTestToneMode(tlg_i2c_addr, TLG_ON);
-	TLG_SetAudioTestToneL(tlg_i2c_addr, TLG_1KHZ);
-	TLG_SetAudioTestToneR(tlg_i2c_addr, TLG_1KHZ);
+	//TLGAPP_TurnOnTestToneMode();
+	//TLG_SetAudioTestToneMode(tlg_i2c_addr, TLG_ON);
+	//TLG_SetAudioTestToneL(tlg_i2c_addr, TLG_1KHZ);
+	//TLG_SetAudioTestToneR(tlg_i2c_addr, TLG_1KHZ);
 
 
     //register function for sensor driver
-    TLG1120_tv_register(camsensor_function_table_ptr);
-    TLG1120_tv_setup_camctrl_tbl(camctrl_tbl_ptr);    
+    //TLG1120_tv_register(camsensor_function_table_ptr);
+    //TLG1120_tv_setup_camctrl_tbl(camctrl_tbl_ptr);    
     //TLG1120_tv_scan_channel
     //TLG_SetAudioGain(TLGI2C_DEFAULT_BASE_ADDR,TLG_DAC, 1);
     
- //   time_secure_get_local_time_ms(&time);
- //   TLG_PRINT_1("TLG1120_tlg1120_init Leave time=%u\n",time);
-	TLG1120_tv_scan_channel(NULL);
+ 	//time_secure_get_local_time_ms(&time);
+ 	//TLG_PRINT_1("TLG1120_tlg1120_init Leave time=%u\n",time);
+	//TLG1120_tv_scan_channel(NULL);
     TLG_PRINT_0("TLG1120_tlg1120_init Leave");
-  
-
     return TRUE;
 }
 #endif

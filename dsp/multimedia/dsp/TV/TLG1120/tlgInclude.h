@@ -5,7 +5,7 @@
 #include "tlg_bit_definition.h"
 #include "tlg_error.h"
 #include "tlg_defs.h"
-
+#include "msg.h"
 #include "tlgConfig.h"
 #ifndef TLG_TOOL
 #include "tlgi2c.h"

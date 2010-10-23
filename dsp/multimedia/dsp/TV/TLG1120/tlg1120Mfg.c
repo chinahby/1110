@@ -13,6 +13,7 @@
 * (c) 2008 Telegent Systems
 *****************************************************************************/
 #include "tlgInclude.h"
+
 #if TLG_CHIP_TYPE == TLG_CHIP_TYPE_TLG1120_1
 
 #define USE_OLD_TFCALCODE
@@ -217,7 +218,7 @@ TLGDLL_API int TLG_GetTFCalCode(uint32 base_addr, uint16 *tfCalCode)
     uint32 cur_freq_hz ;
 
     TLG_GetCurrentFreq(base_addr, &cur_freq_hz);
-    TLG_REG_LOG((b, "TLG_GetTFCalCode %01d\n", cur_freq_hz));
+    MSG_FATAL("TLG_GetTFCalCode %01d\n", cur_freq_hz,0,0);
     return TLG_GetCalCode(base_addr, tfCalCode, cur_freq_hz);
 
     return TLG_ERR_SUCCESS;
@@ -284,8 +285,8 @@ TLGDLL_API int TLG_GetCalCode_VHF3(uint32 base_addr, uint16 *tfCalCode)
         REG_011C_BIT9_1_SHIFT,
         REG_011C_BIT9_1_MASK);
     TLG_ReadRegNS(base_addr,    REG_016E_VALUE_1,   &data);
-    TLG_REG_LOG((b, "TLG_GetTFCalCode_VHF3 0x%04X\n", data));
-    TLG_REG_LOG((b, "REg170 = 0x%04X\n", data));
+    MSG_FATAL("TLG_GetTFCalCode_VHF3 0x%04x\n",data,0,0);
+    MSG_FATAL("REg170 = 0x%04x\n", data,0,0);
     TLGHAL_GET(cnotch, data,
         REG_016E_BIT9_1_SHIFT,
         REG_016E_BIT9_1_MASK);
@@ -380,7 +381,4 @@ if (locks & (uint16)0x0004)
 else
 	return 0;
 }
-
-
-
 #endif 

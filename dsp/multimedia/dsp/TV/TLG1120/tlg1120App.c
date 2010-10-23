@@ -1591,26 +1591,26 @@ const tlg_reg_pair_t *getTlgInitReg()
     
     if (TLG_GetChipVersion(tlg_i2c_addr, &version)!=TLG_ERR_SUCCESS)
     {
-        //TLG_PRINT_0("TLG_GetChipVersion failed");
+        TLG_PRINT_0("TLG_GetChipVersion failed");
         return NULL;
     }
 
     TLG_CHIP_VERS_2_1_BEGIN
     #ifdef TLG_CMP_CHIP_1120_2_1
-    TLG_REG_LOG((b, "tlg_init_reg = tlg_init_reg_2_1_common\n"));
+    MSG_FATAL("tlg_init_reg = tlg_init_reg_2_1_common\n",0,0,0);
     return (tlg_init_reg_2_1_common);
 
     #endif 
     TLG_CHIP_VERS_1_2_ELSE
     #ifdef TLG_CMP_CHIP_1120_1_2
-    TLG_REG_LOG((b, "tlg_init_reg = tlg_init_reg_1_2_common\n"));
+    MSG_FATAL("tlg_init_reg = tlg_init_reg_1_2_common\n",0,0,0);
     return (tlg_init_reg_1_2_common);
 
     #endif 
     TLG_CHIP_VERS_1_1_ELSE
 
     #ifdef TLG_CMP_CHIP_1120_1_1
-    TLG_REG_LOG((b, "tlg_init_reg = tlg_init_reg_1_1\n"));
+    MSG_FATAL("tlg_init_reg = tlg_init_reg_1_1\n",0,0,0);
     return tlg_init_reg_1_1;
     #endif 
     
@@ -1675,7 +1675,7 @@ TLGDLL_API int TLGAPP_Ini_Reg(int start)
 	{
        // TLG_WriteReg(tlg_i2c_addr, 0x52,0);
 	}
-    TLG_REG_LOG((b, "TLGAPP_Ini_Reg DONE\n"));
+    MSG_FATAL("TLGAPP_Ini_Reg DONE\n",0,0,0);
     return TLG_ERR_SUCCESS;
 }
 
@@ -1828,7 +1828,7 @@ TLGDLL_API int TLGAPP_SetChannelMapFM(void)
         if (p_tlg_cur_map[i] HZ_S < minhz) minhz = p_tlg_cur_map[i] HZ_S;
         if (p_tlg_cur_map[i] HZ_S > maxhz) maxhz = p_tlg_cur_map[i] HZ_S;
     }
-    TLG_REG_LOG((b, "TLGAPP_SetChannelMapFM TLG_Set_FM_StepSize %01d\n", step_size_hz));
+    MSG_FATAL("TLGAPP_SetChannelMapFM TLG_Set_FM_StepSize %01d\n", step_size_hz,0,0);
     TLG_Set_FM_StepSize(tlg_i2c_addr, step_size_hz);
     TLG_SetRegion(tlg_i2c_addr, TLG_REGION_WW);
     return TLG_InitScanFMChn(tlg_i2c_addr, minhz, maxhz, &tlg_slope, &tlg_offset);
@@ -1858,7 +1858,7 @@ TLGDLL_API int TLGAPP_SetChannelMapFM_USA(void)
         if (p_tlg_cur_map[i] HZ_S < minhz) minhz = p_tlg_cur_map[i] HZ_S;
         if (p_tlg_cur_map[i] HZ_S > maxhz) maxhz = p_tlg_cur_map[i] HZ_S;
     }
-    TLG_REG_LOG((b, "TLGAPP_SetChannelMapFM TLG_Set_FM_StepSize %01d\n", step_size_hz));
+    MSG_FATAL("TLGAPP_SetChannelMapFM TLG_Set_FM_StepSize %01d\n", step_size_hz,0,0);
     TLG_Set_FM_StepSize(tlg_i2c_addr, step_size_hz);
     TLG_SetRegion(tlg_i2c_addr, TLG_REGION_US);
     return TLG_InitScanFMChn(tlg_i2c_addr, minhz, maxhz, &tlg_slope, &tlg_offset);
@@ -1889,7 +1889,7 @@ TLGDLL_API int TLGAPP_SetChannelAux(int chn, int useFast)
     if (p_tlg_cur_map == NULL) return 0;
 
     //if (!tlg_init_done) TLGAPP_Init(tlg_i2c_addr);
-    TLG_REG_LOG((b, "SetChn # %d\n", chn));
+    MSG_FATAL("SetChn # %d\n", chn,0,0);
     while (p_tlg_cur_map[i] CHN_S != 0)
     {
        // TLG_PRINT_1( "Search chn %d\n", p_tlg_cur_map[i] CHN_S);
@@ -1946,7 +1946,7 @@ TLGDLL_API int TLGAPP_SetChannelAux(int chn, int useFast)
 
 TLGDLL_API int TLGAPP_SetChannel(int chn)
 {
-    TLG_REG_LOG((b, "TLGAPP_SetChn # %d\n", chn));
+    MSG_FATAL("TLGAPP_SetChn # %d\n", chn,0,0);
     return TLGAPP_SetChannelAux(chn, false );
 }
 
@@ -2451,7 +2451,7 @@ TLGDLL_API int TLGAPP_FMSetParam(uint32 step_size, uint32 min_hz, uint32 max_hz)
     tlg_offset      = 0;
     tlg_cur_chn_cnt = 0;
 
-    TLG_REG_LOG((b,"TLGAPP_FMSetParm (%d khz, %d khz, %d khz )\n", tlg_fm_step_size/1000, min_hz/1000, max_hz/1000));
+    MSG_FATAL("TLGAPP_FMSetParm (%d khz, %d khz, %d khz )\n", tlg_fm_step_size/1000, min_hz/1000, max_hz/1000);
     TLGAPP_ChannelSetup(TLG_MODE_FM_RADIO, TLG_VSTD_NTSC_M, TLG_BW_6);
 
     return TLG_InitScanFMChn(tlg_i2c_addr, tlg_fm_min_hz, tlg_fm_max_hz, &tlg_slope, &tlg_offset);
@@ -2475,7 +2475,7 @@ TLGDLL_API int TLGAPP_FMSetFrequency(uint32 center_freq_hz)
         TLGAPP_ChannelSetup(TLG_MODE_FM_RADIO, TLG_VSTD_NTSC_M, TLG_BW_6);
 
 
-        TLG_REG_LOG((b,"TLGAPP_FMSetFrequency (%d khz ) (%x, %x)\n", center_freq_hz/1000, tlg_slope, tlg_offset));
+        MSG_FATAL("TLGAPP_FMSetFrequency (%d khz ) (%x, %x)\n", center_freq_hz/1000, tlg_slope, tlg_offset);
         result = TLG_ScanFMChn(tlg_i2c_addr, center_freq_hz, tlg_slope, tlg_offset);
     }
     return result;
@@ -2499,7 +2499,7 @@ static int TLGAPP_FMScanFrequency(int32 center_freq_hz)
     int32   halfMargin   = 275000; 
     int32   halfScanBandwidth = FM_SCAN_HALF_BANDWIDTH - halfMargin - searchOffset;
     
-    TLG_REG_LOG((b,"TLGAPP_FMScanFrequency hz=%d START\n", center_freq_hz));
+    MSG_FATAL("TLGAPP_FMScanFrequency hz=%d START\n", center_freq_hz,0,0);
     
     if((center_freq_hz < tlg_fm_min_hz) || (center_freq_hz > tlg_fm_max_hz))
         return 0;
@@ -2524,7 +2524,7 @@ static int TLGAPP_FMScanFrequency(int32 center_freq_hz)
 
         
         TLGAPP_ChannelSetup(TLG_MODE_FM_RADIO, TLG_VSTD_NTSC_M, TLG_BW_6);
-        TLG_REG_LOG((b,"TLGAPP_FMScanFrequency (%d khz ) (%x, %x)\n", tlg_fm_scan_set_freq/1000, tlg_slope, tlg_offset));
+        MSG_FATAL("TLGAPP_FMScanFrequency (%d khz ) (%x, %x)\n", tlg_fm_scan_set_freq/1000, tlg_slope, tlg_offset);
 
         
         TLG_ScanFMChn(tlg_i2c_addr, tlg_fm_scan_set_freq+2750000, tlg_slope, tlg_offset);
@@ -2534,8 +2534,8 @@ static int TLGAPP_FMScanFrequency(int32 center_freq_hz)
 
     result = TLG_ReadNotchPwrAvgNotches(tlg_i2c_addr, freqOffset, searchOffset, 10, &status);
     log_printf("\thz=%d\n", center_freq_hz);
-    TLG_REG_LOG((b,"TLGAPP_FMScanFrequency: %d - freq=%d khz, set_freq=%d khz, freqOffset=%d khz\n", 
-                result, center_freq_hz/1000, tlg_fm_scan_set_freq/1000, freqOffset/1000));
+    MSG_FATAL("TLGAPP_FMScanFrequency result: %d",result,0,0);
+    MSG_FATAL("TLGAPP_FMScanFrequency: freq=%d khz, set_freq=%d khz, freqOffset=%d khz\n",center_freq_hz/1000, tlg_fm_scan_set_freq/1000, freqOffset/1000);
 	
     if( status == 0x1 || status == 0x2 )
 	{
@@ -2550,14 +2550,14 @@ static int TLGAPP_FMScanFrequency(int32 center_freq_hz)
 
 TLGDLL_API void TLGAPP_FMStartScan(void)
 {
-    TLG_REG_LOG((b,"TLGAPP_FMStartScan \n"));
+    MSG_FATAL("TLGAPP_FMStartScan \n",0,0,0);
     tlg_fm_scan= 1;
 }
 
 
 TLGDLL_API void TLGAPP_FMStopScan(void)
 {
-    TLG_REG_LOG((b,"TLGAPP_FMStopScan \n"));
+    MSG_FATAL("TLGAPP_FMStopScan \n",0,0,0);
     tlg_fm_scan= 0;
     tlg_fm_scan_set_freq = 0;
 }
@@ -2565,7 +2565,7 @@ TLGDLL_API void TLGAPP_FMStopScan(void)
 
 TLGDLL_API int TLGAPP_FMGetCurrentSSI(void)
 {
-    TLG_REG_LOG((b,"TLGAPP_FMGetCurrentSSI: %d \n", tlg_cur_fm_ssi));
+    MSG_FATAL("TLGAPP_FMGetCurrentSSI: %d \n", tlg_cur_fm_ssi,0,0);
     return tlg_cur_fm_ssi;
 }
 

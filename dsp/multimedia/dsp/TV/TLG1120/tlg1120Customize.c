@@ -85,7 +85,7 @@ TLGDLL_API void TLGAPP_SetLnaGpio(uint32 hz)
             tlg_cur_lna = TLG_LNA_UHF;
             /** BEGIN CUSTOM SECTION: DO GPIO FOR UHF SWITCH HERE          **/
 #ifdef ENABLE_FM_SWITCH
-            TLG_REG_LOG((b, "\n\n\nTLGAPP_SetLnaGpio UHF\n\n\n\n"));
+            MSG_FATAL("\n\n\nTLGAPP_SetLnaGpio UHF\n\n\n\n",0,0,0);
             TLG_SetGPIOOutput(tlg_i2c_addr, 0x20, 0x00);
             TLG_SetGPIOEnable(tlg_i2c_addr, 0x20, 0x20);
 #endif /* ENABLE_FM_SWITCH */
@@ -112,7 +112,7 @@ TLGDLL_API void TLGAPP_SetLnaGpio(uint32 hz)
                 tlg_cur_lna = TLG_LNA_VHF2;
                 /** BEGIN CUSTOM SECTION: DO GPIO FOR VHF2 SWITCH HERE         **/
 #ifdef ENABLE_FM_SWITCH
-                TLG_REG_LOG((b, "\n\n\nTLGAPP_SetLnaGpio VHF3\n\n\n\n"));
+                MSG_FATAL("\n\n\nTLGAPP_SetLnaGpio VHF3\n\n\n\n",0,0,0);
                 TLG_SetGPIOOutput(tlg_i2c_addr, 0x20, 0x00);
                 TLG_SetGPIOEnable(tlg_i2c_addr, 0x20, 0x20);
 #endif /* ENABLE_FM_SWITCH */
@@ -126,7 +126,7 @@ TLGDLL_API void TLGAPP_SetLnaGpio(uint32 hz)
             tlg_cur_lna = TLG_LNA_VHF1;
             /** BEGIN CUSTOM SECTION: DO GPIO FOR VHF1 SWITCH HERE         **/
 #ifdef ENABLE_FM_SWITCH
-            TLG_REG_LOG((b, "\n\n\nTLGAPP_SetLnaGpio VHF1\n\n\n\n"));
+            MSG_FATAL("\n\n\nTLGAPP_SetLnaGpio VHF1\n\n\n\n",0,0,0);
             TLG_SetGPIOOutput(tlg_i2c_addr, 0x20, 0x20);
             TLG_SetGPIOEnable(tlg_i2c_addr, 0x20, 0x20);
 #endif /* ENABLE_FM_SWITCH */
@@ -365,7 +365,7 @@ TLGDLL_API int TLG_SetBits(
     if (_TLG_shadow_reg_use[reg_addr] == TLG_ON)
     {
         val = _TLG_shadow_reg[reg_addr];
-        TLG_REG_LOG((b, "READ(Cache) 0x%04x = 0x%04x\n", reg_addr, val));
+        MSG_FATAL("READ(Cache) 0x%04x = 0x%04x\n", reg_addr, val,0);
     } 
     else
 #endif /* TLG_USE_SHADOW_REGISTERS */
@@ -377,7 +377,7 @@ TLGDLL_API int TLG_SetBits(
 #ifdef TLG_USE_SHADOW_REGISTERS
         _TLG_shadow_reg[reg_addr]     = val;
 #endif /* TLG_USE_SHADOW_REGISTERS */
-        TLG_REG_LOG((b, "READ  0x%04x = 0x%04x\n", reg_addr, val));
+        MSG_FATAL("READ  0x%04x = 0x%04x\n", reg_addr, val,0);
     }
     /*
         MODIFY
@@ -396,7 +396,7 @@ TLGDLL_API int TLG_SetBits(
     _TLG_shadow_reg[reg_addr]     = val;
     _TLG_shadow_reg_use[reg_addr] = TLG_ON;
 #endif /* TLG_USE_SHADOW_REGISTERS */
-    TLG_REG_LOG((b, "WRITE 0x%04x = 0x%04x\n", reg_addr, val));
+    MSG_FATAL("WRITE 0x%04x = 0x%04x\n", reg_addr, val,0);
 #else /* ! OLD_SET_BIT */
     {
         uint16 read_val;
@@ -408,7 +408,7 @@ TLGDLL_API int TLG_SetBits(
         if (read_val != val)
         {
             TLGI2C_WriteReg(base_addr, reg_addr, val);
-            TLG_REG_LOG((b, "WRITE 0x%04x = 0x%04x\n", reg_addr, val));
+            MSG_FATAL("WRITE 0x%04x = 0x%04x\n", reg_addr, val,0);
         }
 #ifdef TLG_USE_SHADOW_REGISTERS
         _TLG_shadow_reg[reg_addr]     = val;
@@ -463,7 +463,7 @@ TLGDLL_API int TLG_ModifyBits(
     if (_TLG_shadow_reg_use[reg_addr] == TLG_ON)
     {
         val = _TLG_shadow_reg[reg_addr];
-        TLG_REG_LOG((b, "READ(Cache) 0x%04x = 0x%04x\n", reg_addr, val));
+        MSG_FATAL("READ(Cache) 0x%04x = 0x%04x\n", reg_addr, val,0);
     } 
     else
 #endif /* TLG_USE_SHADOW_REGISTERS */
@@ -475,7 +475,7 @@ TLGDLL_API int TLG_ModifyBits(
 #ifdef TLG_USE_SHADOW_REGISTERS
         _TLG_shadow_reg[reg_addr]     = val;
 #endif /* TLG_USE_SHADOW_REGISTERS */
-        TLG_REG_LOG((b, "READ  0x%04x = 0x%04x\n", reg_addr, val));
+        MSG_FATAL("READ  0x%04x = 0x%04x\n", reg_addr, val,0);
     }
     /*
         MODIFY
@@ -490,7 +490,7 @@ TLGDLL_API int TLG_ModifyBits(
         if (read_val != val)
         {
             TLGI2C_WriteReg(base_addr, reg_addr, val);
-            TLG_REG_LOG((b, "WRITE 0x%04x = 0x%04x\n", reg_addr, val));
+            MSG_FATAL("WRITE 0x%04x = 0x%04x\n", reg_addr, val,0);
         }
 #ifdef TLG_USE_SHADOW_REGISTERS
         _TLG_shadow_reg[reg_addr]     = val;
@@ -520,7 +520,7 @@ TLGDLL_API int TLG_ReadReg(uint32 base_addr, uint32 reg_addr, uint16 *val)
     if (_TLG_shadow_reg_use[reg_addr] == TLG_ON)
     {
         *val = _TLG_shadow_reg[reg_addr];
-        TLG_REG_LOG((b, "READ(Cache) 0x%04x = 0x%04x\n", reg_addr, *val));
+        MSG_FATAL("READ(Cache) 0x%04x = 0x%04x\n", reg_addr, *val,0);
     } 
     else
 #endif /* TLG_USE_SHADOW_REGISTERS */
@@ -542,7 +542,7 @@ TLGDLL_API int TLG_ReadReg(uint32 base_addr, uint32 reg_addr, uint16 *val)
 TLGDLL_API int TLG_ReadRegNS(uint32 base_addr, uint32 reg_addr, uint16 *val)
 {
     TLG_ReadRegNS_NoLog(base_addr, reg_addr, val);
-    TLG_REG_LOG((b, "READ  0x%04x = 0x%04x\n", reg_addr, *val));
+    MSG_FATAL("READ  0x%04x = 0x%04x\n", reg_addr, *val,0);
 
     return(TLG_ERR_SUCCESS);
 }
@@ -625,7 +625,7 @@ TLGDLL_API int TLG_StrobeCheck(uint32 reg_addr)
 TLGDLL_API int TLG_WriteReg(uint32 base_addr, uint32 reg_addr, uint16 val)
 {
     TLG_WriteRegNoLog(base_addr, reg_addr, val);
-    TLG_REG_LOG((b, "WRITE 0x%04x = 0x%04x\n", reg_addr, val));
+    MSG_FATAL("WRITE 0x%04x = 0x%04x\n", reg_addr, val,0);
 
     return(TLG_ERR_SUCCESS);
 }
@@ -697,7 +697,7 @@ TLGDLL_API int TLG_BurstWrite(uint32 base_addr, uint32 start_addr, int len, uint
         int i;
         for (i = 0; i < len; i++)
         {
-            TLG_REG_LOG((b, "WRITE 0x%04x = 0x%04x\n", start_addr+i, val[i]));
+            MSG_FATAL("WRITE 0x%04x = 0x%04x\n", start_addr+i, val[i],0);
         }
     }
 #endif /* TLG_DO_REG_LOGGING */
@@ -735,7 +735,7 @@ TLGDLL_API int TLG_BurstRead(uint32 base_addr, uint32 start_addr, int len, uint1
         int i;
         for (i = 0; i < len; i++)
         {
-            TLG_REG_LOG((b, "READ  0x%04x = 0x%04x\n", start_addr+i, val[i]));
+            MSG_FATAL("READ  0x%04x = 0x%04x\n", start_addr+i, val[i],0);
         }
     }
 #endif /* TLG_DO_REG_LOGGING */
