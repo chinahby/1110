@@ -2800,13 +2800,19 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             switch (wParam)
             {
+#if defined(FEATURE_VERSION_C01)
+                case AVK_MUSIC:     
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+                case AVK_FM:
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+#else
             	//Add By zzg 2010_10_14
             	case AVK_MUSIC:		//现在外壳上位置相反，所以和FM区分
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
 				case AVK_FM:
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
             	//Add End
-				
+#endif
                 case AVK_UP:
 
 #if defined(FEATURE_WMS_APP)
