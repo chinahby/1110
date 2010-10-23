@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -25,7 +25,7 @@
 #include "AEEXYContainer.h"
 #include "AEEWProperties.h"
 
-#include "bid/AEECLSID_CURSORWIDGET.bid"
+#include "bid\AEECLSID_CURSORWIDGET.bid"
 
 
 typedef struct {

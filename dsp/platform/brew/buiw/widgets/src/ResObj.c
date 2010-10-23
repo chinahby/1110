@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -24,13 +24,13 @@
 #include "ResObj.h"
 #include "FileSource.h"
 #include "wutil.h"
-#include "ResDecoderCache.h"
 
-#include "GenericViewer.bid"
+#include "BREWVersion.h"
+
+#if MIN_BREW_VERSIONEx(3,1,2)
 #include "IForceFeed.h"
 #include "IImageDecoder.h"
-#include "GenericViewer.bid"
-#include "BMPDecoder.bid"
+#endif
 
 
 // define the following to test const file handling 
@@ -93,11 +93,7 @@ struct ResObj {
    void *         pMapped;    // if mapped, pointer to start of file in memory, else 0
    uint32 *       pOffsets;   // pointer to start of offset table
    ResMap *       pMap;       // pointer to start of resource map
-   void *         pUser;      // user pointer
-
-   ICharsetConv * piConv;     // pointer to charset converter class object
-   const char *   pszConvTo;  // "convert-to" string
-
+   void *         pUser;
    // size is 32-bit alignment copacetic
    // - overallocated - 
    // map data follows
@@ -126,7 +122,7 @@ typedef int (*PFNCOUNTDECODE) (const char *pcSrc, int cbSrc);
 
 // Is c the first byte of a double-byte character?
 //
-#define EUC_DOUBLE(c)      (((c) & 0x80) != 0)
+#define EUC_DOUBLE(c)      (((c) & '\200') != 0)
 
 // Is c the first byte of a double-byte character?
 //
@@ -166,7 +162,7 @@ static int DecodeEUC(AECHAR *pwcDest, int cwDest, const char *pcSrc, int cbSrc)
    }
    *pwc++ = (AECHAR)0;
 
-   return (pwc - pwcDest) * (int)sizeof(AECHAR);
+   return (pwc - pwcDest) * sizeof(AECHAR);
 }
 
 
@@ -192,7 +188,7 @@ static int CountDecodeEUC(const char *pcSrc, int cbSrc)
       cw--;
    }
 
-   return (cw + 1) * (int)sizeof(AECHAR);
+   return cw * sizeof(AECHAR) + sizeof(AECHAR);
 }
 
 
@@ -230,7 +226,7 @@ static int DecodeSJIS(AECHAR *pwcDest, int cwDest, const char *pcSrc, int cbSrc)
    }
    *pwc++ = (AECHAR)0;
 
-   return (pwc - pwcDest) * (int)sizeof(AECHAR);
+   return (pwc - pwcDest) * sizeof(AECHAR);
 }
 
 
@@ -256,7 +252,7 @@ static int CountDecodeSJIS(const char *pcSrc, int cbSrc)
       cw--;
    }
       
-   return (cw + 1) * (int)sizeof(AECHAR);
+   return cw * sizeof(AECHAR) + sizeof(AECHAR);
 }
 
 
@@ -342,7 +338,7 @@ static int DecodeUTF8(AECHAR *pwcDest, int cwDest, const char *pcSrc, int cbSrc)
    }
    *pwc++ = (AECHAR)0;
 
-   return (pwc - pwcDest) * (int)sizeof(AECHAR);
+   return (pwc - pwcDest) * sizeof(AECHAR);
 }
 
 
@@ -403,7 +399,7 @@ static int CountDecodeUTF8(const char *pcSrc, int cbSrc)
       cw++;
    }
 
-   return (cw + 1) * (int)sizeof(AECHAR);
+   return cw * sizeof(AECHAR) + sizeof(AECHAR);
 }
 
 
@@ -425,7 +421,7 @@ static int Decode8859_1(AECHAR *pwcDest, int cwDest, const char *pcSrc, int cbSr
    }
    *pwc++ = (AECHAR)0;
 
-   return (pwc - pwcDest) * (int)sizeof(AECHAR);
+   return (pwc - pwcDest) * sizeof(AECHAR);
 }
 
 
@@ -433,8 +429,7 @@ static int Decode8859_1(AECHAR *pwcDest, int cwDest, const char *pcSrc, int cbSr
 // returns required buffer size (in bytes) to store decoded string
 static int CountDecode8859_1(const char *pcSrc, int cbSrc)
 {  
-   (void) pcSrc;
-   return (cbSrc + 1) * (int)sizeof(AECHAR);
+   return cbSrc * sizeof(AECHAR) + sizeof(AECHAR);
 }
 
 
@@ -443,18 +438,17 @@ static int DecodeUni(AECHAR *pwcDest, int cwDest, const char *pcSrc, int cbSrc)
 {
    int cbMax = CONSTRAIN(cwDest*(int)sizeof(AECHAR), 0, cbSrc);
 
-   MEMMOVE(pwcDest, pcSrc, (uint32)cbMax);
-   *(pwcDest + (cbMax/(int)sizeof(AECHAR))) = 0;
+   MEMMOVE(pwcDest, pcSrc, cbMax);
+   *(pwcDest + (cbMax/sizeof(AECHAR))) = 0;
 
-   return cbMax + (int)sizeof(AECHAR);
+   return cbMax + sizeof(AECHAR);
 }
 
 
 // returns required buffer size (in bytes) to store decoded string
 static int CountDecodeUni(const char *pcSrc, int cbSrc)
 {
-   (void) pcSrc;
-   return cbSrc + (int)sizeof(AECHAR);
+   return cbSrc + sizeof(AECHAR);
 }
 
 
@@ -462,22 +456,21 @@ static int CountDecodeUni(const char *pcSrc, int cbSrc)
 /////////////////////////////////////////////////////////////////////////////
 
 
-static int ResObj_DecodeString(ResObj *me, AECHAR *pwcDest, int cwDest, 
-                               const char *pcSrc, int cbSrc, uint32 *pnDecoded)
+static int DecodeString(AECHAR *pwcDest, int cwDest, const char *pcSrc, int cbSrc, uint32 *pnDecoded)
 {
    int nErr = 0;
    byte nType;
    byte nType2;
 
-   nType = (byte) *pcSrc;
-   nType2 = (byte) *(pcSrc+1);
+   nType = *pcSrc;
+   nType2 = *(pcSrc+1);
 
    /* Check the string type:
 
       AEE_ENC_UNICODE - (0xfffe)  0xfeff is not supported.
-      AEE_ENC_KSC5601 (Korean)      "
-      AEE_ENC_EUC_CN (Chinese)      "
-      AEE_ENC_S_JIS (Japanese)      "
+      AEE_ENC_KSC5601 (Korea)      "
+      AEE_ENC_EUC_CN (China)       "
+      AEE_ENC_S_JIS (Japan)        "
       AEE_ENC_UTF8 - 
       AEE_END_ISOLATIN1 - If it's set or was not set but positive, we assume it was latin1
    */
@@ -495,66 +488,19 @@ static int ResObj_DecodeString(ResObj *me, AECHAR *pwcDest, int cwDest,
       nType = AEE_ENC_ISOLATIN1;
    }
 
-   // skip over the header byte(s)
-   if (nType == AEE_ENC_UTF8 || nType == AEE_ENC_ISOLATIN1) {
-      pcSrc++;
-      cbSrc--;
-   } else {
-      pcSrc += 2;
-      cbSrc -= 2;
-   }
-
-   // use ICharsetConv converter if we have one and the 
-   // From/To combination is supported
-   if (!nErr && me->piConv && me->pszConvTo) {
-      const char *pcszFrom = 0;
-      if (AEE_ENC_UNICODE == nType) {
-         pcszFrom = "UTF-16LE";
-      } else if (AEE_ENC_UTF8 == nType) {
-         pcszFrom = "UTF-8";
-      } else if (AEE_ENC_KSC5601 == nType) {
-         pcszFrom = "KSC-5601-1992-16LE";
-      } else {
-         nErr = EFAILED;
-      }
-      // see if the ICharsetConv can handle the conversion
-      if (!nErr) {
-         nErr = ICharsetConv_Initialize(me->piConv, pcszFrom, me->pszConvTo, ' ');
-      }
-      // do the conversion
-      if (!nErr) {
-         byte *pSrcBuf = CAST(byte*, pcSrc);
-         byte *pDstBuf = CAST(byte*, pwcDest);
-         int nSrcSize = cbSrc; 
-         int nDstSize = cwDest * (int)sizeof(AECHAR);
-         void *pFree = 0;
-
-         if (!pDstBuf || 0 == nDstSize) {
-            nDstSize = nSrcSize * 6;
-            pFree = MALLOC((dword)nDstSize);
-            pDstBuf = CAST(byte*, pFree);
-            if (!pFree) {
-               nErr = ENOMEMORY;
-            }
-         }
-         if (!nErr && pDstBuf) {
-            int nConverted = 0;
-            byte *pDstStart = pDstBuf;
-            nErr = ICharsetConv_CharsetConvert(me->piConv, &pSrcBuf, &nSrcSize,
-                                               &pDstBuf, &nDstSize, &nConverted);
-            *pnDecoded = (uint32)(pDstBuf - pDstStart);
-         }
-         FREEIF(pFree);
-      }
-
-      return nErr;
-   }
-
 
    if (!nErr) {
 
       PFNDECODE      pfnDecode = DecodeUni;
       PFNCOUNTDECODE pfnCount  = CountDecodeUni;
+
+      if (nType == AEE_ENC_UTF8 || nType == AEE_ENC_ISOLATIN1) {
+         pcSrc++;
+         cbSrc--;
+      } else {
+         pcSrc += 2;
+         cbSrc -= 2;
+      }
 
       if (nType == AEE_ENC_UTF8) {
          pfnDecode = DecodeUTF8;
@@ -586,7 +532,9 @@ static int ResObj_DecodeString(ResObj *me, AECHAR *pwcDest, int cwDest,
    }
 
    return nErr;
+
 }
+
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -600,7 +548,7 @@ static __inline int IFILE_ReadBlock(IFile *me, void *pDest, uint32 dwSize) {
 
 static int IFILE_SeekReadBlock(IFile *me, uint32 dwOffset, void *pDest, uint32 dwSize)
 {
-   int nErr = IFILE_Seek(me, _SEEK_START, (int32)dwOffset);
+   int nErr = IFILE_Seek(me, _SEEK_START, dwOffset);
    if (!nErr) {
       nErr = IFILE_ReadBlock(me, pDest, dwSize);
    }
@@ -668,7 +616,6 @@ static int IFILE_CheckValidResFile(IFile *me, ResHeader *pHdr)
    nErr = IFILE_SeekReadBlock(me, 0, pHdr, sizeof(ResHeader));
 
    if (!nErr) {
-
       // endian conversion
       LETOHS_D(pHdr->nFileVers);
       LETOHS_D(pHdr->nOldestCode);
@@ -679,9 +626,6 @@ static int IFILE_CheckValidResFile(IFile *me, ResHeader *pHdr)
       LETOHL_D(pHdr->dwOffsetCount);
       LETOHL_D(pHdr->dwDataOffset);
       LETOHL_D(pHdr->dwDataLength);
-
-      (void)pHdr->byReserved;
-      (void)pHdr->dwDataLength;
 
       // Check file type and versions
       if (pHdr->byFileType != RM_FILE_TYPE ||
@@ -734,8 +678,8 @@ int IFILEMGR_OpenResFile(IFileMgr *me, const char *pszResFile, IFile **ppo, ResH
    }
 
    // set cache size and check if file is valid
-   if (!nErr && piFile != NULL) {
-      (void) IFILE_SetCacheSize(piFile, SCS_BEST);
+   if (!nErr) {
+      IFILE_SetCacheSize(piFile, SCS_BEST);
       nErr = IFILE_CheckValidResFile(piFile, pHdr);
    }
 
@@ -750,9 +694,9 @@ int IFILEMGR_OpenResFile(IFileMgr *me, const char *pszResFile, IFile **ppo, ResH
 #endif
 #endif
 
-   if (!nErr && piFile != NULL) {
+   if (!nErr) {
       *ppo = piFile;
-      (void) IFILE_AddRef(piFile);
+      IFILE_AddRef(piFile);
    }
 
    RELEASEIF(piFile);
@@ -877,13 +821,13 @@ int ResObj_LoadSource(ResObj *me, uint16 nResID, uint16 nType, ISource **ppo)
 
       if (!nErr) {
          nErr = ISOURCEUTIL_SourceFromMemory(me->piSourceUtil, (byte*)me->pMapped + dwOffset,
-                                             (int32)dwSize, NULL, 0, ppo);
+                                             dwSize, NULL, 0, ppo);
       }
 
    } else {
 
       if (!nErr) {
-         nErr = IFILE_Seek(me->piFile, _SEEK_START, (int32)dwOffset);
+         nErr = IFILE_Seek(me->piFile, _SEEK_START, dwOffset);
       }
    
       // wrap the IFile with an object that provides sub-file streams
@@ -929,28 +873,40 @@ static __inline int ResObj_GetHandler(ResObj *me, AEECLSID clsidBase, const char
    return clsid ? SUCCESS : EFAILED;
 }
 
-static int ResObj_GetStreamMimeType(ResObj *me, uint16 nResID, uint16 nType,
-                                IAStream **ppo, char *szMimeType, byte nMimeLen) 
-{
-   int nErr = ResObj_GetStream(me, nResID, nType, ppo);
-   if (!nErr && nType == RESTYPE_IMAGE) {
-      byte nActualLen = 0;
-      if (1 == IASTREAM_Read(*ppo, &nActualLen, sizeof(nActualLen))
-          && nActualLen > 2
-          && nActualLen <= nMimeLen) {
-            (void) IASTREAM_Read(*ppo, szMimeType, nActualLen-1);
 
-      }
-      else {
-         nErr = EFAILED;
+/* ResObj_GetStreamHandler
+*/
+static int ResObj_GetStreamHandler(ResObj *me, uint16 nResID, uint16 nType, AEECLSID clsidBase, 
+                                   IAStream **ppo, AEECLSID *ppoClsid)
+{
+   int nErr;
+
+   if (ppoClsid) {
+      *ppoClsid = 0;
+   }
+
+   nErr = ResObj_GetStream(me, nResID, nType, ppo);
+
+   if (!nErr && nType == RESTYPE_IMAGE) {
+
+      byte nMimeLen = 0;
+      char szMimeType[32];
+
+      if (1 == IASTREAM_Read(*ppo, &nMimeLen, sizeof(nMimeLen))
+          && nMimeLen > 2
+          && nMimeLen <= sizeof(szMimeType)
+          && (nMimeLen-1) == IASTREAM_Read(*ppo, szMimeType, nMimeLen-1)) {
+
+         nErr = ResObj_GetHandler(me, clsidBase, szMimeType+1, ppoClsid);
       }
    }
+
    return nErr;
 }
 
 
-
 ///////////////////////////////////////////////////////////////////
+#if MIN_BREW_VERSIONEx(3,1,2)
 ///////////////////////////////////////////////////////////////////
 
 #ifdef FULL_FUNCTIONALITY
@@ -1042,45 +998,30 @@ static int ResObj_InitializeFromStream(ResObj *me, IQueryInterface *piqi, IAStre
 
 /* ResObj_LoadObject
 */
-int ResObj_LoadObject(ResObj *me, uint16 nResID, AEECLSID clsidBase, IBase **ppo, 
-                      ResDecoderCache *pResDecoderCache) 
+int ResObj_LoadObject(ResObj *me, uint16 nResID, AEECLSID clsidBase, IBase **ppo) 
 {
    int nErr;
    IBase *piBase = 0;
    IBitmap *pib = 0;
    IAStream *pias = 0;
-   IImageDecoder *piDecoder = 0;
-   AEECLSID clsId = 0;
-   char szMimeType[32];
-   AEECLSID viewerClsId = 0;
+   AEECLSID clsid;
 
-   nErr = ResObj_GetStreamMimeType(me, nResID, RESTYPE_IMAGE, &pias, szMimeType, sizeof(szMimeType));
-   if(!nErr) {
-      nErr = ResDecoderCache_GetDecoder(pResDecoderCache, szMimeType+1, CAST(IBase**, &piDecoder), &clsId);
-      if(!nErr) {
-         viewerClsId = (clsId ==AEECLSID_BMPDECODER)? AEECLSID_GENERICVIEWER_CONVERT: AEECLSID_GENERICVIEWER;      
-         nErr = ISHELL_CreateInstance(me->piShell, viewerClsId, (void**) &piBase);
-         IIMAGE_SetParm(CAST(IImage*,piBase), IPARM_DECODER, (int)piDecoder, 0);
-      }
-      else {
-         nErr = ResObj_GetHandler(me, clsidBase, szMimeType+1, &clsId);
-         if(!nErr && clsId) {
-            nErr = ISHELL_CreateInstance(me->piShell, clsId, (void **)&piBase);
-         }
-      }
+   nErr = ResObj_GetStreamHandler(me, nResID, RESTYPE_IMAGE, clsidBase, &pias, &clsid);
+
+   if (!nErr) {
+      nErr = ISHELL_CreateInstance(me->piShell, clsid, (void **)&piBase);
    }
-   
 
-   if (!nErr && piBase != NULL) {
+   if (!nErr) {
       if (clsidBase == HTYPE_VIEWER ||
           clsidBase == AEECLSID_VIEW) {
 
-         IIMAGE_SetStream(CAST(IImage*, piBase), pias);
+         IIMAGE_SetStream((IImage*)piBase, pias);
 
       } else if (clsidBase == HTYPE_SOUND ||
                  clsidBase == AEECLSID_SOUNDPLAYER) {
 
-         ISOUNDPLAYER_SetStream(CAST(ISoundPlayer*, piBase), pias);
+         ISOUNDPLAYER_SetStream((ISoundPlayer*)piBase, pias);
 
 #ifdef FULL_FUNCTIONALITY
       } else if (0x03010200 <= GETAEEVERSION(0,0,0)) {
@@ -1102,16 +1043,71 @@ int ResObj_LoadObject(ResObj *me, uint16 nResID, AEECLSID clsidBase, IBase **ppo
    }
 
    if (!nErr) {
-      *ppo = pib ? CAST(IBase*, pib) : piBase;
+      *ppo = pib ? (IBase*)pib : piBase;
       IBASE_AddRef(*ppo);
    }
-   RELEASEIF(piDecoder);
+
    RELEASEIF(piBase);
    RELEASEIF(pib);
    RELEASEIF(pias);
 
    return nErr;
 }
+
+
+///////////////////////////////////////////////////////////////////
+#else  // MIN_BREW_VERSIONEx(3,1,2)
+///////////////////////////////////////////////////////////////////
+
+/* ResObj_LoadObject
+   pre-3.1.2 version of ResObj_LoadObject
+*/
+int ResObj_LoadObject(ResObj *me, uint16 nResID, AEECLSID clsidBase, IBase **ppo) 
+{
+   int nErr = 0;
+   IAStream *pias = 0;
+   IBase *piBase = 0;
+   AEECLSID clsid;
+   boolean bImage = 0;
+
+   // for this version, we can only support viewers and soundplayers
+   if (clsidBase == HTYPE_VIEWER || clsidBase == AEECLSID_VIEW) {
+      bImage = 1;
+   } else if (clsidBase == HTYPE_SOUND || clsidBase == AEECLSID_SOUNDPLAYER) {
+      bImage = 0;
+   } else {
+      return ECLASSNOTSUPPORT;
+   }
+
+   nErr = ResObj_GetStreamHandler(me, nResID, RESTYPE_IMAGE, clsidBase, &pias, &clsid);
+   if (!nErr) {
+
+      if (clsid == AEECLSID_DIB) {
+         nErr = ECLASSNOTSUPPORT;
+      } else {
+         nErr = ISHELL_CreateInstance(me->piShell, clsid, (void **)&piBase);
+      }
+   }
+
+   if (!nErr) {
+      if (bImage) {
+         IIMAGE_SetStream((IImage*)piBase, pias);
+      } else {
+         ISOUNDPLAYER_SetStream((ISoundPlayer*)piBase, pias);
+      }
+
+      *ppo = piBase;
+   }
+
+   RELEASEIF(pias);
+
+   return nErr;
+}
+
+
+///////////////////////////////////////////////////////////////////
+#endif   // MIN_BREW_VERSIONEx(3,1,2)
+///////////////////////////////////////////////////////////////////
 
 
 
@@ -1255,8 +1251,8 @@ int ResObj_LoadString(ResObj *me, uint16 nResID, AECHAR *pwchBuffer, uint32 dwBu
    }
 
    if (!nErr) {
-      nErr = ResObj_DecodeString(me, pwchBuffer, (int)(dwBufSize / sizeof(AECHAR)), me->pBuffer,
-                                 (int)me->cbRawSize, pdwResSize);
+      nErr = DecodeString(pwchBuffer, dwBufSize / sizeof(AECHAR), me->pBuffer, 
+                          me->cbRawSize, pdwResSize);
    }
 
    return nErr;
@@ -1283,28 +1279,8 @@ int ResObj_GetMappedData(ResObj *me, uint16 nResID, uint16 nType, uint32 *pdwRes
 }
 
 
-void ResObj_SetICharsetConv(ResObj *me, ICharsetConv *piConv)
-{
-   RELEASEIF(me->piConv);
-   me->piConv = piConv;
-   ADDREFIF(me->piConv);
-}
-
-
-void ResObj_SetCharsetString(ResObj *me, const char *pszTo)
-{
-   FREEIF(me->pszConvTo);
-   if (pszTo) {
-      me->pszConvTo = STRDUP(pszTo);
-   }
-}
-
-
 int ResObj_LoadImage(ResObj *me, uint16 nResID, IImage *ppo)
-{
-   (void) me; (void) nResID; (void) ppo;
-   return EFAILED;
-}
+{ return EFAILED; }
 
 
 
@@ -1344,8 +1320,6 @@ void ResObj_Delete(ResObj *me)
    RELEASEIF(me->piFile);
    RELEASEIF(me->piShell); 
    RELEASEIF(me->piSourceUtil); 
-   RELEASEIF(me->piConv);
-   FREEIF(me->pszConvTo);
    FREEIF(me->pBuffer);
    FREE(me);
 }
@@ -1359,12 +1333,10 @@ int ResObj_New(ResObj **ppo, IShell *piShell, const char *pszResFile)
    IFile *piFile = 0;
    IFileMgr *piFileMgr = 0;
    ResHeader hdr;
-   uint32 nOffsetSize = 0;
+   int nOffsetSize = 0;
    int nErr = 0;
    boolean bTryToMap = 0;
    void *pMapped = 0;
-
-   (void) bTryToMap;
 
 // NOTE: we don't support big endian and mapped files simultaneously
 #if !defined(FEATURE_BIG_ENDIAN)
@@ -1383,7 +1355,7 @@ int ResObj_New(ResObj **ppo, IShell *piShell, const char *pszResFile)
    }
 
 #ifdef IFILE_Map
-   if (!nErr && piFile != NULL && bTryToMap) {
+   if (!nErr && bTryToMap) {
       pMapped = IFILE_Map(piFile, 0,0,0,AEE_FMAP_SHARED,0);
       // Unaligned data access is unpredictable on ARM implementations.  If the file
       // has been mapped onto a non-dword aligned address, abort the map attempt
@@ -1395,14 +1367,14 @@ int ResObj_New(ResObj **ppo, IShell *piShell, const char *pszResFile)
 #endif
 
    if (!nErr) {
-      uint32 cbExtra = pMapped ? 0 : (nOffsetSize + hdr.dwMapLength);
+      int cbExtra = pMapped ? 0 : (nOffsetSize + hdr.dwMapLength);
       me = MALLOCREC_EX(ResObj, cbExtra);
       if (!me) {
          nErr = ENOMEMORY;
       }
    }
 
-   if (!nErr && me != NULL) {
+   if (!nErr) {
 
       // store pMapped
       me->pMapped = pMapped;
@@ -1422,9 +1394,11 @@ int ResObj_New(ResObj **ppo, IShell *piShell, const char *pszResFile)
          me->pOffsets = (uint32*) ((byte*)me->pMapped + me->hdr.dwOffsetOffset);
          me->pMap = (ResMap*) ((byte*)me->pMapped + me->hdr.dwMapOffset);
       } else {
-         me->pOffsets = CAST(uint32*, me + 1);
+         me->pOffsets = (uint32*) (me + 1);
          me->pMap = (ResMap*) ((byte*)me->pOffsets + nOffsetSize);
+      }
 
+      if (!me->pMapped) {
          nErr = ResObj_Setup(me);
       }
    }

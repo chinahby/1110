@@ -15,7 +15,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -32,7 +32,8 @@
 
 #include "AEEStdLib.h"
 
-#include "bid/AEEIID_LOCALE.BID"
+#include "bid/AEEIID_LOCALE.bid"
+#include "bid/AEECLSID_LOCALEENUS.bid"
 #include "bid/AEECLSID_CURRENTLOCALE.bid"
 
 /*---------------------------------------------------------------------------------
@@ -353,6 +354,7 @@ Definition:
 Identifier              Definition
 ----------              -----------------------------------
 AEECLSID_CURRENTLOCALE  Identifies the ID of the current system locale class.
+AEECLSID_LOCALEENUS     Identifies the ID of the US/english locale class.
    
 Comments:
    None

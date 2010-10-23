@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -311,9 +311,7 @@ static int RootForm_MoveWidget(RootForm *me, IWidget *piwFind, IForm *pifBefore)
 static int RootForm_ReplaceWidget(RootForm *me, IWidget **piw, IWidget *piwNew, IWidget *piwBefore)
 {
    int nErr = SUCCESS;
-   WidgetPos pos;
-   pos.x = pos.y = 0;
-   pos.bVisible = TRUE;    // In case of newly inserted widget
+   WidgetPos  pos;
 
    // Early check for identical replacements
    if (*piw != piwNew) {
@@ -549,7 +547,7 @@ boolean RootForm_HandleEvent(IRootForm *po, AEEEvent evt, uint16 wParam, uint32 
             wd.args = pdesc->args;
             wd.piWidget = pdesc->piWidget;
          }
-         return (SUCCESS == IWIDGET_SetProperty(pdesc->piWidget, PROP_APPLYWPROPS, (uint32)&wd));
+         return IWIDGET_SetProperty(pdesc->piWidget, PROP_APPLYWPROPS, (uint32)&wd);
       }
 
       case WID_TITLE:
@@ -663,10 +661,6 @@ static int RootForm_GetFormIndex(RootForm *me, IForm **ppiForm)
 {
    IForm *piForm;
    int nrForms;
-
-   if (NULL == me->piForms) {
-      return -1;
-   }
 
    nrForms = IVECTORMODEL_Size(me->piForms);
 
@@ -804,8 +798,6 @@ int RootForm_InsertForm(IRootForm *po, IForm *piForm, IForm *pifBefore)
    IWidget *piwBefore = 0;
    IForm *pifCurrent;
    int nrForms, formIndex, nErr;
-
-   (void)pifCurrent;
 
    if (!piForm)
       return EBADPARM;
@@ -1018,10 +1010,6 @@ IForm *RootForm_GetForm(IRootForm *po, IForm *pifRef, boolean bNext, boolean bWr
    IForm *piForm = 0;
    int nrForms, formIndex;
    
-   if (NULL == me->piForms) {
-      return NULL;
-   }
-
    nrForms = IVECTORMODEL_Size(me->piForms);
 
    if (pifRef == NULL) {

@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -29,8 +29,8 @@
 #include "AEEHandler.h"
 #include "AEECanvas.h"
 
-#include "bid/AEEIID_WIDGET.bid"
-#include "bid/AEEIID_CONTROLLER.bid"
+#include "bid\AEEIID_WIDGET.bid"
+#include "bid\AEEIID_CONTROLLER.bid"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,6 @@ typedef struct {
 #define EVT_WDG_SETFOCUS      0x700    // wparam is focus state (1=focused, 0=not focused)
 #define EVT_WDG_HASFOCUS      0x701    // dwParam is ptr to boolean to fill
 #define EVT_WDG_CANTAKEFOCUS  0x702    // dwParam is ptr to boolean to fill
-#define EVT_WDG_WINDOWSTATUS  0x750    // Window Manager status event.
 #define EVT_WDG_GETPROPERTY   0x800    // wParam PROP_ constant, dwParam is ptr to prop dest
 #define EVT_WDG_SETPROPERTY   0x801    // wParam PROP_ constant, dwParam is prop value
 #define EVT_WDG_SETLAYOUT     0x802    // wParam is layout flags (0=disable, 1=enable, 2=force)
@@ -117,12 +116,12 @@ AEEINTERFACE(IWidget) {
 #define IWIDGET_SetModel(p,m)                AEEGETPVTBL((p),IWidget)->SetModel(p,m)
 
 
-static __inline int IWIDGET_GetProperty(IWidget *pi, uint16 propId, uint32 *pVal) {
-   return ((0 != IWIDGET_HandleEvent(pi, EVT_WDG_GETPROPERTY, propId, (uint32)pVal)) ? SUCCESS : EFAILED);
+static __inline int IWIDGET_GetProperty(IWidget *p, uint16 propId, uint32 *pVal) {
+   return ((0 != IWIDGET_HandleEvent(p, EVT_WDG_GETPROPERTY, propId, (uint32)pVal)) ? SUCCESS : EFAILED);
 }
 
-static __inline int IWIDGET_SetProperty(IWidget *pi, uint16 propId, uint32 val) {
-   return ((0 != IWIDGET_HandleEvent(pi, EVT_WDG_SETPROPERTY, propId, val)) ? SUCCESS : EFAILED);
+static __inline int IWIDGET_SetProperty(IWidget *p, uint16 propId, uint32 val) {
+   return ((0 != IWIDGET_HandleEvent(p, EVT_WDG_SETPROPERTY, propId, val)) ? SUCCESS : EFAILED);
 }
 
 static __inline int IWIDGET_GetPropBool(IWidget *po, uint16 wProp, boolean *pbVal)
@@ -170,7 +169,7 @@ static __inline void IWIDGET_SetPreferredExtent(IWidget *po, WExtent *pe)
 static __inline void IWIDGET_SetFocus(IWidget* po, boolean bFocus) {
    // SetFocus does not return a meaningful value. Use the functions
    // below to determine if a widget can take focus or has focus
-   (void)IWIDGET_HandleEvent(po, EVT_WDG_SETFOCUS, (uint16)bFocus, 0);
+   IWIDGET_HandleEvent(po, EVT_WDG_SETFOCUS, (uint16)bFocus, 0);
 }
 
 static __inline int IWIDGET_HasFocus(IWidget* po, boolean *pbFocus) {
@@ -298,16 +297,6 @@ EVT_WDG_SETPROPERTY:          The widget is being asked to set the value for a p
                               widget receiving this event should return TRUE if it is able to
                               successfully set the specified property, FALSE if no such property
                               exists for the widget.
-
-
-EVT_WDG_WINDOWSTATUS:         This event is used by WindowManager to provide window status
-                              to the widget that was used to create the window. Widgets, by 
-                              themselves, do not handle this event and widget based applications
-                              can ignore this event. Window-based applications should set a handler
-                              on the widget, which is used to create the window and look for this
-                              property for various window status events like creation, removal of 
-                              the window. 
-                              
 
 Members:
    None

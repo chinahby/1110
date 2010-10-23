@@ -540,16 +540,13 @@ ifeq ($(USES_MSUITE), yes)
 endif
 
 ifeq ($(USES_BREW_BUIW), yes)
-    ifeq ($(USES_BREW_3.0),yes)
-        # Default min files for BUIW
-        include $(BUIW_MIN)/forms_ads12_arm7.min
-        include $(BUIW_MIN)/widgets_ads12_arm7.min
-        ifeq ($(findstring RVCT,$(ARMTOOLS)),RVCT)
-            # BUIW min files to pick when RVCT is used
-            include $(BUIW_MIN)/forms_rvct21_arm9.min
-            include $(BUIW_MIN)/widgets_rvct21_arm9.min
-        endif
-    endif
+  include $(BUIW)/buiw.min
+  #include $(BUIW_MIN)/forms_ads12_arm7.min
+  #include $(BUIW_MIN)/widgets_ads12_arm7.min
+  #ifeq ($(findstring RVCT,$(ARMTOOLS)),RVCT)
+  #   include $(BUIW_MIN)/forms_rvct21_arm9.min
+  #   include $(BUIW_MIN)/widgets_rvct21_arm9.min
+  #endif
 endif
 
 ifeq ($(USES_OEM), yes)

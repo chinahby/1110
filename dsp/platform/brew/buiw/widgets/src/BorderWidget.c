@@ -8,7 +8,7 @@ GENERAL DESCRIPTION:
   Reproduction and/or distribution of this file without the
   written consent of QUALCOMM, Incorporated. is prohibited.
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright © 1999-2006 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -36,12 +36,24 @@ static __inline BorderWidget *CONTAINER_TO_BORDERWIDGET(IContainer *po) {
 #define BORDER_FROM_DECORATOR BorderWidget *me = DECORATOR_TO_BORDERWIDGET(po)
 #define BORDER_FROM_CONTAINER BorderWidget *me = CONTAINER_TO_BORDERWIDGET(po)
 
+
+static __inline void BorderWidget_SetExtentFromChild(IDecorator *po)
+{
+   BORDER_FROM_DECORATOR;
+   WExtent we, weChild;
+   
+   Decorator_GetExtent(po, &weChild);
+   Border_CalcPreferredExtent(&me->border, &we, &weChild);
+   WidgetBase_SetExtent(IDECORATOR_TO_IWIDGET(po), &we);
+}
+
+
 void BorderWidget_SetExtent(IDecorator *po, WExtent *pe)
 {
    BORDER_FROM_DECORATOR;
    WExtent ce;
 
-   WidgetBase_SetExtent((IWidget*)WBASE(me), pe);
+   WidgetBase_SetExtent((IWidget*)&me->base.base, pe);
    Border_CalcClientRect(&me->border);
    
    ce.width = me->border.rcClient.dx;
@@ -59,7 +71,7 @@ void BorderWidget_SetWidget(IDecorator *po, IWidget *piChild)
    Decorator_GetExtent(po, &we);
    Border_CalcPreferredExtent(&me->border, &we, &we);
 
-   WidgetBase_SetExtent((IWidget*)WBASE(me), &we);
+   WidgetBase_SetExtent((IWidget*)&me->base.base, &we);
    Border_CalcClientRect(&me->border);
 }
 
@@ -154,7 +166,7 @@ uint32 BorderWidget_Release(IDecorator *po)
 {
    BORDER_FROM_DECORATOR;
 
-   if (WBASE(me)->nRefs == 1) {
+   if (me->base.base.nRefs == 1) {
       BorderWidget_Dtor(me);
    }
    return Decorator_Release(po);
@@ -167,7 +179,7 @@ void BorderWidget_Dtor(BorderWidget *me)
 }
 
 void BorderWidget_Ctor(BorderWidget *me, AEEVTBL(IDecorator) *pvt, 
-                       IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler)
+                       IModule *piModule, PFNHANDLER pfnDefHandler)
 {
    Decorator_Ctor(&me->base, pvt, piModule, DEFHANDLER(BorderWidget_HandleEvent));
 
@@ -179,23 +191,23 @@ void BorderWidget_Ctor(BorderWidget *me, AEEVTBL(IDecorator) *pvt,
    pvt->SetExtent          = BorderWidget_SetExtent;
    pvt->SetWidget          = BorderWidget_SetWidget;
 
-   WCBASE(me)->vtContainer.Invalidate   = BorderWidget_Invalidate;
-   WCBASE(me)->vtContainer.Locate       = BorderWidget_Locate;
+   me->base.vtContainer.Invalidate = BorderWidget_Invalidate;
+   me->base.vtContainer.Locate = BorderWidget_Locate;
    
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &WBASE(me)->extent, FALSE, &WBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.base.extent, FALSE, &WBASE(me)->piViewModel);
 
    me->border.nWidth[RGBINDEX_ACTIVE]    = 1;
    me->border.nWidth[RGBINDEX_INACTIVE]  = 1;
 }
 
-int BorderWidget_New(IDecorator **ppo, IShell *piShell, IModule *piModule)
-{
+int BorderWidget_New(IDecorator **ppo, IModule *piModule)
+   {
    BorderWidget *me = MALLOCREC_VTBL(BorderWidget, IDecorator);
 
    if (!me)
       return ENOMEMORY;
 
-   BorderWidget_Ctor(me, GETVTBL(me, IDecorator), piShell, piModule, 0);
+   BorderWidget_Ctor(me, GETVTBL(me, IDecorator), piModule, 0);
    *ppo = BORDERWIDGET_TO_IDECORATOR(me);
 
    return 0;
@@ -204,12 +216,12 @@ int BorderWidget_New(IDecorator **ppo, IShell *piShell, IModule *piModule)
 /////////////////////////////////////////////////////////////////
 // Utility functions
 
-int IWidget_WrapInBorder(IWidget **ppioChild, IShell *piShell, IModule *piModule)
+int IWidget_WrapInBorder(IWidget **ppioChild, IModule *piModule)
 {
    int result;
    IDecorator *piBorder;
 
-   result = BorderWidget_New(&piBorder, piShell, piModule);
+   result = BorderWidget_New(&piBorder, piModule);
    
    if (result == 0) {
       IDECORATOR_SetWidget(piBorder, *ppioChild);

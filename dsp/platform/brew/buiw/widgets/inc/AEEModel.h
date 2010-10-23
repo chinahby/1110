@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////
 // Model Interface ID
 
-#include "bid/AEEIID_MODEL.bid"
+#include "bid\AEEIID_MODEL.bid"
 
 /////////////////////////////////////////////////////////////////////////////
 // Events from models

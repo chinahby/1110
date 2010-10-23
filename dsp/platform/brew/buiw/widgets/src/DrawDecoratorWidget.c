@@ -8,7 +8,7 @@ GENERAL DESCRIPTION:
   Reproduction and/or distribution of this file without the
   written consent of QUALCOMM, Incorporated. is prohibited.
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright © 1999-2006 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -32,7 +32,7 @@ uint32 DrawDecoratorWidget_Release(IDrawDecorator *po)
 {
    DRAWDECORATORWIDGET_FROM_DRAWDECORATOR;
 
-   if (1 == WBASE(me)->nRefs) {
+   if (1 == me->base.base.nRefs) {
       DrawDecoratorWidget_Dtor(me);
    }
 

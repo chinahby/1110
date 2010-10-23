@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -100,10 +100,10 @@ void Form_SetPrefRect(IForm *po, int nPctWidth, int nPctHeight, int xOffset, int
          yAdjust = ySpace - yAdjust;
       }
 
-      prc->x = prc->x + (int16)xAdjust;
-      prc->y = prc->y + (int16)yAdjust;
-      prc->dx = (int16)we.width;
-      prc->dy = (int16)we.height;
+      prc->x = prc->x + xAdjust;
+      prc->y = prc->y + yAdjust;
+      prc->dx = we.width;
+      prc->dy = we.height;
    }
    RELEASEIF(piRoot);
    RELEASEIF(piw);
@@ -134,9 +134,6 @@ int FormUtil_ISHELL_CreateFont(IShell *piShell, AEECLSID fontClass, IFont **ppo)
          piFont = FormUtil_IDISPLAY_GetFont(piDisplay, AEE_FONT_LARGE);
          result = 0;
          break;
-
-      default:
-         break;
       }
    }
 
@@ -145,10 +142,10 @@ int FormUtil_ISHELL_CreateFont(IShell *piShell, AEECLSID fontClass, IFont **ppo)
    return result;
 }
 
-static int ISHELL_GetResStringSize(IShell *piShell, const char *pszFile, uint16 idRes)
+int ISHELL_GetResStringSize(IShell *piShell, const char *pszFile, uint16 idRes)
 {
    uint32 cbBufsize = 0;
-   (void)ISHELL_LoadResDataEx(piShell, pszFile, idRes, RESTYPE_STRING, (void*)-1, &cbBufsize);
+   ISHELL_LoadResDataEx(piShell, pszFile, idRes, RESTYPE_STRING, (void*)-1, &cbBufsize);
    cbBufsize *= sizeof(AECHAR);
    return (int)cbBufsize;
 }
@@ -161,7 +158,7 @@ int ISHELL_LoadResStringEx(IShell *piShell, const char *resFile, uint16 resid, A
    int cb = ISHELL_GetResStringSize(piShell, resFile, resid);
 
    if (cb) {
-      pw = MALLOC((unsigned long)cb);
+      pw = MALLOC(cb);
       if (!pw) {
          err = ENOMEMORY;
       }
@@ -223,7 +220,7 @@ IFont *FormUtil_IDISPLAY_GetFont(IDisplay *piDisplay, AEEFont fontId)
    IFont *piFont;
 
    piFont = IDISPLAY_SetFont(piDisplay, fontId, 0);
-   (void)IDISPLAY_SetFont(piDisplay, fontId, piFont);
+   IDISPLAY_SetFont(piDisplay, fontId, piFont);
    IFONT_AddRef(piFont);
    return piFont;
 }
@@ -244,7 +241,7 @@ int FormRes_GetImage(FormRes *me, IShell *piShell, IImage **ppo)
       return ISHELL_LoadResImageEx(piShell, (const char*)me->pdata, me->id, ppo);
    }
    *ppo = (IImage*)me->pdata;
-   ADDREFIF((*ppo));
+   ADDREFIF(*ppo);
    return 0;
 }
 
@@ -256,7 +253,7 @@ int IWIDGET_SetFormText(IWidget *piWidget, IShell *piShell, FormRes *pfr)
    result = FormRes_GetText(pfr, piShell, &txt);
    
    if (result == 0)
-      (void)IWIDGET_SetText(piWidget, txt, TRUE);
+      IWIDGET_SetText(piWidget, txt, TRUE);
 
    return result;
    
@@ -277,7 +274,7 @@ int IWIDGET_SetFormTextStatic(IWidget *piWidget, IShell *piShell, FormRes *pfr)
    }
    
    if (!nErr)
-      (void)IWIDGET_SetText(piWidget, txt, bFree);
+      IWIDGET_SetText(piWidget, txt, bFree);
 
    return nErr;
 }
@@ -291,7 +288,7 @@ int IWIDGET_SetFormImage(IWidget *piWidget, IShell *piShell, FormRes *fi)
    result = FormRes_GetImage(fi, piShell, &piImage);
    
    if (result == 0)
-      (void)IWIDGET_SetImage(piWidget, piImage);
+      IWIDGET_SetImage(piWidget, piImage);
 
    RELEASEIF(piImage);
    return result;
@@ -299,6 +296,6 @@ int IWIDGET_SetFormImage(IWidget *piWidget, IShell *piShell, FormRes *fi)
 
 int Theme_ApplyListProps(IResFile *po, IWidget *piList, IWidget *piItem, const char *baseName)
 {
-   (void)IWIDGET_SetProperties(piList, po, baseName, "List.Properties", 0);
+   IWIDGET_SetProperties(piList, po, baseName, "List.Properties", 0);
    return IWIDGET_SetProperties(piItem, po, baseName, "List.Item.Properties", 0);
 }

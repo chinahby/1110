@@ -11,7 +11,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -23,9 +23,9 @@
 
 #include "AEEWModel.h"
 
-#include "bid/AEEIID_TEXTMODEL.bid"
+#include "bid\AEEIID_TEXTMODEL.bid"
 
-#include "bid/AEECLSID_TEXTMODEL.bid"
+#include "bid\AEECLSID_TEXTMODEL.bid"
 
 /////////////////////////////////////////////////////////////////////////////
 // ITextModel interface

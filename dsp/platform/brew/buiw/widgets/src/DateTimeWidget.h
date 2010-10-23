@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -53,7 +53,6 @@ typedef struct DateWidget {
    uint16         cxFont;        // font width of typical char (usually '0')
    
    flg            fShowArrows : 1;  // draw the up/down arrows in each field
-   flg            fNoWrapField: 1;  // do not wrap to/from first/last field in focus
    flg            fDirty      : 1;  // julian struct needs to be converted/written to value model
    // date-mode flags
    flg            f2DigitYear : 1;  // show only 2 digits of the year [80-99]->19xx, [00-79]->20xx
@@ -66,21 +65,19 @@ typedef struct DateWidget {
    uint16         nPM;           // dest variable for DtFld -- used as boolean (TRUE means PM)
    const AECHAR * pwSpecDelim;   // special delim string used between hh:mm and AM/PM (usually space)
    
-   uint8          ndxDay;              // index of day field in date mode (for changing max month days)
-   int8           nField;              // current edit field, left to right: 0->1->2
-   int8           nNumFields;          // number of fields (# of DtFld's used)
-   uint8          nFldPad;             // padding used around fields
-   uint8          nArrowPad;           // padding between field and up/down arrow
-   DynRGB         rgbText;             // text color, indexed by RGBINDEX_xxx (see Border.h)
-   RGBVAL         rgbTextSel;          // foreground color for text selection when active
-   RGBVAL         rgbaSelected;        // selection BG color (ACTIVE only, w/ alpha component)
-   DtFld          aFlds[4];            // array of fields
-   AECHAR *       pwDelim;             // delimiter string, ex: ":" or  " : " or "/" or " / "
-   AECHAR *       pwFormat;            // compact format string
-   AECHAR *       pwAM;                // AM designator
-   AECHAR *       pwPM;                // PM designator
-   uint8          nDigit;              // count of digits entered in current field
-   uint32         dwFlags;             // holder of PROP_FLAGS
+   uint8          ndxDay;        // index of day field in date mode (for changing max month days)
+   int8           nField;        // current edit field, left to right: 0->1->2
+   int8           nNumFields;    // number of fields (# of DtFld's used)
+   uint8          nFldPad;       // padding used around fields
+   uint8          nArrowPad;     // padding between field and up/down arrow
+   DynRGB         rgbText;       // text color, indexed by RGBINDEX_xxx (see Border.h)
+   DtFld          aFlds[4];      // array of fields
+   AECHAR *       pwDelim;       // delimiter string, ex: ":" or  " : " or "/" or " / "
+   AECHAR *       pwFormat;      // compact format string
+   AECHAR *       pwAM;          // AM designator
+   AECHAR *       pwPM;          // PM designator
+   uint8          nDigit;        // count of digits entered in current field
+   uint32         dwFlags;       // holder of PROP_FLAGS
 } DateWidget;
 
 

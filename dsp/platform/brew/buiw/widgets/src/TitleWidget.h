@@ -11,7 +11,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -45,8 +45,7 @@ static __inline IWidget *TITLEWIDGET_TO_IWIDGET(TitleWidget *me) {
 
 int  TitleWidget_New  (IDecorator **ppo, IShell *piShell, IModule *piModule);
 void TitleWidget_Ctor (TitleWidget *me, AEEVTBL(IDecorator) *pvt, 
-                       IWidget *piTitle, IShell *piShell, IModule *piModule, 
-                       PFNHANDLER pfnDefHandler);
+                       IWidget *piTitle, IModule *piModule, PFNHANDLER pfnDefHandler);
 
 // Widget methods
 boolean TitleWidget_HandleEvent        (IDecorator *po, AEEEvent evt, uint16 wParam, uint32 dwParam);

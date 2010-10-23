@@ -13,7 +13,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -27,9 +27,9 @@
 #include "AEEDecorator.h"
 #include "AEEWProperties.h"
 
-#include "bid/AEECLSID_LISTWIDGET.bid"
-#include "bid/AEECLSID_PICKWIDGET.bid"
-#include "bid/AEECLSID_GRIDWIDGET.bid"
+#include "bid\AEECLSID_LISTWIDGET.bid"
+#include "bid\AEECLSID_PICKWIDGET.bid"
+#include "bid\AEECLSID_GRIDWIDGET.bid"
 
 // List/Pick/Grid Widget flags (set with PROP_FLAGS)
 #define LWF_WRAP                 1  // wrap to/from first/last selection (all)
@@ -62,11 +62,12 @@ static __inline int IWIDGET_SetVarItemSize(IWidget *po, uint8 nItemSize) {
    return IWIDGET_SetProperty(po, PROP_VARITEMSIZE, (int)nItemSize);
 }
 
-static __inline int IWIDGET_GetSelItemSize(IWidget *po, int *pnSelItemSize) {
-   return IWIDGET_GetPropertyEx(po, PROPEX_SELITEMSIZE, (int)sizeof(*pnSelItemSize), pnSelItemSize);
+
+static __inline int IWIDGET_GetSelItemSize(IWidget *po, int *pnItemSize) {
+   return IWIDGET_GetPropInt(po, PROP_SELITEMSIZE, pnItemSize);
 }
-static __inline int IWIDGET_SetSelItemSize(IWidget *po, int nSelItemSize) {
-   return IWIDGET_SetPropertyEx(po, PROPEX_SELITEMSIZE, (int)sizeof(nSelItemSize), &nSelItemSize);
+static __inline int IWIDGET_SetSelItemSize(IWidget *po, uint8 nItemSize) {
+   return IWIDGET_SetProperty(po, PROP_SELITEMSIZE, (int)nItemSize);
 }
 
 
@@ -661,31 +662,8 @@ PROP_SELITEMSIZE: This property sets or retrieves the value of the variable dime
                   used where the size of the selected item is to be displayed with a 
                   different size than non-selected items.  Note that this can be used without 
                   setting the LWF_VARIABLEITEMSIZE flag or installing and indexer function.
-
-PROP_EX:             This property sets or retrieves an extended property value using a
-                     WidgetPropEx structure. The extended property value is specified in
-                     the structure's property ID field.
-
-                     This structure also contains a size field and buffer pointer field.
-                     For a get operation, on input the size field contains the buffer size
-                     in bytes and on output it contains the buffer's data size. For a set
-                     operation, on input the size field contains the buffer's data size.
-
-                     Possible values for the property ID field include:
-
-                        PROPEX_ITEMHEIGHT
-                        PROPEX_ITEMWIDTH
-                        PROPEX_SELITEMSIZE
-
-PROPEX_ITEMHEIGHT:   This extended property replaces the property PROP_ITEMHEIGHT which is
-                     unable to properly set values larger than 255.
-
-PROPEX_ITEMWIDTH:    This extended property replaces the property PROP_ITEMWIDTH which is
-                     unable to properly set values larger than 255.
-
-PROPEX_SELITEMSIZE:  This extended property replaces the property PROP_SELITEMSIZE which
-                     is unable to properly set values larger than 255.
-
+                  
+                  
 Required Model:
    IListModel (default)
    

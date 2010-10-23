@@ -12,7 +12,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -61,7 +61,7 @@ void Vector_Dtor(Vector *me)
 }
 
 
-int Vector_GetAt(const Vector *me, uint32 nIndex, void **ppoItem)
+int Vector_GetAt(Vector *me, uint32 nIndex, void **ppoItem)
 {
    if (nIndex >= me->nItems) {
       *ppoItem = NULL;

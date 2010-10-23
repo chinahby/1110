@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -28,8 +28,6 @@
 typedef struct {
    BitmapWidget   base;
    IShell *       piShell;
-   boolean        bInitRes;
-   ModelListener  mlCursor;
 } CursorWidget;
 
 static __inline IWidget *CURSORWIDGET_TO_IWIDGET(CursorWidget *me) {

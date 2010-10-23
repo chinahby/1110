@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -22,15 +22,6 @@
 
 #include "AEEShell.h"
 #include "AEEFile.h"
-#include "ResDecoderCache.h"
-
-#include "BREWVersion.h"
-#if MIN_BREW_VERSIONEx(4,0,0)
-   #include "AEEICharsetConv.h"
-#else
-   #include "brew/AEEICharsetConv.h"
-#endif
-
 
 // error code not defined for BREW2.1
 #ifndef  EBUFFERTOOSMALL
@@ -39,19 +30,17 @@
 
 typedef struct ResObj ResObj;
 
+
 int   ResObj_New           (ResObj **ppo, IShell *piShell, const char *pszResFile);
 void  ResObj_Delete        (ResObj *me);
 int   ResObj_Open          (ResObj *me, const char *pszResFile);
 int   ResObj_BufferLoadData(ResObj *me, uint16 nResID, uint16 nType, void *pBuffer, uint32 dwBufSize, uint32 *pdwResSize);
 int   ResObj_LoadData      (ResObj *me, uint16 nResID, uint16 nType, void **ppo);
-int   ResObj_LoadObject    (ResObj *me, uint16 nResID, AEECLSID clsidHandler, IBase **ppo, ResDecoderCache *pDecoderCache);
+int   ResObj_LoadObject    (ResObj *me, uint16 nResID, AEECLSID clsidHandler, IBase **ppo);
 int   ResObj_LoadString    (ResObj *me, uint16 nResID, AECHAR *pwchBuffer, uint32 dwBufSize, uint32 *pdwResSize);
 int   ResObj_LoadImage     (ResObj *me, uint16 nResID, IImage *ppo);
 int   ResObj_LoadSource    (ResObj *me, uint16 nResID, uint16 nType, ISource **ppo);
 int   ResObj_GetMappedData (ResObj *me, uint16 nResID, uint16 nType, uint32 *pdwResSize, void **ppo);
-
-void  ResObj_SetICharsetConv  (ResObj *me, ICharsetConv *piConv);
-void  ResObj_SetCharsetString (ResObj *me, const char *pszTo);
 
 boolean  ResObj_IsMapped   (ResObj *me);
 int      ResObj_GetSize    (ResObj *me, uint16 nResID, uint16 nType, uint32 *pdwResSize);

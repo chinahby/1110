@@ -10,7 +10,7 @@ DESCRIPTION:   This file describes an interface of several bidirectional font
                It is assumed the OEM will create a version that supports their
                right to left fonts.
 
-                Copyright © 1999-2007 QUALCOMM Incorporated.
+                Copyright © 1999-2006 QUALCOMM Incorporated.
                            All Rights Reserved.
                         QUALCOMM Proprietary/GTDR
 =================================================================================*/

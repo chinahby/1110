@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -22,7 +22,7 @@
 
 #include "AEEDecorator.h"
 
-#include "bid/AEECLSID_TABWIDGET.bid"
+#include "bid\AEECLSID_TABWIDGET.bid"
 
 
 #define TABWF_SHOWBORDER      1        // draw a border around the contained widget

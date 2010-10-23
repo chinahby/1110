@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -156,24 +156,6 @@ static void SbArrows_Dtor(SbArrows *me)
    TiledImage_Dtor(&me->tiHArrows);
 }
 
-static __inline int SBArrows_InitVArrows(SbArrows *me) {
-   
-   if(!me->bInitV || !TILEDIMAGE_HASIMAGE(&me->tiVArrows)) {
-      me->bInitV = TRUE;
-      return TiledImage_LoadResBitmap(&me->tiVArrows, me->piShell, "widgets.mif", IDB_VSBARROWS, 2); 
-   }
-   return SUCCESS;
-}
-
-static __inline int SBArrows_InitHArrows(SbArrows *me) {
-   
-   if(!me->bInitH || !TILEDIMAGE_HASIMAGE(&me->tiHArrows)) {
-      me->bInitH = TRUE;
-      return TiledImage_LoadResBitmap(&me->tiHArrows, me->piShell, "widgets.mif", IDB_HSBARROWS, 2); 
-   }
-   return SUCCESS;
-}
-
 static void SbArrows_DrawVertArrows(SbArrows *me, IDisplay *piDisplay, AEERect *prc, 
                                     RGBVAL rgbUp, RGBVAL rgbDown, boolean bReduce,
                                     int nEndPad)
@@ -181,9 +163,12 @@ static void SbArrows_DrawVertArrows(SbArrows *me, IDisplay *piDisplay, AEERect *
    int x, y;
 
    // ensure resource image is loaded
-   if (SUCCESS != SBArrows_InitVArrows(me)) {
+   if (!TILEDIMAGE_HASIMAGE(&me->tiVArrows) && 
+       me->piShell && 
+       0 != TiledImage_LoadResBitmap(&me->tiVArrows, me->piShell, "widgets.mif", IDB_VSBARROWS, 2)) {
       return;
    }
+
    x = prc->x + ((prc->dx - me->tiVArrows.cxTile) / 2);
    y = prc->y;
    if (rgbUp != RGB_NONE) {
@@ -209,8 +194,10 @@ static void SbArrows_DrawHorzArrows(SbArrows *me, IDisplay *piDisplay, AEERect *
    int x, y;
 
    // ensure resource image is loaded
-   if (SUCCESS != SBArrows_InitHArrows(me)) {
-      return ;
+   if (!TILEDIMAGE_HASIMAGE(&me->tiHArrows) &&
+       me->piShell &&
+       0 != TiledImage_LoadResBitmap(&me->tiHArrows, me->piShell, "widgets.mif", IDB_HSBARROWS, 2)) {
+      return;
    }
 
    x = prc->x;
@@ -270,11 +257,6 @@ static __inline int ScrollbarWidget_GetScrollbarWidth(ScrollbarWidget *me, boole
 {
    int nWidth = 0;
    if (me->dwFlags & SBWF_ARROWS) {
-      if(bHorz) {
-         (void) SBArrows_InitHArrows(&me->arrows);
-      } else {
-         (void) SBArrows_InitVArrows(&me->arrows);
-      }
       nWidth = bHorz ? me->arrows.tiHArrows.cyTile : me->arrows.tiVArrows.cxTile;
    }
 
@@ -420,7 +402,7 @@ static void ScrollbarWidget_GetScrollHandleRects(ScrollbarWidget *me, boolean bH
 static __inline void ScrollbarWidget_CalcExtent(IDecorator *po)
 {
    SCROLLBAR_FROM_DECORATOR;
-   ScrollbarWidget_SetExtent(po, &WBASE(me)->extent);
+   ScrollbarWidget_SetExtent(po, &me->base.base.extent);
 }
 
 
@@ -432,7 +414,7 @@ uint32 ScrollbarWidget_Release(IDecorator *po)
 {
    SCROLLBAR_FROM_DECORATOR;
 
-   if (WBASE(me)->nRefs == 1) {
+   if (me->base.base.nRefs == 1) {
       // specific cleanup
       SbArrows_Dtor(&me->arrows);
       LISTENER_Cancel(&me->scrollListener);
@@ -796,13 +778,11 @@ boolean ScrollbarWidget_HandleEvent(IDecorator *po, AEEEvent evt, uint16 wParam,
          switch(wParam) {
          
             case PROP_IMAGESTRIP_H:
-               me->arrows.bInitH = TRUE;
                TiledImage_SetBitmap(&me->arrows.tiHArrows, (IBitmap*)dwParam, 2);
                ScrollbarWidget_InvalidateScrollbar(me, 1);
                return TRUE;
 
             case PROP_IMAGESTRIP_V:
-               me->arrows.bInitV = TRUE;
                TiledImage_SetBitmap(&me->arrows.tiVArrows, (IBitmap*)dwParam, 2);
                ScrollbarWidget_InvalidateScrollbar(me, 0);
                return TRUE;
@@ -991,11 +971,11 @@ void ScrollbarWidget_Ctor(ScrollbarWidget *me, AEEVTBL(IDecorator) *pvt, IShell 
    pvt->SetWidget          = ScrollbarWidget_SetWidget;
    pvt->SetModel           = ScrollbarWidget_SetModel;
    
-   WCBASE(me)->vtContainer.Invalidate  = ScrollbarWidget_Invalidate;
-   WCBASE(me)->vtContainer.Locate      = ScrollbarWidget_Locate;
+   me->base.vtContainer.Invalidate  = ScrollbarWidget_Invalidate;
+   me->base.vtContainer.Locate      = ScrollbarWidget_Locate;
    
 
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &WBASE(me)->extent, FALSE, &WBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.base.extent, FALSE, &WBASE(me)->piViewModel);
    me->border.nWidth[0] =
    me->border.nWidth[1] = 0;
    Border_SetBGColor(&me->border, 0, RGBA_NONE);
@@ -1023,8 +1003,10 @@ void ScrollbarWidget_Ctor(ScrollbarWidget *me, AEEVTBL(IDecorator) *pvt, IShell 
    LISTENER_Init(&me->scrollListener, ScrollbarWidget_onScrollEvent, 
                  SCROLLBARWIDGET_TO_IDECORATOR(me));
 
-   SETWEXTENT(&WBASE(me)->extent, 0, 0);
+   SETWEXTENT(&me->base.base.extent, 0, 0);
 
+   TiledImage_LoadResBitmap(&me->arrows.tiVArrows, me->piShell, "widgets.mif", IDB_VSBARROWS, 2);
+   TiledImage_LoadResBitmap(&me->arrows.tiHArrows, me->piShell, "widgets.mif", IDB_HSBARROWS, 2);
 }
 
 int ScrollbarWidget_New(IDecorator **ppo, IShell *piShell, IModule *piModule)
@@ -1063,15 +1045,8 @@ int IWidget_WrapInScrollbar(IWidget **ppioChild, IShell *piShell, IModule *piMod
 /////////////////////////////////////////////////////////////////
 // ScrollIndicatorWidget
 
-static __inline int DYEXTRA(ScrollIndicatorWidget *me) {
-   (void) SBArrows_InitVArrows(&me->arrows);
-   return me->arrows.tiVArrows.cyTile + me->nPad;
-}
-
-static __inline int DXEXTRA(ScrollIndicatorWidget *me) {
-   (void) SBArrows_InitHArrows(&me->arrows);
-   return me->arrows.tiHArrows.cxTile + me->nPad;
-}
+#define DYEXTRA   (me->arrows.tiVArrows.cyTile + me->nPad)
+#define DXEXTRA   (me->arrows.tiHArrows.cxTile + me->nPad)
 
 static __inline void ScrollIndicatorWidget_GetChildRect(IDecorator *po, int x, int y, AEERect *prc)
 {
@@ -1089,10 +1064,10 @@ static __inline void ScrollIndicatorWidget_GetChildRect(IDecorator *po, int x, i
    SETAEERECT(prc, x + me->border.rcClient.x, y + me->border.rcClient.y, e.width, e.height);
 
    if (me->nScrollStyle == SCROLL_VERT || me->nScrollStyle == SCROLL_BOTH) {
-      prc->y += DYEXTRA(me);
+      prc->y += DYEXTRA;
    }
    if (me->nScrollStyle == SCROLL_HORZ || me->nScrollStyle == SCROLL_BOTH) {
-      prc->x += DXEXTRA(me);
+      prc->x += DXEXTRA;
    }
 
 }
@@ -1128,27 +1103,23 @@ void ScrollIndicatorWidget_GetPreferredExtent(IDecorator *po, WExtent *pweOut)
       Decorator_GetPreferredExtent(po, &we);
 
       if (me->nScrollStyle == SCROLL_VERT || me->nScrollStyle == SCROLL_BOTH) {
-         we.width += (DXEXTRA(me) * 2);
+         we.width += (DXEXTRA * 2);
       }
       if (me->nScrollStyle == SCROLL_HORZ || me->nScrollStyle == SCROLL_BOTH) {
-         we.height += (DYEXTRA(me) * 2);
+         we.height += (DYEXTRA * 2);
       }
    
    } else {
 
       if (me->nScrollStyle == SCROLL_VERT) {
-         (void) SBArrows_InitVArrows(&me->arrows);
          we.height = (me->arrows.tiVArrows.cyTile * 2) + me->nPad;
          we.width = me->arrows.tiVArrows.cxTile;
 
       } else if (me->nScrollStyle == SCROLL_HORZ) {
-         (void) SBArrows_InitHArrows(&me->arrows);
          we.height = me->arrows.tiHArrows.cyTile;
          we.width = (me->arrows.tiHArrows.cxTile * 2) + me->nPad;
 
       } else {
-         (void) SBArrows_InitVArrows(&me->arrows);
-         (void) SBArrows_InitHArrows(&me->arrows);
          we.height = (me->arrows.tiVArrows.cyTile * 2) + me->nPad;
          we.width = (me->arrows.tiHArrows.cxTile + (me->arrows.tiHArrows.cxTile * 2) + (me->nPad * 2));
 
@@ -1175,12 +1146,10 @@ void ScrollIndicatorWidget_SetExtent(IDecorator *po, WExtent *pe)
    we.height = me->border.rcClient.dy;
 
    if (me->nScrollStyle == SCROLL_VERT || me->nScrollStyle == SCROLL_BOTH) {
-      int height = DYEXTRA(me) * 2;
-      we.height = MAX(0, we.height - height);
+      we.height = MAX(0, we.height - (DYEXTRA * 2));
    }
    if (me->nScrollStyle == SCROLL_HORZ || me->nScrollStyle == SCROLL_BOTH) {
-      int width = DXEXTRA(me) * 2;
-      we.width = MAX(0, we.width - width);
+      we.width = MAX(0, we.width - (DXEXTRA * 2));
    }
 
    Decorator_SetExtent(po, &we);
@@ -1200,10 +1169,10 @@ void ScrollIndicatorWidget_SetWidget(IDecorator *po, IWidget *piChild)
    Decorator_GetExtent(po, &we);
 
    if (me->nScrollStyle == SCROLL_VERT ||  me->nScrollStyle == SCROLL_BOTH) {
-      we.height += (DYEXTRA(me) * 2);
+      we.height += (DYEXTRA * 2);
    }
    if (me->nScrollStyle == SCROLL_HORZ || me->nScrollStyle == SCROLL_BOTH) {
-      we.width += (DXEXTRA(me) * 2);
+      we.width += (DXEXTRA * 2);
    }
 
    Border_CalcPreferredExtent(&me->border, &weBorder, &we);
@@ -1335,20 +1304,18 @@ boolean ScrollIndicatorWidget_HandleEvent(IDecorator *po, AEEEvent evt, uint16 w
          switch(wParam) {
             
             case PROP_IMAGESTRIP_H:
-               me->arrows.bInitH = TRUE;
                TiledImage_SetBitmap(&me->arrows.tiHArrows, (IBitmap*)dwParam, 2);
                Decorator_Invalidate(po, &me->border.rcClient, 0);
                return TRUE;
             
             case PROP_IMAGESTRIP_V:
-               me->arrows.bInitV = TRUE;
                TiledImage_SetBitmap(&me->arrows.tiVArrows, (IBitmap*)dwParam, 2);
                Decorator_Invalidate(po, &me->border.rcClient, 0);
                return TRUE;
 
             case PROP_SCROLLPAD:
                me->nPad = (int)dwParam;
-               ScrollIndicatorWidget_SetExtent(po, &WBASE(me)->extent);
+               ScrollIndicatorWidget_SetExtent(po, &me->base.base.extent);
                return TRUE;
          
             case PROP_SCROLLSTYLE: {
@@ -1407,7 +1374,7 @@ uint32 ScrollIndicatorWidget_Release(IDecorator *po)
 {
    SCROLLIND_FROM_DECORATOR;
 
-   if (WBASE(me)->nRefs == 1) {
+   if (me->base.base.nRefs == 1) {
       // specific cleanup
       SbArrows_Dtor(&me->arrows);
       LISTENER_Cancel(&me->scrollListener);
@@ -1452,10 +1419,10 @@ void ScrollIndicatorWidget_Ctor(ScrollIndicatorWidget *me, AEEVTBL(IDecorator) *
    pvt->GetPreferredExtent = ScrollIndicatorWidget_GetPreferredExtent;
    pvt->SetModel           = ScrollIndicatorWidget_SetModel;
 
-   WCBASE(me)->vtContainer.Invalidate  = ScrollIndicatorWidget_Invalidate;
-   WCBASE(me)->vtContainer.Locate      = ScrollIndicatorWidget_Locate;
+   me->base.vtContainer.Invalidate  = ScrollIndicatorWidget_Invalidate;
+   me->base.vtContainer.Locate      = ScrollIndicatorWidget_Locate;
 
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &WBASE(me)->extent, FALSE, &WBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.base.extent, FALSE, &WBASE(me)->piViewModel);
    me->border.nWidth[0] =
    me->border.nWidth[1] = 0;
    Border_SetBorderColor(&me->border, 0, RGBA_NONE);
@@ -1474,6 +1441,8 @@ void ScrollIndicatorWidget_Ctor(ScrollIndicatorWidget *me, AEEVTBL(IDecorator) *
 
    LISTENER_Init(&me->scrollListener, ScrollIndicatorWidget_OnScrollEvent, (IWidget*)me);
 
+   TiledImage_LoadResBitmap(&me->arrows.tiVArrows, me->piShell, "widgets.mif", IDB_VSBARROWS, 2);
+   TiledImage_LoadResBitmap(&me->arrows.tiHArrows, me->piShell, "widgets.mif", IDB_HSBARROWS, 2);
 }
 
 

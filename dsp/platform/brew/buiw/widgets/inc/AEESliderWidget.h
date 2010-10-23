@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -23,7 +23,7 @@
 #include "AEEWProperties.h"
 
 
-#include "bid/AEECLSID_SLIDERWIDGET.bid"
+#include "bid\AEECLSID_SLIDERWIDGET.bid"
 
 
 static __inline int IWIDGET_GetSliderMaxPos(IWidget *po, uint16 *pnValue) {
@@ -150,14 +150,14 @@ EVT_WDG_GETPROPERTY     This event allows various properties to be retrieved fro
 Properties:
 Property                Description
 --------                ------------------------------------------------------------
-PROP_SLIDER_MAXPOS      This property gets/sets the value of the maximum position 
+PROP_MAXPOS             This property gets/sets the value of the maximum position 
                         of the slider handle. The minimum position value is always zero
                         and visually occurs when the slider handle is in the left-most
                         position (for horizontal orientation) or bottom-most position 
                         (for vertical orientation), of the slider range. Conversely, 
-                        the maximum position value is set by PROP_SLIDER MAXPOS and
-                        visually occurs when the handle is in the right-most or
-                        top-most position of the slider range.  
+                        the maximum position value is set by PROP_MAXPOS and visually
+                        occurs when the handle is in the right-most or top-most 
+                        position of the slider range.  
 
 PROP_SLIDER_HANDLEBORDERCOLOR
                         This property gets/sets the RGB value of the border area around
@@ -212,7 +212,7 @@ Model Data:
    
    The slider widget relies on a value model that presents its data as an 
    unsigned integer in the range of zero to 'MaxPos', which is the 
-   maximum position value and is set by the property: PROP_SLIDER_MAXPOS. 
+   maximum position value and is set by the property: PROP_MAXPOS. 
    
    For example, if 'MaxPos' is set to the value (4), there are five possible
    values and corresponding positions for the slider handle: (0,1,2,3,4).
@@ -276,7 +276,7 @@ Side Effects:
    None.
 
 See Also:
-   PROP_SLIDER_MAXPOS
+   PROP_MAXPOS
    IWIDGET_SetSliderMaxPos()
 
 
@@ -313,7 +313,7 @@ Side Effects:
    position value.
 
 See Also:
-   PROP_SLIDER_MAXPOS
+   PROP_MAXPOS
    IWIDGET_GetSliderMaxPos()
 
 

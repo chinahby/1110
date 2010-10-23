@@ -12,7 +12,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -42,8 +42,8 @@ int      GridContainer_New       (IGridContainer **ppo, IShell *piShell, IModule
 int      GridContainer_Construct (GridContainer *me, AEEVTBL(IGridContainer) *pvt, IModule *piModule,
                                   PFNHANDLER pfnDefHandler);
 
-void     GridContainer_Ctor(GridContainer *me, AEEVTBL(IGridContainer) *pvt, 
-                            IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler);
+void     GridContainer_Ctor(GridContainer *me, AEEVTBL(IGridContainer) *pvt, IModule *piModule, 
+                            PFNHANDLER pfnDefHandler);
 void     GridContainer_Dtor(GridContainer *me);
 
 int      GridContainer_Insert (IGridContainer *po, IWidget *piw,

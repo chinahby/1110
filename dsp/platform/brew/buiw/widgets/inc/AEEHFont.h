@@ -23,7 +23,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -47,7 +47,7 @@
 ---------------------------------------------------------------------------------*/
  
 // IHFont interface id
-#include "bid/AEEIID_HFONT.BID"
+#include "bid\AEEIID_HFONT.bid"
 
 /*---------------------------------------------------------------------------------
       Type Declarations
@@ -120,7 +120,7 @@ Description:
    The IHFont interface is an abstract interface that has no concrete
    implementation (and thus no class ID to create one).  Instead it 
    acts as the base interface for all IHFont implementations.  For 
-   example, the IHFont interface is used by the IHFont Outline font 
+   example, the IHFont interface is used by the outline font 
    interface.
 
    The IHFont interface is identified by the interface ID below.
@@ -299,7 +299,7 @@ Usage:
 ===/pre>
 
 See Also:
-   IHFont Outline
+   IHFont outline implementaion
    IFont
    ISHELL_CreateInstance()
 

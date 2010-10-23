@@ -3,11 +3,10 @@
 #    xmod_arm.min
 #
 #  Description:
-#    Makefile to build the an xmod downloadable module.
+#    Makefile to build the an xmod downloadable module with gcc-arm
 #
 # Assumptions:
-#   1. Compiler-specific definitions are defined separately in an
-#      xmod_$(TARGET).min file
+#   1. The ARM ADS tools are installed in $(ARMHOME)
 #   2. The BREW sdk include files are installed in $(BREWDIR)/inc
 #   3. BREWDIR is defined, and points to the installed location of the 
 #      BREW SDK.  Optionally, you can install your app directories next 
@@ -15,7 +14,7 @@
 #   4. The variable MODNAME below has be set to the proper base name of the
 #      module being built
 #
-#        Copyright © 2000-2007 QUALCOMM Incorporated.
+#        Copyright © 2000-2005 QUALCOMM Incorporated.
 #               All Rights Reserved.
 #            QUALCOMM Proprietary/GTDR
 #
@@ -26,44 +25,9 @@
 # Target file name and type and path definitions
 #----------------------------------------------------------------------------
 
-ifndef MODDIR
-  MODDIR=mod
-endif
-
-ifndef LIBDIR
-  LIBDIR=lib
-endif
-
-# Our clean target is modname- and target-agnostic
-ifneq ($(MAKECMDGOALS),clean)
-
 ifndef MODNAME
 $(error MODNAME is undefined!)
 endif
-
-ifndef TARGET
-$(error TARGET is undefined!)
-endif
-
-
-#----------------------------------------------------------------------------
-# Compiler-specific definitons.
-#
-# Sets the compiler tools depending on the TARGET option selected
-#----------------------------------------------------------------------------
-ifeq ($(TARGET),ADS12_ARM7)
-  include $(XMODDIR)/defines_ads12.min
-else
-  ifeq ($(TARGET),RVCT21_ARM9)
-    include $(XMODDIR)/defines_rvct21.min
-  else
-    $(error Invalid TARGET selected! The following are valid options:\
-    ADS12_ARM7, RVCT21_ARM9)
-  endif
-endif
-
-endif #ifneq clean
-
 
 #----------------------------------------------------------------------------
 #----------------------------------------------------------------------------
@@ -74,36 +38,106 @@ endif #ifneq clean
 MKDIR=mkdir
 
 #----------------------------------------------------------------------------
-#  where objects go
+# I need ARMHOME
 #----------------------------------------------------------------------------
-MODOBJ=$(MODDIR)/$(TARGET)/objs
-LIBOBJ=$(LIBDIR)/$(TARGET)/objs
+
+ifndef ARMHOME
+$(error ARMHOME is undefined!)
+endif
+
+ARMHOME := $(subst \,/,$(ARMHOME))
+
+ARMBIN = "$(ARMHOME)/bin"
+ARMINC = "$(ARMHOME)/include/"
+ARMLIB = $(ARMHOME)/lib
+
+ARMCC   = $(ARMBIN)/armcc
+ARMAR   = $(ARMBIN)/armar
+ARMCPP  = $(ARMBIN)/armcpp
+TCC     = $(ARMBIN)/tcc
+TCPP    = $(ARMBIN)/tcpp
+LD      = $(ARMBIN)/armlink
+FROMELF = $(ARMBIN)/fromelf
+
+#----------------------------------------------------------------------------
+# Target compile time symbol definitions
+#----------------------------------------------------------------------------
+
+DEFINES = -DT_ARM $(MYDEFINES)
+
+#----------------------------------------------------------------------------
+# Processor architecture options, ARM7TDMI target processor, little endian
+#----------------------------------------------------------------------------
+
+CPU = -littleend -cpu ARM7TDMI
+
+#----------------------------------------------------------------------------
+# ARM Procedure Call Standard (APCS) options
+#----------------------------------------------------------------------------
+
+APCS = -apcs /noswst/inter/ropi/norwpi
+
+#----------------------------------------------------------------------------
+# C Compiler options
+#----------------------------------------------------------------------------
+
+COPT = -zo -Wbns+a -fa
+
+#----------------------------------------------------------------------------
+# Compiler/assembler debug options
+#----------------------------------------------------------------------------
+
+DBG =
+
+#----------------------------------------------------------------------------
+# Compiler optimization options, full compiler optimization for space
+#----------------------------------------------------------------------------
+
+OPT = -Otime --no_inlinemax -O2
+
+#----------------------------------------------------------------------------
+# Include file search path options
+#----------------------------------------------------------------------------
+
+INC = -I$(XMODDIR) $(MODINC) 
+
+#----------------------------------------------------------------------------
+# Compiler flag definitions
+#----------------------------------------------------------------------------
+
+CFLAGS = -ansic $(CPU) $(APCS) $(COPT) $(DBG) $(OPT) $(DEFINES) $(INC) $(MODCFLAGS)
+CPPFLAGS = -cpp $(CPU) $(APCS) $(COPT) $(DBG) $(OPT) $(DEFINES) $(INC) $(MODCFLAGS)
+
+#----------------------------------------------------------------------------
+# Linker options
+#----------------------------------------------------------------------------
+
+LFLAGS = -remove -ropi -rwpi -rw-base 0 -strict -entry AEEMod_Load -first AEEMod_Load $(MODLFLAGS)
+
+#----------------------------------------------------------------------------
+#  define what goes into target
+#----------------------------------------------------------------------------
+
+OBJS = $(notdir $(MODOBJS) xmodstub.o xmodimpl.o)
+
+MODOBJ=modobjs
+LIBOBJ=libobjs
 
 OBJDIR=$(MODOBJ)
 ifdef STATIC
   OBJDIR=$(LIBOBJ)
   DEFINES += -DAEE_STATIC
 endif
-
  
-#----------------------------------------------------------------------------
-#  define what goes into target
-#----------------------------------------------------------------------------
-OBJS = $(notdir $(MODOBJS) xmodstub.o xmodimpl.o)
 OBJS := $(addprefix $(OBJDIR)/,$(OBJS))
 
 LIBS = $(MODLIBS)
-
-MODOUT=$(MODDIR)/$(TARGET)/$(MODNAME).mod
-ELFOUT=$(MODDIR)/$(TARGET)/$(MODNAME).elf
-AROUT =$(MODDIR)/$(TARGET)/$(MODNAME).a
-LIBOUT=$(LIBDIR)/$(TARGET)/$(MODNAME)_arm.lib
 
 #----------------------------------------------------------------------------
 # Default target
 #----------------------------------------------------------------------------
 
-all : $(MODOUT) $(LIBOUT)
+all : $(MODNAME).mod $(MODNAME)_arm.lib
 
 #----------------------------------------------------------------------------
 # Clean target
@@ -114,8 +148,11 @@ all : $(MODOUT) $(LIBOUT)
 clean :
 	@echo ---------------------------------------------------------------
 	@echo CLEAN
-	-rm -rf $(LIBDIR)
-	-rm -rf $(MODDIR)
+	-rm -rf $(LIBOBJ)
+	-rm -rf $(MODOBJ)
+	-rm -f $(MODNAME).lib
+	-rm -f $(MODNAME).elf
+	-rm -f $(MODNAME).mod
 	$(XMOD_CLEAN_CMDS)
 	@echo ---------------------------------------------------------------
 
@@ -144,7 +181,7 @@ $(OBJDIR)/%.o: %.c
 	@echo ---------------------------------------------------------------
 	@echo OBJECT $@
 	@if [ ! -d $(OBJDIR) ] ; \
-		then $(MKDIR) -p $(OBJDIR) ; \
+		then $(MKDIR) $(OBJDIR) ; \
 	fi
 	$(TCC) $(CFLAGS) -o $@ -c $(subst \,/,$<)
 	$(XMOD_POSTCC_CMDS)
@@ -154,7 +191,7 @@ $(OBJDIR)/%.o: %.cpp
 	@echo ---------------------------------------------------------------
 	@echo OBJECT $@
 	@if [ ! -d $(OBJDIR) ] ; \
-		then $(MKDIR) -p $(OBJDIR) ; \
+		then $(MKDIR) $(OBJDIR) ; \
 	fi
 	$(TCPP) $(CFLAGS) -o $@ -c $<
 	$(XMOD_POSTCC_CMDS)
@@ -165,7 +202,7 @@ $(OBJDIR)/xmodstub.o: xmodstub.c
 	@echo ---------------------------------------------------------------
 	@echo OBJECT $@
 	@if [ ! -d $(OBJDIR) ] ; \
-		then $(MKDIR) -p $(OBJDIR) ; \
+		then $(MKDIR) $(OBJDIR) ; \
 	fi
 	$(ARMCC) $(CFLAGS) -o $@ -c $(subst \,/,$<)
 	@echo ---------------------------------------------------------------
@@ -175,35 +212,24 @@ $(OBJDIR)/xmodstub.o: xmodstub.c
 #                              MODULE RULES
 #============================================================================
 
-$(MODOUT): $(ELFOUT)
+$(MODNAME).mod : $(MODNAME).elf
 	@echo ---------------------------------------------------------------
 	@echo ELF $@
-	@mkdir -p $(@D)
 	$(FROMELF) -bin -o $@ $<
 
-$(ELFOUT): $(OBJS)
+$(MODNAME).elf : $(OBJS)
 	@echo ---------------------------------------------------------------
 	@echo BREW MODULE $@
-	@mkdir -p $(@D)
 	$(LD) -o $@ $(LFLAGS) $(OBJS)
 	$(XMOD_POSTELF_CMDS)	
 
-$(AROUT): $(OBJS)
+$(MODNAME).a: $(OBJS)
 	@echo ---------------------------------------------------------------
 	@echo BREW ARCHIVE $@
-	@mkdir -p $(@D)
 	$(ARMAR) -r $@ $(OBJS)
 
-ifndef BREWPK
-$(LIBOUT):
+$(MODNAME)_arm.lib: $(OBJS)
 	@echo ---------------------------------------------------------------
 	@echo BREW LIB $@
-	@echo Note: Library build skipped: BREWPK is not defined
-else
-$(LIBOUT): $(OBJS)
-	@echo ---------------------------------------------------------------
-	@echo BREW LIB $@
-	@mkdir -p $(@D)
 	$(ARMAR) -r $@ $(OBJS)
-endif
 

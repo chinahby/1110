@@ -11,7 +11,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -31,12 +31,12 @@ typedef struct ConstraintContainer
 } ConstraintContainer;
 
 
-int     ConstraintContainer_New       (IConstraintContainer **ppo, IShell *piShell, IModule *piModule);
+int     ConstraintContainer_New       (IConstraintContainer **ppo, IModule *piModule);
 int     ConstraintContainer_Construct (ConstraintContainer *me, AEEVTBL(IConstraintContainer) *pvt, 
                                        IModule *piModule, PFNHANDLER pfnDefHandler);
 
 void ConstraintContainer_Ctor(ConstraintContainer *me, AEEVTBL(IConstraintContainer) *pvt, 
-                              IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler);
+                              IModule *piModule, PFNHANDLER pfnDefHandler);
 
 int     ConstraintContainer_SetConstraint(IConstraintContainer *po, IWidget *piw, IWidget *piwBefore, const WidgetConstraint *pwc);
 int     ConstraintContainer_GetConstraint(IConstraintContainer *po, IWidget *piw, WidgetConstraint *pwc);

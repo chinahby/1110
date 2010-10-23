@@ -8,7 +8,7 @@ GENERAL DESCRIPTION:
   Reproduction and/or distribution of this file without the
   written consent of QUALCOMM, Incorporated. is prohibited.
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright © 1999-2006 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -17,8 +17,6 @@ GENERAL DESCRIPTION:
 #include "AEEShell.h"
 #include "AEEImage.h"
 #include "modres.h"
-
-#define IDIB_COLORSCHEME_8888 32
 
 // RCCOORD without the subtracting one
 #define GETCORNERS(prc,l,t,r,b)  (l)=(prc)->x,(t)=(prc)->y,(r)=(l)+(prc)->dx,(b)=(t)+(prc)->dy
@@ -1224,87 +1222,6 @@ static int DIB_AlphaFill32(IDIB *me, int x, int cx, int y, int cy, NativeColor n
    return 0;
 }
 
-// handles IDIB_COLORSCHEME_8888
-//
-// See documentation for DIB_AlphaBlit32 for more details. Works
-// the way, except here we're blending in a single color rather
-// than a source image. Format is BGRA not ARGB
-//
-static int DIB_AlphaFill32a(IDIB *me, int x, int cx, int y, int cy, NativeColor nc, int nAlpha)
-{
-   uint32 *pwRow  = (uint32*) (me->pBmp + y*me->nPitch + x*4);
-   int cbRow      = cx * 4;
-   int nAlphaLo   = REDUCEALPHA(nAlpha);
-   uint32 srca;
-
-   // TODO: add 50% and 75% alpha optimizations
-
-   if (nAlphaLo != 0) {
-   
-      uint32 *pw = pwRow;
-      register int nBeta32 = 32 - nAlphaLo;
-      register uint32 uSrcProductrb;
-      register uint32 uSrcProductg;
-      uint32 maskrb = MASK888RB;
-      uint32 maskg = MASK888G;
-      uint32 biasrb = BIAS888RB;
-      uint32 biasg = BIAS888G;
-
-
-      srca = (nc & 0xff) * nAlphaLo;
-      // red and blue channels
-      nc = nc >> 8;
-      uSrcProductrb = (nc & maskrb) << 5;
-      uSrcProductrb += biasrb;
-
-      // green channel
-      uSrcProductg = (nc & maskg) << 5;
-      uSrcProductg += biasg;
-
-      for (y = cy; --y >= 0; pw = DWADD(pw,me->nPitch) ) {
-         int i = cbRow;
-
-         while ( (i -= 4) >= 0) {
-            // get pixel
-            uint32 u = DWB(pw,i);
-            uint32 rb, g;
-            uint32 a = u & 0xff;
-            uint32 ua = (REDUCEALPHA(a) * nBeta32) >> 5;
-
-            u = u >> 8;
-
-
-            // red and blue
-            rb = u & maskrb;  
-            rb *= ua;
-            rb += uSrcProductrb;
-            rb = (rb >> 5) & maskrb;
-
-            // green
-            g = u & maskg;
-            g *= ua;
-            g += uSrcProductg;
-            g = (g >> 5) & maskg;
-
-            // recombine rb and g
-            u = rb | g;
-            u = u << 8;
-
-
-            // Calculate new alpha component
-            a = (srca + (a * nBeta32)  ) >> 5;
-            
-            u = u | a;
-
-            // set pixel
-            DWB(pw,i) = u;
-         }
-      }
-   }
-   return 0;
-}
-
-
 // Alpha blend a rect and a single color.  Performs clipping, then
 // hands off to the right DIB_AlphaFillxxx() routine to do the
 // actual blending.
@@ -1334,8 +1251,6 @@ static int DIB_AlphaFill(IDIB *me, const AEERect *prc, NativeColor nc, int nAlph
       // 32 bit
       if (me->nColorScheme == IDIB_COLORSCHEME_666 || me->nColorScheme == IDIB_COLORSCHEME_888)
          return DIB_AlphaFill32(me, x, cx, y, cy, nc, nAlpha);
-      if (me->nColorScheme == IDIB_COLORSCHEME_8888)
-         return DIB_AlphaFill32a(me, x, cx, y, cy, nc, nAlpha);
    }
    return EFAILED;
 }
@@ -1397,8 +1312,7 @@ int BlendRect(IDisplay *pid, const AEERect *prc, RGBVAL rgb, int nAlpha)
       if (pdib->nColorScheme == IDIB_COLORSCHEME_555 ||
           pdib->nColorScheme == IDIB_COLORSCHEME_565 ||
           pdib->nColorScheme == IDIB_COLORSCHEME_666 ||
-          pdib->nColorScheme == IDIB_COLORSCHEME_888 ||
-          pdib->nColorScheme == IDIB_COLORSCHEME_8888) {
+          pdib->nColorScheme == IDIB_COLORSCHEME_888) {
          NativeColor nc = IBITMAP_RGBToNative(pb, rgb);
          DIB_AlphaFill(pdib, &rcFill, nc, nAlpha);
       } else {
@@ -1617,91 +1531,6 @@ static int DIB_AlphaBlit32(IDIB *me, int x, int cx, int y, int cy, IDIB *pdibSrc
    return SUCCESS;
 }
 
-
-// Blend a 32bit DIB including alpha channel
-static int DIB_AlphaBlit32a(IDIB *me, int x, int cx, int y, int cy, IDIB *pdibSrc, int xSrc, int ySrc, int nAlphaHi)
-{
-   uint32 uAlphaLo;
-   
-   nAlphaHi &= 255;
-   uAlphaLo = REDUCEALPHA(nAlphaHi);
-
-   // if (uAlphaLo == 32) DDBBLIT();
-
-   if (cx > 0 && uAlphaLo != 0) {
- 
-      int cbRow = cx * 4;
-      uint32 *pw    = (uint32*) (me->pBmp + y*me->nPitch + x*4);
-      uint32 *pwSrc = (uint32*) (pdibSrc->pBmp + ySrc*pdibSrc->nPitch + xSrc*4);
-
-      // Use the same -32 alpha calculation as everything else, and the same RGB masks
-      // as IDIB_COLORSCHEME_888
-      register uint32 uBetaLo = 32 - uAlphaLo;
-      register uint32 maskrb = MASK888RB;
-      register uint32 maskg = MASK888G;
-      uint32 biasrb = BIAS888RB;
-      uint32 biasg = BIAS888G;
-
-      for (y = cy; --y >= 0;  ) {
-         int i = cbRow;
-
-         while ( (i -= 4) >= 0) {
-            // get pixels
-            uint32 u = DWB(pw,i);
-            uint32 v = DWB(pwSrc,i);
-            uint32 urb, ug;
-            uint32 vrb, vg;
-            uint32 ua, va;
-            uint32 mua;
-            
-            ua = u & 0xff;
-            va = v & 0xff;
-            u = u >> 8;
-            v = v >> 8;
-
-            mua = (REDUCEALPHA(ua) * uBetaLo) >> 5;
-           
-            // red and blue
-            urb = u & maskrb;
-            urb *= mua;
-
-            vrb = (v & maskrb) << 5;
-                  
-            urb += vrb + biasrb;
-            urb = (urb >> 5) & maskrb;
-
-            // green
-            ug = u & maskg;
-            ug *= mua;
-
-            vg = (v & maskg) << 5;
-                   
-            ug += vg + biasg;
-            ug = (ug >> 5) & maskg;
-   
-            // recombine rb and g
-            u = urb | ug;
-
-            u = u << 8;
-
-            // Calculate new alpha component
-            ua = ua * uBetaLo;
-            va = va * uAlphaLo;
-            ua += va;
-            
-            u = u | (ua >> 5);
-
-            // set pixel
-            DWB(pw,i) = u;
-         }
-         pw = DWADD(pw,me->nPitch);
-         pwSrc = DWADD(pwSrc, pdibSrc->nPitch);
-      }
-   }
-
-   return SUCCESS;
-}
-
 // Alpha blend two bitmpas.  Performs clipping, then
 // hands off to the right DIB_AlphaBlitxxx() routine to do the
 // actual blending.
@@ -1741,8 +1570,6 @@ static int DIB_AlphaBlit(IDIB *me, const AEERect *prc, IDIB *pdibSrc, int xSrc, 
       
    if (me->nColorScheme == IDIB_COLORSCHEME_666 || me->nColorScheme == IDIB_COLORSCHEME_888)
       return DIB_AlphaBlit32(me, x, cx, y, cy, pdibSrc, xSrc, ySrc, nAlphaHi);
-   if (me->nColorScheme == IDIB_COLORSCHEME_8888)
-      return DIB_AlphaBlit32a(me, x, cx, y, cy, pdibSrc, xSrc, ySrc, nAlphaHi);
         
 
    return EFAILED;

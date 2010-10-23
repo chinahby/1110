@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -26,36 +26,6 @@
 
 #define ME_FROM_WIDGET     CursorWidget *me = ((CursorWidget*)po)
 #define WBASE(p)          ((WidgetBase *)p)
-
-int CursorWidget_InitBitmapDef(CursorWidget *me)
-{
-   int nErr = 0;
-   IBitmap *pib = 0;
-   pib = WidgetLib_LoadResBitmap(me->piShell, "widgets.mif", IDB_CURSOR);
-   if (!pib) {
-      nErr = ERESOURCENOTFOUND;
-   }
-   if (!nErr) {
-      nErr = IWIDGET_SetBitmap((IWidget*)me, pib);
-   }
-   RELEASEIF(pib);
-   return nErr;
-}
-
-static __inline void CursorWidget_InitBitmap(CursorWidget *me) {
-   if(!me->bInitRes) {
-      me->bInitRes = TRUE;
-      (void) CursorWidget_InitBitmapDef(me);
-   }
-
-}
-
-static void CursorWidget_ModelChanged(CursorWidget *me, ModelEvent *pEvent)
-{
-   //Interface model has changed - just pretend that the resource has been initialized;
-   (void) pEvent;
-   me->bInitRes = TRUE;
-}
 
 static void CursorWidget_Dismiss(CursorWidget *me)
 {
@@ -123,44 +93,18 @@ int CursorWidget_QueryInterface(IWidget *po, AEECLSID clsid, void **ppo)
 }
 
 
-void CursorWidget_Draw(IWidget *po, ICanvas *piCanvas, int x, int y)
-{
-   ME_FROM_WIDGET;
-   CursorWidget_InitBitmap(me);
-   BitmapWidget_Draw(po, piCanvas, x, y);
-
-}
-
-int CursorWidget_SetModel(IWidget *po, IModel *piModel)
-{
-   ME_FROM_WIDGET;
-   me->bInitRes = TRUE;
-   return BitmapWidget_SetModel(po, piModel);
-}
-
-void CursorWidget_GetPreferredExtent(IWidget *po, WExtent *pweOut)
-{
-   ME_FROM_WIDGET;
-   CursorWidget_InitBitmap(me);
-   BitmapWidget_GetPreferredExtent(po, pweOut);
-}
-
 
 void CursorWidget_Dtor(CursorWidget *me)
 {
-   LISTENER_Cancel(&me->mlCursor);
    BitmapWidget_Dtor(&me->base);
 }
 
 void CursorWidget_Ctor(CursorWidget *me, AEEVTBL(IWidget) *pvt, IShell *piShell,
                        IModule *piModule, PFNHANDLER pfnDefHandler)
 {
-   BitmapWidget_Ctor(&me->base, pvt, piShell, piModule, DEFHANDLER(CursorWidget_HandleEvent));
+   BitmapWidget_Ctor(&me->base, pvt, piModule, DEFHANDLER(CursorWidget_HandleEvent));
    
    pvt->QueryInterface = CursorWidget_QueryInterface;
-   pvt->GetPreferredExtent = CursorWidget_GetPreferredExtent;
-   pvt->SetModel           = CursorWidget_SetModel;
-   pvt->Draw               = CursorWidget_Draw;
 
    me->piShell = piShell;
    ISHELL_AddRef(me->piShell);
@@ -170,22 +114,24 @@ void CursorWidget_Ctor(CursorWidget *me, AEEVTBL(IWidget) *pvt, IShell *piShell,
 int CursorWidget_Initialize(CursorWidget *me)
 {
    int nErr;
-   IModel *piModel = NULL;
+   IBitmap *pib = 0;
 
    nErr = BitmapWidget_Initialize(&me->base, me->piShell);
 
    if (!nErr) {
-      nErr = IWIDGET_SetTranspColor((IWidget*)me, MAKE_RGB(255,0,255));
+      pib = WidgetLib_LoadResBitmap(me->piShell, "widgets.mif", IDB_CURSOR);
+      if (!pib) {
+         nErr = ERESOURCENOTFOUND;
+      }
    }
-   //Add a model listener
-   if(!nErr) {
-      nErr = IWIDGET_GetModel((IWidget*)me, AEEIID_MODEL, &piModel);
+
+   if (!nErr) {
+      IWIDGET_SetTranspColor((IWidget*)me, MAKE_RGB(255,0,255));
+      IWIDGET_SetBitmap((IWidget*)me, pib);
    }
-   if(!nErr) {
-      nErr = IMODEL_AddListenerEx(piModel, &me->mlCursor, 
-         (PFNLISTENER) CursorWidget_ModelChanged, (void*) me);
-   }
-   RELEASEIF(piModel);
+
+   RELEASEIF(pib);
+
    return nErr;
 }
 

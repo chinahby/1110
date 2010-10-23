@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright ?1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -54,17 +54,14 @@
 #include "ResFile.h"
 #include "DefaultLocale.h"
 #include "HFontOutline.h"
-#include "FontMapModel.h"
-#include "TextLayout.h"
 #include "xmod.h"
 
 #include "wutil.h"
 
 #include "bid/AEECLSID_OEMLOCALE.bid"
-#include "bid/AEECLSID_WIDGETSMOD.bid"
-#include "bid/AEECLSID_DEFAULTTEXTCONTROLLER.bid"
 
-#ifdef AEE_STATIC
+
+#ifdef BREW_STATIC_APP
 
 // Need to rename AEEMod_Load() to prevent duplicate symbols
 #define AEEMOD_LOAD           WidgetMod_Load
@@ -87,7 +84,7 @@ static const AEECLSID      gWidgetExtClasses[] = {
    AEECLSID_CARDCONTAINER, AEECLSID_FADER, AEECLSID_MOVER, AEECLSID_IMAGESTATICWIDGET, 
    AEECLSID_TABWIDGET, AEECLSID_MENUMODEL, AEECLSID_DRAWDECORATORWIDGET, AEECLSID_DISPLAYCANVAS,
    AEECLSID_SLIDERWIDGET, AEECLSID_DATEWIDGET, AEECLSID_TIMEWIDGET, AEECLSID_TEXTFORMATTER, AEECLSID_RESFILE,
-   AEECLSID_CURRENTLOCALE, AEECLSID_HFONT_OUTLINE, AEECLSID_FONTMAPMODEL, AEECLSID_TEXTLAYOUT,
+   AEECLSID_LOCALEENUS, AEECLSID_CURRENTLOCALE, AEECLSID_HFONT_OUTLINE,
    0 
 };
     
@@ -111,7 +108,7 @@ PFNMODENTRY WidgetMod_GetModInfo(IShell * ps,AEECLSID ** ppClasses, AEEAppInfo *
 
 int AEEMOD_CREATEINSTANCE(IModule *piModule, IShell *piShell, AEECLSID clsid, void **ppo)
 {
-   int result = ECLASSNOTSUPPORT;
+   int result;
 
    switch(clsid) {
    case AEECLSID_ARRAYMODEL:
@@ -124,7 +121,7 @@ int AEEMOD_CREATEINSTANCE(IModule *piModule, IShell *piShell, AEECLSID clsid, vo
       result = BlendWidget_New((IDecorator **)ppo, piModule);
       break;
    case AEECLSID_BORDERWIDGET:
-      result = BorderWidget_New((IDecorator **)ppo, piShell, piModule);
+      result = BorderWidget_New((IDecorator **)ppo, piModule);
       break;
    case AEECLSID_CHECKWIDGET:
       result = CheckWidget_New((IWidget **)ppo, 0, piShell, piModule);
@@ -136,13 +133,13 @@ int AEEMOD_CREATEINSTANCE(IModule *piModule, IShell *piShell, AEECLSID clsid, vo
       result = RadioWidget_New((IWidget **)ppo, 0, piShell, piModule);
       break;
    case AEECLSID_CONSTRAINTCONTAINER:
-      result = ConstraintContainer_New((IConstraintContainer **)ppo, piShell, piModule);
+      result = ConstraintContainer_New((IConstraintContainer **)ppo, piModule);
       break;
    case AEECLSID_CURSORWIDGET:
       result = CursorWidget_New((IWidget **)ppo, piShell, piModule);
       break;
    case AEECLSID_IMAGEWIDGET:
-      result = ImageWidget_New((IDecorator **)ppo, piShell, piModule);
+      result = ImageWidget_New((IDecorator **)ppo, piModule);
       break;
    case AEECLSID_LISTWIDGET:
       result = ListWidget_New((IDecorator **)ppo, 0, piShell, piModule);
@@ -194,11 +191,11 @@ int AEEMOD_CREATEINSTANCE(IModule *piModule, IShell *piShell, AEECLSID clsid, vo
       result = ViewportWidget_New((IDecorator **)ppo, piShell, piModule);
       break;
    case AEECLSID_XYCONTAINER:
-      result = XYContainer_New((IXYContainer **)ppo, piShell, piModule);
+      result = XYContainer_New((IXYContainer **)ppo, piModule);
       break;
    case AEECLSID_PROPCONTAINER_1:
    case AEECLSID_PROPCONTAINER:
-      result = PropContainer_New((IPropContainer **)ppo, piShell, piModule);
+      result = PropContainer_New((IPropContainer **)ppo, piModule);
       break;
    case AEECLSID_CARDCONTAINER:
       result = CardContainer_New((ICardContainer**)ppo, piShell, piModule);
@@ -233,9 +230,6 @@ int AEEMOD_CREATEINSTANCE(IModule *piModule, IShell *piShell, AEECLSID clsid, vo
    case AEECLSID_TIMEWIDGET:
       result = TimeWidget_New((IWidget**)ppo, piShell, piModule);
       break;
-   case AEECLSID_DEFAULTTEXTCONTROLLER:
-      result = TextController_New((IController**)ppo, piShell, piModule);
-      break;
    case AEECLSID_TEXTFORMATTER:
       result = TextFormatter_New((ITextFormatter**)ppo, piShell, piModule);
       break;
@@ -245,11 +239,12 @@ int AEEMOD_CREATEINSTANCE(IModule *piModule, IShell *piShell, AEECLSID clsid, vo
 	  break;
    case AEECLSID_CURRENTLOCALE:
       result = ISHELL_CreateInstance(piShell, AEECLSID_OEMLOCALE, ppo);
-      if (SUCCESS != result) {
-         // no OEMLOCALE has been defined on this device.  Fall back and
-         // create an instance of our default ILocale object instead.
-         result = DefaultLocale_New((ILocale **)ppo, piShell, piModule); 
+      if (SUCCESS == result) {
+         break;
       }
+      // fall thru to create our default locale
+   case AEECLSID_LOCALEENUS:
+      result = DefaultLocale_New((ILocale **)ppo, piShell, piModule); 
       break;
    case AEECLSID_HFONT_OUTLINE:
       result = HFontOutline_New((IHFont **)ppo, piShell, piModule);
@@ -262,19 +257,6 @@ int AEEMOD_CREATEINSTANCE(IModule *piModule, IShell *piShell, AEECLSID clsid, vo
       break;
    case AEECLSID_JULIANTIMEWIDGET:
       result = JulianTimeWidget_New((IWidget **)ppo, piShell, piModule);
-      break;
-   case AEECLSID_FONTMAPMODEL:
-      result = FontMapModel_New((IFontMapModel **)ppo, piModule);
-      break;
-   case AEECLSID_TEXTLAYOUT:
-      result = TextLayout_New((ITextLayout **)ppo, piShell, piModule);
-      break;
-   case AEECLSID_WIDGETSMOD:
-      if (piModule) {
-         IMODULE_AddRef(piModule);
-         *(IModule**)ppo = piModule;
-         result = SUCCESS;
-      }
       break;
    default:
       result = ECLASSNOTSUPPORT;

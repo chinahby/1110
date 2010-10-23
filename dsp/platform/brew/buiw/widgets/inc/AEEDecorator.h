@@ -12,7 +12,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -24,7 +24,7 @@
 
 #include "AEEContainer.h"
 
-#include "bid/AEEIID_DECORATOR.bid"
+#include "bid\AEEIID_DECORATOR.bid"
 
 typedef struct IDecorator IDecorator;
 #define INHERIT_IDecorator(iname) \
@@ -156,6 +156,7 @@ Supported Events:
 See Also:
    Blend Widget Class
    Border Widget Class
+   Gradient Decorator Class
    Image Widget Class
    List Widget Class
    Scroll Widget Class

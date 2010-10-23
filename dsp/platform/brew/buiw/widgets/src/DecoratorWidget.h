@@ -14,7 +14,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -27,14 +27,22 @@
 #define __DECORATORWIDGET_H__
 
 #include "AEEDecorator.h"
-#include "AEEContainer.h"
-#include "WidgetContBase.h"
+#include "AEEBase.h"
+#include "WidgetBase.h"
 
 typedef struct Decorator Decorator;
 
+struct IContainer {
+   AEEBASE_INHERIT(IContainer, Decorator);
+};
+
 struct Decorator {
-   WidgetContBase    base;
-   IWidget *         pChild;
+   WidgetBase base;
+
+   IContainer container;
+   AEEVTBL(IContainer) vtContainer;
+
+   IWidget *pChild;
 };
 
 static __inline IWidget *DECORATOR_TO_IWIDGET(Decorator *p) {

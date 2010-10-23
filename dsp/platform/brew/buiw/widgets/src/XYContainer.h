@@ -11,7 +11,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -31,10 +31,9 @@ typedef struct XYContainer
    ContainerBase base;
 } XYContainer;
 
-int      XYContainer_New            (IXYContainer **ppo, IShell *piShell, IModule *piModule);
+int      XYContainer_New            (IXYContainer **ppo, IModule *piModule);
 void     XYContainer_Ctor           (XYContainer *me, AEEVTBL(IXYContainer) *pvt, 
-                                     IShell *piShell, IModule *piModule, 
-                                     PFNHANDLER pfnDefHandler, PFNLAYOUT pfnLayout);
+                                     IModule *piModule, PFNHANDLER pfnDefHandler, PFNLAYOUT pfnLayout);
 int      XYContainer_QueryInterface (IXYContainer *po, AEECLSID id, void **ppo);
 int      XYContainer_GetPos         (IXYContainer *po, IWidget *piw, WidgetPos *pos);
 int      XYContainer_SetPos         (IXYContainer *po, IWidget *piw, IWidget *piwBefore, const WidgetPos *pos);

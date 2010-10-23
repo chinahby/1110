@@ -18,7 +18,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -31,8 +31,8 @@
 #include "AEEWidget.h"
 #include "AEEWProperties.h"
 
-#include "bid/AEECLSID_SCROLLBARWIDGET.bid"
-#include "bid/AEECLSID_SCROLLINDICATORWIDGET.bid"
+#include "bid\AEECLSID_SCROLLBARWIDGET.bid"
+#include "bid\AEECLSID_SCROLLINDICATORWIDGET.bid"
 
 // ScrollbarWidget flags
 #define SBWF_NOAUTOHIDE       1  // don't auto-hide the scrollbar when scrolling not possible

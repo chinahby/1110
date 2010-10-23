@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -54,16 +54,12 @@ static WidgetNode * GridContainer_FindChildNodeAtCell(GridContainer *me, int row
    return node;
 }
 
-static int GridContainer_FindCellFromNode(GridContainer *me, WidgetNode *node, int *iRow, int *iCol)
+static void GridContainer_FindCellFromNode(GridContainer *me, WidgetNode *node, uint16 *iRow, uint16 *iCol)
 {
-   WidgetNode *tempNode;
    *iRow = *iCol = 0;
-   
-   WNODE_ENUM_FWD(tempNode, &CBASE(me)->head) {
-      if (tempNode->fVisible || me->base.nLayoutFlags) {
-         if(tempNode == node) {
-            break;
-         }
+
+   WNODE_ENUM_FWD(node, &CBASE(me)->head) {
+      if (node->fVisible) {
          *iCol += 1;
          if (*iCol == me->iCols) {
             *iCol = 0;
@@ -71,12 +67,23 @@ static int GridContainer_FindCellFromNode(GridContainer *me, WidgetNode *node, i
          }
       }
    }
-   if(*iCol < me->iCols && *iRow < me->iRows)  {
-      return SUCCESS;
-   }
-   *iRow = *iCol = -1;
-   return EFAILED;
+}
 
+static boolean GridContainer_IsCellSizeToFit(GridContainer *me, WidgetNode *node)
+{
+   uint16 iRow, iCol;
+
+   // we don't have valid descriptors, so don't bother drawing.
+   if (me->iRows == 0 || me->iCols == 0)
+      return FALSE;
+
+   GridContainer_FindCellFromNode(me, node, &iRow, &iCol);
+   
+   if (me->pRowDesc[iRow].iFlag == CELL_SIZE_TO_FIT ||
+       me->pColDesc[iCol].iFlag == CELL_SIZE_TO_FIT)
+       return TRUE;
+
+   return FALSE;
 }
 
 static boolean GridContainer_BuildDescriptors(GridContainer *me, GridDescriptor *pFromDesc, GridDescriptor **pToDesc,
@@ -131,21 +138,14 @@ void GridContainer_Invalidate(IGridContainer *po, IWidget *piw, const AEERect *p
    GRID_FROM_CONTAINER;
    WidgetNode *node;
 
-   if (CBASE(me)->fInLayout) {
+   if (CBASE(me)->fInLayout)
       return;
-   }
 
    if (0 == (dwFlags & (ICIF_EXTENT|ICIF_REDRAW)) 
-      && SUCCESS == WidgetNode_FindWidget(&CBASE(me)->head, piw, &node)) {
-      int iRow, iCol;
-      if(SUCCESS != GridContainer_FindCellFromNode(me, node, &iRow, &iCol))  {
-         //Node does not fit in the container
-         return;
-      }
-      if (me->pRowDesc[iRow].iFlag == CELL_SIZE_TO_FIT ||
-         me->pColDesc[iCol].iFlag == CELL_SIZE_TO_FIT) {
-         dwFlags |= ICIF_EXTENT;
-      }
+       && SUCCESS == WidgetNode_FindWidget(&CBASE(me)->head, piw, &node) 
+       && GridContainer_IsCellSizeToFit(me, node)) {
+
+      dwFlags |= ICIF_EXTENT;
    }
 
    ContainerBase_Invalidate(IGRIDCONTAINER_TO_ICONTAINER(po), piw, prcInWidget, dwFlags);
@@ -163,15 +163,15 @@ void GridContainer_GetPreferredExtent(IWidget *po, WExtent *pwe)
 }
 
 void GridContainer_Ctor(GridContainer *me, AEEVTBL(IGridContainer) *pvt, 
-                        IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler)
+                        IModule *piModule, PFNHANDLER pfnDefHandler)
 {
    ContainerBase_Ctor(&me->base, (AEEVTBL(IContainer) *)pvt,
-                      piShell, piModule, 
+                      piModule, 
                       pfnDefHandler ? pfnDefHandler :
                       (PFNHANDLER)GridContainer_DefHandleEvent,
                       (PFNMKNODE)WidgetNode_ForGrid,
                       GridContainer_DoLayout);
-  
+
    pvt->Release = GridContainer_Release;
    pvt->QueryInterface = GridContainer_QueryInterface;
    pvt->Invalidate = GridContainer_Invalidate;
@@ -198,7 +198,7 @@ int GridContainer_New(IGridContainer **ppo, IShell *piShell,
    if (!me)
       return ENOMEMORY;
 
-   GridContainer_Ctor(me, GETVTBL(me,IGridContainer), piShell, piModule, 0);
+   GridContainer_Ctor(me, GETVTBL(me,IGridContainer), piModule, 0);
    return SUCCESS;
 }
 
@@ -247,7 +247,7 @@ boolean GridContainer_DefHandleEvent(IWidget *po, AEEEvent evt,
    }
 
    // need to do a layout if the client rectangle changed
-   if (doLayout || (rcSave.dx != prcClient->dx) || (rcSave.dy != prcClient->dy))
+   if ((doLayout && CBASE(me)->fEnableLayout) || (rcSave.dx != prcClient->dx) || (rcSave.dy != prcClient->dy))
       ContainerBase_LayoutInvalidate((ContainerBase*)me);
    
    return bResult;
@@ -432,14 +432,8 @@ void GridContainer_LayoutChildren(GridContainer *me, WExtent *pwe, boolean calcS
    ZEROAT(&frame);
    
    WNODE_ENUM_FWD(wn, &CBASE(me)->head) {
-      if (wn->fVisible || me->base.nLayoutFlags) {
-
-         if((col >= me->iCols) || (row >= me->iRows)) { 
-            // More children inserted than row*col as set by descriptor. Set their display size to be (0,0)
-            wn->rc.x = wn->rc.y  = wn->rc.dx = wn->rc.dy = 0;
-            continue;
-          }
-
+      if (wn->fVisible) {
+      
          if (iColPrev != col)
             frame.x += me->pColDesc[col].iPaddingBefore;
       
@@ -453,7 +447,7 @@ void GridContainer_LayoutChildren(GridContainer *me, WExtent *pwe, boolean calcS
          // copy frame
          SETWEXTENT(&extent, frame.dx, frame.dy);
          wn->rc = frame;
-         
+    
          // set the extent if cell is not set as KEEP_EXTENT
          oldextent = extent;
          if (me->pRowDesc[row].iFlag != CELL_KEEP_EXTENT &&
@@ -461,14 +455,12 @@ void GridContainer_LayoutChildren(GridContainer *me, WExtent *pwe, boolean calcS
             IWIDGET_SetExtent(wn->piWidget, &extent);
             // get the preferred extent if size-to-fit
             if (calcShrink && (me->pRowDesc[row].iFlag == CELL_SIZE_TO_FIT ||
-               me->pColDesc[col].iFlag == CELL_SIZE_TO_FIT)) {
-                  if(wn->fVisible || (me->base.nLayoutFlags & LF_INVIS_USEEXTENT))
-                  IWIDGET_GetPreferredExtent(wn->piWidget, &extent);
-               }
+                               me->pColDesc[col].iFlag == CELL_SIZE_TO_FIT))
+                IWIDGET_GetPreferredExtent(wn->piWidget, &extent);
          }
          else {
             // otherwise get the actual extent
-               IWIDGET_GetExtent(wn->piWidget, &extent);
+            IWIDGET_GetExtent(wn->piWidget, &extent);
             frame.dx = extent.width;
             frame.dy = extent.height;
             me->pRowCurrMax[row] = extent.height;
@@ -525,24 +517,21 @@ void GridContainer_GetGridDescriptors(IGridContainer *po, GridDescriptor *pRowDe
                                       uint16 *iCols)
 {
    GRID_FROM_CONTAINER;
-   int i, nFill;
+   int i;
 
-   if(iRows) {
-      if(pRowDesc) {
-         nFill = MIN(*iRows, me->iRows);
-         for (i = 0; i < nFill; i++)
-            pRowDesc[i] = me->pRowDesc[i];
-      }
+   if (!pRowDesc && iRows)
       *iRows = me->iRows;
+   else if (pRowDesc && iRows) { 
+      for (i = 0; i < *iRows; i++)
+         pRowDesc[i] = me->pRowDesc[i];
    }
-   if(iCols) {
-      if(pColDesc) {
-         nFill = MIN(*iCols, me->iCols);
-         for (i = 0; i < nFill; i++)
-            pColDesc[i] = me->pColDesc[i];
-      }
+
+   if (!pColDesc && iCols)
       *iCols = me->iCols;
-   }
+   else if (pColDesc && iCols) {
+      for (i = 0; i < *iCols; i++)
+         pColDesc[i] = me->pColDesc[i];
+   }   
 }
 
 int GridContainer_SetGridDescriptors(IGridContainer *po, GridDescriptor *pRowDesc, uint16 *iRows, GridDescriptor *pColDesc,

@@ -19,7 +19,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -48,9 +48,9 @@ static __inline IWidget *BORDERWIDGET_TO_IWIDGET(BorderWidget *p) {
    return (IWidget *)p;
 }
 
-int  BorderWidget_New  (IDecorator **ppo, IShell *piShell, IModule *piModule);
+int  BorderWidget_New  (IDecorator **ppo, IModule *piModule);
 void BorderWidget_Ctor (BorderWidget *me, AEEVTBL(IDecorator) *pvt, 
-                        IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler);
+                        IModule *piModule, PFNHANDLER pfnDefHandler);
 void BorderWidget_Dtor (BorderWidget *me);
 
 // Widget methods
@@ -72,6 +72,6 @@ int BorderWidget_Locate      (IContainer *po, IWidget *piw, IContainer **ppRoot,
 /////////////////////////////////////////////////////////////////
 // Utility functions
 
-int IWidget_WrapInBorder(IWidget **ppioChild, IShell *piShell, IModule *piModule);
+int IWidget_WrapInBorder(IWidget **ppioChild, IModule *piModule);
 
 #endif // _BORDERWIDGET_H_

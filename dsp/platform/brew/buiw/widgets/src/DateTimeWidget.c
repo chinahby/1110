@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -110,6 +110,12 @@ static __inline void DtFld_Ctor(DtFld *me, uint16 *pnVal, uint16 nMin, uint16 nM
    me->nLen       = nLen;
    me->wFlags     = wFlags;
 }
+
+
+static __inline uint16 DtFld_GetVal(DtFld *me) {
+   return *me->pnVal;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // misc utilities
@@ -414,7 +420,7 @@ static void DateWidget_ValidateDate(DateWidget *me)
 }
 
 
-static boolean DateWidget_EnterField(DateWidget *me, uint16 wParam)
+static void DateWidget_EnterField(DateWidget *me, uint16 wParam)
 {
    // find field
    DtFld *pFld = me->aFlds + me->nField;
@@ -423,8 +429,8 @@ static boolean DateWidget_EnterField(DateWidget *me, uint16 wParam)
    uint16 keyval = wParam - AVK_0;
 
    // special case for AM/PM field
-   if (pFld->wFlags & FFLG_AMPM) {
-      if (wParam == AVK_SELECT){
+   if (wParam == AVK_SELECT) {
+      if (pFld->wFlags & FFLG_AMPM) {
          *(pFld->pnVal) = !fldval;
          me->fDirty = 1;
          // update the value model if on-field-change is enabled
@@ -433,11 +439,8 @@ static boolean DateWidget_EnterField(DateWidget *me, uint16 wParam)
             DateWidget_SetValue(me);
          }
          WidgetBase_InvalidateContent((IWidget*)me);
-         return TRUE;
       }
-      else { // Ignore any other key for am/pm field except for Select key
-         return FALSE;
-      }
+      return;
    }
 
    // handle normal numeric keys
@@ -487,7 +490,6 @@ static boolean DateWidget_EnterField(DateWidget *me, uint16 wParam)
    }
 
    WidgetBase_InvalidateContent((IWidget*)me);
-   return TRUE;
 }
 
 
@@ -675,14 +677,8 @@ static int DateWidget_ParseTimeFormat(DateWidget *me, const AECHAR *pwFormat)
 
 static void DateWidget_InitTimeFields(DateWidget *me)
 {
-   int i = 0;
    const AECHAR *pw = me->pwFormat;
    
-   // reset the delimiters from previous format
-   for (i=0; i < me->nNumFields; i++){
-      me->aFlds[i].ppwDelim = 0;
-   }
-
    me->nNumFields = 0;
    me->fShortAMPM = 0;
    
@@ -737,14 +733,8 @@ static void DateWidget_InitTimeFields(DateWidget *me)
 
 static void DateWidget_InitDateFields(DateWidget *me)
 {
-   int i = 0;
    const AECHAR *pw = me->pwFormat;
    
-   // reset the delimiters from previous format
-   for (i=0; i < me->nNumFields; i++){
-      me->aFlds[i].ppwDelim = 0;
-   }
-
    me->nNumFields = 0;
 
    for (; *pw; pw++) {
@@ -1020,18 +1010,10 @@ static void DateWidget_FieldChanged(DateWidget *me, boolean bMoveFwd)
    WidgetBase_InvalidateContent((IWidget*)me);
 }
 
-static boolean DateWidget_FieldMove(DateWidget *me, boolean bMoveFwd)
+static void DateWidget_FieldMove(DateWidget *me, boolean bMoveFwd)
 {
-   int8 newField = me->nField + (bMoveFwd?1:-1);
    DateWidget_CheckField(me, me->aFlds + me->nField, 0);
-   
-   //If NoWrap is true, return without changing anything if on extreme sides.
-   if (me->fNoWrapField && (newField <0 || (newField > me->nNumFields-1)) )
-   {
-      return FALSE;
-   }
-  
-   me->nField = newField;
+   me->nField += (bMoveFwd ? 1 : -1);
 
    if (me->nField < 0) {
       me->nField = me->nNumFields-1;
@@ -1040,7 +1022,6 @@ static boolean DateWidget_FieldMove(DateWidget *me, boolean bMoveFwd)
    }
 
    DateWidget_FieldChanged(me, bMoveFwd);
-   return TRUE;
 }
 
 static boolean DateWidget_SetField(DateWidget *me, int dwField)
@@ -1085,7 +1066,8 @@ static boolean DateWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, 
          switch (wParam) {
             case AVK_LEFT:
             case AVK_RIGHT:
-               return DateWidget_FieldMove(me, (boolean)(wParam == AVK_RIGHT));
+               DateWidget_FieldMove(me, (boolean)(wParam == AVK_RIGHT));
+               return TRUE;
 
             case AVK_UP:
             case AVK_DOWN:
@@ -1099,7 +1081,8 @@ static boolean DateWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, 
             default:
                if (wParam >= AVK_0 && wParam <= AVK_9 ||
                    wParam == AVK_SELECT) {
-                  return DateWidget_EnterField(me, wParam);
+                  DateWidget_EnterField(me, wParam);
+                  return TRUE;
                }
                break;
          }
@@ -1151,8 +1134,6 @@ static boolean DateWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, 
                me->dwFlags = dwParam;
                me->fShowArrows = ( (me->dwFlags & DTWF_USEUPDOWNKEYS) && 
                                    (me->dwFlags & DTWF_SHOWUPDOWNARROWS) );
-               me->fNoWrapField = ((me->dwFlags & DTWF_NOFIELDWRAP)!=0);
-               WidgetBase_InvalidateContent(po);
                return TRUE;
 
             case PROP_LOCALE: 
@@ -1165,14 +1146,12 @@ static boolean DateWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, 
                   if (SUCCESS == DateWidget_ParseTimeFormat(me, (AECHAR*)dwParam)) {
                      // initialize the date fields
                      DateWidget_InitTimeFields(me);
-                     WidgetBase_InvalidateContent(po);
                      return TRUE;
                   }
                } else {
                   if (SUCCESS == DateWidget_ParseDateFormat(me, (AECHAR*)dwParam)) {
                      // initialize the date fields
                      DateWidget_InitDateFields(me);
-                     WidgetBase_InvalidateContent(po);
                      return TRUE;
                   }
                }
@@ -1192,7 +1171,6 @@ static boolean DateWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, 
                   DateWidget_SetDelimiterFromLocale(me, piLocale);
                   RELEASEIF(piLocale);
                }
-               WidgetBase_InvalidateContent(po);
                return TRUE;
 
 
@@ -1212,24 +1190,8 @@ static boolean DateWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, 
                WidgetBase_InvalidateContent(po);
                return TRUE;
 
-            case PROP_SELECTED_FGCOLOR:
             case PROP_SACTIVE_FGCOLOR:
                DynRGB_Set(&me->rgbText, RGBINDEX_SACTIVE, (RGBVAL)dwParam);
-               WidgetBase_InvalidateContent(po);
-               return TRUE;
-
-            case PROP_TEXT_SELECTED_FGCOLOR:
-            case PROP_TEXT_SACTIVE_FGCOLOR:
-               me->rgbTextSel = (RGBVAL)dwParam;
-               WidgetBase_InvalidateContent(po);
-               return TRUE;
-
-            case PROP_TEXT_SELECTED_BGCOLOR:
-               me->rgbaSelected = (RGBVAL)dwParam;
-               return TRUE;
-
-            case PROP_TEXT_SACTIVE_BGCOLOR:
-               me->rgbaSelected = (RGBVAL)dwParam;
                return TRUE;
 
             case PROP_IMAGESTRIP:
@@ -1300,22 +1262,8 @@ static boolean DateWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, 
                DynRGB_Get(&me->rgbText, RGBINDEX_ACTIVE, (uint32*)dwParam);
                return TRUE;
 
-            case PROP_SELECTED_FGCOLOR:
             case PROP_SACTIVE_FGCOLOR:
                DynRGB_Get(&me->rgbText, RGBINDEX_SACTIVE, (uint32*)dwParam);
-               return TRUE;
-
-            case PROP_TEXT_SELECTED_BGCOLOR:
-               *(RGBVAL*)dwParam = me->rgbaSelected;
-               return TRUE;
-
-            case PROP_TEXT_SACTIVE_BGCOLOR:
-               *(RGBVAL*)dwParam = me->rgbaSelected;
-               return TRUE;
-
-            case PROP_TEXT_SELECTED_FGCOLOR:
-            case PROP_TEXT_SACTIVE_FGCOLOR:
-               *(RGBVAL*)dwParam = me->rgbTextSel;
                return TRUE;
 
             case PROP_FOCUSINDEX:
@@ -1371,7 +1319,7 @@ static int DateWidget_DrawField(DateWidget *me, IBitmap *piBmp, const AEERect *p
       AEERect rcFill;
       NativeColor ncSel;
 
-      rgb = me->rgbaSelected;
+      Border_GetBGColor(&me->border, RGBINDEX_SACTIVE, &rgb);
       ncSel = IBITMAP_RGBToNative(piBmp, rgb);
 
       IntersectRect(&rcFill, &rc, prcClip);
@@ -1380,7 +1328,7 @@ static int DateWidget_DrawField(DateWidget *me, IBitmap *piBmp, const AEERect *p
       // ensure resource image is loaded, then draw arrows
       if (me->fShowArrows && DateWidget_HaveArrows(me)) {
 
-         //Bitmap_ReplaceColor(me->piBmpArrows, RGB_BLACK, rgb);
+//         Bitmap_ReplaceColor(me->piBmpArrows, RGB_BLACK, rgb);
 
          // draw the arrows
          DateWidget_DrawArrow(me, piBmp, prcClip, 0, 
@@ -1390,7 +1338,7 @@ static int DateWidget_DrawField(DateWidget *me, IBitmap *piBmp, const AEERect *p
                               rcFill.x + (rcFill.dx-me->cxTile)/2,
                               rcFill.y + rcFill.dy + me->nArrowPad);
 
-         //Bitmap_ReplaceColor(me->piBmpArrows, rgb, RGB_BLACK);
+//         Bitmap_ReplaceColor(me->piBmpArrows, rgb, RGB_BLACK);
       }
    }
 
@@ -1409,23 +1357,14 @@ static int DateWidget_DrawField(DateWidget *me, IBitmap *piBmp, const AEERect *p
          ndxFG += RGBINDEX_SINACTIVE;
       }
 
-      if(TRUE == bSelected){
-         if(TRUE == me->border.bActive){
-            rgb = me->rgbTextSel;
-            rgb &= MASK_NOALPHA;
-         }else{
-            (void)DynRGB_Get(&me->rgbText, ndxFG, &rgb);
-            rgb &= MASK_NOALPHA;
-         }
-      }else{
-         (void)DynRGB_Get(&me->rgbText, ndxFG, &rgb);
-         rgb &= MASK_NOALPHA;
-      }
+      DynRGB_Get(&me->rgbText, ndxFG, &rgb);
+      rgb &= MASK_NOALPHA;
       ncFore = IBITMAP_RGBToNative(piBmp, rgb);
 
       cxDigits = IFont_MeasureString(me->piFont, wszBuf);
 
-      (void)IFONT_DrawText(me->piFont, piBmp, rc.x + cx - me->nFldPad - cxDigits, rc.y, wszBuf, WSTRLEN(wszBuf), ncFore, 0, prcClip, IFONT_DRAW_TRANSPARENT);
+      IFONT_DrawText(me->piFont, piBmp, rc.x + cx - me->nFldPad - cxDigits, rc.y, wszBuf, WSTRLEN(wszBuf), 
+                     ncFore, 0, prcClip, IFONT_DRAW_TRANSPARENT);
 
       // draw delimiter following the field
       if (pwDelim) {
@@ -1461,8 +1400,7 @@ void DateWidget_Draw(IWidget *po, ICanvas *piCanvas, int x, int y)
       int xd = x + me->border.rcClient.x;
       int yd = y + me->border.rcClient.y;
       
-      //if (me->fShowArrows) {
-      if (me->fShowArrows && DateWidget_HaveArrows(me)) {
+      if (me->fShowArrows) {
          yd += me->cyTile + me->nArrowPad;
       }
 
@@ -1601,9 +1539,6 @@ static int DateWidget_Construct(DateWidget *me, AEEVTBL(IWidget) *pvt, IShell *p
    DynRGB_Ctor(&me->rgbText, RGB_BLACK);
    DynRGB_Set(&me->rgbText, RGBINDEX_SACTIVE, RGB_WHITE);
 
-   me->rgbaSelected = RGBA_BLACK;
-   me->rgbTextSel = RGB_WHITE;
-
    me->piShell = piShell;
    ISHELL_AddRef(piShell);
 
@@ -1617,7 +1552,7 @@ static int DateWidget_Construct(DateWidget *me, AEEVTBL(IWidget) *pvt, IShell *p
    if (!nErr) {
       DateWidget_UseLocale(me, piLocale);
 
-      Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.extent, TRUE, &WBASE(me)->piViewModel);
+      Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.extent, TRUE, &WBASE(me)->piViewModel);
       Border_SetBorderColor(&me->border, 0, RGBA_BLACK);
       Border_SetBGColor(&me->border, 0, RGBA_NONE);
       

@@ -64,6 +64,9 @@
 	<String Id="1023" Name="IDS_APPLICATION_TITLE_13">
 		<Text>Kalender</Text>
 	</String>
+	<String Id="1024" Name="IDS_APPLICATION_TITLE_14">
+		<Text>Browser</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">

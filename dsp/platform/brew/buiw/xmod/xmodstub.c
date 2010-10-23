@@ -3,6 +3,8 @@
 
 #include "xmod.h"
 
+#ifndef AEE_STATIC
+
 /* Allow the AEEMod_Load function to be renamed through a
    preprocessor directive */
 #ifndef AEEMOD_LOAD
@@ -14,6 +16,8 @@
 #ifndef AEEMOD_CREATEINSTANCE
 #define AEEMOD_CREATEINSTANCE xModule_CreateInstance  
 #endif
+
+#endif   // AEE_STATIC
 
 
 /* Prototype the createinstance function */

@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -25,7 +25,7 @@
 #include "AEEWidget.h"
 #include "AEEWProperties.h"
 
-#include "bid/AEECLSID_IMAGEWIDGET.bid"
+#include "bid\AEECLSID_IMAGEWIDGET.bid"
 
 // Define image interface for pre-2.1 SDKs
 #ifndef AEEIID_IMAGE 
@@ -453,10 +453,7 @@ EVT_WDG_SETPROPERTY:  The image widget responds to this event by attempting to s
                                                   within the Image Widget is drawn.
                           PROP_FLAGS          --  Set various image widget flags.
                           PROP_ANIMATE_FLAGS  --  Set various animation-specific flags.
-                          PROP_TRANSP_COLOR   --  Sets the transparency color to be used
-                                                  when transferring the bitmap image to
-                                                  the screen.(Applicable only for bitmaps).
-
+                      
                       These properties are discussed below in greater detail.
 
 EVT_WDG_GETPROPERTY:  The image widget responds to this event by attempting to retrieve the
@@ -472,9 +469,6 @@ EVT_WDG_GETPROPERTY:  The image widget responds to this event by attempting to r
                           PROP_IMAGE_NFRAMES  --  Restrieves the number of frames in
                                                   the image contained in the Image Widget.
                           PROP_ANIMATE_FLAGS  --  Retrieves the animation flags.
-                          PROP_TRANSP_COLOR   --  Retrieves the transparency color used
-                                                  when transferring the bitmap image to
-                                                  the screen.(Applicable only for bitmaps).
 ===/pre>
 ===pre>
 Properties:
@@ -568,26 +562,11 @@ PROP_ANIMATE_FLAGS:  This property holds the flags related to image widget's ani
 
                         AF_ENABLE_EVT_STEP
                         ------------------
-                        This flag enables the EVT_MDL_STEP event to be from the image 
-                        widget's view model during animation. When image widget animates, 
-                        EVT_MDL_STEP will only be passed to model listeners if this flag is 
-                        set to true.
+                        This flag allows the user to enable StepEvent to be sent through the
+                        widget's ViewModel.  When image widget animates, StepEvent will only
+                        be passed to model listeners if this flag is set to true.
                        
-                        AF_ANIMATE_ONCE
-                        ---------------
-                        This flag causes image animation to stop on the last frame 
-                        after one animation sequence has completed. The default behavior is 
-                        for the animation sequence to continue until explicitly stopped with
-                        PROP_IMAGE_ANIMATE(FALSE). 
-
-                        Property Value:  uint32
-
-PROP_TRANSP_COLOR:   This property determines how the bitmap will be transferred to the
-                     display.  Set PROP_TRANSP_COLOR to RGB_NONE to copy the bitmap without
-                     any transparency (i.e. every pixel in the source bitmapped will be
-                     copied to the display), otherwise the bitmapped will be transferred
-                     with transparency. Note that this property is applicable only for
-                     bitmaps.
+                         Property Value:  uint32
 
 ===/pre>
 

@@ -11,7 +11,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -40,7 +40,7 @@ void ViewportWidget_Dtor(ViewportWidget *me);
 
 static void ViewportWidget_SendScrollEvent(ViewportWidget *me, boolean bVert)
 {
-   if (WBASE(me)->piViewModel) {
+   if (me->base.base.piViewModel) {
 
       ScrollEvent se;
    
@@ -57,7 +57,7 @@ static void ViewportWidget_SendScrollEvent(ViewportWidget *me, boolean bVert)
          se.position     = me->xOrigin;
       }
 
-      IMODEL_Notify(WBASE(me)->piViewModel, (ModelEvent*)&se);
+      IMODEL_Notify(me->base.base.piViewModel, (ModelEvent*)&se);
    }
 }
 
@@ -301,7 +301,7 @@ boolean ViewportWidget_HandleEvent(IDecorator *po, AEEEvent evt, uint16 wParam, 
                   ViewportWidget_SendScrollEvent(me, 0);
                }
                return TRUE;
-            }
+            } break; 
       
             case PROP_OFFSETY: {
                int ySave = me->yOrigin;
@@ -311,14 +311,14 @@ boolean ViewportWidget_HandleEvent(IDecorator *po, AEEEvent evt, uint16 wParam, 
                   ViewportWidget_SendScrollEvent(me, 1);
                }
                return TRUE;
-            }
+            } break;
          }
          break;
    
       case EVT_WDG_GETPROPERTY:
          switch  (wParam) {
             case PROP_VIEWMODEL:
-               if (SUCCESS == WidgetBase_GetViewModel(WBASE(me), (IModel **)dwParam)) {
+               if (SUCCESS == WidgetBase_GetViewModel(&me->base.base, (IModel **)dwParam)) {
                   CALLBACK_Resume(&me->cbkView, ViewportWidget_NotifyScroll, me, me->piShell);
                }
                return TRUE;
@@ -418,13 +418,13 @@ void ViewportWidget_Ctor(ViewportWidget *me, AEEVTBL(IDecorator) *pvt,
    pvt->SetWidget          = ViewportWidget_SetWidget;
    pvt->IntersectOpaque    = ViewportWidget_IntersectOpaque;
 
-   WCBASE(me)->vtContainer.Invalidate  = ViewportWidget_Invalidate;
-   WCBASE(me)->vtContainer.Locate      = ViewportWidget_Locate;
+   me->base.vtContainer.Invalidate  = ViewportWidget_Invalidate;
+   me->base.vtContainer.Locate      = ViewportWidget_Locate;
 
    me->piShell = piShell;
    ISHELL_AddRef(piShell);
 
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &WBASE(me)->extent, TRUE, &WBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.base.extent, TRUE, &WBASE(me)->piViewModel);
    IWIDGET_SetBorderWidth((IWidget*)me, 0);
    IWIDGET_SetBorderColor((IWidget*)me, RGBA_NONE);
    IWIDGET_SetBGColor((IWidget*)me, RGBA_NONE);

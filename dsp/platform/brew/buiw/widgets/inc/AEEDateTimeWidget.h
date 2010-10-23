@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -23,10 +23,10 @@
 #include "AEEWProperties.h"
 #include "AEELocale.h"
 
-#include "bid/AEECLSID_DATEWIDGET.bid"
-#include "bid/AEECLSID_TIMEWIDGET.bid"
-#include "bid/AEECLSID_JULIANDATEWIDGET.bid"
-#include "bid/AEECLSID_JULIANTIMEWIDGET.BID"
+#include "bid\AEECLSID_DATEWIDGET.bid"
+#include "bid\AEECLSID_TIMEWIDGET.bid"
+#include "bid\AEECLSID_JULIANDATEWIDGET.bid"
+#include "bid\AEECLSID_JULIANTIMEWIDGET.bid"
 
 #define PROP_JULIANVALUEMODEL          PROP_SPECIAL   // set to TRUE if the widget stores its date and time
                                                       // data as a JulianType
@@ -34,7 +34,6 @@
 #define DTWF_UPDATE_ONFIELDCHANGE      1  // update the underlying value model on every field change 
 #define DTWF_USEUPDOWNKEYS             2  // use the up/down arrow keys
 #define DTWF_SHOWUPDOWNARROWS          4  // show up/down indicator arrows (only valid if DTWF_USEUPDOWNKEYS set)
-#define DTWF_NOFIELDWRAP               8  // Do not wrap to/from first/last field in focus
 
 static __inline int IWIDGET_SetLocale(IWidget *po, ILocale *piLocale) {
    return IWIDGET_SetProperty(po, PROP_LOCALE, (uint32)piLocale);
@@ -228,57 +227,51 @@ EVT_WDG_SETPROPERTY:    The date and time widgets responds to this event by atte
                         property identified by the 'wParam' parameter.  The date and time widgets
                         allow the following properties to be set:
                         
-                           PROP_FONT                     --  Sets the font to be used when displaying the
-                                                             widget field text.
-                           PROP_FONT_CLASS               --  Sets the font to be used when displaying
-                                                             widget field text
-                           PROP_FONT_OUTLINEWIDTH        --  Sets the font's outline width.  Must first
-                                                             use PROP_FONT to set the font to a font
-                                                             object that understands this property, no
-                                                             effect otherwise.
-                           PROP_FONT_OUTLINECOLOR        --  Sets the font's outline color.  Must first
-                                                             use PROP_FONT to set the font to a font
-                                                             object that understands this property, no
-                                                             effect otherwise.
-                           PROP_LOCALE                   --  Set the ILocale object that the widget will 
-                                                             use to retrieve date/time display and entry 
-                                                             characteristics.  Note that this property will 
-                                                             override any previous settings of 
-                                                             PROP_FORMATSTRING and PROP_DELIMITER.
-                           PROP_FORMATSTRING             --  Set a format string that the widget will
-                                                             use to determine date/time display and
-                                                             entry characteristics. Note that this property
-                                                             will override any previous settings of PROP_LOCALE.
-                           PROP_DELIMITER                --  Set a delimiter string that the widget will
-                                                             display between fields.  Note that this property
-                                                             will override any previous settings of PROP_LOCALE.
-                           PROP_FIELDPAD                 --  Set the amount of padding in pixels that will be
-                                                             displayed around each side of the bounding 
-                                                             rectangle of the  field text. 
-                           PROP_ARROWPAD                 --  Set the amount of padding that will be displayed
-                                                             between the field selection rectangle and the up and 
-                                                             down arrows, when visible.
-                           PROP_FLAGS                    --  Set various flags that effect the behavior
-                                                             of the date or time widget.
-                           PROP_FOCUSINDEX               --  Sets which field is focused and highlited in the date/
-                                                             time widget.  This is zero-based, so pass 0 to 
-                                                             IWIDGET_SetFocusIndex() to select the first field.
-                           PROP_FGCOLOR                  --  Sets the text color to be used when the
-                                                             widget is selected, unselected, active or
-                                                             inactive. 
-                           PROP_SACTIVE_FGCOLOR          --  Sets the color of text when the widget is
-                                                             active.  
-                           PROP_TEXT_SELECTED_FGCOLOR    --  Sets the text color for the selected text
-                           PROP_TEXT_SACTIVE_FGCOLOR     --  Sets the text color for the selected text when the 
-                                                             widget is active
-                           PROP_TEXT_SELECTED_BGCOLOR    --  Sets the background text color for the selected text
-                           PROP_TEXT_SACTIVE_BGCOLOR     --  Sets the background text color for the selected text  
-                                                             when the widget is active
-                           PROP_BGCOLOR                  --  Sets the background color to be used when the
-                                                             widget is selected, unselected, active or 
-													                      inactive.
-                           PROP_SACTIVE_BGCOLOR          --  Sets the color of the selection when the widget
-                                                             is active.
+                           PROP_FONT              --  Sets the font to be used when displaying the
+                                                      widget field text.
+                           PROP_FONT_CLASS        --  Sets the font to be used when displaying
+                                                      widget field text
+                           PROP_FONT_OUTLINEWIDTH --  Sets the font's outline width.  Must first
+                                                      use PROP_FONT to set the font to a font
+                                                      object that understands this property, no
+                                                      effect otherwise.
+                           PROP_FONT_OUTLINECOLOR --  Sets the font's outline color.  Must first
+                                                      use PROP_FONT to set the font to a font
+                                                      object that understands this property, no
+                                                      effect otherwise.
+                           PROP_LOCALE            --  Set the ILocale object that the widget will 
+                                                      use to retrieve date/time display and entry 
+                                                      characteristics.  Note that this property will 
+                                                      override any previous settings of 
+                                                      PROP_FORMATSTRING and PROP_DELIMITER.
+                           PROP_FORMATSTRING      --  Set a format string that the widget will
+                                                      use to determine date/time display and
+                                                      entry characteristics. Note that this property
+                                                      will override any previous settings of PROP_LOCALE.
+                           PROP_DELIMITER         --  Set a delimiter string that the widget will
+                                                      display between fields.  Note that this property
+                                                      will override any previous settings of PROP_LOCALE.
+                           PROP_FIELDPAD          --  Set the amount of padding in pixels that will be
+                                                      displayed around each side of the bounding 
+                                                      rectangle of the  field text. 
+                           PROP_ARROWPAD          --  Set the amount of padding that will be displayed
+                                                      between the field selection rectangle and the up and 
+                                                      down arrows, when visible.
+                           PROP_FLAGS             --  Set various flags that effect the behavior
+                                                      of the date or time widget.
+                           PROP_FOCUSINDEX        --  Sets which field is focused and highlited in the date/
+                                                      time widget.  This is zero-based, so pass 0 to 
+                                                      IWIDGET_SetFocusIndex() to select the first field.
+                           PROP_FGCOLOR           --  Sets the text color to be used when the
+                                                      widget is selected, unselected, active or
+                                                      inactive. 
+                           PROP_SACTIVE_FGCOLOR   --  Sets the color of selected text when the widget is
+                                                      active.  
+                           PROP_BGCOLOR           --  Sets the background color to be used when the
+                                                      widget is selected, unselected, active or
+                                                      inactive.
+                           PROP_SACTIVE_BGCOLOR   --  Sets the color of the seleciton when the widget
+                                                      is active.
                                                                      
                         These properties are discussed below in greater detail.
 
@@ -287,46 +280,40 @@ EVT_WDG_GETPROPERTY:    The date and time widgets respond to this event by attem
                         property identified by the 'wParam' parameter.  The date and time widgets
                         allow the following properties to be retrieved:
                       
-                           PROP_FONT                     --  Retrieves the font used to display the text.
-                           PROP_FONT_OUTLINEWIDTH        --  Retrieves the current outline width of the
-                                                             display text if the font supports this
-                                                             property.
-                           PROP_FONT_OUTLINECOLOR        --  Retrieves the current outline color of the
-                                                             display text if the font supports this
-                                                             property.
-                           PROP_FIELDPAD                 --  Retreive the amount of padding in pixels that will be
-                                                             displayed around each side of the bounding 
-                                                             rectangle of the  field text.  When the field is 
-                                                             selected, the selection highlight will encompass 
-                                                             the text bounding rectangle plus the field pad.
-                           PROP_ARROWPAD                 --  Retrieve the amount of padding that will be displayed
-                                                             between the top and bottom of the field selection
-                                                             rectangle and the up and down arrows, when visible.
-                           PROP_FLAGS                    --  Retrieves the flags that effect the behavior
-                                                             of the widget.
-                           PROP_SACTIVE_FGCOLOR          --  Gets the active selected text color.
-                           PROP_FOCUSINDEX               --  Retrieves which field is selected in the date/
-                                                             time widget.  This is zero-based, so when the first
-                                                             field is selected, IWIDGET_GetFocusIndex() will 
-                                                             return 0.
-                           PROP_JULIANVALUEMODEL         --  Used to determine if the widget is storing its date
-                                                             data in its value model as a JulianType versus a long.
-                                                             The Date/Time Widgets ill always return FALSE, the
-                                                             Julian Date and Julian Time widgets will return TRUE.
-                           PROP_FGCOLOR                  --  Retrieves the text color used when the widget is selected,
-                                                             unselected, active or inactive.  
-                           PROP_SACTIVE_FGCOLOR          --  Retrieves the color of selected text when the widget is
-                                                             active.
-                           PROP_TEXT_SELECTED_FGCOLOR    --  Retrieves the color of selected text color
-                           PROP_TEXT_SACTIVE_FGCOLOR     --  Retrieves the color of text for the selected text when the 
-                                                             widget is active
-                           PROP_TEXT_SELECTED_BGCOLOR    --  Retrieves the background color of selected text color
-                           PROP_TEXT_SACTIVE_BGCOLOR     --  Retrieves the background color of text for the selected text 
-                                                             when the widget is active
-                           PROP_BGCOLOR                  --  Retrieves the background color used when the widget is selected, 
-                                                             unselected, active or inactive.
-                           PROP_SACTIVE_BGCOLOR          --  Retrieves the color of the seleciton used when the widget
-                                                             is active.
+                           PROP_FONT              --  Retrieves the font used to display the text.
+                           PROP_FONT_OUTLINEWIDTH --  Retrieves the current outline width of the
+                                                      display text if the font supports this
+                                                      property.
+                           PROP_FONT_OUTLINECOLOR --  Retrieves the current outline color of the
+                                                      display text if the font supports this
+                                                      property.
+                           PROP_FIELDPAD          --  Retreive the amount of padding in pixels that will be
+                                                      displayed around each side of the bounding 
+                                                      rectangle of the  field text.  When the field is 
+                                                      selected, the selection highlight will encompass 
+                                                      the text bounding rectangle plus the field pad.
+                           PROP_ARROWPAD          --  Retrieve the amount of padding that will be displayed
+                                                      between the top and bottom of the field selection
+                                                      rectangle and the up and down arrows, when visible.
+                           PROP_FLAGS             --  Retrieves the flags that effect the behavior
+                                                      of the widget.
+                           PROP_SACTIVE_FGCOLOR   --  Gets the active selected text color.
+                           PROP_FOCUSINDEX        --  Retrieves which field is selected in the date/
+                                                      time widget.  This is zero-based, so when the first
+                                                      field is selected, IWIDGET_GetFocusIndex() will 
+                                                      return 0.
+                           PROP_JULIANVALUEMODEL  --  Used to determine if the widget is storing its date
+                                                      data in its value model as a JulianType versus a long.
+                                                      The Date/Time Widgets ill always return FALSE, the
+                                                      Julian Date and Julian Time widgets will return TRUE.
+                           PROP_FGCOLOR           --  Retrieves the text color used when the widget is selected,
+                                                      unselected, active or inactive.  
+                           PROP_SACTIVE_FGCOLOR   --  Retrieves the color of selected text with the widget is
+                                                      active.
+                           PROP_BGCOLOR           --  Retrieves the background color used when the widget is selected, 
+                                                      unselected, active or inactive.
+                           PROP_SACTIVE_BGCOLOR   --  Retrieves the color of the seleciton used when the widget
+                                                      is active.
                                                       
    
                         These properties are discussed below in greater detail.
@@ -484,16 +471,6 @@ PROP_FLAGS              This property contains a set of flags that effect the be
                         decremented.  If this flag is used without DTWF_USEUPDOWNKEYS, it 
                         will be ignored.  
 
-                        DTWF_NOFIELDWRAP
-                        -----------------
-                        When this flag is set, the widget will not wrap from first field to
-                        the last field when left key (AVK_LEFT) is pressed, or from 
-                        last field to first field when right key (AVK_RIGHT) is pressed. 
-                        If this flag is not set, then corresponding keys will  be handled
-                        by the widget and widget will wrap from/to first/last field on 
-                        AVK_LEFT/AVK_RIGHT.
-
-
 PROP_IMAGESTRIP:        This property contains the bitmap the widget uses when drawing the
                         Up/Down indicator arrows above and below each field that indicate 
                         that the field may be incremented or decremented.  The bitmap is
@@ -550,32 +527,9 @@ PROP_FGCOLOR:           This property contains the color the date and time widge
                              Property Value:  RGBVal
 
 PROP_SACTIVE_FGCOLOR:   This property contains the color the date and time widget will use to 
-                        draw the text within the widget when it is active.
+                        to draw selected text within the widget.  Text selection is drawn
+                        only when the widget is selected and active.
                              
-                             Property Value:  RGBVal
-
-PROP_TEXT_SELECTED_FGCOLOR
-                        This property contains the color the date and time widget will use to 
-                        draw selected text within the widget.
-
-                             Property Value:  RGBVal
-
-PROP_TEXT_SACTIVE_FGCOLOR
-                        This property contains the color the date and time widget will use to 
-                        draw the selected text when the widget is active.
-
-                             Property Value:  RGBVal
-                             
-PROP_TEXT_SELECTED_BGCOLOR
-                        This property contains the background color the date and time widget will 
-                        use to draw selected text within the widget.
-
-                             Property Value:  RGBVal
-
-PROP_TEXT_SACTIVE_BGCOLOR
-                        This property contains the background color the date and time widget will
-                        use to draw the selected text when the widget is active.
-
                              Property Value:  RGBVal
 
 PROP_BGCOLOR            This property contains the color the date and time widget will use as 

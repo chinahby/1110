@@ -14,7 +14,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -26,7 +26,7 @@
 #define __AEESOFTKEYWIDGET_H__
 
 
-#include "bid/AEECLSID_SOFTKEYWIDGET.bid"
+#include "bid\AEECLSID_SOFTKEYWIDGET.bid"
 
 /*
 =======================================================================

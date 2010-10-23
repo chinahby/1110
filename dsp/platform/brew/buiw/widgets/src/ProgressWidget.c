@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -46,20 +46,7 @@ uint32 ProgressWidget_Release(IWidget *po)
 void ProgressWidget_MakeProgress(ProgressWidget *me)
 {
    me->nIndeterminate++;
-   WidgetBase_Invalidate((IWidget*)me, ICIF_REDRAW);
-
-   if (me->bStepEnabled) {
-      IMODEL_StepNotify(WBASE(me)->piViewModel, (me->bFinalStep ? EVT_STEP_FINAL : 0) | EVT_STEP_REPEAT, me->nCurStep, me->nScrollRep);
-   }
-
-   if (me->bFinalStep) {
-      ++me->nScrollRep;
-      me->nCurStep = 0;
-      me->bFinalStep = FALSE;
-   }
-   else {
-      ++me->nCurStep;
-   }
+   WidgetBase_InvalidateExtent((IWidget*)me);
 }
 
 void ProgressWidget_Draw(IWidget *po, ICanvas *piCanvas, int x, int y)
@@ -91,6 +78,7 @@ void ProgressWidget_Draw(IWidget *po, ICanvas *piCanvas, int x, int y)
          int pos = me->nIndeterminate % (STEPS + SEGMENTS+1) - SEGMENTS;
          int xOffset = pos * dxSeg;
          int nGap = MAX(1, me->cyFont / 20);
+
          int i;
 
          SETAEERECT(&rc, x + me->border.rcClient.x + xOffset, y + me->border.rcClient.y, 
@@ -101,10 +89,6 @@ void ProgressWidget_Draw(IWidget *po, ICanvas *piCanvas, int x, int y)
             rc.x += dxSeg;
          }
    
-         if (pos == STEPS){
-            me->bFinalStep = TRUE;
-         }
-
          CALLBACK_Timer(&me->cbkAuto, ProgressWidget_MakeProgress, me, me->piShell, 150);
 
       } else {
@@ -178,9 +162,6 @@ boolean ProgressWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, uin
          me->rgbProgress = (RGBVAL)dwParam;
          WidgetBase_InvalidateExtent(po);
          return TRUE;
-      case PROP_ANIMATE_FLAGS:
-         me->bStepEnabled = (dwParam & AF_ENABLE_EVT_STEP);
-         return TRUE;
       }
 
    case EVT_WDG_GETPROPERTY:
@@ -188,14 +169,6 @@ boolean ProgressWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, uin
       case PROP_FGCOLOR:
          *(RGBVAL *)dwParam = me->rgbProgress;
          return TRUE;
-      case PROP_ANIMATE_FLAGS:
-         if (dwParam) {
-            *((uint32*)dwParam) = 0;
-            if (me->bStepEnabled) {
-               *((uint32*)dwParam) |= AF_ENABLE_EVT_STEP;
-            }
-            return TRUE;
-         }
       }
    }
       
@@ -209,7 +182,7 @@ void ProgressWidget_Ctor(ProgressWidget *me, AEEVTBL(IWidget) *pvt, IValueModel 
 {
    WidgetBase_Ctor(&me->base, pvt, piModule, DEFHANDLER(ProgressWidget_HandleEvent));
 
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.extent, FALSE, &WBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.extent, FALSE, &WBASE(me)->piViewModel);
 
    pvt->Release             = ProgressWidget_Release;
    pvt->Draw                = ProgressWidget_Draw;
@@ -234,8 +207,6 @@ void ProgressWidget_Ctor(ProgressWidget *me, AEEVTBL(IWidget) *pvt, IValueModel 
          IFONT_Release(piFont);
       }
    }
-
-   me->bFinalStep = FALSE;
 
    ProgressWidget_SetModel(PROGRESSWIDGET_TO_IWIDGET(me), IVALUEMODEL_TO_IMODEL(piModel));
 }

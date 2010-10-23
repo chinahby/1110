@@ -6,7 +6,6 @@
 #include "AEEDisp.h"
 #include "AEEFontBidiUtil.h"
 #include "AEEWidget.h"
-#include "wlint.h"
 
 void   DrawAndInsetBorder(IDisplay *piDisplay, AEERect *prc, int nThick, RGBVAL rgb);
 void   DrawAndInsetBorderEx(IDisplay *piDisplay, AEERect *prc, int nInset, int nThick, RGBVAL rgb, uint8 nAlpha, boolean bBeveled);
@@ -134,7 +133,7 @@ static __inline void RELEASEPPIF(IBase **p) {
 
 
 #ifndef ADDREFIF
-#define ADDREFIF(p)        do { if (p) IBASE_AddRef((IBase*) (void *) (p)); } while(0)
+#define ADDREFIF(p)        do { if (p) IBASE_AddRef((IBase*) (void *) p); } while(0)
 #endif
 
 #ifndef ARRAYSIZE

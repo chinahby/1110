@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright ?1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -26,7 +26,7 @@
 #include "xmod.h"
 
 
-#ifdef AEE_STATIC
+#ifdef BREW_STATIC_APP
 
 // Need to rename AEEMod_Load() to prevent duplicate symbols
 #define AEEMOD_LOAD           FormsMod_Load

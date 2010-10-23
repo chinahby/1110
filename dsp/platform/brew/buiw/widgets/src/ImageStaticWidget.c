@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -202,8 +202,8 @@ static boolean ImageStaticWidget_DefHandleEvent(IWidget *po, AEEEvent evt, uint1
    ME_FROM_WIDGET;
 
    // let PropContainer have first crack at all events
-   // except for Flags
-   if (wParam != PROP_FLAGS) {
+   // except for SetProperty/Flags
+   if (evt != EVT_WDG_SETPROPERTY || wParam != PROP_FLAGS) {
       if (PropContainer_DefHandleEvent(po, evt, wParam, dwParam)) {
          return TRUE;
       }
@@ -220,10 +220,6 @@ static boolean ImageStaticWidget_DefHandleEvent(IWidget *po, AEEEvent evt, uint1
          case PROP_IMAGESTATIC_STATICWIDGET:
             *(IWidget **)dwParam = me->piLabel;
             ADDREFIF(me->piLabel);
-            return TRUE;
-         
-         case PROP_FLAGS:
-            *((uint32*)dwParam) = me->dwFlags;
             return TRUE;
       }
 
@@ -292,12 +288,7 @@ static boolean ImageStaticWidget_DefHandleEvent(IWidget *po, AEEEvent evt, uint1
             }
             // if image widget flag(s) changed, pass to image widget
             if (dwDiff & IWF_HASSELECTIMAGE) {
-               if (me->dwFlags & IWF_HASSELECTIMAGE) { 
-                  IWIDGET_AddFlags(me->piImage, IWF_HASSELECTIMAGE);
-               }
-               else {
-                  IWIDGET_RemoveFlags(me->piImage, IWF_HASSELECTIMAGE);
-               }
+               IWIDGET_SetFlags(me->piImage, (me->dwFlags & IWF_HASSELECTIMAGE));
             }
 
             // strip out ISW specific flags
@@ -335,7 +326,7 @@ uint32 ImageStaticWidget_Release(IWidget *po)
 void ImageStaticWidget_Ctor(ImageStaticWidget *me, AEEVTBL(IPropContainer) *pvt, 
                             IShell *piShell, IModule *piModule) 
 {
-   PropContainer_Ctor(&me->base, pvt, piShell, piModule, (PFNHANDLER)ImageStaticWidget_DefHandleEvent);
+   PropContainer_Ctor(&me->base, pvt, piModule, (PFNHANDLER)ImageStaticWidget_DefHandleEvent);
    
    // override IWidget method(s)
 #  define WVT(name)    me->base.base.vtWidget.name = ImageStaticWidget_##name

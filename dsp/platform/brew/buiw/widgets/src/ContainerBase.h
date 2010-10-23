@@ -11,7 +11,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -129,8 +129,6 @@ struct ContainerBase
    flg                     fBroadcast : 1;
    flg                     fNoFilterKeys : 1;
    flg                     fNoRouteFocus : 1;
-
-   int                     nLayoutFlags;
 };
 
 //helper functions
@@ -143,7 +141,7 @@ static __inline IContainer* ICONTAINER_FROM_WIDGET(IWidget *po){
 #define CBASE(p) ((ContainerBase *)p)
 
 void    ContainerBase_Ctor       (ContainerBase *me, AEEVTBL(IContainer) *pvt, 
-                                  IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler,
+                                  IModule *piModule, PFNHANDLER pfnDefHandler,
                                   PFNMKNODE pfnMkNode, PFNLAYOUT pfnLayout);
 void    ContainerBase_Dtor       (ContainerBase *me);
 

@@ -12,7 +12,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -59,7 +59,7 @@ typedef struct Vector {
 int   Vector_New            (Vector **ppo);
 void  Vector_Delete         (Vector *me);
 void  Vector_Dtor           (Vector *me);
-int   Vector_GetAt          (const Vector *me, uint32 nIndex, void **ppoItem);
+int   Vector_GetAt          (Vector *me, uint32 nIndex, void **ppoItem);
 int   Vector_ReplaceAt      (Vector *me, uint32 nIndex, void *pvItem);
 int   Vector_InsertAt       (Vector *me, uint32 nIndex, void *pvItem);
 int   Vector_DeleteAt       (Vector *me, uint32 nIndex);
@@ -80,7 +80,7 @@ PFNNOTIFY Vector_SetPfnFree(Vector *me, PFNNOTIFY pfnFree) {
 }
 
 static __inline
-int Vector_Size(const Vector *me) {
+int Vector_Size(Vector *me) {
    return me->nItems;
 }
 

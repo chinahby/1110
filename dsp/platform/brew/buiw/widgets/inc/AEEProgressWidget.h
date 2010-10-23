@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -21,7 +21,7 @@
 #ifndef __AEEPROGRESSWIDGET_H__
 #define __AEEPROGRESSWIDGET_H__
 
-#include "bid/AEECLSID_PROGRESSWIDGET.bid"
+#include "bid\AEECLSID_PROGRESSWIDGET.bid"
 
 /*
 =======================================================================
@@ -115,18 +115,6 @@ PROP_FGCOLOR:         This property contains the color that the progress widget 
 
                       Property Value:  RGBVal
 
-PROP_ANIMATE_FLAGS:   This property holds the flags related to progress widget's animation when the
-                      model holds the value -1 i.e. the progress widget is displaying an infinitely-
-                      looping progress bar. 
-
-                      AF_ENABLE_EVT_STEP
-                      ------------------
-                      This flag allows the user to enable StepEvent to be sent through the
-                      widget's ViewModel.  When progress widget animates, StepEvent will only
-                      be passed to model listeners if this flag is set to true.
-                    
-                      Property Value:  uint32
-
 Required Model:
    IValueModel
    
@@ -157,7 +145,6 @@ Comments:
 
 See Also:
    Model Events
-   StepEvent
    ISHELL_CreateInstance()
 */
 

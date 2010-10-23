@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -21,7 +21,7 @@
 #ifndef __AEEBLENDWIDGET_H__
 #define __AEEBLENDWIDGET_H__
 
-#include "bid/AEECLSID_BLENDWIDGET.bid"
+#include "bid\AEECLSID_BLENDWIDGET.bid"
 
 /*
 =======================================================================
@@ -106,8 +106,6 @@ EVT_WDG_SETPROPERTY:  The blend widget responds to this event by attempting to s
                       
                           PROP_TRANSPARENCY   --  Sets the transparency level of the blend
                                                   widget.
-                          PROP_ALPHA          --  Sets the opacity level of the blend widget
-                          PROP_BUFFERED       --  Sets the buffered status of the blend widget
                                                   
                       These properties are discussed below in greater detail.
 
@@ -121,8 +119,6 @@ EVT_WDG_GETPROPERTY:  The blend widget responds to this event by attempting to r
                       
                           PROP_TRANSPARENCY   --  Gets the transparency level of the blend
                                                   widget.
-                          PROP_ALPHA          --  Gets the opacity level of the blend widget
-                          PROP_BUFFERED       --  Gets the buffered status of the blend widget
                                                   
                       These properties are discussed below in greater detail.
 
@@ -138,23 +134,8 @@ PROP_TRANSPARENCY:   This property controls the degree to which the underlying w
                      be blended.  A value of 0 would produce a fully opaque result.  A value
                      of 1 would add a small degree of transparency to the widget, 2 a little
                      more, 3 a little more... up to 255 which would render the widget
-                     completely transparent (i.e. invisible!). PROP_ALPHA and PROP_TRANSPARENCY
-                     are tied with the relationship 
-                     valueof(PROP_ALPHA) == 255 - alueof(PROP_TRANSPARENCY)  - i.e. changing
-                     one will change the other.
+                     completely transparent (i.e. invisible!).
 
-PROP_ALPHA           This property controls the degree to which the underlying widget will
-                     be blended.  A value of 0 would produce a fully transparent result 
-                     (i.e. invisible!).  A value of 1 would add a small degree of opacity 
-                     to the widget, 2 a little more, 3 a little more... up to 255 which 
-                     would render the widget completely opaque. See also PROP_TRANSPARENCY.
-
-PROP_BUFFERED        This property controls whether or not a drawing of the BlendWidget requires
-                     its child widget to redraw itself. If PROP_BUFFERED is TRUE, then the child 
-                     widget's draw is buffered, and the child widget is only asked to redraw when
-                     necessary (as a result of invalidating itself). Otherwise the buffer is used, 
-                     and the child does not need to draw. This has potential performance benefits 
-                     for complex child content.
 Required Model:
    None
    

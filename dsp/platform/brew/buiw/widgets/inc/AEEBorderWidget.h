@@ -11,7 +11,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -22,7 +22,7 @@
 #ifndef __AEEBORDERWIDGET_H__
 #define __AEEBORDERWIDGET_H__
 
-#include "bid/AEECLSID_BORDERWIDGET.bid"
+#include "bid\AEECLSID_BORDERWIDGET.bid"
 
 /*
 =======================================================================

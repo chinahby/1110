@@ -12,7 +12,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -25,7 +25,7 @@
 
 #include "AEEWidget.h"
 
-#include "bid/AEEIID_CONTAINER.bid"
+#include "bid\AEEIID_CONTAINER.bid"
 
 // Container event for setting focus to a particular widget
 #define EVT_WDG_MOVEFOCUS     0x711    // dwParam is next focus item (IWidget*)
@@ -42,9 +42,9 @@
 
 
 // Default insertion points for widgets
-#define WIDGET_ZBOTTOMMOST    ((IWidget*) -1)   // set widget as bottommost
-#define WIDGET_ZNORMAL        ((IWidget*) 0)    // normal z-order (leave unchanged in SetPos)
-#define WIDGET_ZTOPMOST       ((IWidget*) 1)    // set widget as topmost
+#define WIDGET_ZBOTTOMMOST    (IWidget *)-1    // set widget as bottommost
+#define WIDGET_ZNORMAL        (IWidget *)0     // normal z-order (leave unchanged in SetPos)
+#define WIDGET_ZTOPMOST       (IWidget *)1     // set widget as topmost
 
 // Used to tell a container how to size an item
 #define WIDGET_SIZE_TO_FIT ((uint16)-1)
@@ -60,10 +60,6 @@
 #define ICIF_EXTENT           (1 << 0)     // widget's extent changed
 #define ICIF_REDRAW           (1 << 1)     // force redraw only, content has not changed
                                            // (this is an optimization flag)
-#define ICIF_DEFER            (1 << 2)     // defer this widget's draw (used when layout is disabled)
-#define ICIF_FORCEDRAW        (1 << 3)     // forces an immediate, synchronous draw cycle in rootcontainer
-
-
 
 typedef boolean (*PFNVISIT)(void*, IWidget*);  
 
@@ -962,13 +958,7 @@ Parameters:
                              changed its extent.
              ICIF_REDRAW  -  When this flag is ON, it is an indication that the widget has 
                              changed its contents, but its preferred extent is still the same.
-                             The widget simply wants to be redrawn.
-             ICIF_DEFER   -  When this flag is ON, it indicates that the widget's layout is
-                             disabled, but it is still passing an invalidate up to 
-                             notify its ancestors that an invalidate occurred but no action
-                             was taken as layout was disabled.  When RootContainer receives
-                             an invalidate with the ICIF_DEFER flag appended, it will not cause
-                             a draw to be scheduled. 
+                             The widget simply wants to be redrawn.  
 ===/pre>
 
 Return Value:
@@ -1388,13 +1378,7 @@ Parameters:
                              changed its extent.
              ICIF_REDRAW  -  When this flag is ON, it is an indication that the widget has 
                              changed its contents, but its preferred extent is still the same.
-                             The widget simply wants to be redrawn.
-             ICIF_DEFER   -  When this flag is ON, it indicates that the widget's layout is
-                             disabled, but it is still passing an invalidate up to 
-                             notify its ancestors that an invalidate occurred but no action
-                             was taken as layout was disabled.  When RootContainer receives
-                             an invalidate with the ICIF_DEFER flag appended, it will not cause
-                             a draw to be scheduled.                      
+                             The widget simply wants to be redrawn.  
              
 ===/pre>
       

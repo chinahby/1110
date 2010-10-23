@@ -15,7 +15,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -40,10 +40,6 @@ typedef struct ProgressWidget {
    int            nIndeterminate;
    AEECallback    cbkAuto;
    int            cyFont;
-   flg            bStepEnabled : 1;
-   flg            bFinalStep : 1;
-   int            nCurStep;
-   int            nScrollRep;
 
    ModelListener modelListener;
 } ProgressWidget;

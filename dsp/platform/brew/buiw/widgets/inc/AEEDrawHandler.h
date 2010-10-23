@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -22,7 +22,7 @@
 #define __AEEDRAWHANDLER_H__
 
 #include "AEE.h"
-#include "bid/AEEIID_DRAWHANDLER.BID"
+#include "bid\AEEIID_DRAWHANDLER.bid"
 
 
 typedef void (*PFNDRAWHANDLER) (void *pCxt, ICanvas *piCanvas, int x, int y);

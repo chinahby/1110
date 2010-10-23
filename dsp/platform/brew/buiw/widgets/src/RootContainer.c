@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -31,9 +31,10 @@
 #define ROOT_FROM_INTERFACE      RootContainer *me = (RootContainer *)po->pMe
 #define ROOT_FROM_WIDGET         ROOT_FROM_INTERFACE
 
+#if (defined BREW_BUILD) && (BREW_BUILD < 145)
 
 // version-indepedent function
-static boolean IDisplay_IsEnabledSafe(IDisplay *me)
+static boolean IDisplay_IsEnabled(IDisplay *me)
 {
 #ifndef IDISPLAY_IsEnabled
 #define IDISPLAY_IsEnabled(p) \
@@ -43,6 +44,8 @@ static boolean IDisplay_IsEnabledSafe(IDisplay *me)
    return (0x02010000 <= GETAEEVERSION(0,0,0)) ? IDISPLAY_IsEnabled(me) : TRUE;
 }
 
+#endif
+
 
 static void RootContainer_onDraw(RootContainer *me)
 {
@@ -50,7 +53,7 @@ static void RootContainer_onDraw(RootContainer *me)
 
    if (me->piCanvas 
          && SUCCESS == ICANVAS_GetDisplay(me->piCanvas, &piDisplay) 
-         && IDisplay_IsEnabledSafe(piDisplay)) {
+         && IDisplay_IsEnabled(piDisplay)) {
 
       AEERect rcDraw;
 
@@ -61,7 +64,6 @@ static void RootContainer_onDraw(RootContainer *me)
 
       IDISPLAY_UpdateEx(piDisplay,FALSE);
       SETAEERECT(&me->rcInvalid, 0, 0, 0, 0);
-      (void) ICANVAS_SetClipRect(me->piCanvas, NULL);
    }
    RELEASEIF(piDisplay);
 }
@@ -173,16 +175,6 @@ void RootContainer_Invalidate(IRootContainer *po, IWidget *piw, const AEERect *p
    ROOT_FROM_CONTAINER;
    AEERect rcNotify;
 
-   //If we have a parent - behave like a regular container.
-   if(me->base.base.piParent) {
-      ContainerBase_Invalidate(IROOTCONTAINER_TO_ICONTAINER(po), piw, prc, dwFlags);
-      return;
-   }
-   // the defer made it all the way to the top.  Its reward is death.  Nice work.  
-   if (dwFlags & ICIF_DEFER) {
-      return;
-   }
-
    if (piw) {
 
       if (!ContainerBase_CalcInvalidRect(&me->base.base, piw, prc, dwFlags, &rcNotify)) {
@@ -212,29 +204,9 @@ void RootContainer_Invalidate(IRootContainer *po, IWidget *piw, const AEERect *p
          IMODEL_Notify(me->base.base.piViewModel, &mev);
       }
 
-      if(me->piCanvas) { // No parent and I am the root - Need to draw.
-         if (dwFlags & ICIF_FORCEDRAW) {
-            CALLBACK_Cancel(&me->cbDraw);
-            RootContainer_onDraw(me);
-         } else if (!CALLBACK_IsQueued(&me->cbDraw)) {
-            CALLBACK_Init(&me->cbDraw, RootContainer_onDraw, me);
-               // this uses SetTimerEx(0) instead of ISHELL_Resume because 
-               // it has more priority than resume.
-            (void) ISHELL_SetTimerEx(me->piShell, 0, &me->cbDraw);
-         }
-      }
-   }
-}
-
-void RootContainer_SetParent(IWidget *po, IContainer *piContainer)
-{
-   ROOT_FROM_INTERFACE;
-
-   // Parent is not addref'ed to avoid circular references
-   me->base.base.piParent = piContainer;
-
-   if(piContainer) { // A valid parent is being set. Cancel any draw callbacks
-      CALLBACK_Cancel(&me->cbDraw);
+      // this uses SetTimerEx(0) instead of ISHELL_Resume because it has more priority than resume.
+      CALLBACK_Init(&me->cbDraw, RootContainer_onDraw, me);
+      ISHELL_SetTimerEx(me->piShell, 0, &me->cbDraw);
    }
 }
 
@@ -250,89 +222,11 @@ void RootContainer_doLayout(ContainerBase *me, WidgetNode *pNode, AEERect *prcIn
    RootContainer_Invalidate((IRootContainer*)me, (pNode ? pNode->piWidget : NULL), NULL, 0);
 }
 
-int RootContainer_Locate(IContainer *po, IWidget *piw, IContainer **ppRoot, AEERect *prcRelative)
-{
-   ROOT_FROM_CONTAINER;
-   WidgetNode *node;
 
-   if (SUCCESS != WidgetNode_FindWidget(&me->base.base.head, piw, &node))
-      return EFAILED;
-
-   prcRelative->x += me->base.base.border.rcClient.x + node->rc.x;
-   prcRelative->y += me->base.base.border.rcClient.y + node->rc.y;
-
-   if(ppRoot) {
-      *ppRoot = po;
-      ICONTAINER_AddRef(po);
-   }
-   return SUCCESS;
-}
-
-static boolean RootContainer_HandlePropScreen(RootContainer *me, IWidget *po, WidgetPropEx *pPropEx)
-{
-   AEERect *prc = (AEERect*) pPropEx->pUser;
-
-   if(!me->base.base.piParent) {
-      // No parent to traverse up the chain, return the screen co-ordinates
-      prc->x += me->xDisp;
-      prc->y += me->yDisp;
-   }
-   else {
-      IContainer *picRoot = NULL;
-      IWidget *piwRoot = NULL;
-      int nErr = 0;
-      AEERect rect;
-      ZEROAT(&rect);
-      // This RC has a parent , locate self and ask parent for 
-      // PROP_SCREEN.
-      ICONTAINER_Locate(me->base.base.piParent, po, &picRoot, &rect);
-      if(picRoot) {
-         nErr = ICONTAINER_QueryInterface(picRoot, AEEIID_WIDGET, (void**) &piwRoot);
-         if( SUCCESS == nErr) {
-            IWIDGET_GetPropertyEx(piwRoot, PROPEX_SCREEN , 
-               pPropEx->nSize, pPropEx->pUser);
-         }
-      }
-      prc->x += rect.x;
-      prc->y += rect.y;
-      RELEASEIF(picRoot);
-      RELEASEIF(piwRoot);
-   }
-   return TRUE;
-}
-boolean RootContainer_DefHandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, uint32 dwParam)
-{
-   ROOT_FROM_INTERFACE;
-   boolean bHandled = ContainerBase_DefHandleEvent(po, evt, wParam, dwParam);
-   if(!bHandled)
-   {
-      switch(evt) {
-      case EVT_WDG_GETPROPERTY: {
-            switch(wParam) {
-            case PROP_EX: 
-               {  
-                  WidgetPropEx *pPropEx = (WidgetPropEx*) dwParam;
-                  if(pPropEx->nPropId == PROPEX_SCREEN) {        
-                     bHandled = RootContainer_HandlePropScreen(me, po, pPropEx);
-                  }
-               }
-               break;
-            default:
-               break;
-            }
-         }
-         break;
-      default:
-         break;
-      }
-   }
-   return bHandled;
-      
-}
 void RootContainer_Ctor(RootContainer *me, AEEVTBL(IRootContainer) *pvt, IShell *piShell, 
                         IModule *piModule, PFNHANDLER pfnDefHandler)
 {
-   XYContainer_Ctor(&me->base, (AEEVTBL(IXYContainer) *)pvt, piShell, piModule, 
+   XYContainer_Ctor(&me->base, (AEEVTBL(IXYContainer) *)pvt, piModule, 
                     pfnDefHandler, RootContainer_doLayout);
 
    // Border object in root container needs to have a different
@@ -345,10 +239,6 @@ void RootContainer_Ctor(RootContainer *me, AEEVTBL(IRootContainer) *pvt, IShell 
    pvt->QueryInterface  = RootContainer_QueryInterface;
    pvt->Invalidate      = RootContainer_Invalidate;
    pvt->GetCanvas       = RootContainer_GetCanvas;
-
-   // Override SetParent
-   me->base.base.vtWidget.SetParent = RootContainer_SetParent;
-   me->base.base.pvt->Locate = RootContainer_Locate;
 
    // IDrawHandler vtbl
    AEEBASE_INIT(me, idrawhandler, &me->vtDrawHandler);
@@ -377,7 +267,6 @@ int RootContainer_New(IRootContainer **ppo, IShell *piShell, IModule *piModule)
       return ENOMEMORY;
    }
 
-   RootContainer_Ctor(me, GETVTBL(me,IRootContainer), piShell, piModule, 
-      (PFNHANDLER) RootContainer_DefHandleEvent);
+   RootContainer_Ctor(me, GETVTBL(me,IRootContainer), piShell, piModule, 0);
    return SUCCESS;
 }

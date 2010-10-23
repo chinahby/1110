@@ -13,7 +13,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -27,10 +27,10 @@
 #include "AEE.h"
 #include "AEEXYContainer.h"
 
-#include "bid/AEEIID_TRANSITION.bid"
+#include "bid\AEEIID_TRANSITION.bid"
  
-#include "bid/AEECLSID_FADER.bid"
-#include "bid/AEECLSID_MOVER.bid"
+#include "bid\AEECLSID_FADER.bid"
+#include "bid\AEECLSID_MOVER.bid"
 
 typedef struct 
 {

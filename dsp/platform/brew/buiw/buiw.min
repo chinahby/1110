@@ -92,3 +92,4 @@ CONSTFILE_FILES+=\
 	forms.mif|fs:/mif/forms.mif \
 	widgets.mif|fs:/mif/widgets.mif
 	
+OBJECTS += $(BUIW_OBJS)

@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -209,10 +209,9 @@ int XYContainer_QueryInterface(IXYContainer *po, AEECLSID id, void **ppo)
 
 
 void XYContainer_Ctor(XYContainer *me, AEEVTBL(IXYContainer) *pvt, 
-                      IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler, 
-                      PFNLAYOUT pfnLayout)
+                      IModule *piModule, PFNHANDLER pfnDefHandler, PFNLAYOUT pfnLayout)
 {
-   ContainerBase_Ctor(&me->base, (AEEVTBL(IContainer) *)pvt, piShell, piModule, pfnDefHandler,
+   ContainerBase_Ctor(&me->base, (AEEVTBL(IContainer) *)pvt, piModule, pfnDefHandler,
                       (PFNMKNODE)WidgetNode_NewForPos, pfnLayout);
 
 #define VT(name) pvt->name = XYContainer_##name
@@ -222,7 +221,7 @@ void XYContainer_Ctor(XYContainer *me, AEEVTBL(IXYContainer) *pvt,
    VT(GetPos);
 }
 
-int XYContainer_New(IXYContainer **ppo, IShell *piShell, IModule *piModule)
+int XYContainer_New(IXYContainer **ppo, IModule *piModule)
 {
    XYContainer *me = MALLOCREC_VTBL(XYContainer, IXYContainer);
 
@@ -231,7 +230,7 @@ int XYContainer_New(IXYContainer **ppo, IShell *piShell, IModule *piModule)
 
    *ppo = (IXYContainer *)me;
 
-   XYContainer_Ctor(me, GETVTBL(me,IXYContainer), piShell, piModule, 0, 
+   XYContainer_Ctor(me, GETVTBL(me,IXYContainer), piModule, 0, 
                     XYContainer_DoLayout);
 
    return SUCCESS;

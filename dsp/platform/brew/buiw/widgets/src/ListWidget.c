@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -19,7 +19,6 @@
 */
 
 #include "AEEStdLib.h"
-#include "AEEComUtil.h"
 #include "AEEDisp.h"
 
 #include "ListWidget.h"
@@ -53,10 +52,10 @@
 #define INSHORTRANGE(dw)    (((dw) <= 32767) && ((dw) >= -32768))
 
 typedef struct {
-   int   x;
-   int   y;
-   int   dx;
-   int   dy;
+   int32    x;
+   int32    y;
+   int16    dx;
+   int16    dy;
 } BigRect;
 
 static __inline int SafeDiv(int a, int b) {
@@ -109,14 +108,6 @@ static void ListWidget_Indexer(ListWidget *me, int nStartIndex, int nCount,
 static int ListWidget_MeasureSpan(ListWidget *me, uint32 indexStart, uint32 count);
 
 static int ListWidget_IndexToLimitRev(ListWidget *me, uint32 indexStart, uint32 limit);
-
-static boolean HandleEventGetPropertyEx(
-   IDecorator* po,
-   uint32      dwParam);
-
-static boolean HandleEventSetPropertyEx(
-   IDecorator* po,
-   uint32      dwParam);
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -376,42 +367,40 @@ static __inline void ListWidget_BigItemRectToWidgetCoords(ListWidget *me, BigRec
 static
 boolean ListWidget_ItemRectToWidgetCoords(ListWidget *me, BigRect *prcIn, AEERect *prcOut) {
    
-   int   nTempX   = 0;
-   int   nTempY   = 0;
-
+   int32 nTemp, nTemp2;
    if (me->nOrientation == LWO_VERTICAL) {
-      nTempY = prcIn->y + me->yOffset + me->border.rcClient.y;
-      if (!INSHORTRANGE(prcIn->x) || !INSHORTRANGE(nTempY)) {
+      nTemp = prcIn->y + me->yOffset + me->border.rcClient.y;
+      if (!INSHORTRANGE(nTemp) || !INSHORTRANGE(prcIn->x)) {
          return 0;
       }
-
-      prcOut->x   = int32toint16(prcIn->x);
-      prcOut->y   = int32toint16(nTempY);
-      prcOut->dx  = int32toint16(prcIn->dx);
-      prcOut->dy  = int32toint16(prcIn->dy);
+      prcOut->y = (int16)nTemp;
+      prcOut->x = (int16)prcIn->x;
+      prcOut->dx = prcIn->dx;
+      prcOut->dy = prcIn->dy;
    }
    if (me->nOrientation == LWO_HORIZONTAL) {
-      nTempX = prcIn->x + me->xOffset + me->border.rcClient.x;
-      if (!INSHORTRANGE(nTempX) || !INSHORTRANGE(prcIn->y)) {
+      nTemp = prcIn->x + me->xOffset + me->border.rcClient.x;
+      if (!INSHORTRANGE(nTemp) || !INSHORTRANGE(prcIn->y)) {
          return 0;
       }
-
-      prcOut->x   = int32toint16(nTempX);
-      prcOut->y   = int32toint16(prcIn->y);
-      prcOut->dx  = int32toint16(prcIn->dx);
-      prcOut->dy  = int32toint16(prcIn->dy);
+      prcOut->x = (int16)nTemp;
+      prcOut->y = (int16)prcIn->y;
+      prcOut->dx = prcIn->dx;
+      prcOut->dy = prcIn->dy;
    }
    if (me->nOrientation == LWO_GRID) {
-      nTempX = prcIn->x + me->xOffset + me->border.rcClient.x;
-      nTempY = prcIn->y + me->yOffset + me->border.rcClient.y;
-      if (!INSHORTRANGE(nTempX) || !INSHORTRANGE(nTempY)) {
+      nTemp = prcIn->x + me->xOffset + me->border.rcClient.x;
+      if (!INSHORTRANGE(nTemp) || !INSHORTRANGE(prcIn->y)) {
          return 0;
       }
-
-      prcOut->x   = int32toint16(nTempX);
-      prcOut->y   = int32toint16(nTempY);
-      prcOut->dx  = int32toint16(prcIn->dx);
-      prcOut->dy  = int32toint16(prcIn->dy);
+      nTemp2 = prcIn->y + me->yOffset + me->border.rcClient.y;
+      if (!INSHORTRANGE(nTemp2) || !INSHORTRANGE(prcIn->x)) {
+         return 0;
+      }
+      prcOut->x = (int16)nTemp;
+      prcOut->y = (int16)nTemp2;
+      prcOut->dx = prcIn->dx;
+      prcOut->dy = prcIn->dy;
    }
 
    return 1;
@@ -640,25 +629,25 @@ static __inline int ListWidget_GetTopIndex(ListWidget *me)
 
 static void ListWidget_Notify(ListWidget *me, uint32 evCode)
 {
-   if (WBASE(me)->piViewModel) {
+   if (me->base.base.piViewModel) {
       ModelEvent ev;
       ev.evCode   = evCode;
       ev.dwParam  = (uint32)me->focusIndex;
-      IMODEL_Notify(WBASE(me)->piViewModel, &ev);
+      IMODEL_Notify(me->base.base.piViewModel, &ev);
    }
 }
 
 
 static __inline void ListWidget_NotifyFocus(ListWidget *me, uint32 evCode)
 {
-   if(WBASE(me)->piViewModel) {
+   if(me->base.base.piViewModel) {
       FocusEvent fe;
 
       fe.base.evCode = evCode;
       fe.base.dwParam = fe.focusIndex = me->focusIndex;
       fe.numItems = ListWidget_GetModelSize(me);
 
-      IMODEL_Notify(WBASE(me)->piViewModel, (ModelEvent*)&fe);
+      IMODEL_Notify(me->base.base.piViewModel, (ModelEvent*)&fe);
    }
 }
 
@@ -683,19 +672,17 @@ static __inline boolean ListWidget_NotifySelect(ListWidget *me)
 }
 
 
-static __inline void ScaleScrollEvent(ScrollEvent *pse, int vis, int pos, int range)
-{
-   if (range & (int)0xFF000000) {
-      pos   = (uint32)pos >> 16;
-      range = (uint32)range >> 16;
-   } else if (range & 0x00FF0000) {
-      pos   = (uint32)pos >> 8;
-      range = (uint32)range >> 8;
+static __inline void ScaleScrollEvent(ScrollEvent *pse, int16 vis, int32 pos, int32 range) {
+   if ((uint32)range & 0xFF000000) {
+      (uint32)pos   >>= 16;
+      (uint32)range >>= 16;
+   } else if ((uint32)range & 0x00FF0000) {
+      (uint32)pos   >>= 8;
+      (uint32)range >>= 8;
    }
-
-   pse->visible   = int32touint16(vis);
-   pse->position  = int32touint16(pos);
-   pse->range     = int32touint16(range);
+   pse->visible   = vis;
+   pse->position  = (int16)pos;
+   pse->range     = (int16)range;
 }
 
 
@@ -710,7 +697,7 @@ static __inline void ListWidget_RecalcRange(ListWidget *me)
 }
 
 
-static __inline int ListWidget_GetRange(ListWidget *me)
+static __inline uint32 ListWidget_GetRange(ListWidget *me)
 {
    if (IsVarHeight(me)) {
       if (!me->nVarRange) {
@@ -722,16 +709,16 @@ static __inline int ListWidget_GetRange(ListWidget *me)
       int item = (me->nOrientation == LWO_VERTICAL) ? me->dyItem : me->dxItem;
       int size = ListWidget_GetModelSize(me);
       if (me->nSelItem > 0 && size > 0) {
-         return (item * (size-1) + me->nSelItem);
+         return item * (size-1) + me->nSelItem;
       } else {
-         return (item * size);
+         return item * size;
       }
    }
 }
 
 static void ListWidget_NotifyScroll(ListWidget *me)
 {
-   if (WBASE(me)->piViewModel) {
+   if (me->base.base.piViewModel) {
 
       ScrollEvent se;
       se.base.evCode  = EVT_MDL_SCROLL_CHANGE;
@@ -753,8 +740,9 @@ static void ListWidget_NotifyScroll(ListWidget *me)
          if (!cols) {
             cols++;
          }
-         ScaleScrollEvent(&se, DIVROUNDUP(vis, cols) * me->dyItem,
-            ABS(me->yOffset), DIVROUNDUP(size, cols) * me->dyItem);
+         ScaleScrollEvent(&se, (int16)(DIVROUNDUP(vis, cols) * me->dyItem), 
+                          ABS(me->yOffset), 
+                          DIVROUNDUP(size, cols) * me->dyItem);
          se.bVertical = 1;
       }
    
@@ -763,7 +751,7 @@ static void ListWidget_NotifyScroll(ListWidget *me)
                      se.visible,
                      se.position));
    
-      IMODEL_Notify(WBASE(me)->piViewModel, (ModelEvent*)&se);
+      IMODEL_Notify(me->base.base.piViewModel, (ModelEvent*)&se);
    }
 }
                                                 
@@ -813,14 +801,8 @@ void ListWidget_ModelChanged(IDecorator *po, ListModelEvent *pEvent)
          me->bDrawing = 1;
          ListWidget_SetItemData(me, -1);
          me->bDrawing = 0;
-
-         if (me->base.pChild && bAnimated) {
-            IWIDGET_Animate(me->base.pChild, 1);
-         }
-
          ListWidget_NotifyView(me);
          ListWidget_InvalidateExtent(po, 0);
-
          return;
       }
 
@@ -886,7 +868,7 @@ void ListWidget_ModelChanged(IDecorator *po, ListModelEvent *pEvent)
          }
       }
 
-      if (me->base.pChild && bAnimated) {
+      if (size > 0 && bAnimated) {
          IWIDGET_Animate(me->base.pChild, 1);
       }
 
@@ -1189,13 +1171,13 @@ void ListWidget_SetExtent(IDecorator *po, WExtent *pe)
    Border_CalcClientRect(&me->border);
    
    if (me->nOrientation == LWO_VERTICAL) {
-      me->dxItem = me->border.rcClient.dx;
+      me->dxItem = (uint8)me->border.rcClient.dx;
    } else if (me->nOrientation == LWO_HORIZONTAL) {
-      me->dyItem = me->border.rcClient.dy;
+      me->dyItem = (uint8)me->border.rcClient.dy;
    } else if (me->nOrientation == LWO_GRID) {
       if (me->bKeepLayout) {
-         me->dyItem = me->border.rcClient.dy / me->nRows;
-         me->dxItem = me->border.rcClient.dx / me->nCols;
+         me->dyItem = (uint8)(me->border.rcClient.dy / me->nRows);
+         me->dxItem = (uint8)(me->border.rcClient.dx / me->nCols);
       }
    }
     
@@ -1448,7 +1430,7 @@ boolean ListWidget_HandleEvent(IDecorator *po, AEEEvent evt, uint16 wParam,
       // Deal with focus
       if (evt == EVT_WDG_SETFOCUS) {
          // pass it into our item (child) widget 
-         Decorator_HandleEvent(po, evt, wParam, dwParam);
+         Decorator_HandleEvent(po,evt,wParam, dwParam);
       }
       return TRUE;
    }
@@ -1576,12 +1558,6 @@ boolean ListWidget_HandleEvent(IDecorator *po, AEEEvent evt, uint16 wParam,
                   return TRUE;
                }
                return FALSE;
-
-            case PROP_EX:
-               if (HandleEventSetPropertyEx(po, dwParam)) {
-                  return TRUE;
-               }
-               break;
          } 
          break;
       }  // EVT_WDG_SETPROPERTY
@@ -1619,7 +1595,7 @@ boolean ListWidget_HandleEvent(IDecorator *po, AEEEvent evt, uint16 wParam,
                return TRUE;
 
             case PROP_SELITEMSIZE:
-               *(int*)dwParam = me->nSelItem;
+               *(int*)dwParam = (int)me->nSelItem;
                return TRUE;
 
             case PROP_FOCUSINDEX:
@@ -1655,145 +1631,15 @@ boolean ListWidget_HandleEvent(IDecorator *po, AEEEvent evt, uint16 wParam,
                return TRUE;
       
             case PROP_VIEWMODEL:
-               if (SUCCESS == WidgetBase_GetViewModel(WBASE(me), (IModel**)dwParam)) {
+               if (SUCCESS == WidgetBase_GetViewModel(&me->base.base, (IModel**)dwParam)) {
                   CALLBACK_Resume(&me->cbkView,  ListWidget_NotifyView, me, me->piShell);
                }
                return TRUE;
-
-            case PROP_EX:
-               if (HandleEventGetPropertyEx(po, dwParam)) {
-                  return TRUE;
-               }
-               break;
-
-            default:
-               break;
          } 
          break;
    }
    
    return Decorator_HandleEvent(po, evt, wParam, dwParam);
-}
-
-static boolean HandleEventGetPropertyEx(
-   IDecorator* po,
-   uint32      dwParam)
-{
-   ME_FROM_DECORATOR;
-
-   WidgetPropEx*  pWidgetPropEx  = (WidgetPropEx*)dwParam;
-   boolean        bHandled       = FALSE;
-
-   switch (pWidgetPropEx->nPropId) {
-
-   case PROPEX_ITEMHEIGHT:
-      {
-         int*  pnItemHeight   = pWidgetPropEx->pUser;
-         int   nDataSize      = (int)sizeof(*pnItemHeight);
-
-         if (pWidgetPropEx->nSize >= nDataSize) {
-            *pnItemHeight = me->dyItem;
-            pWidgetPropEx->nSize = nDataSize;
-            bHandled = TRUE;
-         }
-      }
-      break;
-
-   case PROPEX_ITEMWIDTH:
-      {
-         int*  pnItemWidth = pWidgetPropEx->pUser;
-         int   nDataSize   = (int)sizeof(*pnItemWidth);
-
-         if (pWidgetPropEx->nSize >= nDataSize) {
-            *pnItemWidth = me->dxItem;
-            pWidgetPropEx->nSize = nDataSize;
-            bHandled = TRUE;
-         }
-      }
-      break;
-
-   case PROPEX_SELITEMSIZE:
-      {
-         int*  pnSelItemSize  = pWidgetPropEx->pUser;
-         int   nDataSize      = (int)sizeof(*pnSelItemSize);
-
-         if (pWidgetPropEx->nSize >= nDataSize) {
-            *pnSelItemSize = me->nSelItem;
-            pWidgetPropEx->nSize = nDataSize;
-            bHandled = TRUE;
-         }
-      }
-      break;
-
-   default:
-      break;
-   }
-
-   return bHandled;
-}
-
-static boolean HandleEventSetPropertyEx(
-   IDecorator* po,
-   uint32      dwParam)
-{
-   ME_FROM_DECORATOR;
-
-   WidgetPropEx*  pWidgetPropEx  = (WidgetPropEx*)dwParam;
-   boolean        bHandled       = FALSE;
-
-   switch (pWidgetPropEx->nPropId) {
-
-   case PROPEX_ITEMHEIGHT:
-      {
-         int*  pnItemHeight   = pWidgetPropEx->pUser;
-         int   nDataSize      = (int)sizeof(*pnItemHeight);
-
-         if (pWidgetPropEx->nSize >= nDataSize) {
-            if ((me->nOrientation == LWO_VERTICAL) || (me->nOrientation == LWO_GRID)) {
-               me->dyItem = *pnItemHeight;
-               me->bKeepLayout = FALSE; // on extent change, number of rows may change
-               IWIDGET_SetExtent(IDECORATOR_TO_IWIDGET(po), &WBASE(me)->extent);
-            }
-            me->dyPrefItem = *pnItemHeight;
-            bHandled = TRUE;
-         }
-      }
-      break;
-
-   case PROPEX_ITEMWIDTH:
-      {
-         int*  pnItemWidth = pWidgetPropEx->pUser;
-         int   nDataSize   = (int)sizeof(*pnItemWidth);
-
-         if (pWidgetPropEx->nSize >= nDataSize) {
-            if ((me->nOrientation == LWO_HORIZONTAL) || (me->nOrientation == LWO_GRID)) {
-               me->dxItem = *pnItemWidth;
-               me->bKeepLayout = FALSE; // on extent change, number of cols may change
-               IWIDGET_SetExtent(IDECORATOR_TO_IWIDGET(po), &WBASE(me)->extent);
-            }
-            me->dxPrefItem = *pnItemWidth;
-            bHandled = TRUE;
-         }
-      }
-      break;
-
-   case PROPEX_SELITEMSIZE:
-      {
-         int*  pnSelItemSize  = pWidgetPropEx->pUser;
-         int   nDataSize      = (int)sizeof(*pnSelItemSize);
-
-         if (pWidgetPropEx->nSize >= nDataSize) {
-            me->nSelItem = *pnSelItemSize;
-            bHandled = TRUE;
-         }
-      }
-      break;
-
-   default:
-      break;
-   }
-
-   return bHandled;
 }
 
 uint32 ListWidget_Release(IDecorator *po)
@@ -1931,8 +1777,8 @@ void ListWidget_Ctor(ListWidget *me, AEEVTBL(IDecorator) *pvt, IListModel *piMod
    ISHELL_AddRef(piShell);
 
    // Container definitions
-   WCBASE(me)->vtContainer.Invalidate = ListWidget_Invalidate;
-   WCBASE(me)->vtContainer.Locate = ListWidget_Locate;
+   me->base.vtContainer.Invalidate = ListWidget_Invalidate;
+   me->base.vtContainer.Locate = ListWidget_Locate;
 
    me->bDrawing      = FALSE;
    me->focusIndex    = 0;
@@ -1940,7 +1786,7 @@ void ListWidget_Ctor(ListWidget *me, AEEVTBL(IDecorator) *pvt, IListModel *piMod
    me->nRows         = 0;   // zero means nRows == ILISTMODEL_Size()
    me->nCols         = 1;
 
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &WBASE(me)->extent, TRUE, &WBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &WBASE(me)->extent, TRUE, &WBASE(me)->piViewModel);
    Border_SetBGColor(&me->border, 0, RGBA_WHITE);
 
    me->dxItem = 10;

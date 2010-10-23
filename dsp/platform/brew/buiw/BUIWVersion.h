@@ -10,17 +10,17 @@ GENERAL DESCRIPTION:
    for checking minimum version.
 
 
-        Copyright © 2000-2007 QUALCOMM Incorporated.
+        Copyright © 2000-2004 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================================*/
 
 #define BUIW_MAJ_VER          1
-#define BUIW_MIN_VER          4
-#define BUIW_SUB_VER          3 
-#define BUIW_BUILD            468068
-#define BUIW_BUILD_NUMBER     1,4,3,468068
-#define BUIW_BUILD_STRING     "1.4.3.468068"
+#define BUIW_MIN_VER          3
+#define BUIW_SUB_VER          0
+#define BUIW_BUILD            6
+#define BUIW_BUILD_NUMBER     1,3,0,6
+#define BUIW_BUILD_STRING     "1.3.0.06"
 
 
 #define MIN_BUIW_VERSION(maj,min) \

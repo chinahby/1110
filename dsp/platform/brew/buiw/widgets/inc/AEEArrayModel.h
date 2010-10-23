@@ -12,7 +12,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -26,9 +26,9 @@
 
 #include "AEEListModel.h"
 
-#include "bid/AEEIID_ARRAYMODEL.bid"
+#include "bid\AEEIID_ARRAYMODEL.bid"
 
-#include "bid/AEECLSID_ARRAYMODEL.bid"
+#include "bid\AEECLSID_ARRAYMODEL.bid"
 
 /////////////////////////////////////////////////////////////////
 // IArrayModel interface

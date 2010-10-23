@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -51,6 +51,7 @@ boolean Decorator_IntersectOpaque(IDecorator *po, AEERect *prc, const AEERect *p
       return FALSE;
    }
 }
+
 
 boolean Decorator_HandleEvent(IDecorator *po, AEEEvent evt, uint16 wParam, uint32 dwParam)
 {
@@ -128,7 +129,7 @@ uint32 Decorator_Release(IDecorator *po)
 {
    ME_FROM_DECORATOR;
 
-   if (WBASE(me)->nRefs == 1) {
+   if (me->base.nRefs == 1) {
       Decorator_Dtor(me);
    }
 
@@ -138,13 +139,24 @@ uint32 Decorator_Release(IDecorator *po)
 
 int Decorator_QueryInterface(IDecorator *po, AEECLSID clsid, void **ppo)
 {
-   if (clsid == AEEIID_DECORATOR) {
+   ME_FROM_DECORATOR;
+   
+   if (SUCCESS == WidgetBase_QueryInterface(IDECORATOR_TO_IWIDGET(po), clsid, ppo)) {
+      return SUCCESS;
+   }
+
+   if (clsid == AEEIID_CONTAINER) {
+      *ppo = (void *)&me->container;
+      IDECORATOR_AddRef(po);
+      return SUCCESS;
+   } else if (clsid == AEEIID_DECORATOR) {
       *ppo = po;
       IDECORATOR_AddRef(po);
       return SUCCESS;
    }
 
-   return WidgetContBase_QueryInterface(IDECORATOR_TO_IWIDGET(po), clsid, ppo);
+   *ppo = 0;
+   return ECLASSNOTSUPPORT;
 }
 
 
@@ -161,10 +173,8 @@ void Decorator_SetWidget(IDecorator *po, IWidget *pChild)
    me->pChild = pChild;
    if (pChild) {
       IWIDGET_AddRef(pChild);
-      IWIDGET_SetParent(pChild, &WCBASE(me)->container);
+      IWIDGET_SetParent(pChild, &me->container);
    }
-
-   Decorator_Invalidate(po, NULL, ICIF_EXTENT); 
 }
 
 void Decorator_GetWidget(IDecorator *po, IWidget **ppo)
@@ -179,13 +189,20 @@ void Decorator_GetWidget(IDecorator *po, IWidget **ppo)
 // IContainer members
 
 
+static void Container_Invalidate(IContainer *po, IWidget *pw, const AEERect *prc, uint32 dwFlags)
+{
+   ME_FROM_CONTAINER;
+
+   if (me->base.piContainer)
+      ICONTAINER_Invalidate(me->base.piContainer, DECORATOR_TO_IWIDGET(me), prc, dwFlags);
+}
 
 static int Container_Locate(IContainer *po, IWidget *pw, IContainer **ppic, AEERect *prc)
 {
    ME_FROM_CONTAINER;
 
-   if (WBASE(me)->piContainer && me->pChild == pw)
-      return ICONTAINER_Locate(WBASE(me)->piContainer, DECORATOR_TO_IWIDGET(me), ppic, prc);
+   if (me->base.piContainer && me->pChild == pw)
+      return ICONTAINER_Locate(me->base.piContainer, DECORATOR_TO_IWIDGET(me), ppic, prc);
 
    return EFAILED;
 }      
@@ -237,18 +254,18 @@ void Decorator_Invalidate(IDecorator *po, const AEERect *prc, uint32 dwFlags)
 {
    ME_FROM_DECORATOR;
    
-   if (WBASE(me)->piContainer)
-      ICONTAINER_Invalidate(WBASE(me)->piContainer, DECORATOR_TO_IWIDGET(me), prc, dwFlags);
+   if (me->base.piContainer)
+      ICONTAINER_Invalidate(me->base.piContainer, DECORATOR_TO_IWIDGET(me), prc, dwFlags);
 }
 
 int Decorator_Locate(IDecorator *po, IContainer **ppic, AEERect *prc)
 {
    ME_FROM_DECORATOR;
 
-   if (!WBASE(me)->piContainer)
+   if (!me->base.piContainer)
       return EFAILED;
 
-   return ICONTAINER_Locate(WBASE(me)->piContainer, DECORATOR_TO_IWIDGET(me), ppic, prc);
+   return ICONTAINER_Locate(me->base.piContainer, DECORATOR_TO_IWIDGET(me), ppic, prc);
 }
 
 
@@ -287,13 +304,13 @@ int Decorator_ClientLocate(IDecorator *po, const AEERect *prcClient, IWidget *pi
 void Decorator_Dtor(Decorator *me) 
 {
    RELEASEIF(me->pChild);
-   WidgetBase_Dtor(WBASE(me));
+   WidgetBase_Dtor(&me->base);
 }
 
 
 void Decorator_Ctor(Decorator *me, AEEVTBL(IDecorator) *pvt, IModule *piModule, PFNHANDLER pfnDefHandler)
 {
-   WidgetContBase_Ctor(&me->base, (AEEVTBL(IWidget) *)pvt, piModule, DEFHANDLER(Decorator_HandleEvent));
+   WidgetBase_Ctor(&me->base, (AEEVTBL(IWidget) *)pvt, piModule, DEFHANDLER(Decorator_HandleEvent));
 
    me->pChild = 0;
 
@@ -314,8 +331,13 @@ void Decorator_Ctor(Decorator *me, AEEVTBL(IDecorator) *pvt, IModule *piModule, 
    VTW( GetWidget );
    
    // Container functions
-   WCBASE(me)->vtContainer.Locate     = Container_Locate;
-   WCBASE(me)->vtContainer.Insert     = Container_Insert;
-   WCBASE(me)->vtContainer.Remove     = Container_Remove;
-   WCBASE(me)->vtContainer.GetWidget  = Container_GetWidget;
+   AEEBASE_INIT(me, container, &me->vtContainer);
+   me->vtContainer.AddRef = AEEBASE_AddRef(IContainer);
+   me->vtContainer.Release = AEEBASE_Release(IContainer);
+   me->vtContainer.QueryInterface = AEEBASE_QueryInterface(IContainer);
+   me->vtContainer.Invalidate = Container_Invalidate;
+   me->vtContainer.Locate = Container_Locate;
+   me->vtContainer.Insert = Container_Insert;
+   me->vtContainer.Remove = Container_Remove;
+   me->vtContainer.GetWidget = Container_GetWidget;
 }

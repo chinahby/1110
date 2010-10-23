@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -31,9 +31,9 @@ typedef struct PropContainer
    flg fVertical : 1;
 } PropContainer;
 
-int     PropContainer_New       (IPropContainer **ppo, IShell *piShell, IModule *piModule);
+int     PropContainer_New       (IPropContainer **ppo, IModule *piModule);
 void    PropContainer_Ctor      (PropContainer *me, AEEVTBL(IPropContainer) *pvt, 
-                                 IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler);
+                                 IModule *piModule, PFNHANDLER pfnDefHandler);
 
 int     PropContainer_SetProp    (IPropContainer *po, IWidget *piw, IWidget *piwBefore, const WidgetProp *prop);
 int     PropContainer_GetProp    (IPropContainer *po, IWidget *piw, WidgetProp *prop);

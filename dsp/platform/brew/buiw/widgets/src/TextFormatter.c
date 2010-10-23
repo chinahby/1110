@@ -10,7 +10,7 @@ DESCRIPTION:   TThis file describes an interface of language dependent
                  compose strings of text according to a specific
                  set of culture specific formatting rules.
 
-                Copyright © 1999-2007 QUALCOMM Incorporated.
+                Copyright © 1999-2006 QUALCOMM Incorporated.
                            All Rights Reserved.
                         QUALCOMM Proprietary/GTDR
 =================================================================================*/
@@ -43,7 +43,6 @@ typedef struct
    ILocale *piLocale;                           // default ILocale object for formatting
    char     pszLanguage[LANGUAGE_CODE_LEN+1];   // four characters representing language
    uint16   dwYearOffset;                       // offset to add to years when formatting dates
-   AEECLSID clsId;                              // class id of ILocale specified via ITEXTFORMATTER_SetLocaleClass()
 
    AECHAR  *pawFormatBuffer;                    // a scratch buffer for formatting
    int32    dwFormatBufferLen;                  // length of the format buffer in bytes
@@ -278,7 +277,7 @@ static int TextFormatter_SetParm(ITextFormatter *po, int16 nParmID, int32 p1)
 
       // language
       case ITEXTFORMATTER_PARM_LANG:
-         STRLCPY(pMe->pszLanguage, (const char *)p1, LANGUAGE_CODE_LEN+1);
+         STRNCPY(pMe->pszLanguage, (const char *)p1, MIN(LANGUAGE_CODE_LEN,STRLEN((const char *)p1)));
 
          // find the ILocale object for this language
          dwResult = GetLocale(pMe->piShell, pMe->pszLanguage, STRLEN(pMe->pszLanguage), &pil);
@@ -286,9 +285,6 @@ static int TextFormatter_SetParm(ITextFormatter *po, int16 nParmID, int32 p1)
             // set our internal ILocale.
             RELEASEIF(pMe->piLocale);
             pMe->piLocale = pil;
-
-            // class id no longer known
-            pMe->clsId = 0;                                       
          }
          break;
 
@@ -297,32 +293,11 @@ static int TextFormatter_SetParm(ITextFormatter *po, int16 nParmID, int32 p1)
          RELEASEIF(pMe->piLocale);
          pMe->piLocale = (ILocale *)p1;
          ILOCALE_AddRef(pMe->piLocale);
-
-         // language no longer known
-         MEMSET(pMe->pszLanguage, 0, sizeof(pMe->pszLanguage));  
-
-         // class id no longer known
-         pMe->clsId = 0;                                          
          break;
    
       // year offset
       case ITEXTFORMATTER_PARM_YEAROFFSET:
          pMe->dwYearOffset = (uint16)p1;
-         break;
-
-      // ILocale class id
-      case ITEXTFORMATTER_PARM_ILOCALECLASS:
-         // find the ILocale object for this language
-         dwResult = ISHELL_CreateInstance(pMe->piShell, CAST(AEECLSID, p1), (void **)&pil);
-         if (SUCCESS == dwResult) {
-            // set our internal ILocale.
-            RELEASEIF(pMe->piLocale);
-            pMe->piLocale = pil;
-            pMe->clsId = CAST(AEECLSID, p1);
-
-             // language no longer known
-            MEMSET(pMe->pszLanguage, 0, sizeof(pMe->pszLanguage));
-         }
          break;
 
       // bad paramter
@@ -361,11 +336,6 @@ static int TextFormatter_GetParm(ITextFormatter *po, int16 nParmID, int32 *pp1)
          *pp1 = pMe->dwYearOffset;
          break;
 
-      // ILocale class id
-      case ITEXTFORMATTER_PARM_ILOCALECLASS:
-         *pp1 = (int32)pMe->clsId;
-         break;
-
       // bad paramter
       default:
          return(EBADPARM);
@@ -388,6 +358,7 @@ static int TextFormatter_FormatText(ITextFormatter *po, AECHAR *bufOut, uint32 *
    ParsedFormatItem pfi;                  // parsed format item
    uint32 dwFmtLen;                       // length of formatted data
    ILocale *pILocale;                     // ILocale object to use for formatting
+   boolean bIncomplete = FALSE;           // set to TRUE if we encounter something we can't format
 
    // sanity check
    if (!pdwBufSize || !pszFormatString || !pszTypeString)
@@ -471,11 +442,21 @@ static int TextFormatter_FormatText(ITextFormatter *po, AECHAR *bufOut, uint32 *
                   }
 
                   // clean up ILocale if necessary
-                  if (pILocale != pMe->piLocale) {
+                  if (pILocale != pMe->piLocale)
                      ILOCALE_Release(pILocale);
-		  }
+
+               } else {
+                  // FormatItem failed.  We can't format this item, let's move on
+                  bIncomplete = TRUE;
                }
             }
+            else {
+               // Unknown argument type.  We can't format this item, let's move on
+               bIncomplete = TRUE;
+            }
+         } else {
+            // no ILocale object was specified.  We can't format it, let's move on
+             bIncomplete = TRUE;
          }
       }
    }
@@ -533,7 +514,7 @@ static int TextFormatter_Ctor(TextFormatter *pMe, AEEVTBL(ITextFormatter) *pvt, 
    ADDREFIF(piModule);
 
    // Set our internal Locale to the default locale ...
-   dwResult = ISHELL_CreateInstance(pMe->piShell, AEECLSID_CURRENTLOCALE, (void**)&pMe->piLocale);
+   dwResult = DefaultLocale_New(&pMe->piLocale, pMe->piShell, pMe->piModule); 
    if (SUCCESS == dwResult) {
       // set up a scratch buffer to perform intermediate formatting in
       pMe->dwFormatBufferLen = FORMATB_DEFAULT_SIZE;
@@ -786,29 +767,27 @@ static void GetNthArgumentFromList(const char *pszTypeString, int dwIndex, AEELo
    --- */ 
 static int GetLocale(IShell *piShell, const char *pszLang, int dwLangLen, ILocale **ppObj)
 {
-#define MIME_STRING_LEN 21
    int dwResult;
    AEECLSID clsId;
-   char pszMimeString[MIME_STRING_LEN] = "text/plain;";
+   char pszMimeString[20] = "text/plain;";
 
-   if (!ppObj || (dwLangLen > 4)) {
+   if (!ppObj || (dwLangLen > 4))
       return (EBADPARM);
-   }
 
    *ppObj = NULL;
 
    // build the mimetype string
-   STRLCPY((pszMimeString + STRLEN(pszMimeString)), pszLang, MIME_STRING_LEN - STRLEN(pszMimeString));
+   STRNCPY((pszMimeString + STRLEN(pszMimeString)), pszLang, dwLangLen);
 
    // find the ILocale
    clsId = ISHELL_GetHandler(piShell, AEEIID_LOCALE, pszMimeString);
    if (clsId) {
       dwResult = ISHELL_CreateInstance(piShell, clsId, (void**)ppObj);
-   } else {
-      dwResult = ECLASSNOTSUPPORT;
    }
+   else 
+      dwResult = ECLASSNOTSUPPORT;
 
-   return dwResult;
+   return (dwResult);
 }
 
 /* -----------------------------------------------------------------------

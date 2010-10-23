@@ -5,7 +5,7 @@ SERVICES:      Locale specific string and text formatting utilities.
 
 LANGUAGE:      US English, widget default
 
-PUBLIC CLASSES:None.  Private ILocale implementation for widgets only.
+PUBLIC CLASSES:ILocale
 
 DESCRIPTION:   This file describes an interface that provides language
                dependent string formatting for a specific language. The
@@ -13,7 +13,7 @@ DESCRIPTION:   This file describes an interface that provides language
                language your device supports.  Addition implementations
                may be added later to support additional languages.
 
-                Copyright © 1999-2007 QUALCOMM Incorporated.
+                Copyright © 1999-2006 QUALCOMM Incorporated.
                            All Rights Reserved.
                         QUALCOMM Proprietary/GTDR
 =================================================================================*/
@@ -24,7 +24,6 @@ DESCRIPTION:   This file describes an interface that provides language
 
 #include "AEEShell.h"
 #include "DefaultLocale.h"
-#include "wlint.h"
 
 /*---------------------------------------------------------------------------------
       Type Declarations
@@ -195,7 +194,7 @@ static const AECHAR DateTime_DayNames[] = {
    'M', 'o', 'n', 'd', 'a', 'y', 0,
    'T', 'u', 'e', 's', 'd', 'a', 'y', 0,
    'W', 'e', 'd', 'n', 'e', 's', 'd', 'a', 'y', 0,
-   'T', 'h', 'u', 'r', 's', 'd', 'a', 'y', 0,
+   'T', 'h', 'u', 's', 'd', 'a', 'y', 0,
    'F', 'r', 'i', 'd', 'a', 'y', 0,
    'S', 'a', 't', 'u', 'r', 'd', 'a', 'y', 0,
    'S', 'u', 'n', 'd', 'a', 'y', 0,
@@ -324,6 +323,7 @@ static __inline void RELEASEPPIF(IBase **p) {
       *p = 0;
    }
 }
+
 #endif
 
 /*---------------------------------------------------------------------------------
@@ -335,7 +335,7 @@ static __inline void RELEASEPPIF(IBase **p) {
    --- */
 static uint32 Locale_AddRef(ILocale* po)
 {
-   Locale *pMe = (Locale *)(void*)po;
+   Locale *pMe = (Locale *)po;
    return ++pMe->nRefs;
 }
 
@@ -344,7 +344,7 @@ static uint32 Locale_AddRef(ILocale* po)
    --- */
 static uint32 Locale_Release(ILocale* po)
 {
-   Locale *pMe = (Locale *)(void*)po;
+   Locale *pMe = (Locale *)po;
 
     if (--pMe->nRefs)
       return pMe->nRefs;
@@ -360,7 +360,7 @@ static uint32 Locale_Release(ILocale* po)
    --- */
 static int Locale_QueryInterface(ILocale *po, AEECLSID id, void **ppo)
 {
-   Locale *pMe = (Locale *)(void*)po;
+   Locale *pMe = (Locale *)po;
 
    if (id == AEEIID_LOCALE)    // place your classId here 
    {
@@ -379,7 +379,7 @@ static int Locale_QueryInterface(ILocale *po, AEECLSID id, void **ppo)
    --- */
 static int Locale_SetParm(ILocale *po, int16 nParmID, int32 p1)
 {
-   Locale *pMe = (Locale *)(void*)po;
+   Locale *pMe = (Locale *)po;
    int dwItem;
    AECHAR *pawNew = NULL;
    int dwNewLen;
@@ -401,12 +401,12 @@ static int Locale_SetParm(ILocale *po, int16 nParmID, int32 p1)
          // this is an AECHAR
          dwNewLen = WSTRLEN((AECHAR *)p1);
          if (dwNewLen) 
-            pawNew = (AECHAR *)MALLOC((uint32)(dwNewLen + 1) * sizeof(AECHAR));
+            pawNew = (AECHAR *)MALLOC((dwNewLen + 1) * sizeof(AECHAR));
 
          if (pawNew) {
 
             // out with the old and in with the new ...
-            WSTRLCPY(pawNew, (AECHAR *)p1, (uint32)(dwNewLen + 1));
+            WSTRCPY(pawNew, (AECHAR *)p1);
             if (pMe->gtFormats[dwItem].cFlags & FORMATTABLE_FLAG_ALLOCATED)
                FREEIF(pMe->gtFormats[dwItem].pawData);
             pMe->gtFormats[dwItem].pawData = pawNew;
@@ -430,7 +430,7 @@ static int Locale_SetParm(ILocale *po, int16 nParmID, int32 p1)
 static int Locale_GetParm(ILocale *po, int16 nParmID, int32 *pp1)
 {
    int dwResult = EBADPARM;
-   Locale *pMe = (Locale *)(void*)po;
+   Locale *pMe = (Locale *)po;
    int dwItem;
 
    if (pp1) {
@@ -468,18 +468,14 @@ static int Locale_GetParm(ILocale *po, int16 nParmID, int32 *pp1)
    --- */
 static int32 Locale_FormatItem(ILocale *po, AECHAR *bufOut, uint32 dwBufSize, AECHAR **ppszFormatPattern, const AECHAR *pszFormatString, int dwFormatStringLen, AEELocaleArg *pItem)
 {
-   PARAM_NOT_REF(bufOut)
-   PARAM_NOT_REF(dwBufSize)
-
    int dwResult = -1;
-   AECHAR aFormatCode[2];
+   AECHAR aFormatCode;
 
    // sanity check
    if (pszFormatString && dwFormatStringLen) {
 
       // for now, assume pattern is a single character pattern   
-      aFormatCode[0] = *pszFormatString;
-      aFormatCode[1] = 0;
+      aFormatCode = *pszFormatString;
 
       // try to return an exact pattern
       if (ppszFormatPattern) {
@@ -494,30 +490,32 @@ static int32 Locale_FormatItem(ILocale *po, AECHAR *bufOut, uint32 dwBufSize, AE
             case AEELOCALEARGTYPE_UNSIGNEDDECIMAL:
          
                // numeric patterns are case insensitive
-               WSTRLOWER(aFormatCode);
+               if ((aFormatCode >= (AECHAR)'A' && aFormatCode <= (AECHAR)'Z')) {
+                  aFormatCode += (AECHAR)('a' - 'A');
+               }
 
-               switch (aFormatCode[0]) {
+               switch (aFormatCode) {
     
                   // request for the signed decimal pattern
                   case ILOCALE_FORMATCODE_NUMBER_NUMBER:
                      if ((pItem->cType == AEELOCALEARGTYPE_SIGNEDDECIMAL) && (pItem->u.d < 0))
-                        (void) Locale_GetParm(po, ILOCALE_NUMBER_NEGATIVEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                        Locale_GetParm(po, ILOCALE_NUMBER_NEGATIVEPATTERN, (int32 *)ppszFormatPattern);
                      break;
 
                   // request for the currency pattern
                   case ILOCALE_FORMATCODE_NUMBER_CURRENCY:
                      if ((pItem->cType == AEELOCALEARGTYPE_SIGNEDDECIMAL) && (pItem->u.d < 0))
-                        (void) Locale_GetParm(po, ILOCALE_CURRENCY_NEGATIVEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                        Locale_GetParm(po, ILOCALE_CURRENCY_NEGATIVEPATTERN, (int32 *)ppszFormatPattern);
                      else
-                        (void) Locale_GetParm(po, ILOCALE_CURRENCY_POSITIVEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                        Locale_GetParm(po, ILOCALE_CURRENCY_POSITIVEPATTERN, (int32 *)ppszFormatPattern);
                      break;
 
                   // request for the percentage pattern
                   case ILOCALE_FORMATCODE_NUMBER_PERCENT:
                      if ((pItem->cType == AEELOCALEARGTYPE_SIGNEDDECIMAL) && (pItem->u.d < 0))
-                        (void) Locale_GetParm(po, ILOCALE_PERCENT_NEGATIVEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                        Locale_GetParm(po, ILOCALE_PERCENT_NEGATIVEPATTERN, (int32 *)ppszFormatPattern);
                      else
-                        (void) Locale_GetParm(po, ILOCALE_PERCENT_POSITIVEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                        Locale_GetParm(po, ILOCALE_PERCENT_POSITIVEPATTERN, (int32 *)ppszFormatPattern);
                      break;
 
                   // unrecognized format code.  Punt.
@@ -529,57 +527,57 @@ static int32 Locale_FormatItem(ILocale *po, AECHAR *bufOut, uint32 dwBufSize, AE
             // Date/Time pattern
             case AEELOCALEARGTYPE_JULIANDATE:
          
-               switch (aFormatCode[0]) {
+               switch (aFormatCode) {
    
                   case ILOCALE_FORMATCODE_DATETIME_SHORTDATE:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_SHORTDATEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_SHORTDATEPATTERN, (int32 *)ppszFormatPattern);
                      break;
          
                   case ILOCALE_FORMATCODE_DATETIME_LONGDATE:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_LONGDATEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_LONGDATEPATTERN, (int32 *)ppszFormatPattern);
                      break;
          
                   case ILOCALE_FORMATCODE_DATETIME_SHORTTIME:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_SHORTTIMEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_SHORTTIMEPATTERN, (int32 *)ppszFormatPattern);
                      break;
          
                   case ILOCALE_FORMATCODE_DATETIME_LONGTIME:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_LONGTIMEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_LONGTIMEPATTERN, (int32 *)ppszFormatPattern);
                      break;
             
                   case ILOCALE_FORMATCODE_DATETIME_FULLDATESHORTTIME:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_FULLDATESTIMEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_FULLDATESTIMEPATTERN, (int32 *)ppszFormatPattern);
                      break;
           
                   case ILOCALE_FORMATCODE_DATETIME_FULLDATELONGTIME:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_FULLDATELTIMEPATTERN, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_FULLDATELTIMEPATTERN, (int32 *)ppszFormatPattern);
                      break;
             
                   case ILOCALE_FORMATCODE_DATETIME_GENDATESHORTTIME:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_GENDATESHORTTIME, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_GENDATESHORTTIME, (int32 *)ppszFormatPattern);
                      break;
          
                   case ILOCALE_FORMATCODE_DATETIME_GENDATELONGTIME:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_GENDATELONGTIME, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_GENDATELONGTIME, (int32 *)ppszFormatPattern);
                      break;
             
                   case ILOCALE_FORMATCODE_DATETIME_MONTHDAY:
                   case ILOCALE_FORMATCODE_DATETIME_MONTHDAYALT:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_MONTHDAYPATTERN, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_MONTHDAYPATTERN, (int32 *)ppszFormatPattern);
                      break;
          
                   case ILOCALE_FORMATCODE_DATETIME_RFC1123:
                   case ILOCALE_FORMATCODE_DATETIME_RFC1121ALT:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_RFC1123PATTERN, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_RFC1123PATTERN, (int32 *)ppszFormatPattern);
                      break;
          
                   case ILOCALE_FORMATCODE_DATETIME_SORTABLE:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_SORTABLEDATETIME, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_SORTABLEDATETIME, (int32 *)ppszFormatPattern);
                      break;
          
                   case ILOCALE_FORMATCODE_DATETIME_YEARMONTH:
                   case ILOCALE_FORMATCODE_DATETIME_YEARMONTHALT:
-                     (void) Locale_GetParm(po, ILOCALE_DATETIME_YEARMONTHPATTERN, (int32 *)(void *)ppszFormatPattern);
+                     Locale_GetParm(po, ILOCALE_DATETIME_YEARMONTHPATTERN, (int32 *)ppszFormatPattern);
                      break;  
                      
                   // unrecognized format code.  Punt.
@@ -611,7 +609,6 @@ static int32 Locale_FormatItem(ILocale *po, AECHAR *bufOut, uint32 dwBufSize, AE
    --- */
 static int Locale_wstrncmp(ILocale *po, AECHAR *s1, AECHAR *s2, unsigned int length)
 {
-   PARAM_NOT_REF(po)
    // US English - as implemted by this ILocale - can use BREW's library function
    return (WSTRNCMP(s1, s2, length));
 }
@@ -624,7 +621,6 @@ static int Locale_wstrncmp(ILocale *po, AECHAR *s1, AECHAR *s2, unsigned int len
    --- */
 static int Locale_wstrcmp(ILocale *po, AECHAR *s1, AECHAR *s2)
 {
-   PARAM_NOT_REF(po)
    // US English - as implemted by this ILocale - can use BREW's library function
    return (WSTRCMP(s1, s2));
 }
@@ -637,7 +633,6 @@ static int Locale_wstrcmp(ILocale *po, AECHAR *s1, AECHAR *s2)
    --- */
 static void Locale_wstrupper(ILocale *po, AECHAR *pszDest)
 {
-   PARAM_NOT_REF(po)
    // US English - as implemted by this ILocale - can use BREW's library function
    WSTRUPPER(pszDest);
 }
@@ -650,7 +645,6 @@ static void Locale_wstrupper(ILocale *po, AECHAR *pszDest)
    --- */
 static void Locale_wstrlower(ILocale *po, AECHAR *pszDest)
 {
-   PARAM_NOT_REF(po)
    // US English - as implemted by this ILocale - can use BREW's library function
    WSTRLOWER(pszDest);
 }
@@ -666,16 +660,15 @@ static void Locale_wstrlower(ILocale *po, AECHAR *pszDest)
    --- */
 static AECHAR *Locale_BreakLine(ILocale *po, AECHAR *pszText, AECHAR *pszClip, AECHAR *pszEnd)
 {
-   PARAM_NOT_REF(pszEnd)
    AECHAR *pszScan = pszText;
    AECHAR *pszBreak = pszClip;
    AECHAR *pszHardBreak, *pszWhiteSpace;
    int dwHardBreakLen, i;
 
    // get our breaking characters
-   (void) Locale_GetParm(po, ILOCALE_STRING_HARDBREAK, (int32 *)(void*)&pszHardBreak);
+   Locale_GetParm(po, ILOCALE_STRING_HARDBREAK, (int32 *)&pszHardBreak);
    dwHardBreakLen = pszHardBreak ? WSTRLEN(pszHardBreak) : 0;
-   (void) Locale_GetParm(po, ILOCALE_STRING_SOFTBREAK, (int32 *)(void*)&pszWhiteSpace);
+   Locale_GetParm(po, ILOCALE_STRING_SOFTBREAK, (int32 *)&pszWhiteSpace);
 
    // Go through word, noting last break position     
    while (pszScan < pszClip) {
@@ -683,7 +676,7 @@ static AECHAR *Locale_BreakLine(ILocale *po, AECHAR *pszText, AECHAR *pszClip, A
       // is this a hard break character sequence?
       for (i = 0; i < dwHardBreakLen; i++) {
          if (pszScan + i <= pszClip) {
-            if (pszScan[i] != pszHardBreak[i]) //lint !e613 [if pszHardBreak is NULL, this will never get executed]
+            if (pszScan[i] != pszHardBreak[i])
                break;
          }
       }
@@ -766,8 +759,8 @@ int DefaultLocale_New(ILocale **ppo, IShell *piShell, IModule *piModule)
    if (!pMe) {
       return ENOMEMORY;
    }
-   Locale_Ctor(pMe,GETVTBL(pMe,ILocale),piShell,piModule); //lint !e740
-   *ppo = (ILocale*)(void*)pMe;
+   Locale_Ctor(pMe, GETVTBL(pMe,ILocale), piShell, piModule);
+   *ppo = (ILocale*) pMe;
    return SUCCESS;
 }
 
@@ -876,3 +869,4 @@ static int  LocateFormatTableItem(int16 nParmID)
    }
    return (-1);
 }
+

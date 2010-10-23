@@ -15,7 +15,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -36,7 +36,7 @@
 ---------------------------------------------------------------------------------*/
 
 // OutlineFont class id
-#include "bid/AEECLSID_HFONT_OUTLINE.BID"
+#include "bid\AEECLSID_HFONT_OUTLINE.bid"
 
 /*---------------------------------------------------------------------------------
       Inlines
@@ -75,7 +75,7 @@ static __inline int IHFONT_SetFontOutlineColor(IHFont *po, RGBAVAL rgb) {
 =======================================================================
   DATA STRUCTURE DOCUMENTATION
 =======================================================================
-IHFont Outline Class ID
+IHFont Outline Interface
 
 Description:
    Each class and interface within the widgets framework is identified 
@@ -109,7 +109,7 @@ See Also:
  CLASS DOCUMENTATION
 =======================================================================
 
-IHFont Outline Class
+IHFont Outline Interface
 
 Description:
    IHFont Outline provides a wrapper around existing IFont objects that 

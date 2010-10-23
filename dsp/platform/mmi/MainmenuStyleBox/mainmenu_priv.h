@@ -21,7 +21,7 @@
 #include "AEEConfig.h"
 
 #ifdef FEATURE_SUPPORT_WAP_APP
-#include "WapBrowser.bid"
+//#include "WapBrowser.bid"
 #endif
 
 #ifdef FEATRUE_SUPPORT_G_SENSOR

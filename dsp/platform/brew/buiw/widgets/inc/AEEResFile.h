@@ -10,26 +10,23 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
   ========================================================================
   ========================================================================
 */
+
 #ifndef __AEERESFILE_H__
 #define __AEERESFILE_H__
 
 #include "AEEShell.h"
 #include "AEESource.h"
-#include "AEEComUtil.h"
-#include "AEEStdLib.h"
+#include "stdarg.h"
 
-// IResFile interface ids
-#define AEEIID_RESFILE_1    	0x01022738
-#define AEEIID_RESFILE_2    	0x0102ec58
-
-#define AEEIID_RESFILE		   AEEIID_RESFILE_2
+#include "bid/AEEIID_RESFILE.bid"
+#include "bid/AEECLSID_RESFILE.bid"
 
 #define RESTYPE_DICT     0x5001
 #define RESTYPE_WPROPS   0x5002
@@ -42,72 +39,31 @@ typedef struct IResFile IResFile;
    int   (*Get)             (iname *, uint32 resid, uint16 restype, void *pbuf, uint32 *plen);\
    int   (*GetSource)       (iname *, uint32 resid, uint16 restype, ISource **ppo);\
    int   (*GetObject)       (iname *, uint32 resid, AEECLSID clsid, void **ppo);\
-   int   (*GetNamedIdV)     (iname *, uint16 restype, uint32 *presid, VaListPtrType args);\
-   int   (*GetNamedV)       (iname *, uint16 restype, void *pbuf, uint32 *plen, VaListPtrType args);\
-   int   (*GetNamedObjectV) (iname *, AEECLSID clsid, void **ppo, VaListPtrType args);\
-   int   (*GetNamedSourceV) (iname *, uint16 restype, ISource **ppo, VaListPtrType args);\
-   int   (*GetNamedChildrenV)(iname*, void *buf, uint32 *plen, uint32 *pnrElem, VaListPtrType args);\
-   int   (*GetNamedTypeV)   (iname *, uint16* ptype, VaListPtrType args)
+   int   (*GetNamedIdV)     (iname *, uint16 restype, uint32 *presid, va_list* args);\
+   int   (*GetNamedV)       (iname *, uint16 restype, void *pbuf, uint32 *plen, va_list* args);\
+   int   (*GetNamedObjectV) (iname *, AEECLSID clsid, void **ppo, va_list* args);\
+   int   (*GetNamedSourceV) (iname *, uint16 restype, ISource **ppo, va_list* args);\
+   int   (*GetNamedChildrenV)(iname*, void *buf, uint32 *plen, uint32 *pnrElem, va_list* args);\
+   int   (*GetNamedTypeV)   (iname *, uint16* ptype, va_list* args)
 
 AEEINTERFACE(IResFile) {
    INHERIT_IResFile(IResFile);
 };
 
-static __inline uint32 IRESFILE_AddRef(IResFile *po) {
-   return AEEGETPVTBL(po, IResFile)->AddRef(po);
-}
-
-static __inline uint32 IRESFILE_Release(IResFile *po) {
-   return AEEGETPVTBL(po, IResFile)->Release(po);
-}
-
-static __inline int IRESFILE_QueryInterface(IResFile *po, AEECLSID clsid, void **ppo) {
-   return AEEGETPVTBL(po, IResFile)->QueryInterface(po, clsid, ppo);
-}
-
-static __inline int IRESFILE_Open(IResFile *po, const char *f) {
-   return AEEGETPVTBL(po,IResFile)->Open(po, f);
-}
-
-static __inline void IRESFILE_Close(IResFile *po) {
-   AEEGETPVTBL(po, IResFile)->Close(po);
-}
-
-static __inline int IRESFILE_Get(IResFile *po, uint32 resid, uint16 restype, void *pbuf, uint32 *plen) {
-   return AEEGETPVTBL(po, IResFile)->Get(po, resid, restype, pbuf, plen);
-}
-
-static __inline int IRESFILE_GetSource(IResFile *po, uint32 resid, uint16 restype, ISource **ppo) {
-   return AEEGETPVTBL(po, IResFile)->GetSource(po, resid, restype, ppo);
-}
-
-static __inline int IRESFILE_GetObject(IResFile *po, uint32 resid, AEECLSID clsid, void **ppo) {
-   return AEEGETPVTBL(po, IResFile)->GetObject(po, resid, clsid, ppo);
-}
-
-static __inline int IRESFILE_GetNamedIdV(IResFile *po, uint16 restype, uint32 *presid, VaListPtrType args) {
-   return AEEGETPVTBL(po, IResFile)->GetNamedIdV(po, restype, presid, args);
-}
-
-static __inline int IRESFILE_GetNamedV(IResFile *po, uint16 restype, void *pbuf, uint32 *plen, VaListPtrType args) {
-   return AEEGETPVTBL(po, IResFile)->GetNamedV(po, restype, pbuf, plen, args);
-}
-
-static __inline int IRESFILE_GetNamedObjectV(IResFile *po, AEECLSID clsid, void **ppo, VaListPtrType args) {
-   return AEEGETPVTBL(po, IResFile)->GetNamedObjectV(po, clsid, ppo, args);
-}
-
-static __inline int IRESFILE_GetNamedSourceV(IResFile *po, uint16 restype, ISource **ppo, VaListPtrType args) {
-   return AEEGETPVTBL(po, IResFile)->GetNamedSourceV(po, restype, ppo, args);
-}
-
-static __inline int IRESFILE_GetNamedChildrenV(IResFile *po, void *pbuf, uint32 *plen, uint32 *prnElem, VaListPtrType args) {
-   return AEEGETPVTBL(po, IResFile)->GetNamedChildrenV(po, pbuf, plen, prnElem, args);
-}
-
-static __inline int IRESFILE_GetNamedTypeV(IResFile *po, uint16 *ptype, VaListPtrType args) {
-   return AEEGETPVTBL(po, IResFile)->GetNamedTypeV(po, ptype, args);
-}
+#define IRESFILE_AddRef(p)                   AEEGETPVTBL(p,IResFile)->AddRef(p)
+#define IRESFILE_Release(p)                  AEEGETPVTBL(p,IResFile)->Release(p)
+#define IRESFILE_QueryInterface(p,c,d)       AEEGETPVTBL(p,IResFile)->QueryInterface(p,c,d)
+#define IRESFILE_Open(p,f)                   AEEGETPVTBL(p,IResFile)->Open(p,f)
+#define IRESFILE_Close(p)                    AEEGETPVTBL(p,IResFile)->Close(p)
+#define IRESFILE_Get(p,i,t,b,s)              AEEGETPVTBL(p,IResFile)->Get(p,i,t,b,s)
+#define IRESFILE_GetSource(p,i,t,o)          AEEGETPVTBL(p,IResFile)->GetSource(p,i,t,o)
+#define IRESFILE_GetObject(p,i,c,o)          AEEGETPVTBL(p,IResFile)->GetObject(p,i,c,o)
+#define IRESFILE_GetNamedV(p,t,b,s,a)        AEEGETPVTBL(p,IResFile)->GetNamedV(p,t,b,s,a)
+#define IRESFILE_GetNamedObjectV(p,c,o,a)    AEEGETPVTBL(p,IResFile)->GetNamedObjectV(p,c,o,a)
+#define IRESFILE_GetNamedSourceV(p,t,o,a)    AEEGETPVTBL(p,IResFile)->GetNamedSourceV(p,t,o,a)
+#define IRESFILE_GetNamedIdV(p,t,o,a)        AEEGETPVTBL(p,IResFile)->GetNamedIdV(p,t,o,a)
+#define IRESFILE_GetNamedChildrenV(p,b,l,n,a)AEEGETPVTBL(p,IResFile)->GetNamedChildrenV(p,b,l,n,a)
+#define IRESFILE_GetNamedTypeV(p,t,a)        AEEGETPVTBL(p,IResFile)->GetNamedTypeV(p,t,a)
 
 static __inline int IRESFILE_GetString(IResFile *po, uint32 resid, AECHAR *buf, uint32 *plen) {
    return IRESFILE_Get(po, resid, RESTYPE_STRING, (void*)buf, plen);
@@ -117,7 +73,7 @@ static __inline int IRESFILE_GetNamed(IResFile *po, uint16 restype, void *pbuf, 
    int result;
    va_list args;
    va_start(args, plen);
-   result = IRESFILE_GetNamedV(po, restype, pbuf, plen, VaListPtr_From_va_list(&args));
+   result = IRESFILE_GetNamedV(po, restype, pbuf, plen, &args);
    va_end(args);
    return result;
 }
@@ -126,7 +82,7 @@ static __inline int IRESFILE_GetNamedObject(IResFile *po, AEECLSID clsid, void *
    int result;
    va_list args;
    va_start(args, ppo);
-   result = IRESFILE_GetNamedObjectV(po, clsid, ppo, VaListPtr_From_va_list(&args));
+   result = IRESFILE_GetNamedObjectV(po, clsid, ppo, &args);
    va_end(args);
    return result;
 }
@@ -136,7 +92,7 @@ static __inline int IRESFILE_GetNamedChildren(IResFile *po, void *buf, uint32 *p
    int result;
    va_list args;
    va_start(args, pnrElem);
-   result = IRESFILE_GetNamedChildrenV(po, buf, plen, pnrElem, VaListPtr_From_va_list(&args));
+   result = IRESFILE_GetNamedChildrenV(po, buf, plen, pnrElem, &args);
    va_end(args);
    return result;
 }
@@ -146,7 +102,7 @@ static __inline int IRESFILE_GetNamedSource(IResFile *po, uint16 restype, ISourc
    int result;
    va_list args;
    va_start(args, ppo);
-   result = IRESFILE_GetNamedSourceV(po, restype, ppo, VaListPtr_From_va_list(&args));
+   result = IRESFILE_GetNamedSourceV(po, restype, ppo, &args);
    va_end(args);
    return result;
 }
@@ -155,12 +111,12 @@ static __inline int IRESFILE_GetNamedId(IResFile *po, uint16 restype, uint32 *pr
    int result;
    va_list args;
    va_start(args, presid);
-   result = IRESFILE_GetNamedIdV(po, restype, presid, VaListPtr_From_va_list(&args));
+   result = IRESFILE_GetNamedIdV(po, restype, presid, &args);
    va_end(args);
    return result;
 }
 
-static __inline int IRESFILE_GetNamedImageV(IResFile *po, void **ppo, VaListPtrType args) {
+static __inline int IRESFILE_GetNamedImageV(IResFile *po, void **ppo, va_list* args) {
    return IRESFILE_GetNamedObjectV(po, HTYPE_VIEWER, ppo, args);
 }
 
@@ -168,7 +124,7 @@ static __inline int IRESFILE_GetNamedImage(IResFile *po, void **ppo, ...) {
    int result;
    va_list args;
    va_start(args, ppo);
-   result = IRESFILE_GetNamedImageV(po, ppo, VaListPtr_From_va_list(&args));
+   result = IRESFILE_GetNamedImageV(po, ppo, &args);
    va_end(args);
    return result;
 }
@@ -177,12 +133,12 @@ static __inline int IRESFILE_GetNamedType(IResFile *po, uint16* ptype, ...) {
    int result;
    va_list args;
    va_start(args, ptype);
-   result = IRESFILE_GetNamedTypeV(po, ptype, VaListPtr_From_va_list(&args));
+   result = IRESFILE_GetNamedTypeV(po, ptype, &args);
    va_end(args);
    return result;
 }
 
-static __inline int IRESFILE_GetNamedStringV(IResFile *po, AECHAR *buf, uint32 *plen, VaListPtrType args) {
+static __inline int IRESFILE_GetNamedStringV(IResFile *po, AECHAR *buf, uint32 *plen, va_list* args) {
    return IRESFILE_GetNamedV(po, RESTYPE_STRING, (void*)buf, plen, args);
 }
 
@@ -190,12 +146,14 @@ static __inline int IRESFILE_GetNamedString(IResFile *po, AECHAR *buf, uint32 *p
    int result;
    va_list args;
    va_start(args, plen);
-   result = IRESFILE_GetNamedStringV(po, buf, plen, VaListPtr_From_va_list(&args));
+   result = IRESFILE_GetNamedStringV(po, buf, plen, &args);
    va_end(args);
    return result;
 }
 
-#include "bid/AEECLSID_RESFILE.bid"
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -736,10 +694,7 @@ Description:
    arguments. Each string specifies one or more levels in the naming
    tree. A simple string without '.' characters specifies a single
    level in the naming tree where as a dot separated set of names in a
-   string specify a series of names in the naming tree.  
-
-   To specify the 'Root' of the dictionary in order to retrieve the names of the 
-   top-level children, use a string containing a single dot ( "." ) for the parent name.
+   string specify a series of names in the naming tree.
 
    Retrieving the names of children for "Main.Intro.Properties" could be accomplished
    by the following sequence of commands:
@@ -764,20 +719,6 @@ Description:
    {'C','h','i','l','d','1',\0,'C','h','i','l','d','2',\0,\0}
 
    The number of elements would be 2, and the buffer size would be 15.
-
-   Retrieving the names of the top-level children (those under the root level), 
-   could be accomplished by the following commands: 
-
-===pre>
-      IRESFILE_GetNamedChildren(piResFile, NULL, &nLength, &nNumChildren, ".", 0));
-
-      // -- allocate buffer 'pBuffer' here --
-
-      IRESFILE_GetNamedChildren(piResFile, pBuffer, &nLength, &nNumChildren, ".", 0));
-===/pre>
-
-   Which would fill the buffer 'pBuffer' with the names of the top-level children.
-
 
 Prototype:
    int   IRESFILE_GetNamedChildren(IResFile *p, void *buf, uint32 *plen, uint32 *pnrElem, ...);

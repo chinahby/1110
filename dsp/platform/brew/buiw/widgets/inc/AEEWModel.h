@@ -11,7 +11,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -25,12 +25,12 @@
 #include "AEEStdLib.h"
 
 
-#include "bid/AEEIID_VALUEMODEL.bid"
-#include "bid/AEEIID_INTERFACEMODEL.bid"
+#include "bid\AEEIID_VALUEMODEL.bid"
+#include "bid\AEEIID_INTERFACEMODEL.bid"
 
-#include "bid/AEECLSID_MODEL.bid"
-#include "bid/AEECLSID_VALUEMODEL.bid"
-#include "bid/AEECLSID_INTERFACEMODEL.bid"
+#include "bid\AEECLSID_MODEL.bid"
+#include "bid\AEECLSID_VALUEMODEL.bid"
+#include "bid\AEECLSID_INTERFACEMODEL.bid"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -69,8 +69,6 @@
 // ViewModel event (ScrollEvent struct)
 #define EVT_MDL_SCROLL_CHANGE       (EVT_MDL_WIDGET_START+100) // scroll pos changed
 
-// TextModel event (ModelEvent struct)
-#define EVT_MDL_TEXT_INPUT_SYMBOL   (EVT_MDL_WIDGET_START+17)  // inputSymbol mode requested by TextController
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -187,11 +185,11 @@ static __inline int IVALUEMODEL_SetText(IValueModel *po, const AECHAR *pwText, i
       nLen = WSTRLEN(pwText);
    }
 
-   pw = (AECHAR *)MALLOC(sizeof(AECHAR) * ((dword)(nLen) + 1));
+   pw = (AECHAR *)MALLOC(sizeof(AECHAR) * (nLen + 1));
    if (!pw) {
       return ENOMEMORY;
    }
-   WSTRLCPY(pw, pwText, (dword)(nLen)+1);
+   WSTRLCPY(pw, pwText, nLen+1);
    IVALUEMODEL_SetValue(po, pw, nLen, WidgetAEEFree);
    return SUCCESS;
 }

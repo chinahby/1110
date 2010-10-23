@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -174,7 +174,7 @@ void TitleWidget_Draw(IDecorator *po, ICanvas *piCanvas, int x, int y)
       nTitleDY = MAX(0, ce.height - nOverlap);
 
       // Max clip height base extent minus border / shadow
-      nMaxDY = MAX(0, WBASE(me)->extent.height - (2*nBorder+ABS(nShadowY)));
+      nMaxDY = MAX(0, me->base.base.extent.height - (2*nBorder+ABS(nShadowY)));
 
       // Zero shadows if they dont affect draw pos (negative shadow => positive offset)
       nShadowX = ABS(MIN(nShadowX, 0));
@@ -257,7 +257,7 @@ boolean TitleWidget_HandleEvent(IDecorator *po, AEEEvent evt, uint16 wParam, uin
       
          if (me->piTitle) {
             IWIDGET_AddRef(me->piTitle);
-            IWIDGET_SetParent(me->piTitle, &WCBASE(me)->container);
+            IWIDGET_SetParent(me->piTitle, &me->base.container);
          }
 
          return TRUE;
@@ -299,7 +299,7 @@ int TitleWidget_Locate(IContainer *po, IWidget *piw, IContainer **ppRoot, AEERec
 
 
 void TitleWidget_Ctor(TitleWidget *me, AEEVTBL(IDecorator) *pvt, IWidget *piTitle, 
-                      IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler)
+                      IModule *piModule, PFNHANDLER pfnDefHandler)
 {
    Decorator_Ctor(&me->base, pvt, piModule, DEFHANDLER(TitleWidget_HandleEvent));
 
@@ -311,16 +311,16 @@ void TitleWidget_Ctor(TitleWidget *me, AEEVTBL(IDecorator) *pvt, IWidget *piTitl
    pvt->SetExtent          = TitleWidget_SetExtent;
    pvt->SetWidget          = TitleWidget_SetWidget;
 
-   WCBASE(me)->vtContainer.Invalidate = TitleWidget_Invalidate;
-   WCBASE(me)->vtContainer.Locate = TitleWidget_Locate;
+   me->base.vtContainer.Invalidate = TitleWidget_Invalidate;
+   me->base.vtContainer.Locate = TitleWidget_Locate;
 
    me->piTitle = piTitle;
    if (me->piTitle) {
       IWIDGET_AddRef(piTitle);
-      IWIDGET_SetParent(piTitle, &WCBASE(me)->container);
+      IWIDGET_SetParent(piTitle, &me->base.container);
    }
 
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &WBASE(me)->extent, FALSE, &WBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.base.extent, FALSE, &WBASE(me)->piViewModel);
    IWIDGET_SetBorderWidth(TITLEWIDGET_TO_IWIDGET(me), 1);
    IWIDGET_SetBorderColor(TITLEWIDGET_TO_IWIDGET(me), RGBA_BLACK);
 }
@@ -358,7 +358,7 @@ int TitleWidget_New(IDecorator **ppo, IShell *piShell, IModule *piModule)
       IWIDGET_SetFont(piTitle, piFont);
 
    if (result == 0)
-      TitleWidget_Ctor(me, GETVTBL(me, IDecorator), piTitle, piShell, piModule, 0);
+      TitleWidget_Ctor(me, GETVTBL(me, IDecorator), piTitle, piModule, 0);
 
    if (result != 0)
       FREE(me);

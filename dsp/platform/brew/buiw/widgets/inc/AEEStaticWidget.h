@@ -10,14 +10,13 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
   ========================================================================
   ========================================================================
 */
-#include "AEERichTextModel.h"
 #include "AEEWidget.h"
 #include "AEEWProperties.h"
 
@@ -25,7 +24,7 @@
 #ifndef __AEESTATICWIDGET_H__
 #define __AEESTATICWIDGET_H__
 
-#include "bid/AEECLSID_STATICWIDGET.bid"
+#include "bid\AEECLSID_STATICWIDGET.bid"
 
 #define SWF_WRAPTEXT          0x00100000                 // wrap text to fit in widget rect
 #define SWF_NOSHORTENTEXT     0x00200000                 // don't shorten text that doesn't fit
@@ -35,39 +34,19 @@
 
 
 static __inline int IWIDGET_SetText(IWidget *piWidget, const AECHAR *txt, boolean bFree)
-{  
-   int nErr = EFAILED;
-   IValueModel *pivm;
-   IRichTextModel *pirtm;
+{
+   IValueModel *piModel = 0;
 
-   if (piWidget) {
+   if (!piWidget || IWIDGET_GetModel(piWidget, AEEIID_VALUEMODEL, (IModel **)&piModel) != 0)
+      return EFAILED;
 
-      // check the widget for a RichTextModel.
-      nErr = IWIDGET_GetModel(piWidget, AEEIID_RICHTEXTMODEL, (IModel **)&pirtm);
-      if (pirtm && (SUCCESS == nErr)) {
-         IRICHTEXTMODEL_SetMarkupText(pirtm, txt, (txt == 0 ? 0 : WSTRLEN(txt)));
-         IRICHTEXTMODEL_Release(pirtm);
-      } else {
-         // NULL model
-         nErr = EFAILED;
-      }
-
-      // check the widget for a value model.
-      if (SUCCESS != nErr) {
-         nErr = IWIDGET_GetModel(piWidget, AEEIID_VALUEMODEL, (IModel **)&pivm);
-         if (pivm && (SUCCESS == nErr)) {
-            IVALUEMODEL_SetValue(pivm, (void *)txt, 
-                        (txt == 0 ? 0 : WSTRLEN(txt)), 
-                        (bFree ? WidgetAEEFree : 0));
-            IVALUEMODEL_Release(pivm);
-         } else {
-            // NULL model
-            nErr = EFAILED;
-         }
-      }
+   if (piModel) {
+      IVALUEMODEL_SetValue(piModel, (void *)txt, 
+                           (txt == 0 ? 0 : WSTRLEN(txt)), 
+                           (bFree ? WidgetAEEFree : 0));
+      IVALUEMODEL_Release(piModel);
    }
-
-   return nErr;
+   return 0;
 }
 
 /*
@@ -356,8 +335,6 @@ EVT_WDG_SETPROPERTY:  The static widget responds to this event by attempting to 
                           PROP_ANIMATE_FLAGS     --  Sets the animation flags for the widget.
                           PROP_DEFAULTTEXTALIGNMENT
                                                  --  Sets the default text alignment.
-                          PROP_ELLIPSIS          --  Allows caller to override what character
-                                                     is used for ellipsis truncation.  
                       
                       These properties are discussed below in greater detail.
 
@@ -393,9 +370,7 @@ EVT_WDG_GETPROPERTY:  The static widget responds to this event by attempting to 
                                                      display.
                           PROP_ANIMATE_FLAGS     --  Retrieves animation-specific flags.
                           PROP_DEFAULTTESTALIGNMENT  
-                                                 --  Retrieves the default text alignment.
-                          PROP_ELLIPSIS          --  Retrieves the character used to indicate
-                                                     text has been truncated.
+                                                 --  Retrieves the default text alignment
 
 ===/pre>   
 
@@ -635,18 +610,6 @@ PROP_DEFAULTTEXTALIGNMENT:
                         
                          Property Value:  uint32
 
-PROP_ELLIPSIS:           This property contains the character to be used to indicate when 
-                         text has been truncated within a static widget.  If not set, or set 
-                         to NULL, the static widget will make its best guess at determining 
-                         the code point for the ellipsis character based on the device encoding.  
-                         Applications may set this property to override this behavior and force 
-                         the widget to use a particular character as the ellipsis, such as 
-                         0x2026, the Unicode code point for the ellipsis.  This may be useful 
-                         for applications that use Unicode fonts that include the ellipsis
-                         character but run on a device with a non-Unicode device encoding.
-
-                             Property Value:  AECHAR
-
  
 Required Model:
    IValueModel 
@@ -734,15 +697,10 @@ See Also:
 IWIDGET_SetText()
 
 Description:
-   Sets the text to be displayed by the static widget.  The widget can contain
-   either a text model or a value model.
-   A value model stores a pointer to the text memory, which may be owned by 
-   the caller, or if 'bFree' is TRUE, by the value model, in which case it 
-   will be freed when the value model is destroyed.
-   A text model copies the display text into the model.  No pointers 
-   are stored within a text model and the caller is responsible for freeing
-   all memory associated with its pointers.  The bFree parameter is has 
-   no effect.
+   Sets the text to be displayed by the static widget. The text widget's value 
+   model stores a pointer to the text memory, which may be owned by the 
+   caller, or if 'bFree' is TRUE, by the value model, in which case it will
+   be freed when the value model is destroyed.
    
 Prototype:
    int IWIDGET_SetText(IWidget *piWidget, const AECHAR *txt, boolean bFree);
@@ -755,9 +713,7 @@ Parameters:
    bFree:     Indicates whether or not the widget's value model is responsible for
               freeing the text. When 'bFree' is TRUE, the value model will free the
               text memory when the model is destroyed, or when it is replaced with new 
-              text. When FALSE, the caller is responsible for managing the text memory.
-              This parameter is only effective for widgets that contain a value model.
-              The parameter is ignore for widgets with text models.
+              text. When FALSE,the caller is responsible for managing the text memory.
 ===/pre>
 
 Return Value:

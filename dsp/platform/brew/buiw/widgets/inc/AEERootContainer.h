@@ -12,7 +12,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -25,8 +25,8 @@
 
 #include "AEEXYContainer.h"
 
-#include "bid/AEEIID_ROOTCONTAINER.bid"
-#include "bid/AEECLSID_ROOTCONTAINER.bid"
+#include "bid\AEEIID_ROOTCONTAINER.bid"
+#include "bid\AEECLSID_ROOTCONTAINER.bid"
 
 /////////////////////////////////////////////////////////////////////////////
 // IRootContainer interface
@@ -186,9 +186,6 @@ EVT_WDG_GETPROPERTY:  The root container responds to this event by attempting to
 
                           PROP_BGCOLOR  --  Gets the background color that will be used to
                                             render the background of the container.
-                           
-                          PROP_EX       --  RootContainer supports an extended property
-                                            PROPEX_SCREEN.
 
                       These properties are discussed below in greater detail.
 ===/pre>   
@@ -196,20 +193,10 @@ EVT_WDG_GETPROPERTY:  The root container responds to this event by attempting to
 Properties:
 Property       Description
 --------       ------------------------------------------------------------
-PROP_BGCOLOR:  
-               This property contains the color the root container will use to draw
+PROP_BGCOLOR:  This property contains the color the root container will use to draw
                its background. 
                
                    Property Value:  RGBVAL
-
-PROPEX_SCREEN:   
-               This property contains the location of canvas to which RootContainer
-               draws on screen. This property is supported as GetOnly Property via 
-               PROP_EX. 
-                  
-                   Property Value: AEERect*.
-               
-               Only x and y members of the AEERect structure are modified. 
                     
 Required Model:
    None 
@@ -374,15 +361,6 @@ Parameters:
          The defined validation flags are:
              ICIF_EXTENT  -  When this flag is ON, it is an indication that the widget has
                              changed its extent.
-             ICIF_REDRAW  -  When this flag is ON, it is an indication that the widget has 
-                             changed its contents, but its preferred extent is still the same.
-                             The widget simply wants to be redrawn.
-             ICIF_DEFER   -  When this flag is ON, it indicates that the widget's layout is
-                             disabled, but it is still passing an invalidate up to 
-                             notify its ancestors that an invalidate occurred but no action
-                             was taken as layout was disabled.  When RootContainer receives
-                             an invalidate with the ICIF_DEFER flag appended, it will not cause
-                             a draw to be scheduled. 
 ===/pre>
 
 Return Value:
@@ -390,9 +368,7 @@ Return Value:
 
 Comments:
    Callers should set the ICIF_EXTENT flag of the 'f' parameter when calling the function
-   following a change to the 'pw' widget's extent.
-
-   Root Container will not schedule a draw when the ICIF_DEFER flag is present.
+   following a change to the 'pw' widget's extent.  
 
 Side Effects: 
    None

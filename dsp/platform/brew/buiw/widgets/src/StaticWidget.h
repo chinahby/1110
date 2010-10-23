@@ -19,7 +19,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -31,12 +31,10 @@
 
 #include "AEEStaticWidget.h"
 #include "AEEWModel.h"
-#include "AEEFontBidiUtil.h"
 #include "WidgetBase.h"
 #include "AEEFont.h"
 #include "Border.h"
-#include "AEEFontMapModel.h"
-#include "AEETextLayout.h"
+#include "LayoutText.h"
 
 typedef struct StaticWidget {
    WidgetBase     base;
@@ -44,42 +42,38 @@ typedef struct StaticWidget {
    Border         border;
    IFont *        piFont;
    ModelListener  mlFont;              // model listener for animated fonts
-   ModelListener  mlFontMapModel;      // model listener for FontMapModel
    WExtent        weFont;              // cached size of string, measured with font
    DynRGB         rgbText;
    WExtent        wePrefExtent;
    uint32         dwFlags;
    uint32         dwDefaultAlignment;
-   flg            fLayoutText;         // layout the text
+   LayoutText*    poLayoutText;
+   flg            fRewrap;             // recalc the line table
    int            cxHintWidth;
    int            nHintRows;
    int            nLineGap;
    IShell         *piShell;            // For font creation
 
-   // text layout and drawing
-   AEECLSID       clsIdTextLayout;     // class id of TextLayout object to use
-   ITextLayout    *piTextLayout;       // TexyLayout to layout and draw text
-   IFontMapModel  *piFontMapModel;     // FontMapModel to interpret text styles
-   AECHAR         awEllipsis;          // AECHAR to use for ellipsis truncation
-
-   uint32         dwLayoutFlags;       // flags used during the last layout
    // scrolling
    boolean        bAnimate;
    boolean        bScrollReset;
-   boolean        bAdjustScroll;
    AEECallback    cbkScroll;           // Callback for scrolling
    int            nScrollOffset;       // Text offset 
    int            nScrollDelay;        // Scroll delay
-   uint32         nScrollRepeat;       // Current repeat
+   int            nScrollRepeat;       // Current repeat
    uint32         nCurStep;            // Current step
    ScrollText     stProps;             // ScrollText properties
    uint32         dwAnimFlags;         // Animation specific flags
 
 } StaticWidget;
 
+static __inline IWidget *STATICWIDGET_TO_IWIDGET(StaticWidget *p) { 
+   return (IWidget*) p; 
+}
+
 
 int      StaticWidget_New  (IWidget **ppo, IModel *piModel, IShell *piShell, IModule *piModule);
-int      StaticWidget_Ctor (StaticWidget *me, AEEVTBL(IWidget) *pvt, IModel *piModel, IShell *piShell, 
+void     StaticWidget_Ctor (StaticWidget *me, AEEVTBL(IWidget) *pvt, IModel *piModel, IShell *piShell, 
                             IModule *piModule, PFNHANDLER pfnDefHandler);
 void     StaticWidget_Dtor (StaticWidget *me);
 

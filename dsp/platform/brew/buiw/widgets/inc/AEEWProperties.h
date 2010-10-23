@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -26,14 +26,13 @@
 #include "AEEXYContainer.h"
 #include "AEEImage.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // ScrollText
 typedef struct {
-   uint16      nScrollAmount; // step size (pixels)
+   uint16	   nScrollAmount; // step size (pixels)
    uint16      nScrollDelay;  // scroll speed (msec)
-   uint16      nStartDelay;   // start delay (msec)
-   uint16      nEndDelay;     // end delay (msec)
+   uint16      nStartDelay;	// start delay (msec)
+   uint16      nEndDelay;		// end delay (msec)
    uint16      nRepeat;       // number of times to repeat (zero means infinite)
 } ScrollText;
 
@@ -41,7 +40,7 @@ typedef struct {
 // Widget structs for named variable argument lists and resfile related functions
 #define INHERIT_WProps\
    IWidget *piWidget;\
-   VaListPtrType args
+   va_list *args
 
 typedef struct {
    INHERIT_WProps;
@@ -150,10 +149,6 @@ typedef uint32 RGBAVAL;    // similar to RGBVAL, except the alpha channel is sig
 #define PROP_SACTIVE_FGCOLOR           0x143 // Get/Set fgcolor when widget is selected/active  
 #define PROP_SINACTIVE_FGCOLOR         0x144 // Get/Set fgcolor when widget is selected/inactive
 #define PROP_SELECTED_FGCOLOR          0x145 // Set (only) fgcolor for selected (active&inactive)
-#define PROP_TEXT_SELECTED_FGCOLOR     0x146 // Get/Set fgcolor for active&inactive text selection (used in TextWidget)
-#define PROP_TEXT_SACTIVE_FGCOLOR      0x147 // Get/Set fgcolor for active text selection (used in TextWidget) 
-#define PROP_TEXT_SINACTIVE_FGCOLOR    0x148 // Get/Set fgcolor for inactive text selection (used in TextWidget)
-
 
 #define PROP_TRANSP_COLOR              0x150 // Get/Set BitmapWidget: color representing transparent area for bitblts
 #define PROP_SELECTED                  0x151 // Get/Set 'selected' property for list item widgets
@@ -219,7 +214,6 @@ typedef uint32 RGBAVAL;    // similar to RGBVAL, except the alpha channel is sig
 #define PROP_SHADOWCOLOR               0x206 // Get/Set shadow color 
 
 #define PROP_LAYOUTSTYLE               0x207 // Get/Set layout style for containers that support it
-#define PROP_LAYOUTFLAGS               0x208 // Get/Set layout flags for containers that support it
 
 #define PROP_GRADIENT_STYLE            0x210 // Get/Set gradient fill style
 
@@ -243,8 +237,6 @@ typedef uint32 RGBAVAL;    // similar to RGBVAL, except the alpha channel is sig
 #define PROP_NEXTLINE                  0x223 // Get start of next line (from pos)
 #define PROP_TEXTCONTROLLER            0x224 // Get/Set the widget's Controller
 #define PROP_TEXTCONTROLLERMODEKEY     0x230 // Get/Set the text controller's input mode key
-
-#define PROP_READONLY                  0x231 // Get/Set ability to accept user editing
 
 #define PROP_TITLEWIDGET               0x225 // Get the static widget from the TitleWidget
 #define PROP_SCROLLBARENDPAD           0x226 // @@@
@@ -303,7 +295,6 @@ typedef uint32 RGBAVAL;    // similar to RGBVAL, except the alpha channel is sig
 #define PROP_ANIMATE_FLAGS             0x347 // Flags specific to animation
 
 #define PROP_DEFAULTTEXTALIGNMENT      0x348 // Default text alignment
-#define PROP_ELLIPSIS                  0x349 // AECHAR to be used for ellipsis truncation
 
 // Background image props (apply to all widgets that support border props)
 #define PROP_BGIMAGE                   0x350 // Get/Set background image (IImage*)
@@ -337,43 +328,9 @@ typedef uint32 RGBAVAL;    // similar to RGBVAL, except the alpha channel is sig
 
 #define PROP_IMAGE_NFRAMES             0x414 // Get (only) the number of frames of the displayed image
 
-#define PROP_FONTLINEWIDTH             0x415 // Set/Get the IHFont property used to break the text into lines
-
-#define PROP_CURSOR_MOVE               0x416 // Get the text cursor postion after a given movement
-
-#define PROP_TEXTLAYOUTCLASSID         0x417 // Set/Get the classid of the ITextLayout object to use for text layout
-
-#define PROP_FONTMAPMODEL              0x418 // Set/Get the font map model used for rich text
-
-#define PROP_INPUT_MODES               0x419 // Set/get the list of allowed text input modes
-
-#define PROP_FIELDMODE                 0x41a // Set/get the text input field mode
-
-#define PROP_IGNORE_KEYS               0x41b // Set the list of keys that should be ignored by the text controller
-
-#define PROP_TEXTCONTROLLERSHIFTKEY    0x41c // Get/Set the text controller's shift mode key
-
-#define PROP_LINEBREAKONGLYPH          0x41d // Set/Get the IHFont property, break lines on glyph, not on spaces
-
-#define PROP_BUFFERED                  0x500 // Get/set the buffered status of this widget
-#define PROP_ALPHA                     0x501 // Get/set the alpha value of the whole widget
-
-#define PROP_EX                        0x600 // Extended properties
-
 #define PROP_SPECIAL                   0x1000 // for widget-specific properties
 
 #define PROP_OEM_SPECIAL               0x8000 // reserved for OEM use
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-/* Ids for the Extended Properties (Used with PROP_EX)*/
-#define PROPEX_SCREEN                  0x0103f55c  // Get the screen-co-ordinates of RootContainer Canvas.
-#define PROPEX_DIRECT                  0x0103f4d4  // Get/Set the DirectMode on FrameWidget. 
-#define PROPEX_ITEMHEIGHT              0x010437a3  // Get/Set item height for ListWidget, GridWidget
-#define PROPEX_ITEMWIDTH               0x010437a4  // Get/Set item width for PickWidget, GridWidget
-#define PROPEX_SELITEMSIZE             0x010437a5  // Get/Set size (width or height) of selected item
 
 // update values
 #define UPDATE_DISABLE                 1
@@ -387,34 +344,23 @@ typedef uint32 RGBAVAL;    // similar to RGBVAL, except the alpha channel is sig
 #define GRADIENT_STYLE_NONE            4     // gradient fill none
 
 // border styles
-#define BORDERSTYLE_NORMAL             0
-#define BORDERSTYLE_BEVELED            1
-#define BORDERSTYLE_ROUNDED            2
-#define BORDERSTYLE_MAXSTYLE           2
+#define BORDERSTYLE_NORMAL          0
+#define BORDERSTYLE_BEVELED         1
+#define BORDERSTYLE_ROUNDED         2
+#define BORDERSTYLE_MAXSTYLE        2
 
 // scroll style, also used as scroll type value in ScrollEvent (except SCROLL_BOTH)
-#define SCROLL_VERT                    0     // vertical scroll bar/indicator
-#define SCROLL_HORZ                    1     // horizontal scroll bar/indicator
-#define SCROLL_BOTH                    2     // both vertical and horizontal scroll bar/indicators visible
+#define SCROLL_VERT     0     // vertical scroll bar/indicator
+#define SCROLL_HORZ     1     // horizontal scroll bar/indicator
+#define SCROLL_BOTH     2     // both vertical and horizontal scroll bar/indicators visible
 
-#define LAYOUT_NONE                    0     // no layout
-#define LAYOUT_VERT                    1     // vertical layout
-#define LAYOUT_HORZ                    2     // horizontal layout style
-#define LAYOUT_BOTH                    3     // layout both dimensions
+#define LAYOUT_NONE     0     // no layout
+#define LAYOUT_VERT     1     // vertical layout
+#define LAYOUT_HORZ     2     // horizontal layout style
+#define LAYOUT_BOTH     3     // layout both dimensions
 
-//Layout flags(used with PROP_LAYOUTFLAGS)
-#define LF_INVIS_IGNORE                0       // Ignore invisible children during layout
-#define LF_INVIS_NOEXTENT              (1<<0)  // Consider invis children but treat their extent as 0
-#define LF_INVIS_USEEXTENT             (1<<1)  // Consider invis children and use their extent.
 // animation flags
-#define AF_ENABLE_EVT_STEP             (1<<0)  // enables the step event to be sent to the view model
-#define AF_ANIMATE_ONCE                (1<<1)  // animate the image once then stop on last frame
-
-// field mode flags
-#define AEE_TFIELDMODE_DIAL            1      // Dial entry
-#define AEE_TFIELDMODE_EMAIL           2      // Email entry
-#define AEE_TFIELDMODE_PASSWORD        3      // Password entry
-#define AEE_TFIELDMODE_WEB             4      // Web entry (URL, etc)
+#define AF_ENABLE_EVT_STEP    (1<<0)      // enables the step event to be sent to the view model
 
 // indexer function for List/Grid/Pick/Tab Widget
 typedef void (*PFNINDEXER)(void *pCtx, int nIndex, boolean bSelected);
@@ -451,51 +397,26 @@ typedef struct {
    boolean bVisible;
 } WidgetVis;
 
-// Structure to be used along with Get/SetProperty for PROP_EX
-typedef struct {
-   AEECLSID nPropId;
-   int      nSize;
-   void     *pUser;
-} WidgetPropEx;
-
-//Get Extended property
-static __inline int IWIDGET_GetPropertyEx(IWidget *po, AEECLSID nPropId, int nSize, void *pUser) {
-   WidgetPropEx propEx;
-   propEx.nPropId = nPropId;
-   propEx.nSize = nSize;
-   propEx.pUser = pUser;
-   return IWIDGET_GetProperty(po, PROP_EX, (uint32*)(void*) &propEx);
-}
-
-//Set Extended property
-static __inline int IWIDGET_SetPropertyEx(IWidget *po, AEECLSID nPropId, int nSize, void *pUser) {
-   WidgetPropEx propEx;
-   propEx.nPropId = nPropId;
-   propEx.nSize = nSize;
-   propEx.pUser = pUser;
-   return IWIDGET_SetProperty(po, PROP_EX, (uint32) &propEx);
-}
-
 static __inline int IWIDGET_GetBorderWidth(IWidget *po, int *pnBorderWidth) {
    return IWIDGET_GetPropInt(po, PROP_BORDERWIDTH, pnBorderWidth);
 }
 
 static __inline int IWIDGET_SetBorderWidth(IWidget *po, int nBorderWidth) {
-   return IWIDGET_SetProperty(po, PROP_BORDERWIDTH, (uint32)nBorderWidth);
+   return IWIDGET_SetProperty(po, PROP_BORDERWIDTH, nBorderWidth);
 }
 
 static __inline int IWIDGET_GetActiveBorderWidth(IWidget *po, int *pnBorderWidth) {
    return IWIDGET_GetPropInt(po, PROP_ACTIVE_BORDERWIDTH, pnBorderWidth);
 }
 static __inline int IWIDGET_SetActiveBorderWidth(IWidget *po, int nBorderWidth) {
-   return IWIDGET_SetProperty(po, PROP_ACTIVE_BORDERWIDTH, (uint32)nBorderWidth);
+   return IWIDGET_SetProperty(po, PROP_ACTIVE_BORDERWIDTH, nBorderWidth);
 }                                         
 
 static __inline int IWIDGET_GetInactiveBorderWidth(IWidget *po, int *pnBorderWidth) {
    return IWIDGET_GetPropInt(po, PROP_INACTIVE_BORDERWIDTH, pnBorderWidth);
 }
 static __inline int IWIDGET_SetInactiveBorderWidth(IWidget *po, int nBorderWidth) {
-   return IWIDGET_SetProperty(po, PROP_INACTIVE_BORDERWIDTH, (uint32)nBorderWidth);
+   return IWIDGET_SetProperty(po, PROP_INACTIVE_BORDERWIDTH, nBorderWidth);
 }
 
 static __inline int IWIDGET_GetBorderRadius(IWidget *po, int *pnBorderRadius) {
@@ -503,46 +424,46 @@ static __inline int IWIDGET_GetBorderRadius(IWidget *po, int *pnBorderRadius) {
 }
 
 static __inline int IWIDGET_SetBorderRadius(IWidget *po, int nBorderRadius) {
-   return IWIDGET_SetProperty(po, PROP_BORDERRADIUS, (uint32)nBorderRadius);
+   return IWIDGET_SetProperty(po, PROP_BORDERRADIUS, nBorderRadius);
 }
 
 static __inline int IWIDGET_GetBorderStyle(IWidget *po, int *pnStyle) {
    return IWIDGET_GetPropInt(po, PROP_BORDERSTYLE, pnStyle);
 }
 static __inline int IWIDGET_SetBorderStyle(IWidget *po, int nStyle) {
-   return IWIDGET_SetProperty(po, PROP_BORDERSTYLE, (uint32)nStyle);
+   return IWIDGET_SetProperty(po, PROP_BORDERSTYLE, nStyle);
 }
 
 static __inline int IWIDGET_SetPadding(IWidget *po, int nPadding) {
-   return IWIDGET_SetProperty(po, PROP_PADDING, (uint32)nPadding);
+   return IWIDGET_SetProperty(po, PROP_PADDING, nPadding);
 }
 
 static __inline int IWIDGET_GetLeftPadding(IWidget *po, int *pnPadding) {
    return IWIDGET_GetPropInt(po, PROP_LEFT_PAD, pnPadding);
 }
 static __inline int IWIDGET_SetLeftPadding(IWidget *po, int nPadding) {
-   return IWIDGET_SetProperty(po, PROP_LEFT_PAD, (uint32)nPadding);
+   return IWIDGET_SetProperty(po, PROP_LEFT_PAD, nPadding);
 }
 
 static __inline int IWIDGET_GetRightPadding(IWidget *po, int *pnPadding) {
    return IWIDGET_GetPropInt(po, PROP_RIGHT_PAD, pnPadding);
 }
 static __inline int IWIDGET_SetRightPadding(IWidget *po, int nPadding) {
-   return IWIDGET_SetProperty(po, PROP_RIGHT_PAD, (uint32)nPadding);
+   return IWIDGET_SetProperty(po, PROP_RIGHT_PAD, nPadding);
 }
 
 static __inline int IWIDGET_GetTopPadding(IWidget *po, int *pnPadding) {
    return IWIDGET_GetPropInt(po, PROP_TOP_PAD, pnPadding);
 }
 static __inline int IWIDGET_SetTopPadding(IWidget *po, int nPadding) {
-   return IWIDGET_SetProperty(po, PROP_TOP_PAD, (uint32)nPadding);
+   return IWIDGET_SetProperty(po, PROP_TOP_PAD, nPadding);
 }
 
 static __inline int IWIDGET_GetBottomPadding(IWidget *po, int *pnPadding) {
    return IWIDGET_GetPropInt(po, PROP_BOTTOM_PAD, pnPadding);
 }
 static __inline int IWIDGET_SetBottomPadding(IWidget *po, int nPadding) {
-   return IWIDGET_SetProperty(po, PROP_BOTTOM_PAD, (uint32)nPadding);
+   return IWIDGET_SetProperty(po, PROP_BOTTOM_PAD, nPadding);
 }
 
 // font
@@ -558,14 +479,14 @@ static __inline int IWIDGET_SetFontClass(IWidget *po, AEECLSID fontClass) {
 
 // font outline
 static __inline int IWIDGET_GetFontOutlineWidth(IWidget *po, int *dwWidth) {
-   return IWIDGET_GetPropPtr(po, PROP_FONT_OUTLINEWIDTH, (void**)(void*)dwWidth);
+   return IWIDGET_GetPropPtr(po, PROP_FONT_OUTLINEWIDTH, (void **)dwWidth);
 }
 static __inline int IWIDGET_SetFontOutlineWidth(IWidget *po, int dwWidth) {
    return IWIDGET_SetProperty(po, PROP_FONT_OUTLINEWIDTH, (uint32)dwWidth);
 }
 
 static __inline int IWIDGET_GetFontOutlineColor(IWidget *po, RGBAVAL *rgb) {
-   return IWIDGET_GetPropPtr(po, PROP_FONT_OUTLINECOLOR, (void**)(void*)rgb);
+   return IWIDGET_GetPropPtr(po, PROP_FONT_OUTLINECOLOR, (void **)rgb);
 }
 static __inline int IWIDGET_SetFontOutlineColor(IWidget *po, RGBAVAL rgb) {
    return IWIDGET_SetProperty(po, PROP_FONT_OUTLINECOLOR, (uint32)rgb);
@@ -602,7 +523,7 @@ static __inline int IWIDGET_GetTextRects(IWidget *po, uint32 start, uint32 end, 
    wtr.end    = end;
    wtr.pRects = pRects;
    
-   result = IWIDGET_GetProperty(po, PROP_TEXTRECTS, (uint32*)(void*)&wtr);
+   result = IWIDGET_GetProperty(po, PROP_TEXTRECTS, (uint32*) &wtr);
    if ( SUCCESS == result ) {
       *pCount = wtr.count;
    }
@@ -610,49 +531,9 @@ static __inline int IWIDGET_GetTextRects(IWidget *po, uint32 start, uint32 end, 
    return result;
 }
 
-
-
-///////////////////////////////////////////////////////////////////////////////
-// CursorMovementType
-typedef struct {
-   uint32   flags;         // in: for future expansion, currently must be zero.
-   int      nIndex;        // in: character index before the movement.
-   uint32   dwMovement;    // in: type of movement see #define MOVEMENT_
-   int      nMoveIndex;    // out: character index after the movement.
-} CursorMovementType;
-
-#define MOVEMENT_LINE_UP  (0)
-#define MOVEMENT_LINE_DOWN (1)
-#define MOVEMENT_CHARACTER_LEFT (2)
-#define MOVEMENT_CHARACTER_RIGHT (3)
-#define MOVEMENT_WORD_LEFT (4)
-#define MOVEMENT_WORD_RIGHT (5)
-#define MOVEMENT_LINE_END (6)
-#define MOVEMENT_LINE_BEGIN (7)
-
-
-static __inline int IWIDGET_GetCursorMovement(IWidget *po, int nCharacterIndex, uint32 dwMovement, int *pnCharacterIndex) {
-   int result;
-   CursorMovementType cmt;
-
-   if (NULL == pnCharacterIndex) {
-      return EBADPARM;
-   }
-
-   cmt.flags      = 0;
-   cmt.nIndex     = nCharacterIndex;
-   cmt.dwMovement = dwMovement;
-   result = IWIDGET_GetProperty(po, PROP_CURSOR_MOVE, (uint32*)(void*)&cmt);
-   if ( SUCCESS == result ) {
-      *pnCharacterIndex = cmt.nMoveIndex;
-   }
-
-   return result;
-}
-
 // border colors (all)
 static __inline int IWIDGET_SetBorderColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_BORDERCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_BORDERCOLOR, rgb);
 }
 
 // active border color
@@ -660,7 +541,7 @@ static __inline int IWIDGET_GetActiveBorderColor(IWidget *po, RGBAVAL *prgb) {
    return IWIDGET_GetPropRGB(po, PROP_ACTIVE_BORDERCOLOR, prgb);
 }
 static __inline int IWIDGET_SetActiveBorderColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_ACTIVE_BORDERCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_ACTIVE_BORDERCOLOR, rgb);
 }
 
 // selected/active border color
@@ -668,7 +549,7 @@ static __inline int IWIDGET_GetSelectedActiveBorderColor(IWidget *po, RGBAVAL *p
    return IWIDGET_GetPropRGB(po, PROP_SACTIVE_BORDERCOLOR, prgb);
 }
 static __inline int IWIDGET_SetSelectedActiveBorderColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_SACTIVE_BORDERCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_SACTIVE_BORDERCOLOR, rgb);
 }
 
 // inactive border color
@@ -676,7 +557,7 @@ static __inline int IWIDGET_GetInactiveBorderColor(IWidget *po, RGBAVAL *prgb) {
    return IWIDGET_GetPropRGB(po, PROP_INACTIVE_BORDERCOLOR, prgb);
 }
 static __inline int IWIDGET_SetInactiveBorderColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_INACTIVE_BORDERCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_INACTIVE_BORDERCOLOR, rgb);
 }
 
 // selected/inactive border color
@@ -684,17 +565,17 @@ static __inline int IWIDGET_GetSelectedInactiveBorderColor(IWidget *po, RGBAVAL 
    return IWIDGET_GetPropRGB(po, PROP_SINACTIVE_BORDERCOLOR, prgb);
 }
 static __inline int IWIDGET_SetSelectedInactiveBorderColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_SINACTIVE_BORDERCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_SINACTIVE_BORDERCOLOR, rgb);
 }
 
 // selected border color (both)
 static __inline int IWIDGET_SetSelectedBorderColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_SELECTED_BORDERCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_SELECTED_BORDERCOLOR, rgb);
 }
 
 // foreground color (all)
 static __inline int IWIDGET_SetFGColor(IWidget *po, RGBVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_FGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_FGCOLOR, rgb);
 }
 
 // active foreground color
@@ -702,7 +583,7 @@ static __inline int IWIDGET_GetActiveFGColor(IWidget *po, RGBVAL *prgb) {
    return IWIDGET_GetPropRGB(po, PROP_ACTIVE_FGCOLOR, prgb);
 }
 static __inline int IWIDGET_SetActiveFGColor(IWidget *po, RGBVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_ACTIVE_FGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_ACTIVE_FGCOLOR, rgb);
 }
 
 // selected/active foreground color
@@ -710,7 +591,7 @@ static __inline int IWIDGET_GetSelectedActiveFGColor(IWidget *po, RGBVAL *prgb) 
    return IWIDGET_GetPropRGB(po, PROP_SACTIVE_FGCOLOR, prgb);
 }
 static __inline int IWIDGET_SetSelectedActiveFGColor(IWidget *po, RGBVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_SACTIVE_FGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_SACTIVE_FGCOLOR, rgb);
 }
 
 // inactive foreground color
@@ -718,7 +599,7 @@ static __inline int IWIDGET_GetInactiveFGColor(IWidget *po, RGBVAL *prgb) {
    return IWIDGET_GetPropRGB(po, PROP_INACTIVE_FGCOLOR, prgb);
 }
 static __inline int IWIDGET_SetInactiveFGColor(IWidget *po, RGBVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_INACTIVE_FGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_INACTIVE_FGCOLOR, rgb);
 }
 
 // selected/Inactive foreground color
@@ -726,17 +607,17 @@ static __inline int IWIDGET_GetSelectedInactiveFGColor(IWidget *po, RGBVAL *prgb
    return IWIDGET_GetPropRGB(po, PROP_SINACTIVE_FGCOLOR, prgb);
 }
 static __inline int IWIDGET_SetSelectedInactiveFGColor(IWidget *po, RGBVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_SINACTIVE_FGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_SINACTIVE_FGCOLOR, rgb);
 }
 
 // selected/both foreground color
 static __inline int IWIDGET_SetSelectedFGColor(IWidget *po, RGBVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_SELECTED_FGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_SELECTED_FGCOLOR, rgb);
 }
 
 // background colors (all)
 static __inline int IWIDGET_SetBGColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_BGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_BGCOLOR, rgb);
 }
 
 // active background color
@@ -744,7 +625,7 @@ static __inline int IWIDGET_GetActiveBGColor(IWidget *po, RGBAVAL *prgb) {
    return IWIDGET_GetPropRGB(po, PROP_ACTIVE_BGCOLOR, prgb);
 }
 static __inline int IWIDGET_SetActiveBGColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_ACTIVE_BGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_ACTIVE_BGCOLOR, rgb);
 }
 
 // selected/active background color
@@ -752,7 +633,7 @@ static __inline int IWIDGET_GetSelectedActiveBGColor(IWidget *po, RGBAVAL *prgb)
    return IWIDGET_GetPropRGB(po, PROP_SACTIVE_BGCOLOR, prgb);
 }
 static __inline int IWIDGET_SetSelectedActiveBGColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_SACTIVE_BGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_SACTIVE_BGCOLOR, rgb);
 }
 
 // inactive background color
@@ -760,7 +641,7 @@ static __inline int IWIDGET_GetInactiveBGColor(IWidget *po, RGBAVAL *prgb) {
    return IWIDGET_GetPropRGB(po, PROP_INACTIVE_BGCOLOR, prgb);
 }
 static __inline int IWIDGET_SetInactiveBGColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_INACTIVE_BGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_INACTIVE_BGCOLOR, rgb);
 }
 
 // selected/active background color
@@ -768,38 +649,37 @@ static __inline int IWIDGET_GetSelectedInactiveBGColor(IWidget *po, RGBAVAL *prg
    return IWIDGET_GetPropRGB(po, PROP_SINACTIVE_BGCOLOR, prgb);
 }
 static __inline int IWIDGET_SetSelectedInactiveBGColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_SINACTIVE_BGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_SINACTIVE_BGCOLOR, rgb);
 }
 
 // selected/both foreground color
 static __inline int IWIDGET_SetSelectedBGColor(IWidget *po, RGBAVAL rgb) {
-   return IWIDGET_SetProperty(po, PROP_SELECTED_BGCOLOR, (uint32)rgb);
+   return IWIDGET_SetProperty(po, PROP_SELECTED_BGCOLOR, rgb);
 }
 
 static __inline int IWIDGET_GetBGTransparency(IWidget *po, int *pnTrans) {
    return IWIDGET_GetPropInt(po, PROP_BGTRANSPARENCY, pnTrans);
 }
 static __inline int IWIDGET_SetBGTransparency(IWidget *po, int nTrans) {
-   return IWIDGET_SetProperty(po, PROP_BGTRANSPARENCY, (uint32)nTrans);
+   return IWIDGET_SetProperty(po, PROP_BGTRANSPARENCY, nTrans);
 }
 
 static __inline int IWIDGET_GetBorderTransparency(IWidget *po, int *pnTrans) {
    return IWIDGET_GetPropInt(po, PROP_BORDERTRANSPARENCY, pnTrans);
 }
 static __inline int IWIDGET_SetBorderTransparency(IWidget *po, int nTrans) {
-   return IWIDGET_SetProperty(po, PROP_BORDERTRANSPARENCY, (uint32)nTrans);
+   return IWIDGET_SetProperty(po, PROP_BORDERTRANSPARENCY, nTrans);
 }
 
 static __inline int IWIDGET_GetTransparency(IWidget *po, int *pnTrans) {
    return IWIDGET_GetPropInt(po, PROP_TRANSPARENCY, pnTrans);
 }
 static __inline int IWIDGET_SetTransparency(IWidget *po, int nTrans) {
-   return IWIDGET_SetProperty(po, PROP_TRANSPARENCY, (uint32)nTrans);
+   return IWIDGET_SetProperty(po, PROP_TRANSPARENCY, nTrans);
 }
 
-static __inline int IWIDGET_SetOpacity(IWidget *po, int nOpacity) {
-   return IWIDGET_SetTransparency(po, 255 - nOpacity);
-}
+#define IWIDGET_SetOpacity(p,v) IWIDGET_SetTransparency(p, 255 - (v))
+
 
 static __inline int IWIDGET_GetViewModel(IWidget *po, IModel **ppo) {
    return IWIDGET_GetPropPtr(po, PROP_VIEWMODEL, (void **)ppo);
@@ -826,18 +706,18 @@ static __inline int IWIDGET_SelectIndex(IWidget *po, int index) {
    return IWIDGET_SetProperty(po, PROP_SELECTINDEX, (uint32)index);
 }
 
-static __inline int IWIDGET_GetItemWidth(IWidget *po, int *pnItemWidth) {
-   return IWIDGET_GetPropertyEx(po, PROPEX_ITEMWIDTH, (int)sizeof(*pnItemWidth), pnItemWidth);
+static __inline int IWIDGET_GetItemWidth(IWidget *po, int *pnDelta) {
+   return IWIDGET_GetPropInt(po, PROP_ITEMWIDTH, pnDelta);
 }
-static __inline int IWIDGET_SetItemWidth(IWidget *po, int nItemWidth) {
-   return IWIDGET_SetPropertyEx(po, PROPEX_ITEMWIDTH, (int)sizeof(nItemWidth), &nItemWidth);
+static __inline int IWIDGET_SetItemWidth(IWidget *po, int v) {
+   return IWIDGET_SetProperty(po, PROP_ITEMWIDTH, (uint32)v);
 }
 
-static __inline int IWIDGET_GetItemHeight(IWidget *po, int *pnItemHeight) {
-   return IWIDGET_GetPropertyEx(po, PROPEX_ITEMHEIGHT, (int)sizeof(*pnItemHeight), pnItemHeight);
+static __inline int IWIDGET_GetItemHeight(IWidget *po, int *pnDelta) {
+   return IWIDGET_GetPropInt(po, PROP_ITEMHEIGHT, pnDelta);
 }
-static __inline int IWIDGET_SetItemHeight(IWidget *po, int nItemHeight) {
-   return IWIDGET_SetPropertyEx(po, PROPEX_ITEMHEIGHT, (int)sizeof(nItemHeight), &nItemHeight);
+static __inline int IWIDGET_SetItemHeight(IWidget *po, int v) {
+   return IWIDGET_SetProperty(po, PROP_ITEMHEIGHT, (uint32)v);
 }
 
 static __inline int IWIDGET_GetFlags(IWidget *po, uint32 *pdwFlags) {
@@ -848,13 +728,13 @@ static __inline int IWIDGET_SetFlags(IWidget *po, uint32 dwFlags) {
 }
 static __inline int IWIDGET_AddFlags(IWidget *po, uint32 dwFlagsToAdd) {
    uint32 dwFlags;
-   (void)IWIDGET_GetFlags(po, &dwFlags);
+   IWIDGET_GetFlags(po, &dwFlags);
    dwFlags |= dwFlagsToAdd;
    return IWIDGET_SetFlags(po, dwFlags);
 }
 static __inline int IWIDGET_RemoveFlags(IWidget *po, uint32 dwFlagsToRemove) {
    uint32 dwFlags;
-   (void)IWIDGET_GetFlags(po, &dwFlags);
+   IWIDGET_GetFlags(po, &dwFlags);
    dwFlags &= ~dwFlagsToRemove;
    return IWIDGET_SetFlags(po, dwFlags);
 }
@@ -945,7 +825,7 @@ static __inline int IWIDGET_SetScrollFillColor(IWidget *po, RGBVAL rgb) {
 }
 
 static __inline int IWIDGET_GetSoftkey(IWidget *po, uint16 skid, IWidget **ppo) {
-   return IWIDGET_GetProperty(po, skid, (uint32*)(void*)ppo);
+   return IWIDGET_GetProperty(po, skid, (uint32 *)ppo);
 }
 static __inline int IWIDGET_SetSoftkey(IWidget *po, uint16 skid, IWidget *piw) {
    return IWIDGET_SetProperty(po, skid, (uint32)piw);
@@ -1012,7 +892,7 @@ static __inline int IWIDGET_GetHintWidth(IWidget *po, int *pnWidth) {
    return IWIDGET_GetPropInt(po, PROP_HINT_WIDTH, pnWidth);
 }
 static __inline int IWIDGET_SetHintWidth(IWidget *po, int nWidth) {
-   return IWIDGET_SetProperty(po, PROP_HINT_WIDTH, (uint32)nWidth);
+   return IWIDGET_SetProperty(po, PROP_HINT_WIDTH, nWidth);
 }
 
 static __inline int IWIDGET_GetOffsetX(IWidget *po, int *pnValue) {
@@ -1060,9 +940,9 @@ static __inline int IWIDGET_SetLayoutStyle(IWidget *po, int nStyle) {
 static __inline int IWIDGET_SetFocusListener(IWidget *po, ModelListener *pml, PFNLISTENER pfn, void *pv) {
    
    IModel *pim = 0;
-   (void)IWIDGET_GetViewModel(po, &pim);
+   IWIDGET_GetViewModel(po, &pim);
    if (pim) {
-      (void)IMODEL_AddListenerEx(pim, pml, pfn, pv);
+      IMODEL_AddListenerEx(pim, pml, pfn, pv);
       IMODEL_Release(pim);
       return SUCCESS;
    }
@@ -1122,7 +1002,7 @@ static __inline int IWIDGET_SetInactiveTabWidth(IWidget *po, int v) {
 }
 
 static __inline int IWIDGET_GetClientRect(IWidget *po, AEERect *prc) {
-   return IWIDGET_GetProperty(po, PROP_CLIENTRECT, (uint32*)(void*)prc);
+   return IWIDGET_GetProperty(po, PROP_CLIENTRECT, (uint32*)prc);
 }
 
 static __inline int IWIDGET_SetGradientStyle(IWidget *po, uint16 nStyle) {
@@ -1146,10 +1026,10 @@ static __inline int IWIDGET_SetLineGap(IWidget *po, int nLineGap) {
    return IWIDGET_SetProperty(po, PROP_LINEGAP, (uint32)nLineGap);
 }
 
-static __inline int IWIDGET_SetPropertiesV(IWidget *piWidget, IResFile *piResFile, VaListPtrType args) {      
+static __inline int IWIDGET_SetPropertiesV(IWidget *piWidget, IResFile *piResFile, va_list* args) {      
    WResPropDesc desc;
    desc.piWidget = piWidget;   
-   desc.args = args;   
+   desc.args = (va_list *)args;   
    desc.piResFile = piResFile; 
    return (piWidget) ? IWIDGET_SetProperty(piWidget, PROP_APPLYWPROPS, (uint32)&desc) : EBADPARM;
 }
@@ -1158,7 +1038,7 @@ static __inline int IWIDGET_SetProperties(IWidget *piWidget, IResFile *piResFile
    int result;
    va_list args;
    va_start(args, piResFile);
-   result = IWIDGET_SetPropertiesV(piWidget, piResFile, VaListPtr_From_va_list(&args));
+   result = IWIDGET_SetPropertiesV(piWidget, piResFile, &args);
    va_end(args);
    return result;
 }
@@ -1196,7 +1076,7 @@ static __inline IXYContainer* IWIDGET_ContainerGetRaiseTo(IWidget *po, IWidget *
    RaiseDesc rd;
    rd.pixyTarget  = NULL;
    rd.piw         = piwRaised;
-   (void) IWIDGET_GetProperty(po, PROP_RAISE, (uint32*)(void*)&rd);
+   IWIDGET_GetProperty(po, PROP_RAISE, (uint32*)&rd);
    return rd.pixyTarget;
 }
 
@@ -1206,7 +1086,7 @@ static __inline int IWIDGET_SetBGImage(IWidget *po, IImage *pii) {
 }
 
 static __inline int IWIDGET_GetBGImage(IWidget *po, IImage **ppii) {
-   return IWIDGET_GetProperty(po, PROP_BGIMAGE, (uint32*)(void*)ppii);
+   return IWIDGET_GetProperty(po, PROP_BGIMAGE, (uint32*)ppii);
 }
 
 static __inline int IWIDGET_SetBGImageFlags(IWidget *po, uint32 dwFlags) {
@@ -1230,7 +1110,7 @@ static __inline int IWIDGET_SetBGImageParm(IWidget *po, int parm, int arg1, int 
    ip.parm = parm;
    ip.arg1 = arg1;
    ip.arg2 = arg2;
-   return IWIDGET_SetProperty(po, PROP_BGIMAGE_PARM, (uint32)&ip);
+   return IWIDGET_SetProperty(po, PROP_BGIMAGE_PARM, (uint32)&parm);
 }
 
 static __inline int IWIDGET_SetBGImageOffset(IWidget *po, int xOffset, int yOffset) {
@@ -1302,7 +1182,7 @@ static __inline int IWIDGET_GetChildVisibility(IWidget *po, IWidget *piwChild, b
    WidgetVis wv;
    wv.piw = piwChild;
    wv.bVisible = 0;
-   nErr = IWIDGET_GetProperty(po, PROP_VISIBLE, (uint32*)(void*)&wv);      
+   nErr = IWIDGET_GetProperty(po, PROP_VISIBLE, (uint32*)&wv);      
    *pbVisible = wv.bVisible;
    return nErr;
 }
@@ -1312,8 +1192,8 @@ static __inline boolean IWIDGET_IsVisible(IWidget *po) {
    boolean bVis = 0;
    IWidget *piwParent = 0;
    if (SUCCESS == IWIDGET_GetParentWidget(po, &piwParent)) {
-       (void) IWIDGET_GetChildVisibility(piwParent, po, &bVis);
-       (void) IWIDGET_Release(piwParent);
+       IWIDGET_GetChildVisibility(piwParent, po, &bVis);
+       IWIDGET_Release(piwParent);
    }
    return bVis;
 }
@@ -1322,9 +1202,10 @@ static __inline boolean IWIDGET_IsVisible(IWidget *po) {
 static __inline void IWIDGET_SetVisible(IWidget *po, boolean bVisible) {
    IWidget *piwParent = 0;
    if (SUCCESS == IWIDGET_GetParentWidget(po, &piwParent)) {
-       (void) IWIDGET_SetChildVisibility(piwParent, po, bVisible);
-       (void) IWIDGET_Release(piwParent);
+       IWIDGET_SetChildVisibility(piwParent, po, bVisible);
+       IWIDGET_Release(piwParent);
    }
 }
+
 
 #endif /* __AEEWPROPERTIES_H__ */

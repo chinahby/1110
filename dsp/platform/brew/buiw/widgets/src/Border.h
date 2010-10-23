@@ -8,7 +8,7 @@ GENERAL DESCRIPTION:
   Reproduction and/or distribution of this file without the
   written consent of QUALCOMM, Incorporated. is prohibited.
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright © 1999-2006 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -16,8 +16,7 @@ GENERAL DESCRIPTION:
 #define __BORDER_H__
 
 #include "WidgetBase.h"
-#include "ImageBase.h"
-
+#include "AEEContainer.h"
 
 
 #define RGBINDEX_INACTIVE    0     // index into rgb and width arrays
@@ -25,11 +24,37 @@ GENERAL DESCRIPTION:
 #define RGBINDEX_SINACTIVE   2     // index into rgb arrays
 #define RGBINDEX_SACTIVE     3     // index into rgb arrays 
 
+typedef void (*PFNINVALIDATE) (void *p, uint32 dwFlags);
+
 
 typedef struct BackImage BackImage;
 struct BackImage {
-   ImageBase      image;
+   IImage *       piImage;
+
+   PFNINVALIDATE  pfnInval;   
+   void *         pvInval;
+
+   boolean        bAnimating;
+
+   int            x;          // x offset
+   int            y;          // y offset
+   int            dx;         // dx size
+   int            dy;         // dy size
+   int            odx;        // original dx
+   int            ody;        // original dy
+   int            sdx;        // scaled dx
+   int            sdy;        // scaled dy
+   boolean        bScaled;    // set to true if the image has been scaled
+
+   int            nFrames;
+   uint32         nCurStep, nCurRep;
+   int            nCurFrame;  // which frame to draw
+
    uint32         dwFlags;
+   uint16         bdl, bdr, bdt, bdb;
+
+   IModel**       piViewModel;
+   uint32         dwAnimFlags;   // flags specific to animation
 };
 
 
@@ -100,7 +125,6 @@ struct Border {
    BackImage *    pBackImage;    // pointer to BackImage struct, if set
 
    IModel**       piViewModel;   // viewmodel of widget wrapped in border
-   IShell *       piShell;       // IShell (now needed for BackImage)
 };
 
 void     DynRGB_Ctor(DynRGB *me, RGBVAL rgbDef);
@@ -110,16 +134,15 @@ boolean  DynRGB_Get(DynRGB *me, int nIndex, RGBVAL *prgb);
 void     DynRGB_Collapse(DynRGB *me, RGBVAL rgb);
 boolean  DynRGB_Compare(DynRGB *me, int n1, int n2);
 
-void     Border_CtorZ            (Border *me, IShell *piShell, PFNINVALIDATE pfnInval, void *pvInval, WExtent *pExtent, boolean bCanTakeFocus, IModel **piViewModel);
-void     Border_Ctor             (Border *me, IShell *piShell, PFNINVALIDATE pfnInval, void *pvInval, WExtent *pExtent, boolean bCanTakeFocus, IModel **piViewModel);
+void     Border_CtorZ            (Border *me, PFNINVALIDATE pfnInval, void *pvInval, WExtent *pExtent, boolean bCanTakeFocus, IModel **piViewModel);
+void     Border_Ctor             (Border *me, PFNINVALIDATE pfnInval, void *pvInval, WExtent *pExtent, boolean bCanTakeFocus, IModel **piViewModel);
 void     Border_Dtor             (Border *me);
 boolean  Border_IntersectOpaque  (Border *me, AEERect *prcOut, const AEERect *prcIn);
 boolean  Border_HandleEvent      (Border *me, AEEEvent evt, uint16 wParam, uint32 dwParam);
 void     Border_Draw             (Border *me, ICanvas *piCanvas, int x, int y);
-void     Border_CalcPreferredExtent(Border *me, WExtent *pweOut, const WExtent *pweClientIn);
+void     Border_CalcPreferredExtent(Border *me, WExtent *pweOut, WExtent *pweClientIn);
 void     Border_AdjustDisplayClipRect(Border *me, ICanvas *piCanvas, int x, int y);
 void     Border_CalcClientRect   (Border *me);
-void     Border_GetClientRect    (Border *me, AEERect* prcClientOut, const WExtent* prcExtentIn);
 
 RGBVAL   Border_GetCurrentBorderColor (Border *me);
 RGBVAL   Border_GetCurrentBGColor     (Border *me);

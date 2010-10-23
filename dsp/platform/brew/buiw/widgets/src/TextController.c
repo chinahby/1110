@@ -9,7 +9,7 @@ GENERAL DESCRIPTION:
   Reproduction and/or distribution of this file without the written consent of
   QUALCOMM, Incorporated. is prohibited.
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright © 1999-2006 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -20,7 +20,7 @@ GENERAL DESCRIPTION:
 #include "StaticWidget.h"
 #include "ScrollWidget.h"
 #include "TextController.h"
-#include "AEETextWidget.h"
+#include "TextWidget.h"
 #include "AEEWProperties.h"
 #include "AEEHFont.h"
 #include "widget_res.h"
@@ -450,27 +450,47 @@ static boolean TextController_DefHandleEvent(IController *po, AEEEvent evt, uint
                case AVK_RIGHT:
                   {
                      int nErr = SUCCESS;
+                     IFont*   piFont = 0;
+                     IFontBidiUtil* pIFontBidiUtil = 0;
                      TextController_ClearMTSel(me);
                      ITEXTMODEL_GetTextInfo(me->piTextModel, &info);
 
-                     nErr = IWIDGET_GetCursorMovement(
-                           me->base.piw, 
-                           info.nSelEndCaret, 
-                           ( wParam==AVK_LEFT) ? MOVEMENT_CHARACTER_LEFT : MOVEMENT_CHARACTER_RIGHT, 
-                           &nCaret);
-
-                     if ( SUCCESS == nErr ) { 
-                        if ( info.nSelEndCaret != nCaret ) {
-                           ITEXTMODEL_SetSel(me->piTextModel, nCaret, nCaret);
-                           return TRUE;
-                        }
-                        else {
-                           // don't return TRUE if we can't move
-                           break;
+                     // get the font from the widget, and the font bidu util from the font
+                     nErr = IWIDGET_GetFont(me->base.piw, &piFont);
+                     if ( nErr == SUCCESS ) {
+                        IHFont *piHFont;
+                        AEECLSID  ciFontBidiUtil;
+                        nErr = IFONT_TO_IHFONT(piFont, &piHFont);
+                        if ( nErr == SUCCESS ) {
+                           nErr = IHFONT_GetFontBidiUtilClassId(piHFont, &ciFontBidiUtil);
+                           if ( nErr == SUCCESS ) {
+                              if ( me->pfbu == NULL || ciFontBidiUtil != me->ciFontBidiUtil ) {
+                                 RELEASEIF(me->pfbu);
+                                 nErr = ISHELL_CreateInstance(me->piShell, ciFontBidiUtil, (void **)&me->pfbu);
+                                 if ( nErr == SUCCESS ) {
+                                    me->ciFontBidiUtil = ciFontBidiUtil;
+                                 }
+                              }
+                              pIFontBidiUtil = me->pfbu;
+                           }
+                           RELEASEIF(piHFont);
                         }
                      }
+                     if (pIFontBidiUtil) {
+                        IFONTBIDIUTIL_MoveCaretIndex(me->pfbu, piFont, info.pwText, info.cchText, info.nSelEndCaret, (wParam==AVK_LEFT) ? -1 : 1, &nCaret);
+                     } else {
+                        // Check boundary condition
+                        if (((wParam==AVK_LEFT) && (info.nSelEndCaret <= 0)) ||
+                           ((wParam==AVK_RIGHT) && (info.nSelEndCaret >= info.cchText))) {
+                           RELEASEIF(piFont);
+                           return FALSE;
+                        }
+                        nCaret = (wParam==AVK_LEFT) ? info.nSelEndCaret-1 : info.nSelEndCaret+1;
+                     }
+                     RELEASEIF(piFont);
+                     ITEXTMODEL_SetSel(me->piTextModel, nCaret, nCaret);
+                     return TRUE;
                   }
-                  break;
    
                case AVK_UP:
                case AVK_DOWN:
@@ -481,33 +501,6 @@ static boolean TextController_DefHandleEvent(IController *po, AEEEvent evt, uint
                      TextController_ClearMTSel(me);
                      ITEXTMODEL_GetTextInfo(me->piTextModel, &info);
                      posStart = info.nSelEndCaret;
-
-                     // try using the CURSOR_MOVE property.
-                     {
-
-                        int nErr = SUCCESS;
-                        TextController_ClearMTSel(me);
-                        ITEXTMODEL_GetTextInfo(me->piTextModel, &info);
-
-                        nErr = IWIDGET_GetCursorMovement(
-                              me->base.piw, 
-                              info.nSelEndCaret, 
-                              ( wParam==AVK_UP) ? MOVEMENT_LINE_UP : MOVEMENT_LINE_DOWN, 
-                              &nCaret);
-
-                        if ( SUCCESS == nErr ) { 
-                           if ( info.nSelEndCaret != nCaret ) {
-                              ITEXTMODEL_SetSel(me->piTextModel, nCaret, nCaret);
-                              return TRUE;
-                           }
-                           else {
-                              // don't return TRUE if we can't move
-                              break;
-                           }
-                        }
-                     }
-
-                     // that didn't work...revert to the old method.
                      IWIDGET_GetProperty(me->base.piw, PROP_STARTLINE, (uint32*)&posStart);
                      pos = posStart;
                      col = info.nSelEndCaret - posStart;
@@ -645,9 +638,11 @@ void TextController_Dtor(TextController *me)
    if (me->wParamKey) {
       ISHELL_CancelTimer(me->piShell, (PFNNOTIFY)TextController_KeyHeldTimerCB, (void *)me);
    }
+
    RELEASEIF(me->piShell);
    RELEASEIF(me->piTextModel);
    RELEASEIF(me->piViewModel);
+   RELEASEIF(me->pfbu);
 }
 
 
@@ -664,6 +659,9 @@ void TextController_Ctor(TextController *me, AEEVTBL(IController) *pvt, IShell *
 
    me->nMode   = AEE_TMODE_MULTITAP_LC;
    me->avkMode = AVK_STAR;
+
+
+   me->pfbu = GetFontBidiUtil(piShell);
 
    me->nMaskTimeout = MTTIMEOUT;
 }

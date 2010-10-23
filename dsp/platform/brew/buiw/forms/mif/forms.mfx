@@ -5,10 +5,10 @@
 		<Text>QUALCOMM Incorporated</Text>
 	</String>
 	<String Id="7" Name="IDS_STRING_7">
-		<Text>Copyright 2007</Text>
+		<Text>Copyright 2006</Text>
 	</String>
 	<String Id="8" Name="IDS_STRING_8">
-		<Text>1.4.3.468068</Text>
+		<Text>1.3.0.06 U01</Text>
 	</String>
 </Strings>
 <BREWMif>

@@ -8,7 +8,7 @@ GENERAL DESCRIPTION:
   Reproduction and/or distribution of this file without the
   written consent of QUALCOMM, Incorporated. is prohibited.
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright © 1999-2006 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -86,19 +86,6 @@ boolean BitmapWidget_HandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, uint3
    }
 
    switch(evt) {
-      case EVT_WDG_GETPROPERTY:
-         if (wParam == PROP_TRANSP_COLOR) {
-            if (dwParam) {
-               *(uint32 *)dwParam = (uint32)me->rgbTransp;
-            }
-         } else if (wParam == PROP_FLAGS){
-            if (dwParam) {
-               *(uint32 *)dwParam = (uint32)me->dwFlags;
-            }
-         } else {
-            break;
-         }
-         return TRUE;
 
       case EVT_WDG_SETPROPERTY:
          if (wParam == PROP_TRANSP_COLOR) {
@@ -263,12 +250,12 @@ uint32 BitmapWidget_Release(IWidget *po)
 }
 
 void BitmapWidget_Ctor(BitmapWidget *me, AEEVTBL(IWidget) *pvt, 
-                       IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler)
+                       IModule *piModule, PFNHANDLER pfnDefHandler)
 {
    // contruct base
    WidgetBase_Ctor(&me->base, pvt, piModule, DEFHANDLER(BitmapWidget_HandleEvent));
 
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.extent, FALSE, &WBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->base.extent, FALSE, &WBASE(me)->piViewModel);
 
    // construct derived members
    pvt->Release            = BitmapWidget_Release;
@@ -314,7 +301,7 @@ int BitmapWidget_New(IWidget **ppo, IShell *piShell, IModule *piModule)
       return ENOMEMORY;
    }
 
-   BitmapWidget_Ctor(me, GETVTBL(me,IWidget), piShell, piModule, 0);
+   BitmapWidget_Ctor(me, GETVTBL(me,IWidget), piModule, 0);
    nErr = BitmapWidget_Initialize(me, piShell);
 
    if (!nErr) {

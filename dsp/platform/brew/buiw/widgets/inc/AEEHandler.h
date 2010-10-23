@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -50,7 +50,7 @@ typedef struct {
 /////////////////////////////////////////////////////////////////////////////
 // IHandler interface
 
-#include "bid/AEEIID_HANDLER.bid"
+#include "bid\AEEIID_HANDLER.bid"
 
 typedef struct IHandler IHandler;
 

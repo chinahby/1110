@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -298,7 +298,7 @@ void CardContainer_SetExtent(IWidget *po, WExtent *pe)
 void CardContainer_Ctor(CardContainer *me, AEEVTBL(ICardContainer) *pvt, 
                         IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler)
 {
-   ContainerBase_Ctor(&me->base, (AEEVTBL(IContainer)*) pvt, piShell, piModule, 
+   ContainerBase_Ctor(&me->base, (AEEVTBL(IContainer)*) pvt, piModule, 
                       pfnDefHandler ? pfnDefHandler : (PFNHANDLER)CardContainer_DefHandleEvent,
                       WidgetNode_NewForCard, 0/*DefDoLayout*/);
 

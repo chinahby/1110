@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -359,9 +359,8 @@ void ConstraintContainer_Invalidate(IConstraintContainer *po, IWidget *piw, cons
    BASE_FROM_CONTAINER;
    ConstraintWidgetNode *node;
 
-   if (me->fInLayout) {
+   if (!me->fEnableLayout || me->fInLayout)
       return;
-   }
 
    if (0 == (dwFlags & (ICIF_EXTENT|ICIF_REDRAW)) 
        && SUCCESS == ConstraintWidgetNode_FindWidget(&CBASE(me)->head, piw, &node)
@@ -413,9 +412,9 @@ void ConstraintContainer_GetPreferredExtent(IWidget *po, WExtent *pwe)
 /////////////////////////////////////////////////////////////////
 // ConstraintContainer concrete inplementation
 void ConstraintContainer_Ctor(ConstraintContainer *me, AEEVTBL(IConstraintContainer) *pvt, 
-                              IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler)
+                                  IModule *piModule, PFNHANDLER pfnDefHandler)
 {
-   ContainerBase_Ctor(&me->base, (AEEVTBL(IContainer) *)pvt, piShell, piModule, 
+   ContainerBase_Ctor(&me->base, (AEEVTBL(IContainer) *)pvt, piModule, 
                       pfnDefHandler ? pfnDefHandler : (PFNHANDLER)ConstraintContainer_DefHandleEvent,
                       (PFNMKNODE)WidgetNode_ForConstraint, (PFNLAYOUT)ConstraintContainer_doLayout);
 
@@ -428,7 +427,7 @@ void ConstraintContainer_Ctor(ConstraintContainer *me, AEEVTBL(IConstraintContai
 }
 
 
-int ConstraintContainer_New(IConstraintContainer **ppo, IShell *piShell, IModule *piModule)
+int ConstraintContainer_New(IConstraintContainer **ppo, IModule *piModule)
 {
    ConstraintContainer *me = MALLOCREC_VTBL(ConstraintContainer, IConstraintContainer);
 
@@ -437,7 +436,7 @@ int ConstraintContainer_New(IConstraintContainer **ppo, IShell *piShell, IModule
    if (!me)
       return ENOMEMORY;
 
-   ConstraintContainer_Ctor(me, GETVTBL(me,IConstraintContainer), piShell, piModule, 0);
+   ConstraintContainer_Ctor(me, GETVTBL(me,IConstraintContainer), piModule, 0);
    return SUCCESS;
 }
 

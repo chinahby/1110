@@ -12,7 +12,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -26,7 +26,7 @@
 #include "AEETextModel.h"
 #include "AEEWProperties.h"
 
-#include "bid/AEECLSID_TEXTWIDGET.bid"
+#include "bid\AEECLSID_TEXTWIDGET.bid"
 
 // text widget flags
 #define TWF_MULTILINE            1
@@ -210,14 +210,6 @@ Description:
    The text widget is also attached to a view model, which will send scroll events
    (with 'evCode' set to EVT_MDL_SCROLL_CHANGE) to other objects registered with
    the text widget's view (i.e. scroll bars, etc). 
-
-   Note: Text entry keys are handled (absorbed) by the TextWidget even if they did
-   not result in a visible change to the widget or data change in the model. For instance
-   when the cursor is at the beginning of text the CLR key will be 
-   absorbed (TRUE wil be returned) but will not affect the cursor or current focus 
-   of the widget.  If an application wishes to act different in these situations, 
-   the cursor position of the TextWidget can be analyzed, and if necessary the key can be 
-   handled by the application instead.
    
    To create a text widget, an application would do the following:
 ===pre>
@@ -292,20 +284,8 @@ EVT_WDG_SETPROPERTY:  The text widget responds to this event by attempting to se
                                                      effect otherwise.
                           PROP_LINEGAP           --  Sets the spacing between lines of text.
                           PROP_FGCOLOR           --  Sets the color of the text.
-                          PROP_SELECTED_BGCOLOR  --  Sets the text background color for the selected widget
-                          PROP_SELECTED_FGCOLOR  --  Sets the text color for the selected widget
-                          PROP_TEXT_SELECTED_FGCOLOR -- Sets the text color for the selected text in a
-                                                     text widget
-                          PROP_TEXT_SACTIVE_FGCOLOR -- Sets the text color for the selected text in a
-                                                     text widget when the widget is active
-                          PROP_TEXT_SINACTIVE_FGCOLOR -- Sets the text color for the selected text in a 
-                                                     text widget when the widget is inactive
-                          PROP_TEXT_SELECTED_BGCOLOR -- Sets the background text color for the selected text
-                                                     in a text widget
-                          PROP_TEXT_SACTIVE_BGCOLOR -- Sets the background text color for the selected text 
-                                                     in a text widget when the widget is active
-                          PROP_TEXT_SINACTIVE_BGCOLOR -- Sets the background text color for the selected text  
-                                                     in a text widget when the widget is inactive
+                          PROP_SELECTED_BGCOLOR  --  Sets the selection color of the text
+                          PROP_SELECTED_FGCOLOR  --  Sets the selected text color
                           PROP_FLAGS             --  Sets various flags that effect how the text
                                                      will be displayed.
                           PROP_PASSWORDMASKCHAR  --  Sets the replacement character that will be
@@ -313,8 +293,6 @@ EVT_WDG_SETPROPERTY:  The text widget responds to this event by attempting to se
                                                      designated as a password field.
                           PROP_CARETWIDGET       --  Sets the caret widget.
                           PROP_TEXTCONTROLLERMODEKEY -- Sets the text controller's mode change key.
-                          PROP_ELLIPSIS          --  Allows caller to override what character
-                                                     is used for ellipsis truncation.  
                       
 EVT_WDG_GETPROPERTY:  The text widget responds to this event by attempting to retrieve the
                       property identified by the 'wParam' parameter.  The text widget
@@ -329,18 +307,6 @@ EVT_WDG_GETPROPERTY:  The text widget responds to this event by attempting to re
                                                      property.
                           PROP_LINEGAP           --  Retrieves the spacing between lines of text.
                           PROP_FGCOLOR           --  Retrieves the text color.
-                          PROP_TEXT_SELECTED_FGCOLOR -- Retrieves the text color for the selected text in a
-                                                     text widget
-                          PROP_TEXT_SACTIVE_FGCOLOR -- Retrieves the text color for the selected text in a
-                                                     text widget when the widget is active
-                          PROP_TEXT_SINACTIVE_FGCOLOR -- Retrieves the text color for the selected text in a 
-                                                     text widget when the widget is inactive
-                          PROP_TEXT_SELECTED_BGCOLOR -- Retrieves the background text color for the selected text
-                                                     in a text widget
-                          PROP_TEXT_SACTIVE_BGCOLOR -- Retrieves the background text color for the selected text 
-                                                     in a text widget when the widget is active
-                          PROP_TEXT_SINACTIVE_BGCOLOR -- Retrieves the background text color for the selected text  
-                                                     in a text widget when the widget is inactive
                           PROP_FLAGS             --  Retrieves the flags that dictate how the
                                                      text will be displayed.
                           PROP_VIEWMODEL         --  Retrieves the view model attached to the text widget, 
@@ -348,8 +314,6 @@ EVT_WDG_GETPROPERTY:  The text widget responds to this event by attempting to re
                           PROP_CARETPOS          --  Retrieves the current caret position.
                           PROP_CARETWIDGET       --  Retrieves the caret widget.
                           PROP_TEXTCONTROLLERMODEKEY -- Retrieves the text controller's mode change key.
-                          PROP_ELLIPSIS          --  Retrieves the character used to indicate
-                                                     text has been truncated.
                           PROP_TEXTRECTS         --  Retrieves an array of rectangles that represent the 
                                                      display location of a range of text.
 ===/pre>   
@@ -555,21 +519,8 @@ PROP_TEXTCONTROLLERMODEKEY
 
                              Property Value: AVKType
 
-
-PROP_ELLIPSIS:           This property contains the character to be used to indicate when 
-                         text has been truncated within a text widget.  If not set, or set 
-                         to NULL, the text widget will make its best guess at determining 
-                         the code point for the ellipsis character based on the device encoding.  
-                         Applications may set this property to override this behavior and force 
-                         the widget to use a particular character as the ellipsis, such as 
-                         0x2026, the Unicode code point for the ellipsis.  This may be useful 
-                         for applications that use Unicode fonts that include the ellipsis
-                         character but run on a device with a non-Unicode device encoding.
-
-                             Property Value:  AECHAR
-
-
-PROP_TEXTRECTS           This property gets an array of rectangles that represent the display 
+PROP_TEXTRECTS
+                         This property gets an array of rectangles that represent the display 
                          location of a range of text.
 
                              Property Value: WidgetTextRects*

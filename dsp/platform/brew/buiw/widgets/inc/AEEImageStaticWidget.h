@@ -11,7 +11,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -28,7 +28,7 @@
 #include "AEEStaticWidget.h"
 #include "AEEWModel.h"
 
-#include "bid/AEECLSID_IMAGESTATICWIDGET.bid"
+#include "bid\AEECLSID_IMAGESTATICWIDGET.bid"
 
 
 // @@@ to set the PROP_FLAGS flags for the image and static widget, you must

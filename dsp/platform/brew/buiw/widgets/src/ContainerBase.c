@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -26,6 +26,7 @@
 #define FARF_INVAL   0
 #define FARF_DRAW    0
 #define FARF_FOCUS   0
+#define FARF_INVAL   0
 #define FARF_TEST    0
 
 #ifndef FARF
@@ -34,8 +35,8 @@
 
 
 
-#define BASE_FROM_CONTAINER ContainerBase *me = (ContainerBase *)(void*)po
-#define BASE_FROM_WIDGET    ContainerBase *me = (ContainerBase *)(void*)po->pMe
+#define BASE_FROM_CONTAINER ContainerBase *me = (ContainerBase *)po
+#define BASE_FROM_WIDGET    ContainerBase *me = (ContainerBase *)po->pMe
 
 
 static int ContainerBase_LocateRaisedPosition(IContainer *po, WidgetNode *pNode, WidgetPos *pwpRel)
@@ -60,7 +61,7 @@ static int ContainerBase_LocateRaisedPosition(IContainer *po, WidgetNode *pNode,
    }
 
    // Get the absolute position of the raise container
-   if (!nErr && piwRef != NULL) {
+   if (!nErr) {
       IWIDGET_GetParent(piwRef, &picParent);
       if (picParent) {
          nErr = ICONTAINER_Locate(picParent, piwRef, NULL, &rcContainer);
@@ -107,6 +108,7 @@ void ContainerBase_DoLayout(ContainerBase *me, WidgetNode *pn, AEERect *prc)
             }
          }
       }
+
    }
 }
 
@@ -144,6 +146,9 @@ void ContainerBase_Dtor(ContainerBase *me)
    // Free all nodes
    WidgetNode *node = &me->head;
    while (node->pNext != node) {
+      if (node->piWidget) {
+         IWIDGET_SetParent(node->piWidget, NULL);
+      }
       WidgetNode_Delete(node->pNext);
    }
 
@@ -194,7 +199,7 @@ int ContainerBase_QueryInterface(IContainer *po, AEECLSID id, void **ppo)
 static __inline boolean WidgetNode_CanTakeFocus(WidgetNode *pn) {
    boolean bFocus = FALSE;
    if (pn->fVisible) 
-      (void)IWIDGET_CanTakeFocus(pn->piWidget, &bFocus);
+      IWIDGET_CanTakeFocus(pn->piWidget, &bFocus);
    return bFocus;
 }
 
@@ -214,7 +219,7 @@ static WidgetNode *FindFocusNode(WidgetNode *pnHead, WidgetNode *pn, boolean bRe
 // object stays at same reference count
 static __inline IWidget *IContainer_GetIWidget(IContainer *pic) {
    IWidget *piwc = 0;
-   (void)ICONTAINER_QueryInterface(pic, AEEIID_WIDGET, (void**)&piwc);
+   ICONTAINER_QueryInterface(pic, AEEIID_WIDGET, (void**)&piwc);
    ICONTAINER_Release(pic);
    return piwc;
 }
@@ -223,8 +228,8 @@ boolean IWidget_FindInContainmentTree(IWidget *piw, IWidget *piwQueryContainer)
 {
    boolean bFound = 0;
    ADDREFIF(piw);
- 
-   while (piw && !bFound) { 
+
+   while (piw && !bFound) {
       IContainer *pic = 0;
       IWIDGET_GetParent(piw, &pic);
       RELEASEIF(piw);      // release the old piw
@@ -400,7 +405,7 @@ boolean ContainerBase_SetProperty(ContainerBase* me, uint16 wParam, uint32 dwPar
 
       // make sure we are actually passed an IXYContainer
       if (pDesc->pixyTarget &&
-          SUCCESS != ICONTAINER_QueryInterface(CAST(IContainer*,pDesc->pixyTarget), AEEIID_XYCONTAINER, (void**)&picTemp)) {
+          SUCCESS != ICONTAINER_QueryInterface((IContainer*)pDesc->pixyTarget, AEEIID_XYCONTAINER, (void**)&picTemp)) {
          return FALSE;
       }
 
@@ -408,27 +413,27 @@ boolean ContainerBase_SetProperty(ContainerBase* me, uint16 wParam, uint32 dwPar
 
       // Remove the widget from its previous raise container
       if (node->pixyRaise) {
-         (void)IXYCONTAINER_Remove(node->pixyRaise, pDesc->piw);
+         IXYCONTAINER_Remove(node->pixyRaise, pDesc->piw);
          // Reset the parent
-         IWIDGET_SetParent(pDesc->piw, CAST(IContainer*,me));
+         IWIDGET_SetParent(pDesc->piw, (IContainer*)me);
          node->pixyRaise = NULL;
       } 
 
       // We have to invalidate our own area while the child widget is unraised. Here is a good spot
-      ICONTAINER_Invalidate(CAST(IContainer*,me),  node->piWidget, NULL, 0);
+      ICONTAINER_Invalidate((IContainer*)me,  node->piWidget, NULL, 0);
 
       // If someone is trying to raise the child to its original parent (me)
       // then we don't need to do anything
-      if (pDesc->pixyTarget && pDesc->pixyTarget != CAST(IXYContainer*, me)) {
+      if (pDesc->pixyTarget && pDesc->pixyTarget != (IXYContainer*)me) {
          WidgetPos wpRel;
          node->pixyRaise = pDesc->pixyTarget;
 
          // add the widget to the raise container
-         (void)ContainerBase_LocateRaisedPosition(CAST(IContainer*,me), node, &wpRel); 
-         (void)IXYCONTAINER_Insert(node->pixyRaise, node->piWidget, WIDGET_ZTOPMOST, &wpRel);
+         ContainerBase_LocateRaisedPosition((IContainer*)me, node, &wpRel); 
+         IXYCONTAINER_Insert(node->pixyRaise, node->piWidget, WIDGET_ZTOPMOST, &wpRel);
 
          // restore the parent 
-         IWIDGET_SetParent(pDesc->piw, CAST(IContainer*,me));
+         IWIDGET_SetParent(pDesc->piw, (IContainer*)me);
       }
       return TRUE;
    }
@@ -438,7 +443,7 @@ boolean ContainerBase_SetProperty(ContainerBase* me, uint16 wParam, uint32 dwPar
       // if the node is currently hidden
       if (SUCCESS == WidgetNode_FindWidget(&CBASE(me)->head, ((WidgetVis*)dwParam)->piw, &node)) {
          node->fVisible = ((WidgetVis*)dwParam)->bVisible;
-         ICONTAINER_Invalidate(CAST(IContainer*,me), node->piWidget, NULL, 0);
+         ICONTAINER_Invalidate((IContainer*)me, node->piWidget, NULL, 0);
       }
       return (node != NULL);
    }
@@ -447,11 +452,6 @@ boolean ContainerBase_SetProperty(ContainerBase* me, uint16 wParam, uint32 dwPar
       me->fBroadcast    = 0 != (dwParam & CWF_BROADCAST);
       me->fNoRouteFocus = 0 != (dwParam & CWF_NOROUTEFOCUS);
       return TRUE;
-   case PROP_LAYOUTFLAGS:
-      me->nLayoutFlags = (int)dwParam;
-      return TRUE;
-   default:
-      break;
    }
 
    // Not handled
@@ -487,7 +487,7 @@ boolean ContainerBase_GetProperty(ContainerBase* me, uint16 wParam, uint32 dwPar
             return FALSE;
       }
       case PROP_VIEWMODEL:
-         (void)ContainerBase_GetViewModel(me, (IModel**)dwParam);
+         ContainerBase_GetViewModel(me, (IModel**)dwParam);
          return TRUE;
    
       case PROP_FLAGS: {
@@ -504,11 +504,6 @@ boolean ContainerBase_GetProperty(ContainerBase* me, uint16 wParam, uint32 dwPar
          *((uint32 *)dwParam) = dwFlags;
          return TRUE;  
       }
-      case PROP_LAYOUTFLAGS:
-         *((uint32 *)dwParam) = (uint32) me->nLayoutFlags;
-         return TRUE;
-      default:
-         break;
    }
 
    // Not handled
@@ -621,7 +616,7 @@ boolean ContainerBase_DefHandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, u
    }
 
    if (!me->pFocus && evt == EVT_WDG_SETFOCUS && wParam != 0) {
-      (void)ContainerBase_MoveFocus(me, 0, (IWidget*)WIDGET_FOCUS_FIRST);
+      ContainerBase_MoveFocus(me, 0, (IWidget*)WIDGET_FOCUS_FIRST);
    }
 
    if (evt == EVT_WDG_MOVEFOCUS) {
@@ -663,7 +658,6 @@ boolean ContainerBase_DefHandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, u
 
 void ContainerBase_GetPreferredExtent(IWidget *po, WExtent *pwe)
 {
-   PARAM_NOT_REF(po)
    SETWEXTENT(pwe, 0, 0);
 }
 
@@ -685,8 +679,8 @@ void ContainerBase_SetExtent(IWidget *po, WExtent *pwe)
       AEERect rc;
       rc.x = 0;
       rc.y = 0;
-      rc.dx = (int16)MAX(pwe->width, eOld.width);
-      rc.dy = (int16)MAX(pwe->height, eOld.height);
+      rc.dx = MAX(pwe->width, eOld.width);
+      rc.dy = MAX(pwe->height, eOld.height);
       ICONTAINER_Invalidate(me->piParent, po, &rc, ICIF_EXTENT);
    }
 
@@ -730,7 +724,7 @@ void ContainerBase_Draw(IWidget *po, ICanvas *piCanvas, int x, int y)
 
    // Get clip from display
    // rcDisp is in SCREEN coordinates
-   (void)ICANVAS_GetClipRect(piCanvas, &rcDisp);
+   ICANVAS_GetClipRect(piCanvas, &rcDisp);
 
    // optimization #1
    // after Border_AdjustDisplayClipRect, rectangle may be empty
@@ -740,8 +734,8 @@ void ContainerBase_Draw(IWidget *po, ICanvas *piCanvas, int x, int y)
 
    // convert rcDisp to CLIENT coordinates
    rcClient = rcDisp;
-   rcClient.x -= (int16)x + me->border.rcClient.x;
-   rcClient.y -= (int16)y + me->border.rcClient.y;
+   rcClient.x -= x + me->border.rcClient.x;
+   rcClient.y -= y + me->border.rcClient.y;
 
    // optimization #2
    // walk nodes from top to bottom and mark ones that need to be drawn
@@ -782,19 +776,19 @@ void ContainerBase_Draw(IWidget *po, ICanvas *piCanvas, int x, int y)
       // Get the node rectangle
       rcDraw = node->rc;
       // convert to screen coords
-      rcDraw.x += (int16)x + me->border.rcClient.x;
-      rcDraw.y += (int16)y + me->border.rcClient.y;
+      rcDraw.x += x + me->border.rcClient.x;
+      rcDraw.y += y + me->border.rcClient.y;
 
       // intersect the node rect w/ display clip rect
       if (IntersectRect(&rcClip, &rcDraw, &rcDisp)) {
          // Set the clip to intersection of the node rect and the display clip
-         (void)ICANVAS_SetClipRect(piCanvas, &rcClip);
+         ICANVAS_SetClipRect(piCanvas, &rcClip);
          // And draw it
          IWIDGET_Draw(node->piWidget, piCanvas, rcDraw.x, rcDraw.y);
          FARF(DRAW, ("########## IWIDGET_Draw(%lx) %d,%d", node->piWidget, rcDraw.x, rcDraw.y));
       }
 #else
-      (void)ICANVAS_SetClipRect(piCanvas, &node->rcDraw);
+      ICANVAS_SetClipRect(piCanvas, &node->rcDraw);
       // And draw it
       IWIDGET_Draw(node->piWidget, piCanvas, 
                    node->rc.x + x + me->border.rcClient.x, 
@@ -820,7 +814,7 @@ boolean ContainerBase_IntersectOpaque(IWidget *po, AEERect *prcResult, const AEE
    }
 
    SETAEERECT(&rc, 0, 0, me->extent.width, me->extent.height);
-   (void)IntersectRect(&rcCompare, prcIn, &rc);
+   IntersectRect(&rcCompare, prcIn, &rc);
    
    WNODE_ENUM_FWD(node, &me->head) {
       if (node->fVisible
@@ -844,7 +838,7 @@ int ContainerBase_GetModel(IWidget *po, AEECLSID iid, IModel **ppwm)
    BASE_FROM_WIDGET;
    
    if (me->piModel) {
-      return IQI_QueryInterface(CAST(IQueryInterface *,me->piModel), iid, (void**)ppwm);
+      return IQI_QueryInterface((IQueryInterface *)me->piModel, iid, (void**)ppwm);
    } else {
       *ppwm = 0;
       return EFAILED;
@@ -917,14 +911,14 @@ boolean ContainerBase_CalcInvalidRectForNode(ContainerBase *me, WidgetNode *node
    if (dwFlags & ICIF_EXTENT) {
       WExtent extent;
       IWIDGET_GetExtent(piw, &extent);
-      prcInvalid->dx = (int16)MAX(node->rc.dx, extent.width);
-      prcInvalid->dy = (int16)MAX(node->rc.dy, extent.height);
+      prcInvalid->dx = MAX(node->rc.dx, extent.width);
+      prcInvalid->dy = MAX(node->rc.dy, extent.height);
       if (prcInWidget) {
-         prcInvalid->dx = (int16)MAX(prcInvalid->dx, prcInWidget->dx);
-         prcInvalid->dy = (int16)MAX(prcInvalid->dy, prcInWidget->dy);
+         prcInvalid->dx = MAX(prcInvalid->dx, prcInWidget->dx);
+         prcInvalid->dy = MAX(prcInvalid->dy, prcInWidget->dy);
       }
-      node->rc.dx = (int16)extent.width;
-      node->rc.dy = (int16)extent.height;
+      node->rc.dx = extent.width;
+      node->rc.dy = extent.height;
    }
 
    // If the widget isn't visible, then there's no need to continue figuring out the
@@ -937,7 +931,7 @@ boolean ContainerBase_CalcInvalidRectForNode(ContainerBase *me, WidgetNode *node
    {  // Constrain invalidation request to my size
       AEERect rcMe;
       SETAEERECT(&rcMe, 0, 0, me->extent.width, me->extent.height);
-      (void)IntersectRect(prcInvalid, prcInvalid, &rcMe);   
+      IntersectRect(prcInvalid, prcInvalid, &rcMe);   
    }
 
    // Remember this to look for opaque area under invalid widget
@@ -1058,13 +1052,13 @@ void ContainerBase_DefDoLayout(ContainerBase *me, WidgetNode *pNode, AEERect *pr
       WExtent extent;
       IWIDGET_GetExtent(pNode->piWidget, &extent);
 
-      pNode->rc.dx = (int16)extent.width;
-      pNode->rc.dy = (int16)extent.height;
+      pNode->rc.dx = extent.width;
+      pNode->rc.dy = extent.height;
 
       prcInvalid->x  = pNode->rc.x;
       prcInvalid->y  = pNode->rc.y;
-      prcInvalid->dx = (int16)MAX(pNode->rc.dx, extent.width);
-      prcInvalid->dy = (int16)MAX(pNode->rc.dy, extent.height);
+      prcInvalid->dx = MAX(pNode->rc.dx, extent.width);
+      prcInvalid->dy = MAX(pNode->rc.dy, extent.height);
 
    } else {
       *prcInvalid = me->border.rcClient;
@@ -1081,12 +1075,6 @@ void ContainerBase_LayoutInvalidate(ContainerBase *me)
          ICONTAINER_Invalidate(me->piParent, &me->widget, &rc, 0);
       }
    }
-   else if (!me->fEnableLayout && me->piParent) {
-      // this is somewhat rough because we'd really like to pass an invalidate rect up instead of
-      // NULL, but we'd have to do a layout to figure it out.  The parent will have to figure out
-      // what it meant if the ICIF_DEFER flag is on.
-      ICONTAINER_Invalidate(me->piParent, &me->widget, NULL, ICIF_DEFER);
-   }
 }
 
 void ContainerBase_Invalidate(IContainer *po, IWidget *piw, const AEERect *prcInWidget, uint32 dwFlags)
@@ -1099,7 +1087,7 @@ void ContainerBase_Invalidate(IContainer *po, IWidget *piw, const AEERect *prcIn
 
    // DoLayout also checks the disabled flag for invalidation, but adding the check here avoids
    // bubbling invalidation up the tree
-   if (me->fInLayout || SUCCESS != WidgetNode_FindWidget(&me->head, piw, &pn)) {
+   if (!me->fEnableLayout || me->fInLayout || SUCCESS != WidgetNode_FindWidget(&me->head, piw, &pn)) {
       return;
    }
 
@@ -1108,22 +1096,6 @@ void ContainerBase_Invalidate(IContainer *po, IWidget *piw, const AEERect *prcIn
    } else {
       SETAEERECT(&rcInvalid, prcInWidget->x + pn->rc.x, prcInWidget->y + pn->rc.y,
                   prcInWidget->dx, prcInWidget->dy);
-   }
-
-   if (!me->fEnableLayout || (dwFlags & ICIF_DEFER)) {    
-      dwFlags &= ~ICIF_EXTENT;         // extent changes become content changes
-      dwFlags |= ICIF_DEFER;           // in case it's not already appended
-
-      if (pn->pixyRaise) {
-         IXYCONTAINER_Invalidate(pn->pixyRaise, pn->piWidget, prcInWidget, dwFlags);
-      }
-      else if (me->piParent) {
-         // this is where you'd insert dirty bit logic because you'd want to store the fact that you
-         // would have done a layout but couldn't because it's disabled, so you'll just pass up the 
-         // 0 content change flag      
-         ICONTAINER_Invalidate(me->piParent, &me->widget, &rcInvalid, dwFlags);
-      }
-      return;
    }
 
    if (dwFlags & ICIF_EXTENT) {
@@ -1206,13 +1178,14 @@ void ContainerBase_WidgetNodeRemove(ContainerBase *me, WidgetNode *pn)
 {
    // Tell widget and parent it's losing focus if it had it
    if (me->pFocus && me->pFocus->piWidget == pn->piWidget) {
-      (void)IWIDGET_HandleEvent(&me->widget, EVT_WDG_FOCUSCANCEL, 0, (uint32)pn->piWidget);
+      IWIDGET_HandleEvent(&me->widget, EVT_WDG_FOCUSCANCEL, 0, (uint32)pn->piWidget);
       IWIDGET_SetFocus(pn->piWidget, 0);
       me->pFocus = NULL;
       me->pFocusPress = NULL;
    }
 
-   // destroy node
+   // de-parent widget and destroy node
+   IWIDGET_SetParent(pn->piWidget, NULL);
    WidgetNode_Delete(pn);
 
    ContainerBase_LayoutInvalidate(me);
@@ -1241,7 +1214,7 @@ IWidget *ContainerBase_GetWidget(IContainer *po, IWidget *piw, boolean bNext, bo
 }
 
 void ContainerBase_Ctor(ContainerBase *me, AEEVTBL(IContainer) *pvt, 
-                        IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler,
+                        IModule *piModule, PFNHANDLER pfnDefHandler,
                         PFNMKNODE pfnMkNode, PFNLAYOUT pfnLayout)
 {
    me->pvt = pvt;
@@ -1250,7 +1223,7 @@ void ContainerBase_Ctor(ContainerBase *me, AEEVTBL(IContainer) *pvt,
    me->piModule = piModule;
    ADDREFIF(piModule);
 
-#define VT(name) (pvt->name = ContainerBase_##name)
+#define VT(name) pvt->name = ContainerBase_##name
    VT(AddRef);
    VT(Release);
    VT(QueryInterface);
@@ -1262,7 +1235,7 @@ void ContainerBase_Ctor(ContainerBase *me, AEEVTBL(IContainer) *pvt,
 
    AEEBASE_INIT(me, widget, &me->vtWidget);
 
-#define WVT(name) (me->vtWidget.name = ContainerBase_##name)
+#define WVT(name) me->vtWidget.name = ContainerBase_##name
    me->vtWidget.AddRef         = AEEBASE_AddRef(IWidget);
    me->vtWidget.Release        = AEEBASE_Release(IWidget);
    me->vtWidget.QueryInterface = AEEBASE_QueryInterface(IWidget);
@@ -1278,7 +1251,7 @@ void ContainerBase_Ctor(ContainerBase *me, AEEVTBL(IContainer) *pvt,
    WVT(SetModel);
    WVT(SetHandler);
    
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)ContainerBase_InvalidateMe, me, &me->extent, TRUE, &CBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)ContainerBase_InvalidateMe, me, &me->extent, TRUE, &CBASE(me)->piViewModel);
    me->border.nWidth[RGBINDEX_INACTIVE]   = 0;
    me->border.nWidth[RGBINDEX_ACTIVE]     = 0;
    
@@ -1390,12 +1363,9 @@ void WidgetNode_Ctor(WidgetNode *me, IWidget *piw, AEERect *rc, boolean bVisible
 
 void WidgetNode_Dtor(WidgetNode *me)
 {
-   if(me->piWidget) {
-      IWIDGET_SetParent(me->piWidget, NULL);
-   }
    // If this widget is raised, unraise it by removing it from the raise container
    if (me->pixyRaise) {
-      (void)IXYCONTAINER_Remove(me->pixyRaise, me->piWidget);
+      IXYCONTAINER_Remove(me->pixyRaise, me->piWidget);
    }
    WNODE_REMOVE(me);
    RELEASEIF(me->piWidget);

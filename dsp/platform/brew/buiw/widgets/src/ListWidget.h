@@ -18,7 +18,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -65,19 +65,19 @@ struct ListWidget {
 
    uint32         dwFlags;
 
-   int8           nOrientation;  // LWO_VERTICAL, LWO_HORIZONTAL, LWO_GRID
-   int            nRows;         // requested rows (for GetPreferredExtent)
-   int            nCols;         // requested cols (for GetPreferredExtent)
-   int            dxPrefItem;    // requested width of item (for GetPreferredExtent)
-   int            dyPrefItem;    // requested height of item (for GetPreferredExtent)
+   uint8          nOrientation;  // LWO_VERTICAL, LWO_HORIZONTAL, LWO_GRID
+   uint8          nRows;         // requested rows (for GetPreferredExtent)
+   uint8          nCols;         // requested cols (for GetPreferredExtent)
+   uint8          dxPrefItem;    // requested width of item (for GetPreferredExtent)
+   uint8          dyPrefItem;    // requested height of item (for GetPreferredExtent)
 
-   int            dxItem;        // width of item
-   int            dyItem;        // height of item
+   uint8          dxItem;        // width of item
+   uint8          dyItem;        // height of item
 
-   int            nSelItem;      // selected height/width of item  (PROP_SELITEMSIZE)
+   uint8          nSelItem;      // selected height/width of item  (PROP_SELITEMSIZE)
 
-   int            xOffset;       // x scroll position in widget coordinates
-   int            yOffset;       // y scroll position in widget coordinates 
+   int32          xOffset;       // x scroll position in widget coordinates
+   int32          yOffset;       // y scroll position in widget coordinates 
 
    PFNMOVEHANDLER pfnMove;
    AEECallback    cbkView;
@@ -90,9 +90,9 @@ struct ListWidget {
 
    // the following are only used in var-height mode
    int            nVarTopIndex;     // keeps track of top item
-   int            nVarTopPos;       // position of top item, x or y direction (list coordinates)
+   int32          nVarTopPos;       // position of top item, x or y direction (list coordinates)
    int            nVarItemSize;     // new item width or height during variable-size draw cycle
-   int            nVarRange;        // used for scroll notifications
+   uint32         nVarRange;        // used for scroll notifications
 };
 
 int     ListWidget_New(IDecorator **ppo, IListModel *piListModel, IShell *piShell, IModule *piModule);

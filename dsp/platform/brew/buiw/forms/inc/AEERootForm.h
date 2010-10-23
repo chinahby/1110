@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -25,7 +25,7 @@
 #include "AEEResFile.h"
 #include "AEEWProperties.h"
 
-#define AEEIID_ROOTFORM    	0x01013604
+#include "bid/AEEIID_ROOTFORM.bid"
 
 #include "bid/AEECLSID_ROOTFORM.bid"
 
@@ -96,16 +96,16 @@ static __inline void IFORM_PopSelf(IForm *piForm)
          && SUCCESS == IFORM_GetRootForm(piForm, &piRoot) 
          && piRoot) {
 
-      (void)IROOTFORM_RemoveFormIfTop(piRoot, piForm);
+      IROOTFORM_RemoveFormIfTop(piRoot, piForm);
       IROOTFORM_Release(piRoot);
    }
 }
 
 static __inline void IROOTFORM_Activate(IRootForm *po) {
-   (void)IFORM_SetProperty(IROOTFORM_TO_IFORM(po), FID_ACTIVE, TRUE);
+   IFORM_SetProperty(IROOTFORM_TO_IFORM(po), FID_ACTIVE, TRUE);
 }
 static __inline void IROOTFORM_Deactivate(IRootForm *po) {
-   (void)IFORM_SetProperty(IROOTFORM_TO_IFORM(po), FID_ACTIVE, FALSE);
+   IFORM_SetProperty(IROOTFORM_TO_IFORM(po), FID_ACTIVE, FALSE);
 }
 
 static __inline int IROOTFORM_GetThemeFile(IRootForm *po, IResFile **ppo) {
@@ -123,10 +123,10 @@ static __inline int IROOTFORM_SetDisplay(IRootForm *po, IDisplay *piDisplay) {
    return IFORM_SetProperty(IROOTFORM_TO_IFORM(po), FID_DISPLAY, (uint32)piDisplay);
 }
 
-static __inline int IROOTFORM_ApplyWPropsV(IRootForm *po, IWidget *piWidget, VaListPtrType args) {
+static __inline int IROOTFORM_ApplyWPropsV(IRootForm *po, IWidget *piWidget, va_list* args) {
    WPropDesc desc;
    desc.piWidget = piWidget;
-   desc.args = args;
+   desc.args = (va_list *)args;
    return IFORM_SetProperty(IROOTFORM_TO_IFORM(po), FID_WPROPS, (uint32)&desc);
 }
 
@@ -134,7 +134,7 @@ static __inline int IROOTFORM_ApplyWProps(IRootForm *po, IWidget *piWidget,  ...
    int result;
    va_list args;
    va_start(args, piWidget);
-   result = IROOTFORM_ApplyWPropsV(po, piWidget, VaListPtr_From_va_list(&args));
+   result = IROOTFORM_ApplyWPropsV(po, piWidget, &args);
    va_end(args);
    return result;
 }

@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -58,6 +58,8 @@ static __inline TabWidget *CONTAINER_TO_TABWIDGET(IContainer *po) {
 // return TRUE to continue, FALSE to stop
 typedef boolean (*PFNINTERNALINDEXER) (TabWidget *me, int nIndex, void *pv);
 
+#undef WBASE
+#define WBASE(p)        (&(p)->base.base.base)
 
 #define MYEXTENT(p)     WBASE(p)->extent
 #define MYMODEL(p)      (IListModel*)WBASE(p)->piModel
@@ -353,7 +355,7 @@ void TabWidget_SetWidget(IDecorator *po, IWidget *piChild)
    RELEASEIF(piModel);
 
    // connect the view model back the other way
-   WidgetBase_GetViewModel(WBASE(me), &piModel);
+   WidgetBase_GetViewModel(&me->base.base.base, &piModel);
    if (piModel) {
       IWIDGET_SetViewModel(piChild, piModel);
    }
@@ -385,8 +387,8 @@ void TabWidget_Invalidate(IContainer *po, IWidget *piw, const AEERect *prcIn, ui
    AEERect rc;
 
    SETAEERECT(&rc, 0, me->cyTabHeight, 
-              WBASE(me)->extent.width, 
-              WBASE(me)->extent.height - me->cyTabHeight);
+              me->base.base.base.extent.width, 
+              me->base.base.base.extent.height - me->cyTabHeight);
 
    if (prcIn) {
       rc.x += prcIn->x;
@@ -623,11 +625,11 @@ static void TabWidget_onFocusChange(TabWidget *me, ModelEvent *pEvent)
 
 static void TabWidget_NotifyFocus(TabWidget *me)
 {
-   if (WBASE(me)->piViewModel) {
+   if (me->base.base.base.piViewModel) {
       ModelEvent ev;
       ev.evCode   = EVT_MDL_TAB_CHANGE;
       ev.dwParam  = (uint32)me->nFocusPos;
-      IMODEL_Notify(WBASE(me)->piViewModel, &ev);
+      IMODEL_Notify(me->base.base.base.piViewModel, &ev);
    }
 }
 
@@ -853,7 +855,7 @@ int TabWidget_Construct(TabWidget *me, AEEVTBL(IDecorator) *pvt, IShell *piShell
    int nErr = 0;
    IListModel *piListModel = 0;
 
-   BorderWidget_Ctor(&me->base, pvt, piShell, piModule, DEFHANDLER(TabWidget_HandleEvent)); 
+   BorderWidget_Ctor(&me->base, pvt, piModule, DEFHANDLER(TabWidget_HandleEvent)); 
 
    // override some interface methods
    pvt->Release            = TabWidget_Release;
@@ -865,9 +867,8 @@ int TabWidget_Construct(TabWidget *me, AEEVTBL(IDecorator) *pvt, IShell *piShell
    pvt->SetModel           = TabWidget_SetModel;
    pvt->GetModel           = TabWidget_GetModel;
 
-   WCBASE(me)->vtContainer.Invalidate = TabWidget_Invalidate;
-   WCBASE(me)->vtContainer.Locate     = TabWidget_Locate;
-
+   me->base.base.vtContainer.Invalidate = TabWidget_Invalidate;
+   me->base.base.vtContainer.Locate     = TabWidget_Locate;
    me->base.border.bCanTakeFocus        = TRUE;
 
    me->cyTabHeight = 20;

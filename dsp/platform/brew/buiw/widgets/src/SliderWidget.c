@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -280,7 +280,7 @@ int SliderWidget_Construct(SliderWidget *me, AEEVTBL(IWidget) *pvt, IShell *piSh
    VTFUNC( SetModel );
 #undef VTFUNC
 
-   Border_Ctor(&me->border, piShell, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->bextent, TRUE, &WBASE(me)->piViewModel);
+   Border_Ctor(&me->border, (PFNINVALIDATE)WidgetBase_Invalidate, me, &me->bextent, TRUE, &WBASE(me)->piViewModel);
    Border_SetBGColor(&me->border, 0, MAKE_RGBA(0xED, 0xEC, 0xFE, 0xFF));
    Border_SetBorderColor(&me->border, 0, MAKE_RGBA(0x6E, 0x6E, 0xA0, 0xFF));
    

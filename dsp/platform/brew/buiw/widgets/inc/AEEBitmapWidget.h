@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -23,14 +23,14 @@
 #include "AEEWidget.h"
 #include "AEEWModel.h"
 
-#include "bid/AEECLSID_BITMAPWIDGET.bid"
+#include "bid\AEECLSID_BITMAPWIDGET.bid"
 
 
 static __inline int IWIDGET_SetBitmap(IWidget *p, IBitmap *pib) {
    IInterfaceModel *piim;
    int nErr = IWIDGET_GetModel(p, AEEIID_INTERFACEMODEL, (IModel**)&piim);
    if (!nErr) {
-      IINTERFACEMODEL_SetIPtr(piim, (IBase*)(void*)pib, AEECLSID_BITMAP);
+      IINTERFACEMODEL_SetIPtr(piim, (IBase*)pib, AEECLSID_BITMAP);
       IINTERFACEMODEL_Release(piim);
    }
    return nErr;

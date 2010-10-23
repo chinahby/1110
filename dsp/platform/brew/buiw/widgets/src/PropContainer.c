@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -389,9 +389,9 @@ boolean PropContainer_DefHandleEvent(IWidget *po, AEEEvent evt, uint16 wParam, u
 /////////////////////////////////////////////////////////////////
 // PropContainer concrete inplementation
 void PropContainer_Ctor(PropContainer *me, AEEVTBL(IPropContainer) *pvt, 
-                        IShell *piShell, IModule *piModule, PFNHANDLER pfnDefHandler)
+                        IModule *piModule, PFNHANDLER pfnDefHandler)
 {
-   ContainerBase_Ctor(&me->base, (AEEVTBL(IContainer) *)pvt, piShell, piModule, 
+   ContainerBase_Ctor(&me->base, (AEEVTBL(IContainer) *)pvt, piModule, 
                       pfnDefHandler ? pfnDefHandler : (PFNHANDLER)PropContainer_DefHandleEvent,
                       (PFNMKNODE)WidgetNode_ForProp, PropContainer_doLayout);
 
@@ -408,7 +408,7 @@ void PropContainer_Ctor(PropContainer *me, AEEVTBL(IPropContainer) *pvt,
 }
 
 
-int PropContainer_New(IPropContainer **ppo, IShell *piShell, IModule *piModule)
+int PropContainer_New(IPropContainer **ppo, IModule *piModule)
 {
    typedef struct PropContainerImpl {
       PropContainer base;
@@ -422,6 +422,6 @@ int PropContainer_New(IPropContainer **ppo, IShell *piShell, IModule *piModule)
    if (!me)
       return ENOMEMORY;
 
-   PropContainer_Ctor(&me->base, &me->vt, piShell, piModule, 0);
+   PropContainer_Ctor(&me->base, &me->vt, piModule, 0);
    return SUCCESS;
 }

@@ -13,7 +13,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -38,8 +38,8 @@
 ---------------------------------------------------------------------------------*/
 
 // uniquely identify the IFontBidiUtil interface.
-#include "bid/AEEIID_FONTBIDIUTIL.BID"
-#include "bid/AEECLSID_FONTBIDIUTIL.bid"
+#include "bid\AEEIID_FONTBIDIUTIL.bid"
+#include "bid\AEECLSID_FONTBIDIUTIL.bid"
 
 /*---------------------------------------------------------------------------------
       Type Declarations
@@ -383,12 +383,65 @@ See Also:
 
 ===========================================================================
 
+IFONTBIDIUTIL_Breakline()
+
+Description:
+   Given a paragraph of text, the IFont object used to render the text and
+   the visual clipping coordinate, return the visual pixel coordinate of
+   an appropriate place to break the line. 
+
+   Applications may use this routine in combination with IDISPLAY_DrawText()
+   to break a paragraph of bidirectional text into lines and display them
+   on screen.  The text is passed into this routine in logical order,
+   laid out with respect to the various Unicode layout algorithms and then 
+   broken into lines where the application requests.  This routine gives
+   the application the ability to break the line according to the layout
+   rules the IFont object understands.
+   
+Prototype:
+   int IFONTBIDIUTIL_Breakline(
+      IFontBidiUtil *po, 
+      IFont *pif, 
+      const AECHAR *pwText, 
+      int dwLen, 
+      int dwLineStart, 
+      int dwClip, 
+      int *pdwLineEnd);
+
+Parameters:
+===pre>
+   po          [in]  pointer to the IFontBidiUtil interface object.  
+   pif         [in]  pointer to the IFont object used to render the text
+   pwText      [in]  pointer to the entire paragraph of text
+   dwLen       [in]  total length of the paragraph of text.  If -1 is
+                     specified, this rouitne calculates the length itself.
+   dwLineStart [in]  offset into the text where the line starts
+   dwClip      [in]  offset into the text where the line ends
+   pdwLineEnd  [out] on return, a point at dwClip or before where it 
+                     makes sense to break the line at.
+===/pre>
+
+Return Value:
+   SUCCESS - pdwLineEnd contains the best possible place to break this
+             paragraph of text
+   EFAILED - some error occured determining the line break
+
+Comments:
+   Breaking the text into lines requires that it be laid out properly, 
+   so applications must  pass the entire paragraph of text to be broken 
+   each time this routineis called.
+  
+Side Effects: 
+   None
+
+See Also:
+   None
+
+===========================================================================
+
 IFONTBIDIUTIL_Locate()
 
 Description:
-
-   This function is no longer supported.
-
    Given an index and an optional range within a text string, return
    the screen position at which the character(s) will be rendered.  This 
    routine also returns where a cursor should be placed relative to the
@@ -574,7 +627,7 @@ Parameters:
    pif            [in]  the font being used to render the text
    pwText         [in]  pointer to Unicode text to display
    dwLen          [in]  total length of the paragraph of text.  If -1 is
-                        specified, this routine calculates the length itself.
+                        specified, this rouitne calculates the length itself.
    dwStart        [in]  start of in memory charcter run
    dwEnd          [in]  end of in memory character run
    dwOptions      [in]  either BIDI_LOGICAL_ORDER, which tells this routine to
@@ -594,62 +647,6 @@ Comments:
    An individual character can be located by setting dwStart and dwEnd to
    the same value.
 
-Side Effects: 
-   None
-
-See Also:
-   None
-
-===========================================================================
-
-IFONTBIDIUTIL_Breakline()
-
-Description:
-   Given a paragraph of text, the IFont object used to render the text and
-   the visual clipping coordinate, return the visual pixel coordinate of
-   an appropriate place to break the line. 
-
-   Applications may use this routine in combination with IDISPLAY_DrawText()
-   to break a paragraph of bidirectional text into lines and display them
-   on screen.  The text is passed into this routine in logical order,
-   laid out with respect to the various Unicode layout algorithms and then 
-   broken into lines where the application requests.  This routine gives
-   the application the ability to break the line according to the layout
-   rules the IFont object understands.
-   
-Prototype:
-   int IFONTBIDIUTIL_Breakline(
-      IFontBidiUtil *po, 
-      IFont *pif, 
-      const AECHAR *pwText, 
-      int dwLen, 
-      int dwLineStart, 
-      int dwClip, 
-      int *pdwLineEnd);
-
-Parameters:
-===pre>
-   po          [in]  pointer to the IFontBidiUtil interface object.  
-   pif         [in]  pointer to the IFont object used to render the text
-   pwText      [in]  pointer to the entire paragraph of text
-   dwLen       [in]  total length of the paragraph of text.  If -1 is
-                     specified, this routine calculates the length itself.
-   dwLineStart [in]  x coordinate offset into the text where the line starts
-   dwClip      [in]  number of pixel that define the width of the line
-   pcxLineEnd  [out] on return, the x coordinate where the line breaks.
-   pdwFits     [out] on return, a last character index of the line.
-===/pre>
-
-Return Value:
-   SUCCESS - pdwLineEnd contains the best possible place to break this
-             paragraph of text
-   EFAILED - some error occured determining the line break
-
-Comments:
-   Breaking the text into lines requires that it be laid out properly, 
-   so applications must  pass the entire paragraph of text to be broken 
-   each time this routine is called.
-  
 Side Effects: 
    None
 
@@ -682,11 +679,11 @@ Prototype:
 
 Parameters:
 ===pre>
-   po          [in]  pointer to the IFontBidiUtil interface object.  
+   po           in]  pointer to the IFontBidiUtil interface object.  
    pif         [in]  the font being used to render the text
    pwText      [in]  pointer to Unicode text to display
    dwLen       [in]  total length of the paragraph of text.  If -1 is
-                     specified, this routine calculates the length itself.
+                     specified, this rouitne calculates the length itself.
    dwX         [in]  horizontal pixel position of the logical characer
    pdwCharIdx  [out] the logical character at position dwX
 ===/pre>
@@ -711,8 +708,6 @@ See Also:
 IFONTBIDIUTIL_NextDisplayChar()
 
 Description:
-   This function is no longer supported.
-
    Given an index into text in logical order, return an index into the 
    text in logical order of the character that is displayed <offset> 
    characters to the right or left.  That is, tell the caller which in 
@@ -787,7 +782,7 @@ Parameters:
    po          [in]  pointer to the IFontBidiUtil interface object.  
    pwText      [in]  pointer to Unicode text to display
    dwLen       [in]  total length of the paragraph of text.  If -1 is
-                     specified, this routine calculates the length itself.
+                     specified, this rouitne calculates the length itself.
    dwIndex     [in]  in memory index of current character
    dwOffset    [in]  display offset of next character  
    pdwNextChar [out] On successful return, an index into the in memory copy 
@@ -809,147 +804,6 @@ Side Effects:
 
 See Also:
    IFONT_GetInfo()
-===========================================================================
-
-IFONTBIDIUTIL_CharLocation()
-
-Description:
-   This routine can be used to determine the given character's bounding
-   rectangle where it is displayed.
-   
-   This routine takes the entire text of the paragraph being rendered and
-   lays it out on a single line.  It then asks the underlying text layout
-   engine to return the location of the character's glyph.
-   
-Prototype:
-   int IFONTBIDIUTIL_CharLocation(
-      IFontBidiUtil *po, 
-      IFont *pif, 
-      const AECHAR *pwText, 
-      int dwLen, 
-      int dwIndex, 
-      int *prcBounds);
-
-Parameters:
-===pre>
-   po          [in]  pointer to the IFontBidiUtil interface object.  
-   pif         [in]  the font being used to render the text
-   pwText      [in]  pointer to Unicode text to display
-   dwLen       [in]  total length of the paragraph of text.  If -1 is
-                     specified, this routine calculates the length itself.
-   dwIndex     [in]  in memory index of character
-   prcBounds   [out] bounding rect of the character's glyph
-===/pre>
-
-Return Value:
-   SUCCESS if the bounding rect of the index could be determined
-   error code otherwise
-
-Comments: 
-   This routine has to lay out the entire paragraph to determine what
-   character occurs at the given position.  Be sure to pass the entire
-   paragraph text into this routine each time it's called!
-
-Side Effects: 
-   None
-
-
-===========================================================================
-
-IFONTBIDIUTIL_CaretInfo
-
-Description:
-   This routine can be used to determine the caret position of the given
-   character index.
-
-   This routine takes the entire text of the paragraph being rendered and
-   lays it out on a single line.  It then asks the underlying text layout
-   engine to return the caret position of the given character index.
-   
-Prototype:
-   int IFONTBIDIUTIL_CaretInfo(
-      IFontBidiUtil *po, 
-      IFont *pif, 
-      const AECHAR *pwText, 
-      int dwLen, 
-      int dwIndex, 
-      int *pdwX);
-
-Parameters:
-===pre>
-   po          [in]  pointer to the IFontBidiUtil interface object.  
-   pif         [in]  the font being used to render the text
-   pwText      [in]  pointer to Unicode text to display
-   dwLen       [in]  total length of the paragraph of text.  If -1 is
-                     specified, this routine calculates the length itself.
-   dwIndex     [in]  in memory index of character
-   pdwX        [out] horizontal pixel position of the character's caret position.
-   
-===/pre>
-
-Return Value:
-   SUCCESS if logical character index could be determined
-   error code otherwise
-
-Comments: 
-   This routine has to lay out the entire paragraph to determine the 
-   character's caret position.  Be sure to pass the entire
-   paragraph text into this routine each time it's called!
-
-Side Effects: 
-   None
-
-See Also:
-
-===========================================================================
-
-IFONTBIDIUTIL_MoveCaretIndex
-
-Description:
-   This routine can be used to determine the character index after visually
-   moving left or right. Applications can use this information to move cursors.
-
-   This routine takes the entire text of the paragraph being rendered and
-   lays it out on a single line.  It then asks the underlying text layout
-   engine to return the character index after the caret moves.
-   
-Prototype:
-   int IFONTBIDIUTIL_MoveCaretIndex(
-      IFontBidiUtil *po, 
-      IFont *pif, 
-      const AECHAR *pwText, 
-      int dwLen, 
-      int dwIndex,
-      int dwOffset,
-      int *pdwNextChar);
-
-Parameters:
-===pre>
-   po          [in]  pointer to the IFontBidiUtil interface object.  
-   pif         [in]  the font being used to render the text
-   pwText      [in]  pointer to Unicode text to display
-   dwLen       [in]  total length of the paragraph of text.  If -1 is
-                     specified, this routine calculates the length itself.
-   dwIndex     [in]  character index of current cursor position.
-   dwOffset    [in]  direction and length of move.  Negative numbers move the
-                     cursor visually left.  Positive numbers move the cursor
-                     visually right.
-   pdwNextChar [out] the logical character index after the move
-===/pre>
-
-Return Value:
-   SUCCESS if logical character index could be moved
-
-Comments: 
-   This routine has to lay out the entire paragraph to determine what
-   characters location.  Be sure to pass the entire
-   paragraph text into this routine each time it's called!
-
-Side Effects: 
-   None
-
-See Also:
-
 
 ===========================================================================*/
 

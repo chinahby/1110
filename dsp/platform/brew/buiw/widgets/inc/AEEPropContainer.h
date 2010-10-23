@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -22,8 +22,8 @@
 
 #include "AEEContainer.h"
 
-#include "bid/AEECLSID_PROPCONTAINER.bid"
-#include "bid/AEEIID_PROPCONTAINER.bid"
+#include "bid\AEECLSID_PROPCONTAINER.bid"
+#include "bid\AEEIID_PROPCONTAINER.bid"
 
 
 typedef struct WidgetProp WidgetProp;
@@ -552,15 +552,6 @@ Parameters:
          The defined validation flags are:
              ICIF_EXTENT  -  When this flag is ON, it is an indication that the widget has
                              changed its extent.
-             ICIF_REDRAW  -  When this flag is ON, it is an indication that the widget has 
-                             changed its contents, but its preferred extent is still the same.
-                             The widget simply wants to be redrawn.
-             ICIF_DEFER   -  When this flag is ON, it indicates that the widget's layout is
-                             disabled, but it is still passing an invalidate up to 
-                             notify its ancestors that an invalidate occurred but no action
-                             was taken as layout was disabled.  When RootContainer receives
-                             an invalidate with the ICIF_DEFER flag appended, it will not cause
-                             a draw to be scheduled. 
 ===/pre>
 
 Return Value:

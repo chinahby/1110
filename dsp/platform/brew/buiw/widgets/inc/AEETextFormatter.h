@@ -14,7 +14,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -29,26 +29,25 @@
       Include Files
 ---------------------------------------------------------------------------------*/
 
-#include "AEELocale.h"
-#include "AEEComUtil.h"
+#include "AEEStdLib.h"
 
 /*---------------------------------------------------------------------------------
       Class IDs
 ---------------------------------------------------------------------------------*/
 
 // uniquely identify the ITextFormatter interface.
-#include "bid/AEECLSID_TEXTFORMATTER.bid"
-#include "bid/AEEIID_TEXTFORMATTER.BID"
+#include "bid\AEECLSID_TEXTFORMATTER.bid"
+#include "bid\AEEIID_TEXTFORMATTER.bid"
 
 /*---------------------------------------------------------------------------------
       Type Declarations
 ---------------------------------------------------------------------------------*/
 
 // ITextFormatter parameters
-#define ITEXTFORMATTER_PARM_ILOCALE       1  // default ILocale object to use for formatting
+#define ITEXTFORMATTER_PARM_ILOCALE       1  // language code of default locale
 #define ITEXTFORMATTER_PARM_LANG          2  // language code of default language
 #define ITEXTFORMATTER_PARM_YEAROFFSET    3  // offset to add to years when computing dates (Buddhist vs. Julian)
-#define ITEXTFORMATTER_PARM_ILOCALECLASS  4  // class id of the default ILocale object
+// others ...
 
 // ITEXTFORMATTER_FormatText return codes
 #define ITEXTFORMATTER_PARTIALSUCCESS     -1
@@ -65,7 +64,6 @@
 
 AEEINTERFACE_DEFINE(ITextFormatter);
 
-// ITextFormatter interface
 #define ITEXTFORMATTER_AddRef(p)                      AEEGETPVTBL((p),ITextFormatter)->AddRef((p))
 #define ITEXTFORMATTER_Release(p)                     AEEGETPVTBL((p),ITextFormatter)->Release((p))
 #define ITEXTFORMATTER_QueryInterface(p,i,o)          AEEGETPVTBL((p),ITextFormatter)->QueryInterface((p),(i),(o))
@@ -73,32 +71,14 @@ AEEINTERFACE_DEFINE(ITextFormatter);
 #define ITEXTFORMATTER_GetParm(p,i,v)                 AEEGETPVTBL((p),ITextFormatter)->GetParm((p),(i),(v))
 #define ITEXTFORMATTER_FormatText(p,args)             AEEGETPVTBL((p),ITextFormatter)->FormatText args
 
-// Helper inlines
-static __inline int ITEXTFORMATTER_SetLocale(ITextFormatter *po, ILocale *pil) {
-   return ITEXTFORMATTER_SetParm(po, ITEXTFORMATTER_PARM_ILOCALE, CAST(int32,pil));
-}
-static __inline int ITEXTFORMATTER_SetLang(ITextFormatter *po, const char *pszLang) {
-   return ITEXTFORMATTER_SetParm(po, ITEXTFORMATTER_PARM_LANG, CAST(int32, pszLang));
-}
-static __inline int ITEXTFORMATTER_SetYearOffset(ITextFormatter *po, int dwOffset) {
-   return ITEXTFORMATTER_SetParm(po, ITEXTFORMATTER_PARM_YEAROFFSET, CAST(int32, dwOffset));
-}
-static __inline int ITEXTFORMATTER_SetLocaleClass(ITextFormatter *po, AEECLSID clsId) {
-   return ITEXTFORMATTER_SetParm(po, ITEXTFORMATTER_PARM_ILOCALECLASS, CAST(int32, clsId));
-}
+// Helper Macros
+#define ITEXTFORMATTER_SetLocale(p,l)                 ITEXTFORMATTER_SetParm(p, ITEXTFORMATTER_PARM_ILOCALE,      (int32)l)
+#define ITEXTFORMATTER_SetLang(p,l)                   ITEXTFORMATTER_SetParm(p, ITEXTFORMATTER_PARM_LANG,         (int32)l)
+#define ITEXTFORMATTER_SetYearOffset(p,o)             ITEXTFORMATTER_SetParm(p, ITEXTFORMATTER_PARM_YEAROFFSET,   (int32)o)
 
-static __inline int ITEXTFORMATTER_GetLocale(ITextFormatter *po, ILocale **ppil) {
-   return ITEXTFORMATTER_GetParm(po, ITEXTFORMATTER_PARM_ILOCALE, CAST(int32 *, ppil));
-}
-static __inline int ITEXTFORMATTER_GetLang(ITextFormatter *po, const char **ppszLang) {
-   return ITEXTFORMATTER_GetParm(po, ITEXTFORMATTER_PARM_LANG, CAST(int32 *, ppszLang));
-}
-static __inline int ITEXTFORMATTER_GetYearOffset(ITextFormatter *po, int *pdwOffset) {
-   return ITEXTFORMATTER_GetParm(po, ITEXTFORMATTER_PARM_YEAROFFSET, CAST(int32 *, pdwOffset));
-}
-static __inline int ITEXTFORMATTER_GetLocaleClass(ITextFormatter *po, AEECLSID *pclsId) {
-   return ITEXTFORMATTER_GetParm(po, ITEXTFORMATTER_PARM_ILOCALECLASS, CAST(int32 *, pclsId));
-}
+#define ITEXTFORMATTER_GetLocale(p,l)                 ITEXTFORMATTER_GetParm(p, ITEXTFORMATTER_PARM_ILOCALE,      (int32 *)l)
+#define ITEXTFORMATTER_GetLang(p,pl)                  ITEXTFORMATTER_GetParm(p, ITEXTFORMATTER_PARM_LANG,         (int32 *)pl)
+#define ITEXTFORMATTER_GetYearOffset(p,po)            ITEXTFORMATTER_GetParm(p, ITEXTFORMATTER_PARM_YEAROFFSET,   (int32*)po)
 
 /*=================================================================================
    DATA STRUCTURE DOCUMENTATION
@@ -112,48 +92,19 @@ Description:
    ITEXTFORMATTER_GetParm() APIs.
 
 ITEXTFORMATTER_PARM_ILOCALE
-   The default ILocale object used by this ITextFormatter object. The caller may 
-   retrieve or set the internal ILocale object  used by the ITextFormatter with 
-   this parameter.  This parameter specifies the ILocale object that is used to 
-   compose locale-specific format items such as dates and currency values when a 
-   language code is not explicitly specified in the format item.  
+   The default ILocale object used by this ITextFormatter object.  The caller
+   may retrieve or set the internal ILocale object used by the ITextFormatter 
+   with this parameter.
 
 ITEXTFORMATTER_PARM_LANG
    The caller may both inquire as to the default language an ITextFormatter
    uses and set it.  ITEXTFORMATTER_SetParm() will return an error if it is called
    with a lanague code that is not supported on the device.  Four character
-   strings such as "enus" and "engb" are expected.  This parameter specifies
-   the language portion of the mimetype of the ILocale obect to be used to compose 
-   locale-specific items when a language code is not explicitly specified in the 
-   format item.  
-
-ITEXTFORMATTER_PARM_ILOCALECLASS
-   The class ID of the default ILocale object used by this ITextFormatter
-   instance.  The caller may set or retrieve the class ID of the ILocale object
-   that's used by default when composing format strings.  This parameter specifies 
-   the class id of the ILocale object to be used to compose locale-specific items 
-   when a language code is not explicitly specified in the format item.  
+   strings such as "enus" and "engb" are expected.
 
 ITEXTFORMATTER_PARM_YEAROFFSET
    Specifies an offset to be applied to the year field of any date generated
    by the ITextFormatter object.  Allows for Julian, Buddhist or other dates.
-
-Comments:
-   Applications should use the following convenience inlines to set and get
-   these parameters, rather than using them in calls to ITEXTFORMATTER_GetParm() 
-   and ITEXTFORMATTER_SetParm() directly:
-
-===pre>
-   ITEXTFORMATTER_SetLocale()  
-   ITEXTFORMATTER_SetLang()       
-   ITEXTFORMATTER_SetYearOffset() 
-   ITEXTFORMATTER_SetLocaleClass()
-
-   ITEXTFORMATTER_GetLocale()     
-   ITEXTFORMATTER_GetLang()       
-   ITEXTFORMATTER_GetYearOffset()
-   ITEXTFORMATTER_GetLocaleClass()
-===/pre>
 
 ===================================================================================
 
@@ -311,11 +262,9 @@ Description:
 
    {index[,alignment][[;language]:formatString]}
 
-   The matching braces ("{" and "}") are required.  Since the opening curly brace
-   is used to indicate the start of a format item, two opening curly braces 
-   "{{" must be specified in the string if a single curly brace is to be included 
-   in formatted text.  ITEXTFORMATTER_FormatText() will then replace any occurence
-   of "{{" with a single curly brace.
+   The matching braces ("{" and "}") are required.  To include either of these 
+   characters in the fixed text, specify two opening braces "{{" or two closing
+   braces "}}".
 
 
    Index Component

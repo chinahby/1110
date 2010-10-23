@@ -10,7 +10,7 @@
   ========================================================================
   ========================================================================
     
-               Copyright © 1999-2007 QUALCOMM Incorporated 
+               Copyright © 1999-2006 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
     
@@ -23,16 +23,29 @@
 #include "AEEImageWidget.h"
 #include "DecoratorWidget.h"
 #include "Border.h"
-#include "ImageBase.h"
-
 
 typedef struct ImageWidget {
    Decorator      base;
-   ImageBase      image;
+
+   int            x;          // x offset
+   int            y;          // y offset
+   int            dx;         // dx size
+   int            dy;         // dy size
+   int            odx;        // original dx
+   int            ody;        // original dy
+   int            sdx;        // scaled dx
+   int            sdy;        // scaled dy
+   boolean        bScaled;    // set to true if the image has been scaled
+   boolean        bAnimated;  // set to true if image should be animated
+   int            nFrames;    // number of frames
+   int            nCurFrame;  // which frame to draw
    Border         border;
-   ModelListener  modelListener;
    uint32         dwFlags;
-   RGBVAL         rgbTransp;
+   IImage *       piAnimImage; // cache image when animating for callback cancellation
+   ModelListener  modelListener;
+   uint16         bdt, bdb, bdl, bdr;	//tiling border distances - see Image Widget cls description
+   uint32         nCurStep, nCurRep;   // current step and repetition of animation
+   uint32         dwAnimFlags;         // animation specific flags
 } ImageWidget;
 
 // Safe up-cast
@@ -43,8 +56,8 @@ static __inline IDecorator *IMAGEWIDGET_TO_IDECORATOR(ImageWidget *me) {
    return (IDecorator *) me; 
 }
 
-int      ImageWidget_New         (IDecorator **ppo, IShell *piShell, IModule *piModule);
-void     ImageWidget_Ctor        (ImageWidget *me, AEEVTBL(IDecorator) *pvt, IShell *piShell, IModule *piModule, 
+int      ImageWidget_New         (IDecorator **ppo, IModule *piModule);
+void     ImageWidget_Ctor        (ImageWidget *me, AEEVTBL(IDecorator) *pvt, IModule *piModule, 
                                   PFNHANDLER pfnDefHandler);
 void     ImageWidget_Dtor        (ImageWidget *me);
 
