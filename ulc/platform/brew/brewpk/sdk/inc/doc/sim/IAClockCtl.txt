@@ -1,0 +1,10 @@
+/* 
+===========================
+Simulation support DOCUMENTATION
+============================
+IAClockCtl Simulation
+
+IAClockCtl is simulated.
+
+==========================  
+*/
