@@ -13,10 +13,10 @@
 #define SENSOR_LATCH_EDGE           		(A8_SENSOR_POS_EDGE)
 
 #define	SENSOR_I2C_ID  			    		(0xFF)
-#define	SENSOR_PREVIEW_WIDTH  	    		(320)
-#define	SENSOR_PREVIEW_HEIGHT  	    		(240)
-#define	SENSOR_FULL_WIDTH  		    		(320)
-#define	SENSOR_FULL_HEIGHT  	    		(240)
+#define	SENSOR_PREVIEW_WIDTH  	    		(320) 	//360
+#define	SENSOR_PREVIEW_HEIGHT  	    		(240)	//288
+#define	SENSOR_FULL_WIDTH  		    		(320)	//360
+#define	SENSOR_FULL_HEIGHT  	    		(240)	//288
 
 extern boolean camsensor_tlg1120_init(void);
 

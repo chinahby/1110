@@ -127,6 +127,7 @@ int TLG1120_tv_scan_channel(TLG_TV_STORAGE *tv_storage)
     }
 #endif    
     TLGAPP_StartChannelScan(p_tlg_cur_map, p_tlg_cur_map[1]HZ_S - p_tlg_cur_map[0]HZ_S);
+    dog_kick();
     for(ChnInx=0;p_tlg_cur_map[ChnInx]CHN_S!=0;ChnInx++)
     {               
         ret = TLGAPP_SetChannel(p_tlg_cur_map[ChnInx]CHN_S);        
@@ -138,13 +139,14 @@ int TLG1120_tv_scan_channel(TLG_TV_STORAGE *tv_storage)
         {        
             if (TLG1120_tv_save_program(p_tlg_cur_map[ChnInx]CHN_S)==EFAILED)
             {
+            	TLG_PRINT_1("freq:%d   have  signal\n", p_tlg_cur_map[ChnInx]CHN_S);
                 break;
             }
-            TLG_PRINT_1("freq:%d   have  signal\n", p_tlg_cur_map[ChnInx]CHN_S);           
+            TLG_PRINT_1("freq:%d   have  signal\n", p_tlg_cur_map[ChnInx]CHN_S);
         }              
     }
     TLGAPP_StopChannelScan();
-    
+    dog_kick();
     if (gTvStorage.mIdxListBuf[gTvStorage.mCurListIdx].ChnIdx != 0)
     {
          TLGAPP_SetChannel(gTvStorage.mIdxListBuf[gTvStorage.mCurListIdx].ChnIdx);  
@@ -158,6 +160,7 @@ int TLG1120_tv_scan_channel(TLG_TV_STORAGE *tv_storage)
         TLGAPP_SetChannel(p_tlg_cur_map[24]CHN_S);      
         return EFAILED;
     }   
+    dog_kick();
 }
 
 
@@ -249,7 +252,7 @@ int TLG1120_tv_set_param(ATV_SET_PARAM_e type, int hparam, int lparam)
             ret = 0;
             TLGMMI_SetRegion((TLG_REGION_CODE)hparam);
             TLGAPP_InitRegionChannelMap();
-            ERR("gPreScanLines = %d, gTvScanLines=%d",gPreScanLines,gTvScanLines,0);
+            MSG_FATAL("gPreScanLines = %d, gTvScanLines=%d",gPreScanLines,gTvScanLines,0);
             if (gPreScanLines != gTvScanLines)
             {
                 /*ret==1表示电视制式发生变化,应用需要reset sensor*/
@@ -416,7 +419,7 @@ boolean camsensor_tlg1120_init(void)
 	//TLG_SetAudioTestToneL(tlg_i2c_addr, TLG_1KHZ);
 	//TLG_SetAudioTestToneR(tlg_i2c_addr, TLG_1KHZ);
 
-
+	//dog_kick();
     //register function for sensor driver
     //TLG1120_tv_register(camsensor_function_table_ptr);
     //TLG1120_tv_setup_camctrl_tbl(camctrl_tbl_ptr);    
@@ -425,6 +428,15 @@ boolean camsensor_tlg1120_init(void)
     
  	//time_secure_get_local_time_ms(&time);
  	//TLG_PRINT_1("TLG1120_tlg1120_init Leave time=%u\n",time);
+ 	//dog_kick();       
+    //if (TLGAPP_SetChannel(p_tlg_cur_map[0]CHN_S) == 0)
+    //{
+    //    TLG_PRINT_1("freq:%d   no  signal\n", p_tlg_cur_map[0]CHN_S);
+    //}
+    //else
+    //{        
+    //    TLG_PRINT_1("freq:%d   have  signal\n", p_tlg_cur_map[0]CHN_S);
+    //} 
 	//TLG1120_tv_scan_channel(NULL);
     TLG_PRINT_0("TLG1120_tlg1120_init Leave");
     return TRUE;
