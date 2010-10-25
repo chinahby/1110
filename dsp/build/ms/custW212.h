@@ -10,6 +10,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+//add by yangdecai  for tv
+#define FEATURE_ANALOG_TV
+#define USE_ANALOGTV_TLG1120
+#define FEATURE_TV
 
 //Add by zzg 2010_10_13
 #define FEATURE_TORCH_KEY_SPACE		//手电筒功能按键
