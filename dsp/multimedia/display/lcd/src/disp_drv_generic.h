@@ -592,7 +592,7 @@ static int disp_drv_ioctl ( int cmd, void *arg )
         disp_update_cmd = (disp_update_type*)arg;
         /* bitwise OR all int16 together. If the result is
          * less than 0, then at least one of them is negative */
-        if(((disp_update_cmd->src_width |
+        if((disp_update_cmd->src_width |
             disp_update_cmd->src_starting_row |
             disp_update_cmd->src_starting_column |
             disp_update_cmd->num_of_rows |
