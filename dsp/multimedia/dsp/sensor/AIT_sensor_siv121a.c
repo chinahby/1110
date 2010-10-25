@@ -17,17 +17,17 @@
 #define	SENSOR_I2C_TYPE						(A8_I2C_1A1D)
 #define SENSOR_PREVIEW_VH_POLARITY  		(A8_SENSOR_HOR_POS|A8_SENSOR_VER_POS)
 #define SENSOR_FULL_VH_POLARITY     		(A8_SENSOR_HOR_POS|A8_SENSOR_VER_POS)
-#define SENSOR_PREVIEW_LATCH_COUNT  		(A8_PHASE_COUNTER_NUM_4)
+#define SENSOR_PREVIEW_LATCH_COUNT  		(A8_PHASE_COUNTER_NUM_3)
 #define SENSOR_FULL_LATCH_COUNT     		(A8_PHASE_COUNTER_NUM_2)
 #define SENSOR_PREVIEW_YUV_FORMAT   		(A8_SENSOR_YCBYCR) //(A8_SENSOR_CBYCRY) //
 #define SENSOR_FULL_YUV_FORMAT     	 		(A8_SENSOR_YCRYCB) //(A8_SENSOR_CBYCRY) //
 #define SENSOR_LATCH_EDGE           		(A8_SENSOR_POS_EDGE)
 
 #define	SENSOR_I2C_ID  			    		(0x66)
-#define	SENSOR_PREVIEW_WIDTH  	    		(640)
-#define	SENSOR_PREVIEW_HEIGHT  	    		(480)
-#define	SENSOR_FULL_WIDTH  		    		(640)
-#define	SENSOR_FULL_HEIGHT  	    		(480)
+#define	SENSOR_PREVIEW_WIDTH  	    		(640) //(640)
+#define	SENSOR_PREVIEW_HEIGHT  	    		(480) //(480)
+#define	SENSOR_FULL_WIDTH  		    		(640) //(640)
+#define	SENSOR_FULL_HEIGHT  	    		(480) //(480)
 
 u_short siv121a_read_cmos_sensor(u_short Reg)
 {
@@ -47,22 +47,9 @@ static t_sensor_mode_attr	full_mode;
 static t_sensor_mode_attr	preview_mode;
 
 extern	u_char	gbSensorInited;
-unsigned char gc_effect_on;
-unsigned char gc_reinit = 1;
-
-uint8  siv121a_start_grab_x_offset=0, siv121a_start_grab_y_offset=0;
-boolean  siv121a_gVGAmode=TRUE,siv121a_sensor_night_mode = FALSE;
-boolean siv121a_MPEG4_encode_mode=FALSE;
 
 
 static u_short	Get_Sensor_ID(u_short*	SensorID);
-
-uint8  siv121a_normal_gain=0;//, siv121a_night_gain=GC_0307_SENSOR_NIGHT_MODE_GAIN;
-uint8  siv121a_preview_pclk_division=0, siv121a_capture_pclk_division=0;
-uint16 siv121a_dummy_pixels=0, siv121a_dummy_lines=0, siv121a_extra_exposure_lines=0;
-uint16 siv121a_exposure_lines=0,siv121a_w_blank=0,siv121a_h_blank=0;
-uint16 	siv121a_sensor_gain_base=0x0;
-boolean siv121a_g_bMJPEG_mode;
 
 
 
@@ -72,26 +59,46 @@ __align(2)const static u_char	Sensor_Init[]=
 {
 	// SNR Block [Vendor recommended value ##Don't change##]
 	0x00,0x00,
-	0x03,0x04, //0x04
+	0x03,0xF4, //0x04
 	0x10,0x83, 
-	//0x13,0x17,
-	//0x15,0x22, 
+	0x13,0x17,
+	0x15,0x22, 
 
+#if 0
 	0x00,0x01,
 	0x04,0x00,//0x00_1021
 	0x05,0x02, 
 	0x11,0x25,
 	0x12,0x21, 
 	0x13,0x15,
-	0x15,0xC2, 
+	0x15,0xC2,
 	
-    //50HZ 12MHZ 12.5FPS
-    0x20,0x10, 	//00
-	0x21,0x93,  //6e
-	0x23,0x51,  // 1d
+	0x20,0x44, 	//00
+	0x21,0xff,  //6e
+	0x22,0xff,  //6e
+	0x23,0xff,  // 1d
 	
 	0x00,0x02,
-	0x34,0x3a,   //42
+	0x34,0x3a,   //42 
+#else
+	0x00,0x01,
+	0x04,0x00,
+	0x05,0x02, 
+	0x11,0x25,
+	0x12,0x21, 
+	0x13,0x17,
+	0x15,0x22,
+	 
+	0x20,0x10, //0x00
+	0x21,0xc5, //0x03
+    0x23,0xad, //0x01
+    
+    0x00,0x02,
+	0x34,0x60,   //42 
+#endif
+	
+    //50HZ 12MHZ 12.5FPS
+ 
     
     0x00,0x02,
     0x11,0x08,
@@ -549,27 +556,23 @@ static void	Sensor_Enable(u_short enable)
 	if(enable)
 	{
 		A8L_VIF_Init(&preview_mode);
-		
-		//A800_SetGPIO(AIT_GPIO_SENSOR_POWER_CTL);
+
 		gpio_tlmm_config(GPIO_OUTPUT_29);
 		A8L_SetSensorPowerPin(1);
 		sys_IF_ait_delay1ms(5);
 		A8L_SetSensorEnablePin(1);
-		
+		//SetA8RegB(0x7126,0x03);
 		sys_IF_ait_delay1ms(10);
 		
 		
-		//A8L_SetSensorResetPin(1); 
-		gpio_out(GPIO_OUTPUT_29,1);
+		A8L_SetSensorResetPin(1); 
 		sys_IF_ait_delay1ms(10);
-		//A8L_SetSensorResetPin(0);
-		gpio_out(GPIO_OUTPUT_29,0);
+		A8L_SetSensorResetPin(0);
 		sys_IF_ait_delay1ms(50); //0x15_1021
-		//A8L_SetSensorResetPin(1); 
-		gpio_out(GPIO_OUTPUT_29,1);
+		A8L_SetSensorResetPin(1); 
 		sys_IF_ait_delay1ms(10);
 		//Initial I2C I/F
-
+		
 		A8L_SetSensorIF(A8_SENSOR_SCK_PIN, A8_ON);
 		A8L_SetSensorIF(A8_SENSOR_SDA_PIN, A8_ON);
 		sys_IF_ait_delay1ms(30);
@@ -586,8 +589,7 @@ static void	Sensor_Enable(u_short enable)
 		A8L_SetSensorEnablePin(0);	
 		A8L_SetSensorIF(A8_SENSOR_SCK_PIN, A8_OFF);
 		A8L_SetSensorIF(A8_SENSOR_SDA_PIN, A8_OFF);	
-		A8L_SetSensorPowerPin(0);		    			        	
-		//A800_ClearGPIO(AIT_GPIO_SENSOR_POWER_CTL);    
+		A8L_SetSensorPowerPin(0);		    			        	   
 		gbSensorInited = 0;	
 	}	
 	

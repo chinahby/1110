@@ -601,20 +601,17 @@ u_short	A8L_SetSensorAttr(t_sensor_mode_attr* sensor_mode)
 		SetA8RegW(VIF_LINE_INT_NUM,sensor_mode->image_height);								
 		SetA8RegB(VIF_SEN_GEN_CTL,(sensor_mode->latch_edge<<7)|(sensor_mode->hv_polarity));
 		SetA8RegB(VIF_SEN_YUV_CTL,SEN_YUV_EN|(sensor_mode->yuv_format <<4));
-#if defined(AIT_ATV_RDA5888)&&(AIT_ATV_RDA5888==1)
-		SetA8RegB(VIF_PXL_CLK_DELAY,0x03); // tune for RDA5888
-#endif
 	}
 	else
+	{
 		SetA8RegW(VIF_LINE_INT_NUM,sensor_mode->image_height);// - 0x20);	 					
+		SetA8RegB(VIF_SEN_GEN_CTL,(sensor_mode->latch_edge<<7)|(sensor_mode->hv_polarity));
+		SetA8RegB(VIF_SEN_YUV_CTL,SEN_YUV_EN|(sensor_mode->yuv_format <<4));
+		//SetA8RegB(VIF_PXL_CLK_DELAY,0x03);
+	}
 
-	//								
-	SetA8RegB(VIF_SEN_GEN_CTL,(sensor_mode->latch_edge<<7)|(sensor_mode->hv_polarity));
-	SetA8RegB(VIF_SEN_YUV_CTL,SEN_YUV_EN|(sensor_mode->yuv_format <<4));
-
-
-//	SetA8RegW(0x6048,0x8080);
-//	SetA8RegW(0x604a,0x8080);
+	//SetA8RegW(0x6048,0x8080);
+	//SetA8RegW(0x604a,0x8080);
 	return A8_NO_ERROR;
 }
 
@@ -648,5 +645,25 @@ u_char	A8L_SendSensorSettingTable(u_short* tbl,u_short table_length)
 		if(A8L_SetSenReg(Saddr,Sdata))
 			return	A8_SYSTEM_ERROR;
 	}
+	return	A8_NO_ERROR;
+}
+
+
+u_char	A8L_InitSensorSettingTable(u_char* tbl,u_short table_length)
+{
+	u_char	Saddr,Sdata;
+	u_short	i;
+	if(!gsSensorUsing)
+		return A8_SYSTEM_ERROR;	
+
+	for(i=0;i<table_length;i++)
+	{
+		Saddr = tbl[i];
+		Sdata = tbl[i+1];
+		
+		if(A8L_SetSenReg(Saddr,Sdata))
+			return	A8_SYSTEM_ERROR;
+	}
+	
 	return	A8_NO_ERROR;
 }

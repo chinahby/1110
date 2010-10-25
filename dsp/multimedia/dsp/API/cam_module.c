@@ -924,7 +924,6 @@ void cam_test(void)
 {
 	ext_camera_para_struct ext_cam_para = {0};
 
-	ext_cam_para.preview_src = AIT_TV_SRC;
 	AIT701_cam_preview(&ext_cam_para);
 }
 
@@ -936,25 +935,13 @@ static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 	if(g_ATV_Flag)
 	{
 		ext_cam_para->preview_src = (unsigned char)	AIT_TV_SRC;
-		#ifdef __MMI_MAINLCD_128X160__
-			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START,ext_cam_para,AIT_ATV_PREV_NOR_MODE,AIT_TV_SRC,0,0,0);
-		#else
-			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START,ext_cam_para,AIT_ATV_PREV_NOR_MODE,AIT_TV_SRC,0,0,0);
-		#endif
+		mmpfunc_process(MMPFUNC_CAM_PREVIEW_START,ext_cam_para,AIT_ATV_PREV_FULL_MODE,AIT_TV_SRC,0,0,0);
 	}
 	else
 #endif	
 	{
-		if(ait_is_active_cam()==1){
-#ifdef __SXMOBI_VC_SUPPORT__		
-		#if AIT_VIDEO_PHONE_SUPPORT
-            if(1 == bVideoChat)
-            {
-                mmpfunc_process(MMPFUNC_CAM_PREVIEW_START, ext_cam_para, AIT_VIDPHONE_PREV_MODE, 0, 0, 0, 0);
-            }
-            else
-		#endif
-#endif		
+		if(ait_is_active_cam()==1)
+		{
 			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START, ext_cam_para,AIT_VDO_PREV_MODE , 0, 0, 0, 0);
 		}
 		else

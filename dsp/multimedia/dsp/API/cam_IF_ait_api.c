@@ -218,14 +218,14 @@ A8_ERROR_MSG	cam_IF_ait_open_camera (void)
 #ifdef SENSOR_VIF
 	if(!gsSensorUsing)
 		return A8_SYSTEM_ERROR;
-	AIT_Message_P1("sensor_id = 0x%x\r\n",gsSensorUsing -> sensor_id);
+	AIT_Message_P1("sensor_id = 0x%x\r\n",gsSensorUsing->sensor_id);
 #ifdef AIT_ATV_SUPPORT
 	if(g_ATV_Flag==0)
 #endif		
 	{
 		A8L_I2CInit(gsSensorUsing->i2c_type,gsSensorUsing->i2c_id);
 	}	
-	//A800_PreInit_Sensor();	
+	A800_PreInit_Sensor();	
 #endif	
 
 	retVal = A800_Init_Sensor();

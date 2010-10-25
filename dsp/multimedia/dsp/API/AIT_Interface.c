@@ -52,7 +52,7 @@ void AIT_ext_SetLCDRotate(unsigned char bRotate)
 const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 {
 
-#if defined(__MMI_MAINLCD_240X320__) || defined(__MMI_MAINLCD_320X240__)
+#if defined(__MMI_MAINLCD_240X320__)
 	{
 		AIT_CAM_PREV_FULL_MODE,
 		CAM_ROTATE_NORMAL,
@@ -228,7 +228,7 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 		AIT_CAM_PREV_NOR_MODE,
 		CAM_ROTATE_NORMAL,
 		{0,0,176,144},
-		{0,0,220,176}, 
+		{0,0,0,0}, 
 		{0,0,0,0},
 		{0,0,0,0}
 	},
@@ -236,7 +236,7 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 		AIT_CAM_PREV_FULL_MODE,
 		CAM_ROTATE_NORMAL,
 		{0,0,220,176},
-		{0,3,220,0/*30*/},
+		{0,3,220,18/*30*/},
 		{180,30,40,0},
 		{0,152,180,0}
 	},
@@ -414,7 +414,7 @@ extern	t_sensor_manager	sensor_siv121a;
 
 //TV
 #ifdef AIT_ATV_SUPPORT
-u_char g_ATV_Flag=1;
+u_char g_ATV_Flag=0;
 extern t_sensor_manager	sensor_tlg1120;
 #endif
 

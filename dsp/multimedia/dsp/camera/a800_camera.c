@@ -533,6 +533,7 @@ WinInfoDT *A800_ChangeCameraSetting(PREVIEW_MODE mode)
 		}
 
 #endif
+
 	{
 
 		Select->DownScale = 80;
@@ -545,11 +546,10 @@ WinInfoDT *A800_ChangeCameraSetting(PREVIEW_MODE mode)
 		else
 			Select->UpScale = temUpScaleh;
 
-		Select->UpScale++;
+		Select->UpScale += 1;
 		
 		AIT_Message_P2(" M = %d,N = %d\r\n",Select->DownScale,Select->UpScale);
 	}
-
 	switch(gA8MainLCDWidth)
 		
 	{
