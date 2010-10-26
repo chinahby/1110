@@ -102,7 +102,11 @@ static AEERect MP3SKIN1_RECT[] = {
                
 			   //{15,10,149,22},       // 音乐名称坐标
 #if defined (FEATURE_DISP_128X160)
-				{4,10,120,22},       // 音乐名称坐标  
+				{4,10,120,22},       // 音乐名称坐标
+#elif defined (FEATURE_DISP_220X176)
+				{5,10,210,30},       // 音乐名称坐标  
+#elif defined (FEATURE_DISP_320X240)
+				{5,10,310,30},       // 音乐名称坐标  				
 #else
 				{5,10,149,22},       // 音乐名称坐标  
 #endif			   
