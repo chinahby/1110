@@ -19,15 +19,15 @@
 #define SENSOR_FULL_VH_POLARITY     		(A8_SENSOR_HOR_POS|A8_SENSOR_VER_POS)
 #define SENSOR_PREVIEW_LATCH_COUNT  		(A8_PHASE_COUNTER_NUM_3)
 #define SENSOR_FULL_LATCH_COUNT     		(A8_PHASE_COUNTER_NUM_2)
-#define SENSOR_PREVIEW_YUV_FORMAT   		(A8_SENSOR_YCBYCR) //(A8_SENSOR_CBYCRY) //
-#define SENSOR_FULL_YUV_FORMAT     	 		(A8_SENSOR_YCRYCB) //(A8_SENSOR_CBYCRY) //
+#define SENSOR_PREVIEW_YUV_FORMAT   		(A8_SENSOR_CBYCRY)
+#define SENSOR_FULL_YUV_FORMAT     	 		(A8_SENSOR_CBYCRY)
 #define SENSOR_LATCH_EDGE           		(A8_SENSOR_POS_EDGE)
 
 #define	SENSOR_I2C_ID  			    		(0x66)
-#define	SENSOR_PREVIEW_WIDTH  	    		(640) //(640)
-#define	SENSOR_PREVIEW_HEIGHT  	    		(480) //(480)
-#define	SENSOR_FULL_WIDTH  		    		(640) //(640)
-#define	SENSOR_FULL_HEIGHT  	    		(480) //(480)
+#define	SENSOR_PREVIEW_WIDTH  	    		(640)
+#define	SENSOR_PREVIEW_HEIGHT  	    		(480)
+#define	SENSOR_FULL_WIDTH  		    		(640)
+#define	SENSOR_FULL_HEIGHT  	    		(480)
 
 u_short siv121a_read_cmos_sensor(u_short Reg)
 {
@@ -51,10 +51,6 @@ extern	u_char	gbSensorInited;
 
 static u_short	Get_Sensor_ID(u_short*	SensorID);
 
-
-
-
-
 __align(2)const static u_char	Sensor_Init[]=
 {
 	// SNR Block [Vendor recommended value ##Don't change##]
@@ -64,23 +60,6 @@ __align(2)const static u_char	Sensor_Init[]=
 	0x13,0x17,
 	0x15,0x22, 
 
-#if 0
-	0x00,0x01,
-	0x04,0x00,//0x00_1021
-	0x05,0x02, 
-	0x11,0x25,
-	0x12,0x21, 
-	0x13,0x15,
-	0x15,0xC2,
-	
-	0x20,0x44, 	//00
-	0x21,0xff,  //6e
-	0x22,0xff,  //6e
-	0x23,0xff,  // 1d
-	
-	0x00,0x02,
-	0x34,0x3a,   //42 
-#else
 	0x00,0x01,
 	0x04,0x00,
 	0x05,0x02, 
@@ -95,8 +74,6 @@ __align(2)const static u_char	Sensor_Init[]=
     
     0x00,0x02,
 	0x34,0x60,   //42 
-#endif
-	
     //50HZ 12MHZ 12.5FPS
  
     
@@ -197,9 +174,9 @@ __align(2)const static u_char	Sensor_Init[]=
 	// IDP
 	0x00,0x04,
 	0x10,0xFF, // IDP function enable
-	0x11,0x09, //0x1D // PCLK polarity  0x09/0x19
+	0x11,0x19, //0x1D // PCLK polarity  0x09/0x19
 	//0x12,0x9D, // Y,Cb,Cr order sequence
-    0x12,0x1D,// Y,Cb,Cr order sequence
+    0x12,0x9D,// Y,Cb,Cr order sequence
 	// DPCNR
 	0x17,0x98,
 	0x18,0x00,
@@ -557,11 +534,9 @@ static void	Sensor_Enable(u_short enable)
 	{
 		A8L_VIF_Init(&preview_mode);
 
-		gpio_tlmm_config(GPIO_OUTPUT_29);
 		A8L_SetSensorPowerPin(1);
 		sys_IF_ait_delay1ms(5);
 		A8L_SetSensorEnablePin(1);
-		//SetA8RegB(0x7126,0x03);
 		sys_IF_ait_delay1ms(10);
 		
 		
@@ -575,8 +550,7 @@ static void	Sensor_Enable(u_short enable)
 		
 		A8L_SetSensorIF(A8_SENSOR_SCK_PIN, A8_ON);
 		A8L_SetSensorIF(A8_SENSOR_SDA_PIN, A8_ON);
-		sys_IF_ait_delay1ms(30);
-	    //gbSensorInited = 1;    		
+		sys_IF_ait_delay1ms(30);		
 	}
 	else
 	{
@@ -637,36 +611,46 @@ static u_short SetSensorResolution(mmp_sensor_mode sensor_mode)
 				tab_addr = (u_short *)Sensor_Init;
 				tab_len = sizeof(Sensor_Init);			
                 gbSensorInited = 1;
-                return fRet;
 			break;	
+			
 		case	SENSOR_DSC_PREVIEW:
 				tab_addr = (u_short *)Sensor_Init;
 				tab_len = sizeof(Sensor_Init);				
 			break;
+			
         case    SENSOR_VIDEO_PREVIEW:
 				tab_addr = (u_short *)Sensor_Video_Preview;
 				tab_len = sizeof(Sensor_Video_Preview);				
-			break;            
+			break;   
+			
 		case	SENSOR_NORMAL_CAP_MODE:
 				tab_addr = (u_short *)Sensor_Normal_Capture;
 				tab_len = sizeof(Sensor_Normal_Capture);				
 			break;
+			
 		case	SENSOR_FULL_RESOL_MODE:
                 A8L_VIF_Init(&full_mode); 
                 A8L_SetSensorAttr(&full_mode);            
 				tab_addr = (u_short *)Sensor_Full_Capture;
 				tab_len = sizeof(Sensor_Full_Capture);				
 			break;
+			
 		case	SENSOR_SCALE_UP_MODE:
                 fRet = ChangeSensorAE();
 				tab_addr = (u_short *)Sensor_Full_Capture_ScaleUp;
 				tab_len = sizeof(Sensor_Full_Capture_ScaleUp);				
-            break;			
+            break;	
+            
 	}
+	
     if(!fRet)
+    {
     	return	A8L_SendSensorSettingTable(tab_addr,tab_len);
+    }
     else
-        return  fRet;
+    {
+    	return  fRet;
+    }
 }
 
 static t_sensor_mode_attr	preview_mode =

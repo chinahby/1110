@@ -42,9 +42,10 @@ extern unsigned short ait_sleep_checktime;
 extern const unsigned char DCAM_EINT_NO;
 static void AIT701_set_gpio(u_short pin, u_char level);
 static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para);
+static void AIT701_cam_capture(ext_camera_para_struct *ext_cam_para);
 
 extern unsigned char g_ATV_Flag;
-
+uint16 rgbbuffer[220*176] = {0};
 #if AIT_VIDEO_PHONE_SUPPORT
 unsigned char bVideoChat;
 #endif
@@ -72,9 +73,6 @@ static void AIT701_ResetLCDWindow(void)
 	sys_IF_ait_set_bypass_mode(A8_ON);			
 	AIT_ext_SetLCDWindow(0,0,gA8MainLCDWidth,gA8MainLCDHeight);
 	sys_IF_ait_set_bypass_mode(A8_OFF);
-
-
-	
 	return;
 }
 
@@ -205,10 +203,11 @@ static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_da
 				if(AIT_STATUS_CAM_PREVIEW == sys_IF_ait_get_status())
 				{
 					cam_IF_ait_capture_config((ext_camera_para_struct*)  client_data);
-					status = cam_IF_ait_capture((u_short*)(((ext_camera_para_struct *)client_data)->jpeg_buffer_ptr),&gAitJpegSize);
-					*(u_int*)pdata = gAitJpegSize;	
+					status = cam_IF_ait_capture((u_short*)(((ext_camera_para_struct *)client_data)->jpeg_buffer_ptr),&gAitJpegSize);	
 					AIT_Message_P1("cam_IF_ait_capture size = %d\r\n",gAitJpegSize);
-				}else{
+				}
+				else
+				{
 					status = MMP_INVALID_STATE;
 				}
 				break;
@@ -823,7 +822,7 @@ static mmp_ret_code_type mmpfunc_process(mmp_func_type func, void* client_data, 
 		case AIT_STATUS_VDO_PLAY_PAUSE:
 			break;
 		default:
-		sys_IF_ait_set_bypass_mode(A8_ON);		
+			sys_IF_ait_set_bypass_mode(A8_ON);		
 			break;
 	}
 
@@ -949,6 +948,7 @@ static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START, ext_cam_para, AIT_CAM_PREV_FULL_MODE , 0, 0, 0, 0);
 		}
 	}
+
 	return;
 }
 
@@ -972,6 +972,49 @@ u_char AIT701_cam_resume_lcd_refresh(void)
 
 	AIT_Message_P0("-AIT701_cam_resume_lcd_refresh\r\n");
 	return 0;
+}
+
+extern void disp_update
+(
+  /* The buffer pointer point to the first byte of the whole buffer.
+  */
+  void *buf_ptr,
+  /* Source image width */
+  int16 src_width,
+  /* Source rectangle starting row */
+  int16 src_starting_row,
+  /* Source rectangle starting column */
+  int16 src_starting_column,
+  /* Number of rows to update */
+  int16 num_of_rows,
+  /* Number of columns to update */
+  int16 num_of_columns,
+  /* Device rectangle starting row */
+  int16 dst_starting_row,
+  /* Device rectangle starting column */
+  int16 dst_starting_column
+);
+
+u_int AIT701_Test_capture(uint8 *buf)
+{
+	ext_camera_para_struct ext_cam_para = {0};
+
+	ext_cam_para.image_width = 640;
+	ext_cam_para.image_height = 480;
+	ext_cam_para.buffer_width = 640;
+	ext_cam_para.buffer_height = 480;
+	ext_cam_para.jpeg_buffer_ptr = buf;
+	ext_cam_para.image_buffer_size = 300*1024;
+	ext_cam_para.sticker_capture = FALSE;
+	ext_cam_para.jpeg_compression_ratio = 1;
+	ext_cam_para.preview_width = 220;
+	ext_cam_para.preview_height = 176;
+	ext_cam_para.preview_src = 0;
+	AIT701_cam_capture(&ext_cam_para);
+
+	AIT701_JpegDecode((u_short*)buf,gAitJpegSize,220,176,(u_char*)rgbbuffer,0);
+	disp_update(rgbbuffer,220,0,0,176,220,0,0);
+	return gAitJpegSize;
 }
 
 static void AIT701_cam_capture(ext_camera_para_struct *ext_cam_para)

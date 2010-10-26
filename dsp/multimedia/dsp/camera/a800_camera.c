@@ -6131,40 +6131,50 @@ void A800_TakeJpegSetting(u_int JpegWidth, u_int JpegHeight)
 	if(!gsSensorUsing)
 		return;
 
-	ZoomBase = A800Data.Select -> UpScale;
+	ZoomBase = A800Data.Select->UpScale;
 	CurZoomStep =gA8CurrentZoomRate+ZoomBase;// GetA8RegB(0x4f15);
 	SetA8RegB(0x6510,GetA8RegB(0x6510)&0xfb);	
-	while( (GetA8RegB(0x5008)&0x1) && (timeout < 0x10000)){
+	while( (GetA8RegB(0x5008)&0x1) && (timeout < 0x10000))
+	{
 		timeout++;
 	};
 	SetA8RegB(0x500A, GetA8RegB(0x500a)&0xfe);
 	if((gsSensorUsing->preview_mode->image_width*JpegHeight)>(gsSensorUsing->preview_mode->image_height*JpegWidth)){
 		Temp0 = ((120<<8)*JpegHeight) / (gsSensorUsing->preview_mode->image_height*ZoomBase);
 		MaxN = Temp0 * gsSensorUsing->preview_mode->image_height * ZoomBase / JpegHeight;
-	} else {
+	}
+	else
+	{
 		Temp0 = ((120<<8)*JpegWidth) / (gsSensorUsing->preview_mode->image_width*ZoomBase);
 		MaxN = Temp0 * gsSensorUsing->preview_mode->image_width * ZoomBase / JpegWidth;
 	}
 	tmpCurZoomStep = Temp0 * CurZoomStep;
 
-	if(tmpCurZoomStep > MaxN) {
+	if(tmpCurZoomStep > MaxN)
+	{
 		gsSensorUsing->sensor_setting(SENSOR_FULL_RESOL_MODE);
 		if((gsSensorUsing->full_mode->image_width*JpegHeight) > (gsSensorUsing->full_mode->image_height*JpegWidth)) {
 			Temp0 = ((120<<8)*JpegHeight) / (gsSensorUsing->full_mode->image_height*ZoomBase);
 			MaxN = Temp0 * gsSensorUsing->full_mode->image_height * ZoomBase / JpegHeight;
-		} else {
+		}
+		else
+		{
 			Temp0 = ((120<<8)*JpegWidth) / (gsSensorUsing->full_mode->image_width*ZoomBase);
 			MaxN = Temp0 * gsSensorUsing->full_mode->image_width * ZoomBase / JpegWidth;
 		}
 		tmpCurZoomStep = Temp0 * CurZoomStep;
-		if(MaxWidth < JpegWidth) {
+		if(MaxWidth < JpegWidth)
+		{
 			tmpCurZoomStep >>= 8;
 			MaxN >>= 8;			
 			if((((gsSensorUsing->full_mode->image_width*tmpCurZoomStep/MaxN))<JpegWidth)||(((gsSensorUsing->full_mode->image_height*tmpCurZoomStep/MaxN))<JpegHeight))
 				tmpCurZoomStep++;		
 			A800_FillJpegScaleDown(JpegWidth, JpegHeight, gsSensorUsing->full_mode->image_width, gsSensorUsing->full_mode->image_height, MaxN, tmpCurZoomStep);
-		} else {
-			if(tmpCurZoomStep > MaxN) {
+		}
+		else
+		{
+			if(tmpCurZoomStep > MaxN)
+			{
 				Temp0 = 120 * MaxN / tmpCurZoomStep;
 				MaxN = Temp0 * tmpCurZoomStep / MaxN;
 				tmpCurZoomStep = Temp0;
@@ -6172,7 +6182,9 @@ void A800_TakeJpegSetting(u_int JpegWidth, u_int JpegHeight)
 				if((((gsSensorUsing->full_mode->image_width*tmpCurZoomStep/MaxN))<JpegWidth)||(((gsSensorUsing->full_mode->image_height*tmpCurZoomStep/MaxN))<JpegHeight))
 					tmpCurZoomStep++;		
 				A800_FillJpegScaleUp(JpegWidth, JpegHeight, gsSensorUsing->full_mode->image_width, gsSensorUsing->full_mode->image_height, MaxN, tmpCurZoomStep);
-			} else {
+			}
+			else
+			{
 				tmpCurZoomStep >>= 8;
 				MaxN >>= 8;			
 				if((((gsSensorUsing->full_mode->image_width*tmpCurZoomStep/MaxN))<JpegWidth)||(((gsSensorUsing->full_mode->image_height*tmpCurZoomStep/MaxN))<JpegHeight))
@@ -6180,7 +6192,9 @@ void A800_TakeJpegSetting(u_int JpegWidth, u_int JpegHeight)
 				A800_FillJpegScaleDown(JpegWidth, JpegHeight, gsSensorUsing->full_mode->image_width, gsSensorUsing->full_mode->image_height, MaxN, tmpCurZoomStep);
 			}
 		}		
-	} else {
+	}
+	else
+	{
 		gsSensorUsing->sensor_setting(SENSOR_NORMAL_CAP_MODE);
 		tmpCurZoomStep >>= 8;
 		MaxN >>= 8;			
@@ -6195,7 +6209,8 @@ void A800_TakeJpegSetting(u_int JpegWidth, u_int JpegHeight)
 	SetA8RegW(0x6202,JpegHeight);
 
 	SetA8RegW(0x4f0a, GetA8RegW(0x4f0a)+(Temp0-JpegWidth));	
-	AIT_Message_P4("x0=0x%x,x1=0x%x,y0=0x%x,y1=0x%x\r\n",GetA8RegW(0x4f08),GetA8RegW(0x4f0a),GetA8RegW(0x4f0c),GetA8RegW(0x4f0e));
+	AIT_Message_P2("x0=0x%x,x1=0x%x",GetA8RegW(0x4f08),GetA8RegW(0x4f0a));
+	AIT_Message_P2("y0=0x%x,y1=0x%x\r\n",GetA8RegW(0x4f0c),GetA8RegW(0x4f0e));
 	AIT_Message_P2("N=0x%x,M=0x%x\r\n",GetA8RegB(0x4f15),GetA8RegB(0x4f16));		
 
 }
@@ -6264,91 +6279,18 @@ A8_ERROR_MSG 	A800_TakeJPEG(u_char resolution, u_int maxFileSize, u_short *pdata
 	return A8_NO_ERROR;
 }
 
-#if PANEL_IS_HX8367
-void A800_VideoPlayback_SpeedUp_Init(void)
-{
-   s_int timeout;
-   u_short val;
-   SetA8RegW(0x5006, 0x28);//Index  ? Reg[0x28] = 0x34
-
-   SetA8RegB(0x500a, 0x04);
-   timeout = 0;
-   do
-   {
-      val=GetA8RegB(0x500a);
-             sys_IF_ait_delay1us(1);
-      timeout++;
-   }while((val & 0x04) &&(timeout < A8_CMD_READY_TIME_OUT));
-
-   SetA8RegW(0x5004, 0x34);//CMD  ? Reg[0x28] = 0x34
-   SetA8RegB(0x500a, 0x08);
-   timeout = 0;
-   do
-   {
-      val=GetA8RegB(0x500a);
-             sys_IF_ait_delay1us(1);
-      timeout++;
-   }while((val & 0x08) &&(timeout < A8_CMD_READY_TIME_OUT));
-
-   SetA8RegW(0x5006, 0x22);//Index  ?index for writing to GRAM
-   SetA8RegB(0x500a, 0x04);
-   timeout = 0;
-   do
-   {
-      val=GetA8RegB(0x500a);
-             sys_IF_ait_delay1us(1);
-      timeout++;
-   }while((val & 0x04) &&(timeout < A8_CMD_READY_TIME_OUT));
-}
-
-void A800_VideoPlayback_SpeedUp(void)
-{
-   s_int timeout;
-   u_short val;
-
-   SetA8RegW(0x5006, 0x28);//Index  ? Reg[0x28] = 0x3F
-   SetA8RegB(0x500a, 0x04);
-   timeout = 0;
-   do
-   {
-      val=GetA8RegB(0x500a);
-             sys_IF_ait_delay1us(10);
-      timeout++;
-   }while((val & 0x08) &&(timeout < A8_CMD_READY_TIME_OUT));
-
-   SetA8RegW(0x5004, 0x3F);//CMD  ? Reg[0x28] = 0x3F
-   SetA8RegB(0x500a, 0x08);
-   timeout = 0;
-   do
-   {
-      val=GetA8RegB(0x500a);
-             sys_IF_ait_delay1us(10);
-      timeout++;
-   }while((val & 0x08) &&(timeout < A8_CMD_READY_TIME_OUT));
-
-   SetA8RegW(0x5006, 0x22);//Index  ?index for writing to GRAM
-   SetA8RegB(0x500a, 0x04);
-   timeout = 0;
-   do
-   {
-      val=GetA8RegB(0x500a);
-             sys_IF_ait_delay1us(10);
-      timeout++;
-   }while((val & 0x08) &&(timeout < A8_CMD_READY_TIME_OUT));
-}
-#endif
 void A800_LCD_Refresh_Pause(void)
 {
-   s_int timeout;
-   u_short val;
-   u_short color = 0xff;
-   /*  SetA8RegB(0x500a, 0x00);
-   do
-   {
-      val=GetA8RegB(0x5008);
-           sys_IF_ait_delay1us(1);
-      timeout++;
-   }while((val & 0x01) &&(timeout < A8_CMD_READY_TIME_OUT));
+	s_int timeout;
+	u_short val;
+	u_short color = 0xff;
+	/*  SetA8RegB(0x500a, 0x00);
+	do
+	{
+		val=GetA8RegB(0x5008);
+		sys_IF_ait_delay1us(1);
+		timeout++;
+	}while((val & 0x01) &&(timeout < A8_CMD_READY_TIME_OUT));
 
 
 	SetA8RegW(0x5006, 0x02);//Index  ?index for writing to GRAM
@@ -6359,64 +6301,62 @@ void A800_LCD_Refresh_Pause(void)
 	SetA8RegB(0x500a, 0x04);
 	sys_IF_ait_delay1us(5);
 
-  
-  for(timeout=0;timeout<176*220*2;++timeout)
-  {
-  
-SetA8RegW(0x5004, color);//Index  ? Reg[0x28] = 0x34
-   SetA8RegB(0x500a, 0x08);
-      sys_IF_ait_delay1us(5);
-  
-  }
-*/
+
+	for(timeout=0;timeout<176*220*2;++timeout)
+	{
+		SetA8RegW(0x5004, color);//Index  ? Reg[0x28] = 0x34
+		SetA8RegB(0x500a, 0x08);
+		sys_IF_ait_delay1us(5);
+	}
+	*/
 
 
-   SetA8RegW(0x5006, 0x0007);//Index  ? Reg[0x28] = 0x34
-   SetA8RegB(0x500a, 0x04);
-  sys_IF_ait_delay1us(15);
+	SetA8RegW(0x5006, 0x0007);//Index  ? Reg[0x28] = 0x34
+	SetA8RegB(0x500a, 0x04);
+	sys_IF_ait_delay1us(15);
 
 
-   SetA8RegW(0x5004, 0x0003);//CMD  ? Reg[0x28] = 0x34
-   SetA8RegB(0x500a, 0x08);
-    sys_IF_ait_delay1us(1);
+	SetA8RegW(0x5004, 0x0003);//CMD  ? Reg[0x28] = 0x34
+	SetA8RegB(0x500a, 0x08);
+	sys_IF_ait_delay1us(1);
 
 
- //  SetA8RegW(0x5006, 0x0202);//Index  ?index for writing to GRAM
-   //SetA8RegB(0x500a, 0x04);
-   //   sys_IF_ait_delay1us(1);
+	//SetA8RegW(0x5006, 0x0202);//Index  ?index for writing to GRAM
+	//SetA8RegB(0x500a, 0x04);
+	//sys_IF_ait_delay1us(1);
 
 }
 
 void A800_LCD_Refresh_Resume(void)
 {
-   s_int timeout;
-   u_short val;
-A8L_CheckSensorFrame(VIF_FRAME_END); 
-A8L_CheckLcdBusy();		
-   SetA8RegW(0x5006, 0x0007);//Index  ? Reg[0x28] = 0x34
-   SetA8RegB(0x500a, 0x04);
-    sys_IF_ait_delay1us(1);
+	s_int timeout;
+	u_short val;
+	A8L_CheckSensorFrame(VIF_FRAME_END); 
+	A8L_CheckLcdBusy();		
+	SetA8RegW(0x5006, 0x0007);//Index  ? Reg[0x28] = 0x34
+	SetA8RegB(0x500a, 0x04);
+	sys_IF_ait_delay1us(1);
 
-   SetA8RegW(0x5004, 0x0003);//CMD  ? Reg[0x28] = 0x34
-   SetA8RegB(0x500a, 0x08);
-    sys_IF_ait_delay1us(1);
-//A8L_CheckLcdBusy();	
-   SetA8RegW(0x5006, 0x0007);//Index  ? Reg[0x28] = 0x34
-   SetA8RegB(0x500a, 0x04);
-    sys_IF_ait_delay1us(1);
+	SetA8RegW(0x5004, 0x0003);//CMD  ? Reg[0x28] = 0x34
+	SetA8RegB(0x500a, 0x08);
+	sys_IF_ait_delay1us(1);
+	//A8L_CheckLcdBusy();	
+	SetA8RegW(0x5006, 0x0007);//Index  ? Reg[0x28] = 0x34
+	SetA8RegB(0x500a, 0x04);
+	sys_IF_ait_delay1us(1);
 
-   SetA8RegW(0x5004, 0x0001);//CMD  ? Reg[0x28] = 0x34
-   SetA8RegB(0x500a, 0x04);
-    sys_IF_ait_delay1us(1);
-      SetA8RegW(0x5006, 0x0202);//Index  ?index for writing to GRAM
-   SetA8RegB(0x500a, 0x04);
-    sys_IF_ait_delay1us(1);
+	SetA8RegW(0x5004, 0x0001);//CMD  ? Reg[0x28] = 0x34
+	SetA8RegB(0x500a, 0x04);
+	sys_IF_ait_delay1us(1);
+	SetA8RegW(0x5006, 0x0202);//Index  ?index for writing to GRAM
+	SetA8RegB(0x500a, 0x04);
+	sys_IF_ait_delay1us(1);
 	A8L_CheckSensorFrame(VIF_FRAME_END);
-A8L_CheckLcdBusy();		
-   SetA8RegB(0x500a, 0x01);
+	A8L_CheckLcdBusy();		
+	SetA8RegB(0x500a, 0x01);
 	A8L_CheckSensorFrame(VIF_FRAME_END);
-A8L_CheckLcdBusy();		
-   SetA8RegB(0x500a, 0x00);	
+	A8L_CheckLcdBusy();		
+	SetA8RegB(0x500a, 0x00);	
 }
 
 #endif

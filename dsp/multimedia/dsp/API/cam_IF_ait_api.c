@@ -834,10 +834,10 @@ A8_ERROR_MSG	cam_IF_ait_preview_LcdScaler (u_short Win, u_short Hin, u_short Wou
 */ 
 void cam_IF_ait_capture_config(ext_camera_para_struct*  Ext_Capture_config)
 {
-	AIT_Capture_config.jpeg_quality = Ext_Capture_config -> jpeg_compression_ratio;
-	AIT_Capture_config.maxEncodedSize = Ext_Capture_config ->image_buffer_size;
+	AIT_Capture_config.jpeg_quality = Ext_Capture_config->jpeg_compression_ratio;
+	AIT_Capture_config.maxEncodedSize = Ext_Capture_config->image_buffer_size;
 	AIT_Capture_config.jpeg_withEXIF = FALSE;
-	AIT_Capture_config.sticker_capture = Ext_Capture_config ->sticker_capture;
+	AIT_Capture_config.sticker_capture = Ext_Capture_config->sticker_capture;
 
 	AIT_Message_P3("capture 1=0x%x, 2=0x%x, 3=0x%x \r\n",AIT_Capture_config.jpeg_quality,AIT_Capture_config.maxEncodedSize,AIT_Capture_config.sticker_capture );
 #if 0	
@@ -863,8 +863,8 @@ void cam_IF_ait_capture_config(ext_camera_para_struct*  Ext_Capture_config)
 			AIT_Capture_config.image_resolution = 0;
 	A800_SetCaptureResolution(AIT_Capture_config.image_resolution);										
 #else
-	gsJpegWidth = Ext_Capture_config ->image_width;
-	gsJpegHeight = Ext_Capture_config ->image_height;
+	gsJpegWidth = Ext_Capture_config->image_width;
+	gsJpegHeight = Ext_Capture_config->image_height;
 	AIT_Message_P2("JpegReso=0x%x x 0x%x\r\n",gsJpegWidth,gsJpegHeight);
 #endif
 }
@@ -926,17 +926,18 @@ A8_ERROR_MSG	cam_IF_ait_capture (u_short *jpeg_buffer_ptr, u_int *JpegSize)
 	else
 	{
 
-{	
-		extern u_short	gsJpegWidth,gsJpegHeight;
-		A800_TakeJpegSetting(gsJpegWidth,gsJpegHeight);
+		{	
+			extern u_short	gsJpegWidth,gsJpegHeight;
+			A800_TakeJpegSetting(gsJpegWidth,gsJpegHeight);
 
-		retVal = A800_TakeJPEG(AIT_Capture_config.maxEncodedSize, AIT_Capture_config.maxEncodedSize/*300*1024*/, jpeg_buffer_ptr, JpegSize);
-		if (retVal != A8_NO_ERROR) {
-			sys_IF_ait_set_status(AIT_STATUS_DUMMY);
-			AIT_Message_P0("A800_JPEGCapture is failed !!!\n");
-			return A8_CAM_CAPTURE_ERROR;
+			retVal = A800_TakeJPEG(AIT_Capture_config.maxEncodedSize, AIT_Capture_config.maxEncodedSize/*300*1024*/, jpeg_buffer_ptr, JpegSize);
+			if (retVal != A8_NO_ERROR)
+			{
+				sys_IF_ait_set_status(AIT_STATUS_DUMMY);
+				AIT_Message_P0("A800_JPEGCapture is failed !!!\n");
+				return A8_CAM_CAPTURE_ERROR;
+			}		
 		}		
-}		
 		
 
 	}
@@ -946,6 +947,7 @@ A8_ERROR_MSG	cam_IF_ait_capture (u_short *jpeg_buffer_ptr, u_int *JpegSize)
 	
 	// After capture process, AIT will be in stop_preview status.
 	gAitCaptureStatus = TRUE;
+	AIT_Message_P0("A800_JPEGCapture finished!!!\n");
 	return A8_NO_ERROR;
 	
 }
@@ -1538,7 +1540,7 @@ A8_ERROR_MSG cam_IF_ait_preview_start(PREVIEW_MODE preview_mode, ePREVIEW_SRC_MO
 	previewConfig.lcdMode = A8_MAIN_LCD;
 	
 	//Vin: Todo
-    //    previewConfig.transparencyColor = OSD_TRANSPARENCY_COLOR ;
+    previewConfig.transparencyColor = OSD_TRANSPARENCY_COLOR;
 	// VIN: preview Screen is separate by some block
 
 	SetA8RegB(0x500A,0x0);
@@ -1662,7 +1664,7 @@ A8_ERROR_MSG cam_IF_ait_VIF_Src_Selection(ePREVIEW_SRC_MODE preview_src)
 			#if AIT_VIDEO_PHONE_SUPPORT
 			A8L_SetTVPreviewMode(A8_OFF, 0x0000, 0x2800);
 			#else
-			A8L_SetTVPreviewMode(A8_OFF);//			A8L_SetTVPreviewMode(A8_OFF);
+			A8L_SetTVPreviewMode(A8_ON);//			A8L_SetTVPreviewMode(A8_OFF);
 			#endif
 			break;
 
