@@ -44,6 +44,14 @@ static void disp_ic_init(void)
     LCD_WRITE_CMD(0x59); LCD_WRITE_DATA16(0x001F);
     LCD_DELAY(50); // Delay 50ms
     LCD_WRITE_CMD(0x07); LCD_WRITE_DATA16(0x1017);
+
+    LCD_WRITE_CMD(0x10);
+    LCD_WRITE_DATA16(0xa000);
+    LCD_DELAY(50);
+
+    LCD_WRITE_CMD(0x07);
+    LCD_WRITE_DATA16(0x1017); //Exit Sleep   
+    LCD_DELAY(10);
 }
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
