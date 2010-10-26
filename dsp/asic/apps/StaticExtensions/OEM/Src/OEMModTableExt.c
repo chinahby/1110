@@ -299,6 +299,10 @@ extern int FormsMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int WidgetMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
+#ifdef	 FEATURE_APP_BLUETOOTH
+extern int BTApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+
 
 #if defined FEATURE_SUPPORT_WAP_APP
 extern int EditApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
@@ -1088,6 +1092,11 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined(FEATURE_WMS_APP)
     {AEEFS_MIF_DIR"wms.mif", WMSAPP_Load},
 #endif
+
+#if defined	(FEATURE_APP_BLUETOOTH)
+	{AEEFS_MIF_DIR"btapp.mif",  BTApp_Load},
+#endif
+
 
 #if defined(FEATURE_MFLO)
 #error code not present
