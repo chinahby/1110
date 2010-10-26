@@ -879,5 +879,14 @@ void gpio_restore_gpios_after_uim_sleep( void );
 #define CAMIF_HSYNC_OUT          CAMIF_HSYNC
 #define CAMIF_VSYNC_OUT          CAMIF_VSYNC
 
+#ifdef FEATURE_DSP
+
+#define	ATV_POWER_PIN			(GPIO_OUTPUT_25)
+#define	ATV_RESET_PIN			(GPIO_OUTPUT_24)
+
+#define AIT701_RESET			(GPIO_OUTPUT_53)
+#define AIT701_BYPASS			(GPIO_OUTPUT_51)
+
+#endif
 
 #endif /* GPIO_1100_H */

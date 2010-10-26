@@ -31,9 +31,9 @@
 #define A8_MAIN_LCD_WIDTH			(128)
 #define A8_MAIN_LCD_HEIGHT		(128)
 #elif
-//#error __MMI_MAINLCD_xxxxxxx should be defined in global scope.
+#error __MMI_MAINLCD_xxxxxxx should be defined in global scope.
 #endif
-//#define SET_LCD_WINDOW(x,y,w,h)	 LCD_SetWindow(x,y,w,h)
+
 
 //===========================
 // External Clock
@@ -43,17 +43,8 @@
 //#define EXTCLK_19M2
 
 #if defined(__QSC_TARGET__)
-#define AIT701_RESET			(GPIO_OUTPUT_53)
-#define AIT701_BYPASS			(GPIO_OUTPUT_51)
-#define AIT701_DSP_CLK			(0)			//only use in MTK
-#define AIT701_CLKNUM			(0)			//only use in MTK
-#define AIT701_DSPCLK_CNGDATA	(0)			//only use in MTK
-#define AIT_SLEEP_CHECKTIME 	(300)
 
-#define	ATV_POWER_PIN			(GPIO_OUTPUT_25)
-#define	ATV_RESET_PIN			(GPIO_OUTPUT_24)
-#define	ATV_I2C_SDA				(GPIO_OUTPUT_39)
-#define	ATV_I2C_SCL				(GPIO_OUTPUT_40)
+#define AIT_SLEEP_CHECKTIME 	(300)
 
 #endif
 // USB EN control 
@@ -95,6 +86,7 @@
 #define AIT_LOG_ENABLE_VDO_REC 1
 #define AIT_LOG_ENABLE_SD 0
 
+#define OSD_TRANSPARENCY_COLOR 0x1F
 
 //Vin@20091210:Twin Sensor & TV
 typedef enum ePREVIEW_SRC_MODE{
