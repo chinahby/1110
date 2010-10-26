@@ -31,9 +31,11 @@ when       who  what, where, why
 #if defined(FEATURE_IBT)
 #include "bt.h"
 #include "bti.h"
-#ifndef FEATURE_BT_SOC 
+#ifndef FEATURE_BT_SOC   //modi by yangdecai
+#if 0
 #include "btlm.h"
 #include "btbb.h"
+#endif
 #endif /* FEATURE_BT_SOC */
 #include "msg.h"
 #include "dsm.h"

@@ -121,7 +121,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_STATIC_APP        (AEECLSID_OEM + 0x601)   //addj by yangdecai
 #define AEECLSID_Tv_APP            (AEECLSID_OEM + 0x602)   //addj by pengyuangui
 #define AEECLSID_BRW_APP    	    0x0104c960
-
+#define AEECLSID_BLUETOOTH_APP    	0x01015223
 
 
 #endif /*CUST_EDITION*/

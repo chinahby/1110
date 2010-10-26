@@ -287,6 +287,7 @@ int OEMBTExtSD_DiscoverDevices(
     return EMEMPTR;
   }
 
+  MSG_FATAL("svcCls:::::::::::::::%d",svcCls,0,0);
   switch(svcCls)
   {
     case AEEBT_COD_SC_UNKNOWN:
@@ -328,7 +329,7 @@ int OEMBTExtSD_DiscoverDevices(
   pMe->uMaxNumDevRecs    = uMaxNumRec;
   stat = bt_cmd_sd_discover_devices( pMe->appId, bitmap, &addr, 
                                      uMaxNumRec );
-
+  MSG_FATAL("stat::::::::::::::::=%d",stat,0,0);
   if ( (result = OEMBTExtSD_CheckCmdStatus( stat )) != SUCCESS )
   {
     pMe->pDevRec = NULL;

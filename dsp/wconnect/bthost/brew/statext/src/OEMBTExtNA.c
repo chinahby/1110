@@ -189,8 +189,9 @@ int OEMBTExtNA_Enable( IBTExtNA* pParent )
   {
     return AEEBT_EPORT;
   }
-
+#ifdef FEATURE_BT_NA
   stat = bt_cmd_na_enable( pMe->m_appId );
+#endif
   switch (stat)
   {
     case BT_CS_GN_SUCCESS:
@@ -219,8 +220,9 @@ int OEMBTExtNA_Disable( IBTExtNA* pParent )
   {
     return EBADPARM;
   }
-
+	#ifdef FEATURE_BT_NA
   stat = bt_cmd_na_disable( pMe->m_appId );
+	#endif
   switch (stat)
   {
     case BT_CS_GN_SUCCESS:

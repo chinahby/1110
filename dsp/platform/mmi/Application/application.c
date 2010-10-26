@@ -1013,6 +1013,9 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 #ifdef FEATURE_SUPPORT_WAP_APP
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_14, IDS_APPLICATION_TITLE_14, NULL, 0); 
 #endif
+#ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_15, IDS_APPLICATION_TITLE_15, NULL, 0); 
+#endif
 #endif
 
             return TRUE;
@@ -1447,6 +1450,12 @@ static boolean StartApplet(Application *pMe, int i)
 		case 13:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
             break; 	
+#endif
+#ifdef	FEATURE_APP_BLUETOOTH   //add by yangdecai  2010-10-23
+		case 14:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+			MSG_FATAL("Result======================%d",Result,0,0);
+            break; 		
 #endif
 			
 #endif

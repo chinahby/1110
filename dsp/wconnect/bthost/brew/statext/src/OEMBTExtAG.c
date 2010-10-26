@@ -162,11 +162,13 @@ int OEMBTExtAG_Init( IBTExtAG* pParent )
     FREE( pNew );
     return EFAILED;
   }
+  #ifdef FEATURE_BT_AG
   stat = bt_cmd_ec_reg_event_set_any_app_id( pNew->m_appId,
                                              OEMBTExtAG_EventCallback,
                                              BT_EC_ES_AUDIO_GATEWAY,
                                              BT_EV_NULL,
                                              BT_EV_NULL );
+  #endif
   if ( stat == BT_CS_GN_SUCCESS )
   {
     stat = bt_cmd_ec_register_event_set( pNew->m_appId,
@@ -218,11 +220,13 @@ int OEMBTExtAG_Release( IBTExtAG* pParent )
                                            BT_EC_ES_CUSTOM,
                                            BT_EV_GN_CMD_DONE,
                                            BT_EV_GN_CMD_DONE );
+#ifdef FEATURE_BT_AG
 
     (void) bt_cmd_ec_unregister_event_set( pMe->m_appId,
                                            BT_EC_ES_AUDIO_GATEWAY,
                                            BT_EV_NULL,
                                            BT_EV_NULL );
+#endif
 
     (void)bt_cmd_ec_free_application_id( pMe->m_appId );
     pMe->m_appId = BT_APP_ID_NULL;
@@ -247,9 +251,11 @@ int OEMBTExtAG_Config(
   uint16          wIdleTimeout
 )
 {
+	int 				 result;
+#ifdef FEATURE_BT_AG
   bt_ag_idle_mode_type idleMode;
   bt_cmd_status_type   stat;
-  int                  result;
+  
   OEMBTExtAGobj_t*     pMe = OEMBTExtAG_CheckParentPtr( pParent );
 
   if ( pMe == NULL )
@@ -271,6 +277,7 @@ int OEMBTExtAG_Config(
 
   stat = bt_cmd_ag_config(pMe->m_appId, idleMode, wIdleTimeout);
   result = OEMBTExtAG_CheckCmdStatus( stat );
+#endif
 
   return result;
 }
@@ -282,10 +289,13 @@ int OEMBTExtAG_Enable(
   AEEBTAudioDevice    dev
 )
 {
+	int 				 result;
+
+#ifdef FEATURE_BT_AG
   bt_bd_addr_type      addr;
   bt_audio_device_type audioDevice;
   bt_cmd_status_type   stat;
-  int                  result;
+
   OEMBTExtAGobj_t*     pMe = OEMBTExtAG_CheckParentPtr( pParent );
 
   if ( pMe == NULL )
@@ -320,7 +330,7 @@ int OEMBTExtAG_Enable(
 
   stat = bt_cmd_ag_enable(pMe->m_appId, &addr, audioDevice);
   result = OEMBTExtAG_CheckCmdStatus( stat );
-
+#endif
   return result;
 }
 
@@ -331,6 +341,7 @@ int OEMBTExtAG_Connect(
   AEEBTAudioDevice    dev
 )
 {
+#ifdef FEATURE_BT_AG
   bt_audio_device_type audioDevice;
   bt_cmd_status_type   stat;
   int                  result;
@@ -361,7 +372,7 @@ int OEMBTExtAG_Connect(
   stat = bt_cmd_ag_connect( pMe->m_appId, (bt_bd_addr_type*)pAddr, 
                             audioDevice );
   result = OEMBTExtAG_CheckCmdStatus( stat );
-
+#endif
   return result;
 }
 
@@ -375,8 +386,9 @@ int OEMBTExtAG_Ring( IBTExtAG* pParent, uint16 uMaxRings, uint16 uPeriod )
   {
     return EBADPARM;
   }
-
+#ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_ring_audio_device(pMe->m_appId, uMaxRings, uPeriod);
+#endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -393,8 +405,9 @@ int OEMBTExtAG_SetVRCapable(
   {
     return EBADPARM;
   }
-
+#ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_set_vr_capable( pMe->m_appId, vr_capable );
+#endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -411,8 +424,9 @@ int OEMBTExtAG_UpdateVRState(
   {
     return EBADPARM;
   }
-  
+  #ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_update_vr_state( pMe->m_appId, bVROn );
+  #endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -426,8 +440,9 @@ int OEMBTExtAG_SetSpkrGain( IBTExtAG* pParent, uint8 nGain )
   {
     return EBADPARM;
   }
-  
+  #ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_set_ad_spkr_gain(pMe->m_appId, nGain);
+  #endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -441,8 +456,9 @@ int OEMBTExtAG_SetMicGain( IBTExtAG* pParent, uint8 nGain )
   {
     return EBADPARM;
   }
-  
+  #ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_set_ad_mic_gain(pMe->m_appId, nGain);
+  #endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -456,8 +472,9 @@ int OEMBTExtAG_ConnectAudio( IBTExtAG* pParent )
   {
     return EBADPARM;
   }
-  
+  #ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_audio_connect( pMe->m_appId, 0 );
+  #endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -471,8 +488,9 @@ int OEMBTExtAG_DisconnectAudio( IBTExtAG* pParent )
   {
     return EBADPARM;
   }
-
+#ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_audio_disconnect( pMe->m_appId );
+#endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -486,8 +504,9 @@ int OEMBTExtAG_Disconnect( IBTExtAG* pParent )
   {
     return EBADPARM;
   }
-  
+  #ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_disconnect( pMe->m_appId );
+  #endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -501,8 +520,9 @@ int OEMBTExtAG_Disable( IBTExtAG* pParent )
   {
     return EBADPARM;
   }
-
+	#ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_disable(pMe->m_appId);
+	#endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -588,9 +608,11 @@ int OEMBTExtAG_EnableExternalIO( IBTExtAG* pParent, AEECallback* pCb )
 
   /*  Set up TX watermark.  */
   dsm_queue_init( pMe->m_pTxWm, 1000, &pMe->m_txQ );
+#ifdef BT_AG_HF_EXTENSION
 
   stat = bt_cmd_ag_external_io_config( pMe->m_appId, TRUE, pMe->m_pRxWm,
                                        pMe->m_pTxWm, BT_AG_IC_NONE_M );
+#endif
   result = OEMBTExtAG_CheckCmdStatus( stat );
   if ( result != SUCCESS )
   {
@@ -623,9 +645,11 @@ int OEMBTExtAG_DisableExternalIO( IBTExtAG* pParent )
   *  BT_EV_GN_CMD_DONE can be properly processed in OEMBTExtAG_ProcessCmdDone().
   */
   pMe->m_bDisablingExtIO = TRUE;
+#ifdef BT_AG_HF_EXTENSION
 
   stat = bt_cmd_ag_external_io_config( pMe->m_appId, FALSE, NULL, NULL, 
                                        BT_AG_IC_NONE_M );
+#endif
   nCmdStatus = OEMBTExtAG_CheckCmdStatus( stat );
 
   if ( SUCCESS != nCmdStatus )
@@ -747,8 +771,9 @@ int OEMBTExtAG_SetInbandRingCapable( IBTExtAG* pParent, boolean bCapable )
   {
     return EBADPARM;
   }
-
+	#ifdef FEATURE_BT_AG
   stat = bt_cmd_ag_set_inband_ring( pMe->m_appId, bCapable );
+	#endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -764,9 +789,11 @@ int OEMBTExtAG_SetBatteryChargeIndicator(
   {
     return EBADPARM;
   }
+#ifdef FEATURE_BT_AG
 
   stat = bt_cmd_ag_set_battchg_ind( pMe->m_appId, 
                                     (bt_ag_battchg_level_type) currentLevel );
+#endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -780,9 +807,11 @@ int OEMBTExtAG_SetRSSI( IBTExtAG* pParent, AEEBTRSSI currentLevel )
   {
     return EBADPARM;
   }
+#ifdef FEATURE_BT_AG
 
   stat = bt_cmd_ag_set_rssi( pMe->m_appId, 
                              (bt_ag_rssi_level_type) currentLevel );
+#endif
   return( OEMBTExtAG_CheckCmdStatus( stat ) );
 }
 
@@ -841,9 +870,11 @@ static boolean OEMBTExtAG_ConvertCmdDone(
     case BT_CS_GN_SUCCESS:
       pN->data.uError = AEEBT_AG_ERR_NONE;
       return FALSE;          // wait for other event
+      #ifdef FEATURE_BT_AG
     case BT_CS_AG_ALREADY_ENABLED:
       pN->data.uError = AEEBT_AG_ERR_ALREADY_ENABLED;
       break;
+	 
     case BT_CS_AG_INVALID_PARAMETERS:
       pN->data.uError = AEEBT_AG_ERR_BAD_PARAMS;
       break;
@@ -856,6 +887,7 @@ static boolean OEMBTExtAG_ConvertCmdDone(
     case BT_CS_AG_NO_AUDIO:
       pN->data.uError = AEEBT_AG_ERR_NO_AUDIO;
       break;
+	#endif
     default:
       pN->data.uError = default_stat;
       break;
@@ -873,6 +905,7 @@ static boolean OEMBTExtAG_ProcessCmdDone(
 
   switch (pm->cmd_type)
   {
+  #ifdef FEATURE_BT_AG
     case BT_CMD_AG_CONFIG:
     {
       // status is always SUCCESS; no other event expected;
@@ -1038,6 +1071,7 @@ static boolean OEMBTExtAG_ProcessCmdDone(
                                  pN );
       break;
     }
+#endif
     default:
     {
       MSG_ERROR( "AGEvCb - unexpect Cmd Done %x", pm->cmd_type, 0, 0 );
@@ -1080,6 +1114,7 @@ static void OEMBTExtAG_EventCallback( bt_ev_msg_type* bt_ev_msg_ptr )
       }
       break;
     }
+	#ifdef FEATURE_BT_AG
     case BT_EV_AG_ENABLED:
     {
       pN->uID = AEEBT_AG_EVT_ENABLED;
@@ -1249,6 +1284,7 @@ static void OEMBTExtAG_EventCallback( bt_ev_msg_type* bt_ev_msg_ptr )
       pN->data.uDTMFChar  = bt_ev_msg_ptr->ev_msg.ev_ag_dev_send_dtmf.dtmf_char;
       break;
     }
+	#endif
     default:
     {
       MSG_ERROR( "AGEvCb - unexpect event %x", 

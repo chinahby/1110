@@ -1731,7 +1731,9 @@ void BTApp_UseBTDevice( CBTApp* pMe, boolean bForceUnmute )
 #endif /* FEATURE_AVS_BT_SCO_REWORK */
 
 #ifdef UI_UISND_NO_DIRECT_STATUS_CALLS
+#ifdef FEATURE_BT_AG
     uisnd_set_device_status( SND_DEVICE_BT_HEADSET, UISND_DEV_ENABLED );
+#endif
 #else
     uisnd_force_device_autoselect();
 #endif /* UI_UISND_NO_DIRECT_STATUS_CALLS */
@@ -1777,7 +1779,9 @@ void BTApp_ReleaseBTDevice( CBTApp* pMe, boolean bForceUnmute )
     pMe->mAG.bAudioSelected = FALSE;
 
 #ifdef UI_UISND_NO_DIRECT_STATUS_CALLS
+#ifdef FEATURE_BT_AG
     uisnd_set_device_status( SND_DEVICE_BT_HEADSET, UISND_DEV_UNATTACHED );
+#endif
 #else
     uisnd_force_device_autoselect();
 #endif /* UI_UISND_NO_DIRECT_STATUS_CALLS */
@@ -1821,6 +1825,7 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
   AEETCallInfo         callInfo;
   uint8                index = 0;
   boolean              bCallState = FALSE;
+#ifdef FEATURE_BT_HFP_1_5
 
   uSizeOfCallsDesc = sizeof(AEETCalls) + 
                      (sizeof(AEECallDesc)*(BTAPP_MAX_NUM_CALLS - 1));
@@ -1876,6 +1881,7 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
     }    
   }
   FREEIF( pCallsDesc );
+  #endif
   return bCallState;
 }
 
@@ -2252,8 +2258,10 @@ boolean  BTApp_GetBatteryLevel( CBTApp *pMe , uint8* battLevel )
   uint16  uBattScale;
   uint8   ATBattLevel;
   uint8   uLevel;
+  #ifdef FEATURE_BT_HFP_1_5
   if ( IBATTERY_GetBatteryLevel( pMe->mAG.pIBattery, 
                                  &(pdwData) ) != SUCCESS )
+  #endif
   {
     MSG_ERROR("BTApp_GetBatteryLevel - Cannot obtain battery level", 0, 0, 0);
     return FALSE;

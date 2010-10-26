@@ -527,13 +527,15 @@ Qualcomm Confidential and Proprietary
 #include "btsio.h"
 #include "btutils.h"
 
-#ifndef FEATURE_BT_SOC 
+#ifndef FEATURE_BT_SOC
+#ifndef FEATURE_BT_QSC1100
 #include "btbb.h"
 #include "bthcetc.h"
 #include "bthcev.h"
 #include "btqddata.h"
 #include "btqdspq.h"
 #include "btse.h"
+#endif
 #else
 #include "bthcdrv.h"
 #include "clk.h"
@@ -1024,15 +1026,18 @@ LOCAL void bt_wakeup_isr
 
       /*  Prevent DSP from sleeping until the  */
       /*  saved bt timer sigs are processed.   */
+	  #ifndef FEATURE_BT_QSC1100
       *bt_qd_bt_enable_sleep_mode_ptr = BT_QD_DISABLE_SLEEP_MODE;
+	  #endif
       (void) rex_set_sigs( &bt_tcb, bt_pending_bb_timer_sigs ) ;
     }
 
 #if defined(T_MSM6300) && defined(FEATURE_GSM)
 #error code not present
 #endif
-    
+    #ifndef FEATURE_BT_QSC1100
     bt_bb_send_qdsp_cmd( BT_QDSP_GOTO_WAKEUP_CMD, BT_QDSP_GEN_IDX );
+	#endif
     bt_sleep_data.wakeup_cmd_cnt++;
   
     /*  Now that we have woken up, check both the   */
@@ -1069,7 +1074,9 @@ LOCAL void bt_wakeup_isr
   /*  This is not needed if the interrupt is configured  */
   /*  to be edge-sensitive as opposed to level-sensitive.*/
 #if defined( T_MSM6100 ) && !defined( BT_WAKEUP_EDGE_TRIGGERED )
+#ifndef FEATURE_BT_QSC1100
   tramp_block_till_deasserted( TRAMP_BT_WAKEUP_ISR, 30 );
+#endif
 #endif
 
 }
@@ -1170,7 +1177,9 @@ void bt_enable_clocks_after_wakeup( void )
 
 #if defined( T_MSM6200 ) || defined( T_MSM6100 )
   /* Turn on the MDSP clock. */
+#ifndef FEATURE_BT_QSC1100
   mdsp_dsp_wakeup( MDSP_APP_BT );
+#endif
 #endif
 
 }
@@ -1195,7 +1204,9 @@ void bt_disable_clocks_for_sleep( void )
 
 #if defined( T_MSM6200 ) || defined( T_MSM6100 )
   /* Allow the MDSP clock to be disabled. */
+#ifndef FEATURE_BT_QSC1100
   mdsp_dsp_sleep( MDSP_APP_BT );
+#endif
 #endif
 
 }
@@ -1818,13 +1829,14 @@ LOCAL void bt_init_efs_params
 {
 
   bt_efs_params.version          = BT_EFS_PARAMS_FILE_VER;
+  #ifdef FEATURE_BT_AG  
   bt_efs_params.ag_ad_mic_gain   = BT_AG_DEFAULT_HS_VOLUME_LEVEL;
   bt_efs_params.ag_ad_spkr_gain  = BT_AG_DEFAULT_HS_VOLUME_LEVEL;
   bt_efs_params.ag_idle_mode     = BT_AGIM_DEFAULT_IDLE_MODE;
   bt_efs_params.ag_idle_timeout  = BT_AG_DEFAULT_IDLE_TIMEOUT;
   bt_efs_params.ag_pref_dev_type = BT_AD_HEADSET;
-
   bt_efs_params.low_power_mode   = BT_LPM_SNIFF;
+  #endif
 
   bt_efs_params.cert_mode        = FALSE;
   bt_efs_params.park_supported   = TRUE;
@@ -2108,8 +2120,10 @@ LOCAL void bt_init_always_on_timers
 )
 {
   /* These timers should be cleared in bt_soc_shutdown() */
+  #ifdef FEATURE_BT_SOC
   timer_def( &bt_soc_driver_idle_timer, &bt_always_on_timer_group, &bt_tcb, 
              BT_DRIVER_IDLE_TIMER_SIG, NULL, 0 );
+  #endif
   timer_def( &bt_requeued_cmd_q_timer, &bt_always_on_timer_group, &bt_tcb, 
              BT_REQUEUED_CMD_Q_SIG, NULL, 0 );
   timer_def( &bt_persistent_background_timer, &bt_always_on_timer_group,
@@ -2284,7 +2298,9 @@ LOCAL void bt_task_start
 
   /* Enable the BT Wakeup ISR */
 #if defined( T_MSM33 ) || defined( T_MSM6250 )
+#ifndef FEATURE_BT_QSC1100
   tramp_set_isr( TRAMP_BT_WAKEUP_ISR, bt_wakeup_isr );
+#endif
 #elif defined( T_MSM6200 )
 #error code not present
 #else
@@ -2376,11 +2392,17 @@ LOCAL void bt_process_command
   {
     bt_ag_process_command( bt_cmd_ptr );
   }
-#endif /* FEATURE_BT_AG */
-  else if ( BT_CE_GROUP( bt_cmd_ptr->cmd_hdr.cmd_type, NA ) )
+   else if ( BT_CE_GROUP( bt_cmd_ptr->cmd_hdr.cmd_type, NA ) )
   {
     bt_na_process_command( bt_cmd_ptr );
   }
+#else
+  if ( BT_CE_GROUP( bt_cmd_ptr->cmd_hdr.cmd_type, NA ) )
+  {
+    bt_na_process_command( bt_cmd_ptr );
+  }
+#endif /* FEATURE_BT_AG */
+ 
   else if ( BT_CE_GROUP( bt_cmd_ptr->cmd_hdr.cmd_type, RC ) )
   {
     bt_rc_process_command( bt_cmd_ptr );
@@ -3576,7 +3598,9 @@ void bt_soc_shutdown_cleanup
   bt_l2_soc_reset_shutdown();
   bt_rc_soc_reset_shutdown();
   bt_sd_soc_reset_shutdown();
+  #ifdef FEATURE_BT_AG
   bt_ag_soc_reset_shutdown();
+  #endif
 }
 #endif /* FEATURE_BT_SOC */
 
@@ -3710,7 +3734,9 @@ LOCAL void bt_clear_pending_bb_timer_sig
     if ( bt_pending_bb_timer_sigs == 0 )
     {
       BT_MSG_DEBUG ( "BT: Enabled DSP sleep", 0, 0, 0 );
-      *bt_qd_bt_enable_sleep_mode_ptr = BT_QD_ENABLE_SLEEP_MODE;          
+      #ifndef FEATURE_BT_QSC1100
+	  *bt_qd_bt_enable_sleep_mode_ptr = BT_QD_ENABLE_SLEEP_MODE;
+	  #endif
     }
   }
 
@@ -4204,8 +4230,9 @@ void bt_task
       (void) rex_clr_timer( &bt_background_timer );
       (void) rex_clr_timer( &bt_persistent_background_timer );
       (void) rex_clr_sigs( &bt_tcb, BT_BACKGROUND_TIMER_SIG );
-
+#ifdef FEATURE_BT_AG
       bt_ag_background_tick();
+#endif
       bt_sio_background_tick();
       bt_rc_background_tick();
       bt_l2_background_tick();
@@ -4321,7 +4348,9 @@ void bt_task
       {
         if ( BT_IS_IN_QDSP() )
         {
+        #ifndef FEATURE_BT_QSC1100
           bt_bb_send_qdsp_cmd( BT_QDSP_DISABLE_RFU_CMD, BT_QDSP_GEN_IDX );
+		#endif
         }
         else
         {

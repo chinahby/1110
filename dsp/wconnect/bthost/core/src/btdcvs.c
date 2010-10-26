@@ -127,7 +127,9 @@ static void bt_switch_to_high_power_mode(boolean flag)
 /* This API has not changed in a while. If it changes convert this into
  * a macro that uses appropriate api based on target
  */
+ #ifdef FEATURE_BT_USE_CLKRGM_BT
     clk_regime_register_for_cpu_resource(BT_DCVS_CLIENT);
+#endif
     clk_mode = BT_DCVS_HIGH_POWER_MODE;
   }
 
@@ -135,7 +137,9 @@ static void bt_switch_to_high_power_mode(boolean flag)
   else if ( (flag == FALSE) && (clk_mode == BT_DCVS_HIGH_POWER_MODE) )
   {
     BT_MSG_HIGH(" Switching to low power mode", 0, 0, 0); 
+	 #ifdef FEATURE_BT_USE_CLKRGM_BT
     clk_regime_deregister_for_cpu_resource(BT_DCVS_CLIENT);
+	 #endif
     clk_mode = BT_DCVS_LOW_POWER_MODE;
   }
   else

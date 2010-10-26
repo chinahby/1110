@@ -3,7 +3,7 @@
 
 #include "customer.h"
 
-#ifdef FEATURE_BT
+
 
 /*====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*
 
@@ -561,6 +561,7 @@ $Log:   O:/src/asw/COMMON/vcs/bt.h_v  $
 #include "task.h"
 #include "btcomdef.h"
 #include "btqsocnvm.h"
+//#ifdef FEATURE_BT
 
 /*===========================================================================
 
@@ -5034,7 +5035,7 @@ typedef struct bt_ev_msg_struct
 #error code not present
 #endif /* FEATURE_BT_TEST_API */
 
-#endif /* FEATURE_BT */
+//#endif /* FEATURE_BT */
 
 #endif /* _BT_H */
 

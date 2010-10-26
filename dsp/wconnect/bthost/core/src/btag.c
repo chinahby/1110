@@ -2053,14 +2053,14 @@ LOCAL void bt_ag_send_event
 
   if ( keep_going )
   {
-    BT_BDA( MSG_API, "BT AG EV TX:", bd_addr_ptr );
+    //BT_BDA( MSG_API, "BT AG EV TX:", bd_addr_ptr );
     event_msg.ev_hdr.ev_type = ev_type;
     bt_ec_send_event( &event_msg );  /* send it up */
   }
   else
   {
     BT_ERR( "BT AG: Event NOT SENT T %x", ev_type, 0, 0 );
-    BT_BDA( ERR, "BT AG: Event NOT SENT", bd_addr_ptr );
+    //BT_BDA( ERR, "BT AG: Event NOT SENT", bd_addr_ptr );
   }
 }
 
@@ -2930,7 +2930,7 @@ LOCAL void bt_ag_cmd_connect
       case BT_AGS_AUDIO_CONNECTING:
       case BT_AGS_AUDIO_DISCONNECTING:
       case BT_AGS_AUDIO_CONNECTED:
-        BT_BDA( MSG_DEBUG, "BT AG: already connected", &AUDIO_DEV.bd_addr );
+        //BT_BDA( MSG_DEBUG, "BT AG: already connected", &AUDIO_DEV.bd_addr );
         ag_cmd_ptr->cmd_hdr.cmd_status = BT_CS_AG_ALREADY_CONNECTED;
         bt_ag_send_event( BT_EV_AG_CONNECTED );
         break;

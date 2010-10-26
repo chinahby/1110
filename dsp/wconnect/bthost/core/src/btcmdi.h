@@ -3633,7 +3633,9 @@ typedef BT_PACKED union
   bt_cmd_hc_periodic_inq_type                  cmd_hc_per_inq;
   bt_cmd_hc_create_conn_type                   cmd_hc_create_conn;
   bt_cmd_hc_disconn_type                       cmd_hc_disconn;
+  #ifdef FEATURE_BT_1_2
   bt_cmd_hc_create_conn_cancel_type            cmd_hc_create_conn_cancel;
+  #endif
   bt_cmd_hc_add_sco_conn_type                  cmd_hc_add_sco;
   bt_cmd_hc_accept_conn_type                   cmd_hc_accept_conn;
   bt_cmd_hc_reject_conn_type                   cmd_hc_reject_conn;
@@ -3643,7 +3645,9 @@ typedef BT_PACKED union
   bt_cmd_hc_set_conn_encrypt_type              cmd_hc_set_conn_encrypt;
   bt_cmd_hc_master_link_key_type               cmd_hc_master_key;
   bt_cmd_hc_remote_name_req_type               cmd_hc_remote_name_req;
+  #ifdef FEATURE_BT_1_2
   bt_cmd_hc_remote_name_req_cancel_type        cmd_hc_remote_name_req_cancel;
+  #endif
   bt_cmd_hc_hold_mode_type                     cmd_hc_hold_mode;
   bt_cmd_hc_sniff_mode_type                    cmd_hc_sniff_mode;
   bt_cmd_hc_exit_sniff_mode_type               cmd_hc_exit_sniff_mode;

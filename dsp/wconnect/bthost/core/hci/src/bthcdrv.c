@@ -1664,9 +1664,9 @@ const bt_hc_drv_ev_struct_type  bt_hc_drv_ev_table[] =
 #ifdef FEATURE_BT_2_1
  ,{ BT_EV_HC_LINK_SUPERVISION_TIMEOUT_CHANGED,
                                   BT_HCI_LINK_SUPERVISION_TIMEOUT_CHANGED_EV,
-   sizeof( bt_ev_hc_lk_sup_to_changed_type ), BT_EV_FIXED_LENGTH },
+   sizeof( bt_ev_hc_lk_sup_to_changed_type ), BT_EV_FIXED_LENGTH }
 #endif /* FEATURE_BT_2_1 */
-   { BT_EV_HC_RX_SCO_DATA,                 BT_HCI_MAX_EV,
+   ,{ BT_EV_HC_RX_SCO_DATA,                 BT_HCI_MAX_EV,
      sizeof( bt_ev_hc_rx_sco_data_type ),  BT_EV_VAR_LENGTH},
 
    { BT_EV_HC_MAX,                         BT_HCI_MAX_EV,
@@ -3550,7 +3550,7 @@ void bt_hc_drv_sio_wakeup_and_transmit
         /* Since the MSM's TX path is down, set TX UNBREAK to wakeup SOC */
         BT_QSOC_SLEEP_INBAND_SET_WAIT_UNBRK_ACK();
 
-        BT_LOG_INBAND_STATE( "BT HC DRV :MSM Sending TX UNBRK to SOC ");
+        //BT_LOG_INBAND_STATE( "BT HC DRV :MSM Sending TX UNBRK to SOC ");
 
         /* Register for the RX high callback function  before restoring the
            lockedout interrupts any RX wakeup can occur only at this stage. */
@@ -3585,7 +3585,7 @@ void bt_hc_drv_sio_wakeup_and_transmit
 
         /* No need to use INBAND Sleep signalling as the Driver is not yet enabled,
            TX Path can transmit without inband sleep functionality */
-        BT_LOG_INBAND_STATE( "BT HC DRV: TX Req before SOC is initialized ");
+        //BT_LOG_INBAND_STATE( "BT HC DRV: TX Req before SOC is initialized ");
 
         /* RST the FLush timer as we are anyway going to start TX FLUSH again after this TX*/
         BT_QSOC_INBAND_CLR_TX_FLUSH_TIMER();
@@ -3636,7 +3636,7 @@ void bt_hc_drv_sio_wakeup_and_transmit
         The SoC is already awake, ensure it stays awake until the command
         is passed to the SIO driver.
       */
-      BT_LOG_INBAND_STATE( "BT HC DRV Inband: SOC Already Awake");
+      //BT_LOG_INBAND_STATE( "BT HC DRV Inband: SOC Already Awake");
 
 #ifdef FEATURE_BT_QSOC_INBAND_SLEEP
       /* For Inband sleep we reset the Flush timer as we are anyway going
@@ -6797,7 +6797,7 @@ void bt_hc_drv_build_rx_hci_pkt
 
      case BT_HCI_ZERO_PKT     :
 #ifdef FEATURE_BT_QSOC_INBAND_SLEEP
-       BT_LOG_INBAND_STATE("BT HC DRV:Recvd zero char for RX BRK from SOC");
+       //BT_LOG_INBAND_STATE("BT HC DRV:Recvd zero char for RX BRK from SOC");
 #else
        BT_MSG_HIGH( "BT HC DRV: Bad pkt type from SOC %d, Sync loss",
                      hci_pkt_type, 0, 0 );
@@ -6967,7 +6967,10 @@ void bt_hc_drv_process_bytes_from_sio( void )
 
 #ifdef FEATURE_BT_QSOC_INBAND_SLEEP
       /* Update the Inband RX state  machine */
+#ifdef FEATURE_BT_QSOC_SLEEP
+
       bt_qsoc_sleep_inband_rx_new_pkt();
+#endif
 #endif /* FEATURE_BT_QSOC_INBAND_SLEEP*/
     }
     else

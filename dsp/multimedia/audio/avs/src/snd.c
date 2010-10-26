@@ -5330,23 +5330,35 @@ LOCAL void snd_change_inactive_tone ( void )
   /*Indicates a HW ringer tone got stopped*/
   if(sndhw_get_bt_playback_other_start())
   {
+  #if defined (FEATURE_SBC_CODEC) || defined (FEATURE_SBC_DSP_CODEC)
+#ifndef FEATURE_AVS_SBCENC_TASK
+  #if defined (FEATURE_AVS_BT_SCO_REWORK)
     if (snd_bt_cb_func_ptr)
     {
       MSG_MED("Calling BT callback with playback OTHER stop", 0,0,0);
       snd_bt_cb_func_ptr(VOC_PLAYBACK_OTHER_STOP);
       sndhw_set_bt_playback_other_start(FALSE);
     }
+	#endif
+	#endif
+	#endif
   }
 
   /*Indicates a dtmf tone got stopped in FFA*/
   if(sndhw_get_bt_playback_dtmf_start())
   {
+  #if defined (FEATURE_SBC_CODEC) || defined (FEATURE_SBC_DSP_CODEC)
+#ifndef FEATURE_AVS_SBCENC_TASK
+  #if defined (FEATURE_AVS_BT_SCO_REWORK)
     if (snd_bt_cb_func_ptr)
     {
       MSG_MED("Calling BT callback with playback DTMF stop", 0,0,0);
       snd_bt_cb_func_ptr(VOC_PLAYBACK_DTMF_STOP);
       sndhw_set_bt_playback_dtmf_start(FALSE);
     }
+	#endif
+	#endif
+	#endif
   }
 #endif /*FEATURE_AVS_BT_SCO_REWORK*/
 
@@ -9783,8 +9795,14 @@ SIDE EFFECTS
 ==========================================================================*/
 extern void snd_set_bt_cb_func(snd_bt_cb_func_ptr_type cb_func)
 {
+#if defined (FEATURE_SBC_CODEC) || defined (FEATURE_SBC_DSP_CODEC)
+#ifndef FEATURE_AVS_SBCENC_TASK
+#if defined (FEATURE_AVS_BT_SCO_REWORK)
   snd_bt_cb_func_ptr = cb_func;
   sndhw_set_bt_cb_func((voc_bt_cb_func_ptr_type)cb_func);
+  #endif
+  #endif
+  #endif
 }
 
 /*===========================================================================
@@ -9806,6 +9824,10 @@ SIDE EFFECTS
 ==========================================================================*/
 extern void snd_clr_bt_cb_func(snd_bt_cb_func_ptr_type cb_func)
 {
+#if defined (FEATURE_SBC_CODEC) || defined (FEATURE_SBC_DSP_CODEC)
+#ifndef FEATURE_AVS_SBCENC_TASK
+#if defined (FEATURE_AVS_BT_SCO_REWORK)
+
   if (cb_func == snd_bt_cb_func_ptr)
   {
     snd_bt_cb_func_ptr = NULL;
@@ -9815,6 +9837,9 @@ extern void snd_clr_bt_cb_func(snd_bt_cb_func_ptr_type cb_func)
   {
     MSG_MED("snd_clr_bt_cb_func is called with unregistered function",0,0,0);
   }
+#endif
+#endif
+#endif
 }
 
 #endif /*FEATURE_AVS_BT_SCO_REWORK*/

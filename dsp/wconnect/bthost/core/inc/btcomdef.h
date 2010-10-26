@@ -67,7 +67,7 @@ Notice that changes are listed in reverse chronological order.
 
 #include "customer.h"
 
-#ifdef FEATURE_BT
+//#ifdef FEATURE_BT   //modi by yangdecai
 /*===========================================================================
 
                      INCLUDE FILES FOR MODULE
@@ -382,7 +382,7 @@ typedef enum
   BT_CS_HCI_START =                        BT_CMD_EV_HCI_BASE,
   BT_CS_HCI_END =                          (BT_CMD_EV_HCI_BASE +
                                             BT_BE_LAST),
-#ifdef FEATURE_BT_EXTPF
+#ifndef FEATURE_BT_EXTPF
   BT_CS_PF_INVALID_PARAMETERS =             BT_CMD_EV_PF_GN_BASE,
   BT_CS_PF_NOT_IMPLEMENTED,
   BT_CS_PF_NOT_INITIALIZED,
@@ -589,7 +589,7 @@ typedef enum
 #endif /* FEATURE_BT_EXTPF_AV */
 
 #ifdef FEATURE_BT_EXTPF_HID_HOST
-#error code not present
+//#error code not present
 #endif /*  FEATURE_BT_EXTPF_HID_HOST */
 
 #endif /* FEATURE_BT_EXTPF */
@@ -997,7 +997,7 @@ typedef enum
   BT_EV_PF_SAP_STATUS_IND,
   BT_EV_PF_SAP_ERROR_RSP,
 
-#ifdef FEATURE_BT_EXTPF_AV
+#ifdef FEATURE_BT_EXTPF_AV  //modi by yangdecai
   /* A2DP Events */
   BT_EV_PF_A2DP_CON        =   BT_CMD_EV_PF_A2DP_BASE,
   BT_EV_PF_A2DP_CON_FAILED,
@@ -1145,6 +1145,6 @@ typedef enum
   BT_EV_NULL =                     BT_CMD_EV_NULL
 } bt_event_type;
 
-#endif /* FEATURE_BT */
+//#endif /* FEATURE_BT */  //modi by yangdecai
 #endif /* _BTCOMDEF_H */
 

@@ -282,7 +282,7 @@ void bt_rc_rx_sabm_service_sec_result
     
     BT_MSG_HIGH( "BT RC: Serv Sec forces DM PID %x SCN %x",
                  dlc_ptr->pid, dlc_ptr->server_channel, 0 );
-    BT_BDA( MSG_HIGH, "BT RC: Serv Sec forces DM", &ssn_ptr->bd_addr );
+    //BT_BDA( MSG_HIGH, "BT RC: Serv Sec forces DM", &ssn_ptr->bd_addr );
 
     /* Insure MCC gets taken down if necessary, and event sent to app */
     bt_rc_bring_down_dlc( ssn_ptr, dlc_ptr, TRUE, BT_EVR_RM_SECURITY_NOT_MET );
@@ -326,8 +326,8 @@ LOCAL void bt_rc_rx_process_sabm
       {
         BT_MSG_API( "BT RC CMD TX: RM Enf Sec SCN %x",
                     rxi_ptr->dlc_ptr->server_channel, 0, 0 );
-        BT_BDA( MSG_API, "BT RC CMD TX: RM Enf Sec SCN",
-                &rxi_ptr->ssn_ptr->bd_addr );
+        //BT_BDA( MSG_API, "BT RC CMD TX: RM Enf Sec SCN",
+        //        &rxi_ptr->ssn_ptr->bd_addr );
         bt_cmd_rm_enforce_security_rfcomm_scn(
           bt_rc_app_id, rxi_ptr->dlc_ptr->server_channel,
           &rxi_ptr->ssn_ptr->bd_addr, FALSE );

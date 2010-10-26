@@ -2357,19 +2357,19 @@ LOCAL uint16 bt_rm_select_sco_packet_type
         if( conn_ptr->remote_lmp_features.lmp_features_bytes[1] &
                                                     BT_LM_FEATURE_BYTE1_HV3_B )
         {
-            sync_pkt_types | = BT_PT_HV3_B;
+            sync_pkt_types |= BT_PT_HV3_B;
         }
 
         if ( conn_ptr->remote_lmp_features.lmp_features_bytes[1] &
                                                     BT_LM_FEATURE_BYTE1_HV2_B )
         {
-            sync_pkt_types | = BT_PT_HV2_B;
+            sync_pkt_types |= BT_PT_HV2_B;
         }
 
         if ( conn_ptr->remote_lmp_features.lmp_features_bytes[1] &
                                                     BT_LM_FEATURE_BYTE1_HV1_B )
         {
-            sync_pkt_types | = BT_PT_HV1_B;
+            sync_pkt_types |= BT_PT_HV1_B;
         }
 #endif /* FEATURE_BT_1_2 */
 
@@ -5185,13 +5185,13 @@ LOCAL void bt_rm_reject_connection
 {
 
   BT_MSG_HIGH( "BT RM: Rej Conn R %x LT %x", hc_reason, link_type, 0 );
-  BT_BDA( MSG_HIGH, "BT RM: Rej Conn",
-          &conn_ptr->dev_ptr->dev_public.bd_addr );
+  //BT_BDA( MSG_HIGH, "BT RM: Rej Conn",
+  //        &conn_ptr->dev_ptr->dev_public.bd_addr );
 
   BT_MSG_API( "BT RM CMD TX: HC Rej Conn R %x LT %x",
               hc_reason, link_type, 0 );
-  BT_BDA( MSG_API, "BT RM CMD TX: HC Rej Conn",
-          &conn_ptr->dev_ptr->dev_public.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD TX: HC Rej Conn",
+  //        &conn_ptr->dev_ptr->dev_public.bd_addr );
 
 #ifdef FEATURE_BT_1_2
   if ( ( link_type == BT_SCO_LINK ) || ( link_type == BT_ESCO_LINK ) )
@@ -5252,13 +5252,13 @@ LOCAL void bt_rm_ev_send_connection_failed
   if ( ev_rm_cf.ev_hdr.bt_app_id != BT_APP_ID_NULL )
   {
     BT_MSG_HIGH( "BT RM: ConnF R %x LT %x", reason, link_type, 0 );
-    BT_BDA( MSG_HIGH, "BT RM: ConnF",
-            &conn_ptr->dev_ptr->dev_public.bd_addr );
+    //BT_BDA( MSG_HIGH, "BT RM: ConnF",
+    //        &conn_ptr->dev_ptr->dev_public.bd_addr );
 
     BT_MSG_API( "BT RM EV TX: ConnF R %x LT %x AID %x",
                 reason, link_type, ev_rm_cf.ev_hdr.bt_app_id );
-    BT_BDA( MSG_API, "BT RM EV TX: ConnF",
-            &conn_ptr->dev_ptr->dev_public.bd_addr );
+    //BT_BDA( MSG_API, "BT RM EV TX: ConnF",
+    //        &conn_ptr->dev_ptr->dev_public.bd_addr );
     bt_ec_send_event( &ev_rm_cf );
   }
 
@@ -5303,11 +5303,11 @@ LOCAL void bt_rm_ev_send_conn_bd_addr_failed
 
   BT_MSG_HIGH( "BT RM: ConnF R %x T %x AID %x",
                reason, link_type, bt_app_id );
-  BT_BDA( MSG_HIGH, "BT RM: ConnF", bd_addr_ptr );
+  //BT_BDA( MSG_HIGH, "BT RM: ConnF", bd_addr_ptr );
 
   BT_MSG_API( "BT RM EV TX: ConnF R %x T %x AID %x",
               reason, link_type, ev_rm_cf.ev_hdr.bt_app_id );
-  BT_BDA( MSG_API, "BT RM EV TX: ConnF", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM EV TX: ConnF", bd_addr_ptr );
   bt_ec_send_event( &ev_rm_cf );
 
 }
@@ -5591,8 +5591,8 @@ LOCAL void bt_rm_ev_send_bonded
   BT_MSG_HIGH( "BT RM: BONDED BAI %x PAI %x H %x",
                conn_ptr->bonding_app_id, conn_ptr->pin_req_resp_app_id,
                conn_ptr->rm_handle );
-  BT_BDA( MSG_HIGH, "BT RM: BONDED",
-          &conn_ptr->dev_ptr->dev_public.bd_addr );
+  //BT_BDA( MSG_HIGH, "BT RM: BONDED",
+  //        &conn_ptr->dev_ptr->dev_public.bd_addr );
 
   if ( conn_ptr->bonding_app_id != BT_APP_ID_NULL )
   {
@@ -5628,8 +5628,8 @@ LOCAL void bt_rm_ev_send_bonded
 
 #endif /* BT_SWDEV_2_1_SSP */
 
-    BT_BDA( MSG_API, "BT RM EV TX: Bonded",
-            &ev_rm_b.ev_msg.ev_rm_bond.bd_addr );
+   // BT_BDA( MSG_API, "BT RM EV TX: Bonded",
+   //         &ev_rm_b.ev_msg.ev_rm_bond.bd_addr );
 
     bt_ec_send_event( &ev_rm_b );
   }
@@ -5658,8 +5658,8 @@ LOCAL void bt_rm_ev_send_bonded
         bt_ec_send_event( &ev_rm_b );
       }
     }
-    BT_BDA( MSG_API, "BT RM EV TX: Bonded",
-            &ev_rm_b.ev_msg.ev_rm_bond.bd_addr );
+   // BT_BDA( MSG_API, "BT RM EV TX: Bonded",
+   //         &ev_rm_b.ev_msg.ev_rm_bond.bd_addr );
   }
 #endif
 
@@ -5692,12 +5692,12 @@ LOCAL void bt_rm_ev_send_bond_failed
   ev_rm_bf.ev_msg.ev_rm_bondf.reason  = reason;
 
   BT_MSG_HIGH( "BT RM: BondF R %x H %x", reason, rm_handle, 0 );
-  BT_BDA( MSG_HIGH, "BT RM: BondF", bd_addr_ptr );
+  //BT_BDA( MSG_HIGH, "BT RM: BondF", bd_addr_ptr );
 
   BT_MSG_API( "BT RM EV TX: BondF R %x AID %x",
               ev_rm_bf.ev_msg.ev_rm_bondf.reason,
               ev_rm_bf.ev_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM: BondF", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM: BondF", bd_addr_ptr );
   bt_ec_send_event( &ev_rm_bf );
 
 }
@@ -5814,7 +5814,7 @@ void bt_rm_deliver_remote_device_name
 
   bt_rm_device_type*  dev_ptr;
 
-  BT_BDA( MSG_DEBUG, "BT RM RX: RemDevName", bd_addr_ptr );
+  //BT_BDA( MSG_DEBUG, "BT RM RX: RemDevName", bd_addr_ptr );
   BT_MSG_DEBUG( "BT RM RX: RemDevName %c%c%c",
                 name_str[ 0 ], name_str[ 1 ], name_str[ 2 ] );
 
@@ -6729,8 +6729,8 @@ LOCAL void bt_rm_request_device_services
   attr_id_list.attr_id[ 2 ].value    =
     BT_SD_ATTR_ID_BLUETOOTH_PROFILE_DESCRIPTOR_LIST;
 
-  BT_BDA( MSG_API, "BT RM CMD TX: SD Srch Srv",
-          &conn_ptr->dev_ptr->dev_public.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD TX: SD Srch Srv",
+  //        &conn_ptr->dev_ptr->dev_public.bd_addr );
   if ( (cmd_status = bt_cmd_sd_search_service(
           bt_rm_app_id,
           &conn_ptr->dev_ptr->dev_public.bd_addr,
@@ -6738,8 +6738,8 @@ LOCAL void bt_rm_request_device_services
           BT_SD_DEFAULT_MAX_ATTR_BYTE_COUNT )) != BT_CS_GN_PENDING )
   {
     BT_ERR( "BT RM: Bad SD Srch Srv CS %x", cmd_status, 0, 0 );
-    BT_BDA( ERR, "BT RM: Bad SD Srch Srv",
-            &conn_ptr->dev_ptr->dev_public.bd_addr );
+    //BT_BDA( ERR, "BT RM: Bad SD Srch Srv",
+    //        &conn_ptr->dev_ptr->dev_public.bd_addr );
   }
 
 }
@@ -6898,8 +6898,8 @@ LOCAL void bt_rm_ev_send_connection_req
 
   BT_MSG_API( "BT RM EV TX: ConnR T %x AID %x",
               link_type, ev_rm_cr.ev_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM EV TX: ConnR",
-          &conn_ptr->dev_ptr->dev_public.bd_addr );
+  //BT_BDA( MSG_API, "BT RM EV TX: ConnR",
+  //        &conn_ptr->dev_ptr->dev_public.bd_addr );
   bt_ec_send_event( &ev_rm_cr );
 
 }
@@ -7089,8 +7089,8 @@ LOCAL boolean bt_rm_authorize_connection
     BT_MSG_API( "BT RM EV TX: AtzReq SCN %x AID %x Dir %d",
                 ev_rm_ar.ev_msg.ev_rm_atzrq.service_id.rfcomm_scn,
                 ev_rm_ar.ev_hdr.bt_app_id, conn_ptr->authorize_dir );
-    BT_BDA( MSG_API, "BT RM EV TX: AtzReq",
-            &ev_rm_ar.ev_msg.ev_rm_atzrq.bd_addr );
+    //BT_BDA( MSG_API, "BT RM EV TX: AtzReq",
+    //        &ev_rm_ar.ev_msg.ev_rm_atzrq.bd_addr );
     bt_ec_send_event( &ev_rm_ar );
   }
 
@@ -7339,14 +7339,14 @@ LOCAL void bt_rm_ev_send_rfcomm_scn_sec_result
 
   BT_MSG_HIGH( "BT RM: SCN Sec Res %x SCN %x",
                secure_enough, rfcomm_scn, 0 );
-  BT_BDA( MSG_HIGH, "BT RM: SCN Sec Res", bd_addr_ptr );
+  //BT_BDA( MSG_HIGH, "BT RM: SCN Sec Res", bd_addr_ptr );
 
 
   BT_MSG_API( "BT RM EV TX: SCN Sec Res %x SCN %x",
                ev_rm_rsr.ev_msg.ev_rm_srscn.secure_enough,
                ev_rm_rsr.ev_msg.ev_rm_srscn.rfcomm_scn, 0 );
-  BT_BDA( MSG_API, "BT RM EV TX: SCN Sec Res",
-          &ev_rm_rsr.ev_msg.ev_rm_srscn.bd_addr );
+  //BT_BDA( MSG_API, "BT RM EV TX: SCN Sec Res",
+ //         &ev_rm_rsr.ev_msg.ev_rm_srscn.bd_addr );
   bt_ec_send_event( &ev_rm_rsr );
 
 }
@@ -7383,13 +7383,13 @@ LOCAL void bt_rm_ev_send_l2cap_psm_sec_result
 
   BT_MSG_HIGH( "BT RM: PSM Sec Res %x PSM %x CID %x",
                secure_enough, l2cap_psm, l2cap_cid );
-  BT_BDA( MSG_HIGH, "BT RM: PSM Sec Res", bd_addr_ptr );
+  //BT_BDA( MSG_HIGH, "BT RM: PSM Sec Res", bd_addr_ptr );
 
   BT_MSG_API( "BT RM EV TX: PSM Sec Res %x PSM %x CID %x",
               ev_rm_lsr.ev_msg.ev_rm_srpsm.secure_enough,
               ev_rm_lsr.ev_msg.ev_rm_srpsm.l2cap_psm,
               ev_rm_lsr.ev_msg.ev_rm_srpsm.l2cap_cid );
-  BT_BDA( MSG_API, "BT RM EV TX: PSM Sec Res", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM EV TX: PSM Sec Res", bd_addr_ptr );
   bt_ec_send_event( &ev_rm_lsr );
 
 }
@@ -7485,8 +7485,8 @@ LOCAL void bt_rm_ev_send_serv_sec_result
                          conn_ptr->dev_ptr->dev_public.link_key_type),
                (uint16)((conn_ptr->security_min_enc_key_len_bytes << 8) |
                          conn_ptr->enc_key_len_bytes) );
-  BT_BDA( MSG_HIGH, "BT RM: SSec Res",
-                    &conn_ptr->dev_ptr->dev_public.bd_addr );
+  //BT_BDA( MSG_HIGH, "BT RM: SSec Res",
+  //                  &conn_ptr->dev_ptr->dev_public.bd_addr );
 
 #ifdef BT_SWDEV_2_1_SSP
   BT_MSG_API( "BT RM EV TX: SSec Res %x AZR/AZD %04x MinSec/Sec %04x",
@@ -7513,8 +7513,8 @@ LOCAL void bt_rm_ev_send_serv_sec_result
               ev_rm_ssr.ev_msg.ev_rm_ssres.min_enc_key_len_bytes,
               ev_rm_ssr.ev_msg.ev_rm_ssres.enc_key_len_bytes,
               ev_rm_ssr.ev_hdr.bt_app_id );
-  BT_BDA( MSG_API, "BT RM EV TX: SSec Res",
-          &ev_rm_ssr.ev_msg.ev_rm_ssres.bd_addr );
+  //BT_BDA( MSG_API, "BT RM EV TX: SSec Res",
+  //        &ev_rm_ssr.ev_msg.ev_rm_ssres.bd_addr );
 
   bt_ec_send_event( &ev_rm_ssr );
 
@@ -7675,8 +7675,8 @@ LOCAL void bt_rm_update_conn_hc_error
     {
       BT_ERR( "BT RM: Lost HC Err %x LU %x",
               conn_ptr->hc_error, conn_ptr->updates, 0 );
-      BT_BDA( ERR, "BT RM: Lost HC Err",
-              &conn_ptr->dev_ptr->dev_public.bd_addr );
+      //BT_BDA( ERR, "BT RM: Lost HC Err",
+      //        &conn_ptr->dev_ptr->dev_public.bd_addr );
     }
 
     conn_ptr->hc_error  = (bt_error_code_type)BT_HCI_REASON( hc_status );
@@ -8684,7 +8684,7 @@ LOCAL void bt_rm_send_hc_pin_reply_negative
 
   if ( bda_ptr != NULL )
   {
-    BT_BDA( MSG_API, "BT RM CMD TX: HC PIN Rep Neg", bda_ptr );
+    //BT_BDA( MSG_API, "BT RM CMD TX: HC PIN Rep Neg", bda_ptr );
     bt_cmd_hc_pin_code_req_reply_neg( bda_ptr );
   }
   else
@@ -9927,8 +9927,8 @@ LOCAL void bt_rm_create_connection_acl
               conn_ptr->dev_ptr->page_scan_mode,
               conn_ptr->pkt_types_allowed_acl,
               role_sw_req_ok );
-  BT_BDA( MSG_API, "BT RM CMD TX: HC CrConnA",
-          &conn_ptr->dev_ptr->dev_public.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD TX: HC CrConnA",
+  //        &conn_ptr->dev_ptr->dev_public.bd_addr );
   bt_cmd_hc_create_connection(
     &conn_ptr->dev_ptr->dev_public.bd_addr,
     (bt_bb_pkt_type)conn_ptr->pkt_types_allowed_acl,
@@ -10009,7 +10009,7 @@ LOCAL void bt_rm_cmd_device_update
   BT_MSG_API( "BT RM CMD RX: DevUpd UC %x AID %x",
               rm_du_ptr->cmd_msg.cmd_rm_dvupd.update_control,
               rm_du_ptr->cmd_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: DevUpd", &new_dev_ptr->bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: DevUpd", &new_dev_ptr->bd_addr );
 
   rm_du_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -10192,7 +10192,7 @@ bt_cmd_status_type bt_cmd_rm_device_read
   bt_rm_device_type*  src_dev_ptr;
 
   BT_MSG_API( "BT RM CMD RX: RM DevRd AID %x", bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM DevRd", &dev_ptr->bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM DevRd", &dev_ptr->bd_addr );
 
   if ( dev_ptr != NULL )
   {
@@ -10242,8 +10242,8 @@ LOCAL void bt_rm_cmd_unbond
 
   BT_MSG_API( "BT RM CMD RX: RM Unbond AID %x",
               rm_ub_ptr->cmd_hdr.bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Unbond",
-          &rm_ub_ptr->cmd_msg.cmd_rm_unbnd.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Unbond",
+  //        &rm_ub_ptr->cmd_msg.cmd_rm_unbnd.bd_addr );
 
   cmd.cmd_msg.cmd_rm_dvupd.device.bd_addr =
     rm_ub_ptr->cmd_msg.cmd_rm_unbnd.bd_addr;
@@ -11480,8 +11480,8 @@ LOCAL boolean bt_rm_unbond_performed
       {
         /*  Remote side indicates it does not want to pair     */
         /*  with us... do not attempt a re-pair in this case.  */
-        BT_BDA( MSG_DEBUG, "BT RM: Remote no pairing %x",
-                &conn_ptr->dev_ptr->dev_public.bd_addr );
+        //BT_BDA( MSG_DEBUG, "BT RM: Remote no pairing %x",
+        //        &conn_ptr->dev_ptr->dev_public.bd_addr );
         BT_MSG_DEBUG( "BT RM: Remote no pairing %x",
                       hc_status, 0, 0 );
         break;
@@ -11515,8 +11515,8 @@ LOCAL boolean bt_rm_unbond_performed
         conn_ptr->no_disc_on_del_link_key = TRUE;
 
         BT_MSG_DEBUG( "BT RM: Forced Unbond St %x", hc_status, 0, 0 );
-        BT_BDA( MSG_DEBUG, "BT RM: Forced Unbond",
-                &conn_ptr->dev_ptr->dev_public.bd_addr );
+        //BT_BDA( MSG_DEBUG, "BT RM: Forced Unbond",
+        //        &conn_ptr->dev_ptr->dev_public.bd_addr );
 
         cmd.cmd_hdr.cmd_type             = BT_CMD_RM_UNBOND;
         cmd.cmd_hdr.bt_app_id            = BT_APP_ID_NULL;
@@ -11655,8 +11655,8 @@ LOCAL boolean bt_rm_serv_sec_re_pair_started
 
   BT_MSG_DEBUG( "BT RM: SSec Re-pair Y %x HC St %x",
                 re_pair_started, hc_status, 0 );
-  BT_BDA( MSG_DEBUG, "BT RM: SSec Re-pair",
-          &conn_ptr->dev_ptr->dev_public.bd_addr );
+  //BT_BDA( MSG_DEBUG, "BT RM: SSec Re-pair",
+   //       &conn_ptr->dev_ptr->dev_public.bd_addr );
 
   return ( re_pair_started );
 
@@ -11728,8 +11728,8 @@ LOCAL boolean bt_rm_link_sec_re_pair_started
 
   BT_MSG_DEBUG( "BT RM: LSec Re-pair Y %x HC St %x",
                 re_pair_started, hc_status, 0 );
-  BT_BDA( MSG_DEBUG, "BT RM: LSec Re-pair",
-          &conn_ptr->dev_ptr->dev_public.bd_addr );
+//  BT_BDA( MSG_DEBUG, "BT RM: LSec Re-pair",
+       //   &conn_ptr->dev_ptr->dev_public.bd_addr );
 
   return ( re_pair_started );
 
@@ -11991,8 +11991,8 @@ LOCAL void bt_rm_ev_sd_service_search_response
 
   BT_MSG_API( "BT RM EV RX: SD Serv Srch Rsp C %x",
               ssr_ev_ptr->srv_rec_count, 0, 0 );
-  BT_BDA( MSG_API, "BT RM EV RX: SD Serv Srch Rsp",
-          &ssr_ev_ptr->bd_addr );
+ // BT_BDA( MSG_API, "BT RM EV RX: SD Serv Srch Rsp",
+   //       &ssr_ev_ptr->bd_addr );
 
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
@@ -12010,7 +12010,7 @@ LOCAL void bt_rm_ev_sd_service_search_response
 
     ssr_ptr = bt_sd_srv_rec_iter.first();
 
-    BT_BDA( MSG_API, "BT RM: SD SSR", &ssr_ev_ptr->bd_addr );
+    //BT_BDA( MSG_API, "BT RM: SD SSR", &ssr_ev_ptr->bd_addr );
     BT_MSG_DEBUG( "BT RM: SD SSR Serv Rec Cnt %x",
                   ssr_ev_ptr->srv_rec_count, 0, 0 );
 
@@ -12090,7 +12090,7 @@ LOCAL void bt_rm_ev_sd_service_search_response
   else
   {
     BT_ERR( "BT RM: Bad SD Serv Srch Rsp St %x", status, 0, 0 );
-    BT_BDA( ERR, "BT RM: Bad SD Serv Srch Rsp", &ssr_ev_ptr->bd_addr );
+    //BT_BDA( ERR, "BT RM: Bad SD Serv Srch Rsp", &ssr_ev_ptr->bd_addr );
   }
 
 }
@@ -12114,7 +12114,7 @@ LOCAL void bt_rm_ev_sd_timeout_response
   bt_cmd_status_type  status;
   bt_rm_conn_type*    conn_ptr;
 
-  BT_BDA( MSG_API, "BT RM EV RX: SD TO Resp", &sdto_ev_ptr->bd_addr );
+  //BT_BDA( MSG_API, "BT RM EV RX: SD TO Resp", &sdto_ev_ptr->bd_addr );
 
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
@@ -12124,7 +12124,7 @@ LOCAL void bt_rm_ev_sd_timeout_response
                    &conn_ptr )) != BT_CS_GN_SUCCESS )
   {
     BT_ERR( "BT RM: Bad SD TO Resp St %x", status, 0, 0 );
-    BT_BDA( ERR, "BT RM: Bad SD TO Resp", &sdto_ev_ptr->bd_addr );
+    //BT_BDA( ERR, "BT RM: Bad SD TO Resp", &sdto_ev_ptr->bd_addr );
   }
 
 }
@@ -12191,7 +12191,7 @@ LOCAL void bt_rm_ev_sd_error_response
 
   BT_MSG_API( "BT RM EV RX: SD Err Resp EC %x",
               sde_ev_ptr->error_code, 0, 0 );
-  BT_BDA( MSG_API, "BT RM EV RX: SD Err Resp", &sde_ev_ptr->bd_addr );
+  //BT_BDA( MSG_API, "BT RM EV RX: SD Err Resp", &sde_ev_ptr->bd_addr );
 
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
@@ -12205,8 +12205,8 @@ LOCAL void bt_rm_ev_sd_error_response
   else
   {
     BT_MSG_DEBUG( "BT RM: No Conn SD Err Resp St %x", status, 0, 0 );
-    BT_BDA( MSG_DEBUG, "BT RM: No Conn SD Err Resp",
-            &sde_ev_ptr->bd_addr );
+    //BT_BDA( MSG_DEBUG, "BT RM: No Conn SD Err Resp",
+//            &sde_ev_ptr->bd_addr );
   }
 
 }
@@ -12888,8 +12888,8 @@ LOCAL void bt_rm_remote_name_complete_processing
 
         BT_MSG_API( "BT RM EV TX: PIN Req AID %x",
                     ev_rm_pcr.ev_hdr.bt_app_id, 0, 0 );
-        BT_BDA( MSG_API, "BT RM EV TX: PIN Req",
-                        &conn_ptr->dev_ptr->dev_public.bd_addr );
+//        BT_BDA( MSG_API, "BT RM EV TX: PIN Req",
+      //                  &conn_ptr->dev_ptr->dev_public.bd_addr );
         bt_ec_send_event( &ev_rm_pcr );
       }
     }
@@ -13063,8 +13063,8 @@ LOCAL void bt_rm_ev_hc_command_status
 
               BT_ERR( "BT RM: Triggering name request failure RH %x",
                        i, 0, 0 );
-              BT_BDA( ERR, "BT RM: Rname fail ",
-                            &conn_ptr->dev_ptr->dev_public.bd_addr );
+              //BT_BDA( ERR, "BT RM: Rname fail ",
+               //             &conn_ptr->dev_ptr->dev_public.bd_addr );
               bt_rm_remote_name_complete_processing( conn_ptr, 
                                                      BT_CS_RM_NAME_REQ_FAILED );
             }
@@ -13239,8 +13239,8 @@ LOCAL void bt_rm_conn_complete_processing
     {
 
       /* Do remote name request for this link */
-      BT_BDA( MSG_API, "BT RM CMD TX: HC RName Req",
-                  &conn_ptr->dev_ptr->dev_public.bd_addr )
+      //BT_BDA( MSG_API, "BT RM CMD TX: HC RName Req",
+      //            &conn_ptr->dev_ptr->dev_public.bd_addr )
       conn_ptr->rname_app_id = bt_rm_app_id;
 #ifdef FEATURE_BT_QSOC
       /* Serialize Read Remote Name Command if Encryption key
@@ -13535,8 +13535,8 @@ LOCAL void bt_rm_ev_hc_conn_complete_acl
     {
       BT_MSG_HIGH( "BT RM: Forced Re-pair HC St %x",
                    hc_status, 0, 0 );
-      BT_BDA( MSG_HIGH, "BT RM: Forced Re-pair",
-              &conn_ptr->dev_ptr->dev_public.bd_addr );
+     // BT_BDA( MSG_HIGH, "BT RM: Forced Re-pair",
+       //       &conn_ptr->dev_ptr->dev_public.bd_addr );
     }
   }
 }
@@ -13597,8 +13597,8 @@ LOCAL void bt_rm_ev_hc_conn_complete_sco
   else
   {
     BT_ERR( "BT RM: Bad ConnC SCO St %x", conn_ptr->state_sco, 0, 0 );
-    BT_BDA( ERR, "BT RM: Bad ConnC SCO",
-            &conn_ptr->dev_ptr->dev_public.bd_addr );
+//    BT_BDA( ERR, "BT RM: Bad ConnC SCO",
+       //     &conn_ptr->dev_ptr->dev_public.bd_addr );
   }
 
 }
@@ -13625,8 +13625,8 @@ LOCAL void bt_rm_ev_hc_connection_complete
   BT_MSG_API( "BT RM EV RX: HC ConnC S %x LT %x",
               ev_msg_ptr->ev_msg.ev_hc_concp.status,
               ev_msg_ptr->ev_msg.ev_hc_concp.link_type, 0 );
-  BT_BDA( MSG_API, "BT RM EV RX: HC ConnC",
-          &ev_msg_ptr->ev_msg.ev_hc_concp.bd_addr );
+ // BT_BDA( MSG_API, "BT RM EV RX: HC ConnC",
+   //       &ev_msg_ptr->ev_msg.ev_hc_concp.bd_addr );
 
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
@@ -13663,8 +13663,8 @@ LOCAL void bt_rm_ev_hc_connection_complete
   {
     BT_ERR( "BT RM: Bad ConnC St %x LT %x",
             status, ev_msg_ptr->ev_msg.ev_hc_concp.link_type, 0 );
-    BT_BDA( ERR, "BT RM: Bad ConnC",
-            &ev_msg_ptr->ev_msg.ev_hc_concp.bd_addr );
+//    BT_BDA( ERR, "BT RM: Bad ConnC",
+  //          &ev_msg_ptr->ev_msg.ev_hc_concp.bd_addr );
   }
 
 }
@@ -15108,8 +15108,8 @@ LOCAL void bt_rm_finish_sco_setup
 
         if ( conn_ptr->sco_resps_pending != 0 )
         {
-          BT_BDA( MSG_API, "BT RM CMD TX: HC Acpt ConnS",
-                  &conn_ptr->dev_ptr->dev_public.bd_addr );
+//          BT_BDA( MSG_API, "BT RM CMD TX: HC Acpt ConnS",
+           //       &conn_ptr->dev_ptr->dev_public.bd_addr );
 
 #ifdef FEATURE_BT_1_2
           bt_cmd_hc_accept_sync_conn_req(
@@ -15296,7 +15296,7 @@ LOCAL bt_cmd_status_type bt_rm_accept_connection_acl
       bt_rm_init_hc_sec_settings_acl( conn_ptr );
       //#endif /* BT_SWDEV_2_1_SSP */
 
-      BT_BDA( MSG_API, "BT RM CMD TX: HC Acpt ConnA", bd_addr_ptr );
+//      BT_BDA( MSG_API, "BT RM CMD TX: HC Acpt ConnA", bd_addr_ptr );
 
       bt_cmd_hc_accept_connection( bd_addr_ptr,
                                      bt_rm_data.accept_conn_role );
@@ -15361,7 +15361,7 @@ LOCAL bt_cmd_status_type bt_rm_accept_connection_sco
       if ( (conn_ptr->pending_pkt_adjs =
               bt_rm_check_all_packet_types_acl()) == FALSE )
       {
-        BT_BDA( MSG_API, "BT RM CMD TX: HC Acpt ConnS", bd_addr_ptr );
+//        BT_BDA( MSG_API, "BT RM CMD TX: HC Acpt ConnS", bd_addr_ptr );
 #ifdef FEATURE_BT_1_2
 
         bt_cmd_hc_accept_sync_conn_req(
@@ -15670,7 +15670,7 @@ LOCAL boolean bt_rm_device_in_black_list
     {
       device_in_black_list = TRUE;
 
-      BT_BDA( MSG_HIGH, "BT RM: Dev In Black List", bd_addr_ptr );
+//      BT_BDA( MSG_HIGH, "BT RM: Dev In Black List", bd_addr_ptr );
 
       break;
     }
@@ -15715,7 +15715,7 @@ LOCAL boolean bt_rm_device_in_white_list
 
   if ( device_in_white_list == FALSE )
   {
-    BT_BDA( MSG_HIGH, "BT RM: Dev NOT In White List", bd_addr_ptr );
+//    BT_BDA( MSG_HIGH, "BT RM: Dev NOT In White List", bd_addr_ptr );
   }
 
   return ( device_in_white_list );
@@ -15798,9 +15798,10 @@ LOCAL void bt_rm_ev_hc_connection_request
               ev_msg_ptr->ev_msg.ev_hc_conrq.link_type,
               ev_msg_ptr->ev_msg.ev_hc_conrq.
                 class_of_device.cod_bytes[ 0 ], 0 );
+#if 0
   BT_BDA( MSG_API, "BT RM EV RX: HC ConnR",
           &ev_msg_ptr->ev_msg.ev_hc_conrq.bd_addr );
-
+#endif
 #ifdef BT_SWDEV_RADIO_OFF
   if ( ((bt_rm_data.dev_white_list_count == 0) ||
         (bt_rm_device_in_white_list(
@@ -15829,8 +15830,8 @@ LOCAL void bt_rm_ev_hc_connection_request
               link_type,
               ev_msg_ptr->ev_msg.ev_hc_conrq.
                 class_of_device.cod_bytes[ 0 ], 0 );
-      BT_BDA( ERR, "BT RM: Bad HC ConnR",
-              &ev_msg_ptr->ev_msg.ev_hc_conrq.bd_addr );
+//      BT_BDA( ERR, "BT RM: Bad HC ConnR",
+            //  &ev_msg_ptr->ev_msg.ev_hc_conrq.bd_addr );
     }
 #ifdef BT_SWDEV_RADIO_OFF
   }
@@ -15844,9 +15845,10 @@ LOCAL void bt_rm_ev_hc_connection_request
   {
     BT_MSG_API( "BT RM CMD TX: HC Rej Conn LT %x R %x",
                 link_type, hc_reason, 0 );
-    BT_BDA( MSG_API, "BT RM CMD TX: HC Rej Conn",
+#if 0
+	BT_BDA( MSG_API, "BT RM CMD TX: HC Rej Conn",
             &ev_msg_ptr->ev_msg.ev_hc_conrq.bd_addr );
-
+#endif
 #ifdef FEATURE_BT_1_2
     if ( ( link_type == BT_SCO_LINK ) || ( link_type == BT_ESCO_LINK ) )
     {
@@ -16278,7 +16280,7 @@ LOCAL void bt_rm_ev_hc_inquiry_result
       dsm_extract( dsm_ptr, (dsm_bdaddr_offset+(i*sizeof( bt_bd_addr_type ))),
                    (void*) &bd_addr, sizeof( bt_bd_addr_type ) );
 
-      BT_BDA( MSG_API, "BT RM EV RX: HC InqR", &bd_addr );
+//      BT_BDA( MSG_API, "BT RM EV RX: HC InqR", &bd_addr );
 
       dsm_extract( dsm_ptr,
                   (dsm_ps_rep_offset+(i*sizeof( bt_page_scan_rep_mode_type ))),
@@ -16339,8 +16341,8 @@ LOCAL void bt_rm_ev_hc_inquiry_result
                       (uint16)((class_of_device.cod_bytes[ 1 ] << 8) |
                                 class_of_device.cod_bytes[ 0 ]),
                       ev_rm_ir.ev_hdr.bt_app_id );
-          BT_BDA( MSG_API, "BT RM EV TX: RM InqR",
-                  &ev_rm_ir.ev_msg.ev_rm_inqrs.bd_addr );
+         // BT_BDA( MSG_API, "BT RM EV TX: RM InqR",
+           //       &ev_rm_ir.ev_msg.ev_rm_inqrs.bd_addr );
           bt_ec_send_event( &ev_rm_ir );
 
           dev_ptr->inq_result_sent = TRUE;
@@ -16360,12 +16362,12 @@ LOCAL void bt_rm_ev_hc_inquiry_result
         {
          /* Always update clk_offset field and set it to valid in ram copy */
          dev_ptr->clk_offset = clk_offset | BT_CLK_OFFSET_VALID_V;
-          BT_BDA( MSG_DEBUG, "BT RM: Dup InqR", &bd_addr );
+//          BT_BDA( MSG_DEBUG, "BT RM: Dup InqR", &bd_addr );
         }
       }
       else
       {
-        BT_BDA( MSG_DEBUG, "BT RM: InqR Dropped", &bd_addr );
+       // BT_BDA( MSG_DEBUG, "BT RM: InqR Dropped", &bd_addr );
         /* Reached here because device table is full ..
          * Continue processing remaining inq response in this
          * event, even though they will be ignored either because
@@ -16440,7 +16442,7 @@ LOCAL void bt_rm_ev_hc_inquiry_result_rssi
     dsm_pullup( &dsm_ptr, (void*) &bd_addr,
                 sizeof( bt_bd_addr_type ) );
 
-    BT_BDA( MSG_API, "BT RM EV RX: HC InqR Rssi", &bd_addr );
+    //BT_BDA( MSG_API, "BT RM EV RX: HC InqR Rssi", &bd_addr );
 
     dsm_pullup( &dsm_ptr, &page_scan_rep_mode,
                 sizeof( bt_page_scan_rep_mode_type ) );
@@ -16485,8 +16487,8 @@ LOCAL void bt_rm_ev_hc_inquiry_result_rssi
                     (uint16)((class_of_device.cod_bytes[ 1 ] << 8) |
                                 class_of_device.cod_bytes[ 0 ]),
                     ev_rm_ir.ev_hdr.bt_app_id );
-        BT_BDA( MSG_API, "BT RM EV TX: RM InqR Rssi",
-                &ev_rm_ir.ev_msg.ev_rm_inqrs.bd_addr );
+       // BT_BDA( MSG_API, "BT RM EV TX: RM InqR Rssi",
+           //     &ev_rm_ir.ev_msg.ev_rm_inqrs.bd_addr );
         bt_ec_send_event( &ev_rm_ir );
 
         dev_ptr->inq_result_sent = TRUE;
@@ -16497,7 +16499,7 @@ LOCAL void bt_rm_ev_hc_inquiry_result_rssi
       {
         /* Always update clk_offset field and set it to valid in ram copy */
         dev_ptr->clk_offset = clk_offset | BT_CLK_OFFSET_VALID_V;
-        BT_BDA( MSG_DEBUG, "BT RM: Dup InqR Rssi", &bd_addr );
+        //BT_BDA( MSG_DEBUG, "BT RM: Dup InqR Rssi", &bd_addr );
 
         /* We should use the highest received RSSI value */
         if( inq_resp_rssi > dev_ptr->inq_resp_rssi )
@@ -16509,7 +16511,7 @@ LOCAL void bt_rm_ev_hc_inquiry_result_rssi
     }
     else
     {
-      BT_BDA( MSG_DEBUG, "BT RM: InqR Rssi Dropped", &bd_addr );
+      //BT_BDA( MSG_DEBUG, "BT RM: InqR Rssi Dropped", &bd_addr );
     }
   }
   else
@@ -16700,8 +16702,8 @@ LOCAL void bt_rm_ev_hc_link_key_request
   bt_rm_conn_type*    conn_ptr;
   bt_bd_addr_type*    bd_addr_ptr;
 
-  BT_BDA( MSG_API, "BT RM EV RX: HC LK Req",
-          &ev_msg_ptr->ev_msg.ev_hc_keyrq.bd_addr );
+//  BT_BDA( MSG_API, "BT RM EV RX: HC LK Req",
+       //   &ev_msg_ptr->ev_msg.ev_hc_keyrq.bd_addr );
 
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
@@ -16746,14 +16748,14 @@ LOCAL void bt_rm_ev_hc_link_key_request
           (conn_ptr->dev_ptr->dev_public.link_key_type ==
              BT_HC_LINK_KEY_COMB)) )
     {
-      BT_BDA( MSG_API, "BT RM CMD TX: HC LK Rep Pos", bd_addr_ptr );
+//      BT_BDA( MSG_API, "BT RM CMD TX: HC LK Rep Pos", bd_addr_ptr );
       bt_cmd_hc_link_key_req_reply( bd_addr_ptr,
                                     conn_ptr->dev_ptr->link_key );
 #endif /* BT_SWDEV_2_1_SSP */
     }
     else
     {
-      BT_BDA( MSG_API, "BT RM CMD TX: HC LK Rep Neg", bd_addr_ptr );
+      //BT_BDA( MSG_API, "BT RM CMD TX: HC LK Rep Neg", bd_addr_ptr );
       bt_cmd_hc_link_key_req_reply_neg( bd_addr_ptr );
 
       bt_rm_reset_idle_timeout( conn_ptr );
@@ -16762,11 +16764,13 @@ LOCAL void bt_rm_ev_hc_link_key_request
   else
   {
     BT_ERR( "BT RM: Bad LK Req St %x", status, 0, 0 );
+#if 0
     BT_BDA( ERR, "BT RM: Bad LK Req",
             &ev_msg_ptr->ev_msg.ev_hc_keyrq.bd_addr );
 
     BT_BDA( MSG_API, "BT RM CMD TX: HC LK Rep Neg",
             &ev_msg_ptr->ev_msg.ev_hc_keyrq.bd_addr );
+	#endif
     bt_cmd_hc_link_key_req_reply_neg(
       &ev_msg_ptr->ev_msg.ev_hc_keyrq.bd_addr );
   }
@@ -16798,8 +16802,8 @@ LOCAL void bt_rm_send_hc_pin_code_req_reply
     conn_ptr->pin_code_reply_len_bytes = pin_code_len;
     conn_ptr->pin_code_reply_neg_sent  = FALSE;
 
-    BT_BDA( MSG_API, "BT RM CMD TX: HC PIN Rep Pos",
-            &conn_ptr->dev_ptr->dev_public.bd_addr );
+    //BT_BDA( MSG_API, "BT RM CMD TX: HC PIN Rep Pos",
+        //    &conn_ptr->dev_ptr->dev_public.bd_addr );
     BT_MSG_API( "BT RM CMD TX: HC PIN Rep Pos L %x",
                 pin_code_len, 0, 0 );
     bt_cmd_hc_pin_code_req_reply(
@@ -16935,7 +16939,7 @@ LOCAL void bt_rm_ev_hc_pin_code_request
 
                 BT_MSG_API( "BT RM EV TX: PIN Req AID %x",
                             ev_rm_pcr.ev_hdr.bt_app_id, 0, 0 );
-                BT_BDA( MSG_API, "BT RM EV TX: PIN Req", bd_addr_ptr );
+                //BT_BDA( MSG_API, "BT RM EV TX: PIN Req", bd_addr_ptr );
                 bt_ec_send_event( &ev_rm_pcr );
               }
           }
@@ -16976,15 +16980,15 @@ LOCAL void bt_rm_ev_hc_pin_code_request
   else
   {
     BT_ERR( "BT RM: Bad PIN Req St %x", status, 0, 0 );
-    BT_BDA( ERR, "BT RM: Bad PIN Req",
-            &ev_msg_ptr->ev_msg.ev_hc_pinrq.bd_addr );
-
+    //BT_BDA( ERR, "BT RM: Bad PIN Req",
+    //        &ev_msg_ptr->ev_msg.ev_hc_pinrq.bd_addr );
+//
     bt_rm_send_hc_pin_reply_negative(
       NULL, &ev_msg_ptr->ev_msg.ev_hc_pinrq.bd_addr );
   }
 #else
-  BT_BDA( MSG_API, "BT RM EV RX: HC PIN Req",
-          &ev_msg_ptr->ev_msg.ev_hc_pinrq.bd_addr );
+  //BT_BDA( MSG_API, "BT RM EV RX: HC PIN Req",
+    //      &ev_msg_ptr->ev_msg.ev_hc_pinrq.bd_addr );
 
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
@@ -17051,7 +17055,7 @@ LOCAL void bt_rm_ev_hc_pin_code_request
 
                 BT_MSG_API( "BT RM EV TX: PIN Req AID %x",
                             ev_rm_pcr.ev_hdr.bt_app_id, 0, 0 );
-                BT_BDA( MSG_API, "BT RM EV TX: PIN Req", bd_addr_ptr );
+               // BT_BDA( MSG_API, "BT RM EV TX: PIN Req", bd_addr_ptr );
                 bt_ec_send_event( &ev_rm_pcr );
               }
           }
@@ -17092,9 +17096,8 @@ LOCAL void bt_rm_ev_hc_pin_code_request
   else
   {
     BT_ERR( "BT RM: Bad PIN Req St %x", status, 0, 0 );
-    BT_BDA( ERR, "BT RM: Bad PIN Req",
-            &ev_msg_ptr->ev_msg.ev_hc_pinrq.bd_addr );
-
+    //BT_BDA( ERR, "BT RM: Bad PIN Req",
+       //     &ev_msg_ptr->ev_msg.ev_hc_pinrq.bd_addr );
     bt_rm_send_hc_pin_reply_negative(
       NULL, &ev_msg_ptr->ev_msg.ev_hc_pinrq.bd_addr );
   }
@@ -17209,8 +17212,8 @@ LOCAL void bt_rm_ev_hc_link_key_notification
   boolean             security_failure=FALSE;
 #endif /* BT_SWDEV_2_1_SSP */
 
-  BT_BDA( MSG_API, "BT RM EV RX: HC LK Notif",
-          &ev_msg_ptr->ev_msg.ev_hc_keynt.bd_addr );
+ // BT_BDA( MSG_API, "BT RM EV RX: HC LK Notif",
+   //       &ev_msg_ptr->ev_msg.ev_hc_keynt.bd_addr );
 
   BT_MSG_HIGH( "BT RM: SSP Link Key Notif LKT %x",
                ev_msg_ptr->ev_msg.ev_hc_keynt.key_type_key, 0,0);
@@ -17375,8 +17378,8 @@ LOCAL void bt_rm_ev_hc_link_key_notification
   else
   {
     BT_ERR( "BT RM: Bad LK Notif St %x", status, 0, 0 );
-    BT_BDA( ERR, "BT RM: Bad LK Notif",
-            &ev_msg_ptr->ev_msg.ev_hc_keynt.bd_addr );
+    //BT_BDA( ERR, "BT RM: Bad LK Notif",
+      //      &ev_msg_ptr->ev_msg.ev_hc_keynt.bd_addr );
   }
 
 }
@@ -17753,9 +17756,9 @@ LOCAL void bt_rm_ev_hc_role_change
   cur_role  = ev_msg_ptr->ev_msg.ev_hc_role.new_role;
 
   BT_MSG_API( "BT RM EV RX: HC RoleCh %x S %x", cur_role, hc_status, 0 );
-  BT_BDA( MSG_API, "BT RM EV RX: HC RoleCh",
-          &ev_msg_ptr->ev_msg.ev_hc_role.bd_addr );
-
+ // BT_BDA( MSG_API, "BT RM EV RX: HC RoleCh",
+//          &ev_msg_ptr->ev_msg.ev_hc_role.bd_addr );
+//
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
                    FALSE,  /*  Connection need not be settled.  */
@@ -17769,7 +17772,9 @@ LOCAL void bt_rm_ev_hc_role_change
 
     if ( ( conn_ptr->role == cur_role ) && ( hc_status == BT_BE_SUCCESS ) )
     {
+    #ifdef FEATURE_BT_1_2 
         hc_status = BT_BE_ROLE_SWITCH_FAILED;
+	#endif
         BT_ERR( "BT RM: Changed HCI Status CR %x OR %x S %x",
                                                 cur_role, conn_ptr->role, hc_status );
     }
@@ -17787,8 +17792,8 @@ LOCAL void bt_rm_ev_hc_role_change
   else
   {
     BT_ERR( "BT RM: Bad RoleCh St %x R %x", status, cur_role, 0 );
-    BT_BDA( ERR, "BT RM: Bad RoleCh",
-            &ev_msg_ptr->ev_msg.ev_hc_role.bd_addr );
+    //BT_BDA( ERR, "BT RM: Bad RoleCh",
+      //      &ev_msg_ptr->ev_msg.ev_hc_role.bd_addr );
   }
 
 }
@@ -17849,8 +17854,8 @@ LOCAL void bt_rm_ev_hc_remote_name
   rname_dsm_ptr = ev_msg_ptr->ev_msg.ev_hc_rname.dsm_ptr;
 
   BT_MSG_API( "BT RM EV RX: HC RName St %x", hc_status, 0, 0 );
-  BT_BDA( MSG_API, "BT RM EV RX: HC RName",
-          &ev_msg_ptr->ev_msg.ev_hc_rname.bd_addr );
+  //BT_BDA( MSG_API, "BT RM EV RX: HC RName",
+          //&ev_msg_ptr->ev_msg.ev_hc_rname.bd_addr );
 
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
@@ -17903,15 +17908,15 @@ LOCAL void bt_rm_ev_hc_remote_name
     {
       BT_MSG_HIGH( "BT RM: Unexp RName RNAID %x St %x",
                     conn_ptr->rname_app_id, hc_status, 0 );
-      BT_BDA( MSG_HIGH, "BT RM: Unexp RName",
-              &ev_msg_ptr->ev_msg.ev_hc_rname.bd_addr );
+      //BT_BDA( MSG_HIGH, "BT RM: Unexp RName",
+            //  &ev_msg_ptr->ev_msg.ev_hc_rname.bd_addr );
     }
   }
   else
   {
     BT_ERR( "BT RM: Bad RName St %x HSt %x", status, hc_status, 0 );
-    BT_BDA( ERR, "BT RM: Unexp RName",
-            &ev_msg_ptr->ev_msg.ev_hc_rname.bd_addr );
+    //BT_BDA( ERR, "BT RM: Unexp RName",
+            //&ev_msg_ptr->ev_msg.ev_hc_rname.bd_addr );
   }
 
   dsm_free_packet( &rname_dsm_ptr );
@@ -18484,7 +18489,7 @@ LOCAL void bt_rm_hc_ev_qc_ext_cs_disconnect
       {
         BT_ERR( "BT RM: Bad ExtCS Disc St %x",
                 conn_ptr->state_acl, 0, 0 );
-        BT_BDA( ERR, "BT RM: Bad ExtCS Disc", bd_addr_ptr );
+        //BT_BDA( ERR, "BT RM: Bad ExtCS Disc", bd_addr_ptr );
       }
     }
     else
@@ -18550,13 +18555,13 @@ LOCAL void bt_rm_hc_ev_qc_ext_cs_create_conn
     {
       BT_ERR( "BT RM: Bad ExtCS CC St %x R %x",
               conn_ptr->state_acl, conn_ptr->role, 0 );
-      BT_BDA( ERR, "BT RM: Bad ExtCS CC",
+      //BT_BDA( ERR, "BT RM: Bad ExtCS CC",
               bd_addr_ptr );
     }
   }
   else
   {
-    BT_BDA( ERR, "BT RM: ExtCS CC No Conn", bd_addr_ptr );
+    //BT_BDA( ERR, "BT RM: ExtCS CC No Conn", bd_addr_ptr );
   }
 
 }
@@ -18596,12 +18601,12 @@ LOCAL void bt_rm_hc_ev_qc_ext_cs_rem_name_req
     {
       BT_ERR( "BT RM: Bad ExtCS RNR RNAID %x",
               conn_ptr->rname_app_id, 0, 0 );
-      BT_BDA( ERR, "BT RM: Bad ExtCS RNR", bd_addr_ptr );
+      //BT_BDA( ERR, "BT RM: Bad ExtCS RNR", bd_addr_ptr );
     }
   }
   else
   {
-    BT_BDA( ERR, "BT RM: ExtCS RNR No Conn", bd_addr_ptr );
+    //BT_BDA( ERR, "BT RM: ExtCS RNR No Conn", bd_addr_ptr );
   }
 
 }
@@ -18640,7 +18645,7 @@ LOCAL void bt_rm_hc_ev_qc_ext_cs_add_sco
       {
         BT_ERR( "BT RM: Bad ExtCS ASCO St %x",
                 conn_ptr->state_sco, 0, 0 );
-        BT_BDA( ERR, "BT RM: Bad ExtCS ASCO", bd_addr_ptr );
+        //BT_BDA( ERR, "BT RM: Bad ExtCS ASCO", bd_addr_ptr );
       }
     }
     else
@@ -18692,12 +18697,12 @@ LOCAL void bt_rm_hc_ev_qc_ext_cs_switch_role
     {
       BT_ERR( "BT RM: Bad ExtCS SwRl RR %x",
               conn_ptr->role_request, 0, 0 );
-      BT_BDA( ERR, "BT RM: Bad ExtCS SwRl", bd_addr_ptr );
+      //BT_BDA( ERR, "BT RM: Bad ExtCS SwRl", bd_addr_ptr );
     }
   }
   else
   {
-    BT_BDA( ERR, "BT RM: ExtCS SwRl No Conn", bd_addr_ptr );
+    //BT_BDA( ERR, "BT RM: ExtCS SwRl No Conn", bd_addr_ptr );
   }
 
 }
@@ -18733,7 +18738,7 @@ LOCAL void bt_rm_hc_ev_qc_extended_cmd_status
 
   BT_MSG_API( "BT RM EV RX: HC QC ExtCS St %x OC %x H %x",
               hc_status, hc_opcode, hc_handle );
-  BT_BDA( MSG_API, "BT RM EV RX: HC QC ExtCS", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM EV RX: HC QC ExtCS", bd_addr_ptr );
 
   if ( hc_status != BT_BE_SUCCESS )
   {
@@ -18790,7 +18795,7 @@ LOCAL void bt_rm_hc_ev_qc_extended_cmd_status
   {
     BT_ERR( "BT RM: Bad HC QC ExtCS CS %x OC %x H %x",
             hc_status, hc_opcode, hc_handle );
-    BT_BDA( ERR, "BT RM: Bad HC QC ExtCS", bd_addr_ptr );
+    //BT_BDA( ERR, "BT RM: Bad HC QC ExtCS", bd_addr_ptr );
   }
 
 }
@@ -18817,7 +18822,7 @@ LOCAL void bt_rm_hc_ev_qc_rem_auth_pair_failed
 
   bd_addr_ptr = &ev_msg_ptr->ev_msg.ev_hc_qc.qc_event_params.rmapf.bd_addr;
 
-  BT_BDA( MSG_API, "BT RM EV RX: HC QC RAPF", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM EV RX: HC QC RAPF", bd_addr_ptr );
   BT_MSG_API( "BT RM EV RX: HC QC RAPF EC %x",
               ev_msg_ptr->ev_msg.ev_hc_qc.qc_event_params.rmapf.error,
               0, 0 );
@@ -18833,7 +18838,7 @@ LOCAL void bt_rm_hc_ev_qc_rem_auth_pair_failed
   }
   else
   {
-    BT_BDA( ERR, "BT RM: Bad HC QC PF BDA", bd_addr_ptr );
+    //BT_BDA( ERR, "BT RM: Bad HC QC PF BDA", bd_addr_ptr );
   }
 
 }
@@ -19586,7 +19591,7 @@ bt_cmd_status_type bt_cmd_rm_get_remote_feat_mask
   bt_rm_conn_type*    conn_ptr;
 
   BT_MSG_API( "BT RM CMD RX: RM Get Sync Param AID %x", bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Get Sync Param", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Get Sync Param", bd_addr_ptr );
 
   if ( ( remote_feat_ptr != NULL ) && ( bd_addr_ptr != NULL ) )
   {
@@ -19643,7 +19648,7 @@ bt_cmd_status_type bt_cmd_rm_get_sync_conn_params
   bt_rm_conn_type*    conn_ptr;
 
   BT_MSG_API( "BT RM CMD RX: RM Get Sync Param AID %x", bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Get Sync Param", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Get Sync Param", bd_addr_ptr );
 
   if ( ( sync_param_ptr != NULL ) && ( bd_addr_ptr != NULL ) )
   {
@@ -20289,8 +20294,8 @@ LOCAL void bt_rm_cmd_register_link_status
 
   BT_MSG_API( "BT RM CMD RX: RM Reg LStat AID %x",
               rm_rls_ptr->cmd_hdr.bt_app_id, 0 , 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Reg LStat",
-          &rm_rls_ptr->cmd_msg.cmd_rm_regls.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Reg LStat",
+   //       &rm_rls_ptr->cmd_msg.cmd_rm_regls.bd_addr );
 
   if ( rm_rls_ptr->cmd_msg.cmd_rm_regls.rssi_delta < BT_RM_INVALID_RSSI )
   {
@@ -20347,8 +20352,8 @@ LOCAL void bt_rm_cmd_unregister_link_status
 
   BT_MSG_API( "BT RM CMD RX: RM Unreg LS AID %x",
               rm_uls_ptr->cmd_hdr.bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Unreg LS",
-          &rm_uls_ptr->cmd_msg.cmd_rm_urgls.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Unreg LS",
+   //       &rm_uls_ptr->cmd_msg.cmd_rm_urgls.bd_addr );
 
   if ( (rm_uls_ptr->cmd_hdr.cmd_status =
           bt_rm_get_link_status_reg(
@@ -20386,8 +20391,8 @@ bt_cmd_status_type bt_cmd_rm_get_link_status
 
   if ( link_status_ptr != NULL )
   {
-    BT_BDA( MSG_API, "BT RM CMD RX: RM Get LS",
-            &link_status_ptr->bd_addr );
+    //BT_BDA( MSG_API, "BT RM CMD RX: RM Get LS",
+     //       &link_status_ptr->bd_addr );
 
     TASKLOCK();
 
@@ -20937,7 +20942,7 @@ LOCAL void bt_rm_cmd_set_connection_role
   BT_MSG_API( "BT RM CMD RX: RM Set C Role %x AID %x",
               rm_scr_ptr->cmd_msg.cmd_rm_setrl.role,
               rm_scr_ptr->cmd_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Set C Role", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Set C Role", bd_addr_ptr );
 
   if ( (rm_scr_ptr->cmd_msg.cmd_rm_setrl.role == BT_ROLE_MASTER) ||
        (rm_scr_ptr->cmd_msg.cmd_rm_setrl.role == BT_ROLE_SLAVE) )
@@ -21063,7 +21068,7 @@ bt_cmd_status_type bt_cmd_rm_get_connection_role
   bt_rm_conn_type*    conn_ptr;
 
   BT_MSG_API( "BT RM CMD RX: RM Get C Role AID %x", bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Get C Role", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Get C Role", bd_addr_ptr );
 
   if ( role_ptr != NULL )
   {
@@ -21133,7 +21138,7 @@ LOCAL void bt_rm_cmd_set_conn_role_sw_req_ok
   BT_MSG_API( "BT RM CMD RX: RM Set C RlSwReq OK %x AID %x",
               rm_scrsr_ptr->cmd_msg.cmd_rm_scrsr.role_sw_req_ok,
               rm_scrsr_ptr->cmd_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Set C RlSwReq OK", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Set C RlSwReq OK", bd_addr_ptr );
 
   if ( rm_scrsr_ptr->cmd_msg.cmd_rm_scrsr.role_sw_req_ok != FALSE )
   {
@@ -21292,8 +21297,8 @@ LOCAL void bt_rm_cmd_set_connection_security
   BT_MSG_API( "BT RM CMD RX: RM Set Conn Sec %x AID %x",
               rm_scs_ptr->cmd_msg.cmd_rm_setcs.security,
               rm_scs_ptr->cmd_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Set Conn Sec",
-          &rm_scs_ptr->cmd_msg.cmd_rm_setcs.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Set Conn Sec",
+   //       &rm_scs_ptr->cmd_msg.cmd_rm_setcs.bd_addr );
 
   if ( rm_scs_ptr->cmd_msg.cmd_rm_setcs.security < BT_SEC_MAX )
   {
@@ -21355,8 +21360,8 @@ LOCAL void bt_rm_cmd_bond
   BT_MSG_API( "BT RM CMD RX: RM Bond PINL %x AID %x",
               rm_b_ptr->cmd_msg.cmd_rm_bond.pin.length,
               rm_b_ptr->cmd_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Bond",
-          &rm_b_ptr->cmd_msg.cmd_rm_bond.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Bond",
+   //       &rm_b_ptr->cmd_msg.cmd_rm_bond.bd_addr );
 
   if ( rm_b_ptr->cmd_msg.cmd_rm_bond.pin.length > 0 )
   {
@@ -21437,8 +21442,8 @@ LOCAL void bt_rm_cmd_bond_cancel
 
   rm_bc_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
-  BT_BDA( MSG_API, "BT RM CMD RX: RM BondC",
-          &rm_bc_ptr->cmd_msg.cmd_rm_bondc.bd_addr );
+//  BT_BDA( MSG_API, "BT RM CMD RX: RM BondC",
+   //       &rm_bc_ptr->cmd_msg.cmd_rm_bondc.bd_addr );
 
   if ( (conn_ptr = bt_rm_find_conn_bd_addr( bd_addr_ptr ) ) != NULL )
   {
@@ -21456,7 +21461,9 @@ LOCAL void bt_rm_cmd_bond_cancel
              with a failed status, thus  bt_rm_ev_hc_conn_complete_acl() will get called, 
              which in turn calls bt_rm_finish_bond_attempt() and BT_EV_RM_BOND_FAILED event 
              is sent upto the app */
+             #ifdef FEATURE_BT_1_2
           bt_cmd_hc_create_connection_cancel ( bd_addr_ptr );
+			 #endif
         }
         else if ( (conn_ptr->state_acl == BT_RM_CS_CONNECTING) &&
                   (conn_ptr->ev_hc_conn_acl_rxd == TRUE) )
@@ -21582,8 +21589,8 @@ LOCAL void bt_rm_cmd_pin_reply
               rm_pr_ptr->cmd_msg.cmd_rm_pin.pin_valid,
               rm_pr_ptr->cmd_msg.cmd_rm_pin.pin.length,
               rm_pr_ptr->cmd_hdr.bt_app_id );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM PIN Rep",
-          &rm_pr_ptr->cmd_msg.cmd_rm_pin.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM PIN Rep",
+    //      &rm_pr_ptr->cmd_msg.cmd_rm_pin.bd_addr );
 
   rm_pr_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -21691,8 +21698,8 @@ LOCAL void bt_rm_cmd_authorize_reply
               rm_ar_ptr->cmd_msg.cmd_rm_atzrp.authorized,
               rm_ar_ptr->cmd_msg.cmd_rm_atzrp.service_id.service_id_method,
               rm_ar_ptr->cmd_msg.cmd_rm_atzrp.service_id.sdp_uuid );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM AtzR",
-          &rm_ar_ptr->cmd_msg.cmd_rm_atzrp.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM AtzR",
+    //      &rm_ar_ptr->cmd_msg.cmd_rm_atzrp.bd_addr );
 
   if ( (rm_ar_ptr->cmd_hdr.cmd_status =
           bt_rm_get_service_security(
@@ -21768,7 +21775,7 @@ LOCAL void bt_rm_cmd_device_add
 
   BT_MSG_API( "BT RM CMD RX: DevAdd AID %x",
               rm_da_ptr->cmd_hdr.bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: DevAdd", &new_dev_ptr->bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: DevAdd", &new_dev_ptr->bd_addr );
 
   rm_da_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -21828,8 +21835,8 @@ LOCAL void bt_rm_cmd_device_services_update
   BT_MSG_API( "BT RM CMD RX: RM DevServUpd NS %x AID %x",
               rm_dsu_ptr->cmd_msg.cmd_rm_dsupd.num_services,
               rm_dsu_ptr->cmd_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM DevServUpd",
-          &rm_dsu_ptr->cmd_msg.cmd_rm_dsupd.bd_addr );
+ // BT_BDA( MSG_API, "BT RM CMD RX: RM DevServUpd",
+          //&rm_dsu_ptr->cmd_msg.cmd_rm_dsupd.bd_addr );
 
   if ( ( dev_ptr = bt_rm_get_device(
            &rm_dsu_ptr->cmd_msg.cmd_rm_dsupd.bd_addr, FALSE ) ) != NULL )
@@ -21892,7 +21899,7 @@ LOCAL void bt_rm_cmd_set_device_security
   BT_MSG_API( "BT RM CMD RX: Set DevSec %x AID %x",
               rm_sds_ptr->cmd_msg.cmd_rm_setds.security,
               rm_sds_ptr->cmd_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: Set DevSec", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: Set DevSec", bd_addr_ptr );
 
   if ( rm_sds_ptr->cmd_msg.cmd_rm_setds.security < BT_SEC_MAX )
   {
@@ -22117,7 +22124,7 @@ bt_cmd_status_type bt_cmd_rm_uuid_scn_paired
 
   BT_MSG_API( "BT RM CMD RX: Paired UUID %x SCN %x",
               sdp_uuid, rfcomm_scn, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: Paired", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: Paired", bd_addr_ptr );
 
   if ( (sdp_uuid != BT_SD_INVALID_UUID) &&
        (rfcomm_scn != BT_RC_SCN_NOT_SPECIFIED) )
@@ -22144,7 +22151,7 @@ bt_cmd_status_type bt_cmd_rm_uuid_scn_paired
 
         BT_MSG_HIGH( "BT RM: Paired UUID %x SCN %x",
                      usp_ptr->sdp_uuid, usp_ptr->rfcomm_scn, 0 );
-        BT_BDA( MSG_HIGH, "BT RM: Paired", bd_addr_ptr );
+        //BT_BDA( MSG_HIGH, "BT RM: Paired", bd_addr_ptr );
       }
     }
     else
@@ -22185,7 +22192,7 @@ bt_cmd_status_type bt_cmd_rm_uuid_scn_unpaired
 
   BT_MSG_API( "BT RM CMD RX: Unpaired UUID %x SCN %x",
               sdp_uuid, rfcomm_scn, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: Unpaired", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: Unpaired", bd_addr_ptr );
 
   if ( (sdp_uuid != BT_SD_INVALID_UUID) &&
        (rfcomm_scn != BT_RC_SCN_NOT_SPECIFIED) )
@@ -22204,7 +22211,7 @@ bt_cmd_status_type bt_cmd_rm_uuid_scn_unpaired
       {
         BT_MSG_HIGH( "BT RM: Unpaired UUID %x SCN %x",
                      usp_ptr->sdp_uuid, usp_ptr->rfcomm_scn, 0 );
-        BT_BDA( MSG_HIGH, "BT RM: Unpaired", bd_addr_ptr );
+        //BT_BDA( MSG_HIGH, "BT RM: Unpaired", bd_addr_ptr );
 
         bt_rm_init_uuid_scn_pair( usp_ptr );
       }
@@ -22871,8 +22878,8 @@ LOCAL void bt_rm_cmd_enforce_security_rfcomm_scn
   BT_MSG_API( "BT RM CMD RX: RM Enf Sec SCN %x LC %x",
               rm_esr_ptr->cmd_msg.cmd_rm_esscn.rfcomm_scn,
               rm_esr_ptr->cmd_msg.cmd_rm_esscn.local_client, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Enf Sec SCN",
-          &rm_esr_ptr->cmd_msg.cmd_rm_esscn.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Enf Sec SCN",
+    //      &rm_esr_ptr->cmd_msg.cmd_rm_esscn.bd_addr );
 
   if ( (rm_esr_ptr->cmd_hdr.cmd_status =
           bt_rm_get_conn_bd_addr(
@@ -23034,8 +23041,8 @@ LOCAL void bt_rm_cmd_enforce_security_l2cap_psm
   BT_MSG_API( "BT RM CMD RX: RM Enf Sec PSM %x CID %x",
               rm_esl_ptr->cmd_msg.cmd_rm_espsm.l2cap_psm,
               rm_esl_ptr->cmd_msg.cmd_rm_espsm.l2cap_cid, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Enf Sec PSM",
-          &rm_esl_ptr->cmd_msg.cmd_rm_espsm.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Enf Sec PSM",
+  //        &rm_esl_ptr->cmd_msg.cmd_rm_espsm.bd_addr );
 
   if ( (rm_esl_ptr->cmd_hdr.cmd_status =
           bt_rm_get_conn_bd_addr(
@@ -23351,8 +23358,8 @@ LOCAL void bt_rm_cmd_device_remove
 
   BT_MSG_API( "BT RM CMD RX: DevRmv AID %x",
               rm_dr_ptr->cmd_hdr.bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: DevRmv",
-          &rm_dr_ptr->cmd_msg.cmd_rm_dvrmv.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: DevRmv",
+   //       &rm_dr_ptr->cmd_msg.cmd_rm_dvrmv.bd_addr );
 
   rm_dr_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -23868,8 +23875,8 @@ LOCAL void bt_rm_cmd_remote_name_req
   bt_rm_conn_type*    conn_ptr;
   bt_rm_device_type*  dev_ptr;
 
-  BT_BDA( MSG_API, "BT RM CMD RX: RM RName Req",
-          &rm_rnr_ptr->cmd_msg.cmd_rm_rname.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM RName Req",
+  //        &rm_rnr_ptr->cmd_msg.cmd_rm_rname.bd_addr );
 
   rm_rnr_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -23893,8 +23900,8 @@ LOCAL void bt_rm_cmd_remote_name_req
     }
     conn_ptr->rname_app_id = rm_rnr_ptr->cmd_hdr.bt_app_id;
 
-    BT_BDA( MSG_API, "BT RM CMD TX: HC RName Req",
-            &conn_ptr->dev_ptr->dev_public.bd_addr )
+    //BT_BDA( MSG_API, "BT RM CMD TX: HC RName Req",
+    //        &conn_ptr->dev_ptr->dev_public.bd_addr )
     bt_cmd_hc_remote_name_req( conn_ptr->dev_ptr->dev_public.bd_addr,
                                conn_ptr->dev_ptr->page_scan_rep_mode,
                                conn_ptr->dev_ptr->page_scan_mode,
@@ -23906,8 +23913,8 @@ LOCAL void bt_rm_cmd_remote_name_req
   {
     BT_MSG_DEBUG( "BT RM: Could not req name S %x",
                   rm_rnr_ptr->cmd_hdr.cmd_status, 0, 0 );
-    BT_BDA( MSG_DEBUG, "BT RM: Could not req name",
-            &rm_rnr_ptr->cmd_msg.cmd_rm_rname.bd_addr );
+    //BT_BDA( MSG_DEBUG, "BT RM: Could not req name",
+     //       &rm_rnr_ptr->cmd_msg.cmd_rm_rname.bd_addr );
 
     if ( (dev_ptr =
             bt_rm_get_device(
@@ -23922,8 +23929,8 @@ LOCAL void bt_rm_cmd_remote_name_req
     }
     else
     {
-      BT_BDA( MSG_DEBUG, "BT RM: No dev name",
-              &rm_rnr_ptr->cmd_msg.cmd_rm_rname.bd_addr );
+      //BT_BDA( MSG_DEBUG, "BT RM: No dev name",
+      //        &rm_rnr_ptr->cmd_msg.cmd_rm_rname.bd_addr );
     }
   }
 
@@ -23949,8 +23956,8 @@ LOCAL void bt_rm_cmd_remote_name_req_cancel
   bt_bd_addr_type*  bd_addr_ptr =
                       &rm_rnrc_ptr->cmd_msg.cmd_rm_rname_cancel.bd_addr;
 
-  BT_BDA( MSG_API, "BT RM CMD RX: RM RName Req Cancel",
-          bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM RName Req Cancel",
+  //        bd_addr_ptr );
 
   rm_rnrc_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -23960,7 +23967,9 @@ LOCAL void bt_rm_cmd_remote_name_req_cancel
          ( conn_ptr->rname_app_id != BT_APP_ID_NULL ) )
     {
       /* Send the HCI Remote Name Req Cancel Cmd */
+	  #ifdef FEATURE_BT_1_2
       bt_cmd_hc_remote_name_req_cancel ( bd_addr_ptr );
+	  #endif
     }
     else
     {
@@ -24001,7 +24010,7 @@ LOCAL void bt_rm_cmd_connect_acl
   bt_app_id   = rm_ca_ptr->cmd_hdr.bt_app_id;
 
   BT_MSG_API( "BT RM CMD RX: RM ConnA AID %x", bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM ConnA", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM ConnA", bd_addr_ptr );
 
   if ( (*status_ptr =
            bt_rm_get_conn_bd_addr(
@@ -24031,7 +24040,7 @@ LOCAL void bt_rm_cmd_connect_acl
          ( BT_CHECK_RETRY_EXPIRED( rm_ca_ptr->cmd_hdr.cmd_retries ) ) ) )
   {
     BT_MSG_HIGH( "BT RM: ConnFA No Res CS %x", *status_ptr, 0, 0 );
-    BT_BDA( MSG_HIGH, "BT RM: ConnFA No Res", bd_addr_ptr );
+    //BT_BDA( MSG_HIGH, "BT RM: ConnFA No Res", bd_addr_ptr );
 
     bt_rm_ev_send_conn_bd_addr_failed( bt_app_id, bd_addr_ptr,
                                        BT_ACL_LINK,
@@ -24059,8 +24068,8 @@ LOCAL void bt_rm_cmd_connect_cancel
   bt_bd_addr_type*  bd_addr_ptr =
                       &rm_cc_ptr->cmd_msg.cmd_rm_conn_cancel.bd_addr;
 
-  BT_BDA( MSG_API, "BT RM CMD RX: RM Connect Cancel",
-          bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM Connect Cancel",
+  //        bd_addr_ptr );
 
   rm_cc_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -24070,7 +24079,9 @@ LOCAL void bt_rm_cmd_connect_cancel
          ( conn_ptr->rname_app_id == BT_APP_ID_NULL ) )
     {
       /* Send the HCI Create Connection Cancel Cmd */
+	  #ifdef FEATURE_BT_1_2
       bt_cmd_hc_create_connection_cancel ( bd_addr_ptr );
+	  #endif
     }
     else
     {
@@ -24137,8 +24148,8 @@ LOCAL void bt_rm_cmd_accept_acl
 
   BT_MSG_API( "BT RM CMD RX: RM AcptA AID %x",
               rm_aa_ptr->cmd_hdr.bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM AcptA",
-          &rm_aa_ptr->cmd_msg.cmd_rm_acpta.bd_addr );
+ // BT_BDA( MSG_API, "BT RM CMD RX: RM AcptA",
+ //         &rm_aa_ptr->cmd_msg.cmd_rm_acpta.bd_addr );
 
   if ( (rm_aa_ptr->cmd_hdr.cmd_status =
           bt_rm_get_conn_bd_addr(
@@ -24181,8 +24192,8 @@ LOCAL void bt_rm_cmd_reject_acl
   BT_MSG_API( "BT RM CMD RX: RM RejA R %x AID %x",
               rm_ra_ptr->cmd_msg.cmd_rm_reja.reason,
               rm_ra_ptr->cmd_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM RejA",
-          &rm_ra_ptr->cmd_msg.cmd_rm_reja.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM RejA",
+   //       &rm_ra_ptr->cmd_msg.cmd_rm_reja.bd_addr );
 
   rm_ra_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -24466,7 +24477,7 @@ LOCAL void bt_rm_cmd_connect_sco
 
   BT_MSG_API( "BT RM CMD RX: RM ConnS AID %x eSCO %x",
               bt_app_id, attempt_esco, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM ConnS", bd_addr_ptr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM ConnS", bd_addr_ptr );
 
   if ( (rm_cs_ptr->cmd_hdr.cmd_status =
           bt_rm_get_conn_bd_addr(
@@ -24548,10 +24559,10 @@ LOCAL void bt_rm_cmd_connect_sco
 
     BT_MSG_HIGH( "BT RM: ConnFS No Res CS %x",
                  rm_cs_ptr->cmd_hdr.cmd_status, 0, 0 );
-    BT_BDA( MSG_HIGH, "BT RM: ConnFS No Res", bd_addr_ptr );
+    //BT_BDA( MSG_HIGH, "BT RM: ConnFS No Res", bd_addr_ptr );
 
     BT_MSG_API( "BT RM EV TX: ConnFS No Res AID %x", bt_app_id, 0, 0 );
-    BT_BDA( MSG_API, "BT RM EV TX: ConnFS No Res", bd_addr_ptr );
+    //BT_BDA( MSG_API, "BT RM EV TX: ConnFS No Res", bd_addr_ptr );
     bt_ec_send_event( &ev_rm_cfs );
   }
 
@@ -24609,8 +24620,8 @@ LOCAL void bt_rm_cmd_accept_sco
 
   BT_MSG_API( "BT RM CMD RX: RM AcptS AID %x",
               rm_as_ptr->cmd_hdr.bt_app_id, 0, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM AcptS",
-          &rm_as_ptr->cmd_msg.cmd_rm_acpts.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM AcptS",
+  //        &rm_as_ptr->cmd_msg.cmd_rm_acpts.bd_addr );
 
   rm_as_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -24662,8 +24673,8 @@ LOCAL void bt_rm_cmd_reject_sco
   BT_MSG_API( "BT RM CMD RX: RM RejS R %x AID %x",
               rm_rs_ptr->cmd_msg.cmd_rm_rejs.reason,
               rm_rs_ptr->cmd_hdr.bt_app_id, 0 );
-  BT_BDA( MSG_API, "BT RM CMD RX: RM RejS",
-          &rm_rs_ptr->cmd_msg.cmd_rm_rejs.bd_addr );
+  //BT_BDA( MSG_API, "BT RM CMD RX: RM RejS",
+  //        &rm_rs_ptr->cmd_msg.cmd_rm_rejs.bd_addr );
 
   if ( (rm_rs_ptr->cmd_hdr.cmd_status =
           bt_rm_get_conn_bd_addr(
@@ -24679,8 +24690,8 @@ LOCAL void bt_rm_cmd_reject_sco
       {
         conn_ptr->sco_req_timeout_ms_left = 0;
 
-        BT_BDA( MSG_API, "BT RM CMD TX: HC Rej ConnS",
-                &conn_ptr->dev_ptr->dev_public.bd_addr );
+        //BT_BDA( MSG_API, "BT RM CMD TX: HC Rej ConnS",
+        //        &conn_ptr->dev_ptr->dev_public.bd_addr );
         bt_rm_reject_connection
                  ( conn_ptr,
                    (bt_error_code_type)rm_rs_ptr->cmd_msg.cmd_rm_rejs.reason,

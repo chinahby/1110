@@ -1422,8 +1422,8 @@ LOCAL void bt_l2_conn_closed_disconn_acl_link_if_ok
     {
       /* This is the only requested connection to this device, and the ACL
        * isn't up yet. Cancel the page */
-      BT_BDA( MSG_DEBUG, "BT L2 CMD TX: Connect Cancel Addr",
-              &bt_l2_conn_db[ ci ].bd_addr );
+      //BT_BDA( MSG_DEBUG, "BT L2 CMD TX: Connect Cancel Addr",
+      //        &bt_l2_conn_db[ ci ].bd_addr );
       bt_cmd_rm_connect_cancel( bt_l2_app_id,
                                 &bt_l2_conn_db[ ci ].bd_addr );
     }
@@ -3732,8 +3732,8 @@ LOCAL boolean bt_l2_process_conn_rqst_pkt
               cmd_hdr_ptr->matching_id,
               req_cmd.psm,
               req_cmd.source_cid );
-  BT_BDA( MSG_SIG, "BT L2 RX: L2 Conn Req",
-          &cdb_ptr->bd_addr );
+  //BT_BDA( MSG_SIG, "BT L2 RX: L2 Conn Req",
+  //        &cdb_ptr->bd_addr );
 
   for ( i=0; i < BT_L2_MAX_CONN; ++i )
   {
@@ -3835,7 +3835,7 @@ LOCAL boolean bt_l2_process_conn_rqst_pkt
     BT_MSG_API( "BT L2 CMD TX: RM Enf Sec PSM %x MI %x lcid %x",
                 cdb_ptr->serv_sec_psm, cdb_ptr->serv_sec_matching_id,
                 cdb_ptr->local_cid );
-    BT_BDA( MSG_API, "BT L2 CMD TX: RM Enf Sec PSM", &cdb_ptr->bd_addr );
+    //BT_BDA( MSG_API, "BT L2 CMD TX: RM Enf Sec PSM", &cdb_ptr->bd_addr );
     bt_cmd_rm_enforce_security_l2cap_psm(
       bt_l2_app_id, cdb_ptr->serv_sec_psm, &cdb_ptr->bd_addr,
       cdb_ptr->local_cid, BT_RM_ATZRQ_INCOMING ); 
@@ -3876,8 +3876,8 @@ LOCAL boolean bt_l2_process_conn_rqst_pkt
                   bt_l2_conn_db[i].serv_sec_psm,
                   bt_l2_conn_db[i].serv_sec_matching_id,
                   bt_l2_conn_db[i].local_cid );
-      BT_BDA( MSG_API, "BT L2 CMD TX: RM Enf Sec PSM",
-              &bt_l2_conn_db[i].bd_addr );
+      //BT_BDA( MSG_API, "BT L2 CMD TX: RM Enf Sec PSM",
+      //        &bt_l2_conn_db[i].bd_addr );
       bt_cmd_rm_enforce_security_l2cap_psm(
         bt_l2_app_id, bt_l2_conn_db[i].serv_sec_psm,
         &bt_l2_conn_db[i].bd_addr,
@@ -5543,8 +5543,8 @@ LOCAL void bt_l2_ev_rm_connected_acl
 
   BT_MSG_API( "BT L2 EV RX: RM ConnA hndl %x",
               conn_msg_ptr->handle, 0, 0 );
-  BT_BDA( MSG_API, "BT L2 EV RX: RM ConnA",
-          &conn_msg_ptr->bd_addr );
+  //BT_BDA( MSG_API, "BT L2 EV RX: RM ConnA",
+  //        &conn_msg_ptr->bd_addr );
 
   for ( ci = 0; ci < BT_L2_MAX_CONN; ci++ )
   {
@@ -5568,7 +5568,7 @@ LOCAL void bt_l2_ev_rm_connected_acl
         BT_MSG_API( "BT L2 CMD TX: RM Enf Sec PSM %x AID %x LCID %x",
                     cdb_ptr->serv_sec_psm, bt_l2_app_id, 
                     cdb_ptr->local_cid );
-        BT_BDA( MSG_API, "BT L2 CMD TX: RM Enf Sec PSM", &cdb_ptr->bd_addr );
+        //BT_BDA( MSG_API, "BT L2 CMD TX: RM Enf Sec PSM", &cdb_ptr->bd_addr );
         bt_cmd_rm_enforce_security_l2cap_psm( bt_l2_app_id,
                                               cdb_ptr->serv_sec_psm,
                                               &cdb_ptr->bd_addr,
@@ -5633,8 +5633,8 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
   BT_MSG_API( "BT L2 EV RX: RM PSM SecRes %x PSM %x",
               rm_psr_ptr->ev_msg.ev_rm_srpsm.secure_enough,
               rm_psr_ptr->ev_msg.ev_rm_srpsm.l2cap_psm, 0 );
-  BT_BDA( MSG_API, "BT L2 EV RX: RM PSM SecRes",
-          &rm_psr_ptr->ev_msg.ev_rm_srpsm.bd_addr );
+  //BT_BDA( MSG_API, "BT L2 EV RX: RM PSM SecRes",
+  //        &rm_psr_ptr->ev_msg.ev_rm_srpsm.bd_addr );
 
   for ( ci = 0; ci < BT_L2_MAX_CONN; ci++ )
   {
@@ -5659,7 +5659,7 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
         BT_MSG_HIGH( "BT L2: ServSec DISC lcid %x PSM %x",
                      cdb_ptr->local_cid,
                      rm_psr_ptr->ev_msg.ev_rm_srpsm.l2cap_psm, 0 );
-        BT_BDA( MSG_HIGH, "BT L2: ServSec DISC", &cdb_ptr->bd_addr );
+        //BT_BDA( MSG_HIGH, "BT L2: ServSec DISC", &cdb_ptr->bd_addr );
       }
 
       if ( cdb_ptr->serv_sec_local_initiated == FALSE )
@@ -5792,8 +5792,8 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
     BT_ERR( "BT L2: Conn not found PSM %x CID %x",
             rm_psr_ptr->ev_msg.ev_rm_srpsm.l2cap_psm,
             rm_psr_ptr->ev_msg.ev_rm_srpsm.l2cap_cid, 0 );
-    BT_BDA( ERR, "BT L2: Conn not found",
-            &rm_psr_ptr->ev_msg.ev_rm_srpsm.bd_addr );
+    //BT_BDA( ERR, "BT L2: Conn not found",
+    //        &rm_psr_ptr->ev_msg.ev_rm_srpsm.bd_addr );
   }
 
 }
@@ -5822,8 +5822,8 @@ LOCAL void bt_l2_ev_rm_connect_req_acl
               (conn_msg_ptr->class_of_device.cod_bytes[1]<<8)  | 
               (conn_msg_ptr->class_of_device.cod_bytes[0]),
               0, 0 );
-  BT_BDA( MSG_API, "BT L2 EV RX: RM ConnReqA",
-          &conn_msg_ptr->bd_addr );
+  //BT_BDA( MSG_API, "BT L2 EV RX: RM ConnReqA",
+  //        &conn_msg_ptr->bd_addr );
 
   cdb_ptr = bt_l2_get_free_conn_entry();
 
@@ -5966,8 +5966,8 @@ LOCAL void bt_l2_ev_rm_connection_failed_acl
 
   BT_MSG_API( "BT L2 EV RX: RM ConnFA rsn %x",
               failed_msg_ptr->reason, 0, 0 );
-  BT_BDA( MSG_API, "BT L2 EV RX: RM ConnFA",
-          &failed_msg_ptr->bd_addr );
+  //BT_BDA( MSG_API, "BT L2 EV RX: RM ConnFA",
+  //        &failed_msg_ptr->bd_addr );
 
   for ( ci = 0; ci < BT_L2_MAX_CONN; ci++ )
   {
@@ -6311,8 +6311,8 @@ LOCAL void bt_l2_cmd_connect
               l2_conn_ptr->cmd_hdr.bt_app_id,
               l2_conn_ptr->cmd_msg.cmd_l2_conn.psm, 0);
 
-  BT_BDA( MSG_API, "BT L2 CMD RX: Conn",
-          &l2_conn_ptr->cmd_msg.cmd_l2_conn.bd_addr );
+  //BT_BDA( MSG_API, "BT L2 CMD RX: Conn",
+  //        &l2_conn_ptr->cmd_msg.cmd_l2_conn.bd_addr );
 
   l2_conn_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -6403,7 +6403,7 @@ LOCAL void bt_l2_cmd_connect
       BT_MSG_API( "BT L2 CMD TX: RM Enf Sec PSM %x AID %x LCID %x",
                   cdb_ptr->serv_sec_psm, bt_l2_app_id, 
                   cdb_ptr->local_cid );
-      BT_BDA( MSG_API, "BT L2 CMD TX: RM Enf Sec PSM", &cdb_ptr->bd_addr );
+      //BT_BDA( MSG_API, "BT L2 CMD TX: RM Enf Sec PSM", &cdb_ptr->bd_addr );
       bt_cmd_rm_enforce_security_l2cap_psm( bt_l2_app_id,
                                             cdb_ptr->serv_sec_psm,
                                             &cdb_ptr->bd_addr,
@@ -6873,8 +6873,8 @@ LOCAL void bt_l2_cmd_ping
               l2_ping_ptr->cmd_hdr.bt_app_id,
               l2_ping_ptr->cmd_msg.cmd_l2_ping.length, 0 );
 
-  BT_BDA( MSG_API, "BT L2 CMD RX: Ping",
-          &l2_ping_ptr->cmd_msg.cmd_l2_ping.bd_addr );
+  //BT_BDA( MSG_API, "BT L2 CMD RX: Ping",
+  //        &l2_ping_ptr->cmd_msg.cmd_l2_ping.bd_addr );
 
   l2_ping_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -7619,7 +7619,7 @@ void bt_l2_background_tick
         BT_MSG_DEBUG("BT L2: Idle timer expired CID %x, AID %x",
                      bt_l2_conn_db[ ci ].local_cid,
                      bt_l2_conn_db[ ci ].app_id, 0);
-        BT_BDA( MSG_HIGH, "BT L2: Idle timer expired", &bt_l2_conn_db[ ci ].bd_addr );
+        //BT_BDA( MSG_HIGH, "BT L2: Idle timer expired", &bt_l2_conn_db[ ci ].bd_addr );
         // Timer expired; disconnect
         bt_l2_conn_db[ ci ].idle_timeout = 0;
         if( bt_l2_conn_db[ ci ].local_cid != BT_L2_NULL_CID )

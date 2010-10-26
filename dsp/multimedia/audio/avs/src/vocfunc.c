@@ -4281,6 +4281,8 @@ SIDE EFFECTS
 
 void voc_set_a2dp_disconnected(void)
 {
+#if defined (FEATURE_SBC_CODEC) || defined (FEATURE_SBC_DSP_CODEC)
+
   if(voc_bt_state == VOC_BT_STATE_A2DP_DISABLE_PENDING)
   {
     voc_bt_state       = VOC_BT_STATE_DISABLED;
@@ -4289,6 +4291,7 @@ void voc_set_a2dp_disconnected(void)
   } else {
     MSG_HIGH("Recvd A2DP Disconnect without AVS initiating it", 0,0,0);
   }
+  #endif
 }
 
 /* <EJECT> */

@@ -607,7 +607,9 @@ void bt_soc_etc_init( void )
   /* SOC Driver should be enabled now and HCI commands can be sent  */
 
   /* Command to read the HCI buffer sizes */
+  #ifdef FEATURE_BT_1_2
   (void) bt_cmd_hc_rd_buf_size();
+  #endif
   BT_MSG_HIGH( "BT SOC ETC: Read Buffer Size cmd sent", 0, 0, 0 );
 
 #ifdef FEATURE_BT_HCI_HOST_FCTL

@@ -297,7 +297,7 @@ PARAMETERS
   bda_ptr  Pointer to bt_bd_addr_type to be output in message
 
 ===========================================================================*/
-
+#ifdef FEATURE_BT_QSC1100  //add  by yangdecai 2010-10-25
 #define BT_BDA( msg, fmt, bda_ptr )                       \
 {                                                         \
   bt_bd_addr_type*  bp = (bda_ptr);                       \
@@ -317,6 +317,12 @@ PARAMETERS
     BT_##msg##( fmt " BDA NONE", 0, 0, 0 );               \
   }                                                       \
 }
+#else
+#define BT_BDA( msg, fmt, bda_ptr )                       \
+{
+	;
+}
+#endif
 
 /*===========================================================================
 

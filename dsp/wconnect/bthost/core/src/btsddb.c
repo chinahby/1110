@@ -2531,8 +2531,10 @@ uint16 bt_sd_match_service_record(
 
         if ( srv_rec_ptr->is_custom_srv )
         {
+          #ifndef FEATURE_BT_QSC1100
           BT_MSG_UUID128( MSG_HIGH, "BT SD: Found match",
                           &srv_rec_ptr->srv_uuid128 );
+		  #endif
         }
         else
         {

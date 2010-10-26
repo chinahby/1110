@@ -798,7 +798,9 @@ when       who  what, where, why
 #include "AEEStd.h"
 
 #ifdef FEATURE_APP_DIALER
+#if 0  //modi by yangdecai
 #include "DialerApp.h"
+#endif
 #endif /* FEATURE_APP_DIALER */
 
 #ifdef FEATURE_APP_PUREVOICE
@@ -1220,6 +1222,7 @@ static const AEEAppInfo gaiBt =
 int BTApp_Load(IShell *ps, void *pHelpers, IModule **pMod)
 {
   int result;
+  MSG_FATAL("BTApp_Load..........................",0,0,0);
   result = AEEStaticMod_New((int16)(sizeof(AEEMod)),
                             ps,
                             pHelpers,
@@ -1892,6 +1895,7 @@ static boolean BTApp_InitAppData(IApplet* pi)
 #endif //FEATURE_APP_TEST_AUTOMATION
 
   /* Check for bar file here. */
+  MSG_FATAL("BTApp_InitAppData.......................",0,0,0);
   if ( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_FILEMGR, 
                               (void **)&pIFileMgr ) == SUCCESS )
   {
@@ -1932,7 +1936,9 @@ static boolean BTApp_InitAppData(IApplet* pi)
     pMe->m_nColorDepth  = di.nColorDepth;
 
     // increase font size on VGA displays
+    #ifdef QSC6270
     AppComFunc_SelectFonts( pMe->a.m_pIDisplay );
+	#endif
 
     pMe->pMem             = NULL;
     pMe->m_pISoftMenu     = NULL;
@@ -1944,8 +1950,10 @@ static boolean BTApp_InitAppData(IApplet* pi)
     pMe->mRM.po           = NULL;
     pMe->mSD.po           = NULL;
     pMe->mSPP.po          = NULL;
+#ifdef FEATURE_BT_HFP_1_5
     pMe->mAG.pIncomingCall  = NULL;
     pMe->mAG.pOutgoingCall  = NULL;
+#endif
 #ifdef FEATURE_BT_EXTPF_OPP
     pMe->mOPP.po          = NULL;
 #endif   
@@ -2334,9 +2342,11 @@ static boolean BTApp_HandleEvent
     {
       MSG_HIGH( "HndlEv - START/RESUME ev=%x tm=%x suspend=%x", 
                eCode, pMe->uTopMenu, pMe->bSuspended );
+	  MSG_FATAL("EVT_APP_START.......................",0,0,0);
       if ( !pMe->bSuspended )
       {
         event_processed = BTApp_Init( pMe );
+		MSG_FATAL("EVT_APP_START.......................%d",event_processed,0,0);
       }
       if ( event_processed )
       {
@@ -2352,6 +2362,7 @@ static boolean BTApp_HandleEvent
 #endif /* !FEATURE_AVS_BT_SCO_REWORK */
           }
         }
+		MSG_FATAL("BTApp_BuildTopMenu before................",0,0,0);
         BTApp_BuildTopMenu( pMe );
         IBTEXTRM_GetHCIMode( pMe->mRM.po, &HCIMode );
         if ( HCIMode != AEEBT_HCIM_OFF )
@@ -2628,11 +2639,15 @@ static boolean BTApp_HandleEvent
           BTApp_ProcEvtAGDisabled( pMe );
           break;
         case EVT_A2DP_DISCONNECTED:
+		#ifdef FEATURE_BT_EXTPF_AV
           BTApp_A2DPDisable( pMe );
+		#endif
           BTApp_BuildMenu( pMe, TOP_MENU );
           break;
         case EVT_AVRCP_DISCONNECTED:
+	     #ifdef FEATURE_BT_EXTPF_AV
           BTApp_AVRCPDisable( pMe );
+		 #endif
           BTApp_BuildMenu( pMe, TOP_MENU );
           break;
         case EVT_NA_DISABLED:
@@ -3001,6 +3016,7 @@ DESCRIPTION
 ============================================================================= */
 static void BTApp_EndCall( CBTApp* pMe, BTAppCallType callType )
 {
+#if 0
   MSG_LOW( "EndCall - c=%d ac=%d", callType, pMe->mAG.bAudioConnected, 0 );
 #ifdef FEATURE_AVS_BT_SCO_REWORK
   if ( BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_SCO_4_VOICE_WANTED_B ) )
@@ -3090,6 +3106,7 @@ static void BTApp_EndCall( CBTApp* pMe, BTAppCallType callType )
   {
     MSG_ERROR( "EndCall - unexpected call type", 0, 0, 0 );
   }
+  #endif
 }
 
 /* ==========================================================================
@@ -3108,7 +3125,7 @@ static boolean BTApp_Originate( CBTApp* pMe, char* szDialString )
 
   std_strlcpy( szURI, szTelURI, dwStrLen );
   std_strlcat( szURI, szDialString, dwStrLen );
-
+#if 0
   if ( ISHELL_SendURL( pMe->a.m_pIShell, szURI ) == TRUE )
   {
     DBGPRINTF_FATAL("BTAPP Originate: Sent URL %s", szURI );
@@ -3122,6 +3139,7 @@ static boolean BTApp_Originate( CBTApp* pMe, char* szDialString )
                                   NULL )
               == SUCCESS);
   }
+  #endif
   return result;
 }
 
@@ -3183,7 +3201,7 @@ static void BTApp_AnswerCall( CBTApp* pMe, BTAppCallType callIncoming )
 {
   boolean bAnswered = FALSE;
   static const char szAnswer[] = "tel:AnswerCall";
-
+  #if 0
   MSG_LOW( "AnswerCall - dev=%d c=%d st=%d", 
            pMe->mAG.devType, callIncoming, pMe->mAG.callState );
 
@@ -3228,6 +3246,7 @@ static void BTApp_AnswerCall( CBTApp* pMe, BTAppCallType callIncoming )
       MSG_ERROR( "AnswerCall - failed", 0, 0, 0 );
     }
   }
+  #endif
 }
 
 #ifdef FEATURE_BT_EXTPF_AV
@@ -3430,7 +3449,7 @@ static void BTApp_HandleEventDevMemDial( CBTApp* pMe )
   AECHAR wString[ AEEBT_MAX_MEM_DIAL_DIGITS + 1 ];
   char   szString[ AEEBT_MAX_PHONE_NUM_DIGITS + 1 ];
   AECHAR wString2[ AEEBT_MAX_PHONE_NUM_DIGITS + 1 ] = {L""};
-
+  uint8  numChars = AEEBT_MAX_MEM_DIAL_DIGITS + 1;
   MSG_MED( "DevMemDial - ac=%d as=%d digits=%d",
            pMe->mAG.bAudioConnected,
            pMe->mAG.bAudioSelected,
@@ -3441,7 +3460,7 @@ static void BTApp_HandleEventDevMemDial( CBTApp* pMe )
   STRTOWSTR( (char*)(pMe->mAG.parseData.rx_params[ 0 ]),
              wString, sizeof( wString ) );
 #else
-  uint8  numChars = AEEBT_MAX_MEM_DIAL_DIGITS + 1;
+  //uint8  numChars = AEEBT_MAX_MEM_DIAL_DIGITS + 1;
   if ( IBTEXTAG_GetDialedString( pMe->mAG.po, wString, &numChars, 
                                  TRUE ) == SUCCESS )
 #endif
@@ -4335,6 +4354,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
 #endif
     case BT_APP_MENU_L2_TEST:
     {
+	#ifdef FEATURE_BT_EXTPF_AV
       WSTRLCPY( pMe->mL2.wControlData, pMe->pText2, 
                 ARR_SIZE(pMe->mL2.wControlData) );
       WSTRTOSTR( pMe->pText2, sControlData, sizeof( sControlData ) );
@@ -4346,6 +4366,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
       {
         pMe->mL2.sCliInfo.psm = ATOI( sControlData );
       }
+	  #endif
       break;
     }
 #ifdef FEATURE_BT_EXTPF_HID_HOST
@@ -7486,7 +7507,7 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
   IDialog*  pCurrentDialog;
 
   MSG_LOW( "BuildMenu - m=%d tm=%d", menu, TOP_MENU, 0 );
-
+  MSG_FATAL("BuildMenu - m=%d tm=%d", menu, TOP_MENU, 0);
   ISHELL_CancelTimer( pMe->a.m_pIShell, (PFNNOTIFY) BTApp_MessageTimerExpired, 
                       pMe );
 
@@ -8754,8 +8775,9 @@ static boolean BTApp_MenuHandleEvent
         ev_processed = BTApp_HandleClearKey( pMe ); // rebuild previous menu
         break;
       case AVK_SELECT:
-        MSG_MED( "MenuHndlEv - SELECT key, m=%d", TOP_MENU, 0, 0 );
+        MSG_FATAL( "MenuHndlEv - SELECT key, m=%d", TOP_MENU, 0, 0 );
         selection = IMENUCTL_GetSel( pMenu );
+		MSG_FATAL( "MenuHndlEv - SELECT key, selection=%d", selection, 0, 0 );
         ev_processed = BTApp_HandleSelection( pMe, selection );
         break;
       case AVK_UP:
@@ -8931,7 +8953,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
       BTApp_AGDeInit( (IApplet*) pMe );
       return FALSE;
     }
-
+#if 0  //modi by yangdecai
      /* Instance for ICallMgr */
     if (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_CALLMGR,
                                (void**)&pMe->mAG.pICallMgr ) != SUCCESS )
@@ -8962,6 +8984,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
                              AEECLSID_VIDEOPHONE_NOTIFIER, nmask );
     }
     pMe->mAG.bVideoCallEnabled = FALSE;
+#endif /* FEATURE_BT_VT */
 #endif /* FEATURE_BT_VT */
 #ifdef FEATURE_BT_HFP_1_5
     /* Instance for IBattery */
@@ -9044,13 +9067,13 @@ void BTApp_AGDeInit( IApplet* pi )
     pMe->mAG.pIBattery = NULL;
   }
 #endif
-
+#if 0 //modi by yangdecai
   if ( pMe->mAG.pICallMgr != NULL )
   {
     ICALLMGR_Release( pMe->mAG.pICallMgr );
     pMe->mAG.pICallMgr = NULL;
   }
-
+#endif
 #ifdef FEATURE_BT_HFP_1_5
   ISHELL_RegisterNotify( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP,
                          AEECLSID_CARD, 0 );
@@ -10843,12 +10866,12 @@ static boolean BTApp_DoDeviceSearch(
                                         MAX_DEVICES ) == SUCCESS );
   if ( success )
   {
-    MSG_MED( "DevSrch - DiscDev requested svcCls=%x", svcCls, 0, 0 );
+    MSG_FATAL( "DevSrch - DiscDev requested svcCls=%x", svcCls, 0, 0 );
     BTApp_ShowMessage( pMe, IDS_MSG_SEARCHING, NULL, 0 );
   }
   else
   {
-    MSG_ERROR( "DevSrchAll - DiscDev failed", 0, 0, 0 );
+    MSG_FATAL( "DevSrchAll - DiscDev failed", 0, 0, 0 );
   }
   return success;
 }
@@ -11346,18 +11369,25 @@ void BTApp_DeviceChangeCallBack( CBTApp* pMe,
 {
   MSG_HIGH( "Device or Mute setting Changed, as=%d flag=%d",
             pMe->mAG.bAudioSelected, pMe->mAG.uFlags, 0 );
+#ifdef FEATURE_BT_AG
 
   MSG_HIGH( "BT Headset id %x Current Device id %x",
             SND_DEVICE_BT_HEADSET,
             pNotifyData->out_device, 0 );
-
+#endif
+#ifdef FEATURE_BT_AG
   if ( pNotifyData->out_device != SND_DEVICE_BT_HEADSET )
+#else
+  if(0)
+#endif
   {
     /* if device change was caused by non-BT subsystems */
     if ( pMe->mAG.bAudioSelected == TRUE )
     {
+    #ifdef FEATURE_AVS_BT_SCO_REWORK
       if ( BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_NON_VOICE_AUDIO_ON_B ) ||
            (BTApp_CallPresent( pMe ) != BT_APP_CALL_NONE) )
+    #endif
       {
         /* set to indicate SCO needs to be brought up again,
          * when BT device is back in use.
@@ -11413,7 +11443,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
 
   MSG_MED( "HndlSlction - sel=%d m=%d", selection, TOP_MENU, 0 );
   MENU_SET_SEL( selection );
-
+  MSG_FATAL("BTApp_HandleSelection:::::::=%d",selection,0,0);
   switch ( selection )
   {
     case IDS_BT_ON:
@@ -12080,8 +12110,10 @@ static void BTApp_InitVolumes( CBTApp* pMe )
     nvi.beep_lvl_shadow = UISND_2ND_VOL;
     (void) OEMNV_Put (NV_BEEP_LVL_SHADOW_I, &nvi);
   }
+  #ifdef FEATURE_BT_AG
   snd_set_volume( SND_DEVICE_BT_HEADSET, SND_METHOD_KEY_BEEP, 
                   nvi.beep_lvl_shadow, NULL, NULL );
+  #endif
 
   // voice volume
   result = OEMNV_Get( NV_EAR_LVL_SHADOW_I, &nvi );
@@ -12090,8 +12122,10 @@ static void BTApp_InitVolumes( CBTApp* pMe )
     nvi.ear_lvl_shadow = UISND_2ND_VOL;
     (void) OEMNV_Put (NV_EAR_LVL_SHADOW_I, &nvi);
   }
+  #ifdef FEATURE_BT_AG
   snd_set_volume( SND_DEVICE_BT_HEADSET, SND_METHOD_VOICE, 
                   nvi.ear_lvl_shadow, NULL, NULL );
+  #endif
 
   // message volume
   result = OEMNV_Get( NV_ALERTS_LVL_SHADOW_I, &nvi );
@@ -12100,8 +12134,10 @@ static void BTApp_InitVolumes( CBTApp* pMe )
     nvi.alerts_lvl_shadow = UISND_2ND_VOL;
     (void) OEMNV_Put (NV_ALERTS_LVL_SHADOW_I, &nvi);
   }
+  #ifdef FEATURE_BT_AG
   snd_set_volume( SND_DEVICE_BT_HEADSET, SND_METHOD_MESSAGE, 
                   nvi.alerts_lvl_shadow, NULL, NULL );
+  #endif
 
   // ring volume
   result = OEMNV_Get( NV_RINGER_LVL_I, &nvi );
@@ -12110,8 +12146,10 @@ static void BTApp_InitVolumes( CBTApp* pMe )
     nvi.ringer_lvl_shadow = UISND_2ND_VOL;
     (void) OEMNV_Put (NV_RINGER_LVL_I, &nvi);
   }
+  #ifdef FEATURE_BT_AG
   snd_set_volume( SND_DEVICE_BT_HEADSET, SND_METHOD_RING, 
                   nvi.ringer_lvl_shadow, NULL, NULL);
+  #endif
 
   // midi volume
 #ifdef FEATURE_MULTIMEDIA
@@ -12121,8 +12159,10 @@ static void BTApp_InitVolumes( CBTApp* pMe )
     nvi.mm_lvl_shadow = UISND_2ND_VOL;
     (void) OEMNV_Put (NV_MM_LVL_SHADOW_I, &nvi);
   }
+  #ifdef FEATURE_BT_AG
   snd_set_volume( SND_DEVICE_BT_HEADSET, SND_METHOD_MIDI, 
                   nvi.mm_lvl_shadow, NULL, NULL );
+  #endif
   
 #endif
   pMe->mAG.bVolumesInit = TRUE;
@@ -12238,6 +12278,7 @@ static boolean BTApp_Init( CBTApp* pMe )
                                AEECLSID_BLUETOOTH_NOTIFIER, 
                                uBTApp_NMask ) == SUCCESS) )
   {
+  	MSG_FATAL("BTApp_Init................................",0,0,0);
     SetDefaultMenuLook( pMe->a.m_pIShell, pMe->m_pIMenu );
     SetDefaultSoftkeyLook( pMe->a.m_pIShell, pMe->m_pISoftMenu );
     IMENUCTL_SetProperties( pMe->m_pISoftMenu, MP_MAXSOFTKEYITEMS );
@@ -12246,7 +12287,9 @@ static boolean BTApp_Init( CBTApp* pMe )
     pMe->mAG.bInbandRing         = FALSE;
     pMe->mAG.bInitialized        = FALSE;
     pMe->mNA.bInitialized        = FALSE;
+	#ifdef FEATURE_BT_EXTPF_AV
     pMe->mA2DP.bInitialized      = FALSE; 
+	#endif
     pMe->mAG.bForceUnmute        = TRUE;
     pMe->mRM.bBondable           = FALSE;
     pMe->mSD.bDiscoverable       = FALSE;
@@ -12397,7 +12440,7 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
   uint8       len = 0;
   uint16      itemID = IDS_BT_ON;
   boolean     bScvEnabled = FALSE;
-
+   MSG_FATAL("BTApp_BuildMainMenu...........................",0,0,0);
   IMENUCTL_Reset( pMe->m_pIMenu );
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );
    
@@ -18536,11 +18579,12 @@ static void BTApp_HandleCallIncom( CBTApp* pMe )
  /* Releasing the availability of A2dp device to prevent the AVS from  
   * sending the ring on a2dp media during the incoming call 
   */
+  #ifdef FEATURE_BT_EXTPF_AV
   if (pMe->mA2DP.bConnected != FALSE)
   {
     BTApp_ReleaseA2DPDevice( pMe );
   } 
-  
+  #endif
   if ( IS_AG_CONNECTABLE() != FALSE )
   {
 #ifndef FEATURE_AVS_BT_SCO_REWORK
@@ -18616,13 +18660,14 @@ static void BTApp_HandleCallEnd( CBTApp* pMe )
     if ( pMe->mAG.uNumCalls == 0 )
     {
 #ifdef FEATURE_AVS_BT_SCO_REWORK
+#ifdef FEATURE_BT_EXTPF_AV
       if ( (pMe->mAG.bSLCUp != FALSE) &&
            (pMe->mA2DP.bAudioSelected == FALSE) )
       {
         /* in case audio transfer happened during the call session */
         BTApp_UseBTDevice( pMe, FALSE );
       }
-
+#endif
       if ( BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_AUDIO_WANTED_B ) )
       {
         BTAPP_AG_CLRBIT( BTAPP_AG_FLAG_AUDIO_WANTED_B );
@@ -18648,10 +18693,12 @@ static void BTApp_HandleCallEnd( CBTApp* pMe )
     }
   }
   /* Using the a2dp device again if it is not already set once the call ends */
+  #ifdef FEATURE_BT_EXTPF_AV
   if (pMe->mA2DP.bConnected != FALSE)
   {
     BTApp_UseA2DPDevice( pMe );
   }
+  #endif
 
 }
 
@@ -18676,9 +18723,11 @@ static boolean BTApp_ProcessTPCallEvents( CBTApp* pMe, uint16  wParam,
     case AEET_EVENT_CALL_INCOM:
     {
       MSG_MED( "AG - TP ev CALL_INCOM calls=%d", pMe->mAG.uNumCalls, 0, 0 );
+	  #ifdef FEATURE_BT_HFP_1_5
       ICALLMGR_GetCall( pMe->mAG.pICallMgr, pEv->event_data.call.cd, 
                         &pMe->mAG.pIncomingCall );
       BTApp_HandleCallIncom( pMe );
+	  #endif
       return TRUE;
     }
     case AEET_EVENT_CALL_ANSWER:

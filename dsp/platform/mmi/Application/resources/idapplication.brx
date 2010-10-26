@@ -67,6 +67,9 @@
 	<String Id="1024" Name="IDS_APPLICATION_TITLE_14">
 		<Text>Browser</Text>
 	</String>
+	<String Id="1025" Name="IDS_APPLICATION_TITLE_15">
+		<Text>Bluetootch</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">

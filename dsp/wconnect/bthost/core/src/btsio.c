@@ -1749,7 +1749,9 @@ LOCAL void bt_sio_rc_is_disconnected
                 (uint16)((bt_sio_table[ i ].client_app << 8) |
                             bt_sio_table[ i ].rc_server_channel),
                 bt_sio_table[ i ].bt_app_id_port );
+	#ifndef FEATURE_BT_QSC1100
     BT_BDA( MSG_API, "BT SIO CMD TX: RM Unpaired", bd_addr_ptr );
+	#endif
     if ( (status =
             bt_cmd_rm_uuid_scn_unpaired(
               bt_sio_table[ i ].uuid_scn_paired_uuid,
@@ -1760,7 +1762,9 @@ LOCAL void bt_sio_rc_is_disconnected
               status, bt_sio_table[ i ].uuid_scn_paired_uuid,
               (uint16)((bt_sio_table[ i ].client_app << 8) |
                          bt_sio_table[ i ].rc_server_channel) );
+	  #ifndef FEATURE_BT_QSC1100
       BT_BDA( ERR, "BT SIO: Bad RM Unpaired", bd_addr_ptr );
+	  #endif
     }
 
     bt_sio_table[ i ].uuid_scn_paired_uuid = BT_SD_INVALID_UUID;
@@ -1851,8 +1855,10 @@ LOCAL void bt_sio_disconnect_rc
       BT_MSG_API( "BT SIO CMD TX: RC Cancel Connect AID %x SCN %x",
                   bt_sio_table[ i ].bt_app_id_port,
                   bt_sio_table[ i ].rc_server_channel, 0 );
+	  #ifndef FEATURE_BT_QSC1100
       BT_BDA( MSG_API, "BT SIO CMD TX: RC Cancel Connect",
               &bt_sio_table[ i ].bd_addr );
+	  #endif
       bt_cmd_rc_cancel_connect( bt_sio_table[ i ].bt_app_id_port,
                                 bt_sio_table[ i ].rc_server_channel,
                                 &bt_sio_table[ i ].bd_addr );
@@ -2132,7 +2138,9 @@ LOCAL bt_cmd_status_type bt_sio_rm_pair_uuid_scn_bda
               (uint16)((bt_sio_table[ i ].client_app << 8) |
                           bt_sio_table[ i ].rc_server_channel),
               bt_sio_table[ i ].bt_app_id_port );
+  #ifndef FEATURE_BT_QSC1100
   BT_BDA( MSG_API, "BT SIO CMD TX: RM Paired", bd_addr_ptr );
+  #endif
   if ( (status =
           bt_cmd_rm_uuid_scn_paired(
             bt_sio_table[ i ].service_uuid,
@@ -2148,7 +2156,9 @@ LOCAL bt_cmd_status_type bt_sio_rm_pair_uuid_scn_bda
             status, bt_sio_table[ i ].service_uuid,
             (uint16)((bt_sio_table[ i ].client_app << 8) |
                        bt_sio_table[ i ].rc_server_channel) );
+	#ifndef FEATURE_BT_QSC1100
     BT_BDA( ERR, "BT SIO: Bad RM Paired", bd_addr_ptr );
+	#endif
   }
 
   return( status );
@@ -2328,8 +2338,10 @@ LOCAL void bt_sio_open_spp
         BT_MSG_API( "BT SIO CMD TX: SD Get SCN UUID %x AID %x",
                     bt_sio_table[ i ].service_uuid,
                     bt_sio_table[ i ].bt_app_id_port, 0 );
+		#ifndef FEATURE_BT_QSC1100
         BT_BDA( MSG_API, "BT SIO CMD TX: SD Get SCN",
                 &bt_sio_table[ i ].bd_addr );
+		#endif
         bt_cmd_sd_get_server_channel_number(
           bt_sio_table[ i ].bt_app_id_port,
           &bt_sio_table[ i ].bd_addr,
@@ -2354,8 +2366,10 @@ LOCAL void bt_sio_open_spp
                   bt_sio_table[ i ].rc_server_channel,
                   bt_sio_table[ i ].rc_config.max_frame_size,
                   bt_sio_table[ i ].bt_app_id_port );
+	  #ifndef FEATURE_BT_QSC1100
       BT_BDA( MSG_API, "BT SIO CMD TX: RC ConnCC",
               &bt_sio_table[ i ].bd_addr );
+	  #endif
       bt_cmd_rc_connect_custom_cfg(
         bt_sio_table[ i ].bt_app_id_port,
         bt_sio_table[ i ].rc_server_channel,
@@ -2399,8 +2413,10 @@ LOCAL void bt_sio_ev_sd_scn_response
   BT_MSG_API( "BT SIO EV RX: SD SCN Resp UUID %x SCN %x",
               sd_scn_ptr->ev_msg.ev_sd_scn_resp.service_class,
               sd_scn_ptr->ev_msg.ev_sd_scn_resp.scn, 0 );
+  #ifndef FEATURE_BT_QSC1100
   BT_BDA( MSG_API, "BT SIO EV RX: SD SCN Resp",
           &sd_scn_ptr->ev_msg.ev_sd_scn_resp.bd_addr );
+  #endif
 
   if ( (i = bt_sio_find_entry_app_id_port(
               sd_scn_ptr->ev_hdr.bt_app_id )) != BT_SIO_NULL_IDX )
@@ -2483,9 +2499,11 @@ LOCAL void bt_sio_ev_sd_timeout_response
 {
 
   uint8  i;
+#ifndef FEATURE_BT_QSC1100
 
   BT_BDA( MSG_API, "BT SIO EV RX: SD TO Resp",
           &sd_to_ptr->ev_msg.ev_sd_timeout_resp.bd_addr );
+#endif
 
   if ( (i = bt_sio_find_entry_app_id_port(
               sd_to_ptr->ev_hdr.bt_app_id )) != BT_SIO_NULL_IDX )
@@ -2503,10 +2521,12 @@ LOCAL void bt_sio_ev_sd_timeout_response
       {
         BT_ERR( "BT SIO: Bad SD TO Resp I %x AID %x",
                 i, bt_sio_table[ i ].bt_app_id_port, 0 );
+		#ifndef FEATURE_BT_QSC1100
         BT_BDA( ERR, "BT SIO: Bad SD TO Resp Evt",
                 &sd_to_ptr->ev_msg.ev_sd_timeout_resp.bd_addr );
         BT_BDA( ERR, "BT SIO: Bad SD TO Resp Tbl",
                 &bt_sio_table[ i ].bd_addr );
+		#endif
       }
     }
     else if ( (bt_sio_table[ i ].spp_state == BT_SPP_ST_DISCONNECTING) &&
@@ -2525,8 +2545,10 @@ LOCAL void bt_sio_ev_sd_timeout_response
   {
     BT_ERR( "BT SIO: Bad SD TO Resp AID %x",
             sd_to_ptr->ev_hdr.bt_app_id, 0, 0 );
+	#ifndef FEATURE_BT_QSC1100
     BT_BDA( ERR, "BT SIO: Bad SD TO Resp",
             &sd_to_ptr->ev_msg.ev_sd_timeout_resp.bd_addr );
+	#endif
   }
 
 }
@@ -2552,8 +2574,10 @@ LOCAL void bt_sio_ev_sd_error_response
   BT_MSG_API( "BT SIO EV RX: SD Err Resp EC %x AID %x",
               sd_err_ptr->ev_msg.ev_sd_error_resp.error_code,
               sd_err_ptr->ev_hdr.bt_app_id, 0 );
+  #ifndef FEATURE_BT_QSC1100
   BT_BDA( MSG_API, "BT SIO EV RX: SD Err Resp",
           &sd_err_ptr->ev_msg.ev_sd_error_resp.bd_addr );
+  #endif
 
   if ( (i = bt_sio_find_entry_app_id_port(
               sd_err_ptr->ev_hdr.bt_app_id )) != BT_SIO_NULL_IDX )
@@ -2575,10 +2599,12 @@ LOCAL void bt_sio_ev_sd_error_response
       {
         BT_ERR( "BT SIO: Bad SD Err Resp I %x AID %x",
                 i, bt_sio_table[ i ].bt_app_id_port, 0 );
+		#ifndef FEATURE_BT_QSC1100
         BT_BDA( ERR, "BT SIO: Bad SD Err Resp Evt",
                 &sd_err_ptr->ev_msg.ev_sd_error_resp.bd_addr );
         BT_BDA( ERR, "BT SIO: Bad SD Err Resp Tbl",
                 &bt_sio_table[ i ].bd_addr );
+		#endif
       }
     }
     else if ( (bt_sio_table[ i ].spp_state == BT_SPP_ST_DISCONNECTING) &&
@@ -2856,7 +2882,9 @@ LOCAL void bt_sio_process_connection_failed
   else
   {
     BT_ERR( "BT SIO: Bad RC ConnF AID %x R %x", app_id, reason, 0 );
+	#ifndef FEATURE_BT_QSC1100
     BT_BDA( ERR, "BT SIO: RC ConnF", bd_addr_ptr );
+	#endif
   }
 }
 
@@ -3910,6 +3938,7 @@ sio_status_type bt_sio_cmd_open
        ( (i = bt_sio_find_entry_app_id_port( BT_APP_ID_NULL )) !=
          BT_SIO_NULL_IDX ) )
   {
+  #ifdef FEATURE_BT_SPP
     if ( (open_ptr->stream_id != SIO_NO_STREAM_ID) &&
          (open_ptr->rx_queue != NULL) && (open_ptr->tx_queue != NULL) )
     {
@@ -4032,11 +4061,13 @@ sio_status_type bt_sio_cmd_open
       }
     }
     else
+    #endif
     {
       status = SIO_BADP_S;
     }
   }
   else
+
   {
     status = SIO_UNAVAIL_S;
   }
@@ -4317,7 +4348,6 @@ void bt_sio_cmd_ioctl
       BT_ERR("BT SIO CMD IOCTL: Bad sid %x cmd %x while TASKLOCKed", 
              stream_id, cmd, 0);
   }
-    
   return;
 }
 
@@ -5047,9 +5077,11 @@ void bt_sio_process_command
   switch ( sio_cmd_ptr->cmd_hdr.cmd_type )
   {
     case BT_CMD_SIO_TRANSMIT:
-      bt_sio_cmd_transmit( 
-        sio_cmd_ptr->cmd_msg.cmd_sio_transmit.stream_id,
-        sio_cmd_ptr->cmd_msg.cmd_sio_transmit.dsm_ptr );
+		{
+      		bt_sio_cmd_transmit( 
+        		sio_cmd_ptr->cmd_msg.cmd_sio_transmit.stream_id,
+        		sio_cmd_ptr->cmd_msg.cmd_sio_transmit.dsm_ptr );
+    	}
       break;
 
     case BT_CMD_SIO_IN_FLOW_ON:
