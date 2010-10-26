@@ -115,10 +115,10 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
 
 #define DATA_X				IDLE_D_CLOCK_X
-#define DATA_Y				(RPLMN_Y + 30) 
+#define DATA_Y				(RPLMN_Y + 25) 
 
-#define WEEK_X              5
-#define WEEK_Y              52
+#define WEEK_X              IDLE_D_CLOCK_X
+#define WEEK_Y              (DATA_Y + 25)
 
 #elif defined(FEATURE_DISP_128X160)
 
@@ -4180,12 +4180,33 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              | IDF_TEXT_TRANSPARENT);  
         MSG_FATAL("Strlen=%d, rc.x=%d", strlen, rc.x, 0);
     }
+#elif defined FEATURE_DISP_220X176
+	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              25, 
+	                              wszDate, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_LEFT
+	                              | IDF_TEXT_TRANSPARENT);
+#elif defined FEATURE_DISP_320X240
+	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              30, 
+	                              wszDate, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_LEFT
+	                              | IDF_TEXT_TRANSPARENT);
+
 #else	
 		//rc.y = 20;
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
-	                              30, 
+	                              18, 
 	                              wszDate, -1,
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
