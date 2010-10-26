@@ -230,14 +230,12 @@ void disp_update
 
 void disp_setwindows(unsigned short x,unsigned short y,unsigned short w,unsigned short h)
 {
-	dup_arg.num_of_rows = x;
-	dup_arg.num_of_columns = y;
-	dup_arg.dst_starting_row = w;
-	dup_arg.dst_starting_column = h;
-	dup_arg.dest = PRIMARY_LCD_TYPE;
+	dup_arg.dst_starting_row 	= x;
+	dup_arg.dst_starting_row 	= y;
+	dup_arg.num_of_rows 		= h;
+	dup_arg.num_of_columns 		= w;
 
 	drv_ioctl(fd, IOCTL_DISP_SET_WINDOWS, (void *)&dup_arg);
-
 	return;
 }
 

@@ -654,10 +654,11 @@ static int disp_drv_ioctl ( int cmd, void *arg )
 #ifdef FEATURE_DSP
 
     case IOCTL_DISP_SET_WINDOWS:
-		disp_drv_ic.disp_ic_setwindow(((disp_cls_type *)arg)->start_row,
-                                   ((disp_cls_type *)arg)->start_column,
-                                   ((disp_cls_type *)arg)->end_row,                                          
-                                   ((disp_cls_type *)arg)->end_column);
+    	disp_update_cmd = (disp_update_type*)arg;
+		disp_drv_ic.disp_ic_setwindow((uint32)disp_update_cmd->dst_starting_row,
+                                   	(uint32)disp_update_cmd->dst_starting_column,
+                                   	(uint32)(disp_update_cmd->dst_starting_row+disp_update_cmd->num_of_rows),                                          
+                                   	(uint32)(disp_update_cmd->dst_starting_column+disp_update_cmd->num_of_columns));
 #endif
     default: 
         return -1;
