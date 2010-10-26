@@ -200,7 +200,9 @@ typedef struct {
  /*RSSI/Airplane Mode*/
  static OEMState_data rssi_image_data[]=
 {
+#ifndef FEATURE_USES_LOWMEM
   {ANNUN_STATE_AIR_MODE_ON, IDB_AIR_MODE, NULL},
+#endif
   {ANNUN_STATE_RSSI_NO_SERV, IDB_NO_SERVICE, NULL},
   {ANNUN_STATE_RSSI_0, IDB_RSSI0, NULL},
   {ANNUN_STATE_RSSI_1, IDB_RSSI1, NULL},
@@ -211,8 +213,10 @@ typedef struct {
 /*1x/Wap/Roam*/
 static OEMState_data wap_image_data[]=
 {
+#ifndef FEATURE_USES_LOWMEM
     {ANNUN_STATE_WAP_ON, IDB_WAP, NULL},
     {ANNUN_STATE_1X_ON, IDB_1X, NULL},
+#endif
     {ANNUN_STATE_ROAM_ON, IDB_ROAM, NULL}
 };
 /*Voice Privacy/Lockstatus*/
@@ -241,9 +245,12 @@ static OEMState_data sms_image_data[]=
 /*FMRadio/Headset*/
 static OEMState_data fmradio_image_data[]=
 {
+#ifndef FEATURE_USES_LOWMEM
     {ANNUN_STATE_FMRADIO_ON, IDB_FM_RADIO, NULL},
+#endif
     {ANNUN_STATE_HEADSET_ON, IDB_HEADSET, NULL}
 };
+#ifndef FEATURE_USES_LOWMEM
 /*BT Trans/BT Headset/BT On*/
 static OEMState_data bluetooth_image_data[]=
 {
@@ -251,12 +258,17 @@ static OEMState_data bluetooth_image_data[]=
     {ANNUN_STATE_BT_HEADSET_ON, IDB_BT_HEADSET, NULL},
     {ANNUN_STATE_BT_ON, IDB_BLUETOOTH, NULL}
 };
+#endif
 /*Timer/Alarm/Schedule*/
 static OEMState_data alarm_image_data[]=
 {
+#ifndef FEATURE_USES_LOWMEM
     {ANNUN_STATE_TIMER_ON, IDB_TIMER, NULL},
+#endif
     {ANNUN_STATE_ALARM_ON, IDB_ALARM, NULL},
+#ifndef FEATURE_USES_LOWMEM
     {ANNUN_STATE_SCHEDULE_ON, IDB_SCHEDULE, NULL}
+#endif
 };
 /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 static OEMState_data mms_image_data[]=
@@ -292,10 +304,18 @@ static OEMState_data batt_image_data[]=
  /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
  /*ANNUN_FIELD_RSSI*/
 OEMAnnun_content rssi_content =
+#ifndef FEATURE_USES_LOWMEM
      {ANNUN_TYPE_IMAGE, 7, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
+#else
+     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
+#endif
 /*ANNUN_FIELD_WAP*/
 OEMAnnun_content wap_content =
+#ifndef FEATURE_USES_LOWMEM
      {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)wap_image_data};
+#else
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)wap_image_data};
+#endif
 /*ANNUN_FIELD_LOCKSTATUS*/
 OEMAnnun_content lockstatus_content =
      {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)lockstatus_image_data};
@@ -307,13 +327,23 @@ OEMAnnun_content sms_content =
      {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)sms_image_data};
 /*ANNUN_FIELD_FMRADIO*/
 OEMAnnun_content fmradio_content =
+#ifndef FEATURE_USES_LOWMEM
      {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
+#else
+     {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)fmradio_image_data};
+#endif
 /*ANNUN_FIELD_BLUETOOTH*/
+#ifndef FEATURE_USES_LOWMEM
 OEMAnnun_content bluetooth_content =
      {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)bluetooth_image_data};
+#endif
 /*ANNUN_FIELD_ALARM*/
 OEMAnnun_content alarm_content =
+#ifndef FEATURE_USES_LOWMEM
      {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)alarm_image_data};
+#else
+     {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)alarm_image_data};
+#endif
 /*ANNUN_FIELD_MMS*/
 OEMAnnun_content mms_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)mms_image_data};
@@ -471,7 +501,11 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
   {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
   {ANNUN_FIELD_FMRADIO,          ANNUN_ICON_POSITION_6,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &fmradio_content},
+#ifndef FEATURE_USES_LOWMEM
   {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
+#else
+  {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
+#endif
   {ANNUN_FIELD_ALARM,             ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
   {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
   {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
@@ -1104,14 +1138,14 @@ static int ModifyAnnunStateSchedule(IAnnunciator * pMe, uint32 nAnnunID, uint32 
     else
     {
         uint32 tempState = 0;
-        
+#ifndef FEATURE_USES_LOWMEM
         /*deal with bluetooth close*/
         if(nAnnunID == ANNUN_FIELD_BLUETOOTH && *nState == ANNUN_STATE_BT_OFF)
         {
             *nState = ANNUN_STATE_OFF;
             return SUCCESS;
         }
-        
+#endif
         if(IAnnunciator_GetField(pMe, nAnnunID, &tempState) != SUCCESS)
         {
             return EFAILED;

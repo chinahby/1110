@@ -437,8 +437,10 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
                 }
                 else
                 {
+                
+#ifdef FEATRUE_AUTO_POWER		
                     OEMRTC_Process_Auto_Power_On();
-
+#endif
 #if defined( FEATURE_POWERDOWN_ALARM)
                     {
                         extern void registerAgainPowerdownAlarmclock( void);
@@ -1156,6 +1158,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             CoreApp_ProcessSubscriptionStatus(pMe);
             if(pMe->m_bemergencymode)
             {
+#ifdef FEATURE_ICM
                 //exit the emergency mode
                 ICM_SetSystemPreference(pMe->m_pCM,
                                         AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
@@ -1163,6 +1166,21 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
                                         AEECM_ROAM_PREF_NO_CHANGE, AEECM_HYBR_PREF_NO_CHANGE,
                                         AEECM_SRV_DOMAIN_PREF_NO_CHANGE, AEECM_NETWORK_SEL_MODE_PREF_NO_CHANGE,
                                         NULL, NULL, NULL);
+#else
+            	AEETSystemPreference tSysPref={
+												AEET_MODE_PREF_PERSISTENT, 
+												AEET_PREF_TERM_PERMANENT, 
+												0,
+		                                        AEET_GW_ACQ_ORDER_PREF_NO_CHANGE,
+		                                        AEET_BAND_PREF_NO_CHANGE,
+		                                        AEET_ROAM_PREF_NO_CHANGE,
+		                                        AEET_HYBR_PREF_NO_CHANGE,
+		                                        AEET_SRV_DOMAIN_PREF_NO_CHANGE, 
+		                                        AEET_NETWORK_SEL_MODE_PREF_NO_CHANGE,
+		                                        {0xFF,0xFF,0xFF}};  /*if we don,t use plmn set it to 0xff,0xff,0xff*/
+                //exit the emergency mode
+                IPHONECTL_SetSystemPreference(pMe->m_pIPhoneCtl,NULL,&tSysPref,sizeof(AEETSystemPreference),NULL);
+#endif
                 pMe->m_bemergencymode = FALSE;
             }
             CoreApp_ShowDialog(pMe, IDD_STARTUPANI);

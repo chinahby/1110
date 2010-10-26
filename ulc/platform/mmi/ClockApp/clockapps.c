@@ -24,7 +24,12 @@ when         who            what, where, why
 #include "ClockApps_priv.h"
 #include "oemnvint.h"
 #include "OEMRTC.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 
 /*==============================================================================
                                  类型定义
@@ -1357,7 +1362,7 @@ boolean ClockApps_CanAlert(CClockApps *pMe)
         return TRUE;
     }
 #endif   // #if 0   db.in_use也包括了wap连接时的状态，用下面的判断方法实现
-    
+#ifdef FEATURE_ICM
     ICM *pICM = NULL;
     uint16 num = 0;
  
@@ -1380,7 +1385,31 @@ boolean ClockApps_CanAlert(CClockApps *pMe)
         ICM_Release(pICM);
         pICM = NULL;
     }
-
+#else
+    ITelephone *pITelephone = NULL;
+    uint16 num = 0;
+ 
+    if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
+                                            AEECLSID_TELEPHONE, 
+                                            (void **)&pITelephone))
+    {
+        return FALSE;
+    }
+    if(pITelephone)
+    {
+    	
+		AEETCalls po;
+		
+		if(SUCCESS != ITELEPHONE_GetCalls(pITelephone, &po,sizeof(AEETCalls)))
+		{
+			return FALSE;
+		}
+        num = po.dwCount;
+        
+        ITELEPHONE_Release(pITelephone);
+        pITelephone = NULL;
+    }
+#endif
     if(num > 0)
     {
         return FALSE;

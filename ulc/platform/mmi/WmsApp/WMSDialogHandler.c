@@ -37,9 +37,16 @@
                                  
 ==============================================================================*/
 // 发送短信动画图片文件定义
+#ifndef FEATURE_USES_LOWMEM
 #define SENDINGSMS_ANI      "fs:/image/notice/sendingsms.png"
 // 动画帧数
 #define SENDINGSMS_ANI_N    7
+#else
+#define SENDINGSMS_ANI_N    2
+
+#define SENDINGSMS_ANI      "fs:/image/notice/sendingsmslow.png"
+#endif
+
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    20
 // 动画播放速率 ms

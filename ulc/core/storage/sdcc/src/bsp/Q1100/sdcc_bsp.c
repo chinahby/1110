@@ -142,11 +142,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
 boolean
 sdcc_bsp_slot_interrupt_exists()
 {
-//#ifdef CUST_EDITION_EX
-	 //return FALSE;
-//#else
-	 return (qsc11x0_hw_rev.pmic_hw_version >= 3) ? TRUE : FALSE;
-//#endif  
+   return (qsc11x0_hw_rev.pmic_hw_version >= 3) ? TRUE : FALSE;
 }
 
 /*=============================================================================
@@ -163,21 +159,17 @@ sdcc_bsp_slot_interrupt_exists()
  *===========================================================================*/
 void
 sdcc_bsp_enable_slot_int(void *isr)
-{	
+{
    if(FALSE == slot_int_enabled)
    {
       if( NULL == isr)
          return;
-
-		/*
+#ifndef CUST_EDITION
       gpio_tlmm_config(GPIO_INPUT_32);
       gpio_int_set_detect(GPIO_INT_32, DETECT_EDGE);
-	  
-	  
       gpio_int_set_handler(GPIO_INT_32, ACTIVE_LOW,
                            (gpio_int_handler_type)isr);
-*/
-                           
+#endif
       slot_int_enabled = TRUE;
    }   
 } /* sdcc_bsp_enable_slot_int */

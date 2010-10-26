@@ -37,12 +37,17 @@ endif
 
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/GraphicNotice
 
+ifneq ($(USES_LOWMEM),yes)
 CONSTFILE_FILES+=\
-	appscommon_images$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/sys/appscommonimages.bar 
-
-CONSTFILE_FILES+=\
+	appscommon_images$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/sys/appscommonimages.bar
 	sendingsms.png|fs:/image/notice/sendingsms.png \
-	volume.png|fs:/image/notice/volume.png \
+	volume.png|fs:/image/notice/volume.png 
+else	
+CONSTFILE_FILES+=\
+	appscommon_images$(USES_LCD_SIZE)_$(USES_RESDIR)_low.bar|fs:/sys/appscommonimages.bar
+	sendingsmslow.png|fs:/image/notice/sendingsmslow.png \
+	volume.png|fs:/image/notice/volume.png 
+endif	
 
 INC  += $(APPSCOMMON_INC) $(APPSCOMMON_RES)
 #SRC  += $(APPSCOMMON_SOURCES)

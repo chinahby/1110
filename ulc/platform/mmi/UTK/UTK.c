@@ -354,9 +354,14 @@ static int UTK_InitAppData(CUTK *pMe)
         ERR("Failed to create AEECLSID_CONFIG",0,0,0);
         return EFAILED;
     }
-    
+#ifdef FEATURE_ICM
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CALLMANAGER,
             (void **)&pMe->m_pCM) != SUCCESS)
+#else
+    
+    if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_TELEPHONE ,
+            (void **)&pMe->m_pITelephone) != SUCCESS)
+#endif
     {
         ERR("Failed to create AEECLSID_CALLMANAGER",0,0,0);
         return EFAILED;
@@ -430,13 +435,19 @@ static void UTK_FreeAppData(CUTK *pMe)
         ICONFIG_Release(pMe->m_pConfig);
         pMe->m_pConfig = NULL;
     }
-    
+#ifdef FEATURE_ICM
     if (NULL != pMe->m_pCM)
     {
         ICM_Release(pMe->m_pCM);
         pMe->m_pCM = NULL;
     }
-    
+#else
+    if (NULL != pMe->m_pITelephone)
+    {
+        ITELEPHONE_Release(pMe->m_pITelephone);
+        pMe->m_pITelephone = NULL;
+    }
+#endif
     if (NULL != pMe->m_wszInputText)
     {
         FREE(pMe->m_wszInputText);
@@ -826,7 +837,10 @@ static boolean UTK_HandleEvent(IUTK *pi,
                     {
                         Setup_Call  *pstCall;
                         byte        *pdata;
-                        
+#ifdef FEATURE_ICM
+						AEETCalls po;
+#endif
+
                         pstCall = UTK_Get_Setup_Call_Buf();
                         pdata = UTK_GetCmddata(pMe->cmd_type);
                         
@@ -838,8 +852,15 @@ static boolean UTK_HandleEvent(IUTK *pi,
                         
                         MEMSET(pstCall, 0, sizeof(Setup_Call));
                         (void)UTK_DecodeSetupCallCmdData(pdata, pstCall);
-                        
+#ifdef FEATURE_ICM
                         if ((AEECM_IS_VOICECALL_PRESENT(pMe->m_pCM))  &&
+#else
+						if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+						{
+							break;
+						}
+                        if ((po.dwCount>0)&&
+#endif
                             ((pstCall->cmd_describe.command_restricttag == 0x00) ||
                              (pstCall->cmd_describe.command_restricttag == 0x01)) &&
                             (WSTRLEN(pstCall->wszAlpha) == 0))
@@ -1100,7 +1121,18 @@ void UTK_MessageAlert(CUTK * pMe, boolean  bPlay)
 
     if (bSmsAlertType)
     {
+#ifdef FEATURE_ICM
         if (AEECM_IS_VOICECALL_CONNECTED(pMe->m_pCM))
+#else
+		AEETCalls po;
+		
+		if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+		{
+			return;
+		}
+		
+        if (po.dwCount>0)
+#endif
         {
             (void)ISHELL_Beep(pMe->m_pShell,BEEP_MSG,TRUE);
             return;

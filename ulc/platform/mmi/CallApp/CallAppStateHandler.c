@@ -393,8 +393,20 @@ static NextFSMAction STATE_INITHandler(CCallApp *pMe)
                 }
                 else
                 {
+#ifdef FEATURE_ICM
                     //if (pMe->m_lastCallState == AEECM_CALL_STATE_CONV)
                     if(AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM))
+#else
+					AEETCalls po;
+					
+					if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+					{
+						return NFSMACTION_WAIT;
+					}
+                    //if (pMe->m_lastCallState == AEECM_CALL_STATE_CONV)
+                    //if(AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM))
+                    if(po.dwCount>0)
+#endif
                     {
                         switch(pstCall->cmd_describe.command_restricttag)
                         {
@@ -408,7 +420,11 @@ static NextFSMAction STATE_INITHandler(CCallApp *pMe)
                             case 0x04:
                             case 0x05:
                                 pMe->m_bEndcurcallForUTKCall = TRUE;
+#ifdef FEATURE_ICM
                                 ICM_EndAllCalls(pMe->m_pICM);
+#else
+                                ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
                                 eTsatate = STATE_ENDCALL;
                                 break;
 
@@ -553,13 +569,28 @@ static NextFSMAction STATE_CALLING_FROM_ANOTHERAPP_Handler(CCallApp *pMe)
 ==============================================================================*/
 static NextFSMAction STATE_NUMBER_FROM_COREHandler(CCallApp *pMe)
 {
+#ifdef FEATURE_ICM
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
     }
 
     pMe->m_b_incall = AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM);
+#else
+	AEETCalls po;
+	
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+	
+	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+	{
+		return NFSMACTION_WAIT;
+	}
 
+    pMe->m_b_incall = po.dwCount>0?TRUE:FALSE;
+#endif
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1032,12 +1063,24 @@ static NextFSMAction STATE_MISSEDCALLHandler(CCallApp *pMe)
 ==============================================================================*/
 static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe)
 {
+#ifndef FEATURE_ICM
+	AEETCalls po;
+#endif
+
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+#ifdef FEATURE_ICM
     pMe->m_b_incall = AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM);
+#else
+	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+	{
+		return NFSMACTION_WAIT;
+	}
+
+    pMe->m_b_incall = po.dwCount>0?TRUE:FALSE;
+#endif
 
     switch(pMe->m_eDlgRet)
     {
@@ -1045,6 +1088,7 @@ static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe)
             pMe->m_bNotOverwriteDlgRet = FALSE;
             {
                 boolean bHeadsetPresent = FALSE;
+#ifdef FEATURE_ICM
                 AEECMCallInfo ci;
                 if(pMe->m_CallsTable)
                 {
@@ -1055,6 +1099,18 @@ static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe)
                 }
 
                 if(AEECM_CALL_STATE_IDLE == ci.call_state)
+#else
+                AEETCallInfo ci;
+                if(pMe->m_CallsTable)
+                {
+                    if(AEE_SUCCESS != ITELEPHONE_GetCallInfo(pMe->m_pITelephone, pMe->m_CallsTable->call_id, &ci, sizeof(AEETCallInfo)))
+                    {
+                        return NFSMACTION_WAIT;
+                    }
+                }
+
+                if(AEET_CALL_STATE_IDLE == ci.call_state)
+#endif
                 {
                     MOVE_TO_STATE(STATE_MISSEDCALL)
                     return NFSMACTION_CONTINUE;
@@ -1144,12 +1200,24 @@ static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe)
 ==============================================================================*/
 static NextFSMAction STATE_CALLCONFIRM_Handler(CCallApp *pMe)
 {
+#ifndef FEATURE_ICM
+	AEETCalls po;
+#endif
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+    
+#ifndef FEATURE_ICM
     pMe->m_b_incall = AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM);
+#else
+	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+	{
+		return NFSMACTION_WAIT;
+	}
+	
+	pMe->m_b_incall = po.dwCount>0?TRUE:FALSE;
+#endif
 
     switch(pMe->m_eDlgRet)
     {
@@ -1187,7 +1255,11 @@ static NextFSMAction STATE_CALLCONFIRM_Handler(CCallApp *pMe)
                     case 0x04:
                     case 0x05:
                         pMe->m_bEndcurcallForUTKCall = TRUE;
+#ifndef FEATURE_ICM
                         ICM_EndAllCalls(pMe->m_pICM);
+#else
+                        ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
                         eTsatate = STATE_ENDCALL;
                         break;
 
@@ -1303,6 +1375,7 @@ SEE ALSO:
 void CallApp_HandleAutoAnswerTimer(void *pUser)
 {
     CCallApp         *pMe = (CCallApp *)pUser;
+#ifndef FEATURE_ICM
     AEECMCallInfo ci;
 
     // Check if we are still in the incoming call state.
@@ -1315,6 +1388,20 @@ void CallApp_HandleAutoAnswerTimer(void *pUser)
     }
 
     if (AEECM_CALL_STATE_INCOM == ci.call_state)
+#else
+    AEETCallInfo ci;
+
+    // Check if we are still in the incoming call state.
+    if(pMe->m_CallsTable)
+    {
+        if(AEE_SUCCESS != ITELEPHONE_GetCallInfo(pMe->m_pITelephone, pMe->m_CallsTable->call_id, &ci, sizeof(AEETCallInfo)))
+        {
+            return;
+        }
+    }
+
+    if (AEET_CALL_STATE_INCOM == ci.call_state)
+#endif
     {
         // Auto answer the call
         CallApp_AnswerCall(pMe,FALSE,0,0,TRUE);

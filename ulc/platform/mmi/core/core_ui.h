@@ -460,6 +460,8 @@ SIDE EFFECTS
 ===========================================================================*/
 void CoreTask_SetLCDTimer(uint32 timer);
 
+boolean   IsRunAsUIMVersion(void);
+
 #endif /* FEATURE_UIONE_HDK */
 
 #if defined(FEATURE_UIONE_HDK) && defined(FEATURE_UIXSND_IMPLEMENTATION) && defined(FEATURE_TTY)

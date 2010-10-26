@@ -141,7 +141,9 @@ when         who     what, where, why
 #ifdef FEATURE_ICM
 #include "AEECM.h"
 #else
-#include "uixcm.h"
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+//#include "uixcm.h"
 #endif
 
 #include "fs.h"
@@ -2395,6 +2397,7 @@ static boolean CFieldDebug_TestCallHandleEvent(CFieldDebug * pme,
                                             uint16 wParam,
                                             uint32 dwParam)
 {
+#ifndef FEATURE_USES_LOWMEM
    PARAM_NOT_REF(dwParam)
 
 #ifdef FEATURE_ICM
@@ -2521,6 +2524,7 @@ static boolean CFieldDebug_TestCallHandleEvent(CFieldDebug * pme,
    default:
       break;
    }
+#endif   
    return FALSE;
 }
 
@@ -2721,6 +2725,9 @@ static boolean CFieldDebug_ClearEFSHandleEvent(CFieldDebug * pme,
 #ifdef FEATURE_ICM
    ICM *pICM = NULL;
    int nReturnStatus;
+#else
+   IPhoneCtl *pIPhoneCtl = NULL;
+   int nReturnStatus;
 #endif
 
    switch (eCode) {
@@ -2750,13 +2757,25 @@ static boolean CFieldDebug_ClearEFSHandleEvent(CFieldDebug * pme,
          if (pICM == NULL) { /* error */
            return FALSE;
          }
+#else
+         /* Create the Call Manager object. */
+         nReturnStatus = ISHELL_CreateInstance(pme->a.m_pIShell,
+                                    AEECLSID_PHONECTL,
+                                    (void **) &pIPhoneCtl);
 
+         if(nReturnStatus != SUCCESS) {
+           return FALSE;
+         }
+
+         if (pIPhoneCtl == NULL) { /* error */
+           return FALSE;
+         }
 #endif
          if (!(WSTRICMP(input_txt, yes_txt))) { // if the user types Yes
 #ifdef FEATURE_ICM
            ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_OFFLINE);
 #else
-           ui_set_ph_oprt_mode (SYS_OPRT_MODE_OFFLINE);
+           IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
 #endif
             // TODO - do something here
 #ifndef FEATURE_EFS2
@@ -2767,7 +2786,7 @@ static boolean CFieldDebug_ClearEFSHandleEvent(CFieldDebug * pme,
 #ifdef FEATURE_ICM
            ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_RESET);
 #else
-           ui_set_ph_oprt_mode(SYS_OPRT_MODE_RESET);
+           IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_RESET);
 #endif
          } else {
             (void) CFieldDebug_MoveToDialog(pme, IDD_DEBUG_DIALOG);
@@ -2775,6 +2794,9 @@ static boolean CFieldDebug_ClearEFSHandleEvent(CFieldDebug * pme,
 #ifdef FEATURE_ICM
          ICM_Release(pICM);
          pICM = NULL;
+#else
+         IPHONECTL_Release(pIPhoneCtl);
+         pIPhoneCtl = NULL;
 #endif
          return TRUE;
       } else if (wParam == IDS_CANCEL ) {

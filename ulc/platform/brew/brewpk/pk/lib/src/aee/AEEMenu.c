@@ -8361,6 +8361,7 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
     else
     #endif
 #endif
+#ifndef FEATURE_USES_LOWMEM     
     {
        if(pme->m_pBgImage == NULL)
        {
@@ -8379,6 +8380,10 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
        }
        Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, pme->m_c.cBack, pRect, 0, 0);
     }
+#else
+	   Appscommon_ResetBackground(pme->m_pIDisplay, NULL, APPSCOMMON_TEXT_BG_COLOR, pRect, 0, 0);
+
+#endif
 }
 #ifdef FEATURE_MENUTITLE_AUTOSCROLL
 /*=====================================================================

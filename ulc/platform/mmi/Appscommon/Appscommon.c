@@ -1447,7 +1447,7 @@ void drawTheImage( IImage *image, AEERect *pRect)
 
 void DrawBackground( IDisplay *pDisplay, AEERect *pRect)
 {
-    
+#ifndef FEATURE_USES_LOWMEM     
     IImage *image = ISHELL_LoadResImage( AEE_GetShell(),
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDB_BACKGROUND
@@ -1460,7 +1460,9 @@ void DrawBackground( IDisplay *pDisplay, AEERect *pRect)
     {
         drawTheImage( image, pRect);
     }
-
+#else	
+	Appscommon_ResetBackground(pDisplay, NULL, APPSCOMMON_TEXT_BG_COLOR, pRect, 0, 0);
+#endif
 }
 
 /*==============================================================================
@@ -2401,7 +2403,11 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     }       
     if (NULL != pwszMsg)
     {
+#ifndef FEATURE_USES_LOWMEM 
         IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
+#else
+        IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);
+#endif
         if (TRUE== drawbgimage)
         {
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
@@ -3773,13 +3779,17 @@ void Appscommon_ResetBackgroundEx(IDisplay *pDisplay, AEERect * rect, boolean bD
         else
 	    #endif
 #endif
+#ifndef FEATURE_USES_LOWMEM 
+
         {
             /* 由于透明通道会大大降低图像的显示速度，默认使用一张无透明色的图片*/
             pImageBg = ISHELL_LoadResImage(pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);  //moci by yangdecai
         }
 
         Appscommon_ResetBackground(pDisplay, pImageBg, nBgColor, rect, xPos, yPos);
-
+#else
+		Appscommon_ResetBackground(pDisplay, NULL, APPSCOMMON_TEXT_BG_COLOR, rect, xPos, yPos);
+#endif
         if(pImageBg != NULL)
         {
             IImage_Release(pImageBg);

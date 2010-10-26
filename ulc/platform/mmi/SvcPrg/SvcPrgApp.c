@@ -1135,6 +1135,10 @@ static boolean CSvcPrg_OnCommand_AKEYEntry(CSvcPrgApp      *pMe,
    int nReturnStatus;
    ICM  *pICM;
    AEECMPhInfo phInfo;
+#else
+   ITelephone *pTelephone;
+   int nReturnStatus;
+   AEETPhInfo phInfo;
 #endif
 
    if (NULL == pItem) {
@@ -1178,7 +1182,22 @@ static boolean CSvcPrg_OnCommand_AKEYEntry(CSvcPrgApp      *pMe,
       ICM_Release(pICM);
       pICM = NULL;
 #else
-      nam = ui.nam;
+      /* Create the Call Manager object. */
+      nReturnStatus = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                AEECLSID_TELEPHONE,
+                                (void **) &pTelephone);
+
+      if(nReturnStatus != SUCCESS) {
+        return FALSE;
+      }
+
+      if (pTelephone == NULL) { /* error */
+        return FALSE;
+      }
+      ITELEPHONE_GetPhoneInfo(pTelephone, &phInfo, sizeof(phInfo));
+      nam = phInfo.curr_nam;
+      ICM_Release(pTelephone);
+      pTelephone = NULL;
 #endif
 
 #if defined (FEATURE_AUTH)

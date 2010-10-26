@@ -5686,6 +5686,7 @@ static int TextCtl_Oemmode_Textmode(byte oeminputmode)
 
 static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
 {
+#ifndef FEATURE_USES_LOWMEM	
     if(pme->m_pImageBg == NULL)
     {
         //modified by chengxiao 2009.04.08
@@ -5701,6 +5702,9 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
     }
     Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pImageBg, APPSCOMMON_BG_COLOR, pRect, 0, 0);
+#else
+	Appscommon_ResetBackground(pme->m_pIDisplay, NULL, APPSCOMMON_TEXT_BG_COLOR, pRect, 0, 0);
+#endif
 }
 //end added
 

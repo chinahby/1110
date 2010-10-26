@@ -43,7 +43,12 @@ when         who            what, where, why
 #include "Appscommon.h"
 #include "OEMCFGI.h"
 #include "Oemnvint.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif 
@@ -1556,7 +1561,8 @@ static void TimerNotifyMP3PlayerAlertEvent(CAppTimer *pMe, boolean toStartAlert)
 extern boolean recorder_GetRunningFlag(void);
 #endif
 boolean AppTimer_CanAlert(CAppTimer *pMe)
-{    
+{
+#ifdef FEATURE_ICM
     ICM *pICM = NULL;
     uint16 num = 0;
     
@@ -1579,7 +1585,31 @@ boolean AppTimer_CanAlert(CAppTimer *pMe)
         ICM_Release(pICM);
         pICM = NULL;
     }
-    
+#else
+   ITelephone *pITelephone = NULL;
+   uint16 num = 0;
+
+   if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
+										   AEECLSID_TELEPHONE, 
+										   (void **)&pITelephone))
+   {
+	   return FALSE;
+   }
+   if(pITelephone)
+   {
+	   
+	   AEETCalls po;
+	   
+	   if(SUCCESS != ITELEPHONE_GetCalls(pITelephone, &po,sizeof(AEETCalls)))
+	   {
+		   return FALSE;
+	   }
+	   num = po.dwCount;
+	   
+	   ITELEPHONE_Release(pITelephone);
+	   pITelephone = NULL;
+   }
+#endif
 #ifdef FEATURE_APP_RECORDER
 if(TRUE == recorder_GetRunningFlag())
 {

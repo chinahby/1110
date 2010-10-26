@@ -2542,6 +2542,7 @@ static void AStatic_FillRect_Transparence(AStatic * pme, AEERect rc)
 
 static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
 {
+#ifndef FEATURE_USES_LOWMEM 
     IImage *pImageBg = NULL;
 
     if(pme->m_nBgImgResID != 0 && STRLEN(pme->m_strBgImgResFile) != 0)
@@ -2560,6 +2561,9 @@ static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
         IImage_Release(pImageBg);
         pImageBg = NULL;
     }
+#else
+	Appscommon_ResetBackground(pme->m_pDisplay, NULL, APPSCOMMON_TEXT_BG_COLOR, rc, 0, 0);
+#endif
 }
 static void AStatic_SetBackGround(IStatic * po, char *pstrImgResFile, uint16 nImgResID)
 {

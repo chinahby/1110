@@ -174,7 +174,12 @@ when       who     what, where, why
 #include "adc.h"
 
 #ifdef FEATURE_ICM
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #endif //FEATURE_ICM
 
 
@@ -229,7 +234,13 @@ when       who     what, where, why
 #ifdef FEATURE_KEYGUARD
 #include "OEMKeyguard.h"
 #endif
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
+
 #ifdef FEATURE_SUPPORT_BT_APP
 #ifndef WIN32
 #include "bt_ui_int.h"
@@ -2898,8 +2909,10 @@ void OEM_RestoreFactorySetting( void )
    }
 #ifndef WIN32//wlh ÁÙÊ±ÐÞ¸Ä
    {
-	   extern void StopWatch_ClearData(void);
+#ifdef FEATURE_APP_STOPWATCH   
+	   extern void StopWatch_ClearData(void);	   
 	   StopWatch_ClearData();
+#endif	   
    }
 #endif//WIN32
     {

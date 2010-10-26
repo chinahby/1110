@@ -109,8 +109,10 @@ when       who     what, where, why
       //#define FEATURE_APP_DATASTATS
 #endif
 #ifndef FEATURE_MANGO_BREW
-#ifndef FEATURE_W021_LOW_MEMORY
+#ifndef FEATURE_USES_LOWMEM
       #define FEATURE_ICM
+#else
+	  #define FEATURE_OEM_TELEPHONE
 #endif	  
 #endif
     #endif

@@ -1712,7 +1712,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                     pme->m_CalMgr.m_julianCurrentDay.wMonth    = pnMonth;
                     pme->m_CalMgr.m_julianCurrentDay.wDay      = pnDay;
                     pme->m_CalMgr.m_lCurrentDay = (uint32)IDATECTL_GetJulianDay(pDatePick);
-
+#ifdef FEATURE_APP_WORLDTIME
                     {
                         extern boolean Calendar_FormatDate2( uint16 year, uint16 month, uint16 day, AECHAR* resultString, int resultStringLength);
 
@@ -1721,6 +1721,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                             pnChars = WSTRLEN( pchar);
                         }
                     }
+#endif
                     nLeft = nLeft - pnChars;
                     pchar = pchar + pnChars;
                     for( i = 0; i < 2; i ++)
@@ -4600,7 +4601,9 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
                 uint16      hour        = GET_HOUR( GETTIME(pEvent->m_b.dwTime));
                 uint16      minute      = GET_MINUTE( GETTIME(pEvent->m_b.dwTime));
 
+#ifdef FEATURE_APP_WORLDTIME
                 Calendar_FormatTime( hour*3600 + minute*60, text, sizeof( text));
+#endif
                 text[WSTRLEN( text)] = ' ';
                 WSTRCAT( text, subject);
                 text[WSTRLEN( text)] = ' ';
@@ -4638,7 +4641,9 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
         else
         {
             uint32 seconds = i*3600 + (i==setupHour?setupMinute:0)*60;
+#ifdef FEATURE_APP_WORLDTIME			
             Calendar_FormatTime( seconds, subject, sizeof( subject));
+#endif
             IMENUCTL_AddItem( pMenu, 0, 0, id ++, subject, 0);
             debug( ";%d, %S, no event", seconds, subject);
 
@@ -6165,7 +6170,9 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SCHEDULE_BACKGROUND);
 #else
+#ifndef FEATURE_USES_LOWMEM
             ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
+#endif
 #endif
             {
                 AEERect rect = pme->m_rc;
@@ -6279,7 +6286,9 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
             text[length ++] = ' ';
             text[length ++] = ' ';
             seconds = JULIANTOSECONDS( &pappointment->julian);
+#ifdef FEATURE_APP_WORLDTIME    			
             Calendar_FormatDateTime( seconds, date, sizeof( date));
+#endif
             WSTRCPY( text + length, date);
             length = WSTRLEN( text);
             text[length ++] = '\n';

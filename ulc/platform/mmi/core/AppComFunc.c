@@ -1770,7 +1770,11 @@ SIDE EFFECTS:
   None
 
 =============================================================================*/
+#ifdef FEATURE_ICM
 boolean IsCallActive (AEECMCallType calltype)
+#else
+boolean IsCallActive (AEETCallType calltype)
+#endif
 {  
   IShell *pIShell=NULL;
   int nCalls = 0;
