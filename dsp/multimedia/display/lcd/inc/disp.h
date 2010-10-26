@@ -272,7 +272,9 @@ enum
 #endif
   IOCTL_DISP_OFF,
   IOCTL_DISP_ON,
+#ifdef FEATURE_DSP
   IOCTL_DISP_SET_WINDOWS,
+#endif
 };
 
 typedef struct

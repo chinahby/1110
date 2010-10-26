@@ -36,7 +36,6 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
 extern boolean disp_ili9342_tft23_rot(disp_drv_ic_type *pdispic);
 
-
 /*============================================================================
 
                            VARIABLE DECLARATION

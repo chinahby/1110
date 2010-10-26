@@ -592,13 +592,19 @@ static int disp_drv_ioctl ( int cmd, void *arg )
         disp_update_cmd = (disp_update_type*)arg;
         /* bitwise OR all int16 together. If the result is
          * less than 0, then at least one of them is negative */
+    #ifdef FEATURE_DSP
+    	if( g_ByPassOn && 
+    #else
+    	if(
+    #endif
+        ((disp_update_cmd->src_width |
         if((disp_update_cmd->src_width |
             disp_update_cmd->src_starting_row |
             disp_update_cmd->src_starting_column |
             disp_update_cmd->num_of_rows |
             disp_update_cmd->num_of_columns |
             disp_update_cmd->dst_starting_row |
-            disp_update_cmd->dst_starting_column ) >= 0)
+            disp_update_cmd->dst_starting_column ) >= 0))
         {
             disp_drv_update(disp_update_cmd->buf_ptr,
                             (uint32)disp_update_cmd->src_width,
@@ -646,8 +652,14 @@ static int disp_drv_ioctl ( int cmd, void *arg )
                                    ((disp_cls_type *)arg)->end_column);
         break;
 
+#ifdef FEATURE_DSP
+
     case IOCTL_DISP_SET_WINDOWS:
-		disp_drv_ic.disp_ic_setwindow(0,0,disp_drv_info.disp_height-1,disp_drv_info.disp_width-1);
+		disp_drv_ic.disp_ic_setwindow(((disp_cls_type *)arg)->start_row,
+                                   ((disp_cls_type *)arg)->start_column,
+                                   ((disp_cls_type *)arg)->end_row,                                          
+                                   ((disp_cls_type *)arg)->end_column);
+#endif
     default: 
         return -1;
     }
