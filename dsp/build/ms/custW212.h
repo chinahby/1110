@@ -15,6 +15,17 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define USE_ANALOGTV_TLG1120
 #define FEATURE_TV
 
+#define FEATURE_APP_BLUETOOTH
+#define FEATURE_BT
+#define FEATURE_IBT
+#define FEATURE_BT_QSOC_ALL   
+#define FEATURE_BT_QSOC_INBAND_SLEEP  
+#define FEATURE_BT_SOC
+#define FEATURE_BT_AG
+#define FEATURE_BT_EXTPF_AV
+#define FEATURE_BT_QSC1100
+//end add by yaangdecai for bt
+
 //Add by zzg 2010_10_13
 #define FEATURE_TORCH_KEY_SPACE		//手电筒功能按键
 #define FEATURE_GPIO_LAMP_EN_OUTPUT_32	//GPIO_OUTPUT_32
