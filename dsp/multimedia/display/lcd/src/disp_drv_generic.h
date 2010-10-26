@@ -597,7 +597,7 @@ static int disp_drv_ioctl ( int cmd, void *arg )
     #else
     	if(
     #endif
-        if((disp_update_cmd->src_width |
+			((disp_update_cmd->src_width |
             disp_update_cmd->src_starting_row |
             disp_update_cmd->src_starting_column |
             disp_update_cmd->num_of_rows |
