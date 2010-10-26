@@ -43,6 +43,7 @@ extern const unsigned char DCAM_EINT_NO;
 static void AIT701_set_gpio(u_short pin, u_char level);
 static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para);
 static void AIT701_cam_capture(ext_camera_para_struct *ext_cam_para);
+static void AIT701_cam_power_off(void);
 
 extern unsigned char g_ATV_Flag;
 uint16 rgbbuffer[220*176] = {0};
@@ -71,7 +72,7 @@ static void AIT701_ResetLCDWindow(void)
 	extern unsigned short gA8MainLCDHeight;
 	
 	sys_IF_ait_set_bypass_mode(A8_ON);			
-	AIT_ext_SetLCDWindow(0,0,gA8MainLCDWidth,gA8MainLCDHeight);
+	AIT_ext_SetLCDWindow(0,0,gA8MainLCDWidth-1,gA8MainLCDHeight-1);
 	sys_IF_ait_set_bypass_mode(A8_OFF);
 	return;
 }
@@ -929,6 +930,8 @@ void cam_test(void)
 static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 {
 	extern u_char g_ATV_Flag;
+	extern void disp_on(void);
+	extern void disp_off(void);
 	ASSERT(ext_cam_para!=NULL);
 #ifdef AIT_ATV_SUPPORT
 	if(g_ATV_Flag)
@@ -949,6 +952,8 @@ static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 		}
 	}
 
+	disp_off();
+	disp_on();
 	return;
 }
 

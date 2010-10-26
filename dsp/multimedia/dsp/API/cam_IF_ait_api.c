@@ -1664,7 +1664,7 @@ A8_ERROR_MSG cam_IF_ait_VIF_Src_Selection(ePREVIEW_SRC_MODE preview_src)
 			#if AIT_VIDEO_PHONE_SUPPORT
 			A8L_SetTVPreviewMode(A8_OFF, 0x0000, 0x2800);
 			#else
-			A8L_SetTVPreviewMode(A8_ON);//			A8L_SetTVPreviewMode(A8_OFF);
+			A8L_SetTVPreviewMode(A8_OFF);//			A8L_SetTVPreviewMode(A8_OFF);
 			#endif
 			break;
 

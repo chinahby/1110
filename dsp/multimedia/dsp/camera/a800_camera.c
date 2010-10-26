@@ -6188,7 +6188,8 @@ void A800_TakeJpegSetting(u_int JpegWidth, u_int JpegHeight)
 				tmpCurZoomStep >>= 8;
 				MaxN >>= 8;			
 				if((((gsSensorUsing->full_mode->image_width*tmpCurZoomStep/MaxN))<JpegWidth)||(((gsSensorUsing->full_mode->image_height*tmpCurZoomStep/MaxN))<JpegHeight))
-					tmpCurZoomStep++;		
+					tmpCurZoomStep++;	
+				
 				A800_FillJpegScaleDown(JpegWidth, JpegHeight, gsSensorUsing->full_mode->image_width, gsSensorUsing->full_mode->image_height, MaxN, tmpCurZoomStep);
 			}
 		}		
@@ -6200,6 +6201,7 @@ void A800_TakeJpegSetting(u_int JpegWidth, u_int JpegHeight)
 		MaxN >>= 8;			
 		if((((gsSensorUsing->preview_mode->image_width*tmpCurZoomStep)/MaxN)<JpegWidth)||(((gsSensorUsing->preview_mode->image_height*tmpCurZoomStep)/MaxN)<JpegHeight))
 			tmpCurZoomStep++;
+
 		A800_FillJpegScaleDown(JpegWidth, JpegHeight, gsSensorUsing->preview_mode->image_width, gsSensorUsing->preview_mode->image_height, MaxN, tmpCurZoomStep);
 	} 
 		
@@ -6281,9 +6283,9 @@ A8_ERROR_MSG 	A800_TakeJPEG(u_char resolution, u_int maxFileSize, u_short *pdata
 
 void A800_LCD_Refresh_Pause(void)
 {
-	s_int timeout;
-	u_short val;
-	u_short color = 0xff;
+	//s_int timeout;
+	//u_short val;
+	//u_short color = 0xff;
 	/*  SetA8RegB(0x500a, 0x00);
 	do
 	{
@@ -6329,8 +6331,8 @@ void A800_LCD_Refresh_Pause(void)
 
 void A800_LCD_Refresh_Resume(void)
 {
-	s_int timeout;
-	u_short val;
+	//s_int timeout;
+	//u_short val;
 	A8L_CheckSensorFrame(VIF_FRAME_END); 
 	A8L_CheckLcdBusy();		
 	SetA8RegW(0x5006, 0x0007);//Index  ? Reg[0x28] = 0x34

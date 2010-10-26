@@ -611,6 +611,7 @@ static u_short SetSensorResolution(mmp_sensor_mode sensor_mode)
 				tab_addr = (u_short *)Sensor_Init;
 				tab_len = sizeof(Sensor_Init);			
                 gbSensorInited = 1;
+                return fRet;
 			break;	
 			
 		case	SENSOR_DSC_PREVIEW:
