@@ -41,9 +41,6 @@ static AIT_PREVIEW_CONFIG playbackConfig = {A8_MAIN_LCD,AIT_CAM_PREV_NOR_MODE,0x
 extern unsigned short ait_sleep_checktime;
 extern const unsigned char DCAM_EINT_NO;
 static void AIT701_set_gpio(u_short pin, u_char level);
-static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para);
-static void AIT701_cam_capture(ext_camera_para_struct *ext_cam_para);
-static void AIT701_cam_power_off(void);
 
 extern unsigned char g_ATV_Flag;
 uint16 rgbbuffer[220*176] = {0};
@@ -927,7 +924,7 @@ void cam_test(void)
 	AIT701_cam_preview(&ext_cam_para);
 }
 
-static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
+void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 {
 	extern u_char g_ATV_Flag;
 	extern void disp_on(void);
@@ -957,7 +954,7 @@ static void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 	return;
 }
 
-static void AIT701_cam_exit_preview(void)
+void AIT701_cam_exit_preview(void)
 {
 	mmpfunc_process(MMPFUNC_CAM_PREVIEW_STOP, 0, 0, 0, 0, 0, 0);
 	return;
@@ -1022,7 +1019,7 @@ u_int AIT701_Test_capture(uint8 *buf)
 	return gAitJpegSize;
 }
 
-static void AIT701_cam_capture(ext_camera_para_struct *ext_cam_para)
+void AIT701_cam_capture(ext_camera_para_struct *ext_cam_para)
 {
 	ASSERT(ext_cam_para!=NULL);
 
@@ -1587,7 +1584,6 @@ ait_usb_func AIT701_USB_Func =
 } ;
 
 
-#if defined (MTK_PLATFORM)
 /*===========================================================================
 
 FUNCTION cam_module_func_config
@@ -1609,11 +1605,7 @@ SIDE EFFECTS
   External camera module function is hooked.
 
 ===========================================================================*/
-
-ait_cam_module_func ait_cam_func;
-void image_sensor_func_config(void)
-{
-}
+#if 0
 void cam_module_func_config(void)
 {
 	ait_cam_func.cam_module_cmd_mapping=AIT701_cam_cmd_mapping;

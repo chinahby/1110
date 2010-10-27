@@ -1,4 +1,3 @@
-
 #ifndef __CAM_MODULE_H_
 #define __CAM_MODULE_H_
 #include	"A8_common.h"
@@ -59,7 +58,7 @@ typedef struct
 	unsigned short (* cam_module_read_para)(unsigned short cmd);
 	unsigned char (* cam_module_frame_rate)(void);
 
-} ait_cam_func;
+}ait_cam_func;
 
 
 typedef struct
@@ -338,5 +337,7 @@ typedef enum
 	DSC_JPEG_QUALITY_LOW
 } DSCJpegQuality_e;
 
-void cam_test(void);
+extern void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para);
+extern void AIT701_cam_capture(ext_camera_para_struct *ext_cam_para);
+extern void AIT701_cam_exit_preview(void);
 #endif
