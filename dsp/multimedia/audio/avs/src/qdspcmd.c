@@ -29015,7 +29015,10 @@ void qdsp_cmd_register (
 #ifdef FEATURE_AVS_I2SSBC
 #ifdef QDSP_IMAGE_I2SSBC_DEFINED
   /* I2S SBC encoder isr */
-  qdsp_cmd_image_isr_table[QDSP_IMAGE_I2SSBC] = qdsp_cmd_arm_pp_isr;
+	#if defined(FEATURE_ARM_POST_PROCESSING) || \
+    defined (FEATURE_AVS_WB_PCM_RX_INTERFACE)
+  		qdsp_cmd_image_isr_table[QDSP_IMAGE_I2SSBC] = qdsp_cmd_arm_pp_isr;
+	#endif
 #endif /* QDSP_IMAGE_I2SSBC_DEFINED */
 #endif /* FEATURE_AVS_I2SSBC */
 

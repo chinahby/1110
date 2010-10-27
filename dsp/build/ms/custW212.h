@@ -22,7 +22,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_BT_QSOC_INBAND_SLEEP  
 #define FEATURE_BT_SOC
 #define FEATURE_BT_AG
-#define FEATURE_BT_EXTPF_AV
+//#define FEATURE_BT_EXTPF_AV
 #define FEATURE_BT_QSC1100
 //end add by yaangdecai for bt
 
