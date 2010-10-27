@@ -10,6 +10,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+
 //add by yangdecai  for tv
 #define FEATURE_ANALOG_TV
 #define USE_ANALOGTV_TLG1120
@@ -26,7 +27,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_BT_QSC1100
 //end add by yaangdecai for bt
 
-//Add by zzg 2010_10_13
+
 #define FEATURE_TORCH_KEY_SPACE		//手电筒功能按键
 #define FEATURE_GPIO_LAMP_EN_OUTPUT_32	//GPIO_OUTPUT_32
 #define FEATURE_SIM_SEL_GPIO_31_PULL_DOWN		//SIM_SEL == GPIO_OUP(31,GROUP_GPIO2_0,GPIO_PULL_DOWN)
@@ -80,7 +81,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_LOW_MEMORY_USAGE 
 //#define FEATURE_FS_LOW_MEMORY_USAGE 
 #define FEATURE_DSM_MINIMIZE 
-#define FEATURE_MSG_LOW_MEMORY_USAGE 
+//#define FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
@@ -249,7 +250,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_AAC_PLUS
 //#define FEATURE_ENHANCED_AAC_PLUS
 #endif
-
+#include "custqbt.h"
+#include "custbt.h"
 #include "custuim.h"
 #include "custcmx.h"
 #include "custavs.h"

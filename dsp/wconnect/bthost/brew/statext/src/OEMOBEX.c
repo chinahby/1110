@@ -1120,6 +1120,7 @@ static AEEOBEXStatusType OEMOBEX_MapEvtStatus(bt_cmd_status_type status)
   {
   case BT_CS_GN_SUCCESS:
       return AEE_OBEX_ERR_NONE;
+#ifndef FEATURE_BT_EXTPF
   case BT_CS_PF_INVALID_PARAMETERS:
       return AEE_OBEX_ERR_BAD_PARAM;
   case BT_CS_PF_NO_RESOURCES:
@@ -1168,6 +1169,7 @@ static AEEOBEXStatusType OEMOBEX_MapEvtStatus(bt_cmd_status_type status)
       return AEE_OBEX_UNAUTHORIZED;
   case BT_CS_PF_OBEX_PARTIAL_CONTENT:
       return AEE_OBEX_PARTIAL_CONTENT;
+#endif
   default:
     return AEE_OBEX_ERR_FAILED;
   }
@@ -1178,6 +1180,7 @@ static mt_obex_status_type OEMOBEX_MapCmdStatus(AEEOBEXCmdStatusType status)
   {
 
   case AEE_OBEX_STAT_SUCCESS: return MT_OBEX_SUCCESS;
+  #ifndef FEATURE_BT_EXTPF
   case AEE_OBEX_STAT_CONTINUE: return MT_OBEX_CONTINUE;
   case AEE_OBEX_STAT_COMMAND_ERROR: return MT_OBEX_COMMAND_ERROR;
   case AEE_OBEX_STAT_OBEX_CONNECTION_TIMEOUT: return MT_OBEX_CONNECTION_TIMEOUT;
@@ -1228,6 +1231,7 @@ static mt_obex_status_type OEMOBEX_MapCmdStatus(AEEOBEXCmdStatusType status)
   case AEE_OBEX_STAT_GONE : return MT_OBEX_GONE;
   case AEE_OBEX_STAT_REQ_TIMEOUT : return MT_OBEX_REQ_TIMEOUT;
   default: return MT_OBEX_COMMAND_ERROR;
+   #endif
 
   }
 }
@@ -1243,7 +1247,7 @@ static int  OEMOBEX_CheckCmdStatus( mt_obex_status_type status )
     return SUCCESS;
   case MT_OBEX_CMD_Q_FULL:
     return ENOMEMORY;
-#ifdef FEATURE_BT_EXTPF
+#ifndef FEATURE_BT_EXTPF
   case MT_OBEX_OUT_OF_MEMORY:
     return ENOMEMORY;
   case MT_OBEX_INVALID_PARAMETERS:

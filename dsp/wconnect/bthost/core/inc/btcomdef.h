@@ -382,7 +382,7 @@ typedef enum
   BT_CS_HCI_START =                        BT_CMD_EV_HCI_BASE,
   BT_CS_HCI_END =                          (BT_CMD_EV_HCI_BASE +
                                             BT_BE_LAST),
-#ifndef FEATURE_BT_EXTPF
+#ifdef FEATURE_BT_EXTPF
   BT_CS_PF_INVALID_PARAMETERS =             BT_CMD_EV_PF_GN_BASE,
   BT_CS_PF_NOT_IMPLEMENTED,
   BT_CS_PF_NOT_INITIALIZED,

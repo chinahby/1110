@@ -1087,8 +1087,8 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_con_ind( bt_ev_pf_avdtp_con_ind_type *ev )
     // If we're idle, accept this connection.
     bt_pf_a2dp_unit.bd_addr = ev->bd_addr;
 
-    BT_BDA( MSG_HIGH, "BT PF A2DP: Incoming conneciton",
-            &bt_pf_a2dp_unit.bd_addr );
+    //BT_BDA( MSG_HIGH, "BT PF A2DP: Incoming conneciton",
+     //       &bt_pf_a2dp_unit.bd_addr );
 
     bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CONNECTING;
     bt_cmd_pf_avdtp_accept( bt_pf_a2dp_unit.int_id,
@@ -1434,7 +1434,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_set_cfg_ind( bt_ev_pf_avdtp_set_cfg_ind_type *
   if( !BT_BD_ADDRS_EQUAL( &ev->bd_addr, &bt_pf_a2dp_unit.bd_addr ) )
   {
     // Set config from another device
-    BT_BDA( ERR, "BT PF A2DP: set cfg wrong bda:", &ev->bd_addr );
+    //BT_BDA( ERR, "BT PF A2DP: set cfg wrong bda:", &ev->bd_addr );
     return;
   }
 

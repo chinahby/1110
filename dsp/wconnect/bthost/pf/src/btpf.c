@@ -2257,7 +2257,9 @@ OI_STATUS OI_RFCOMM_Connect(OI_RFCOMM_CONNECT_CFM callback,
   so.rx_queue       = &(bt_pf_sio_table[index].rx_wm);
   so.tail_char_used = FALSE;
   so.rx_func_ptr    = NULL;
+  #ifdef FEATURE_BT_SPP
   so.bt_open_ptr    = &bso;
+  #endif
 
 #if defined(FEATURE_MT_OBEX) && defined(FEATURE_IRDA)
 #error code not present
@@ -2421,7 +2423,10 @@ OI_STATUS OI_RFCOMM_RegisterServer(OI_RFCOMM_CONNECT_IND callback,
 #endif /* FEATURE_MT_OBEX */
 
     so.port_id        = SIO_PORT_BT_SPP;
+#ifdef FEATURE_BT_SPP
+
     so.bt_open_ptr    = &bso;
+#endif
 
     bso.status_change_fptr    = bt_pf_sio_table[index].spp_stat_fptr;
     bso.config_change_fptr    = bt_pf_sio_table[index].spp_cfg_fptr;

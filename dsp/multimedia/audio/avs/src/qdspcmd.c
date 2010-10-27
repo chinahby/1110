@@ -29011,7 +29011,6 @@ void qdsp_cmd_register (
   qdsp_cmd_image_isr_table[QDSP_IMAGE_G711]  = qdsp_cmd_wlan_voc_isr;
 #endif /* QDSP_IMAGE_G711_DEFINED && MSMAUD_VOC_G711 */
 
-
 #ifdef FEATURE_AVS_I2SSBC
 #ifdef QDSP_IMAGE_I2SSBC_DEFINED
   /* I2S SBC encoder isr */

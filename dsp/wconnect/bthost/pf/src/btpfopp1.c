@@ -106,7 +106,7 @@ void bt_pf_opp_process_command( bt_pf_cmd_msg_type* cmd_ptr )
   {
     case BT_PF_CMD_OPP_CLI_CONNECT:
       bd_addr = cmd_ptr->cmd_msg.cmd_opp_cli_connect.bd_addr;
-      BT_BDA( MSG_API, "BT PF OPP CLI CMD RX: Connect", &bd_addr );
+      //BT_BDA( MSG_API, "BT PF OPP CLI CMD RX: Connect", &bd_addr );
       status = bt_pf_opp_cli_cmd_connect(
         cmd_ptr->cmd_hdr.app_id,
         &bd_addr,

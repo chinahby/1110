@@ -543,7 +543,9 @@ int OEMBTExtOPP_Push(
   {
     pMe->dwFileSize = 0;
     pMe->wName[ 0 ] = 0;
+	#ifndef FEATURE_BT_EXTPF 
     statIn = OI_OBEX_NOT_FOUND;
+	#endif
   }
 
   TASKLOCK();
@@ -609,7 +611,9 @@ int OEMBTExtOPP_Pull( IBTExtOPP* pParent, const AECHAR* pwFileName )
   if ( pwFileName == NULL && pMe->bIsServer == TRUE )
   {
     // reject push request 
+    #ifndef FEATURE_BT_EXTPF
     status = BT_CS_PF_OBEX_ACCESS_DENIED;
+	#endif
   }
   else if ( pwFileName == NULL )
   {
@@ -734,8 +738,10 @@ static int OEMBTExtOPP_CheckCmdStatus( bt_cmd_status_type stat )
       return ENOMEMORY;
     case BT_CS_GN_BAD_CMD_STATE:
       return EBADSTATE;
+	  #ifndef FEATURE_BT_EXTPF 
     case OI_STATUS_INVALID_PARAMETERS:
       return EBADPARM;
+	  #endif
     default:
       return EFAILED;
   }
@@ -897,17 +903,24 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
        ((pMe->bIsServer == FALSE) && (pMe->clientConnID != pEvCb->connId)) )
   {
     MSG_ERROR( "ReadCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
+	#ifndef FEATURE_BT_EXTPF 
     status = BT_CS_PF_OBEX_CONNECTION_NOT_FOUND;
+	#endif
   }
   else if ( (void*)pMe->pFile != (void*)pEvCb->handle )
   {
     MSG_ERROR( "ReadCb: wrong handle=%x", pEvCb->handle, 0, 0 );
+	#ifndef FEATURE_BT_EXTPF 
     status = BT_CS_PF_INVALID_HANDLE;
+
+	#endif
   }
   else if ( pMe->bytesSent >= pMe->dwFileSize )
   {
     MSG_LOW( "ReadCb: all %d bytes read", pMe->dwFileSize, 0, 0 );
+	#ifndef FEATURE_BT_EXTPF 
     status = BT_CS_PF_END_OF_FILE;
+	#endif
   }
   else // everything checks out
   {
@@ -928,7 +941,9 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
     if ( bytesRead == 0 )
     {
       MSG_ERROR( "ReadCb: failed to read from obj", 0, 0, 0 );
+	  #ifndef FEATURE_BT_EXTPF 
       status = BT_CS_PF_READ_ERROR;
+	  #endif
     }
     // notify the app about progress
     OEMBTExtOPP_NotifyProgress(pMe);
@@ -999,7 +1014,9 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
   else if ( IFILEMGR_GetFreeSpace( pMe->pFileMgr, NULL ) < pEvCb->maxBytes )
   {
     MSG_ERROR( "WriteCb: EFS full, failed to write to obj", 0, 0, 0 );
+	#ifndef FEATURE_BT_EXTPF 
     status = BT_CS_PF_OBEX_DATABASE_FULL;
+	#endif
   }
 #ifdef FEATURE_BT_OBEX_DBL_BUF_WRITE
   /* Check for NULL buffer and if size is larger than buffer size. */
@@ -1008,8 +1025,9 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
     /* Error, can't copy to save buffer, shouldn't happen. */
     MSG_ERROR( "WriteCb: Save Buffer Error, pBuffer:0x%X, maxBytes:%d", 
                pMe->pBuffer, pEvCb->maxBytes, 0 );
-    
+    #ifndef FEATURE_BT_EXTPF 
     status = BT_CS_PF_WRITE_ERROR;
+	#endif
   }
   else
   {
@@ -1037,7 +1055,9 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
                                        pEvCb->maxBytes )) == 0 )
     {
       MSG_ERROR( "WriteCb: failed to write to obj", 0, 0, 0 );
+	  #ifndef FEATURE_BT_EXTPF 
       status = BT_CS_PF_WRITE_ERROR;
+	  #endif
 
     }
     else
@@ -1080,7 +1100,9 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
                                          pEvCb->maxBytes )) == 0 )
   {
     MSG_ERROR( "WriteCb: failed to write to obj", 0, 0, 0 );
+	#ifndef FEATURE_BT_EXTPF 
     status = BT_CS_PF_WRITE_ERROR;
+	#endif
   }
   else
   {
@@ -1440,7 +1462,9 @@ static void OEMBTExtOPP_OpenCb( OEMBTExtOPP_EvCb* pEvCb )
   {
     MSG_ERROR( "OPPEvCb: C open wr req, wrong conn id=%x", 
                pEvCb->connId, 0, 0 );
+	#ifndef FEATURE_BT_EXTPF 
     status = BT_CS_PF_OBEX_CONNECTION_NOT_FOUND;
+	#endif
 
     TASKLOCK();
     pEvCb->bInUse = FALSE;
@@ -1450,7 +1474,9 @@ static void OEMBTExtOPP_OpenCb( OEMBTExtOPP_EvCb* pEvCb )
   else if ( pMe->state != AEEBT_OPP_STATE_PULL_STARTED )
   {
     MSG_ERROR( "OPPEvCb: C open wr req unexpected", 0, 0, 0 );
+	#ifndef FEATURE_BT_EXTPF 
     status = BT_CS_PF_INVALID_STATE;
+	#endif
   }
   else if ( pMe->pFile == NULL )
   {

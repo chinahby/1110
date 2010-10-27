@@ -691,8 +691,13 @@ static boolean BTApp_PBAPIsSIMRec( AEEAddrCat  category )
 {
   if ( (category==AEE_ADDR_CAT_SIM_ADN) || (category==AEE_ADDR_CAT_SIM_ADN2)||
        (category==AEE_ADDR_CAT_SIM_FDN) || (category==AEE_ADDR_CAT_SIM_FDN2) ||
-       (category==AEE_ADDR_CAT_SIM_BDN) ||(category==AEE_ADDR_CAT_SIM_BDN2) ||
-       (category==AEE_ADDR_CAT_SIM_SDN) || (category==AEE_ADDR_CAT_SIM_SDN2) )
+       (category==AEE_ADDR_CAT_SIM_BDN) ||(category==AEE_ADDR_CAT_SIM_BDN2) 
+  #ifndef FEATURE_BT_QSC1100
+       ||
+       (category==AEE_ADDR_CAT_SIM_SDN) || (category==AEE_ADDR_CAT_SIM_SDN2)
+  #else
+	    )
+  #endif
   {
     return TRUE;
   }
@@ -802,8 +807,10 @@ static uint16 BTApp_PBAPFindNumberOfABItems( CBTApp * pMe, boolean bFromSIM )
   /* not implemented the search feature */
 
   /* initialize the address book */
+  #ifndef FEATURE_BT_QSC1100
   Status = IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook, AEE_ADDR_CAT_NONE,
                                   AEE_ADDRFIELD_NONE, NULL, 0, 0 );
+  #endif
   if ( Status == EFAILED )
   {
     MSG_HIGH( "PBAPBuildABObject - EnumRecInit return Failed", 0, 0, 0 );
@@ -1300,6 +1307,7 @@ static boolean BTApp_PBAPBuildCCHVCardEntry( CBTApp* pMe, char* ObjName )
     }
     /* find if there is an entry corresponding to this number in AB */
     bRecordFound = FALSE;
+	#ifndef FEATURE_BT_QSC1100
     if ( SUCCESS == IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook,
                                                 AEE_ADDR_CAT_NONE,
                                                 AEE_ADDRFIELD_NONE,
@@ -1307,6 +1315,7 @@ static boolean BTApp_PBAPBuildCCHVCardEntry( CBTApp* pMe, char* ObjName )
                                                 (uint16) WSTRSIZE(wNumber),
                                                 ADDRREC_SEARCHTYPE_EXACT |
                                                 ADDRREC_FIELDID_PHONE ) ) 
+    #endif
     {
       addrRec = IADDRBOOK_EnumNextRec( pMe->mPBAP.pAddrbook );
       /* there might be multiple records, add only the first record */
@@ -1554,6 +1563,7 @@ static boolean BTApp_PBAPBuildCHVCardEntry( CBTApp* pMe, char* ObjName,
     }
     /* find if there is an entry corresponding to this number in AB */
     bRecordFound = FALSE;
+	#ifndef FEATURE_BT_QSC1100
     if ( SUCCESS == IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook,
                                                 AEE_ADDR_CAT_NONE,
                                                 AEE_ADDRFIELD_NONE,
@@ -1561,7 +1571,8 @@ static boolean BTApp_PBAPBuildCHVCardEntry( CBTApp* pMe, char* ObjName,
                                                 (uint16) WSTRSIZE(wNumber),
                                                 ADDRREC_SEARCHTYPE_EXACT |
                                                 ADDRREC_FIELDID_PHONE ) ) 
-    {
+    #endif
+	{
       addrRec = IADDRBOOK_EnumNextRec( pMe->mPBAP.pAddrbook );
       /* there might be multiple records, add only the first record */
       if ( NULL != addrRec ) 
@@ -2378,6 +2389,7 @@ static void BTApp_PBAPBuildCCHListingObject( CBTApp* pMe )
           }
         }
         bNameAdded = FALSE;
+		#ifndef FEATURE_BT_QSC1100
         if ( SUCCESS == IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook,
                                                     AEE_ADDR_CAT_NONE,
                                                     AEE_ADDRFIELD_NONE,
@@ -2385,7 +2397,8 @@ static void BTApp_PBAPBuildCCHListingObject( CBTApp* pMe )
                                                     (uint16) WSTRSIZE(wNumber),
                                                     ADDRREC_SEARCHTYPE_EXACT |
                                                     ADDRREC_FIELDID_PHONE ) ) 
-        {
+		#endif
+		{
           addrRec = IADDRBOOK_EnumNextRec( pMe->mPBAP.pAddrbook );
           /* there might be multiple records, add only the first record */
           if ( NULL != addrRec ) 
@@ -2552,6 +2565,7 @@ static void BTApp_PBAPBuildCHListingObject( CBTApp* pMe, uint8 uCallType )
           }
         }
         bNameAdded = FALSE;
+		#ifndef FEATURE_BT_QSC1100
         if ( SUCCESS == IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook,
                                                     AEE_ADDR_CAT_NONE,
                                                     AEE_ADDRFIELD_NONE,
@@ -2559,7 +2573,8 @@ static void BTApp_PBAPBuildCHListingObject( CBTApp* pMe, uint8 uCallType )
                                                     (uint16) WSTRSIZE(wNumber),
                                                     ADDRREC_SEARCHTYPE_EXACT |
                                                     ADDRREC_FIELDID_PHONE ) ) 
-        {
+		#endif
+		{
           addrRec = IADDRBOOK_EnumNextRec( pMe->mPBAP.pAddrbook );
           /* there might be multiple records, add only the first record */
           if ( NULL != addrRec ) 
@@ -2703,6 +2718,7 @@ static void BTApp_PBAPBuildABListingObject( CBTApp* pMe, boolean bFromSIM )
            AEEBT_PBAP_SEARCH_ATTRIBUTE_NAME )
     {
       /* initialize the address book */  
+#ifndef FEATURE_BT_QSC1100
       Status = IADDRBOOKEXT_EnumRecInitEx( 
                  pMe->mPBAP.pAddrbook, 
                  AEE_ADDR_CAT_NONE,
@@ -2718,32 +2734,39 @@ static void BTApp_PBAPBuildABListingObject( CBTApp* pMe, boolean bFromSIM )
                  pMe->mPBAP.PBAPObject.searchValue,
                  WSTRSIZE(pMe->mPBAP.PBAPObject.searchValue), 
                  ADDRREC_SEARCHTYPE_CONTAINS );
+#endif
     }
     else if ( pMe->mPBAP.PBAPObject.searchAttrib == 
                 AEEBT_PBAP_SEARCH_ATTRIBUTE_NUMBER )
     {
       /* initialize the address book */  
+	  #ifndef FEATURE_BT_QSC1100
       Status = IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook, 
                  AEE_ADDR_CAT_NONE,
                  AEE_ADDRFIELD_NONE, 
                  pMe->mPBAP.PBAPObject.searchValue,
                  WSTRSIZE(pMe->mPBAP.PBAPObject.searchValue), 
                  ADDRREC_SEARCHTYPE_CONTAINS | ADDRREC_FIELDID_PHONE );
+	  #endif
     }
     else
     {
       /* initialize the address book */  
+	  #ifndef FEATURE_BT_QSC1100
       Status = IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook, 
                                            AEE_ADDR_CAT_NONE,
                                            AEE_ADDRFIELD_NONE, NULL, 0, 0 );
+	  #endif
     }
   }
   else
   {
     /* initialize the address book */  
+	#ifndef FEATURE_BT_QSC1100
     Status = IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook, 
                                          AEE_ADDR_CAT_NONE,
                                          AEE_ADDRFIELD_NONE, NULL, 0, 0 );
+	#endif
   }
 
   if ( Status != SUCCESS )
@@ -3540,6 +3563,7 @@ static boolean BTApp_PBAPBuildCCHObject( CBTApp * pMe )
           /* add this entry to ICF object */
           /* find if there is an entry corresponding to this number in AB */
           bRecordFound = FALSE;
+		  #ifndef FEATURE_BT_QSC1100
           if ( SUCCESS == IADDRBOOKEXT_EnumRecInitEx( 
                                            pMe->mPBAP.pAddrbook,
                                            AEE_ADDR_CAT_NONE,
@@ -3548,7 +3572,8 @@ static boolean BTApp_PBAPBuildCCHObject( CBTApp * pMe )
                                            (uint16) WSTRSIZE(wNumber),
                                            ADDRREC_SEARCHTYPE_EXACT |
                                            ADDRREC_FIELDID_PHONE ) ) 
-          {
+		  #endif
+		  {
             addrRec = IADDRBOOK_EnumNextRec( pMe->mPBAP.pAddrbook );
             /* there might be multiple records, return only the first rec */
             if ( NULL != addrRec ) 
@@ -3776,6 +3801,7 @@ static boolean BTApp_PBAPBuildCHObject( CBTApp * pMe, uint16 uCallType )
         /* add this entry to ICF object */
         /* find if there is an entry corresponding to this number in AB */
         bRecordFound = FALSE;
+		#ifndef FEATURE_BT_QSC1100
         if ( SUCCESS == IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook,
                                                     AEE_ADDR_CAT_NONE,
                                                     AEE_ADDRFIELD_NONE,
@@ -3783,7 +3809,8 @@ static boolean BTApp_PBAPBuildCHObject( CBTApp * pMe, uint16 uCallType )
                                                     (uint16) WSTRSIZE(wNumber),
                                                     ADDRREC_SEARCHTYPE_EXACT |
                                                     ADDRREC_FIELDID_PHONE ) ) 
-        {
+		#endif
+		{
           addrRec = IADDRBOOK_EnumNextRec( pMe->mPBAP.pAddrbook );
           /* there might be multiple records, add only the first record */
           if ( NULL != addrRec ) 
@@ -3896,8 +3923,10 @@ static boolean BTApp_PBAPBuildABObject( CBTApp * pMe, boolean bFromSIM )
   /* not implemented the search feature */
 
   /* initialize the address book */
+  #ifndef FEATURE_BT_QSC1100
   Status = IADDRBOOKEXT_EnumRecInitEx( pMe->mPBAP.pAddrbook, AEE_ADDR_CAT_NONE,
                                   AEE_ADDRFIELD_NONE, NULL, 0, 0 );
+  #endif
   if ( Status == EFAILED )
   {
     MSG_HIGH( "PBAPBuildABObject - EnumRecInit return Failed", 0, 0, 0 );

@@ -3272,6 +3272,7 @@ static boolean BTApp_PickAudioLink( CBTApp* pMe )
     MSG_ERROR( "PickAudioLink - can't suspend MP ", 0, 0, 0 );
 #else
     // must suspend MediaPlayer so AVS would switch to play voice audio
+    #ifndef FEATURE_BT_QSC1100
     MSG_LOW( "PickAudioLink - launching DialerApp", 0, 0, 0 );
     if ( CDialerApp_StartApp( pMe->a.m_pIShell ) ==  FALSE )
     {
@@ -3281,6 +3282,7 @@ static boolean BTApp_PickAudioLink( CBTApp* pMe )
     {
       bAGWins = TRUE; // allow SCO
     }
+	#endif
 #endif //FEATURE_APP_DIALER
   }
   if ( bAGWins == FALSE )
@@ -8869,6 +8871,7 @@ static boolean BTApp_HCIModeOn( CBTApp* pMe )
   IBTEXTRM_GetHCIMode( pMe->mRM.po, &HCIMode );
   if ( HCIMode != AEEBT_HCIM_OFF )
   {
+  	MSG_FATAL("HCIMode=================%d",HCIMode,0,0);
     BTApp_ShowMessage( pMe, IDS_MSG_HCI_MODE_OFF_FIRST, NULL, 0 );
     return TRUE;
   }
@@ -9463,6 +9466,7 @@ void BTApp_EnableBT( CBTApp* pMe )
     pMe->bEnableAtStart = TRUE;
     BTApp_WriteConfigFile( pMe );
   }
+  MSG_FATAL("pMe->mEnablingType=================%d",pMe->mEnablingType,0,0);
   switch(pMe->mEnablingType)
   {
     case BTAPP_ENABLING_AG:
