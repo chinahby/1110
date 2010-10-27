@@ -346,9 +346,9 @@ OEMAnnun_content batt_content =
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1    
 #elif defined(FEATURE_DISP_220X176)
-    #define IMG_WIDTH      12
-    #define IMG_HEIGHT     13
-    #define LG_IMG_WIDTH 20
+    #define IMG_WIDTH      18
+    #define IMG_HEIGHT     18
+    #define LG_IMG_WIDTH   29
     #define TEXT_HEIGHT    10
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1  	
@@ -367,9 +367,9 @@ OEMAnnun_content batt_content =
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1 	
 #elif defined(FEATURE_DISP_320X240)
-    #define IMG_WIDTH      12
-    #define IMG_HEIGHT     13
-    #define LG_IMG_WIDTH 20
+    #define IMG_WIDTH      19
+    #define IMG_HEIGHT     21
+    #define LG_IMG_WIDTH 	32
     #define TEXT_HEIGHT    10
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1 		

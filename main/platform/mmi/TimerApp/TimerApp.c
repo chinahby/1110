@@ -68,12 +68,20 @@ when         who            what, where, why
 ===========================================================================*/
 //#define  AEE_APPTIMER_RES_FILE (AEE_RES_LANGDIR APPTIMER_RES_FILE)
 #define RUNNING_UPDATE_MSECS  100
-
 #define TIMER_SCREEN_XOFFSET 20
 #define TIMER_SCREEN_HEIGHT   38
 #define TIMER_SCREEN_YOFFSET 33
+
+#if defined(FEATURE_DISP_220X176)
+#define TIMER_SCREEN_WIDTH    80
+#define TIMER_IMAGE_WIDTH      120
+#elif defined(FEATURE_DISP_320X240)
+#define TIMER_SCREEN_WIDTH    100
+#define TIMER_IMAGE_WIDTH      140
+#else
 #define TIMER_SCREEN_WIDTH    60
 #define TIMER_IMAGE_WIDTH      100
+#endif
 /*===========================================================================
 
                     TYPE DECLARATIONs

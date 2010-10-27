@@ -2488,7 +2488,7 @@ static void paint( CFmRadio *pMe)
 		#elif defined(FEATURE_DISP_320X240)
             int         width       = 70;
 		
-            SETAEERECT( &rect, ( 240 - width) / 2, (( 320 - fontHeight) / 2) - fontHeight, width, fontHeight);
+            SETAEERECT( &rect, ( 320 - width) / 2, (( 240 - fontHeight) / 2) - fontHeight, width, fontHeight);
             drawText( pMe,
                         FMRADIOLS_RES_FILE_LANG,
                         IDS_FMRADIO_FREQ_INPUT,
