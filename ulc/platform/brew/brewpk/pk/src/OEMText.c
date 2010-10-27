@@ -139,17 +139,8 @@ when       who     what, where, why
 
 static int snTextModeIndex = 0;
 #define TIMEOUT   460
-#ifdef FEATURE_T9_CHINESE
-#define FEATURE_GRAPHIC_INPUT_BG
-#endif
-
 #define TEXT_BETWEEN_LINE_PIXEL   (3)
 #define INPUT_BETWEEN_LINE_PIXEL   (2)
-
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-#define FEATURE_INPUT_BG_YOFFSET (18)  //added nu chengxiao 2009.04.17
-#endif
-
 #define  PTRCK_GEN_TMRSET  (0x01)   // Timer is set
 #define TSIM_MODE      (2)
 
@@ -402,9 +393,6 @@ extern int WMSUtil_CalculateMessagesCount(AECHAR *pWstr,
 static void TextCtl_NumbersTimer(void *pUser);
 /* add the code end */
 static void TextCtl_DrawBackGround(TextCtlContext *pContext, AEERect *pRect);
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-static void TextCtl_DrawInputBackground(TextCtlContext *pContext, AEERect *pRect, int xPos, int yPos);
-#endif
 /*===========================================================================
 
                     STATIC/LOCAL DATA
@@ -4071,22 +4059,6 @@ static void TextCtl_DrawBackGround(TextCtlContext *pContext, AEERect *pRect)
 {
     Appscommon_ResetBackground(pContext->pIDisplay, pContext->m_pImageBg, APPSCOMMON_BG_COLOR, pRect, 0, 0);
 }
-
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-static void TextCtl_DrawInputBackground(TextCtlContext *pContext, AEERect *pRect, int xPos, int yPos)
-{
-    IImage *pImage = NULL;
-    
-    pImage = ISHELL_LoadResImage(pContext->pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_INPUT_BACKGROUND);
-    Appscommon_ResetBackground(pContext->pIDisplay, pImage, APPSCOMMON_BG_COLOR, pRect, xPos, yPos);
-                            //pContext->rectChineseSyllableInput.x+2, pContext->rectChineseSyllableInput.y+1);
-    if(pImage != NULL)
-    {
-        IImage_Release(pImage);
-        pImage = NULL;
-    }
-}
-#endif
 
 #ifdef FEATURE_T9_INPUT
 /*------------------------------------------------------------------------
@@ -9300,21 +9272,9 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
                      iWindX+2,   //+T9_FONT_WIDTH,   
                      iWindY+1,
                      iWindDx -4,  
-                     iWindDy);  
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-       if(pContext->dwProperties& TP_GRAPHIC_BG)
-       {
-           TextCtl_DrawBackGround(pContext, &pRect);
-       }
-       else
-       {
-           IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-       }
-       TextCtl_DrawInputBackground(pContext, &pRect, pRect.x, pRect.y);
-#else
+                     iWindDy); 
        // Erase Stroke Rect
        IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-#endif
 
     /* len of the stroke buffer, extra 1 for a component */
     nStrokeLen = pContext->sT9ccFieldInfo.nKeyBufLen;
@@ -9322,7 +9282,6 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
     /*nStrokeDisLen is the length of the strokes and components in spell buffer */
     nStrokeDisLen = pContext->sT9ccFieldInfo.nKeyBufLen;
 
-#if !defined(FEATURE_GRAPHIC_INPUT_BG)
 #ifdef FEATURE_FUNCS_THEME                       
     IDISPLAY_DrawRect(pContext->pIDisplay,
             &pRect,
@@ -9336,30 +9295,19 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
             RGB_WHITE,
             IDF_RECT_FRAME);
 #endif //FEATURE_FUNCS_THEME  
-#endif
     
     /* padding the elipse ..., if stroke len is bigger than the display window */
     if (nStrokeDisLen > MAX_STROKES) 
     {
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-        format = IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT;
-#else
         format = IDF_ALIGN_NONE;
-#endif
         ch[0] = 0x003C; //'<'
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                ch,
                                -1,
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-                               iWindX+INPUT_BETWEEN_LINE_PIXEL+4,
-                               0,
-                               &pRect,
-#else
                                iWindX+4,  // iWindX,
                                iWindY+3,  // iWindY,
                                NULL,
-#endif
                                format);
         iWindX += T9_STROKE_LEFT_ARROW; // T9_STROKE_FONT_WIDTH;
 
@@ -9375,25 +9323,15 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
     /* Draw each stroke, starting fromt the nstart */
     for (k = nStart; k < pContext->sT9ccFieldInfo.nKeyBufLen - bNumOfComp; k++) 
     {
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-        format = IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT;
-#else
         format = IDF_ALIGN_NONE;
-#endif
         ch[0] = *(pbBuffer+k) + 0x3129;
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                ch,
                                -1,
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-                               iWindX+INPUT_BETWEEN_LINE_PIXEL+4,
-                               0,
-                               &pRect,
-#else
                                iWindX+4,  // iWindX,
                                iWindY+3,  // iWindY,
                                NULL,
-#endif
                                format);
 
         /* If this character is a NULL terminator, then stop drawing */
@@ -9429,11 +9367,8 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     int     nSpellBufLen    = 0;
     char   *pbSpellBuffer   = NULL;
     T9UINT  nKeyBufLen      = pContext->sT9ccFieldInfo.nKeyBufLen ;
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-    uint32  format          = IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT;
-#else
     uint32  format          = IDF_ALIGN_NONE;
-#endif
+    
     T9UINT  bSpellCode      = 0;
     AECHAR *wszSpellBuf     = NULL;
     AECHAR *wszSpellBufDisp = NULL;
@@ -9456,21 +9391,10 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
                   iWindY+1,
                   iWindDx -6,  
                   iWindDy);  
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-    if(pContext->dwProperties& TP_GRAPHIC_BG)
-    {
-        TextCtl_DrawBackGround(pContext, &pRect);
-    }
-    else
-    {
-        IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-    }
-    TextCtl_DrawInputBackground(pContext, &pRect, pRect.x, pRect.y);
-#else
+
     // Erase BMPF Rect
     IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-#endif
-
+    
     // no syllable to drew
     if ( 0 == nKeyBufLen )
     {
@@ -9575,7 +9499,6 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     SymbToAECHARNCopy ( wszSpellBufDisp, 
                         wszSpellBuf + nSpellCodeStart * (nKeyBufLen+1) ,
                         nWordCountDisp * (nKeyBufLen+1) - 1 );
-#if !defined(FEATURE_GRAPHIC_INPUT_BG)
 #ifdef FEATURE_FUNCS_THEME                       
     IDISPLAY_DrawRect(pContext->pIDisplay,
             &pRect,
@@ -9589,21 +9512,14 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             RGB_WHITE,
             IDF_RECT_FRAME);
 #endif //FEATURE_FUNCS_THEME  
-#endif
 
     (void) IDISPLAY_DrawText ((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                wszSpellBufDisp,  
                                -1,  
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-                               pRect.x+1+INPUT_BETWEEN_LINE_PIXEL,
-                               0,
-                               &pRect,
-#else
                                pRect.x+1,
                                pRect.y+1,
                                NULL,
-#endif
                                format );
     // Add the character width
     for ( nSelectedCodeTemp=0; nSelectedCodeTemp < SPELLMAX; nSelectedCodeTemp++)
@@ -9648,15 +9564,8 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             {   // 中文的后面的字母组合的精确位置
                 invertRect.x = iSpellCursX[nSelectedCode]-2;
             }
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-            invertRect.x += INPUT_BETWEEN_LINE_PIXEL;
-#endif
         }
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-        invertRect.y  = pRect.y+2;
-#else
         invertRect.y  = pRect.y+1;
-#endif
         invertRect.dy = CHINESE_FONT_HEIGHT;
         IDISPLAY_InvertRect ( pContext->pIDisplay, &invertRect );
     }                              
@@ -9711,24 +9620,11 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
               iWindY+1, // at the bottom line
               iWindDx -6,     
               iWindDy -1);    
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-    if(pContext->dwProperties& TP_GRAPHIC_BG)
-    {
-        TextCtl_DrawBackGround(pContext, &pRect);
-    }
-    else
-    {
-        IDISPLAY_EraseRect(pContext->pIDisplay, &pRect);
-    }
-    TextCtl_DrawInputBackground(pContext, &pRect, pRect.x, pRect.y - FEATURE_INPUT_BG_YOFFSET);
-#else
     IDISPLAY_EraseRect(pContext->pIDisplay, &pRect);
-#endif
-   
+    
     // blank the selection when focus on TEXT
     if ( FOCUS_TEXT != pContext->sFocus )
     {
-#if !defined(FEATURE_GRAPHIC_INPUT_BG)
 #ifdef FEATURE_FUNCS_THEME     
         IDISPLAY_DrawRect(pContext->pIDisplay,   
                 &pRect,
@@ -9742,7 +9638,6 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
                 RGB_WHITE,
                 IDF_RECT_FRAME);  
 #endif //FEATURE_FUNCS_THEME 
-#endif
     
         /* Point to the buffer to draw */
         psBuffer = pContext->sT9ccFieldInfo.pwSelectPage;
@@ -9750,26 +9645,16 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
         /* Draw each character */
         for (k = 0; k < pContext->sT9ccFieldInfo.nSelectPageMax; k++) 
         {
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-            format = IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT;
-#else
             format = IDF_ALIGN_NONE;
-#endif
              
             ch[0] = *(psBuffer+k); // use GBcode for EVB board    
             (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                    AEE_FONT_NORMAL,
                                    ch,
                                    -1,
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-                                   pRect.x+1+INPUT_BETWEEN_LINE_PIXEL+(T9_FONT_WIDTH)*k,
-                                   0,
-                                   &pRect,
-#else
                                    pRect.x+1+(T9_FONT_WIDTH)*k,
                                    pRect.y+1,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
-#endif
                                    format);
             /* If this character is a NULL terminator, then stop drawing */
             if (*(psBuffer + k ) == 0)  break;
@@ -9784,11 +9669,7 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
             {
                 pContext->nSelectionSelectd = pContext->sT9ccFieldInfo.nSelectPageLen - 1;
             }
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-            invertRect.x = pRect.x+1+INPUT_BETWEEN_LINE_PIXEL+(T9_FONT_WIDTH)*pContext->nSelectionSelectd;
-#else
             invertRect.x = pRect.x+1+(T9_FONT_WIDTH)*pContext->nSelectionSelectd;
-#endif
             invertRect.y = pRect.y+1;
             invertRect.dx = CHINESE_FONT_WIDTH;
             invertRect.dy = CHINESE_FONT_HEIGHT;

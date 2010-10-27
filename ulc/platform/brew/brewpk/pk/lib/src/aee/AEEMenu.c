@@ -4872,26 +4872,6 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
     {
         IImage*              underline;
         
-		/*
-        if(pme->SetPopMenu == TRUE)
-		{
-            underline = ISHELL_LoadResImage(pme->m_pIShell, 
-                                           AEE_APPSCOMMONRES_IMAGESFILE,
-                                           IDI_UNDERLINE_SHORT);
-        }
-        else if(IS_PROP_SET(pme->m_dwProps, MP_TRANSPARENT_UNSEL)) 
-		{
-            underline = ISHELL_LoadResImage(pme->m_pIShell, 
-                                           AEE_APPSCOMMONRES_IMAGESFILE,
-                                           IDI_UNDERLINE_SHORT);   
-        }
-        else 
-		{
-            underline = ISHELL_LoadResImage(pme->m_pIShell, 
-                                           AEE_APPSCOMMONRES_IMAGESFILE,
-                                           IDI_UNDERLINE);
-        }
-        */
        	//Add By zzg 2010_07_25
         underline = ISHELL_LoadResImage(pme->m_pIShell, 
                                            AEE_APPSCOMMONRES_IMAGESFILE,
@@ -8213,7 +8193,7 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     //Draw shadow for screen
     BgImg = ISHELL_LoadResImage(pme->m_pIShell,
                             AEE_APPSCOMMONRES_IMAGESFILE,
-                            IDB_BGMASK);
+                            IDB_BACKGROUND);
     if(BgImg != NULL)
     {                  
 
@@ -8360,8 +8340,7 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
     }
     else
     #endif
-#endif
-#ifndef FEATURE_USES_LOWMEM     
+#endif 
     {
        if(pme->m_pBgImage == NULL)
        {
@@ -8380,10 +8359,6 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
        }
        Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, pme->m_c.cBack, pRect, 0, 0);
     }
-#else
-	   Appscommon_ResetBackground(pme->m_pIDisplay, NULL, APPSCOMMON_TEXT_BG_COLOR, pRect, 0, 0);
-
-#endif
 }
 #ifdef FEATURE_MENUTITLE_AUTOSCROLL
 /*=====================================================================

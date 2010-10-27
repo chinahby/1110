@@ -270,6 +270,7 @@ static OEMState_data alarm_image_data[]=
     {ANNUN_STATE_SCHEDULE_ON, IDB_SCHEDULE, NULL}
 #endif
 };
+#ifndef FEATURE_USES_LOWMEM
 /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 static OEMState_data mms_image_data[]=
 {
@@ -278,6 +279,7 @@ static OEMState_data mms_image_data[]=
     {ANNUN_MMS_UNRECEIVE_ON, IDB_MMS_UNRECEIVED, NULL},
     {ANNUN_STATE_PUSH_ON, IDB_PUSH_MSG, NULL}
 };
+#endif
 /*Ringtone*/
 static OEMState_data ringtone_image_data[]=
 {
@@ -345,8 +347,10 @@ OEMAnnun_content alarm_content =
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)alarm_image_data};
 #endif
 /*ANNUN_FIELD_MMS*/
+#ifndef FEATURE_USES_LOWMEM
 OEMAnnun_content mms_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)mms_image_data};
+#endif
 /*ANNUN_FIELD_RINGTONE*/
 OEMAnnun_content ringtone_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)ringtone_image_data};
@@ -507,7 +511,11 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
 #endif
   {ANNUN_FIELD_ALARM,             ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+#ifndef FEATURE_USES_LOWMEM
   {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
+#else
+  {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
+#endif
   {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
   {ANNUN_FIELD_BATT,                ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 };
