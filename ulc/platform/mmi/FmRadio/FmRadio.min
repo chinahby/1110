@@ -21,7 +21,7 @@ vpath %.brx $(FMRADIOAPP_RES)
 CONSTFILE_FILES+=\
 	fmradio.mif|fs:/mif/fmradio.mif \
 	fmradiols.bar|fs:/mod/fmradio/en/fmradiols.bar \
-	fmradioln$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/mod/fmradio/fmradioln.bar
+	fmradioln$(USES_LCD_SIZE).bar|fs:/mod/fmradio/fmradioln.bar
 
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

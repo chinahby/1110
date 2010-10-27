@@ -23,7 +23,7 @@ vpath %.brx $(MEDIAGALLERY_RES)
 CONSTFILE_FILES+=\
 	mediagallery.mif|fs:/mif/mediagallery.mif \
 	mediagallery.bar|fs:/mod/mediagallery/en/mediagallery.bar \
-	mediagallery_image$(USES_LCD_SIZE)_$(USES_RESDIR).bar|fs:/mod/mediagallery/mediagallery_image.bar
+	mediagallery_image$(USES_LCD_SIZE).bar|fs:/mod/mediagallery/mediagallery_image.bar
     
 #加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)

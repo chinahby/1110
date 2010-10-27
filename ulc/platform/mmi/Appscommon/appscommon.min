@@ -35,7 +35,7 @@ CONSTFILE_FILES+=\
     $(EXTLANG2)appscommon.bar|fs:/sys/$(EXTLANG2)/appscommon.bar 
 endif
 
-vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/GraphicNotice
+vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/common/GraphicNotice
 
 ifneq ($(USES_LOWMEM),yes)
 CONSTFILE_FILES+=\
