@@ -1208,7 +1208,7 @@ static NextFSMAction STATE_CALLCONFIRM_Handler(CCallApp *pMe)
         return NFSMACTION_WAIT;
     }
     
-#ifndef FEATURE_ICM
+#ifdef FEATURE_ICM
     pMe->m_b_incall = AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM);
 #else
 	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
@@ -1255,7 +1255,7 @@ static NextFSMAction STATE_CALLCONFIRM_Handler(CCallApp *pMe)
                     case 0x04:
                     case 0x05:
                         pMe->m_bEndcurcallForUTKCall = TRUE;
-#ifndef FEATURE_ICM
+#ifdef FEATURE_ICM
                         ICM_EndAllCalls(pMe->m_pICM);
 #else
                         ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
@@ -1375,7 +1375,7 @@ SEE ALSO:
 void CallApp_HandleAutoAnswerTimer(void *pUser)
 {
     CCallApp         *pMe = (CCallApp *)pUser;
-#ifndef FEATURE_ICM
+#ifdef FEATURE_ICM
     AEECMCallInfo ci;
 
     // Check if we are still in the incoming call state.

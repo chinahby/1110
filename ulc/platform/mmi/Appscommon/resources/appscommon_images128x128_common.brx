@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="appscommon_images128x128_common" VERSION="1">
 <Objects MimeType="image/bmp">
-	<Object Id="5001" Name="IDB_BGMASK" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\Background\bgmask.png</File>
-	</Object>
 	<Object Id="5002" Name="IDB_BACKGROUND" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Menu\background\background.png</File>
 	</Object>
@@ -16,9 +13,6 @@
 	<Object Id="5005" Name="IDI_NOTE_BOOK" MimeType="image/png">
 		<File>..\images\128x128\common\Calendar\notebook.png</File>
 	</Object>
-	<Object Id="5006" Name="IDI_SPORTS" MimeType="image/png">
-		<File>..\images\128x128\common\Calendar\Schedule.png</File>
-	</Object>
 	<Object Id="5009" Name="IDB_SPORT_RACE">
 		<File>..\images\128x128\common\Sports\Icons\step_race.bmp</File>
 	</Object>
@@ -27,9 +21,6 @@
 	</Object>
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
 		<File>..\images\128x128\common\QuickTest\down.png</File>
-	</Object>
-	<Object Id="5015" Name="IDI_TEXT_BACKGROUND" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\Background\background_text.png</File>
 	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Icon\check_yes.png</File>
@@ -93,9 +84,6 @@
 	</Object>
 	<Object Id="5141" Name="IDI_UNDERLINE" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Menu\underline\underline.png</File>
-	</Object>
-	<Object Id="5142" Name="IDI_UNDERLINE_SHORT" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\Menu\underline\underlineshort.png</File>
 	</Object>
 	<Object Id="5201" Name="IDB_PHONE">
 		<File>..\images\128x128\common\Contact\AddressBook\Mobile.bmp</File>

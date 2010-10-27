@@ -59,12 +59,6 @@
 			<Text>Done</Text>
 		</STRING>
 	</Strings>
-<Objects MimeType="image/png">
-	<Object Id="5001" Name="IDB_COLOR_UTK_SPLASH">
-		<File>..\..\Appscommon\images\128x128\common\UTK\utksplash.png</File>
-	</Object>
-
-	</Objects>
 	<Dialogs>
 		<DIALOG Id="1" Name="IDD_SPLASH_DIALOG" Focus="0">
 			<Controls/>

@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="appscommon_images160x128_common" VERSION="1">
 <Objects MimeType="image/png">
-	<Object Id="5001" Name="IDB_BGMASK">
-		<File>..\images\160x128\common\Appscommon\Background\bgmask.png</File>
-	</Object>
 	<Object Id="5002" Name="IDB_BACKGROUND">
 		<File>..\images\160x128\common\Appscommon\Menu\background\background.png</File>
 	</Object>
@@ -15,9 +12,6 @@
 	</Object>
 	<Object Id="5005" Name="IDI_NOTE_BOOK">
 		<File>..\images\160x128\common\Calendar\notebook.png</File>
-	</Object>
-	<Object Id="5006" Name="IDI_SPORTS">
-		<File>..\images\160x128\common\Calendar\Schedule.png</File>
 	</Object>
 	<Object Id="5007" Name="IDI_CONV_POUND">
 		<File>..\images\160x128\common\Converter\converter_pound.png</File>
@@ -33,12 +27,6 @@
 	</Object>
 	<Object Id="5011" Name="IDI_TEST_DOWN">
 		<File>..\images\160x128\common\QuickTest\down.png</File>
-	</Object>
-	<Object Id="5015" Name="IDI_TEXT_BACKGROUND">
-		<File>..\images\160x128\common\Appscommon\Background\background_text.png</File>
-	</Object>
-	<Object Id="5016" Name="IDI_INPUT_BACKGROUND">
-		<File>..\images\160x128\common\Appscommon\Background\background_input.png</File>
 	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON">
 		<File>..\images\160x128\common\Appscommon\Icon\check_yes.png</File>
@@ -102,9 +90,6 @@
 	</Object>
 	<Object Id="5141" Name="IDI_UNDERLINE">
 		<File>..\images\160x128\common\Appscommon\Menu\underline\underline.png</File>
-	</Object>
-	<Object Id="5142" Name="IDI_UNDERLINE_SHORT">
-		<File>..\images\160x128\common\Appscommon\Menu\underline\underlineshort.png</File>
 	</Object>
 	<Object Id="5201" Name="IDB_PHONE" MimeType="image/bmp">
 		<File>..\images\160x128\common\Contact\AddressBook\Mobile.bmp</File>

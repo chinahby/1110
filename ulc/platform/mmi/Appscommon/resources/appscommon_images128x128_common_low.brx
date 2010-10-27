@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="appscommon_images128x128_common" VERSION="1">
 <Objects MimeType="image/bmp">
-	<Object Id="5001" Name="IDB_BGMASK" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\Background\bgmask.png</File>
+	<Object Id="5002" Name="IDB_BACKGROUND" MimeType="image/png">
+		<File>..\images\128x128\common\Appscommon\Menu\background\background.png</File>
 	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Icon\check_yes.png</File>
@@ -31,26 +31,14 @@
 	<Object Id="5029" Name="IDB_RIGHTARROW" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Icon\RightArrow.png</File>
 	</Object>
-	<Object Id="5041" Name="IDB_ERROR" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\MessageBox\error.png</File>
-	</Object>
-	<Object Id="5042" Name="IDB_WARNNING" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\MessageBox\WarningMsgBox.png</File>
-	</Object>
 	<Object Id="5043" Name="IDB_CONFIRM" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\MessageBox\YesNoMsgBox.png</File>
+		<File>..\images\128x128\common\Appscommon\MessageBox\YesNoMsgBoxlow.png</File>
 	</Object>
 	<Object Id="5044" Name="IDB_INFORMATION" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\MessageBox\information.png</File>
-	</Object>
-	<Object Id="5045" Name="IDB_WAITING" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\MessageBox\waiting.png</File>
-	</Object>
-	<Object Id="5046" Name="IDB_INFORMATIVE" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\MessageBox\informative.png</File>
+		<File>..\images\128x128\common\Appscommon\MessageBox\informationlow.png</File>
 	</Object>
 	<Object Id="5047" Name="IDB_PROMPT_MSG_BG" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\MessageBox\background.png</File>
+		<File>..\images\128x128\common\Appscommon\MessageBox\backgroundlow.png</File>
 	</Object>
 	<Object Id="5081" Name="IDI_BOTTOMBAR" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Menu\bottombar\bottombar.png</File>
@@ -66,9 +54,6 @@
 	</Object>
 	<Object Id="5141" Name="IDI_UNDERLINE" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Menu\underline\underline.png</File>
-	</Object>
-	<Object Id="5142" Name="IDI_UNDERLINE_SHORT" MimeType="image/png">
-		<File>..\images\128x128\common\Appscommon\Menu\underline\underlineshort.png</File>
 	</Object>
 	<Object Id="5201" Name="IDB_PHONE">
 		<File>..\images\128x128\common\Contact\AddressBook\Mobile.bmp</File>
@@ -210,24 +195,6 @@
 	</Object>
 	<Object Id="6003" Name="IDB_MISS_CALL">
 		<File>..\images\128x128\common\CallApp\Calltype\miss_call.bmp</File>
-	</Object>
-	<Object Id="6021" Name="IDI_REFUI_INCOMING" MimeType="image/png">
-		<File>..\images\128x128\common\CallApp\Call\incoming_call.png</File>
-	</Object>
-	<Object Id="6022" Name="IDI_REFUI_OUTGOING" MimeType="image/png">
-		<File>..\images\128x128\common\CallApp\Call\outgoing_call.png</File>
-	</Object>
-	<Object Id="6023" Name="IDI_REFUI_CALLING" MimeType="image/png">
-		<File>..\images\128x128\common\CallApp\Call\calling.png</File>
-	</Object>
-	<Object Id="6024" Name="IDI_REFUI_ENDCALL" MimeType="image/png">
-		<File>..\images\128x128\common\CallApp\Call\end_call.png</File>
-	</Object>
-	<Object Id="6025" Name="IDI_REFUI_MISSEDCALL" MimeType="image/png">
-		<File>..\images\128x128\common\CallApp\Call\missed_call.png</File>
-	</Object>
-	<Object Id="6026" Name="IDI_REFUI_LOUDSPEAKER" MimeType="image/png">
-		<File>..\images\128x128\common\CallApp\Call\loudspeaker.png</File>
 	</Object>
 	<Object Id="6201" Name="IDB_UTKMENU">
 		<File>..\images\128x128\common\UTK\utkmenu.bmp</File>

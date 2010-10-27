@@ -245,6 +245,15 @@ static boolean Setting_Handle_ShakeSub(CSettingMenu *pMe,
 	uint32 dwParam
 );
 #endif
+
+
+static boolean Setting_CClockApps_HandleKeyEvent(CSettingMenu *pMe, uint16 wParam);
+
+static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe);
+
+//static boolean Setting_CClockApps_HandleNumKeyEvent(CSettingMenu *pMe, uint16 wParam);
+#endif
+
 static boolean Setting_Handle_CallRestrict(CSettingMenu *pMe,
 	AEEEvent eCode,
 	uint16 wParam,
@@ -271,12 +280,6 @@ static boolean Setting_Handle_Msgbox(CSettingMenu *pMe,
 	uint32 dwParam
 );
 
-static boolean Setting_CClockApps_HandleKeyEvent(CSettingMenu *pMe, uint16 wParam);
-
-static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe);
-
-//static boolean Setting_CClockApps_HandleNumKeyEvent(CSettingMenu *pMe, uint16 wParam);
-#endif
 static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,

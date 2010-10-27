@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="appscommon_images160x128_common" VERSION="1">
 <Objects MimeType="image/png">
-	<Object Id="5001" Name="IDB_BGMASK">
-		<File>..\images\160x128\common\Appscommon\Background\bgmask.png</File>
+	<Object Id="5002" Name="IDB_BACKGROUND">
+		<File>..\images\160x128\common\Appscommon\Menu\background\background.png</File>
 	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON">
 		<File>..\images\160x128\common\Appscommon\Icon\check_yes.png</File>
@@ -31,23 +31,11 @@
 	<Object Id="5029" Name="IDB_RIGHTARROW">
 		<File>..\images\160x128\common\Appscommon\Icon\RightArrow.png</File>
 	</Object>
-	<Object Id="5041" Name="IDB_ERROR">
-		<File>..\images\160x128\common\Appscommon\MessageBox\error.png</File>
-	</Object>
-	<Object Id="5042" Name="IDB_WARNNING">
-		<File>..\images\160x128\common\Appscommon\MessageBox\WarningMsgBox.png</File>
-	</Object>
 	<Object Id="5043" Name="IDB_CONFIRM">
 		<File>..\images\160x128\common\Appscommon\MessageBox\YesNoMsgBox.png</File>
 	</Object>
 	<Object Id="5044" Name="IDB_INFORMATION">
 		<File>..\images\160x128\common\Appscommon\MessageBox\information.png</File>
-	</Object>
-	<Object Id="5045" Name="IDB_WAITING">
-		<File>..\images\160x128\common\Appscommon\MessageBox\waiting.png</File>
-	</Object>
-	<Object Id="5046" Name="IDB_INFORMATIVE">
-		<File>..\images\160x128\common\Appscommon\MessageBox\informative.png</File>
 	</Object>
 	<Object Id="5047" Name="IDB_PROMPT_MSG_BG">
 		<File>..\images\160x128\common\Appscommon\MessageBox\background.png</File>
@@ -66,9 +54,6 @@
 	</Object>
 	<Object Id="5141" Name="IDI_UNDERLINE">
 		<File>..\images\160x128\common\Appscommon\Menu\underline\underline.png</File>
-	</Object>
-	<Object Id="5142" Name="IDI_UNDERLINE_SHORT">
-		<File>..\images\160x128\common\Appscommon\Menu\underline\underlineshort.png</File>
 	</Object>
 	<Object Id="5201" Name="IDB_PHONE" MimeType="image/bmp">
 		<File>..\images\160x128\common\Contact\AddressBook\Mobile.bmp</File>

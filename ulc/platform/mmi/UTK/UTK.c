@@ -837,7 +837,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
                     {
                         Setup_Call  *pstCall;
                         byte        *pdata;
-#ifdef FEATURE_ICM
+#ifndef FEATURE_ICM
 						AEETCalls po;
 #endif
 

@@ -1531,7 +1531,7 @@ static boolean Calc_operate( CCalcApp* pme, int i)
 #else
                 drawImageWithOffset( pme,
                              AEE_APPSCOMMONRES_IMAGESFILE,
-                             IDB_CALCAPP,
+                             0,
                              rc.x,
                              rc.y,
                              &rc

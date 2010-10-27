@@ -566,14 +566,9 @@ typedef struct _CCallApp
     AEERect                m_RectSub;
     IBitmap                *m_pWallSubImage;
 #endif
-
-    //IImage                *m_pBgImage;
-    IImage                *m_pCallingImage;
-    //IImage               *m_pDialerImage;
+#ifndef FEATURE_USES_LOWMEM
     IImage                 *m_pConvImage;
-    //IImage               *m_pCallendImage;
-
-
+#endif
 #ifdef Temp_remove
     IIdle                   *m_pIdle;
 #endif/*Temp_remove*/

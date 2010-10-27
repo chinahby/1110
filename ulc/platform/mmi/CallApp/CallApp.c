@@ -109,9 +109,10 @@ static boolean CallApp_Notify(void *pUser,
                                         uint32 dwParam);
 
 #ifndef FEATURE_ICM
-#define AEECMNotifyInfo AEETNotifyInfo
-#define AEECM_MAX_DIGITS_LENGTH AEET_MAX_DIGITS_LENGTH
-#define AEECM_MAX_ALPHA_TAG_LENGTH AEET_MAX_ALPHA_TAG_LENGTH
+#define AEECMNotifyInfo             AEETNotifyInfo
+#define AEECMCallEventData          AEETCallEventData
+#define AEECM_MAX_DIGITS_LENGTH     AEET_MAX_DIGITS_LENGTH
+#define AEECM_MAX_ALPHA_TAG_LENGTH  AEET_MAX_ALPHA_TAG_LENGTH
 #endif
 
 //static void  CallApp_ProcessBattNotify(CCallApp  *pMe,AEENotify   *msg);
@@ -184,7 +185,11 @@ static void CallApp_ProcessCallStateVoiceSignal(CCallApp *pMe,
 
 static boolean CallApp_PlaySignal(CCallApp *pMe,
                                         AECHAR* pszPhoneNumber,
+#ifdef FEATURE_ICM
                                         AEECMSignal *pSignal);
+#else
+                                        AEETSignal *pSignal);
+#endif
 
 static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
                                         AECHAR           *number,
@@ -851,15 +856,8 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_CallsTable = NULL;
     pMe->m_CallsTable_Count =0;
     pMe->m_bReceiveCallerID     = FALSE;
-#if 1
+#ifndef FEATURE_USES_LOWMEM
     pMe->m_pConvImage = NULL;
-    pMe->m_pCallingImage = NULL;
-#else
-    if(pMe->m_pConvImage)
-    {
-        IIMAGE_Release(pMe->m_pConvImage);
-        pMe->m_pConvImage = NULL;
-    }
 #endif
     pMe->m_btime_out = 0;
     pMe->m_return_value = RETURN_ZERO;
@@ -1296,21 +1294,18 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             pMe->m_ePreState = STATE_NULL;
             pMe->m_nStartCallType = START_MAX;
             pMe->m_bHandFree = FALSE;
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
+#endif
             pMe->m_btime_out = 0;
             pMe->m_return_value = RETURN_ZERO;
             pMe->m_bincoming_rsk = IDS_MUTE;
             //pMe->m_b_show_cdg = FALSE;
             pMe->m_cdg_row = 0;
-            if(pMe->m_pCallingImage)
-            {
-                IIMAGE_Release(pMe->m_pCallingImage);
-                pMe->m_pCallingImage = NULL;
-            }
             pMe->m_msg_text_id = 0;
             CallApp_SetupCallAudio(pMe);
 #ifdef FEATRUE_AUTO_POWER
@@ -2851,6 +2846,11 @@ static void CallApp_ProcessCallStateVoiceAnswer(CCallApp               *pMe,
 	                                              AEECMCallEventData         *call_table,
 	                                              CallAppState             *newState)/* Incoming call was answered */
 {
+#ifndef FEATURE_ICM
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+#endif
     PARAM_NOT_REF (call_table)
     PARAM_NOT_REF (newState)
 
@@ -3564,6 +3564,11 @@ static void CallApp_ProcessCallStateVoiceConnect(CCallApp                 *pMe,
 	                                               AEECMCallEventData    *call_table,
 	                                               CallAppState             *newState)
 {
+#ifndef FEATURE_ICM
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+#endif
     *newState = STATE_CONVERSATION;
     // 如果不置零，会造成在正常通话中也出现pMe->m_Is3Way==TRUE的情况。
     pMe->m_Is3Way = FALSE;
@@ -3936,12 +3941,10 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
 
 #ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_LINE_CTRL: /* Originated was accepted */
-#else
-        case AEET_EVENT_CALL_LINE_CTRL: /* Originated was accepted */
-#endif
             CALL_ERR("%d AEECM_EVENT_CALL_LINE_CTRL=+=",call_table->number.pi,0,0);
             CallApp_ProcessCallStateVoiceAccept(pMe, call_table, newState);
             break;
+#endif
 #ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_OPS:      /* phone sent Flash/Flash with Info to BS */
 #else

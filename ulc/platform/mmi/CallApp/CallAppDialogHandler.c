@@ -1815,11 +1815,13 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             pMe->m_cdg_row    = 0;
             //pMe->m_b_show_cdg = TRUE;
             ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_MakeCall, pMe);
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
+#endif
             {
                 byte mute = OEMSOUND_MUTE_VOL;
                 ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
@@ -1957,6 +1959,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                     pMe->m_CallsTable->in_phonebook = TRUE;
                 }
             }
+#ifndef FEATURE_USES_LOWMEM
             //DRAW ANIMATION
             if(pMe->m_pConvImage == NULL)
             {
@@ -1973,6 +1976,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                 //IIMAGE_Release(pImage);
                 //pImage = NULL;
             }
+#endif
             //DRAW NAME
             if(pMe->m_CallsTable->in_phonebook && !b_cdg)
             {
@@ -2072,25 +2076,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             else
             {
                 //calling.....
-                if(pMe->m_pCallingImage)
-                {
-                    IIMAGE_Release(pMe->m_pCallingImage);
-                    pMe->m_pCallingImage = NULL;
-                }
-
-           #if FEATURE_DIALER_ANIMAION_SUPPORT
-                if(pMe->m_pCallingImage == NULL)
-                {
-                    pMe->m_pCallingImage = ISHELL_LoadImage(pMe->m_pShell, CALLAPP_CALLOUT_ANI);
-                }
-                if(pMe->m_pCallingImage)
-                {
-                    IIMAGE_SetParm(pMe->m_pCallingImage, IPARM_NFRAMES, CALLAPP_ANI_FRAMES, 0);
-                }
-                pMe->m_b_draw_dot = TRUE;
-            #endif
                 CallApp_Dialer_Show_Animation(pMe); 
-            
             }
             return TRUE;
         }
@@ -2105,16 +2091,13 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             //(void) ISHELL_CancelTimer(pMe->m_pShell,
             //                                            (PFNNOTIFY)CallApp_NotifyDisp_CB,
             //                                            pMe);
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
-            if(pMe->m_pCallingImage)
-            {
-                IIMAGE_Release(pMe->m_pCallingImage);
-                pMe->m_pCallingImage = NULL;
-            }
+#endif
             ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
             return TRUE;
 
@@ -2299,26 +2282,6 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
     }
 
-#if FEATURE_DIALER_ANIMAION_SUPPORT
-    if(pMe->m_pCallingImage != NULL)
-    {
-        IIMAGE_GetInfo(pMe->m_pCallingImage, &ImageSize);
-        SETAEERECT(&rect,
-        			(pMe->m_rc.dx - ImageSize.cxFrame)/2+12,
-                    CALL_ANIM_IMG_Y - CALL_LINE_HIGHT + MAX_COUNT_TO_CHANGE,
-                    ImageSize.cx,
-                    ImageSize.cy);
-        
-        Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);  // 不让刷第二次背景图
-        
-        nCurrentFrame = (calling_coute >= CALLAPP_ANI_FRAMES)?(CALLAPP_ANI_FRAMES - 1):(calling_coute);
-        IIMAGE_DrawFrame(pMe->m_pCallingImage, 
-                                    nCurrentFrame, 
-                                    (pMe->m_rc.dx - ImageSize.cxFrame)/2+12, 
-                                    CALL_ANIM_IMG_Y - CALL_LINE_HIGHT);
-    }
-	
-#endif	
     (void) ISHELL_SetTimer(pMe->m_pShell,
 	                        400,
 	                        (PFNNOTIFY)CallApp_Dialer_Show_Animation,
@@ -2708,11 +2671,13 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             //pMe->m_b_show_cdg = TRUE;
             pMe->m_dtmf_length = OEMNV_KEYTONE_NORMAL;
             ICONFIG_GetItem(pMe->m_pConfig,CFGI_KEYTONE_LENGTH,&pMe->m_dtmf_length,sizeof(keyToneLength));
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
+#endif
             if(pMe->m_pActiveDlg)
             {
                 IDIALOG_SetProperties(pMe->m_pActiveDlg,DLG_NOT_SET_FOCUS_AUTO);
@@ -2776,36 +2741,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             CallApp_Draw_Connect_Softkey(pMe);
             CallApp_Draw_Connect_Number_and_Name(pMe);
             CallApp_Draw_Connect_Time(pMe);
-            
-#if FEATURE_DIALER_ANIMAION_SUPPORT
-            if(pMe->m_pCallingImage == NULL)
-            {
-#if !defined(FEATURE_CARRIER_CHINA_VERTU)
-                if(pMe->m_call_info.call_type == AEECALLHISTORY_CALL_TYPE_TO)
-                {
-                    pMe->m_pCallingImage = ISHELL_LoadImage(pMe->m_pShell, CALLAPP_CALLOUT_ANI);
-                }
-                else
-#endif
-                {
-                    pMe->m_pCallingImage = ISHELL_LoadImage(pMe->m_pShell, CALLAPP_CALLIN_ANI);
-                }
-            }
-            if(pMe->m_pCallingImage)
-            {
-                AEEImageInfo ImageSize;
-                IIMAGE_SetParm(pMe->m_pCallingImage, IPARM_NFRAMES, CALLAPP_ANI_FRAMES, 0); //added by chengxiao 2009.04.13
-                IIMAGE_GetInfo(pMe->m_pCallingImage, &ImageSize);
-                IIMAGE_DrawFrame(pMe->m_pCallingImage, 
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-                                    0, 
-#else
-                                    3, 
-#endif
-                                    (pMe->m_rc.dx - ImageSize.cxFrame)/2, 
-                                    CALL_ANIM_IMG_Y - CALL_LINE_HIGHT);
-            }
-#endif //FEATURE_DIALER_ANIMAION_SUPPORT
 
 #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
             if (pMe->m_CallMuted ==TRUE)
@@ -2869,16 +2804,13 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
             pMe->m_bShowPopMenu = FALSE;
             IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
-            if(pMe->m_pCallingImage)
-            {
-                IIMAGE_Release(pMe->m_pCallingImage);
-                pMe->m_pCallingImage = NULL;
-            }
+#endif
             return TRUE;
 
         case EVT_FLIP:// wParam = TRUE if open, FALSE if closed.
@@ -3287,11 +3219,13 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             }
 
             CallApp_Free_All_Call_Table(pMe);
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
+#endif
             pMe->m_b_callend_time = 0;
 
 #if defined( FEATURE_CALL_RECORDER)
@@ -3480,7 +3414,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 
             ITIMECTL_SetRect(pTimerCtl, &rect);
             ITIMECTL_SetProperties(pTimerCtl, TP_NO_MSECONDS);
-
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage == NULL)
             {
                 pMe->m_pConvImage = ISHELL_LoadResImage( pMe->m_pShell,
@@ -3496,23 +3430,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 //pImage = NULL;
                 //CALL_ERR("Draw call end  image",0,0,0);
             }
-
-#if FEATURE_DIALER_ANIMAION_SUPPORT
-			if(pMe->m_pCallingImage == NULL)
-            {
-                pMe->m_pCallingImage = ISHELL_LoadImage(pMe->m_pShell, CALLAPP_CALLIN_ANI);
-            }
-            if(pMe->m_pCallingImage)
-            {
-                AEEImageInfo ImageSize;
-                IIMAGE_SetParm(pMe->m_pCallingImage, IPARM_NFRAMES, CALLAPP_ANI_FRAMES, 0); //added by chengxiao 2009.04.13
-                IIMAGE_GetInfo(pMe->m_pCallingImage, &ImageSize);
-                IIMAGE_DrawFrame(pMe->m_pCallingImage, 
-                                    3, 
-                                    (pMe->m_rc.dx - ImageSize.cxFrame)/2, 
-                                    CALL_ANIM_IMG_Y- CALL_LINE_HIGHT);
-            }
-#endif //FEATURE_DIALER_ANIMAION_SUPPORT
+#endif
             if(pMe->m_Is3Way)
             {
                 //  Position NAME
@@ -3671,16 +3589,13 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             // Cancel blink timer
             (void) ISHELL_CancelTimer(pMe->m_pShell,
                                                         CallApp_HandleEndCallBlinkTimer, pMe);
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
-            if(pMe->m_pCallingImage)
-            {
-                IIMAGE_Release(pMe->m_pCallingImage);
-                pMe->m_pCallingImage = NULL;
-            }
+#endif
 #ifdef FEATURE_ICM
             pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
 #else
@@ -4010,12 +3925,13 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 IBACKLIGHT_SigLedEnable( pMe->m_pBacklight, SIG_LED_INCOMING_CALL);
 #endif
             }
-
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
+#endif
             {
                 byte mute = OEMSOUND_MUTE_VOL;
                 ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
@@ -4200,6 +4116,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                                 pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
                 }
             }
+#ifndef FEATURE_USES_LOWMEM
             // NAME
             // set rect.
             // first line used for title
@@ -4219,6 +4136,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 //pImage = NULL;
                 //CALL_ERR("Draw incoming image",0,0,0);
             }
+#endif
             if(pMe->m_CallsTable->in_phonebook && !b_cdg)
             {
                 /*预留出动画的宽度*/
@@ -4230,27 +4148,8 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
                             pMe->m_CallsTable->call_name, &rect, IDF_TEXT_TRANSPARENT);
             }
-            {
-                if(pMe->m_pCallingImage)
-                {
-                    IIMAGE_Release(pMe->m_pCallingImage);
-                    pMe->m_pCallingImage = NULL;
-                }
-
-           #if FEATURE_DIALER_ANIMAION_SUPPORT
-                if(pMe->m_pCallingImage == NULL)
-                {
-                    pMe->m_pCallingImage = ISHELL_LoadImage(pMe->m_pShell, CALLAPP_CALLIN_ANI);
-                }
-                if(pMe->m_pCallingImage)
-                {
-                    IIMAGE_SetParm(pMe->m_pCallingImage, IPARM_NFRAMES, CALLAPP_ANI_FRAMES, 0);
-                }
-                pMe->m_b_draw_dot = FALSE;
-            #endif
-                CallApp_Dialer_Show_Animation(pMe); 
             
-            }
+            CallApp_Dialer_Show_Animation(pMe); 
 
             //Draw display or extended display info
             //if ( pMe->m_DispInfo[0] != '\0' )
@@ -4334,16 +4233,13 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             (void) ISHELL_CancelTimer(pMe->m_pShell,
                                                     (PFNNOTIFY)CallApp_HandleAutoAnswerTimer,
                                                     pMe);
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
-            if(pMe->m_pCallingImage)
-            {
-                IIMAGE_Release(pMe->m_pCallingImage);
-                pMe->m_pCallingImage = NULL;
-            }
+#endif
             ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte)); 
             if ((NULL != pMe->m_pwstrDialStringkeep) && (STATE_EXIT == pMe->m_eCurState))
             {
@@ -4703,13 +4599,14 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                 IBACKLIGHT_SigLedDisable(pMe->m_pBacklight);    //cancel the previous LED control
                 IBACKLIGHT_SigLedEnable(pMe->m_pBacklight,SIG_LED_MISSED_CALL);
             }
-#endif            
+#endif
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
-			
+#endif
             CallApp_Free_All_Call_Table(pMe);//free all call table
             (void) ISHELL_PostEvent(pMe->m_pShell,
                                                     AEECLSID_DIALER/*AEECLSID_CALL*/,
@@ -4733,6 +4630,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 
             ASSERT(IDD_MISSED == pMe->m_pActiveDlgID);
+#ifndef FEATURE_USES_LOWMEM
             //First line
             if(pMe->m_pConvImage == NULL)
             {
@@ -4749,30 +4647,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                 //pImage = NULL;
                 //CALL_ERR("Draw Missed call image",0,0,0);
             }
-            if(pMe->m_pCallingImage)
-            {
-                IImage_Release(pMe->m_pCallingImage);
-                pMe->m_pCallingImage = NULL;
-            }
-
-        #if FEATURE_DIALER_ANIMAION_SUPPORT
-            if(pMe->m_pCallingImage == NULL)
-            {
-                pMe->m_pCallingImage = ISHELL_LoadImage(pMe->m_pShell, CALLAPP_CALLIN_ANI);
-            }
-
-            if(pMe->m_pCallingImage)
-            {
-                AEEImageInfo ImageSize;
-                
-                IIMAGE_SetParm(pMe->m_pCallingImage, IPARM_NFRAMES, CALLAPP_ANI_FRAMES, 0);
-                IIMAGE_GetInfo(pMe->m_pCallingImage, &ImageSize);
-                IIMAGE_DrawFrame(pMe->m_pCallingImage, 
-                                    0, 
-                                    (pMe->m_rc.dx - ImageSize.cxFrame)/2, 
-                                    CALL_ANIM_IMG_Y - CALL_LINE_HIGHT);
-            }
-        #endif
+#endif
         	//Secend line
             if (pMe->m_MissedCallCount > 1)
             {
@@ -4856,16 +4731,13 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
 #else
             pMe->m_lastCallState = AEET_CALL_STATE_IDLE;
 #endif
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
-            if(pMe->m_pCallingImage)
-            {
-                IIMAGE_Release(pMe->m_pCallingImage);
-                pMe->m_pCallingImage = NULL;
-            }
+#endif
             if(pMe->m_b_miss_notify)
             {
                 //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_MISSEDCALL, ANNUN_STATE_OFF);
@@ -5746,7 +5618,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
     }
     else
     {
-#ifdef FEATURE_ICM
+#ifndef FEATURE_ICM
 		ICall *pCall = NULL;
 #endif
 
@@ -7701,6 +7573,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
         CallApp_NotifyDisp(pMe);
         b_cdg = TRUE ;
     }
+#ifndef FEATURE_USES_LOWMEM
     //pMe->m_pConvImage
     if(pMe->m_pConvImage == NULL)
     {
@@ -7726,7 +7599,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
         pMe->m_pConvImage = NULL;
         //CALL_ERR("Draw connect image",0,0,0);
     }
-    
+#endif
     oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
     // display Call Name
     if(pMe->m_Is3Way)/*in this time we only show 'muticall'*/
@@ -8323,7 +8196,7 @@ static void  CallApp_SetTimerControl(void *pUser)
         CALL_ERR("CallsTable == NULL CallApp_SetTimerControl",0,0,0);
         return;
     }
-
+#ifndef FEATURE_USES_LOWMEM
     if (pMe->m_pConvImage)
     {
         IIMAGE_SetOffset(pMe->m_pConvImage, 0, pMe->m_rc.dy -
@@ -8333,7 +8206,7 @@ static void  CallApp_SetTimerControl(void *pUser)
                                             (pMe->m_LineHeight + pMe->m_LineHeight + 14));
         IIMAGE_SetOffset(pMe->m_pConvImage, 0, 0);
     }
-
+#endif
     nlen=WSTRLEN(pMe->m_TimerString);
     if (nlen==0)
     {

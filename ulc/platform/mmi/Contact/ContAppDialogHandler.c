@@ -13321,7 +13321,7 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
                 //Draw shadow for screen
                 BgImg = ISHELL_LoadResImage(pMe->m_pShell,
                                         AEE_APPSCOMMONRES_IMAGESFILE,
-                                        IDB_BGMASK);
+                                        IDB_BACKGROUND);
 
                 if(STATE_SELECTOPT == pMe->m_ePreState)
                 {

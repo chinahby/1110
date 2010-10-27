@@ -942,7 +942,7 @@ static void drawPrompt( CScheduleApp* pme, uint16 stringResId)
 
     imageBg = ISHELL_LoadResImage( pme->m_pShell,
                         AEE_APPSCOMMONRES_IMAGESFILE,
-                        IDB_BGMASK
+                        IDB_BACKGROUND
                     );
     if( imageBg)
     {
@@ -3805,18 +3805,6 @@ _scheduleapp_event_edit_save_:
                         pme->m_CalMgr.m_CurMode     = walkmode[IMENUCTL_GetSel(pMode) - IDS_SPORTS_RUN];
                     }
                     
-                    {
-
-                        if(pme->m_sports)
-                        {
-                            pme->m_CalMgr.m_CurEvtType = 2;//事件为 sports plan 事件
-                        }
-                        else
-                        {
-                            pme->m_CalMgr.m_CurEvtType = 1; //事件为 日程表事件
-                        }
-                    }
-                    
                     if( pme->m_subStateEventEdit == SUBSTATE_EVENT_EDIT_NEW)
                     {
                         saveEvent( &pme->m_CalMgr);
@@ -4595,7 +4583,7 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
                 (void) readRecordFields(pRecord, &fields);
                 IDBRECORD_Release(pRecord);
             }
-            if((type == 1 && fields.b.m_CurEvtType == 1) || (type == 2 && fields.b.m_CurEvtType == 2))
+            if((type == 1 || (type == 2))
             {
                 CtlAddItem  item        = { 0 };
                 uint16      hour        = GET_HOUR( GETTIME(pEvent->m_b.dwTime));
@@ -5104,13 +5092,6 @@ static int saveEventToDB( CCalApp* pme, boolean newEvent)
     baseFields.dwTime        = MAKECOMPTIME(pme->m_lEventDay,(uint32)pme->m_lStartTime);
     baseFields.wAlarmTime    = pme->m_nAlarmTime;
     baseFields.alertst       = pme->m_AlertState;
-    baseFields.m_CurEvtType  = pme->m_CurEvtType;
-
-    if(pme->m_CurEvtType == 2)
-    {
-        baseFields.walk          = pme->m_CurMode;
-        baseFields.wDuration     = 0;
-    }
 
     if( !newEvent)
     {
@@ -5596,40 +5577,7 @@ void Cal_HandleAlarm(CScheduleApp* pme, uint16 permId)
                 }
                 else
                 {
-                    #ifdef FEATURE_SPORTS_APP
-                    int i  = 0;
-                    Appointment* pAppointment = 0; 
-                    Appointment* theLast      = 0;
-                    int end = GET_EXPIREDAPPOINTMENT_NUMBER( &pme->m_CalMgr);
-                    
-                    for( i = 1; i <= end; i ++)
-                    {
-
-                        pAppointment = pme->m_CalMgr.m_expiredAppointment[i];
-                        if( pAppointment->permId == pme->m_CalMgr.m_wPendingAlarmPermID)
-                        {
-                            theLast = pAppointment;
-                        }
-                        if( pAppointment->status <= NOT_EXPIRED)
-                        {
-                            continue;
-                        }
-                    }     
-
-                    g_nCurEvtStyle = theLast->baseFields.m_CurEvtType;
-                    if(g_nCurEvtStyle == 2)
-                    {
-                        g_tempCurEvtFlag = pme->m_eCurState;
-                        g_gobacktosportflag = TRUE;//修改在日程表中闹铃响了之后进入sport 死机的问题
-                        pme->m_stateToBackShowAlert = STATE_EXIT;
-                    }
-                    else
-                    #endif /*#ifdef FEATURE_SPORTS_APP*/
-                    {
-                        
                     pme->m_stateToBackShowAlert = pme->m_eCurState;
-                }
-
                 }
 
                 CLOSE_DIALOG( DLGRET_TO_SHOWALERT)
@@ -5747,18 +5695,18 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
             //{
                 int      i              = 0;
                 int      end            = GET_EXPIREDAPPOINTMENT_NUMBER( &pme->m_CalMgr);
-//                AECHAR   text[200]      = {0};
-//                AECHAR   date[32]       = {0};
-//                uint32   seconds        = 0;
+    //                AECHAR   text[200]      = {0};
+    //                AECHAR   date[32]       = {0};
+    //                uint32   seconds        = 0;
 
-//                CtlAddItem   item         = {0};
-//                int          length       = 0;
+    //                CtlAddItem   item         = {0};
+    //                int          length       = 0;
                 Appointment* pAppointment = 0;
                 Appointment* theLast      = 0;
                 IImage *AlertImage = NULL;
                 AECHAR wstrTitle[MAX_INPUT_SUBJECT] = {0};
 
- 
+
                 for( i = 1; i <= end; i ++)
                 {
 
@@ -5771,41 +5719,9 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     {
                         continue;
                     }
-#if 0
-                    MEMSET( text, 0, sizeof( text));
-                    WSTRCPY( text, pAppointment->subject);
-                    length = WSTRLEN( text);
-                    text[length ++] = ' ';
-                    seconds = JULIANTOSECONDS( &pAppointment->julian);
-                    Calendar_FormatDateTime( seconds, date, sizeof( date));
-                    WSTRCPY( text + length, date);
-                    length = WSTRLEN( text);
-                    text[length ++] = '-';
-                    seconds += pAppointment->baseFields.wDuration * 60;
-                    Calendar_FormatDateTime( seconds, date, sizeof( date));
-                    WSTRCPY( text + length, date);
-                    length = WSTRLEN( text);
-                    text[length ++] = ' ';
-                    WSTRCPY( text + length, pAppointment->location);
-                    debug( ";add [%d], %S", i, text);
-
-                    item.pText          = text;
-                    item.pszResImage    = AEE_APPSCOMMONRES_IMAGESFILE;
-                    item.wImage         = IDI_ALARM;
-                    item.wItemID        = pAppointment->permId;
-                    IMENUCTL_AddItemEx( pMenu, &item);
-#endif                    
                 }
-
-
-                if(theLast->baseFields.m_CurEvtType == 2)
-                {
-                    AlertImage = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SPORTS);
-                }
-                else
-                {
-                    AlertImage = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SCHEDULE);
-                }
+                
+                AlertImage = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SCHEDULE);
 
                 Appscommon_ResetBackgroundEx(pme->m_pDisplay, &pme->m_rc, TRUE);
                 if(AlertImage != NULL)
@@ -5826,77 +5742,9 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     AEERect rc;
                     int length;
                     
-#ifdef FEATURE_SPORTS_APP
-                    if(theLast->baseFields.m_CurEvtType == 2)
-                    {
-                    MEMSET(&pSportAppt,0,sizeof(Sport_Appointment));
-                    pSportAppt.runOrwalk = theLast->baseFields.walk;                    
-                    WSTRLCPY(pSportAppt.location,theLast->location,64);
-                    WSTRLCPY(pSportAppt.subject,theLast->subject,64);
-                    }
-                    g_nCurEvtStyle = theLast->baseFields.m_CurEvtType;
-#endif   
-                    
                     SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pme->m_rc.dx, BOTTOMBAR_HEIGHT);
                     IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
-                    if(theLast->baseFields.m_CurEvtType == 2)
-                    {
-                        ISHELL_LoadResString(pme->m_pShell, 
-                                                AEE_SCHEDULEAPP_RES_FILE, 
-                                                IDS_SPORTS_TITLE, 
-                                                wstrTitle, 
-                                                sizeof(wstrTitle));
-                        
-                        ISHELL_LoadResString(pme->m_pShell, 
-                                                AEE_SCHEDULEAPP_RES_FILE, 
-                                                IDS_SPORTS_MODE, 
-                                                AlertText, 
-                                                sizeof(AlertText));
-
-                        length = WSTRLEN(AlertText);
-                        AlertText[length++] = ':';
-                        if(theLast->baseFields.walk == WALK)
-                        {
-                            ISHELL_LoadResString(pme->m_pShell,
-                                                    AEE_SCHEDULEAPP_RES_FILE,
-                                                    IDS_SPORTS_WALK,
-                                                    text,
-                                                    sizeof(text));
-                        }
-                        else
-                        {
-                            ISHELL_LoadResString(pme->m_pShell,
-                                                    AEE_SCHEDULEAPP_RES_FILE,
-                                                    IDS_SPORTS_RUN,
-                                                    text,
-                                                    sizeof(text));
-                        }
-                        WSTRCPY(AlertText + length,text);
-                        IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL, 
-                                                            AlertText, 
-                                                            -1, 
-                                                            rc.x, rc.y, &rc, 
-                                                            IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT| IDF_ALIGN_MIDDLE);
-
-                        SETAEERECT(&rc, 0,TITLEBAR_HEIGHT + BOTTOMBAR_HEIGHT, pme->m_rc.dx, BOTTOMBAR_HEIGHT);
-                        
-                        ISHELL_LoadResString(pme->m_pShell,
-                                                AEE_SCHEDULEAPP_RES_FILE,
-                                                IDS_SPORTS_DISTANCE,
-                                                AlertText,
-                                                sizeof(AlertText));
-                        length = WSTRLEN(AlertText);
-                        AlertText[length++] = ':';
-                        WSTRCPY(AlertText + length, theLast->subject);
-                        IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
-                                                            AlertText,
-                                                            -1,
-                                                            rc.x, rc.y, &rc,
-                                                            IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
-                        
-                        
-                    }
-                    else  // schedule alert
+                    // schedule alert
                     {
                         ISHELL_LoadResString(pme->m_pShell, 
                                                 AEE_SCHEDULEAPP_RES_FILE, 
@@ -5938,11 +5786,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                 {
                     BottomBar_Param_type BottomBar;
                     MEMSET(&BottomBar, 0, sizeof(BottomBar_Param_type));
-                    if(theLast->baseFields.m_CurEvtType == 2)
-                    {
-                        BottomBar.eBBarType = BTBAR_SPORT_STOP;
-                    }
-                    else
+                    
                     {
                     	if(g_nCurEvtStyle == 0)
                     	{
@@ -6167,13 +6011,7 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
                 return FALSE;
             }
             ISTATIC_SetProperties( pStatic, ST_GRAPHIC_BG|ST_NOSCROLL);
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-            ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SCHEDULE_BACKGROUND);
-#else
-#ifndef FEATURE_USES_LOWMEM
             ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
-#endif
-#endif
             {
                 AEERect rect = pme->m_rc;
 

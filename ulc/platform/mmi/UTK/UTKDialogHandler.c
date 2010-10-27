@@ -44,15 +44,6 @@ static void UTKApp_DialogTimeout(void *pme);
 
 static void SetMenuLook( CUTK *pMe, IMenuCtl *pMenu);
 
-// 对话框 IDD_SPLASH_DIALOG 事件处理函数
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
-static boolean  IDD_SPLASH_Handler(CUTK *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-);
-#endif //FEATURE_CARRIER_CHINA_TELCOM
-
 // 对话框 IDD_MAIN_DIALOG 事件处理函数
 static boolean  IDD_MAIN_Handler(CUTK *pMe,
     AEEEvent eCode,

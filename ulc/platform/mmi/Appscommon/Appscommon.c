@@ -1446,8 +1446,7 @@ void drawTheImage( IImage *image, AEERect *pRect)
 }
 
 void DrawBackground( IDisplay *pDisplay, AEERect *pRect)
-{
-#ifndef FEATURE_USES_LOWMEM     
+{     
     IImage *image = ISHELL_LoadResImage( AEE_GetShell(),
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDB_BACKGROUND
@@ -1460,9 +1459,6 @@ void DrawBackground( IDisplay *pDisplay, AEERect *pRect)
     {
         drawTheImage( image, pRect);
     }
-#else	
-	Appscommon_ResetBackground(pDisplay, NULL, APPSCOMMON_TEXT_BG_COLOR, pRect, 0, 0);
-#endif
 }
 
 /*==============================================================================
@@ -2171,11 +2167,17 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         
     switch (PParam->ePMsgType)
     {
+        case MESSAGE_CONFIRM:
+            drawbottomStr = TRUE;
+            pMsgImgResID = IDB_CONFIRM;        
+            break;
+            
         case MESSAGE_NONE:
         default:        
             drawbottomStr = FALSE;
             pMsgImgResID = IDB_INFORMATION;
             break;
+#ifndef FEATURE_USES_LOWMEM
 //以下由于图片以及spec的修改，重新将图片画在中间，底条根据用户需求来画(与cs0x相同)
         case MESSAGE_ERR:
             drawbottomStr = FALSE;
@@ -2191,11 +2193,6 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             drawbottomStr = FALSE;
             pMsgImgResID = IDB_WAITING;        
             break;
-             
-        case MESSAGE_CONFIRM:
-            drawbottomStr = TRUE;
-            pMsgImgResID = IDB_CONFIRM;        
-            break;     
             
         case MESSAGE_INFORMATION:
             drawbottomStr = FALSE;
@@ -2205,13 +2202,14 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         case MESSAGE_INFORMATIVE:
             drawbottomStr = FALSE;
             pMsgImgResID = IDB_INFORMATIVE;        
-            break;                                          
+            break;               
+#endif
     }  
     
     //Draw shadow for screen
     pMsgImg = ISHELL_LoadResImage(pShell,
                             AEE_APPSCOMMONRES_IMAGESFILE,
-                            IDB_BGMASK);
+                            IDB_BACKGROUND);
     if(pMsgImg != NULL)
     {                  
         IIMAGE_Draw(pMsgImg, 0, 0);
@@ -3779,17 +3777,13 @@ void Appscommon_ResetBackgroundEx(IDisplay *pDisplay, AEERect * rect, boolean bD
         else
 	    #endif
 #endif
-#ifndef FEATURE_USES_LOWMEM 
-
         {
             /* 由于透明通道会大大降低图像的显示速度，默认使用一张无透明色的图片*/
             pImageBg = ISHELL_LoadResImage(pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);  //moci by yangdecai
         }
 
         Appscommon_ResetBackground(pDisplay, pImageBg, nBgColor, rect, xPos, yPos);
-#else
-		Appscommon_ResetBackground(pDisplay, NULL, APPSCOMMON_TEXT_BG_COLOR, rect, xPos, yPos);
-#endif
+
         if(pImageBg != NULL)
         {
             IImage_Release(pImageBg);

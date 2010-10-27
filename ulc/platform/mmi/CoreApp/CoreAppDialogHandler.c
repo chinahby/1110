@@ -4731,7 +4731,6 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
                              (void*)pMe);
 #else
         {
-            MSG_FATAL("CoreApp_PlayPwrOnAni 3",0,0,0);
             #define PWRON_STR L"Welcome"
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
