@@ -256,14 +256,12 @@ GENERAL DESCRIPTION:
 #ifdef FEATURE_USES_ADVANCEAPI
 #define FEATURE_BREW_AEENET
 #define FEATURE_BREW_AEETHREAD
-#endif
-//#ifdef FEATURE_APP_MANAGER
 #define FEATURE_BREW_AEEFIFO
 #define FEATURE_BREW_PROVISION
 #define FEATURE_BREW_LICENSE
 #define FEATURE_BREW_AEEAPPHISTORY
 #define FEATURE_BREW_AEEAPPLETCTL
-//#endif
+#endif
 //
 // Feature Libraries
 //
@@ -329,7 +327,8 @@ GENERAL DESCRIPTION:
 #define FEATURE_IVOCODER
 #endif
 #endif
-//#if defined(FEATURE_APP_MANAGER) && defined(FEATURE_BREW_DOWNLOAD)
+
+#ifdef FEATURE_USES_ADVANCEAPI
 #define FEATURE_BREW_SECURITY       // turn on hashes, ciphers and random numbers
 #define FEATURE_BREW_RSA            // Turn on RSA; needed for sig verify, SSL & IX509Chain
 #define FEATURE_BREW_SEED
@@ -337,7 +336,7 @@ GENERAL DESCRIPTION:
    #define FEATURE_BREW_DES3DES     // define this to turn on DES and 3DES in BREW
 #endif
   #define FEATURE_BREW_ROOTCERTS // Turn on WebOpts based access to root certs
-//#endif
+#endif
 
 //Disable for QSC1110
 //#define FEATURE_BREW_SSL            // turn on BREW SSL
@@ -369,9 +368,9 @@ GENERAL DESCRIPTION:
 //#define  FEATURE_LOGGER
 //#endif
 
-//#if defined(FEATURE_APP_MANAGER) && defined(FEATURE_BREW_DOWNLOAD)
+#ifdef FEATURE_USES_ADVANCEAPI
   #define FEATURE_BREW_KEYMAKER // Used by BREW's Mutual Auth for BREW Keys and Credentials
-//#endif
+#endif
 
 #define FEATURE_WMS
 
@@ -498,7 +497,9 @@ GENERAL DESCRIPTION:
 // network coverage.
 #ifndef FEATURE_MANGO_BREW
 #ifndef FEATURE_WLAN
+#ifndef FEATURE_USES_LOWMEM
   #define CLOSE_PPP_ON_OUT_OF_NETWORK_COVERAGE
+#endif
 #endif //FEATURE_WLAN
 #endif
 // Disable vixenUI

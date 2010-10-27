@@ -73,19 +73,23 @@ const flashi_nor_device *(samsung_parts[]) = {
 
 /* List of all Intel parts that are probed similarly. */
 const flashi_nor_device *(intel_parts[]) = {
+#ifndef FEATURE_USES_LOWMEM
   &Intel_128M18_ADMux,
   &Intel_256M18_ADMux,
   &Intel_512M18_ADMux,
   &Intel_1024M18_ADMux,
   &Intel_64W18_ADMux,
+#endif
   &M36W0R5040U6ZS,
   NULL
 };
 
 const flashi_nor_device **(global_parts[]) = {
   intel_parts,
+#ifndef FEATURE_USES_LOWMEM
   samsung_parts,
   spansion_parts,
+#endif
   NULL
 };
 
