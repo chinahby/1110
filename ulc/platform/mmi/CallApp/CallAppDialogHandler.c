@@ -8370,7 +8370,7 @@ static void  CallApp_SetFrenduoTimer(void *pUser)
 #ifdef FEATURE_ICM
     ICM_EndAllCalls(pMe->m_pICM);
 #else
-    ICM_EndAllCalls(pMe->m_pITelephone);
+    ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
 #endif
 }
 
@@ -8733,7 +8733,7 @@ static void CallApp_Flash_Call(CCallApp *pMe)
         CALL_ERR("ICM_OriginateVoiceCall FAILED", 0, 0, 0);
         return;
     }
-#ifdef FEATURE_ICM
+#ifndef FEATURE_ICM
 	if (pCall != NULL)
 	{
 		ICALL_Release(pCall);

@@ -63,6 +63,7 @@ ifneq ($(USES_LOWMEM),yes)
 include $(CONVERTER)/converter.min
 include $(STOPWATCH)/stopwatch.min
 include $(TIMERAPP)/timerapp.min
+include $(SCHEDULEAPP)/scheduleapp.min
 endif
 
 ifeq ($(MMI_ADD_SPORT),yes)

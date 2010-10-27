@@ -4583,7 +4583,7 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
                 (void) readRecordFields(pRecord, &fields);
                 IDBRECORD_Release(pRecord);
             }
-            if((type == 1 || (type == 2))
+            if((type == 1) || (type == 2))
             {
                 CtlAddItem  item        = { 0 };
                 uint16      hour        = GET_HOUR( GETTIME(pEvent->m_b.dwTime));
