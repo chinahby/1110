@@ -1555,11 +1555,7 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          ISTATIC_SetRect(pStatic, &rc);
          ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG); //modified by chengxiao 2009.04.07
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-         ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
-#else
          ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
-#endif
          return TRUE;
       }
 
@@ -1828,12 +1824,7 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          ISTATIC_SetRect(pText, &rc);
          ISTATIC_SetProperties(pText, ST_MIDDLETEXT|ST_GRAPHIC_BG);
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-         ISTATIC_SetBackGround(pText, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
-#else
          ISTATIC_SetBackGround(pText, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
-#endif
-
          return TRUE;
       }
 
@@ -4692,15 +4683,9 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
          rc.dy = pMe->m_rc.dy - rc.y - GetBottomBarHeight(pMe->m_pDisplay);
 
          ISTATIC_SetRect(pDetailText, &rc);
-         ISTATIC_SetProperties(pDetailText, ST_MIDDLETEXT|ST_GRAPHIC_BG); //modified by chengxiao 2009.04.07
-         //added by chengxiao 2009.04.08
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-         ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
-#else
+         ISTATIC_SetProperties(pDetailText, ST_MIDDLETEXT|ST_GRAPHIC_BG);
          ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
-#endif
-         //end added
-
+         
          RELEASEIF(pMe->m_pDetailText);
          pMe->m_pDetailText = pDetailText;
          ISTATIC_AddRef(pMe->m_pDetailText);

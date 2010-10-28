@@ -117,7 +117,13 @@ when       who     what, where, why
 #ifdef FEATURE_PHONE_VR
 #include "AEEVR.h"
 #endif
+
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS
@@ -794,8 +800,11 @@ SIDE EFFECTS:
   None
 
 =============================================================================*/
+#ifdef FEATURE_ICM
 boolean IsCallActive (AEECMCallType calltype);
-
+#else
+boolean IsCallActive (AEETCallType calltype);
+#endif
 /*=============================================================================
 FUNCTION: SetIdleMenuText
 
@@ -928,11 +937,15 @@ SIDE EFFECTS:
 
 =============================================================================*/
 int DisplayString (const AECHAR* pszBuf);
-
+#ifdef FEATURE_ICM
 #define ui_is_in_call()         IsCallActive(AEECM_CALL_TYPE_NONE)
 #define ui_curr_call_is_sms()   IsCallActive(AEECM_CALL_TYPE_SMS)
 #define ui_curr_call_is_data()  IsCallActive(AEECM_CALL_TYPE_CS_DATA)
-
+#else
+#define ui_is_in_call()         IsCallActive(AEET_CALL_TYPE_NONE)
+#define ui_curr_call_is_sms()   IsCallActive(AEET_CALL_TYPE_SMS)
+#define ui_curr_call_is_data()  IsCallActive(AEET_CALL_TYPE_CS_DATA)
+#endif
 /*=============================================================================
 FUNCTION: SetBacklight
 

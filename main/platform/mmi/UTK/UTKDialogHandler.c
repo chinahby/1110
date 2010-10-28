@@ -44,15 +44,6 @@ static void UTKApp_DialogTimeout(void *pme);
 
 static void SetMenuLook( CUTK *pMe, IMenuCtl *pMenu);
 
-// 对话框 IDD_SPLASH_DIALOG 事件处理函数
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
-static boolean  IDD_SPLASH_Handler(CUTK *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-);
-#endif //FEATURE_CARRIER_CHINA_TELCOM
-
 // 对话框 IDD_MAIN_DIALOG 事件处理函数
 static boolean  IDD_MAIN_Handler(CUTK *pMe,
     AEEEvent eCode,
@@ -1017,10 +1008,17 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
             {
                 AECHAR   wszInfo[64]={0};
                 boolean bSetTimer = FALSE;
+#ifdef FEATURE_ICM
                 AEECMSysMode sysmode;
                 
                 sysmode = ICM_GetSysMode(pMe->m_pCM);
+#else
+				AEETSSInfo ss_info;
+                AEETSysMode sysmode;
 
+                ITELEPHONE_GetServingSystemInfo(pMe->m_pITelephone,&ss_info,sizeof(AEETSSInfo));
+                sysmode = ss_info.sys_mode;
+#endif
                 pCltMsg = NULL;
                 nRetrys = 0;
                 (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
@@ -1044,7 +1042,11 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
                 }
                 else
                 {
+#ifdef FEATURE_ICM
                     if (sysmode == AEECM_SYS_MODE_NO_SRV)
+#else
+                    if (sysmode == AEET_SYS_MODE_NO_SRV)
+#endif
                     {
                         bSetTimer = TRUE;
                         nRetrys = 4;
@@ -1129,12 +1131,23 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
             
             {
                 boolean bSetTimer = FALSE;
+#ifdef FEATURE_ICM
                 AEECMSysMode sysmode;
                 int nRet;
                 
                 sysmode = ICM_GetSysMode(pMe->m_pCM);
             
                 if (sysmode == AEECM_SYS_MODE_NO_SRV)
+#else
+				int nRet;
+                AEETSSInfo ss_info;
+                AEETSysMode sysmode;
+
+                ITELEPHONE_GetServingSystemInfo(pMe->m_pITelephone,&ss_info,sizeof(AEETSSInfo));
+                sysmode = ss_info.sys_mode;
+            
+                if (sysmode == AEET_SYS_MODE_NO_SRV)
+#endif
                 {
                     bSetTimer = TRUE;
                 }

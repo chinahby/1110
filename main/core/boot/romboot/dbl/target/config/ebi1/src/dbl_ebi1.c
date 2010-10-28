@@ -179,11 +179,13 @@ const dbl_nor_device *(spansion_parts[]) = {
 
 /* List of all Intel parts that are probed similarly. */
 const dbl_nor_device *(intel_parts[]) = {
+#ifndef FEATURE_USES_LOWMEM
   &Intel_1024M18_ADMux,
   &Intel_512M18_ADMux,
   &Intel_256M18_ADMux,
   &Intel_128M18_ADMux,
   &Intel_64W18_ADMux,
+#endif
   &M36W0R5040U6ZS,
   NULL
 };
@@ -202,9 +204,13 @@ const dbl_nor_device *(samsung_parts[]) = {
 
 /* Probe table for flash */
 DBLProbeTbl dbl_probe_info_flash[] = {
+#ifndef FEATURE_USES_LOWMEM
   { (volatile word *)FLASH_BASE_ADDRESS, dbl_samsung_probe },
   { (volatile word *)FLASH_BASE_ADDRESS, dbl_intel_probe },
   { (volatile word *)FLASH_BASE_ADDRESS, dbl_spansion_probe },
+#else
+  { (volatile word *)FLASH_BASE_ADDRESS, dbl_intel_probe },
+#endif
   { (volatile word *) DBL_FLASH_PROBE_END, 0 }
 };
 
@@ -1319,7 +1325,7 @@ void dbl_ebi1_data_psram_configure
 dbl_nor_device *dev = dbl_nor_device_probe();
 	
 	  DBL_VERIFY(dev != NULL, DBL_ERR_NOR_DETECTION_FAILED );
-
+#ifndef FEATURE_USES_LOWMEM
 	  if ((dev == &K5N5629ABM)|| (dev == &K5N6433ABM) || (dev == &K5N6433ATM) || (dev == &K5N2833ATB) || (dev == &K5N2833ABB))
 	  	{
 			dbl_parse_cfg_data(ebi1_cfg_data_ebi1_default);
@@ -1342,12 +1348,14 @@ dbl_nor_device *dev = dbl_nor_device_probe();
 	  	}
 
   	else
+#endif
 	  	{
 	
                 if( configured_clk_speed->ebi1 == 48 )
                 {
                        dbl_parse_cfg_data(ebi1_cfg_data_PSRAM_CS1_48MHZ);
                 }
+#ifndef FEATURE_USES_LOWMEM
                  else if( configured_clk_speed->ebi1 == 64 )
                 {
                        dbl_parse_cfg_data(ebi1_cfg_data_PSRAM_CS1_64MHZ);
@@ -1360,6 +1368,7 @@ dbl_nor_device *dev = dbl_nor_device_probe();
                 {
                        DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
                 }
+#endif
 		}
 
 }
@@ -1389,7 +1398,7 @@ void dbl_ebi1_nor_configure
   dbl_nor_device *dev = dbl_nor_device_probe();
 
   DBL_VERIFY(dev != NULL, DBL_ERR_NOR_DETECTION_FAILED );
-
+#ifndef FEATURE_USES_LOWMEM
   if(dev == &S29WS256N0SB)
   {
     if( configured_clk_speed->ebi1 == 48 )
@@ -1480,6 +1489,9 @@ else if (dev == &Intel_64W18_ADMux || dev == &M36W0R5040U6ZS)
   {
     DBL_ERR_FATAL( DBL_ERR_NOR_DETECTION_FAILED );
   }
+#else
+  dbl_parse_cfg_data(ebi1_cfg_data_Intel_W18_48MHZ);
+#endif
 }
 
 /*===========================================================================

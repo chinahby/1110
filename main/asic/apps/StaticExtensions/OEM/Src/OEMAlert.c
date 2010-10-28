@@ -113,7 +113,13 @@ when       who     what, where, why
 #include "AEEShell.h"
 #include "AEEBacklight.h"
 #include "OEMSound.h"
+
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "OEMClassIDs.h"
 #include "AEEAnnunciator.h"
 
@@ -226,7 +232,11 @@ struct IALERT
   int                      alert_count;  
   int                      smsID; 
   IBacklight               *m_pBacklight;  
+#ifdef FEATURE_ICM
   ICM                      *m_pICM;  
+#else
+  ITelephone               *m_pITelephone;  
+#endif
   ALERT_SND_TYPE   m_snd_type;
   boolean                  m_mp3Ring;
 };
@@ -684,12 +694,19 @@ static void OEMALERT_NOTIFIER_SetMask(IALERT_NOTIFIER *po,
      (void) IBACKLIGHT_Release(pMe->m_pBacklight);
      pMe->m_pBacklight= NULL;
    }     
-   
+#ifdef FEATURE_ICM
    if (pMe->m_pICM) 
    {
      (void) ICM_Release(pMe->m_pICM);
      pMe->m_pICM= NULL;
-   }        
+   }
+#else
+   if (pMe->m_pITelephone) 
+   {
+     (void) ITELEPHONE_Release(pMe->m_pITelephone);
+     pMe->m_pITelephone= NULL;
+   }    
+#endif
    if (pMe->m_pIAnn) 
    {
        IANNUNCIATOR_Release(pMe->m_pIAnn);
@@ -788,7 +805,7 @@ int OEMALERT_New(IShell *pIShell, AEECLSID cls, void **ppif)
      OEM_FreeAlert(pNew);
      return EFAILED;
   }     
-
+#ifdef FEATURE_ICM
   if (AEE_SUCCESS != ISHELL_CreateInstance(pNew->m_pIShell,
                                            AEECLSID_CM,
                                            (void **)&pNew->m_pICM))
@@ -796,7 +813,15 @@ int OEMALERT_New(IShell *pIShell, AEECLSID cls, void **ppif)
      OEM_FreeAlert(pNew);
      return EFAILED;
   }       
-
+#else
+  if (AEE_SUCCESS != ISHELL_CreateInstance(pNew->m_pIShell,
+                                           AEECLSID_TELEPHONE,
+                                           (void **)&pNew->m_pITelephone))
+  {
+     OEM_FreeAlert(pNew);
+     return EFAILED;
+  }    
+#endif
   if (AEE_SUCCESS != ISHELL_CreateInstance(pNew->m_pIShell, AEECLSID_ANNUNCIATOR, 
           (void **) &pNew->m_pIAnn))
   {
@@ -2368,6 +2393,7 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
     
     if(type == ALERT_SMS_SND)
     {
+#ifdef FEATURE_ICM
         uint16 num;
         
         num = ICM_GetActiveCallIDs(pMe->m_pICM, 
@@ -2378,6 +2404,15 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                                    NULL, 
                                    0);     
         if(num >0)
+#else
+        AEETCalls po;
+		if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+		{
+		    return FALSE;
+		}
+        
+        if(po.dwCount>0)
+#endif
         {
             ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
             IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON | ANNUN_STATE_BLINK);
@@ -2962,6 +2997,7 @@ SEE ALSO:
 
 static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
 {  
+#ifdef FEATURE_ICM
     uint16          num = 0;    
 #if !defined(FEATURE_SMSTONETYPE_MID)
     byte sms_size = 1;
@@ -2978,6 +3014,22 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
     OEMALERT_GetRingerVol(pMe);
     //判断当前是不是来电响铃状态
     if (num > 0)
+#else
+	AEETCalls po;
+#if !defined(FEATURE_SMSTONETYPE_MID)
+    byte sms_size = 1;
+#endif
+    MSG_FATAL("OEMALERT_StartSMSAlert Start",0,0,0);
+	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+	{
+		return ;
+	}
+
+
+    OEMALERT_GetRingerVol(pMe);
+    //判断当前是不是来电响铃状态
+    if (po.dwCount> 0)
+#endif
     {
         if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
         {
@@ -3769,8 +3821,19 @@ SEE ALSO:
 
 =============================================================================*/
 static boolean OEMALERT_InCall(IALERT *pMe)
-{                  
+{
+#ifdef FEATURE_ICM
     return (AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM));
+#else
+	AEETCalls po;
+	
+	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+	{
+		return FALSE;
+	}
+
+    return (po.dwCount>0)?TRUE:FALSE;
+#endif
 }
 /*=============================================================================
 FUNCTION:  OEMALERT_RingInHeadset

@@ -816,18 +816,27 @@ static void CALC_drawClipRectWithOffset(CCalcApp *pMe,uint32 imageId,AEERect *re
 	IImage *image = ISHELL_LoadResImage( pMe->a.m_pIShell,
                                          AEE_APPSCOMMONRES_IMAGESFILE,
                                          imageId);
+#ifndef FEATURE_USES_LOWMEM
     if( image != NULL)
+#endif    
     {
         AEERect oldClip;
 		IDISPLAY_GetClipRect( pMe->a.m_pIDisplay, &oldClip);
         IDISPLAY_SetClipRect( pMe->a.m_pIDisplay, rect);
-
+#ifndef FEATURE_USES_LOWMEM
         IIMAGE_SetOffset( image, rect->x, rect->y);
         IIMAGE_SetDrawSize( image, rect->dx, rect->dy);
         IIMAGE_Draw( image, rect->x, rect->y);
         IIMAGE_Release( image);
         image = NULL;
-
+#else
+		{
+			AEERect rect;
+		
+			rect.x = 0;rect.y=0;rect.dx=SCREEN_WIDTH,rect.dy=SCREEN_HEIGHT;
+			IDISPLAY_DrawRect(pMe->a.m_pIDisplay,&rect,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
+		}
+#endif
         IDISPLAY_SetClipRect( pMe->a.m_pIDisplay, &oldClip);
     }
 }
@@ -856,9 +865,11 @@ static void CALC_DrawImageWithOffset( CCalcApp *pMe)//wlh 20090417 add ÎªÁËÇø±ðµ
 		SETAEERECT( &clip, CALC_EQUAL_X, CALC_EQUAL_Y,CALC_EQUAL_W,CALC_EQUAL_H);
 	else 
 		return;
-
+#ifndef FEATURE_USES_LOWMEM
     CALC_drawClipRectWithOffset(pMe,IDB_CALCAPP,&clip);
-
+#else
+    CALC_drawClipRectWithOffset(pMe,0,&clip);
+#endif
     IDISPLAY_UpdateEx(pMe->a.m_pIDisplay, FALSE);
 }
 /*===========================================================================
@@ -994,7 +1005,9 @@ static void drawImageWithOffset( CCalcApp *pMe, char *resFile, int16 resId, int 
 {
 
     IImage *image = ISHELL_LoadResImage( pMe->a.m_pIShell, resFile, resId);
+#ifndef FEATURE_USES_LOWMEM
     if( image != NULL)
+#endif
     {
 
         AEERect oldClip;
@@ -1014,13 +1027,20 @@ static void drawImageWithOffset( CCalcApp *pMe, char *resFile, int16 resId, int 
         oldClip.dy = oldClip.dy - oldClip.y;
 
         IDISPLAY_SetClipRect( pMe->a.m_pIDisplay, &clip);
-
+#ifndef FEATURE_USES_LOWMEM
         IIMAGE_SetOffset( image, pRectOffset->x, pRectOffset->y);
         IIMAGE_SetDrawSize( image, pRectOffset->dx, pRectOffset->dy);
         IIMAGE_Draw( image, x, y);
         IIMAGE_Release( image);
 		image = NULL;
-
+#else
+		{
+			AEERect rect;
+		
+			rect.x = 0;rect.y=0;rect.dx=SCREEN_WIDTH,rect.dy=SCREEN_HEIGHT;
+			IDISPLAY_DrawRect(pMe->a.m_pIDisplay,&rect,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
+		}
+#endif
         IDISPLAY_SetClipRect( pMe->a.m_pIDisplay, &oldClip);
     }
 }
@@ -1079,8 +1099,11 @@ static void Calc_Overflow( CCalcApp *pme)
         RGBVAL nOldFontColor;
 
         rc = pme->m_valRect;
+#ifndef FEATURE_USES_LOWMEM
         drawImageWithOffset(pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, rc.x, rc.y, &rc);
-
+#else
+        drawImageWithOffset(pme, AEE_APPSCOMMONRES_IMAGESFILE, 0, rc.x, rc.y, &rc);
+#endif
         Calc_ClearVals(pme);
         pme->m_szText[1] = '0';
         wOp = OP_UNDEFINED;
@@ -1438,8 +1461,16 @@ static void Calc_DrawScreen(CCalcApp *pme)
 	BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
 
 	Calc_SetupValRect(pme);
-
+#ifndef FEATURE_USES_LOWMEM
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 0);
+#else
+{
+	AEERect rect;
+
+	rect.x = 0;rect.y=0;rect.dx=SCREEN_WIDTH,rect.dy=SCREEN_HEIGHT;
+	IDISPLAY_DrawRect(pme->a.m_pIDisplay,&rect,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
+}
+#endif
 	Calc_SetVal(pme, 0.0, FALSE);
 	Calc_ShowAnnun(pme);
 	DrawBottomBar(pme->a.m_pIDisplay,&BarParam);    //wlh 20090417 add
@@ -1489,6 +1520,7 @@ static boolean Calc_operate( CCalcApp* pme, int i)
 
                 //ÏÔÊ¾¡®³ýÊýÎª0¡¯
                 rc = pme->m_valRect;
+#ifndef FEATURE_USES_LOWMEM
                 drawImageWithOffset( pme,
                              AEE_APPSCOMMONRES_IMAGESFILE,
                              IDB_CALCAPP,
@@ -1496,6 +1528,15 @@ static boolean Calc_operate( CCalcApp* pme, int i)
                              rc.y,
                              &rc
                          );
+#else
+                drawImageWithOffset( pme,
+                             AEE_APPSCOMMONRES_IMAGESFILE,
+                             0,
+                             rc.x,
+                             rc.y,
+                             &rc
+                         );
+#endif
                 ISHELL_LoadResString(pme->a.m_pIShell,AEE_CALCAPP_RES_FILE,IDS_DIV_0,szError,sizeof(szError));
                 nOldFontColor = IDISPLAY_SetColor( pme->a.m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
                 IDISPLAY_DrawText(pme->a.m_pIDisplay, AEE_FONT_BOLD, szError, -1, rc.x, rc.y, &rc, IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);
@@ -1934,7 +1975,11 @@ static void Calc_ShowAnnun( void* pMe)
         int           i            = 0;
         
         SETAEERECT(&rc, pme->m_valRect.x, pme->m_valRect.y - 2*pme->m_valRect.dy, pme->m_valRect.dx, 2*pme->m_valRect.dy);        
+#ifndef FEATURE_USES_LOWMEM
         drawImageWithOffset( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, rc.x, rc.y, &rc);
+#else
+        drawImageWithOffset( pme, AEE_APPSCOMMONRES_IMAGESFILE, 0, rc.x, rc.y, &rc);
+#endif
         for( i = 1; i <= pme->m_nValNum; i ++)
         {
             Calc_FloatToWStr(pme->m_pValList[i].v, text, sizeof(text));
@@ -2159,7 +2204,7 @@ static void Calc_DrawNum( CCalcApp *pme)
     boolean   bSmall     = 0;
     int16     nWidth     = 0;
     AEERect   rc         = pme->m_valRect;
-
+#ifndef FEATURE_USES_LOWMEM
     drawImageWithOffset( pme,
                  AEE_APPSCOMMONRES_IMAGESFILE,
                  IDB_CALCAPP,
@@ -2167,7 +2212,15 @@ static void Calc_DrawNum( CCalcApp *pme)
                  rc.y,
                  &rc
              );
-
+#else
+    drawImageWithOffset( pme,
+                 AEE_APPSCOMMONRES_IMAGESFILE,
+                 0,
+                 rc.x,
+                 rc.y,
+                 &rc
+             );
+#endif
 #if 0
     bSmall = FALSE;
     nWidth = Calc_NumText( pme, -1, RGB_WHITE, FALSE, bSmall);

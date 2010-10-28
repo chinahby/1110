@@ -68,7 +68,12 @@
 #include "Appscommon.h"
 
 #include "OEMCFGI.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "AEEAddrBookExt.h"
 
 

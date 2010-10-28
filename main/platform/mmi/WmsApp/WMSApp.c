@@ -601,7 +601,6 @@ static uint32 CWmsApp_Release(IWmsApp *p)
 ==============================================================================*/
 static int CWmsApp_InitAppData(WmsApp *pMe)
 {
-	int rt;
     if (NULL == pMe)
     {
         return EFAILED;
@@ -1253,8 +1252,10 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_WMS_MSG_STATUS_REPORT:
             {
                 wms_msg_event_info_s_type *info = ((wms_msg_event_info_s_type*)dwParam);
+#ifdef FEATURE_ICM
 				uint16 num = 0;
-                
+#endif
+
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM                
                 if (info->mt_message_info.message.u.cdma_message.teleservice == 
                     WMS_TELESERVICE_CHINAUNICOMREG)
@@ -1305,7 +1306,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 if (info->mt_message_info.route == WMS_ROUTE_STORE_AND_NOTIFY)
                 {
                     boolean bSendEvt = TRUE;
-
+#ifndef FEATURE_ICM
+					AEETCalls po;
+#endif
                     
                     if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
                         info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
@@ -1319,6 +1322,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                         }
                     }
 					//add by yangdecai   09-26
+#ifdef FEATURE_ICM
 					num = ICM_GetActiveCallIDs(pMe->m_pICM, 
                                (AEECM_CALL_TYPE_VOICE | AEECM_CALL_TYPE_EMERGENCY), 
                                (AEECM_CALL_STATE_ORIG | AEECM_CALL_STATE_INCOM | 
@@ -1326,7 +1330,17 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                                 AEECM_CALL_STATE_DORMANT),
                                NULL, 
                                0);
+                               
 					if(num<=0)
+#else
+					if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone,                                            
+	                                           &po, 
+	                                           sizeof(AEETCalls)))
+					{
+						return FALSE;
+					}
+					if(po.dwCount==0)
+#endif
 					{
 	                    if (bSendEvt)
 	                    {                                        
@@ -2036,7 +2050,11 @@ static boolean WmsApp_HandleNotifyEvent(WmsApp *pMe, AEENotify *pN)
     
     switch (pN->cls)
     {
+#ifdef FEATURE_ICM
         case AEECLSID_CM_NOTIFIER:
+#else
+        case AEECLSID_PHONENOTIFIER:
+#endif
             return WmsApp_HandleCMNotify(pMe, pN);
 
         case AEECLSID_SHELL:
@@ -2087,8 +2105,12 @@ static boolean WmsApp_HandleNotifyEvent(WmsApp *pMe, AEENotify *pN)
 ==============================================================================*/
 static boolean WmsApp_HandleCMNotify(WmsApp * pMe, AEENotify *pNotify)
 {
+#ifdef FEATURE_ICM
     AEECMNotifyInfo *pEvtInfo;
-    
+#else
+    AEETNotifyInfo *pEvtInfo;
+#endif
+
     if (NULL == pNotify)
     {
         return FALSE;
@@ -2098,11 +2120,19 @@ static boolean WmsApp_HandleCMNotify(WmsApp * pMe, AEENotify *pNotify)
     
     switch (pNotify->dwMask)
     {
+#ifdef FEATURE_ICM
         case NMASK_CM_PHONE:
+#else
+        case AEET_NMASK_PHONE:
+#endif
             switch(pEvtInfo->event)
             {
                 // Phone information is now available
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_INFO_AVAIL:
+#else
+                case AEET_EVENT_PH_INFO_AVAIL:
+#endif
                     return TRUE;
 
                 default:
@@ -3140,13 +3170,15 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
 ==============================================================================*/
 void WmsApp_BcCb(wms_bc_event_e_type  event, wms_bc_event_info_s_type  *pInfo)
 {
+//wangliang close!  2010-08-14
+#if 0    
+
     wms_bc_event_info_s_type    *pInfobuf = NULL;
     IShell                      *pShell = AEE_GetShell();
     uint8                       btRet; 
     AEEEvent                    evt = EVT_WMS_BC_EVENT;
 
-//wangliang close!  2010-08-14
-#if 0    
+
     if (pShell == NULL)
     {
         return;

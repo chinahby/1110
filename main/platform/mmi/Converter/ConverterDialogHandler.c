@@ -801,25 +801,6 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 //Add End
 				IIMAGE_Release(Image);
             }
-#if 0
-            if(pMe->m_converterMode == CONVERTER_MODE_TEMPERATURE)
-            {
-                Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONV_POUND);
-                if(Image)
-                {
-                    IIMAGE_Draw(Image, pMe->m_rc.dx - CHARACTOR_PIC_WIDTH - 5*FRAME_SIZE, pMe->m_rc.dy - 2*BOTTOMBAR_HEIGHT);
-                    IIMAGE_Release(Image);
-                }
-            }
-            
-            Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONV_STAR);
-            if(Image)
-            {
-                IIMAGE_Draw(Image, pMe->m_rc.x + 5*FRAME_SIZE, pMe->m_rc.dy - 2*BOTTOMBAR_HEIGHT);
-                IIMAGE_Release(Image);
-                Image = NULL;
-            }
-#endif
 
             //»­µ×Ìõ
             nLen = STRLEN(m_inputNumber);

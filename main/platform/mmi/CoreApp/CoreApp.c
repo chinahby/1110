@@ -88,9 +88,11 @@ static void CoreApp_Process_AutoPower_Event(void *pUser);
 
 static void CoreApp_Process_Batty_Msg(CCoreApp   *pMe, uint16  msg_id);
 static void CoreApp_Process_Batty_Msg_CB(void *pp);
-
+#ifdef FEATURE_ICM
 static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEECMSSEventData *ss);
-
+#else
+static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEETSSEventData *ss);
+#endif
 static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe);
 static uint32 CoreApp_ConvertBattLvToAnnunState(int nBattLevel);
 //end added
@@ -210,7 +212,7 @@ void CoreApp_FreeAppData(IApplet* po)
         ICARD_Release(pMe->m_pICard);
         pMe->m_pICard = NULL;
     }
-    
+#ifdef FEATURE_ICM
     // 释放 ICM 接口
     if (pMe->m_pCM != NULL)
     {
@@ -221,6 +223,29 @@ void CoreApp_FreeAppData(IApplet* po)
         ICM_Release(pMe->m_pCM);
         pMe->m_pCM = NULL;
     }
+#else
+    if (pMe->m_pITelephone != NULL)
+    {
+        (void)ISHELL_RegisterNotify(pMe->a.m_pIShell, 
+                                    AEECLSID_CORE_APP,
+                                    AEECLSID_PHONENOTIFIER, 
+                                    0);
+        ITELEPHONE_Release(pMe->m_pITelephone);
+        pMe->m_pITelephone = NULL;
+    }
+
+	 if (pMe->m_pICallMgr != NULL)
+    {
+        ICALLMGR_Release(pMe->m_pICallMgr);
+        pMe->m_pICallMgr = NULL;
+    }
+		
+	if (pMe->m_pIPhoneCtl != NULL)
+    {
+        IPHONECTL_Release(pMe->m_pIPhoneCtl);
+        pMe->m_pIPhoneCtl = NULL;
+    }
+#endif
     
     if (pMe->m_pConfig) 
     {
@@ -511,7 +536,10 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             CoreApp_PoweronStartApps(pMe);
             //CoreApp_InitBattStatus(pMe);
 
-            EnableUIKeys(TRUE);
+			{
+				extern void EnableUIKeys (boolean flag);
+            	EnableUIKeys(TRUE);
+			}
             
             (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
                                   RESETPROFILE_TIME,
@@ -526,9 +554,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             //    (void) IDISPLAY_Release(pMe->m_pDisplay);
             //    pMe->m_pDisplay = NULL;
             //}
-	            JulianType  julian;
-	        	GetJulianDate(GETTIMESECONDS(), &julian);
-	            pm_rtc_rw_cmd (PM_RTC_SET_CMD, (pm_rtc_julian_type*)(&julian));
+            JulianType  julian;
+        	GetJulianDate(GETTIMESECONDS(), &julian);
+            pm_rtc_rw_cmd (PM_RTC_SET_CMD, (pm_rtc_julian_type*)(&julian));
             pMe->m_bSuspended = TRUE;
             pMe->m_bActive = TRUE;
 
@@ -582,10 +610,15 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             //pMe->m_pDisplay = as->pDisplay;
             //(void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc;
+#ifdef FEATURE_ICM
             pMe->m_bemergencymode = CoreApp_IsEmergencyMode(pMe->m_pCM);
             // 关闭全部通话。以前出现过访问数据业务后电流过大的问题
             ICM_EndAllCalls(pMe->m_pCM);
-
+#else
+            pMe->m_bemergencymode = CoreApp_IsEmergencyMode(pMe->m_pITelephone);
+            // 关闭全部通话。以前出现过访问数据业务后电流过大的问题
+            ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
             pMe->m_bSuspended = FALSE;
             pMe->m_bActive = TRUE;
 
@@ -655,7 +688,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             {
                 if(pMe->m_cdg_msgptr == NULL)
                 {
+#ifdef FEATURE_ICM
                     pMe->m_cdg_msgptr = (AECHAR * )MALLOC(AEECM_MAX_ALPHA_TAG_LENGTH*sizeof(AECHAR));
+#else
+                    pMe->m_cdg_msgptr = (AECHAR * )MALLOC(AEET_MAX_ALPHA_TAG_LENGTH*sizeof(AECHAR));
+#endif
                 }
                 if(pMe->m_cdg_msgptr != NULL)
                 {
@@ -663,7 +700,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                     pDialog = ISHELL_GetActiveDialog(pMe->a.m_pIShell);
                     if(pDialog != NULL)
                     {
+#ifdef FEATURE_ICM
                         WSTRLCPY(pMe->m_cdg_msgptr,(AECHAR * )dwParam,AEECM_MAX_ALPHA_TAG_LENGTH);
+#else
+                        WSTRLCPY(pMe->m_cdg_msgptr,(AECHAR * )dwParam,AEET_MAX_ALPHA_TAG_LENGTH);
+#endif
                         pMe->m_nMsgID = 0xFFFF;
                         if(IDIALOG_GetID(pDialog) == IDD_IDLE)
                         {
@@ -1041,7 +1082,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             break;
         case EVT_SET_OPERATING_MODE:
+#ifdef FEATURE_ICM
             ICM_SetOperatingMode(pMe->m_pCM, (AEECMOprtMode)wParam);
+#else
+            IPHONECTL_SetOperatingMode(pMe->m_pIPhoneCtl, (AEETOprtMode)wParam);
+#endif
             break;
             
         default:
@@ -1079,7 +1124,11 @@ static boolean CoreApp_HandleNotify(CCoreApp * pMe, AEENotify *pNotify)
     
     switch (pNotify->cls)
     {
+#ifdef FEATURE_ICM
         case AEECLSID_CM_NOTIFIER:
+#else
+        case AEECLSID_PHONENOTIFIER:
+#endif
             return CoreApp_HandleCMNotify(pMe, pNotify);
 
         case AEECLSID_BATTERYNOTIFIER:
@@ -1091,12 +1140,21 @@ static boolean CoreApp_HandleNotify(CCoreApp * pMe, AEENotify *pNotify)
     
     return FALSE;
 }
+#ifdef FEATURE_ICM
 static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEECMSSEventData *ss)
+#else
+static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEETSSEventData *ss)
+#endif
 {
     switch (ss->ss_info.srv_status)
     {
+#ifdef FEATURE_ICM
         case AEECM_SRV_STATUS_SRV:
         case AEECM_SRV_STATUS_LIMITED:
+#else
+        case AEET_SRV_STATUS_SRV:
+        case AEET_SRV_STATUS_LIMITED:
+#endif
         {
             if(pMe->m_pIAnn == NULL)
             {
@@ -1105,15 +1163,25 @@ static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEECMSSEventData *ss)
 
             switch (ss->ss_info.roam_status)
             {
+#ifdef FEATURE_ICM
                 case AEECM_ROAM_STATUS_OFF:
+#else
+                case AEET_ROAM_STATUS_OFF:
+#endif
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP/*ANNUN_FIELD_ROAM*/, ANNUN_STATE_ROAM_OFF/*ANNUN_STATE_OFF*/);
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_ROAM_STATUS_ON:
+#else
+                case AEET_ROAM_STATUS_ON:
+#endif
                     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP/*ANNUN_FIELD_ROAM*/, ANNUN_STATE_ROAM_ON/*ANNUN_STATE_ON*/);
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_ROAM_STATUS_BLINK:
+#else
+                case AEET_ROAM_STATUS_BLINK:
+#endif
                     //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ROAM, ANNUN_STATE_BLINK);
                     break;
                     
@@ -1123,9 +1191,13 @@ static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEECMSSEventData *ss)
             }
             break;
         }
-        
+#ifdef FEATURE_ICM
         case AEECM_SRV_STATUS_NO_SRV:
         case AEECM_SRV_STATUS_PWR_SAVE:
+#else
+        case AEET_SRV_STATUS_NO_SRV:
+        case AEET_SRV_STATUS_PWR_SAVE:
+#endif
             if(pMe->m_pIAnn == NULL)
             {
                 return ;
@@ -1159,10 +1231,16 @@ static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEECMSSEventData *ss)
 ==============================================================================*/
 static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 {
+#ifdef FEATURE_ICM
     AEECMSysMode SysMode;
     boolean  bUpdate = FALSE;
     AEECMNotifyInfo *pEvtInfo;
-   
+#else
+    AEETSysMode SysMode;
+    boolean  bUpdate = FALSE;
+    AEETNotifyInfo *pEvtInfo;
+#endif
+
     if (NULL == pNotify)
     {
         return FALSE;
@@ -1174,10 +1252,18 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
     
     switch (pNotify->dwMask)
     {
+#ifdef FEATURE_ICM
     case NMASK_CM_DATA_CALL:
+#else
+    case AEET_NMASK_DATA_CALL:
+#endif
             switch (pEvtInfo->event)
             {
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_CALL_CONNECT:
+#else
+                case AEET_EVENT_CALL_CONNECT:
+#endif
                     if(pMe->m_pIAnn != NULL)
                     {
                         IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_ON);
@@ -1191,7 +1277,11 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_ON);                   
                     break;
 #endif
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_CALL_END: 
+#else
+                case AEET_EVENT_CALL_END: 
+#endif
                     if(pMe->m_pIAnn != NULL)
                     {
                         IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_1X_OFF);   
@@ -1199,12 +1289,25 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                     break;
             }
             break;
+#ifdef FEATURE_ICM
        case NMASK_CM_SS:
+#else
+       case AEET_NMASK_SS:
+#endif
             switch (pEvtInfo->event)
             {
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_SS_SRV_CHANGED:
                 case AEECM_EVENT_SS_RSSI:
+#else
+                case AEET_EVENT_SS_SRV_CHANGED:
+                case AEET_EVENT_SS_RSSI:
+#endif
+#ifdef FEATURE_ICM
                     if (SysMode == AEECM_SYS_MODE_NO_SRV)
+#else
+                    if (SysMode == AEET_SYS_MODE_NO_SRV)
+#endif
                     {
                         pMe->m_SYS_MODE_NO_SRV = TRUE;
                         if(pMe->m_pIAnn != NULL)
@@ -1216,7 +1319,11 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 #endif
                         bUpdate = TRUE;
                     }
+#ifdef FEATURE_ICM
                     else if (AEECM_SYS_MODE_NONE != SysMode)
+#else
+                    else if (AEET_SYS_MODE_NONE != SysMode)
+#endif
                     {
                         if (pMe->m_bAcquiredTime == FALSE)
                         {
@@ -1252,33 +1359,53 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 
                     CoreApp_Process_SS_info(pMe,&pEvtInfo->event_data.ss);
                     break;
-                    
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_SS_HDR_RSSI:
                     break;
-                    
+#endif
                 default:
                     break;
             }
             break;
-            
+#ifdef FEATURE_ICM
         case NMASK_CM_PHONE:
+#else
+        case AEET_NMASK_PHONE:
+#endif
             switch(pEvtInfo->event)
             {
                 // System preference changed
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_SYSTEM_PREF:
+#else
+                case AEET_EVENT_PH_SYSTEM_PREF:
+#endif
                     return TRUE;
 
                 // PLMN: Subscription info available
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_SUBSCRIPTION:
+#else
+                case AEET_EVENT_PH_SUBSCRIPTION:
+#endif
                     return TRUE;
 
                 // CDMA lock mode was changed
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_CDMA_LOCK_MODE:
                 case AEECM_EVENT_PH_FUNDS_LOW:
+#else
+                case AEET_EVENT_PH_CDMA_LOCK_MODE:
+                case AEET_EVENT_PH_FUNDS_LOW:
+#endif
                     return TRUE;
 
                 // NAM selection was changed
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_NAM_SEL:
+#else
+                case AEET_EVENT_PH_NAM_SEL:
+#endif
                     // Reset the date, operator name
                     {
                         int nErr;
@@ -1297,55 +1424,100 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                     return TRUE;
 
                 // Current NAM was changed
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_CURR_NAM:
+#else
+                case AEET_EVENT_PH_CURR_NAM:
+#endif
                     (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
                     return TRUE;
 
                 // Answer voice as data was changed.
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_ANSWER_VOICE:
+#else
+                case AEET_EVENT_PH_ANSWER_VOICE:
+#endif
                     return TRUE;
 
                 // Entering powerdown sleep mode
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_STANDBY_SLEEP:
+#else
+                case AEET_EVENT_PH_STANDBY_SLEEP:
+#endif
                     return TRUE;
 
                 // Existing powerdown sleep mode
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_STANDBY_WAKE:
+#else
+                case AEET_EVENT_PH_STANDBY_WAKE:
+#endif
                     return TRUE;
 
                 // DMA maintenance required command
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_MAINTREQ:
+#else
+                case AEET_EVENT_PH_MAINTREQ:
+#endif
                     return TRUE;
 
                 // In use state was changed
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_IN_USE_STATE:
+#else
+                case AEET_EVENT_PH_IN_USE_STATE:
+#endif
                     return TRUE;
 
                 // Phone information is now available
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_INFO_AVAIL:
+#else
+                case AEET_EVENT_PH_INFO_AVAIL:
+#endif
                     if (!pMe->m_bProvisioned) {
                        InitAfterPhInfo(pMe, pEvtInfo->event_data.ph.oprt_mode);
                     }
                     return TRUE;
 
                 // Operating mode was changed
+#ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_OPRT_MODE:
+#else
+                case AEET_EVENT_PH_OPRT_MODE:
+#endif
                     /* continue processing of the event, e.g., update banner etc
                        this is done regardless of whether we are in the Test Mode
                        dialog or not */
                     switch (pEvtInfo->event_data.ph.oprt_mode)
                     {
+#ifdef FEATURE_ICM
                     case AEECM_OPRT_MODE_FTM:
+#else
+                    case AEET_OPRT_MODE_FTM:
+#endif
                       return CoreApp_ProcessFTMMode(pMe);
-                      
+#ifdef FEATURE_ICM
                     case AEECM_OPRT_MODE_OFFLINE:
+#else
+                    case AEET_OPRT_MODE_OFFLINE:
+#endif
                       return CoreApp_ProcessOffLine(pMe);
-                      
+#ifdef FEATURE_ICM
                     case AEECM_OPRT_MODE_ONLINE:
+#else
+                    case AEET_OPRT_MODE_ONLINE:
+#endif
                       CoreApp_ProcessSubscriptionStatus(pMe);
                       return TRUE;
-                      
+#ifdef FEATURE_ICM
                     case AEECM_OPRT_MODE_LPM:
+#else
+                    case AEET_OPRT_MODE_LPM:
+#endif 
                       return TRUE;
                       
                     default:
@@ -1717,7 +1889,7 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
 {
     int nRet;
     uint32 dwMask;
-    
+#ifdef FEATURE_ICM
     // register with ICM
     dwMask = NMASK_CM_PHONE|NMASK_CM_SS|NMASK_CM_DATA_CALL;
     //dwMask = NMASK_CM_PHONE|NMASK_CM_SS;
@@ -1725,6 +1897,15 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
                                  AEECLSID_CORE_APP, 
                                  AEECLSID_CM_NOTIFIER, 
                                  dwMask);
+#else
+    // register with ICM
+    dwMask = AEET_NMASK_PHONE|AEET_NMASK_SS|AEET_NMASK_DATA_CALL;
+    //dwMask = NMASK_CM_PHONE|NMASK_CM_SS;
+    nRet = ISHELL_RegisterNotify(pMe->a.m_pIShell, 
+                                 AEECLSID_CORE_APP, 
+                                 AEECLSID_PHONENOTIFIER, 
+                                 dwMask);
+#endif
     if (nRet != SUCCESS) 
     {
         return FALSE;
@@ -1775,6 +1956,7 @@ boolean CoreApp_RegisterNotify(CCoreApp *pMe)
 boolean CoreApp_InitExtInterface(CCoreApp *pMe)
 {
     int nRet;
+#ifdef FEATURE_ICM
     AEECMPhInfo phInfo;
     
     pMe->m_bProvisioned = FALSE;
@@ -1795,6 +1977,52 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe)
     /* If phone info is available, do not wait for PH_INFO_AVAIL event for
        * starting provisioning */
     if (!pMe->m_bProvisioned && (SUCCESS == ICM_GetPhoneInfo(pMe->m_pCM, &phInfo, sizeof(AEECMPhInfo))))
+#else
+    AEETPhInfo phInfo;
+    
+    pMe->m_bProvisioned = FALSE;
+    // 创建 ICM 接口
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_TELEPHONE,
+                                 (void **) &pMe->m_pITelephone);
+    if (nRet != SUCCESS) 
+    {
+        return FALSE;
+    }
+    if (pMe->m_pITelephone == NULL) 
+    {
+        return FALSE;
+    }	
+
+	nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_CALLMGR,
+                                 (void **) &pMe->m_pICallMgr);
+	if (nRet != SUCCESS) 
+    {
+        return FALSE;
+    }
+    if (pMe->m_pICallMgr == NULL) 
+    {
+        return FALSE;
+    }
+	
+    nRet = ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                 AEECLSID_PHONECTL,
+                                 (void **) &pMe->m_pIPhoneCtl);
+	if (nRet != SUCCESS) 
+    {
+        return FALSE;
+    }
+    if (pMe->m_pIPhoneCtl == NULL) 
+    {
+        return FALSE;
+    }
+	
+    IPHONECTL_SetRSSIDeltaThreshold(pMe->m_pIPhoneCtl, 5);
+    /* If phone info is available, do not wait for PH_INFO_AVAIL event for
+       * starting provisioning */
+    if (!pMe->m_bProvisioned && (SUCCESS == ITELEPHONE_GetPhoneInfo(pMe->m_pITelephone, &phInfo, sizeof(AEETPhInfo))))
+#endif
     {
         InitAfterPhInfo(pMe, phInfo.oprt_mode);
     }
@@ -1927,7 +2155,11 @@ static void CoreApp_PoweronStartApps(CCoreApp *pMe)
 #endif
 
 #ifdef FEATURE_KEYGUARD
+#ifdef FEATURE_ICM
     OEMKeyguard_Init(pMe->a.m_pIShell,pMe->m_pCM,pMe->m_pAlert,pMe->m_pIAnn);
+#else
+    OEMKeyguard_Init(pMe->a.m_pIShell,pMe->m_pITelephone,pMe->m_pAlert,pMe->m_pIAnn);
+#endif
 #endif
     
     bRun = TRUE;
@@ -2034,7 +2266,7 @@ static void CCharger_BlinkLowBattIcon(void *pUser)
 
     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_LOW);
 }
-
+#ifdef FEATURE_ICM
 /*=============================================================================
 FUNCTION: CoreApp_IsEmergencyMode
 
@@ -2076,6 +2308,49 @@ boolean CoreApp_IsEmergencyMode(ICM* pICM)
     }
     MSG_FATAL("CoreApp_IsEmergencyMode End",0,0,0); 
 }
+#else
+/*=============================================================================
+FUNCTION: CoreApp_IsEmergencyMode
+
+DESCRIPTION: Check if the  phone  is emergency mode
+
+PARAMETERS:
+    m_pITelephone            :  [IN] m_pITelephone Instance
+
+RETURN VALUE:
+    boolean         : return TRUE if phone  is in emergency mode
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+boolean CoreApp_IsEmergencyMode(ITelephone* pITelephone)
+{
+    AEETPhInfo phoneInfo;
+    MSG_FATAL("CoreApp_IsEmergencyMode Start",0,0,0);
+    
+    //PRINT_FUNCTION_NAME();
+
+    if (!pITelephone)
+    {
+        return FALSE;
+    }
+
+    ITELEPHONE_GetPhoneInfo(pITelephone, &phoneInfo, sizeof(phoneInfo));
+    if (phoneInfo.mode_pref == AEET_MODE_PREF_EMERGENCY)
+    {
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
+    MSG_FATAL("CoreApp_IsEmergencyMode End",0,0,0); 
+}
+#endif
 #ifdef FEATRUE_AUTO_POWER
 static void CoreApp_Process_AutoPower_Event(void *pUser)
 {
@@ -2573,6 +2848,15 @@ static void CoreAppReadNVKeyBeepValue(CCoreApp *pMe)
 }
 
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
+extern nv_stat_enum_type ui_get_nv(
+  nv_items_enum_type item,        /* which item */
+  nv_item_type *data_ptr          /* pointer to space for item */
+);
+extern nv_stat_enum_type ui_put_nv(
+  nv_items_enum_type item,        /* which item */
+  nv_item_type *data_ptr          /* pointer to data for item */
+);
+
 /*===========================================================================
 FUNCTION GetRTREConfig
 
@@ -2628,20 +2912,36 @@ boolean SetRTREConfig(CCoreApp *pMe, uint64 nNewSetting)
   {
 #ifdef FEATURE_UIM_RUIM_W_GSM_ACCESS
     case NV_RTRE_CONFIG_SIM_ACCESS:
+#ifdef FEATURE_ICM
       retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_SIM_ACCESS);
+#else
+      retVal = IPHONECTL_SetRTREConfig(pMe->m_pIPhoneCtl, AEECM_RTRE_CONFIG_SIM_ACCESS);
+#endif
       break;
 #endif
     case NV_RTRE_CONFIG_RUIM_ONLY:
+#ifdef FEATURE_ICM
       retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_RUIM_ONLY);
+#else
+      retVal = IPHONECTL_SetRTREConfig(pMe->m_pIPhoneCtl, AEET_RTRE_CONFIG_RUIM_ONLY);
+#endif
       break;
       
     case NV_RTRE_CONFIG_NV_ONLY:
+#ifdef FEATURE_ICM
       retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_NV_ONLY);
+#else
+      retVal = IPHONECTL_SetRTREConfig(pMe->m_pIPhoneCtl, AEET_RTRE_CONFIG_NV_ONLY);
+#endif
       break;
       
     case NV_RTRE_CONFIG_RUIM_OR_DROP_BACK:
     default:
+#ifdef FEATURE_ICM
       retVal = ICM_SetRTREConfig(pMe->m_pCM, AEECM_RTRE_CONFIG_RUIM_OR_DROP_BACK);
+#else
+      retVal = IPHONECTL_SetRTREConfig(pMe->m_pIPhoneCtl, AEET_RTRE_CONFIG_RUIM_OR_DROP_BACK);
+#endif
       break;
   }
   return (retVal == AEE_SUCCESS) ? TRUE : FALSE;
@@ -2689,6 +2989,7 @@ DEPENDENCIES
 SIDE EFFECTS
   None
 ===========================================================================*/
+#ifdef FEATURE_ICM
 void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode)
 {
   if (pMe == NULL)
@@ -2723,7 +3024,43 @@ void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode)
   }
   pMe->m_bProvisioned = TRUE;
 }
+#else
+void InitAfterPhInfo(CCoreApp *pMe, AEETOprtMode mode)
+{
+  if (pMe == NULL)
+  {
+    //CORE_ERR("Null pMe",0,0,0);
+    return;
+  }
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+  /* Send RTRE config changed to CM - response from CM will */
+  /* generate subscription changed event */
+  SendRTREConfig(pMe);
+#endif
 
+  //Change modes if we're provisioned properly.
+  if (mode != AEET_OPRT_MODE_FTM)
+  {  
+    extern boolean ui_check_provisioning(void);
+    if (ui_check_provisioning() && mode != AEET_OPRT_MODE_OFFLINE &&
+        mode != AEET_OPRT_MODE_OFFLINE_CDMA &&
+        mode != AEET_OPRT_MODE_OFFLINE_AMPS) {
+      //ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_ONLINE);
+      ISHELL_PostEventEx (pMe->a.m_pIShell, EVTFLG_ASYNC, AEECLSID_CORE_APP,
+                          EVT_SET_OPERATING_MODE,AEET_OPRT_MODE_ONLINE,0L);
+    }
+    else
+    {
+      IPHONECTL_SetOperatingMode(pMe->m_pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
+    }
+  }
+  else
+  {
+    IPHONECTL_SetOperatingMode(pMe->m_pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
+  }
+  pMe->m_bProvisioned = TRUE;
+}
+#endif
 /*=============================================================================
 FUNCTION: ProcessSubscriptionStatus
 
@@ -2748,9 +3085,12 @@ void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe)
     {
         bSubAvail = FALSE;
     } /* pin is not permanently disabled */
-    
+#ifdef FEATURE_ICM
     //CORE_ERR("CoreApp_ProcessSubscriptionStatus", 0, 0, 0);
     ICM_SetSubscriptionStatus(pMe->m_pCM, AEECM_SYS_MODE_CDMA, bSubAvail);
+#else
+    IPHONECTL_SetSubscriptionStatus(pMe->m_pIPhoneCtl, AEET_SYS_MODE_CDMA, bSubAvail);
+#endif
 }
 
 /*=============================================================================

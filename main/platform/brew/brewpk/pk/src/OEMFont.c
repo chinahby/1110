@@ -713,7 +713,7 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe,  int x, const AECHAR *pcText
 {
     int          nWidth;
     int          xMax;
-    MSG_FATAL("OEMFont_MeasureTextCursorPos Start",0,0,0);
+    
     if(!prcClip)
     {
         return EMEMPTR;
@@ -767,7 +767,7 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe,  int x, const AECHAR *pcText
 
     xMax = prcClip->x + prcClip->dx - 1;
     ArphicLineCursorMeasure (pcText, nChars, x, xMax, dwFlags, curx, LineCursor);
-    MSG_FATAL("OEMFont_MeasureTextCursorPos End",0,0,0);
+
     return SUCCESS;
 }
 

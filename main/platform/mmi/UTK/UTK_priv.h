@@ -73,7 +73,12 @@
 #include "appscommonimages.brh"
 #include "OEMCFGI.h"
 #include "CallApp.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "OEMSound.h"
 #include "OEMConfig.h"
 #include "AEEAnnunciator.h"
@@ -156,7 +161,13 @@ typedef struct _CUTK
 
     IConfig        *m_pConfig;
 
+#ifdef FEATURE_ICM
     ICM            *m_pCM;
+#else
+    ITelephone            *m_pITelephone;
+	IPhoneCtl             *m_pIPhoneCtl;
+#endif
+
 #ifdef FEATURE_UIM_TOOLKIT_UTK
     uim_tk_proactive_cmd_enum_type   cmd_type;
 #endif

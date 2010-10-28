@@ -774,6 +774,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 {
                     if(pMe->m_nMsgID ==IDS_EXIT_EMERGENCY_MODE)
                     {
+#ifdef FEATURE_ICM
                         //exit the emergency mode
                         ICM_SetSystemPreference(pMe->m_pCM,
                                                         AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
@@ -781,6 +782,21 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                                                         AEECM_ROAM_PREF_NO_CHANGE, AEECM_HYBR_PREF_NO_CHANGE,
                                                         AEECM_SRV_DOMAIN_PREF_NO_CHANGE, AEECM_NETWORK_SEL_MODE_PREF_NO_CHANGE,
                                                         NULL, NULL, NULL);
+#else
+                    	AEETSystemPreference tSysPref={
+														AEET_MODE_PREF_PERSISTENT, 
+														AEET_PREF_TERM_PERMANENT,
+														0,
+								                        AEET_GW_ACQ_ORDER_PREF_NO_CHANGE,
+								                        AEET_BAND_PREF_NO_CHANGE,
+								                        AEET_ROAM_PREF_NO_CHANGE, 
+								                        AEET_HYBR_PREF_NO_CHANGE,
+								                        AEET_SRV_DOMAIN_PREF_NO_CHANGE, 
+								                        AEET_NETWORK_SEL_MODE_PREF_NO_CHANGE,
+							                            {0xFF,0xFF,0xFF}};  /*if we don,t use plmn set it to 0xff,0xff,0xff*/
+		                //exit the emergency mode
+		                IPHONECTL_SetSystemPreference(pMe->m_pIPhoneCtl,NULL,&tSysPref,sizeof(AEETSystemPreference),NULL);
+#endif
                         pMe->m_bemergencymode = FALSE;
                     }
 #ifdef FEATRUE_AUTO_POWER
@@ -4735,7 +4751,6 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
                              (void*)pMe);
 #else
         {
-            MSG_FATAL("CoreApp_PlayPwrOnAni 3",0,0,0);
             #define PWRON_STR L"Welcome"
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
@@ -5346,10 +5361,17 @@ void CoreApp_Poweroff_Phone(void *pp)
                                  AEECLSID_CORE_APP,
                                  AEECLSID_BATTERYNOTIFIER,
                                  0);
+#ifdef FEATURE_ICM
     (void) ISHELL_RegisterNotify(pMe->a.m_pIShell, 
                                  AEECLSID_CORE_APP, 
                                  AEECLSID_CM_NOTIFIER, 
                                  0);
+#else
+    (void) ISHELL_RegisterNotify(pMe->a.m_pIShell, 
+                                 AEECLSID_CORE_APP, 
+                                 AEECLSID_PHONENOTIFIER, 
+                                 0);
+#endif
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 
     // Turn off RSSI indicator
@@ -5360,7 +5382,11 @@ void CoreApp_Poweroff_Phone(void *pp)
     }
     //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
     //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+#ifdef FEATURE_ICM
     ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_PWROFF);
+#else
+    IPHONECTL_SetOperatingMode(pMe->m_pIPhoneCtl, AEET_OPRT_MODE_PWROFF);
+#endif
     CoreTask_SetPwrDnComplete(TRUE);
 }
 

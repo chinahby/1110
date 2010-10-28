@@ -61,7 +61,7 @@ extern AEEConstFile gVIEWAPP_MIF;
 //entries for pdiparsers & vCalStore
 #if !defined(AEE_SIMULATOR)
 #ifndef FEATURE_MANGO_BREW
-#ifndef FEATURE_W021_LOW_MEMORY
+#ifndef FEATURE_USES_LOWMEM
 extern AEEConstFile gAEEVCALSTORE_MIF;
 extern AEEConstFile gAEEVCALSTORE_MOD;
 extern AEEConstFile gAEEPDIPARSERS_MIF;
@@ -72,7 +72,7 @@ extern AEEConstFile gAEEPDIPARSERS_MOD;
 
 // Const MIF files for MCF
 #ifndef FEATURE_MANGO_BREW
-#ifndef FEATURE_W021_LOW_MEMORY
+#ifndef FEATURE_USES_LOWMEM
 extern AEEConstFile g10888_MIF;
 extern AEEConstFile g10889_MIF;
 extern AEEConstFile g10890_MIF;
@@ -97,7 +97,7 @@ extern AEEConstFile gQTCAM_MIF;
 
 // const MIF files for USB Host Mass Storage
 #ifndef FEATURE_MANGO_BREW
-#ifndef FEATURE_W021_LOW_MEMORY
+#ifndef FEATURE_USES_LOWMEM
 extern AEEConstFile g26108_MIF;
 extern AEEConstFile g26109_MIF;
 #endif /*FEATURE_W021_LOW_MEMORY*/
@@ -131,7 +131,7 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
 #ifndef CUST_EDITION
                                                             // Const MIF files for MCF
 #ifndef FEATURE_MANGO_BREW
-#ifndef FEATURE_W021_LOW_MEMORY
+#ifndef FEATURE_USES_LOWMEM
 
                                                             &g10888_MIF,
                                                             &g10889_MIF,
@@ -161,7 +161,7 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
 
 #ifndef CUST_EDITION
 #ifndef FEATURE_MANGO_BREW                                                            // Const MIF files for USB Host Mass Storage
-#ifndef FEATURE_W021_LOW_MEMORY															
+#ifndef FEATURE_USES_LOWMEM															
                                                             &g26108_MIF,
                                                             &g26109_MIF,
 #if !defined(AEE_SIMULATOR)

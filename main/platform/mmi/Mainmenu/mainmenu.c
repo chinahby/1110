@@ -391,7 +391,18 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {
         return EFAILED;
     }
-    
+	
+    if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                            AEECLSID_ANNUNCIATOR,
+                                            (void **)&pMe->m_pIAnn))
+    {    	
+        return EFAILED;
+    }
+
+	if (pMe->m_pIAnn != NULL)
+	{
+		IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	}
     return SUCCESS;
 }
 
@@ -424,6 +435,12 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
     {
         (void) IDISPLAY_Release(pMe->m_pDisplay);
         pMe->m_pDisplay = NULL;
+    }
+	
+	if (pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+		pMe->m_pIAnn = NULL;
     }
 
     //释放图片资源
@@ -896,7 +913,8 @@ DESCRIPTION:   列表菜单
 PARAMETERS:
 
 =============================================================================*/
-
+#include "err.h"
+#include "msg.h"
 static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     PARAM_NOT_REF(dwParam)
@@ -910,17 +928,28 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+						//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MAINMENU_RES_FILE_LANG,                                
+                        IDS_MENU_LIST,
+                        WTitle,
+                        sizeof(WTitle));
+				MSG_FATAL("WTitle = %c %c",WTitle[0],WTitle[1],0);
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);				
+				IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+            }
      //       ERR("MainMenu_ListMenuHandler EVT_DIALOG_INIT",0,0,0);
-            IMENUCTL_SetTitle(pMenu, MAINMENU_RES_FILE_LANG, IDS_MENU_LIST, NULL);                
+            //IMENUCTL_SetTitle(pMenu, MAINMENU_RES_FILE_LANG, IDS_MENU_LIST, NULL);                
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_1, IDS_MAIN_MENU_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_2, IDS_MAIN_MENU_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_3, IDS_MAIN_MENU_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_4, IDS_MAIN_MENU_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_5, IDS_MAIN_MENU_TITLE_5, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_5, IDS_MAIN_MENU_TITLE_5, NULL, 0);			
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_6, IDS_MAIN_MENU_TITLE_6, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_7, IDS_MAIN_MENU_TITLE_7, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_8, IDS_MAIN_MENU_TITLE_8, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_9, IDS_MAIN_MENU_TITLE_9, NULL, 0);
+
            // IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
@@ -1013,10 +1042,8 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 case IDS_MAIN_MENU_TITLE_3:
                 case IDS_MAIN_MENU_TITLE_4:
                 case IDS_MAIN_MENU_TITLE_5:
-                case IDS_MAIN_MENU_TITLE_6:
-                case IDS_MAIN_MENU_TITLE_7:
-                case IDS_MAIN_MENU_TITLE_8:
-                case IDS_MAIN_MENU_TITLE_9:
+				case IDS_MAIN_MENU_TITLE_6:
+				case IDS_MAIN_MENU_TITLE_7:
                     StartApplet(pMe, wParam - IDS_MAIN_MENU_TITLE_1);
                     return TRUE;
             }
@@ -1065,23 +1092,19 @@ static boolean StartApplet(MainMenu *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
             break;
         case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
-            break;
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
+            break;   
+
         case 4:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
-            break;
-        case 5:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-            break;    
-        case 6:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
-        case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-            break;
-        case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_DISPLAYMENU);
-            break;
+		case 5:
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+			break;
+
+        case 6:			
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            break;			
 
     }
     return TRUE;

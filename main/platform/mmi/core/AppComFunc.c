@@ -1770,14 +1770,19 @@ SIDE EFFECTS:
   None
 
 =============================================================================*/
+#ifdef FEATURE_ICM
 boolean IsCallActive (AEECMCallType calltype)
+#else
+boolean IsCallActive (AEETCallType calltype)
+#endif
 {  
   IShell *pIShell=NULL;
   int nCalls = 0;
   pIShell = AEE_GetShell();
   if (!pIShell)
     return FALSE;
-#ifndef FEATURE_MANGO_BREW
+//#ifndef FEATURE_MANGO_BREW
+#ifndef FEATURE_USES_LOWMEM
   {
      ICM *pICM=NULL;
      ISHELL_CreateInstance(pIShell, AEECLSID_CM, (void **) &pICM);

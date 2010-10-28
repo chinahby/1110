@@ -40,7 +40,9 @@ when       who     what, where, why
 /* -----------------------------------------------------------------------
 ** Data Services
 ** ----------------------------------------------------------------------- */
+#ifndef FEATURE_USES_LOWMEM
 #define FEATURE_DS
+#endif
 
 #ifdef FEATURE_DS
    /* Turn on old data api */

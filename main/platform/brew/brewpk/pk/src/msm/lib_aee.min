@@ -50,6 +50,21 @@ QCTLIBS :=\
 	$(BREW_LIB)/aeebattery.lib \
 	$(BREW_LIB)/others.lib 
 else
+ifeq ($(USES_LOWMEM),yes)
+QCTLIBS :=\
+	$(QCTLIBS) \
+	$(BREW_LIB)/aee.lib \
+	$(BREW_LIB)/aeeaddrbk.lib \
+	$(BREW_LIB)/aeebattery.lib \
+	$(BREW_LIB)/aeecontrols.lib \
+	$(BREW_LIB)/aeedb.lib \
+	$(BREW_LIB)/aeemm.lib \
+	$(BREW_LIB)/aeesecurity.lib \
+	$(BREW_LIB)/aeesms.lib \
+	$(BREW_LIB)/aeetapi.lib \
+	$(BREW_LIB)/a1litesignal.lib \
+	$(BREW_LIB)/others.lib
+else
 QCTLIBS :=\
 	$(QCTLIBS) \
 	$(BREW_LIB)/aee.lib \
@@ -79,7 +94,8 @@ QCTLIBS :=\
 	$(BREW_LIB)/aeeweb.lib \
 	$(BREW_LIB)/a1litesignal.lib \
 	$(BREW_LIB)/brew.lib
-   
+endif
+
 ifeq ($(USES_BREW_PREFIX_LIBS), yes)
     QCTLIBS +=\
 	$(BREW_LIB)/AEEPrefixLibs/aeebci.lib \
@@ -106,4 +122,4 @@ endif
 ifeq ($(USES_JOYST),yes)
         QCTLIBS += $(BREW_LIB)/aeejoystick.lib
 endif
-endif
+endif 

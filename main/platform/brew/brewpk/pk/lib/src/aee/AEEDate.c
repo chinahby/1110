@@ -370,7 +370,7 @@ int DateCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
       IIMAGE_SetParm(pme->m_pFont, IPARM_CXFRAME, IMAGE_WIDTH, 0);
 #ifdef CUST_EDITION	   
 #ifdef FEATURE_CALENDAR_USE_STYLE
-   pme->m_pBgImage = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BGMASK);//modi by yangdecai
+   pme->m_pBgImage = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modi by yangdecai
 #endif
 #endif /*CUST_EDITION*/
    *ppobj = (IDateCtl*)pme;

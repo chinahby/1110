@@ -41,7 +41,12 @@ INCLUDE FILES FOR MODULE
 #include "OEMConfig.h"
 #include "OEMHeap.h"
 #include "AEE_OEMDispatch.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "ui.h"
 #include "Task.h"
 /*===========================================================================
@@ -811,7 +816,11 @@ void OEMRTC_Free_All_Node(void)
 
 void OEMRTC_Phone_Reset(void *ppp)
 {
+#ifdef FEATURE_ICM
     ICM *pIcm = NULL;
+#else
+	IPhoneCtl *pIPhoneCtl = NULL;
+#endif
     IShell *pShell =(IShell*) ppp;
     uint32 time = 0;
     boolean flag = FALSE;
@@ -819,15 +828,23 @@ void OEMRTC_Phone_Reset(void *ppp)
     {
         return;
     }
+#ifdef FEATURE_ICM
     if(ISHELL_CreateInstance(pShell ,AEECLSID_CM,(void **) &pIcm) != SUCCESS)
+#else
+	if(ISHELL_CreateInstance(pShell ,AEECLSID_PHONECTL,(void **) &pIPhoneCtl) != SUCCESS)
+#endif
     {
         RTC_ERR("Unable to create ICM interface", 0, 0, 0);
         return;
     }
     OEM_SetConfig(CFGI_ALARM_FLAG, (void*)&flag, sizeof(flag));
+#ifdef FEATURE_ICM
     ICM_SetOperatingMode(pIcm, AEECM_OPRT_MODE_PWROFF);
     ICM_Release(pIcm);
-
+#else
+    IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_PWROFF);
+    IPHONECTL_Release(pIPhoneCtl);
+#endif
     OEMRTC_hs_bsp_test_rtc_set();
     OEMRTC_hs_bsp_test_rtc_get();
     time = JULIANTOSECONDS((JulianType*)&pm_rtc_time);

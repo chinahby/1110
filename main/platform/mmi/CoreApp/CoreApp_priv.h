@@ -38,7 +38,12 @@
 #include "OEMCFGI.h"
 #include "AEEBattery.h"
 #include "AEERUIM.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "coreapp.brh"
 #ifndef WIN32
 #include "ui.h"
@@ -441,7 +446,13 @@ typedef struct _CCoreApp
     IConfig             *m_pConfig;
     IBattery            *m_pBatt;
     IRUIM               *m_pIRUIM;
+#ifdef FEATURE_ICM
     ICM                 *m_pCM;
+#else
+    ITelephone          *m_pITelephone;
+	ICallMgr            *m_pICallMgr;
+	IPhoneCtl           *m_pIPhoneCtl;
+#endif
     //IPhone       *m_pPhone;
     
     // 当前活动对话框IDialog接口指针
@@ -753,8 +764,11 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe);
 说明      :  函数用于获取COREAPP是否处于IDLE状态
 ==============================================================================*/
 boolean CoreApp_IsIdle(void);
+#ifdef FEATURE_ICM
 boolean CoreApp_IsEmergencyMode(ICM* pICM);
-
+#else
+boolean CoreApp_IsEmergencyMode(ITelephone* pICM);
+#endif
 void CoreApp_UpdateAnnunciator(CCoreApp *pMe);
 
 void CoreApp_Draw_Charger_image(void *pp);
@@ -804,6 +818,10 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe);
 void CoreApp_SendSeamlessSMSTimer(void *pme);
 int  CoreApp_SendSeamlessSMS(CCoreApp *pMe);
 #endif //#ifdef FEATURE_SEAMLESS_SMS
+#ifdef FEATURE_ICM
 void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode);
+#else
+void InitAfterPhInfo(CCoreApp *pMe, AEETOprtMode mode);
+#endif
 void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe);
 #endif

@@ -124,6 +124,7 @@ typedef struct _MainMenu
     
     MainmenuState             m_prevState;        // Applet前一状态
     MainmenuState             m_currState;        // Applet当前状态
+	IAnnunciator        *m_pIAnn;
 
 } MainMenu;
 

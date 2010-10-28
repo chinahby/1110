@@ -2001,7 +2001,7 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
             }
             else
             {
-                pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEXT_BACKGROUND);
+                pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
             }
         }
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
@@ -5695,7 +5695,7 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
         }
         else
         {
-            pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEXT_BACKGROUND);
+            pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
         }
         //chengxiao modify end 2009.04.08
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);

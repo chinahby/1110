@@ -21,7 +21,12 @@
                                  本文件包含的外部文件
 ==============================================================================*/
 #include "SettingMenu_priv.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "CallApp.h"
 #include "OEMRTC.h"
 #include "appscommonimages.brh"
@@ -155,8 +160,11 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
     );
+#ifdef FEATURE_ICM
 void HandleSimChoiceTimer(ICM *m_pICM);
-
+#else
+void HandleSimChoiceTimer(IPhoneCtl *m_pITelephone);
+#endif
 #endif
 #ifdef FEATURE_KEYGUARD
 //对话框 IDD_AKG_MENU 事件处理函数
@@ -237,6 +245,15 @@ static boolean Setting_Handle_ShakeSub(CSettingMenu *pMe,
 	uint32 dwParam
 );
 #endif
+
+
+static boolean Setting_CClockApps_HandleKeyEvent(CSettingMenu *pMe, uint16 wParam);
+
+static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe);
+
+//static boolean Setting_CClockApps_HandleNumKeyEvent(CSettingMenu *pMe, uint16 wParam);
+#endif
+
 static boolean Setting_Handle_CallRestrict(CSettingMenu *pMe,
 	AEEEvent eCode,
 	uint16 wParam,
@@ -263,12 +280,6 @@ static boolean Setting_Handle_Msgbox(CSettingMenu *pMe,
 	uint32 dwParam
 );
 
-static boolean Setting_CClockApps_HandleKeyEvent(CSettingMenu *pMe, uint16 wParam);
-
-static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe);
-
-//static boolean Setting_CClockApps_HandleNumKeyEvent(CSettingMenu *pMe, uint16 wParam);
-#endif
 static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -907,7 +918,6 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 )
 {
-	int rt;
     PARAM_NOT_REF(dwParam)
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
@@ -1255,12 +1265,20 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
 #endif //#ifdef FEATRUE_AUTO_POWER
                     else if(pMe->m_CallSettingSel == IDS_VOICE_PRIVACY)
                     {
+#ifdef FEATURE_ICM
                         if(byte_return == AEECM_PRIVACY_PREF_ENHANCED)    //on
+#else
+                        if(byte_return == AEET_PRIVACY_PREF_ENHANCED)    //on
+#endif
                         {
                             IMENUCTL_SetSel(pMenu, IDS_ENABLE);
                             SetMenuIcon(pMenu, IDS_ENABLE, TRUE);
                         }
+#ifdef FEATURE_ICM
                         else if(byte_return == AEECM_PRIVACY_PREF_STANDARD || byte_return == AEECM_PRIVACY_PREF_NONE)                   //off
+#else
+                        else if(byte_return == AEET_PRIVACY_PREF_STANDARD || byte_return == AEET_PRIVACY_PREF_NONE)
+#endif
                         {
                             IMENUCTL_SetSel(pMenu, IDS_DISABLE);
                             SetMenuIcon(pMenu, IDS_DISABLE, TRUE);
@@ -1366,7 +1384,11 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             return TRUE;
 
                        case IDS_VOICE_PRIVACY:     //voice privacy
+#ifdef FEATURE_ICM
                             callset = AEECM_PRIVACY_PREF_STANDARD;
+#else
+                            callset = AEET_PRIVACY_PREF_STANDARD;
+#endif
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)
                             return TRUE;
@@ -1437,7 +1459,11 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             return TRUE;
 
                         case IDS_VOICE_PRIVACY:     //voice privacy
+#ifdef FEATURE_ICM
                             callset = AEECM_PRIVACY_PREF_ENHANCED;
+#else
+                            callset = AEET_PRIVACY_PREF_ENHANCED;
+#endif
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)
                             return TRUE;
@@ -3240,12 +3266,22 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
     return FALSE;
     
 }
+
+#ifdef FEATURE_ICM
 void HandleSimChoiceTimer(ICM *m_pICM)
 {
 	ICM_SetOperatingMode(m_pICM, AEECM_OPRT_MODE_RESET);
     ICM_Release(m_pICM);
     m_pICM = NULL;
 }
+#else
+void HandleSimChoiceTimer(IPhoneCtl *m_pIPhoneCtl)
+{
+	IPHONECTL_SetOperatingMode(m_pIPhoneCtl, AEET_OPRT_MODE_RESET);
+    IPHONECTL_Release(m_pIPhoneCtl);
+    m_pIPhoneCtl = NULL;
+}
+#endif
 
 static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
     AEEEvent eCode,
@@ -3295,26 +3331,41 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
 				case AVK_SELECT:
                 {
                     nv_item_type nviNew;
+#ifdef FEATURE_ICM
                     ICM *pICM = NULL;
+#else
+                    IPhoneCtl *pIPhoneCtl = NULL;
+#endif
                     int nReturnStatus = -1;    
                     MSG_FATAL("HandleSimChoiceEvent AVK_SEND",0,0,0);
 
                     MSG_FATAL("HandleSimChoiceEvent:::::22222 sim_select=%d",pMe->nviNewSimChoice.sim_select,0,0);
                     (void)OEMNV_Put(NV_SIM_SELECT_I,&pMe->nviNewSimChoice);
                     pMe->nviOldSimChoice.sim_select = pMe->nviNewSimChoice.sim_select;
-
+#ifdef FEATURE_ICM
                     nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CM, (void **) &pICM);   
                     if((pICM == NULL) || (SUCCESS != nReturnStatus))
+#else
+                    nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_PHONECTL, (void **) &pIPhoneCtl);   
+                    if((pIPhoneCtl == NULL) || (SUCCESS != nReturnStatus))
+#endif
                     {
                         MSG_FATAL("HandleSimDialogEvent:::::33333 ICM cerate Failed",0,0,0);
                         return FALSE;
-                    }                    
+                    }
+#ifdef FEATURE_ICM
                     ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_OFFLINE);
 					(void)ISHELL_SetTimer(pMe->m_pShell,
                                 500,
                                 (PFNNOTIFY)HandleSimChoiceTimer,
                                 pICM);
-                    
+#else
+                    IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
+					(void)ISHELL_SetTimer(pMe->m_pShell,
+                                500,
+                                (PFNNOTIFY)HandleSimChoiceTimer,
+                                pIPhoneCtl);
+#endif
                     MSG_FATAL("HandleSimChoiceEvent AVK_SEND2",0,0,0);
                     return TRUE;                  
                 }
@@ -3748,7 +3799,11 @@ static void SettingMenu_MakeForwardCall(CSettingMenu *pMe,char *Number)
 {
     if((pMe->m_pShell) && (Number))
     {
+#ifdef FEATURE_ICM
         AECHAR w_buf[AEECM_MAX_DIGITS_LENGTH] = {0};
+#else
+        AECHAR w_buf[AEET_MAX_DIGITS_LENGTH] = {0};
+#endif
         ICallApp         *pCallApp = NULL;
         if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
                                                         AEECLSID_DIALER,

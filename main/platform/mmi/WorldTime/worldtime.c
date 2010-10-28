@@ -295,11 +295,7 @@ static boolean InitWorldTime(CWorldTime *pme)
     if( SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell, AEECLSID_LISTCTL, (void **) &pme->m_pMenuCity) ||
         NULL    == ( pme->m_pImageBg = ISHELL_LoadResImage(pme->a.m_pIShell, WORLDTIME_IMAGES_RES_FILE, IDI_MAP)) ||
         NULL    == ( pme->m_pImageBar = ISHELL_LoadResImage(pme->a.m_pIShell, WORLDTIME_IMAGES_RES_FILE, IDI_BAR)) ||
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-        NULL    == ( pme->m_backGround= ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND)) ||  //modified by yangdecai
-#else
         NULL    == ( pme->m_backGround= ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND)) ||
-#endif
         NULL    == ( pme->m_leftArrow  = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW)) ||
         NULL    == ( pme->m_rightArrow = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW))
         )

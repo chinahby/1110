@@ -42,7 +42,7 @@ when       who     what, where, why
 #define FEATURE_JPEG_ENCODER
 #endif
 
-#ifndef FEATURE_W021_LOW_MEMORY
+#ifndef FEATURE_USES_LOWMEM
 #define FEATURE_JPEG_DECODER
 #define FEATURE_QCT_JPEG_DECODER // Use the QCT provided JPEG decoder.
 #endif

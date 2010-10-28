@@ -4872,26 +4872,6 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
     {
         IImage*              underline;
         
-		/*
-        if(pme->SetPopMenu == TRUE)
-		{
-            underline = ISHELL_LoadResImage(pme->m_pIShell, 
-                                           AEE_APPSCOMMONRES_IMAGESFILE,
-                                           IDI_UNDERLINE_SHORT);
-        }
-        else if(IS_PROP_SET(pme->m_dwProps, MP_TRANSPARENT_UNSEL)) 
-		{
-            underline = ISHELL_LoadResImage(pme->m_pIShell, 
-                                           AEE_APPSCOMMONRES_IMAGESFILE,
-                                           IDI_UNDERLINE_SHORT);   
-        }
-        else 
-		{
-            underline = ISHELL_LoadResImage(pme->m_pIShell, 
-                                           AEE_APPSCOMMONRES_IMAGESFILE,
-                                           IDI_UNDERLINE);
-        }
-        */
        	//Add By zzg 2010_07_25
         underline = ISHELL_LoadResImage(pme->m_pIShell, 
                                            AEE_APPSCOMMONRES_IMAGESFILE,
@@ -8213,7 +8193,7 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     //Draw shadow for screen
     BgImg = ISHELL_LoadResImage(pme->m_pIShell,
                             AEE_APPSCOMMONRES_IMAGESFILE,
-                            IDB_BGMASK);
+                            IDB_BACKGROUND);
     if(BgImg != NULL)
     {                  
 
@@ -8360,7 +8340,7 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
     }
     else
     #endif
-#endif
+#endif 
     {
        if(pme->m_pBgImage == NULL)
        {

@@ -1359,7 +1359,7 @@ static void popTuningModeSelectMenu( CFmRadio *pMe)
         IMENUCTL_AddItemEx( pMe->m_pMenu, &ai);
     }
 
-    drawImage( pMe, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BGMASK, 0, 0);
+    drawImage( pMe, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND, 0, 0);
 #if defined(FEATURE_DISP_128X128)
 	SETAEERECT( &rect, (128 >> 3) + 6, (128 >> 3) + 6, 128 * 3 >> 2, 128 * 3 >> 2);
     IDISPLAY_FillRect( pMe->m_pDisplay, &rect, 0);
@@ -2377,7 +2377,7 @@ static void paint( CFmRadio *pMe)
 							IDS_FMRADIO_REFUSE_HEADSET_PLUG_OUT
                         };
 
-        drawImage( pMe, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BGMASK, 0, 0);
+        drawImage( pMe, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND, 0, 0);
         drawText( pMe,
                 FMRADIOLS_RES_FILE_LANG,
                 resId[pMe->refuseReason],
@@ -2408,7 +2408,7 @@ static void paint( CFmRadio *pMe)
     if( pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL)
     {
 
-        drawImage( pMe, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BGMASK, 0, 0);
+        drawImage( pMe, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND, 0, 0);
         ITEXTCTL_Redraw( pMe->pText);
         {
             AEERect     rect        = {0};

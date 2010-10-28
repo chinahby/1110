@@ -108,6 +108,13 @@ static boolean CallApp_Notify(void *pUser,
                                         uint16 wParam,
                                         uint32 dwParam);
 
+#ifndef FEATURE_ICM
+#define AEECMNotifyInfo             AEETNotifyInfo
+#define AEECMCallEventData          AEETCallEventData
+#define AEECM_MAX_DIGITS_LENGTH     AEET_MAX_DIGITS_LENGTH
+#define AEECM_MAX_ALPHA_TAG_LENGTH  AEET_MAX_ALPHA_TAG_LENGTH
+#endif
+
 //static void  CallApp_ProcessBattNotify(CCallApp  *pMe,AEENotify   *msg);
 //static int CallApp_SetStartCallType(ICallApp       *p,
 //                                        start_call_type type,
@@ -178,7 +185,11 @@ static void CallApp_ProcessCallStateVoiceSignal(CCallApp *pMe,
 
 static boolean CallApp_PlaySignal(CCallApp *pMe,
                                         AECHAR* pszPhoneNumber,
+#ifdef FEATURE_ICM
                                         AEECMSignal *pSignal);
+#else
+                                        AEETSignal *pSignal);
+#endif
 
 static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
                                         AECHAR           *number,
@@ -649,14 +660,35 @@ static int CallApp_InitAppData(CCallApp *pMe)
     {
         return EFAILED;
     }
-
+#ifdef FEATURE_ICM
     if(ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_CM,
                                             (void **) &pMe->m_pICM) != SUCCESS)
     {
         return EFAILED;
     }
+#else
+    if(ISHELL_CreateInstance(pMe->m_pShell,
+                                            AEECLSID_TELEPHONE,
+                                            (void **) &pMe->m_pITelephone) != SUCCESS)
+    {
+        return EFAILED;
+    }
 
+	if(ISHELL_CreateInstance(pMe->m_pShell,
+                                 AEECLSID_CALLMGR,
+                                 (void **) &pMe->m_pICallMgr)!=SUCCESS)
+    {
+        return EFAILED;
+    }
+	
+    if( ISHELL_CreateInstance(pMe->m_pShell,
+                                 AEECLSID_PHONECTL,
+                                 (void **) &pMe->m_pIPhoneCtl)!=SUCCESS)
+    {
+        return EFAILED;
+    }
+#endif
     // Create Sound instance
     if (ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_SOUND,
@@ -711,7 +743,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     {
         return EFAILED;
     }
-    
+#ifdef FEATURE_ICM
     // Register for phone, call, and serving system notifications
     if (AEE_SUCCESS != ISHELL_RegisterNotify(pMe->m_pShell,
                                              AEECLSID_DIALER,
@@ -723,6 +755,18 @@ static int CallApp_InitAppData(CCallApp *pMe)
     {
         return EFAILED;
     }
+#else
+    if (AEE_SUCCESS != ISHELL_RegisterNotify(pMe->m_pShell,
+                                             AEECLSID_DIALER,
+                                             AEECLSID_PHONENOTIFIER,
+                                             AEET_NMASK_VOICE_CALL
+                                             |AEET_NMASK_OTHER_CALL
+                                             | AEET_NMASK_TEST_CALL
+                                             ))
+    {
+        return EFAILED;
+    }
+#endif
     if(ISHELL_RegisterNotify(pMe->m_pShell, AEECLSID_DIALER,
         AEECLSID_ALERT_NOTIFIER, NMASK_ALERT_ONOFF | NMASK_ALERT_MUTED) != SUCCESS)
     {
@@ -795,7 +839,11 @@ static int CallApp_InitAppData(CCallApp *pMe)
 
     //pMe->m_msg_text = NULL;
     //pMe->m_IStatic = NULL;
+#ifdef FEATURE_ICM
     pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
+#else
+    pMe->m_lastCallState = AEET_CALL_STATE_IDLE;
+#endif
     pMe->IsStartCall = TRUE;
     pMe->m_bCloseAllApplet = FALSE;
     pMe->IsRestrictNumber = FALSE;
@@ -808,15 +856,8 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_CallsTable = NULL;
     pMe->m_CallsTable_Count =0;
     pMe->m_bReceiveCallerID     = FALSE;
-#if 1
+#ifndef FEATURE_USES_LOWMEM
     pMe->m_pConvImage = NULL;
-    pMe->m_pCallingImage = NULL;
-#else
-    if(pMe->m_pConvImage)
-    {
-        IIMAGE_Release(pMe->m_pConvImage);
-        pMe->m_pConvImage = NULL;
-    }
 #endif
     pMe->m_btime_out = 0;
     pMe->m_return_value = RETURN_ZERO;
@@ -906,12 +947,31 @@ static void CallApp_FreeAppData(CCallApp *pMe)
         pMe->m_pConfig = NULL;
     }
 
+#ifdef FEATURE_ICM
     if(pMe->m_pICM != NULL)
     {
         ICM_Release(pMe->m_pICM);
         pMe->m_pICM = NULL;
     }
+#else
+    if(pMe->m_pITelephone != NULL)
+    {
+        ITELEPHONE_Release(pMe->m_pITelephone);
+        pMe->m_pITelephone = NULL;
+    }
 
+	if(pMe->m_pICallMgr != NULL)
+    {
+        ICALLMGR_Release(pMe->m_pICallMgr);
+        pMe->m_pICallMgr = NULL;
+    }
+
+	if(pMe->m_pIPhoneCtl != NULL)
+    {
+        IPHONECTL_Release(pMe->m_pIPhoneCtl);
+        pMe->m_pIPhoneCtl = NULL;
+    }
+#endif
     if (pMe->m_pSound != NULL)
     {
         ISOUND_Release(pMe->m_pSound);
@@ -951,7 +1011,11 @@ static void CallApp_FreeAppData(CCallApp *pMe)
         pMe->m_pMenu = NULL;
     }
     CallApp_Free_All_Call_Table(pMe);//ok
+#ifdef FEATURE_ICM
     ISHELL_RegisterNotify(pMe->m_pShell,AEECLSID_DIALER,  AEECLSID_CM_NOTIFIER,0);
+#else
+    ISHELL_RegisterNotify(pMe->m_pShell,AEECLSID_DIALER,  AEECLSID_PHONENOTIFIER,0);
+#endif
     ISHELL_RegisterNotify(pMe->m_pShell,AEECLSID_DIALER,  AEECLSID_ALERT_NOTIFIER,0);
 
 #if defined( FEATURE_CALL_RECORDER)
@@ -1094,6 +1158,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 
         case EVT_ALARM:
             {
+#ifdef FEATURE_ICM
                 ICM *pICM = NULL;
                 uint16 num = 0;
              
@@ -1116,6 +1181,32 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                     ICM_Release(pICM);
                     pICM = NULL;
                 }
+#else
+                ITelephone*pITelephone = NULL;
+                uint16 num = 0;             
+
+                if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
+                                                        AEECLSID_TELEPHONE, 
+                                                        (void **)&pITelephone))
+                {
+                    return FALSE;
+                }
+                if(pITelephone)
+                {
+                
+					AEETCalls po;
+					if(SUCCESS != ITELEPHONE_GetCalls(pITelephone,                                            
+	                                           &po, 
+	                                           sizeof(AEETCalls)))
+					{
+						return FALSE;
+					}
+	                    
+                    ITELEPHONE_Release(pITelephone);
+                    pITelephone = NULL;
+					num = po.dwCount;
+                }
+#endif
                 if(num > 0)
                 {
                     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON | ANNUN_STATE_BLINK);
@@ -1203,21 +1294,18 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             pMe->m_ePreState = STATE_NULL;
             pMe->m_nStartCallType = START_MAX;
             pMe->m_bHandFree = FALSE;
+#ifndef FEATURE_USES_LOWMEM
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
                 pMe->m_pConvImage = NULL;
             }
+#endif
             pMe->m_btime_out = 0;
             pMe->m_return_value = RETURN_ZERO;
             pMe->m_bincoming_rsk = IDS_MUTE;
             //pMe->m_b_show_cdg = FALSE;
             pMe->m_cdg_row = 0;
-            if(pMe->m_pCallingImage)
-            {
-                IIMAGE_Release(pMe->m_pCallingImage);
-                pMe->m_pCallingImage = NULL;
-            }
             pMe->m_msg_text_id = 0;
             CallApp_SetupCallAudio(pMe);
 #ifdef FEATRUE_AUTO_POWER
@@ -1245,6 +1333,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                                                         (PFNNOTIFY)CallApp_MakeCall, pMe);
             return TRUE;
         case EVT_FLIP:// wParam = TRUE if open, FALSE if closed.
+#ifdef FEATURE_ICM
             if((AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM))&& pMe->m_bSuspending)
             {
                 CallApp_Process_EVT_FLIP_Event(pMe,wParam);
@@ -1253,6 +1342,25 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             {
                 CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             }
+#else
+        	{   
+				AEETCalls po;
+				if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone,                                            
+                                            &po, 
+                                            sizeof(AEETCalls)))
+				{
+					return FALSE;
+				}
+	            if((po.dwCount>0)&& pMe->m_bSuspending)
+	            {
+	                CallApp_Process_EVT_FLIP_Event(pMe,wParam);
+	            }
+	            else
+	            {
+	                CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+	            }
+        	}
+#endif
             return TRUE;
             
         case EVT_APP_RESUME:
@@ -1289,8 +1397,19 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                         }
                         else
                         {
+#ifdef FEATURE_ICM
                             //if (pMe->m_lastCallState == AEECM_CALL_STATE_CONV)
                             if(AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM))
+#else
+							AEETCalls po;
+							if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone,                                            
+															&po, 
+															sizeof(AEETCalls)))
+							{
+								return FALSE;
+							}
+                            if(po.dwCount > 0)
+#endif
                             {
                                 switch(pstCall->cmd_describe.command_restricttag)
                                 {
@@ -1304,7 +1423,11 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                                     case 0x04:
                                     case 0x05:
                                         pMe->m_bEndcurcallForUTKCall = TRUE;
+#ifdef FEATURE_ICM
                                         ICM_EndAllCalls(pMe->m_pICM);
+#else
+                                        ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
                                         eTsatate = STATE_ENDCALL;
                                         break;
 
@@ -1368,7 +1491,19 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             return TRUE;
 #ifdef FEATRUE_AUTO_POWER
         case EVT_AUTO_POWERDOWN:
+        {
+#ifdef FEATURE_ICM
             if((pMe->m_pActiveDlg != NULL)|| AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM))
+#else
+			AEETCalls po;
+			if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone,                                            
+											&po, 
+											sizeof(AEETCalls)))
+			{
+				return FALSE;
+			}
+            if((pMe->m_pActiveDlg != NULL)||(po.dwCount>0))
+#endif
             {
                 pMe->m_b_powerdown = TRUE;
             }
@@ -1378,12 +1513,24 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                 ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CORE_APP,EVT_AUTO_POWERDOWN,1,1);
             }
             return TRUE;
+        }
 #endif
 
         case EVT_BATT_POWERDOWN:
             if(pMe->m_b_incall)
             {
+#ifdef FEATURE_ICM
                 ICM_EndCall(pMe->m_pICM, pMe->m_CallsTable->call_id);
+#else
+                ICall *pCall = NULL;
+            
+            	ICALLMGR_GetCall(pMe->m_pICallMgr,pMe->m_CallsTable->call_id,&pCall);
+				if (pCall != NULL)
+				{
+					ICALL_End(pCall);
+					ICALL_Release(pCall);
+				}
+#endif
             }
             return TRUE;
 
@@ -1391,7 +1538,18 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
         case EVT_ORIGINATE_CALL:
         {
             AVKType key = AVK_SEND;/*0xe02f*/
+#ifdef FEATURE_ICM
             pMe->m_b_incall = AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM);
+#else
+			AEETCalls po;
+			if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone,                                            
+												&po, 
+												sizeof(AEETCalls)))
+			{
+				return FALSE;
+			}
+			pMe->m_b_incall = (po.dwCount>0)?TRUE:FALSE;
+#endif
             ERR("EVT_ORIGINATE_CALL %d %d %x",pMe->m_b_incall,pMe->m_Is3Way,wParam);
             if(wParam == 0)
             {
@@ -1686,8 +1844,11 @@ static boolean CallApp_Notify(void *pUser, AEEEvent eCode,
                 default:
                     return FALSE;
             }
-
+#ifdef FEATURE_ICM
         case AEECLSID_CM_NOTIFIER:
+#else
+        case AEECLSID_PHONENOTIFIER:
+#endif
         {
             AEECMNotifyInfo *EventInfo = (AEECMNotifyInfo *)(Notify_msg->pData);
             //CALL_ERR("[DlgManager]dwMask = %x byCMCallID=%d ", Notify_msg->dwMask,
@@ -1695,14 +1856,24 @@ static boolean CallApp_Notify(void *pUser, AEEEvent eCode,
 
             switch (Notify_msg->dwMask)
             {
+#ifdef FEATURE_ICM
                 case NMASK_CM_VOICE_CALL:
                 case NMASK_CM_TEST_CALL:
                 case NMASK_CM_OTHER_CALL:
+#else
+                case AEET_NMASK_VOICE_CALL:
+                case AEET_NMASK_TEST_CALL:
+                case AEET_NMASK_OTHER_CALL:
+#endif
                     //CALL_ERR("NMASK_CM_VOICE_CALL %x",EventInfo->event,0,0);
                     CallApp_Handle_Call_StateChange(pMe, EventInfo);
                     return TRUE;
 #if 1  /*move process DATA CALL in CallApp_Handle_Call_StateChange*/
+#ifdef FEATURE_ICM
                 case NMASK_CM_DATA_CALL:
+#else
+                case AEET_NMASK_DATA_CALL:
+#endif
                     CALL_ERR("NMASK_CM_DATA_CALL %x",EventInfo->event,0,0);
                     clsid =  ISHELL_ActiveApplet(pMe->m_pShell);
 
@@ -1710,8 +1881,11 @@ static boolean CallApp_Notify(void *pUser, AEEEvent eCode,
                     {
                         return FALSE;
                     }
-
+#ifdef FEATURE_ICM
                     if((EventInfo->event == AEECM_EVENT_CALL_END)&&(pMe->m_makeCallAfterOTAPA == TRUE))
+#else
+                    if((EventInfo->event == AEET_EVENT_CALL_END)&&(pMe->m_makeCallAfterOTAPA == TRUE))
+#endif
                     {
                         CallApp_MakeCall(pMe);
                     }
@@ -1884,6 +2058,7 @@ static void CallApp_Handle_Phone_StateChange(CCallApp *pMe,
 
     if (NULL == p_Ph_Info)
     {
+#ifdef FEATURE_ICM
         ICM_GetPhoneInfo(pMe->m_pICM, p_Ph_Info, sizeof(AEECMPhInfo));
         if (NULL == p_Ph_Info)
         {
@@ -1891,7 +2066,15 @@ static void CallApp_Handle_Phone_StateChange(CCallApp *pMe,
         }
 
         p_Phone_Info->event= AEECM_EVENT_NONE;
+#else
+        ICM_GetPhoneInfo(pMe->m_pITelephone, p_Ph_Info, sizeof(AEECMPhInfo));
+        if (NULL == p_Ph_Info)
+        {
+            return;
+        }
 
+        p_Phone_Info->event= AEET_EVENT_NONE;
+#endif
     }
 
     if (pMe->idle_info.inLPM)
@@ -1902,13 +2085,17 @@ static void CallApp_Handle_Phone_StateChange(CCallApp *pMe,
 
     switch (p_Phone_Info->event)
     {
-
+#ifdef FEATURE_ICM
         /*Operating mode was changed*/
         case AEECM_EVENT_PH_OPRT_MODE:
+#else
+        case AEET_EVENT_PH_OPRT_MODE:
+#endif
         {
             CALL_MSG_HIGH("AEECM_EVENT_PH_OPRT_MODE %d",p_Ph_Info->oprt_mode,0,0);
             switch (p_Ph_Info->oprt_mode)
             {
+#ifdef FEATURE_ICM
                 case AEECM_OPRT_MODE_PWROFF:/* Phone is powering off                            */
                 case AEECM_OPRT_MODE_FTM:/* Phone is in factory test mode                    */
                 case AEECM_OPRT_MODE_OFFLINE: /* Phone is offline                                 */
@@ -1918,6 +2105,17 @@ static void CallApp_Handle_Phone_StateChange(CCallApp *pMe,
                 case AEECM_OPRT_MODE_LPM:/* Phone is in LPM - Low Power Mode                 */
                 case AEECM_OPRT_MODE_RESET:/* Phone is resetting - i.e. power-cycling          */
                 case AEECM_OPRT_MODE_NET_TEST_GW:
+#else
+                case AEET_OPRT_MODE_PWROFF:/* Phone is powering off                            */
+                case AEET_OPRT_MODE_FTM:/* Phone is in factory test mode                    */
+                case AEET_OPRT_MODE_OFFLINE: /* Phone is offline                                 */
+                case AEET_OPRT_MODE_OFFLINE_AMPS:/* Phone is offline analog                          */
+                case AEET_OPRT_MODE_OFFLINE_CDMA:/* Phone is offline cdma                            */
+                case AEET_OPRT_MODE_ONLINE: /* Phone is online                                  */
+                case AEET_OPRT_MODE_LPM:/* Phone is in LPM - Low Power Mode                 */
+                case AEET_OPRT_MODE_RESET:/* Phone is resetting - i.e. power-cycling          */
+                case AEET_OPRT_MODE_NET_TEST_GW:
+#endif
                 /* Phone is conducting network test for GSM/WCDMA.  */
                 /* This mode can NOT be set by the clients. It can  */
                 /* only be set by the lower layers of the stack.    */
@@ -1929,12 +2127,18 @@ static void CallApp_Handle_Phone_StateChange(CCallApp *pMe,
         }
         break;
 
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_SYSTEM_PREF:        /* System preference changed */
+#else
+        case AEET_EVENT_PH_SYSTEM_PREF:        /* System preference changed */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_SYSTEM_PREF",0,0,0);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_ANSWER_VOICE:       /* Answer voice as data was changed. */
+#else
+        case AEET_EVENT_PH_ANSWER_VOICE:       /* Answer voice as data was changed. */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_ANSWER_VOICE %d",p_Ph_Info->answer_voice,0,0);
             switch (p_Ph_Info->answer_voice)
             {
@@ -1942,8 +2146,11 @@ static void CallApp_Handle_Phone_StateChange(CCallApp *pMe,
                 default:
                     break;
             }
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_NAM_SEL:        /* NAM selection was changed */
+#else
+        case AEET_EVENT_PH_NAM_SEL:        /* NAM selection was changed */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_NAM_SEL %d",p_Ph_Info->nam_sel,0,0);
             switch (p_Ph_Info->nam_sel)
             {
@@ -1951,8 +2158,11 @@ static void CallApp_Handle_Phone_StateChange(CCallApp *pMe,
                 default:
                     break;
             }
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_CURR_NAM:       /* Current NAM was changed. */
+#else
+        case AEET_EVENT_PH_CURR_NAM:       /* Current NAM was changed. */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_CURR_NAM %d",p_Ph_Info->curr_nam,0,0);
             switch (p_Ph_Info->curr_nam)
             {
@@ -1960,12 +2170,18 @@ static void CallApp_Handle_Phone_StateChange(CCallApp *pMe,
                 default:
                     break;
             }
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_IN_USE_STATE:       /* In use state was changed */
+#else
+        case AEET_EVENT_PH_IN_USE_STATE:       /* In use state was changed */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_IN_USE_STATE %d",p_Ph_Info->is_in_use,0,0);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_CDMA_LOCK_MODE:     /* CDMA lock mode was changed. */
+#else
+        case AEET_EVENT_PH_CDMA_LOCK_MODE:     /* CDMA lock mode was changed. */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_CDMA_LOCK_MODE %d",p_Ph_Info->cdma_lock_mode,0,0);
             switch (p_Ph_Info->cdma_lock_mode)
             {
@@ -1973,39 +2189,68 @@ static void CallApp_Handle_Phone_StateChange(CCallApp *pMe,
                 default:
                     break;
             }
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_MAINTREQ:       /* CDMA maintenance required command. */
+#else
+        case AEET_EVENT_PH_MAINTREQ:       /* CDMA maintenance required command. */
+#endif
             // TBD
             CALL_MSG_HIGH("AEECM_EVENT_PH_MAINTREQ",0,0,0);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_STANDBY_SLEEP:      /* Entering powerdown sleep mode */
+#else
+        case AEET_EVENT_PH_STANDBY_SLEEP:      /* Entering powerdown sleep mode */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_STANDBY_SLEEP",0,0,0);
             break;
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_STANDBY_WAKE:       /* Exiting powerdown sleep mode */
+#else
+        case AEET_EVENT_PH_STANDBY_WAKE:       /* Exiting powerdown sleep mode */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_STANDBY_WAKE %d",pMe->m_lastCallState,0,0);
             // Only force a change back to Idle, if no other call event has
             // already made the change out of Power Save for us.
+#ifdef FEATURE_ICM
             if (pMe->m_lastCallState == AEECM_CALL_STATE_IDLE)
+#else
+            if (pMe->m_lastCallState == AEET_CALL_STATE_IDLE)
+#endif
             {
                 newState = STATE_EXIT;
             }
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_INFO_AVAIL:     /* Phone information is now available */
+#else
+        case AEET_EVENT_PH_INFO_AVAIL:     /* Phone information is now available */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_INFO_AVAIL",0,0,0);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_SUBSCRIPTION:       /* Subscription info changed */
         case AEECM_EVENT_PH_FUNDS_LOW:          /* Funds running low. */
+#else
+        case AEET_EVENT_PH_SUBSCRIPTION:       /* Subscription info changed */
+        case AEET_EVENT_PH_FUNDS_LOW:          /* Funds running low. */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_FUNDS_LOW",0,0,0);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_NVRUIM_CONFIG:     /* RTRE configuration changed. */
+#else
+        case AEET_EVENT_PH_NVRUIM_CONFIG:     /* RTRE configuration changed. */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_NVRUIM_CONFIG",p_Ph_Info->rtre_config,0,0);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_PH_ACM_RESET:          /* Accumulated Call Meter was reset */
         case AEECM_EVENT_PH_ACMMAX_SET:         /* Accumulated Call Meter was set */
+#else
+        case AEET_EVENT_PH_ACM_RESET:          /* Accumulated Call Meter was reset */
+        case AEET_EVENT_PH_ACMMAX_SET:         /* Accumulated Call Meter was set */
+#endif
             CALL_MSG_HIGH("AEECM_EVENT_PH_ACMMAX_SET",0,0,0);
             break;
 
@@ -2053,9 +2298,13 @@ static void CallApp_Handle_Call_StateChange(CCallApp *pMe,
                                              AEECMNotifyInfo  *p_Call_Info)
 {
     CallAppState newState = STATE_NULL;
+#ifdef FEATURE_ICM
     AEECMCallEventData *p_Call_Eventdata_Info =NULL;
     AEECMCallInfo          *p_cm_call_info = NULL;
-
+#else
+    AEETCallEventData *p_Call_Eventdata_Info =NULL;
+    AEETCallInfo          *p_cm_call_info = NULL;
+#endif
     CALL_FUN_START("CallApp_Handle_Call_StateChange",0,0,0);
 
     if (NULL == p_Call_Info)
@@ -2082,13 +2331,21 @@ static void CallApp_Handle_Call_StateChange(CCallApp *pMe,
 
     switch (p_cm_call_info->call_type)
     {
+#ifdef FEATURE_ICM
         case AEECM_CALL_TYPE_OTAPA:
+#else
+        case AEET_CALL_TYPE_OTAPA:
+#endif
             //CALL_ERR("AEECM_CALL_TYPE_OTAPA",0,0,0);
             CallApp_ProcessCallStateOTAPA(pMe, p_Call_Info, &newState);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_CALL_TYPE_SMS:
         case AEECM_CALL_TYPE_PD:
+#else
+        case AEET_CALL_TYPE_SMS:
+        case AEET_CALL_TYPE_PD:
+#endif
             // The Idle Applet is not registered for these events and will
             // be handled by other Applets, if at all.
             CALL_ERR("AEECM_CALL_TYPE_SMS??",0,0,0);
@@ -2096,20 +2353,33 @@ static void CallApp_Handle_Call_StateChange(CCallApp *pMe,
             //ASSERT_NOT_REACHABLE;
             //break;
 #if 1
+#ifdef FEATURE_ICM
         case AEECM_CALL_TYPE_CS_DATA:
         case AEECM_CALL_TYPE_PS_DATA:
+#else
+        case AEET_CALL_TYPE_CS_DATA:
+        case AEET_CALL_TYPE_PS_DATA:
+#endif
             //CALL_ERR("AEECM_CALL_TYPE_CS_DATA",0,0,0);
             CallApp_ProcessCallStateDATA(pMe, p_Call_Info, &newState);
             //else fallthrough
             /*lint -fallthrough*/
 #endif
+#ifdef FEATURE_ICM
         case AEECM_CALL_TYPE_TEST:
+#else
+        case AEET_CALL_TYPE_TEST:
+#endif
             //CALL_ERR("AEECM_CALL_TYPE_TEST",0,0,0);
             CallApp_ProcessCallStateTest(pMe, p_Call_Info, &newState);
             /*lint -fallthrough*/
-
+#ifdef FEATURE_ICM
         case AEECM_CALL_TYPE_NON_STD_OTASP:
         case AEECM_CALL_TYPE_STD_OTASP:
+#else
+        case AEET_CALL_TYPE_NON_STD_OTASP:
+        case AEET_CALL_TYPE_STD_OTASP:
+#endif
         // OTASP (by definition, MO) calls are initiated by the user, are
         // thusly NOT transparent, and should be handled like voice calls.
 
@@ -2118,10 +2388,15 @@ static void CallApp_Handle_Call_StateChange(CCallApp *pMe,
         //       dialog or something.
 
         // FALL THROUGH
-
+#ifdef FEATURE_ICM
         case AEECM_CALL_TYPE_VOICE:
         case AEECM_CALL_TYPE_EMERGENCY:
         case AEECM_CALL_TYPE_NONE:
+#else
+        case AEET_CALL_TYPE_VOICE:
+        case AEET_CALL_TYPE_EMERGENCY:
+        case AEET_CALL_TYPE_NONE:
+#endif
             // 解决在充电、输入手机密码界面下来电重启问题
 
             //CALL_ERR("AEECM_CALL_TYPE_VOICE",0,0,0);
@@ -2130,18 +2405,30 @@ static void CallApp_Handle_Call_StateChange(CCallApp *pMe,
 
         default:
         {
+#ifdef FEATURE_ICM
             AEECMCallEventData    *call_table = NULL;	
+#else
+            AEETCallEventData    *call_table = NULL;	
+#endif
             call_table = &(p_Call_Info->event_data.call); 
             //CALL_ERR("3333333333333",0,0,0);
             //if((p_Call_Info->event == AEECM_EVENT_CALL_SIGNAL) && (AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM)))
+#ifdef FEATURE_ICM
             if((p_Call_Info->event == AEECM_EVENT_CALL_SIGNAL))
+#else
+            if((p_Call_Info->event == AEET_EVENT_CALL_SIGNAL))
+#endif
             {
                 //  call_table->signal.signal_type=AEECM_SIGNAL_CDMA_IS54B;
                 // call_table->signal.signal.cdma_tone=AEECM_CDMA_TONE_BUSY;
                 CallApp_ProcessCallStateVoiceSignal(pMe, call_table, &newState);
                 // CALL_ERR("DDDDDDDDDDDDDDDFFFFFFFFFFFFFFFF",0,0,0);
             }
+#ifdef FEATURE_ICM
             else if (p_Call_Info->event ==  AEECM_EVENT_CALL_DISPLAY)//cdg 9.71
+#else
+            else if (p_Call_Info->event ==  AEET_EVENT_CALL_DISPLAY)//cdg 9.71
+#endif
             {
                 CallApp_ProcessCallStateVoiceDisplay(pMe, p_Call_Info, &newState);
             }
@@ -2243,8 +2530,11 @@ static void CallApp_Handle_Call_StateChange(CCallApp *pMe,
             {
                 int ret;
                 CALL_ERR("StartIncomingCall: %d,%d,%d",  newState,pMe->m_eCurState,pMe->m_nStartCallType);
-
+#ifdef FEATURE_ICM
                 if (p_cm_call_info->call_type == AEECM_CALL_TYPE_CS_DATA)
+#else
+                if (p_cm_call_info->call_type == AEET_CALL_TYPE_CS_DATA)
+#endif
                 {
                     pMe->m_nStartCallType = START_DATA_CALLING;
                 }
@@ -2337,12 +2627,30 @@ static void CallApp_ProcessCallStateOTAPA(CCallApp*pMe,AEECMNotifyInfo   *pCallI
 
     switch (pCallInfo->event)
     {
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_INCOM:
             //CALL_ERR("AEECM_EVENT_CALL_INCOM",0,0,0);
             ICM_AnswerCall(pMe->m_pICM, pCallInfo->event_data.call.call_id);
             break;
 
         case AEECM_EVENT_CALL_END:
+#else
+        case AEET_EVENT_CALL_INCOM:
+		{
+			ICall 				 *pCall= NULL;
+            //CALL_ERR("AEET_EVENT_CALL_INCOM",0,0,0);
+            ICALLMGR_GetCall(pMe->m_pICallMgr,pCallInfo->event_data.call.cd,&pCall);
+            if (pCall != NULL)
+        	{
+        		ICALL_Answer(pCall);
+				ICALL_Release(pCall);
+        	}
+        }
+            //ICM_AnswerCall(pMe->m_pITelephone, pCallInfo->event_data.call.cd);
+            break;
+
+        case AEET_EVENT_CALL_END:
+#endif
             //CALL_ERR("AEECM_EVENT_CALL_END",0,0,0);
             // If the OTAPA call was ended because the user tried to
             // call a number, make the call now
@@ -2377,7 +2685,11 @@ static void CallApp_ProcessCallStateDATA(CCallApp                 *pMe,
     {
         switch (pCallInfo->event)
         {
+#ifdef FEATURE_ICM
             case AEECM_EVENT_CALL_END:
+#else
+            case AEET_EVENT_CALL_END:
+#endif
                 // If the OTAPA call was ended because the user tried to
                 // call a number, make the call now
                 if (pMe->m_makeCallAfterOTAPA)
@@ -2418,10 +2730,17 @@ static void CallApp_ProcessCallStateTest(CCallApp                 *pMe,
     CALL_ERR("%d ProcessCallStateTEST",pCallInfo->event,0,0);
     switch (pCallInfo->event)
     {
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_CONNECT: /* Originated/incoming call was connected */
+#else
+        case AEET_EVENT_CALL_CONNECT: /* Originated/incoming call was connected */
+#endif
             break;
-            
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ORIG:    /* phone originated a call */
+#else
+        case AEET_EVENT_CALL_ORIG:    /* phone originated a call */
+#endif
             //CALL_ERR("AEECM_EVENT_CALL_CONNECT",0,0,0);
             if(pMe->m_CallsTable)
             {
@@ -2430,8 +2749,11 @@ static void CallApp_ProcessCallStateTest(CCallApp                 *pMe,
                 pMe->m_CallsTable->type = PI_ALLOWED;
             }
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_END:
+#else
+        case AEET_EVENT_CALL_END:
+#endif
             //CALL_ERR("AEECM_EVENT_CALL_END",0,0,0);
             // If the OTAPA call was ended because the user tried to
             // call a number, make the call now
@@ -2463,6 +2785,7 @@ static void CallApp_ProcessCallStateVoiceOrig(CCallApp               *pMe,
     boolean b_energency = FALSE;
     boolean b_restict   = FALSE;
     Dialer_call_table * call_tb = NULL ;
+#ifdef FEATURE_ICM
     call_tb = CallApp_Search_Number_In_Call_Table(pMe,call_table->call_info.other_party_no);
     if(NULL == call_tb)
     {
@@ -2472,6 +2795,20 @@ static void CallApp_ProcessCallStateVoiceOrig(CCallApp               *pMe,
             b_restict  = CallApp_IsRestictCallNumber_Ex(pMe, call_table->call_info.other_party_no, TRUE);
         }
     }
+#else
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+    call_tb = CallApp_Search_Number_In_Call_Table(pMe,other_party_no);
+    if(NULL == call_tb)
+    {
+        b_energency = CallApp_IsEmergency_Number(other_party_no);
+        if(!b_energency)
+        {
+            b_restict  = CallApp_IsRestictCallNumber_Ex(pMe, other_party_no, TRUE);
+        }
+    }
+#endif
     if(pMe->m_pIAnn)
     {
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
@@ -2486,12 +2823,22 @@ static void CallApp_ProcessCallStateVoiceOrig(CCallApp               *pMe,
     //if the call be dialed in another applet.we need add the number to calls_table 2007/09/14
     if(NULL == call_tb)
     {
+#ifdef FEATURE_ICM
         CallApp_Add_Number_To_Call_Table(pMe,call_table->call_info.other_party_no,call_table->call_id,
                                                                             AEECALLHISTORY_CALL_TYPE_TO/*CALLHISTORY_OUTGOING*/,call_table->number.pi,
                                                                             FALSE,b_energency,b_restict);
+#else
+        CallApp_Add_Number_To_Call_Table(pMe,other_party_no,call_table->cd,
+                                                                            AEECALLHISTORY_CALL_TYPE_TO/*CALLHISTORY_OUTGOING*/,call_table->number.pi,
+                                                                            FALSE,b_energency,b_restict);
+#endif
     }
     //if the call be dialed in another applet.we need add the number to calls_table 2007/09/14
+#ifdef FEATURE_ICM
     CallApp_Change_Call_Table_Call_Start_Time(pMe,call_table->call_info.other_party_no);
+#else
+    CallApp_Change_Call_Table_Call_Start_Time(pMe,other_party_no);
+#endif
     //CallApp_Change_Call_Table_Call_ID(pMe,call_table->call_info.other_party_no,call_table->call_id);
 }
 
@@ -2499,19 +2846,35 @@ static void CallApp_ProcessCallStateVoiceAnswer(CCallApp               *pMe,
 	                                              AEECMCallEventData         *call_table,
 	                                              CallAppState             *newState)/* Incoming call was answered */
 {
+#ifndef FEATURE_ICM
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+#endif
     PARAM_NOT_REF (call_table)
     PARAM_NOT_REF (newState)
 
     IALERT_StopAlerting(pMe->m_pAlert);
+#ifdef FEATURE_ICM
     CallApp_Change_Call_Table_Call_Start_Time(pMe,call_table->call_info.other_party_no);
     CallApp_Change_Call_Table_Call_History_State(pMe,call_table->call_info.other_party_no,
                                                                     AEECALLHISTORY_CALL_TYPE_FROM/*CALLHISTORY_INCOMING*/);
+#else
+    CallApp_Change_Call_Table_Call_Start_Time(pMe,other_party_no);
+    CallApp_Change_Call_Table_Call_History_State(pMe,other_party_no,
+                                                                    AEECALLHISTORY_CALL_TYPE_FROM/*CALLHISTORY_INCOMING*/);
+#endif
 }
 
 static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
 	                                           AEECMCallEventData         *call_table,
 	                                           CallAppState             *newState)/* Originated/incoming call was ended */
 {
+#ifndef FEATURE_ICM
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+#endif
 #ifdef  FEATURE_PERU_VERSION
     pMe->in_convert = FALSE; //to save another incoming call in conversation;
 #endif
@@ -2569,7 +2932,11 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
     CALL_ERR("pMe->m_lastCallState =%d Canceled = %d callEndStatus = %d",pMe->m_lastCallState,pMe->m_userCanceled,pMe->m_callEndStatus);
     switch (pMe->m_lastCallState)
     {
+#ifdef FEATURE_ICM
         case AEECM_CALL_STATE_CONV:
+#else
+        case AEET_CALL_STATE_CONV:
+#endif
             *newState = STATE_ENDCALL;
             pMe->m_LastMinuteAlert = 0;
             pMe->m_CallVolume = 0;
@@ -2577,18 +2944,29 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
             CallApp_SetupCallAudio(pMe);
             CallApp_Change_Call_Table_All_Call_End_Time(pMe);//set all call end time for call histore
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_CALL_STATE_INCOM:
         case AEECM_CALL_STATE_IDLE:
+#else
+        case AEET_CALL_STATE_INCOM:
+        case AEET_CALL_STATE_IDLE:
+#endif
             if (pMe->m_userCanceled)
             {
                 pMe->m_userCanceled = FALSE;
                 *newState = STATE_EXIT;
                 CallAppNotifyMP3PlayerAlertEvent(pMe,FALSE);
+#ifdef FEATURE_ICM
                 CallApp_Change_Call_Table_Call_History_State(pMe,
                                                         call_table->call_info.other_party_no,AEECALLHISTORY_CALL_TYPE_FROM);//CALLHISTORY_INCOMING);
                 CallApp_Change_Call_Table_All_Call_End_Time(pMe);
                 CallApp_Reset_Call_Table_Call_End_Time(pMe,call_table->call_info.other_party_no);
+#else
+                CallApp_Change_Call_Table_Call_History_State(pMe,
+                                                        other_party_no,AEECALLHISTORY_CALL_TYPE_FROM);//CALLHISTORY_INCOMING);
+                CallApp_Change_Call_Table_All_Call_End_Time(pMe);
+                CallApp_Reset_Call_Table_Call_End_Time(pMe,other_party_no);
+#endif
             }
             else
             {
@@ -2596,8 +2974,11 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
                 *newState = STATE_MISSEDCALL;
             }
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_CALL_STATE_ORIG:
+#else
+        case AEET_CALL_STATE_ORIG:
+#endif
             pMe->m_callEndInOrig = TRUE;
             if (pMe->m_userCanceled)
             {
@@ -2612,7 +2993,11 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
                 // Call failed.  Add a call history entry with a zero
                 // duration so the user can redial it later.
             }
+#ifdef FEATURE_ICM
             CallApp_Reset_Call_Table_Call_End_Time(pMe,call_table->call_info.other_party_no);
+#else
+            CallApp_Reset_Call_Table_Call_End_Time(pMe,other_party_no);
+#endif
             break;
 
         default:
@@ -2624,13 +3009,23 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
     //CFGI_AUTO_REDIAL
     CALL_ERR("CFGI_AUTO_REDIAL %d %d %d",pMe->m_auto_redial_count,call_table->call_info.direction,pMe->m_callEndStatus);
     if(pMe->m_auto_redial_count<MAXIMUM_TIMES_OF_REDIAL
+#ifdef FEATURE_ICM
             && call_table->call_info.direction == AEECM_CALL_DIRECTION_MO)
+#else
+            && call_table->call_info.direction == AEET_CALL_DIRECTION_MO)
+#endif
     {
         switch (pMe->m_callEndStatus)
         {
+#ifdef FEATURE_ICM
             case AEECM_CALL_END_CD_GEN_OR_BUSY:
             case AEECM_CALL_END_NO_CDMA_SRV:
             case AEECM_CALL_END_NO_SRV:
+#else
+            case AEET_CALL_END_CD_GEN_OR_BUSY:
+            case AEET_CALL_END_NO_CDMA_SRV:
+            case AEET_CALL_END_NO_SRV:
+#endif
             {
                 if(pMe->m_CallsTable->b_emerg == FALSE)//Emerg call cann't allow to redail
                 {
@@ -2659,6 +3054,7 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
     }
     switch (pMe->m_callEndStatus)
     {
+#ifdef FEATURE_ICM
         case AEECM_CALL_END_INTERCEPT:/*cdg6.4*/
             IALERT_StartAlerting(pMe->m_pAlert, AEEALERT_CALLTYPE_VOICE, call_table->call_info.other_party_no, AEECM_CDMA_TONE_INTERCEPT);
             break;
@@ -2666,6 +3062,15 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
         case AEECM_CALL_END_REORDER:/*cdg2.6*/
             IALERT_StartAlerting(pMe->m_pAlert, AEEALERT_CALLTYPE_VOICE, call_table->call_info.other_party_no, AEECM_CDMA_TONE_REORDER);
             break;
+#else
+        case AEET_CALL_END_INTERCEPT:/*cdg6.4*/
+            IALERT_StartAlerting(pMe->m_pAlert, AEEALERT_CALLTYPE_VOICE, other_party_no, AEET_CDMA_TONE_INTERCEPT);
+            break;
+
+        case AEET_CALL_END_REORDER:/*cdg2.6*/
+            IALERT_StartAlerting(pMe->m_pAlert, AEEALERT_CALLTYPE_VOICE, other_party_no, AEET_CDMA_TONE_REORDER);
+            break;
+#endif
         //test only
         //case 1:/*cdg2.6*/
         //    IALERT_StartAlerting(pMe->m_pAlert, AEEALERT_CALLTYPE_VOICE, call_table->call_info.other_party_no, AEECM_CDMA_TONE_ABBR_INTERCEPT);
@@ -2692,13 +3097,26 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
     byte data = 0;
     boolean b_energency = FALSE;
     boolean b_restict   = FALSE;
+#ifdef FEATURE_ICM
     if(pMe->m_pICM == NULL)
     {
         return;
     }
+#else
+	AEETCalls po;
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+	
+    if(pMe->m_pITelephone == NULL)
+    {
+        return;
+    }
+#endif
 #ifdef FEATRUE_SET_IP_NUMBER
     pMe->m_b_ip_call[0] = 0;
 #endif
+#ifdef FEATURE_ICM
     pMe->m_b_incall = AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM);
     if(CallApp_IsEmergencyMode(pMe->m_pICM)
                                     && pMe->m_b_incall)
@@ -2712,11 +3130,50 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
     {
         b_restict  = CallApp_IsRestictCallNumber_Ex(pMe, call_table->call_info.other_party_no, FALSE);
     }
+#else
+	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone,											 
+										&po, 
+										sizeof(AEETCalls)))
+	{
+		return ;
+	}
+	pMe->m_b_incall = (po.dwCount>0)?TRUE:FALSE;
+    if(CallApp_IsEmergencyMode(pMe->m_pITelephone)
+                                    && pMe->m_b_incall)
+    {
+    	ICall *pCall= NULL;
+		
+     	ICALLMGR_GetCall(pMe->m_pICallMgr,call_table->cd,&pCall);
+        if (pCall != NULL)
+    	{
+    		ICALL_Answer(pCall);
+			ICALL_Release(pCall);
+    	}
+       // ICM_EndCall(pMe->m_pITelephone, call_table->cd);
+        return;
+    }
 
+    b_energency = CallApp_IsEmergency_Number(other_party_no);
+    if(!b_energency)
+    {
+        b_restict  = CallApp_IsRestictCallNumber_Ex(pMe, other_party_no, FALSE);
+    }
+#endif
     if (pMe->idle_info.uimLocked)
     {
+#ifdef FEATURE_ICM
         // Ignore incoming calls while PIN locked
         ICM_EndCall(pMe->m_pICM, call_table->call_id);
+#else
+    	ICall *pCall= NULL;
+		
+     	ICALLMGR_GetCall(pMe->m_pICallMgr,call_table->cd,&pCall);
+        if (pCall != NULL)
+    	{
+    		ICALL_Answer(pCall);
+			ICALL_Release(pCall);
+    	}
+#endif
         return;
     }
     CALL_ERR("number.pi =%d number.si =%d",call_table->number.pi,call_table->number.si,0);
@@ -2725,11 +3182,27 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
     if (b_restict  &&(data != OEMNV_RESTRICT_INCOMING_OUTCONTACT))
     {
         pMe->IsRestrictNumber = TRUE;
+#ifdef FEATURE_ICM
         if(pMe->m_pICM != NULL)
         {
             ICM_EndCall(pMe->m_pICM, call_table->call_id);
             return;
         }
+#else
+        if(pMe->m_pITelephone != NULL)
+        {
+        	ICall *pCall= NULL;
+			
+	     	ICALLMGR_GetCall(pMe->m_pICallMgr,call_table->cd,&pCall);
+	        if (pCall != NULL)
+	    	{
+	    		ICALL_Answer(pCall);
+				ICALL_Release(pCall);
+	    	}
+           // ICM_EndCall(pMe->m_pITelephone, call_table->cd);
+            return;
+        }
+#endif
     }
     //test ok,we show incoming dialog
     CALL_ERR("test ok,we show incoming dialog",0,0,0);
@@ -2746,7 +3219,11 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
     pMe->m_auto_redial_count = 0;
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_ANYKEY_ANSWER, &pMe->m_anykey_answer, sizeof(byte));
     pMe->m_b_incoming = TRUE;
+#ifdef FEATURE_ICM
     CallApp_Add_Number_To_Call_Table(pMe,call_table->call_info.other_party_no,call_table->call_id,
+#else
+    CallApp_Add_Number_To_Call_Table(pMe,other_party_no,call_table->cd,
+#endif
                                                                             AEECALLHISTORY_CALL_TYPE_MISSED/*CALLHISTORY_MISSED*/,call_table->number.pi,TRUE,b_energency,b_restict );
 #if 0
     // start the ringer
@@ -2778,11 +3255,23 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
 {
     boolean b_energency = FALSE;
     boolean b_restict   = FALSE;
+#ifdef FEATURE_ICM
     b_energency = CallApp_IsEmergency_Number(call_table->call_info.other_party_no);
     if(!b_energency)
     {
         b_restict  = CallApp_IsRestictCallNumber_Ex(pMe, call_table->call_info.other_party_no, FALSE);
     }
+#else
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+	
+    b_energency = CallApp_IsEmergency_Number(other_party_no);
+    if(!b_energency)
+    {
+        b_restict  = CallApp_IsRestictCallNumber_Ex(pMe, other_party_no, FALSE);
+    }
+#endif
 #ifdef  FEATURE_PERU_VERSION
     //to save another incoming call in conversation;
     if(pMe->in_convert)
@@ -2799,6 +3288,7 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
 #endif
     if (b_restict)//Restict Number
     {
+#ifdef FEATURE_ICM
         pMe->m_userCanceled = TRUE;
         pMe->IsRestrictNumber = TRUE;
         //this code is used to decide the state of the phone, last state is idle, mean
@@ -2810,6 +3300,27 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
         }
 
         ICM_EndCall(pMe->m_pICM, call_table->call_id);
+#else
+    	ICall *pCall= NULL;
+
+        pMe->m_userCanceled = TRUE;
+        pMe->IsRestrictNumber = TRUE;
+        //this code is used to decide the state of the phone, last state is idle, mean
+        //it's first call.
+        //if in conversation then the phone is in conversation,endcall will end all the link
+        if (AEET_CALL_STATE_CONV == pMe->m_lastCallState)
+        {
+            return;
+        }
+		
+     	ICALLMGR_GetCall(pMe->m_pICallMgr,call_table->cd,&pCall);
+        if (pCall != NULL)
+    	{
+    		ICALL_Answer(pCall);
+			ICALL_Release(pCall);
+    	}
+
+#endif
         *newState = STATE_EXIT;
         MOVE_TO_STATE(STATE_EXIT)
     }
@@ -2821,7 +3332,11 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
         }
 
 #if defined FEATURE_CARRIER_TAIWAN_APBW            //zhuweisheng2008.7.2 modify tw waiting call ms receive caller event
+#ifdef FEATURE_ICM
         if((AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM))&&(pMe->incoming_id==FALSE)&&(WSTRNCMP(pMe->m_CallsTable->call_number, L"*",1) == 0))
+#else
+        if((AEET_IS_VOICECALL_CONNECTED(pMe->m_pITelephone))&&(pMe->incoming_id==FALSE)&&(WSTRNCMP(pMe->m_CallsTable->call_number, L"*",1) == 0))
+#endif
         {
             if(pMe->m_b_incoming)
             {
@@ -2832,25 +3347,40 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
 #endif  //FEATURE_CARRIER_TAIWAN_APBW
         if(pMe->m_b_incoming)
         {
+#ifdef FEATURE_ICM
             CallApp_Modify_Number_To_Call_Table(pMe,call_table->call_info.other_party_no,call_table->call_id,
+#else
+            CallApp_Modify_Number_To_Call_Table(pMe,other_party_no,call_table->cd,
+#endif
                                                                             AEECALLHISTORY_CALL_TYPE_MISSED/*CALLHISTORY_MISSED*/,call_table->number.pi);
             pMe->m_b_incoming = FALSE;
         }
         else
         {
+#ifdef FEATURE_ICM
             CallApp_Add_Number_To_Call_Table(pMe,call_table->call_info.other_party_no,call_table->call_id,
+#else
+            CallApp_Add_Number_To_Call_Table(pMe,other_party_no,call_table->cd,
+#endif
                                                                             AEECALLHISTORY_CALL_TYPE_MISSED/*CALLHISTORY_MISSED*/,call_table->number.pi,FALSE,b_energency,b_restict);
         }
         //CallApp_Change_Call_Table_Call_ID(pMe,call_table->call_info.other_party_no,call_table->call_id);
         switch (call_table->call_info.call_state)
         {
+#ifdef FEATURE_ICM
             case AEECM_CALL_STATE_INCOM: // caller id of the incoming call
+#else
+            case AEET_CALL_STATE_INCOM: // caller id of the incoming call
+#endif
                 // We are probably already displaying the incoming call dialog,
                 // but this will force it to refresh the call id information
                 *newState = STATE_INCOMINGCALL;
                 break;
-
+#ifdef FEATURE_ICM
             case AEECM_CALL_STATE_CONV://waiting call
+#else
+            case AEET_CALL_STATE_CONV://waiting call
+#endif
                // If a CallerID event occurs while in the conversation state,
                // assume it's an In-Band call
                //pMe->m_answerHold = FALSE;
@@ -2872,7 +3402,11 @@ static void CallApp_ProcessCallStateVoiceRedirNum(CCallApp                 *pMe,
     //pMe->m_b_show_cdg = TRUE;
     switch(pMe->m_cdg_dsp_info.pi/*call_table->call_info.redirect_party_number.pi*/)
     {
+#ifdef FEATURE_ICM
         case AEECM_PI_RES: /* Presentation restricted */
+#else
+        case AEET_PI_RES: /* Presentation restricted */
+#endif
             //for CDG test, CNAP with Forwarding
             pMe->m_RedirectingNumberPI = PI_RESTRICTED;
             (void) ISHELL_LoadResString(pMe->m_pShell,
@@ -2881,8 +3415,11 @@ static void CallApp_ProcessCallStateVoiceRedirNum(CCallApp                 *pMe,
                                                     pMe->m_RedirNumStr,
                                                     sizeof(pMe->m_RedirNumStr));
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_PI_NOT_AVAIL: /* Number not available */
+#else
+        case AEET_PI_NOT_AVAIL: /* Number not available */
+#endif
             //for CDG test, CNAP with Forwarding
             pMe->m_RedirectingNumberPI = PI_UNAVAILABLE;
             (void) ISHELL_LoadResString(pMe->m_pShell,
@@ -2891,14 +3428,27 @@ static void CallApp_ProcessCallStateVoiceRedirNum(CCallApp                 *pMe,
                                                     pMe->m_RedirNumStr,
                                                     sizeof(pMe->m_RedirNumStr));
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_PI_ALLOW: /* Presentation allowed */
+#else
+        case AEET_PI_ALLOW: /* Presentation allowed */
+#endif
         {
+#ifndef FEATURE_ICM
+			AECHAR redirect_party_number_buf[AEET_MAX_DIGITS_LENGTH]={0};
+
+			STRTOWSTR(call_table->call_info.redirect_party_number.buf,redirect_party_number_buf,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+#endif
             //for CDG test, CNAP with Forwarding
             pMe->m_RedirectingNumberPI = PI_ALLOWED;
             MEMSET(pMe->m_RedirNumStr,0,sizeof(pMe->m_RedirNumStr));
+#ifdef FEATURE_ICM
             CALL_PRINTF("VoiceRedirNum %S -%S",call_table->call_info.redirect_party_number.buf,call_table->call_info.forwarded_from);
             WSTRLCPY(pMe->m_RedirNumStr,call_table->call_info.redirect_party_number.buf,AEECM_MAX_DIGITS_LENGTH);
+#else
+            CALL_PRINTF("VoiceRedirNum %S -%S",redirect_party_number_buf,call_table->call_info.forwarded_from);
+            WSTRLCPY(pMe->m_RedirNumStr,redirect_party_number_buf,AEET_MAX_DIGITS_LENGTH);
+#endif
             CallApp_Conver_Buf(pMe->m_RedirNumStr);
             break;
         }
@@ -2908,10 +3458,17 @@ static void CallApp_ProcessCallStateVoiceRedirNum(CCallApp                 *pMe,
     }
     pMe->m_cdg_dsp_info.m_b_show_cdg = TRUE;
     //for CDG test, CNAP with Forwarding
+#ifdef FEATURE_ICM
     if((pMe->m_lastCallState == AEECM_CALL_STATE_ORIG)
         ||(pMe->m_lastCallState == AEECM_CALL_STATE_INCOM)
         ||(pMe->m_lastCallState == AEECM_CALL_STATE_CONV)
         )
+#else
+    if((pMe->m_lastCallState == AEET_CALL_STATE_ORIG)
+        ||(pMe->m_lastCallState == AEET_CALL_STATE_INCOM)
+        ||(pMe->m_lastCallState == AEET_CALL_STATE_CONV)
+        )
+#endif
     {
         //if(call_table->call_info.is_last_cdma_info_rec)
         if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
@@ -2926,6 +3483,11 @@ static void CallApp_ProcessCallStateVoiceSignal(CCallApp                 *pMe,
                                                             AEECMCallEventData    *call_table,
                                                             CallAppState             *newState)
 {
+#ifndef FEATURE_ICM
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+#endif
     if (!call_table->signal.is_signal_info_avail)
     {
         CALL_ERR("Received AEECM_EVENT_CALL_SIGNAL with no signal info.",
@@ -2937,12 +3499,21 @@ static void CallApp_ProcessCallStateVoiceSignal(CCallApp                 *pMe,
     //当不是需要响铃的时候,就设置状态为FALSE,
     //取消在这个地方响铃,统一到来电界面去
     pMe->incoming_id = FALSE;
+#ifdef FEATURE_ICM
     if((call_table->signal.signal_type == AEECM_SIGNAL_CDMA_IS54B)
         &&(call_table->signal.signal.cdma_is54b== AEECM_CDMA_IS54B_L  )
         &&(call_table->signal.signal_pitch == AEECM_PITCH_MED)
         &&(call_table->call_info.call_type          != AEECM_CALL_TYPE_TEST)
         &&(call_table->call_info.call_state         == AEECM_CALL_STATE_INCOM)
       )
+#else
+    if((call_table->signal.signal_type == AEET_SIGNAL_CDMA_IS54B)
+        &&(call_table->signal.signal.cdma_is54b== AEET_CDMA_IS54B_L  )
+        &&(call_table->signal.signal_pitch == AEET_PITCH_MED)
+        &&(call_table->call_info.call_type          != AEET_CALL_TYPE_TEST)
+        &&(call_table->call_info.call_state         == AEET_CALL_STATE_INCOM)
+      )
+#endif
     {
          pMe->incoming_id = TRUE;
     }
@@ -2952,16 +3523,26 @@ static void CallApp_ProcessCallStateVoiceSignal(CCallApp                 *pMe,
         len = WSTRLEN(call_table->call_info.alpha);
         if(len > 0)//cdg 2.5
         {
+#ifdef FEATURE_ICM
             AECHAR  alpha[AEECM_MAX_ALPHA_TAG_LENGTH] = {0};
+#else
+            AECHAR  alpha[AEET_MAX_ALPHA_TAG_LENGTH] = {0};
+#endif
             MEMCPY(alpha, call_table->call_info.alpha, len*sizeof(AECHAR));
             CallApp_Conver_Buf(alpha);
             if(WSTRLEN(alpha) >0 )
             {
                 MEMCPY(pMe->m_cdg_dsp_info.alpha, alpha, len*sizeof(AECHAR));
                 pMe->m_cdg_dsp_info.m_b_show_cdg = TRUE;
+#ifdef FEATURE_ICM
                 pMe->m_cdg_dsp_info.event = AEECM_EVENT_CALL_SIGNAL;
                 pMe->m_cdg_dsp_info.disp_type = AEECM_DISP_NORMAL;
                 pMe->m_cdg_dsp_info.b_last_rec = call_table->call_info.is_last_cdma_info_rec;
+#else
+                pMe->m_cdg_dsp_info.event = AEET_EVENT_CALL_SIGNAL;
+                pMe->m_cdg_dsp_info.disp_type = AEET_DISP_NORMAL;
+           //     pMe->m_cdg_dsp_info.b_last_rec = call_table->call_info.is_last_cdma_info_rec;  remove by aming
+#endif
                 pMe->m_cdg_dsp_info.pi = PI_ALLOWED;
                 ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW,  0,0);
             }
@@ -2970,8 +3551,11 @@ static void CallApp_ProcessCallStateVoiceSignal(CCallApp                 *pMe,
 #endif
     if(call_table->signal.is_signal_info_avail == TRUE)
     {
-
+#ifdef FEATURE_ICM
         (void) CallApp_PlaySignal(pMe, call_table->call_info.other_party_no,
+#else
+        (void) CallApp_PlaySignal(pMe, other_party_no,
+#endif
                                      &(call_table->signal));
     }
 }
@@ -2980,6 +3564,11 @@ static void CallApp_ProcessCallStateVoiceConnect(CCallApp                 *pMe,
 	                                               AEECMCallEventData    *call_table,
 	                                               CallAppState             *newState)
 {
+#ifndef FEATURE_ICM
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+#endif
     *newState = STATE_CONVERSATION;
     // 如果不置零，会造成在正常通话中也出现pMe->m_Is3Way==TRUE的情况。
     pMe->m_Is3Way = FALSE;
@@ -2987,7 +3576,11 @@ static void CallApp_ProcessCallStateVoiceConnect(CCallApp                 *pMe,
     pMe->m_bIsPrivacy |= call_table->call_info.is_privacy;
     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_LOCKSTATUS/*ANNUN_FIELD_VOICE_PRIVACY*/,
                             (pMe->m_bIsPrivacy? ANNUN_STATE_VOICE_PRIV_ON/*ANNUN_STATE_ON*/ : ANNUN_STATE_VOICE_PRIV_OFF/*ANNUN_STATE_OFF*/));
+#ifdef FEATURE_ICM
     CallApp_Change_Call_Table_Call_Start_Time(pMe,call_table->call_info.other_party_no);
+#else
+    CallApp_Change_Call_Table_Call_Start_Time(pMe,other_party_no);
+#endif
 
     pMe->m_LastMinuteAlert = 0;
     // Get current NV volume level
@@ -3008,11 +3601,20 @@ static void CallApp_ProcessCallStateVoiceAccept(CCallApp                 *pMe,
 	                                              AEECMCallEventData    *call_table,
 	                                              CallAppState             *newState)
 {
+#ifndef FEATURE_ICM
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+#endif
     *newState = STATE_CONVERSATION;
     CALL_ERR("OK, originated call accepted!", 0, 0, 0);
 
     //Reset call time when receive CM_CALL_EVENT_ORG_ACCEPT.
+#ifdef FEATURE_ICM
     CallApp_Change_Call_Table_Call_Start_Time(pMe,call_table->call_info.other_party_no);
+#else
+    CallApp_Change_Call_Table_Call_Start_Time(pMe,other_party_no);
+#endif
 }
 
 //add for CDG test, CNAP with Forwarding
@@ -3023,11 +3625,22 @@ static void CallApp_ProcessCallStateVoiceAccept(CCallApp                 *pMe,
 static void CallApp_ProcessCallStateVoiceDisplay(CCallApp *pMe,
 	AEECMNotifyInfo  *pCallInfo, CallAppState *newState)
 {
-
+#ifdef FEATURE_ICM
     AECHAR   tmpBuf[AEECM_MAX_ALPHA_TAG_LENGTH + 1] = {'\0'};
     uint32 len = 0;
     AEECLSID id = 0;
     CALL_ERR(" %x lastCallState= %d  info_rec= %d CallApp_ProcessCallStateVoiceDisplay",pCallInfo->event,pMe->m_lastCallState,pCallInfo->event_data.call.call_info.is_last_cdma_info_rec);
+#else
+    AECHAR   tmpBuf[AEET_MAX_ALPHA_TAG_LENGTH + 1] = {'\0'};
+    uint32 len = 0;
+    AEECLSID id = 0;
+	AECHAR  other_party_no[AEET_MAX_DIGITS_LENGTH]={0}; 	
+
+	STRTOWSTR(pCallInfo->event_data.call.call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+	
+    //CALL_ERR(" %x lastCallState= %d  info_rec= %d CallApp_ProcessCallStateVoiceDisplay",pCallInfo->event,pMe->m_lastCallState,pCallInfo->event_data.call.call_info.is_last_cdma_info_rec);
+    //pMe->m_b_show_cdg = TRUE;
+#endif
     //pMe->m_b_show_cdg = TRUE;
     CALL_ERR("call_info.alpha %x %x %x",pCallInfo->event_data.call.call_info.alpha[0],pCallInfo->event_data.call.call_info.alpha[1],pCallInfo->event_data.call.call_info.alpha[2]);
     CALL_PRINTF("call_info.alpha %S",pCallInfo->event_data.call.call_info.alpha);
@@ -3035,8 +3648,13 @@ static void CallApp_ProcessCallStateVoiceDisplay(CCallApp *pMe,
     //CALL_PRINTF("other_party_no %S",pCallInfo->event_data.call.call_info.other_party_no);
     //CALL_PRINTF("call.number.buf %S",pCallInfo->event_data.call.number.buf);
     // Get the string from Display or Extended Display record
+#ifdef FEATURE_ICM
     if(pCallInfo->event == AEECM_EVENT_CALL_DISPLAY)//||
     //(pCallInfo->event == AEECM_EVENT_INTERNAL_EXT_DISP))
+#else
+    if(pCallInfo->event == AEET_EVENT_CALL_DISPLAY)//||
+    //(pCallInfo->event == AEET_EVENT_INTERNAL_EXT_DISP))
+#endif
     {
         CALL_ERR("%d pCallInfo->event_data.call.disp_type",pCallInfo->event_data.call.disp_type,0,0);
         /*OEMCM.c 5409     AEECM_EVENT_CALL_DISPLAY
@@ -3044,20 +3662,31 @@ static void CallApp_ProcessCallStateVoiceDisplay(CCallApp *pMe,
         len = WSTRLEN(pCallInfo->event_data.call.call_info.alpha);
         if(len > 0)
         {
+#ifdef FEATURE_ICM
             if(len > AEECM_MAX_ALPHA_TAG_LENGTH)
             {
                 len = AEECM_MAX_ALPHA_TAG_LENGTH;
             }
-            
+#else
+            if(len > AEET_MAX_ALPHA_TAG_LENGTH)
+            {
+                len = AEET_MAX_ALPHA_TAG_LENGTH;
+            }
+#endif
             MEMCPY(tmpBuf, pCallInfo->event_data.call.call_info.alpha, len*sizeof(AECHAR));
         }
     }
+#ifdef FEATURE_ICM
     else if(pCallInfo->event == AEECM_EVENT_CALL_CALLED_PARTY)
+#else
+    else if(pCallInfo->event == AEET_EVENT_CALL_CALLED_PARTY)
+#endif
     // Get the string from Called Party Number record    
     {
         //当前还不能确定传上来的信息在哪个里面
         //From cmxcall.c 8611,call party number be saved in num->buf
         //From oemcm.c 5358,call party number be saved in call_info.other_party_no
+#ifdef FEATURE_ICM
         len = WSTRLEN(pCallInfo->event_data.call.call_info.other_party_no);
         if(len > 0)
         {
@@ -3067,8 +3696,20 @@ static void CallApp_ProcessCallStateVoiceDisplay(CCallApp *pMe,
             }
             MEMCPY(tmpBuf, pCallInfo->event_data.call.call_info.other_party_no, len*sizeof(AECHAR));
         }
+#else
+        len = WSTRLEN(other_party_no);
+        if(len > 0)
+        {
+            if(len > AEET_MAX_SUBADDRESS_DIGITS_LENGTH)
+            {
+                len = AEET_MAX_SUBADDRESS_DIGITS_LENGTH;
+            }
+            MEMCPY(tmpBuf, other_party_no, len*sizeof(AECHAR));
+        }
+#endif
     }
     CALL_PRINTF("pMe->m_RedirNumStr %S",pMe->m_RedirNumStr);
+#ifdef FEATURE_ICM
     if(WSTRLEN(pMe->m_RedirNumStr)>0 && pMe->m_cdg_dsp_info.pi == AEECM_PI_ALLOW) //in cdg 9.6.3 ,we need show ABC- 01628-681690
     {
         AECHAR mm[AEECM_MAX_ALPHA_TAG_LENGTH] = {0};
@@ -3082,6 +3723,21 @@ static void CallApp_ProcessCallStateVoiceDisplay(CCallApp *pMe,
     {
         WSTRLCPY(pMe->m_cdg_dsp_info.alpha, tmpBuf, AEECM_MAX_ALPHA_TAG_LENGTH);
     }
+#else
+    if(WSTRLEN(pMe->m_RedirNumStr)>0 && pMe->m_cdg_dsp_info.pi == AEET_PI_ALLOW) //in cdg 9.6.3 ,we need show ABC- 01628-681690
+    {
+        AECHAR mm[AEET_MAX_ALPHA_TAG_LENGTH] = {0};
+        CallApp_Conver_Buf(tmpBuf);
+        WSTRLCPY(mm, tmpBuf, AEET_MAX_ALPHA_TAG_LENGTH); 
+        WSTRLCAT(mm,L"-",AEET_MAX_ALPHA_TAG_LENGTH);
+        WSTRLCAT(mm, pMe->m_RedirNumStr, AEET_MAX_ALPHA_TAG_LENGTH);
+        WSTRLCPY(pMe->m_RedirNumStr,mm,AEET_MAX_ALPHA_TAG_LENGTH);
+    }
+    else
+    {
+        WSTRLCPY(pMe->m_cdg_dsp_info.alpha, tmpBuf, AEET_MAX_ALPHA_TAG_LENGTH);
+    }
+#endif
     CALL_PRINTF("pMe->m_cdg_dsp_info.alpha %S",pMe->m_cdg_dsp_info.alpha);
     if(WSTRLEN(pMe->m_cdg_dsp_info.alpha) == 0)
     {
@@ -3094,7 +3750,11 @@ static void CallApp_ProcessCallStateVoiceDisplay(CCallApp *pMe,
     pMe->m_cdg_dsp_info.m_b_show_cdg = TRUE;
     pMe->m_cdg_dsp_info.event = pCallInfo->event;
     pMe->m_cdg_dsp_info.disp_type = pCallInfo->event_data.call.disp_type;
+#ifdef FEATURE_ICM
     pMe->m_cdg_dsp_info.b_last_rec = pCallInfo->event_data.call.call_info.is_last_cdma_info_rec;
+#else
+    //pMe->m_cdg_dsp_info.b_last_rec = pCallInfo->event_data.call.call_info.is_last_cdma_info_rec;  remove by aming
+#endif
     pMe->m_cdg_dsp_info.pi = pMe->m_b_is_PI_ALLOWED/*pCallInfo->event_data.call.number.pi*/;
     id = AEE_Active();
     if(id == AEECLSID_CORE_APP)
@@ -3133,7 +3793,11 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
     // In conclusion, we only care about CM display events while in the
     // idle state so ignore everything else.
     //
+#ifdef FEATURE_ICM
     AEECMCallEventData    *call_table = NULL;
+#else
+    AEETCallEventData    *call_table = NULL;
+#endif
     CALL_FUN_START("CallApp_ProcessCallStateVoice",0,0,0);
     if(pCallInfo == NULL)
     {
@@ -3146,7 +3810,7 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
     {
         return;
     }
-
+#ifdef FEATURE_ICM
     if ( (AEECM_CALL_TYPE_NONE == call_table->call_info.call_type) &&
            //(pCallInfo->event != AEECM_EVENT_INTERNAL_EXT_DISP) &&     //add for CR330: CDG2 9.7.1
            (pCallInfo->event != AEECM_EVENT_CALL_DISPLAY)&&
@@ -3155,26 +3819,45 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
         CALL_ERR("%d AEECM_CALL_TYPE_NONE",pCallInfo->event, 0, 0);
         return;
     }
-
+#else
+    if ( (AEET_CALL_TYPE_NONE == call_table->call_info.call_type) &&
+           //(pCallInfo->event != AEET_EVENT_INTERNAL_EXT_DISP) &&     //add for CR330: CDG2 9.7.1
+           (pCallInfo->event != AEET_EVENT_CALL_DISPLAY)&&
+           (pCallInfo->event != AEET_EVENT_CALL_SIGNAL)) //add for CDG2 9.1.2.1
+    {
+        CALL_ERR("%d AEET_CALL_TYPE_NONE",pCallInfo->event, 0, 0);
+        return;
+    }
+#endif
     switch (pCallInfo->event)
     {
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ORIG:       /* phone originated a call */
+#else
+        case AEET_EVENT_CALL_ORIG:       /* phone originated a call */
+#endif
             CALL_ERR("AEECM_EVENT_CALL_ORIG=+=",0,0,0);
             CallApp_ProcessCallStateVoiceOrig(pMe, call_table, newState);
 #ifdef CDG_TEMP_TEST
             CallApp_ProcessCallStateVoiceDisplay(pMe,pCallInfo,newState);
 #endif
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ANSWER:     /* Incoming call was answered */
+#else
+        case AEET_EVENT_CALL_ANSWER:     /* Incoming call was answered */
+#endif
             CALL_ERR("%d AEECM_EVENT_CALL_ANSWER=+=",call_table->number.pi,0,0);
             CallApp_ProcessCallStateVoiceAnswer(pMe, call_table, newState);
 #ifdef FEATURE_LED_CONTROL
             //CallApp_DisableLedSig( pMe);
 #endif
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_END:        /* Originated/incoming call was ended */
+#else
+        case AEET_EVENT_CALL_END:        /* Originated/incoming call was ended */
+#endif
             CALL_ERR("AEECM_EVENT_CALL_END=+=",0,0,0);
             pMe->m_bReceiveCallerID     = FALSE;
             CallApp_ProcessCallStateVoiceEnd(pMe, call_table, newState);
@@ -3182,14 +3865,20 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
             //CallApp_DisableLedSig( pMe);
 #endif
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_INCOM:      /* phone received an incoming call */
+#else
+        case AEET_EVENT_CALL_INCOM:      /* phone received an incoming call */
+#endif
             CALL_ERR("%d AEECM_EVENT_CALL_INCOM=+=",call_table->number.pi,0,0);
             pMe->incoming_id=TRUE;  // 初始需要播放铃声
             CallApp_ProcessCallStateVoice_Incoming(pMe, call_table, newState);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_CALLER_ID:  /* Caller ID info was received from BS */
+#else
+        case AEET_EVENT_CALL_CALLER_ID:  /* Caller ID info was received from BS */
+#endif
             CALL_ERR("%d AEECM_EVENT_CALL_CALLER_ID=+=",call_table->number.pi,0,0);
             pMe->m_bReceiveCallerID = TRUE;
             CallApp_ProcessCallStateVoiceCallerID(pMe, call_table, newState);
@@ -3197,14 +3886,26 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
             CallApp_ProcessCallStateVoiceDisplay(pMe,pCallInfo,newState);
 #endif
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_FORWARDED://we not use the pMe->m_RedirNumStr
+#else
+        case AEET_EVENT_CALL_FORWARDED://we not use the pMe->m_RedirNumStr
+#endif
         //for CDG test, CNAP with Forwarding
+#ifdef FEATURE_ICM
 #ifdef T_MSM6000
         case AEECM_EVENT_CALL_EXIT_TC:
 #endif
 #ifdef FEATURE_REDIRECTING_NUMBER_INFO_REC
         case AEECM_EVENT_CALL_REDIR_NUM:// Redirection number info was received
+#endif
+#else
+#ifdef T_MSM6000
+        case AEET_EVENT_CALL_EXIT_TC:
+#endif
+#ifdef FEATURE_REDIRECTING_NUMBER_INFO_REC
+        case AEET_EVENT_CALL_REDIR_NUM:// Redirection number info was received
+#endif
 #endif
             CALL_ERR("%d %d AEECM_EVENT_CALL_REDIR_NUM=+=",call_table->number.pi,call_table->call_info.redirect_party_number.pi,0);
             CallApp_ProcessCallStateVoiceRedirNum(pMe, call_table, newState);
@@ -3212,8 +3913,11 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
             //CallApp_DisableLedSig( pMe);
 #endif
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_SIGNAL:       /* signal info was received from BS */
+#else
+        case AEET_EVENT_CALL_SIGNAL:       /* signal info was received from BS */
+#endif
             CALL_ERR("%d %d AEECM_EVENT_CALL_SIGNAL=+=",pMe->m_bReceiveCallerID,call_table->number.pi,0);
             if (pMe->m_bReceiveCallerID)
             {
@@ -3222,8 +3926,11 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
             }
             CallApp_ProcessCallStateVoiceSignal(pMe, call_table, newState);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_CONNECT: /* Originated/incoming call was connected */
+#else
+        case AEET_EVENT_CALL_CONNECT: /* Originated/incoming call was connected */
+#endif
             CALL_ERR("%d AEECM_EVENT_CALL_CONNECT=+=",call_table->number.pi,0,0);
             pMe->m_bReceiveCallerID     = FALSE;
             CallApp_ProcessCallStateVoiceConnect(pMe, call_table, newState);
@@ -3232,21 +3939,34 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
 #endif
             break;
 
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_LINE_CTRL: /* Originated was accepted */
             CALL_ERR("%d AEECM_EVENT_CALL_LINE_CTRL=+=",call_table->number.pi,0,0);
             CallApp_ProcessCallStateVoiceAccept(pMe, call_table, newState);
             break;
-
+#endif
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_OPS:      /* phone sent Flash/Flash with Info to BS */
+#else
+        case AEET_EVENT_CALL_OPS:      /* phone sent Flash/Flash with Info to BS */
+#endif
             CALL_ERR("AEECM_EVENT_CALL_OPS=+=",0,0,0);
+#ifdef FEATURE_ICM
             if (AEECM_CALL_STATE_CONV == call_table->call_info.call_state)
+#else
+            if (AEET_CALL_STATE_CONV == call_table->call_info.call_state)
+#endif
             {
                 *newState = STATE_CONVERSATION;
             }
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_PRIVACY:  /* Privacy mode changed while in a call */
         case AEECM_EVENT_CALL_SRV_OPT: /* Service option changed */
+#else
+        case AEET_EVENT_CALL_PRIVACY:  /* Privacy mode changed while in a call */
+        case AEET_EVENT_CALL_SRV_OPT: /* Service option changed */
+#endif
             CALL_ERR("%d AEECM_EVENT_CALL_PRIVACY=+=",call_table->call_info.is_privacy,0,0);
             // Update the privacy annunciator
             pMe->m_bIsPrivacy |= call_table->call_info.is_privacy;
@@ -3256,7 +3976,11 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
             break;
 
            /* Events added forcase CM 2.0 */
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ABRV_ALERT:   /* CDMA/AMPS abbreviated alert */
+#else
+        case AEET_EVENT_CALL_ABRV_ALERT:   /* CDMA/AMPS abbreviated alert */
+#endif
             CALL_ERR("AEECM_EVENT_CALL_ABRV_ALERT=+=",0,0,0);
             //OEM_Snd_Sound_Id_Start(SND_DEVICE_CURRENT, SND_METHOD_VOICE,
             //  SND_ABRV_ALERT, SND_PRIO_MED, SND_APATH_LOCAL, NULL);
@@ -3265,8 +3989,11 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
                 SND_ABRV_ALERT, SND_PRIO_MED, SND_APATH_LOCAL, NULL,NULL);
 #endif
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ABRV_REORDER: /* AMPS abbreviated reorder */
+#else
+        case AEET_EVENT_CALL_ABRV_REORDER: /* AMPS abbreviated reorder */
+#endif
             CALL_ERR("AEECM_EVENT_CALL_ABRV_REORDER=+=",0,0,0);
             //OEM_Snd_Sound_Id_Start(SND_DEVICE_CURRENT, SND_METHOD_VOICE,
             //    SND_ABRV_REORDER, SND_PRIO_MED, SND_APATH_LOCAL, NULL);
@@ -3275,8 +4002,11 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
                 SND_ABRV_REORDER, SND_PRIO_MED, SND_APATH_LOCAL, NULL,NULL);
 #endif
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ABRV_INTERCEPT: /* AMPS abbreviated intercept */
+#else
+        case AEET_EVENT_CALL_ABRV_INTERCEPT: /* AMPS abbreviated intercept */
+#endif
             CALL_ERR("AEECM_EVENT_CALL_ABRV_INTERCEPT=+=",0,0,0);
             //OEM_Snd_Sound_Id_Start(SND_DEVICE_CURRENT, SND_METHOD_VOICE,
             //     SND_ABRV_INTERCEPT, SND_PRIO_MED, SND_APATH_LOCAL, NULL);
@@ -3287,7 +4017,11 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
             break;
 
         //add for CDG test, CNAP with Forwarding
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_DISPLAY:      /* display info was received from BS */
+#else
+        case AEET_EVENT_CALL_DISPLAY:      /* display info was received from BS */
+#endif
             //#ifdef FEATURE_IS95B_EXT_DISP
             //        case AEECM_EVENT_INTERNAL_EXT_DISP:  /* extended display was received from BS */
             //#endif /* FEATURE_IS95B_EXT_DISP */
@@ -3297,16 +4031,23 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
             CALL_ERR("AEECM_EVENT_CALL_DISPLAY=+=",0,0,0);
             //CallApp_ProcessCallStateVoiceDisplay(pMe, pCallInfo, newState);
             //break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_CALLED_PARTY:   /* called party info was received from BS */
+#else
+        case AEET_EVENT_CALL_CALLED_PARTY:   /* called party info was received from BS */
+#endif
             CALL_ERR("%d AEECM_EVENT_CALL_CALLED_PARTY=+=", call_table->number.pi, 0, 0);
             CallApp_ProcessCallStateVoiceDisplay(pMe, pCallInfo, newState);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_CONNECTED_NUM:  /* connected number info was received from BS */
+#else
+        case AEET_EVENT_CALL_CONNECTED_NUM:  /* connected number info was received from BS */
+#endif
             CALL_ERR("%d && %d %d AEECM_EVENT_CALL_CONNECTED_NUM=+=",
                                             call_table->number.number_type, pMe->m_lastCallState, call_table->number.pi);
 #if 1
+#ifdef FEATURE_ICM
             if(call_table->number.number_type == AEECM_TON_INTERNATIONAL)
             {
                 /*in this time,CM will inset a "+" in call_info->other_party_no OEMCM.c 5903*/
@@ -3331,10 +4072,42 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
                                           AEECLSID_DIALER/*AEECLSID_CALL*/, EVT_USER_REDRAW, 0, 0);
                 }
             }
+#else
+            if(call_table->number.number_type == AEET_TON_INTERNATIONAL)
+            {
+                /*in this time,CM will inset a "+" in call_info->other_party_no OEMCM.c 5903*/
+                Dialer_call_table * temp = NULL;
+                AECHAR new_number[AEET_MAX_DIGITS_LENGTH] = {0};
+				AECHAR	other_party_no[AEET_MAX_DIGITS_LENGTH]={0};  
+				
+				STRTOWSTR(call_table->call_info.other_party_no,other_party_no,AEET_MAX_DIGITS_LENGTH*sizeof(AECHAR));
+
+                WSTRLCPY(new_number,other_party_no + 1,AEET_MAX_DIGITS_LENGTH);
+                CALL_PRINTF("new_number = %S %S",new_number,other_party_no);
+                //CALL_PRINT("other_party_no = ",call_table->call_info.other_party_no,0);
+                temp = CallApp_Search_Number_In_Call_Table(pMe,new_number);
+                if (temp)
+                {
+                    temp->call_number[0] = 0;
+                    WSTRLCPY(temp->call_number,other_party_no ,AEET_MAX_DIGITS_LENGTH);
+                }
+
+                if(pMe->m_lastCallState == AEET_CALL_STATE_CONV)/*||
+                     (pMe->m_lastCallState == AEET_CALL_STATE_INCOM) ||
+                        (pMe->m_lastCallState == AEET_CALL_STATE_ORIG))*/
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                          AEECLSID_DIALER/*AEECLSID_CALL*/, EVT_USER_REDRAW, 0, 0);
+                }
+            }
+#endif
 #endif
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ERROR:
+#else
+        case AEET_EVENT_CALL_ERROR:
+#endif
             CALL_ERR("%x AEECM_EVENT_CALL_ERROR=+=", pCallInfo->event_data.call.call_error, 0, 0);
             *newState = STATE_EXIT;
             break;
@@ -3374,7 +4147,11 @@ SEE ALSO:
 
 =============================================================================*/
 static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
+#ifdef FEATURE_ICM
                                                 AEECMSignal *pSignal)
+#else
+                                                AEETSignal *pSignal)
+#endif
 {
     AECHAR         *pszPhNumber = NULL;
     AEEALERTType    AlertType;
@@ -3397,81 +4174,140 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
     CALL_ERR("%d %d CallApp_PlaySignal", pSignal->signal_type, pSignal->signal.cdma_tone, 0);
     switch(pSignal->signal_type)
     {
+#ifdef FEATURE_ICM
         case AEECM_SIGNAL_CDMA_TONE:
+#else
+        case AEET_SIGNAL_CDMA_TONE:
+#endif
             switch(pSignal->signal.cdma_tone)
             {
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_DIAL:
+#else
+                case AEET_CDMA_TONE_DIAL:
+#endif
                     AlertType = AEEALERT_ALERT_DIALTONE;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_RING:
+#else
+                case AEET_CDMA_TONE_RING:
+#endif
                     AlertType = AEEALERT_ALERT_RINGBACK;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_BUSY:
+#else
+#endif
                     AlertType = AEEALERT_ALERT_BUSY;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_ANSWER:
+#else
+                case AEET_CDMA_TONE_ANSWER:
+#endif
                     AlertType = AEEALERT_ALERT_ANSWER;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_INTERCEPT:
+#else
+                case AEET_CDMA_TONE_INTERCEPT:
+#endif
                     AlertType = AEEALERT_ALERT_INTERCEPT;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_ABBR_INTERCEPT:
+#else
+                case AEET_CDMA_TONE_ABBR_INTERCEPT:
+#endif
                     AlertType = AEEALERT_ALERT_ABBR_INTERCEPT;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_REORDER:
+#else
+                case AEET_CDMA_TONE_REORDER:
+#endif
                     AlertType = AEEALERT_ALERT_REORDER;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_ABBR_REORDER:
+#else
+
+#endif
                     AlertType = AEEALERT_ALERT_ABBR_REORDER;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_CONFIRM:
+#else
+                case AEET_CDMA_TONE_CONFIRM:
+#endif
                     AlertType = AEEALERT_ALERT_CONFIRM;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_CALLWAIT:
+#else
+                case AEET_CDMA_TONE_CALLWAIT:
+#endif
                     AlertType = AEEALERT_ALERT_CALLWAITING;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_PIP:
+#else
+                case AEET_CDMA_TONE_PIP:
+#endif
                     AlertType = AEEALERT_ALERT_PIP;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_TONE_OFF:
+#else
+                case AEET_CDMA_TONE_OFF:
+#endif
                 default:
                     (void) IALERT_StopAlerting(pMe->m_pAlert);
                     return TRUE;
             }
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_SIGNAL_CDMA_ISDN:
+#else
+        case AEET_SIGNAL_CDMA_ISDN:
+#endif
             switch(pSignal->signal.cdma_isdn)
             {
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_ISDN_INTERGROUP:
+#else
+                case AEET_CDMA_ISDN_INTERGROUP:
+#endif
                     AlertType = AEEALERT_ALERT_ISDN_INTERGROUP;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_ISDN_SPECIAL:
+#else
+                case AEET_CDMA_ISDN_SPECIAL:
+#endif
                     AlertType = AEEALERT_ALERT_ISDN_SPECIAL;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_ISDN_PING:
+#else
+                case AEET_CDMA_ISDN_PING:
+#endif
                     AlertType = AEEALERT_ALERT_ISDN_PING;
                     break;
                     return TRUE;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_ISDN_OFF:
+#else
+                case AEET_CDMA_ISDN_OFF:
+#endif
                     (void) IALERT_StopAlerting(pMe->m_pAlert);
                     return TRUE;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_ISDN_NORMAL:
+#else
+                case AEET_CDMA_ISDN_NORMAL:
+#endif
                 default:
                     // play the normal ringer since this is default
                     AlertType = AEEALERT_ALERT_NORMAL;
@@ -3479,24 +4315,41 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                     break;
             }
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_SIGNAL_CDMA_IS54B:
+#else
+        case AEET_SIGNAL_CDMA_IS54B:
+#endif
         {
             switch(pSignal->signal.cdma_is54b)
             {
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_L:
+#else
+                case AEET_CDMA_IS54B_L:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             // play the normal ringer since this is default
                             AlertType = AEEALERT_ALERT_NORMAL;
                             break;
-
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_LONG_H;
                             break;
-
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_LONG_L;
                             break;
 
@@ -3505,19 +4358,32 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_SS:
+#else
+                case AEET_CDMA_IS54B_SS:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SS_M;
                             break;
-
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SS_H;
                             break;
-
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SS_L;
                             break;
 
@@ -3526,19 +4392,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_SSL:
+#else
+                case AEET_CDMA_IS54B_SSL:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SSL_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SSL_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SSL_L;
                             break;
 
@@ -3547,19 +4428,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_SS2:
+#else
+                case AEET_CDMA_IS54B_SS2:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SS2_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SS2_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SS2_L;
                             break;
 
@@ -3568,19 +4464,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_SLS:
+#else
+                case AEET_CDMA_IS54B_SLS:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SLS_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SLS_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SLS_L;
                             break;
 
@@ -3589,19 +4500,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_SSSS:
+#else
+                case AEET_CDMA_IS54B_SSSS:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SSSS_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SSSS_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_SSSS_L;
                             break;
 
@@ -3610,19 +4536,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_PBX_L:
+#else
+                case AEET_CDMA_IS54B_PBX_L:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_LONG_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_LONG_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_LONG_L;
                             break;
 
@@ -3631,19 +4572,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_PBX_SS:
+#else
+                case AEET_CDMA_IS54B_PBX_SS:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SS_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SS_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SS_L;
                             break;
 
@@ -3652,19 +4608,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_PBX_SSL:
+#else
+                case AEET_CDMA_IS54B_PBX_SSL:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SSL_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SSL_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SSL_L;
                             break;
 
@@ -3673,19 +4644,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_PBX_SLS:
+#else
+                case AEET_CDMA_IS54B_PBX_SLS:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SLS_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SLS_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SLS_L;
                             break;
 
@@ -3694,19 +4680,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_PBX_SSSS:
+#else
+                case AEET_CDMA_IS54B_PBX_SSSS:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SSSS_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SSSS_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS54B_PBX_SSSS_L;
                             break;
 
@@ -3715,19 +4716,34 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_PPPP:
+#else
+                case AEET_CDMA_IS54B_PPPP:
+#endif
                     switch(pSignal->signal_pitch)
                     {
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_MED:
+#else
+                        case AEET_PITCH_MED:
+#endif
                             AlertType = AEEALERT_ALERT_IS53A_PPPP_M;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_HIGH:
+#else
+                        case AEET_PITCH_HIGH:
+#endif
                             AlertType = AEEALERT_ALERT_IS53A_PPPP_H;
                             break;
 
+#ifdef FEATURE_ICM
                         case AEECM_PITCH_LOW:
+#else
+                        case AEET_PITCH_LOW:
+#endif
                             AlertType = AEEALERT_ALERT_IS53A_PPPP_L;
                             break;
 
@@ -3736,8 +4752,11 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
                             return FALSE;
                     }
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_CDMA_IS54B_OFF:
+#else
+                case AEET_CDMA_IS54B_OFF:
+#endif
                     (void) IALERT_StopAlerting(pMe->m_pAlert);
                     return TRUE;
 
@@ -3747,42 +4766,73 @@ static boolean CallApp_PlaySignal(CCallApp *pMe, AECHAR* pszPhoneNumber,
             }
         }
         break;
-
+#ifdef FEATURE_ICM
         case AEECM_SIGNAL_GW_TONE:
+#else
+        case AEET_SIGNAL_GW_TONE:
+#endif
             switch(pSignal->signal.gw_tone)
             {
+#ifdef FEATURE_ICM
                 case AEECM_GW_DIAL_TONE_ON:
+#else
+                case AEET_GW_DIAL_TONE_ON:
+#endif
                     AlertType = AEEALERT_ALERT_DIALTONE;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_GW_RING_BACK_TONE_ON:
+#else
+                case AEET_GW_RING_BACK_TONE_ON:
+#endif
                     AlertType = AEEALERT_ALERT_RINGBACK;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_GW_BUSY_TONE_ON:
+#else
+                case AEET_GW_BUSY_TONE_ON:
+#endif
                     AlertType = AEEALERT_ALERT_BUSY;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_GW_ANSWER_TONE_ON:
+#else
+                case AEET_GW_ANSWER_TONE_ON:
+#endif
                     AlertType = AEEALERT_ALERT_ANSWER;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_GW_INTERCEPT_TONE_ON:
+#else
+                case AEET_GW_INTERCEPT_TONE_ON:
+#endif
                     AlertType = AEEALERT_ALERT_INTERCEPT;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_GW_CONFIRM_TONE_ON:
+#else
+                case AEET_GW_CONFIRM_TONE_ON:
+#endif
                     AlertType = AEEALERT_ALERT_CONFIRM;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_GW_CALL_WAITING_TONE_ON:
+#else
+                case AEET_GW_CALL_WAITING_TONE_ON:
+#endif
                     AlertType = AEEALERT_ALERT_CALLWAITING;
                     break;
-
+#ifdef FEATURE_ICM
                 case AEECM_GW_TONES_OFF:
                 case AEECM_GW_NW_CONGESTION_TONE_ON:
                 case AEECM_GW_OFF_HOOK_WARNING_TONE_ON:
                 case AEECM_GW_ALERTING_TONE_OFF:
+#else
+                case AEET_GW_TONES_OFF:
+                case AEET_GW_NW_CONGESTION_TONE_ON:
+                case AEET_GW_OFF_HOOK_WARNING_TONE_ON:
+                case AEET_GW_ALERTING_TONE_OFF:
+#endif
                 default:
                     (void) IALERT_StopAlerting(pMe->m_pAlert);
                     return TRUE;
@@ -4024,6 +5074,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
+#ifdef FEATURE_ICM
 boolean CallApp_IsEmergencyMode(ICM* pICM)
 {
     AEECMPhInfo phoneInfo;
@@ -4046,7 +5097,30 @@ boolean CallApp_IsEmergencyMode(ICM* pICM)
         return FALSE;
     }
 }
+#else
+boolean CallApp_IsEmergencyMode(ITelephone * pTelephone)
+{
+    AEETPhInfo phoneInfo;
 
+    //PRINT_FUNCTION_NAME();
+    CALL_FUN_START("CallApp_IsEmergencyMode",0,0,0);
+
+    if (!pTelephone)
+    {
+        return FALSE;
+    }
+
+    ITELEPHONE_GetPhoneInfo(pTelephone, &phoneInfo, sizeof(phoneInfo));
+    if (phoneInfo.mode_pref == AEET_MODE_PREF_EMERGENCY)
+    {
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
+}
+#endif
 
 /*===========================================================================
 
@@ -4440,7 +5514,7 @@ boolean CallApp_Modify_Number_To_Call_Table(CCallApp *pMe,AECHAR *number,
                                             uint8 call_id,uint16 call_type/*uint16 call_status*/,callPIType type)
 {
     AECHAR    m_call_name[MAX_SIZE_NAME_TEXT] = {0};
-    AECHAR    m_call_number[AEECM_MAX_DIAL_STRING] = {0};
+    AECHAR    m_call_number[MAX_SIZE_DIAL_STR] = {0};
     AECHAR    ringer[MAX_FILE_NAME] = {0};
     CALL_FUN_START("%d type= %d CallApp_Modify_Number_To_Call_Table",pMe->m_CallsTable_Count,type,0);
 
@@ -4464,7 +5538,7 @@ boolean CallApp_Modify_Number_To_Call_Table(CCallApp *pMe,AECHAR *number,
                                         AEE_APPSCALLAPP_RES_FILE,
                                         IDS_NUMBER_RESTRICTED,
                                         m_call_number,
-                                        AEECM_MAX_DIAL_STRING);
+                                        MAX_SIZE_DIAL_STR);
             pMe->m_b_is_PI_ALLOWED = PI_RESTRICTED;
             break;
 
@@ -4473,7 +5547,7 @@ boolean CallApp_Modify_Number_To_Call_Table(CCallApp *pMe,AECHAR *number,
                                         AEE_APPSCALLAPP_RES_FILE,
                                         IDS_NUMBER_UNAVAILABLE,
                                         m_call_number,
-                                        AEECM_MAX_DIAL_STRING);
+                                        MAX_SIZE_DIAL_STR);
             pMe->m_b_is_PI_ALLOWED = PI_UNAVAILABLE;
             break;
 
@@ -5432,7 +6506,11 @@ static void CallApp_DisableLedSig( CCallApp *pMe)
 
 static void CallApp_Settime_To_EndCall(CCallApp *pMe)
 {
+#ifdef FEATURE_ICM
     ICM_EndAllCalls(pMe->m_pICM);
+#else
+    ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
 }
 
 //static void CallApp_Process_Batty_Msg(CCallApp  *pMe, uint16  msg_id)
@@ -5530,7 +6608,11 @@ boolean bt_ui_process_cmcall_notify(CCallApp *pMe,uint32 event/*,void  *pCallInf
 
     switch(event)
     {
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ORIG:       /* phone originated a call */
+#else
+        case AEET_EVENT_CALL_ORIG:       /* phone originated a call */
+#endif
             bt_ui_ag_cb->call_state = BTUI_AG_CALL_OUT;
             bt_ui_ag_cb->ind[BTUI_AG_IND_CALL]   = BTUI_AG_CALL_IND_ACTIVE;
             bt_ui_ag_cb->ind[BTUI_AG_IND_SETUP] =  BTUI_AG_CALLSETUP_ALERTING;
@@ -5544,24 +6626,33 @@ boolean bt_ui_process_cmcall_notify(CCallApp *pMe,uint32 event/*,void  *pCallInf
                 BTA_AgResult(BTA_AG_HANDLE_ALL, BTA_AG_OUT_CALL_ALERT_RES, &data);
             }
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ANSWER:     /* Incoming call was answered */
+#else
+        case AEET_EVENT_CALL_ANSWER:     /* Incoming call was answered */
+#endif
             //if (bt_ui_ag_cb->call_handle != BTA_AG_HANDLE_NONE)
             //{
             //    data.audio_handle = bt_ui_ag_cb->call_handle;
             //    BTA_AgResult(BTA_AG_HANDLE_ALL, BTA_AG_IN_CALL_CONN_RES, &data);
             //}
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_END:        /* Originated/incoming call was ended */
+#else
+        case AEET_EVENT_CALL_END:        /* Originated/incoming call was ended */
+#endif
             bt_ui_ag_cb->call_state = BTUI_AG_CALL_NONE;
             bt_ui_ag_cb->ind[BTUI_AG_IND_SETUP] =BTUI_AG_CALLSETUP_NONE;
             bt_ui_ag_cb->ind[BTUI_AG_IND_CALL] = BTUI_AG_CALL_IND_INACTIVE;
             bt_ui_ag_cb->ind[BTUI_AG_IND_HELD] = '0';
             BTA_AgResult(BTA_AG_HANDLE_ALL, BTA_AG_END_CALL_RES, NULL);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_INCOM:      /* phone received an incoming call */
+#else
+        case AEET_EVENT_CALL_INCOM:      /* phone received an incoming call */
+#endif
             ERR("AEECM_EVENT_CALL_INCOM",0,0,0);
             b_incoming = TRUE;
             pMe->m_bt_audio = SEND_BT_CALL;
@@ -5569,13 +6660,19 @@ boolean bt_ui_process_cmcall_notify(CCallApp *pMe,uint32 event/*,void  *pCallInf
             //bt_ui_ag_cb->ind[BTUI_AG_IND_CALL]   = BTUI_AG_CALL_IND_ACTIVE;
             bt_ui_ag_cb->ind[BTUI_AG_IND_SETUP] = BTUI_AG_CALLSETUP_INCOMING;
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_CALLER_ID:  /* Caller ID info was received from BS */
+#else
+        case AEET_EVENT_CALL_CALLER_ID:  /* Caller ID info was received from BS */
+#endif
             bt_ui_ag_cb->call_state = BTUI_AG_CALL_INC;
             //bt_ui_ag_cb->ind[BTUI_AG_IND_CALL]   = BTUI_AG_CALL_IND_ACTIVE;
             bt_ui_ag_cb->ind[BTUI_AG_IND_SETUP] = BTUI_AG_CALLSETUP_INCOMING;
-
+#ifdef FEATURE_ICM
             pMe->m_b_incall = AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM);
+#else
+            pMe->m_b_incall = AEET_IS_VOICECALL_CONNECTED(pMe->m_pITelephone);
+#endif
             ERR("AEECM_EVENT_CALL_CALLER_ID %d",pMe->m_b_incall,0,0);
             b_incoming = TRUE;
             data.str[0]='\"';
@@ -5596,14 +6693,20 @@ boolean bt_ui_process_cmcall_notify(CCallApp *pMe,uint32 event/*,void  *pCallInf
                 }
             }
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_SIGNAL:       /* signal info was received from BS */
+#else
+        case AEET_EVENT_CALL_SIGNAL:       /* signal info was received from BS */
+#endif
             //data.audio_handle = bt_ui_ag_cb->call_handle;
             //data.state = TRUE;
             //BTA_AgResult(bt_ui_ag_cb->call_handle, BTA_AG_INBAND_RING_RES, &data);
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_CONNECT: /* Originated/incoming call was connected */
+#else
+        case AEET_EVENT_CALL_CONNECT: /* Originated/incoming call was connected */
+#endif
             ERR("AEECM_EVENT_CALL_CONNECT %d",b_incoming,0,0);
             pMe->m_b_add_btag_menu = TRUE;
             bt_ui_ag_cb->call_state = BTUI_AG_CALL_ACTIVE;
@@ -5619,8 +6722,11 @@ boolean bt_ui_process_cmcall_notify(CCallApp *pMe,uint32 event/*,void  *pCallInf
                 BTA_AgResult(BTA_AG_HANDLE_ALL, BTA_AG_OUT_CALL_CONN_RES, &data);
             }
             break;
-
+#ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_ERROR:
+#else
+        case AEET_EVENT_CALL_ERROR:
+#endif
             bt_ui_ag_cb->call_state = BTUI_AG_CALL_NONE;
             bt_ui_ag_cb->ind[BTUI_AG_IND_SETUP] =BTUI_AG_CALLSETUP_NONE;
             bt_ui_ag_cb->ind[BTUI_AG_IND_CALL] = BTUI_AG_CALL_IND_INACTIVE;
