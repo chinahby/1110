@@ -870,7 +870,8 @@ void gpio_restore_gpios_after_uim_sleep( void );
 #define AIT701_RESET			(GPIO_OUTPUT_53)
 #define AIT701_BYPASS			(GPIO_OUTPUT_51)
 
-#else
+#endif
+
 
 #define CAMIF_EN_N  CAMIF_DISABLE
 #define CAMCLK_PO  CAMIF_MCLK
@@ -891,6 +892,6 @@ void gpio_restore_gpios_after_uim_sleep( void );
 #define CAMIF_HSYNC_OUT          CAMIF_HSYNC
 #define CAMIF_VSYNC_OUT          CAMIF_VSYNC
 
-#endif
+
 
 #endif /* GPIO_1100_H */
