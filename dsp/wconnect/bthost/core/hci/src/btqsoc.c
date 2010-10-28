@@ -760,8 +760,7 @@ static boolean bt_qsoc_detect_fw_version
     bt_qsoc.bt_qsoc_type = BT_QSOC_UNKNOWN;
   }
 
-  MSG_SPRINTF_3(MSG_SSID_DFLT, MSG_LEGACY_LOW, "BT QSOC: BTS version %s, idx %x", \
-bts_ver, bt_qsoc.bt_qsoc_type, 0);
+  MSG_FATAL("BT QSOC: BTS version %s, idx %x",bts_ver, bt_qsoc.bt_qsoc_type, 0);
 
   /* NVM initalization below will need the BD Address, so read it from NV */
   bt_cmd_dc_get_bd_addr( &bd_addr ); 
@@ -790,6 +789,7 @@ bts_ver, bt_qsoc.bt_qsoc_type, 0);
 
   BT_MSG_HIGH( "BT QSOC START SENDING NVMs", 0, 0, 0 );
 
+	MSG_FATAL("bt_qsoc.bt_qsoc_type = %d,bt_refclock_type = %d",bt_qsoc.bt_qsoc_type,bt_refclock_type,0);
   /* if(!bt_qsoc_nvm_vs_find_file(bt_qsoc.bt_qsoc_type, &bt_qsoc_vs_nvm_cmd_tbl)) */
   if(!bt_qsoc_read_nvm_tags_from_header(bt_qsoc.bt_qsoc_type,bt_refclock_type))
   {
@@ -2214,7 +2214,7 @@ void bt_qsoc_powerup
     /* Temporarily using target define, this will eventually need to be 
        a separate feature
      */
-#ifdef T_QSC1110
+#if (defined(T_QSC1110) || defined(T_QSC1100))
 
     /* Force enable the clock (XO_GP1) from software. This must be done 
        when BTS is still in reset. After the HCI reset clock enable 
@@ -2288,10 +2288,11 @@ void bt_qsoc_powerup
     }
 #endif /* T_QSC6270 */
 
-#if (defined (T_QSC60X5) || defined (T_QSC6270) || defined (T_QSC1110))
+#if (defined (T_QSC60X5) || defined (T_QSC6270) || defined (T_QSC1110) || defined(T_QSC1100))
     /* NOTE: QSC60X5 is also defined for QSC1110 target */
 
     /* 60X5 uses the GPIO interface to control SoC power */
+    gpio_tlmm_config(BT_PWR_EN);
     gpio_out( BT_PWR_EN, GPIO_HIGH_VALUE );
     BT_MSG_HIGH( "BT QSOC Powerup: Calling gpio_out - to turn on", 0, 0, 0 );
 
@@ -2959,7 +2960,8 @@ void bt_qsoc_process_hci_reset
 #endif /* FEATURE_BT_QSOC_SLEEP */
 #endif /* FEATURE_BT_QSOC_INBAND_SLEEP*/
 
-#ifdef T_QSC1110
+#if (defined(T_QSC1110) || defined(T_QSC1100))
+
  /* Switch the clock control to BTS HW signalling. Disable manual override
   * after setting it to automatic mode.
   */
@@ -3021,7 +3023,7 @@ void bt_qsoc_shutdown
 
 #ifdef FEATURE_BT_QSOC_POWERDOWN
 
-#ifdef T_QSC1110
+#if (defined(T_QSC1110) || defined(T_QSC1100))
   /* Change XO_GP1 to automatic (HW signalling based) mode and disable
      the buffer
    */
@@ -3054,7 +3056,7 @@ void bt_qsoc_shutdown
 
 #endif /* T_QSC6270 */
 
-#if (defined (T_QSC60X5) || defined (T_QSC6270) || defined (T_QSC1110))
+#if (defined (T_QSC60X5) || defined (T_QSC6270) || defined (T_QSC1110) || defined(T_QSC1100))
 
   gpio_out( BT_PWR_EN, GPIO_LOW_VALUE );
   BT_MSG_HIGH( "BT QSOC Shutdown: Calling gpio_out - to turn off", 0, 0, 0 );

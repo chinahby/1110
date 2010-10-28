@@ -135,8 +135,8 @@ LOCAL void bt_rc_ev_l2_connected
   BT_MSG_API( "BT RC EV RX: L2 Conn AID %x CID %x",
               l2_conn_ptr->ev_hdr.bt_app_id,
               l2_conn_ptr->ev_msg.ev_l2_conn.cid, 0 );
-  //BT_BDA( MSG_API, "BT RC EV RX: L2 Conn",
-  //        &l2_conn_ptr->ev_msg.ev_l2_conn.bd_addr );
+  BT_BDA( MSG_API, "BT RC EV RX: L2 Conn",
+          &l2_conn_ptr->ev_msg.ev_l2_conn.bd_addr );
 
   if ( (ssn_ptr = bt_rc_find_session_bd_addr(
                     &l2_conn_ptr->ev_msg.ev_l2_conn.bd_addr )) != NULL )
@@ -429,8 +429,8 @@ LOCAL void bt_rc_ev_l2_conn_failed
   BT_MSG_API( "BT RC EV RX: L2 ConnF R %x AID %x",
               l2_cf_ptr->ev_msg.ev_l2_conn_failed.reason,
               l2_cf_ptr->ev_hdr.bt_app_id, 0 );
-  //BT_BDA( MSG_API, "BT RC EV RX: L2 ConnF",
-  //        &l2_cf_ptr->ev_msg.ev_l2_conn_failed.bd_addr );
+  BT_BDA( MSG_API, "BT RC EV RX: L2 ConnF",
+          &l2_cf_ptr->ev_msg.ev_l2_conn_failed.bd_addr );
 
   if ( (ssn_ptr = bt_rc_find_session_bd_addr(
                     &l2_cf_ptr->ev_msg.ev_l2_conn_failed.
@@ -457,8 +457,8 @@ LOCAL void bt_rc_ev_l2_conn_failed
   }
   else
   {
-    //BT_BDA( ERR, "BT RC: No SSN L2 ConnF",
-    //        &l2_cf_ptr->ev_msg.ev_l2_conn_failed.bd_addr );
+    BT_BDA( ERR, "BT RC: No SSN L2 ConnF",
+            &l2_cf_ptr->ev_msg.ev_l2_conn_failed.bd_addr );
   }
 
 }
@@ -486,8 +486,8 @@ LOCAL void bt_rc_ev_rm_rfcomm_scn_sec_result
   BT_MSG_API( "BT RC EV RX: RM SCN SecRes %x SCN %x",
               rm_rsr_ptr->ev_msg.ev_rm_srscn.secure_enough,
               rm_rsr_ptr->ev_msg.ev_rm_srscn.rfcomm_scn, 0 );
-  //BT_BDA( MSG_API, "BT RC EV RX: RM SCN SecRes",
-  //        &rm_rsr_ptr->ev_msg.ev_rm_srscn.bd_addr );
+  BT_BDA( MSG_API, "BT RC EV RX: RM SCN SecRes",
+          &rm_rsr_ptr->ev_msg.ev_rm_srscn.bd_addr );
 
   if ( (ssn_ptr = bt_rc_find_session_bd_addr(
                     &rm_rsr_ptr->ev_msg.ev_rm_srscn.bd_addr )) != NULL )
@@ -542,8 +542,8 @@ LOCAL void bt_rc_ev_rm_rfcomm_scn_sec_result
   }
   else
   {
-    //BT_BDA( ERR, "BT RC: No SSN RM SecRes",
-    //        &rm_rsr_ptr->ev_msg.ev_rm_srscn.bd_addr );
+    BT_BDA( ERR, "BT RC: No SSN RM SecRes",
+            &rm_rsr_ptr->ev_msg.ev_rm_srscn.bd_addr );
   }
 
 }
@@ -705,7 +705,7 @@ void bt_rc_ev_send_connected
   bt_ev_msg_type  ev_rc_conn;
 
   BT_MSG_API( "BT RC EV TX: RC Conn AID %x PID %x", bt_app_id, pid, 0 );
-  //BT_BDA( MSG_API, "BT RC EV TX: RC Conn", bd_addr_ptr );
+  BT_BDA( MSG_API, "BT RC EV TX: RC Conn", bd_addr_ptr );
 
   ev_rc_conn.ev_hdr.ev_type            = BT_EV_RC_CONNECTED;
   ev_rc_conn.ev_hdr.bt_app_id          = bt_app_id;
@@ -782,7 +782,7 @@ void bt_rc_ev_send_connection_failed
   bt_ev_msg_type  ev_rc_cf;
 
   BT_MSG_API( "BT RC EV TX: RC ConnF R %x AID %x", reason, bt_app_id, 0 );
-  //BT_BDA( MSG_API, "BT RC EV TX: RC ConnF", bd_addr_ptr );
+  BT_BDA( MSG_API, "BT RC EV TX: RC ConnF", bd_addr_ptr );
 
   ev_rc_cf.ev_hdr.ev_type                   = BT_EV_RC_CONNECTION_FAILED;
   ev_rc_cf.ev_hdr.bt_app_id                 = bt_app_id;

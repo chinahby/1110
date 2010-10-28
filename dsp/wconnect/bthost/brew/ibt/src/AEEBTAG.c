@@ -1048,7 +1048,6 @@ static void AEEBTAG_GetSubcriberNumFromSIM (IBTAudioGateway* pMe)
                                (void **)&piAddrBook) == SUCCESS))
    {
       IAddrRec *piAddrRec = NULL;
-	  #ifndef FEATURE_BT_QSC1100
       AEEAddrCat cat = 
          (cardApp.operational_slot & AEECARD_GSM_SLOT2_OPERATIONAL) ?
          AEE_ADDR_CAT_SIM_MSISDN2 : AEE_ADDR_CAT_SIM_MSISDN;
@@ -1072,7 +1071,6 @@ static void AEEBTAG_GetSubcriberNumFromSIM (IBTAudioGateway* pMe)
             IADDRREC_Release (piAddrRec);
          }
       }
-	  #endif
    }
    if (NULL != piCard)
    {

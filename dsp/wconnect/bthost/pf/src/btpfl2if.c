@@ -472,7 +472,7 @@ LOCAL void bt_pf_l2if_process_event( struct bt_ev_msg_struct* ev_msg_ptr )
                     ev_msg_ptr->ev_hdr.bt_app_id,
                     ev_msg_ptr->ev_msg.ev_l2_conn.cid,
 		    ev_msg_ptr->ev_msg.ev_l2_conn.mtu );
-     // BT_BDA( MSG_DEBUG, "BT PF L2: Connected", &ev_msg_ptr->ev_msg.ev_l2_conn.bd_addr );
+      BT_BDA( MSG_DEBUG, "BT PF L2: Connected", &ev_msg_ptr->ev_msg.ev_l2_conn.bd_addr );
       db_handle = bt_pf_l2if_lookup_by_cid(ev_msg_ptr->ev_msg.ev_l2_conn.cid);
       if( db_handle != NULL )
       {
@@ -1025,7 +1025,7 @@ OI_STATUS OI_L2CAP_Connect(OI_L2CAP_CONNECT_COMPLETE_CALLBACK confirmCB,
   bt_app_id_type app_id;
 
   BT_MSG_DEBUG( "BT PF L2 CMD RX: Connect PSM %x", targetPSM, 0, 0 );
-  //BT_BDA( MSG_DEBUG, "BT PF L2: Connect", (bt_bd_addr_type*)addr );
+  BT_BDA( MSG_DEBUG, "BT PF L2: Connect", (bt_bd_addr_type*)addr );
 
   db_handle = bt_pf_l2if_get_new_db_entry( BT_APP_ID_NULL );
 

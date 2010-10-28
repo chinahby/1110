@@ -353,7 +353,7 @@ AEEBTError OEMBTExt_MapCmdStatus( bt_cmd_status_type status )
   case BT_CS_GN_PENDING:
       return AEEBT_ERR_NONE;
 
-#ifndef FEATURE_BT_EXTPF
+#ifdef FEATURE_BT_EXTPF
     // errors on the local device
     case BT_CS_PF_INVALID_PARAMETERS:
       return AEEBT_ERR_BAD_PARAM;

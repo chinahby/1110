@@ -79,7 +79,7 @@ $Log:   O:/src/asw/COMMON/vcs/btutils.h_v  $
 
 ===========================================================================*/
 #ifndef FEATURE_BT_SOC 
-//#include "btlm.h"   //modi by yangdecai
+#include "btlm.h"
 #endif /* FEATURE_BT_SOC */
 #include "bti.h"
 #include "dsm.h"
@@ -197,9 +197,8 @@ FUNCTION
 DESCRIPTION
 
 ===========================================================================*/
-#ifndef FEATURE_BT_QSC1100
 extern byte bt_connh2idx (word conn_hndl, bt_lm_conn_info_type** ptr_ptr);
-#endif
+
 /*===========================================================================
 
 FUNCTION
@@ -208,13 +207,12 @@ FUNCTION
 DESCRIPTION
 
 ===========================================================================*/
-#ifndef FEATURE_BT_QSC1100
 extern bt_lm_remote_unit_info_type* bt_connh2rui
 (
   word                    conn_hndl,
   bt_lm_conn_info_type**  ci_ptr_ptr
 );
-#endif
+
 /*===========================================================================
 
 FUNCTION

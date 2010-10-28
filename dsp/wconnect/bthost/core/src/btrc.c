@@ -2622,8 +2622,8 @@ LOCAL void bt_rc_cmd_connect
   BT_MSG_API( "BT RC CMD RX: Conn SC %x AID %x",
               rc_conn_ptr->cmd_msg.cmd_rc_conn.server_channel,
               rc_conn_ptr->cmd_hdr.bt_app_id, 0 );
-  //BT_BDA( MSG_API, "BT RC CMD RX: Conn",
-  //        &rc_conn_ptr->cmd_msg.cmd_rc_conn.bd_addr );
+  BT_BDA( MSG_API, "BT RC CMD RX: Conn",
+          &rc_conn_ptr->cmd_msg.cmd_rc_conn.bd_addr );
 
   /*  Is a session already active with remote device?  */
 
@@ -2651,7 +2651,7 @@ LOCAL void bt_rc_cmd_connect
       ssn_ptr->mcc.state     = BT_RCDS_CONNECTING_L2CAP;
 
       BT_MSG_HIGH( "BT RC: New SSN AID %x", ssn_ptr->mcc.bt_app_id, 0, 0 );
-      //BT_BDA( MSG_HIGH, "BT RC: New SSN", &ssn_ptr->bd_addr );
+      BT_BDA( MSG_HIGH, "BT RC: New SSN", &ssn_ptr->bd_addr );
 
       BT_MSG_API( "BT RC CMD TX: L2 StPrm PSM %x AID %x",
                   BT_L2_PSM_RFCOMM, bt_rc_app_id, 0 );
@@ -2670,7 +2670,7 @@ LOCAL void bt_rc_cmd_connect
 
       BT_MSG_API( "BT RC CMD TX: L2 Conn AID %x PSM %x",
                   bt_rc_app_id, BT_L2_PSM_RFCOMM, 0 );
-      //BT_BDA( MSG_API, "BT RC CMD TX: L2 Conn", &ssn_ptr->bd_addr );
+      BT_BDA( MSG_API, "BT RC CMD TX: L2 Conn", &ssn_ptr->bd_addr );
       cmd_status = bt_cmd_l2_connect_immediate_cid( bt_rc_app_id,
                                                     BT_L2_PSM_RFCOMM,
                                                     &ssn_ptr->bd_addr,
@@ -2748,8 +2748,8 @@ LOCAL void bt_rc_cmd_connect
           BT_ERR("BT RC: RX connect command in bad state. SC %x, ST %x, AID %x",
                  rc_conn_ptr->cmd_msg.cmd_rc_conn.server_channel,
                  dlc_ptr->state, rc_conn_ptr->cmd_hdr.bt_app_id );
-          //BT_BDA( ERR, "BT RC: RX connect",
-          //        &rc_conn_ptr->cmd_msg.cmd_rc_conn.bd_addr );
+          BT_BDA( ERR, "BT RC: RX connect",
+                  &rc_conn_ptr->cmd_msg.cmd_rc_conn.bd_addr );
         }
         rc_conn_ptr->cmd_hdr.cmd_status = BT_CS_RC_CONN_ACTIVE;
       }
@@ -4176,7 +4176,7 @@ LOCAL void bt_rc_cmd_cancel_connect
               rc_cncl_conn_ptr->cmd_hdr.bt_app_id,
               server_channel, 0 );
 
-  //BT_BDA( MSG_API, "BT RC CMD RX: Cancel Conn", bd_addr_ptr );
+  BT_BDA( MSG_API, "BT RC CMD RX: Cancel Conn", bd_addr_ptr );
 
   if ( (ssn_ptr = bt_rc_find_session_bd_addr( bd_addr_ptr )) != NULL )
   {
@@ -4230,7 +4230,7 @@ LOCAL void bt_rc_cmd_cancel_connect
   }
   else
   {
-    //BT_BDA( ERR, "BT RC: No connection to cancel", bd_addr_ptr );
+    BT_BDA( ERR, "BT RC: No connection to cancel", bd_addr_ptr );
     rc_cncl_conn_ptr->cmd_hdr.cmd_status = BT_CS_RC_BAD_BD_ADDR;
   }
 }
@@ -5231,7 +5231,7 @@ void bt_rc_loc_client_dlc_srv_sec_result
     
     BT_MSG_HIGH( "BT RC: SSec reqs DISC PID %x SCN %x",
                  dlc_ptr->pid, dlc_ptr->server_channel, 0 );
-    //BT_BDA( MSG_HIGH, "BT RC: SSec reqs DISC", &ssn_ptr->bd_addr );
+    BT_BDA( MSG_HIGH, "BT RC: SSec reqs DISC", &ssn_ptr->bd_addr );
   }
 
 }
@@ -5269,7 +5269,7 @@ void bt_rc_bring_up_local_client_dlc
   {
     BT_MSG_API( "BT RC CMD TX: RM Enf Sec SCN %x LC %x",
                 dlc_ptr->server_channel, TRUE, 0 );
-    //BT_BDA( MSG_API, "BT RC CMD TX: RM Enf Sec SCN", &ssn_ptr->bd_addr );
+    BT_BDA( MSG_API, "BT RC CMD TX: RM Enf Sec SCN", &ssn_ptr->bd_addr );
     bt_cmd_rm_enforce_security_rfcomm_scn(
       bt_rc_app_id, dlc_ptr->server_channel,
       &ssn_ptr->bd_addr, TRUE );

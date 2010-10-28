@@ -2925,24 +2925,24 @@ void bt_sd_process_command(
 
     case BT_CMD_SD_GET_DEVICE_NAME:
     {
-      //BT_BDA( MSG_API, "BT SD CMD RX: Get Dev Name",
-      //        &( cmd_msg_ptr->cmd_msg.cmd_sd_get_dev_name.bd_addr ) );
+      BT_BDA( MSG_API, "BT SD CMD RX: Get Dev Name",
+              &( cmd_msg_ptr->cmd_msg.cmd_sd_get_dev_name.bd_addr ) );
       bt_sd_get_device_name( cmd_msg_ptr );
       break;
     }
 
     case BT_CMD_SD_GET_DEVICE_NAME_CANCEL:
     {
-      //BT_BDA( MSG_API, "BT SD CMD RX: Get Dev Name Cancel",
-        //      &( cmd_msg_ptr->cmd_msg.cmd_sd_get_dev_name_cancel.bd_addr ) );
+      BT_BDA( MSG_API, "BT SD CMD RX: Get Dev Name Cancel",
+              &( cmd_msg_ptr->cmd_msg.cmd_sd_get_dev_name_cancel.bd_addr ) );
       bt_sd_get_device_name_cancel( cmd_msg_ptr );
       break;
     }
 
     case BT_CMD_SD_STOP_SERVICE_SEARCH:
     {
-      //BT_BDA( MSG_API, "BT SD CMD RX: Stop Srv Srch",
-       //       &( cmd_msg_ptr->cmd_msg.cmd_sd_stop_srv_srch.bd_addr ) );
+      BT_BDA( MSG_API, "BT SD CMD RX: Stop Srv Srch",
+              &( cmd_msg_ptr->cmd_msg.cmd_sd_stop_srv_srch.bd_addr ) );
       bt_sd_stop_service_search( cmd_msg_ptr );
       break;
     }
@@ -2950,8 +2950,8 @@ void bt_sd_process_command(
     case BT_CMD_SD_SEARCH_SERVICE:
     case BT_CMD_SD_SEARCH_SERVICE_EXT:
     {
-      //BT_BDA( MSG_API, "BT SD CMD RX: Search Service",
-      //        &( cmd_msg_ptr->cmd_msg.cmd_sd_srv_srch.bd_addr ) );
+      BT_BDA( MSG_API, "BT SD CMD RX: Search Service",
+              &( cmd_msg_ptr->cmd_msg.cmd_sd_srv_srch.bd_addr ) );
       BT_MSG_API( "BT SD CMD RX: Srch Srv Gen XML %x", 
                   cmd_msg_ptr->cmd_msg.cmd_sd_srv_srch.generate_xml, 0, 0 );
       bt_sd_search_service( cmd_msg_ptr );
@@ -2960,32 +2960,32 @@ void bt_sd_process_command(
 
     case BT_CMD_SD_CANCEL_IDLE_TIMER:
     {
-      //BT_BDA( MSG_API, "BT SD CMD RX: Cancel Idle Timer",
-       //       &( cmd_msg_ptr->cmd_msg.cmd_sd_cancel_idle_timer.bd_addr ) );
+      BT_BDA( MSG_API, "BT SD CMD RX: Cancel Idle Timer",
+              &( cmd_msg_ptr->cmd_msg.cmd_sd_cancel_idle_timer.bd_addr ) );
       bt_sd_cancel_idle_timer( cmd_msg_ptr );
       break;
     }
 
     case BT_CMD_SD_GET_SERVER_CHANNEL_NUMBER:
     {
-      //BT_BDA( MSG_API, "BT SD CMD RX: Get Srv Channel #",
-        //      &( cmd_msg_ptr->cmd_msg.cmd_sd_get_scn.bd_addr ) );
+      BT_BDA( MSG_API, "BT SD CMD RX: Get Srv Channel #",
+              &( cmd_msg_ptr->cmd_msg.cmd_sd_get_scn.bd_addr ) );
       bt_sd_get_server_channel_number( cmd_msg_ptr );
       break;
     }
 
     case BT_CMD_SD_GET_SECONDARY_SERVER_CHANNEL_NUMBER:
     {
-      //BT_BDA( MSG_API, "BT SD CMD RX: Get Sec Srv Channel #",
-//              &( cmd_msg_ptr->cmd_msg.cmd_sd_get_scn.bd_addr ) );
+      BT_BDA( MSG_API, "BT SD CMD RX: Get Sec Srv Channel #",
+              &( cmd_msg_ptr->cmd_msg.cmd_sd_get_scn.bd_addr ) );
       bt_sd_get_server_channel_number( cmd_msg_ptr );
       break;
     }
 
     case BT_CMD_SD_SEARCH_SERVICE_UUID128:
     {
-      //BT_BDA( MSG_API, "BT SD CMD RX: Search Srv UUID 128",
-            //  &( cmd_msg_ptr->cmd_msg.cmd_sd_srv_srch.bd_addr ) );
+      BT_BDA( MSG_API, "BT SD CMD RX: Search Srv UUID 128",
+              &( cmd_msg_ptr->cmd_msg.cmd_sd_srv_srch.bd_addr ) );
       bt_sd_search_service( cmd_msg_ptr );
       break;
     }
@@ -3046,8 +3046,8 @@ void bt_sd_process_command(
       BT_MSG_API( "BT SD CMD RX: Reg Custom Srv #UUID128 %x #UUID16 %x",
                   cmd_msg_ptr->cmd_msg.cmd_sd_reg_custom_srv.uuid_list.num_uuid128,
                   cmd_msg_ptr->cmd_msg.cmd_sd_reg_custom_srv.uuid_list.num_uuid, 0 );
-      //BT_MSG_UUID128( MSG_API, "BT SD CMD RX: Reg Custom Srv",
-       //               &cmd_msg_ptr->cmd_msg.cmd_sd_reg_custom_srv.uuid_list.uuid128[0] );
+      BT_MSG_UUID128( MSG_API, "BT SD CMD RX: Reg Custom Srv",
+                      &cmd_msg_ptr->cmd_msg.cmd_sd_reg_custom_srv.uuid_list.uuid128[0] );
       BT_MSG_API( "BT SD CMD RX: Reg Custom Srv SCN %x PSM %x PfVer %x",
                   cmd_msg_ptr->cmd_msg.cmd_sd_reg_custom_srv.scn,
                   cmd_msg_ptr->cmd_msg.cmd_sd_reg_custom_srv.psm,
@@ -3077,8 +3077,8 @@ void bt_sd_process_command(
 
     case BT_CMD_SD_UNREGISTER_CUSTOM_SERVICE:
     {
-      //BT_MSG_UUID128( MSG_API, "BT SD CMD RX: Unreg Custom Srv",
-         //             &cmd_msg_ptr->cmd_msg.cmd_sd_unreg_custom_srv.uuid128 );
+      BT_MSG_UUID128( MSG_API, "BT SD CMD RX: Unreg Custom Srv",
+                      &cmd_msg_ptr->cmd_msg.cmd_sd_unreg_custom_srv.uuid128 );
       bt_sd_unregister_custom_service( cmd_msg_ptr );
       break;
     }
@@ -3322,8 +3322,8 @@ bt_sd_uuid_type bt_sd_extract_srvc_cls( bt_sd_srv_attr_rec_type* attrib_ptr )
   /* The first service class on the list is what we want */
   if ( attrib_ptr->attr_value.uuid_list.num_uuid128 > 0 )
   {
-//    BT_MSG_UUID128( MSG_DEBUG, "BT SD: Service Class",
-                //    &attrib_ptr->attr_value.uuid_list.uuid128[0] );
+    BT_MSG_UUID128( MSG_DEBUG, "BT SD: Service Class",
+                    &attrib_ptr->attr_value.uuid_list.uuid128[0] );
   }
   else if ( attrib_ptr->attr_value.uuid_list.num_uuid > 0 )
   {

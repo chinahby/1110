@@ -471,9 +471,7 @@ int OEMBTExtSPP_Open(
   so.tx_queue     = &pMe->tx_wm;
   so.rx_queue     = &pMe->rx_wm;
   so.rx_func_ptr  = NULL;
-  #ifdef FEATURE_BT_SPP
   so.bt_open_ptr  = &bso;
-  #endif
 
   bso.client_app            = pOpenCfg->bClientApp;
   bso.bd_addr_ptr           = (bt_bd_addr_type*)&pMe->BDAddr;

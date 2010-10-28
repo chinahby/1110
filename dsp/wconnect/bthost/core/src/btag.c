@@ -2053,14 +2053,14 @@ LOCAL void bt_ag_send_event
 
   if ( keep_going )
   {
-    //BT_BDA( MSG_API, "BT AG EV TX:", bd_addr_ptr );
+    BT_BDA( MSG_API, "BT AG EV TX:", bd_addr_ptr );
     event_msg.ev_hdr.ev_type = ev_type;
     bt_ec_send_event( &event_msg );  /* send it up */
   }
   else
   {
     BT_ERR( "BT AG: Event NOT SENT T %x", ev_type, 0, 0 );
-    //BT_BDA( ERR, "BT AG: Event NOT SENT", bd_addr_ptr );
+    BT_BDA( ERR, "BT AG: Event NOT SENT", bd_addr_ptr );
   }
 }
 
@@ -2412,10 +2412,7 @@ LOCAL void bt_ag_init_sio_open_params
   so_ptr->rx_func_ptr    = NULL;
 
   /*  Fill out Bluetooth specific information.  */
-  #ifdef FEATURE_BT_SPP
   so_ptr->bt_open_ptr           = bso_ptr;
-  #endif
-  
   bso_ptr->status_change_fptr   = bt_ag_update_sio_conn_status;
   bso_ptr->config_change_fptr   = NULL;
   bso_ptr->modem_status_fptr    = NULL;
@@ -2829,7 +2826,7 @@ LOCAL void bt_ag_cmd_enable
   BT_MSG_API( "BT AG CMD RX: Enable Dev %x AID %x",
               enable_cmd_ptr->audio_device,
               ag_cmd_ptr->cmd_hdr.bt_app_id, 0 );
-  //BT_BDA( MSG_API, "BT AG EV RX: Enable ", &enable_cmd_ptr->bd_addr );
+  BT_BDA( MSG_API, "BT AG EV RX: Enable ", &enable_cmd_ptr->bd_addr );
 
   ag_cmd_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
   
@@ -2890,7 +2887,7 @@ LOCAL void bt_ag_cmd_connect
   BT_MSG_API( "BT AG CMD RX: Connect Dev %x St %x AID %x",
               conn_cmd_ptr->audio_device,
               bt_ag.state, ag_cmd_ptr->cmd_hdr.bt_app_id );
-  //BT_BDA( MSG_API, "BT AG CMD RX: Connect", &conn_cmd_ptr->bd_addr );
+  BT_BDA( MSG_API, "BT AG CMD RX: Connect", &conn_cmd_ptr->bd_addr );
 
   ag_cmd_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
 
@@ -2933,7 +2930,7 @@ LOCAL void bt_ag_cmd_connect
       case BT_AGS_AUDIO_CONNECTING:
       case BT_AGS_AUDIO_DISCONNECTING:
       case BT_AGS_AUDIO_CONNECTED:
-        //BT_BDA( MSG_DEBUG, "BT AG: already connected", &AUDIO_DEV.bd_addr );
+        BT_BDA( MSG_DEBUG, "BT AG: already connected", &AUDIO_DEV.bd_addr );
         ag_cmd_ptr->cmd_hdr.cmd_status = BT_CS_AG_ALREADY_CONNECTED;
         bt_ag_send_event( BT_EV_AG_CONNECTED );
         break;
@@ -8613,8 +8610,8 @@ LOCAL void bt_ag_process_spp_connected
     /*  Connected to wrong audio device.  */
     /*  Treat as if connection failed.    */
     BT_MSG_HIGH( "BT AG: SPP connected to wrong AD", 0, 0, 0 );
-    //BT_BDA( MSG_DEBUG, "BT AG: expected", &AUDIO_DEV.bd_addr );
-    //BT_BDA( MSG_DEBUG, "BT AG: connected", &ss_ptr->bd_addr );
+    BT_BDA( MSG_DEBUG, "BT AG: expected", &AUDIO_DEV.bd_addr );
+    BT_BDA( MSG_DEBUG, "BT AG: connected", &ss_ptr->bd_addr );
     bt_ag.event_reason = BT_EVR_AG_CONN_FAILED; /* signal not to send ev */
     bt_ag_process_spp_connect_failed( ss_ptr->stream_id );
     keep_going = FALSE;

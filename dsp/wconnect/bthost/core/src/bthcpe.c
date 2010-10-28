@@ -2347,13 +2347,10 @@ LOCAL void bt_hc_process_event
       bt_hc_pe_send_ev_pkt_to_host();
       break;
     }
-	#ifdef FEATURE_BT_2_1
     case BT_EV_HC_INQUIRY_RESULT_WITH_RSSI:
     {
-		
       bt_ev_hc_inquiry_result_with_rssi_type*  inq_msg_ptr =
         &ev_msg_ptr->ev_msg.ev_hc_inqrs_wrssi;
-	
       uint8  num_rsp = inq_msg_ptr->num_responses;
       dsm_item_type*  dsm_ptr = inq_msg_ptr->dsm_ptr;
 
@@ -2368,7 +2365,7 @@ LOCAL void bt_hc_process_event
       bt_hc_pe_send_ev_pkt_to_host();
       break;
     }
-
+#ifdef FEATURE_BT_2_1
     case BT_EV_HC_INQUIRY_RESULT_EXTENDED:
     {
       bt_ev_hc_inquiry_result_extended_type*  inq_msg_ptr =
@@ -2387,7 +2384,7 @@ LOCAL void bt_hc_process_event
       bt_hc_pe_send_ev_pkt_to_host();
       break;
     }
-
+#endif /* FEATURE_BT_2_1 */
     case BT_EV_HC_REMOTE_NAME_REQ_COMPLETE:
     {
       dsm_item_type* dsm_ptr;
@@ -2414,13 +2411,11 @@ LOCAL void bt_hc_process_event
       bt_hc_pe_send_ev_pkt_to_host();
       break;
     }
-	#endif /* FEATURE_BT_2_1 */
     case BT_EV_HC_COMMAND_COMPLETE:
     {
       bt_hc_pe_process_ev_cmd_cmplt( ev_msg_ptr );
       break;
     }
-	#ifdef FEATURE_BT_2_1
     case BT_EV_HC_NUM_CMPLT_PKTS:
     {
       bt_ev_hc_num_cmplt_pkts_type*  cmplt_msg_ptr =
@@ -2457,7 +2452,6 @@ LOCAL void bt_hc_process_event
       bt_hc_pe_send_ev_pkt_to_host();
       break;
     }
-	#endif
     case BT_EV_HC_VENDOR_SPECIFIC:
     {
 #ifdef FEATURE_BT_SOC

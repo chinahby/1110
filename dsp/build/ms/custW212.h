@@ -19,12 +19,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
 #define FEATURE_IBT
-#define FEATURE_BT_QSOC_ALL   
 #define FEATURE_BT_QSOC_INBAND_SLEEP  
-#define FEATURE_BT_SOC
-#define FEATURE_BT_AG
-//#define FEATURE_BT_EXTPF_AV
-#define FEATURE_BT_QSC1100
+#define FEATURE_DRM_NO_BREW 
+
+#define BT_QSC1110//FEATURE_BT_QSC1100
+#define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used
+
 //end add by yaangdecai for bt
 
 
@@ -259,6 +259,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
+#include "custqbt.h"
+#include "custbt.h"
 #include "custcdma2000.h"
 #include "custdebug.h"
 #include "custdmss.h"

@@ -354,9 +354,7 @@ $Log:   O:/src/asw/COMMON/vcs/btcmd.c_v  $
 #include "bti.h"
 #include "btcmdi.h"
 #ifndef FEATURE_BT_SOC 
-#ifndef FEATURE_BT_QSC1100
 #include "btlm.h"
-#endif
 #endif /* FEATURE_BT_SOC */
 #include "btmsg.h"
 #include "btsd.h"
@@ -4551,9 +4549,7 @@ bt_cmd_status_type bt_cmd_rm_set_local_info
   if ( (class_of_device_ptr != NULL) && (cmd_status == BT_CS_GN_PENDING) )
   {
 #ifndef FEATURE_BT_SOC
-#ifndef FEATURE_BT_QSC1100
     bt_lm_data.attributes.class_of_device = *class_of_device_ptr;
-#endif
 #else
     bt_class_of_device = *class_of_device_ptr;
 #endif /* FEATURE_BT_SOC */

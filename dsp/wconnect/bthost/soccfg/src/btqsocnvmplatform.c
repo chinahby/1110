@@ -79,6 +79,6 @@ void btqsocnvmplatform_log_error(btqsocnvm_parser_err_type parser_err)
 #else /* UNDER_CE */
 void btqsocnvmplatform_log_error(btqsocnvm_parser_err_type parser_err)
 {
-  //BT_MSG_HIGH( "NVM File Error %d", parser_err, 0, 0 );
+  BT_MSG_HIGH( "NVM File Error %d", parser_err, 0, 0 );
 }
 #endif /* UNDER_CE */

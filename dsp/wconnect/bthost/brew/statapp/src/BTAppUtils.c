@@ -1825,7 +1825,6 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
   AEETCallInfo         callInfo;
   uint8                index = 0;
   boolean              bCallState = FALSE;
-#ifdef FEATURE_BT_HFP_1_5
 
   uSizeOfCallsDesc = sizeof(AEETCalls) + 
                      (sizeof(AEECallDesc)*(BTAPP_MAX_NUM_CALLS - 1));
@@ -1881,7 +1880,6 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
     }    
   }
   FREEIF( pCallsDesc );
-  #endif
   return bCallState;
 }
 
@@ -2258,10 +2256,8 @@ boolean  BTApp_GetBatteryLevel( CBTApp *pMe , uint8* battLevel )
   uint16  uBattScale;
   uint8   ATBattLevel;
   uint8   uLevel;
-  #ifdef FEATURE_BT_HFP_1_5
   if ( IBATTERY_GetBatteryLevel( pMe->mAG.pIBattery, 
                                  &(pdwData) ) != SUCCESS )
-  #endif
   {
     MSG_ERROR("BTApp_GetBatteryLevel - Cannot obtain battery level", 0, 0, 0);
     return FALSE;

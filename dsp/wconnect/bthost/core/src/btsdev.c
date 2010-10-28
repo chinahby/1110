@@ -1178,9 +1178,7 @@ boolean bt_sd_parse_service_search_pattern(
           }
           else
           {
-          	#ifndef FEATURE_BT_QSC1100
             BT_MSG_UUID128( MSG_DEBUG, "BT SD: parse SSP", &uuid128 );
-			#endif
             srch_pat_ptr->uuid128[ srch_pat_ptr->num_uuid128++ ] = uuid128;
 
             if ( BT_SD_UUID128_EQUAL( &uuid128,
@@ -1672,9 +1670,7 @@ uint16 bt_sd_parse_uuid(
 
   if ( is_uuid128 )
   {
-  #ifndef FEATURE_BT_QSC1100
     BT_MSG_UUID128( MSG_DEBUG, "BT SD: parse UID", &uuid128 );
-  #endif
 
     if ( srv_attr_ptr->attr_type == BT_SD_ATTR_TYPE_UUID_LIST )
     {
@@ -1951,9 +1947,7 @@ uint16 bt_sd_parse_proto_desc_list(
           if ( uuid16 == BT_SD_INVALID_UUID )
           {
             /* Custom 128-bit UUID */
-			#ifndef FEATURE_BT_QSC1100
             BT_MSG_UUID128( MSG_DEBUG, "BT SD: parse PDL", &uuid128 );
-			#endif
             uuid128_ptr = &uuid128;
           }
           else
@@ -4684,9 +4678,7 @@ boolean bt_sd_ev_rm_inquiry_result
     rm_inq_res_ptr->class_of_device.cod_bytes[ 2 ],
     (uint16)((rm_inq_res_ptr->class_of_device.cod_bytes[ 1 ] << 8) |
                 rm_inq_res_ptr->class_of_device.cod_bytes[ 0 ]), 0 );
-  #ifndef FEATURE_BT_QSC1100
   BT_BDA( MSG_API, "BT SD EV RX: RM Inq Res", &rm_inq_res_ptr->bd_addr );
-  #endif
 
   /* Make sure we're doing device discovery */
   if ( ! bt_sd_dev_discv_db.dev_discv_in_progress )
@@ -4810,10 +4802,8 @@ boolean bt_sd_ev_rm_inquiry_result
     (uint16)((ev_ddr.ev_msg.ev_sd_dev_discv_resp.major_device_class << 8) |
                 ev_ddr.ev_msg.ev_sd_dev_discv_resp.minor_device_class),
     ev_ddr.ev_hdr.bt_app_id );
-  #ifndef FEATURE_BT_QSC1100
   BT_BDA( MSG_API, "BT SD EV TX: SD DD Resp",
           &ev_ddr.ev_msg.ev_sd_dev_discv_resp.bd_addr );
-  #endif
 
   bt_ec_send_event( &ev_ddr );
 

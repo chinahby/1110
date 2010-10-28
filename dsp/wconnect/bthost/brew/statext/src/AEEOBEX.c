@@ -55,7 +55,7 @@ when       who     what, where, why
 
 #include "AEEStdLib.h"
 
-//#include "AEECLSID_MODEL.bid"
+#include "AEECLSID_MODEL.bid"
 #ifdef FEATURE_BREW_3_0
 
 #include "AEE_OEMDispatch.h"
