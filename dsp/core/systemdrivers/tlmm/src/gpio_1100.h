@@ -860,6 +860,18 @@ void gpio_restore_gpios_after_uim_sleep( void );
 #define GPIO_CAMIF_EN_ON_V       0
 #define GPIO_CAMIF_EN_OFF_V      1
 
+
+
+#ifdef FEATURE_DSP
+
+#define	ATV_POWER_PIN			(GPIO_OUTPUT_25)
+#define	ATV_RESET_PIN			(GPIO_OUTPUT_24)
+
+#define AIT701_RESET			(GPIO_OUTPUT_53)
+#define AIT701_BYPASS			(GPIO_OUTPUT_51)
+
+#else
+
 #define CAMIF_EN_N  CAMIF_DISABLE
 #define CAMCLK_PO  CAMIF_MCLK
 #define CAMCLK_PO_OFF GPIO_INPUT_53
@@ -878,14 +890,6 @@ void gpio_restore_gpios_after_uim_sleep( void );
 
 #define CAMIF_HSYNC_OUT          CAMIF_HSYNC
 #define CAMIF_VSYNC_OUT          CAMIF_VSYNC
-
-#ifdef FEATURE_DSP
-
-#define	ATV_POWER_PIN			(GPIO_OUTPUT_25)
-#define	ATV_RESET_PIN			(GPIO_OUTPUT_24)
-
-#define AIT701_RESET			(GPIO_OUTPUT_53)
-#define AIT701_BYPASS			(GPIO_OUTPUT_51)
 
 #endif
 
