@@ -60,7 +60,7 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
                                                         const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags);
 #endif
 
-#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"/systemfont.gvf"
+//#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"systemfont.gvf"
 
 #if defined(FEATURE_DISP_320X240) || defined(FEATURE_DISP_240X320)
 #define BIGNUMBER_FONT_SIZE 30 
@@ -127,7 +127,6 @@ static IFont gFontBigNumber        = {&gOEMFontFuncs, 0, BIGNUMBER_FONT_SIZE,FAL
 
 static GBHANDLE g_pLibrary = NULL;
 static GBHANDLE g_pLoader  = NULL;
-//extern const AEEConstFile gSYSTEMFONT_GVF;
 
 void GreyBitBrewFont_Init(void)
 {
@@ -137,8 +136,26 @@ void GreyBitBrewFont_Init(void)
     
     if(g_pLibrary){
         if(g_pLoader == NULL){
-            g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
-			//g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMFONT_GVF.pFileData, gSYSTEMFONT_GVF.dwDataSize);
+            //g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
+#if defined(FEATURE_LANG_CHINESE)
+            extern const AEEConstFile gSYSTEMZHCN_GVF;
+            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMZHCN_GVF.pFileData, gSYSTEMZHCN_GVF.dwDataSize);
+#elif defined(FEATURE_LANG_TCHINESE)
+            extern const AEEConstFile gSYSTEMZHTW_GVF;
+            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMZHTW_GVF.pFileData, gSYSTEMZHTW_GVF.dwDataSize);
+#elif defined(FEATURE_LANG_INDONESIAN)
+            extern const AEEConstFile gSYSTEMID_GVF;
+            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMID_GVF.pFileData, gSYSTEMID_GVF.dwDataSize);
+#elif defined(FEATURE_LANG_ARABIC)
+            extern const AEEConstFile gSYSTEMAR_GVF;
+            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMAR_GVF.pFileData, gSYSTEMAR_GVF.dwDataSize);
+#elif defined(FEATURE_LANG_THAI)
+            extern const AEEConstFile gSYSTEMTH_GVF;
+            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMTH_GVF.pFileData, gSYSTEMTH_GVF.dwDataSize);
+#else
+            extern const AEEConstFile gSYSTEMEN_GVF;
+            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMEN_GVF.pFileData, gSYSTEMEN_GVF.dwDataSize);
+#endif
         }
     }
 }
@@ -959,6 +976,7 @@ int GreyBitBrewFont_Destory(IFont *pMe)
         OEMFont_Destroy(pMe);
         sys_free(pMe);
     }
+    return 0;
 }
 
 #include "AEEDisp.h"
