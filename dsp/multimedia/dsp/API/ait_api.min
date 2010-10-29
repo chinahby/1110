@@ -9,9 +9,7 @@ AIT_API_SOURCES=\
 	sd_IF_ait_api.c \
 	sys_IF_ait_api.c \
 	usb_IF_ait_api.c \
-	cam_module.c \
-	OEMCameraEx.c \
-	AEECameraEx.c
+	cam_module.c
 AIT_API_OBJS :=  $(addprefix $(TARGETDIR)/, $(AIT_API_SOURCES:%.c=%.o))
 vpath %.h $(AIT_API_INC)
 vpath %.c $(AIT_API_SRC)

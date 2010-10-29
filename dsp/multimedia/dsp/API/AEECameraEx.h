@@ -335,6 +335,23 @@ typedef struct AEECameraNotify
    uint32         dwSize;
 } AEECameraNotify;
 
+//
+//============== End: EXIF Related ===================================
+//
+
+//
+// Specifies finite equally spaced discrete values
+//
+typedef struct AEEParmInfo
+{
+   int32    nMin;
+   int32    nMax;
+   int32    nStep;
+   int32    nDefault;
+   int32    nCurrent;
+} AEEParmInfo;
+
+
 typedef void (*PFNCAMERANOTIFY)(void * pUser, AEECameraNotify * pNotify);
 
 //-------------------------------------------------------------------
