@@ -128,6 +128,7 @@ when       who     what, where, why
 
 #include "sdcc_api.h"
 #include "sdcc_priv.h"
+#ifndef FEATURE_DSP
 #include "sdcc_util.h"
 #include "sdcc_mmc_util.h"
 #include "assert.h"
@@ -138,7 +139,10 @@ extern unsigned int sdio_card;
 #if defined(FEATURE_SDCC_FIX_FOR_EXTRA_10MA_ON_TCXO)                            
  #define PULL_DOWN ~GPIO_PULL_MASK | (GPIO_PULL_DOWN << GPIO_PULL_POSITION)
 #endif
-
+#else
+#include "cam_module.h"
+extern ait_sd_func AIT701_SD_Func;
+#endif
 
 /*lint -save -e641 Suppress 'Converting enum to int' warning */
 /******************************************************************************
@@ -275,16 +279,21 @@ sdcc_open(int16 driveno)
    sdcc_leave_crit_sect();
    return(rc ? FALSE : TRUE);
 #else
-   A8_ERROR_MSG res;
-   //res = sd_IF_ait_open_sd();
-   if(A8_NO_ERROR == res)
+   boolean bRet = FALSE;
+   sdcc_enter_crit_sect();
+   bRet = (AIT701_SD_Func.ait_sd_init() == NULL)?FALSE:TRUE;
+   if(bRet)
    {
-     return TRUE;
+       sdcc_pdata.card_type = SDCC_CARD_SD;
+       sdcc_pdata.mem.card_size = AIT701_SD_Func.ait_sd_get_size();
+       sdcc_pdata.mem.block_len = 512;
    }
    else
-   { 
-     return FALSE;
+   {
+       memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
    }
+   sdcc_leave_crit_sect();
+   return bRet;
 #endif
 }/* sdcc_open */
 
@@ -470,25 +479,33 @@ SDCC_READ_RETRY:
    sdcc_leave_crit_sect();
    return(ret_status);
 #else 
-   A8_ERROR_MSG res;
-   u_int m_startsect;
-   u_int m_offset;
-   u_char *p_buf;
-   u_int m_read_size;
-   m_startsect = (u_int)s_sector;
-   m_offset = 0;
-   p_buf = (u_char *)buff;
-   m_read_size = n_sectors * sdcc_blk_in_bits(sdcc_pdata.mem.block_len);
-   res = sd_IF_ait_read_sectors(m_startsect, m_offset, p_buf, m_read_size);
-   if(A8_NO_ERROR == res)
+   uint16 nRet;
+   sdcc_enter_crit_sect();
+   do
    {
-     return TRUE;
+      /******************************************************************
+      * Check the card status first to make sure that sdcc controller
+      * has been turned on properly..
+      ********************************************************************/
+      if (sdcc_pdata.card_type ==  SDCC_CARD_UNKNOWN)
+      {
+         nRet = SDCC_ERR_CARD_READY;
+         break;
+      }
+      
+      nRet = AIT701_SD_Func.ait_sd_read(s_sector,0,buff,n_sectors*sdcc_pdata.mem.block_len);
+   }while(0);
+   
+   if(nRet == 0)
+   {
+      sdcc_pdata.errno = SDCC_NO_ERROR;
    }
    else
    {
-   	 DPRINTF(("ReadSD is failed !!!\n"));
-	 return FALSE;
+      sdcc_pdata.errno = nRet;
    }
+   sdcc_leave_crit_sect();
+   return (nRet == 0)?TRUE:FALSE;
 #endif 
 }/* sdcc_read */
 
@@ -747,28 +764,35 @@ SDCC_WRITE_RETRY:
    while (0);
    sdcc_leave_crit_sect();
    return(ret_status);
- #else
-   A8_ERROR_MSG res;
-   u_int m_startsect;
-   u_int m_offset;
-   u_char *p_buf;
-   u_int m_write_size;
-   m_startsect = (u_int)s_sector;
-   m_offset = 0;
-   p_buf =(u_char *)buff;
-   m_write_size = n_sectors * sdcc_blk_in_bits(sdcc_pdata.mem.block_len);
-   res = sd_IF_ait_write_sectors(m_startsect, m_offset, p_buf, m_write_size);
-   if(A8_NO_ERROR == res)
+#else
+   uint16 nRet;
+   sdcc_enter_crit_sect();
+   do
    {
-     return TRUE;
+      /******************************************************************
+      * Check the card status first to make sure that sdcc controller
+      * has been turned on properly..
+      ********************************************************************/
+      if (sdcc_pdata.card_type ==  SDCC_CARD_UNKNOWN)
+      {
+         nRet = SDCC_ERR_CARD_READY;
+         break;
+      }
+      
+      nRet = AIT701_SD_Func.ait_sd_write(s_sector,0,buff,n_sectors*sdcc_pdata.mem.block_len);
+   }while(0);
+   
+   if(nRet == 0)
+   {
+      sdcc_pdata.errno = SDCC_NO_ERROR;
    }
    else
    {
-     DPRINTF(("WriteSD is failed !!!\n"));
-     return FALSE;
+      sdcc_pdata.errno = nRet;
    }
-
- #endif
+   sdcc_leave_crit_sect();
+   return (nRet == 0)?TRUE:FALSE;
+#endif
 }/* sdcc_write */
 
 
@@ -795,7 +819,7 @@ int16    driveno,
 uint8    what
 )
 {
-#ifdef FEATURE_DSP
+#ifndef FEATURE_DSP
    uint32 value = (uint32)SDCC_NO_ERROR;
    (void)driveno;
 
@@ -829,11 +853,49 @@ uint8    what
          break;
 
       case SDCC_CARD_SIZE:
-         value = (uint32)sd_IF_ait_ioctl();
+         value = sdcc_pdata.mem.card_size;
          break;
 
       case SDCC_BLOCK_LEN:
          value = sdcc_pdata.mem.block_len;
+         break;
+
+      default:
+         DPRINTF(("Invalid request:(0x%x)?", what));
+         value = (uint32)SDCC_ERR_UNKNOWN;
+         break;
+   }
+   sdcc_leave_crit_sect();
+   return value;
+#else
+   uint32 value = (uint32)SDCC_NO_ERROR;
+   (void)driveno;
+
+   if (sdcc_pdata.slot_state_changed)
+      return SDCC_CARD_UNKNOWN;
+
+   sdcc_enter_crit_sect();
+
+   switch (what)
+   {
+      case SDCC_CARD_STATE:
+         value = SDCC_NO_ERROR;
+         break;
+         
+      case SDCC_GET_TYPE:
+         value = (uint32)sdcc_pdata.card_type;
+         break;
+        
+      case SDCC_GET_ERROR:
+         value = (uint32)sdcc_pdata.errno;
+         break;
+
+      case SDCC_CARD_SIZE:
+         value = sdcc_pdata.mem.card_size;
+         break;
+
+      case SDCC_BLOCK_LEN:
+         value = sdcc_pdata.mem.block_len;;
          break;
 
       default:
@@ -905,10 +967,10 @@ sdcc_read_serial
 boolean
 sdcc_init(void)
 {
-#ifndef FEATURE_DSP
    /* Its OK to re-initialize the sdcc critical section */
    sdcc_init_crit_sect();
    sdcc_enter_crit_sect();
+#ifndef FEATURE_DSP
    do
    {
       /* The controller already turned on */
@@ -1009,22 +1071,11 @@ sdcc_init(void)
       sdcc_pdata.slot_state_changed = FALSE;
    }
    while (0);
+#else
+   memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
+#endif
    sdcc_leave_crit_sect();
    return(TRUE);
-#else
-   A8_ERROR_MSG res;
-   res = sd_IF_ait_init_sd();
-   if(A8_NO_ERROR == res)
-   {
-     return TRUE;
-   }
-   else
-   {
-	 DPRINTF(("A800_CheckSDDevice is failed !!!\n"));
-	 return FALSE;
-   }
-  
-#endif
 }/* sdcc_init */
 
 /******************************************************************************
@@ -1114,17 +1165,7 @@ sdcc_close(int16 driveno)
    sdcc_leave_crit_sect();
    return TRUE;
 #else
-   A8_ERROR_MSG res;
-   res = sd_IF_ait_close_sd();
-   if(A8_NO_ERROR == res)
-   {
-     return TRUE;
-   }
-   else
-   {
-	 DPRINTF(("A800_SetPllFreq(A8_OFF) is failed !!!\n"));
-	 return FALSE;
-   }
+   return TRUE;
 #endif
 }/* sdcc_close */
 
@@ -1148,11 +1189,12 @@ sdcc_close(int16 driveno)
  *===========================================================================*/
 SDCC_STATUS sdcc_activity_timeout_event( int16 driveno )
 {
+#ifndef FEATURE_DSP
    if(FALSE == sdcc_bsp_slot_interrupt_exists())
       return SDCC_ERR_UNKNOWN;
 
    DPRINTF(("SDCC Activity timeout. Closing the slot.\n")); 
-
+#endif
    (void)sdcc_close(driveno);
    return SDCC_NO_ERROR;
 }
