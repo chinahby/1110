@@ -64,18 +64,13 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
                                                         const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags);
 #endif
 
+#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"/systemfont.gvf"
 
-//#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
-//#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"/systemar.gvf"
-//#else
-#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"/systemen.gvf"
-//#endif
-
-#if defined(FEATURE_DISP_320X240)
+#if defined(FEATURE_DISP_320X240) || defined(FEATURE_DISP_240X320)
 #define BIGNUMBER_FONT_SIZE 30 
 #define NORMAL_FONT_SIZE    24 
 #define LARGE_FONT_SIZE     26 
-#elif defined(FEATURE_DISP_220X176)
+#elif defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_176X220)
 #define BIGNUMBER_FONT_SIZE 26 
 #define NORMAL_FONT_SIZE    20 
 #define LARGE_FONT_SIZE     22 
