@@ -48,10 +48,6 @@ ALE_UINT16 gLineCharPos [MAXLINESIZE+1];   //position of each char (used by layo
 unsigned char gbFont_Arabic_Hebrew[] = {
 #include "FontDB//Arabic_Hebrew_14x14p.i"
 };
- byte BigNumFontBuf[] = 
-{
-#include "FontDB//bignum.i"
-};
 
 #ifndef ABS
 #define ABS(VAL) (((VAL)>0)?(VAL):(-(VAL)))
@@ -131,11 +127,7 @@ static IFont gFontBigNumber        = {&gOEMFontFuncs, 0, BIGNUMBER_FONT_SIZE,FAL
 
 static GBHANDLE g_pLibrary = NULL;
 static GBHANDLE g_pLoader  = NULL;
-//#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
-//extern const AEEConstFile gSYSTEMAR_GVF;
-//#else
-extern const AEEConstFile gSYSTEMEN_GVF;
-//#endif
+//extern const AEEConstFile gSYSTEMFONT_GVF;
 
 void GreyBitBrewFont_Init(void)
 {
@@ -145,12 +137,8 @@ void GreyBitBrewFont_Init(void)
     
     if(g_pLibrary){
         if(g_pLoader == NULL){
-            //g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
-            //#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
-            //g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMAR_GVF.pFileData, gSYSTEMAR_GVF.dwDataSize);
-			//#else
-			g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMEN_GVF.pFileData, gSYSTEMEN_GVF.dwDataSize);
-			//#endif
+            g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
+			//g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMFONT_GVF.pFileData, gSYSTEMFONT_GVF.dwDataSize);
         }
     }
 }
