@@ -23,7 +23,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DRM_NO_BREW 
 
 #define BT_QSC1110//FEATURE_BT_QSC1100
-#define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used
+#define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  ÐÍºÅ
 
 //end add by yaangdecai for bt
 
@@ -250,8 +250,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_AAC_PLUS
 //#define FEATURE_ENHANCED_AAC_PLUS
 #endif
-#include "custqbt.h"
-#include "custbt.h"
+#include "custqbt.h"     //for bt
+#include "custbt.h"      //for bt
 #include "custuim.h"
 #include "custcmx.h"
 #include "custavs.h"
