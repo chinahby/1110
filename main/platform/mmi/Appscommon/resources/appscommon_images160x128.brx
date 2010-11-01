@@ -145,6 +145,18 @@
 	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP">
 		<File>..\images\160x128\common\IME\upezenglish.png</File>
 	</Object>
+	<Object Id="5413" Name="IDB_MODE_T9_MT_ARABIC">
+		<File>..\images\160x128\common\IME\Indo.png</File>
+	</Object>
+	<Object Id="5414" Name="IDB_MODE_T9_RAPID_ARABIC">
+		<File>..\images\160x128\common\IME\T9In.png</File>
+	</Object>
+	<Object Id="5415" Name="IDB_MODE_T9_MT_THAI">
+		<File>..\images\160x128\common\IME\Indo.png</File>
+	</Object>
+	<Object Id="5416" Name="IDB_MODE_T9_RAPID_THAI">
+		<File>..\images\160x128\common\IME\T9In.png</File>
+	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE" MimeType="image/bmp">
 		<File>..\images\160x128\common\Message\Icon\Template.bmp</File>
 	</Object>

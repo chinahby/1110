@@ -40,7 +40,7 @@ when       who     what, where, why
 #include "AEEClassIDs.h"
 #include "AEEControls.brh"
 #include "AEEPen.h"
-
+#include "AEE_OEM.h"
 #ifndef AEE_SIMULATOR
 #include "Err.h"
 #else
@@ -5401,13 +5401,48 @@ SEE ALSO:
 #ifndef FEATURE_CARRIER_CHINA_TELCOM
 uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size)
 {
-    MSG_FATAL("OEM_TextQuerySymbols Start",0,0,0);
-   if (!pszOut || size < (sizeof(sszSymbolList)/sizeof(sszSymbolList[0])))
-      return(0);
+   IConfig         *m_pConfig;
+   nv_language_enum_type language;
+   IShell      *pShell = NULL;
+   MSG_FATAL("OEM_TextQuerySymbols Start",0,0,0);
+   pShell = AEE_GetShell();
+   if (AEE_SUCCESS != ISHELL_CreateInstance(pShell,
+                                            AEECLSID_CONFIG,
+                                            (void **)&m_pConfig))
+    {
+        return EFAILED;
+    }
+	(void) ICONFIG_GetItem(m_pConfig,
+                                       CFGI_LANGUAGE_SELECTION,
+                                       &language,
+                                       sizeof(language));
+	switch (language)
+                {
 
-   MEMCPY(pszOut, sszSymbolList, sizeof(sszSymbolList));
 
-   return(sizeof(sszSymbolList)/sizeof(sszSymbolList[0])) - 1;
+#ifdef FEATURE_LANG_THAI
+                    case NV_LANGUAGE_THAI:    //Ì©¹úÓï
+                      	{
+							if (!pszOut || size < (sizeof(sszSymbolListTH)/sizeof(sszSymbolListTH[0])))
+      								return(0);
+
+   							MEMCPY(pszOut, sszSymbolListTH, sizeof(sszSymbolListTH));
+
+  							return(sizeof(sszSymbolListTH)/sizeof(sszSymbolListTH[0])) - 1;
+					    }
+                        break;
+#endif
+					default:
+						{
+   							if (!pszOut || size < (sizeof(sszSymbolList)/sizeof(sszSymbolList[0])))
+      								return(0);
+
+   							MEMCPY(pszOut, sszSymbolList, sizeof(sszSymbolList));
+
+  							return(sizeof(sszSymbolList)/sizeof(sszSymbolList[0])) - 1;
+						}
+						break;
+				}
 }
 #else
 static uint16 TextCtl_QuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size) 

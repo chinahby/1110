@@ -55,12 +55,20 @@ when       who     what, where, why
 
 #define MAX_SHEFTKEYPAD_NUMBER 30
 typedef struct _SheftKeyItem_Own  SheftKeyItem_Own;
+typedef struct _UI_character_type UI_character_type ;
 struct _SheftKeyItem_Own
 {
 	uint16          wParam;
 	uint16          wp;
 	AECHAR          name[1];
 };
+struct _UI_character_type
+{
+	uint16          wParam;
+	uint16          wp[8];
+	AECHAR          name[1];
+};
+
 static SheftKeyItem_Own  VLCharKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 {
 	{AVK_POUND, '#', {'#'}},
@@ -251,6 +259,90 @@ static SheftKeyItem_Own  VLCharArabicKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_0,0x0660,{0x0660}}
 };
 #endif
+
+
+#ifdef FEATURE_LANG_THAI
+
+
+static SheftKeyItem_Own VLCharThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] = 
+{
+	{AVK_POUND, 0xE20, {'Q'}},
+	{AVK_1, 0xE04, {'W'}},
+	{AVK_2, 0xE0E, {'E'}},
+	{AVK_3, 0xE1E, {'R'}},
+	{AVK_T, 0xE02, {'T'}},
+	{AVK_Y, 0xE0A, {'Y'}},
+	{AVK_U, 0xE27, {'U'}},
+
+	{AVK_I, 0xE23, {'I'}},
+	{AVK_O, 0xE19, {'O'}},
+	{AVK_P, 0xE22, {'P'}},
+	{AVK_STAR, 0xE1F, {'A'}},
+	{AVK_4, 0xE2B, {'S'}},
+	{AVK_5, 0xE01, {'D'}},
+	{AVK_6, 0xE14, {'F'}},
+
+	{AVK_G, 0xE0C, {'G'}},
+	{AVK_H, 0xE08, {'H'}},
+	{AVK_J, 0xE1A, {'J'}},
+	{AVK_K, 0xE25, {'K'}},
+	{AVK_L, 0xE2A, {'L'}},
+	{AVK_7, 0xE1C, {'Z'}},
+	{AVK_8, 0xE1B, {'X'}},
+	
+	{AVK_9, 0xE09, {'C'}},
+	{AVK_V, 0xE2D, {'V'}},
+	{AVK_B, 0xE2E, {'B'}},
+	{AVK_N, 0xE0B, {'N'}},
+	{AVK_M, 0xE17, {'M'}},
+	{AVK_RWD, 0xE21, {'$'}},
+    {AVK_ENTER,0x000A,{0x000A}},
+    
+    {AVK_SPACE,' ',{' '}}  
+};
+
+
+static SheftKeyItem_Own VLCharShiftThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] = 
+{
+	{AVK_POUND, 0xE16, {'Q'}},
+	{AVK_1, 0xE15, {'W'}},
+	{AVK_2, 0xE26, {'E'}},
+	{AVK_3, NULL, {'R'}},
+	{AVK_T, NULL, {'T'}},
+	{AVK_Y, NULL, {'Y'}},
+	{AVK_U, NULL, {'U'}},
+
+	{AVK_I, 0xE13, {'I'}},
+	{AVK_O, 0xE07, {'O'}},
+	{AVK_P, 0xE0D, {'P'}},
+	{AVK_STAR, 0xE24, {'A'}},
+	{AVK_4, 0xE06, {'S'}},
+	{AVK_5, 0xE0F, {'D'}},
+	{AVK_6, NULL, {'F'}},
+
+	{AVK_G, NULL, {'G'}},
+	{AVK_H, NULL, {'H'}},
+	{AVK_J, NULL, {'J'}},
+	{AVK_K, 0xE29, {'K'}},
+	{AVK_L, 0xE28, {'L'}},
+	{AVK_7, 0xE11, {'Z'}},
+	{AVK_8, 0xE18, {'X'}},
+	
+	{AVK_9, 0xE10, {'C'}},
+	{AVK_V, NULL, {'V'}},
+	{AVK_B, NULL, {'B'}},
+	{AVK_N, NULL, {'N'}},
+	{AVK_M, NULL, {'M'}},
+	{AVK_RWD, 0xE12, {'$'}},
+    {AVK_ENTER,0x000A,{0x000A}},
+    
+    {AVK_SPACE,' ',{' '}}  
+};
+
+
+
+#endif
+
 
 /*-------------------------------------------------------------------
       Type Declarations

@@ -4366,6 +4366,27 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		    			{    
 		    				switch(OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
 		    				{
+		    				#ifdef FEATURE_T9_RAPID_THAI
+								case TEXT_MODE_T9_RAPID_THAI:
+									{
+										if (key == VLCharKeyItem[i].wParam)
+					            		{
+					        			    if(pContext->is_isShift)
+					                        { 
+					                            TextCtl_NoSelection(pContext);
+					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharShiftThaiKeyItem[i].wp));
+					                            pContext->is_isShift = FALSE;
+					                        }
+					                        else
+					                        {
+					                            TextCtl_NoSelection(pContext);
+					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharThaiKeyItem[i].wp));
+					                        }
+					                     }
+										break;
+
+								    }
+							#endif
 		    				#ifdef FEATURE_T9_RAPID_ARABIC
 		    					case TEXT_MODE_T9_RAPID_ARABIC:
 									{
@@ -5617,28 +5638,54 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                }
 	                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 	    			{       
-	            		if (key == VLCharKeyItem[i].wParam)
-	            		{
-	        			    if(pContext->is_isShift)
-	                        { 
-	                            TextCtl_NoSelection(pContext);
-	                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-	                            pContext->is_isShift = FALSE;
-	                        }
-	                        else
-	                        {
-	                            TextCtl_NoSelection(pContext);
-								if(pContext->m_bCaplk)
-								{
-									TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
-									pContext->m_bCaplk = FALSE;
+						switch(OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
+		    				{
+		    				#ifdef FEATURE_T9_RAPID_THAI
+								case TEXT_MODE_T9_MT_THAI:
+									{
+										if (key == VLCharKeyItem[i].wParam)
+			            				{
+			            					TextCtl_NoSelection(pContext);
+			            					if(pContext->is_isShift)
+			                        		{ 
+			                        			TextCtl_AddChar(pContext,(AECHAR)(VLCharShiftThaiKeyItem[i].wp));
+			                            		pContext->is_isShift = FALSE;
+			            					}
+											else
+											{
+												TextCtl_AddChar(pContext,(AECHAR)(VLCharThaiKeyItem[i].wp));
+											}
+										}
+									}
+							#endif
+							default:
+							{
+			            		if (key == VLCharKeyItem[i].wParam)
+			            		{
+			        			    if(pContext->is_isShift)
+			                        { 
+			                            TextCtl_NoSelection(pContext);
+			                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+
+			                        }
+			                        else
+			                        {
+			                            TextCtl_NoSelection(pContext);
+									
+										if(pContext->m_bCaplk)
+										{
+											TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+											pContext->m_bCaplk = FALSE;
+										}
+										else
+										{
+			                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+										}
+			                        }
+			                     }
 								}
-								else
-								{
-	                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
-								}
-	                        }
-	                     }
+							break;
+						}
 	                  }
 	            }
 	            return TRUE;
