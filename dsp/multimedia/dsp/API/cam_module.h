@@ -99,7 +99,7 @@ typedef struct
 	unsigned char* (*ait_sd_init)(void);
 	unsigned short (*ait_sd_read)( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int read_size );
 	unsigned short (*ait_sd_write)( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int write_size );
-	u_int (*ait_sd_get_size)(void);
+	u_int32 (*ait_sd_get_size)(void);
 } ait_sd_func;
 
 

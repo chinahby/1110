@@ -148,7 +148,7 @@ A8_ERROR_MSG sd_IF_ait_read_sectors(u_int startsect, u_int offset, u_char* buf, 
 */
 u_int sd_IF_ait_ioctl(void)
 {
-	u_char retVal;
+	u_int retVal;
 	u_char isBypassMode = sys_IF_ait_get_bypass_status();
 	
 	sys_IF_ait_set_input_clock(A8_SD, A8_ON);
@@ -157,7 +157,7 @@ u_int sd_IF_ait_ioctl(void)
 		sys_IF_ait_set_bypass_mode(A8_OFF);
 	
 	retVal = A800_GetSDSize();
-	
+	MSG_FATAL("retVal:::::::::::::=%d",retVal,0,0);
 	if (isBypassMode == TRUE)
 		sys_IF_ait_set_bypass_mode(A8_ON);
 	

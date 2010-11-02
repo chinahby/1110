@@ -1349,7 +1349,7 @@ unsigned char* AIT701_SD_Initialize(void)
 	return pCSD;
 }
 
-unsigned short AIT701_SD_ReadSector( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int read_size )
+static	unsigned short AIT701_SD_ReadSector( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int read_size )
 {
 	unsigned short retVal=0xFF;
 	ASSERT(buf!=NULL);
@@ -1360,7 +1360,7 @@ unsigned short AIT701_SD_ReadSector( unsigned int startsect,unsigned int offset,
 }
 
 
-unsigned short AIT701_SD_WriteSector( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int write_size )
+static unsigned short AIT701_SD_WriteSector( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int write_size )
 {
 	unsigned short retVal=0xFF;
 	ASSERT(buf!=NULL);
@@ -1377,11 +1377,12 @@ u_char* AIT701_sd_get_CSD()
 	return (u_char*)pCSD_Addr;
 }
 
-u_int  AIT701_sd_get_Size()
+u_int32  AIT701_sd_get_Size()
 {
-	u_int	sd_size ;
-	sd_size = sd_IF_ait_ioctl() * 512 ;
-	AIT_Message_P1("T Card Capability =0x%x  Byte\r\n", sd_size);
+	u_int32	sd_size ;
+	MSG_FATAL("sd_IF_ait_ioctl():::::::::::::=%d",sd_IF_ait_ioctl(),0,0);
+	sd_size = sd_IF_ait_ioctl() /** 512*/ ;
+	AIT_Message_P1("T Card Capability =%d  Byte\r\n", sd_size);
 	return sd_size;
 }
 

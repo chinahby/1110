@@ -17,6 +17,7 @@ typedef unsigned char		bool;
 typedef unsigned char		u_char;
 typedef unsigned short		u_short;
 typedef unsigned int			u_int;
+typedef unsigned long int       u_int32;
 
 typedef int                 		s_int;
 typedef short               	s_short;
