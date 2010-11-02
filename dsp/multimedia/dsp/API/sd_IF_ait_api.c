@@ -68,9 +68,7 @@ A8_ERROR_MSG sd_IF_ait_close_sd(void)
 */
 A8_ERROR_MSG sd_IF_ait_init_sd(void)
 {
-	u_char retVal;
-
-	sys_IF_ait_boot_init();
+	u_char retVal = A8_NO_ERROR;
 
 	sys_IF_ait_set_input_clock(A8_SD, A8_ON);
 	retVal = A800_CheckSDDevice();
@@ -78,6 +76,7 @@ A8_ERROR_MSG sd_IF_ait_init_sd(void)
 		AIT_Message_P0("A800_CheckSDDevice is failed !!!\n");		
 		return A8_SD_ERROR;
 	}else{		
+		AIT_Message_P0("A800_CheckSDDevice is sucess !!!\n");	
 		return A8_NO_ERROR;
 	}
 }

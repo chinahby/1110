@@ -612,6 +612,7 @@ static mmp_ret_code_type mmpfunc_sd_process(mmp_func_type func, void* client_dat
 	{
 		case	MMPFUNC_SD_INIT:
 			status = sd_IF_ait_init_sd();
+			MSG_FATAL("MMPFUNC_SD_INIT.........status:%d",status,0,0);
 			break;
 			
 		case	MMPFUNC_SD_OPEN:
@@ -778,8 +779,8 @@ static mmp_ret_code_type mmpfunc_process(mmp_func_type func, void* client_data, 
 	mmp_ret_code_type status = MMP_INVALID_STATE;
 
 	AIT_ext_Take_Semaphore(0);
-	//lcd_busy_waiting();
-	//mmpfunc_sleep_disable();
+//	lcd_busy_waiting();
+	mmpfunc_sleep_disable();
 
 	switch(func)
 	{
@@ -1319,7 +1320,7 @@ static void AIT701_set_gpio(u_short pin, u_char level)
 
 
 unsigned short AIT_SD_InitializeFlag=0;
-static unsigned char* AIT701_SD_Initialize(void)
+unsigned char* AIT701_SD_Initialize(void)
 {
 	unsigned char* pCSD=NULL;
 	unsigned short ret = MMP_SUCCESS;
@@ -1348,17 +1349,18 @@ static unsigned char* AIT701_SD_Initialize(void)
 	return pCSD;
 }
 
-static unsigned short AIT701_SD_ReadSector( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int read_size )
+unsigned short AIT701_SD_ReadSector( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int read_size )
 {
 	unsigned short retVal=0xFF;
 	ASSERT(buf!=NULL);
 
 	retVal = (u_char)mmpfunc_process(MMPFUNC_SD_READ, buf, startsect, offset, read_size, 0, 0);
+	AIT_Message_P1("Enter AIT701_SD_ReadSector ::%d!\r\n",retVal);
 	return retVal;
 }
 
 
-static unsigned short AIT701_SD_WriteSector( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int write_size )
+unsigned short AIT701_SD_WriteSector( unsigned int startsect,unsigned int offset,unsigned char *buf,unsigned int write_size )
 {
 	unsigned short retVal=0xFF;
 	ASSERT(buf!=NULL);
