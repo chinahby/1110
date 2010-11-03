@@ -364,7 +364,7 @@ void QtvConfig::Reset(const char *configFile)
 {
    ResetHardCodedValues();
    ReadItemsFromNV(); /*lint !e534*/
-   ReadItemsFromConfigFile(configFile); /*lint !e534*/
+   //ReadItemsFromConfigFile(configFile); /*lint !e534*/
 }
 
 

@@ -25,6 +25,10 @@ ifeq ($(MMI_ADD_MUSICPLAYER),yes)
 include $(MUSICPLAYER)/MusicPlayer.min
 endif
 
+ifeq ($(MMI_ADD_VIDEOPLAYER),yes)
+include $(VIDEOPLAYER)/VideoPlayer.min
+endif
+
 ifeq ($(MMI_ADD_RECORDER),yes)
 include $(RECORDER)/recorder.min
 endif

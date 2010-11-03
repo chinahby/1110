@@ -16,6 +16,9 @@
 	<STRING Id="1014" Name="IDS_MULTIMEDIA_TITLE_4">
 		<Text>Rekaman</Text>
 	</STRING>
+	<STRING Id="1015" Name="IDS_MULTIMEDIA_TITLE_VIDEO">
+		<Text>Video Player</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_MULTIMEDIA" Focus="7001">
