@@ -403,7 +403,7 @@ OEMAnnun_content batt_content =
 #elif defined(FEATURE_DISP_240X320)
 #define ANNUN_ICON_POSITION_10     (DISP_WIDTH - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
 #elif defined(FEATURE_DISP_320X240)
-#define ANNUN_ICON_POSITION_10     (DISP_WIDTH - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
+#define ANNUN_ICON_POSITION_10     (DISP_WIDTH - LG_IMG_WIDTH) // - IMG_WIDTH - BETWEEN_ICON_PIXEL)
 #else
 #define ANNUN_ICON_POSITION_10    (LG_IMG_WIDTH + 8*IMG_WIDTH + 9*BETWEEN_ICON_PIXEL)
 #endif
@@ -2142,14 +2142,14 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 200;
                     }		
 #elif defined(FEATURE_DISP_320X240)
-                    if(titleLen > 200)
+                    if(titleLen > 256)
                     {
                         bgRect.x = 0;
-                        bgRect.dx = 240;
+                        bgRect.dx = 320;
                     }
                     else
                     {
-                        bgRect.dx = 200;
+                        bgRect.dx = 256;
                     }						
 #else
                     bgRect.dx = 120;

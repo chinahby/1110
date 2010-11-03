@@ -4056,11 +4056,27 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
 
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
+
+#if defined FEATURE_DISP_220X176
 	SETAEERECT(&rc, 
 			   IDLE_D_CLOCK_X,
 			   IDLE_D_CLOCK_Y,
 			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
-			   pMe->m_nNormalFontHeight);	//26
+			   25);	
+#elif defined FEATURE_DISP_320X240
+	SETAEERECT(&rc, 
+			   IDLE_D_CLOCK_X,
+			   IDLE_D_CLOCK_Y,
+			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
+			   30);	
+#else
+	SETAEERECT(&rc, 
+			   IDLE_D_CLOCK_X,
+			   IDLE_D_CLOCK_Y,
+			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
+			   pMe->m_nNormalFontHeight);	
+#endif
+	
 	SETAEERECT(&rc_date, 
 			   DATA_X,
 			   DATA_Y,

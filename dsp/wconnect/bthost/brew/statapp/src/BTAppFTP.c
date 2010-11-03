@@ -540,7 +540,29 @@ void BTApp_FTPBuildMainMenu( CBTApp* pMe )
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_FTP_TESTS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_FTP_TESTS, NULL );
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_FTP_TESTS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+  //Add End
 
   BTApp_InitAddItem( &ai );
 
@@ -580,6 +602,7 @@ void BTApp_FTPBuildServerMenu( CBTApp* pMe )
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );
 
   // set the title
+  /*
   if ( pMe->mFTP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
@@ -595,6 +618,48 @@ void BTApp_FTPBuildServerMenu( CBTApp* pMe )
   {
     IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_FTP_SERVER, NULL );
   }
+  */
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+  	if ( pMe->mFTP.bConnected != FALSE )
+    {
+      szStatus[ 3 ] = 'C';
+      ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_FTP_SERVER, 
+                            pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+      len = WSTRLEN( pMe->pText2 );
+  
+      STRTOWSTR( szStatus, &pMe->pText2[ len ], 
+                 (SHORT_TEXT_BUF_LEN - len) * sizeof( AECHAR ) );
+      //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText2 );     		
+      if(pMe->m_pIAnn != NULL)
+      {
+          IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+      }
+    }
+    else
+    {
+      //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_FTP_SERVER, NULL );
+      AECHAR WTitle[20] = {0};
+      ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_FTP_SERVER,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+		if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+		}
+    }    
+	
+  }
+  //Add End
 
   BTApp_InitAddItem( &ai );
 
@@ -632,6 +697,7 @@ void BTApp_FTPBuildClientMenu( CBTApp* pMe )
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );
 
   // set the title
+  /*
   if ( pMe->mFTP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
@@ -647,6 +713,50 @@ void BTApp_FTPBuildClientMenu( CBTApp* pMe )
   {
     IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_FTP_CLIENT, NULL );
   }
+  */
+  
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+  	if ( pMe->mFTP.bConnected != FALSE )
+    {
+      szStatus[ 3 ] = 'C';
+      ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_FTP_CLIENT, 
+                            pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+      len = WSTRLEN( pMe->pText2 );
+  
+      STRTOWSTR( szStatus, &pMe->pText2[ len ], 
+                 (SHORT_TEXT_BUF_LEN - len) * sizeof( AECHAR ) );
+      //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText2 );     		
+      if(pMe->m_pIAnn != NULL)
+      {
+          IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+      }
+    }
+    else
+    {
+      //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_FTP_CLIENT, NULL );
+      AECHAR WTitle[20] = {0};
+      ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_FTP_CLIENT,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+		if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+		}
+    }    
+	
+  }
+  //Add End
+
+  
 
   BTApp_InitAddItem( &ai );
 
@@ -685,7 +795,22 @@ void BTApp_FTPBuildSettingsMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS, NULL );
+  //Add By zzg 2010_11_01
+  {
+	  AECHAR WTitle[20] = {0};
+	  ISHELL_LoadResString(pMe->a.m_pIShell,
+		                   BTAPP_RES_FILE,                                
+		                   IDS_SETTINGS,
+		                   WTitle,
+		                   sizeof(WTitle));
+	  
+	  if (pMe->m_pIAnn != NULL)
+	  {
+	  	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	  }
+  }
+  //Add End
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUTHENTICATE, 
@@ -714,7 +839,22 @@ void BTApp_FTPBuildServerRegisterMenu( CBTApp* pMe )
   IMENUCTL_Reset( pMe->m_pIMenu );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_REGISTER, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_REGISTER, NULL );
+  //Add By zzg 2010_11_01
+  {
+	  AECHAR WTitle[20] = {0};
+	  ISHELL_LoadResString(pMe->a.m_pIShell,
+		                   BTAPP_RES_FILE,                                
+		                   IDS_REGISTER,
+		                   WTitle,
+		                   sizeof(WTitle));
+	  
+	  if (pMe->m_pIAnn != NULL)
+	  {
+	  	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	  }
+  }
+  //Add End
 
   BTApp_InitAddItem( &ai );
 
@@ -742,7 +882,22 @@ void BTApp_FTPBuildEnableMenu( CBTApp* pMe )
   IMENUCTL_Reset( pMe->m_pIMenu );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS_FTP, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS_FTP, NULL );
+  //Add By zzg 2010_11_01
+  {
+	  AECHAR WTitle[20] = {0};
+	  ISHELL_LoadResString(pMe->a.m_pIShell,
+		                   BTAPP_RES_FILE,                                
+		                   IDS_SETTINGS_FTP,
+		                   WTitle,
+		                   sizeof(WTitle));
+	  
+	  if (pMe->m_pIAnn != NULL)
+	  {
+	  	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	  }
+  }
+  //Add End
 
   BTApp_InitAddItem( &ai );
 
@@ -780,9 +935,25 @@ void BTApp_FTPLoadBrowsingMenu( CBTApp* pMe )
                 pMe->m_rect.dy - 20); // leave room for SK menu
     // Set the area on the device screen where the menu is drawn
     IMENUCTL_SetRect( pMe->m_pIMenu, &rc );
+	
     // Set the title for the menu
-    IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_FTP_LIST_FOLDER, 
-                       NULL );
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_FTP_LIST_FOLDER, NULL );
+    //Add By zzg 2010_11_01
+	  {
+		  AECHAR WTitle[20] = {0};
+		  ISHELL_LoadResString(pMe->a.m_pIShell,
+			                   BTAPP_RES_FILE,                                
+			                   IDS_FTP_LIST_FOLDER,
+			                   WTitle,
+			                   sizeof(WTitle));
+		  
+		  if (pMe->m_pIAnn != NULL)
+		  {
+		  	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+		  }
+	  }
+  //Add End
+	
 
     uNoOfItems = pMe->mFTP.uNumOfObjInRemoteDev;
   }
@@ -793,7 +964,15 @@ void BTApp_FTPLoadBrowsingMenu( CBTApp* pMe )
 
     // Set the title for the menu
     STRTOWSTR( "Local Browsing", wName, sizeof( wName ) );
-    IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, 0, wName );
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, 0, wName );
+    //Add By zzg 2010_11_01
+	  {
+		  if (pMe->m_pIAnn != NULL)
+		  {
+		  	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wName);
+		  }
+	  }
+  //Add End
 
     uNoOfItems = pMe->mFTP.uNumOfObjInLocalDev;
   }

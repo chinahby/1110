@@ -790,6 +790,7 @@ when       who  what, where, why
 ===========================================================================*/
 #include "comdef.h"
 #include "AEECallHistory.h"
+
 #ifdef FEATURE_APP_BLUETOOTH
 
 #include "BTApp.h"
@@ -871,6 +872,12 @@ when       who  what, where, why
                       STATIC DATA
 
 ===========================================================================*/
+
+//Add By zzg 2010_10_29
+#define BTBAR_HEIGHT	(BOTTOMBAR_HEIGHT + 7)
+//Add End
+
+
 const AEEBTBDAddr NULL_BD_ADDR = {0,0,0,0,0,0};
 CBTApp* pTheBTApp = NULL;
 uint32 uBTApp_NMask = NMASK_BT_RM  | NMASK_BT_SD | NMASK_BT_SPP |
@@ -1902,7 +1909,6 @@ static boolean BTApp_InitAppData(IApplet* pi)
     }
     IFILEMGR_Release( pIFileMgr );
   }
-
   if ( success )
   {
     pMe->pText1 = MALLOC( LONG_TEXT_BUF_LEN*sizeof(AECHAR) );
@@ -2137,6 +2143,7 @@ static void BTApp_FreeAppData( IApplet* pi )
 
   if ( pMe->m_pStatic != NULL )
   {
+  	MSG_FATAL("***zzg BTApp_FreeAppData.***", 0, 0, 0);
     ISTATIC_Release( pMe->m_pStatic );
     pMe->m_pStatic = NULL;
   }
@@ -2165,6 +2172,14 @@ static void BTApp_FreeAppData( IApplet* pi )
     pMe->pMem = NULL;
   }
 
+  //Add By zzg 2010_10_29
+  if (pMe->m_pIAnn != NULL )
+  {
+      IANNUNCIATOR_Release(pMe->m_pIAnn);
+      pMe->m_pIAnn= NULL;
+  }
+  //Add End
+  
 #ifdef FEATURE_BT_EXTPF_SAP
 #error code not present
 #endif
@@ -3824,6 +3839,8 @@ static boolean BTApp_InitTextDlg( CBTApp* pMe, IDialog* pDlg )
   }
 
   // set the title
+
+  /*
   if ( stringID == IDS_PASS_KEY )
   {
     ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, stringID, 
@@ -3842,14 +3859,61 @@ static boolean BTApp_InitTextDlg( CBTApp* pMe, IDialog* pDlg )
   {
     ITEXTCTL_SetTitle( pTextCtl, BTAPP_RES_FILE, stringID, NULL );
   }
+  */
+
+	//Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	}  
+
+	if ( stringID == IDS_PASS_KEY )
+    {
+      ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, stringID, 
+                            pMe->pText2, SHORT_TEXT_BUF_LEN*sizeof( AECHAR ) );
+      if ( WSTRLEN( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName ) == 0 )
+      {
+        BTApp_BDAddr2Wstr( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName,
+                           &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr );
+      }
+      // build the title
+      WSPRINTF( pMe->pText1, LONG_TEXT_BUF_LEN*sizeof( AECHAR ), 
+                pMe->pText2, pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName );
+	  
+      //ITEXTCTL_SetTitle( pTextCtl, BTAPP_RES_FILE, 0, pMe->pText1 );
+	  
+	  if(pMe->m_pIAnn != NULL)
+      {
+          IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText1);
+      }
+    }
+    else
+    {
+      AECHAR wTitle[20];
+      //ITEXTCTL_SetTitle( pTextCtl, BTAPP_RES_FILE, stringID, NULL );
+	  ISHELL_LoadResString(pMe->a.m_pIShell,
+	                           BTAPP_RES_FILE,                                
+	                           stringID,
+	                           wTitle,
+	                           sizeof(wTitle));
+
+      if(pMe->m_pIAnn != NULL)
+      {
+          IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wTitle);
+      }
+    }  	
+	//Add End
 
   ITEXTCTL_SetSoftKeyMenu( pTextCtl, NULL );
-  SetDefaultSoftkeyLook( pMe->a.m_pIShell, pICurrentMenu );
+  //SetDefaultSoftkeyLook( pMe->a.m_pIShell, pICurrentMenu );  //Del By zzg 2010_11_01
 
   IMENUCTL_DeleteAll( pICurrentMenu );
   IMENUCTL_AddItem( pICurrentMenu, BTAPP_RES_FILE, IDS_OK, IDS_OK, NULL, 0);
 
-  SETAEERECT ( &rc, 10, 10, pMe->m_rect.dx-10, 30 );
+  //SETAEERECT ( &rc, 10, 10, pMe->m_rect.dx-10, 30 );
+  //Modify by zzg 2010_11_01
+  SETAEERECT ( &rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy - BTBAR_HEIGHT);
+  
   ITEXTCTL_SetRect( pTextCtl, &rc );
 
   ITEXTCTL_SetMaxSize( pTextCtl, maxLen );
@@ -4456,7 +4520,8 @@ static boolean BTApp_TextEditHandleEvent(
         }
         return TRUE;
       }
-      else if ( wParam == AVK_SELECT )
+      //else if ( wParam == AVK_SELECT )
+      else if ((wParam == AVK_SELECT) || (wParam == AVK_INFO))	//Modify by zzg  2010_11_03
       {
         return BTApp_TextEditSave( pMe );
       }
@@ -4465,7 +4530,7 @@ static boolean BTApp_TextEditHandleEvent(
     case EVT_COMMAND:
     {
       MSG_LOW( "TextEditHndlEv - COMMAND wP=%x", wParam, 0, 0 );
-      if ( (wParam == IDS_OK) || (wParam == AVK_SELECT) )
+      if ( (wParam == IDS_OK) || (wParam == AVK_SELECT) || (wParam == AVK_INFO))//Modify by zzg  2010_11_03
       {
         return BTApp_TextEditSave( pMe );
       }
@@ -4609,6 +4674,7 @@ static boolean BTApp_HandleVRCapableMenu( CBTApp* pMe, uint16 key )
         ev_processed = BTApp_HandleClearKey( pMe );
       }
       break;
+	case AVK_INFO:		//Add By zzg 2010_11_03  
     case AVK_SELECT:
     {
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -4697,6 +4763,8 @@ static boolean BTApp_HandleDevTypeMenu( CBTApp* pMe, uint16 key )
       }
       break;
     }
+
+	case AVK_INFO:		//Add By zzg 2010_11_03
     case AVK_SELECT:
     {
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -4814,6 +4882,7 @@ static boolean BTApp_HandleIOCMenu( CBTApp* pMe, uint16 key )
       ev_processed = BTApp_HandleClearKey( pMe );
       break;
     }
+	case AVK_INFO:	//Add By zzg 2010_11_03
     case AVK_SELECT:
     {
       // update menu
@@ -4896,6 +4965,7 @@ static boolean BTApp_HandleServiceSecurityOptionsMenu( CBTApp* pMe, uint16 key )
     case AVK_7:
     case AVK_8:
     case AVK_9:
+	case AVK_INFO:		//Add By zzg 2010_11_03	
     case AVK_SELECT:
     {
 #ifdef FEATURE_BT_TEST_API
@@ -5313,6 +5383,7 @@ static boolean BTApp_HandleSvrMainSec( CBTApp* pMe, uint16 key )
       {
     switch ( key)
     {
+      case AVK_INFO:		//Add By zzg 2010_11_03
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -5379,6 +5450,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
     case AVK_CLR:
       ev_processed = BTApp_HandleClearKey( pMe ); 
       break;
+	case AVK_INFO:	//Add By zzg 2010_11_03  
     case AVK_SELECT:
     {
       do
@@ -5894,6 +5966,7 @@ static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key )
     case AVK_CLR:
       ev_processed = BTApp_HandleClearKey( pMe );
       break;
+	case AVK_INFO:	//Add By zzg 2010_11_03    
     case AVK_SELECT:
     {
       switch( selection )
@@ -6003,17 +6076,46 @@ static void BTApp_BuildDisplayPasskeyMenu( CBTApp* pMe )
   else
   {
     // set rect for info display area
-    SETAEERECT ( &rc, pMe->m_rect.x, 
-                 pMe->m_rect.y, 
-                 pMe->m_rect.dx, 
-                 pMe->m_rect.dy - 20); // leave room for SK menu
+    SETAEERECT ( &rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy - BTBAR_HEIGHT); // leave room for SK menu
     ISTATIC_SetRect( pMe->m_pStatic, &rc );
+
+	
     ISTATIC_SetProperties( pMe->m_pStatic, 
                            ISTATIC_GetProperties( pMe->m_pStatic ) 
                            & ~ST_MIDDLETEXT & ~ST_CENTERTEXT );
+          
+    //Add By zzg 2010_10_29        
+	ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
+	ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 
+    //Add End
+
+
+	/*
     // get title
     ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_DISPLAY_PSSKEY, 
                           wTitle, sizeof(wTitle) );
+                          */
+
+
+	//Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }  
+    {   
+	  	ISHELL_LoadResString(pMe->a.m_pIShell,
+	                           BTAPP_RES_FILE,                                
+	                           IDS_DISPLAY_PSSKEY,
+	                           wTitle,
+	                           sizeof(wTitle));
+   
+	    if(pMe->m_pIAnn != NULL)
+	  	{
+	  	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wTitle);
+	  	}
+    }
+	//Add End
+	
     //add Title Here
     if ( WSTRLEN( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName ) == 0 )
     {
@@ -6057,8 +6159,9 @@ static void BTApp_BuildDisplayPasskeyMenu( CBTApp* pMe )
     WSTRLCAT(pMe->pText1, wBuf1, LONG_TEXT_BUF_LEN*sizeof(AECHAR));
 
     // display text
-    ISTATIC_SetText( pMe->m_pStatic, wText, pMe->pText1, 
-                     AEE_FONT_BOLD, AEE_FONT_NORMAL );
+    //ISTATIC_SetText( pMe->m_pStatic, wText, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+    ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+	
     ISTATIC_Redraw( pMe->m_pStatic );
 
     // add the SK menu to bottom of screen
@@ -6154,6 +6257,7 @@ static boolean BTApp_HandleConnModeMenu( CBTApp* pMe, uint16 key )
       }
       break;
     }
+	case AVK_INFO:	//Add By zzg 2010_11_03  
     case AVK_SELECT:
     {
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -6235,6 +6339,7 @@ static boolean BTApp_HandleHSButtonHndlrMenu( CBTApp* pMe, uint16 key )
       }
       break;
     }
+	case AVK_INFO:	//Add By zzg 2010_11_03  
     case AVK_SELECT:
     {
       BTApp_UpdateMenuItemImage( 
@@ -6330,6 +6435,7 @@ static boolean BTApp_HandleListMenu( CBTApp* pMe, uint16 key )
       BTApp_UpdateAGSettings( pMe, newVal );
       ev_processed = BTApp_HandleClearKey( pMe );
       break;
+	case AVK_INFO:	//Add By zzg 2010_11_03    
     case AVK_SELECT:
       ev_processed = TRUE;
       break;
@@ -6347,6 +6453,7 @@ static boolean BTApp_HandleDevListMenu( CBTApp* pMe, uint16 key )
 
   switch ( key )
   {
+    case AVK_INFO:	//Add By zzg 2010_11_03  
     case AVK_SELECT:
     {
       if ( IMENUCTL_GetItemCount( pMe->m_pIMenu ) > 0 )
@@ -6535,6 +6642,7 @@ static boolean BTApp_HandleDevRespMenu( CBTApp* pMe, uint16 key )
 
   switch ( key )
   {
+    case AVK_INFO:	//Add By zzg 2010_11_03  
     case AVK_SELECT:
     {
       if ( pMe->mSD.bDiscovering )
@@ -6667,6 +6775,7 @@ static boolean BTApp_HandleDevInfoMenu( CBTApp* pMe, uint16 key )
     case AVK_DOWN:
       break;
 
+    case AVK_INFO:	//Add By zzg 2010_11_03  
     case AVK_SELECT:
     {
       MENU_SET_SEL( IMENUCTL_GetSel( pMe->m_pISoftMenu ) );
@@ -6793,6 +6902,7 @@ static boolean BTApp_HandleSecurityMenu( CBTApp* pMe, uint16 key )
       }
       ev_processed = BTApp_HandleClearKey( pMe );
       break;
+	case AVK_INFO:	//Add By zzg 2010_11_03    
     case AVK_SELECT:
       // update menu
       while ( sel != 0 )
@@ -6886,6 +6996,7 @@ static boolean BTApp_HandleDiscoverableMenu( CBTApp* pMe, uint16 key )
         ev_processed = BTApp_HandleClearKey( pMe );
       }
       break;
+	case AVK_INFO:	//Add By zzg 2010_11_03    
     case AVK_SELECT:
       // update menu
       while ( sel != 0 )
@@ -6960,6 +7071,7 @@ static boolean BTApp_HandleSppSettingsMenu( CBTApp* pMe, uint16 key )
     case AVK_CLR:
       ev_processed = BTApp_HandleClearKey( pMe );
       break;
+	case AVK_INFO:	//Add By zzg 2010_11_03    
     case AVK_SELECT:
     {
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -7076,6 +7188,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
     case AVK_CLR:
       ev_processed = BTApp_HandleClearKey( pMe );
       break;
+	case AVK_INFO:	//Add By zzg 2010_11_03    
     case AVK_SELECT:
     {
       switch( selection )
@@ -7401,6 +7514,7 @@ static boolean BTApp_HandleScanParamsMenu(
       }
       break;
     }
+	case AVK_INFO:	//Add By zzg 2010_11_03  
     case AVK_SELECT:
     {
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -7518,6 +7632,7 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
       BTApp_BuildDevicesMenu( pMe );
       break;
     case BT_APP_MENU_MY_INFO:
+	  MSG_FATAL("***zzg BTApp_BuildMyInfoMenu***", 0, 0, 0);
       BTApp_BuildMyInfoMenu( pMe );
       break;
     case BT_APP_MENU_SETTINGS:
@@ -8454,9 +8569,11 @@ static boolean BTApp_MenuHandleEvent
 {
   CBTApp*   pMe = (CBTApp *)pUser;
   boolean   ev_processed = FALSE;
-  IMenuCtl* pMenu = pMe->m_pIMenu;
+  IMenuCtl* pMenu = pMe->m_pIMenu;  
   uint16    selection;
 
+  boolean   bInStatic = FALSE;	//Add By zzg 2010_11_03
+  
   MSG_LOW( "MenuHndlEv - wP=0x%x dw=0x%x m=%d", wParam, dw, TOP_MENU );
 
   if ( (wParam != AVK_CLR) && (pMe->uCurrMsgId != 0) )
@@ -8721,6 +8838,7 @@ static boolean BTApp_MenuHandleEvent
 #endif /* FEATURE_BT_2_1 */
     {
       pMenu = pMe->m_pISoftMenu;
+	  bInStatic = TRUE;				//Add By zzg 2010_11_03
       break;
     }
     case BT_APP_MENU_L2_TEST:
@@ -8738,6 +8856,17 @@ static boolean BTApp_MenuHandleEvent
     }
   }
 
+
+  //Add  By zzg 2010_11_03
+  if (TRUE == bInStatic)
+  {
+	 if ((wParam == AVK_UP) || (wParam == AVK_DOWN))
+	 {
+		ev_processed = ISTATIC_HandleEvent(pMe->m_pStatic, EVT_KEY, wParam, 0);     		
+	 }
+  }
+  //AddEnd
+
   if ( (pMenu == pMe->m_pIMenu) &&
        ((selection = BTApp_NumKey2Selection( pMenu, wParam )) != 0) )
   {
@@ -8750,6 +8879,7 @@ static boolean BTApp_MenuHandleEvent
       case AVK_CLR:
         ev_processed = BTApp_HandleClearKey( pMe ); // rebuild previous menu
         break;
+	  case AVK_INFO:		//Add By zzg 2010_11_01
       case AVK_SELECT:
         MSG_FATAL( "MenuHndlEv - SELECT key, m=%d", TOP_MENU, 0, 0 );
         selection = IMENUCTL_GetSel( pMenu );
@@ -11621,13 +11751,17 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
     case IDS_DEVICE_SEARCH:
       if ( BTApp_HCIModeOn( pMe ) == FALSE )
       {
-        built = BTApp_BuildMenu( pMe, BT_APP_MENU_SEARCH );
+        //built = BTApp_BuildMenu( pMe, BT_APP_MENU_SEARCH );
+
+	    //跳过SEARCH选项，直接搜索所有设备。
+		built = BTApp_DoDeviceSearch( pMe, AEEBT_COD_SC_ALL, NULL );	//Modify by zzg 2010_11_02
       }
       break;
     case IDS_DEVICES:
       built = BTApp_BuildMenu( pMe, BT_APP_MENU_DEVICE );
       break;
     case IDS_MY_INFO:
+	  MSG_FATAL("***zzg BTApp_HandleSel IDS_MY_INFO***", 0, 0, 0);	
       built = BTApp_BuildMenu( pMe, BT_APP_MENU_MY_INFO );
       break;
     case IDS_SETTINGS:
@@ -12220,8 +12354,11 @@ static boolean BTApp_Init( CBTApp* pMe )
     return bInitDone;
   }
 
+  //Add By zzg 2010_10_29 (AEECLSID_ANNUNCIATOR)
   if ( (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_MENUCTL,
-                               (void**) &pMe->m_pIMenu ) == SUCCESS) &&
+                               (void**) &pMe->m_pIMenu ) == SUCCESS) &&	  
+	   (ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_ANNUNCIATOR,
+	 						   (void **) &pMe->m_pIAnn) == SUCCESS) &&	                               
        (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_SOFTKEYCTL,
                                (void**) &pMe->m_pISoftMenu ) == SUCCESS) &&
        (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_STATIC, 
@@ -12239,9 +12376,12 @@ static boolean BTApp_Init( CBTApp* pMe )
                                uBTApp_NMask ) == SUCCESS) )
   {
   	MSG_FATAL("BTApp_Init................................",0,0,0);
-    SetDefaultMenuLook( pMe->a.m_pIShell, pMe->m_pIMenu );
-    SetDefaultSoftkeyLook( pMe->a.m_pIShell, pMe->m_pISoftMenu );
-    IMENUCTL_SetProperties( pMe->m_pISoftMenu, MP_MAXSOFTKEYITEMS );
+
+	//Del By zzg 2010_10_29
+    //SetDefaultMenuLook( pMe->a.m_pIShell, pMe->m_pIMenu );
+    //SetDefaultSoftkeyLook( pMe->a.m_pIShell, pMe->m_pISoftMenu );
+    //IMENUCTL_SetProperties( pMe->m_pISoftMenu, MP_MAXSOFTKEYITEMS );
+    //Del End
 
     BTApp_ReadConfigFile( pMe );
     pMe->mAG.bInbandRing         = FALSE;
@@ -12400,6 +12540,7 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
   boolean     bScvEnabled = FALSE;
    MSG_FATAL("BTApp_BuildMainMenu...........................",0,0,0);
   IMENUCTL_Reset( pMe->m_pIMenu );
+
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );
    
   BTApp_InitAddItem( &ai );
@@ -12508,7 +12649,8 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
     itemID = IDS_BT_OFF;
     bScvEnabled = TRUE;
   }
-  
+
+  /*
   if ( bScvEnabled )
   {
     ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_BT_TITLE, 
@@ -12525,14 +12667,54 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
   {
     IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BT_TITLE, NULL );
   }
+  */
+
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }
+
+  if ( bScvEnabled )
+  {
+    ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_BT_TITLE, 
+                          pMe->pText1, LONG_TEXT_BUF_LEN * sizeof(AECHAR) );
+    len = WSTRLEN( pMe->pText1 );
+
+    STRTOWSTR( nzStatus, &pMe->pText1[ len ], 
+               (LONG_TEXT_BUF_LEN-len) * sizeof(AECHAR) );
+
+    // set the title
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText1 );
+
+	if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText1);
+	}
+  }
+  else
+  {
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BT_TITLE, NULL );
+
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_BT_TITLE,
+                         pMe->pText1,
+                         LONG_TEXT_BUF_LEN * sizeof(AECHAR));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText1);
+	}
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, itemID, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DEVICE_SEARCH, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DEVICES, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_MY_INFO, 0 );
-  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SETTINGS, 0 );
-  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_TESTS, 0 );
+  //BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SETTINGS, 0 );
+  //BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_TESTS, 0 );
+  /*
   if ( pMe->mAG.bConnected )
   {
     if ( (pMe->mAG.bSLCUp != FALSE) ||
@@ -12541,6 +12723,13 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
       BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUDIO_TRANSFER, 0 );
     }
   }
+  */
+  
+  //Add by zzg 2010_10_29
+  IMENUCTL_SetProperties(pMe->m_pIMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+  IMENUCTL_SetOemProperties(pMe->m_pIMenu, OEMMP_USE_MENU_STYLE);
+  IMENUCTL_SetBottomBarType(pMe->m_pIMenu, BTBAR_SELECT_BACK);  
+  //Add End
   
   // Activate menu
   pMe->uTopMenu = 0;
@@ -12567,8 +12756,30 @@ static void BTApp_BuildDeviceSearchMenu( CBTApp* pMe)
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DEVICE_SEARCH, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DEVICE_SEARCH, NULL );
 
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_DEVICE_SEARCH,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+  //Add End
+  
   BTApp_InitAddItem( &ai );
 
   // Add individual entries to the Menu
@@ -12603,7 +12814,27 @@ static void BTApp_BuildDevicesMenu( CBTApp* pMe)
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DEVICES, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DEVICES, NULL );
+
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_DEVICES,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_LIST_BONDED, 0 );
@@ -12637,23 +12868,50 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
   char        szManuData[ AEEBT_MAX_EIR_MANUF_DATA_LEN + 1 ] = {0};
 #endif /* FEATURE_BT_2_1 */
 
-  if ( IBTEXTRM_GetLocalInfo( pMe->mRM.po, 
-                              &pMe->mRM.myInfo ) == SUCCESS )
+  if ( IBTEXTRM_GetLocalInfo( pMe->mRM.po, &pMe->mRM.myInfo ) == SUCCESS )
   {
     // set rect for info display area
     SETAEERECT ( &rc, pMe->m_rect.x, 
                  pMe->m_rect.y, 
                  pMe->m_rect.dx, 
-                 pMe->m_rect.dy - 20); // leave room for SK menu
+                 pMe->m_rect.dy - BTBAR_HEIGHT); // leave room for SK menu
+                 
     ISTATIC_SetRect( pMe->m_pStatic, &rc );
 
-    ISTATIC_SetProperties( 
-      pMe->m_pStatic, 
-      ISTATIC_GetProperties( pMe->m_pStatic ) & ~ST_MIDDLETEXT & ~ST_CENTERTEXT);
+    /*
+	// get title
+      ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_MY_INFO, wTitle, sizeof(wTitle) );
+      */                    
 
-    // get title
-    ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_MY_INFO, 
-                          wTitle, sizeof(wTitle) );
+	//Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }  
+    {   
+	  	ISHELL_LoadResString(pMe->a.m_pIShell,
+	                           BTAPP_RES_FILE,                                
+	                           IDS_MY_INFO,
+	                           wTitle,
+	                           sizeof(wTitle));
+   
+	    if(pMe->m_pIAnn != NULL)
+	  	{
+	  	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wTitle);
+	  	}
+    }
+	//Add End
+
+    ISTATIC_SetProperties(pMe->m_pStatic, 
+                          ISTATIC_GetProperties( pMe->m_pStatic ) 
+                          & ~ST_MIDDLETEXT & ~ST_CENTERTEXT);      
+
+    //Add By zzg 2010_10_29        
+	ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
+	ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 	
+    //Add End
+
+    
 
     // BT name
     uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
@@ -12727,16 +12985,16 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
 #endif /* FEATURE_BT_2_1 */
 
     // display text
-    ISTATIC_SetText( pMe->m_pStatic, wTitle, pMe->pText1, 
-                     AEE_FONT_BOLD, AEE_FONT_NORMAL );
+    //ISTATIC_SetText( pMe->m_pStatic, wTitle, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+    ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
     ISTATIC_Redraw( pMe->m_pStatic );
 
     // add the SK menu to bottom of screen
     IMENUCTL_Reset( pMe->m_pISoftMenu );
-
+	
     // set rect for SK menu
     rc.y  = rc.dy;
-    rc.dy = pMe->m_rect.dy - rc.y;
+    rc.dy = BTBAR_HEIGHT; //pMe->m_rect.dy - rc.y;
     IMENUCTL_SetRect( pMe->m_pISoftMenu, &rc );
 
     BTApp_InitAddItem( &ai );
@@ -12794,7 +13052,29 @@ static void BTApp_BuildSettingsMenu( CBTApp* pMe)
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS, NULL );
+
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_SETTINGS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+
+  
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUDIO_GATEWAY, 0 );
@@ -12846,7 +13126,26 @@ static void BTApp_BuildTestsMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_TESTS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_TESTS, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_TESTS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_MASTER_CONTROL, 0 );
@@ -12907,7 +13206,27 @@ static void BTApp_BuildHCIMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_HCI_MODE, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_HCI_MODE, NULL );
+  
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_HCI_MODE,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OFF, 
@@ -12999,13 +13318,35 @@ static void BTApp_BuildScanParamsSubmenu( CBTApp* pMe, BTAppMenuType menu )
   }
 
   IMENUCTL_Reset( pMe->m_pIMenu );
-  SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  //SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  //Modify by zzg 2010_11_01
+  SETAEERECT (&rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy);
+  
   IMENUCTL_SetRect( pMe->m_pIMenu, &rc );
 
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, titleID, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, titleID, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         titleID,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SCAN_PARAM_DEFAULT, 
@@ -13058,7 +13399,11 @@ static void BTApp_BuildScanParamsMenu( CBTApp* pMe )
   CtlAddItem  ai;
 
   IMENUCTL_Reset( pMe->m_pISoftMenu );
-  SETAEERECT (&rc, 0, 160, pMe->m_rect.dx, pMe->m_rect.dy-160);
+  
+  //SETAEERECT (&rc, 0, 160, pMe->m_rect.dx, pMe->m_rect.dy-160);
+  //Modify by zzg 2010_11_01
+  SETAEERECT (&rc, pMe->m_rect.x, pMe->m_rect.dy-BTBAR_HEIGHT, pMe->m_rect.dx, BTBAR_HEIGHT);
+  
   IMENUCTL_SetRect( pMe->m_pISoftMenu, &rc );
 
   BTApp_InitAddItem( &ai );
@@ -13093,7 +13438,28 @@ static void BTApp_BuildMasterControlMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_MASTER_CONTROL, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_MASTER_CONTROL, NULL );
+
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_MASTER_CONTROL,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+  
 
   BTApp_AddMenuItem( 
     pMe, pMe->m_pIMenu, &ai, 
@@ -13145,7 +13511,26 @@ static void BTApp_BuildSPPTestMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SPP_TESTS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SPP_TESTS, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_SPP_TESTS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SPP_SERVER, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SPP_CLIENT, 0 );
@@ -13172,7 +13557,26 @@ static void BTApp_BuildSPPSettingsMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SPP_SETTINGS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SPP_SETTINGS, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_SPP_SETTINGS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SPP_DATA_SIZE_THOUSAND, 
@@ -13223,7 +13627,26 @@ static void BTApp_BuildOBEXMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OBEX_TESTS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OBEX_TESTS, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_OBEX_TESTS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
 #ifdef FEATURE_BT_EXTPF_OPP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OPP, 0 );
@@ -13264,7 +13687,26 @@ static void BTApp_BuildTCSMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_TCS_TESTS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_TCS_TESTS, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_TCS_TESTS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
 #ifdef FEATURE_BT_EXTPF_CTP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_CTP, 0 );
@@ -13290,13 +13732,35 @@ static void BTApp_BuildDevTypeMenu( CBTApp* pMe )
   MSG_LOW( "BuildDevType - type=%d", pMe->mAG.devType, 0, 0 );
 
   IMENUCTL_Reset( pMe->m_pIMenu );
-  SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  //SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  //Modify by zzg 2010_11_01
+  SETAEERECT (&rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy);
+  
   IMENUCTL_SetRect( pMe->m_pIMenu, &rc );
 
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DEVICE_TYPE, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DEVICE_TYPE, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_DEVICE_TYPE,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_HEADSET, 
@@ -13349,13 +13813,36 @@ static void BTApp_BuildConnModeMenu( CBTApp* pMe )
   MSG_LOW( "BuildConnMode - idleMode=%d", pMe->mAG.idleMode, 0, 0 );
 
   IMENUCTL_Reset( pMe->m_pIMenu );
-  SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  
+  //SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  //Modify by zzg 2010_11_01
+  SETAEERECT (&rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy);
+  
   IMENUCTL_SetRect( pMe->m_pIMenu, &rc );
 
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_CONN_MODE, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_CONN_MODE, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_CONN_MODE,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ACTIVE_ANY_DEVICE, 
@@ -13406,13 +13893,36 @@ static void BTApp_BuildHSButtonHndlrMenu( CBTApp* pMe )
   MSG_LOW( "BuildHSButtonHndlr - ignore=%d", bIgnore, 0, 0 );
 
   IMENUCTL_Reset( pMe->m_pIMenu );
-  SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  
+  //SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  //Modify by zzg 2010_11_01
+  SETAEERECT (&rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy);
+  
   IMENUCTL_SetRect( pMe->m_pIMenu, &rc );
 
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_HS_BUTTON, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_HS_BUTTON, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_HS_BUTTON,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_IGNORE, 
@@ -13424,15 +13934,20 @@ static void BTApp_BuildHSButtonHndlrMenu( CBTApp* pMe )
   IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
 
   // Add info
-  SETAEERECT ( &rc, 5, pMe->m_rect.dy/2 - 20, 
-               pMe->m_rect.dx - 10, pMe->m_rect.dy/2);
+  //SETAEERECT ( &rc, 5, pMe->m_rect.dy/2 - 20, pMe->m_rect.dx - 10, pMe->m_rect.dy/2);
+  //Modify by zzg 2010_11_01
+  SETAEERECT ( &rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx,pMe->m_rect.dy-BTBAR_HEIGHT);
+  
+  
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
   ISTATIC_Reset( pMe->m_pStatic );
   ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_INFO_HS_BUTTON,
                         pMe->pText1, LONG_TEXT_BUF_LEN*sizeof(AECHAR) );
-  ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, 
-                   AEE_FONT_NORMAL, AEE_FONT_NORMAL );
-  ISTATIC_SizeToFit( pMe->m_pStatic, &rc );
+  
+  ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, AEE_FONT_NORMAL, AEE_FONT_NORMAL );
+  
+  //ISTATIC_SizeToFit( pMe->m_pStatic, &rc ); //Del By zzg 2010_11_01
+  
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
   ISTATIC_Redraw( pMe->m_pStatic );
   ISTATIC_SetActive( pMe->m_pStatic, FALSE );
@@ -13473,13 +13988,37 @@ static void BTApp_BuildListMenu( CBTApp* pMe, BTAppMenuType menu )
   if ( val != -1 )
   {
     CLEAR_SCREEN();
-    SETAEERECT ( &rc, 10, 10, pMe->m_rect.dx-50, 30 );
+	
+    //SETAEERECT ( &rc, 10, 10, pMe->m_rect.dx-50, 30 );
+    //Modify by zzg 2010_11_01
+    SETAEERECT ( &rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx-10,pMe->m_rect.dy - BTBAR_HEIGHT);
+	
     ITEXTCTL_SetRect( pMe->m_pText, &rc );
 
     ITEXTCTL_Reset( pMe->m_pText );
 
     // set the title
-    ITEXTCTL_SetTitle( pMe->m_pText, BTAPP_RES_FILE, uTitleID, NULL );
+    //ITEXTCTL_SetTitle( pMe->m_pText, BTAPP_RES_FILE, uTitleID, NULL );
+    //Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	}  	
+    {
+      AECHAR wTitle[20];      
+	  ISHELL_LoadResString(pMe->a.m_pIShell,
+	                           BTAPP_RES_FILE,                                
+	                           uTitleID,
+	                           wTitle,
+	                           sizeof(wTitle));
+
+      if(pMe->m_pIAnn != NULL)
+      {
+          IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wTitle);
+      }
+    }  	
+	//Add End
+	
 
     // set the value as text
     WWRITELONG( pMe->pText2, val );
@@ -13571,7 +14110,11 @@ static void BTApp_BuildAGSettingsMenu( CBTApp* pMe)
   CtlAddItem  ai;
 
   IMENUCTL_Reset( pMe->m_pISoftMenu );
-  SETAEERECT (&rc, 0, 160, pMe->m_rect.dx, pMe->m_rect.dy-160);
+  
+  //SETAEERECT (&rc, 0, 160, pMe->m_rect.dx, pMe->m_rect.dy-160);
+  //Modify By zzg 2010_11_01
+  SETAEERECT (&rc, pMe->m_rect.x, pMe->m_rect.dy-BTBAR_HEIGHT, pMe->m_rect.dx, BTBAR_HEIGHT); 
+  
   IMENUCTL_SetRect( pMe->m_pISoftMenu, &rc );
 
   BTApp_InitAddItem( &ai );
@@ -13606,7 +14149,26 @@ static void BTApp_BuildNASettingsMenu( CBTApp* pMe)
 
   BTApp_InitAddItem( &ai );
 
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_NETWORK_ACCESS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_NETWORK_ACCESS, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_NETWORK_ACCESS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_SERVICE_SECURITY, 
@@ -13632,7 +14194,26 @@ static void BTApp_BuildEnablingMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_ENABLING, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_ENABLING, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_ENABLING,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUDIO_GATEWAY, 
@@ -13707,7 +14288,26 @@ static void BTApp_BuildDiscoverableMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DISCOVERABLE, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DISCOVERABLE, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_DISCOVERABLE,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ON_TIMED, 
@@ -13749,7 +14349,26 @@ static void BTApp_BuildVRCapableMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_VR_CAPABLE, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_VR_CAPABLE, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_VR_CAPABLE,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_YES, 
@@ -13905,12 +14524,38 @@ static void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu )
   SETAEERECT ( &rc, pMe->m_rect.x, 
                pMe->m_rect.y, 
                pMe->m_rect.dx, 
-               pMe->m_rect.dy - 20); // leave room for SK menu
+               pMe->m_rect.dy - BTBAR_HEIGHT); //Modify by zzg 2010_11_01
+               //pMe->m_rect.dy - 20); // leave room for SK menu
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
 
-  ISTATIC_SetProperties( 
-    pMe->m_pStatic, 
-    ISTATIC_GetProperties( pMe->m_pStatic ) | ST_CENTERTEXT | ST_MIDDLETEXT );
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  {   
+  	 AECHAR wTitle[20];
+     ISHELL_LoadResString(pMe->a.m_pIShell,
+                          BTAPP_RES_FILE,                                
+                          msgID,
+                          wTitle,
+                          sizeof(wTitle));
+  
+      if(pMe->m_pIAnn != NULL)
+    	{
+    	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wTitle);
+    	}
+  }
+  //Add End
+  
+  ISTATIC_SetProperties(pMe->m_pStatic, 
+                        ISTATIC_GetProperties( pMe->m_pStatic ) 
+                        | ST_CENTERTEXT | ST_MIDDLETEXT );    
+  
+  //Add By zzg 2010_10_29        
+  ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
+  ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 
+  //Add End
 
   ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, msgID,
                         pMe->pText2, SHORT_TEXT_BUF_LEN*sizeof(AECHAR) );
@@ -13953,8 +14598,7 @@ static void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu )
   }
 
   // display text
-  ISTATIC_SetText( pMe->m_pStatic, NULL, pText, 
-                   AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  ISTATIC_SetText( pMe->m_pStatic, NULL, pText, AEE_FONT_BOLD, AEE_FONT_NORMAL );
   ISTATIC_Redraw( pMe->m_pStatic );
 
   // add the SK menu to bottom of screen
@@ -13962,7 +14606,8 @@ static void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu )
 
   // set rect for SK menu
   rc.y  = rc.dy;
-  rc.dy = pMe->m_rect.dy - rc.y;
+  //rc.dy = pMe->m_rect.dy - rc.y;
+  rc.dy = BTBAR_HEIGHT;  //Modify by zzg 2010_11_01
   IMENUCTL_SetRect( pMe->m_pISoftMenu, &rc );
 
   BTApp_InitAddItem( &ai );
@@ -14055,7 +14700,26 @@ static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu )
       PUSH_MENU( menu );
 
       // set the title
-      IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, stringID, NULL );
+      //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, stringID, NULL );
+      if(pMe->m_pIAnn != NULL)
+	  {
+	      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	  }  
+	  
+	  {
+	    AECHAR WTitle[20] = {0};
+		ISHELL_LoadResString(pMe->a.m_pIShell,
+	                         BTAPP_RES_FILE,                                
+	                         stringID,
+	                         WTitle,
+	                         sizeof(WTitle));
+	 
+	    if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+		}
+		
+	  }
 
       if ( IBTEXTRM_DeviceEnumInit( pMe->mRM.po, &enumerator ) == SUCCESS )
       {
@@ -14187,7 +14851,26 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
   ai.wFont = AEE_FONT_BOLD;
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, stringID, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, stringID, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         stringID,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   if ( pMe->mSD.bDiscovering == FALSE )
   {
@@ -14465,12 +15148,19 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
   SETAEERECT ( &rc, pMe->m_rect.x, 
                pMe->m_rect.y, 
                pMe->m_rect.dx, 
-               pMe->m_rect.dy - 20); // leave room for SK menu
+               pMe->m_rect.dy - BTBAR_HEIGHT);	//Modify by zzg 2010_11_01
+               //pMe->m_rect.dy - 20); // leave room for SK menu
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
 
-  ISTATIC_SetProperties( 
-    pMe->m_pStatic, 
-    ISTATIC_GetProperties( pMe->m_pStatic ) & ~ST_MIDDLETEXT & ~ST_CENTERTEXT );
+  
+  ISTATIC_SetProperties(pMe->m_pStatic, 
+                        ISTATIC_GetProperties( pMe->m_pStatic ) 
+                        & ~ST_MIDDLETEXT & ~ST_CENTERTEXT );    
+
+  //Add By zzg 2010_10_29        
+  ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
+  ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 
+  //Add End
 
   // save the value of get name status
   tempuValue1 = pDev->uValue1;
@@ -14499,9 +15189,8 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
       }
       else if ( WSTRLEN( pDev->wName ) == 0 )
       {
-        // schedule to get name when current get name session is done
-        ISHELL_SetTimer( pMe->a.m_pIShell, 500,
-                         (PFNNOTIFY) BTApp_RefreshDevInfo, pMe );
+        // schedule to get name when current get name session is done        
+		ISHELL_SetTimer( pMe->a.m_pIShell, 500,(PFNNOTIFY) BTApp_RefreshDevInfo, pMe );
     
       }
   }
@@ -14608,8 +15297,7 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
 #endif /* FEATURE_BT_2_1 */
 
   // display text
-  ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, 
-                   AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
   ISTATIC_Redraw( pMe->m_pStatic );
 
   // add the SK menu to bottom of screen
@@ -14617,7 +15305,8 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
 
   // set rect for SK menu
   rc.y  = rc.dy;
-  rc.dy = pMe->m_rect.dy - rc.y;
+  //rc.dy = pMe->m_rect.dy - rc.y;
+  rc.dy = BTBAR_HEIGHT; //Modify by zzg 2010_11_01
   IMENUCTL_SetRect( pMe->m_pISoftMenu, &rc );
 
   BTApp_InitAddItem( &ai );
@@ -14723,7 +15412,19 @@ static void BTApp_BuildDevOptions( CBTApp* pMe )
   }
   WSPRINTF( pMe->pText1, LONG_TEXT_BUF_LEN * sizeof(AECHAR), 
             wTempBuf, pMe->pText2, wTempBuf );
-  IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText1 );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText1 );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText1);
+	}
+	
+  }
 
   // Add individual entries to the Menu
 #ifndef FEATURE_BT_2_1
@@ -14777,13 +15478,36 @@ static void BTApp_BuildSecurityMenu(
   CLEAR_SCREEN();
 
   IMENUCTL_Reset( pMe->m_pIMenu );
-  SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy);
+  
+  //SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy);
+  //Modify by zzg 2010_11_01
+  SETAEERECT (&rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy);
+  
   IMENUCTL_SetRect( pMe->m_pIMenu, &rc );
 
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SECURITY, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SECURITY, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_SECURITY,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SECURITY_NONE, 
@@ -14830,7 +15554,26 @@ static void BTApp_BuildBondOptionsMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BOND_OPTIONS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BOND_OPTIONS, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_BOND_OPTIONS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_MITM, 
@@ -14880,6 +15623,7 @@ static boolean BTApp_HandleDbgKey( CBTApp* pMe, uint16 key )
       ev_processed = BTApp_HandleClearKey( pMe );
       break;
     }
+	case AVK_INFO:	//Add By zzg 2010_11_03  
     case AVK_SELECT:
     {
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -14939,13 +15683,35 @@ static void BTApp_BuildBrowseRespScreen( CBTApp* pMe )
   SETAEERECT ( &rc, pMe->m_rect.x, 
                pMe->m_rect.y, 
                pMe->m_rect.dx, 
-               pMe->m_rect.dy - 20); // leave room for SK menu
+               pMe->m_rect.dy); // - BTBAR_HEIGHT); // leave room for SK menu
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
   IMENUCTL_Reset( pMe->m_pIMenu );
 
   // get the screen title
-  ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_BROWSE_SVC, 
-                        pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+  //ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_BROWSE_SVC, pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  {   
+    	ISHELL_LoadResString(pMe->a.m_pIShell,
+                             BTAPP_RES_FILE,                                
+                             IDS_BROWSE_SVC,
+                             pMe->pText2,
+                             SHORT_TEXT_BUF_LEN * sizeof( AECHAR ));
+  
+      if(pMe->m_pIAnn != NULL)
+    	{
+    	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+    	}
+  }
+  //Add End
+
+
+  
   // BD address
   uLen += BTApp_FormatBDAddress( pMe, &pMe->pText1[ uLen], 
                                  LONG_TEXT_BUF_LEN - uLen, &pDev->bdAddr );
@@ -14990,10 +15756,11 @@ static void BTApp_BuildBrowseRespScreen( CBTApp* pMe )
   }
 
   // display text
-  ISTATIC_SetText( pMe->m_pStatic, pMe->pText2, pMe->pText1, 
-                   AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  //ISTATIC_SetText( pMe->m_pStatic, pMe->pText2, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  
   ISTATIC_Redraw( pMe->m_pStatic );
-
+ 
   PUSH_MENU( BT_APP_MENU_BROWSE_SVC_RESP );
   ISTATIC_SetActive( pMe->m_pStatic, TRUE );
   IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
@@ -15024,13 +15791,33 @@ static void BTApp_BuildSearchRespScreen( CBTApp* pMe )
   SETAEERECT ( &rc, pMe->m_rect.x, 
                pMe->m_rect.y, 
                pMe->m_rect.dx, 
-               pMe->m_rect.dy - 20); // leave room for SK menu
+               pMe->m_rect.dy); // - BTBAR_HEIGHT); // leave room for SK menu
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
   IMENUCTL_Reset( pMe->m_pIMenu );
 
   // get the screen title
-  ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_SEARCH_SVC, 
-                        pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof(AECHAR) );
+  //ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_SEARCH_SVC, pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof(AECHAR) );
+
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  {   
+    	ISHELL_LoadResString(pMe->a.m_pIShell,
+                             BTAPP_RES_FILE,                                
+                             IDS_SEARCH_SVC,
+                             pMe->pText2,
+                             SHORT_TEXT_BUF_LEN * sizeof(AECHAR) );
+  
+      if(pMe->m_pIAnn != NULL)
+    	{
+    	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+    	}
+  }
+  //Add End
+  
   // BD address
   uLen += BTApp_FormatBDAddress( pMe, &pMe->pText1[ uLen], 
                                  LONG_TEXT_BUF_LEN - uLen, &pDev->bdAddr );
@@ -15070,10 +15857,11 @@ static void BTApp_BuildSearchRespScreen( CBTApp* pMe )
   pMe->pText1[ uLen++ ] = (AECHAR)(unsigned char) ('\0');
 
   // display text
-  ISTATIC_SetText( pMe->m_pStatic, pMe->pText2, pMe->pText1, 
-                   AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  //ISTATIC_SetText( pMe->m_pStatic, pMe->pText2, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  
   ISTATIC_Redraw( pMe->m_pStatic );
-
+ 
   PUSH_MENU( BT_APP_MENU_SEARCH_SVC_RESP );
   ISTATIC_SetActive( pMe->m_pStatic, TRUE );
   IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
@@ -15104,15 +15892,44 @@ static void BTApp_BuildSppTestResults( CBTApp* pMe )
                  pMe->m_rect.dy);
     ISTATIC_SetRect( pMe->m_pStatic, &rc );
 
-    ISTATIC_SetProperties( 
-      pMe->m_pStatic, 
-      ISTATIC_GetProperties( pMe->m_pStatic ) & 
-        ~ST_MIDDLETEXT & ~ST_CENTERTEXT );
+    
+    ISTATIC_SetProperties(pMe->m_pStatic, 
+		                  ISTATIC_GetProperties( pMe->m_pStatic ) 
+		                  & ~ST_MIDDLETEXT & ~ST_CENTERTEXT );      
+
+	//Add By zzg 2010_10_29        
+	ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
+	ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 
+    //Add End
 
     // get the screen title
+
+	/*
     titleID = pMe->mSPP.bClient ? IDS_SPP_CLIENT : IDS_SPP_SERVER;
     ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, titleID, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof(AECHAR) );
+                          */
+    //Add By zzg 2010_11_01
+    titleID = pMe->mSPP.bClient ? IDS_SPP_CLIENT : IDS_SPP_SERVER;
+	if(pMe->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }  
+    {   
+	  	ISHELL_LoadResString(pMe->a.m_pIShell,
+	                           BTAPP_RES_FILE,                                
+	                           titleID,
+	                           pMe->pText2,
+	                           SHORT_TEXT_BUF_LEN * sizeof(AECHAR));
+   
+	    if(pMe->m_pIAnn != NULL)
+	  	{
+	  	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+	  	}
+    }
+	//Add End
+
+	
   }
 
   uLen += BTApp_FormatPortStatus( pMe, &pMe->pText1[ uLen], 
@@ -15122,8 +15939,8 @@ static void BTApp_BuildSppTestResults( CBTApp* pMe )
   uLen += BTApp_FormatBytesRcvd( pMe, &pMe->pText1[ uLen], 
                                  LONG_TEXT_BUF_LEN - uLen );
   // display text
-  ISTATIC_SetText( pMe->m_pStatic, pMe->pText2, pMe->pText1, 
-                   AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  //ISTATIC_SetText( pMe->m_pStatic, pMe->pText2, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
   ISTATIC_Redraw( pMe->m_pStatic );
 
   if ( TOP_MENU != BT_APP_MENU_SPP_RESULTS )
@@ -15155,11 +15972,19 @@ static void BTApp_BuildSetConnRoleMenu( CBTApp* pMe )
   SETAEERECT ( &rc, pMe->m_rect.x, 
                pMe->m_rect.y, 
                pMe->m_rect.dx, 
-               pMe->m_rect.dy - 20); // leave room for SK menu
+               pMe->m_rect.dy - BTBAR_HEIGHT); //Modify by zzg 2010_11_01
+               //pMe->m_rect.dy - 20); // leave room for SK menu
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
-  ISTATIC_SetProperties( 
-    pMe->m_pStatic, 
-    ISTATIC_GetProperties( pMe->m_pStatic ) | ST_MIDDLETEXT | ST_CENTERTEXT );
+
+  
+  ISTATIC_SetProperties(pMe->m_pStatic, 
+                        ISTATIC_GetProperties( pMe->m_pStatic ) 
+                        | ST_MIDDLETEXT | ST_CENTERTEXT );  
+
+  //Add By zzg 2010_10_29        
+  ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
+  ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 
+  //Add End
 
   if ( BDADDR_VALID( &pMe->mRM.devToSwitchRole->bdAddr ) == FALSE )
   {
@@ -15172,8 +15997,26 @@ static void BTApp_BuildSetConnRoleMenu( CBTApp* pMe )
     titleID = IDS_SET_CONN_ROLE;
   }
   // get title
-  ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, titleID, 
-                        wTitle, sizeof(wTitle) );
+  //ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, titleID, wTitle, sizeof(wTitle) );
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  {   
+    	ISHELL_LoadResString(pMe->a.m_pIShell,
+                             BTAPP_RES_FILE,                                
+                             titleID,
+                             wTitle,
+                             sizeof(wTitle));
+  
+      if(pMe->m_pIAnn != NULL)
+    	{
+    	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wTitle);
+    	}
+  }
+  //Add End
 
   // get prompt
   uLen = ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, msgID,
@@ -15189,8 +16032,9 @@ static void BTApp_BuildSetConnRoleMenu( CBTApp* pMe )
             &pMe->pText2[ uLen + 1 ], pMe->mRM.devToSwitchRole->wName );
 
   // display text
-  ISTATIC_SetText( pMe->m_pStatic, wTitle, pMe->pText1, 
-                   AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  //ISTATIC_SetText( pMe->m_pStatic, wTitle, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  
   ISTATIC_Redraw( pMe->m_pStatic );
 
   // add the SK menu to bottom of screen
@@ -15198,7 +16042,8 @@ static void BTApp_BuildSetConnRoleMenu( CBTApp* pMe )
 
   // set rect for SK menu
   rc.y  = rc.dy;
-  rc.dy = pMe->m_rect.dy - rc.y;
+  //rc.dy = pMe->m_rect.dy - rc.y;
+  rc.dy = BTBAR_HEIGHT;	//Modify by zzg 2010_11_01
   IMENUCTL_SetRect( pMe->m_pISoftMenu, &rc );
 
   BTApp_InitAddItem( &ai );
@@ -15227,13 +16072,36 @@ static void BTApp_BuildIOCapabilityMenu( CBTApp* pMe )
   MSG_LOW( "BTApp_BuildIOCapabilityMenu - type=%d", pMe->mRM.ioCaptype, 0, 0 ); 
 
   IMENUCTL_Reset( pMe->m_pIMenu );
-  SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy);
+  
+  //SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy);
+  //Modify by zzg 2010_11_01
+  SETAEERECT (&rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy);
+  
   IMENUCTL_SetRect( pMe->m_pIMenu, &rc );
 
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_IOCAPABILITY, NULL ); 
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_IOCAPABILITY, NULL ); 
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_IOCAPABILITY,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_IOC_YESNO, 
@@ -15294,7 +16162,26 @@ static void BTApp_BuildSvcSecMainMenu ( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SERV_SECURITY, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SERV_SECURITY, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_SERV_SECURITY,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_STRING_SRV_PROFILE_SELECTION, 0 );
@@ -15320,7 +16207,26 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SERV_SECURITY, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SERV_SECURITY, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_SERV_SECURITY,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
 
@@ -15626,7 +16532,26 @@ static boolean BTApp_BuildSecurityOptionsMenu(   CBTApp* pMe   )
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SERV_SECURITY, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SERV_SECURITY, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_SERV_SECURITY,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
    BTApp_InitAddItem( &ai );
 
@@ -15777,13 +16702,36 @@ static void BTApp_BuildDBGKeyHndlrMenu( CBTApp* pMe )
   MSG_LOW( "BuildDBGKeyHndlrMenu ",0, 0, 0 );
 
   IMENUCTL_Reset( pMe->m_pIMenu );
-  SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  
+  //SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
+  //Modify by zzg 2010_11_01
+  SETAEERECT (&rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy);
+  
   IMENUCTL_SetRect( pMe->m_pIMenu, &rc );
 
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DBG_KEY, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_DBG_KEY, NULL );
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_DBG_KEY,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DBG_KEY, 
@@ -17636,21 +18584,18 @@ static void BTApp_ProcessRMNotifications(
 
   switch ( evt )
   {
-    case AEEBT_RM_EVT_LOCAL_NAME_SET:  // response to SetName()
-      ISHELL_SetTimer( pMe->a.m_pIShell, 500, 
-                       (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
+    case AEEBT_RM_EVT_LOCAL_NAME_SET:  // response to SetName()      
+      ISHELL_SetTimer( pMe->a.m_pIShell, 500, (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
       break;
 #ifdef FEATURE_BT_2_1
     case AEEBT_RM_EVT_NICK_NAME_SET:  // response to SetName()
-      ISHELL_SetTimer( pMe->a.m_pIShell, 500, 
-                       (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
+      ISHELL_SetTimer( pMe->a.m_pIShell, 500, (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
       break;
-    case AEEBT_RM_EVT_MANUF_DATA_SET:  // response to 
-      ISHELL_SetTimer( pMe->a.m_pIShell, 500, 
-                       (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
+    case AEEBT_RM_EVT_MANUF_DATA_SET:  // response to       
+      ISHELL_SetTimer( pMe->a.m_pIShell, 500, (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
       break;
     case AEEBT_RM_EVT_KEYPRESS_NOTIFICATION:
     {

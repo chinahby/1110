@@ -882,7 +882,22 @@ void BTApp_BIPBuildMainMenu( CBTApp* pMe )
   IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_TESTS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_TESTS, NULL );
+  //Add By zzg 2010_11_01
+  {
+	  AECHAR WTitle[20] = {0};
+	  ISHELL_LoadResString(pMe->a.m_pIShell,
+		                   BTAPP_RES_FILE,                                
+		                   IDS_BIP_TESTS,
+		                   WTitle,
+		                   sizeof(WTitle));
+	  
+	  if (pMe->m_pIAnn != NULL)
+	  {
+	  	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	  }
+  }
+  //Add End
 
   BTApp_InitAddItem( &ai );
 
@@ -911,6 +926,7 @@ void BTApp_BIPBuildServerMenu( CBTApp* pMe )
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );
 
   // set the title
+  /*
   if ( pMe->mBIP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
@@ -929,6 +945,50 @@ void BTApp_BIPBuildServerMenu( CBTApp* pMe )
   {
     IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_SERVER, NULL );
   }
+  */
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  if ( pMe->mBIP.bConnected != FALSE )
+  {
+    szStatus[ 3 ] = 'C';
+    ISHELL_LoadResString( pMe->a.m_pIShell, 
+                          BTAPP_RES_FILE, 
+                          IDS_BIP_SERVER, 
+                          pMe->pText2, 
+                          SHORT_TEXT_BUF_LEN * sizeof(AECHAR) );
+    len = WSTRLEN( pMe->pText2 );
+
+    STRTOWSTR( szStatus, &pMe->pText2[ len ], 
+               (SHORT_TEXT_BUF_LEN-len) * sizeof(AECHAR) );
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText2 );
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+	}
+  }
+  else
+  {
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_SERVER, NULL );
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_BIP_SERVER,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+  }
+  //Add End
+
+  
 
   BTApp_InitAddItem( &ai );
 
@@ -963,7 +1023,28 @@ void BTApp_BIPBuildClientSubMenu( CBTApp* pMe )
   IMENUCTL_Reset( pMe->m_pIMenu );
   IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
 
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_CLIENT, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_CLIENT, NULL );
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_BIP_CLIENT,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+  //Add End
 
   BTApp_InitAddItem( &ai );
 
@@ -1129,7 +1210,28 @@ void BTApp_BIPBuildServerSubMenu( CBTApp* pMe )
   IMENUCTL_Reset( pMe->m_pIMenu );
   IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
 
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_SERVER, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_SERVER, NULL );
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_BIP_SERVER,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+  //Add End
 
   BTApp_InitAddItem( &ai );
 
@@ -1163,6 +1265,7 @@ void BTApp_BIPBuildClientMenu( CBTApp* pMe )
   IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
 
   // set the title
+  /*
   if ( pMe->mBIP.bConnected != FALSE && pMe->mBIP.bSecConnected == FALSE)
   {
     szStatus[ 3 ] = 'C';
@@ -1181,6 +1284,49 @@ void BTApp_BIPBuildClientMenu( CBTApp* pMe )
   {
     IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_CLIENT, NULL );
   }
+  */
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+
+
+  if ( pMe->mBIP.bConnected != FALSE && pMe->mBIP.bSecConnected == FALSE)
+  {
+    szStatus[ 3 ] = 'C';
+    ISHELL_LoadResString( pMe->a.m_pIShell, 
+                          BTAPP_RES_FILE, 
+                          IDS_BIP_CLIENT, 
+                          pMe->pText2, 
+                          SHORT_TEXT_BUF_LEN * sizeof(AECHAR) );
+    len = WSTRLEN( pMe->pText2 );
+
+    STRTOWSTR( szStatus, &pMe->pText2[ len ], 
+               (SHORT_TEXT_BUF_LEN-len) * sizeof(AECHAR) );
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText2 );
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+	}
+  }
+  else
+  {
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_BIP_CLIENT, NULL );
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_BIP_CLIENT,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+  } 
+  //Add End
 
   BTApp_InitAddItem( &ai );
 
@@ -1225,7 +1371,28 @@ void BTApp_BIPBuildSettingsMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS, NULL );
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_SETTINGS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+  //Add End
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_USE, 0 );
@@ -1253,7 +1420,28 @@ void BTApp_BIPBuildEnableMenu( CBTApp* pMe )
   IMENUCTL_Reset( pMe->m_pIMenu );
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS_BIP, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_SETTINGS_BIP, NULL );
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_SETTINGS_BIP,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+  //Add End
 
   BTApp_InitAddItem( &ai );
 

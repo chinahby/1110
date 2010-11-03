@@ -443,10 +443,20 @@ when        who   what, where, why
 #include "AEEAddrBook.h"
 #endif
 
+//Add By zzg 2010_10_29
+#include "AEEAnnunciator.h"
+#include "Appscommon.h"
+#include "appscommonimages.brh"
+//Add End
+
+
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
 #endif
 
+//Add By zzg 2010_10_29
+#include "AEEAnnunciator.h"
+//Add End
 /*===========================================================================
 
                       MACROS
@@ -1829,6 +1839,8 @@ typedef struct _CBTApp
   IMenuCtl*       m_pISoftMenu;
   IStatic*        m_pStatic;
   ITextCtl*       m_pText;
+
+  IAnnunciator    *m_pIAnn;	//Add By zzg 2010_10_29
 
   BTAppMenuType   menuStack[ MENU_STACK_DEPTH ];
   uint16          uMenuSel[ MENU_STACK_DEPTH ];

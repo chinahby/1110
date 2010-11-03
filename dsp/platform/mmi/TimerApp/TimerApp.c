@@ -76,8 +76,8 @@ when         who            what, where, why
 #define TIMER_SCREEN_WIDTH    80
 #define TIMER_IMAGE_WIDTH      120
 #elif defined(FEATURE_DISP_320X240)
-#define TIMER_SCREEN_WIDTH    100
-#define TIMER_IMAGE_WIDTH      140
+#define TIMER_SCREEN_WIDTH    140
+#define TIMER_IMAGE_WIDTH      180
 #else
 #define TIMER_SCREEN_WIDTH    60
 #define TIMER_IMAGE_WIDTH      100
