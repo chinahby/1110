@@ -368,7 +368,7 @@ static void TextCtl_DrawCursorTimer(TextCtlContext *pContext);
 extern uint32 ParagraphAlignment(AECHAR *pszText, int nChars);                 
 #endif
 
-#ifdef FEATURE_T9_MT_THAI  
+#ifdef FEATURE_LANG_THAI 
 //Ã©”Ô◊÷∑˚ «∑Ò Ù”⁄∏®“Ù
 static boolean isThaiCnsntChar(AECHAR inputChar);
 //Ã©”Ô◊÷∑˚ «∑Ò Ù”⁄…œ‘™“Ù
@@ -5640,7 +5640,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	    			{       
 						switch(OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
 		    				{
-		    				#ifdef FEATURE_T9_RAPID_THAI
+		    				#ifdef FEATURE_T9_MT_THAI
 								case TEXT_MODE_T9_MT_THAI:
 									{
 										if (key == VLCharKeyItem[i].wParam)
@@ -5656,6 +5656,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 												TextCtl_AddChar(pContext,(AECHAR)(VLCharThaiKeyItem[i].wp));
 											}
 										}
+										break;
 									}
 							#endif
 							default:

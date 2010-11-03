@@ -19,6 +19,8 @@
 #define AUTO_NV_MIN_VERSION                 0x3
 #elif defined(FEATURE_VERSION_M8)
 #define AUTO_NV_MIN_VERSION                 0x2
+#elif defined(FEATURE_VERSION_HITZ181)
+#define AUTO_NV_MIN_VERSION                 0x5
 #else
 #define AUTO_NV_MIN_VERSION                 0x1
 #endif

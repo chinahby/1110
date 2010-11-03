@@ -767,6 +767,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 {
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[2];
                 }
+				MSG_FATAL("1pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
                 SetArrowFlagonIM(FALSE);
                 ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
                 OEM_SetInputMode((CTextCtl *)pme);
@@ -841,9 +842,9 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 {
                     return FALSE;
                 }
-
+				MSG_FATAL("2pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
 #if defined FEATURE_T9_MT_THAI  || defined FEATURE_T9_RAPID_THAI
-                 goto NormalKeyEvent;   
+                 //goto NormalKeyEvent;   
 #endif //#if defined FEATURE_T9_MT_THAI  || defined FEATURE_T9_RAPID_THAI
 
                 switch (pme->m_nCurrInputMode)
@@ -856,19 +857,20 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 
 #ifdef FEATURE_T9_MT_THAI                   
                     case OEM_MODE_T9_MT_THAI:                       
-                        goto NormalKeyEvent;                              
+                        //goto NormalKeyEvent;                              
                         break; 
 #endif //FEATURE_T9_MT_THAI  
 
 #ifdef FEATURE_T9_RAPID_THAI                   
                     case OEM_MODE_T9_RAPID_THAI:                       
-                        goto NormalKeyEvent;                              
+                        //goto NormalKeyEvent;                              
                         break; 
   #endif //FEATURE_T9_MT_THAI    
   
                     default:
                         break;                    
-                }               
+                }  
+				MSG_FATAL("3pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
                 if ( !TextCtl_SetNextInputMode(pme) )
                 {
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[2];
@@ -5404,10 +5406,10 @@ SEE ALSO:
 #ifndef FEATURE_CARRIER_CHINA_TELCOM
 uint16 OEM_TextQuerySymbols(CTextCtl *pme,AECHAR *pszOut, uint16 size)
 {
-   MSG_FATAL("OEM_TextQuerySymbols Start",0,0,0);
+   MSG_FATAL("pme->m_nCurrInputMode=%d",pme->m_nCurrInputMode,0,0);
 
 #ifdef FEATURE_LANG_THAI
-                    if ((pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI)||(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI))
+                    if ((pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI))
                     {
 							if (!pszOut || size < (sizeof(sszSymbolListTH)/sizeof(sszSymbolListTH[0])))
       								return(0);

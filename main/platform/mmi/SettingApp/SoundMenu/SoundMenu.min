@@ -165,7 +165,17 @@ ifeq ($(USES_LOWMEM), yes)
 					        clock.mid|fs:/ringers/clock.mid \
 					        green_line.mid|fs:/ringers/green_line.mid \
 					        lucky.mid|fs:/ringers/lucky.mid \
-					        street_tale.mid|fs:/ringers/street_tale.mid					        					        	        						                
+					        street_tale.mid|fs:/ringers/street_tale.mid		
+		else ifeq($(USES_RESDIR),Hitz181)
+					CONSTFILE_FILES+=\
+					       soundmenu.mif|fs:/mif/soundmenu.mif \
+								        enhusoundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+								        i_mobile1.mid|fs:/ringers/i_mobile1.mid \
+								        i_mobile2.mid|fs:/ringers/i_mobile2.mid \
+								        i_mobile3.mid|fs:/ringers/i_mobile3.mid \
+								        i_mobile4.mid|fs:/ringers/i_mobile4.mid \
+								        i_mobile5.mid|fs:/ringers/i_mobile5.mid \
+								        tone_one.mp3|fs:/ringers/tone_one.mp3 		        					        	        						                
 		endif
       
 else
@@ -403,7 +413,21 @@ else
 								        jumping.mid|fs:/ringers/jumping.mid \
 								        lucky.mid|fs:/ringers/lucky.mid \
 								        street_tale.mid|fs:/ringers/street_tale.mid \
-								        techno_meto.mid|fs:/ringers/techno_meto.mid								        									              							        								        
+								        techno_meto.mid|fs:/ringers/techno_meto.mid		
+				 else ifeq($(USES_RESDIR),Hitz181)
+				 					CONSTFILE_FILES+=\
+								        soundmenu.mif|fs:/mif/soundmenu.mif \
+								        enhusoundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+								        i_mobile1.mid|fs:/ringers/i_mobile1.mid \
+								        i_mobile2.mid|fs:/ringers/i_mobile2.mid \
+								        i_mobile3.mid|fs:/ringers/i_mobile3.mid \
+								        i_mobile4.mid|fs:/ringers/i_mobile4.mid \
+								        i_mobile5.mid|fs:/ringers/i_mobile5.mid \
+								        tone_one.mp3|fs:/ringers/tone_one.mp3 \
+								        tone_two.mp3|fs:/ringers/tone_two.mp3 \
+								        tone_the.mp3|fs:/ringers/tone_the.mp3 \
+								        tone_four.mp3|fs:/ringers/tone_four.mp3 \
+								        tone_five.mp3|fs:/ringers/tone_five.mp3 					        									              							        								        
 			     esle
 				 					CONSTFILE_FILES+=\
 									      soundmenu.mif|fs:/mif/soundmenu.mif \
@@ -634,7 +658,22 @@ else
 								        street_tale.mid|fs:/ringers/street_tale.mid \
 								        techno_meto.mid|fs:/ringers/techno_meto.mid \
 								        feeling_on.mid|fs:/ringers/feeling_on.mid \
-								        feeling_off.mid|fs:/ringers/feeling_off.mid							        										           						        						        
+								        feeling_off.mid|fs:/ringers/feeling_off.mid		
+				else ifeq($(USES_RESDIR),Hitz181)
+										CONSTFILE_FILES+=\
+								        soundmenu.mif|fs:/mif/soundmenu.mif \
+								        soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar \
+								        i_mobile1.mid|fs:/ringers/i_mobile1.mid \
+								        i_mobile2.mid|fs:/ringers/i_mobile2.mid \
+								        i_mobile3.mid|fs:/ringers/i_mobile3.mid \
+								        i_mobile4.mid|fs:/ringers/i_mobile4.mid \
+								        i_mobile5.mid|fs:/ringers/i_mobile5.mid \
+								        tone_six.mid|fs:/ringers/tone_six.mid \
+								        tone_one.mp3|fs:/ringers/tone_one.mp3 \
+								        tone_two.mp3|fs:/ringers/tone_two.mp3 \
+								        tone_the.mp3|fs:/ringers/tone_the.mp3 \
+								        tone_four.mp3|fs:/ringers/tone_four.mp3 \
+								        tone_five.mp3|fs:/ringers/tone_five.mp3 					        										           						        						        
 			    else								        	
 			    						CONSTFILE_FILES+=\
 								        soundmenu.mif|fs:/mif/soundmenu.mif \

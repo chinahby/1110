@@ -397,6 +397,9 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined FEATURE_VERSION_C01
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
+#elif defined FEATURE_VERSION_HITZ181
+#define   OEMNV_STARTUP_MUSIC 11
+#define   OEMNV_SHUTDOWN_MUSIC 11
 #else
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
@@ -797,7 +800,7 @@ typedef PACKED struct _ringID
 #endif//WIN32
 
 #if defined FEATURE_LANG_THAI 
-#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_THAI
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_THAI
 #elif defined FEATURE_LANG_TCHINESE
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_ZHUYIN
 #elif defined FEATURE_LANG_SPANISH

@@ -65,6 +65,10 @@ else ifeq ($(USES_RESDIR), C01)
 CONSTFILE_FILES+=\
     poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
     poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg
+else ifeq ($(USES_RESDIR), Hitz181)
+CONSTFILE_FILES+=\
+	poweronani.png|fs:/image/pwronoffani/poweronani.png \
+	poweroffani.png|fs:/image/pwronoffani/poweroffani.png
 else
 CONSTFILE_FILES+=\
     poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
