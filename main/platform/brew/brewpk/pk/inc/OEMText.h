@@ -2025,7 +2025,7 @@ void OEM_TextEnumModesInit(void) ;
 //Return true if this is a valid mode. Return false if we already reached end
 boolean OEM_TextEnumMode(AEETextMode* pMode) ;
 
-uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size) ;
+//uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size) ;
 
 int32 OEM_TextGetCursorPos(OEMCONTEXT hTextField);
 

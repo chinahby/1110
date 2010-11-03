@@ -217,6 +217,9 @@ static void     TextCtl_SetMode (ITextCtl * pITextCtl,boolean bEdit,AEETextInput
 static void     TextCtl_ShowSymbolDialog(CTextCtl * pme) ;
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
 static uint16   TextCtl_QuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size) ;
+#else 
+static uint16   OEM_TextQuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size);
+
 #endif // FEATURE_CARRIER_CHINA_TELCOM
 static void     TextCtl_ShowFaceSymbolDialog(CTextCtl * pme) ;
 static void     TextCtl_ShowNetSymbolDialog(CTextCtl * pme) ;
@@ -3319,7 +3322,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
    
    //Query Symbols From OEM
 #ifndef FEATURE_CARRIER_CHINA_TELCOM  // modify the code for the Unicom Spec on 081206
-   OEM_TextQuerySymbols(szBuff, sizeof(szBuff)); 
+   OEM_TextQuerySymbols(pme,szBuff, sizeof(szBuff)); 
 #else
    TextCtl_QuerySymbols(pme, szBuff, sizeof(szBuff));
 #endif
@@ -3775,7 +3778,7 @@ static boolean TextCtl_IsSymbolsSupported(CTextCtl * pme)
 
    *szBuff = (AECHAR)0; // in case OEM is misbehaved.
 #ifndef FEATURE_CARRIER_CHINA_TELCOM
-   if( OEM_TextQuerySymbols(szBuff, sizeof(szBuff)) && *szBuff ) 
+   if( OEM_TextQuerySymbols(pme,szBuff, sizeof(szBuff)) && *szBuff ) 
 #else   
    if( TextCtl_QuerySymbols(pme, szBuff, sizeof(szBuff)) && *szBuff )
 #endif
@@ -3812,7 +3815,7 @@ static AECHAR TextCtl_GetSymChar(CTextCtl * pme, int nPos)
    AECHAR  szSyms[128]; //szSyms[64];
 
 #ifndef FEATURE_CARRIER_CHINA_TELCOM
-   if(OEM_TextQuerySymbols(szSyms, sizeof(szSyms)) && *szSyms) 
+   if(OEM_TextQuerySymbols(pme,szSyms, sizeof(szSyms)) && *szSyms) 
 #else
    if(TextCtl_QuerySymbols(pme, szSyms, sizeof(szSyms)) && *szSyms)
 #endif
@@ -5399,50 +5402,33 @@ SIDE EFFECTS:
 SEE ALSO:
 =============================================================================*/
 #ifndef FEATURE_CARRIER_CHINA_TELCOM
-uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size)
+uint16 OEM_TextQuerySymbols(CTextCtl *pme,AECHAR *pszOut, uint16 size)
 {
-   IConfig         *m_pConfig;
-   nv_language_enum_type language;
-   IShell      *pShell = NULL;
    MSG_FATAL("OEM_TextQuerySymbols Start",0,0,0);
-   pShell = AEE_GetShell();
-   if (AEE_SUCCESS != ISHELL_CreateInstance(pShell,
-                                            AEECLSID_CONFIG,
-                                            (void **)&m_pConfig))
-    {
-        return EFAILED;
-    }
-	(void) ICONFIG_GetItem(m_pConfig,
-                                       CFGI_LANGUAGE_SELECTION,
-                                       &language,
-                                       sizeof(language));
-	switch (language)
-                {
-
 
 #ifdef FEATURE_LANG_THAI
-                    case NV_LANGUAGE_THAI:    //Ì©¹úÓï
-                      	{
+                    if ((pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI)||(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI))
+                    {
 							if (!pszOut || size < (sizeof(sszSymbolListTH)/sizeof(sszSymbolListTH[0])))
       								return(0);
 
    							MEMCPY(pszOut, sszSymbolListTH, sizeof(sszSymbolListTH));
 
   							return(sizeof(sszSymbolListTH)/sizeof(sszSymbolListTH[0])) - 1;
-					    }
-                        break;
+					}
+					else
+                       
 #endif
-					default:
-						{
+				   {
    							if (!pszOut || size < (sizeof(sszSymbolList)/sizeof(sszSymbolList[0])))
       								return(0);
 
    							MEMCPY(pszOut, sszSymbolList, sizeof(sszSymbolList));
 
   							return(sizeof(sszSymbolList)/sizeof(sszSymbolList[0])) - 1;
-						}
-						break;
-				}
+				  }
+						
+				
 }
 #else
 static uint16 TextCtl_QuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size) 
@@ -6095,7 +6081,7 @@ static void TextCtl_GetSymbDlgInfo(CTextCtl * pme, IDisplay * pd, AEEBitmapInfo 
 	int16  nWidth;
 	int    i;
 #ifndef FEATURE_CARRIER_CHINA_TELCOM 
-    (void)OEM_TextQuerySymbols(pszwBuff, wBuffSize);
+    (void)OEM_TextQuerySymbols(pme, pszwBuff, wBuffSize);
 #else
     (void)TextCtl_QuerySymbols(pme, pszwBuff, wBuffSize);
 #endif
