@@ -950,6 +950,7 @@ void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 		}
 	}
 
+	Delayms(10);
 	disp_off();
 	disp_on();
 	return;

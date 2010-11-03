@@ -4,7 +4,7 @@
 #include "cam_module.h"
 #include "sys_if_ait_api.h"
 //add by yangdecai 09-24
-#define __MMI_MAINLCD_220X176__
+#define __MMI_MAINLCD_320X240__
 //------------------------------------------------------------------------------------//
 // LCD customization definition
 //------------------------------------------------------------------------------------//
