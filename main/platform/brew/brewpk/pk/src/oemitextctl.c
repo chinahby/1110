@@ -46,7 +46,7 @@ when       who     what, where, why
 #else
 #include "BREWSimFeatures.h"
 #endif
-
+#include "AEEMenu.h"
 #include "Appscommon.h"
 #include "appscommonimages.brh"
 #include "appscommon.brh"
