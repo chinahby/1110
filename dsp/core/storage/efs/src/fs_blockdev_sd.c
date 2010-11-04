@@ -118,6 +118,7 @@ when         who   what, where, why
 
 /* Maximum number of SD-Slots present in this device. */
 static int max_sd_slots;
+static boolean m_isinit = FALSE;
 
 /* Device operations */
 static int fs_sd_open (struct block_device *, void *);
@@ -233,6 +234,7 @@ fs_sd_init (struct block_device **head, uint16 *dev_id)
     FS_ERR_FATAL ("Number of block devices MUST match private data!", 0,0,0);
 
   /* Link the list of devices together */
+  MSG_FATAL("fs_sd_init............................",0,0,0);
   for (i = NUM_DEVICES - 1; i >= 0; i--)
   {
     struct block_device *dev = &devices[i];
@@ -402,12 +404,12 @@ static int
 fs_sd_open (struct block_device *bdev, void *data)
 {
   sd_device_data *dev = (sd_device_data *)bdev->device_data;
-
+  MSG_FATAL("fs_sd_open.....................",0,0,0);
   /* Make sure that the slot is a valid one. */
   ASSERT (dev->driveno < max_sd_slots);
   dev->device_idle_state = FALSE;
 
-  if (! dev->is_open) {
+  if ((! dev->is_open) && (!m_isinit)) {
 
 #ifdef HAVE_SDCC_HANDLE_SUPPORT
     uint32 phy_part_num = (uint32)data;
@@ -417,12 +419,13 @@ fs_sd_open (struct block_device *bdev, void *data)
     dev->was_present = dev->handle ? TRUE : FALSE;
 #else
     (void) data;
-
+    MSG_FATAL("fs_sd_open fist.....................",0,0,0);
     /* Every sd open() call needs an INIT first, so do it here: */
     SDCC_INIT (dev->driveno);
 
     /* If sdcc_open fails, then it leaves the card "closed" */
     dev->is_open = !!sdcc_open (dev->driveno);
+	m_isinit = TRUE;
 #endif /* HAVE_SDCC_HANDLE_SUPPORT */
   }
   return dev->is_open ? 0 : -1;
