@@ -850,6 +850,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_bmissCallWaiting = FALSE;
 
     pMe->m_pBigNumFont = NULL;
+    pMe->m_pNormalNumFont = NULL;
 #ifdef FEATURE_UTK2
     pMe->m_bEndcurcallForUTKCall = FALSE;
 #endif
@@ -6224,18 +6225,24 @@ void CallApp_DrawTextWithProfile(IShell* pShell,
                                         );
 }
 
-#if 1
 static int CallApp_Start(CCallApp *pMe)
 {
+    AEEFontInfo myInfo = {0,0};
     
-    if ( SUCCESS != GreyBitBrewFont_Create(26, (void **)&pMe->m_pBigNumFont))
+    (void)ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FONTSYSBIGNUMBER, (void **)&pMe->m_pBigNumFont);
+    (void)ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FONTSYSNORMAL, (void **)&pMe->m_pNormalNumFont);
+    
+    if(pMe->m_pBigNumFont)
     {
-        return EFAILED;
+        IFONT_GetInfo(pMe->m_pBigNumFont, &myInfo, sizeof(myInfo));
+        pMe->m_large_Num_Height = myInfo.nAscent+myInfo.nDescent;
     }
-  //  if(pMe->m_pBigNumFont)
-  //  {
-  //      IDISPLAY_SetFont(pMe->m_pDisplay, AEE_FONT_USER_1, pMe->m_pBigNumFont);
-  //  }
+    
+    if(pMe->m_pNormalNumFont)
+    {
+        IFONT_GetInfo(pMe->m_pNormalNumFont, &myInfo, sizeof(myInfo));
+        pMe->m_Normal_Num_Height = myInfo.nAscent+myInfo.nDescent;
+    }
     return SUCCESS;
 }
 
@@ -6246,8 +6253,14 @@ static void CallApp_Stop(CCallApp *pMe)
         IFONT_Release(pMe->m_pBigNumFont);
         pMe->m_pBigNumFont = NULL;
     }
+    
+    if( pMe->m_pNormalNumFont )
+    {
+        IFONT_Release(pMe->m_pNormalNumFont);
+        pMe->m_pNormalNumFont = NULL;
+    }
 }
-#endif
+
 #ifdef DIALER_MEM_CHECK
 void CallApp_show_Mem(CCallApp *pMe)
 {

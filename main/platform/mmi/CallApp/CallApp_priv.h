@@ -317,7 +317,7 @@ typedef PACKED struct {
 //#define FEATURE_LARGE_DIALING_DIGITS
 //#define FEATURE_IS2000_SCC_CODES
 /*Temp add*/
-#define DIALER_PAUSE_AECHAR             ((AECHAR)'P')
+#define DIALER_PAUSE_AECHAR              ((AECHAR)'P')
 #define DIALER_PLUS_AECHAR               ((AECHAR)'+')
 #ifdef FEATURE_APP_PAUSE_TIMER
 #define DIALER_TIMER_AECHAR              ((AECHAR)'T')
@@ -662,8 +662,15 @@ typedef struct _CCallApp
     AECHAR                     wszPrivateString_tw[20];
     ERefreshVol                m_bRefreshVol;      //for display conversation text
 
-    IFont                      *m_pBigNumFont;       //IFont interface for the dialing big number
+    IFont                     *m_pBigNumFont;        //IFont interface for the dialing big number
     int                        m_large_Num_Height;   //Dialing Number's Height,onle used for NumEdit
+    IFont                     *m_pNormalNumFont;        //IFont interface for the dialing big number
+    int                        m_Normal_Num_Height;   //Dialing Number's Height,onle used for NumEdit
+    IFont                     *m_pCurrNumFont;
+    int                        m_nCurrNumHeight;
+    int                        m_nCurrLineSpace;
+    int                        m_nCurrLine;
+    int                        m_nCurrLineFits[MAX_SIZE_DIALER_TEXT/8];
     boolean                    m_bShowPopMenu;//indicate current focus is pop_menu
     IMenuCtl                  *m_pMenu;          // pop menu
     boolean                    m_bHandFree;    //设置声音是否从扬声器发出

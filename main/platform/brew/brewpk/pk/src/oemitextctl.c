@@ -1741,7 +1741,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色  
             IDISPLAY_DrawText(pme->m_pIDisplay, 
                 AEE_FONT_BOLD,pme->m_pTitle, -1,
-                qrc.x+2, qrc.y,&qrc,IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER);
+                qrc.x, qrc.y,&qrc,IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER);
             IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色            
             if ((!pme->m_pSoftKey)&&(pme->m_dwProps&TP_STARKEY_SWITCH))
             {
@@ -1756,7 +1756,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                                         pme->m_wResID);
                     if(RightTopImg != NULL)
                     {
-                        IIMAGE_Draw(RightTopImg, qrc.dx-30, qrc.y + TITLEBAR_HEIGHT/4);
+                        IIMAGE_Draw(RightTopImg, qrc.dx-30, qrc.y + 1);
                         IIMAGE_Release(RightTopImg);
                         RightTopImg = NULL;
                     }                    
@@ -3061,15 +3061,14 @@ static void TextCtl_CalcRects(CTextCtl * pme)
       // round rc.dy to nearest line increment
       if (bIntegral) {
          int lines = (rc.dy + (LINEHEIGHT/2)) / LINEHEIGHT;
-         rc.dy = (LINEHEIGHT * lines) + 6;
+         rc.dy = (LINEHEIGHT * lines);
       }
    }
    else {                                    // single-line
       if (!bFixOEM)
       {
-         rc.dy = (LINEHEIGHT + 6);
+         rc.dy = (LINEHEIGHT);
       }
-      //rc.dy = (LINEHEIGHT + 6);
    }
 
    // check within min/max
@@ -3084,12 +3083,12 @@ static void TextCtl_CalcRects(CTextCtl * pme)
        }
        else
        {
-          rc.dy = CONSTRAIN(rc.dy, (LINEHEIGHT+6), dyMax);
+          rc.dy = CONSTRAIN(rc.dy, (LINEHEIGHT), dyMax);
        }
        if (bFix && bIntegral && bMulti)
-          rc.dy = ((rc.dy / LINEHEIGHT) * LINEHEIGHT) + 6;
+          rc.dy = ((rc.dy / LINEHEIGHT) * LINEHEIGHT);
    }
-
+   
    // calc rectangle of entire control, which will be
    // stored in m_rcGet and returned in GetRect()
    if (!bFixRect) {

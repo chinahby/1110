@@ -4644,7 +4644,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
     {
        /*  这个if用来检测MP_BIND_ITEM_TO_NUMBER_KEY属性是否被设置，有，在菜单前面画一个内嵌序号的正方形 */
        //下面的20 和12可能要改成公式计算
-       SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset + AEE_FRAME_SIZE, 16, prc->dy);
+       SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, 16, prc->dy);
 	   
        STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
        WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
@@ -4883,7 +4883,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         if(NULL != underline)
         {
             /* 由于AdjustRect中为文字显示多加了一个像素，这里补偿回来*/
-            SETAEERECT(&rect, xMenu, prc->y + prc->dy + ps->yOffset - 2*AEE_FRAME_SIZE, menuwidth, AEE_FRAME_SIZE);
+            SETAEERECT(&rect, xMenu, prc->y + prc->dy + ps->yOffset, menuwidth, AEE_FRAME_SIZE);
             IIMAGE_GetInfo(underline, &imageInfo);
             
             Appscommon_ResetBackground(pd, underline, pme->m_c.cBack, &rect, rect.x - (imageInfo.cx - menuwidth)/2, rect.y);
@@ -8122,7 +8122,7 @@ static void AdjustRect(AEERect * prc, AEEItemStyle * ps)
    prc->x += ps->xOffset;
    /* 因为显示字体总在字体下方空余一个像素，为了显示美观，
     总是在纵坐标方向多向下偏移一个像素使之看起来更加居中*/
-   prc->y += (ps->yOffset + AEE_FRAME_SIZE);
+   prc->y += (ps->yOffset);
    prc->dx -= (ps->xOffset * 2);
    prc->dy -= (ps->yOffset * 2);
 }

@@ -75,7 +75,7 @@ when         who            what, where, why
 #define RUNNING_UPDATE_MSECS  100
 #define TIMER_SCREEN_XOFFSET 20
 #define TIMER_SCREEN_HEIGHT   38
-#define TIMER_SCREEN_YOFFSET 33
+#define TIMER_SCREEN_YOFFSET 30
 
 #if defined(FEATURE_DISP_220X176)
 #define TIMER_SCREEN_WIDTH    80

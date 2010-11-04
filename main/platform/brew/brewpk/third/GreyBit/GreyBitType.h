@@ -4,10 +4,12 @@
 extern "C"{
 #endif
 
-//#define ENABLE_GREYBITFILE
+#ifdef WIN32
+#define ENABLE_GREYBITFILE
 //#define ENABLE_TRUETYPEFILE
+#define ENABLE_ENCODER
+#endif
 #define ENABLE_GREYVECTORFILE
-//#define ENABLE_ENCODER
 #define ENABLE_ITALIC
 #define ENABLE_BOLD
 
@@ -21,6 +23,9 @@ extern "C"{
 #define GB_FALSE                   0
 #define GB_SUCCESS                 0
 #define GB_FAILED                  1
+#define GB_WIDTH_DEFAULT           0
+#define GB_HORIOFF_DEFAULT         0
+
 
 typedef void*           GBHANDLE;
 typedef char            GB_BOOL;
@@ -31,6 +36,7 @@ typedef short           GB_INT16;
 typedef long            GB_INT32;
 typedef GB_INT16        GB_Pos;
 typedef char            GB_CHAR;
+typedef char            GB_INT8;
 
 typedef enum{
     GB_FORMAT_NONE,
@@ -43,6 +49,7 @@ typedef struct  _GB_DataRec
 {
     GB_DataFormat   format;
     GB_INT16        width;
+    GB_INT16        horioff;
     void           *data;
 } GB_DataRec, *GB_Data;
 
@@ -50,6 +57,7 @@ typedef struct  _GB_BitmapRec
 {
     GB_INT16         width;
     GB_INT16         height;
+    GB_INT16         horioff;
     GB_INT16         pitch;
     GB_INT16         bitcount;
     GB_BYTE         *buffer;

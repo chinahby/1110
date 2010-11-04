@@ -3447,11 +3447,9 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LANG_CHINESE            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CHINESE, IDS_CHINESE, NULL, 0);
 #endif //FEATURE_LANG_TCHINESE
-
 #ifdef FEATURE_LANG_TCHINESE            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_TCHINESE, IDS_TCHINESE, NULL, 0);
 #endif //FEATURE_LANG_TCHINESE
-
 #if defined(FEATURE_LANG_ITALIAN)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ITALIAN, IDS_ITALIAN, NULL, 0);
 #endif
@@ -3461,16 +3459,9 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #if defined(FEATURE_LANG_PORTUGUESE)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PORTUGUESE, IDS_PORTUGUESE, NULL, 0);
 #endif
-
 #if defined(FEATURE_LANG_INDONESIAN)
-#ifndef FEATURE_VERSION_H19C
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_INDONESIAN, IDS_INDONESIAN, NULL, 0);
 #endif
-#if defined(FEATURE_CARRIER_INDONESIA)
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CHINESE, IDS_CHINESE, NULL, 0);
-#endif
-#endif
-
 #if defined(FEATURE_LANG_HINDI)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_HINDI, IDS_HINDI, NULL, 0);
 #endif
@@ -3542,17 +3533,9 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #endif /* FEATURE_LANG_PORTUGUESE */
 
 #ifdef FEATURE_LANG_INDONESIAN
-#ifndef FEATURE_VERSION_H19C
                     case NV_LANGUAGE_INDONESIAN:    //印度尼西亚
                         nSelItem = IDS_INDONESIAN;
                         break;
-#endif                        
-#if defined(FEATURE_CARRIER_INDONESIA)
-                    case NV_LANGUAGE_CHINESE:       //中文
-                        nSelItem = IDS_CHINESE;
-                        break;
-#endif  
-                        
 #endif //FEATURE_LANG_INDONESIAN
 
 #ifdef FEATURE_LANG_HINDI
@@ -3682,22 +3665,10 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #endif /* FEATURE_LANG_PORTUGUESE */
 
 #ifdef FEATURE_LANG_INDONESIAN
-#ifndef FEATURE_VERSION_H19C
                 case IDS_INDONESIAN:    //印度尼西亚
                     language = NV_LANGUAGE_INDONESIAN;
                     inputmode = OEM_MODE_T9_MT_ENGLISH; //OEM_MODE_T9_MT_INDONESIAN;                           
                     break;
-#endif                    
-#if defined(FEATURE_CARRIER_INDONESIA)
-                case IDS_CHINESE:       //中文
-                    language = NV_LANGUAGE_CHINESE;
-                    (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                           CFGI_INPUTMODE,
-                                           &inputmode,
-                                           sizeof(inputmode));            
-                    break;
-#endif
-                    
 #endif /* FEATURE_LANG_INDONESIAN */
 
 #ifdef FEATURE_LANG_HINDI

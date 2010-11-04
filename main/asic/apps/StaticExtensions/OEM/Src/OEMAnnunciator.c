@@ -58,7 +58,7 @@
 #define ANN_BLINK_TIME 320
 #endif
 /* Use a fixed size for the primary display annunciator */
-#define ANNUN_PRIMARY_HEIGHT 14
+#define ANNUN_PRIMARY_HEIGHT 16
 
 #if ! MIN_BREW_VERSION(3, 0)
 #define AEEFS_SHARED_DIR

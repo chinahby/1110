@@ -80,7 +80,7 @@ typedef struct
    AEEPoint ptPosition;
 } PenTracker;
 
-#define TEXT_BETWEEN_LINE_PIXEL   (3)
+#define TEXT_BETWEEN_LINE_PIXEL   (0)
 
 /*===========================================================================
 

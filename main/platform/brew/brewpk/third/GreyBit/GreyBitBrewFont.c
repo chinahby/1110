@@ -89,20 +89,20 @@ static boolean isTone(uint32 ch);
 static boolean isAroundVowel(uint32 ch);
 #endif  // FEATURE_LANG_THAI
 
-//#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"systemfont.gvf"
+#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"systemfont.gvf"
 
 #if defined(FEATURE_DISP_320X240) || defined(FEATURE_DISP_240X320)
-#define BIGNUMBER_FONT_SIZE 30 
+#define BIGNUMBER_FONT_SIZE 48 
 #define NORMAL_FONT_SIZE    24 
-#define LARGE_FONT_SIZE     26 
+#define LARGE_FONT_SIZE     28 
 #elif defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_176X220)
-#define BIGNUMBER_FONT_SIZE 26 
+#define BIGNUMBER_FONT_SIZE 40 
 #define NORMAL_FONT_SIZE    20 
-#define LARGE_FONT_SIZE     22 
+#define LARGE_FONT_SIZE     24 
 #else
-#define BIGNUMBER_FONT_SIZE 24
-#define NORMAL_FONT_SIZE    14
-#define LARGE_FONT_SIZE     16
+#define BIGNUMBER_FONT_SIZE 32
+#define NORMAL_FONT_SIZE    16
+#define LARGE_FONT_SIZE     20
 #endif
 
 
@@ -165,26 +165,7 @@ void GreyBitBrewFont_Init(void)
     
     if(g_pLibrary){
         if(g_pLoader == NULL){
-            //g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
-#if defined(FEATURE_LANG_CHINESE)
-            extern const AEEConstFile gSYSTEMZHCN_GVF;
-            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMZHCN_GVF.pFileData, gSYSTEMZHCN_GVF.dwDataSize);
-#elif defined(FEATURE_LANG_TCHINESE)
-            extern const AEEConstFile gSYSTEMZHTW_GVF;
-            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMZHTW_GVF.pFileData, gSYSTEMZHTW_GVF.dwDataSize);
-#elif defined(FEATURE_LANG_INDONESIAN)
-            extern const AEEConstFile gSYSTEMID_GVF;
-            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMID_GVF.pFileData, gSYSTEMID_GVF.dwDataSize);
-#elif defined(FEATURE_LANG_ARABIC)
-            extern const AEEConstFile gSYSTEMAR_GVF;
-            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMAR_GVF.pFileData, gSYSTEMAR_GVF.dwDataSize);
-#elif defined(FEATURE_LANG_THAI)
-            extern const AEEConstFile gSYSTEMTH_GVF;
-            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMTH_GVF.pFileData, gSYSTEMTH_GVF.dwDataSize);
-#else
-            extern const AEEConstFile gSYSTEMEN_GVF;
-            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMEN_GVF.pFileData, gSYSTEMEN_GVF.dwDataSize);
-#endif
+            g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
         }
     }
 }
@@ -1031,8 +1012,11 @@ static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int
     {
         *pnCharFits = nFits;
     }
-    
-    *pnPixels = nTotalWidth;
+
+    if(pnPixels)
+    {
+        *pnPixels = nTotalWidth;
+    }
     
     return nRet;
 #endif    

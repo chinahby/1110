@@ -139,8 +139,8 @@ when       who     what, where, why
 
 static int snTextModeIndex = 0;
 #define TIMEOUT   460
-#define TEXT_BETWEEN_LINE_PIXEL   (3)
-#define INPUT_BETWEEN_LINE_PIXEL   (2)
+#define TEXT_BETWEEN_LINE_PIXEL   (0)
+#define INPUT_BETWEEN_LINE_PIXEL   (0)
 #define  PTRCK_GEN_TMRSET  (0x01)   // Timer is set
 #define TSIM_MODE      (2)
 
@@ -797,12 +797,12 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    // This workaround will ensure there is always enough room to display
    // a single line regardless of the rectangle that the ITextCtl gives us.
    //
-   if (pNewContext->rectDisplay.dy < pNewContext->nLineHeight + 4) {
+   if (pNewContext->rectDisplay.dy < pNewContext->nLineHeight) {
       SETAEERECT(&pNewContext->rectDisplay,
                   pNewContext->rectDisplay.x,
                   pNewContext->rectDisplay.y,
                   pNewContext->rectDisplay.dx,
-                  pNewContext->nLineHeight + 4);
+                  pNewContext->nLineHeight);
    }
 #ifdef FEATURE_T9_CHINESE
    pNewContext->rectChineseInput.x = pNewContext->rectDisplay.x;
@@ -2362,7 +2362,7 @@ static void TextCtl_TextChanged(TextCtlContext *pContext)
 
    // Calculate maximum number of lines
    if (pContext->dwProperties & TP_FRAME) {
-      pContext->nDisplayLines = ( (pContext->rectDisplay.dy - 4) +
+      pContext->nDisplayLines = ( (pContext->rectDisplay.dy) +
                                   pContext->nFontLeading          ) /
                                      (pContext->nFontAscent +
                                       pContext->nFontDescent +
@@ -2394,7 +2394,7 @@ static void TextCtl_TextChanged(TextCtlContext *pContext)
    }
    if (pContext->dwProperties & TP_FRAME) {
       // Adjust for frame
-      pContext->nExtraPixels -= 4;
+      pContext->nExtraPixels -= 2;
    }
 
    // We're valid now pending recalc.
@@ -3327,7 +3327,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 */ 
    scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
    scratch.dx = 1;
-   scratch.dy = 14; 
+   scratch.dy = pContext->nFontAscent + pContext->nFontDescent; 
    // Vertical bar
    // 单行垂直方向居中对齐
    if (IntersectRect(&draw, &scratch, clipRect))
@@ -3422,10 +3422,10 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    rectClip.dy = pContext->rectDisplay.dy;
 
    if (bFrame) {
-      rectClip.x  += 2;
-      rectClip.y  += 2;
-      rectClip.dx -= 4;
-      rectClip.dy -= 4;
+      rectClip.x  += 1;
+      rectClip.y  += 1;
+      rectClip.dx -= 2;
+      rectClip.dy -= 2;
 
       // If we have a frame, the scroll bar overlaps it by 2 pixels
       if (bScroll) {
@@ -3634,7 +3634,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                cursRect.y = rectText.y; // Would subtract 1, but vertical leading
                                         // is embedded in our fonts too
                cursRect.dx = 1;
-               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent + 1;
+               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
                bDrawCursor = TRUE;  // Draw the cursor at the end
             }
          }
@@ -3805,7 +3805,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                cursRect.y = rectText.y; // Would subtract 1, but vertical leading
                                         // is embedded in our fonts too
                cursRect.dx = 5;
-               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent + 1;
+               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
                bDrawCursor = TRUE;  // Draw the cursor at the end
             }
          } 
@@ -3944,7 +3944,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             cursRect.x = rectText.x - 2;
             cursRect.y = rectText.y;
             cursRect.dx = 5;
-            cursRect.dy = pContext->nFontAscent + pContext->nFontDescent + 1;
+            cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
             bDrawCursor = TRUE;
          }
       }
@@ -8437,12 +8437,12 @@ static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
     // set rectChinese input Rect
     pContext->rectChineseSyllableInput.x = pContext->rectDisplay.x;
     pContext->rectChineseSyllableInput.dx = pContext->rectDisplay.dx -2;
-    pContext->rectChineseSyllableInput.dy = pContext->nLineHeight + 4;    
+    pContext->rectChineseSyllableInput.dy = pContext->nLineHeight;    
     pContext->rectChineseSyllableInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectChineseSyllableInput.dy*2;
 
     pContext->rectChineseTextInput.x = pContext->rectChineseSyllableInput.x;
     pContext->rectChineseTextInput.dx = pContext->rectChineseSyllableInput.dx;
-    pContext->rectChineseTextInput.dy = pContext->nLineHeight + 5;    
+    pContext->rectChineseTextInput.dy = pContext->nLineHeight;    
     pContext->rectChineseTextInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectChineseTextInput.dy;    
 
     pContext->rectChineseInput.x = pContext->rectChineseSyllableInput.x;
@@ -9701,7 +9701,7 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
                                    ch,
                                    -1,
                                    pRect.x+1+(T9_FONT_WIDTH)*k,
-                                   pRect.y+1,//SCREEN_HEIGHT - pContext->nLineHeight,
+                                   pRect.y,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
             /* If this character is a NULL terminator, then stop drawing */

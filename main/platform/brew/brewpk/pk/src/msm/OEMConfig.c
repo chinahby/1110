@@ -1756,12 +1756,6 @@ uint32 GetLngCode(void)
         case NV_LANGUAGE_INDONESIAN:
             LngCode = LNG_INDONESIAN;
             break;
-            
-#if defined(FEATURE_CARRIER_INDONESIA)
-        case NV_LANGUAGE_CHINESE:
-            LngCode = LNG_SCHINESE;             
-            break; 
-#endif
 #endif 	//FEATURE_LANG_INDONESIAN           
 
 #ifdef FEATURE_LANG_HINDI
@@ -1861,13 +1855,6 @@ int SetLngCode(uint32 dwLngCode)
         case LNG_INDONESIAN:
             language = NV_LANGUAGE_INDONESIAN;                
             break;
-            
-#if defined(FEATURE_CARRIER_INDONESIA)
-        case LNG_SCHINESE:
-            language = NV_LANGUAGE_CHINESE;               
-            break; 
-#endif
-
 #endif //FEATURE_LANG_INDONESIAN
 
 #ifdef FEATURE_LANG_HINDI

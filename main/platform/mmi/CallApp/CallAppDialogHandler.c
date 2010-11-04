@@ -5908,56 +5908,48 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
 
 static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
 {
-    static AECHAR  str[MAX_SIZE_DIALER_TEXT];
-    static AECHAR  revStr[MAX_SIZE_DIALER_TEXT];
-    AECHAR          *srcStr;
-    AECHAR          *dstStr;
-    int                   len;
-    int                   largeLineHeight;
-    int                   y;
-    int                   fits;
-    int                   pixelLen;
-    AEERect           dialerRect;
-    IFont *pOldFont = NULL;
+    AECHAR         revStr[MAX_SIZE_DIALER_TEXT];
+    AECHAR const  *srcStr;
+    AECHAR        *dstStr;
+    int            len;
+    int            y;
+    int            fits;
+    AEERect        dialerRect;
+    int            nLineMax;
+    int            nLine;
+    int            i;
+    NativeColor    clrFG;
+    IBitmap       *pBmp = NULL;
 
-    CALL_FUN_START("CallApp_DrawDialerString", 0, 0, 0);
-
-    if(pMe->m_pBigNumFont)
-    {
-        pOldFont = IDISPLAY_SetFont(pMe->m_pDisplay, AEE_FONT_USER_1, pMe->m_pBigNumFont);
-    }
-
+    pMe->m_pCurrNumFont     = NULL;
+    pMe->m_nCurrLineSpace   = 0;
     SETAEERECT(&dialerRect,
-                                            0,
-                                            0,
-                                            pMe->m_rc.dx,
-                                            pMe->m_rc.dy - BOTTOMBAR_HEIGHT);
-
-    /*SETAEERECT(&dialerRect,
-                                            SOFT_KEY_MENU_X,
-                                            SOFT_KEY_MENU_Y,
-                                            SOFT_KEY_MENU_DX,
-                                            SOFT_KEY_MENU_DY);*/
-
+                0,
+                0,
+                pMe->m_rc.dx,
+                pMe->m_rc.dy - BOTTOMBAR_HEIGHT);
+    
     // Clear the dialer rectangle
     Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &dialerRect, TRUE);
     
-    // Copy the dialer string into a temp buffer so it can be modified
-    WSTRNCOPYN(str,sizeof(str)/sizeof(str[0]),  dialStr,  -1);
-
     // Return if empty
-    len = WSTRLEN(str);
+    len = WSTRLEN(dialStr);
     if (len <= 0)
     {
         return;
     }
 
+    IDISPLAY_GetDeviceBitmap(pMe->m_pDisplay, &pBmp);
+    if(pBmp == NULL)
+    {
+        return;
+    }
     // Build the revStr buffer.
     //
     // 'revStr' is the reverse string of 'str'.
-    srcStr = str;
+    srcStr = dialStr;
     dstStr = revStr + len;
-
+    
     *dstStr = '\0';
     for (;;)
     {
@@ -5970,155 +5962,103 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         *dstStr = *srcStr;
         srcStr++;
     }
-    ASSERT(dstStr == revStr);
-    //OEMFont_SetBigNumber(TRUE);
-    //SetLargeFontBold(pMe->m_pOEM_TSGBridge,pMe->m_pDisplay);(Null Function)
-    if(pMe->m_pBigNumFont)
+    
+    dstStr = revStr;
+    // 计算行数和确定使用的字体
+    if(pMe->m_pBigNumFont && pMe->m_pCurrNumFont == NULL)
     {
-        largeLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
-                                            AEE_FONT_USER_1,
-                                            NULL,
-                                            NULL);
-    }
-    else
-    {
-        largeLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
-                                            AEE_FONT_NORMAL,
-                                            NULL,
-                                            NULL);    
-    }
-
-    // Main drawing loop.
-    //
-    // Each iteration of this loop will draw one line of the dialing
-    // digits, starting from the bottom of the rectangle and moving up.
-    //
-    y = dialerRect.dy;
-
-#if defined( FEATURE_CALL_RECORDER)
-    if( pMe->m_bRecorderOn)
-    {
-		y -= largeLineHeight;
-    }
-#endif
-
-    for (;;)
-    {
-        if ('\0' == *dstStr)
+        pMe->m_pCurrNumFont = pMe->m_pBigNumFont;
+        pMe->m_nCurrNumHeight = pMe->m_large_Num_Height;
+        nLineMax    = dialerRect.dy/pMe->m_nCurrNumHeight;
+        pMe->m_nCurrLineSpace = (dialerRect.dy - pMe->m_nCurrNumHeight*nLineMax)/(nLineMax-1);
+        nLine = 0;
+        while(1)
         {
-            // Nothing more to display
-            break;
+            if ('\0' == *dstStr)
+            {
+                // Nothing more to display
+                break;
+            }
+            
+            fits     = 0;
+            IFONT_MeasureText(pMe->m_pCurrNumFont, dstStr, -1, dialerRect.dx, &fits, NULL);
+            if(fits == 0)
+            {
+                break;
+            }
+            pMe->m_nCurrLineFits[nLine] = fits;
+            dstStr += fits;
+            nLine++;
         }
-
-        y -= largeLineHeight;
-
-        if (y < dialerRect.y)
-        {
-            // Out of room in the rectangle
-            break;
-        }
-
-        // Determine how much of the string will fit on the line
-        // (the 'fits' var will return the number of characters that will fit)
-        if(pMe->m_pBigNumFont)
-        {
-            pixelLen = IDISPLAY_MeasureTextEx(pMe->m_pDisplay,
-                                            AEE_FONT_USER_1,
-                                            dstStr,
-                                            -1,
-                                            dialerRect.dx,
-                                            &fits);
-        }
-        else
-        {
-            pixelLen = IDISPLAY_MeasureTextEx(pMe->m_pDisplay,
-                                            AEE_FONT_NORMAL,
-                                            dstStr,
-                                            -1,
-                                            dialerRect.dx,
-                                            &fits);        
-        }
-
-        if (pixelLen <= 0)
-        {
-            break;
-        }
-        ASSERT(pixelLen <= dialerRect.dx);
-        pixelLen = dialerRect.dx - pixelLen;
-#if defined(FEATURE_DISP_128X128)        
-        if(pixelLen == 0)
-        {
-            pixelLen = 12;
-        }
-#elif defined(FEATURE_DISP_160X128)       
-        if(pixelLen == 0)
-        {
-            pixelLen = 5;
-        } 	
-#elif defined(FEATURE_DISP_220X176)       
-        if(pixelLen == 0)
-        {
-            pixelLen = 5;
-        } 			
-#elif defined(FEATURE_DISP_128X160)       
-        if(pixelLen == 0)
-        {
-            pixelLen = 12;
-        } 	
-#elif defined(FEATURE_DISP_176X220)       
-        if(pixelLen == 0)
-        {
-            pixelLen = 12;
-        } 	
-#elif defined(FEATURE_DISP_240X320)       
-        if(pixelLen == 0)
-        {
-            pixelLen = 12;
-        }    
-#elif defined(FEATURE_DISP_320X240)       
-        if(pixelLen == 0)
-        {
-            pixelLen = 12;
-        }   		
-#endif      
-
-        // Move dstStr past the characters about to be drawn
-        dstStr += fits;
-
-        // Move srcStr to the location of the characters about to be drawn
-        srcStr -= fits;
         
-        IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-        if(pMe->m_pBigNumFont)
+        if(nLine <= nLineMax)
         {
-            (void) IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_USER_1,
-                                            srcStr,
-                                            -1,
-                                            pixelLen,
-                                            y,
-                                            &dialerRect,
-                                            IDF_TEXT_TRANSPARENT);
+            
         }
         else
         {
-            (void) IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_NORMAL,
-                                            srcStr,
-                                            -1,
-                                            pixelLen,
-                                            y,
-                                            &dialerRect,
-                                            IDF_TEXT_TRANSPARENT);        
+            pMe->m_pCurrNumFont = NULL;
         }
-        IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
-
-        // Forget about the characeters that were just drawn.
-        *srcStr = '\0';
     }
-    if(pMe->m_pBigNumFont)
+
+    dstStr = revStr;
+    if(pMe->m_pNormalNumFont && pMe->m_pCurrNumFont == NULL)
     {
-        IDISPLAY_SetFont(pMe->m_pDisplay, AEE_FONT_USER_1, pOldFont);
+        pMe->m_pCurrNumFont = pMe->m_pNormalNumFont;
+        pMe->m_nCurrNumHeight = pMe->m_Normal_Num_Height;
+        nLineMax    = dialerRect.dy/pMe->m_nCurrNumHeight;
+        pMe->m_nCurrLineSpace  = (dialerRect.dy - pMe->m_nCurrNumHeight*nLineMax)/(nLineMax-1);
+        nLine = 0;
+        while(1)
+        {
+            if ('\0' == *dstStr)
+            {
+                // Nothing more to display
+                break;
+            }
+            
+            fits     = 0;
+            IFONT_MeasureText(pMe->m_pCurrNumFont, dstStr, -1, dialerRect.dx, &fits, NULL);
+            if(fits == 0)
+            {
+                break;
+            }
+            pMe->m_nCurrLineFits[nLine] = fits;
+            dstStr += fits;
+            nLine++;
+        }
+    }
+    
+    if(pMe->m_pCurrNumFont == NULL)
+    {
+        if(pBmp)
+        {
+            IBITMAP_Release(pBmp);
+            pBmp = NULL;
+        }
+        return;
+    }
+    
+    // 画字符串
+    nLine = nLine<nLineMax?nLine:nLineMax;
+    pMe->m_nCurrLine = nLine;
+    y = dialerRect.dy;
+    srcStr = dialStr + len;
+    clrFG = IBITMAP_RGBToNative(pBmp, CALLAPP_TEXT_COLOR);
+    
+    for(i=0;i<nLine;i++)
+    {
+        y -= pMe->m_nCurrNumHeight;
+        srcStr -= pMe->m_nCurrLineFits[i];
+        IFONT_DrawText(pMe->m_pCurrNumFont, pBmp, 0, y, srcStr, pMe->m_nCurrLineFits[i], clrFG, 0, &dialerRect, IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+        y -= pMe->m_nCurrLineSpace;
+    }
+    
+    // 释放资源
+    if(pBmp)
+    {
+        IBITMAP_Release(pBmp);
+        pBmp = NULL;
     }
 }
 #endif //#ifdef FEATURE_LARGE_DIALING_DIGITS
@@ -10302,16 +10242,8 @@ static void notifyFMRadioAlertEvent( CCallApp *pMe, boolean toStartAlert)
 ==============================================================================*/
 static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 {
-    int xPos = 0, yPos = 0, xNum = 0, yNum = 0, dy = pMe->m_rc.dy, Line_Pixel = 2;
-    
-#if defined( FEATURE_CALL_RECORDER)
-    if(pMe->m_bRecorderOn)
-    {
-        dy -= NUM_IMAGE_HIGHT;
-    }
-#endif
-
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
+    int xPos = 0, yPos = 0, xNum = 0, yNum = 0, dy = pMe->m_rc.dy;
     xNum = pMe->m_rc.dx /NUM_IMAGE_WIDTH;
     yNum = (dy - BOTTOMBAR_HEIGHT)/(NUM_IMAGE_HIGHT + BETWEEN_LINE_PIXEL);
     xPos = (pMe->m_rc.dx + NUM_IMAGE_WIDTH *xNum) /2 - (pMe->m_nCursorPos%xNum)*NUM_IMAGE_WIDTH - 2;
@@ -10333,297 +10265,49 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
     }
 	SETAEERECT(pRect, xPos, yPos, 4, NUM_IMAGE_HIGHT);
 #else
+    int x = 0, y = 0;
+    int i;
+    int nLen = WSTRLEN(pMe->m_DialString);
 
-    int temp = 0;
-    int tempstrlen = 0;
-    int tempstrlen_ex = 0;
-    
-    int m_index_one = 0;
-    int m_index_two = 0;    
-	int m_index_thr = 0;
-    
-    int m_index_one_strlen = 0;
-    int m_index_two_strlen = 0; 
-	int m_index_thr_strlen = 0;
-    
-    int totalstrlen = 0;
-    int dialstrlen  = 0;   
-    
-    extern int GreyBitBrewFont_MeasureText(IDisplay *p, int nSize, const AECHAR *psz);  
-
-    totalstrlen  = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString);  
-    totalstrlen += WSTRLEN(pMe->m_DialString);    	//字符1像素间隔
-    
-    dialstrlen  = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-    dialstrlen += pMe->m_nCursorPos;   				//字符1像素间隔
-    
-    //MSG_FATAL("***zzg Calc_Cursor pMe->m_rc.dx=%d***", pMe->m_rc.dx, 0, 0);
-    //MSG_FATAL("***zzg Calc_Cursor Totalstrlen=%d***", totalstrlen, 0, 0);        
-    //MSG_FATAL("***zzg Calc_Cursor WSTRLEN=%d, pMe->m_nCursorPos=%d***", WSTRLEN(pMe->m_DialString), pMe->m_nCursorPos, 0);
-    
-    if (totalstrlen < pMe->m_rc.dx)    //一行
+    if(nLen > 0)
     {
-        xPos = pMe->m_rc.dx - dialstrlen - 1;
-        yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
+        AECHAR *pSrcStr = pMe->m_DialString + nLen;
+        int nCurrLineMaxPos = nLen;
+        int nCurrLineMinPos = nLen;
+        int nCurrPos    = nLen-pMe->m_nCursorPos;
         
-        //MSG_FATAL("***zzg Calc_Cursor 1_1 xPos=%d***", xPos, 0, 0);
-    }
-    else if ((totalstrlen >= pMe->m_rc.dx) && (totalstrlen < 2*pMe->m_rc.dx))    //两行
-    {
-        for (temp = (WSTRLEN(pMe->m_DialString) - 2); temp >= 0 ; temp --)
+        y = pMe->m_rc.dy-BOTTOMBAR_HEIGHT;
+        
+        for(i=0;i<pMe->m_nCurrLine;i++)
         {
-            tempstrlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp);  
-            tempstrlen += (WSTRLEN(pMe->m_DialString) - temp);
+            y -= pMe->m_nCurrNumHeight;
+            pSrcStr -= pMe->m_nCurrLineFits[i];
+            nCurrLineMinPos = nCurrLineMaxPos-pMe->m_nCurrLineFits[i];
             
-            tempstrlen_ex = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp + 1); 
-            tempstrlen_ex += (WSTRLEN(pMe->m_DialString) - (temp + 1));
-            
-            if ((tempstrlen >= pMe->m_rc.dx) && (tempstrlen_ex < pMe->m_rc.dx))	//确定第一、二行的分界点的INDEX
+            // 在此行
+            if(nCurrPos > nCurrLineMinPos && nCurrPos < nCurrLineMaxPos)
             {
-            	//MSG_FATAL("***zzg Calc_Cursor 2_1 tempstrlen=%d, tempstrlen_ex=%d***", tempstrlen, tempstrlen_ex, 0);
-            	
-                m_index_one = WSTRLEN(pMe->m_DialString) - (temp + 1);       
-                
-                //MSG_FATAL("***zzg Calc_Cursor 2_1 m_index_one=%d***", m_index_one, 0, 0);
+                IFONT_MeasureText(pMe->m_pCurrNumFont, pSrcStr+(nCurrPos-nCurrLineMinPos), nCurrLineMaxPos-nCurrPos, pMe->m_rc.dx, NULL, &x);
+                x = pMe->m_rc.dx - x;
                 break;
             }
-        }
-        
-        if (pMe->m_nCursorPos < m_index_one)	//第一行
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
-            m_index_one_strlen += m_index_one;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-            m_index_two_strlen += pMe->m_nCursorPos;
-
-            //MSG_FATAL("***zzg Calc_Cursor 2_2 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-
-#if defined(FEATURE_DISP_128X160)  
-			xPos = m_index_one_strlen - m_index_two_strlen + 1;  
-#else
-			xPos = m_index_one_strlen - m_index_two_strlen + 3;     
-#endif			
-            
-            //MSG_FATAL("***zzg Calc_Cursor 2_2 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
-        }
-        else	//第二行
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));
-            m_index_one_strlen += pMe->m_nCursorPos;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
-            m_index_two_strlen += m_index_one;
-
-			//MSG_FATAL("***zzg Calc_Cursor 2_3 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-            
-            xPos = pMe->m_rc.dx - (m_index_one_strlen - m_index_two_strlen) - 1;
-            //MSG_FATAL("***zzg Calc_Cursor 2_3 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);
-        }
-    }
-    else if ((totalstrlen >= 2*pMe->m_rc.dx) && (totalstrlen < 3*pMe->m_rc.dx))    //三行   
-    {
-        for (temp = (WSTRLEN(pMe->m_DialString) - 2); temp > 0 ; temp --)
-        {
-            tempstrlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp);  
-            tempstrlen += (WSTRLEN(pMe->m_DialString) - temp);
-            
-            tempstrlen_ex = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp + 1); 
-            tempstrlen_ex += (WSTRLEN(pMe->m_DialString) - (temp + 1));
-            
-            if ((tempstrlen >= pMe->m_rc.dx) && (tempstrlen_ex < pMe->m_rc.dx))		//确定第一、二行的分界点的INDEX
-            {                
-            	//MSG_FATAL("***zzg Calc_Cursor 3_1 tempstrlen=%d, tempstrlen_ex=%d***", tempstrlen, tempstrlen_ex, 0);
-            	
-                m_index_one = WSTRLEN(pMe->m_DialString) - (temp + 1);                  
-                //MSG_FATAL("***zzg Calc_Cursor 3_1 m_index_one=%d***", m_index_one, 0, 0);
+            else if(nCurrPos == 0 && nCurrLineMinPos == nCurrPos)
+            {
+                IFONT_MeasureText(pMe->m_pCurrNumFont, pSrcStr, nCurrLineMaxPos, pMe->m_rc.dx, NULL, &x);
+                x = pMe->m_rc.dx - x;
+                break;
             }
-            else if ((tempstrlen >= 2*pMe->m_rc.dx) && (tempstrlen_ex < 2*pMe->m_rc.dx))	//确定第二、三行的分界点的INDEX
-            {                
-            	//MSG_FATAL("***zzg Calc_Cursor 3_1 tempstrlen=%d, tempstrlen_ex=%d***", tempstrlen, tempstrlen_ex, 0);
-            	
-                m_index_two = WSTRLEN(pMe->m_DialString) - (temp + 1);  
-                //MSG_FATAL("***zzg Calc_Cursor 3_1 m_index_two=%d***", m_index_two, 0, 0);
+            else if(nCurrPos == nCurrLineMaxPos)
+            {
+                x = pMe->m_rc.dx - 1;
+                break;
             }
-        }
-        if (pMe->m_nCursorPos < m_index_one)
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
-            m_index_one_strlen += m_index_one;
             
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-            m_index_two_strlen += pMe->m_nCursorPos;
-
-            //MSG_FATAL("***zzg Calc_Cursor 3_2 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-
-#if defined(FEATURE_DISP_128X160)  
-			xPos = m_index_one_strlen - m_index_two_strlen + 1;        
-#else
-			xPos = m_index_one_strlen - m_index_two_strlen + 3;        
-#endif
-                
-            //MSG_FATAL("***zzg Calc_Cursor 3_2 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
-        }
-        else if ((pMe->m_nCursorPos >= m_index_one) && (pMe->m_nCursorPos < m_index_two))
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_two));
-            m_index_one_strlen += m_index_two;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-            m_index_two_strlen += pMe->m_nCursorPos;
-
-            //MSG_FATAL("***zzg Calc_Cursor 3_3 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-
-#if defined(FEATURE_DISP_128X160)  
-			xPos = m_index_one_strlen - m_index_two_strlen + 1;           
-#else
-			xPos = m_index_one_strlen - m_index_two_strlen + 3;   
-#endif			
-                    
-            //MSG_FATAL("***zzg Calc_Cursor 3_3 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);
-        }
-        else
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));
-            m_index_one_strlen += pMe->m_nCursorPos;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_two));
-            m_index_two_strlen += m_index_two;     
-
-            //MSG_FATAL("***zzg Calc_Cursor 3_4 CursorPos=%d, one_strlen=%d, two_strlen=%d***", pMe->m_nCursorPos, m_index_one_strlen, m_index_two_strlen);
-            
-            xPos = pMe->m_rc.dx - (m_index_one_strlen - m_index_two_strlen) - 1;
-            //MSG_FATAL("***zzg Calc_Cursor 3_4 xPos=%d***", xPos, 0, 0);
-
-            yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
+            nCurrLineMaxPos -= pMe->m_nCurrLineFits[i];
+            y -= pMe->m_nCurrLineSpace;
         }
     }
-    else 	//DialString总长度大于三行
-    {
-		//xPos = 1;
-		//yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
-
-		for (temp = (WSTRLEN(pMe->m_DialString) - 2); temp > 0 ; temp --)
-        {
-            tempstrlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp);  
-            tempstrlen += (WSTRLEN(pMe->m_DialString) - temp);
-            
-            tempstrlen_ex = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + temp + 1); 
-            tempstrlen_ex += (WSTRLEN(pMe->m_DialString) - (temp + 1));
-            
-            if ((tempstrlen >= pMe->m_rc.dx) && (tempstrlen_ex < pMe->m_rc.dx))		//确定第一、二行的分界点的INDEX
-            {              	
-                m_index_one = WSTRLEN(pMe->m_DialString) - (temp + 1); 
-            }
-            else if ((tempstrlen >= 2*pMe->m_rc.dx) && (tempstrlen_ex < 2*pMe->m_rc.dx))	//确定第二、三行的分界点的INDEX
-            {               	
-                m_index_two = WSTRLEN(pMe->m_DialString) - (temp + 1);  
-            }
-			else if ((tempstrlen >= 3*pMe->m_rc.dx) && (tempstrlen_ex < 3*pMe->m_rc.dx))
-			{
-				m_index_thr = WSTRLEN(pMe->m_DialString) - (temp + 1);
-			}
-        }
-        if (pMe->m_nCursorPos < m_index_one)
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_one));
-            m_index_one_strlen += m_index_one;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-            m_index_two_strlen += pMe->m_nCursorPos;
-          
-            xPos = m_index_one_strlen - m_index_two_strlen + 3;
-            yPos = dy - BOTTOMBAR_HEIGHT - (25 + Line_Pixel);
-        }
-        else if ((pMe->m_nCursorPos >= m_index_one) && (pMe->m_nCursorPos < m_index_two))
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_two));
-            m_index_one_strlen += m_index_two;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));  
-            m_index_two_strlen += pMe->m_nCursorPos;
-
-            xPos = m_index_one_strlen - m_index_two_strlen + 3; 
-            yPos = dy - BOTTOMBAR_HEIGHT - 2*(25 + Line_Pixel);
-        }
-        else if ((pMe->m_nCursorPos >= m_index_two) && (pMe->m_nCursorPos < m_index_thr))
-        {
-            m_index_one_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - m_index_thr));
-            m_index_one_strlen += m_index_thr;
-            
-            m_index_two_strlen = GreyBitBrewFont_MeasureText(pMe->m_pDisplay, 24, pMe->m_DialString + (WSTRLEN(pMe->m_DialString) - pMe->m_nCursorPos));
-            m_index_two_strlen += pMe->m_nCursorPos;     
-
-			xPos = m_index_one_strlen - m_index_two_strlen + 3;             
-            yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
-        }
-		else 
-        {            
-            xPos = 1;  			
-            yPos = dy - BOTTOMBAR_HEIGHT - 3*(25 + Line_Pixel);
-        }		
-    }
-
-	//光标位于最右边时显示不全，向左微调2像素
-	if (xPos > (pMe->m_rc.dx - 5))
-	{
-		xPos -= 2;
-	}
-
-    SETAEERECT(pRect, xPos, yPos, 4, 25);
-
-    /*	
-    //xPos
-	xNum = pMe->m_rc.dx /13;
-    yNum = (dy - BOTTOMBAR_HEIGHT)/(25 + Line_Pixel);
-    
-    if (((pMe->m_nCursorPos%xNum == 0)&& (pMe->m_nCursorPos != 0)) || (pMe->m_nCursorPos > 3*xNum ))
-    {
-        xPos = pMe->m_rc.dx -  13*xNum -2 ;
-    }
-    else
-    {
-        xPos = pMe->m_rc.dx - (pMe->m_nCursorPos%xNum)*13 -2 ;
-    }    
-    
-    //yPos  
-    if((pMe->m_nCursorPos%xNum == 0) && (pMe->m_nCursorPos/xNum != 0))
-    {
-        yPos = dy - BOTTOMBAR_HEIGHT - (pMe->m_nCursorPos/xNum)*(25 + Line_Pixel);
-    }
-    else if((pMe->m_nCursorPos%xNum == 0) && (pMe->m_nCursorPos/xNum == 0))
-    {
-        yPos = dy - BOTTOMBAR_HEIGHT - (1 + pMe->m_nCursorPos/xNum)*(25 + Line_Pixel);
-    }
-    else
-    {
-        yPos = dy - BOTTOMBAR_HEIGHT - (1 + pMe->m_nCursorPos/xNum)*(25 + Line_Pixel);
-    }
-    if(pMe->m_nCursorPos >= xNum*yNum)
-    {
-        yPos = dy - BOTTOMBAR_HEIGHT - yNum*(25 + Line_Pixel);
-    }
-    if(pMe->m_nCursorPos != 0 &&
-        pMe->m_nCursorPos == WSTRLEN(pMe->m_DialString) &&
-        pMe->m_nCursorPos%xNum == 0)
-    {
-        //xPos = 2;
-        if(pMe->m_nCursorPos < xNum*yNum)
-        {
-            yPos += (25 + Line_Pixel);
-        }
-    }
-    */
-    
-	//SETAEERECT(pRect, xPos, yPos, 4, 25);
+    SETAEERECT(pRect, x, y, 1, pMe->m_nCurrNumHeight);
 #endif
 }
 
@@ -10645,16 +10329,8 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 ==============================================================================*/
 static void CallApp_Draw_Cursor(CCallApp* pMe, AEERect *pRect)
 {
-    AEERect rect = {0};
-    RGBVAL  nCursorColor = MAKE_RGB(0xE6, 0xE6, 0xE6);
-    SETAEERECT(&rect, pRect->x, pRect->y, pRect->dx, 1);
-    IDISPLAY_FillRect(pMe->m_pDisplay, &rect, nCursorColor);
-    SETAEERECT(&rect, pRect->x+1, pRect->y+1, 2, pRect->dy-2);
-    IDISPLAY_FillRect(pMe->m_pDisplay, &rect, nCursorColor);
-    SETAEERECT(&rect, pRect->x, pRect->y+pRect->dy-1, pRect->dx, 1);
-    IDISPLAY_FillRect(pMe->m_pDisplay, &rect, nCursorColor);
+    IDISPLAY_InvertRect(pMe->m_pDisplay, pRect);
 }
-
 
 /*==============================================================================
 函数：
