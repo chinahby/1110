@@ -23,6 +23,9 @@
 #include "AEEShell.h"
 #include "AEE_OEM.h"
 
+
+
+
 #define __RBMP_PURE_MEMORY_VERSION__
 
 #define SCREENWIDTH (512)
@@ -59,6 +62,32 @@ static int ArphicMeasureNChars(const AECHAR *pcText, int nChars);
 static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText, int nChars, 
                                                         const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags);
 #endif
+#ifdef FEATURE_LANG_THAI
+//#define TONE_UP_START 0xE000
+//#define TONE_START    0x0e48
+//#define TONE_VOWEL_WIDTH        6
+#define TOP_VOWEL_WIDTH         6
+#define BOTTOM_VOWEL_WIDTH      5
+#define TONE_WIDTH              6
+
+#define AROUND_VOWEL_OFFSET     4
+#define CHAR_NORMAL             0
+//#define CHAR_TONE_VOWEL         1
+#define CHAR_TOP_VOWEL          1
+#define CHAR_BOTTOM_VOWEL       2
+#define CHAR_TONE               3
+
+#define CHAR_AROUND_VOWEL       2
+
+#define BOTTOM_CON_OFFSET       79
+
+static boolean isThaiFont(uint32 ch);
+static boolean isTopVowel(uint32 ch);
+static boolean isBottomVowel(uint32 ch);
+static boolean isBottomConsonant(uint32 ch);
+static boolean isTone(uint32 ch);
+static boolean isAroundVowel(uint32 ch);
+#endif  // FEATURE_LANG_THAI
 
 //#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"systemfont.gvf"
 
@@ -358,6 +387,13 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     int bmp_offset;
     GB_Bitmap charBmp;
     int16 foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
+	#ifdef FEATURE_LANG_THAI
+    uint32  prechar      = 0;
+    uint32  postchar     = 0;
+    uint8   ThaiSpecChar = CHAR_NORMAL;
+    boolean bOriTransparency = bTransparency;
+    
+	#endif // FEATURE_LANG_THAI
     bmp_offset = sy * nPitch;
     
     cText = (word)(clrText & 0xFFFF);
@@ -383,6 +419,48 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         }
         
 	    ch = pcText[i];
+		#ifdef FEATURE_LANG_THAI
+        postchar = pcText[i+1];
+        if (isAroundVowel(ch))   // 包元音
+        {
+            x -= AROUND_VOWEL_OFFSET;
+            ThaiSpecChar = CHAR_AROUND_VOWEL;
+        }
+        
+        else if (isTopVowel(ch))   // 上元音，准上元音
+        {
+            x -= TOP_VOWEL_WIDTH;
+            ThaiSpecChar = CHAR_TOP_VOWEL;
+        }
+        
+        else if ( isBottomConsonant(ch) )
+        {
+            if ( isBottomVowel(postchar) )
+            {
+                ch = ch + BOTTOM_CON_OFFSET;
+            }
+        }
+        
+        else if (isBottomVowel(ch))   //下元音
+        {
+            x -= BOTTOM_VOWEL_WIDTH;
+            ThaiSpecChar = CHAR_BOTTOM_VOWEL;
+        }
+        
+        else if (isTone(ch))  //音调
+        {
+            x -= TONE_WIDTH;
+            ThaiSpecChar = CHAR_TONE;
+
+        }
+        if ( isThaiFont (ch) )
+        {
+            bTransparency = TRUE;
+        }
+        prechar = ch;
+
+
+#endif  // FEATURE_LANG_THAI   
 		if(ch < ' ') continue;
 		
 		if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch, &charBmp))
@@ -418,7 +496,12 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         
         pFontData = charBmp->buffer + oy * bytes_per_row;
         dp = dpBase = (word*)(pBmp + bmp_offset + (x<<1));
-        
+        #ifdef FEATURE_LANG_THAI
+        if (isBottomVowel(ch))   //下元音
+        {
+            dp = dpBase = dp + nPitch;
+        }
+		#endif //#ifdef FEATURE_LANG_THAI
         y1 = dy;
         if (bTransparency){
             while (y1--){
@@ -481,7 +564,30 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
             }
         }
         
- 
+ #ifdef FEATURE_LANG_THAI
+        bTransparency = bOriTransparency;
+        if(CHAR_TOP_VOWEL == ThaiSpecChar)
+        {
+            ThaiSpecChar = CHAR_NORMAL;
+            x += 1; // the width is 4, and now I subtract 6, so it offset 2 here.
+        }
+        else if(CHAR_BOTTOM_VOWEL == ThaiSpecChar)
+        {
+            ThaiSpecChar = CHAR_NORMAL;
+            //x += 1;
+        }
+        else if(CHAR_TONE == ThaiSpecChar)
+        {
+            ThaiSpecChar = CHAR_NORMAL;
+            x += 1;
+        }
+        else if(CHAR_AROUND_VOWEL == ThaiSpecChar)
+        {
+            ThaiSpecChar = CHAR_NORMAL;
+            dispWidth += xWidth - AROUND_VOWEL_OFFSET;
+        }
+        else
+#endif // FEATURE_LANG_THAI
  	  dispWidth += xWidth;
        x += xWidth;
     }
@@ -898,6 +1004,18 @@ static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int
         }
         
 	    nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch);
+		#ifdef FEATURE_LANG_THAI
+        if (isAroundVowel(ch))   // 包元音
+        {
+            nTotalWidth = nTotalWidth - AROUND_VOWEL_OFFSET;// - 1;
+        }
+        
+        else if (isTone(ch) ||isTopVowel(ch) ||isBottomVowel(ch) )   // 上元音，准上元音
+        {
+            nTotalWidth = nTotalWidth - GreyBitType_Layout_GetWidth(pMe->pLayout, ch) - 1;
+        }
+
+		#endif //#ifdef FEATURE_LANG_THAI
         if (nTotalWidth >= nMaxWidth)
         {
             nTotalWidth = nMaxWidth;
@@ -1289,4 +1407,55 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe,  int x, const AECHAR *pcText
 }
 
 #endif // FEATURE_ARPHIC_LAYOUT_ENGINE
+#ifdef FEATURE_LANG_THAI
+
+boolean isThaiFont(uint32 ch)
+{
+    if (ch >= 0x0E01 && ch <= 0x0E5B)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+boolean isTopVowel(uint32 ch)
+{
+    if (ch == 0x0E31 || ch == 0x0E34 || ch == 0x0E35 || ch == 0x0E36 || ch == 0x0E37   //上元音
+     || ch == 0x0E47 || ch == 0x0E4c)   //准上元音 
+        return TRUE;
+    else
+        return FALSE;
+}
+
+boolean isBottomVowel(uint32 ch)
+{
+    if (ch == 0x0E38 || ch == 0x0E39)   //下元音
+        return TRUE;
+    else
+        return FALSE;
+}
+
+boolean isBottomConsonant(uint32 ch)
+{
+    if (ch == 0x0E0D || ch == 0x0E0E || ch == 0x0E0F || ch == 0x0E10 ) 
+        return TRUE;
+    else
+        return FALSE;
+}
+
+boolean isTone(uint32 ch)
+{
+    if (ch == 0x0E48 || ch == 0x0E49 || ch == 0x0E4a || ch == 0x0E4b)  //音调
+        return TRUE;
+    else
+        return FALSE;
+}
+
+boolean isAroundVowel(uint32 ch)
+{
+    if (ch == 0x0E33)  //包元音
+        return TRUE;
+    else
+        return FALSE;
+}
+#endif  // FEATURE_LANG_THAI
 
