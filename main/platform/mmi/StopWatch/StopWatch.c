@@ -512,7 +512,6 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
             return TRUE;
 
         case EVT_APP_STOP:
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH
 #if defined (FEATURE_CARRIER_THAILAND_HUTCH) || defined (FEATURE_CARRIER_SUDAN_SUDATEL)
             StopWatch_Reset(pme);  
             ISHELL_CloseApplet(pme->a.m_pIShell, FALSE);
@@ -553,7 +552,6 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
                                 ISHELL_CloseApplet(pme->a.m_pIShell, FALSE);
                                 return TRUE;
                             }*/
-        //#ifdef FEATURE_CARRIER_THAILAND_HUTCH
 #if defined (FEATURE_CARRIER_THAILAND_HUTCH) || defined (FEATURE_CARRIER_SUDAN_SUDATEL)                    
                             StopWatch_Reset(pme);  
                             ISHELL_CloseApplet(pme->a.m_pIShell, FALSE);

@@ -10148,7 +10148,6 @@ static boolean  CContApp_HandleSettingDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_VIEWTYPE);
                     return TRUE;
                     
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
                 case IDI_SETTING_MENU_COPYMOVE:
                     CLOSE_DIALOG(DLGRET_COPY);
                     return TRUE;
@@ -10156,7 +10155,6 @@ static boolean  CContApp_HandleSettingDlgEvent( CContApp  *pMe,
                 case IDI_SETTING_MENU_MEMORY:
                     CLOSE_DIALOG(DLGRET_CHECKCAPACITY);
                     return TRUE;                    
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
                 
                 default:
                     break;
