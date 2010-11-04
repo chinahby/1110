@@ -1686,11 +1686,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     {
                         break;
                     }
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH                        
-                    (void) ISHELL_SetTimer(pMe->a.m_pIShell,500, CCharger_EnableICONCB, (void *) pMe);
-#else
                     (void) ISHELL_SetTimer(pMe->a.m_pIShell,1000, CCharger_EnableICONCB, (void *) pMe);
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
                     break;
                 }
 
@@ -2228,11 +2224,7 @@ static void CCharger_EnableICONCB(void *pUser)
         
         nBattState = CoreApp_ConvertBattLvToAnnunState(BattLevel);
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH           
-        (void) ISHELL_SetTimer(pMe->a.m_pIShell, 500, CCharger_EnableICONCB, (void *) pMe);
-#else
         (void) ISHELL_SetTimer(pMe->a.m_pIShell, 1000, CCharger_EnableICONCB, (void *) pMe);
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
     }
     else
     {   //及时更新停止充电时的电池level显示

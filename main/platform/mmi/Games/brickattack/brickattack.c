@@ -559,13 +559,7 @@ static boolean Brick_HandleEvent(IApplet *po,
       }
 
    case EVT_APP_START:
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
       Brick_Stop(pme, pme->m_st.nState);
-#else
-	  //modi by yangdecai 2010-08-09
-      //(void) ISHELL_ShowCopyright(pme->a.m_pIShell);
-      Brick_Stop(pme, pme->m_st.nState);
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
       return TRUE;
 
    case EVT_APP_STOP:

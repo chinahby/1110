@@ -2681,23 +2681,7 @@ void OEM_RestoreFactorySetting( void )
    nvi.back_light_hfk = OEMNV_EXTPWR_BL_ON;
    (void) OEMNV_Put( NV_BACK_LIGHT_HFK_I, &nvi );
    nvi_cache.backlight_hfk = OEMNV_EXTPWR_BL_ON;
-
-#if defined(FEATURE_CARRIER_THAILAND_CAT)
-   // CFGI_RINGER_VOL:
-   nvi.ringer_level = OEMNV_VOLUME_MAX;
-   (void) OEMNV_Put( NV_RINGER_LVL_I, &nvi );
-   nvi_cache.ringer_level = OEMNV_VOLUME_ESCALATING;
-
-   // CFGI_EAR_VOL:
-   nvi.ear_level = OEMNV_VOLUME_MAX;
-   (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
-   nvi_cache.handset_ear_level = OEMNV_VOLUME_ESCALATING;
-
-   // CFGI_BEEP_VOL:
-   nvi.beep_level = OEMNV_VOLUME_MAX;
-   (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
-   nvi_cache.beep_level = OEMNV_VOLUME_MAX;
-#else
+   
    // CFGI_RINGER_VOL:
    nvi.ringer_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_RINGER_LVL_I, &nvi );
@@ -2712,7 +2696,6 @@ void OEM_RestoreFactorySetting( void )
    nvi.beep_level = OEMNV_VOLUME_LOW;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
    nvi_cache.beep_level = OEMNV_VOLUME_LOW;
-#endif //defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
 
 #ifdef FEATURE_SMART_SOUND
    // CFGI_SMART_SOUND:

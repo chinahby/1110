@@ -3998,12 +3998,10 @@ int CContApp_CopyToRUIM(CContApp *pMe, uint16 wContID)
     IADDRREC_Release(pAddrRec);
     pAddrRec = NULL; 
     
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
     if (SINGLEMOVE == pMe->m_nCopyMoveType)
     {
         CContApp_DeleteCont(pMe, wContID);
-    }     
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
+    }
 //    (void)CContApp_LoadRUIMCont( pMe, pMe->m_wFindFldID, pMe->m_pFindData);
     return SUCCESS;
     
@@ -4097,13 +4095,10 @@ int CContApp_CopyToPhone(CContApp *pMe, uint16 wContID)
     IADDRREC_Release(pAddrRec);
     pAddrRec = NULL; 
     
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
     if (SINGLEMOVE == pMe->m_nCopyMoveType)
     {
         CContApp_DeleteCont(pMe, wContID + CONTAPP_RUIM_START_IDX -1);
-    }     
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
-
+    }
     return SUCCESS;
 }// CContApp_CopyToRUIM
 

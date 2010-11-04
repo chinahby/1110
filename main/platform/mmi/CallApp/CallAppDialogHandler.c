@@ -4677,16 +4677,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                                     CALL_LINE_HIGHT);
 			
             IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH                     
-            (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                                    AEE_FONT_NORMAL,
-                                                    szText,
-                                                    -1,          
-                                                    CALL_NAME_X+8,                                                 
-                                                    CALL_SECOND_LINE_Y,
-                                                    &rc,
-                                                    IDF_TEXT_TRANSPARENT);
-#else
+            
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                                     AEE_FONT_NORMAL,
                                                     szText,
@@ -4695,16 +4686,10 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                                     CALL_THIRD_LINE_Y, //CALL_SECOND_LINE_Y,
                                                     &rc,
 
-                                                    IDF_TEXT_TRANSPARENT);
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH		
+                                                    IDF_TEXT_TRANSPARENT);	
             IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
-            //drawBottomBar(pMe->m_pDisplay,AEE_FONT_NORMAL,BTBAR_OK_CANCEL);
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
-            REFUI_DRAW_BOTTOMBAR(BTBAR_OK_BACK);
-#else
             REFUI_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH		
             
             // add Missing call icon
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -5131,11 +5116,7 @@ static void CallApp_MakeSpeedDialCall(CCallApp  *pMe)
     {
         //If it valid speed dial number but it is empty
         //then show the message
- #ifdef FEATURE_CARRIER_THAILAND_HUTCH
-        if(WSTRLEN(pMe->m_DialString) >= 2)
-  #else
-       if(WSTRLEN(pMe->m_DialString) >= 3)
-  #endif
+        if(WSTRLEN(pMe->m_DialString) >= 3)
         {
             MAKE_CALL_VALUE ret;
             ret = CallApp_MakeCall(pMe);

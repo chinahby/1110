@@ -956,10 +956,8 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
         case EVT_KEY:
             switch(wParam)
             {
-                case AVK_CLR:
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH                      
+                case AVK_CLR:                   
                     pMe->m_sSubDlgId = 0;
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
 

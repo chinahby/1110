@@ -762,13 +762,7 @@ typedef enum {
 
 #define MAX_FMRADIO_VOLUME  15
 #define MAX_FMRADIO_NAME_CHAR 16
-
-#if defined( FEATURE_CARRIER_THAILAND_HUTCH)
 #define MAX_FMRADIO_STORED_CHANNEL 40
-#else
-#define MAX_FMRADIO_STORED_CHANNEL 40
-#endif
-
 #define MAS_BREWSETINT_STRING    64
 
 typedef PACKED struct _sChanInfo

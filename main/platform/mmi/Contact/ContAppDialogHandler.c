@@ -1095,16 +1095,7 @@ int CContApp_LoadByCat(CContApp *pMe, AEEAddrCat wCategory)
             pMe->m_wFindFldID = AEE_ADDRFIELD_NONE;
             FREEIF(pMe->m_pFindData);
             pMe->m_pFindData  = NULL;
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH    
             return CContApp_LoadPhoneBook(pMe, pMe->m_nViewType); 
-/*#else
-            // Load RUIM record
-            return CContApp_LoadSingleStoreCont(pMe,
-                                                pMe->m_wFindCat,
-                                                pMe->m_wFindFldID,
-                                                pMe->m_pFindData,
-                                                ADDR_STORE_DBFILE);
-#endif*/ //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
         }
         else 
         {
@@ -4768,12 +4759,7 @@ static boolean  CContApp_HandleYesNoDlgEvent( CContApp  *pMe,
                 PromptMsg_Param_type  Msg_Param={0};                                
                 Msg_Param.ePMsgType = MESSAGE_CONFIRM;
                 Msg_Param.pwszMsg = pMe->m_pMsgBox_Msg;
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH              
                 Msg_Param.eBBarType = BTBAR_OK_BACK;
-//#else
-//                Msg_Param.eBBarType = BTBAR_OK_CANCEL;
-//#endif            
-            //    Msg_Param.eBBarType = BTBAR_OK_CANCEL;
                 DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
             }
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -5603,7 +5589,6 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                         }
                         else if(IS_NUM_FIELD(pMe->m_nFldInputID)) */
                         
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH                            
                         if(AEE_ADDRFIELD_EMAIL == pMe->m_nFldInputID)
                         {
                             int len;
@@ -5627,7 +5612,6 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                                return TRUE;
                             }
                         }
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
     
                         if(IS_NUM_FIELD(pMe->m_nFldInputID))
                         {
@@ -7730,9 +7714,7 @@ static boolean  CContApp_HandleGroupDlgEvent( CContApp  *pMe,
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
 #endif
 
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH    
             CContApp_BuildGroupMenu(pMe, pMenuCtl);
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
     
             // Set menu select
             //(void)CContApp_SetGroupMenuSel(pMe, pMenuCtl);
@@ -8250,18 +8232,8 @@ static boolean  CContApp_HandleCopyMoveDlgEvent( CContApp  *pMe,
                     return TRUE;
                     
                 case IDI_COPYMOVE_MENU_COPY:
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH                        
-                    pMe->m_nCopyMoveType = COPYMULTIPE; 
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
                     CLOSE_DIALOG(DLGRET_COPY);
                     return TRUE;
-                    
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH  
-                case IDI_COPYMOVE_MENU_MOVE:
-                    pMe->m_nCopyMoveType = MOVEMULTIPE;
-                    CLOSE_DIALOG(DLGRET_COPY);
-                    return TRUE;
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
       */
                 default:
                     break;
@@ -9314,12 +9286,7 @@ static boolean  CContApp_HandleCapacityDlgEvent( CContApp  *pMe,
 				#endif
             }
             // Draw prompt bar here
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH              
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);
-//#else
-//            CONTAPP_DRAW_BOTTOMBAR(BTBAR_CANCEL);
-//#endif
-
             IDISPLAY_Update(pMe->m_pDisplay);
             IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_BACKGROUND, scrollbarFillColor);
             IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);

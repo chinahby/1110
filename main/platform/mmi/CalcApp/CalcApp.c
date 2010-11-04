@@ -1304,11 +1304,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     break;
 
                 case AVK_POUND:
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
                     Calc_Reset( pme);
-#else
-                    Calc_Reset( pme);
-#endif //FEATURE_CARRIER_THAILAND_HUTCH
                     break;
             } //switch (wParam)
 
