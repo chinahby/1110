@@ -4136,7 +4136,7 @@ static boolean Menu_Draw(CMenuCtl * pme)
    CMenuItem * p = NULL;
    IDisplay *  pd = pme->m_pIDisplay;
 #ifdef FEATURE_RANDOM_MENU_COLOR
-   byte nOldRandMenu = pme->m_nRandomMenu;//added by chengxiao 2009.02.19
+   byte nOldRandMenu = pme->m_nRandomMenu;
 #endif
 #ifdef FEATURE_RANDOM_MENU_COLOR
    if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL)  &&

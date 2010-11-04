@@ -247,7 +247,7 @@ QINTERFACE(ITextCtl)
 #ifdef CUST_EDITION	   
    boolean           (*GetInfo)(ITextCtl *po, uint32 type, uint32 * pvoid);
    int32             (*GetT9End)(ITextCtl *po);
-   void              (*SetBackGround)(ITextCtl *po, char *pstrImgResFile, uint16 nImgResID);//added by chengxiao 2009.04.08
+   void              (*SetBackGround)(ITextCtl *po, char *pstrImgResFile, uint16 nImgResID);
 #endif /*CUST_EDITION*/
 };
 
@@ -288,7 +288,7 @@ QINTERFACE(ITextCtl)
 #ifdef CUST_EDITION	
 #define ITEXTCTL_GetInfo(p,type,pvoid)                GET_PVTBL((p),ITextCtl)->GetInfo((p),(type),(pvoid))
 #define ITEXTCTL_GetT9End(p)                          GET_PVTBL((p),ITextCtl)->GetT9End((p))
-#define ITEXTCTL_SetBackGround(p,s,n)            GET_PVTBL((p),ITextCtl)->SetBackGround(p, s, n) //added by chengxiao 2009.04.08
+#define ITEXTCTL_SetBackGround(p,s,n)            GET_PVTBL((p),ITextCtl)->SetBackGround(p, s, n)
 #endif /*CUST_EDITION*/
 
 #endif    // AEETEXT_H

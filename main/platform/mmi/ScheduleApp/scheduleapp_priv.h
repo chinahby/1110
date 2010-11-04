@@ -68,7 +68,7 @@
 #define     HEIGHT_PROMPT_BAR   BOTTOMBAR_HEIGHT
 
 #ifdef FEATURE_DRAW_LUNAR_CALENDAR
-#define     LUNAR_RECT_HEIGHT              14  //added by chengxiao 2009.03.04
+#define     LUNAR_RECT_HEIGHT              14
 #endif
 
 #define     MAX_INPUT_SUBJECT               20

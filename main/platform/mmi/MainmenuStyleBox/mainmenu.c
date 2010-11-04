@@ -1439,7 +1439,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                         IBITMAP_CreateCompatibleBitmap(pTempBmp, &pMe->m_pDevImage, pMe->m_rc.dx, pMe->m_rc.dy);
                     }
                     IBITMAP_BltIn(pMe->m_pDevImage, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy, pTempBmp, 0, 0, AEE_RO_COPY);
-                    IBITMAP_Release(pTempBmp); //added by chengxiao 2009.04.20
+                    IBITMAP_Release(pTempBmp);
                 }
             }
 #endif
@@ -1656,7 +1656,6 @@ static void calculateScreenParameters(MainMenu *pMe)
     imageInfoIcon.cx = ICON_WIDTH;
     imageInfoIcon.cy = ICON_HEIGHT;
 
-    //modified by chengxiao 2009.04.02
     /* icon size in all might be larger than screen*/
 #ifdef FEATURE_VERSION_H19C   
     iconSpaceHorizontal = 12;
@@ -1680,7 +1679,6 @@ static void calculateScreenParameters(MainMenu *pMe)
         iconSpaceVertical = 0;
     }
 #endif
-    //chengxiao modify end 2009.04.02
     for( i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
         pMe->m_Icondefault_Pt[i].x = iconSpaceHorizontal +
@@ -1692,7 +1690,6 @@ static void calculateScreenParameters(MainMenu *pMe)
 //        pMe->m_Icondefault_Pt[i].y = TITLEBAR_HEIGHT + STATEBAR_HEIGHT + iconSpaceVertical +
 //            ( imageInfoIcon.cy + iconSpaceVertical) * ( i / MAX_MATRIX_COLS);
 //#endif
-        //added by chengxiao 2009.04.02
         //计算焦点图片的坐标
         pMe->m_IconFocus_Pt[i].x = pMe->m_Icondefault_Pt[i].x - (ICON_ANIMATED_WIDTH - imageInfoIcon.cx)/2;
 
@@ -1742,7 +1739,7 @@ static void DrawMatrix(MainMenu *pMe)
         return;
     }
     //draw bg image
-    MainMenu_DrawBackGround(pMe, &pMe->m_rc); //modified by chengxiao 2009.04.10
+    MainMenu_DrawBackGround(pMe, &pMe->m_rc);
 #ifndef FEATURE_VERSION_H19C  
     //Draw icon
     for (i = 0; i < MAX_MATRIX_ITEMS; i ++)

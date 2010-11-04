@@ -759,7 +759,7 @@ int Appscomm_is_incoming_state(int bb);
 备注:
        
 ==============================================================================*/
-boolean Appscommon_DrawDialogBoxFrame(AEERect *pBoxRect, boolean bUpward, RGBVAL nFrameColor, RGBVAL nBgColor);//added by  chengxiao 2009.02.16
+boolean Appscommon_DrawDialogBoxFrame(AEERect *pBoxRect, boolean bUpward, RGBVAL nFrameColor, RGBVAL nBgColor);
 
 /*==============================================================================
 函数: 
@@ -784,7 +784,7 @@ boolean Appscommon_DrawDialogBoxFrame(AEERect *pBoxRect, boolean bUpward, RGBVAL
     menu最低一条可显示的起始坐标， 不符的将自动调整。
        
 ==============================================================================*/
-boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR *strDisplay);//added by  chengxiao 2008.10.31
+boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR *strDisplay);
 
 /*==============================================================================
 函数: 
@@ -807,7 +807,7 @@ boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR 
 备注:
        
 ==============================================================================*/
-boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineWidth, AEERect *fontRect, RGBVAL fontColor);//added by chengxiao 2008.12.05
+boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineWidth, AEERect *fontRect, RGBVAL fontColor);
 
 
 /*=============================================================================
@@ -946,7 +946,6 @@ PARAMETERS:
 AECHAR CNLetter2Alpha(AECHAR letter);
 
 #endif
-//added by chengxiao 2009.02.19
 /*==============================================================================
 函数: 
     Appscommon_GetRandomColor

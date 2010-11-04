@@ -1025,7 +1025,7 @@ static __inline boolean ISHELL_SendURL( IShell *pShell, const char *pszURL )
 #define ST_DISPLATSMS         0x20000000  // Current static text control used for displaying sms
 #define ST_TRANSPARENTBACK    0x40000000  // set static text background transparent, liubin 2008.10.23
 #define ST_TRANSPARENT        0x80000000  // Transparent Text
-#define ST_GRAPHIC_BG        0x00000010  // use graphic background //added by chengxiao 2009.03.25
+#define ST_GRAPHIC_BG        0x00000010  // use graphic background
 #endif /*CUST_EDITION*/
 QINTERFACE(IStatic)
 {
@@ -1071,8 +1071,8 @@ QINTERFACE(IStatic)
 #define ISTATIC_IsScrollable(p)                      GET_PVTBL(p,IStatic)->IsScrollable(p)
 
 #ifdef CUST_EDITION	 
-#define ISTATIC_SetBackGround(p,s,n)          GET_PVTBL(p,IStatic)->SetBackGround(p, s, n) //added by chengxiao 2009.03.30
-#define ISTATIC_SetFontColor(p,n)                GET_PVTBL(p,IStatic)->SetFontColor(p, n)  //added by chengxiao 2009.04.16
+#define ISTATIC_SetBackGround(p,s,n)          GET_PVTBL(p,IStatic)->SetBackGround(p, s, n)
+#define ISTATIC_SetFontColor(p,n)                GET_PVTBL(p,IStatic)->SetFontColor(p, n)
 #endif /*CUST_EDITION*/ 
 
 #endif    // AEESHELL_H

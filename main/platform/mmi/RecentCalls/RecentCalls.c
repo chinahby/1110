@@ -85,7 +85,7 @@ static boolean recentcalls_HandleEvent(IRecentCalls *pi,
 
 static void    recentcalls_SendList (IRecentCalls *pi);
 
-static void    recentcalls_CallList (IRecentCalls *pi, PFNSELECTEDRECENTCALLSCB cb, SelectRecordType type);//modified by chengxiao 2009.02.19
+static void    recentcalls_CallList (IRecentCalls *pi, PFNSELECTEDRECENTCALLSCB cb, SelectRecordType type);
 
 static void    recentcalls_MissedList (IRecentCalls *pi);
 
@@ -535,7 +535,7 @@ recentcalls_RecentCallList
 ±¸×¢£º:
 
 ==============================================================================*/
-static void  recentcalls_CallList (IRecentCalls *pi, PFNSELECTEDRECENTCALLSCB cb, SelectRecordType type)//modified by chengxiao 2009.02.19
+static void  recentcalls_CallList (IRecentCalls *pi, PFNSELECTEDRECENTCALLSCB cb, SelectRecordType type)
 {
    CRecentCalls *pMe = (CRecentCalls*)pi;
    char     *args;

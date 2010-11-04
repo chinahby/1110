@@ -1280,7 +1280,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     if(!pMe->m_bShowPopMenu)
                     {
 #ifdef FEATURE_EDITABLE_NUMBER
-                        ISHELL_CancelTimer(pMe->m_pShell, CallApp_Set_Cursor_Blink, pMe);//added by chengxiao 2009.03.16
+                        ISHELL_CancelTimer(pMe->m_pShell, CallApp_Set_Cursor_Blink, pMe);
 #endif
                         CallApp_Build_NumEdit_Option_Menu ( pMe,pMe->m_pMenu );
                         pMe->m_bShowPopMenu = TRUE;
@@ -4682,7 +4682,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                                     AEE_FONT_NORMAL,
                                                     szText,
                                                     -1,
-                                                    10, //CALL_NUM_X, //CALL_TEXT_X, //modfied by chengxiao 2009.01.20                                                
+                                                    10, //CALL_NUM_X, //CALL_TEXT_X,
                                                     CALL_THIRD_LINE_Y, //CALL_SECOND_LINE_Y,
                                                     &rc,
 

@@ -322,7 +322,7 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
 //            IMENUCTL_SetProperties( pMenuAlarmList, IMENUCTL_GetProperties( pMenuAlarmList) | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties( pMenuAlarmList, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY |OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuAlarmList, AEE_APPSCOMMONRES_IMAGESFILE, IDI_ALARM_BACKGROUND); //added by chengxiao 2009.03.23
+            IMENUCTL_SetBackGround(pMenuAlarmList, AEE_APPSCOMMONRES_IMAGESFILE, IDI_ALARM_BACKGROUND);
 #endif
             //IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_OPTION_BACK);
             return TRUE;

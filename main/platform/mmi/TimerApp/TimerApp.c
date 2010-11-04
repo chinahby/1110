@@ -350,7 +350,7 @@ static boolean InitAppTimer(CAppTimer *pme)
     //if(pme->m_pmenu)
     //{
         /*»æÖÆÈí¼üÀ¸*/
-        /*SETAEERECT( &rect, 0, pme->cyScreen - BOTTOMBAR_HEIGHT,  pme->cxScreen, BOTTOMBAR_HEIGHT); //modified by chengxiao 2009.02.24
+        /*SETAEERECT( &rect, 0, pme->cyScreen - BOTTOMBAR_HEIGHT,  pme->cxScreen, BOTTOMBAR_HEIGHT);
         IMENUCTL_SetRect(pme->m_pmenu, &rect);
         
         IMENUCTL_SetProperties( pme->m_pmenu, MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -1099,7 +1099,6 @@ SEE ALSO:
 =============================================================================*/
 static void AppTimer_Redraw(CAppTimer *pme)
 {
-    //modified by chengxiao 2009.02.27
     TitleBar_Param_type  TBarParam = {0};
     BottomBar_Param_type  BBarParam ={0};
     AECHAR                   wszTitle[16] = {0};

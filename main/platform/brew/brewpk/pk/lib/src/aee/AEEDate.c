@@ -1669,7 +1669,7 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
    SETAEERECT(&rectTitle, pme->m_rc.x+4, pme->m_rc.y+3, pme->m_rc.dx-7, pme->m_nFontLineHeight);
    drawImage(pme, AEE_APPSCOMMONRES_IMAGESFILE, IDI_DATE_BAR, pme->m_rc.x, pme->m_rc.y);
 #endif
-    nOldFontColor = IDISPLAY_SetColor( pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE); //modified by chengxiao 2009.04.16
+    nOldFontColor = IDISPLAY_SetColor( pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
    
    // display the day-of-week string in the top left of screen
 
@@ -1708,7 +1708,7 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
 #endif
 }
 
-    (void)IDISPLAY_SetColor( pme->m_pIDisplay, CLR_USER_TEXT, nOldFontColor/*RGB_BLACK*/); //modified by chengxiao 2009.04.16
+    (void)IDISPLAY_SetColor( pme->m_pIDisplay, CLR_USER_TEXT, nOldFontColor/*RGB_BLACK*/);
 }
 #else
 /*==================================================================
@@ -2378,7 +2378,7 @@ static void DateCtl_DrawDayEx(DateCtl * pme, int nDay, AEERect * prc)
                 AEERect rc = { 0 };
 
                 SETAEERECT( &rc, prc->x, prc->y + prc->dy, prc->dx, 1);   //modi by yangdecai 2010.06.15
-                IDISPLAY_FillRect(pme->m_pIDisplay, &rc, DATECTL_UNDELINE_COLOR);//modifed by chengxiao 2009.03.19
+                IDISPLAY_FillRect(pme->m_pIDisplay, &rc, DATECTL_UNDELINE_COLOR);
             }
         }
         IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, preclr);

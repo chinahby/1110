@@ -1154,7 +1154,6 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
         case EVT_USER_REDRAW:
             // 绘制相关信息
             {
-                //chengxiao 2008.10.17
                 AECHAR  text[32] = {0};
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
@@ -1286,7 +1285,6 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
                         
                     case AVK_SELECT:
                     case AVK_INFO:
-                        //added by chengxiao 2009.02.16
                         if (pme->m_strPhonePWD == NULL || STRLEN(pme->m_strPhonePWD) < 4)
                         {
                             return TRUE;
@@ -4362,7 +4360,6 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
                 // draw scroll bar
                 if( itemNumberPerPage < itemNumber)
                 {
-                    //modified by chengxiao 2009.03.03
 #ifdef FEATURE_SCROLLBAR_USE_STYLE
                     RGBVAL  ScrollbarClr = MAKE_RGB(0xDE, 0xDE, 0xDE),
                                 ScrollbarFillClr = MAKE_RGB(0xFF, 0x70, 0x00);
@@ -4731,7 +4728,7 @@ static boolean dialog_handler_of_state_viewday(CScheduleApp *pme, AEEEvent eCode
             IMENUCTL_SetRect(pMenu, &pme->m_rc);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SCHEDULE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SCHEDULE_BACKGROUND);
 #endif
             {
                 int     i           = 0;
@@ -6200,7 +6197,7 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
             scrollbarFillColor  =   themeParms.themeColor;
             scrollbarFillColor = IDISPLAY_SetColor( pme->m_pDisplay, CLR_SYS_SCROLLBAR_FILL, scrollbarFillColor);
 #else
-            nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE); //added by chengxiao 2009.03.05
+            nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
 #endif
 
             ISTATIC_Redraw( pStatic);

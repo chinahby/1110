@@ -3365,7 +3365,6 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
 
    pszSym = szBuff + (nPage * 9);
 
-   //added by chengxiao 2009.03.31
    if(pme->m_dwProps & TP_GRAPHIC_BG)
    {
         nOldFontColor = TEXT_GRAPHIC_FONT_COLOR;
@@ -3377,7 +3376,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
 
    nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, nOldFontColor);
    for(nRow = i = 0; nRow < 3; nRow++, y += cyAdd){
-      for(x = dm.cxScreen/10, nCol = 0; nCol < 3; nCol++, x += cxAdd, i++, pszSym++) //modified by chengxiao 2009.03.31
+      for(x = dm.cxScreen/10, nCol = 0; nCol < 3; nCol++, x += cxAdd, i++, pszSym++)
       {
 
    // See if we hit the end...
@@ -5710,7 +5709,6 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
 {
     if(pme->m_pImageBg == NULL)
     {
-        //modified by chengxiao 2009.04.08
         if(pme->m_nBgImgResID != 0 && STRLEN(pme->m_strBgImgResFile) != 0)
         {
             pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, pme->m_strBgImgResFile, pme->m_nBgImgResID);
@@ -5719,14 +5717,12 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
         {
             pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
         }
-        //chengxiao modify end 2009.04.08
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
     }
     Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pImageBg, APPSCOMMON_BG_COLOR, pRect, 0, 0);
 }
 //end added
 
-//added by chengxiao 2009.04.08
 static void CTextCtl_SetBackGround(ITextCtl * po, char *pstrImgResFile, uint16 nImgResID)
 {
     CTextCtl * pme = (CTextCtl *) po;

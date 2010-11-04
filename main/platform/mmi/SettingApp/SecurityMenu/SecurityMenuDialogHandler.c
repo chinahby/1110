@@ -403,7 +403,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             // 设定菜单控件的矩形位置及尺寸
@@ -570,7 +570,7 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SAVE_BACK);
             //检查sms 锁状态
@@ -717,7 +717,7 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             if(pMe->m_lock_sel == SEC_SEL_PHONE_LOCK)
@@ -1334,12 +1334,12 @@ static boolean  SecurityPinCheckDlgHandler(CSecurityMenu *pMe,
                 /*(void) ISHELL_SetTimer(pMe->m_pShell,
                                                  750,
                                                  CSecurtyMenu_DialogTimeout,
-                                                 pMe);*///deleted by chengxiao 2008.12.12
+                                                 pMe);*/
            }
            return TRUE;
         //自动返回上级对话框
         /*case EVT_DISPLAYDIALOGTIMEOUT:
-           CLOSE_DIALOG(DLGRET_CANCELED)*///deleted by chengxiao 2008.12.12
+           CLOSE_DIALOG(DLGRET_CANCELED)*/
 
         default:
             break;
@@ -2403,7 +2403,6 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
         case EVT_USER_REDRAW:
             // 绘制相关信息
             {
-                //chengxiao 2008.10.17
                 AECHAR  text[32] = {0};
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
@@ -3345,7 +3344,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-                                    MENUITEM_HEIGHT*5/2, //modified by chengxiao 2008.11.20
+                                    MENUITEM_HEIGHT*5/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
 
@@ -3504,7 +3503,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                                             CFGI_PHONE_PASSWORD,
                                                             &wData, 
                                                             sizeof(wData));
-                                //pMe->m_wMsgID = IDS_PHONE_PASSWORD_CHANGED;//deleted by chengxiao 2008.12.17
+                                //pMe->m_wMsgID = IDS_PHONE_PASSWORD_CHANGED;
                                 CLOSE_DIALOG(DLGRET_TOSHOWMSG)
                             }
 
@@ -3560,7 +3559,6 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
     return FALSE;
 }
 
-//added by chengxiao 2008.12.16
 /*==============================================================================
 函数：
        SecurityAskPUKPassWordHandler
@@ -4190,7 +4188,7 @@ static boolean  SecurityEmergencyCallHandler(CSecurityMenu *pMe,
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
 #endif
                 for(i=0; i<emerg_tab.emert_size; i++)
                 {
@@ -4395,7 +4393,6 @@ static boolean  HandleRestoreDialogEvent(CSecurityMenu *pMe,
 ==============================================================================*/
 static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
 {
-    //modified by chengxiao 2009.02.11
     //ICallList      *m_pCallList = NULL;uint32 value;
     //ICallHistory *pCallHistory = NULL;
     uint32        value;
@@ -4549,7 +4546,7 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 

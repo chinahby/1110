@@ -3329,7 +3329,7 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
     {
         if(pMe->m_pIAnn)
         {
-            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/); //modified by chengxiao 2009.01.05
+            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
         }
 
 #if defined FEATURE_CARRIER_TAIWAN_APBW            //zhuweisheng2008.7.2 modify tw waiting call ms receive caller event

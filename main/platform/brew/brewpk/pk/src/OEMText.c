@@ -753,7 +753,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
 
    // By default we have these settings until the API is enhanced
    pNewContext->font = AEE_FONT_NORMAL;
-   pNewContext->nFontLeading = TEXT_BETWEEN_LINE_PIXEL; // 0 pixels of leading between rows //modified by chengxiao 2009.03.23
+   pNewContext->nFontLeading = TEXT_BETWEEN_LINE_PIXEL; // 0 pixels of leading between rows
    curLngMode = LNG_ENGLISH;//OEM_Lang();  
    pNewContext->m_pImageBg = NULL;
 
