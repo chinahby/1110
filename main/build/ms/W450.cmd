@@ -5,7 +5,7 @@
 @set QUALCOMMNAME_BUILD=SXNAALZ
 @set RESOURCEDIR=common
 @set MODELVERSION=none
-@set HWVERSION=W450_MB_V0.3
+@set HWVERSION=W450_MB_V0.1
 
 rem delete some files for compile
 del %PROJECTNAME%\OEMConstFiles_Dynamic.c
