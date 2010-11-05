@@ -1,1 +1,0 @@
-./build/ms/bin/SBNAALZ/all.mbn

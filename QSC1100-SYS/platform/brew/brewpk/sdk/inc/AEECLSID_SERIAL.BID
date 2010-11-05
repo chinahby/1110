@@ -1,6 +1,0 @@
-#ifndef SERIAL_BID
-#define SERIAL_BID
-
-#define AEECLSID_SERIAL        0x01001042
-
-#endif //SERIAL_BID

@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-ISignalBus simulation
-
-ISignalBus is simulated.
-==========================
-*/ 

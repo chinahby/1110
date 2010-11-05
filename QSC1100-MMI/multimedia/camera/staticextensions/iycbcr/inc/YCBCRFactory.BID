@@ -1,7 +1,0 @@
-#ifndef YCBCRFACTORY_BID
-#define YCBCRFACTORY_BID
-
-#define AEECLSID_YCBCR       0x010392f0
-
-#endif   // YCBCRFACTORY_BID
-

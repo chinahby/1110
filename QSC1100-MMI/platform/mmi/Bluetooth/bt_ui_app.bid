@@ -1,6 +1,0 @@
-#ifndef BTUIAPP_BID
-#define BTUIAPP_BID
-
-#define AEECLSID_BTUIAPP        0x0100612a
-
-#endif //BTUIAPP_BID

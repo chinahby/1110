@@ -1,9 +1,0 @@
-/* 
-===========================
-Simulator Support DOCUMENTATION
-============================
-IBattery simulation
-IBattery is simumated. The battery state and levels are 
-controlled using the battery settings dialog.
-==========================  
-*/

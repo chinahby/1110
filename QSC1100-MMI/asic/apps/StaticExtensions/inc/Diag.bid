@@ -1,6 +1,0 @@
-#ifndef DIAG_BID
-#define DIAG_BID
-
-#define AEECLSID_DIAG    	0x0101de05
-
-#endif //DIAG_BID

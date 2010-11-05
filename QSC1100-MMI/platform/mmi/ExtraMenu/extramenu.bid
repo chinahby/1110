@@ -1,6 +1,0 @@
-#ifndef EXTRAMENU_BID
-#define EXTRAMENU_BID
-
-#define AEECLSID_EXTRAMENU        0x01006112
-
-#endif //EXTRAMENU_BID

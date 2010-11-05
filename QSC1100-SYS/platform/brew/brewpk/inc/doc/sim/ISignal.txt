@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-ISignal simulation
-
-ISignal is simulated.
-==========================
-*/ 

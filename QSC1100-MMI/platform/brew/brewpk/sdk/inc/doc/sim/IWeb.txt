@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IWeb simulation
-
-IWeb is simulated.
-==========================
-*/ 

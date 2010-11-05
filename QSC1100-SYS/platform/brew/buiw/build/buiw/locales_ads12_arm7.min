@@ -1,9 +1,0 @@
-
-# Locales extension as const files
-CONSTFILE_FILES+=\
-	locales.mod|fs:/mod/locales/locales.mod \
-	locales.mif|fs:/mif/locales.mif 
-	
-# ADS12ARM7	
-vpath %.mif $(BUIW)
-vpath %.mod $(BUIW)/locales/mod/ADS12_ARM7  

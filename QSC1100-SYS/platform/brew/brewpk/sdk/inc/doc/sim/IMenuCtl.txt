@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IMenuCtl simulation
-
-IMenuCtl is simulated.
-==========================
-*/ 

@@ -1,8 +1,0 @@
-#ifndef ESURFING_BID
-#define ESURFING_BID
-
-#define AEECLSID_ESURFING        0x01006137
-
-#endif //ESURFING_BID
-
-

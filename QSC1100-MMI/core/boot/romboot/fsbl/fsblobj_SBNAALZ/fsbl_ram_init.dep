@@ -1,5 +1,0 @@
-..\..\fsblobj_SBNAALZ\fsbl_ram_init.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl_ram_init.c
-..\..\fsblobj_SBNAALZ\fsbl_ram_init.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
-..\..\fsblobj_SBNAALZ\fsbl_ram_init.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl_ram_init.h
-..\..\fsblobj_SBNAALZ\fsbl_ram_init.o:	..\..\..\..\..\..\core\boot\romboot\fsbl\shared\src\fsbl.h
-..\..\fsblobj_SBNAALZ\fsbl_ram_init.o:	..\..\..\..\..\..\core\boot\romboot\common\shared\boot\src\boot_comdef.h
