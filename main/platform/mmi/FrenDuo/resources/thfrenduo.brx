@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="thfrenduo" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="Unicode">
 	<String Id="1002" Name="IDS_FRENDUO_TITLE_1">
 		<Text>Cellular</Text>
 	</String>
