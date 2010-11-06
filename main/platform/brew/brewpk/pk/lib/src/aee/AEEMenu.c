@@ -4886,7 +4886,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
             SETAEERECT(&rect, xMenu, prc->y + prc->dy + ps->yOffset-1, menuwidth, AEE_FRAME_SIZE);
             IIMAGE_GetInfo(underline, &imageInfo);
             
-            Appscommon_ResetBackground(pd, underline, pme->m_c.cBack, &rect, rect.x - (imageInfo.cx - menuwidth)/2, rect.y);
+            Appscommon_ResetBackground(pd, underline, pme->m_c.cBack, &rect, rect.x, rect.y);
             IIMAGE_Release(underline);
         }
     }
