@@ -4883,7 +4883,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         if(NULL != underline)
         {
             /* 由于AdjustRect中为文字显示多加了一个像素，这里补偿回来*/
-            SETAEERECT(&rect, xMenu, prc->y + prc->dy + ps->yOffset, menuwidth, AEE_FRAME_SIZE);
+            SETAEERECT(&rect, xMenu, prc->y + prc->dy + ps->yOffset-1, menuwidth, AEE_FRAME_SIZE);
             IIMAGE_GetInfo(underline, &imageInfo);
             
             Appscommon_ResetBackground(pd, underline, pme->m_c.cBack, &rect, rect.x - (imageInfo.cx - menuwidth)/2, rect.y);
