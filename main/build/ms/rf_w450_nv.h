@@ -10,13 +10,13 @@
         3.使用QCN View转为txt文件。
         4.将其中的值复制到本表中。
 ----------------------------------------------------------------*/
-#define AUTO_NV_RF_VERSION      0x450
+#define AUTO_NV_RF_VERSION      0x451
 //Fixed rf nv, it'may adjust for certain target.
 const nv_auto_set_type nv_auto_set_rf_fixed_list[] =
 { 
     {NV_RF_CONFIG_I,                        {0x01}}, // Any
     {NV_RF_HW_CONFIG_I,                     {0x26}}, // For 1100 and 1110
-    {NV_RF_BC_CONFIG_I,                     {0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}, //BC5 Only
+    {NV_RF_BC_CONFIG_I,                     {0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}, //BC5 Only
     {NV_FTM_MODE_I,                         {0x00}}, //FTM Mode,
     {NV_CDMA_DYNAMIC_RANGE_I,               {0x00, 0x04}},    
     {NV_CDMA_MIN_RX_RSSI_I,                 {0x82, 0xFB}},
