@@ -428,29 +428,35 @@
 		<Text>รายชื่อสูงสุด</Text>
 	</STRING>
 	<STRING Id="1078" Name="IDS_COPY_EXPECT">
-		<Text>%d records done,%d records fail</Text>
+		<Text>%d บันทึกแล้ว,%d บันทึกล้มเหลว</Text>
 	</STRING>
 	<STRING Id="1079" Name="IDS_RENAME">
 		<Text>เปลี่ยนชื่อ</Text>
 	</STRING>
-	<STRING Id="1080" Name="IDS_SAVE_EDIT" Encoding="Unicode">
-		<Text>Save edit</Text>
+	<STRING Id="1080" Name="IDS_SAVE_EDIT">
+		<Text>บันทึกแก้ไข</Text>
 	</STRING>
-	<STRING Id="1081" Name="IDS_GROUP_UIM" Encoding="Unicode">
+	<STRING Id="1081" Name="IDS_GROUP_UIM">
 		<Text>การ์ด UIM</Text>
 	</STRING>
-	<STRING Id="1082" Name="IDS_SAME_NAME" Encoding="Unicode">
-		<Text>Same name,rename</Text>
+	<STRING Id="1082" Name="IDS_SAME_NAME">
+		<Text>ชื่อซ้ำ เปลี่ยนชื่อ</Text>
 	</STRING>
-	<STRING Id="1083" Name="IDS_BT_COPYN" Encoding="Unicode">
-		<Text>Send via bluetooth</Text>
+	<STRING Id="1083" Name="IDS_BT_COPYN">
+		<Text>ส่งผ่านบูลทูธ</Text>
 	</STRING>
-	<STRING Id="1084" Name="IDS_NO_NUMBER_TO_MAKECALL" Encoding="Unicode">
-		<Text>No number to make call</Text>
+	<STRING Id="1084" Name="IDS_NO_NUMBER_TO_MAKECALL">
+		<Text>ไม่มีเบอร์เพื่อโทรออก</Text>
 	</STRING>
-	<STRING Id="1085" Name="IDS_NO_SELECTION" Encoding="Unicode">
-		<Text>No selection</Text>
+	<STRING Id="1085" Name="IDS_NO_SELECTION">
+		<Text>ไม่ได้เลือก</Text>
 	</STRING>
+	<String Id="1086" Name="IDS_NO_UIM_CARD">
+		<Text>ไม่มีการ์ด UIM บันทึกลงตัวเครื่อง</Text>
+	</String>
+	<String Id="1087" Name="IDS_NO_CARD">
+		<Text>ไม่มีการ์ด UIM</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
@@ -600,6 +606,7 @@
 	<DIALOG Id="6011" Name="IDD_GROUP" Focus="7013">
 		<Controls>
 			<Menu Id="7013" Name="IDC_GROUP_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -898,7 +905,6 @@
 	<DIALOG Id="6035" Name="IDD_SEARCHNAME" Focus="7037">
 		<Controls>
 			<Text Id="7037" Name="IDC_SEARCHNAME_TEXTCTL">
-				<TitleID>IDS_SEARCH_NAME</TitleID>
 				<Items/></Text>
 		</Controls>
 	</DIALOG>
