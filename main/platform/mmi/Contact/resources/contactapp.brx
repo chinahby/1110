@@ -13,7 +13,7 @@
 	<STRING Id="4" Name="IDS_HOME">
 		<Text>Home</Text>
 	</STRING>
-	<STRING Id="5" Name="IDS_OFFICE" Encoding="Unicode">
+	<STRING Id="5" Name="IDS_OFFICE" >
 		<Text>Office</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_EMAIL">
@@ -199,94 +199,94 @@
 	<STRING Id="1001" Name="IDS_CALL">
 		<Text>Call</Text>
 	</STRING>
-	<STRING Id="1002" Name="IDS_IPCALL" Encoding="Unicode">
+	<STRING Id="1002" Name="IDS_IPCALL">
 		<Text>IP Call</Text>
 	</STRING>
-	<STRING Id="1003" Name="IDS_SENDSMS" Encoding="Unicode">
+	<STRING Id="1003" Name="IDS_SENDSMS">
 		<Text>Send messages</Text>
 	</STRING>
-	<STRING Id="1004" Name="IDS_SENDDIRECTORY" Encoding="Unicode">
+	<STRING Id="1004" Name="IDS_SENDDIRECTORY">
 		<Text>Send contacts</Text>
 	</STRING>
-	<STRING Id="1005" Name="IDS_SEARCHOTHERDIRECTORY" Encoding="Unicode">
+	<STRING Id="1005" Name="IDS_SEARCHOTHERDIRECTORY">
 		<Text>Search</Text>
 	</STRING>
-	<STRING Id="1006" Name="IDS_DIRECTORTLIST" Encoding="Unicode">
+	<STRING Id="1006" Name="IDS_DIRECTORTLIST">
 		<Text>Names</Text>
 	</STRING>
-	<STRING Id="1007" Name="IDS_SEARCH_NAME" Encoding="Unicode">
+	<STRING Id="1007" Name="IDS_SEARCH_NAME">
 		<Text>Search by name</Text>
 	</STRING>
-	<STRING Id="1008" Name="IDS_EMPTY" Encoding="Unicode">
+	<STRING Id="1008" Name="IDS_EMPTY">
 		<Text>No record</Text>
 	</STRING>
-	<STRING Id="1009" Name="IDS_SEARCH_GROUP" Encoding="Unicode">
+	<STRING Id="1009" Name="IDS_SEARCH_GROUP">
 		<Text>Search by group</Text>
 	</STRING>
-	<STRING Id="1010" Name="IDS_NEEDNAME" Encoding="Unicode">
+	<STRING Id="1010" Name="IDS_NEEDNAME">
 		<Text>Input name</Text>
 	</STRING>
-	<STRING Id="1011" Name="IDS_INPUT_GROUP" Encoding="Unicode">
+	<STRING Id="1011" Name="IDS_INPUT_GROUP">
 		<Text>Groups</Text>
 	</STRING>
-	<STRING Id="1012" Name="IDS_NOT_UIMADDRINIT" Encoding="Unicode">
+	<STRING Id="1012" Name="IDS_NOT_UIMADDRINIT">
 		<Text>Initialization not completed,pls try it later</Text>
 	</STRING>
-	<STRING Id="1013" Name="IDS_SAVE_URL" Encoding="Unicode">
+	<STRING Id="1013" Name="IDS_SAVE_URL">
 		<Text>The URL shall lose</Text>
 	</STRING>
-	<STRING Id="1014" Name="IDS_MOVING" Encoding="Unicode">
+	<STRING Id="1014" Name="IDS_MOVING">
 		<Text>Moving...</Text>
 	</STRING>
-	<STRING Id="1015" Name="IDS_COPYING" Encoding="Unicode">
+	<STRING Id="1015" Name="IDS_COPYING">
 		<Text>Copying...</Text>
 	</STRING>
-	<STRING Id="1016" Name="IDS_ADDRESS" Encoding="Unicode">
+	<STRING Id="1016" Name="IDS_ADDRESS">
 		<Text>Address</Text>
 	</STRING>
-	<STRING Id="1017" Name="IDS_EXECUTE" Encoding="Unicode">
+	<STRING Id="1017" Name="IDS_EXECUTE">
 		<Text>Execute</Text>
 	</STRING>
-	<STRING Id="1018" Name="IDS_MARK" Encoding="Unicode">
+	<STRING Id="1018" Name="IDS_MARK">
 		<Text>Mark</Text>
 	</STRING>
-	<STRING Id="1019" Name="IDS_UNMARK" Encoding="Unicode">
+	<STRING Id="1019" Name="IDS_UNMARK">
 		<Text>Unmark</Text>
 	</STRING>
-	<STRING Id="1020" Name="IDS_MARKALL" Encoding="Unicode">
+	<STRING Id="1020" Name="IDS_MARKALL">
 		<Text>Mark all</Text>
 	</STRING>
-	<STRING Id="1021" Name="IDS_SAVE_EMAIL" Encoding="Unicode">
+	<STRING Id="1021" Name="IDS_SAVE_EMAIL">
 		<Text>The e_mail shall lose</Text>
 	</STRING>
-	<STRING Id="1022" Name="IDS_NEEDNUMBER" Encoding="Unicode">
+	<STRING Id="1022" Name="IDS_NEEDNUMBER">
 		<Text>Input number</Text>
 	</STRING>
-	<STRING Id="1023" Name="IDS_MSG_MAXCOPY" Encoding="Unicode">
+	<STRING Id="1023" Name="IDS_MSG_MAXCOPY">
 		<Text>Copy failed,exceed the max</Text>
 	</STRING>
-	<STRING Id="1024" Name="IDS_MSG_NUM_UNAVAILD" Encoding="Unicode">
+	<STRING Id="1024" Name="IDS_MSG_NUM_UNAVAILD">
 		<Text>Pls only use 0-9 and *#+P for your input</Text>
 	</STRING>
-	<STRING Id="1025" Name="IDS_MSG_PSWERR" Encoding="Unicode">
+	<STRING Id="1025" Name="IDS_MSG_PSWERR">
 		<Text>Invalid password</Text>
 	</STRING>
-	<STRING Id="1026" Name="IDS_FLD_SETTYPE" Encoding="Unicode">
+	<STRING Id="1026" Name="IDS_FLD_SETTYPE">
 		<Text>Number type</Text>
 	</STRING>
-	<STRING Id="1027" Name="IDS_UNMARKALL" Encoding="Unicode">
+	<STRING Id="1027" Name="IDS_UNMARKALL">
 		<Text>Unmark all</Text>
 	</STRING>
-	<STRING Id="1028" Name="IDS_ONEDIAL" Encoding="Unicode">
+	<STRING Id="1028" Name="IDS_ONEDIAL">
 		<Text>Speed dial</Text>
 	</STRING>
-	<STRING Id="1029" Name="IDS_POSITION" Encoding="Unicode">
+	<STRING Id="1029" Name="IDS_POSITION">
 		<Text>Save to</Text>
 	</STRING>
-	<STRING Id="1030" Name="IDS_POSITION_PHONE" Encoding="Unicode">
+	<STRING Id="1030" Name="IDS_POSITION_PHONE">
 		<Text>Phone</Text>
 	</STRING>
-	<STRING Id="1031" Name="IDS_PASSWORD" Encoding="Unicode">
+	<STRING Id="1031" Name="IDS_PASSWORD">
 		<Text>Enter Password</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_YESNO_MOVERECORD">
@@ -349,10 +349,10 @@
 	<STRING Id="1051" Name="IDS_ERR_LOADPICTURE">
 		<Text>Load picture failed</Text>
 	</STRING>
-	<STRING Id="1052" Name="IDS_REPLACE" Encoding="Unicode">
+	<STRING Id="1052" Name="IDS_REPLACE">
 		<Text>Replace</Text>
 	</STRING>
-	<STRING Id="1053" Name="IDS_POP_DONE" Encoding="Unicode">
+	<STRING Id="1053" Name="IDS_POP_DONE">
 		<Text>Done</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_ERR_GETCONFIG">
@@ -433,22 +433,22 @@
 	<STRING Id="1079" Name="IDS_RENAME">
 		<Text>Rename</Text>
 	</STRING>
-	<STRING Id="1080" Name="IDS_SAVE_EDIT" Encoding="Unicode">
+	<STRING Id="1080" Name="IDS_SAVE_EDIT">
 		<Text>Save edit</Text>
 	</STRING>
-	<STRING Id="1081" Name="IDS_GROUP_UIM" Encoding="Unicode">
+	<STRING Id="1081" Name="IDS_GROUP_UIM">
 		<Text>UIM card</Text>
 	</STRING>
-	<STRING Id="1082" Name="IDS_SAME_NAME" Encoding="Unicode">
+	<STRING Id="1082" Name="IDS_SAME_NAME">
 		<Text>Same name,rename</Text>
 	</STRING>
-	<STRING Id="1083" Name="IDS_BT_COPYN" Encoding="Unicode">
+	<STRING Id="1083" Name="IDS_BT_COPYN">
 		<Text>Send via bluetooth</Text>
 	</STRING>
-	<STRING Id="1084" Name="IDS_NO_NUMBER_TO_MAKECALL" Encoding="Unicode">
+	<STRING Id="1084" Name="IDS_NO_NUMBER_TO_MAKECALL">
 		<Text>No number to make call</Text>
 	</STRING>
-	<STRING Id="1085" Name="IDS_NO_SELECTION" Encoding="Unicode">
+	<STRING Id="1085" Name="IDS_NO_SELECTION">
 		<Text>No selection</Text>
 	</STRING>
 	<String Id="1086" Name="IDS_NO_UIM_CARD">
