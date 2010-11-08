@@ -71,19 +71,19 @@
 		<Text>ปิดวิทยุ FM</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_USEBT_HEADSET">
-		<Text>Use BT headset</Text>
+		<Text>ใช้หูฟังบูลทูธ</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_MSG_SELECT_NONE">
-		<Text>Select none</Text>
+		<Text>ไม่เลือก</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_UNUSE_BT_HEADSET">
-		<Text>Unuse BT headset</Text>
+		<Text>หูฟังบูลทูธที่ไม่ต้องใช้</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_MSG_OPEN_FAILED">
-		<Text>Open Sco failed</Text>
+		<Text>เปิด Sco ล้มเหลว</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_MSG_UNCONNECT_BT">
-		<Text>Bluetooth unconnect</Text>
+		<Text>ไม่เชื่อมต่อบูลทูธ</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_VOLUME_ONE">
 		<Text>1</Text>
@@ -167,10 +167,10 @@
 		<Text>ไม่สามารถลบ</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_MSG_OPENNING_BT_SCO">
-		<Text>Openning BT Sco,Pls waiting</Text>
+		<Text>กำลังเปิดบูลทูธ Sco กรุณารอ</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_MSG_FILE_NOEXIT">
-		<Text>File no exist</Text>
+		<Text>ไม่มีไฟล์อยู่</Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_PLAYFAILED">
 		<Text>เล่นล้มเหลว</Text>
@@ -181,17 +181,20 @@
 	<STRING Id="1060" Name="IDS_SORT_NONE">
 		<Text>ไม่มี</Text>
 	</STRING>
-	<STRING Id="1061" Name="IDS_PLAYMODE_REPEATONE" Encoding="Unicode">
-		<Text>Repeat one</Text>
+	<STRING Id="1061" Name="IDS_PLAYMODE_REPEATONE">
+		<Text>ซ้ำ1 รอบ</Text>
 	</STRING>
-	<STRING Id="1062" Name="IDS_DEFAULTPLAYLISTNAME" Encoding="Unicode">
-		<Text>Default playlist</Text>
+	<STRING Id="1062" Name="IDS_DEFAULTPLAYLISTNAME">
+		<Text>รายการเพลงมาตรฐาน</Text>
 	</STRING>
-	<STRING Id="1063" Name="IDS_MSG_WAITING" Encoding="Unicode">
-		<Text>Loading music,please wait</Text>
+	<STRING Id="1063" Name="IDS_MSG_WAITING">
+		<Text>กำลังโหลดเพลง,กรุณารอ</Text>
 	</STRING>
-	<STRING Id="1064" Name="IDS_RENAME_FAILED" Encoding="Unicode">
-		<Text>Can't rename</Text>
+	<STRING Id="1064" Name="IDS_RENAME_FAILED">
+		<Text>ไม่สามารถเปลี่ยนชื่อ</Text>
+	</STRING>
+	<STRING Id="1065" Name="IDS_MUSIC_PLAYER">
+		<Text>เครื่องเล่นเพลง</Text>
 	</STRING>
 </Strings>
 <Dialogs>

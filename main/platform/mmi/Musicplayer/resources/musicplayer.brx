@@ -46,9 +46,9 @@
 	<STRING Id="1015" Name="IDS_PLAYMODE">
 		<Text>Mode</Text>
 	</STRING>
-	<String Id="1016" Name="IDS_MSG_NORECORD" Encoding="Unicode">
+	<STRING Id="1016" Name="IDS_MSG_NORECORD" Encoding="Unicode">
 		<Text>No record</Text>
-	</String>
+	</STRING>
 	<STRING Id="1017" Name="IDS_VOLUME">
 		<Text>Volume</Text>
 	</STRING>
@@ -61,30 +61,30 @@
 	<STRING Id="1020" Name="IDS_PLAYMODE_ORDER">
 		<Text>Order</Text>
 	</STRING>
-	<STRING Id="1021" Name="IDS_MSG_ERR_FORMAT" Encoding="Unicode">
+	<STRING Id="1021" Name="IDS_MSG_ERR_FORMAT">
 		<Text>Error format</Text>
 	</STRING>
-	<STRING Id="1022" Name="IDS_PLAYMODE_RANDOM" Encoding="Unicode">
+	<STRING Id="1022" Name="IDS_PLAYMODE_RANDOM">
 		<Text>Random</Text>
 	</STRING>
-	<STRING Id="1023" Name="IDS_YESNOMSG_FMBGPLAY" Encoding="Unicode">
+	<STRING Id="1023" Name="IDS_YESNOMSG_FMBGPLAY">
 		<Text>Turn off FM</Text>
 	</STRING>
-	<String Id="1024" Name="IDS_USEBT_HEADSET" Encoding="Unicode">
+	<STRING Id="1024" Name="IDS_USEBT_HEADSET">
 		<Text>Use BT headset</Text>
-	</String>
-	<String Id="1025" Name="IDS_MSG_SELECT_NONE" Encoding="Unicode">
+	</STRING>
+	<STRING Id="1025" Name="IDS_MSG_SELECT_NONE">
 		<Text>Select none</Text>
-	</String>
-	<String Id="1026" Name="IDS_UNUSE_BT_HEADSET" Encoding="Unicode">
+	</STRING>
+	<STRING Id="1026" Name="IDS_UNUSE_BT_HEADSET">
 		<Text>Unuse BT headset</Text>
-	</String>
-	<String Id="1027" Name="IDS_MSG_OPEN_FAILED" Encoding="Unicode">
+	</STRING>
+	<STRING Id="1027" Name="IDS_MSG_OPEN_FAILED">
 		<Text>Open Sco failed</Text>
-	</String>
-	<String Id="1028" Name="IDS_MSG_UNCONNECT_BT" Encoding="Unicode">
+	</STRING>
+	<STRING Id="1028" Name="IDS_MSG_UNCONNECT_BT">
 		<Text>Bluetooth unconnect</Text>
-	</String>
+	</STRING>
 	<STRING Id="1029" Name="IDS_VOLUME_ONE">
 		<Text>1</Text>
 	</STRING>
@@ -166,12 +166,12 @@
 	<STRING Id="1055" Name="IDS_MSG_DELPLAYLISTWARN">
 		<Text>Unable to delete</Text>
 	</STRING>
-	<String Id="1056" Name="IDS_MSG_OPENNING_BT_SCO" Encoding="Unicode">
+	<STRING Id="1056" Name="IDS_MSG_OPENNING_BT_SCO">
 		<Text>Openning BT Sco,Pls waiting</Text>
-	</String>
-	<String Id="1057" Name="IDS_MSG_FILE_NOEXIT" Encoding="Unicode">
+	</STRING>
+	<STRING Id="1057" Name="IDS_MSG_FILE_NOEXIT">
 		<Text>File no exist</Text>
-	</String>
+	</STRING>
 	<STRING Id="1058" Name="IDS_PLAYFAILED">
 		<Text>Play failed</Text>
 	</STRING>
@@ -181,21 +181,21 @@
 	<STRING Id="1060" Name="IDS_SORT_NONE">
 		<Text>None</Text>
 	</STRING>
-	<String Id="1061" Name="IDS_PLAYMODE_REPEATONE" Encoding="Unicode">
+	<STRING Id="1061" Name="IDS_PLAYMODE_REPEATONE" Encoding="Unicode">
 		<Text>Repeat one</Text>
-	</String>
-	<String Id="1062" Name="IDS_DEFAULTPLAYLISTNAME" Encoding="Unicode">
+	</STRING>
+	<STRING Id="1062" Name="IDS_DEFAULTPLAYLISTNAME" Encoding="Unicode">
 		<Text>Default playlist</Text>
-	</String>
-	<String Id="1063" Name="IDS_MSG_WAITING" Encoding="Unicode">
+	</STRING>
+	<STRING Id="1063" Name="IDS_MSG_WAITING" Encoding="Unicode">
 		<Text>Loading music,please wait</Text>
-	</String>
-	<String Id="1064" Name="IDS_RENAME_FAILED" Encoding="Unicode">
+	</STRING>
+	<STRING Id="1064" Name="IDS_RENAME_FAILED" Encoding="Unicode">
 		<Text>Can't rename</Text>
-	</String>
-	<String Id="1065" Name="IDS_MUSIC_PLAYER">
+	</STRING>
+	<STRING Id="1065" Name="IDS_MUSIC_PLAYER">
 		<Text>MusicPlayer</Text>
-	</String>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_WINDOWS" Focus="0">
