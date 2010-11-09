@@ -467,7 +467,7 @@
 		<Text>ข้อมูลการใช้</Text>
 	</STRING>
 	<STRING Id="162" Name="IDS_LANGUAGE">
-		<Text>Language</Text>
+		<Text>ภาษา</Text>
 	</STRING>
 	<STRING Id="163" Name="IDS_LANGUAGE_NOSPEC">
 		<Text>Unspecified</Text>
@@ -506,17 +506,43 @@
 		<Text>บันทึกไปรายชื่อ</Text>
 	</STRING>
 	<STRING Id="175" Name="IDS_EXIT_EDITOR">
-		<Text>Exit editor</Text>
+		<Text>ออก</Text>
 	</STRING>
 	<String Id="176" Name="IDS_BROWSE">
-		<Text>Browse</Text>
+		<Text>บราวซ์</Text>
+	</String>
+	<String Id="177" Name="IDS_FAILED_RESENDING">
+		<Text>ล้มเหลว ส่งอีกครั้ง?</Text>
+	</String>
+	<String Id="178" Name="IDS_NO_PHONENUMBER">
+		<Text>เบอร์ว่าง ไม่สามารถส่งอีกครั้ง!</Text>
+	</String>
+	<String Id="179" Name="IDS_SENT">
+		<Text>SMS ส่งแล้ว</Text>
+	</String>
+	<String Id="180" Name="IDS_NEWWMSTIPS">
+		<Text> ได้รับ %d ข้อความใหม่</Text>
+	</String>
+	<String Id="181" Name="IDS_VMAILTIPS">
+		<Text>ข้อความเสียงใหม่:%d</Text>
+	</String>
+	<String Id="182" Name="IDS_NO_CARD">
+		<Text>ไม่มีการ์ด UIM</Text>
+	</String>
+	<String Id="183" Name="IDS_ENABLE_SHORT">
+		<Text>เปิด</Text>
+	</String>
+	<String Id="184" Name="IDS_SENDOPT_SAVEANDSEND_SHORT">
+		<Text>Send and Save</Text>
+	</String>
+	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
+		<Text>Hdp</Text>
 	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_MAIN_MENU">
-				<TitleID>IDS_APP_WMS</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -563,7 +589,6 @@
 	<DIALOG Id="6009" Name="IDD_DELETEMSGS" Focus="7009">
 		<Controls>
 			<Menu Id="7009" Name="IDC_DELETEMSGS_MENU">
-				<TitleID>IDS_DELETEMSGS</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -579,7 +604,6 @@
 	<DIALOG Id="6012" Name="IDD_TEMPLATES" Focus="7010">
 		<Controls>
 			<Menu Id="7010" Name="IDC_TEMPLATES_MENU">
-				<TitleID>IDS_TEMPLATES</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -587,7 +611,6 @@
 	<DIALOG Id="6013" Name="IDD_SETTING" Focus="7011">
 		<Controls>
 			<Menu Id="7011" Name="IDC_SETTING_MENU">
-				<TitleID>IDS_MSGSETTING</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -595,7 +618,6 @@
 	<DIALOG Id="6014" Name="IDD_OUTMSGSAVEOPT" Focus="7012">
 		<Controls>
 			<Menu Id="7012" Name="IDC_OUTMSGSAVEOPT_MENU">
-				<TitleID>IDS_AUTOSAVE</TitleID>
 				<Items>
 					<Item Id="8022" Name="IDL_AUTOSAVE">
 						<TextID>IDS_AUTOSAVE</TextID>
@@ -610,7 +632,6 @@
 	<DIALOG Id="6015" Name="IDD_PRIORITY" Focus="7013">
 		<Controls>
 			<Menu Id="7013" Name="IDC_PRIORITY_MENU">
-				<TitleID>IDS_PRIORITY</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -618,7 +639,6 @@
 	<DIALOG Id="6016" Name="IDD_REPORTS" Focus="7014">
 		<Controls>
 			<Menu Id="7014" Name="IDC_REPORTS_MENU">
-				<TitleID>IDS_DELIVERYREPORTS</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -626,7 +646,6 @@
 	<DIALOG Id="6017" Name="IDD_STORAGE" Focus="7015">
 		<Controls>
 			<Menu Id="7015" Name="IDC_STORAGE_MENU">
-				<TitleID>IDS_STORAGE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -637,7 +656,6 @@
 	<Dialog Id="6019" Name="IDD_RSVDMSGALERTTIMEOUT_SETTING" Focus="0">
 		<Controls>
 			<Menu Id="7007" Name="IDC_RSVDMSGALERTTIMEOUT_SETTING">
-				<TitleID>IDS_RESERVEDMSG</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -652,7 +670,6 @@
 	<DIALOG Id="6021" Name="IDD_TONUMLIST" Focus="7018">
 		<Controls>
 			<Menu Id="7018" Name="IDC_TONUMLIST_MENU">
-				<TitleID>IDS_RECEIVER</TitleID>
 				<Items/>
 			</Menu>
 			<Text Id="7024" Name="IDC_NUMTEXT">
@@ -666,7 +683,6 @@
 	<DIALOG Id="6023" Name="IDD_EXTARCTEDITEMLIST" Focus="7019">
 		<Controls>
 			<Menu Id="7019" Name="IDC_SAVENUMLIST_MENU">
-				<TitleID>IDS_SAVENUM</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -682,7 +698,6 @@
 	<Dialog Id="6025" Name="IDD_RESERVEDMSG" Focus="0">
 		<Controls>
 			<Menu Id="7002" Name="IDC_RESERVEDMSG_MENU">
-				<TitleID>IDS_RESERVEDMSG</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -690,7 +705,6 @@
 	<DIALOG Id="6026" Name="IDD_CALLREJECTSMS" Focus="7022">
 		<Controls>
 			<Menu Id="7022" Name="IDC_CALLREJECTSMS_MENU">
-				<TitleID>IDS_CALLREJECTSMS</TitleID>
 				<Items>
 					<Item Id="8010" Name="IDL_CALLREJECTSMS_ENABLE">
 						<TextID>IDS_ENABLE</TextID>
@@ -708,7 +722,6 @@
 	<DIALOG Id="6027" Name="IDD_AUTODELETE" Focus="7023">
 		<Controls>
 			<Menu Id="7023" Name="IDC_AUTODELETE_MENU">
-				<TitleID>IDS_AUTODELETE</TitleID>
 				<Items>
 					<Item Id="8024" Name="IDL_AUTODELETE_ON">
 						<TextID>IDS_ENABLE</TextID>
@@ -723,7 +736,6 @@
 	<Dialog Id="6028" Name="IDD_MESSAGEVALIDITY" Focus="0">
 		<Controls>
 			<Menu Id="7025" Name="IDC_MESSAGEVALIDITY_MENU">
-				<TitleID>IDS_MSGVALIDITY</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -754,7 +766,6 @@
 	<Dialog Id="6030" Name="IDD_CALLBACKNUMSWITCH" Focus="7008">
 		<Controls>
 			<Menu Id="7008" Name="IDC_CALLBACKNUMSWITCH_MENU">
-				<TitleID>IDS_CALLBACKNUM</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -762,7 +773,6 @@
 	<Dialog Id="6031" Name="IDD_VOICEMAIL" Focus="0">
 		<Controls>
 			<Menu Id="7030" Name="IDC_VOICEMAIL_MENU">
-				<TitleID>IDS_VOICEMAIL</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -770,7 +780,6 @@
 	<Dialog Id="6032" Name="IDD_VMNUM" Focus="0">
 		<Controls>
 			<Text Id="7031" Name="IDC_VMNUM_TEXT">
-				<TitleID>IDS_VOICEMAIL</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
@@ -781,7 +790,6 @@
 	<Dialog Id="6034" Name="IDD_CALLBACKNUM" Focus="7016">
 		<Controls>
 			<Text Id="7016" Name="IDC_CALLBACKNUM_TEXT">
-				<TitleID>IDS_CALLBACKNUM</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
@@ -802,7 +810,6 @@
 	<Dialog Id="6038" Name="IDD_MANAGEMENT" Focus="7020">
 		<Controls>
 			<Menu Id="7020" Name="IDC_MANAGEMENT_MENU">
-				<TitleID>IDS_MSGMANAGEMENT</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -810,7 +817,6 @@
 	<Dialog Id="6039" Name="IDD_COPYINBOX" Focus="7033">
 		<Controls>
 			<Menu Id="7033" Name="IDC_COPYINBOX_MENU">
-				<TitleID>IDS_COPYINBOX</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -818,7 +824,6 @@
 	<Dialog Id="6040" Name="IDD_MOVEINBOX" Focus="7034">
 		<Controls>
 			<Menu Id="7034" Name="IDC_MOVEINBOX_MENU">
-				<TitleID>IDS_MOVEINBOX</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -826,7 +831,6 @@
 	<Dialog Id="6041" Name="IDD_SENDMODE" Focus="7035">
 		<Controls>
 			<Menu Id="7035" Name="IDC_SENDMODE_MENU">
-				<TitleID>IDS_SENDMODE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -843,10 +847,21 @@
 	<Dialog Id="6043" Name="IDD_AUTOREPLACE" Focus="7038">
 		<Controls>
 			<Menu Id="7038" Name="IDC_AUTOREPLACE_MENU">
-				<TitleID>IDS_AUTOREPLACE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
+	</Dialog>
+	<Dialog Id="6044" Name="IDD_RESEND_CONFIRM" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6045" Name="IDD_WMSNEWMSG" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6046" Name="IDD_NOPOPMSG" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 </Dialogs>
 </BREWRes>
