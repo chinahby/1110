@@ -615,7 +615,7 @@ static void CameraApp_FreeAppData(CCameraApp *pMe)
 
     if(pMe->m_pCamera)
     {
-        ICAMERA_Release(pMe->m_pCamera);
+        ICAMERAEX_Release(pMe->m_pCamera);
         pMe->m_pCamera = NULL;
     }
 
@@ -810,8 +810,8 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             SetDeviceState(DEVICE_TYPE_CAMERA, DEVICE_CAMERA_STATE_OFF);
             if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
-                ICAMERA_RegisterNotify(pMe->m_pCamera,NULL, NULL);
-                ICAMERA_Stop(pMe->m_pCamera);
+                //ICAMERAEX_RegisterNotify(pMe->m_pCamera,NULL, NULL);
+                ICAMERAEX_Stop(pMe->m_pCamera);
             }
             (void)ICONFIG_SetItem(pMe->m_pConfig,
                                   CFGI_BACK_LIGHT,
@@ -826,13 +826,13 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             pMe->m_bSuspending = TRUE;
             if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
-                ICAMERA_RegisterNotify(pMe->m_pCamera,NULL, NULL);
-                ICAMERA_Stop(pMe->m_pCamera);
+                ICAMERAEX_RegisterNotify(pMe->m_pCamera,NULL, NULL);
+                ICAMERAEX_Stop(pMe->m_pCamera);
             }
             
             if(pMe->m_nCameraState == CAM_START && pMe->m_pCamera)
             {
-                ICAMERA_Release(pMe->m_pCamera);
+                ICAMERAEX_Release(pMe->m_pCamera);
                 pMe->m_pCamera = NULL;
             }
             pMe->m_bIsPreview = FALSE;
@@ -841,7 +841,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
         case EVT_ALARM:
             if(pMe->m_nCameraState == CAM_START && pMe->m_pCamera)
             {
-                ICAMERA_Release(pMe->m_pCamera);
+                ICAMERAEX_Release(pMe->m_pCamera);
                 pMe->m_pCamera = NULL;
             }
             pMe->m_bIsPreview = FALSE;
@@ -903,7 +903,16 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_KEY:
-        case EVT_COMMAND:         
+        case EVT_COMMAND:
+            /*
+            if(AVK_END == wParam)
+              (void)ISHELL_PostEvent(pMe->m_pShell,
+                                       AEECLSID_APP_CAMERA,
+                                       EVT_APP_STOP,
+                                       0,
+                                       0);*/
+           // DBGPRINTF("key-----------------%d",pMe->m_bAppIsReady);            
+           
             if(!pMe->m_bAppIsReady)
             {
                 return TRUE;

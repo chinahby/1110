@@ -48,7 +48,7 @@
 #include "AEEBitmap.h"
 #include "AEEImageCtl.h"
 #include "AEEText.h"           // AEE Text Services
-#include "AEEMimeTypes.h"  
+#include "AEEMimeTypes.h"       
 #ifndef AEE_SIMULATOR  
 #include "AEEAlert.h"          // IAlert Services
 #include "AEEGraphics.h"
@@ -61,10 +61,10 @@
 #include "AEEBacklight.h"
 #include "AEEConfig.h"
 #include "CameraApp.h"
-#include "AEECamera.h"
+#include "AEECameraEx.h"
 #include "AEECM.h"
-#include "ICameraExt.h"
-#include "OEMCamera.h"
+//#include "ICameraExt.h"
+#include "OEMCameraEx.h"
 #include "Appscommon.h"
 #include "BREWVersion.h"
 #include "Appscommon.h"
@@ -73,7 +73,7 @@
 #include "AEEAnnunciator.h"
 #include "AEEMediaUtil.h"
 #include "AEEMedia.h"
-#include "AEECamera.h"
+//#include "AEECamera.h"
 #include "cameraapp_image.brh"
 #include "db.h"
 #ifdef FEATURE_SUPPORT_VC0848
@@ -313,7 +313,7 @@ typedef struct _CCameraApp
     OEMCAMERABANDING     m_nCameraBanding;       // camera bandig…Ë÷√
     OEMCAMERASTORAGE     m_nCameraStorage;       // camera≈ƒ’’¥Ê¥¢Œª÷√
     
-    ICamera              *m_pCamera;
+    ICameraEx              *m_pCamera;
     IFileMgr             *m_pFM; 
     IConfig              *m_pConfig;              // IConfig interface
     IMedia               *m_pMedia;
