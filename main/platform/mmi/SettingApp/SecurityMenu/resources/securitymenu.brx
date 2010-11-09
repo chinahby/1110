@@ -112,16 +112,16 @@
 	<STRING Id="1051" Name="IDS_RESET_DONE">
 		<Text>Reset done</Text>
 	</STRING>
-	<STRING Id="1052" Name="IDS_MSG_INPUTINVALID" Encoding="Unicode">
+	<STRING Id="1052" Name="IDS_MSG_INPUTINVALID">
 		<Text>Invalid password</Text>
 	</STRING>
-	<STRING Id="1053" Name="IDS_NEW_PIN" Encoding="Unicode">
+	<STRING Id="1053" Name="IDS_NEW_PIN">
 		<Text>New PIN:</Text>
 	</STRING>
-	<STRING Id="1054" Name="IDS_SECURITY" Encoding="Unicode">
+	<STRING Id="1054" Name="IDS_SECURITY">
 		<Text>Enter password</Text>
 	</STRING>
-	<STRING Id="1055" Name="IDS_KEY_LOCK" Encoding="Unicode">
+	<STRING Id="1055" Name="IDS_KEY_LOCK">
 		<Text>Key Lock</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_PHONE_CODE">
