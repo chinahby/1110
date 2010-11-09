@@ -277,32 +277,136 @@ static u_short	Sensor_Effect(u_short EffectMode)
 
 	switch(EffectMode)
 	{
-		case DSC_GRAYSCALE:                             
-                 break;
+		case DSC_GRAYSCALE:   
+		{
+			A8L_SetSenReg(0x80,0x45);
+			A8L_SetSenReg(0x76,0x00);
+			A8L_SetSenReg(0x69,0x20);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
 		case DSC_SEPIA:
-				break;
+		{
+			A8L_SetSenReg(0x80,0x45);
+			A8L_SetSenReg(0x76,0x00);
+			A8L_SetSenReg(0x69,0x20);
+			A8L_SetSenReg(0x67,0x60);
+			A8L_SetSenReg(0x68,0x98);
+			break;
+		}
+		
 		case DSC_SEPIA_GREEN:
-				break;
-		case  DSC_SEPIA_BLUE:
-				break;
-		case	 DSC_COLOR_INV:
-				break;	
+		{
+			A8L_SetSenReg(0x80,0x45);
+			A8L_SetSenReg(0x76,0x00);
+			A8L_SetSenReg(0x69,0x20);
+			A8L_SetSenReg(0x67,0x40);
+			A8L_SetSenReg(0x68,0x40);
+			break;
+		}
+		
+		case DSC_SEPIA_BLUE:
+		{
+			A8L_SetSenReg(0x80,0x45);
+			A8L_SetSenReg(0x76,0x00);
+			A8L_SetSenReg(0x69,0x20);
+			A8L_SetSenReg(0x67,0xA0);
+			A8L_SetSenReg(0x68,0x40);
+			break;
+		}
+		
+		case DSC_COLOR_INV:
+		{
+			A8L_SetSenReg(0x80,0x45);
+			A8L_SetSenReg(0x76,0x00);
+			A8L_SetSenReg(0x69,0x40);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
 		case DSC_GRAY_INV:
-				break;
+		{
+			A8L_SetSenReg(0x80,0x45);
+			A8L_SetSenReg(0x76,0x00);
+			A8L_SetSenReg(0x69,0x20);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
 		case DSC_BLACKBOARD:
-				break;
-		case DSC_WHITEBOARD :	
-				break;	
+		{
+			A8L_SetSenReg(0x69,0x00);
+			A8L_SetSenReg(0x80,0xc5);
+			A8L_SetSenReg(0x76,0xe0);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
+		case DSC_WHITEBOARD:	
+		{
+			A8L_SetSenReg(0x69,0x00);
+			A8L_SetSenReg(0x80,0xc5);
+			A8L_SetSenReg(0x76,0xf0);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
 		case DSC_COPPER_CARVING:
-				break;
+		{
+			A8L_SetSenReg(0x69,0x00);
+			A8L_SetSenReg(0x80,0xc5);
+			A8L_SetSenReg(0x76,0xc0);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
 		case DSC_EMBOSSMENT:
-				break;
+		{
+			A8L_SetSenReg(0x69,0x00);
+			A8L_SetSenReg(0x80,0xc5);
+			A8L_SetSenReg(0x77,0x80);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
 		case DSC_BLUE_CARVING:
-				break;  
+		{
+			A8L_SetSenReg(0x69,0x00);
+			A8L_SetSenReg(0x80,0xc5);
+			A8L_SetSenReg(0x76,0xd0);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
 		case DSC_CONTRAST:
-				break; 
+		{
+			A8L_SetSenReg(0x80,0x45);
+			A8L_SetSenReg(0x76,0x00);
+			A8L_SetSenReg(0x69,0x00);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
 		case DSC_SKETCH:
-				break;		
+		{
+			A8L_SetSenReg(0x69,0x00);
+			A8L_SetSenReg(0x80,0xc5);
+			A8L_SetSenReg(0x76,0xb0);
+			A8L_SetSenReg(0x67,0x80);
+			A8L_SetSenReg(0x68,0x80);
+			break;
+		}
+		
 		default:		
 			break;				
 	}
@@ -312,6 +416,47 @@ static u_short	Sensor_Effect(u_short EffectMode)
 
 static u_short	Sensor_EV(u_short EvStep)
 {
+	switch(EvStep)
+	{
+		case	DSC_EV_VALUE_NEG_4:
+				A8L_SetSenReg(0x55, 0xF8);
+				break;
+				
+		case	DSC_EV_VALUE_NEG_3:
+				A8L_SetSenReg(0x55, 0xD8);
+				break;
+				
+		case	DSC_EV_VALUE_NEG_2:
+				A8L_SetSenReg(0x55, 0xB8);	
+				break;
+				
+		case	DSC_EV_VALUE_NEG_1:
+				A8L_SetSenReg(0x55, 0x98);	
+				break;
+				
+		case	DSC_EV_VALUE_ZERO:
+				A8L_SetSenReg(0x55, 0x00);	
+				break;
+				
+		case	DSC_EV_VALUE_POS_1:
+				A8L_SetSenReg(0x55, 0x18);		
+				break;
+				
+		case	DSC_EV_VALUE_POS_2:
+				A8L_SetSenReg(0x55, 0x38);	
+				break;
+				
+		case	DSC_EV_VALUE_POS_3:
+				A8L_SetSenReg(0x55, 0x58);	
+				break;
+				
+		case	DSC_EV_VALUE_POS_4:
+				A8L_SetSenReg(0x55, 0x78);	
+				break;																																																		
+		default:
+				break;
+	}
+	
    	return	A8_NO_ERROR;
 }
 
@@ -319,31 +464,79 @@ static u_short	Sensor_EV(u_short EvStep)
 static u_short	Sensor_WhiteBalance(u_short WbMode)
 {
     u_short fRet = 0;
-    
+    u_short  temp_reg;	
+
+	A8L_GetSenReg(0x13, &temp_reg);
+	
 	switch(WbMode)
 	{
 		case	DSC_WB_AUTO:	//WB_AUTO
-	
-				break;
+		{
+			A8L_SetSenReg(0x01,0x15);
+			A8L_SetSenReg(0x02,0x24);
+			A8L_SetSenReg(0x6a,0x81);
+			A8L_SetSenReg(0x23,0x66);
+			A8L_SetSenReg(0x13,temp_reg|0x2);   // Enable AWB
+			break;
+		}
+		
 		case	DSC_WB_CLOUD:	//WB_CLOUD
+		{
+			A8L_SetSenReg(0x13,temp_reg&~0x2);  // Disable AWB				
+			A8L_SetSenReg(0x01,0x10);
+			A8L_SetSenReg(0x02,0x28);
+			A8L_SetSenReg(0x6a,0x81);
+			A8L_SetSenReg(0x23,0x66);
+			break;
+		}					
 
-				break;
 		case DSC_WB_DAYLIGHT:	//WB_DAYLIGHT
-	
-				break;
+		{
+			A8L_SetSenReg(0x13,temp_reg&~0x2);  // Disable AWB				
+			A8L_SetSenReg(0x01,0x13);
+			A8L_SetSenReg(0x02,0x26);
+			A8L_SetSenReg(0x6a,0x81);
+			A8L_SetSenReg(0x23,0x66);
+			break;
+		}
+		
 		case	DSC_WB_INCANDESCENCE:	//WB_INCANDESCENCE
-
-				break;
+		{
+			A8L_SetSenReg(0x13,temp_reg&~0x2);  // Disable AWB				
+			A8L_SetSenReg(0x01,0x1f);
+			A8L_SetSenReg(0x02,0x15);
+			A8L_SetSenReg(0x6a,0x81);
+			A8L_SetSenReg(0x23,0x66);
+			break;
+		}
+		
 		case	DSC_WB_FLUORESCENT:	//WB_FLUORESCENT
+		{
+			A8L_SetSenReg(0x13,temp_reg&~0x2);  // Disable AWB				
+			A8L_SetSenReg(0x01,0x1a);
+			A8L_SetSenReg(0x02,0x1e);
+			A8L_SetSenReg(0x6a,0x81);
+			A8L_SetSenReg(0x23,0x66);
+			break;
+		}
 
-				break;
 		case	DSC_WB_TUNGSTEN:	//WB_TUNGSTEN
-
-				break;
+		{
+			A8L_SetSenReg(0x13,temp_reg&~0x2);  // Disable AWB				
+			A8L_SetSenReg(0x01,0x1a);
+			A8L_SetSenReg(0x02,0x0d);
+			A8L_SetSenReg(0x6a,0x81);
+			A8L_SetSenReg(0x23,0x66);
+			break;
+		}
+		
 		case	DSC_WB_MANUAL:	//
-				break;
+		{
+			break;
+		}
+		
 		default:
-				break;	
+				break;
 	}	
 	return	fRet;
 }
