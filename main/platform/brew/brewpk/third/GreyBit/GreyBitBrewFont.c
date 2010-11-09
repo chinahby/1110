@@ -210,7 +210,8 @@ static int OEMFont_QueryInterface(IFont *pMe, AEECLSID id, void **pvtbl)
 
 
 static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, int nChars,
-	int x, int xMin, int xMax, int sy, int oy, int dy, NativeColor clrText, NativeColor clrBack, int *pOutWidth)
+	int x, int xMin, int xMax, int sy, int oy, int dy, NativeColor clrText, NativeColor clrBack,
+	boolean bTransparency, int *pOutWidth)
 {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
        AleFontMetrics fm;   //metics of the entrie string
@@ -387,40 +388,70 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         dp = dpBase = (word*)(pBmp + bmp_offset + (x<<1));
         
         y1 = dy;
-        
-        while (y1--){
-            unsigned int x1 = xxDisp;
-            sp = pFontData;
-            sp += xSrc;
-            
-            // draw only foreground color                
-            while (x1--){
-                switch(*sp){
-                case 0:
-                    break;
-                case 0xFF:
-                    *dp = cText;
-                    break;
-                default:
-                    backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
-                    backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
-                    backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
-                    backR = (((foreR - backR) * (*sp))/256) + backR;
-                    backG = (((foreG - backG) * (*sp))/256) + backG;
-                    backB = (((foreB - backB) * (*sp))/256) + backB;
-                    *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
-                    break;
-                }
-                dp++;
-                sp++;
-            }  // for loop            
-            
-            pFontData += bytes_per_row;
-            dp = dpBase += nPitch;
+        if (bTransparency){
+            while (y1--){
+                unsigned int x1 = xxDisp;
+                sp = pFontData;
+                sp += xSrc;
+                
+                // draw only foreground color                
+                while (x1--){
+                    switch(*sp){
+                    case 0:
+                        break;
+                    case 0xFF:
+                        *dp = cText;
+                        break;
+                    default:
+                        backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
+                        backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
+                        backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
+                        backR = (((foreR - backR) * (*sp))/256) + backR;
+                        backG = (((foreG - backG) * (*sp))/256) + backG;
+                        backB = (((foreB - backB) * (*sp))/256) + backB;
+                        *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
+                        break;
+                    }
+                    dp++;
+                    sp++;
+                }  // for loop            
+                
+                pFontData += bytes_per_row;
+                dp = dpBase += nPitch;
+            }
+        }else{
+            while (y1--){
+                unsigned int x1 = xxDisp;
+                sp = pFontData;
+                sp += xSrc;
+                
+                while (x1--){
+                    switch(*sp){
+                    case 0:
+                        *dp = cBack;
+                        break;
+                    case 0xFF:
+                        *dp = cText;
+                        break;
+                    default:
+                        foreR = ((diffR * (*sp))/256) + backR;
+                        foreG = ((diffG * (*sp))/256) + backG;
+                        foreB = ((diffB * (*sp))/256) + backB;
+                        *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                        break;
+                    }
+                    dp++;
+                    sp++;
+                }  // for loop
+                
+                pFontData += bytes_per_row;
+                dp = dpBase += nPitch;
+            }
         }
-            
- 	    dispWidth += xWidth;
-        x += xWidth;
+        
+ 
+ 	  dispWidth += xWidth;
+       x += xWidth;
     }
  
     *pOutWidth = dispWidth;
@@ -429,12 +460,13 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 
 static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nChars,
                       int x, int y, const AEERect * prcBackground, uint32 dwFlags, NativeColor clrText,
-                      NativeColor clrBack, NativeColor clrFrame, int nStrWidth)
+                      NativeColor clrBack, NativeColor clrFrame)
 {
     int sx;
     int xMin, xMax, yMin, yMax;
-    boolean bUnderline;
+    boolean bTransparent, bUnderline;
     int sy, dy, oy;
+    int dispWidth;
     int result = SUCCESS;
     
     xMin = prcBackground->x;
@@ -474,10 +506,20 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
     {
        return SUCCESS;
     }
+    
+    if (dwFlags & IDF_TEXT_TRANSPARENT)
+    {
+ 	    bTransparent = TRUE;
+ 	}
+    else
+    {
+ 	    bTransparent = FALSE;
+ 	}
  
     if (dwFlags & IDF_TEXT_UNDERLINE)  // last line will be overwritten by underline
     {
         bUnderline = TRUE;
+ 	    dy --;
     }
     else
     {
@@ -492,37 +534,24 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
     
     if (dy > 0)
     {
-        IDIB *pDIB;
-        if ((result = IBITMAP_QueryInterface(pDst, AEECLSID_DIB, (void**)&pDIB)) != SUCCESS)
-        {
+         IDIB *pDIB;
+         if ((result = IBITMAP_QueryInterface(pDst, AEECLSID_DIB, (void**)&pDIB)) != SUCCESS)
+         {
              return result;
-        }
-
-        if(dwFlags & IDF_TEXT_TRANSPARENT == 0)
-        {
-            AEERect rc;
-            if(nStrWidth == 0)
-            {
-                OEMFont_MeasureText(pMe, pcText, nChars, 0, NULL, &nStrWidth);
-            }
-            
-            if(nStrWidth > prcBackground->dx)
-            {
-                nStrWidth = prcBackground->dx;
-            }
-            
-            SETAEERECT(&rc, sx, sy, nStrWidth, dy);
-            IBitmap_FillRect(pDst, &rc, clrBack, AEE_RO_COPY);
-        }
-        
-        DrawChar(pMe, pDIB->pBmp, pDIB->nPitch, pcText, nChars,
-    	         x, xMin, xMax, sy, oy, dy, clrText, clrBack, &nStrWidth);
-        IDIB_Release(pDIB);
-        
-        if (bUnderline)
-        {
-            result = IBITMAP_DrawHScanline(pDst, y + pMe->wSize - 1, sx, sx+nStrWidth-1, clrText, AEE_RO_COPY);
-        }
+         }
+         DrawChar(pMe, pDIB->pBmp, pDIB->nPitch, pcText, nChars,
+    	          x, xMin, xMax, sy, oy, dy, clrText, clrBack, bTransparent, &dispWidth);
+         IDIB_Release(pDIB);
+    }
+    else if (bUnderline)
+    {
+        int nCharFits;
+        OEMFont_MeasureText(pMe, pcText, nChars, xMax-xMin+1, &nCharFits, &dispWidth);
+    }
+    
+    if (bUnderline)
+    {
+        result = IBITMAP_DrawHScanline(pDst, y + pMe->wSize - 1, sx, sx+dispWidth-1, clrText, AEE_RO_COPY);
     }
     
     return result;
@@ -534,7 +563,7 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
     AEERect rca;
     NativeColor clrBack, clrText, clrFrame;
     AEERect * prcBackRect = (AEERect *) prcClip;
-    int nWidth = 0, nHeight;
+    int nWidth,nHeight;
     AEERect dirty_rc;
     
     if(pMe->pLayout == NULL){
@@ -574,13 +603,12 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
     }
     
     // Get the text width and height
+    OEMFont_MeasureText(pMe, pcText, nChars, 0, NULL, &nWidth);
     nHeight = pMe->wSize;
     
     // Text is horizontally aligned
     if (dwFlags & IDF_ALIGNHORZ_MASK)
     {
-        OEMFont_MeasureText(pMe, pcText, nChars, 0, NULL, &nWidth);
-        
         x = prcBackRect->x;
 
         if (dwFlags & IDF_ALIGN_RIGHT)
@@ -621,6 +649,12 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
         return SUCCESS;
     }
     
+    if(prcBackRect->x > (x+ nWidth))
+    {
+        //Overflow the start x coordinate
+        return SUCCESS;
+    }
+    
     if(prcBackRect->y > (y +nHeight))
     {
         //Overflow the start y coordinate
@@ -649,8 +683,17 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
     }
     
     clrFrame = IBITMAP_RGBToNative(pDst, CLR_USER_FRAME);
-    
-    return DrawTextEx(pMe, pDst, pcText, nChars, x, y, prcBackRect, dwFlags, clrText, clrBack, clrFrame, nWidth);
+
+    // If a rectangle flag is passed in, draw it
+    if ((dwFlags & IDF_RECT_MASK) != IDF_RECT_NONE)
+    {
+        if (IBITMAP_FillRect(pDst, prcBackRect, clrFrame, AEE_RO_COPY) != SUCCESS)
+        {
+       	    return EUNSUPPORTED;
+       	}
+    }
+
+    return DrawTextEx(pMe, pDst, pcText, nChars, x, y, prcBackRect, dwFlags, clrText, clrBack, clrFrame);
 }
 
 static int OEMFont_GetInfo(IFont *pMe, AEEFontInfo *pInfo, int nSize)
