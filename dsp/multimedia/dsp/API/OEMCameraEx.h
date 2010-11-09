@@ -62,9 +62,10 @@ typedef struct OEMCamera
 	int16             m_nMode;
 	int16             m_nPreviewType;
 	// Media data.
-	char *            m_pszFile;
+	char*             m_pszFile;
 	int16             m_nQuality;
 	int32             m_nFileSize;
+    IFileMgr*         m_pFileMgr;
 }OEMCamera;
 
 //-------------------------------------------------------------------
@@ -86,23 +87,24 @@ typedef struct CameraConfigInfo
 //---------------------------------------------------------------------------
 //    AEE-OEM Function Declarations
 //---------------------------------------------------------------------------
-extern void    OEMCamera_Init(void);
-extern int     OEMCamera_New(AEECLSID cls, IBitmap * pFrame, uint16 wSize, OEMINSTANCE * ph);
-extern void    OEMCamera_Delete(OEMINSTANCE h);
+extern void    OEMCameraEx_Init(void);
+extern int     OEMCameraEx_New(AEECLSID cls, IBitmap * pFrame, uint16 wSize, OEMINSTANCE * ph);
+extern void    OEMCameraEx_Delete(OEMINSTANCE h);
 
-extern int     OEMCamera_QueryInterface(OEMINSTANCE h, AEECLSID idReq, void ** ppo);
-extern int     OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2);
-extern int     OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2);
-extern int     OEMCamera_Start(OEMINSTANCE h, int16 nMode, uint32 dwParam);
-extern int     OEMCamera_Stop(OEMINSTANCE h);
+extern int     OEMCameraEx_QueryInterface(OEMINSTANCE h, AEECLSID idReq, void ** ppo);
+extern int     OEMCameraEx_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2);
+extern int     OEMCameraEx_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2);
+extern int     OEMCameraEx_Start(OEMINSTANCE h, int16 nMode, uint32 dwParam);
+extern int     OEMCameraEx_Stop(OEMINSTANCE h);
+extern int     OEMCameraEx_Update(OEMINSTANCE h, uint32 dwParam);
 
-extern int     OEMCamera_EncodeSnapshot(OEMINSTANCE h);
+extern int     OEMCameraEx_EncodeSnapshot(OEMINSTANCE h);
 
 
 //---------------------------------------------------------------------------
 //    User Mode AEE-OEM Function Declarations
 //---------------------------------------------------------------------------
-extern int     OEMCamera_GetConfigInfo(CameraConfigInfo * pInfo);
+extern int     OEMCameraEx_GetConfigInfo(CameraConfigInfo * pInfo);
 //---------------------------------------------------------------------------
 // AEE Functions used in OEM Layer.
 // AEECamera_Init(): OEM ModTable entry. Called, during BREW initialization,
@@ -110,6 +112,6 @@ extern int     OEMCamera_GetConfigInfo(CameraConfigInfo * pInfo);
 // AEECamera_New():  OEM ModTable entry. Called, during ISHELL_CreateInstance(),
 //                   in user mode.
 //---------------------------------------------------------------------------
-extern void    AEECamera_Init(IShell * ps);
-extern int     AEECamera_New(IShell * ps, AEECLSID cls, void **ppif);
+extern void    AEECameraEx_Init(IShell * ps);
+extern int     AEECameraEx_New(IShell * ps, AEECLSID cls, void **ppif);
 #endif // #ifndef OEMCAMERA_H

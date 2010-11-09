@@ -481,7 +481,7 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 
 
 // DSC Related
-extern	t_sensor_manager	sensor_siv121a;
+extern	t_sensor_manager	sensor_bf3703;
 extern	t_sensor_manager	sensor_bf3703;
 
 //TV

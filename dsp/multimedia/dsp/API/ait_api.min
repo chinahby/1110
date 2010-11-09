@@ -9,8 +9,13 @@ AIT_API_SOURCES=\
 	sd_IF_ait_api.c \
 	sys_IF_ait_api.c \
 	usb_IF_ait_api.c \
-	cam_module.c
+	cam_module.c \
+	AEECameraEx.c \
+	OEMCameraEx.c
+	
 AIT_API_OBJS :=  $(addprefix $(TARGETDIR)/, $(AIT_API_SOURCES:%.c=%.o))
+$(AIT_API_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
 vpath %.h $(AIT_API_INC)
 vpath %.c $(AIT_API_SRC)
 INC  += $(AIT_API_INC)

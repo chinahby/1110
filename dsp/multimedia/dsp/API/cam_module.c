@@ -61,7 +61,6 @@ static char bIsVidPlayFullScreen = 0;
 #endif /* AIT_3GP_SUPPORT */
 
 
-
 static void AIT701_ResetLCDWindow(void)
 {
 	int timeout;
@@ -133,7 +132,7 @@ static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_da
 	if(AIT_STATUS_USB_READY <= sys_IF_ait_get_status())
 	{
 		AIT_Message_Error("!!!mmpfunc_cam_process: SD is Busy, AIT Status = %d\r\n", sys_IF_ait_get_status());
-		return MMP_INVALID_STATE;	
+		return MMP_INVALID_STATE;
 	}
 
 	switch(func)

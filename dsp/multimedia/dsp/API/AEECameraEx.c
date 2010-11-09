@@ -2,10 +2,10 @@
 
 FILE: OEMCamera.c
 
-SERVICES: ICamera interface implementation
+SERVICES: ICameraEx interface implementation
 
 DESCRIPTION
-   This file implements BREW ICamera. ICamera controls the device camera
+   This file implements BREW ICameraEx. ICameraEx controls the device camera
    and allows recording of snapshot or movie.
 
 PUBLIC CLASSES:  Not Applicable
@@ -31,80 +31,83 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 
 #include "aeestdlib.h"
 
-struct ICamera
+struct ICameraEx
 {
-    VTBL(ICamera)    *pvt;
+    VTBL(ICameraEx)    *pvt;
     int32             m_nRefs;
     OEMCamera        *m_pOEMCamera;
 };
 
 // ModTable entry points...
-extern void    AEECamera_Init(IShell * ps);
-extern int     AEECamera_New(IShell * ps, AEECLSID cls, void **ppif);
+ extern void    AEECameraEx_Init(IShell * ps);
+extern int   AEECameraEx_New(IShell * ps, AEECLSID cls, void **ppif);
+
 // Vtbl entry points...
-static uint32  ICamera_AddRef(ICamera * pme);
-static uint32  ICamera_Release(ICamera * pme);
-static int     ICamera_QueryInterface(ICamera * pme, AEECLSID idReq, void ** ppo);
-static int     ICamera_SetParm(ICamera * pme, int16 nParmID, int32 p1, int32 p2);
-static int     ICamera_GetParm(ICamera * pme, int16 nParmID, int32 * pP1, int32 * pP2);
-static int     ICamera_Start(ICamera * pme, int16 nMode, uint32 dwParam);
-static int     ICamera_Stop(ICamera * pme);
-static int     ICamera_EncodeSnapshot(ICamera * pme);
-static int     ICamera_RegisterNotify(ICamera * pme, PFNCAMERANOTIFY pfnNotify, void * pUser);
+static uint32  ICameraEx_AddRef(ICameraEx * pme);
+static uint32  ICameraEx_Release(ICameraEx * pme);
+static int     ICameraEx_QueryInterface(ICameraEx * pme, AEECLSID idReq, void ** ppo);
+static int     ICameraEx_SetParm(ICameraEx * pme, int16 nParmID, int32 p1, int32 p2);
+static int     ICameraEx_GetParm(ICameraEx * pme, int16 nParmID, int32 * pP1, int32 * pP2);
+static int     ICameraEx_Start(ICameraEx * pme, int16 nMode, uint32 dwParam);
+static int     ICameraEx_Stop(ICameraEx * pme);
+static int     ICameraEx_EncodeSnapshot(ICameraEx * pme);
+static int     ICameraEx_RegisterNotify(ICameraEx * pme, PFNCAMERANOTIFY pfnNotify, void * pUser);
 
 
-static AEEVTBL(ICamera) gvtICamera =
+static AEEVTBL(ICameraEx) gvtICameraEx =
 {
-   ICamera_AddRef,
-   ICamera_Release,
-   ICamera_QueryInterface,
-   ICamera_RegisterNotify,
-   ICamera_SetParm,
-   ICamera_GetParm,
-   ICamera_Start,
-   ICamera_Stop,
-   ICamera_EncodeSnapshot
+   ICameraEx_AddRef,
+   ICameraEx_Release,
+   ICameraEx_QueryInterface,
+   ICameraEx_RegisterNotify,
+   ICameraEx_SetParm,
+   ICameraEx_GetParm,
+   ICameraEx_Start,
+   ICameraEx_Stop,
+   ICameraEx_EncodeSnapshot
 };
 
 /*===============================================================================
 
-                     ICamera Function Definitions
+                     ICameraEx Function Definitions
 
 ===============================================================================*/
 /*==================================================================
 
 ==================================================================*/
-void AEECamera_Init(IShell * ps)
+void AEECameraEx_Init(IShell * ps)
 {
-   OEMCamera_Init();
+  OEMCameraEx_Init();
 }
 
 /*==================================================================
 
 ==================================================================*/
-int AEECamera_New(IShell * ps, AEECLSID cls, void **ppif)
+int AEECameraEx_New(IShell* ps, AEECLSID cls, void **ppif)
 {
-    ICamera *   pme;
+    ICameraEx *   pme;
     int         nRet = SUCCESS;
+    DBGPRINTF("aaaaaaaaaaaaaaaaaaa-----AEECameraEx_New");
 
     // Alloc memory for the object
-    pme = (ICamera *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gvtICamera, sizeof(ICamera));
+    pme = (ICameraEx *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gvtICameraEx, sizeof(ICameraEx));
     if (!pme)
     {
         nRet = ENOMEMORY;
     }
     else
     {
-        uint16 wSize;
+        uint16 wSize = 0;
         
         // Get Frame Bitmap        
-        nRet = OEMCamera_New( cls, 
+        nRet = OEMCameraEx_New( cls, 
                              NULL, 
                               wSize, 
                              (void **)&pme->m_pOEMCamera);
         
-        pme->pvt = &gvtICamera;
+        pme->pvt = &gvtICameraEx;
         pme->m_nRefs = 1;
+        DBGPRINTF("ddddddddddddddddddd-----AEECamera_New");
     }
 
     if (ppif)
@@ -125,7 +128,7 @@ Done:
 /*==================================================================
 
 ==================================================================*/
-static uint32 ICamera_AddRef(ICamera * pme)
+static uint32 ICameraEx_AddRef(ICameraEx * pme)
 {
     return (++(pme->m_nRefs));
 }
@@ -133,7 +136,7 @@ static uint32 ICamera_AddRef(ICamera * pme)
 /*==================================================================
 
 ==================================================================*/
-static uint32 ICamera_Release(ICamera * pme)
+static uint32 ICameraEx_Release(ICameraEx * pme)
 {
     if(pme->m_nRefs <= 0)
     {
@@ -145,6 +148,8 @@ static uint32 ICamera_Release(ICamera * pme)
         return pme->m_nRefs;
     }
 
+    OEMCameraEx_Delete(pme->m_pOEMCamera);
+
     FREE(pme);
     return(0);
 }
@@ -152,7 +157,7 @@ static uint32 ICamera_Release(ICamera * pme)
 /*==================================================================
 
 ==================================================================*/
-static int ICamera_QueryInterface(ICamera * pme, AEECLSID idReq, void ** ppo)
+static int ICameraEx_QueryInterface(ICameraEx * pme, AEECLSID idReq, void ** ppo)
 {
     if (!ppo)
     {
@@ -175,56 +180,56 @@ static int ICamera_QueryInterface(ICamera * pme, AEECLSID idReq, void ** ppo)
 /*==================================================================
 
 ==================================================================*/
-static int ICamera_SetParm(ICamera * pme, int16 nParmID, int32 p1, int32 p2)
+static int ICameraEx_SetParm(ICameraEx * pme, int16 nParmID, int32 p1, int32 p2)
 {
-    return OEMCamera_SetParm(pme->m_pOEMCamera, nParmID, p1, p2);
+    return OEMCameraEx_SetParm(pme->m_pOEMCamera, nParmID, p1, p2);
 }
 
 /*==================================================================
 
 ==================================================================*/
-static int ICamera_GetParm(ICamera * pme, int16 nParmID, int32 * pP1, int32 * pP2)
+static int ICameraEx_GetParm(ICameraEx * pme, int16 nParmID, int32 * pP1, int32 * pP2)
 {
-    return OEMCamera_GetParm(pme->m_pOEMCamera, nParmID, pP1, pP2);
+    return OEMCameraEx_GetParm(pme->m_pOEMCamera, nParmID, pP1, pP2);
 }
 
 /*==================================================================
 
 ==================================================================*/
-static int ICamera_Start(ICamera * pme, int16 nMode, uint32 dwParam)
+static int ICameraEx_Start(ICameraEx * pme, int16 nMode, uint32 dwParam)
 {
-    return OEMCamera_Start(pme->m_pOEMCamera, nMode, dwParam);
+    return OEMCameraEx_Start(pme->m_pOEMCamera, nMode, dwParam);
 }
 
 /*==================================================================
 
 ==================================================================*/
-static int ICamera_Stop(ICamera * pme)
+static int ICameraEx_Stop(ICameraEx * pme)
 {
-    return OEMCamera_Stop(pme->m_pOEMCamera);
+    return OEMCameraEx_Stop(pme->m_pOEMCamera);
 }
 
 
 /*==================================================================
 
 ==================================================================*/
-static int ICamera_Pause(ICamera * pme, boolean bPause)
+static int ICameraEx_Pause(ICameraEx * pme, boolean bPause)
 {
-    return OEMCamera_Pause(pme->m_pOEMCamera, bPause);
+    return 0;//OEMCameraEx_Pause(pme->m_pOEMCamera, bPause);
 }
 
 /*==================================================================
 
 ==================================================================*/
-static int ICamera_EncodeSnapshot(ICamera * pme)
+static int ICameraEx_EncodeSnapshot(ICameraEx * pme)
 {
-    return OEMCamera_EncodeSnapshot(pme->m_pOEMCamera);
+    return OEMCameraEx_EncodeSnapshot(pme->m_pOEMCamera);
 }
 
-static int ICamera_RegisterNotify( ICamera         *pme, 
+static int ICameraEx_RegisterNotify( ICameraEx         *pme, 
                                    PFNCAMERANOTIFY  pfnNotify, 
                                    void            *pUser)
 {
-    return SUCCESS;//OEMCamera_RegisterNotify(pme->m_pOEMCamera, pfnNotify, pUser);
+    return SUCCESS;//OEMCameraEx_RegisterNotify(pme->m_pOEMCamera, pfnNotify, pUser);
 }
 

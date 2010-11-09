@@ -540,7 +540,7 @@ A8_ERROR_MSG	cam_IF_ait_camera_config (CAM_CTRL_MODE mode, u_char para)
 		if(1 == para)
 			AIT_Camera_config.night_mode = 1;
 		else
-			AIT_Camera_config.night_mode = 0;			
+			AIT_Camera_config.night_mode = 0;		
 		break;
 	case CAM_CTRL_WB:
 		if (para <= 5)

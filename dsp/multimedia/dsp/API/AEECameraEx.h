@@ -41,6 +41,7 @@ Anthor:			Wangliang
 // AEECameraNotify::nStatus sent via callback function contains
 // the following status codes.
 //
+#define TRANS_COLOR                    0x001f
 #define CAM_STATUS_BASE                1                       // Base used by ICamera
 #define CAM_STATUS_USER_BASE           0x8000                  // Base for extension
 
@@ -59,6 +60,7 @@ Anthor:			Wangliang
 #define CAM_STATUS_SPACE_ERROR         (CAM_STATUS_BASE + 9)   // [Record] Memory unavailable to store recording, pData contains CAM_ERR_SPACE_MSG_XXX
 #define CAM_STATUS_FILE_SIZE_EXCEEDED  (CAM_STATUS_BASE + 10)  // [EncodeSnapshot/RecordMovie] Operation completed but output encoded image exceeds specified file size
 #define CAM_STATUS_IO_ERROR            (CAM_STATUS_BASE + 11)  // [EncodeSnapshot/RecordMovie] I/O Error, pData contains CAM_ERR_XXX
+#define CAM_STATUS_UPDATE               (CAM_STATUS_BASE + 12)  // [Preview] Ready to update histogram.
 
 #define CAM_ERR_BASE                   1        // Base used by ICamera
 #define CAM_ERR_USER_BASE              0x1000   // Base for derived class
@@ -202,6 +204,8 @@ Anthor:			Wangliang
 #define CAM_MODE_PREVIEW            (CAM_MODE_BASE + 1)   // Preview state or start subcmd. Camera starts sending preview frames
 #define CAM_MODE_SNAPSHOT           (CAM_MODE_BASE + 2)   // Record mode: snapshot or start subcmd
 #define CAM_MODE_MOVIE              (CAM_MODE_BASE + 3)   // Record mode: movie or start subcmd
+#define CAM_MODE_UPDATE             (CAM_MODE_BASE + 4)   //update screen after ui paint
+
 
 //
 // CAM_MODE_MOVIE specific
@@ -320,13 +324,13 @@ Anthor:			Wangliang
 #define CAM_BESTSHOT_FLOWERS        (CAM_BESTSHOT_BASE + 10) // Flowers
 #define CAM_BESTSHOT_CANDLE_LIGHT   (CAM_BESTSHOT_BASE + 11) // Candle light
 
-typedef struct ICamera  ICamera;
+typedef struct ICameraEx  ICameraEx;
 
 // AEECameraNotify structure is returned via AEECallback
 // AEECameraNotify structure is returned via AEECallback
 typedef struct AEECameraNotify
 {
-   ICamera *      pCam;
+   ICameraEx *      pCam;
    int16          nCmd;
    int16          nSubCmd;
    int16          nStatus;
@@ -375,86 +379,88 @@ typedef void (*PFNCAMERANOTIFY)(void * pUser, AEECameraNotify * pNotify);
 // ICamera Interface
 //
 //********************************************************************************************************************************
-AEEINTERFACE(ICamera)
+AEEINTERFACE(ICameraEx)
 {
-   INHERIT_IQueryInterface(ICamera);
+   INHERIT_IQueryInterface(ICameraEx);
 
-   int         (*RegisterNotify)(ICamera * po, PFNCAMERANOTIFY pfnNotify, void * pUser);
+   int         (*RegisterNotify)(ICameraEx * po, PFNCAMERANOTIFY pfnNotify, void * pUser);
    
-   int         (*SetParm)(ICamera * po, int16 nParmID, int32 p1, int32 p2);
-   int         (*GetParm)(ICamera * po, int16 nParmID, int32 * pP1, int32 * pP2);
+   int         (*SetParm)(ICameraEx * po, int16 nParmID, int32 p1, int32 p2);
+   int         (*GetParm)(ICameraEx * po, int16 nParmID, int32 * pP1, int32 * pP2);
 
-   int         (*Start)(ICamera * po, int16 nMode, uint32 dwParam);
-   int         (*Stop)(ICamera * po);
-
-   int         (*EncodeSnapshot)(ICamera * po);
+   int         (*Start)(ICameraEx * po, int16 nMode, uint32 dwParam);
+   int         (*Stop)(ICameraEx * po);
+   int         (*EncodeSnapshot)(ICameraEx * po);
 };
 
-#define ICAMERA_AddRef(p)                       AEEGETPVTBL(p, ICamera)->AddRef(p)
-#define ICAMERA_Release(p)                      AEEGETPVTBL(p, ICamera)->Release(p)
-#define ICAMERA_QueryInterface(p, i, p2)        AEEGETPVTBL(p, ICamera)->QueryInterface(p, i, p2)
+#define ICAMERAEX_AddRef(p)                       AEEGETPVTBL(p, ICameraEx)->AddRef(p)
+#define ICAMERAEX_Release(p)                      AEEGETPVTBL(p, ICameraEx)->Release(p)
+#define ICAMERAEX_QueryInterface(p, i, p2)        AEEGETPVTBL(p, ICameraEx)->QueryInterface(p, i, p2)
 
-#define ICAMERA_RegisterNotify(p, pfn, pu)      AEEGETPVTBL(p, ICamera)->RegisterNotify(p, pfn, pu)
+#define ICAMERAEX_RegisterNotify(p, pfn, pu)      AEEGETPVTBL(p, ICameraEx)->RegisterNotify(p, pfn, pu)
 
 
-#define ICAMERA_SetParm(p, c, p1, p2)           AEEGETPVTBL(p, ICamera)->SetParm(p, c, p1, p2)
-#define ICAMERA_GetParm(p, c, pp1, pp2)         AEEGETPVTBL(p, ICamera)->GetParm(p, c, pp1, pp2)
+#define ICAMERAEX_SetParm(p, c, p1, p2)           AEEGETPVTBL(p, ICameraEx)->SetParm(p, c, p1, p2)
+#define ICAMERAEX_GetParm(p, c, pp1, pp2)         AEEGETPVTBL(p, ICameraEx)->GetParm(p, c, pp1, pp2)
 
 // Camera preview/record control APIs:
-#define ICAMERA_Preview(p)                      AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_PREVIEW,  0)
-#define ICAMERA_RecordSnapshot(p)               AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_SNAPSHOT, 0)
-#define ICAMERA_RecordMovie(p)                  AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_NORMAL)
-#define ICAMERA_RecordMoviePostcard(p)          AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_POSTCARD)
-#define ICAMERA_Stop(p)                         AEEGETPVTBL(p, ICamera)->Stop(p)
-#define ICAMERA_Pause(p)                        AEEGETPVTBL(p, ICamera)->Pause(p, TRUE)
-#define ICAMERA_Resume(p)                       AEEGETPVTBL(p, ICamera)->Pause(p, FALSE)
-#define ICAMERA_EncodeSnapshot(p)               AEEGETPVTBL(p, ICamera)->EncodeSnapshot(p)
-#define ICAMERA_DeferEncode(p, b)               ICAMERA_SetParm(p, CAM_PARM_DEFER_ENCODE, (int32)(b), 0)
+#define ICAMERAEX_Preview(p)                      AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_PREVIEW,  0)
+#define ICAMERAEX_RecordSnapshot(p)               AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_SNAPSHOT, 0)
+#define ICAMERAEX_UpdateScreen(p, dw)                 AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_UPDATE, dw)
+#define ICAMERAEX_RecordMovie(p)                  AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_NORMAL)
+#define ICAMERAEX_RecordMoviePostcard(p)          AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_POSTCARD)
+                    
+#define ICAMERAEX_Stop(p)                         AEEGETPVTBL(p, ICameraEx)->Stop(p)
+#define ICAMERAEX_Pause(p)                        AEEGETPVTBL(p, ICameraEx)->Pause(p, TRUE)
+#define ICAMERAEX_Resume(p)                       AEEGETPVTBL(p, ICameraEx)->Pause(p, FALSE)
+#define ICAMERAEX_EncodeSnapshot(p)               AEEGETPVTBL(p, ICameraEx)->EncodeSnapshot(p)
+#define ICAMERAEX_DeferEncode(p, b)               ICAMERAEX_SetParm(p, CAM_PARM_DEFER_ENCODE, (int32)(b), 0)
 //
 // Commonly used APIs to set/get ICamera parm
 //
 // Camera record info APIs:
-#define ICAMERA_SetMediaData(p, pmd, ppsz)      ICAMERA_SetParm(p, CAM_PARM_MEDIA_DATA,   (int32)(pmd),     (int32)(ppsz))
-#define ICAMERA_SetVideoEncode(p, cls, dw)      ICAMERA_SetParm(p, CAM_PARM_VIDEO_ENCODE, (int32)(cls),     (int32)(dw))
-#define ICAMERA_SetAudioEncode(p, cls, dw)      ICAMERA_SetParm(p, CAM_PARM_AUDIO_ENCODE, (int32)(cls),     (int32)(dw))
-#define ICAMERA_SetSize(p, ps)                  ICAMERA_SetParm(p, CAM_PARM_SIZE,         (int32)(ps),      0)
-#define ICAMERA_SetQuality(p, q)                ICAMERA_SetParm(p, CAM_PARM_QUALITY,      (int32)(q),       0)
-#define ICAMERA_SetBitRate(p, q)                ICAMERA_SetParm(p, CAM_PARM_BITRATE,      (int32)(q),       0)
-#define ICAMERA_SetFramesPerSecond(p, v)        ICAMERA_SetParm(p, CAM_PARM_FPS,          (int32)(v),       0)
-#define ICAMERA_SetContrast(p, v)               ICAMERA_SetParm(p, CAM_PARM_CONTRAST,     (int32)(v),       0)
-#define ICAMERA_SetBrightness(p, v)             ICAMERA_SetParm(p, CAM_PARM_BRIGHTNESS,   (int32)(v),       0)
-#define ICAMERA_SetSharpness(p, v)              ICAMERA_SetParm(p, CAM_PARM_SHARPNESS,    (int32)(v),       0)
-#define ICAMERA_SetZoom(p, v)                   ICAMERA_SetParm(p, CAM_PARM_ZOOM,         (int32)(v),       0)
-#define ICAMERA_SetMaxFileSize(p, s)            ICAMERA_SetParm(p, CAM_PARM_FILE_SIZE,    (int32)(s),       0)
-#define ICAMERA_RotatePreview(p, v)             ICAMERA_SetParm(p, CAM_PARM_ROTATE_PREVIEW,(int32)(v),      0)
-#define ICAMERA_RotateEncode(p, v)              ICAMERA_SetParm(p, CAM_PARM_ROTATE_ENCODE,(int32)(v),       0)
-#define ICAMERA_AddOverlay(p, pb)               ICAMERA_SetParm(p, CAM_PARM_OVERLAY,      (int32)(pb),      0)
-#define ICAMERA_ClearOverlay(p)                 ICAMERA_SetParm(p, CAM_PARM_OVERLAY,      0,                0)
+#define ICAMERAEX_SetMediaData(p, pmd, ppsz)      ICAMERAEX_SetParm(p, CAM_PARM_MEDIA_DATA,   (int32)(pmd),     (int32)(ppsz))
+#define ICAMERAEX_SetVideoEncode(p, cls, dw)      ICAMERAEX_SetParm(p, CAM_PARM_VIDEO_ENCODE, (int32)(cls),     (int32)(dw))
+#define ICAMERAEX_SetAudioEncode(p, cls, dw)      ICAMERAEX_SetParm(p, CAM_PARM_AUDIO_ENCODE, (int32)(cls),     (int32)(dw))
+#define ICAMERAEX_SetSize(p, ps)                  ICAMERAEX_SetParm(p, CAM_PARM_SIZE,         (int32)(ps),      0)
+#define ICAMERAEX_SetQuality(p, q)                ICAMERAEX_SetParm(p, CAM_PARM_QUALITY,      (int32)(q),       0)
+#define ICAMERAEX_SetBitRate(p, q)                ICAMERAEX_SetParm(p, CAM_PARM_BITRATE,      (int32)(q),       0)
+#define ICAMERAEX_SetFramesPerSecond(p, v)        ICAMERAEX_SetParm(p, CAM_PARM_FPS,          (int32)(v),       0)
+#define ICAMERAEX_SetContrast(p, v)               ICAMERAEX_SetParm(p, CAM_PARM_CONTRAST,     (int32)(v),       0)
+#define ICAMERAEX_SetBrightness(p, v)             ICAMERAEX_SetParm(p, CAM_PARM_BRIGHTNESS,   (int32)(v),       0)
+#define ICAMERAEX_SetSharpness(p, v)              ICAMERAEX_SetParm(p, CAM_PARM_SHARPNESS,    (int32)(v),       0)
+#define ICAMERAEX_SetZoom(p, v)                   ICAMERAEX_SetParm(p, CAM_PARM_ZOOM,         (int32)(v),       0)
+#define ICAMERAEX_SetMaxFileSize(p, s)            ICAMERAEX_SetParm(p, CAM_PARM_FILE_SIZE,    (int32)(s),       0)
+#define ICAMERAEX_RotatePreview(p, v)             ICAMERAEX_SetParm(p, CAM_PARM_ROTATE_PREVIEW,(int32)(v),      0)
+#define ICAMERAEX_RotateEncode(p, v)              ICAMERAEX_SetParm(p, CAM_PARM_ROTATE_ENCODE,(int32)(v),       0)
+#define ICAMERAEX_AddOverlay(p, pb)               ICAMERAEX_SetParm(p, CAM_PARM_OVERLAY,      (int32)(pb),      0)
+#define ICAMERAEX_ClearOverlay(p)                 ICAMERAEX_SetParm(p, CAM_PARM_OVERLAY,      0,                0)
 
 // Camera display API:
-#define ICAMERA_SetDisplaySize(p, pr)           ICAMERA_SetParm(p, CAM_PARM_DISPLAY_SIZE, (int32)(pr),      0)
+#define ICAMERAEX_SetDisplaySize(p, pr)           ICAMERAEX_SetParm(p, CAM_PARM_DISPLAY_SIZE, (int32)(pr),      0)
 
-#define ICAMERA_GetMode(p, pm, pb)              ICAMERA_GetParm(p, CAM_PARM_MODE,         (int32 *)(pm),    (int32 *)(pb))
+#define ICAMERAEX_GetMode(p, pm, pb)              ICAMERAEX_GetParm(p, CAM_PARM_MODE,         (int32 *)(pm),    (int32 *)(pb))
 
 // Camera capabilities APIs:
-#define ICAMERA_IsSupport(p, parm, pb)          ICAMERA_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(parm),                 (int32 *)(pb))
-#define ICAMERA_IsContrast(p, pb)               ICAMERA_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(CAM_PARM_CONTRAST),    (int32 *)(pb))
-#define ICAMERA_IsBrightness(p, pb)             ICAMERA_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(CAM_PARM_BRIGHTNESS),  (int32 *)(pb))
-#define ICAMERA_IsSharpness(p, pb)              ICAMERA_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(CAM_PARM_SHARPNESS),   (int32 *)(pb))
-#define ICAMERA_IsZoom(p, pb)                   ICAMERA_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(CAM_PARM_ZOOM),        (int32 *)(pb))
-#define ICAMERA_IsMovie(p, pb)                  ICAMERA_GetParm(p, CAM_PARM_IS_MOVIE,     (int32 *)(pb),                   NULL)
-#define ICAMERA_GetSizeList(p, ppl, pb)         ICAMERA_GetParm(p, CAM_PARM_SIZE_LIST,    (int32 *)(ppl),                  (int32 *)(pb))
-#define ICAMERA_GetDisplaySizeList(p, ppl, pb)  ICAMERA_GetParm(p, CAM_PARM_DISPLAY_SIZE_LIST,(int32 *)(ppl),              (int32 *)(pb))
+#define ICAMERAEX_IsSupport(p, parm, pb)          ICAMERAEX_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(parm),                 (int32 *)(pb))
+#define ICAMERAEX_IsContrast(p, pb)               ICAMERAEX_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(CAM_PARM_CONTRAST),    (int32 *)(pb))
+#define ICAMERAEX_IsBrightness(p, pb)             ICAMERAEX_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(CAM_PARM_BRIGHTNESS),  (int32 *)(pb))
+#define ICAMERAEX_IsSharpness(p, pb)              ICAMERAEX_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(CAM_PARM_SHARPNESS),   (int32 *)(pb))
+#define ICAMERAEX_IsZoom(p, pb)                   ICAMERAEX_GetParm(p, CAM_PARM_IS_SUPPORT,   (int32 *)(CAM_PARM_ZOOM),        (int32 *)(pb))
+#define ICAMERAEX_IsMovie(p, pb)                  ICAMERAEX_GetParm(p, CAM_PARM_IS_MOVIE,     (int32 *)(pb),                   NULL)
+#define ICAMERAEX_GetSizeList(p, ppl, pb)         ICAMERAEX_GetParm(p, CAM_PARM_SIZE_LIST,    (int32 *)(ppl),                  (int32 *)(pb))
+#define ICAMERAEX_GetDisplaySizeList(p, ppl, pb)  ICAMERAEX_GetParm(p, CAM_PARM_DISPLAY_SIZE_LIST,(int32 *)(ppl),              (int32 *)(pb))
 
-static __inline int ICAMERA_SetFlashCtl(ICamera *me, int32 nFlashType, int32 nFlashLevel, int32 nCustomLevel)
+
+static __inline int ICAMERAEX_SetFlashCtl(ICameraEx *me, int32 nFlashType, int32 nFlashLevel, int32 nCustomLevel)
 {
-   return AEEGETPVTBL(me,ICamera)->SetParm(me, CAM_PARM_FLASH_CTL, (int32)(nFlashType | nFlashLevel), nCustomLevel);
+   return AEEGETPVTBL(me,ICameraEx)->SetParm(me, CAM_PARM_FLASH_CTL, (int32)(nFlashType | nFlashLevel), nCustomLevel);
 }
 
-static __inline int ICAMERA_GetFlashCtl(ICamera *me, int32 nFlashType, int32 *pnFlashLevel, AEEParmInfo *pi)
+static __inline int ICAMERAEX_GetFlashCtl(ICameraEx *me, int32 nFlashType, int32 *pnFlashLevel, AEEParmInfo *pi)
 {
    int32 nFlash = nFlashType | ((pnFlashLevel && CAM_FLASH_CUSTOM == *pnFlashLevel) ? *pnFlashLevel : 0);
-   int   nErr = AEEGETPVTBL(me,ICamera)->GetParm(me, CAM_PARM_FLASH_CTL, &nFlash, (int32 *)pi);
+   int   nErr = AEEGETPVTBL(me,ICameraEx)->GetParm(me, CAM_PARM_FLASH_CTL, &nFlash, (int32 *)pi);
 
    if (SUCCESS == nErr && pnFlashLevel)
       *pnFlashLevel = (nFlash & ~CAM_FLASHTYPE_MASK);
