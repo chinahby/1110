@@ -171,7 +171,7 @@
 	</STRING>
 </Strings>
 <Dialogs>
-	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="7009">
+	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="0">
 		<Controls>
 			<Menu Id="7009" Name="IDC_SOUNDMENU_PROFILES">
 				<Items/>
