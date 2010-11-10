@@ -420,38 +420,93 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
                 dp = dpBase += nPitch;
             }
         }else{
-            while (y1--){
-                unsigned int x1 = xxDisp;
-                sp = pFontData;
-                sp += xSrc;
-                
-                while (x1--){
-                    switch(*sp){
-                    case 0:
-                        *dp = cBack;
-                        break;
-                    case 0xFF:
-                        *dp = cText;
-                        break;
-                    default:
-                        foreR = ((diffR * (*sp))/256) + backR;
-                        foreG = ((diffG * (*sp))/256) + backG;
-                        foreB = ((diffB * (*sp))/256) + backB;
-                        *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
-                        break;
-                    }
-                    dp++;
-                    sp++;
-                }  // for loop
-                
-                pFontData += bytes_per_row;
-                dp = dpBase += nPitch;
+            if(charBmp->horioff < 0) //ÈçÌ©ÓïµÈÓïÑÔ
+            {
+                while (y1--){
+                    unsigned int x1 = -charBmp->horioff;
+                    sp = pFontData;
+                    sp += xSrc;
+                    
+                    // draw only foreground color                
+                    while (x1--){
+                        switch(*sp){
+                        case 0:
+                            break;
+                        case 0xFF:
+                            *dp = cText;
+                            break;
+                        default:
+                            backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
+                            backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
+                            backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
+                            backR = (((foreR - backR) * (*sp))/256) + backR;
+                            backG = (((foreG - backG) * (*sp))/256) + backG;
+                            backB = (((foreB - backB) * (*sp))/256) + backB;
+                            *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
+                            break;
+                        }
+                        dp++;
+                        sp++;
+                    }  // for loop            
+                    
+                    x1 = xxDisp+charBmp->horioff;
+                    while (x1--){
+                        switch(*sp){
+                        case 0:
+                            *dp = cBack;
+                            break;
+                        case 0xFF:
+                            *dp = cText;
+                            break;
+                        default:
+                            foreR = ((diffR * (*sp))/256) + backR;
+                            foreG = ((diffG * (*sp))/256) + backG;
+                            foreB = ((diffB * (*sp))/256) + backB;
+                            *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                            break;
+                        }
+                        dp++;
+                        sp++;
+                    }  // for loop
+                    
+                    pFontData += bytes_per_row;
+                    dp = dpBase += nPitch;
+                }
+            }
+            else
+            {
+                while (y1--){
+                    unsigned int x1 = xxDisp;
+                    sp = pFontData;
+                    sp += xSrc;
+                    
+                    while (x1--){
+                        switch(*sp){
+                        case 0:
+                            *dp = cBack;
+                            break;
+                        case 0xFF:
+                            *dp = cText;
+                            break;
+                        default:
+                            foreR = ((diffR * (*sp))/256) + backR;
+                            foreG = ((diffG * (*sp))/256) + backG;
+                            foreB = ((diffB * (*sp))/256) + backB;
+                            *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                            break;
+                        }
+                        dp++;
+                        sp++;
+                    }  // for loop
+                    
+                    pFontData += bytes_per_row;
+                    dp = dpBase += nPitch;
+                }
             }
         }
         
- 
- 	  dispWidth += xWidth;
-       x += xWidth;
+ 	    dispWidth += xWidth;
+        x += xWidth;
     }
  
     *pOutWidth = dispWidth;
@@ -603,12 +658,13 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
     }
     
     // Get the text width and height
-    OEMFont_MeasureText(pMe, pcText, nChars, 0, NULL, &nWidth);
     nHeight = pMe->wSize;
     
     // Text is horizontally aligned
     if (dwFlags & IDF_ALIGNHORZ_MASK)
     {
+        OEMFont_MeasureText(pMe, pcText, nChars, 0, NULL, &nWidth);
+        
         x = prcBackRect->x;
 
         if (dwFlags & IDF_ALIGN_RIGHT)
@@ -649,12 +705,6 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
         return SUCCESS;
     }
     
-    if(prcBackRect->x > (x+ nWidth))
-    {
-        //Overflow the start x coordinate
-        return SUCCESS;
-    }
-    
     if(prcBackRect->y > (y +nHeight))
     {
         //Overflow the start y coordinate
@@ -683,16 +733,7 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
     }
     
     clrFrame = IBITMAP_RGBToNative(pDst, CLR_USER_FRAME);
-
-    // If a rectangle flag is passed in, draw it
-    if ((dwFlags & IDF_RECT_MASK) != IDF_RECT_NONE)
-    {
-        if (IBITMAP_FillRect(pDst, prcBackRect, clrFrame, AEE_RO_COPY) != SUCCESS)
-        {
-       	    return EUNSUPPORTED;
-       	}
-    }
-
+    
     return DrawTextEx(pMe, pDst, pcText, nChars, x, y, prcBackRect, dwFlags, clrText, clrBack, clrFrame);
 }
 
