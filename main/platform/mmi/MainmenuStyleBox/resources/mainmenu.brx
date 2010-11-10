@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="mainmenu" VERSION="1">
 <Strings Encoding="ISOLATIN1">
-	<STRING Id="1005" Name="IDS_MAIN_MENU_TITLE_ESURFING" Encoding="Unicode">
+	<STRING Id="1005" Name="IDS_MAIN_MENU_TITLE_ESURFING">
 		<Text>Esurfing</Text>
 	</STRING>
-	<STRING Id="1006" Name="IDS_MAIN_MENU_TITLE_CUSTSERVICE" Encoding="Unicode">
+	<STRING Id="1006" Name="IDS_MAIN_MENU_TITLE_CUSTSERVICE">
 		<Text>Customer service</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_TITLE_1">
