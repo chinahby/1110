@@ -46,9 +46,13 @@
 
 #define SENDINGSMS_ANI      "fs:/image/notice/sendingsmslow.png"
 #endif
-
+#ifdef FEATURE_SUPPORT_ID
+// 动画起点 Y 坐标
+#define SENDINGSMS_ANI_Y    10
+#else
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    20
+#endif
 // 动画播放速率 ms
 #define SENDINGSMS_ANI_R    150
 // 填充背景色
@@ -13207,7 +13211,7 @@ static void WmsApp_PlaySendingAni(void *pUser)
 	oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, SENDINGSMS_TEXT_COLOR);
     IDISPLAY_DrawText( pMe->m_pDisplay, 
                                 AEE_FONT_NORMAL, wszPrsend,
-                                -1, 0, 68, NULL, 
+                                -1, 0, (rect.dy), NULL, 
                                 IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER);
 	IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
      MSG_FATAL("EVT_USER_REDRAW...::::::::::::::::::::::::: WMS:%d:::%d",pMe->m_idxCurSend,pMe->m_nSendItems,0);
