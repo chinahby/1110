@@ -12,7 +12,6 @@
 ----------------------------------------------------------------*/
 
 //If any change in this file, please increase the MACRO AUTO_NV_MIN_VERSION
-//It must be less than AUTO_NV_MODIFY_TIME_FOR_CUSTOMER
 #if defined(FEATURE_VERSION_SMART)
 #define AUTO_NV_MIN_VERSION                 0x14
 #elif defined(FEATURE_VERSION_FLEXI203)
@@ -23,10 +22,6 @@
 #define AUTO_NV_MIN_VERSION                 0x15
 #else
 #define AUTO_NV_MIN_VERSION                 0x11
-#endif
-
-#if (AUTO_NV_MIN_VERSION >= AUTO_NV_MODIFY_TIME_FOR_CUSTOMER)
-#error AUTO_NV_MIN_VERSION msut be less than AUTO_NV_MODIFY_TIME_FOR_CUSTOMER
 #endif
 
 #define AUTO_NV_ITME_VERSION                (AUTO_NV_MIN_VERSION + AUTO_NV_RF_VERSION)
