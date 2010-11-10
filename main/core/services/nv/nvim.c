@@ -256,7 +256,6 @@ typedef struct _nv_auto_set_table_type
           We give every customer 16 version number for update it's nv in future
 ---------------------------------------------------------------------------------------*/
 #define AUTO_NV_CUST_CODE_INVALID           0x00
-#define AUTO_NV_MODIFY_TIME_FOR_CUSTOMER    0x10
 
 #ifdef MODEL_RF_NV_H
 #include MODEL_RF_NV_H
