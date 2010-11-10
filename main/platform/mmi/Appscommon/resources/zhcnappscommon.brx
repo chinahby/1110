@@ -238,6 +238,9 @@
 	<String Id="1030" Name="IDS_MORE">
 		<Text>附加</Text>
 	</String>
+	<String Id="1031" Name="IDS_MESSAGES">
+		<Text>信息</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>延时</Text>
 	</STRING>
@@ -261,6 +264,9 @@
 	</String>
 	<String Id="2008" Name="IDS_FPORTAL">
 		<Text>FPortal</Text>
+	</String>
+	<String Id="2009" Name="IDS_FGURU">
+		<Text>FGuru</Text>
 	</String>
 </Strings>
 </BREWRes>

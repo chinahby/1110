@@ -238,6 +238,9 @@
 	<String Id="1030" Name="IDS_MORE">
 		<Text>More</Text>
 	</String>
+	<String Id="1031" Name="IDS_MESSAGES">
+		<Text>Messages</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>

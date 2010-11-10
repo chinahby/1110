@@ -2640,6 +2640,11 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 
     switch (eBBarType)
     {
+        case BTBAR_MESSAGES_CONTACTS:
+            nResID_L = IDS_MESSAGES;
+            nResID_R = IDS_STRING_CONTACTS;
+            break;
+            
         case BTBAR_MENU_CONTACTS:
             nResID_L = IDS_MENU;
             nResID_R = IDS_STRING_CONTACTS;

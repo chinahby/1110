@@ -32,7 +32,7 @@
 		<Text>ตั้งค่า</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
-		<Text>กีฬา</Text>
+		<Text>ตาราง</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_MAIN_MENU_TITLE_10">
 		<Text>รูปแบบ</Text>

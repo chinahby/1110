@@ -2902,29 +2902,29 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_FPT005)
 			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 #else
-			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif /*FEATURE_NASRANI*/
 #else
-               ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+               ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_IVIO203)
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined (FEATURE_VERSION_SMART)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif /*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/			
 #else
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
 				  return ret;
                 }
@@ -4639,7 +4639,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		eBBarType = BTBAR_FACEBOOK_CHAT;
 #else										//Include IVIO
 	#if !defined (FEATURE_FLEXI_STATIC_BREW_APP)
-		eBBarType = BTBAR_MENU_CONTACTS;
+		eBBarType = BTBAR_MESSAGES_CONTACTS;
     #elif defined (FEATURE_FMN2010)
         eBBarType = BTBAR_FMUSLIM_FPORTAL;
 	#elif defined (FEATURE_NASRANI) 
@@ -4647,7 +4647,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	#elif defined (FEATURE_FPT005)
 		eBBarType = BTBAR_CONTACTS_FPORTAL; //add by yangdecai
 	#else
-		eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
+		eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai
 	#endif
 #endif
 	

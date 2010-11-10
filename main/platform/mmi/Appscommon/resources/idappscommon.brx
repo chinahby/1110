@@ -238,6 +238,9 @@
 	<String Id="1030" Name="IDS_MORE">
 		<Text>Lainnya</Text>
 	</String>
+	<String Id="1031" Name="IDS_MESSAGES">
+		<Text>Pesan</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Tahan</Text>
 	</STRING>
@@ -263,7 +266,7 @@
 		<Text>FPortal</Text>
 	</String>
 	<String Id="2009" Name="IDS_FGuru">
-	<Text>FGuru</Text>
-</String>
+		<Text>FGuru</Text>
+	</String>
 </Strings>
 </BREWRes>

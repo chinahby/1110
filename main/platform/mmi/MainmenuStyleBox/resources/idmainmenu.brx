@@ -32,7 +32,7 @@
 		<Text>Aplikasi</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
-		<Text>Kalender</Text>
+		<Text>Jadwal</Text>
 	</STRING>
 	<String Id="1020" Name="IDS_MAIN_MENU_TITLE_10">
 		<Text>Pengaturan</Text>
