@@ -80,7 +80,7 @@
 		<Text>Aplikasi</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_MAIN_MENU_TITLE_48">
-		<Text>Kalender</Text>
+		<Text>Jadwal</Text>
 	</STRING>
 	<String Id="1049" Name="IDS_MAIN_MENU_TITLE_49">
 		<Text>Pengaturan</Text>
@@ -194,7 +194,7 @@
 		<Text>Timer</Text>
 	</String>
 	<String Id="1111" Name="IDS_MAIN_MENU_TITLE_31">
-		<Text>Calendar</Text>
+		<Text>Jadwal</Text>
 	</String>
 	<String Id="1112" Name="IDS_MAIN_MENU_TITLE_32">
 		<Text>Calculator</Text>

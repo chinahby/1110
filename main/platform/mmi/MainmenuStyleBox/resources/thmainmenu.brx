@@ -80,7 +80,7 @@
 		<Text>แอปพลิเคชั่น</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_MAIN_MENU_TITLE_48">
-		<Text>ปฏิทิน</Text>
+		<Text>ตาราง</Text>
 	</STRING>
 	<String Id="1049" Name="IDS_MAIN_MENU_TITLE_49">
 		<Text>ตั้งค่า</Text>
@@ -194,7 +194,7 @@
 		<Text>Timer</Text>
 	</String>
 	<String Id="1111" Name="IDS_MAIN_MENU_TITLE_31">
-		<Text>ปฏิทิน</Text>
+		<Text>ตาราง</Text>
 	</String>
 	<String Id="1112" Name="IDS_MAIN_MENU_TITLE_32">
 		<Text>เครื่องคิดเลข</Text>
