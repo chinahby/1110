@@ -3649,7 +3649,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             }
             */
             IMENUCTL_SetRect(pMenuCtl, &menurc);
-            MSG_FATAL("EVT_DIALOG_START",0,0,0);
+            
             if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType)
             {
                 dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE;
@@ -3687,9 +3687,10 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
 #else
             ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
             ITEXTCTL_SetRect(pTextCtl, &textrc);
+            CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 
-
+            
             if(NULL != pMe->m_szAlpha)
             {
                 uint32    dwMask;
@@ -3704,8 +3705,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 IMENUCTL_SetProperties(pMenuCtl, dwMask|MP_NO_REDRAW);
                 ITEXTCTL_SetText(pTextCtl, pMe->m_szAlpha, -1);
                 if(SUCCESS != CContApp_FilterSmartItems( pMe,  pMe->m_szAlpha) )
-                {   
-                    MSG_FATAL("SUCCESS != CContApp_FilterSmartItems 222",0,0,0);
+                {
                     pMe->m_bInsmartnofind = TRUE;
                     IMENUCTL_SetActive(pMenuCtl, FALSE);
                     /*guoys add @2008.10.20 for no match dont use select*/    
@@ -3878,33 +3878,41 @@ void CContApp_SmartMenuSetFocus(void *pUser)
 =============================================================================*/
 static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
 {
-    boolean  bRet = TRUE;
+    boolean     bRet = TRUE;
     IImage     *RightTopImg = NULL; 
-    uint32     nResID=0;
-    AEERect IconRect={0};
+    uint32      nResID=0;
+    AEERect     IconRect={0};
     IShell      *pIShell =AEE_GetShell();
     Theme_Param_type TParam={0};
+    AEEImageInfo myInfo;
     
     if(pTextCtl == NULL ||pIShell == NULL)
         return;
-
+    ITEXTCTL_GetRect(pTextCtl, &IconRect);
+    if(IconRect.dx == 0 || IconRect.dy == 0)
+    {
+        return;
+    }
+    
+    IconRect.x  = 0;
+    IconRect.dx = SEARCH_IMEICON_WIDTH;
+    
     bRet = ITEXTCTL_GetInfo(pTextCtl, AEE_TMINFO_ICONID, (void *)&nResID);
 
     if(!bRet)
         return;
     
-    Appscom_GetThemeParameters(&TParam);   
-
-    ITEXTCTL_GetRect(pTextCtl, &IconRect);
-    IconRect.x = 0;
-    IconRect.dx = SEARCH_IMEICON_WIDTH;
-    IconRect.dy = GetBottomBarHeight(pIDisplay);/* + SEARCH_INPUTBOX_GAP*/ 
-    IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor); 
-    
+    Appscom_GetThemeParameters(&TParam);
+    IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor);
     RightTopImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE, nResID);
     if(RightTopImg != NULL)
     {
-        IIMAGE_Draw(RightTopImg, IconRect.x, IconRect.y);           
+        IIMAGE_GetInfo(RightTopImg, &myInfo);
+        if(myInfo.cy < IconRect.dy)
+        {
+            IconRect.y += (IconRect.dy-myInfo.cy)>>1;
+        }
+        IIMAGE_Draw(RightTopImg, IconRect.x, IconRect.y);
         IIMAGE_Release(RightTopImg);
         RightTopImg = NULL;
     }
@@ -5034,8 +5042,8 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 			//Add End
 			
             /*必须在textctl初始化完毕后,才能获得icon id,而且要在dialog更新完之后再更新图标*/
-			CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);			
-			ITEXTCTL_Redraw(pTextCtl);			
+            CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
+			ITEXTCTL_Redraw(pTextCtl);
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay); 
 
@@ -13482,9 +13490,10 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
         //if(pMe->m_nAddnewOrEdit == ADDOREDIT_EDIT)
         //{
     IMENUCTL_GetSelItemRect( pMenuCtl, &rect);
+    DBGPRINTF("ItemRECT %d %d %d %d",rect.x,rect.y,rect.dx,rect.dy);
     rect.x  = 23;//大概的一个数字
     rect.dx = pMe->m_rc.dx - 27;//five pixels for right edge, 
-    rect.dy -= 1;
+    //rect.dy -= 1;
     ITEXTCTL_SetRect( pTextCtl, &rect);
     CContApp_SetFldMaxSize(pMe,pTextCtl,pMe->m_nFldInputID);
     // 只有数字域才真正在本地编辑，按数字域的属性设置

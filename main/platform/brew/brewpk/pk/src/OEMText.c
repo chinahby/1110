@@ -2390,7 +2390,7 @@ static void TextCtl_TextChanged(TextCtlContext *pContext)
                                     );
    if (!(pContext->dwProperties & TP_MULTILINE) && (pContext->dwProperties & TP_FIXOEM)) {
       // Adjust for frame
-      pContext->nExtraPixels = pContext->nExtraPixels/2 + 1;
+      pContext->nExtraPixels = pContext->nExtraPixels/2;
    }
    if (pContext->dwProperties & TP_FRAME) {
       // Adjust for frame
@@ -3443,7 +3443,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    rectLeading = rectText;
    rectLeading.y += rectText.dy;
    rectLeading.dy = pContext->nFontLeading;
-
+   
    if(pContext->dwProperties & TP_GRAPHIC_BG)
    {
        dwOldBkClr = TEXT_GRAPHIC_BG_COLOR;
@@ -3541,11 +3541,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
          else if (!(pContext->dwProperties & TP_MULTILINE) && 
                   (pContext->dwProperties & TP_FIXOEM))
          {
-            int offSet = 0;
-            if(AEE_TM_NUMBERS == sTextModes[pContext?pContext->byMode:0].info.wID)
-            {
-                offSet = 1;
-            }
             if(pContext->dwProperties & TP_GRAPHIC_BG)
             {
                 TextCtl_DrawBackGround(pContext, &rectClip);
@@ -3555,8 +3550,8 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                                       pContext->pwLineStarts[i] +
                                       pContext->pszContents,
                                       lineChars,
-                                      rectText.x + 1,
-                                      rectText.y + pContext->nExtraPixels + offSet,
+                                      rectText.x,
+                                      rectText.y + pContext->nExtraPixels,
                                       &rectClip,
                                       IDF_TEXT_TRANSPARENT);
             }
@@ -3567,8 +3562,8 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                                       pContext->pwLineStarts[i] +
                                       pContext->pszContents,
                                       lineChars,
-                                      rectText.x + 1,
-                                      rectText.y + pContext->nExtraPixels + offSet/*+pContext->nFontAscent*/,
+                                      rectText.x,
+                                      rectText.y + pContext->nExtraPixels/*+pContext->nFontAscent*/,
                                       &rectClip,
                                       IDF_RECT_FILL/*|IDF_ALIGN_MIDDLE*/);//dwFlags);
             }
