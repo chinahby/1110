@@ -238,6 +238,9 @@
 	<String Id="1030" Name="IDS_MORE">
 		<Text>More</Text>
 	</String>
+	<String Id="1031" Name="IDS_MESSAGES">
+		<Text>Messages</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>
@@ -254,13 +257,16 @@
 		<Text>View</Text>
 	</String>
 	<String Id="2006" Name="IDS_FMUSLIM">
-		<Text>FGuru</Text>
+		<Text>FMuslim</Text>
 	</String>
 	<String Id="2007" Name="IDS_FNASRANI">
 		<Text>FKristiani </Text>
 	</String>
 	<String Id="2008" Name="IDS_FPORTAL">
 		<Text>FPortal</Text>
+	</String>
+	<String Id="2009" Name="IDS_FGURU">
+		<Text>FGuru</Text>
 	</String>
 </Strings>
 </BREWRes>
