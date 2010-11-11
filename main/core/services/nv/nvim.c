@@ -2990,14 +2990,18 @@ LOCAL nv_stat_enum_type nv_auto_set_prl()
     dword               dwPrlSize = 0;
 #ifdef FEATURE_SD20
     word                prl_version = PRL_DEFAULT_VER;
-    /* Validate all sspr p rev version with P REV 1 first.*/
-    prl_sspr_p_rev_e_type  sspr_p_rev          = PRL_SSPR_P_REV_1;  
-    boolean                is_full_validation  = TRUE;  
 #endif    
     boolean             bIsNVTaskIni = nvi_initialized;
+#ifdef FEATURE_EXTENDED_PRL
+    nv_item_type  nv_item;  /* NV Item buffer for NV interface */
+    prl_sspr_p_rev_e_type sspr_p_rev; /* PRL protocol revision */
+#endif
 
     dwPrlSize = sizeof(pr_list_data)/sizeof(byte);
-
+    local_cmd.tcb_ptr    = NULL;
+    local_cmd.sigs       = 0;
+    local_cmd.done_q_ptr = NULL;
+    
     //set it to TRUE and set back to it's own value when exit
     nvi_initialized = TRUE;
     
@@ -3008,38 +3012,57 @@ LOCAL nv_stat_enum_type nv_auto_set_prl()
         nvi_initialized = bIsNVTaskIni;
         return NV_NOTACTIVE_S;
     }
-
-    local_cmd.tcb_ptr    = NULL;
-    local_cmd.sigs       = 0;
-    local_cmd.done_q_ptr = NULL;
-    local_cmd.cmd        = NV_WRITE_F;
-    local_cmd.data_ptr   = (nv_item_type*) &nv_pr_list;
-        
+    
     /* We always only pre-set NAM 1 */
     nv_pr_list.nam = 0;
     nv_pr_list.size = dwPrlSize * 8;
-
+    
     memcpy((void*)nv_pr_list.roaming_list, (void*)pr_list_data, dwPrlSize);
     
 #ifdef FEATURE_SD20
-    if(prl_validate((byte*) nv_pr_list.roaming_list, &prl_version,&sspr_p_rev,is_full_validation) == PRL_VALID)
-    {
-#else
-    if(mcsys_validate_roaming_list((byte *)nv_pr_list.roaming_list) == PRL_VALID)
-    {
-#endif
-        nv_pr_list.valid = TRUE;
+    #ifdef FEATURE_EXTENDED_PRL
+    local_cmd.cmd           = NV_READ_F;
+    local_cmd.data_ptr      = (nv_item_type*) &nv_item;
+    local_cmd.item          = NV_SSPR_P_REV_I;
+    nvio_read(&local_cmd);
+    /* Get PRL protocol revision from NV. Validate PRL revision from nv first
+    ** then with all other available protocol revisions next.
+    ** Update revision in nv if returned revision does not match that from nv.
+    */
+    if ( local_cmd.status != NV_DONE_S ) {
+       MSG_HIGH("Failed to read PRL protocol revision", 0, 0, 0);
+       nv_item.sspr_p_rev = PRL_SSPR_P_REV_INVALID;
+       sspr_p_rev = PRL_SSPR_P_REV_1;
     }
-    else
-    {
-        nv_pr_list.valid = FALSE;
+    else{
+       sspr_p_rev = (prl_sspr_p_rev_e_type)nv_item.sspr_p_rev;
+    }
 
-        ERR("Pre-defined PRL is invalid!!!", 0, 0, 0);  
-        
-        nvi_initialized = bIsNVTaskIni;
-        return NV_NOTACTIVE_S;
-    }    
-    
+    nv_pr_list.valid = FALSE;
+    if( prl_validate((byte*) nv_pr_list.roaming_list, &prl_version, &sspr_p_rev, TRUE) == PRL_VALID)
+    {
+      if ( sspr_p_rev != nv_item.sspr_p_rev) {
+        nv_item.sspr_p_rev = sspr_p_rev;
+        local_cmd.item      = NV_SSPR_P_REV_I;
+        local_cmd.cmd       = NV_WRITE_F;
+        local_cmd.data_ptr  = (nv_item_type*) &nv_item;
+        nvio_write(&local_cmd);
+      }
+      nv_pr_list.valid = TRUE;
+    }
+    #else /* !FEATURE_EXTENDED_PRL*/
+    if( prl_validate((byte*) nv_pr_list.roaming_list, &prl_version) == PRL_VALID)
+    {
+      nv_pr_list.valid = TRUE;
+    }
+    #endif /* FEATURE_EXTENDED_PRL */
+#else
+    if (mcsys_validate_roaming_list((byte *)nv_pr_list.roaming_list) == PRL_VALID)
+    {
+      nv_pr_list.valid = TRUE;
+    }
+#endif
+
     /* Set the PRL version */
 #ifdef FEATURE_SD20
     nv_pr_list.prl_version = prl_version;
@@ -3052,7 +3075,9 @@ LOCAL nv_stat_enum_type nv_auto_set_prl()
 #else
     local_cmd.item = NV_ROAMING_LIST_I;
 #endif    
-
+    
+    local_cmd.cmd        = NV_WRITE_F;
+    local_cmd.data_ptr   = (nv_item_type*) &nv_pr_list;
     nvio_write(&local_cmd);
     
     nvi_initialized = bIsNVTaskIni;
