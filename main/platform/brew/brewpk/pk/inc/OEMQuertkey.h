@@ -182,7 +182,6 @@ static SheftKeyItem_Own  VLCharLowKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_8, 'c', {'c'}},
 	{AVK_9, 'v', {'v'}},
 
-	{AVK_V, 'v', {'v'}},
 	{AVK_B, 'b', {'b'}},
 	{AVK_N, 'n', {'n'}},
 	{AVK_M, 'm', {'m'}},
@@ -262,7 +261,6 @@ static SheftKeyItem_Own  VLCharCapKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_8, 'C', {'C'}},
 	{AVK_9, 'V', {'V'}},
 
-	{AVK_V, 'V', {'V'}},
 	{AVK_B, 'B', {'B'}},
 	{AVK_N, 'N', {'N'}},
 	{AVK_M, 'M', {'M'}},
