@@ -4219,7 +4219,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
     uint16   nBufLen   = pContext->sT9awFieldInfo.G.nBufLen;
     sFocusType sFocus = pContext->sFocus;     
     boolean bFlag = GetArrowFlagonIM();
-
+	MSG_FATAL("T9TextCtl_Latin_Rapid_Key::start:%d",key,0,0);
 #if defined (FEATURE_ALL_KEY_PAD)
 	if(eCode == EVT_KEY_HELD)
 		{
@@ -4253,6 +4253,8 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 	        case AVK_B:
 	        case AVK_N:
 	        case AVK_M:
+	        case AVK_Z:
+	        case AVK_MUTE:
                 for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
     			{           
             		if (key == VLCharKeyItem[i].wParam)
@@ -4346,6 +4348,8 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		        case AVK_ENTER:
 				case AVK_SPACE:
 		        case AVK_RWD:
+		        case AVK_Z:
+	        	case AVK_MUTE:
 		            {
 		                int i = 0;
 		                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
@@ -4397,6 +4401,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 									{
 					            		if (key == VLCharKeyItem[i].wParam)
 					            		{
+					            			MSG_FATAL("i:::::::::::::::::%d",i,0,0);
 					        			    if(pContext->is_isShift)
 					                        { 
 					                            TextCtl_NoSelection(pContext);
@@ -5491,7 +5496,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
     T9STATUS sT9Status = T9STATERROR;  
     T9KEY    t9Key;
     uint16   nBufLen = pContext->sT9awFieldInfo.G.nBufLen;
-    ERR("T9TextCtl_MultitapKey::start",0,0,0);
+    MSG_FATAL("T9TextCtl_MultitapKey::start:%d",key,0,0);
 
 #if defined (FEATURE_ALL_KEY_PAD)
 	if(eCode == EVT_KEY_HELD)
@@ -5526,6 +5531,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         case AVK_B:
         case AVK_N:
         case AVK_M:
+        case AVK_Z:
+	    case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
             {           
                 if (key == VLCharKeyItem[i].wParam)
@@ -5620,6 +5627,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
+	        case AVK_Z:
+	        case AVK_MUTE:
 	            {
 	                int i = 0;
 	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
@@ -6309,7 +6318,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
     T9STATUS sT9Status = T9STATERROR;  
     T9KEY    t9Key;
     uint16   nBufLen = pContext->sT9awFieldInfo.G.nBufLen;
-    ERR("T9TextCtl_MultitapKey::start",0,0,0);
+    MSG_FATAL("T9TextCtl_Cap_Lower_Rapid_Key::start:::%d",key,0,0);
     //handle key
 #if defined (FEATURE_DISP_160X128) || defined (FEATURE_DISP_220X176)
     
@@ -6345,6 +6354,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         case AVK_B:
         case AVK_N:
         case AVK_M:
+        case AVK_Z:
+        case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 			{           
         		if (key == VLCharKeyItem[i].wParam)
@@ -6439,6 +6450,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
+	        case AVK_Z:
+        	case AVK_MUTE:
 	            {
 	                int i = 0;
 	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
@@ -6452,8 +6465,10 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                }
 	                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 	    			{       
+	    			     MSG_FATAL("T9TextCtl_Cap_Lower_Rapid_Key::start:::%d,%d",i,VLCharKeyItem[i].wParam,0);
 	            		if (key == VLCharKeyItem[i].wParam)
 	            		{
+	            			MSG_FATAL("T9TextCtl_Cap_Lower_Rapid_Key::SUCC::::::%d",pContext->is_isShift,0,0);
 	        			    if(pContext->is_isShift)
 	                        { 
 	                            TextCtl_NoSelection(pContext);
@@ -6468,7 +6483,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 								nBufLen = WSTRLEN(pContext->pszContents);
 								if(nBufLen == 0)
 								{
-									
+									MSG_FATAL("1T9TextCtl_Cap_Lower_Rapid_Key::SUCC::::::%x",VLCharCapKeyItem[i].wp,0,0);
 	                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
 									
 								}
@@ -6477,6 +6492,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 									if((pContext->m_bCaplk) || (!WSTRCMP(pContext->pszContents+(nBufLen-2),Tempstr))||
 										(!WSTRCMP(pContext->pszContents+(nBufLen-1),Tempstrp)))
 									{
+										MSG_FATAL("T9TextCtl_Cap_Lower_Rapid_Key::SUCC::::::%x",VLCharCapKeyItem[i].wp,0,0);
 										TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
 										pContext->m_bCaplk = FALSE;
 									}
@@ -6747,6 +6763,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         case AVK_B:
         case AVK_N:
         case AVK_M:
+        case AVK_Z:
+        case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 			{           
         		if (key == VLCharKeyItem[i].wParam)
@@ -6841,6 +6859,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
+	        case AVK_Z:
+        	case AVK_MUTE:
 	            {
 	                int i = 0;
 	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
@@ -7551,6 +7571,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         case AVK_B:
         case AVK_N:
         case AVK_M:
+        case AVK_Z:
+        case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 			{           
         		if (key == VLCharKeyItem[i].wParam)
@@ -7645,6 +7667,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
+	        case AVK_Z:
+        	case AVK_MUTE:
 	            {
 	                int i = 0;
 	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)

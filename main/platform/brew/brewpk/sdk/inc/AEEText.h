@@ -58,6 +58,7 @@ typedef struct _ITextCtl ITextCtl;
 #define TP_EDITNUMBER_PTSTRING 0x00000020 //input P\T\+ wehn input number
 #define TP_USELESS_UPDOWN      0x00000040 // the text do not handle AVK_UP  and  AVK_DOWN
 #define TP_GRAPHIC_BG      0x00000080 // use graphic bcakground
+#define TP_STARKEY_ID_SWITCH 0x00000010  //switch input method when input text
 #endif /*CUST_EDITION*/
 
 // Placeholder: Extended Text Properties

@@ -2828,7 +2828,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
             	//Add End
 #endif
+				case AVK_TV:
+					{
+						return TRUE;
+					}
                 case AVK_UP:
+                case AVK_MESSAGE:
 
 #if defined(FEATURE_WMS_APP)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);

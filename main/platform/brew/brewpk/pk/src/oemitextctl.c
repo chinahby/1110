@@ -875,6 +875,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 {
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[2];
                 }
+                MSG_FATAL("4pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
                 SetArrowFlagonIM(FALSE);
                 ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
                 OEM_SetInputMode((CTextCtl *)pme);
@@ -1461,29 +1462,32 @@ NormalKeyEvent:
 
                 // if the cursor is in Right position then change to FirstCap.
                 //it should check Key release event 
-                if ( ( OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode         // Ab --> ab --> AB --> Ab inputmethod switch
-                       ||OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode )
-                       ||OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode )
-                {
-                    if (OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode)
-                    {
-                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;    // Ab --> ab inputmethod switch
-                    }
-                    else if (OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode)
-                    {
-                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_UP;     // ab --> AB inputmethod switch
-                    }
-                    else if(OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode)
-                    {
-                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;        // AB --> Ab inputmethod switch
-                    }
+               
+		                if ( ( OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode         // Ab --> ab --> AB --> Ab inputmethod switch
+		                       ||OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode )
+		                       ||OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode )
+		                {
+		                    if (OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode)
+		                    {
+		                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;    // Ab --> ab inputmethod switch
+		                    }
+		                    else if (OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode)
+		                    {
+		                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_UP;     // ab --> AB inputmethod switch
+		                    }
+		                    else if(OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode)
+		                    {
+		                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;        // AB --> Ab inputmethod switch
+		                    }
+		        
 
-                   OEM_SetInputMode((CTextCtl *)pme);
+		                   OEM_SetInputMode((CTextCtl *)pme);
+		                   
+		                   // set flag
+		                   pme->m_eAutoState = MULTITAP_USER_DENY_AUTOSET;
                    
-                   // set flag
-                   pme->m_eAutoState = MULTITAP_USER_DENY_AUTOSET;
-                   
-                }   
+                		}
+                
 
                 // if the cursor is in Right position then change to FirstCap.
                 //it should check Key release event 
@@ -2066,6 +2070,21 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
                 }
             }            
 #endif
+		if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
+		{
+			if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH || 
+                    pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW ||
+                    pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP ||
+                    pme->m_nCurrInputMode == OEM_MODE_NUMBERS)
+                {
+                	pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+                }
+                else
+                {
+                	pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
+                }
+                
+		}
         OEM_SetInputMode((CTextCtl *)pme);
     }
 }
@@ -5072,6 +5091,21 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     int i;
     MSG_FATAL("pme->m_nCurrInputMode:::::::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
 	MSG_FATAL("pme->m_nCurrInputModeCount:::::::::::::::::::::%d",pme->m_nCurrInputModeCount,0,0);
+	if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
+	{
+		if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH || 
+                pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW ||
+                pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP ||
+                pme->m_nCurrInputMode == OEM_MODE_NUMBERS)
+            {
+            	pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+            }
+            else
+            {
+            	pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
+            }
+	}
+	
     if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP))
     {
         pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
@@ -5115,6 +5149,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     {
         if ( pme->m_nCurrInputMode == pme->m_nCurrInputModeList[i] )
         {
+        		
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
             if(pme->m_dwProps & TP_NOSYMBOL)
             {
@@ -5177,10 +5212,17 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             {
                 // if meet the end , then return the first one
                 MSG_FATAL("pme->m_nCurrInputMode::::end1:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
+                if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
+                {
+                	;
+                }
+                else
+                {
                 if (  i == pme->m_nCurrInputModeCount-1 )
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[0];
                 else
-                    pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];                
+                    pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];     
+                }
             }
             ret = TRUE;
             break;
